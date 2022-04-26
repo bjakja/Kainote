@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,7 +19,7 @@
     #include "wx/dcmemory.h"
 #endif
 
-wxIMPLEMENT_ABSTRACT_CLASS(wxX11DCImpl, wxDCImpl);
+IMPLEMENT_ABSTRACT_CLASS(wxX11DCImpl, wxDCImpl)
 
 //-----------------------------------------------------------------------------
 // wxDC
@@ -33,7 +34,7 @@ wxX11DCImpl::wxX11DCImpl( wxDC *owner ) :
     m_font = *wxNORMAL_FONT;
     m_brush = *wxWHITE_BRUSH;
 
-    m_backgroundMode = wxBRUSHSTYLE_TRANSPARENT;
+    m_backgroundMode = wxTRANSPARENT;
 }
 
 void wxX11DCImpl::DoSetClippingRegion( wxCoord x, wxCoord y, wxCoord width, wxCoord height )
@@ -51,9 +52,9 @@ void wxX11DCImpl::DoGetSizeMM( int* width, int* height ) const
     DoGetSize( &w, &h );
 
     if ( width )
-        *width = int( double(w) / (m_scaleX*GetMMToPXx()) );
+        *width = int( double(w) / (m_scaleX*m_mm_to_pix_x) );
     if ( height )
-        *height = int( double(h) / (m_scaleY*GetMMToPXy()) );
+        *height = int( double(h) / (m_scaleY*m_mm_to_pix_y) );
 }
 
 // Resolution in pixels per logical inch

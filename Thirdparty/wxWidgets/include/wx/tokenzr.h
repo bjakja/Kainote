@@ -4,6 +4,7 @@
 // Author:      Guilhem Lavaux
 // Modified by: (or rather rewritten by) Vadim Zeitlin
 // Created:     04/22/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Guilhem Lavaux
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,9 +12,9 @@
 #ifndef _WX_TOKENZRH
 #define _WX_TOKENZRH
 
-#include "wx\object.h"
-#include "wx\string.h"
-#include "wx\arrstr.h"
+#include "wx/object.h"
+#include "wx/string.h"
+#include "wx/arrstr.h"
 
 // ----------------------------------------------------------------------------
 // constants
@@ -47,9 +48,6 @@ public:
     wxStringTokenizer(const wxString& str,
                       const wxString& delims = wxDEFAULT_DELIMITERS,
                       wxStringTokenizerMode mode = wxTOKEN_DEFAULT);
-        // copy ctor and assignment operator
-    wxStringTokenizer(const wxStringTokenizer& src);
-    wxStringTokenizer& operator=(const wxStringTokenizer& src);
 
         // args are same as for the non default ctor above
     void SetString(const wxString& str,
@@ -114,8 +112,6 @@ protected:
     bool IsOk() const { return m_mode != wxTOKEN_INVALID; }
 
     bool DoHasMoreTokens() const;
-
-    void DoCopyFrom(const wxStringTokenizer& src);
 
     enum MoreTokensState
     {

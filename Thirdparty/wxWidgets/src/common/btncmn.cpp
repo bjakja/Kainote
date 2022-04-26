@@ -3,7 +3,8 @@
 // Purpose:     implementation of wxButtonBase
 // Author:      Vadim Zeitlin
 // Created:     2007-04-08
-// Copyright:   (c) 2007 Vadim Zeitlin <vadim@wxwidgets.org>
+// RCS-ID:      $Id$
+// Copyright:   (c) 2007 Vadim Zeitlin <vadim@wxwindows.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -18,6 +19,9 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_BUTTON
 
@@ -68,10 +72,10 @@ wxFLAGS_MEMBER(wxBU_BOTTOM)
 wxFLAGS_MEMBER(wxBU_EXACTFIT)
 wxEND_FLAGS( wxButtonStyle )
 
-wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxButton, wxControl, "wx/button.h");
+wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxButton, wxControl, "wx/button.h")
 
 wxBEGIN_PROPERTIES_TABLE(wxButton)
-wxEVENT_PROPERTY( Click, wxEVT_BUTTON, wxCommandEvent )
+wxEVENT_PROPERTY( Click, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEvent )
 
 wxPROPERTY( Font, wxFont, SetFont, GetFont, wxEMPTY_PARAMETER_VALUE, \
            0 /*flags*/, wxT("The font associated with the button label"), wxT("group"))

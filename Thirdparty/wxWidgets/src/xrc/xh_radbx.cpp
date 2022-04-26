@@ -3,6 +3,7 @@
 // Purpose:     XRC resource for wxRadioBox
 // Author:      Bob Mitchell
 // Created:     2000/03/21
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 Bob Mitchell and Verant Interactive
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -10,6 +11,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_XRC && wxUSE_RADIOBOX
 
@@ -20,9 +24,7 @@
     #include "wx/radiobox.h"
 #endif
 
-#include "wx/xml/xml.h"
-
-wxIMPLEMENT_DYNAMIC_CLASS(wxRadioBoxXmlHandler, wxXmlResourceHandler);
+IMPLEMENT_DYNAMIC_CLASS(wxRadioBoxXmlHandler, wxXmlResourceHandler)
 
 wxRadioBoxXmlHandler::wxRadioBoxXmlHandler()
 : wxXmlResourceHandler(), m_insideBox(false)
@@ -104,21 +106,30 @@ wxObject *wxRadioBoxXmlHandler::DoCreateResource()
         // we handle handle <item>Label</item> constructs here, and the item
         // tag can have tooltip, helptext, enabled and hidden attributes
 
-        // For compatibility, labels are not escaped in XRC by default and
-        // label="1" attribute needs to be explicitly specified to handle them
-        // consistently with the other labels.
-        m_labels.push_back(GetNodeText(m_node,
-                                       GetBoolAttr("label", 0)
-                                        ? 0
-                                        : wxXRC_TEXT_NO_ESCAPE));
+        wxString label = GetNodeContent(m_node);
+
+        wxString tooltip;
+        m_node->GetAttribute(wxT("tooltip"), &tooltip);
+
+        wxString helptext;
+        bool hasHelptext = m_node->GetAttribute(wxT("helptext"), &helptext);
+
+        if (m_resource->GetFlags() & wxXRC_USE_LOCALE)
+        {
+            label = wxGetTranslation(label, m_resource->GetDomain());
+            if ( !tooltip.empty() )
+                tooltip = wxGetTranslation(tooltip, m_resource->GetDomain());
+            if ( hasHelptext )
+                helptext = wxGetTranslation(helptext, m_resource->GetDomain());
+        }
+
+        m_labels.push_back(label);
 #if wxUSE_TOOLTIPS
-        m_tooltips.push_back(GetNodeText(GetParamNode(wxT("tooltip")),
-                                         wxXRC_TEXT_NO_ESCAPE));
+        m_tooltips.push_back(tooltip);
 #endif // wxUSE_TOOLTIPS
 #if wxUSE_HELP
-        const wxXmlNode* const nodeHelp = GetParamNode(wxT("helptext"));
-        m_helptexts.push_back(GetNodeText(nodeHelp, wxXRC_TEXT_NO_ESCAPE));
-        m_helptextSpecified.push_back(nodeHelp != NULL);
+        m_helptexts.push_back(helptext);
+        m_helptextSpecified.push_back(hasHelptext);
 #endif // wxUSE_HELP
         m_isEnabled.push_back(GetBoolAttr("enabled", 1));
         m_isShown.push_back(!GetBoolAttr("hidden", 0));

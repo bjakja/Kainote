@@ -4,6 +4,7 @@
 // Author:      Guilhem Lavaux
 // Modified by: Simo Virokannas (authentication, Dec 2005)
 // Created:     August 1997
+// RCS-ID:      $Id$
 // Copyright:   (c) 1997, 1998 Guilhem Lavaux
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,6 +12,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_PROTOCOL_HTTP
 
@@ -19,6 +23,7 @@
 
 #ifndef WX_PRECOMP
     #include "wx/string.h"
+    #include "wx/app.h"
 #endif
 
 #include "wx/tokenzr.h"
@@ -34,7 +39,7 @@
 // wxHTTP
 // ----------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxHTTP, wxProtocol);
+IMPLEMENT_DYNAMIC_CLASS(wxHTTP, wxProtocol)
 IMPLEMENT_PROTOCOL(wxHTTP, wxT("http"), wxT("80"), true)
 
 wxHTTP::wxHTTP()
@@ -44,6 +49,8 @@ wxHTTP::wxHTTP()
     m_read = false;
     m_proxy_mode = false;
     m_http_response = 0;
+
+    SetNotify(wxSOCKET_LOST_FLAG);
 }
 
 wxHTTP::~wxHTTP()
@@ -334,53 +341,77 @@ bool wxHTTP::Connect(const wxSockAddress& addr, bool WXUNUSED(wait))
     return true;
 }
 
-bool wxHTTP::BuildRequest(const wxString& path, const wxString& method)
+bool wxHTTP::BuildRequest(const wxString& path, wxHTTP_Req req)
 {
-    // Use the data in the post buffer, if any.
-    if ( !m_postBuffer.IsEmpty() )
+    const wxChar *request;
+
+    switch (req)
     {
-        wxString len;
-        len << m_postBuffer.GetDataLen();
+        case wxHTTP_GET:
+            request = wxT("GET");
+            break;
 
-        // Content length must be correct, so always set, possibly
-        // overriding the value set explicitly by a previous call to
-        // SetHeader("Content-Length").
-        SetHeader(wxS("Content-Length"), len);
+        case wxHTTP_POST:
+            request = wxT("POST");
+            // Content length must be correct, so always set, possibly
+            // overriding the value set explicitly by a previous call to
+            // SetHeader("Content-Length").
+            if ( !m_postBuffer.IsEmpty() )
+            {
+                wxString len;
+                len << m_postBuffer.GetDataLen();
 
-        // However if the user had explicitly set the content type, don't
-        // override it with the content type passed to SetPostText().
-        if ( !m_contentType.empty() && GetContentType().empty() )
-            SetHeader(wxS("Content-Type"), m_contentType);
+                SetHeader(wxS("Content-Length"), len);
+            }
+
+            // However if the user had explicitly set the content type, don't
+            // override it with the content type passed to SetPostText().
+            if ( !m_contentType.empty() && GetContentType().empty() )
+                SetHeader(wxS("Content-Type"), m_contentType);
+            break;
+
+        default:
+            return false;
     }
 
     m_http_response = 0;
 
     // If there is no User-Agent defined, define it.
     if ( GetHeader(wxT("User-Agent")).empty() )
-        SetHeader(wxT("User-Agent"), wxVERSION_STRING);
+        SetHeader(wxT("User-Agent"), wxT("wxWidgets 2.x"));
 
     // Send authentication information
     if (!m_username.empty() || !m_password.empty()) {
         SetHeader(wxT("Authorization"), GenerateAuthString(m_username, m_password));
     }
 
+    SaveState();
+
+    // we may use non blocking sockets only if we can dispatch events from them
+    SetFlags( wxIsMainThread() && wxApp::IsMainLoopRunning() ? wxSOCKET_NONE
+                                                             : wxSOCKET_BLOCK );
+    Notify(false);
+
     wxString buf;
-    buf.Printf(wxT("%s %s HTTP/1.0\r\n"), method, path);
+    buf.Printf(wxT("%s %s HTTP/1.0\r\n"), request, path.c_str());
     const wxWX2MBbuf pathbuf = buf.mb_str();
     Write(pathbuf, strlen(pathbuf));
     SendHeaders();
     Write("\r\n", 2);
 
-    if ( !m_postBuffer.IsEmpty() ) {
-        Write(m_postBuffer.GetData(), m_postBuffer.GetDataLen());
+    if ( req == wxHTTP_POST ) {
+        if ( !m_postBuffer.IsEmpty() )
+            Write(m_postBuffer.GetData(), m_postBuffer.GetDataLen());
 
         m_postBuffer.Clear();
     }
 
     wxString tmp_str;
     m_lastError = ReadLine(this, tmp_str);
-    if (m_lastError != wxPROTO_NOERR)
+    if (m_lastError != wxPROTO_NOERR) {
+        RestoreState();
         return false;
+    }
 
     if (!tmp_str.Contains(wxT("HTTP/"))) {
         // TODO: support HTTP v0.9 which can have no header.
@@ -423,11 +454,11 @@ bool wxHTTP::BuildRequest(const wxString& path, const wxString& method)
 
     m_lastError = wxPROTO_NOERR;
     ret_value = ParseHeaders();
-
+    RestoreState();
     return ret_value;
 }
 
-bool wxHTTP::Abort()
+bool wxHTTP::Abort(void)
 {
     return wxSocketClient::Close();
 }
@@ -443,18 +474,12 @@ public:
     size_t m_httpsize;
     unsigned long m_read_bytes;
 
-    wxHTTPStream(wxHTTP *http) : wxSocketInputStream(*http)
-    {
-        m_http = http;
-        m_httpsize = 0;
-        m_read_bytes = 0;
-    }
-
-    size_t GetSize() const wxOVERRIDE { return m_httpsize; }
-    virtual ~wxHTTPStream() { m_http->Abort(); }
+    wxHTTPStream(wxHTTP *http) : wxSocketInputStream(*http), m_http(http) {}
+    size_t GetSize() const { return m_httpsize; }
+    virtual ~wxHTTPStream(void) { m_http->Abort(); }
 
 protected:
-    size_t OnSysRead(void *buffer, size_t bufsize) wxOVERRIDE;
+    size_t OnSysRead(void *buffer, size_t bufsize);
 
     wxDECLARE_NO_COPY_CLASS(wxHTTPStream);
 };
@@ -475,7 +500,7 @@ size_t wxHTTPStream::OnSysRead(void *buffer, size_t bufsize)
         // if m_httpsize is (size_t) -1 this means read until connection closed
         // which is equivalent to getting a READ_ERROR, for clients however this
         // must be translated into EOF, as it is the expected way of signalling
-        // end of the content
+        // end end of the content
         m_lasterror = wxSTREAM_EOF;
     }
 
@@ -504,13 +529,7 @@ wxInputStream *wxHTTP::GetInputStream(const wxString& path)
         return NULL;
 #endif
 
-    // Use the user-specified method if any or determine the method to use
-    // automatically depending on whether we have anything to post or not.
-    wxString method = m_method;
-    if (method.empty())
-        method = m_postBuffer.IsEmpty() ? wxS("GET"): wxS("POST");
-
-    if (!BuildRequest(path, method))
+    if (!BuildRequest(path, m_postBuffer.IsEmpty() ? wxHTTP_GET : wxHTTP_POST))
         return NULL;
 
     inp_stream = new wxHTTPStream(this);
@@ -521,6 +540,9 @@ wxInputStream *wxHTTP::GetInputStream(const wxString& path)
         inp_stream->m_httpsize = (size_t)-1;
 
     inp_stream->m_read_bytes = 0;
+
+    Notify(false);
+    SetFlags(wxSOCKET_BLOCK | wxSOCKET_WAITALL);
 
     // no error; reset m_lastError
     m_lastError = wxPROTO_NOERR;

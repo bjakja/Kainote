@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,7 +20,7 @@
 
 class WXDLLIMPEXP_CORE wxPrinter: public wxPrinterBase
 {
-    wxDECLARE_DYNAMIC_CLASS(wxPrinter);
+    DECLARE_DYNAMIC_CLASS(wxPrinter)
 
 public:
     wxPrinter(wxPrintData *data = NULL);
@@ -37,7 +38,7 @@ public:
 
 class WXDLLIMPEXP_CORE wxPrintPreview: public wxPrintPreviewBase
 {
-    wxDECLARE_CLASS(wxPrintPreview);
+    DECLARE_CLASS(wxPrintPreview)
 
 public:
     wxPrintPreview(wxPrintout *printout, wxPrintout *printoutForPrinting = NULL, wxPrintData *data = NULL);

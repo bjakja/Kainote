@@ -1,3 +1,4 @@
+.\" $Id: TIFFmemory.3tiff,v 1.2 2005/11/02 11:07:18 dron Exp $
 .\"
 .\" Copyright (c) 1995 Sam Leffler
 .\" Copyright (c) 1995 Silicon Graphics, Inc.
@@ -77,7 +78,7 @@ C routines:
 .IR memcpy ,
 and
 .IR memcmp ,
-respectively.
+repsectively.
 .SH DIAGNOSTICS
 None.
 .SH "SEE ALSO"
@@ -86,4 +87,4 @@ None.
 .BR libtiff (3TIFF)
 .PP
 Libtiff library home page:
-.BR http://www.simplesystems.org/libtiff/
+.BR http://www.remotesensing.org/libtiff/

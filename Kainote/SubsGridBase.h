@@ -21,19 +21,21 @@
 #include "LineParse.h"
 #include "RendererVideo.h"
 #include "SubsFile.h"
-//#include "SubsGrid.h"
-//#include "Visuals.h"
-//#include "VisualDrawingShapes.h"
-//#include "TabPanel.h"
+#include "SubsGridPreview.h"
+#include "KainoteFrame.h"
+#include "EditBox.h"
+//#include "SubsGridWindow.h"
+
+#include "TabPanel.h"
 #include <vector>
 #include <set>
 
 
 
-class EditBox;
-class KainoteFrame;
-class SubsGridPreview;
-class SubsGrid;
+//class EditBox;
+//class KainoteFrame;
+//class SubsGridPreview;
+class SubsGridWindow;
 
 
 class compareData{
@@ -150,8 +152,8 @@ public:
 	SubsFile* file = nullptr;
 	EditBox *edit = nullptr;
 	//comparison static pointers needs short name because we not use this class
-	//static SubsGrid* CG1;
-	//static SubsGrid* CG2;
+	static SubsGridWindow* CG1;
+	static SubsGridWindow* CG2;
 	static void SubsComparison();
 	static void RemoveComparison();
 	static wxArrayString compareStyles;
@@ -165,7 +167,8 @@ private:
 	virtual void ScrollTo(int y, bool center = false, int offset = 0, bool useUpdate = false){};
 	
 protected:
-	void CompareTexts(compareData &firstTable, compareData &secondTable, const wxString &first, const wxString &second);
+	static void CompareTexts(compareData &firstTable, compareData &secondTable, 
+		const wxString &first, const wxString &second);
 	short numsave;
 	bool hideOverrideTags;
 	bool ismenushown = false;

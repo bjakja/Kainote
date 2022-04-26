@@ -3,6 +3,7 @@
 // Purpose:     functions to manipulate atomically integers and pointers
 // Author:      Armel Asselin
 // Created:     12/13/2006
+// RCS-ID:      $Id$
 // Copyright:   (c) Armel Asselin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -15,7 +16,7 @@
 // ----------------------------------------------------------------------------
 
 // get the value of wxUSE_THREADS configuration flag
-#include "wx\defs.h"
+#include "wx/defs.h"
 
 // constraints on the various functions:
 //  - wxAtomicDec must return a zero value if the value is zero once
@@ -45,7 +46,7 @@ inline wxUint32 wxAtomicDec (wxUint32 &value)
 #elif defined(__WINDOWS__)
 
 // include standard Windows headers
-#include "wx\msw/wrapwin.h"
+#include "wx/msw/wrapwin.h"
 
 inline void wxAtomicInc (wxUint32 &value)
 {
@@ -57,7 +58,7 @@ inline wxUint32 wxAtomicDec (wxUint32 &value)
     return InterlockedDecrement ((LONG*)&value);
 }
 
-#elif defined(__DARWIN__)
+#elif defined(__WXMAC__) || defined(__DARWIN__)
 
 #include "libkern/OSAtomic.h"
 inline void wxAtomicInc (wxUint32 &value)
@@ -106,7 +107,7 @@ inline wxUint32 wxAtomicDec (wxUint32 &value) { return --value; }
 
 #ifdef wxNEEDS_GENERIC_ATOMIC_OPS
 
-#include "wx\thread.h" // for wxCriticalSection
+#include "wx/thread.h" // for wxCriticalSection
 
 class wxAtomicInt32
 {

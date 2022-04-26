@@ -3,6 +3,7 @@
 // Purpose:     String-related benchmarks
 // Author:      Vadim Zeitlin
 // Created:     2008-07-19
+// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,10 +20,10 @@
     #include "wx/msw/wrapwin.h"
 #endif
 
-#ifdef __GNUC__
+#if wxCHECK_GCC_VERSION(3, 3)
     #define HAVE_COMPILER_THREAD
     #define wxTHREAD_SPECIFIC __thread
-#elif defined(__VISUALC__)
+#elif wxCHECK_VISUALC_VERSION(7)
     #define HAVE_COMPILER_THREAD
     #define wxTHREAD_SPECIFIC __declspec(thread)
 #endif
@@ -92,7 +93,7 @@ public:
 private:
     pthread_key_t m_key;
 
-    wxDECLARE_NO_COPY_CLASS(PthreadKey);
+    DECLARE_NO_COPY_CLASS(PthreadKey)
 };
 
 BENCHMARK_FUNC(PosixTLS)
@@ -132,7 +133,7 @@ public:
 private:
     DWORD m_slot;
 
-    wxDECLARE_NO_COPY_CLASS(TlsSlot);
+    DECLARE_NO_COPY_CLASS(TlsSlot)
 };
 
 BENCHMARK_FUNC(Win32TLS)

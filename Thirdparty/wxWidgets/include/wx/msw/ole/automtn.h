@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     11/6/98
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998, Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -20,7 +21,6 @@
 
 typedef void            WXIDISPATCH;
 typedef unsigned short* WXBSTR;
-typedef unsigned long   WXLCID;
 
 #ifdef GetObject
 #undef GetObject
@@ -67,7 +67,7 @@ public:
     // Low-level invocation function. Pass either an array of variants,
     // or an array of pointers to variants.
     bool Invoke(const wxString& member, int action,
-        wxVariant& retValue, int noArgs, wxVariant args[], const wxVariant* ptrArgs[] = NULL) const;
+        wxVariant& retValue, int noArgs, wxVariant args[], const wxVariant* ptrArgs[] = 0) const;
 
     // Invoke a member function
     wxVariant CallMethod(const wxString& method, int noArgs, wxVariant args[]);
@@ -96,7 +96,7 @@ public:
 
     // Uses DISPATCH_PROPERTYGET
     // and returns a dispatch pointer. The calling code should call Release
-    // on the pointer, though this could be implicit by constructing a wxAutomationObject
+    // on the pointer, though this could be implicit by constructing an wxAutomationObject
     // with it and letting the destructor call Release.
     WXIDISPATCH* GetDispatchProperty(const wxString& property, int noArgs, wxVariant args[]) const;
     WXIDISPATCH* GetDispatchProperty(const wxString& property, int noArgs, const wxVariant **args) const;
@@ -106,31 +106,8 @@ public:
     bool GetObject(wxAutomationObject& obj, const wxString& property, int noArgs = 0, wxVariant args[] = NULL) const;
     bool GetObject(wxAutomationObject& obj, const wxString& property, int noArgs, const wxVariant **args) const;
 
-    // Returns the locale identifier used in automation calls. The default is
-    // LOCALE_SYSTEM_DEFAULT. Objects obtained by GetObject() inherit the
-    // locale identifier from the one that created them.
-    WXLCID GetLCID() const;
-
-    // Sets the locale identifier to be used in automation calls performed by
-    // this object. The default is LOCALE_SYSTEM_DEFAULT.
-    void SetLCID(WXLCID lcid);
-
-    // Returns the flags used for conversions between wxVariant and OLE
-    // VARIANT, see wxOleConvertVariantFlags. The default value is
-    // wxOleConvertVariant_Default but all the objects obtained by GetObject()
-    // inherit the flags from the one that created them.
-    long GetConvertVariantFlags() const;
-
-    // Sets the flags used for conversions between wxVariant and OLE VARIANT,
-    // see wxOleConvertVariantFlags (default is wxOleConvertVariant_Default.
-    void SetConvertVariantFlags(long flags);
-
-public: // public for compatibility only, don't use m_dispatchPtr directly.
+public:
     WXIDISPATCH*  m_dispatchPtr;
-
-private:
-    WXLCID m_lcid;
-    long   m_convertVariantFlags;
 
     wxDECLARE_NO_COPY_CLASS(wxAutomationObject);
 };

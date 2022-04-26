@@ -5,6 +5,7 @@
 // Author:      John Norris, minor changes by Axel Schlueter
 // Modified by:
 // Created:     08.02.01
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 Johnny C. Norris II
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -39,20 +40,20 @@ static void gtk_togglebutton_clicked_callback(GtkWidget *WXUNUSED(widget), wxTog
     if (cb->m_blockEvent) return;
 
     // Generate a wx event.
-    wxCommandEvent event(wxEVT_TOGGLEBUTTON, cb->GetId());
+    wxCommandEvent event(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, cb->GetId());
     event.SetInt(cb->GetValue());
     event.SetEventObject(cb);
     cb->HandleWindowEvent(event);
 }
 }
 
-wxDEFINE_EVENT( wxEVT_TOGGLEBUTTON, wxCommandEvent );
+wxDEFINE_EVENT( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEvent );
 
 // ------------------------------------------------------------------------
 // wxToggleBitmapButton
 // ------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxToggleBitmapButton, wxControl);
+IMPLEMENT_DYNAMIC_CLASS(wxToggleBitmapButton, wxControl)
 
 bool wxToggleBitmapButton::Create(wxWindow *parent, wxWindowID id,
                             const wxBitmap &label, const wxPoint &pos,
@@ -136,7 +137,7 @@ void wxToggleBitmapButton::OnSetBitmap()
     if (!m_bitmap.IsOk()) return;
 
     GdkBitmap *mask = NULL;
-    if (m_bitmap.GetMask()) mask = m_bitmap.GetMask()->m_bitmap;
+    if (m_bitmap.GetMask()) mask = m_bitmap.GetMask()->GetBitmap();
 
     GtkWidget *child = BUTTON_CHILD(m_widget);
     if (child == NULL)
@@ -208,6 +209,7 @@ wxSize wxToggleBitmapButton::DoGetBestSize() const
         best.x = m_bitmap.GetWidth()+border;
         best.y = m_bitmap.GetHeight()+border;
     }
+    CacheBestSize(best);
     return best;
 }
 
@@ -224,7 +226,7 @@ wxToggleBitmapButton::GetClassDefaultAttributes(wxWindowVariant WXUNUSED(variant
 // wxToggleButton
 // ------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxToggleButton, wxControl);
+IMPLEMENT_DYNAMIC_CLASS(wxToggleButton, wxControl)
 
 bool wxToggleButton::Create(wxWindow *parent, wxWindowID id,
                             const wxString &label, const wxPoint &pos,
@@ -347,6 +349,7 @@ wxSize wxToggleButton::DoGetBestSize() const
         if (ret.x < 80) ret.x = 80;
     }
 
+    CacheBestSize(ret);
     return ret;
 }
 

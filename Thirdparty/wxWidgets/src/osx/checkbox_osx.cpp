@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     04/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:       wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -15,7 +16,7 @@
 #include "wx/checkbox.h"
 #include "wx/osx/private.h"
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxBitmapCheckBox, wxCheckBox);
+IMPLEMENT_DYNAMIC_CLASS(wxBitmapCheckBox, wxCheckBox)
 
 // Single check box item
 bool wxCheckBox::Create(wxWindow *parent,
@@ -127,7 +128,7 @@ bool wxCheckBox::OSXHandleClicked( double WXUNUSED(timestampsec) )
     
     if (sendEvent)
     {
-        wxCommandEvent event( wxEVT_CHECKBOX, m_windowId );
+        wxCommandEvent event( wxEVT_COMMAND_CHECKBOX_CLICKED, m_windowId );
         event.SetInt( newState );
         event.SetEventObject( this );
         ProcessCommand( event );
@@ -169,6 +170,11 @@ void wxBitmapCheckBox::SetLabel(const wxBitmap *WXUNUSED(bitmap))
 {
     // TODO
     wxFAIL_MSG(wxT("wxBitmapCheckBox::SetLabel() not yet implemented"));
+}
+
+void wxBitmapCheckBox::SetSize(int x, int y, int width, int height, int sizeFlags)
+{
+    wxControl::SetSize( x , y , width , height , sizeFlags ) ;
 }
 
 void wxBitmapCheckBox::SetValue(bool WXUNUSED(val))

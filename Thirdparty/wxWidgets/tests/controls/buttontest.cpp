@@ -3,6 +3,7 @@
 // Purpose:     wxButton unit test
 // Author:      Steven Lamerton
 // Created:     2010-06-21
+// RCS-ID:      $Id$
 // Copyright:   (c) 2010 Steven Lamerton
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -10,6 +11,9 @@
 
 #if wxUSE_BUTTON
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
     #include "wx/app.h"
@@ -19,42 +23,66 @@
 #include "testableframe.h"
 #include "wx/uiaction.h"
 #include "wx/artprov.h"
-
-// Get operator<<(wxSize) so that wxSize values are shown correctly in case of
-// a failure of a CHECK() involving them.
+//For CPPUNIT_ASSERT_EQUAL to work a class must have a stream output function
+//for those classes which do not have them by default we define them in
+//asserthelper.h so they can be reused
 #include "asserthelper.h"
 
-class ButtonTestCase
+class ButtonTestCase : public CppUnit::TestCase
 {
 public:
-    ButtonTestCase();
-    ~ButtonTestCase();
+    ButtonTestCase() { }
 
-protected:
+    void setUp();
+    void tearDown();
+
+private:
+    CPPUNIT_TEST_SUITE( ButtonTestCase );
+        //We add tests that use wxUIActionSimulator with WXUISIM_TEST so they
+        //are not run on platofrms were wxUIActionSimulator isn't supported
+        WXUISIM_TEST( Click );
+        WXUISIM_TEST( Disabled );
+        CPPUNIT_TEST( Auth );
+        CPPUNIT_TEST( BitmapMargins );
+        CPPUNIT_TEST( Bitmap );
+    CPPUNIT_TEST_SUITE_END();
+
+    void Click();
+    void Disabled();
+    void Auth();
+    void BitmapMargins();
+    void Bitmap();
+
     wxButton* m_button;
 
-    wxDECLARE_NO_COPY_CLASS(ButtonTestCase);
+    DECLARE_NO_COPY_CLASS(ButtonTestCase)
 };
 
-ButtonTestCase::ButtonTestCase()
+// register in the unnamed registry so that these tests are run by default
+CPPUNIT_TEST_SUITE_REGISTRATION( ButtonTestCase );
+
+// also include in its own registry so that these tests can be run alone
+CPPUNIT_TEST_SUITE_NAMED_REGISTRATION( ButtonTestCase, "ButtonTestCase" );
+
+void ButtonTestCase::setUp()
 {
     //We use wxTheApp->GetTopWindow() as there is only a single testable frame
     //so it will always be returned
     m_button = new wxButton(wxTheApp->GetTopWindow(), wxID_ANY, "wxButton");
 }
 
-ButtonTestCase::~ButtonTestCase()
+void ButtonTestCase::tearDown()
 {
-    delete m_button;
+    wxDELETE(m_button);
 }
 
 #if wxUSE_UIACTIONSIMULATOR
 
-TEST_CASE_METHOD(ButtonTestCase, "Button::Click", "[button]")
+void ButtonTestCase::Click()
 {
     //We use the internal class EventCounter which handles connecting and
     //disconnecting the control to the wxTestableFrame
-    EventCounter clicked(m_button, wxEVT_BUTTON);
+    EventCounter clicked(m_button, wxEVT_COMMAND_BUTTON_CLICKED);
 
     wxUIActionSimulator sim;
 
@@ -66,30 +94,17 @@ TEST_CASE_METHOD(ButtonTestCase, "Button::Click", "[button]")
     sim.MouseClick();
     wxYield();
 
-    CHECK( clicked.GetCount() == 1 );
+    CPPUNIT_ASSERT_EQUAL( 1, clicked.GetCount() );
 }
 
-TEST_CASE_METHOD(ButtonTestCase, "Button::Disabled", "[button]")
+void ButtonTestCase::Disabled()
 {
+    EventCounter clicked(m_button, wxEVT_COMMAND_BUTTON_CLICKED);
+
     wxUIActionSimulator sim;
 
-    // In this test we disable the button and check events are not sent and we
-    // do it once by disabling the previously enabled button and once by
-    // creating the button in the disabled state.
-    SECTION("Disable after creation")
-    {
-        m_button->Disable();
-    }
-
-    SECTION("Create disabled")
-    {
-        delete m_button;
-        m_button = new wxButton();
-        m_button->Disable();
-        m_button->Create(wxTheApp->GetTopWindow(), wxID_ANY, "wxButton");
-    }
-
-    EventCounter clicked(m_button, wxEVT_BUTTON);
+    //In this test we disable the button and check events are not sent
+    m_button->Disable();
 
     sim.MouseMove(m_button->GetScreenPosition() + wxPoint(10, 10));
     wxYield();
@@ -97,12 +112,12 @@ TEST_CASE_METHOD(ButtonTestCase, "Button::Disabled", "[button]")
     sim.MouseClick();
     wxYield();
 
-    CHECK( clicked.GetCount() == 0 );
+    CPPUNIT_ASSERT_EQUAL( 0, clicked.GetCount() );
 }
 
 #endif // wxUSE_UIACTIONSIMULATOR
 
-TEST_CASE_METHOD(ButtonTestCase, "Button::Auth", "[button]")
+void ButtonTestCase::Auth()
 {
     //Some functions only work on specific operating system versions, for
     //this we need a runtime check
@@ -112,19 +127,19 @@ TEST_CASE_METHOD(ButtonTestCase, "Button::Auth", "[button]")
         return;
 
     //We are running Windows Vista or newer
-    CHECK(!m_button->GetAuthNeeded());
+    CPPUNIT_ASSERT(!m_button->GetAuthNeeded());
 
     m_button->SetAuthNeeded();
 
-    CHECK(m_button->GetAuthNeeded());
+    CPPUNIT_ASSERT(m_button->GetAuthNeeded());
 
     //We test both states
     m_button->SetAuthNeeded(false);
 
-    CHECK(!m_button->GetAuthNeeded());
+    CPPUNIT_ASSERT(!m_button->GetAuthNeeded());
 }
 
-TEST_CASE_METHOD(ButtonTestCase, "Button::BitmapMargins", "[button]")
+void ButtonTestCase::BitmapMargins()
 {
     //Some functions only work on specific platforms in which case we can use
     //a preprocessor check
@@ -136,46 +151,25 @@ TEST_CASE_METHOD(ButtonTestCase, "Button::BitmapMargins", "[button]")
 
     m_button->SetBitmapMargins(15, 15);
 
-    CHECK( m_button->GetBitmapMargins() == wxSize(15, 15) );
+    CPPUNIT_ASSERT_EQUAL(wxSize(15, 15), m_button->GetBitmapMargins());
 
     m_button->SetBitmapMargins(wxSize(20, 20));
 
-    CHECK( m_button->GetBitmapMargins() == wxSize(20, 20) );
+    CPPUNIT_ASSERT_EQUAL(wxSize(20, 20), m_button->GetBitmapMargins());
 #endif
 }
 
-TEST_CASE_METHOD(ButtonTestCase, "Button::Bitmap", "[button]")
+void ButtonTestCase::Bitmap()
 {
     //We start with no bitmaps
-    CHECK(!m_button->GetBitmap().IsOk());
+    CPPUNIT_ASSERT(!m_button->GetBitmap().IsOk());
 
-    // Some bitmap, doesn't really matter which.
-    const wxBitmap bmp = wxArtProvider::GetBitmap(wxART_INFORMATION);
 
-    m_button->SetBitmap(bmp);
+    m_button->SetBitmap(wxArtProvider::GetIcon(wxART_INFORMATION, 
+                                               wxART_OTHER,
+                                               wxSize(32, 32)));
 
-    CHECK(m_button->GetBitmap().IsOk());
-
-    // The call above shouldn't affect any other bitmaps as returned by the API
-    // even though the same (normal) bitmap does appear for all the states.
-    CHECK( !m_button->GetBitmapCurrent().IsOk() );
-    CHECK( !m_button->GetBitmapDisabled().IsOk() );
-    CHECK( !m_button->GetBitmapFocus().IsOk() );
-    CHECK( !m_button->GetBitmapPressed().IsOk() );
-
-    // Do set one of the bitmaps now.
-    m_button->SetBitmapPressed(wxArtProvider::GetBitmap(wxART_ERROR));
-    CHECK( m_button->GetBitmapPressed().IsOk() );
-
-    // Check that resetting the button label doesn't result in problems when
-    // updating the bitmap later, as it used to be the case in wxGTK (#18898).
-    m_button->SetLabel(wxString());
-    CHECK_NOTHROW( m_button->Disable() );
-
-    // Also check that setting an invalid bitmap doesn't do anything untoward,
-    // such as crashing, as it used to do in wxOSX (#19257).
-    CHECK_NOTHROW( m_button->SetBitmapPressed(wxNullBitmap) );
-    CHECK( !m_button->GetBitmapPressed().IsOk() );
+    CPPUNIT_ASSERT(m_button->GetBitmap().IsOk());
 }
 
 #endif //wxUSE_BUTTON

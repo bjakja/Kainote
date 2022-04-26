@@ -3,6 +3,7 @@
 // Purpose:     XRC resource for wxComboCtrl
 // Author:      Jaakko Salli
 // Created:     2009/01/25
+// RCS-ID:      $Id$
 // Copyright:   (c) 2009 Jaakko Salli
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -10,6 +11,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_XRC && wxUSE_COMBOCTRL
 
@@ -23,7 +27,7 @@
 #include "wx/combo.h"
 
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxComboCtrlXmlHandler, wxXmlResourceHandler);
+IMPLEMENT_DYNAMIC_CLASS(wxComboCtrlXmlHandler, wxXmlResourceHandler)
 
 wxComboCtrlXmlHandler::wxComboCtrlXmlHandler()
                      : wxXmlResourceHandler()

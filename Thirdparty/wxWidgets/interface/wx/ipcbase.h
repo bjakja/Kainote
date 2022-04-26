@@ -2,6 +2,7 @@
 // Name:        ipcbase.h
 // Purpose:     interface of wxConnectionBase
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 

@@ -1,12 +1,16 @@
 /////////////////////////////////////////////////////////////////////////////
 // Name:        src/common/colourdata.cpp
 // Author:      Julian Smart
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_COLOURDLG || wxUSE_COLOURPICKERCTRL
 
@@ -17,19 +21,11 @@
 // wxColourData
 // ----------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxColourData, wxObject);
+IMPLEMENT_DYNAMIC_CLASS(wxColourData, wxObject)
 
 wxColourData::wxColourData()
 {
     m_chooseFull = false;
-#ifdef __WXOSX__
-    // Under OSX, legacy wxColourDialog had opacity selector
-    // (slider) always enabled, so for backward compatibilty
-    // we should tell the dialog to enable it by default.
-    m_chooseAlpha = true;
-#else
-    m_chooseAlpha = false;
-#endif // __WXOSX__ / !__WXOSX__
     m_dataColour.Set(0,0,0);
     // m_custColours are wxNullColours initially
 }
@@ -66,7 +62,6 @@ wxColourData& wxColourData::operator=(const wxColourData& data)
 
     m_dataColour = data.m_dataColour;
     m_chooseFull = data.m_chooseFull;
-    m_chooseAlpha = data.m_chooseAlpha;
 
     return *this;
 }
@@ -91,9 +86,6 @@ wxString wxColourData::ToString() const
             str += clr.GetAsString(wxC2S_HTML_SYNTAX);
     }
 
-    str.Append(wxCOL_DATA_SEP);
-    str.Append(m_chooseAlpha ? '1' : '0');
-
     return str;
 }
 
@@ -111,78 +103,6 @@ bool wxColourData::FromString(const wxString& str)
         else
             success = m_custColours[i].Set(token);
     }
-
-    if ( success )
-    {
-        token = tokenizer.GetNextToken();
-        m_chooseAlpha = token == wxS("1");
-        success = m_chooseAlpha || token == wxS("0");
-    }
-
     return success;
 }
-
-#if wxUSE_COLOURDLG
-
-#include "wx/colordlg.h"
-
-wxIMPLEMENT_DYNAMIC_CLASS(wxColourDialogEvent, wxCommandEvent);
-
-wxDEFINE_EVENT(wxEVT_COLOUR_CHANGED, wxColourDialogEvent);
-
-wxColour wxGetColourFromUser(wxWindow *parent,
-                             const wxColour& colInit,
-                             const wxString& caption,
-                             wxColourData *ptrData)
-{
-    // contains serialized representation of wxColourData used the last time
-    // the dialog was shown: we want to reuse it the next time in order to show
-    // the same custom colours to the user (and we can't just have static
-    // wxColourData itself because it's a GUI object and so should be destroyed
-    // before GUI shutdown and doing it during static cleanup is too late)
-    static wxString s_strColourData;
-
-    wxColourData data;
-    if ( !ptrData )
-    {
-        ptrData = &data;
-        if ( !s_strColourData.empty() )
-        {
-            if ( !data.FromString(s_strColourData) )
-            {
-                wxFAIL_MSG( "bug in wxColourData::FromString()?" );
-            }
-
-#ifdef __WXMSW__
-            // we don't get back the "choose full" flag value from the native
-            // dialog and so we can't preserve it between runs, so we decide to
-            // always use it as it seems better than not using it (user can
-            // just ignore the extra controls in the dialog but having to click
-            // a button each time to show them would be very annoying
-            data.SetChooseFull(true);
-#endif // __WXMSW__
-        }
-    }
-
-    if ( colInit.IsOk() )
-    {
-        ptrData->SetColour(colInit);
-    }
-
-    wxColour colRet;
-    wxColourDialog dialog(parent, ptrData);
-    if (!caption.empty())
-        dialog.SetTitle(caption);
-    if ( dialog.ShowModal() == wxID_OK )
-    {
-        *ptrData = dialog.GetColourData();
-        colRet = ptrData->GetColour();
-        s_strColourData = ptrData->ToString();
-    }
-    //else: leave colRet invalid
-
-    return colRet;
-}
-
-#endif // wxUSE_COLOURDLG
 #endif // wxUSE_COLOURDLG || wxUSE_COLOURPICKERCTRL

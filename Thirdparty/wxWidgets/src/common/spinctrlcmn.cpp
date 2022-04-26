@@ -3,6 +3,7 @@
 // Purpose:     define wxSpinCtrl event types
 // Author:      Peter Most
 // Created:     01.11.08
+// RCS-ID:      $Id$
 // Copyright:   (c) 2008-2009 wxWidgets team
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,18 +19,17 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#if wxUSE_SPINCTRL
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #include "wx/spinbutt.h"
 #include "wx/spinctrl.h"
 
-#include "wx/private/spinctrl.h"
+#if wxUSE_SPINCTRL
 
-#include <math.h>
-
-wxDEFINE_EVENT(wxEVT_SPINCTRL, wxSpinEvent);
-wxDEFINE_EVENT(wxEVT_SPINCTRLDOUBLE, wxSpinDoubleEvent);
+wxDEFINE_EVENT(wxEVT_COMMAND_SPINCTRL_UPDATED, wxSpinEvent);
+wxDEFINE_EVENT(wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, wxSpinDoubleEvent);
 
 // ----------------------------------------------------------------------------
 // XTI
@@ -70,14 +70,14 @@ wxFLAGS_MEMBER(wxSP_ARROW_KEYS)
 wxFLAGS_MEMBER(wxSP_WRAP)
 wxEND_FLAGS( wxSpinCtrlStyle )
 
-wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxSpinCtrl, wxControl, "wx/spinctrl.h");
+wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxSpinCtrl, wxControl, "wx/spinctrl.h")
 
 wxBEGIN_PROPERTIES_TABLE(wxSpinCtrl)
 wxEVENT_RANGE_PROPERTY( Spin, wxEVT_SCROLL_TOP, wxEVT_SCROLL_CHANGED, wxSpinEvent )
 
-wxEVENT_PROPERTY( Updated, wxEVT_SPINCTRL, wxCommandEvent )
-wxEVENT_PROPERTY( TextUpdated, wxEVT_TEXT, wxCommandEvent )
-wxEVENT_PROPERTY( TextEnter, wxEVT_TEXT_ENTER, wxCommandEvent )
+wxEVENT_PROPERTY( Updated, wxEVT_COMMAND_SPINCTRL_UPDATED, wxCommandEvent )
+wxEVENT_PROPERTY( TextUpdated, wxEVT_COMMAND_TEXT_UPDATED, wxCommandEvent )
+wxEVENT_PROPERTY( TextEnter, wxEVT_COMMAND_TEXT_ENTER, wxCommandEvent )
 
 wxPROPERTY( ValueString, wxString, SetValue, GetValue, \
            wxEMPTY_PARAMETER_VALUE, 0 /*flags*/, wxT("Helpstring"), wxT("group")) ;
@@ -102,59 +102,5 @@ wxCONSTRUCTOR_6( wxSpinCtrl, wxWindow*, Parent, wxWindowID, Id, \
                 wxString, ValueString, wxPoint, Position, \
                 wxSize, Size, long, WindowStyle )
 
-
-using namespace wxSpinCtrlImpl;
-
-wxString wxSpinCtrlImpl::FormatAsHex(long val, long maxVal)
-{
-    // We format the value like this is for compatibility with (native
-    // behaviour of) wxMSW
-    wxString text;
-    if ( maxVal < 0x10000 )
-        text.Printf(wxS("0x%04lx"), val);
-    else
-        text.Printf(wxS("0x%08lx"), val);
-
-    return text;
-}
-
-int wxSpinCtrlImpl::GetMaxValueLength(int minVal, int maxVal, int base)
-{
-    const int lenMin = (base == 16 ?
-                       FormatAsHex(minVal, maxVal) :
-                       wxString::Format("%d", minVal)).length();
-    const int lenMax = (base == 16 ?
-                       FormatAsHex(maxVal, maxVal) :
-                       wxString::Format("%d", maxVal)).length();
-    return wxMax(lenMin, lenMax);
-}
-
-wxSize wxSpinCtrlImpl::GetBestSize(const wxControl* spin,
-                                   int minVal, int maxVal, int base)
-{
-    const wxString largestString('8', GetMaxValueLength(minVal, maxVal, base));
-    return spin->GetSizeFromText(largestString);
-}
-
-bool wxSpinCtrlImpl::IsBaseCompatibleWithRange(int minVal, int maxVal, int base)
-{
-    // Negative values in the range are allowed only if base == 10
-    return base == 10 || (minVal >= 0 && maxVal >= 0);
-}
-
-unsigned wxSpinCtrlImpl::DetermineDigits(double inc)
-{
-    // TODO-C++11: Use std::modf() to get the fractional part.
-    inc = fabs(inc);
-    inc -= static_cast<int>(inc);
-    if ( inc > 0.0 )
-    {
-        return wxMin(SPINCTRLDBL_MAX_DIGITS, -static_cast<int>(floor(log10(inc))));
-    }
-    else
-    {
-        return 0;
-    }
-}
 
 #endif // wxUSE_SPINCTRL

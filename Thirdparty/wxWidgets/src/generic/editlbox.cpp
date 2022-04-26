@@ -2,6 +2,7 @@
 // Name:        src/generic/editlbox.cpp
 // Purpose:     ListBox with editable items
 // Author:      Vaclav Slavik
+// RCS-ID:      $Id$
 // Copyright:   (c) Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -9,6 +10,9 @@
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_EDITABLELISTBOX
 
@@ -21,13 +25,122 @@
 #include "wx/editlbox.h"
 #include "wx/sizer.h"
 #include "wx/listctrl.h"
-#include "wx/artprov.h"
 
 // ============================================================================
 // implementation
 // ============================================================================
 
 const char wxEditableListBoxNameStr[] = "editableListBox";
+
+static const char* const eledit_xpm[] = {
+"16 16 3 1",
+"   c None",
+".  c #000000",
+"+  c #00007F",
+"                ",
+"                ",
+"      .. ..     ",
+"        .       ",
+"        .       ",
+"  ++++  .  ++++ ",
+"     ++ . ++  ++",
+"  +++++ . ++++++",
+" ++  ++ . ++    ",
+" ++  ++ . ++  ++",
+"  +++++ .  ++++ ",
+"        .       ",
+"        .       ",
+"      .. ..     ",
+"                ",
+"                "};
+
+static const char* const elnew_xpm[] = {
+"16 16 5 1",
+"   c None",
+".  c #7F7F7F",
+"+  c #FFFFFF",
+"@  c #FFFF00",
+"#  c #000000",
+"                ",
+"                ",
+" .  .+ .@       ",
+"  . .@.@# # #   ",
+"  @.@+....   #  ",
+" ... @@         ",
+"  @ . @.     #  ",
+" .# .@          ",
+"    .        #  ",
+"  #             ",
+"             #  ",
+"  #             ",
+"             #  ",
+"  # # # # # #   ",
+"                ",
+"                "};
+
+static const char* const eldel_xpm[] = {
+"16 16 3 1",
+"   c None",
+".  c #7F0000",
+"+  c #FFFFFF",
+"                ",
+"                ",
+"                ",
+" ..+        ..+ ",
+" ....+     ..+  ",
+"  ....+   ..+   ",
+"    ...+ .+     ",
+"     .....+     ",
+"      ...+      ",
+"     .....+     ",
+"    ...+ ..+    ",
+"   ...+   ..+   ",
+"  ...+     .+   ",
+"  ...+      .+  ",
+"   .         .  ",
+"                "};
+
+static const char* const eldown_xpm[] = {
+"16 16 2 1",
+"   c None",
+".  c #000000",
+"                ",
+"                ",
+"         ...    ",
+"        ...     ",
+"       ...      ",
+"       ...      ",
+"       ...      ",
+"       ...      ",
+"   ...........  ",
+"    .........   ",
+"     .......    ",
+"      .....     ",
+"       ...      ",
+"        .       ",
+"                ",
+"                "};
+
+static const char* const elup_xpm[] = {
+"16 16 2 1",
+"   c None",
+".  c #000000",
+"                ",
+"        .       ",
+"       ...      ",
+"      .....     ",
+"     .......    ",
+"    .........   ",
+"   ...........  ",
+"       ...      ",
+"       ...      ",
+"       ...      ",
+"       ...      ",
+"      ...       ",
+"     ...        ",
+"                ",
+"                ",
+"                "};
 
 // list control with auto-resizable column:
 class CleverListCtrl : public wxListCtrl
@@ -55,16 +168,16 @@ public:
     {
          int w = GetSize().x;
 #ifdef __WXMSW__
-         w -= wxSystemSettings::GetMetric(wxSYS_VSCROLL_X, this) + 6;
+         w -= wxSystemSettings::GetMetric(wxSYS_VSCROLL_X) + 6;
 #else
-         w -= 2*wxSystemSettings::GetMetric(wxSYS_VSCROLL_X, this);
+         w -= 2*wxSystemSettings::GetMetric(wxSYS_VSCROLL_X);
 #endif
          if (w < 0) w = 0;
          SetColumnWidth(0, w);
     }
 
 private:
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
     void OnSize(wxSizeEvent& event)
     {
         SizeColumns();
@@ -72,16 +185,16 @@ private:
     }
 };
 
-wxBEGIN_EVENT_TABLE(CleverListCtrl, wxListCtrl)
+BEGIN_EVENT_TABLE(CleverListCtrl, wxListCtrl)
    EVT_SIZE(CleverListCtrl::OnSize)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 
 // ----------------------------------------------------------------------------
 // wxEditableListBox
 // ----------------------------------------------------------------------------
 
-wxIMPLEMENT_CLASS(wxEditableListBox, wxPanel);
+IMPLEMENT_CLASS(wxEditableListBox, wxPanel)
 
 // NB: generate the IDs at runtime to avoid conflict with XRCID values,
 //     they could cause XRCCTRL() failures in XRC-based dialogs
@@ -92,7 +205,7 @@ const wxWindowIDRef wxID_ELB_UP = wxWindow::NewControlId();
 const wxWindowIDRef wxID_ELB_DOWN = wxWindow::NewControlId();
 const wxWindowIDRef wxID_ELB_LISTCTRL = wxWindow::NewControlId();
 
-wxBEGIN_EVENT_TABLE(wxEditableListBox, wxPanel)
+BEGIN_EVENT_TABLE(wxEditableListBox, wxPanel)
     EVT_LIST_ITEM_SELECTED(wxID_ELB_LISTCTRL, wxEditableListBox::OnItemSelected)
     EVT_LIST_END_LABEL_EDIT(wxID_ELB_LISTCTRL, wxEditableListBox::OnEndLabelEdit)
     EVT_BUTTON(wxID_ELB_NEW, wxEditableListBox::OnNewItem)
@@ -100,7 +213,7 @@ wxBEGIN_EVENT_TABLE(wxEditableListBox, wxPanel)
     EVT_BUTTON(wxID_ELB_DOWN, wxEditableListBox::OnDownItem)
     EVT_BUTTON(wxID_ELB_EDIT, wxEditableListBox::OnEditItem)
     EVT_BUTTON(wxID_ELB_DELETE, wxEditableListBox::OnDelItem)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 bool wxEditableListBox::Create(wxWindow *parent, wxWindowID id,
                           const wxString& label,
@@ -118,53 +231,56 @@ bool wxEditableListBox::Create(wxWindow *parent, wxWindowID id,
     wxPanel *subp = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                                 wxSUNKEN_BORDER | wxTAB_TRAVERSAL);
     wxSizer *subsizer = new wxBoxSizer(wxHORIZONTAL);
+    subsizer->Add(new wxStaticText(subp, wxID_ANY, label), 1, wxALIGN_CENTRE_VERTICAL | wxLEFT, 4);
 
-    subsizer->Add(new wxStaticText(subp, wxID_ANY, label),
-                  wxSizerFlags(1).Center().Border(wxLEFT));
-
-    const wxSizerFlags flagsCentered = wxSizerFlags().Center();
+#ifdef __WXMSW__
+    #define BTN_BORDER 4
+    // FIXME - why is this needed? There's some reason why sunken border is
+    //         ignored by sizers in wxMSW but not in wxGTK that I can't
+    //         figure out...
+#else
+    #define BTN_BORDER 0
+#endif
 
     if ( m_style & wxEL_ALLOW_EDIT )
     {
-        m_bEdit = new wxBitmapButton(subp, wxID_ELB_EDIT,
-                                     wxArtProvider::GetBitmap(wxART_EDIT, wxART_BUTTON));
-        m_bEdit->SetToolTip(_("Edit item"));
-        subsizer->Add(m_bEdit, flagsCentered);
+        m_bEdit = new wxBitmapButton(subp, wxID_ELB_EDIT, wxBitmap(eledit_xpm));
+        subsizer->Add(m_bEdit, 0, wxALIGN_CENTRE_VERTICAL | wxTOP | wxBOTTOM, BTN_BORDER);
     }
 
     if ( m_style & wxEL_ALLOW_NEW )
     {
-        m_bNew = new wxBitmapButton(subp, wxID_ELB_NEW,
-                                    wxArtProvider::GetBitmap(wxART_NEW, wxART_BUTTON));
-        m_bNew->SetToolTip(_("New item"));
-        subsizer->Add(m_bNew, flagsCentered);
+        m_bNew = new wxBitmapButton(subp, wxID_ELB_NEW, wxBitmap(elnew_xpm));
+        subsizer->Add(m_bNew, 0, wxALIGN_CENTRE_VERTICAL | wxTOP | wxBOTTOM, BTN_BORDER);
     }
 
     if ( m_style & wxEL_ALLOW_DELETE )
     {
-        m_bDel = new wxBitmapButton(subp, wxID_ELB_DELETE,
-                                    wxArtProvider::GetBitmap(wxART_DELETE, wxART_BUTTON));
-        m_bDel->SetToolTip(_("Delete item"));
-        subsizer->Add(m_bDel, flagsCentered);
+        m_bDel = new wxBitmapButton(subp, wxID_ELB_DELETE, wxBitmap(eldel_xpm));
+        subsizer->Add(m_bDel, 0, wxALIGN_CENTRE_VERTICAL | wxTOP | wxBOTTOM, BTN_BORDER);
     }
 
     if (!(m_style & wxEL_NO_REORDER))
     {
-        m_bUp = new wxBitmapButton(subp, wxID_ELB_UP,
-                                   wxArtProvider::GetBitmap(wxART_GO_UP, wxART_BUTTON));
-        m_bUp->SetToolTip(_("Move up"));
-        subsizer->Add(m_bUp, flagsCentered);
+        m_bUp = new wxBitmapButton(subp, wxID_ELB_UP, wxBitmap(elup_xpm));
+        subsizer->Add(m_bUp, 0, wxALIGN_CENTRE_VERTICAL | wxTOP | wxBOTTOM, BTN_BORDER);
 
-        m_bDown = new wxBitmapButton(subp, wxID_ELB_DOWN,
-                                     wxArtProvider::GetBitmap(wxART_GO_DOWN, wxART_BUTTON));
-        m_bDown->SetToolTip(_("Move down"));
-        subsizer->Add(m_bDown, flagsCentered);
+        m_bDown = new wxBitmapButton(subp, wxID_ELB_DOWN, wxBitmap(eldown_xpm));
+        subsizer->Add(m_bDown, 0, wxALIGN_CENTRE_VERTICAL | wxTOP | wxBOTTOM, BTN_BORDER);
     }
+
+#if wxUSE_TOOLTIPS
+    if ( m_bEdit ) m_bEdit->SetToolTip(_("Edit item"));
+    if ( m_bNew ) m_bNew->SetToolTip(_("New item"));
+    if ( m_bDel ) m_bDel->SetToolTip(_("Delete item"));
+    if ( m_bUp ) m_bUp->SetToolTip(_("Move up"));
+    if ( m_bDown ) m_bDown->SetToolTip(_("Move down"));
+#endif
 
     subp->SetSizer(subsizer);
     subsizer->Fit(subp);
 
-    sizer->Add(subp, wxSizerFlags().Expand());
+    sizer->Add(subp, 0, wxEXPAND);
 
     long st = wxLC_REPORT | wxLC_NO_HEADER | wxLC_SINGLE_SEL | wxSUNKEN_BORDER;
     if ( style & wxEL_ALLOW_EDIT )
@@ -174,7 +290,7 @@ bool wxEditableListBox::Create(wxWindow *parent, wxWindowID id,
     wxArrayString empty_ar;
     SetStrings(empty_ar);
 
-    sizer->Add(m_listCtrl, wxSizerFlags(1).Expand());
+    sizer->Add(m_listCtrl, 1, wxEXPAND);
 
     SetSizer(sizer);
     Layout();
@@ -234,9 +350,9 @@ void wxEditableListBox::OnEndLabelEdit(wxListEvent& event)
         // possible:
         m_listCtrl->InsertItem(m_listCtrl->GetItemCount(), wxEmptyString);
 
-        // Simulate a wxEVT_LIST_ITEM_SELECTED event for the new item,
+        // Simulate a wxEVT_COMMAND_LIST_ITEM_SELECTED event for the new item,
         // so that the buttons are enabled/disabled properly
-        wxListEvent selectionEvent(wxEVT_LIST_ITEM_SELECTED, m_listCtrl->GetId());
+        wxListEvent selectionEvent(wxEVT_COMMAND_LIST_ITEM_SELECTED, m_listCtrl->GetId());
         selectionEvent.m_itemIndex = event.GetIndex();
         m_listCtrl->GetEventHandler()->ProcessEvent(selectionEvent);
     }
@@ -254,32 +370,26 @@ void wxEditableListBox::OnEditItem(wxCommandEvent& WXUNUSED(event))
     m_listCtrl->EditLabel(m_selection);
 }
 
-void wxEditableListBox::SwapItems(long i1, long i2)
-{
-    // swap the text
-    wxString t1 = m_listCtrl->GetItemText(i1);
-    wxString t2 = m_listCtrl->GetItemText(i2);
-    m_listCtrl->SetItemText(i1, t2);
-    m_listCtrl->SetItemText(i2, t1);
-
-    // swap the item data
-    wxUIntPtr d1 = m_listCtrl->GetItemData(i1);
-    wxUIntPtr d2 = m_listCtrl->GetItemData(i2);
-    m_listCtrl->SetItemPtrData(i1, d2);
-    m_listCtrl->SetItemPtrData(i2, d1);
-}
-
-
 void wxEditableListBox::OnUpItem(wxCommandEvent& WXUNUSED(event))
 {
-    SwapItems(m_selection - 1, m_selection);
+    wxString t1, t2;
+
+    t1 = m_listCtrl->GetItemText(m_selection - 1);
+    t2 = m_listCtrl->GetItemText(m_selection);
+    m_listCtrl->SetItemText(m_selection - 1, t2);
+    m_listCtrl->SetItemText(m_selection, t1);
     m_listCtrl->SetItemState(m_selection - 1,
                              wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 }
 
 void wxEditableListBox::OnDownItem(wxCommandEvent& WXUNUSED(event))
 {
-    SwapItems(m_selection + 1, m_selection);
+    wxString t1, t2;
+
+    t1 = m_listCtrl->GetItemText(m_selection + 1);
+    t2 = m_listCtrl->GetItemText(m_selection);
+    m_listCtrl->SetItemText(m_selection + 1, t2);
+    m_listCtrl->SetItemText(m_selection, t1);
     m_listCtrl->SetItemState(m_selection + 1,
                              wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
 }

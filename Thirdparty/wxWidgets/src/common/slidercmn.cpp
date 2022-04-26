@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     04/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart 1998
 //                  Vadim Zeitlin 2004
 // Licence:     wxWindows licence
@@ -20,6 +21,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_SLIDER
 
@@ -63,8 +67,6 @@ wxBEGIN_FLAGS( wxSliderStyle )
     wxFLAGS_MEMBER(wxSL_HORIZONTAL)
     wxFLAGS_MEMBER(wxSL_VERTICAL)
     wxFLAGS_MEMBER(wxSL_AUTOTICKS)
-    wxFLAGS_MEMBER(wxSL_MIN_MAX_LABELS)
-    wxFLAGS_MEMBER(wxSL_VALUE_LABEL)
     wxFLAGS_MEMBER(wxSL_LABELS)
     wxFLAGS_MEMBER(wxSL_LEFT)
     wxFLAGS_MEMBER(wxSL_TOP)
@@ -75,11 +77,11 @@ wxBEGIN_FLAGS( wxSliderStyle )
     wxFLAGS_MEMBER(wxSL_INVERSE)
 wxEND_FLAGS( wxSliderStyle )
 
-wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxSlider, wxControl, "wx/slider.h");
+wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxSlider, wxControl, "wx/slider.h")
 
 wxBEGIN_PROPERTIES_TABLE(wxSlider)
     wxEVENT_RANGE_PROPERTY( Scroll, wxEVT_SCROLL_TOP, wxEVT_SCROLL_CHANGED, wxScrollEvent )
-    wxEVENT_PROPERTY( Updated, wxEVT_SLIDER, wxCommandEvent )
+    wxEVENT_PROPERTY( Updated, wxEVT_COMMAND_SLIDER_UPDATED, wxCommandEvent )
 
     wxPROPERTY( Value, int, SetValue, GetValue, 0, 0 /*flags*/, \
                 wxT("Helpstring"), wxT("group"))

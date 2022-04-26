@@ -4,18 +4,14 @@
 // Copyright 1998-2007 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 
-#include <stdlib.h>
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #include <stdarg.h>
-
-#include <stdexcept>
-#include <algorithm>
 
 #include "Platform.h"
 
 #include "Scintilla.h"
-#include "Position.h"
 #include "SplitVector.h"
 #include "Partitioning.h"
 #include "RunStyles.h"
@@ -31,8 +27,8 @@ Decoration::Decoration(int indicator_) : next(0), indicator(indicator_) {
 Decoration::~Decoration() {
 }
 
-bool Decoration::Empty() const {
-	return (rs.Runs() == 1) && (rs.AllSameAs(0));
+bool Decoration::Empty() {
+	return rs.starts->Partitions() == 1;
 }
 
 DecorationList::DecorationList() : currentIndicator(0), currentValue(1), current(0),
@@ -130,13 +126,9 @@ bool DecorationList::FillRange(int &position, int value, int &fillLength) {
 }
 
 void DecorationList::InsertSpace(int position, int insertLength) {
-	const bool atEnd = position == lengthDocument;
 	lengthDocument += insertLength;
 	for (Decoration *deco=root; deco; deco = deco->next) {
 		deco->rs.InsertSpace(position, insertLength);
-		if (atEnd) {
-			deco->rs.FillRange(position, 0, insertLength);
-		}
 	}
 }
 
@@ -152,7 +144,7 @@ void DecorationList::DeleteRange(int position, int deleteLength) {
 void DecorationList::DeleteAnyEmpty() {
 	Decoration *deco = root;
 	while (deco) {
-		if ((lengthDocument == 0) || deco->Empty()) {
+		if (deco->Empty()) {
 			Delete(deco->indicator);
 			deco = root;
 		} else {
@@ -161,13 +153,11 @@ void DecorationList::DeleteAnyEmpty() {
 	}
 }
 
-int DecorationList::AllOnFor(int position) const {
+int DecorationList::AllOnFor(int position) {
 	int mask = 0;
 	for (Decoration *deco=root; deco; deco = deco->next) {
 		if (deco->rs.ValueAt(position)) {
-			if (deco->indicator < INDIC_IME) {
-				mask |= 1 << deco->indicator;
-			}
+			mask |= 1 << deco->indicator;
 		}
 	}
 	return mask;

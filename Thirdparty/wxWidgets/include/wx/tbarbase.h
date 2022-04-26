@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -20,7 +21,6 @@
 #if wxUSE_TOOLBAR
 
 #include "wx/bitmap.h"
-#include "wx/bmpbndl.h"
 #include "wx/list.h"
 #include "wx/control.h"
 
@@ -64,8 +64,8 @@ public:
     wxToolBarToolBase(wxToolBarBase *tbar = NULL,
                       int toolid = wxID_SEPARATOR,
                       const wxString& label = wxEmptyString,
-                      const wxBitmapBundle& bmpNormal = wxBitmapBundle(),
-                      const wxBitmapBundle& bmpDisabled = wxBitmapBundle(),
+                      const wxBitmap& bmpNormal = wxNullBitmap,
+                      const wxBitmap& bmpDisabled = wxNullBitmap,
                       wxItemKind kind = wxITEM_NORMAL,
                       wxObject *clientData = NULL,
                       const wxString& shortHelpString = wxEmptyString,
@@ -146,16 +146,11 @@ public:
         { return m_kind == wxITEM_CHECK || m_kind == wxITEM_RADIO; }
 
     // attributes
-    wxBitmapBundle GetNormalBitmapBundle() const { return m_bmpNormal; }
-    wxBitmapBundle GetDisabledBitmapBundle() const { return m_bmpDisabled; }
+    const wxBitmap& GetNormalBitmap() const { return m_bmpNormal; }
+    const wxBitmap& GetDisabledBitmap() const { return m_bmpDisabled; }
 
-    wxBitmap GetNormalBitmap(const wxSize& size = wxDefaultSize) const
-        { return m_bmpNormal.GetBitmap(size); }
-    wxBitmap GetDisabledBitmap(const wxSize& size = wxDefaultSize) const
-        { return m_bmpDisabled.GetBitmap(size); }
-
-    wxBitmap GetBitmap(const wxSize& size = wxDefaultSize) const
-        { return IsEnabled() ? GetNormalBitmap(size) : GetDisabledBitmap(size); }
+    const wxBitmap& GetBitmap() const
+        { return IsEnabled() ? GetNormalBitmap() : GetDisabledBitmap(); }
 
     const wxString& GetLabel() const { return m_label; }
 
@@ -183,8 +178,8 @@ public:
 
     void Toggle() { Toggle(!IsToggled()); }
 
-    void SetNormalBitmap(const wxBitmapBundle& bmp) { m_bmpNormal = bmp; }
-    void SetDisabledBitmap(const wxBitmapBundle& bmp) { m_bmpDisabled = bmp; }
+    virtual void SetNormalBitmap(const wxBitmap& bmp) { m_bmpNormal = bmp; }
+    virtual void SetDisabledBitmap(const wxBitmap& bmp) { m_bmpDisabled = bmp; }
 
     virtual void SetLabel(const wxString& label) { m_label = label; }
 
@@ -257,8 +252,8 @@ protected:
     bool m_enabled;
 
     // normal and disabled bitmaps for the tool, both can be invalid
-    wxBitmapBundle m_bmpNormal;
-    wxBitmapBundle m_bmpDisabled;
+    wxBitmap m_bmpNormal;
+    wxBitmap m_bmpDisabled;
 
     // the button label
     wxString m_label;
@@ -271,7 +266,7 @@ protected:
     wxMenu *m_dropdownMenu;
 #endif
 
-    wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxToolBarToolBase);
+    DECLARE_DYNAMIC_CLASS_NO_COPY(wxToolBarToolBase)
 };
 
 // a list of toolbar tools
@@ -292,56 +287,56 @@ public:
 
     // the full AddTool() function
     //
-    // If bmpDisabled is an empty bundle, a shadowed version of the normal bitmap
+    // If bmpDisabled is wxNullBitmap, a shadowed version of the normal bitmap
     // is created and used as the disabled image.
     wxToolBarToolBase *AddTool(int toolid,
                                const wxString& label,
-                               const wxBitmapBundle& bitmap,
-                               const wxBitmapBundle& bmpDisabled,
+                               const wxBitmap& bitmap,
+                               const wxBitmap& bmpDisabled,
                                wxItemKind kind = wxITEM_NORMAL,
                                const wxString& shortHelp = wxEmptyString,
                                const wxString& longHelp = wxEmptyString,
-                               wxObject *clientData = NULL)
+                               wxObject *data = NULL)
     {
         return DoAddTool(toolid, label, bitmap, bmpDisabled, kind,
-                         shortHelp, longHelp, clientData);
+                         shortHelp, longHelp, data);
     }
 
     // the most common AddTool() version
     wxToolBarToolBase *AddTool(int toolid,
                                const wxString& label,
-                               const wxBitmapBundle& bitmap,
+                               const wxBitmap& bitmap,
                                const wxString& shortHelp = wxEmptyString,
                                wxItemKind kind = wxITEM_NORMAL)
     {
-        return AddTool(toolid, label, bitmap, wxBitmapBundle(), kind, shortHelp);
+        return AddTool(toolid, label, bitmap, wxNullBitmap, kind, shortHelp);
     }
 
     // add a check tool, i.e. a tool which can be toggled
     wxToolBarToolBase *AddCheckTool(int toolid,
                                     const wxString& label,
-                                    const wxBitmapBundle& bitmap,
-                                    const wxBitmapBundle& bmpDisabled = wxBitmapBundle(),
+                                    const wxBitmap& bitmap,
+                                    const wxBitmap& bmpDisabled = wxNullBitmap,
                                     const wxString& shortHelp = wxEmptyString,
                                     const wxString& longHelp = wxEmptyString,
-                                    wxObject *clientData = NULL)
+                                    wxObject *data = NULL)
     {
         return AddTool(toolid, label, bitmap, bmpDisabled, wxITEM_CHECK,
-                       shortHelp, longHelp, clientData);
+                       shortHelp, longHelp, data);
     }
 
     // add a radio tool, i.e. a tool which can be toggled and releases any
     // other toggled radio tools in the same group when it happens
     wxToolBarToolBase *AddRadioTool(int toolid,
                                     const wxString& label,
-                                    const wxBitmapBundle& bitmap,
-                                    const wxBitmapBundle& bmpDisabled = wxBitmapBundle(),
+                                    const wxBitmap& bitmap,
+                                    const wxBitmap& bmpDisabled = wxNullBitmap,
                                     const wxString& shortHelp = wxEmptyString,
                                     const wxString& longHelp = wxEmptyString,
-                                    wxObject *clientData = NULL)
+                                    wxObject *data = NULL)
     {
         return AddTool(toolid, label, bitmap, bmpDisabled, wxITEM_RADIO,
-                       shortHelp, longHelp, clientData);
+                       shortHelp, longHelp, data);
     }
 
 
@@ -352,8 +347,8 @@ public:
                                     size_t pos,
                                     int toolid,
                                     const wxString& label,
-                                    const wxBitmapBundle& bitmap,
-                                    const wxBitmapBundle& bmpDisabled = wxBitmapBundle(),
+                                    const wxBitmap& bitmap,
+                                    const wxBitmap& bmpDisabled = wxNullBitmap,
                                     wxItemKind kind = wxITEM_NORMAL,
                                     const wxString& shortHelp = wxEmptyString,
                                     const wxString& longHelp = wxEmptyString,
@@ -433,9 +428,9 @@ public:
     virtual wxString GetToolLongHelp(int toolid) const;
 
     virtual void SetToolNormalBitmap(int WXUNUSED(id),
-                                     const wxBitmapBundle& WXUNUSED(bitmap)) {}
+                                     const wxBitmap& WXUNUSED(bitmap)) {}
     virtual void SetToolDisabledBitmap(int WXUNUSED(id),
-                                       const wxBitmapBundle& WXUNUSED(bitmap)) {}
+                                       const wxBitmap& WXUNUSED(bitmap)) {}
 
 
     // margins/packing/separation
@@ -467,8 +462,10 @@ public:
 
     // get/set the size of the bitmaps used by the toolbar: should be called
     // before adding any tools to the toolbar
-    virtual void SetToolBitmapSize(const wxSize& size);
-    virtual wxSize GetToolBitmapSize() const;
+    virtual void SetToolBitmapSize(const wxSize& size)
+        { m_defaultWidth = size.x; m_defaultHeight = size.y; }
+    virtual wxSize GetToolBitmapSize() const
+        { return wxSize(m_defaultWidth, m_defaultHeight); }
 
     // the button size in some implementations is bigger than the bitmap size:
     // get the total button size (by default the same as bitmap size)
@@ -486,13 +483,8 @@ public:
     // return true if this is a vertical toolbar, otherwise false
     bool IsVertical() const;
 
-    // returns one of wxTB_TOP, wxTB_BOTTOM, wxTB_LEFT, wxTB_RIGHT
-    // indicating where the toolbar is placed in the associated frame
-    int GetDirection() const;
-
     // these methods allow to access tools by their index in the toolbar
     size_t GetToolsCount() const { return m_tools.GetCount(); }
-    wxToolBarToolBase *GetToolByPos(int pos) { return m_tools[pos]; }
     const wxToolBarToolBase *GetToolByPos(int pos) const { return m_tools[pos]; }
 
 #if WXWIN_COMPATIBILITY_2_8
@@ -520,7 +512,7 @@ public:
                                const wxString& longHelpString = wxEmptyString)
     ,
         return AddTool(toolid, wxEmptyString,
-                       bitmap, wxBitmapBundle(), wxITEM_NORMAL,
+                       bitmap, wxNullBitmap, wxITEM_NORMAL,
                        shortHelpString, longHelpString, NULL);
     )
     wxDEPRECATED_INLINE(
@@ -580,8 +572,8 @@ public:
     // -------------------------
     virtual wxToolBarToolBase *CreateTool(int toolid,
                                           const wxString& label,
-                                          const wxBitmapBundle& bmpNormal,
-                                          const wxBitmapBundle& bmpDisabled = wxBitmapBundle(),
+                                          const wxBitmap& bmpNormal,
+                                          const wxBitmap& bmpDisabled = wxNullBitmap,
                                           wxItemKind kind = wxITEM_NORMAL,
                                           wxObject *clientData = NULL,
                                           const wxString& shortHelp = wxEmptyString,
@@ -596,20 +588,20 @@ public:
     {
         return CreateTool(wxID_SEPARATOR,
                           wxEmptyString,
-                          wxBitmapBundle(), wxBitmapBundle(),
+                          wxNullBitmap, wxNullBitmap,
                           wxITEM_SEPARATOR, NULL,
                           wxEmptyString, wxEmptyString);
     }
 
-
+    
     // implementation only from now on
     // -------------------------------
 
     // Do the toolbar button updates (check for EVT_UPDATE_UI handlers)
-    virtual void UpdateWindowUI(long flags = wxUPDATE_UI_NONE) wxOVERRIDE ;
+    virtual void UpdateWindowUI(long flags = wxUPDATE_UI_NONE) ;
 
     // don't want toolbars to accept the focus
-    virtual bool AcceptsFocus() const wxOVERRIDE { return false; }
+    virtual bool AcceptsFocus() const { return false; }
 
 #if wxUSE_MENUS
     // Set dropdown menu
@@ -617,9 +609,6 @@ public:
 #endif
 
 protected:
-    // choose the default border for this window
-    virtual wxBorder GetDefaultBorder() const wxOVERRIDE { return wxBORDER_NONE; }
-
     // to implement in derived classes
     // -------------------------------
 
@@ -629,8 +618,8 @@ protected:
                                (
                                    int toolid,
                                    const wxString& label,
-                                   const wxBitmapBundle& bitmap,
-                                   const wxBitmapBundle& bmpDisabled,
+                                   const wxBitmap& bitmap,
+                                   const wxBitmap& bmpDisabled,
                                    wxItemKind kind,
                                    const wxString& shortHelp = wxEmptyString,
                                    const wxString& longHelp = wxEmptyString,
@@ -685,10 +674,6 @@ protected:
         return tool;
     }
 
-    // set the tool bitmap size without changing m_requestedBitmapSize
-    virtual void DoSetToolBitmapSize(const wxSize& size);
-
-
     // the list of all our tools
     wxToolBarToolsList m_tools;
 
@@ -704,16 +689,11 @@ protected:
     int m_toolPacking,
         m_toolSeparation;
 
-    // the currently used size of the toolbar bitmaps: the name is unfortunate
-    // but keep it for compatibility
+    // the size of the toolbar bitmaps
     wxCoord m_defaultWidth, m_defaultHeight;
 
 private:
-    // the size of the bitmaps requested by the application by calling
-    // SetToolBitmapSize()
-    wxSize m_requestedBitmapSize;
-
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
     wxDECLARE_NO_COPY_CLASS(wxToolBarBase);
 };
 

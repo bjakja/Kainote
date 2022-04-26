@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     11.09.00
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -38,7 +39,7 @@ public:
                int majorDim = 0,
                long style = wxRA_SPECIFY_COLS,
                const wxValidator& val = wxDefaultValidator,
-               const wxString& name = wxASCII_STR(wxRadioBoxNameStr))
+               const wxString& name = wxRadioBoxNameStr)
     {
         Init();
 
@@ -54,7 +55,7 @@ public:
                int majorDim = 0,
                long style = wxRA_SPECIFY_COLS,
                const wxValidator& val = wxDefaultValidator,
-               const wxString& name = wxASCII_STR(wxRadioBoxNameStr));
+               const wxString& name = wxRadioBoxNameStr);
 
     bool Create(wxWindow *parent,
                 wxWindowID id,
@@ -65,7 +66,7 @@ public:
                 int majorDim = 0,
                 long style = wxRA_SPECIFY_COLS,
                 const wxValidator& val = wxDefaultValidator,
-                const wxString& name = wxASCII_STR(wxRadioBoxNameStr));
+                const wxString& name = wxRadioBoxNameStr);
     bool Create(wxWindow *parent,
                 wxWindowID id,
                 const wxString& title,
@@ -75,35 +76,35 @@ public:
                 int majorDim = 0,
                 long style = wxRA_SPECIFY_COLS,
                 const wxValidator& val = wxDefaultValidator,
-                const wxString& name = wxASCII_STR(wxRadioBoxNameStr));
+                const wxString& name = wxRadioBoxNameStr);
 
     virtual ~wxRadioBox();
 
     // implement wxRadioBox interface
-    virtual void SetSelection(int n) wxOVERRIDE;
-    virtual int GetSelection() const wxOVERRIDE;
+    virtual void SetSelection(int n);
+    virtual int GetSelection() const;
 
-    virtual unsigned int GetCount() const wxOVERRIDE
+    virtual unsigned int GetCount() const
         { return (unsigned int)m_buttons.GetCount(); }
 
-    virtual wxString GetString(unsigned int n) const wxOVERRIDE;
-    virtual void SetString(unsigned int n, const wxString& label) wxOVERRIDE;
+    virtual wxString GetString(unsigned int n) const;
+    virtual void SetString(unsigned int n, const wxString& label);
 
-    virtual bool Enable(unsigned int n, bool enable = true) wxOVERRIDE;
-    virtual bool Show(unsigned int n, bool show = true) wxOVERRIDE;
+    virtual bool Enable(unsigned int n, bool enable = true);
+    virtual bool Show(unsigned int n, bool show = true);
 
-    virtual bool IsItemEnabled(unsigned int n) const wxOVERRIDE;
-    virtual bool IsItemShown(unsigned int n) const wxOVERRIDE;
+    virtual bool IsItemEnabled(unsigned int n) const;
+    virtual bool IsItemShown(unsigned int n) const;
 
     // we also override the wxControl methods to avoid virtual function hiding
-    virtual bool Enable(bool enable = true) wxOVERRIDE;
-    virtual bool Show(bool show = true) wxOVERRIDE;
-    virtual wxString GetLabel() const wxOVERRIDE;
-    virtual void SetLabel(const wxString& label) wxOVERRIDE;
+    virtual bool Enable(bool enable = true);
+    virtual bool Show(bool show = true);
+    virtual wxString GetLabel() const;
+    virtual void SetLabel(const wxString& label);
 
     // we inherit a version always returning false from wxStaticBox, override
     // it to behave normally
-    virtual bool AcceptsFocus() const wxOVERRIDE { return wxControl::AcceptsFocus(); }
+    virtual bool AcceptsFocus() const { return wxControl::AcceptsFocus(); }
 
 #if wxUSE_TOOLTIPS
     virtual void DoSetToolTip( wxToolTip *tip );
@@ -119,12 +120,12 @@ public:
     bool OnKeyDown(wxKeyEvent& event);
 
 protected:
-    virtual wxBorder GetDefaultBorder() const wxOVERRIDE { return wxBORDER_NONE; }
+    virtual wxBorder GetDefaultBorder() const { return wxBORDER_NONE; }
 
     // override the base class methods dealing with window positioning/sizing
     // as we must move/size the buttons as well
-    virtual void DoMoveWindow(int x, int y, int width, int height) wxOVERRIDE;
-    virtual wxSize DoGetBestClientSize() const wxOVERRIDE;
+    virtual void DoMoveWindow(int x, int y, int width, int height);
+    virtual wxSize DoGetBestClientSize() const;
 
     // generate a radiobutton click event for the current item
     void SendRadioEvent();
@@ -146,7 +147,7 @@ protected:
     wxEvtHandler *m_evtRadioHook;
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxRadioBox);
+    DECLARE_DYNAMIC_CLASS(wxRadioBox)
 };
 
 #endif // _WX_UNIV_RADIOBOX_H_

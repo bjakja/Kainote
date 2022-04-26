@@ -4,7 +4,8 @@
 // Author:      Vadim Zeitlin, Stefan Csomor
 // Modified by:
 // Created:     2006-01-12
-// Copyright:   (c) 2006 Vadim Zeitlin <vadim@wxwidgets.org>
+// RCS-ID:      $Id$
+// Copyright:   (c) 2006 Vadim Zeitlin <vadim@wxwindows.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -19,6 +20,9 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #include "wx/evtloop.h"
 
@@ -41,33 +45,37 @@
 /*
 static int CalculateUIEventMaskFromEventCategory(wxEventCategory cat)
 {
-    NSLeftMouseDownMask      |
-    NSLeftMouseUpMask        |
-    NSRightMouseDownMask     |
-    NSRightMouseUpMask       = 1 << NSRightMouseUp,
-    NSMouseMovedMask         = 1 << NSMouseMoved,
-    NSLeftMouseDraggedMask   = 1 << NSLeftMouseDragged,
-    NSRightMouseDraggedMask  = 1 << NSRightMouseDragged,
-    NSMouseEnteredMask       = 1 << NSMouseEntered,
-    NSMouseExitedMask        = 1 << NSMouseExited,
-    NSScrollWheelMask        = 1 << NSScrollWheel,
-    NSTabletPointMask        = 1 << NSTabletPoint,
-    NSTabletProximityMask    = 1 << NSTabletProximity,
-    NSOtherMouseDownMask     = 1 << NSOtherMouseDown,
-    NSOtherMouseUpMask       = 1 << NSOtherMouseUp,
-    NSOtherMouseDraggedMask  = 1 << NSOtherMouseDragged,
+	NSLeftMouseDownMask	|
+	NSLeftMouseUpMask |
+	NSRightMouseDownMask |
+	NSRightMouseUpMask		= 1 << NSRightMouseUp,
+	NSMouseMovedMask		= 1 << NSMouseMoved,
+	NSLeftMouseDraggedMask		= 1 << NSLeftMouseDragged,
+	NSRightMouseDraggedMask		= 1 << NSRightMouseDragged,
+	NSMouseEnteredMask		= 1 << NSMouseEntered,
+	NSMouseExitedMask		= 1 << NSMouseExited,
+        NSScrollWheelMask		= 1 << NSScrollWheel,
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+	NSTabletPointMask		= 1 << NSTabletPoint,
+	NSTabletProximityMask		= 1 << NSTabletProximity,
+#endif
+	NSOtherMouseDownMask		= 1 << NSOtherMouseDown,
+	NSOtherMouseUpMask		= 1 << NSOtherMouseUp,
+	NSOtherMouseDraggedMask		= 1 << NSOtherMouseDragged,
 
-    NSKeyDownMask            = 1 << NSKeyDown,
-    NSKeyUpMask              = 1 << NSKeyUp,
-    NSFlagsChangedMask       = 1 << NSFlagsChanged,
 
-    NSAppKitDefinedMask      = 1 << NSAppKitDefined,
-    NSSystemDefinedMask      = 1 << NSSystemDefined,
-    UIApplicationDefinedMask = 1 << UIApplicationDefined,
-    NSPeriodicMask           = 1 << NSPeriodic,
-    NSCursorUpdateMask       = 1 << NSCursorUpdate,
 
-    NSAnyEventMask           = 0xffffffffU
+	NSKeyDownMask			= 1 << NSKeyDown,
+	NSKeyUpMask			= 1 << NSKeyUp,
+	NSFlagsChangedMask		= 1 << NSFlagsChanged,
+
+	NSAppKitDefinedMask		= 1 << NSAppKitDefined,
+	NSSystemDefinedMask		= 1 << NSSystemDefined,
+	UIApplicationDefinedMask	= 1 << UIApplicationDefined,
+	NSPeriodicMask			= 1 << NSPeriodic,
+	NSCursorUpdateMask		= 1 << NSCursorUpdate,
+
+	NSAnyEventMask			= 0xffffffffU
 }
 */
 
@@ -75,21 +83,17 @@ wxGUIEventLoop::wxGUIEventLoop()
 {
 }
 
-wxGUIEventLoop::~wxGUIEventLoop()
-{
-}
-
-void wxGUIEventLoop::OSXDoRun()
+void wxGUIEventLoop::DoRun()
 {
     if ( IsMain() )
     {
         wxMacAutoreleasePool pool;
         const char* appname = "app";
-        UIApplicationMain( 1, (char**) &appname, @"UIApplication", @"wxAppDelegate" );
+        UIApplicationMain( 1, (char**) &appname, nil, @"wxAppDelegate" );
     }
     else 
     {
-        wxCFEventLoop::OSXDoRun();
+        wxCFEventLoop::DoRun();
     }
 }
 
@@ -98,9 +102,9 @@ int wxGUIEventLoop::DoDispatchTimeout(unsigned long timeout)
     return wxCFEventLoop::DoDispatchTimeout(timeout);
 }
 
-void wxGUIEventLoop::OSXDoStop()
+void wxGUIEventLoop::DoStop()
 {
-    return wxCFEventLoop::OSXDoStop();
+    return wxCFEventLoop::DoStop();
 }
 
 CFRunLoopRef wxGUIEventLoop::CFGetCurrentRunLoop() const
@@ -132,12 +136,12 @@ wxModalEventLoop::wxModalEventLoop(WXWindow modalNativeWindow)
 // END move into a evtloop_osx.cpp
 
 
-void wxModalEventLoop::OSXDoRun()
+void wxModalEventLoop::DoRun()
 {
     // presentModalViewController:animated:
 }
 
-void wxModalEventLoop::OSXDoStop()
+void wxModalEventLoop::DoStop()
 {
     // (void)dismissModalViewControllerAnimated:(BOOL)animated
 }

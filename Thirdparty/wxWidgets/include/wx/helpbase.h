@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     04/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -50,7 +51,7 @@ public:
     virtual bool LoadFile(const wxString& file = wxEmptyString) = 0;
 
     // Displays the contents
-    virtual bool DisplayContents() = 0;
+    virtual bool DisplayContents(void) = 0;
 
     // Display the given section
     virtual bool DisplaySection(int sectionNo) = 0;
@@ -96,7 +97,7 @@ public:
 protected:
     wxWindow* m_parentWindow;
 private:
-    wxDECLARE_CLASS(wxHelpControllerBase);
+    DECLARE_CLASS(wxHelpControllerBase)
 };
 
 #endif // wxUSE_HELP

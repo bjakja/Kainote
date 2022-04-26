@@ -4,6 +4,7 @@
 // Author:      Julian Smart, after Robert Roebling, Vadim Zeitlin, SciTech
 // Modified by:
 // Created:     2006-04-13
+// Id:          $Id$
 // Copyright:   (c) Julian Smart, Robert Roebling, Vadim Zeitlin,
 //              SciTech Software, Inc.
 // Licence:     wxWindows licence
@@ -20,6 +21,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 // Currently, only for Mac as a toolbar replacement.
 #if defined(__WXMAC__) && wxUSE_TOOLBAR && wxUSE_BMPBUTTON
@@ -46,8 +50,8 @@ public:
     wxButtonToolBarTool(wxButtonToolBar *tbar,
                   int id,
                   const wxString& label,
-                  const wxBitmapBundle& bmpNormal,
-                  const wxBitmapBundle& bmpDisabled,
+                  const wxBitmap& bmpNormal,
+                  const wxBitmap& bmpDisabled,
                   wxItemKind kind,
                   wxObject *clientData,
                   const wxString& shortHelp,
@@ -92,13 +96,13 @@ private:
 // wxButtonToolBar implementation
 // ============================================================================
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxButtonToolBar, wxControl);
+IMPLEMENT_DYNAMIC_CLASS(wxButtonToolBar, wxControl)
 
-wxBEGIN_EVENT_TABLE(wxButtonToolBar, wxControl)
+BEGIN_EVENT_TABLE(wxButtonToolBar, wxControl)
     EVT_BUTTON(wxID_ANY, wxButtonToolBar::OnCommand)
     EVT_PAINT(wxButtonToolBar::OnPaint)
     EVT_LEFT_UP(wxButtonToolBar::OnLeftUp)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 // ----------------------------------------------------------------------------
 // wxButtonToolBar creation
@@ -261,8 +265,8 @@ void wxButtonToolBar::DoSetToggle(wxToolBarToolBase *WXUNUSED(tool), bool WXUNUS
 
 wxToolBarToolBase *wxButtonToolBar::CreateTool(int id,
                                          const wxString& label,
-                                         const wxBitmapBundle& bmpNormal,
-                                         const wxBitmapBundle& bmpDisabled,
+                                         const wxBitmap& bmpNormal,
+                                         const wxBitmap& bmpDisabled,
                                          wxItemKind kind,
                                          wxObject *clientData,
                                          const wxString& shortHelp,
@@ -386,7 +390,7 @@ void wxButtonToolBar::DoLayout()
             if (!tool->GetButton())
             {
                 wxBitmapButton* bmpButton = new wxBitmapButton(this, tool->GetId(), tool->GetNormalBitmap(), wxPoint(tool->m_x, tool->m_y), wxDefaultSize,
-                                                               wxBORDER_NONE);
+                                                               wxBU_AUTODRAW|wxBORDER_NONE);
                 if (!tool->GetShortHelp().empty())
                     bmpButton->SetLabel(tool->GetShortHelp());
 
@@ -497,7 +501,7 @@ void wxButtonToolBar::OnPaint(wxPaintEvent& WXUNUSED(event))
     wxPaintDC dc(this);
 
     dc.SetFont(GetFont());
-    dc.SetBackgroundMode(wxBRUSHSTYLE_TRANSPARENT);
+    dc.SetBackgroundMode(wxTRANSPARENT);
 
     for ( wxToolBarToolsList::compatibility_iterator node = m_tools.GetFirst();
           node;
@@ -546,7 +550,7 @@ void wxButtonToolBar::OnLeftUp(wxMouseEvent& event)
         wxButtonToolBarTool* tool = (wxButtonToolBarTool*) FindToolForPosition(event.GetX(), event.GetY());
         if (tool && tool->GetButton() && (event.GetY() > (tool->m_y + tool->GetButton()->GetSize().y)))
         {
-            wxCommandEvent event(wxEVT_BUTTON, tool->GetId());
+            wxCommandEvent event(wxEVT_COMMAND_BUTTON_CLICKED, tool->GetId());
             event.SetEventObject(tool->GetButton());
             if (!GetEventHandler()->ProcessEvent(event))
                 event.Skip();

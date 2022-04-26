@@ -3,6 +3,7 @@
 // Purpose:     wxCommandLinkButton class
 // Author:      Rickard Westerlund
 // Created:     2010-06-11
+// RCS-ID:      $Id$
 // Copyright:   (c) 2010 wxWidgets team
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -31,7 +32,7 @@ public:
                         const wxSize& size = wxDefaultSize,
                         long style = 0,
                         const wxValidator& validator = wxDefaultValidator,
-                        const wxString& name = wxASCII_STR(wxButtonNameStr))
+                        const wxString& name = wxButtonNameStr)
         : wxGenericCommandLinkButton()
     {
         Create(parent, id, mainLabel, note, pos, size, style, validator, name);
@@ -45,26 +46,26 @@ public:
                 const wxSize& size = wxDefaultSize,
                 long style = 0,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxASCII_STR(wxButtonNameStr));
+                const wxString& name = wxButtonNameStr);
 
     // overridden base class methods
     // -----------------------------
 
     // do the same thing as in the generic case here
-    virtual void SetLabel(const wxString& label) wxOVERRIDE
+    virtual void SetLabel(const wxString& label)
     {
         SetMainLabelAndNote(label.BeforeFirst('\n'), label.AfterFirst('\n'));
     }
 
     virtual void SetMainLabelAndNote(const wxString& mainLabel,
-                                     const wxString& note) wxOVERRIDE;
+                                     const wxString& note);
 
-    virtual WXDWORD MSWGetStyle(long style, WXDWORD *exstyle) const wxOVERRIDE;
+    virtual WXDWORD MSWGetStyle(long style, WXDWORD *exstyle) const;
 
 protected:
-    virtual wxSize DoGetBestSize() const wxOVERRIDE;
+    virtual wxSize DoGetBestSize() const;
 
-    virtual bool HasNativeBitmap() const wxOVERRIDE;
+    virtual bool HasNativeBitmap() const;
 
 private:
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxCommandLinkButton);

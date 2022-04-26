@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     22.01.01
+// RCS-ID:      $Id$
 // Copyright:   (c) 2001 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -11,7 +12,6 @@
 #ifndef _WX_UNIV_SCRARROW_H_
 #define _WX_UNIV_SCRARROW_H_
 
-#if wxUSE_SCROLLBAR
 // ----------------------------------------------------------------------------
 // wxScrollArrows is not a control but just a class containing the common
 // functionality of scroll arrows, whether part of scrollbars, spin ctrls or
@@ -108,6 +108,5 @@ public:
     // false to stop it
     virtual bool OnArrow(wxScrollArrows::Arrow arrow) = 0;
 };
-#endif // wxUSE_SCROLLBAR
 
 #endif // _WX_UNIV_SCRARROW_H_

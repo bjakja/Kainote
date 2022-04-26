@@ -4,6 +4,7 @@
 // Author:      David Norris <danorris@gmail.com>, Otto Wyss
 // Modified by: Ryan Norton, Francesco Montorsi
 // Created:     04/02/2005
+// RCS-ID:      $Id$
 // Copyright:   (c) 2005 David Norris
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -27,7 +28,7 @@
 #define wxHL_ALIGN_CENTRE       0x0008
 #define wxHL_DEFAULT_STYLE      (wxHL_CONTEXTMENU|wxNO_BORDER|wxHL_ALIGN_CENTRE)
 
-extern WXDLLIMPEXP_DATA_CORE(const char) wxHyperlinkCtrlNameStr[];
+extern WXDLLIMPEXP_DATA_ADV(const char) wxHyperlinkCtrlNameStr[];
 
 
 // ----------------------------------------------------------------------------
@@ -44,7 +45,7 @@ extern WXDLLIMPEXP_DATA_CORE(const char) wxHyperlinkCtrlNameStr[];
 // just like a wxCommandEvent.
 //
 // Use the EVT_HYPERLINK() to catch link events.
-class WXDLLIMPEXP_CORE wxHyperlinkCtrlBase : public wxControl
+class WXDLLIMPEXP_ADV wxHyperlinkCtrlBase : public wxControl
 {
 public:
 
@@ -67,18 +68,15 @@ public:
     // NOTE: also wxWindow::Set/GetLabel, wxWindow::Set/GetBackgroundColour,
     //       wxWindow::Get/SetFont, wxWindow::Get/SetCursor are important !
 
-    virtual bool HasTransparentBackground() wxOVERRIDE { return true; }
+    virtual bool HasTransparentBackground() { return true; }
 
 protected:
-    virtual wxBorder GetDefaultBorder() const wxOVERRIDE { return wxBORDER_NONE; }
+    virtual wxBorder GetDefaultBorder() const { return wxBORDER_NONE; }
 
     // checks for validity some of the ctor/Create() function parameters
     void CheckParams(const wxString& label, const wxString& url, long style);
 
 public:
-    // Send wxHyperlinkEvent and open our link in the default browser if it
-    // wasn't handled.
-    //
     // not part of the public API but needs to be public as used by
     // GTK+ callbacks:
     void SendEvent();
@@ -88,20 +86,20 @@ public:
 // wxHyperlinkEvent
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_CORE wxHyperlinkEvent;
+class WXDLLIMPEXP_FWD_ADV wxHyperlinkEvent;
 
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_HYPERLINK, wxHyperlinkEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_ADV, wxEVT_COMMAND_HYPERLINK, wxHyperlinkEvent );
 
 //
 // An event fired when the user clicks on the label in a hyperlink control.
 // See HyperlinkControl for details.
 //
-class WXDLLIMPEXP_CORE wxHyperlinkEvent : public wxCommandEvent
+class WXDLLIMPEXP_ADV wxHyperlinkEvent : public wxCommandEvent
 {
 public:
     wxHyperlinkEvent() {}
     wxHyperlinkEvent(wxObject *generator, wxWindowID id, const wxString& url)
-        : wxCommandEvent(wxEVT_HYPERLINK, id),
+        : wxCommandEvent(wxEVT_COMMAND_HYPERLINK, id),
           m_url(url)
     {
         SetEventObject(generator);
@@ -113,14 +111,14 @@ public:
     void SetURL(const wxString &url) { m_url=url; }
 
     // default copy ctor, assignment operator and dtor are ok
-    virtual wxEvent *Clone() const wxOVERRIDE { return new wxHyperlinkEvent(*this); }
+    virtual wxEvent *Clone() const { return new wxHyperlinkEvent(*this); }
 
 private:
 
     // URL associated with the hyperlink control that the used clicked on.
     wxString m_url;
 
-    wxDECLARE_DYNAMIC_CLASS_NO_ASSIGN_DEF_COPY(wxHyperlinkEvent);
+    DECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxHyperlinkEvent)
 };
 
 
@@ -134,7 +132,7 @@ typedef void (wxEvtHandler::*wxHyperlinkEventFunction)(wxHyperlinkEvent&);
     wxEVENT_HANDLER_CAST(wxHyperlinkEventFunction, func)
 
 #define EVT_HYPERLINK(id, fn) \
-    wx__DECLARE_EVT1(wxEVT_HYPERLINK, id, wxHyperlinkEventHandler(fn))
+    wx__DECLARE_EVT1(wxEVT_COMMAND_HYPERLINK, id, wxHyperlinkEventHandler(fn))
 
 
 #if defined(__WXGTK210__) && !defined(__WXUNIVERSAL__)
@@ -145,7 +143,7 @@ typedef void (wxEvtHandler::*wxHyperlinkEventFunction)(wxHyperlinkEvent&);
 #else
     #include "wx/generic/hyperlink.h"
 
-    class WXDLLIMPEXP_CORE wxHyperlinkCtrl : public wxGenericHyperlinkCtrl
+    class WXDLLIMPEXP_ADV wxHyperlinkCtrl : public wxGenericHyperlinkCtrl
     {
     public:
         wxHyperlinkCtrl() { }
@@ -157,7 +155,7 @@ typedef void (wxEvtHandler::*wxHyperlinkEventFunction)(wxHyperlinkEvent&);
                         const wxPoint& pos = wxDefaultPosition,
                         const wxSize& size = wxDefaultSize,
                         long style = wxHL_DEFAULT_STYLE,
-                        const wxString& name = wxASCII_STR(wxHyperlinkCtrlNameStr))
+                        const wxString& name = wxHyperlinkCtrlNameStr)
             : wxGenericHyperlinkCtrl(parent, id, label, url, pos, size,
                                      style, name)
         {
@@ -168,8 +166,6 @@ typedef void (wxEvtHandler::*wxHyperlinkEventFunction)(wxHyperlinkEvent&);
     };
 #endif
 
-// old wxEVT_COMMAND_* constants
-#define wxEVT_COMMAND_HYPERLINK   wxEVT_HYPERLINK
 
 #endif // wxUSE_HYPERLINKCTRL
 

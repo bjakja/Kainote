@@ -2,6 +2,7 @@
 // Name:        src/gtk/dcmemory.cpp
 // Purpose:
 // Author:      Robert Roebling
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,13 +12,13 @@
 
 #include "wx/gtk/dcmemory.h"
 
-#include "wx/gtk/private/wrapgtk.h"
+#include <gtk/gtk.h>
 
 //-----------------------------------------------------------------------------
 // wxMemoryDCImpl
 //-----------------------------------------------------------------------------
 
-wxIMPLEMENT_ABSTRACT_CLASS(wxMemoryDCImpl, wxWindowDCImpl);
+IMPLEMENT_ABSTRACT_CLASS(wxMemoryDCImpl, wxWindowDCImpl)
 
 wxMemoryDCImpl::wxMemoryDCImpl( wxMemoryDC *owner )
   : wxWindowDCImpl( owner )
@@ -40,6 +41,7 @@ wxMemoryDCImpl::wxMemoryDCImpl( wxMemoryDC *owner, wxDC *WXUNUSED(dc) )
 
 wxMemoryDCImpl::~wxMemoryDCImpl()
 {
+    g_object_unref(m_context);
 }
 
 void wxMemoryDCImpl::Init()
@@ -162,8 +164,3 @@ wxBitmap& wxMemoryDCImpl::GetSelectedBitmap()
     return m_selected;
 }
 
-void* wxMemoryDCImpl::GetHandle() const
-{
-    const wxBitmap& bmp = GetSelectedBitmap();
-    return bmp.GetPixmap();
-}

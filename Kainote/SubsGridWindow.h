@@ -18,11 +18,11 @@
 #include "SubsGridBase.h"
 #include "SubsGridPreview.h"
 //#include "SubsGrid.h"
-#include "Graphicsd2d.h"
+//#include "Graphicsd2d.h"
 #include <wx/window.h>
 
 class SubsGrid;
-
+class GraphicsContext;
 
 class SubsGridWindow : public SubsGridBase
 {
@@ -57,7 +57,7 @@ protected:
 	void OnScroll(wxScrollWinEvent& event);
 	void OnSize(wxSizeEvent& event);
 	void OnLostCapture(wxMouseCaptureLostEvent& evt);
-	bool ShowPreviewWindow(SubsGrid *previewGrid, SubsGrid *windowToDraw, 
+	bool ShowPreviewWindow(SubsGridWindow *previewGrid, SubsGridWindow *windowToDraw,
 		int activeLine, int diffPosition);
 	void PaintD2D(GraphicsContext *gc, int w, int h, int size, int scrows, 
 		wxPoint previewpos, wxSize previewsize, bool bg);

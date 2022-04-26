@@ -2,6 +2,7 @@
 // Name:        wx/gtk1/dc.h
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -51,10 +52,10 @@ public:
     virtual void DoGetSizeMM(int* width, int* height) const;
 
 private:
-    wxDECLARE_ABSTRACT_CLASS(wxDC);
+    DECLARE_ABSTRACT_CLASS(wxDC)
 };
 
-// this must be defined when wxDC::Blit() honours the DC origin and needed to
+// this must be defined when wxDC::Blit() honours the DC origian and needed to
 // allow wxUniv code in univ/winuniv.cpp to work with versions of wxGTK
 // 2.3.[23]
 #ifndef wxHAS_WORKING_GTK_DC_BLIT

@@ -2,12 +2,16 @@
 // Name:        tests/filetype/filetype.cpp
 // Purpose:     Test wxGetFileKind and wxStreamBase::IsSeekable
 // Author:      Mike Wetherell
+// RCS-ID:      $Id$
 // Copyright:   (c) 2005 Mike Wetherell
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "testprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 // for all others, include the necessary headers
 #ifndef WX_PRECOMP
@@ -33,8 +37,6 @@
     #define fdopen _fdopen
     #define fileno _fileno
 #endif
-
-#include "testfile.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // The test case
@@ -70,7 +72,7 @@ class FileKindTestCase : public CppUnit::TestCase
 };
 
 // test a wxFFile and wxFFileInput/OutputStreams of a known type
-//
+// 
 void FileKindTestCase::TestFILE(wxFFile& file, bool expected)
 {
     CPPUNIT_ASSERT(file.IsOpened());
@@ -99,17 +101,23 @@ void FileKindTestCase::TestFd(wxFile& file, bool expected)
     CPPUNIT_ASSERT(outStream.IsSeekable() == expected);
 }
 
+struct TempFile
+{
+    ~TempFile() { if (!m_name.IsEmpty()) wxRemoveFile(m_name); }
+    wxString m_name;
+};
+
 // test with an ordinary file
 //
 void FileKindTestCase::File()
 {
     TempFile tmp; // put first
     wxFile file;
-    tmp.Assign(wxFileName::CreateTempFileName(wxT("wxft"), &file));
+    tmp.m_name = wxFileName::CreateTempFileName(wxT("wxft"), &file);
     TestFd(file, true);
     file.Close();
 
-    wxFFile ffile(tmp.GetName());
+    wxFFile ffile(tmp.m_name);
     TestFILE(ffile, true);
 }
 
@@ -119,13 +127,11 @@ void FileKindTestCase::File()
 void FileKindTestCase::Pipe()
 {
     int afd[2];
-    int rc;
 #ifdef __UNIX__
-    rc = pipe(afd);
+    pipe(afd);
 #else
-    rc = _pipe(afd, 256, O_BINARY);
+    _pipe(afd, 256, O_BINARY);
 #endif
-    CPPUNIT_ASSERT_EQUAL_MESSAGE("Failed to create pipe", 0, rc);
 
     wxFile file0(afd[0]);
     wxFile file1(afd[1]);
@@ -188,7 +194,7 @@ void FileKindTestCase::MemoryStream()
 }
 
 // Stdin will usually be a terminal, if so then test it
-//
+// 
 void FileKindTestCase::Stdin()
 {
     if (isatty(0))

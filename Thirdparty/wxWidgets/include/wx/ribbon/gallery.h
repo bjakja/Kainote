@@ -4,6 +4,7 @@
 // Author:      Peter Cawley
 // Modified by:
 // Created:     2009-07-22
+// RCS-ID:      $Id$
 // Copyright:   (C) Peter Cawley
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -63,16 +64,16 @@ public:
     wxRibbonGalleryButtonState GetExtensionButtonState() const;
 
     bool IsHovered() const;
-    virtual bool IsSizingContinuous() const wxOVERRIDE;
-    virtual bool Realize() wxOVERRIDE;
-    virtual bool Layout() wxOVERRIDE;
+    virtual bool IsSizingContinuous() const;
+    virtual bool Realize();
+    virtual bool Layout();
 
-    virtual bool ScrollLines(int lines) wxOVERRIDE;
+    virtual bool ScrollLines(int lines);
     bool ScrollPixels(int pixels);
     void EnsureVisible(const wxRibbonGalleryItem* item);
 
 protected:
-    wxBorder GetDefaultBorder() const wxOVERRIDE { return wxBORDER_NONE; }
+    wxBorder GetDefaultBorder() const { return wxBORDER_NONE; }
     void CommonInit(long style);
     void CalculateMinSize();
     bool TestButtonHover(const wxRect& rect, wxPoint pos,
@@ -89,11 +90,11 @@ protected:
     void OnSize(wxSizeEvent& evt);
     int GetScrollLineSize() const;
 
-    virtual wxSize DoGetBestSize() const wxOVERRIDE;
+    virtual wxSize DoGetBestSize() const;
     virtual wxSize DoGetNextSmallerSize(wxOrientation direction,
-                                        wxSize relative_to) const wxOVERRIDE;
+                                        wxSize relative_to) const;
     virtual wxSize DoGetNextLargerSize(wxOrientation direction,
-                                       wxSize relative_to) const wxOVERRIDE;
+                                       wxSize relative_to) const;
 
     wxArrayRibbonGalleryItem m_items;
     wxRibbonGalleryItem* m_selected_item;
@@ -117,8 +118,8 @@ protected:
     bool m_hovered;
 
 #ifndef SWIG
-    wxDECLARE_CLASS(wxRibbonGallery);
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_CLASS(wxRibbonGallery)
+    DECLARE_EVENT_TABLE()
 #endif
 };
 
@@ -140,7 +141,7 @@ public:
         m_item = e.m_item;
     }
 #endif
-    wxEvent *Clone() const wxOVERRIDE { return new wxRibbonGalleryEvent(*this); }
+    wxEvent *Clone() const { return new wxRibbonGalleryEvent(*this); }
 
     wxRibbonGallery* GetGallery() {return m_gallery;}
     wxRibbonGalleryItem* GetGalleryItem() {return m_item;}
@@ -153,15 +154,15 @@ protected:
 
 #ifndef SWIG
 private:
-    wxDECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxRibbonGalleryEvent);
+    DECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxRibbonGalleryEvent)
 #endif
 };
 
 #ifndef SWIG
 
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_RIBBON, wxEVT_RIBBONGALLERY_HOVER_CHANGED, wxRibbonGalleryEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_RIBBON, wxEVT_RIBBONGALLERY_SELECTED, wxRibbonGalleryEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_RIBBON, wxEVT_RIBBONGALLERY_CLICKED, wxRibbonGalleryEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_RIBBON, wxEVT_COMMAND_RIBBONGALLERY_HOVER_CHANGED, wxRibbonGalleryEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_RIBBON, wxEVT_COMMAND_RIBBONGALLERY_SELECTED, wxRibbonGalleryEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_RIBBON, wxEVT_COMMAND_RIBBONGALLERY_CLICKED, wxRibbonGalleryEvent);
 
 typedef void (wxEvtHandler::*wxRibbonGalleryEventFunction)(wxRibbonGalleryEvent&);
 
@@ -169,30 +170,22 @@ typedef void (wxEvtHandler::*wxRibbonGalleryEventFunction)(wxRibbonGalleryEvent&
     wxEVENT_HANDLER_CAST(wxRibbonGalleryEventFunction, func)
 
 #define EVT_RIBBONGALLERY_HOVER_CHANGED(winid, fn) \
-    wx__DECLARE_EVT1(wxEVT_RIBBONGALLERY_HOVER_CHANGED, winid, wxRibbonGalleryEventHandler(fn))
+    wx__DECLARE_EVT1(wxEVT_COMMAND_RIBBONGALLERY_HOVER_CHANGED, winid, wxRibbonGalleryEventHandler(fn))
 #define EVT_RIBBONGALLERY_SELECTED(winid, fn) \
-    wx__DECLARE_EVT1(wxEVT_RIBBONGALLERY_SELECTED, winid, wxRibbonGalleryEventHandler(fn))
+    wx__DECLARE_EVT1(wxEVT_COMMAND_RIBBONGALLERY_SELECTED, winid, wxRibbonGalleryEventHandler(fn))
 #define EVT_RIBBONGALLERY_CLICKED(winid, fn) \
-    wx__DECLARE_EVT1(wxEVT_RIBBONGALLERY_CLICKED, winid, wxRibbonGalleryEventHandler(fn))
+    wx__DECLARE_EVT1(wxEVT_COMMAND_RIBBONGALLERY_CLICKED, winid, wxRibbonGalleryEventHandler(fn))
 #else
 
 // wxpython/swig event work
-%constant wxEventType wxEVT_RIBBONGALLERY_HOVER_CHANGED;
-%constant wxEventType wxEVT_RIBBONGALLERY_SELECTED;
-%constant wxEventType wxEVT_RIBBONGALLERY_CLICKED;
-
+%constant wxEventType wxEVT_COMMAND_RIBBONGALLERY_HOVER_CHANGED;
+%constant wxEventType wxEVT_COMMAND_RIBBONGALLERY_SELECTED;
 
 %pythoncode {
-    EVT_RIBBONGALLERY_HOVER_CHANGED = wx.PyEventBinder( wxEVT_RIBBONGALLERY_HOVER_CHANGED, 1 )
-    EVT_RIBBONGALLERY_SELECTED = wx.PyEventBinder( wxEVT_RIBBONGALLERY_SELECTED, 1 )
-    EVT_RIBBONGALLERY_CLICKED = wx.PyEventBinder( wxEVT_RIBBONGALLERY_CLICKED, 1 )
+    EVT_RIBBONGALLERY_HOVER_CHANGED = wx.PyEventBinder( wxEVT_COMMAND_RIBBONGALLERY_HOVER_CHANGED, 1 )
+    EVT_RIBBONGALLERY_SELECTED = wx.PyEventBinder( wxEVT_COMMAND_RIBBONGALLERY_SELECTED, 1 )
 }
 #endif // SWIG
-
-// old wxEVT_COMMAND_* constants
-#define wxEVT_COMMAND_RIBBONGALLERY_HOVER_CHANGED   wxEVT_RIBBONGALLERY_HOVER_CHANGED
-#define wxEVT_COMMAND_RIBBONGALLERY_SELECTED        wxEVT_RIBBONGALLERY_SELECTED
-#define wxEVT_COMMAND_RIBBONGALLERY_CLICKED         wxEVT_RIBBONGALLERY_CLICKED
 
 #endif // wxUSE_RIBBON
 

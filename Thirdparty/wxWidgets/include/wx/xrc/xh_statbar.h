@@ -3,6 +3,7 @@
 // Purpose:     XML resource handler for wxStatusBar
 // Author:      Brian Ravnsgaard Riis
 // Created:     2004/01/21
+// RCS-ID:      $Id$
 // Copyright:   (c) 2004 Brian Ravnsgaard Riis
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -16,12 +17,12 @@
 
 class WXDLLIMPEXP_XRC wxStatusBarXmlHandler : public wxXmlResourceHandler
 {
-    wxDECLARE_DYNAMIC_CLASS(wxStatusBarXmlHandler);
+    DECLARE_DYNAMIC_CLASS(wxStatusBarXmlHandler)
 
 public:
     wxStatusBarXmlHandler();
-    virtual wxObject *DoCreateResource() wxOVERRIDE;
-    virtual bool CanHandle(wxXmlNode *node) wxOVERRIDE;
+    virtual wxObject *DoCreateResource();
+    virtual bool CanHandle(wxXmlNode *node);
 };
 
 #endif // wxUSE_XRC && wxUSE_STATUSBAR

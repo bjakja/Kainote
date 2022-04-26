@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_GAUGE
 
@@ -30,13 +34,20 @@
     #include "wx/msw/wrapcctl.h" // include <commctrl.h> "properly"
 #endif
 
-#include "wx/appprogress.h"
 #include "wx/msw/private.h"
-#include "wx/msw/private/winstyle.h"
 
 // ----------------------------------------------------------------------------
 // constants
 // ----------------------------------------------------------------------------
+
+// old commctrl.h (< 4.71) don't have those
+#ifndef PBS_SMOOTH
+    #define PBS_SMOOTH 0x01
+#endif
+
+#ifndef PBS_VERTICAL
+    #define PBS_VERTICAL 0x04
+#endif
 
 #ifndef PBM_SETBARCOLOR
     #define PBM_SETBARCOLOR         (WM_USER+9)
@@ -81,18 +92,12 @@ bool wxGauge::Create(wxWindow *parent,
     if ( !MSWCreateControl(PROGRESS_CLASS, wxEmptyString, pos, size) )
         return false;
 
+    SetRange(range);
+
     // in case we need to emulate indeterminate mode...
     m_nDirection = wxRIGHT;
 
-    SetRange(range);
-
-    InitProgressIndicatorIfNeeded();
-
     return true;
-}
-
-wxGauge::~wxGauge()
-{
 }
 
 WXDWORD wxGauge::MSWGetStyle(long style, WXDWORD *exstyle) const
@@ -134,7 +139,7 @@ void wxGauge::SetRange(int r)
     if ( IsInIndeterminateMode() )
         SetDeterminateMode();
 
-    wxGaugeBase::SetRange(r);
+    m_rangeMax = r;
 
 #ifdef PBM_SETRANGE32
     ::SendMessage(GetHwnd(), PBM_SETRANGE32, 0, r);
@@ -152,7 +157,7 @@ void wxGauge::SetValue(int pos)
 
     if ( GetValue() != pos )
     {
-        wxGaugeBase::SetValue(pos);
+        m_gaugePos = pos;
 
         ::SendMessage(GetHwnd(), PBM_SETPOS, pos, 0);
     }
@@ -188,7 +193,8 @@ void wxGauge::SetIndeterminateMode()
     // Switch the control into indeterminate mode if necessary.
     if ( !IsInIndeterminateMode() )
     {
-        wxMSWWinStyleUpdater(GetHwnd()).TurnOn(PBS_MARQUEE);
+        const long style = ::GetWindowLong(GetHwnd(), GWL_STYLE);
+        ::SetWindowLong(GetHwnd(), GWL_STYLE, style | PBS_MARQUEE);
         ::SendMessage(GetHwnd(), PBM_SETMARQUEE, TRUE, 0);
     }
 }
@@ -197,8 +203,9 @@ void wxGauge::SetDeterminateMode()
 {
     if ( IsInIndeterminateMode() )
     {
+        const long style = ::GetWindowLong(GetHwnd(), GWL_STYLE);
         ::SendMessage(GetHwnd(), PBM_SETMARQUEE, FALSE, 0);
-        wxMSWWinStyleUpdater(GetHwnd()).TurnOff(PBS_MARQUEE);
+        ::SetWindowLong(GetHwnd(), GWL_STYLE, style & ~PBS_MARQUEE);
     }
 }
 
@@ -210,9 +217,6 @@ void wxGauge::Pulse()
         SetIndeterminateMode();
 
         SendMessage(GetHwnd(), PBM_STEPIT, 0, 0);
-
-        if ( m_appProgressIndicator )
-            m_appProgressIndicator->Pulse();
     }
     else
     {

@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     22.10.99
+// RCS-ID:      $Id$
 // Copyright:   (c) wxWidgets team
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_CONTROLS
 
@@ -27,7 +31,7 @@
     #include "wx/arrstr.h"
 #endif
 
-wxIMPLEMENT_ABSTRACT_CLASS(wxControlWithItems, wxControl);
+IMPLEMENT_ABSTRACT_CLASS(wxControlWithItems, wxControl)
 
 // ============================================================================
 // wxItemContainerImmutable implementation
@@ -165,9 +169,10 @@ void wxItemContainer::SetClientObject(unsigned int n, wxClientData *data)
 
     if ( HasClientObjectData() )
     {
-        wxClientData * clientDataOld =
-            static_cast<wxClientData *>(DoGetItemClientData(n));
-        delete clientDataOld;
+        wxClientData * clientDataOld
+            = static_cast<wxClientData *>(DoGetItemClientData(n));
+        if ( clientDataOld )
+            delete clientDataOld;
     }
     else // didn't have any client data so far
     {
@@ -251,7 +256,7 @@ void wxItemContainer::AssignNewItemClientData(unsigned int pos,
 
         default:
             wxFAIL_MSG( wxT("unknown client data type") );
-            wxFALLTHROUGH;
+            // fall through
 
         case wxClientData_None:
             // nothing to do
@@ -285,20 +290,6 @@ wxControlWithItemsBase::InitCommandEventWithItems(wxCommandEvent& event, int n)
         else if ( HasClientUntypedData() )
             event.SetClientData(GetClientData(n));
     }
-}
-
-void wxControlWithItemsBase::SendSelectionChangedEvent(wxEventType eventType)
-{
-    const int n = GetSelection();
-    if ( n == wxNOT_FOUND )
-        return;
-
-    wxCommandEvent event(eventType, m_windowId);
-    event.SetInt(n);
-    event.SetString(GetStringSelection());
-    InitCommandEventWithItems(event, n);
-
-    HandleWindowEvent(event);
 }
 
 #endif // wxUSE_CONTROLS

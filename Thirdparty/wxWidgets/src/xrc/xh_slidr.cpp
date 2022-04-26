@@ -3,6 +3,7 @@
 // Purpose:     XRC resource for wxSlider
 // Author:      Bob Mitchell
 // Created:     2000/03/21
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 Bob Mitchell and Verant Interactive
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -10,6 +11,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_XRC && wxUSE_SLIDER
 
@@ -24,7 +28,7 @@ static const long DEFAULT_MIN = 0;
 static const long DEFAULT_MAX = 100;
 
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxSliderXmlHandler, wxXmlResourceHandler);
+IMPLEMENT_DYNAMIC_CLASS(wxSliderXmlHandler, wxXmlResourceHandler)
 
 wxSliderXmlHandler::wxSliderXmlHandler()
                    :wxXmlResourceHandler()
@@ -32,8 +36,6 @@ wxSliderXmlHandler::wxSliderXmlHandler()
     XRC_ADD_STYLE(wxSL_HORIZONTAL);
     XRC_ADD_STYLE(wxSL_VERTICAL);
     XRC_ADD_STYLE(wxSL_AUTOTICKS);
-    XRC_ADD_STYLE(wxSL_MIN_MAX_LABELS);
-    XRC_ADD_STYLE(wxSL_VALUE_LABEL);
     XRC_ADD_STYLE(wxSL_LABELS);
     XRC_ADD_STYLE(wxSL_LEFT);
     XRC_ADD_STYLE(wxSL_TOP);

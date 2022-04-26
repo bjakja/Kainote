@@ -2,6 +2,7 @@
 // Name:        wx/gtk/slider.h
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -24,12 +25,11 @@ public:
              const wxSize& size = wxDefaultSize,
              long style = wxSL_HORIZONTAL,
              const wxValidator& validator = wxDefaultValidator,
-             const wxString& name = wxASCII_STR(wxSliderNameStr))
+             const wxString& name = wxSliderNameStr)
     {
         Create( parent, id, value, minValue, maxValue,
                 pos, size, style, validator, name );
     }
-    ~wxSlider();
 
     bool Create(wxWindow *parent,
                 wxWindowID id,
@@ -38,27 +38,23 @@ public:
                 const wxSize& size = wxDefaultSize,
                 long style = wxSL_HORIZONTAL,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxASCII_STR(wxSliderNameStr));
+                const wxString& name = wxSliderNameStr);
 
     // implement the base class pure virtuals
-    virtual int GetValue() const wxOVERRIDE;
-    virtual void SetValue(int value) wxOVERRIDE;
+    virtual int GetValue() const;
+    virtual void SetValue(int value);
 
-    virtual void SetRange(int minValue, int maxValue) wxOVERRIDE;
-    virtual int GetMin() const wxOVERRIDE;
-    virtual int GetMax() const wxOVERRIDE;
+    virtual void SetRange(int minValue, int maxValue);
+    virtual int GetMin() const;
+    virtual int GetMax() const;
 
-    virtual void SetLineSize(int lineSize) wxOVERRIDE;
-    virtual void SetPageSize(int pageSize) wxOVERRIDE;
-    virtual int GetLineSize() const wxOVERRIDE;
-    virtual int GetPageSize() const wxOVERRIDE;
+    virtual void SetLineSize(int lineSize);
+    virtual void SetPageSize(int pageSize);
+    virtual int GetLineSize() const;
+    virtual int GetPageSize() const;
 
-    virtual void SetThumbLength(int lenPixels) wxOVERRIDE;
-    virtual int GetThumbLength() const wxOVERRIDE;
-
-    virtual void ClearTicks() wxOVERRIDE;
-    virtual void SetTick(int tickPos) wxOVERRIDE;
-    int GetTickFreq() const wxOVERRIDE;
+    virtual void SetThumbLength(int lenPixels);
+    virtual int GetThumbLength() const;
 
     static wxVisualAttributes
     GetClassDefaultAttributes(wxWindowVariant variant = wxWINDOW_VARIANT_NORMAL);
@@ -74,26 +70,15 @@ public:
     GtkWidget *m_scale;
 
 protected:
-    virtual wxSize DoGetBestSize() const wxOVERRIDE;
-
     GtkWidget *m_minLabel,*m_maxLabel;
     bool m_blockScrollEvent;
 
-    // Note the following member is not used in GTK+2 < 2.16.
-    int m_tickFreq;
-
-    virtual GdkWindow *GTKGetWindow(wxArrayGdkWindows& windows) const wxOVERRIDE;
+    virtual GdkWindow *GTKGetWindow(wxArrayGdkWindows& windows) const;
 
     // set the slider value unconditionally
     void GTKSetValue(int value);
 
-    // Platform-specific implementation of SetTickFreq
-    virtual void DoSetTickFreq(int freq) wxOVERRIDE;
-
-private:
-    void Init();
-
-    wxDECLARE_DYNAMIC_CLASS(wxSlider);
+    DECLARE_DYNAMIC_CLASS(wxSlider)
 };
 
 #endif // _WX_GTK_SLIDER_H_

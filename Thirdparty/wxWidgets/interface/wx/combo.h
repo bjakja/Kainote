@@ -2,6 +2,7 @@
 // Name:        combo.h
 // Purpose:     interface of wxComboCtrl and wxComboPopup
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -69,10 +70,10 @@ public:
     /**
         Implement to customize matching of value string to an item container
         entry.
-
+        
         @param item
             String entered, usually by user or from SetValue() call.
-
+            
         @param trueItem
             When item matches an entry, but the entry's string representation
             is not exactly the same (case mismatch, for example), then the
@@ -130,7 +131,7 @@ public:
         Useful in conjunction with LazyCreate().
     */
     bool IsCreated() const;
-
+    
     /**
         The derived class may implement this to return @true if it wants to
         delay call to Create() until the popup is shown for the first time. It
@@ -329,7 +330,7 @@ struct wxComboCtrlFeatures
     @style{wxCB_SORT}
            Sorts the entries in the list alphabetically.
     @style{wxTE_PROCESS_ENTER}
-           The control will generate the event @c wxEVT_TEXT_ENTER
+           The control will generate the event @c wxEVT_COMMAND_TEXT_ENTER
            (otherwise pressing Enter key is either processed internally by the
            control or used for navigation between dialog controls). Windows
            only.
@@ -344,22 +345,22 @@ struct wxComboCtrlFeatures
 
     @beginEventEmissionTable{wxCommandEvent}
     @event{EVT_TEXT(id, func)}
-           Process a @c wxEVT_TEXT event, when the text changes.
+           Process a @c wxEVT_COMMAND_TEXT_UPDATED event, when the text changes.
     @event{EVT_TEXT_ENTER(id, func)}
-           Process a @c wxEVT_TEXT_ENTER event, when RETURN is pressed in
+           Process a @c wxEVT_COMMAND_TEXT_ENTER event, when RETURN is pressed in
            the combo control.
     @event{EVT_COMBOBOX_DROPDOWN(id, func)}
-           Process a @c wxEVT_COMBOBOX_DROPDOWN event, which is generated
+           Process a @c wxEVT_COMMAND_COMBOBOX_DROPDOWN event, which is generated
            when the popup window is shown (drops down).
     @event{EVT_COMBOBOX_CLOSEUP(id, func)}
-           Process a @c wxEVT_COMBOBOX_CLOSEUP event, which is generated
+           Process a @c wxEVT_COMMAND_COMBOBOX_CLOSEUP event, which is generated
            when the popup window of the combo control disappears (closes up).
            You should avoid adding or deleting items in this event.
     @endEventTable
 
-    @library{wxcore}
+    @library{wxbase}
     @category{ctrl}
-    @appearance{comboctrl}
+    @appearance{comboctrl.png}
 
     @see wxComboBox, wxChoice, wxOwnerDrawnComboBox, wxComboPopup,
          wxCommandEvent
@@ -386,7 +387,7 @@ public:
             Window position.
             If ::wxDefaultPosition is specified then a default position is chosen.
         @param size
-            Window size.
+            Window size. 
             If ::wxDefaultSize is specified then the window is sized appropriately.
         @param style
             Window style. See wxComboCtrl.
@@ -437,7 +438,7 @@ public:
         Dismisses the popup window.
 
         Notice that calling this function will generate a
-        @c wxEVT_COMBOBOX_CLOSEUP event.
+        @c wxEVT_COMMAND_COMBOBOX_CLOSEUP event.
 
         @since 2.9.2
     */
@@ -450,7 +451,7 @@ public:
     */
     void EnablePopupAnimation(bool enable = true);
 
-
+    
     /**
        Returns true if given key combination should toggle the popup.
     */
@@ -483,33 +484,33 @@ public:
         Returns disabled button bitmap that has been set with
         SetButtonBitmaps().
 
-        @return The disabled state bitmap.
+        @return A reference to the disabled state bitmap.
     */
-    wxBitmap GetBitmapDisabled() const;
+    const wxBitmap& GetBitmapDisabled() const;
 
     /**
         Returns button mouse hover bitmap that has been set with
         SetButtonBitmaps().
 
-        @return The mouse hover state bitmap.
+        @return A reference to the mouse hover state bitmap.
     */
-    wxBitmap GetBitmapHover() const;
+    const wxBitmap& GetBitmapHover() const;
 
     /**
         Returns default button bitmap that has been set with
         SetButtonBitmaps().
 
-        @return The normal state bitmap.
+        @return A reference to the normal state bitmap.
     */
-    wxBitmap GetBitmapNormal() const;
+    const wxBitmap& GetBitmapNormal() const;
 
     /**
         Returns depressed button bitmap that has been set with
         SetButtonBitmaps().
 
-        @return The depressed state bitmap.
+        @return A reference to the depressed state bitmap.
     */
-    wxBitmap GetBitmapPressed() const;
+    const wxBitmap& GetBitmapPressed() const;
 
     /**
         Returns current size of the dropdown button.
@@ -608,7 +609,7 @@ public:
 
         @param generateEvent
             Set this to @true in order to generate
-            @c wxEVT_COMBOBOX_CLOSEUP event.
+            @c wxEVT_COMMAND_COMBOBOX_CLOSEUP event.
 
         @deprecated Use Dismiss() instead.
     */
@@ -651,7 +652,7 @@ public:
         Shows the popup portion of the combo control.
 
         Notice that calling this function will generate a
-        @c wxEVT_COMBOBOX_DROPDOWN event.
+        @c wxEVT_COMMAND_COMBOBOX_DROPDOWN event.
 
         @since 2.9.2
     */
@@ -697,11 +698,11 @@ public:
         @param bmpDisabled
             Disabled button image.
     */
-    void SetButtonBitmaps(const wxBitmapBundle& bmpNormal,
+    void SetButtonBitmaps(const wxBitmap& bmpNormal,
                           bool pushButtonBg = false,
-                          const wxBitmapBundle& bmpPressed = wxBitmapBundle(),
-                          const wxBitmapBundle& bmpHover = wxBitmapBundle(),
-                          const wxBitmapBundle& bmpDisabled = wxBitmapBundle());
+                          const wxBitmap& bmpPressed = wxNullBitmap,
+                          const wxBitmap& bmpHover = wxNullBitmap,
+                          const wxBitmap& bmpDisabled = wxNullBitmap);
 
     /**
         Sets size and position of dropdown button.
@@ -730,7 +731,7 @@ public:
         Sets a hint shown in an empty unfocused combo control.
 
         Notice that hints are known as <em>cue banners</em> under MSW or
-        <em>placeholder strings</em> under macOS.
+        <em>placeholder strings</em> under OS X.
 
         @see wxTextEntry::SetHint()
 
@@ -750,47 +751,6 @@ public:
         Sets the insertion point at the end of the combo control text field.
     */
     virtual void SetInsertionPointEnd();
-
-    /**
-        Uses the given window instead of the default text control as the main
-        window of the combo control.
-
-        By default, combo controls without @c wxCB_READONLY style create a
-        wxTextCtrl which shows the current value and allows to edit it. This
-        method allows to use some other window instead of this wxTextCtrl.
-
-        This method can be called after creating the combo fully, however in
-        this case a wxTextCtrl is unnecessarily created just to be immediately
-        destroyed when it's replaced by a custom window. If you wish to avoid
-        this, you can use the following approach, also shown in the combo
-        sample:
-
-        @code
-            // Create the combo control using its default ctor.
-            wxComboCtrl* combo = new wxComboCtrl();
-
-            // Create the custom main control using its default ctor too.
-            SomeWindow* main = new SomeWindow();
-
-            // Set the custom main control before creating the combo.
-            combo->SetMainControl(main);
-
-            // And only create it now: wxTextCtrl won't be unnecessarily
-            // created because the combo already has a main window.
-            combo->Create(panel, wxID_ANY, wxEmptyString);
-
-            // Finally create the main window itself, now that its parent was
-            // created.
-            main->Create(combo, ...);
-        @endcode
-
-        Note that when a custom main window is used, none of the methods of
-        this class inherited from wxTextEntry, such as SetValue(), Replace(),
-        SetInsertionPoint() etc do anything and simply return.
-
-        @since 3.1.6
-    */
-    void SetMainControl(wxWindow* win);
 
     //@{
     /**
@@ -960,16 +920,6 @@ protected:
     virtual void DoSetPopupControl(wxComboPopup* popup);
 
     /**
-        Flags for DoShowPopup() and AnimateShow().
-    */
-    enum
-    {
-        ShowBelow       = 0x0000, //!< Show popup below the control.
-        ShowAbove       = 0x0001, //!< Show popup above the control.
-        CanDeferShow    = 0x0002  //!< Can only return true from AnimateShow() if this is set.
-    };
-
-    /**
         This member function is not normally called in application code.
         Instead, it must be called in a derived class to make sure popup is
         properly shown after a popup animation has finished (but only if
@@ -978,8 +928,15 @@ protected:
         @param rect
             Position to show the popup window at, in screen coordinates.
         @param flags
-            Combination of any of the following: wxComboCtrl::ShowAbove,
-            and wxComboCtrl::CanDeferShow.
+            Combination of any of the following:
+            @beginTable
+            @row2col{wxComboCtrl::ShowAbove,
+                     Popup is shown above the control instead of below.}
+            @row2col{wxComboCtrl::CanDeferShow,
+                     Showing the popup can be deferred to happen sometime after
+                     ShowPopup() has finished. In this case, AnimateShow() must
+                     return false.}
+            @endTable
     */
     virtual void DoShowPopup(const wxRect& rect, int flags);
 };

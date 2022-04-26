@@ -6,6 +6,7 @@
 //
 // Author:      Robin Dunn
 // Created:     03-Nov-2003
+// RCS-ID:      $Id$
 // Copyright:   (c) Robin Dunn
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -13,13 +14,16 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #include "wx/gbsizer.h"
 
 //---------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxGBSizerItem, wxSizerItem);
-wxIMPLEMENT_CLASS(wxGridBagSizer, wxFlexGridSizer);
+IMPLEMENT_DYNAMIC_CLASS(wxGBSizerItem, wxSizerItem)
+IMPLEMENT_CLASS(wxGridBagSizer, wxFlexGridSizer)
 
 const wxGBSpan wxDefaultSpan;
 
@@ -179,9 +183,11 @@ wxSizerItem* wxGridBagSizer::Add( wxWindow *window,
     wxGBSizerItem* item = new wxGBSizerItem(window, pos, span, flag, border, userData);
     if ( Add(item) )
         return item;
-
-    delete item;
-    return NULL;
+    else
+    {
+        delete item;
+        return NULL;
+    }
 }
 
 wxSizerItem* wxGridBagSizer::Add( wxSizer *sizer,
@@ -191,9 +197,11 @@ wxSizerItem* wxGridBagSizer::Add( wxSizer *sizer,
     wxGBSizerItem* item = new wxGBSizerItem(sizer, pos, span, flag, border, userData);
     if ( Add(item) )
         return item;
-
-    delete item;
-    return NULL;
+    else
+    {
+        delete item;
+        return NULL;
+    }
 }
 
 wxSizerItem* wxGridBagSizer::Add( int width, int height,
@@ -203,9 +211,11 @@ wxSizerItem* wxGridBagSizer::Add( int width, int height,
     wxGBSizerItem* item = new wxGBSizerItem(width, height, pos, span, flag, border, userData);
     if ( Add(item) )
         return item;
-
-    delete item;
-    return NULL;
+    else
+    {
+        delete item;
+        return NULL;
+    }
 }
 
 wxSizerItem* wxGridBagSizer::Add( wxGBSizerItem *item )
@@ -302,24 +312,27 @@ bool wxGridBagSizer::SetItemPosition(size_t index, const wxGBPosition& pos)
 
 wxGBSpan wxGridBagSizer::GetItemSpan(wxWindow *window)
 {
+    wxGBSpan badspan(-1,-1);
     wxGBSizerItem* item = FindItem(window);
-    wxCHECK_MSG( item, wxGBSpan::Invalid(), wxT("Failed to find item.") );
+    wxCHECK_MSG( item, badspan, wxT("Failed to find item.") );
     return item->GetSpan();
 }
 
 
 wxGBSpan wxGridBagSizer::GetItemSpan(wxSizer *sizer)
 {
+    wxGBSpan badspan(-1,-1);
     wxGBSizerItem* item = FindItem(sizer);
-    wxCHECK_MSG( item, wxGBSpan::Invalid(), wxT("Failed to find item.") );
+    wxCHECK_MSG( item, badspan, wxT("Failed to find item.") );
     return item->GetSpan();
 }
 
 
 wxGBSpan wxGridBagSizer::GetItemSpan(size_t index)
 {
+    wxGBSpan badspan(-1,-1);
     wxSizerItemList::compatibility_iterator node = m_children.Item( index );
-    wxCHECK_MSG( node, wxGBSpan::Invalid(), wxT("Failed to find item.") );
+    wxCHECK_MSG( node, badspan, wxT("Failed to find item.") );
     wxGBSizerItem* item = (wxGBSizerItem*)node->GetData();
     return item->GetSpan();
 }
@@ -488,18 +501,15 @@ wxSize wxGridBagSizer::CalcMin()
     for (idx=0; idx < m_rows; idx++)
         height += m_rowHeights[idx] + ( idx == m_rows-1 ? 0 : m_vgap );
 
-    return wxSize(width, height);
+    m_calculatedMinSize = wxSize(width, height);
+    return m_calculatedMinSize;
 }
 
 
 
-void wxGridBagSizer::RepositionChildren(const wxSize& minSize)
+void wxGridBagSizer::RecalcSizes()
 {
-    // We can't lay out our elements if we don't have at least a single row and
-    // a single column. Notice that this may happen even if we have some
-    // children but all of them are hidden, so checking for m_children being
-    // non-empty is not enough, see #15475.
-    if ( m_rowHeights.empty() || m_colWidths.empty() )
+    if (m_children.GetCount() == 0)
         return;
 
     wxPoint pt( GetPosition() );
@@ -509,7 +519,7 @@ void wxGridBagSizer::RepositionChildren(const wxSize& minSize)
     m_cols = m_colWidths.GetCount();
     int idx, width, height;
 
-    AdjustForGrowables(sz, minSize);
+    AdjustForGrowables(sz);
 
     // Find the start positions on the window of the rows and columns
     wxArrayInt rowpos;
@@ -537,11 +547,11 @@ void wxGridBagSizer::RepositionChildren(const wxSize& minSize)
     wxSizerItemList::compatibility_iterator node = m_children.GetFirst();
     while (node)
     {
+        int row, col, endrow, endcol;
         wxGBSizerItem* item = (wxGBSizerItem*)node->GetData();
 
         if ( item->IsShown() )
         {
-            int row, col, endrow, endcol;
             item->GetPos(row, col);
             item->GetEndPos(endrow, endcol);
 

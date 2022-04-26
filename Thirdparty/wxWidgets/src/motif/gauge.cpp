@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -25,6 +26,10 @@
 
 #ifndef WX_PRECOMP
     #include "wx/math.h"
+#endif
+
+#ifdef __OS2__
+#include <types.h>
 #endif
 
 #ifdef __VMS__
@@ -156,6 +161,13 @@ wxSize wxGauge::DoGetBestSize() const
         return wxSize( 18, 100 );
 }
 
+void wxGauge::SetShadowWidth(int w)
+{
+    if (w == 0)
+        w = 1;
+    XtVaSetValues((Widget) m_mainWidget, XmNshadowThickness, w, NULL);
+}
+
 void wxGauge::SetRange(int r)
 {
     XtVaSetValues((Widget) m_mainWidget, XmNmaximum, r, NULL);
@@ -164,6 +176,13 @@ void wxGauge::SetRange(int r)
 void wxGauge::SetValue(int pos)
 {
     XtVaSetValues((Widget) m_mainWidget, XmNvalue, pos, NULL);
+}
+
+int wxGauge::GetShadowWidth() const
+{
+    Dimension w;
+    XtVaGetValues((Widget) m_mainWidget, XmNshadowThickness, &w, NULL);
+    return (int)w;
 }
 
 int wxGauge::GetRange() const

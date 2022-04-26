@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -84,7 +85,6 @@ public:
         // with multiple display
         return m_visualInfo;
     }
-    virtual void* GetXVisualInfo() { return NULL; }
 
 public:
     static long           sm_lastMessageTime;
@@ -100,7 +100,7 @@ protected:
     WXColormap            m_mainColormap;
     long                  m_maxRequestSize;
 
-    wxDECLARE_DYNAMIC_CLASS(wxApp);
+    DECLARE_DYNAMIC_CLASS(wxApp)
 };
 
 #endif // _WX_X11_APP_H_

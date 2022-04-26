@@ -26,7 +26,6 @@ contribDir = None
 options = None
 configure_opts = None
 exitWithException = True
-nmakeCommand = 'nmake.exe'
 
 verbose = False
 
@@ -55,19 +54,14 @@ def numCPUs():
     return 1 # Default
 
 
-def getXcodePaths():
-    base = getoutput("xcode-select -print-path")
-    return [base, base+"/Platforms/MacOSX.platform/Developer"]
+def getXcodePath():
+    return getoutput("xcode-select -print-path")
 
 
 def getVisCVersion():
     text = getoutput("cl.exe")
-    if 'Version 13' in text:
-        return '71'
     if 'Version 15' in text:
         return '90'
-    if 'Version 16' in text:
-        return '100'
     # TODO: Add more tests to get the other versions...
     else:
         return 'FIXME'
@@ -172,7 +166,6 @@ def main(scriptName, args):
     global options
     global configure_opts
     global wxBuilder
-    global nmakeCommand
     
     scriptDir = os.path.dirname(os.path.abspath(scriptName))
     wxRootDir = os.path.abspath(os.path.join(scriptDir, "..", ".."))
@@ -207,19 +200,18 @@ def main(scriptName, args):
         "mac_framework" : (False, "Install the Mac build as a framework"),
         "mac_framework_prefix" 
                         : (defFwPrefix, "Prefix where the framework should be installed. Default: %s" % defFwPrefix),
-        "cairo"         : (False, "Enable dynamically loading the Cairo lib for wxGraphicsContext on MSW"),
+        "cairo"         : (False, "Enable dynamicly loading the Cairo lib for wxGraphicsContext on MSW"),
         "no_config"     : (False, "Turn off configure step on autoconf builds"),
         "config_only"   : (False, "Only run the configure step and then exit"),
         "rebake"        : (False, "Regenerate Bakefile and autoconf files"),
         "unicode"       : (False, "Build the library with unicode support"),
         "wxpython"      : (False, "Build the wxWidgets library with all options needed by wxPython"),
-        "cocoa"         : (False, "Build the old Mac Cocoa port."),
+        "cocoa"         : (False, "Build the old Mac Cooca port."),
         "osx_cocoa"     : (False, "Build the new Cocoa port"),
         "shared"        : (False, "Build wx as a dynamic library"),
         "extra_make"    : ("", "Extra args to pass on [n]make's command line."),
         "features"      : ("", "A comma-separated list of wxUSE_XYZ defines on Win, or a list of configure flags on unix."),
         "verbose"       : (False, "Print commands as they are run, (to aid with debugging this script)"),
-        "jom"           : (False, "Use jom.exe instead of nmake for MSW builds."),
     }
         
     parser = optparse.OptionParser(usage="usage: %prog [options]", version="%prog 1.0")
@@ -281,27 +273,27 @@ def main(scriptName, args):
             wxpy_configure_opts.append("--enable-monolithic")
         else:
             wxpy_configure_opts.append("--with-sdl")
-
+            wxpy_configure_opts.append("--with-gnomeprint")
+                                        
         # Try to use use lowest available SDK back to 10.5. Both Carbon and
         # Cocoa builds require at least the 10.5 SDK now. We only add it to
         # the wxpy options because this is a hard-requirement for wxPython,
         # but other cases it is optional and is left up to the developer.
         # TODO: there should be a command line option to set the SDK...
         if sys.platform.startswith("darwin"):
-            for xcodePath in getXcodePaths():
-                sdks = [
-                    xcodePath+"/SDKs/MacOSX10.5.sdk",
-                    xcodePath+"/SDKs/MacOSX10.6.sdk",
-                    xcodePath+"/SDKs/MacOSX10.7.sdk",
-                    xcodePath+"/SDKs/MacOSX10.8.sdk",
-                    ]
+            xcodePath = getXcodePath()
+            sdks = [
+                xcodePath+"/SDKs/MacOSX10.5.sdk",
+                xcodePath+"/SDKs/MacOSX10.6.sdk",
+                xcodePath+"/SDKs/MacOSX10.7.sdk",
+            ]
             
-                # use the lowest available sdk
-                for sdk in sdks:
-                    if os.path.exists(sdk):
-                        wxpy_configure_opts.append(
-                            "--with-macosx-sdk=%s" % sdk)
-                        break
+            # use the lowest available sdk
+            for sdk in sdks:
+                if os.path.exists(sdk):
+                    wxpy_configure_opts.append(
+                        "--with-macosx-sdk=%s" % sdk)
+                    break
 
         if not options.mac_framework:
             if installDir and not prefixDir:
@@ -345,13 +337,7 @@ def main(scriptName, args):
                     shutil.rmtree(frameworkRootDir)
 
         if options.mac_universal_binary: 
-            if options.mac_universal_binary == 'default':
-                if options.osx_cocoa:
-                    configure_opts.append("--enable-universal_binary=i386,x86_64")                
-                else:
-                    configure_opts.append("--enable-universal_binary")                
-            else:
-                configure_opts.append("--enable-universal_binary=%s" % options.mac_universal_binary)
+            configure_opts.append("--enable-universal_binary=%s" % options.mac_universal_binary)
 
             
         print("Configure options: " + repr(configure_opts))
@@ -372,9 +358,11 @@ def main(scriptName, args):
         flags = {}
         buildDir = os.path.abspath(os.path.join(scriptDir, "..", "msw"))
 
-        print("creating wx/msw/setup.h")
+        print("creating wx/msw/setup.h from setup0.h")
         if options.unicode:
             flags["wxUSE_UNICODE"] = "1"
+            if VERSION < (2,9):
+                flags["wxUSE_UNICODE_MSLU"] = "1"
     
         if options.cairo:
             if not os.environ.get("CAIRO_ROOT"):
@@ -392,10 +380,6 @@ def main(scriptName, args):
             flags["wxUSE_AFM_FOR_POSTSCRIPT"] = "0"
             flags["wxUSE_DATEPICKCTRL_GENERIC"] = "1"
 
-            # Remove this when Windows XP finally dies, or when there is a
-            # solution for ticket #13116...
-            flags["wxUSE_COMPILER_TLS"] = "0"
-            
             if VERSION < (2,9):
                 flags["wxUSE_DIB_FOR_BITMAP"] = "1"
 
@@ -404,13 +388,13 @@ def main(scriptName, args):
 
     
         mswIncludeDir = os.path.join(wxRootDir, "include", "wx", "msw")
-        setupFile = os.path.join(mswIncludeDir, "setup.h")
-        setupText = open(setupFile, "rb").read()
+        setup0File = os.path.join(mswIncludeDir, "setup0.h")
+        setupText = open(setup0File, "rb").read()
         
         for flag in flags:
             setupText, subsMade = re.subn(flag + "\s+?\d", "%s %s" % (flag, flags[flag]), setupText)
             if subsMade == 0:
-                print("Flag %s wasn't found in setup.h!" % flag)
+                print("Flag %s wasn't found in setup0.h!" % flag)
                 sys.exit(1)
     
         setupFile = open(os.path.join(mswIncludeDir, "setup.h"), "wb")
@@ -422,6 +406,8 @@ def main(scriptName, args):
             args.append("-f makefile.vc")
             if options.unicode:
                 args.append("UNICODE=1")
+                if VERSION < (2,9):
+                    args.append("MSLU=1")
     
             if options.wxpython:
                 args.append("OFFICIAL_BUILD=1")
@@ -443,11 +429,8 @@ def main(scriptName, args):
                 args.append(
                     "CPPFLAGS=/I%s" %
                      os.path.join(os.environ.get("CAIRO_ROOT", ""), 'include\\cairo'))
-                
-            if options.jom:
-                nmakeCommand = 'jom.exe'
     
-            wxBuilder = builder.MSVCBuilder(commandName=nmakeCommand)
+            wxBuilder = builder.MSVCBuilder()
             
         if toolkit == "msvcProject":
             args = []
@@ -625,7 +608,7 @@ def main(scriptName, args):
         os.makedirs(packagedir)
         basename = os.path.basename(prefixDir.split(".")[0])
         packageName = basename + "-" + getWxRelease()
-        packageMakerPath = getXcodePaths()[0]+"/usr/bin/packagemaker "
+        packageMakerPath = getXcodePath()+"/usr/bin/packagemaker "
         args = []
         args.append("--root %s" % options.installdir)
         args.append("--id org.wxwidgets.%s" % basename.lower())

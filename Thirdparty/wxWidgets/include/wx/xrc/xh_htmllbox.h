@@ -3,6 +3,7 @@
 // Purpose:     XML resource handler for wxSimpleHtmlListBox
 // Author:      Francesco Montorsi
 // Created:     2006/10/21
+// RCS-ID:      $Id$
 // Copyright:   (c) 2006 Francesco Montorsi
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,14 +19,14 @@ class WXDLLIMPEXP_XRC wxSimpleHtmlListBoxXmlHandler : public wxXmlResourceHandle
 {
 public:
     wxSimpleHtmlListBoxXmlHandler();
-    virtual wxObject *DoCreateResource() wxOVERRIDE;
-    virtual bool CanHandle(wxXmlNode *node) wxOVERRIDE;
+    virtual wxObject *DoCreateResource();
+    virtual bool CanHandle(wxXmlNode *node);
 
 private:
     bool m_insideBox;
     wxArrayString strList;
 
-    wxDECLARE_DYNAMIC_CLASS(wxSimpleHtmlListBoxXmlHandler);
+    DECLARE_DYNAMIC_CLASS(wxSimpleHtmlListBoxXmlHandler)
 };
 
 #endif // wxUSE_XRC && wxUSE_HTML

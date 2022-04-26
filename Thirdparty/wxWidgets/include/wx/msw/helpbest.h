@@ -4,6 +4,7 @@
 // Author:      Mattia Barbon
 // Modified by:
 // Created:     02/04/2001
+// RCS-ID:      $Id$
 // Copyright:   (c) Mattia Barbon
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -32,52 +33,52 @@ public:
     virtual ~wxBestHelpController() { delete m_helpController; }
 
     // Must call this to set the filename
-    virtual bool Initialize(const wxString& file) wxOVERRIDE;
-    virtual bool Initialize(const wxString& file, int WXUNUSED(server) ) wxOVERRIDE { return Initialize( file ); }
+    virtual bool Initialize(const wxString& file);
+    virtual bool Initialize(const wxString& file, int WXUNUSED(server) ) { return Initialize( file ); }
 
     // If file is "", reloads file given in Initialize
-    virtual bool LoadFile(const wxString& file = wxEmptyString) wxOVERRIDE
+    virtual bool LoadFile(const wxString& file = wxEmptyString)
     {
         return m_helpController->LoadFile( GetValidFilename( file ) );
     }
 
-    virtual bool DisplayContents() wxOVERRIDE
+    virtual bool DisplayContents()
     {
         return m_helpController->DisplayContents();
     }
 
-    virtual bool DisplaySection(int sectionNo) wxOVERRIDE
+    virtual bool DisplaySection(int sectionNo)
     {
         return m_helpController->DisplaySection( sectionNo );
     }
 
-    virtual bool DisplaySection(const wxString& section) wxOVERRIDE
+    virtual bool DisplaySection(const wxString& section)
     {
         return m_helpController->DisplaySection( section );
     }
 
-    virtual bool DisplayBlock(long blockNo) wxOVERRIDE
+    virtual bool DisplayBlock(long blockNo)
     {
         return m_helpController->DisplayBlock( blockNo );
     }
 
-    virtual bool DisplayContextPopup(int contextId) wxOVERRIDE
+    virtual bool DisplayContextPopup(int contextId)
     {
         return m_helpController->DisplayContextPopup( contextId );
     }
 
-    virtual bool DisplayTextPopup(const wxString& text, const wxPoint& pos) wxOVERRIDE
+    virtual bool DisplayTextPopup(const wxString& text, const wxPoint& pos)
     {
         return m_helpController->DisplayTextPopup( text, pos );
     }
 
     virtual bool KeywordSearch(const wxString& k,
-                               wxHelpSearchMode mode = wxHELP_SEARCH_ALL) wxOVERRIDE
+                               wxHelpSearchMode mode = wxHELP_SEARCH_ALL)
     {
         return m_helpController->KeywordSearch( k, mode );
     }
 
-    virtual bool Quit() wxOVERRIDE
+    virtual bool Quit()
     {
         return m_helpController->Quit();
     }
@@ -86,7 +87,7 @@ public:
     virtual void SetFrameParameters(const wxString& title,
                                     const wxSize& size,
                                     const wxPoint& pos = wxDefaultPosition,
-                                    bool newFrameEachTime = false) wxOVERRIDE
+                                    bool newFrameEachTime = false)
     {
         m_helpController->SetFrameParameters( title, size, pos,
                                               newFrameEachTime );
@@ -95,17 +96,17 @@ public:
     // Obtains the latest settings used by the help frame and the help frame.
     virtual wxFrame *GetFrameParameters(wxSize *size = NULL,
                                         wxPoint *pos = NULL,
-                                        bool *newFrameEachTime = NULL) wxOVERRIDE
+                                        bool *newFrameEachTime = NULL)
     {
         return m_helpController->GetFrameParameters( size, pos,
                                                      newFrameEachTime );
     }
 
     /// Set the window that can optionally be used for the help window's parent.
-    virtual void SetParentWindow(wxWindow* win) wxOVERRIDE { m_helpController->SetParentWindow(win); }
+    virtual void SetParentWindow(wxWindow* win) { m_helpController->SetParentWindow(win); }
 
     /// Get the window that can optionally be used for the help window's parent.
-    virtual wxWindow* GetParentWindow() const wxOVERRIDE { return m_helpController->GetParentWindow(); }
+    virtual wxWindow* GetParentWindow() const { return m_helpController->GetParentWindow(); }
 
 protected:
     // Append/change extension if necessary.
@@ -118,7 +119,7 @@ protected:
     wxHelpControllerBase* m_helpController;
     int m_style;
 
-    wxDECLARE_DYNAMIC_CLASS(wxBestHelpController);
+    DECLARE_DYNAMIC_CLASS(wxBestHelpController)
     wxDECLARE_NO_COPY_CLASS(wxBestHelpController);
 };
 

@@ -3,6 +3,7 @@
 // Purpose:
 // Author:      Robert Roebling
 // Created:
+// Id:          $Id$
 // Copyright:   (c) 2001 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -38,8 +39,8 @@ protected:
                            int sizeFlags = wxSIZE_AUTO);
 
 private:
-    wxDECLARE_EVENT_TABLE();
-    wxDECLARE_DYNAMIC_CLASS(wxPopupWindow);
+    DECLARE_EVENT_TABLE()
+    DECLARE_DYNAMIC_CLASS(wxPopupWindow)
 };
 
 #endif // __GTKPOPUPWINDOWH__

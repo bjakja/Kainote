@@ -3,6 +3,7 @@
 // Purpose:     implementation of wxEditableListBox XRC handler
 // Author:      Vadim Zeitlin
 // Created:     2009-06-04
+// RCS-ID:      $Id$
 // Copyright:   (c) 2009 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -18,6 +19,9 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_XRC && wxUSE_EDITABLELISTBOX
 
@@ -27,8 +31,6 @@
 
 #include "wx/editlbox.h"
 #include "wx/xrc/xh_editlbox.h"
-
-#include "wx/xml/xml.h"
 
 // ----------------------------------------------------------------------------
 // constants
@@ -46,7 +48,7 @@ const char * const EDITLBOX_ITEM_NAME = "item";
 // implementation
 // ============================================================================
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxEditableListBoxXmlHandler, wxXmlResourceHandler);
+IMPLEMENT_DYNAMIC_CLASS(wxEditableListBoxXmlHandler, wxXmlResourceHandler)
 
 wxEditableListBoxXmlHandler::wxEditableListBoxXmlHandler()
 {
@@ -96,7 +98,10 @@ wxObject *wxEditableListBoxXmlHandler::DoCreateResource()
     }
     else if ( m_insideBox && m_node->GetName() == EDITLBOX_ITEM_NAME )
     {
-        m_items.push_back(GetNodeText(m_node, wxXRC_TEXT_NO_ESCAPE));
+        wxString str = GetNodeContent(m_node);
+        if ( m_resource->GetFlags() & wxXRC_USE_LOCALE )
+            str = wxGetTranslation(str, m_resource->GetDomain());
+        m_items.push_back(str);
 
         return NULL;
     }

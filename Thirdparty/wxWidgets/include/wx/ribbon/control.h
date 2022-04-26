@@ -4,6 +4,7 @@
 // Author:      Peter Cawley
 // Modified by:
 // Created:     2009-06-05
+// RCS-ID:      $Id$
 // Copyright:   (C) Peter Cawley
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -30,7 +31,7 @@ public:
                     const wxPoint& pos = wxDefaultPosition,
                     const wxSize& size = wxDefaultSize, long style = 0,
                     const wxValidator& validator = wxDefaultValidator,
-                    const wxString& name = wxASCII_STR(wxControlNameStr))
+                    const wxString& name = wxControlNameStr)
     {
         Init();
 
@@ -41,7 +42,7 @@ public:
             const wxPoint& pos = wxDefaultPosition,
             const wxSize& size = wxDefaultSize, long style = 0,
             const wxValidator& validator = wxDefaultValidator,
-            const wxString& name = wxASCII_STR(wxControlNameStr));
+            const wxString& name = wxControlNameStr);
 
     virtual void SetArtProvider(wxRibbonArtProvider* art);
     wxRibbonArtProvider* GetArtProvider() const {return m_art;}
@@ -72,7 +73,7 @@ private:
     void Init() { m_art = NULL; }
 
 #ifndef SWIG
-    wxDECLARE_CLASS(wxRibbonControl);
+    DECLARE_CLASS(wxRibbonControl)
 #endif
 };
 

@@ -2,6 +2,7 @@
 // Name:        radiobox.h
 // Purpose:     interface of wxRadioBox
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -22,13 +23,13 @@
 
     @beginEventEmissionTable{wxCommandEvent}
     @event{EVT_RADIOBOX(id, func)}
-           Process a @c wxEVT_RADIOBOX event, when a radiobutton
+           Process a @c wxEVT_COMMAND_RADIOBOX_SELECTED event, when a radiobutton
            is clicked.
     @endEventTable
 
     @library{wxcore}
     @category{ctrl}
-    @appearance{radiobox}
+    @appearance{radiobox.png}
 
     @see @ref overview_events, wxRadioButton, wxCheckBox
 */
@@ -236,7 +237,7 @@ public:
         Returns @true if the item is enabled or @false if it was disabled using
         @ref Enable(unsigned int,bool) "Enable(n, false)".
 
-        This function is currently only implemented in wxMSW, wxGTK, wxQT and
+        This function is currently only implemented in wxMSW, wxGTK and
         wxUniversal and always returns @true in the other ports.
 
         @param n
@@ -251,7 +252,7 @@ public:
         Note that this function returns @true for an item which hadn't been hidden
         even if the entire radiobox is not currently shown.
 
-        This function is currently only implemented in wxMSW, wxGTK, wxQT and
+        This function is currently only implemented in wxMSW, wxGTK and
         wxUniversal and always returns @true in the other ports.
 
         @param n
@@ -287,14 +288,6 @@ public:
     void SetItemToolTip(unsigned int item, const wxString& text);
 
     /**
-        Sets the selection to the given item.
-
-        Notice that a radio box always has selection, so @a n must be valid
-        here and passing @c wxNOT_FOUND is not allowed.
-     */
-    virtual void SetSelection(int n);
-
-    /**
         Shows or hides individual buttons.
 
         @param show
@@ -317,13 +310,7 @@ public:
     virtual unsigned int GetCount() const;
     virtual wxString GetString(unsigned int n) const;
     virtual void SetString(unsigned int n, const wxString& string);
-
-    /**
-        Returns the index of the selected item.
-
-        As radio boxes always have a selected item, the return value is never
-        @c wxNOT_FOUND for this class.
-     */
+    virtual void SetSelection(int n);
     virtual int GetSelection() const;
 
 };

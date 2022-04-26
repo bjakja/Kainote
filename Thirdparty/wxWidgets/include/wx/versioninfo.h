@@ -3,6 +3,7 @@
 // Purpose:     declaration of wxVersionInfo class
 // Author:      Troels K
 // Created:     2010-11-22
+// RCS-ID:      $Id$
 // Copyright:   (c) 2010 wxWidgets team
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -10,7 +11,7 @@
 #ifndef _WX_VERSIONINFO_H_
 #define _WX_VERSIONINFO_H_
 
-#include "wx\string.h"
+#include "wx/string.h"
 
 // ----------------------------------------------------------------------------
 // wxVersionInfo: represents version information
@@ -25,13 +26,13 @@ public:
                   int micro = 0,
                   const wxString& description = wxString(),
                   const wxString& copyright = wxString())
-        : m_name(name)
-        , m_description(description)
-        , m_copyright(copyright)
     {
+        m_name = name;
         m_major = major;
         m_minor = minor;
         m_micro = micro;
+        m_description = description;
+        m_copyright = copyright;
     }
 
     // Default copy ctor, assignment operator and dtor are ok.

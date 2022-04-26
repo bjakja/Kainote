@@ -3,6 +3,7 @@
 // Purpose:     translate between wx and GtkMessageType
 // Author:      Vadim Zeitlin
 // Created:     2009-09-27
+// RCS-ID:      $Id$
 // Copyright:   (c) 2009 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -12,8 +13,6 @@
 
 #include <gtk/gtk.h>
 
-#include "wx/gtk/private/gtk2-compat.h"
-
 namespace wxGTKImpl
 {
 
@@ -22,7 +21,7 @@ namespace wxGTKImpl
 inline bool ConvertMessageTypeFromWX(int style, GtkMessageType *type)
 {
 #ifdef __WXGTK210__
-    if ( wx_is_at_least_gtk2(10) && (style & wxICON_NONE))
+    if ( gtk_check_version(2, 10, 0) == NULL && (style & wxICON_NONE))
         *type = GTK_MESSAGE_OTHER;
     else
 #endif // __WXGTK210__

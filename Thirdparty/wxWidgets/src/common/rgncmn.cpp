@@ -4,6 +4,7 @@
 // Author:      Robin Dunn
 // Modified by:
 // Created:     27-Mar-2003
+// RCS-ID:      $Id$
 // Copyright:   (c) Robin Dunn
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -15,6 +16,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #include "wx/region.h"
 
@@ -22,7 +26,6 @@
     #include "wx/dcmemory.h"
     #include "wx/bitmap.h"
     #include "wx/image.h"
-    #include "wx/utils.h"
 #endif //WX_PRECOMP
 
 // ============================================================================

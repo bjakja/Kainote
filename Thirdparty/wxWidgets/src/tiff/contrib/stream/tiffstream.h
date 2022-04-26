@@ -61,10 +61,3 @@ private:
 };
 
 #endif // _TIFF_STREAM_H_
-/*
- * Local Variables:
- * mode: c++
- * c-basic-offset: 8
- * fill-column: 78
- * End:
- */

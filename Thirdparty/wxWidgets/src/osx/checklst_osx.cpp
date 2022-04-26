@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -23,8 +24,8 @@
 
 #include "wx/osx/private.h"
 
-wxBEGIN_EVENT_TABLE(wxCheckListBox, wxListBox)
-wxEND_EVENT_TABLE()
+BEGIN_EVENT_TABLE(wxCheckListBox, wxListBox)
+END_EVENT_TABLE()
 
 void wxCheckListBox::Init()
 {
@@ -63,7 +64,7 @@ bool wxCheckListBox::Create(
     if ( !wxCheckListBoxBase::Create( parent, id, pos, size, n, choices, style & ~(wxHSCROLL | wxVSCROLL), validator, name ) )
         return false;
 
-    int colwidth = 18;
+    int colwidth = 30;
     // TODO adapt the width according to the window variant
     m_checkColumn = GetListPeer()->InsertCheckColumn(0, wxEmptyString, true, wxALIGN_CENTER, colwidth);
 
@@ -83,13 +84,7 @@ bool wxCheckListBox::IsChecked(unsigned int n) const
     wxCHECK_MSG( IsValid(n), false,
                  wxT("invalid index in wxCheckListBox::IsChecked") );
 
-    // It's possible that m_checks has not yet been expanded to match the
-    // wxCheckListBox::GetCount() value (for example while in the midst of
-    // appending a new item) so double-check that we don't read beyond the end
-    // of the array.
-    if (n < m_checks.size())
-        return m_checks[n] != 0;
-    return false;
+    return m_checks[n] != 0;
 }
 
 void wxCheckListBox::Check(unsigned int n, bool check)
@@ -121,7 +116,7 @@ void wxCheckListBox::SetValueCallback( unsigned int n, wxListWidgetColumn* col ,
     {
         Check( n, value.IsChecked() );
 
-        wxCommandEvent event( wxEVT_CHECKLISTBOX, GetId() );
+        wxCommandEvent event( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, GetId() );
         event.SetInt( n );
         event.SetString( GetString( n ) );
         event.SetEventObject( this );

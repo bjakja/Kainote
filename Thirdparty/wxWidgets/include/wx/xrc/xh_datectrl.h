@@ -3,6 +3,7 @@
 // Purpose:     XML resource handler for wxDatePickerCtrl
 // Author:      Vaclav Slavik
 // Created:     2005-02-07
+// RCS-ID:      $Id$
 // Copyright:   (c) 2005 Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -16,12 +17,12 @@
 
 class WXDLLIMPEXP_XRC wxDateCtrlXmlHandler : public wxXmlResourceHandler
 {
-    wxDECLARE_DYNAMIC_CLASS(wxDateCtrlXmlHandler);
+    DECLARE_DYNAMIC_CLASS(wxDateCtrlXmlHandler)
 
 public:
     wxDateCtrlXmlHandler();
-    virtual wxObject *DoCreateResource() wxOVERRIDE;
-    virtual bool CanHandle(wxXmlNode *node) wxOVERRIDE;
+    virtual wxObject *DoCreateResource();
+    virtual bool CanHandle(wxXmlNode *node);
 };
 
 #endif // wxUSE_XRC && wxUSE_DATEPICKCTRL

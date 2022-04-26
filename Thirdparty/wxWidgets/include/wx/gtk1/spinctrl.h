@@ -3,6 +3,7 @@
 // Purpose:     wxSpinCtrl class
 // Author:      Robert Roebling
 // Modified by:
+// RCS-ID:      $Id$
 // Copyright:   (c) Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -48,7 +49,6 @@ public:
     void SetValue(const wxString& text);
     void SetSelection(long from, long to);
 
-    virtual wxString GetTextValue() const;
     virtual int GetValue() const;
     virtual void SetValue( int value );
     virtual void SetRange( int minVal, int maxVal );
@@ -65,35 +65,19 @@ public:
     void GtkDisableEvents();
     void GtkEnableEvents();
 
-    void SetIncrement(int inc) { DoSetIncrement(inc); }
-    int GetIncrement() const { return int(DoGetIncrement()); }
-   
     GtkAdjustment  *m_adjust;
     float           m_oldPos;
 
-    virtual int GetBase() const { return m_base; }
-    virtual bool SetBase(int base);
-
- protected:
+protected:
     virtual wxSize DoGetBestSize() const;
-    void DoSetIncrement(double inc);
-    double DoGetIncrement() const;
 
     // Widgets that use the style->base colour for the BG colour should
     // override this and return true.
     virtual bool UseGTKStyleBase() const { return true; }
 
 private:
-    // Common part of all ctors.
-    void Init()
-    {
-        m_base = 10;
-    }
-
-    int m_base;
-
-    wxDECLARE_DYNAMIC_CLASS(wxSpinCtrl);
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_DYNAMIC_CLASS(wxSpinCtrl)
+    DECLARE_EVENT_TABLE()
 };
 
 #endif

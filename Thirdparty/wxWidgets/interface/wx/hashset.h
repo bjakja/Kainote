@@ -2,6 +2,7 @@
 // Name:        hashset.h
 // Purpose:     interface of wxHashSet
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -19,11 +20,11 @@
         class MyClass { ... };
 
         // same, with MyClass* keys (only uses pointer equality!)
-        WX_DECLARE_HASH_SET( MyClass*, wxPointerHash, wxPointerEqual, MySet1 );
+        WX_DECLARE_HASH_SET( MyClass*, ::wxPointerHash, ::wxPointerEqual, MySet1 );
         // same, with int keys
-        WX_DECLARE_HASH_SET( int, wxIntegerHash, wxIntegerEqual, MySet2 );
+        WX_DECLARE_HASH_SET( int, ::wxIntegerHash, ::wxIntegerEqual, MySet2 );
         // declare a hash set with string keys
-        WX_DECLARE_HASH_SET( wxString, wxStringHash, wxStringEqual, MySet3 );
+        WX_DECLARE_HASH_SET( wxString, ::wxStringHash, ::wxStringEqual, MySet3 );
 
         MySet1 h1;
         MySet2 h1;
@@ -69,11 +70,11 @@
 
     @code
         WX_DECLARE_HASH_SET( int,
-                            wxIntegerHash,
-                            wxIntegerEqual,
+                            ::wxIntegerHash,
+                            ::wxIntegerEqual,
                             MySet );
 
-        // using a user-defined class for keys
+        // using an user-defined class for keys
         class MyKey { ... };
 
         // hashing function
@@ -104,8 +105,8 @@
         };
 
         WX_DECLARE_HASH_SET( MyKey,      // type of the keys
-                            MyKeyHash,  // hasher
-                            MyKeyEqual, // key equality predicate
+                            ::MyKeyHash,  // hasher
+                            ::MyKeyEqual, // key equality predicate
                             CLASSNAME); // name of the class
     @endcode
 
@@ -131,7 +132,7 @@
     An iterator is similar to a pointer, and so you can use the usual pointer
     operations: ++it ( and it++ ) to move to the next element, *it to access the
     element pointed to, *it to access the value of the element pointed to.
-    Hash sets provide forward only iterators, this means that you can't use \--it,
+    Hash sets provide forward only iterators, this means that you can't use --it,
     it + 3, it1 - it2.
 
     @library{wxbase}
@@ -204,8 +205,7 @@ public:
     /**
         If an element with the given key is present, the functions returns
         an iterator pointing at that element, otherwise an invalid iterator
-        is returned.
-        i.e.
+        is returned; i.e.
         @code
             hashset.find( non_existent_key ) == hashset.end()
         @endcode

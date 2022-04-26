@@ -3,6 +3,7 @@
 // Purpose:     wxGTK implementation of wxNonOwnedWindow.
 // Author:      Vadim Zeitlin
 // Created:     2011-10-12
+// RCS-ID:      $Id$
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -18,18 +19,21 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
     #include "wx/nonownedwnd.h"
     #include "wx/dcclient.h"
     #include "wx/dcmemory.h"
     #include "wx/region.h"
-    #include "wx/scopedptr.h"
 #endif // WX_PRECOMP
 
 #include "wx/graphics.h"
 
-#include "wx/gtk/private/wrapgtk.h"
+#include <gtk/gtk.h>
+#include "wx/gtk/private/gtk2-compat.h"
 
 // ----------------------------------------------------------------------------
 // wxNonOwnedWindowShapeImpl: base class for region and path-based classes.
@@ -86,10 +90,10 @@ public:
     {
     }
 
-    virtual bool CanBeDeleted() const wxOVERRIDE { return true; }
+    virtual bool CanBeDeleted() const { return true; }
 
 private:
-    virtual bool DoSetShape(GdkWindow* window) wxOVERRIDE
+    virtual bool DoSetShape(GdkWindow* window)
     {
         gdk_window_shape_combine_region(window, NULL, 0, 0);
 
@@ -107,10 +111,10 @@ public:
     {
     }
 
-    virtual bool CanBeDeleted() const wxOVERRIDE { return true; }
+    virtual bool CanBeDeleted() const { return true; }
 
 private:
-    virtual bool DoSetShape(GdkWindow* window) wxOVERRIDE
+    virtual bool DoSetShape(GdkWindow* window)
     {
         gdk_window_shape_combine_region(window, m_region.GetRegion(), 0, 0);
 
@@ -132,17 +136,29 @@ public:
         m_mask(CreateShapeBitmap(path), *wxBLACK)
     {
 
-        m_win->Bind(wxEVT_PAINT, &wxNonOwnedWindowShapeImplPath::OnPaint, this);
+        m_win->Connect
+               (
+                wxEVT_PAINT,
+                wxPaintEventHandler(wxNonOwnedWindowShapeImplPath::OnPaint),
+                NULL,
+                this
+               );
     }
 
     virtual ~wxNonOwnedWindowShapeImplPath()
     {
-        m_win->Unbind(wxEVT_PAINT, &wxNonOwnedWindowShapeImplPath::OnPaint, this);
+        m_win->Disconnect
+               (
+                wxEVT_PAINT,
+                wxPaintEventHandler(wxNonOwnedWindowShapeImplPath::OnPaint),
+                NULL,
+                this
+               );
     }
 
     // Currently we always return false from here, if drawing the border
     // becomes optional, we could return true if we don't need to draw it.
-    virtual bool CanBeDeleted() const wxOVERRIDE { return false; }
+    virtual bool CanBeDeleted() const { return false; }
 
 private:
     wxBitmap CreateShapeBitmap(const wxGraphicsPath& path)
@@ -170,17 +186,17 @@ private:
         return bmp;
     }
 
-    virtual bool DoSetShape(GdkWindow *window) wxOVERRIDE
+    virtual bool DoSetShape(GdkWindow *window)
     {
-        if (!m_mask)
+        if (m_mask.GetBitmap() == NULL)
             return false;
 
 #ifdef __WXGTK3__
-        cairo_region_t* region = gdk_cairo_region_create_from_surface(m_mask);
+        cairo_region_t* region = gdk_cairo_region_create_from_surface(m_mask.GetBitmap());
         gdk_window_shape_combine_region(window, region, 0, 0);
         cairo_region_destroy(region);
 #else
-        gdk_window_shape_combine_mask(window, m_mask, 0, 0);
+        gdk_window_shape_combine_mask(window, m_mask.GetBitmap(), 0, 0);
 #endif
 
         return true;

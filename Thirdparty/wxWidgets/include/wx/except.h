@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     17.09.2003
+// RCS-ID:      $Id$
 // Copyright:   (c) 2003 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -11,7 +12,7 @@
 #ifndef _WX_EXCEPT_H_
 #define _WX_EXCEPT_H_
 
-#include "wx\defs.h"
+#include "wx/defs.h"
 
 // ----------------------------------------------------------------------------
 // macros working whether wxUSE_EXCEPTIONS is 0 or 1

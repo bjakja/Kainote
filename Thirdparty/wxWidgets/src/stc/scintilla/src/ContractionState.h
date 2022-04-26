@@ -12,9 +12,6 @@
 namespace Scintilla {
 #endif
 
-template<class T>
-class SparseVector;
-
 /**
  */
 class ContractionState {
@@ -22,7 +19,6 @@ class ContractionState {
 	RunStyles *visible;
 	RunStyles *expanded;
 	RunStyles *heights;
-	SparseVector<const char *> *foldDisplayTexts;
 	Partitioning *displayLines;
 	int linesInDocument;
 
@@ -43,7 +39,6 @@ public:
 	int LinesInDoc() const;
 	int LinesDisplayed() const;
 	int DisplayFromDoc(int lineDoc) const;
-	int DisplayLastFromDoc(int lineDoc) const;
 	int DocFromDisplay(int lineDisplay) const;
 
 	void InsertLine(int lineDoc);
@@ -52,16 +47,10 @@ public:
 	void DeleteLines(int lineDoc, int lineCount);
 
 	bool GetVisible(int lineDoc) const;
-	bool SetVisible(int lineDocStart, int lineDocEnd, bool isVisible);
-	bool HiddenLines() const;
-
-	const char *GetFoldDisplayText(int lineDoc) const;
-	bool SetFoldDisplayText(int lineDoc, const char *text);
+	bool SetVisible(int lineDocStart, int lineDocEnd, bool visible);
 
 	bool GetExpanded(int lineDoc) const;
-	bool SetExpanded(int lineDoc, bool isExpanded);
-	bool GetFoldDisplayTextShown(int lineDoc) const;
-	int ContractedNext(int lineDocStart) const;
+	bool SetExpanded(int lineDoc, bool expanded);
 
 	int GetHeight(int lineDoc) const;
 	bool SetHeight(int lineDoc, int height);

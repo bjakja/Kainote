@@ -3,6 +3,7 @@
 // Purpose:     font management for ports that don't have their own
 // Author:      Vaclav Slavik
 // Created:     2006-11-18
+// RCS-ID:      $Id$
 // Copyright:   (c) 2001-2002 SciTech Software, Inc. (www.scitechsoft.com)
 //              (c) 2006 REA Elektronik GmbH
 // Licence:     wxWindows licence
@@ -70,7 +71,7 @@ public:
 
         @param ptSize   point size of the font to create; note that this is
                         a float and not integer, it should be wxFont's point
-                        size multiplied by wxDC's scale factor
+                        size multipled by wxDC's scale factor
         @param aa       should the font be antialiased?
      */
     virtual wxFontInstance *GetFontInstance(float ptSize, bool aa);
@@ -98,7 +99,7 @@ public:
     /// Returns name of the bundle
     virtual wxString GetName() const = 0;
 
-    /// Returns true if the font is fixed-width
+    /// Returns true if the font is fixe-width
     virtual bool IsFixed() const = 0;
 
     /// Type of faces in the bundle
@@ -204,7 +205,7 @@ public:
     wxFontMgrFontRefData(int size = wxDEFAULT,
                   wxFontFamily family = wxFONTFAMILY_DEFAULT,
                   wxFontStyle style = wxFONTSTYLE_NORMAL,
-                  int weight = wxFONTWEIGHT_NORMAL,
+                  wxFontWeight weight = wxFONTWEIGHT_NORMAL,
                   bool underlined = false,
                   const wxString& faceName = wxEmptyString,
                   wxFontEncoding encoding = wxFONTENCODING_DEFAULT);
@@ -218,18 +219,18 @@ public:
 
     const wxNativeFontInfo *GetNativeFontInfo() const { return &m_info; }
 
-    double GetFractionalPointSize() const { return m_info.pointSize; }
+    int GetPointSize() const { return m_info.pointSize; }
     wxString GetFaceName() const { return m_info.faceName; }
     wxFontFamily GetFamily() const { return m_info.family; }
     wxFontStyle GetStyle() const { return m_info.style; }
-    int GetNumericWeight() const { return m_info.weight; }
+    wxFontWeight GetWeight() const { return m_info.weight; }
     bool GetUnderlined() const { return m_info.underlined; }
     wxFontEncoding GetEncoding() const { return m_info.encoding; }
 
-    void SetFractionalPointSize(double pointSize);
+    void SetPointSize(int pointSize);
     void SetFamily(wxFontFamily family);
     void SetStyle(wxFontStyle style);
-    void SetNumericWeight(int weight);
+    void SetWeight(wxFontWeight weight);
     void SetFaceName(const wxString& faceName);
     void SetUnderlined(bool underlined);
     void SetEncoding(wxFontEncoding encoding);

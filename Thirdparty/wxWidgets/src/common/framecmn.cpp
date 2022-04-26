@@ -3,6 +3,7 @@
 // Purpose:     common (for all platforms) wxFrame functions
 // Author:      Julian Smart, Vadim Zeitlin
 // Created:     01/02/97
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling and Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,11 +19,13 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #include "wx/frame.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/app.h"
     #include "wx/menu.h"
     #include "wx/menuitem.h"
     #include "wx/dcclient.h"
@@ -37,34 +40,16 @@ extern WXDLLEXPORT_DATA(const char) wxStatusLineNameStr[] = "status_line";
 // event table
 // ----------------------------------------------------------------------------
 
-#if wxUSE_MENUS
+#if wxUSE_MENUS && wxUSE_STATUSBAR
 
-wxBEGIN_EVENT_TABLE(wxFrameBase, wxTopLevelWindow)
+BEGIN_EVENT_TABLE(wxFrameBase, wxTopLevelWindow)
     EVT_MENU_OPEN(wxFrameBase::OnMenuOpen)
-#if wxUSE_STATUSBAR
     EVT_MENU_CLOSE(wxFrameBase::OnMenuClose)
 
     EVT_MENU_HIGHLIGHT_ALL(wxFrameBase::OnMenuHighlight)
-#endif // wxUSE_STATUSBAR
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
-/* static */
-bool wxFrameBase::ShouldUpdateMenuFromIdle()
-{
-    // Usually this is determined at compile time and is determined by whether
-    // the platform supports wxEVT_MENU_OPEN, however in wxGTK we need to also
-    // check if we're using the global menu bar as we don't get EVT_MENU_OPEN
-    // for it and need to fall back to idle time updating even if normally
-    // wxUSE_IDLEMENUUPDATES is set to 0 for wxGTK.
-#ifdef __WXGTK20__
-    if ( wxApp::GTKIsUsingGlobalMenu() )
-        return true;
-#endif // !__WXGTK__
-
-    return wxUSE_IDLEMENUUPDATES != 0;
-}
-
-#endif // wxUSE_MENUS
+#endif // wxUSE_MENUS && wxUSE_STATUSBAR
 
 // ============================================================================
 // implementation
@@ -106,8 +91,14 @@ wxFLAGS_MEMBER(wxHSCROLL)
 // frame styles
 wxFLAGS_MEMBER(wxSTAY_ON_TOP)
 wxFLAGS_MEMBER(wxCAPTION)
+#if WXWIN_COMPATIBILITY_2_6
+wxFLAGS_MEMBER(wxTHICK_FRAME)
+#endif // WXWIN_COMPATIBILITY_2_6
 wxFLAGS_MEMBER(wxSYSTEM_MENU)
 wxFLAGS_MEMBER(wxRESIZE_BORDER)
+#if WXWIN_COMPATIBILITY_2_6
+wxFLAGS_MEMBER(wxRESIZE_BOX)
+#endif // WXWIN_COMPATIBILITY_2_6
 wxFLAGS_MEMBER(wxCLOSE_BOX)
 wxFLAGS_MEMBER(wxMAXIMIZE_BOX)
 wxFLAGS_MEMBER(wxMINIMIZE_BOX)
@@ -118,10 +109,10 @@ wxFLAGS_MEMBER(wxFRAME_FLOAT_ON_PARENT)
 wxFLAGS_MEMBER(wxFRAME_SHAPED)
 wxEND_FLAGS( wxFrameStyle )
 
-wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxFrame, wxTopLevelWindow, "wx/frame.h");
+wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxFrame, wxTopLevelWindow, "wx/frame.h")
 
 wxBEGIN_PROPERTIES_TABLE(wxFrame)
-wxEVENT_PROPERTY( Menu, wxEVT_MENU, wxCommandEvent)
+wxEVENT_PROPERTY( Menu, wxEVT_COMMAND_MENU_SELECTED, wxCommandEvent)
 
 wxPROPERTY( Title,wxString, SetTitle, GetTitle, wxString(), 0 /*flags*/, \
            wxT("Helpstring"), wxT("group"))
@@ -145,7 +136,7 @@ wxCONSTRUCTOR_6( wxFrame, wxWindow*, Parent, wxWindowID, Id, wxString, Title, \
 
 wxFrameBase::wxFrameBase()
 {
-#if wxUSE_MENUBAR
+#if wxUSE_MENUS
     m_frameMenuBar = NULL;
 #endif // wxUSE_MENUS
 
@@ -162,9 +153,7 @@ wxFrameBase::wxFrameBase()
 
 wxFrameBase::~wxFrameBase()
 {
-    SendDestroyEvent();
-
-    DeleteAllBars();
+    // this destructor is required for Darwin
 }
 
 wxFrame *wxFrameBase::New(wxWindow *parent,
@@ -180,7 +169,7 @@ wxFrame *wxFrameBase::New(wxWindow *parent,
 
 void wxFrameBase::DeleteAllBars()
 {
-#if wxUSE_MENUBAR
+#if wxUSE_MENUS
     wxDELETE(m_frameMenuBar);
 #endif // wxUSE_MENUS
 
@@ -195,7 +184,7 @@ void wxFrameBase::DeleteAllBars()
 
 bool wxFrameBase::IsOneOfBars(const wxWindow *win) const
 {
-#if wxUSE_MENUBAR
+#if wxUSE_MENUS
     if ( win == GetMenuBar() )
         return true;
 #endif // wxUSE_MENUS
@@ -255,15 +244,11 @@ wxPoint wxFrameBase::GetClientAreaOrigin() const
 
 bool wxFrameBase::ProcessCommand(int id)
 {
-#if wxUSE_MENUBAR
     wxMenuItem* const item = FindItemInMenuBar(id);
     if ( !item )
         return false;
 
     return ProcessCommand(item);
-#else
-    return false;
-#endif
 }
 
 bool wxFrameBase::ProcessCommand(wxMenuItem *item)
@@ -309,13 +294,15 @@ void wxFrameBase::UpdateWindowUI(long flags)
         GetToolBar()->UpdateWindowUI(flags);
 #endif
 
-#if wxUSE_MENUBAR
+#if wxUSE_MENUS
     if (GetMenuBar())
     {
         // If coming from an idle event, we only want to update the menus if
         // we're in the wxUSE_IDLEMENUUPDATES configuration, otherwise they
         // will be update when the menu is opened later
-        if ( !(flags & wxUPDATE_UI_FROMIDLE) || ShouldUpdateMenuFromIdle() )
+#if !wxUSE_IDLEMENUUPDATES
+        if ( !(flags & wxUPDATE_UI_FROMIDLE) )
+#endif // wxUSE_IDLEMENUUPDATES
             DoMenuUpdates();
     }
 #endif // wxUSE_MENUS
@@ -325,46 +312,39 @@ void wxFrameBase::UpdateWindowUI(long flags)
 // event handlers for status bar updates from menus
 // ----------------------------------------------------------------------------
 
-#if wxUSE_MENUS
-
-void wxFrameBase::OnMenuOpen(wxMenuEvent& event)
-{
-    event.Skip();
-
-    if ( !ShouldUpdateMenuFromIdle() )
-    {
-        // as we didn't update the menus from idle time, do it now
-        DoMenuUpdates(event.GetMenu());
-    }
-}
-
-#if wxUSE_STATUSBAR
+#if wxUSE_MENUS && wxUSE_STATUSBAR
 
 void wxFrameBase::OnMenuHighlight(wxMenuEvent& event)
 {
-    event.Skip();
-
+#if wxUSE_STATUSBAR
     (void)ShowMenuHelp(event.GetMenuId());
+#endif // wxUSE_STATUSBAR
 }
 
-void wxFrameBase::OnMenuClose(wxMenuEvent& event)
+void wxFrameBase::OnMenuOpen(wxMenuEvent& event)
 {
-    event.Skip();
+#if wxUSE_IDLEMENUUPDATES
+    wxUnusedVar(event);
+#else // !wxUSE_IDLEMENUUPDATES
+    // as we didn't update the menus from idle time, do it now
+    DoMenuUpdates(event.GetMenu());
+#endif // wxUSE_IDLEMENUUPDATES/!wxUSE_IDLEMENUUPDATES
+}
 
+void wxFrameBase::OnMenuClose(wxMenuEvent& WXUNUSED(event))
+{
     DoGiveHelp(wxEmptyString, false);
 }
 
-#endif // wxUSE_STATUSBAR
-
-#endif // wxUSE_MENUS
+#endif // wxUSE_MENUS && wxUSE_STATUSBAR
 
 // Implement internal behaviour (menu updating on some platforms)
 void wxFrameBase::OnInternalIdle()
 {
     wxTopLevelWindow::OnInternalIdle();
 
-#if wxUSE_MENUS
-    if ( ShouldUpdateMenuFromIdle() && wxUpdateUIEvent::CanUpdate(this) )
+#if wxUSE_MENUS && wxUSE_IDLEMENUUPDATES
+    if (wxUpdateUIEvent::CanUpdate(this))
         DoMenuUpdates();
 #endif
 }
@@ -466,7 +446,7 @@ void wxFrameBase::SetStatusBar(wxStatusBar *statBar)
     {
         PositionStatusBar();
 
-        Layout();
+        DoLayout();
     }
 }
 
@@ -566,7 +546,7 @@ wxToolBar* wxFrameBase::CreateToolBar(long style,
         //      a) this allows us to have different defaults for different
         //         platforms (even if we don't have them right now)
         //      b) we don't need to include wx/toolbar.h in the header then
-        style = wxTB_DEFAULT_STYLE;
+        style = wxBORDER_NONE | wxTB_HORIZONTAL | wxTB_FLAT;
     }
 
     SetToolBar(OnCreateToolBar(style, id, name));
@@ -578,9 +558,15 @@ wxToolBar* wxFrameBase::OnCreateToolBar(long style,
                                         wxWindowID id,
                                         const wxString& name)
 {
+#if defined(__WXWINCE__) && defined(__POCKETPC__)
+    return new wxToolMenuBar(this, id,
+                         wxDefaultPosition, wxDefaultSize,
+                         style, name);
+#else
     return new wxToolBar(this, id,
                          wxDefaultPosition, wxDefaultSize,
                          style, name);
+#endif
 }
 
 void wxFrameBase::SetToolBar(wxToolBar *toolbar)
@@ -598,19 +584,19 @@ void wxFrameBase::SetToolBar(wxToolBar *toolbar)
             m_frameToolBar = toolbar;
             PositionToolBar();
         }
-        //else: tricky: do not reset m_frameToolBar yet as otherwise Layout()
+        //else: tricky: do not reset m_frameToolBar yet as otherwise DoLayout()
         //      wouldn't recognize the (still existing) toolbar as one of our
         //      bars and wouldn't layout the single child of the frame correctly
 
 
-        // and this is even more tricky: we want Layout() to recognize the
+        // and this is even more tricky: we want DoLayout() to recognize the
         // old toolbar for the purpose of not counting it among our non-bar
         // children but we don't want to reserve any more space for it so we
         // temporarily hide it
         if ( m_frameToolBar )
             m_frameToolBar->Hide();
 
-        Layout();
+        DoLayout();
 
         if ( m_frameToolBar )
             m_frameToolBar->Show();
@@ -634,19 +620,16 @@ void wxFrameBase::DoMenuUpdates(wxMenu* menu)
 {
     if (menu)
     {
-        menu->UpdateUI();
+        wxEvtHandler* source = GetEventHandler();
+        menu->UpdateUI(source);
     }
-#if wxUSE_MENUBAR
     else
     {
         wxMenuBar* bar = GetMenuBar();
         if (bar != NULL)
             bar->UpdateMenus();
     }
-#endif
 }
-
-#if wxUSE_MENUBAR
 
 void wxFrameBase::DetachMenuBar()
 {
@@ -685,7 +668,5 @@ wxMenuItem *wxFrameBase::FindItemInMenuBar(int menuId) const
 
     return menuBar ? menuBar->FindItem(menuId) : NULL;
 }
-
-#endif // wxUSE_MENUBAR
 
 #endif // wxUSE_MENUS

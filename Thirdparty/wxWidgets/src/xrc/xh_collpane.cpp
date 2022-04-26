@@ -3,6 +3,7 @@
 // Purpose:     XML resource handler for wxCollapsiblePane
 // Author:      Francesco Montorsi
 // Created:     2006-10-27
+// RCS-ID:      $Id$
 // Copyright:   (c) 2006 Francesco Montorsi
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -10,6 +11,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_XRC && wxUSE_COLLPANE
 
@@ -20,7 +24,7 @@
 #include "wx/collpane.h"
 #include "wx/xrc/xh_collpane.h"
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxCollapsiblePaneXmlHandler, wxXmlResourceHandler);
+IMPLEMENT_DYNAMIC_CLASS(wxCollapsiblePaneXmlHandler, wxXmlResourceHandler)
 
 wxCollapsiblePaneXmlHandler::wxCollapsiblePaneXmlHandler()
 : wxXmlResourceHandler(), m_isInside(false)
@@ -58,7 +62,7 @@ wxObject *wxCollapsiblePaneXmlHandler::DoCreateResource()
     {
         XRC_MAKE_INSTANCE(ctrl, wxCollapsiblePane)
 
-        wxString label = GetText(wxT("label"));
+        wxString label = GetParamValue(wxT("label"));
         if (label.empty())
         {
             ReportParamError("label", "label cannot be empty");

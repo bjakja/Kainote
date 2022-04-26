@@ -3,6 +3,7 @@
 // Purpose:     includes all xh_*.h files
 // Author:      Vaclav Slavik
 // Created:     2000/03/05
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -13,7 +14,6 @@
 
 // Existing handlers:
 
-#include "wx/xrc/xh_activityindicator.h"
 #include "wx/xrc/xh_animatctrl.h"
 #include "wx/xrc/xh_bannerwindow.h"
 #include "wx/xrc/xh_bmp.h"
@@ -30,7 +30,6 @@
 #include "wx/xrc/xh_collpane.h"
 #include "wx/xrc/xh_combo.h"
 #include "wx/xrc/xh_comboctrl.h"
-#include "wx/xrc/xh_dataview.h"
 #include "wx/xrc/xh_datectrl.h"
 #include "wx/xrc/xh_dirpicker.h"
 #include "wx/xrc/xh_dlg.h"
@@ -45,7 +44,6 @@
 #include "wx/xrc/xh_html.h"
 #include "wx/xrc/xh_htmllbox.h"
 #include "wx/xrc/xh_hyperlink.h"
-#include "wx/xrc/xh_infobar.h"
 #include "wx/xrc/xh_listb.h"
 #include "wx/xrc/xh_listc.h"
 #include "wx/xrc/xh_listbk.h"
@@ -59,7 +57,6 @@
 #include "wx/xrc/xh_radbx.h"
 #include "wx/xrc/xh_scrol.h"
 #include "wx/xrc/xh_scwin.h"
-#include "wx/xrc/xh_simplebook.h"
 #include "wx/xrc/xh_sizer.h"
 #include "wx/xrc/xh_slidr.h"
 #include "wx/xrc/xh_spin.h"

@@ -5,6 +5,7 @@
 // Modified by:
 // Created:     14/4/2006
 // Copyright:   (c) Francesco Montorsi
+// RCS-ID:      $Id$
 // Licence:     wxWindows Licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -16,8 +17,8 @@
 #include "wx/dirdlg.h"
 
 
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_DIRPICKER_CHANGED, wxFileDirPickerEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_FILEPICKER_CHANGED, wxFileDirPickerEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEvent );
 
 
 //-----------------------------------------------------------------------------
@@ -31,22 +32,22 @@ public:
     wxGenericFileDirButton() { Init(); }
     wxGenericFileDirButton(wxWindow *parent,
                            wxWindowID id,
-                           const wxString& label = wxASCII_STR(wxFilePickerWidgetLabel),
+                           const wxString& label = wxFilePickerWidgetLabel,
                            const wxString& path = wxEmptyString,
-                           const wxString &message = wxASCII_STR(wxFileSelectorPromptStr),
-                           const wxString &wildcard = wxASCII_STR(wxFileSelectorDefaultWildcardStr),
+                           const wxString &message = wxFileSelectorPromptStr,
+                           const wxString &wildcard = wxFileSelectorDefaultWildcardStr,
                            const wxPoint& pos = wxDefaultPosition,
                            const wxSize& size = wxDefaultSize,
                            long style = 0,
                            const wxValidator& validator = wxDefaultValidator,
-                           const wxString& name = wxASCII_STR(wxFilePickerWidgetNameStr))
+                           const wxString& name = wxFilePickerWidgetNameStr)
     {
         Init();
         Create(parent, id, label, path, message, wildcard,
                pos, size, style, validator, name);
     }
 
-    virtual wxControl *AsControl() wxOVERRIDE { return this; }
+    virtual wxControl *AsControl() { return this; }
 
 public:     // overridable
 
@@ -57,20 +58,20 @@ public:     // overridable
 
     virtual wxEventType GetEventType() const = 0;
 
-    virtual void SetInitialDirectory(const wxString& dir) wxOVERRIDE;
+    virtual void SetInitialDirectory(const wxString& dir);
 
 public:
 
     bool Create(wxWindow *parent, wxWindowID id,
-           const wxString& label = wxASCII_STR(wxFilePickerWidgetLabel),
+           const wxString& label = wxFilePickerWidgetLabel,
            const wxString& path = wxEmptyString,
-           const wxString &message = wxASCII_STR(wxFileSelectorPromptStr),
-           const wxString &wildcard = wxASCII_STR(wxFileSelectorDefaultWildcardStr),
+           const wxString &message = wxFileSelectorPromptStr,
+           const wxString &wildcard = wxFileSelectorDefaultWildcardStr,
            const wxPoint& pos = wxDefaultPosition,
            const wxSize& size = wxDefaultSize,
            long style = 0,
            const wxValidator& validator = wxDefaultValidator,
-           const wxString& name = wxASCII_STR(wxFilePickerWidgetNameStr));
+           const wxString& name = wxFilePickerWidgetNameStr);
 
     // event handler for the click
     void OnButtonClick(wxCommandEvent &);
@@ -104,15 +105,15 @@ public:
     wxGenericFileButton() {}
     wxGenericFileButton(wxWindow *parent,
                         wxWindowID id,
-                        const wxString& label = wxASCII_STR(wxFilePickerWidgetLabel),
+                        const wxString& label = wxFilePickerWidgetLabel,
                         const wxString& path = wxEmptyString,
-                        const wxString &message = wxASCII_STR(wxFileSelectorPromptStr),
-                        const wxString &wildcard = wxASCII_STR(wxFileSelectorDefaultWildcardStr),
+                        const wxString &message = wxFileSelectorPromptStr,
+                        const wxString &wildcard = wxFileSelectorDefaultWildcardStr,
                         const wxPoint& pos = wxDefaultPosition,
                         const wxSize& size = wxDefaultSize,
                         long style = wxFILEBTN_DEFAULT_STYLE,
                         const wxValidator& validator = wxDefaultValidator,
-                        const wxString& name = wxASCII_STR(wxFilePickerWidgetNameStr))
+                        const wxString& name = wxFilePickerWidgetNameStr)
     {
         Create(parent, id, label, path, message, wildcard,
                pos, size, style, validator, name);
@@ -144,19 +145,23 @@ public:     // overridable
         return filedlgstyle;
     }
 
-    virtual wxDialog *CreateDialog() wxOVERRIDE;
+    virtual wxDialog *CreateDialog();
 
-    wxEventType GetEventType() const wxOVERRIDE
-        { return wxEVT_FILEPICKER_CHANGED; }
+    wxEventType GetEventType() const
+        { return wxEVT_COMMAND_FILEPICKER_CHANGED; }
 
 protected:
-    void UpdateDialogPath(wxDialog *p) wxOVERRIDE
+    void UpdateDialogPath(wxDialog *p)
         { wxStaticCast(p, wxFileDialog)->SetPath(m_path); }
-    void UpdatePathFromDialog(wxDialog *p) wxOVERRIDE
+    void UpdatePathFromDialog(wxDialog *p)
         { m_path = wxStaticCast(p, wxFileDialog)->GetPath(); }
 
+    // Set the initial directory for the dialog but without overriding the
+    // directory of the currently selected file, if any.
+    void DoSetInitialDirectory(wxFileDialog* dialog, const wxString& dir);
+
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxGenericFileButton);
+    DECLARE_DYNAMIC_CLASS(wxGenericFileButton)
 };
 
 
@@ -172,14 +177,14 @@ public:
     wxGenericDirButton() {}
     wxGenericDirButton(wxWindow *parent,
                        wxWindowID id,
-                       const wxString& label = wxASCII_STR(wxDirPickerWidgetLabel),
+                       const wxString& label = wxDirPickerWidgetLabel,
                        const wxString& path = wxEmptyString,
-                       const wxString &message = wxASCII_STR(wxDirSelectorPromptStr),
+                       const wxString &message = wxDirSelectorPromptStr,
                        const wxPoint& pos = wxDefaultPosition,
                        const wxSize& size = wxDefaultSize,
                        long style = wxDIRBTN_DEFAULT_STYLE,
                        const wxValidator& validator = wxDefaultValidator,
-                       const wxString& name = wxASCII_STR(wxDirPickerWidgetNameStr))
+                       const wxString& name = wxDirPickerWidgetNameStr)
     {
         Create(parent, id, label, path, message, wxEmptyString,
                pos, size, style, validator, name);
@@ -199,23 +204,20 @@ public:     // overridable
         return dirdlgstyle;
     }
 
-    virtual wxDialog *CreateDialog() wxOVERRIDE;
+    virtual wxDialog *CreateDialog();
 
-    wxEventType GetEventType() const wxOVERRIDE
-        { return wxEVT_DIRPICKER_CHANGED; }
+    wxEventType GetEventType() const
+        { return wxEVT_COMMAND_DIRPICKER_CHANGED; }
 
 protected:
-    void UpdateDialogPath(wxDialog *p) wxOVERRIDE
+    void UpdateDialogPath(wxDialog *p)
         { wxStaticCast(p, wxDirDialog)->SetPath(m_path); }
-    void UpdatePathFromDialog(wxDialog *p) wxOVERRIDE
+    void UpdatePathFromDialog(wxDialog *p)
         { m_path = wxStaticCast(p, wxDirDialog)->GetPath(); }
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxGenericDirButton);
+    DECLARE_DYNAMIC_CLASS(wxGenericDirButton)
 };
 
-// old wxEVT_COMMAND_* constants
-//#define wxEVT_COMMAND_DIRPICKER_CHANGED wxEVT_DIRPICKER_CHANGED
-//#define wxEVT_COMMAND_FILEPICKER_CHANGED wxEVT_FILEPICKER_CHANGED
 
 #endif // _WX_FILEDIRPICKER_H_

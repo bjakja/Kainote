@@ -2,6 +2,7 @@
 // Name:        class_grid.h
 // Purpose:     wxGrid classes group docs
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 

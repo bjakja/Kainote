@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -20,31 +21,29 @@ class WXDLLIMPEXP_CORE wxBitmapButton : public wxBitmapButtonBase
 public:
     wxBitmapButton()
         {
+            SetMargins(wxDEFAULT_BUTTON_MARGIN, wxDEFAULT_BUTTON_MARGIN);
         }
 
-    wxBitmapButton(wxWindow *parent, wxWindowID id, const wxBitmapBundle& bitmap,
+    wxBitmapButton(wxWindow *parent, wxWindowID id, const wxBitmap& bitmap,
                    const wxPoint& pos = wxDefaultPosition,
-                   const wxSize& size = wxDefaultSize, long style = 0,
+                   const wxSize& size = wxDefaultSize, long style = wxBU_AUTODRAW,
                    const wxValidator& validator = wxDefaultValidator,
-                   const wxString& name = wxASCII_STR(wxButtonNameStr))
+                   const wxString& name = wxButtonNameStr)
         {
             Create(parent, id, bitmap, pos, size, style, validator, name);
         }
 
-    bool Create(wxWindow *parent, wxWindowID id, const wxBitmapBundle& bitmap,
+    bool Create(wxWindow *parent, wxWindowID id, const wxBitmap& bitmap,
                 const wxPoint& pos = wxDefaultPosition,
-                const wxSize& size = wxDefaultSize, long style = 0,
+                const wxSize& size = wxDefaultSize, long style = wxBU_AUTODRAW,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxASCII_STR(wxButtonNameStr));
+                const wxString& name = wxButtonNameStr);
 
-    bool CreateCloseButton(wxWindow* parent,
-                           wxWindowID winid,
-                           const wxString& name = wxString());
 protected:
 
-    virtual wxSize DoGetBestSize() const wxOVERRIDE;
+    virtual wxSize DoGetBestSize() const;
 
-    wxDECLARE_DYNAMIC_CLASS(wxBitmapButton);
+    DECLARE_DYNAMIC_CLASS(wxBitmapButton)
 };
 
 #endif // _WX_OSX_BMPBUTTN_H_

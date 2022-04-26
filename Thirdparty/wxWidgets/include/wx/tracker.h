@@ -3,6 +3,7 @@
 // Purpose:     Support class for object lifetime tracking (wxWeakRef<T>)
 // Author:      Arne Steinarson
 // Created:     28 Dec 07
+// RCS-ID:      $Id$
 // Copyright:   (c) 2007 Arne Steinarson
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -10,7 +11,7 @@
 #ifndef _WX_TRACKER_H_
 #define _WX_TRACKER_H_
 
-#include "wx\defs.h"
+#include "wx/defs.h"
 
 class wxEventConnectionRef;
 

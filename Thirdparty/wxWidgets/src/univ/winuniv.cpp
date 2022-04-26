@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     06.08.00
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #include "wx/window.h"
 
@@ -48,7 +52,7 @@
     #define WXDEBUG_REFRESH
 #endif
 
-#if defined(WXDEBUG_REFRESH) && defined(__WXMSW__)
+#if defined(WXDEBUG_REFRESH) && defined(__WXMSW__) && !defined(__WXMICROWIN__)
 #include "wx/msw/private.h"
 #endif
 
@@ -56,7 +60,6 @@
 // implementation
 // ============================================================================
 
-#if wxUSE_SCROLLBAR
 // ----------------------------------------------------------------------------
 // scrollbars class
 // ----------------------------------------------------------------------------
@@ -78,7 +81,6 @@ public:
 
     virtual bool CanBeOutsideClientArea() const { return true; }
 };
-#endif // wxUSE_SCROLLBAR
 
 
 // ----------------------------------------------------------------------------
@@ -87,18 +89,20 @@ public:
 
 // we can't use wxWindowNative here as it won't be expanded inside the macro
 #if defined(__WXMSW__)
-    wxIMPLEMENT_DYNAMIC_CLASS(wxWindow, wxWindowMSW);
+    IMPLEMENT_DYNAMIC_CLASS(wxWindow, wxWindowMSW)
 #elif defined(__WXGTK__)
-    wxIMPLEMENT_DYNAMIC_CLASS(wxWindow, wxWindowGTK);
-#elif defined(__WXOSX__)
-    wxIMPLEMENT_DYNAMIC_CLASS(wxWindow, wxWindowMac);
+    IMPLEMENT_DYNAMIC_CLASS(wxWindow, wxWindowGTK)
+#elif defined(__WXOSX_OR_COCOA__)
+    IMPLEMENT_DYNAMIC_CLASS(wxWindow, wxWindowMac)
 #elif defined(__WXDFB__)
-    wxIMPLEMENT_DYNAMIC_CLASS(wxWindow, wxWindowDFB);
+    IMPLEMENT_DYNAMIC_CLASS(wxWindow, wxWindowDFB)
 #elif defined(__WXX11__)
-    wxIMPLEMENT_DYNAMIC_CLASS(wxWindow, wxWindowX11);
+    IMPLEMENT_DYNAMIC_CLASS(wxWindow, wxWindowX11)
+#elif defined(__WXPM__)
+    IMPLEMENT_DYNAMIC_CLASS(wxWindow, wxWindowOS2)
 #endif
 
-wxBEGIN_EVENT_TABLE(wxWindow, wxWindowNative)
+BEGIN_EVENT_TABLE(wxWindow, wxWindowNative)
     EVT_SIZE(wxWindow::OnSize)
 
 #if wxUSE_ACCEL || wxUSE_MENUS
@@ -113,7 +117,7 @@ wxBEGIN_EVENT_TABLE(wxWindow, wxWindowNative)
     EVT_PAINT(wxWindow::OnPaint)
     EVT_NC_PAINT(wxWindow::OnNcPaint)
     EVT_ERASE_BACKGROUND(wxWindow::OnErase)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 // ----------------------------------------------------------------------------
 // creation
@@ -476,7 +480,7 @@ void wxWindow::Refresh(bool eraseBackground, const wxRect *rect)
         dc.DrawRectangle(rectWin);
 
         // under Unix we use "--sync" X option for this
-        #if defined(__WXMSW__)
+        #if defined(__WXMSW__) && !defined(__WXMICROWIN__)
             ::GdiFlush();
             ::Sleep(200);
         #endif // __WXMSW__
@@ -712,7 +716,7 @@ void wxWindow::OnSize(wxSizeEvent& event)
 #endif
 }
 
-wxSize wxWindow::GetWindowBorderSize() const
+wxSize wxWindow::DoGetBorderSize() const
 {
     return AdjustSize(wxSize(0, 0));
 }
@@ -915,7 +919,7 @@ void wxWindow::SetScrollbar(int orient,
                             bool refresh)
 {
 #if wxUSE_SCROLLBAR
-    wxASSERT_MSG( (range == -1 || pageSize <= range),
+    wxASSERT_MSG( pageSize <= range,
                     wxT("page size can't be greater than range") );
 
     bool hasClientSizeChanged = false;
@@ -958,10 +962,10 @@ void wxWindow::SetScrollbar(int orient,
         if ( scrollbar )
         {
             // wxALWAYS_SHOW_SB only applies to the vertical scrollbar
-            if ( range == -1 || ((orient & wxVERTICAL) && (GetWindowStyle() & wxALWAYS_SHOW_SB)) )
+            if ( (orient & wxVERTICAL) && (GetWindowStyle() & wxALWAYS_SHOW_SB) )
             {
                 // just disable the scrollbar
-                scrollbar->SetScrollbar(pos, pageSize, range == -1 ? 0 : range, pageSize, refresh);
+                scrollbar->SetScrollbar(pos, pageSize, range, pageSize, refresh);
                 scrollbar->Disable();
             }
             else // really remove the scrollbar
@@ -1318,7 +1322,7 @@ void wxWindow::OnKeyDown(wxKeyEvent& event)
         int command = win->GetAcceleratorTable()->GetCommand(event);
         if ( command != -1 )
         {
-            wxCommandEvent eventCmd(wxEVT_MENU, command);
+            wxCommandEvent eventCmd(wxEVT_COMMAND_MENU_SELECTED, command);
             if ( win->GetEventHandler()->ProcessEvent(eventCmd) )
             {
                 // skip "event.Skip()" below
@@ -1349,7 +1353,7 @@ void wxWindow::OnKeyDown(wxKeyEvent& event)
                 wxWindow* child = win->FindWindow(command);
                 if ( child && wxDynamicCast(child, wxButton) )
                 {
-                    wxCommandEvent eventCmd(wxEVT_BUTTON, command);
+                    wxCommandEvent eventCmd(wxEVT_COMMAND_BUTTON_CLICKED, command);
                     eventCmd.SetEventObject(child);
                     if ( child->GetEventHandler()->ProcessEvent(eventCmd) )
                     {
@@ -1424,7 +1428,7 @@ void wxWindow::OnChar(wxKeyEvent& event)
             wxButton *btn = wxDynamicCast(tlw->GetDefaultItem(), wxButton);
             if ( btn )
             {
-                wxCommandEvent evt(wxEVT_BUTTON, btn->GetId());
+                wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, btn->GetId());
                 evt.SetEventObject(btn);
                 btn->Command(evt);
                 return;

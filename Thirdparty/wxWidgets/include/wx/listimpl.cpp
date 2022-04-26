@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     16/11/98
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -16,7 +17,7 @@
     {                                                                         \
         delete X;                                                             \
     }                                                                         \
-    _WX_LIST_HELPER_##name::BaseListType _WX_LIST_HELPER_##name::EmptyList;
+    name::BaseListType name::EmptyList;
 
 #else // !wxUSE_STD_CONTAINERS
     #undef WX_DEFINE_LIST_2

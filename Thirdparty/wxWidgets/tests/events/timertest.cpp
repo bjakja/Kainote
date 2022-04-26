@@ -3,6 +3,7 @@
 // Purpose:     Test wxTimer events
 // Author:      Vadim Zeitlin
 // Created:     2008-10-22
+// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Vadim Zeitlin <vadim@wxwidgets.org>
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -12,6 +13,9 @@
 
 #include "testprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
 #endif // WX_PRECOMP
@@ -49,7 +53,7 @@ private:
 
     int m_events;
 
-    wxDECLARE_NO_COPY_CLASS(TimerCounterHandler);
+    DECLARE_NO_COPY_CLASS(TimerCounterHandler)
 };
 
 // --------------------------------------------------------------------------
@@ -70,7 +74,7 @@ private:
     void OneShot();
     void Multiple();
 
-    wxDECLARE_NO_COPY_CLASS(TimerEventTestCase);
+    DECLARE_NO_COPY_CLASS(TimerEventTestCase)
 };
 
 // register in the unnamed registry so that these tests are run by default
@@ -91,11 +95,11 @@ void TimerEventTestCase::OneShot()
         }
 
     private:
-        virtual void Tick() wxOVERRIDE { m_loop.Exit(); }
+        virtual void Tick() { m_loop.Exit(); }
 
         wxEventLoopBase& m_loop;
 
-        // don't use wxDECLARE_NO_COPY_CLASS() to avoid upsetting MSVC
+        // don't use DECLARE_NO_COPY_CLASS() to avoid upsetting MSVC
     };
 
     wxEventLoop loop;

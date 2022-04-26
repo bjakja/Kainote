@@ -5,6 +5,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -21,7 +22,7 @@ class WXDLLIMPEXP_CORE wxMessageDialog : public wxMessageDialogBase
 public:
     wxMessageDialog(wxWindow *parent,
                     const wxString& message,
-                    const wxString& caption = wxASCII_STR(wxMessageBoxCaptionStr),
+                    const wxString& caption = wxMessageBoxCaptionStr,
                     long style = wxOK | wxCENTRE,
                     const wxPoint& WXUNUSED(pos) = wxDefaultPosition)
         : wxMessageDialogBase(parent, message, caption, style)
@@ -37,7 +38,7 @@ public:
 protected:
     long        m_result;
 
-    wxDECLARE_DYNAMIC_CLASS(wxMessageDialog);
+    DECLARE_DYNAMIC_CLASS(wxMessageDialog)
 };
 
 #endif // _WX_MSGBOXDLG_H_

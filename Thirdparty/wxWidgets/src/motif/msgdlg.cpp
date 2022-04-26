@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     04/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -39,14 +40,13 @@
     #include "wx/settings.h"
 #endif
 
-#include "wx/modalhook.h"
 #include "wx/motif/private.h"
 
 // ----------------------------------------------------------------------------
 // macros
 // ----------------------------------------------------------------------------
 
-    wxIMPLEMENT_CLASS(wxMessageDialog, wxDialog);
+    IMPLEMENT_CLASS(wxMessageDialog, wxDialog)
 
 // ============================================================================
 // implementation
@@ -105,8 +105,6 @@ extern "C"
 
 int wxMessageDialog::ShowModal()
 {
-    WX_HOOK_MODAL_DIALOG();
-
     const long style = GetMessageDialogStyle();
 
     DialogCreateFunction dialogCreateFunction;

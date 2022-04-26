@@ -2,6 +2,7 @@
 // Name:        html/helpdlg.h
 // Purpose:     interface of wxHtmlHelpDialog
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -15,7 +16,7 @@
     @library{wxhtml}
     @category{help,html}
 */
-class wxHtmlHelpDialog : public wxDialog
+class wxHtmlHelpDialog : public wxFrame
 {
 public:
     wxHtmlHelpDialog(wxHtmlHelpData* data = NULL);
@@ -25,7 +26,7 @@ public:
 
         For the possible values of @a style, please see wxHtmlHelpController.
     */
-    wxHtmlHelpDialog(wxWindow* parent, wxWindowID id,
+    wxHtmlHelpDialog(wxWindow* parent, int wxWindowID,
                      const wxString& title = wxEmptyString,
                      int style = wxHF_DEFAULT_STYLE,
                      wxHtmlHelpData* data = NULL);

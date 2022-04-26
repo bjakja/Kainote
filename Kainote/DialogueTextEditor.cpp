@@ -23,8 +23,8 @@
 #include "config.h"
 #include "Menu.h"
 #include <wx/regex.h>
-#include <wx/msw/winundef.h>
 #include <wx/clipbrd.h>
+#include <wx/msw/winundef.h>
 #include <wx/dc.h>
 #include <wx/dcclient.h>
 #include "KaiMessageBox.h"

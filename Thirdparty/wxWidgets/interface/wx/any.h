@@ -2,6 +2,7 @@
 // Name:        any.h
 // Purpose:     interface of wxAny
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -47,11 +48,6 @@
     object in heap for large objects (i.e. ones with size more than
     WX_ANY_VALUE_BUFFER_SIZE, which at the time of writing is 16 bytes).
 
-    @note When performing conversions between strings and floating point
-        numbers, the representation of numbers in C locale is always used.
-        I.e. @code wxAny("1.23").GetAs<double>() @endcode will always work,
-        even if the current locale uses comma as decimal separator.
-
     @library{wxbase}
     @category{data}
 
@@ -84,25 +80,6 @@ public:
                  cannot be converted to a specific data type, wxAny will then
                  hold and manage reference to wxVariantData* similar to how
                  wxVariant does.
-
-                 Note that objects constructed from list-valued variants
-                 require the list to be explicitly cleared using `WX_CLEAR_LIST`
-                 to avoid leaking memory. This unfortunate behaviour will not
-                 be changed to prevent breaking the existing code relying on it.
-
-                 @code
-                 wxVariant vList;
-                 vList.NullList();
-                 vList.Append(15);
-                 vList.Append("abc");
-
-                 // Create wxAny from the list variant.
-                 wxAny any = wxAny(vList);
-
-                 // Clear the list to avoid the memory leak.
-                 wxAnyList anyList = any.As<wxAnyList>();
-                 WX_CLEAR_LIST(wxAnyList, anyList);
-                 @endcode
     */
     wxAny(const wxVariant& variant);
 
@@ -116,9 +93,13 @@ public:
         no type conversion is performed, so if the type is incorrect an
         assertion failure will occur.
 
-        @remarks For convenience, conversion is done when T is wxString. This
+        @remarks For conveniency, conversion is done when T is wxString. This
                  is useful when a string literal (which are treated as
                  const char* and const wchar_t*) has been assigned to wxAny.
+
+                 This template function may not work properly with Visual C++
+                 6. For full compiler compatibility, please use
+                 wxANY_AS(any, T) macro instead.
     */
     template<typename T>
     T As() const;
@@ -126,6 +107,10 @@ public:
     /**
         Use this template function for checking if this wxAny holds
         a specific C++ data type.
+
+        @remarks This template function may not work properly with Visual C++
+                6. For full compiler compatibility, please use
+                wxANY_CHECK_TYPE(any, T) macro instead.
 
         @see wxAnyValueType::CheckType()
     */
@@ -244,6 +229,19 @@ public:
     bool operator!=(const wxString& value) const;
     //@}
 };
+
+/**
+    This is value getter macro that is more compatible with older
+    compilers, such as Visual C++ 6.0.
+*/
+#define wxANY_AS(any, T)
+
+
+/**
+    This is type checking macro that is more compatible with older
+    compilers, such as Visual C++ 6.0.
+*/
+#define wxANY_CHECK_TYPE(any, T)
 
 
 /**
@@ -396,6 +394,11 @@ public:
         Use this template function for checking if wxAnyValueType represents
         a specific C++ data type.
 
+        @remarks This template function does not work on some older compilers
+                (such as Visual C++ 6.0). For full compiler compatibility
+                please use wxANY_VALUE_TYPE_CHECK_TYPE(valueTypePtr, T) macro
+                instead.
+
         @see wxAny::CheckType()
     */
     template <typename T>
@@ -433,3 +436,9 @@ public:
     */
     virtual bool IsSameType(const wxAnyValueType* otherType) const = 0;
 };
+
+/**
+    This is type checking macro that is more compatible with older
+    compilers, such as Visual C++ 6.0.
+*/
+#define wxANY_VALUE_TYPE_CHECK_TYPE(valueTypePtr, T)

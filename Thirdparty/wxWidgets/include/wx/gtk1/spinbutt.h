@@ -3,6 +3,7 @@
 // Purpose:     wxSpinButton class
 // Author:      Robert Roebling
 // Modified by:
+// RCS-ID:      $Id$
 // Copyright:   (c) Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -56,8 +57,8 @@ protected:
     virtual wxSize DoGetBestSize() const;
 
 private:
-    wxDECLARE_EVENT_TABLE();
-    wxDECLARE_DYNAMIC_CLASS(wxSpinButton);
+    DECLARE_EVENT_TABLE()
+    DECLARE_DYNAMIC_CLASS(wxSpinButton)
 };
 
 #endif

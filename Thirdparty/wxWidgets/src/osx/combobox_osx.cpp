@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -16,16 +17,7 @@
 #include "wx/osx/private.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/button.h"
-    #include "wx/toplevel.h"
 #endif
-
-typedef wxWindowWithItems<wxControl, wxComboBoxBase> RealwxComboBoxBase;
-
-wxBEGIN_EVENT_TABLE(wxComboBox, RealwxComboBoxBase)
-    EVT_CHAR(wxComboBox::OnChar)
-    EVT_KEY_DOWN(wxComboBox::OnKeyDown)
-wxEND_EVENT_TABLE()
 
 // work in progress
 
@@ -64,6 +56,9 @@ bool wxComboBox::Create(wxWindow *parent, wxWindowID id,
     
     if ( !wxControl::Create( parent, id, pos, size, style, validator, name ) )
         return false;
+
+    wxASSERT_MSG( !(style & wxCB_SORT),
+                  "wxCB_SORT not currently supported by wxOSX/Cocoa");
 
     SetPeer(wxWidgetImpl::CreateComboBox( this, parent, id, NULL, pos, size, style, GetExtraStyle() ));
 
@@ -194,28 +189,13 @@ wxString wxComboBox::GetStringSelection() const
     return sel == wxNOT_FOUND ? wxString() : GetString(sel);
 }
 
-void wxComboBox::SetValue(const wxString& value)
-{
-    if ( HasFlag(wxCB_READONLY) )
-        SetStringSelection( value ) ;
-    else
-        wxTextEntry::SetValue( value );
-}
-
 void wxComboBox::SetString(unsigned int n, const wxString& s)
 {
     // Notice that we shouldn't delete and insert the item in this control
     // itself as this would also affect the client data which we need to
     // preserve here.
-    const int sel = GetSelection();
     GetComboPeer()->RemoveItem(n);
     GetComboPeer()->InsertItem(n, s);
-    // When selected item is removed its selection is invalidated
-    // so we need to re-select it manually.
-    if ( sel == int(n) )
-    {
-        SetSelection(n);
-    }
     SetValue(s); // changing the item in the list won't update the display item
 }
 
@@ -227,7 +207,7 @@ void wxComboBox::EnableTextChangedEvents(bool WXUNUSED(enable))
 
 bool wxComboBox::OSXHandleClicked( double WXUNUSED(timestampsec) )
 {
-    wxCommandEvent event(wxEVT_COMBOBOX, m_windowId );
+    wxCommandEvent event(wxEVT_COMMAND_COMBOBOX_SELECTED, m_windowId );
     event.SetInt(GetSelection());
     event.SetEventObject(this);
     event.SetString(GetStringSelection());
@@ -248,81 +228,6 @@ void wxComboBox::Popup()
 void wxComboBox::Dismiss()
 {
     GetComboPeer()->Dismiss();
-}
-
-void wxComboBox::OnChar(wxKeyEvent& event)
-{
-    const int key = event.GetKeyCode();
-    bool eat_key = false;
-
-    switch (key)
-    {
-        case WXK_RETURN:
-        case WXK_NUMPAD_ENTER:
-            if (m_windowStyle & wxTE_PROCESS_ENTER)
-            {
-                wxCommandEvent event(wxEVT_TEXT_ENTER, m_windowId);
-                event.SetEventObject(this);
-                event.SetString(GetValue());
-                if (HandleWindowEvent(event))
-                    return;
-            }
-
-            {
-                wxTopLevelWindow *tlw = wxDynamicCast(wxGetTopLevelParent(this), wxTopLevelWindow);
-                if (tlw && tlw->GetDefaultItem())
-                {
-                    wxButton *def = wxDynamicCast(tlw->GetDefaultItem(), wxButton);
-                    if (def && def->IsEnabled())
-                    {
-                        wxCommandEvent event(wxEVT_BUTTON, def->GetId());
-                        event.SetEventObject(def);
-                        def->Command(event);
-                        return;
-                    }
-                }
-
-                // this will make wxWidgets eat the ENTER key so that
-                // we actually prevent line wrapping in a single line text control
-                eat_key = true;
-            }
-            break;
-    }
-
-    if (!eat_key)
-    {
-        // perform keystroke handling
-        event.Skip(true);
-    }
-}
-
-void wxComboBox::OnKeyDown(wxKeyEvent& event)
-{
-    if (event.GetModifiers() == wxMOD_CONTROL)
-    {
-        switch(event.GetKeyCode())
-        {
-            case 'A':
-                SelectAll();
-                return;
-            case 'C':
-                if (CanCopy())
-                    Copy();
-                return;
-            case 'V':
-                if (CanPaste())
-                    Paste();
-                return;
-            case 'X':
-                if (CanCut())
-                    Cut();
-                return;
-            default:
-                break;
-        }
-    }
-    // no, we didn't process it
-    event.Skip();
 }
 
 #endif // wxUSE_COMBOBOX && wxOSX_USE_COCOA

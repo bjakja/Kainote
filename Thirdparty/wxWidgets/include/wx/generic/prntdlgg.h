@@ -5,6 +5,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -83,11 +84,11 @@ public:
     wxPostScriptPrintNativeData();
     virtual ~wxPostScriptPrintNativeData();
 
-    virtual bool TransferTo( wxPrintData &data ) wxOVERRIDE;
-    virtual bool TransferFrom( const wxPrintData &data ) wxOVERRIDE;
+    virtual bool TransferTo( wxPrintData &data );
+    virtual bool TransferFrom( const wxPrintData &data );
 
-    virtual bool Ok() const wxOVERRIDE { return IsOk(); }
-    virtual bool IsOk() const wxOVERRIDE { return true; }
+    virtual bool Ok() const { return IsOk(); }
+    virtual bool IsOk() const { return true; }
 
     const wxString& GetPrinterCommand() const { return m_printerCommand; }
     const wxString& GetPrinterOptions() const { return m_printerOptions; }
@@ -128,7 +129,7 @@ private:
 #endif
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxPostScriptPrintNativeData);
+    DECLARE_DYNAMIC_CLASS(wxPostScriptPrintNativeData)
 };
 
 // ----------------------------------------------------------------------------
@@ -149,16 +150,16 @@ public:
     void OnRange(wxCommandEvent& event);
     void OnOK(wxCommandEvent& event);
 
-    virtual bool TransferDataFromWindow() wxOVERRIDE;
-    virtual bool TransferDataToWindow() wxOVERRIDE;
+    virtual bool TransferDataFromWindow();
+    virtual bool TransferDataToWindow();
 
-    virtual int ShowModal() wxOVERRIDE;
+    virtual int ShowModal();
 
-    wxPrintData& GetPrintData() wxOVERRIDE
+    wxPrintData& GetPrintData()
         { return m_printDialogData.GetPrintData(); }
 
-    wxPrintDialogData& GetPrintDialogData() wxOVERRIDE { return m_printDialogData; }
-    wxDC *GetPrintDC() wxOVERRIDE;
+    wxPrintDialogData& GetPrintDialogData() { return m_printDialogData; }
+    wxDC *GetPrintDC();
 
 public:
 //    wxStaticText*       m_printerMessage;
@@ -177,8 +178,8 @@ protected:
     void Init(wxWindow *parent);
 
 private:
-    wxDECLARE_EVENT_TABLE();
-    wxDECLARE_DYNAMIC_CLASS(wxGenericPrintDialog);
+    DECLARE_EVENT_TABLE()
+    DECLARE_DYNAMIC_CLASS(wxGenericPrintDialog)
 };
 
 class WXDLLIMPEXP_CORE wxGenericPrintSetupDialog : public wxDialog
@@ -193,8 +194,8 @@ public:
 
     void OnPrinter(wxListEvent& event);
 
-    virtual bool TransferDataFromWindow() wxOVERRIDE;
-    virtual bool TransferDataToWindow() wxOVERRIDE;
+    virtual bool TransferDataFromWindow();
+    virtual bool TransferDataToWindow();
 
     virtual wxComboBox *CreatePaperTypeChoice();
 
@@ -213,8 +214,8 @@ public:
     wxPrintData*        m_targetData;
 
 private:
-    wxDECLARE_EVENT_TABLE();
-    wxDECLARE_CLASS(wxGenericPrintSetupDialog);
+    DECLARE_EVENT_TABLE()
+    DECLARE_CLASS(wxGenericPrintSetupDialog)
 };
 #endif
     // wxUSE_POSTSCRIPT
@@ -226,10 +227,10 @@ public:
                              wxPageSetupDialogData* data = NULL);
     virtual ~wxGenericPageSetupDialog();
 
-    virtual bool TransferDataFromWindow() wxOVERRIDE;
-    virtual bool TransferDataToWindow() wxOVERRIDE;
+    virtual bool TransferDataFromWindow();
+    virtual bool TransferDataToWindow();
 
-    virtual wxPageSetupDialogData& GetPageSetupDialogData() wxOVERRIDE;
+    virtual wxPageSetupDialogData& GetPageSetupDialogData();
 
     void OnPrinter(wxCommandEvent& event);
     wxComboBox *CreatePaperTypeChoice(int* x, int* y);
@@ -246,8 +247,8 @@ public:
     wxPageSetupDialogData m_pageData;
 
 private:
-    wxDECLARE_EVENT_TABLE();
-    wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxGenericPageSetupDialog);
+    DECLARE_EVENT_TABLE()
+    DECLARE_DYNAMIC_CLASS_NO_COPY(wxGenericPageSetupDialog)
 };
 
 #endif

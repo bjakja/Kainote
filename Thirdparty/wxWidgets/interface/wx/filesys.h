@@ -2,6 +2,7 @@
 // Name:        filesys.h
 // Purpose:     interface of wxFileSystem, wxFileSystemHandler, wxFSFile
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -64,7 +65,7 @@ public:
        Remove a filesystem handler from the list of handlers.
     */
     static wxFileSystemHandler* RemoveHandler(wxFileSystemHandler *handler);
-
+    
     /**
         Sets the current location. @a location parameter passed to OpenFile() is
         relative to this path.
@@ -186,7 +187,7 @@ public:
     @class wxFSFile
 
     This class represents a single file opened by wxFileSystem.
-    It provides more information than wxWidgets' input streams
+    It provides more informations than wxWidgets' input streams
     (stream, filename, mime type, anchor).
 
     @note Any pointer returned by a method of wxFSFile is valid only as long as
@@ -493,7 +494,7 @@ public:
 
         Use wxStreamBase::IsOk() to verify if the constructor succeeded.
     */
-    wxFSInputStream(const wxString& filename, int flags = 0);
+    wxFileInputStream(const wxString& filename, int flags = 0);
 
     /**
         Returns @true if the stream is initialized and ready.

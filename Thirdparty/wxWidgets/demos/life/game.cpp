@@ -4,6 +4,7 @@
 // Author:      Guillermo Rodriguez Garcia, <guille@iies.es>
 // Modified by:
 // Created:     Jan/2000
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000, Guillermo Rodriguez Garcia
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -14,6 +15,10 @@
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
+
+#ifdef __BORLANDC__
+#pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
 #include "wx/wx.h"
@@ -580,7 +585,7 @@ extern int g_tab2[];
 bool Life::NextTic()
 {
     LifeCellBox  *c, *up, *dn, *lf, *rt;
-    wxUint32 t1, t2;
+    wxUint32 t1, t2, t3, t4;
     bool     changed = false;
 
     m_numcells = 0;
@@ -829,7 +834,6 @@ bool Life::NextTic()
         t1 = 0;
         t2 = 0;
 
-        wxUint32 t3, t4;
         t3 = c->m_live1;
         c->m_old1 = t3;
 
@@ -919,15 +923,15 @@ bool Life::NextTic()
 
 class LifeModule: public wxModule
 {
-    wxDECLARE_DYNAMIC_CLASS(LifeModule);
+DECLARE_DYNAMIC_CLASS(LifeModule)
 
 public:
-    LifeModule() {}
-    bool OnInit() wxOVERRIDE;
-    void OnExit() wxOVERRIDE;
+    LifeModule() {};
+    bool OnInit();
+    void OnExit();
 };
 
-wxIMPLEMENT_DYNAMIC_CLASS(LifeModule, wxModule);
+IMPLEMENT_DYNAMIC_CLASS(LifeModule, wxModule)
 
 bool LifeModule::OnInit()
 {

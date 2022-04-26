@@ -4,6 +4,7 @@
 // Notes:       Based on htmlhelp.cpp, implementing a monolithic
 //              HTML Help controller class,  by Vaclav Slavik
 // Author:      Harm van der Heijden and Vaclav Slavik
+// RCS-ID:      $Id$
 // Copyright:   (c) Harm van der Heijden and Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -32,11 +33,11 @@ class WXDLLIMPEXP_HTML wxHtmlBookRecord
 public:
     wxHtmlBookRecord(const wxString& bookfile, const wxString& basepath,
                      const wxString& title, const wxString& start)
-        : m_BookFile(bookfile)
-        , m_BasePath(basepath)
-        , m_Title(title)
-        , m_Start(start)
     {
+        m_BookFile = bookfile;
+        m_BasePath = basepath;
+        m_Title = title;
+        m_Start = start;
         // for debugging, give the contents index obvious default values
         m_ContentsStart = m_ContentsEnd = -1;
     }
@@ -138,10 +139,10 @@ public:
                        bool case_sensitive, bool whole_words_only,
                        const wxString& book = wxEmptyString);
     bool Search();  // do the next iteration
-    bool IsActive() const { return m_Active; }
-    int GetCurIndex() const { return m_CurIndex; }
-    int GetMaxIndex() const { return m_MaxIndex; }
-    const wxString& GetName() const { return m_Name; }
+    bool IsActive() { return m_Active; }
+    int GetCurIndex() { return m_CurIndex; }
+    int GetMaxIndex() { return m_MaxIndex; }
+    const wxString& GetName() { return m_Name; }
 
     const wxHtmlHelpDataItem *GetCurItem() const { return m_CurItem; }
 
@@ -161,7 +162,7 @@ private:
 
 class WXDLLIMPEXP_HTML wxHtmlHelpData : public wxObject
 {
-    wxDECLARE_DYNAMIC_CLASS(wxHtmlHelpData);
+    DECLARE_DYNAMIC_CLASS(wxHtmlHelpData)
     friend class wxHtmlSearchStatus;
 
 public:
@@ -203,7 +204,7 @@ protected:
     wxHtmlBookRecArray m_bookRecords;
 
     wxHtmlHelpDataItems m_contents; // list of all available books and pages
-    wxHtmlHelpDataItems m_index; // list of index items
+    wxHtmlHelpDataItems m_index; // list of index itesm
 
 protected:
     // Imports .hhp files (MS HTML Help Workshop)

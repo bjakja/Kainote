@@ -4,7 +4,8 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     21.06.2003 (extracted from common/fontmap.cpp)
-// Copyright:   (c) 1999-2003 Vadim Zeitlin <vadim@wxwidgets.org>
+// RCS-ID:      $Id$
+// Copyright:   (c) 1999-2003 Vadim Zeitlin <vadim@wxwindows.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -17,33 +18,36 @@
 // ----------------------------------------------------------------------------
 
 // for compilers that support precompilation, includes "wx.h".
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_FONTMAP
 
 #ifndef WX_PRECOMP
-    #include "wx\app.h"
-    #include "wx\log.h"
-    #include "wx\intl.h"
-    #include "wx\module.h"
-    #include "wx\wxcrtvararg.h"
+    #include "wx/app.h"
+    #include "wx/log.h"
+    #include "wx/intl.h"
+    #include "wx/module.h"
+    #include "wx/wxcrtvararg.h"
 #endif //WX_PRECOMP
 
 #if defined(__WINDOWS__)
-    #include  "wx\msw/private.h"  // includes windows.h for LOGFONT
-    #include  "wx\msw/winundef.h"
+    #include  "wx/msw/private.h"  // includes windows.h for LOGFONT
+    #include  "wx/msw/winundef.h"
 #endif
 
-#include "wx\fontmap.h"
-#include "wx\fmappriv.h"
+#include "wx/fontmap.h"
+#include "wx/fmappriv.h"
 
-#include "wx\apptrait.h"
+#include "wx/apptrait.h"
 
 // wxMemoryConfig uses wxFileConfig
 #if wxUSE_CONFIG && wxUSE_FILECONFIG
-    #include "wx\config.h"
-    #include "wx\memconf.h"
+    #include "wx/config.h"
+    #include "wx/memconf.h"
 #endif
 
 // ----------------------------------------------------------------------------
@@ -359,7 +363,7 @@ class wxFontMapperModule : public wxModule
 public:
     wxFontMapperModule() : wxModule() { }
 
-    virtual bool OnInit() wxOVERRIDE
+    virtual bool OnInit()
     {
         // a dummy wxFontMapperBase object could have been created during the
         // program startup before wxApp was created, we have to delete it to
@@ -373,15 +377,15 @@ public:
         return true;
     }
 
-    virtual void OnExit() wxOVERRIDE
+    virtual void OnExit()
     {
         wxFontMapperBase::Reset();
     }
 
-    wxDECLARE_DYNAMIC_CLASS(wxFontMapperModule);
+    DECLARE_DYNAMIC_CLASS(wxFontMapperModule)
 };
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxFontMapperModule, wxModule);
+IMPLEMENT_DYNAMIC_CLASS(wxFontMapperModule, wxModule)
 
 
 // ============================================================================
@@ -404,7 +408,8 @@ wxFontMapperBase::wxFontMapperBase()
 wxFontMapperBase::~wxFontMapperBase()
 {
 #if wxUSE_CONFIG && wxUSE_FILECONFIG
-    delete m_configDummy;
+    if ( m_configDummy )
+        delete m_configDummy;
 #endif // wxUSE_CONFIG
 }
 
@@ -413,7 +418,7 @@ wxFontMapperBase *wxFontMapperBase::Get()
 {
     if ( !sm_instance )
     {
-        wxAppTraits *traits = wxApp::GetTraitsIfExists();
+        wxAppTraits *traits = wxTheApp ? wxTheApp->GetTraits() : NULL;
         if ( traits )
         {
             sm_instance = traits->CreateFontMapper();

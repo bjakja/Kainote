@@ -2,21 +2,25 @@
 // Name:        src/common/arcall.cpp
 // Purpose:     wxArchive link all archive streams
 // Author:      Mike Wetherell
+// RCS-ID:      $Id$
 // Copyright:   (c) 2006 Mike Wetherell
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_ARCHIVE_STREAMS
 
 #if wxUSE_ZIPSTREAM
-#include "wx\zipstrm.h"
+#include "wx/zipstrm.h"
 #endif
 #if wxUSE_TARSTREAM
-#include "wx\tarstrm.h"
+#include "wx/tarstrm.h"
 #endif
 
 // Reference archive classes to ensure they are linked into a statically

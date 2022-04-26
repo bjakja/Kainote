@@ -4,6 +4,7 @@
 // Author:      David Elliott
 // Modified by:
 // Created:     2004/04/12
+// RCS-ID:      $Id$
 // Copyright:   (c) 2004 David Elliott
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,6 +13,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #include "wx/region.h"
 
@@ -57,13 +61,13 @@ public:
         Region r,
         wxRect *rect);
     static bool XOffsetRegion(
-        Region pRegion,
-        int x,
-        int y);
+        register Region pRegion,
+        register int x,
+        register int y);
     static bool XIntersectRegion(
         Region reg1,
         Region reg2,          /* source regions     */
-        Region newReg);               /* destination Region */
+        register Region newReg);               /* destination Region */
     static bool XUnionRegion(
         Region reg1,
         Region reg2,             /* source regions     */
@@ -71,7 +75,7 @@ public:
     static bool XSubtractRegion(
         Region regM,
         Region regS,
-        Region regD);
+        register Region regD);
     static bool XXorRegion(Region sra, Region srb, Region dr);
     static bool XEmptyRegion(
         Region r);
@@ -80,7 +84,7 @@ public:
         Region pRegion,
         int x, int y);
     static wxRegionContain XRectInRegion(
-        Region region,
+        register Region region,
         int rx, int ry,
         unsigned int rwidth, unsigned int rheight);
 
@@ -90,77 +94,77 @@ protected:
         Region pReg);
     static bool XDestroyRegion(Region r);
     static int miIntersectO (
-        Region pReg,
-        BoxPtr r1,
+        register Region pReg,
+        register BoxPtr r1,
         BoxPtr r1End,
-        BoxPtr r2,
+        register BoxPtr r2,
         BoxPtr r2End,
         wxCoord y1,
         wxCoord y2);
     static void miRegionCopy(
-        Region dstrgn,
-        Region rgn);
+        register Region dstrgn,
+        register Region rgn);
     static int miCoalesce(
-        Region pReg, /* Region to coalesce */
+        register Region pReg, /* Region to coalesce */
         int prevStart, /* Index of start of previous band */
         int curStart); /* Index of start of current band */
     static void miRegionOp(
-        Region newReg, /* Place to store result */
+        register Region newReg, /* Place to store result */
         Region reg1, /* First region in operation */
         Region reg2, /* 2d region in operation */
         int (*overlapFunc)(
-            Region     pReg,
-            BoxPtr     r1,
+            register Region     pReg,
+            register BoxPtr     r1,
             BoxPtr              r1End,
-            BoxPtr     r2,
+            register BoxPtr     r2,
             BoxPtr              r2End,
             wxCoord             y1,
             wxCoord             y2), /* Function to call for over-
                                       * lapping bands */
         int (*nonOverlap1Func)(
-            Region     pReg,
-            BoxPtr     r,
+            register Region     pReg,
+            register BoxPtr     r,
             BoxPtr              rEnd,
-            wxCoord    y1,
-            wxCoord    y2), /* Function to call for non-
+            register wxCoord    y1,
+            register wxCoord    y2), /* Function to call for non-
                                       * overlapping bands in region
                                       * 1 */
         int (*nonOverlap2Func)(
-            Region     pReg,
-            BoxPtr     r,
+            register Region     pReg,
+            register BoxPtr     r,
             BoxPtr              rEnd,
-            wxCoord    y1,
-            wxCoord    y2)); /* Function to call for non-
+            register wxCoord    y1,
+            register wxCoord    y2)); /* Function to call for non-
                                        * overlapping bands in region
                                        * 2 */
     static int miUnionNonO (
-        Region pReg,
-        BoxPtr r,
+        register Region pReg,
+        register BoxPtr r,
         BoxPtr rEnd,
-        wxCoord y1,
-        wxCoord y2);
+        register wxCoord y1,
+        register wxCoord y2);
     static int miUnionO (
-        Region pReg,
-        BoxPtr r1,
+        register Region pReg,
+        register BoxPtr r1,
         BoxPtr r1End,
-        BoxPtr r2,
+        register BoxPtr r2,
         BoxPtr r2End,
-        wxCoord y1,
-        wxCoord y2);
+        register wxCoord y1,
+        register wxCoord y2);
     static int miSubtractNonO1 (
-        Region pReg,
-        BoxPtr r,
+        register Region pReg,
+        register BoxPtr r,
         BoxPtr rEnd,
-        wxCoord y1,
-        wxCoord y2);
+        register wxCoord y1,
+        register wxCoord y2);
     static int miSubtractO (
-        Region pReg,
-        BoxPtr r1,
+        register Region pReg,
+        register BoxPtr r1,
         BoxPtr r1End,
-        BoxPtr r2,
+        register BoxPtr r2,
         BoxPtr r2End,
-        wxCoord y1,
-        wxCoord y2);
+        register wxCoord y1,
+        register wxCoord y2);
 protected:
     long size;
     long numRects;
@@ -235,7 +239,7 @@ private:
 // ========================================================================
 // wxRegionGeneric
 // ========================================================================
-//wxIMPLEMENT_DYNAMIC_CLASS(wxRegionGeneric, wxGDIObject);
+//IMPLEMENT_DYNAMIC_CLASS(wxRegionGeneric, wxGDIObject)
 
 #define M_REGIONDATA ((wxRegionRefData *)m_refData)
 #define M_REGIONDATA_OF(rgn) ((wxRegionRefData *)(rgn.m_refData))
@@ -397,7 +401,7 @@ wxRegionContain wxRegionGeneric::DoContainsRect(const wxRect& rect) const
 // ========================================================================
 // wxRegionIteratorGeneric
 // ========================================================================
-//wxIMPLEMENT_DYNAMIC_CLASS(wxRegionIteratorGeneric, wxObject);
+//IMPLEMENT_DYNAMIC_CLASS(wxRegionIteratorGeneric,wxObject)
 
 wxRegionIteratorGeneric::wxRegionIteratorGeneric()
 {
@@ -652,7 +656,9 @@ bool REGION::XClipBox(Region r, wxRect *rect)
 void REGION::
 miSetExtents (Region pReg)
 {
-    BoxPtr pBox, pBoxEnd, pExtents;
+    register BoxPtr pBox,
+                    pBoxEnd,
+                    pExtents;
 
     if (pReg->numRects == 0)
     {
@@ -711,12 +717,12 @@ XDestroyRegion(
 
 bool REGION::
 XOffsetRegion(
-    Region pRegion,
-    int x,
-    int y)
+    register Region pRegion,
+    register int x,
+    register int y)
 {
-    int nbox;
-    BOX *pbox;
+    register int nbox;
+    register BOX *pbox;
 
     pbox = pRegion->rects;
     nbox = pRegion->numRects;
@@ -755,17 +761,17 @@ XOffsetRegion(
 /* static void*/
 int REGION::
 miIntersectO (
-    Region     pReg,
-    BoxPtr     r1,
+    register Region     pReg,
+    register BoxPtr     r1,
     BoxPtr              r1End,
-    BoxPtr     r2,
+    register BoxPtr     r2,
     BoxPtr              r2End,
     wxCoord             y1,
     wxCoord             y2)
 {
-    wxCoord    x1;
-    wxCoord    x2;
-    BoxPtr     pNextRect;
+    register wxCoord    x1;
+    register wxCoord    x2;
+    register BoxPtr     pNextRect;
 
     pNextRect = &pReg->rects[pReg->numRects];
 
@@ -821,7 +827,7 @@ bool REGION::
 XIntersectRegion(
     Region reg1,
     Region reg2, /* source regions     */
-    Region newReg) /* destination Region */
+    register Region newReg) /* destination Region */
 {
    /* check for trivial reject */
     if ( (!(reg1->numRects)) || (!(reg2->numRects))  ||
@@ -844,8 +850,8 @@ XIntersectRegion(
 
 void REGION::
 miRegionCopy(
-    Region dstrgn,
-    Region rgn)
+    register Region dstrgn,
+    register Region rgn)
 
 {
     if (dstrgn != rgn) /*  don't want to copy to itself */
@@ -902,13 +908,13 @@ miRegionCopy(
 /* static int*/
 int REGION::
 miCoalesce(
-    Region pReg,     /* Region to coalesce */
+    register Region pReg,     /* Region to coalesce */
     int prevStart,            /* Index of start of previous band */
     int curStart)             /* Index of start of current band */
 {
-    BoxPtr pPrevBox;          /* Current box in previous band */
-    BoxPtr pCurBox;           /* Current box in current band */
-    BoxPtr pRegEnd;           /* End of region */
+    register BoxPtr pPrevBox; /* Current box in previous band */
+    register BoxPtr pCurBox;  /* Current box in current band */
+    register BoxPtr pRegEnd;  /* End of region */
     int         curNumRects;  /* Number of rectangles in current
                                * band */
     int        prevNumRects;  /* Number of rectangles in previous
@@ -1054,48 +1060,48 @@ miCoalesce(
 /* static void*/
 void REGION::
 miRegionOp(
-    Region         newReg,                              /* Place to store result */
+    register Region         newReg,                              /* Place to store result */
     Region                  reg1,                                /* First region in operation */
     Region                  reg2,                                /* 2d region in operation */
     int                      (*overlapFunc)(
-        Region     pReg,
-        BoxPtr     r1,
+        register Region     pReg,
+        register BoxPtr     r1,
         BoxPtr              r1End,
-        BoxPtr     r2,
+        register BoxPtr     r2,
         BoxPtr              r2End,
         wxCoord               y1,
         wxCoord               y2),              /* Function to call for over-
                                                  * lapping bands */
     int                      (*nonOverlap1Func)(
-        Region     pReg,
-        BoxPtr     r,
+        register Region     pReg,
+        register BoxPtr     r,
         BoxPtr              rEnd,
-        wxCoord      y1,
-        wxCoord      y2),              /* Function to call for non-
+        register wxCoord      y1,
+        register wxCoord      y2),              /* Function to call for non-
                                                  * overlapping bands in region
                                                  * 1 */
     int                      (*nonOverlap2Func)(
-        Region     pReg,
-        BoxPtr     r,
+        register Region     pReg,
+        register BoxPtr     r,
         BoxPtr              rEnd,
-        wxCoord      y1,
-        wxCoord      y2))              /* Function to call for non-
+        register wxCoord      y1,
+        register wxCoord      y2))              /* Function to call for non-
                                                  * overlapping bands in region
                                                  * 2 */
 {
-    BoxPtr                 r1; /* Pointer into first region */
-    BoxPtr                 r2; /* Pointer into 2d region */
+    register BoxPtr        r1; /* Pointer into first region */
+    register BoxPtr        r2; /* Pointer into 2d region */
     BoxPtr              r1End; /* End of 1st region */
     BoxPtr              r2End; /* End of 2d region */
-    wxCoord              ybot; /* Bottom of intersection */
-    wxCoord              ytop; /* Top of intersection */
+    register wxCoord     ybot; /* Bottom of intersection */
+    register wxCoord     ytop; /* Top of intersection */
     BoxPtr           oldRects; /* Old rects for newReg */
     int              prevBand; /* Index of start of
                                 * previous band in newReg */
     int               curBand; /* Index of start of current
                                 * band in newReg */
-    BoxPtr                r1BandEnd; /* End of current band in r1 */
-    BoxPtr                r2BandEnd; /* End of current band in r2 */
+    register BoxPtr r1BandEnd; /* End of current band in r1 */
+    register BoxPtr r2BandEnd; /* End of current band in r2 */
     wxCoord               top; /* Top of non-overlapping
                                 * band */
     wxCoord               bot; /* Bottom of non-overlapping
@@ -1363,13 +1369,13 @@ miRegionOp(
 /* static void*/
 int REGION::
 miUnionNonO (
-    Region        pReg,
-    BoxPtr        r,
+    register Region        pReg,
+    register BoxPtr        r,
     BoxPtr                 rEnd,
-    wxCoord       y1,
-    wxCoord       y2)
+    register wxCoord       y1,
+    register wxCoord       y2)
 {
-    BoxPtr pNextRect;
+    register BoxPtr        pNextRect;
 
     pNextRect = &pReg->rects[pReg->numRects];
 
@@ -1412,15 +1418,15 @@ miUnionNonO (
 /* static void*/
 int REGION::
 miUnionO (
-    Region        pReg,
-    BoxPtr        r1,
+    register Region        pReg,
+    register BoxPtr        r1,
     BoxPtr                 r1End,
-    BoxPtr        r2,
+    register BoxPtr        r2,
     BoxPtr                 r2End,
-    wxCoord       y1,
-    wxCoord       y2)
+    register wxCoord       y1,
+    register wxCoord       y2)
 {
-    BoxPtr pNextRect;
+    register BoxPtr        pNextRect;
 
     pNextRect = &pReg->rects[pReg->numRects];
 
@@ -1564,13 +1570,13 @@ XUnionRegion(
 /* static void*/
 int REGION::
 miSubtractNonO1 (
-    Region        pReg,
-    BoxPtr        r,
+    register Region        pReg,
+    register BoxPtr        r,
     BoxPtr                    rEnd,
-    wxCoord          y1,
-    wxCoord           y2)
+    register wxCoord          y1,
+    register wxCoord           y2)
 {
-    BoxPtr        pNextRect;
+    register BoxPtr        pNextRect;
 
     pNextRect = &pReg->rects[pReg->numRects];
 
@@ -1611,16 +1617,16 @@ miSubtractNonO1 (
 /* static void*/
 int REGION::
 miSubtractO (
-    Region        pReg,
-    BoxPtr        r1,
+    register Region        pReg,
+    register BoxPtr        r1,
     BoxPtr                    r1End,
-    BoxPtr        r2,
+    register BoxPtr        r2,
     BoxPtr                    r2End,
-    wxCoord          y1,
-    wxCoord          y2)
+    register wxCoord          y1,
+    register wxCoord          y2)
 {
-    BoxPtr        pNextRect;
-    int          x1;
+    register BoxPtr        pNextRect;
+    register int          x1;
 
     x1 = r1->x1;
 
@@ -1758,7 +1764,7 @@ miSubtractO (
  *-----------------------------------------------------------------------
  */
 
-bool REGION::XSubtractRegion(Region regM, Region regS, Region regD)
+bool REGION::XSubtractRegion(Region regM, Region regS, register Region regD)
 {
    /* check for trivial reject */
     if ( (!(regM->numRects)) || (!(regS->numRects))  ||
@@ -1848,15 +1854,15 @@ bool REGION::XPointInRegion(Region pRegion, int x, int y)
     return false;
 }
 
-wxRegionContain REGION::XRectInRegion(Region region,
+wxRegionContain REGION::XRectInRegion(register Region region,
                                       int rx, int ry,
                                       unsigned int rwidth,
                                       unsigned int rheight)
 {
-    BoxPtr pbox;
-    BoxPtr pboxEnd;
+    register BoxPtr pbox;
+    register BoxPtr pboxEnd;
     Box rect;
-    BoxPtr prect = &rect;
+    register BoxPtr prect = &rect;
     int      partIn, partOut;
 
     prect->x1 = rx;

@@ -4,7 +4,8 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     2004-10-19
-// Copyright:   (c) 2004 Vadim Zeitlin <vadim@wxwidgets.org>
+// RCS-ID:      $Id$
+// Copyright:   (c) 2004 Vadim Zeitlin <vadim@wxwindows.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -17,36 +18,25 @@
 // ----------------------------------------------------------------------------
 
 // for compilers that support precompilation, includes "wx.h".
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
-    #include "wx\app.h"
+    #include "wx/app.h"
 #endif //WX_PRECOMP
-#include "wx\apptrait.h"
+#include "wx/apptrait.h"
 
-#include "wx\filename.h"
-#include "wx\stdpaths.h"
+#include "wx/filename.h"
+#include "wx/stdpaths.h"
 
 // ----------------------------------------------------------------------------
 // module globals
 // ----------------------------------------------------------------------------
 
-namespace
-{
-
-// Derive a class just to be able to create it: wxStandardPaths ctor is
-// protected to prevent its misuse, but it also means we can't create an object
-// of this class directly.
-class wxStandardPathsDefault : public wxStandardPaths
-{
-public:
-    wxStandardPathsDefault() { }
-};
-
-static wxStandardPathsDefault gs_stdPaths;
-
-} // anonymous namespace
+static wxStandardPaths gs_stdPaths;
 
 // ============================================================================
 // implementation
@@ -55,7 +45,7 @@ static wxStandardPathsDefault gs_stdPaths;
 /* static */
 wxStandardPaths& wxStandardPathsBase::Get()
 {
-    wxAppTraits * const traits = wxApp::GetTraitsIfExists();
+    wxAppTraits * const traits = wxTheApp ? wxTheApp->GetTraits() : NULL;
     wxCHECK_MSG( traits, gs_stdPaths, wxT("create wxApp before calling this") );
 
     return traits->GetStandardPaths();
@@ -77,7 +67,9 @@ wxString wxStandardPathsBase::GetExecutablePath() const
     if ( path.empty() )
         return argv0;       // better than nothing
 
-    return wxFileName(path).GetAbsolutePath();
+    wxFileName filename(path);
+    filename.Normalize();
+    return filename.GetFullPath();
 }
 
 wxStandardPaths& wxAppTraitsBase::GetStandardPaths()
@@ -92,9 +84,6 @@ wxStandardPathsBase::wxStandardPathsBase()
     // Derived classes can call this in their constructors
     // to set the platform-specific settings
     UseAppInfo(AppInfo_AppName);
-
-    // Default for compatibility with the existing config files.
-    SetFileLayout(FileLayout_Classic);
 }
 
 wxStandardPathsBase::~wxStandardPathsBase()
@@ -112,6 +101,11 @@ wxString wxStandardPathsBase::GetUserLocalDataDir() const
     return GetUserDataDir();
 }
 
+wxString wxStandardPathsBase::GetDocumentsDir() const
+{
+    return wxFileName::GetHomeDir();
+}
+
 wxString wxStandardPathsBase::GetAppDocumentsDir() const
 {
     const wxString docsDir = GetDocumentsDir();
@@ -124,11 +118,6 @@ wxString wxStandardPathsBase::GetAppDocumentsDir() const
 wxString wxStandardPathsBase::GetTempDir() const
 {
     return wxFileName::GetTempDir();
-}
-
-wxString wxStandardPathsBase::GetUserDir(Dir WXUNUSED(userDir)) const
-{
-    return wxFileName::GetHomeDir();
 }
 
 /* static */

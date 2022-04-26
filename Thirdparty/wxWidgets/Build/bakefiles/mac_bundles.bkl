@@ -1,11 +1,20 @@
 <?xml version="1.0" ?>
+<!-- $Id$ -->
 
 <makefile>
 
     <!--
     Support for application bundles, for wxWidgets samples.
     -->
-
+    
+    <!-- 
+    Nasty hack: use $(srcdir) to obtain usable CFBundleIdentifier suffix;
+    converts $(srcdir) like "../../samples/minimal" to "samples.minimal".
+    -->
+    <set var="BUNDLE_IDENTIFIER">
+        `echo $(DOLLAR)(srcdir) | sed -e 's,\.\./,,g' | sed -e 's,/,.,g'`
+    </set>
+    
     <set var="BUNDLE_PLIST" overwrite="0">
         $(TOP_SRCDIR)src/osx/carbon/Info.plist.in
     </set>
@@ -13,7 +22,6 @@
         $(TOP_SRCDIR)src/osx/carbon/wxmac.icns
     </set>
     <set var="BUNDLE_RESOURCES" overwrite="0"></set>
-    <set var="BUNDLE_FONT_RESOURCES" overwrite="0"></set>
 
     <define-tag name="wx-mac-app-bundle" rules="exe">
 
@@ -37,7 +45,6 @@
             <depends-on-file>$(BUNDLE_PLIST)</depends-on-file>
             <depends-on-file>$(BUNDLE_ICON)</depends-on-file>
             <depends-on-file>$(BUNDLE_RESOURCES)</depends-on-file>
-            <depends-on-file>$(BUNDLE_FONT_RESOURCES)</depends-on-file>
 
             <command>
                 <!-- create the directories: -->
@@ -46,14 +53,9 @@
                 mkdir -p $(BUNDLE)/Resources
 
                 <!-- Info.plist: -->
-                sed -e "s/\$(DOLLAR)$(DOLLAR){MACOSX_BUNDLE_GUI_IDENTIFIER}/org.wxwidgets.$(id)/" \
-                    -e "s/\$(DOLLAR)$(DOLLAR){MACOSX_BUNDLE_EXECUTABLE_NAME}/$(id)/" \
-                    -e "s/\$(DOLLAR)$(DOLLAR){MACOSX_BUNDLE_BUNDLE_NAME}/$(id)/" \
-                    -e "s/\$(DOLLAR)$(DOLLAR){MACOSX_BUNDLE_COPYRIGHT}/Copyright 2002-2022 wxWidgets/" \
-                    -e "s/\$(DOLLAR)$(DOLLAR){MACOSX_BUNDLE_BUNDLE_VERSION}/$(WX_VERSION)/" \
-                    -e "s/\$(DOLLAR)$(DOLLAR){MACOSX_BUNDLE_INFO_STRING}/$(id) version $(WX_VERSION), (c) 2002-2022 wxWidgets/" \
-                    -e "s/\$(DOLLAR)$(DOLLAR){MACOSX_BUNDLE_LONG_VERSION_STRING}/$(WX_VERSION), (c) 2002-2022 wxWidgets/" \
-                    -e "s/\$(DOLLAR)$(DOLLAR){MACOSX_BUNDLE_SHORT_VERSION_STRING}/$(WX_RELEASE)/" \
+                sed -e "s/IDENTIFIER/$(BUNDLE_IDENTIFIER)/" \
+                    -e "s/EXECUTABLE/$(id)/" \
+                    -e "s/VERSION/$(WX_VERSION)/" \
                     $(BUNDLE_PLIST) >$(BUNDLE)/Info.plist
 
                 <!-- PkgInfo: -->
@@ -64,26 +66,16 @@
 
                 <!-- copy the application icon: -->
                 cp -f $(BUNDLE_ICON) $(BUNDLE)/Resources/wxmac.icns
-                </command>
+	        </command>            
             <if cond="BUNDLE_RESOURCES!=''">
                 <command>
                     <!-- copy all other bundle resources: -->
                     cp -f $(BUNDLE_RESOURCES) $(BUNDLE)/Resources
                 </command>
             </if>
-            <if cond="BUNDLE_FONT_RESOURCES!=''">
-                <!--
-                    Special case of font resources, which must be copied into
-                    the Fonts subdirectory used in src/osx/carbon/Info.plist.in file.
-                 -->
-                <command>
-                    mkdir -p $(BUNDLE)/Resources/Fonts
-                    cp -f $(BUNDLE_FONT_RESOURCES) $(BUNDLE)/Resources/Fonts
-                </command>
-            </if>
-
+ 
         </modify-target>
-
+        
         <!-- add pseudo target id_bundle: -->
         <add-target target="$(id)_bundle" type="phony"
                     cond="target and PLATFORM_MACOSX=='1'"/>
@@ -96,7 +88,7 @@
         <modify-target target="clean">
             <command>rm -rf $(id).app</command>
         </modify-target>
-
+        
     </define-tag>
 
 </makefile>

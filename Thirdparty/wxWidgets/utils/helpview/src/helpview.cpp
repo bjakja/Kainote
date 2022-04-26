@@ -5,12 +5,17 @@
 // Author:      Vaclav Slavik, Julian Smart
 // Modified by:
 // Created:     2002-07-09
+// RCS-ID:      $Id$
 // Copyright:   (c) 2002 Vaclav Slavik, Julian Smart and others
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
+
+#ifdef __BORLANDC__
+#pragma hdrstop
+#endif
 
 // for all others, include the necessary headers (this file is usually all you
 // need because it includes almost all "standard" wxWidgets headers
@@ -35,7 +40,7 @@ protected:
                                   const wxSize& size);
 };
 
-wxIMPLEMENT_APP(hvApp);
+IMPLEMENT_APP(hvApp)
 
 hvApp::hvApp()
 {
@@ -51,6 +56,11 @@ bool hvApp::OnInit()
 #endif
 
     wxArtProvider::Push(new AlternateArtProvider);
+
+#if defined( __WXOSX_MAC__ ) && wxOSX_USE_CARBON
+    wxApp::s_macAboutMenuItemId = wxID_ABOUT;
+    wxFileName::MacRegisterDefaultTypeAndCreator( wxT("htb") , 'HTBD' , 'HTBA' ) ;
+#endif
 
     int istyle = wxHF_DEFAULT_STYLE;
 
@@ -115,15 +125,15 @@ bool hvApp::OnInit()
         }
         else if ( argStr.Find( wxT("--Style") )  >= 0 )
         {
-            long style;
+            long i;
             wxString numb = argStr.AfterLast(wxT('e'));
-            if ( !(numb.ToLong(&style) ) )
+            if ( !(numb.ToLong(&i) ) )
             {
                 wxLogError( wxT("Integer conversion failed for --Style") );
             }
             else
             {
-                istyle = style;
+                istyle = i;
             }
         }
         else
@@ -183,12 +193,6 @@ bool hvApp::OnInit()
     wxConfig::Get(); // create an instance
 
     m_helpController = new wxHtmlHelpController( istyle );
-
-    // By default, the application doesn't continue running if only the help
-    // frame remains. This makes sense for the programs doing something else
-    // and also showing help, but as this one only shows help, we should keep
-    // it running as long as this frame is opened.
-    m_helpController->SetShouldPreventAppExit(true);
 
     if ( !hasWindowName )
     {
@@ -438,7 +442,7 @@ bool hvConnection::OnPoke(const wxString& WXUNUSED(topic),
 {
     const wxString data = GetTextFromData(buf, size, format);
 
-    //    wxLogStatus("Poke command: %s = %s", item, data);
+    //    wxLogStatus("Poke command: %s = %s", item.c_str(), data);
     //topic is not tested
 
     if ( wxGetApp().GetHelpController() )

@@ -3,6 +3,7 @@
 // Purpose:     wxDfbPtr<T> for holding objects declared in wrapdfb.h
 // Author:      Vaclav Slavik
 // Created:     2006-08-09
+// RCS-ID:      $Id$
 // Copyright:   (c) 2006 REA Elektronik GmbH
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -23,7 +24,7 @@
  */
 #define wxDFB_DECLARE_INTERFACE(name)            \
     class wx##name;                              \
-    typedef wxDfbPtr<wx##name> wx##name##Ptr
+    typedef wxDfbPtr<wx##name> wx##name##Ptr;
 
 
 //-----------------------------------------------------------------------------

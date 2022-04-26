@@ -9,6 +9,7 @@
 // Author:      Robin Dunn
 //
 // Created:     13-Jan-2000
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 by Total Control Software
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -23,12 +24,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <vector>
-#include <map>
-#include <algorithm>
-#include <stdexcept>
 
-// These are all Scintilla headers
 #include "Platform.h"
 #include "SplitVector.h"
 #include "Partitioning.h"
@@ -37,14 +33,12 @@
 #include "ScintillaWidget.h"
 #ifdef SCI_LEXER
 #include "SciLexer.h"
-#include "PropSetSimple.h"
-#include "ILexer.h"
-#include "LexerModule.h"
-#include "LexAccessor.h"
+#include "PropSet.h"
 #include "Accessor.h"
-#include "WordList.h"
+#include "KeyWords.h"
 #endif
 #include "ContractionState.h"
+#include "SVector.h"
 #include "CellBuffer.h"
 #include "CallTip.h"
 #include "KeyMap.h"
@@ -56,13 +50,9 @@
 #include "ViewStyle.h"
 #include "CharClassify.h"
 #include "Decoration.h"
-#include "CaseFolder.h"
 #include "Document.h"
 #include "Selection.h"
 #include "PositionCache.h"
-#include "EditModel.h"
-#include "MarginView.h"
-#include "EditView.h"
 #include "Editor.h"
 #include "PropSetSimple.h"
 #include "ScintillaBase.h"
@@ -74,20 +64,13 @@
 #include "wx/timer.h"
 #endif
 
-// Define this if there is a standard clipboard format for rectangular
-// text selection under the current platform.
-#if defined(__WXMSW__) || defined(__WXGTK__)
-    #define wxHAVE_STC_RECT_FORMAT
-#endif
-
 //----------------------------------------------------------------------
 
 
 class WXDLLIMPEXP_FWD_CORE wxDC;
 class WXDLLIMPEXP_FWD_STC wxStyledTextCtrl;           // forward
 class ScintillaWX;
-class wxSTCTimer;
-class SurfaceData;
+
 
 //----------------------------------------------------------------------
 // Helper classes
@@ -99,10 +82,10 @@ public:
         m_swx = swx;
     }
 
-    bool OnDropText(wxCoord x, wxCoord y, const wxString& data) wxOVERRIDE;
-    wxDragResult OnEnter(wxCoord x, wxCoord y, wxDragResult def) wxOVERRIDE;
-    wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult def) wxOVERRIDE;
-    void OnLeave() wxOVERRIDE;
+    bool OnDropText(wxCoord x, wxCoord y, const wxString& data);
+    wxDragResult OnEnter(wxCoord x, wxCoord y, wxDragResult def);
+    wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult def);
+    void OnLeave();
 
 private:
     ScintillaWX* m_swx;
@@ -118,41 +101,38 @@ public:
     ~ScintillaWX();
 
     // base class virtuals
-    virtual void Initialise() wxOVERRIDE;
-    virtual void Finalise() wxOVERRIDE;
-    virtual void StartDrag() wxOVERRIDE;
-    virtual bool SetIdle(bool on) wxOVERRIDE;
-    virtual void SetMouseCapture(bool on) wxOVERRIDE;
-    virtual bool HaveMouseCapture() wxOVERRIDE;
-    virtual void ScrollText(int linesToMove) wxOVERRIDE;
-    virtual void SetVerticalScrollPos() wxOVERRIDE;
-    virtual void SetHorizontalScrollPos() wxOVERRIDE;
-    virtual bool ModifyScrollBars(int nMax, int nPage) wxOVERRIDE;
-    virtual void Copy() wxOVERRIDE;
-    virtual void Paste() wxOVERRIDE;
-    virtual void CopyToClipboard(const SelectionText &selectedText) wxOVERRIDE;
+    virtual void Initialise();
+    virtual void Finalise();
+    virtual void StartDrag();
+    virtual bool SetIdle(bool on);
+    virtual void SetTicking(bool on);
+    virtual void SetMouseCapture(bool on);
+    virtual bool HaveMouseCapture();
+    virtual void ScrollText(int linesToMove);
+    virtual void SetVerticalScrollPos();
+    virtual void SetHorizontalScrollPos();
+    virtual bool ModifyScrollBars(int nMax, int nPage);
+    virtual void Copy();
+    virtual void Paste();
+    virtual void CopyToClipboard(const SelectionText &selectedText);
 
-    virtual void CreateCallTipWindow(PRectangle rc) wxOVERRIDE;
-    virtual void AddToPopUp(const char *label, int cmd = 0, bool enabled = true) wxOVERRIDE;
-    virtual void ClaimSelection() wxOVERRIDE;
+    virtual void CreateCallTipWindow(PRectangle rc);
+    virtual void AddToPopUp(const char *label, int cmd = 0, bool enabled = true);
+    virtual void ClaimSelection();
 
     virtual sptr_t DefWndProc(unsigned int iMessage,
                               uptr_t wParam,
-                              sptr_t lParam) wxOVERRIDE;
+                              sptr_t lParam);
     virtual sptr_t WndProc(unsigned int iMessage,
                            uptr_t wParam,
-                           sptr_t lParam) wxOVERRIDE;
+                           sptr_t lParam);
 
-    virtual void NotifyChange() wxOVERRIDE;
-    virtual void NotifyParent(SCNotification scn) wxOVERRIDE;
+    virtual void NotifyChange();
+    virtual void NotifyParent(SCNotification scn);
 
-    virtual void CancelModes() wxOVERRIDE;
+    virtual void CancelModes();
 
-    virtual void UpdateSystemCaret() wxOVERRIDE;
-    virtual bool FineTickerAvailable() wxOVERRIDE;
-    virtual bool FineTickerRunning(TickReason reason) wxOVERRIDE;
-    virtual void FineTickerStart(TickReason reason, int millis, int tolerance) wxOVERRIDE;
-    virtual void FineTickerCancel(TickReason reason) wxOVERRIDE;
+    virtual void UpdateSystemCaret();
 
     // Event delegates
     void DoPaint(wxDC* dc, wxRect rect);
@@ -161,17 +141,15 @@ public:
     void DoSize(int width, int height);
     void DoLoseFocus();
     void DoGainFocus();
-    void DoInvalidateStyleData();
+    void DoSysColourChange();
     void DoLeftButtonDown(Point pt, unsigned int curTime, bool shift, bool ctrl, bool alt);
-    void DoRightButtonDown(Point pt, unsigned int curTime, bool shift, bool ctrl, bool alt);
     void DoLeftButtonUp(Point pt, unsigned int curTime, bool ctrl);
     void DoLeftButtonMove(Point pt);
     void DoMiddleButtonUp(Point pt);
-    void DoMouseWheel(wxMouseWheelAxis axis, int rotation, int delta,
-                      int linesPerAction, int columnsPerAction,
-                      bool ctrlDown, bool isPageScroll);
+    void DoMouseWheel(int rotation, int delta, int linesPerAction, int ctrlDown, bool isPageScroll);
     void DoAddChar(int key);
     int  DoKeyDown(const wxKeyEvent& event, bool* consumed);
+    void DoTick() { Tick(); }
     void DoOnIdle(wxIdleEvent& evt);
 
 #if wxUSE_DRAG_AND_DROP
@@ -182,73 +160,44 @@ public:
 #endif
 
     void DoCommand(int ID);
-    bool DoContextMenu(Point pt);
+    void DoContextMenu(Point pt);
     void DoOnListBox();
-    void DoMouseCaptureLost();
 
 
     // helpers
     void FullPaint();
     void FullPaintDC(wxDC* dc);
-    bool CanPaste() wxOVERRIDE;
-    bool GetHideSelection() { return view.hideSelection; }
+    bool CanPaste();
+    bool GetHideSelection() { return hideSelection; }
     void DoScrollToLine(int line);
     void DoScrollToColumn(int column);
     void ClipChildren(wxDC& dc, PRectangle rect);
     void SetUseAntiAliasing(bool useAA);
     bool GetUseAntiAliasing();
-    SurfaceData* GetSurfaceData() const {return m_surfaceData;}
-    void SetPaintAbandoned(){paintState = paintAbandoned;}
-    void DoMarkerDefineBitmap(int markerNumber, const wxBitmap& bmp);
-    void DoRegisterImage(int type, const wxBitmap& bmp);
 
 private:
     bool                capturedMouse;
     bool                focusEvent;
     wxStyledTextCtrl*   stc;
 
-    WX_DECLARE_HASH_MAP(TickReason, wxSTCTimer*, wxIntegerHash, wxIntegerEqual, TimersHash);
-    TimersHash          timers;
-
 #if wxUSE_DRAG_AND_DROP
     wxSTCDropTarget*    dropTarget;
     wxDragResult        dragResult;
 #endif
 
-    int                 wheelVRotation;
-    int                 wheelHRotation;
-    SurfaceData*        m_surfaceData;
+    int                 wheelRotation;
 
     // For use in creating a system caret
     bool HasCaretSizeChanged();
     bool CreateSystemCaret();
     bool DestroySystemCaret();
-
-    static sptr_t DirectFunction(ScintillaWX* swx, unsigned int iMessage,
-                                 uptr_t wParam, sptr_t lParam);
 #ifdef __WXMSW__
     HBITMAP sysCaretBitmap;
     int sysCaretWidth;
     int sysCaretHeight;
 #endif
-
-#ifdef wxHAVE_STC_RECT_FORMAT
-    // The presence of this format on the clipboard indicates that the text is
-    // a rectangular (and not the default linear) selection.
-    wxDataFormat m_clipRectTextFormat;
-#endif
-
-#ifdef __WXMSW__
-    // ScintillaWin
-    HWND MainHWND() const wxNOEXCEPT;
-
-    // DBCS
-    void ImeStartComposition();
-    void ImeEndComposition();
-#endif
-
+   
     friend class wxSTCCallTip;
-    friend class wxSTCTimer; // To get access to TickReason declaration
 };
 
 //----------------------------------------------------------------------

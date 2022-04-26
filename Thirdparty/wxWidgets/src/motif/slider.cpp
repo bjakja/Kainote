@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -35,8 +36,8 @@
 
 static void wxSliderCallback (Widget widget, XtPointer clientData, XmScaleCallbackStruct * cbs);
 
-wxBEGIN_EVENT_TABLE(wxSlider, wxControl)
-wxEND_EVENT_TABLE()
+BEGIN_EVENT_TABLE(wxSlider, wxControl)
+END_EVENT_TABLE()
 
 
 
@@ -221,7 +222,7 @@ void wxSliderCallback (Widget widget, XtPointer clientData,
     slider->HandleWindowEvent(event);
 
     // Also send a wxCommandEvent for compatibility.
-    wxCommandEvent event2(wxEVT_SLIDER, slider->GetId());
+    wxCommandEvent event2(wxEVT_COMMAND_SLIDER_UPDATED, slider->GetId());
     event2.SetEventObject(slider);
     event2.SetInt( event.GetInt() );
     slider->HandleWindowEvent(event2);

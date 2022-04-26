@@ -4,6 +4,7 @@
 // Author:      Chris Breeze
 // Modified by:
 // Created:     21/07/97
+// RCS-ID:      $Id$
 // Copyright:   (c) 1993-1998 Chris Breeze
 // Licence:     wxWindows licence
 //---------------------------------------------------------------------------
@@ -23,7 +24,7 @@ public:
     FortyCanvas(wxWindow* parent, const wxPoint& pos, const wxSize& size);
     virtual ~FortyCanvas();
 
-    virtual void OnDraw(wxDC& dc) wxOVERRIDE;
+    virtual void OnDraw(wxDC& dc);
     bool OnCloseCanvas();
     void OnMouseEvent(wxMouseEvent& event);
     void SetCursorStyle(int x, int y);
@@ -39,7 +40,7 @@ public:
     void LayoutGame();
     void ShowPlayerDialog();
 
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
 
 private:
     wxFont* m_font;

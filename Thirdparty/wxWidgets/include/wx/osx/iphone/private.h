@@ -6,6 +6,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -24,22 +25,18 @@
 
 #if wxUSE_GUI
 
-#include "wx/bmpbndl.h"
-
-typedef CGRect WXRect;
-
 OSStatus WXDLLIMPEXP_CORE wxMacDrawCGImage(
                                CGContextRef    inContext,
                                const CGRect *  inBounds,
                                CGImageRef      inImage) ;
 
 WX_UIImage WXDLLIMPEXP_CORE wxOSXGetUIImageFromCGImage( CGImageRef image );
-wxBitmapBundle WXDLLIMPEXP_CORE wxOSXCreateSystemBitmapBundle(const wxString& id, const wxString &client, const wxSize& size);
+wxBitmap WXDLLIMPEXP_CORE wxOSXCreateSystemBitmap(const wxString& id, const wxString &client, const wxSize& size);
 
 class WXDLLIMPEXP_CORE wxWidgetIPhoneImpl : public wxWidgetImpl
 {
 public :
-    wxWidgetIPhoneImpl( wxWindowMac* peer , WXWidget w, int flags = 0 ) ;
+    wxWidgetIPhoneImpl( wxWindowMac* peer , WXWidget w, bool isRootControl = false, bool isUserPane = false ) ;
     wxWidgetIPhoneImpl() ;
     ~wxWidgetIPhoneImpl();
 
@@ -58,15 +55,14 @@ public :
 
     virtual void        SetBackgroundColour( const wxColour& col ) ;
     virtual bool        SetBackgroundStyle(wxBackgroundStyle style) ;
-    virtual void        SetForegroundColour( const wxColour& col ) ;
 
     virtual void        GetContentArea( int &left , int &top , int &width , int &height ) const;
     virtual void        Move(int x, int y, int width, int height);
     virtual void        GetPosition( int &x, int &y ) const;
     virtual void        GetSize( int &width, int &height ) const;
     virtual void        SetControlSize( wxWindowVariant variant );
-    virtual double      GetContentScaleFactor() const ;
-
+    virtual float       GetContentScaleFactor() const ;
+    
     virtual void        SetNeedsDisplay( const wxRect* where = NULL );
     virtual bool        GetNeedsDisplay() const;
 
@@ -90,7 +86,7 @@ public :
     void                SetValue( wxInt32 v );
 
     virtual wxBitmap    GetBitmap() const;
-    virtual void        SetBitmap( const wxBitmapBundle& bitmap );
+    virtual void        SetBitmap( const wxBitmap& bitmap );
     virtual void        SetBitmapPosition( wxDirection dir );
 
     void                SetupTabs( const wxNotebook &notebook );
@@ -100,17 +96,14 @@ public :
     bool                ButtonClickDidStateChange() { return true ;}
     void                SetMinimum( wxInt32 v );
     void                SetMaximum( wxInt32 v );
-    void                SetIncrement(int WXUNUSED(value)) { }
     wxInt32             GetMinimum() const;
     wxInt32             GetMaximum() const;
-    int                 GetIncrement() const { return 1; }
     void                PulseGauge();
     void                SetScrollThumb( wxInt32 value, wxInt32 thumbSize );
 
-    void                SetFont(const wxFont & font);
+    void                SetFont( const wxFont & font , const wxColour& foreground , long windowStyle, bool ignoreBlack = true );
 
     void                InstallEventHandler( WXWidget control = NULL );
-    bool                EnableTouchEvents(int WXUNUSED(eventsMask)) { return false; }
 
     virtual void        DoNotifyFocusEvent(bool receivedFocus, wxWidgetImpl* otherWindow);
 
@@ -127,7 +120,7 @@ public :
     virtual void         controlTextDidChange();
 protected:
     WXWidget m_osxView;
-    wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxWidgetIPhoneImpl);
+    DECLARE_DYNAMIC_CLASS_NO_COPY(wxWidgetIPhoneImpl)
 };
 
 class wxNonOwnedWindowIPhoneImpl : public wxNonOwnedWindowImpl
@@ -165,11 +158,6 @@ public :
 
     virtual void SetTitle( const wxString& title, wxFontEncoding encoding ) ;
 
-    // Title bar buttons don't exist in iOS.
-    virtual bool EnableCloseButton(bool WXUNUSED(enable)) { return false; }
-    virtual bool EnableMaximizeButton(bool WXUNUSED(enable)) { return false; }
-    virtual bool EnableMinimizeButton(bool WXUNUSED(enable)) { return false; }
-
     virtual bool IsMaximized() const;
 
     virtual bool IsIconized() const;
@@ -180,14 +168,7 @@ public :
 
     virtual bool IsFullScreen() const;
 
-    virtual bool EnableFullScreenView(bool enable, long style);
-
     virtual bool ShowFullScreen(bool show, long style);
-
-    virtual wxContentProtection GetContentProtection() const wxOVERRIDE
-        {  return wxCONTENT_PROTECTION_NONE; }
-    virtual bool SetContentProtection(wxContentProtection contentProtection) wxOVERRIDE
-        { return false; }
 
     virtual void RequestUserAttention(int flags);
 
@@ -205,7 +186,7 @@ protected :
     WX_UIWindow          m_macWindow;
     void *              m_macFullScreenData ;
     bool                m_initialShowSent;
-    wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxNonOwnedWindowIPhoneImpl);
+    DECLARE_DYNAMIC_CLASS_NO_COPY(wxNonOwnedWindowIPhoneImpl)
 };
 
 #ifdef __OBJC__

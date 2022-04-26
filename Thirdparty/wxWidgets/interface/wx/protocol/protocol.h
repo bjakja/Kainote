@@ -2,6 +2,7 @@
 // Name:        wx/protocol/protocol.h
 // Purpose:     interface of wxProtocol
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -132,7 +133,7 @@ public:
 
     /**
         Detach the existing logger without deleting it.
-
+        
         The caller is responsible for deleting the returned pointer if it's
         non-@c NULL.
      */

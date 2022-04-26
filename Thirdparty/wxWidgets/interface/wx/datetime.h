@@ -2,6 +2,7 @@
 // Name:        datetime.h
 // Purpose:     interface of wxDateTime
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -147,7 +148,8 @@ public:
         NZST = GMT12,       //!< Standard Time
         NZDT = GMT13,       //!< Daylight Saving Time
 
-        /// Universal Coordinated Time
+        /// Universal Coordinated Time = the new and politically correct name
+        /// for GMT.
         UTC = GMT0
     };
 
@@ -163,7 +165,129 @@ public:
     };
 
     /**
-        Date calculations often depend on the country and wxDateTime allows setting
+        Values corresponding to different dates of adoption of the Gregorian
+        calendar.
+
+        @see IsGregorianDate
+     */
+    enum GregorianAdoption
+    {
+        Gr_Unknown,    ///< no data for this country or it's too uncertain to use
+        Gr_Standard,   ///< on the day 0 of Gregorian calendar: 15 Oct 1582
+
+        Gr_Alaska,             ///< Oct 1867 when Alaska became part of the USA
+        Gr_Albania,            ///< Dec 1912
+
+        Gr_Austria = Gr_Unknown,    ///< Different regions on different dates
+        Gr_Austria_Brixen,          ///< 5 Oct 1583 -> 16 Oct 1583
+        Gr_Austria_Salzburg = Gr_Austria_Brixen,
+        Gr_Austria_Tyrol = Gr_Austria_Brixen,
+        Gr_Austria_Carinthia,       ///< 14 Dec 1583 -> 25 Dec 1583
+        Gr_Austria_Styria = Gr_Austria_Carinthia,
+
+        Gr_Belgium,            ///< Then part of the Netherlands
+
+        Gr_Bulgaria = Gr_Unknown, ///< Unknown precisely (from 1915 to 1920)
+        Gr_Bulgaria_1,         ///<      18 Mar 1916 -> 1 Apr 1916
+        Gr_Bulgaria_2,         ///<      31 Mar 1916 -> 14 Apr 1916
+        Gr_Bulgaria_3,         ///<      3 Sep 1920 -> 17 Sep 1920
+
+        Gr_Canada = Gr_Unknown,   ///< Different regions followed the changes in
+                               ///< Great Britain or France
+
+        Gr_China = Gr_Unknown,    ///< Different authorities say:
+        Gr_China_1,            ///<      18 Dec 1911 -> 1 Jan 1912
+        Gr_China_2,            ///<      18 Dec 1928 -> 1 Jan 1929
+
+        Gr_Czechoslovakia,     ///< (Bohemia and Moravia) 6 Jan 1584 -> 17 Jan 1584
+        Gr_Denmark,            ///< (including Norway) 18 Feb 1700 -> 1 Mar 1700
+        Gr_Egypt,              ///< 1875
+        Gr_Estonia,            ///< 1918
+        Gr_Finland,            ///< Then part of Sweden
+
+        Gr_France,             ///< 9 Dec 1582 -> 20 Dec 1582
+        Gr_France_Alsace,      ///<      4 Feb 1682 -> 16 Feb 1682
+        Gr_France_Lorraine,    ///<      16 Feb 1760 -> 28 Feb 1760
+        Gr_France_Strasbourg,  ///< February 1682
+
+        Gr_Germany = Gr_Unknown,  ///< Different states on different dates:
+        Gr_Germany_Catholic,   ///<      1583-1585 (we take 1584)
+        Gr_Germany_Prussia,    ///<      22 Aug 1610 -> 2 Sep 1610
+        Gr_Germany_Protestant, ///<      18 Feb 1700 -> 1 Mar 1700
+
+        Gr_GreatBritain,       ///< 2 Sep 1752 -> 14 Sep 1752 (use 'cal(1)')
+
+        Gr_Greece,             ///< 9 Mar 1924 -> 23 Mar 1924
+        Gr_Hungary,            ///< 21 Oct 1587 -> 1 Nov 1587
+        Gr_Ireland = Gr_GreatBritain,
+        Gr_Italy = Gr_Standard,
+
+        Gr_Japan = Gr_Unknown,    ///< Different authorities say:
+        Gr_Japan_1,            ///<      19 Dec 1872 -> 1 Jan 1873
+        Gr_Japan_2,            ///<      19 Dec 1892 -> 1 Jan 1893
+        Gr_Japan_3,            ///<      18 Dec 1918 -> 1 Jan 1919
+
+        Gr_Latvia,             ///< 1915-1918 (we take 1915)
+        Gr_Lithuania,          ///< 1915
+        Gr_Luxemburg,          ///< 14 Dec 1582 -> 25 Dec 1582
+        Gr_Netherlands = Gr_Belgium, ///< (including Belgium) 1 Jan 1583
+
+        /**
+            Special case of Groningen.
+
+            The Gregorian calendar was introduced twice in Groningen, first
+            time 28 Feb 1583 was followed by 11 Mar 1583, then it has gone back
+            to Julian in the summer of 1584 and then 13 Dec 1700 was followed
+            by 12 Jan 1701 -- which is the date we take into account here.
+         */
+        Gr_Netherlands_Groningen,  ///< 13 Dec 1700 -> 12 Jan 1701
+        Gr_Netherlands_Gelderland, ///< 30 Jun 1700 -> 12 Jul 1700
+        Gr_Netherlands_Utrecht,    ///< (and Overijssel) 30 Nov 1700->12 Dec 1700
+        Gr_Netherlands_Friesland,  ///< (and Drenthe) 31 Dec 1700 -> 12 Jan 1701
+
+        Gr_Norway = Gr_Denmark,       ///< Then part of Denmark
+        Gr_Poland = Gr_Standard,
+        Gr_Portugal = Gr_Standard,
+        Gr_Romania,                ///< 31 Mar 1919 -> 14 Apr 1919
+        Gr_Russia,                 ///< 31 Jan 1918 -> 14 Feb 1918
+        Gr_Scotland = Gr_GreatBritain,
+        Gr_Spain = Gr_Standard,
+
+        /**
+            Special case of Sweden.
+
+            Sweden has a curious history. Sweden decided to make a gradual
+            change from the Julian to the Gregorian calendar. By dropping every
+            leap year from 1700 through 1740 the eleven superfluous days would
+            be omitted and from 1 Mar 1740 they would be in sync with the
+            Gregorian calendar. (But in the meantime they would be in sync with
+            nobody!)
+
+            So 1700 (which should have been a leap year in the Julian calendar)
+            was not a leap year in Sweden. However, by mistake 1704 and 1708
+            became leap years. This left Sweden out of synchronisation with
+            both the Julian and the Gregorian world, so they decided to go back
+            to the Julian calendar. In order to do this, they inserted an extra
+            day in 1712, making that year a double leap year! So in 1712,
+            February had 30 days in Sweden.
+
+            Later, in 1753, Sweden changed to the Gregorian calendar by
+            dropping 11 days like everyone else and this is what we use here.
+         */
+        Gr_Sweden = Gr_Finland,       ///< 17 Feb 1753 -> 1 Mar 1753
+
+        Gr_Switzerland = Gr_Unknown,///< Different cantons used different dates
+        Gr_Switzerland_Catholic,    ///<      1583, 1584 or 1597 (we take 1584)
+        Gr_Switzerland_Protestant,  ///<      31 Dec 1700 -> 12 Jan 1701
+
+        Gr_Turkey,                 ///< 1 Jan 1927
+        Gr_USA = Gr_GreatBritain,
+        Gr_Wales = Gr_GreatBritain,
+        Gr_Yugoslavia              ///< 1919
+    };
+
+    /**
+        Date calculations often depend on the country and wxDateTime allows to set
         the country whose conventions should be used using SetCountry(). It takes
         one of the following values as parameter.
     */
@@ -253,17 +377,6 @@ public:
         /// Create a time zone with the given offset in seconds.
         static TimeZone Make(long offset);
 
-        /**
-            Return true if this is the local time zone.
-
-            This method can be useful for distinguishing between UTC time zone
-            and local time zone in Great Britain, which use the same offset as
-            UTC (i.e. 0), but do use DST.
-
-            @since 3.1.1
-         */
-        bool IsLocal() const;
-
         /// Return the offset of this time zone from UTC, in seconds.
         long GetOffset() const;
     };
@@ -273,7 +386,7 @@ public:
 
         This struct is analogous to standard C <code>struct tm</code> and uses
         the same, not always immediately obvious, conventions for its members:
-        notably its mon and yday fields count from 0 while mday counts from 1.
+        notably its mon and mday fields count from 0 while yday counts from 1.
      */
     struct Tm
     {
@@ -324,7 +437,7 @@ public:
        Copy constructor.
     */
     wxDateTime(const wxDateTime& date);
-
+    
     /**
         Same as Set().
     */
@@ -369,10 +482,7 @@ public:
 
     /**
         Constructs the object from @a timet value holding the number of seconds
-        since Jan 1, 1970 UTC.
-
-        If @a timet is invalid, i.e. @code (time_t)-1 @endcode, wxDateTime
-        becomes invalid too, i.e. its IsValid() will return @false.
+        since Jan 1, 1970.
     */
     wxDateTime& Set(time_t timet);
     /**
@@ -386,7 +496,7 @@ public:
        @a wxDateTime::Tm structure.
     */
     wxDateTime& Set(const Tm& tm);
-
+    
     /**
         Sets the date from the so-called Julian Day Number.
 
@@ -399,25 +509,11 @@ public:
     /**
         Sets the date to be equal to Today() and the time from supplied
         parameters.
-
-        See the full Set() overload for the remarks about DST.
     */
     wxDateTime& Set(wxDateTime_t hour, wxDateTime_t minute = 0,
                     wxDateTime_t second = 0, wxDateTime_t millisec = 0);
     /**
         Sets the date and time from the parameters.
-
-        If the function parameters are invalid, e.g. @a month is February and
-        @a day is 30, the object is left in an invalid state, i.e. IsValid()
-        method will return @false.
-
-        If the specified time moment is invalid due to DST, i.e. it falls into
-        the "missing" hour on the date on which the DST starts, a valid
-        wxDateTime object is still constructed but its hour component is moved
-        forward to ensure that it corresponds to a valid moment in the local
-        time zone. For example, in the CET time zone the DST started on
-        2013-03-31T02:00:00 in 2013 and so setting the object to 2:30 at this
-        date actually sets the hour to 3, and not 2.
     */
     wxDateTime& Set(wxDateTime_t day, Month month,
                     int year = Inv_Year, wxDateTime_t hour = 0,
@@ -488,7 +584,7 @@ public:
 
         Here are the trivial accessors. Other functions, which might have to
         perform some more complicated calculations to find the answer are under
-        the "Date Arithmetic" section.
+        the "Date Arithmetics" section.
     */
     //@{
 
@@ -569,30 +665,10 @@ public:
     unsigned short GetSecond(const TimeZone& tz = Local) const;
 
     /**
-        Returns the number of seconds since Jan 1, 1970 UTC.
-
-        This function is provided solely for interoperability with the standard
-        C library and other libraries using @c time_t values. If you just need
-        to get the value represented by this object as a number, use GetValue()
-        instead, which doesn't lose precision and covers the entire supported
-        range of dates, unlike this one which is limited to the range of
-        positive 32 bit values, i.e. from Jan 1, 1970 to around Jan 19, 2038
-        and returns @c -1 for the dates outside of it.
-
-        Additionally, this method must be called on an initialized date object
-        and an assertion failure occurs if it is called on an object for which
-        IsValid() is false.
+        Returns the number of seconds since Jan 1, 1970. An assert failure will
+        occur if the date is not in the range covered by @c time_t type.
     */
     time_t GetTicks() const;
-
-    /**
-        Returns the number of milliseconds since Jan 1, 1970 UTC.
-
-        Directly returns the internal representation of wxDateTime object as
-        the number of milliseconds (positive or negative) since the Unix/C
-        epoch.
-     */
-    wxLongLong GetValue() const;
 
     /**
         Returns broken down representation of the date and time.
@@ -603,25 +679,6 @@ public:
         Returns the week day in the given timezone (local one by default).
     */
     WeekDay GetWeekDay(const TimeZone& tz = Local) const;
-
-    /**
-        Returns the year to which the week containing this date belongs.
-
-        The value returned by this function is the same as the year, except,
-        possibly, for a few days at the very beginning and very end of the year
-        if they belong to a week which is mostly (i.e. at least 4 days) is in
-        another year in which case that other (previous or next) year is
-        returned.
-
-        For example, January 1 in 2015 belongs to the first year of 2015, hence
-        GetWeekOfYear() for it returns 1 and this function returns 2015.
-        However January 1 in 2016 belongs to the last week of 2015 according to
-        ISO 8601 standard rules and so GetWeekOfYear() returns 53 and this
-        function returns 2015, although GetYear() returns 2016.
-
-        @since 3.1.0
-    */
-    int GetWeekBasedYear(const TimeZone& tz) const;
 
     /**
         Returns the ordinal number of the week in the month (in 1-5 range).
@@ -644,8 +701,6 @@ public:
         The function depends on the week start convention specified by the @a flags
         argument but its results for @c Sunday_First are not well-defined as the
         ISO definition quoted above applies to the weeks starting on Monday only.
-
-        @see GetWeekBasedYear()
     */
     wxDateTime_t GetWeekOfYear(WeekFlags flags = Monday_First,
                                const TimeZone& tz = Local) const;
@@ -654,6 +709,13 @@ public:
         Returns the year in the given timezone (local one by default).
     */
     int GetYear(const TimeZone& tz = Local) const;
+
+    /**
+        Returns @true if the given date is later than the date of adoption of
+        the Gregorian calendar in the given country (and hence the Gregorian
+        calendar calculations make sense for it).
+    */
+    bool IsGregorianDate(GregorianAdoption country = Gr_Standard) const;
 
     /**
         Returns @true if the object represents a valid time moment.
@@ -673,14 +735,7 @@ public:
         @name Date Comparison
 
         There are several functions to allow date comparison. To supplement
-        them, the usual comparison operators taking wxDateTime are defined as
-        well.
-
-        Notice that an invalid wxDateTime object can only be compared for
-        exact equality, i.e. using @c operator==(), @c operator!=() or
-        IsEqualTo(), but comparisons involving an invalid wxDateTime object
-        using any other operators or IsEarlierThan() or IsLaterThan() functions
-        would result in an assert because their result is not well-defined.
+        them, a few global operators, etc taking wxDateTime are defined.
     */
     //@{
 
@@ -696,7 +751,7 @@ public:
 
     /**
         Returns @true if the date is equal to another one up to the given time
-        interval, i.e.\ if the absolute difference between the two dates is less
+        interval, i.e. if the absolute difference between the two dates is less
         than this interval.
     */
     bool IsEqualUpTo(const wxDateTime& dt, const wxTimeSpan& ts) const;
@@ -737,10 +792,10 @@ public:
 
 
     /**
-        @name Date Arithmetic
+        @name Date Arithmetics
 
         These functions carry out
-        @ref overview_datetime_arithmetics "arithmetic" on the wxDateTime
+        @ref overview_datetime_arithmetics "arithmetics" on the wxDateTime
         objects. As explained in the overview, either wxTimeSpan or wxDateSpan
         may be added to wxDateTime, hence all functions are overloaded to
         accept both arguments.
@@ -760,7 +815,7 @@ public:
     /**
         Adds the given date span to this object.
     */
-    wxDateTime& Add(const wxDateSpan& diff);
+    wxDateTime Add(const wxDateSpan& diff);
     /**
         Adds the given time span to this object.
     */
@@ -791,53 +846,23 @@ public:
         them as a wxTimeSpan.
     */
     wxTimeSpan Subtract(const wxDateTime& dt) const;
-    /**
-       Returns the difference between this object and @a dt as a wxDateSpan.
-
-       This method allows finding the number of entire years, months, weeks and
-       days between @a dt and this date.
-
-       @since 2.9.5
-    */
-    wxDateSpan DiffAsDateSpan(const wxDateTime& dt) const;
 
     /**
         Adds the given date span to this object.
     */
     wxDateTime& operator+=(const wxDateSpan& diff);
     /**
-        Adds the given date span to this object.
-    */
-    wxDateTime operator+(const wxDateSpan& ds) const;
-    /**
         Subtracts the given date span from this object.
     */
     wxDateTime& operator-=(const wxDateSpan& diff);
-    /**
-        Subtracts the given date span from this object.
-    */
-    wxDateTime operator-(const wxDateSpan& ds) const;
     /**
         Adds the given time span to this object.
     */
     wxDateTime& operator+=(const wxTimeSpan& diff);
     /**
-        Adds the given time span to this object.
-    */
-    wxDateTime operator+(const wxTimeSpan& ts) const;
-    /**
         Subtracts the given time span from this object.
     */
     wxDateTime& operator-=(const wxTimeSpan& diff);
-    /**
-        Subtracts the given time span from this object.
-    */
-    wxDateTime operator-(const wxTimeSpan& ts) const;
-    /**
-        Subtracts another date from this one and returns the difference between
-        them as a wxTimeSpan.
-    */
-    wxTimeSpan operator-(const wxDateTime& dt2) const;
 
     //@}
 
@@ -854,10 +879,6 @@ public:
         This function does the same as the standard ANSI C @c strftime(3)
         function (http://www.cplusplus.com/reference/clibrary/ctime/strftime.html).
         Please see its description for the meaning of @a format parameter.
-
-        Notice that POSIX @c "%g", @c "%G", @c "%V" and @c "%z" format
-        specifiers are supported even if the standard library doesn't support
-        them (e.g. MSVC).
 
         It also accepts a few wxWidgets-specific extensions: you can optionally
         specify the width of the field to follow using @c printf(3)-like syntax
@@ -1160,14 +1181,10 @@ public:
         @a n may be either positive (counting from the beginning of the month)
         or negative (counting from the end of it).
 
-        For example, SetToWeekDay(wxDateTime::Wed, 2) will set the date to the
+        For example, SetToWeekDay(2, wxDateTime::Wed) will set the date to the
         second Wednesday in the current month and
-        SetToWeekDay(wxDateTime::Sun, -1) will set the date to the last Sunday
+        SetToWeekDay(-1, wxDateTime::Sun) will set the date to the last Sunday
         in the current month.
-
-        Note that leaving the month or year parameters as their default values
-        will result in the current month or year being substituted, overwriting
-        any previous values in the wxDateTime object.
 
         @return @true if the date was modified successfully, @false otherwise
                  meaning that the specified date doesn't exist.
@@ -1185,7 +1202,7 @@ public:
                                       WeekFlags flags = Monday_First);
 
     /**
-        Sets the date to the day number @a yday in the same year (i.e.\ unlike
+        Sets the date to the day number @a yday in the same year (i.e., unlike
         the other functions, this one does not use the current year). The day
         number should be in the range 1-366 for the leap years and 1-365 for
         the other ones.
@@ -1255,23 +1272,15 @@ public:
         for more information about time zones. Normally, these functions should
         be rarely used.
 
-        Note that all functions in this section always use the current offset
-        for the specified time zone and don't take into account its possibly
-        different historical value at the given date.
-
         Related functions in other groups: GetBeginDST(), GetEndDST()
     */
     //@{
 
     /**
-        Transform the date from the given time zone to the local one.
+        Transform the date from the given time zone to the local one. If
+        @a noDST is @true, no DST adjustments will be made.
 
-        If @a noDST is @true, no DST adjustments will be made.
-
-        If @a tz parameter is wxDateTime::Local, no adjustment is performed.
-
-        @return The date adjusted by the different between the given and the
-        local time zones.
+        @return The date in the local time zone.
     */
     wxDateTime FromTimezone(const TimeZone& tz, bool noDST = false) const;
 
@@ -1289,9 +1298,7 @@ public:
 
     /**
         Modifies the object in place to represent the date in another time
-        zone.
-
-        If @a noDST is @true, no DST adjustments will be made.
+        zone. If @a noDST is @true, no DST adjustments will be made.
     */
     wxDateTime& MakeTimezone(const TimeZone& tz, bool noDST = false);
 
@@ -1301,14 +1308,10 @@ public:
     wxDateTime& MakeUTC(bool noDST = false);
 
     /**
-        Transform the date to the given time zone.
+        Transform the date to the given time zone. If @a noDST is @true, no DST
+        adjustments will be made.
 
-        If @a noDST is @true, no DST adjustments will be made.
-
-        If @a tz parameter is wxDateTime::Local, no adjustment is performed.
-
-        @return The date adjusted by the different between the local and the
-        given time zones.
+        @return The date in the new time zone.
     */
     wxDateTime ToTimezone(const TimeZone& tz, bool noDST = false) const;
 
@@ -1324,7 +1327,7 @@ public:
 
 
     /**
-        Converts the year in absolute notation (i.e.\ a number which can be
+        Converts the year in absolute notation (i.e. a number which can be
         negative, positive or zero) to the year in BC/AD notation. For the
         positive years, nothing is done, but the year 0 is year 1 BC and so for
         other years there is a difference of 1.
@@ -1366,7 +1369,7 @@ public:
                                  Country country = Country_Default);
 
     /**
-        Get the current century, i.e.\ first two digits of the year, in given
+        Get the current century, i.e. first two digits of the year, in given
         calendar (only Gregorian is currently supported).
     */
     static int GetCentury(int year);
@@ -1501,18 +1504,6 @@ public:
                                   Country country = Country_Default);
 
     /**
-         Acquires the first weekday of a week based on locale and/or OS settings.
-         If the information was not available, returns @c Sun.
-         @param firstDay
-             The address of a WeekDay variable to which the first weekday will be
-             assigned to.
-         @return If the first day could not be determined, returns false,
-             and @a firstDay is set to a fallback value.
-         @since 3.1.1
-    */
-    static bool GetFirstWeekDay(WeekDay *firstDay);
-
-    /**
         Returns @true if the @a year is a leap one in the specified calendar.
         This functions supports Gregorian and Julian calendars.
     */
@@ -1526,7 +1517,7 @@ public:
     static bool IsWestEuropeanCountry(Country country = Country_Default);
 
     /**
-        Returns the object corresponding to the current time in local time zone.
+        Returns the object corresponding to the current time.
 
         Example:
 
@@ -1564,18 +1555,18 @@ public:
 
     /**
         Returns the object corresponding to the midnight of the current day
-        (i.e.\ the same as Now(), but the time part is set to 0).
+        (i.e. the same as Now(), but the time part is set to 0).
 
         @see Now()
     */
     static wxDateTime Today();
 
     /**
-        Returns the object corresponding to the current time including the
+        Returns the object corresponding to the current UTC time including the
         milliseconds.
 
-        Like Now(), this method creates the wxDateTime object corresponding to
-        the current moment in local time.
+        Notice that unlike Now(), this method creates a wxDateTime object
+        corresponding to UTC, not local, time.
 
         @see Now(), wxGetUTCTimeMillis()
     */
@@ -1702,16 +1693,6 @@ public:
         span.
     */
     int GetMonths() const;
-
-    /**
-        Returns the combined number of months in this date span, counting both
-        years and months.
-
-        @see GetYears(), GetMonths()
-
-        @since 2.9.5
-    */
-    int GetTotalMonths() const;
 
     /**
         Returns the combined number of days in this date span, counting both
@@ -2013,7 +1994,7 @@ public:
     bool IsEqualTo(const wxTimeSpan& ts) const;
 
     /**
-        Compares two timespans: works with the absolute values, i.e.\ -2 hours
+        Compares two timespans: works with the absolute values, i.e. -2 hours
         is longer than 1 hour. Also, it will return @false if the timespans are
         equal in absolute value.
     */
@@ -2035,7 +2016,7 @@ public:
     bool IsPositive() const;
 
     /**
-        Compares two timespans: works with the absolute values, i.e.\ 1 hour is
+        Compares two timespans: works with the absolute values, i.e. 1 hour is
         shorter than -2 hours. Also, it will return @false if the timespans are
         equal in absolute value.
     */

@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     20.11.99
+// RCS-ID:      $Id$
 // Copyright:   (c) Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,7 +18,7 @@
 // wxToolBar style flags
 // ----------------------------------------------------------------------------
 
-enum wxToolBarStyleFlags
+enum
 {
     // lay out the toolbar horizontally
     wxTB_HORIZONTAL  = wxHORIZONTAL,    // == 0x0004
@@ -26,6 +27,9 @@ enum wxToolBarStyleFlags
     // lay out the toolbar vertically
     wxTB_VERTICAL    = wxVERTICAL,      // == 0x0008
     wxTB_LEFT        = wxTB_VERTICAL,
+
+    // show 3D buttons (wxToolBarSimple only)
+    wxTB_3DBUTTONS   = 0x0010,
 
     // "flat" buttons (Win32/GTK only)
     wxTB_FLAT        = 0x0020,
@@ -56,20 +60,18 @@ enum wxToolBarStyleFlags
     wxTB_BOTTOM       = 0x2000,
 
     // lay out toolbar at the right edge of the window
-    wxTB_RIGHT        = 0x4000,
-
-    wxTB_DEFAULT_STYLE = wxTB_HORIZONTAL
+    wxTB_RIGHT        = 0x4000
 };
-
-wxALLOW_COMBINING_ENUMS(wxToolBarStyleFlags, wxBorder)
 
 #if wxUSE_TOOLBAR
     #include "wx/tbarbase.h"     // the base class for all toolbars
 
     #if defined(__WXUNIVERSAL__)
        #include "wx/univ/toolbar.h"
-    #elif defined(__WXMSW__)
+    #elif defined(__WXMSW__) && (!defined(_WIN32_WCE) || (_WIN32_WCE >= 400 && !defined(__POCKETPC__) && !defined(__SMARTPHONE__)))
        #include "wx/msw/toolbar.h"
+    #elif defined(__WXWINCE__)
+       #include "wx/msw/wince/tbarwce.h"
     #elif defined(__WXMOTIF__)
        #include "wx/motif/toolbar.h"
     #elif defined(__WXGTK20__)
@@ -78,8 +80,10 @@ wxALLOW_COMBINING_ENUMS(wxToolBarStyleFlags, wxBorder)
         #include "wx/gtk1/toolbar.h"
     #elif defined(__WXMAC__)
        #include "wx/osx/toolbar.h"
-    #elif defined(__WXQT__)
-        #include "wx/qt/toolbar.h"
+    #elif defined(__WXCOCOA__)
+       #include "wx/cocoa/toolbar.h"
+    #elif defined(__WXPM__)
+       #include "wx/os2/toolbar.h"
     #endif
 #endif // wxUSE_TOOLBAR
 

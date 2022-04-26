@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by: Mattia Barbon (added support for generic wxDataObjects)
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -185,7 +186,7 @@ static void wxClipboardCallback( Widget widget, long* data_id,
 #endif // Less/Motif
 }
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxClipboard, wxObject);
+IMPLEMENT_DYNAMIC_CLASS(wxClipboard,wxObject)
 
 wxClipboard::wxClipboard()
 {
@@ -264,7 +265,7 @@ void wxClipboardCallback( Widget xwidget, long* data_id,
 
     wxCharBuffer buffer(size);
     size_t count = dobj->GetFormatCount( wxDataObject::Get );
-    wxDataFormatScopedArray dfarr(count);
+    wxDataFormatScopedArray dfarr( new wxDataFormat[count] );
     dobj->GetAllFormats( dfarr.get(), wxDataObject::Get );
 
     if( !dobj->GetDataHere( dfarr[*priv], buffer.data() ) )
@@ -300,7 +301,7 @@ bool wxClipboard::AddData( wxDataObject *data )
         return false;
 
     size_t count = data->GetFormatCount( wxDataObject::Get );
-    wxDataFormatScopedArray dfarr(count);
+    wxDataFormatScopedArray dfarr( new wxDataFormat[count] );
     data->GetAllFormats( dfarr.get(), wxDataObject::Get );
 
     for( size_t i = 0; i < count; ++i )
@@ -413,7 +414,7 @@ bool wxClipboard::GetData( wxDataObject& data )
     int count;
     unsigned long max_name_length;
     size_t dfcount = data.GetFormatCount( wxDataObject::Set );
-    wxDataFormatScopedArray dfarr(dfcount);
+    wxDataFormatScopedArray dfarr( new wxDataFormat[dfcount] );
     data.GetAllFormats( dfarr.get(), wxDataObject::Set );
 
     if( XmClipboardInquireCount( xdisplay, xwindow, &count, &max_name_length )

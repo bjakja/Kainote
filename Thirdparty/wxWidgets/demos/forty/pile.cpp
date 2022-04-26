@@ -4,6 +4,7 @@
 // Author:      Chris Breeze
 // Modified by:
 // Created:     21/07/97
+// RCS-ID:      $Id$
 // Copyright:   (c) 1993-1998 Chris Breeze
 // Licence:     wxWindows licence
 //---------------------------------------------------------------------------
@@ -16,6 +17,10 @@
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
+
+#ifdef __BORLANDC__
+#pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
 #include "wx/wx.h"
@@ -151,14 +156,13 @@ Card* Pile::RemoveTopCard()
 //+-------------------------------------------------------------+
 Card* Pile::RemoveTopCard(wxDC& dc, int xOffset, int yOffset)
 {
-    int topX, topY;
+    int topX, topY, x, y;
 
     GetTopCardPos(topX, topY);
     Card* card = RemoveTopCard();
 
     if (card)
     {
-        int x, y;
         card->Erase(dc, topX - xOffset, topY - yOffset);
         GetTopCardPos(x, y);
         if (m_topCard < 0)

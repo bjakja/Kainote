@@ -4,11 +4,13 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     23.05.99
+// RCS-ID:      $Id$
 // Copyright:   (c) wxWidgets team
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef _WX_CARET_H_
+#define _WX_CARET_H_
 
 class WXDLLIMPEXP_CORE wxCaret : public wxCaretBase
 {
@@ -20,7 +22,7 @@ public:
     {
         Init();
 
-        (void)Create((wxWindowBase*)window, width, height);
+        (void)Create(window, width, height);
     }
         // same as above
     wxCaret(wxWindowBase *window, const wxSize& size)
@@ -31,30 +33,32 @@ public:
     }
 
     // process wxWindow notifications
-    virtual void OnSetFocus() wxOVERRIDE;
-    virtual void OnKillFocus() wxOVERRIDE;
+    virtual void OnSetFocus();
+    virtual void OnKillFocus();
 
 protected:
+    void Init()
+    {
+        wxCaretBase::Init();
+
+        m_hasCaret = false;
+    }
+
     // override base class virtuals
-    virtual void DoMove() wxOVERRIDE;
-    virtual void DoShow() wxOVERRIDE;
-    virtual void DoHide() wxOVERRIDE;
-    virtual void DoSize() wxOVERRIDE;
+    virtual void DoMove();
+    virtual void DoShow();
+    virtual void DoHide();
+    virtual void DoSize();
 
     // helper function which creates the system caret
     bool MSWCreateCaret();
 
 private:
-    void Init()
-    {
-        m_hasCaret = false;
-    }
-
     bool m_hasCaret;
 
     wxDECLARE_NO_COPY_CLASS(wxCaret);
 };
 
-
+#endif // _WX_CARET_H_
 
 

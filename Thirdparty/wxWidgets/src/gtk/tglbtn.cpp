@@ -5,6 +5,7 @@
 // Author:      John Norris, minor changes by Axel Schlueter
 // Modified by:
 // Created:     08.02.01
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 Johnny C. Norris II
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -20,37 +21,35 @@
     #include "wx/button.h"
 #endif
 
+#include <gtk/gtk.h>
 #include "wx/gtk/private.h"
-#include "wx/gtk/private/eventsdisabler.h"
-#include "wx/gtk/private/image.h"
-#include "wx/gtk/private/list.h"
 
 extern bool      g_blockEventsOnDrag;
 
 extern "C" {
 static void gtk_togglebutton_clicked_callback(GtkWidget *WXUNUSED(widget), wxToggleButton *cb)
 {
-    if (g_blockEventsOnDrag)
+    if (!cb->m_hasVMT || g_blockEventsOnDrag)
         return;
 
     // Generate a wx event.
-    wxCommandEvent event(wxEVT_TOGGLEBUTTON, cb->GetId());
+    wxCommandEvent event(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, cb->GetId());
     event.SetInt(cb->GetValue());
     event.SetEventObject(cb);
     cb->HandleWindowEvent(event);
 }
 }
 
-wxDEFINE_EVENT( wxEVT_TOGGLEBUTTON, wxCommandEvent );
+wxDEFINE_EVENT( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEvent );
 
 // ------------------------------------------------------------------------
 // wxBitmapToggleButton
 // ------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxBitmapToggleButton, wxToggleButton);
+IMPLEMENT_DYNAMIC_CLASS(wxBitmapToggleButton, wxToggleButton)
 
 bool wxBitmapToggleButton::Create(wxWindow *parent, wxWindowID id,
-                            const wxBitmapBundle &bitmap, const wxPoint &pos,
+                            const wxBitmap &bitmap, const wxPoint &pos,
                             const wxSize &size, long style,
                             const wxValidator& validator,
                             const wxString &name)
@@ -76,7 +75,7 @@ bool wxBitmapToggleButton::Create(wxWindow *parent, wxWindowID id,
 // wxToggleButton
 // ------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxToggleButton, wxControl);
+IMPLEMENT_DYNAMIC_CLASS(wxToggleButton, wxControl)
 
 bool wxToggleButton::Create(wxWindow *parent, wxWindowID id,
                             const wxString &label, const wxPoint &pos,
@@ -104,7 +103,7 @@ bool wxToggleButton::Create(wxWindow *parent, wxWindowID id,
     {
         m_widget = gtk_toggle_button_new();
 
-        GtkWidget* image = wxGtkImage::New(this);
+        GtkWidget *image = gtk_image_new();
         gtk_widget_show(image);
         gtk_container_add(GTK_CONTAINER(m_widget), image);
     }
@@ -146,10 +145,11 @@ void wxToggleButton::SetValue(bool state)
     if (state == GetValue())
         return;
 
-    wxGtkEventsDisabler<wxToggleButton> noEvents(this);
+    GTKDisableEvents();
 
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_widget), state);
-    GTKUpdateBitmap();
+
+    GTKEnableEvents();
 }
 
 // bool GetValue() const
@@ -214,27 +214,7 @@ GtkLabel *wxToggleButton::GTKGetLabel() const
 void wxToggleButton::DoApplyWidgetStyle(GtkRcStyle *style)
 {
     GTKApplyStyle(m_widget, style);
-    GtkWidget* child = gtk_bin_get_child(GTK_BIN(m_widget));
-    GTKApplyStyle(child, style);
-
-#ifndef __WXGTK4__
-    wxGCC_WARNING_SUPPRESS(deprecated-declarations)
-    // for buttons with images, the path to the label is (at least in 2.12)
-    // GtkButton -> GtkAlignment -> GtkHBox -> GtkLabel
-    if ( GTK_IS_ALIGNMENT(child) )
-    {
-        GtkWidget* box = gtk_bin_get_child(GTK_BIN(child));
-        if ( GTK_IS_BOX(box) )
-        {
-            wxGtkList list(gtk_container_get_children(GTK_CONTAINER(box)));
-            for (GList* item = list; item; item = item->next)
-            {
-                GTKApplyStyle(GTK_WIDGET(item->data), style);
-            }
-        }
-    }
-    wxGCC_WARNING_RESTORE()
-#endif
+    GTKApplyStyle(gtk_bin_get_child(GTK_BIN(m_widget)), style);
 }
 
 // Get the "best" size for this control.
@@ -247,6 +227,7 @@ wxSize wxToggleButton::DoGetBestSize() const
         if (ret.x < 80) ret.x = 80;
     }
 
+    CacheBestSize(ret);
     return ret;
 }
 
@@ -254,7 +235,7 @@ wxSize wxToggleButton::DoGetBestSize() const
 wxVisualAttributes
 wxToggleButton::GetClassDefaultAttributes(wxWindowVariant WXUNUSED(variant))
 {
-    return GetDefaultAttributesFromGTKWidget(gtk_toggle_button_new());
+    return GetDefaultAttributesFromGTKWidget(gtk_toggle_button_new);
 }
 
 #endif // wxUSE_TOGGLEBTN

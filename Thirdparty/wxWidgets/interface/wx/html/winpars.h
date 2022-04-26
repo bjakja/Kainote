@@ -2,6 +2,7 @@
 // Name:        html/winpars.h
 // Purpose:     interface of wxHtmlTagsModule
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -49,18 +50,6 @@ public:
 */
 class wxHtmlWinTagHandler : public wxHtmlTagHandler
 {
-public:
-    /**
-        Constructor.
-    */
-    wxHtmlWinTagHandler();
-
-    /**
-        Assigns @a parser to this handler. Each @b instance of handler
-        is guaranteed to be called only from the one parser.
-    */
-    virtual void SetParser(wxHtmlParser* parser);
-
 protected:
     /**
         Value of this attribute is identical to value of m_Parser.
@@ -225,8 +214,9 @@ public:
         (You should always test if it is non-@NULL.
         For example @c TITLE handler sets window title only if some window is
         associated, otherwise it does nothing.
-   */
-    wxHtmlWindowInterface* GetWindowInterface();
+        @deprecated use GetWindowInterface()->GetHTMLWindow() instead
+    */
+    wxHtmlWindow* GetWindow();
 
     /**
         Opens new container and returns pointer to it (see @ref overview_html_cells).

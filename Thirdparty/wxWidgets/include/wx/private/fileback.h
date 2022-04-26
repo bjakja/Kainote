@@ -2,6 +2,7 @@
 // Name:        wx/private/fileback.h
 // Purpose:     Back an input stream with memory or a file
 // Author:      Mike Wetherell
+// RCS-ID:      $Id$
 // Copyright:   (c) 2006 Mike Wetherell
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -58,17 +59,17 @@ public:
 
     // If the length of the backer's parent stream is unknown then GetLength()
     // returns wxInvalidOffset until the parent has been read to the end.
-    wxFileOffset GetLength() const wxOVERRIDE;
+    wxFileOffset GetLength() const;
 
     // Returns the length, reading the parent stream to the end if necessary.
     wxFileOffset FindLength() const;
 
-    bool IsSeekable() const wxOVERRIDE { return true; }
+    bool IsSeekable() const { return true; }
 
 protected:
-    size_t OnSysRead(void *buffer, size_t size) wxOVERRIDE;
-    wxFileOffset OnSysSeek(wxFileOffset pos, wxSeekMode mode) wxOVERRIDE;
-    wxFileOffset OnSysTell() const wxOVERRIDE;
+    size_t OnSysRead(void *buffer, size_t size);
+    wxFileOffset OnSysSeek(wxFileOffset pos, wxSeekMode mode);
+    wxFileOffset OnSysTell() const;
 
 private:
     wxBackingFile m_backer;

@@ -2,6 +2,7 @@
 // Name:        layout.h
 // Purpose:     interface of layout constraints classes
 // Author:      wxWidgets team
+// RCS-ID:      $Id: $
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -84,14 +85,14 @@ public:
     wxEdge GetMyEdge() const;
     void SetEdge(wxEdge which);
     void SetValue(int v);
-    int GetMargin() const;
+    int GetMargin();
     void SetMargin(int m);
     int GetValue() const;
     int GetPercent() const;
     int GetOtherEdge() const;
     bool GetDone() const;
     void SetDone(bool d);
-    wxRelationship GetRelationship() const;
+    wxRelationship GetRelationship();
     void SetRelationship(wxRelationship r);
 
     // Reset constraint if it mentions otherWin

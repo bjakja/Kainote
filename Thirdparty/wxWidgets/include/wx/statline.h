@@ -3,6 +3,7 @@
 // Purpose:     wxStaticLine class interface
 // Author:      Vadim Zeitlin
 // Created:     28.06.99
+// Version:     $Id$
 // Copyright:   (c) 1999 Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -40,17 +41,17 @@ public:
     wxStaticLineBase() { }
 
     // is the line vertical?
-    bool IsVertical() const { return (GetWindowStyle() & wxLI_VERTICAL) != 0; }
+    bool IsVertical() const { return true; }//(GetWindowStyle() & wxLI_VERTICAL) != 0;
 
     // get the default size for the "lesser" dimension of the static line
     static int GetDefaultSize() { return 2; }
 
     // overridden base class virtuals
-    virtual bool AcceptsFocus() const wxOVERRIDE { return false; }
+    virtual bool AcceptsFocus() const { return false; }
 
 protected:
     // choose the default border for this window
-    virtual wxBorder GetDefaultBorder() const wxOVERRIDE { return wxBORDER_NONE; }
+    virtual wxBorder GetDefaultBorder() const { return wxBORDER_NONE; }
 
     // set the right size for the right dimension
     wxSize AdjustSize(const wxSize& size) const
@@ -70,7 +71,7 @@ protected:
         return sizeReal;
     }
 
-    virtual wxSize DoGetBestSize() const wxOVERRIDE
+    virtual wxSize DoGetBestSize() const
     {
         return AdjustSize(wxDefaultSize);
     }
@@ -90,10 +91,12 @@ protected:
     #include "wx/gtk/statline.h"
 #elif defined(__WXGTK__)
     #include "wx/gtk1/statline.h"
+#elif defined(__WXPM__)
+    #include "wx/os2/statline.h"
 #elif defined(__WXMAC__)
     #include "wx/osx/statline.h"
-#elif defined(__WXQT__)
-    #include "wx/qt/statline.h"
+#elif defined(__WXCOCOA__)
+    #include "wx/cocoa/statline.h"
 #else // use generic implementation for all other platforms
     #include "wx/generic/statline.h"
 #endif

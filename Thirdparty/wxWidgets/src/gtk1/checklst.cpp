@@ -2,6 +2,7 @@
 // Name:        src/gtk1/checklst.cpp
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -21,7 +22,7 @@
 // wxCheckListBox
 //-----------------------------------------------------------------------------
 
-wxCheckListBox::wxCheckListBox() : wxCheckListBoxBase()
+wxCheckListBox::wxCheckListBox() : wxListBox()
 {
     m_hasCheckBoxes = true;
 }

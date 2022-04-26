@@ -5,6 +5,7 @@
 // Modified by:
 // Created:     Aug-31-2006
 // Copyright:   (c) Jaakko Salli
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -16,8 +17,7 @@
 
 #if wxUSE_BITMAPCOMBOBOX
 
-#include "wx/bmpbndl.h"
-#include "wx/dynarray.h"
+#include "wx/bitmap.h"
 
 class WXDLLIMPEXP_FWD_CORE wxWindow;
 class WXDLLIMPEXP_FWD_CORE wxItemContainer;
@@ -31,10 +31,10 @@ class WXDLLIMPEXP_FWD_CORE wxItemContainer;
 class WXDLLIMPEXP_FWD_CORE wxDC;
 #endif
 
-extern WXDLLIMPEXP_DATA_CORE(const char) wxBitmapComboBoxNameStr[];
+extern WXDLLIMPEXP_DATA_ADV(const char) wxBitmapComboBoxNameStr[];
 
 
-class WXDLLIMPEXP_CORE wxBitmapComboBoxBase
+class WXDLLIMPEXP_ADV wxBitmapComboBoxBase
 {
 public:
     // ctors and such
@@ -43,7 +43,7 @@ public:
     virtual ~wxBitmapComboBoxBase() { }
 
     // Sets the image for the given item.
-    virtual void SetItemBitmap(unsigned int n, const wxBitmapBundle& bitmap) = 0;
+    virtual void SetItemBitmap(unsigned int n, const wxBitmap& bitmap) = 0;
 
 #if !defined(wxBITMAPCOMBOBOX_OWNERDRAWN_BASED)
 
@@ -79,7 +79,7 @@ protected:
     void BCBDoClear();
     void BCBDoDeleteOneItem(unsigned int n);
 
-    void DoSetItemBitmap(unsigned int n, const wxBitmapBundle& bitmap);
+    void DoSetItemBitmap(unsigned int n, const wxBitmap& bitmap);
 
     void DrawBackground(wxDC& dc, const wxRect& rect, int item, int flags) const;
     void DrawItem(wxDC& dc, const wxRect& rect, int item, const wxString& text,
@@ -87,7 +87,7 @@ protected:
     wxCoord MeasureItem(size_t item) const;
 
     // Returns true if image size was affected
-    virtual bool OnAddBitmap(const wxBitmapBundle& bitmap);
+    virtual bool OnAddBitmap(const wxBitmap& bitmap);
 
     // Recalculates amount of empty space needed in front of text
     // in control itself. Returns number that can be passed to
@@ -97,8 +97,8 @@ protected:
 
     void UpdateInternals();
 
-    wxVector<wxBitmapBundle> m_bitmapbundles;// Images associated with items
-    wxSize                   m_usedImgSize;  // Size of bitmaps
+    wxArrayPtrVoid      m_bitmaps;  // Images associated with items
+    wxSize              m_usedImgSize;  // Size of bitmaps
 
     int                 m_imgAreaWidth;  // Width and height of area next to text field
     int                 m_fontHeight;

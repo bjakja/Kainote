@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -13,7 +14,7 @@
 
 #include "wx/icon.h"
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxIcon, wxBitmap);
+IMPLEMENT_DYNAMIC_CLASS(wxIcon, wxBitmap)
 
 // ============================================================================
 // Icons
@@ -28,6 +29,14 @@ wxIcon::wxIcon(const char bits[], int width, int height)
 {
     (void) Create((void*) bits, wxBITMAP_TYPE_XBM_DATA, width, height, 1);
 }
+
+#ifdef wxNEEDS_CHARPP
+// Create from XPM data
+wxIcon::wxIcon(char **data)
+{
+    (void) Create((void*) data, wxBITMAP_TYPE_XPM_DATA, 0, 0, 0);
+}
+#endif
 
 wxIcon::wxIcon(const char* const* data)
 {

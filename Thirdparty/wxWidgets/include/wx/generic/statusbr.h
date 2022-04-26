@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by: VZ at 05.02.00 to derive from wxStatusBarBase
 // Created:     01/02/97
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -30,7 +31,7 @@ public:
     wxStatusBarGeneric(wxWindow *parent,
                        wxWindowID winid = wxID_ANY,
                        long style = wxSTB_DEFAULT_STYLE,
-                       const wxString& name = wxASCII_STR(wxStatusBarNameStr))
+                       const wxString& name = wxStatusBarNameStr)
     {
         Init();
 
@@ -41,15 +42,15 @@ public:
 
     bool Create(wxWindow *parent, wxWindowID winid = wxID_ANY,
                 long style = wxSTB_DEFAULT_STYLE,
-                const wxString& name = wxASCII_STR(wxStatusBarNameStr));
+                const wxString& name = wxStatusBarNameStr);
 
     // implement base class methods
-    virtual void SetStatusWidths(int n, const int widths_field[]) wxOVERRIDE;
-    virtual bool GetFieldRect(int i, wxRect& rect) const wxOVERRIDE;
-    virtual void SetMinHeight(int height) wxOVERRIDE;
+    virtual void SetStatusWidths(int n, const int widths_field[]);
+    virtual bool GetFieldRect(int i, wxRect& rect) const;
+    virtual void SetMinHeight(int height);
 
-    virtual int GetBorderX() const wxOVERRIDE { return m_borderX; }
-    virtual int GetBorderY() const wxOVERRIDE { return m_borderY; }
+    virtual int GetBorderX() const { return m_borderX; }
+    virtual int GetBorderY() const { return m_borderY; }
 
 
     // implementation only (not part of wxStatusBar public API):
@@ -57,7 +58,7 @@ public:
     int GetFieldFromPoint(const wxPoint& point) const;
 
 protected:
-    virtual void DoUpdateStatusText(int number) wxOVERRIDE;
+    virtual void DoUpdateStatusText(int number);
 
     // event handlers
     void OnPaint(wxPaintEvent& event);
@@ -70,7 +71,7 @@ protected:
     void OnSysColourChanged(wxSysColourChangedEvent& event);
 
 protected:
-    virtual int GetEffectiveFieldStyle(int i) const { return m_panes[i].GetStyle(); }
+
     virtual void DrawFieldText(wxDC& dc, const wxRect& rc, int i, int textHeight);
     virtual void DrawField(wxDC& dc, int i, int textHeight);
 
@@ -81,7 +82,7 @@ protected:
 
     // true if the status bar shows the size grip: for this it must have
     // wxSTB_SIZEGRIP style and the window it is attached to must be resizable
-    // and not maximized (note that currently size grip is only used in wxGTK)
+    // and not maximized
     bool ShowsSizeGrip() const;
 
     // returns the position and the size of the size grip
@@ -103,14 +104,14 @@ protected:
     wxPen             m_mediumShadowPen;
     wxPen             m_hilightPen;
 
-    virtual wxSize DoGetBestSize() const wxOVERRIDE;
+    virtual wxSize DoGetBestSize() const;
 
 private:
     // Update m_lastClientSize and m_widthsAbs from the current size.
     void DoUpdateFieldWidths();
 
-    wxDECLARE_EVENT_TABLE();
-    wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxStatusBarGeneric);
+    DECLARE_EVENT_TABLE()
+    DECLARE_DYNAMIC_CLASS_NO_COPY(wxStatusBarGeneric)
 };
 
 #endif // wxUSE_STATUSBAR

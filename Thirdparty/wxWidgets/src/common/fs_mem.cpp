@@ -2,27 +2,31 @@
 // Name:        src/common/fs_mem.cpp
 // Purpose:     in-memory file system
 // Author:      Vaclav Slavik
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_FILESYSTEM && wxUSE_STREAMS
 
-#include "wx\fs_mem.h"
+#include "wx/fs_mem.h"
 
 #ifndef WX_PRECOMP
-    #include "wx\intl.h"
-    #include "wx\log.h"
-    #include "wx\wxcrtvararg.h"
+    #include "wx/intl.h"
+    #include "wx/log.h"
+    #include "wx/wxcrtvararg.h"
     #if wxUSE_GUI
-        #include "wx\image.h"
+        #include "wx/image.h"
     #endif // wxUSE_GUI
 #endif
 
-#include "wx\mstream.h"
+#include "wx/mstream.h"
 
 // represents a file entry in wxMemoryFS
 class wxMemoryFSFile
@@ -120,10 +124,6 @@ wxFSFile * wxMemoryFSHandlerBase::OpenFile(wxFileSystem& WXUNUSED(fs),
 
 wxString wxMemoryFSHandlerBase::FindFirst(const wxString& url, int flags)
 {
-    // Make sure to reset the find iterator, so that calling FindNext() doesn't
-    // reuse its value from the last search that could well be invalid.
-    m_findIter = m_Hash.end();
-
     if ( (flags & wxDIR) && !(flags & wxFILE) )
     {
         // we only store files, not directories, so we don't risk finding
@@ -148,16 +148,22 @@ wxString wxMemoryFSHandlerBase::FindFirst(const wxString& url, int flags)
 
 wxString wxMemoryFSHandlerBase::FindNext()
 {
-    while ( m_findIter != m_Hash.end() )
+    // m_findArgument is used to indicate that search is in progress, we reset
+    // it to empty string after iterating over all elements
+    while ( !m_findArgument.empty() )
     {
-        const wxString& path = m_findIter->first;
+        // test for the match before (possibly) clearing m_findArgument below
+        const bool found = m_findIter->first.Matches(m_findArgument);
 
         // advance m_findIter first as we need to do it anyhow, whether it
         // matches or not
-        ++m_findIter;
+        const wxMemoryFSHash::const_iterator current = m_findIter;
 
-        if ( path.Matches(m_findArgument) )
-            return "memory:" + path;
+        if ( ++m_findIter == m_Hash.end() )
+            m_findArgument.clear();
+
+        if ( found )
+            return "memory:" + current->first;
     }
 
     return wxString();
@@ -180,12 +186,7 @@ void wxMemoryFSHandlerBase::AddFileWithMimeType(const wxString& filename,
                                                 const wxString& textdata,
                                                 const wxString& mimetype)
 {
-    // We try to use the provided data "as is" if possible, but if not, we fall
-    // back to UTF-8 because it's better to do this than just lose the data
-    // completely.
-    wxCharBuffer buf(textdata.To8BitData());
-    if ( !buf.length() )
-        buf = textdata.utf8_str();
+    const wxCharBuffer buf(textdata.To8BitData());
 
     AddFileWithMimeType(filename, buf.data(), buf.length(), mimetype);
 }
@@ -224,8 +225,7 @@ void wxMemoryFSHandlerBase::AddFile(const wxString& filename,
     wxMemoryFSHash::iterator i = m_Hash.find(filename);
     if ( i == m_Hash.end() )
     {
-        wxLogError(_("Trying to remove file '%s' from memory VFS, "
-                     "but it is not loaded!"),
+        wxLogError(_("Trying to remove file '%s' from memory VFS, but it is not loaded!"),
                    filename);
         return;
     }

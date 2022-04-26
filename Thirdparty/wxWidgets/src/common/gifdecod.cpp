@@ -3,6 +3,7 @@
 // Purpose:     wxGIFDecoder, GIF reader for wxImage and wxAnimation
 // Author:      Guillermo Rodriguez Garcia <guille@iies.es>
 // Version:     3.04
+// RCS-ID:      $Id$
 // Copyright:   (c) Guillermo Rodriguez Garcia
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -10,6 +11,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_STREAMS && wxUSE_GIF
 
@@ -22,7 +26,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "wx/gifdecod.h"
-#include "wx/scopedarray.h"
 #include "wx/scopedptr.h"
 #include "wx/scopeguard.h"
 
@@ -127,10 +130,8 @@ bool wxGIFDecoder::ConvertToImage(unsigned int frame, wxImage *image) const
     unsigned long i;
     int      transparent;
 
-    // Store the original value of the transparency option, before it is reset
-    // by Create().
-    const wxString&
-        transparency = image->GetOption(wxIMAGE_OPTION_GIF_TRANSPARENCY);
+    // just in case...
+    image->Destroy();
 
     // create the image
     wxSize sz = GetFrameSize(frame);
@@ -148,58 +149,24 @@ bool wxGIFDecoder::ConvertToImage(unsigned int frame, wxImage *image) const
     // set transparent colour mask
     if (transparent != -1)
     {
-        if ( transparency.empty() ||
-                transparency == wxIMAGE_OPTION_GIF_TRANSPARENCY_HIGHLIGHT )
+        for (i = 0; i < GetNcolours(frame); i++)
         {
-            // By default, we assign bright pink to transparent pixels to make
-            // them perfectly noticeable if someone accidentally draws the
-            // image without taking transparency into account. Due to this use
-            // of pink, we need to change any existing image pixels with this
-            // colour to use something different.
-            for (i = 0; i < GetNcolours(frame); i++)
+            if ((pal[3 * i + 0] == 255) &&
+                (pal[3 * i + 1] == 0) &&
+                (pal[3 * i + 2] == 255))
             {
-                if ((pal[3 * i + 0] == 255) &&
-                    (pal[3 * i + 1] == 0) &&
-                    (pal[3 * i + 2] == 255))
-                {
-                    pal[3 * i + 2] = 254;
-                }
+                pal[3 * i + 2] = 254;
             }
-
-            pal[3 * transparent + 0] = 255;
-            pal[3 * transparent + 1] = 0;
-            pal[3 * transparent + 2] = 255;
-
-            image->SetMaskColour(255, 0, 255);
         }
-        else if ( transparency == wxIMAGE_OPTION_GIF_TRANSPARENCY_UNCHANGED )
-        {
-            // Leave the GIF exactly as it was, just adjust (in the least
-            // noticeable way, by just flipping a single bit) non-transparent
-            // pixels colour,
-            for (i = 0; i < GetNcolours(frame); i++)
-            {
-                if ((pal[3 * i + 0] == pal[3 * transparent + 0]) &&
-                    (pal[3 * i + 1] == pal[3 * transparent + 1]) &&
-                    (pal[3 * i + 2] == pal[3 * transparent + 2]))
-                {
-                    pal[3 * i + 2] ^= 1;
-                }
-            }
 
-            image->SetMaskColour(pal[3 * transparent + 0],
-                                 pal[3 * transparent + 1],
-                                 pal[3 * transparent + 2]);
-        }
-        else
-        {
-            wxFAIL_MSG( wxS("Unknown wxIMAGE_OPTION_GIF_TRANSPARENCY value") );
-        }
+        pal[3 * transparent + 0] = 255,
+        pal[3 * transparent + 1] = 0,
+        pal[3 * transparent + 2] = 255;
+
+        image->SetMaskColour(255, 0, 255);
     }
     else
-    {
         image->SetMask(false);
-    }
 
 #if wxUSE_PALETTE
     unsigned char r[256];
@@ -351,18 +318,26 @@ wxGIFErrorCode
 wxGIFDecoder::dgif(wxInputStream& stream, GIFImage *img, int interl, int bits)
 {
     static const int allocSize = 4096 + 1;
-
-    wxScopedArray<int> ab_prefix(allocSize); // alphabet (prefixes)
-    if ( !ab_prefix )
+    int *ab_prefix = new int[allocSize]; // alphabet (prefixes)
+    if (ab_prefix == NULL)
+    {
         return wxGIF_MEMERR;
+    }
 
-    wxScopedArray<int> ab_tail(allocSize);   // alphabet (tails)
-    if ( !ab_tail )
+    int *ab_tail = new int[allocSize];   // alphabet (tails)
+    if (ab_tail == NULL)
+    {
+        delete[] ab_prefix;
         return wxGIF_MEMERR;
+    }
 
-    wxScopedArray<int> stack(allocSize);     // decompression stack
-    if ( !stack )
+    int *stack = new int[allocSize];     // decompression stack
+    if (stack == NULL)
+    {
+        delete[] ab_prefix;
+        delete[] ab_tail;
         return wxGIF_MEMERR;
+    }
 
     int ab_clr;                     // clear code
     int ab_fin;                     // end of info code
@@ -370,10 +345,10 @@ wxGIFDecoder::dgif(wxInputStream& stream, GIFImage *img, int interl, int bits)
     int ab_free;                    // first free position in alphabet
     int ab_max;                     // last possible character in alphabet
     int pass;                       // pass number in interlaced images
-    int pos;                        // index into decompression stack
+    int pos;                        // index into decompresion stack
     unsigned int x, y;              // position in image buffer
 
-    int code, lastcode, abcabca;
+    int code, readcode, lastcode, abcabca;
 
     // these won't change
     ab_clr = (1 << bits);
@@ -396,7 +371,6 @@ wxGIFDecoder::dgif(wxInputStream& stream, GIFImage *img, int interl, int bits)
     do
     {
         // get next code
-        int readcode;
         readcode = code = getcode(stream, ab_bits, ab_fin);
 
         // end of image?
@@ -433,11 +407,21 @@ wxGIFDecoder::dgif(wxInputStream& stream, GIFImage *img, int interl, int bits)
             // GIF files, the allocSize of 4096+1 is enough. This
             // will only happen with badly formed GIFs.
             if (pos >= allocSize)
+            {
+                delete[] ab_prefix;
+                delete[] ab_tail;
+                delete[] stack;
                 return wxGIF_INVFORMAT;
+            }
         }
 
         if (pos >= allocSize)
+        {
+            delete[] ab_prefix;
+            delete[] ab_tail;
+            delete[] stack;
             return wxGIF_INVFORMAT;
+        }
 
         stack[pos] = code;              // push last code into the stack
         abcabca    = code;              // save for special case
@@ -450,7 +434,12 @@ wxGIFDecoder::dgif(wxInputStream& stream, GIFImage *img, int interl, int bits)
             // to reset it. This checks whether we really got it, otherwise
             // the GIF is damaged.
             if (ab_free > ab_max)
+            {
+                delete[] ab_prefix;
+                delete[] ab_tail;
+                delete[] stack;
                 return wxGIF_INVFORMAT;
+            }
 
             // This assert seems unnecessary since the condition above
             // eliminates the only case in which it went false. But I really
@@ -589,6 +578,10 @@ as an End of Information itself)
         lastcode = readcode;
     }
     while (code != ab_fin);
+
+    delete [] ab_prefix ;
+    delete [] ab_tail ;
+    delete [] stack ;
 
     return wxGIF_OK;
 }
@@ -823,8 +816,7 @@ wxGIFErrorCode wxGIFDecoder::LoadGIF(wxInputStream& stream)
                         if ( (!pimg->w || pimg->w > (unsigned)m_szAnimation.x) ||
                                 (!pimg->h || pimg->h > (unsigned)m_szAnimation.y) )
                         {
-                            wxLogError(_("Incorrect GIF frame size (%u, %d) for "
-                                         "the frame #%u"),
+                            wxLogError(_("Incorrect GIF frame size (%u, %d) for the frame #%u"),
                                        pimg->w, pimg->h, m_nFrames);
                             return wxGIF_INVFORMAT;
                         }
@@ -885,7 +877,7 @@ wxGIFErrorCode wxGIFDecoder::LoadGIF(wxInputStream& stream)
         }
     }
 
-    if (m_nFrames == 0)
+    if (m_nFrames <= 0)
     {
         Destroy();
         return wxGIF_INVFORMAT;

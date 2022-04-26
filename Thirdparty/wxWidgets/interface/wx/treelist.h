@@ -3,6 +3,7 @@
 // Purpose:     wxTreeListCtrl class documentation
 // Author:      Vadim Zeitlin
 // Created:     2011-08-17
+// RCS-ID:      $Id$
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -20,15 +21,6 @@ enum
     wxTL_CHECKBOX       = 0x0002,       /// Show checkboxes in the first column.
     wxTL_3STATE         = 0x0004,       /// Allow 3rd state in checkboxes.
     wxTL_USER_3STATE    = 0x0008,       /// Allow user to set 3rd state.
-    /**
-        Don't show the column headers.
-
-        By default this control shows the column headers, using this class
-        allows avoiding this and showing only the data.
-
-        @since 2.9.5
-     */
-    wxTL_NO_HEADER      = 0x0010,
 
     wxTL_DEFAULT_STYLE  = wxTL_SINGLE,
     wxTL_STYLE_MASK     = wxTL_SINGLE |
@@ -41,7 +33,7 @@ enum
 
 /**
     @class wxTreeListItem
-
+   
     Unique identifier of an item in wxTreeListCtrl.
 
     This is an opaque class which can't be used by the application in any other
@@ -50,7 +42,7 @@ enum
 
     @see wxTreeListCtrl
 
-    @library{wxcore}
+    @library{wxadv}
     @category{ctrl}
 
     @since 2.9.3
@@ -74,12 +66,12 @@ public:
 
 /**
     @class wxTreeListItemComparator
-
+   
     Class defining sort order for the items in wxTreeListCtrl.
 
     @see wxTreeListCtrl
 
-    @library{wxcore}
+    @library{wxadv}
     @category{ctrl}
 
     @since 2.9.3
@@ -90,7 +82,7 @@ public:
     /**
         Default constructor.
 
-        Notice that this class is not copiable, comparators are not passed by
+        Notice that this class is not copyable, comparators are not passed by
         value.
      */
     wxTreeListItemComparator();
@@ -212,16 +204,13 @@ extern const wxTreeListItem wxTLI_LAST;
     @style{wxTL_USER_3STATE}
         Same as wxTL_3STATE but the user can also set the checkboxes to the
         undetermined state. Implies wxTL_3STATE.
-    @style{wxTL_NO_HEADER}
-        Don't show the column headers, that are shown by default. Notice that
-        this style is only available since wxWidgets 2.9.5.
     @style{wxTL_DEFAULT_STYLE}
         Style used by the control by default, just wxTL_SINGLE currently.
     @endStyleTable
 
     @beginEventTable{wxTreeListEvent}
     @event{EVT_TREELIST_SELECTION_CHANGED(id, func)}
-        Process @c wxEVT_TREELIST_SELECTION_CHANGED event and notifies
+        Process @c wxEVT_COMMAND_TREELIST_SELECTION_CHANGED event and notifies
         about the selection change in the control. In the single selection case
         the item indicated by the event has been selected and previously
         selected item, if any, was deselected. In multiple selection case, the
@@ -230,32 +219,32 @@ extern const wxTreeListItem wxTLI_LAST;
         could have changed as well, use wxTreeListCtrl::GetSelections() to
         retrieve the new selection if necessary.
     @event{EVT_TREELIST_ITEM_EXPANDING(id, func)}
-        Process @c wxEVT_TREELIST_ITEM_EXPANDING event notifying about
+        Process @c wxEVT_COMMAND_TREELIST_ITEM_EXPANDING event notifying about
         the given branch being expanded. This event is sent before the
         expansion occurs and can be vetoed to prevent it from happening.
     @event{EVT_TREELIST_ITEM_EXPANDED(id, func)}
-        Process @c wxEVT_TREELIST_ITEM_EXPANDED event notifying about
+        Process @c wxEVT_COMMAND_TREELIST_ITEM_EXPANDED event notifying about
         the expansion of the given branch. This event is sent after the
         expansion occurs and can't be vetoed.
     @event{EVT_TREELIST_ITEM_CHECKED(id, func)}
-        Process @c wxEVT_TREELIST_ITEM_CHECKED event notifying about
+        Process @c wxEVT_COMMAND_TREELIST_ITEM_CHECKED event notifying about
         the user checking or unchecking the item. You can use
         wxTreeListCtrl::GetCheckedState() to retrieve the new item state and
         wxTreeListEvent::GetOldCheckedState() to get the previous one.
     @event{EVT_TREELIST_ITEM_ACTIVATED(id, func)}
-        Process @c wxEVT_TREELIST_ITEM_ACTIVATED event notifying about
+        Process @c wxEVT_COMMAND_TREELIST_ITEM_ACTIVATED event notifying about
         the user double clicking the item or activating it from keyboard.
     @event{EVT_TREELIST_ITEM_CONTEXT_MENU(id, func)}
-        Process @c wxEVT_TREELIST_ITEM_CONTEXT_MENU event indicating
+        Process @c wxEVT_COMMAND_TREELIST_ITEM_CONTEXT_MENU event indicating
         that the popup menu for the given item should be displayed.
     @event{EVT_TREELIST_COLUMN_SORTED(id, func)}
-        Process @c wxEVT_TREELIST_COLUMN_SORTED event indicating that
+        Process @c wxEVT_COMMAND_TREELIST_COLUMN_SORTED event indicating that
         the control contents has just been resorted using the specified column.
         The event doesn't carry the sort direction, use GetSortColumn() method
         if you need to know it.
     @endEventTable
 
-    @library{wxcore}
+    @library{wxadv}
     @category{ctrl}
 
     @since 2.9.3
@@ -314,7 +303,7 @@ public:
 
 
     /**
-        @name Image list methods.
+        Image list methods.
 
         Like wxTreeCtrl and wxListCtrl this class uses wxImageList so if you
         intend to use item icons with it, you must construct wxImageList
@@ -352,7 +341,7 @@ public:
 
 
     /**
-        @name Column methods.
+        Column methods.
      */
     //@{
 
@@ -364,7 +353,7 @@ public:
         @param width
             The width of the column in pixels or the special
             wxCOL_WIDTH_AUTOSIZE value indicating that the column should adjust
-            to its contents. Notice that the last column is special and will
+            to its contents. Notice that the first column is special and will
             be always resized to fill all the space not taken by the other
             columns, i.e. the width specified here is ignored for it.
         @param align
@@ -408,7 +397,7 @@ public:
         Set column width to either the given value in pixels or to the value
         large enough to fit all of the items if width is wxCOL_WIDTH_AUTOSIZE.
 
-        Notice that setting the width of the last column is ignored as this
+        Notice that setting the width of the first column is ignored as this
         column is always resized to fill the space left by the other columns.
      */
     void SetColumnWidth(unsigned col, int width);
@@ -428,7 +417,7 @@ public:
 
 
     /**
-        @name Adding and removing items.
+        Adding and removing items.
 
         When adding items, the parent and text of the first column of the new item
         must always be specified, the rest is optional.
@@ -462,8 +451,6 @@ public:
             wxTLI_FIRST or wxTLI_LAST indicating that the item should be either
             inserted before the first child of its parent (if any) or after the
             last one.
-        @param text
-            The item text.
         @param imageClosed
             The normal item image, may be NO_IMAGE to not show any image.
         @param imageOpened
@@ -497,10 +484,10 @@ public:
 
 
     /**
-        @name Methods for the tree navigation.
+        Methods for the tree navigation.
 
         The tree has an invisible root item which is the hidden parent of all
-        top-level items in the tree. Starting from it is possible to iterate
+        top-level items in the tree. Starting from it it is possible to iterate
         over all tree items using GetNextItem().
 
         It is also possible to iterate over just the children of the given item
@@ -567,7 +554,7 @@ public:
 
 
     /**
-        @name Items attributes
+        Items attributes
      */
     //@{
 
@@ -619,7 +606,7 @@ public:
 
 
     /**
-        @name Expanding and collapsing tree branches.
+        Expanding and collapsing tree branches.
 
         Notice that calling neither Expand() nor Collapse() method generates
         any events.
@@ -645,7 +632,7 @@ public:
 
 
     /**
-        @name Selection methods.
+        Selection methods.
 
         The behaviour of the control is different in single selection mode (the
         default) and multi-selection mode (if @c wxTL_MULTIPLE was specified
@@ -713,18 +700,11 @@ public:
      */
     void UnselectAll();
 
-    /**
-        Call this to ensure that the given item is visible.
-
-        @since 3.1.0
-     */
-    void EnsureVisible(wxTreeListItem item);
-
     //@}
 
 
     /**
-        @name Checkbox handling
+        Checkbox handling
 
         Methods in this section can only be used with the controls created with
         wxTL_CHECKBOX style.
@@ -802,7 +782,7 @@ public:
     //@}
 
     /**
-        @name Sorting.
+        Sorting.
 
         If some control columns were added with wxCOL_SORTABLE flag, clicking
         on them will automatically resort the control using the custom
@@ -867,7 +847,7 @@ public:
 
 
     /**
-        @name View window.
+        View window.
 
         This control itself is entirely covered by the "view window" which is
         currently a wxDataViewCtrl but if you want to avoid relying on this to
@@ -920,7 +900,7 @@ public:
     /**
         Return the previous state of the item checkbox.
 
-        This method can be used with @c wxEVT_TREELIST_ITEM_CHECKED
+        This method can be used with @c wxEVT_COMMAND_TREELIST_ITEM_CHECKED
         events only.
 
         Notice that the new state of the item can be retrieved using
@@ -931,7 +911,7 @@ public:
     /**
         Return the column affected by the event.
 
-        This is currently only used with @c wxEVT_TREELIST_COLUMN_SORTED
+        This is currently only used with @c wxEVT_COMMAND_TREELIST_COLUMN_SORTED
         event.
      */
     unsigned GetColumn() const;
@@ -948,10 +928,10 @@ public:
     wxEVENT_HANDLER_CAST(wxTreeListEventFunction, func)
 
 
-wxEventType wxEVT_TREELIST_SELECTION_CHANGED;
-wxEventType wxEVT_TREELIST_ITEM_EXPANDING;
-wxEventType wxEVT_TREELIST_ITEM_EXPANDED;
-wxEventType wxEVT_TREELIST_ITEM_CHECKED;
-wxEventType wxEVT_TREELIST_ITEM_ACTIVATED;
-wxEventType wxEVT_TREELIST_ITEM_CONTEXT_MENU;
-wxEventType wxEVT_TREELIST_COLUMN_SORTED;
+wxEventType wxEVT_COMMAND_TREELIST_SELECTION_CHANGED;
+wxEventType wxEVT_COMMAND_TREELIST_ITEM_EXPANDING;
+wxEventType wxEVT_COMMAND_TREELIST_ITEM_EXPANDED;
+wxEventType wxEVT_COMMAND_TREELIST_ITEM_CHECKED;
+wxEventType wxEVT_COMMAND_TREELIST_ITEM_ACTIVATED;
+wxEventType wxEVT_COMMAND_TREELIST_ITEM_CONTEXT_MENU;
+wxEventType wxEVT_COMMAND_TREELIST_COLUMN_SORTED;

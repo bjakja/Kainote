@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     22.06.2003
+// RCS-ID:      $Id$
 // Copyright:   (c) 2003 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -44,6 +45,7 @@ public:
 #endif // wxUSE_THREADS
 
 
+#ifndef __WXWINCE__
     // console helpers
     // ---------------
 
@@ -57,13 +59,7 @@ public:
 
     // write text to the console, return true if ok or false on error
     virtual bool WriteToStderr(const wxString& text) = 0;
-
-    // return the main application window or 0 if none
-    virtual WXHWND GetMainHWND() const = 0;
-
-    // implement this base class function for both console and GUI applications
-    virtual bool SafeMessageBox(const wxString& text,
-                                const wxString& title) wxOVERRIDE;
+#endif // !__WXWINCE__
 
 protected:
 #if wxUSE_THREADS

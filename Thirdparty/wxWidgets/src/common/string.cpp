@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin, Ryan Norton
 // Modified by:
 // Created:     29/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 //              (c) 2004 Ryan Norton <wxprojects@comcast.net>
 // Licence:     wxWindows licence
@@ -14,44 +15,51 @@
 // ===========================================================================
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
-    #include "wx\string.h"
-    #include "wx\wxcrtvararg.h"
-    #include "wx\intl.h"
-    #include "wx\log.h"
+    #include "wx/string.h"
+    #include "wx/wxcrtvararg.h"
+    #include "wx/intl.h"
+    #include "wx/log.h"
 #endif
 
 #include <ctype.h>
 
-#include <errno.h>
+#ifndef __WXWINCE__
+    #include <errno.h>
+#endif
 
 #include <string.h>
 #include <stdlib.h>
 
-#include "wx\hashmap.h"
-#include "wx\vector.h"
-#include "wx\xlocale.h"
+#include "wx/hashmap.h"
+#include "wx/vector.h"
+#include "wx/xlocale.h"
 
 #ifdef __WINDOWS__
-    #include "wx\msw/wrapwin.h"
+    #include "wx/msw/wrapwin.h"
 #endif // __WINDOWS__
 
 #if wxUSE_STD_IOSTREAM
     #include <sstream>
 #endif
 
-#ifndef HAVE_STD_STRING_COMPARE
 // string handling functions used by wxString:
 #if wxUSE_UNICODE_UTF8
+    #define wxStringMemcpy   memcpy
     #define wxStringMemcmp   memcmp
+    #define wxStringMemchr   memchr
     #define wxStringStrlen   strlen
 #else
+    #define wxStringMemcpy   wxTmemcpy
     #define wxStringMemcmp   wxTmemcmp
+    #define wxStringMemchr   wxTmemchr
     #define wxStringStrlen   wxStrlen
-#endif
 #endif
 
 // define a function declared in wx/buffer.h here as we don't have buffer.cpp
@@ -188,7 +196,13 @@ static wxStrCacheStatsDumper s_showCacheStats;
 wxSTD ostream& operator<<(wxSTD ostream& os, const wxCStrData& str)
 {
 #if wxUSE_UNICODE && !wxUSE_UNICODE_UTF8
-    return os << wxConvWhateverWorks.cWX2MB(str);
+    const wxScopedCharBuffer buf(str.AsCharBuf());
+    if ( !buf )
+        os.clear(wxSTD ios_base::failbit);
+    else
+        os << buf.data();
+
+    return os;
 #else
     return os << str.AsInternal();
 #endif
@@ -204,14 +218,12 @@ wxSTD ostream& operator<<(wxSTD ostream& os, const wxScopedCharBuffer& str)
     return os << str.data();
 }
 
+#ifndef __BORLANDC__
 wxSTD ostream& operator<<(wxSTD ostream& os, const wxScopedWCharBuffer& str)
 {
-    // There is no way to write wide character data to std::ostream directly,
-    // but we need to define this operator for compatibility, as we provided it
-    // since basically always, even if it never worked correctly before. So do
-    // the only reasonable thing and output it as UTF-8.
-    return os << wxConvWhateverWorks.cWC2MB(str.data());
+    return os << str.data();
 }
+#endif
 
 #if wxUSE_UNICODE && defined(HAVE_WOSTREAM)
 
@@ -554,7 +566,7 @@ bool wxString::Shrink()
 {
   wxString tmp(begin(), end());
   swap(tmp);
-  return true;
+  return tmp.length() == length();
 }
 
 // deprecated compatibility code:
@@ -1159,10 +1171,10 @@ int wxString::CmpNoCase(const wxString& s) const
 
 wxString wxString::FromAscii(const char *ascii, size_t len)
 {
-    wxString res;
-
     if (!ascii || len == 0)
-       return res;
+       return wxEmptyString;
+
+    wxString res;
 
     {
         wxStringInternalBuffer buf(res, len);
@@ -1174,7 +1186,7 @@ wxString wxString::FromAscii(const char *ascii, size_t len)
             wxASSERT_MSG( c < 0x80,
                           wxT("Non-ASCII value passed to FromAscii().") );
 
-            *dest++ = static_cast<wxStringCharType>(c);
+            *dest++ = (wchar_t)c;
         }
     }
 
@@ -1198,7 +1210,7 @@ wxString wxString::FromAscii(char ascii)
     return wxString(wxUniChar((wchar_t)c));
 }
 
-const wxScopedCharBuffer wxString::ToAscii(char replaceWith) const
+const wxScopedCharBuffer wxString::ToAscii() const
 {
     // this will allocate enough space for the terminating NUL too
     wxCharBuffer buffer(length());
@@ -1208,7 +1220,7 @@ const wxScopedCharBuffer wxString::ToAscii(char replaceWith) const
     {
         wxUniChar c(*i);
         // FIXME-UTF8: unify substituted char ('_') with wxUniChar ('?')
-        *dest++ = c.IsAscii() ? (char)c : replaceWith;
+        *dest++ = c.IsAscii() ? (char)c : '_';
 
         // the output string can't have embedded NULs anyhow, so we can safely
         // stop at first of them even if we do have any
@@ -1233,15 +1245,15 @@ wxString wxString::Mid(size_t nFirst, size_t nCount) const
     }
 
     // out-of-bounds requests return sensible things
+    if ( nFirst + nCount > nLen )
+    {
+        nCount = nLen - nFirst;
+    }
+
     if ( nFirst > nLen )
     {
         // AllocCopy() will return empty string
         return wxEmptyString;
-    }
-
-    if ( nCount > nLen - nFirst )
-    {
-        nCount = nLen - nFirst;
     }
 
     wxString dest(*this, nFirst, nCount);
@@ -1662,9 +1674,15 @@ int wxString::Find(wxUniChar ch, bool bFromEnd) const
 // it out. Note that number extraction works correctly on UTF-8 strings, so
 // we can use wxStringCharType and wx_str() for maximum efficiency.
 
+#ifndef __WXWINCE__
+    #define DO_IF_NOT_WINCE(x) x
+#else
+    #define DO_IF_NOT_WINCE(x)
+#endif
+
 #define WX_STRING_TO_X_TYPE_START                                           \
     wxCHECK_MSG( pVal, false, wxT("NULL output pointer") );                  \
-    errno = 0;                                                              \
+    DO_IF_NOT_WINCE( errno = 0; )                                           \
     const wxStringCharType *start = wx_str();                               \
     wxStringCharType *end;
 
@@ -1672,36 +1690,10 @@ int wxString::Find(wxUniChar ch, bool bFromEnd) const
 // nothing could be parsed but we do modify it and return false then if we did
 // parse something successfully but not the entire string
 #define WX_STRING_TO_X_TYPE_END                                             \
-    if ( end == start || errno == ERANGE )                                  \
+    if ( end == start DO_IF_NOT_WINCE(|| errno == ERANGE) )                 \
         return false;                                                       \
     *pVal = val;                                                            \
     return !*end;
-
-bool wxString::ToInt(int *pVal, int base) const
-{
-    wxASSERT_MSG(!base || (base > 1 && base <= 36), wxT("invalid base"));
-
-    WX_STRING_TO_X_TYPE_START
-    wxLongLong_t lval = wxStrtoll(start, &end, base);
-
-    if (lval < INT_MIN || lval > INT_MAX)
-        return false;
-    int val = (int)lval;
-
-    WX_STRING_TO_X_TYPE_END
-}
-
-bool wxString::ToUInt(unsigned int *pVal, int base) const
-{
-    wxASSERT_MSG(!base || (base > 1 && base <= 36), wxT("invalid base"));
-
-    WX_STRING_TO_X_TYPE_START
-    wxULongLong_t lval = wxStrtoull(start, &end, base);
-    if (lval > UINT_MAX)
-        return false;
-    unsigned int val = (unsigned int)lval;
-    WX_STRING_TO_X_TYPE_END
-}
 
 bool wxString::ToLong(long *pVal, int base) const
 {
@@ -1806,8 +1798,6 @@ bool wxString::ToCULong(unsigned long *pVal, int base) const
 // point which is different in different locales.
 bool wxString::ToCDouble(double *pVal) const
 {
-    // See the explanations in FromCDouble() below for the reasons for all this.
-
     // Create a copy of this string using the decimal point instead of whatever
     // separator the current locale uses.
 #if wxUSE_INTL
@@ -1865,19 +1855,20 @@ wxString wxString::FromCDouble(double val, int precision)
 {
     wxCHECK_MSG( precision >= -1, wxString(), "Invalid negative precision" );
 
-    // Unfortunately there is no good way to get the number directly in the C
-    // locale. Some platforms provide special functions to do this (e.g.
-    // _sprintf_l() in MSVS or sprintf_l() in BSD systems), but some systems we
-    // still support don't have them and it doesn't seem worth it to have two
-    // different ways to do the same thing. Also, in principle, using the
-    // standard C++ streams should allow us to do it, but some implementations
-    // of them are horribly broken and actually change the global C locale,
-    // thus randomly affecting the results produced in other threads, when
-    // imbue() stream method is called (for the record, the latest libstdc++
-    // version included in OS X does it and so seem to do the versions
-    // currently included in Android NDK and both FreeBSD and OpenBSD), so we
-    // can't do this neither and are reduced to this hack.
+#if wxUSE_STD_IOSTREAM && wxUSE_STD_STRING
+    // We assume that we can use the ostream and not wstream for numbers.
+    wxSTD ostringstream os;
+    if ( precision != -1 )
+    {
+        os.precision(precision);
+        os.setf(std::ios::fixed, std::ios::floatfield);
+    }
 
+    os << val;
+    return os.str();
+#else // !wxUSE_STD_IOSTREAM
+    // Can't use iostream locale support, fall back to the manual method
+    // instead.
     wxString s = FromDouble(val, precision);
 #if wxUSE_INTL
     wxString sep = wxLocale::GetInfo(wxLOCALE_DECIMAL_POINT,
@@ -1891,6 +1882,7 @@ wxString wxString::FromCDouble(double val, int precision)
 
     s.Replace(sep, ".");
     return s;
+#endif // wxUSE_STD_IOSTREAM/!wxUSE_STD_IOSTREAM
 }
 
 // ---------------------------------------------------------------------------
@@ -1990,16 +1982,12 @@ int wxString::DoPrintfUtf8(const char *format, ...)
     the ISO C99 (and thus SUSv3) standard the return value for the case of
     an undersized buffer is inconsistent.  For conforming vsnprintf
     implementations the function must return the number of characters that
-    would have been printed had the buffer been large enough, which is useful.
-    Unfortunately, for conforming vswprintf implementations, the function must
-    just return a negative number and is not even required to set errno, which
-    makes the standard behaviour totally useless as there is no way to
-    determine if the error occurred due to a (fatal) problem with either the
-    format string or the arguments or to a (correctable) problem with the
-    buffer just not being big enough.
+    would have been printed had the buffer been large enough.  For conforming
+    vswprintf implementations the function must return a negative number
+    and set errno.
 
-    In practice some implementations (including our own implementation of
-    vsprintf(), if we use it) do set errno to EILSEQ or EINVAL.  Both of
+    What vswprintf sets errno to is undefined but Darwin seems to set it to
+    EOVERFLOW.  The only expected errno are EILSEQ and EINVAL.  Both of
     those are defined in the standard and backed up by several conformance
     statements.  Note that ENOMEM mentioned in the manual page does not
     apply to swprintf, only wprintf and fwprintf.
@@ -2011,14 +1999,34 @@ int wxString::DoPrintfUtf8(const char *format, ...)
     http://www.opengroup.org/csq/view.mhtml?RID=ibm%2FSD1%2F3
     http://www.theopengroup.org/csq/view.mhtml?norationale=1&noreferences=1&RID=Fujitsu%2FSE2%2F10
 
-    So we can check for these specific errno values to detect invalid format
-    string or arguments. Unfortunately not all implementations set them and, in
-    particular, glibc, use under Linux, never sets errno at all. This means
-    that we have no choice but to try increasing the buffer size because we
-    can't distinguish between the unrecoverable errors and buffer just being too
-    small. Of course, continuing increasing the size forever will sooner or
-    later result in out of memory error and crashing, so we also have to impose
-    some arbitrary limit on it.
+    Since EILSEQ and EINVAL are rather common but EOVERFLOW is not and since
+    EILSEQ and EINVAL are specifically defined to mean the error is other than
+    an undersized buffer and no other errno are defined we treat those two
+    as meaning hard errors and everything else gets the old behaviour which
+    is to keep looping and increasing buffer size until the function succeeds.
+
+    In practice it's impossible to determine before compilation which behaviour
+    may be used.  The vswprintf function may have vsnprintf-like behaviour or
+    vice-versa.  Behaviour detected on one release can theoretically change
+    with an updated release.  Not to mention that configure testing for it
+    would require the test to be run on the host system, not the build system
+    which makes cross compilation difficult. Therefore, we make no assumptions
+    about behaviour and try our best to handle every known case, including the
+    case where wxVsnprintf returns a negative number and fails to set errno.
+
+    There is yet one more non-standard implementation and that is our own.
+    Fortunately, that can be detected at compile-time.
+
+    On top of all that, ISO C99 explicitly defines snprintf to write a null
+    character to the last position of the specified buffer.  That would be at
+    at the given buffer size minus 1.  It is supposed to do this even if it
+    turns out that the buffer is sized too small.
+
+    Darwin (tested on 10.5) follows the C99 behaviour exactly.
+
+    Glibc 2.6 almost follows the C99 behaviour except vswprintf never sets
+    errno even when it fails.  However, it only seems to ever fail due
+    to an undersized buffer.
 */
 #if wxUSE_UNICODE_UTF8
 template<typename BufferType>
@@ -2030,7 +2038,7 @@ template<typename BufferType>
 static int DoStringPrintfV(wxString& str,
                            const wxString& format, va_list argptr)
 {
-    size_t size = 1024;
+    int size = 1024;
 
     for ( ;; )
     {
@@ -2053,8 +2061,10 @@ static int DoStringPrintfV(wxString& str,
         va_list argptrcopy;
         wxVaCopy(argptrcopy, argptr);
 
+#ifndef __WXWINCE__
         // Set errno to 0 to make it determinate if wxVsnprintf fails to set it.
         errno = 0;
+#endif
         int len = wxVsnprintf(buf, size, format, argptrcopy);
         va_end(argptrcopy);
 
@@ -2065,43 +2075,54 @@ static int DoStringPrintfV(wxString& str,
         // bug except the code above allocates an extra character.
         buf[size] = wxT('\0');
 
-        // Handle all possible results that we can get depending on the build
-        // options.
+        // vsnprintf() may return either -1 (traditional Unix behaviour) or the
+        // total number of characters which would have been written if the
+        // buffer were large enough (newer standards such as Unix98)
         if ( len < 0 )
         {
+            // NB: wxVsnprintf() may call either wxCRT_VsnprintfW or
+            //     wxCRT_VsnprintfA in UTF-8 build; wxUSE_WXVSNPRINTF
+            //     is true if *both* of them use our own implementation,
+            //     otherwise we can't be sure
+#if wxUSE_WXVSNPRINTF
+            // we know that our own implementation of wxVsnprintf() returns -1
+            // only for a format error - thus there's something wrong with
+            // the user's format string
+            buf[0] = '\0';
+            return -1;
+#else // possibly using system version
             // assume it only returns error if there is not enough space, but
             // as we don't know how much we need, double the current size of
             // the buffer
+#ifndef __WXWINCE__
             if( (errno == EILSEQ) || (errno == EINVAL) )
-            {
-                // If errno was set to one of the two well-known hard errors
-                // then fail immediately to avoid an infinite loop.
+            // If errno was set to one of the two well-known hard errors
+            // then fail immediately to avoid an infinite loop.
                 return -1;
-            }
-
+            else
+#endif // __WXWINCE__
             // still not enough, as we don't know how much we need, double the
-            // current size of the buffer -- unless it's already too big, as we
-            // have to stop at some point to avoid running out of memory and
-            // crashing or worse (e.g. triggering OOM killer and accidentally
-            // killing some other innocent process)
-
-            // The limit is completely arbitrary, it's supposed to be big
-            // enough to never become a problem in practice, but not so big as
-            // to result in out of memory crashes.
-            static const size_t MAX_BUFFER_SIZE = 128*1024*1024;
-
-            if ( size >= MAX_BUFFER_SIZE )
-                return -1;
-
-            // Note that doubling the size here will never overflow for size
-            // less than the limit.
-            size *= 2;
+            // current size of the buffer
+                size *= 2;
+#endif // wxUSE_WXVSNPRINTF/!wxUSE_WXVSNPRINTF
         }
-        else if ( static_cast<size_t>(len) >= size )
+        else if ( len >= size )
         {
-            // we got back the needed size, but it doesn't include space for
-            // NUL, so add it ourselves
+#if wxUSE_WXVSNPRINTF
+            // we know that our own implementation of wxVsnprintf() returns
+            // size+1 when there's not enough space but that's not the size
+            // of the required buffer!
+            size *= 2;      // so we just double the current size of the buffer
+#else
+            // some vsnprintf() implementations NUL-terminate the buffer and
+            // some don't in len == size case, to be safe always add 1
+            // FIXME: I don't quite understand this comment.  The vsnprintf
+            // function is specifically defined to return the number of
+            // characters printed not including the null terminator.
+            // So OF COURSE you need to add 1 to get the right buffer size.
+            // The following line is definitely correct, no question.
             size = len + 1;
+#endif
         }
         else // ok, there was enough space
         {
@@ -2183,7 +2204,7 @@ bool wxString::Matches(const wxString& mask) const
                 // (however note that we don't quote '[' and ']' to allow
                 // using them for Unix shell like matching)
                 pattern += wxT('\\');
-                wxFALLTHROUGH;
+                // fall through
 
             default:
                 pattern += *pszMask;

@@ -4,6 +4,7 @@
 // Author:      David Norris <danorris@gmail.com>, Otto Wyss
 // Modified by: Ryan Norton, Francesco Montorsi
 // Created:     04/02/2005
+// RCS-ID:      $Id$
 // Copyright:   (c) 2005 David Norris
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_HYPERLINKCTRL
 
@@ -73,10 +77,10 @@ wxFLAGS_MEMBER(wxHL_ALIGN_RIGHT)
 wxFLAGS_MEMBER(wxHL_ALIGN_CENTRE)
 wxEND_FLAGS( wxHyperlinkStyle )
 
-wxIMPLEMENT_DYNAMIC_CLASS_XTI( wxHyperlinkCtrl, wxControl, "wx/hyperlink.h");
+wxIMPLEMENT_DYNAMIC_CLASS_XTI( wxHyperlinkCtrl, wxControl, "wx/hyperlink.h")
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxHyperlinkEvent, wxCommandEvent);
-wxDEFINE_EVENT( wxEVT_HYPERLINK, wxHyperlinkEvent );
+IMPLEMENT_DYNAMIC_CLASS(wxHyperlinkEvent, wxCommandEvent)
+wxDEFINE_EVENT( wxEVT_COMMAND_HYPERLINK, wxHyperlinkEvent );
 
 wxBEGIN_PROPERTIES_TABLE(wxHyperlinkCtrl)
 wxPROPERTY( Label, wxString, SetLabel, GetLabel, wxString(), \
@@ -124,13 +128,13 @@ wxHyperlinkCtrlBase::CheckParams(const wxString& label,
 
 void wxHyperlinkCtrlBase::SendEvent()
 {
-    const wxString& url = GetURL();
+    wxString url = GetURL();
     wxHyperlinkEvent linkEvent(this, GetId(), url);
     if (!GetEventHandler()->ProcessEvent(linkEvent))     // was the event skipped ?
     {
         if (!wxLaunchDefaultBrowser(url))
         {
-            wxLogWarning(_("Failed to open URL \"%s\" in the default browser"), url);
+            wxLogWarning(wxT("Could not launch the default browser with url '%s' !"), url.c_str());
         }
     }
 }

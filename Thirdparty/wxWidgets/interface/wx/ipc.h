@@ -2,6 +2,7 @@
 // Name:        ipc.h
 // Purpose:     interface of wxConnection
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 

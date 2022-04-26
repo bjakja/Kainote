@@ -3,6 +3,7 @@
 // Purpose:     wxDC class
 // Author:      Vaclav Slavik
 // Created:     2006-08-07
+// RCS-ID:      $Id$
 // Copyright:   (c) 2006 REA Elektronik GmbH
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -131,9 +132,9 @@ protected:
     virtual void DoGetSize(int *width, int *height) const;
     virtual void DoGetSizeMM(int* width, int* height) const;
 
-    virtual void DoDrawLines(int n, const wxPoint points[],
+    virtual void DoDrawLines(int n, wxPoint points[],
                              wxCoord xoffset, wxCoord yoffset);
-    virtual void DoDrawPolygon(int n, const wxPoint points[],
+    virtual void DoDrawPolygon(int n, wxPoint points[],
                                wxCoord xoffset, wxCoord yoffset,
                                wxPolygonFillMode fillStyle = wxODDEVEN_RULE);
 
@@ -157,9 +158,11 @@ private:
 protected:
     wxIDirectFBSurfacePtr m_surface;
 
+    double            m_mm_to_pix_x, m_mm_to_pix_y;
+
     friend class WXDLLIMPEXP_FWD_CORE wxOverlayImpl; // for Init
 
-    wxDECLARE_ABSTRACT_CLASS(wxDFBDCImpl);
+    DECLARE_ABSTRACT_CLASS(wxDFBDCImpl)
 };
 
 #endif // _WX_DFB_DC_H_

@@ -4,6 +4,7 @@
 // Author:      Peter Cawley
 // Modified by:
 // Created:     2009-05-25
+// RCS-ID:      $Id$
 // Copyright:   (C) Peter Cawley
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -41,33 +42,30 @@ public:
                 const wxBitmap& icon = wxNullBitmap,
                 long style = 0);
 
-    void SetArtProvider(wxRibbonArtProvider* art) wxOVERRIDE;
+    void SetArtProvider(wxRibbonArtProvider* art);
 
     wxBitmap& GetIcon() {return m_icon;}
-    virtual wxSize GetMinSize() const wxOVERRIDE;
+    virtual wxSize GetMinSize() const;
     void SetSizeWithScrollButtonAdjustment(int x, int y, int width, int height);
     void AdjustRectToIncludeScrollButtons(wxRect* rect) const;
 
     bool DismissExpandedPanel();
 
-    virtual bool Realize() wxOVERRIDE;
-    virtual bool Show(bool show = true) wxOVERRIDE;
-    virtual bool Layout() wxOVERRIDE;
-    virtual bool ScrollLines(int lines) wxOVERRIDE;
+    virtual bool Realize();
+    virtual bool Show(bool show = true);
+    virtual bool Layout();
+    virtual bool ScrollLines(int lines);
     bool ScrollPixels(int pixels);
-    bool ScrollSections(int sections);
 
     wxOrientation GetMajorAxis() const;
 
-    virtual void RemoveChild(wxWindowBase *child) wxOVERRIDE;
-
-    void HideIfExpanded();
+    virtual void RemoveChild(wxWindowBase *child);
 
 protected:
-    virtual wxSize DoGetBestSize() const wxOVERRIDE;
-    virtual wxBorder GetDefaultBorder() const wxOVERRIDE { return wxBORDER_NONE; }
+    virtual wxSize DoGetBestSize() const;
+    virtual wxBorder GetDefaultBorder() const { return wxBORDER_NONE; }
 
-    void DoSetSize(int x, int y, int width, int height, int sizeFlags = wxSIZE_AUTO) wxOVERRIDE;
+    void DoSetSize(int x, int y, int width, int height, int sizeFlags = wxSIZE_AUTO);
     bool DoActualLayout();
     void OnEraseBackground(wxEraseEvent& evt);
     void OnPaint(wxPaintEvent& evt);
@@ -75,7 +73,7 @@ protected:
 
     bool ExpandPanels(wxOrientation direction, int maximum_amount);
     bool CollapsePanels(wxOrientation direction, int minimum_amount);
-    bool ShowScrollButtons();
+    void ShowScrollButtons();
     void HideScrollButtons();
 
     void CommonInit(const wxString& label, const wxBitmap& icon);
@@ -95,8 +93,8 @@ protected:
     bool m_scroll_buttons_visible;
 
 #ifndef SWIG
-    wxDECLARE_CLASS(wxRibbonPage);
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_CLASS(wxRibbonPage)
+    DECLARE_EVENT_TABLE()
 #endif
 };
 

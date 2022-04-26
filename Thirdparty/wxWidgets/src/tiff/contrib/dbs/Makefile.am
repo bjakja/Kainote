@@ -27,9 +27,7 @@ SUBDIRS = xtiff
 
 LIBTIFF = $(top_builddir)/libtiff/libtiff.la
 
-EXTRA_DIST = \
-	CMakeLists.txt \
-	README
+EXTRA_DIST = README
 
 noinst_PROGRAMS = tiff-bi tiff-grayscale tiff-palette tiff-rgb
 
@@ -42,5 +40,5 @@ tiff_palette_LDADD = $(LIBTIFF)
 tiff_rgb_SOURCES = tiff-rgb.c
 tiff_rgb_LDADD = $(LIBTIFF)
 
-AM_CPPFLAGS = -I$(top_srcdir)/libtiff
+INCLUDES = -I$(top_srcdir)/libtiff
 

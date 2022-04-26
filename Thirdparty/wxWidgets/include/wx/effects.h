@@ -5,6 +5,7 @@
 // Author:      Julian Smart et al
 // Modified by:
 // Created:     25/4/2000
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -74,7 +75,7 @@ protected:
     wxColour    m_mediumShadow;     // Usually dark grey
     wxColour    m_darkShadow;       // Usually black
 
-    wxDECLARE_CLASS(wxEffectsImpl);
+    DECLARE_CLASS(wxEffectsImpl)
 };
 
 // current versions of g++ don't generate deprecation warnings for classes
@@ -83,7 +84,7 @@ protected:
 // directly deprecating the classes...)
 //
 // note that this g++ bug (16370) is supposed to be fixed in g++ 4.3.0
-wxDEPRECATED(typedef wxEffectsImpl wxEffects);
+typedef wxEffectsImpl wxDEPRECATED(wxEffects);
 
 #endif // WXWIN_COMPATIBILITY_2_8
 

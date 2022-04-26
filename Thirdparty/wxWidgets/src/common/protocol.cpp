@@ -4,6 +4,7 @@
 // Author:      Guilhem Lavaux
 // Modified by:
 // Created:     07/07/1997
+// RCS-ID:      $Id$
 // Copyright:   (c) 1997, 1998 Guilhem Lavaux
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,6 +12,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_PROTOCOL
 
@@ -18,7 +22,6 @@
 #include "wx/protocol/log.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/app.h"
     #include "wx/module.h"
 #endif
 
@@ -31,7 +34,7 @@
 // wxProtoInfo
 // ----------------------------------------------------------------------------
 
-wxIMPLEMENT_CLASS(wxProtoInfo, wxObject);
+IMPLEMENT_CLASS(wxProtoInfo, wxObject)
 
 wxProtoInfo::wxProtoInfo(const wxChar *name, const wxChar *serv,
                          const bool need_host1, wxClassInfo *info)
@@ -54,15 +57,14 @@ wxProtoInfo::wxProtoInfo(const wxChar *name, const wxChar *serv,
 // ----------------------------------------------------------------------------
 
 #if wxUSE_SOCKETS
-wxIMPLEMENT_ABSTRACT_CLASS(wxProtocol, wxSocketClient);
+IMPLEMENT_ABSTRACT_CLASS(wxProtocol, wxSocketClient)
 #else
-wxIMPLEMENT_ABSTRACT_CLASS(wxProtocol, wxObject);
+IMPLEMENT_ABSTRACT_CLASS(wxProtocol, wxObject)
 #endif
 
 wxProtocol::wxProtocol()
 #if wxUSE_SOCKETS
-    // Only use non blocking sockets if we can dispatch events.
-    : wxSocketClient(wxSocketClient::GetBlockingFlagIfNeeded() | wxSOCKET_WAITALL)
+ : wxSocketClient()
 #endif
 {
     m_lastError = wxPROTO_NOERR;
@@ -113,11 +115,6 @@ wxProtocolError wxProtocol::ReadLine(wxSocketBase *sock, wxString& result)
     static const int LINE_BUF = 4095;
 
     result.clear();
-
-    // Although we're supposed to get 7-bit ASCII from the server, some FTP
-    // servers are known to send 8-bit data, so we try to decode it in
-    // any way that works as this is more useful than just throwing it away.
-    wxWhateverWorksConv conv;
 
     wxCharBuffer buf(LINE_BUF);
     char *pBuf = buf.data();
@@ -170,7 +167,7 @@ wxProtocolError wxProtocol::ReadLine(wxSocketBase *sock, wxString& result)
             return wxPROTO_NETERR;
 
         pBuf[nRead] = '\0';
-        result += conv.cMB2WX(pBuf);
+        result += wxString::FromAscii(pBuf);
 
         if ( eol )
         {

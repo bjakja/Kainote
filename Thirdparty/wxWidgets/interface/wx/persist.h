@@ -2,6 +2,7 @@
 // Name:        wx/persist.h
 // Purpose:     interface of wxPersistenceManager and related classes
 // Author:      Vadim Zeitlin
+// RCS-ID:      $Id$
 // Copyright:   (c) 2009 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -62,7 +63,7 @@ public:
         Globally disable restoring the persistence object properties.
 
         By default, restoring properties in Restore() is enabled but this
-        function allows disabling it. This is mostly useful for testing.
+        function allows to disable it. This is mostly useful for testing.
 
         @see DisableSaving()
      */
@@ -204,9 +205,6 @@ protected:
 /**
     Base class for persistent object adapters.
 
-    See @ref overview_persistence for an overview of persistent objects within
-    wxWidgets.
-
     wxWidgets persistence framework is non-intrusive, i.e. can work with the
     classes which have no relationship to nor knowledge of it. To allow this,
     an intermediate persistence adapter is used: this is just a simple object
@@ -295,14 +293,13 @@ protected:
     bool SaveValue(const wxString& name, T value) const;
 
     /**
-        Restore a value saved by SaveValue().
+        Restore the value saved by Save().
 
         @param name
-            The same name as was used by SaveValue().
+            The same name as was used by Save().
         @param value
-            Non-@NULL pointer to the same type that was passed to SaveValue().
-            The pointed to object will be filled with the saved value if it
-            was read successfully or not modified otherwise.
+            Non-@NULL pointer which will be filled with the value if it was
+            read successfully or not modified if it wasn't.
         @return
             @true if the value was successfully read or @false if it was not
             found or an error occurred.
@@ -335,6 +332,9 @@ wxPersistentObject *wxCreatePersistentObject(T *obj);
     using it results in slightly shorter code as it calls
     wxPersistenceManager::Get() internally. As an additional convenience, this
     function can also set the window name.
+
+    For the implementation reasons, this function @em must be used instead of
+    the template method when using Microsoft Visual C++ 6 compiler.
 
     @param obj wxWindow-derived object to register with persistence manager and
         to try to restore the settings for.

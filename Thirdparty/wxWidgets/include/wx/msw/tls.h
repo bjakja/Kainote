@@ -3,6 +3,7 @@
 // Purpose:     Win32 implementation of wxTlsValue<>
 // Author:      Vadim Zeitlin
 // Created:     2008-08-08
+// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -34,14 +35,7 @@ public:
     // get the key value, there is no error return
     void *Get() const
     {
-        // Exceptionally, TlsGetValue() calls SetLastError() even on success
-        // which means it overwrites the previous value. This is undesirable
-        // here, so explicitly preserve the last error here.
-        const DWORD dwLastError = ::GetLastError();
-        void* const value = ::TlsGetValue(m_slot);
-        if ( dwLastError )
-            ::SetLastError(dwLastError);
-        return value;
+        return ::TlsGetValue(m_slot);
     }
 
     // change the key value, return true if ok

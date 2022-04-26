@@ -2,6 +2,7 @@
 // Name:        src/gtk/radiobox.cpp
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,7 +18,14 @@
     #include "wx/tooltip.h"
 #endif
 
+#include <gtk/gtk.h>
 #include "wx/gtk/private.h"
+#include "wx/gtk/private/gtk2-compat.h"
+
+#include <gdk/gdkkeysyms.h>
+#if GTK_CHECK_VERSION(3,0,0)
+#include <gdk/gdkkeysyms-compat.h>
+#endif
 
 //-----------------------------------------------------------------------------
 // wxGTKRadioButtonInfo
@@ -50,11 +58,12 @@ extern bool          g_blockEventsOnDrag;
 extern "C" {
 static void gtk_radiobutton_clicked_callback( GtkToggleButton *button, wxRadioBox *rb )
 {
+    if (!rb->m_hasVMT) return;
     if (g_blockEventsOnDrag) return;
 
     if (!gtk_toggle_button_get_active(button)) return;
 
-    wxCommandEvent event( wxEVT_RADIOBOX, rb->GetId() );
+    wxCommandEvent event( wxEVT_COMMAND_RADIOBOX_SELECTED, rb->GetId() );
     event.SetInt( rb->GetSelection() );
     event.SetString( rb->GetStringSelection() );
     event.SetEventObject( rb );
@@ -69,26 +78,27 @@ static void gtk_radiobutton_clicked_callback( GtkToggleButton *button, wxRadioBo
 extern "C" {
 static gint gtk_radiobox_keypress_callback( GtkWidget *widget, GdkEventKey *gdk_event, wxRadioBox *rb )
 {
+    if (!rb->m_hasVMT) return FALSE;
     if (g_blockEventsOnDrag) return FALSE;
 
-    if ( ((gdk_event->keyval == GDK_KEY_Tab) ||
-          (gdk_event->keyval == GDK_KEY_ISO_Left_Tab)) &&
+    if ( ((gdk_event->keyval == GDK_Tab) ||
+          (gdk_event->keyval == GDK_ISO_Left_Tab)) &&
          rb->GetParent() && (rb->GetParent()->HasFlag( wxTAB_TRAVERSAL)) )
     {
         wxNavigationKeyEvent new_event;
         new_event.SetEventObject( rb->GetParent() );
         // GDK reports GDK_ISO_Left_Tab for SHIFT-TAB
-        new_event.SetDirection( (gdk_event->keyval == GDK_KEY_Tab) );
+        new_event.SetDirection( (gdk_event->keyval == GDK_Tab) );
         // CTRL-TAB changes the (parent) window, i.e. switch notebook page
         new_event.SetWindowChange( (gdk_event->state & GDK_CONTROL_MASK) != 0 );
         new_event.SetCurrentFocus( rb );
         return rb->GetParent()->HandleWindowEvent(new_event);
     }
 
-    if ((gdk_event->keyval != GDK_KEY_Up) &&
-        (gdk_event->keyval != GDK_KEY_Down) &&
-        (gdk_event->keyval != GDK_KEY_Left) &&
-        (gdk_event->keyval != GDK_KEY_Right))
+    if ((gdk_event->keyval != GDK_Up) &&
+        (gdk_event->keyval != GDK_Down) &&
+        (gdk_event->keyval != GDK_Left) &&
+        (gdk_event->keyval != GDK_Right))
     {
         return FALSE;
     }
@@ -103,8 +113,8 @@ static gint gtk_radiobox_keypress_callback( GtkWidget *widget, GdkEventKey *gdk_
         return FALSE;
     }
 
-    if ((gdk_event->keyval == GDK_KEY_Up) ||
-        (gdk_event->keyval == GDK_KEY_Left))
+    if ((gdk_event->keyval == GDK_Up) ||
+        (gdk_event->keyval == GDK_Left))
     {
         if (node == rb->m_buttonsInfo.GetFirst())
             node = rb->m_buttonsInfo.GetLast();
@@ -180,23 +190,12 @@ static void gtk_radiobutton_size_allocate( GtkWidget *widget,
 }
 }
 
-#ifndef __WXGTK3__
-extern "C" {
-static gboolean expose_event(GtkWidget* widget, GdkEventExpose*, wxWindow*)
-{
-    const GtkAllocation& a = widget->allocation;
-    gtk_paint_flat_box(gtk_widget_get_style(widget), gtk_widget_get_window(widget),
-        GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, widget, "", a.x, a.y, a.width, a.height);
-    return false;
-}
-}
-#endif
 
 //-----------------------------------------------------------------------------
 // wxRadioBox
 //-----------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxRadioBox, wxControl);
+IMPLEMENT_DYNAMIC_CLASS(wxRadioBox,wxControl)
 
 bool wxRadioBox::Create( wxWindow *parent, wxWindowID id,
                          const wxString& title,
@@ -244,70 +243,28 @@ bool wxRadioBox::Create( wxWindow *parent, wxWindowID id, const wxString& title,
 
     GtkRadioButton *rbtn = NULL;
 
-#ifdef __WXGTK3__
-    GtkWidget* grid = gtk_grid_new();
-    gtk_widget_show(grid);
-    gtk_container_add(GTK_CONTAINER(m_widget), grid);
-#else
     GtkWidget *table = gtk_table_new( num_of_rows, num_of_cols, FALSE );
     gtk_table_set_col_spacings( GTK_TABLE(table), 1 );
     gtk_table_set_row_spacings( GTK_TABLE(table), 1 );
     gtk_widget_show( table );
     gtk_container_add( GTK_CONTAINER(m_widget), table );
-#endif
 
+    wxString label;
     GSList *radio_button_group = NULL;
     for (unsigned int i = 0; i < (unsigned int)n; i++)
     {
         if ( i != 0 )
             radio_button_group = gtk_radio_button_get_group( GTK_RADIO_BUTTON(rbtn) );
 
-        // Process mnemonic in the label
-        wxString label;
-        bool hasMnemonic = false;
+        label.Empty();
         for ( wxString::const_iterator pc = choices[i].begin();
               pc != choices[i].end(); ++pc )
         {
-            if ( *pc == wxS('_') )
-            {
-                // If we have a literal underscore character in the label
-                // containing mnemonic, two underscores should be used.
-                if ( hasMnemonic )
-                    label += wxS('_');
-            }
-            else if ( *pc == wxS('&') )
-            {
-                ++pc; // skip it
-                 if ( pc == choices[i].end() )
-                 {
-                     break;
-                 }
-                 else if ( *pc != wxS('&') )
-                 {
-                     if ( !hasMnemonic )
-                     {
-                         hasMnemonic = true;
-                         // So far we assumed that label doesn't contain mnemonic
-                         // and therefore single underscore characters were not
-                         // replaced by two underscores. Now we have to double
-                         // all existing underscore characters.
-                         label.Replace(wxS("_"), wxS("__"));
-                         label += wxS('_');
-                     }
-                     else
-                     {
-                         wxFAIL_MSG(wxT("duplicate mnemonic char in radio button label"));
-                     }
-                 }
-            }
-
-            label += *pc;
+            if ( *pc != wxT('&') )
+                label += *pc;
         }
-        if ( hasMnemonic )
-            rbtn = GTK_RADIO_BUTTON( gtk_radio_button_new_with_mnemonic( radio_button_group, wxGTK_CONV( label ) ) );
-        else
-            rbtn = GTK_RADIO_BUTTON( gtk_radio_button_new_with_label( radio_button_group, wxGTK_CONV( label ) ) );
 
+        rbtn = GTK_RADIO_BUTTON( gtk_radio_button_new_with_label( radio_button_group, wxGTK_CONV( label ) ) );
         gtk_widget_show( GTK_WIDGET(rbtn) );
 
         g_signal_connect (rbtn, "key_press_event",
@@ -315,20 +272,6 @@ bool wxRadioBox::Create( wxWindow *parent, wxWindowID id, const wxString& title,
 
         m_buttonsInfo.Append( new wxGTKRadioButtonInfo( rbtn, wxRect() ) );
 
-#ifdef __WXGTK3__
-        int left, top;
-        if (HasFlag(wxRA_SPECIFY_COLS))
-        {
-            left = i % num_of_cols;
-            top = i / num_of_cols;
-        }
-        else
-        {
-            left = i / num_of_rows;
-            top = i % num_of_rows;
-        }
-        gtk_grid_attach(GTK_GRID(grid), GTK_WIDGET(rbtn), left, top, 1, 1);
-#else
         if (HasFlag(wxRA_SPECIFY_COLS))
         {
             int left = i%num_of_cols;
@@ -347,7 +290,6 @@ bool wxRadioBox::Create( wxWindow *parent, wxWindowID id, const wxString& title,
             gtk_table_attach( GTK_TABLE(table), GTK_WIDGET(rbtn), left, right, top, bottom,
                   GTK_FILL, GTK_FILL, 1, 1 );
         }
-#endif
 
         ConnectWidget( GTK_WIDGET(rbtn) );
 
@@ -377,7 +319,6 @@ wxRadioBox::~wxRadioBox()
     while (node)
     {
         GtkWidget *button = GTK_WIDGET( node->GetData()->button );
-        GTKDisconnect(button);
         gtk_widget_destroy( button );
         node = node->GetNext();
     }
@@ -487,18 +428,8 @@ void wxRadioBox::SetString(unsigned int item, const wxString& label)
 
 bool wxRadioBox::Enable( bool enable )
 {
-    // Explicitly forward to the base class just because we need to override
-    // this function to prevent it from being hidden by Enable(int, bool)
-    // overload.
-    return wxControl::Enable(enable);
-}
-
-void wxRadioBox::DoEnable(bool enable)
-{
-    if ( !m_widget )
-        return;
-
-    wxControl::DoEnable(enable);
+    if ( !wxControl::Enable( enable ) )
+        return false;
 
     wxRadioBoxButtonsInfoList::compatibility_iterator node = m_buttonsInfo.GetFirst();
     while (node)
@@ -513,6 +444,8 @@ void wxRadioBox::DoEnable(bool enable)
 
     if (enable)
         GTKFixSensitivity();
+
+    return true;
 }
 
 bool wxRadioBox::Enable(unsigned int item, bool enable)
@@ -621,12 +554,6 @@ void wxRadioBox::DoApplyWidgetStyle(GtkRcStyle *style)
 
         node = node->GetNext();
     }
-
-#ifndef __WXGTK3__
-    g_signal_handlers_disconnect_by_func(m_widget, (void*)expose_event, this);
-    if (m_backgroundColour.IsOk())
-        g_signal_connect(m_widget, "expose-event", G_CALLBACK(expose_event), this);
-#endif
 }
 
 bool wxRadioBox::GTKWidgetNeedsMnemonic() const
@@ -691,7 +618,14 @@ GdkWindow *wxRadioBox::GTKGetWindow(wxArrayGdkWindows& windows) const
 wxVisualAttributes
 wxRadioBox::GetClassDefaultAttributes(wxWindowVariant WXUNUSED(variant))
 {
-    return GetDefaultAttributesFromGTKWidget(gtk_radio_button_new_with_label(NULL, ""));
+    wxVisualAttributes attr;
+    // NB: we need toplevel window so that GTK+ can find the right style
+    GtkWidget *wnd = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget* widget = gtk_radio_button_new_with_label(NULL, "");
+    gtk_container_add(GTK_CONTAINER(wnd), widget);
+    attr = GetDefaultAttributesFromGTKWidget(widget);
+    gtk_widget_destroy(wnd);
+    return attr;
 }
 
 int wxRadioBox::GetItemFromPoint(const wxPoint& point) const

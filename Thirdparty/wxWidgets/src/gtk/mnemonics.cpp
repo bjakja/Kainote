@@ -3,7 +3,8 @@
 // Purpose:     implementation of GTK mnemonics conversion functions
 // Author:      Vadim Zeitlin
 // Created:     2007-11-12
-// Copyright:   (c) 2007 Vadim Zeitlin <vadim@wxwidgets.org>
+// RCS-ID:      $Id$
+// Copyright:   (c) 2007 Vadim Zeitlin <vadim@wxwindows.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -18,6 +19,9 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #include "wx/log.h"
 #include "wx/gtk/private/mnemonics.h"
@@ -117,7 +121,7 @@ static wxString GTKProcessMnemonics(const wxString& label, MnemonicsFlag flag)
                             labelGTK += wxT("_-");
                             break;
                         }
-                        wxFALLTHROUGH;
+                        //else: fall through
 
                     default:
                         if ( flag != MNEMONICS_REMOVE )
@@ -134,7 +138,7 @@ static wxString GTKProcessMnemonics(const wxString& label, MnemonicsFlag flag)
                     labelGTK += wxT("__");
                     break;
                 }
-                wxFALLTHROUGH;
+                //else: fall through
 
             default:
                 labelGTK += ch;

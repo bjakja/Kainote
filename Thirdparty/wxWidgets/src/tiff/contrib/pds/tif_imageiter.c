@@ -1,3 +1,5 @@
+/* $Header: /cvs/maptools/cvsroot/libtiff/contrib/pds/tif_imageiter.c,v 1.3 2005/12/21 12:23:13 joris Exp $ */
+
 /*
  * Copyright (c) 1991-1996 Sam Leffler
  * Copyright (c) 1991-1996 Silicon Graphics, Inc.
@@ -114,7 +116,7 @@ TIFFImageIterBegin(TIFFImageIter* img, TIFF* tif, int stop, char emsg[1024])
 		TIFFErrorExt(tif->tif_clientdata, TIFFFileName(tif), "Missing required \"Colormap\" tag");
 	    return (0);
 	}
-	/* fall through... */
+	/* fall thru... */
     case PHOTOMETRIC_MINISWHITE:
     case PHOTOMETRIC_MINISBLACK:
 /* This should work now so skip the check - BSR
@@ -181,7 +183,7 @@ TIFFImageIterBegin(TIFFImageIter* img, TIFF* tif, int stop, char emsg[1024])
     case ORIENTATION_LEFTBOT:	/* XXX */
 	TIFFWarning(TIFFFileName(tif), "using bottom-left orientation");
 	img->orientation = ORIENTATION_BOTLEFT;
-	/* fall through... */
+	/* fall thru... */
     case ORIENTATION_BOTLEFT:
 	break;
     case ORIENTATION_TOPRIGHT:
@@ -190,7 +192,7 @@ TIFFImageIterBegin(TIFFImageIter* img, TIFF* tif, int stop, char emsg[1024])
     default:
 	TIFFWarning(TIFFFileName(tif), "using top-left orientation");
 	img->orientation = ORIENTATION_TOPLEFT;
-	/* fall through... */
+	/* fall thru... */
     case ORIENTATION_TOPLEFT:
 	break;
     }
@@ -514,10 +516,3 @@ main(int argc, char **argv)
     
 }
 #endif
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 8
- * fill-column: 78
- * End:
- */

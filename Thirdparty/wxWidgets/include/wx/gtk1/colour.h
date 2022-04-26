@@ -2,6 +2,7 @@
 // Name:        wx/gtk1/colour.h
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -63,7 +64,7 @@ protected:
     InitRGBA(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxColour);
+    DECLARE_DYNAMIC_CLASS(wxColour)
 };
 
 #endif // __GTKCOLOURH__

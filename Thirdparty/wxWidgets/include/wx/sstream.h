@@ -4,14 +4,15 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     2004-09-19
-// Copyright:   (c) 2004 Vadim Zeitlin <vadim@wxwidgets.org>
+// RCS-ID:      $Id$
+// Copyright:   (c) 2004 Vadim Zeitlin <vadim@wxwindows.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_SSTREAM_H_
 #define _WX_SSTREAM_H_
 
-#include "wx\stream.h"
+#include "wx/stream.h"
 
 #if wxUSE_STREAMS
 
@@ -26,13 +27,13 @@ public:
     // it
     wxStringInputStream(const wxString& s);
 
-    virtual wxFileOffset GetLength() const wxOVERRIDE;
-    virtual bool IsSeekable() const wxOVERRIDE { return true; }
+    virtual wxFileOffset GetLength() const;
+    virtual bool IsSeekable() const { return true; }
 
 protected:
-    virtual wxFileOffset OnSysSeek(wxFileOffset ofs, wxSeekMode mode) wxOVERRIDE;
-    virtual wxFileOffset OnSysTell() const wxOVERRIDE;
-    virtual size_t OnSysRead(void *buffer, size_t size) wxOVERRIDE;
+    virtual wxFileOffset OnSysSeek(wxFileOffset ofs, wxSeekMode mode);
+    virtual wxFileOffset OnSysTell() const;
+    virtual size_t OnSysRead(void *buffer, size_t size);
 
 private:
     // the string that was passed in the ctor
@@ -62,17 +63,25 @@ public:
     //
     // Note that the conversion object should have the life time greater than
     // this stream.
-    explicit wxStringOutputStream(wxString *pString = NULL,
-                                  wxMBConv& conv = wxConvUTF8);
+    wxStringOutputStream(wxString *pString = NULL,
+                         wxMBConv& conv = wxConvUTF8)
+        : m_conv(conv)
+#if wxUSE_UNICODE
+        , m_unconv(0)
+#endif // wxUSE_UNICODE
+    {
+        m_str = pString ? pString : &m_strInternal;
+        m_pos = m_str->length() / sizeof(wxChar);
+    }
 
     // get the string containing current output
     const wxString& GetString() const { return *m_str; }
 
-    virtual bool IsSeekable() const wxOVERRIDE { return true; }
+    virtual bool IsSeekable() const { return true; }
 
 protected:
-    virtual wxFileOffset OnSysTell() const wxOVERRIDE;
-    virtual size_t OnSysWrite(const void *buffer, size_t size) wxOVERRIDE;
+    virtual wxFileOffset OnSysTell() const;
+    virtual size_t OnSysWrite(const void *buffer, size_t size);
 
 private:
     // internal string, not used if caller provided his own string

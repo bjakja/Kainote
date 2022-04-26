@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     11.11.97
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -39,8 +40,8 @@ public:
     // I'm not sure if this works but it silences the linker in the
     // menu sample.
     //     JJ
-    virtual void SetBitmap(const wxBitmapBundle& bitmap) { m_bitmap = bitmap; }
-    virtual wxBitmap GetBitmap() const { return GetBitmapFromBundle(m_bitmap); }
+    virtual void SetBitmap(const wxBitmap& bitmap) { m_bitmap = bitmap; }
+    virtual const wxBitmap& GetBitmap() const { return m_bitmap; }
 
     // implementation from now on
     void CreateItem (WXWidget menu, wxMenuBar * menuBar, wxMenu * topMenu,
@@ -59,9 +60,9 @@ private:
     WXWidget    m_buttonWidget;
     wxMenuBar*  m_menuBar;
     wxMenu*     m_topMenu;        // Top-level menu e.g. popup-menu
-    wxBitmapBundle  m_bitmap; // Bitmap for menuitem, if any
+    wxBitmap  m_bitmap; // Bitmap for menuitem, if any
 
-    wxDECLARE_DYNAMIC_CLASS(wxMenuItem);
+    DECLARE_DYNAMIC_CLASS(wxMenuItem)
 };
 
 #endif  // _WX_MOTIF_MENUITEM_H

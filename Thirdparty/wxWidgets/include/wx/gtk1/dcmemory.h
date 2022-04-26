@@ -2,6 +2,7 @@
 // Name:        wx/gtk1/dcmemory.h
 // Purpose:
 // Author:      Robert Roebling
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -61,7 +62,7 @@ public:
 private:
     void Init();
 
-    wxDECLARE_DYNAMIC_CLASS(wxMemoryDCImpl);
+    DECLARE_DYNAMIC_CLASS(wxMemoryDCImpl)
 };
 
 #endif // __GTKDCMEMORYH__

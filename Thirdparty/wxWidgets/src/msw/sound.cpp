@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by: 2005-07-29: Vadim Zeitlin: redesign
 // Created:     04/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#if defined(__BORLANDC__)
+    #pragma hdrstop
+#endif
 
 #if wxUSE_SOUND
 
@@ -58,9 +62,9 @@ public:
 
     void *GetPtr() const { return m_waveDataPtr; }
 
-    virtual bool IsOk() const wxOVERRIDE { return GetPtr() != NULL; }
-    virtual DWORD GetSoundFlag() const wxOVERRIDE { return SND_MEMORY; }
-    virtual LPCTSTR GetSoundData() const wxOVERRIDE { return (LPCTSTR)GetPtr(); }
+    virtual bool IsOk() const { return GetPtr() != NULL; }
+    virtual DWORD GetSoundFlag() const { return SND_MEMORY; }
+    virtual LPCTSTR GetSoundData() const { return (LPCTSTR)GetPtr(); }
 
 private:
     GlobalPtr m_waveData;
@@ -75,12 +79,12 @@ class wxSoundDataFile : public wxSoundData
 public:
     wxSoundDataFile(const wxString& filename, bool isResource);
 
-    virtual bool IsOk() const wxOVERRIDE { return !m_name.empty(); }
-    virtual DWORD GetSoundFlag() const wxOVERRIDE
+    virtual bool IsOk() const { return !m_name.empty(); }
+    virtual DWORD GetSoundFlag() const
     {
         return m_isResource ? SND_RESOURCE : SND_FILENAME;
     }
-    virtual LPCTSTR GetSoundData() const wxOVERRIDE { return m_name.c_str(); }
+    virtual LPCTSTR GetSoundData() const { return m_name.c_str(); }
 
 private:
     const wxString m_name;

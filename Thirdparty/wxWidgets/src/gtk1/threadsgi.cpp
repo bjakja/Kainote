@@ -4,6 +4,7 @@
 // Author:      Original from Wolfram Gloger/Guilhem Lavaux
 // Modified by:
 // Created:     04/22/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Wolfram Gloger (1996, 1997); Guilhem Lavaux (1998)
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -125,7 +126,7 @@ void wxThreadPrivate::SprocStart(void *ptr)
 
   thr->p_internal->thread_id = getpid();
   thr->p_internal->exit_status = 0;
-  status = thr->CallEntry();
+  status = thr->Entry();
   thr->Exit(status);
 }
 
@@ -251,10 +252,10 @@ public:
     virtual void OnExit();
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxThreadModule);
+    DECLARE_DYNAMIC_CLASS(wxThreadModule)
 };
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxThreadModule, wxModule);
+IMPLEMENT_DYNAMIC_CLASS(wxThreadModule, wxModule)
 
 bool wxThreadModule::OnInit()
 {

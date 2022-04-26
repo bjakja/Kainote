@@ -4,6 +4,7 @@
 // Author:      Benjamin I. Williams
 // Modified by:
 // Created:     2005-05-17
+// RCS-ID:      $Id$
 // Copyright:   (C) Copyright 2005, Kirix Corporation, All Rights Reserved.
 // Licence:     wxWindows Library Licence, Version 3.1
 ///////////////////////////////////////////////////////////////////////////////
@@ -43,11 +44,6 @@ public:
     void SetPaneWindow(const wxAuiPaneInfo& pane);
     wxAuiManager* GetOwnerManager() const;
 
-    // Allow processing accelerators to the parent frame
-    virtual bool IsTopNavigationDomain(NavigationKind kind) const wxOVERRIDE;
-
-    wxAuiManager& GetAuiManager()  { return m_mgr; }
-
 protected:
     virtual void OnMoveStart();
     virtual void OnMoving(const wxRect& windowRect, wxDirection dir);
@@ -75,8 +71,8 @@ private:
     wxAuiManager m_mgr;
 
 #ifndef SWIG
-    wxDECLARE_EVENT_TABLE();
-    wxDECLARE_CLASS(wxAuiFloatingFrame);
+    DECLARE_EVENT_TABLE()
+    DECLARE_CLASS(wxAuiFloatingFrame)
 #endif // SWIG
 };
 

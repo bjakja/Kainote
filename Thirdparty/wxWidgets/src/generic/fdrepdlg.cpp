@@ -4,6 +4,7 @@
 // Author:      Markus Greither and Vadim Zeitlin
 // Modified by:
 // Created:     05/25/01
+// RCS-ID:      $Id$
 // Copyright:   (c) wxWidgets team
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_FINDREPLDLG
 
@@ -46,9 +50,9 @@
 // implementation
 // ============================================================================
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxGenericFindReplaceDialog, wxDialog);
+IMPLEMENT_DYNAMIC_CLASS(wxGenericFindReplaceDialog, wxDialog)
 
-wxBEGIN_EVENT_TABLE(wxGenericFindReplaceDialog, wxDialog)
+BEGIN_EVENT_TABLE(wxGenericFindReplaceDialog, wxDialog)
     EVT_BUTTON(wxID_FIND, wxGenericFindReplaceDialog::OnFind)
     EVT_BUTTON(wxID_REPLACE, wxGenericFindReplaceDialog::OnReplace)
     EVT_BUTTON(wxID_REPLACE_ALL, wxGenericFindReplaceDialog::OnReplaceAll)
@@ -59,7 +63,7 @@ wxBEGIN_EVENT_TABLE(wxGenericFindReplaceDialog, wxDialog)
     EVT_UPDATE_UI(wxID_REPLACE_ALL, wxGenericFindReplaceDialog::OnUpdateFindUI)
 
     EVT_CLOSE(wxGenericFindReplaceDialog::OnCloseWindow)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 // ----------------------------------------------------------------------------
 // wxGenericFindReplaceDialog
@@ -83,7 +87,7 @@ bool wxGenericFindReplaceDialog::Create(wxWindow *parent,
                                         const wxString& title,
                                         int style)
 {
-    parent = GetParentForModelessDialog(parent, style);
+    parent = GetParentForModalDialog(parent, style);
 
     if ( !wxDialog::Create(parent, wxID_ANY, title,
                            wxDefaultPosition, wxDefaultSize,
@@ -204,9 +208,11 @@ bool wxGenericFindReplaceDialog::Create(wxWindow *parent,
     if ( style & wxFR_NOUPDOWN)
         m_radioDir->Enable(false);
 
+    SetAutoLayout( true );
     SetSizer( topsizer );
 
     topsizer->SetSizeHints( this );
+    topsizer->Fit( this );
 
     Centre( wxBOTH );
 
@@ -253,22 +259,22 @@ void wxGenericFindReplaceDialog::SendEvent(const wxEventType& evtType)
 
 void wxGenericFindReplaceDialog::OnFind(wxCommandEvent& WXUNUSED(event))
 {
-    SendEvent(wxEVT_FIND_NEXT);
+    SendEvent(wxEVT_COMMAND_FIND_NEXT);
 }
 
 void wxGenericFindReplaceDialog::OnReplace(wxCommandEvent& WXUNUSED(event))
 {
-    SendEvent(wxEVT_FIND_REPLACE);
+    SendEvent(wxEVT_COMMAND_FIND_REPLACE);
 }
 
 void wxGenericFindReplaceDialog::OnReplaceAll(wxCommandEvent& WXUNUSED(event))
 {
-    SendEvent(wxEVT_FIND_REPLACE_ALL);
+    SendEvent(wxEVT_COMMAND_FIND_REPLACE_ALL);
 }
 
 void wxGenericFindReplaceDialog::OnCancel(wxCommandEvent& WXUNUSED(event))
 {
-    SendEvent(wxEVT_FIND_CLOSE);
+    SendEvent(wxEVT_COMMAND_FIND_CLOSE);
 
     Show(false);
 }
@@ -281,7 +287,7 @@ void wxGenericFindReplaceDialog::OnUpdateFindUI(wxUpdateUIEvent &event)
 
 void wxGenericFindReplaceDialog::OnCloseWindow(wxCloseEvent &)
 {
-    SendEvent(wxEVT_FIND_CLOSE);
+    SendEvent(wxEVT_COMMAND_FIND_CLOSE);
 }
 
 #endif // wxUSE_FINDREPLDLG

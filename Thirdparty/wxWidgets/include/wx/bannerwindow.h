@@ -3,6 +3,7 @@
 // Purpose:     wxBannerWindow class declaration
 // Author:      Vadim Zeitlin
 // Created:     2011-08-16
+// RCS-ID:      $Id$
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -14,20 +15,21 @@
 
 #if wxUSE_BANNERWINDOW
 
-#include "wx/bmpbndl.h"
+#include "wx/bitmap.h"
 #include "wx/event.h"
 #include "wx/window.h"
 
+class WXDLLIMPEXP_FWD_CORE wxBitmap;
 class WXDLLIMPEXP_FWD_CORE wxColour;
 class WXDLLIMPEXP_FWD_CORE wxDC;
 
-extern WXDLLIMPEXP_DATA_CORE(const char) wxBannerWindowNameStr[];
+extern WXDLLIMPEXP_DATA_ADV(const char) wxBannerWindowNameStr[];
 
 // ----------------------------------------------------------------------------
 // A simple banner window showing either a bitmap or text.
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxBannerWindow : public wxWindow
+class WXDLLIMPEXP_ADV wxBannerWindow : public wxWindow
 {
 public:
     // Default constructor, use Create() later.
@@ -53,7 +55,7 @@ public:
                    const wxPoint& pos = wxDefaultPosition,
                    const wxSize& size = wxDefaultSize,
                    long style = 0,
-                   const wxString& name = wxASCII_STR(wxBannerWindowNameStr))
+                   const wxString& name = wxBannerWindowNameStr)
     {
         Init();
 
@@ -67,14 +69,14 @@ public:
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = 0,
-                const wxString& name = wxASCII_STR(wxBannerWindowNameStr));
+                const wxString& name = wxBannerWindowNameStr);
 
 
     // Provide an existing bitmap to show. For wxLEFT orientation the bitmap is
     // truncated from the top, for wxTOP and wxBOTTOM -- from the right and for
     // wxRIGHT -- from the bottom, so put the most important part of the bitmap
     // information in the opposite direction.
-    void SetBitmap(const wxBitmapBundle& bmp);
+    void SetBitmap(const wxBitmap& bmp);
 
     // Set the text to display. This is mutually exclusive with SetBitmap().
     // Title is rendered in bold and should be single line, message can have
@@ -86,7 +88,7 @@ public:
     void SetGradient(const wxColour& start, const wxColour& end);
 
 protected:
-    virtual wxSize DoGetBestClientSize() const wxOVERRIDE;
+    virtual wxSize DoGetBestClientSize() const;
 
 private:
     // Common part of all constructors.
@@ -119,7 +121,7 @@ private:
     wxDirection m_direction;
 
     // If valid, this bitmap is drawn as is.
-    wxBitmapBundle m_bitmapBundle;
+    wxBitmap m_bitmap;
 
     // If bitmap is valid, this is the colour we use to extend it if the bitmap
     // is smaller than this window. It is computed on demand by GetBitmapBg().

@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     03/02/99
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -14,35 +15,9 @@
 #include "wx/combobox.h"
 #include "wx/osx/private.h"
 
-@class wxTextEntryFormatter;
-
-class wxNSTextBase : public wxWidgetCocoaImpl, public wxTextWidgetImpl
-{
-public :
-    wxNSTextBase( wxTextCtrl *text, WXWidget w )
-        : wxWidgetCocoaImpl(text, w),
-          wxTextWidgetImpl(text)
-    {
-    }
-    wxNSTextBase( wxWindow *wxPeer, wxTextEntry *entry, WXWidget w )
-        : wxWidgetCocoaImpl(wxPeer, w),
-          wxTextWidgetImpl(entry)
-    {
-    }
-    virtual ~wxNSTextBase() { }
-
-    virtual bool ShouldHandleKeyNavigation(const wxKeyEvent &event) const wxOVERRIDE;
-
-    virtual void SetInitialLabel(const wxString& WXUNUSED(title), wxFontEncoding WXUNUSED(encoding)) wxOVERRIDE
-    {
-        // Don't do anything here, text controls don't have any label and
-        // setting it would overwrite the string value set when creating it.
-    }
-};
-
 // implementation exposed, so that search control can pull it
 
-class wxNSTextFieldControl : public wxNSTextBase
+class wxNSTextFieldControl : public wxWidgetCocoaImpl, public wxTextWidgetImpl
 {
 public :
     // wxNSTextFieldControl must always be associated with a wxTextEntry. If
@@ -53,38 +28,24 @@ public :
     wxNSTextFieldControl( wxWindow *wxPeer, wxTextEntry *entry, WXWidget w );
     virtual ~wxNSTextFieldControl();
 
-    virtual bool CanClipMaxLength() const wxOVERRIDE { return true; }
-    virtual void SetMaxLength(unsigned long len) wxOVERRIDE;
+    virtual bool CanClipMaxLength() const { return true; }
+    virtual void SetMaxLength(unsigned long len);
+        
+    virtual wxString GetStringValue() const ;
+    virtual void SetStringValue( const wxString &str) ;
+    virtual void Copy() ;
+    virtual void Cut() ;
+    virtual void Paste() ;
+    virtual bool CanPaste() const ;
+    virtual void SetEditable(bool editable) ;
+    virtual void GetSelection( long* from, long* to) const ;
+    virtual void SetSelection( long from , long to );
+    virtual void WriteText(const wxString& str) ;
+    virtual bool HasOwnContextMenu() const { return true; }
+    virtual bool SetHint(const wxString& hint);
 
-    virtual bool CanForceUpper() wxOVERRIDE { return true; }
-    virtual void ForceUpper() wxOVERRIDE;
+    virtual void controlAction(WXWidget slf, void* _cmd, void *sender);
 
-    virtual wxString GetStringValue() const wxOVERRIDE ;
-    virtual void SetStringValue( const wxString &str) wxOVERRIDE ;
-    virtual void Copy() wxOVERRIDE ;
-    virtual void Cut() wxOVERRIDE ;
-    virtual void Paste() wxOVERRIDE ;
-    virtual bool CanPaste() const wxOVERRIDE ;
-    virtual void SetEditable(bool editable) wxOVERRIDE ;
-    virtual long GetLastPosition() const wxOVERRIDE;
-    virtual void GetSelection( long* from, long* to) const wxOVERRIDE ;
-    virtual void SetSelection( long from , long to ) wxOVERRIDE;
-    virtual bool PositionToXY(long pos, long *x, long *y) const wxOVERRIDE;
-    virtual long XYToPosition(long x, long y) const wxOVERRIDE;
-    virtual void ShowPosition(long pos) wxOVERRIDE;
-    virtual void WriteText(const wxString& str) wxOVERRIDE ;
-    virtual bool HasOwnContextMenu() const wxOVERRIDE { return true; }
-    virtual bool SetHint(const wxString& hint) wxOVERRIDE;
-    virtual void SetJustification() wxOVERRIDE;
-
-    virtual void controlAction(WXWidget slf, void* _cmd, void *sender) wxOVERRIDE;
-    virtual bool becomeFirstResponder(WXWidget slf, void *_cmd) wxOVERRIDE;
-    virtual bool resignFirstResponder(WXWidget slf, void *_cmd) wxOVERRIDE;
-
-    virtual void EnableNewLineReplacement(bool enable) wxOVERRIDE;
-    virtual bool GetNewLineReplacement() wxOVERRIDE;
-    virtual void SetInternalSelection( long from , long to );
-    virtual void UpdateInternalSelectionFromEditor( wxNSTextFieldEditor* editor);
 protected :
     NSTextField* m_textField;
     long m_selStart;
@@ -93,69 +54,39 @@ protected :
 private:
     // Common part of both ctors.
     void Init(WXWidget w);
-
-    // Get our formatter, creating it if necessary.
-    wxTextEntryFormatter* GetFormatter();
 };
 
-class wxNSTextViewControl : public wxNSTextBase
+class wxNSTextViewControl : public wxWidgetCocoaImpl, public wxTextWidgetImpl
 {
 public:
-    wxNSTextViewControl( wxTextCtrl *wxPeer, WXWidget w, long style );
+    wxNSTextViewControl( wxTextCtrl *wxPeer, WXWidget w );
     virtual ~wxNSTextViewControl();
 
-    virtual void insertText(NSString* text, WXWidget slf, void *_cmd) wxOVERRIDE;
+    virtual wxString GetStringValue() const ;
+    virtual void SetStringValue( const wxString &str) ;
+    virtual void Copy() ;
+    virtual void Cut() ;
+    virtual void Paste() ;
+    virtual bool CanPaste() const ;
+    virtual void SetEditable(bool editable) ;
+    virtual void GetSelection( long* from, long* to) const ;
+    virtual void SetSelection( long from , long to );
+    virtual void WriteText(const wxString& str) ;
+    virtual void SetFont( const wxFont & font , const wxColour& foreground , long windowStyle, bool ignoreBlack = true );
 
-    virtual wxString GetStringValue() const wxOVERRIDE ;
-    virtual void SetStringValue( const wxString &str) wxOVERRIDE ;
-    virtual void Copy() wxOVERRIDE ;
-    virtual void Cut() wxOVERRIDE ;
-    virtual void Paste() wxOVERRIDE ;
-    virtual bool CanPaste() const wxOVERRIDE ;
-    virtual void SetEditable(bool editable) wxOVERRIDE ;
-    virtual long GetLastPosition() const wxOVERRIDE;
-    virtual void GetSelection( long* from, long* to) const wxOVERRIDE ;
-    virtual void SetSelection( long from , long to ) wxOVERRIDE;
-    virtual bool PositionToXY(long pos, long *x, long *y) const wxOVERRIDE;
-    virtual long XYToPosition(long x, long y) const wxOVERRIDE;
-    virtual void ShowPosition(long pos) wxOVERRIDE;
-    virtual void WriteText(const wxString& str) wxOVERRIDE ;
-    virtual void SetFont(const wxFont & font) wxOVERRIDE;
+    virtual bool GetStyle(long position, wxTextAttr& style);
+    virtual void SetStyle(long start, long end, const wxTextAttr& style);
 
-    virtual bool GetStyle(long position, wxTextAttr& style) wxOVERRIDE;
-    virtual void SetStyle(long start, long end, const wxTextAttr& style) wxOVERRIDE;
+    virtual bool CanFocus() const;
 
-    virtual bool CanFocus() const wxOVERRIDE;
+    virtual bool HasOwnContextMenu() const { return true; }
 
-    virtual bool HasOwnContextMenu() const wxOVERRIDE { return true; }
-
-#if wxUSE_SPELLCHECK
-    virtual void CheckSpelling(const wxTextProofOptions& options) wxOVERRIDE;
-    virtual wxTextProofOptions GetCheckingOptions() const wxOVERRIDE;
-#endif // wxUSE_SPELLCHECK
-    virtual void EnableAutomaticQuoteSubstitution(bool enable) wxOVERRIDE;
-    virtual void EnableAutomaticDashSubstitution(bool enable) wxOVERRIDE;
-    virtual void EnableNewLineReplacement(bool enable) wxOVERRIDE;
-    virtual bool GetNewLineReplacement() wxOVERRIDE;
-
-    virtual wxSize GetBestSize() const wxOVERRIDE;
-    virtual void SetJustification() wxOVERRIDE;
-
-    virtual void controlTextDidChange() wxOVERRIDE;
-
-    virtual bool CanUndo() const wxOVERRIDE;
-    virtual void Undo() wxOVERRIDE;
-    virtual bool CanRedo() const wxOVERRIDE;
-    virtual void Redo() wxOVERRIDE;
-    virtual void EmptyUndoBuffer() wxOVERRIDE;
+    virtual void CheckSpelling(bool check);
+    virtual wxSize GetBestSize() const;
 
 protected:
-    void DoUpdateTextStyle();
-
     NSScrollView* m_scrollView;
     NSTextView* m_textView;
-    bool m_useCharWrapping;
-    NSUndoManager* m_undoManager;
 };
 
 class wxNSComboBoxControl : public wxNSTextFieldControl, public wxComboWidgetImpl
@@ -179,10 +110,6 @@ public :
     virtual int FindString(const wxString& text) const;
     virtual void Popup();
     virtual void Dismiss();
-
-    virtual void SetEditable(bool editable);
-
-    virtual void mouseEvent(WX_NSEvent event, WXWidget slf, void *_cmd);
 
 private:
     NSComboBox* m_comboBox;

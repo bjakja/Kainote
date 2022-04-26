@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -16,7 +17,7 @@
 
 class WXDLLIMPEXP_CORE wxAcceleratorTable: public wxObject
 {
-    wxDECLARE_DYNAMIC_CLASS(wxAcceleratorTable);
+DECLARE_DYNAMIC_CLASS(wxAcceleratorTable)
 public:
     wxAcceleratorTable();
     wxAcceleratorTable(int n, const wxAcceleratorEntry entries[]); // Load from array

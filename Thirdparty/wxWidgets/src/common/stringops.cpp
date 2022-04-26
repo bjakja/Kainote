@@ -4,6 +4,7 @@
 // Author:      Vaclav Slavik
 // Modified by:
 // Created:     2007-04-16
+// RCS-ID:      $Id$
 // Copyright:   (c) 2007 REA Elektronik GmbH
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -13,82 +14,19 @@
 // ===========================================================================
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
-
-#ifndef WX_PRECOMP
-    #include "wx\stringops.h"
+#ifdef __BORLANDC__
+    #pragma hdrstop
 #endif
 
-#include "wx\private/unicode.h"
+#ifndef WX_PRECOMP
+    #include "wx/stringops.h"
+#endif
 
 // ===========================================================================
 // implementation
 // ===========================================================================
-
-#if wxUSE_UNICODE_WCHAR || !wxUSE_UNICODE
-
-#if wxUSE_UNICODE_UTF16
-
-wxStringOperationsWchar::Utf16CharBuffer wxStringOperationsWchar::EncodeChar(const wxUniChar& ch)
-{
-    Utf16CharBuffer buf;
-    if ( ch.IsSupplementary() )
-    {
-        buf.data[0] = (wchar_t)ch.HighSurrogate();
-        buf.data[1] = (wchar_t)ch.LowSurrogate();
-        buf.data[2] = L'\0';
-    }
-    else
-    {
-        // Assume ch is a BMP character
-        buf.data[0] = (wchar_t)ch;
-        buf.data[1] = L'\0';
-    }
-    return buf;
-}
-
-wxWCharBuffer wxStringOperationsWchar::EncodeNChars(size_t n, const wxUniChar& ch)
-{
-    if ( ch.IsSupplementary() )
-    {
-        wxWCharBuffer buf(n * 2);
-        wchar_t s[2] = {
-            (wchar_t)ch.HighSurrogate(),
-            (wchar_t)ch.LowSurrogate(),
-        };
-        wchar_t *ptr = buf.data();
-        for (size_t i = 0; i < n; i++, ptr += 2)
-        {
-            wmemcpy(ptr, s, 2);
-        }
-        return buf;
-    }
-    else
-    {
-        // Assume ch is a BMP character
-        wxWCharBuffer buf(n);
-        wmemset(buf.data(), (wchar_t)ch, n);
-        return buf;
-    }
-}
-
-#else
-
-wxWxCharBuffer wxStringOperationsWchar::EncodeNChars(size_t n, const wxUniChar& ch)
-{
-    wxWxCharBuffer buf(n);
-#if wxUSE_UNICODE_WCHAR
-    wmemset(buf.data(), (wchar_t)ch, n);
-#else // ANSI
-    memset(buf.data(), (unsigned char)ch, n);
-#endif
-    return buf;
-}
-
-#endif // wxUSE_UNICODE_UTF16
-
-#endif // wxUSE_UNICODE_WCHAR || !wxUSE_UNICODE
 
 #if wxUSE_UNICODE_UTF8
 
@@ -96,13 +34,40 @@ wxWxCharBuffer wxStringOperationsWchar::EncodeNChars(size_t n, const wxUniChar& 
 // UTF-8 sequences lengths
 // ---------------------------------------------------------------------------
 
-unsigned char wxStringOperationsUtf8::GetUTF8IterOffset(unsigned char c)
-{
-    unsigned char l = tableUtf8Lengths[c];
-    if ( !l ) //skip over invalid characters
-        l = 1;
-    return l;
-}
+const unsigned char wxStringOperationsUtf8::ms_utf8IterTable[256] = {
+    // single-byte sequences (ASCII):
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // 00..0F
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // 10..1F
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // 20..2F
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // 30..3F
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // 40..4F
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // 50..5F
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // 60..6F
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // 70..7F
+
+    // these are invalid, we use step 1 to skip
+    // over them (should never happen):
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // 80..8F
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // 90..9F
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // A0..AF
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // B0..BF
+    1, 1,                                            // C0,C1
+
+    // two-byte sequences:
+          2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  // C2..CF
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  // D0..DF
+
+    // three-byte sequences:
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,  // E0..EF
+
+    // four-byte sequences:
+    4, 4, 4, 4, 4,                                   // F0..F4
+
+    // these are invalid again (5- or 6-byte
+    // sequences and sequences for code points
+    // above U+10FFFF, as restricted by RFC 3629):
+                   1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1   // F5..FF
+};
 
 // ---------------------------------------------------------------------------
 // UTF-8 operations
@@ -130,7 +95,7 @@ bool wxStringOperationsUtf8::IsValidUtf8String(const char *str, size_t len)
     const unsigned char *c = (const unsigned char*)str;
     const unsigned char * const end = (len == wxStringImpl::npos) ? NULL : c + len;
 
-    for ( ; end != NULL ? c != end : *c; ++c )
+    for ( ; c != end && *c; ++c )
     {
         unsigned char b = *c;
 
@@ -138,7 +103,7 @@ bool wxStringOperationsUtf8::IsValidUtf8String(const char *str, size_t len)
         {
             // if the string is not NULL-terminated, verify we have enough
             // bytes in it left for current character's encoding:
-            if ( c + GetUTF8IterOffset(*c) > end )
+            if ( c + ms_utf8IterTable[*c] > end )
                 return false;
         }
 
@@ -289,6 +254,7 @@ wxStringOperationsUtf8::DecodeNonAsciiChar(wxStringImpl::const_iterator i)
 {
     wxASSERT( IsValidUtf8LeadByte(*i) );
 
+    wxUniChar::value_type code = 0;
     size_t len = GetUtf8CharLength(*i);
     wxASSERT_MSG( len <= 4, wxT("invalid UTF-8 sequence length") );
 
@@ -316,7 +282,7 @@ wxStringOperationsUtf8::DecodeNonAsciiChar(wxStringImpl::const_iterator i)
     wxASSERT_MSG( ((unsigned char)*i & s_leadMarkerMask[len-1]) ==
                   s_leadMarkerVal[len-1],
                   wxT("invalid UTF-8 lead byte") );
-    wxUniChar::value_type code = (unsigned char)*i & s_leadValueMask[len-1];
+    code = (unsigned char)*i & s_leadValueMask[len-1];
 
     // all remaining bytes, if any, are handled in the same way regardless of
     // sequence's length:
@@ -336,7 +302,7 @@ wxCharBuffer wxStringOperationsUtf8::EncodeNChars(size_t n, const wxUniChar& ch)
 {
     Utf8CharBuffer once(EncodeChar(ch));
     // the IncIter() table can be used to determine the length of ch's encoding:
-    size_t len = GetUTF8IterOffset(once.data[0]);
+    size_t len = ms_utf8IterTable[(unsigned char)once.data[0]];
 
     wxCharBuffer buf(n * len);
     char *ptr = buf.data();

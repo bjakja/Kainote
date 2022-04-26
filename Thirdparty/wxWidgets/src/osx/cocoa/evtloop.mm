@@ -4,7 +4,8 @@
 // Author:      Vadim Zeitlin, Stefan Csomor
 // Modified by:
 // Created:     2006-01-12
-// Copyright:   (c) 2006 Vadim Zeitlin <vadim@wxwidgets.org>
+// RCS-ID:      $Id$
+// Copyright:   (c) 2006 Vadim Zeitlin <vadim@wxwindows.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -19,34 +20,20 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #include "wx/evtloop.h"
 
 #ifndef WX_PRECOMP
     #include "wx/app.h"
     #include "wx/nonownedwnd.h"
-    #include "wx/dialog.h"
 #endif // WX_PRECOMP
 
 #include "wx/log.h"
-#include "wx/scopeguard.h"
-#include "wx/vector.h"
-#include "wx/hashmap.h"
 
 #include "wx/osx/private.h"
-
-struct wxModalSessionStackElement
-{
-    WXWindow        dummyWindow;
-    void*           modalSession;
-};
-
-typedef wxVector<wxModalSessionStackElement> wxModalSessionStack;
-
-WX_DECLARE_HASH_MAP(wxGUIEventLoop*, wxModalSessionStack*, wxPointerHash, wxPointerEqual,
-                    wxModalSessionStackMap);
-
-static wxModalSessionStackMap gs_modalSessionStackMap;
 
 // ============================================================================
 // wxEventLoop implementation
@@ -69,7 +56,7 @@ static NSUInteger CalculateNSEventMaskFromEventCategory(wxEventCategory cat)
     if ( cat | wxEVT_CATEGORY_USER_INPUT )
     {
         mask |=
-            NSLeftMouseDownMask |
+            NSLeftMouseDownMask	|
             NSLeftMouseUpMask |
             NSRightMouseDownMask |
             NSRightMouseUpMask |
@@ -79,8 +66,10 @@ static NSUInteger CalculateNSEventMaskFromEventCategory(wxEventCategory cat)
             NSMouseEnteredMask |
             NSMouseExitedMask |
             NSScrollWheelMask |
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
             NSTabletPointMask |
             NSTabletProximityMask |
+#endif
             NSOtherMouseDownMask |
             NSOtherMouseUpMask |
             NSOtherMouseDraggedMask |
@@ -88,12 +77,14 @@ static NSUInteger CalculateNSEventMaskFromEventCategory(wxEventCategory cat)
             NSKeyDownMask |
             NSKeyUpMask |
             NSFlagsChangedMask |
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
             NSEventMaskGesture |
             NSEventMaskMagnify |
             NSEventMaskSwipe |
             NSEventMaskRotate |
             NSEventMaskBeginGesture |
             NSEventMaskEndGesture |
+#endif
             0;
     }
     
@@ -123,7 +114,6 @@ wxGUIEventLoop::wxGUIEventLoop()
 
 wxGUIEventLoop::~wxGUIEventLoop()
 {
-    wxASSERT( gs_modalSessionStackMap.find( this ) == gs_modalSessionStackMap.end() );
     wxASSERT( m_modalSession == nil );
     wxASSERT( m_dummyWindow == nil );
     wxASSERT( m_modalNestedLevel == 0 );
@@ -212,11 +202,8 @@ int wxGUIEventLoop::DoDispatchTimeout(unsigned long timeout)
         
         switch (response) 
         {
-            case NSModalResponseContinue:
+            case NSRunContinuesResponse:
             {
-                [[NSRunLoop currentRunLoop]
-                        runMode:NSDefaultRunLoopMode
-                        beforeDate:[NSDate dateWithTimeIntervalSinceNow: timeout/1000.0]];
                 if ( [[NSApplication sharedApplication]
                         nextEventMatchingMask: NSAnyEventMask
                         untilDate: nil
@@ -226,11 +213,12 @@ int wxGUIEventLoop::DoDispatchTimeout(unsigned long timeout)
                 
                 return -1;
             }
-            case NSModalResponseStop:
-            case NSModalResponseAbort:
+                
+            case NSRunStoppedResponse:
+            case NSRunAbortedResponse:
                 return -1;
             default:
-                // nested native loops may return other codes here, just ignore them
+                wxFAIL_MSG("unknown response code");
                 break;
         }
         return -1;
@@ -239,7 +227,7 @@ int wxGUIEventLoop::DoDispatchTimeout(unsigned long timeout)
     {        
         NSEvent *event = [NSApp
                     nextEventMatchingMask:NSAnyEventMask
-                    untilDate:[NSDate dateWithTimeIntervalSinceNow: timeout/1000.0]
+                    untilDate:[NSDate dateWithTimeIntervalSinceNow: timeout/1000]
                     inMode:NSDefaultRunLoopMode
                     dequeue: YES];
         
@@ -252,113 +240,17 @@ int wxGUIEventLoop::DoDispatchTimeout(unsigned long timeout)
     }
 }
 
-static int gs_loopNestingLevel = 0;
-
-void wxGUIEventLoop::OSXDoRun()
+void wxGUIEventLoop::DoRun()
 {
-    /*
-       In order to properly nest GUI event loops in Cocoa, it is important to
-       have [NSApp run] only as the main/outermost event loop.  There are many
-       problems if [NSApp run] is used as an inner event loop.  The main issue
-       is that a call to [NSApp stop] is needed to exit an [NSApp run] event
-       loop. But the [NSApp stop] has some side effects that we do not want -
-       such as if there was a modal dialog box with a modal event loop running,
-       that event loop would also get exited, and the dialog would be closed.
-       The call to [NSApp stop] would also cause the enclosing event loop to
-       exit as well.
-
-       webkit's webcore library uses CFRunLoopRun() for nested event loops. See
-       the log of the commit log about the change in webkit's webcore module:
-       http://www.mail-archive.com/webkit-changes@lists.webkit.org/msg07397.html
-
-       See here for the latest run loop that is used in webcore:
-       https://github.com/WebKit/webkit/blob/master/Source/WebCore/platform/mac/RunLoopMac.mm
-
-       CFRunLoopRun() was tried for the nested event loop here but it causes a
-       problem in that all user input is disabled - and there is no way to
-       re-enable it.  The caller of this event loop may not want user input
-       disabled (such as synchronous wxExecute with wxEXEC_NODISABLE flag).
-
-       In order to have an inner event loop where user input can be enabled,
-       the old wxCocoa code that used the [NSApp nextEventMatchingMask] was
-       borrowed but changed to use blocking instead of polling. By specifying
-       'distantFuture' in 'untildate', we can have it block until the next
-       event.  Then we can keep looping on each new event until m_shouldExit is
-       raised to exit the event loop.
-    */
-    gs_loopNestingLevel++;
-    wxON_BLOCK_EXIT_SET(gs_loopNestingLevel, gs_loopNestingLevel - 1);
-
-    while ( !m_shouldExit )
-    {
-        // By putting this inside the loop, we can drain it in each
-        // loop iteration.
-        wxMacAutoreleasePool autoreleasepool;
-
-        if ( gs_loopNestingLevel == 1 )
-        {
-            // Use -[NSApplication run] for the main run loop.
-            [NSApp run];
-        }
-        else
-        {
-            // We use this blocking call to [NSApp nextEventMatchingMask:...]
-            // because the other methods (such as CFRunLoopRun() and [runLoop
-            // runMode:beforeDate] were always disabling input to the windows
-            // (even if we wanted it enabled).
-            //
-            // Here are the other run loops which were tried, but always left
-            // user input disabled:
-            //
-            // [runLoop runMode:NSDefaultRunLoopMode beforeDate:date];
-            // CFRunLoopRun();
-            // CFRunLoopRunInMode(kCFRunLoopDefaultMode, 10 , true);
-            //
-            // Using [NSApp nextEventMatchingMask:...] would leave windows
-            // enabled if we wanted them to be, so that is why it is used.
-            NSEvent *event = [NSApp
-                    nextEventMatchingMask:NSAnyEventMask
-                    untilDate:[NSDate distantFuture]
-                    inMode:NSDefaultRunLoopMode
-                    dequeue: YES];
-
-            [NSApp sendEvent: event];
-
-            /**
-              The NSApplication documentation states that:
-
-              "
-              This method is invoked automatically in the main event loop
-              after each event when running in NSDefaultRunLoopMode or
-              NSModalRunLoopMode. This method is not invoked automatically
-              when running in NSEventTrackingRunLoopMode.
-              "
-
-              So to be safe, we also invoke it here in this event loop.
-
-              See: https://developer.apple.com/library/mac/#documentation/Cocoa/Reference/ApplicationKit/Classes/NSApplication_Class/Reference/Reference.html
-            */
-            [NSApp updateWindows];
-        }
-    }
-
-    // Wake up the enclosing loop so that it can check if it also needs
-    // to exit.
-    WakeUp();
+    wxMacAutoreleasePool autoreleasepool;
+    [NSApp run];
 }
 
-void wxGUIEventLoop::OSXDoStop()
+void wxGUIEventLoop::DoStop()
 {
-    // We should only stop the top level event loop.
-    if ( gs_loopNestingLevel <= 1 )
-    {
-        [NSApp stop:0];
-    }
-
-    // For the top level loop only calling stop: is not enough when called from
-    // a runloop-observer, therefore add a dummy event, to make sure the
-    // runloop gets another round. And for the nested loops we need to wake it
-    // up to notice that it should exit, so do this unconditionally.
+    // only calling stop: is not enough when called from a runloop-observer,
+    // therefore add a dummy event, to make sure the runloop gets another round
+    [NSApp stop:0];
     WakeUp();
 }
 
@@ -413,9 +305,7 @@ wxModalEventLoop::wxModalEventLoop(WXWindow modalNativeWindow)
 
 // END move into a evtloop_osx.cpp
 
-#define OSX_USE_MODAL_SESSION 1
-
-void wxModalEventLoop::OSXDoRun()
+void wxModalEventLoop::DoRun()
 {
     wxMacAutoreleasePool pool;
 
@@ -430,21 +320,11 @@ void wxModalEventLoop::OSXDoRun()
             [NSApp sendEvent:event];
         }
     }
-#if OSX_USE_MODAL_SESSION
-    if ( m_modalWindow )
-    {
-        BeginModalSession(m_modalWindow);
-        wxCFEventLoop::OSXDoRun();
-        EndModalSession();
-    }
-    else
-#endif
-    {
-        [NSApp runModalForWindow:m_modalNativeWindow];
-    }
+    
+    [NSApp runModalForWindow:m_modalNativeWindow];
 }
 
-void wxModalEventLoop::OSXDoStop()
+void wxModalEventLoop::DoStop()
 {
     [NSApp abortModal];
 }
@@ -453,34 +333,15 @@ void wxGUIEventLoop::BeginModalSession( wxWindow* modalWindow )
 {
     WXWindow nsnow = nil;
 
-    m_modalNestedLevel++;
-    if ( m_modalNestedLevel > 1 )
+    if ( m_modalNestedLevel > 0 )
     {
-        wxModalSessionStack* stack = NULL;
-        
-        if ( m_modalNestedLevel == 2 )
-        {
-            stack = new wxModalSessionStack;
-            gs_modalSessionStackMap[this] = stack;
-        }
-        else
-        {
-            stack = gs_modalSessionStackMap[this];
-        }
-        
-        wxModalSessionStackElement element;
-        element.dummyWindow = m_dummyWindow;
-        element.modalSession = m_modalSession;
-        
-        stack->push_back(element);
-        
-        // shortcut if nothing changed in this level
-        
-        if ( m_modalWindow == modalWindow )
-            return;
+        wxASSERT_MSG( m_modalWindow == modalWindow, "Nested Modal Sessions must be based on same window");
+        m_modalNestedLevel++;
+        return;
     }
     
     m_modalWindow = modalWindow;
+    m_modalNestedLevel = 1;
     
     if ( modalWindow )
     {
@@ -502,8 +363,8 @@ void wxGUIEventLoop::BeginModalSession( wxWindow* modalWindow )
                                  backing:NSBackingStoreBuffered
                                    defer:YES
          ];
-        m_dummyWindow = nsnow;
         [nsnow orderOut:nil];
+        m_dummyWindow = nsnow;
     }
     m_modalSession = [NSApp beginModalSessionForWindow:nsnow];
     wxASSERT_MSG(m_modalSession != NULL, "modal session couldn't be started");
@@ -515,8 +376,7 @@ void wxGUIEventLoop::EndModalSession()
     
     wxASSERT_MSG(m_modalNestedLevel > 0, "incorrect modal nesting level");
     
-    --m_modalNestedLevel;
-    if ( m_modalNestedLevel == 0 )
+    if ( --m_modalNestedLevel == 0 )
     {
         [NSApp endModalSession:(NSModalSession)m_modalSession];
         m_modalSession = nil;
@@ -526,47 +386,78 @@ void wxGUIEventLoop::EndModalSession()
             m_dummyWindow = nil;
         }
     }
-    else
-    {
-        wxModalSessionStack* stack = gs_modalSessionStackMap[this];
-        wxModalSessionStackElement element = stack->back();
-        stack->pop_back();
-        
-        if( m_modalNestedLevel == 1 )
-        {
-            gs_modalSessionStackMap.erase(this);
-            delete stack;
-        }
-        
-        if ( m_modalSession != element.modalSession )
-        {
-            [NSApp endModalSession:(NSModalSession)m_modalSession];
-            m_modalSession = element.modalSession;
-        }
-        
-        if ( m_dummyWindow != element.dummyWindow )
-        {
-            if ( element.dummyWindow )
-                [element.dummyWindow release];
-
-            m_dummyWindow = element.dummyWindow;
-        }
-    }
 }
 
 //
 // 
 //
 
-void wxWindowDisabler::AfterDisable(wxWindow* winToSkip)
+wxWindowDisabler::wxWindowDisabler(bool disable)
 {
+    m_modalEventLoop = NULL;
+    m_disabled = disable;
+    if ( disable )
+        DoDisable();
+}
+
+wxWindowDisabler::wxWindowDisabler(wxWindow *winToSkip)
+{
+    m_disabled = true;
+    DoDisable(winToSkip);
+}
+
+void wxWindowDisabler::DoDisable(wxWindow *winToSkip)
+{    
+    // remember the top level windows which were already disabled, so that we
+    // don't reenable them later
+    m_winDisabled = NULL;
+    
+    wxWindowList::compatibility_iterator node;
+    for ( node = wxTopLevelWindows.GetFirst(); node; node = node->GetNext() )
+    {
+        wxWindow *winTop = node->GetData();
+        if ( winTop == winToSkip )
+            continue;
+        
+        // we don't need to disable the hidden or already disabled windows
+        if ( winTop->IsEnabled() && winTop->IsShown() )
+        {
+            winTop->Disable();
+        }
+        else
+        {
+            if ( !m_winDisabled )
+            {
+                m_winDisabled = new wxWindowList;
+            }
+            
+            m_winDisabled->Append(winTop);
+        }
+    }
+    
     m_modalEventLoop = (wxEventLoop*)wxEventLoopBase::GetActive();
     if (m_modalEventLoop)
         m_modalEventLoop->BeginModalSession(winToSkip);
 }
 
-void wxWindowDisabler::BeforeEnable()
+wxWindowDisabler::~wxWindowDisabler()
 {
+    if ( !m_disabled )
+        return;
+    
     if (m_modalEventLoop)
         m_modalEventLoop->EndModalSession();
+    
+    wxWindowList::compatibility_iterator node;
+    for ( node = wxTopLevelWindows.GetFirst(); node; node = node->GetNext() )
+    {
+        wxWindow *winTop = node->GetData();
+        if ( !m_winDisabled || !m_winDisabled->Find(winTop) )
+        {
+            winTop->Enable();
+        }
+        //else: had been already disabled, don't reenable
+    }
+    
+    delete m_winDisabled;
 }

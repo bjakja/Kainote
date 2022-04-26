@@ -4,7 +4,8 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     2004-10-19
-// Copyright:   (c) 2004 Vadim Zeitlin <vadim@wxwidgets.org>
+// RCS-ID:      $Id$
+// Copyright:   (c) 2004 Vadim Zeitlin <vadim@wxwindows.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -13,20 +14,14 @@
 
 #include "wx/msw/wrapwin.h"
 
-#ifdef __VISUALC__
-    // Disable a warning that we can do nothing about: we get it for
-    // shlobj.h at least from 7.1a Windows kit when using VC14.
-    #pragma warning(push)
-
-    // 'typedef ': ignored on left of '' when no variable is declared
-    #pragma warning(disable:4091)
+#ifdef __WXWINCE__
+    #include <winreg.h>
+    #include <objbase.h>
+    #include <shlguid.h>
+    #include <shellapi.h>
 #endif
 
 #include <shlobj.h>
-
-#ifdef __VISUALC__
-    #pragma warning(pop)
-#endif
 
 #include "wx/msw/winundef.h"
 

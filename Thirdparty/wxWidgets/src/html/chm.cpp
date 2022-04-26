@@ -3,11 +3,15 @@
 // Purpose:     CHM (Help) support for wxHTML
 // Author:      Markus Sinner
 // Copyright:   (c) 2003 Herd Software Development
+// CVS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_LIBMSPACK
 
@@ -48,13 +52,13 @@ public:
     const wxArrayString *GetFileNames()
     {
         return m_fileNames;
-    }
+    };
 
-    /// get the name of the archive represented by this class
-    const wxString GetArchiveName() const
+    /// get the name of the archive representated by this class
+    const wxString GetArchiveName()
     {
         return m_chmFileName;
-    }
+    };
 
     /// Find a file in the archive
     const wxString Find(const wxString& pattern,
@@ -136,7 +140,7 @@ wxChmTools::wxChmTools(const wxFileName &archive)
     else
     {
         wxLogError(_("Failed to open CHM archive '%s'."),
-                   archive.GetFullPath());
+                   archive.GetFullPath().c_str());
         m_lasterror = (chmd->last_error(chmd));
         return;
     }
@@ -198,7 +202,7 @@ bool wxChmTools::Contains(const wxString& pattern)
 /**
  * Find()
  *
- * Finds the next file described by a pattern in the archive, starting
+ * Finds the next file descibed by a pattern in the archive, starting
  * the file given by second parameter
  *
  * @param pattern   The file-pattern to search for. May contain '*' and/or '?'
@@ -268,9 +272,9 @@ size_t wxChmTools::Extract(const wxString& pattern, const wxString& filename)
                 // Error
                 m_lasterror = d->last_error(d);
                 wxLogError(_("Could not extract %s into %s: %s"),
-                           wxString::FromAscii(f->filename),
-                           filename,
-                           ChmErrorMsg(m_lasterror));
+                           wxString::FromAscii(f->filename).c_str(),
+                           filename.c_str(),
+                           ChmErrorMsg(m_lasterror).c_str());
                 return 0;
             }
             else
@@ -363,19 +367,19 @@ public:
     virtual ~wxChmInputStream();
 
     /// Return the size of the accessed file in archive
-    virtual size_t GetSize() const wxOVERRIDE { return m_size; }
+    virtual size_t GetSize() const { return m_size; }
     /// End of Stream?
-    virtual bool Eof() const wxOVERRIDE;
+    virtual bool Eof() const;
     /// Set simulation-mode of HHP-File (if non is found)
     void SimulateHHP(bool sim) { m_simulateHHP = sim; }
 
 protected:
     /// See wxInputStream
-    virtual size_t OnSysRead(void *buffer, size_t bufsize) wxOVERRIDE;
+    virtual size_t OnSysRead(void *buffer, size_t bufsize);
     /// See wxInputStream
-    virtual wxFileOffset OnSysSeek(wxFileOffset seek, wxSeekMode mode) wxOVERRIDE;
+    virtual wxFileOffset OnSysSeek(wxFileOffset seek, wxSeekMode mode);
     /// See wxInputStream
-    virtual wxFileOffset OnSysTell() const wxOVERRIDE { return m_pos; }
+    virtual wxFileOffset OnSysTell() const { return m_pos; }
 
 private:
     size_t m_size;
@@ -390,6 +394,10 @@ private:
     // this void* is handle of archive . I'm sorry it is void and not proper
     // type but I don't want to make unzip.h header public.
 
+
+    // locates the file and returns a mspack_file *
+    mspack_file *LocateFile(wxString filename);
+
     // should store pointer to current file
     mspack_file *m_file;
 
@@ -403,7 +411,7 @@ private:
 /**
  * Constructor
  * @param archive  The name of the .chm archive. Remember that archive must
- *                 be local file accessible via fopen, fread functions!
+ *                 be local file accesible via fopen, fread functions!
  * @param filename The Name of the file to be extracted from archive
  * @param simulate if true than class should simulate .HHP-File based on #SYSTEM
  *                 if false than class does nothing if it doesn't find .hhp
@@ -434,7 +442,7 @@ wxChmInputStream::wxChmInputStream(const wxString& archive,
         }
         else
         {
-            wxLogError(_("Could not locate file '%s'."), filename);
+            wxLogError(_("Could not locate file '%s'."), filename.c_str());
             m_lasterror = wxSTREAM_READ_ERROR;
             return;
         }
@@ -464,14 +472,14 @@ bool wxChmInputStream::Eof() const
     return (m_content==NULL ||
             m_contentStream==NULL ||
             m_contentStream->Eof() ||
-            (size_t)m_pos>m_size);
+            m_pos>m_size);
 }
 
 
 
 size_t wxChmInputStream::OnSysRead(void *buffer, size_t bufsize)
 {
-    if ( (size_t)m_pos >= m_size )
+    if ( m_pos >= m_size )
     {
         m_lasterror = wxSTREAM_EOF;
         return 0;
@@ -509,7 +517,7 @@ size_t wxChmInputStream::OnSysRead(void *buffer, size_t bufsize)
 
 wxFileOffset wxChmInputStream::OnSysSeek(wxFileOffset seek, wxSeekMode mode)
 {
-    wxString mode_str;
+    wxString mode_str = wxEmptyString;
 
     if ( !m_contentStream || m_contentStream->Eof() )
     {
@@ -546,8 +554,8 @@ wxFileOffset wxChmInputStream::OnSysSeek(wxFileOffset seek, wxSeekMode mode)
 
 /**
  * Help Browser tries to read the contents of the
- * file by interpreting a .hhp file in the Archive.
- * Because .chm doesn't include such a file, we need
+ * file by interpreting a .hhp file in the Archiv.
+ * For .chm doesn't include such a file, we need
  * to rebuild the information based on stored
  * system-files.
  */
@@ -555,6 +563,7 @@ void
 wxChmInputStream::CreateHHPStream()
 {
     wxFileName file;
+    bool topic = false;
     bool hhc = false;
     bool hhk = false;
     wxInputStream *i;
@@ -622,6 +631,7 @@ wxChmInputStream::CreateHHPStream()
                     break;
                 case 2: // DEFAULT_TOPIC
                     tmp = "Default Topic=";
+                    topic = true;
                     break;
                 case 3: // TITLE
                     tmp = "Title=";
@@ -708,7 +718,7 @@ bool wxChmInputStream::CreateFileStream(const wxString& pattern)
 
     if ( tmpfile.empty() )
     {
-        wxLogError(_("Could not create temporary file '%s'"), tmpfile);
+        wxLogError(_("Could not create temporary file '%s'"), tmpfile.c_str());
         return false;
     }
 
@@ -716,7 +726,7 @@ bool wxChmInputStream::CreateFileStream(const wxString& pattern)
     if ( m_chm->Extract(pattern, tmpfile) <= 0 )
     {
         wxLogError(_("Extraction of '%s' into '%s' failed."),
-                   pattern, tmpfile);
+                   pattern.c_str(), tmpfile.c_str());
         if ( wxFileExists(tmpfile) )
             wxRemoveFile(tmpfile);
         return false;
@@ -754,16 +764,16 @@ class wxChmFSHandler : public wxFileSystemHandler
 public:
     /// Constructor and Destructor
     wxChmFSHandler();
-    virtual ~wxChmFSHandler() wxOVERRIDE;
+    virtual ~wxChmFSHandler();
 
     /// Is able to open location?
-    virtual bool CanOpen(const wxString& location) wxOVERRIDE;
+    virtual bool CanOpen(const wxString& location);
     /// Open a file
-    virtual wxFSFile* OpenFile(wxFileSystem& fs, const wxString& location) wxOVERRIDE;
+    virtual wxFSFile* OpenFile(wxFileSystem& fs, const wxString& location);
     /// Find first occurrence of spec
-    virtual wxString FindFirst(const wxString& spec, int flags = 0) wxOVERRIDE;
+    virtual wxString FindFirst(const wxString& spec, int flags = 0);
     /// Find next occurrence of spec
-    virtual wxString FindNext() wxOVERRIDE;
+    virtual wxString FindNext();
 
 private:
     int m_lasterror;
@@ -775,6 +785,8 @@ private:
 wxChmFSHandler::wxChmFSHandler() : wxFileSystemHandler()
 {
     m_lasterror=0;
+    m_pattern=wxEmptyString;
+    m_found=wxEmptyString;
     m_chm=NULL;
 }
 
@@ -817,7 +829,9 @@ wxFSFile* wxChmFSHandler::OpenFile(wxFileSystem& WXUNUSED(fs),
     // now work on the right location
     if (right.Contains(wxT("..")))
     {
-        right = wxFileName(right).GetAbsolutePath(wxT("/"));
+        wxFileName abs(right);
+        abs.MakeAbsolute(wxT("/"));
+        right = abs.GetFullPath();
     }
 
     // a workaround for absolute links to root
@@ -852,7 +866,7 @@ wxFSFile* wxChmFSHandler::OpenFile(wxFileSystem& WXUNUSED(fs),
 /**
  * Doku see wxFileSystemHandler
  */
-wxString wxChmFSHandler::FindFirst(const wxString& spec, int WXUNUSED(flags))
+wxString wxChmFSHandler::FindFirst(const wxString& spec, int flags)
 {
     wxString right = GetRightLocation(spec);
     wxString left = GetLeftLocation(spec);
@@ -875,7 +889,7 @@ wxString wxChmFSHandler::FindFirst(const wxString& spec, int WXUNUSED(flags))
         !m_pattern.Contains(wxT(".hhp.cached")))
     {
         m_found.Printf(wxT("%s#chm:%s.hhp"),
-                       left, m_pattern.BeforeLast(wxT('.')));
+                       left.c_str(), m_pattern.BeforeLast(wxT('.')).c_str());
     }
 
     return m_found;
@@ -898,18 +912,18 @@ wxString wxChmFSHandler::FindNext()
 
 class wxChmSupportModule : public wxModule
 {
-    wxDECLARE_DYNAMIC_CLASS(wxChmSupportModule);
+    DECLARE_DYNAMIC_CLASS(wxChmSupportModule)
 
 public:
-    virtual bool OnInit() wxOVERRIDE
+    virtual bool OnInit()
     {
         wxFileSystem::AddHandler(new wxChmFSHandler);
         return true;
     }
-    virtual void OnExit() wxOVERRIDE {}
+    virtual void OnExit() {}
 }
 ;
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxChmSupportModule, wxModule);
+IMPLEMENT_DYNAMIC_CLASS(wxChmSupportModule, wxModule)
 
 #endif // wxUSE_LIBMSPACK

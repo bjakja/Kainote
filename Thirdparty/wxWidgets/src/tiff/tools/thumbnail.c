@@ -1,3 +1,5 @@
+/* $Id$ */
+
 /*
  * Copyright (c) 1994-1997 Sam Leffler
  * Copyright (c) 1994-1997 Silicon Graphics, Inc.
@@ -33,21 +35,10 @@
 # include <unistd.h>
 #endif
 
-#ifdef NEED_LIBPORT
-# include "libport.h"
-#endif
-
 #include "tiffio.h"
 
-#ifndef EXIT_SUCCESS
-#define EXIT_SUCCESS 0
-#endif
-#ifndef EXIT_FAILURE
-#define EXIT_FAILURE 1
-#endif
-
 #ifndef HAVE_GETOPT
-extern int getopt(int argc, char * const argv[], const char *optstring);
+extern int getopt(int, char**, char*);
 #endif
 
 #define	streq(a,b)	(strcmp(a,b) == 0)
@@ -74,12 +65,10 @@ static	uint8* thumbnail;
 static	int cpIFD(TIFF*, TIFF*);
 static	int generateThumbnail(TIFF*, TIFF*);
 static	void initScale();
-static	void usage(int code);
+static	void usage(void);
 
-#if !HAVE_DECL_OPTARG
 extern	char* optarg;
 extern	int optind;
-#endif
 
 int
 main(int argc, char* argv[])
@@ -101,24 +90,22 @@ main(int argc, char* argv[])
 				   streq(optarg, "linear")? LINEAR :
 							    EXP;
 			break;
-	default:	usage(EXIT_FAILURE);
+	default:	usage();
 	}
     }
     if (argc-optind != 2)
-	usage(EXIT_FAILURE);
+	usage();
 
     out = TIFFOpen(argv[optind+1], "w");
     if (out == NULL)
 	return 2;
     in = TIFFOpen(argv[optind], "r");
-    if( in == NULL )
-        return 2;
 
     thumbnail = (uint8*) _TIFFmalloc(tnw * tnh);
     if (!thumbnail) {
 	    TIFFError(TIFFFileName(in),
 		      "Can't allocate space for thumbnail buffer.");
-	    return EXIT_FAILURE;
+	    return 1;
     }
 
     if (in != NULL) {
@@ -132,10 +119,10 @@ main(int argc, char* argv[])
 	(void) TIFFClose(in);
     }
     (void) TIFFClose(out);
-    return EXIT_SUCCESS;
+    return 0;
 bad:
     (void) TIFFClose(out);
-    return EXIT_FAILURE;
+    return 1;
 }
 
 #define	CopyField(tag, v) \
@@ -172,16 +159,6 @@ cpTag(TIFF* in, TIFF* out, uint16 tag, uint16 count, TIFFDataType type)
 		  CopyField(tag, longv);
 		}
 		break;
-	case TIFF_LONG8:
-		{ uint64 longv8;
-		  CopyField(tag, longv8);
-		}
-		break;
-	case TIFF_SLONG8:
-		{ int64 longv8;
-		  CopyField(tag, longv8);
-		}
-		break;
 	case TIFF_RATIONAL:
 		if (count == 1) {
 			float floatv;
@@ -205,11 +182,7 @@ cpTag(TIFF* in, TIFF* out, uint16 tag, uint16 count, TIFFDataType type)
 			CopyField(tag, doubleav);
 		}
 		break;
-	case TIFF_IFD8:
-		{ toff_t ifd8;
-		  CopyField(tag, ifd8);
-		}
-		break;          default:
+          default:
                 TIFFError(TIFFFileName(in),
                           "Data type %d is not supported, tag %d skipped.",
                           tag, type);
@@ -257,14 +230,14 @@ static struct cpTag {
     { TIFFTAG_DATETIME,			1, TIFF_ASCII },
     { TIFFTAG_ARTIST,			1, TIFF_ASCII },
     { TIFFTAG_HOSTCOMPUTER,		1, TIFF_ASCII },
-    { TIFFTAG_WHITEPOINT,		2, TIFF_RATIONAL },
+    { TIFFTAG_WHITEPOINT,		1, TIFF_RATIONAL },
     { TIFFTAG_PRIMARYCHROMATICITIES,	(uint16) -1,TIFF_RATIONAL },
     { TIFFTAG_HALFTONEHINTS,		2, TIFF_SHORT },
     { TIFFTAG_BADFAXLINES,		1, TIFF_LONG },
     { TIFFTAG_CLEANFAXDATA,		1, TIFF_SHORT },
     { TIFFTAG_CONSECUTIVEBADFAXLINES,	1, TIFF_LONG },
     { TIFFTAG_INKSET,			1, TIFF_SHORT },
-    /*{ TIFFTAG_INKNAMES,			1, TIFF_ASCII },*/ /* Needs much more complicated logic. See tiffcp */
+    { TIFFTAG_INKNAMES,			1, TIFF_ASCII },
     { TIFFTAG_DOTRANGE,			2, TIFF_SHORT },
     { TIFFTAG_TARGETPRINTER,		1, TIFF_ASCII },
     { TIFFTAG_SAMPLEFORMAT,		1, TIFF_SHORT },
@@ -281,26 +254,7 @@ cpTags(TIFF* in, TIFF* out)
 {
     struct cpTag *p;
     for (p = tags; p < &tags[NTAGS]; p++)
-	{
-		/* Horrible: but TIFFGetField() expects 2 arguments to be passed */
-		/* if we request a tag that is defined in a codec, but that codec */
-		/* isn't used */
-		if( p->tag == TIFFTAG_GROUP3OPTIONS )
-		{
-			uint16 compression;
-			if( !TIFFGetField(in, TIFFTAG_COMPRESSION, &compression) ||
-				compression != COMPRESSION_CCITTFAX3 )
-				continue;
-		}
-		if( p->tag == TIFFTAG_GROUP4OPTIONS )
-		{
-			uint16 compression;
-			if( !TIFFGetField(in, TIFFTAG_COMPRESSION, &compression) ||
-				compression != COMPRESSION_CCITTFAX4 )
-				continue;
-		}
-		cpTag(in, out, p->tag, p->count, p->type);
-	}
+	cpTag(in, out, p->tag, p->count, p->type);
 }
 #undef NTAGS
 
@@ -312,18 +266,18 @@ cpStrips(TIFF* in, TIFF* out)
 
     if (buf) {
 	tstrip_t s, ns = TIFFNumberOfStrips(in);
-	uint64 *bytecounts;
+	tsize_t *bytecounts;
 
 	TIFFGetField(in, TIFFTAG_STRIPBYTECOUNTS, &bytecounts);
 	for (s = 0; s < ns; s++) {
-	  if (bytecounts[s] > (uint64) bufsize) {
-		buf = (unsigned char *)_TIFFrealloc(buf, (tmsize_t)bytecounts[s]);
+	    if (bytecounts[s] > bufsize) {
+		buf = (unsigned char *)_TIFFrealloc(buf, bytecounts[s]);
 		if (!buf)
 		    goto bad;
-		bufsize = (tmsize_t)bytecounts[s];
+		bufsize = bytecounts[s];
 	    }
-	    if (TIFFReadRawStrip(in, s, buf, (tmsize_t)bytecounts[s]) < 0 ||
-		TIFFWriteRawStrip(out, s, buf, (tmsize_t)bytecounts[s]) < 0) {
+	    if (TIFFReadRawStrip(in, s, buf, bytecounts[s]) < 0 ||
+		TIFFWriteRawStrip(out, s, buf, bytecounts[s]) < 0) {
 		_TIFFfree(buf);
 		return 0;
 	    }
@@ -346,18 +300,18 @@ cpTiles(TIFF* in, TIFF* out)
 
     if (buf) {
 	ttile_t t, nt = TIFFNumberOfTiles(in);
-	uint64 *bytecounts;
+	tsize_t *bytecounts;
 
 	TIFFGetField(in, TIFFTAG_TILEBYTECOUNTS, &bytecounts);
 	for (t = 0; t < nt; t++) {
-	    if (bytecounts[t] > (uint64) bufsize) {
-		buf = (unsigned char *)_TIFFrealloc(buf, (tmsize_t)bytecounts[t]);
+	    if (bytecounts[t] > bufsize) {
+		buf = (unsigned char *)_TIFFrealloc(buf, bytecounts[t]);
 		if (!buf)
 		    goto bad;
-		bufsize = (tmsize_t)bytecounts[t];
+		bufsize = bytecounts[t];
 	    }
-	    if (TIFFReadRawTile(in, t, buf, (tmsize_t)bytecounts[t]) < 0 ||
-		TIFFWriteRawTile(out, t, buf, (tmsize_t)bytecounts[t]) < 0) {
+	    if (TIFFReadRawTile(in, t, buf, bytecounts[t]) < 0 ||
+		TIFFWriteRawTile(out, t, buf, bytecounts[t]) < 0) {
 		_TIFFfree(buf);
 		return 0;
 	    }
@@ -532,15 +486,15 @@ setrow(uint8* row, uint32 nrows, const uint8* rows[])
 	    default:
 		for (i = fw; i > 8; i--)
 		    acc += bits[*src++];
-		/* fall through... */
-	    case 8: acc += bits[*src++]; /* fall through */
-	    case 7: acc += bits[*src++]; /* fall through */
-	    case 6: acc += bits[*src++]; /* fall through */
-	    case 5: acc += bits[*src++]; /* fall through */
-	    case 4: acc += bits[*src++]; /* fall through */
-	    case 3: acc += bits[*src++]; /* fall through */
-	    case 2: acc += bits[*src++]; /* fall through */
-	    case 1: acc += bits[*src++]; /* fall through */
+		/* fall thru... */
+	    case 8: acc += bits[*src++];
+	    case 7: acc += bits[*src++];
+	    case 6: acc += bits[*src++];
+	    case 5: acc += bits[*src++];
+	    case 4: acc += bits[*src++];
+	    case 3: acc += bits[*src++];
+	    case 2: acc += bits[*src++];
+	    case 1: acc += bits[*src++];
 	    case 0: break;
 	    }
 	    acc += bits[*src & mask1];
@@ -575,13 +529,7 @@ setImage1(const uint8* br, uint32 rw, uint32 rh)
 	    err -= limit;
 	    sy++;
 	    if (err >= limit)
-		{
-			/* We should perhaps error loudly, but I can't make sense of that */
-			/* code... */
-			if( nrows == 256 )
-				break;
-			rows[nrows++] = br + bpr*sy;
-		}
+		rows[nrows++] = br + bpr*sy;
 	}
 	setrow(row, nrows, rows);
 	row += tnw;
@@ -605,7 +553,7 @@ generateThumbnail(TIFF* in, TIFF* out)
     uint16 bps, spp;
     tsize_t rowsize, rastersize;
     tstrip_t s, ns = TIFFNumberOfStrips(in);
-    toff_t diroff[1];
+    uint32 diroff[1];
 
     TIFFGetField(in, TIFFTAG_IMAGEWIDTH, &sw);
     TIFFGetField(in, TIFFTAG_IMAGELENGTH, &sh);
@@ -617,17 +565,12 @@ generateThumbnail(TIFF* in, TIFF* out)
     rowsize = TIFFScanlineSize(in);
     rastersize = sh * rowsize;
     fprintf(stderr, "rastersize=%u\n", (unsigned int)rastersize);
-	/* +3 : add a few guard bytes since setrow() can read a bit */
-	/* outside buffer */
-    raster = (unsigned char*)_TIFFmalloc(rastersize+3);
+    raster = (unsigned char*)_TIFFmalloc(rastersize);
     if (!raster) {
 	    TIFFError(TIFFFileName(in),
 		      "Can't allocate space for raster buffer.");
 	    return 0;
     }
-    raster[rastersize] = 0;
-    raster[rastersize+1] = 0;
-    raster[rastersize+2] = 0;
     rp = raster;
     for (s = 0; s < ns; s++) {
 	(void) TIFFReadEncodedStrip(in, s, rp, -1);
@@ -651,13 +594,13 @@ generateThumbnail(TIFF* in, TIFF* out)
     cpTag(in, out, TIFFTAG_IMAGEDESCRIPTION,	(uint16) -1, TIFF_ASCII);
     cpTag(in, out, TIFFTAG_DATETIME,		(uint16) -1, TIFF_ASCII);
     cpTag(in, out, TIFFTAG_HOSTCOMPUTER,	(uint16) -1, TIFF_ASCII);
-    diroff[0] = 0UL;
+    diroff[0] = 0;
     TIFFSetField(out, TIFFTAG_SUBIFD, 1, diroff);
     return (TIFFWriteEncodedStrip(out, 0, thumbnail, tnw*tnh) != -1 &&
             TIFFWriteDirectory(out) != -1);
 }
 
-const char* stuff[] = {
+char* stuff[] = {
 "usage: thumbnail [options] input.tif output.tif",
 "where options are:",
 " -h #		specify thumbnail image height (default is 274)",
@@ -674,22 +617,16 @@ NULL
 };
 
 static void
-usage(int code)
+usage(void)
 {
+	char buf[BUFSIZ];
 	int i;
-	FILE * out = (code == EXIT_SUCCESS) ? stdout : stderr;
 
-        fprintf(out, "%s\n\n", TIFFGetVersion());
+	setbuf(stderr, buf);
+        fprintf(stderr, "%s\n\n", TIFFGetVersion());
 	for (i = 0; stuff[i] != NULL; i++)
-		fprintf(out, "%s\n", stuff[i]);
-	exit(code);
+		fprintf(stderr, "%s\n", stuff[i]);
+	exit(-1);
 }
 
 /* vim: set ts=8 sts=8 sw=8 noet: */
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 8
- * fill-column: 78
- * End:
- */

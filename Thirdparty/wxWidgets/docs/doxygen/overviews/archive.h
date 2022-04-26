@@ -2,14 +2,13 @@
 // Name:        archive.h
 // Purpose:     topic overview
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 /**
 
 @page overview_archive Archive Formats
-
-@tableofcontents
 
 The archive classes handle archive formats such as zip, tar, rar and cab.
 Currently wxZip, wxTar and wxZlib classes are included.
@@ -31,6 +30,17 @@ The classes are designed to handle archives on both seekable streams such as
 disk files, or non-seekable streams such as pipes and sockets (see
 @ref overview_archive_noseek).
 
+See also wxFileSystem.
+
+@li @ref overview_archive_create
+@li @ref overview_archive_extract
+@li @ref overview_archive_modify
+@li @ref overview_archive_byname
+@li @ref overview_archive_generic
+@li @ref overview_archive_noseek
+
+
+<hr>
 
 
 @section overview_archive_create Creating an Archive
@@ -297,11 +307,11 @@ if (in->IsOk())
 
         // list the contents of the archive
         while ((entry.reset(arc->GetNextEntry())), entry.get() != NULL)
-            std::wcout << entry->GetName() << "\n";
+            std::wcout << entry->GetName().c_str() << "\n";
     }
     else
     {
-        wxLogError(wxT("can't handle '%s'"), filename);
+        wxLogError(wxT("can't handle '%s'"), filename.c_str());
     }
 }
 @endcode

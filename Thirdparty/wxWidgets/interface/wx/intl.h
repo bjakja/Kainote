@@ -2,6 +2,7 @@
 // Name:        intl.h
 // Purpose:     interface of wxLocale
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -33,25 +34,8 @@ struct wxLanguageInfo
     /// language info structure.
     int Language;
 
-    /**
-        Tag for locale in BCP 47-like notation.
-
-        @since 3.1.6
-     */
-    wxString LocaleTag;
-
     /// Canonical name of the language, e.g. @c fr_FR.
     wxString CanonicalName;
-
-    /**
-        Canonical reference including region.
-
-        Set, if the name specifies the language only, e.g. fr_FR for fr.
-        Empty, if region is unknown or already part of the name.
-
-        @since 3.1.6
-    */
-    wxString CanonicalRef;
 
     //@{
     /**
@@ -62,15 +46,8 @@ struct wxLanguageInfo
     wxUint32 WinLang, WinSublang;
     //@}
 
-    /// Human-readable name of the language in English.
+    /// Human-readable name of the language.
     wxString Description;
-
-    /**
-        Human-readable name of the language in this language itself.
-
-        @since 3.1.6
-     */
-    wxString DescriptionNative;
 
     /// The layout direction used for this language.
     wxLayoutDirection LayoutDirection;
@@ -79,59 +56,16 @@ struct wxLanguageInfo
     /// @onlyfor{wxmsw}
     wxUint32 GetLCID() const;
 
-    /**
-        Return the locale name corresponding to this language usable with
-        @c setlocale() on the current system.
-
-        If setting locale for this language is not supported, the returned
-        string is empty.
-     */
+    /// Return the locale name corresponding to this language usable with
+    /// @c setlocale() on the current system.
     wxString GetLocaleName() const;
-
-    /**
-        Return the canonical locale name including the region, if known.
-
-        The value is identical to @c CanonicalRef, if not empty,
-        otherwise it is identical to @c CanonicalName.
-
-        @since 3.1.6
-    */
-    wxString GetCanonicalWithRegion() const;
-};
-
-
-/**
-    The type of a locale tag.
-
-    @see wxLocaleIdent::GetTag()
-    @since 3.1.6
-*/
-enum wxLocaleTagType
-{
-    /// Default (tag as given or else same as wxLOCALE_TAGTYPE_SYSTEM)
-    wxLOCALE_TAGTYPE_DEFAULT,
-
-    /// Default type of the system (platform-dependent).
-    wxLOCALE_TAGTYPE_SYSTEM,
-
-    /// BCP47-like type: \<language\>[-\<script\>][-\<region\>][-\<modifier\>].
-    wxLOCALE_TAGTYPE_BCP47,
-
-    /// macOS type: \<language\>[-\<script\>][_\<region\>].
-    wxLOCALE_TAGTYPE_MACOS,
-
-    /// POSIX type: \<language\>_\<region\>[.\<charset\>][@@{\<scriptalias\>|\<modifier\>}].
-    wxLOCALE_TAGTYPE_POSIX,
-
-    /// Windows type:  \<language\>[-\<script\>][-\<region\>][-\<extension\>][_\<sortorder\>].
-    wxLOCALE_TAGTYPE_WINDOWS
 };
 
 
 /**
     The category of locale settings.
 
-    @see wxLocale::GetInfo(), wxUILocale::GetInfo()
+    @see wxLocale::GetInfo()
 */
 enum wxLocaleCategory
 {
@@ -160,18 +94,16 @@ enum wxLocaleCategory
 
 /**
     The values understood by wxLocale::GetInfo().
-
-    Note that for the @c wxLOCALE_*_FMT constants (the date and time formats),
+    
+    Note that for the @c wxLOCALE_*_FMT constants (the date and time formats), 
     the strings returned by wxLocale::GetInfo() use strftime() or,
     equivalently, wxDateTime::Format() format. If the relevant format
     couldn't be determined, an empty string is returned -- there is no
     fallback value so that the application could determine the best course
     of actions itself in such case.
 
-    All of these values are used with @c wxLOCALE_CAT_DATE in wxLocale::GetInfo() or,
+    All of these values are used with @c wxLOCALE_CAT_DATE in wxLocale::GetInfo() or, 
     more typically, with @c wxLOCALE_CAT_DEFAULT as they only apply to a single category.
-
-    @see wxUILocale::GetInfo()
 */
 enum wxLocaleInfo
 {
@@ -180,9 +112,6 @@ enum wxLocaleInfo
 
         This value can be used with either wxLOCALE_CAT_NUMBER or
         wxLOCALE_CAT_MONEY categories.
-
-        By default, i.e. when wxLOCALE_CAT_DEFAULT is used, the separator for
-        numbers is returned.
      */
     wxLOCALE_THOUSANDS_SEP,
 
@@ -191,9 +120,6 @@ enum wxLocaleInfo
 
         This value can be used with either wxLOCALE_CAT_NUMBER or
         wxLOCALE_CAT_MONEY categories.
-
-        By default, i.e. when wxLOCALE_CAT_DEFAULT is used, the decimal point
-        for numbers is returned.
      */
     wxLOCALE_DECIMAL_POINT,
 
@@ -201,7 +127,7 @@ enum wxLocaleInfo
         Short date format.
 
         Notice that short and long date formats may be the same under POSIX
-        systems currently but may, and typically are, different under MSW or macOS.
+        systems currently but may, and typically are, different under MSW or OS X.
 
         @since 2.9.0
      */
@@ -231,63 +157,10 @@ enum wxLocaleInfo
 
 
 /**
-    The values understood by wxUILocale::GetLocalizedName().
-
-    The corresponding strings can be used to display the information in the UI.
-
-    @since 3.1.6
-
-    @see wxUILocale::GetLocalizedName()
-*/
-enum wxLocaleName
-{
-    /// Display name of a locale.
-    wxLOCALE_NAME_LOCALE,
-
-    /// Display name of the language of a locale.
-    wxLOCALE_NAME_LANGUAGE,
-
-    /// Display name of the country/region of a locale.
-    wxLOCALE_NAME_COUNTRY
-};
-
-// ----------------------------------------------------------------------------
-// wxLocaleForm: the forms of names understood by wxLocale::GetLocalizedName()
-// ----------------------------------------------------------------------------
-
-/**
-    The values understood by wxUILocale::GetLocalizedName().
-
-    The values specify the form of a localized name.
-
-    @since 3.1.6
-
-    @see wxUILocale::GetLocalizedName()
-*/
-enum wxLocaleForm
-{
-    /// Name should be returned in the language of the locale itself.
-    wxLOCALE_FORM_NATIVE,
-
-    /// Name should be returned in English.
-    wxLOCALE_FORM_ENGLISH
-};
-
-
-/**
     @class wxLocale
 
     wxLocale class encapsulates all language-dependent settings and is a
     generalization of the C locale concept.
-
-    @note This class is known to have several problems under macOS: first of all,
-        it is impossible to change the application UI locale after launching it
-        under this platform and so using this class doesn't affect the native
-        controls and dialogs there. Additionally, versions of macOS between
-        11.0 and 12.2 inclusive are affected by a bug when changing C locale can
-        break display of the application menus. Because of this, it is
-        recommended to use wxUILocale instead of this class for the
-        applications targeting macOS.
 
     In wxWidgets this class manages current locale. It also initializes and
     activates wxTranslations object that manages message catalogs.
@@ -337,12 +210,6 @@ enum wxLocaleForm
 
     @see @ref overview_i18n, @ref page_samples_internat, wxXLocale, wxTranslations
 */
-enum wxLocaleInitFlags
-{
-    wxLOCALE_DONT_LOAD_DEFAULT = 0x0000,     ///< Don't load wxstd.mo catalog.
-    wxLOCALE_LOAD_DEFAULT      = 0x0001      ///< Load wxstd.mo (done by default).
-};
-
 class wxLocale
 {
 public:
@@ -410,7 +277,7 @@ public:
         This function may be used to find the language description structure for the
         given locale, specified either as a two letter ISO language code (for example,
         "pt"), a language code followed by the country code ("pt_BR") or a full, human
-        readable, language description ("Portuguese_Brazil").
+        readable, language description ("Portuguese-Brazil").
 
         Returns the information for the given language or @NULL if this language
         is unknown. Note that even if the returned pointer is valid, the caller
@@ -488,17 +355,17 @@ public:
     const wxString& GetName() const;
 
     /**
-        Calls wxGetTranslation(const wxString&, const wxString&).
+        Calls wxTranslations::GetString(const wxString&, const wxString&) const.
     */
-    const wxString& GetString(const wxString& origString,
-                              const wxString& domain = wxEmptyString) const;
+    virtual const wxString& GetString(const wxString& origString,
+                                      const wxString& domain = wxEmptyString) const;
 
     /**
-        Calls wxGetTranslation(const wxString&, const wxString&, unsigned, const wxString&).
+        Calls wxTranslations::GetString(const wxString&, const wxString&, unsigned, const wxString&) const.
     */
-    const wxString& GetString(const wxString& origString,
-                              const wxString& origString2, unsigned n,
-                              const wxString& domain = wxEmptyString) const;
+    virtual const wxString& GetString(const wxString& origString,
+                                      const wxString& origString2, unsigned n,
+                                      const wxString& domain = wxEmptyString) const;
 
     /**
         Returns current platform-specific locale name as passed to setlocale().
@@ -524,17 +391,10 @@ public:
     static wxString GetSystemEncodingName();
 
     /**
-        Tries to detect the user's default locale setting.
+        Tries to detect the user's default language setting.
 
         Returns the ::wxLanguage value or @c wxLANGUAGE_UNKNOWN if the language-guessing
         algorithm failed.
-
-        @note This function works with @em locales and returns the user's default
-              locale. This may be, and usually is, the same as their preferred UI
-              language, but it's not the same thing. Use wxTranslation to obtain
-              @em language information.
-
-        @see wxTranslations::GetBestTranslation().
     */
     static int GetSystemLanguage();
 
@@ -556,24 +416,6 @@ public:
                             wxLocaleCategory cat = wxLOCALE_CAT_DEFAULT);
 
     /**
-        Get the values of a locale datum in the OS locale.
-
-        This function shouldn't be used in the new code, use
-        wxUILocale::GetInfo() instead.
-
-        This function is similar to GetInfo() and, in fact, identical to it
-        under non-MSW systems. Under MSW it differs from it when no locale had
-        been explicitly set: GetInfo() returns the values corresponding to the
-        "C" locale used by the standard library functions, while this method
-        returns the values used by the OS which, in Windows case, correspond to
-        the user settings in the control panel.
-
-        @since 3.1.0
-     */
-    static wxString GetOSInfo(wxLocaleInfo index,
-                              wxLocaleCategory cat = wxLOCALE_CAT_DEFAULT);
-
-    /**
         Initializes the wxLocale instance.
 
         The call of this function has several global side effects which you should
@@ -585,11 +427,9 @@ public:
         try to translate the messages using the message catalogs for this locale.
 
         @param language
-            ::wxLanguage identifier of the locale. It can be either some
-            concrete language, e.g. @c wxLANGUAGE_ESPERANTO, or a special value
-            @c wxLANGUAGE_DEFAULT which means that wxLocale should use system's
-            default language (see GetSystemLanguage()). Notice that the value
-            @c wxLANGUAGE_UNKNOWN is not allowed here.
+            ::wxLanguage identifier of the locale.
+            @c wxLANGUAGE_DEFAULT has special meaning -- wxLocale will use system's
+            default language (see GetSystemLanguage()).
         @param flags
             Combination of the following:
             - wxLOCALE_LOAD_DEFAULT: Load the message catalog for the given locale
@@ -608,7 +448,7 @@ public:
 
         @param name
             The name of the locale. Only used in diagnostic messages.
-        @param shortName
+        @param short
             The standard 2 letter locale abbreviation; it is used as the
             directory prefix when looking for the message catalog files.
         @param locale
@@ -624,7 +464,7 @@ public:
 
     /**
         Check whether the operating system and/or C run time environment supports
-        this locale. For example in Windows, support for many
+        this locale. For example in Windows 2000 and Windows XP, support for many
         locales is not installed by default. Returns @true if the locale is
         supported.
 
@@ -647,11 +487,3 @@ public:
     */
     bool IsOk() const;
 };
-
-
-
-/**
-   Get the current locale object (note that it may be NULL!)
-*/
-wxLocale* wxGetLocale();
-

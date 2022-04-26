@@ -4,12 +4,16 @@
 // Author:      Peter Cawley
 // Modified by:
 // Created:     2009-07-22
+// RCS-ID:      $Id$
 // Copyright:   (C) Peter Cawley
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_RIBBON
 
@@ -26,12 +30,12 @@
 #include "wx/msw/private.h"
 #endif
 
-wxDEFINE_EVENT(wxEVT_RIBBONGALLERY_HOVER_CHANGED, wxRibbonGalleryEvent);
-wxDEFINE_EVENT(wxEVT_RIBBONGALLERY_SELECTED, wxRibbonGalleryEvent);
-wxDEFINE_EVENT(wxEVT_RIBBONGALLERY_CLICKED, wxRibbonGalleryEvent);
+wxDEFINE_EVENT(wxEVT_COMMAND_RIBBONGALLERY_HOVER_CHANGED, wxRibbonGalleryEvent);
+wxDEFINE_EVENT(wxEVT_COMMAND_RIBBONGALLERY_SELECTED, wxRibbonGalleryEvent);
+wxDEFINE_EVENT(wxEVT_COMMAND_RIBBONGALLERY_CLICKED, wxRibbonGalleryEvent);
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxRibbonGalleryEvent, wxCommandEvent);
-wxIMPLEMENT_CLASS(wxRibbonGallery, wxRibbonControl);
+IMPLEMENT_DYNAMIC_CLASS(wxRibbonGalleryEvent, wxCommandEvent)
+IMPLEMENT_CLASS(wxRibbonGallery, wxRibbonControl)
 
 class wxRibbonGalleryItem
 {
@@ -66,7 +70,7 @@ protected:
     bool m_is_visible;
 };
 
-wxBEGIN_EVENT_TABLE(wxRibbonGallery, wxRibbonControl)
+BEGIN_EVENT_TABLE(wxRibbonGallery, wxRibbonControl)
     EVT_ENTER_WINDOW(wxRibbonGallery::OnMouseEnter)
     EVT_ERASE_BACKGROUND(wxRibbonGallery::OnEraseBackground)
     EVT_LEAVE_WINDOW(wxRibbonGallery::OnMouseLeave)
@@ -76,7 +80,7 @@ wxBEGIN_EVENT_TABLE(wxRibbonGallery, wxRibbonControl)
     EVT_MOTION(wxRibbonGallery::OnMouseMove)
     EVT_PAINT(wxRibbonGallery::OnPaint)
     EVT_SIZE(wxRibbonGallery::OnSize)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 wxRibbonGallery::wxRibbonGallery()
 {
@@ -132,7 +136,7 @@ void wxRibbonGallery::CommonInit(long WXUNUSED(style))
     m_extension_button_state = wxRIBBON_GALLERY_BUTTON_NORMAL;
     m_hovered = false;
 
-    SetBackgroundStyle(wxBG_STYLE_PAINT);
+    SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 }
 
 void wxRibbonGallery::OnMouseEnter(wxMouseEvent& evt)
@@ -193,7 +197,7 @@ void wxRibbonGallery::OnMouseMove(wxMouseEvent& evt)
     {
         m_hovered_item = hovered_item;
         wxRibbonGalleryEvent notification(
-            wxEVT_RIBBONGALLERY_HOVER_CHANGED, GetId());
+            wxEVT_COMMAND_RIBBONGALLERY_HOVER_CHANGED, GetId());
         notification.SetEventObject(this);
         notification.SetGallery(this);
         notification.SetGalleryItem(hovered_item);
@@ -247,7 +251,7 @@ void wxRibbonGallery::OnMouseLeave(wxMouseEvent& WXUNUSED(evt))
     {
         m_hovered_item = NULL;
         wxRibbonGalleryEvent notification(
-            wxEVT_RIBBONGALLERY_HOVER_CHANGED, GetId());
+            wxEVT_COMMAND_RIBBONGALLERY_HOVER_CHANGED, GetId());
         notification.SetEventObject(this);
         notification.SetGallery(this);
         ProcessWindowEvent(notification);
@@ -337,7 +341,7 @@ void wxRibbonGallery::OnMouseUp(wxMouseEvent& evt)
             else if(m_mouse_active_rect == &m_extension_button_rect)
             {
                 m_extension_button_state = wxRIBBON_GALLERY_BUTTON_HOVERED;
-                wxCommandEvent notification(wxEVT_BUTTON,
+                wxCommandEvent notification(wxEVT_COMMAND_BUTTON_CLICKED,
                     GetId());
                 notification.SetEventObject(this);
                 ProcessWindowEvent(notification);
@@ -348,7 +352,7 @@ void wxRibbonGallery::OnMouseUp(wxMouseEvent& evt)
                 {
                     m_selected_item = m_active_item;
                     wxRibbonGalleryEvent notification(
-                        wxEVT_RIBBONGALLERY_SELECTED, GetId());
+                        wxEVT_COMMAND_RIBBONGALLERY_SELECTED, GetId());
                     notification.SetEventObject(this);
                     notification.SetGallery(this);
                     notification.SetGalleryItem(m_selected_item);
@@ -356,7 +360,7 @@ void wxRibbonGallery::OnMouseUp(wxMouseEvent& evt)
                 }
 
                 wxRibbonGalleryEvent notification(
-                    wxEVT_RIBBONGALLERY_CLICKED, GetId());
+                    wxEVT_COMMAND_RIBBONGALLERY_CLICKED, GetId());
                 notification.SetEventObject(this);
                 notification.SetGallery(this);
                 notification.SetGalleryItem(m_selected_item);
@@ -538,12 +542,12 @@ wxRibbonGalleryItem* wxRibbonGallery::Append(const wxBitmap& bitmap, int id)
     wxASSERT(bitmap.IsOk());
     if(m_items.IsEmpty())
     {
-        m_bitmap_size = bitmap.GetLogicalSize();
+        m_bitmap_size = bitmap.GetSize();
         CalculateMinSize();
     }
     else
     {
-        wxASSERT(bitmap.GetLogicalSize() == m_bitmap_size);
+        wxASSERT(bitmap.GetSize() == m_bitmap_size);
     }
 
     wxRibbonGalleryItem *item = new wxRibbonGalleryItem;

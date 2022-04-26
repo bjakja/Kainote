@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by: Vadim Zeitlin at 2008-03-01: refactoring, simplification
 // Created:     16/04/2000
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,6 +12,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_HELP && wxUSE_MS_HTML_HELP
 
@@ -33,10 +37,10 @@
 // ----------------------------------------------------------------------------
 
 #ifndef UNICODE
-    typedef HWND ( WINAPI * HTMLHELP )( HWND, LPCSTR, UINT, ULONG_PTR );
+    typedef HWND ( WINAPI * HTMLHELP )( HWND, LPCSTR, UINT, DWORD );
     #define HTMLHELP_NAME wxT("HtmlHelpA")
 #else // ANSI
-    typedef HWND ( WINAPI * HTMLHELP )( HWND, LPCWSTR, UINT, ULONG_PTR );
+    typedef HWND ( WINAPI * HTMLHELP )( HWND, LPCWSTR, UINT, DWORD );
     #define HTMLHELP_NAME wxT("HtmlHelpW")
 #endif
 
@@ -69,14 +73,14 @@ HTMLHELP GetHtmlHelpFunction()
 // fall back to the top level app window and then the desktop if it's NULL
 static HWND GetSuitableHWND(wxWindow *win)
 {
-    if ( !win )
-        win = wxApp::GetMainTopWindow();
+    if ( !win && wxTheApp )
+        win = wxTheApp->GetTopWindow();
 
     return win ? GetHwndOf(win) : ::GetDesktopWindow();
 }
 
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxCHMHelpController, wxHelpControllerBase);
+IMPLEMENT_DYNAMIC_CLASS(wxCHMHelpController, wxHelpControllerBase)
 
 bool wxCHMHelpController::Initialize(const wxString& filename)
 {
@@ -110,7 +114,7 @@ bool wxCHMHelpController::DisplayContents()
     if (m_helpFile.IsEmpty())
         return false;
 
-    return CallHtmlHelp(HH_DISPLAY_TOC);
+    return CallHtmlHelp(HH_DISPLAY_TOPIC);
 }
 
 // Use topic or HTML filename
@@ -134,12 +138,6 @@ bool wxCHMHelpController::DisplaySection(int section)
 {
     if (m_helpFile.IsEmpty())
         return false;
-
-    // Treat -1 as a special context number that displays the index
-    if (section == -1)
-    {
-        return CallHtmlHelp(HH_DISPLAY_INDEX);
-    }
 
     return CallHtmlHelp(HH_HELP_CONTEXT, section);
 }
@@ -200,34 +198,17 @@ bool wxCHMHelpController::KeywordSearch(const wxString& k,
     if (m_helpFile.IsEmpty())
         return false;
 
-    if (k.IsEmpty())
-    {
-        HH_FTS_QUERY oQuery;
-        oQuery.cbStruct = sizeof(HH_FTS_QUERY);
-        oQuery.fStemmedSearch = 0;
-        oQuery.fTitleOnly = 0;
-        oQuery.fUniCodeStrings = 0;
-        oQuery.iProximity = 0;
-        oQuery.pszSearchQuery = TEXT("");
-        oQuery.pszWindow = TEXT("");
-        oQuery.fExecute = 1;
+    HH_AKLINK link;
+    link.cbStruct =     sizeof(HH_AKLINK);
+    link.fReserved =    FALSE;
+    link.pszKeywords =  k.t_str();
+    link.pszUrl =       NULL;
+    link.pszMsgText =   NULL;
+    link.pszMsgTitle =  NULL;
+    link.pszWindow =    NULL;
+    link.fIndexOnFail = TRUE;
 
-        return CallHtmlHelp(HH_DISPLAY_SEARCH, &oQuery);
-    }
-    else
-    {
-        HH_AKLINK link;
-        link.cbStruct =     sizeof(HH_AKLINK);
-        link.fReserved =    FALSE;
-        link.pszKeywords =  k.t_str();
-        link.pszUrl =       NULL;
-        link.pszMsgText =   NULL;
-        link.pszMsgTitle =  NULL;
-        link.pszWindow =    NULL;
-        link.fIndexOnFail = TRUE;
-
-        return CallHtmlHelp(HH_KEYWORD_LOOKUP, &link);
-    }
+    return CallHtmlHelp(HH_KEYWORD_LOOKUP, &link);
 }
 
 bool wxCHMHelpController::Quit()

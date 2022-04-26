@@ -3,6 +3,7 @@
 // Purpose:     wxBase64Encode/Decode unit test
 // Author:      Charles Reimers
 // Created:     2007-06-22
+// RCS-ID:      $Id$
 ///////////////////////////////////////////////////////////////////////////////
 
 // ----------------------------------------------------------------------------
@@ -11,6 +12,9 @@
 
 #include "testprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
     #include "wx/wx.h"
@@ -101,7 +105,7 @@ private:
     void EncodeDecodeRandom();
     void DecodeInvalid();
 
-    wxDECLARE_NO_COPY_CLASS(Base64TestCase);
+    DECLARE_NO_COPY_CLASS(Base64TestCase)
 };
 
 // register in the unnamed registry so that these tests are run by default
@@ -266,8 +270,6 @@ void Base64TestCase::EncodeDecodeRandom()
     size_t realsize = size;
     CPPUNIT_ASSERT(wxBase64Decode(buff2, realsize, (char *)buff, size));
     CPPUNIT_ASSERT(wxBase64Encode(buff2, size, buff2, realsize));
-    delete[] buff2;
-    delete[] buff;
 }
 
 void Base64TestCase::DecodeInvalid()
@@ -288,17 +290,16 @@ void Base64TestCase::DecodeInvalid()
     CPPUNIT_ASSERT_EQUAL( wxCONV_FAILED, rc);
     CPPUNIT_ASSERT_EQUAL( 0, posErr );
 
-    const size_t POS_INVALID = (size_t)-1;
-    posErr = POS_INVALID;
+    posErr = (size_t)-1;
     rc = wxBase64Decode(NULL, 0, " QQ==", wxNO_LEN,
                         wxBase64DecodeMode_SkipWS, &posErr);
     CPPUNIT_ASSERT_EQUAL( 1, rc );
-    CPPUNIT_ASSERT_EQUAL( POS_INVALID, posErr );
+    CPPUNIT_ASSERT_EQUAL( -1, posErr );
 
     rc = wxBase64Decode(NULL, 0, "? QQ==", wxNO_LEN,
                         wxBase64DecodeMode_Relaxed, &posErr);
     CPPUNIT_ASSERT_EQUAL( 1, rc );
-    CPPUNIT_ASSERT_EQUAL( POS_INVALID, posErr );
+    CPPUNIT_ASSERT_EQUAL( -1, posErr );
 
     CPPUNIT_ASSERT( !wxBase64Decode("wxGetApp()").GetDataLen() );
 }

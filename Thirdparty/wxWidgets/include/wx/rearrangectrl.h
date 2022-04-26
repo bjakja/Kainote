@@ -3,6 +3,7 @@
 // Purpose:     various controls for rearranging the items interactively
 // Author:      Vadim Zeitlin
 // Created:     2008-12-15
+// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -60,7 +61,7 @@ public:
                     const wxArrayString& items,
                     long style = 0,
                     const wxValidator& validator = wxDefaultValidator,
-                    const wxString& name = wxASCII_STR(wxRearrangeListNameStr))
+                    const wxString& name = wxRearrangeListNameStr)
     {
         Create(parent, id, pos, size, order, items, style, validator, name);
     }
@@ -75,7 +76,7 @@ public:
                 const wxArrayString& items,
                 long style = 0,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxASCII_STR(wxRearrangeListNameStr));
+                const wxString& name = wxRearrangeListNameStr);
 
 
     // items order
@@ -95,15 +96,6 @@ public:
     bool MoveCurrentUp();
     bool MoveCurrentDown();
 
-
-    // Override this to keep our m_order array in sync with the real item state.
-    virtual void Check(unsigned int item, bool check = true) wxOVERRIDE;
-
-    int DoInsertItems(const wxArrayStringsAdapter& items, unsigned int pos,
-                      void **clientData, wxClientDataType type) wxOVERRIDE;
-    void DoDeleteOneItem(unsigned int n) wxOVERRIDE;
-    void DoClear() wxOVERRIDE;
-
 private:
     // swap two items at the given positions in the listbox
     void Swap(int pos1, int pos2);
@@ -116,7 +108,7 @@ private:
     wxArrayInt m_order;
 
 
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
     wxDECLARE_NO_COPY_CLASS(wxRearrangeList);
 };
 
@@ -141,7 +133,7 @@ public:
                     const wxArrayString& items,
                     long style = 0,
                     const wxValidator& validator = wxDefaultValidator,
-                    const wxString& name = wxASCII_STR(wxRearrangeListNameStr))
+                    const wxString& name = wxRearrangeListNameStr)
     {
         Init();
 
@@ -156,7 +148,7 @@ public:
                 const wxArrayString& items,
                 long style = 0,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxASCII_STR(wxRearrangeListNameStr));
+                const wxString& name = wxRearrangeListNameStr);
 
     // get the underlying listbox
     wxRearrangeList *GetList() const { return m_list; }
@@ -173,7 +165,7 @@ private:
     wxRearrangeList *m_list;
 
 
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
     wxDECLARE_NO_COPY_CLASS(wxRearrangeCtrl);
 };
 
@@ -195,7 +187,7 @@ public:
                       const wxArrayInt& order,
                       const wxArrayString& items,
                       const wxPoint& pos = wxDefaultPosition,
-                      const wxString& name = wxASCII_STR(wxRearrangeDialogNameStr))
+                      const wxString& name = wxRearrangeDialogNameStr)
     {
         Init();
 
@@ -208,7 +200,7 @@ public:
                 const wxArrayInt& order,
                 const wxArrayString& items,
                 const wxPoint& pos = wxDefaultPosition,
-                const wxString& name = wxASCII_STR(wxRearrangeDialogNameStr));
+                const wxString& name = wxRearrangeDialogNameStr);
 
 
     // methods for the dialog customization

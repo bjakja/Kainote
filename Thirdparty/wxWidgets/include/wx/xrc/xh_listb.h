@@ -3,6 +3,7 @@
 // Purpose:     XML resource handler for wxListbox
 // Author:      Bob Mitchell & Vaclav Slavik
 // Created:     2000/07/29
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 Bob Mitchell & Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -16,12 +17,12 @@
 
 class WXDLLIMPEXP_XRC wxListBoxXmlHandler : public wxXmlResourceHandler
 {
-    wxDECLARE_DYNAMIC_CLASS(wxListBoxXmlHandler);
+    DECLARE_DYNAMIC_CLASS(wxListBoxXmlHandler)
 
 public:
     wxListBoxXmlHandler();
-    virtual wxObject *DoCreateResource() wxOVERRIDE;
-    virtual bool CanHandle(wxXmlNode *node) wxOVERRIDE;
+    virtual wxObject *DoCreateResource();
+    virtual bool CanHandle(wxXmlNode *node);
 
 private:
     bool m_insideBox;

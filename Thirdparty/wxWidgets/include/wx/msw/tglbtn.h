@@ -5,6 +5,7 @@
 // Author:      John Norris, minor changes by Axel Schlueter
 // Modified by:
 // Created:     08.02.01
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 Johnny C. Norris II
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,7 +13,7 @@
 #ifndef _WX_TOGGLEBUTTON_H_
 #define _WX_TOGGLEBUTTON_H_
 
-#include "wx/bmpbndl.h"
+#include "wx/bitmap.h"
 
 // Checkbox item (single checkbox)
 class WXDLLIMPEXP_CORE wxToggleButton : public wxToggleButtonBase
@@ -26,7 +27,7 @@ public:
                    const wxSize& size = wxDefaultSize,
                    long style = 0,
                    const wxValidator& validator = wxDefaultValidator,
-                   const wxString& name = wxASCII_STR(wxCheckBoxNameStr))
+                   const wxString& name = wxCheckBoxNameStr)
     {
         Create(parent, id, label, pos, size, style, validator, name);
     }
@@ -38,23 +39,23 @@ public:
                 const wxSize& size = wxDefaultSize,
                 long style = 0,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxASCII_STR(wxCheckBoxNameStr));
+                const wxString& name = wxCheckBoxNameStr);
 
-    virtual void SetValue(bool value) wxOVERRIDE;
-    virtual bool GetValue() const wxOVERRIDE;
+    virtual void SetValue(bool value);
+    virtual bool GetValue() const ;
 
-    virtual bool MSWCommand(WXUINT param, WXWORD id) wxOVERRIDE;
-    virtual void Command(wxCommandEvent& event) wxOVERRIDE;
+    virtual bool MSWCommand(WXUINT param, WXWORD id);
+    virtual void Command(wxCommandEvent& event);
+
+    virtual State GetNormalState() const;
 
     // returns true if the platform should explicitly apply a theme border
-    virtual bool CanApplyThemeBorder() const wxOVERRIDE { return false; }
+    virtual bool CanApplyThemeBorder() const { return false; }
 
 protected:
-    virtual wxBorder GetDefaultBorder() const wxOVERRIDE { return wxBORDER_NONE; }
+    virtual wxBorder GetDefaultBorder() const { return wxBORDER_NONE; }
 
-    virtual WXDWORD MSWGetStyle(long flags, WXDWORD *exstyle = NULL) const wxOVERRIDE;
-
-    virtual bool MSWIsPushed() const wxOVERRIDE;
+    virtual WXDWORD MSWGetStyle(long flags, WXDWORD *exstyle = NULL) const;
 
     void Init();
 
@@ -62,7 +63,7 @@ protected:
     bool m_state;
 
 private:
-    wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxToggleButton);
+    DECLARE_DYNAMIC_CLASS_NO_COPY(wxToggleButton)
 };
 
 //-----------------------------------------------------------------------------
@@ -77,12 +78,12 @@ public:
     wxBitmapToggleButton() {}
     wxBitmapToggleButton(wxWindow *parent,
                    wxWindowID id,
-                   const wxBitmapBundle& label,
+                   const wxBitmap& label,
                    const wxPoint& pos = wxDefaultPosition,
                    const wxSize& size = wxDefaultSize,
                    long style = 0,
                    const wxValidator& validator = wxDefaultValidator,
-                   const wxString& name = wxASCII_STR(wxCheckBoxNameStr))
+                   const wxString& name = wxCheckBoxNameStr)
     {
         Create(parent, id, label, pos, size, style, validator, name);
     }
@@ -90,20 +91,20 @@ public:
     // Create the control
     bool Create(wxWindow *parent,
                 wxWindowID id,
-                const wxBitmapBundle& label,
+                const wxBitmap& label,
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize, long style = 0,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxASCII_STR(wxCheckBoxNameStr));
+                const wxString& name = wxCheckBoxNameStr);
 
     // deprecated synonym for SetBitmapLabel()
     wxDEPRECATED_INLINE( void SetLabel(const wxBitmap& bitmap),
        SetBitmapLabel(bitmap); )
     // prevent virtual function hiding
-    virtual void SetLabel(const wxString& label) wxOVERRIDE { wxToggleButton::SetLabel(label); }
+    virtual void SetLabel(const wxString& label) { wxToggleButton::SetLabel(label); }
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxBitmapToggleButton);
+    DECLARE_DYNAMIC_CLASS(wxBitmapToggleButton)
 };
 
 #endif // _WX_TOGGLEBUTTON_H_

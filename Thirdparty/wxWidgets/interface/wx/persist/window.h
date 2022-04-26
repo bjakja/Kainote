@@ -2,6 +2,7 @@
 // Name:        wx/persist/window.h
 // Purpose:     interface of wxPersistentWindow<>
 // Author:      Vadim Zeitlin
+// RCS-ID:      $Id$
 // Copyright:   (c) 2009 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -28,7 +29,7 @@ public:
     /**
         Constructor for a persistent window object.
 
-        The constructor uses wxEvtHandler::Bind() to catch
+        The constructor uses wxEvtHandler::Connect() to catch
         wxWindowDestroyEvent generated when the window is destroyed and call
         wxPersistenceManager::SaveAndUnregister() when this happens. This
         ensures that the window properties are saved and that this object

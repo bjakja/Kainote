@@ -4,6 +4,7 @@
 // Author:      Eric Dowty
 // Modified by:
 // Created:     2002-11-18
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -40,7 +41,7 @@ public:
 
 class wxRemoteHtmlHelpController : public wxHelpControllerBase
 {
-    wxDECLARE_CLASS(wxRemoteHtmlHelpController);
+    DECLARE_CLASS(wxRemoteHtmlHelpController)
 public:
     wxRemoteHtmlHelpController(int style = wxHF_DEFAULT_STYLE);
     virtual ~wxRemoteHtmlHelpController();

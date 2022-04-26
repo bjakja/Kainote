@@ -8,17 +8,13 @@
 #ifndef PARTITIONING_H
 #define PARTITIONING_H
 
-#ifdef SCI_NAMESPACE
-namespace Scintilla {
-#endif
-
-/// A split vector of integers with a method for adding a value to all elements
+/// A split vector of integers with a method for adding a value to all elements 
 /// in a range.
 /// Used by the Partitioning class.
 
 class SplitVectorWithRangeAdd : public SplitVector<int> {
 public:
-	explicit SplitVectorWithRangeAdd(int growSize_) {
+	SplitVectorWithRangeAdd(int growSize_) {
 		SetGrowSize(growSize_);
 		ReAllocate(growSize_);
 	}
@@ -46,10 +42,6 @@ public:
 
 /// Divide an interval into multiple partitions.
 /// Useful for breaking a document down into sections such as lines.
-/// A 0 length interval has a single 0 length partition, numbered 0
-/// If interval not 0 length then each partition non-zero length
-/// When needed, positions after the interval are considered part of the last partition
-/// but the end of the last partition can be found with PositionFromPartition(last+1).
 
 class Partitioning {
 private:
@@ -88,7 +80,7 @@ private:
 	}
 
 public:
-	explicit Partitioning(int growSize) {
+	Partitioning(int growSize) {
 		Allocate(growSize);
 	}
 
@@ -161,7 +153,6 @@ public:
 		return pos;
 	}
 
-	/// Return value in range [0 .. Partitions() - 1] even for arguments outside interval
 	int PartitionFromPosition(int pos) const {
 		if (body->Length() <= 1)
 			return 0;
@@ -189,10 +180,5 @@ public:
 		Allocate(growSize);
 	}
 };
-
-
-#ifdef SCI_NAMESPACE
-}
-#endif
 
 #endif

@@ -4,6 +4,7 @@
 // Author:      George Policello
 // Modified by:
 // Created:     28 Jan 02
+// RCS-ID:      $Id$
 // Copyright:   (c) 2002 George Policello
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -15,11 +16,11 @@
 #ifndef _WX_FSVOLUME_H_
 #define _WX_FSVOLUME_H_
 
-#include "wx\defs.h"
+#include "wx/defs.h"
 
 #if wxUSE_FSVOLUME
 
-#include "wx\arrstr.h"
+#include "wx/arrstr.h"
 
 // the volume flags
 enum wxFSVolumeFlags
@@ -105,8 +106,8 @@ protected:
 
 #if wxUSE_GUI
 
-#include "wx\icon.h"
-#include "wx\iconbndl.h" // only for wxIconArray
+#include "wx/icon.h"
+#include "wx/iconbndl.h" // only for wxIconArray
 
 enum wxFSIconType
 {

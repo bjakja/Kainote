@@ -3,6 +3,7 @@
 // Purpose:     XRC resource for wxBitmapComboBox
 // Author:      Jaakko Salli
 // Created:     Sep-10-2006
+// RCS-ID:      $Id$
 // Copyright:   (c) 2006 Jaakko Salli
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -10,6 +11,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_XRC && wxUSE_BITMAPCOMBOBOX
 
@@ -22,9 +26,7 @@
 
 #include "wx/bmpcbox.h"
 
-#include "wx/xml/xml.h"
-
-wxIMPLEMENT_DYNAMIC_CLASS(wxBitmapComboBoxXmlHandler, wxXmlResourceHandler);
+IMPLEMENT_DYNAMIC_CLASS(wxBitmapComboBoxXmlHandler, wxXmlResourceHandler)
 
 wxBitmapComboBoxXmlHandler::wxBitmapComboBoxXmlHandler()
                      :wxXmlResourceHandler()
@@ -47,7 +49,7 @@ wxObject *wxBitmapComboBoxXmlHandler::DoCreateResource()
         }
 
         m_combobox->Append(GetText(wxT("text")),
-                           GetBitmapBundle(wxT("bitmap")));
+                           GetBitmap(wxT("bitmap")));
 
         return m_combobox;
     }

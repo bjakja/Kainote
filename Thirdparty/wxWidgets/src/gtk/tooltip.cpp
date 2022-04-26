@@ -2,6 +2,7 @@
 // Name:        src/gtk/tooltip.cpp
 // Purpose:     wxToolTip implementation
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -31,7 +32,7 @@ static GtkTooltips *gs_tooltips = NULL;
 // wxToolTip
 //-----------------------------------------------------------------------------
 
-wxIMPLEMENT_ABSTRACT_CLASS(wxToolTip, wxObject);
+IMPLEMENT_ABSTRACT_CLASS(wxToolTip, wxObject)
 
 wxToolTip::wxToolTip( const wxString &tip )
     : m_text(tip)
@@ -57,7 +58,7 @@ void wxToolTip::GTKSetWindow(wxWindow* win)
 void wxToolTip::GTKApply(GtkWidget* widget, const char* tip)
 {
 #if GTK_CHECK_VERSION(2, 12, 0)
-    if (wx_is_at_least_gtk2(12))
+    if (GTK_CHECK_VERSION(3,0,0) || gtk_check_version(2,12,0) == NULL)
         gtk_widget_set_tooltip_text(widget, tip);
     else
 #endif
@@ -73,17 +74,12 @@ void wxToolTip::GTKApply(GtkWidget* widget, const char* tip)
 
 void wxToolTip::Enable( bool flag )
 {
-#ifdef __WXGTK4__
-    wxUnusedVar(flag);
-#else
 #if GTK_CHECK_VERSION(2, 12, 0)
-    if (wx_is_at_least_gtk2(12))
+    if (GTK_CHECK_VERSION(3,0,0) || gtk_check_version(2,12,0) == NULL)
     {
         GtkSettings* settings = gtk_settings_get_default();
-        wxGCC_WARNING_SUPPRESS(deprecated-declarations)
         if (settings)
             gtk_settings_set_long_property(settings, "gtk-enable-tooltips", flag, NULL);
-        wxGCC_WARNING_RESTORE()
     }
     else
 #endif
@@ -98,22 +94,16 @@ void wxToolTip::Enable( bool flag )
             gtk_tooltips_disable( gs_tooltips );
 #endif
     }
-#endif // !__WXGTK4__
 }
 
 void wxToolTip::SetDelay( long msecs )
 {
-#ifdef __WXGTK4__
-    wxUnusedVar(msecs);
-#else
 #if GTK_CHECK_VERSION(2, 12, 0)
-    if (wx_is_at_least_gtk2(12))
+    if (GTK_CHECK_VERSION(3,0,0) || gtk_check_version(2,12,0) == NULL)
     {
         GtkSettings* settings = gtk_settings_get_default();
-        wxGCC_WARNING_SUPPRESS(deprecated-declarations)
         if (settings)
             gtk_settings_set_long_property(settings, "gtk-tooltip-timeout", msecs, NULL);
-        wxGCC_WARNING_RESTORE()
     }
     else
 #endif
@@ -125,7 +115,6 @@ void wxToolTip::SetDelay( long msecs )
         gtk_tooltips_set_delay( gs_tooltips, (int)msecs );
 #endif
     }
-#endif // !__WXGTK4__
 }
 
 void wxToolTip::SetAutoPop( long WXUNUSED(msecs) )

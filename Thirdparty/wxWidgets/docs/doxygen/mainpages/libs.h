@@ -2,14 +2,13 @@
 // Name:        libs.h
 // Purpose:     Libraries page of the Doxygen manual
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 /**
 
 @page page_libs Library List
-
-@tableofcontents
 
 wxWidgets can be built either as a single large library (this is called a
 <em>monolithic build</em>) or as several smaller libraries
@@ -19,7 +18,7 @@ wxWidgets library is divided into libraries briefly described below. This
 diagram shows the dependencies between them:
 
 @dot
-digraph Dependencies
+digraph Dependancies
 {
     node [shape = ellipse, fontname = "Courier", fontsize = 10, style = filled];
 
@@ -29,6 +28,7 @@ digraph Dependencies
     wxNet      [fillcolor = deepskyblue, URL = "\ref page_libs_wxnet"];
     wxXML      [fillcolor = deepskyblue, URL = "\ref page_libs_wxxml"];
 
+    wxAdvanced [fillcolor = green, URL = "\ref page_libs_wxadv"];
     wxAUI      [fillcolor = green, URL = "\ref page_libs_wxaui"];
     wxGL       [fillcolor = green, URL = "\ref page_libs_wxgl"];
     wxHTML     [fillcolor = green, URL = "\ref page_libs_wxhtml"];
@@ -45,16 +45,17 @@ digraph Dependencies
     wxNet -> wxBase;
     wxXML -> wxBase;
 
-    wxAUI -> wxCore;
+    wxAdvanced -> wxCore;
+    wxAUI -> wxAdvanced; wxAUI -> wxHTML; wxAUI -> wxXML;
     wxGL -> wxCore;
     wxHTML -> wxCore;
     wxMedia -> wxCore;
-    wxPropertyGrid -> wxCore;
+    wxPropertyGrid -> wxAdvanced;
     wxQA -> wxCore; wxQA -> wxXML;
     wxRibbon -> wxCore;
-    wxRichText -> wxCore; wxRichText -> wxHTML; wxRichText -> wxXML;
+    wxRichText -> wxAdvanced; wxRichText -> wxHTML; wxRichText -> wxXML;
     wxSTC -> wxCore;
-    wxXRC -> wxCore; wxXRC -> wxHTML; wxXRC -> wxXML;
+    wxXRC -> wxAdvanced; wxXRC -> wxHTML; wxXRC -> wxXML;
     wxWebView -> wxCore;
 }
 @enddot
@@ -63,18 +64,6 @@ Please note that arrows indicate the "depends from" relation and that all blue
 libraries depend on the @ref page_libs_wxbase library (i.e. they are non-GUI
 libraries), and all green libraries depend on the @ref page_libs_wxcore library
 (i.e. they are GUI libraries).
-
-@note Until wxWidgets 3.1.2 some core GUI classes were in a separate wxAdvanced
-    library, but this library was merged into wxCore and, while it's still
-    preserved as an empty library for compatibility, should be never used any
-    longer and will disappear completely in the future.
-
-
-@section page_libs_wxaui wxAui
-
-This contains the Advanced User Interface docking library.
-
-Requires @ref page_libs_wxcore, @ref page_libs_wxbase.
 
 
 @section page_libs_wxbase wxBase
@@ -95,6 +84,83 @@ applications don't.
 Requires @ref page_libs_wxbase.
 
 
+@section page_libs_wxaui wxAui
+
+This contains the Advanced User Interface docking library.
+
+Requires @ref page_libs_wxadv, @ref page_libs_wxhtml, @ref page_libs_wxxml,
+@ref page_libs_wxcore, @ref page_libs_wxbase.
+
+
+@section page_libs_wxnet wxNet
+
+Classes for network access:
+
+@li wxSocket classes (wxSocketClient, wxSocketServer and related classes)
+@li wxSocketOutputStream and wxSocketInputStream
+@li sockets-based IPC classes (wxTCPServer, wxTCPClient and wxTCPConnection)
+@li wxURL
+@li wxInternetFSHandler (a wxFileSystem handler)
+
+Requires @ref page_libs_wxbase.
+
+
+@section page_libs_wxpropgrid wxPropertyGrid
+
+This contains the wxPropertyGrid control.
+
+Requires @ref page_libs_wxadv, @ref page_libs_wxcore, @ref page_libs_wxbase.
+
+
+@section page_libs_wxribbon wxRibbon
+
+This contains the Ribbon User Interface components library.
+
+Requires @ref page_libs_wxcore, @ref page_libs_wxbase.
+
+
+@section page_libs_wxrichtext wxRichText
+
+This contains generic rich text control functionality.
+
+Requires @ref page_libs_wxadv, @ref page_libs_wxhtml, @ref page_libs_wxxml,
+@ref page_libs_wxcore, @ref page_libs_wxbase.
+
+
+@section page_libs_wxxml wxXML
+
+This library contains simple classes for parsing XML documents.
+
+Requires @ref page_libs_wxbase.
+
+
+@section page_libs_wxadv wxAdvanced
+
+Advanced or rarely used GUI classes:
+
+@li wxCalendarCtrl
+@li wxGrid classes
+@li wxJoystick
+@li wxLayoutAlgorithm
+@li wxSplashScreen
+@li wxTaskBarIcon
+@li wxSound
+@li wxWizard
+@li wxSashLayoutWindow
+@li wxSashWindow
+@li ...others
+
+Requires @ref page_libs_wxcore and @ref page_libs_wxbase.
+
+
+@section page_libs_wxmedia wxMedia
+
+Miscellaneous classes related to multimedia. Currently this library only
+contains wxMediaCtrl but more classes will be added in the future.
+
+Requires @ref page_libs_wxcore and @ref page_libs_wxbase.
+
+
 @section page_libs_wxgl wxGL
 
 This library contains wxGLCanvas class for integrating OpenGL library with
@@ -113,35 +179,6 @@ wxHtmlListBox.
 Requires @ref page_libs_wxcore and @ref page_libs_wxbase.
 
 
-@section page_libs_wxmedia wxMedia
-
-Miscellaneous classes related to multimedia. Currently this library only
-contains wxMediaCtrl but more classes will be added in the future.
-
-Requires @ref page_libs_wxcore and @ref page_libs_wxbase.
-
-
-@section page_libs_wxnet wxNet
-
-Classes for network access:
-
-@li wxWebRequest
-@li wxSocket classes (wxSocketClient, wxSocketServer and related classes)
-@li wxSocketOutputStream and wxSocketInputStream
-@li sockets-based IPC classes (wxTCPServer, wxTCPClient and wxTCPConnection)
-@li wxURL
-@li wxInternetFSHandler (a wxFileSystem handler)
-
-Requires @ref page_libs_wxbase.
-
-
-@section page_libs_wxpropgrid wxPropertyGrid
-
-This contains the wxPropertyGrid control.
-
-Requires @ref page_libs_wxcore, @ref page_libs_wxbase.
-
-
 @section page_libs_wxqa wxQA
 
 This is the library containing extra classes for quality assurance. Currently
@@ -151,18 +188,12 @@ it in the future.
 Requires @ref page_libs_wxxml, @ref page_libs_wxcore, @ref page_libs_wxbase.
 
 
-@section page_libs_wxribbon wxRibbon
+@section page_libs_wxxrc wxXRC
 
-This contains the Ribbon User Interface components library.
+This library contains wxXmlResource class that provides access to XML resource
+files in XRC format.
 
-Requires @ref page_libs_wxcore, @ref page_libs_wxbase.
-
-
-@section page_libs_wxrichtext wxRichText
-
-This contains generic rich text control functionality.
-
-Requires @ref page_libs_wxhtml, @ref page_libs_wxxml,
+Requires @ref page_libs_wxadv, @ref page_libs_wxhtml, @ref page_libs_wxxml,
 @ref page_libs_wxcore, @ref page_libs_wxbase.
 
 
@@ -179,20 +210,5 @@ The wxWebView library contains the wxWebView control and its associated classes.
 
 Requires @ref page_libs_wxcore, @ref page_libs_wxbase.
 
-
-@section page_libs_wxxml wxXML
-
-This library contains simple classes for parsing XML documents.
-
-Requires @ref page_libs_wxbase.
-
-
-@section page_libs_wxxrc wxXRC
-
-This library contains wxXmlResource class that provides access to XML resource
-files in XRC format.
-
-Requires @ref page_libs_wxhtml, @ref page_libs_wxxml,
-@ref page_libs_wxcore, @ref page_libs_wxbase.
-
 */
+

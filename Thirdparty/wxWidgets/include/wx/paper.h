@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -62,7 +63,7 @@ public:
     wxString    m_paperName;
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxPrintPaperType);
+    DECLARE_DYNAMIC_CLASS(wxPrintPaperType)
 };
 
 WX_DECLARE_STRING_HASH_MAP(wxPrintPaperType*, wxStringToPrintPaperTypeHashMap);
@@ -82,28 +83,28 @@ public:
     void AddPaperType(wxPaperSize paperId, int platformId, const wxString& name, int w, int h);
 
     // Find by name
-    wxPrintPaperType *FindPaperType(const wxString& name) const;
+    wxPrintPaperType *FindPaperType(const wxString& name);
 
     // Find by size id
-    wxPrintPaperType *FindPaperType(wxPaperSize id) const;
+    wxPrintPaperType *FindPaperType(wxPaperSize id);
 
     // Find by platform id
-    wxPrintPaperType *FindPaperTypeByPlatformId(int id) const;
+    wxPrintPaperType *FindPaperTypeByPlatformId(int id);
 
     // Find by size
-    wxPrintPaperType *FindPaperType(const wxSize& size) const;
+    wxPrintPaperType *FindPaperType(const wxSize& size);
 
     // Convert name to size id
-    wxPaperSize ConvertNameToId(const wxString& name) const;
+    wxPaperSize ConvertNameToId(const wxString& name);
 
     // Convert size id to name
-    wxString ConvertIdToName(wxPaperSize paperId) const;
+    wxString ConvertIdToName(wxPaperSize paperId);
 
     // Get the paper size
-    wxSize GetSize(wxPaperSize paperId) const;
+    wxSize GetSize(wxPaperSize paperId);
 
     // Get the paper size
-    wxPaperSize GetSize(const wxSize& size) const;
+    wxPaperSize GetSize(const wxSize& size);
 
     //
     wxPrintPaperType* Item(size_t index) const;
@@ -111,7 +112,7 @@ public:
 private:
     wxStringToPrintPaperTypeHashMap* m_map;
     wxPrintPaperTypeList* m_list;
-    //wxDECLARE_DYNAMIC_CLASS(wxPrintPaperDatabase);
+    // DECLARE_DYNAMIC_CLASS(wxPrintPaperDatabase)
 };
 
 extern WXDLLIMPEXP_DATA_CORE(wxPrintPaperDatabase*) wxThePrintPaperDatabase;

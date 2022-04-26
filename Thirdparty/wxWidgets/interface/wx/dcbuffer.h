@@ -2,6 +2,7 @@
 // Name:        dcbuffer.h
 // Purpose:     interface of wxBufferedDC
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -36,11 +37,11 @@
     Otherwise, wxBufferedDC can be used in the same way as any other device
     context.
 
-    Another possible use for wxBufferedDC is to use it to maintain a
+    There is another possible use for wxBufferedDC is to use it to maintain a
     backing store for the window contents. In this case, the associated @e DC
     may be @NULL but a valid backing store bitmap should be specified.
 
-    Finally, please note that GTK+ 2.0 as well as macOS provide double buffering
+    Finally, please note that GTK+ 2.0 as well as OS X provide double buffering
     themselves natively. You can either use wxWindow::IsDoubleBuffered() to
     determine whether you need to use buffering or not, or use
     wxAutoBufferedPaintDC to avoid needless double buffering on the systems
@@ -117,27 +118,6 @@ public:
     void Init(wxDC* dc, wxBitmap& buffer = wxNullBitmap,
               int style = wxBUFFER_CLIENT_AREA);
     //@}
-
-
-    /**
-       Blits the buffer to the dc, and detaches the dc from the buffer (so it
-       can be effectively used once only).
-
-       Usually only called in the destructor or by the destructor of derived
-       classes if the BufferedDC must blit before the derived class (which may
-       own the dc it's blitting to) is destroyed.
-    */
-    void UnMask();
-
-    /**
-       Set the style.
-    */
-    void SetStyle(int style);
-
-    /**
-       Get the style.
-    */
-    int GetStyle() const;
 };
 
 
@@ -159,7 +139,7 @@ public:
     have native double-buffering, otherwise, it is a typedef of
     wxBufferedPaintDC.
 
-    @library{wxcore}
+    @library{wxbase}
     @category{dc}
 
     @see wxDC, wxBufferedPaintDC, wxPaintDC
@@ -173,13 +153,6 @@ public:
     wxAutoBufferedPaintDC(wxWindow* window);
 };
 
-
-/**
- * Check if the window is natively double buffered and will return a wxPaintDC
- * if it is, a wxBufferedPaintDC otherwise.  It is the caller's responsibility
- * to delete the wxDC pointer when finished with it.
- */
-wxDC* wxAutoBufferedPaintDCFactory(wxWindow* window);
 
 
 /**

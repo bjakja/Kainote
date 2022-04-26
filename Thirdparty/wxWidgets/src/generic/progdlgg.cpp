@@ -4,6 +4,7 @@
 // Author:      Karsten Ballueder
 // Modified by:
 // Created:     09.05.1999
+// RCS-ID:      $Id$
 // Copyright:   (c) Karsten Ballueder
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_PROGRESSDLG
 
@@ -40,11 +44,25 @@
 #include "wx/progdlg.h"
 #include "wx/evtloop.h"
 
+// ---------------------------------------------------------------------------
+// macros
+// ---------------------------------------------------------------------------
+
+/* Macro for avoiding #ifdefs when value have to be different depending on size of
+   device we display on - take it from something like wxDesktopPolicy in the future
+ */
+
+#if defined(__SMARTPHONE__)
+    #define wxLARGESMALL(large,small) small
+#else
+    #define wxLARGESMALL(large,small) large
+#endif
+
 // ----------------------------------------------------------------------------
 // constants
 // ----------------------------------------------------------------------------
 
-#define LAYOUT_MARGIN 8
+#define LAYOUT_MARGIN wxLARGESMALL(8,2)
 
 static const int wxID_SKIP = 32000;  // whatever
 
@@ -52,18 +70,18 @@ static const int wxID_SKIP = 32000;  // whatever
 // event tables
 // ----------------------------------------------------------------------------
 
-wxBEGIN_EVENT_TABLE(wxGenericProgressDialog, wxDialog)
+BEGIN_EVENT_TABLE(wxGenericProgressDialog, wxDialog)
     EVT_BUTTON(wxID_CANCEL, wxGenericProgressDialog::OnCancel)
     EVT_BUTTON(wxID_SKIP, wxGenericProgressDialog::OnSkip)
 
     EVT_CLOSE(wxGenericProgressDialog::OnClose)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 // ============================================================================
 // wxGenericProgressDialog implementation
 // ============================================================================
 
-wxIMPLEMENT_CLASS(wxProgressDialog, wxDialog);
+wxIMPLEMENT_CLASS(wxProgressDialog, wxDialog)
 
 // ----------------------------------------------------------------------------
 // wxGenericProgressDialog creation
@@ -95,8 +113,10 @@ void wxGenericProgressDialog::Init()
 
     m_skip = false;
 
+#if !defined(__SMARTPHONE__)
     m_btnAbort =
     m_btnSkip = NULL;
+#endif
 
     m_display_estimated =
     m_last_timeupdate =
@@ -106,8 +126,6 @@ void wxGenericProgressDialog::Init()
 
     m_winDisabler = NULL;
     m_tempEventLoop = NULL;
-
-    SetWindowStyle(wxDEFAULT_DIALOG_STYLE);
 }
 
 wxGenericProgressDialog::wxGenericProgressDialog()
@@ -130,15 +148,7 @@ wxGenericProgressDialog::wxGenericProgressDialog(const wxString& title,
 
 void wxGenericProgressDialog::SetTopParent(wxWindow* parent)
 {
-    m_parent = parent;
-
-    // Notice that we intentionally do not use GetParentForModalDialog() here
-    // as we don't want to disable the main application window if null parent
-    // was given (and GetParentForModalDialog() would fall back to it in this
-    // case). This allows creating modeless progress dialog, which can be
-    // useful even though it is also dangerous because it can easily result in
-    // unwanted reentrancies.
-    m_parentTop = parent;
+    m_parentTop = GetParentForModalDialog(parent, GetWindowStyle());
 }
 
 bool wxGenericProgressDialog::Create( const wxString& title,
@@ -149,9 +159,13 @@ bool wxGenericProgressDialog::Create( const wxString& title,
 {
     SetTopParent(parent);
 
+    m_parentTop = wxGetTopLevelParent(parent);
     m_pdStyle = style;
 
-    if (!wxDialog::Create(m_parentTop, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, GetWindowStyle()))
+    wxWindow* const
+        realParent = GetParentForModalDialog(parent, GetWindowStyle());
+
+    if (!wxDialog::Create(realParent, wxID_ANY, title))
         return false;
 
     SetMaximum(maximum);
@@ -161,7 +175,11 @@ bool wxGenericProgressDialog::Create( const wxString& title,
     // even if this means we have to start it ourselves (this happens most
     // commonly during the program initialization, e.g. for the progress
     // dialogs shown from overridden wxApp::OnInit()).
-    EnsureActiveEventLoopExists();
+    if ( !wxEventLoopBase::GetActive() )
+    {
+        m_tempEventLoop = new wxEventLoop;
+        wxEventLoop::SetActive(m_tempEventLoop);
+    }
 
 #if defined(__WXMSW__) && !defined(__WXUNIVERSAL__)
     // we have to remove the "Close" button from the title bar then as it is
@@ -174,18 +192,21 @@ bool wxGenericProgressDialog::Create( const wxString& title,
     }
 #endif // wxMSW
 
+#if defined(__SMARTPHONE__)
+    SetLeftMenu();
+#endif
+
     m_state = HasPDFlag(wxPD_CAN_ABORT) ? Continue : Uncancelable;
 
     // top-level sizerTop
     wxSizer * const sizerTop = new wxBoxSizer(wxVERTICAL);
 
     m_msg = new wxStaticText(this, wxID_ANY, message);
-    sizerTop->Add(m_msg, 0, wxLEFT | wxRIGHT | wxTOP, 2*LAYOUT_MARGIN);
+    sizerTop->Add(m_msg, 0, wxLEFT | wxTOP, 2*LAYOUT_MARGIN);
 
     int gauge_style = wxGA_HORIZONTAL;
     if ( style & wxPD_SMOOTH )
         gauge_style |= wxGA_SMOOTH;
-    gauge_style |= wxGA_PROGRESS;
 
 #ifdef __WXMSW__
     maximum /= m_factor;
@@ -237,33 +258,45 @@ bool wxGenericProgressDialog::Create( const wxString& title,
     }
     sizerTop->Add(sizerLabels, 0, wxALIGN_CENTER_HORIZONTAL | wxTOP, LAYOUT_MARGIN);
 
-    wxStdDialogButtonSizer *buttonSizer = wxDialog::CreateStdDialogButtonSizer(0);
+#if defined(__SMARTPHONE__)
+    if ( HasPDFlag(wxPD_CAN_SKIP) )
+        SetRightMenu(wxID_SKIP, _("Skip"));
+    if ( HasPDFlag(wxPD_CAN_ABORT) )
+        SetLeftMenu(wxID_CANCEL);
+#else
+    m_btnAbort =
+    m_btnSkip = NULL;
 
-    const int borderFlags = wxALL;
+    wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    wxSizerFlags sizerFlags =
-        wxSizerFlags().Border(borderFlags, LAYOUT_MARGIN);
+    // Windows dialogs usually have buttons in the lower right corner
+    const int sizerFlags =
+#if defined(__WXMSW__) || defined(__WXPM__) || defined(__WXOSX__)
+                           wxALIGN_RIGHT | wxALL
+#else // !MSW
+                           wxALIGN_CENTER_HORIZONTAL | wxBOTTOM | wxTOP
+#endif // MSW/!MSW
+                           ;
 
     if ( HasPDFlag(wxPD_CAN_SKIP) )
     {
         m_btnSkip = new wxButton(this, wxID_SKIP, _("&Skip"));
 
-        buttonSizer->SetNegativeButton(m_btnSkip);
+        buttonSizer->Add(m_btnSkip, 0, sizerFlags, LAYOUT_MARGIN);
     }
 
     if ( HasPDFlag(wxPD_CAN_ABORT) )
     {
         m_btnAbort = new wxButton(this, wxID_CANCEL);
 
-        buttonSizer->SetCancelButton(m_btnAbort);
+        buttonSizer->Add(m_btnAbort, 0, sizerFlags, LAYOUT_MARGIN);
     }
 
     if ( !HasPDFlag(wxPD_CAN_SKIP | wxPD_CAN_ABORT) )
         buttonSizer->AddSpacer(LAYOUT_MARGIN);
 
-    buttonSizer->Realize();
-
-    sizerTop->Add(buttonSizer, sizerFlags.Expand());
+    sizerTop->Add(buttonSizer, 0, sizerFlags, LAYOUT_MARGIN );
+#endif // __SMARTPHONE__/!__SMARTPHONE__
 
     SetSizerAndFit(sizerTop);
 
@@ -360,15 +393,6 @@ wxString wxGenericProgressDialog::GetFormattedTime(unsigned long timeInSec)
     return timeAsHMS;
 }
 
-void wxGenericProgressDialog::EnsureActiveEventLoopExists()
-{
-    if ( !wxEventLoopBase::GetActive() )
-    {
-        m_tempEventLoop = new wxEventLoop;
-        wxEventLoop::SetActive(m_tempEventLoop);
-    }
-}
-
 wxStaticText *
 wxGenericProgressDialog::CreateLabel(const wxString& text, wxSizer *sizer)
 {
@@ -376,9 +400,13 @@ wxGenericProgressDialog::CreateLabel(const wxString& text, wxSizer *sizer)
     wxStaticText *value = new wxStaticText(this, wxID_ANY, _("unknown"));
 
     // select placement most native or nice on target GUI
-#if defined(__WXMSW__) || defined(__WXMAC__) || defined(__WXGTK20__)
+#if defined(__SMARTPHONE__)
+    // value and time to the left in two rows
+    sizer->Add(label, 1, wxALIGN_LEFT);
+    sizer->Add(value, 1, wxALIGN_LEFT);
+#elif defined(__WXMSW__) || defined(__WXPM__) || defined(__WXMAC__) || defined(__WXGTK20__)
     // value and time centered in one row
-    sizer->Add(label, 1, wxALIGN_RIGHT | wxTOP | wxRIGHT, LAYOUT_MARGIN);
+    sizer->Add(label, 1, wxLARGESMALL(wxALIGN_RIGHT,wxALIGN_LEFT) | wxTOP | wxRIGHT, LAYOUT_MARGIN);
     sizer->Add(value, 1, wxALIGN_LEFT | wxTOP, LAYOUT_MARGIN);
 #else
     // value and time to the right in one row
@@ -593,11 +621,10 @@ void wxGenericProgressDialog::SetMaximum(int maximum)
 {
     m_maximum = maximum;
 
-#if defined(__WXMSW__)
+#if defined(__WXMSW__) || defined(__WXPM__)
     // we can't have values > 65,536 in the progress control under Windows, so
     // scale everything down
     m_factor = m_maximum / 65536 + 1;
-    m_maximum /= m_factor;
 #endif // __WXMSW__
 }
 
@@ -702,21 +729,6 @@ wxGenericProgressDialog::~wxGenericProgressDialog()
 
     if ( m_tempEventLoop )
     {
-        // If another event loop has been installed as active during the life
-        // time of this object, we shouldn't deactivate it, but we also can't
-        // delete our m_tempEventLoop in this case because it risks leaving the
-        // new event loop with a dangling pointer, which it will set back as
-        // the active loop when it exits, resulting in a crash. So we have no
-        // choice but to just leak this pointer then, which is, of course, bad
-        // and usually easily avoidable by just destroying the progress dialog
-        // sooner, so warn the programmer about it.
-        wxCHECK_RET
-        (
-            wxEventLoopBase::GetActive() == m_tempEventLoop,
-            "current event loop must not be changed during "
-            "wxGenericProgressDialog lifetime"
-        );
-
         wxEventLoopBase::SetActive(NULL);
         delete m_tempEventLoop;
     }
@@ -757,8 +769,15 @@ void wxGenericProgressDialog::EnableSkip(bool enable)
 {
     if ( HasPDFlag(wxPD_CAN_SKIP) )
     {
+#ifdef __SMARTPHONE__
+        if(enable)
+            SetRightMenu(wxID_SKIP, _("Skip"));
+        else
+            SetRightMenu();
+#else
         if(m_btnSkip)
             m_btnSkip->Enable(enable);
+#endif
     }
 }
 
@@ -766,8 +785,15 @@ void wxGenericProgressDialog::EnableAbort(bool enable)
 {
     if( HasPDFlag(wxPD_CAN_ABORT) )
     {
+#ifdef __SMARTPHONE__
+        if(enable)
+            SetLeftMenu(wxID_CANCEL); // stock buttons makes Cancel label
+        else
+            SetLeftMenu();
+#else
         if(m_btnAbort)
             m_btnAbort->Enable(enable);
+#endif
     }
 }
 
@@ -775,11 +801,15 @@ void wxGenericProgressDialog::EnableClose()
 {
     if(HasPDFlag(wxPD_CAN_ABORT))
     {
+#ifdef __SMARTPHONE__
+        SetLeftMenu(wxID_CANCEL, _("Close"));
+#else
         if(m_btnAbort)
         {
             m_btnAbort->Enable();
             m_btnAbort->SetLabel(_("Close"));
         }
+#endif
     }
 }
 
@@ -787,16 +817,7 @@ void wxGenericProgressDialog::UpdateMessage(const wxString &newmsg)
 {
     if ( !newmsg.empty() && newmsg != m_msg->GetLabel() )
     {
-        const wxSize sizeOld = m_msg->GetSize();
-
         m_msg->SetLabel(newmsg);
-
-        if ( m_msg->GetSize().x > sizeOld.x )
-        {
-            // Resize the dialog to fit its new, longer contents instead of
-            // just truncating it.
-            Fit();
-        }
 
         // allow the window to repaint:
         // NOTE: since we yield only for UI events with this call, there

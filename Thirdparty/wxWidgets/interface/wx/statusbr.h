@@ -2,6 +2,7 @@
 // Name:        statusbr.h
 // Purpose:     interface of wxStatusBar
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +20,6 @@
 #define wxSB_NORMAL    0x0000
 #define wxSB_FLAT      0x0001
 #define wxSB_RAISED    0x0002
-#define wxSB_SUNKEN    0x0003
 
 
 /**
@@ -38,7 +38,7 @@ public:
     /**
         Constructs the pane with the given @a style and @a width.
     */
-    wxStatusBarPane(int style = wxSB_NORMAL, int width = 0);
+    wxStatusBarPane(int style = wxSB_NORMAL, size_t width = 0);
 
     /**
         Returns the pane width; it maybe negative, indicating a variable-width field.
@@ -96,9 +96,10 @@ public:
 
     @remarks
     Notice that only the first 127 characters of a string will be shown in
-    status bar fields under Windows if a proper manifest indicating that the
-    program uses version 6 of common controls library is not used. This is a
-    limitation of the native control on these platforms.
+    status bar fields under pre-XP MSW systems (or even under later systems if
+    a proper manifest indicating that the program uses version 6 of common
+    controls library is not used). This is a limitation of the native control
+    on these platforms.
 
     @library{wxcore}
     @category{miscwnd}
@@ -267,21 +268,17 @@ public:
             number passed to SetFieldsCount() the last time it was called.
         @param styles
             Contains an array of @a n integers with the styles for each field.
-            There are four possible styles:
-            - @c wxSB_NORMAL (default): The field appears with the default native border.
+            There are three possible styles:
+            - @c wxSB_NORMAL (default): The field appears sunken with a standard 3D border.
             - @c wxSB_FLAT: No border is painted around the field so that it appears flat.
             - @c wxSB_RAISED: A raised 3D border is painted around the field.
-            - @c wxSB_SUNKEN: A sunken 3D border is painted around the field
-              (this style is new since wxWidgets 2.9.5).
     */
     virtual void SetStatusStyles(int n, const int* styles);
 
     /**
         Sets the status text for the @a i-th field.
 
-        The given text will replace the current text. The display of the status
-        bar is updated immediately, so there is no need to call
-        wxWindow::Update() after calling this function.
+        The given text will replace the current text.
 
         Note that if PushStatusText() had been called before the new text will
         also replace the last saved value to make sure that the next call to

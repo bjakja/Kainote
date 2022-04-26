@@ -3,10 +3,9 @@
 // Purpose:     interface of wxEvtHandler, wxEventBlocker and many
 //              wxEvent-derived classes
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
-
-#if wxUSE_BASE
 
 /**
     The predefined constants for the number of times we propagate event
@@ -112,7 +111,7 @@ public:
             this event.
         @param eventType
             The unique type of event, e.g. @c wxEVT_PAINT, @c wxEVT_SIZE or
-            @c wxEVT_BUTTON.
+            @c wxEVT_COMMAND_BUTTON_CLICKED.
     */
     wxEvent(int id = 0, wxEventType eventType = wxEVT_NULL);
 
@@ -143,7 +142,7 @@ public:
     wxObject* GetEventObject() const;
 
     /**
-        Returns the identifier of the given event type, such as @c wxEVT_BUTTON.
+        Returns the identifier of the given event type, such as @c wxEVT_COMMAND_BUTTON_CLICKED.
     */
     wxEventType GetEventType() const;
 
@@ -159,19 +158,6 @@ public:
         Returns the identifier associated with this event, such as a button command id.
     */
     int GetId() const;
-
-    /**
-        Return the user data associated with a dynamically connected event handler.
-
-        wxEvtHandler::Connect() and wxEvtHandler::Bind() allow associating
-        optional @c userData pointer with the handler and this method returns
-        the value of this pointer.
-
-        The returned pointer is owned by wxWidgets and must not be deleted.
-
-        @since 2.9.5
-    */
-    wxObject *GetEventUserData() const;
 
     /**
         Returns @true if the event handler should be skipped, @false otherwise.
@@ -223,7 +209,7 @@ public:
     void SetTimestamp(long timeStamp = 0);
 
     /**
-        Test if this event should be propagated or not, i.e.\ if the propagation level
+        Test if this event should be propagated or not, i.e. if the propagation level
         is currently greater than 0.
     */
     bool ShouldPropagate() const;
@@ -272,14 +258,10 @@ protected:
     int m_propagationLevel;
 };
 
-#endif // wxUSE_BASE
-
-#if wxUSE_GUI
-
 /**
     @class wxEventBlocker
 
-    This class is a special event handler which allows discarding
+    This class is a special event handler which allows to discard
     any event (or a set of event types) directed to a specific window.
 
     Example:
@@ -357,9 +339,7 @@ public:
     ~wxPropagateOnce();
 };
 
-#endif // wxUSE_GUI
 
-#if wxUSE_BASE
 
 /**
     @class wxEvtHandler
@@ -442,7 +422,7 @@ public:
             void FunctionInAWorkerThread(const wxString& str)
             {
                 wxThreadEvent evt;
-                evt.SetString(str);
+                evt->SetString(str);
 
                 // wxThreadEvent::Clone() makes sure that the internal wxString
                 // member is not shared by other wxString instances:
@@ -485,90 +465,6 @@ public:
     virtual void AddPendingEvent(const wxEvent& event);
 
     /**
-         Asynchronously call the given method.
-
-         Calling this function on an object schedules an asynchronous call to
-         the method specified as CallAfter() argument at a (slightly) later
-         time. This is useful when processing some events as certain actions
-         typically can't be performed inside their handlers, e.g. you shouldn't
-         show a modal dialog from a mouse click event handler as this would
-         break the mouse capture state -- but you can call a method showing
-         this message dialog after the current event handler completes.
-
-         The method being called must be the method of the object on which
-         CallAfter() itself is called.
-
-         Notice that it is safe to use CallAfter() from other, non-GUI,
-         threads, but that the method will be always called in the main, GUI,
-         thread context.
-
-         Example of use:
-         @code
-         class MyFrame : public wxFrame {
-            void OnClick(wxMouseEvent& event) {
-                CallAfter(&MyFrame::ShowPosition, event.GetPosition());
-            }
-
-            void ShowPosition(const wxPoint& pos) {
-                if ( wxMessageBox(
-                        wxString::Format("Perform click at (%d, %d)?",
-                                         pos.x, pos.y), "", wxYES_NO) == wxYES )
-                {
-                    ... do take this click into account ...
-                }
-            }
-         };
-         @endcode
-
-         @param method The method to call.
-         @param x1 The (optional) first parameter to pass to the method.
-            Currently, 0, 1 or 2 parameters can be passed. If you need to pass
-            more than 2 arguments, you can use the CallAfter<T>(const T& fn)
-            overload that can call any functor.
-
-         @note This method is not available with Visual C++ before version 8
-               (Visual Studio 2005) as earlier versions of the compiler don't
-               have the required support for C++ templates to implement it.
-
-         @since 2.9.5
-     */
-    template<typename T, typename T1, ...>
-    void CallAfter(void (T::*method)(T1, ...), T1 x1, ...);
-
-    /**
-         Asynchronously call the given functor.
-
-         Calling this function on an object schedules an asynchronous call to
-         the functor specified as CallAfter() argument at a (slightly) later
-         time. This is useful when processing some events as certain actions
-         typically can't be performed inside their handlers, e.g. you shouldn't
-         show a modal dialog from a mouse click event handler as this would
-         break the mouse capture state -- but you can call a function showing
-         this message dialog after the current event handler completes.
-
-         Notice that it is safe to use CallAfter() from other, non-GUI,
-         threads, but that the method will be always called in the main, GUI,
-         thread context.
-
-         This overload is particularly useful in combination with C++11 lambdas:
-         @code
-         wxGetApp().CallAfter([]{
-             wxBell();
-         });
-         @endcode
-
-         @param functor The functor to call.
-
-         @note This method is not available with Visual C++ before version 8
-               (Visual Studio 2005) as earlier versions of the compiler don't
-               have the required support for C++ templates to implement it.
-
-         @since 3.0
-     */
-    template<typename T>
-    void CallAfter(const T& functor);
-
-    /**
         Processes an event, searching event tables and calling zero or more suitable
         event handler function(s).
 
@@ -595,13 +491,11 @@ public:
         -# If the object is disabled (via a call to wxEvtHandler::SetEvtHandlerEnabled)
            the function skips to step (7).
         -# Dynamic event table of the handlers bound using Bind<>() is
-           searched in the most-recently-bound to the most-early-bound order.
-           If a handler is found, it is executed and the function
+           searched. If a handler is found, it is executed and the function
            returns @true unless the handler used wxEvent::Skip() to indicate
            that it didn't handle the event in which case the search continues.
         -# Static events table of the handlers bound using event table
-           macros is searched for this event handler in the order of appearance
-           of event table macros in the source code. If this fails, the base
+           macros is searched for this event handler. If this fails, the base
            class event table is tried, and so on until no more tables
            exist or an appropriate function was found. If a handler is found,
            the same logic as in the previous step applies.
@@ -626,6 +520,8 @@ public:
         @return
             @true if a suitable event handler function was found and executed,
             and the function did not call wxEvent::Skip.
+
+        @see SearchEventTable()
     */
     virtual bool ProcessEvent(wxEvent& event);
 
@@ -695,6 +591,36 @@ public:
     */
     void DeletePendingEvents();
 
+    /**
+        Searches the event table, executing an event handler function if an appropriate
+        one is found.
+
+        @param table
+            Event table to be searched.
+        @param event
+            Event to be matched against an event table entry.
+
+        @return @true if a suitable event handler function was found and
+                 executed, and the function did not call wxEvent::Skip.
+
+        @remarks This function looks through the object's event table and tries
+                 to find an entry that will match the event.
+                 An entry will match if:
+                 @li The event type matches, and
+                 @li the identifier or identifier range matches, or the event table
+                     entry's identifier is zero.
+
+                 If a suitable function is called but calls wxEvent::Skip, this
+                 function will fail, and searching will continue.
+
+         @todo this function in the header is listed as an "implementation only" function;
+               are we sure we want to document it?
+
+        @see ProcessEvent()
+    */
+    virtual bool SearchEventTable(wxEventTable& table,
+                                  wxEvent& event);
+
     //@}
 
 
@@ -710,16 +636,10 @@ public:
         Notice that Bind() provides a more flexible and safer way to do the
         same thing as Connect(), please use it in any new code -- while
         Connect() is not formally deprecated due to its existing widespread
-        usage, it has no advantages compared to Bind() and has a number of
-        drawbacks, including:
-
-        - Less compile-time safety.
-        - Unintuitive parameter order.
-        - Limited to use with the methods of the classes publicly inheriting
-        from wxEvtHandler.
+        usage, it has no advantages compared to Bind().
 
         This is an alternative to the use of static event tables. It is more
-        flexible as it allows connecting events generated by some object to an
+        flexible as it allows to connect events generated by some object to an
         event handler defined in a different object of a different class (which
         is impossible to do directly with the event tables -- the events can be
         only handled in another object if they are propagated upwards to it).
@@ -751,11 +671,7 @@ public:
             be explicitly converted to the correct type which can be done using a macro
             called @c wxFooEventHandler for the handler for any @c wxFooEvent.
         @param userData
-            Optional data to be associated with the event table entry.
-            wxWidgets will take ownership of this pointer, i.e. it will be
-            destroyed when the event handler is disconnected or at the program
-            termination. This pointer can be retrieved using
-            wxEvent::GetEventUserData() later.
+            Data to be associated with the event table entry.
         @param eventSink
             Object whose member function should be called. It must be specified
             when connecting an event generated by one object to a member
@@ -764,7 +680,7 @@ public:
         @beginWxPerlOnly
         In wxPerl this function takes 4 arguments: @a id, @a lastid,
         @a type, @a method; if @a method is undef, the handler is
-        disconnected.
+        disconnected.}
         @endWxPerlOnly
 
         @see Bind<>()
@@ -783,7 +699,7 @@ public:
         Example:
         @code
         frame->Connect( wxID_EXIT,
-                        wxEVT_MENU,
+                        wxEVT_COMMAND_MENU_SELECTED,
                         wxCommandEventHandler(MyFrame::OnQuit) );
         @endcode
 
@@ -904,11 +820,7 @@ public:
             The last ID of the identifier range to be associated with the event
             handler.
         @param userData
-            Optional data to be associated with the event table entry.
-            wxWidgets will take ownership of this pointer, i.e. it will be
-            destroyed when the event handler is disconnected or at the program
-            termination. This pointer can be retrieved using
-            wxEvent::GetEventUserData() later.
+            Data to be associated with the event table entry.
 
         @see @ref overview_cpp_rtti_disabled
 
@@ -943,11 +855,7 @@ public:
             The last ID of the identifier range to be associated with the event
             handler.
         @param userData
-            Optional data to be associated with the event table entry.
-            wxWidgets will take ownership of this pointer, i.e. it will be
-            destroyed when the event handler is disconnected or at the program
-            termination. This pointer can be retrieved using
-            wxEvent::GetEventUserData() later.
+            Data to be associated with the event table entry.
 
         @see @ref overview_cpp_rtti_disabled
 
@@ -968,12 +876,6 @@ public:
         This method can only unbind functions, functors or methods which have
         been added using the Bind<>() method. There is no way to unbind
         functions bound using the (static) event tables.
-
-        @note Currently functors are compared by their address which,
-        unfortunately, doesn't work correctly if the same address is reused for
-        two different functor objects. Because of this, using Unbind() is not
-        recommended if there are multiple functors using the same @a eventType
-        and @a id and @a lastId as a wrong one could be unbound.
 
         @param eventType
             The event type associated with this event handler.
@@ -1281,9 +1183,6 @@ protected:
     virtual bool TryAfter(wxEvent& event);
 };
 
-#endif // wxUSE_BASE
-
-#if wxUSE_GUI
 
 /**
     Flags for categories of keys.
@@ -1321,26 +1220,20 @@ enum wxKeyCategoryFlags
     This event class contains information about key press and release events.
 
     The main information carried by this event is the key being pressed or
-    released. It can be accessed using one of GetUnicodeKey(), GetKeyCode()
-    or GetRawKeyCode() functions.
-    For the printable characters, GetUnicodeKey() should be used as it works
-    for any keys, including non-Latin-1 characters that can be entered when
-    using national keyboard layouts. GetKeyCode() should be used to handle
+    released. It can be accessed using either GetKeyCode() function or
+    GetUnicodeKey(). For the printable characters, the latter should be used as
+    it works for any keys, including non-Latin-1 characters that can be entered
+    when using national keyboard layouts. GetKeyCode() should be used to handle
     special characters (such as cursor arrows keys or @c HOME or @c INS and so
     on) which correspond to ::wxKeyCode enum elements above the @c WXK_START
     constant. While GetKeyCode() also returns the character code for Latin-1
     keys for compatibility, it doesn't work for Unicode characters in general
-    and will return @c WXK_NONE for any non-Latin-1 ones.
-    If both GetUnicodeKey() and GetKeyCode() return @c WXK_NONE then the key
-    has no @c WXK_xxx mapping and GetRawKeyCode() can be used to distinguish
-    between keys, but raw key codes are platform specific.
-    For these reasons, it is recommended to always use GetUnicodeKey() and
-    only fall back to GetKeyCode() if GetUnicodeKey() returned @c WXK_NONE,
-    meaning that the event corresponds to a non-printable special keys, then
-    optionally check GetRawKeyCode() if GetKeyCode() also returned @c WXK_NONE
-    or simply ignore that key.
+    and will return @c WXK_NONE for any non-Latin-1 ones. For this reason, it's
+    recommended to always use GetUnicodeKey() and only fall back to GetKeyCode()
+    if GetUnicodeKey() returned @c WXK_NONE meaning that the event corresponds
+    to a non-printable special keys.
 
-    While these three functions can be used with the events of @c
+    While both of these functions can be used with the events of @c
     wxEVT_KEY_DOWN, @c wxEVT_KEY_UP and @c wxEVT_CHAR types, the values
     returned by them are different for the first two events and the last one.
     For the latter, the key returned corresponds to the character that would
@@ -1373,10 +1266,6 @@ enum wxKeyCategoryFlags
     usual Latin-1 ones. However for non-Latin-1 letters only GetUnicodeKey()
     can be used to retrieve the key code as GetKeyCode() just returns @c
     WXK_NONE in this case.
-
-    Also, note that @c wxEVT_CHAR events are not generated for keys which do
-    not have a wxWidgets mapping, so GetRawKeyCode() should never be required
-    for this event.
 
     To summarize: you should handle @c wxEVT_CHAR if you need the translated
     key and @c wxEVT_KEY_DOWN if you only need the value of the key itself,
@@ -1504,11 +1393,11 @@ public:
         codes.
 
         Note that this method returns a meaningful value only for special
-        non-alphanumeric keys or if the user entered a Latin-1 character (this
-        includes ASCII and the accented letters found in Western European
-        languages but not letters of other alphabets such as e.g. Cyrillic).
-        Otherwise it simply method returns @c WXK_NONE and GetUnicodeKey()
-        should be used to obtain the corresponding Unicode character.
+        non-alphanumeric keys or if the user entered a character that can be
+        represented in current locale's default charset. Otherwise, e.g. if the
+        user enters a Japanese character in a program not using Japanese
+        locale, this method returns @c WXK_NONE and GetUnicodeKey() should be
+        used to obtain the corresponding Unicode character.
 
         Using GetUnicodeKey() is in general the right thing to do if you are
         interested in the characters typed by the user, GetKeyCode() should be
@@ -1517,26 +1406,15 @@ public:
         @code
             void MyHandler::OnChar(wxKeyEvent& event)
             {
-                wxChar uc = event.GetUnicodeKey();
-                if ( uc != WXK_NONE )
+                if ( event.GetUnicodeKey() != WXK_NONE )
                 {
-                    // It's a "normal" character. Notice that this includes
-                    // control characters in 1..31 range, e.g. WXK_RETURN or
-                    // WXK_BACK, so check for them explicitly.
-                    if ( uc >= 32 )
-                    {
-                        wxLogMessage("You pressed '%c'", uc);
-                    }
-                    else
-                    {
-                        // It's a control character
-                        ...
-                    }
+                    // It's a printable character
+                    wxLogMessage("You pressed '%c'", event.GetUnicodeKey());
                 }
-                else // No Unicode equivalent.
+                else
                 {
                     // It's a special key, deal with all the known ones:
-                    switch ( event.GetKeyCode() )
+                    switch ( GetKeyCode() )
                     {
                         case WXK_LEFT:
                         case WXK_RIGHT:
@@ -1563,28 +1441,12 @@ public:
     */
     bool IsKeyInCategory(int category) const;
 
-    /**
-        Returns true if this event is an auto-repeat of the key, false if this
-        is the initial key press.
-
-        @since 3.1.6
-        @onlyfor{wxosx,wxmsw,wxQt}
-    */
-    bool IsAutoRepeat() const;
-
     //@{
     /**
         Obtains the position (in client coordinates) at which the key was pressed.
-
-        Notice that under most platforms this position is simply the current
-        mouse pointer position and has no special relationship to the key event
-        itself.
-
-        @a x and @a y may be @NULL if the corresponding coordinate is not
-        needed.
     */
     wxPoint GetPosition() const;
-    void GetPosition(wxCoord* x, wxCoord* y) const;
+    void GetPosition(long* x, long* y) const;
     //@}
 
     /**
@@ -1599,7 +1461,7 @@ public:
         Under GTK, the raw key code is the @c keyval field of the corresponding
         GDK event.
 
-        Under macOS, the raw key code is the @c keyCode field of the
+        Under OS X, the raw key code is the @c keyCode field of the
         corresponding NSEvent.
 
         @note Currently the raw key codes are not supported by all ports, use
@@ -1619,7 +1481,7 @@ public:
         Under GTK, the raw flags contain the @c hardware_keycode field of the
         corresponding GDK event.
 
-        Under macOS, the raw flags contain the modifiers state.
+        Under OS X, the raw flags contain the modifiers state.
 
         @note Currently the raw key flags are not supported by all ports, use
               @ifdef_ wxHAS_RAW_KEY_CODES to determine if this feature is available.
@@ -1640,15 +1502,11 @@ public:
 
     /**
         Returns the X position (in client coordinates) of the event.
-
-        @see GetPosition()
     */
     wxCoord GetX() const;
 
     /**
         Returns the Y position (in client coordinates) of the event.
-
-        @see GetPosition()
     */
     wxCoord GetY() const;
 
@@ -1766,23 +1624,9 @@ public:
     /**
         Returns the identifier of the button changing state.
 
-        The return value is @code 1 << n @endcode where @c n is the index of the
-        button changing state, which can also be retrieved using GetButtonOrdinal().
-
-        Note that for @c n equal to 1, 2, 3 or 4 there are predefined @c wxJOY_BUTTONn
-        constants which can be used for more clarity, however these constants are not
-        defined for the buttons beyond the first four.
+        This is a @c wxJOY_BUTTONn identifier, where @c n is one of 1, 2, 3, 4.
     */
     int GetButtonChange() const;
-
-    /**
-        Returns the 0-indexed ordinal of the button changing state.
-
-        @see GetButtonChange()
-
-        @since 3.1.2.
-    */
-    int GetButtonOrdinal() const;
 
     /**
         Returns the down state of the buttons.
@@ -1892,7 +1736,7 @@ public:
     int GetPosition() const;
 
     void SetOrientation(int orient);
-    void SetPosition(int pos);
+    void SetPosition(int pos);    
 };
 
 
@@ -1901,18 +1745,14 @@ public:
     @class wxSysColourChangedEvent
 
     This class is used for system colour change events, which are generated
-    when the user changes the colour settings or when the system theme changes
-    (e.g. automatic dark mode switching on macOS).
-
-    Event handlers for this event can access the new system colour settings through
-    wxSystemSettings::GetColour().
+    when the user changes the colour settings using the control panel.
+    This is only appropriate under Windows.
 
     @remarks
         The default event handler for this event propagates the event to child windows,
-        since the system events are only sent to top-level windows.
-        If intercepting this event for a top-level window, remember to either call
-        wxEvent::Skip() on the event, call the base class handler, or pass the event
-        on to the window's children explicitly.
+        since Windows only sends the events to top-level windows.
+        If intercepting this event for a top-level window, remember to call the base
+        class handler, or to pass the event on to the window's children explicitly.
 
     @beginEventTable{wxSysColourChangedEvent}
     @event{EVT_SYS_COLOUR_CHANGED(func)}
@@ -1931,6 +1771,824 @@ public:
         Constructor.
     */
     wxSysColourChangedEvent();
+};
+
+
+
+/**
+    @class wxWindowCreateEvent
+
+    This event is sent just after the actual window associated with a wxWindow
+    object has been created.
+
+    Since it is derived from wxCommandEvent, the event propagates up
+    the window hierarchy.
+
+    @beginEventTable{wxWindowCreateEvent}
+    @event{EVT_WINDOW_CREATE(func)}
+        Process a @c wxEVT_CREATE event.
+    @endEventTable
+
+    @library{wxcore}
+    @category{events}
+
+    @see @ref overview_events, wxWindowDestroyEvent
+*/
+class wxWindowCreateEvent : public wxCommandEvent
+{
+public:
+    /**
+        Constructor.
+    */
+    wxWindowCreateEvent(wxWindow* win = NULL);
+
+    /// Return the window being created.
+    wxWindow *GetWindow() const;
+};
+
+
+
+/**
+    @class wxPaintEvent
+
+    A paint event is sent when a window's contents needs to be repainted.
+
+    The handler of this event must create a wxPaintDC object and use it for
+    painting the window contents. For example:
+    @code
+    void MyWindow::OnPaint(wxPaintEvent& event)
+    {
+        wxPaintDC dc(this);
+
+        DrawMyDocument(dc);
+    }
+    @endcode
+
+    Notice that you must @e not create other kinds of wxDC (e.g. wxClientDC or
+    wxWindowDC) in EVT_PAINT handlers and also don't create wxPaintDC outside
+    of this event handlers.
+
+
+    You can optimize painting by retrieving the rectangles that have been damaged
+    and only repainting these. The rectangles are in terms of the client area,
+    and are unscrolled, so you will need to do some calculations using the current
+    view position to obtain logical, scrolled units.
+    Here is an example of using the wxRegionIterator class:
+    @code
+    // Called when window needs to be repainted.
+    void MyWindow::OnPaint(wxPaintEvent& event)
+    {
+        wxPaintDC dc(this);
+
+        // Find Out where the window is scrolled to
+        int vbX,vbY;                     // Top left corner of client
+        GetViewStart(&vbX,&vbY);
+
+        int vX,vY,vW,vH;                 // Dimensions of client area in pixels
+        wxRegionIterator upd(GetUpdateRegion()); // get the update rect list
+
+        while (upd)
+        {
+            vX = upd.GetX();
+            vY = upd.GetY();
+            vW = upd.GetW();
+            vH = upd.GetH();
+
+            // Alternatively we can do this:
+            // wxRect rect(upd.GetRect());
+
+            // Repaint this rectangle
+            ...some code...
+
+            upd ++ ;
+        }
+    }
+    @endcode
+
+    @remarks
+    Please notice that in general it is impossible to change the drawing of a
+    standard control (such as wxButton) and so you shouldn't attempt to handle
+    paint events for them as even if it might work on some platforms, this is
+    inherently not portable and won't work everywhere.
+
+
+    @beginEventTable{wxPaintEvent}
+    @event{EVT_PAINT(func)}
+        Process a @c wxEVT_PAINT event.
+    @endEventTable
+
+    @library{wxcore}
+    @category{events}
+
+    @see @ref overview_events
+*/
+class wxPaintEvent : public wxEvent
+{
+public:
+    /**
+        Constructor.
+    */
+    wxPaintEvent(int id = 0);
+};
+
+
+
+/**
+    @class wxMaximizeEvent
+
+    An event being sent when a top level window is maximized. Notice that it is
+    not sent when the window is restored to its original size after it had been
+    maximized, only a normal wxSizeEvent is generated in this case.
+
+    Currently this event is only generated in wxMSW, wxGTK, wxOSX/Cocoa and wxOS2
+    ports so portable programs should only rely on receiving @c wxEVT_SIZE and
+    not necessarily this event when the window is maximized.
+
+    @beginEventTable{wxMaximizeEvent}
+    @event{EVT_MAXIMIZE(func)}
+        Process a @c wxEVT_MAXIMIZE event.
+    @endEventTable
+
+    @library{wxcore}
+    @category{events}
+
+    @see @ref overview_events, wxTopLevelWindow::Maximize,
+         wxTopLevelWindow::IsMaximized
+*/
+class wxMaximizeEvent : public wxEvent
+{
+public:
+    /**
+        Constructor. Only used by wxWidgets internally.
+    */
+    wxMaximizeEvent(int id = 0);
+};
+
+/**
+    The possibles modes to pass to wxUpdateUIEvent::SetMode().
+*/
+enum wxUpdateUIMode
+{
+        /** Send UI update events to all windows. */
+    wxUPDATE_UI_PROCESS_ALL,
+
+        /** Send UI update events to windows that have
+            the wxWS_EX_PROCESS_UI_UPDATES flag specified. */
+    wxUPDATE_UI_PROCESS_SPECIFIED
+};
+
+
+/**
+    @class wxUpdateUIEvent
+
+    This class is used for pseudo-events which are called by wxWidgets
+    to give an application the chance to update various user interface elements.
+
+    Without update UI events, an application has to work hard to check/uncheck,
+    enable/disable, show/hide, and set the text for elements such as menu items
+    and toolbar buttons. The code for doing this has to be mixed up with the code
+    that is invoked when an action is invoked for a menu item or button.
+
+    With update UI events, you define an event handler to look at the state of the
+    application and change UI elements accordingly. wxWidgets will call your member
+    functions in idle time, so you don't have to worry where to call this code.
+
+    In addition to being a clearer and more declarative method, it also means you don't
+    have to worry whether you're updating a toolbar or menubar identifier. The same
+    handler can update a menu item and toolbar button, if the identifier is the same.
+    Instead of directly manipulating the menu or button, you call functions in the event
+    object, such as wxUpdateUIEvent::Check. wxWidgets will determine whether such a
+    call has been made, and which UI element to update.
+
+    These events will work for popup menus as well as menubars. Just before a menu is
+    popped up, wxMenu::UpdateUI is called to process any UI events for the window that
+    owns the menu.
+
+    If you find that the overhead of UI update processing is affecting your application,
+    you can do one or both of the following:
+    @li Call wxUpdateUIEvent::SetMode with a value of wxUPDATE_UI_PROCESS_SPECIFIED,
+        and set the extra style wxWS_EX_PROCESS_UI_UPDATES for every window that should
+        receive update events. No other windows will receive update events.
+    @li Call wxUpdateUIEvent::SetUpdateInterval with a millisecond value to set the delay
+        between updates. You may need to call wxWindow::UpdateWindowUI at critical points,
+        for example when a dialog is about to be shown, in case the user sees a slight
+        delay before windows are updated.
+
+    Note that although events are sent in idle time, defining a wxIdleEvent handler
+    for a window does not affect this because the events are sent from wxWindow::OnInternalIdle
+    which is always called in idle time.
+
+    wxWidgets tries to optimize update events on some platforms.
+    On Windows and GTK+, events for menubar items are only sent when the menu is about
+    to be shown, and not in idle time.
+
+
+    @beginEventTable{wxUpdateUIEvent}
+    @event{EVT_UPDATE_UI(id, func)}
+        Process a @c wxEVT_UPDATE_UI event for the command with the given id.
+    @event{EVT_UPDATE_UI_RANGE(id1, id2, func)}
+        Process a @c wxEVT_UPDATE_UI event for any command with id included in the given range.
+    @endEventTable
+
+    @library{wxcore}
+    @category{events}
+
+    @see @ref overview_events
+*/
+class wxUpdateUIEvent : public wxCommandEvent
+{
+public:
+    /**
+        Constructor.
+    */
+    wxUpdateUIEvent(wxWindowID commandId = 0);
+
+    /**
+        Returns @true if it is appropriate to update (send UI update events to)
+        this window.
+
+        This function looks at the mode used (see wxUpdateUIEvent::SetMode),
+        the wxWS_EX_PROCESS_UI_UPDATES flag in @a window, the time update events
+        were last sent in idle time, and the update interval, to determine whether
+        events should be sent to this window now. By default this will always
+        return @true because the update mode is initially wxUPDATE_UI_PROCESS_ALL
+        and the interval is set to 0; so update events will be sent as often as
+        possible. You can reduce the frequency that events are sent by changing the
+        mode and/or setting an update interval.
+
+        @see ResetUpdateTime(), SetUpdateInterval(), SetMode()
+    */
+    static bool CanUpdate(wxWindow* window);
+
+    /**
+        Check or uncheck the UI element.
+    */
+    void Check(bool check);
+
+    /**
+        Enable or disable the UI element.
+    */
+    void Enable(bool enable);
+
+    /**
+        Returns @true if the UI element should be checked.
+    */
+    bool GetChecked() const;
+
+    /**
+        Returns @true if the UI element should be enabled.
+    */
+    bool GetEnabled() const;
+
+    /**
+        Static function returning a value specifying how wxWidgets will send update
+        events: to all windows, or only to those which specify that they will process
+        the events.
+
+        @see SetMode()
+    */
+    static wxUpdateUIMode GetMode();
+
+    /**
+        Returns @true if the application has called Check().
+        For wxWidgets internal use only.
+    */
+    bool GetSetChecked() const;
+
+    /**
+        Returns @true if the application has called Enable().
+        For wxWidgets internal use only.
+    */
+    bool GetSetEnabled() const;
+
+    /**
+        Returns @true if the application has called Show().
+        For wxWidgets internal use only.
+    */
+    bool GetSetShown() const;
+
+    /**
+        Returns @true if the application has called SetText().
+        For wxWidgets internal use only.
+    */
+    bool GetSetText() const;
+
+    /**
+        Returns @true if the UI element should be shown.
+    */
+    bool GetShown() const;
+
+    /**
+        Returns the text that should be set for the UI element.
+    */
+    wxString GetText() const;
+
+    /**
+        Returns the current interval between updates in milliseconds.
+        The value -1 disables updates, 0 updates as frequently as possible.
+
+        @see SetUpdateInterval().
+    */
+    static long GetUpdateInterval();
+
+    /**
+        Used internally to reset the last-updated time to the current time.
+
+        It is assumed that update events are normally sent in idle time, so this
+        is called at the end of idle processing.
+
+        @see CanUpdate(), SetUpdateInterval(), SetMode()
+    */
+    static void ResetUpdateTime();
+
+    /**
+        Specify how wxWidgets will send update events: to all windows, or only to
+        those which specify that they will process the events.
+
+        @param mode
+            this parameter may be one of the ::wxUpdateUIMode enumeration values.
+            The default mode is wxUPDATE_UI_PROCESS_ALL.
+    */
+    static void SetMode(wxUpdateUIMode mode);
+
+    /**
+        Sets the text for this UI element.
+    */
+    void SetText(const wxString& text);
+
+    /**
+        Sets the interval between updates in milliseconds.
+
+        Set to -1 to disable updates, or to 0 to update as frequently as possible.
+        The default is 0.
+
+        Use this to reduce the overhead of UI update events if your application
+        has a lot of windows. If you set the value to -1 or greater than 0,
+        you may also need to call wxWindow::UpdateWindowUI at appropriate points
+        in your application, such as when a dialog is about to be shown.
+    */
+    static void SetUpdateInterval(long updateInterval);
+
+    /**
+        Show or hide the UI element.
+    */
+    void Show(bool show);
+};
+
+
+
+/**
+    @class wxClipboardTextEvent
+
+    This class represents the events generated by a control (typically a
+    wxTextCtrl but other windows can generate these events as well) when its
+    content gets copied or cut to, or pasted from the clipboard.
+
+    There are three types of corresponding events @c wxEVT_COMMAND_TEXT_COPY,
+    @c wxEVT_COMMAND_TEXT_CUT and @c wxEVT_COMMAND_TEXT_PASTE.
+
+    If any of these events is processed (without being skipped) by an event
+    handler, the corresponding operation doesn't take place which allows to
+    prevent the text from being copied from or pasted to a control. It is also
+    possible to examine the clipboard contents in the PASTE event handler and
+    transform it in some way before inserting in a control -- for example,
+    changing its case or removing invalid characters.
+
+    Finally notice that a CUT event is always preceded by the COPY event which
+    makes it possible to only process the latter if it doesn't matter if the
+    text was copied or cut.
+
+    @note
+    These events are currently only generated by wxTextCtrl in wxGTK and wxOSX
+    but are also generated by wxComboBox without wxCB_READONLY style in wxMSW.
+
+    @beginEventTable{wxClipboardTextEvent}
+    @event{EVT_TEXT_COPY(id, func)}
+           Some or all of the controls content was copied to the clipboard.
+    @event{EVT_TEXT_CUT(id, func)}
+           Some or all of the controls content was cut (i.e. copied and
+           deleted).
+    @event{EVT_TEXT_PASTE(id, func)}
+           Clipboard content was pasted into the control.
+    @endEventTable
+
+
+    @library{wxcore}
+    @category{events}
+
+    @see wxClipboard
+*/
+class wxClipboardTextEvent : public wxCommandEvent
+{
+public:
+    /**
+        Constructor.
+    */
+    wxClipboardTextEvent(wxEventType commandType = wxEVT_NULL, int id = 0);
+};
+
+/**
+    Possible axis values for mouse wheel scroll events.
+
+    @since 2.9.4
+ */
+enum wxMouseWheelAxis
+{
+    wxMOUSE_WHEEL_VERTICAL,     ///< Vertical scroll event.
+    wxMOUSE_WHEEL_HORIZONTAL    ///< Horizontal scroll event.
+};
+
+
+/**
+    @class wxMouseEvent
+
+    This event class contains information about the events generated by the mouse:
+    they include mouse buttons press and release events and mouse move events.
+
+    All mouse events involving the buttons use @c wxMOUSE_BTN_LEFT for the
+    left mouse button, @c wxMOUSE_BTN_MIDDLE for the middle one and
+    @c wxMOUSE_BTN_RIGHT for the right one. And if the system supports more
+    buttons, the @c wxMOUSE_BTN_AUX1 and @c wxMOUSE_BTN_AUX2 events
+    can also be generated. Note that not all mice have even a middle button so a
+    portable application should avoid relying on the events from it (but the right
+    button click can be emulated using the left mouse button with the control key
+    under Mac platforms with a single button mouse).
+
+    For the @c wxEVT_ENTER_WINDOW and @c wxEVT_LEAVE_WINDOW events
+    purposes, the mouse is considered to be inside the window if it is in the
+    window client area and not inside one of its children. In other words, the
+    parent window receives @c wxEVT_LEAVE_WINDOW event not only when the
+    mouse leaves the window entirely but also when it enters one of its children.
+
+    The position associated with a mouse event is expressed in the window
+    coordinates of the window which generated the event, you can use
+    wxWindow::ClientToScreen() to convert it to screen coordinates and possibly
+    call wxWindow::ScreenToClient() next to convert it to window coordinates of
+    another window.
+
+    @note Note that under Windows CE mouse enter and leave events are not natively
+          supported by the system but are generated by wxWidgets itself. This has several
+          drawbacks: the LEAVE_WINDOW event might be received some time after the mouse
+          left the window and the state variables for it may have changed during this time.
+
+    @note Note the difference between methods like wxMouseEvent::LeftDown and
+          the inherited wxMouseState::LeftIsDown: the former returns @true when
+          the event corresponds to the left mouse button click while the latter
+          returns @true if the left mouse button is currently being pressed.
+          For example, when the user is dragging the mouse you can use
+          wxMouseEvent::LeftIsDown to test whether the left mouse button is
+          (still) depressed. Also, by convention, if wxMouseEvent::LeftDown
+          returns @true, wxMouseEvent::LeftIsDown will also return @true in
+          wxWidgets whatever the underlying GUI behaviour is (which is
+          platform-dependent). The same applies, of course, to other mouse
+          buttons as well.
+
+
+    @beginEventTable{wxMouseEvent}
+    @event{EVT_LEFT_DOWN(func)}
+        Process a @c wxEVT_LEFT_DOWN event. The handler of this event should normally
+        call event.Skip() to allow the default processing to take place as otherwise
+        the window under mouse wouldn't get the focus.
+    @event{EVT_LEFT_UP(func)}
+        Process a @c wxEVT_LEFT_UP event.
+    @event{EVT_LEFT_DCLICK(func)}
+        Process a @c wxEVT_LEFT_DCLICK event.
+    @event{EVT_MIDDLE_DOWN(func)}
+        Process a @c wxEVT_MIDDLE_DOWN event.
+    @event{EVT_MIDDLE_UP(func)}
+        Process a @c wxEVT_MIDDLE_UP event.
+    @event{EVT_MIDDLE_DCLICK(func)}
+        Process a @c wxEVT_MIDDLE_DCLICK event.
+    @event{EVT_RIGHT_DOWN(func)}
+        Process a @c wxEVT_RIGHT_DOWN event.
+    @event{EVT_RIGHT_UP(func)}
+        Process a @c wxEVT_RIGHT_UP event.
+    @event{EVT_RIGHT_DCLICK(func)}
+        Process a @c wxEVT_RIGHT_DCLICK event.
+    @event{EVT_MOUSE_AUX1_DOWN(func)}
+        Process a @c wxEVT_AUX1_DOWN event.
+    @event{EVT_MOUSE_AUX1_UP(func)}
+        Process a @c wxEVT_AUX1_UP event.
+    @event{EVT_MOUSE_AUX1_DCLICK(func)}
+        Process a @c wxEVT_AUX1_DCLICK event.
+    @event{EVT_MOUSE_AUX2_DOWN(func)}
+        Process a @c wxEVT_AUX2_DOWN event.
+    @event{EVT_MOUSE_AUX2_UP(func)}
+        Process a @c wxEVT_AUX2_UP event.
+    @event{EVT_MOUSE_AUX2_DCLICK(func)}
+        Process a @c wxEVT_AUX2_DCLICK event.
+    @event{EVT_MOTION(func)}
+        Process a @c wxEVT_MOTION event.
+    @event{EVT_ENTER_WINDOW(func)}
+        Process a @c wxEVT_ENTER_WINDOW event.
+    @event{EVT_LEAVE_WINDOW(func)}
+        Process a @c wxEVT_LEAVE_WINDOW event.
+    @event{EVT_MOUSEWHEEL(func)}
+        Process a @c wxEVT_MOUSEWHEEL event.
+    @event{EVT_MOUSE_EVENTS(func)}
+        Process all mouse events.
+    @endEventTable
+
+    @library{wxcore}
+    @category{events}
+
+    @see wxKeyEvent
+*/
+class wxMouseEvent : public wxEvent,
+                     public wxMouseState
+{
+public:
+    /**
+        Constructor. Valid event types are:
+
+         @li @c wxEVT_ENTER_WINDOW
+         @li @c wxEVT_LEAVE_WINDOW
+         @li @c wxEVT_LEFT_DOWN
+         @li @c wxEVT_LEFT_UP
+         @li @c wxEVT_LEFT_DCLICK
+         @li @c wxEVT_MIDDLE_DOWN
+         @li @c wxEVT_MIDDLE_UP
+         @li @c wxEVT_MIDDLE_DCLICK
+         @li @c wxEVT_RIGHT_DOWN
+         @li @c wxEVT_RIGHT_UP
+         @li @c wxEVT_RIGHT_DCLICK
+         @li @c wxEVT_AUX1_DOWN
+         @li @c wxEVT_AUX1_UP
+         @li @c wxEVT_AUX1_DCLICK
+         @li @c wxEVT_AUX2_DOWN
+         @li @c wxEVT_AUX2_UP
+         @li @c wxEVT_AUX2_DCLICK
+         @li @c wxEVT_MOTION
+         @li @c wxEVT_MOUSEWHEEL
+    */
+    wxMouseEvent(wxEventType mouseEventType = wxEVT_NULL);
+
+    /**
+        Returns @true if the event was a first extra button double click.
+    */
+    bool Aux1DClick() const;
+
+    /**
+        Returns @true if the first extra button mouse button changed to down.
+    */
+    bool Aux1Down() const;
+
+    /**
+        Returns @true if the first extra button mouse button changed to up.
+    */
+    bool Aux1Up() const;
+
+    /**
+        Returns @true if the event was a second extra button double click.
+    */
+    bool Aux2DClick() const;
+
+    /**
+        Returns @true if the second extra button mouse button changed to down.
+    */
+    bool Aux2Down() const;
+
+    /**
+        Returns @true if the second extra button mouse button changed to up.
+    */
+    bool Aux2Up() const;
+
+    /**
+        Returns @true if the event was generated by the specified button.
+
+        @see wxMouseState::ButtoinIsDown()
+    */
+    bool Button(wxMouseButton but) const;
+
+    /**
+        If the argument is omitted, this returns @true if the event was a mouse
+        double click event. Otherwise the argument specifies which double click event
+        was generated (see Button() for the possible values).
+    */
+    bool ButtonDClick(wxMouseButton but = wxMOUSE_BTN_ANY) const;
+
+    /**
+        If the argument is omitted, this returns @true if the event was a mouse
+        button down event. Otherwise the argument specifies which button-down event
+        was generated (see Button() for the possible values).
+    */
+    bool ButtonDown(wxMouseButton but = wxMOUSE_BTN_ANY) const;
+
+    /**
+        If the argument is omitted, this returns @true if the event was a mouse
+        button up event. Otherwise the argument specifies which button-up event
+        was generated (see Button() for the possible values).
+    */
+    bool ButtonUp(wxMouseButton but = wxMOUSE_BTN_ANY) const;
+
+    /**
+        Returns @true if this was a dragging event (motion while a button is depressed).
+
+        @see Moving()
+    */
+    bool Dragging() const;
+
+    /**
+        Returns @true if the mouse was entering the window.
+
+        @see Leaving()
+    */
+    bool Entering() const;
+
+    /**
+        Returns the mouse button which generated this event or @c wxMOUSE_BTN_NONE
+        if no button is involved (for mouse move, enter or leave event, for example).
+        Otherwise @c wxMOUSE_BTN_LEFT is returned for the left button down, up and
+        double click events, @c wxMOUSE_BTN_MIDDLE and @c wxMOUSE_BTN_RIGHT
+        for the same events for the middle and the right buttons respectively.
+    */
+    int GetButton() const;
+
+    /**
+        Returns the number of mouse clicks for this event: 1 for a simple click, 2
+        for a double-click, 3 for a triple-click and so on.
+
+        Currently this function is implemented only in wxMac and returns -1 for the
+        other platforms (you can still distinguish simple clicks from double-clicks as
+        they generate different kinds of events however).
+
+        @since 2.9.0
+    */
+    int GetClickCount() const;
+
+    /**
+        Returns the configured number of lines (or whatever) to be scrolled per
+        wheel action. Defaults to three.
+    */
+    int GetLinesPerAction() const;
+
+    /**
+        Returns the logical mouse position in pixels (i.e. translated according to the
+        translation set for the DC, which usually indicates that the window has been
+        scrolled).
+    */
+    wxPoint GetLogicalPosition(const wxDC& dc) const;
+
+    /**
+        Get wheel delta, normally 120.
+
+        This is the threshold for action to be taken, and one such action
+        (for example, scrolling one increment) should occur for each delta.
+    */
+    int GetWheelDelta() const;
+
+    /**
+        Get wheel rotation, positive or negative indicates direction of rotation.
+
+        Current devices all send an event when rotation is at least +/-WheelDelta, but
+        finer resolution devices can be created in the future.
+
+        Because of this you shouldn't assume that one event is equal to 1 line, but you
+        should be able to either do partial line scrolling or wait until several
+        events accumulate before scrolling.
+    */
+    int GetWheelRotation() const;
+
+    /**
+        Gets the axis the wheel operation concerns.
+
+        Usually the mouse wheel is used to scroll vertically so @c
+        wxMOUSE_WHEEL_VERTICAL is returned but some mice (and most trackpads)
+        also allow to use the wheel to scroll horizontally in which case
+        @c wxMOUSE_WHEEL_HORIZONTAL is returned.
+
+        Notice that before wxWidgets 2.9.4 this method returned @c int.
+    */
+    wxMouseWheelAxis GetWheelAxis() const;
+
+    /**
+        Returns @true if the event was a mouse button event (not necessarily a button
+        down event - that may be tested using ButtonDown()).
+    */
+    bool IsButton() const;
+
+    /**
+        Returns @true if the system has been setup to do page scrolling with
+        the mouse wheel instead of line scrolling.
+    */
+    bool IsPageScroll() const;
+
+    /**
+        Returns @true if the mouse was leaving the window.
+
+        @see Entering().
+    */
+    bool Leaving() const;
+
+    /**
+        Returns @true if the event was a left double click.
+    */
+    bool LeftDClick() const;
+
+    /**
+        Returns @true if the left mouse button changed to down.
+    */
+    bool LeftDown() const;
+
+    /**
+        Returns @true if the left mouse button changed to up.
+    */
+    bool LeftUp() const;
+
+    /**
+        Returns @true if the Meta key was down at the time of the event.
+    */
+    bool MetaDown() const;
+
+    /**
+        Returns @true if the event was a middle double click.
+    */
+    bool MiddleDClick() const;
+
+    /**
+        Returns @true if the middle mouse button changed to down.
+    */
+    bool MiddleDown() const;
+
+    /**
+        Returns @true if the middle mouse button changed to up.
+    */
+    bool MiddleUp() const;
+
+    /**
+        Returns @true if this was a motion event and no mouse buttons were pressed.
+        If any mouse button is held pressed, then this method returns @false and
+        Dragging() returns @true.
+    */
+    bool Moving() const;
+
+    /**
+        Returns @true if the event was a right double click.
+    */
+    bool RightDClick() const;
+
+    /**
+        Returns @true if the right mouse button changed to down.
+    */
+    bool RightDown() const;
+
+    /**
+        Returns @true if the right mouse button changed to up.
+    */
+    bool RightUp() const;
+};
+
+
+
+/**
+    @class wxDropFilesEvent
+
+    This class is used for drop files events, that is, when files have been dropped
+    onto the window. This functionality is currently only available under Windows.
+
+    The window must have previously been enabled for dropping by calling
+    wxWindow::DragAcceptFiles().
+
+    Important note: this is a separate implementation to the more general drag and drop
+    implementation documented in the @ref overview_dnd. It uses the older, Windows
+    message-based approach of dropping files.
+
+    @beginEventTable{wxDropFilesEvent}
+    @event{EVT_DROP_FILES(func)}
+        Process a @c wxEVT_DROP_FILES event.
+    @endEventTable
+
+    @onlyfor{wxmsw}
+
+    @library{wxcore}
+    @category{events}
+
+    @see @ref overview_events
+*/
+class wxDropFilesEvent : public wxEvent
+{
+public:
+    /**
+        Constructor.
+    */
+    wxDropFilesEvent(wxEventType id = 0, int noFiles = 0,
+                     wxString* files = NULL);
+
+    /**
+        Returns an array of filenames.
+    */
+    wxString* GetFiles() const;
+
+    /**
+        Returns the number of files dropped.
+    */
+    int GetNumberOfFiles() const;
+
+    /**
+        Returns the position at which the files were dropped.
+        Returns an array of filenames.
+    */
+    wxPoint GetPosition() const;
 };
 
 
@@ -1956,59 +2614,59 @@ public:
         Process a command for a range of window identifiers, supplying the minimum and
         maximum window identifiers, command event identifier, and member function.
     @event{EVT_BUTTON(id, func)}
-        Process a @c wxEVT_BUTTON command, which is generated by a wxButton control.
+        Process a @c wxEVT_COMMAND_BUTTON_CLICKED command, which is generated by a wxButton control.
     @event{EVT_CHECKBOX(id, func)}
-        Process a @c wxEVT_CHECKBOX command, which is generated by a wxCheckBox control.
+        Process a @c wxEVT_COMMAND_CHECKBOX_CLICKED command, which is generated by a wxCheckBox control.
     @event{EVT_CHOICE(id, func)}
-        Process a @c wxEVT_CHOICE command, which is generated by a wxChoice control.
+        Process a @c wxEVT_COMMAND_CHOICE_SELECTED command, which is generated by a wxChoice control.
     @event{EVT_COMBOBOX(id, func)}
-        Process a @c wxEVT_COMBOBOX command, which is generated by a wxComboBox control.
+        Process a @c wxEVT_COMMAND_COMBOBOX_SELECTED command, which is generated by a wxComboBox control.
     @event{EVT_LISTBOX(id, func)}
-        Process a @c wxEVT_LISTBOX command, which is generated by a wxListBox control.
+        Process a @c wxEVT_COMMAND_LISTBOX_SELECTED command, which is generated by a wxListBox control.
     @event{EVT_LISTBOX_DCLICK(id, func)}
-        Process a @c wxEVT_LISTBOX_DCLICK command, which is generated by a wxListBox control.
+        Process a @c wxEVT_COMMAND_LISTBOX_DOUBLECLICKED command, which is generated by a wxListBox control.
     @event{EVT_CHECKLISTBOX(id, func)}
-        Process a @c wxEVT_CHECKLISTBOX command, which is generated by a wxCheckListBox control.
+        Process a @c wxEVT_COMMAND_CHECKLISTBOX_TOGGLED command, which is generated by a wxCheckListBox control.
     @event{EVT_MENU(id, func)}
-        Process a @c wxEVT_MENU command, which is generated by a menu item.
+        Process a @c wxEVT_COMMAND_MENU_SELECTED command, which is generated by a menu item.
     @event{EVT_MENU_RANGE(id1, id2, func)}
-        Process a @c wxEVT_MENU command, which is generated by a range of menu items.
+        Process a @c wxEVT_COMMAND_MENU_RANGE command, which is generated by a range of menu items.
     @event{EVT_CONTEXT_MENU(func)}
         Process the event generated when the user has requested a popup menu to appear by
         pressing a special keyboard key (under Windows) or by right clicking the mouse.
     @event{EVT_RADIOBOX(id, func)}
-        Process a @c wxEVT_RADIOBOX command, which is generated by a wxRadioBox control.
+        Process a @c wxEVT_COMMAND_RADIOBOX_SELECTED command, which is generated by a wxRadioBox control.
     @event{EVT_RADIOBUTTON(id, func)}
-        Process a @c wxEVT_RADIOBUTTON command, which is generated by a wxRadioButton control.
+        Process a @c wxEVT_COMMAND_RADIOBUTTON_SELECTED command, which is generated by a wxRadioButton control.
     @event{EVT_SCROLLBAR(id, func)}
-        Process a @c wxEVT_SCROLLBAR command, which is generated by a wxScrollBar
+        Process a @c wxEVT_COMMAND_SCROLLBAR_UPDATED command, which is generated by a wxScrollBar
         control. This is provided for compatibility only; more specific scrollbar event macros
         should be used instead (see wxScrollEvent).
     @event{EVT_SLIDER(id, func)}
-        Process a @c wxEVT_SLIDER command, which is generated by a wxSlider control.
+        Process a @c wxEVT_COMMAND_SLIDER_UPDATED command, which is generated by a wxSlider control.
     @event{EVT_TEXT(id, func)}
-        Process a @c wxEVT_TEXT command, which is generated by a wxTextCtrl control.
+        Process a @c wxEVT_COMMAND_TEXT_UPDATED command, which is generated by a wxTextCtrl control.
     @event{EVT_TEXT_ENTER(id, func)}
-        Process a @c wxEVT_TEXT_ENTER command, which is generated by a wxTextCtrl control.
+        Process a @c wxEVT_COMMAND_TEXT_ENTER command, which is generated by a wxTextCtrl control.
         Note that you must use wxTE_PROCESS_ENTER flag when creating the control if you want it
         to generate such events.
     @event{EVT_TEXT_MAXLEN(id, func)}
-        Process a @c wxEVT_TEXT_MAXLEN command, which is generated by a wxTextCtrl control
+        Process a @c wxEVT_COMMAND_TEXT_MAXLEN command, which is generated by a wxTextCtrl control
         when the user tries to enter more characters into it than the limit previously set
         with SetMaxLength().
     @event{EVT_TOGGLEBUTTON(id, func)}
-        Process a @c wxEVT_TOGGLEBUTTON event.
+        Process a @c wxEVT_COMMAND_TOGGLEBUTTON_CLICKED event.
     @event{EVT_TOOL(id, func)}
-        Process a @c wxEVT_TOOL event (a synonym for @c wxEVT_MENU).
+        Process a @c wxEVT_COMMAND_TOOL_CLICKED event (a synonym for @c wxEVT_COMMAND_MENU_SELECTED).
         Pass the id of the tool.
     @event{EVT_TOOL_RANGE(id1, id2, func)}
-        Process a @c wxEVT_TOOL event for a range of identifiers. Pass the ids of the tools.
+        Process a @c wxEVT_COMMAND_TOOL_CLICKED event for a range of identifiers. Pass the ids of the tools.
     @event{EVT_TOOL_RCLICKED(id, func)}
-        Process a @c wxEVT_TOOL_RCLICKED event. Pass the id of the tool.  (Not available on wxOSX.)
+        Process a @c wxEVT_COMMAND_TOOL_RCLICKED event. Pass the id of the tool.  (Not available on wxOSX.)
     @event{EVT_TOOL_RCLICKED_RANGE(id1, id2, func)}
-        Process a @c wxEVT_TOOL_RCLICKED event for a range of ids. Pass the ids of the tools.  (Not available on wxOSX.)
+        Process a @c wxEVT_COMMAND_TOOL_RCLICKED event for a range of ids. Pass the ids of the tools.  (Not available on wxOSX.)
     @event{EVT_TOOL_ENTER(id, func)}
-        Process a @c wxEVT_TOOL_ENTER event. Pass the id of the toolbar itself.
+        Process a @c wxEVT_COMMAND_TOOL_ENTER event. Pass the id of the toolbar itself.
         The value of wxCommandEvent::GetSelection() is the tool id, or -1 if the mouse cursor
         has moved off a tool.  (Not available on wxOSX.)
     @event{EVT_COMMAND_LEFT_CLICK(id, func)}
@@ -2134,946 +2792,6 @@ public:
 
 
 /**
-    @class wxWindowCreateEvent
-
-    This event is sent just after the actual window associated with a wxWindow
-    object has been created.
-
-    Since it is derived from wxCommandEvent, the event propagates up
-    the window hierarchy.
-
-    @beginEventTable{wxWindowCreateEvent}
-    @event{EVT_WINDOW_CREATE(func)}
-        Process a @c wxEVT_CREATE event.
-    @endEventTable
-
-    @library{wxcore}
-    @category{events}
-
-    @see @ref overview_events, wxWindowDestroyEvent
-*/
-class wxWindowCreateEvent : public wxCommandEvent
-{
-public:
-    /**
-        Constructor.
-    */
-    wxWindowCreateEvent(wxWindow* win = NULL);
-
-    /// Return the window being created.
-    wxWindow *GetWindow() const;
-};
-
-
-
-/**
-    @class wxPaintEvent
-
-    A paint event is sent when a window's contents needs to be repainted.
-
-    The handler of this event must create a wxPaintDC object and use it for
-    painting the window contents. For example:
-    @code
-    void MyWindow::OnPaint(wxPaintEvent& event)
-    {
-        wxPaintDC dc(this);
-
-        DrawMyDocument(dc);
-    }
-    @endcode
-
-    Notice that you must @e not create other kinds of wxDC (e.g. wxClientDC or
-    wxWindowDC) in EVT_PAINT handlers and also don't create wxPaintDC outside
-    of this event handlers.
-
-
-    You can optimize painting by retrieving the rectangles that have been damaged
-    and only repainting these. The rectangles are in terms of the client area,
-    and are unscrolled, so you will need to do some calculations using the current
-    view position to obtain logical, scrolled units.
-    Here is an example of using the wxRegionIterator class:
-    @code
-    // Called when window needs to be repainted.
-    void MyWindow::OnPaint(wxPaintEvent& event)
-    {
-        wxPaintDC dc(this);
-
-        // Find Out where the window is scrolled to
-        int vbX,vbY;                     // Top left corner of client
-        GetViewStart(&vbX,&vbY);
-
-        int vX,vY,vW,vH;                 // Dimensions of client area in pixels
-        wxRegionIterator upd(GetUpdateRegion()); // get the update rect list
-
-        while (upd)
-        {
-            vX = upd.GetX();
-            vY = upd.GetY();
-            vW = upd.GetW();
-            vH = upd.GetH();
-
-            // Alternatively we can do this:
-            // wxRect rect(upd.GetRect());
-
-            // Repaint this rectangle
-            ...some code...
-
-            upd ++ ;
-        }
-    }
-    @endcode
-
-    @remarks
-    Please notice that in general it is impossible to change the drawing of a
-    standard control (such as wxButton) and so you shouldn't attempt to handle
-    paint events for them as even if it might work on some platforms, this is
-    inherently not portable and won't work everywhere.
-
-
-    @beginEventTable{wxPaintEvent}
-    @event{EVT_PAINT(func)}
-        Process a @c wxEVT_PAINT event.
-    @endEventTable
-
-    @library{wxcore}
-    @category{events}
-
-    @see @ref overview_events
-*/
-class wxPaintEvent : public wxEvent
-{
-public:
-    /**
-        Constructor for exclusive use of wxWidgets itself.
-
-        Note that the objects of this class can @em not be created from
-        application code, they're only created by the library itself. If you
-        need a window to be repainted, use wxWindow::Refresh() instead of
-        trying to manually create an event of this class.
-    */
-    explicit wxPaintEvent(wxWindow* window);
-};
-
-
-
-/**
-    @class wxMaximizeEvent
-
-    An event being sent when a top level window is maximized. Notice that it is
-    not sent when the window is restored to its original size after it had been
-    maximized, only a normal wxSizeEvent is generated in this case.
-
-    Currently this event is only generated in wxMSW, wxGTK and wxOSX/Cocoa
-    ports so portable programs should only rely on receiving @c wxEVT_SIZE and
-    not necessarily this event when the window is maximized.
-
-    @beginEventTable{wxMaximizeEvent}
-    @event{EVT_MAXIMIZE(func)}
-        Process a @c wxEVT_MAXIMIZE event.
-    @endEventTable
-
-    @library{wxcore}
-    @category{events}
-
-    @see @ref overview_events, wxTopLevelWindow::Maximize,
-         wxTopLevelWindow::IsMaximized
-*/
-class wxMaximizeEvent : public wxEvent
-{
-public:
-    /**
-        Constructor. Only used by wxWidgets internally.
-    */
-    wxMaximizeEvent(int id = 0);
-};
-
-/**
-    @class wxFullScreenEvent
-
-    An event being sent when the user enters or exits full screen mode.
-
-    Currently this event is only generated in the wxOSX/Cocoa port when
-    wxTopLevelWindow::EnableFullScreenView() is enabled and the user
-    the user enters or exits full screen. Note that this event is @e not
-    generated when wxTopLevelWindow::ShowFullScreen().
-
-    @beginEventTable{wxFullScreenEvent}
-    @event{EVT_FULLSCREEN(func)}
-        Process a @c wxEVT_FULLSCREEN event.
-    @endEventTable
-
-    @library{wxcore}
-    @category{events}
-
-    @since 3.1.5
-
-    @see @ref overview_events, wxTopLevelWindow::EnableFullScreenView,
-         wxTopLevelWindow::IsFullScreen
-*/
-class wxFullScreenEvent : public wxEvent
-{
-public:
-    /**
-        Constructor.
-    */
-    wxFullScreenEvent(int id = 0, bool fullscreen = true);
-
-    /**
-        Returns @true if the frame entered full screen, @false if exited
-        full screen.
-    */
-    bool IsFullScreen() const;
-};
-
-
-
-/**
-    The possibles modes to pass to wxUpdateUIEvent::SetMode().
-*/
-enum wxUpdateUIMode
-{
-        /** Send UI update events to all windows. */
-    wxUPDATE_UI_PROCESS_ALL,
-
-        /** Send UI update events to windows that have
-            the wxWS_EX_PROCESS_UI_UPDATES flag specified. */
-    wxUPDATE_UI_PROCESS_SPECIFIED
-};
-
-
-/**
-    @class wxUpdateUIEvent
-
-    This class is used for pseudo-events which are called by wxWidgets
-    to give an application the chance to update various user interface elements.
-
-    Without update UI events, an application has to work hard to check/uncheck,
-    enable/disable, show/hide, and set the text for elements such as menu items
-    and toolbar buttons. The code for doing this has to be mixed up with the code
-    that is invoked when an action is invoked for a menu item or button.
-
-    With update UI events, you define an event handler to look at the state of the
-    application and change UI elements accordingly. wxWidgets will call your member
-    functions in idle time, so you don't have to worry where to call this code.
-
-    In addition to being a clearer and more declarative method, it also means you don't
-    have to worry whether you're updating a toolbar or menubar identifier. The same
-    handler can update a menu item and toolbar button, if the identifier is the same.
-    Instead of directly manipulating the menu or button, you call functions in the event
-    object, such as wxUpdateUIEvent::Check. wxWidgets will determine whether such a
-    call has been made, and which UI element to update.
-
-    These events will work for popup menus as well as menubars. Just before a menu is
-    popped up, wxMenu::UpdateUI is called to process any UI events for the window that
-    owns the menu.
-
-    If you find that the overhead of UI update processing is affecting your application,
-    you can do one or both of the following:
-    @li Call wxUpdateUIEvent::SetMode with a value of wxUPDATE_UI_PROCESS_SPECIFIED,
-        and set the extra style wxWS_EX_PROCESS_UI_UPDATES for every window that should
-        receive update events. No other windows will receive update events.
-    @li Call wxUpdateUIEvent::SetUpdateInterval with a millisecond value to set the delay
-        between updates. You may need to call wxWindow::UpdateWindowUI at critical points,
-        for example when a dialog is about to be shown, in case the user sees a slight
-        delay before windows are updated.
-
-    Note that although events are sent in idle time, defining a wxIdleEvent handler
-    for a window does not affect this because the events are sent from wxWindow::OnInternalIdle
-    which is always called in idle time.
-
-    wxWidgets tries to optimize update events on some platforms.
-    On Windows and GTK+, events for menubar items are only sent when the menu is about
-    to be shown, and not in idle time.
-
-
-    @beginEventTable{wxUpdateUIEvent}
-    @event{EVT_UPDATE_UI(id, func)}
-        Process a @c wxEVT_UPDATE_UI event for the command with the given id.
-    @event{EVT_UPDATE_UI_RANGE(id1, id2, func)}
-        Process a @c wxEVT_UPDATE_UI event for any command with id included in the given range.
-    @endEventTable
-
-    @library{wxcore}
-    @category{events}
-
-    @see @ref overview_events
-*/
-class wxUpdateUIEvent : public wxCommandEvent
-{
-public:
-    /**
-        Constructor.
-    */
-    wxUpdateUIEvent(wxWindowID commandId = 0);
-
-    /**
-        Returns @true if it is appropriate to update (send UI update events to)
-        this window.
-
-        This function looks at the mode used (see wxUpdateUIEvent::SetMode),
-        the wxWS_EX_PROCESS_UI_UPDATES flag in @a window, the time update events
-        were last sent in idle time, and the update interval, to determine whether
-        events should be sent to this window now. By default this will always
-        return @true because the update mode is initially wxUPDATE_UI_PROCESS_ALL
-        and the interval is set to 0; so update events will be sent as often as
-        possible. You can reduce the frequency that events are sent by changing the
-        mode and/or setting an update interval.
-
-        @see ResetUpdateTime(), SetUpdateInterval(), SetMode()
-    */
-    static bool CanUpdate(wxWindow* window);
-
-    /**
-        Check or uncheck the UI element.
-    */
-    void Check(bool check);
-
-    /**
-        Enable or disable the UI element.
-    */
-    void Enable(bool enable);
-
-    /**
-        Returns @true if the UI element should be checked.
-    */
-    bool GetChecked() const;
-
-    /**
-        Returns @true if the UI element should be enabled.
-    */
-    bool GetEnabled() const;
-
-    /**
-        Returns @true if the UI element can be checked.
-
-        For the event handlers that can be used for multiple items, not all of
-        which can be checked, this method can be useful to determine whether
-        to call Check() on the event object or not, i.e. the main use case for
-        this method is:
-        @code
-        void MyWindow::OnUpdateUI(wxUpdateUIEvent& event)
-        {
-            ....
-            if ( event.IsCheckable() )
-                event.Check(...some condition...);
-        }
-        @endcode
-
-        @since 3.1.5
-    */
-    bool IsCheckable() const;
-
-    /**
-        Static function returning a value specifying how wxWidgets will send update
-        events: to all windows, or only to those which specify that they will process
-        the events.
-
-        @see SetMode()
-    */
-    static wxUpdateUIMode GetMode();
-
-    /**
-        Returns @true if the application has called Check().
-        For wxWidgets internal use only.
-    */
-    bool GetSetChecked() const;
-
-    /**
-        Returns @true if the application has called Enable().
-        For wxWidgets internal use only.
-    */
-    bool GetSetEnabled() const;
-
-    /**
-        Returns @true if the application has called Show().
-        For wxWidgets internal use only.
-    */
-    bool GetSetShown() const;
-
-    /**
-        Returns @true if the application has called SetText().
-        For wxWidgets internal use only.
-    */
-    bool GetSetText() const;
-
-    /**
-        Returns @true if the UI element should be shown.
-    */
-    bool GetShown() const;
-
-    /**
-        Returns the text that should be set for the UI element.
-    */
-    wxString GetText() const;
-
-    /**
-        Returns the current interval between updates in milliseconds.
-        The value -1 disables updates, 0 updates as frequently as possible.
-
-        @see SetUpdateInterval().
-    */
-    static long GetUpdateInterval();
-
-    /**
-        Used internally to reset the last-updated time to the current time.
-
-        It is assumed that update events are normally sent in idle time, so this
-        is called at the end of idle processing.
-
-        @see CanUpdate(), SetUpdateInterval(), SetMode()
-    */
-    static void ResetUpdateTime();
-
-    /**
-        Specify how wxWidgets will send update events: to all windows, or only to
-        those which specify that they will process the events.
-
-        @param mode
-            this parameter may be one of the ::wxUpdateUIMode enumeration values.
-            The default mode is wxUPDATE_UI_PROCESS_ALL.
-    */
-    static void SetMode(wxUpdateUIMode mode);
-
-    /**
-        Sets the text for this UI element.
-    */
-    void SetText(const wxString& text);
-
-    /**
-        Sets the interval between updates in milliseconds.
-
-        Set to -1 to disable updates, or to 0 to update as frequently as possible.
-        The default is 0.
-
-        Use this to reduce the overhead of UI update events if your application
-        has a lot of windows. If you set the value to -1 or greater than 0,
-        you may also need to call wxWindow::UpdateWindowUI at appropriate points
-        in your application, such as when a dialog is about to be shown.
-    */
-    static void SetUpdateInterval(long updateInterval);
-
-    /**
-        Show or hide the UI element.
-    */
-    void Show(bool show);
-};
-
-
-
-/**
-    @class wxClipboardTextEvent
-
-    This class represents the events generated by a control (typically a
-    wxTextCtrl but other windows can generate these events as well) when its
-    content gets copied or cut to, or pasted from the clipboard.
-
-    There are three types of corresponding events @c wxEVT_TEXT_COPY,
-    @c wxEVT_TEXT_CUT and @c wxEVT_TEXT_PASTE.
-
-    If any of these events is processed (without being skipped) by an event
-    handler, the corresponding operation doesn't take place which allows
-    preventing the text from being copied from or pasted to a control. It is also
-    possible to examine the clipboard contents in the PASTE event handler and
-    transform it in some way before inserting in a control -- for example,
-    changing its case or removing invalid characters.
-
-    Finally notice that a CUT event is always preceded by the COPY event which
-    makes it possible to only process the latter if it doesn't matter if the
-    text was copied or cut.
-
-    @note
-    These events are currently only generated by wxTextCtrl in wxGTK and wxOSX
-    but are also generated by wxComboBox without wxCB_READONLY style in wxMSW.
-
-    @beginEventTable{wxClipboardTextEvent}
-    @event{EVT_TEXT_COPY(id, func)}
-           Some or all of the controls content was copied to the clipboard.
-    @event{EVT_TEXT_CUT(id, func)}
-           Some or all of the controls content was cut (i.e. copied and
-           deleted).
-    @event{EVT_TEXT_PASTE(id, func)}
-           Clipboard content was pasted into the control.
-    @endEventTable
-
-
-    @library{wxcore}
-    @category{events}
-
-    @see wxClipboard
-*/
-class wxClipboardTextEvent : public wxCommandEvent
-{
-public:
-    /**
-        Constructor.
-    */
-    wxClipboardTextEvent(wxEventType commandType = wxEVT_NULL, int id = 0);
-};
-
-/**
-    Possible axis values for mouse wheel scroll events.
-
-    @since 2.9.4
- */
-enum wxMouseWheelAxis
-{
-    wxMOUSE_WHEEL_VERTICAL,     ///< Vertical scroll event.
-    wxMOUSE_WHEEL_HORIZONTAL    ///< Horizontal scroll event.
-};
-
-
-/**
-    @class wxMouseEvent
-
-    This event class contains information about the events generated by the mouse:
-    they include mouse buttons press and release events and mouse move events.
-
-    All mouse events involving the buttons use @c wxMOUSE_BTN_LEFT for the
-    left mouse button, @c wxMOUSE_BTN_MIDDLE for the middle one and
-    @c wxMOUSE_BTN_RIGHT for the right one. And if the system supports more
-    buttons, the @c wxMOUSE_BTN_AUX1 and @c wxMOUSE_BTN_AUX2 events
-    can also be generated. Note that not all mice have even a middle button so a
-    portable application should avoid relying on the events from it (but the right
-    button click can be emulated using the left mouse button with the control key
-    under Mac platforms with a single button mouse).
-
-    For the @c wxEVT_ENTER_WINDOW and @c wxEVT_LEAVE_WINDOW events
-    purposes, the mouse is considered to be inside the window if it is in the
-    window client area and not inside one of its children. In other words, the
-    parent window receives @c wxEVT_LEAVE_WINDOW event not only when the
-    mouse leaves the window entirely but also when it enters one of its children.
-
-    The position associated with a mouse event is expressed in the window
-    coordinates of the window which generated the event, you can use
-    wxWindow::ClientToScreen() to convert it to screen coordinates and possibly
-    call wxWindow::ScreenToClient() next to convert it to window coordinates of
-    another window.
-
-    @note Note the difference between methods like wxMouseEvent::LeftDown and
-          the inherited wxMouseState::LeftIsDown: the former returns @true when
-          the event corresponds to the left mouse button click while the latter
-          returns @true if the left mouse button is currently being pressed.
-          For example, when the user is dragging the mouse you can use
-          wxMouseEvent::LeftIsDown to test whether the left mouse button is
-          (still) depressed. Also, by convention, if wxMouseEvent::LeftDown
-          returns @true, wxMouseEvent::LeftIsDown will also return @true in
-          wxWidgets whatever the underlying GUI behaviour is (which is
-          platform-dependent). The same applies, of course, to other mouse
-          buttons as well.
-
-
-    @beginEventTable{wxMouseEvent}
-    @event{EVT_LEFT_DOWN(func)}
-        Process a @c wxEVT_LEFT_DOWN event. The handler of this event should normally
-        call event.Skip() to allow the default processing to take place as otherwise
-        the window under mouse wouldn't get the focus.
-    @event{EVT_LEFT_UP(func)}
-        Process a @c wxEVT_LEFT_UP event.
-    @event{EVT_LEFT_DCLICK(func)}
-        Process a @c wxEVT_LEFT_DCLICK event.
-    @event{EVT_MIDDLE_DOWN(func)}
-        Process a @c wxEVT_MIDDLE_DOWN event.
-    @event{EVT_MIDDLE_UP(func)}
-        Process a @c wxEVT_MIDDLE_UP event.
-    @event{EVT_MIDDLE_DCLICK(func)}
-        Process a @c wxEVT_MIDDLE_DCLICK event.
-    @event{EVT_RIGHT_DOWN(func)}
-        Process a @c wxEVT_RIGHT_DOWN event.
-    @event{EVT_RIGHT_UP(func)}
-        Process a @c wxEVT_RIGHT_UP event.
-    @event{EVT_RIGHT_DCLICK(func)}
-        Process a @c wxEVT_RIGHT_DCLICK event.
-    @event{EVT_MOUSE_AUX1_DOWN(func)}
-        Process a @c wxEVT_AUX1_DOWN event.
-    @event{EVT_MOUSE_AUX1_UP(func)}
-        Process a @c wxEVT_AUX1_UP event.
-    @event{EVT_MOUSE_AUX1_DCLICK(func)}
-        Process a @c wxEVT_AUX1_DCLICK event.
-    @event{EVT_MOUSE_AUX2_DOWN(func)}
-        Process a @c wxEVT_AUX2_DOWN event.
-    @event{EVT_MOUSE_AUX2_UP(func)}
-        Process a @c wxEVT_AUX2_UP event.
-    @event{EVT_MOUSE_AUX2_DCLICK(func)}
-        Process a @c wxEVT_AUX2_DCLICK event.
-    @event{EVT_MOTION(func)}
-        Process a @c wxEVT_MOTION event.
-    @event{EVT_ENTER_WINDOW(func)}
-        Process a @c wxEVT_ENTER_WINDOW event.
-    @event{EVT_LEAVE_WINDOW(func)}
-        Process a @c wxEVT_LEAVE_WINDOW event.
-    @event{EVT_MOUSEWHEEL(func)}
-        Process a @c wxEVT_MOUSEWHEEL event.
-    @event{EVT_MOUSE_EVENTS(func)}
-        Process all mouse events.
-    @event{EVT_MAGNIFY(func)}
-        Process a @c wxEVT_MAGNIFY event (new since wxWidgets 3.1.0).
-    @endEventTable
-
-    @library{wxcore}
-    @category{events}
-
-    @see wxKeyEvent
-*/
-class wxMouseEvent : public wxEvent,
-                     public wxMouseState
-{
-public:
-    /**
-        Constructor. Valid event types are:
-
-         @li @c wxEVT_ENTER_WINDOW
-         @li @c wxEVT_LEAVE_WINDOW
-         @li @c wxEVT_LEFT_DOWN
-         @li @c wxEVT_LEFT_UP
-         @li @c wxEVT_LEFT_DCLICK
-         @li @c wxEVT_MIDDLE_DOWN
-         @li @c wxEVT_MIDDLE_UP
-         @li @c wxEVT_MIDDLE_DCLICK
-         @li @c wxEVT_RIGHT_DOWN
-         @li @c wxEVT_RIGHT_UP
-         @li @c wxEVT_RIGHT_DCLICK
-         @li @c wxEVT_AUX1_DOWN
-         @li @c wxEVT_AUX1_UP
-         @li @c wxEVT_AUX1_DCLICK
-         @li @c wxEVT_AUX2_DOWN
-         @li @c wxEVT_AUX2_UP
-         @li @c wxEVT_AUX2_DCLICK
-         @li @c wxEVT_MOTION
-         @li @c wxEVT_MOUSEWHEEL
-         @li @c wxEVT_MAGNIFY
-    */
-    wxMouseEvent(wxEventType mouseEventType = wxEVT_NULL);
-
-    /**
-        Returns @true if the event was a first extra button double click.
-    */
-    bool Aux1DClick() const;
-
-    /**
-        Returns @true if the first extra button mouse button changed to down.
-    */
-    bool Aux1Down() const;
-
-    /**
-        Returns @true if the first extra button mouse button changed to up.
-    */
-    bool Aux1Up() const;
-
-    /**
-        Returns @true if the event was a second extra button double click.
-    */
-    bool Aux2DClick() const;
-
-    /**
-        Returns @true if the second extra button mouse button changed to down.
-    */
-    bool Aux2Down() const;
-
-    /**
-        Returns @true if the second extra button mouse button changed to up.
-    */
-    bool Aux2Up() const;
-
-    /**
-        Returns @true if the event was generated by the specified button.
-
-        @see wxMouseState::ButtoinIsDown()
-    */
-    bool Button(wxMouseButton but) const;
-
-    /**
-        If the argument is omitted, this returns @true if the event was a mouse
-        double click event. Otherwise the argument specifies which double click event
-        was generated (see Button() for the possible values).
-    */
-    bool ButtonDClick(wxMouseButton but = wxMOUSE_BTN_ANY) const;
-
-    /**
-        If the argument is omitted, this returns @true if the event was a mouse
-        button down event. Otherwise the argument specifies which button-down event
-        was generated (see Button() for the possible values).
-    */
-    bool ButtonDown(wxMouseButton but = wxMOUSE_BTN_ANY) const;
-
-    /**
-        If the argument is omitted, this returns @true if the event was a mouse
-        button up event. Otherwise the argument specifies which button-up event
-        was generated (see Button() for the possible values).
-    */
-    bool ButtonUp(wxMouseButton but = wxMOUSE_BTN_ANY) const;
-
-    /**
-        Returns @true if this was a dragging event (motion while a button is depressed).
-
-        @see Moving()
-    */
-    bool Dragging() const;
-
-    /**
-        Returns @true if the mouse was entering the window.
-
-        @see Leaving()
-    */
-    bool Entering() const;
-
-    /**
-        Returns the mouse button which generated this event or @c wxMOUSE_BTN_NONE
-        if no button is involved (for mouse move, enter or leave event, for example).
-        Otherwise @c wxMOUSE_BTN_LEFT is returned for the left button down, up and
-        double click events, @c wxMOUSE_BTN_MIDDLE and @c wxMOUSE_BTN_RIGHT
-        for the same events for the middle and the right buttons respectively.
-    */
-    int GetButton() const;
-
-    /**
-        Returns the number of mouse clicks for this event: 1 for a simple click, 2
-        for a double-click, 3 for a triple-click and so on.
-
-        Currently this function is implemented only in wxMac and returns -1 for the
-        other platforms (you can still distinguish simple clicks from double-clicks as
-        they generate different kinds of events however).
-
-        @since 2.9.0
-    */
-    int GetClickCount() const;
-
-    /**
-        Returns the configured number of lines (or whatever) to be scrolled per
-        wheel action.
-
-        Default value under most platforms is three.
-
-        @see GetColumnsPerAction()
-    */
-    int GetLinesPerAction() const;
-
-    /**
-        Returns the configured number of columns (or whatever) to be scrolled per
-        wheel action.
-
-        Default value under most platforms is three.
-
-        @see GetLinesPerAction()
-
-        @since 2.9.5
-    */
-    int GetColumnsPerAction() const;
-
-    /**
-        Returns the logical mouse position in pixels (i.e.\ translated according to the
-        translation set for the DC, which usually indicates that the window has been
-        scrolled).
-    */
-    wxPoint GetLogicalPosition(const wxDC& dc) const;
-
-    /**
-        For magnify (pinch to zoom) events: returns the change in magnification.
-
-        A value of 0 means no change, a positive value means we should enlarge
-        (or zoom in), a negative value means we should shrink (or zoom out).
-
-        This method is only valid to call for @c wxEVT_MAGNIFY events which are
-        currently only generated under macOS.
-
-        @see Magnify()
-
-        @since 3.1.0
-    */
-    float GetMagnification() const;
-
-    /**
-        Get wheel delta, normally 120.
-
-        This is the threshold for action to be taken, and one such action
-        (for example, scrolling one increment) should occur for each delta.
-    */
-    int GetWheelDelta() const;
-
-    /**
-        On Mac, has the user selected "Natural" scrolling in their System
-        Preferences? Currently false on all other OS's.
-
-        "Natural" scrolling means that content scrolling happens in the
-        opposite direction, and if you are indeed scrolling content then
-        you don't need to use this function because macOS has already
-        inverted the scroll direction.
-        But there can be special situations where you want the mouse wheel
-        action to work always in the same direction and in that case you
-        will need this function.
-
-        @since 3.1.3
-    */
-    bool IsWheelInverted() const;
-
-    /**
-        Get wheel rotation, positive or negative indicates direction of rotation.
-
-        Current devices all send an event when rotation is at least +/-WheelDelta, but
-        finer resolution devices can be created in the future.
-
-        Because of this you shouldn't assume that one event is equal to 1 line, but you
-        should be able to either do partial line scrolling or wait until several
-        events accumulate before scrolling.
-    */
-    int GetWheelRotation() const;
-
-    /**
-        Gets the axis the wheel operation concerns.
-
-        Usually the mouse wheel is used to scroll vertically so @c
-        wxMOUSE_WHEEL_VERTICAL is returned but some mice (and most trackpads)
-        also allow to use the wheel to scroll horizontally in which case
-        @c wxMOUSE_WHEEL_HORIZONTAL is returned.
-
-        Notice that before wxWidgets 2.9.4 this method returned @c int.
-    */
-    wxMouseWheelAxis GetWheelAxis() const;
-
-    /**
-        Returns @true if the event was a mouse button event (not necessarily a button
-        down event - that may be tested using ButtonDown()).
-    */
-    bool IsButton() const;
-
-    /**
-        Returns @true if the system has been setup to do page scrolling with
-        the mouse wheel instead of line scrolling.
-    */
-    bool IsPageScroll() const;
-
-    /**
-        Returns @true if the mouse was leaving the window.
-
-        @see Entering().
-    */
-    bool Leaving() const;
-
-    /**
-        Returns @true if the event was a left double click.
-    */
-    bool LeftDClick() const;
-
-    /**
-        Returns @true if the left mouse button changed to down.
-    */
-    bool LeftDown() const;
-
-    /**
-        Returns @true if the left mouse button changed to up.
-    */
-    bool LeftUp() const;
-
-    /**
-        Returns @true if the event is a magnify (i.e.\ pinch to zoom) event.
-
-        Such events are currently generated only under macOS.
-
-        @see GetMagnification()
-
-        @since 3.1.0
-    */
-    bool Magnify() const;
-
-    /**
-        Returns @true if the Meta key was down at the time of the event.
-    */
-    bool MetaDown() const;
-
-    /**
-        Returns @true if the event was a middle double click.
-    */
-    bool MiddleDClick() const;
-
-    /**
-        Returns @true if the middle mouse button changed to down.
-    */
-    bool MiddleDown() const;
-
-    /**
-        Returns @true if the middle mouse button changed to up.
-    */
-    bool MiddleUp() const;
-
-    /**
-        Returns @true if this was a motion event and no mouse buttons were pressed.
-        If any mouse button is held pressed, then this method returns @false and
-        Dragging() returns @true.
-    */
-    bool Moving() const;
-
-    /**
-        Returns @true if the event was a right double click.
-    */
-    bool RightDClick() const;
-
-    /**
-        Returns @true if the right mouse button changed to down.
-    */
-    bool RightDown() const;
-
-    /**
-        Returns @true if the right mouse button changed to up.
-    */
-    bool RightUp() const;
-};
-
-
-
-/**
-    @class wxDropFilesEvent
-
-    This class is used for drop files events, that is, when files have been dropped
-    onto the window.
-
-    The window must have previously been enabled for dropping by calling
-    wxWindow::DragAcceptFiles().
-
-    Important note: this is a separate implementation to the more general drag and drop
-    implementation documented in the @ref overview_dnd. It uses the older, Windows
-    message-based approach of dropping files.
-
-    @beginEventTable{wxDropFilesEvent}
-    @event{EVT_DROP_FILES(func)}
-        Process a @c wxEVT_DROP_FILES event.
-    @endEventTable
-
-    @remarks Windows only until version 2.8.9, available on all platforms
-             since 2.8.10.
-
-    @library{wxcore}
-    @category{events}
-
-    @see @ref overview_events, wxWindow::DragAcceptFiles()
-*/
-class wxDropFilesEvent : public wxEvent
-{
-public:
-    /**
-        Constructor.
-    */
-    wxDropFilesEvent(wxEventType id = 0, int noFiles = 0,
-                     wxString* files = NULL);
-
-    /**
-        Returns an array of filenames.
-    */
-    wxString* GetFiles() const;
-
-    /**
-        Returns the number of files dropped.
-    */
-    int GetNumberOfFiles() const;
-
-    /**
-        Returns the position at which the files were dropped.
-        Returns an array of filenames.
-    */
-    wxPoint GetPosition() const;
-};
-
-
-
-/**
     @class wxActivateEvent
 
     An activate event is sent when a window or application is being activated
@@ -3093,11 +2811,6 @@ public:
         a @c wxEVT_ACTIVATE or @c wxEVT_ACTIVATE_APP event.
     @endEventTable
 
-    @note Until wxWidgets 3.1.0 activation events could be sent by wxMSW when
-    the window was minimized. This reflected the native MSW behaviour but was
-    often surprising and unexpected, so starting from 3.1.0 such events are not
-    sent any more when the window is in the minimized state.
-
     @library{wxcore}
     @category{events}
 
@@ -3107,45 +2820,15 @@ class wxActivateEvent : public wxEvent
 {
 public:
     /**
-        Specifies the reason for the generation of this event.
-
-        See GetActivationReason().
-
-        @since 3.0
-    */
-    enum Reason
-    {
-        /// Window activated by mouse click.
-        Reason_Mouse,
-        /// Window was activated with some other method than mouse click.
-        Reason_Unknown
-    };
-
-    /**
         Constructor.
     */
     wxActivateEvent(wxEventType eventType = wxEVT_NULL, bool active = true,
-                    int id = 0, Reason ActivationReason = Reason_Unknown);
+                    int id = 0);
 
     /**
         Returns @true if the application or window is being activated, @false otherwise.
     */
     bool GetActive() const;
-
-    /**
-        Allows checking if the window was activated by clicking it with the
-        mouse or in some other way.
-
-        This method is currently only implemented in wxMSW and returns @c
-        Reason_Mouse there if the window was activated by a mouse click and @c
-        Reason_Unknown if it was activated in any other way (e.g. from
-        keyboard or programmatically).
-
-        Under all the other platforms, @c Reason_Unknown is always returned.
-
-        @since 3.0
-    */
-    Reason GetActivationReason() const;
 };
 
 
@@ -3160,15 +2843,11 @@ public:
     means that the event originated from a keyboard context button event, and you
     should compute a suitable position yourself, for example by calling wxGetMousePosition().
 
-    Notice that the exact sequence of mouse events is different across the
-    platforms. For example, under MSW the context menu event is generated after
-    @c EVT_RIGHT_UP event and only if it was not handled but under GTK the
-    context menu event is generated after @c EVT_RIGHT_DOWN event. This is
-    correct in the sense that it ensures that the context menu is shown
-    according to the current platform UI conventions and also means that you
-    must not handle (or call wxEvent::Skip() in your handler if you do have
-    one) neither right mouse down nor right mouse up event if you plan on
-    handling @c EVT_CONTEXT_MENU event.
+    When a keyboard context menu button is pressed on Windows, a right-click event
+    with default position is sent first, and if this event is not processed, the
+    context menu event is sent. So if you process mouse events and you find your
+    context menu event handler is not being called, you could call wxEvent::Skip()
+    for mouse right-down events.
 
     @beginEventTable{wxContextMenuEvent}
     @event{EVT_CONTEXT_MENU(func)}
@@ -3385,121 +3064,13 @@ public:
     wxMouseCaptureLostEvent(wxWindowID windowId = 0);
 };
 
-/**
-    @class wxDisplayChangedEvent
 
-    A display changed event is sent to top-level windows when the display resolution has changed.
-
-    This event is currently emitted under Windows only.
-
-    @beginEventTable{wxDisplayChangedEvent}
-    @event{EVT_DISPLAY_CHANGED(func)}
-        Process a @c wxEVT_DISPLAY_CHANGED event.
-    @endEventTable
-
-    @onlyfor{wxmsw}
-
-    @library{wxcore}
-    @category{events}
-
-    @see wxDisplay
-*/
 
 class wxDisplayChangedEvent : public wxEvent
 {
 public:
     wxDisplayChangedEvent();
 };
-
-
-
-/**
-    @class wxDPIChangedEvent
-
-    Event sent when the display scale factor or pixel density (measured in
-    dots-per-inch, or DPI) of the monitor a window is on changes.
-
-    The event is sent to each wxTopLevelWindow affected by the change, and all
-    its children recursively (post-order traversal). For example, this event is
-    sent to the window when it is moved, by the user, from a display using some
-    DPI value to another display using a different DPI value. It also sent to
-    all program windows on the given display if its DPI changes due to a change
-    in the system settings.
-
-    If you define an event handler for this event, you should almost always
-    call @c event.Skip() in it in order to allow the base class handler to
-    execute, as many controls rely on processing this event in order to update
-    their appearance when the DPI changes.
-
-    Currently this event is generated by wxMSW port if only and only if the
-    MSW application runs under Windows 10 Creators Update (v1703) or later and
-    is marked as being "per-monitor DPI aware", i.e. contains a @c dpiAwareness
-    tag with the value "PerMonitorV2" in its manifest (see Microsoft
-    <a href="https://docs.microsoft.com/en-us/windows/desktop/sbscs/application-manifests">"Application Manifests" documentation</a>
-    for more details).
-
-    @note Per-monitor DPI support is an experimental feature that is still in
-    development. It might not work correctly for some controls.
-
-    @beginEventTable{wxDPIChangedEvent}
-    @event{EVT_DPI_CHANGED(func)}
-        Process a @c wxEVT_DPI_CHANGED event.
-    @endEventTable
-
-    @since 3.1.3
-
-    @library{wxcore}
-    @category{events}
-
-    @see @ref overview_events
-*/
-class wxDPIChangedEvent : public wxEvent
-{
-public:
-    /**
-        Returns the old DPI.
-    */
-    wxSize GetOldDPI() const;
-
-    /**
-        Returns the new DPI.
-    */
-    wxSize GetNewDPI() const;
-
-    /**
-        Rescale a value in pixels to match the new DPI.
-
-        This is a convenience function to use in wxEVT_DPI_CHANGED event
-        handlers, as they often need to update some sizes to the new DPI.
-        It simply calls wxMulDivInt32() with new and old DPI values, but
-        is more readable and less error-prone.
-
-        For example, the returned value will be twice bigger than the original
-        one when switching from normal (96) DPI to high (2x, 192) DPI.
-
-        @since 3.1.6
-     */
-    wxSize Scale(wxSize sz) const;
-
-    /**
-        Rescale horizontal component to match the new DPI.
-
-        This is the same as Scale(), but for the horizontal component only.
-
-        @since 3.1.6
-     */
-    int ScaleX(int x) const;
-
-    /**
-        Rescale vertical component to match the new DPI.
-
-        This is the same as Scale(), but for the vertical component only.
-
-        @since 3.1.6
-     */
-    int ScaleY(int y) const;
-};
-
 
 
 class wxPaletteChangedEvent : public wxEvent
@@ -3516,7 +3087,7 @@ class wxQueryNewPaletteEvent : public wxEvent
 {
 public:
     wxQueryNewPaletteEvent(wxWindowID winid = 0);
-
+    
     void SetPaletteRealized(bool realized);
     bool GetPaletteRealized();
 };
@@ -3736,7 +3307,7 @@ public:
                 wxHelpEvent::Origin origin = Origin_Unknown);
 
     /**
-        Returns the origin of the help event which is one of the wxHelpEvent::Origin
+        Returns the origin of the help event which is one of the ::wxHelpEventOrigin
         values.
 
         The application may handle events generated using the keyboard or mouse
@@ -3789,7 +3360,7 @@ public:
     event does not happen).
 
     In short, the EVT_SCROLL_CHANGED event is triggered when scrolling/ moving has finished
-    independently of the way it had started. Please see the @ref page_samples_widgets ("Slider" page)
+    independently of the way it had started. Please see the widgets sample ("Slider" page)
     to see the difference between EVT_SCROLL_THUMBRELEASE and EVT_SCROLL_CHANGED in action.
 
     @remarks
@@ -3871,259 +3442,10 @@ public:
     */
     int GetPosition() const;
 
-
+    
     void SetOrientation(int orient);
-    void SetPosition(int pos);
+    void SetPosition(int pos);    
 };
-
-
-
-/** @class wxGestureEvent
-    This is the base class for all supported gesture events.
-
-    @note Gesture events are not generated by default, you must call
-          wxWindow::EnableTouchEvents() with the appropriate parameter to
-          request their generation.
-
-    @library{wxcore}
-    @category{events}
-
-    @see wxPanGestureEvent, wxZoomGestureEvent, wxRotateGestureEvent
-
-    @since 3.1.1
-*/
-class wxGestureEvent : public wxEvent
-{
-public:
-    /**
-        Constructor.
-    */
-    wxGestureEvent(wxWindowID winid = 0, wxEventType type = wxEVT_NULL);
-
-    /**
-        Returns the position where the event took effect, in client coordinates: position of Pan event,
-        center of zoom for Zoom event, center of rotation for Rotate event, center of box formed by 2 fingers
-        for Two Finger Tap event and position of the pressed finger for Press and Tap Event.
-    */
-    const wxPoint& GetPosition() const;
-
-    /**
-        Returns true if the event was the first in a gesture sequence.
-    */
-    bool IsGestureStart() const;
-
-    /**
-        Returns true if the event was the last in a gesture sequence.
-    */
-    bool IsGestureEnd() const;
-
-    /**
-        Sets the position where the event took effect, in client coordinates: position of Pan event,
-        center of zoom for Zoom event, center of rotation for Rotate event.
-    */
-    void SetPosition(const wxPoint& pos);
-
-    /**
-        Sets the event to be the first in a gesture sequence.
-    */
-    void SetGestureStart(bool isStart = true);
-
-    /**
-        Sets the event to be the last in a gesture sequence.
-    */
-    void SetGestureEnd(bool isEnd = true);
-};
-
-
-/** @class wxPanGestureEvent
-
-    This event is generated when the user moves a finger on the surface.
-
-    wxGTK also generates this event during mouse dragging (mouse motion while a left mouse button is depressed).
-
-    Note that OSX requires the primary mouse button to be pressed while performing the finger movement.
-
-    @beginEventTable{wxPanGestureEvent}
-    @event{EVT_GESTURE_PAN(id, func)}
-        Process a @c wxEVT_GESTURE_PAN.
-    @endEventTable
-
-    @library{wxcore}
-    @category{events}
-
-    @since 3.1.1
-*/
-class wxPanGestureEvent : public wxGestureEvent
-{
-public:
-    /**
-        Constructor.
-    */
-    wxPanGestureEvent(wxWindowID winid = 0);
-
-    /**
-        Returns the distance covered since the previous panning event.
-    */
-    wxPoint GetDelta() const;
-
-    /**
-        Sets the distance covered since the previous panning event.
-    */
-    void SetDelta(const wxPoint& delta);
-};
-
-
-/** @class wxZoomGestureEvent
-
-    This event is generated when two fingers pinch the surface to zoom in or out.
-
-    @beginEventTable{wxZoomGestureEvent}
-    @event{EVT_GESTURE_ZOOM(id, func)}
-        Process a @c wxEVT_GESTURE_ZOOM.
-    @endEventTable
-
-    @library{wxcore}
-    @category{events}
-
-    @since 3.1.1
-*/
-class wxZoomGestureEvent : public wxGestureEvent
-{
-public:
-    /**
-        Constructor.
-    */
-    wxZoomGestureEvent(wxWindowID windid = 0);
-
-    /**
-        Returns the zoom Factor since the gesture started. Hence, starting of the gesture
-        is considered as 1:1. A value greater than 1.0 means we should enlarge
-        (or zoom in), a value less than 1.0 means we should shrink (or zoom out).
-    */
-    double GetZoomFactor() const;
-
-    /**
-        Sets the zoom Factor.
-    */
-    void SetZoomFactor(double zoomFactor);
-};
-
-
-/** @class wxRotateGestureEvent
-
-    This event is generated when two fingers move in opposite directions on the surface.
-
-    @beginEventTable{wxRotateGestureEvent}
-    @event{EVT_GESTURE_ROTATE(id, func)}
-        Process a @c wxEVT_GESTURE_ROTATE.
-    @endEventTable
-
-    @library{wxcore}
-    @category{events}
-
-    @since 3.1.1
-*/
-class wxRotateGestureEvent : public wxGestureEvent
-{
-public:
-    /**
-        Constructor.
-    */
-    wxRotateGestureEvent(wxWindowID windid = 0);
-
-    /**
-        Returns the total angle of rotation in radians in clockwise direction since the
-        gesture was first started i.e. when IsGestureStart() returned true. This value is always
-        greater than or equal to zero.
-    */
-    double GetRotationAngle() const;
-
-     /**
-        Sets the total angle of rotation in radians in clockwise direction since the
-        gesture was first started i.e. when IsGestureStart() returned true. This value is always
-        greater than or equal to zero.
-    */
-    void SetRotationAngle(double rotationAngle);
-};
-
-/** @class wxTwoFingerTapEvent
-
-    This event is generated when two fingers touch the surface at the same time.
-
-    @beginEventTable{wxTwoFingerTapEvent}
-    @event{EVT_TWO_FINGER_TAP(id, func)}
-        Process a @c wxEVT_TWO_FINGER_TAP.
-    @endEventTable
-
-    @library{wxcore}
-    @category{events}
-
-    @since 3.1.1
-*/
-class wxTwoFingerTapEvent : public wxGestureEvent
-{
-public:
-    /**
-        Constructor.
-    */
-    wxTwoFingerTapEvent(wxWindowID windid = 0);
-};
-
-/** @class wxLongPressEvent
-
-    This event is generated when one finger touches the surface and remains stationary.
-
-    Note that currently it is only generated under wxGTK and wxOSX.
-
-    wxGTK also generates this event when left mouse button is being pressed for some minimum duration of time.
-
-    @beginEventTable{wxLongPressEvent}
-    @event{EVT_LONG_PRESS(id, func)}
-        Process a @c wxEVT_LONG_PRESS.
-    @endEventTable
-
-    @library{wxcore}
-    @category{events}
-
-    @since 3.1.1
-*/
-class wxLongPressEvent : public wxGestureEvent
-{
-public:
-    /**
-        Constructor.
-    */
-    wxLongPressEvent(wxWindowID windid = 0);
-};
-
-/** @class wxPressAndTapEvent
-
-    This event is generated when the user press the surface with one finger and taps with another.
-
-    Note that once started the event will also be generated when the finger that was pressed moves on surface.
-
-    @beginEventTable{wxPressAndTapEvent}
-    @event{EVT_PRESS_AND_TAP(id, func)}
-        Process a @c wxEVT_PRESS_AND_TAP.
-    @endEventTable
-
-    @library{wxcore}
-    @category{events}
-
-    @since 3.1.1
-*/
-class wxPressAndTapEvent : public wxGestureEvent
-{
-public:
-    /**
-        Constructor.
-    */
-    wxPressAndTapEvent(wxWindowID windid = 0);
-};
-
-#endif // wxUSE_GUI
-
-#if wxUSE_BASE
 
 /**
     See wxIdleEvent::SetMode() for more info.
@@ -4252,9 +3574,7 @@ public:
     static void SetMode(wxIdleMode mode);
 };
 
-#endif // wxUSE_BASE
 
-#if wxUSE_GUI
 
 /**
     @class wxInitDialogEvent
@@ -4397,8 +3717,7 @@ public:
 
     /**
         Sets the flags for this event.
-        The @a flags can be a combination of the
-        wxNavigationKeyEvent::wxNavigationKeyEventFlags values.
+        The @a flags can be a combination of the ::wxNavigationKeyEventFlags values.
     */
     void SetFlags(long flags);
 
@@ -4418,7 +3737,7 @@ public:
 /**
     @class wxMouseCaptureChangedEvent
 
-    A mouse capture changed event is sent to a window that loses its
+    An mouse capture changed event is sent to a window that loses its
     mouse capture. This is called even if wxWindow::ReleaseMouse
     was called by the application code. Handling this event allows
     an application to cater for unexpected capture releases which
@@ -4498,9 +3817,6 @@ public:
         }
     @endcode
 
-    See also @c samples/dialogs for a full example of interrupting closing an
-    application when there are e.g. unsaved files.
-
     The EVT_END_SESSION event is slightly different as it is sent by the system
     when the user session is ending (e.g. because of log out or shutdown) and
     so all windows are being forcefully closed. At least under MSW, after the
@@ -4569,11 +3885,6 @@ public:
         You can only veto a shutdown if CanVeto() returns @true.
     */
     void Veto(bool veto = true);
-
-    /**
-       Returns whether the Veto flag was set.
-    */
-    bool GetVeto() const;
 };
 
 
@@ -4585,31 +3896,15 @@ public:
     these do not include menu command events, which are
     handled using wxCommandEvent objects.
 
-    Events of this class are generated by both menus that are part of a
-    wxMenuBar, attached to wxFrame, and popup menus shown by
-    wxWindow::PopupMenu(). They are sent to the following objects until one of
-    them handles the event:
-        -# The menu object itself, as returned by GetMenu(), if any.
-        -# The wxMenuBar to which this menu is attached, if any.
-        -# The window associated with the menu, e.g. the one calling
-        PopupMenu() for the popup menus.
-        -# The top level parent of that window if it's different from the
-        window itself.
-
-    This is similar to command events generated by the menu items, but, unlike
-    them, wxMenuEvent are only sent to the window itself and its top level
-    parent but not any intermediate windows in the hierarchy.
-
-    The default handler for @c wxEVT_MENU_HIGHLIGHT in wxFrame displays help
-    text in the status bar, see wxFrame::SetStatusBarPane().
+    The default handler for @c wxEVT_MENU_HIGHLIGHT displays help
+    text in the first field of the status bar.
 
     @beginEventTable{wxMenuEvent}
     @event{EVT_MENU_OPEN(func)}
         A menu is about to be opened. On Windows, this is only sent once for each
         navigation of the menubar (up until all menus have closed).
     @event{EVT_MENU_CLOSE(func)}
-        A menu has been just closed. Notice that this event is currently being
-        sent before the menu selection (@c wxEVT_MENU) event, if any.
+        A menu has been just closed.
     @event{EVT_MENU_HIGHLIGHT(id, func)}
         The menu item with the specified id has been highlighted: used to show
         help prompts in the status bar by wxFrame
@@ -4631,16 +3926,12 @@ public:
     wxMenuEvent(wxEventType type = wxEVT_NULL, int id = 0, wxMenu* menu = NULL);
 
     /**
-        Returns the menu which is being opened or closed, or the menu containing
-        the highlighted item.
+        Returns the menu which is being opened or closed.
 
-        Note that the returned value can be @NULL if the menu being opened
-        doesn't have a corresponding wxMenu, e.g. this happens when opening the
-        system menu in wxMSW port.
+        This method can only be used with the @c OPEN and @c CLOSE events.
 
-        @remarks Since 3.1.3 this function can be used with @c OPEN, @c CLOSE
-        and @c HIGHLIGHT events. Before 3.1.3, this method can only be used
-        with the @c OPEN and @c CLOSE events.
+        The returned value is never @NULL in the ports implementing this
+        function, which currently includes all the major ones.
     */
     wxMenu* GetMenu() const;
 
@@ -4668,6 +3959,8 @@ public:
     the current platform and/or window manager).
     Notice that the event is not triggered when the application is iconized
     (minimized) or restored under wxMSW.
+
+    @onlyfor{wxmsw,wxgtk,wxos2}
 
     @beginEventTable{wxShowEvent}
     @event{EVT_SHOW(func)}
@@ -4713,6 +4006,10 @@ public:
 
     An event being sent when the frame is iconized (minimized) or restored.
 
+    Currently only wxMSW and wxGTK generate such events.
+
+    @onlyfor{wxmsw,wxgtk}
+
     @beginEventTable{wxIconizeEvent}
     @event{EVT_ICONIZE(func)}
         Process a @c wxEVT_ICONIZE event.
@@ -4749,11 +4046,9 @@ public:
 /**
     @class wxMoveEvent
 
-    A move event holds information about window position change.
+    A move event holds information about wxTopLevelWindow move change events.
 
-    These events are currently generated for top level (see wxTopLevelWindow)
-    windows in all ports, but are not generated for the child windows in
-    wxGTK.
+    These events are currently only generated by wxMSW port.
 
     @beginEventTable{wxMoveEvent}
     @event{EVT_MOVE(func)}
@@ -4789,7 +4084,7 @@ public:
 
     wxRect GetRect() const;
     void SetRect(const wxRect& rect);
-    void SetPosition(const wxPoint& pos);
+    void SetPosition(const wxPoint& pos);    
 };
 
 
@@ -4813,7 +4108,7 @@ public:
     @b Important : Sizers ( see @ref overview_sizer ) rely on size events to function
     correctly. Therefore, in a sizer-based layout, do not forget to call Skip on all
     size events you catch (and don't catch size events at all when you don't need to).
-
+ 
     @beginEventTable{wxSizeEvent}
     @event{EVT_SIZE(func)}
         Process a @c wxEVT_SIZE event.
@@ -4867,7 +4162,7 @@ public:
     @library{wxcore}
     @category{events}
 
-    @see ::wxSetCursor, wxWindow::SetCursor
+    @see ::wxSetCursor, wxWindow::wxSetCursor
 */
 class wxSetCursorEvent : public wxEvent
 {
@@ -4907,7 +4202,7 @@ public:
     void SetCursor(const wxCursor& cursor);
 };
 
-#endif // wxUSE_GUI
+
 
 // ============================================================================
 // Global functions/macros
@@ -4916,16 +4211,14 @@ public:
 /** @addtogroup group_funcmacro_events */
 //@{
 
-#if wxUSE_BASE
-
 /**
     A value uniquely identifying the type of the event.
 
     The values of this type should only be created using wxNewEventType().
 
-    See the macro wxDEFINE_EVENT_TYPE() for more information.
+    See the macro DEFINE_EVENT_TYPE() for more info.
 
-    @see @ref overview_events
+    @see @ref overview_events_introduction
 */
 typedef int wxEventType;
 
@@ -4961,7 +4254,8 @@ wxEventType wxNewEventType();
 
     @see wxDECLARE_EVENT(), @ref overview_events_custom
  */
-#define wxDEFINE_EVENT(name, cls)
+#define wxDEFINE_EVENT(name, cls) \
+    const wxEventTypeTag< cls > name(wxNewEventType())
 
 /**
     Declares a custom event type.
@@ -4981,7 +4275,8 @@ wxEventType wxNewEventType();
     wxDECLARE_EVENT(MY_CUSTOM_EVENT, MyCustomEvent);
     @endcode
  */
-#define wxDECLARE_EVENT(name, cls)
+#define wxDECLARE_EVENT(name, cls) \
+        wxDECLARE_EXPORTED_EVENT(wxEMPTY_PARAMETER_VALUE, name, cls)
 
 /**
     Variant of wxDECLARE_EVENT() used for event types defined inside a shared
@@ -4989,24 +4284,27 @@ wxEventType wxNewEventType();
 
     This is mostly used by wxWidgets internally, e.g.
     @code
-    wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_BUTTON, wxCommandEvent);
+    wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEvent)
     @endcode
  */
-#define wxDECLARE_EXPORTED_EVENT( expdecl, name, cls )
+#define wxDECLARE_EXPORTED_EVENT( expdecl, name, cls ) \
+    extern const expdecl wxEventTypeTag< cls > name;
 
 /**
     Helper macro for definition of custom event table macros.
 
-    This macro casts the given event handler to the given function type using
-    @c static_cast to ensure that the actual handler is indeed compatible with
-    it, before (unsafely) casting it to a generic function pointer used by the
-    event tables.
+    This macro must only be used if wxEVENTS_COMPATIBILITY_2_8 is 1, otherwise
+    it is better and more clear to just use the address of the function
+    directly as this is all this macro does in this case. However it needs to
+    explicitly cast @a func to @a functype, which is the type of wxEvtHandler
+    member function taking the custom event argument when
+    wxEVENTS_COMPATIBILITY_2_8 is 0.
 
-    See wx__DECLARE_EVT1 for an example of use.
+    See wx__DECLARE_EVT0 for an example of use.
 
     @see @ref overview_events_custom_ownclass
  */
-#define wxEVENT_HANDLER_CAST(functype, func)
+#define wxEVENT_HANDLER_CAST(functype, func) (&func)
 
 /**
     This macro is used to define event table macros for handling custom
@@ -5040,7 +4338,8 @@ wxEventType wxNewEventType();
     @param fn
         The event handler method.
  */
-#define wx__DECLARE_EVT1(evt, id, fn)
+#define wx__DECLARE_EVT1(evt, id, fn) \
+    wx__DECLARE_EVT2(evt, id, wxID_ANY, fn)
 
 /**
     Generalized version of the wx__DECLARE_EVT1() macro taking a range of
@@ -5048,14 +4347,16 @@ wxEventType wxNewEventType();
     Argument @a id1 is the first identifier of the range, @a id2 is the
     second identifier of the range.
 */
-#define wx__DECLARE_EVT2(evt, id1, id2, fn)
+#define wx__DECLARE_EVT2(evt, id1, id2, fn) \
+    DECLARE_EVENT_TABLE_ENTRY(evt, id1, id2, fn, NULL),
 
 /**
     Simplified version of the wx__DECLARE_EVT1() macro, to be used when the
     event type must be handled regardless of the ID associated with the
     specific event instances.
 */
-#define wx__DECLARE_EVT0(evt, fn)
+#define wx__DECLARE_EVT0(evt, fn) \
+    wx__DECLARE_EVT1(evt, wxID_ANY, fn)
 
 /**
     Use this macro inside a class declaration to declare a @e static event table
@@ -5064,7 +4365,7 @@ wxEventType wxNewEventType();
     In the implementation file you'll need to use the wxBEGIN_EVENT_TABLE()
     and the wxEND_EVENT_TABLE() macros, plus some additional @c EVT_xxx macro
     to capture events.
-
+    
     Note that this macro requires a final semicolon.
 
     @see @ref overview_events_eventtables
@@ -5121,28 +4422,26 @@ void wxPostEvent(wxEvtHandler* dest, const wxEvent& event);
  */
 void wxQueueEvent(wxEvtHandler* dest, wxEvent *event);
 
-#endif // wxUSE_BASE
 
-#if wxUSE_GUI
 
-wxEventType wxEVT_BUTTON;
-wxEventType wxEVT_CHECKBOX;
-wxEventType wxEVT_CHOICE;
-wxEventType wxEVT_LISTBOX;
-wxEventType wxEVT_LISTBOX_DCLICK;
-wxEventType wxEVT_CHECKLISTBOX;
-wxEventType wxEVT_MENU;
-wxEventType wxEVT_SLIDER;
-wxEventType wxEVT_RADIOBOX;
-wxEventType wxEVT_RADIOBUTTON;
-wxEventType wxEVT_SCROLLBAR;
-wxEventType wxEVT_VLBOX;
-wxEventType wxEVT_COMBOBOX;
-wxEventType wxEVT_TOOL_RCLICKED;
-wxEventType wxEVT_TOOL_DROPDOWN;
-wxEventType wxEVT_TOOL_ENTER;
-wxEventType wxEVT_COMBOBOX_DROPDOWN;
-wxEventType wxEVT_COMBOBOX_CLOSEUP;
+wxEventType wxEVT_COMMAND_BUTTON_CLICKED;
+wxEventType wxEVT_COMMAND_CHECKBOX_CLICKED;
+wxEventType wxEVT_COMMAND_CHOICE_SELECTED;
+wxEventType wxEVT_COMMAND_LISTBOX_SELECTED;
+wxEventType wxEVT_COMMAND_LISTBOX_DOUBLECLICKED;
+wxEventType wxEVT_COMMAND_CHECKLISTBOX_TOGGLED;
+wxEventType wxEVT_COMMAND_MENU_SELECTED;
+wxEventType wxEVT_COMMAND_SLIDER_UPDATED;
+wxEventType wxEVT_COMMAND_RADIOBOX_SELECTED;
+wxEventType wxEVT_COMMAND_RADIOBUTTON_SELECTED;
+wxEventType wxEVT_COMMAND_SCROLLBAR_UPDATED;
+wxEventType wxEVT_COMMAND_VLBOX_SELECTED;
+wxEventType wxEVT_COMMAND_COMBOBOX_SELECTED;
+wxEventType wxEVT_COMMAND_TOOL_RCLICKED;
+wxEventType wxEVT_COMMAND_TOOL_DROPDOWN_CLICKED;
+wxEventType wxEVT_COMMAND_TOOL_ENTER;
+wxEventType wxEVT_COMMAND_COMBOBOX_DROPDOWN;
+wxEventType wxEVT_COMMAND_COMBOBOX_CLOSEUP;
 wxEventType wxEVT_THREAD;
 wxEventType wxEVT_LEFT_DOWN;
 wxEventType wxEVT_LEFT_UP;
@@ -5160,7 +4459,6 @@ wxEventType wxEVT_SET_FOCUS;
 wxEventType wxEVT_KILL_FOCUS;
 wxEventType wxEVT_CHILD_FOCUS;
 wxEventType wxEVT_MOUSEWHEEL;
-wxEventType wxEVT_MAGNIFY;
 wxEventType wxEVT_AUX1_DOWN;
 wxEventType wxEVT_AUX1_UP;
 wxEventType wxEVT_AUX1_DCLICK;
@@ -5194,12 +4492,6 @@ wxEventType wxEVT_SCROLLWIN_PAGEUP;
 wxEventType wxEVT_SCROLLWIN_PAGEDOWN;
 wxEventType wxEVT_SCROLLWIN_THUMBTRACK;
 wxEventType wxEVT_SCROLLWIN_THUMBRELEASE;
-wxEventType wxEVT_GESTURE_PAN;
-wxEventType wxEVT_GESTURE_ZOOM;
-wxEventType wxEVT_GESTURE_ROTATE;
-wxEventType wxEVT_TWO_FINGER_TAP;
-wxEventType wxEVT_LONG_PRESS;
-wxEventType wxEVT_PRESS_AND_TAP;
 wxEventType wxEVT_SIZE;
 wxEventType wxEVT_MOVE;
 wxEventType wxEVT_CLOSE_WINDOW;
@@ -5223,7 +4515,6 @@ wxEventType wxEVT_MENU_HIGHLIGHT;
 wxEventType wxEVT_CONTEXT_MENU;
 wxEventType wxEVT_SYS_COLOUR_CHANGED;
 wxEventType wxEVT_DISPLAY_CHANGED;
-wxEventType wxEVT_DPI_CHANGED;
 wxEventType wxEVT_QUERY_NEW_PALETTE;
 wxEventType wxEVT_PALETTE_CHANGED;
 wxEventType wxEVT_JOY_BUTTON_DOWN;
@@ -5239,9 +4530,9 @@ wxEventType wxEVT_MOVING;
 wxEventType wxEVT_MOVE_START;
 wxEventType wxEVT_MOVE_END;
 wxEventType wxEVT_HIBERNATE;
-wxEventType wxEVT_TEXT_COPY;
-wxEventType wxEVT_TEXT_CUT;
-wxEventType wxEVT_TEXT_PASTE;
+wxEventType wxEVT_COMMAND_TEXT_COPY;
+wxEventType wxEVT_COMMAND_TEXT_CUT;
+wxEventType wxEVT_COMMAND_TEXT_PASTE;
 wxEventType wxEVT_COMMAND_LEFT_CLICK;
 wxEventType wxEVT_COMMAND_LEFT_DCLICK;
 wxEventType wxEVT_COMMAND_RIGHT_CLICK;
@@ -5251,9 +4542,11 @@ wxEventType wxEVT_COMMAND_KILL_FOCUS;
 wxEventType wxEVT_COMMAND_ENTER;
 wxEventType wxEVT_HELP;
 wxEventType wxEVT_DETAILED_HELP;
-wxEventType wxEVT_TOOL;
+wxEventType wxEVT_COMMAND_TEXT_UPDATED;
+wxEventType wxEVT_COMMAND_TOOL_CLICKED;
 wxEventType wxEVT_WINDOW_MODAL_DIALOG_CLOSED;
 
-#endif // wxUSE_GUI
+
 
 //@}
+

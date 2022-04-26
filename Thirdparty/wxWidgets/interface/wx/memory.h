@@ -2,6 +2,7 @@
 // Name:        memory.h
 // Purpose:     interface of wxDebugContext
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 

@@ -3,7 +3,8 @@
 // Purpose:     generic wxAboutBox() implementation
 // Author:      Vadim Zeitlin
 // Created:     2006-10-07
-// Copyright:   (c) 2006 Vadim Zeitlin <vadim@wxwidgets.org>
+// RCS-ID:      $Id$
+// Copyright:   (c) 2006 Vadim Zeitlin <vadim@wxwindows.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -16,7 +17,7 @@
 
 #include "wx/dialog.h"
 
-class WXDLLIMPEXP_FWD_CORE wxAboutDialogInfo;
+class WXDLLIMPEXP_FWD_ADV wxAboutDialogInfo;
 class WXDLLIMPEXP_FWD_CORE wxSizer;
 class WXDLLIMPEXP_FWD_CORE wxSizerFlags;
 
@@ -34,7 +35,7 @@ class WXDLLIMPEXP_FWD_CORE wxSizerFlags;
 // wxGenericAboutDialog: generic "About" dialog implementation
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxGenericAboutDialog : public wxDialog
+class WXDLLIMPEXP_ADV wxGenericAboutDialog : public wxDialog
 {
 public:
     // constructors and Create() method
@@ -94,7 +95,7 @@ private:
 
 // unlike wxAboutBox which can show either the native or generic about dialog,
 // this function always shows the generic one
-WXDLLIMPEXP_CORE void wxGenericAboutBox(const wxAboutDialogInfo& info, wxWindow* parent = NULL);
+WXDLLIMPEXP_ADV void wxGenericAboutBox(const wxAboutDialogInfo& info, wxWindow* parent = NULL);
 
 #endif // wxUSE_ABOUTDLG
 

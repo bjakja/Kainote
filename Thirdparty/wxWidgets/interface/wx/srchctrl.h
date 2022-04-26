@@ -2,6 +2,7 @@
 // Name:        srchctrl.h
 // Purpose:     interface of wxSearchCtrl
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -11,10 +12,11 @@
     A search control is a composite control with a search button, a text
     control, and a cancel button.
 
-    This control is implemented natively under macOS and GTK 3.6 or later and
-    generically for all the other platforms.
-
     @beginStyleTable
+    @style{wxTE_PROCESS_ENTER}
+           The control will generate the event @c wxEVT_COMMAND_TEXT_ENTER
+           (otherwise pressing Enter key is either processed internally by the
+           control or used for navigation between dialog controls).
     @style{wxTE_PROCESS_TAB}
            The control will receive @c wxEVT_CHAR events for TAB pressed -
            normally, TAB is used for passing to the next control in a dialog
@@ -38,27 +40,24 @@
     @endStyleTable
 
     @beginEventEmissionTable{wxCommandEvent}
-    To react to the changes in the control contents, use wxEVT_TEXT event, just
-    as you would do with wxTextCtrl. However it is recommended to use
-    wxEVT_SEARCH to actually start searching to avoid doing it too soon, while
-    the user is still typing (note that wxEVT_SEARCH is also triggered by
-    pressing Enter in the control).
-    @event{EVT_SEARCH(id, func)}
-        Respond to a @c wxEVT_SEARCH event, generated when the
+    To retrieve actual search queries, use EVT_TEXT and EVT_TEXT_ENTER events,
+    just as you would with wxTextCtrl.
+    @event{EVT_SEARCHCTRL_SEARCH_BTN(id, func)}
+        Respond to a @c wxEVT_SEARCHCTRL_SEARCH_BTN event, generated when the
         search button is clicked. Note that this does not initiate a search on
         its own, you need to perform the appropriate action in your event
         handler. You may use @code event.GetString() @endcode to retrieve the
         string to search for in the event handler code.
-    @event{EVT_SEARCH_CANCEL(id, func)}
-        Respond to a @c wxEVT_SEARCH_CANCEL event, generated when the
+    @event{EVT_SEARCHCTRL_CANCEL_BTN(id, func)}
+        Respond to a @c wxEVT_SEARCHCTRL_CANCEL_BTN event, generated when the
         cancel button is clicked.
     @endEventTable
 
     @library{wxcore}
     @category{ctrl}
-    @appearance{searchctrl}
+    @appearance{searchctrl.png}
 
-    @see wxTextCtrl
+    @see wxTextCtrl::Create, wxValidator
 */
 class wxSearchCtrl : public wxTextCtrl
 {
@@ -103,7 +102,7 @@ public:
     */
     virtual ~wxSearchCtrl();
 
-
+    
     bool Create(wxWindow* parent, wxWindowID id,
                  const wxString& value = wxEmptyString,
                  const wxPoint& pos = wxDefaultPosition,
@@ -122,6 +121,8 @@ public:
         Returns the search button visibility value.
         If there is a menu attached, the search button will be visible regardless of
         the search button visibility value.
+
+        This always returns @false in Mac OS X v10.3
     */
     virtual bool IsSearchButtonVisible() const;
 
@@ -129,7 +130,7 @@ public:
        Returns the cancel button's visibility state.
     */
     virtual bool IsCancelButtonVisible() const;
-
+    
     /**
         Sets the search control's menu object.
         If there is already a menu associated with the search control it is deleted.
@@ -141,21 +142,15 @@ public:
 
     /**
         Shows or hides the cancel button.
-
-        Note that this function does nothing in the native GTK version of the
-        control: "Cancel" button is always shown automatically if the control
-        is not empty and hidden if it is empty.
     */
     virtual void ShowCancelButton(bool show);
 
     /**
         Sets the search button visibility value on the search control.
-
         If there is a menu attached, the search button will be visible regardless of
         the search button visibility value.
 
-        Note that this function does nothing in the native GTK version of the
-        control: "Search" button is always shown there.
+        This has no effect in Mac OS X v10.3
     */
     virtual void ShowSearchButton(bool show);
 
@@ -172,5 +167,5 @@ public:
 };
 
 
-wxEventType  wxEVT_SEARCH_CANCEL;
-wxEventType  wxEVT_SEARCH;
+wxEventType  wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN;
+wxEventType  wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN;

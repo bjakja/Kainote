@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -241,7 +242,7 @@ void wxButtonCallback (Widget w, XtPointer clientData, XtPointer WXUNUSED(ptr))
         return;
 
     wxButton *item = (wxButton *) clientData;
-    wxCommandEvent event (wxEVT_BUTTON, item->GetId());
+    wxCommandEvent event (wxEVT_COMMAND_BUTTON_CLICKED, item->GetId());
     event.SetEventObject(item);
     item->ProcessCommand (event);
 }

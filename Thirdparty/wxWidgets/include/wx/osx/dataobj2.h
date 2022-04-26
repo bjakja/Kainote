@@ -4,6 +4,7 @@
 // Author:      David Webster (adapted from Robert Roebling's gtk port
 // Modified by:
 // Created:     10/21/99
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998, 1999 Vadim Zeitlin, Robert Roebling
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -26,24 +27,24 @@ public:
     virtual ~wxBitmapDataObject();
 
     // override base class virtual to update PNG data too
-    virtual void SetBitmap(const wxBitmap& bitmap) wxOVERRIDE;
+    virtual void SetBitmap(const wxBitmap& bitmap);
 
     // implement base class pure virtuals
     // ----------------------------------
 
-    virtual size_t GetDataSize() const wxOVERRIDE;
-    virtual bool GetDataHere(void *buf) const wxOVERRIDE;
-    virtual bool SetData(size_t len, const void *buf) wxOVERRIDE;
+    virtual size_t GetDataSize() const ;
+    virtual bool GetDataHere(void *buf) const ;
+    virtual bool SetData(size_t len, const void *buf);
     // Must provide overloads to avoid hiding them (and warnings about it)
-    virtual size_t GetDataSize(const wxDataFormat&) const wxOVERRIDE
+    virtual size_t GetDataSize(const wxDataFormat&) const
     {
         return GetDataSize();
     }
-    virtual bool GetDataHere(const wxDataFormat&, void *buf) const wxOVERRIDE
+    virtual bool GetDataHere(const wxDataFormat&, void *buf) const
     {
         return GetDataHere(buf);
     }
-    virtual bool SetData(const wxDataFormat&, size_t len, const void *buf) wxOVERRIDE
+    virtual bool SetData(const wxDataFormat&, size_t len, const void *buf)
     {
         return SetData(len, buf);
     }
@@ -52,7 +53,8 @@ protected :
     void Init() ;
     void Clear() ;
 
-    CFDataRef m_pictData ;
+    void* m_pictHandle ;
+    bool m_pictCreated ;
 };
 
 // ----------------------------------------------------------------------------
@@ -67,19 +69,19 @@ public:
 
     void AddFile( const wxString &filename );
 
-    virtual size_t GetDataSize() const wxOVERRIDE;
-    virtual bool GetDataHere(void *buf) const wxOVERRIDE;
-    virtual bool SetData(size_t len, const void *buf) wxOVERRIDE;
+    virtual size_t GetDataSize() const;
+    virtual bool GetDataHere(void *buf) const;
+    virtual bool SetData(size_t len, const void *buf);
     // Must provide overloads to avoid hiding them (and warnings about it)
-    virtual size_t GetDataSize(const wxDataFormat&) const wxOVERRIDE
+    virtual size_t GetDataSize(const wxDataFormat&) const
     {
         return GetDataSize();
     }
-    virtual bool GetDataHere(const wxDataFormat&, void *buf) const wxOVERRIDE
+    virtual bool GetDataHere(const wxDataFormat&, void *buf) const
     {
         return GetDataHere(buf);
     }
-    virtual bool SetData(const wxDataFormat&, size_t len, const void *buf) wxOVERRIDE
+    virtual bool SetData(const wxDataFormat&, size_t len, const void *buf)
     {
         return SetData(len, buf);
     }

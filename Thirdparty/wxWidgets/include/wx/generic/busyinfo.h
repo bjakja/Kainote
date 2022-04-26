@@ -3,6 +3,7 @@
 // Purpose:     Information window (when app is busy)
 // Author:      Vaclav Slavik
 // Copyright:   (c) 1999 Vaclav Slavik
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -17,7 +18,6 @@
 
 class WXDLLIMPEXP_FWD_CORE wxFrame;
 class WXDLLIMPEXP_FWD_CORE wxWindow;
-class WXDLLIMPEXP_FWD_CORE wxControl;
 
 //--------------------------------------------------------------------------------
 // wxBusyInfo
@@ -28,26 +28,12 @@ class WXDLLIMPEXP_FWD_CORE wxControl;
 class WXDLLIMPEXP_CORE wxBusyInfo : public wxObject
 {
 public:
-    wxBusyInfo(const wxBusyInfoFlags& flags)
-    {
-        Init(flags);
-    }
-
-    wxBusyInfo(const wxString& message, wxWindow *parent = NULL)
-    {
-        Init(wxBusyInfoFlags().Parent(parent).Label(message));
-    }
-
-    void UpdateText(const wxString& str);
-    void UpdateLabel(const wxString& str);
+    wxBusyInfo(const wxString& message, wxWindow *parent = NULL);
 
     virtual ~wxBusyInfo();
 
 private:
-    void Init(const wxBusyInfoFlags& flags);
-
     wxFrame *m_InfoFrame;
-    wxControl *m_text;
 
     wxDECLARE_NO_COPY_CLASS(wxBusyInfo);
 };

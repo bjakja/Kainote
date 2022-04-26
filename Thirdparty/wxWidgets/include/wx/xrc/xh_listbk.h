@@ -9,22 +9,23 @@
 #ifndef _WX_XH_LISTBK_H_
 #define _WX_XH_LISTBK_H_
 
-#include "wx/xrc/xh_bookctrlbase.h"
+#include "wx/xrc/xmlres.h"
 
 #if wxUSE_XRC && wxUSE_LISTBOOK
 
 class WXDLLIMPEXP_FWD_CORE wxListbook;
 
-class WXDLLIMPEXP_XRC wxListbookXmlHandler : public wxBookCtrlXmlHandlerBase
+class WXDLLIMPEXP_XRC wxListbookXmlHandler : public wxXmlResourceHandler
 {
-    wxDECLARE_DYNAMIC_CLASS(wxListbookXmlHandler);
+    DECLARE_DYNAMIC_CLASS(wxListbookXmlHandler)
 
 public:
     wxListbookXmlHandler();
-    virtual wxObject *DoCreateResource() wxOVERRIDE;
-    virtual bool CanHandle(wxXmlNode *node) wxOVERRIDE;
+    virtual wxObject *DoCreateResource();
+    virtual bool CanHandle(wxXmlNode *node);
 
 private:
+    bool m_isInside;
     wxListbook *m_listbook;
 };
 

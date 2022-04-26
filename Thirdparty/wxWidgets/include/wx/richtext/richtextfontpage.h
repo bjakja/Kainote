@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     2006-10-02
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -26,8 +27,8 @@
  */
 
 ////@begin forward declarations
-class wxBoxSizer;
 class wxSpinButton;
+class wxBoxSizer;
 class wxRichTextFontListBox;
 class wxRichTextColourSwatchCtrl;
 class wxRichTextFontPreviewCtrl;
@@ -51,8 +52,8 @@ class wxRichTextFontPreviewCtrl;
 
 class WXDLLIMPEXP_RICHTEXT wxRichTextFontPage: public wxRichTextDialogPage
 {
-    wxDECLARE_DYNAMIC_CLASS(wxRichTextFontPage);
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_DYNAMIC_CLASS( wxRichTextFontPage )
+    DECLARE_EVENT_TABLE()
     DECLARE_HELP_PROVISION()
 
 public:
@@ -70,8 +71,8 @@ public:
     void CreateControls();
 
     /// Transfer data from/to window
-    virtual bool TransferDataFromWindow() wxOVERRIDE;
-    virtual bool TransferDataToWindow() wxOVERRIDE;
+    virtual bool TransferDataFromWindow();
+    virtual bool TransferDataToWindow();
 
     /// Updates the font preview
     void UpdatePreview();
@@ -81,15 +82,6 @@ public:
 
     /// Gets the attributes associated with the main formatting dialog
     wxRichTextAttr* GetAttributes();
-
-    /// Determines which text effect controls should be shown.
-    /// Currently only wxTEXT_ATTR_EFFECT_RTL and wxTEXT_ATTR_EFFECT_SUPPRESS_HYPHENATION may
-    /// be removed from the page. By default, these effects are not shown as they
-    /// have no effect in the editor.
-    static int GetAllowedTextEffects() { return sm_allowedTextEffects; }
-
-    /// Sets the allowed text effects in the page.
-    static void SetAllowedTextEffects(int allowed) { sm_allowedTextEffects = allowed; }
 
 ////@begin wxRichTextFontPage event handler declarations
 
@@ -150,7 +142,6 @@ public:
     static bool ShowToolTips();
 
 ////@begin wxRichTextFontPage member variables
-    wxBoxSizer* m_innerSizer;
     wxTextCtrl* m_faceTextCtrl;
     wxTextCtrl* m_sizeTextCtrl;
     wxSpinButton* m_fontSizeSpinButtons;
@@ -167,44 +158,36 @@ public:
     wxRichTextColourSwatchCtrl* m_bgColourCtrl;
     wxCheckBox* m_strikethroughCtrl;
     wxCheckBox* m_capitalsCtrl;
-    wxCheckBox* m_smallCapitalsCtrl;
     wxCheckBox* m_superscriptCtrl;
     wxCheckBox* m_subscriptCtrl;
-    wxBoxSizer* m_rtlParentSizer;
-    wxCheckBox* m_rtlCtrl;
-    wxCheckBox* m_suppressHyphenationCtrl;
     wxRichTextFontPreviewCtrl* m_previewCtrl;
     /// Control identifiers
     enum {
         ID_RICHTEXTFONTPAGE = 10000,
         ID_RICHTEXTFONTPAGE_FACETEXTCTRL = 10001,
-        ID_RICHTEXTFONTPAGE_SIZETEXTCTRL = 10002,
-        ID_RICHTEXTFONTPAGE_SPINBUTTONS = 10003,
-        ID_RICHTEXTFONTPAGE_SIZE_UNITS = 10004,
-        ID_RICHTEXTFONTPAGE_FACELISTBOX = 10005,
+        ID_RICHTEXTFONTPAGE_SIZETEXTCTRL = 10005,
+        ID_RICHTEXTFONTPAGE_SPINBUTTONS = 10018,
+        ID_RICHTEXTFONTPAGE_SIZE_UNITS = 10017,
+        ID_RICHTEXTFONTPAGE_FACELISTBOX = 10002,
         ID_RICHTEXTFONTPAGE_SIZELISTBOX = 10006,
         ID_RICHTEXTFONTPAGE_STYLECTRL = 10007,
-        ID_RICHTEXTFONTPAGE_WEIGHTCTRL = 10008,
-        ID_RICHTEXTFONTPAGE_UNDERLINING_CTRL = 10009,
-        ID_RICHTEXTFONTPAGE_COLOURCTRL_LABEL = 10010,
-        ID_RICHTEXTFONTPAGE_COLOURCTRL = 10011,
-        ID_RICHTEXTFONTPAGE_BGCOLOURCTRL_LABEL = 10012,
-        ID_RICHTEXTFONTPAGE_BGCOLOURCTRL = 10013,
-        ID_RICHTEXTFONTPAGE_STRIKETHROUGHCTRL = 10014,
-        ID_RICHTEXTFONTPAGE_CAPSCTRL = 10015,
-        ID_RICHTEXTFONTPAGE_SMALLCAPSCTRL = 10016,
-        ID_RICHTEXTFONTPAGE_SUPERSCRIPT = 10017,
-        ID_RICHTEXTFONTPAGE_SUBSCRIPT = 10018,
-        ID_RICHTEXTFONTPAGE_RIGHT_TO_LEFT = 10020,
-        ID_RICHTEXTFONTPAGE_SUBSCRIPT_SUPPRESS_HYPHENATION = 10021,
-        ID_RICHTEXTFONTPAGE_PREVIEWCTRL = 10019
+        ID_RICHTEXTFONTPAGE_WEIGHTCTRL = 10004,
+        ID_RICHTEXTFONTPAGE_UNDERLINING_CTRL = 10008,
+        ID_RICHTEXTFONTPAGE_COLOURCTRL_LABEL = 10015,
+        ID_RICHTEXTFONTPAGE_COLOURCTRL = 10009,
+        ID_RICHTEXTFONTPAGE_BGCOLOURCTRL_LABEL = 10016,
+        ID_RICHTEXTFONTPAGE_BGCOLOURCTRL = 10014,
+        ID_RICHTEXTFONTPAGE_STRIKETHROUGHCTRL = 10010,
+        ID_RICHTEXTFONTPAGE_CAPSCTRL = 10011,
+        ID_RICHTEXTFONTPAGE_SUPERSCRIPT = 10012,
+        ID_RICHTEXTFONTPAGE_SUBSCRIPT = 10013,
+        ID_RICHTEXTFONTPAGE_PREVIEWCTRL = 10003
     };
 ////@end wxRichTextFontPage member variables
 
     bool m_dontUpdate;
     bool m_colourPresent;
     bool m_bgColourPresent;
-    static int sm_allowedTextEffects;
 };
 
 #endif

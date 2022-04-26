@@ -4,6 +4,7 @@
 // Author:      Guilhem Lavaux
 // Modified by:
 // Created:     04/22/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Wolfram Gloger (1996, 1997); Guilhem Lavaux (1998)
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -164,7 +165,7 @@ void wxThread::OnExit()
     Join();
 }
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxThreadModule, wxModule);
+IMPLEMENT_DYNAMIC_CLASS(wxThreadModule, wxModule)
 
 bool wxThreadModule::OnInit()
 {

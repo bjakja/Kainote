@@ -3,6 +3,7 @@
 // Purpose:     mac carbon wxSearchCtrl class
 // Author:      Vince Harron
 // Created:     2006-02-19
+// RCS-ID:      $Id$
 // Copyright:   Vince Harron
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -27,7 +28,7 @@ public:
                const wxSize& size = wxDefaultSize,
                long style = 0,
                const wxValidator& validator = wxDefaultValidator,
-               const wxString& name = wxASCII_STR(wxSearchCtrlNameStr));
+               const wxString& name = wxSearchCtrlNameStr);
 
     virtual ~wxSearchCtrl();
 
@@ -37,51 +38,44 @@ public:
                 const wxSize& size = wxDefaultSize,
                 long style = 0,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxASCII_STR(wxSearchCtrlNameStr));
+                const wxString& name = wxSearchCtrlNameStr);
 
-#if wxUSE_MENUS
     // get/set search button menu
     // --------------------------
-    virtual void SetMenu( wxMenu* menu ) wxOVERRIDE;
-    virtual wxMenu* GetMenu() wxOVERRIDE;
-#endif  // wxUSE_MENUS
+    virtual void SetMenu( wxMenu* menu );
+    virtual wxMenu* GetMenu();
 
     // get/set search options
     // ----------------------
-    virtual void ShowSearchButton( bool show ) wxOVERRIDE;
-    virtual bool IsSearchButtonVisible() const wxOVERRIDE;
+    virtual void ShowSearchButton( bool show );
+    virtual bool IsSearchButtonVisible() const;
 
-    virtual void ShowCancelButton( bool show ) wxOVERRIDE;
-    virtual bool IsCancelButtonVisible() const wxOVERRIDE;
+    virtual void ShowCancelButton( bool show );
+    virtual bool IsCancelButtonVisible() const;
 
-    virtual void SetDescriptiveText(const wxString& text) wxOVERRIDE;
-    virtual wxString GetDescriptiveText() const wxOVERRIDE;
+    // TODO: In 2.9 these should probably be virtual, and declared in the base class...
+    void        SetDescriptiveText(const wxString& text);
+    wxString    GetDescriptiveText() const;
 
     virtual bool    HandleSearchFieldSearchHit() ;
     virtual bool    HandleSearchFieldCancelHit() ;
 
     wxSearchWidgetImpl * GetSearchPeer() const;
 
-#if wxUSE_MENUS
-    virtual void OSXAfterMenuEvent() wxOVERRIDE;
-#endif  // wxUSE_MENUS
-
 protected:
 
-    wxSize DoGetBestSize() const wxOVERRIDE;
+    wxSize DoGetBestSize() const;
 
     void Init();
 
-#if wxUSE_MENUS
     wxMenu *m_menu;
-#endif  // wxUSE_MENUS
 
     wxString m_descriptiveText;
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxSearchCtrl);
+    DECLARE_DYNAMIC_CLASS(wxSearchCtrl)
 
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
 };
 
 #endif // wxUSE_SEARCHCTRL

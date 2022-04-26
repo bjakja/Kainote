@@ -3,6 +3,7 @@
 // Purpose:     XML resource handler for wxTimePickerCtrl
 // Author:      Vadim Zeitlin
 // Created:     2011-09-22
+// RCS-ID:      $Id$
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -10,13 +11,16 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_XRC && wxUSE_TIMEPICKCTRL
 
 #include "wx/xrc/xh_timectrl.h"
 #include "wx/timectrl.h"
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxTimeCtrlXmlHandler, wxXmlResourceHandler);
+IMPLEMENT_DYNAMIC_CLASS(wxTimeCtrlXmlHandler, wxXmlResourceHandler)
 
 wxTimeCtrlXmlHandler::wxTimeCtrlXmlHandler()
 {

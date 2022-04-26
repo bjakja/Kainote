@@ -2,6 +2,7 @@
 // Name:        wx/gtk/dcscreen.h
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -22,12 +23,12 @@ public:
     wxScreenDCImpl( wxScreenDC *owner );
     ~wxScreenDCImpl();
 
-    virtual void DoGetSize(int *width, int *height) const wxOVERRIDE;
+    virtual void DoGetSize(int *width, int *height) const;
 
-private:
+protected:
     void Init();
 
-    wxDECLARE_ABSTRACT_CLASS(wxScreenDCImpl);
+    DECLARE_ABSTRACT_CLASS(wxScreenDCImpl)
 };
 
 #endif // _WX_GTKDCSCREEN_H_

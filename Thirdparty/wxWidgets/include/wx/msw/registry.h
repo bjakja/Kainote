@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     03.04.1998
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -11,7 +12,7 @@
 #ifndef _WX_MSW_REGISTRY_H_
 #define _WX_MSW_REGISTRY_H_
 
-#include "wx\defs.h"
+#include "wx/defs.h"
 
 #if wxUSE_REGKEY
 
@@ -42,8 +43,7 @@ public:
     Type_Multi_String,               // Multiple Unicode strings
     Type_Resource_list,              // Resource list in the resource map
     Type_Full_resource_descriptor,   // Resource list in the hardware description
-    Type_Resource_requirements_list, // ???
-    Type_Qword                       // 64-bit number
+    Type_Resource_requirements_list  // ???
   };
 
   // predefined registry keys
@@ -53,9 +53,9 @@ public:
     HKCU,       // current user
     HKLM,       // local machine
     HKUSR,      // users
-    HKPD,       // (obsolete under XP and later)
+    HKPD,       // performance data (WinNT/2K only)
     HKCC,       // current config
-    HKDD,       // (obsolete under XP and later)
+    HKDD,       // dynamic data (Win95/98 only)
     HKMAX
   };
 
@@ -124,7 +124,7 @@ public:
     // hKey should be opened and will be closed in wxRegKey dtor
   void  SetHkey(WXHKEY hKey);
 
-  // get information about the key
+  // get infomation about the key
     // get the (full) key name. Abbreviate std root keys if bShortPrefix.
   wxString GetName(bool bShortPrefix = true) const;
     // Retrieves the registry view used by this key.
@@ -133,11 +133,11 @@ public:
   bool  Exists() const;
     // get the info about key (any number of these pointers may be NULL)
   bool  GetKeyInfo(size_t *pnSubKeys,      // number of subkeys
-                   size_t *pnMaxKeyLen,    // max length of subkey name
+                   size_t *pnMaxKeyLen,    // max len of subkey name
                    size_t *pnValues,       // number of values
                    size_t *pnMaxValueLen) const;
     // return true if the key is opened
-  bool  IsOpened() const { return m_hKey != NULL; }
+  bool  IsOpened() const { return m_hKey != 0; }
     // for "if ( !key ) wxLogError(...)" kind of expressions
   operator bool()  const { return m_dwLastError == 0; }
 
@@ -198,14 +198,10 @@ public:
     // retrieve either raw or expanded string value
   bool  QueryValue(const wxString& szValue, wxString& strValue, bool raw) const;
 
-    // set the 32-bit numeric value
+    // set the numeric value
   bool  SetValue(const wxString& szValue, long lValue);
-    // return the 32-bit numeric value
+    // return the numeric value
   bool  QueryValue(const wxString& szValue, long *plValue) const;
-    // set the 64-bit numeric value
-  bool  SetValue64(const wxString& szValue, wxLongLong_t llValue);
-    // return the 64-bit numeric value
-  bool  QueryValue64(const wxString& szValue, wxLongLong_t *pllValue) const;
     // set the binary value
   bool  SetValue(const wxString& szValue, const wxMemoryBuffer& buf);
     // return the binary value
@@ -268,7 +264,7 @@ private:
   wxString      m_strKey;        // key name (relative to m_hRootKey)
   WOW64ViewMode m_viewMode;      // which view to select under WOW64
   AccessMode    m_mode;          // valid only if key is opened
-  mutable long  m_dwLastError;   // last error (0 if none)
+  long          m_dwLastError;   // last error (0 if none)
 
 
   wxDECLARE_NO_COPY_CLASS(wxRegKey);

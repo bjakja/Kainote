@@ -5,6 +5,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     20.09.99 (extracted from src/common/log.cpp)
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -20,6 +21,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
     #include "wx/app.h"
@@ -48,13 +52,16 @@
 #include "wx/collpane.h"
 #include "wx/arrstr.h"
 #include "wx/msgout.h"
-#include "wx/scopeguard.h"
 
 #ifdef  __WXMSW__
     // for OutputDebugString()
     #include  "wx/msw/private.h"
 #endif // Windows
 
+
+#ifdef  __WXPM__
+    #include <time.h>
+#endif
 
 #if wxUSE_LOG_DIALOG
     #include "wx/listctrl.h"
@@ -63,6 +70,9 @@
 #endif // wxUSE_LOG_DIALOG/!wxUSE_LOG_DIALOG
 
 #include "wx/time.h"
+
+// the suffix we add to the button to show that the dialog can be expanded
+#define EXPAND_SUFFIX wxT(" >>")
 
 #define CAN_SAVE_FILES (wxUSE_FILE && wxUSE_FILEDLG)
 
@@ -148,11 +158,11 @@ private:
     // the maximum length of the log message
     static size_t ms_maxLength;
 
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
     wxDECLARE_NO_COPY_CLASS(wxLogDialog);
 };
 
-wxBEGIN_EVENT_TABLE(wxLogDialog, wxDialog)
+BEGIN_EVENT_TABLE(wxLogDialog, wxDialog)
     EVT_BUTTON(wxID_OK, wxLogDialog::OnOk)
 #if wxUSE_CLIPBOARD
     EVT_BUTTON(wxID_COPY,   wxLogDialog::OnCopy)
@@ -161,7 +171,7 @@ wxBEGIN_EVENT_TABLE(wxLogDialog, wxDialog)
     EVT_BUTTON(wxID_SAVE,   wxLogDialog::OnSave)
 #endif // CAN_SAVE_FILES
     EVT_LIST_ITEM_ACTIVATED(wxID_ANY, wxLogDialog::OnListItemActivated)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 #endif // wxUSE_LOG_DIALOG
 
@@ -227,13 +237,13 @@ wxString wxLogGui::GetTitle() const
 
         default:
             wxFAIL_MSG( "unexpected icon severity" );
-            wxFALLTHROUGH;
+            // fall through
 
         case wxICON_INFORMATION:
             titleFormat = _("%s Information");
     }
 
-    return wxString::Format(titleFormat, wxTheApp ? wxTheApp->GetAppDisplayName() : _("Application"));
+    return wxString::Format(titleFormat, wxTheApp->GetAppDisplayName());
 }
 
 void
@@ -302,10 +312,6 @@ void wxLogGui::Flush()
     // showing right now: nested modal dialogs make for really bad UI!
     Suspend();
 
-    // and ensure that we allow showing the log again afterwards, even if an
-    // exception is thrown
-    wxON_BLOCK_EXIT0(wxLog::Resume);
-
     if ( nMsgCount == 1 )
     {
         // make a copy before calling Clear()
@@ -328,6 +334,9 @@ void wxLogGui::Flush()
 
         DoShowMultipleLogMessages(messages, severities, times, title, style);
     }
+
+    // allow flushing the logs again
+    Resume();
 }
 
 // log all kinds of messages
@@ -338,11 +347,12 @@ void wxLogGui::DoLogRecord(wxLogLevel level,
     switch ( level )
     {
         case wxLOG_Info:
+            if ( GetVerbose() )
         case wxLOG_Message:
             {
                 m_aMessages.Add(msg);
                 m_aSeverity.Add(wxLOG_Message);
-                m_aTimes.Add((long)(info.timestampMS / 1000));
+                m_aTimes.Add((long)info.timestamp);
                 m_bHasMessages = true;
             }
             break;
@@ -385,7 +395,7 @@ void wxLogGui::DoLogRecord(wxLogLevel level,
 #endif // wxUSE_LOG_DIALOG
                 m_bErrors = true;
             }
-            wxFALLTHROUGH;
+            // fall through
 
         case wxLOG_Warning:
             if ( !m_bErrors ) {
@@ -395,7 +405,7 @@ void wxLogGui::DoLogRecord(wxLogLevel level,
 
             m_aMessages.Add(msg);
             m_aSeverity.Add((int)level);
-            m_aTimes.Add((long)(info.timestampMS / 1000));
+            m_aTimes.Add((long)info.timestamp);
             m_bHasMessages = true;
             break;
 
@@ -438,9 +448,6 @@ public:
     wxLogFrame(wxWindow *pParent, wxLogWindow *log, const wxString& szTitle);
     virtual ~wxLogFrame();
 
-    // Don't prevent the application from exiting if just this frame remains.
-    virtual bool ShouldPreventAppExit() const wxOVERRIDE { return false; }
-
     // menu callbacks
     void OnClose(wxCommandEvent& event);
     void OnCloseWindow(wxCloseEvent& event);
@@ -470,11 +477,11 @@ private:
     wxTextCtrl  *m_pTextCtrl;
     wxLogWindow *m_log;
 
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
     wxDECLARE_NO_COPY_CLASS(wxLogFrame);
 };
 
-wxBEGIN_EVENT_TABLE(wxLogFrame, wxFrame)
+BEGIN_EVENT_TABLE(wxLogFrame, wxFrame)
     // wxLogWindow menu events
     EVT_MENU(Menu_Close, wxLogFrame::OnClose)
 #if CAN_SAVE_FILES
@@ -483,7 +490,7 @@ wxBEGIN_EVENT_TABLE(wxLogFrame, wxFrame)
     EVT_MENU(Menu_Clear, wxLogFrame::OnClear)
 
     EVT_CLOSE(wxLogFrame::OnCloseWindow)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 wxLogFrame::wxLogFrame(wxWindow *pParent, wxLogWindow *log, const wxString& szTitle)
           : wxFrame(pParent, wxID_ANY, szTitle)
@@ -519,6 +526,8 @@ wxLogFrame::wxLogFrame(wxWindow *pParent, wxLogWindow *log, const wxString& szTi
     // status bar for menu prompts
     CreateStatusBar();
 #endif // wxUSE_STATUSBAR
+
+    m_log->OnFrameCreate(this);
 }
 
 void wxLogFrame::DoClose()
@@ -570,7 +579,7 @@ void wxLogFrame::OnSave(wxCommandEvent& WXUNUSED(event))
         wxLogError(_("Can't save log contents to file."));
     }
     else {
-        wxLogStatus((wxFrame*)this, _("Log saved to the file '%s'."), filename);
+        wxLogStatus((wxFrame*)this, _("Log saved to the file '%s'."), filename.c_str());
     }
 }
 #endif // CAN_SAVE_FILES
@@ -632,6 +641,10 @@ wxFrame *wxLogWindow::GetFrame() const
     return m_pLogFrame;
 }
 
+void wxLogWindow::OnFrameCreate(wxFrame * WXUNUSED(frame))
+{
+}
+
 bool wxLogWindow::OnFrameClose(wxFrame * WXUNUSED(frame))
 {
     // allow to close
@@ -678,6 +691,9 @@ wxLogDialog::wxLogDialog(wxWindow *parent,
         // happens to pop up a Log message while translating this :-)
         ms_details = wxTRANSLATE("&Details");
         ms_details = wxGetTranslation(ms_details);
+#ifdef __SMARTPHONE__
+        ms_details = wxStripMenuCodes(ms_details);
+#endif
     }
 
     if ( ms_maxLength == 0 )
@@ -732,6 +748,8 @@ wxLogDialog::wxLogDialog(wxWindow *parent,
 
 
     // add the details pane
+#ifndef __SMARTPHONE__
+
 #if wxUSE_COLLPANE
     wxCollapsiblePane * const
         collpane = new wxCollapsiblePane(this, wxID_ANY, ms_details);
@@ -767,6 +785,10 @@ wxLogDialog::wxLogDialog(wxWindow *parent,
 
     win->SetSizer(paneSz);
     paneSz->SetSizeHints(win);
+#else // __SMARTPHONE__
+    SetLeftMenu(wxID_OK);
+    SetRightMenu(wxID_MORE, ms_details + EXPAND_SUFFIX);
+#endif // __SMARTPHONE__/!__SMARTPHONE__
 
     SetSizerAndFit(sizerTop);
 
@@ -792,6 +814,11 @@ void wxLogDialog::CreateDetailsControls(wxWindow *parent)
                                 wxLC_REPORT |
                                 wxLC_NO_HEADER |
                                 wxLC_SINGLE_SEL);
+#ifdef __WXWINCE__
+    // This makes a big aesthetic difference on WinCE but I
+    // don't want to risk problems on other platforms
+    m_listctrl->Hide();
+#endif
 
     // no need to translate these strings as they're not shown to the
     // user anyhow (we use wxLC_NO_HEADER style)
@@ -805,7 +832,7 @@ void wxLogDialog::CreateDetailsControls(wxWindow *parent)
     wxImageList *imageList = new wxImageList(ICON_SIZE, ICON_SIZE);
 
     // order should be the same as in the switch below!
-    static wxString const icons[] =
+    static const char* const icons[] =
     {
         wxART_ERROR,
         wxART_WARNING,
@@ -1009,7 +1036,7 @@ static int OpenLogFile(wxFile& file, wxString *pFilename, wxWindow *parent)
         bool bAppend = false;
         wxString strMsg;
         strMsg.Printf(_("Append log to file '%s' (choosing [No] will overwrite it)?"),
-                      filename);
+                      filename.c_str());
         switch ( wxMessageBox(strMsg, _("Question"),
                               wxICON_QUESTION | wxYES_NO | wxCANCEL) ) {
             case wxYES:

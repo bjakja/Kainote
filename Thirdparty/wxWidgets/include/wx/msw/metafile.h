@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by: VZ 07.01.00: implemented wxMetaFileDataObject
 // Created:     01/02/97
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -14,7 +15,7 @@
 #include "wx/dc.h"
 #include "wx/gdiobj.h"
 
-#if wxUSE_DATAOBJ
+#if wxUSE_DRAG_AND_DROP
     #include "wx/dataobj.h"
 #endif
 
@@ -30,7 +31,7 @@ public:
     wxMetafileRefData();
     virtual ~wxMetafileRefData();
 
-    virtual bool IsOk() const wxOVERRIDE { return m_metafile != 0; }
+    virtual bool IsOk() const { return m_metafile != 0; }
 
 public:
     WXHANDLE m_metafile;
@@ -69,11 +70,11 @@ public:
     void SetWindowsMappingMode(int mm);
 
 protected:
-    virtual wxGDIRefData *CreateGDIRefData() const wxOVERRIDE;
-    virtual wxGDIRefData *CloneGDIRefData(const wxGDIRefData *data) const wxOVERRIDE;
+    virtual wxGDIRefData *CreateGDIRefData() const;
+    virtual wxGDIRefData *CloneGDIRefData(const wxGDIRefData *data) const;
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxMetafile);
+    DECLARE_DYNAMIC_CLASS(wxMetafile)
 };
 
 class WXDLLIMPEXP_CORE wxMetafileDCImpl: public wxMSWDCImpl
@@ -85,12 +86,12 @@ public:
     virtual ~wxMetafileDCImpl();
 
     virtual wxMetafile *Close();
-    virtual void SetMapMode(wxMappingMode mode) wxOVERRIDE;
+    virtual void SetMapMode(wxMappingMode mode);
     virtual void DoGetTextExtent(const wxString& string,
                                  wxCoord *x, wxCoord *y,
                                  wxCoord *descent = NULL,
                                  wxCoord *externalLeading = NULL,
-                                 const wxFont *theFont = NULL) const wxOVERRIDE;
+                                 const wxFont *theFont = NULL) const;
 
     // Implementation
     wxMetafile *GetMetaFile() const { return m_metaFile; }
@@ -99,13 +100,13 @@ public:
     void SetWindowsMappingMode(int mm) { m_windowsMappingMode = mm; }
 
 protected:
-    virtual void DoGetSize(int *width, int *height) const wxOVERRIDE;
+    virtual void DoGetSize(int *width, int *height) const;
 
     int           m_windowsMappingMode;
     wxMetafile*   m_metaFile;
 
 private:
-    wxDECLARE_CLASS(wxMetafileDCImpl);
+    DECLARE_CLASS(wxMetafileDCImpl)
     wxDECLARE_NO_COPY_CLASS(wxMetafileDCImpl);
 };
 
@@ -131,7 +132,7 @@ public:
        { return ((wxMetafileDCImpl*)m_pimpl)->Close(); }
 
 private:
-    wxDECLARE_CLASS(wxMetafileDC);
+    DECLARE_CLASS(wxMetafileDC)
     wxDECLARE_NO_COPY_CLASS(wxMetafileDC);
 };
 
@@ -146,16 +147,16 @@ private:
  */
 
 // No origin or extent
-bool WXDLLIMPEXP_CORE wxMakeMetafilePlaceable(const wxString& filename, float scale = 1.0f);
+bool WXDLLIMPEXP_CORE wxMakeMetafilePlaceable(const wxString& filename, float scale = 1.0);
 
 // Optional origin and extent
-bool WXDLLIMPEXP_CORE wxMakeMetaFilePlaceable(const wxString& filename, int x1, int y1, int x2, int y2, float scale = 1.0f, bool useOriginAndExtent = true);
+bool WXDLLIMPEXP_CORE wxMakeMetaFilePlaceable(const wxString& filename, int x1, int y1, int x2, int y2, float scale = 1.0, bool useOriginAndExtent = true);
 
 // ----------------------------------------------------------------------------
 // wxMetafileDataObject is a specialization of wxDataObject for metafile data
 // ----------------------------------------------------------------------------
 
-#if wxUSE_DATAOBJ
+#if wxUSE_DRAG_AND_DROP
 
 class WXDLLIMPEXP_CORE wxMetafileDataObject : public wxDataObjectSimple
 {
@@ -174,15 +175,15 @@ public:
         { return m_metafile; }
 
     // implement base class pure virtuals
-    virtual size_t GetDataSize() const wxOVERRIDE;
-    virtual bool GetDataHere(void *buf) const wxOVERRIDE;
-    virtual bool SetData(size_t len, const void *buf) wxOVERRIDE;
+    virtual size_t GetDataSize() const;
+    virtual bool GetDataHere(void *buf) const;
+    virtual bool SetData(size_t len, const void *buf);
 
 protected:
     wxMetafile m_metafile;
 };
 
-#endif // wxUSE_DATAOBJ
+#endif // wxUSE_DRAG_AND_DROP
 
 #endif
     // _WX_METAFIILE_H_

@@ -106,8 +106,6 @@ HDIB LoadTIFFinDIB(LPSTR lpFileName)
           
     if (lpDIB)
        lpBits = FindDIBBits((LPSTR) lpDIB);
-    else
-       lpBits = NULL;
 
     //In the tiff file the lines are save from up to down 
 	//In a DIB the lines must be save from down to up
@@ -372,10 +370,3 @@ WORD DIBNumColors(LPSTR lpDIB)
       return 0;
       }
 }
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 8
- * fill-column: 78
- * End:
- */

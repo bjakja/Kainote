@@ -5,6 +5,7 @@
 //               (derived in part from dynlib.cpp (c) 1998 Guilhem Lavaux)
 // Modified by:
 // Created:      03/12/01
+// RCS-ID:       $Id$
 // Copyright:    (c) 2001 Ron Lee <ron@debian.org>
 // Licence:      wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -16,13 +17,13 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx\defs.h"
+#include "wx/defs.h"
 
 #if wxUSE_DYNAMIC_LOADER
 
-#include "wx\dynlib.h"
-#include "wx\hashmap.h"
-#include "wx\module.h"
+#include "wx/dynlib.h"
+#include "wx/hashmap.h"
+#include "wx/module.h"
 
 class WXDLLIMPEXP_FWD_BASE wxPluginLibrary;
 
@@ -36,10 +37,10 @@ typedef wxDLManifest wxDLImports;
 // ---------------------------------------------------------------------------
 
 // NOTE: Do not attempt to use a base class pointer to this class.
-//       wxDL is not virtual and we deliberately hide some of its
+//       wxDL is not virtual and we deliberately hide some of it's
 //       methods here.
 //
-//       Unless you know exactly why you need to, you probably shouldn't
+//       Unless you know exacty why you need to, you probably shouldn't
 //       instantiate this class directly anyway, use wxPluginManager
 //       instead.
 
@@ -123,7 +124,7 @@ public:
     void   Unload();
 
     bool   IsLoaded() const { return m_entry && m_entry->IsLoaded(); }
-    void* GetSymbol(const wxString& symbol, bool* success = NULL)
+    void  *GetSymbol(const wxString &symbol, bool *success = 0)
     {
         return m_entry->GetSymbol( symbol, success );
     }

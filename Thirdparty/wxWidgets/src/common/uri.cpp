@@ -4,6 +4,7 @@
 // Author:      Ryan Norton,
 //              Vadim Zeitlin (UTF-8 URI support, many other changes)
 // Created:     10/26/04
+// RCS-ID:      $Id$
 // Copyright:   (c) 2004 Ryan Norton,
 //                  2008 Vadim Zeitlin
 // Licence:     wxWindows licence
@@ -18,20 +19,23 @@
 // ---------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
-
-#ifndef WX_PRECOMP
-    #include "wx\crt.h"
+#ifdef __BORLANDC__
+    #pragma hdrstop
 #endif
 
-#include "wx\uri.h"
+#ifndef WX_PRECOMP
+    #include "wx/crt.h"
+#endif
+
+#include "wx/uri.h"
 
 // ---------------------------------------------------------------------------
 // definitions
 // ---------------------------------------------------------------------------
 
-wxIMPLEMENT_CLASS(wxURI, wxObject);
+IMPLEMENT_CLASS(wxURI, wxObject)
 
 // ===========================================================================
 // wxURI implementation
@@ -64,13 +68,13 @@ bool wxURI::Create(const wxString& uri)
 
 void wxURI::Clear()
 {
-    m_scheme.clear();
-    m_userinfo.clear();
-    m_server.clear();
-    m_port.clear();
-    m_path.clear();
-    m_query.clear();
-    m_fragment.clear();
+    m_scheme =
+    m_userinfo =
+    m_server =
+    m_port =
+    m_path =
+    m_query =
+    m_fragment = wxEmptyString;
 
     m_hostType = wxURI_REGNAME;
 
@@ -87,9 +91,9 @@ void wxURI::Clear()
 /* static */
 int wxURI::CharToHex(char c)
 {
-    if ((c >= 'A') && (c <= 'F'))
+    if ((c >= 'A') && (c <= 'Z'))
         return c - 'A' + 10;
-    if ((c >= 'a') && (c <= 'f'))
+    if ((c >= 'a') && (c <= 'z'))
         return c - 'a' + 10;
     if ((c >= '0') && (c <= '9'))
         return c - '0';
@@ -97,32 +101,38 @@ int wxURI::CharToHex(char c)
     return -1;
 }
 
+int wxURI::DecodeEscape(wxString::const_iterator& i)
+{
+    int hi = CharToHex(*++i);
+    if ( hi == -1 )
+        return -1;
+
+    int lo = CharToHex(*++i);
+    if ( lo == -1 )
+        return -1;
+
+    return (hi << 4) | lo;
+}
+
 /* static */
 wxString wxURI::Unescape(const wxString& uri)
 {
-    // URIs can contain escaped 8-bit characters that have to be decoded using
-    // UTF-8 (see RFC 3986), however in our (probably broken...) case we can
-    // also end up with not escaped Unicode characters in the URI string which
-    // can't be decoded as UTF-8. So what we do here is to encode all Unicode
-    // characters as UTF-8 only to decode them back below. This is obviously
-    // inefficient but there doesn't seem to be anything else to do, other than
-    // not allowing to mix Unicode characters with escapes in the first place,
-    // but this seems to be done in a lot of places, unfortunately.
-    const wxScopedCharBuffer& uriU8(uri.utf8_str());
-    const size_t len = uriU8.length();
-
     // the unescaped version can't be longer than the original one
-    wxCharBuffer buf(uriU8.length());
+    wxCharBuffer buf(uri.length());
     char *p = buf.data();
 
-    const char* const end = uriU8.data() + len;
-    for ( const char* s = uriU8.data(); s != end; ++s, ++p )
+    for ( wxString::const_iterator i = uri.begin(); i != uri.end(); ++i, ++p )
     {
-        char c = *s;
-        if ( c == '%' && s < end - 2 && IsHex(s[1]) && IsHex(s[2]) )
+        char c = *i;
+        if ( c == '%' )
         {
-            c = (CharToHex(s[1]) << 4) | CharToHex(s[2]);
-            s += 2;
+            int n = wxURI::DecodeEscape(i);
+            if ( n == -1 )
+                return wxString();
+
+            wxASSERT_MSG( n >= 0 && n <= 0xff, "unexpected character value" );
+
+            c = static_cast<char>(n);
         }
 
         *p = c;
@@ -130,7 +140,17 @@ wxString wxURI::Unescape(const wxString& uri)
 
     *p = '\0';
 
-    return wxString::FromUTF8(buf);
+    // by default assume that the URI is in UTF-8, this is the most common
+    // practice
+    wxString s = wxString::FromUTF8(buf);
+    if ( s.empty() )
+    {
+        // if it isn't, use latin-1 as a fallback -- at least this always
+        // succeeds
+        s = wxCSConv(wxFONTENCODING_ISO8859_1).cMB2WC(buf);
+    }
+
+    return s;
 }
 
 void wxURI::AppendNextEscaped(wxString& s, const char *& p)
@@ -174,7 +194,7 @@ wxString wxURI::GetPassword() const
       size_t posColon = m_userinfo.find(':');
 
       if ( posColon == wxString::npos )
-          return wxString();
+          return "";
 
       return m_userinfo(posColon + 1, wxString::npos);
 }
@@ -292,17 +312,6 @@ bool wxURI::operator==(const wxURI& uri) const
 bool wxURI::IsReference() const
 {
     return !HasScheme() || !HasServer();
-}
-
-// ---------------------------------------------------------------------------
-// IsRelative
-//
-// FIXME: may need refinement
-// ---------------------------------------------------------------------------
-
-bool wxURI::IsRelative() const
-{
-    return !HasScheme() && !HasServer();
 }
 
 // ---------------------------------------------------------------------------
@@ -529,21 +538,6 @@ const char* wxURI::ParsePath(const char* uri)
         return uri;
 
     const bool isAbs = *uri == '/';
-
-    // From RFC 3986: when authority is present, the path must either be empty
-    // or begin with a slash ("/") character. When authority is not present,
-    // the path cannot begin with two slashes.
-    if ( m_userinfo.empty() && m_server.empty() && m_port.empty() )
-    {
-        if ( isAbs && uri[1] == '/' )
-            return uri;
-    }
-    else
-    {
-        if ( !isAbs )
-            return uri;
-    }
-
     if ( isAbs )
         m_path += *uri++;
 
@@ -754,7 +748,7 @@ void wxURI::Resolve(const wxURI& base, int flags)
             // if we have an empty path it means we were constructed from a "."
             // string or something similar (e.g. "././././"), it should count
             // as (empty) segment
-            our.push_back(wxString());
+            our.push_back("");
         }
 
         const wxArrayString::const_iterator end = our.end();
@@ -765,7 +759,7 @@ void wxURI::Resolve(const wxURI& base, int flags)
                 // as in ParsePath(), while normally we ignore the empty
                 // segments, we need to take account of them at the end
                 if ( i == end - 1 )
-                    result.push_back(wxString());
+                    result.push_back("");
                 continue;
             }
 
@@ -776,7 +770,7 @@ void wxURI::Resolve(const wxURI& base, int flags)
                     result.pop_back();
 
                     if ( i == end - 1 )
-                        result.push_back(wxString());
+                        result.push_back("");
                 }
                 //else: just ignore, extra ".." don't accumulate
             }
@@ -785,7 +779,7 @@ void wxURI::Resolve(const wxURI& base, int flags)
                 if ( result.empty() )
                 {
                     // ensure that the resulting path will always be absolute
-                    result.push_back(wxString());
+                    result.push_back("");
                 }
 
                 result.push_back(*i);

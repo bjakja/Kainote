@@ -2,13 +2,14 @@
 // Name:        snglinst.h
 // Purpose:     interface of wxSingleInstanceChecker
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 /**
     @class wxSingleInstanceChecker
 
-    wxSingleInstanceChecker class allows checking that only a single instance of a
+    wxSingleInstanceChecker class allows to check that only a single instance of a
     program is running.
 
     To do it, you should create an object of this class. As long as this object
@@ -23,7 +24,7 @@
     bool MyApp::OnInit()
     {
         m_checker = new wxSingleInstanceChecker;
-        if ( m_checker->IsAnotherRunning() )
+        if ( m_checker-IsAnotherRunning() )
         {
             wxLogError(_("Another program instance is already running, aborting."));
 

@@ -4,6 +4,7 @@
 // Author:      Robert Roebling
 // Modified by: Vadim Zeitlin (2005-10-10): wxScrolledWindow is now common
 // Created:     01/02/97
+// RCS-ID:      $Id$
 // Copyright:   (c) Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -26,15 +27,13 @@ public:
     virtual void SetScrollbars(int pixelsPerUnitX, int pixelsPerUnitY,
                                int noUnitsX, int noUnitsY,
                                int xPos = 0, int yPos = 0,
-                               bool noRefresh = false) wxOVERRIDE;
-    virtual void AdjustScrollbars() wxOVERRIDE;
-
-    virtual bool IsScrollbarShown(int orient) const wxOVERRIDE;
+                               bool noRefresh = false);
+    virtual void AdjustScrollbars();
 
 protected:
-    virtual void DoScroll(int x, int y) wxOVERRIDE;
+    virtual void DoScroll(int x, int y);
     virtual void DoShowScrollbars(wxScrollbarVisibility horz,
-                                  wxScrollbarVisibility vert) wxOVERRIDE;
+                                  wxScrollbarVisibility vert);
 
 private:
     // this does (each) half of AdjustScrollbars() work

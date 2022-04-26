@@ -4,12 +4,16 @@
 // Author:      P. Foggia 1996
 // Modified by: Wlodzimierz Skiba (ABX) since 2003
 // Created:     1996
+// RCS-ID:      $Id$
 // Copyright:   (c) 1996 P. Foggia
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+#   pragma hdrstop
+#endif
 
 #ifndef  WX_PRECOMP
 #   include "wx/wx.h"
@@ -21,18 +25,28 @@
 
 #include <stdlib.h>
 
-#include <time.h>
+#ifndef __WXWINCE__
+#   include <time.h>
+#endif
 
 #ifndef wxHAS_IMAGES_IN_RESOURCES
 #   include "bombs.xpm"
 #endif
 
-wxIMPLEMENT_APP(BombsApp);
+IMPLEMENT_APP(BombsApp)
+
+#ifdef __WXWINCE__
+    STDAPI_(__int64) CeGetRandomSeed();
+#endif
 
 // Called to initialize the program
 bool BombsApp::OnInit()
 {
+#ifdef __WXWINCE__
+    srand((unsigned) CeGetRandomSeed());
+#else
     srand((unsigned) time(NULL));
+#endif
 
     m_frame = new BombsFrame(&m_game);
 
@@ -41,7 +55,7 @@ bool BombsApp::OnInit()
     return true;
 }
 
-wxBEGIN_EVENT_TABLE(BombsFrame, wxFrame)
+BEGIN_EVENT_TABLE(BombsFrame, wxFrame)
     EVT_MENU(wxID_NEW,           BombsFrame::OnNewGame)
     EVT_MENU(bombsID_EASY,       BombsFrame::OnEasyGame)
     EVT_MENU(bombsID_MEDIUM,     BombsFrame::OnMediumGame)
@@ -49,7 +63,7 @@ wxBEGIN_EVENT_TABLE(BombsFrame, wxFrame)
     EVT_MENU(bombsID_EASYCORNER, BombsFrame::OnEasyCorner)
     EVT_MENU(wxID_EXIT,          BombsFrame::OnExit)
     EVT_MENU(wxID_ABOUT,         BombsFrame::OnAbout)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 BombsFrame::BombsFrame(BombsGame *game)
     : wxFrame(NULL, wxID_ANY, wxT("wxBombs"), wxDefaultPosition,
@@ -203,11 +217,11 @@ void BombsFrame::OnEasyCorner(wxCommandEvent& WXUNUSED(event))
     NewGame(m_lastLevel, true);
 }
 
-wxBEGIN_EVENT_TABLE(BombsCanvas, wxPanel)
+BEGIN_EVENT_TABLE(BombsCanvas, wxPanel)
     EVT_PAINT(BombsCanvas::OnPaint)
     EVT_MOUSE_EVENTS(BombsCanvas::OnMouseEvent)
     EVT_CHAR(BombsCanvas::OnChar)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 BombsCanvas::BombsCanvas(wxFrame *parent, BombsGame *game)
     : wxPanel(parent, wxID_ANY)
@@ -215,7 +229,8 @@ BombsCanvas::BombsCanvas(wxFrame *parent, BombsGame *game)
     m_game = game;
     int sx, sy;
     wxClientDC dc(this);
-    dc.SetFont(BOMBS_FONT);
+    wxFont font= BOMBS_FONT;
+    dc.SetFont(font);
 
     wxCoord chw, chh;
     wxString buf = wxT("M");

@@ -19,17 +19,14 @@
 
 #include "wx/wxprec.h"
 
-
-#ifdef __WINDOWS__
-    #include "wx\msw/msvcrt.h"
+#ifdef __BORLANDC__
+    #pragma hdrstop
 #endif
 
-#ifdef WXMAKINGDLL_ADV
+#ifdef __WINDOWS__
+    #include "wx/msw/msvcrt.h"
+#endif
 
-// This is a hack required to create an import library for the "adv" DLL which
-// doesn't contain anything any more and is preserved only for compatibility.
-extern WXEXPORT void wxAdvLibraryIsObsoleteDontUse()
-{
-}
-
-#endif // WXMAKINGDLL_ADV
+#ifdef __VISAGECPP__
+    char wxDummyChar = 0;
+#endif

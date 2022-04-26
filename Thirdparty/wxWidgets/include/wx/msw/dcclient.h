@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,8 +19,16 @@
 #include "wx/dc.h"
 #include "wx/msw/dc.h"
 #include "wx/dcclient.h"
+#include "wx/dynarray.h"
 
-class wxPaintDCInfo;
+// ----------------------------------------------------------------------------
+// array types
+// ----------------------------------------------------------------------------
+
+// this one if used by wxPaintDC only
+struct WXDLLIMPEXP_FWD_CORE wxPaintDCInfo;
+
+WX_DECLARE_EXPORTED_OBJARRAY(wxPaintDCInfo, wxArrayDCInfo);
 
 // ----------------------------------------------------------------------------
 // DC classes
@@ -34,13 +43,13 @@ public:
     // Create a DC corresponding to the whole window
     wxWindowDCImpl( wxDC *owner, wxWindow *win );
 
-    virtual void DoGetSize(int *width, int *height) const wxOVERRIDE;
+    virtual void DoGetSize(int *width, int *height) const;
 
 protected:
     // initialize the newly created DC
     void InitDC();
 
-    wxDECLARE_CLASS(wxWindowDCImpl);
+    DECLARE_CLASS(wxWindowDCImpl)
     wxDECLARE_NO_COPY_CLASS(wxWindowDCImpl);
 };
 
@@ -55,12 +64,12 @@ public:
 
     virtual ~wxClientDCImpl();
 
-    virtual void DoGetSize(int *width, int *height) const wxOVERRIDE;
+    virtual void DoGetSize(int *width, int *height) const;
 
 protected:
     void InitDC();
 
-    wxDECLARE_CLASS(wxClientDCImpl);
+    DECLARE_CLASS(wxClientDCImpl)
     wxDECLARE_NO_COPY_CLASS(wxClientDCImpl);
 };
 
@@ -77,15 +86,13 @@ public:
     // find the entry for this DC in the cache (keyed by the window)
     static WXHDC FindDCInCache(wxWindow* win);
 
-    // This must be called by the code handling WM_PAINT to remove the DC
-    // cached for this window for the duration of this message processing.
-    static void EndPaint(wxWindow *win);
-
 protected:
-    // Find the DC for this window in the cache, return NULL if not found.
-    static wxPaintDCInfo *FindInCache(wxWindow* win);
+    static wxArrayDCInfo ms_cache;
 
-    wxDECLARE_CLASS(wxPaintDCImpl);
+    // find the entry for this DC in the cache (keyed by the window)
+    wxPaintDCInfo *FindInCache(size_t *index = NULL) const;
+
+    DECLARE_CLASS(wxPaintDCImpl)
     wxDECLARE_NO_COPY_CLASS(wxPaintDCImpl);
 };
 
@@ -100,7 +107,7 @@ class WXDLLIMPEXP_CORE wxPaintDCEx : public wxPaintDC
 public:
     wxPaintDCEx(wxWindow *canvas, WXHDC dc);
 
-    wxDECLARE_CLASS(wxPaintDCEx);
+    DECLARE_CLASS(wxPaintDCEx)
     wxDECLARE_NO_COPY_CLASS(wxPaintDCEx);
 };
 

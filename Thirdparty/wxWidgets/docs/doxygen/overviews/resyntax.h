@@ -2,6 +2,7 @@
 // Name:        resyntax.h
 // Purpose:     topic overview
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -9,13 +10,25 @@
 
 @page overview_resyntax Regular Expressions
 
-@tableofcontents
-
 A <em>regular expression</em> describes strings of characters. It's a  pattern
 that matches certain strings and doesn't match others.
 
-@see wxRegEx
+@li @ref overview_resyntax_differentflavors
+@li @ref overview_resyntax_syntax
+@li @ref overview_resyntax_bracket
+@li @ref overview_resyntax_escapes
+@li @ref overview_resyntax_metasyntax
+@li @ref overview_resyntax_matching
+@li @ref overview_resyntax_limits
+@li @ref overview_resyntax_bre
+@li @ref overview_resyntax_characters
 
+@see
+
+@li wxRegEx
+
+
+<hr>
 
 
 @section overview_resyntax_differentflavors Different Flavors of Regular Expressions
@@ -649,3 +662,4 @@ Note that the character names are case sensitive.
 </tr></table></center>
 
 */
+

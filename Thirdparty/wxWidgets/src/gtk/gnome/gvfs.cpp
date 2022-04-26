@@ -3,6 +3,7 @@
 // Author:      Robert Roebling
 // Purpose:     Implement GNOME VFS support
 // Created:     03/17/06
+// RCS-ID:      $Id$
 // Copyright:   Robert Roebling
 // Licence:     wxWindows Licence
 /////////////////////////////////////////////////////////////////////////////
@@ -10,6 +11,9 @@
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_MIMETYPE && wxUSE_LIBGNOMEVFS
 
@@ -135,7 +139,7 @@ public:
     void OnExit();
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxGnomeVFSModule);
+    DECLARE_DYNAMIC_CLASS(wxGnomeVFSModule)
 };
 
 bool wxGnomeVFSModule::OnInit()
@@ -157,6 +161,6 @@ void wxGnomeVFSModule::OnExit()
     delete gs_lgvfs;
 }
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxGnomeVFSModule, wxModule);
+IMPLEMENT_DYNAMIC_CLASS(wxGnomeVFSModule, wxModule)
 
 #endif // wxUSE_LIBGNOMEVFS && wxUSE_MIMETYPE

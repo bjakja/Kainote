@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     05.02.00
+// RCS-ID:      $Id$
 // Copyright:   (c) Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -44,7 +45,6 @@ extern WXDLLIMPEXP_DATA_CORE(const char) wxStatusBarNameStr[];
 #define wxSB_NORMAL    0x0000
 #define wxSB_FLAT      0x0001
 #define wxSB_RAISED    0x0002
-#define wxSB_SUNKEN    0x0003
 
 // ----------------------------------------------------------------------------
 // wxStatusBarPane: an helper for wxStatusBar
@@ -53,7 +53,7 @@ extern WXDLLIMPEXP_DATA_CORE(const char) wxStatusBarNameStr[];
 class WXDLLIMPEXP_CORE wxStatusBarPane
 {
 public:
-    wxStatusBarPane(int style = wxSB_NORMAL, int width = 0)
+    wxStatusBarPane(int style = wxSB_NORMAL, size_t width = 0)
         : m_nStyle(style), m_nWidth(width)
         { m_bEllipsized = false; }
 
@@ -119,7 +119,7 @@ public:
     // set the number of fields and call SetStatusWidths(widths) if widths are
     // given
     virtual void SetFieldsCount(int number = 1, const int *widths = NULL);
-    int GetFieldsCount() const { return (int)m_panes.GetCount(); }
+    int GetFieldsCount() const { return m_panes.GetCount(); }
 
     // field text
     // ----------
@@ -150,7 +150,10 @@ public:
     // field styles
     // ------------
 
-    // Set the field border style to one of wxSB_XXX values.
+    // Set the field style. Use either wxSB_NORMAL (default) for a standard 3D
+    // border around a field, wxSB_FLAT for no border around a field, so that it
+    // appears flat or wxSB_POPOUT to make the field appear raised.
+    // Setting field styles only works on wxMSW
     virtual void SetStatusStyles(int n, const int styles[]);
 
     int GetStatusStyle(int n) const
@@ -181,10 +184,10 @@ public:
     // wxWindow overrides:
 
     // don't want status bars to accept the focus at all
-    virtual bool AcceptsFocus() const wxOVERRIDE { return false; }
+    virtual bool AcceptsFocus() const { return false; }
 
     // the client size of a toplevel window doesn't include the status bar
-    virtual bool CanBeOutsideClientArea() const wxOVERRIDE { return true; }
+    virtual bool CanBeOutsideClientArea() const { return true; }
 
 protected:
     // called after the status bar pane text changed and should update its
@@ -195,14 +198,14 @@ protected:
     // wxWindow overrides:
 
 #if wxUSE_TOOLTIPS
-   virtual void DoSetToolTip( wxToolTip *tip ) wxOVERRIDE
+   virtual void DoSetToolTip( wxToolTip *tip )
         {
             wxASSERT_MSG(!HasFlag(wxSTB_SHOW_TIPS),
                          "Do not set tooltip(s) manually when using wxSTB_SHOW_TIPS!");
             wxWindow::DoSetToolTip(tip);
         }
 #endif // wxUSE_TOOLTIPS
-    virtual wxBorder GetDefaultBorder() const wxOVERRIDE { return wxBORDER_NONE; }
+    virtual wxBorder GetDefaultBorder() const { return wxBORDER_NONE; }
 
 
     // internal helpers & data:
@@ -237,8 +240,6 @@ protected:
     #define wxStatusBarMac wxStatusBar
     #include "wx/generic/statusbr.h"
     #include "wx/osx/statusbr.h"
-#elif defined(__WXQT__)
-    #include "wx/qt/statusbar.h"
 #else
     #define wxStatusBarGeneric wxStatusBar
     #include "wx/generic/statusbr.h"

@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     04/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:       wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -30,9 +31,9 @@
 #include <stdio.h>
 #include <string.h>
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxMetafile, wxObject);
-wxIMPLEMENT_ABSTRACT_CLASS(wxMetafileDC, wxDC);
-wxIMPLEMENT_ABSTRACT_CLASS(wxMetafileDCImpl, wxGCDCImpl);
+IMPLEMENT_DYNAMIC_CLASS(wxMetafile, wxObject)
+IMPLEMENT_ABSTRACT_CLASS(wxMetafileDC, wxDC)
+IMPLEMENT_ABSTRACT_CLASS(wxMetafileDCImpl, wxGCDCImpl)
 
 #define M_METAFILEREFDATA( a ) ((wxMetafileRefData*)(a).GetRefData())
 
@@ -53,7 +54,7 @@ public:
 
     virtual ~wxMetafileRefData();
 
-    virtual bool IsOk() const wxOVERRIDE { return m_data != NULL; }
+    virtual bool IsOk() const { return m_data != NULL; }
 
     void Init();
 
@@ -95,7 +96,9 @@ wxMetafileRefData::wxMetafileRefData( const wxString& filename )
 
     if ( !filename.empty() )
     {
-        wxCFRef<CFURLRef> url(wxOSXCreateURLFromFileSystemPath(filename));
+        wxCFRef<CFMutableStringRef> cfMutableString(CFStringCreateMutableCopy(NULL, 0, wxCFStringRef(filename)));
+        CFStringNormalize(cfMutableString,kCFStringNormalizationFormD);
+        wxCFRef<CFURLRef> url(CFURLCreateWithFileSystemPath(kCFAllocatorDefault, cfMutableString , kCFURLPOSIXPathStyle, false));
         m_pdfDoc.reset(CGPDFDocumentCreateWithURL(url));
     }
 }
@@ -187,8 +190,7 @@ wxMetaFile::CloneGDIRefData(const wxGDIRefData * WXUNUSED(data)) const
 
 WXHMETAFILE wxMetaFile::GetHMETAFILE() const
 {
-    const void* p = M_METAFILEDATA->GetData();
-    return static_cast<WXHMETAFILE>(const_cast<void*>(p));
+    return (WXHMETAFILE) (CFDataRef) M_METAFILEDATA->GetData();
 }
 
 bool wxMetaFile::SetClipboard(int WXUNUSED(width), int WXUNUSED(height))
@@ -341,7 +343,7 @@ bool wxMetafileDataObject::GetDataHere(void *buf) const
 
 bool wxMetafileDataObject::SetData(size_t len, const void *buf)
 {
-    wxMetafileRefData* metafiledata = new wxMetafileRefData(wxCFRefFromGet(wxCFDataRef(static_cast<const UInt8*>(buf), len).get()));
+    wxMetafileRefData* metafiledata = new wxMetafileRefData(wxCFRefFromGet(wxCFDataRef((UInt8*)buf, len).get()));
     m_metafile.UnRef();
     m_metafile.SetRefData( metafiledata );
     return true;

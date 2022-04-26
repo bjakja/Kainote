@@ -5,7 +5,8 @@
 // Modified by:
 // Created:
 // Copyright:   (c) Julian Smart
-// Copyright:   (c) 2014 wxWidgets dev team
+// RCS-ID:      $Id$
+// Licence:     wxWindows Licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_MINIFRAM_H_BASE_
@@ -27,8 +28,8 @@
 #include "wx/x11/minifram.h"
 #elif defined(__WXMAC__)
 #include "wx/osx/minifram.h"
-#elif defined(__WXQT__)
-#include "wx/qt/minifram.h"
+#elif defined(__WXPM__)
+#include "wx/os2/minifram.h"
 #else
 // TODO: it seems that wxMiniFrame could be just defined here generically
 //       instead of having all the above port-specific headers

@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -28,18 +29,15 @@ public:
     wxWindowDCImpl( wxDC *owner, wxWindow *window );
     virtual ~wxWindowDCImpl();
 
-    virtual void DoGetSize( int *width, int *height ) const wxOVERRIDE;
-    virtual wxBitmap DoGetAsBitmap(const wxRect *subrect) const wxOVERRIDE;
+    virtual void DoGetSize( int *width, int *height ) const;
+    virtual wxBitmap DoGetAsBitmap(const wxRect *subrect) const;
 
 protected:
-    virtual wxPoint OSXGetOrigin() const wxOVERRIDE;
-
     bool m_release;
     int m_width;
     int m_height;
-    wxPoint m_origin;
 
-    wxDECLARE_CLASS(wxWindowDCImpl);
+    DECLARE_CLASS(wxWindowDCImpl)
     wxDECLARE_NO_COPY_CLASS(wxWindowDCImpl);
 };
 
@@ -52,7 +50,7 @@ public:
     virtual ~wxClientDCImpl();
 
 private:
-    wxDECLARE_CLASS(wxClientDCImpl);
+    DECLARE_CLASS(wxClientDCImpl)
     wxDECLARE_NO_COPY_CLASS(wxClientDCImpl);
 };
 
@@ -65,7 +63,7 @@ public:
     virtual ~wxPaintDCImpl();
 
 protected:
-    wxDECLARE_CLASS(wxPaintDCImpl);
+    DECLARE_CLASS(wxPaintDCImpl)
     wxDECLARE_NO_COPY_CLASS(wxPaintDCImpl);
 };
 

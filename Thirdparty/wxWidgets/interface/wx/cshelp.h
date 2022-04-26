@@ -2,6 +2,7 @@
 // Name:        cshelp.h
 // Purpose:     interface of wxHelpProvider
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -36,7 +37,7 @@ public:
         Although all help providers have these functions to allow making
         wxWindow::SetHelpText() work, not all of them implement the functions.
     */
-    virtual void AddHelp(wxWindow* window, const wxString& text);
+    virtual void AddHelp(wxWindowBase* window, const wxString& text);
 
     /**
         Associates the text with the given ID.
@@ -65,7 +66,7 @@ public:
         May be used to set the same help string for all Cancel buttons in
         the application, for example.
     */
-    virtual wxString GetHelp(const wxWindow* window) = 0;
+    virtual wxString GetHelp(const wxWindowBase* window) = 0;
 
     /**
         Removes the association between the window pointer and the help text.
@@ -73,7 +74,7 @@ public:
         help strings will fill up and when window pointers are reused, the
         wrong help string will be found.
     */
-    virtual void RemoveHelp(wxWindow* window);
+    virtual void RemoveHelp(wxWindowBase* window);
 
     /**
         Set the current, application-wide help provider.
@@ -90,7 +91,7 @@ public:
         Returns @true if help was shown, or @false if no help was available for
         this window.
     */
-    virtual bool ShowHelp(wxWindow* window);
+    virtual bool ShowHelp(wxWindowBase* window);
 
     /**
         This function may be overridden to show help for the window when it
@@ -110,7 +111,7 @@ public:
 
         @since 2.7.0
     */
-    virtual bool ShowHelpAtPoint(wxWindow* window, const wxPoint& point,
+    virtual bool ShowHelpAtPoint(wxWindowBase* window, const wxPoint& point,
                                  wxHelpEvent::Origin origin);
 };
 
@@ -182,7 +183,7 @@ public:
       so that this button is only added to a dialog for non-Windows platforms
       (use wxDIALOG_EX_CONTEXTHELP on Windows).
 
-    Note that on macOS, the cursor does not change when in context-sensitive
+    Note that on Mac OS X, the cursor does not change when in context-sensitive
     help mode.
 
     @library{wxcore}
@@ -257,8 +258,8 @@ public:
             Button position.
             If ::wxDefaultPosition is specified then a default position is chosen.
         @param size
-            Button size.
-            If ::wxDefaultSize is specified then the button is sized appropriately
+            Button size. 
+            If ::wxDefaultSize is specified then the button is sized appropriately 
             for the question mark bitmap.
         @param style
             Window style.
@@ -271,7 +272,7 @@ public:
                         wxWindowID id = wxID_CONTEXT_HELP,
                         const wxPoint& pos = wxDefaultPosition,
                         const wxSize& size = wxDefaultSize,
-                        long style = 0);
+                        long style = wxBU_AUTODRAW);
 };
 
 

@@ -2,6 +2,7 @@
 // Name:        src/gtk1/dcscreen.cpp
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -32,7 +33,7 @@ int wxScreenDCImpl::sm_overlayWindowY = 0;
 // wxScreenDCImpl
 //-----------------------------------------------------------------------------
 
-wxIMPLEMENT_ABSTRACT_CLASS(wxScreenDCImpl, wxPaintDCImpl);
+IMPLEMENT_ABSTRACT_CLASS(wxScreenDCImpl, wxPaintDCImpl)
 
 wxScreenDCImpl::wxScreenDCImpl(wxScreenDC *owner)
               : wxPaintDCImpl(owner)

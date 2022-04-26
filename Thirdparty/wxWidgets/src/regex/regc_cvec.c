@@ -34,6 +34,12 @@
  - newcvec - allocate a new cvec
  ^ static struct cvec *newcvec(int, int, int);
  */
+
+#include "regex.h"
+#include "regguts.h"
+#include "regerrs.h"
+#include "regcustom.h"
+
 static struct cvec *
 newcvec(nchrs, nranges, nmcces)
     int nchrs;				/* to hold this many chrs... */

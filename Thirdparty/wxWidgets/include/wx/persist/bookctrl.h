@@ -3,6 +3,7 @@
 // Purpose:     persistence support for wxBookCtrl
 // Author:      Vadim Zeitlin
 // Created:     2009-01-19
+// RCS-ID:      $Id$
 // Copyright:   (c) 2009 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -12,17 +13,15 @@
 
 #include "wx/persist/window.h"
 
-#if wxUSE_BOOKCTRL
-
 #include "wx/bookctrl.h"
 
 // ----------------------------------------------------------------------------
 // string constants used by wxPersistentBookCtrl
 // ----------------------------------------------------------------------------
 
-#define wxPERSIST_BOOK_KIND wxASCII_STR("Book")
+#define wxPERSIST_BOOK_KIND "Book"
 
-#define wxPERSIST_BOOK_SELECTION wxASCII_STR("Selection")
+#define wxPERSIST_BOOK_SELECTION "Selection"
 
 // ----------------------------------------------------------------------------
 // wxPersistentBookCtrl: supports saving/restoring book control selection
@@ -36,12 +35,12 @@ public:
     {
     }
 
-    virtual void Save() const wxOVERRIDE
+    virtual void Save() const
     {
         SaveValue(wxPERSIST_BOOK_SELECTION, Get()->GetSelection());
     }
 
-    virtual bool Restore() wxOVERRIDE
+    virtual bool Restore()
     {
         long sel;
         if ( RestoreValue(wxPERSIST_BOOK_SELECTION, &sel) )
@@ -57,14 +56,12 @@ public:
         return false;
     }
 
-    virtual wxString GetKind() const wxOVERRIDE { return wxPERSIST_BOOK_KIND; }
+    virtual wxString GetKind() const { return wxPERSIST_BOOK_KIND; }
 };
 
 inline wxPersistentObject *wxCreatePersistentObject(wxBookCtrlBase *book)
 {
     return new wxPersistentBookCtrl(book);
 }
-
-#endif // wxUSE_BOOKCTRL
 
 #endif // _WX_PERSIST_BOOKCTRL_H_

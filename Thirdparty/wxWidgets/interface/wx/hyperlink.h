@@ -2,6 +2,7 @@
 // Name:        hyperlink.h
 // Purpose:     interface of wxHyperlinkEvent
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -18,10 +19,10 @@
 
     @beginEventTable{wxHyperlinkEvent}
     @event{EVT_HYPERLINK(id, func)}
-        User clicked on a hyperlink.
+        User clicked on an hyperlink.
     @endEventTable
 
-    @library{wxcore}
+    @library{wxadv}
     @category{events}
 */
 class wxHyperlinkEvent : public wxCommandEvent
@@ -44,7 +45,7 @@ public:
 };
 
 
-wxEventType wxEVT_HYPERLINK;
+wxEventType wxEVT_COMMAND_HYPERLINK;
 
 /**
     @class wxHyperlinkCtrl
@@ -66,10 +67,10 @@ wxEventType wxEVT_HYPERLINK;
            Align the text to the left.
     @style{wxHL_ALIGN_RIGHT}
            Align the text to the right. This style is not supported under
-           Windows.
+           Windows XP but is supported under all the other Windows versions.
     @style{wxHL_ALIGN_CENTRE}
-           Center the text (horizontally). This style is not supported
-           under Windows.
+           Center the text (horizontally). This style is not supported by the
+           native MSW implementation used under Windows XP and later.
     @style{wxHL_CONTEXTMENU}
            Pop up a context menu when the hyperlink is right-clicked. The
            context menu contains a "Copy URL" menu item which is automatically
@@ -88,11 +89,12 @@ wxEventType wxEVT_HYPERLINK;
     @endEventTable
 
     Currently this class is implemented using native support in wxGTK and wxMSW
-    and a generic version is used by the other ports.
+    (under Windows XP and later only) and a generic version is used by the
+    other ports.
 
-    @library{wxcore}
+    @library{wxadv}
     @category{ctrl}
-    @appearance{hyperlinkctrl}
+    @appearance{hyperlinkctrl.png}
 
     @see wxURL, wxHyperlinkEvent
 */
@@ -100,7 +102,7 @@ class wxHyperlinkCtrl : public wxControl
 {
 public:
     wxHyperlinkCtrl();
-
+    
     /**
         Constructor. See Create() for more info.
     */
@@ -147,7 +149,7 @@ public:
 
     /**
         Returns the colour used to print the label when the link has never been clicked
-        before (i.e.\ the link has not been @e visited) and the mouse is not over the control.
+        before (i.e. the link has not been @e visited) and the mouse is not over the control.
     */
     virtual wxColour GetNormalColour() const;
 
@@ -164,7 +166,7 @@ public:
 
     /**
         Returns the colour used to print the label when the mouse is not over the
-        control and the link has already been clicked before (i.e.\ the link has
+        control and the link has already been clicked before (i.e. the link has
         been @e visited).
     */
     virtual wxColour GetVisitedColour() const;
@@ -177,7 +179,7 @@ public:
 
     /**
         Sets the colour used to print the label when the link has never been clicked before
-        (i.e.\ the link has not been @e visited) and the mouse is not over the control.
+        (i.e. the link has not been @e visited) and the mouse is not over the control.
     */
     virtual void SetNormalColour(const wxColour& colour);
 
@@ -193,7 +195,7 @@ public:
 
     /**
         Sets the colour used to print the label when the mouse is not over the control
-        and the link has already been clicked before (i.e.\ the link has been @e visited).
+        and the link has already been clicked before (i.e. the link has been @e visited).
     */
     virtual void SetVisitedColour(const wxColour& colour);
 };

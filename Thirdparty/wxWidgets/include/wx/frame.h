@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     15.11.99
+// RCS-ID:      $Id$
 // Copyright:   (c) wxWidgets team
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,14 +19,12 @@
 #include "wx/toplevel.h"      // the base class
 #include "wx/statusbr.h"
 
-// the default names for various classes
+// the default names for various classs
 extern WXDLLIMPEXP_DATA_CORE(const char) wxStatusLineNameStr[];
 extern WXDLLIMPEXP_DATA_CORE(const char) wxToolBarNameStr[];
 
 class WXDLLIMPEXP_FWD_CORE wxFrame;
-#if wxUSE_MENUBAR
 class WXDLLIMPEXP_FWD_CORE wxMenuBar;
-#endif
 class WXDLLIMPEXP_FWD_CORE wxMenuItem;
 class WXDLLIMPEXP_FWD_CORE wxStatusBar;
 class WXDLLIMPEXP_FWD_CORE wxToolBar;
@@ -66,21 +65,20 @@ public:
                  const wxPoint& pos = wxDefaultPosition,
                  const wxSize& size = wxDefaultSize,
                  long style = wxDEFAULT_FRAME_STYLE,
-                 const wxString& name = wxASCII_STR(wxFrameNameStr));
+                 const wxString& name = wxFrameNameStr);
 
     // frame state
     // -----------
 
     // get the origin of the client area (which may be different from (0, 0)
     // if the frame has a toolbar) in client coordinates
-    virtual wxPoint GetClientAreaOrigin() const wxOVERRIDE;
+    virtual wxPoint GetClientAreaOrigin() const;
 
 
     // menu bar functions
     // ------------------
 
 #if wxUSE_MENUS
-#if wxUSE_MENUBAR
     virtual void SetMenuBar(wxMenuBar *menubar);
     virtual wxMenuBar *GetMenuBar() const { return m_frameMenuBar; }
 
@@ -88,7 +86,7 @@ public:
     // and exists mainly in order to be overridden in the MDI parent frame
     // which also looks at its active child menu bar
     virtual wxMenuItem *FindItemInMenuBar(int menuId) const;
-#endif
+
     // generate menu command corresponding to the given menu item
     //
     // returns true if processed
@@ -109,7 +107,7 @@ public:
     virtual wxStatusBar* CreateStatusBar(int number = 1,
                                          long style = wxSTB_DEFAULT_STYLE,
                                          wxWindowID winid = 0,
-                                         const wxString& name = wxASCII_STR(wxStatusLineNameStr));
+                                         const wxString& name = wxStatusLineNameStr);
     // return a new status bar
     virtual wxStatusBar *OnCreateStatusBar(int number,
                                            long style,
@@ -139,7 +137,7 @@ public:
     // create main toolbar bycalling OnCreateToolBar()
     virtual wxToolBar* CreateToolBar(long style = -1,
                                      wxWindowID winid = wxID_ANY,
-                                     const wxString& name = wxASCII_STR(wxToolBarNameStr));
+                                     const wxString& name = wxToolBarNameStr);
     // return a new toolbar
     virtual wxToolBar *OnCreateToolBar(long style,
                                        wxWindowID winid,
@@ -155,8 +153,8 @@ public:
 
     // event handlers
 #if wxUSE_MENUS
-    void OnMenuOpen(wxMenuEvent& event);
 #if wxUSE_STATUSBAR
+    void OnMenuOpen(wxMenuEvent& event);
     void OnMenuClose(wxMenuEvent& event);
     void OnMenuHighlight(wxMenuEvent& event);
 #endif // wxUSE_STATUSBAR
@@ -167,10 +165,10 @@ public:
 #endif // wxUSE_MENUS
 
     // do the UI update processing for this window
-    virtual void UpdateWindowUI(long flags = wxUPDATE_UI_NONE) wxOVERRIDE;
+    virtual void UpdateWindowUI(long flags = wxUPDATE_UI_NONE);
 
     // Implement internal behaviour (menu updating on some platforms)
-    virtual void OnInternalIdle() wxOVERRIDE;
+    virtual void OnInternalIdle();
 
 #if wxUSE_MENUS || wxUSE_TOOLBAR
     // show help text for the currently selected menu or toolbar item
@@ -179,7 +177,7 @@ public:
     virtual void DoGiveHelp(const wxString& text, bool show);
 #endif
 
-    virtual bool IsClientAreaChild(const wxWindow *child) const wxOVERRIDE
+    virtual bool IsClientAreaChild(const wxWindow *child) const
     {
         return !IsOneOfBars(child) && wxTopLevelWindow::IsClientAreaChild(child);
     }
@@ -193,9 +191,9 @@ protected:
     void DeleteAllBars();
 
     // test whether this window makes part of the frame
-    virtual bool IsOneOfBars(const wxWindow *win) const wxOVERRIDE;
+    virtual bool IsOneOfBars(const wxWindow *win) const;
 
-#if wxUSE_MENUBAR
+#if wxUSE_MENUS
     // override to update menu bar position when the frame size changes
     virtual void PositionMenuBar() { }
 
@@ -206,15 +204,9 @@ protected:
     // override to do something special when the menu bar is attached to the
     // frame
     virtual void AttachMenuBar(wxMenuBar *menubar);
-#endif // wxUSE_MENUBAR
 
-    // Return true if we should update the menu item state from idle event
-    // handler or false if we should delay it until the menu is opened.
-    static bool ShouldUpdateMenuFromIdle();
-
-#if wxUSE_MENUBAR
     wxMenuBar *m_frameMenuBar;
-#endif // wxUSE_MENUBAR
+#endif // wxUSE_MENUS
 
 #if wxUSE_STATUSBAR && (wxUSE_MENUS || wxUSE_TOOLBAR)
     // the saved status bar text overwritten by DoGiveHelp()
@@ -248,15 +240,15 @@ protected:
     wxToolBar *m_frameToolBar;
 #endif // wxUSE_TOOLBAR
 
-#if wxUSE_MENUS
-    wxDECLARE_EVENT_TABLE();
-#endif // wxUSE_MENUS
+#if wxUSE_MENUS && wxUSE_STATUSBAR
+    DECLARE_EVENT_TABLE()
+#endif // wxUSE_MENUS && wxUSE_STATUSBAR
 
     wxDECLARE_NO_COPY_CLASS(wxFrameBase);
 };
 
 // include the real class declaration
-#if defined(__WXUNIVERSAL__)
+#if defined(__WXUNIVERSAL__) // && !defined(__WXMICROWIN__)
     #include "wx/univ/frame.h"
 #else // !__WXUNIVERSAL__
     #if defined(__WXMSW__)
@@ -269,8 +261,10 @@ protected:
         #include "wx/motif/frame.h"
     #elif defined(__WXMAC__)
         #include "wx/osx/frame.h"
-    #elif defined(__WXQT__)
-        #include "wx/qt/frame.h"
+    #elif defined(__WXCOCOA__)
+        #include "wx/cocoa/frame.h"
+    #elif defined(__WXPM__)
+        #include "wx/os2/frame.h"
     #endif
 #endif
 

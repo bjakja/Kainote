@@ -3,7 +3,8 @@
 // Purpose:     generic implementation of wxMask
 // Author:      Vadim Zeitlin
 // Created:     2006-09-28
-// Copyright:   (c) 2006 Vadim Zeitlin <vadim@wxwidgets.org>
+// RCS-ID:      $Id$
+// Copyright:   (c) 2006 Vadim Zeitlin <vadim@wxwindows.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -46,7 +47,7 @@ private:
 
     wxBitmap m_bitmap;
 
-    wxDECLARE_DYNAMIC_CLASS(wxMask);
+    DECLARE_DYNAMIC_CLASS(wxMask)
 };
 
 #endif // _WX_GENERIC_MASKG_H_

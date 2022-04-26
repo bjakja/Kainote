@@ -3,14 +3,13 @@
 // Purpose:     generic wxScrollHelper
 // Author:      Vadim Zeitlin
 // Created:     2008-12-24 (replacing old file with the same name)
+// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_GENERIC_SCROLLWIN_H_
 #define _WX_GENERIC_SCROLLWIN_H_
-
-#include "wx/recguard.h"
 
 // ----------------------------------------------------------------------------
 // generic wxScrollHelper implementation
@@ -22,13 +21,12 @@ public:
     wxScrollHelper(wxWindow *winToScroll);
 
     // implement base class pure virtuals
-    virtual void AdjustScrollbars() wxOVERRIDE;
-    virtual bool IsScrollbarShown(int orient) const wxOVERRIDE;
+    virtual void AdjustScrollbars();
 
 protected:
-    virtual void DoScroll(int x, int y) wxOVERRIDE;
+    virtual void DoScroll(int x, int y);
     virtual void DoShowScrollbars(wxScrollbarVisibility horz,
-                                  wxScrollbarVisibility vert) wxOVERRIDE;
+                                  wxScrollbarVisibility vert);
 
 private:
     // helper of AdjustScrollbars(): does the work for the single scrollbar
@@ -47,7 +45,6 @@ private:
 
     wxScrollbarVisibility m_xVisibility,
                           m_yVisibility;
-    wxRecursionGuardFlag m_adjustScrollFlagReentrancy;
 
     wxDECLARE_NO_COPY_CLASS(wxScrollHelper);
 };

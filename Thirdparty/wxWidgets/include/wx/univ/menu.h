@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     05.05.01
+// RCS-ID:      $Id$
 // Copyright:   (c) 2001 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -55,8 +56,8 @@ public:
     void Dismiss();
 
     // override the base class methods to connect/disconnect event handlers
-    virtual void Attach(wxMenuBarBase *menubar) wxOVERRIDE;
-    virtual void Detach() wxOVERRIDE;
+    virtual void Attach(wxMenuBarBase *menubar);
+    virtual void Detach();
 
     // implementation only from here
 
@@ -74,9 +75,9 @@ public:
 
 protected:
     // implement base class virtuals
-    virtual wxMenuItem* DoAppend(wxMenuItem *item) wxOVERRIDE;
-    virtual wxMenuItem* DoInsert(size_t pos, wxMenuItem *item) wxOVERRIDE;
-    virtual wxMenuItem* DoRemove(wxMenuItem *item) wxOVERRIDE;
+    virtual wxMenuItem* DoAppend(wxMenuItem *item);
+    virtual wxMenuItem* DoInsert(size_t pos, wxMenuItem *item);
+    virtual wxMenuItem* DoRemove(wxMenuItem *item);
 
     // common part of DoAppend and DoInsert
     void OnItemAdded(wxMenuItem *item);
@@ -130,7 +131,7 @@ private:
 
     // it calls out OnDismiss()
     friend class wxPopupMenuWindow;
-    wxDECLARE_DYNAMIC_CLASS(wxMenu);
+    DECLARE_DYNAMIC_CLASS(wxMenu)
 };
 
 // ----------------------------------------------------------------------------
@@ -146,19 +147,19 @@ public:
     virtual ~wxMenuBar();
 
     // implement base class virtuals
-    virtual bool Append( wxMenu *menu, const wxString &title ) wxOVERRIDE;
-    virtual bool Insert(size_t pos, wxMenu *menu, const wxString& title) wxOVERRIDE;
-    virtual wxMenu *Replace(size_t pos, wxMenu *menu, const wxString& title) wxOVERRIDE;
-    virtual wxMenu *Remove(size_t pos) wxOVERRIDE;
+    virtual bool Append( wxMenu *menu, const wxString &title );
+    virtual bool Insert(size_t pos, wxMenu *menu, const wxString& title);
+    virtual wxMenu *Replace(size_t pos, wxMenu *menu, const wxString& title);
+    virtual wxMenu *Remove(size_t pos);
 
-    virtual void EnableTop(size_t pos, bool enable) wxOVERRIDE;
-    virtual bool IsEnabledTop(size_t pos) const wxOVERRIDE;
+    virtual void EnableTop(size_t pos, bool enable);
+    virtual bool IsEnabledTop(size_t pos) const;
 
-    virtual void SetMenuLabel(size_t pos, const wxString& label) wxOVERRIDE;
-    virtual wxString GetMenuLabel(size_t pos) const wxOVERRIDE;
+    virtual void SetMenuLabel(size_t pos, const wxString& label);
+    virtual wxString GetMenuLabel(size_t pos) const;
 
-    virtual void Attach(wxFrame *frame) wxOVERRIDE;
-    virtual void Detach() wxOVERRIDE;
+    virtual void Attach(wxFrame *frame);
+    virtual void Detach();
 
     // get the next item for the givan accel letter (used by wxFrame), return
     // -1 if none
@@ -187,11 +188,9 @@ protected:
 
     // event handlers
     void OnLeftDown(wxMouseEvent& event);
-    void OnLeftUp(wxMouseEvent& event);
     void OnMouseMove(wxMouseEvent& event);
     void OnKeyDown(wxKeyEvent& event);
     void OnKillFocus(wxFocusEvent& event);
-    void OnCaptureLost(wxMouseCaptureLostEvent& event);
 
     // process the mouse move event, return true if we did, false to continue
     // processing as usual
@@ -204,10 +203,10 @@ protected:
     void OnDismiss();
 
     // draw the menubar
-    virtual void DoDraw(wxControlRenderer *renderer) wxOVERRIDE;
+    virtual void DoDraw(wxControlRenderer *renderer);
 
     // menubar geometry
-    virtual wxSize DoGetBestClientSize() const wxOVERRIDE;
+    virtual wxSize DoGetBestClientSize() const;
 
     // has the menubar been created already?
     bool IsCreated() const { return m_frameLast != NULL; }
@@ -269,8 +268,8 @@ private:
     // it calls out ProcessMouseEvent()
     friend class wxPopupMenuWindow;
 
-    wxDECLARE_EVENT_TABLE();
-    wxDECLARE_DYNAMIC_CLASS(wxMenuBar);
+    DECLARE_EVENT_TABLE()
+    DECLARE_DYNAMIC_CLASS(wxMenuBar)
 };
 
 #endif // _WX_UNIV_MENU_H_

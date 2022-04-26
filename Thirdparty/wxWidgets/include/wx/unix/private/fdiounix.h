@@ -3,6 +3,7 @@
 // Purpose:     wxFDIOManagerUnix class used by console Unix applications
 // Author:      Vadim Zeitlin
 // Created:     2009-08-17
+// RCS-ID:      $Id$
 // Copyright:   (c) 2009 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -19,8 +20,8 @@
 class wxFDIOManagerUnix : public wxFDIOManager
 {
 public:
-    virtual int AddInput(wxFDIOHandler *handler, int fd, Direction d) wxOVERRIDE;
-    virtual void RemoveInput(wxFDIOHandler *handler, int fd, Direction d) wxOVERRIDE;
+    virtual int AddInput(wxFDIOHandler *handler, int fd, Direction d);
+    virtual void RemoveInput(wxFDIOHandler *handler, int fd, Direction d);
 };
 
 #endif // _UNIX_PRIVATE_FDIOUNIX_H_

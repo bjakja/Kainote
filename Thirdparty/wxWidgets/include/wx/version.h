@@ -4,6 +4,7 @@
  *  Author:      Julian Smart
  *  Modified by: Ryan Norton (Converted to C)
  *  Created:     29/01/98
+ *  RCS-ID:      $Id$
  *  Copyright:   (c) 1998 Julian Smart
  *  Licence:     wxWindows licence
  */
@@ -25,11 +26,11 @@
  */
 
 /*  NB: this file is parsed by automatic tools so don't change its format! */
-#define wxMAJOR_VERSION      3
-#define wxMINOR_VERSION      1
-#define wxRELEASE_NUMBER     6
+#define wxMAJOR_VERSION      2
+#define wxMINOR_VERSION      9
+#define wxRELEASE_NUMBER     4
 #define wxSUBRELEASE_NUMBER  0
-#define wxVERSION_STRING   wxT("wxWidgets 3.1.6")
+#define wxVERSION_STRING   wxT("wxWidgets 2.9.4")
 
 /*  nothing to update below this line when updating the version */
 /*  ---------------------------------------------------------------------------- */

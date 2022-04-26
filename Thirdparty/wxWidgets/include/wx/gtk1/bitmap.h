@@ -2,6 +2,7 @@
 // Name:        wx/gtk1/bitmap.h
 // Purpose:
 // Author:      Robert Roebling
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -25,7 +26,6 @@ class WXDLLIMPEXP_FWD_CORE wxPixelDataBase;
 class WXDLLIMPEXP_FWD_CORE wxMask;
 class WXDLLIMPEXP_FWD_CORE wxBitmap;
 class WXDLLIMPEXP_FWD_CORE wxImage;
-class WXDLLIMPEXP_FWD_CORE wxCursor;
 
 //-----------------------------------------------------------------------------
 // wxMask
@@ -50,13 +50,11 @@ public:
 
     // implementation
     GdkBitmap   *m_bitmap;
-    int m_width;
-    int m_height;
 
-    wxBitmap GetBitmap() const;
+    GdkBitmap *GetBitmap() const;
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxMask);
+    DECLARE_DYNAMIC_CLASS(wxMask)
 };
 
 //-----------------------------------------------------------------------------
@@ -71,22 +69,29 @@ public:
     wxBitmap( const wxSize& sz, int depth = -1 ) { Create( sz, depth ); }
     wxBitmap( const char bits[], int width, int height, int depth = 1 );
     wxBitmap( const char* const* bits );
+#ifdef wxNEEDS_CHARPP
+    // needed for old GCC
+    wxBitmap(char** data)
+    {
+        *this = wxBitmap(const_cast<const char* const*>(data));
+    }
+#endif
     wxBitmap( const wxString &filename, wxBitmapType type = wxBITMAP_DEFAULT_TYPE );
-    wxBitmap( const wxImage& image, int depth = -1, double WXUNUSED(scale) = 1.0 ) { (void)CreateFromImage(image, depth); }
-    explicit wxBitmap(const wxCursor& cursor);
+    wxBitmap( const wxImage& image, int depth = -1 ) { (void)CreateFromImage(image, depth); }
     virtual ~wxBitmap();
 
     bool Create(int width, int height, int depth = wxBITMAP_SCREEN_DEPTH);
     bool Create(const wxSize& sz, int depth = wxBITMAP_SCREEN_DEPTH)
         { return Create(sz.GetWidth(), sz.GetHeight(), depth); }
-    bool Create(int width, int height, const wxDC& WXUNUSED(dc))
-        { return Create(width,height); }
 
     virtual int GetHeight() const;
     virtual int GetWidth() const;
     virtual int GetDepth() const;
 
     wxImage ConvertToImage() const;
+
+    // copies the contents and mask of the given (colour) icon to the bitmap
+    virtual bool CopyFromIcon(const wxIcon& icon);
 
     wxMask *GetMask() const;
     void SetMask( wxMask *mask );
@@ -120,8 +125,6 @@ public:
 
     // Basically, this corresponds to Win32 StretchBlt()
     wxBitmap Rescale( int clipx, int clipy, int clipwidth, int clipheight, int width, int height );
-    // OpenVMS needs the next statement to detect Rescale in an inherited class
-    using wxBitmapHelpers::Rescale;
 
     // raw bitmap access support functions
     void *GetRawData(wxPixelDataBase& data, int bpp);
@@ -143,7 +146,7 @@ private:
     friend class wxBitmapHandler;
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxBitmap);
+    DECLARE_DYNAMIC_CLASS(wxBitmap)
 };
 
 

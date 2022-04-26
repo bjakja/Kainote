@@ -4,6 +4,7 @@
 // Author:      Jens Lody and Teodor Petrov
 // Modified by:
 // Created:     2012-03-23
+// RCS-ID:      $Id:$
 // Copyright:   (c) 2012 Jens Lody <jens@codeblocks.org>
 //                  and Teodor Petrov
 // Licence:     wxWindows licence
@@ -31,9 +32,8 @@ class WXDLLIMPEXP_AUI wxAuiGtkTabArt : public wxAuiGenericTabArt
 public:
     wxAuiGtkTabArt();
 
-    virtual wxAuiTabArt* Clone() wxOVERRIDE;
-    virtual void DrawBorder(wxDC& dc, wxWindow* wnd, const wxRect& rect) wxOVERRIDE;
-    virtual void DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect) wxOVERRIDE;
+    virtual wxAuiTabArt* Clone();
+    virtual void DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect);
     virtual void DrawTab(wxDC& dc,
                          wxWindow* wnd,
                          const wxAuiNotebookPage& page,
@@ -41,16 +41,14 @@ public:
                          int close_button_state,
                          wxRect* out_tab_rect,
                          wxRect* out_button_rect,
-                         int* x_extent) wxOVERRIDE;
+                         int* x_extent);
     void DrawButton(wxDC& dc, wxWindow* wnd, const wxRect& in_rect, int bitmap_id,
-                    int button_state, int orientation, wxRect* out_rect) wxOVERRIDE;
+                    int button_state, int orientation, wxRect* out_rect);
     int GetBestTabCtrlSize(wxWindow* wnd, const wxAuiNotebookPageArray& pages,
-                            const wxSize& required_bmp_size) wxOVERRIDE;
-    int GetBorderWidth(wxWindow* wnd) wxOVERRIDE;
-    int GetAdditionalBorderSpace(wxWindow* wnd) wxOVERRIDE;
+                            const wxSize& required_bmp_size);
     virtual wxSize GetTabSize(wxDC& dc, wxWindow* wnd, const wxString& caption,
-                              const wxBitmapBundle& bitmap, bool active,
-                              int close_button_state, int* x_extent) wxOVERRIDE;
+                              const wxBitmap& bitmap, bool active,
+                              int close_button_state, int* x_extent);
 };
 
 #endif  // wxUSE_AUI

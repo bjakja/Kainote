@@ -4,6 +4,7 @@
 // Author:      Julian Smart, Guillermo Rodriguez, Vadim Zeitlin
 // Modified by: VZ: extracted all non-wxTimer stuff in stopwatch.cpp (20.06.03)
 // Created:     04/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 //              (c) 1999 Guillermo Rodriguez <guille@iies.es>
 // Licence:     wxWindows licence
@@ -18,14 +19,17 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_TIMER
 
-#include "wx\private/timer.h"
-#include "wx\utils.h"               // for wxNewId()
-#include "wx\thread.h"
+#include "wx/private/timer.h"
+#include "wx/utils.h"               // for wxNewId()
+#include "wx/thread.h"
 
 wxTimerImpl::wxTimerImpl(wxTimer *timer)
 {

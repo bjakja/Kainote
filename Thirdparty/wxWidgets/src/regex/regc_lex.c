@@ -30,6 +30,11 @@
  *
  */
 
+#include "regex.h"
+#include "regguts.h"
+#include "regerrs.h"
+#include "regcustom.h"
+
 /* scanning macros (know about v) */
 #define	ATEOS()		(v->now >= v->stop)
 #define	HAVE(n)		(v->stop - v->now >= (n))

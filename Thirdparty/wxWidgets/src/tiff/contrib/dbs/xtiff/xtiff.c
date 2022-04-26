@@ -54,7 +54,6 @@
  */
 #include <math.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <tiffio.h>
 #include <X11/Xatom.h>
 #include <X11/Intrinsic.h>
@@ -70,7 +69,7 @@
 #include "xtifficon.h"
 
 #define TIFF_GAMMA      "2.2"     /* default gamma from the TIFF 5.0 spec */
-#define ROUND(x)        (uint16) ((x) + 0.5)
+#define ROUND(x)        (u_short) ((x) + 0.5)
 #define SCALE(x, s)     (((x) * 65535L) / (s))
 #define MCHECK(m)       if (!m) { fprintf(stderr, "malloc failed\n"); exit(0); }
 #define MIN(a, b)       (((a) < (b)) ? (a) : (b))
@@ -85,7 +84,7 @@
 #define PP(args)    ()
 #endif
 
-int main PP((int argc, char **argv));
+void main PP((int argc, char **argv));
 void OpenTIFFFile PP((void));
 void GetTIFFHeader PP((void));
 void SetNameLabel PP((void));
@@ -131,8 +130,8 @@ typedef struct {
     Boolean help;
     float gamma;
     Boolean usePixmap;
-    uint32 viewportWidth;
-    uint32 viewportHeight;
+    int viewportWidth;
+    int viewportHeight;
     int translate;
     Boolean verbose;
 } AppData, *AppDataPtr;
@@ -230,14 +229,14 @@ XImage *            xImage;
 GC                  xWinGc;
 int                 xImageDepth, xScreen, xRedMask, xGreenMask, xBlueMask,
                     xOffset = 0, yOffset = 0, grabX = -1, grabY = -1;
-unsigned char       basePixel = 0;
+u_char              basePixel = 0;
 
 /*
  * TIFF data structures
  */
 TIFF *              tfFile = NULL;
-uint32              tfImageWidth, tfImageHeight;
-uint16              tfBitsPerSample, tfSamplesPerPixel, tfPlanarConfiguration,
+u_long              tfImageWidth, tfImageHeight;
+u_short             tfBitsPerSample, tfSamplesPerPixel, tfPlanarConfiguration,
                     tfPhotometricInterpretation, tfGrayResponseUnit,
                     tfImageDepth, tfBytesPerRow;
 int                 tfDirectory = 0, tfMultiPage = False;
@@ -253,13 +252,15 @@ double              *dRed, *dGreen, *dBlue;
 /*
  * shared data structures
  */
-uint16 *            redMap = NULL, *greenMap = NULL, *blueMap = NULL,
+u_short *           redMap = NULL, *greenMap = NULL, *blueMap = NULL,
                     *grayMap = NULL, colormapSize;
-char *             imageMemory;
+u_char *            imageMemory;
 char *              fileName;
 
-int
-main(int argc, char **argv)
+void
+main(argc, argv)
+    int argc;
+    char ** argv;
 {
     XSetWindowAttributes window_attributes;
     Widget widget_list[3];
@@ -378,8 +379,6 @@ main(int argc, char **argv)
     CreateXImage();
 
     XtMainLoop();
-
-    return 0;
 }
 
 void
@@ -451,9 +450,9 @@ GetTIFFHeader()
      */
     switch (tfPhotometricInterpretation) {
     case PHOTOMETRIC_RGB:
-	redMap = (uint16 *) malloc(colormapSize * sizeof(uint16));
-	greenMap = (uint16 *) malloc(colormapSize * sizeof(uint16));
-	blueMap = (uint16 *) malloc(colormapSize * sizeof(uint16));
+	redMap = (u_short *) malloc(colormapSize * sizeof(u_short));
+	greenMap = (u_short *) malloc(colormapSize * sizeof(u_short));
+	blueMap = (u_short *) malloc(colormapSize * sizeof(u_short));
 	MCHECK(redMap); MCHECK(greenMap); MCHECK(blueMap);
 	for (i = 0; i < colormapSize; i++)
 	    dRed[i] = dGreen[i] = dBlue[i]
@@ -462,9 +461,9 @@ GetTIFFHeader()
     case PHOTOMETRIC_PALETTE:
         if (!TIFFGetField(tfFile, TIFFTAG_COLORMAP,
                 &redMap, &greenMap, &blueMap)) {
-            redMap = (uint16 *) malloc(colormapSize * sizeof(uint16));
-            greenMap = (uint16 *) malloc(colormapSize * sizeof(uint16));
-            blueMap = (uint16 *) malloc(colormapSize * sizeof(uint16));
+            redMap = (u_short *) malloc(colormapSize * sizeof(u_short));
+            greenMap = (u_short *) malloc(colormapSize * sizeof(u_short));
+            blueMap = (u_short *) malloc(colormapSize * sizeof(u_short));
             MCHECK(redMap); MCHECK(greenMap); MCHECK(blueMap);
             for (i = 0; i < colormapSize; i++)
                 dRed[i] = dGreen[i] = dBlue[i]
@@ -479,18 +478,18 @@ GetTIFFHeader()
         }
         break;
     case PHOTOMETRIC_MINISWHITE:
-        redMap = (uint16 *) malloc(colormapSize * sizeof(uint16));
-        greenMap = (uint16 *) malloc(colormapSize * sizeof(uint16));
-        blueMap = (uint16 *) malloc(colormapSize * sizeof(uint16));
+        redMap = (u_short *) malloc(colormapSize * sizeof(u_short));
+        greenMap = (u_short *) malloc(colormapSize * sizeof(u_short));
+        blueMap = (u_short *) malloc(colormapSize * sizeof(u_short));
         MCHECK(redMap); MCHECK(greenMap); MCHECK(blueMap);
 	for (i = 0; i < colormapSize; i++)
 	    dRed[i] = dGreen[i] = dBlue[i] = (double)
 		 SCALE(colormapSize-1-i, colormapSize-1);
         break;
     case PHOTOMETRIC_MINISBLACK:
-        redMap = (uint16 *) malloc(colormapSize * sizeof(uint16));
-        greenMap = (uint16 *) malloc(colormapSize * sizeof(uint16));
-        blueMap = (uint16 *) malloc(colormapSize * sizeof(uint16));
+        redMap = (u_short *) malloc(colormapSize * sizeof(u_short));
+        greenMap = (u_short *) malloc(colormapSize * sizeof(u_short));
+        blueMap = (u_short *) malloc(colormapSize * sizeof(u_short));
         MCHECK(redMap); MCHECK(greenMap); MCHECK(blueMap);
 	for (i = 0; i < colormapSize; i++)
 	    dRed[i] = dGreen[i] = dBlue[i] = (double) SCALE(i, colormapSize-1);
@@ -510,9 +509,9 @@ SetNameLabel()
     Arg args[1];
 
     if (tfMultiPage)
-        snprintf(buffer, sizeof(buffer), "%s - page %d", fileName, tfDirectory);
+        sprintf(buffer, "%s - page %d", fileName, tfDirectory);
     else
-        snprintf(buffer, sizeof(buffer), "%s", fileName);
+        strcpy(buffer, fileName);
     XtSetArg(args[0], XtNlabel, buffer);
     XtSetValues(labelWidget, args, 1);
 }
@@ -576,9 +575,9 @@ static char* classNames[] = {
 void
 GetVisual()
 {
-    XColor *colors = NULL;
-    unsigned long *pixels = NULL;
-    unsigned long i;
+    register XColor *colors = NULL;
+    register u_long *pixels = NULL;
+    register int i;
 
     switch (tfImageDepth) {
     /*
@@ -596,7 +595,7 @@ GetVisual()
         MCHECK(colors);
 
         for (i = 0; i < colormapSize; i++) {
-            colors[i].pixel = (i << 16) + (i << 8) + i;
+            colors[i].pixel = (u_long) (i << 16) + (i << 8) + i;
             colors[i].red = redMap[i];
             colors[i].green = greenMap[i];
             colors[i].blue = blueMap[i];
@@ -631,7 +630,7 @@ GetVisual()
         MCHECK(colors);
 
         for (i = 0; i < colormapSize; i++) {
-            colors[i].pixel = i;
+            colors[i].pixel = (u_long) i;
             colors[i].red = redMap[i];
             colors[i].green = greenMap[i];
             colors[i].blue = blueMap[i];
@@ -653,12 +652,11 @@ GetVisual()
         else {
             xColormap = XCreateColormap(xDisplay, RootWindow(xDisplay, xScreen),
                 xVisual, AllocNone);
-            pixels = (unsigned long *)
-                malloc(colormapSize * sizeof(unsigned long));
+            pixels = (u_long *) malloc(colormapSize * sizeof(u_long));
             MCHECK(pixels);
             (void) XAllocColorCells(xDisplay, xColormap, True,
                 NULL, 0, pixels, colormapSize);
-            basePixel = (unsigned char) pixels[0];
+            basePixel = (u_char) pixels[0];
             free(pixels);
         }
         XStoreColors(xDisplay, xColormap, colors, colormapSize);
@@ -735,15 +733,14 @@ void
 GetTIFFImage()
 {
     int pixel_map[3], red_shift, green_shift, blue_shift;
-    char *scan_line, *output_p, *input_p;
-    uint32 i, j;
-    uint16 s;
+    register u_char *scan_line, *output_p, *input_p;
+    register int i, j, s;
 
-    scan_line = (char *) malloc(tfBytesPerRow = TIFFScanlineSize(tfFile));
+    scan_line = (u_char *) malloc(tfBytesPerRow = TIFFScanlineSize(tfFile));
     MCHECK(scan_line);
 
     if ((tfImageDepth == 32) || (tfImageDepth == 24)) {
-        output_p = imageMemory = (char *)
+        output_p = imageMemory = (u_char *)
             malloc(tfImageWidth * tfImageHeight * 4);
         MCHECK(imageMemory);
 
@@ -795,7 +792,7 @@ GetTIFFImage()
         }
     } else {
         if (xImageDepth == tfImageDepth) {
-            output_p = imageMemory = (char *)
+            output_p = imageMemory = (u_char *)
                 malloc(tfBytesPerRow * tfImageHeight);
             MCHECK(imageMemory);
 
@@ -803,7 +800,7 @@ GetTIFFImage()
                 if (TIFFReadScanline(tfFile, output_p, i, 0) < 0)
                     break;
         } else if ((xImageDepth == 8) && (tfImageDepth == 4)) {
-            output_p = imageMemory = (char *)
+            output_p = imageMemory = (u_char *)
                 malloc(tfBytesPerRow * 2 * tfImageHeight + 2);
             MCHECK(imageMemory);
 
@@ -823,7 +820,7 @@ GetTIFFImage()
                 }
             }
         } else if ((xImageDepth == 8) && (tfImageDepth == 2)) {
-            output_p = imageMemory = (char *)
+            output_p = imageMemory = (u_char *)
                 malloc(tfBytesPerRow * 4 * tfImageHeight + 4);
             MCHECK(imageMemory);
 
@@ -840,7 +837,7 @@ GetTIFFImage()
                 }
             }
         } else if ((xImageDepth == 4) && (tfImageDepth == 2)) {
-            output_p = imageMemory = (char *)
+            output_p = imageMemory = (u_char *)
                 malloc(tfBytesPerRow * 2 * tfImageHeight + 2);
             MCHECK(imageMemory);
 
@@ -1276,13 +1273,3 @@ Usage()
     fprintf(stderr, "\t[-verbose (True | False)]\n");
     exit(0);
 }
-
-/* vim: set ts=8 sts=8 sw=8 noet: */
-
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 8
- * fill-column: 78
- * End:
- */

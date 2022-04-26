@@ -2,6 +2,7 @@
 // Name:        dateevt.h
 // Purpose:     interface of wxDateEvent
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -12,7 +13,7 @@
     with wxDatePickerCtrl. It also serves as a base class
     for wxCalendarEvent.
 
-    @library{wxcore}
+    @library{wxadv}
     @category{events}
 */
 class wxDateEvent : public wxCommandEvent

@@ -6,6 +6,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     06.08.00
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -184,10 +185,10 @@ struct WXDLLIMPEXP_CORE wxThemeInfo
 // if no theme was picked, get any theme compiled in (sorted by
 // quality/completeness of the theme):
 #ifndef wxUNIV_DEFAULT_THEME
-    #if wxUSE_THEME_GTK
-        #define wxUNIV_DEFAULT_THEME gtk
-    #elif wxUSE_THEME_WIN32
+    #if wxUSE_THEME_WIN32
         #define wxUNIV_DEFAULT_THEME win32
+    #elif wxUSE_THEME_GTK
+        #define wxUNIV_DEFAULT_THEME gtk
     #elif wxUSE_THEME_MONO
         #define wxUNIV_DEFAULT_THEME mono
     #endif

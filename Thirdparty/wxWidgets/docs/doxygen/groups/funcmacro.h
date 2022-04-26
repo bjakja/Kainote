@@ -2,6 +2,7 @@
 // Name:        funcmacro.h
 // Purpose:     Main function and macro group docs
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 

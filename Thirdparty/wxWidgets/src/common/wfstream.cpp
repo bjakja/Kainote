@@ -4,20 +4,24 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     11/07/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Guilhem Lavaux
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_STREAMS
 
-#include "wx\wfstream.h"
+#include "wx/wfstream.h"
 
 #ifndef WX_PRECOMP
-    #include "wx\stream.h"
+    #include "wx/stream.h"
 #endif
 
 #include <stdio.h>
@@ -204,33 +208,6 @@ wxTempFileOutputStream::~wxTempFileOutputStream()
 }
 
 size_t wxTempFileOutputStream::OnSysWrite(const void *buffer, size_t size)
-{
-    if (IsOk() && m_file->Write(buffer, size))
-        return size;
-    m_lasterror = wxSTREAM_WRITE_ERROR;
-    return 0;
-}
-
-// ----------------------------------------------------------------------------
-// wxTempFFileOutputStream
-// ----------------------------------------------------------------------------
-
-wxTempFFileOutputStream::wxTempFFileOutputStream(const wxString& fileName)
-{
-    m_file = new wxTempFFile(fileName);
-
-    if (!m_file->IsOpened())
-        m_lasterror = wxSTREAM_WRITE_ERROR;
-}
-
-wxTempFFileOutputStream::~wxTempFFileOutputStream()
-{
-    if (m_file->IsOpened())
-        Discard();
-    delete m_file;
-}
-
-size_t wxTempFFileOutputStream::OnSysWrite(const void *buffer, size_t size)
 {
     if (IsOk() && m_file->Write(buffer, size))
         return size;

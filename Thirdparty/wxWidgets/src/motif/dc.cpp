@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,7 +19,7 @@
 
 #include "wx/motif/dc.h"
 
-wxIMPLEMENT_ABSTRACT_CLASS(wxMotifDCImpl, wxDCImpl);
+IMPLEMENT_ABSTRACT_CLASS(wxMotifDCImpl, wxDCImpl)
 
 //-----------------------------------------------------------------------------
 // wxMotifDCImpl
@@ -29,7 +30,7 @@ wxMotifDCImpl::wxMotifDCImpl(wxDC *owner)
 {
     m_ok = false;
 
-    m_backgroundMode = wxBRUSHSTYLE_TRANSPARENT;
+    m_backgroundMode = wxTRANSPARENT;
 }
 
 void wxMotifDCImpl::DoDrawIcon( const wxIcon &icon, wxCoord x, wxCoord y)
@@ -87,9 +88,9 @@ void wxMotifDCImpl::DoGetSizeMM( int* width, int* height ) const
     GetSize( &w, &h );
 
     if ( width )
-        *width = int( double(w) / (m_scaleX*GetMMToPXx()) );
+        *width = int( double(w) / (m_scaleX*m_mm_to_pix_x) );
     if ( height )
-        *height = int( double(h) / (m_scaleY*GetMMToPXy()) );
+        *height = int( double(h) / (m_scaleY*m_mm_to_pix_y) );
 }
 
 // Resolution in pixels per logical inch

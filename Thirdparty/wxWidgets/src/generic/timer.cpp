@@ -2,6 +2,7 @@
 // Name:        src/generic/timer.cpp
 // Purpose:     wxTimer implementation
 // Author:      Vaclav Slavik
+// Id:          $Id$
 // Copyright:   (c) Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -9,6 +10,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 // ----------------------------------------------------------------------------
 // NB: when using generic wxTimer implementation in your port, you *must* call
@@ -229,14 +233,14 @@ void wxGenericTimerImpl::Stop()
 // A module to deallocate memory properly:
 class wxTimerModule: public wxModule
 {
-    wxDECLARE_DYNAMIC_CLASS(wxTimerModule);
+DECLARE_DYNAMIC_CLASS(wxTimerModule)
 public:
     wxTimerModule() {}
     bool OnInit() { return true; }
     void OnExit() { wxDELETE(gs_scheduler); }
 };
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxTimerModule, wxModule);
+IMPLEMENT_DYNAMIC_CLASS(wxTimerModule, wxModule)
 
 // ----------------------------------------------------------------------------
 // wxGUIAppTraits

@@ -4,6 +4,7 @@
 // Author:      Mattia Barbon
 // Modified by:
 // Created:     29/01/2002
+// RCS-ID:      $Id$
 // Copyright:   (c) Mattia Barbon
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,8 +12,8 @@
 #ifndef _WX_HASHMAP_H_
 #define _WX_HASHMAP_H_
 
-#include "wx\string.h"
-#include "wx\wxcrt.h"
+#include "wx/string.h"
+#include "wx/wxcrt.h"
 
 // In wxUSE_STD_CONTAINERS build we prefer to use the standard hash map class
 // but it can be either in non-standard hash_map header (old g++ and some other
@@ -62,7 +63,11 @@
 
 #define wxNEEDS_WX_HASH_MAP
 
+#ifdef __WXWINCE__
+typedef int ptrdiff_t;
+#else
 #include <stddef.h>             // for ptrdiff_t
+#endif
 
 // private
 struct WXDLLIMPEXP_BASE _wxHashTable_NodeBase
@@ -81,7 +86,7 @@ class WXDLLIMPEXP_BASE _wxHashTableBase2
 {
 public:
     typedef void (*NodeDtor)(_wxHashTable_NodeBase*);
-    typedef size_t (*BucketFromNode)(_wxHashTableBase2*,_wxHashTable_NodeBase*);
+    typedef unsigned long (*BucketFromNode)(_wxHashTableBase2*,_wxHashTable_NodeBase*);
     typedef _wxHashTable_NodeBase* (*ProcessNode)(_wxHashTable_NodeBase*);
 protected:
     static _wxHashTable_NodeBase* DummyProcessNode(_wxHashTable_NodeBase* node);
@@ -450,6 +455,11 @@ CLASSEXP CLASSNAME \
 public: \
     CLASSNAME() { } \
     const_key_reference operator()( const_pair_reference pair ) const { return pair.first; }\
+    \
+    /* the dummy assignment operator is needed to suppress compiler */ \
+    /* warnings from hash table class' operator=(): gcc complains about */ \
+    /* "statement with no effect" without it */ \
+    CLASSNAME& operator=(const CLASSNAME&) { return *this; } \
 };
 
 // grow/shrink predicates
@@ -466,12 +476,15 @@ inline bool grow_lf70( size_t buckets, size_t items )
 // hashing and comparison functors
 // ----------------------------------------------------------------------------
 
+// NB: implementation detail: all of these classes must have dummy assignment
+//     operators to suppress warnings about "statement with no effect" from gcc
+//     in the hash table class assignment operator (where they're assigned)
+
 #ifndef wxNEEDS_WX_HASH_MAP
 
 // integer types
-struct WXDLLIMPEXP_BASE wxIntegerHash
+class WXDLLIMPEXP_BASE wxIntegerHash
 {
-private:
     WX_HASH_MAP_NAMESPACE::hash<long> longHash;
     WX_HASH_MAP_NAMESPACE::hash<unsigned long> ulongHash;
     WX_HASH_MAP_NAMESPACE::hash<int> intHash;
@@ -496,81 +509,96 @@ private:
 #endif // wxHAS_LONG_LONG_T_DIFFERENT_FROM_LONG
 
 public:
-    wxIntegerHash() wxNOEXCEPT { }
-    size_t operator()( long x ) const wxNOEXCEPT { return longHash( x ); }
-    size_t operator()( unsigned long x ) const wxNOEXCEPT { return ulongHash( x ); }
-    size_t operator()( int x ) const wxNOEXCEPT { return intHash( x ); }
-    size_t operator()( unsigned int x ) const wxNOEXCEPT { return uintHash( x ); }
-    size_t operator()( short x ) const wxNOEXCEPT { return shortHash( x ); }
-    size_t operator()( unsigned short x ) const wxNOEXCEPT { return ushortHash( x ); }
+    wxIntegerHash() { }
+    size_t operator()( long x ) const { return longHash( x ); }
+    size_t operator()( unsigned long x ) const { return ulongHash( x ); }
+    size_t operator()( int x ) const { return intHash( x ); }
+    size_t operator()( unsigned int x ) const { return uintHash( x ); }
+    size_t operator()( short x ) const { return shortHash( x ); }
+    size_t operator()( unsigned short x ) const { return ushortHash( x ); }
 #ifdef wxHAS_LONG_LONG_T_DIFFERENT_FROM_LONG
-    size_t operator()( wxLongLong_t x ) const wxNOEXCEPT { return longlongHash(x); }
-    size_t operator()( wxULongLong_t x ) const wxNOEXCEPT { return longlongHash(x); }
+    size_t operator()( wxLongLong_t x ) const { return longlongHash(x); }
+    size_t operator()( wxULongLong_t x ) const { return longlongHash(x); }
 #endif // wxHAS_LONG_LONG_T_DIFFERENT_FROM_LONG
+
+    wxIntegerHash& operator=(const wxIntegerHash&) { return *this; }
 };
 
 #else // wxNEEDS_WX_HASH_MAP
 
 // integer types
-struct WXDLLIMPEXP_BASE wxIntegerHash
+class WXDLLIMPEXP_BASE wxIntegerHash
 {
-    wxIntegerHash() wxNOEXCEPT { }
-    unsigned long operator()( long x ) const wxNOEXCEPT { return (unsigned long)x; }
-    unsigned long operator()( unsigned long x ) const wxNOEXCEPT { return x; }
-    unsigned long operator()( int x ) const wxNOEXCEPT { return (unsigned long)x; }
-    unsigned long operator()( unsigned int x ) const wxNOEXCEPT { return x; }
-    unsigned long operator()( short x ) const wxNOEXCEPT { return (unsigned long)x; }
-    unsigned long operator()( unsigned short x ) const wxNOEXCEPT { return x; }
+public:
+    wxIntegerHash() { }
+    unsigned long operator()( long x ) const { return (unsigned long)x; }
+    unsigned long operator()( unsigned long x ) const { return x; }
+    unsigned long operator()( int x ) const { return (unsigned long)x; }
+    unsigned long operator()( unsigned int x ) const { return x; }
+    unsigned long operator()( short x ) const { return (unsigned long)x; }
+    unsigned long operator()( unsigned short x ) const { return x; }
 #ifdef wxHAS_LONG_LONG_T_DIFFERENT_FROM_LONG
-    wxULongLong_t operator()( wxLongLong_t x ) const wxNOEXCEPT { return static_cast<wxULongLong_t>(x); }
-    wxULongLong_t operator()( wxULongLong_t x ) const wxNOEXCEPT { return x; }
+    wxULongLong_t operator()( wxLongLong_t x ) const { return static_cast<wxULongLong_t>(x); }
+    wxULongLong_t operator()( wxULongLong_t x ) const { return x; }
 #endif // wxHAS_LONG_LONG_T_DIFFERENT_FROM_LONG
+
+    wxIntegerHash& operator=(const wxIntegerHash&) { return *this; }
 };
 
 #endif // !wxNEEDS_WX_HASH_MAP/wxNEEDS_WX_HASH_MAP
 
-struct WXDLLIMPEXP_BASE wxIntegerEqual
+class WXDLLIMPEXP_BASE wxIntegerEqual
 {
-    wxIntegerEqual() wxNOEXCEPT { }
-    bool operator()( long a, long b ) const wxNOEXCEPT { return a == b; }
-    bool operator()( unsigned long a, unsigned long b ) const wxNOEXCEPT { return a == b; }
-    bool operator()( int a, int b ) const wxNOEXCEPT { return a == b; }
-    bool operator()( unsigned int a, unsigned int b ) const wxNOEXCEPT { return a == b; }
-    bool operator()( short a, short b ) const wxNOEXCEPT { return a == b; }
-    bool operator()( unsigned short a, unsigned short b ) const wxNOEXCEPT { return a == b; }
+public:
+    wxIntegerEqual() { }
+    bool operator()( long a, long b ) const { return a == b; }
+    bool operator()( unsigned long a, unsigned long b ) const { return a == b; }
+    bool operator()( int a, int b ) const { return a == b; }
+    bool operator()( unsigned int a, unsigned int b ) const { return a == b; }
+    bool operator()( short a, short b ) const { return a == b; }
+    bool operator()( unsigned short a, unsigned short b ) const { return a == b; }
 #ifdef wxHAS_LONG_LONG_T_DIFFERENT_FROM_LONG
-    bool operator()( wxLongLong_t a, wxLongLong_t b ) const wxNOEXCEPT { return a == b; }
-    bool operator()( wxULongLong_t a, wxULongLong_t b ) const wxNOEXCEPT { return a == b; }
+    bool operator()( wxLongLong_t a, wxLongLong_t b ) const { return a == b; }
+    bool operator()( wxULongLong_t a, wxULongLong_t b ) const { return a == b; }
 #endif // wxHAS_LONG_LONG_T_DIFFERENT_FROM_LONG
+
+    wxIntegerEqual& operator=(const wxIntegerEqual&) { return *this; }
 };
 
 // pointers
-struct WXDLLIMPEXP_BASE wxPointerHash
+class WXDLLIMPEXP_BASE wxPointerHash
 {
-    wxPointerHash() wxNOEXCEPT { }
+public:
+    wxPointerHash() { }
 
 #ifdef wxNEEDS_WX_HASH_MAP
-    wxUIntPtr operator()( const void* k ) const wxNOEXCEPT { return wxPtrToUInt(k); }
+    wxUIntPtr operator()( const void* k ) const { return wxPtrToUInt(k); }
 #else
-    size_t operator()( const void* k ) const wxNOEXCEPT { return (size_t)k; }
+    size_t operator()( const void* k ) const { return (size_t)k; }
 #endif
+
+    wxPointerHash& operator=(const wxPointerHash&) { return *this; }
 };
 
-struct WXDLLIMPEXP_BASE wxPointerEqual
+class WXDLLIMPEXP_BASE wxPointerEqual
 {
-    wxPointerEqual() wxNOEXCEPT { }
-    bool operator()( const void* a, const void* b ) const wxNOEXCEPT { return a == b; }
+public:
+    wxPointerEqual() { }
+    bool operator()( const void* a, const void* b ) const { return a == b; }
+
+    wxPointerEqual& operator=(const wxPointerEqual&) { return *this; }
 };
 
 // wxString, char*, wchar_t*
-struct WXDLLIMPEXP_BASE wxStringHash
+class WXDLLIMPEXP_BASE wxStringHash
 {
-    wxStringHash() wxNOEXCEPT {}
-    unsigned long operator()( const wxString& x ) const wxNOEXCEPT
+public:
+    wxStringHash() {}
+    unsigned long operator()( const wxString& x ) const
         { return stringHash( x.wx_str() ); }
-    unsigned long operator()( const wchar_t* x ) const wxNOEXCEPT
+    unsigned long operator()( const wchar_t* x ) const
         { return stringHash( x ); }
-    unsigned long operator()( const char* x ) const wxNOEXCEPT
+    unsigned long operator()( const char* x ) const
         { return stringHash( x ); }
 
 #if WXWIN_COMPATIBILITY_2_8
@@ -584,19 +612,24 @@ struct WXDLLIMPEXP_BASE wxStringHash
 
     static unsigned long stringHash( const wchar_t* );
     static unsigned long stringHash( const char* );
+
+    wxStringHash& operator=(const wxStringHash&) { return *this; }
 };
 
-struct WXDLLIMPEXP_BASE wxStringEqual
+class WXDLLIMPEXP_BASE wxStringEqual
 {
-    wxStringEqual() wxNOEXCEPT {}
-    bool operator()( const wxString& a, const wxString& b ) const wxNOEXCEPT
+public:
+    wxStringEqual() {}
+    bool operator()( const wxString& a, const wxString& b ) const
         { return a == b; }
-    bool operator()( const wxChar* a, const wxChar* b ) const wxNOEXCEPT
+    bool operator()( const wxChar* a, const wxChar* b ) const
         { return wxStrcmp( a, b ) == 0; }
 #if wxUSE_UNICODE
-    bool operator()( const char* a, const char* b ) const wxNOEXCEPT
+    bool operator()( const char* a, const char* b ) const
         { return strcmp( a, b ) == 0; }
 #endif // wxUSE_UNICODE
+
+    wxStringEqual& operator=(const wxStringEqual&) { return *this; }
 };
 
 #ifdef wxNEEDS_WX_HASH_MAP
@@ -617,8 +650,8 @@ public: \
     typedef VALUE_T mapped_type; \
     _WX_DECLARE_PAIR( iterator, bool, Insert_Result, CLASSEXP ) \
  \
-    explicit CLASSNAME( size_type hint = 100, hasher hf = hasher(),          \
-                        key_equal eq = key_equal() )                         \
+    wxEXPLICIT CLASSNAME( size_type hint = 100, hasher hf = hasher(),        \
+                          key_equal eq = key_equal() )                       \
         : CLASSNAME##_wxImplementation_HashTable( hint, hf, eq,              \
                                    CLASSNAME##_wxImplementation_KeyEx() ) {} \
  \
@@ -676,27 +709,24 @@ public: \
 
 // and these do exactly the same thing but should be used inside the
 // library
-// note: DECL is not used since the class is inline
 #define WX_DECLARE_HASH_MAP_WITH_DECL( KEY_T, VALUE_T, HASH_T, KEY_EQ_T, CLASSNAME, DECL) \
-    _WX_DECLARE_HASH_MAP( KEY_T, VALUE_T, HASH_T, KEY_EQ_T, CLASSNAME, class )
+    _WX_DECLARE_HASH_MAP( KEY_T, VALUE_T, HASH_T, KEY_EQ_T, CLASSNAME, DECL )
 
 #define WX_DECLARE_EXPORTED_HASH_MAP( KEY_T, VALUE_T, HASH_T, KEY_EQ_T, CLASSNAME) \
     WX_DECLARE_HASH_MAP_WITH_DECL( KEY_T, VALUE_T, HASH_T, KEY_EQ_T, \
                                    CLASSNAME, class WXDLLIMPEXP_CORE )
 
-// note: DECL is not used since the class is inline
 #define WX_DECLARE_STRING_HASH_MAP_WITH_DECL( VALUE_T, CLASSNAME, DECL ) \
     _WX_DECLARE_HASH_MAP( wxString, VALUE_T, wxStringHash, wxStringEqual, \
-                          CLASSNAME, class )
+                          CLASSNAME, DECL )
 
 #define WX_DECLARE_EXPORTED_STRING_HASH_MAP( VALUE_T, CLASSNAME ) \
     WX_DECLARE_STRING_HASH_MAP_WITH_DECL( VALUE_T, CLASSNAME, \
                                           class WXDLLIMPEXP_CORE )
 
-// note: DECL is not used since the class is inline
 #define WX_DECLARE_VOIDPTR_HASH_MAP_WITH_DECL( VALUE_T, CLASSNAME, DECL ) \
     _WX_DECLARE_HASH_MAP( void*, VALUE_T, wxPointerHash, wxPointerEqual, \
-                          CLASSNAME, class )
+                          CLASSNAME, DECL )
 
 #define WX_DECLARE_EXPORTED_VOIDPTR_HASH_MAP( VALUE_T, CLASSNAME ) \
     WX_DECLARE_VOIDPTR_HASH_MAP_WITH_DECL( VALUE_T, CLASSNAME, \

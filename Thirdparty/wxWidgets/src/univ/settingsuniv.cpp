@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     20.08.00
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
     #include "wx/settings.h"
@@ -93,7 +97,7 @@ wxColour wxSystemSettings::GetColour(wxSystemColour index)
     return wxTheme::Get()->GetColourScheme()->Get(col);
 }
 
-int wxSystemSettings::GetMetric(wxSystemMetric index, const wxWindow* win)
+int wxSystemSettings::GetMetric(wxSystemMetric index, wxWindow *win)
 {
     switch ( index )
     {

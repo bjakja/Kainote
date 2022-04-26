@@ -4,6 +4,7 @@
 // Author:      Ryan Norton
 // Modified by:
 // Created:     11/11/2003
+// RCS-ID:      $Id$
 // Copyright:   (c) Ryan Norton
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -104,7 +105,7 @@ public:
     static int GetCount();
     bool Create(int nDev = 1);
     void AddCookie(CFTypeRef Data, int i);
-    virtual void BuildCookies(CFArrayRef Array) wxOVERRIDE;
+    virtual void BuildCookies(CFArrayRef Array);
     void DoBuildCookies(CFArrayRef Array);
 };
 

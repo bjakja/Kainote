@@ -3,6 +3,7 @@
 // Purpose:     wxPopupWindow class for wxDFB
 // Author:      Vaclav Slavik
 // Created:     2006-12-24
+// RCS-ID:      $Id$
 // Copyright:   (c) 2006 TT-Solutions
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -37,7 +38,7 @@ public:
                );
     }
 
-    wxDECLARE_DYNAMIC_CLASS(wxPopupWindow);
+    DECLARE_DYNAMIC_CLASS(wxPopupWindow)
 };
 
 #endif // _WX_DFB_POPUPWIN_H_

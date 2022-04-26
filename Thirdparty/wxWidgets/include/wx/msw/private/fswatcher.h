@@ -3,6 +3,7 @@
 // Purpose:     File system watcher impl classes
 // Author:      Bartosz Bekier
 // Created:     2009-05-26
+// RCS-ID:      $Id$
 // Copyright:   (c) 2009 Bartosz Bekier <bartosz.bekier@gmail.com>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -139,8 +140,7 @@ public:
                                             (ULONG_PTR)watch.get(), 0);
         if (ret == NULL)
         {
-            wxLogSysError(_("Unable to associate handle with "
-                            "I/O completion port"));
+            wxLogSysError(_("Unable to associate handle with I/O completion port"));
             return false;
         }
         else if (ret != m_iocp)
@@ -173,7 +173,7 @@ public:
         // worse, reused to point to another object) pointer in ReadEvents() so
         // just remember that this one should be removed when CompleteRemoval()
         // is called later.
-        m_removedWatches.push_back(watch);
+        m_removedWatches.insert(wxFSWatchEntries::value_type(path, watch));
         m_watches.erase(it);
 
         return true;
@@ -185,20 +185,15 @@ public:
     // this case we'll just return false and do nothing.
     bool CompleteRemoval(wxFSWatchEntryMSW* watch)
     {
-        for ( Watches::iterator it = m_removedWatches.begin();
-              it != m_removedWatches.end();
-              ++it )
-        {
-            if ( (*it).get() == watch )
-            {
-                // Removing the object from here will result in deleting the
-                // watch itself as it's not referenced from anywhere else now.
-                m_removedWatches.erase(it);
-                return true;
-            }
-        }
+        wxFSWatchEntries::iterator it = m_removedWatches.find(watch->GetPath());
+        if ( it == m_removedWatches.end() )
+            return false;
 
-        return false;
+        // Removing the object from the map will result in deleting the watch
+        // itself as it's not referenced from anywhere else now.
+        m_removedWatches.erase(it);
+
+        return true;
     }
 
     // post completion packet
@@ -206,8 +201,7 @@ public:
     {
         wxCHECK_MSG( m_iocp != INVALID_HANDLE_VALUE, false, "IOCP not init" );
 
-        // The special values of 0 will make GetStatus() return Status_Exit.
-        const int ret = PostQueuedCompletionStatus(m_iocp, 0, 0, NULL);
+        int ret = PostQueuedCompletionStatus(m_iocp, 0, 0, NULL);
         if (!ret)
         {
             wxLogSysError(_("Unable to post completion status"));
@@ -216,52 +210,25 @@ public:
         return ret != 0;
     }
 
-    // Possible return values of GetStatus()
-    enum Status
-    {
-        // Status successfully retrieved into the provided arguments.
-        Status_OK,
-
-        // Special status indicating that we should exit retrieved.
-        Status_Exit,
-
-        // An error occurred because the watched directory was deleted.
-        Status_Deleted,
-
-        // Some other error occurred.
-        Status_Error
-    };
-
     // Wait for completion status to arrive.
     // This function can block forever in it's wait for completion status.
     // Use PostEmptyStatus() to wake it up (and end the worker thread)
-    Status
-    GetStatus(DWORD* count, wxFSWatchEntryMSW** watch,
-              OVERLAPPED** overlapped)
+    bool GetStatus(unsigned long* count, wxFSWatchEntryMSW** watch,
+                   OVERLAPPED** overlapped)
     {
-        wxCHECK_MSG( m_iocp != INVALID_HANDLE_VALUE, Status_Error,
-                     "Invalid IOCP object" );
-        wxCHECK_MSG( count && watch && overlapped, Status_Error,
-                     "Output parameters can't be NULL" );
+        wxCHECK_MSG( m_iocp != INVALID_HANDLE_VALUE, false, "IOCP not init" );
+        wxCHECK_MSG( count != NULL, false, "Null out parameter 'count'");
+        wxCHECK_MSG( watch != NULL, false, "Null out parameter 'watch'");
+        wxCHECK_MSG( overlapped != NULL, false,
+                     "Null out parameter 'overlapped'");
 
-        const int ret = GetQueuedCompletionStatus(m_iocp, count, (ULONG_PTR *)watch,
+        int ret = GetQueuedCompletionStatus(m_iocp, count, (ULONG_PTR *)watch,
                                             overlapped, INFINITE);
-        if ( ret != 0 )
+        if (!ret)
         {
-            return *count || *watch || *overlapped ? Status_OK : Status_Exit;
+            wxLogSysError(_("Unable to dequeue completion packet"));
         }
-
-        // An error is returned if the underlying directory has been deleted,
-        // but this is not really an unexpected failure, so handle it
-        // specially.
-        if ( wxSysErrorCode() == ERROR_ACCESS_DENIED &&
-                *watch && !wxFileName::DirExists((*watch)->GetPath()) )
-            return Status_Deleted;
-
-        // Some other error, at least log it.
-        wxLogSysError(_("Unable to dequeue completion packet"));
-
-        return Status_Error;
+        return ret != 0;
     }
 
 protected:
@@ -282,8 +249,7 @@ protected:
     wxFSWatchEntries m_watches;
 
     // Contains the watches which had been removed but are still pending.
-    typedef wxVector< wxSharedPtr<wxFSWatchEntryMSW> > Watches;
-    Watches m_removedWatches;
+    wxFSWatchEntries m_removedWatches;
 };
 
 
@@ -297,22 +263,22 @@ public:
 
 protected:
     // structure to hold information needed to process one native event
-    // this is just a dummy holder, so it doesn't take ownership of its data
+    // this is just a dummy holder, so it doesn't take ownership of it's data
     struct wxEventProcessingData
     {
         wxEventProcessingData(const FILE_NOTIFY_INFORMATION* ne,
-                              const wxFSWatchEntryMSW* watch_) :
-            nativeEvent(ne), watch(watch_)
+                              const wxFSWatchEntryMSW* watch) :
+            nativeEvent(ne), watch(watch)
         {}
 
         const FILE_NOTIFY_INFORMATION* nativeEvent;
         const wxFSWatchEntryMSW* watch;
     };
 
-    virtual ExitCode Entry() wxOVERRIDE;
+    virtual ExitCode Entry();
 
     // wait for events to occur, read them and send to interested parties
-    // returns false it empty status was read, which means we would exit
+    // returns false it empty status was read, which means we whould exit
     //         true otherwise
     bool ReadEvents();
 

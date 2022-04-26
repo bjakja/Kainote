@@ -2,6 +2,7 @@
 // Name:        samples.h
 // Purpose:     Samples page of the Doxygen manual
 // Author:      wxWidgets team
+// RCS-ID:      $Id: utilities.h 52634 2008-03-20 13:45:17Z VS $
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -9,66 +10,22 @@
 
 @page page_samples Samples Overview
 
-@tableofcontents
+@brief Overview of the examples provided with wxWidgets.
 
-Arguably the best way to learn wxWidgets is by reading the sources of many samples,
-or examples, provided with it. Many aspects of wxWidgets programming can be learned
+Probably the best way to learn wxWidgets is by reading the source of some 80+
+samples provided with it. Many aspects of wxWidgets programming can be learnt
 from them, but sometimes it is not simple to just choose the right sample to
 look at. This overview aims at describing what each sample does/demonstrates to
 make it easier to find the relevant one if a simple grep through all sources
 didn't help. They also provide some notes about using the samples and what
 features of wxWidgets are they supposed to test.
 
-Notice that all wxWidgets samples mentioned here can be found in @c samples
-subdirectory of the library distribution. When a @c foobar sample is mentioned
-below, its sources can be found in @c samples/foobar directory of your
-wxWidgets tree. If you installed wxWidgets from a binary package, you might not
-have this directory. In this case, you may view the samples online at
-https://github.com/wxWidgets/wxWidgets/tree/master/samples/ but you need to
-download the source distribution in order to be able to build them (highly
-recommended).
-
-@section page_samples_building Building and running the samples
-
-Although reading the samples code can be very useful, it may not be sufficient
-and often it is even more useful to experiment by making a small change to a
-sample and checking how it works when running the sample.
-
-Before being able to run them, you need to be able build the sample you're
-interested in. The right way to do it depends on the way you built wxWidgets
-itself (see @ref overview_install for more details):
-
-- Under Microsoft Windows (MSW):
-    - If you're using Microsoft Visual C++ compiler (MSVC), you need to
-    use @c makefile.vc from the directory of the sample to build it. Open
-    "Developer Command Prompt", navigate to the sample directory and run
-    <code>nmake -f makefile.vc</code> command with the additional arguments
-    corresponding to your library build, e.g. @c BUILD=debug. See @ref
-    msw_build_msvs "MSVS instructions" for more information.
-    - If you're using MinGW, use @c makefile.gcc in the sample directory in a
-    similar way. Note that if you use MSYS2 or another Unix-like environment
-    for building, you should use the Unix instructions below instead.
-- Under Unix systems (including macOS):
-    - If you installed wxWidgets from your distribution binaries, you can use
-    @c makefile.unx in the sample directory to build it using the version of
-    wxWidgets already installed on your system. Use <code>make -f
-    makefile.unx</code> in the sample directory to build it.
-    - If you built wxWidgets from source using configure, you may use @c
-    Makefile in the directory with the same name as the sample directory, but
-    under the @em build directory, i.e. the one where you ran configure, and
-    @em not under the source directory. Just run @c make to build the sample in
-    the build directory subdirectory, e.g. @c ~/build/wx/samples/minimal. You
-    can also build all the samples at once by doing <code>make samples</code>,
-    but be warned that this might take some time on older and slower machines.
-
-
-@section page_samples_overview Overview of the available samples
-
-There are currently almost 100 different samples as part of wxWidgets: the
-list in this page is not complete! You should start your tour of wxWidgets with
-the @ref page_samples_minimal which is the wxWidgets version of "Hello,
-world!". It shows the basic structure of wxWidgets program and is the most
-commented sample of all - looking at its source code is recommended.
+There are currently more than 80 different samples as part of wxWidgets:
+the list in this page is not complete!
+You should start your tour of wxWidgets with the @ref page_samples_minimal
+which is the wxWidgets version of "Hello, world!".
+It shows the basic structure of wxWidgets program and is the most commented
+sample of all - looking at its source code is recommended.
 
 The next most useful sample is @ref page_samples_widgets which shows many of
 wxWidgets controls, such as buttons, text entry zones, list boxes, check boxes,
@@ -86,10 +43,124 @@ may find the following samples showing the corresponding controls:
 @li wxDataViewCtrl: @ref page_samples_dataview
 @li wxWebView: @ref page_samples_webview
 
+Finally, here is the full list of samples:
+<!--
+The following sample list is generated by executing command
+
+ls -1 | egrep '[a-z]+' | egrep '^[a-z]+/$' | sed 's/^/@li @sample\{/' | sed 's///$/\}/'
+
+in wxWidgets/samples
+
+TODO: Organize them in a more human-readable way.
+-->
+
+@beginInvisibleTable
+<tr><td>
+@li @sample{access}
+@li @sample{animate}
+@li @sample{artprov}
+@li @sample{aui}
+@li @sample{calendar}
+@li @sample{caret}
+@li @sample{clipboard}
+@li @sample{collpane}
+@li @sample{combo}
+@li @sample{config}
+@li @sample{console}
+@li @sample{controls}
+@li @sample{dataview}
+@li @sample{debugrpt}
+@li @sample{dialogs}
+@li @sample{dialup}
+@li @sample{display}
+@li @sample{dnd}
+@li @sample{docview}
+@li @sample{dragimag}
+@li @sample{drawing}
+@li @sample{erase}
+@li @sample{event}
+@li @sample{except}
+@li @sample{exec}
+@li @sample{flash}
+@li @sample{font}
+</td><td>
+@li @sample{grid}
+@li @sample{help}
+@li @sample{htlbox}
+@li @sample{html}
+@li @sample{image}
+@li @sample{internat}
+@li @sample{ipc}
+@li @sample{joytest}
+@li @sample{keyboard}
+@li @sample{layout}
+@li @sample{listctrl}
+@li @sample{mdi}
+@li @sample{mediaplayer}
+@li @sample{memcheck}
+@li @sample{menu}
+@li @sample{mfc}
+@li @sample{minimal}
+@li @sample{nativdlg}
+@li @sample{notebook}
+@li @sample{oleauto}
+@li @sample{opengl}
+@li @sample{ownerdrw}
+@li @sample{popup}
+@li @sample{power}
+@li @sample{printing}
+@li @sample{propgrid}
+@li @sample{regtest}
+</td><td>
+@li @sample{render}
+@li @sample{richtext}
+@li @sample{sashtest}
+@li @sample{scroll}
+@li @sample{shaped}
+@li @sample{sockets}
+@li @sample{sound}
+@li @sample{splash}
+@li @sample{splitter}
+@li @sample{statbar}
+@li @sample{stc}
+@li @sample{svg}
+@li @sample{taborder}
+@li @sample{taskbar}
+@li @sample{text}
+@li @sample{thread}
+@li @sample{toolbar}
+@li @sample{treectrl}
+@li @sample{typetest}
+@li @sample{uiaction}
+@li @sample{validate}
+@li @sample{vscroll}
+@li @sample{webview}
+@li @sample{widgets}
+@li @sample{wizard}
+@li @sample{wrapsizer}
+@li @sample{xrc}
+</td></tr>
+@endTable
+
+
+<hr>
+
+Notice that all wxWidgets samples mentioned above can be found in @c samples
+subdirectory of the library distribution. When a @c foobar sample is mentioned
+below, its sources can be found in @c samples/foobar directory of your
+wxWidgets tree. If you installed wxWidgets from a binary package, you might not
+have this directory. In this case, you may view the samples online at
+http://svn.wxwidgets.org/viewvc/wx/wxWidgets/trunk/samples/ but you need to
+download the source distribution in order to be able to build them (highly
+recommended).
+
 Final advice is to do a search in the entire samples directory if you can't
 find the sample showing the control you are interested in by name. Most classes
 contained in wxWidgets occur in at least one of the samples.
 
+
+@todo Write descriptions for the samples who description started with
+ "This sample demonstrates", they are semi-auto generated.
 
 @section page_samples_access Accessibility Sample
 
@@ -107,14 +178,6 @@ control and shows concept of a platform-dependent animation encapsulated
 in wxAnimation.
 
 @sampledir{animate}
-
-@section page_samples_archive Archive Sample
-
-This sample shows how you can use wxArchiveClassFactory, wxArchiveOutputStream
-and wxArchiveInputStream. This shows how to process ZIP and TAR archives using
-wxZipOutputStream and wxTarOutputStream
-
-@sampledir{archive}
 
 @section page_samples_artprov Art Provider Sample
 
@@ -173,6 +236,37 @@ See @ref overview_config for the descriptions of all features of this class.
 
 @sampledir{console}
 
+@section page_samples_controls Controls Sample
+
+The controls sample is the main test program for most simple controls used in
+wxWidgets. The sample tests their basic functionality, events, placement,
+modification in terms of colour and font as well as the possibility to change
+the controls programmatically, such as adding an item to a list box etc. Apart
+from that, the sample uses a wxNotebook and tests most
+features of this special control (using bitmap in the tabs, using
+wxSizer instances and wxLayoutConstraints within notebook pages, advancing pages
+programmatically and vetoing a page change by intercepting the wxNotebookEvent.
+
+The various controls tested are listed here:
+
+@li wxButton
+@li wxBitmapButton
+@li wxCheckBox
+@li wxChoice
+@li wxComboBox
+@li wxGauge
+@li wxStaticBox
+@li wxListBox
+@li wxSpinCtrl
+@li wxSpinButton
+@li wxStaticText
+@li wxStaticBitmap
+@li wxRadioBox
+@li wxRadioButton
+@li wxSlider
+
+@sampledir{controls}
+
 @section page_samples_dataview wxDataViewCtrl Sample
 
 @sampleabout{wxDataViewCtrl}
@@ -209,7 +303,7 @@ This sample shows how to use the common dialogs available from wxWidgets. These
 dialogs are described in detail in the @ref overview_cmndlg.
 
 In addition to the dialogs accessible from the sample menus, you can also run
-it with a <code>\--progress=style</code> command line option to show a
+it with a <code>--progress=style</code> command line option to show a
 wxProgressDialog with the given style (try 0 for the default style) on program
 startup, before the main window is shown.
 
@@ -306,7 +400,7 @@ wxDataObject to achieve this.
 
 This sample demonstrates various features of the wxWidgets events. It
 shows how to dynamic events and connecting/disconnecting the event handlers
-during run time by using wxEvtHandler::Bind() and wxEvtHandler::Unbind(),
+during run time by using wxEvtHandler::Connect() and wxEvtHandler::Disconnect(),
 and also how to use wxWindow::PushEventHandler() and wxWindow::PopEventHandler().
 
 @sampledir{event}
@@ -338,6 +432,23 @@ wxProcess::Kill() and test for their existence with
 wxProcess::Exists().
 
 @sampledir{exec}
+
+@section page_samples_flash Flash Sample
+
+The flash sample demonstrates embedding of Adobe Flash into a wxWidgets
+program. Currently it only works under Windows as it uses the Flash ActiveX
+control to achieve this but we hope to be able to extend it to also work under
+other platforms in the future. The sample also currently requires Microsoft
+Visual C++ compiler as it uses COM support extensions specific to this
+compiler.
+
+The sample comes with 2 Flash files (SWF), showing a simple Flash animation
+which can be controlled using the "Play", "Stop" and "Back"/"Forward" buttons
+in the sample as well as a Flash form which shows how Flash and wxWidgets
+program can exchange data: calling "GetText" function without arguments returns
+the text of the text control defined inside Flash and calling "SetText" with an
+argument sets the control contents to the given string. Finally clicking on the
+button generates an event which is caught by the C++ program.
 
 @section page_samples_font Font Sample
 
@@ -576,8 +687,6 @@ commands through the menu.
     Arrow keys rotate the cube. Space bar toggles spinning.
 @li @b isosurf Draws a surface by reading coordinates from a DAT file.
 @li @b penguin Draws a rotatable penguin by reading data from a DXF file.
-@li @b pyramid Draws a rotatable tetrahedron and some strings.
-    It uses OpenGL 3.2 Core Profile context.
 
 @sampledir{opengl}
 
@@ -674,30 +783,12 @@ on screen.
 
 @sampledir{scroll}
 
-@section page_samples_secretstore Secret Store Sample
-
-@sampleabout{wxSecretStore}
-
-This console-mode sample shows the use of wxSecretStore class for remembering
-the user-entered passwords. It should be run from the command line with the
-first argument of @c save, @c load or @c delete, followed by the "service" and
-"user" arguments as used by wxSecretStore methods. After storing some password,
-you can check that it can be retrieved later and also that it can be seen in
-the OS-provided password manager (e.g. credential manager under MSW or keychain
-utility under macOS).
-
-@sampledir{secretstore}
-
 @section page_samples_shaped Shaped Window Sample
 
-@sampleabout{Showing unusual, e.g. shaped or semi-transparent windows}
-
-This sample shows windows with non-rectangular shapes and non-opaque windows as
-well as how the windows can be shown with a special effect.
+@sampleabout{how to implement a shaped or transparent window\, and a window showing/hiding with effect}
 
 @see wxTopLevelWindow::SetShape(), wxTopLevelWindow::SetTransparent(),
-wxWindow::ShowWithEffect(), wxWindow::HideWithEffect(),
-wxWindow::SetBackgroundStyle()
+wxWindow::ShowWithEffect(), wxWindow::HideWithEffect()
 
 @sampledir{shaped}
 
@@ -932,20 +1023,11 @@ control.
 @section page_samples_webview wxWebView Sample
 
 The wxWebView sample demonstarates the various capabilities of the wxWebView
-control. It is set up as a simple single window web browser, but with support
-for many of the more complex wxWebView features, including browsing through
+control. It is set up as a simple single window web broswer, but with support
+for many of the more complex wxWebView features, including browsing through 
 archives.
 
 @sampledir{webview}
-
-@section page_samples_webrequest Web Request Sample
-
-This sample demonstrates the various capabilities of the
-wxWebRequest class. It shows how to handle simple text HTTP and HTTPS requests,
-downloading files, showing download progress and processing downloaded
-data while it's being downloaded.
-
-@sampledir{webrequest}
 
 @section page_samples_widgets Widgets Sample
 
@@ -1007,3 +1089,4 @@ other resources. From its menu or toolbar you can then run the following dialogs
 @sampledir{xrc}
 
 */
+

@@ -4,6 +4,7 @@
 // Author:      Robert Roebling
 // Modified by:
 // Created:     17/8/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -21,16 +22,6 @@ class WXDLLIMPEXP_GL wxGLCanvas : public wxGLCanvasX11
 {
 public:
     wxGLCanvas(wxWindow *parent,
-               const wxGLAttributes& dispAttrs,
-               wxWindowID id = wxID_ANY,
-               const wxPoint& pos = wxDefaultPosition,
-               const wxSize& size = wxDefaultSize,
-               long style = 0,
-               const wxString& name = wxGLCanvasName,
-               const wxPalette& palette = wxNullPalette);
-
-    explicit // avoid implicitly converting a wxWindow* to wxGLCanvas
-    wxGLCanvas(wxWindow *parent,
                wxWindowID id = wxID_ANY,
                const int *attribList = NULL,
                const wxPoint& pos = wxDefaultPosition,
@@ -38,15 +29,6 @@ public:
                long style = 0,
                const wxString& name = wxGLCanvasName,
                const wxPalette& palette = wxNullPalette);
-
-    bool Create(wxWindow *parent,
-                const wxGLAttributes& dispAttrs,
-                wxWindowID id = wxID_ANY,
-                const wxPoint& pos = wxDefaultPosition,
-                const wxSize& size = wxDefaultSize,
-                long style = 0,
-                const wxString& name = wxGLCanvasName,
-                const wxPalette& palette = wxNullPalette);
 
     bool Create(wxWindow *parent,
                 wxWindowID id = wxID_ANY,
@@ -61,7 +43,7 @@ public:
     // implement wxGLCanvasX11 methods
     // -------------------------------
 
-    virtual unsigned long GetXWindow() const;
+    virtual Window GetXWindow() const;
 
 
     // deprecated methods
@@ -120,7 +102,7 @@ public:
 #endif // WXWIN_COMPATIBILITY_2_8
 
 private:
-    wxDECLARE_CLASS(wxGLCanvas);
+    DECLARE_CLASS(wxGLCanvas)
 };
 
 #endif // _WX_GLCANVAS_H_

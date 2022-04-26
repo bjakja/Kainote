@@ -2,6 +2,7 @@
 // Name:        tests/streams/stdstream.cpp
 // Purpose:     Test wxStdInputStreamBuffer/wxStdOutputStreamBuffer
 // Author:      Jonathan Liu <net147@gmail.com>
+// RCS-ID:      $Id$
 // Copyright:   (c) 2009 Jonathan Liu
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -10,6 +11,9 @@
 // and "wx/cppunit.h"
 #include "testprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 // for all others, include the necessary headers
 #ifndef WX_PRECOMP
@@ -93,7 +97,7 @@ private:
 
     char m_testData[TEST_SIZE];
 
-    wxDECLARE_NO_COPY_CLASS(StdStreamTestCase);
+    DECLARE_NO_COPY_CLASS(StdStreamTestCase)
 };
 
 // register in the unnamed registry so that these tests are run by default

@@ -2,6 +2,7 @@
 // Name:        src/gtk/radiobut.cpp
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -13,7 +14,9 @@
 
 #include "wx/radiobut.h"
 
+#include <gtk/gtk.h>
 #include "wx/gtk/private.h"
+#include "wx/gtk/private/gtk2-compat.h"
 
 //-----------------------------------------------------------------------------
 // data
@@ -29,11 +32,13 @@ extern "C" {
 static
 void gtk_radiobutton_clicked_callback( GtkToggleButton *button, wxRadioButton *rb )
 {
+    if (!rb->m_hasVMT) return;
+
     if (g_blockEventsOnDrag) return;
 
     if (!gtk_toggle_button_get_active(button)) return;
 
-    wxCommandEvent event( wxEVT_RADIOBUTTON, rb->GetId());
+    wxCommandEvent event( wxEVT_COMMAND_RADIOBUTTON_SELECTED, rb->GetId());
     event.SetInt( rb->GetValue() );
     event.SetEventObject( rb );
     rb->HandleWindowEvent( event );
@@ -149,17 +154,17 @@ bool wxRadioButton::GetValue() const
     return gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(m_widget)) != 0;
 }
 
-void wxRadioButton::DoEnable(bool enable)
+bool wxRadioButton::Enable( bool enable )
 {
-    if ( !m_widget )
-        return;
-
-    base_type::DoEnable(enable);
+    if (!base_type::Enable(enable))
+        return false;
 
     gtk_widget_set_sensitive(gtk_bin_get_child(GTK_BIN(m_widget)), enable);
 
     if (enable)
         GTKFixSensitivity();
+
+    return true;
 }
 
 void wxRadioButton::DoApplyWidgetStyle(GtkRcStyle *style)
@@ -178,7 +183,14 @@ wxRadioButton::GTKGetWindow(wxArrayGdkWindows& WXUNUSED(windows)) const
 wxVisualAttributes
 wxRadioButton::GetClassDefaultAttributes(wxWindowVariant WXUNUSED(variant))
 {
-    return GetDefaultAttributesFromGTKWidget(gtk_radio_button_new_with_label(NULL, ""));
+    wxVisualAttributes attr;
+    // NB: we need toplevel window so that GTK+ can find the right style
+    GtkWidget *wnd = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    GtkWidget* widget = gtk_radio_button_new_with_label(NULL, "");
+    gtk_container_add(GTK_CONTAINER(wnd), widget);
+    attr = GetDefaultAttributesFromGTKWidget(widget);
+    gtk_widget_destroy(wnd);
+    return attr;
 }
 
 

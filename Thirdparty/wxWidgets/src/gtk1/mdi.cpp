@@ -2,6 +2,7 @@
 // Name:        src/gtk1/mdi.cpp
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -107,7 +108,7 @@ gtk_mdi_page_change_callback( GtkNotebook *WXUNUSED(widget),
 // wxMDIParentFrame
 //-----------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxMDIParentFrame, wxFrame);
+IMPLEMENT_DYNAMIC_CLASS(wxMDIParentFrame,wxFrame)
 
 void wxMDIParentFrame::Init()
 {
@@ -299,12 +300,12 @@ void wxMDIParentFrame::ActivatePrevious()
 // wxMDIChildFrame
 //-----------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxMDIChildFrame, wxFrame);
+IMPLEMENT_DYNAMIC_CLASS(wxMDIChildFrame,wxFrame)
 
-wxBEGIN_EVENT_TABLE(wxMDIChildFrame, wxFrame)
+BEGIN_EVENT_TABLE(wxMDIChildFrame, wxFrame)
     EVT_ACTIVATE(wxMDIChildFrame::OnActivate)
     EVT_MENU_HIGHLIGHT_ALL(wxMDIChildFrame::OnMenuHighlight)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 void wxMDIChildFrame::Init()
 {
@@ -450,7 +451,7 @@ static void wxInsertChildInMDI( wxMDIClientWindow* parent, wxMDIChildFrame* chil
 // wxMDIClientWindow
 //-----------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxMDIClientWindow, wxWindow);
+IMPLEMENT_DYNAMIC_CLASS(wxMDIClientWindow,wxWindow)
 
 bool wxMDIClientWindow::CreateClient( wxMDIParentFrame *parent, long style )
 {

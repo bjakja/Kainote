@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -37,7 +38,7 @@ private:
     void Init();
 
 private:
-    wxDECLARE_CLASS(wxMemoryDCImpl);
+    DECLARE_CLASS(wxMemoryDCImpl)
 };
 
 #endif

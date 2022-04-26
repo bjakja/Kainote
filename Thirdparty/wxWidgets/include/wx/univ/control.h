@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     14.08.00
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -47,7 +48,7 @@ public:
               const wxPoint& pos = wxDefaultPosition,
               const wxSize& size = wxDefaultSize, long style = 0,
               const wxValidator& validator = wxDefaultValidator,
-              const wxString& name = wxASCII_STR(wxControlNameStr))
+              const wxString& name = wxControlNameStr)
     {
         Init();
 
@@ -59,14 +60,14 @@ public:
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize, long style = 0,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxASCII_STR(wxControlNameStr));
+                const wxString& name = wxControlNameStr);
 
     // this function will filter out '&' characters and will put the
     // accelerator char (the one immediately after '&') into m_chAccel
-    virtual void SetLabel(const wxString& label) wxOVERRIDE;
+    virtual void SetLabel(const wxString& label);
 
     // return the current label
-    virtual wxString GetLabel() const wxOVERRIDE { return wxControlBase::GetLabel(); }
+    virtual wxString GetLabel() const { return m_label; }
 
     // wxUniversal-specific methods
 
@@ -79,10 +80,7 @@ public:
         return m_indexAccel == -1 ? wxT('\0') : (wxChar)m_label[m_indexAccel];
     }
 
-    virtual wxWindow *GetInputWindow() const wxOVERRIDE
-    {
-        return const_cast<wxControl*>(this);
-    }
+    virtual wxWindow *GetInputWindow() const { return (wxWindow*)this; }
 
 protected:
     // common part of all ctors
@@ -98,8 +96,8 @@ private:
     wxString   m_label;
     int        m_indexAccel;
 
-    wxDECLARE_DYNAMIC_CLASS(wxControl);
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_DYNAMIC_CLASS(wxControl)
+    DECLARE_EVENT_TABLE()
     WX_DECLARE_INPUT_CONSUMER()
 };
 

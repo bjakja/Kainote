@@ -4,6 +4,7 @@
 // Author:      Denis Pershin
 // Modified by:
 // Created:     08/08/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Denis Pershin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -61,6 +62,14 @@ static const int wxTREE_HITTEST_TORIGHT          = 0x0800;
 static const int wxTREE_HITTEST_ONITEM  = wxTREE_HITTEST_ONITEMICON |
                                           wxTREE_HITTEST_ONITEMLABEL |
                                           wxTREE_HITTEST_ONITEMSTATEICON;
+
+#if WXWIN_COMPATIBILITY_2_6
+    // NB: all the following flags are for compatbility only and will be removed in
+    //     next versions
+    // flags for deprecated InsertItem() variant
+    #define wxTREE_INSERT_FIRST 0xFFFF0001
+    #define wxTREE_INSERT_LAST  0xFFFF0002
+#endif
 
 // ----------------------------------------------------------------------------
 // wxTreeItemId identifies an element of the tree. In this implementation, it's
@@ -129,7 +138,7 @@ public:
              const wxSize& size = wxDefaultSize,
              long style = wxTR_HAS_BUTTONS | wxTR_LINES_AT_ROOT,
              const wxValidator& validator = wxDefaultValidator,
-             const wxString& name = wxASCII_STR("wxTreeCtrl")) {
+             const wxString& name = "wxTreeCtrl") {
       Create(parent, id, pos, size, style, validator, name);
   }
 
@@ -140,7 +149,7 @@ public:
                 const wxSize& size = wxDefaultSize,
                 long style = wxTR_HAS_BUTTONS | wxTR_LINES_AT_ROOT,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxASCII_STR("wxTreeCtrl"));
+                const wxString& name = "wxTreeCtrl");
 
     // accessors
     // ---------
@@ -317,11 +326,44 @@ public:
 
         // sort the children of this item using the specified callback function
         // (it should return -1, 0 or +1 as usual), if it's not specified
-        // alphabetical comparison is performed.
+        // alphabetical comparaison is performed.
         //
         // NB: this function is not reentrant!
     void SortChildren(const wxTreeItemId& item,
                       wxTreeItemCmpFunc *cmpFunction = NULL);
+
+    // deprecated
+    // ----------
+
+#if WXWIN_COMPATIBILITY_2_6
+    // these methods are deprecated and will be removed in future versions of
+    // wxWidgets, they're here for compatibility only, don't use them in new
+    // code (the comments indicate why these methods are now useless and how to
+    // replace them)
+
+        // use Expand, Collapse, CollapseAndReset or Toggle
+    wxDEPRECATED( void ExpandItem(const wxTreeItemId& item, int action) );
+
+        // use SetImageList
+    wxDEPRECATED( void SetImageList(wxImageList *imageList, int) )
+        { SetImageList(imageList); }
+
+        // use Set/GetItemImage directly
+    wxDEPRECATED( int GetItemSelectedImage(const wxTreeItemId& item) const );
+    wxDEPRECATED( void SetItemSelectedImage(const wxTreeItemId& item, int image) );
+
+        // get the first child of this item
+    wxDEPRECATED( wxTreeItemId GetFirstChild(const wxTreeItemId& item, long& cookie) const );
+        // get the next child (after GetFirstChild or GetNextChild)
+    wxDEPRECATED( wxTreeItemId GetNextChild(const wxTreeItemId& item, long& cookie) const );
+
+        // use AddRoot, PrependItem or AppendItem
+    wxDEPRECATED( wxTreeItemId InsertItem(const wxTreeItemId& parent,
+                                          const wxString& text,
+                                          int image = -1, int selImage = -1,
+                                          long insertAfter = wxTREE_INSERT_LAST) );
+
+#endif // WXWIN_COMPATIBILITY_2_6
 
         // use Set/GetImageList and Set/GetStateImageList
     wxImageList *GetImageList(int) const
@@ -357,7 +399,7 @@ protected:
                               wxTreeItemData *data);
 
 
-    wxDECLARE_DYNAMIC_CLASS(wxTreeCtrl);
+    DECLARE_DYNAMIC_CLASS(wxTreeCtrl)
 };
 
 #endif

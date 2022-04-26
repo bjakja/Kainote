@@ -15,20 +15,20 @@
 
 #pragma once
 
-#include "VisualDrawingShapes.h"
+#include "Visuals.h"
 #include "KaiDialog.h"
 #include "ListControls.h"
 #include "KaiTextCtrl.h"
-//#include "TabPanel.h"
+#include "TabPanel.h"
 
 //#include "Notebook.h"
 #include <vector>
 
 #include <d3dx9.h>
 
-class TabPanel;
+//class TabPanel;
 //class DrawingAndClip;
-class Visuals;
+//class Visuals;
 
 class ShapesSetting
 {

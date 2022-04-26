@@ -3,6 +3,7 @@
 // Purpose:     wxDataViewRenderer for generic wxDataViewCtrl implementation
 // Author:      Robert Roebling, Vadim Zeitlin
 // Created:     2009-11-07 (extracted from wx/generic/dataview.h)
+// RCS-ID:      $Id$
 // Copyright:   (c) 2006 Robert Roebling
 //              (c) 2009 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
@@ -23,19 +24,19 @@ public:
                         int align = wxDVR_DEFAULT_ALIGNMENT );
     virtual ~wxDataViewRenderer();
 
-    virtual wxDC *GetDC() wxOVERRIDE;
+    virtual wxDC *GetDC();
 
-    virtual void SetAlignment( int align ) wxOVERRIDE;
-    virtual int GetAlignment() const wxOVERRIDE;
+    virtual void SetAlignment( int align );
+    virtual int GetAlignment() const;
 
-    virtual void EnableEllipsize(wxEllipsizeMode mode = wxELLIPSIZE_MIDDLE) wxOVERRIDE
+    virtual void EnableEllipsize(wxEllipsizeMode mode = wxELLIPSIZE_MIDDLE)
         { m_ellipsizeMode = mode; }
-    virtual wxEllipsizeMode GetEllipsizeMode() const wxOVERRIDE
+    virtual wxEllipsizeMode GetEllipsizeMode() const
         { return m_ellipsizeMode; }
 
-    virtual void SetMode( wxDataViewCellMode mode ) wxOVERRIDE
+    virtual void SetMode( wxDataViewCellMode mode )
         { m_mode = mode; }
-    virtual wxDataViewCellMode GetMode() const wxOVERRIDE
+    virtual wxDataViewCellMode GetMode() const
         { return m_mode; }
 
     // implementation
@@ -52,12 +53,6 @@ public:
                                 const wxMouseEvent* WXUNUSED(mouseEvent))
         { return false; }
 
-    void SetState(int state) { m_state = state; }
-
-protected:
-    virtual bool IsHighlighted() const wxOVERRIDE
-        { return m_state & wxDATAVIEW_CELL_SELECTED; }
-
 private:
     int                          m_align;
     wxDataViewCellMode           m_mode;
@@ -66,9 +61,7 @@ private:
 
     wxDC *m_dc;
 
-    int m_state;
-
-    wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxDataViewRenderer);
+    DECLARE_DYNAMIC_CLASS_NO_COPY(wxDataViewRenderer)
 };
 
 #endif // _WX_GENERIC_DVRENDERER_H_

@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     14.08.00
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,6 +19,9 @@
 
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_CONTROLS
 
@@ -36,11 +40,11 @@
 // implementation
 // ============================================================================
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxControl, wxWindow);
+IMPLEMENT_DYNAMIC_CLASS(wxControl, wxWindow)
 
-wxBEGIN_EVENT_TABLE(wxControl, wxControlBase)
+BEGIN_EVENT_TABLE(wxControl, wxControlBase)
     WX_EVENT_TABLE_INPUT_CONSUMER(wxControl)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 WX_FORWARD_TO_INPUT_CONSUMER(wxControl)
 

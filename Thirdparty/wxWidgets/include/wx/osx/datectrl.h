@@ -3,6 +3,7 @@
 // Purpose:     Declaration of wxOSX-specific wxDatePickerCtrl class.
 // Author:      Vadim Zeitlin
 // Created:     2011-12-18
+// RCS-ID:      $Id: wxhead.h,v 1.12 2010-04-22 12:44:51 zeitlin Exp $
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -42,10 +43,10 @@ public:
                 const wxString& name = wxDatePickerCtrlNameStr);
 
     // Implement the base class pure virtuals.
-    virtual void SetRange(const wxDateTime& dt1, const wxDateTime& dt2) wxOVERRIDE;
-    virtual bool GetRange(wxDateTime *dt1, wxDateTime *dt2) const wxOVERRIDE;
+    virtual void SetRange(const wxDateTime& dt1, const wxDateTime& dt2);
+    virtual bool GetRange(wxDateTime *dt1, wxDateTime *dt2) const;
 
-    virtual void OSXGenerateEvent(const wxDateTime& dt) wxOVERRIDE;
+    virtual void OSXGenerateEvent(const wxDateTime& dt);
 
 private:
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxDatePickerCtrl);

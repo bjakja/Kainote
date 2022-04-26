@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -20,10 +21,12 @@ public:
     wxScreenDCImpl( wxDC *owner );
     virtual ~wxScreenDCImpl();
 
-    virtual wxBitmap DoGetAsBitmap(const wxRect *subrect) const wxOVERRIDE;
+    virtual wxBitmap DoGetAsBitmap(const wxRect *subrect) const;
+private:
+    void* m_overlayWindow;
 
 private:
-    wxDECLARE_CLASS(wxScreenDCImpl);
+    DECLARE_CLASS(wxScreenDCImpl)
     wxDECLARE_NO_COPY_CLASS(wxScreenDCImpl);
 };
 

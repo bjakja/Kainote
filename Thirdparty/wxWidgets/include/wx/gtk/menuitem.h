@@ -2,12 +2,15 @@
 // Name:        wx/gtk/menuitem.h
 // Purpose:     wxMenuItem class
 // Author:      Robert Roebling
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_GTKMENUITEM_H_
 #define _WX_GTKMENUITEM_H_
+
+#include "wx/bitmap.h"
 
 //-----------------------------------------------------------------------------
 // wxMenuItem
@@ -25,31 +28,22 @@ public:
     virtual ~wxMenuItem();
 
     // implement base class virtuals
-    virtual void SetItemLabel( const wxString& str ) wxOVERRIDE;
-    virtual void Enable( bool enable = true ) wxOVERRIDE;
-    virtual void Check( bool check = true ) wxOVERRIDE;
-    virtual bool IsChecked() const wxOVERRIDE;
-    virtual void SetBitmap(const wxBitmapBundle& bitmap);
-    virtual wxBitmap GetBitmap() const;
-    void SetupBitmaps(wxWindow *win);
-
-#if wxUSE_ACCEL
-    virtual void AddExtraAccel(const wxAcceleratorEntry& accel) wxOVERRIDE;
-    virtual void ClearExtraAccels() wxOVERRIDE;
-#endif // wxUSE_ACCEL
+    virtual void SetItemLabel( const wxString& str );
+    virtual void Enable( bool enable = true );
+    virtual void Check( bool check = true );
+    virtual bool IsChecked() const;
+    virtual void SetBitmap(const wxBitmap& bitmap);
+    virtual const wxBitmap& GetBitmap() const { return m_bitmap; }
 
     // implementation
-    void SetMenuItem(GtkWidget *menuItem);
+    void SetMenuItem(GtkWidget *menuItem) { m_menuItem = menuItem; }
     GtkWidget *GetMenuItem() const { return m_menuItem; }
     void SetGtkLabel();
 
-#if wxUSE_ACCEL
-    void GTKSetExtraAccels();
-#endif // wxUSE_ACCEL
-
 #if WXWIN_COMPATIBILITY_2_8
     // compatibility only, don't use in new code
-    wxDEPRECATED_CONSTRUCTOR(
+    wxDEPRECATED(
+    inline
     wxMenuItem(wxMenu *parentMenu,
                int id,
                const wxString& text,
@@ -60,10 +54,10 @@ public:
 #endif
 
 private:
-    wxBitmapBundle m_bitmap; // Bitmap for menuitem, if any
+    wxBitmap  m_bitmap; // Bitmap for menuitem, if any
     GtkWidget *m_menuItem;  // GtkMenuItem
 
-    wxDECLARE_DYNAMIC_CLASS(wxMenuItem);
+    DECLARE_DYNAMIC_CLASS(wxMenuItem)
 };
 
 #endif // _WX_GTKMENUITEM_H_

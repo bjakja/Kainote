@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     11.09.00
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,6 +19,9 @@
 
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_RADIOBOX
 
@@ -59,7 +63,7 @@ public:
     virtual bool ProcessEvent(wxEvent& event)
     {
         // we intercept the command events from radio buttons
-        if ( event.GetEventType() == wxEVT_RADIOBUTTON )
+        if ( event.GetEventType() == wxEVT_COMMAND_RADIOBUTTON_SELECTED )
         {
             m_radio->OnRadioButton(event);
         }
@@ -83,7 +87,7 @@ private:
 // implementation
 // ============================================================================
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxRadioBox, wxControl);
+IMPLEMENT_DYNAMIC_CLASS(wxRadioBox, wxControl)
 
 // ----------------------------------------------------------------------------
 // wxRadioBox creation
@@ -137,8 +141,28 @@ bool wxRadioBox::Create(wxWindow *parent,
                         const wxValidator& wxVALIDATOR_PARAM(val),
                         const wxString& name)
 {
-    if ( !(style & (wxRA_SPECIFY_ROWS | wxRA_SPECIFY_COLS)) )
-        style |= wxRA_SPECIFY_COLS;
+    // for compatibility with the other ports which don't handle (yet?)
+    // wxRA_LEFTTORIGHT and wxRA_TOPTOBOTTOM flags, we add them ourselves if
+    // not specified
+    if ( !(style & (wxRA_LEFTTORIGHT | wxRA_TOPTOBOTTOM)) )
+    {
+        // horizontal radiobox use left to right layout
+        if ( style & wxRA_SPECIFY_COLS )
+        {
+            style |= wxRA_LEFTTORIGHT;
+        }
+        else if ( style & wxRA_SPECIFY_ROWS )
+        {
+            style |= wxRA_TOPTOBOTTOM;
+        }
+        else
+        {
+            wxFAIL_MSG( wxT("you must specify wxRA_XXX style!") );
+
+            // use default
+            style = wxRA_SPECIFY_COLS | wxRA_LEFTTORIGHT;
+        }
+    }
 
     if ( !wxStaticBox::Create(parent, id, title, pos, size, style, name) )
         return false;
@@ -237,7 +261,7 @@ void wxRadioBox::SendRadioEvent()
 {
     wxCHECK_RET( m_selection != -1, wxT("no active radio button") );
 
-    wxCommandEvent event(wxEVT_RADIOBOX, GetId());
+    wxCommandEvent event(wxEVT_COMMAND_RADIOBOX_SELECTED, GetId());
     InitCommandEvent(event);
     event.SetInt(m_selection);
     event.SetString(GetString(m_selection));
@@ -424,7 +448,7 @@ void wxRadioBox::DoMoveWindow(int x0, int y0, int width, int height)
     {
         m_buttons[n]->SetSize(x, y, sizeBtn.x, sizeBtn.y);
 
-        if ( GetWindowStyle() & wxRA_SPECIFY_ROWS )
+        if ( GetWindowStyle() & wxRA_TOPTOBOTTOM )
         {
             // from top to bottom
             if ( (n + 1) % GetRowCount() )
@@ -439,7 +463,7 @@ void wxRadioBox::DoMoveWindow(int x0, int y0, int width, int height)
                 y = y0;
             }
         }
-        else // wxRA_SPECIFY_COLS: mirror the code above
+        else // wxRA_LEFTTORIGHT: mirror the code above
         {
             // from left to right
             if ( (n + 1) % GetColumnCount() )

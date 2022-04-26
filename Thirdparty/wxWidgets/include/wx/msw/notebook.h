@@ -3,6 +3,7 @@
 // Purpose:     MSW/GTK compatible notebook (a.k.a. property sheet)
 // Author:      Robert Roebling
 // Modified by: Vadim Zeitlin for Windows version
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -35,51 +36,59 @@ public:
              const wxPoint& pos = wxDefaultPosition,
              const wxSize& size = wxDefaultSize,
              long style = 0,
-             const wxString& name = wxASCII_STR(wxNotebookNameStr));
+             const wxString& name = wxNotebookNameStr);
     // Create() function
   bool Create(wxWindow *parent,
               wxWindowID id,
               const wxPoint& pos = wxDefaultPosition,
               const wxSize& size = wxDefaultSize,
               long style = 0,
-              const wxString& name = wxASCII_STR(wxNotebookNameStr));
+              const wxString& name = wxNotebookNameStr);
   virtual ~wxNotebook();
 
   // accessors
   // ---------
     // get number of pages in the dialog
-  virtual size_t GetPageCount() const wxOVERRIDE;
+  virtual size_t GetPageCount() const;
 
     // set the currently selected page, return the index of the previously
     // selected one (or wxNOT_FOUND on error)
     // NB: this function will _not_ generate wxEVT_NOTEBOOK_PAGE_xxx events
-  int SetSelection(size_t nPage) wxOVERRIDE;
+  int SetSelection(size_t nPage);
 
     // changes selected page without sending events
-  int ChangeSelection(size_t nPage) wxOVERRIDE;
+  int ChangeSelection(size_t nPage);
 
     // set/get the title of a page
-  bool SetPageText(size_t nPage, const wxString& strText) wxOVERRIDE;
-  wxString GetPageText(size_t nPage) const wxOVERRIDE;
+  bool SetPageText(size_t nPage, const wxString& strText);
+  wxString GetPageText(size_t nPage) const;
+
+  // image list stuff: each page may have an image associated with it. All
+  // the images belong to an image list, so you have to
+  // 1) create an image list
+  // 2) associate it with the notebook
+  // 3) set for each page it's image
+    // associate image list with a control
+  void SetImageList(wxImageList* imageList);
 
     // sets/returns item's image index in the current image list
-  int  GetPageImage(size_t nPage) const wxOVERRIDE;
-  bool SetPageImage(size_t nPage, int nImage) wxOVERRIDE;
+  int  GetPageImage(size_t nPage) const;
+  bool SetPageImage(size_t nPage, int nImage);
 
     // currently it's always 1 because wxGTK doesn't support multi-row
     // tab controls
-  int GetRowCount() const wxOVERRIDE;
+  int GetRowCount() const;
 
   // control the appearance of the notebook pages
     // set the size (the same for all pages)
-  void SetPageSize(const wxSize& size) wxOVERRIDE;
+  void SetPageSize(const wxSize& size);
     // set the padding between tabs (in pixels)
-  void SetPadding(const wxSize& padding) wxOVERRIDE;
+  void SetPadding(const wxSize& padding);
 
   // operations
   // ----------
     // remove all pages
-  bool DeleteAllPages() wxOVERRIDE;
+  bool DeleteAllPages();
 
     // inserts a new page to the notebook (it will be deleted ny the notebook,
     // don't delete it yourself). If bSelect, this page becomes active.
@@ -87,17 +96,17 @@ public:
                   wxNotebookPage *pPage,
                   const wxString& strText,
                   bool bSelect = false,
-                  int imageId = NO_IMAGE) wxOVERRIDE;
+                  int imageId = NO_IMAGE);
 
     // Windows-only at present. Also, you must use the wxNB_FIXEDWIDTH
     // style.
-  void SetTabSize(const wxSize& sz) wxOVERRIDE;
+  void SetTabSize(const wxSize& sz);
 
     // hit test
-  virtual int HitTest(const wxPoint& pt, long *flags = NULL) const wxOVERRIDE;
+  virtual int HitTest(const wxPoint& pt, long *flags = NULL) const;
 
     // calculate the size of the notebook from the size of its page
-  virtual wxSize CalcSizeFromPage(const wxSize& sizePage) const wxOVERRIDE;
+  virtual wxSize CalcSizeFromPage(const wxSize& sizePage) const;
 
   // callbacks
   // ---------
@@ -107,23 +116,23 @@ public:
   // base class virtuals
   // -------------------
 
-  virtual bool MSWOnNotify(int idCtrl, WXLPARAM lParam, WXLPARAM *result) wxOVERRIDE;
+  virtual bool MSWOnNotify(int idCtrl, WXLPARAM lParam, WXLPARAM *result);
   virtual bool MSWOnScroll(int orientation, WXWORD nSBCode,
-                           WXWORD pos, WXHWND control) wxOVERRIDE;
+                           WXWORD pos, WXHWND control);
 
 #if wxUSE_CONSTRAINTS
-  virtual void SetConstraintSizes(bool recurse = true) wxOVERRIDE;
-  virtual bool DoPhase(int nPhase) wxOVERRIDE;
+  virtual void SetConstraintSizes(bool recurse = true);
+  virtual bool DoPhase(int nPhase);
 #endif // wxUSE_CONSTRAINTS
 
   // Attempts to get colour for UX theme page background
-  wxColour GetThemeBackgroundColour() const wxOVERRIDE;
+  wxColour GetThemeBackgroundColour() const;
 
   // implementation only
   // -------------------
 
 #if wxUSE_UXTHEME
-  virtual bool SetBackgroundColour(const wxColour& colour) wxOVERRIDE
+  virtual bool SetBackgroundColour(const wxColour& colour)
   {
       if ( !wxNotebookBase::SetBackgroundColour(colour) )
           return false;
@@ -134,13 +143,14 @@ public:
   }
 
   // draw child background
-  virtual bool MSWPrintChild(WXHDC hDC, wxWindow *win) wxOVERRIDE;
+  virtual bool MSWPrintChild(WXHDC hDC, wxWindow *win);
 
-  virtual bool MSWHasInheritableBackground() const wxOVERRIDE { return true; }
+  virtual bool MSWHasInheritableBackground() const { return true; }
 #endif // wxUSE_UXTHEME
 
   // translate wxWin styles to the Windows ones
-  virtual WXDWORD MSWGetStyle(long flags, WXDWORD *exstyle = NULL) const wxOVERRIDE;
+  virtual WXDWORD MSWGetStyle(long flags, WXDWORD *exstyle = NULL) const;
+
 
 protected:
   // common part of all ctors
@@ -151,10 +161,8 @@ protected:
   void UpdateSelection(int selNew);
 
   // remove one page from the notebook, without deleting
-  virtual wxNotebookPage *DoRemovePage(size_t nPage) wxOVERRIDE;
+  virtual wxNotebookPage *DoRemovePage(size_t nPage);
 
-  // update the image list used by the native control
-  virtual void OnImagesChanged() wxOVERRIDE;
 
   // get the page rectangle for the current notebook size
   //
@@ -165,41 +173,42 @@ protected:
   void AdjustPageSize(wxNotebookPage *page);
 
 #if wxUSE_UXTHEME
-  virtual void MSWAdjustBrushOrg(int *xOrg, int* yOrg) const wxOVERRIDE
-  {
-      *xOrg -= m_bgBrushAdj.x;
-      *yOrg -= m_bgBrushAdj.y;
-  }
-
   // return the themed brush for painting our children
-  virtual WXHBRUSH MSWGetCustomBgBrush() wxOVERRIDE { return m_hbrBackground; }
+  virtual WXHBRUSH MSWGetCustomBgBrush() { return m_hbrBackground; }
 
-  // gets the bitmap of notebook background and returns a brush from it and
-  // sets m_bgBrushAdj
+  // gets the bitmap of notebook background and returns a brush from it
   WXHBRUSH QueryBgBitmap();
 
   // creates the brush to be used for drawing the tab control background
   void UpdateBgBrush();
+
+  // common part of QueryBgBitmap() and MSWPrintChild()
+  //
+  // if child == NULL, draw background for the entire notebook itself
+  bool DoDrawBackground(WXHDC hDC, wxWindow *child = NULL);
 #endif // wxUSE_UXTHEME
 
-  // these function are used for reducing flicker on notebook resize
+  // these function are only used for reducing flicker on notebook resize and
+  // we don't need to do this for WinCE
+#ifndef __WXWINCE__
   void OnEraseBackground(wxEraseEvent& event);
   void OnPaint(wxPaintEvent& event);
 
   // true if we have already subclassed our updown control
   bool m_hasSubclassedUpdown;
 
+  // true if we already refreshed the current page after showing the window
+  bool m_doneUpdateHack;
+#endif // __WXWINCE__
+
 #if wxUSE_UXTHEME
   // background brush used to paint the tab control
   WXHBRUSH m_hbrBackground;
-
-  // offset for MSWAdjustBrushOrg()
-  wxPoint m_bgBrushAdj;
 #endif // wxUSE_UXTHEME
 
 
-  wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxNotebook);
-  wxDECLARE_EVENT_TABLE();
+  DECLARE_DYNAMIC_CLASS_NO_COPY(wxNotebook)
+  DECLARE_EVENT_TABLE()
 };
 
 #endif // wxUSE_NOTEBOOK

@@ -6,6 +6,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,8 +20,17 @@
 
 #include "wx/osx/core/cfstring.h"
 #include "wx/osx/core/cfdataref.h"
-#include "wx/osx/core/cfarray.h"
-#include "wx/osx/core/cfdictionary.h"
+
+// Define helper macros allowing to insert small snippets of code to be
+// compiled for high enough OS X version only: this shouldn't be abused for
+// anything big but it's handy for e.g. specifying OS X 10.6-only protocols in
+// the Objective C classes declarations when they're not supported under the
+// previous versions
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6
+    #define wxOSX_10_6_AND_LATER(x) x
+#else
+    #define wxOSX_10_6_AND_LATER(x)
+#endif
 
 // platform specific Clang analyzer support
 #ifndef NS_RETURNS_RETAINED
@@ -45,6 +55,8 @@
 // wxBase part of it).
 #include <Carbon/Carbon.h>
 
+WXDLLIMPEXP_BASE long UMAGetSystemVersion() ;
+
 void WXDLLIMPEXP_CORE wxMacStringToPascal( const wxString&from , unsigned char * to );
 wxString WXDLLIMPEXP_CORE wxMacMakeStringFromPascal( const unsigned char * from );
 
@@ -59,13 +71,6 @@ WXDLLIMPEXP_BASE long wxMacTranslateKey(unsigned char key, unsigned char code);
 
 #endif
 
-// NSString<->wxString
-
-WXDLLIMPEXP_BASE wxString wxStringWithNSString(NSString *nsstring);
-WXDLLIMPEXP_BASE NSString* wxNSStringWithWxString(const wxString &wxstring);
-
-WXDLLIMPEXP_BASE CFURLRef wxOSXCreateURLFromFileSystemPath( const wxString& path);
-
 #if wxUSE_GUI
 
 #if wxOSX_USE_IPHONE
@@ -74,11 +79,8 @@ WXDLLIMPEXP_BASE CFURLRef wxOSXCreateURLFromFileSystemPath( const wxString& path
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
-#include "wx/bmpbndl.h"
+#include "wx/bitmap.h"
 #include "wx/window.h"
-#include "wx/toplevel.h"
-
-class wxTextProofOptions;
 
 class WXDLLIMPEXP_CORE wxMacCGContextStateSaver
 {
@@ -114,23 +116,13 @@ protected :
 
 // Quartz
 
+WXDLLIMPEXP_CORE CGImageRef wxMacCreateCGImageFromBitmap( const wxBitmap& bitmap );
+
 WXDLLIMPEXP_CORE CGDataProviderRef wxMacCGDataProviderCreateWithCFData( CFDataRef data );
 WXDLLIMPEXP_CORE CGDataConsumerRef wxMacCGDataConsumerCreateWithCFData( CFMutableDataRef data );
 WXDLLIMPEXP_CORE CGDataProviderRef wxMacCGDataProviderCreateWithMemoryBuffer( const wxMemoryBuffer& buf );
 
-WXDLLIMPEXP_CORE CGColorSpaceRef wxMacGetGenericRGBColorSpace();
-
-WXDLLIMPEXP_CORE double wxOSXGetMainScreenContentScaleFactor();
-
-// UI
-
-CGSize WXDLLIMPEXP_CORE wxOSXGetImageSize(WXImage image);
-CGImageRef WXDLLIMPEXP_CORE wxOSXCreateCGImageFromImage( WXImage nsimage, double *scale = NULL );
-CGImageRef WXDLLIMPEXP_CORE wxOSXGetCGImageFromImage( WXImage nsimage, CGRect* r, CGContextRef cg);
-CGContextRef WXDLLIMPEXP_CORE wxOSXCreateBitmapContextFromImage( WXImage nsimage, bool *isTemplate = NULL);
-WXImage WXDLLIMPEXP_CORE wxOSXGetImageFromCGImage( CGImageRef image, double scale = 1.0, bool isTemplate = false);
-double WXDLLIMPEXP_CORE wxOSXGetImageScaleFactor(WXImage image);
-
+CGColorSpaceRef WXDLLIMPEXP_CORE wxMacGetGenericRGBColorSpace(void);
 
 class wxWindowMac;
 // to
@@ -145,12 +137,14 @@ class wxComboBox;
 class wxNotebook;
 class wxTextCtrl;
 class wxSearchCtrl;
-class wxMenuItem;
-class wxAcceleratorEntry;
 
 WXDLLIMPEXP_CORE wxWindowMac * wxFindWindowFromWXWidget(WXWidget inControl );
 
+#if wxOSX_USE_CARBON
+typedef wxMacControl wxWidgetImplType;
+#else
 typedef wxWidgetImpl wxWidgetImplType;
+#endif
 
 #if wxUSE_MENUS
 class wxMenuItemImpl : public wxObject
@@ -166,7 +160,6 @@ public :
     virtual void Check( bool check ) = 0;
     virtual void SetLabel( const wxString& text, wxAcceleratorEntry *entry ) = 0;
     virtual void Hide( bool hide = true ) = 0;
-    virtual void SetAllowsKeyEquivalentWhenHidden( bool ) {}
 
     virtual void * GetHMenuItem() = 0;
 
@@ -179,13 +172,13 @@ public :
                        const wxString& strHelp,
                        wxItemKind kind,
                        wxMenu *pSubMenu );
-
+    
     // handle OS specific menu items if they weren't handled during normal processing
     virtual bool DoDefault() { return false; }
 protected :
     wxMenuItem* m_peer;
 
-    wxDECLARE_ABSTRACT_CLASS(wxMenuItemImpl);
+    DECLARE_ABSTRACT_CLASS(wxMenuItemImpl)
 } ;
 
 class wxMenuImpl : public wxObject
@@ -209,17 +202,12 @@ public :
 
     virtual void PopUp( wxWindow *win, int x, int y ) = 0;
 
-    virtual void GetMenuBarDimensions(int &x, int &y, int &width, int &height) const
-    {
-        x = y = width = height = -1;
-    }
-
     static wxMenuImpl* Create( wxMenu* peer, const wxString& title );
     static wxMenuImpl* CreateRootMenu( wxMenu* peer );
 protected :
     wxMenu* m_peer;
 
-    wxDECLARE_ABSTRACT_CLASS(wxMenuImpl);
+    DECLARE_ABSTRACT_CLASS(wxMenuItemImpl)
 } ;
 #endif
 
@@ -227,31 +215,15 @@ protected :
 class WXDLLIMPEXP_CORE wxWidgetImpl : public wxObject
 {
 public :
-    enum WidgetFlags
-    {
-        Widget_IsRoot = 0x0001,
-        Widget_IsUserPane = 0x0002,
-        Widget_UserKeyEvents = 0x0004,
-        Widget_UserMouseEvents = 0x0008,
-    };
-
-    wxWidgetImpl( wxWindowMac* peer , bool isRootControl, bool isUserPane, bool wantsUserKey );
-    wxWidgetImpl( wxWindowMac* peer , int flags = 0 );
+    wxWidgetImpl( wxWindowMac* peer , bool isRootControl = false, bool isUserPane = false );
     wxWidgetImpl();
     virtual ~wxWidgetImpl();
 
     void Init();
 
     bool                IsRootControl() const { return m_isRootControl; }
-
-    // is a custom control that has all events handled in wx code, no built-ins
+    
     bool                IsUserPane() const { return m_isUserPane; }
-
-    // we are doing keyboard handling in wx code, other events might be handled natively
-    virtual bool        HasUserKeyHandling() const { return m_wantsUserKey; }
-
-    // we are doing mouse handling in wx code, other events might be handled natively
-    virtual bool        HasUserMouseHandling() const { return m_wantsUserMouse; }
 
     wxWindowMac*        GetWXPeer() const { return m_wxPeer; }
 
@@ -280,7 +252,6 @@ public :
 
     virtual void        SetBackgroundColour( const wxColour& col ) = 0;
     virtual bool        SetBackgroundStyle(wxBackgroundStyle style) = 0;
-    virtual void        SetForegroundColour( const wxColour& col ) = 0;
 
     // all coordinates in native parent widget relative coordinates
     virtual void        GetContentArea( int &left , int &top , int &width , int &height ) const = 0;
@@ -288,11 +259,11 @@ public :
     virtual void        GetPosition( int &x, int &y ) const = 0;
     virtual void        GetSize( int &width, int &height ) const = 0;
     virtual void        SetControlSize( wxWindowVariant variant ) = 0;
-    virtual double      GetContentScaleFactor() const
+    virtual float       GetContentScaleFactor() const 
     {
         return 1.0;
     }
-
+    
     // the native coordinates may have an 'aura' for shadows etc, if this is the case the layout
     // inset indicates on which insets the real control is drawn
     virtual void        GetLayoutInset(int &left , int &top , int &right, int &bottom) const
@@ -306,12 +277,11 @@ public :
     virtual void        SetNeedsDisplay( const wxRect* where = NULL ) = 0;
     virtual bool        GetNeedsDisplay() const = 0;
 
-    virtual void        EnableFocusRing(bool WXUNUSED(enabled)) {}
+    virtual bool        NeedsFocusRect() const;
+    virtual void        SetNeedsFocusRect( bool needs );
 
     virtual bool        NeedsFrame() const;
     virtual void        SetNeedsFrame( bool needs );
-
-    virtual void        SetDrawingEnabled(bool enabled);
 
     virtual bool        CanFocus() const = 0;
     // return true if successful
@@ -327,35 +297,30 @@ public :
 #if wxUSE_MARKUP && wxOSX_USE_COCOA
     virtual void        SetLabelMarkup( const wxString& WXUNUSED(markup) ) { }
 #endif
-    virtual void        SetInitialLabel( const wxString& title, wxFontEncoding encoding )
-                            { SetLabel(title, encoding); }
 
     virtual void        SetCursor( const wxCursor & cursor ) = 0;
     virtual void        CaptureMouse() = 0;
     virtual void        ReleaseMouse() = 0;
-
+    
     virtual void        SetDropTarget( wxDropTarget * WXUNUSED(dropTarget) ) {}
 
     virtual wxInt32     GetValue() const = 0;
     virtual void        SetValue( wxInt32 v ) = 0;
     virtual wxBitmap    GetBitmap() const = 0;
-    virtual void        SetBitmap( const wxBitmapBundle& bitmap ) = 0;
+    virtual void        SetBitmap( const wxBitmap& bitmap ) = 0;
     virtual void        SetBitmapPosition( wxDirection dir ) = 0;
-    virtual void        SetupTabs( const wxNotebook& WXUNUSED(notebook) ) {}
-    virtual int         TabHitTest( const wxPoint & WXUNUSED(pt), long *flags ) {*flags=1; return -1;}
+    virtual void        SetupTabs( const wxNotebook &notebook ) =0;
     virtual void        GetBestRect( wxRect *r ) const = 0;
     virtual bool        IsEnabled() const = 0;
     virtual void        Enable( bool enable ) = 0;
     virtual void        SetMinimum( wxInt32 v ) = 0;
     virtual void        SetMaximum( wxInt32 v ) = 0;
-    virtual void        SetIncrement(int value) = 0;
     virtual wxInt32     GetMinimum() const = 0;
     virtual wxInt32     GetMaximum() const = 0;
-    virtual int         GetIncrement() const = 0;
     virtual void        PulseGauge() = 0;
     virtual void        SetScrollThumb( wxInt32 value, wxInt32 thumbSize ) = 0;
 
-    virtual void        SetFont(const wxFont & font) = 0;
+    virtual void        SetFont( const wxFont & font , const wxColour& foreground , long windowStyle, bool ignoreBlack = true ) = 0;
 
     virtual void        SetToolTip(wxToolTip* WXUNUSED(tooltip)) { }
 
@@ -365,8 +330,6 @@ public :
 
     virtual void        InstallEventHandler( WXWidget control = NULL ) = 0;
 
-    virtual bool        EnableTouchEvents(int eventsMask) = 0;
-
     // Mechanism used to keep track of whether a change should send an event
     // Do SendEvents(false) when starting actions that would trigger programmatic events
     // and SendEvents(true) at the end of the block.
@@ -375,18 +338,10 @@ public :
 
     // static methods for associating native controls and their implementations
 
-    // finds the impl associated with this native control
     static wxWidgetImpl*
                         FindFromWXWidget(WXWidget control);
 
-    // finds the impl associated with this native control, if the native control itself is not known
-    // also checks whether its parent is eg a registered scrollview, ie whether the control is a native subpart
-    // of a known control
-    static wxWidgetImpl*
-                        FindBestFromWXWidget(WXWidget control);
-
     static void         RemoveAssociations( wxWidgetImpl* impl);
-    static void         RemoveAssociation(WXWidget control);
 
     static void         Associate( WXWidget control, wxWidgetImpl *impl );
 
@@ -495,7 +450,7 @@ public :
     static wxWidgetImplType*    CreateBitmapToggleButton( wxWindowMac* wxpeer,
                                     wxWindowMac* parent,
                                     wxWindowID id,
-                                    const wxBitmapBundle& bitmap,
+                                    const wxBitmap& bitmap,
                                     const wxPoint& pos,
                                     const wxSize& size,
                                     long style,
@@ -504,7 +459,7 @@ public :
     static wxWidgetImplType*    CreateBitmapButton( wxWindowMac* wxpeer,
                                     wxWindowMac* parent,
                                     wxWindowID id,
-                                    const wxBitmapBundle& bitmap,
+                                    const wxBitmap& bitmap,
                                     const wxPoint& pos,
                                     const wxSize& size,
                                     long style,
@@ -587,27 +542,17 @@ public :
                                     long extraStyle);
 #endif
 
-    static wxWidgetImplType*    CreateStaticBitmap( wxWindowMac* wxpeer,
-                                                   wxWindowMac* parent,
-                                                   wxWindowID id,
-                                                   const wxBitmapBundle& bitmap,
-                                                   const wxPoint& pos,
-                                                   const wxSize& size,
-                                                   long style,
-                                                   long extraStyle);
-
     // converts from Toplevel-Content relative to local
     static void Convert( wxPoint *pt , wxWidgetImpl *from , wxWidgetImpl *to );
 protected :
     bool                m_isRootControl;
     bool                m_isUserPane;
-    bool                m_wantsUserKey;
-    bool                m_wantsUserMouse;
     wxWindowMac*        m_wxPeer;
+    bool                m_needsFocusRect;
     bool                m_needsFrame;
     bool                m_shouldSendEvents;
 
-    wxDECLARE_ABSTRACT_CLASS(wxWidgetImpl);
+    DECLARE_ABSTRACT_CLASS(wxWidgetImpl)
 };
 
 //
@@ -665,8 +610,6 @@ public:
     // display
 
     virtual void            ListScrollTo( unsigned int n ) = 0;
-    virtual int             ListGetTopItem() const = 0;
-    virtual int             ListGetCountPerPage() const = 0;
     virtual void            UpdateLine( unsigned int n, wxListWidgetColumn* col = NULL ) = 0;
     virtual void            UpdateLineToEnd( unsigned int n) = 0;
 
@@ -709,10 +652,7 @@ public :
 
     virtual bool CanClipMaxLength() const { return false; }
     virtual void SetMaxLength(unsigned long WXUNUSED(len)) {}
-
-    virtual bool CanForceUpper() { return false; }
-    virtual void ForceUpper() {}
-
+    
     virtual bool GetStyle( long position, wxTextAttr& style);
     virtual void SetStyle( long start, long end, const wxTextAttr& style ) ;
     virtual void Copy() ;
@@ -736,33 +676,24 @@ public :
     virtual void Undo() ;
     virtual bool CanRedo() const;
     virtual void Redo() ;
-    virtual void EmptyUndoBuffer() ;
     virtual int GetNumberOfLines() const ;
     virtual long XYToPosition(long x, long y) const;
     virtual bool PositionToXY(long pos, long *x, long *y) const ;
-    virtual void ShowPosition(long pos) ;
+    virtual void ShowPosition(long WXUNUSED(pos)) ;
     virtual int GetLineLength(long lineNo) const ;
     virtual wxString GetLineText(long lineNo) const ;
-#if wxUSE_SPELLCHECK
-    virtual void CheckSpelling(const wxTextProofOptions& WXUNUSED(options)) { }
-    virtual wxTextProofOptions GetCheckingOptions() const;
-#endif // wxUSE_SPELLCHECK
-    virtual void EnableAutomaticQuoteSubstitution(bool WXUNUSED(enable)) {}
-    virtual void EnableAutomaticDashSubstitution(bool WXUNUSED(enable)) {}
+    virtual void CheckSpelling(bool WXUNUSED(check)) { }
 
-    virtual void EnableNewLineReplacement(bool WXUNUSED(enable)) {}
-    virtual bool GetNewLineReplacement() { return true; }
     virtual wxSize GetBestSize() const { return wxDefaultSize; }
 
     virtual bool SetHint(const wxString& WXUNUSED(hint)) { return false; }
-    virtual void SetJustification();
 private:
     wxTextEntry * const m_entry;
 
     wxDECLARE_NO_COPY_CLASS(wxTextWidgetImpl);
 };
 
-// common interface for all combobox implementations
+// common interface for all implementations
 class WXDLLIMPEXP_CORE wxComboWidgetImpl
 
 {
@@ -790,41 +721,6 @@ public :
 };
 
 //
-// common interface for choice
-//
-
-class WXDLLIMPEXP_CORE wxChoiceWidgetImpl
-
-{
-public :
-    wxChoiceWidgetImpl() {}
-
-    virtual ~wxChoiceWidgetImpl() {}
-
-    virtual int GetSelectedItem() const { return -1; }
-
-    virtual void SetSelectedItem(int WXUNUSED(item)) {}
-
-    virtual size_t GetNumberOfItems() const = 0;
-
-    virtual void InsertItem(size_t pos, int itemid, const wxString& text) = 0;
-
-    virtual void RemoveItem(size_t pos) = 0;
-
-    virtual void Clear()
-    {
-        size_t count = GetNumberOfItems();
-        for ( size_t i = 0 ; i < count ; i++ )
-        {
-            RemoveItem( 0 );
-        }
-    }
-
-    virtual void SetItem(int pos, const wxString& item) = 0;
-};
-
-
-//
 // common interface for buttons
 //
 
@@ -834,7 +730,7 @@ class wxButtonImpl
     wxButtonImpl(){}
     virtual ~wxButtonImpl(){}
 
-    virtual void SetPressedBitmap( const wxBitmapBundle& bitmap ) = 0;
+    virtual void SetPressedBitmap( const wxBitmap& bitmap ) = 0;
 } ;
 
 //
@@ -948,10 +844,6 @@ public :
 
     virtual void SetTitle( const wxString& title, wxFontEncoding encoding ) = 0;
 
-    virtual bool EnableCloseButton(bool enable) = 0;
-    virtual bool EnableMaximizeButton(bool enable) = 0;
-    virtual bool EnableMinimizeButton(bool enable) = 0;
-
     virtual bool IsMaximized() const = 0;
 
     virtual bool IsIconized() const= 0;
@@ -964,12 +856,7 @@ public :
 
     virtual void ShowWithoutActivating() { Show(true); }
 
-    virtual bool EnableFullScreenView(bool enable, long style) = 0;
-
     virtual bool ShowFullScreen(bool show, long style)= 0;
-
-    virtual wxContentProtection GetContentProtection() const = 0;
-    virtual bool SetContentProtection(wxContentProtection contentProtection) = 0;
 
     virtual void RequestUserAttention(int flags) = 0;
 
@@ -1000,8 +887,6 @@ public :
 
     virtual void SetRepresentedFilename(const wxString& WXUNUSED(filename)) { }
 
-    virtual void SetBottomBorderThickness(int WXUNUSED(thickness)) { }
-
 #if wxOSX_USE_IPHONE
     virtual CGFloat GetWindowLevel() const { return 0.0; }
 #else
@@ -1010,7 +895,7 @@ public :
     virtual void RestoreWindowLevel() {}
 protected :
     wxNonOwnedWindow*   m_wxPeer;
-    wxDECLARE_ABSTRACT_CLASS(wxNonOwnedWindowImpl);
+    DECLARE_ABSTRACT_CLASS(wxNonOwnedWindowImpl)
 };
 
 #endif // wxUSE_GUI
@@ -1036,95 +921,6 @@ void wxMacCocoaRelease( void* obj );
 void wxMacCocoaAutorelease( void* obj );
 void* wxMacCocoaRetain( void* obj );
 
-// shared_ptr like API for NSObject and subclasses
-template <class T>
-class wxNSObjRef
-{
-public:
-    typedef T element_type;
-
-    wxNSObjRef()
-        : m_ptr(NULL)
-    {
-    }
-
-    wxNSObjRef( T p )
-        : m_ptr(p)
-    {
-    }
-
-    wxNSObjRef( const wxNSObjRef& otherRef )
-        : m_ptr(wxMacCocoaRetain(otherRef.m_ptr))
-    {
-    }
-
-    wxNSObjRef& operator=( const wxNSObjRef& otherRef )
-    {
-        if (this != &otherRef)
-        {
-            wxMacCocoaRetain(otherRef.m_ptr);
-            wxMacCocoaRelease(m_ptr);
-            m_ptr = otherRef.m_ptr;
-        }
-        return *this;
-    }
-    
-    wxNSObjRef& operator=( T ptr )
-    {
-        if (get() != ptr)
-        {
-            wxMacCocoaRetain(ptr);
-            wxMacCocoaRelease(m_ptr);
-            m_ptr = ptr;
-        }
-        return *this;
-    }
-
-
-    T get() const
-    {
-        return m_ptr;
-    }
-
-    operator T() const
-    {
-        return m_ptr;
-    }
-
-    T operator->() const
-    {
-        return m_ptr;
-    }
-
-    void reset( T p = NULL )
-    {
-        wxMacCocoaRelease(m_ptr);
-        m_ptr = p; // Automatic conversion should occur
-    }
-
-    // Release the pointer, i.e. give up its ownership.
-    T release()
-    {
-        T p = m_ptr;
-        m_ptr = NULL;
-        return p;
-    }
-
-protected:
-    T m_ptr;
-};
-
-// This macro checks if the evaluation of cond, having a return value of
-// OS Error type, is zero, ie no error occurred, and calls the assert handler
-// with the provided message if it isn't.
-#define wxOSX_VERIFY_NOERR(cond)                                          \
-    wxSTATEMENT_MACRO_BEGIN                                               \
-        const unsigned long evalOnce = (cond);                            \
-        if ( evalOnce != 0 )                                              \
-        {                                                                 \
-            wxFAIL_COND_MSG(#cond, GetMacOSStatusErrorString(evalOnce));  \
-        }                                                                 \
-    wxSTATEMENT_MACRO_END
 
 #endif
     // _WX_PRIVATE_CORE_H_

@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -20,7 +21,6 @@
 #endif // WX_PRECOMP
 
 #include "wx/osx/private.h"
-#include "wx/osx/private/available.h"
 
 // a mapping from wx ids to standard osx actions in order to support the native menu item handling
 // if a new mapping is added, make sure the wxNonOwnedWindowController has a handler for this action as well
@@ -132,8 +132,7 @@ void wxMacCocoaMenuItemSetAccelerator( NSMenuItem* menuItem, wxAcceleratorEntry*
         [menuItem setKeyEquivalent:@""];
         return;
     }
-
-#if wxUSE_ACCEL
+         
     unsigned int modifiers = 0 ;
     int key = entry->GetKeyCode() ;
     if ( key )
@@ -155,6 +154,7 @@ void wxMacCocoaMenuItemSetAccelerator( NSMenuItem* menuItem, wxAcceleratorEntry*
         unichar shortcut = 0;
         if ( key >= WXK_F1 && key <= WXK_F15 )
         {
+            modifiers |= NSFunctionKeyMask ;
             shortcut = NSF1FunctionKey + ( key - WXK_F1 );
         }
         else
@@ -162,50 +162,47 @@ void wxMacCocoaMenuItemSetAccelerator( NSMenuItem* menuItem, wxAcceleratorEntry*
             switch ( key )
             {
                 case WXK_CLEAR :
+                    modifiers |= NSFunctionKeyMask;
                     shortcut = NSDeleteCharacter ;
                     break ;
 
                 case WXK_PAGEUP :
+                    modifiers |= NSFunctionKeyMask;
                     shortcut = NSPageUpFunctionKey ;
                     break ;
 
                 case WXK_PAGEDOWN :
+                    modifiers |= NSFunctionKeyMask;
                     shortcut = NSPageDownFunctionKey ;
                     break ;
 
-                case WXK_NUMPAD_LEFT :
-                    modifiers |= NSNumericPadKeyMask;
-                    wxFALLTHROUGH;
                 case WXK_LEFT :
+                    modifiers |= NSNumericPadKeyMask | NSFunctionKeyMask;
                     shortcut = NSLeftArrowFunctionKey ;
                     break ;
 
-                case WXK_NUMPAD_UP :
-                    modifiers |= NSNumericPadKeyMask;
-                    wxFALLTHROUGH;
                 case WXK_UP :
+                    modifiers |= NSNumericPadKeyMask | NSFunctionKeyMask;
                     shortcut = NSUpArrowFunctionKey ;
                     break ;
 
-                case WXK_NUMPAD_RIGHT :
-                    modifiers |= NSNumericPadKeyMask;
-                    wxFALLTHROUGH;
                 case WXK_RIGHT :
+                    modifiers |= NSNumericPadKeyMask | NSFunctionKeyMask;
                     shortcut = NSRightArrowFunctionKey ;
                     break ;
 
-                case WXK_NUMPAD_DOWN :
-                    modifiers |= NSNumericPadKeyMask;
-                    wxFALLTHROUGH;
                 case WXK_DOWN :
+                    modifiers |= NSNumericPadKeyMask | NSFunctionKeyMask;
                     shortcut = NSDownArrowFunctionKey ;
                     break ;
 
                 case WXK_HOME :
+                    modifiers |= NSFunctionKeyMask;
                     shortcut = NSHomeFunctionKey ;
                     break ;
 
                 case WXK_END :
+                    modifiers |= NSFunctionKeyMask;
                     shortcut = NSEndFunctionKey ;
                     break ;
 
@@ -229,7 +226,6 @@ void wxMacCocoaMenuItemSetAccelerator( NSMenuItem* menuItem, wxAcceleratorEntry*
         [menuItem setKeyEquivalent:[NSString stringWithCharacters:&shortcut length:1]];
         [menuItem setKeyEquivalentModifierMask:modifiers];
     }
-#endif // wxUSE_ACCEL
 }
 
 @interface NSMenuItem(PossibleMethods)
@@ -247,22 +243,22 @@ public :
 
     ~wxMenuItemCocoaImpl();
 
-    void SetBitmap( const wxBitmap& bitmap ) wxOVERRIDE
+    void SetBitmap( const wxBitmap& bitmap )
     {
         [m_osxMenuItem setImage:bitmap.GetNSImage()];
     }
 
-    void Enable( bool enable ) wxOVERRIDE
+    void Enable( bool enable )
     {
         [m_osxMenuItem setEnabled:enable];
     }
 
-    void Check( bool check ) wxOVERRIDE
+    void Check( bool check )
     {
         [m_osxMenuItem setState:( check ?  NSOnState :  NSOffState) ];
     }
 
-    void Hide( bool hide ) wxOVERRIDE
+    void Hide( bool hide )
     {
         // NB: setHidden is new as of 10.5 so we should not call it below there
         if ([m_osxMenuItem respondsToSelector:@selector(setHidden:)])
@@ -271,16 +267,7 @@ public :
             wxLogDebug("wxMenuItemCocoaImpl::Hide not yet supported under OS X < 10.5");
     }
 
-    void SetAllowsKeyEquivalentWhenHidden( bool allow ) wxOVERRIDE
-    {
-        // setAllowsKeyEquivalentWhenHidden is available since macOS 10.13
-        if (WX_IS_MACOS_AVAILABLE(10, 13))
-            [m_osxMenuItem setAllowsKeyEquivalentWhenHidden:allow ];
-        else
-            wxLogDebug("wxMenuItemCocoaImpl::setAllowsKeyEquivalentWhenHidden not supported under OS X < 10.13");
-    }
-
-    void SetLabel( const wxString& text, wxAcceleratorEntry *entry ) wxOVERRIDE
+    void SetLabel( const wxString& text, wxAcceleratorEntry *entry )
     {
         wxCFStringRef cfText(text);
         [m_osxMenuItem setTitle:cfText.AsNSString()];
@@ -288,9 +275,9 @@ public :
         wxMacCocoaMenuItemSetAccelerator( m_osxMenuItem, entry );
     }
     
-    bool DoDefault() wxOVERRIDE;
+    bool DoDefault();
 
-    void * GetHMenuItem() wxOVERRIDE { return m_osxMenuItem; }
+    void * GetHMenuItem() { return m_osxMenuItem; }
 
 protected :
     NSMenuItem* m_osxMenuItem ;
@@ -323,10 +310,6 @@ bool wxMenuItemCocoaImpl::DoDefault()
     {
         [theNSApplication unhideAllApplications:nil];
         handled=true;
-    }
-    else if (menuid == wxApp::s_macExitMenuItemId)
-    {
-        wxTheApp->ExitMainLoop();
     }
     return handled;
 }

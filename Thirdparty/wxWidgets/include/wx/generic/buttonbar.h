@@ -4,6 +4,7 @@
 // Author:      Julian Smart, after Robert Roebling, Vadim Zeitlin, SciTech
 // Modified by:
 // Created:     2006-04-13
+// Id:          $Id$
 // Copyright:   (c) Julian Smart, Robert Roebling, Vadim Zeitlin,
 //              SciTech Software, Inc.
 // Licence:     wxWindows licence
@@ -31,7 +32,7 @@ public:
               const wxPoint& pos = wxDefaultPosition,
               const wxSize& size = wxDefaultSize,
               long style = 0,
-              const wxString& name = wxASCII_STR(wxToolBarNameStr))
+              const wxString& name = wxToolBarNameStr)
     {
         Init();
 
@@ -43,39 +44,39 @@ public:
                  const wxPoint& pos = wxDefaultPosition,
                  const wxSize& size = wxDefaultSize,
                  long style = 0,
-                 const wxString& name = wxASCII_STR(wxToolBarNameStr) );
+                 const wxString& name = wxToolBarNameStr );
 
     virtual ~wxButtonToolBar();
 
-    virtual bool Realize() wxOVERRIDE;
+    virtual bool Realize();
 
-    virtual void SetToolShortHelp(int id, const wxString& helpString) wxOVERRIDE;
-    virtual wxToolBarToolBase *FindToolForPosition(wxCoord x, wxCoord y) const wxOVERRIDE;
+    virtual void SetToolShortHelp(int id, const wxString& helpString);
+    virtual wxToolBarToolBase *FindToolForPosition(wxCoord x, wxCoord y) const;
 
 protected:
     // common part of all ctors
     void Init();
 
     // implement base class pure virtuals
-    virtual bool DoInsertTool(size_t pos, wxToolBarToolBase *tool) wxOVERRIDE;
-    virtual bool DoDeleteTool(size_t pos, wxToolBarToolBase *tool) wxOVERRIDE;
+    virtual bool DoInsertTool(size_t pos, wxToolBarToolBase *tool);
+    virtual bool DoDeleteTool(size_t pos, wxToolBarToolBase *tool);
 
-    virtual void DoEnableTool(wxToolBarToolBase *tool, bool enable) wxOVERRIDE;
-    virtual void DoToggleTool(wxToolBarToolBase *tool, bool toggle) wxOVERRIDE;
-    virtual void DoSetToggle(wxToolBarToolBase *tool, bool toggle) wxOVERRIDE;
+    virtual void DoEnableTool(wxToolBarToolBase *tool, bool enable);
+    virtual void DoToggleTool(wxToolBarToolBase *tool, bool toggle);
+    virtual void DoSetToggle(wxToolBarToolBase *tool, bool toggle);
 
     virtual wxToolBarToolBase *CreateTool(int id,
                                           const wxString& label,
-                                          const wxBitmapBundle& bmpNormal,
-                                          const wxBitmapBundle& bmpDisabled,
+                                          const wxBitmap& bmpNormal,
+                                          const wxBitmap& bmpDisabled,
                                           wxItemKind kind,
                                           wxObject *clientData,
                                           const wxString& shortHelp,
-                                          const wxString& longHelp) wxOVERRIDE;
+                                          const wxString& longHelp);
     virtual wxToolBarToolBase *CreateTool(wxControl *control,
-                                          const wxString& label) wxOVERRIDE;
+                                          const wxString& label);
 
-    virtual wxSize DoGetBestClientSize() const wxOVERRIDE;
+    virtual wxSize DoGetBestClientSize() const;
 
     // calculate layout
     void DoLayout();
@@ -114,8 +115,8 @@ private:
     int m_labelMargin;
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxButtonToolBar);
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_DYNAMIC_CLASS(wxButtonToolBar)
+    DECLARE_EVENT_TABLE()
 };
 
 #endif

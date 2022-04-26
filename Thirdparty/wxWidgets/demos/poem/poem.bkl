@@ -13,7 +13,7 @@
 
     <wx-data id="data">
         <files>
-            wxpoem.txt wxpoem.dat wxpoem.idx
+            wxpoem.txt wxpoem.dat
         </files>
     </wx-data>
 

@@ -2,6 +2,7 @@
 // Name:        slider.h
 // Purpose:     interface of wxSlider
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -30,12 +31,7 @@
 
     On Windows, the track bar control is used.
 
-    On GTK+, tick marks are only available for version 2.16 and later.
-
-    Slider generates the same events as wxScrollBar but in practice the most
-    convenient way to process wxSlider updates is by handling the
-    slider-specific @c wxEVT_SLIDER event which carries wxCommandEvent
-    containing just the latest slider position.
+    Slider events are handled in the same way as a scrollbar.
 
     @beginStyleTable
     @style{wxSL_HORIZONTAL}
@@ -43,7 +39,7 @@
     @style{wxSL_VERTICAL}
            Displays the slider vertically.
     @style{wxSL_AUTOTICKS}
-           Displays tick marks (Windows, GTK+ 2.16 and later).
+           Displays tick marks. Windows only.
     @style{wxSL_MIN_MAX_LABELS}
            Displays minimum, maximum labels (new since wxWidgets 2.9.1).
     @style{wxSL_VALUE_LABEL}
@@ -52,28 +48,26 @@
            Displays minimum, maximum and value labels (same as wxSL_VALUE_LABEL
            and wxSL_MIN_MAX_LABELS together).
     @style{wxSL_LEFT}
-           Displays ticks on the left and forces the slider to be vertical (Windows and GTK+ 3 only).
+           Displays ticks on the left and forces the slider to be vertical.
     @style{wxSL_RIGHT}
            Displays ticks on the right and forces the slider to be vertical.
     @style{wxSL_TOP}
-           Displays ticks on the top (Windows and GTK+ 3 only).
+           Displays ticks on the top.
     @style{wxSL_BOTTOM}
            Displays ticks on the bottom (this is the default).
-    @style{wxSL_BOTH}
-           Displays ticks on both sides of the slider. Windows only.
     @style{wxSL_SELRANGE}
-           Displays a highlighted selection range. Windows only.
+           Allows the user to select a range on the slider. Windows only.
     @style{wxSL_INVERSE}
            Inverses the minimum and maximum endpoints on the slider. Not
            compatible with wxSL_SELRANGE.
     @endStyleTable
 
     Notice that @c wxSL_LEFT, @c wxSL_TOP, @c wxSL_RIGHT and @c wxSL_BOTTOM
-    specify the position of the slider ticks and that the slider labels, if any,
-    are positioned on the opposite side. So, to have a label on the left side of
-    a vertical slider, @b wxSL_RIGHT must be used (or none of these styles at all
-    should be specified as left and top are default positions for the vertical
-    and horizontal sliders respectively).
+    specify the position of the slider ticks in MSW implementation and that the
+    slider labels, if any, are positioned on the opposite side. So, to have a
+    label on the left side of a vertical slider, @b wxSL_RIGHT must be used (or
+    none of these styles at all should be specified as left and top are default
+    positions for the vertical and horizontal sliders respectively).
 
     @beginEventEmissionTable{wxScrollEvent}
     You can use EVT_COMMAND_SCROLL... macros with window IDs for when intercepting
@@ -123,10 +117,8 @@
     @event{EVT_COMMAND_SCROLL_CHANGED(func)}
         Process @c wxEVT_SCROLL_CHANGED end of scrolling events (MSW only).
     @event{EVT_SLIDER(id, func)}
-        Process @c wxEVT_SLIDER which is generated after any
+        Process @c wxEVT_COMMAND_SLIDER_UPDATED which is generated after any
         change of wxSlider position in addition to one of the events above.
-        Notice that the handler of this event receives a wxCommandEvent as
-        argument and not wxScrollEvent, as all the other handlers.
     @endEventTable
 
     @section slider_diff The difference between EVT_SCROLL_THUMBRELEASE and EVT_SCROLL_CHANGED
@@ -140,12 +132,12 @@
     (In all these cases the EVT_SCROLL_THUMBRELEASE event does not happen).
     In short, the EVT_SCROLL_CHANGED event is triggered when scrolling/ moving
     has finished independently of the way it had started.
-    Please see the @ref page_samples_widgets ("Slider" page) to see the difference between
+    Please see the widgets sample ("Slider" page) to see the difference between
     EVT_SCROLL_THUMBRELEASE and EVT_SCROLL_CHANGED in action.
 
     @library{wxcore}
     @category{ctrl}
-    @appearance{slider}
+    @appearance{slider.png}
 
     @see @ref overview_events, wxScrollBar
 */
@@ -171,19 +163,11 @@ public:
         @param maxValue
             Maximum slider position.
         @param pos
-            Window position.
+            Window position. 
             If ::wxDefaultPosition is specified then a default position is chosen.
         @param size
-            Window size.
-            If ::wxDefaultSize is specified then a default size is chosen,
-            which is typically appropriate in the transverse slider direction,
-            but is just fixed 100 (DPI-independent) pixels in the primary
-            direction (i.e. vertical for ::wxSL_VERTICAL sliders or horizontal
-            for ::wxSL_HORIZONTAL ones), so it may be preferable to specify it
-            explicitly. Conversely, when using non-default size, it's usually
-            best to use @c -1 for the transverse size component, meaning that
-            the default should be used, as the appropriate value depends on the
-            platform and theme.
+            Window size. 
+            If ::wxDefaultSize is specified then a default size is chosen.
         @param style
             Window style. See wxSlider.
         @param validator
@@ -216,7 +200,7 @@ public:
     /**
         Clears the ticks.
 
-        @onlyfor{wxmsw,wxgtk}
+        @onlyfor{wxmsw}
     */
     virtual void ClearTicks();
 
@@ -288,7 +272,7 @@ public:
     /**
         Returns the tick frequency.
 
-        @onlyfor{wxmsw,wxgtk}
+        @onlyfor{wxmsw}
 
         @see SetTickFreq()
     */
@@ -311,27 +295,6 @@ public:
         @see GetLineSize()
     */
     virtual void SetLineSize(int lineSize);
-
-
-    /**
-        Sets the minimum slider value.
-
-        @param minValue
-            The new bottom end of the slider range.
-
-        @see GetMin(), SetRange()
-    */
-    void SetMin( int minValue );
-
-    /**
-        Sets the maximum slider value.
-
-        @param maxValue
-            The new top end of the slider range.
-
-        @see GetMax(), SetRange()
-    */
-    void SetMax( int maxValue );
 
     /**
         Sets the page size for the slider.
@@ -382,7 +345,7 @@ public:
         @param tickPos
             The tick position.
 
-        @onlyfor{wxmsw,wxgtk}
+        @onlyfor{wxmsw}
 
         @see SetTickFreq()
     */
@@ -391,15 +354,15 @@ public:
     /**
         Sets the tick mark frequency and position.
 
-        @param freq
+        @param n
             Frequency. For example, if the frequency is set to two, a tick mark is
             displayed for every other increment in the slider's range.
 
-        @onlyfor{wxmsw,wxgtk}
+        @onlyfor{wxmsw}
 
         @see GetTickFreq()
     */
-    virtual void SetTickFreq(int freq);
+    virtual void SetTickFreq(int n);
 
     /**
         Sets the slider position.

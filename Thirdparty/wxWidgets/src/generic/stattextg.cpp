@@ -3,12 +3,16 @@
 // Purpose:     wxGenericStaticText
 // Author:      Marcin Wojdyr
 // Created:     2008-06-26
+// RCS-ID:      $Id$
 // Copyright:   Marcin Wojdyr
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_STATTEXT
 
@@ -24,7 +28,7 @@
     #include "wx/generic/private/markuptext.h"
 #endif // wxUSE_MARKUP
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxGenericStaticText, wxStaticTextBase);
+IMPLEMENT_DYNAMIC_CLASS(wxGenericStaticText, wxStaticTextBase)
 
 
 bool wxGenericStaticText::Create(wxWindow *parent,
@@ -41,7 +45,7 @@ bool wxGenericStaticText::Create(wxWindow *parent,
 
     SetLabel(label);
     SetInitialSize(size);
-    Bind(wxEVT_PAINT, &wxGenericStaticText::OnPaint, this);
+    Connect(wxEVT_PAINT, wxPaintEventHandler(wxGenericStaticText::OnPaint));
     return true;
 }
 
@@ -67,7 +71,12 @@ void wxGenericStaticText::OnPaint(wxPaintEvent& WXUNUSED(event))
     wxPaintDC dc(this);
 
     wxRect rect = GetClientRect();
-    if ( !IsEnabled() )
+    if ( IsEnabled() )
+    {
+        dc.SetTextForeground(
+                       wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
+    }
+    else // paint disabled text
     {
         // draw shadow of the text
         dc.SetTextForeground(
@@ -97,9 +106,9 @@ wxSize wxGenericStaticText::DoGetBestClientSize() const
 void wxGenericStaticText::SetLabel(const wxString& label)
 {
     wxControl::SetLabel(label);
-    WXSetVisibleLabel(GetEllipsizedLabel());
-
-    AutoResizeIfNecessary();
+    DoSetLabel(GetEllipsizedLabel());
+    if ( !HasFlag(wxST_NO_AUTORESIZE) && !IsEllipsized() )
+        InvalidateBestSize();
 
 #if wxUSE_MARKUP
     if ( m_markupText )
@@ -112,7 +121,7 @@ void wxGenericStaticText::SetLabel(const wxString& label)
     Refresh();
 }
 
-void wxGenericStaticText::WXSetVisibleLabel(const wxString& label)
+void wxGenericStaticText::DoSetLabel(const wxString& label)
 {
     m_mnemonic = FindAccelIndex(label, &m_label);
 }
@@ -129,7 +138,8 @@ bool wxGenericStaticText::DoSetLabelMarkup(const wxString& markup)
     else
         m_markupText->SetMarkup(markup);
 
-    AutoResizeIfNecessary();
+    if ( !HasFlag(wxST_NO_AUTORESIZE) )
+        InvalidateBestSize();
 
     Refresh();
 
@@ -142,9 +152,8 @@ bool wxGenericStaticText::SetFont(const wxFont &font)
 {
     if ( !wxControl::SetFont(font) )
         return false;
-
-    AutoResizeIfNecessary();
-
+    if ( !HasFlag(wxST_NO_AUTORESIZE) )
+        InvalidateBestSize();
     Refresh();
     return true;
 }

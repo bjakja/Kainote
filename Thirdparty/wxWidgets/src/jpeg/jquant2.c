@@ -2,7 +2,6 @@
  * jquant2.c
  *
  * Copyright (C) 1991-1996, Thomas G. Lane.
- * Modified 2011 by Guido Vollbeding.
  * This file is part of the Independent JPEG Group's software.
  * For conditions of distribution and use, see the accompanying README file.
  *
@@ -182,8 +181,8 @@ typedef hist2d * hist3d;	/* type for top-level pointer */
 typedef INT16 FSERROR;		/* 16 bits should be enough */
 typedef int LOCFSERROR;		/* use 'int' for calculation temps */
 #else
-typedef INT32 FSERROR;		/* may need more than 16 bits */
-typedef INT32 LOCFSERROR;	/* be sure calculation temps are big enough */
+typedef JPEG_INT32 FSERROR;		/* may need more than 16 bits */
+typedef JPEG_INT32 LOCFSERROR;	/* be sure calculation temps are big enough */
 #endif
 
 typedef FSERROR FAR *FSERRPTR;	/* pointer to error array (in FAR storage!) */
@@ -201,11 +200,11 @@ typedef struct {
   /* Variables for accumulating image statistics */
   hist3d histogram;		/* pointer to the histogram */
 
-  boolean needs_zeroed;		/* TRUE if next pass must zero histogram */
+  wxjpeg_boolean needs_zeroed;		/* TRUE if next pass must zero histogram */
 
   /* Variables for Floyd-Steinberg dithering */
   FSERRPTR fserrors;		/* accumulated errors */
-  boolean on_odd_row;		/* flag to remember which row we are on */
+  wxjpeg_boolean on_odd_row;		/* flag to remember which row we are on */
   int * error_limiter;		/* table for clamping the applied error */
 } my_cquantizer;
 
@@ -262,7 +261,7 @@ typedef struct {
   int c1min, c1max;
   int c2min, c2max;
   /* The volume (actually 2-norm) of the box */
-  INT32 volume;
+  JPEG_INT32 volume;
   /* The number of nonzero histogram cells within this box */
   long colorcount;
 } box;
@@ -297,7 +296,7 @@ find_biggest_volume (boxptr boxlist, int numboxes)
 {
   register boxptr boxp;
   register int i;
-  register INT32 maxv = 0;
+  register JPEG_INT32 maxv = 0;
   boxptr which = NULL;
   
   for (i = 0, boxp = boxlist; i < numboxes; i++, boxp++) {
@@ -320,7 +319,7 @@ update_box (j_decompress_ptr cinfo, boxptr boxp)
   histptr histp;
   int c0,c1,c2;
   int c0min,c0max,c1min,c1max,c2min,c2max;
-  INT32 dist0,dist1,dist2;
+  JPEG_INT32 dist0,dist1,dist2;
   long ccount;
   
   c0min = boxp->c0min;  c0max = boxp->c0max;
@@ -659,8 +658,8 @@ find_nearby_colors (j_decompress_ptr cinfo, int minc0, int minc1, int minc2,
   int maxc0, maxc1, maxc2;
   int centerc0, centerc1, centerc2;
   int i, x, ncolors;
-  INT32 minmaxdist, min_dist, max_dist, tdist;
-  INT32 mindist[MAXNUMCOLORS];	/* min distance to colormap entry i */
+  JPEG_INT32 minmaxdist, min_dist, max_dist, tdist;
+  JPEG_INT32 mindist[MAXNUMCOLORS];	/* min distance to colormap entry i */
 
   /* Compute true coordinates of update box's upper corner and center.
    * Actually we compute the coordinates of the center of the upper-corner
@@ -784,15 +783,15 @@ find_best_colors (j_decompress_ptr cinfo, int minc0, int minc1, int minc2,
 {
   int ic0, ic1, ic2;
   int i, icolor;
-  register INT32 * bptr;	/* pointer into bestdist[] array */
+  register JPEG_INT32 * bptr;	/* pointer into bestdist[] array */
   JSAMPLE * cptr;		/* pointer into bestcolor[] array */
-  INT32 dist0, dist1;		/* initial distance values */
-  register INT32 dist2;		/* current distance in inner loop */
-  INT32 xx0, xx1;		/* distance increments */
-  register INT32 xx2;
-  INT32 inc0, inc1, inc2;	/* initial values for increments */
+  JPEG_INT32 dist0, dist1;		/* initial distance values */
+  register JPEG_INT32 dist2;		/* current distance in inner loop */
+  JPEG_INT32 xx0, xx1;		/* distance increments */
+  register JPEG_INT32 xx2;
+  JPEG_INT32 inc0, inc1, inc2;	/* initial values for increments */
   /* This array holds the distance to the nearest-so-far color for each cell */
-  INT32 bestdist[BOX_C0_ELEMS * BOX_C1_ELEMS * BOX_C2_ELEMS];
+  JPEG_INT32 bestdist[BOX_C0_ELEMS * BOX_C1_ELEMS * BOX_C2_ELEMS];
 
   /* Initialize best-distance for each cell of the update box */
   bptr = bestdist;
@@ -1165,7 +1164,7 @@ finish_pass2 (j_decompress_ptr cinfo)
  */
 
 METHODDEF(void)
-start_pass_2_quant (j_decompress_ptr cinfo, boolean is_pre_scan)
+start_pass_2_quant (j_decompress_ptr cinfo, wxjpeg_boolean is_pre_scan)
 {
   my_cquantize_ptr cquantize = (my_cquantize_ptr) cinfo->cquantize;
   hist3d histogram = cquantize->histogram;
@@ -1204,7 +1203,7 @@ start_pass_2_quant (j_decompress_ptr cinfo, boolean is_pre_scan)
 	cquantize->fserrors = (FSERRPTR) (*cinfo->mem->alloc_large)
 	  ((j_common_ptr) cinfo, JPOOL_IMAGE, arraysize);
       /* Initialize the propagated errors to zero. */
-      FMEMZERO((void FAR *) cquantize->fserrors, arraysize);
+      jzero_far((void FAR *) cquantize->fserrors, arraysize);
       /* Make the error-limit table if we didn't already. */
       if (cquantize->error_limiter == NULL)
 	init_error_limit(cinfo);
@@ -1215,8 +1214,8 @@ start_pass_2_quant (j_decompress_ptr cinfo, boolean is_pre_scan)
   /* Zero the histogram or inverse color map, if necessary */
   if (cquantize->needs_zeroed) {
     for (i = 0; i < HIST_C0_ELEMS; i++) {
-      FMEMZERO((void FAR *) histogram[i],
-	       HIST_C1_ELEMS*HIST_C2_ELEMS * SIZEOF(histcell));
+      jzero_far((void FAR *) histogram[i],
+		HIST_C1_ELEMS*HIST_C2_ELEMS * SIZEOF(histcell));
     }
     cquantize->needs_zeroed = FALSE;
   }

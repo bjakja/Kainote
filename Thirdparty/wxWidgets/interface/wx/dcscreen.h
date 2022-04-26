@@ -2,6 +2,7 @@
 // Name:        dcscreen.h
 // Purpose:     interface of wxScreenDC
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -10,10 +11,6 @@
 
     A wxScreenDC can be used to paint on the screen. This should normally be
     constructed as a temporary stack object; don't store a wxScreenDC object.
-
-    When using multiple monitors, wxScreenDC corresponds to the entire virtual
-    screen composed of all of them. Notice that coordinates on wxScreenDC can
-    be negative in this case, see wxDisplay::GetGeometry() for more.
 
     @library{wxcore}
     @category{dc}

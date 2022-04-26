@@ -3,6 +3,7 @@
 // Purpose:     Helper functions for cppunit
 // Author:      Steven Lamerton
 // Created:     2010-07-23
+// RCS-ID:      $Id$
 // Copyright:   (c) 2009 Vadim Zeitlin <vadim@wxwidgets.org>
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -10,11 +11,11 @@
 #define _WX_TESTS_ASSERTHELPER_H_
 
 #include <ostream>
-#include "wx/colour.h"
-#include "wx/gdicmn.h"
-#include "wx/font.h"
+#include <wx/colour.h>
+#include <wx/gdicmn.h>
+#include <wx/font.h>
 
-namespace wxTestPrivate
+namespace
 {
     // by default colour components values are output incorrectly because they
     // are unsigned chars, define a small helper struct which formats them in
@@ -27,14 +28,19 @@ namespace wxTestPrivate
     };
 
     std::ostream& operator<<(std::ostream& os, const ColourChannel& cc);
-} // wxTestPrivate namespace
 
-// Operators used to show the values of the corresponding types when comparing
-// them in the unit tests fails.
+} // anonymous namespace
+
+// this operator is needed to use CPPUNIT_ASSERT_EQUAL with wxColour objects
 std::ostream& operator<<(std::ostream& os, const wxColour& c);
+
+// this operator is needed to use CPPUNIT_ASSERT_EQUAL with wxSize objects
 std::ostream& operator<<(std::ostream& os, const wxSize& s);
+
+// this operator is needed to use CPPUNIT_ASSERT_EQUAL with wxFont objects
 std::ostream& operator<<(std::ostream& os, const wxFont& f);
+
+// this operator is needed to use CPPUNIT_ASSERT_EQUAL with wxPoint objects
 std::ostream& operator<<(std::ostream& os, const wxPoint& p);
-std::ostream& operator<<(std::ostream& os, const wxRect& r);
 
 #endif

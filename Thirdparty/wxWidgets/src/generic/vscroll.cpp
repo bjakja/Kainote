@@ -4,7 +4,8 @@
 // Author:      Vadim Zeitlin
 // Modified by: Brad Anderson, David Warkentin
 // Created:     30.05.03
-// Copyright:   (c) 2003 Vadim Zeitlin <vadim@wxwidgets.org>
+// RCS-ID:      $Id$
+// Copyright:   (c) 2003 Vadim Zeitlin <vadim@wxwindows.org>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -18,6 +19,10 @@
 
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
+
+#ifdef __BORLANDC__
+#pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
     #include "wx/dc.h"
@@ -45,7 +50,7 @@ public:
         m_scrollHelper = scrollHelper;
     }
 
-    virtual bool ProcessEvent(wxEvent& event) wxOVERRIDE;
+    virtual bool ProcessEvent(wxEvent& event);
 
 private:
     wxVarScrollHelperBase *m_scrollHelper;
@@ -57,20 +62,12 @@ private:
 // wxVarScrollHelperEvtHandler implementation
 // ============================================================================
 
-// FIXME: This method totally duplicates a method with the same name in
-//        wxScrollHelperEvtHandler, we really should merge them by reusing the
-//        common parts in wxAnyScrollHelperBase.
 bool wxVarScrollHelperEvtHandler::ProcessEvent(wxEvent& event)
 {
     wxEventType evType = event.GetEventType();
 
-    // Pass it on to the real handler: notice that we must not call
-    // ProcessEvent() on this object itself as it wouldn't pass it to the next
-    // handler (i.e. the real window) if we're called from a previous handler
-    // (as indicated by "process here only" flag being set) and we do want to
-    // execute the handler defined in the window we're associated with right
-    // now, without waiting until TryAfter() is called from wxEvtHandler.
-    bool processed = m_nextHandler->ProcessEvent(event);
+    // pass it on to the real handler
+    bool processed = wxEvtHandler::ProcessEvent(event);
 
     // always process the size events ourselves, even if the user code handles
     // them as well, as we need to AdjustScrollbars()
@@ -82,31 +79,19 @@ bool wxVarScrollHelperEvtHandler::ProcessEvent(wxEvent& event)
     if ( evType == wxEVT_SIZE )
     {
         m_scrollHelper->HandleOnSize((wxSizeEvent &)event);
-        return true;
+
+        return !event.GetSkipped();
     }
 
-    // For wxEVT_PAINT the user code can either handle this event as usual or
-    // override virtual OnDraw(), so if the event hasn't been handled we need
-    // to call this virtual function ourselves.
-    if (
-#ifndef __WXUNIVERSAL__
-          // in wxUniversal "processed" will always be true, because
-          // all windows use the paint event to draw themselves.
-          // In this case we can't use this flag to determine if a custom
-          // paint event handler already drew our window and we just
-          // call OnDraw() anyway.
-          !processed &&
-#endif // !__WXUNIVERSAL__
-            evType == wxEVT_PAINT )
-    {
-        m_scrollHelper->HandleOnPaint((wxPaintEvent &)event);
-        return true;
-    }
-
-    // If the user code handled this event, it should prevent the default
-    // handling from taking place, so don't do anything else in this case.
     if ( processed )
-        return true;
+    {
+        // normally, nothing more to do here - except if we have a command
+        // event
+        if ( event.IsCommandEvent() )
+        {
+            return true;
+        }
+    }
 
     // reset the skipped flag (which might have been set to true in
     // ProcessEvent() above) to be able to test it below
@@ -128,45 +113,19 @@ bool wxVarScrollHelperEvtHandler::ProcessEvent(wxEvent& event)
         {
             // it makes sense to indicate that we processed the message as we
             // did scroll the window (and also notice that wxAutoScrollTimer
-            // relies on our return value to stop scrolling when we are at top
-            // or bottom already)
+            // relies on our return value for continuous scrolling)
             processed = true;
             wasSkipped = false;
         }
     }
 #if wxUSE_MOUSEWHEEL
-    // Use GTK's own scroll wheel handling in GtkScrolledWindow
-#ifndef __WXGTK20__
     else if ( evType == wxEVT_MOUSEWHEEL )
     {
         m_scrollHelper->HandleOnMouseWheel((wxMouseEvent &)event);
-        return true;
     }
-#endif
 #endif // wxUSE_MOUSEWHEEL
-    else if ( evType == wxEVT_CHAR &&
-                (m_scrollHelper->GetOrientation() == wxVERTICAL) )
-    {
-        m_scrollHelper->HandleOnChar((wxKeyEvent &)event);
-        if ( !event.GetSkipped() )
-        {
-            processed = true;
-            wasSkipped = false;
-        }
-    }
 
     event.Skip(wasSkipped);
-
-    // We called ProcessEvent() on the next handler, meaning that we explicitly
-    // worked around the request to process the event in this handler only. As
-    // explained above, this is unfortunately really necessary but the trouble
-    // is that the event will continue to be post-processed by the previous
-    // handler resulting in duplicate calls to event handlers. Call the special
-    // function below to prevent this from happening, base class DoTryChain()
-    // will check for it and behave accordingly.
-    //
-    // And if we're not called from DoTryChain(), this won't do anything anyhow.
-    event.DidntHonourProcessOnlyIn();
 
     return processed;
 }
@@ -181,8 +140,9 @@ bool wxVarScrollHelperEvtHandler::ProcessEvent(wxEvent& event)
 // ----------------------------------------------------------------------------
 
 wxVarScrollHelperBase::wxVarScrollHelperBase(wxWindow *win)
-    : wxAnyScrollHelperBase(win)
 {
+    wxASSERT_MSG( win, wxT("associated window can't be NULL in wxVarScrollHelperBase") );
+
 #if wxUSE_MOUSEWHEEL
     m_sumWheelRotation = 0;
 #endif
@@ -191,11 +151,17 @@ wxVarScrollHelperBase::wxVarScrollHelperBase(wxWindow *win)
     m_sizeTotal = 0;
     m_unitFirst = 0;
 
+    m_win =
+    m_targetWindow = NULL;
+
     m_physicalScrolling = true;
     m_handler = NULL;
 
+    m_win = win;
+
     // by default, the associated window is also the target window
     DoSetTargetWindow(win);
+
 }
 
 wxVarScrollHelperBase::~wxVarScrollHelperBase()
@@ -521,10 +487,10 @@ void wxVarScrollHelperBase::RefreshUnits(size_t from, size_t to)
         to = GetVisibleEnd();
 
     // calculate the rect occupied by these units on screen
-    int orient_size = 0,
-        orient_pos = 0;
+    int orient_size, nonorient_size, orient_pos;
+    orient_size = nonorient_size = orient_pos = 0;
 
-    int nonorient_size = GetNonOrientationTargetSize();
+    nonorient_size = GetNonOrientationTargetSize();
 
     for ( size_t nBefore = GetVisibleBegin();
           nBefore < from;
@@ -992,9 +958,9 @@ bool wxVarHVScrollHelper::IsVisible(size_t row, size_t column) const
 // wx[V/H/HV]ScrolledWindow implementations
 // ============================================================================
 
-wxIMPLEMENT_ABSTRACT_CLASS(wxVScrolledWindow, wxPanel);
-wxIMPLEMENT_ABSTRACT_CLASS(wxHScrolledWindow, wxPanel);
-wxIMPLEMENT_ABSTRACT_CLASS(wxHVScrolledWindow, wxPanel);
+IMPLEMENT_ABSTRACT_CLASS(wxVScrolledWindow, wxPanel)
+IMPLEMENT_ABSTRACT_CLASS(wxHScrolledWindow, wxPanel)
+IMPLEMENT_ABSTRACT_CLASS(wxHVScrolledWindow, wxPanel)
 
 
 #if WXWIN_COMPATIBILITY_2_8

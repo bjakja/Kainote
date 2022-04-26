@@ -2,6 +2,7 @@
 // Name:        wx/tarstrm.h
 // Purpose:     Streams for Tar files
 // Author:      Mike Wetherell
+// RCS-ID:      $Id$
 // Copyright:   (c) 2004 Mike Wetherell
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -9,12 +10,12 @@
 #ifndef _WX_WXTARSTREAM_H__
 #define _WX_WXTARSTREAM_H__
 
-#include "wx\defs.h"
+#include "wx/defs.h"
 
 #if wxUSE_TARSTREAM
 
-#include "wx\archive.h"
-#include "wx\hashmap.h"
+#include "wx/archive.h"
+#include "wx/hashmap.h"
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -68,15 +69,15 @@ public:
     wxTarEntry& operator=(const wxTarEntry& entry);
 
     // Get accessors
-    wxString     GetName(wxPathFormat format = wxPATH_NATIVE) const wxOVERRIDE;
-    wxString     GetInternalName() const wxOVERRIDE        { return m_Name; }
-    wxPathFormat GetInternalFormat() const wxOVERRIDE      { return wxPATH_UNIX; }
+    wxString     GetName(wxPathFormat format = wxPATH_NATIVE) const;
+    wxString     GetInternalName() const        { return m_Name; }
+    wxPathFormat GetInternalFormat() const      { return wxPATH_UNIX; }
     int          GetMode() const;
     int          GetUserId() const              { return m_UserId; }
     int          GetGroupId() const             { return m_GroupId; }
-    wxFileOffset GetSize() const wxOVERRIDE                { return m_Size; }
-    wxFileOffset GetOffset() const wxOVERRIDE              { return m_Offset; }
-    wxDateTime   GetDateTime() const wxOVERRIDE            { return m_ModifyTime; }
+    wxFileOffset GetSize() const                { return m_Size; }
+    wxFileOffset GetOffset() const              { return m_Offset; }
+    wxDateTime   GetDateTime() const            { return m_ModifyTime; }
     wxDateTime   GetAccessTime() const          { return m_AccessTime; }
     wxDateTime   GetCreateTime() const          { return m_CreateTime; }
     int          GetTypeFlag() const            { return m_TypeFlag; }
@@ -87,16 +88,16 @@ public:
     int          GetDevMinor() const            { return m_DevMinor; }
 
     // is accessors
-    bool IsDir() const wxOVERRIDE;
-    bool IsReadOnly() const wxOVERRIDE                     { return !(m_Mode & 0222); }
+    bool IsDir() const;
+    bool IsReadOnly() const                     { return !(m_Mode & 0222); }
 
     // set accessors
-    void SetName(const wxString& name, wxPathFormat format = wxPATH_NATIVE) wxOVERRIDE;
+    void SetName(const wxString& name, wxPathFormat format = wxPATH_NATIVE);
     void SetUserId(int id)                      { m_UserId = id; }
     void SetGroupId(int id)                     { m_GroupId = id; }
     void SetMode(int mode);
-    void SetSize(wxFileOffset size) wxOVERRIDE             { m_Size = size; }
-    void SetDateTime(const wxDateTime& dt) wxOVERRIDE      { m_ModifyTime = dt; }
+    void SetSize(wxFileOffset size)             { m_Size = size; }
+    void SetDateTime(const wxDateTime& dt)      { m_ModifyTime = dt; }
     void SetAccessTime(const wxDateTime& dt)    { m_AccessTime = dt; }
     void SetCreateTime(const wxDateTime& dt)    { m_CreateTime = dt; }
     void SetTypeFlag(int type)                  { m_TypeFlag = type; }
@@ -107,8 +108,8 @@ public:
     void SetDevMinor(int dev)                   { m_DevMinor = dev; }
 
     // set is accessors
-    void SetIsDir(bool isDir = true) wxOVERRIDE;
-    void SetIsReadOnly(bool isReadOnly = true) wxOVERRIDE;
+    void SetIsDir(bool isDir = true);
+    void SetIsReadOnly(bool isReadOnly = true);
 
     static wxString GetInternalName(const wxString& name,
                                     wxPathFormat format = wxPATH_NATIVE,
@@ -119,9 +120,9 @@ public:
     void SetNotifier(wxTarNotifier& WXUNUSED(notifier)) { }
 
 private:
-    void SetOffset(wxFileOffset offset) wxOVERRIDE         { m_Offset = offset; }
+    void SetOffset(wxFileOffset offset)         { m_Offset = offset; }
 
-    virtual wxArchiveEntry* DoClone() const wxOVERRIDE     { return Clone(); }
+    virtual wxArchiveEntry* DoClone() const     { return Clone(); }
 
     wxString     m_Name;
     int          m_Mode;
@@ -142,7 +143,7 @@ private:
 
     friend class wxTarInputStream;
 
-    wxDECLARE_DYNAMIC_CLASS(wxTarEntry);
+    DECLARE_DYNAMIC_CLASS(wxTarEntry)
 };
 
 
@@ -161,23 +162,23 @@ public:
     virtual ~wxTarInputStream();
 
     bool OpenEntry(wxTarEntry& entry);
-    bool CloseEntry() wxOVERRIDE;
+    bool CloseEntry();
 
     wxTarEntry *GetNextEntry();
 
-    wxFileOffset GetLength() const wxOVERRIDE      { return m_size; }
-    bool IsSeekable() const wxOVERRIDE { return m_parent_i_stream->IsSeekable(); }
+    wxFileOffset GetLength() const      { return m_size; }
+    bool IsSeekable() const { return m_parent_i_stream->IsSeekable(); }
 
 protected:
-    size_t OnSysRead(void *buffer, size_t size) wxOVERRIDE;
-    wxFileOffset OnSysTell() const wxOVERRIDE      { return m_pos; }
-    wxFileOffset OnSysSeek(wxFileOffset seek, wxSeekMode mode) wxOVERRIDE;
+    size_t OnSysRead(void *buffer, size_t size);
+    wxFileOffset OnSysTell() const      { return m_pos; }
+    wxFileOffset OnSysSeek(wxFileOffset seek, wxSeekMode mode);
 
 private:
     void Init();
 
-    wxArchiveEntry *DoGetNextEntry() wxOVERRIDE    { return GetNextEntry(); }
-    bool OpenEntry(wxArchiveEntry& entry) wxOVERRIDE;
+    wxArchiveEntry *DoGetNextEntry()    { return GetNextEntry(); }
+    bool OpenEntry(wxArchiveEntry& entry);
     bool IsOpened() const               { return m_pos != wxInvalidOffset; }
 
     wxStreamError ReadHeaders();
@@ -221,34 +222,34 @@ public:
 
     bool PutNextEntry(const wxString& name,
                       const wxDateTime& dt = wxDateTime::Now(),
-                      wxFileOffset size = wxInvalidOffset) wxOVERRIDE;
+                      wxFileOffset size = wxInvalidOffset);
 
     bool PutNextDirEntry(const wxString& name,
-                         const wxDateTime& dt = wxDateTime::Now()) wxOVERRIDE;
+                         const wxDateTime& dt = wxDateTime::Now());
 
     bool CopyEntry(wxTarEntry *entry, wxTarInputStream& inputStream);
     bool CopyArchiveMetaData(wxTarInputStream& WXUNUSED(s)) { return true; }
 
-    void Sync() wxOVERRIDE;
-    bool CloseEntry() wxOVERRIDE;
-    bool Close() wxOVERRIDE;
+    void Sync();
+    bool CloseEntry();
+    bool Close();
 
-    bool IsSeekable() const wxOVERRIDE { return m_parent_o_stream->IsSeekable(); }
+    bool IsSeekable() const { return m_parent_o_stream->IsSeekable(); }
 
     void SetBlockingFactor(int factor)  { m_BlockingFactor = factor; }
     int GetBlockingFactor() const       { return m_BlockingFactor; }
 
 protected:
-    size_t OnSysWrite(const void *buffer, size_t size) wxOVERRIDE;
-    wxFileOffset OnSysTell() const wxOVERRIDE      { return m_pos; }
-    wxFileOffset OnSysSeek(wxFileOffset pos, wxSeekMode mode) wxOVERRIDE;
+    size_t OnSysWrite(const void *buffer, size_t size);
+    wxFileOffset OnSysTell() const      { return m_pos; }
+    wxFileOffset OnSysSeek(wxFileOffset pos, wxSeekMode mode);
 
 private:
     void Init(wxTarFormat format);
 
-    bool PutNextEntry(wxArchiveEntry *entry) wxOVERRIDE;
-    bool CopyEntry(wxArchiveEntry *entry, wxArchiveInputStream& stream) wxOVERRIDE;
-    bool CopyArchiveMetaData(wxArchiveInputStream& WXUNUSED(s)) wxOVERRIDE { return true; }
+    bool PutNextEntry(wxArchiveEntry *entry);
+    bool CopyEntry(wxArchiveEntry *entry, wxArchiveInputStream& stream);
+    bool CopyArchiveMetaData(wxArchiveInputStream& WXUNUSED(s)) { return true; }
     bool IsOpened() const               { return m_pos != wxInvalidOffset; }
 
     bool WriteHeaders(wxTarEntry& entry);
@@ -325,26 +326,26 @@ public:
         { return new wxTarOutputStream(stream, wxTAR_PAX, GetConv()); }
 
     wxString GetInternalName(const wxString& name,
-                             wxPathFormat format = wxPATH_NATIVE) const wxOVERRIDE
+                             wxPathFormat format = wxPATH_NATIVE) const
         { return wxTarEntry::GetInternalName(name, format); }
 
     const wxChar * const *GetProtocols(wxStreamProtocolType type
-                                       = wxSTREAM_PROTOCOL) const wxOVERRIDE;
+                                       = wxSTREAM_PROTOCOL) const;
 
 protected:
-    wxArchiveEntry *DoNewEntry() const wxOVERRIDE
+    wxArchiveEntry *DoNewEntry() const
         { return NewEntry(); }
-    wxArchiveInputStream *DoNewStream(wxInputStream& stream) const wxOVERRIDE
+    wxArchiveInputStream *DoNewStream(wxInputStream& stream) const
         { return NewStream(stream); }
-    wxArchiveOutputStream *DoNewStream(wxOutputStream& stream) const wxOVERRIDE
+    wxArchiveOutputStream *DoNewStream(wxOutputStream& stream) const
         { return NewStream(stream); }
-    wxArchiveInputStream *DoNewStream(wxInputStream *stream) const wxOVERRIDE
+    wxArchiveInputStream *DoNewStream(wxInputStream *stream) const
         { return NewStream(stream); }
-    wxArchiveOutputStream *DoNewStream(wxOutputStream *stream) const wxOVERRIDE
+    wxArchiveOutputStream *DoNewStream(wxOutputStream *stream) const
         { return NewStream(stream); }
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxTarClassFactory);
+    DECLARE_DYNAMIC_CLASS(wxTarClassFactory)
 };
 
 

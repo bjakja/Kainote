@@ -2,6 +2,7 @@
 // Name:        treebase.h
 // Purpose:     interface of wxTreeItemId
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 

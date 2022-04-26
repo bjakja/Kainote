@@ -1,3 +1,5 @@
+/* $Header: /cvs/maptools/cvsroot/libtiff/libtiff/tif_error.c,v 1.4 2005/12/23 01:18:59 joris Exp $ */
+
 /*
  * Copyright (c) 1988-1997 Sam Leffler
  * Copyright (c) 1991-1997 Silicon Graphics, Inc.
@@ -49,38 +51,23 @@ void
 TIFFError(const char* module, const char* fmt, ...)
 {
 	va_list ap;
-	if (_TIFFerrorHandler) {
-		va_start(ap, fmt);	
+	va_start(ap, fmt);
+	if (_TIFFerrorHandler)
 		(*_TIFFerrorHandler)(module, fmt, ap);
-		va_end(ap);
-	}
-	if (_TIFFerrorHandlerExt) {
-		va_start(ap, fmt);
+	if (_TIFFerrorHandlerExt)
 		(*_TIFFerrorHandlerExt)(0, module, fmt, ap);
-		va_end(ap);
-	}
+	va_end(ap);
 }
 
 void
 TIFFErrorExt(thandle_t fd, const char* module, const char* fmt, ...)
 {
 	va_list ap;
-	if (_TIFFerrorHandler) {
-		va_start(ap, fmt);
+	va_start(ap, fmt);
+	if (_TIFFerrorHandler)
 		(*_TIFFerrorHandler)(module, fmt, ap);
-		va_end(ap);
-	}
-	if (_TIFFerrorHandlerExt) {
-		va_start(ap, fmt);
+	if (_TIFFerrorHandlerExt)
 		(*_TIFFerrorHandlerExt)(fd, module, fmt, ap);
-		va_end(ap);
-	}
+	va_end(ap);
 }
 
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 8
- * fill-column: 78
- * End:
- */

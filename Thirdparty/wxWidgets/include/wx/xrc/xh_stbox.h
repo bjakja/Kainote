@@ -3,6 +3,7 @@
 // Purpose:     XML resource handler for wxStaticBox
 // Author:      Brian Gavin
 // Created:     2000/09/00
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 Brian Gavin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -16,12 +17,12 @@
 
 class WXDLLIMPEXP_XRC wxStaticBoxXmlHandler : public wxXmlResourceHandler
 {
-    wxDECLARE_DYNAMIC_CLASS(wxStaticBoxXmlHandler);
+    DECLARE_DYNAMIC_CLASS(wxStaticBoxXmlHandler)
 
 public:
     wxStaticBoxXmlHandler();
-    virtual wxObject *DoCreateResource() wxOVERRIDE;
-    virtual bool CanHandle(wxXmlNode *node) wxOVERRIDE;
+    virtual wxObject *DoCreateResource();
+    virtual bool CanHandle(wxXmlNode *node);
 };
 
 #endif // wxUSE_XRC && wxUSE_STATBOX

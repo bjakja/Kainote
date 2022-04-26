@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,7 +18,7 @@
 
 class WXDLLIMPEXP_CORE wxFileDialog: public wxFileDialogBase
 {
-    wxDECLARE_DYNAMIC_CLASS(wxFileDialog);
+    DECLARE_DYNAMIC_CLASS(wxFileDialog)
 public:
 
     // For Motif
@@ -26,14 +27,14 @@ public:
 
 public:
     wxFileDialog(wxWindow *parent,
-                 const wxString& message = wxASCII_STR(wxFileSelectorPromptStr),
+                 const wxString& message = wxFileSelectorPromptStr,
                  const wxString& defaultDir = wxEmptyString,
                  const wxString& defaultFile = wxEmptyString,
-                 const wxString& wildCard = wxASCII_STR(wxFileSelectorDefaultWildcardStr),
+                 const wxString& wildCard = wxFileSelectorDefaultWildcardStr,
                  long style = wxFD_DEFAULT_STYLE,
                  const wxPoint& pos = wxDefaultPosition,
                  const wxSize& sz = wxDefaultSize,
-                 const wxString& name = wxASCII_STR(wxFileDialogNameStr));
+                 const wxString& name = wxFileDialogNameStr);
 
     virtual int ShowModal();
 };

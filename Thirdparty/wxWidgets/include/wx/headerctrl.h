@@ -3,6 +3,7 @@
 // Purpose:     wxHeaderCtrlBase class: interface of wxHeaderCtrl
 // Author:      Vadim Zeitlin
 // Created:     2008-12-01
+// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -37,9 +38,6 @@ enum
     // right clicking the header
     wxHD_ALLOW_HIDE = 0x0002,
 
-    // force putting column images on right
-    wxHD_BITMAP_ON_RIGHT = 0x0004,
-
     // style used by default when creating the control
     wxHD_DEFAULT_STYLE = wxHD_ALLOW_REORDER
 };
@@ -62,14 +60,14 @@ public:
                  const wxPoint& pos = wxDefaultPosition,
                  const wxSize& size = wxDefaultSize,
                  long style = wxHD_DEFAULT_STYLE,
-                 const wxString& name = wxASCII_STR(wxHeaderCtrlNameStr));
+                 const wxString& name = wxHeaderCtrlNameStr);
 
     bool Create(wxWindow *parent,
                 wxWindowID winid = wxID_ANY,
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = wxHD_DEFAULT_STYLE,
-                const wxString& name = wxASCII_STR(wxHeaderCtrlNameStr));
+                const wxString& name = wxHeaderCtrlNameStr);
      */
 
     // column-related methods
@@ -159,22 +157,16 @@ public:
     // compute column title width
     int GetColumnTitleWidth(const wxHeaderColumn& col);
 
-    // compute column title width for the column with the given index
-    int GetColumnTitleWidth(unsigned int idx)
-    {
-        return GetColumnTitleWidth(GetColumn(idx));
-    }
-
     // implementation only from now on
     // -------------------------------
 
     // the user doesn't need to TAB to this control
-    virtual bool AcceptsFocusFromKeyboard() const wxOVERRIDE { return false; }
+    virtual bool AcceptsFocusFromKeyboard() const { return false; }
 
     // this method is only overridden in order to synchronize the control with
     // the main window when it is scrolled, the derived class must implement
     // DoScrollHorz()
-    virtual void ScrollWindow(int dx, int dy, const wxRect *rect = NULL) wxOVERRIDE;
+    virtual void ScrollWindow(int dx, int dy, const wxRect *rect = NULL);
 
 protected:
     // this method must be implemented by the derived classes to return the
@@ -220,7 +212,7 @@ protected:
 
 protected:
     // this window doesn't look nice with the border so don't use it by default
-    virtual wxBorder GetDefaultBorder() const wxOVERRIDE { return wxBORDER_NONE; }
+    virtual wxBorder GetDefaultBorder() const { return wxBORDER_NONE; }
 
 private:
     // methods implementing our public API and defined in platform-specific
@@ -241,7 +233,7 @@ private:
     void OnRClick(wxHeaderCtrlEvent& event);
 #endif // wxUSE_MENUS
 
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
 };
 
 // ----------------------------------------------------------------------------
@@ -273,7 +265,7 @@ public:
                        const wxPoint& pos = wxDefaultPosition,
                        const wxSize& size = wxDefaultSize,
                        long style = wxHD_DEFAULT_STYLE,
-                       const wxString& name = wxASCII_STR(wxHeaderCtrlNameStr))
+                       const wxString& name = wxHeaderCtrlNameStr)
     {
         Init();
 
@@ -340,8 +332,8 @@ public:
 
 protected:
     // implement/override base class methods
-    virtual const wxHeaderColumn& GetColumn(unsigned int idx) const wxOVERRIDE;
-    virtual bool UpdateColumnWidthToFit(unsigned int idx, int widthTitle) wxOVERRIDE;
+    virtual const wxHeaderColumn& GetColumn(unsigned int idx) const;
+    virtual bool UpdateColumnWidthToFit(unsigned int idx, int widthTitle);
 
     // and define another one to be overridden in the derived classes: it
     // should return the best width for the given column contents or -1 if not
@@ -350,8 +342,6 @@ protected:
     {
         return -1;
     }
-
-    void OnHeaderResizing(wxHeaderCtrlEvent& evt);
 
 private:
     // functions implementing our public API
@@ -379,7 +369,6 @@ private:
 
 
     wxDECLARE_NO_COPY_CLASS(wxHeaderCtrlSimple);
-    wxDECLARE_EVENT_TABLE();
 };
 
 // ----------------------------------------------------------------------------
@@ -417,7 +406,7 @@ public:
     unsigned int GetNewOrder() const { return m_order; }
     void SetNewOrder(unsigned int order) { m_order = order; }
 
-    virtual wxEvent *Clone() const wxOVERRIDE { return new wxHeaderCtrlEvent(*this); }
+    virtual wxEvent *Clone() const { return new wxHeaderCtrlEvent(*this); }
 
 protected:
     // the column affected by the event
@@ -430,28 +419,28 @@ protected:
     unsigned int m_order;
 
 private:
-    wxDECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxHeaderCtrlEvent);
+    DECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxHeaderCtrlEvent)
 };
 
 
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_HEADER_CLICK, wxHeaderCtrlEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_HEADER_RIGHT_CLICK, wxHeaderCtrlEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_HEADER_MIDDLE_CLICK, wxHeaderCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_HEADER_CLICK, wxHeaderCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_HEADER_RIGHT_CLICK, wxHeaderCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_HEADER_MIDDLE_CLICK, wxHeaderCtrlEvent );
 
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_HEADER_DCLICK, wxHeaderCtrlEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_HEADER_RIGHT_DCLICK, wxHeaderCtrlEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_HEADER_MIDDLE_DCLICK, wxHeaderCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_HEADER_DCLICK, wxHeaderCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_HEADER_RIGHT_DCLICK, wxHeaderCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_HEADER_MIDDLE_DCLICK, wxHeaderCtrlEvent );
 
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_HEADER_SEPARATOR_DCLICK, wxHeaderCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_HEADER_SEPARATOR_DCLICK, wxHeaderCtrlEvent );
 
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_HEADER_BEGIN_RESIZE, wxHeaderCtrlEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_HEADER_RESIZING, wxHeaderCtrlEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_HEADER_END_RESIZE, wxHeaderCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_HEADER_BEGIN_RESIZE, wxHeaderCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_HEADER_RESIZING, wxHeaderCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_HEADER_END_RESIZE, wxHeaderCtrlEvent );
 
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_HEADER_BEGIN_REORDER, wxHeaderCtrlEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_HEADER_END_REORDER, wxHeaderCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_HEADER_BEGIN_REORDER, wxHeaderCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_HEADER_END_REORDER, wxHeaderCtrlEvent );
 
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_HEADER_DRAGGING_CANCELLED, wxHeaderCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_HEADER_DRAGGING_CANCELLED, wxHeaderCtrlEvent );
 
 typedef void (wxEvtHandler::*wxHeaderCtrlEventFunction)(wxHeaderCtrlEvent&);
 
@@ -459,7 +448,7 @@ typedef void (wxEvtHandler::*wxHeaderCtrlEventFunction)(wxHeaderCtrlEvent&);
     wxEVENT_HANDLER_CAST(wxHeaderCtrlEventFunction, func)
 
 #define wx__DECLARE_HEADER_EVT(evt, id, fn) \
-    wx__DECLARE_EVT1(wxEVT_HEADER_ ## evt, id, wxHeaderCtrlEventHandler(fn))
+    wx__DECLARE_EVT1(wxEVT_COMMAND_HEADER_ ## evt, id, wxHeaderCtrlEventHandler(fn))
 
 #define EVT_HEADER_CLICK(id, fn) wx__DECLARE_HEADER_EVT(CLICK, id, fn)
 #define EVT_HEADER_RIGHT_CLICK(id, fn) wx__DECLARE_HEADER_EVT(RIGHT_CLICK, id, fn)
@@ -479,21 +468,6 @@ typedef void (wxEvtHandler::*wxHeaderCtrlEventFunction)(wxHeaderCtrlEvent&);
 #define EVT_HEADER_END_REORDER(id, fn) wx__DECLARE_HEADER_EVT(END_REORDER, id, fn)
 
 #define EVT_HEADER_DRAGGING_CANCELLED(id, fn) wx__DECLARE_HEADER_EVT(DRAGGING_CANCELLED, id, fn)
-
-// old wxEVT_COMMAND_* constants
-#define wxEVT_COMMAND_HEADER_CLICK                wxEVT_HEADER_CLICK
-#define wxEVT_COMMAND_HEADER_RIGHT_CLICK          wxEVT_HEADER_RIGHT_CLICK
-#define wxEVT_COMMAND_HEADER_MIDDLE_CLICK         wxEVT_HEADER_MIDDLE_CLICK
-#define wxEVT_COMMAND_HEADER_DCLICK               wxEVT_HEADER_DCLICK
-#define wxEVT_COMMAND_HEADER_RIGHT_DCLICK         wxEVT_HEADER_RIGHT_DCLICK
-#define wxEVT_COMMAND_HEADER_MIDDLE_DCLICK        wxEVT_HEADER_MIDDLE_DCLICK
-#define wxEVT_COMMAND_HEADER_SEPARATOR_DCLICK     wxEVT_HEADER_SEPARATOR_DCLICK
-#define wxEVT_COMMAND_HEADER_BEGIN_RESIZE         wxEVT_HEADER_BEGIN_RESIZE
-#define wxEVT_COMMAND_HEADER_RESIZING             wxEVT_HEADER_RESIZING
-#define wxEVT_COMMAND_HEADER_END_RESIZE           wxEVT_HEADER_END_RESIZE
-#define wxEVT_COMMAND_HEADER_BEGIN_REORDER        wxEVT_HEADER_BEGIN_REORDER
-#define wxEVT_COMMAND_HEADER_END_REORDER          wxEVT_HEADER_END_REORDER
-#define wxEVT_COMMAND_HEADER_DRAGGING_CANCELLED   wxEVT_HEADER_DRAGGING_CANCELLED
 
 #endif // wxUSE_HEADERCTRL
 

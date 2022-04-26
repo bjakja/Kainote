@@ -16,15 +16,12 @@ namespace Scintilla {
  */
 class AutoComplete {
 	bool active;
-	std::string stopChars;
-	std::string fillUpChars;
+	char stopChars[256];
+	char fillUpChars[256];
 	char separator;
 	char typesep; // Type seperator
-	enum { maxItemLen=1000 };
-	std::vector<int> sortMatrix;
 
 public:
-
 	bool ignoreCase;
 	bool chooseSingle;
 	ListBox *lb;
@@ -34,24 +31,16 @@ public:
 	bool cancelAtStartPos;
 	bool autoHide;
 	bool dropRestOfWord;
-	unsigned int ignoreCaseBehaviour;
-	int widthLBDefault;
-	int heightLBDefault;
-	/** SC_ORDER_PRESORTED:   Assume the list is presorted; selection will fail if it is not alphabetical<br />
-	 *  SC_ORDER_PERFORMSORT: Sort the list alphabetically; start up performance cost for sorting<br />
-	 *  SC_ORDER_CUSTOM:      Handle non-alphabetical entries; start up performance cost for generating a sorted lookup table
-	 */
-	int autoSort;
 
 	AutoComplete();
 	~AutoComplete();
 
 	/// Is the auto completion list displayed?
-	bool Active() const;
+	bool Active();
 
 	/// Display the auto completion list positioned to be near a character position
 	void Start(Window &parent, int ctrlID, int position, Point location,
-		int startLen_, int lineHeight, bool unicodeMode, int technology);
+		int startLen_, int lineHeight, bool unicodeMode);
 
 	/// The stop chars are characters which, when typed, cause the auto completion list to disappear
 	void SetStopChars(const char *stopChars_);
@@ -63,20 +52,14 @@ public:
 
 	/// The separator character is used when interpreting the list in SetList
 	void SetSeparator(char separator_);
-	char GetSeparator() const;
+	char GetSeparator();
 
-	/// The typesep character is used for separating the word from the type
+	/// The typesep character is used for seperating the word from the type
 	void SetTypesep(char separator_);
-	char GetTypesep() const;
+	char GetTypesep();
 
 	/// The list string contains a sequence of words separated by the separator character
 	void SetList(const char *list);
-
-	/// Return the position of the currently selected list item
-	int GetSelection() const;
-
-	/// Return the value of an item in the list
-	std::string GetValue(int item) const;
 
 	void Show(bool show);
 	void Cancel();

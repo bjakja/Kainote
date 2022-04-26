@@ -3,6 +3,7 @@
 // Purpose:     XRC resource for wxSplitterWindow
 // Author:      panga@freemail.hu, Vaclav Slavik
 // Created:     2003/01/26
+// RCS-ID:      $Id$
 // Copyright:   (c) 2003 panga@freemail.hu, Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -10,6 +11,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_XRC && wxUSE_SPLITTER
 
@@ -21,15 +25,16 @@
 
 #include "wx/splitter.h"
 
-#include "wx/xml/xml.h"
-
-wxIMPLEMENT_DYNAMIC_CLASS(wxSplitterWindowXmlHandler, wxXmlResourceHandler);
+IMPLEMENT_DYNAMIC_CLASS(wxSplitterWindowXmlHandler, wxXmlResourceHandler)
 
 wxSplitterWindowXmlHandler::wxSplitterWindowXmlHandler() : wxXmlResourceHandler()
 {
     XRC_ADD_STYLE(wxSP_3D);
     XRC_ADD_STYLE(wxSP_3DSASH);
     XRC_ADD_STYLE(wxSP_3DBORDER);
+#if WXWIN_COMPATIBILITY_2_6
+    XRC_ADD_STYLE(wxSP_FULLSASH);
+#endif // WXWIN_COMPATIBILITY_2_6
     XRC_ADD_STYLE(wxSP_BORDER);
     XRC_ADD_STYLE(wxSP_NOBORDER);
     XRC_ADD_STYLE(wxSP_PERMIT_UNSPLIT);
@@ -40,7 +45,7 @@ wxSplitterWindowXmlHandler::wxSplitterWindowXmlHandler() : wxXmlResourceHandler(
 
 wxObject *wxSplitterWindowXmlHandler::DoCreateResource()
 {
-    XRC_MAKE_INSTANCE(splitter, wxSplitterWindow)
+    XRC_MAKE_INSTANCE(splitter, wxSplitterWindow);
 
     splitter->Create(m_parentAsWindow,
                      GetID(),
@@ -50,13 +55,13 @@ wxObject *wxSplitterWindowXmlHandler::DoCreateResource()
 
     SetupWindow(splitter);
 
-    long sashpos = GetDimension(wxT("sashpos"), 0);
-    long minpanesize = GetDimension(wxT("minsize"), -1);
-    float gravity = GetFloat(wxS("gravity"));
+    long sashpos = GetLong(wxT("sashpos"), 0);
+    long minpanesize = GetLong(wxT("minsize"), -1);
+    float gravity = GetFloat(wxT("gravity"), 0.0);
     if (minpanesize != -1)
         splitter->SetMinimumPaneSize(minpanesize);
-    if (gravity != 0)
-        splitter->SetSashGravity(double(gravity));
+    if (gravity != 0.0)
+        splitter->SetSashGravity(gravity);
 
     wxWindow *win1 = NULL, *win2 = NULL;
     wxXmlNode *n = m_node->GetChildren();

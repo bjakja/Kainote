@@ -3,6 +3,7 @@
 // Purpose:     wxCursor implementation
 // Author:      Vaclav Slavik
 // Created:     2006-08-08
+// RCS-ID:      $Id$
 // Copyright:   (c) 2006 REA Elektronik GmbH
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -10,6 +11,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #include "wx/cursor.h"
 #include "wx/bitmap.h"
@@ -46,26 +50,12 @@ public:
 // wxCursor
 //-----------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxCursor, wxObject);
+IMPLEMENT_DYNAMIC_CLASS(wxCursor, wxObject)
 
 void wxCursor::InitFromStock(wxStockCursor cursorId)
 {
 #warning "FIXME -- implement the cursor as bitmaps (that's what DFB uses)"
 }
-
-#if wxUSE_IMAGE
-
-wxCursor::wxCursor(const wxImage& image)
-{
-#warning "FIXME"
-}
-
-wxCursor::wxCursor(const char* const* xpmData)
-{
-#warning "FIXME"
-}
-
-#endif // wxUSE_IMAGE
 
 wxCursor::wxCursor(const wxString& cursor_file,
                    wxBitmapType type,

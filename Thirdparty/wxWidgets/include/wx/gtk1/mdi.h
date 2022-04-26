@@ -3,6 +3,7 @@
 // Purpose:     TDI-based MDI implementation for wxGTK1
 // Author:      Robert Roebling
 // Modified by: 2008-10-31 Vadim Zeitlin: derive from the base classes
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 //              (c) 2008 Vadim Zeitlin
 // Licence:     wxWindows licence
@@ -32,7 +33,7 @@ public:
                      const wxPoint& pos = wxDefaultPosition,
                      const wxSize& size = wxDefaultSize,
                      long style = wxDEFAULT_FRAME_STYLE | wxVSCROLL | wxHSCROLL,
-                     const wxString& name = wxASCII_STR(wxFrameNameStr))
+                     const wxString& name = wxFrameNameStr)
     {
         Init();
 
@@ -45,7 +46,7 @@ public:
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = wxDEFAULT_FRAME_STYLE | wxVSCROLL | wxHSCROLL,
-                const wxString& name = wxASCII_STR(wxFrameNameStr));
+                const wxString& name = wxFrameNameStr);
 
     // we don't store the active child in m_currentChild unlike the base class
     // version so override this method to find it dynamically
@@ -69,7 +70,7 @@ public:
 private:
     void Init();
 
-    wxDECLARE_DYNAMIC_CLASS(wxMDIParentFrame);
+    DECLARE_DYNAMIC_CLASS(wxMDIParentFrame)
 };
 
 //-----------------------------------------------------------------------------
@@ -86,7 +87,7 @@ public:
                     const wxPoint& pos = wxDefaultPosition,
                     const wxSize& size = wxDefaultSize,
                     long style = wxDEFAULT_FRAME_STYLE,
-                    const wxString& name = wxASCII_STR(wxFrameNameStr))
+                    const wxString& name = wxFrameNameStr)
     {
         Init();
 
@@ -99,7 +100,7 @@ public:
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = wxDEFAULT_FRAME_STYLE,
-                const wxString& name = wxASCII_STR(wxFrameNameStr));
+                const wxString& name = wxFrameNameStr);
 
     virtual ~wxMDIChildFrame();
 
@@ -124,8 +125,8 @@ private:
 
     GtkNotebook *GTKGetNotebook() const;
 
-    wxDECLARE_EVENT_TABLE();
-    wxDECLARE_DYNAMIC_CLASS(wxMDIChildFrame);
+    DECLARE_EVENT_TABLE()
+    DECLARE_DYNAMIC_CLASS(wxMDIChildFrame)
 };
 
 //-----------------------------------------------------------------------------
@@ -141,7 +142,7 @@ public:
                               long style = wxVSCROLL | wxHSCROLL);
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxMDIClientWindow);
+    DECLARE_DYNAMIC_CLASS(wxMDIClientWindow)
 };
 
 #endif // _WX_GTK1_MDI_H_

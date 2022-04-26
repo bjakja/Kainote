@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     29.06.2003
+// RCS-ID:      $Id$
 // Copyright:   (c) 2003 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -11,8 +12,8 @@
 #ifndef _WX_INIT_H_
 #define _WX_INIT_H_
 
-#include "wx\defs.h"
-#include "wx\chartype.h"
+#include "wx/defs.h"
+#include "wx/chartype.h"
 
 // ----------------------------------------------------------------------------
 // wxEntry helper functions which allow to have more fine grained control
@@ -21,7 +22,7 @@
 // do common initialization, return true if ok (in this case wxEntryCleanup
 // must be called later), otherwise the program can't use wxWidgets at all
 //
-// this function also creates wxTheApp as a side effect, if wxIMPLEMENT_APP
+// this function also creates wxTheApp as a side effect, if IMPLEMENT_APP
 // hadn't been used a dummy default application object is created
 //
 // note that the parameters may be modified, this is why we pass them by
@@ -54,8 +55,8 @@ extern int WXDLLIMPEXP_BASE wxEntry(int& argc, char **argv);
 
 // Under Windows we define additional wxEntry() overloads with signature
 // compatible with WinMain() and not the traditional main().
-#ifdef __WINDOWS__
-    #include "wx\msw/init.h"
+#if wxUSE_GUI && defined(__WINDOWS__)
+    #include "wx/msw/init.h"
 #endif
 
 // ----------------------------------------------------------------------------
@@ -67,9 +68,9 @@ extern int WXDLLIMPEXP_BASE wxEntry(int& argc, char **argv);
 // initialize the library (may be called as many times as needed, but each
 // call to wxInitialize() must be matched by wxUninitialize())
 extern bool WXDLLIMPEXP_BASE wxInitialize();
-extern bool WXDLLIMPEXP_BASE wxInitialize(int& argc, wxChar **argv);
+extern bool WXDLLIMPEXP_BASE wxInitialize(int argc, wxChar **argv);
 #if wxUSE_UNICODE
-extern bool WXDLLIMPEXP_BASE wxInitialize(int& argc, char **argv);
+extern bool WXDLLIMPEXP_BASE wxInitialize(int argc, char **argv);
 #endif
 
 // clean up -- the library can't be used any more after the last call to
@@ -87,13 +88,13 @@ public:
         m_ok = wxInitialize();
     }
 
-    wxInitializer(int& argc, wxChar **argv)
+    wxInitializer(int argc, wxChar **argv)
     {
         m_ok = wxInitialize(argc, argv);
     }
 
 #if wxUSE_UNICODE
-    wxInitializer(int& argc, char **argv)
+    wxInitializer(int argc, char **argv)
     {
         m_ok = wxInitialize(argc, argv);
     }

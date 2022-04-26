@@ -4,6 +4,7 @@
 // Author:      Karsten Ballueder (Ballueder@usa.net)
 // Modified by:
 // Copyright:   (c) Karsten Ballueder 1998
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -37,36 +38,36 @@ public:
 
     // Set viewer: new name for SetBrowser
     virtual void SetViewer(const wxString& viewer = wxEmptyString,
-                            long flags = wxHELP_NETSCAPE) wxOVERRIDE;
+                            long flags = wxHELP_NETSCAPE);
 
-    virtual bool Initialize(const wxString& dir, int WXUNUSED(server)) wxOVERRIDE
+    virtual bool Initialize(const wxString& dir, int WXUNUSED(server))
         { return Initialize(dir); }
 
-    virtual bool Initialize(const wxString& dir) wxOVERRIDE;
-    virtual bool LoadFile(const wxString& file = wxEmptyString) wxOVERRIDE;
-    virtual bool DisplayContents() wxOVERRIDE;
-    virtual bool DisplaySection(int sectionNo) wxOVERRIDE;
-    virtual bool DisplaySection(const wxString& section) wxOVERRIDE;
-    virtual bool DisplayBlock(long blockNo) wxOVERRIDE;
+    virtual bool Initialize(const wxString& dir);
+    virtual bool LoadFile(const wxString& file = wxEmptyString);
+    virtual bool DisplayContents(void);
+    virtual bool DisplaySection(int sectionNo);
+    virtual bool DisplaySection(const wxString& section);
+    virtual bool DisplayBlock(long blockNo);
     virtual bool KeywordSearch(const wxString& k,
-                                wxHelpSearchMode mode = wxHELP_SEARCH_ALL) wxOVERRIDE;
+                                wxHelpSearchMode mode = wxHELP_SEARCH_ALL);
 
-    virtual bool Quit() wxOVERRIDE;
-    virtual void OnQuit() wxOVERRIDE;
+    virtual bool Quit(void);
+    virtual void OnQuit(void);
 
     virtual bool DisplayHelp(const wxString &) ;
 
     virtual void SetFrameParameters(const wxString& WXUNUSED(title),
                                     const wxSize& WXUNUSED(size),
                                     const wxPoint& WXUNUSED(pos) = wxDefaultPosition,
-                                    bool WXUNUSED(newFrameEachTime) = false) wxOVERRIDE
+                                    bool WXUNUSED(newFrameEachTime) = false)
         {
             // does nothing by default
         }
 
     virtual wxFrame *GetFrameParameters(wxSize *WXUNUSED(size) = NULL,
                                     wxPoint *WXUNUSED(pos) = NULL,
-                                    bool *WXUNUSED(newFrameEachTime) = NULL) wxOVERRIDE
+                                    bool *WXUNUSED(newFrameEachTime) = NULL)
         {
             return NULL; // does nothing by default
         }
@@ -88,7 +89,7 @@ private:
     bool ParseMapFileLine(const wxString& line);
 
     // Deletes the list and all objects.
-    void DeleteList();
+    void DeleteList(void);
 
 
     // How to call the html viewer.
@@ -97,7 +98,7 @@ private:
     // Is the viewer a variant of netscape?
     bool             m_BrowserIsNetscape;
 
-    wxDECLARE_CLASS(wxExtHelpController);
+    DECLARE_CLASS(wxExtHelpController)
 };
 
 #endif // wxUSE_HELP

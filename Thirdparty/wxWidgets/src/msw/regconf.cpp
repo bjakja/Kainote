@@ -4,28 +4,32 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     27.04.98
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_CONFIG && wxUSE_REGKEY
 
-#include "wx\config.h"
+#include "wx/config.h"
 
 #ifndef WX_PRECOMP
-    #include  "wx\string.h"
-    #include  "wx\intl.h"
-    #include "wx\log.h"
-    #include "wx\event.h"
-    #include "wx\app.h"
+    #include  "wx/string.h"
+    #include  "wx/intl.h"
+    #include "wx/log.h"
+    #include "wx/event.h"
+    #include "wx/app.h"
 #endif //WX_PRECOMP
 
-#include "wx\msw/registry.h"
-#include "wx\msw/regconf.h"
+#include "wx/msw/registry.h"
+#include "wx/msw/regconf.h"
 
 // ----------------------------------------------------------------------------
 // constants
@@ -39,9 +43,9 @@
 // ----------------------------------------------------------------------------
 
 // get the value if the key is opened and it exists
-bool TryGetValue(const wxRegKey& key, const wxString& str, wxString* strVal)
+bool TryGetValue(const wxRegKey& key, const wxString& str, wxString& strVal)
 {
-  return key.IsOpened() && key.HasValue(str) && key.QueryValue(str, *strVal);
+  return key.IsOpened() && key.HasValue(str) && key.QueryValue(str, strVal);
 }
 
 bool TryGetValue(const wxRegKey& key, const wxString& str, long *plVal)
@@ -49,27 +53,9 @@ bool TryGetValue(const wxRegKey& key, const wxString& str, long *plVal)
   return key.IsOpened() && key.HasValue(str) && key.QueryValue(str, plVal);
 }
 
-bool TryGetValue(const wxRegKey& key, const wxString& str, wxLongLong_t *pll)
+bool TryGetValue(const wxRegKey& key, const wxString& str, wxMemoryBuffer &plVal)
 {
-  return key.IsOpened() && key.HasValue(str) && key.QueryValue64(str, pll);
-}
-
-bool TryGetValue(const wxRegKey& key, const wxString& str, wxMemoryBuffer* pBuf)
-{
-  return key.IsOpened() && key.HasValue(str) && key.QueryValue(str, *pBuf);
-}
-
-// set value of the key in a homogeneous way to hide the differences between
-// wxRegKey::SetValue() and SetValue64()
-template <typename T>
-bool SetKeyValue(wxRegKey& key, const wxString& name, const T& value)
-{
-    return key.SetValue(name, value);
-}
-
-bool SetKeyValue(wxRegKey& key, const wxString& name, wxLongLong_t value)
-{
-    return key.SetValue64(name, value);
+  return key.IsOpened() && key.HasValue(str) && key.QueryValue(str, plVal);
 }
 
 // ============================================================================
@@ -79,7 +65,7 @@ bool SetKeyValue(wxRegKey& key, const wxString& name, wxLongLong_t value)
 // ----------------------------------------------------------------------------
 // ctor/dtor
 // ----------------------------------------------------------------------------
-wxIMPLEMENT_ABSTRACT_CLASS(wxRegConfig, wxConfigBase);
+IMPLEMENT_ABSTRACT_CLASS(wxRegConfig, wxConfigBase)
 
 // create the config object which stores its data under HKCU\vendor\app and, if
 // style & wxCONFIG_USE_GLOBAL_FILE, under HKLM\vendor\app
@@ -93,7 +79,7 @@ wxRegConfig::wxRegConfig(const wxString& appName, const wxString& vendorName,
   bool bDoUseGlobal = (style & wxCONFIG_USE_GLOBAL_FILE) != 0;
 
   // the convention is to put the programs keys under <vendor>\<appname>
-  // (but it can be overridden by specifying the paths explicitly in strLocal
+  // (but it can be overridden by specifying the pathes explicitly in strLocal
   // and/or strGlobal)
   if ( strLocal.empty() || (strGlobal.empty() && bDoUseGlobal) )
   {
@@ -271,7 +257,7 @@ void wxRegConfig::SetPath(const wxString& strPath)
                     if ( !totalSlashes )
                     {
                         wxLogWarning(_("'%s' has extra '..', ignored."),
-                                     strFullPath);
+                                     strFullPath.c_str());
                     }
                     else // return to the previous path component
                     {
@@ -496,11 +482,11 @@ size_t wxRegConfig::GetNumberOfEntries(bool WXUNUSED(bRecursive)) const
   // dummy vars
   wxString str;
   long l;
-  bool bCont = GetFirstEntry(str, l);
+  bool bCont = ((wxRegConfig*)this)->GetFirstEntry(str, l);
   while ( bCont ) {
     nEntries++;
 
-    bCont = GetNextEntry(str, l);
+    bCont = ((wxRegConfig*)this)->GetNextEntry(str, l);
   }
 
   return nEntries;
@@ -513,11 +499,11 @@ size_t wxRegConfig::GetNumberOfGroups(bool WXUNUSED(bRecursive)) const
   // dummy vars
   wxString str;
   long l;
-  bool bCont = GetFirstGroup(str, l);
+  bool bCont = ((wxRegConfig*)this)->GetFirstGroup(str, l);
   while ( bCont ) {
     nGroups++;
 
-    bCont = GetNextGroup(str, l);
+    bCont = ((wxRegConfig*)this)->GetNextGroup(str, l);
   }
 
   return nGroups;
@@ -568,10 +554,9 @@ wxConfigBase::EntryType wxRegConfig::GetEntryType(const wxString& key) const
 // reading/writing
 // ----------------------------------------------------------------------------
 
-template <typename T>
-bool wxRegConfig::DoReadValue(const wxString& key, T* pValue) const
+bool wxRegConfig::DoReadString(const wxString& key, wxString *pStr) const
 {
-    wxCHECK_MSG( pValue, false, wxT("wxRegConfig::Read(): NULL param") );
+    wxCHECK_MSG( pStr, false, wxT("wxRegConfig::Read(): NULL param") );
 
   wxConfigPathChanger path(this, key);
 
@@ -580,10 +565,10 @@ bool wxRegConfig::DoReadValue(const wxString& key, T* pValue) const
   // if immutable key exists in global key we must check that it's not
   // overridden by the local key with the same name
   if ( IsImmutable(path.Name()) ) {
-    if ( TryGetValue(m_keyGlobal, path.Name(), pValue) ) {
+    if ( TryGetValue(m_keyGlobal, path.Name(), *pStr) ) {
       if ( m_keyLocal.Exists() && LocalKey().HasValue(path.Name()) ) {
         wxLogWarning(wxT("User value for immutable key '%s' ignored."),
-                   path.Name());
+                   path.Name().c_str());
       }
 
       return true;
@@ -595,70 +580,120 @@ bool wxRegConfig::DoReadValue(const wxString& key, T* pValue) const
   }
 
   // first try local key
-  if ( (m_keyLocal.Exists() && TryGetValue(LocalKey(), path.Name(), pValue)) ||
-       (bQueryGlobal && TryGetValue(m_keyGlobal, path.Name(), pValue)) ) {
+  if ( (m_keyLocal.Exists() && TryGetValue(LocalKey(), path.Name(), *pStr)) ||
+       (bQueryGlobal && TryGetValue(m_keyGlobal, path.Name(), *pStr)) ) {
     return true;
   }
 
   return false;
 }
 
-bool wxRegConfig::DoReadString(const wxString& key, wxString *pStr) const
-{
-  return DoReadValue(key, pStr);
-}
+// this exactly reproduces the string version above except for ExpandEnvVars(),
+// we really should avoid this code duplication somehow...
 
 bool wxRegConfig::DoReadLong(const wxString& key, long *plResult) const
 {
-  return DoReadValue(key, plResult);
-}
+    wxCHECK_MSG( plResult, false, wxT("wxRegConfig::Read(): NULL param") );
 
-bool wxRegConfig::DoReadLongLong(const wxString& key, wxLongLong_t *pll) const
-{
-  return DoReadValue(key, pll);
-}
-
-#if wxUSE_BASE64
-bool wxRegConfig::DoReadBinary(const wxString& key, wxMemoryBuffer *buf) const
-{
-  return DoReadValue(key, buf);
-}
-#endif // wxUSE_BASE64
-
-template <typename T>
-bool wxRegConfig::DoWriteValue(const wxString& key, const T& value)
-{
   wxConfigPathChanger path(this, key);
 
+  bool bQueryGlobal = true;
+
+  // if immutable key exists in global key we must check that it's not
+  // overridden by the local key with the same name
   if ( IsImmutable(path.Name()) ) {
-    wxLogError(wxT("Can't change immutable entry '%s'."), path.Name());
-    return false;
+    if ( TryGetValue(m_keyGlobal, path.Name(), plResult) ) {
+      if ( m_keyLocal.Exists() && LocalKey().HasValue(path.Name()) ) {
+        wxLogWarning(wxT("User value for immutable key '%s' ignored."),
+                     path.Name().c_str());
+      }
+
+      return true;
+    }
+    else {
+      // don't waste time - it's not there anyhow
+      bQueryGlobal = false;
+    }
   }
 
-  return SetKeyValue(LocalKey(), path.Name(), value);
+  // first try local key
+  if ( (m_keyLocal.Exists() && TryGetValue(LocalKey(), path.Name(), plResult)) ||
+       (bQueryGlobal && TryGetValue(m_keyGlobal, path.Name(), plResult)) ) {
+    return true;
+  }
+
+  return false;
+}
+
+bool wxRegConfig::DoReadBinary(const wxString& key, wxMemoryBuffer *buf) const
+{
+    wxCHECK_MSG( buf, false, wxT("wxRegConfig::Read(): NULL param") );
+
+  wxConfigPathChanger path(this, key);
+
+  bool bQueryGlobal = true;
+
+  // if immutable key exists in global key we must check that it's not
+  // overridden by the local key with the same name
+  if ( IsImmutable(path.Name()) ) {
+    if ( TryGetValue(m_keyGlobal, path.Name(), *buf) ) {
+      if ( m_keyLocal.Exists() && LocalKey().HasValue(path.Name()) ) {
+        wxLogWarning(wxT("User value for immutable key '%s' ignored."),
+                   path.Name().c_str());
+      }
+
+      return true;
+    }
+    else {
+      // don't waste time - it's not there anyhow
+      bQueryGlobal = false;
+    }
+  }
+
+  // first try local key
+  if ( (m_keyLocal.Exists() && TryGetValue(LocalKey(), path.Name(), *buf)) ||
+       (bQueryGlobal && TryGetValue(m_keyGlobal, path.Name(), *buf)) ) {
+    return true;
+  }
+
+  return false;
 }
 
 bool wxRegConfig::DoWriteString(const wxString& key, const wxString& szValue)
 {
-  return DoWriteValue(key, szValue);
+  wxConfigPathChanger path(this, key);
+
+  if ( IsImmutable(path.Name()) ) {
+    wxLogError(wxT("Can't change immutable entry '%s'."), path.Name().c_str());
+    return false;
+  }
+
+  return LocalKey().SetValue(path.Name(), szValue);
 }
 
 bool wxRegConfig::DoWriteLong(const wxString& key, long lValue)
 {
-  return DoWriteValue(key, lValue);
+  wxConfigPathChanger path(this, key);
+
+  if ( IsImmutable(path.Name()) ) {
+    wxLogError(wxT("Can't change immutable entry '%s'."), path.Name().c_str());
+    return false;
+  }
+
+  return LocalKey().SetValue(path.Name(), lValue);
 }
 
-bool wxRegConfig::DoWriteLongLong(const wxString& key, wxLongLong_t llValue)
-{
-  return DoWriteValue(key, llValue);
-}
-
-#if wxUSE_BASE64
 bool wxRegConfig::DoWriteBinary(const wxString& key, const wxMemoryBuffer& buf)
 {
-  return DoWriteValue(key, buf);
+  wxConfigPathChanger path(this, key);
+
+  if ( IsImmutable(path.Name()) ) {
+    wxLogError(wxT("Can't change immutable entry '%s'."), path.Name().c_str());
+    return false;
+  }
+
+  return LocalKey().SetValue(path.Name(), buf);
 }
-#endif // wxUSE_BASE64
 
 // ----------------------------------------------------------------------------
 // renaming

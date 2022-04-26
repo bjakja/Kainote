@@ -3,6 +3,7 @@
 // Purpose:     Implementation of wxMarkupParser.
 // Author:      Vadim Zeitlin
 // Created:     2011-02-16
+// RCS-ID:      $Id$
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -18,6 +19,9 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_MARKUP
 
@@ -168,6 +172,7 @@ wxMarkupParser::ParseAttrs(wxString attrs, TagAndAttrs& tagAndAttrs)
             else // Must be a CSS-like size specification
             {
                 int cssSize = 1;
+                wxString rest;
                 if ( value.StartsWith("xx-", &rest) )
                     cssSize = 3;
                 else if ( value.StartsWith("x-", &rest) )
@@ -368,7 +373,12 @@ bool wxMarkupParser::Parse(const wxString& text)
                         if ( text.compare(pos, xmlEnt.len, xmlEnt.name) == 0
                                 && text[pos + xmlEnt.len] == ';' )
                         {
-                            current += xmlEnt.value;
+                            // Escape the ampersands if needed to protect them
+                            // from being interpreted as mnemonics indicators.
+                            if ( xmlEnt.value == '&' )
+                                current += "&&";
+                            else
+                                current += xmlEnt.value;
 
                             it += xmlEnt.len + 1; // +1 for '&' itself
 
@@ -378,7 +388,7 @@ bool wxMarkupParser::Parse(const wxString& text)
 
                     if ( n < WXSIZEOF(xmlEntities) )
                         break;
-                    wxFALLTHROUGH;//else: fall through, '&' is not special
+                    //else: fall through, '&' is not special
                 }
 
             default:
@@ -434,31 +444,31 @@ wxString wxMarkupParser::Strip(const wxString& text)
 
         const wxString& GetText() const { return m_text; }
 
-        virtual void OnText(const wxString& string) wxOVERRIDE { m_text += string; }
+        virtual void OnText(const wxString& text) { m_text += text; }
 
-        virtual void OnBoldStart() wxOVERRIDE { }
-        virtual void OnBoldEnd() wxOVERRIDE { }
+        virtual void OnBoldStart() { }
+        virtual void OnBoldEnd() { }
 
-        virtual void OnItalicStart() wxOVERRIDE { }
-        virtual void OnItalicEnd() wxOVERRIDE { }
+        virtual void OnItalicStart() { }
+        virtual void OnItalicEnd() { }
 
-        virtual void OnUnderlinedStart() wxOVERRIDE { }
-        virtual void OnUnderlinedEnd() wxOVERRIDE { }
+        virtual void OnUnderlinedStart() { }
+        virtual void OnUnderlinedEnd() { }
 
-        virtual void OnStrikethroughStart() wxOVERRIDE { }
-        virtual void OnStrikethroughEnd() wxOVERRIDE { }
+        virtual void OnStrikethroughStart() { }
+        virtual void OnStrikethroughEnd() { }
 
-        virtual void OnBigStart() wxOVERRIDE { }
-        virtual void OnBigEnd() wxOVERRIDE { }
+        virtual void OnBigStart() { }
+        virtual void OnBigEnd() { }
 
-        virtual void OnSmallStart() wxOVERRIDE { }
-        virtual void OnSmallEnd() wxOVERRIDE { }
+        virtual void OnSmallStart() { }
+        virtual void OnSmallEnd() { }
 
-        virtual void OnTeletypeStart() wxOVERRIDE { }
-        virtual void OnTeletypeEnd() wxOVERRIDE { }
+        virtual void OnTeletypeStart() { }
+        virtual void OnTeletypeEnd() { }
 
-        virtual void OnSpanStart(const wxMarkupSpanAttributes& WXUNUSED(a)) wxOVERRIDE { }
-        virtual void OnSpanEnd(const wxMarkupSpanAttributes& WXUNUSED(a)) wxOVERRIDE { }
+        virtual void OnSpanStart(const wxMarkupSpanAttributes& WXUNUSED(a)) { }
+        virtual void OnSpanEnd(const wxMarkupSpanAttributes& WXUNUSED(a)) { }
 
     private:
         wxString m_text;

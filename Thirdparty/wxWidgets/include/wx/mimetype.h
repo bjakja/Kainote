@@ -5,6 +5,7 @@
 // Modified by:
 //  Chris Elliott (biol75@york.ac.uk) 5 Dec 00: write support for Win32
 // Created:     23.09.98
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence (part of wxExtra library)
 /////////////////////////////////////////////////////////////////////////////
@@ -16,14 +17,14 @@
 // headers and such
 // ----------------------------------------------------------------------------
 
-#include "wx\defs.h"
+#include "wx/defs.h"
 
 #if wxUSE_MIMETYPE
 
 // the things we really need
-#include "wx\string.h"
-#include "wx\dynarray.h"
-#include "wx\arrstr.h"
+#include "wx/string.h"
+#include "wx/dynarray.h"
+#include "wx/arrstr.h"
 
 #include <stdarg.h>
 
@@ -32,7 +33,7 @@ class WXDLLIMPEXP_FWD_BASE wxIconLocation;
 class WXDLLIMPEXP_FWD_BASE wxFileTypeImpl;
 class WXDLLIMPEXP_FWD_BASE wxMimeTypesManagerImpl;
 
-// these constants define the MIME information source under UNIX and are used
+// these constants define the MIME informations source under UNIX and are used
 // by wxMimeTypesManager::Initialize()
 enum wxMailcapStyle
 {
@@ -138,15 +139,11 @@ public:
     //     Do not use, it's used by the ctor only.
     struct CtorString
     {
-#ifndef wxNO_IMPLICIT_WXSTRING_ENCODING
         CtorString(const char *str) : m_str(str) {}
-#endif
         CtorString(const wchar_t *str) : m_str(str) {}
         CtorString(const wxString& str) : m_str(str) {}
         CtorString(const wxCStrData& str) : m_str(str) {}
-#ifndef wxNO_IMPLICIT_WXSTRING_ENCODING
         CtorString(const wxScopedCharBuffer& str) : m_str(str) {}
-#endif
         CtorString(const wxScopedWCharBuffer& str) : m_str(str) {}
 
         operator const wxString*() const { return &m_str; }
@@ -179,6 +176,49 @@ public:
                                    const CtorString&,
                                    const CtorString&),
                                VarArgInit, VarArgInit)
+#ifdef __WATCOMC__
+    // workaround for http://bugzilla.openwatcom.org/show_bug.cgi?id=351
+    WX_VARARG_WATCOM_WORKAROUND_CTOR(
+                                wxFileTypeInfo,
+                                4, (const wxString&,
+                                    const wxString&,
+                                    const wxString&,
+                                    const wxString&),
+                                (CtorString(f1),
+                                 CtorString(f2),
+                                 CtorString(f3),
+                                 CtorString(f4)));
+    WX_VARARG_WATCOM_WORKAROUND_CTOR(
+                                wxFileTypeInfo,
+                                4, (const wxCStrData&,
+                                    const wxCStrData&,
+                                    const wxCStrData&,
+                                    const wxCStrData&),
+                                (CtorString(f1),
+                                 CtorString(f2),
+                                 CtorString(f3),
+                                 CtorString(f4)));
+    WX_VARARG_WATCOM_WORKAROUND_CTOR(
+                                wxFileTypeInfo,
+                                4, (const char*,
+                                    const char*,
+                                    const char*,
+                                    const char*),
+                                (CtorString(f1),
+                                 CtorString(f2),
+                                 CtorString(f3),
+                                 CtorString(f4)));
+    WX_VARARG_WATCOM_WORKAROUND_CTOR(
+                                wxFileTypeInfo,
+                                4, (const wchar_t*,
+                                    const wchar_t*,
+                                    const wchar_t*,
+                                    const wchar_t*),
+                                (CtorString(f1),
+                                 CtorString(f2),
+                                 CtorString(f3),
+                                 CtorString(f4)));
+#endif
 
         // the array elements correspond to the parameters of the ctor above in
         // the same order
@@ -357,9 +397,6 @@ public:
     // dtor (not virtual, shouldn't be derived from)
     ~wxFileType();
 
-    wxString
-    GetExpandedCommand(const wxString& verb,
-                       const wxFileType::MessageParameters& params) const;
 private:
     // default ctor is private because the user code never creates us
     wxFileType();

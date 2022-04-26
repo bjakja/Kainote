@@ -2,6 +2,7 @@
 // Name:        src/gtk1/menu.cpp
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -613,7 +614,7 @@ static void gtk_menu_clicked_callback( GtkWidget *widget, wxMenu *menu )
         // If it is attached then let the frame send the event.
         // Don't call frame->ProcessCommand(id) because it toggles
         // checkable items and we've already done that above.
-        wxCommandEvent commandEvent(wxEVT_MENU, id);
+        wxCommandEvent commandEvent(wxEVT_COMMAND_MENU_SELECTED, id);
         commandEvent.SetEventObject(frame);
         if (item->IsCheckable())
             commandEvent.SetInt(item->IsChecked());
@@ -645,7 +646,7 @@ static void gtk_menu_hilight_callback( GtkWidget *widget, wxMenu *menu )
     if (!menu->IsEnabled(id))
         return;
 
-    wxMenuEvent event( wxEVT_MENU_HIGHLIGHT, id, menu );
+    wxMenuEvent event( wxEVT_MENU_HIGHLIGHT, id );
     event.SetEventObject( menu );
 
     wxEvtHandler* handler = menu->GetEventHandler();
@@ -673,7 +674,7 @@ static void gtk_menu_nolight_callback( GtkWidget *widget, wxMenu *menu )
     if (!menu->IsEnabled(id))
         return;
 
-    wxMenuEvent event( wxEVT_MENU_HIGHLIGHT, wxID_NONE, menu );
+    wxMenuEvent event( wxEVT_MENU_HIGHLIGHT, -1 );
     event.SetEventObject( menu );
 
     wxEvtHandler* handler = menu->GetEventHandler();
@@ -756,9 +757,9 @@ void wxMenuItem::SetItemLabel( const wxString& string )
 
     // Some optimization to avoid flicker
     wxString oldLabel = m_text;
-    oldLabel = wxStripMenuCodes(oldLabel, wxStrip_Menu);
+    oldLabel = wxStripMenuCodes(oldLabel);
     oldLabel.Replace(wxT("_"), wxEmptyString);
-    wxString label1 = wxStripMenuCodes(str, wxStrip_Menu);
+    wxString label1 = wxStripMenuCodes(str);
     wxString oldhotkey = GetHotKey();    // Store the old hotkey in Ctrl-foo format
     wxCharBuffer oldbuf = wxGTK_CONV( GetGtkHotKey(*this) );  // and as <control>foo
 
@@ -870,11 +871,6 @@ wxAcceleratorEntry *wxMenuItem::GetAccel() const
 
 #endif // wxUSE_ACCEL
 
-wxBitmap wxMenuItem::GetBitmap() const
-{
-   return GetBitmapFromBundle(m_bitmap);
-}
-
 void wxMenuItem::Check( bool check )
 {
     wxCHECK_RET( m_menuItem, wxT("invalid menu item") );
@@ -983,7 +979,7 @@ bool wxMenu::GtkAppend(wxMenuItem *mitem, int pos)
     else if (mitem->GetBitmap().IsOk())
     {
         text = mitem->wxMenuItemBase::GetItemLabel();
-        const wxBitmap bitmap = mitem->GetBitmap();
+        const wxBitmap *bitmap = &mitem->GetBitmap();
 
         // TODO
         wxUnusedVar(bitmap);

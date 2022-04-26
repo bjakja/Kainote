@@ -2,7 +2,6 @@
  * jquant1.c
  *
  * Copyright (C) 1991-1996, Thomas G. Lane.
- * Modified 2011 by Guido Vollbeding.
  * This file is part of the Independent JPEG Group's software.
  * For conditions of distribution and use, see the accompanying README file.
  *
@@ -129,8 +128,8 @@ static const UINT8 base_dither_matrix[ODITHER_SIZE][ODITHER_SIZE] = {
 typedef INT16 FSERROR;		/* 16 bits should be enough */
 typedef int LOCFSERROR;		/* use 'int' for calculation temps */
 #else
-typedef INT32 FSERROR;		/* may need more than 16 bits */
-typedef INT32 LOCFSERROR;	/* be sure calculation temps are big enough */
+typedef JPEG_INT32 FSERROR;		/* may need more than 16 bits */
+typedef JPEG_INT32 LOCFSERROR;	/* be sure calculation temps are big enough */
 #endif
 
 typedef FSERROR FAR *FSERRPTR;	/* pointer to error array (in FAR storage!) */
@@ -152,7 +151,7 @@ typedef struct {
    * premultiplied as described above.  Since colormap indexes must fit into
    * JSAMPLEs, the entries of this array will too.
    */
-  boolean is_padded;		/* is the colorindex padded for odither? */
+  wxjpeg_boolean is_padded;		/* is the colorindex padded for odither? */
 
   int Ncolors[MAX_Q_COMPS];	/* # of values alloced to each component */
 
@@ -162,7 +161,7 @@ typedef struct {
 
   /* Variables for Floyd-Steinberg dithering */
   FSERRPTR fserrors[MAX_Q_COMPS]; /* accumulated errors */
-  boolean on_odd_row;		/* flag to remember which row we are on */
+  wxjpeg_boolean on_odd_row;		/* flag to remember which row we are on */
 } my_cquantizer;
 
 typedef my_cquantizer * my_cquantize_ptr;
@@ -192,7 +191,7 @@ select_ncolors (j_decompress_ptr cinfo, int Ncolors[])
   int nc = cinfo->out_color_components; /* number of color components */
   int max_colors = cinfo->desired_number_of_colors;
   int total_colors, iroot, i, j;
-  boolean changed;
+  wxjpeg_boolean changed;
   long temp;
   static const int RGB_order[3] = { RGB_GREEN, RGB_RED, RGB_BLUE };
 
@@ -252,7 +251,7 @@ output_value (j_decompress_ptr cinfo, int ci, int j, int maxj)
    * (Forcing the upper and lower values to the limits ensures that
    * dithering can't produce a color outside the selected gamut.)
    */
-  return (int) (((INT32) j * MAXJSAMPLE + maxj/2) / maxj);
+  return (int) (((JPEG_INT32) j * MAXJSAMPLE + maxj/2) / maxj);
 }
 
 
@@ -262,7 +261,7 @@ largest_input_value (j_decompress_ptr cinfo, int ci, int j, int maxj)
 /* Must have largest(j=0) >= 0, and largest(j=maxj) >= MAXJSAMPLE */
 {
   /* Breakpoints are halfway between values returned by output_value */
-  return (int) (((INT32) (2*j + 1) * MAXJSAMPLE + maxj) / (2*maxj));
+  return (int) (((JPEG_INT32) (2*j + 1) * MAXJSAMPLE + maxj) / (2*maxj));
 }
 
 
@@ -398,7 +397,7 @@ make_odither_array (j_decompress_ptr cinfo, int ncolors)
 {
   ODITHER_MATRIX_PTR odither;
   int j,k;
-  INT32 num,den;
+  JPEG_INT32 num,den;
 
   odither = (ODITHER_MATRIX_PTR)
     (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_IMAGE,
@@ -408,10 +407,10 @@ make_odither_array (j_decompress_ptr cinfo, int ncolors)
    * (f=0..N-1) should be (N-1-2*f)/(2*N) * MAXJSAMPLE/(ncolors-1).
    * On 16-bit-int machine, be careful to avoid overflow.
    */
-  den = 2 * ODITHER_CELLS * ((INT32) (ncolors - 1));
+  den = 2 * ODITHER_CELLS * ((JPEG_INT32) (ncolors - 1));
   for (j = 0; j < ODITHER_SIZE; j++) {
     for (k = 0; k < ODITHER_SIZE; k++) {
-      num = ((INT32) (ODITHER_CELLS-1 - 2*((int)base_dither_matrix[j][k])))
+      num = ((JPEG_INT32) (ODITHER_CELLS-1 - 2*((int)base_dither_matrix[j][k])))
 	    * MAXJSAMPLE;
       /* Ensure round towards zero despite C's lack of consistency
        * about rounding negative values in integer division...
@@ -531,8 +530,8 @@ quantize_ord_dither (j_decompress_ptr cinfo, JSAMPARRAY input_buf,
 
   for (row = 0; row < num_rows; row++) {
     /* Initialize output values to 0 so can process components separately */
-    FMEMZERO((void FAR *) output_buf[row],
-	     (size_t) (width * SIZEOF(JSAMPLE)));
+    jzero_far((void FAR *) output_buf[row],
+	      (size_t) (width * SIZEOF(JSAMPLE)));
     row_index = cquantize->row_index;
     for (ci = 0; ci < nc; ci++) {
       input_ptr = input_buf[row] + ci;
@@ -636,8 +635,8 @@ quantize_fs_dither (j_decompress_ptr cinfo, JSAMPARRAY input_buf,
 
   for (row = 0; row < num_rows; row++) {
     /* Initialize output values to 0 so can process components separately */
-    FMEMZERO((void FAR *) output_buf[row],
-	     (size_t) (width * SIZEOF(JSAMPLE)));
+    jzero_far((void FAR *) output_buf[row],
+	      (size_t) (width * SIZEOF(JSAMPLE)));
     for (ci = 0; ci < nc; ci++) {
       input_ptr = input_buf[row] + ci;
       output_ptr = output_buf[row];
@@ -739,7 +738,7 @@ alloc_fs_workspace (j_decompress_ptr cinfo)
  */
 
 METHODDEF(void)
-start_pass_1_quant (j_decompress_ptr cinfo, boolean is_pre_scan)
+start_pass_1_quant (j_decompress_ptr cinfo, wxjpeg_boolean is_pre_scan)
 {
   my_cquantize_ptr cquantize = (my_cquantize_ptr) cinfo->cquantize;
   size_t arraysize;
@@ -782,7 +781,7 @@ start_pass_1_quant (j_decompress_ptr cinfo, boolean is_pre_scan)
     /* Initialize the propagated errors to zero. */
     arraysize = (size_t) ((cinfo->output_width + 2) * SIZEOF(FSERROR));
     for (i = 0; i < cinfo->out_color_components; i++)
-      FMEMZERO((void FAR *) cquantize->fserrors[i], arraysize);
+      jzero_far((void FAR *) cquantize->fserrors[i], arraysize);
     break;
   default:
     ERREXIT(cinfo, JERR_NOT_COMPILED);

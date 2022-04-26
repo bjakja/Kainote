@@ -3,6 +3,7 @@
 // Purpose:     Private declarations for wxSTC
 // Author:      Robin Dunn
 // Created:     2007-07-15
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 by Total Control Software
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -28,7 +29,7 @@ extern wxCharBuffer wx2stc(const wxString& str);
 // just to compute the length.
 inline size_t wx2stclen(const wxString& WXUNUSED(str), const wxCharBuffer& buf)
 {
-    return buf.length();
+    return buf.length() - 1;
 }
 
 #else // not UNICODE

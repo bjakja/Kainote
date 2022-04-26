@@ -6,6 +6,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     03.04.98
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -13,13 +14,13 @@
 #ifndef _WX_TEXTFILE_H
 #define _WX_TEXTFILE_H
 
-#include "wx\defs.h"
+#include "wx/defs.h"
 
-#include "wx\textbuf.h"
+#include "wx/textbuf.h"
 
 #if wxUSE_TEXTFILE
 
-#include "wx\file.h"
+#include "wx/file.h"
 
 // ----------------------------------------------------------------------------
 // wxTextFile
@@ -34,12 +35,12 @@ public:
 
 protected:
     // implement the base class pure virtuals
-    virtual bool OnExists() const wxOVERRIDE;
+    virtual bool OnExists() const;
     virtual bool OnOpen(const wxString &strBufferName,
-                        wxTextBufferOpenMode openMode) wxOVERRIDE;
-    virtual bool OnClose() wxOVERRIDE;
-    virtual bool OnRead(const wxMBConv& conv) wxOVERRIDE;
-    virtual bool OnWrite(wxTextFileType typeNew, const wxMBConv& conv) wxOVERRIDE;
+                        wxTextBufferOpenMode OpenMode);
+    virtual bool OnClose();
+    virtual bool OnRead(const wxMBConv& conv);
+    virtual bool OnWrite(wxTextFileType typeNew, const wxMBConv& conv);
 
 private:
 

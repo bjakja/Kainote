@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     10/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,22 +12,22 @@
 #ifndef _WX_VARIANT_H_
 #define _WX_VARIANT_H_
 
-#include "wx\defs.h"
+#include "wx/defs.h"
 
 #if wxUSE_VARIANT
 
-#include "wx\object.h"
-#include "wx\string.h"
-#include "wx\arrstr.h"
-#include "wx\list.h"
-#include "wx\cpp.h"
-#include "wx\longlong.h"
+#include "wx/object.h"
+#include "wx/string.h"
+#include "wx/arrstr.h"
+#include "wx/list.h"
+#include "wx/cpp.h"
+#include "wx/longlong.h"
 
 #if wxUSE_DATETIME
-    #include "wx\datetime.h"
+    #include "wx/datetime.h"
 #endif // wxUSE_DATETIME
 
-#include "wx\iosfwrap.h"
+#include "wx/iosfwrap.h"
 
 class wxAny;
 
@@ -216,10 +217,8 @@ public:
     wxVariant& operator=(const wxString& value);
     // these overloads are necessary to prevent the compiler from using bool
     // version instead of wxString one:
-#ifndef wxNO_IMPLICIT_WXSTRING_ENCODING
     wxVariant& operator=(const char* value)
         { return *this = wxString(value); }
-#endif // wxNO_IMPLICIT_WXSTRING_ENCODING
     wxVariant& operator=(const wchar_t* value)
         { return *this = wxString(value); }
     wxVariant& operator=(const wxCStrData& value)
@@ -232,7 +231,6 @@ public:
     wxString GetString() const;
 
 #if wxUSE_STD_STRING
-#ifndef wxNO_IMPLICIT_WXSTRING_ENCODING
     wxVariant(const std::string& val, const wxString& name = wxEmptyString);
     bool operator==(const std::string& value) const
         { return operator==(wxString(value)); }
@@ -241,7 +239,6 @@ public:
     wxVariant& operator=(const std::string& value)
         { return operator=(wxString(value)); }
     operator std::string() const { return (operator wxString()).ToStdString(); }
-#endif // wxNO_IMPLICIT_WXSTRING_ENCODING
 
     wxVariant(const wxStdWideString& val, const wxString& name = wxEmptyString);
     bool operator==(const wxStdWideString& value) const
@@ -387,13 +384,13 @@ public:
 
 // Attributes
 protected:
-    virtual wxObjectRefData *CreateRefData() const wxOVERRIDE;
-    virtual wxObjectRefData *CloneRefData(const wxObjectRefData *data) const wxOVERRIDE;
+    virtual wxObjectRefData *CreateRefData() const;
+    virtual wxObjectRefData *CloneRefData(const wxObjectRefData *data) const;
 
     wxString        m_name;
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxVariant);
+    DECLARE_DYNAMIC_CLASS(wxVariant)
 };
 
 
@@ -402,7 +399,7 @@ private:
 //
 #if wxUSE_ANY
 
-#include "wx\any.h"
+#include "wx/any.h"
 
 // In order to convert wxAny to wxVariant, we need to be able to associate
 // wxAnyValueType with a wxVariantData factory function.
@@ -434,7 +431,7 @@ public:
     {
     }
 
-    virtual wxAnyValueType* GetAssociatedType() wxOVERRIDE
+    virtual wxAnyValueType* GetAssociatedType()
     {
         return wxAnyValueTypeImpl<T>::GetInstance();
     }
@@ -442,7 +439,7 @@ private:
 };
 
 #define DECLARE_WXANY_CONVERSION() \
-virtual bool GetAsAny(wxAny* any) const wxOVERRIDE; \
+virtual bool GetAsAny(wxAny* any) const; \
 static wxVariantData* VariantDataFactory(const wxAny& any);
 
 #define _REGISTER_WXANY_CONVERSION(T, CLASSNAME, FUNC) \
@@ -461,7 +458,7 @@ bool CLASSNAME::GetAsAny(wxAny* any) const \
 } \
 wxVariantData* CLASSNAME::VariantDataFactory(const wxAny& any) \
 { \
-    return new CLASSNAME(any.As<T>()); \
+    return new CLASSNAME(wxANY_AS(any, T)); \
 } \
 REGISTER_WXANY_CONVERSION(T, CLASSNAME)
 
@@ -489,16 +486,16 @@ class classname##VariantData: public wxVariantData \
 { \
 public:\
     classname##VariantData() {} \
-    classname##VariantData( const classname &value ) : m_value(value) { } \
+    classname##VariantData( const classname &value ) { m_value = value; } \
 \
     classname &GetValue() { return m_value; } \
 \
-    virtual bool Eq(wxVariantData& data) const wxOVERRIDE; \
+    virtual bool Eq(wxVariantData& data) const; \
 \
-    virtual wxString GetType() const wxOVERRIDE; \
-    virtual wxClassInfo* GetValueClassInfo() wxOVERRIDE; \
+    virtual wxString GetType() const; \
+    virtual wxClassInfo* GetValueClassInfo(); \
 \
-    virtual wxVariantData* Clone() const wxOVERRIDE { return new classname##VariantData(m_value); } \
+    virtual wxVariantData* Clone() const { return new classname##VariantData(m_value); } \
 \
     DECLARE_WXANY_CONVERSION() \
 protected:\
@@ -573,11 +570,7 @@ bool classname##VariantData::Eq(wxVariantData& data) const \
                   var.GetWxObjectPtr() : NULL));
 
 // Replacement for using wxDynamicCast on a wxVariantData object
-#ifndef wxNO_RTTI
-    #define wxDynamicCastVariantData(data, classname) dynamic_cast<classname*>(data)
-#endif
-
-#define wxStaticCastVariantData(data, classname) static_cast<classname*>(data)
+#define wxDynamicCastVariantData(data, classname) dynamic_cast<classname*>(data)
 
 extern wxVariant WXDLLIMPEXP_BASE wxNullVariant;
 

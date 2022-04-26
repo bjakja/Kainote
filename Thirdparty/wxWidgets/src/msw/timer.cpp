@@ -4,30 +4,34 @@
 // Author:      Julian Smart
 // Modified by: Vadim Zeitlin (use hash map instead of list, global rewrite)
 // Created:     04/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_TIMER
 
-#include "wx\msw/private/timer.h"
+#include "wx/msw/private/timer.h"
 
 #ifndef WX_PRECOMP
-    #include "wx\list.h"
-    #include "wx\event.h"
-    #include "wx\app.h"
-    #include "wx\intl.h"
-    #include "wx\log.h"
-    #include "wx\hashmap.h"
-    #include "wx\module.h"
+    #include "wx/list.h"
+    #include "wx/event.h"
+    #include "wx/app.h"
+    #include "wx/intl.h"
+    #include "wx/log.h"
+    #include "wx/hashmap.h"
+    #include "wx/module.h"
 #endif
 
-#include "wx\msw/private.h"
-#include "wx\msw/private/hiddenwin.h"
+#include "wx/msw/private.h"
+#include "wx/msw/private/hiddenwin.h"
 
 // ----------------------------------------------------------------------------
 // private globals
@@ -70,8 +74,8 @@ UINT_PTR GetNewTimerId(wxMSWTimerImpl *t)
 // private functions
 // ----------------------------------------------------------------------------
 
-LRESULT APIENTRY
-wxTimerWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+LRESULT APIENTRY _EXPORT wxTimerWndProc(HWND hWnd, UINT message,
+                                        WPARAM wParam, LPARAM lParam);
 
 // ----------------------------------------------------------------------------
 // wxTimerHiddenWindowModule: used to manage the hidden window used for
@@ -83,8 +87,8 @@ class wxTimerHiddenWindowModule : public wxModule
 {
 public:
     // module init/finalize
-    virtual bool OnInit() wxOVERRIDE;
-    virtual void OnExit() wxOVERRIDE;
+    virtual bool OnInit();
+    virtual void OnExit();
 
     // get the hidden window (creates on demand)
     static HWND GetHWND();
@@ -96,10 +100,10 @@ private:
     // the class used to create it
     static const wxChar *ms_className;
 
-    wxDECLARE_DYNAMIC_CLASS(wxTimerHiddenWindowModule);
+    DECLARE_DYNAMIC_CLASS(wxTimerHiddenWindowModule)
 };
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxTimerHiddenWindowModule, wxModule);
+IMPLEMENT_DYNAMIC_CLASS(wxTimerHiddenWindowModule, wxModule)
 
 // ============================================================================
 // implementation
@@ -158,8 +162,8 @@ void wxProcessTimer(wxMSWTimerImpl& timer)
 }
 
 
-LRESULT APIENTRY
-wxTimerWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT APIENTRY _EXPORT wxTimerWndProc(HWND hWnd, UINT message,
+                                        WPARAM wParam, LPARAM lParam)
 {
     if ( message == WM_TIMER )
     {

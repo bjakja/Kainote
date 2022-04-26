@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -28,7 +29,7 @@
 
 #include "wx/osx/private.h"
 
-wxIMPLEMENT_ABSTRACT_CLASS(wxControl, wxWindow);
+IMPLEMENT_ABSTRACT_CLASS(wxControl, wxWindow)
 
 
 wxControl::wxControl()
@@ -75,5 +76,16 @@ void  wxControl::OnKeyDown( wxKeyEvent &WXUNUSED(event) )
     if ( GetPeer() == NULL || !GetPeer()->IsOk() )
         return;
 
+#if wxOSX_USE_CARBON
+    UInt32 keyCode, modifiers;
+    char charCode;
+
+    GetEventParameter( (EventRef)wxTheApp->MacGetCurrentEvent(), kEventParamKeyCode, typeUInt32, NULL, sizeof(UInt32), NULL, &keyCode  );
+    GetEventParameter( (EventRef)wxTheApp->MacGetCurrentEvent(), kEventParamKeyMacCharCodes, typeChar, NULL, sizeof(char), NULL, &charCode );
+    GetEventParameter( (EventRef)wxTheApp->MacGetCurrentEvent(), kEventParamKeyModifiers, typeUInt32, NULL, sizeof(UInt32), NULL, &modifiers );
+
+    GetPeer()->HandleKey( keyCode, charCode, modifiers );
+#else
     // TODO
+#endif
 }

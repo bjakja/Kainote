@@ -68,7 +68,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\wxWidgets\include;$(solutionDir)Thirdparty\zlib;$(solutionDir)Thirdparty\wxWidgets\3rdparty\pcre\src\wx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\wxWidgets\include;$(solutionDir)Thirdparty\wxWidgets\src\regex;$(solutionDir)Thirdparty\zlib;$(solutionDir)Thirdparty\wxWidgets\3rdparty\pcre\src\wx;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_LIB;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;WXBUILDING;wxUSE_GUI=0;wxUSE_BASE=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -82,8 +82,8 @@
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard_C>Default</LanguageStandard_C>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;WXBUILDING;wxUSE_GUI=0;wxUSE_BASE=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -252,7 +252,6 @@
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\debughlp.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\dir.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\dlmsw.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\evtloopconsole.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\fswatcher.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\main.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\mimetype.cpp" />
@@ -268,23 +267,6 @@
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\utilsexc.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\volume.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\generic\fswatcherg.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\secretstore.cpp">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)msw_%(Filename).obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)msw_%(Filename).obj</ObjectFileName>
-    </ClCompile>
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\secretstore.cpp">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)common_%(Filename).obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)common_%(Filename).obj</ObjectFileName>
-    </ClCompile>
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\lzmastream.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\uilocale.cpp">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)msw_%(Filename).obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)msw_%(Filename).obj</ObjectFileName>
-    </ClCompile>
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\uilocale.cpp">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)common_%(Filename).obj</ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)common_%(Filename).obj</ObjectFileName>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\version.rc">
@@ -303,7 +285,6 @@
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\crashrpt.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\dde.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\debughlp.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\evtloopconsole.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\fswatcher.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\gccpriv.h" />
     <CustomBuild Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\genrcdefs.h">
@@ -319,7 +300,6 @@
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\stackwalk.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\stdpaths.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\winundef.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\winver.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\wrapcctl.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\wrapcdlg.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\wrapwin.h" />
@@ -482,15 +462,9 @@
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\zipstrm.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\zstream.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\listimpl.cpp" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\meta\removeref.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\compiler.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\thrimpl.cpp" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\arrimpl.cpp" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\secretstore.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\evtloopsrc.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\lzmastream.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\localedefs.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\uilocale.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\wxPng\wx_wxpng.vcxproj">

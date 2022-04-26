@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     12.05.02
+// RCS-ID:      $Id$
 // Copyright:   (c) 1997-2002 wxWidgets team
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -40,6 +41,13 @@ public:
     const wxFontData& GetFontData() const { return m_fontData; }
     wxFontData& GetFontData() { return m_fontData; }
 
+#if WXWIN_COMPATIBILITY_2_6
+    // deprecated interface, for compatibility only, don't use
+    wxDEPRECATED( wxFontDialogBase(wxWindow *parent, const wxFontData *data) );
+
+    wxDEPRECATED( bool Create(wxWindow *parent, const wxFontData *data) );
+#endif // WXWIN_COMPATIBILITY_2_6
+
 protected:
     virtual bool DoCreate(wxWindow *parent) { m_parent = parent; return true; }
 
@@ -50,6 +58,15 @@ protected:
 
     wxDECLARE_NO_COPY_CLASS(wxFontDialogBase);
 };
+
+#if WXWIN_COMPATIBILITY_2_6
+    // deprecated interface, for compatibility only, don't use
+inline wxFontDialogBase::wxFontDialogBase(wxWindow *parent, const wxFontData *data)
+{ m_parent = parent; InitFontData(data); }
+
+inline bool wxFontDialogBase::Create(wxWindow *parent, const wxFontData *data)
+{ InitFontData(data); return Create(parent); }
+#endif // WXWIN_COMPATIBILITY_2_6
 
 // ----------------------------------------------------------------------------
 // platform-specific wxFontDialog implementation
@@ -65,6 +82,8 @@ protected:
 
 #if defined(__WXUNIVERSAL__) || \
     defined(__WXMOTIF__)     || \
+    defined(__WXCOCOA__)     || \
+    defined(__WXWINCE__)     || \
     defined(__WXGPE__)
 
     #include "wx/generic/fontdlgg.h"
@@ -75,10 +94,10 @@ protected:
     #include "wx/gtk/fontdlg.h"
 #elif defined(__WXGTK__)
     #include "wx/gtk1/fontdlg.h"
+#elif defined(__WXPM__)
+    #include "wx/os2/fontdlg.h"
 #elif defined(__WXMAC__)
     #include "wx/osx/fontdlg.h"
-#elif defined(__WXQT__)
-    #include "wx/qt/fontdlg.h"
 #endif
 
 // ----------------------------------------------------------------------------

@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     2005-09-30
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,6 +12,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_RICHTEXT
 
@@ -29,7 +33,7 @@
 #include "wx/fs_mem.h"
 #endif
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxRichTextHTMLHandler, wxRichTextFileHandler);
+IMPLEMENT_DYNAMIC_CLASS(wxRichTextHTMLHandler, wxRichTextFileHandler)
 
 int wxRichTextHTMLHandler::sm_fileCounter = 1;
 
@@ -71,8 +75,7 @@ bool wxRichTextHTMLHandler::DoSaveFile(wxRichTextBuffer *buffer, wxOutputStream&
 
     ClearTemporaryImageLocations();
 
-    wxRichTextDrawingContext context(buffer);
-    buffer->Defragment(context);
+    buffer->Defragment();
 
 #if wxUSE_UNICODE
     wxCSConv* customEncoding = NULL;
@@ -163,8 +166,7 @@ bool wxRichTextHTMLHandler::DoSaveFile(wxRichTextBuffer *buffer, wxOutputStream&
 
         CloseLists(-1, str);
 
-        if (currentParaStyle.HasFont())
-            str << wxT("</font>");
+        str << wxT("</font>");
 
         if ((GetFlags() & wxRICHTEXT_HANDLER_NO_HEADER_FOOTER) == 0)
             str << wxT("</body></html>");
@@ -223,9 +225,9 @@ void wxRichTextHTMLHandler::BeginCharacterFormatting(const wxRichTextAttr& curre
         m_font = true;
     }
 
-    if (thisStyle.GetFontWeight() == wxFONTWEIGHT_BOLD)
+    if (thisStyle.GetFontWeight() == wxBOLD)
         str << wxT("<b>");
-    if (thisStyle.GetFontStyle() == wxFONTSTYLE_ITALIC)
+    if (thisStyle.GetFontStyle() == wxITALIC)
         str << wxT("<i>");
     if (thisStyle.GetFontUnderlined())
         str << wxT("<u>");
@@ -251,9 +253,9 @@ void wxRichTextHTMLHandler::EndCharacterFormatting(const wxRichTextAttr& WXUNUSE
 
     if (thisStyle.GetFontUnderlined())
         stream << wxT("</u>");
-    if (thisStyle.GetFontStyle() == wxFONTSTYLE_ITALIC)
+    if (thisStyle.GetFontStyle() == wxITALIC)
         stream << wxT("</i>");
-    if (thisStyle.GetFontWeight() == wxFONTWEIGHT_BOLD)
+    if (thisStyle.GetFontWeight() == wxBOLD)
         stream << wxT("</b>");
 
     if (thisStyle.HasTextEffects())
@@ -322,29 +324,29 @@ void wxRichTextHTMLHandler::BeginParagraphFormatting(const wxRichTextAttr& WXUNU
 
             if ((GetFlags() & wxRICHTEXT_HANDLER_USE_CSS) && thisStyle.HasParagraphSpacingBefore())
             {
-                double spacingBeforeMM = thisStyle.GetParagraphSpacingBefore() / 10.0;
+                float spacingBeforeMM = thisStyle.GetParagraphSpacingBefore() / 10.0;
 
                 styleStr += wxString::Format(wxT("margin-top: %.2fmm; "), spacingBeforeMM);
             }
             if ((GetFlags() & wxRICHTEXT_HANDLER_USE_CSS) && thisStyle.HasParagraphSpacingAfter())
             {
-                double spacingAfterMM = thisStyle.GetParagraphSpacingAfter() / 10.0;
+                float spacingAfterMM = thisStyle.GetParagraphSpacingAfter() / 10.0;
 
                 styleStr += wxString::Format(wxT("margin-bottom: %.2fmm; "), spacingAfterMM);
             }
 
-            double indentLeftMM = (thisStyle.GetLeftIndent() + thisStyle.GetLeftSubIndent()) / 10.0;
+            float indentLeftMM = (thisStyle.GetLeftIndent() + thisStyle.GetLeftSubIndent())/10.0;
             if ((GetFlags() & wxRICHTEXT_HANDLER_USE_CSS) && (indentLeftMM > 0.0))
             {
                 styleStr += wxString::Format(wxT("margin-left: %.2fmm; "), indentLeftMM);
             }
-            double indentRightMM = thisStyle.GetRightIndent() / 10.0;
+            float indentRightMM = thisStyle.GetRightIndent()/10.0;
             if ((GetFlags() & wxRICHTEXT_HANDLER_USE_CSS) && thisStyle.HasRightIndent() && (indentRightMM > 0.0))
             {
                 styleStr += wxString::Format(wxT("margin-right: %.2fmm; "), indentRightMM);
             }
             // First line indentation
-            double firstLineIndentMM = - thisStyle.GetLeftSubIndent() / 10.0;
+            float firstLineIndentMM = - thisStyle.GetLeftSubIndent() / 10.0;
             if ((GetFlags() & wxRICHTEXT_HANDLER_USE_CSS) && (firstLineIndentMM > 0.0))
             {
                 styleStr += wxString::Format(wxT("text-indent: %.2fmm; "), firstLineIndentMM);
@@ -382,13 +384,13 @@ void wxRichTextHTMLHandler::BeginParagraphFormatting(const wxRichTextAttr& WXUNU
 
         if ((GetFlags() & wxRICHTEXT_HANDLER_USE_CSS) && thisStyle.HasParagraphSpacingBefore())
         {
-            double spacingBeforeMM = thisStyle.GetParagraphSpacingBefore() / 10.0;
+            float spacingBeforeMM = thisStyle.GetParagraphSpacingBefore() / 10.0;
 
             styleStr += wxString::Format(wxT("margin-top: %.2fmm; "), spacingBeforeMM);
         }
         if ((GetFlags() & wxRICHTEXT_HANDLER_USE_CSS) && thisStyle.HasParagraphSpacingAfter())
         {
-            double spacingAfterMM = thisStyle.GetParagraphSpacingAfter() / 10.0;
+            float spacingAfterMM = thisStyle.GetParagraphSpacingAfter() / 10.0;
 
             styleStr += wxString::Format(wxT("margin-bottom: %.2fmm; "), spacingAfterMM);
         }
@@ -519,7 +521,7 @@ void wxRichTextHTMLHandler::WriteImage(wxRichTextImage* image, wxOutputStream& s
             if (img.IsOk())
             {
                 wxString ext(image->GetImageBlock().GetExtension());
-                wxString tempFilename(wxString::Format(wxT("image%d.%s"), sm_fileCounter, ext.c_str()));
+                wxString tempFilename(wxString::Format(wxT("image%d.%s"), sm_fileCounter, ext));
                 wxMemoryFSHandler::AddFile(tempFilename, img, image->GetImageBlock().GetImageType());
 
                 m_imageLocations.Add(tempFilename);
@@ -548,7 +550,7 @@ void wxRichTextHTMLHandler::WriteImage(wxRichTextImage* image, wxOutputStream& s
                 tempDir = wxFileName::GetTempDir();
 
             wxString ext(image->GetImageBlock().GetExtension());
-            wxString tempFilename(wxString::Format(wxT("%s/image%d.%s"), tempDir.c_str(), sm_fileCounter, ext.c_str()));
+            wxString tempFilename(wxString::Format(wxT("%s/image%d.%s"), tempDir, sm_fileCounter, ext));
             image->GetImageBlock().Write(tempFilename);
 
             m_imageLocations.Add(tempFilename);
@@ -632,7 +634,7 @@ wxChar* wxRichTextHTMLHandler::b64enc( unsigned char* input, size_t in_len )
 
     while( in_len-- > 0 )
     {
-        wxChar a, b;
+        register wxChar a, b;
 
         a = *input++;
 

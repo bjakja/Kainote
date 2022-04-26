@@ -3,6 +3,7 @@
 // Purpose:     XML resource handler for wxToolBar
 // Author:      Vaclav Slavik
 // Created:     2000/08/11
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,12 +19,12 @@ class WXDLLIMPEXP_FWD_CORE wxToolBar;
 
 class WXDLLIMPEXP_XRC wxToolBarXmlHandler : public wxXmlResourceHandler
 {
-    wxDECLARE_DYNAMIC_CLASS(wxToolBarXmlHandler);
+    DECLARE_DYNAMIC_CLASS(wxToolBarXmlHandler)
 
 public:
     wxToolBarXmlHandler();
-    virtual wxObject *DoCreateResource() wxOVERRIDE;
-    virtual bool CanHandle(wxXmlNode *node) wxOVERRIDE;
+    virtual wxObject *DoCreateResource();
+    virtual bool CanHandle(wxXmlNode *node);
 
 private:
     bool m_isInside;

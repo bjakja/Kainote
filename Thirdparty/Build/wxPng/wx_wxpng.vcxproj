@@ -67,7 +67,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>"$(SolutionDir)Thirdparty\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_LIB;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;NDEBUG;_CRT_SECURE_NO_WARNINGS;PNG_INTEL_SSE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -155,11 +155,9 @@
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\png\pngwrite.c" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\png\pngwtran.c" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\png\pngwutil.c" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\png\arm\arm_init.c" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\png\arm\filter_neon_intrinsics.c" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\png\arm\palette_neon_intrinsics.c" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\png\intel\intel_init.c" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\png\intel\filter_sse2_intrinsics.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\wxWidgets\src\png\pngstruct.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

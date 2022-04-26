@@ -1,4 +1,5 @@
 #!/bin/sh
+# CVS-ID: $Id$
 
 
 add_fallback()

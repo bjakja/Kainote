@@ -4,6 +4,7 @@
 // Author:      Guilhem Lavaux
 // Modified by:
 // Created:     17/07/97
+// RCS-ID:      $Id$
 // Copyright:   (c)
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -25,12 +26,12 @@ public:
 protected:
     wxSocketBase *m_o_socket;
 
-    size_t OnSysWrite(const void *buffer, size_t bufsize) wxOVERRIDE;
+    size_t OnSysWrite(const void *buffer, size_t bufsize);
 
     // socket streams are both un-seekable and size-less streams:
-    wxFileOffset OnSysTell() const wxOVERRIDE
+    wxFileOffset OnSysTell() const
         { return wxInvalidOffset; }
-    wxFileOffset OnSysSeek(wxFileOffset WXUNUSED(pos), wxSeekMode WXUNUSED(mode)) wxOVERRIDE
+    wxFileOffset OnSysSeek(wxFileOffset WXUNUSED(pos), wxSeekMode WXUNUSED(mode))
         { return wxInvalidOffset; }
 
     wxDECLARE_NO_COPY_CLASS(wxSocketOutputStream);
@@ -45,13 +46,13 @@ public:
 protected:
     wxSocketBase *m_i_socket;
 
-    size_t OnSysRead(void *buffer, size_t bufsize) wxOVERRIDE;
+    size_t OnSysRead(void *buffer, size_t bufsize);
 
     // socket streams are both un-seekable and size-less streams:
 
-    wxFileOffset OnSysTell() const wxOVERRIDE
+    wxFileOffset OnSysTell() const
         { return wxInvalidOffset; }
-    wxFileOffset OnSysSeek(wxFileOffset WXUNUSED(pos), wxSeekMode WXUNUSED(mode)) wxOVERRIDE
+    wxFileOffset OnSysSeek(wxFileOffset WXUNUSED(pos), wxSeekMode WXUNUSED(mode))
         { return wxInvalidOffset; }
 
     wxDECLARE_NO_COPY_CLASS(wxSocketInputStream);

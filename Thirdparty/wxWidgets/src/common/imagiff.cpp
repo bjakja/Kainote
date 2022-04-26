@@ -2,6 +2,7 @@
 // Name:        src/common/imagiff.cpp
 // Purpose:     wxImage handler for Amiga IFF images
 // Author:      Steffen Gutmann, Thomas Meyer
+// RCS-ID:      $Id$
 // Copyright:   (c) Steffen Gutmann, 2002
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -14,6 +15,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_IMAGE && wxUSE_IFF
 
@@ -238,6 +242,7 @@ bool wxIFFDecoder::CanRead()
 // Permission for use in wxWidgets has been gratefully given.
 
 typedef unsigned char byte;
+#define IFFDEBUG 0
 
 /*************************************************************************
 void decomprle(source, destination, source length, buffer size)
@@ -357,7 +362,7 @@ int wxIFFDecoder::ReadIFF()
     }
 
     // check if we really got an IFF file
-    if (strncmp(reinterpret_cast<const char*>(dataptr), "FORM", 4) != 0) {
+    if (strncmp((char *)dataptr, "FORM", 4) != 0) {
         Destroy();
         return wxIFF_INVFORMAT;
     }
@@ -365,7 +370,7 @@ int wxIFFDecoder::ReadIFF()
     dataptr = dataptr + 8;                  // skip ID and length of FORM
 
     // check if the IFF file is an ILBM (picture) file
-    if (strncmp(reinterpret_cast<const char*>(dataptr), "ILBM", 4) != 0) {
+    if (strncmp((char *) dataptr, "ILBM", 4) != 0) {
         Destroy();
         return wxIFF_INVFORMAT;
     }
@@ -391,7 +396,7 @@ int wxIFFDecoder::ReadIFF()
     }
     bool truncated = (dataptr + 8 + chunkLen > dataend);
 
-    if (strncmp(reinterpret_cast<const char*>(dataptr), "BMHD", 4) == 0) { // BMHD chunk?
+    if (strncmp((char *)dataptr, "BMHD", 4) == 0) { // BMHD chunk?
         if (chunkLen < 12 + 2 || truncated) {
         break;
         }
@@ -404,14 +409,14 @@ int wxIFFDecoder::ReadIFF()
         BMHDok = true;                              // got BMHD
         dataptr += 8 + chunkLen;                    // to next chunk
     }
-    else if (strncmp(reinterpret_cast<const char*>(dataptr), "CMAP", 4) == 0) { // CMAP ?
+    else if (strncmp((char *)dataptr, "CMAP", 4) == 0) { // CMAP ?
         if (truncated) {
         break;
         }
         const byte *cmapptr = dataptr + 8;
         colors = chunkLen / 3;                  // calc no of colors
 
-        wxDELETEA(m_image->pal);
+        wxDELETE(m_image->pal);
         m_image->colors = colors;
         if (colors > 0) {
         m_image->pal = new byte[3*colors];
@@ -432,7 +437,7 @@ int wxIFFDecoder::ReadIFF()
             colors);
 
         dataptr += 8 + chunkLen;                    // to next chunk
-    } else if (strncmp(reinterpret_cast<const char*>(dataptr), "CAMG", 4) == 0) { // CAMG ?
+    } else if (strncmp((char *)dataptr, "CAMG", 4) == 0) { // CAMG ?
         if (chunkLen < 4 || truncated) {
         break;
         }
@@ -440,7 +445,7 @@ int wxIFFDecoder::ReadIFF()
         CAMGok = true;                              // got CAMG
         dataptr += 8 + chunkLen;                    // to next chunk
     }
-    else if (strncmp(reinterpret_cast<const char*>(dataptr), "BODY", 4) == 0) { // BODY ?
+    else if (strncmp((char *)dataptr, "BODY", 4) == 0) { // BODY ?
         if (!BMHDok) {                              // BMHD found?
         break;
         }
@@ -527,7 +532,7 @@ int wxIFFDecoder::ReadIFF()
             pal[3*i + 1] = 0;
             pal[3*i + 2] = 0;
             }
-            delete[] m_image->pal;
+            delete m_image->pal;
             m_image->pal = pal;
             m_image->colors = colors;
         }
@@ -715,7 +720,7 @@ int wxIFFDecoder::ReadIFF()
 // wxIFFHandler
 //-----------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxIFFHandler, wxImageHandler);
+IMPLEMENT_DYNAMIC_CLASS(wxIFFHandler, wxImageHandler)
 
 #if wxUSE_STREAMS
 

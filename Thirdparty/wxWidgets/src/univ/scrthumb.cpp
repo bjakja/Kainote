@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     13.02.01
+// RCS-ID:      $Id$
 // Copyright:   (c) 2001 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,6 +19,9 @@
 
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
     #include "wx/window.h"
@@ -27,7 +31,6 @@
 #include "wx/univ/scrtimer.h"
 #include "wx/univ/scrthumb.h"
 
-#if wxUSE_SCROLLBAR
 // ----------------------------------------------------------------------------
 // wxScrollThumbCaptureData: the struct used while dragging the scroll thumb
 // ----------------------------------------------------------------------------
@@ -140,10 +143,8 @@ wxScrollThumb::wxScrollThumb(wxControlWithThumb *control)
 
 wxScrollThumb::~wxScrollThumb()
 {
-    // make sure the mouse capture data will be released
-    // when destroy the thumb.
-    delete m_captureData;
-    wxConstCast(this, wxScrollThumb)->m_captureData = NULL;
+    // it should have been destroyed
+    wxASSERT_MSG( !m_captureData, wxT("memory leak in wxScrollThumb") );
 }
 
 // ----------------------------------------------------------------------------
@@ -237,7 +238,7 @@ bool wxScrollThumb::HandleMouseMove(const wxMouseEvent& event) const
 {
     if ( HasCapture() )
     {
-        if ( (m_captureData->m_shaftPart == Shaft_Thumb) && event.Dragging() )
+        if ( (m_captureData->m_shaftPart == Shaft_Thumb) && event.Moving() )
         {
             // make the thumb follow the mouse by keeping the same offset
             // between the mouse position and the top/left of the thumb
@@ -288,4 +289,3 @@ int wxScrollThumb::GetThumbPos(const wxMouseEvent& event) const
     int x = GetMouseCoord(event) - m_captureData->m_ofsMouse;
     return m_control->PixelToThumbPos(x);
 }
-#endif // wxUSE_SCROLLBAR

@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     25.08.00
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,6 +19,9 @@
 
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_BMPBUTTON
 
@@ -34,10 +38,10 @@
 // implementation
 // ============================================================================
 
-wxBEGIN_EVENT_TABLE(wxBitmapButton, wxButton)
+BEGIN_EVENT_TABLE(wxBitmapButton, wxButton)
     EVT_SET_FOCUS(wxBitmapButton::OnSetFocus)
     EVT_KILL_FOCUS(wxBitmapButton::OnKillFocus)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 // ----------------------------------------------------------------------------
 // wxBitmapButton
@@ -45,7 +49,7 @@ wxEND_EVENT_TABLE()
 
 bool wxBitmapButton::Create(wxWindow *parent,
                             wxWindowID id,
-                            const wxBitmapBundle& bitmap,
+                            const wxBitmap& bitmap,
                             const wxPoint &pos,
                             const wxSize &size,
                             long style,
@@ -91,7 +95,6 @@ bool wxBitmapButton::ChangeBitmap(const wxBitmap& bmp)
         return false;
 
     m_bitmap = bitmap;
-    SetInitialSize(bitmap.GetSize());
 
     return true;
 }

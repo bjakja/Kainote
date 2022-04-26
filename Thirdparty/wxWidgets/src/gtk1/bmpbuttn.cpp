@@ -2,6 +2,7 @@
 // Name:        src/gtk1/bmpbuttn.cpp
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -47,7 +48,7 @@ static void gtk_bmpbutton_clicked_callback( GtkWidget *WXUNUSED(widget), wxBitma
     if (!button->m_hasVMT) return;
     if (g_blockEventsOnDrag) return;
 
-    wxCommandEvent event(wxEVT_BUTTON, button->GetId());
+    wxCommandEvent event(wxEVT_COMMAND_BUTTON_CLICKED, button->GetId());
     event.SetEventObject(button);
     button->HandleWindowEvent(event);
 }
@@ -121,7 +122,7 @@ void wxBitmapButton::Init()
 
 bool wxBitmapButton::Create( wxWindow *parent,
                              wxWindowID id,
-                             const wxBitmapBundle& bitmap,
+                             const wxBitmap& bitmap,
                              const wxPoint& pos,
                              const wxSize& size,
                              long style,
@@ -138,7 +139,7 @@ bool wxBitmapButton::Create( wxWindow *parent,
         return false;
     }
 
-    m_bitmaps[State_Normal] = bitmap.GetBitmap(wxDefaultSize);
+    m_bitmaps[State_Normal] = bitmap;
 
     m_widget = gtk_button_new();
 
@@ -206,7 +207,7 @@ void wxBitmapButton::OnSetBitmap()
      }
 
     GdkBitmap *mask = NULL;
-    if (the_one.GetMask()) mask = the_one.GetMask()->m_bitmap;
+    if (the_one.GetMask()) mask = the_one.GetMask()->GetBitmap();
 
     GtkWidget *child = BUTTON_CHILD(m_widget);
     if (child == NULL)

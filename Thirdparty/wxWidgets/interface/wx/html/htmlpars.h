@@ -2,17 +2,9 @@
 // Name:        html/htmlpars.h
 // Purpose:     interface of wxHtmlTagHandler
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
-
-enum wxHtmlURLType
-{
-    wxHTML_URL_PAGE,
-    wxHTML_URL_IMAGE,
-    wxHTML_URL_OTHER
-};
-
-
 
 /**
     @class wxHtmlTagHandler
@@ -65,17 +57,9 @@ public:
 
     /**
         Assigns @a parser to this handler. Each @b instance of handler
-        is guaranteed to be called only from the one parser.
+        is guaranteed to be called only from the parser.
     */
     virtual void SetParser(wxHtmlParser* parser);
-
-    /**
-       Returns the parser associated with this tag handler.
-
-       @since 2.9.5
-    */
-    wxHtmlParser* GetParser() const;
-
 
 protected:
 
@@ -90,14 +74,6 @@ protected:
         will parse 'Hello, world!'.
     */
     void ParseInner(const wxHtmlTag& tag);
-
-    /**
-       Parses given source as if it was tag's inner code (see
-       wxHtmlParser::GetInnerSource).  Unlike ParseInner(), this method lets
-       you specify the source code to parse. This is useful when you need to
-       modify the inner text before parsing.
-    */
-    void ParseInnerSource(const wxString& source);
 
     /**
         This attribute is used to access parent parser. It is protected so that

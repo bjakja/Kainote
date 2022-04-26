@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     04.04.98
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,9 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+  #pragma hdrstop
+#endif
 
 #if wxUSE_STATUSBAR && wxUSE_NATIVE_STATUSBAR
 
@@ -103,9 +107,11 @@ WXDWORD wxStatusBar::MSWGetStyle(long style, WXDWORD *exstyle) const
     }
     else
     {
+#ifndef __WXWINCE__
         // may be some versions of comctl32.dll do need it - anyhow, it won't
         // do any harm
        msStyle |= SBARS_SIZEGRIP;
+#endif
     }
 
     return msStyle;
@@ -163,8 +169,7 @@ bool wxStatusBar::SetFont(const wxFont& font)
     if (!wxWindow::SetFont(font))
         return false;
 
-    if ( m_pDC )
-        m_pDC->SetFont(m_font);
+    if (m_pDC) m_pDC->SetFont(font);
     return true;
 }
 
@@ -254,14 +259,6 @@ void wxStatusBar::MSWUpdateFieldsWidths()
     delete [] pWidths;
 }
 
-void wxStatusBar::MSWUpdateFontOnDPIChange(const wxSize& newDPI)
-{
-    wxStatusBarBase::MSWUpdateFontOnDPIChange(newDPI);
-
-    if ( m_pDC && m_font.IsOk() )
-        m_pDC->SetFont(m_font);
-}
-
 void wxStatusBar::DoUpdateStatusText(int nField)
 {
     if (!m_pDC)
@@ -278,7 +275,6 @@ void wxStatusBar::DoUpdateStatusText(int nField)
         style = SBT_NOBORDERS;
         break;
 
-    case wxSB_SUNKEN:
     case wxSB_NORMAL:
     default:
         style = 0;
@@ -293,12 +289,12 @@ void wxStatusBar::DoUpdateStatusText(int nField)
     wxString text = GetStatusText(nField);
 
     // do we need to ellipsize this string?
-    wxEllipsizeMode ellmode = wxELLIPSIZE_NONE;
+    wxEllipsizeMode ellmode = (wxEllipsizeMode)-1;
     if (HasFlag(wxSTB_ELLIPSIZE_START)) ellmode = wxELLIPSIZE_START;
     else if (HasFlag(wxSTB_ELLIPSIZE_MIDDLE)) ellmode = wxELLIPSIZE_MIDDLE;
     else if (HasFlag(wxSTB_ELLIPSIZE_END)) ellmode = wxELLIPSIZE_END;
 
-    if (ellmode == wxELLIPSIZE_NONE)
+    if (ellmode == (wxEllipsizeMode)-1)
     {
         // if we have the wxSTB_SHOW_TIPS we must set the ellipsized flag even if
         // we don't ellipsize the text but just truncate it
@@ -399,7 +395,7 @@ const wxStatusBar::MSWMetrics& wxStatusBar::MSWGetMetrics()
         // pane. Notice that it's not the value returned by SB_GETBORDERS
         // which, at least on this Windows 2003 system, returns {0, 2, 2}
 #if wxUSE_UXTHEME
-        if ( wxUxThemeIsActive() )
+        if ( wxUxThemeEngine::GetIfActive() )
         {
             s_metrics.gripWidth = 20;
             s_metrics.textMargin = 8;
@@ -423,12 +419,9 @@ void wxStatusBar::SetMinHeight(int height)
     // statbar sample gets truncated otherwise.
     height += 4*GetBorderY();
 
-    // Ensure that the min height is respected when the status bar is resized
-    // automatically, like the status bar managed by wxFrame.
-    SetMinSize(wxSize(m_minWidth, height));
-
-    // And also update the size immediately, which may be useful for the status
-    // bars not managed by wxFrame.
+    // We need to set the size and not the size to reflect the height because
+    // wxFrame uses our size and not the minimal size as it assumes that the
+    // size of a status bar never changes anyhow.
     SetSize(-1, height);
 
     SendMessage(GetHwnd(), SB_SETMINHEIGHT, height, 0);
@@ -459,7 +452,7 @@ bool wxStatusBar::GetFieldRect(int i, wxRect& rect) const
             r.left -= 2;
         }
 
-        ::GetThemeBackgroundContentRect(theme, NULL,
+        wxUxThemeEngine::Get()->GetThemeBackgroundContentRect(theme, NULL,
                                                               1 /* SP_PANE */, 0,
                                                               &r, &r);
     }
@@ -506,7 +499,9 @@ wxSize wxStatusBar::DoGetBestSize() const
     int height = GetCharHeight();
     height += 4*borders.vert;
 
-    return wxSize(width, height);
+    wxSize best(width, height);
+    CacheBestSize(best);
+    return best;
 }
 
 void wxStatusBar::DoMoveWindow(int x, int y, int width, int height)
@@ -523,7 +518,9 @@ void wxStatusBar::DoMoveWindow(int x, int y, int width, int height)
         // if other windows are size deferred
         ::SetWindowPos(GetHwnd(), NULL, x, y, width, height,
                        SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOACTIVATE
+#ifndef __WXWINCE__
                        | SWP_NOCOPYBITS | SWP_NOSENDCHANGING
+#endif
                        );
     }
 
@@ -556,7 +553,6 @@ void wxStatusBar::SetStatusStyles(int n, const int styles[])
         case wxSB_FLAT:
             style = SBT_NOBORDERS;
             break;
-        case wxSB_SUNKEN:
         case wxSB_NORMAL:
         default:
             style = 0;
@@ -577,6 +573,7 @@ void wxStatusBar::SetStatusStyles(int n, const int styles[])
 WXLRESULT
 wxStatusBar::MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam)
 {
+#ifndef __WXWINCE__
     if ( nMsg == WM_WINDOWPOSCHANGING )
     {
         WINDOWPOS *lpPos = (WINDOWPOS *)lParam;
@@ -615,6 +612,7 @@ wxStatusBar::MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam)
             }
         }
     }
+#endif
 
     if ( nMsg == WM_SIZE )
     {

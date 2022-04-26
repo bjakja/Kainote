@@ -2,14 +2,28 @@
 // Name:        log.h
 // Purpose:     topic overview
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 /**
 
-@page overview_log Logging Overview
+@page overview_log wxLog Classes Overview
 
-@tableofcontents
+Classes: wxLog, wxLogStderr, wxLogStream, wxLogTextCtrl, wxLogWindow, wxLogGui, wxLogNull, wxLogBuffer, 
+         wxLogChain, wxLogInterposer, wxLogInterposerTemp, wxStreamToTextRedirector, wxLogFormatter
+
+Table of contents:
+@li @ref overview_log_introduction
+@li @ref overview_log_enable
+@li @ref overview_log_targets
+@li @ref overview_log_mt 
+@li @ref overview_log_customize
+@li @ref overview_log_tracemasks
+<hr>
+
+
+@section overview_log_introduction Introduction
 
 This is a general overview of logging classes provided by wxWidgets. The word
 logging here has a broad sense, including all of the program output, not only
@@ -19,9 +33,9 @@ as well as several standard implementations of it and a family of functions to
 use with them.
 
 First of all, no knowledge of wxLog classes is needed to use them. For this,
-you should only know about @ref group_funcmacro_log "wxLogXXX() functions".
-All of them have the same syntax as @e printf() or @e vprintf() , i.e. they
-take the format string as the first argument and respectively a variable number
+you should only know about @ref group_funcmacro_log "wxLogXXX() functions". 
+All of them have the same syntax as @e printf() or @e vprintf() , i.e. they 
+take the format string as the first argument and respectively a variable number 
 of arguments or a variable argument list pointer. Here are all of them:
 
 @li wxLogFatalError() which is like wxLogError(), but also terminates the program
@@ -52,7 +66,7 @@ of arguments or a variable argument list pointer. Here are all of them:
     defined) and expands to nothing in release mode (otherwise).
     Note that under Windows, you must either run the program under debugger or
     use a 3rd party program such as DebugView
-    (http://technet.microsoft.com/en-us/sysinternals/bb896647.aspx)
+    (http://www.microsoft.com/technet/sysinternals/Miscellaneous/DebugView.mspx)
     to actually see the debug output.
 @li wxLogTrace() as wxLogDebug() only does something in debug build. The reason for
     making it a separate function from it is that usually there are a lot of
@@ -60,8 +74,6 @@ of arguments or a variable argument list pointer. Here are all of them:
     messages which would be flooded in them. Moreover, the second version of
     this function takes a trace mask as the first argument which allows to
     further restrict the amount of messages generated.
-
-@see @ref group_funcmacro_log "Logging Functions and Macros"
 
 The usage of these functions should be fairly straightforward, however it may
 be asked why not use the other logging facilities, such as C standard stdio
@@ -99,7 +111,6 @@ classes are. Some of advantages in using wxWidgets log functions are:
     about data file writing error.
 
 
-
 @section overview_log_enable Log Messages Selection
 
 By default, most log messages are enabled. In particular, this means that
@@ -130,27 +141,23 @@ you could give it the value "MyProgram" by default and re-define it as
 "MyProgram/DB" in the module working with the database and "MyProgram/DB/Trans"
 in its part managing the transactions. Then you could use
 wxLog::SetComponentLevel() in the following ways:
+    @code
+        // disable all database error messages, everybody knows databases never
+        // fail anyhow
+        wxLog::SetComponentLevel("MyProgram/DB", wxLOG_FatalError);
 
-@code
-// disable all database error messages, everybody knows databases never
-// fail anyhow
-wxLog::SetComponentLevel("MyProgram/DB", wxLOG_FatalError);
+        // but enable tracing for the transactions as somehow our changes don't
+        // get committed sometimes
+        wxLog::SetComponentLevel("MyProgram/DB/Trans", wxLOG_Trace);
 
-// but enable tracing for the transactions as somehow our changes don't
-// get committed sometimes
-wxLog::SetComponentLevel("MyProgram/DB/Trans", wxLOG_Trace);
-
-// also enable tracing messages from wxWidgets dynamic module loading
-// mechanism
-wxLog::SetComponentLevel("wx/base/module", wxLOG_Trace);
-@endcode
-
+        // also enable tracing messages from wxWidgets dynamic module loading
+        // mechanism
+        wxLog::SetComponentLevel("wx/base/module", wxLOG_Trace);
+    @endcode
 Notice that the log level set explicitly for the transactions code overrides
 the log level of the parent component but that all other database code
 subcomponents inherit its setting by default and so won't generate any log
 messages at all.
-
-
 
 @section overview_log_targets Log Targets
 
@@ -161,11 +168,10 @@ works.
 wxWidgets has the notion of a <em>log target</em>: it is just a class deriving
 from wxLog. As such, it implements the virtual functions of the base class
 which are called when a message is logged. Only one log target is @e active at
-any moment, this is the one used by @ref group_funcmacro_log "wxLogXXX() functions".
-The normal usage of a log object (i.e. object of a class derived from wxLog) is
-to install it as the active target with a call to @e SetActiveTarget() and it
-will be used automatically by all subsequent calls to
-@ref group_funcmacro_log "wxLogXXX() functions".
+any moment, this is the one used by @ref group_funcmacro_log "wxLogXXX() functions". 
+The normal usage of a log object (i.e. object of a class derived from wxLog) is 
+to install it as the active target with a call to @e SetActiveTarget() and it will be used
+automatically by all subsequent calls to @ref group_funcmacro_log "wxLogXXX() functions".
 
 To create a new log target class you only need to derive it from wxLog and
 override one or several of wxLog::DoLogRecord(), wxLog::DoLogTextAtLevel() and
@@ -177,6 +183,7 @@ simply want to redirect the log messages somewhere else, without changing their
 formatting. Finally, it is enough to override wxLog::DoLogText() if you only
 want to redirect the log messages and the destination doesn't depend on the
 message log level.
+
 
 There are some predefined classes deriving from wxLog and which might be
 helpful to see how you can create a new log target class and, of course, may
@@ -215,13 +222,10 @@ also be used without any change. There are:
     wxLogMessage("..."); // ok
     @endcode
 
-@see @ref group_class_logging "Logging Classes"
-
 The log targets can also be combined: for example you may wish to redirect the
 messages somewhere else (for example, to a log file) but also process them as
 normally. For this the wxLogChain, wxLogInterposer, and wxLogInterposerTemp can
 be used.
-
 
 
 @section overview_log_mt Logging in Multi-Threaded Applications
@@ -243,7 +247,6 @@ affect the current thread, i.e. logging messages may still be generated by the
 other threads after a call to @c EnableLogging(false).
 
 
-
 @section overview_log_customize Logging Customization
 
 To completely change the logging behaviour you may define a custom log target.
@@ -263,7 +266,7 @@ GUI is (already/still) available when your log target as used as wxWidgets
 automatically switches to using wxLogStderr if it isn't.
 
 There are several methods which may be overridden in the derived class to
-customize log messages handling: wxLog::DoLogRecord(), wxLog::DoLogTextAtLevel()
+customize log messages handling: wxLog::DoLogRecord(), wxLog::DoLogTextAtLevel() 
 and wxLog::DoLogText().
 
 The last method is the simplest one: you should override it if you simply
@@ -291,7 +294,7 @@ The @e dialog sample illustrates this approach by defining a custom log target
 customizing the dialog used by wxLogGui for the single messages.
 
 
-@section overview_log_tracemasks Using Trace Masks
+@section overview_log_tracemasks Using trace masks
 
 Notice that the use of log trace masks is hardly necessary any longer in
 current wxWidgets version as the same effect can be achieved by using
@@ -325,3 +328,4 @@ wxLog::AddTraceMask( wxTRACE_OleCalls );
 The standard trace masks are given in wxLogTrace() documentation.
 
 */
+

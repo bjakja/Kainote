@@ -2,6 +2,7 @@
 // Name:        printing.h
 // Purpose:     topic overview
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -9,7 +10,33 @@
 
 @page overview_printing Printing Framework Overview
 
-@tableofcontents
+Classes:
+@li wxPrintout
+@li wxPrinter
+@li wxPrintPreview
+@li wxPrinterDC
+@li wxPostScriptDC
+@li wxPrintDialog
+@li wxPrintData
+@li wxPrintDialogData
+@li wxPageSetupDialog
+@li wxPageSetupDialogData
+
+
+@li @ref overview_printing_printout
+@li @ref overview_printing_printer
+@li @ref overview_printing_printpreview
+@li @ref overview_printing_printerdc
+@li @ref overview_printing_postscriptdc
+@li @ref overview_printing_printdialog
+@li @ref overview_printing_printdata
+@li @ref overview_printing_printdialogdata
+@li @ref overview_printing_pagesetupdialog
+@li @ref overview_printing_pagesetupdialogdata
+
+
+<hr>
+
 
 The printing framework relies on the application to provide classes whose
 member functions can respond to particular requests, such as 'print this page'
@@ -25,8 +52,6 @@ A brief description of each class's role and how they work together follows.
 
 For the special case of printing under Unix, where various different printing
 backends have to be offered, please have a look at @ref overview_unixprinting.
-
-@see @ref group_class_printing
 
 
 @section overview_printing_printout wxPrintout
@@ -84,7 +109,7 @@ The scaling of the drawn image typically differs from the screen to the preview
 and printed images. This class provides a set of routines named
 FitThisSizeToXXX(), MapScreenSizeToXXX(), and GetLogicalXXXRect, which can be
 used to set the user scale and origin of the wxPrintout's DC so that your class
-can easily map your image to the printout without getting into the details of
+can easily map your image to the printout withough getting into the details of
 screen and printer PPI and scaling. See the printing sample for examples of how
 these routines are used.
 
@@ -174,7 +199,7 @@ user.
 
 Class wxPageSetupDialog puts up the standard page setup dialog, which allows
 you to specify the orientation, paper size, and related settings. You provide
-it with a wxPageSetupDialogData object at initialization, which is used to
+it with a wxPageSetupDialogData object at intialization, which is used to
 populate the dialog; when the dialog is dismissed, this object contains the
 settings chosen by the user, including orientation and/or page margins.
 
@@ -202,3 +227,4 @@ range (from the wxPrintDialogData) or the paper size and/or page orientation
 (from the wxPageSetupDialogData).
 
 */
+

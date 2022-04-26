@@ -3,6 +3,7 @@
 // Purpose:     wxAnyButton
 // Author:      Stefan Csomor
 // Created:     1998-01-01 (extracted from button_osx.cpp)
+// RCS-ID:      $Id: anybutton_osx.cpp 67280 2011-03-22 14:17:38Z DS $
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -22,10 +23,10 @@
 
 #include "wx/osx/private.h"
 
-wxBEGIN_EVENT_TABLE(wxAnyButton, wxControl)
+BEGIN_EVENT_TABLE(wxAnyButton, wxControl)
     EVT_ENTER_WINDOW(wxAnyButton::OnEnterWindow)
     EVT_LEAVE_WINDOW(wxAnyButton::OnLeaveWindow)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 void wxAnyButton::SetLabel(const wxString& label)
 {
@@ -43,20 +44,20 @@ void wxAnyButton::SetLabel(const wxString& label)
 
 wxBitmap wxAnyButton::DoGetBitmap(State which) const
 {
-    return m_bitmaps[which].GetBitmap(wxDefaultSize);
+    return m_bitmaps[which];
 }
 
-void wxAnyButton::DoSetBitmap(const wxBitmapBundle& bitmapBundle, State which)
+void wxAnyButton::DoSetBitmap(const wxBitmap& bitmap, State which)
 {
-    m_bitmaps[which] = bitmapBundle;
+    m_bitmaps[which] = bitmap;
 
     if ( which == State_Normal )
-        GetPeer()->SetBitmap(bitmapBundle);
+        GetPeer()->SetBitmap(bitmap);
     else if ( which == State_Pressed )
     {
         wxButtonImpl* bi = dynamic_cast<wxButtonImpl*> (GetPeer());
         if ( bi )
-            bi->SetPressedBitmap(bitmapBundle);
+            bi->SetPressedBitmap(bitmap);
     }
     InvalidateBestSize();
 }
@@ -84,11 +85,11 @@ bool wxAnyButton::DoSetLabelMarkup(const wxString& markup)
 void wxAnyButton::OnEnterWindow( wxMouseEvent& WXUNUSED(event))
 {
     if ( DoGetBitmap( State_Current ).IsOk() )
-        GetPeer()->SetBitmap( m_bitmaps[State_Current] );
+        GetPeer()->SetBitmap( DoGetBitmap( State_Current ) );
 }
 
 void wxAnyButton::OnLeaveWindow( wxMouseEvent& WXUNUSED(event))
 {
     if ( DoGetBitmap( State_Current ).IsOk() )
-        GetPeer()->SetBitmap( m_bitmaps[State_Normal] );
+        GetPeer()->SetBitmap( DoGetBitmap( State_Normal ) );
 }

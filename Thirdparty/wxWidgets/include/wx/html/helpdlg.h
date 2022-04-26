@@ -4,6 +4,7 @@
 // Notes:       Based on htmlhelp.cpp, implementing a monolithic
 //              HTML Help controller class,  by Vaclav Slavik
 // Author:      Harm van der Heijden, Vaclav Slavik, Julian Smart
+// RCS-ID:      $Id$
 // Copyright:   (c) Harm van der Heijden, Vaclav Slavik, Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -36,11 +37,11 @@ class WXDLLIMPEXP_FWD_HTML wxHtmlHelpWindow;
 
 class WXDLLIMPEXP_HTML wxHtmlHelpDialog : public wxDialog
 {
-    wxDECLARE_DYNAMIC_CLASS(wxHtmlHelpDialog);
+    DECLARE_DYNAMIC_CLASS(wxHtmlHelpDialog)
 
 public:
     wxHtmlHelpDialog(wxHtmlHelpData* data = NULL) { Init(data); }
-    wxHtmlHelpDialog(wxWindow* parent, wxWindowID id,
+    wxHtmlHelpDialog(wxWindow* parent, wxWindowID wxWindowID,
                     const wxString& title = wxEmptyString,
                     int style = wxHF_DEFAULT_STYLE, wxHtmlHelpData* data = NULL);
     virtual ~wxHtmlHelpDialog();
@@ -79,7 +80,7 @@ protected:
     wxHtmlHelpWindow *m_HtmlHelpWin;
     wxHtmlHelpController* m_helpController;
 
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
     wxDECLARE_NO_COPY_CLASS(wxHtmlHelpDialog);
 };
 

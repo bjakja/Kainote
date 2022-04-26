@@ -3,6 +3,7 @@
 // Purpose:     declares wxEventLoop class
 // Author:      Vaclav Slavik
 // Created:     2006-08-16
+// RCS-ID:      $Id$
 // Copyright:   (c) 2006 REA Elektronik GmbH
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -24,11 +25,10 @@ class WXDLLIMPEXP_CORE wxGUIEventLoop : public wxConsoleEventLoop
 public:
     wxGUIEventLoop();
 
+    virtual bool YieldFor(long eventsToProcess);
+
     // returns DirectFB event buffer used by wx
     static wxIDirectFBEventBufferPtr GetDirectFBEventBuffer();
-
-protected:
-    virtual void DoYieldFor(long eventsToProcess);
 
 private:
     static void InitBuffer();

@@ -2,6 +2,7 @@
 // Name:        wx/gtk1/gauge.h
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -25,7 +26,7 @@ public:
              const wxSize& size = wxDefaultSize,
              long style = wxGA_HORIZONTAL,
              const wxValidator& validator = wxDefaultValidator,
-             const wxString& name = wxASCII_STR(wxGaugeNameStr) )
+             const wxString& name = wxGaugeNameStr )
     {
         Init();
 
@@ -38,10 +39,14 @@ public:
                  const wxSize& size = wxDefaultSize,
                  long style = wxGA_HORIZONTAL,
                  const wxValidator& validator = wxDefaultValidator,
-                 const wxString& name = wxASCII_STR(wxGaugeNameStr) );
+                 const wxString& name = wxGaugeNameStr );
 
+    void SetShadowWidth( int WXUNUSED(w) ) { }
+    void SetBezelFace( int WXUNUSED(w) ) { }
     void SetRange( int r );
     void SetValue( int pos );
+    int GetShadowWidth() const { return 0; }
+    int GetBezelFace() const { return 0; }
     int GetRange() const;
     int GetValue() const;
 
@@ -69,7 +74,7 @@ protected:
     virtual wxVisualAttributes GetDefaultAttributes() const;
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxGauge);
+    DECLARE_DYNAMIC_CLASS(wxGauge)
 };
 
 #endif

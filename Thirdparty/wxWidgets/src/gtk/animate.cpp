@@ -4,6 +4,7 @@
 // Author:      Francesco Montorsi
 // Modified By:
 // Created:     24/09/2006
+// Id:          $Id$
 // Copyright:   (c) Francesco Montorsi
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,10 +12,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#if wxUSE_ANIMATIONCTRL
+#if wxUSE_ANIMATIONCTRL && !defined(__WXUNIVERSAL__)
+
 #include "wx/animate.h"
-#include "wx/gtk/private/animate.h"
-#include "wx/generic/private/animate.h"
 
 #ifndef WX_PRECOMP
     #include "wx/image.h"
@@ -24,21 +24,20 @@
 
 #include "wx/wfstream.h"
 #include "wx/gtk/private.h"
-#include "wx/gtk/private/object.h"
+
+#include <gtk/gtk.h>
 
 
 // ============================================================================
 // implementation
 // ============================================================================
 
-extern "C" {
-static
-void gdk_pixbuf_area_updated(GdkPixbufLoader    *loader,
-                             gint               WXUNUSED(x),
-                             gint               WXUNUSED(y),
-                             gint               WXUNUSED(width),
-                             gint               WXUNUSED(height),
-                             wxAnimationGTKImpl *anim)
+void gdk_pixbuf_area_updated(GdkPixbufLoader *loader,
+                             gint             WXUNUSED(x),
+                             gint             WXUNUSED(y),
+                             gint             WXUNUSED(width),
+                             gint             WXUNUSED(height),
+                             wxAnimation      *anim)
 {
     if (anim && anim->GetPixbuf() == NULL)
     {
@@ -47,35 +46,50 @@ void gdk_pixbuf_area_updated(GdkPixbufLoader    *loader,
         anim->SetPixbuf(gdk_pixbuf_loader_get_animation(loader));
     }
 }
-}
+
 
 //-----------------------------------------------------------------------------
-// wxAnimationGTKImpl
+// wxAnimation
 //-----------------------------------------------------------------------------
 
-#ifdef wxHAS_NATIVE_ANIMATIONCTRL
+IMPLEMENT_DYNAMIC_CLASS(wxAnimation, wxAnimationBase)
 
-/* static */
-wxAnimationImpl *wxAnimationImpl::CreateDefault()
+wxAnimation::wxAnimation(const wxAnimation& that)
+    : base_type(that)
 {
-    return new wxAnimationGTKImpl();
+    m_pixbuf = that.m_pixbuf;
+    if (m_pixbuf)
+        g_object_ref(m_pixbuf);
 }
 
-#endif // wxHAS_NATIVE_ANIMATIONCTRL
-
-bool wxAnimationGTKImpl::IsCompatibleWith(wxClassInfo* ci) const
+wxAnimation::wxAnimation(GdkPixbufAnimation *p)
 {
-    return ci->IsKindOf(&wxAnimationCtrl::ms_classInfo);
+    m_pixbuf = p;
+    if ( m_pixbuf )
+        g_object_ref(m_pixbuf);
 }
 
-bool wxAnimationGTKImpl::LoadFile(const wxString &name, wxAnimationType WXUNUSED(type))
+wxAnimation& wxAnimation::operator=(const wxAnimation& that)
+{
+    if (this != &that)
+    {
+        base_type::operator=(that);
+        UnRef();
+        m_pixbuf = that.m_pixbuf;
+        if (m_pixbuf)
+            g_object_ref(m_pixbuf);
+    }
+    return *this;
+}
+
+bool wxAnimation::LoadFile(const wxString &name, wxAnimationType WXUNUSED(type))
 {
     UnRef();
     m_pixbuf = gdk_pixbuf_animation_new_from_file(wxGTK_CONV_FN(name), NULL);
     return IsOk();
 }
 
-bool wxAnimationGTKImpl::Load(wxInputStream &stream, wxAnimationType type)
+bool wxAnimation::Load(wxInputStream &stream, wxAnimationType type)
 {
     UnRef();
 
@@ -102,8 +116,6 @@ bool wxAnimationGTKImpl::Load(wxInputStream &stream, wxAnimationType type)
         loader = gdk_pixbuf_loader_new_with_type(anim_type, &error);
     else
         loader = gdk_pixbuf_loader_new();
-
-    wxGtkObject<GdkPixbufLoader> ensureUnrefLoader(loader);
 
     if (!loader ||
         error != NULL)  // even if the loader was allocated, an error could have happened
@@ -145,7 +157,6 @@ bool wxAnimationGTKImpl::Load(wxInputStream &stream, wxAnimationType type)
     if (!data_written)
     {
         wxLogDebug("Could not read data from the stream...");
-        gdk_pixbuf_loader_close(loader, NULL);
         return false;
     }
 
@@ -162,25 +173,25 @@ bool wxAnimationGTKImpl::Load(wxInputStream &stream, wxAnimationType type)
     return data_written;
 }
 
-wxImage wxAnimationGTKImpl::GetFrame(unsigned int WXUNUSED(frame)) const
+wxImage wxAnimation::GetFrame(unsigned int WXUNUSED(frame)) const
 {
     return wxNullImage;
 }
 
-wxSize wxAnimationGTKImpl::GetSize() const
+wxSize wxAnimation::GetSize() const
 {
     return wxSize(gdk_pixbuf_animation_get_width(m_pixbuf),
                   gdk_pixbuf_animation_get_height(m_pixbuf));
 }
 
-void wxAnimationGTKImpl::UnRef()
+void wxAnimation::UnRef()
 {
     if (m_pixbuf)
         g_object_unref(m_pixbuf);
     m_pixbuf = NULL;
 }
 
-void wxAnimationGTKImpl::SetPixbuf(GdkPixbufAnimation* p)
+void wxAnimation::SetPixbuf(GdkPixbufAnimation* p)
 {
     UnRef();
     m_pixbuf = p;
@@ -192,11 +203,10 @@ void wxAnimationGTKImpl::SetPixbuf(GdkPixbufAnimation* p)
 // wxAnimationCtrl
 //-----------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxAnimationCtrl, wxControl);
-
-wxBEGIN_EVENT_TABLE(wxAnimationCtrl, wxAnimationCtrlBase)
+IMPLEMENT_DYNAMIC_CLASS(wxAnimationCtrl, wxAnimationCtrlBase)
+BEGIN_EVENT_TABLE(wxAnimationCtrl, wxAnimationCtrlBase)
     EVT_TIMER(wxID_ANY, wxAnimationCtrl::OnTimer)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 void wxAnimationCtrl::Init()
 {
@@ -241,8 +251,6 @@ bool wxAnimationCtrl::Create( wxWindow *parent, wxWindowID id,
 
 wxAnimationCtrl::~wxAnimationCtrl()
 {
-    if (IsPlaying())
-        Stop();
     ResetAnim();
     ResetIter();
 }
@@ -257,22 +265,12 @@ bool wxAnimationCtrl::LoadFile(const wxString &filename, wxAnimationType type)
 
 bool wxAnimationCtrl::Load(wxInputStream& stream, wxAnimationType type)
 {
-    wxAnimation anim(CreateAnimation());
+    wxAnimation anim;
     if ( !anim.Load(stream, type) || !anim.IsOk() )
         return false;
 
     SetAnimation(anim);
     return true;
-}
-
-wxAnimation wxAnimationCtrl::CreateCompatibleAnimation()
-{
-    return MakeAnimFromImpl(new wxAnimationGTKImpl());
-}
-
-wxAnimationImpl* wxAnimationCtrl::DoCreateAnimationImpl() const
-{
-    return new wxAnimationGTKImpl();
 }
 
 void wxAnimationCtrl::SetAnimation(const wxAnimation &anim)
@@ -283,19 +281,8 @@ void wxAnimationCtrl::SetAnimation(const wxAnimation &anim)
     ResetAnim();
     ResetIter();
 
-    m_animation = anim;
-    if (!m_animation.IsOk())
-    {
-        m_anim = NULL;
-        DisplayStaticImage();
-        return;
-    }
-
-    wxCHECK_RET(anim.IsCompatibleWith(GetClassInfo()),
-                wxT("incompatible animation") );
-
     // copy underlying GdkPixbuf object
-    m_anim = AnimationImplGetPixbuf();
+    m_anim = anim.GetPixbuf();
 
     // m_anim may be null in case wxNullAnimation has been passed
     if (m_anim)
@@ -474,22 +461,6 @@ void wxAnimationCtrl::OnTimer(wxTimerEvent& WXUNUSED(ev))
         // no need to update the m_widget yet
         m_timer.Start(10, true);
     }
-}
-
-
-// helpers to safely access wxAnimationGTKImpl methods
-#define ANIMATION (static_cast<wxAnimationGTKImpl*>(GetAnimImpl()))
-
-GdkPixbufAnimation* wxAnimationCtrl::AnimationImplGetPixbuf() const
-{
-    wxCHECK_MSG( m_animation.IsOk(), NULL, wxT("invalid animation") );
-    return ANIMATION->GetPixbuf();
-}
-
-void wxAnimationCtrl::AnimationImplSetPixbuf(GdkPixbufAnimation* p)
-{
-    wxCHECK_RET( m_animation.IsOk(), wxT("invalid animation") );
-    ANIMATION->SetPixbuf(p);
 }
 
 #endif      // wxUSE_ANIMATIONCTRL

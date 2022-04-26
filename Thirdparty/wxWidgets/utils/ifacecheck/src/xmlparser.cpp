@@ -3,6 +3,7 @@
 // Purpose:     Parser of the API/interface XML files
 // Author:      Francesco Montorsi
 // Created:     2008/03/17
+// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Francesco Montorsi
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -10,6 +11,9 @@
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 // for all others, include the necessary headers
 #ifndef WX_PRECOMP
@@ -567,7 +571,7 @@ const wxMethod* wxClass::RecursiveUpwardFindMethod(const wxMethod& m,
             if (!parent) {
                 wxLogError("Could not find parent '%s' of class '%s'...",
                          m_parents[i], GetName());
-                return NULL;
+                return false;
             }
 
             const wxMethod *parentMethod = parent->RecursiveUpwardFindMethod(m, allclasses);
@@ -610,7 +614,7 @@ wxMethodPtrArray wxClass::RecursiveUpwardFindMethodsNamed(const wxString& name,
             if (!parent) {
                 wxLogError("Could not find parent '%s' of class '%s'...",
                          m_parents[i], GetName());
-                return wxMethodPtrArray();
+                return false;
             }
 
             wxMethodPtrArray temp = parent->RecursiveUpwardFindMethodsNamed(name, allclasses);

@@ -3,6 +3,7 @@
 // Purpose:     generic implementation of wxAcceleratorTable class
 // Author:      Robert Roebling
 // Modified:    VZ pn 31.05.01: use typed lists, Unicode cleanup, Add/Remove
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -18,6 +19,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_ACCEL
 
@@ -51,8 +55,8 @@ public:
 
     wxAccelRefData(const wxAccelRefData& data)
         : wxObjectRefData()
-        , m_accels(data.m_accels)
     {
+        m_accels = data.m_accels;
     }
 
     virtual ~wxAccelRefData()
@@ -75,7 +79,7 @@ public:
 // wxAcceleratorTable ctors
 // ----------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxAcceleratorTable, wxObject);
+IMPLEMENT_DYNAMIC_CLASS(wxAcceleratorTable, wxObject)
 
 wxAcceleratorTable::wxAcceleratorTable()
 {
@@ -210,7 +214,7 @@ wxObjectRefData *wxAcceleratorTable::CreateRefData() const
 
 wxObjectRefData *wxAcceleratorTable::CloneRefData(const wxObjectRefData *data) const
 {
-    return new wxAccelRefData(*static_cast<const wxAccelRefData*>(data));
+    return new wxAccelRefData(*(wxAccelRefData *)data);
 }
 
 #endif // wxUSE_ACCEL

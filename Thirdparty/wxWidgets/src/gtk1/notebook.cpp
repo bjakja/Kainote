@@ -2,6 +2,7 @@
 // Name:        src/gtk1/notebook.cpp
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling, Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -266,7 +267,8 @@ static void wxInsertChildInNotebook( wxNotebook* parent, wxWindow* child )
     // because without it GetBestSize (which is used to set the initial size
     // of controls if an explicit size is not given) will often report
     // incorrect sizes since the widget's style context is not fully known.
-    // See https://github.com/wxWidgets/wxWidgets/issues/20825
+    // See bug #901694 for details
+    // (http://sourceforge.net/tracker/?func=detail&aid=901694&group_id=9863&atid=109863)
     gtk_widget_set_parent(child->m_widget, parent->m_widget);
 
     // NOTE: This should be considered a temporary workaround until we can
@@ -278,9 +280,9 @@ static void wxInsertChildInNotebook( wxNotebook* parent, wxWindow* child )
 // wxNotebook
 //-----------------------------------------------------------------------------
 
-wxBEGIN_EVENT_TABLE(wxNotebook, wxBookCtrlBase)
+BEGIN_EVENT_TABLE(wxNotebook, wxBookCtrlBase)
     EVT_NAVIGATION_KEY(wxNotebook::OnNavigationKey)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 void wxNotebook::Init()
 {
@@ -511,12 +513,12 @@ bool wxNotebook::SetPageImage( size_t page, int image )
     wxASSERT( HasImageList() ); /* Just in case */
 
     /* Construct the new pixmap */
-    const wxBitmap bmp = GetImageList()->GetBitmap(image);
-    GdkPixmap *pixmap = bmp.GetPixmap();
+    const wxBitmap *bmp = GetImageList()->GetBitmapPtr(image);
+    GdkPixmap *pixmap = bmp->GetPixmap();
     GdkBitmap *mask = NULL;
-    if ( bmp.GetMask() )
+    if ( bmp->GetMask() )
     {
-        mask = bmp.GetMask()->m_bitmap;
+        mask = bmp->GetMask()->GetBitmap();
     }
 
     if (pixmapwid == NULL)
@@ -585,6 +587,7 @@ bool wxNotebook::DeleteAllPages()
 
     wxASSERT_MSG( GetPageCount() == 0, wxT("all pages must have been deleted") );
 
+    InvalidateBestSize();
     return wxNotebookBase::DeleteAllPages();
 }
 
@@ -659,7 +662,7 @@ bool wxNotebook::InsertPage( size_t position,
     else
         m_pagesData.Insert( position, nb_page );
 
-    m_pages.insert(m_pages.begin() + position, win);
+    m_pages.Insert(win, position);
 
     nb_page->m_box = gtk_hbox_new( FALSE, 1 );
     gtk_container_border_width( GTK_CONTAINER(nb_page->m_box), 2 );
@@ -678,12 +681,12 @@ bool wxNotebook::InsertPage( size_t position,
     {
         wxASSERT( HasImageList() );
 
-        const wxBitmap bmp = GetImageList()->GetBitmap(imageId);
-        GdkPixmap *pixmap = bmp.GetPixmap();
+        const wxBitmap *bmp = GetImageList()->GetBitmapPtr(imageId);
+        GdkPixmap *pixmap = bmp->GetPixmap();
         GdkBitmap *mask = NULL;
-        if ( bmp.GetMask() )
+        if ( bmp->GetMask() )
         {
-            mask = bmp.GetMask()->m_bitmap;
+            mask = bmp->GetMask()->GetBitmap();
         }
 
         GtkWidget *pixmapwid = gtk_pixmap_new (pixmap, mask );

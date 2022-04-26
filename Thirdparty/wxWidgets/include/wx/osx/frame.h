@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -21,15 +22,17 @@ class WXDLLIMPEXP_CORE wxFrame: public wxFrameBase
 {
 public:
     // construction
-    wxFrame() { }
+    wxFrame() { Init(); }
     wxFrame(wxWindow *parent,
             wxWindowID id,
             const wxString& title,
             const wxPoint& pos = wxDefaultPosition,
             const wxSize& size = wxDefaultSize,
             long style = wxDEFAULT_FRAME_STYLE,
-            const wxString& name = wxASCII_STR(wxFrameNameStr))
+            const wxString& name = wxFrameNameStr)
     {
+        Init();
+
         Create(parent, id, title, pos, size, style, name);
     }
 
@@ -39,18 +42,19 @@ public:
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = wxDEFAULT_FRAME_STYLE,
-                const wxString& name = wxASCII_STR(wxFrameNameStr));
+                const wxString& name = wxFrameNameStr);
+
+    virtual ~wxFrame();
 
     // implementation only from now on
     // -------------------------------
 
     // get the origin of the client area (which may be different from (0, 0)
     // if the frame has a toolbar) in client coordinates
-    virtual wxPoint GetClientAreaOrigin() const wxOVERRIDE;
+    virtual wxPoint GetClientAreaOrigin() const;
 
     // override some more virtuals
-    virtual bool Show(bool show = true) wxOVERRIDE;
-    virtual bool Enable(bool enable = true) wxOVERRIDE;
+    virtual bool Enable(bool enable = true) ;
 
     // event handlers
     void OnActivate(wxActivateEvent& event);
@@ -60,9 +64,9 @@ public:
 #if wxUSE_TOOLBAR
     virtual wxToolBar* CreateToolBar(long style = -1,
                                      wxWindowID id = -1,
-                                     const wxString& name = wxASCII_STR(wxToolBarNameStr)) wxOVERRIDE;
+                                     const wxString& name = wxToolBarNameStr);
 
-    virtual void SetToolBar(wxToolBar *toolbar) wxOVERRIDE;
+    virtual void SetToolBar(wxToolBar *toolbar);
 #endif // wxUSE_TOOLBAR
 
     // Status bar
@@ -70,37 +74,45 @@ public:
     virtual wxStatusBar* OnCreateStatusBar(int number = 1,
                                            long style = wxSTB_DEFAULT_STYLE,
                                            wxWindowID id = 0,
-                                           const wxString& name = wxASCII_STR(wxStatusLineNameStr)) wxOVERRIDE;
-
-    virtual void SetStatusBar(wxStatusBar *statbar) wxOVERRIDE;
+                                           const wxString& name = wxStatusLineNameStr);
 #endif // wxUSE_STATUSBAR
+
+    // called by wxWindow whenever it gets focus
+    void SetLastFocus(wxWindow *win) { m_winLastFocused = win; }
+    wxWindow *GetLastFocus() const { return m_winLastFocused; }
 
     void PositionBars();
 
     // internal response to size events
-    virtual void MacOnInternalSize() wxOVERRIDE { PositionBars(); }
+    virtual void MacOnInternalSize() { PositionBars(); }
 
 protected:
+    // common part of all ctors
+    void Init();
+
 #if wxUSE_TOOLBAR
-    virtual void PositionToolBar() wxOVERRIDE;
+    virtual void PositionToolBar();
 #endif
 #if wxUSE_STATUSBAR
-    virtual void PositionStatusBar() wxOVERRIDE;
+    virtual void PositionStatusBar();
 #endif
 
     // override base class virtuals
-    virtual void DoGetClientSize(int *width, int *height) const wxOVERRIDE;
-    virtual void DoSetClientSize(int width, int height) wxOVERRIDE;
+    virtual void DoGetClientSize(int *width, int *height) const;
+    virtual void DoSetClientSize(int width, int height);
 
-#if wxUSE_MENUBAR
-    virtual void DetachMenuBar() wxOVERRIDE;
-    virtual void AttachMenuBar(wxMenuBar *menubar) wxOVERRIDE;
+#if wxUSE_MENUS
+    virtual void DetachMenuBar();
+    virtual void AttachMenuBar(wxMenuBar *menubar);
 #endif
 
-    virtual bool        MacIsChildOfClientArea( const wxWindow* child ) const wxOVERRIDE;
+    // the last focused child: we restore focus to it on activation
+    wxWindow             *m_winLastFocused;
 
-    wxDECLARE_EVENT_TABLE();
-    wxDECLARE_DYNAMIC_CLASS(wxFrame);
+    virtual bool        MacIsChildOfClientArea( const wxWindow* child ) const ;
+
+    DECLARE_EVENT_TABLE()
+    DECLARE_DYNAMIC_CLASS(wxFrame)
 };
 
 #endif

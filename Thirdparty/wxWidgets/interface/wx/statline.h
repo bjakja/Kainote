@@ -2,6 +2,7 @@
 // Name:        statline.h
 // Purpose:     interface of wxStaticLine
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 

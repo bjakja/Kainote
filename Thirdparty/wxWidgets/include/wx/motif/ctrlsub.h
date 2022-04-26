@@ -3,7 +3,8 @@
 // Purpose:     common functionality of wxItemContainer-derived controls
 // Author:      Vadim Zeitlin
 // Created:     2007-07-25
-// Copyright:   (c) 2007 Vadim Zeitlin <vadim@wxwidgets.org>
+// RCS-ID:      $Id$
+// Copyright:   (c) 2007 Vadim Zeitlin <vadim@wxwindows.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -31,7 +32,7 @@ protected:
     }
 
 private:
-    wxDECLARE_ABSTRACT_CLASS(wxControlWithItems);
+    DECLARE_ABSTRACT_CLASS(wxControlWithItems)
     wxDECLARE_NO_COPY_CLASS(wxControlWithItems);
 };
 

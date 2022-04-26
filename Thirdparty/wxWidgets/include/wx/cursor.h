@@ -1,33 +1,25 @@
 /////////////////////////////////////////////////////////////////////////////
 // Name:        wx/cursor.h
 // Purpose:     wxCursor base header
-// Author:      Julian Smart, Vadim Zeitlin
+// Author:      Julian Smart
+// Modified by:
 // Created:
 // Copyright:   (c) Julian Smart
-//              (c) 2014 Vadim Zeitlin (wxCursorBase)
+// RCS-ID:      $Id$
 // Licence:     wxWindows Licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_CURSOR_H_BASE_
 #define _WX_CURSOR_H_BASE_
 
-#include "wx/gdiobj.h"
-#include "wx/gdicmn.h"
+#include "wx/defs.h"
 
-// Under most ports, wxCursor derives directly from wxGDIObject, but in wxMSW
-// there is an intermediate wxGDIImage class.
-#ifdef __WXMSW__
-    #include "wx/msw/gdiimage.h"
-#else
-    typedef wxGDIObject wxGDIImage;
-#endif
+/*
+    wxCursor classes should have the following public API:
 
-class WXDLLIMPEXP_CORE wxCursorBase : public wxGDIImage
+class WXDLLIMPEXP_CORE wxCursor : public wxGDIObject
 {
 public:
-/*
-    wxCursor classes should provide the following ctors:
-
     wxCursor();
     wxCursor(const wxImage& image);
     wxCursor(const wxString& name,
@@ -37,10 +29,10 @@ public:
 #if WXWIN_COMPATIBILITY_2_8
     wxCursor(int id) { InitFromStock((wxStockCursor)id); }
 #endif
-*/
-
-    virtual wxPoint GetHotSpot() const { return wxDefaultPosition; }
+    virtual ~wxCursor();
 };
+
+*/
 
 #if defined(__WXMSW__)
     #define wxCURSOR_DEFAULT_TYPE   wxBITMAP_TYPE_CUR_RESOURCE
@@ -67,9 +59,12 @@ public:
 #elif defined(__WXMAC__)
     #define wxCURSOR_DEFAULT_TYPE   wxBITMAP_TYPE_MACCURSOR_RESOURCE
     #include "wx/osx/cursor.h"
-#elif defined(__WXQT__)
-    #define wxCURSOR_DEFAULT_TYPE   wxBITMAP_TYPE_CUR
-    #include "wx/qt/cursor.h"
+#elif defined(__WXCOCOA__)
+    #define wxCURSOR_DEFAULT_TYPE   wxBITMAP_TYPE_MACCURSOR_RESOURCE
+    #include "wx/cocoa/cursor.h"
+#elif defined(__WXPM__)
+    #define wxCURSOR_DEFAULT_TYPE   wxBITMAP_TYPE_CUR_RESOURCE
+    #include "wx/os2/cursor.h"
 #endif
 
 #include "wx/utils.h"

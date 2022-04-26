@@ -5,6 +5,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     10.09.00
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -14,7 +15,16 @@
 
 #if wxUSE_TIPWINDOW
 
-#include "wx/popupwin.h"
+#if wxUSE_POPUPWIN
+    #include "wx/popupwin.h"
+
+    #define wxTipWindowBase wxPopupTransientWindow
+#else
+    #include "wx/frame.h"
+
+    #define wxTipWindowBase wxFrame
+#endif
+#include "wx/arrstr.h"
 
 class WXDLLIMPEXP_FWD_CORE wxTipWindowView;
 
@@ -22,7 +32,7 @@ class WXDLLIMPEXP_FWD_CORE wxTipWindowView;
 // wxTipWindow
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxTipWindow : public wxPopupTransientWindow
+class WXDLLIMPEXP_CORE wxTipWindow : public wxTipWindowBase
 {
 public:
     // the mandatory ctor parameters are: the parent window and the text to
@@ -60,15 +70,23 @@ protected:
     // event handlers
     void OnMouseClick(wxMouseEvent& event);
 
-    virtual void OnDismiss() wxOVERRIDE;
+#if !wxUSE_POPUPWIN
+    void OnActivate(wxActivateEvent& event);
+    void OnKillFocus(wxFocusEvent& event);
+#else // wxUSE_POPUPWIN
+    virtual void OnDismiss();
+#endif // wxUSE_POPUPWIN/!wxUSE_POPUPWIN
 
 private:
+    wxArrayString m_textLines;
+    wxCoord m_heightLine;
+
     wxTipWindowView *m_view;
 
     wxTipWindow** m_windowPtr;
     wxRect m_rectBound;
 
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
 
     friend class wxTipWindowView;
 

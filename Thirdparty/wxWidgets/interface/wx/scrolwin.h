@@ -2,6 +2,7 @@
 // Name:        scrolwin.h
 // Purpose:     interface of wxScrolled template
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -32,9 +33,6 @@ enum wxScrollbarVisibility
     - ::wxScrolledCanvas, aka wxScrolled<wxWindow>, derives from wxWindow and
       so doesn't handle children specially. This is suitable e.g. for
       implementing scrollable controls such as tree or list controls.
-
-    @note
-    See wxScrolled::Create() if you want to use wxScrolled with a custom class.
 
     Starting from version 2.4 of wxWidgets, there are several ways to use a
     ::wxScrolledWindow (and now wxScrolled). In particular, there are
@@ -101,19 +99,6 @@ enum wxScrollbarVisibility
     of (10,-90).
 
     @beginStyleTable
-    @style{wxHSCROLL}
-           If this style is specified and ::wxVSCROLL isn't, the window will be
-           scrollable only in horizontal direction (by default, i.e. if neither
-           this style nor ::wxVSCROLL is specified, it scrolls in both
-           directions).
-    @style{wxVSCROLL}
-           If this style is specified and ::wxHSCROLL isn't, the window will be
-           scrollable only in vertical direction (by default, i.e. if neither
-           this style nor ::wxHSCROLL is specified, it scrolls in both
-           directions).
-    @style{wxALWAYS_SHOW_SB}
-           Since wxWidgets 2.9.5, specifying this style makes the window always
-           show its scrollbars, even if they are not used. See ShowScrollbars().
     @style{wxRETAINED}
            Uses a backing pixmap to speed refreshes. Motif only.
     @endStyleTable
@@ -198,6 +183,7 @@ public:
                long style = wxHSCROLL | wxVSCROLL,
                const wxString& name = "scrolledWindow");
 
+
     /**
         Translates the logical coordinates to the device ones. For example, if
         a window is scrolled 10 pixels to the bottom, the device coordinates of
@@ -213,7 +199,6 @@ public:
         @see CalcUnscrolledPosition()
     */
     void CalcScrolledPosition(int x, int y, int* xx, int* yy) const;
-    wxPoint CalcScrolledPosition(const wxPoint& pt) const;
 
     /**
         Translates the device coordinates to the logical ones. For example, if
@@ -230,17 +215,11 @@ public:
         @see CalcScrolledPosition()
     */
     void CalcUnscrolledPosition(int x, int y, int* xx, int* yy) const;
-    wxPoint CalcUnscrolledPosition(const wxPoint& pt) const;
 
     /**
         Creates the window for two-step construction. Derived classes
-        should call or replace this function. If it is not replaced,
-        bear in mind that it calls T::Create() through the global function
-        wxCreateScrolled() so if T::Create() has a different signature
-        than wxScrolled::Create() you should implement overloaded
-        wxCreateScrolled() which would call T::Create() in the correct manner.
-
-        @see wxScrolled::wxScrolled() and wxCreateScrolled() for details.
+        should call or replace this function. See wxScrolled::wxScrolled()
+        for details.
     */
     bool Create(wxWindow* parent, wxWindowID id = -1,
                 const wxPoint& pos = wxDefaultPosition,
@@ -304,22 +283,21 @@ public:
     void DoPrepareDC(wxDC& dc);
 
     /**
-        Enable or disable use of wxWindow::ScrollWindow() for scrolling.
-
-        By default, when a scrolled window is logically scrolled,
-        wxWindow::ScrollWindow() is called on the underlying window which
-        scrolls the window contents and only invalidates the part of the window
-        newly brought into view. If @false is passed as an argument, then this
-        "physical scrolling" is disabled and the window is entirely invalidated
-        whenever it is scrolled by calling wxWindow::Refresh().
-
-        It should be rarely necessary to disable physical scrolling, so this
-        method shouldn't be called in normal circumstances.
+        Enable or disable physical scrolling in the given direction. Physical
+        scrolling is the physical transfer of bits up or down the
+        screen when a scroll event occurs. If the application scrolls by a
+        variable amount (e.g. if there are different font sizes) then physical
+        scrolling will not work, and you should switch it off. Note that you
+        will have to reposition child windows yourself, if physical scrolling
+        is disabled.
 
         @param xScrolling
             If @true, enables physical scrolling in the x direction.
         @param yScrolling
             If @true, enables physical scrolling in the y direction.
+
+        @remarks Physical scrolling may not be available on all platforms. Where
+                 it is available, it is enabled by default.
     */
     void EnableScrolling(bool xScrolling, bool yScrolling);
 
@@ -339,8 +317,6 @@ public:
                 user to scroll the window.
             - wxSHOW_SB_DEFAULT: To restore the default behaviour described
                 above.
-
-        Note that the window must be created before calling this method.
 
         @param horz
             The desired visibility for the horizontal scrollbar.
@@ -547,7 +523,7 @@ public:
     void SetTargetWindow(wxWindow *window);
     wxWindow *GetTargetWindow() const;
 
-
+    
     void SetTargetRect(const wxRect& rect);
     wxRect GetTargetRect() const;
 
@@ -570,32 +546,19 @@ public:
        window.
      */
     void StopAutoScrolling();
-
+    
     /**
        This method can be overridden in a derived class to forbid sending the
        auto scroll events - note that unlike StopAutoScrolling() it doesn't
        stop the timer, so it will be called repeatedly and will typically
        return different values depending on the current mouse position
-
+    
        The base class version just returns true.
     */
     virtual bool SendAutoScrollEvents(wxScrollWinEvent& event) const;
 
+
 protected:
-    /**
-        This method can be overridden in a derived class to prevent scrolling
-        the child window into view automatically when it gets focus.
-
-        The default behaviour is to scroll this window to show its currently
-        focused child automatically, to ensure that the user can interact with
-        it. This is usually helpful, but can be undesirable for some windows,
-        in which case this method can be overridden to return @false for them
-        to prevent any scrolling from taking place when such windows get focus.
-
-        @since 3.1.3
-     */
-    virtual bool ShouldScrollToChildOnFocus(wxWindow* child);
-
     /**
         Function which must be overridden to implement the size available for
         the scroll target for the given size of the main window.
@@ -611,32 +574,6 @@ protected:
     virtual wxSize GetSizeAvailableForScrollTarget(const wxSize& size);
 };
 
-/**
-    Helper function which is called from wxScrolled::Create() to actually create
-    a scrolled window. By default it just passes the call to the base class Create():
-    @code
-    self->Create(parent, winid, pos, size, style, name);
-    @endcode
-
-    You should provide overloaded implementation of this function for the custom
-    base class if this class is created in a different manner, like it is e.g.
-    done for wxControl:
-    @code
-    bool wxCreateScrolled(wxControl* self,
-                          wxWindow *parent, wxWindowID winid,
-                          const wxPoint& pos, const wxSize& size,
-                          long style, const wxString& name)
-    {
-         return self->Create(parent, winid, pos, size, style, wxDefaultValidator, name);
-    }
-    @endcode
-
-    @since 3.1.3
-*/
-bool wxCreateScrolled(T* self,
-                      wxWindow *parent, wxWindowID winid,
-                      const wxPoint& pos, const wxSize& size,
-                      long style, const wxString& name);
 
 /**
     Scrolled window derived from wxPanel.

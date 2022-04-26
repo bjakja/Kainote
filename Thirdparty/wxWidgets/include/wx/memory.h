@@ -4,6 +4,7 @@
 // Author:      Arthur Seaton, Julian Smart
 // Modified by:
 // Created:     29/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,9 +12,9 @@
 #ifndef _WX_MEMORY_H_
 #define _WX_MEMORY_H_
 
-#include "wx\defs.h"
-#include "wx\string.h"
-#include "wx\msgout.h"
+#include "wx/defs.h"
+#include "wx/string.h"
+#include "wx/msgout.h"
 
 #if wxUSE_MEMORY_TRACING || wxUSE_DEBUG_CONTEXT
 
@@ -42,13 +43,18 @@ WXDLLIMPEXP_BASE void wxDebugFree(void * buf, bool isVect = false);
 
 #if defined(__SUNCC__)
     #define wxUSE_ARRAY_MEMORY_OPERATORS 0
+#elif !( defined (__VISUALC__) && (__VISUALC__ <= 1020) )
+    #define wxUSE_ARRAY_MEMORY_OPERATORS 1
 #elif defined (__SGI_CC_)
     // only supported by -n32 compilers
     #ifndef __EDG_ABI_COMPATIBILITY_VERSION
         #define wxUSE_ARRAY_MEMORY_OPERATORS 0
     #endif
-#else
+#elif !( defined (__VISUALC__) && (__VISUALC__ <= 1020) )
     #define wxUSE_ARRAY_MEMORY_OPERATORS 1
+#else
+    // ::operator new[] is a recent C++ feature, so assume it's not supported
+    #define wxUSE_ARRAY_MEMORY_OPERATORS 0
 #endif
 
 // devik 2000-8-29: All new/delete ops are now inline because they can't
@@ -104,7 +110,8 @@ void operator delete[] (void * buf);
 #endif // wxUSE_ARRAY_MEMORY_OPERATORS
 #endif // defined(__WINDOWS__) && (defined(WXUSINGDLL) || defined(WXMAKINGDLL_BASE))
 
-#if defined(__VISUALC__)
+// VC++ 6.0
+#if ( defined(__VISUALC__) && (__VISUALC__ >= 1200) )
 inline void operator delete(void* pData, wxChar* /* fileName */, int /* lineNum */)
 {
     wxDebugFree(pData, false);
@@ -113,7 +120,7 @@ inline void operator delete[](void* pData, wxChar* /* fileName */, int /* lineNu
 {
     wxDebugFree(pData, true);
 }
-#endif // __VISUALC__
+#endif // __VISUALC__>=1200
 #endif // wxUSE_GLOBAL_MEMORY_OPERATORS
 
 //**********************************************************************************
@@ -215,7 +222,7 @@ protected:
     // Returns the amount of padding needed after something of the given
     // size. This is so that when we cast pointers backwards and forwards
     // the pointer value will be valid for a wxMarkerType.
-    static size_t GetPadding (size_t size) ;
+    static size_t GetPadding (const size_t size) ;
 
     // Traverse the list.
     static void TraverseList (PmSFV, wxMemStruct *from = NULL);
@@ -244,17 +251,17 @@ public:
 
     // Calculated from the request size and any padding needed
     // before the final marker.
-    static size_t PaddedSize (size_t reqSize);
+    static size_t PaddedSize (const size_t reqSize);
 
     // Calc the total amount of space we need from the system
     // to satisfy a caller request. This includes all padding.
-    static size_t TotSize (size_t reqSize);
+    static size_t TotSize (const size_t reqSize);
 
     // Return valid pointers to offsets within the allocated memory.
     static char * StructPos (const char * buf);
     static char * MidMarkerPos (const char * buf);
     static char * CallerMemPos (const char * buf);
-    static char * EndMarkerPos (const char * buf, size_t size);
+    static char * EndMarkerPos (const char * buf, const size_t size);
 
     // Given a pointer to the start of the caller requested area
     // return a pointer to the start of the entire alloc\'d buffer.
@@ -264,7 +271,7 @@ public:
     static wxMemStruct * GetHead () { return m_head; }
     static wxMemStruct * GetTail () { return m_tail; }
 
-    // Set the list sentinels.
+    // Set the list sentinals.
     static wxMemStruct * SetHead (wxMemStruct * st) { return (m_head = st); }
     static wxMemStruct * SetTail (wxMemStruct * st) { return (m_tail = st); }
 
@@ -346,8 +353,15 @@ void WXDLLIMPEXP_BASE wxTraceLevel(int level, const wxChar *fmt ...) WX_ATTRIBUT
 
 #define WXDEBUG_DUMPDELAYCOUNTER
 
-#define wxTrace(fmt)
-#define wxTraceLevel(l, fmt)
+// Borland C++ Builder 6 seems to have troubles with inline functions (see bug
+// 819700)
+#if 0
+    inline void wxTrace(const wxChar *WXUNUSED(fmt)) {}
+    inline void wxTraceLevel(int WXUNUSED(level), const wxChar *WXUNUSED(fmt)) {}
+#else
+    #define wxTrace(fmt)
+    #define wxTraceLevel(l, fmt)
+#endif
 
 #define WXTRACE true ? (void)0 : wxTrace
 #define WXTRACELEVEL true ? (void)0 : wxTraceLevel

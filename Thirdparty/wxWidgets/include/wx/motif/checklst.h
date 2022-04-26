@@ -5,6 +5,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -16,7 +17,7 @@
 
 class WXDLLIMPEXP_CORE wxCheckListBox : public wxCheckListBoxBase
 {
-    wxDECLARE_DYNAMIC_CLASS(wxCheckListBox);
+    DECLARE_DYNAMIC_CLASS(wxCheckListBox)
 
 public:
     // ctors
@@ -28,7 +29,7 @@ public:
         const wxString choices[] = NULL,
         long style = 0,
         const wxValidator& validator = wxDefaultValidator,
-        const wxString& name = wxASCII_STR(wxListBoxNameStr));
+        const wxString& name = wxListBoxNameStr);
 
     wxCheckListBox(wxWindow *parent, wxWindowID id,
         const wxPoint& pos,
@@ -36,7 +37,7 @@ public:
         const wxArrayString& choices,
         long style = 0,
         const wxValidator& validator = wxDefaultValidator,
-        const wxString& name = wxASCII_STR(wxListBoxNameStr));
+        const wxString& name = wxListBoxNameStr);
 
     bool Create(wxWindow *parent, wxWindowID id,
         const wxPoint& pos = wxDefaultPosition,
@@ -44,7 +45,7 @@ public:
         int n = 0, const wxString choices[] = NULL,
         long style = 0,
         const wxValidator& validator = wxDefaultValidator,
-        const wxString& name = wxASCII_STR(wxListBoxNameStr));
+        const wxString& name = wxListBoxNameStr);
 
     bool Create(wxWindow *parent, wxWindowID id,
         const wxPoint& pos,
@@ -52,7 +53,7 @@ public:
         const wxArrayString& choices,
         long style = 0,
         const wxValidator& validator = wxDefaultValidator,
-        const wxString& name = wxASCII_STR(wxListBoxNameStr));
+        const wxString& name = wxListBoxNameStr);
 
     // items may be checked
     bool IsChecked(unsigned int uiIndex) const;
@@ -69,7 +70,7 @@ public:
 private:
     void DoToggleItem( int item, int x );
 private:
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
 };
 
 #endif

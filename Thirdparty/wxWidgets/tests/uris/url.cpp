@@ -3,6 +3,7 @@
 // Purpose:     wxURL unit test
 // Author:      Francesco Montorsi
 // Created:     2009-5-31
+// RCS-ID:      $Id: uris.cpp 58272 2009-01-21 17:02:11Z VZ $
 // Copyright:   (c) 2009 Francesco Montorsi
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -12,6 +13,9 @@
 
 #include "testprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
     #include "wx/wx.h"
@@ -19,8 +23,6 @@
 
 #include "wx/url.h"
 #include "wx/mstream.h"
-#include "wx/scopedptr.h"
-#include "wx/utils.h"
 
 // ----------------------------------------------------------------------------
 // test class
@@ -29,7 +31,7 @@
 class URLTestCase : public CppUnit::TestCase
 {
 public:
-    URLTestCase();
+    URLTestCase(); 
     ~URLTestCase();
 
 private:
@@ -41,7 +43,7 @@ private:
     void GetInputStream();
     void CopyAndAssignment();
 
-    wxDECLARE_NO_COPY_CLASS(URLTestCase);
+    DECLARE_NO_COPY_CLASS(URLTestCase)
 };
 
 // register in the unnamed registry so that these tests are run by default
@@ -69,26 +71,20 @@ void URLTestCase::GetInputStream()
         return;
     }
 
-    wxURL url("http://www.wxwidgets.org/assets/img/header-logo.png");
+    wxURL url("http://wxwidgets.org/logo9.jpg");
     CPPUNIT_ASSERT_EQUAL(wxURL_NOERR, url.GetError());
 
-    wxScopedPtr<wxInputStream> in_stream(url.GetInputStream());
-    if ( !in_stream && IsAutomaticTest() )
-    {
-        // Sometimes the connection fails during CI runs, don't consider this
-        // as a fatal error because it happens from time to time and there is
-        // nothing we can do about it.
-        WARN("Connection to www.wxwidgets.org failed, skipping the test.");
-        return;
-    }
-
-    CPPUNIT_ASSERT(in_stream);
-    CPPUNIT_ASSERT(in_stream->IsOk());
+    wxInputStream *in_stream = url.GetInputStream();
+    CPPUNIT_ASSERT(in_stream && in_stream->IsOk());
 
     wxMemoryOutputStream ostream;
     CPPUNIT_ASSERT(in_stream->Read(ostream).GetLastError() == wxSTREAM_EOF);
 
-    CPPUNIT_ASSERT_EQUAL(17334, ostream.GetSize());
+    // wx logo image currently is 13219 bytes
+    CPPUNIT_ASSERT(ostream.GetSize() == 13219);
+
+    // we have to delete the object created by GetInputStream()
+    delete in_stream;
 }
 
 void URLTestCase::CopyAndAssignment()
@@ -128,9 +124,7 @@ void URLTestCase::CopyAndAssignment()
     CPPUNIT_ASSERT(url1 == url2);
 
     // assignment to self
-    wxCLANG_WARNING_SUPPRESS(self-assign-overloaded)
     url2 = url2;
-    wxCLANG_WARNING_RESTORE(self-assign-overloaded)
 
     // check for destructor (with base pointer!)
     puri = new wxURL();

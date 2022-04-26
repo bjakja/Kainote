@@ -1,3 +1,4 @@
+.\" $Id: TIFFSetDirectory.3tiff,v 1.2 2005/11/02 11:07:18 dron Exp $
 .\"
 .\" Copyright (c) 1988-1997 Sam Leffler
 .\" Copyright (c) 1991-1997 Silicon Graphics, Inc.
@@ -32,7 +33,7 @@ file
 .sp
 .BI "int TIFFSetDirectory(TIFF *" tif ", tdir_t " dirnum ")"
 .br
-.BI "int TIFFSetSubDirectory(TIFF *" tif ", uint64 " diroff ")"
+.BI "int TIFFSetSubDirectory(TIFF *" tif ", uint32 " diroff ")"
 .SH DESCRIPTION
 .I TIFFSetDirectory
 changes the current directory and reads its contents with
@@ -75,4 +76,4 @@ next directory in a file.
 .IR libtiff (3TIFF)
 .PP
 Libtiff library home page:
-.BR http://www.simplesystems.org/libtiff/
+.BR http://www.remotesensing.org/libtiff/

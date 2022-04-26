@@ -4,14 +4,18 @@
 // Author:      Karsten Ballueder
 // Modified by:
 // Created:     04/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Karsten Ballueder
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
-#if wxUSE_HELP
+#if wxUSE_HELP && !defined(__WXWINCE__)
 
 #ifndef WX_PRECOMP
     #include "wx/list.h"
@@ -31,8 +35,12 @@
 #include <ctype.h>
 #include <sys/stat.h>
 
-#if !defined(__WINDOWS__)
+#if !defined(__WINDOWS__) && !defined(__OS2__)
     #include   <unistd.h>
+#endif
+
+#ifdef __WINDOWS__
+#include "wx/msw/mslu.h"
 #endif
 
 #ifdef __WXMSW__
@@ -59,7 +67,7 @@
 // Is browser a netscape browser?
 #define WXEXTHELP_ENVVAR_BROWSERISNETSCAPE  wxT("WX_HELPBROWSER_NS")
 
-wxIMPLEMENT_CLASS(wxExtHelpController, wxHelpControllerBase);
+IMPLEMENT_CLASS(wxExtHelpController, wxHelpControllerBase)
 
 wxExtHelpController::wxExtHelpController(wxWindow* parentWindow)
                    : wxHelpControllerBase(parentWindow)
@@ -131,8 +139,7 @@ public:
     wxString doc;
 
     wxExtHelpMapEntry(int iid, wxString const &iurl, wxString const &idoc)
-        : entryid(iid), url(iurl), doc(idoc)
-        { }
+        { entryid = iid; url = iurl; doc = idoc; }
 };
 
 void wxExtHelpController::DeleteList()
@@ -346,9 +353,9 @@ bool wxExtHelpController::DisplaySection(int sectionNo)
 
     wxBusyCursor b; // display a busy cursor
     wxList::compatibility_iterator node = m_MapList->GetFirst();
+    wxExtHelpMapEntry *entry;
     while (node)
     {
-        wxExtHelpMapEntry* entry;
         entry = (wxExtHelpMapEntry *)node->GetData();
         if (entry->entryid == sectionNo)
             return DisplayHelp(entry->url);
@@ -420,7 +427,7 @@ bool wxExtHelpController::KeywordSearch(const wxString& k,
                 // choices[idx] = (**i).doc.Contains((**i).doc.Before(WXEXTHELP_COMMENTCHAR));
                 //if (choices[idx].empty()) // didn't contain the ';'
                 //   choices[idx] = (**i).doc;
-                choices[idx].clear();
+                choices[idx] = wxEmptyString;
                 for (int j=0; ; j++)
                 {
                     wxChar targetChar = entry->doc.c_str()[j];

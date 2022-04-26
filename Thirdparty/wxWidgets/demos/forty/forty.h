@@ -4,6 +4,7 @@
 // Author:      Chris Breeze
 // Modified by:
 // Created:     21/07/97
+// RCS-ID:      $Id$
 // Copyright:   (c) 1993-1998 Chris Breeze
 // Licence:     wxWindows licence
 //---------------------------------------------------------------------------
@@ -17,7 +18,7 @@ class FortyApp: public wxApp
 public:
     FortyApp(){}
     virtual ~FortyApp();
-    bool OnInit() wxOVERRIDE;
+    bool OnInit();
 
     static const wxColour& BackgroundColour();
     static const wxColour& TextColour();
@@ -31,14 +32,14 @@ private:
     wxString m_helpFile;
 };
 
-wxDECLARE_APP(FortyApp);
+DECLARE_APP(FortyApp)
 
 class FortyCanvas;
 class FortyFrame: public wxFrame
 {
 public:
     FortyFrame(wxFrame* frame, const wxString& title, const wxPoint& pos, const wxSize& size, bool largecards);
-    virtual ~FortyFrame(){}
+    virtual ~FortyFrame(){};
 
     void OnCloseWindow(wxCloseEvent& event);
 
@@ -56,7 +57,7 @@ public:
 
     FortyCanvas* GetCanvas() { return m_canvas; }
 
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
 
 private:
     enum MenuCommands {

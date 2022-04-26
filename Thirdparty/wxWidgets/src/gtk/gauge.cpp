@@ -2,6 +2,7 @@
 // Name:        src/gtk/gauge.cpp
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -13,7 +14,7 @@
 
 #include "wx/gauge.h"
 
-#include "wx/gtk/private/wrapgtk.h"
+#include <gtk/gtk.h>
 
 //-----------------------------------------------------------------------------
 // wxGauge
@@ -70,6 +71,17 @@ void wxGauge::DoSetGauge()
                                    m_rangeMax ? ((double)m_gaugePos)/m_rangeMax : 0.0);
 }
 
+wxSize wxGauge::DoGetBestSize() const
+{
+    wxSize best;
+    if (HasFlag(wxGA_VERTICAL))
+        best = wxSize(28, 100);
+    else
+        best = wxSize(100, 28);
+    CacheBestSize(best);
+    return best;
+}
+
 void wxGauge::SetRange( int range )
 {
     m_rangeMax = range;
@@ -116,7 +128,7 @@ wxVisualAttributes wxGauge::GetDefaultAttributes() const
 wxVisualAttributes
 wxGauge::GetClassDefaultAttributes(wxWindowVariant WXUNUSED(variant))
 {
-    return GetDefaultAttributesFromGTKWidget(gtk_progress_bar_new(),
+    return GetDefaultAttributesFromGTKWidget(gtk_progress_bar_new,
                                              false, GTK_STATE_ACTIVE);
 }
 

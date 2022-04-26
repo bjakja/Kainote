@@ -2,6 +2,7 @@
 // Name:        wizard.h
 // Purpose:     interface of wxWizardPage, wxWizardEvent,
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -41,7 +42,7 @@
     wxWizardPage::GetBitmap() can also be overridden, but this should be very
     rarely needed.
 
-    @library{wxcore}
+    @library{wxadv}
     @category{miscwnd}
 
     @see wxWizard, @ref page_samples_wizard
@@ -53,7 +54,7 @@ public:
        Default constructor.
     */
     wxWizardPage();
-
+    
     /**
         Constructor accepts an optional bitmap which will be used for this page
         instead of the default one for this wizard (note that all bitmaps used should
@@ -66,7 +67,7 @@ public:
             The page-specific bitmap if different from the global one
     */
     wxWizardPage(wxWizard* parent,
-                 const wxBitmapBundle& bitmap = wxBitmapBundle());
+                 const wxBitmap& bitmap = wxNullBitmap);
 
     /**
        Creates the wizard page.
@@ -78,7 +79,7 @@ public:
             The page-specific bitmap if different from the global one
     */
     bool Create(wxWizard *parent,
-                const wxBitmapBundle& bitmap = wxBitmapBundle());
+                const wxBitmap& bitmap = wxNullBitmap);
 
     /**
         This method is called by wxWizard to get the bitmap to display alongside the page.
@@ -142,7 +143,7 @@ public:
         The wizard finished button was pressed.
     @endEventTable
 
-    @library{wxcore}
+    @library{wxadv}
     @category{events}
 
     @see wxWizard, @ref page_samples_wizard
@@ -194,7 +195,7 @@ wxEventType wxEVT_WIZARD_BEFORE_PAGE_CHANGED;
     the pages order is known statically - on the other hand, if this is not the
     case you must derive your own class from wxWizardPage instead.
 
-    @library{wxcore}
+    @library{wxadv}
     @category{miscwnd}
 
     @see wxWizard, @ref page_samples_wizard
@@ -206,7 +207,7 @@ public:
        Default constructor.
     */
     wxWizardPageSimple();
-
+    
     /**
         Constructor takes the previous and next pages.
         They may be modified later by SetPrev() or SetNext().
@@ -214,40 +215,16 @@ public:
     wxWizardPageSimple(wxWizard* parent,
                        wxWizardPage* prev = NULL,
                        wxWizardPage* next = NULL,
-                       const wxBitmapBundle& bitmap = wxBitmapBundle());
+                       const wxBitmap& bitmap = wxNullBitmap);
 
     /**
        Creates the wizard page.
        Must be called if the default constructor had been used to create the object.
     */
-    bool Create(wxWizard *parent = NULL,
+    bool Create(wxWizard *parent = NULL, 
                 wxWizardPage *prev = NULL,
                 wxWizardPage *next = NULL,
-                const wxBitmapBundle& bitmap = wxBitmapBundle());
-
-    /**
-        A helper chaining this page with the next one.
-
-        Notice that this method returns a reference to the next page, so the
-        calls to it can, in turn, be chained:
-
-        @code
-        wxWizardPageSimple* firstPage = new FirstPage;
-        (*firstPage).Chain(new SecondPage)
-                    .Chain(new ThirdPage)
-                    .Chain(new LastPage);
-        @endcode
-
-        This makes this method the simplest way to define the order of changes
-        in fully static wizards, i.e. in those where the order doesn't depend
-        on the choices made by the user in the wizard pages during run-time.
-
-        @param next A non-@NULL pointer to the next page.
-        @return Reference to @a next on which Chain() can be called again.
-
-        @since 2.9.5
-     */
-    wxWizardPageSimple& Chain(wxWizardPageSimple* next);
+                const wxBitmap& bitmap = wxNullBitmap);
 
     /**
         A convenience function to make the pages follow each other.
@@ -339,7 +316,7 @@ public:
 
     See also wxDialog for other extended styles.
 
-    @library{wxcore}
+    @library{wxadv}
     @category{cmndlg}
 
     @see wxWizardEvent, wxWizardPage, @ref page_samples_wizard
@@ -380,7 +357,7 @@ public:
     */
     wxWizard(wxWindow* parent, int id = wxID_ANY,
              const wxString& title = wxEmptyString,
-             const wxBitmapBundle& bitmap = wxBitmapBundle(),
+             const wxBitmap& bitmap = wxNullBitmap,
              const wxPoint& pos = wxDefaultPosition,
              long style = wxDEFAULT_DIALOG_STYLE);
 
@@ -408,8 +385,8 @@ public:
     */
     bool Create(wxWindow* parent, int id = wxID_ANY,
                 const wxString& title = wxEmptyString,
-                const wxBitmapBundle& bitmap = wxBitmapBundle(),
-                const wxPoint& pos = wxDefaultPosition, long style = wxDEFAULT_DIALOG_STYLE);
+                const wxBitmap& bitmap = wxNullBitmap,
+                const wxPoint& pos = wxDefaultPosition, long style = 536877056);
 
     /**
         This method is obsolete, use GetPageAreaSizer() instead.
@@ -504,7 +481,7 @@ public:
     virtual bool HasNextPage(wxWizardPage* page);
 
     /**
-        Returns @true if this page is not the first one in the wizard.
+        Returns @true if this page is not the last one in the wizard.
         The base class version implements this by calling
         @ref wxWizardPage::GetPrev "page->GetPrev" but this could be
         undesirable if, for example, the pages are created on demand only.
@@ -523,7 +500,7 @@ public:
     /**
         Sets the bitmap used for the wizard.
     */
-    void SetBitmap(const wxBitmapBundle& bitmap);
+    void SetBitmap(const wxBitmap& bitmap);
 
     /**
         Sets the colour that should be used to fill the area not taken up by the wizard
@@ -546,7 +523,7 @@ public:
         - @b wxWIZARD_HALIGN_LEFT: Left-aligns the bitmap.
         - @b wxWIZARD_HALIGN_CENTRE: Centres the bitmap horizontally.
         - @b wxWIZARD_HALIGN_RIGHT: Right-aligns the bitmap.
-        - @b wxWIZARD_TILE: The bitmap will be tiled to fit available space.
+        - @b wxWIZARD_TILE: @todo describe this
 
         See also SetMinimumBitmapWidth().
     */
@@ -585,3 +562,4 @@ public:
     */
     virtual void SetPageSize(const wxSize& sizePage);
 };
+

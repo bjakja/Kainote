@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     08/05/99
+// RCS-ID:      $Id$
 // Copyright:   (c) 1999 Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,6 +12,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_GEOMETRY
 
@@ -135,6 +139,15 @@ void wxRect2DDouble::ConstrainTo( const wxRect2DDouble &rect )
         SetTop( rect.GetTop() );
 }
 
+wxRect2DDouble& wxRect2DDouble::operator=( const wxRect2DDouble &r )
+{
+    m_x = r.m_x;
+    m_y = r.m_y;
+    m_width = r.m_width;
+    m_height = r.m_height;
+    return *this;
+}
+
 // integer version
 
 // for the following calculations always remember
@@ -173,7 +186,8 @@ wxDouble wxPoint2DInt::GetVectorAngle() const
             return 180;
     }
 
-    wxDouble deg = wxRadToDeg(atan2( (double)m_y , (double)m_x ));
+    // casts needed for MIPSpro compiler under SGI
+    wxDouble deg = atan2( (double)m_y , (double)m_x ) * 180 / M_PI;
     if ( deg < 0 )
     {
         deg += 360;
@@ -185,9 +199,8 @@ wxDouble wxPoint2DInt::GetVectorAngle() const
 void wxPoint2DInt::SetVectorAngle( wxDouble degrees )
 {
     wxDouble length = GetVectorLength();
-    double rad = wxDegToRad(degrees);
-    m_x = (int)(length * cos(rad));
-    m_y = (int)(length * sin(rad));
+    m_x = (int)(length * cos( degrees / 180 * M_PI ));
+    m_y = (int)(length * sin( degrees / 180 * M_PI ));
 }
 
 wxDouble wxPoint2DDouble::GetVectorAngle() const
@@ -206,7 +219,7 @@ wxDouble wxPoint2DDouble::GetVectorAngle() const
         else
             return 180;
     }
-    wxDouble deg = wxRadToDeg(atan2( m_y , m_x ));
+    wxDouble deg = atan2( m_y , m_x ) * 180 / M_PI;
     if ( deg < 0 )
     {
         deg += 360;
@@ -217,9 +230,8 @@ wxDouble wxPoint2DDouble::GetVectorAngle() const
 void wxPoint2DDouble::SetVectorAngle( wxDouble degrees )
 {
     wxDouble length = GetVectorLength();
-    double rad = wxDegToRad(degrees);
-    m_x = length * cos(rad);
-    m_y = length * sin(rad);
+    m_x = length * cos( degrees / 180 * M_PI );
+    m_y = length * sin( degrees / 180 * M_PI );
 }
 
 // wxRect2D
@@ -322,6 +334,15 @@ void wxRect2DInt::ConstrainTo( const wxRect2DInt &rect )
         SetTop( rect.GetTop() );
 }
 
+wxRect2DInt& wxRect2DInt::operator=( const wxRect2DInt &r )
+{
+    m_x = r.m_x;
+    m_y = r.m_y;
+    m_width = r.m_width;
+    m_height = r.m_height;
+    return *this;
+}
+
 #if wxUSE_STREAMS
 void wxRect2DInt::WriteTo( wxDataOutputStream &stream ) const
 {
@@ -339,52 +360,5 @@ void wxRect2DInt::ReadFrom( wxDataInputStream &stream )
     m_height = stream.Read32();
 }
 #endif // wxUSE_STREAMS
-
-
-// wxTransform2D
-
-void wxTransform2D::Transform( wxRect2DInt* r ) const
-{
-    wxPoint2DInt a = r->GetLeftTop(), b = r->GetRightBottom();
-    Transform( &a );
-    Transform( &b );
-    *r = wxRect2DInt( a, b );
-}
-
-wxPoint2DInt wxTransform2D::Transform( const wxPoint2DInt &pt ) const
-{
-    wxPoint2DInt res = pt;
-    Transform( &res );
-    return res;
-}
-
-wxRect2DInt wxTransform2D::Transform( const wxRect2DInt &r ) const
-{
-    wxRect2DInt res = r;
-    Transform( &res );
-    return res;
-}
-
-void wxTransform2D::InverseTransform( wxRect2DInt* r ) const
-{
-    wxPoint2DInt a = r->GetLeftTop(), b = r->GetRightBottom();
-    InverseTransform( &a );
-    InverseTransform( &b );
-    *r = wxRect2DInt( a , b );
-}
-
-wxPoint2DInt wxTransform2D::InverseTransform( const wxPoint2DInt &pt ) const
-{
-    wxPoint2DInt res = pt;
-    InverseTransform( &res );
-    return res;
-}
-
-wxRect2DInt wxTransform2D::InverseTransform( const wxRect2DInt &r ) const
-{
-    wxRect2DInt res = r;
-    InverseTransform( &res );
-    return res;
-}
 
 #endif // wxUSE_GEOMETRY

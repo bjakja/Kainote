@@ -19,7 +19,7 @@
 #include "SubsGridBase.h"
 #include "SubsGridPreview.h"
 #include "KainoteFrame.h"
-#include <wx/window.h>
+//#include <wx/window.h>
 
 
 
@@ -29,7 +29,8 @@ class SubsGrid: public SubsGridWindow
 public:
 
 	SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id = wxID_ANY, 
-		const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
+		const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+		long style = 0);
 	virtual ~SubsGrid();
 	void MoveTextTL(char mode);
 	void ResizeSubs(float xnsize, float ynsize, bool stretch);

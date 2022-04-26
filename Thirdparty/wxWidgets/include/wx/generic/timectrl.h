@@ -3,6 +3,7 @@
 // Purpose:     Generic implementation of wxTimePickerCtrl.
 // Author:      Paul Breen, Vadim Zeitlin
 // Created:     2011-09-22
+// RCS-ID:      $Id: wxhead.h,v 1.12 2010-04-22 12:44:51 zeitlin Exp $
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -13,13 +14,11 @@
 #include "wx/containr.h"
 #include "wx/compositewin.h"
 
-typedef wxTimePickerCtrlCommonBase<wxDateTimePickerCtrlBase> wxTimePickerCtrlGenericBase;
-
 class WXDLLIMPEXP_ADV wxTimePickerCtrlGeneric
-    : public wxCompositeWindow< wxNavigationEnabled<wxTimePickerCtrlGenericBase> >
+    : public wxCompositeWindow< wxNavigationEnabled<wxTimePickerCtrlBase> >
 {
 public:
-    typedef wxCompositeWindow< wxNavigationEnabled<wxTimePickerCtrlGenericBase> > Base;
+    typedef wxCompositeWindow< wxNavigationEnabled<wxTimePickerCtrlBase> > Base;
 
     // Creating the control.
     wxTimePickerCtrlGeneric() { Init(); }
@@ -48,19 +47,19 @@ public:
                 const wxString& name = wxTimePickerCtrlNameStr);
 
     // Implement pure virtual wxTimePickerCtrlBase methods.
-    virtual void SetValue(const wxDateTime& date) wxOVERRIDE;
-    virtual wxDateTime GetValue() const wxOVERRIDE;
+    virtual void SetValue(const wxDateTime& date);
+    virtual wxDateTime GetValue() const;
 
 protected:
-    virtual wxSize DoGetBestSize() const wxOVERRIDE;
+    virtual wxSize DoGetBestSize() const;
 
-    virtual void DoMoveWindow(int x, int y, int width, int height) wxOVERRIDE;
+    virtual void DoMoveWindow(int x, int y, int width, int height);
 
 private:
     void Init();
 
     // Return the list of the windows composing this one.
-    virtual wxWindowList GetCompositeWindowParts() const wxOVERRIDE;
+    virtual wxWindowList GetCompositeWindowParts() const;
 
     // Implementation data.
     class wxTimePickerGenericImpl* m_impl;

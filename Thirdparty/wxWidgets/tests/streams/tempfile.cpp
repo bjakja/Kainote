@@ -2,12 +2,16 @@
 // Name:        tests/streams/tempfile.cpp
 // Purpose:     Test wxTempFileOutputStream
 // Author:      Mike Wetherell
+// RCS-ID:      $Id$
 // Copyright:   (c) 2005 Mike Wetherell
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "testprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 // for all others, include the necessary headers
 #ifndef WX_PRECOMP

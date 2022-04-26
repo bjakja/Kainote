@@ -2,12 +2,16 @@
 // Name:        src/gtk/calctrl.cpp
 // Purpose:     implementation of the wxGtkCalendarCtrl
 // Author:      Marcin Wojdyr
+// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Marcin Wojdyr
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_CALENDARCTRL
 
@@ -16,7 +20,7 @@
 
 #include "wx/calctrl.h"
 
-#include "wx/gtk/private/wrapgtk.h"
+#include <gtk/gtk.h>
 
 extern "C" {
 
@@ -195,9 +199,7 @@ bool wxGtkCalendarCtrl::EnableMonthChange(bool enable)
 
 bool wxGtkCalendarCtrl::SetDate(const wxDateTime& date)
 {
-    wxCHECK_MSG( date.IsValid(), false, "invalid date" );
-
-    if ( !IsInValidRange(date) )
+    if ( date.IsValid() && !IsInValidRange(date) )
         return false;
 
     g_signal_handlers_block_by_func(m_widget,

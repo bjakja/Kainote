@@ -2,6 +2,7 @@
 // Name:        src/gtk/dataobj.cpp
 // Purpose:     wxDataObject class
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -235,22 +236,16 @@ wxTextDataObject::GetAllFormats(wxDataFormat *formats,
 
 bool wxFileDataObject::GetDataHere(void *buf) const
 {
-    char* out = static_cast<char*>(buf);
+    wxString filenames;
 
     for (size_t i = 0; i < m_filenames.GetCount(); i++)
     {
-        char* uri = g_filename_to_uri(m_filenames[i].mbc_str(), 0, 0);
-        if (uri)
-        {
-            size_t const len = strlen(uri);
-            memcpy(out, uri, len);
-            out += len;
-            *(out++) = '\r';
-            *(out++) = '\n';
-            g_free(uri);
-        }
+        filenames += wxT("file:");
+        filenames += m_filenames[i];
+        filenames += wxT("\r\n");
     }
-    *out = 0;
+
+    memcpy( buf, filenames.mbc_str(), filenames.length() + 1 );
 
     return true;
 }
@@ -261,11 +256,9 @@ size_t wxFileDataObject::GetDataSize() const
 
     for (size_t i = 0; i < m_filenames.GetCount(); i++)
     {
-        char* uri = g_filename_to_uri(m_filenames[i].mbc_str(), 0, 0);
-        if (uri) {
-            res += strlen(uri) + 2; // Including "\r\n"
-            g_free(uri);
-        }
+        // This is junk in UTF-8
+        res += m_filenames[i].length();
+        res += 5 + 2; // "file:" (5) + "\r\n" (2)
     }
 
     return res + 1;
@@ -427,101 +420,49 @@ void wxBitmapDataObject::DoConvertToPng()
 // wxURLDataObject
 // ----------------------------------------------------------------------------
 
-class wxTextURIListDataObject : public wxDataObjectSimple
-{
-public:
-    wxTextURIListDataObject(const wxString& url)
-        : wxDataObjectSimple(wxDataFormat(g_fileAtom)),
-          m_url(url)
-    {
-    }
-
-    const wxString& GetURL() const { return m_url; }
-    void SetURL(const wxString& url) { m_url = url; }
-
-
-    virtual size_t GetDataSize() const wxOVERRIDE
-    {
-        // It is not totally clear whether we should include "\r\n" at the end
-        // of the string if there is only one URL or not, but not doing it
-        // doesn't seem to create any problems, so keep things simple.
-        return strlen(m_url.utf8_str()) + 1;
-    }
-
-    virtual bool GetDataHere(void *buf) const wxOVERRIDE
-    {
-        char* const dst = static_cast<char*>(buf);
-
-        strcpy(dst, m_url.utf8_str());
-
-        return true;
-    }
-
-    virtual bool SetData(size_t len, const void *buf) wxOVERRIDE
-    {
-        const char* const src = static_cast<const char*>(buf);
-
-        // The string might be "\r\n"-terminated but this is not necessarily
-        // the case (e.g. when dragging an URL from Firefox, it isn't).
-        if ( len > 1 && src[len - 1] == '\n' )
-        {
-            if ( len > 2 && src[len - 2] == '\r' )
-                len--;
-
-            len--;
-        }
-
-        m_url = wxString::FromUTF8(src, len);
-
-        return true;
-    }
-
-    // Must provide overloads to avoid hiding them (and warnings about it)
-    virtual size_t GetDataSize(const wxDataFormat&) const wxOVERRIDE
-    {
-        return GetDataSize();
-    }
-    virtual bool GetDataHere(const wxDataFormat&, void *buf) const wxOVERRIDE
-    {
-        return GetDataHere(buf);
-    }
-    virtual bool SetData(const wxDataFormat&, size_t len, const void *buf) wxOVERRIDE
-    {
-        return SetData(len, buf);
-    }
-
-private:
-    wxString m_url;
-};
-
 wxURLDataObject::wxURLDataObject(const wxString& url) :
-    m_dobjURIList(new wxTextURIListDataObject(url)),
-    m_dobjText(new wxTextDataObject(url))
+   wxDataObjectSimple( wxDataFormat( gdk_atom_intern("text/x-moz-url",FALSE) ) )
 {
-    // Use both URL-specific format and a plain text one to ensure that URLs
-    // can be pasted into any application.
-    Add(m_dobjURIList, true /* preferred */);
-    Add(m_dobjText);
+   m_url = url;
 }
 
-void wxURLDataObject::SetURL(const wxString& url)
+size_t wxURLDataObject::GetDataSize() const
 {
-    m_dobjURIList->SetURL(url);
-    m_dobjText->SetText(url);
+    if (m_url.empty())
+        return 0;
+
+    return 2*m_url.Len()+2;
 }
 
-wxString wxURLDataObject::GetURL() const
+bool wxURLDataObject::GetDataHere(void *buf) const
 {
-    if ( GetReceivedFormat() == g_fileAtom )
-    {
-        // If we received the URL as an URI, use it.
-        return m_dobjURIList->GetURL();
-    }
-    else // Otherwise we either got it as text or didn't get anything yet.
-    {
-        // In either case using the text format should be fine.
-        return m_dobjText->GetText();
-    }
+    if (m_url.empty())
+        return false;
+
+    wxCSConv conv( "UCS2" );
+    conv.FromWChar( (char*) buf, 2*m_url.Len()+2, m_url.wc_str() );
+
+    return true;
 }
+
+    // copy data from buffer to our data
+bool wxURLDataObject::SetData(size_t len, const void *buf)
+{
+    if (len == 0)
+    {
+        m_url = wxEmptyString;
+        return false;
+    }
+
+    wxCSConv conv( "UCS2" );
+    wxWCharBuffer res = conv.cMB2WC( (const char*) buf );
+    m_url = res;
+    int pos = m_url.Find( '\n' );
+    if (pos != wxNOT_FOUND)
+        m_url.Remove( pos, m_url.Len() - pos );
+
+    return true;
+}
+
 
 #endif // wxUSE_DATAOBJ

@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     12.09.96
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -14,6 +15,10 @@
 
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
+
+#if defined(__BORLANDC__)
+#pragma hdrstop
+#endif
 
 #if wxUSE_OLE && (wxUSE_DRAG_AND_DROP || wxUSE_DATAOBJ)
 
@@ -134,7 +139,7 @@ bool Uuid::Set(const wxChar *pc)
 {
   // get UUID from string
 #ifdef _UNICODE
-  if ( UuidFromString(reinterpret_cast<unsigned short *>(const_cast<wxChar*>(pc)), &m_uuid) != RPC_S_OK )
+  if ( UuidFromString((unsigned short *)pc, &m_uuid) != RPC_S_OK)
 #else
   if ( UuidFromString((wxUChar *)pc, &m_uuid) != RPC_S_OK)
 #endif

@@ -4,6 +4,7 @@
 // Author:      Evgeniy Tarassov, Vadim Zeitlin
 // Modified by:
 // Created:     2005-09-15
+// RCS-ID:      $Id$
 // Copyright:   (c) 2005 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_TREEBOOK
 
@@ -29,7 +33,6 @@
 #endif
 
 #include "wx/imaglist.h"
-#include "wx/treectrl.h"
 
 // ----------------------------------------------------------------------------
 // various wxWidgets macros
@@ -42,18 +45,18 @@
 // event table
 // ----------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxTreebook, wxBookCtrlBase);
+IMPLEMENT_DYNAMIC_CLASS(wxTreebook, wxBookCtrlBase)
 
-wxDEFINE_EVENT( wxEVT_TREEBOOK_PAGE_CHANGING,  wxBookCtrlEvent );
-wxDEFINE_EVENT( wxEVT_TREEBOOK_PAGE_CHANGED,   wxBookCtrlEvent );
-wxDEFINE_EVENT( wxEVT_TREEBOOK_NODE_COLLAPSED, wxBookCtrlEvent );
-wxDEFINE_EVENT( wxEVT_TREEBOOK_NODE_EXPANDED,  wxBookCtrlEvent );
+wxDEFINE_EVENT( wxEVT_COMMAND_TREEBOOK_PAGE_CHANGING,  wxBookCtrlEvent );
+wxDEFINE_EVENT( wxEVT_COMMAND_TREEBOOK_PAGE_CHANGED,   wxBookCtrlEvent );
+wxDEFINE_EVENT( wxEVT_COMMAND_TREEBOOK_NODE_COLLAPSED, wxBookCtrlEvent );
+wxDEFINE_EVENT( wxEVT_COMMAND_TREEBOOK_NODE_EXPANDED,  wxBookCtrlEvent );
 
-wxBEGIN_EVENT_TABLE(wxTreebook, wxBookCtrlBase)
+BEGIN_EVENT_TABLE(wxTreebook, wxBookCtrlBase)
     EVT_TREE_SEL_CHANGED   (wxID_ANY, wxTreebook::OnTreeSelectionChange)
     EVT_TREE_ITEM_EXPANDED (wxID_ANY, wxTreebook::OnTreeNodeExpandedCollapsed)
     EVT_TREE_ITEM_COLLAPSED(wxID_ANY, wxTreebook::OnTreeNodeExpandedCollapsed)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 // ============================================================================
 // wxTreebook implementation
@@ -62,6 +65,12 @@ wxEND_EVENT_TABLE()
 // ----------------------------------------------------------------------------
 // wxTreebook creation
 // ----------------------------------------------------------------------------
+
+void wxTreebook::Init()
+{
+    m_selection =
+    m_actualSelection = wxNOT_FOUND;
+}
 
 bool
 wxTreebook::Create(wxWindow *parent,
@@ -132,7 +141,7 @@ bool wxTreebook::InsertSubPage(size_t pagePos,
 bool wxTreebook::AddPage(wxWindow *page, const wxString& text, bool bSelect,
                          int imageId)
 {
-    return DoInsertPage(m_treeIds.size(), page, text, bSelect, imageId);
+    return DoInsertPage(m_treeIds.GetCount(), page, text, bSelect, imageId);
 }
 
 // insertion time is linear to the number of top-pages
@@ -304,7 +313,9 @@ wxTreebookPage *wxTreebook::DoRemovePage(size_t pagePos)
 bool wxTreebook::DeleteAllPages()
 {
     wxBookCtrlBase::DeleteAllPages();
-    m_treeIds.clear();
+    m_treeIds.Clear();
+    m_selection =
+    m_actualSelection = wxNOT_FOUND;
 
     wxTreeCtrl *tree = GetTreeCtrl();
     tree->DeleteChildren(tree->GetRootItem());
@@ -316,26 +327,32 @@ void wxTreebook::DoInternalAddPage(size_t newPos,
                                    wxTreebookPage *page,
                                    wxTreeItemId pageId)
 {
-    wxASSERT_MSG( newPos <= m_treeIds.size(),
-                  wxT("Invalid index passed to wxTreebook::DoInternalAddPage") );
+    wxASSERT_MSG( newPos <= m_treeIds.GetCount(), wxT("Ivalid index passed to wxTreebook::DoInternalAddPage") );
 
     // hide newly inserted page initially (it will be shown when selected)
     if ( page )
         page->Hide();
 
-    if ( newPos == m_treeIds.size() )
+    if ( newPos == m_treeIds.GetCount() )
     {
         // append
-        m_treeIds.push_back(pageId);
+        m_treeIds.Add(pageId);
     }
     else // insert
     {
-        m_treeIds.insert(m_treeIds.begin() + newPos, pageId);
+        m_treeIds.Insert(pageId, newPos);
 
         if ( m_selection != wxNOT_FOUND && newPos <= (size_t)m_selection )
         {
             // selection has been moved one unit toward the end
             ++m_selection;
+            if ( m_actualSelection != wxNOT_FOUND )
+                ++m_actualSelection;
+        }
+        else if ( m_actualSelection != wxNOT_FOUND &&
+                    newPos <= (size_t)m_actualSelection )
+        {
+            DoSetSelection(m_selection);
         }
     }
 }
@@ -345,13 +362,12 @@ void wxTreebook::DoInternalRemovePageRange(size_t pagePos, size_t subCount)
     // Attention: this function is only for a situation when we delete a node
     // with all its children so pagePos is the node's index and subCount is the
     // node children count
-    wxASSERT_MSG( pagePos + subCount < m_treeIds.size(),
-                    wxT("Invalid page index") );
+    wxASSERT_MSG( pagePos + subCount < m_treeIds.GetCount(),
+                    wxT("Ivalid page index") );
 
     wxTreeItemId pageId = m_treeIds[pagePos];
 
-    wxVector<wxTreeItemId>::iterator itPos = m_treeIds.begin() + pagePos;
-    m_treeIds.erase(itPos, itPos + subCount + 1);
+    m_treeIds.RemoveAt(pagePos, subCount + 1);
 
     if ( m_selection != wxNOT_FOUND )
     {
@@ -359,6 +375,10 @@ void wxTreebook::DoInternalRemovePageRange(size_t pagePos, size_t subCount)
         {
             // selection is far after the deleted page, so just update the index and move on
             m_selection -= 1 + subCount;
+            if ( m_actualSelection != wxNOT_FOUND)
+            {
+                m_actualSelection -= subCount + 1;
+            }
         }
         else if ( (size_t)m_selection >= pagePos )
         {
@@ -369,6 +389,7 @@ void wxTreebook::DoInternalRemovePageRange(size_t pagePos, size_t subCount)
             wxTreeItemId nodeId = tree->GetNextSibling(pageId);
 
             m_selection = wxNOT_FOUND;
+            m_actualSelection = wxNOT_FOUND;
 
             if ( nodeId.IsOk() )
             {
@@ -389,6 +410,17 @@ void wxTreebook::DoInternalRemovePageRange(size_t pagePos, size_t subCount)
                     DoUpdateSelection(false, wxNOT_FOUND);
                 }
             }
+        }
+        else if ( m_actualSelection != wxNOT_FOUND &&
+                    (size_t)m_actualSelection >= pagePos )
+        {
+            // nothing to do -- selection is before the deleted node, but
+            // actually shown page (the first (sub)child with page != NULL) is
+            // already deleted
+            m_actualSelection = m_selection;
+
+            // send event as documented
+            DoSetSelection(m_selection, SetSelection_SendEvent);
         }
         //else: nothing to do -- selection is before the deleted node
     }
@@ -423,7 +455,7 @@ void wxTreebook::DoUpdateSelection(bool bSelect, int newPos)
 
 wxTreeItemId wxTreebook::DoInternalGetPage(size_t pagePos) const
 {
-    if ( pagePos >= m_treeIds.size() )
+    if ( pagePos >= m_treeIds.GetCount() )
     {
         // invalid position but ok here, in this internal function, don't assert
         // (the caller will do it)
@@ -435,7 +467,7 @@ wxTreeItemId wxTreebook::DoInternalGetPage(size_t pagePos) const
 
 int wxTreebook::DoInternalFindPageById(wxTreeItemId pageId) const
 {
-    const size_t count = m_treeIds.size();
+    const size_t count = m_treeIds.GetCount();
     for ( size_t i = 0; i < count; ++i )
     {
         if ( m_treeIds[i] == pageId )
@@ -524,55 +556,106 @@ bool wxTreebook::SetPageImage(size_t n, int imageId)
     return true;
 }
 
-void wxTreebook::UpdateSelectedPage(size_t newsel)
+int wxTreebook::DoSetSelection(size_t pagePos, int flags)
 {
-    GetTreeCtrl()->SelectItem(DoInternalGetPage(newsel));
-}
+    wxCHECK_MSG( IS_VALID_PAGE(pagePos), wxNOT_FOUND,
+                 wxT("invalid page index in wxListbook::DoSetSelection()") );
+    wxASSERT_MSG( GetPageCount() == DoInternalGetPageCount(),
+                  wxT("wxTreebook logic error: m_treeIds and m_pages not in sync!"));
 
-wxBookCtrlEvent* wxTreebook::CreatePageChangingEvent() const
-{
-    return new wxBookCtrlEvent(wxEVT_TREEBOOK_PAGE_CHANGING, m_windowId);
-}
+    wxBookCtrlEvent event(wxEVT_COMMAND_TREEBOOK_PAGE_CHANGING, m_windowId);
+    const int oldSel = m_selection;
+    wxTreeCtrl *tree = GetTreeCtrl();
+    bool allowed = false;
 
-void wxTreebook::MakeChangedEvent(wxBookCtrlEvent &event)
-{
-    event.SetEventType(wxEVT_TREEBOOK_PAGE_CHANGED);
-}
-
-wxWindow *wxTreebook::TryGetNonNullPage(size_t n)
-{
-    wxWindow* page = wxBookCtrlBase::GetPage(n);
-
-    if ( !page )
+    if (flags & SetSelection_SendEvent)
     {
-        // Find the next suitable page, i.e. the first (grand)child
-        // of this one with a non-NULL associated page
-        wxTreeCtrl* const tree = GetTreeCtrl();
-        for ( wxTreeItemId childId = m_treeIds[n]; childId.IsOk(); )
+        event.SetEventObject(this);
+        event.SetSelection(pagePos);
+        event.SetOldSelection(m_selection);
+
+        // don't send the event if the old and new pages are the same; do send it
+        // otherwise and be prepared for it to be vetoed
+        allowed = (int)pagePos == m_selection ||
+                  !GetEventHandler()->ProcessEvent(event) ||
+                  event.IsAllowed();
+    }
+
+    if ( !(flags & SetSelection_SendEvent) || allowed )
+    {
+        // hide the previously shown page
+        wxTreebookPage * const oldPage = DoGetCurrentPage();
+        if ( oldPage )
+            oldPage->Hide();
+
+        // then show the new one
+        m_selection = pagePos;
+        wxTreebookPage *page = wxBookCtrlBase::GetPage(m_selection);
+        if ( !page )
         {
-            wxTreeItemIdValue cookie;
-            childId = tree->GetFirstChild( childId, cookie );
-            if ( childId.IsOk() )
+            // find the next page suitable to be shown: the first (grand)child
+            // of this one with a non-NULL associated page
+            wxTreeItemId childId = m_treeIds[pagePos];
+            int actualPagePos = pagePos;
+            while ( !page && childId.IsOk() )
             {
-                page = wxBookCtrlBase::GetPage(++n);
-                if ( page )
-                    break;
+                wxTreeItemIdValue cookie;
+                childId = tree->GetFirstChild( childId, cookie );
+                if ( childId.IsOk() )
+                {
+                    page = wxBookCtrlBase::GetPage(++actualPagePos);
+                }
             }
+
+            m_actualSelection = page ? actualPagePos : m_selection;
         }
+
+        if ( page )
+            page->Show();
+
+        tree->SelectItem(DoInternalGetPage(pagePos));
+
+        if (flags & SetSelection_SendEvent)
+        {
+            // notify about the (now completed) page change
+            event.SetEventType(wxEVT_COMMAND_TREEBOOK_PAGE_CHANGED);
+            (void)GetEventHandler()->ProcessEvent(event);
+        }
+    }
+    else if ( (flags & SetSelection_SendEvent) && !allowed) // page change vetoed
+    {
+        // tree selection might have already had changed
+        if ( oldSel != wxNOT_FOUND )
+            tree->SelectItem(DoInternalGetPage(oldSel));
+    }
+
+    return oldSel;
+}
+
+wxTreebookPage *wxTreebook::DoGetCurrentPage() const
+{
+    if ( m_selection == wxNOT_FOUND )
+        return NULL;
+
+    wxTreebookPage *page = wxBookCtrlBase::GetPage(m_selection);
+    if ( !page && m_actualSelection != wxNOT_FOUND )
+    {
+        page = wxBookCtrlBase::GetPage(m_actualSelection);
     }
 
     return page;
 }
 
-void wxTreebook::OnImagesChanged()
+void wxTreebook::SetImageList(wxImageList *imageList)
 {
-    // Propagate the images to the tree control which will actually use them.
-    wxTreeCtrl* const tree = GetTreeCtrl();
-    const Images& images = GetImages();
-    if ( !images.empty() )
-        tree->SetImages(images);
-    else
-        tree->SetImageList(GetImageList());
+    wxBookCtrlBase::SetImageList(imageList);
+    GetTreeCtrl()->SetImageList(imageList);
+}
+
+void wxTreebook::AssignImageList(wxImageList *imageList)
+{
+    wxBookCtrlBase::AssignImageList(imageList);
+    GetTreeCtrl()->SetImageList(imageList);
 }
 
 // ----------------------------------------------------------------------------
@@ -619,8 +702,8 @@ void wxTreebook::OnTreeNodeExpandedCollapsed(wxTreeEvent & event)
     wxCHECK_RET( pagePos != wxNOT_FOUND, wxT("Internal problem in wxTreebook!..") );
 
     wxBookCtrlEvent ev(GetTreeCtrl()->IsExpanded(nodeId)
-            ? wxEVT_TREEBOOK_NODE_EXPANDED
-            : wxEVT_TREEBOOK_NODE_COLLAPSED,
+            ? wxEVT_COMMAND_TREEBOOK_NODE_EXPANDED
+            : wxEVT_COMMAND_TREEBOOK_NODE_COLLAPSED,
         m_windowId);
 
     ev.SetSelection(pagePos);

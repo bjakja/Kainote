@@ -3,6 +3,7 @@
 // Purpose:     declares wxEventLoop class
 // Author:      Lukasz Michalski (lm@zork.pl)
 // Created:     2007-05-07
+// RCS-ID:      $Id$
 // Copyright:   (c) 2007 Lukasz Michalski
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -16,9 +17,13 @@
 // wxConsoleEventLoop
 // ----------------------------------------------------------------------------
 
-class wxEventLoopSource;
 class wxFDIODispatcher;
-class wxWakeUpPipeMT;
+class wxUnixEventLoopSource;
+
+namespace wxPrivate
+{
+    class PipeIOHandler;
+}
 
 class WXDLLIMPEXP_BASE wxConsoleEventLoop
 #ifdef __WXOSX__
@@ -33,23 +38,25 @@ public:
     virtual ~wxConsoleEventLoop();
 
     // implement base class pure virtuals
-    virtual bool Pending() const wxOVERRIDE;
-    virtual bool Dispatch() wxOVERRIDE;
-    virtual int DispatchTimeout(unsigned long timeout) wxOVERRIDE;
-    virtual void WakeUp() wxOVERRIDE;
-    virtual bool IsOk() const wxOVERRIDE { return m_dispatcher != NULL; }
+    virtual bool Pending() const;
+    virtual bool Dispatch();
+    virtual int DispatchTimeout(unsigned long timeout);
+    virtual void WakeUp();
+    virtual bool IsOk() const { return m_dispatcher != NULL; }
+    virtual bool YieldFor(long WXUNUSED(eventsToProcess)) { return true; }
+
+#if wxUSE_EVENTLOOP_SOURCE
+    virtual wxEventLoopSource *
+      AddSourceForFD(int fd, wxEventLoopSourceHandler *handler, int flags);
+#endif // wxUSE_EVENTLOOP_SOURCE
 
 protected:
-    virtual void OnNextIteration() wxOVERRIDE;
-    virtual void DoYieldFor(long eventsToProcess) wxOVERRIDE;
+    virtual void OnNextIteration();
 
 private:
     // pipe used for wake up messages: when a child thread wants to wake up
     // the event loop in the main thread it writes to this pipe
-    wxWakeUpPipeMT *m_wakeupPipe;
-
-    // the event loop source used to monitor this pipe
-    wxEventLoopSource* m_wakeupSource;
+    wxPrivate::PipeIOHandler *m_wakeupPipe;
 
     // either wxSelectDispatcher or wxEpollDispatcher
     wxFDIODispatcher *m_dispatcher;

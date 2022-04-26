@@ -2,6 +2,7 @@
 // Name:        protocol/ftp.h
 // Purpose:     interface of wxFTP
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 

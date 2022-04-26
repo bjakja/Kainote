@@ -3,6 +3,7 @@
 // Purpose:     wxGenericStaticBitmap header
 // Author:      Marcin Wojdyr, Stefan Csomor
 // Created:     2008-06-16
+// RCS-ID:      $Id$
 // Copyright:   wxWidgets developers
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -18,45 +19,57 @@ public:
     wxGenericStaticBitmap() {}
     wxGenericStaticBitmap(wxWindow *parent,
                           wxWindowID id,
-                          const wxBitmapBundle& bitmap,
+                          const wxBitmap& bitmap,
                           const wxPoint& pos = wxDefaultPosition,
                           const wxSize& size = wxDefaultSize,
                           long style = 0,
-                          const wxString& name = wxASCII_STR(wxStaticBitmapNameStr))
+                          const wxString& name = wxStaticBitmapNameStr)
     {
             Create(parent, id, bitmap, pos, size, style, name);
     }
 
     bool Create(wxWindow *parent,
                 wxWindowID id,
-                const wxBitmapBundle& bitmap,
+                const wxBitmap& bitmap,
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = 0,
-                const wxString& name = wxASCII_STR(wxStaticBitmapNameStr));
+                const wxString& name = wxStaticBitmapNameStr);
 
-    virtual void SetBitmap(const wxBitmapBundle& bitmap) wxOVERRIDE
+    virtual void SetBitmap(const wxBitmap& bitmap)
     {
-        m_bitmapBundle = bitmap;
-        InvalidateBestSize();
-        SetSize(GetBestSize());
+        m_bitmap = bitmap;
+        SetInitialSize(GetBitmapSize());
         Refresh();
     }
 
-    virtual void SetScaleMode(ScaleMode scaleMode) wxOVERRIDE
+    virtual wxBitmap GetBitmap() const { return m_bitmap; }
+
+    virtual void SetIcon(const wxIcon& icon)
     {
-        m_scaleMode = scaleMode;
+        m_bitmap.CopyFromIcon(icon);
+        SetInitialSize(GetBitmapSize());
         Refresh();
     }
 
-    virtual ScaleMode GetScaleMode() const wxOVERRIDE { return m_scaleMode; }
+#if defined(__WXGTK20__) || defined(__WXMAC__)
+    // icons and bitmaps are really the same thing in wxGTK and wxMac
+    wxIcon GetIcon() const  { return (const wxIcon &)m_bitmap; }
+#endif
+
 
 private:
+    wxSize GetBitmapSize()
+    {
+        return m_bitmap.IsOk() ? wxSize(m_bitmap.GetWidth(), m_bitmap.GetHeight())
+                             : wxSize(16, 16); // this is completely arbitrary
+    }
+
     void OnPaint(wxPaintEvent& event);
 
-    ScaleMode m_scaleMode;
+    wxBitmap m_bitmap;
 
-    wxDECLARE_DYNAMIC_CLASS(wxGenericStaticBitmap);
+    DECLARE_DYNAMIC_CLASS(wxGenericStaticBitmap)
 };
 
 

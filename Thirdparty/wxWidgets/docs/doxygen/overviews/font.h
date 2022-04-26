@@ -2,6 +2,7 @@
 // Name:        font.h
 // Purpose:     topic overview
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -9,11 +10,19 @@
 
 @page overview_font wxFont Overview
 
-@tableofcontents
+Class: wxFont, wxFontDialog
 
-A font is an object which determines the appearance of text, primarily when
-drawing text to a window or device context. A font is determined by the
-following parameters (not all of them have to be specified, of course):
+@li @ref overview_font_intro
+@li @ref overview_font_nativeinfo
+
+<hr>
+
+
+@section overview_font_intro Introduction
+
+A font is an object which determines the appearance of text, primarily
+when drawing text to a window or device context. A font is determined by
+the following parameters (not all of them have to be specified, of course):
 
 @beginDefList
 @itemdef{Point size, This is the standard way of referring to text size.}
@@ -45,18 +54,16 @@ standard Windows fonts, or if allowing the user to specify a face name, store
 the family name with any file that might be transported to a different Windows
 machine or other platform.
 
-@see wxFont, wxFontDialog
-
-@note There is currently a difference between the appearance of fonts on the
-      two platforms, if the mapping mode is anything other than wxMM_TEXT.
-      Under X, font size is always specified in points. Under MS Windows, the
-      unit for text is points but the text is scaled according to the current
-      mapping mode. However, user scaling on a device context will also scale
-      fonts under both environments.
+@note There is currently a difference between the appearance
+    of fonts on the two platforms, if the mapping mode is anything other than
+    wxMM_TEXT. Under X, font size is always specified in points. Under MS
+    Windows, the unit for text is points but the text is scaled according to the
+    current mapping mode. However, user scaling on a device context will also
+    scale fonts under both environments.
 
 
 
-@section overview_font_nativeinfo Native Font Information
+@section overview_font_nativeinfo Native font information
 
 An alternative way of choosing fonts is to use the native font description.
 This is the only acceptable solution if the user is allowed to choose the font
@@ -75,16 +82,5 @@ implemented for Windows and Unix (GTK+ and Motif) ports only, all the methods
 are available for all the ports and should be used to make your program work
 correctly when they are implemented later.
 
-@section overview_font_privateinfo Private font information
-
-Sometimes an application needs fonts that are not globally installed on the
-system. On Macintosh/OSX this can be arranged by placing the desired fonts
-within the Application Bundle in Contents/Resources/Fonts and using
-the ATSApplicationFontsPath key to point there. The full details of the
-procedure there can be found as OSX developer resources. For the GTK+ and
-Windows ports it is possible to add TrueType fonts from arbitrary locations at
-run-time using wxFont::AddPrivateFont(). Notice that under MSW this function
-should be called before creating the first wxGraphicsContext object if you want
-the private font to be usable from it.
-
 */
+

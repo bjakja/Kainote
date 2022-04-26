@@ -2,6 +2,7 @@
 // Name:        container.h
 // Purpose:     topic overview
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -9,7 +10,9 @@
 
 @page overview_container Container Classes
 
-@tableofcontents
+Classes: wxList<T>, wxArray<T>, wxVector<T>, wxStack<T>, wxHashMap, wxHashSet
+
+@section overview_container_intro Overview
 
 For historical reasons, wxWidgets uses custom container classes internally.
 This was unfortunately unavoidable during a long time when the standard library
@@ -42,9 +45,6 @@ std::vector<T> and std::list<T> if possible and wxVector<T> or wxDList<T> if
 it isn't and only use legacy wxWidgets containers such as wxArray<T> and
 wxList<T> when you must, i.e. when you use a wxWidgets function taking or
 returning a container of such type.
-
-@see @ref group_class_containers
-
 
 
 @section overview_container_legacy Legacy Classes
@@ -91,13 +91,12 @@ wxArrayString is somewhat special: it is an optimized version of wxArray which
 uses its knowledge about wxString reference counting schema.
 
 
-
 @section overview_container_std STL Build
 
 To build wxWidgets with the standard containers you need to set
 wxUSE_STD_CONTAINERS option to 1 in @c wx/msw/setup.h for wxMSW builds or
-specify @c \--enable-std_containers option to configure (which is also
-implicitly enabled by @c \--enable-stl option) in Unix builds.
+specify @c --enable-std_containers option to configure (which is also
+implicitly enabled by @c --enable-stl option) in Unix builds.
 
 The standard container build is mostly, but not quite, compatible with the
 default one. Here are the most important differences:
@@ -126,4 +125,6 @@ default one. Here are the most important differences:
    class. Please either use std::vector<bool> directly or use an integer array
    instead.
 
+
 */
+

@@ -3,6 +3,7 @@
 // Purpose:     Test wxGet/SetEnv
 // Author:      Francesco Montorsi (extracted from console sample)
 // Created:     2010-06-13
+// RCS-ID:      $Id$
 // Copyright:   (c) 2010 wxWidgets team
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -11,6 +12,10 @@
 // ----------------------------------------------------------------------------
 
 #include "testprec.h"
+
+#ifdef __BORLANDC__
+#   pragma hdrstop
+#endif
 
 #include "wx/utils.h"
 
@@ -31,8 +36,8 @@ private:
 
     void GetSet();
     void Path();
-
-    wxDECLARE_NO_COPY_CLASS(EnvTestCase);
+    
+    DECLARE_NO_COPY_CLASS(EnvTestCase)
 };
 
 // register in the unnamed registry so that these tests are run by default
@@ -64,7 +69,7 @@ void EnvTestCase::GetSet()
 void EnvTestCase::Path()
 {
     wxString contents;
-
+    
     CPPUNIT_ASSERT(wxGetEnv(wxT("PATH"), &contents));
     CPPUNIT_ASSERT(!contents.empty());
 }

@@ -4,38 +4,41 @@
 // Author:      Arthur Seaton, Julian Smart
 // Modified by:
 // Created:     04/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_MEMORY_TRACING || wxUSE_DEBUG_CONTEXT
 
-#include "wx\memory.h"
+#include "wx/memory.h"
 
 #ifndef WX_PRECOMP
     #ifdef __WINDOWS__
-        #include "wx\msw/wrapwin.h"
+        #include "wx/msw/wrapwin.h"
     #endif
-    #include "wx\utils.h"
-    #include "wx\app.h"
-    #include "wx\hash.h"
-    #include "wx\log.h"
-    #include "wx\wxcrtvararg.h" // for wxVsnprintf
+    #include "wx/utils.h"
+    #include "wx/app.h"
+    #include "wx/hash.h"
+    #include "wx/log.h"
 #endif
 
 #if wxUSE_THREADS
-    #include "wx\thread.h"
+    #include "wx/thread.h"
 #endif
 
 #include <stdlib.h>
 
-#include "wx\ioswrap.h"
+#include "wx/ioswrap.h"
 
-#if !(defined(__VMS__) && ( __VMS_VER < 70000000 ) )
+#if !defined(__WATCOMC__) && !(defined(__VMS__) && ( __VMS_VER < 70000000 ) )
 #include <memory.h>
 #endif
 
@@ -318,7 +321,7 @@ void wxMemStruct::PrintNode ()
       msg += wxT("object");
 
     wxString msg2;
-    msg2.Printf(wxT(" at %#zx, size %d"), wxPtrToUInt(GetActualData()), (int)RequestSize());
+    msg2.Printf(wxT(" at 0x%lX, size %d"), (long)GetActualData(), (int)RequestSize());
     msg += msg2;
 
     wxLogMessage(msg);
@@ -331,7 +334,7 @@ void wxMemStruct::PrintNode ()
       msg.Printf(wxT("%s(%d): "), m_fileName, (int)m_lineNum);
     msg += wxT("non-object data");
     wxString msg2;
-    msg2.Printf(wxT(" at %#zx, size %d\n"), wxPtrToUInt(GetActualData()), (int)RequestSize());
+    msg2.Printf(wxT(" at 0x%lX, size %d\n"), (long)GetActualData(), (int)RequestSize());
     msg += msg2;
 
     wxLogMessage(msg);
@@ -364,7 +367,7 @@ void wxMemStruct::Dump ()
       msg += wxT("unknown object class");
 
     wxString msg2;
-    msg2.Printf(wxT(" at %#zx, size %d"), wxPtrToUInt(GetActualData()), (int)RequestSize());
+    msg2.Printf(wxT(" at 0x%lX, size %d"), (long)GetActualData(), (int)RequestSize());
     msg += msg2;
 
     wxDebugContext::OutputDumpLine(msg.c_str());
@@ -376,7 +379,7 @@ void wxMemStruct::Dump ()
       msg.Printf(wxT("%s(%d): "), m_fileName, (int)m_lineNum);
 
     wxString msg2;
-    msg2.Printf(wxT("non-object data at %#zx, size %d"), wxPtrToUInt(GetActualData()), (int)RequestSize() );
+    msg2.Printf(wxT("non-object data at 0x%lX, size %d"), (long)GetActualData(), (int)RequestSize() );
     msg += msg2;
     wxDebugContext::OutputDumpLine(msg.c_str());
   }
@@ -452,11 +455,11 @@ int wxDebugContext::m_balignmask = (int)((char *)&markerCalc[1] - (char*)&marker
 // Pointer to global function to call at shutdown
 wxShutdownNotifyFunction wxDebugContext::sm_shutdownFn;
 
-wxDebugContext::wxDebugContext()
+wxDebugContext::wxDebugContext(void)
 {
 }
 
-wxDebugContext::~wxDebugContext()
+wxDebugContext::~wxDebugContext(void)
 {
 }
 
@@ -488,7 +491,7 @@ char * wxDebugContext::CallerMemPos (const char * buf)
 }
 
 
-char * wxDebugContext::EndMarkerPos (const char * buf, size_t size)
+char * wxDebugContext::EndMarkerPos (const char * buf, const size_t size)
 {
     return CallerMemPos (buf) + PaddedSize (size);
 }
@@ -515,13 +518,13 @@ char * wxDebugContext::StartPos (const char * caller)
   // Note: this function is now obsolete (along with CalcAlignment)
   // because the calculations are done statically, for greater speed.
 */
-size_t wxDebugContext::GetPadding (size_t size)
+size_t wxDebugContext::GetPadding (const size_t size)
 {
     size_t pad = size % CalcAlignment ();
     return (pad) ? sizeof(wxMarkerType) - pad : 0;
 }
 
-size_t wxDebugContext::PaddedSize (size_t size)
+size_t wxDebugContext::PaddedSize (const size_t size)
 {
     // Added by Terry Farnham <TJRT@pacbell.net> to replace
     // slow GetPadding call.
@@ -539,7 +542,7 @@ size_t wxDebugContext::PaddedSize (size_t size)
   in order to satisfy a caller request. This includes space for the struct
   plus markers and the caller's memory as well.
 */
-size_t wxDebugContext::TotSize (size_t reqSize)
+size_t wxDebugContext::TotSize (const size_t reqSize)
 {
     return (PaddedSize (sizeof (wxMemStruct)) + PaddedSize (reqSize) +
             2 * sizeof(wxMarkerType));
@@ -570,14 +573,14 @@ void wxDebugContext::TraverseList (PmSFV func, wxMemStruct *from)
 /*
   Print out the list.
   */
-bool wxDebugContext::PrintList()
+bool wxDebugContext::PrintList (void)
 {
   TraverseList ((PmSFV)&wxMemStruct::PrintNode, (checkPoint ? checkPoint->m_next : NULL));
 
   return true;
 }
 
-bool wxDebugContext::Dump()
+bool wxDebugContext::Dump(void)
 {
   {
     const wxChar* appName = wxT("application");
@@ -717,7 +720,7 @@ bool wxDebugContext::PrintStatistics(bool detailed)
   return true;
 }
 
-bool wxDebugContext::PrintClasses()
+bool wxDebugContext::PrintClasses(void)
 {
   {
     const wxChar* appName = wxT("application");
@@ -930,6 +933,10 @@ void * wxDebugAlloc(size_t size, wxChar * fileName, int lineNum, bool isObject, 
   // If not in debugging allocation mode, do the normal thing
   // so we don't leave any trace of ourselves in the node list.
 
+#if defined(__VISAGECPP__) && (__IBMCPP__ < 400 || __IBMC__ < 400 )
+// VA 3.0 still has trouble in here
+  return (void *)malloc(size);
+#endif
   if (!wxDebugContext::GetDebugMode())
   {
     return (void *)malloc(size);
@@ -986,6 +993,10 @@ void wxDebugFree(void * buf, bool WXUNUSED(isVect) )
   if (!buf)
     return;
 
+#if defined(__VISAGECPP__) && (__IBMCPP__ < 400 || __IBMC__ < 400 )
+// VA 3.0 still has trouble in here
+  free((char *)buf);
+#endif
   // If not in debugging allocation mode, do the normal thing
   // so we don't leave any trace of ourselves in the node list.
   if (!wxDebugContext::GetDebugMode())

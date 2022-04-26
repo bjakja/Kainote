@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     04/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,18 +20,15 @@
 #endif
 
 #include "wx/app.h"
+#include "wx/osx/private.h"
 #include "wx/geometry.h"
 #include "wx/sysopt.h"
-
-#include "wx/private/bmpbndl.h"
-
-#include "wx/osx/private.h"
 
 #pragma mark -
 #pragma mark Tool Implementation
 
-wxBEGIN_EVENT_TABLE(wxToolBar, wxToolBarBase)
-wxEND_EVENT_TABLE()
+BEGIN_EVENT_TABLE(wxToolBar, wxToolBarBase)
+END_EVENT_TABLE()
 
 // ----------------------------------------------------------------------------
 // private classes
@@ -61,8 +59,8 @@ public:
                   wxToolBar *tbar,
                   int id,
                   const wxString& label,
-                  const wxBitmapBundle& bmpNormal,
-                  const wxBitmapBundle& bmpDisabled,
+                  const wxBitmap& bmpNormal,
+                  const wxBitmap& bmpDisabled,
                   wxItemKind kind,
                   wxObject *clientData,
                   const wxString& shortHelp,
@@ -107,8 +105,8 @@ wxToolBarTool::wxToolBarTool(
                              wxToolBar *tbar,
                              int id,
                              const wxString& label,
-                             const wxBitmapBundle& bmpNormal,
-                             const wxBitmapBundle& bmpDisabled,
+                             const wxBitmap& bmpNormal,
+                             const wxBitmap& bmpDisabled,
                              wxItemKind kind,
                              wxObject *clientData,
                              const wxString& shortHelp,
@@ -125,12 +123,12 @@ wxToolBarToolBase(
     
     if ( id == wxID_SEPARATOR )
     {
-        bui = [bui initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
+        [bui initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
         bui.width = 25.0f;
     }
     else if ( bmpNormal.IsOk() )
     {
-        bui = [bui initWithImage:wxOSXGetImageFromBundle(bmpNormal) style:UIBarButtonItemStylePlain target:toolbar
+        [bui initWithImage:bmpNormal.GetUIImage() style:UIBarButtonItemStylePlain target:toolbar
                       action:@selector(clickedAction:)];
     }
     else
@@ -140,7 +138,7 @@ wxToolBarToolBase(
         else
             style = UIBarButtonItemStyleBordered;
         
-        bui = [bui initWithTitle:wxCFStringRef(label).AsNSString() style:style target:toolbar
+        [bui initWithTitle:wxCFStringRef(label).AsNSString() style:style target:toolbar
                       action:@selector(clickedAction:)];
     }
 
@@ -183,8 +181,8 @@ wxToolBarTool::~wxToolBarTool()
 wxToolBarToolBase *wxToolBar::CreateTool(
                                          int id,
                                          const wxString& label,
-                                         const wxBitmapBundle& bmpNormal,
-                                         const wxBitmapBundle& bmpDisabled,
+                                         const wxBitmap& bmpNormal,
+                                         const wxBitmap& bmpDisabled,
                                          wxItemKind kind,
                                          wxObject *clientData,
                                          const wxString& shortHelp,
@@ -280,7 +278,7 @@ void wxToolBar::DoSetSize(int x, int y, int width, int height, int sizeFlags)
     DoLayout();
 } 
 
-void wxToolBar::DoSetToolBitmapSize(const wxSize& size)
+void wxToolBar::SetToolBitmapSize(const wxSize& size)
 {
     m_defaultWidth = size.x;
     m_defaultHeight = size.y;
@@ -299,7 +297,7 @@ void wxToolBar::SetRows(int nRows)
         m_maxRows = nRows;
 }
 
-void wxToolBar::SetToolNormalBitmap( int id, const wxBitmapBundle& bitmap )
+void wxToolBar::SetToolNormalBitmap( int id, const wxBitmap& bitmap )
 {
     wxToolBarTool* tool = static_cast<wxToolBarTool*>(FindById(id));
     if ( tool )
@@ -310,7 +308,7 @@ void wxToolBar::SetToolNormalBitmap( int id, const wxBitmapBundle& bitmap )
     }
 }
 
-void wxToolBar::SetToolDisabledBitmap( int id, const wxBitmapBundle& bitmap )
+void wxToolBar::SetToolDisabledBitmap( int id, const wxBitmap& bitmap )
 {
     wxToolBarTool* tool = static_cast<wxToolBarTool*>(FindById(id));
     if ( tool )

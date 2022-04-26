@@ -2,6 +2,7 @@
 // Name:        wx/textwrapper.h
 // Purpose:     documentation of wxTextWrapper interface
 // Author:      Vadim Zeitlin
+// RCS-ID:      $Id$
 // Copyright:   (c) 2009 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,7 +20,7 @@
 
     Here is an example function using this class which inserts hard line breaks
     into a string of text at the positions where it would be wrapped:
-
+    
     @code
     wxString WrapText(wxWindow *win, const wxString& text, int widthMax)
     {

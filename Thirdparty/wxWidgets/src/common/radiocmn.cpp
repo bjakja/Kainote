@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     03.06.01
+// RCS-ID:      $Id$
 // Copyright:   (c) 2001 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_RADIOBOX
 
@@ -83,10 +87,10 @@ wxFLAGS_MEMBER(wxRA_VERTICAL)
 
 wxEND_FLAGS( wxRadioBoxStyle )
 
-wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxRadioBox, wxControl, "wx/radiobox.h");
+IMPLEMENT_DYNAMIC_CLASS_XTI(wxRadioBox, wxControl,"wx/radiobox.h")
 
 wxBEGIN_PROPERTIES_TABLE(wxRadioBox)
-wxEVENT_PROPERTY( Select , wxEVT_RADIOBOX , wxCommandEvent )
+wxEVENT_PROPERTY( Select , wxEVT_COMMAND_RADIOBOX_SELECTED , wxCommandEvent )
 wxPROPERTY_FLAGS( WindowStyle , wxRadioBoxStyle , long , SetWindowStyleFlag , GetWindowStyleFlag , , 0 /*flags*/ , wxT("Helpstring") , wxT("group")) // style
 wxEND_PROPERTIES_TABLE()
 
@@ -346,7 +350,7 @@ wxString wxRadioBoxBase::DoGetHelpTextAtPoint(const wxWindow *derived,
 
         default:
             wxFAIL_MSG( "unknown help even origin" );
-            wxFALLTHROUGH;
+            // fall through
 
         case wxHelpEvent::Origin_Unknown:
             // this value is used when we're called from GetHelpText() for the

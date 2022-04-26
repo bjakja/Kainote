@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -30,6 +31,7 @@ wxChoice::~wxChoice()
         for ( i = 0; i < max; ++i )
             delete GetClientObject( i );
     }
+    delete m_popUpMenu;
 }
 
 bool wxChoice::Create(wxWindow *parent,
@@ -69,7 +71,10 @@ bool wxChoice::Create(wxWindow *parent,
     if ( !wxChoiceBase::Create( parent, id, pos, size, style, validator, name ) )
         return false;
 
-    SetPeer(wxWidgetImpl::CreateChoice( this, parent, id, NULL, pos, size, style, GetExtraStyle() ));
+    m_popUpMenu = new wxMenu();
+    m_popUpMenu->SetNoEventsMode(true);
+
+    SetPeer(wxWidgetImpl::CreateChoice( this, parent, id, m_popUpMenu, pos, size, style, GetExtraStyle() ));
 
     MacPostControlCreate( pos, size );
 
@@ -94,13 +99,6 @@ bool wxChoice::Create(wxWindow *parent,
 // ----------------------------------------------------------------------------
 // adding/deleting items to/from the list
 // ----------------------------------------------------------------------------
-
-void wxChoice::DoAfterItemCountChange()
-{
-    InvalidateBestSize();
-
-    GetPeer()->SetMaximum( GetCount() );
-}
 
 int wxChoice::DoInsertItems(const wxArrayStringsAdapter & items,
                             unsigned int pos,
@@ -127,14 +125,14 @@ int wxChoice::DoInsertItems(const wxArrayStringsAdapter & items,
         }
 
         wxString text = items[i];
-        if (text.empty())
+        if (text == wxEmptyString)
             text = " ";  // menu items can't have empty labels
-        dynamic_cast<wxChoiceWidgetImpl*>(GetPeer())->InsertItem( idx, i+1, text );
+        m_popUpMenu->Insert( idx, i+1, text );
         m_datas.Insert( NULL, idx );
         AssignNewItemClientData(idx, clientData, i, type);
     }
 
-    DoAfterItemCountChange();
+    GetPeer()->SetMaximum( GetCount() );
 
     return pos - 1;
 }
@@ -146,26 +144,25 @@ void wxChoice::DoDeleteOneItem(unsigned int n)
     if ( HasClientObjectData() )
         delete GetClientObject( n );
 
-    // Deselect item being removed
-    int selIdx = GetSelection();
-    if ( selIdx != -1 && selIdx == int(n) )
-        SetSelection(-1);
+    m_popUpMenu->Delete( m_popUpMenu->FindItemByPosition( n ) );
 
-    dynamic_cast<wxChoiceWidgetImpl*>(GetPeer())->RemoveItem(n);
     m_strings.RemoveAt( n ) ;
     m_datas.RemoveAt( n ) ;
+    GetPeer()->SetMaximum( GetCount() ) ;
 
-    DoAfterItemCountChange();
 }
 
 void wxChoice::DoClear()
 {
-    dynamic_cast<wxChoiceWidgetImpl*>(GetPeer())->Clear();
+    for ( unsigned int i = 0 ; i < GetCount() ; i++ )
+    {
+        m_popUpMenu->Delete( m_popUpMenu->FindItemByPosition( 0 ) );
+    }
 
     m_strings.Empty() ;
     m_datas.Empty() ;
 
-    DoAfterItemCountChange();
+    GetPeer()->SetMaximum( 0 ) ;
 }
 
 // ----------------------------------------------------------------------------
@@ -207,7 +204,7 @@ void wxChoice::SetString(unsigned int n, const wxString& s)
 
     m_strings[n] = s ;
 
-    dynamic_cast<wxChoiceWidgetImpl*>(GetPeer())->SetItem(n,s);
+    m_popUpMenu->FindItemByPosition( n )->SetItemLabel( s ) ;
 }
 
 wxString wxChoice::GetString(unsigned int n) const
@@ -232,20 +229,60 @@ void * wxChoice::DoGetItemClientData(unsigned int n) const
 
 bool wxChoice::OSXHandleClicked( double WXUNUSED(timestampsec) )
 {
-    SendSelectionChangedEvent(wxEVT_CHOICE);
+    wxCommandEvent event( wxEVT_COMMAND_CHOICE_SELECTED, m_windowId );
+
+    // actually n should be made sure by the os to be a valid selection, but ...
+    int n = GetSelection();
+    if ( n > -1 )
+    {
+        event.SetInt( n );
+        event.SetString( GetStringSelection() );
+        event.SetEventObject( this );
+
+        if ( HasClientObjectData() )
+            event.SetClientObject( GetClientObject( n ) );
+        else if ( HasClientUntypedData() )
+            event.SetClientData( GetClientData( n ) );
+
+        ProcessCommand( event );
+    }
 
     return true ;
 }
 
 wxSize wxChoice::DoGetBestSize() const
 {
-    // We use the base window size for the height (which is wrong as it doesn't
-    // take the font into account -- TODO) and add some margins to the width
-    // computed by the base class method to account for the arrow.
-    const int lbHeight = wxWindow::DoGetBestSize().y;
+    int lbWidth = GetCount() > 0 ? 20 : 100;  // some defaults
+    wxSize baseSize = wxWindow::DoGetBestSize();
+    int lbHeight = baseSize.y;
+    int wLine;
 
-    return wxSize(wxChoiceBase::DoGetBestSize().x + 4*GetCharWidth(),
-                  lbHeight);
+    {
+        wxClientDC dc(const_cast<wxChoice*>(this));
+
+        // Find the widest line
+        for(unsigned int i = 0; i < GetCount(); i++)
+        {
+            wxString str(GetString(i));
+
+            wxCoord width, height ;
+            dc.GetTextExtent( str , &width, &height);
+            wLine = width ;
+
+            lbWidth = wxMax( lbWidth, wLine ) ;
+        }
+
+        // Add room for the popup arrow
+        lbWidth += 2 * lbHeight ;
+
+        wxCoord width, height ;
+        dc.GetTextExtent( wxT("X"), &width, &height);
+        int cx = width ;
+
+        lbWidth += cx ;
+    }
+
+    return wxSize( lbWidth, lbHeight );
 }
 
 #endif // wxUSE_CHOICE

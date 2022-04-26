@@ -3,6 +3,7 @@
 // Purpose:     wxCheckListBox class
 // Author:      Robert Roebling
 // Modified by:
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -27,7 +28,7 @@
 // wxCheckListBox
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxCheckListBox : public wxCheckListBoxBase
+class WXDLLIMPEXP_CORE wxCheckListBox : public wxListBox
 {
 public:
     wxCheckListBox();
@@ -38,14 +39,14 @@ public:
             const wxString *choices = (const wxString *)NULL,
             long style = 0,
             const wxValidator& validator = wxDefaultValidator,
-            const wxString& name = wxASCII_STR(wxListBoxNameStr));
+            const wxString& name = wxListBoxNameStr);
     wxCheckListBox(wxWindow *parent, wxWindowID id,
             const wxPoint& pos,
             const wxSize& size,
             const wxArrayString& choices,
             long style = 0,
             const wxValidator& validator = wxDefaultValidator,
-            const wxString& name = wxASCII_STR(wxListBoxNameStr));
+            const wxString& name = wxListBoxNameStr);
 
     bool IsChecked(unsigned int index) const;
     void Check(unsigned int index, bool check = true);
@@ -53,7 +54,7 @@ public:
     int GetItemHeight() const;
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxCheckListBox);
+    DECLARE_DYNAMIC_CLASS(wxCheckListBox)
 };
 
 #endif   //__GTKCHECKLISTH__

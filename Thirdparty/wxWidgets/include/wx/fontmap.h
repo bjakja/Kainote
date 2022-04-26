@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     04.11.99
+// RCS-ID:      $Id$
 // Copyright:   (c) Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,10 +18,10 @@
 
 #if wxUSE_FONTMAP
 
-#include "wx\fontenc.h"         // for wxFontEncoding
+#include "wx/fontenc.h"         // for wxFontEncoding
 
 #if wxUSE_GUI
-    #include "wx\fontutil.h"    // for wxNativeEncodingInfo
+    #include "wx/fontutil.h"    // for wxNativeEncodingInfo
 #endif // wxUSE_GUI
 
 #if wxUSE_CONFIG && wxUSE_FILECONFIG
@@ -202,7 +203,7 @@ public:
     // returns the encoding for the given charset (in the form of RFC 2046) or
     // wxFONTENCODING_SYSTEM if couldn't decode it
     virtual wxFontEncoding CharsetToEncoding(const wxString& charset,
-                                             bool interactive = true) wxOVERRIDE;
+                                             bool interactive = true);
 
     // find an alternative for the given encoding (which is supposed to not be
     // available on this system). If successful, return true and fill info
@@ -242,7 +243,7 @@ public:
     static wxFontMapper *Get();
 
     // pseudo-RTTI since we aren't a wxObject.
-    virtual bool IsDummy() wxOVERRIDE { return false; }
+    virtual bool IsDummy() { return false; }
 
 protected:
     // GetAltForEncoding() helper: tests for the existence of the given
@@ -280,7 +281,7 @@ private:
 
 #if wxUSE_GUI
     // wxEncodingToCodepage (utils.cpp) needs wxGetNativeFontEncoding
-    #include "wx\fontutil.h"
+    #include "wx/fontutil.h"
 #endif
 
 #endif // wxUSE_FONTMAP/!wxUSE_FONTMAP

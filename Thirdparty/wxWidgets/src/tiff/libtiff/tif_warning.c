@@ -1,3 +1,5 @@
+/* $Header: /cvs/maptools/cvsroot/libtiff/libtiff/tif_warning.c,v 1.2 2005/12/23 01:18:59 joris Exp $ */
+
 /*
  * Copyright (c) 1988-1997 Sam Leffler
  * Copyright (c) 1991-1997 Silicon Graphics, Inc.
@@ -49,39 +51,24 @@ void
 TIFFWarning(const char* module, const char* fmt, ...)
 {
 	va_list ap;
-	if (_TIFFwarningHandler) {
-		va_start(ap, fmt);
+	va_start(ap, fmt);
+	if (_TIFFwarningHandler)
 		(*_TIFFwarningHandler)(module, fmt, ap);
-		va_end(ap);
-	}
-	if (_TIFFwarningHandlerExt) {
-		va_start(ap, fmt);
+	if (_TIFFwarningHandlerExt)
 		(*_TIFFwarningHandlerExt)(0, module, fmt, ap);
-		va_end(ap);
-	}
+	va_end(ap);
 }
 
 void
 TIFFWarningExt(thandle_t fd, const char* module, const char* fmt, ...)
 {
 	va_list ap;
-	if (_TIFFwarningHandler) {
-		va_start(ap, fmt);	
+	va_start(ap, fmt);
+	if (_TIFFwarningHandler)
 		(*_TIFFwarningHandler)(module, fmt, ap);
-		va_end(ap);
-	}
-	if (_TIFFwarningHandlerExt) {
-		va_start(ap, fmt);
+	if (_TIFFwarningHandlerExt)
 		(*_TIFFwarningHandlerExt)(fd, module, fmt, ap);
-		va_end(ap);
-	}
+	va_end(ap);
 }
 
 
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 8
- * fill-column: 78
- * End:
- */

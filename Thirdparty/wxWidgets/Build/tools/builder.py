@@ -1,4 +1,5 @@
 import os
+import string
 import subprocess
 import sys
 import time
@@ -88,64 +89,54 @@ class Builder:
 
         return self.name
 
-    def getProjectFileArg(self, projectFile = None):
-        result = []
-        if projectFile:
-            result.append(projectFile)
-        return result
-    
-    def clean(self, dir=None, projectFile=None, options=[]):
+    def clean(self, dir=None, projectFile=None, options=None):
         """
         dir = the directory containing the project file
         projectFile = Some formats need to explicitly specify the project file's name
         """
         if self.isAvailable():
-            args = [self.getProgramPath()]
-            pfArg = self.getProjectFileArg(projectFile)
-            if pfArg:
-                args.extend(pfArg)
-            args.append("clean")
             if options:
-                args.extend(options)
-            result = runInDir(args, dir)
+                optionList = list(options)
+            else:
+                optionList = []
+
+            optionList.insert(0, self.getProgramPath())
+            optionList.append("clean")
+        
+            result = runInDir(optionList, dir)
             return result
 
         return False
 
-    def configure(self, dir=None, options=[]):
+    def configure(self, options=None):
         # if we don't have configure, just report success
-        return 0
+        return True
 
-    def build(self, dir=None, projectFile=None, targets=None, options=[]):
+    def build(self, dir=None, projectFile=None, targets=None, options=None):
         if self.isAvailable():
-            args = [self.getProgramPath()]
-            pfArg = self.getProjectFileArg(projectFile)
-            if pfArg:
-                args.extend(pfArg)
-            # Important Note: if extending args, check it first!
-            # NoneTypes are not iterable and will crash the clean, build, or install!
-            # Very very irritating when this happens right at the end.
-            if options: 
-                args.extend(options)
-            result = runInDir(args, dir)
+            if options:
+                optionList = list(options)
+            else:
+                optionList = []
+
+            optionList.insert(0, self.getProgramPath())
+
+            result = runInDir(optionList, dir)
+
             return result
 
         return 1
 
-    def install(self, dir=None, projectFile=None, options=[]):
+    def install(self, dir=None, options=None):
         if self.isAvailable():
-            args = [self.getProgramPath()]
-            pfArg = self.getProjectFileArg(projectFile)
-            if pfArg:
-                args.extend(pfArg)
-            args.append("install")
+
+            args = ["make", "install"]
             if options:
                 args.extend(options)
             result = runInDir(args, dir)
             return result
 
         return 1
-
 
 # Concrete subclasses of abstract Builder interface
 
@@ -188,7 +179,7 @@ class AutoconfBuilder(GNUMakeBuilder):
             sys.stderr.write("Could not find configure script at %r. Have you run autoconf?\n" % dir)
             return 1
 
-        optionsStr = " ".join(options) if options else ""
+        optionsStr = string.join(options, " ") if options else ""
         command = "%s %s" % (configure_cmd, optionsStr)
         print(command)
         result = os.system(command)
@@ -197,8 +188,8 @@ class AutoconfBuilder(GNUMakeBuilder):
 
 
 class MSVCBuilder(Builder):
-    def __init__(self, commandName="nmake.exe"):
-        Builder.__init__(self, commandName=commandName, formatName="msvc")
+    def __init__(self):
+        Builder.__init__(self, commandName="nmake.exe", formatName="msvc")
 
     def isAvailable(self):
         PATH = os.environ['PATH'].split(os.path.pathsep)
@@ -206,13 +197,6 @@ class MSVCBuilder(Builder):
             if os.path.exists(os.path.join(p, self.name)):
                 return True
         return False
-
-    def getProjectFileArg(self, projectFile = None):
-        result = []
-        if projectFile:
-            result.extend(['-f', projectFile])
-            
-        return result
 
         
 class MSVCProjectBuilder(Builder):

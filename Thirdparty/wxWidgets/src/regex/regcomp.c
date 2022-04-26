@@ -30,7 +30,10 @@
  *
  */
 
+#include "regex.h"
 #include "regguts.h"
+#include "regerrs.h"
+#include "regcustom.h"
 
 /*
  * forward declarations, up here so forward datatypes etc. are defined early

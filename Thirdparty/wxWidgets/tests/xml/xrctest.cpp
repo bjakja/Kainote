@@ -3,6 +3,7 @@
 // Purpose:     XRC classes unit test
 // Author:      wxWidgets team
 // Created:     2010-10-30
+// RCS-ID:      $Id$
 // Copyright:   (c) 2010 wxWidgets team
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -12,25 +13,20 @@
 
 #include "testprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
     #include "wx/wx.h"
 #endif // WX_PRECOMP
 
-#if wxUSE_XRC
-
-#include "wx/fs_inet.h"
-#include "wx/imagxpm.h"
 #include "wx/xml/xml.h"
-#include "wx/scopedptr.h"
 #include "wx/sstream.h"
 #include "wx/wfstream.h"
 #include "wx/xrc/xmlres.h"
-#include "wx/xrc/xh_bmp.h"
 
 #include <stdarg.h>
-
-#include "testfile.h"
 
 // ----------------------------------------------------------------------------
 // helpers to create/save some xrc
@@ -41,19 +37,9 @@ namespace
 
 static const char *TEST_XRC_FILE = "test.xrc";
 
-void LoadXrcFrom(const wxString& xrcText)
-{
-    wxStringInputStream sis(xrcText);
-    wxScopedPtr<wxXmlDocument> xmlDoc(new wxXmlDocument(sis, "UTF-8"));
-    REQUIRE( xmlDoc->IsOk() );
-
-    // Load the xrc we've just created
-    REQUIRE( wxXmlResource::Get()->LoadDocument(xmlDoc.release(), TEST_XRC_FILE) );
-}
-
 // I'm hard-wiring the xrc into this function for now
 // If different xrcs are wanted for future tests, it'll be easy to refactor
-void LoadTestXrc()
+void CreateXrc()
 {
     const char *xrcText =
     "<?xml version=\"1.0\" ?>"
@@ -131,200 +117,113 @@ void LoadTestXrc()
     "</resource>"
       ;
 
-    LoadXrcFrom(wxString::FromAscii(xrcText));
+    // afaict there's no elegant way to load xrc direct from a string
+    // So save it as a file, from which it can be loaded
+    wxStringInputStream sis(xrcText);
+    wxFFileOutputStream fos(TEST_XRC_FILE);
+    CPPUNIT_ASSERT(fos.IsOk());
+    fos.Write(sis);
+    CPPUNIT_ASSERT(fos.Close());
 }
 
 } // anon namespace
 
 
 // ----------------------------------------------------------------------------
-// test fixture and the tests using it
+// test class
 // ----------------------------------------------------------------------------
 
-class XrcTestCase
+class XrcTestCase : public CppUnit::TestCase
 {
 public:
-    XrcTestCase() { }
+    XrcTestCase() {}
+
+    virtual void setUp() { CreateXrc(); }
+    virtual void tearDown() { wxRemoveFile(TEST_XRC_FILE); }
 
 private:
-    wxDECLARE_NO_COPY_CLASS(XrcTestCase);
+    CPPUNIT_TEST_SUITE( XrcTestCase );
+        CPPUNIT_TEST( ObjectReferences );
+        CPPUNIT_TEST( IDRanges );
+    CPPUNIT_TEST_SUITE_END();
+
+    void ObjectReferences();
+    void IDRanges();
+
+    DECLARE_NO_COPY_CLASS(XrcTestCase)
 };
 
-TEST_CASE_METHOD(XrcTestCase, "XRC::ObjectReferences", "[xrc]")
+// register in the unnamed registry so that these tests are run by default
+CPPUNIT_TEST_SUITE_REGISTRATION( XrcTestCase );
+
+// also include in its own registry so that these tests can be run alone
+CPPUNIT_TEST_SUITE_NAMED_REGISTRATION( XrcTestCase, "XrcTestCase" );
+
+
+
+void XrcTestCase::ObjectReferences()
 {
     wxXmlResource::Get()->InitAllHandlers();
 
     for ( int n = 0; n < 2; ++n )
     {
-        LoadTestXrc();
+        // Load the xrc file we're just created
+        CPPUNIT_ASSERT( wxXmlResource::Get()->Load(TEST_XRC_FILE) );
 
         // In xrc there's now a dialog containing two panels, one an object
         // reference of the other
         wxDialog dlg;
-        REQUIRE( wxXmlResource::Get()->LoadDialog(&dlg, NULL, "dialog") );
+        CPPUNIT_ASSERT( wxXmlResource::Get()->LoadDialog(&dlg, NULL, "dialog") );
         // Might as well test XRCCTRL too
         wxPanel* panel1 = XRCCTRL(dlg,"panel1",wxPanel);
         wxPanel* panel2 = XRCCTRL(dlg,"ref_of_panel1",wxPanel);
         // Check that the object reference panel is a different object
-        CHECK( panel2 != panel1 );
+        CPPUNIT_ASSERT( panel2 != panel1 );
 
         // Unload the xrc, so it can be reloaded and the test rerun
-        CHECK( wxXmlResource::Get()->Unload(TEST_XRC_FILE) );
+        CPPUNIT_ASSERT( wxXmlResource::Get()->Unload(TEST_XRC_FILE) );
     }
 }
 
-TEST_CASE_METHOD(XrcTestCase, "XRC::IDRanges", "[xrc]")
+void XrcTestCase::IDRanges()
 {
     // Tests ID ranges
     for ( int n = 0; n < 2; ++n )
     {
-        LoadTestXrc();
+        // Load the xrc file we're just created
+        CPPUNIT_ASSERT( wxXmlResource::Get()->Load(TEST_XRC_FILE) );
 
         // foo[start] should == foo[0]
-        CHECK( XRCID("SecondCol[start]") == XRCID("SecondCol[0]") );
+        CPPUNIT_ASSERT_EQUAL( XRCID("SecondCol[start]"), XRCID("SecondCol[0]") );
         // foo[start] should be < foo[end]. Usually that means more negative
-        CHECK( XRCID("SecondCol[start]") < XRCID("SecondCol[end]") );
+        CPPUNIT_ASSERT( XRCID("SecondCol[start]") < XRCID("SecondCol[end]") );
         // Check it works for the positive values in FirstCol too
-        CHECK( XRCID("FirstCol[start]") < XRCID("FirstCol[end]") );
+        CPPUNIT_ASSERT( XRCID("FirstCol[start]") < XRCID("FirstCol[end]") );
 
         // Check that values are adjacent
-        CHECK( XRCID("SecondCol[0]")+1 == XRCID("SecondCol[1]") );
-        CHECK( XRCID("SecondCol[1]")+1 == XRCID("SecondCol[2]") );
+        CPPUNIT_ASSERT_EQUAL( XRCID("SecondCol[0]")+1, XRCID("SecondCol[1]") );
+        CPPUNIT_ASSERT_EQUAL( XRCID("SecondCol[1]")+1, XRCID("SecondCol[2]") );
         // And for the positive range
-        CHECK( XRCID("FirstCol[2]")+1 == XRCID("FirstCol[3]") );
+        CPPUNIT_ASSERT_EQUAL( XRCID("FirstCol[2]")+1, XRCID("FirstCol[3]") );
 
         // Check that a large-enough range was created, despite the small
         // 'size' parameter
-        CHECK( XRCID("FirstCol[end]") - XRCID("FirstCol[start]") + 1 == 4 );
+        CPPUNIT_ASSERT_EQUAL
+        (
+            4,
+            XRCID("FirstCol[end]") - XRCID("FirstCol[start]") + 1
+        );
 
         // Check that the far-too-large size range worked off the scale too
-        CHECK( XRCID("SecondCol[start]") < XRCID("SecondCol[90]") );
-        CHECK( XRCID("SecondCol[90]") < XRCID("SecondCol[end]") );
-        CHECK( XRCID("SecondCol[90]")+1 == XRCID("SecondCol[91]") );
+        CPPUNIT_ASSERT( XRCID("SecondCol[start]") < XRCID("SecondCol[90]") );
+        CPPUNIT_ASSERT( XRCID("SecondCol[90]") < XRCID("SecondCol[end]") );
+        CPPUNIT_ASSERT_EQUAL( XRCID("SecondCol[90]")+1, XRCID("SecondCol[91]") );
 
         // Check that the positive range-start parameter worked, even after a
         // reload
-        CHECK( XRCID("FirstCol[start]") == 10000 );
+        CPPUNIT_ASSERT_EQUAL( XRCID("FirstCol[start]"), 10000 );
 
         // Unload the xrc, so it can be reloaded and the tests rerun
-        CHECK( wxXmlResource::Get()->Unload(TEST_XRC_FILE) );
+        CPPUNIT_ASSERT( wxXmlResource::Get()->Unload(TEST_XRC_FILE) );
     }
 }
-
-TEST_CASE("XRC::PathWithFragment", "[xrc][uri]")
-{
-    wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-    wxImage::AddHandler(new wxXPMHandler);
-
-    const wxString filename = "image#1.xpm";
-    TempFile xpmFile(filename);
-
-    // Simplest possible XPM, just to have something to create a bitmap from.
-    static const char* xpm =
-        "/* XPM */\n"
-        "static const char *const xpm[] = {\n"
-        "/* columns rows colors chars-per-pixel */\n"
-        "\"1 1 1 1\",\n"
-        "\"  c None\",\n"
-        "/* pixels */\n"
-        "\" \"\n"
-        ;
-
-    wxFFile ff;
-    REQUIRE( ff.Open(filename, "w") );
-    REQUIRE( ff.Write(wxString::FromAscii(xpm)) );
-    REQUIRE( ff.Close() );
-
-    // Opening a percent-encoded URI should work.
-    wxString url = filename;
-    url.Replace("#", "%23");
-
-    LoadXrcFrom
-    (
-        wxString::Format
-        (
-            "<?xml version=\"1.0\" ?>"
-            "<resource>"
-            "  <object class=\"wxBitmap\" name=\"bad\">%s</object>"
-            "  <object class=\"wxBitmap\" name=\"good\">%s</object>"
-            "</resource>",
-            filename,
-            url
-        )
-    );
-
-    CHECK( wxXmlResource::Get()->LoadBitmap("good").IsOk() );
-    CHECK( !wxXmlResource::Get()->LoadBitmap("bad").IsOk() );
-}
-
-TEST_CASE("XRC::EnvVarInPath", "[xrc]")
-{
-    wxStringInputStream sis(
-#ifdef __WINDOWS__
-        "<root><bitmap>%WX_TEST_ENV_IN_PATH%.bmp</bitmap></root>"
-#else
-        "<root><bitmap>$(WX_TEST_ENV_IN_PATH).bmp</bitmap></root>"
-#endif
-    );
-    wxXmlDocument xmlDoc(sis, "UTF-8");
-    REQUIRE( xmlDoc.IsOk() );
-
-    class wxTestEnvXmlHandler : public wxXmlResourceHandler
-    {
-    public:
-        wxTestEnvXmlHandler(wxXmlNode* testNode)
-        {
-            varIsSet = wxSetEnv("WX_TEST_ENV_IN_PATH", "horse");
-
-            wxXmlResource::Get()->SetFlags(wxXRC_USE_LOCALE | wxXRC_USE_ENVVARS);
-            SetParentResource(wxXmlResource::Get());
-
-            m_node = testNode;
-        }
-        ~wxTestEnvXmlHandler()
-        {
-            wxUnsetEnv("WX_TEST_ENV_IN_PATH");
-            wxXmlResource::Get()->SetFlags(wxXRC_USE_LOCALE);
-        }
-        virtual wxObject* DoCreateResource() wxOVERRIDE { return NULL; }
-        virtual bool CanHandle(wxXmlNode*) wxOVERRIDE { return false; }
-        bool varIsSet;
-    } handler(xmlDoc.GetRoot());
-
-    REQUIRE( handler.varIsSet );
-
-    wxXmlResourceHandlerImpl *impl = new wxXmlResourceHandlerImpl(&handler);
-    handler.SetImpl(impl);
-
-    CHECK( impl->GetBitmap().IsOk() );
-    CHECK( impl->GetBitmapBundle().IsOk() );
-}
-
-// This test is disabled by default as it requires the environment variable
-// below to be defined to point to a HTTP URL with the file to load.
-//
-// Use something like "python3 -m http.server samples/xrc/rc" and set
-// WX_TEST_XRC_URL to http://localhost/menu.xrc to run this test.
-TEST_CASE_METHOD(XrcTestCase, "XRC::LoadURL", "[xrc][.]")
-{
-    wxString url;
-    REQUIRE( wxGetEnv("WX_TEST_XRC_URL", &url) );
-
-    // Ensure that loading from HTTP URLs is supported.
-    struct InetHandler : wxInternetFSHandler
-    {
-        InetHandler()
-        {
-            wxFileSystem::AddHandler(this);
-        }
-
-        ~InetHandler()
-        {
-            wxFileSystem::RemoveHandler(this);
-        }
-    } inetHandler;
-
-    CHECK( wxXmlResource::Get()->Load(url) );
-}
-
-#endif // wxUSE_XRC

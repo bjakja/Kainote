@@ -3,6 +3,7 @@
 // Purpose:     Persistence support for wxSplitterWindow.
 // Author:      Vadim Zeitlin
 // Created:     2011-08-31
+// RCS-ID:      $Id: wxhead.h,v 1.12 2010-04-22 12:44:51 zeitlin Exp $
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -18,10 +19,10 @@
 // string constants used by wxPersistentSplitter
 // ----------------------------------------------------------------------------
 
-#define wxPERSIST_SPLITTER_KIND wxASCII_STR("Splitter")
+#define wxPERSIST_SPLITTER_KIND "Splitter"
 
 // Special position value of -1 means the splitter is not split at all.
-#define wxPERSIST_SPLITTER_POSITION wxASCII_STR("Position")
+#define wxPERSIST_SPLITTER_POSITION "Position"
 
 // ----------------------------------------------------------------------------
 // wxPersistentSplitter: supports saving/restoring splitter position
@@ -35,7 +36,7 @@ public:
     {
     }
 
-    virtual void Save() const wxOVERRIDE
+    virtual void Save() const
     {
         wxSplitterWindow* const splitter = Get();
 
@@ -43,7 +44,7 @@ public:
         SaveValue(wxPERSIST_SPLITTER_POSITION, pos);
     }
 
-    virtual bool Restore() wxOVERRIDE
+    virtual bool Restore()
     {
         int pos;
         if ( !RestoreValue(wxPERSIST_SPLITTER_POSITION, &pos) )
@@ -57,7 +58,7 @@ public:
         return true;
     }
 
-    virtual wxString GetKind() const wxOVERRIDE { return wxPERSIST_SPLITTER_KIND; }
+    virtual wxString GetKind() const { return wxPERSIST_SPLITTER_KIND; }
 };
 
 inline wxPersistentObject *wxCreatePersistentObject(wxSplitterWindow* splitter)

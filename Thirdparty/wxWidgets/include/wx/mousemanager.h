@@ -3,6 +3,7 @@
 // Purpose:     wxMouseEventsManager class declaration
 // Author:      Vadim Zeitlin
 // Created:     2009-04-20
+// RCS-ID:      $Id$
 // Copyright:   (c) 2009 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -144,7 +145,7 @@ private:
     wxPoint m_posLast;
 
 
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
 
     wxDECLARE_NO_COPY_CLASS(wxMouseEventsManager);
 };

@@ -3,6 +3,7 @@
 // Purpose:     wx wrappers for DirectFB interfaces
 // Author:      Vaclav Slavik
 // Created:     2006-09-04
+// RCS-ID:      $Id$
 // Copyright:   (c) 2006 REA Elektronik GmbH
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -10,6 +11,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
     #include "wx/intl.h"
@@ -57,7 +61,7 @@ bool wxDfbCheckReturn(DFBResult code)
 
         default:
             // FIXME: should handle the errors individually
-            wxLogError(_("DirectFB error %d occurred."), (int)code);
+            wxLogError(_("DirectFB error %d occured."), (int)code);
             return false;
     }
 }

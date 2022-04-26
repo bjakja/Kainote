@@ -2,6 +2,7 @@
 // Name:        protocol/http.h
 // Purpose:     interface of wxHTTP
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -11,9 +12,6 @@
     wxHTTP can be used to establish a connection to an HTTP server.
 
     wxHTTP can thus be used to create a (basic) HTTP @b client.
-
-    @note In practice, for any but the most trivial cases, e.g. if you need HTTPS, HTTP/2 or IPv6,
-            proxy detection, authentication, etc. support please use wxWebRequest instead.
 
     @library{wxnet}
     @category{net}
@@ -93,23 +91,6 @@ public:
     int GetResponse() const;
 
     /**
-        Set HTTP method.
-
-        Set <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html">common</a>
-        or expanded HTTP method.
-
-        Overrides GET or POST methods that is used by default.
-
-        @param method
-            HTTP method name, e.g. "GET".
-
-        @since 3.0
-
-        @see SetPostBuffer(), SetPostText()
-    */
-    void SetMethod(const wxString& method);
-
-    /**
         It sets data of a field to be sent during the next request to the HTTP server.
 
         The field name is specified by @a header and the content by @a h_data.
@@ -176,3 +157,4 @@ public:
                      const wxString& data,
                      const wxMBConv& conv = wxConvUTF8);
 };
+

@@ -3,6 +3,7 @@
 // Purpose:     XRC resource for wxStatusBar
 // Author:      Brian Ravnsgaard Riis
 // Created:     2004/01/21
+// RCS-ID:      $Id$
 // Copyright:   (c) 2004 Brian Ravnsgaard Riis
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -10,6 +11,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_XRC && wxUSE_STATUSBAR
 
@@ -22,7 +26,7 @@
     #include "wx/statusbr.h"
 #endif
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxStatusBarXmlHandler, wxXmlResourceHandler);
+IMPLEMENT_DYNAMIC_CLASS(wxStatusBarXmlHandler, wxXmlResourceHandler)
 
 wxStatusBarXmlHandler::wxStatusBarXmlHandler()
                       :wxXmlResourceHandler()
@@ -83,8 +87,6 @@ wxObject *wxStatusBarXmlHandler::DoCreateResource()
                 style[i] = wxSB_FLAT;
             else if (first == wxT("wxSB_RAISED"))
                 style[i] = wxSB_RAISED;
-            else if (first == wxT("wxSB_SUNKEN"))
-                style[i] = wxSB_SUNKEN;
             else if (!first.empty())
             {
                 ReportParamError

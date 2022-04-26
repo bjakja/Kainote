@@ -3,6 +3,7 @@
 // Purpose:     wxBannerWindow class documentation
 // Author:      Vadim Zeitlin
 // Created:     2011-08-16
+// RCS-ID:      $Id$
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -29,7 +30,7 @@
                         "the online server.\n"
                         "  Please enter your credentials in the controls below.");
 
-        // And position it along the top edge of the window.
+        // And position it along the left edge of the window.
         wxSizer* sizer = new wxBoxSizer(wxVERTICAL);
         sizer->Add(banner, wxSizerFlags().Expand());
 
@@ -42,9 +43,9 @@
     This class is currently implemented generically and so looks the same under
     all platforms.
 
-    @library{wxcore}
+    @library{wxadv}
     @category{miscwnd}
-    @genericAppearance{bannerwindow}
+    @genericAppearance{bannerwindow.png}
 
     @since 2.9.3
  */
@@ -134,7 +135,7 @@ public:
         @param bmp Bitmap to use as background. May be invalid to indicate
             that no background bitmap should be used.
      */
-    void SetBitmap(const wxBitmapBundle& bmp);
+    void SetBitmap(const wxBitmap& bmp);
 
     /**
         Set the text to display.

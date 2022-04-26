@@ -2,6 +2,7 @@
 // Name:        joystick.h
 // Purpose:     interface of wxJoystick
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -10,7 +11,7 @@
 
     wxJoystick allows an application to control one or more joysticks.
 
-    @library{wxcore}
+    @library{wxadv}
     @category{misc}
 
     @see wxJoystickEvent

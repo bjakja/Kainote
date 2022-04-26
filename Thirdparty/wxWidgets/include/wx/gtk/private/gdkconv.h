@@ -3,6 +3,7 @@
 // Purpose:     Helper functions for converting between GDK and wx types
 // Author:      Vadim Zeitlin
 // Created:     2009-11-10
+// RCS-ID:      $Id$
 // Copyright:   (c) 2009 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////

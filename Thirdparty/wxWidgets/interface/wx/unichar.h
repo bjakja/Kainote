@@ -2,6 +2,7 @@
 // Name:        unichar.h
 // Purpose:     interface of wxUniChar
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -44,8 +45,6 @@ public:
     wxUniChar(unsigned long int c);
     wxUniChar(short int c);
     wxUniChar(unsigned short int c);
-    wxUniChar(wxLongLong_t c);
-    wxUniChar(wxULongLong_t c);
 
     wxUniChar(const wxUniCharRef& c);
 
@@ -55,7 +54,7 @@ public:
     value_type GetValue() const;
 
     /**
-        Returns true if the character is an ASCII character (i.e.\ if its value is less than 128).
+        Returns true if the character is an ASCII character (i.e. if its value is less than 128).
     */
     bool IsAscii() const;
 
@@ -83,82 +82,6 @@ public:
      */
     bool GetAsChar(char *c) const;
 
-    /**
-        Returns true if the character is a BMP character (i.e.\ if its value is less than 0x10000).
-
-        @since 3.1.1
-    */
-    bool IsBMP() const;
-
-    /**
-        Returns true if the character is a BMP character (i.e.\ if its value is less than 0x10000).
-
-        @param value
-            The Unicode code point of the character.
-
-        @since 3.1.1
-    */
-    static bool IsBMP(wxUint32 value);
-
-    /**
-        Returns true if the character is a supplementary character (i.e.\ between 0x10000 and 0x10FFFF).
-
-        @since 3.1.1
-    */
-    bool IsSupplementary() const;
-
-    /**
-        Returns true if the character is a supplementary character (i.e.\ between 0x10000 and 0x10FFFF).
-
-        @param value
-            The Unicode code point of the character.
-
-        @since 3.1.1
-    */
-    static bool IsSupplementary(wxUint32 value);
-
-    /**
-        Returns the high surrogate code unit for the supplementary character.
-
-        @pre IsSupplementary() const
-
-        @since 3.1.1
-    */
-    wxUint16 HighSurrogate() const;
-
-    /**
-        Returns the high surrogate code unit for the supplementary character.
-
-        @param value
-            The Unicode code point of the character.
-
-        @pre IsSupplementary(wxUint32 value)
-
-        @since 3.1.1
-    */
-    static wxUint16 HighSurrogate(wxUint32 value);
-
-    /**
-        Returns the low surrogate code unit for the supplementary character.
-
-        @pre IsSupplementary() const
-
-        @since 3.1.1
-    */
-    wxUint16 LowSurrogate() const;
-
-    /**
-        Returns the low surrogate code unit for the supplementary character.
-
-        @param value
-            The Unicode code point of the character.
-
-        @pre IsSupplementary(wxUint32 value)
-
-        @since 3.1.1
-    */
-    static wxUint16 LowSurrogate(wxUint32 value);
-
     //@{
     /**
         Conversions to char and wchar_t types: all of those are needed to be
@@ -174,8 +97,6 @@ public:
     operator unsigned long int() const;
     operator short int() const;
     operator unsigned short int() const;
-    operator wxLongLong_t() const;
-    operator wxULongLong_t() const;
     //@}
 
     //@{
@@ -193,8 +114,6 @@ public:
     wxUniChar& operator=(unsigned long int c);
     wxUniChar& operator=(short int c);
     wxUniChar& operator=(unsigned short int c);
-    wxUniChar& operator=(wxLongLong_t c);
-    wxUniChar& operator=(wxULongLong_t c);
     //@}
 };
 

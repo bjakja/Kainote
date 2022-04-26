@@ -3,6 +3,7 @@
 // Purpose:     Test wxDynamicLibrary
 // Author:      Francesco Montorsi (extracted from console sample)
 // Created:     2010-06-13
+// RCS-ID:      $Id$
 // Copyright:   (c) 2010 wxWidgets team
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -12,12 +13,11 @@
 
 #include "testprec.h"
 
-#include "wx/dynlib.h"
-
-#ifdef __UNIX__
-    #include "wx/filename.h"
-    #include "wx/log.h"
+#ifdef __BORLANDC__
+#   pragma hdrstop
 #endif
+
+#include "wx/dynlib.h"
 
 // ----------------------------------------------------------------------------
 // test class
@@ -34,8 +34,8 @@ private:
     CPPUNIT_TEST_SUITE_END();
 
     void Load();
-
-    wxDECLARE_NO_COPY_CLASS(DynamicLibraryTestCase);
+    
+    DECLARE_NO_COPY_CLASS(DynamicLibraryTestCase)
 };
 
 // register in the unnamed registry so that these tests are run by default
@@ -57,13 +57,6 @@ void DynamicLibraryTestCase::Load()
     static const wxChar *LIB_NAME = wxT("/lib/libc.so.6");
 #endif
     static const wxChar *FUNC_NAME = wxT("strlen");
-
-    if ( !wxFileName::Exists(LIB_NAME) )
-    {
-        wxLogWarning("Shared library \"%s\" doesn't exist, "
-                     "skipping DynamicLibraryTestCase::Load() test.");
-        return;
-    }
 #else
     #error "don't know how to test wxDllLoader on this platform"
 #endif
@@ -73,10 +66,10 @@ void DynamicLibraryTestCase::Load()
 
     typedef int (wxSTDCALL *wxStrlenType)(const char *);
     wxStrlenType pfnStrlen = (wxStrlenType)lib.GetSymbol(FUNC_NAME);
-
+    
     wxString errMsg = wxString::Format("ERROR: function '%s' wasn't found in '%s'.\n",
                                        FUNC_NAME, LIB_NAME);
-    CPPUNIT_ASSERT_MESSAGE( errMsg.ToStdString(), (pfnStrlen != NULL) );
+    CPPUNIT_ASSERT_MESSAGE( errMsg.ToStdString(), pfnStrlen );
 
     // Call the function dynamically loaded
     CPPUNIT_ASSERT( pfnStrlen("foo") == 3 );
@@ -90,7 +83,7 @@ void DynamicLibraryTestCase::Load()
 
     wxString errMsg2 = wxString::Format("ERROR: function '%s' wasn't found in '%s'.\n",
                                        FUNC_NAME_AW, LIB_NAME);
-    CPPUNIT_ASSERT_MESSAGE( errMsg2.ToStdString(), (pfnStrlenAorW != NULL) );
+    CPPUNIT_ASSERT_MESSAGE( errMsg2.ToStdString(), pfnStrlenAorW );
 
     CPPUNIT_ASSERT( pfnStrlenAorW(wxT("foobar")) == 6 );
 #endif // __WINDOWS__

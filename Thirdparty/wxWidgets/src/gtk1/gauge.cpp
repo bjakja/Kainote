@@ -2,6 +2,7 @@
 // Name:        src/gtk1/gauge.cpp
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -70,6 +71,7 @@ wxSize wxGauge::DoGetBestSize() const
         best = wxSize(28, 100);
     else
         best = wxSize(100, 28);
+    CacheBestSize(best);
     return best;
 }
 

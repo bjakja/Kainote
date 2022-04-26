@@ -2,6 +2,7 @@
 // Name:        class_bookctrl.h
 // Purpose:     Book controls classes group docs
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 

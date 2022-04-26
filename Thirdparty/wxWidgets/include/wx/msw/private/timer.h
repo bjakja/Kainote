@@ -3,6 +3,7 @@
 // Purpose:     wxTimer class
 // Author:      Julian Smart
 // Created:     01/02/97
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -20,10 +21,10 @@ class WXDLLIMPEXP_BASE wxMSWTimerImpl : public wxTimerImpl
 public:
     wxMSWTimerImpl(wxTimer *timer) : wxTimerImpl(timer) { m_id = 0; }
 
-    virtual bool Start(int milliseconds = -1, bool oneShot = false) wxOVERRIDE;
-    virtual void Stop() wxOVERRIDE;
+    virtual bool Start(int milliseconds = -1, bool oneShot = false);
+    virtual void Stop();
 
-    virtual bool IsRunning() const wxOVERRIDE { return m_id != 0; }
+    virtual bool IsRunning() const { return m_id != 0; }
 
 protected:
     // this must be 64 bit under Win64 as WPARAM (storing timer ids) is 64 bit

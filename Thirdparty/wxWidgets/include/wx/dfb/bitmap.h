@@ -3,6 +3,7 @@
 // Purpose:     wxBitmap class
 // Author:      Vaclav Slavik
 // Created:     2006-08-04
+// RCS-ID:      $Id$
 // Copyright:   (c) 2006 REA Elektronik GmbH
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -31,15 +32,13 @@ public:
     wxBitmap(const wxString &filename, wxBitmapType type = wxBITMAP_DEFAULT_TYPE);
     wxBitmap(const char* const* bits);
 #if wxUSE_IMAGE
-    wxBitmap(const wxImage& image, int depth = -1, double WXUNUSED(scale) = 1.0);
+    wxBitmap(const wxImage& image, int depth = -1);
 #endif
 
     bool Create(const wxIDirectFBSurfacePtr& surface);
     bool Create(int width, int height, int depth = wxBITMAP_SCREEN_DEPTH);
     bool Create(const wxSize& sz, int depth = wxBITMAP_SCREEN_DEPTH)
         { return Create(sz.GetWidth(), sz.GetHeight(), depth); }
-    bool Create(int width, int height, const wxDC& WXUNUSED(dc))
-        { return Create(width,height); }
 
     virtual int GetHeight() const;
     virtual int GetWidth() const;
@@ -63,6 +62,9 @@ public:
     virtual void SetPalette(const wxPalette& palette);
 #endif
 
+    // copies the contents and mask of the given (colour) icon to the bitmap
+    virtual bool CopyFromIcon(const wxIcon& icon);
+
     static void InitStandardHandlers();
 
     // raw bitmap access support functions
@@ -72,11 +74,9 @@ public:
     bool HasAlpha() const;
 
     // implementation:
-#if WXWIN_COMPATIBILITY_3_0
-    wxDEPRECATED(virtual void SetHeight(int height));
-    wxDEPRECATED(virtual void SetWidth(int width));
-    wxDEPRECATED(virtual void SetDepth(int depth));
-#endif
+    virtual void SetHeight(int height);
+    virtual void SetWidth(int width);
+    virtual void SetDepth(int depth);
 
     // get underlying native representation:
     wxIDirectFBSurfacePtr GetDirectFBSurface() const;
@@ -87,7 +87,7 @@ protected:
 
     bool CreateWithFormat(int width, int height, int dfbFormat);
 
-    wxDECLARE_DYNAMIC_CLASS(wxBitmap);
+    DECLARE_DYNAMIC_CLASS(wxBitmap)
 };
 
 #endif // _WX_DFB_BITMAP_H_

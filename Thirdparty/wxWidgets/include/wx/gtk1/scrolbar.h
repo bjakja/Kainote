@@ -2,6 +2,7 @@
 // Name:        wx/gtk1/scrolbar.h
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -31,7 +32,7 @@ public:
            const wxSize& size = wxDefaultSize,
            long style = wxSB_HORIZONTAL,
            const wxValidator& validator = wxDefaultValidator,
-           const wxString& name = wxASCII_STR(wxScrollBarNameStr) )
+           const wxString& name = wxScrollBarNameStr )
     {
         Create( parent, id, pos, size, style, validator, name );
     }
@@ -40,7 +41,7 @@ public:
            const wxSize& size = wxDefaultSize,
            long style = wxSB_HORIZONTAL,
            const wxValidator& validator = wxDefaultValidator,
-           const wxString& name = wxASCII_STR(wxScrollBarNameStr) );
+           const wxString& name = wxScrollBarNameStr );
     virtual ~wxScrollBar();
     int GetThumbPosition() const;
     int GetThumbSize() const;
@@ -77,7 +78,7 @@ protected:
     virtual wxSize DoGetBestSize() const;
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxScrollBar);
+    DECLARE_DYNAMIC_CLASS(wxScrollBar)
 };
 
 #endif

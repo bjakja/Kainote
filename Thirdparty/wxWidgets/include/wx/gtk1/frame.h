@@ -2,6 +2,7 @@
 // Name:        wx/gtk1/frame.h
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling, Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -35,7 +36,7 @@ public:
                const wxPoint& pos = wxDefaultPosition,
                const wxSize& size = wxDefaultSize,
                long style = wxDEFAULT_FRAME_STYLE,
-               const wxString& name = wxASCII_STR(wxFrameNameStr))
+               const wxString& name = wxFrameNameStr)
     {
         Init();
 
@@ -48,7 +49,9 @@ public:
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = wxDEFAULT_FRAME_STYLE,
-                const wxString& name = wxASCII_STR(wxFrameNameStr));
+                const wxString& name = wxFrameNameStr);
+
+    virtual ~wxFrame();
 
 #if wxUSE_STATUSBAR
     virtual void PositionStatusBar();
@@ -56,7 +59,7 @@ public:
     virtual wxStatusBar* CreateStatusBar(int number = 1,
                                          long style = wxSTB_DEFAULT_STYLE,
                                          wxWindowID id = 0,
-                                         const wxString& name = wxASCII_STR(wxStatusLineNameStr));
+                                         const wxString& name = wxStatusLineNameStr);
 
     void SetStatusBar(wxStatusBar *statbar);
 #endif // wxUSE_STATUSBAR
@@ -64,7 +67,7 @@ public:
 #if wxUSE_TOOLBAR
     virtual wxToolBar* CreateToolBar(long style = -1,
                                      wxWindowID id = -1,
-                                     const wxString& name = wxASCII_STR(wxToolBarNameStr));
+                                     const wxString& name = wxToolBarNameStr);
     void SetToolBar(wxToolBar *toolbar);
 #endif // wxUSE_TOOLBAR
 
@@ -100,7 +103,7 @@ public:
 
 #endif // wxUSE_MENUS_NATIVE
 
-    wxDECLARE_DYNAMIC_CLASS(wxFrame);
+    DECLARE_DYNAMIC_CLASS(wxFrame)
 };
 
 #endif // __GTKFRAMEH__

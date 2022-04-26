@@ -2,6 +2,7 @@
 // Name:        arrstr.h
 // Purpose:     interface of wxArrayString
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -33,7 +34,7 @@
     array.Last().MakeUpper();
     @endcode
 
-    @note None of the methods of wxArrayString is virtual including its
+    @note none of the methods of wxArrayString is virtual including its
           destructor, so this class should not be used as a base class.
 
     Although this is not true strictly speaking, this class may be considered as
@@ -48,21 +49,13 @@
     @library{wxbase}
     @category{containers}
 
-    @see wxSortedArrayString, wxArray<T>, wxString, @ref overview_string
+    @see wxArray<T>, wxString, @ref overview_string
 */
 class wxArrayString : public wxArray
 {
 public:
     /**
-        The function type used with wxArrayString::Sort().
-
-        This function uses the same conventions as the standard @c qsort()
-        comparison function, that is it should return a negative value if the
-        first argument is less than the second one, a positive value if the
-        first argument is greater than the second one and 0 if the arguments
-        are equal.
-
-        @since 3.1.0
+        The function type used with wxArrayString::Sort function.
     */
     typedef int (*CompareFunction)(const wxString& first, const wxString& second);
 
@@ -132,19 +125,19 @@ public:
     size_t GetCount() const;
 
     /**
-        Searches the array for @a str, starting from the beginning if @a bFromEnd
-        is @false or from the end otherwise. If @a bCase, comparison is case sensitive
+        Search the element in the array, starting from the beginning if @a bFromEnd
+        is @false or from end otherwise. If @a bCase, comparison is case sensitive
         (default), otherwise the case is ignored.
 
         This function uses linear search for wxArrayString.
-        Returns the index of the first item matched or @c wxNOT_FOUND if there is no match.
+        Returns index of the first item matched or @c wxNOT_FOUND if there is no match.
     */
-    int Index(const wxString& str, bool bCase = true, bool bFromEnd = false) const;
+    int Index(const wxString& sz, bool bCase = true, bool bFromEnd = false) const;
 
     /**
-        Inserts the given number of @a copies of @a str in the array before the
-        array element at the position @a nIndex. Thus, for example, to insert
-        the string in the beginning of the array you would write:
+        Insert the given number of @a copies of the new element in the array before the
+        position @a nIndex. Thus, for example, to insert the string in the beginning of
+        the array you would write:
 
         @code
         Insert("foo", 0);
@@ -152,7 +145,7 @@ public:
 
         If @a nIndex is equal to GetCount() this function behaves as Add().
     */
-    void Insert(const wxString& str, size_t nIndex, size_t copies = 1);
+    void Insert(wxString lItem, size_t nIndex, size_t copies = 1);
 
     /**
         Returns @true if the array is empty, @false otherwise. This function returns the
@@ -257,7 +250,7 @@ public:
     bool operator ==(const wxArrayString& array) const;
 
     /**
-        Returns the array element at position @a nIndex. An assert failure will
+        Return the array element at position @a nIndex. An assert failure will
         result from an attempt to access an element beyond the end of array in
         debug mode, but no check is done in release mode.
 
@@ -271,45 +264,31 @@ public:
     @class wxSortedArrayString
 
     wxSortedArrayString is an efficient container for storing wxString objects
-    which always keeps the strings in alphabetical order.
+    which always keeps the string in alphabetical order.
 
-    wxSortedArrayString uses binary search in its wxSortedArrayString::Index() method
+    wxSortedArrayString uses binary search in its wxArrayString::Index() function
     (instead of linear search for wxArrayString::Index()) which makes it much more
     efficient if you add strings to the array rarely (because, of course, you have
     to pay for Index() efficiency by having Add() be slower) but search for them
     often. Several methods should not be used with sorted array (basically, all
     those which break the order of items) which is mentioned in their description.
 
+    @todo what about STL? who does it integrates?
+
     @library{wxbase}
     @category{containers}
 
     @see wxArray, wxString, @ref overview_string
 */
-class wxSortedArrayString : public wxArray
+class wxSortedArrayString : public wxArrayString
 {
 public:
-    /**
-        Default constructor.
-
-        The elements of the array are kept sorted in alphabetical order.
-     */
-    wxSortedArrayString();
-
-    /**
-        Constructs a sorted array using the specified @a compareFunction for
-        item comparison.
-
-        @see wxStringSortAscending(), wxDictionaryStringSortAscending()
-
-        @since 3.1.0
-    */
-    wxSortedArrayString(CompareFunction compareFunction);
 
     /**
         Conversion constructor.
 
         Constructs a sorted array with the same contents as the (possibly
-        unsorted) @a array argument.
+        unsorted) "array" argument.
     */
     wxSortedArrayString(const wxArrayString& array);
 
@@ -330,7 +309,7 @@ public:
         This function uses binary search for wxSortedArrayString, but it ignores
         the @a bCase and @a bFromEnd parameters.
     */
-    int Index(const wxString& str, bool bCase = true,
+    int Index(const wxString& sz, bool bCase = true,
               bool bFromEnd = false) const;
 
     /**
@@ -356,141 +335,6 @@ public:
     void Sort(CompareFunction compareFunction);
     //@}
 };
-
-/**
-    Comparison function comparing strings in alphabetical order.
-
-    This function can be used with wxSortedArrayString::Sort() or passed as an
-    argument to wxSortedArrayString constructor.
-
-    @see wxStringSortDescending(), wxDictionaryStringSortAscending(),
-         wxNaturalStringSortAscending()
-
-    @since 3.1.0
- */
-int wxStringSortAscending(const wxString& s1, const wxString& s2);
-
-/**
-    Comparison function comparing strings in reverse alphabetical order.
-
-    This function can be used with wxSortedArrayString::Sort() or passed as an
-    argument to wxSortedArrayString constructor.
-
-    @see wxStringSortAscending(), wxDictionaryStringSortDescending(),
-         wxNaturalStringSortDescending()
-
-    @since 3.1.0
- */
-int wxStringSortDescending(const wxString& s1, const wxString& s2);
-
-/**
-    Comparison function comparing strings in dictionary order.
-
-    The "dictionary order" differs from the alphabetical order in that the
-    strings differing not only in case are compared case-insensitively to
-    ensure that "Aa" comes before "AB" in the sorted array, unlike with
-    wxStringSortAscending().
-
-    This function can be used with wxSortedArrayString::Sort() or passed as an
-    argument to wxSortedArrayString constructor.
-
-    @see wxDictionaryStringSortDescending(),
-         wxStringSortAscending(),
-         wxNaturalStringSortAscending()
-
-    @since 3.1.0
- */
-int wxDictionaryStringSortAscending(const wxString& s1, const wxString& s2);
-
-/**
-    Comparison function comparing strings in reverse dictionary order.
-
-    See wxDictionaryStringSortAscending() for the dictionary sort description.
-
-    @see wxDictionaryStringSortAscending(),
-         wxStringSortDescending(),
-         wxNaturalStringSortDescending()
-
-    @since 3.1.0
- */
-int wxDictionaryStringSortDescending(const wxString& s1, const wxString& s2);
-
-
-/**
-    Comparison function comparing strings in natural order.
-
-    This function can be used with wxSortedArrayString::Sort()
-    or passed as an argument to wxSortedArrayString constructor.
-
-    See wxCmpNatural() for more information about how natural
-    sort order is implemented.
-
-    @see wxNaturalStringSortDescending(),
-         wxStringSortAscending(), wxDictionaryStringSortAscending()
-
-    @since 3.1.4
-*/
-int wxNaturalStringSortAscending(const wxString& s1, const wxString& s2);
-
-/**
-    Comparison function comparing strings in reverse natural order.
-
-    This function can be used with wxSortedArrayString::Sort()
-    or passed as an argument to wxSortedArrayString constructor.
-
-    See wxCmpNatural() for more information about how natural
-    sort order is implemented.
-
-    @see wxNaturalStringSortAscending(),
-         wxStringSortDescending(), wxDictionaryStringSortDescending()
-
-    @since 3.1.4
-*/
-int wxNaturalStringSortDescending(const wxString& s1, const wxString& s2);
-
-/**
-    This function compares strings using case-insensitive collation and
-    additionally, numbers within strings are recognised and compared
-    numerically, rather than alphabetically. When used for sorting,
-    the result is that e.g. file names containing numbers are sorted
-    in a natural way.
-
-    For example, sorting with a simple string comparison results in:
-    - file1.txt
-    - file10.txt
-    - file100.txt
-    - file2.txt
-    - file20.txt
-    - file3.txt
-
-    But sorting the same strings in natural sort order results in:
-    - file1.txt
-    - file2.txt
-    - file3.txt
-    - file10.txt
-    - file20.txt
-    - file100.txt
-
-    wxCmpNatural() uses an OS native natural sort function when available
-    (currently only under Microsoft Windows), wxCmpNaturalGeneric() otherwise.
-
-    Be aware that OS native implementations might differ from each other,
-    and might change behaviour from release to release.
-
-    @see wxNaturalStringSortAscending(), wxNaturalStringSortDescending()
-
-    @since 3.1.4
-*/
-int wxCmpNatural(const wxString& s1, const wxString& s2);
-
-/**
-    This is wxWidgets' own implementation of the natural sort comparison function.
-
-    @see wxCmpNatural()
-
-    @since 3.1.4
-*/
-int wxCmpNaturalGeneric(const wxString& s1, const wxString& s2);
 
 
 // ============================================================================
@@ -523,18 +367,7 @@ wxArrayString wxSplit(const wxString& str, const wxChar sep,
     If the @a escape character is non-@NULL, then it's used as prefix for each
     occurrence of @a sep in the strings contained in @a arr before joining them
     which is necessary in order to be able to recover the original array
-    contents from the string later using wxSplit(). The @a escape characters
-    themselves are @e not escaped when they occur in the middle of the @a arr
-    elements, but @e are escaped when they occur at the end, i.e.
-    @code
-    wxArrayString arr;
-    arr.push_back("foo^");
-    arr.push_back("bar^baz");
-    wxPuts(wxJoin(arr, ':', '^')); // prints "foo^^:bar^baz"
-    @endcode
-
-    In any case, applying wxSplit() to the result of wxJoin() is guaranteed to
-    recover the original array.
+    contents from the string later using wxSplit().
 
     @see wxSplit()
 

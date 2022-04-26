@@ -4,6 +4,7 @@
 // Author:      Ryan Norton <wxprojects@comcast.net>
 // Modified by:
 // Created:     11/07/04
+// RCS-ID:      $Id$
 // Copyright:   (c) Ryan Norton
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -20,6 +21,9 @@
 
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_MEDIACTRL
 
@@ -40,12 +44,12 @@
 // RTTI and Event implementations
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-wxIMPLEMENT_CLASS(wxMediaCtrl, wxControl);
+IMPLEMENT_CLASS(wxMediaCtrl, wxControl)
 wxDEFINE_EVENT( wxEVT_MEDIA_STATECHANGED, wxMediaEvent );
 wxDEFINE_EVENT( wxEVT_MEDIA_PLAY, wxMediaEvent );
 wxDEFINE_EVENT( wxEVT_MEDIA_PAUSE, wxMediaEvent );
-wxIMPLEMENT_CLASS(wxMediaBackend, wxObject);
-wxIMPLEMENT_DYNAMIC_CLASS(wxMediaEvent, wxEvent);
+IMPLEMENT_CLASS(wxMediaBackend, wxObject)
+IMPLEMENT_DYNAMIC_CLASS(wxMediaEvent, wxEvent)
 wxDEFINE_EVENT( wxEVT_MEDIA_FINISHED, wxMediaEvent );
 wxDEFINE_EVENT( wxEVT_MEDIA_LOADED, wxMediaEvent );
 wxDEFINE_EVENT( wxEVT_MEDIA_STOP, wxMediaEvent );
@@ -266,7 +270,8 @@ const wxClassInfo* wxMediaCtrl::NextBackend(wxClassInfo::const_iterator* it)
 //---------------------------------------------------------------------------
 wxMediaCtrl::~wxMediaCtrl()
 {
-    delete m_imp;
+    if (m_imp)
+        delete m_imp;
 }
 
 //---------------------------------------------------------------------------
@@ -458,6 +463,19 @@ void wxMediaCtrl::DoMoveWindow(int x, int y, int w, int h)
         m_imp->Move(x, y, w, h);
 }
 
+//---------------------------------------------------------------------------
+// wxMediaCtrl::MacVisibilityChanged
+//---------------------------------------------------------------------------
+#ifdef __WXOSX_CARBON__
+void wxMediaCtrl::MacVisibilityChanged()
+{
+    wxControl::MacVisibilityChanged();
+
+    if(m_imp)
+        m_imp->MacVisibilityChanged();
+}
+#endif
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //
 //  wxMediaBackendCommonBase
@@ -466,9 +484,6 @@ void wxMediaCtrl::DoMoveWindow(int x, int y, int w, int h)
 
 void wxMediaBackendCommonBase::NotifyMovieSizeChanged()
 {
-    if ( m_ctrl->HasFlag(wxMC_NO_AUTORESIZE) )
-        return;
-
     // our best size changed after opening a new file
     m_ctrl->InvalidateBestSize();
     m_ctrl->SetSize(m_ctrl->GetSize());
@@ -525,14 +540,14 @@ void wxMediaBackendCommonBase::QueueStopEvent()
 
 //
 // Force link default backends in -
-// see https://wiki.wxwidgets.org/RTTI
+// see http://wiki.wxwidgets.org/wiki.pl?RTTI
 //
 #include "wx/html/forcelnk.h"
 
 #ifdef __WXMSW__ // MSW has huge backends so we do it separately
 FORCE_LINK(wxmediabackend_am)
 FORCE_LINK(wxmediabackend_wmp10)
-#else
+#elif !defined(__WXOSX_COCOA__)
 FORCE_LINK(basewxmediabackends)
 #endif
 

@@ -4,6 +4,7 @@
 // Author:      Chris Breeze
 // Modified by:
 // Created:     21/07/97
+// RCS-ID:      $Id$
 // Copyright:   (c) 1993-1998 Chris Breeze
 // Licence:     wxWindows licence
 //---------------------------------------------------------------------------
@@ -12,6 +13,10 @@
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
+
+#ifdef __BORLANDC__
+#pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
 #include "wx/wx.h"
@@ -24,9 +29,9 @@
 #include "playerdg.h"
 #include "canvas.h"
 
-wxBEGIN_EVENT_TABLE(FortyCanvas, wxScrolledWindow)
+BEGIN_EVENT_TABLE(FortyCanvas, wxScrolledWindow)
     EVT_MOUSE_EVENTS(FortyCanvas::OnMouseEvent)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 FortyCanvas::FortyCanvas(wxWindow* parent, const wxPoint& pos, const wxSize& size) :
              wxScrolledWindow(parent, wxID_ANY, pos, size, 0),
@@ -38,9 +43,9 @@ FortyCanvas::FortyCanvas(wxWindow* parent, const wxPoint& pos, const wxSize& siz
     SetScrollbars(0, 0, 0, 0);
 
 #ifdef __WXGTK__
-    m_font = wxTheFontList->FindOrCreateFont(wxFontInfo(12).Family(wxFONTFAMILY_ROMAN));
+    m_font = wxTheFontList->FindOrCreateFont(12, wxROMAN, wxNORMAL, wxNORMAL);
 #else
-    m_font = wxTheFontList->FindOrCreateFont(wxFontInfo(10).Family(wxFONTFAMILY_SWISS));
+    m_font = wxTheFontList->FindOrCreateFont(10, wxSWISS, wxNORMAL, wxNORMAL);
 #endif
     SetBackgroundColour(FortyApp::BackgroundColour());
 

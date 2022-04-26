@@ -2,6 +2,7 @@
 // Name:        choice.h
 // Purpose:     interface of wxChoice
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -19,18 +20,17 @@
 
     @beginEventEmissionTable{wxCommandEvent}
     @event{EVT_CHOICE(id, func)}
-           Process a @c wxEVT_CHOICE event, when an item on the
+           Process a @c wxEVT_COMMAND_CHOICE_SELECTED event, when an item on the
            list is selected.
     @endEventTable
 
     @library{wxcore}
     @category{ctrl}
-    @appearance{choice}
+    @appearance{choice.png}
 
     @see wxListBox, wxComboBox, wxCommandEvent
 */
-class wxChoice : public wxControl,
-                 public wxItemContainer
+class wxChoice : public wxControlWithItems
 {
 public:
     /**
@@ -51,7 +51,7 @@ public:
             Window position.
             If ::wxDefaultPosition is specified then a default position is chosen.
         @param size
-            Window size.
+            Window size. 
             If ::wxDefaultSize is specified then the choice is sized appropriately.
         @param n
             Number of strings with which to initialise the choice control.
@@ -148,8 +148,8 @@ public:
 
     /**
         Unlike wxControlWithItems::GetSelection() which only returns the
-        accepted selection value (the selection in the control once the
-        user closes the dropdown list), this function returns the current
+        accepted selection value, i.e. the selection in the control once the
+        user closes the dropdown list, this function returns the current
         selection. That is, while the dropdown list is shown, it returns the
         currently selected item in it. When it is not shown, its result is the
         same as for the other function.
@@ -172,7 +172,7 @@ public:
     virtual void SetColumns(int n = 1);
 
     virtual bool IsSorted() const;
-
+    
     virtual unsigned int GetCount() const ;
     virtual int GetSelection() const ;
     virtual void SetSelection(int n);

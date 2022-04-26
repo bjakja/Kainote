@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     25.08.00
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,6 +19,9 @@
 
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_STATBMP
 
@@ -42,7 +46,7 @@
 
 bool wxStaticBitmap::Create(wxWindow *parent,
                             wxWindowID id,
-                            const wxBitmapBundle &label,
+                            const wxBitmap &label,
                             const wxPoint &pos,
                             const wxSize &size,
                             long style,
@@ -64,13 +68,29 @@ bool wxStaticBitmap::Create(wxWindow *parent,
 // bitmap/icon setting/getting and converting between
 // ----------------------------------------------------------------------------
 
-void wxStaticBitmap::SetBitmap(const wxBitmapBundle& bitmap)
+void wxStaticBitmap::SetBitmap(const wxBitmap& bitmap)
 {
-    m_bitmapBundle = bitmap;
+    m_bitmap = bitmap;
+}
 
-    InvalidateBestSize();
-    SetSize(GetBestSize());
-    Refresh();
+void wxStaticBitmap::SetIcon(const wxIcon& icon)
+{
+#ifdef __WXMSW__
+    m_bitmap.CopyFromIcon(icon);
+#else
+    m_bitmap = (const wxBitmap&)icon;
+#endif
+}
+
+wxIcon wxStaticBitmap::GetIcon() const
+{
+    wxIcon icon;
+#ifdef __WXMSW__
+    icon.CopyFromBitmap(m_bitmap);
+#else
+    icon = (const wxIcon&)m_bitmap;
+#endif
+    return icon;
 }
 
 // ----------------------------------------------------------------------------

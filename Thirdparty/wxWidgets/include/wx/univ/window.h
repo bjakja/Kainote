@@ -6,6 +6,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     06.08.00
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -62,7 +63,7 @@ public:
              const wxPoint& pos = wxDefaultPosition,
              const wxSize& size = wxDefaultSize,
              long style = 0,
-             const wxString& name = wxASCII_STR(wxPanelNameStr))
+             const wxString& name = wxPanelNameStr)
         : wxWindowNative(parent, id, pos, size, style | wxCLIP_CHILDREN, name)
         { Init(); }
 
@@ -71,7 +72,7 @@ public:
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = 0,
-                const wxString& name = wxASCII_STR(wxPanelNameStr));
+                const wxString& name = wxPanelNameStr);
 
     virtual ~wxWindow();
 
@@ -93,16 +94,16 @@ public:
                               int pos,
                               int page,
                               int range,
-                              bool refresh = true ) wxOVERRIDE;
-    virtual void SetScrollPos(int orient, int pos, bool refresh = true) wxOVERRIDE;
-    virtual int GetScrollPos(int orient) const wxOVERRIDE;
-    virtual int GetScrollThumb(int orient) const wxOVERRIDE;
-    virtual int GetScrollRange(int orient) const wxOVERRIDE;
+                              bool refresh = true );
+    virtual void SetScrollPos(int orient, int pos, bool refresh = true);
+    virtual int GetScrollPos(int orient) const;
+    virtual int GetScrollThumb(int orient) const;
+    virtual int GetScrollRange(int orient) const;
     virtual void ScrollWindow(int dx, int dy,
-                              const wxRect* rect = NULL) wxOVERRIDE;
+                              const wxRect* rect = NULL);
 
     // take into account the borders here
-    virtual wxPoint GetClientAreaOrigin() const wxOVERRIDE;
+    virtual wxPoint GetClientAreaOrigin() const;
 
     // popup menu support
     // ------------------
@@ -179,15 +180,15 @@ public:
     // the rect coordinates are, for us, in client coords, but if no rect is
     // specified, the entire window is refreshed
     virtual void Refresh(bool eraseBackground = true,
-                         const wxRect *rect = (const wxRect *) NULL) wxOVERRIDE;
+                         const wxRect *rect = (const wxRect *) NULL);
 
     // we refresh the window when it is dis/enabled
-    virtual bool Enable(bool enable = true) wxOVERRIDE;
+    virtual bool Enable(bool enable = true);
 
     // should we use the standard control colours or not?
-    virtual bool ShouldInheritColours() const wxOVERRIDE { return false; }
+    virtual bool ShouldInheritColours() const { return false; }
 
-    virtual bool IsClientAreaChild(const wxWindow *child) const wxOVERRIDE
+    virtual bool IsClientAreaChild(const wxWindow *child) const
     {
 #if wxUSE_SCROLLBAR
         if ( child == (wxWindow*)m_scrollbarHorz ||
@@ -197,20 +198,18 @@ public:
         return wxWindowNative::IsClientAreaChild(child);
     }
 
-    virtual wxSize GetWindowBorderSize() const wxOVERRIDE;
-
 protected:
     // common part of all ctors
     void Init();
 
 #if wxUSE_MENUS
-    virtual bool DoPopupMenu(wxMenu *menu, int x, int y) wxOVERRIDE;
+    virtual bool DoPopupMenu(wxMenu *menu, int x, int y);
 #endif // wxUSE_MENUS
 
     // we deal with the scrollbars in these functions
-    virtual void DoSetClientSize(int width, int height) wxOVERRIDE;
-    virtual void DoGetClientSize(int *width, int *height) const wxOVERRIDE;
-    virtual wxHitTest DoHitTest(wxCoord x, wxCoord y) const wxOVERRIDE;
+    virtual void DoSetClientSize(int width, int height);
+    virtual void DoGetClientSize(int *width, int *height) const;
+    virtual wxHitTest DoHitTest(wxCoord x, wxCoord y) const;
 
     // event handlers
     void OnSize(wxSizeEvent& event);
@@ -235,6 +234,9 @@ protected:
 
     // draw the controls contents
     virtual void DoDraw(wxControlRenderer *renderer);
+
+    // override the base class method to return the size of the window borders
+    virtual wxSize DoGetBorderSize() const;
 
     // adjust the size of the window to take into account its borders
     wxSize AdjustSize(const wxSize& size) const;
@@ -283,8 +285,8 @@ private:
     static wxWindow *ms_winLastAltPress;
 #endif // wxUSE_MENUS
 
-    wxDECLARE_DYNAMIC_CLASS(wxWindow);
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_DYNAMIC_CLASS(wxWindow)
+    DECLARE_EVENT_TABLE()
 };
 
 #endif // _WX_UNIV_WINDOW_H_

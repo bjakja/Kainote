@@ -2,6 +2,7 @@
 // Name:        app.h
 // Purpose:     topic overview
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -9,7 +10,16 @@
 
 @page overview_app wxApp Overview
 
-@tableofcontents
+Classes: wxApp
+
+@li @ref overview_app_intro
+@li @ref overview_app_shutdown
+
+
+<hr>
+
+
+@section overview_app_intro Introduction
 
 A wxWidgets application does not have a @e main procedure; the equivalent is
 the wxApp::OnInit member defined for a class derived from wxApp.
@@ -41,7 +51,7 @@ public:
     virtual bool OnInit();
 };
 
-wxIMPLEMENT_APP(DerivedApp);
+IMPLEMENT_APP(DerivedApp)
 
 bool DerivedApp::OnInit()
 {
@@ -53,14 +63,16 @@ bool DerivedApp::OnInit()
 }
 @endcode
 
-Note the use of wxIMPLEMENT_APP(), which defines the application entry
-point (either @c main() or @c WinMain() function, depending on the platform)
-and tells wxWidgets which application class should be used.
+Note the use of IMPLEMENT_APP(appClass), which allows wxWidgets to dynamically
+create an instance of the application object at the appropriate point in
+wxWidgets initialization. Previous versions of wxWidgets used to rely on the
+creation of a global application object, but this is no longer recommended,
+because required global initialization may not have been performed at
+application object construction time.
 
-You can also use wxDECLARE_APP(appClass) in a header file to declare the wxGetApp
+You can also use DECLARE_APP(appClass) in a header file to declare the wxGetApp
 function which returns a reference to the application object. Otherwise you can
 only use the global @c wxTheApp pointer which is of type @c wxApp*.
-
 
 
 @section overview_app_shutdown Application Shutdown
@@ -121,3 +133,4 @@ int MyApp::OnExit()
 @endcode
 
 */
+

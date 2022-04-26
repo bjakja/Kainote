@@ -3,15 +3,19 @@
 // Purpose:     implementation of BASE64 encoding/decoding functions
 // Author:      Charles Reimers, Vadim Zeitlin
 // Created:     2007-06-18
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_BASE64
 
-#include "wx\base64.h"
+#include "wx/base64.h"
 
 size_t
 wxBase64Encode(char *dst, size_t dstLen, const void *src_, size_t srcLen)
@@ -124,7 +128,7 @@ wxBase64Decode(void *dst_, size_t dstLen,
             case WSP:
                 if ( mode == wxBase64DecodeMode_SkipWS )
                     continue;
-                wxFALLTHROUGH;
+                // fall through
 
             case INV:
                 if ( mode == wxBase64DecodeMode_Relaxed )

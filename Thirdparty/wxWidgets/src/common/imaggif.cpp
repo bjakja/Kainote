@@ -2,6 +2,7 @@
 // Name:        src/common/imaggif.cpp
 // Purpose:     wxGIFHandler
 // Author:      Vaclav Slavik, Guillermo Rodriguez Garcia, Gershon Elber, Troels K
+// RCS-ID:      $Id$
 // Copyright:   (c) 1999-2011 Vaclav Slavik, Guillermo Rodriguez Garcia, Gershon Elber, Troels K
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -9,6 +10,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_IMAGE && wxUSE_GIF
 
@@ -23,7 +27,6 @@
 #include "wx/gifdecod.h"
 #include "wx/stream.h"
 #include "wx/anidecod.h" // wxImageArray
-#include "wx/scopedarray.h"
 
 #define GIF89_HDR     "GIF89a"
 #define NETSCAPE_LOOP "NETSCAPE2.0"
@@ -66,7 +69,7 @@ struct GifHashTableType
     wxUint32 HTable[HT_SIZE];
 };
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxGIFHandler,wxImageHandler);
+IMPLEMENT_DYNAMIC_CLASS(wxGIFHandler,wxImageHandler)
 
 //----------------------------------------------------------------------------
 // Forward declarations
@@ -114,31 +117,53 @@ static bool wxGIFHandler_BufferedOutput(wxOutputStream *, wxUint8 *buf, int c);
 bool wxGIFHandler::LoadFile(wxImage *image, wxInputStream& stream,
     bool verbose, int index)
 {
-    wxGIFDecoder decod;
-    switch ( decod.LoadGIF(stream) )
+    wxGIFDecoder *decod;
+    wxGIFErrorCode error;
+    bool ok = true;
+
+//    image->Destroy();
+    decod = new wxGIFDecoder();
+    error = decod->LoadGIF(stream);
+
+    if ((error != wxGIF_OK) && (error != wxGIF_TRUNCATED))
     {
-        case wxGIF_OK:
-            break;
-
-        case wxGIF_INVFORMAT:
-            if ( verbose )
-                wxLogError(_("GIF: error in GIF image format."));
-            return false;
-
-        case wxGIF_MEMERR:
-            if ( verbose )
-                wxLogError(_("GIF: not enough memory."));
-            return false;
-
-        case wxGIF_TRUNCATED:
-            if ( verbose )
-                wxLogError(_("GIF: data stream seems to be truncated."));
-
-            // go on; image data is OK
-            break;
+        if (verbose)
+        {
+            switch (error)
+            {
+                case wxGIF_INVFORMAT:
+                    wxLogError(_("GIF: error in GIF image format."));
+                    break;
+                case wxGIF_MEMERR:
+                    wxLogError(_("GIF: not enough memory."));
+                    break;
+                default:
+                    wxLogError(_("GIF: unknown error!!!"));
+                    break;
+            }
+        }
+        delete decod;
+        return false;
     }
 
-    return decod.ConvertToImage(index != -1 ? (size_t)index : 0, image);
+    if ((error == wxGIF_TRUNCATED) && verbose)
+    {
+        wxLogError(_("GIF: data stream seems to be truncated."));
+        // go on; image data is OK
+    }
+
+    if (ok)
+    {
+        ok = decod->ConvertToImage(index != -1 ? (size_t)index : 0, image);
+    }
+    else
+    {
+        wxLogError(_("GIF: Invalid gif index."));
+    }
+
+    delete decod;
+
+    return ok;
 }
 
 bool wxGIFHandler::SaveFile(wxImage *image,
@@ -194,8 +219,6 @@ bool wxGIFHandler::DoSaveFile(const wxImage& image, wxOutputStream *stream,
 
     int width = image.GetWidth();
     int height = image.GetHeight();
-    wxCHECK_MSG( width && height, false, wxS("can't save 0-sized file") );
-
     int width_even = width + ((width % 2) ? 1 : 0);
 
     if (first)
@@ -243,7 +266,7 @@ bool wxGIFHandler::DoSaveFile(const wxImage& image, wxOutputStream *stream,
     }
 
     const wxUint8 *src = image.GetData();
-    wxScopedArray<wxUint8> eightBitData(width);
+    wxUint8 *eightBitData = new wxUint8[width];
 
     SetupCompress(stream, 8);
 
@@ -263,12 +286,14 @@ bool wxGIFHandler::DoSaveFile(const wxImage& image, wxOutputStream *stream,
             src+=3;
         }
 
-        ok = CompressLine(stream, eightBitData.get(), width);
+        ok = CompressLine(stream, eightBitData, width);
         if (!ok)
         {
             break;
         }
     }
+
+    delete [] eightBitData;
 
     wxDELETE(m_hashTable);
 
@@ -391,7 +416,9 @@ bool wxGIFHandler::SetupCompress(wxOutputStream *stream, int bpp)
 bool wxGIFHandler::CompressLine(wxOutputStream *stream,
     const wxUint8 *line, int lineLen)
 {
-    int i = 0, crntCode;
+    int i = 0, crntCode, newCode;
+    unsigned long newKey;
+    wxUint8 pixel;
     if (m_crntCode == FIRST_CODE)                  // It's first time!
         crntCode = line[i++];
     else
@@ -400,13 +427,10 @@ bool wxGIFHandler::CompressLine(wxOutputStream *stream,
     while (i < lineLen)
     {
         // Decode lineLen items.
-        wxUint8 pixel;
         pixel = line[i++];                    // Get next pixel from stream.
         // Form a new unique key to search hash table for the code combines
         // crntCode as Prefix string with Pixel as postfix char.
-        unsigned long newKey;
         newKey = (((unsigned long) crntCode) << 8) + pixel;
-        int newCode;
         if ((newCode = ExistsHashTable(newKey)) >= 0)
         {
             // This Key is already there, or the string is old one, so
@@ -698,14 +722,13 @@ bool wxGIFHandler_WriteControl(wxOutputStream *stream,
     int maskIndex, int delayMilliSecs)
 {
     wxUint8 buf[8];
-    const wxUint16 delay = delayMilliSecs / 10;
 
     buf[0] = GIF_MARKER_EXT;    // extension marker
     buf[1] = GIF_MARKER_EXT_GRAPHICS_CONTROL;
     buf[2] = 4;     // length of block
     buf[3] = (maskIndex != wxNOT_FOUND) ? 1 : 0;   // has transparency
-    buf[4] = delay & 0xff;  // delay time
-    buf[5] = (delay >> 8) & 0xff;   // delay time second byte
+    buf[4] = delayMilliSecs / 10; // delay time
+    buf[5] = 0;
     buf[6] = (maskIndex != wxNOT_FOUND) ? (wxUint8) maskIndex : 0;
     buf[7] = 0;
     return wxGIFHandler_Write(stream, buf, sizeof(buf));

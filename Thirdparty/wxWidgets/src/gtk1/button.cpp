@@ -2,6 +2,7 @@
 // Name:        src/gtk1/button.cpp
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -52,7 +53,7 @@ static void gtk_button_clicked_callback( GtkWidget *WXUNUSED(widget), wxButton *
     if (!button->m_hasVMT) return;
     if (g_blockEventsOnDrag) return;
 
-    wxCommandEvent event(wxEVT_BUTTON, button->GetId());
+    wxCommandEvent event(wxEVT_COMMAND_BUTTON_CLICKED, button->GetId());
     event.SetEventObject(button);
     button->HandleWindowEvent(event);
 }
@@ -166,7 +167,7 @@ wxWindow *wxButton::SetDefault()
 }
 
 /* static */
-wxSize wxButtonBase::GetDefaultSize(wxWindow* WXUNUSED(win))
+wxSize wxButtonBase::GetDefaultSize()
 {
     return wxSize(80,26);
 }
@@ -212,7 +213,7 @@ wxSize wxButton::DoGetBestSize() const
 {
     // the default button in wxGTK is bigger than the other ones because of an
     // extra border around it, but we don't want to take it into account in
-    // our size calculations (otherwise the result is visually ugly), so
+    // our size calculations (otherwsie the result is visually ugly), so
     // always return the size of non default button from here
     const bool isDefault = GTK_WIDGET_HAS_DEFAULT(m_widget);
     if ( isDefault )
@@ -238,6 +239,7 @@ wxSize wxButton::DoGetBestSize() const
         if (ret.y < defaultSize.y) ret.y = defaultSize.y;
     }
 
+    CacheBestSize(ret);
     return ret;
 }
 

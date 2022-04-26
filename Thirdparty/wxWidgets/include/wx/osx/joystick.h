@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -15,8 +16,8 @@
 
 class WXDLLIMPEXP_ADV wxJoystick: public wxObject
 {
-  wxDECLARE_DYNAMIC_CLASS(wxJoystick);
-public:
+  DECLARE_DYNAMIC_CLASS(wxJoystick)
+ public:
   /*
    * Public interface
    */

@@ -3,6 +3,7 @@
 // Purpose:     wxDateTime benchmarks
 // Author:      Vadim Zeitlin
 // Created:     2011-05-23
+// RCS-ID:      $Id$
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////

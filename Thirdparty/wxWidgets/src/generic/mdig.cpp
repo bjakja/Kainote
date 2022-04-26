@@ -4,6 +4,7 @@
 // Author:      Hans Van Leemputten
 // Modified by: 2008-10-31 Vadim Zeitlin: derive from the base classes
 // Created:     29/07/2002
+// RCS-ID:      $Id$
 // Copyright:   (c) 2002 Hans Van Leemputten
 //              (c) 2008 Vadim Zeitlin
 // Licence:     wxWindows licence
@@ -20,6 +21,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_MDI
 
@@ -48,14 +52,14 @@ enum MDI_MENU_ID
 // wxGenericMDIParentFrame
 //-----------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxGenericMDIParentFrame, wxFrame);
+IMPLEMENT_DYNAMIC_CLASS(wxGenericMDIParentFrame, wxFrame)
 
-wxBEGIN_EVENT_TABLE(wxGenericMDIParentFrame, wxFrame)
+BEGIN_EVENT_TABLE(wxGenericMDIParentFrame, wxFrame)
     EVT_CLOSE(wxGenericMDIParentFrame::OnClose)
 #if wxUSE_MENUS
     EVT_MENU(wxID_ANY, wxGenericMDIParentFrame::OnWindowMenu)
 #endif
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 void wxGenericMDIParentFrame::Init()
 {
@@ -355,7 +359,7 @@ bool wxGenericMDIParentFrame::ProcessEvent(wxEvent& event)
         // the menu events should be given to the child as we show its menu bar
         // as our own
         const wxEventType eventType = event.GetEventType();
-        if ( eventType == wxEVT_MENU ||
+        if ( eventType == wxEVT_COMMAND_MENU_SELECTED ||
              eventType == wxEVT_UPDATE_UI )
         {
             // set the flag indicating that this event was forwarded to the
@@ -376,15 +380,13 @@ bool wxGenericMDIParentFrame::ProcessEvent(wxEvent& event)
 // wxGenericMDIChildFrame
 // ----------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxGenericMDIChildFrame, wxFrame);
+IMPLEMENT_DYNAMIC_CLASS(wxGenericMDIChildFrame, wxFrame)
 
-wxBEGIN_EVENT_TABLE(wxGenericMDIChildFrame, wxFrame)
-#if wxUSE_MENUS
+BEGIN_EVENT_TABLE(wxGenericMDIChildFrame, wxFrame)
     EVT_MENU_HIGHLIGHT_ALL(wxGenericMDIChildFrame::OnMenuHighlight)
-#endif // wxUSE_MENUS
 
     EVT_CLOSE(wxGenericMDIChildFrame::OnClose)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 void wxGenericMDIChildFrame::Init()
 {
@@ -407,15 +409,7 @@ wxGenericMDIChildFrame::~wxGenericMDIChildFrame()
         parent->WXRemoveChild(this);
 
 #if wxUSE_MENUS
-    if ( m_pMenuBar )
-    {
-        // calling WXRemoveChild() above broke the link between the menu bar
-        // and the parent, so we need to also remove it explicitly
-        if ( parent )
-            parent->RemoveChild(m_pMenuBar);
-
-        delete m_pMenuBar;
-    }
+    delete m_pMenuBar;
 #endif // wxUSE_MENUS
 }
 
@@ -500,7 +494,6 @@ void wxGenericMDIChildFrame::Activate()
     parent->WXActivateChild(this);
 }
 
-#if wxUSE_MENUS
 void wxGenericMDIChildFrame::OnMenuHighlight(wxMenuEvent& event)
 {
     wxGenericMDIParentFrame * const parent = GetGenericMDIParent();
@@ -511,7 +504,6 @@ void wxGenericMDIChildFrame::OnMenuHighlight(wxMenuEvent& event)
         parent->OnMenuHighlight(event);
     }
 }
-#endif // wxUSE_MENUS
 
 void wxGenericMDIChildFrame::OnClose(wxCloseEvent& WXUNUSED(event))
 {
@@ -534,7 +526,7 @@ bool wxGenericMDIChildFrame::TryAfter(wxEvent& event)
 // wxGenericMDIClientWindow
 // ----------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxGenericMDIClientWindow, wxWindow);
+IMPLEMENT_DYNAMIC_CLASS(wxGenericMDIClientWindow, wxWindow)
 
 bool
 wxGenericMDIClientWindow::CreateGenericClient(wxWindow *parent)
@@ -543,15 +535,17 @@ wxGenericMDIClientWindow::CreateGenericClient(wxWindow *parent)
         return false;
 
     m_notebook = new wxNotebook(this, wxID_ANY);
-    m_notebook->Bind
+    m_notebook->Connect
                 (
-                    wxEVT_NOTEBOOK_PAGE_CHANGED,
-                    &wxGenericMDIClientWindow::OnPageChanged,
+                    wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED,
+                    wxNotebookEventHandler(
+                        wxGenericMDIClientWindow::OnPageChanged),
+                    NULL,
                     this
                 );
 
     // now that we have a notebook to resize, hook up OnSize() too
-    Bind(wxEVT_SIZE, &wxGenericMDIClientWindow::OnSize, this);
+    Connect(wxEVT_SIZE, wxSizeEventHandler(wxGenericMDIClientWindow::OnSize));
 
     return true;
 }

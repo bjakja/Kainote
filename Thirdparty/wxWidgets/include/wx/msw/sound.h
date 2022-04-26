@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -36,7 +37,7 @@ protected:
     bool CheckCreatedOk();
     void Free();
 
-    virtual bool DoPlay(unsigned flags) const wxOVERRIDE;
+    virtual bool DoPlay(unsigned flags) const;
 
 private:
     // data of this object

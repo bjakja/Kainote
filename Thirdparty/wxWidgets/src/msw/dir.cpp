@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     08.12.99
+// RCS-ID:      $Id$
 // Copyright:   (c) 1999 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,18 +18,21 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
-    #include "wx\intl.h"
-    #include "wx\log.h"
+    #include "wx/intl.h"
+    #include "wx/log.h"
 #endif // PCH
 
-#include "wx\dir.h"
+#include "wx/dir.h"
 
 #ifdef __WINDOWS__
-    #include "wx\msw/private.h"
+    #include "wx/msw/private.h"
 #endif
 
 // ----------------------------------------------------------------------------
@@ -60,74 +64,20 @@ inline void FreeFindData(FIND_DATA fd)
     }
 }
 
-const wxChar *GetNameFromFindData(const FIND_STRUCT *finddata)
+inline FIND_DATA FindFirst(const wxString& spec,
+                           FIND_STRUCT *finddata)
+{
+    return ::FindFirstFile(spec.t_str(), finddata);
+}
+
+inline bool FindNext(FIND_DATA fd, FIND_STRUCT *finddata)
+{
+    return ::FindNextFile(fd, finddata) != 0;
+}
+
+const wxChar *GetNameFromFindData(FIND_STRUCT *finddata)
 {
     return finddata->cFileName;
-}
-
-// Helper function checking that the contents of the given FIND_STRUCT really
-// match our filter. We need to do it ourselves as native Windows functions
-// apply the filter to both the long and the short names of the file, so
-// something like "*.bar" matches "foo.bar.baz" too and not only "foo.bar", so
-// we have to double check that we have a real match.
-inline bool
-CheckFoundMatch(const FIND_STRUCT* finddata, const wxString& filter)
-{
-    // If there is no filter, the found file must be the one we really are
-    // looking for.
-    if ( filter.empty() )
-        return true;
-
-    // Otherwise do check the match validity. Notice that we must do it
-    // case-insensitively because the case of the file names is not supposed to
-    // matter under Windows.
-    wxString fn(GetNameFromFindData(finddata));
-
-    // However if the filter contains only special characters (which is a
-    // common case), we can skip the case conversion.
-    if ( filter.find_first_not_of(wxS("*?.")) == wxString::npos )
-        return fn.Matches(filter);
-
-    return fn.MakeUpper().Matches(filter.Upper());
-}
-
-inline bool
-FindNext(FIND_DATA fd, const wxString& filter, FIND_STRUCT *finddata)
-{
-    for ( ;; )
-    {
-        if ( !::FindNextFile(fd, finddata) )
-            return false;
-
-        // If we did find something, check that it really matches.
-        if ( CheckFoundMatch(finddata, filter) )
-            return true;
-    }
-}
-
-inline FIND_DATA
-FindFirst(const wxString& spec,
-          const wxString& filter,
-          FIND_STRUCT *finddata)
-{
-    FIND_DATA fd = ::FindFirstFile(spec.t_str(), finddata);
-
-    // As in FindNext() above, we need to check that the file name we found
-    // really matches our filter and look for the next match if it doesn't.
-    if ( IsFindDataOk(fd) && !CheckFoundMatch(finddata, filter) )
-    {
-        if ( !FindNext(fd, filter, finddata) )
-        {
-            // As we return the invalid handle from here to indicate that we
-            // didn't find anything, close the one we initially received
-            // ourselves.
-            FreeFindData(fd);
-
-            return INVALID_HANDLE_VALUE;
-        }
-    }
-
-    return fd;
 }
 
 inline FIND_ATTR GetAttrFromFindData(FIND_STRUCT *finddata)
@@ -201,9 +151,9 @@ private:
 // ----------------------------------------------------------------------------
 
 wxDirData::wxDirData(const wxString& dirname)
-    : m_finddata(InitFindData())
-    , m_dirname(dirname)
+         : m_dirname(dirname)
 {
+    m_finddata = InitFindData();
 }
 
 wxDirData::~wxDirData()
@@ -246,13 +196,14 @@ bool wxDirData::Read(wxString *filename)
         else
             filespec += m_filespec;
 
-        m_finddata = FindFirst(filespec, m_filespec, PTR_TO_FINDDATA);
+        m_finddata = FindFirst(filespec, PTR_TO_FINDDATA);
 
         first = true;
     }
 
     if ( !IsFindDataOk(m_finddata) )
     {
+#ifdef __WIN32__
         DWORD err = ::GetLastError();
 
         if ( err != ERROR_FILE_NOT_FOUND && err != ERROR_NO_MORE_FILES )
@@ -260,6 +211,7 @@ bool wxDirData::Read(wxString *filename)
             wxLogSysError(err, _("Cannot enumerate files in directory '%s'"),
                           m_dirname.c_str());
         }
+#endif // __WIN32__
         //else: not an error, just no (such) files
 
         return false;
@@ -276,14 +228,16 @@ bool wxDirData::Read(wxString *filename)
         }
         else
         {
-            if ( !FindNext(m_finddata, m_filespec, PTR_TO_FINDDATA) )
+            if ( !FindNext(m_finddata, PTR_TO_FINDDATA) )
             {
+#ifdef __WIN32__
                 DWORD err = ::GetLastError();
 
                 if ( err != ERROR_NO_MORE_FILES )
                 {
                     wxLogLastError(wxT("FindNext"));
                 }
+#endif // __WIN32__
                 //else: not an error, just no more (such) files
 
                 return false;
@@ -389,13 +343,9 @@ wxString wxDir::GetName() const
     return name;
 }
 
-void wxDir::Close()
+wxDir::~wxDir()
 {
-    if ( m_data )
-    {
-        delete m_data;
-        m_data = NULL;
-    }
+    delete M_DIR;
 }
 
 // ----------------------------------------------------------------------------
@@ -429,16 +379,24 @@ bool wxDir::GetNext(wxString *filename) const
 // wxGetDirectoryTimes: used by wxFileName::GetTimes()
 // ----------------------------------------------------------------------------
 
+#ifdef __WIN32__
+
 extern bool
 wxGetDirectoryTimes(const wxString& dirname,
                     FILETIME *ftAccess, FILETIME *ftCreate, FILETIME *ftMod)
 {
+#ifdef __WXWINCE__
+    // FindFirst() is going to fail
+    wxASSERT_MSG( !dirname.empty(),
+                  wxT("incorrect directory name format in wxGetDirectoryTimes") );
+#else
     // FindFirst() is going to fail
     wxASSERT_MSG( !dirname.empty() && dirname.Last() != wxT('\\'),
                   wxT("incorrect directory name format in wxGetDirectoryTimes") );
+#endif
 
     FIND_STRUCT fs;
-    FIND_DATA fd = FindFirst(dirname, wxEmptyString, &fs);
+    FIND_DATA fd = FindFirst(dirname, &fs);
     if ( !IsFindDataOk(fd) )
     {
         return false;
@@ -452,3 +410,6 @@ wxGetDirectoryTimes(const wxString& dirname,
 
     return true;
 }
+
+#endif // __WIN32__
+

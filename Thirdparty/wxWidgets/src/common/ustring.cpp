@@ -3,20 +3,23 @@
 // Purpose:     wxUString class
 // Author:      Robert Roebling
 // Created:     2008-07-25
+// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Robert Roebling
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
-#include "wx\ustring.h"
-#include "wx\private/unicode.h"
+#include "wx/ustring.h"
 
 #ifndef WX_PRECOMP
-    #include "wx\crt.h"
-    #include "wx\log.h"
+    #include "wx/crt.h"
+    #include "wx/log.h"
 #endif
 
 wxUString &wxUString::assignFromAscii( const char *str )
@@ -64,6 +67,41 @@ wxUString &wxUString::assignFromAscii( const char *str, size_type n )
 // ----------------------------------------------------------------------------
 // UTF-8
 // ----------------------------------------------------------------------------
+
+// this table gives the length of the UTF-8 encoding from its first character:
+const unsigned char tableUtf8Lengths[256] = {
+    // single-byte sequences (ASCII):
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // 00..0F
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // 10..1F
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // 20..2F
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // 30..3F
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // 40..4F
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // 50..5F
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // 60..6F
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  // 70..7F
+
+    // these are invalid:
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  // 80..8F
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  // 90..9F
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  // A0..AF
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  // B0..BF
+    0, 0,                                            // C0,C1
+
+    // two-byte sequences:
+          2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  // C2..CF
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  // D0..DF
+
+    // three-byte sequences:
+    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,  // E0..EF
+
+    // four-byte sequences:
+    4, 4, 4, 4, 4,                                   // F0..F4
+
+    // these are invalid again (5- or 6-byte
+    // sequences and sequences for code points
+    // above U+10FFFF, as restricted by RFC 3629):
+                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0   // F5..FF
+};
 
 wxUString &wxUString::assignFromUTF8( const char *str )
 {
@@ -394,7 +432,7 @@ wxScopedCharBuffer wxUString::utf8_str() const
         {
             utf8_length += 2;
         }
-        else if ( code <= 0xFFFF )
+        else if ( code < 0xFFFF )
         {
             utf8_length += 3;
         }
@@ -465,7 +503,7 @@ wxScopedU16CharBuffer wxUString::utf16_str() const
 
         // TODO: error range checks
 
-        if (wxUniChar::IsBMP(code))
+        if (code < 0x10000)
            utf16_length++;
         else
            utf16_length += 2;
@@ -483,15 +521,15 @@ wxScopedU16CharBuffer wxUString::utf16_str() const
 
         // TODO: error range checks
 
-        if (wxUniChar::IsBMP(code))
+        if (code < 0x10000)
         {
            out[0] = code;
            out++;
         }
         else
         {
-           out[0] = wxUniChar::HighSurrogate(code);
-           out[1] = wxUniChar::LowSurrogate(code);
+           out[0] = (code - 0x10000) / 0x400 + 0xd800;
+           out[1] = (code - 0x10000) % 0x400 + 0xdc00;
            out += 2;
         }
     }

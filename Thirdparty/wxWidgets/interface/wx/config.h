@@ -2,20 +2,9 @@
 // Name:        config.h
 // Purpose:     interface of wxConfigBase
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
-
-
-// Flags for constructor style parameter
-enum
-{
-    wxCONFIG_USE_LOCAL_FILE = 1,
-    wxCONFIG_USE_GLOBAL_FILE = 2,
-    wxCONFIG_USE_RELATIVE_PATH = 4,
-    wxCONFIG_USE_NO_ESCAPE_CHARACTERS = 8,
-    wxCONFIG_USE_SUBDIR = 16
-};
-
 
 /**
     @class wxConfigBase
@@ -27,9 +16,9 @@ enum
     However, usually you don't even need to know the precise nature of the
     class you're working with but you would just use the wxConfigBase methods.
     This allows you to write the same code regardless of whether you're working
-    with the registry under Windows or text-based config files under Unix.
-    To make writing the portable code even easier, wxWidgets provides a typedef
-    wxConfig which is mapped onto the native wxConfigBase implementation on the
+    with the registry under Windows or text-based config files under Unix. 
+    To make writing the portable code even easier, wxWidgets provides a typedef 
+    wxConfig which is mapped onto the native wxConfigBase implementation on the 
     given platform: i.e. wxRegConfig under Windows and wxFileConfig otherwise.
 
     See @ref overview_config for a description of all features of this class.
@@ -211,17 +200,17 @@ enum
     while ( bCont ) {
         aNames.Add(str);
 
-        bCont = config->GetNextEntry(str, dummy);
+        bCont = GetConfig()->GetNextEntry(str, dummy);
     }
 
     // ... we have all entry names in aNames...
 
     // now all groups...
-    bCont = config->GetFirstGroup(str, dummy);
+    bCont = GetConfig()->GetFirstGroup(str, dummy);
     while ( bCont ) {
         aNames.Add(str);
 
-        bCont = config->GetNextGroup(str, dummy);
+        bCont = GetConfig()->GetNextGroup(str, dummy);
     }
 
     // ... we have all group (and entry) names in aNames...
@@ -253,7 +242,7 @@ enum
 
     @library{wxbase}
     @category{cfg}
-
+    
     @see wxConfigPathChanger
 */
 class wxConfigBase : public wxObject
@@ -353,7 +342,7 @@ public:
         Set current path: if the first character is '/', it is the absolute
         path, otherwise it is a relative path. '..' is supported. If @a strPath
         doesn't exist, it is created.
-
+        
         @see wxConfigPathChanger
     */
     virtual void SetPath(const wxString& strPath) = 0;
@@ -550,52 +539,6 @@ public:
     bool Read(const wxString& key, long* l,
               long defaultVal) const;
     /**
-        Reads a 64-bit long long value, returning @true if the value was found.
-        If the value was not found, @a ll is not changed.
-
-        @since 3.1.5
-
-        @beginWxPerlOnly
-        Not supported by wxPerl.
-        @endWxPerlOnly
-    */
-    bool Read(const wxString& key, wxLongLong_t* ll) const;
-    /**
-        Reads a 64-bit long long value, returning @true if the value was found.
-        If the value was not found, @a defaultVal is used instead.
-
-        @since 3.1.5
-
-        @beginWxPerlOnly
-        Not supported by wxPerl.
-        @endWxPerlOnly
-    */
-    bool Read(const wxString& key, wxLongLong_t* ll,
-              wxLongLong_t defaultVal) const;
-    /**
-        Reads a size_t value, returning @true if the value was found.
-        If the value was not found, @a value is not changed.
-
-        @since 3.1.5
-
-        @beginWxPerlOnly
-        Not supported by wxPerl.
-        @endWxPerlOnly
-    */
-    bool Read(const wxString& key, size_t* value) const;
-    /**
-        Reads a size_t value, returning @true if the value was found.
-        If the value was not found, @a defaultVal is used instead.
-
-        @since 3.1.5
-
-        @beginWxPerlOnly
-        Not supported by wxPerl.
-        @endWxPerlOnly
-    */
-    bool Read(const wxString& key, size_t* value,
-              size_t defaultVal) const;
-    /**
         Reads a double value, returning @true if the value was found. If the
         value was not found, @a d is not changed.
 
@@ -709,14 +652,6 @@ public:
     long ReadLong(const wxString& key, long defaultVal) const;
 
     /**
-        Reads a 64-bit long long value from the key and returns it. @a
-        defaultVal is returned if the key is not found.
-
-        @since 3.1.5
-    */
-    wxLongLong_t ReadLongLong(const wxString& key, wxLongLong_t defaultVal) const;
-
-    /**
         Reads a value of type T (for which the function wxFromString() must be
         defined) from the key and returns it. @a defaultVal is returned if the
         key is not found.
@@ -732,13 +667,6 @@ public:
         Writes the long value to the config file and returns @true on success.
     */
     bool Write(const wxString& key, long value);
-    /**
-        Writes the 64-bit long long value to the config file and returns @true
-        on success.
-
-        @since 3.1.5
-    */
-    bool Write(const wxString& key, wxLongLong_t value);
     /**
         Writes the double value to the config file and returns @true on
         success.
@@ -851,7 +779,7 @@ public:
         # config file for my program
         UserData = $HOME/data
 
-        # the following syntax is valid only under Windows
+        # the following syntax is valud only under Windows
         UserData = %windir%\\data.dat
         @endcode
 
@@ -859,7 +787,7 @@ public:
         @c "/home/zeitlin/data" on linux for example.
 
         Although this feature is very useful, it may be annoying if you read a
-        value which contains '$' or '%' symbols (% is used for environment
+        value which containts '$' or '%' symbols (% is used for environment
         variables expansion under Windows) which are not used for environment
         variable expansion. In this situation you may call
         SetExpandEnvVars(@false) just before reading this value and
@@ -950,12 +878,12 @@ public:
     @class wxConfigPathChanger
 
     A handy little class which changes the current path in a wxConfig object and restores it in dtor.
-    Declaring a local variable of this type, it's possible to work in a specific directory
+    Declaring a local variable of this type, it's possible to work in a specific directory 
     and ensure that the path is automatically restored when the function returns.
 
     For example:
     @code
-    // this function loads some settings from the given wxConfig object;
+    // this function loads somes settings from the given wxConfig object;
     // the path selected inside it is left unchanged
     bool LoadMySettings(wxConfigBase* cfg)
     {
@@ -963,13 +891,13 @@ public:
         wxString str;
         if ( !config->Read("SomeString", &str) ) {
             wxLogError("Couldn't read SomeString!");
-            return false;
+            return false;     
                 // NOTE: without wxConfigPathChanger it would be easy to forget to
                 //       set the old path back into the wxConfig object before this return!
         }
-
+        
         // do something useful with SomeString...
-
+        
         return true;    // again: wxConfigPathChanger dtor will restore the original wxConfig path
     }
     @endcode
@@ -977,28 +905,28 @@ public:
     @library{wxbase}
     @category{cfg}
 */
-class wxConfigPathChanger
+class WXDLLIMPEXP_BASE wxConfigPathChanger
 {
 public:
 
     /**
         Changes the path of the given wxConfigBase object so that the key @a strEntry is accessible
         (for read or write).
-
-        In other words, the ctor uses wxConfigBase::SetPath() with everything which precedes the
+        
+        In other words, the ctor uses wxConfigBase::SetPath() with everything which precedes the 
         last slash of @a strEntry, so that:
         @code
         wxConfigPathChanger(wxConfigBase::Get(), "/MyProgram/SomeKeyName");
-        @endcode
+        @endcode        
         has the same effect of:
         @code
         wxConfigPathChanger(wxConfigBase::Get(), "/MyProgram/");
-        @endcode
+        @endcode        
     */
     wxConfigPathChanger(const wxConfigBase *pContainer, const wxString& strEntry);
 
     /**
-        Restores the path selected, inside the wxConfig object passed to the ctor, to the path which was
+        Restores the path selected, inside the wxConfig object passed to the ctor, to the path which was 
         selected when the wxConfigPathChanger ctor was called.
     */
     ~wxConfigPathChanger();
@@ -1010,9 +938,9 @@ public:
     const wxString& Name() const;
 
     /**
-        This method must be called if the original path inside the wxConfig object
-        (i.e. the current path at the moment of creation of this wxConfigPathChanger object)
-        could have been deleted, thus preventing wxConfigPathChanger from restoring the not
+        This method must be called if the original path inside the wxConfig object 
+        (i.e. the current path at the moment of creation of this wxConfigPathChanger object) 
+        could have been deleted, thus preventing wxConfigPathChanger from restoring the not 
         existing (any more) path.
 
         If the original path doesn't exist any more, the path will be restored to

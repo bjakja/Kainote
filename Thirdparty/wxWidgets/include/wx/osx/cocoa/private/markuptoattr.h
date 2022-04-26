@@ -3,6 +3,7 @@
 // Purpose:     Class to convert markup to Cocoa attributed strings.
 // Author:      Vadim Zeitlin
 // Created:     2011-02-22
+// RCS-ID:      $Id: wxhead.h,v 1.12 2010-04-22 12:44:51 zeitlin Exp $
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -16,20 +17,17 @@
 // wxMarkupToAttrString: create NSAttributedString from markup.
 // ----------------------------------------------------------------------------
 
-class wxMarkupToAttrStringBase : public wxMarkupParserAttrOutput
+class wxMarkupToAttrString : public wxMarkupParserAttrOutput
 {
-protected:
+public:
     // We don't care about the original colours because we never use them but
     // we do need the correct initial font as we apply modifiers (e.g. create a
     // font larger than it) to it and so it must be valid.
-    wxMarkupToAttrStringBase(const wxFont& font)
-        : wxMarkupParserAttrOutput(font, wxColour(), wxColour()),
-          m_attrString(NULL)
-    {}
-
-    void Parse(const wxFont& font, const wxString& markup)
+    wxMarkupToAttrString(wxWindow *win, const wxString& markup)
+        : wxMarkupParserAttrOutput(win->GetFont(), wxColour(), wxColour())
     {
-        const wxCFStringRef label(PrepareText(wxMarkupParser::Strip(markup)));
+        const wxCFStringRef
+            label(wxControl::RemoveMnemonics(wxMarkupParser::Strip(markup)));
         m_attrString = [[NSMutableAttributedString alloc]
                         initWithString: label.AsNSString()];
 
@@ -41,7 +39,9 @@ protected:
         // Apple documentation, attributed strings use "Helvetica 12" font by
         // default which is different from the system "Lucida Grande" font. So
         // we need to explicitly change the font for the entire string.
-        ApplyFont(font, NSMakeRange(0, [m_attrString length]));
+        [m_attrString addAttribute:NSFontAttributeName
+                      value:win->GetFont().OSXGetNSFont()
+                      range:NSMakeRange(0, [m_attrString length])];
 
         // Now translate the markup tags to corresponding attributes.
         wxMarkupParser parser(*this);
@@ -50,37 +50,11 @@ protected:
         [m_attrString endEditing];
     }
 
-    ~wxMarkupToAttrStringBase()
+    ~wxMarkupToAttrString()
     {
-        if ( m_attrString )
-            [m_attrString release];
+        [m_attrString release];
     }
 
-    void ApplyFont(const wxFont& font, const NSRange& range)
-    {
-        [m_attrString addAttribute:NSFontAttributeName
-                      value:font.OSXGetNSFont()
-                      range:range];
-
-        if ( font.GetStrikethrough() )
-        {
-            [m_attrString addAttribute:NSStrikethroughStyleAttributeName
-                                 value:@(NSUnderlineStyleSingle)
-                                 range:range];
-        }
-
-        if ( font.GetUnderlined() )
-        {
-            [m_attrString addAttribute:NSUnderlineStyleAttributeName
-                                 value:@(NSUnderlineStyleSingle)
-                                 range:range];
-        }
-    }
-
-    // prepare text chunk for display, e.g. strip mnemonics from it
-    virtual wxString PrepareText(const wxString& text) = 0;
-
-public:
     // Accessor for the users of this class.
     //
     // We keep ownership of the returned string.
@@ -93,7 +67,7 @@ public:
     // Implement base class pure virtual methods to process markup tags.
     virtual void OnText(const wxString& text)
     {
-        m_pos += PrepareText(text).length();
+        m_pos += wxControl::RemoveMnemonics(text).length();
     }
 
     virtual void OnAttrStart(const Attr& WXUNUSED(attr))
@@ -110,7 +84,9 @@ public:
 
         const NSRange range = NSMakeRange(start, m_pos - start);
 
-        ApplyFont(attr.font, range);
+        [m_attrString addAttribute:NSFontAttributeName
+                      value:attr.font.OSXGetNSFont()
+                      range:range];
 
         if ( attr.foreground.IsOk() )
         {
@@ -136,46 +112,9 @@ private:
 
     // The positions of starting ranges.
     wxStack<unsigned> m_rangeStarts;
-};
 
-
-// for use with labels with mnemonics
-class wxMarkupToAttrString : public wxMarkupToAttrStringBase
-{
-public:
-    wxMarkupToAttrString(const wxFont& font, const wxString& markup)
-        : wxMarkupToAttrStringBase(font)
-    {
-        Parse(font, markup);
-    }
-
-protected:
-    virtual wxString PrepareText(const wxString& text)
-    {
-        return wxControl::RemoveMnemonics(text);
-    }
 
     wxDECLARE_NO_COPY_CLASS(wxMarkupToAttrString);
-};
-
-
-// for raw markup with no mnemonics
-class wxItemMarkupToAttrString : public wxMarkupToAttrStringBase
-{
-public:
-    wxItemMarkupToAttrString(const wxFont& font, const wxString& markup)
-        : wxMarkupToAttrStringBase(font)
-    {
-        Parse(font, markup);
-    }
-
-protected:
-    virtual wxString PrepareText(const wxString& text)
-    {
-        return text;
-    }
-
-    wxDECLARE_NO_COPY_CLASS(wxItemMarkupToAttrString);
 };
 
 #endif // _WX_OSX_COCOA_PRIVATE_MARKUPTOATTR_H_

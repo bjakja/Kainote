@@ -2,6 +2,7 @@
 // Name:        wx/gtk/private/win_gtk.h
 // Purpose:     native GTK+ widget for wxWindow
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////// */
@@ -24,8 +25,6 @@ struct WXDLLIMPEXP_CORE wxPizza
     void put(GtkWidget* widget, int x, int y, int width, int height);
     void scroll(int dx, int dy);
     void get_border(GtkBorder& border);
-    void size_allocate_child(
-        GtkWidget* child, int x, int y, int width, int height, int parent_width = -1);
 
     GtkFixed m_fixed;
     GList* m_children;

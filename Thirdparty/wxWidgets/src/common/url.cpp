@@ -4,6 +4,7 @@
 // Author:      Guilhem Lavaux
 // Modified by:
 // Created:     20/07/1997
+// RCS-ID:      $Id$
 // Copyright:   (c) 1997, 1998 Guilhem Lavaux
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,6 +12,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_URL
 
@@ -26,7 +30,7 @@
 #include <string.h>
 #include <ctype.h>
 
-wxIMPLEMENT_CLASS(wxURL, wxURI);
+IMPLEMENT_CLASS(wxURL, wxURI)
 
 // Protocols list
 wxProtoInfo *wxURL::ms_protocols = NULL;
@@ -315,7 +319,7 @@ wxInputStream *wxURL::GetInputStream()
 
         addr.Service(m_port);
 
-        if (!m_protocol->Connect(addr))
+        if (!m_protocol->Connect(addr, true)) // Watcom needs the 2nd arg for some reason
         {
             m_error = wxURL_CONNERR;
             return NULL;
@@ -385,7 +389,7 @@ void wxURL::SetDefaultProxy(const wxString& url_proxy)
             ms_proxyDefault->Close();
         else
             ms_proxyDefault = new wxHTTP();
-        ms_proxyDefault->Connect(addr);
+        ms_proxyDefault->Connect(addr, true); // Watcom needs the 2nd arg for some reason
     }
 }
 
@@ -424,7 +428,7 @@ void wxURL::SetProxy(const wxString& url_proxy)
         if (m_proxy && m_proxy != ms_proxyDefault)
             delete m_proxy;
         m_proxy = new wxHTTP();
-        m_proxy->Connect(addr);
+        m_proxy->Connect(addr, true); // Watcom needs the 2nd arg for some reason
 
         CleanData();
         // Reparse url.
@@ -447,14 +451,14 @@ class wxURLModule : public wxModule
 public:
     wxURLModule();
 
-    virtual bool OnInit() wxOVERRIDE;
-    virtual void OnExit() wxOVERRIDE;
+    virtual bool OnInit();
+    virtual void OnExit();
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxURLModule);
+    DECLARE_DYNAMIC_CLASS(wxURLModule)
 };
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxURLModule, wxModule);
+IMPLEMENT_DYNAMIC_CLASS(wxURLModule, wxModule)
 
 wxURLModule::wxURLModule()
 {

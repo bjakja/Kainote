@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -13,7 +14,7 @@
 
 class WXDLLIMPEXP_CORE wxStaticText: public wxStaticTextBase
 {
-    wxDECLARE_DYNAMIC_CLASS(wxStaticText);
+    DECLARE_DYNAMIC_CLASS(wxStaticText)
 
 public:
     wxStaticText() { }
@@ -23,7 +24,7 @@ public:
         const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize,
         long style = 0,
-        const wxString& name = wxASCII_STR(wxStaticTextNameStr))
+        const wxString& name = wxStaticTextNameStr)
     {
         Create(parent, id, label, pos, size, style, name);
     }
@@ -33,7 +34,7 @@ public:
         const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize,
         long style = 0,
-        const wxString& name = wxASCII_STR(wxStaticTextNameStr));
+        const wxString& name = wxStaticTextNameStr);
 
     // implementation
     // --------------
@@ -51,8 +52,8 @@ public:
     virtual WXWidget GetLabelWidget() const
         { return m_labelWidget; }
 
-    virtual void WXSetVisibleLabel(const wxString& str);
-    virtual wxString WXGetVisibleLabel() const;
+    virtual void DoSetLabel(const wxString& str);
+    virtual wxString DoGetLabel() const;
 
     virtual wxSize DoGetBestSize() const;
 protected:

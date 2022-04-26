@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:
+// RCS-ID:      $Id$
 // Copyright:   (c) 2006 Stefan Csomor
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -26,9 +27,9 @@ public:
 
     bool Create(wxWindow *parent, int flags = wxBORDER_NONE);
 
-    virtual bool Show(bool show = true) wxOVERRIDE;
+    virtual bool Show(bool show = true);
 
-    wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxPopupWindow);
+    DECLARE_DYNAMIC_CLASS_NO_COPY(wxPopupWindow)
 };
 
 #endif // _WX_MAC_POPUPWIN_H_

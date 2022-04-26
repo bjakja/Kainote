@@ -3,7 +3,8 @@
 // Purpose:     wxMSW-specific wxTextEntry implementation
 // Author:      Vadim Zeitlin
 // Created:     2007-09-26
-// Copyright:   (c) 2007 Vadim Zeitlin <vadim@wxwidgets.org>
+// RCS-ID:      $Id$
+// Copyright:   (c) 2007 Vadim Zeitlin <vadim@wxwindows.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -23,39 +24,38 @@ public:
     virtual ~wxTextEntry();
 
     // implement wxTextEntryBase pure virtual methods
-    virtual void WriteText(const wxString& text) wxOVERRIDE;
-    virtual void Remove(long from, long to) wxOVERRIDE;
+    virtual void WriteText(const wxString& text);
+    virtual void Remove(long from, long to);
 
-    virtual void Copy() wxOVERRIDE;
-    virtual void Cut() wxOVERRIDE;
-    virtual void Paste() wxOVERRIDE;
+    virtual void Copy();
+    virtual void Cut();
+    virtual void Paste();
 
-    virtual void Undo() wxOVERRIDE;
-    virtual void Redo() wxOVERRIDE;
-    virtual bool CanUndo() const wxOVERRIDE;
-    virtual bool CanRedo() const wxOVERRIDE;
+    virtual void Undo();
+    virtual void Redo();
+    virtual bool CanUndo() const;
+    virtual bool CanRedo() const;
 
-    virtual void SetInsertionPoint(long pos) wxOVERRIDE;
-    virtual long GetInsertionPoint() const wxOVERRIDE;
-    virtual long GetLastPosition() const wxOVERRIDE;
+    virtual void SetInsertionPoint(long pos);
+    virtual long GetInsertionPoint() const;
+    virtual long GetLastPosition() const;
 
-    virtual void SetSelection(long from, long to) wxOVERRIDE
+    virtual void SetSelection(long from, long to)
         { DoSetSelection(from, to); }
-    virtual void GetSelection(long *from, long *to) const wxOVERRIDE;
+    virtual void GetSelection(long *from, long *to) const;
 
-    virtual bool IsEditable() const wxOVERRIDE;
-    virtual void SetEditable(bool editable) wxOVERRIDE;
+    virtual bool IsEditable() const;
+    virtual void SetEditable(bool editable);
 
-    virtual void SetMaxLength(unsigned long len) wxOVERRIDE;
-    virtual void ForceUpper() wxOVERRIDE;
+    virtual void SetMaxLength(unsigned long len);
 
 #if wxUSE_UXTHEME
-    virtual bool SetHint(const wxString& hint) wxOVERRIDE;
-    virtual wxString GetHint() const wxOVERRIDE;
+    virtual bool SetHint(const wxString& hint);
+    virtual wxString GetHint() const;
 #endif // wxUSE_UXTHEME
 
 protected:
-    virtual wxString DoGetValue() const wxOVERRIDE;
+    virtual wxString DoGetValue() const;
 
     // this is really a hook for multiline text controls as the single line
     // ones don't need to ever scroll to show the selection but having it here
@@ -68,52 +68,25 @@ protected:
     virtual void DoSetSelection(long from, long to, int flags = SetSel_Scroll);
 
     // margins functions
-    virtual bool DoSetMargins(const wxPoint& pt) wxOVERRIDE;
-    virtual wxPoint DoGetMargins() const wxOVERRIDE;
+    virtual bool DoSetMargins(const wxPoint& pt);
+    virtual wxPoint DoGetMargins() const;
 
     // auto-completion uses COM under Windows so they won't work without
     // wxUSE_OLE as OleInitialize() is not called then
 #if wxUSE_OLE
-    virtual bool DoAutoCompleteStrings(const wxArrayString& choices) wxOVERRIDE;
-#if wxUSE_DYNLIB_CLASS
-    virtual bool DoAutoCompleteFileNames(int flags) wxOVERRIDE;
-#endif // wxUSE_DYNLIB_CLASS
-    virtual bool DoAutoCompleteCustom(wxTextCompleter *completer) wxOVERRIDE;
+    virtual bool DoAutoCompleteStrings(const wxArrayString& choices);
+    virtual bool DoAutoCompleteFileNames(int flags);
+    virtual bool DoAutoCompleteCustom(wxTextCompleter *completer);
 #endif // wxUSE_OLE
-
-    // Returns true if this control uses standard file names completion.
-    bool MSWUsesStandardAutoComplete() const;
-
-    // Returns false if this message shouldn't be preprocessed, but is always
-    // handled by the EDIT control represented by this object itself.
-    bool MSWShouldPreProcessMessage(WXMSG* msg) const;
-
-    // Helper for wxTE_PROCESS_ENTER handling: activates the default button in
-    // the dialog containing this control if any.
-    bool ClickDefaultButtonIfPossible();
 
 private:
     // implement this to return the HWND of the EDIT control
     virtual WXHWND GetEditHWND() const = 0;
 
 #if wxUSE_OLE
-    // This method is called to process special keys such as Return and Tab
-    // before they're consumed by the auto-completer. Notice that it is only
-    // called if we do need to process the key, i.e. if the corresponding
-    // wxTE_PROCESS_XXX style is set in the associated object.
-    //
-    // It is not pure virtual because it won't get called if the derived class
-    // doesn't use auto-completer, but it does need to be overridden if it can
-    // be called and the default implementation asserts if this is not the case.
-    virtual void MSWProcessSpecialKey(wxKeyEvent& event);
-
-    // Check if we really have auto-complete data. This is not the same as just
-    // checking if m_autoCompleteData is NULL, see the code for more details.
-    bool MSWHasAutoCompleteData() const;
-
-    // Check that we have auto-complete data, creating it if necessary. Returns
-    // false if creating it failed.
-    bool MSWEnsureHasAutoCompleteData();
+    // Get the auto-complete object creating it if necessary. Returns NULL if
+    // creating it failed.
+    wxTextAutoCompleteData *GetOrCreateCompleter();
 
     // Various auto-completion-related stuff, only used if any of AutoComplete()
     // methods are called. Use the function above to access it.
@@ -123,9 +96,6 @@ private:
     friend class wxTextAutoCompleteData;
 #endif // wxUSE_OLE
 };
-
-// We don't need the generic version.
-#define wxHAS_NATIVE_TEXT_FORCEUPPER
 
 #endif // _WX_MSW_TEXTENTRY_H_
 

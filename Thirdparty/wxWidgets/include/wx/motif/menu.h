@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -100,7 +101,7 @@ private:
     // common code for both constructors:
     void Init();
 
-    wxDECLARE_DYNAMIC_CLASS(wxMenu);
+    DECLARE_DYNAMIC_CLASS(wxMenu)
 };
 
 // ----------------------------------------------------------------------------
@@ -168,7 +169,7 @@ public:
     wxColour      m_backgroundColour;
     wxFont        m_font;
 
-    wxDECLARE_DYNAMIC_CLASS(wxMenuBar);
+    DECLARE_DYNAMIC_CLASS(wxMenuBar)
 };
 
 #endif // _WX_MOTIF_MENU_H_

@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     01/02/97
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,18 +12,18 @@
 #ifndef _WX_RADIOBUT_H_
 #define _WX_RADIOBUT_H_
 
-class WXDLLIMPEXP_CORE wxRadioButton: public wxRadioButtonBase
+class WXDLLIMPEXP_CORE wxRadioButton: public wxControl
 {
-    wxDECLARE_DYNAMIC_CLASS(wxRadioButton);
-
+  DECLARE_DYNAMIC_CLASS(wxRadioButton)
+ protected:
 public:
-    wxRadioButton() {}
-    wxRadioButton(wxWindow *parent, wxWindowID id,
+    inline wxRadioButton() {}
+    inline wxRadioButton(wxWindow *parent, wxWindowID id,
            const wxString& label,
            const wxPoint& pos = wxDefaultPosition,
            const wxSize& size = wxDefaultSize, long style = 0,
            const wxValidator& validator = wxDefaultValidator,
-           const wxString& name = wxASCII_STR(wxRadioButtonNameStr))
+           const wxString& name = wxRadioButtonNameStr)
     {
         Create(parent, id, label, pos, size, style, validator, name);
     }
@@ -33,21 +34,21 @@ public:
            const wxPoint& pos = wxDefaultPosition,
            const wxSize& size = wxDefaultSize, long style = 0,
            const wxValidator& validator = wxDefaultValidator,
-           const wxString& name = wxASCII_STR(wxRadioButtonNameStr));
+           const wxString& name = wxRadioButtonNameStr);
 
-    virtual void SetValue(bool val) wxOVERRIDE;
-    virtual bool GetValue() const wxOVERRIDE;
+    virtual void SetValue(bool val);
+    virtual bool GetValue() const ;
 
     // implementation
 
-    void Command(wxCommandEvent& event) wxOVERRIDE;
+    void Command(wxCommandEvent& event);
     wxRadioButton *AddInCycle(wxRadioButton *cycle);
     void RemoveFromCycle();
-    wxRadioButton *NextInCycle() {return m_cycle;}
+    inline wxRadioButton *NextInCycle() {return m_cycle;}
 
     // osx specific event handling common for all osx-ports
 
-    virtual bool OSXHandleClicked(double timestampsec) wxOVERRIDE;
+    virtual bool        OSXHandleClicked( double timestampsec );
   protected:
 
     wxRadioButton *m_cycle;
@@ -61,12 +62,12 @@ WXDLLIMPEXP_DATA_CORE(extern const wxChar) wxBitmapRadioButtonNameStr[];
 
 class WXDLLIMPEXP_CORE wxBitmapRadioButton: public wxRadioButton
 {
-  wxDECLARE_DYNAMIC_CLASS(wxBitmapRadioButton);
-protected:
+  DECLARE_DYNAMIC_CLASS(wxBitmapRadioButton)
+ protected:
   wxBitmap *theButtonBitmap;
-public:
-  wxBitmapRadioButton() { theButtonBitmap = NULL; }
-  wxBitmapRadioButton(wxWindow *parent, wxWindowID id,
+ public:
+  inline wxBitmapRadioButton() { theButtonBitmap = NULL; }
+  inline wxBitmapRadioButton(wxWindow *parent, wxWindowID id,
            const wxBitmap *label,
            const wxPoint& pos = wxDefaultPosition,
            const wxSize& size = wxDefaultSize, long style = 0,

@@ -3,6 +3,7 @@
 // Purpose:     implementation of classes in wx/rearrangectrl.h
 // Author:      Vadim Zeitlin
 // Created:     2008-12-15
+// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -18,6 +19,9 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_REARRANGECTRL
 
@@ -36,9 +40,9 @@
 extern
 WXDLLIMPEXP_DATA_CORE(const char) wxRearrangeListNameStr[] = "wxRearrangeList";
 
-wxBEGIN_EVENT_TABLE(wxRearrangeList, wxCheckListBox)
+BEGIN_EVENT_TABLE(wxRearrangeList, wxCheckListBox)
     EVT_CHECKLISTBOX(wxID_ANY, wxRearrangeList::OnCheck)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 bool wxRearrangeList::Create(wxWindow *parent,
                              wxWindowID id,
@@ -75,11 +79,7 @@ bool wxRearrangeList::Create(wxWindow *parent,
     for ( n = 0; n < count; n++ )
     {
         if ( order[n] >= 0 )
-        {
-            // Be careful to call the base class version here and not our own
-            // which would also update m_order itself.
-            wxCheckListBox::Check(n);
-        }
+            Check(n);
     }
 
     m_order = order;
@@ -138,8 +138,8 @@ void wxRearrangeList::Swap(int pos1, int pos2)
 
     // then the checked state
     const bool checkedTmp = IsChecked(pos1);
-    wxCheckListBox::Check(pos1, IsChecked(pos2));
-    wxCheckListBox::Check(pos2, checkedTmp);
+    Check(pos1, IsChecked(pos2));
+    Check(pos2, checkedTmp);
 
     // and finally the client data, if necessary
     switch ( GetClientDataType() )
@@ -166,81 +166,28 @@ void wxRearrangeList::Swap(int pos1, int pos2)
     }
 }
 
-void wxRearrangeList::Check(unsigned int item, bool check)
-{
-    if ( check == IsChecked(item) )
-        return;
-
-    wxCheckListBox::Check(item, check);
-
-    m_order[item] = ~m_order[item];
-}
-
 void wxRearrangeList::OnCheck(wxCommandEvent& event)
 {
     // update the internal state to match the new item state
     const int n = event.GetInt();
 
-    if ( (m_order[n] >= 0) != IsChecked(n) )
-        m_order[n] = ~m_order[n];
-}
+    m_order[n] = ~m_order[n];
 
-int wxRearrangeList::DoInsertItems(const wxArrayStringsAdapter& items, unsigned int pos,
-                                   void **clientData, wxClientDataType type)
-{
-    int ret = wxCheckListBox::DoInsertItems(items, pos, clientData, type);
-    const size_t numItems = items.GetCount();
-    for ( size_t i = 0; i < numItems; i++ )
-    {
-        // Item is not checked initially.
-        const int idx = ~m_order.size();
-        m_order.Insert(idx, pos+i);
-    }
-    return ret;
-}
-
-void wxRearrangeList::DoDeleteOneItem(unsigned int n)
-{
-    wxCheckListBox::DoDeleteOneItem(n);
-    int idxDeleted = m_order[n];
-    if ( idxDeleted < 0 )
-        idxDeleted = ~idxDeleted;
-    m_order.RemoveAt(n);
-    // Remaining items have to be reindexed.
-    for( size_t i = 0; i < m_order.size(); i++ )
-    {
-        int idx = m_order[i];
-        if ( idx < 0 )
-        {
-            idx = ~idx;
-            if ( idx > idxDeleted )
-                m_order[i] = ~(idx-1);
-        }
-        else
-        {
-            if ( idx > idxDeleted )
-                m_order[i] = idx-1;
-        }
-    }
-}
-
-void wxRearrangeList::DoClear()
-{
-    wxCheckListBox::DoClear();
-    m_order.Clear();
+    wxASSERT_MSG( (m_order[n] >= 0) == IsChecked(n),
+                  "discrepancy between internal state and GUI" );
 }
 
 // ============================================================================
 // wxRearrangeCtrl implementation
 // ============================================================================
 
-wxBEGIN_EVENT_TABLE(wxRearrangeCtrl, wxPanel)
+BEGIN_EVENT_TABLE(wxRearrangeCtrl, wxPanel)
     EVT_UPDATE_UI(wxID_UP, wxRearrangeCtrl::OnUpdateButtonUI)
     EVT_UPDATE_UI(wxID_DOWN, wxRearrangeCtrl::OnUpdateButtonUI)
 
     EVT_BUTTON(wxID_UP, wxRearrangeCtrl::OnButton)
     EVT_BUTTON(wxID_DOWN, wxRearrangeCtrl::OnButton)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 void wxRearrangeCtrl::Init()
 {

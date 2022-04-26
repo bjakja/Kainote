@@ -44,6 +44,3 @@ docfiles = \
 	warning.gif
 
 dist_doc_DATA = $(docfiles)
-
-EXTRA_DIST = \
-	CMakeLists.txt

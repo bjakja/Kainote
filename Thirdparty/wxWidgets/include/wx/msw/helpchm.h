@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     16/04/2000
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -21,20 +22,20 @@ public:
     wxCHMHelpController(wxWindow* parentWindow = NULL): wxHelpControllerBase(parentWindow) { }
 
     // Must call this to set the filename
-    virtual bool Initialize(const wxString& file) wxOVERRIDE;
-    virtual bool Initialize(const wxString& file, int WXUNUSED(server) ) wxOVERRIDE { return Initialize( file ); }
+    virtual bool Initialize(const wxString& file);
+    virtual bool Initialize(const wxString& file, int WXUNUSED(server) ) { return Initialize( file ); }
 
     // If file is "", reloads file given in Initialize
-    virtual bool LoadFile(const wxString& file = wxEmptyString) wxOVERRIDE;
-    virtual bool DisplayContents() wxOVERRIDE;
-    virtual bool DisplaySection(int sectionNo) wxOVERRIDE;
-    virtual bool DisplaySection(const wxString& section) wxOVERRIDE;
-    virtual bool DisplayBlock(long blockNo) wxOVERRIDE;
-    virtual bool DisplayContextPopup(int contextId) wxOVERRIDE;
-    virtual bool DisplayTextPopup(const wxString& text, const wxPoint& pos) wxOVERRIDE;
+    virtual bool LoadFile(const wxString& file = wxEmptyString);
+    virtual bool DisplayContents();
+    virtual bool DisplaySection(int sectionNo);
+    virtual bool DisplaySection(const wxString& section);
+    virtual bool DisplayBlock(long blockNo);
+    virtual bool DisplayContextPopup(int contextId);
+    virtual bool DisplayTextPopup(const wxString& text, const wxPoint& pos);
     virtual bool KeywordSearch(const wxString& k,
-                               wxHelpSearchMode mode = wxHELP_SEARCH_ALL) wxOVERRIDE;
-    virtual bool Quit() wxOVERRIDE;
+                               wxHelpSearchMode mode = wxHELP_SEARCH_ALL);
+    virtual bool Quit();
 
     wxString GetHelpFile() const { return m_helpFile; }
 
@@ -81,7 +82,7 @@ protected:
 
     wxString m_helpFile;
 
-    wxDECLARE_DYNAMIC_CLASS(wxCHMHelpController);
+    DECLARE_DYNAMIC_CLASS(wxCHMHelpController)
 };
 
 #endif // wxUSE_MS_HTML_HELP

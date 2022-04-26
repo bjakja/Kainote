@@ -3,6 +3,7 @@
 // Purpose:     helper functions used with native message dialog
 // Author:      Rickard Westerlund
 // Created:     2010-07-12
+// RCS-ID:      $Id$
 // Copyright:   (c) 2010 wxWidgets team
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -56,7 +57,7 @@ namespace wxMSWMessageDialog
         wxString btnCancelLabel;
         wxString btnHelpLabel;
 
-        // Will create a task dialog with it's parameters for it's creation
+        // Will create a task dialog with it's paremeters for it's creation
         // stored in the provided TASKDIALOGCONFIG parameter.
         // NOTE: The wxMSWTaskDialogConfig object needs to remain accessible
         // during the subsequent call to TaskDialogIndirect().

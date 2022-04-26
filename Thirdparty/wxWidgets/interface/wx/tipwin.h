@@ -2,6 +2,7 @@
 // Name:        tipwin.h
 // Purpose:     interface of wxTipWindow
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -18,8 +19,6 @@
 
     @library{wxcore}
     @category{managedwnd}
-
-    @see @ref wxToolTip
 */
 class wxTipWindow : public wxWindow
 {

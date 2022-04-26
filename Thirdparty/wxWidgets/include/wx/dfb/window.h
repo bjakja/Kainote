@@ -3,6 +3,7 @@
 // Purpose:     wxWindow class
 // Author:      Vaclav Slavik
 // Created:     2006-08-10
+// RCS-ID:      $Id$
 // Copyright:   (c) 2006 REA Elektronik GmbH
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -39,7 +40,7 @@ public:
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = 0,
-                const wxString& name = wxASCII_STR(wxPanelNameStr))
+                const wxString& name = wxPanelNameStr)
     {
         Init();
         Create(parent, id, pos, size, style, name);
@@ -52,7 +53,7 @@ public:
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = 0,
-                const wxString& name = wxASCII_STR(wxPanelNameStr));
+                const wxString& name = wxPanelNameStr);
 
     // implement base class (pure) virtual methods
     // -------------------------------------------
@@ -185,9 +186,9 @@ private:
     friend class wxOverlayImpl; // for Add/RemoveOverlay
     friend class wxWindowDCImpl; // for PaintOverlays
 
-    wxDECLARE_DYNAMIC_CLASS(wxWindowDFB);
+    DECLARE_DYNAMIC_CLASS(wxWindowDFB)
     wxDECLARE_NO_COPY_CLASS(wxWindowDFB);
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
 };
 
 #endif // _WX_DFB_WINDOW_H_

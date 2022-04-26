@@ -57,10 +57,10 @@ public:
 };
 
 // Ordered range to make drawing simpler
-struct SelectionSegment {
+struct SelectionSegment {	
 	SelectionPosition start;
 	SelectionPosition end;
-	SelectionSegment() : start(), end() {
+	SelectionSegment() {
 	}
 	SelectionSegment(SelectionPosition a, SelectionPosition b) {
 		if (a < b) {
@@ -86,11 +86,11 @@ struct SelectionRange {
 	SelectionPosition caret;
 	SelectionPosition anchor;
 
-	SelectionRange() : caret(), anchor() {
+	SelectionRange() {
 	}
-	explicit SelectionRange(SelectionPosition single) : caret(single), anchor(single) {
+	SelectionRange(SelectionPosition single) : caret(single), anchor(single) {
 	}
-	explicit SelectionRange(int single) : caret(single), anchor(single) {
+	SelectionRange(int single) : caret(single), anchor(single) {
 	}
 	SelectionRange(SelectionPosition caret_, SelectionPosition anchor_) : caret(caret_), anchor(anchor_) {
 	}
@@ -115,7 +115,6 @@ struct SelectionRange {
 		anchor.SetVirtualSpace(0);
 		caret.SetVirtualSpace(0);
 	}
-	void MoveForInsertDelete(bool insertion, int startChange, int length);
 	bool Contains(int pos) const;
 	bool Contains(SelectionPosition sp) const;
 	bool ContainsCharacter(int posCharacter) const;
@@ -126,15 +125,17 @@ struct SelectionRange {
 	SelectionPosition End() const {
 		return (anchor < caret) ? caret : anchor;
 	}
-	void Swap();
 	bool Trim(SelectionRange range);
 	// If range is all virtual collapse to start of virtual space
 	void MinimizeVirtualSpace();
 };
 
+    
+#include "wx/vector.h"
+    
 class Selection {
-	std::vector<SelectionRange> ranges;
-	std::vector<SelectionRange> rangesSaved;
+	wxVector<SelectionRange> ranges;
+	wxVector<SelectionRange> rangesSaved;
 	SelectionRange rangeRectangular;
 	size_t mainRange;
 	bool moveExtends;
@@ -150,7 +151,7 @@ public:
 	int MainAnchor() const;
 	SelectionRange &Rectangular();
 	SelectionSegment Limits() const;
-	// This is for when you want to move the caret in response to a
+	// This is for when you want to move the caret in response to a 
 	// user direction command - for rectangular selections, use the range
 	// that covers all selected text otherwise return the main selection.
 	SelectionSegment LimitsForRectangularElseMain() const;
@@ -158,10 +159,7 @@ public:
 	size_t Main() const;
 	void SetMain(size_t r);
 	SelectionRange &Range(size_t r);
-	const SelectionRange &Range(size_t r) const;
 	SelectionRange &RangeMain();
-	const SelectionRange &RangeMain() const;
-	SelectionPosition Start() const;
 	bool MoveExtends() const;
 	void SetMoveExtends(bool moveExtends_);
 	bool Empty() const;
@@ -169,12 +167,8 @@ public:
 	int Length() const;
 	void MovePositions(bool insertion, int startChange, int length);
 	void TrimSelection(SelectionRange range);
-	void TrimOtherSelections(size_t r, SelectionRange range);
 	void SetSelection(SelectionRange range);
 	void AddSelection(SelectionRange range);
-	void AddSelectionWithoutTrim(SelectionRange range);
-	void DropSelection(size_t r);
-	void DropAdditionalRanges();
 	void TentativeSelection(SelectionRange range);
 	void CommitTentative();
 	int CharacterInSelection(int posCharacter) const;
@@ -184,7 +178,7 @@ public:
 	void RemoveDuplicates();
 	void RotateMain();
 	bool Tentative() const { return tentativeMain; }
-	std::vector<SelectionRange> RangesCopy() const {
+	wxVector<SelectionRange> RangesCopy() const {
 		return ranges;
 	}
 };

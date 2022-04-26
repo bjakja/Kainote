@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -31,7 +32,7 @@ public:
                int n = 0, const wxString choices[] = NULL,
                int majorDim = 0, long style = wxRA_SPECIFY_COLS,
                const wxValidator& val = wxDefaultValidator,
-               const wxString& name = wxASCII_STR(wxRadioBoxNameStr))
+               const wxString& name = wxRadioBoxNameStr)
     {
         Init();
 
@@ -45,7 +46,7 @@ public:
                const wxArrayString& choices,
                int majorDim = 0, long style = wxRA_SPECIFY_COLS,
                const wxValidator& val = wxDefaultValidator,
-               const wxString& name = wxASCII_STR(wxRadioBoxNameStr))
+               const wxString& name = wxRadioBoxNameStr)
     {
         Init();
 
@@ -61,7 +62,7 @@ public:
                 int n = 0, const wxString choices[] = NULL,
                 int majorDim = 0, long style = wxRA_SPECIFY_COLS,
                 const wxValidator& val = wxDefaultValidator,
-                const wxString& name = wxASCII_STR(wxRadioBoxNameStr));
+                const wxString& name = wxRadioBoxNameStr);
 
     bool Create(wxWindow *parent, wxWindowID id, const wxString& title,
                 const wxPoint& pos,
@@ -69,7 +70,7 @@ public:
                 const wxArrayString& choices,
                 int majorDim = 0, long style = wxRA_SPECIFY_COLS,
                 const wxValidator& val = wxDefaultValidator,
-                const wxString& name = wxASCII_STR(wxRadioBoxNameStr));
+                const wxString& name = wxRadioBoxNameStr);
 
     // Enabling
     virtual bool Enable(bool enable = true);
@@ -128,7 +129,7 @@ protected:
 private:
     void Init();
 
-    wxDECLARE_DYNAMIC_CLASS(wxRadioBox);
+    DECLARE_DYNAMIC_CLASS(wxRadioBox)
 };
 
 #endif // _WX_MOTIF_RADIOBOX_H_

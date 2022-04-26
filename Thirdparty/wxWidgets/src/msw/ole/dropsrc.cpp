@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     10.05.98
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#if defined(__BORLANDC__)
+  #pragma hdrstop
+#endif
 
 #if wxUSE_OLE && wxUSE_DRAG_AND_DROP
 
@@ -30,6 +34,11 @@
 #include "wx/dnd.h"
 
 #include "wx/msw/private.h"
+
+// for some compilers, the entire ole2.h must be included, not only oleauto.h
+#if wxUSE_NORLANDER_HEADERS || defined(__WATCOMC__) || defined(__WXWINCE__)
+    #include <ole2.h>
+#endif
 
 #include <oleauto.h>
 
@@ -46,8 +55,8 @@ public:
   virtual ~wxIDropSource() { }
 
   // IDropSource
-  STDMETHODIMP QueryContinueDrag(BOOL fEscapePressed, DWORD grfKeyState) wxOVERRIDE;
-  STDMETHODIMP GiveFeedback(DWORD dwEffect) wxOVERRIDE;
+  STDMETHODIMP QueryContinueDrag(BOOL fEscapePressed, DWORD grfKeyState);
+  STDMETHODIMP GiveFeedback(DWORD dwEffect);
 
     DECLARE_IUNKNOWN_METHODS;
 
@@ -171,7 +180,7 @@ wxDropSource::~wxDropSource()
 // Name    : DoDragDrop
 // Purpose : start drag and drop operation
 // Returns : wxDragResult - the code of performed operation
-// Params  : [in] int flags: specifies if moving is allowed (or only copying)
+// Params  : [in] int flags: specifies if moving is allowe (or only copying)
 // Notes   : you must call SetData() before if you had used def ctor
 wxDragResult wxDropSource::DoDragDrop(int flags)
 {

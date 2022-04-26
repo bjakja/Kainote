@@ -2,15 +2,15 @@
 #                                                                            *
 # Make file for VMS                                                          *
 # Author : J.Jansen (joukj@hrem.nano.tudelft.nl)                             *
-# Date : 4 March 2020                                                        *
+# Date : 4 November 2010                                                     *
 #                                                                            *
 #*****************************************************************************
 .first
 	define wx [--.include.wx]
 
-CXX_DEFINE = /define=(__WXX11__=1,__WXUNIVERSAL__==1,WXBUILDING=1)/float=ieee\
+CXX_DEFINE = /define=(__WXX11__=1,__WXUNIVERSAL__==1)/float=ieee\
 	/name=(as_is,short)/assume=(nostdnew,noglobal_array_new)
-CC_DEFINE = /define=(__WXX11__=1,__WXUNIVERSAL__==1,WXBUILDING=1)/float=ieee\
+CC_DEFINE = /define=(__WXX11__=1,__WXUNIVERSAL__==1)/float=ieee\
 	/name=(as_is,short)
 
 .suffixes : .cpp
@@ -20,7 +20,7 @@ CC_DEFINE = /define=(__WXX11__=1,__WXUNIVERSAL__==1,WXBUILDING=1)/float=ieee\
 .c.obj :
 	cc $(CFLAGS)$(CC_DEFINE) $(MMS$TARGET_NAME).c
 
-OBJECTS = anybutton.obj,\
+OBJECTS = \
 		bmpbuttn.obj,\
 		button.obj,\
 		checkbox.obj,\
@@ -61,7 +61,7 @@ OBJECTS = anybutton.obj,\
 		scrthumb.obj,\
 		win32.obj
 
-SOURCES =anybutton.cpp\
+SOURCES =\
 		bmpbuttn.cpp \
 		button.cpp \
 		checkbox.cpp \
@@ -108,7 +108,6 @@ all : $(SOURCES)
 
 $(OBJECTS) : [--.include.wx]setup.h
 
-anybutton.obj : anybutton.cpp
 bmpbuttn.obj : bmpbuttn.cpp
 button.obj : button.cpp
 checkbox.obj : checkbox.cpp

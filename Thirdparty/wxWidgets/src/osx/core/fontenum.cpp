@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     04/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -40,12 +41,59 @@ bool wxFontEnumerator::EnumerateFacenames(wxFontEncoding encoding,
      wxArrayString fontFamilies ;
 
     wxUint32 macEncoding = wxMacGetSystemEncFromFontEnc(encoding) ;
-
+    
+#if wxOSX_USE_CORE_TEXT
     {
         CFArrayRef cfFontFamilies = nil;
 
 #if wxOSX_USE_COCOA_OR_CARBON
-        cfFontFamilies = CTFontManagerCopyAvailableFontFamilyNames();
+#if (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_6)
+        if ( UMAGetSystemVersion() >= 0x1060 )
+            cfFontFamilies = CTFontManagerCopyAvailableFontFamilyNames();
+        else
+#endif
+        {
+#if (MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_6)
+            //
+            // From Apple's QA 1471 http://developer.apple.com/qa/qa2006/qa1471.html
+            //
+            
+            CFMutableArrayRef atsfontnames = CFArrayCreateMutable(kCFAllocatorDefault,0,&kCFTypeArrayCallBacks);;
+            
+            ATSFontFamilyIterator theFontFamilyIterator = NULL;
+            ATSFontFamilyRef theATSFontFamilyRef = 0;
+            OSStatus status = noErr;
+            
+            // Create the iterator
+            status = ATSFontFamilyIteratorCreate(kATSFontContextLocal, nil,nil,
+                                                 kATSOptionFlagsUnRestrictedScope,
+                                                 &theFontFamilyIterator );
+            
+            while (status == noErr)
+            {
+                // Get the next font in the iteration.
+                status = ATSFontFamilyIteratorNext( theFontFamilyIterator, &theATSFontFamilyRef );
+                if(status == noErr)
+                {
+                    CFStringRef theName = NULL;
+                    ATSFontFamilyGetName(theATSFontFamilyRef, kATSOptionFlagsDefault, &theName);
+                    CFArrayAppendValue(atsfontnames, theName);
+                    CFRelease(theName);
+                    
+                }
+                else if (status == kATSIterationScopeModified) // Make sure the font database hasn't changed.
+                {
+                    // reset the iterator
+                    status = ATSFontFamilyIteratorReset (kATSFontContextLocal, nil, nil,
+                                                         kATSOptionFlagsUnRestrictedScope,
+                                                         &theFontFamilyIterator);
+                    CFArrayRemoveAllValues(atsfontnames);
+                }
+            }
+            ATSFontFamilyIteratorRelease(&theFontFamilyIterator);
+            cfFontFamilies = atsfontnames;
+#endif
+        }
 #elif wxOSX_USE_IPHONE
         cfFontFamilies = CopyAvailableFontFamilyNames();
 #endif
@@ -80,6 +128,7 @@ bool wxFontEnumerator::EnumerateFacenames(wxFontEncoding encoding,
         
         CFRelease(cfFontFamilies);
     }
+#endif
     for ( size_t i = 0 ; i < fontFamilies.Count() ; ++i )
     {
         if ( OnFacename( fontFamilies[i] ) == false )

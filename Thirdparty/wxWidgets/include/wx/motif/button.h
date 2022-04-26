@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -22,7 +23,7 @@ public:
         const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize, long style = 0,
         const wxValidator& validator = wxDefaultValidator,
-        const wxString& name = wxASCII_STR(wxButtonNameStr))
+        const wxString& name = wxButtonNameStr)
     {
         Create(parent, id, label, pos, size, style, validator, name);
     }
@@ -32,7 +33,7 @@ public:
         const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize, long style = 0,
         const wxValidator& validator = wxDefaultValidator,
-        const wxString& name = wxASCII_STR(wxButtonNameStr));
+        const wxString& name = wxButtonNameStr);
 
     virtual wxWindow *SetDefault();
     virtual void Command(wxCommandEvent& event);
@@ -50,7 +51,7 @@ private:
     wxSize OldGetMinSize() const;
     void SetDefaultShadowThicknessAndResize();
 
-    wxDECLARE_DYNAMIC_CLASS(wxButton);
+    DECLARE_DYNAMIC_CLASS(wxButton)
 };
 
 #endif // _WX_BUTTON_H_

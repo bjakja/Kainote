@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by: 13.12.99 by VZ during toolbar classes reorganization
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -21,8 +22,8 @@ public:
         wxWindowID id,
         const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize,
-        long style = wxTB_DEFAULT_STYLE,
-        const wxString& name = wxASCII_STR(wxToolBarNameStr))
+        long style = wxNO_BORDER | wxTB_HORIZONTAL,
+        const wxString& name = wxToolBarNameStr)
     {
         Init();
 
@@ -33,8 +34,8 @@ public:
         wxWindowID id,
         const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize,
-        long style = wxTB_DEFAULT_STYLE,
-        const wxString& name = wxASCII_STR(wxToolBarNameStr));
+        long style = wxNO_BORDER | wxTB_HORIZONTAL,
+        const wxString& name = wxToolBarNameStr);
 
     virtual ~wxToolBar();
 
@@ -62,8 +63,8 @@ private:
 
     virtual wxToolBarToolBase *CreateTool(int id,
                                           const wxString& label,
-                                          const wxBitmapBundle& bmpNormal,
-                                          const wxBitmapBundle& bmpDisabled,
+                                          const wxBitmap& bmpNormal,
+                                          const wxBitmap& bmpDisabled,
                                           wxItemKind kind,
                                           wxObject *clientData,
                                           const wxString& shortHelp,
@@ -75,7 +76,7 @@ private:
                            int width, int height,
                            int sizeFlags = wxSIZE_AUTO);
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxToolBar);
+    DECLARE_DYNAMIC_CLASS(wxToolBar)
 };
 
 #endif

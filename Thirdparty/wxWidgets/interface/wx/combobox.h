@@ -2,6 +2,7 @@
 // Name:        combobox.h
 // Purpose:     interface of wxComboBox
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -40,42 +41,40 @@
     @style{wxCB_SORT}
            Sorts the entries in the list alphabetically.
     @style{wxTE_PROCESS_ENTER}
-           The control will generate the event @c wxEVT_TEXT_ENTER that can be
-           handled by the program. Otherwise, i.e. either if this style not
-           specified at all, or it is used, but there is no event handler for
-           this event or the event handler called wxEvent::Skip() to avoid
-           overriding the default handling, pressing Enter key is either
-           processed internally by the control or used to activate the default
-           button of the dialog, if any.
+           The control will generate the event @c wxEVT_COMMAND_TEXT_ENTER
+           (otherwise pressing Enter key is either processed internally by the
+           control or used for navigation between dialog controls). Windows
+           only.
     @endStyleTable
 
     @beginEventEmissionTable{wxCommandEvent}
     @event{EVT_COMBOBOX(id, func)}
-           Process a @c wxEVT_COMBOBOX event, when an item on
+           Process a @c wxEVT_COMMAND_COMBOBOX_SELECTED event, when an item on
            the list is selected. Note that calling GetValue() returns the new
            value of selection.
     @event{EVT_TEXT(id, func)}
-           Process a @c wxEVT_TEXT event, when the combobox text
+           Process a @c wxEVT_COMMAND_TEXT_UPDATED event, when the combobox text
            changes.
     @event{EVT_TEXT_ENTER(id, func)}
-           Process a @c wxEVT_TEXT_ENTER event, when RETURN is pressed in
+           Process a @c wxEVT_COMMAND_TEXT_ENTER event, when RETURN is pressed in
            the combobox (notice that the combobox must have been created with
            wxTE_PROCESS_ENTER style to receive this event).
     @event{EVT_COMBOBOX_DROPDOWN(id, func)}
-           Process a @c wxEVT_COMBOBOX_DROPDOWN event, which is generated
+           Process a @c wxEVT_COMMAND_COMBOBOX_DROPDOWN event, which is generated
            when the list box part of the combo box is shown (drops down).
-           Notice that this event is only supported by wxMSW, wxGTK with GTK+
-           2.10 or later, and wxOSX/Cocoa.
+           Notice that this event is currently only supported by wxMSW and
+           wxGTK with GTK+ 2.10 or later.
     @event{EVT_COMBOBOX_CLOSEUP(id, func)}
-           Process a @c wxEVT_COMBOBOX_CLOSEUP event, which is generated
+           Process a @c wxEVT_COMMAND_COMBOBOX_CLOSEUP event, which is generated
            when the list box of the combo box disappears (closes up). This
            event is only generated for the same platforms as
-           @c wxEVT_COMBOBOX_DROPDOWN above.
+           @c wxEVT_COMMAND_COMBOBOX_DROPDOWN above. Also note that only wxMSW
+           supports adding or deleting items in this event.
     @endEventTable
 
     @library{wxcore}
     @category{ctrl}
-    @appearance{combobox}
+    @appearance{combobox.png}
 
     @see wxListBox, wxTextCtrl, wxChoice, wxCommandEvent
 */
@@ -104,7 +103,7 @@ public:
             Window position.
             If ::wxDefaultPosition is specified then a default position is chosen.
         @param size
-            Window size.
+            Window size. 
             If ::wxDefaultSize is specified then the window is sized appropriately.
         @param n
             Number of strings with which to initialise the control.
@@ -256,15 +255,12 @@ public:
     /**
         Sets the text for the combobox text field.
 
-        For normal, editable comboboxes with a text entry field calling this
-        method will generate a @c wxEVT_TEXT event, consistently with
-        wxTextEntry::SetValue() behaviour, use wxTextEntry::ChangeValue() if
-        this is undesirable.
+        Notice that this method will generate a @c wxEVT_COMMAND_TEXT_UPDATED
+        event, use wxTextEntry::ChangeValue() if this is undesirable.
 
-        For controls with @c wxCB_READONLY style the method behaves somewhat
-        differently: the string must be in the combobox choices list (the check
-        for this is case-insensitive) and @c wxEVT_TEXT is @e not generated in
-        this case.
+        @note For a combobox with @c wxCB_READONLY style the string must be in
+              the combobox choices list, otherwise the call to SetValue() is
+              ignored. This is case insensitive.
 
         @param text
             The text to set.
@@ -277,7 +273,7 @@ public:
         Currently this method is implemented in wxMSW, wxGTK and wxOSX/Cocoa.
 
         Notice that calling this function will generate a
-        @c wxEVT_COMBOBOX_DROPDOWN event except under wxOSX where
+        @c wxEVT_COMMAND_COMBOBOX_DROPDOWN event except under wxOSX where
         generation of this event is not supported at all.
 
         @since 2.9.1
@@ -290,7 +286,7 @@ public:
         Currently this method is implemented in wxMSW, wxGTK and wxOSX/Cocoa.
 
         Notice that calling this function will generate a
-        @c wxEVT_COMBOBOX_CLOSEUP event except under wxOSX where
+        @c wxEVT_COMMAND_COMBOBOX_CLOSEUP event except under wxOSX where
         generation of this event is not supported at all.
 
         @since 2.9.1

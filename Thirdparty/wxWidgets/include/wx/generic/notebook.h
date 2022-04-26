@@ -3,6 +3,7 @@
 // Purpose:     wxNotebook class (a.k.a. property sheet, tabbed dialog)
 // Author:      Julian Smart
 // Modified by:
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -42,14 +43,14 @@ public:
              const wxPoint& pos = wxDefaultPosition,
              const wxSize& size = wxDefaultSize,
              long style = 0,
-             const wxString& name = wxASCII_STR(wxNotebookNameStr));
+             const wxString& name = wxNotebookNameStr);
     // Create() function
   bool Create(wxWindow *parent,
               wxWindowID id,
               const wxPoint& pos = wxDefaultPosition,
               const wxSize& size = wxDefaultSize,
               long style = 0,
-              const wxString& name = wxASCII_STR(wxNotebookNameStr));
+              const wxString& name = wxNotebookNameStr);
     // dtor
   virtual ~wxNotebook();
 
@@ -148,8 +149,8 @@ protected:
 
   wxTabView*   m_tabView;
 
-  wxDECLARE_DYNAMIC_CLASS(wxNotebook);
-  wxDECLARE_EVENT_TABLE();
+  DECLARE_DYNAMIC_CLASS(wxNotebook)
+  DECLARE_EVENT_TABLE()
 };
 
 #endif // _WX_NOTEBOOK_H_

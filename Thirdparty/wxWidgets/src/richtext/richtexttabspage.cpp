@@ -1,9 +1,10 @@
 /////////////////////////////////////////////////////////////////////////////
 // Name:        src/richtext/richtexttabspage.cpp
-// Purpose:     Implements the rich text formatting dialog tabs page.
+// Purpose:
 // Author:      Julian Smart
 // Modified by:
 // Created:     10/4/2006 8:03:20 AM
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -16,25 +17,29 @@
  * wxRichTextTabsPage type definition
  */
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxRichTextTabsPage, wxRichTextDialogPage);
+IMPLEMENT_DYNAMIC_CLASS( wxRichTextTabsPage, wxRichTextDialogPage )
 
 /*!
  * wxRichTextTabsPage event table definition
  */
 
-wxBEGIN_EVENT_TABLE(wxRichTextTabsPage, wxRichTextDialogPage)
+BEGIN_EVENT_TABLE( wxRichTextTabsPage, wxRichTextDialogPage )
 
 ////@begin wxRichTextTabsPage event table entries
     EVT_LISTBOX( ID_RICHTEXTTABSPAGE_TABLIST, wxRichTextTabsPage::OnTablistSelected )
+
     EVT_BUTTON( ID_RICHTEXTTABSPAGE_NEW_TAB, wxRichTextTabsPage::OnNewTabClick )
     EVT_UPDATE_UI( ID_RICHTEXTTABSPAGE_NEW_TAB, wxRichTextTabsPage::OnNewTabUpdate )
+
     EVT_BUTTON( ID_RICHTEXTTABSPAGE_DELETE_TAB, wxRichTextTabsPage::OnDeleteTabClick )
     EVT_UPDATE_UI( ID_RICHTEXTTABSPAGE_DELETE_TAB, wxRichTextTabsPage::OnDeleteTabUpdate )
+
     EVT_BUTTON( ID_RICHTEXTTABSPAGE_DELETE_ALL_TABS, wxRichTextTabsPage::OnDeleteAllTabsClick )
     EVT_UPDATE_UI( ID_RICHTEXTTABSPAGE_DELETE_ALL_TABS, wxRichTextTabsPage::OnDeleteAllTabsUpdate )
+
 ////@end wxRichTextTabsPage event table entries
 
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 IMPLEMENT_HELP_PROVISION(wxRichTextTabsPage)
 
@@ -121,7 +126,7 @@ void wxRichTextTabsPage::CreateControls()
     m_tabListCtrl = new wxListBox( itemRichTextDialogPage1, ID_RICHTEXTTABSPAGE_TABLIST, wxDefaultPosition, wxSize(80, 200), m_tabListCtrlStrings, wxLB_SINGLE );
     itemBoxSizer5->Add(m_tabListCtrl, 1, wxGROW|wxLEFT|wxRIGHT|wxBOTTOM, 5);
 
-    itemBoxSizer4->Add(2, 1, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM, 5);
+    itemBoxSizer4->Add(2, 1, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM, 5);
 
     wxBoxSizer* itemBoxSizer10 = new wxBoxSizer(wxVERTICAL);
     itemBoxSizer4->Add(itemBoxSizer10, 0, wxGROW, 5);
@@ -263,7 +268,7 @@ wxIcon wxRichTextTabsPage::GetIconResource( const wxString& name )
 }
 
 /*!
- * wxEVT_BUTTON event handler for ID_RICHTEXTTABSPAGE_NEW_TAB
+ * wxEVT_COMMAND_BUTTON_CLICKED event handler for ID_RICHTEXTTABSPAGE_NEW_TAB
  */
 
 void wxRichTextTabsPage::OnNewTabClick( wxCommandEvent& WXUNUSED(event) )
@@ -300,7 +305,7 @@ void wxRichTextTabsPage::OnNewTabUpdate( wxUpdateUIEvent& event )
 
 
 /*!
- * wxEVT_BUTTON event handler for ID_RICHTEXTTABSPAGE_DELETE_TAB
+ * wxEVT_COMMAND_BUTTON_CLICKED event handler for ID_RICHTEXTTABSPAGE_DELETE_TAB
  */
 
 void wxRichTextTabsPage::OnDeleteTabClick( wxCommandEvent& WXUNUSED(event) )
@@ -322,7 +327,7 @@ void wxRichTextTabsPage::OnDeleteTabUpdate( wxUpdateUIEvent& event )
 
 
 /*!
- * wxEVT_BUTTON event handler for ID_RICHTEXTTABSPAGE_DELETE_ALL_TABS
+ * wxEVT_COMMAND_BUTTON_CLICKED event handler for ID_RICHTEXTTABSPAGE_DELETE_ALL_TABS
  */
 
 void wxRichTextTabsPage::OnDeleteAllTabsClick( wxCommandEvent& WXUNUSED(event) )
@@ -345,7 +350,7 @@ void wxRichTextTabsPage::OnDeleteAllTabsUpdate( wxUpdateUIEvent& event )
 
 
 /*!
- * wxEVT_LISTBOX event handler for ID_RICHTEXTTABSPAGE_TABLIST
+ * wxEVT_COMMAND_LISTBOX_SELECTED event handler for ID_RICHTEXTTABSPAGE_TABLIST
  */
 
 void wxRichTextTabsPage::OnTablistSelected( wxCommandEvent& WXUNUSED(event) )

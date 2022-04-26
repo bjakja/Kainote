@@ -4,6 +4,7 @@
 // Author:      Robin Dunn
 // Modified by:
 // Created:     9-Oct-2001
+// RCS-ID:      $Id$
 // Copyright:   (c) wxWidgets team
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,9 +12,9 @@
 #ifndef _WX_CLNTDATAH__
 #define _WX_CLNTDATAH__
 
-#include "wx\defs.h"
-#include "wx\string.h"
-#include "wx\hashmap.h"
+#include "wx/defs.h"
+#include "wx/string.h"
+#include "wx/hashmap.h"
 
 typedef int (*wxShadowObjectMethod)(void*, void*);
 WX_DECLARE_STRING_HASH_MAP_WITH_DECL(
@@ -47,7 +48,7 @@ public:
         if (it == m_methods.end())
             return false;
         wxShadowObjectMethod method = it->second;
-        const int ret = (*method)(window, param);
+        int ret = (*method)(window, param);
         if (returnValue)
             *returnValue = ret;
         return true;

@@ -1,15 +1,17 @@
 /////////////////////////////////////////////////////////////////////////////
 // Name:        wx/richtext/richtextmarginspage.h
-// Purpose:     Declares the rich text formatting dialog margins page.
+// Purpose:     
 // Author:      Julian Smart
-// Modified by:
+// Modified by: 
 // Created:     20/10/2010 10:27:34
+// RCS-ID:      
 // Copyright:   (c) Julian Smart
-// Licence:     wxWindows licence
+// Licence:     
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _RICHTEXTMARGINSPAGE_H_
 #define _RICHTEXTMARGINSPAGE_H_
+
 
 /*!
  * Includes
@@ -46,9 +48,9 @@
  */
 
 class WXDLLIMPEXP_RICHTEXT wxRichTextMarginsPage: public wxRichTextDialogPage
-{
-    wxDECLARE_DYNAMIC_CLASS(wxRichTextMarginsPage);
-    wxDECLARE_EVENT_TABLE();
+{    
+    DECLARE_DYNAMIC_CLASS( wxRichTextMarginsPage )
+    DECLARE_EVENT_TABLE()
     DECLARE_HELP_PROVISION()
 
 public:
@@ -70,11 +72,11 @@ public:
 
     /// Gets the attributes from the formatting dialog
     wxRichTextAttr* GetAttributes();
-
+    
     /// Data transfer
-    virtual bool TransferDataToWindow() wxOVERRIDE;
-    virtual bool TransferDataFromWindow() wxOVERRIDE;
-
+    virtual bool TransferDataToWindow();
+    virtual bool TransferDataFromWindow();
+    
 ////@begin wxRichTextMarginsPage event handler declarations
 
     /// wxEVT_UPDATE_UI event handler for ID_RICHTEXT_LEFT_MARGIN

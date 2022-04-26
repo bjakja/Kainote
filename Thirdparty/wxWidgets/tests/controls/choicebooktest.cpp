@@ -3,6 +3,7 @@
 // Purpose:     wxChoicebook unit test
 // Author:      Steven Lamerton
 // Created:     2010-07-02
+// RCS-ID:      $Id$
 // Copyright:   (c) 2010 Steven Lamerton
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -10,6 +11,9 @@
 
 #if wxUSE_CHOICEBOOK
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
     #include "wx/app.h"
@@ -24,17 +28,17 @@ class ChoicebookTestCase : public BookCtrlBaseTestCase, public CppUnit::TestCase
 public:
     ChoicebookTestCase() { }
 
-    virtual void setUp() wxOVERRIDE;
-    virtual void tearDown() wxOVERRIDE;
+    virtual void setUp();
+    virtual void tearDown();
 
 private:
-    virtual wxBookCtrlBase *GetBase() const wxOVERRIDE { return m_choicebook; }
+    virtual wxBookCtrlBase *GetBase() const { return m_choicebook; }
 
-    virtual wxEventType GetChangedEvent() const wxOVERRIDE
-    { return wxEVT_CHOICEBOOK_PAGE_CHANGED; }
+    virtual wxEventType GetChangedEvent() const
+    { return wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGED; }
 
-    virtual wxEventType GetChangingEvent() const wxOVERRIDE
-    { return wxEVT_CHOICEBOOK_PAGE_CHANGING; }
+    virtual wxEventType GetChangingEvent() const
+    { return wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGING; }
 
     CPPUNIT_TEST_SUITE( ChoicebookTestCase );
         wxBOOK_CTRL_BASE_TESTS();
@@ -45,7 +49,7 @@ private:
 
     wxChoicebook *m_choicebook;
 
-    wxDECLARE_NO_COPY_CLASS(ChoicebookTestCase);
+    DECLARE_NO_COPY_CLASS(ChoicebookTestCase)
 };
 
 // register in the unnamed registry so that these tests are run by default

@@ -1,3 +1,4 @@
+/* $Header: /cvs/maptools/cvsroot/libtiff/libtiff/tif_version.c,v 1.2 2000/11/13 14:42:38 warmerda Exp $ */
 /*
  * Copyright (c) 1992-1997 Sam Leffler
  * Copyright (c) 1992-1997 Silicon Graphics, Inc.
@@ -30,10 +31,3 @@ TIFFGetVersion(void)
 {
 	return (TIFFVersion);
 }
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 8
- * fill-column: 78
- * End:
- */

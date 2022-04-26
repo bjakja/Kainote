@@ -2,24 +2,28 @@
 // Name:        src/common/fileback.cpp
 // Purpose:     Back an input stream with memory or a file
 // Author:      Mike Wetherell
+// RCS-ID:      $Id$
 // Copyright:   (c) 2006 Mike Wetherell
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_FILESYSTEM
 
-#include "wx\private/fileback.h"
+#include "wx/private/fileback.h"
 
 #ifndef WX_PRECOMP
-    #include "wx\utils.h"
-    #include "wx\log.h"
+    #include "wx/utils.h"
+    #include "wx/log.h"
 #endif
 
-#include "wx\private/filename.h"
+#include "wx/private/filename.h"
 
 // Prefer wxFFile unless wxFile has large file support but wxFFile does not.
 //

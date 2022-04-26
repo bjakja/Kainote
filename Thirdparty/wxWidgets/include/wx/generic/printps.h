@@ -5,6 +5,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -26,12 +27,12 @@ public:
     wxPostScriptPrinter(wxPrintDialogData *data = NULL);
     virtual ~wxPostScriptPrinter();
 
-    virtual bool Print(wxWindow *parent, wxPrintout *printout, bool prompt = true) wxOVERRIDE;
-    virtual wxDC* PrintDialog(wxWindow *parent) wxOVERRIDE;
-    virtual bool Setup(wxWindow *parent) wxOVERRIDE;
+    virtual bool Print(wxWindow *parent, wxPrintout *printout, bool prompt = true);
+    virtual wxDC* PrintDialog(wxWindow *parent);
+    virtual bool Setup(wxWindow *parent);
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxPostScriptPrinter);
+    DECLARE_DYNAMIC_CLASS(wxPostScriptPrinter)
 };
 
 // ----------------------------------------------------------------------------
@@ -51,14 +52,14 @@ public:
 
     virtual ~wxPostScriptPrintPreview();
 
-    virtual bool Print(bool interactive) wxOVERRIDE;
-    virtual void DetermineScaling() wxOVERRIDE;
+    virtual bool Print(bool interactive);
+    virtual void DetermineScaling();
 
 private:
     void Init(wxPrintout *printout, wxPrintout *printoutForPrinting);
 
 private:
-    wxDECLARE_CLASS(wxPostScriptPrintPreview);
+    DECLARE_CLASS(wxPostScriptPrintPreview)
 };
 
 #endif

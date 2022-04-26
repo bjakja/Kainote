@@ -3,6 +3,7 @@
 // Purpose:     wxItemContainer unit test
 // Author:      Steven Lamerton
 // Created:     2010-06-29
+// RCS-ID:      $Id$
 // Copyright:   (c) 2010 Steven Lamerton
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -14,7 +15,6 @@
 #endif // WX_PRECOMP
 
 #include "wx/scopeguard.h"
-#include "wx/uiaction.h"
 
 #include "itemcontainertest.h"
 
@@ -71,7 +71,6 @@ void ItemContainerTestCase::Count()
     wxItemContainer * const container = GetContainer();
 
     CPPUNIT_ASSERT(container->IsEmpty());
-    WX_ASSERT_FAILS_WITH_ASSERT( container->GetString(0) );
 
     wxArrayString testitems;
     testitems.Add("item 0");
@@ -96,7 +95,6 @@ void ItemContainerTestCase::Count()
     container->Insert(testitems, 1);
 
     CPPUNIT_ASSERT_EQUAL(5, container->GetCount());
-    WX_ASSERT_FAILS_WITH_ASSERT( container->GetString(10) );
 }
 
 void ItemContainerTestCase::ItemSelection()
@@ -203,18 +201,6 @@ void ItemContainerTestCase::VoidData()
 
     WX_ASSERT_FAILS_WITH_ASSERT( container->SetClientData((unsigned)-1, NULL) );
     WX_ASSERT_FAILS_WITH_ASSERT( container->SetClientData(12345, NULL) );
-
-    // wxMSW used to hace problems retrieving the client data of -1 from a few
-    // standard controls, especially if the last error was set before doing it,
-    // so test for this specially.
-    const wxUIntPtr minus1 = static_cast<wxUIntPtr>(-1);
-    container->Append("item -1", wxUIntToPtr(minus1));
-
-#ifdef __WINDOWS__
-    ::SetLastError(ERROR_INVALID_DATA);
-#endif
-
-    CPPUNIT_ASSERT_EQUAL( minus1, wxPtrToUInt(container->GetClientData(3)) );
 }
 
 void ItemContainerTestCase::Set()
@@ -272,33 +258,6 @@ void ItemContainerTestCase::SetString()
 #endif
 }
 
-void ItemContainerTestCase::SelectionAfterDelete()
-{
-    wxItemContainer * const container = GetContainer();
-
-    container->Append("item 0");
-    container->Append("item 1");
-    container->Append("item 2");
-    container->Append("item 3");
-
-    container->SetSelection(1);
-    CHECK( container->GetSelection() == 1 );
-
-    container->Delete(3);
-    CHECK( container->GetSelection() == 1 );
-
-    container->Delete(1);
-    CHECK( container->GetSelection() == wxNOT_FOUND );
-
-    container->SetSelection(1);
-    container->Delete(1);
-    CHECK( container->GetSelection() == wxNOT_FOUND );
-
-    container->SetSelection(0);
-    container->Delete(0);
-    CHECK( container->GetSelection() == wxNOT_FOUND );
-}
-
 void ItemContainerTestCase::SetSelection()
 {
     wxItemContainer * const container = GetContainer();
@@ -311,7 +270,7 @@ void ItemContainerTestCase::SetSelection()
     class CommandEventHandler : public wxEvtHandler
     {
     public:
-        virtual bool ProcessEvent(wxEvent& event) wxOVERRIDE
+        virtual bool ProcessEvent(wxEvent& event)
         {
             CPPUNIT_ASSERT_MESSAGE
             (
@@ -333,27 +292,3 @@ void ItemContainerTestCase::SetSelection()
     container->SetSelection(1);
     CPPUNIT_ASSERT_EQUAL( 1, container->GetSelection() );
 }
-
-#if wxUSE_UIACTIONSIMULATOR
-
-void ItemContainerTestCase::SimSelect()
-{
-    wxItemContainer * const container = GetContainer();
-
-    container->Append("first");
-    container->Append("second");
-    container->Append("third");
-
-    GetContainerWindow()->SetFocus();
-
-    wxUIActionSimulator sim;
-    CPPUNIT_ASSERT( sim.Select("third") );
-    CPPUNIT_ASSERT_EQUAL( 2, container->GetSelection() );
-
-    CPPUNIT_ASSERT( sim.Select("first") );
-    CPPUNIT_ASSERT_EQUAL( 0, container->GetSelection() );
-
-    CPPUNIT_ASSERT( !sim.Select("tenth") );
-}
-
-#endif // wxUSE_UIACTIONSIMULATOR

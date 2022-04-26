@@ -1,4 +1,5 @@
 <?xml version="1.0" ?>
+<!-- $Id$ -->
 
 <makefile>
 
@@ -19,7 +20,7 @@
         <define>$(DLLFLAG)</define>
     </template>
 
-    <template id="wx_util" template="wx_util_b,wx_dpi">
+    <template id="wx_util" template="wx_util_b">
         <app-type>gui</app-type>
         <!-- resource files includes: -->
         <include>$(SRCDIR)/$(WXTOPDIR)samples</include>
@@ -29,12 +30,11 @@
             <res-include>$(RCDEFDIR)</res-include>
             <res-include>$(TOP_SRCDIR)include</res-include>
         </if>
-        <if cond="FORMAT=='borland'">
-            <!-- path to windows.h for this compiler -->
-            <res-include>$(DOLLAR)(BCCDIR)\include\windows\sdk</res-include>
-        </if>
 
         <win32-res>$(WXTOPDIR)samples/sample.rc</win32-res>
+        <if cond="FORMAT=='autoconf'">
+            <wx-os2-lib-resource/>
+        </if>
 
         <!-- FIXME: temporary, until bakefile can reuse existing pch files -->
         <if cond="FORMAT!='autoconf'">
@@ -53,13 +53,11 @@
         <if cond="FORMAT=='autoconf'">
             <wx-mac-app-bundle/>
             <ldflags>$(SAMPLES_RPATH_FLAG)</ldflags>
-            <cxxflags>$(SAMPLES_CXXFLAGS)</cxxflags>
         </if>
     </template>
     <template id="wx_sample_console" template="wx_util_console">
         <if cond="FORMAT=='autoconf'">
             <ldflags>$(SAMPLES_RPATH_FLAG)</ldflags>
-            <cxxflags>$(SAMPLES_CXXFLAGS)</cxxflags>
         </if>
     </template>
 
@@ -107,6 +105,20 @@
 
     <if cond="FORMAT=='autoconf'">
         <include file="mac_bundles.bkl"/>
+
+        <!--
+        A hack to include precompiled OS/2 resource file in apps instead of
+        compiling it from .rc file (gcc on OS/2 doesn't ship with resource
+        compiler):
+        -->
+        <define-tag name="wx-os2-lib-resource" rules="exe">
+            <set var="os2_lib_res">
+                <if cond="PLATFORM_OS2=='1'">
+                    $(TOP_SRCDIR)include/wx/os2/wx.res
+                </if>
+            </set>
+            <set var="__objects" append="1">$(os2_lib_res)</set>
+        </define-tag>
     </if>
 
 </makefile>

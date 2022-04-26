@@ -4,6 +4,7 @@
  * Author:      Stefan Csomor
  * Modified by:
  * Created:     2008-07-30
+ * RCS-ID:      $Id$
  * Copyright:   (c) Stefan Csomor
  * Licence:     wxWindows licence
  */
@@ -20,31 +21,35 @@
 #endif
 
 /*
- * leave is isFlipped and don't override
+ * text rendering system
  */
-#ifndef wxOSX_USE_NATIVE_FLIPPED
-    #define wxOSX_USE_NATIVE_FLIPPED 1
+
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5
+
+    #define wxOSX_USE_CORE_TEXT 1
+    #define wxOSX_USE_ATSU_TEXT 0
+
+#else // platform < 10.5
+
+    #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
+        #define wxOSX_USE_CORE_TEXT 1
+    #else
+        #define wxOSX_USE_CORE_TEXT 0
+    #endif
+    #define wxOSX_USE_ATSU_TEXT 1
+
 #endif
 
 /*
  * Audio System
  */
 
-#define wxOSX_USE_QUICKTIME 0
-#define wxOSX_USE_AUDIOTOOLBOX 1
-
-/*
-   Use the more efficient FSEvents API instead of kqueue
-   events for file system watcher since that version introduced a flag that
-   allows watching files as well as sub directories.
- */
-#define wxHAVE_FSEVENTS_FILE_NOTIFICATIONS 1
-
-/*
- * turn off old style icon format if not asked for
- */
-#ifndef wxOSX_USE_ICONREF
-    #define wxOSX_USE_ICONREF 0
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5
+    #define wxOSX_USE_QUICKTIME 0
+    #define wxOSX_USE_AUDIOTOOLBOX 1
+#else // platform < 10.5
+    #define wxOSX_USE_QUICKTIME 1
+    #define wxOSX_USE_AUDIOTOOLBOX 0
 #endif
 
 /*

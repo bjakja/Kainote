@@ -4,6 +4,7 @@
 // Author:      Guilhem Lavaux
 // Modified by: Vadim Zeitlin to check error codes, added Detach() method
 // Created:     24/06/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Guilhem Lavaux
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,10 +18,13 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
-#include "wx\process.h"
+#include "wx/process.h"
 
 // ----------------------------------------------------------------------------
 // event tables and such
@@ -28,8 +32,8 @@
 
 wxDEFINE_EVENT( wxEVT_END_PROCESS, wxProcessEvent );
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxProcess, wxEvtHandler);
-wxIMPLEMENT_DYNAMIC_CLASS(wxProcessEvent, wxEvent);
+IMPLEMENT_DYNAMIC_CLASS(wxProcess, wxEvtHandler)
+IMPLEMENT_DYNAMIC_CLASS(wxProcessEvent, wxEvent)
 
 // ============================================================================
 // wxProcess implementation
@@ -46,7 +50,6 @@ void wxProcess::Init(wxEvtHandler *parent, int id, int flags)
 
     m_id         = id;
     m_pid        = 0;
-    m_priority   = wxPRIORITY_DEFAULT;
     m_redirect   = (flags & wxPROCESS_REDIRECT) != 0;
 
 #if wxUSE_STREAMS
@@ -166,29 +169,10 @@ bool wxProcess::Exists(int pid)
         case wxKILL_ERROR:
         case wxKILL_BAD_SIGNAL:
             wxFAIL_MSG( wxT("unexpected wxProcess::Kill() return code") );
-            wxFALLTHROUGH;
+            // fall through
 
         case wxKILL_NO_PROCESS:
             return false;
     }
 }
 
-bool wxProcess::Activate() const
-{
-#ifdef __WINDOWS__
-    // This function is defined in src/msw/utils.cpp.
-    extern bool wxMSWActivatePID(long pid);
-
-    return wxMSWActivatePID(m_pid);
-#else
-    return false;
-#endif
-}
-
-void wxProcess::SetPriority(unsigned priority)
-{
-    wxCHECK_RET( priority <= wxPRIORITY_MAX,
-                 wxS("Invalid process priority value.") );
-
-    m_priority = priority;
-}

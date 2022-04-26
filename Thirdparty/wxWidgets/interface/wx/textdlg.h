@@ -2,13 +2,14 @@
 // Name:        textdlg.h
 // Purpose:     interface of wxPasswordEntryDialog
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 /**
     Default text dialog style.
 */
-#define wxTextEntryDialogStyle (wxOK | wxCANCEL | wxCENTRE)
+#define wxTextEntryDialogStyle (wxOK | wxCANCEL | wxCENTRE | wxWS_EX_VALIDATE_RECURSIVELY)
 
 /// Default text dialog caption.
 const char wxGetTextFromUserPromptStr[] = "Input Text";
@@ -77,28 +78,8 @@ class wxTextEntryDialog : public wxDialog
 {
 public:
     /**
-        Default constructor.
+        Constructor. Use ShowModal() to show the dialog.
 
-        Call Create() to really create the dialog later.
-
-        @since 2.9.5
-     */
-    wxTextEntryDialog();
-
-    /**
-        Constructor.
-
-        Use ShowModal() to show the dialog.
-
-        See Create() method for parameter description.
-    */
-    wxTextEntryDialog(wxWindow* parent, const wxString& message,
-                      const wxString& caption = wxGetTextFromUserPromptStr,
-                      const wxString& value = wxEmptyString,
-                      long style = wxTextEntryDialogStyle,
-                      const wxPoint& pos = wxDefaultPosition);
-
-    /**
         @param parent
             Parent window.
         @param message
@@ -109,16 +90,13 @@ public:
             The default value, which may be the empty string.
         @param style
             A dialog style, specifying the buttons (wxOK, wxCANCEL)
-            and an optional wxCENTRE style. Additionally, most wxTextCtrl
-            styles (such as @c wxTE_PASSWORD or @c wxTE_MULTILINE) may be
-            specified here, but @c wxTE_READONLY may not be used, as it doesn't
-            make sense for this dialog, used for text input.
+            and an optional wxCENTRE style. Additionally, wxTextCtrl styles
+            (such as @c wxTE_PASSWORD or @c wxTE_MULTILINE) may be specified
+            here.
         @param pos
             Dialog position.
-
-        @since 2.9.5
     */
-    bool Create(wxWindow* parent, const wxString& message,
+    wxTextEntryDialog(wxWindow* parent, const wxString& message,
                       const wxString& caption = wxGetTextFromUserPromptStr,
                       const wxString& value = wxEmptyString,
                       long style = wxTextEntryDialogStyle,
@@ -136,64 +114,13 @@ public:
     wxString GetValue() const;
 
     /**
-        Associate a validator with the text control used by the dialog.
-
-        These methods can be used to limit the user entry to only some
-        characters, e.g.
-        @code
-            wxTextEntryDialog dlg(this, ...);
-            dlg.SetTextValidator(wxFILTER_ALPHA);
-            if ( dlg.ShowModal() == wxID_OK )
-            {
-                // We can be certain that this string contains letters only.
-                wxString value = dlg.GetValue();
-            }
-        @endcode
-
-        The first overload uses the provided @a validator which can be of a
-        custom class derived from wxTextValidator while the second one creates
-        a wxTextValidator with the specified @a style.
-     */
-    //@{
-    void SetTextValidator(const wxTextValidator& validator);
-    void SetTextValidator(wxTextValidatorStyle style = wxFILTER_NONE);
-    //@}
-
-    /**
-        This function sets the maximum number of characters the user can enter
-        into this dialog.
-
-        @see wxTextEntry::SetMaxLength()
-
-        @since 2.9.5
-    */
-    void SetMaxLength(unsigned long len);
-
-    /**
         Sets the default text value.
     */
     void SetValue(const wxString& value);
 
     /**
-        Convert all text entered into the text control used by the dialog to upper case.
-
-        Call this method to ensure that all text entered into the text control
-        used by the dialog is converted on the fly to upper case. If the text
-        control is not empty, its existing contents is also converted to upper
-        case.
-
-        @see wxTextEntry::ForceUpper()
-
-        @since 3.1.0
-     */
-    void ForceUpper();
-
-    /**
         Shows the dialog, returning wxID_OK if the user pressed OK, and wxID_CANCEL
         otherwise.
-
-        Call GetValue() to retrieve the values of the string entered by the
-        user after showing the dialog.
     */
     int ShowModal();
 };

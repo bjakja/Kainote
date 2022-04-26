@@ -4,6 +4,7 @@
 // Author:      wxWidgets team
 // Modified by:
 // Created:     13.01.00
+// RCS-ID:      $Id$
 // Copyright:   (c) wxWidgets team
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -32,7 +33,7 @@
         #else // also map all metafile classes to enh metafile
             typedef wxEnhMetaFile wxMetafile;
             typedef wxEnhMetaFileDC wxMetafileDC;
-            #if wxUSE_DATAOBJ
+            #if wxUSE_DRAG_AND_DROP
                 typedef wxEnhMetaFileDataObject wxMetafileDataObject;
             #endif
 
@@ -42,6 +43,8 @@
     #else // !wxUSE_ENH_METAFILE
         #include "wx/msw/metafile.h"
     #endif
+#elif defined(__WXPM__)
+    #include "wx/os2/metafile.h"
 #elif defined(__WXMAC__)
     #include "wx/osx/metafile.h"
 #endif

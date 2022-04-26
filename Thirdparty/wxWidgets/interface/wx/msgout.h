@@ -2,6 +2,7 @@
 // Name:        wx/msgout.h
 // Purpose:     interface of wxMessageOutput and derived classes
 // Author:      Vadim Zeitlin
+// RCS-ID:      $Id$
 // Copyright:   (c) 2009 Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -10,7 +11,7 @@
     Simple class allowing to write strings to various output channels.
 
     wxMessageOutput is a low-level class and doesn't provide any of the
-    conveniences of wxLog. It simply allows writing a message to some output
+    conveniences of wxLog. It simply allows to write a message to some output
     channel: usually file or standard error but possibly also a message box.
     While use of wxLog and related functions is preferable in many cases
     sometimes this simple interface may be more convenient.

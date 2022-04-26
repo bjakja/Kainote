@@ -4,6 +4,7 @@
 // Notes:       Based on htmlhelp.cpp, implementing a monolithic
 //              HTML Help controller class,  by Vaclav Slavik
 // Author:      Harm van der Heijden and Vaclav Slavik
+// RCS-ID:      $Id$
 // Copyright:   (c) Harm van der Heijden and Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -41,12 +42,12 @@ class WXDLLIMPEXP_FWD_HTML wxHtmlHelpDialog;
 
 class WXDLLIMPEXP_HTML wxHtmlHelpController : public wxHelpControllerBase // wxEvtHandler
 {
-    wxDECLARE_DYNAMIC_CLASS(wxHtmlHelpController);
+    DECLARE_DYNAMIC_CLASS(wxHtmlHelpController)
 
 public:
     wxHtmlHelpController(int style = wxHF_DEFAULT_STYLE, wxWindow* parentWindow = NULL);
     wxHtmlHelpController(wxWindow* parentWindow, int style = wxHF_DEFAULT_STYLE);
-
+    
     virtual ~wxHtmlHelpController();
 
     void SetShouldPreventAppExit(bool enable);
@@ -58,10 +59,10 @@ public:
 
     bool Display(const wxString& x);
     bool Display(int id);
-    bool DisplayContents() wxOVERRIDE;
+    bool DisplayContents();
     bool DisplayIndex();
     bool KeywordSearch(const wxString& keyword,
-                       wxHelpSearchMode mode = wxHELP_SEARCH_ALL) wxOVERRIDE;
+                       wxHelpSearchMode mode = wxHELP_SEARCH_ALL);
 
     wxHtmlHelpWindow* GetHelpWindow() { return m_helpWindow; }
     void SetHelpWindow(wxHtmlHelpWindow* helpWindow);
@@ -81,30 +82,30 @@ public:
 
     //// Backward compatibility with wxHelpController API
 
-    virtual bool Initialize(const wxString& file, int WXUNUSED(server) ) wxOVERRIDE { return Initialize(file); }
-    virtual bool Initialize(const wxString& file) wxOVERRIDE;
-    virtual void SetViewer(const wxString& WXUNUSED(viewer), long WXUNUSED(flags) = 0) wxOVERRIDE {}
-    virtual bool LoadFile(const wxString& file = wxT("")) wxOVERRIDE;
-    virtual bool DisplaySection(int sectionNo) wxOVERRIDE;
-    virtual bool DisplaySection(const wxString& section) wxOVERRIDE { return Display(section); }
-    virtual bool DisplayBlock(long blockNo) wxOVERRIDE { return DisplaySection(blockNo); }
-    virtual bool DisplayTextPopup(const wxString& text, const wxPoint& pos) wxOVERRIDE;
+    virtual bool Initialize(const wxString& file, int WXUNUSED(server) ) { return Initialize(file); }
+    virtual bool Initialize(const wxString& file);
+    virtual void SetViewer(const wxString& WXUNUSED(viewer), long WXUNUSED(flags) = 0) {}
+    virtual bool LoadFile(const wxString& file = wxT(""));
+    virtual bool DisplaySection(int sectionNo);
+    virtual bool DisplaySection(const wxString& section) { return Display(section); }
+    virtual bool DisplayBlock(long blockNo) { return DisplaySection(blockNo); }
+    virtual bool DisplayTextPopup(const wxString& text, const wxPoint& pos);
 
-    virtual void SetFrameParameters(const wxString& titleFormat,
+    virtual void SetFrameParameters(const wxString& title,
                                const wxSize& size,
                                const wxPoint& pos = wxDefaultPosition,
-                               bool newFrameEachTime = false) wxOVERRIDE;
+                               bool newFrameEachTime = false);
     /// Obtains the latest settings used by the help frame and the help
     /// frame.
     virtual wxFrame *GetFrameParameters(wxSize *size = NULL,
                                wxPoint *pos = NULL,
-                               bool *newFrameEachTime = NULL) wxOVERRIDE;
+                               bool *newFrameEachTime = NULL);
 
     // Get direct access to help data:
     wxHtmlHelpData *GetHelpData() { return &m_helpData; }
 
-    virtual bool Quit() wxOVERRIDE ;
-    virtual void OnQuit() wxOVERRIDE {}
+    virtual bool Quit() ;
+    virtual void OnQuit() {}
 
     void OnCloseFrame(wxCloseEvent& evt);
 
@@ -117,7 +118,7 @@ public:
 
 protected:
     void Init(int style);
-
+    
     virtual wxWindow* CreateHelpWindow();
     virtual wxHtmlHelpFrame* CreateHelpFrame(wxHtmlHelpData *data);
     virtual wxHtmlHelpDialog* CreateHelpDialog(wxHtmlHelpData *data);

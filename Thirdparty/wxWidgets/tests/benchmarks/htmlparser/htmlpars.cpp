@@ -2,12 +2,16 @@
 // Name:        src/html/htmlpars.cpp
 // Purpose:     wx28HtmlParser class (generic parser)
 // Author:      Vaclav Slavik
+// RCS-ID:      $Id$
 // Copyright:   (c) 1999 Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #include "htmlpars.h"
 
@@ -18,13 +22,16 @@
     #include "wx/app.h"
 #endif
 
-#include "wx/crt.h"
 #include "wx/tokenzr.h"
 #include "wx/wfstream.h"
 #include "wx/url.h"
 #include "wx/fontmap.h"
 #include "wx/html/htmldefs.h"
 #include "wx/arrimpl.cpp"
+
+#ifdef __WXWINCE__
+    #include "wx/msw/wince/missing.h"       // for bsearch()
+#endif
 
 // DLL options compatibility check:
 WX_CHECK_BUILD_OPTIONS("wxHTML")
@@ -60,7 +67,7 @@ public:
 // wx28HtmlParser
 //-----------------------------------------------------------------------------
 
-wxIMPLEMENT_ABSTRACT_CLASS(wx28HtmlParser, wxObject);
+IMPLEMENT_ABSTRACT_CLASS(wx28HtmlParser,wxObject)
 
 wx28HtmlParser::wx28HtmlParser()
     : wxObject(), m_HandlersHash(wxKEY_STRING),
@@ -433,7 +440,7 @@ wxString wx28HtmlParser::GetInnerSource(const wx28HtmlTag& tag)
 // wx28HtmlTagHandler
 //-----------------------------------------------------------------------------
 
-wxIMPLEMENT_ABSTRACT_CLASS(wx28HtmlTagHandler, wxObject);
+IMPLEMENT_ABSTRACT_CLASS(wx28HtmlTagHandler,wxObject)
 
 void wx28HtmlTagHandler::ParseInnerSource(const wxString& source)
 {
@@ -449,7 +456,7 @@ void wx28HtmlTagHandler::ParseInnerSource(const wxString& source)
 // wx28HtmlEntitiesParser
 //-----------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wx28HtmlEntitiesParser,wxObject);
+IMPLEMENT_DYNAMIC_CLASS(wx28HtmlEntitiesParser,wxObject)
 
 wx28HtmlEntitiesParser::wx28HtmlEntitiesParser()
 #if !wxUSE_UNICODE
@@ -840,10 +847,23 @@ wxChar wx28HtmlEntitiesParser::GetEntityChar(const wxString& entity)
                 substitutions_cnt++;
 
         wx28HtmlEntityInfo *info = NULL;
+#ifdef __WXWINCE__
+        // bsearch crashes under WinCE for some reason
+        size_t i;
+        for (i = 0; i < substitutions_cnt; i++)
+        {
+            if (entity == substitutions[i].name)
+            {
+                info = & substitutions[i];
+                break;
+            }
+        }
+#else
         info = (wx28HtmlEntityInfo*) bsearch(entity.c_str(), substitutions,
                                            substitutions_cnt,
                                            sizeof(wx28HtmlEntityInfo),
                                            wx28HtmlEntityCompare);
+#endif
         if (info)
             code = info->code;
     }
@@ -876,7 +896,7 @@ public:
 protected:
     virtual void AddText(const wxChar* WXUNUSED(txt)) {}
 
-    wxDECLARE_NO_COPY_CLASS(wxMetaTagParser);
+    DECLARE_NO_COPY_CLASS(wxMetaTagParser)
 };
 
 class wxMetaTagHandler : public wx28HtmlTagHandler
@@ -889,7 +909,7 @@ public:
 private:
     wxString *m_retval;
 
-    wxDECLARE_NO_COPY_CLASS(wxMetaTagHandler);
+    DECLARE_NO_COPY_CLASS(wxMetaTagHandler)
 };
 
 bool wxMetaTagHandler::HandleTag(const wx28HtmlTag& tag)

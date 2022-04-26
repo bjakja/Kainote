@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     19.10.99 (extracted from gtk/dataobj.h)
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -24,28 +25,31 @@ public:
     // we have to provide all the overloads to allow using strings instead of
     // data formats (as a lot of existing code does)
     wxDataFormat( const wxString& id ) { InitFromString(id); }
-#ifndef wxNO_IMPLICIT_WXSTRING_ENCODING
     wxDataFormat( const char *id ) { InitFromString(id); }
-#endif
     wxDataFormat( const wchar_t *id ) { InitFromString(id); }
     wxDataFormat( const wxCStrData& id ) { InitFromString(id); }
 
+    wxDataFormat& operator=(const wxDataFormat& format)
+    {
+        if (&format != this)
+        {
+            m_type = format.m_type;
+            m_format = format.m_format;
+        }
+        return *this;
+    }
     wxDataFormat& operator=(NativeFormat format)
         { SetId(format); return *this; }
 
-    // comparison
-    bool operator==(wxDataFormatId type) const
-        { return m_type == type; }
-    bool operator!=(wxDataFormatId type) const
-        { return m_type != type; }
+    // comparison (must have both versions)
     bool operator==(NativeFormat format) const
         { return m_format == (NativeFormat)format; }
     bool operator!=(NativeFormat format) const
         { return m_format != (NativeFormat)format; }
-    bool operator==(const wxDataFormat& other) const
-        { return m_format == other.m_format; }
-    bool operator!=(const wxDataFormat& other) const
-        { return m_format != other.m_format; }
+    bool operator==(wxDataFormatId format) const
+        { return m_type == (wxDataFormatId)format; }
+    bool operator!=(wxDataFormatId format) const
+        { return m_type != (wxDataFormatId)format; }
 
     // explicit and implicit conversions to NativeFormat which is one of
     // standard data types (implicit conversion is useful for preserving the

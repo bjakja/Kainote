@@ -3,6 +3,7 @@
 // Purpose:     wxArtProvider instance with native Mac stock icons
 // Author:      Alan Shouls
 // Created:     2006-10-30
+// RCS-ID:      $Id$
 // Copyright:   (c) wxWindows team
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -14,6 +15,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#if defined(__BORLANDC__)
+    #pragma hdrstop
+#endif
 
 #include "wx/artprov.h"
 
@@ -32,14 +36,14 @@ class wxMacArtProvider : public wxArtProvider
 protected:
 #if wxOSX_USE_COCOA_OR_CARBON
     virtual wxIconBundle CreateIconBundle(const wxArtID& id,
-                                          const wxArtClient& client) wxOVERRIDE;
+                                          const wxArtClient& client);
 #endif
 #if wxOSX_USE_COCOA_OR_IPHONE
-    virtual wxBitmapBundle CreateBitmapBundle(const wxArtID& id,
+    virtual wxBitmap CreateBitmap(const wxArtID& id,
                                   const wxArtClient& client,
-                                  const wxSize& size) wxOVERRIDE
+                                  const wxSize& size)
     {
-        return wxOSXCreateSystemBitmapBundle(id, client, size);
+        return wxOSXCreateSystemBitmap(id, client, size);
     }
 #endif
 };
@@ -84,7 +88,6 @@ static wxIconBundle wxMacArtProvider_CreateIconBundle(const wxArtID& id)
     ART_MSGBOX(wxART_FLOPPY,      wxICON_FLOPPY,      floppy)
     ART_MSGBOX(wxART_HARDDISK,    wxICON_HARDDISK,    harddisk)
     ART_MSGBOX(wxART_REMOVABLE,   wxICON_REMOVABLE,   removable)
-    ART_MSGBOX(wxART_PRINT,       wxICON_PRINT,       print)
 
     ART_MSGBOX(wxART_DELETE,      wxICON_DELETE,      delete)
 
@@ -94,7 +97,6 @@ static wxIconBundle wxMacArtProvider_CreateIconBundle(const wxArtID& id)
 
     ART_MSGBOX(wxART_HELP_SETTINGS, wxICON_HELP_SETTINGS, htmoptns)
     ART_MSGBOX(wxART_HELP_PAGE,   wxICON_HELP_PAGE,   htmpage)
-    ART_MSGBOX(wxART_HELP_FOLDER,   wxICON_HELP_FOLDER,   htmlfoldr)
 
     return wxNullIconBundle;
 }
@@ -116,11 +118,11 @@ wxIconBundle wxMacArtProvider::CreateIconBundle(const wxArtID& id, const wxArtCl
 #endif
 
 // ----------------------------------------------------------------------------
-// wxArtProvider::GetNativeDIPSizeHint()
+// wxArtProvider::GetNativeSizeHint()
 // ----------------------------------------------------------------------------
 
 /*static*/
-wxSize wxArtProvider::GetNativeDIPSizeHint(const wxArtClient& client)
+wxSize wxArtProvider::GetNativeSizeHint(const wxArtClient& client)
 {
     if ( client == wxART_TOOLBAR )
     {

@@ -3,6 +3,7 @@
 // Purpose:     wxNotebook class
 // Author:      Robert Roebling
 // Modified by:
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart and Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -34,14 +35,14 @@ public:
              const wxPoint& pos = wxDefaultPosition,
              const wxSize& size = wxDefaultSize,
              long style = 0,
-             const wxString& name = wxASCII_STR(wxNotebookNameStr));
+             const wxString& name = wxNotebookNameStr);
       // Create() function
     bool Create(wxWindow *parent,
               wxWindowID id,
               const wxPoint& pos = wxDefaultPosition,
               const wxSize& size = wxDefaultSize,
               long style = 0,
-              const wxString& name = wxASCII_STR(wxNotebookNameStr));
+              const wxString& name = wxNotebookNameStr);
       // dtor
     virtual ~wxNotebook();
 
@@ -141,8 +142,8 @@ private:
     // the padding set by SetPadding()
     int m_padding;
 
-    wxDECLARE_DYNAMIC_CLASS(wxNotebook);
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_DYNAMIC_CLASS(wxNotebook)
+    DECLARE_EVENT_TABLE()
 };
 
 #endif

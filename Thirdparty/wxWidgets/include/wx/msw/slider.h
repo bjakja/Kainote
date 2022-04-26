@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -28,7 +29,7 @@ public:
              const wxSize& size = wxDefaultSize,
              long style = wxSL_HORIZONTAL,
              const wxValidator& validator = wxDefaultValidator,
-             const wxString& name = wxASCII_STR(wxSliderNameStr))
+             const wxString& name = wxSliderNameStr)
     {
         Init();
 
@@ -44,57 +45,55 @@ public:
                 const wxSize& size = wxDefaultSize,
                 long style = wxSL_HORIZONTAL,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxASCII_STR(wxSliderNameStr));
+                const wxString& name = wxSliderNameStr);
 
     virtual ~wxSlider();
 
     // slider methods
-    virtual int GetValue() const wxOVERRIDE;
-    virtual void SetValue(int) wxOVERRIDE;
+    virtual int GetValue() const;
+    virtual void SetValue(int);
 
-    void SetRange(int minValue, int maxValue) wxOVERRIDE;
+    void SetRange(int minValue, int maxValue);
 
-    int GetMin() const wxOVERRIDE { return m_rangeMin; }
-    int GetMax() const wxOVERRIDE { return m_rangeMax; }
+    int GetMin() const { return m_rangeMin; }
+    int GetMax() const { return m_rangeMax; }
 
     // Win32-specific slider methods
-    int GetTickFreq() const wxOVERRIDE { return m_tickFreq; }
-    void SetPageSize(int pageSize) wxOVERRIDE;
-    int GetPageSize() const wxOVERRIDE;
-    void ClearSel() wxOVERRIDE;
-    void ClearTicks() wxOVERRIDE;
-    void SetLineSize(int lineSize) wxOVERRIDE;
-    int GetLineSize() const wxOVERRIDE;
-    int GetSelEnd() const wxOVERRIDE;
-    int GetSelStart() const wxOVERRIDE;
-    void SetSelection(int minPos, int maxPos) wxOVERRIDE;
-    void SetThumbLength(int len) wxOVERRIDE;
-    int GetThumbLength() const wxOVERRIDE;
-    void SetTick(int tickPos) wxOVERRIDE;
+    int GetTickFreq() const { return m_tickFreq; }
+    void SetPageSize(int pageSize);
+    int GetPageSize() const;
+    void ClearSel();
+    void ClearTicks();
+    void SetLineSize(int lineSize);
+    int GetLineSize() const;
+    int GetSelEnd() const;
+    int GetSelStart() const;
+    void SetSelection(int minPos, int maxPos);
+    void SetThumbLength(int len);
+    int GetThumbLength() const;
+    void SetTick(int tickPos);
 
     // implementation only from now on
     WXHWND GetStaticMin() const;
     WXHWND GetStaticMax() const;
     WXHWND GetEditValue() const;
-    virtual bool ContainsHWND(WXHWND hWnd) const wxOVERRIDE;
+    virtual bool ContainsHWND(WXHWND hWnd) const;
 
     // we should let background show through the slider (and its labels)
-    virtual bool HasTransparentBackground() wxOVERRIDE { return true; }
+    virtual bool HasTransparentBackground() { return true; }
 
     // returns true if the platform should explicitly apply a theme border
-    virtual bool CanApplyThemeBorder() const wxOVERRIDE { return false; }
+    virtual bool CanApplyThemeBorder() const { return false; }
 
-    void Command(wxCommandEvent& event) wxOVERRIDE;
+    void Command(wxCommandEvent& event);
     virtual bool MSWOnScroll(int orientation, WXWORD wParam,
-                             WXWORD pos, WXHWND control) wxOVERRIDE;
+                             WXWORD pos, WXHWND control);
 
-    virtual bool Show(bool show = true) wxOVERRIDE;
-    virtual bool Enable(bool show = true) wxOVERRIDE;
-    virtual bool SetFont(const wxFont& font) wxOVERRIDE;
-    virtual bool SetForegroundColour(const wxColour& colour) wxOVERRIDE;
-    virtual bool SetBackgroundColour(const wxColour& colour) wxOVERRIDE;
+    virtual bool Show(bool show = true);
+    virtual bool Enable(bool show = true);
+    virtual bool SetFont(const wxFont& font);
 
-    virtual WXDWORD MSWGetStyle(long flags, WXDWORD *exstyle = NULL) const wxOVERRIDE;
+    virtual WXDWORD MSWGetStyle(long flags, WXDWORD *exstyle = NULL) const;
 
 protected:
     // common part of all ctors
@@ -115,22 +114,13 @@ protected:
 
 
     // overridden base class virtuals
-    virtual void DoGetPosition(int *x, int *y) const wxOVERRIDE;
-    virtual void DoGetSize(int *width, int *height) const wxOVERRIDE;
-    virtual void DoMoveWindow(int x, int y, int width, int height) wxOVERRIDE;
-    virtual wxSize DoGetBestSize() const wxOVERRIDE;
-
-    WXHBRUSH DoMSWControlColor(WXHDC pDC, wxColour colBg, WXHWND hWnd) wxOVERRIDE;
-
-    virtual void MSWUpdateFontOnDPIChange(const wxSize& newDPI) wxOVERRIDE;
-
-    void OnDPIChanged(wxDPIChangedEvent& event);
+    virtual void DoGetPosition(int *x, int *y) const;
+    virtual void DoGetSize(int *width, int *height) const;
+    virtual void DoMoveWindow(int x, int y, int width, int height);
+    virtual wxSize DoGetBestSize() const;
 
     // the labels windows, if any
     wxSubwindows  *m_labels;
-
-    // Last background brush we returned from DoMSWControlColor(), see there.
-    WXHBRUSH m_hBrushBg;
 
     int           m_rangeMin;
     int           m_rangeMax;
@@ -143,9 +133,9 @@ protected:
     bool m_isDragging;
 
     // Platform-specific implementation of SetTickFreq
-    virtual void DoSetTickFreq(int freq) wxOVERRIDE;
+    virtual void DoSetTickFreq(int freq);
 
-    wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxSlider);
+    DECLARE_DYNAMIC_CLASS_NO_COPY(wxSlider)
 };
 
 #endif // _WX_SLIDER_H_

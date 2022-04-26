@@ -2,6 +2,7 @@
 // Name:        tests/testfile.h
 // Purpose:     TestFile class
 // Author:      Mike Wetherell
+// RCS-ID:      $Id$
 // Copyright:   (c) 2005 Mike Wetherell
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -39,31 +40,6 @@ public:
 
 private:
     wxString m_name;
-};
-
-// ----------------------------------------------------------------------------
-// TempFile: just a self deleting file
-// ----------------------------------------------------------------------------
-
-class TempFile
-{
-public:
-    explicit TempFile(const wxString& name = wxString()) : m_name(name) { }
-
-    void Assign(const wxString& name) { m_name = name; }
-
-    const wxString& GetName() const { return m_name; }
-
-    ~TempFile()
-    {
-        if ( !m_name.empty() )
-            wxRemoveFile(m_name);
-    }
-
-private:
-    wxString m_name;
-
-    wxDECLARE_NO_COPY_CLASS(TempFile);
 };
 
 #endif // _WX_TESTS_TEMPFILE_H_

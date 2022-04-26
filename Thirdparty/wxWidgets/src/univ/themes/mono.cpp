@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     2006-08-27
+// RCS-ID:      $Id$
 // Copyright:   (c) 2006 REA Elektronik GmbH
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,9 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #include "wx/univ/theme.h"
 
@@ -1057,7 +1061,7 @@ void wxMonoRenderer::DrawScrollbarThumb(wxDC& dc,
 {
     DrawSolidRect(dc, wxMONO_BG_COL, rect);
 
-    // manually draw stipple pattern (wxDFB doesn't implement the wxBRUSHSTYLE_STIPPLE
+    // manually draw stipple pattern (wxDFB doesn't implement the wxSTIPPLE
     // brush style):
     dc.SetPen(m_penFg);
     for ( wxCoord y = rect.GetTop(); y <= rect.GetBottom(); y++ )

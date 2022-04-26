@@ -1,8 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
 // Name:        wx/xrc/xh_spin.h
-// Purpose:     XML resource handler for wxSpinButton, wxSpinCtrl, wxSpinCtrlDouble
+// Purpose:     XML resource handler for wxSpinButton and wxSpinCtrl
 // Author:      Bob Mitchell
 // Created:     2000/03/21
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 Bob Mitchell and Verant Interactive
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -20,13 +21,14 @@ class WXDLLIMPEXP_XRC wxSpinButtonXmlHandler : public wxXmlResourceHandler
 {
 public:
     wxSpinButtonXmlHandler();
-    virtual wxObject *DoCreateResource() wxOVERRIDE;
-    virtual bool CanHandle(wxXmlNode *node) wxOVERRIDE;
+    virtual wxObject *DoCreateResource();
+    virtual bool CanHandle(wxXmlNode *node);
 
-    wxDECLARE_DYNAMIC_CLASS(wxSpinButtonXmlHandler);
+    DECLARE_DYNAMIC_CLASS(wxSpinButtonXmlHandler)
 };
 
 #endif // wxUSE_SPINBTN
+
 
 #if wxUSE_SPINCTRL
 
@@ -34,20 +36,10 @@ class WXDLLIMPEXP_XRC wxSpinCtrlXmlHandler : public wxXmlResourceHandler
 {
 public:
     wxSpinCtrlXmlHandler();
-    virtual wxObject *DoCreateResource() wxOVERRIDE;
-    virtual bool CanHandle(wxXmlNode *node) wxOVERRIDE;
+    virtual wxObject *DoCreateResource();
+    virtual bool CanHandle(wxXmlNode *node);
 
-    wxDECLARE_DYNAMIC_CLASS(wxSpinCtrlXmlHandler);
-};
-
-class WXDLLIMPEXP_XRC wxSpinCtrlDoubleXmlHandler : public wxXmlResourceHandler
-{
-public:
-    wxSpinCtrlDoubleXmlHandler();
-    virtual wxObject *DoCreateResource() wxOVERRIDE;
-    virtual bool CanHandle(wxXmlNode *node) wxOVERRIDE;
-
-    wxDECLARE_DYNAMIC_CLASS(wxSpinCtrlDoubleXmlHandler);
+    DECLARE_DYNAMIC_CLASS(wxSpinCtrlXmlHandler)
 };
 
 #endif // wxUSE_SPINCTRL

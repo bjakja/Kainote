@@ -2,6 +2,7 @@
 // Name:        wx/gtk1/tooltip.h
 // Purpose:     wxToolTip class
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -51,7 +52,7 @@ private:
     wxString     m_text;
     wxWindow    *m_window;
 
-    wxDECLARE_ABSTRACT_CLASS(wxToolTip);
+    DECLARE_ABSTRACT_CLASS(wxToolTip)
 };
 
 #endif // __GTKTOOLTIPH__

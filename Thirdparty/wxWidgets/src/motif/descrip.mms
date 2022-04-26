@@ -2,16 +2,16 @@
 #                                                                            *
 # Make file for VMS                                                          *
 # Author : J.Jansen (joukj@hrem.nano.tudelft.nl)                             *
-# Date : 15 July 2020                                                        *
+# Date : 2 December 2008                                                     *
 #                                                                            *
 #*****************************************************************************
 .first
 	define wx [--.include.wx]
 
 .ifdef __WXMOTIF__
-CXX_DEFINE = /define=(__WXMOTIF__=1,WXBUILDING=1)/name=(as_is,short)\
+CXX_DEFINE = /define=(__WXMOTIF__=1)/name=(as_is,short)\
 	   /assume=(nostdnew,noglobal_array_new)
-CC_DEFINE = /define=(__WXMOTIF__=1,WXBUILDING=1)/name=(as_is,short)
+CC_DEFINE = /define=(__WXMOTIF__=1)/name=(as_is,short)
 .else
 CXX_DEFINE =
 .endif
@@ -58,7 +58,6 @@ OBJECTS = \
 		menuitem.obj,\
 		minifram.obj,\
 		msgdlg.obj,\
-		popupwin.obj,\
 		radiobox.obj,\
 		radiobut.obj,\
 		scrolbar.obj,\
@@ -110,7 +109,6 @@ SOURCES = \
 		menuitem.cpp,\
 		minifram.cpp,\
 		msgdlg.cpp,\
-		popupwin.cpp,\
 		radiobox.cpp,\
 		radiobut.cpp,\
 		scrolbar.cpp,\
@@ -173,7 +171,6 @@ menu.obj : menu.cpp
 menuitem.obj : menuitem.cpp
 minifram.obj : minifram.cpp
 msgdlg.obj : msgdlg.cpp
-popupwin.obj : popupwin.cpp
 radiobox.obj : radiobox.cpp
 radiobut.obj : radiobut.cpp
 scrolbar.obj : scrolbar.cpp
@@ -189,6 +186,4 @@ toplevel.obj : toplevel.cpp
 timer.obj : timer.cpp
 toolbar.obj : toolbar.cpp
 utils.obj : utils.cpp
-	cxx $(CXXFLAGS)$(CXX_DEFINE)/warn=disab=(UNSCOMZER)\
-	$(MMS$TARGET_NAME).cpp
 window.obj : window.cpp

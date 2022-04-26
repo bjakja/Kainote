@@ -2,6 +2,7 @@
 // Name:        wx/gtk1/window.h
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -14,6 +15,10 @@ typedef struct _GtkTooltips GtkTooltips;
 typedef struct _GdkIC GdkIC;
 typedef struct _GdkICAttr GdkICAttr;
 #endif
+
+// helper structure that holds class that holds GtkIMContext object and
+// some additional data needed for key events processing
+struct wxGtkIMData;
 
 //-----------------------------------------------------------------------------
 // callback definition for inserting a window (internal)
@@ -37,13 +42,13 @@ public:
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = 0,
-                const wxString& name = wxASCII_STR(wxPanelNameStr));
+                const wxString& name = wxPanelNameStr);
     bool Create(wxWindow *parent,
                 wxWindowID id,
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = 0,
-                const wxString& name = wxASCII_STR(wxPanelNameStr));
+                const wxString& name = wxPanelNameStr);
     virtual ~wxWindowGTK();
 
     // implement base class (pure) virtual methods
@@ -149,8 +154,8 @@ public:
     virtual void ApplyToolTip( GtkTooltips *tips, const wxChar *tip );
 #endif // wxUSE_TOOLTIPS
 
-    // Call after modifying the value of m_hAdjust or m_vAdjust to bring the
-    // scrollbar in sync (this does not generate any wx events)
+    // Call after modifing the value of m_hAdjust or m_vAdjust to bring the
+    // scrolbar in sync (this does not generate any wx events)
     void GtkUpdateScrollbar(int orient);
 
     // Called from GTK signal handlers. it indicates that
@@ -211,7 +216,7 @@ public:
     bool                 m_needsStyleChange:1;  // May not be able to change
                                                 // background style until OnIdle
 
-    // C++ has no virtual methods in the constructor of any class but we need
+    // C++ has no virtual methods in the constrcutor of any class but we need
     // different methods of inserting a child window into a wxFrame,
     // wxMDIFrame, wxNotebook etc. this is the callback that will get used.
     wxInsertChildFunction  m_insertCallback;
@@ -264,7 +269,7 @@ protected:
     virtual void DoApplyWidgetStyle(GtkRcStyle *style);
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxWindowGTK);
+    DECLARE_DYNAMIC_CLASS(wxWindowGTK)
     wxDECLARE_NO_COPY_CLASS(wxWindowGTK);
 };
 

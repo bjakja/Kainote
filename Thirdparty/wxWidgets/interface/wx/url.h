@@ -2,13 +2,14 @@
 // Name:        url.h
 // Purpose:     interface of wxURL
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 /**
     Error types returned from wxURL::GetError().
 */
-enum wxURLError {
+typedef enum {
     wxURL_NOERR = 0,    ///< No error.
     wxURL_SNTXERR,      ///< Syntax error in the URL string.
     wxURL_NOPROTO,      ///< Found no protocol which can get this URL.
@@ -16,7 +17,7 @@ enum wxURLError {
     wxURL_NOPATH,       ///< A path is required for this protocol.
     wxURL_CONNERR,      ///< Connection error.
     wxURL_PROTOERR      ///< An error occurred during negotiation.
-};
+} wxURLError;
 
 /**
     @class wxURL
@@ -96,7 +97,7 @@ public:
     wxProtocol& GetProtocol();
 
     /**
-        Returns @true if this object is correctly initialized, i.e.\ if
+        Returns @true if this object is correctly initialized, i.e. if
         GetError() returns ::wxURL_NOERR.
     */
     bool IsOk() const;

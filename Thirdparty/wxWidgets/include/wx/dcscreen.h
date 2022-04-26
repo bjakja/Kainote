@@ -5,6 +5,7 @@
 // Modified by:
 // Created:
 // Copyright:   (c) Julian Smart
+// RCS-ID:      $Id$
 // Licence:     wxWindows Licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -27,7 +28,7 @@ public:
         { return true; }
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxScreenDC);
+    DECLARE_DYNAMIC_CLASS(wxScreenDC)
 };
 
 

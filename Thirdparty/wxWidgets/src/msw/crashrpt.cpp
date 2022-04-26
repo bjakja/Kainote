@@ -4,7 +4,8 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     13.07.03
-// Copyright:   (c) 2003 Vadim Zeitlin <vadim@wxwidgets.org>
+// RCS-ID:      $Id$
+// Copyright:   (c) 2003 Vadim Zeitlin <vadim@wxwindows.org>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -17,18 +18,19 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_CRASHREPORT
 
 #ifndef WX_PRECOMP
-    #include "wx\wxcrtvararg.h"
 #endif  //WX_PRECOMP
 
-#include "wx\msw/debughlp.h"
-#include "wx\msw/crashrpt.h"
-#include "wx\msw/private.h"
+#include "wx/msw/debughlp.h"
+#include "wx/msw/crashrpt.h"
 
 // ----------------------------------------------------------------------------
 // classes
@@ -199,7 +201,9 @@ bool wxCrashReportImpl::Generate(int flags, EXCEPTION_POINTERS *ep)
             // if we use the flags below, but the minidump is much more useful
             // as it contains the values of many (but not all) local variables
             dumpFlags = (MINIDUMP_TYPE)(MiniDumpScanMemory
+#if _MSC_VER > 1300
                                         |MiniDumpWithIndirectlyReferencedMemory
+#endif
                                         );
         }
 
@@ -223,9 +227,7 @@ bool wxCrashReportImpl::Generate(int flags, EXCEPTION_POINTERS *ep)
     }
     else // dbghelp.dll couldn't be loaded
     {
-        Output(wxT("%s"), static_cast<const wxChar*>(
-                    wxDbgHelpDLL::GetErrorMessage().c_str()
-              ));
+        Output(wxT("%s"), wxDbgHelpDLL::GetErrorMessage().c_str());
     }
 #else // !wxUSE_DBGHELP
     wxUnusedVar(flags);
@@ -357,7 +359,20 @@ wxString wxCrashContext::GetExceptionString() const
 
         default:
             // unknown exception, ask NTDLL for the name
-            s = wxMSWFormatMessage(code, ::GetModuleHandle(wxT("NTDLL.DLL")));
+            if ( !::FormatMessage
+                    (
+                     FORMAT_MESSAGE_IGNORE_INSERTS |
+                     FORMAT_MESSAGE_FROM_HMODULE,
+                     ::GetModuleHandle(wxT("NTDLL.DLL")),
+                     code,
+                     0,
+                     wxStringBuffer(s, 1024),
+                     1024,
+                     0
+                    ) )
+            {
+                s.Printf(wxT("UNKNOWN_EXCEPTION(%d)"), code);
+            }
     }
 
     #undef CASE_EXCEPTION

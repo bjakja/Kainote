@@ -5,6 +5,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     08.06.01
+// RCS-ID:      $Id$
 // Copyright:   (c) 2001 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -14,8 +15,8 @@
 
 #if wxUSE_SNGLINST_CHECKER
 
-#include "wx\app.h"
-#include "wx\utils.h"
+#include "wx/app.h"
+#include "wx/utils.h"
 
 // ----------------------------------------------------------------------------
 // wxSingleInstanceChecker

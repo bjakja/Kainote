@@ -2,11 +2,16 @@
 // Name:        autocapture.cpp
 // Purpose:     Implement wxCtrlMaskOut class
 // Author:      Utensil Candel (UtensilCandel@@gmail.com)
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
+
+#ifdef __BORLANDC__
+#pragma hdrstop
+#endif
 
 #include "autocapture.h"
 
@@ -21,7 +26,7 @@
 #include <ctime>
 
 #ifdef __WXMAC__
-//#include <cstring>
+#include <cstring>
 #endif
 
 
@@ -44,7 +49,9 @@ wxString AutoCaptureMechanism::default_dir = wxT("screenshots");
 /* static */
 wxString AutoCaptureMechanism::GetDefaultDirectoryAbsPath()
 {
-    return wxFileName::DirName(GetDefaultDirectory()).GetAbsolutePath();
+    wxFileName output = wxFileName::DirName(GetDefaultDirectory());
+    output.MakeAbsolute();
+    return output.GetFullPath();
 }
 
 /* static */
@@ -134,8 +141,7 @@ void AutoCaptureMechanism::Save(wxBitmap* screenshot, const wxString& fileName)
     if (!wxDirExists(default_dir))
         wxMkdir(default_dir);
 
-    wxFileName fullFileName(default_dir, "appear-" + fileName +
-        "-" + wxPlatformInfo::Get().GetPortIdShortName() + ".png");
+    wxFileName fullFileName(default_dir, fileName + ".png");
 
     // do not overwrite already existing files with this name
     while (fullFileName.FileExists())

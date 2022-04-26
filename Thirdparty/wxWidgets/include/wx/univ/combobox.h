@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     30.08.00
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -49,7 +50,7 @@ public:
                const wxString choices[] = (const wxString *) NULL,
                long style = 0,
                const wxValidator& validator = wxDefaultValidator,
-               const wxString& name = wxASCII_STR(wxComboBoxNameStr))
+               const wxString& name = wxComboBoxNameStr)
     {
         Init();
 
@@ -64,7 +65,7 @@ public:
                const wxArrayString& choices,
                long style = 0,
                const wxValidator& validator = wxDefaultValidator,
-               const wxString& name = wxASCII_STR(wxComboBoxNameStr));
+               const wxString& name = wxComboBoxNameStr);
 
     bool Create(wxWindow *parent,
                 wxWindowID id,
@@ -75,7 +76,7 @@ public:
                 const wxString choices[] = (const wxString *) NULL,
                 long style = 0,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxASCII_STR(wxComboBoxNameStr));
+                const wxString& name = wxComboBoxNameStr);
     bool Create(wxWindow *parent,
                 wxWindowID id,
                 const wxString& value,
@@ -84,7 +85,7 @@ public:
                 const wxArrayString& choices,
                 long style = 0,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxASCII_STR(wxComboBoxNameStr));
+                const wxString& name = wxComboBoxNameStr);
 
     virtual ~wxComboBox();
 
@@ -94,36 +95,37 @@ public:
     // implement the combobox interface
 
     // wxTextCtrl methods
-    virtual wxString GetValue() const wxOVERRIDE { return DoGetValue(); }
-    virtual void SetValue(const wxString& value) wxOVERRIDE;
-    virtual void WriteText(const wxString& value) wxOVERRIDE;
-    virtual void Copy() wxOVERRIDE;
-    virtual void Cut() wxOVERRIDE;
-    virtual void Paste() wxOVERRIDE;
-    virtual void SetInsertionPoint(long pos) wxOVERRIDE;
-    virtual void SetInsertionPointEnd() wxOVERRIDE;
-    virtual long GetInsertionPoint() const wxOVERRIDE;
-    virtual wxTextPos GetLastPosition() const wxOVERRIDE;
-    virtual void Replace(long from, long to, const wxString& value) wxOVERRIDE;
-    virtual void Remove(long from, long to) wxOVERRIDE;
-    virtual void SetSelection(long from, long to) wxOVERRIDE;
-    virtual void GetSelection(long *from, long *to) const wxOVERRIDE;
-    virtual void SetEditable(bool editable) wxOVERRIDE;
-    virtual bool IsEditable() const wxOVERRIDE;
+    virtual wxString GetValue() const { return DoGetValue(); }
+    virtual void SetValue(const wxString& value);
+    virtual void WriteText(const wxString& value);
+    virtual void Copy();
+    virtual void Cut();
+    virtual void Paste();
+    virtual void SetInsertionPoint(long pos);
+    virtual void SetInsertionPointEnd();
+    virtual long GetInsertionPoint() const;
+    virtual wxTextPos GetLastPosition() const;
+    virtual void Replace(long from, long to, const wxString& value);
+    virtual void Remove(long from, long to);
+    virtual void SetSelection(long from, long to);
+    virtual void GetSelection(long *from, long *to) const;
+    virtual void SetEditable(bool editable);
+    virtual bool IsEditable() const;
 
-    virtual void Undo() wxOVERRIDE;
-    virtual void Redo() wxOVERRIDE;
-    virtual void SelectAll() wxOVERRIDE;
+    virtual void Undo();
+    virtual void Redo();
+    virtual void SelectAll();
 
-    virtual bool CanCopy() const wxOVERRIDE;
-    virtual bool CanCut() const wxOVERRIDE;
-    virtual bool CanPaste() const wxOVERRIDE;
-    virtual bool CanUndo() const wxOVERRIDE;
-    virtual bool CanRedo() const wxOVERRIDE;
+    virtual bool CanCopy() const;
+    virtual bool CanCut() const;
+    virtual bool CanPaste() const;
+    virtual bool CanUndo() const;
+    virtual bool CanRedo() const;
 
     // override these methods to disambiguate between two base classes versions
-    virtual void Clear() wxOVERRIDE
+    virtual void Clear()
     {
+        wxComboCtrl::Clear();
         wxItemContainer::Clear();
     }
 
@@ -132,15 +134,15 @@ public:
     bool IsTextEmpty() const { return wxTextEntry::IsEmpty(); }
 
     // wxControlWithItems methods
-    virtual void DoClear() wxOVERRIDE;
-    virtual void DoDeleteOneItem(unsigned int n) wxOVERRIDE;
-    virtual unsigned int GetCount() const wxOVERRIDE;
-    virtual wxString GetString(unsigned int n) const wxOVERRIDE;
-    virtual void SetString(unsigned int n, const wxString& s) wxOVERRIDE;
-    virtual int FindString(const wxString& s, bool bCase = false) const wxOVERRIDE;
-    virtual void SetSelection(int n) wxOVERRIDE;
-    virtual int GetSelection() const wxOVERRIDE;
-    virtual wxString GetStringSelection() const wxOVERRIDE;
+    virtual void DoClear();
+    virtual void DoDeleteOneItem(unsigned int n);
+    virtual unsigned int GetCount() const;
+    virtual wxString GetString(unsigned int n) const;
+    virtual void SetString(unsigned int n, const wxString& s);
+    virtual int FindString(const wxString& s, bool bCase = false) const;
+    virtual void SetSelection(int n);
+    virtual int GetSelection() const;
+    virtual wxString GetStringSelection() const;
 
     // we have our own input handler and our own actions
     // (but wxComboCtrl already handled Popup/Dismiss)
@@ -151,25 +153,25 @@ public:
     */
 
     static wxInputHandler *GetStdInputHandler(wxInputHandler *handlerDef);
-    virtual wxInputHandler *DoGetStdInputHandler(wxInputHandler *handlerDef) wxOVERRIDE
+    virtual wxInputHandler *DoGetStdInputHandler(wxInputHandler *handlerDef)
     {
         return GetStdInputHandler(handlerDef);
     }
 
     // we delegate our client data handling to wxListBox which we use for the
     // items, so override this and other methods dealing with the client data
-    virtual wxClientDataType GetClientDataType() const wxOVERRIDE;
-    virtual void SetClientDataType(wxClientDataType clientDataItemsType) wxOVERRIDE;
-
-    virtual const wxTextEntry* WXGetTextEntry() const wxOVERRIDE { return this; }
+    virtual wxClientDataType GetClientDataType() const;
+    virtual void SetClientDataType(wxClientDataType clientDataItemsType);
 
 protected:
+    virtual wxString DoGetValue() const;
+
     virtual int DoInsertItems(const wxArrayStringsAdapter& items,
                               unsigned int pos,
-                              void **clientData, wxClientDataType type) wxOVERRIDE;
+                              void **clientData, wxClientDataType type);
 
-    virtual void DoSetItemClientData(unsigned int n, void* clientData) wxOVERRIDE;
-    virtual void* DoGetItemClientData(unsigned int n) const wxOVERRIDE;
+    virtual void DoSetItemClientData(unsigned int n, void* clientData);
+    virtual void* DoGetItemClientData(unsigned int n) const;
 
 
     // common part of all ctors
@@ -180,13 +182,13 @@ protected:
 
 private:
     // implement wxTextEntry pure virtual method
-    virtual wxWindow *GetEditableWindow() wxOVERRIDE { return this; }
+    virtual wxWindow *GetEditableWindow() { return this; }
 
     // the popup listbox
     wxListBox *m_lbox;
 
-    //wxDECLARE_EVENT_TABLE();
-    wxDECLARE_DYNAMIC_CLASS(wxComboBox);
+    //DECLARE_EVENT_TABLE()
+    DECLARE_DYNAMIC_CLASS(wxComboBox)
 };
 
 #endif // _WX_UNIV_COMBOBOX_H_

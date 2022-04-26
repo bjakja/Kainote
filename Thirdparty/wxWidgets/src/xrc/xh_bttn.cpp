@@ -3,6 +3,7 @@
 // Purpose:     XRC resource for buttons
 // Author:      Vaclav Slavik
 // Created:     2000/03/05
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -10,6 +11,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_XRC && wxUSE_BUTTON
 
@@ -19,7 +23,7 @@
     #include "wx/button.h"
 #endif
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxButtonXmlHandler, wxXmlResourceHandler);
+IMPLEMENT_DYNAMIC_CLASS(wxButtonXmlHandler, wxXmlResourceHandler)
 
 wxButtonXmlHandler::wxButtonXmlHandler()
 : wxXmlResourceHandler()
@@ -49,7 +53,7 @@ wxObject *wxButtonXmlHandler::DoCreateResource()
 
     if ( GetParamNode("bitmap") )
     {
-        button->SetBitmap(GetBitmapBundle("bitmap", wxART_BUTTON),
+        button->SetBitmap(GetBitmap("bitmap", wxART_BUTTON),
                           GetDirection("bitmapposition"));
     }
 

@@ -3,6 +3,7 @@
 // Purpose:     common (to all ports) wxStaticText functions
 // Author:      Vadim Zeitlin, Francesco Montorsi
 // Created:     2007-01-07 (extracted from dlgcmn.cpp)
+// RCS-ID:      $Id$
 // Copyright:   (c) 1999-2006 Vadim Zeitlin
 //              (c) 2007 Francesco Montorsi
 // Licence:     wxWindows licence
@@ -19,6 +20,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_STATTEXT
 
@@ -36,8 +40,6 @@
 #include "wx/textwrapper.h"
 
 #include "wx/private/markupparser.h"
-
-#include <algorithm>
 
 extern WXDLLEXPORT_DATA(const char) wxStaticTextNameStr[] = "staticText";
 
@@ -80,7 +82,7 @@ wxFLAGS_MEMBER(wxALIGN_RIGHT)
 wxFLAGS_MEMBER(wxALIGN_CENTRE)
 wxEND_FLAGS( wxStaticTextStyle )
 
-wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxStaticText, wxControl, "wx/stattext.h");
+wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxStaticText, wxControl, "wx/stattext.h")
 
 wxBEGIN_PROPERTIES_TABLE(wxStaticText)
 wxPROPERTY( Label,wxString, SetLabel, GetLabel, wxString(), 0 /*flags*/, \
@@ -102,59 +104,52 @@ wxCONSTRUCTOR_6( wxStaticText, wxWindow*, Parent, wxWindowID, Id, \
 
 void wxTextWrapper::Wrap(wxWindow *win, const wxString& text, int widthMax)
 {
-    const wxClientDC dc(win);
+    wxString line;
 
-    const wxArrayString ls = wxSplit(text, '\n', '\0');
-    for ( wxArrayString::const_iterator i = ls.begin(); i != ls.end(); ++i )
+    wxString::const_iterator lastSpace = text.end();
+    wxString::const_iterator lineStart = text.begin();
+    for ( wxString::const_iterator p = lineStart; ; ++p )
     {
-        wxString line = *i;
-
-        if ( i != ls.begin() )
+        if ( IsStartOfNewLine() )
         {
-            // Do this even if the line is empty, except if it's the first one.
             OnNewLine();
+
+            lastSpace = text.end();
+            line.clear();
+            lineStart = p;
         }
 
-        // Is this a special case when wrapping is disabled?
-        if ( widthMax < 0 )
+        if ( p == text.end() || *p == wxT('\n') )
         {
             DoOutputLine(line);
-            continue;
+
+            if ( p == text.end() )
+                break;
         }
-
-        for ( bool newLine = false; !line.empty(); newLine = true )
+        else // not EOL
         {
-            if ( newLine )
-                OnNewLine();
+            if ( *p == wxT(' ') )
+                lastSpace = p;
 
-            wxArrayInt widths;
-            dc.GetPartialTextExtents(line, widths);
+            line += *p;
 
-            const size_t posEnd = std::lower_bound(widths.begin(),
-                                                   widths.end(),
-                                                   widthMax) - widths.begin();
-
-            // Does the entire remaining line fit?
-            if ( posEnd == line.length() )
+            if ( widthMax >= 0 && lastSpace != text.end() )
             {
-                DoOutputLine(line);
-                break;
+                int width;
+                win->GetTextExtent(line, &width, NULL);
+
+                if ( width > widthMax )
+                {
+                    // remove the last word from this line
+                    line.erase(lastSpace - lineStart, p + 1 - lineStart);
+                    DoOutputLine(line);
+
+                    // go back to the last word of this line which we didn't
+                    // output yet
+                    p = lastSpace;
+                }
             }
-
-            // Find the last word to chop off.
-            const size_t lastSpace = line.rfind(' ', posEnd);
-            if ( lastSpace == wxString::npos )
-            {
-                // No spaces, so can't wrap.
-                DoOutputLine(line);
-                break;
-            }
-
-            // Output the part that fits.
-            DoOutputLine(line.substr(0, lastSpace));
-
-            // And redo the layout with the rest.
-            line = line.substr(lastSpace + 1);
+            //else: no wrapping at all or impossible to wrap
         }
     }
 }
@@ -175,12 +170,12 @@ public:
     }
 
 protected:
-    virtual void OnOutputLine(const wxString& line) wxOVERRIDE
+    virtual void OnOutputLine(const wxString& line)
     {
         m_text += line;
     }
 
-    virtual void OnNewLine() wxOVERRIDE
+    virtual void OnNewLine()
     {
         m_text += wxT('\n');
     }
@@ -200,26 +195,6 @@ void wxStaticTextBase::Wrap(int width)
     wrapper.WrapLabel(this, width);
 }
 
-void wxStaticTextBase::AutoResizeIfNecessary()
-{
-    // This flag is specifically used to prevent the control from resizing even
-    // when its label changes.
-    if ( HasFlag(wxST_NO_AUTORESIZE) )
-        return;
-
-    // This method is only called if either the label or the font changed, i.e.
-    // if the label extent changed, so the best size is not the same neither
-    // any more.
-    //
-    // Note that we don't invalidate it when wxST_NO_AUTORESIZE is on because
-    // this would result in the control being effectively resized during the
-    // next Layout() and this style is used expressly to prevent this from
-    // happening.
-    InvalidateBestSize();
-
-    SetSize(GetBestSize());
-}
-
 // ----------------------------------------------------------------------------
 // wxStaticTextBase - generic implementation for wxST_ELLIPSIZE_* support
 // ----------------------------------------------------------------------------
@@ -229,7 +204,7 @@ void wxStaticTextBase::UpdateLabel()
     if (!IsEllipsized())
         return;
 
-    const wxString& newlabel = GetEllipsizedLabel();
+    wxString newlabel = GetEllipsizedLabel();
 
     // we need to touch the "real" label (i.e. the text set inside the control,
     // using port-specific functions) instead of the string returned by GetLabel().
@@ -237,9 +212,9 @@ void wxStaticTextBase::UpdateLabel()
     // In fact, we must be careful not to touch the original label passed to
     // SetLabel() otherwise GetLabel() will behave in a strange way to the user
     // (e.g. returning a "Ver...ing" instead of "Very long string") !
-    if (newlabel == WXGetVisibleLabel())
+    if (newlabel == DoGetLabel())
         return;
-    WXSetVisibleLabel(newlabel);
+    DoSetLabel(newlabel);
 }
 
 wxString wxStaticTextBase::GetEllipsizedLabel() const
@@ -258,7 +233,7 @@ wxString wxStaticTextBase::GetEllipsizedLabel() const
 
 wxString wxStaticTextBase::Ellipsize(const wxString& label) const
 {
-    wxSize sz(GetClientSize());
+    wxSize sz(GetSize());
     if (sz.GetWidth() < 2 || sz.GetHeight() < 2)
     {
         // the size of this window is not valid (yet)
@@ -266,6 +241,7 @@ wxString wxStaticTextBase::Ellipsize(const wxString& label) const
     }
 
     wxClientDC dc(const_cast<wxStaticTextBase*>(this));
+    dc.SetFont(GetFont());
 
     wxEllipsizeMode mode;
     if ( HasFlag(wxST_ELLIPSIZE_START) )

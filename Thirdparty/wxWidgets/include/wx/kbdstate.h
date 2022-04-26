@@ -3,6 +3,7 @@
 // Purpose:     Declaration of wxKeyboardState class
 // Author:      Vadim Zeitlin
 // Created:     2008-09-19
+// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -10,7 +11,7 @@
 #ifndef _WX_KBDSTATE_H_
 #define _WX_KBDSTATE_H_
 
-#include "wx\defs.h"
+#include "wx/defs.h"
 
 // ----------------------------------------------------------------------------
 // wxKeyboardState stores the state of the keyboard modifier keys
@@ -19,7 +20,6 @@
 class WXDLLIMPEXP_CORE wxKeyboardState
 {
 public:
-    explicit
     wxKeyboardState(bool controlDown = false,
                     bool shiftDown = false,
                     bool altDown = false,
@@ -55,21 +55,14 @@ public:
     }
 
     // returns true if any modifiers at all are pressed
-    bool HasAnyModifiers() const { return GetModifiers() != wxMOD_NONE; }
-
-    // returns true if any modifiers changing the usual key interpretation are
-    // pressed, notably excluding Shift
-    bool HasModifiers() const
-    {
-        return ControlDown() || RawControlDown() || AltDown();
-    }
+    bool HasModifiers() const { return GetModifiers() != wxMOD_NONE; }
 
     // accessors for individual modifier keys
     bool ControlDown() const { return m_controlDown; }
-    bool RawControlDown() const
-    {
+    bool RawControlDown() const 
+    { 
 #ifdef __WXOSX__
-        return m_rawControlDown;
+        return m_rawControlDown; 
 #else
         return m_controlDown;
 #endif
@@ -92,12 +85,12 @@ public:
     // ---------------------------------------------------
 
     void SetControlDown(bool down) { m_controlDown = down; }
-    void SetRawControlDown(bool down)
-    {
+    void SetRawControlDown(bool down) 
+    { 
 #ifdef __WXOSX__
-        m_rawControlDown = down;
+        m_rawControlDown = down; 
 #else
-        m_controlDown = down;
+        m_controlDown = down; 
 #endif
     }
     void SetShiftDown(bool down)   { m_shiftDown = down; }

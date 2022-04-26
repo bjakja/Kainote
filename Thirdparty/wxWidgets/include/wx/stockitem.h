@@ -4,6 +4,7 @@
 // Author:      Vaclav Slavik
 // Modified by:
 // Created:     2004-08-15
+// RCS-ID:      $Id$
 // Copyright:   (c) Vaclav Slavik, 2004
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,10 +12,10 @@
 #ifndef _WX_STOCKITEM_H_
 #define _WX_STOCKITEM_H_
 
-#include "wx\defs.h"
-#include "wx\chartype.h"
-#include "wx\string.h"
-#include "wx\accel.h"
+#include "wx/defs.h"
+#include "wx/chartype.h"
+#include "wx/string.h"
+#include "wx/accel.h"
 
 // ----------------------------------------------------------------------------
 // Helper functions for stock items handling:
@@ -65,14 +66,14 @@ enum wxStockHelpStringClient
     wxSTOCK_MENU        // help string to use for menu items
 };
 
-// Returns a help string for the given stock UI element and for the given "context".
+// Returns an help string for the given stock UI element and for the given "context".
 WXDLLIMPEXP_CORE wxString wxGetStockHelpString(wxWindowID id,
                                           wxStockHelpStringClient client = wxSTOCK_MENU);
 
 
 #ifdef __WXGTK20__
 
-// Translates stock ID to GTK+'s stock item string identifier:
+// Translates stock ID to GTK+'s stock item string indentifier:
 WXDLLIMPEXP_CORE const char *wxGetStockGtkID(wxWindowID id);
 
 #endif

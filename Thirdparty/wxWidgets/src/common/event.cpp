@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,101 +18,91 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
-#include "wx\event.h"
-#include "wx\eventfilter.h"
-#include "wx\evtloop.h"
+#include "wx/event.h"
+#include "wx/eventfilter.h"
+#include "wx/evtloop.h"
 
 #ifndef WX_PRECOMP
-    #include "wx\list.h"
-    #include "wx\log.h"
-    #include "wx\app.h"
-    #include "wx\utils.h"
-    #include "wx\stopwatch.h"
-    #include "wx\module.h"
+    #include "wx/list.h"
+    #include "wx/log.h"
+    #include "wx/app.h"
+    #include "wx/utils.h"
+    #include "wx/stopwatch.h"
+    #include "wx/module.h"
 
     #if wxUSE_GUI
-        #include "wx\window.h"
-        #include "wx\control.h"
-        #include "wx\dc.h"
-        #include "wx\spinbutt.h"
-        #include "wx\textentry.h"
-        #include "wx\validate.h"
+        #include "wx/window.h"
+        #include "wx/control.h"
+        #include "wx/dc.h"
+        #include "wx/spinbutt.h"
+        #include "wx/textctrl.h"
+        #include "wx/validate.h"
     #endif // wxUSE_GUI
 #endif
 
-#include "wx\thread.h"
+#include "wx/thread.h"
 
 #if wxUSE_BASE
-    #include "wx\scopedptr.h"
+    #include "wx/scopedptr.h"
 
     wxDECLARE_SCOPED_PTR(wxEvent, wxEventPtr)
     wxDEFINE_SCOPED_PTR(wxEvent, wxEventPtr)
 #endif // wxUSE_BASE
-
-#if wxUSE_GUI
-    #include "wx\private/rescale.h"
-#endif
 
 // ----------------------------------------------------------------------------
 // wxWin macros
 // ----------------------------------------------------------------------------
 
 #if wxUSE_BASE
-    wxIMPLEMENT_DYNAMIC_CLASS(wxEvtHandler, wxObject);
-    wxIMPLEMENT_ABSTRACT_CLASS(wxEvent, wxObject);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxIdleEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxThreadEvent, wxEvent);
+    IMPLEMENT_DYNAMIC_CLASS(wxEvtHandler, wxObject)
+    IMPLEMENT_ABSTRACT_CLASS(wxEvent, wxObject)
+    IMPLEMENT_DYNAMIC_CLASS(wxIdleEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxThreadEvent, wxEvent)
 #endif // wxUSE_BASE
 
 #if wxUSE_GUI
-    wxIMPLEMENT_DYNAMIC_CLASS(wxCommandEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxNotifyEvent, wxCommandEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxScrollEvent, wxCommandEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxScrollWinEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxMouseEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxKeyEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxSizeEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxPaintEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxNcPaintEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxEraseEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxMoveEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxFocusEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxChildFocusEvent, wxCommandEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxCloseEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxShowEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxMaximizeEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxIconizeEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxFullScreenEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxMenuEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxJoystickEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxDropFilesEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxActivateEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxInitDialogEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxSetCursorEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxSysColourChangedEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxDisplayChangedEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxDPIChangedEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxUpdateUIEvent, wxCommandEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxNavigationKeyEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxPaletteChangedEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxQueryNewPaletteEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxWindowCreateEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxWindowDestroyEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxHelpEvent, wxCommandEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxContextMenuEvent, wxCommandEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxMouseCaptureChangedEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxMouseCaptureLostEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxClipboardTextEvent, wxCommandEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxGestureEvent, wxEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxPanGestureEvent, wxGestureEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxZoomGestureEvent, wxGestureEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxRotateGestureEvent, wxGestureEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxTwoFingerTapEvent, wxGestureEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxLongPressEvent, wxGestureEvent);
-    wxIMPLEMENT_DYNAMIC_CLASS(wxPressAndTapEvent, wxGestureEvent);
+    IMPLEMENT_DYNAMIC_CLASS(wxCommandEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxNotifyEvent, wxCommandEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxScrollEvent, wxCommandEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxScrollWinEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxMouseEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxKeyEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxSizeEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxPaintEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxNcPaintEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxEraseEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxMoveEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxFocusEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxChildFocusEvent, wxCommandEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxCloseEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxShowEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxMaximizeEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxIconizeEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxMenuEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxJoystickEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxDropFilesEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxActivateEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxInitDialogEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxSetCursorEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxSysColourChangedEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxDisplayChangedEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxUpdateUIEvent, wxCommandEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxNavigationKeyEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxPaletteChangedEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxQueryNewPaletteEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxWindowCreateEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxWindowDestroyEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxHelpEvent, wxCommandEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxContextMenuEvent, wxCommandEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxMouseCaptureChangedEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxMouseCaptureLostEvent, wxEvent)
+    IMPLEMENT_DYNAMIC_CLASS(wxClipboardTextEvent, wxCommandEvent)
 #endif // wxUSE_GUI
 
 #if wxUSE_BASE
@@ -142,13 +133,13 @@ class wxEventTableEntryModule: public wxModule
 {
 public:
     wxEventTableEntryModule() { }
-    virtual bool OnInit() wxOVERRIDE { return true; }
-    virtual void OnExit() wxOVERRIDE { wxEventHashTable::ClearAll(); }
+    virtual bool OnInit() { return true; }
+    virtual void OnExit() { wxEventHashTable::ClearAll(); }
 
-    wxDECLARE_DYNAMIC_CLASS(wxEventTableEntryModule);
+    DECLARE_DYNAMIC_CLASS(wxEventTableEntryModule)
 };
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxEventTableEntryModule, wxModule);
+IMPLEMENT_DYNAMIC_CLASS(wxEventTableEntryModule, wxModule)
 
 #endif // wxUSE_MEMORY_TRACING
 
@@ -165,32 +156,33 @@ const wxEventType wxEVT_NULL = wxNewEventType();
 
 wxDEFINE_EVENT( wxEVT_IDLE, wxIdleEvent );
 
-// Thread and asynchronous call events
+// Thread event
 wxDEFINE_EVENT( wxEVT_THREAD, wxThreadEvent );
-wxDEFINE_EVENT( wxEVT_ASYNC_METHOD_CALL, wxAsyncMethodCallEvent );
 
 #endif // wxUSE_BASE
 
 #if wxUSE_GUI
 
-wxDEFINE_EVENT( wxEVT_BUTTON, wxCommandEvent );
-wxDEFINE_EVENT( wxEVT_CHECKBOX, wxCommandEvent );
-wxDEFINE_EVENT( wxEVT_CHOICE, wxCommandEvent );
-wxDEFINE_EVENT( wxEVT_LISTBOX, wxCommandEvent );
-wxDEFINE_EVENT( wxEVT_LISTBOX_DCLICK, wxCommandEvent );
-wxDEFINE_EVENT( wxEVT_CHECKLISTBOX, wxCommandEvent );
-wxDEFINE_EVENT( wxEVT_MENU, wxCommandEvent );
-wxDEFINE_EVENT( wxEVT_SLIDER, wxCommandEvent );
-wxDEFINE_EVENT( wxEVT_RADIOBOX, wxCommandEvent );
-wxDEFINE_EVENT( wxEVT_RADIOBUTTON, wxCommandEvent );
-wxDEFINE_EVENT( wxEVT_SCROLLBAR, wxCommandEvent );
-wxDEFINE_EVENT( wxEVT_VLBOX, wxCommandEvent );
-wxDEFINE_EVENT( wxEVT_COMBOBOX, wxCommandEvent );
-wxDEFINE_EVENT( wxEVT_TOOL_RCLICKED, wxCommandEvent );
-wxDEFINE_EVENT( wxEVT_TOOL_ENTER, wxCommandEvent );
-wxDEFINE_EVENT( wxEVT_TOOL_DROPDOWN, wxCommandEvent );
-wxDEFINE_EVENT( wxEVT_COMBOBOX_DROPDOWN, wxCommandEvent);
-wxDEFINE_EVENT( wxEVT_COMBOBOX_CLOSEUP, wxCommandEvent);
+wxDEFINE_EVENT( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEvent );
+wxDEFINE_EVENT( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEvent );
+wxDEFINE_EVENT( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEvent );
+wxDEFINE_EVENT( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEvent );
+wxDEFINE_EVENT( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEvent );
+wxDEFINE_EVENT( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEvent );
+wxDEFINE_EVENT( wxEVT_COMMAND_MENU_SELECTED, wxCommandEvent );
+wxDEFINE_EVENT( wxEVT_COMMAND_SLIDER_UPDATED, wxCommandEvent );
+wxDEFINE_EVENT( wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEvent );
+wxDEFINE_EVENT( wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEvent );
+wxDEFINE_EVENT( wxEVT_COMMAND_SCROLLBAR_UPDATED, wxCommandEvent );
+wxDEFINE_EVENT( wxEVT_COMMAND_VLBOX_SELECTED, wxCommandEvent );
+wxDEFINE_EVENT( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEvent );
+wxDEFINE_EVENT( wxEVT_COMMAND_TOOL_RCLICKED, wxCommandEvent );
+wxDEFINE_EVENT( wxEVT_COMMAND_TOOL_ENTER, wxCommandEvent );
+wxDEFINE_EVENT( wxEVT_COMMAND_SPINCTRL_UPDATED, wxCommandEvent );
+wxDEFINE_EVENT( wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, wxCommandEvent );
+wxDEFINE_EVENT( wxEVT_COMMAND_TOOL_DROPDOWN_CLICKED, wxCommandEvent );
+wxDEFINE_EVENT( wxEVT_COMMAND_COMBOBOX_DROPDOWN, wxCommandEvent);
+wxDEFINE_EVENT( wxEVT_COMMAND_COMBOBOX_CLOSEUP, wxCommandEvent);
 
 // Mouse event types
 wxDEFINE_EVENT( wxEVT_LEFT_DOWN, wxMouseEvent );
@@ -215,7 +207,6 @@ wxDEFINE_EVENT( wxEVT_AUX1_DCLICK, wxMouseEvent );
 wxDEFINE_EVENT( wxEVT_AUX2_DOWN, wxMouseEvent );
 wxDEFINE_EVENT( wxEVT_AUX2_UP, wxMouseEvent );
 wxDEFINE_EVENT( wxEVT_AUX2_DCLICK, wxMouseEvent );
-wxDEFINE_EVENT( wxEVT_MAGNIFY, wxMouseEvent );
 
 // Character input event type
 wxDEFINE_EVENT( wxEVT_CHAR, wxKeyEvent );
@@ -267,14 +258,6 @@ wxDEFINE_EVENT( wxEVT_SCROLLWIN_PAGEDOWN, wxScrollWinEvent );
 wxDEFINE_EVENT( wxEVT_SCROLLWIN_THUMBTRACK, wxScrollWinEvent );
 wxDEFINE_EVENT( wxEVT_SCROLLWIN_THUMBRELEASE, wxScrollWinEvent );
 
-// Gesture events
-wxDEFINE_EVENT( wxEVT_GESTURE_PAN, wxPanGestureEvent );
-wxDEFINE_EVENT( wxEVT_GESTURE_ZOOM, wxZoomGestureEvent );
-wxDEFINE_EVENT( wxEVT_GESTURE_ROTATE, wxRotateGestureEvent );
-wxDEFINE_EVENT( wxEVT_TWO_FINGER_TAP, wxTwoFingerTapEvent );
-wxDEFINE_EVENT( wxEVT_LONG_PRESS, wxLongPressEvent );
-wxDEFINE_EVENT( wxEVT_PRESS_AND_TAP, wxPressAndTapEvent );
-
 // System events
 wxDEFINE_EVENT( wxEVT_SIZE, wxSizeEvent );
 wxDEFINE_EVENT( wxEVT_SIZING, wxSizeEvent );
@@ -293,7 +276,6 @@ wxDEFINE_EVENT( wxEVT_DESTROY, wxWindowDestroyEvent );
 wxDEFINE_EVENT( wxEVT_SHOW, wxShowEvent );
 wxDEFINE_EVENT( wxEVT_ICONIZE, wxIconizeEvent );
 wxDEFINE_EVENT( wxEVT_MAXIMIZE, wxMaximizeEvent );
-wxDEFINE_EVENT( wxEVT_FULLSCREEN, wxFullScreenEvent );
 wxDEFINE_EVENT( wxEVT_MOUSE_CAPTURE_CHANGED, wxMouseCaptureChangedEvent );
 wxDEFINE_EVENT( wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEvent );
 wxDEFINE_EVENT( wxEVT_PAINT, wxPaintEvent );
@@ -305,7 +287,6 @@ wxDEFINE_EVENT( wxEVT_MENU_HIGHLIGHT, wxMenuEvent );
 wxDEFINE_EVENT( wxEVT_CONTEXT_MENU, wxContextMenuEvent );
 wxDEFINE_EVENT( wxEVT_SYS_COLOUR_CHANGED, wxSysColourChangedEvent );
 wxDEFINE_EVENT( wxEVT_DISPLAY_CHANGED, wxDisplayChangedEvent );
-wxDEFINE_EVENT( wxEVT_DPI_CHANGED, wxDPIChangedEvent );
 wxDEFINE_EVENT( wxEVT_QUERY_NEW_PALETTE, wxQueryNewPaletteEvent );
 wxDEFINE_EVENT( wxEVT_PALETTE_CHANGED, wxPaletteChangedEvent );
 wxDEFINE_EVENT( wxEVT_JOY_BUTTON_DOWN, wxJoystickEvent );
@@ -317,9 +298,9 @@ wxDEFINE_EVENT( wxEVT_INIT_DIALOG, wxInitDialogEvent );
 wxDEFINE_EVENT( wxEVT_UPDATE_UI, wxUpdateUIEvent );
 
 // Clipboard events
-wxDEFINE_EVENT( wxEVT_TEXT_COPY, wxClipboardTextEvent );
-wxDEFINE_EVENT( wxEVT_TEXT_CUT, wxClipboardTextEvent );
-wxDEFINE_EVENT( wxEVT_TEXT_PASTE, wxClipboardTextEvent );
+wxDEFINE_EVENT( wxEVT_COMMAND_TEXT_COPY, wxClipboardTextEvent );
+wxDEFINE_EVENT( wxEVT_COMMAND_TEXT_CUT, wxClipboardTextEvent );
+wxDEFINE_EVENT( wxEVT_COMMAND_TEXT_PASTE, wxClipboardTextEvent );
 
 // Generic command events
 // Note: a click is a higher-level event than button down/up
@@ -377,8 +358,8 @@ wxEventFunctor::~wxEventFunctor()
  */
 
 wxEvent::wxEvent(int theId, wxEventType commandType)
-    : m_eventType(commandType)
 {
+    m_eventType = commandType;
     m_eventObject = NULL;
     m_timeStamp = 0;
     m_id = theId;
@@ -387,9 +368,7 @@ wxEvent::wxEvent(int theId, wxEventType commandType)
     m_handlerToProcessOnlyIn = NULL;
     m_isCommandEvent = false;
     m_propagationLevel = wxEVENT_PROPAGATE_NONE;
-    m_propagatedFrom = NULL;
     m_wasProcessed = false;
-    m_willBeProcessedAgain = false;
 }
 
 wxEvent::wxEvent(const wxEvent& src)
@@ -401,11 +380,9 @@ wxEvent::wxEvent(const wxEvent& src)
     , m_callbackUserData(src.m_callbackUserData)
     , m_handlerToProcessOnlyIn(NULL)
     , m_propagationLevel(src.m_propagationLevel)
-    , m_propagatedFrom(NULL)
     , m_skipped(src.m_skipped)
     , m_isCommandEvent(src.m_isCommandEvent)
     , m_wasProcessed(false)
-    , m_willBeProcessedAgain(false)
 {
 }
 
@@ -420,15 +397,10 @@ wxEvent& wxEvent::operator=(const wxEvent& src)
     m_callbackUserData = src.m_callbackUserData;
     m_handlerToProcessOnlyIn = NULL;
     m_propagationLevel = src.m_propagationLevel;
-    m_propagatedFrom = NULL;
     m_skipped = src.m_skipped;
     m_isCommandEvent = src.m_isCommandEvent;
 
     // don't change m_wasProcessed
-
-    // While the original again could be passed to another handler, this one
-    // isn't going to be processed anywhere else by default.
-    m_willBeProcessedAgain = false;
 
     return *this;
 }
@@ -441,40 +413,33 @@ wxEvent& wxEvent::operator=(const wxEvent& src)
 // wxCommandEvent
 // ----------------------------------------------------------------------------
 
+wxCommandEvent::wxCommandEvent(wxEventType commandType, int theId)
+              : wxEvent(theId, commandType)
+{
+    m_clientData = NULL;
+    m_clientObject = NULL;
+    m_isCommandEvent = true;
+
+    // the command events are propagated upwards by default
+    m_propagationLevel = wxEVENT_PROPAGATE_MAX;
+}
+
 wxString wxCommandEvent::GetString() const
 {
-    // This is part of the hack retrieving the event string from the control
-    // itself only when/if it's really needed to avoid copying potentially huge
-    // strings coming from multiline text controls.
-    if (m_eventType == wxEVT_TEXT && m_eventObject)
+    if (m_eventType != wxEVT_COMMAND_TEXT_UPDATED || !m_eventObject)
     {
-        // Only windows generate wxEVT_TEXT events, so this cast should really
-        // succeed, but err on the side of caution just in case somebody
-        // created a bogus event of this type.
-        if ( wxWindow* const w = wxDynamicCast(m_eventObject, wxWindow) )
-        {
-            if ( const wxTextEntry* const entry = w->WXGetTextEntry() )
-                return entry->GetValue();
-        }
+        return m_cmdString;
     }
-
-    return m_cmdString;
-}
-
-// ----------------------------------------------------------------------------
-// wxPaintEvent and wxNcPaintEvent
-// ----------------------------------------------------------------------------
-
-wxPaintEvent::wxPaintEvent(wxWindowBase* window)
-    : wxEvent(window ? window->GetId() : 0, wxEVT_PAINT)
-{
-    SetEventObject(window);
-}
-
-wxNcPaintEvent::wxNcPaintEvent(wxWindowBase* window)
-    : wxEvent(window ? window->GetId() : 0, wxEVT_NC_PAINT)
-{
-    SetEventObject(window);
+    else
+    {
+#if wxUSE_TEXTCTRL
+        wxTextCtrl *txt = wxDynamicCast(m_eventObject, wxTextCtrl);
+        if ( txt )
+            return txt->GetValue();
+        else
+#endif // wxUSE_TEXTCTRL
+            return m_cmdString;
+    }
 }
 
 // ----------------------------------------------------------------------------
@@ -592,16 +557,16 @@ wxMouseEvent::wxMouseEvent(wxEventType commandType)
     m_wheelAxis = wxMOUSE_WHEEL_VERTICAL;
     m_wheelRotation = 0;
     m_wheelDelta = 0;
-    m_wheelInverted = false;
     m_linesPerAction = 0;
-    m_columnsPerAction = 0;
-    m_magnification = 0.0f;
 }
 
 void wxMouseEvent::Assign(const wxMouseEvent& event)
 {
     wxEvent::operator=(event);
-    wxMouseState::operator=(event);
+
+    // Borland C++ 5.82 doesn't compile an explicit call to an implicitly
+    // defined operator=() so need to do it this way:
+    *static_cast<wxMouseState *>(this) = event;
 
     m_x = event.m_x;
     m_y = event.m_y;
@@ -614,12 +579,8 @@ void wxMouseEvent::Assign(const wxMouseEvent& event)
 
     m_wheelRotation = event.m_wheelRotation;
     m_wheelDelta = event.m_wheelDelta;
-    m_wheelInverted = event.m_wheelInverted;
     m_linesPerAction = event.m_linesPerAction;
-    m_columnsPerAction = event.m_columnsPerAction;
     m_wheelAxis = event.m_wheelAxis;
-
-    m_magnification = event.m_magnification;
 }
 
 // return true if was a button dclick event
@@ -629,7 +590,7 @@ bool wxMouseEvent::ButtonDClick(int but) const
     {
         default:
             wxFAIL_MSG(wxT("invalid parameter in wxMouseEvent::ButtonDClick"));
-            wxFALLTHROUGH;
+            // fall through
 
         case wxMOUSE_BTN_ANY:
             return (LeftDClick() || MiddleDClick() || RightDClick() ||
@@ -659,7 +620,7 @@ bool wxMouseEvent::ButtonDown(int but) const
     {
         default:
             wxFAIL_MSG(wxT("invalid parameter in wxMouseEvent::ButtonDown"));
-            wxFALLTHROUGH;
+            // fall through
 
         case wxMOUSE_BTN_ANY:
             return (LeftDown() || MiddleDown() || RightDown() ||
@@ -689,7 +650,7 @@ bool wxMouseEvent::ButtonUp(int but) const
     {
         default:
             wxFAIL_MSG(wxT("invalid parameter in wxMouseEvent::ButtonUp"));
-            wxFALLTHROUGH;
+            // fall through
 
         case wxMOUSE_BTN_ANY:
             return (LeftUp() || MiddleUp() || RightUp() ||
@@ -719,7 +680,7 @@ bool wxMouseEvent::Button(int but) const
     {
         default:
             wxFAIL_MSG(wxT("invalid parameter in wxMouseEvent::Button"));
-            wxFALLTHROUGH;
+            // fall through
 
         case wxMOUSE_BTN_ANY:
             return ButtonUp(wxMOUSE_BTN_ANY) ||
@@ -768,16 +729,12 @@ wxPoint wxMouseEvent::GetLogicalPosition(const wxDC& dc) const
 // ----------------------------------------------------------------------------
 
 wxKeyEvent::wxKeyEvent(wxEventType type)
-#if wxUSE_UNICODE
-    : m_uniChar(WXK_NONE)
-#endif
 {
     m_eventType = type;
     m_keyCode = WXK_NONE;
-
-    m_x =
-    m_y = wxDefaultCoord;
-    m_hasPosition = false;
+#if wxUSE_UNICODE
+    m_uniChar = WXK_NONE;
+#endif
 
     InitPropagation();
 }
@@ -802,54 +759,6 @@ wxKeyEvent::wxKeyEvent(wxEventType eventType, const wxKeyEvent& evt)
     InitPropagation();
 }
 
-wxKeyEvent& wxKeyEvent::operator=(const wxKeyEvent& evt)
-{
-    if ( &evt != this )
-    {
-        wxEvent::operator=(evt);
-        wxKeyboardState::operator=(evt);
-
-        DoAssignMembers(evt);
-    }
-    return *this;
-}
-
-void wxKeyEvent::InitPositionIfNecessary() const
-{
-    if ( m_hasPosition )
-        return;
-
-    // We're const because we're called from const Get[XY]() methods but we
-    // need to update the "cached" values.
-    wxKeyEvent& self = const_cast<wxKeyEvent&>(*this);
-    self.m_hasPosition = true;
-
-    // The only position we can possibly associate with the keyboard event on
-    // the platforms where it doesn't carry it already is the mouse position.
-    wxGetMousePosition(&self.m_x, &self.m_y);
-
-    // If this event is associated with a window, the position should be in its
-    // client coordinates, but otherwise leave it in screen coordinates as what
-    // else can we use?
-    wxWindow* const win = wxDynamicCast(GetEventObject(), wxWindow);
-    if ( win )
-        win->ScreenToClient(&self.m_x, &self.m_y);
-}
-
-wxCoord wxKeyEvent::GetX() const
-{
-    InitPositionIfNecessary();
-
-    return m_x;
-}
-
-wxCoord wxKeyEvent::GetY() const
-{
-    InitPositionIfNecessary();
-
-    return m_y;
-}
-
 bool wxKeyEvent::IsKeyInCategory(int category) const
 {
     switch ( GetKeyCode() )
@@ -865,13 +774,13 @@ bool wxKeyEvent::IsKeyInCategory(int category) const
             return (category & WXK_CATEGORY_ARROW) != 0;
 
         case WXK_PAGEDOWN:
-        case WXK_PAGEUP:
+        case WXK_END:
         case WXK_NUMPAD_PAGEUP:
         case WXK_NUMPAD_PAGEDOWN:
             return (category & WXK_CATEGORY_PAGING) != 0;
 
         case WXK_HOME:
-        case WXK_END:
+        case WXK_PAGEUP:
         case WXK_NUMPAD_HOME:
         case WXK_NUMPAD_END:
             return (category & WXK_CATEGORY_JUMP) != 0;
@@ -935,15 +844,6 @@ wxHelpEvent::Origin wxHelpEvent::GuessOrigin(Origin origin)
     }
 
     return origin;
-}
-
-// ----------------------------------------------------------------------------
-// wxDPIChangedEvent
-// ----------------------------------------------------------------------------
-
-wxSize wxDPIChangedEvent::Scale(wxSize sz) const
-{
-    return wxRescaleCoord(sz).From(m_oldDPI).To(m_newDPI);
 }
 
 #endif // wxUSE_GUI
@@ -1172,11 +1072,13 @@ wxEvtHandler::~wxEvtHandler()
 
     if (m_dynamicEvents)
     {
-        size_t cookie;
-        for ( wxDynamicEventTableEntry* entry = GetFirstDynamicEntry(cookie);
-              entry;
-              entry = GetNextDynamicEntry(cookie) )
+        for ( wxList::iterator it = m_dynamicEvents->begin(),
+                               end = m_dynamicEvents->end();
+              it != end;
+              ++it )
         {
+            wxDynamicEventTableEntry *entry = (wxDynamicEventTableEntry*)*it;
+
             // Remove ourselves from sink destructor notifications
             // (this has usually been done, in wxTrackable destructor)
             wxEvtHandler *eventSink = entry->m_fn->GetEvtHandler();
@@ -1485,12 +1387,6 @@ bool wxEvtHandler::TryAfter(wxEvent& event)
     if ( GetNextHandler() )
         return GetNextHandler()->TryAfter(event);
 
-    // If this event is going to be processed in another handler next, don't
-    // pass it to wxTheApp now, it will be done from TryAfter() of this other
-    // handler.
-    if ( event.WillBeProcessedAgain() )
-        return false;
-
 #if WXWIN_COMPATIBILITY_2_8
     // as above, call the old virtual function for compatibility
     return TryParent(event);
@@ -1628,15 +1524,6 @@ bool wxEvtHandler::TryHereOnly(wxEvent& event)
     if ( GetEventHashTable().HandleEvent(event, this) )
         return true;
 
-    // There is an implicit entry for async method calls processing in every
-    // event handler:
-    if ( event.GetEventType() == wxEVT_ASYNC_METHOD_CALL &&
-            event.GetEventObject() == this )
-    {
-        static_cast<wxAsyncMethodCallEvent&>(event).Execute();
-        return true;
-    }
-
     // We don't have a handler for this event.
     return false;
 }
@@ -1652,91 +1539,36 @@ bool wxEvtHandler::SafelyProcessEvent(wxEvent& event)
     }
     catch ( ... )
     {
-        WXConsumeException();
-
-        return false;
-    }
-#endif // wxUSE_EXCEPTIONS
-}
-
-#if wxUSE_EXCEPTIONS
-/* static */
-void wxEvtHandler::WXConsumeException()
-{
-    wxEventLoopBase * const loop = wxEventLoopBase::GetActive();
-    try
-    {
-        if ( !wxTheApp || !wxTheApp->OnExceptionInMainLoop() )
-        {
-            // If OnExceptionInMainLoop() returns false, we're supposed to exit
-            // the program and for this we need to exit the main loop, not the
-            // possibly nested one we're running right now.
-            if ( wxTheApp )
-            {
-                wxTheApp->ExitMainLoop();
-            }
-            else
-            {
-                // We must not continue running after an exception, unless
-                // explicitly requested, so if we can't ensure this in any
-                // other way, do it brutally like this.
-                wxAbort();
-            }
-
-        }
-        //else: continue running current event loop
-    }
-    catch ( ... )
-    {
-        // OnExceptionInMainLoop() threw, possibly rethrowing the same
-        // exception again. We have to deal with it here because we can't
-        // allow the exception to escape from the handling code, this will
-        // result in a crash at best (e.g. when using wxGTK as C++
-        // exceptions can't propagate through the C GTK+ code and corrupt
-        // the stack) and in something even more weird at worst (like
-        // exceptions completely disappearing into the void under some
-        // 64 bit versions of Windows).
-        if ( loop && !loop->IsYielding() )
-            loop->Exit();
-
-        // Give the application one last possibility to store the exception
-        // for rethrowing it later, when we get back to our code.
-        bool stored = false;
+        // notice that we do it in 2 steps to avoid warnings about possibly
+        // uninitialized loop variable from some versions of g++ which are not
+        // smart enough to figure out that GetActive() doesn't throw and so
+        // that loop will always be initialized
+        wxEventLoopBase *loop = NULL;
         try
         {
-            if ( wxTheApp )
-                stored = wxTheApp->StoreCurrentException();
+            loop = wxEventLoopBase::GetActive();
+
+            if ( !wxTheApp || !wxTheApp->OnExceptionInMainLoop() )
+            {
+                if ( loop )
+                    loop->Exit();
+            }
+            //else: continue running current event loop
+
+            return false;
         }
         catch ( ... )
         {
-            // StoreCurrentException() really shouldn't throw, but if it
-            // did, take it as an indication that it didn't store it.
-        }
-
-        // If it didn't take it, just abort, at least like this we behave
-        // consistently everywhere.
-        if ( !stored )
-        {
-            try
-            {
-                if ( wxTheApp )
-                    wxTheApp->OnUnhandledException();
-            }
-            catch ( ... )
-            {
-                // And OnUnhandledException() absolutely shouldn't throw,
-                // but we still must account for the possibility that it
-                // did. At least show some information about the exception
-                // in this case.
-                wxTheApp->wxAppConsoleBase::OnUnhandledException();
-            }
-
-            wxAbort();
+            // OnExceptionInMainLoop() threw, possibly rethrowing the same
+            // exception again: very good, but we still need Exit() to
+            // be called
+            if ( loop )
+                loop->Exit();
+            throw;
         }
     }
-}
-
 #endif // wxUSE_EXCEPTIONS
+}
 
 bool wxEvtHandler::SearchEventTable(wxEventTable& table, wxEvent& event)
 {
@@ -1763,20 +1595,11 @@ void wxEvtHandler::DoBind(int id,
     wxDynamicEventTableEntry *entry =
         new wxDynamicEventTableEntry(eventType, id, lastId, func, userData);
 
-    // Check if the derived class allows binding such event handlers.
-    if ( !OnDynamicBind(*entry) )
-    {
-        delete entry;
-        return;
-    }
-
     if (!m_dynamicEvents)
-        m_dynamicEvents = new DynamicEvents;
+        m_dynamicEvents = new wxList;
 
-    // We prefer to push back the entry here and then iterate over the vector
-    // in reverse direction in GetNextDynamicEntry() as it's more efficient
-    // than inserting the element at the front.
-    m_dynamicEvents->push_back(entry);
+    // Insert at the front of the list so most recent additions are found first
+    m_dynamicEvents->Insert( (wxObject*) entry );
 
     // Make sure we get to know when a sink is destroyed
     wxEvtHandler *eventSink = func->GetEvtHandler();
@@ -1800,71 +1623,34 @@ wxEvtHandler::DoUnbind(int id,
     if (!m_dynamicEvents)
         return false;
 
-    size_t cookie;
-    for ( wxDynamicEventTableEntry* entry = GetFirstDynamicEntry(cookie);
-          entry;
-          entry = GetNextDynamicEntry(cookie) )
+    // Remove connection from tracker node (wxEventConnectionRef)
+    wxEvtHandler *eventSink = func.GetEvtHandler();
+    if ( eventSink && eventSink != this )
     {
+        wxEventConnectionRef *evtConnRef = FindRefInTrackerList(eventSink);
+        if ( evtConnRef )
+            evtConnRef->DecRef();
+    }
+
+    wxList::compatibility_iterator node = m_dynamicEvents->GetFirst();
+    while (node)
+    {
+        wxDynamicEventTableEntry *entry = (wxDynamicEventTableEntry*)node->GetData();
+
         if ((entry->m_id == id) &&
             ((entry->m_lastId == lastId) || (lastId == wxID_ANY)) &&
             ((entry->m_eventType == eventType) || (eventType == wxEVT_NULL)) &&
             entry->m_fn->IsMatching(func) &&
             ((entry->m_callbackUserData == userData) || !userData))
         {
-            // Remove connection from tracker node (wxEventConnectionRef)
-            wxEvtHandler *eventSink = entry->m_fn->GetEvtHandler();
-            if ( eventSink && eventSink != this )
-            {
-                wxEventConnectionRef *evtConnRef = FindRefInTrackerList(eventSink);
-                if ( evtConnRef )
-                    evtConnRef->DecRef();
-            }
-
             delete entry->m_callbackUserData;
-
-            // We can't delete the entry from the vector if we're currently
-            // iterating over it. As we don't know whether we're or not, just
-            // null it for now and we will really erase it when we do finish
-            // iterating over it the next time.
-            //
-            // Notice that we rely on "cookie" being just the index into the
-            // vector, which is not guaranteed by our API, but here we can use
-            // this implementation detail.
-            (*m_dynamicEvents)[cookie] = NULL;
-
+            m_dynamicEvents->Erase( node );
             delete entry;
             return true;
         }
+        node = node->GetNext();
     }
     return false;
-}
-
-wxDynamicEventTableEntry*
-wxEvtHandler::GetFirstDynamicEntry(size_t& cookie) const
-{
-    if ( !m_dynamicEvents )
-        return NULL;
-
-    // The handlers are in LIFO order, so we must start at the end.
-    cookie = m_dynamicEvents->size();
-    return GetNextDynamicEntry(cookie);
-}
-
-wxDynamicEventTableEntry*
-wxEvtHandler::GetNextDynamicEntry(size_t& cookie) const
-{
-    // On entry here cookie is one greater than the index of the entry to
-    // return, so if it is 0, it means that there are no more entries.
-    while ( cookie )
-    {
-        // Otherwise return the element at the previous index, skipping any
-        // null elements which indicate removed entries.
-        wxDynamicEventTableEntry* const entry = m_dynamicEvents->at(--cookie);
-        if ( entry )
-            return entry;
-    }
-
-    return NULL;
 }
 
 bool wxEvtHandler::SearchDynamicEventTable( wxEvent& event )
@@ -1872,26 +1658,14 @@ bool wxEvtHandler::SearchDynamicEventTable( wxEvent& event )
     wxCHECK_MSG( m_dynamicEvents, false,
                  wxT("caller should check that we have dynamic events") );
 
-    DynamicEvents& dynamicEvents = *m_dynamicEvents;
-
-    bool needToPruneDeleted = false;
-
-    // We can't use Get{First,Next}DynamicEntry() here as they hide the deleted
-    // but not yet pruned entries from the caller, but here we do want to know
-    // about them, so iterate directly. Remember to do it in the reverse order
-    // to honour the order of handlers connection.
-    for ( size_t n = dynamicEvents.size(); n; n-- )
+    wxList::compatibility_iterator node = m_dynamicEvents->GetFirst();
+    while (node)
     {
-        wxDynamicEventTableEntry* const entry = dynamicEvents[n - 1];
+        wxDynamicEventTableEntry *entry = (wxDynamicEventTableEntry*)node->GetData();
 
-        if ( !entry )
-        {
-            // This entry must have been unbound at some time in the past, so
-            // skip it now and really remove it from the vector below, once we
-            // finish iterating.
-            needToPruneDeleted = true;
-            continue;
-        }
+        // get next node before (maybe) calling the event handler as it could
+        // call Disconnect() invalidating the current node
+        node = node->GetNext();
 
         if ( event.GetEventType() == entry->m_eventType )
         {
@@ -1899,36 +1673,8 @@ bool wxEvtHandler::SearchDynamicEventTable( wxEvent& event )
             if ( !handler )
                handler = this;
             if ( ProcessEventIfMatchesId(*entry, handler, event) )
-            {
-                // It's important to skip pruning of the unbound event entries
-                // below because this object itself could have been deleted by
-                // the event handler making m_dynamicEvents a dangling pointer
-                // which can't be accessed any longer in the code below.
-                //
-                // In practice, it hopefully shouldn't be a problem to wait
-                // until we get an event that we don't handle before pruning
-                // because this should happen soon enough and even if it
-                // doesn't the worst possible outcome is slightly increased
-                // memory consumption while not skipping pruning can result in
-                // hard to reproduce (because they require the disconnection
-                // and deletion happen at the same time which is not always the
-                // case) crashes.
                 return true;
-            }
         }
-    }
-
-    if ( needToPruneDeleted )
-    {
-        size_t nNew = 0;
-        for ( size_t n = 0; n != dynamicEvents.size(); n++ )
-        {
-            if ( dynamicEvents[n] )
-                dynamicEvents[nNew++] = dynamicEvents[n];
-        }
-
-        wxASSERT( nNew != dynamicEvents.size() );
-        dynamicEvents.resize(nNew);
     }
 
     return false;
@@ -1939,7 +1685,8 @@ void wxEvtHandler::DoSetClientObject( wxClientData *data )
     wxASSERT_MSG( m_clientDataType != wxClientData_Void,
                   wxT("can't have both object and void client data") );
 
-    delete m_clientObject;
+    if ( m_clientObject )
+        delete m_clientObject;
 
     m_clientObject = data;
     m_clientDataType = wxClientData_Object;
@@ -1997,20 +1744,19 @@ void wxEvtHandler::OnSinkDestroyed( wxEvtHandler *sink )
     wxASSERT(m_dynamicEvents);
 
     // remove all connections with this sink
-    size_t cookie;
-    for ( wxDynamicEventTableEntry* entry = GetFirstDynamicEntry(cookie);
-          entry;
-          entry = GetNextDynamicEntry(cookie) )
+    wxList::compatibility_iterator node = m_dynamicEvents->GetFirst(), node_nxt;
+    while (node)
     {
+        wxDynamicEventTableEntry *entry = (wxDynamicEventTableEntry*)node->GetData();
+        node_nxt = node->GetNext();
+
         if ( entry->m_fn->GetEvtHandler() == sink )
         {
             delete entry->m_callbackUserData;
+            m_dynamicEvents->Erase( node );
             delete entry;
-
-            // Just as in DoUnbind(), we use our knowledge of
-            // GetNextDynamicEntry() implementation here.
-            (*m_dynamicEvents)[cookie] = NULL;
         }
+        node = node_nxt;
     }
 }
 
@@ -2072,7 +1818,7 @@ bool wxEventBlocker::ProcessEvent(wxEvent& event)
             return true;   // yes, it should: mark this event as processed
     }
 
-    return wxEvtHandler::ProcessEvent(event);
+    return false;
 }
 
 #endif // wxUSE_GUI

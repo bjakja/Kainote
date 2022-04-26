@@ -4,12 +4,16 @@
 // Author:      Julian Smart, Robert Roebling, Markus Holzhem
 // Modified by:
 // Created:     04/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_PRINTING_ARCHITECTURE && wxUSE_POSTSCRIPT
 
@@ -72,35 +76,64 @@ static const char *wxPostScriptHeaderConicTo = "\
 }  bind def\n\
 ";
 
-static const char *wxPostScriptHeaderEllipse =
-"/ellipse {\n"             // x y xrad yrad startangle endangle
-"  matrix currentmatrix\n" // x y xrad yrad startangle endangle CTM
-"  0 0 1\n"                // x y xrad yrad startangle endangle CTM 0 0 1
-"  10 4 roll\n"            // CTM 0 0 1 x y xrad yrad startangle endangle
-"  6 2 roll\n"             // CTM 0 0 1 startangle endangle x y xrad yrad
-"  4 2 roll\n"             // CTM 0 0 1 startangle endangle xrad yrad x y
-"  translate\n"            // CTM 0 0 1 startangle endangle xrad yrad
-"  scale\n"                // CTM 0 0 1 startangle endangle
-"  arc\n"                  // CTM
-"  setmatrix\n"            // -> restore transformation matrix
-"} def\n";
+static const char *wxPostScriptHeaderEllipse = "\
+/ellipsedict 8 dict def\n\
+ellipsedict /mtrx matrix put\n\
+/ellipse {\n\
+    ellipsedict begin\n\
+    /endangle exch def\n\
+    /startangle exch def\n\
+    /yrad exch def\n\
+    /xrad exch def\n\
+    /y exch def\n\
+    /x exch def\n\
+    /savematrix mtrx currentmatrix def\n\
+    x y translate\n\
+    xrad yrad scale\n\
+    0 0 1 startangle endangle arc\n\
+    savematrix setmatrix\n\
+    end\n\
+    } def\n\
+";
 
-static const char *wxPostScriptHeaderEllipticArc=
-"/ellipticarc {\n"         // x y xrad yrad startangle endangle do_fill
-"  dup\n"                  // x y xrad yrad startangle endangle do_fill do_fill
-"  8 1 roll\n"             // do_fill x y xrad yrad startangle endangle do_fill
-"  matrix currentmatrix\n" // do_fill x y xrad yrad startangle endangle do_fill CTM
-"  0 0 1\n"                // do_fill x y xrad yrad startangle endangle do_fill CTM 0 0 1
-"  11 4 roll\n"            // do_fill CTM 0 0 1 x y xrad yrad startangle endangle do_fill
-"  7 3 roll\n"             // do_fill CTM 0 0 1 startangle endangle do_fill x y xrad yrad
-"  4 2 roll\n"             // do_fill CTM 0 0 1 startangle endangle do_fill xrad yrad x y
-"  translate\n"            // do_fill CTM 0 0 1 startangle endangle do_fill xrad yrad
-"  scale\n"                // do_fill CTM 0 0 1 startangle endangle do_fill
-"  { 0 0 moveto } if\n"    // do_fill CTM 0 0 1 startangle endangle
-"  arc\n"                  // do_fill CTM -> draw arc
-"  setmatrix\n"            // do_fill  -> restore transformation matrix
-"  { fill }{ stroke } ifelse\n" // -> fill or stroke
-"} def\n";
+static const char *wxPostScriptHeaderEllipticArc= "\
+/ellipticarcdict 8 dict def\n\
+ellipticarcdict /mtrx matrix put\n\
+/ellipticarc\n\
+{ ellipticarcdict begin\n\
+  /do_fill exch def\n\
+  /endangle exch def\n\
+  /startangle exch def\n\
+  /yrad exch def\n\
+  /xrad exch def \n\
+  /y exch def\n\
+  /x exch def\n\
+  /savematrix mtrx currentmatrix def\n\
+  x y translate\n\
+  xrad yrad scale\n\
+  do_fill { 0 0 moveto } if\n\
+  0 0 1 startangle endangle arc\n\
+  savematrix setmatrix\n\
+  do_fill { fill }{ stroke } ifelse\n\
+  end\n\
+} def\n";
+
+static const char *wxPostScriptHeaderSpline = "\
+/DrawSplineSection {\n\
+    /y3 exch def\n\
+    /x3 exch def\n\
+    /y2 exch def\n\
+    /x2 exch def\n\
+    /y1 exch def\n\
+    /x1 exch def\n\
+    /xa x1 x2 x1 sub 0.666667 mul add def\n\
+    /ya y1 y2 y1 sub 0.666667 mul add def\n\
+    /xb x3 x2 x3 sub 0.666667 mul add def\n\
+    /yb y3 y2 y3 sub 0.666667 mul add def\n\
+    x1 y1 lineto\n\
+    xa ya xb yb x3 y3 curveto\n\
+    } def\n\
+";
 
 static const char *wxPostScriptHeaderColourImage = "\
 % define 'colorimage' if it isn't defined\n\
@@ -198,25 +231,12 @@ static const char wxPostScriptHeaderReencodeISO2[] =
 "/yacute/thorn/ydieresis\n"
         "] def\n\n";
 
-// Split multiline string and store each line in the array.
-static const char *wxPostScriptHeaderStrSplit =
-"/strsplit {\n"      // str delim
-"  [ 3 1 roll\n"     // [ str delim
-"    {\n"            // [ str-items str delim
-"      search {\n"   // [ str-items post match pre
-"        3 1 roll\n" // [ str-items pre post match => [ str-items new-item remaining-str delim
-"      }{\n"         // [ str-items str
-"      exit\n"       // [ str-items str => exit from loop
-"      }ifelse\n"
-"    }loop\n"        // [ str-items
-"  ]\n"              // [ str-items ]
-"} def\n";
 //-------------------------------------------------------------------------------
 // wxPostScriptDC
 //-------------------------------------------------------------------------------
 
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxPostScriptDC, wxDC);
+IMPLEMENT_DYNAMIC_CLASS(wxPostScriptDC, wxDC)
 
 wxPostScriptDC::wxPostScriptDC()
               : wxDC(new wxPostScriptDCImpl(this))
@@ -227,6 +247,9 @@ wxPostScriptDC::wxPostScriptDC(const wxPrintData& printData)
               : wxDC(new wxPostScriptDCImpl(this, printData))
 {
 }
+
+// conversion
+static const double RAD2DEG  = 180.0 / M_PI;
 
 // we don't want to use only 72 dpi from PS print
 static const int DPI = 600;
@@ -239,7 +262,7 @@ static const double DEV2PS = 72.0 / 600.0;
 #define YLOG2DEVREL(x)  ((double)(LogicalToDeviceYRel(x)) * DEV2PS)
 
 
-wxIMPLEMENT_ABSTRACT_CLASS(wxPostScriptDCImpl, wxDCImpl);
+IMPLEMENT_ABSTRACT_CLASS(wxPostScriptDCImpl, wxDCImpl)
 
 //-------------------------------------------------------------------------------
 
@@ -303,7 +326,6 @@ void wxPostScriptDCImpl::Init()
     m_underlinePosition = 0.0;
     m_underlineThickness = 0.0;
 
-    m_isFontChanged = false;
 }
 
 wxPostScriptDCImpl::~wxPostScriptDCImpl ()
@@ -447,61 +469,56 @@ void wxPostScriptDCImpl::DoDrawArc (wxCoord x1, wxCoord y1, wxCoord x2, wxCoord 
     {
         alpha1 = (x1 - xc == 0) ?
             (y1 - yc < 0) ? 90.0 : -90.0 :
-                wxRadToDeg(-atan2(double(y1-yc), double(x1-xc)));
+                -atan2(double(y1-yc), double(x1-xc)) * RAD2DEG;
         alpha2 = (x2 - xc == 0) ?
             (y2 - yc < 0) ? 90.0 : -90.0 :
-                wxRadToDeg(-atan2(double(y2-yc), double(x2-xc)));
+                -atan2(double(y2-yc), double(x2-xc)) * RAD2DEG;
     }
-    while (alpha1 < 0)    alpha1 += 360;
-    while (alpha2 < 0)    alpha2 += 360; // adjust angles to be between
+    while (alpha1 <= 0)   alpha1 += 360;
+    while (alpha2 <= 0)   alpha2 += 360; // adjust angles to be between
     while (alpha1 > 360)  alpha1 -= 360; // 0 and 360 degree
     while (alpha2 > 360)  alpha2 -= 360;
 
     int i_radius = wxRound( radius );
 
-    // Draw the arc (open)
-    wxString buffer;
-    if ( m_brush.IsNonTransparent() || m_pen.IsNonTransparent() )
+    if ( m_brush.IsNonTransparent() )
     {
+        SetBrush( m_brush );
+
+        wxString buffer;
         buffer.Printf( "newpath\n"
-                       "%f %f %f %f %f %f ellipse\n",
+                       "%f %f %f %f %f %f ellipse\n"
+                       "%f %f lineto\n"
+                       "closepath\n"
+                       "fill\n",
+                XLOG2DEV(xc), YLOG2DEV(yc),
+                XLOG2DEVREL(i_radius), YLOG2DEVREL(i_radius),
+                alpha1, alpha2,
+                XLOG2DEV(xc), YLOG2DEV(yc) );
+        buffer.Replace( ",", "." );
+        PsPrint( buffer );
+
+        CalcBoundingBox( xc-i_radius, yc-i_radius );
+        CalcBoundingBox( xc+i_radius, yc+i_radius );
+    }
+
+    if ( m_pen.IsNonTransparent() )
+    {
+        SetPen( m_pen );
+
+        wxString buffer;
+        buffer.Printf( "newpath\n"
+                       "%f %f %f %f %f %f ellipse\n"
+                       "stroke\n",
                 XLOG2DEV(xc), YLOG2DEV(yc),
                 XLOG2DEVREL(i_radius), YLOG2DEVREL(i_radius),
                 alpha1, alpha2 );
         buffer.Replace( ",", "." );
         PsPrint( buffer );
+
+        CalcBoundingBox( xc-i_radius, yc-i_radius );
+        CalcBoundingBox( xc+i_radius, yc+i_radius );
     }
-
-    // Close and fill the arc if brush is not transparent.
-    if ( m_brush.IsNonTransparent() )
-    {
-        // Lines connecting the centre with endpoints
-        // shouldn't be drawn if arc is full.
-        if ( x1 != x2 || y1 != y2 )
-        {
-            buffer.Printf( "%f %f lineto\n",
-                    XLOG2DEV(xc), YLOG2DEV(yc) );
-            buffer.Replace( ",", "." );
-            PsPrint( buffer );
-        }
-        PsPrint( "closepath\n" );
-
-        SetBrush(m_brush);
-        // We need to preserve current path to draw the contour in the next step.
-        if ( m_pen.IsNonTransparent() )
-            PsPrint( "gsave fill grestore\n" );
-        else
-            PsPrint( "fill\n" );
-    }
-
-    if ( m_pen.IsNonTransparent() )
-    {
-        SetPen(m_pen);
-        PsPrint( "stroke\n" );
-    }
-
-    CalcBoundingBox( xc-i_radius, yc-i_radius );
-    CalcBoundingBox( xc+i_radius, yc+i_radius );
 }
 
 void wxPostScriptDCImpl::DoDrawEllipticArc(wxCoord x,wxCoord y,wxCoord w,wxCoord h,double sa,double ea)
@@ -580,7 +597,7 @@ void wxPostScriptDCImpl::DoDrawPoint (wxCoord x, wxCoord y)
     CalcBoundingBox( x, y );
 }
 
-void wxPostScriptDCImpl::DoDrawPolygon (int n, const wxPoint points[], wxCoord xoffset, wxCoord yoffset, wxPolygonFillMode fillStyle)
+void wxPostScriptDCImpl::DoDrawPolygon (int n, wxPoint points[], wxCoord xoffset, wxCoord yoffset, wxPolygonFillMode fillStyle)
 {
     wxCHECK_RET( m_ok, wxT("invalid postscript dc") );
 
@@ -650,7 +667,7 @@ void wxPostScriptDCImpl::DoDrawPolygon (int n, const wxPoint points[], wxCoord x
     }
 }
 
-void wxPostScriptDCImpl::DoDrawPolyPolygon (int n, const int count[], const wxPoint points[], wxCoord xoffset, wxCoord yoffset, wxPolygonFillMode fillStyle)
+void wxPostScriptDCImpl::DoDrawPolyPolygon (int n, int count[], wxPoint points[], wxCoord xoffset, wxCoord yoffset, wxPolygonFillMode fillStyle)
 {
     wxCHECK_RET( m_ok, wxT("invalid postscript dc") );
 
@@ -726,7 +743,7 @@ void wxPostScriptDCImpl::DoDrawPolyPolygon (int n, const int count[], const wxPo
     }
 }
 
-void wxPostScriptDCImpl::DoDrawLines (int n, const wxPoint points[], wxCoord xoffset, wxCoord yoffset)
+void wxPostScriptDCImpl::DoDrawLines (int n, wxPoint points[], wxCoord xoffset, wxCoord yoffset)
 {
     wxCHECK_RET( m_ok, wxT("invalid postscript dc") );
 
@@ -944,6 +961,9 @@ void wxPostScriptDCImpl::DoDrawIcon( const wxIcon& icon, wxCoord x, wxCoord y )
     DoDrawBitmap( icon, x, y, true );
 }
 
+/* this has to be char, not wxChar */
+static const char hexArray[] = "0123456789ABCDEF";
+
 void wxPostScriptDCImpl::DoDrawBitmap( const wxBitmap& bitmap, wxCoord x, wxCoord y, bool WXUNUSED(useMask) )
 {
     wxCHECK_RET( m_ok, wxT("invalid postscript dc") );
@@ -984,6 +1004,7 @@ void wxPostScriptDCImpl::DoDrawBitmap( const wxBitmap& bitmap, wxCoord x, wxCoor
 
     // size of the buffer = width*rgb(3)*hexa(2)+'\n'
     wxCharBuffer charbuffer(w*6 + 1);
+    int firstDigit, secondDigit;
 
     //rows
     for (int j = 0; j < h; j++)
@@ -993,10 +1014,10 @@ void wxPostScriptDCImpl::DoDrawBitmap( const wxBitmap& bitmap, wxCoord x, wxCoor
         //cols
         for (int i = 0; i < w*3; i++)
         {
-            char c1, c2;
-            wxDecToHex(*data, &c1, &c2);
-            *(bufferindex++) = c1;
-            *(bufferindex++) = c2;
+            firstDigit = (int)(*data/16.0);
+            secondDigit = (int)(*data - (firstDigit*16.0));
+            *(bufferindex++) = hexArray[firstDigit];
+            *(bufferindex++) = hexArray[secondDigit];
 
             data++;
         }
@@ -1013,149 +1034,99 @@ void wxPostScriptDCImpl::DoDrawBitmap( const wxBitmap& bitmap, wxCoord x, wxCoor
     PsPrint( "origstate restore\n" );
 }
 
-// Set PostScript color
-void wxPostScriptDCImpl::SetPSColour(const wxColor& col)
-{
-    unsigned char red = col.Red();
-    unsigned char blue = col.Blue();
-    unsigned char green = col.Green();
-
-    if ( !m_colour )
-    {
-        // Anything not white is black
-        if ( !(red == 255 && blue == 255 && green == 255) )
-        {
-            red = 0;
-            green = 0;
-            blue = 0;
-        }
-        // setgray here ?
-    }
-
-    if (!(red == m_currentRed && green == m_currentGreen && blue == m_currentBlue))
-    {
-        double redPS = (double)red / 255.0;
-        double bluePS = (double)blue / 255.0;
-        double greenPS = (double)green / 255.0;
-
-        wxString buffer;
-        buffer.Printf( "%f %f %f setrgbcolor\n", redPS, greenPS, bluePS );
-        buffer.Replace( ",", "." );
-        PsPrint( buffer );
-
-        m_currentRed = red;
-        m_currentBlue = blue;
-        m_currentGreen = green;
-    }
-}
-
 void wxPostScriptDCImpl::SetFont( const wxFont& font )
 {
     wxCHECK_RET( m_ok, wxT("invalid postscript dc") );
 
     if (!font.IsOk())  return;
 
-    // Note that we may legitimately call SetFont even before BeginDoc.
-    if ( font == m_font ) // No change
-        return;
-
     m_font = font;
-    m_isFontChanged = true;
-}
 
-// Actually set PostScript font.
-void wxPostScriptDCImpl::SetPSFont()
-{
-    wxASSERT_MSG( m_font.IsOk(), wxS("Font is not yet set") );
+    int Style = m_font.GetStyle();
+    int Weight = m_font.GetWeight();
 
-    if ( !m_isFontChanged )
-        return;
-
-    wxFontStyle Style = m_font.GetStyle();
-    wxFontWeight Weight = m_font.GetWeight();
-
-    wxString name;
-    switch ( m_font.GetFamily() )
+    const char *name;
+    switch (m_font.GetFamily())
     {
-        case wxFONTFAMILY_TELETYPE:
-        case wxFONTFAMILY_MODERN:
+        case wxTELETYPE:
+        case wxMODERN:
         {
-            if (Style == wxFONTSTYLE_ITALIC)
+            if (Style == wxITALIC)
             {
-                if (Weight == wxFONTWEIGHT_BOLD)
-                    name = wxS("/Courier-BoldOblique");
+                if (Weight == wxBOLD)
+                    name = "/Courier-BoldOblique";
                 else
-                    name = wxS("/Courier-Oblique");
+                    name = "/Courier-Oblique";
             }
             else
             {
-                if (Weight == wxFONTWEIGHT_BOLD)
-                    name = wxS("/Courier-Bold");
+                if (Weight == wxBOLD)
+                    name = "/Courier-Bold";
                 else
-                    name = wxS("/Courier");
+                    name = "/Courier";
             }
             break;
         }
-        case wxFONTFAMILY_ROMAN:
+        case wxROMAN:
         {
-            if (Style == wxFONTSTYLE_ITALIC)
+            if (Style == wxITALIC)
             {
-                if (Weight == wxFONTWEIGHT_BOLD)
-                    name = wxS("/Times-BoldItalic");
+                if (Weight == wxBOLD)
+                    name = "/Times-BoldItalic";
                 else
-                    name = wxS("/Times-Italic");
+                    name = "/Times-Italic";
             }
             else
             {
-                if (Weight == wxFONTWEIGHT_BOLD)
-                    name = wxS("/Times-Bold");
+                if (Weight == wxBOLD)
+                    name = "/Times-Bold";
                 else
-                    name = wxS("/Times-Roman");
+                    name = "/Times-Roman";
             }
             break;
         }
-        case wxFONTFAMILY_SCRIPT:
+        case wxSCRIPT:
         {
-            name = wxS("/ZapfChancery-MediumItalic");
+            name = "/ZapfChancery-MediumItalic";
             break;
         }
-        case wxFONTFAMILY_SWISS:
+        case wxSWISS:
         default:
         {
-            if (Style == wxFONTSTYLE_ITALIC)
+            if (Style == wxITALIC)
             {
-                if (Weight == wxFONTWEIGHT_BOLD)
-                    name = wxS("/Helvetica-BoldOblique");
+                if (Weight == wxBOLD)
+                    name = "/Helvetica-BoldOblique";
                 else
-                    name = wxS("/Helvetica-Oblique");
+                    name = "/Helvetica-Oblique";
             }
             else
             {
-                if (Weight == wxFONTWEIGHT_BOLD)
-                    name = wxS("/Helvetica-Bold");
+                if (Weight == wxBOLD)
+                    name = "/Helvetica-Bold";
                 else
-                    name = wxS("/Helvetica");
+                    name = "/Helvetica";
             }
             break;
         }
     }
 
-    wxString buffer;
-    // Generate PS code to register the font only once.
-    if ( m_definedPSFonts.Index(name) == wxNOT_FOUND )
-    {
-        buffer.Printf( "%s reencodeISO def\n", name );
-        PsPrint( buffer );
-        m_definedPSFonts.Add(name);
-    }
+    // We may legitimately call SetFont before BeginDoc
+    if (!m_pstream)
+        return;
 
-    // Select font
-    double size = m_font.GetPointSize() * double(GetFontPointSizeAdjustment(DPI));
-    buffer.Printf( "%s findfont %f scalefont setfont\n", name, size * m_scaleX );
+    PsPrint( name );
+    PsPrint( " reencodeISO def\n" );
+    PsPrint( name );
+    PsPrint( " findfont\n" );
+
+
+    float size = float(m_font.GetPointSize());
+    size = size * GetFontPointSizeAdjustment(DPI);
+    wxString buffer;
+    buffer.Printf( "%f scalefont setfont\n", size * m_scaleX );
     buffer.Replace( ",", "." );
     PsPrint( buffer );
-
-    m_isFontChanged = false;
 }
 
 void wxPostScriptDCImpl::SetPen( const wxPen& pen )
@@ -1165,12 +1136,8 @@ void wxPostScriptDCImpl::SetPen( const wxPen& pen )
     if (!pen.IsOk()) return;
 
     int oldStyle = m_pen.IsOk() ? m_pen.GetStyle() : wxPENSTYLE_INVALID;
-    wxPenCap oldCap = m_pen.IsOk() ? m_pen.GetCap() : wxCAP_INVALID;
-    wxPenJoin oldJoin = m_pen.IsOk() ? m_pen.GetJoin() : wxJOIN_INVALID;
 
     m_pen = pen;
-    wxPenCap cap = m_pen.IsOk() ? m_pen.GetCap() : wxCAP_INVALID;
-    wxPenJoin join = m_pen.IsOk() ? m_pen.GetJoin() : wxJOIN_INVALID;
 
     double width;
 
@@ -1234,37 +1201,39 @@ void wxPostScriptDCImpl::SetPen( const wxPen& pen )
         PsPrint( " setdash\n" );
     }
 
-    if ( cap != wxCAP_INVALID && cap != oldCap )
-    {
-        switch ( cap )
-        {
-            case wxCAP_ROUND:      buffer = "1"; break;
-            case wxCAP_PROJECTING: buffer = "2"; break;
-            case wxCAP_BUTT:       buffer = "0"; break;
-
-            // This case is just to fix compiler warning, this is impossible
-            // due to the test above.
-            case wxCAP_INVALID: break;
-        }
-        buffer << " setlinecap\n";
-        PsPrint( buffer );
-    }
-
-    if ( join != wxJOIN_INVALID && join != oldJoin )
-    {
-        switch ( join )
-        {
-            case wxJOIN_BEVEL: buffer = "2"; break;
-            case wxJOIN_ROUND: buffer = "1"; break;
-            case wxJOIN_MITER: buffer = "0"; break;
-            case wxJOIN_INVALID: break;
-        }
-        buffer << " setlinejoin\n";
-        PsPrint( buffer );
-    }
-
     // Line colour
-    SetPSColour(m_pen.GetColour());
+    unsigned char red = m_pen.GetColour().Red();
+    unsigned char blue = m_pen.GetColour().Blue();
+    unsigned char green = m_pen.GetColour().Green();
+
+    if (!m_colour)
+    {
+        // Anything not white is black
+        if (! (red == (unsigned char) 255 &&
+               blue == (unsigned char) 255 &&
+               green == (unsigned char) 255) )
+        {
+            red = (unsigned char) 0;
+            green = (unsigned char) 0;
+            blue = (unsigned char) 0;
+        }
+        // setgray here ?
+    }
+
+    if (!(red == m_currentRed && green == m_currentGreen && blue == m_currentBlue))
+    {
+        double redPS = (double)(red) / 255.0;
+        double bluePS = (double)(blue) / 255.0;
+        double greenPS = (double)(green) / 255.0;
+
+        buffer.Printf( "%f %f %f setrgbcolor\n", redPS, greenPS, bluePS );
+        buffer.Replace( ",", "." );
+        PsPrint( buffer );
+
+        m_currentRed = red;
+        m_currentBlue = blue;
+        m_currentGreen = green;
+    }
 }
 
 void wxPostScriptDCImpl::SetBrush( const wxBrush& brush )
@@ -1276,22 +1245,103 @@ void wxPostScriptDCImpl::SetBrush( const wxBrush& brush )
     m_brush = brush;
 
     // Brush colour
-    SetPSColour(m_brush.GetColour());
-}
+    unsigned char red = m_brush.GetColour().Red();
+    unsigned char blue = m_brush.GetColour().Blue();
+    unsigned char green = m_brush.GetColour().Green();
 
-// Common part of DoDrawText() and DoDrawRotatedText()
-void wxPostScriptDCImpl::DrawAnyText(const wxWX2MBbuf& textbuf, wxCoord textDescent, double lineHeight)
-{
-    wxCHECK_RET( textbuf, wxS("Invalid text buffer") );
-
-    wxString buffer;
-
-    if ( m_textForegroundColour.IsOk() )
+    if (!m_colour)
     {
-        SetPSColour(m_textForegroundColour);
+        // Anything not white is black
+        if (! (red == (unsigned char) 255 &&
+               blue == (unsigned char) 255 &&
+               green == (unsigned char) 255) )
+        {
+            red = (unsigned char) 0;
+            green = (unsigned char) 0;
+            blue = (unsigned char) 0;
+        }
+        // setgray here ?
     }
 
+    if (!(red == m_currentRed && green == m_currentGreen && blue == m_currentBlue))
+    {
+        double redPS = (double)(red) / 255.0;
+        double bluePS = (double)(blue) / 255.0;
+        double greenPS = (double)(green) / 255.0;
+
+        wxString buffer;
+        buffer.Printf( "%f %f %f setrgbcolor\n", redPS, greenPS, bluePS );
+        buffer.Replace( ",", "." );
+        PsPrint( buffer );
+
+        m_currentRed = red;
+        m_currentBlue = blue;
+        m_currentGreen = green;
+    }
+}
+
+void wxPostScriptDCImpl::DoDrawText( const wxString& text, wxCoord x, wxCoord y )
+{
+    wxCHECK_RET( m_ok, wxT("invalid postscript dc") );
+
+    const wxWX2MBbuf textbuf = text.mb_str();
+    if ( !textbuf )
+        return;
+
+    if (m_textForegroundColour.IsOk())
+    {
+        unsigned char red = m_textForegroundColour.Red();
+        unsigned char blue = m_textForegroundColour.Blue();
+        unsigned char green = m_textForegroundColour.Green();
+
+        if (!m_colour)
+        {
+            // Anything not white is black
+            if (! (red == (unsigned char) 255 &&
+                        blue == (unsigned char) 255 &&
+                        green == (unsigned char) 255))
+            {
+                red = (unsigned char) 0;
+                green = (unsigned char) 0;
+                blue = (unsigned char) 0;
+            }
+        }
+
+        // maybe setgray here ?
+        if (!(red == m_currentRed && green == m_currentGreen && blue == m_currentBlue))
+        {
+            double redPS = (double)(red) / 255.0;
+            double bluePS = (double)(blue) / 255.0;
+            double greenPS = (double)(green) / 255.0;
+
+            wxString buffer;
+            buffer.Printf( "%f %f %f setrgbcolor\n", redPS, greenPS, bluePS );
+            buffer.Replace( ",", "." );
+            PsPrint( buffer );
+
+            m_currentRed = red;
+            m_currentBlue = blue;
+            m_currentGreen = green;
+        }
+    }
+
+    wxCoord text_w, text_h, text_descent;
+
+    GetOwner()->GetTextExtent(text, &text_w, &text_h, &text_descent);
+
+    int size = m_font.GetPointSize();
+
+//    wxCoord by = y + (wxCoord)floor( double(size) * 2.0 / 3.0 ); // approximate baseline
+//    commented by V. Slavik and replaced by accurate version
+//        - note that there is still rounding error in text_descent!
+    wxCoord by = y + size - text_descent; // baseline
+
+    wxString buffer;
+    buffer.Printf( "%f %f moveto\n", XLOG2DEV(x), YLOG2DEV(by) );
+    buffer.Replace( ",", "." );
+    PsPrint( buffer );
     PsPrint( "(" );
+
     for ( const char *p = textbuf; *p != '\0'; p++ )
     {
         int c = (unsigned char)*p;
@@ -1312,73 +1362,28 @@ void wxPostScriptDCImpl::DrawAnyText(const wxWX2MBbuf& textbuf, wxCoord textDesc
             PsPrint( (char) c );
         }
     }
-    PsPrint( ")" );
 
-    // Split multiline text and store individual lines in the array.
-    PsPrint( " (\\n) strsplit\n" );
+    PsPrint( ") show\n" );
 
-    // Print each line individually by fetching lines from the array
-    PsPrint(           "{\n" );
-     // Preserve current point.
-    PsPrint(           "  currentpoint 3 -1 roll\n" ); // x y (str)
     if (m_font.GetUnderlined())
     {
-        // We need relative underline position
-        // with reference to the baseline:
-        // uy = y + size - m_underlinePosition =>
-        // uy = by + text_descent - m_underlinePosition =>
-        // dy = -(text_descent - m_underlinePosition)
-        // It's negated due to the orientation of Y-axis.
-        buffer.Printf( "  gsave\n"
-                       "  0.0 %f rmoveto\n"
-                       "  %f setlinewidth\n"
-                       "  dup stringwidth rlineto\n"
-                       "  stroke\n"
-                       "  grestore\n",
-                        -YLOG2DEVREL(textDescent - int(m_underlinePosition)),
-                        m_underlineThickness );
+        wxCoord uy = (wxCoord)(y + size - m_underlinePosition);
+
+        buffer.Printf( "gsave\n"
+                       "%f %f moveto\n"
+                       "%f setlinewidth\n"
+                       "%f %f lineto\n"
+                       "stroke\n"
+                       "grestore\n",
+                XLOG2DEV(x), YLOG2DEV(uy),
+                m_underlineThickness,
+                XLOG2DEV(x + text_w), YLOG2DEV(uy) );
         buffer.Replace( ",", "." );
         PsPrint( buffer );
     }
-    PsPrint(           "  show\n" ); // x y
-    // Advance to the beginning of th next line.
-    buffer.Printf(     "  %f add moveto\n", -YLOG2DEVREL(int(lineHeight)) );
-    buffer.Replace( ",", "." );
-    PsPrint( buffer );
-    // Execute above statements for all elements of the array
-    PsPrint(           "} forall\n" );
-}
 
-void wxPostScriptDCImpl::DoDrawText( const wxString& text, wxCoord x, wxCoord y )
-{
-    wxCHECK_RET( m_ok, wxT("invalid postscript dc") );
-
-    const wxWX2MBbuf textbuf = text.mb_str();
-    if ( !textbuf )
-        return;
-
-    SetPSFont();
-
-    wxCoord text_descent;
-    GetOwner()->GetTextExtent(text, NULL, NULL, &text_descent);
-    int size = m_font.GetPointSize();
-
-//    wxCoord by = y + (wxCoord)floor( double(size) * 2.0 / 3.0 ); // approximate baseline
-//    commented by V. Slavik and replaced by accurate version
-//        - note that there is still rounding error in text_descent!
-    wxCoord by = y + size - text_descent; // baseline
-
-    wxString buffer;
-    buffer.Printf( "%f %f moveto\n", XLOG2DEV(x), YLOG2DEV(by) );
-    buffer.Replace( ",", "." );
-    PsPrint( buffer );
-
-    DrawAnyText(textbuf, text_descent, size);
-
-    wxCoord w, h;
-    GetOwner()->GetMultiLineTextExtent(text, &w, &h);
-    CalcBoundingBox(x, y);
-    CalcBoundingBox(x + w , y + h);
+    CalcBoundingBox( x, y );
+    CalcBoundingBox( x + size * text.length() * 2/3 , y );
 }
 
 void wxPostScriptDCImpl::DoDrawRotatedText( const wxString& text, wxCoord x, wxCoord y, double angle )
@@ -1391,22 +1396,49 @@ void wxPostScriptDCImpl::DoDrawRotatedText( const wxString& text, wxCoord x, wxC
 
     wxCHECK_RET( m_ok, wxT("invalid postscript dc") );
 
-    const wxWX2MBbuf textbuf = text.mb_str();
-    if ( !textbuf )
-        return;
+    SetFont( m_font );
 
-    SetPSFont();
+    if (m_textForegroundColour.IsOk())
+    {
+        unsigned char red = m_textForegroundColour.Red();
+        unsigned char blue = m_textForegroundColour.Blue();
+        unsigned char green = m_textForegroundColour.Green();
 
-    // Calculate bottom-left coordinates of the rotated text
-    wxCoord text_descent;
-    GetOwner()->GetTextExtent(text, NULL, NULL, &text_descent);
+        if (!m_colour)
+        {
+            // Anything not white is black
+            if (! (red == (unsigned char) 255 &&
+                   blue == (unsigned char) 255 &&
+                   green == (unsigned char) 255))
+            {
+                red = (unsigned char) 0;
+                green = (unsigned char) 0;
+                blue = (unsigned char) 0;
+            }
+        }
+
+        // maybe setgray here ?
+        if (!(red == m_currentRed && green == m_currentGreen && blue == m_currentBlue))
+        {
+            double redPS = (double)(red) / 255.0;
+            double bluePS = (double)(blue) / 255.0;
+            double greenPS = (double)(green) / 255.0;
+
+            wxString buffer;
+            buffer.Printf( "%f %f %f setrgbcolor\n", redPS, greenPS, bluePS );
+            buffer.Replace( ",", "." );
+            PsPrint( buffer );
+
+            m_currentRed = red;
+            m_currentBlue = blue;
+            m_currentGreen = green;
+        }
+    }
+
     int size = m_font.GetPointSize();
-    double rad = wxDegToRad(angle);
-    wxCoord bx = wxRound(x + (size - text_descent) * sin(rad));
-    wxCoord by = wxRound(y + (size - text_descent) * cos(rad));
 
     wxString buffer;
-    buffer.Printf( "%f %f moveto\n", XLOG2DEV(bx), YLOG2DEV(by));
+    buffer.Printf( "%f %f moveto\n", XLOG2DEV(x), YLOG2DEV(y));
     buffer.Replace( ",", "." );
     PsPrint( buffer );
 
@@ -1414,22 +1446,60 @@ void wxPostScriptDCImpl::DoDrawRotatedText( const wxString& text, wxCoord x, wxC
     buffer.Replace( ",", "." );
     PsPrint( buffer );
 
-    DrawAnyText(textbuf, text_descent, size);
+    PsPrint( "(" );
+    const wxWX2MBbuf textbuf = text.mb_str();
+    if ( textbuf )
+    {
+        for ( const char *p = textbuf; *p != '\0'; p++ )
+        {
+            int c = (unsigned char)*p;
+            if (c == ')' || c == '(' || c == '\\')
+            {
+                /* Cope with special characters */
+                PsPrint( "\\" );
+                PsPrint( (char) c );
+            }
+            else if ( c >= 128 )
+            {
+                /* Cope with character codes > 127 */
+                buffer.Printf( "\\%o", c);
+                PsPrint( buffer );
+            }
+            else
+            {
+                PsPrint( (char) c );
+            }
+        }
+    }
+
+    PsPrint( ") show\n" );
 
     buffer.Printf( "%f rotate\n", -angle );
     buffer.Replace( ",", "." );
     PsPrint( buffer );
 
-    wxCoord w, h;
-    GetOwner()->GetMultiLineTextExtent(text, &w, &h);
-    // "upper left" and "upper right"
-    CalcBoundingBox(x, y);
-    CalcBoundingBox(x + wxCoord(w*cos(rad)), y - wxCoord(w*sin(rad)));
-    // "bottom left" and "bottom right"
-    x += (wxCoord)(h*sin(rad));
-    y += (wxCoord)(h*cos(rad));
-    CalcBoundingBox(x, y);
-    CalcBoundingBox(x + wxCoord(w*cos(rad)), y - wxCoord(w*sin(rad)));
+    if (m_font.GetUnderlined())
+    {
+        wxCoord uy = (wxCoord)(y + size - m_underlinePosition);
+        wxCoord w, h;
+        GetOwner()->GetTextExtent(text, &w, &h);
+
+        buffer.Printf(
+                "gsave\n"
+                "%f %f moveto\n"
+                "%f setlinewidth\n"
+                "%f %f lineto\n"
+                "stroke\n"
+                "grestore\n",
+                XLOG2DEV(x), YLOG2DEV(uy),
+                m_underlineThickness,
+                XLOG2DEV(x + w), YLOG2DEV(uy) );
+        buffer.Replace( ",", "." );
+        PsPrint( buffer );
+    }
+
+    CalcBoundingBox( x, y );
+    CalcBoundingBox( x + size * text.length() * 2/3 , y );
 }
 
 void wxPostScriptDCImpl::SetBackground (const wxBrush& brush)
@@ -1446,74 +1516,87 @@ void wxPostScriptDCImpl::SetLogicalFunction(wxRasterOperationMode WXUNUSED(funct
 void wxPostScriptDCImpl::DoDrawSpline( const wxPointList *points )
 {
     wxCHECK_RET( m_ok, wxT("invalid postscript dc") );
-    wxCHECK_RET(points, "NULL pointer to spline points?");
-    wxCHECK_RET(points->size() >= 2, "incomplete list of spline points?");
 
     SetPen( m_pen );
 
-    wxPointList::const_iterator itPt = points->begin();
+    // a and b are not used
+    //double a, b;
+    double c, d, x1, y1, x2, y2, x3, y3;
+    wxPoint *p, *q;
 
-    const wxPoint* pt = *itPt; ++itPt;
-    wxPoint2DDouble p1(*pt);
+    wxPointList::compatibility_iterator node = points->GetFirst();
+    p = node->GetData();
+    x1 = p->x;
+    y1 = p->y;
 
-    pt = *itPt; ++itPt;
-    wxPoint2DDouble p2(*pt);
-    wxPoint2DDouble p3 = (p1 + p2) / 2.0;
+    node = node->GetNext();
+    p = node->GetData();
+    c = p->x;
+    d = p->y;
+    x3 =
+         #if 0
+         a =
+         #endif
+         (double)(x1 + c) / 2;
+    y3 =
+         #if 0
+         b =
+         #endif
+         (double)(y1 + d) / 2;
 
     wxString buffer;
     buffer.Printf( "newpath\n"
                    "%f %f moveto\n"
                    "%f %f lineto\n",
-            XLOG2DEV(wxRound(p1.m_x)), YLOG2DEV(wxRound(p1.m_y)),
-            XLOG2DEV(wxRound(p3.m_x)), YLOG2DEV(wxRound(p3.m_y)) );
+            XLOG2DEV(wxRound(x1)), YLOG2DEV(wxRound(y1)),
+            XLOG2DEV(wxRound(x3)), YLOG2DEV(wxRound(y3)) );
     buffer.Replace( ",", "." );
     PsPrint( buffer );
 
-    CalcBoundingBox( (wxCoord)p1.m_x, (wxCoord)p1.m_y );
-    CalcBoundingBox( (wxCoord)p3.m_x, (wxCoord)p3.m_y );
+    CalcBoundingBox( (wxCoord)x1, (wxCoord)y1 );
+    CalcBoundingBox( (wxCoord)x3, (wxCoord)y3 );
 
-    while ( itPt != points->end() )
+    node = node->GetNext();
+    while (node)
     {
-        pt = *itPt; ++itPt;
+        q = node->GetData();
 
-        wxPoint2DDouble p0 = p3;
-        p1 = p2;
-        p2 = *pt;
-        p3 = (p1 + p2) / 2.0;
+        x1 = x3;
+        y1 = y3;
+        x2 = c;
+        y2 = d;
+        c = q->x;
+        d = q->y;
+        x3 = (double)(x2 + c) / 2;
+        y3 = (double)(y2 + d) / 2;
 
-        // Calculate using degree elevation to a cubic bezier
-        wxPoint2DDouble c1 = (p0 + (p1 * 2.0)) / 3.0;
-        wxPoint2DDouble c2 = ((p1 * 2.0) + p3) / 3.0;
-
-        buffer.Printf("%f %f %f %f %f %f curveto\n",
-            XLOG2DEV(wxRound(c1.m_x)), YLOG2DEV(wxRound(c1.m_y)),
-            XLOG2DEV(wxRound(c2.m_x)), YLOG2DEV(wxRound(c2.m_y)),
-            XLOG2DEV(wxRound(p3.m_x)), YLOG2DEV(wxRound(p3.m_y)));
+        buffer.Printf( "%f %f %f %f %f %f DrawSplineSection\n",
+            XLOG2DEV(wxRound(x1)), YLOG2DEV(wxRound(y1)),
+            XLOG2DEV(wxRound(x2)), YLOG2DEV(wxRound(y2)),
+            XLOG2DEV(wxRound(x3)), YLOG2DEV(wxRound(y3)) );
         buffer.Replace( ",", "." );
         PsPrint( buffer );
 
-        CalcBoundingBox( (wxCoord)p0.m_x, (wxCoord)p0.m_y );
-        CalcBoundingBox( (wxCoord)p3.m_x, (wxCoord)p3.m_y );
+        CalcBoundingBox( (wxCoord)x1, (wxCoord)y1 );
+        CalcBoundingBox( (wxCoord)x3, (wxCoord)y3 );
+
+        node = node->GetNext();
     }
 
     /*
-       At this point, p1 and p2 are the position of the
+       At this point, (x2,y2) and (c,d) are the position of the
        next-to-last and last point respectively, in the point list
      */
 
-    buffer.Printf( "%f %f lineto\n"
-                   "stroke\n",
-                   XLOG2DEV(wxRound(p2.m_x)), YLOG2DEV(wxRound(p2.m_y)) );
+    buffer.Printf( "%f %f lineto\nstroke\n", XLOG2DEV(wxRound(c)), YLOG2DEV(wxRound(d)) );
     buffer.Replace( ",", "." );
     PsPrint( buffer );
-
-    CalcBoundingBox((wxCoord)p2.m_x, (wxCoord)p2.m_y);
 }
 #endif // wxUSE_SPLINES
 
 wxCoord wxPostScriptDCImpl::GetCharWidth() const
 {
-    // Chris Breeze: reasonable approximation using wxFONTFAMILY_MODERN/Courier
+    // Chris Breeze: reasonable approximation using wxMODERN/Courier
     return (wxCoord) (GetCharHeight() * 72.0 / 120.0);
 }
 
@@ -1544,14 +1627,12 @@ void wxPostScriptDCImpl::ComputeScaleAndOrigin()
 
     wxDCImpl::ComputeScaleAndOrigin();
 
-    // If scale has changed call SetPen to recalculate the line width
-    // and request for recalculating the font size at nearest opportunity.
-    if ( wxRealPoint(m_scaleX, m_scaleY) != origScale )
+    // If scale has changed call SetPen to recalulate the line width
+    // and SetFont to recalculate font size
+    if ( wxRealPoint(m_scaleX, m_scaleY) != origScale && m_pen.IsOk() )
     {
-        if ( m_pen.IsOk() )
-            SetPen( m_pen );
-
-        m_isFontChanged = true;
+        SetPen( m_pen );
+        SetFont( m_font  );
     }
 }
 
@@ -1573,7 +1654,9 @@ void wxPostScriptDCImpl::DoGetSize(int* width, int* height) const
 
     if (m_printData.GetOrientation() == wxLANDSCAPE)
     {
-        wxSwap(w, h);
+        int tmp = w;
+        w = h;
+        h = tmp;
     }
 
     if (width)
@@ -1601,7 +1684,9 @@ void wxPostScriptDCImpl::DoGetSizeMM(int *width, int *height) const
 
     if (m_printData.GetOrientation() == wxLANDSCAPE)
     {
-        wxSwap(w, h);
+        int tmp = w;
+        w = h;
+        h = tmp;
     }
 
     if (width) *width = w;
@@ -1609,7 +1694,7 @@ void wxPostScriptDCImpl::DoGetSizeMM(int *width, int *height) const
 }
 
 // Resolution in pixels per logical inch
-wxSize wxPostScriptDCImpl::GetPPI() const
+wxSize wxPostScriptDCImpl::GetPPI(void) const
 {
     return wxSize( DPI, DPI );
 }
@@ -1621,7 +1706,7 @@ bool wxPostScriptDCImpl::StartDoc( const wxString& WXUNUSED(message) )
 
     if (m_printData.GetPrintMode() != wxPRINT_MODE_STREAM )
     {
-        if ( m_printData.GetFilename().empty() )
+        if (m_printData.GetFilename() == wxEmptyString)
         {
             wxString filename = wxFileName::CreateTempFileName( wxT("ps") );
             m_printData.SetFilename(filename);
@@ -1685,7 +1770,8 @@ bool wxPostScriptDCImpl::StartDoc( const wxString& WXUNUSED(message) )
     PsPrint( wxPostScriptHeaderColourImage );
     PsPrint( wxPostScriptHeaderReencodeISO1 );
     PsPrint( wxPostScriptHeaderReencodeISO2 );
-    PsPrint( wxPostScriptHeaderStrSplit );
+    if (wxPostScriptHeaderSpline)
+        PsPrint( wxPostScriptHeaderSpline );
     PsPrint( "%%EndProlog\n" );
 
     SetBrush( *wxBLACK_BRUSH );
@@ -1697,9 +1783,6 @@ bool wxPostScriptDCImpl::StartDoc( const wxString& WXUNUSED(message) )
     SetDeviceOrigin( 0,0 );
 
     m_pageNumber = 1;
-    // Reset the list of fonts for which PS font registration code was generated.
-    m_definedPSFonts.Empty();
-
     return true;
 }
 
@@ -1717,9 +1800,6 @@ void wxPostScriptDCImpl::EndDoc ()
         fclose( m_pstream );
         m_pstream = NULL;
     }
-
-    // Reset the list of fonts for which PS font registration code was generated.
-    m_definedPSFonts.Empty();
 
 #if 0
     // THE FOLLOWING HAS BEEN CONTRIBUTED BY Andy Fyfe <andy@hyperparallel.com>
@@ -1740,8 +1820,8 @@ void wxPostScriptDCImpl::EndDoc ()
     wxCoord maxY = (wxCoord) YLOG2DEV(m_maxY);
 
     // LOG2DEV may have changed the minimum to maximum vice versa
-    if ( minX > maxX ) { wxSwap(minX, maxX); }
-    if ( minY > maxY ) { wxSwap(minY, maxY); }
+    if ( minX > maxX ) { wxCoord tmp = minX; minX = maxX; maxX = tmp; }
+    if ( minY > maxY ) { wxCoord tmp = minY; minY = maxY; maxY = tmp; }
 
     // account for used scaling (boundingbox is before scaling in ps-file)
     double scale_x = m_printData.GetPrinterScaleX() / ms_PSScaleFactor;
@@ -1758,8 +1838,9 @@ void wxPostScriptDCImpl::EndDoc ()
     // If we're landscape, our sense of "x" and "y" is reversed.
     if (m_printData.GetOrientation() == wxLANDSCAPE)
     {
-        wxSwap(llx, lly);
-        wxSwap(urx, ury);
+        wxCoord tmp;
+        tmp = llx; llx = lly; lly = tmp;
+        tmp = urx; urx = ury; ury = tmp;
 
         // We need either the two lines that follow, or we need to subtract
         // min_x from real_translate_y, which is commented out below.
@@ -1787,13 +1868,10 @@ void wxPostScriptDCImpl::EndDoc ()
 #endif
 
 #ifndef __WXMSW__
-    // Pointer to PrintNativeData not always points to wxPostScriptPrintNativeData,
-    // e.g. under wxGTK it can point to wxGtkPrintNativeData and so calling
-    // wxPostScriptPrintNativeData methods on it crashes.
     wxPostScriptPrintNativeData *data =
-        wxDynamicCast(m_printData.GetNativeData(), wxPostScriptPrintNativeData);
+        (wxPostScriptPrintNativeData *) m_printData.GetNativeData();
 
-    if (m_ok && data && (m_printData.GetPrintMode() == wxPRINT_MODE_PRINTER))
+    if (m_ok && (m_printData.GetPrintMode() == wxPRINT_MODE_PRINTER))
     {
         wxString command;
         command += data->GetPrinterCommand();
@@ -1818,8 +1896,7 @@ void wxPostScriptDCImpl::StartPage()
 
 #if 0
     wxPostScriptPrintNativeData *data =
-        wxDynamicCast(m_printData.GetNativeData(), wxPostScriptPrintNativeData);
-    wxCHECK_RET( data, wxS("No PostScript print data") );
+        (wxPostScriptPrintNativeData *) m_printData.GetNativeData();
 
     wxCoord translate_x = (wxCoord)data->GetPrinterTranslateX();
     wxCoord translate_y = (wxCoord)data->GetPrinterTranslateY();
@@ -1890,18 +1967,15 @@ void wxPostScriptDCImpl::PsPrint( const wxString& str )
 {
     const wxCharBuffer psdata(str.utf8_str());
 
+    wxPostScriptPrintNativeData *data =
+        (wxPostScriptPrintNativeData *) m_printData.GetNativeData();
+
     switch (m_printData.GetPrintMode())
     {
 #if wxUSE_STREAMS
         // append to output stream
         case wxPRINT_MODE_STREAM:
             {
-                // Pointer to PrintNativeData not always points to wxPostScriptPrintNativeData,
-                // e.g. under wxGTK it can point to wxGtkPrintNativeData and so calling
-                // wxPostScriptPrintNativeData methods on it crashes.
-                wxPostScriptPrintNativeData *data =
-                    wxDynamicCast(m_printData.GetNativeData(), wxPostScriptPrintNativeData);
-                wxCHECK_RET( data, wxS("Cannot obtain output stream") );
                 wxOutputStream* outputstream = data->GetOutputStream();
                 wxCHECK_RET( outputstream, wxT("invalid outputstream") );
                 outputstream->Write( psdata, strlen( psdata ) );
@@ -1948,7 +2022,7 @@ void wxPostScriptDCImpl::DoGetTextExtent(const wxString& string,
 #if !wxUSE_AFM_FOR_POSTSCRIPT
     /* Provide a VERY rough estimate (avoid using it).
      * Produces accurate results for mono-spaced font
-     * such as Courier (aka wxFONTFAMILY_MODERN) */
+     * such as Courier (aka wxMODERN) */
 
     if ( x )
         *x = strlen (strbuf) * fontSize * 72.0 / 120.0;
@@ -1986,7 +2060,7 @@ void wxPostScriptDCImpl::DoGetTextExtent(const wxString& string,
     /      dc.StartDoc("Test");
     /      dc.StartPage();
     /      wxCoord w,h;
-    /      dc.SetFont(new wxFontInfo(10).Family(wxFONTFAMILY_ROMAN));
+    /      dc.SetFont(new wxFont(10, wxROMAN, wxNORMAL, wxNORMAL));
     /      dc.GetTextExtent("Hallo",&w,&h);
     /      dc.EndPage();
     /      dc.EndDoc();
@@ -2026,34 +2100,34 @@ void wxPostScriptDCImpl::DoGetTextExtent(const wxString& string,
 
         switch (Family)
         {
-            case wxFONTFAMILY_MODERN:
-            case wxFONTFAMILY_TELETYPE:
+            case wxMODERN:
+            case wxTELETYPE:
             {
-                if ((Style == wxFONTSTYLE_ITALIC) && (Weight == wxFONTWEIGHT_BOLD)) name = wxT("CourBoO.afm");
-                else if ((Style != wxFONTSTYLE_ITALIC) && (Weight == wxFONTWEIGHT_BOLD)) name = wxT("CourBo.afm");
-                else if ((Style == wxFONTSTYLE_ITALIC) && (Weight != wxFONTWEIGHT_BOLD)) name = wxT("CourO.afm");
+                if ((Style == wxITALIC) && (Weight == wxBOLD)) name = wxT("CourBoO.afm");
+                else if ((Style != wxITALIC) && (Weight == wxBOLD)) name = wxT("CourBo.afm");
+                else if ((Style == wxITALIC) && (Weight != wxBOLD)) name = wxT("CourO.afm");
                 else name = wxT("Cour.afm");
                 break;
             }
-            case wxFONTFAMILY_ROMAN:
+            case wxROMAN:
             {
-                if ((Style == wxFONTSTYLE_ITALIC) && (Weight == wxFONTWEIGHT_BOLD)) name = wxT("TimesBoO.afm");
-                else if ((Style != wxFONTSTYLE_ITALIC) && (Weight == wxFONTWEIGHT_BOLD)) name = wxT("TimesBo.afm");
-                else if ((Style == wxFONTSTYLE_ITALIC) && (Weight != wxFONTWEIGHT_BOLD)) name = wxT("TimesO.afm");
+                if ((Style == wxITALIC) && (Weight == wxBOLD)) name = wxT("TimesBoO.afm");
+                else if ((Style != wxITALIC) && (Weight == wxBOLD)) name = wxT("TimesBo.afm");
+                else if ((Style == wxITALIC) && (Weight != wxBOLD)) name = wxT("TimesO.afm");
                 else name = wxT("TimesRo.afm");
                 break;
             }
-            case wxFONTFAMILY_SCRIPT:
+            case wxSCRIPT:
             {
                 name = wxT("Zapf.afm");
                 break;
             }
-            case wxFONTFAMILY_SWISS:
+            case wxSWISS:
             default:
             {
-                if ((Style == wxFONTSTYLE_ITALIC) && (Weight == wxFONTWEIGHT_BOLD)) name = wxT("HelvBoO.afm");
-                else if ((Style != wxFONTSTYLE_ITALIC) && (Weight == wxFONTWEIGHT_BOLD)) name = wxT("HelvBo.afm");
-                else if ((Style == wxFONTSTYLE_ITALIC) && (Weight != wxFONTWEIGHT_BOLD)) name = wxT("HelvO.afm");
+                if ((Style == wxITALIC) && (Weight == wxBOLD)) name = wxT("HelvBoO.afm");
+                else if ((Style != wxITALIC) && (Weight == wxBOLD)) name = wxT("HelvBo.afm");
+                else if ((Style == wxITALIC) && (Weight != wxBOLD)) name = wxT("HelvO.afm");
                 else name = wxT("Helv.afm");
                 break;
             }
@@ -2115,7 +2189,7 @@ void wxPostScriptDCImpl::DoGetTextExtent(const wxString& string,
            /  character widths in an array, which is processed below (see point 3.). */
         if (afmFile==NULL)
         {
-            wxLogDebug( wxT("GetTextExtent: can't open AFM file '%s'"), afmName );
+            wxLogDebug( wxT("GetTextExtent: can't open AFM file '%s'"), afmName.c_str() );
             wxLogDebug( wxT("               using approximate values"));
             for (int i=0; i<256; i++) lastWidths[i] = 500; /* an approximate value */
             lastDescender = -150; /* dito. */
@@ -2140,7 +2214,7 @@ void wxPostScriptDCImpl::DoGetTextExtent(const wxString& string,
                     if ((sscanf(line,"%s%d",descString,&lastDescender)!=2) ||
                             (strcmp(descString,"Descender")!=0))
                     {
-                        wxLogDebug( wxT("AFM-file '%s': line '%s' has error (bad descender)"), afmName,line );
+                        wxLogDebug( wxT("AFM-file '%s': line '%s' has error (bad descender)"), afmName.c_str(),line );
                     }
                 }
                 /* JC 1.) check for UnderlinePosition */
@@ -2149,7 +2223,7 @@ void wxPostScriptDCImpl::DoGetTextExtent(const wxString& string,
                     if ((sscanf(line,"%s%lf",upString,&UnderlinePosition)!=2) ||
                             (strcmp(upString,"UnderlinePosition")!=0))
                     {
-                        wxLogDebug( wxT("AFM-file '%s': line '%s' has error (bad UnderlinePosition)"), afmName, line );
+                        wxLogDebug( wxT("AFM-file '%s': line '%s' has error (bad UnderlinePosition)"), afmName.c_str(), line );
                     }
                 }
                 /* JC 2.) check for UnderlineThickness */
@@ -2158,7 +2232,7 @@ void wxPostScriptDCImpl::DoGetTextExtent(const wxString& string,
                     if ((sscanf(line,"%s%lf",utString,&UnderlineThickness)!=2) ||
                             (strcmp(utString,"UnderlineThickness")!=0))
                     {
-                        wxLogDebug( wxT("AFM-file '%s': line '%s' has error (bad UnderlineThickness)"), afmName, line );
+                        wxLogDebug( wxT("AFM-file '%s': line '%s' has error (bad UnderlineThickness)"), afmName.c_str(), line );
                     }
                 }
                 /* JC 3.) check for EncodingScheme */
@@ -2167,12 +2241,12 @@ void wxPostScriptDCImpl::DoGetTextExtent(const wxString& string,
                     if ((sscanf(line,"%s%s",utString,encString)!=2) ||
                             (strcmp(utString,"EncodingScheme")!=0))
                     {
-                        wxLogDebug( wxT("AFM-file '%s': line '%s' has error (bad EncodingScheme)"), afmName, line );
+                        wxLogDebug( wxT("AFM-file '%s': line '%s' has error (bad EncodingScheme)"), afmName.c_str(), line );
                     }
                     else if (strncmp(encString, "AdobeStandardEncoding", 21))
                     {
                         wxLogDebug( wxT("AFM-file '%s': line '%s' has error (unsupported EncodingScheme %s)"),
-                                afmName,line, encString);
+                                afmName.c_str(),line, encString);
                     }
                 }
                 /* B.) check for char-width */
@@ -2180,11 +2254,11 @@ void wxPostScriptDCImpl::DoGetTextExtent(const wxString& string,
                 {
                     if (sscanf(line,"%s%d%s%s%d",cString,&ascii,semiString,WXString,&cWidth)!=5)
                     {
-                        wxLogDebug(wxT("AFM-file '%s': line '%s' has an error (bad character width)"),afmName,line);
+                        wxLogDebug(wxT("AFM-file '%s': line '%s' has an error (bad character width)"),afmName.c_str(),line);
                     }
                     if(strcmp(cString,"C")!=0 || strcmp(semiString,";")!=0 || strcmp(WXString,"WX")!=0)
                     {
-                        wxLogDebug(wxT("AFM-file '%s': line '%s' has a format error"),afmName,line);
+                        wxLogDebug(wxT("AFM-file '%s': line '%s' has a format error"),afmName.c_str(),line);
                     }
                     /* printf("            char '%c'=%d has width '%d'\n",ascii,ascii,cWidth); */
                     if (ascii>=0 && ascii<256)
@@ -2194,7 +2268,7 @@ void wxPostScriptDCImpl::DoGetTextExtent(const wxString& string,
                     else
                     {
                         /* MATTHEW: this happens a lot; don't print an error */
-                        /* wxLogDebug("AFM-file '%s': ASCII value %d out of range",afmName,ascii); */
+                        /* wxLogDebug("AFM-file '%s': ASCII value %d out of range",afmName.c_str(),ascii); */
                     }
                 }
                 /* C.) ignore other entries. */
@@ -2217,8 +2291,13 @@ void wxPostScriptDCImpl::DoGetTextExtent(const wxString& string,
 
         /* JC: calculate UnderlineThickness/UnderlinePosition */
 
-        m_underlinePosition  = YLOG2DEVREL(int(UnderlinePosition  * double(fontSize))) / 1000.0;
-        m_underlineThickness = YLOG2DEVREL(int(UnderlineThickness * double(fontSize))) / 1000.0;
+        // VS: dirty, but is there any better solution?
+        double *pt;
+        pt = (double*) &m_underlinePosition;
+        *pt = YLOG2DEVREL((wxCoord)(UnderlinePosition * fontSize)) / 1000.0f;
+        pt = (double*) &m_underlineThickness;
+        *pt = YLOG2DEVREL((wxCoord)(UnderlineThickness * fontSize)) / 1000.0f;
+
     }
 
 
@@ -2228,20 +2307,8 @@ void wxPostScriptDCImpl::DoGetTextExtent(const wxString& string,
 
     long sum=0;
     float height=fontSize; /* by default */
-    const unsigned char *p=reinterpret_cast<const unsigned char *>(static_cast<const char *>(strbuf));
-    if(!p)
-    {
-        // String couldn't be converted which used to SEGV as reported here:
-        // http://bugs.debian.org/702378
-        // https://github.com/wxWidgets/wxWidgets/issues/15300
-        // Upstream suggests "just return if the conversion failed".
-        if (x) (*x) = 0;
-        if (y) (*y) = 0;
-        if (descent) (*descent) = 0;
-        if (externalLeading) (*externalLeading) = 0;
-        return;
-    }
-    for(; *p; p++)
+    unsigned char *p;
+    for(p=(unsigned char *)wxMBSTRINGCAST strbuf; *p; p++)
     {
         if(lastWidths[*p]== INT_MIN)
         {
@@ -2254,6 +2321,10 @@ void wxPostScriptDCImpl::DoGetTextExtent(const wxString& string,
         }
     }
 
+    double widthSum = sum;
+    widthSum *= fontSize;
+    widthSum /= 1000.0F;
+
     /* add descender to height (it is usually a negative value) */
     //if (lastDescender != INT_MIN)
     //{
@@ -2264,7 +2335,7 @@ void wxPostScriptDCImpl::DoGetTextExtent(const wxString& string,
 
     /* return size values */
     if ( x )
-        *x = int(sum * fontSize) / 1000;
+        *x = (wxCoord)widthSum;
     if ( y )
         *y = (wxCoord)height;
 

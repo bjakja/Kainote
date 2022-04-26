@@ -2,6 +2,7 @@
 // Name:        wx/gtk1/minifram.h
 // Purpose:     wxMiniFrame class
 // Author:      Robert Roebling
+// RCS-ID:      $Id$
 // Copyright:   (c) Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -28,7 +29,7 @@ class WXDLLIMPEXP_FWD_CORE wxMiniFrame;
 
 class WXDLLIMPEXP_CORE wxMiniFrame: public wxFrame
 {
-    wxDECLARE_DYNAMIC_CLASS(wxMiniFrame);
+    DECLARE_DYNAMIC_CLASS(wxMiniFrame)
 
 public:
     wxMiniFrame() {}
@@ -38,7 +39,7 @@ public:
             const wxPoint& pos = wxDefaultPosition,
             const wxSize& size = wxDefaultSize,
             long style = wxDEFAULT_FRAME_STYLE | wxTINY_CAPTION,
-            const wxString& name = wxASCII_STR(wxFrameNameStr))
+            const wxString& name = wxFrameNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
@@ -49,7 +50,7 @@ public:
             const wxPoint& pos = wxDefaultPosition,
             const wxSize& size = wxDefaultSize,
             long style = wxDEFAULT_FRAME_STYLE | wxTINY_CAPTION,
-            const wxString& name = wxASCII_STR(wxFrameNameStr));
+            const wxString& name = wxFrameNameStr);
 
     virtual void SetTitle( const wxString &title );
  // implementation

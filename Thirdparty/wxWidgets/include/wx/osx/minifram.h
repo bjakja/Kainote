@@ -6,6 +6,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,17 +18,17 @@
 
 class WXDLLIMPEXP_CORE wxMiniFrame: public wxFrame {
 
-  wxDECLARE_DYNAMIC_CLASS(wxMiniFrame);
+  DECLARE_DYNAMIC_CLASS(wxMiniFrame)
 
 public:
-  wxMiniFrame() {}
-  wxMiniFrame(wxWindow *parent,
+  inline wxMiniFrame() {}
+  inline wxMiniFrame(wxWindow *parent,
            wxWindowID id,
            const wxString& title,
            const wxPoint& pos = wxDefaultPosition,
            const wxSize& size = wxDefaultSize,
            long style = wxCAPTION | wxRESIZE_BORDER | wxTINY_CAPTION,
-           const wxString& name = wxASCII_STR(wxFrameNameStr))
+           const wxString& name = wxFrameNameStr)
   {
       // Use wxFrame constructor in absence of more specific code.
       Create(parent, id, title, pos, size, style | wxFRAME_TOOL_WINDOW | wxFRAME_FLOAT_ON_PARENT , name);

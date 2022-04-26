@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -28,7 +29,7 @@ protected:
     virtual void DoGetSize(int *width, int *height) const;
 
 private:
-    wxDECLARE_CLASS(wxScreenDCImpl);
+    DECLARE_CLASS(wxScreenDCImpl)
 };
 
 

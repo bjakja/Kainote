@@ -2,6 +2,7 @@
 // Name:        src/gtk/statbox.cpp
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -13,7 +14,8 @@
 
 #include "wx/statbox.h"
 
-#include "wx/gtk/private/wrapgtk.h"
+#include <gtk/gtk.h>
+#include "wx/gtk/private/gtk2-compat.h"
 #include "wx/gtk/private/win_gtk.h"
 
 // constants taken from GTK sources
@@ -43,14 +45,6 @@ static void size_allocate(GtkWidget* widget, GtkAllocation* alloc, void*)
         gtk_widget_size_allocate(label_widget, &a);
     }
 }
-
-static gboolean expose_event(GtkWidget* widget, GdkEventExpose*, wxWindow*)
-{
-    const GtkAllocation& a = widget->allocation;
-    gtk_paint_flat_box(gtk_widget_get_style(widget), gtk_widget_get_window(widget),
-        GTK_STATE_NORMAL, GTK_SHADOW_NONE, NULL, widget, "", a.x, a.y, a.width, a.height);
-    return false;
-}
 }
 #endif
 
@@ -58,14 +52,28 @@ static gboolean expose_event(GtkWidget* widget, GdkEventExpose*, wxWindow*)
 // wxStaticBox
 //-----------------------------------------------------------------------------
 
-bool wxStaticBox::DoCreate(wxWindow *parent,
-                           wxWindowID id,
-                           const wxString* labelStr,
-                           wxWindow* labelWin,
-                           const wxPoint& pos,
-                           const wxSize& size,
-                           long style,
-                           const wxString& name)
+wxStaticBox::wxStaticBox()
+{
+}
+
+wxStaticBox::wxStaticBox( wxWindow *parent,
+                          wxWindowID id,
+                          const wxString &label,
+                          const wxPoint& pos,
+                          const wxSize& size,
+                          long style,
+                          const wxString& name )
+{
+    Create( parent, id, label, pos, size, style, name );
+}
+
+bool wxStaticBox::Create( wxWindow *parent,
+                          wxWindowID id,
+                          const wxString& label,
+                          const wxPoint& pos,
+                          const wxSize& size,
+                          long style,
+                          const wxString& name )
 {
     if (!PreCreation( parent, pos, size ) ||
         !CreateBase( parent, id, pos, size, style, wxDefaultValidator, name ))
@@ -74,41 +82,11 @@ bool wxStaticBox::DoCreate(wxWindow *parent,
         return false;
     }
 
-    if ( labelStr )
-    {
-        m_widget = GTKCreateFrame(*labelStr);
-
-        // only base SetLabel needs to be called after GTKCreateFrame
-        wxControl::SetLabel(*labelStr);
-    }
-    else // Use the given window as the label.
-    {
-        wxCHECK_MSG( labelWin, false, wxS("Label window can't be null") );
-
-        GtkWidget* const labelWidget = labelWin->m_widget;
-        wxCHECK_MSG( labelWidget, false, wxS("Label window must be created") );
-
-        // The widget must not have any parent at GTK+ level or setting it as
-        // label widget would fail.
-        GtkWidget* const oldParent = gtk_widget_get_parent(labelWidget);
-        gtk_container_remove(GTK_CONTAINER(oldParent), labelWidget);
-        gtk_widget_unparent(labelWidget);
-
-        // It also should be our child at wx API level, but without being our
-        // child in wxGTK, i.e. it must not be added to the GtkFrame container,
-        // so we can't call Reparent() here (not even wxWindowBase version, as
-        // it still would end up in our overridden AddChild()), nor the normal
-        // AddChild() for the same reason.
-        labelWin->GetParent()->RemoveChild(labelWin);
-        wxWindowBase::AddChild(labelWin);
-
-        m_labelWin = labelWin;
-
-        m_widget = gtk_frame_new(NULL);
-        gtk_frame_set_label_widget(GTK_FRAME(m_widget), labelWidget);
-    }
-
+    m_widget = GTKCreateFrame(label);
     g_object_ref(m_widget);
+
+    // only base SetLabel needs to be called after GTKCreateFrame
+    wxControl::SetLabel(label);
 
     m_parent->DoAddChild( this );
 
@@ -124,14 +102,12 @@ bool wxStaticBox::DoCreate(wxWindow *parent,
     gtk_frame_set_label_align(GTK_FRAME(m_widget), xalign, 0.5);
 
 #ifndef __WXGTK3__
-    if (!wx_is_at_least_gtk2(12))
+    if (gtk_check_version(2, 12, 0))
     {
         // we connect this signal to perform label-clipping as GTK >= 2.12 does
         g_signal_connect(m_widget, "size_allocate", G_CALLBACK(size_allocate), NULL);
     }
 #endif
-
-    m_container.DisableSelfFocus();
 
     return true;
 }
@@ -145,17 +121,14 @@ void wxStaticBox::AddChild( wxWindowBase *child )
         m_wxwindow = wxPizza::New();
         gtk_widget_show( m_wxwindow );
         gtk_container_add( GTK_CONTAINER (m_widget), m_wxwindow );
-        GTKApplyWidgetStyle();
     }
 
-    wxStaticBoxBase::AddChild(child);
+    wxWindow::AddChild( child );
 }
 
 void wxStaticBox::SetLabel( const wxString& label )
 {
     wxCHECK_RET( m_widget != NULL, wxT("invalid staticbox") );
-
-    wxCHECK_RET( !m_labelWin, wxS("Doesn't make sense when using label window") );
 
     GTKSetLabelForFrame(GTK_FRAME(m_widget), label);
 }
@@ -163,16 +136,6 @@ void wxStaticBox::SetLabel( const wxString& label )
 void wxStaticBox::DoApplyWidgetStyle(GtkRcStyle *style)
 {
     GTKFrameApplyWidgetStyle(GTK_FRAME(m_widget), style);
-    if ( m_labelWin )
-        GTKDoApplyWidgetStyle(m_labelWin, style);
-    if (m_wxwindow)
-        GTKApplyStyle(m_wxwindow, style);
-
-#ifndef __WXGTK3__
-    g_signal_handlers_disconnect_by_func(m_widget, (void*)expose_event, this);
-    if (m_backgroundColour.IsOk())
-        g_signal_connect(m_widget, "expose-event", G_CALLBACK(expose_event), this);
-#endif
 }
 
 bool wxStaticBox::GTKWidgetNeedsMnemonic() const
@@ -189,35 +152,14 @@ void wxStaticBox::GTKWidgetDoSetMnemonic(GtkWidget* w)
 wxVisualAttributes
 wxStaticBox::GetClassDefaultAttributes(wxWindowVariant WXUNUSED(variant))
 {
-    return GetDefaultAttributesFromGTKWidget(gtk_frame_new(""));
+    return GetDefaultAttributesFromGTKWidget(gtk_frame_new);
 }
+
 
 void wxStaticBox::GetBordersForSizer(int *borderTop, int *borderOther) const
 {
-    GtkWidget* label = gtk_frame_get_label_widget(GTK_FRAME(m_widget));
-#ifdef __WXGTK3__
-    *borderOther = 0;
-    *borderTop = 0;
-    if (label)
-    {
-        int nat_width;
-        gtk_widget_get_preferred_width(label, NULL, &nat_width);
-        gtk_widget_get_preferred_height_for_width(label, nat_width, borderTop, NULL);
-    }
-#else
-    gtk_widget_ensure_style(m_widget);
-    const int border_width = GTK_CONTAINER(m_widget)->border_width;
-    *borderOther = border_width + m_widget->style->xthickness;
-    *borderTop = border_width;
-    if (label)
-    {
-        GtkRequisition req;
-        gtk_widget_size_request(label, &req);
-        *borderTop += req.height;
-    }
-    else
-        *borderTop += m_widget->style->ythickness;
-#endif
+    *borderTop = GetCharHeight();
+    *borderOther = GetCharWidth()/2;
 }
 
 #endif // wxUSE_STATBOX

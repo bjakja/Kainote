@@ -2,6 +2,7 @@
 // Name:        tooltip.h
 // Purpose:     interface of wxToolTip
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -54,7 +55,7 @@ public:
     /**
         Set the delay after which the tooltip appears.
 
-        @note May not be supported on all platforms.
+        @note May not be supported on all platforms (eg. wxCocoa).
     */
     static void SetDelay(long msecs);
 

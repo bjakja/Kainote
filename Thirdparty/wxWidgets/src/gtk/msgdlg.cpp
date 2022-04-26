@@ -4,6 +4,7 @@
 // Author:      Vaclav Slavik
 // Modified by:
 // Created:     2003/02/28
+// RCS-ID:      $Id$
 // Copyright:   (c) Vaclav Slavik, 2003
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,6 +12,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_MSGDLG && !defined(__WXGPE__)
 
@@ -20,14 +24,20 @@
     #include "wx/intl.h"
 #endif
 
-#include "wx/modalhook.h"
-
+#include <gtk/gtk.h>
 #include "wx/gtk/private.h"
 #include "wx/gtk/private/messagetype.h"
 #include "wx/gtk/private/mnemonics.h"
-#include "wx/gtk/private/dialogcount.h"
 
-wxIMPLEMENT_CLASS(wxMessageDialog, wxDialog);
+#if wxUSE_LIBHILDON
+    #include <hildon-widgets/hildon-note.h>
+#endif // wxUSE_LIBHILDON
+
+#if wxUSE_LIBHILDON2
+    #include <hildon/hildon.h>
+#endif // wxUSE_LIBHILDON2
+
+IMPLEMENT_CLASS(wxMessageDialog, wxDialog)
 
 wxMessageDialog::wxMessageDialog(wxWindow *parent,
                                  const wxString& message,
@@ -36,7 +46,7 @@ wxMessageDialog::wxMessageDialog(wxWindow *parent,
                                  const wxPoint& WXUNUSED(pos))
                : wxMessageDialogBase
                  (
-                    parent,
+                    GetParentForModalDialog(parent, style),
                     message,
                     caption,
                     style
@@ -46,47 +56,27 @@ wxMessageDialog::wxMessageDialog(wxWindow *parent,
 
 wxString wxMessageDialog::GetDefaultYesLabel() const
 {
-#ifdef __WXGTK4__
-    return wxConvertMnemonicsToGTK(wxGetStockLabel(wxID_YES));
-#else
-    return "gtk-yes";
-#endif
+    return GTK_STOCK_YES;
 }
 
 wxString wxMessageDialog::GetDefaultNoLabel() const
 {
-#ifdef __WXGTK4__
-    return wxConvertMnemonicsToGTK(wxGetStockLabel(wxID_NO));
-#else
-    return "gtk-no";
-#endif
+    return GTK_STOCK_NO;
 }
 
 wxString wxMessageDialog::GetDefaultOKLabel() const
 {
-#ifdef __WXGTK4__
-    return wxConvertMnemonicsToGTK(wxGetStockLabel(wxID_OK));
-#else
-    return "gtk-ok";
-#endif
+    return GTK_STOCK_OK;
 }
 
 wxString wxMessageDialog::GetDefaultCancelLabel() const
 {
-#ifdef __WXGTK4__
-    return wxConvertMnemonicsToGTK(wxGetStockLabel(wxID_CANCEL));
-#else
-    return "gtk-cancel";
-#endif
+    return GTK_STOCK_CANCEL;
 }
 
 wxString wxMessageDialog::GetDefaultHelpLabel() const
 {
-#ifdef __WXGTK4__
-    return wxConvertMnemonicsToGTK(wxGetStockLabel(wxID_HELP));
-#else
-    return "gtk-help";
-#endif
+    return GTK_STOCK_HELP;
 }
 
 void wxMessageDialog::DoSetCustomLabel(wxString& var, const ButtonLabel& label)
@@ -99,22 +89,51 @@ void wxMessageDialog::DoSetCustomLabel(wxString& var, const ButtonLabel& label)
     }
     else // stock label
     {
-#ifdef __WXGTK4__
-        var = wxConvertMnemonicsToGTK(wxGetStockLabel(stockId));
-#else
         var = wxGetStockGtkID(stockId);
-#endif
     }
 }
 
 void wxMessageDialog::GTKCreateMsgDialog()
 {
-    // Avoid crash if wxMessageBox() is called before GTK is initialized
-    if (g_type_class_peek(GDK_TYPE_DISPLAY) == NULL)
-        return;
-
     GtkWindow * const parent = m_parent ? GTK_WINDOW(m_parent->m_widget) : NULL;
 
+#if wxUSE_LIBHILDON || wxUSE_LIBHILDON2
+    const char *stockIcon = "";
+
+    switch ( GetEffectiveIcon() )
+    {
+        case wxICON_ERROR:
+            stockIcon = "qgn_note_gene_syserror";
+            break;
+
+        case wxICON_WARNING:
+            stockIcon = "qgn_note_gene_syswarning";
+            break;
+
+        case wxICON_QUESTION:
+            stockIcon = "qgn_note_confirm";
+            break;
+
+        case wxICON_INFORMATION:
+            stockIcon = "qgn_note_info";
+            break;
+    }
+
+    // there is no generic note creation function in public API so we have no
+    // choice but to use g_object_new() directly
+    m_widget = (GtkWidget *)g_object_new
+               (
+                HILDON_TYPE_NOTE,
+#if wxUSE_LIBHILDON
+                "note_type", HILDON_NOTE_CONFIRMATION_BUTTON_TYPE,
+#else // wxUSE_LIBHILDON
+                "note_type", HILDON_NOTE_TYPE_CONFIRMATION_BUTTON,
+#endif // wxUSE_LIBHILDON /wxUSE_LIBHILDON2
+                "description", (const char *)GetFullMessage().utf8_str(),
+                "icon", stockIcon,
+                NULL
+               );
+#else // !wxUSE_LIBHILDON && !wxUSE_LIBHILDON2
     GtkMessageType type = GTK_MESSAGE_ERROR;
     GtkButtonsType buttons = GTK_BUTTONS_NONE;
 
@@ -147,13 +166,19 @@ void wxMessageDialog::GTKCreateMsgDialog()
     }
 
     wxString message;
+#if GTK_CHECK_VERSION(2, 6, 0)
     bool needsExtMessage = false;
-    if (!m_extendedMessage.empty())
+    if (!m_extendedMessage.empty()
+#ifndef __WXGTK3__
+        && gtk_check_version(2, 6, 0) == NULL
+#endif
+        )
     {
         message = m_message;
         needsExtMessage = true;
     }
-    else // extended message not needed
+    else // extended message not needed or not supported
+#endif // GTK+ 2.6+
     {
         message = GetFullMessage();
     }
@@ -165,6 +190,7 @@ void wxMessageDialog::GTKCreateMsgDialog()
                                       "%s",
                                       (const char*)wxGTK_CONV(message));
 
+#if GTK_CHECK_VERSION(2, 6, 0)
     if ( needsExtMessage )
     {
         gtk_message_dialog_format_secondary_text
@@ -174,6 +200,8 @@ void wxMessageDialog::GTKCreateMsgDialog()
             (const char *)wxGTK_CONV(m_extendedMessage)
         );
     }
+#endif // GTK+ 2.6+
+#endif // wxUSE_LIBHILDON || wxUSE_LIBHILDON2/!wxUSE_LIBHILDON && !wxUSE_LIBHILDON2
 
     g_object_ref(m_widget);
 
@@ -188,8 +216,14 @@ void wxMessageDialog::GTKCreateMsgDialog()
     }
 
     // we need to add buttons manually if we use custom labels or always for
-    // Yes/No/Cancel dialog as GTK+ doesn't support it natively
+    // Yes/No/Cancel dialog as GTK+ doesn't support it natively and when using
+    // Hildon we add all the buttons manually as it doesn't support too many of
+    // the combinations we may have
+#if wxUSE_LIBHILDON || wxUSE_LIBHILDON2
+    static const bool addButtons = true;
+#else // !wxUSE_LIBHILDON
     const bool addButtons = buttons == GTK_BUTTONS_NONE;
+#endif // wxUSE_LIBHILDON/!wxUSE_LIBHILDON
 
 
     if ( addButtons )
@@ -238,8 +272,6 @@ void wxMessageDialog::GTKCreateMsgDialog()
         defaultButton = GTK_RESPONSE_NO;
     else if ( m_dialogStyle & wxYES_NO )
         defaultButton = GTK_RESPONSE_YES;
-    else if ( m_dialogStyle & wxOK )
-        defaultButton = GTK_RESPONSE_OK;
     else // No need to change the default value, whatever it is.
         defaultButton = GTK_RESPONSE_NONE;
 
@@ -249,7 +281,11 @@ void wxMessageDialog::GTKCreateMsgDialog()
 
 int wxMessageDialog::ShowModal()
 {
-    WX_HOOK_MODAL_DIALOG();
+    // break the mouse capture as it would interfere with modal dialog (see
+    // wxDialog::ShowModal)
+    wxWindow * const win = wxWindow::GetCapture();
+    if ( win )
+        win->GTKReleaseMouseAndNotify();
 
     if ( !m_widget )
     {
@@ -258,19 +294,12 @@ int wxMessageDialog::ShowModal()
                      wxT("failed to create GtkMessageDialog") );
     }
 
-    // break the mouse capture as it would interfere with modal dialog (see
-    // wxDialog::ShowModal)
-    GTKReleaseMouseAndNotify();
-
     // This should be necessary, but otherwise the
     // parent TLW will disappear..
     if (m_parent)
         gtk_window_present( GTK_WINDOW(m_parent->m_widget) );
 
-    wxOpenModalDialogLocker modalLocker;
-
     gint result = gtk_dialog_run(GTK_DIALOG(m_widget));
-    GTKDisconnect(m_widget);
     gtk_widget_destroy(m_widget);
     g_object_unref(m_widget);
     m_widget = NULL;
@@ -279,7 +308,7 @@ int wxMessageDialog::ShowModal()
     {
         default:
             wxFAIL_MSG(wxT("unexpected GtkMessageDialog return code"));
-            wxFALLTHROUGH;
+            // fall through
 
         case GTK_RESPONSE_CANCEL:
         case GTK_RESPONSE_DELETE_EVENT:

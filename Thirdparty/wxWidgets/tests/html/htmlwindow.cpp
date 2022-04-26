@@ -3,6 +3,7 @@
 // Purpose:     wxHtmlWindow tests
 // Author:      Vaclav Slavik
 // Created:     2008-10-15
+// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Vaclav Slavik <vslavik@fastmail.fm>
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -14,6 +15,9 @@
 
 #if wxUSE_HTML
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
     #include "wx/app.h"
@@ -32,8 +36,8 @@ class HtmlWindowTestCase : public CppUnit::TestCase
 public:
     HtmlWindowTestCase() { }
 
-    virtual void setUp() wxOVERRIDE;
-    virtual void tearDown() wxOVERRIDE;
+    virtual void setUp();
+    virtual void tearDown();
 
 private:
     CPPUNIT_TEST_SUITE( HtmlWindowTestCase );
@@ -54,7 +58,7 @@ private:
 
     wxHtmlWindow *m_win;
 
-    wxDECLARE_NO_COPY_CLASS(HtmlWindowTestCase);
+    DECLARE_NO_COPY_CLASS(HtmlWindowTestCase)
 };
 
 // register in the unnamed registry so that these tests are run by default
@@ -75,8 +79,7 @@ void HtmlWindowTestCase::setUp()
 
 void HtmlWindowTestCase::tearDown()
 {
-    DeleteTestWindow(m_win);
-    m_win = NULL;
+    wxDELETE(m_win);
 }
 
 // ----------------------------------------------------------------------------
@@ -101,12 +104,10 @@ static const char *TEST_PLAIN_TEXT =
 
 void HtmlWindowTestCase::SelectionToText()
 {
-#if wxUSE_CLIPBOARD
     m_win->SetPage(TEST_MARKUP);
     m_win->SelectAll();
 
     CPPUNIT_ASSERT_EQUAL( TEST_PLAIN_TEXT, m_win->SelectionToText() );
-#endif // wxUSE_CLIPBOARD
 }
 
 void HtmlWindowTestCase::Title()
@@ -119,7 +120,7 @@ void HtmlWindowTestCase::Title()
 #if wxUSE_UIACTIONSIMULATOR
 void HtmlWindowTestCase::CellClick()
 {
-    EventCounter clicked(m_win, wxEVT_HTML_CELL_CLICKED);
+    EventCounter clicked(m_win, wxEVT_COMMAND_HTML_CELL_CLICKED);
 
     wxUIActionSimulator sim;
 
@@ -138,7 +139,7 @@ void HtmlWindowTestCase::CellClick()
 
 void HtmlWindowTestCase::LinkClick()
 {
-    EventCounter clicked(m_win, wxEVT_HTML_LINK_CLICKED);
+    EventCounter clicked(m_win, wxEVT_COMMAND_HTML_LINK_CLICKED);
 
     wxUIActionSimulator sim;
 
@@ -158,12 +159,10 @@ void HtmlWindowTestCase::LinkClick()
 
 void HtmlWindowTestCase::AppendToPage()
 {
-#if wxUSE_CLIPBOARD
     m_win->SetPage(TEST_MARKUP_LINK);
     m_win->AppendToPage("A new paragraph");
 
     CPPUNIT_ASSERT_EQUAL("link A new paragraph", m_win->ToText());
-#endif // wxUSE_CLIPBOARD
 }
 
 #endif //wxUSE_HTML

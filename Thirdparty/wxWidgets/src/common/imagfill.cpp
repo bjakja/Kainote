@@ -2,6 +2,7 @@
 // Name:        src/common/imagfill.cpp
 // Purpose:     FloodFill for wxImage
 // Author:      Julian Smart
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -10,6 +11,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_IMAGE && !defined(__WXMSW__)
 // we have no use for this code in wxMSW...

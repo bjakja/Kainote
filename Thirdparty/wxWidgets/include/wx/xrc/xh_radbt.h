@@ -3,6 +3,7 @@
 // Purpose:     XML resource handler for wxRadioButton
 // Author:      Bob Mitchell
 // Created:     2000/03/21
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 Bob Mitchell and Verant Interactive
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -16,12 +17,12 @@
 
 class WXDLLIMPEXP_XRC wxRadioButtonXmlHandler : public wxXmlResourceHandler
 {
-    wxDECLARE_DYNAMIC_CLASS(wxRadioButtonXmlHandler);
+    DECLARE_DYNAMIC_CLASS(wxRadioButtonXmlHandler)
 
 public:
     wxRadioButtonXmlHandler();
-    virtual wxObject *DoCreateResource() wxOVERRIDE;
-    virtual bool CanHandle(wxXmlNode *node) wxOVERRIDE;
+    virtual wxObject *DoCreateResource();
+    virtual bool CanHandle(wxXmlNode *node);
 };
 
 #endif // wxUSE_XRC && wxUSE_RADIOBOX

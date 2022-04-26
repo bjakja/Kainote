@@ -4,6 +4,7 @@
 // Author:      Jens Lody and Teodor Petrov
 // Modified by:
 // Created:     2012-03-23
+// RCS-ID:      $Id$
 // Copyright:   (c) 2012 Jens Lody <jens@codeblocks.org>
 //                  and Teodor Petrov
 // Licence:     wxWindows licence
@@ -20,6 +21,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_AUI
 
@@ -32,6 +36,8 @@
 
 #include "wx/gtk/dc.h"
 #include "wx/gtk/private.h"
+
+#include <gtk/gtk.h>
 
 #include "wx/aui/auibook.h"
 #include "wx/aui/tabartgtk.h"
@@ -73,23 +79,6 @@ void wxAuiGtkTabArt::DrawBackground(wxDC& dc, wxWindow* WXUNUSED(wnd), const wxR
                                        rect.x, rect.y, rect.width, rect.height);
 }
 
-void wxAuiGtkTabArt::DrawBorder(wxDC& WXUNUSED(dc), wxWindow* wnd, const wxRect& rect)
-{
-    int generic_border_width = wxAuiGenericTabArt::GetBorderWidth(wnd);
-
-    if (!wnd) return;
-    if (!wnd->m_wxwindow) return;
-    if (!gtk_widget_is_drawable(wnd->m_wxwindow)) return;
-
-    GtkStyle *style_notebook = gtk_widget_get_style(wxGTKPrivate::GetNotebookWidget());
-
-    gtk_paint_box(style_notebook, wnd->GTKGetDrawingWindow(), GTK_STATE_NORMAL, GTK_SHADOW_OUT,
-                  NULL, wnd->m_wxwindow,
-                  const_cast<char*>("notebook"),
-                  rect.x + generic_border_width + 1, rect.y + generic_border_width + 1,
-                  rect.width - (generic_border_width + 1), rect.height - (generic_border_width + 1));
-}
-
 void ButtonStateAndShadow(int button_state, GtkStateType &state, GtkShadowType &shadow)
 {
 
@@ -128,7 +117,7 @@ wxRect DrawCloseButton(wxDC& dc,
 
     wxBitmap bmp(gtk_widget_render_icon(widget, GTK_STOCK_CLOSE, GTK_ICON_SIZE_SMALL_TOOLBAR, "tab"));
 
-    if(bmp.GetLogicalWidth() != s_CloseIconSize || bmp.GetLogicalHeight() != s_CloseIconSize)
+    if(bmp.GetWidth() != s_CloseIconSize || bmp.GetHeight() != s_CloseIconSize)
     {
         wxImage img = bmp.ConvertToImage();
         img.Rescale(s_CloseIconSize, s_CloseIconSize);
@@ -205,8 +194,11 @@ void wxAuiGtkTabArt::DrawTab(wxDC& dc, wxWindow* wnd, const wxAuiNotebookPage& p
 
     if (page.active)
         tab_rect.height += 2 * GTK_NOTEBOOK (wxGTKPrivate::GetNotebookWidget())->tab_hborder;
+    // if no bitmap is set, we need a tiny correction
+    if (! page.bitmap.IsOk())
+        tab_rect.height += 1;
 
-    int gap_rect_height = 10 * GTK_NOTEBOOK (wxGTKPrivate::GetNotebookWidget())->tab_hborder;
+    int gap_rect_height = 6 * GTK_NOTEBOOK (wxGTKPrivate::GetNotebookWidget())->tab_hborder;
     int gap_rect_x = 1, gap_start = 0, gap_width = 0;
     int gap_rect_y = tab_rect.y - gap_rect_height;
     int gap_rect_width = window_rect.width;
@@ -218,7 +210,7 @@ void wxAuiGtkTabArt::DrawTab(wxDC& dc, wxWindow* wnd, const wxAuiNotebookPage& p
             if (!page.active)
                 tab_rect.y += 2 * GTK_NOTEBOOK (wxGTKPrivate::GetNotebookWidget())->tab_hborder;
             gap_rect_y = tab_rect.y + tab_rect.height - GTK_NOTEBOOK (wxGTKPrivate::GetNotebookWidget())->tab_hborder / 2;
-            wxFALLTHROUGH;
+            // fall through
         case wxAUI_NB_BOTTOM:
             gap_start = tab_rect.x - GTK_NOTEBOOK (wxGTKPrivate::GetNotebookWidget())->tab_vborder / 2;
             gap_width = tab_rect.width;
@@ -245,15 +237,6 @@ void wxAuiGtkTabArt::DrawTab(wxDC& dc, wxWindow* wnd, const wxAuiNotebookPage& p
 
     wxGTKDCImpl *impldc = (wxGTKDCImpl*) dc.GetImpl();
     GdkWindow* window = impldc->GetGDKWindow();
-
-    // Before drawing the active tab itself, draw a box without border, because some themes
-    // have transparent gaps and a line would be visible at the bottom of the tab
-    if (page.active)
-        gtk_paint_box(style_notebook, window, GTK_STATE_NORMAL, GTK_SHADOW_NONE,
-                      NULL, widget,
-                      const_cast<char*>("notebook"),
-                      gap_rect_x, gap_rect_y,
-                      gap_rect_width, gap_rect_height);
 
     if (tab_pos == wxAUI_NB_BOTTOM)
     {
@@ -294,26 +277,15 @@ void wxAuiGtkTabArt::DrawTab(wxDC& dc, wxWindow* wnd, const wxAuiNotebookPage& p
                            GTK_POS_BOTTOM);
     }
 
-    // After drawing the inactive tab itself, draw a box with the same dimensions as the gap-box,
-    // otherwise we don't get a gap-box, if the active tab is invisible
-    if (!page.active)
-        gtk_paint_box(style_notebook, window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
-                      NULL, widget,
-                      const_cast<char*>("notebook"),
-                      gap_rect_x, gap_rect_y,
-                      gap_rect_width, gap_rect_height);
-
     wxCoord textX = tab_rect.x + padding + style_notebook->xthickness;
 
+    int bitmap_offset = 0;
     if (page.bitmap.IsOk())
     {
-        int bitmap_offset;
         bitmap_offset = textX;
 
-        const wxBitmap bitmap = page.bitmap.GetBitmapFor(wnd);
-
         // draw bitmap
-        int bitmapY = tab_rect.y +(tab_rect.height - bitmap.GetLogicalHeight()) / 2;
+        int bitmapY = tab_rect.y +(tab_rect.height - page.bitmap.GetHeight()) / 2;
         if(!page.active)
         {
             if (tab_pos == wxAUI_NB_TOP)
@@ -321,12 +293,12 @@ void wxAuiGtkTabArt::DrawTab(wxDC& dc, wxWindow* wnd, const wxAuiNotebookPage& p
             else
                 bitmapY -= style_notebook->ythickness / 2;
         }
-        dc.DrawBitmap(bitmap,
+        dc.DrawBitmap(page.bitmap,
                       bitmap_offset,
                       bitmapY,
                       true);
 
-        textX += bitmap.GetLogicalWidth() + padding;
+        textX += page.bitmap.GetWidth() + padding;
     }
 
     wxCoord textW, textH, textY;
@@ -355,7 +327,7 @@ void wxAuiGtkTabArt::DrawTab(wxDC& dc, wxWindow* wnd, const wxAuiNotebookPage& p
 
     if(page.active && (wnd->FindFocus() == wnd) && focus_area.x <= (area.x + area.width))
     {
-        // clipping seems not to work here, so we have to recalc the focus-area manually
+        // clipping seems not to work here, so we we have to recalc the focus-area manually
         if((focus_area.x + focus_area.width) > (area.x + area.width))
             focus_area.width = area.x + area.width - focus_area.x + focus_width - GTK_NOTEBOOK (wxGTKPrivate::GetNotebookWidget())->tab_vborder;
         gtk_paint_focus (style_notebook, window,
@@ -379,8 +351,7 @@ void wxAuiGtkTabArt::DrawTab(wxDC& dc, wxWindow* wnd, const wxAuiNotebookPage& p
         *out_button_rect = DrawCloseButton(dc, widget, close_button_state, rect, wxRIGHT, &area);
     }
 
-    if ( clip_width < tab_rect.width )
-        tab_rect.width = clip_width;
+    tab_rect.width = std::min(tab_rect.width, clip_width);
     *out_tab_rect = tab_rect;
 
     dc.DestroyClippingRegion();
@@ -478,21 +449,10 @@ int wxAuiGtkTabArt::GetBestTabCtrlSize(wxWindow* wnd,
     return tab_height;
 }
 
-int wxAuiGtkTabArt::GetBorderWidth(wxWindow* wnd)
-{
-    return wxAuiGenericTabArt::GetBorderWidth(wnd) + wxMax(GTK_NOTEBOOK (wxGTKPrivate::GetNotebookWidget())->tab_hborder,
-                                                           GTK_NOTEBOOK (wxGTKPrivate::GetNotebookWidget())->tab_vborder);
-}
-
-int wxAuiGtkTabArt::GetAdditionalBorderSpace(wxWindow* wnd)
-{
-    return 2 * GetBorderWidth(wnd);
-}
-
 wxSize wxAuiGtkTabArt::GetTabSize(wxDC& dc,
                               wxWindow* wnd,
                               const wxString& caption,
-                              const wxBitmapBundle& bitmap,
+                              const wxBitmap& bitmap,
                               bool active,
                               int close_button_state,
                               int* x_extent)

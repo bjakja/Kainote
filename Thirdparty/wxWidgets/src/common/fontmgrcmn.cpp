@@ -3,6 +3,7 @@
 // Purpose:     font management for ports that don't have their own
 // Author:      Vaclav Slavik
 // Created:     2006-11-18
+// RCS-ID:      $Id$
 // Copyright:   (c) 2001-2002 SciTech Software, Inc. (www.scitechsoft.com)
 //              (c) 2006 REA Elektronik GmbH
 // Licence:     wxWindows licence
@@ -11,6 +12,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #include "wx/private/fontmgr.h"
 
@@ -115,14 +119,13 @@ wxFontBundleBase::GetFaceForFont(const wxFontMgrFontRefData& font) const
 
     int type = FaceType_Regular;
 
-    if ( font.GetNumericWeight() >= wxFONTWEIGHT_BOLD )
+    if ( font.GetWeight() == wxBOLD )
         type |= FaceType_Bold;
 
-    // FIXME -- this should read "if ( font->GetStyle() == wxFONTSTYLE_ITALIC )",
+    // FIXME -- this should read "if ( font->GetStyle() == wxITALIC )",
     // but since DFB doesn't support slant, we try to display it with italic
     // face (better than nothing...)
-    if ( font.GetStyle() == wxFONTSTYLE_ITALIC
-            || font.GetStyle() == wxFONTSTYLE_SLANT )
+    if ( font.GetStyle() == wxITALIC || font.GetStyle() == wxSLANT )
     {
         if ( HasFace((FaceType)(type | FaceType_Italic)) )
             type |= FaceType_Italic;
@@ -224,7 +227,7 @@ void wxFontsManagerBase::AddBundle(wxFontBundle *bundle)
 wxFontMgrFontRefData::wxFontMgrFontRefData(int size,
                                            wxFontFamily family,
                                            wxFontStyle style,
-                                           int weight,
+                                           wxFontWeight weight,
                                            bool underlined,
                                            const wxString& faceName,
                                            wxFontEncoding encoding)
@@ -237,7 +240,7 @@ wxFontMgrFontRefData::wxFontMgrFontRefData(int size,
     m_info.family = (wxFontFamily)family;
     m_info.faceName = faceName;
     m_info.style = (wxFontStyle)style;
-    m_info.weight = weight;
+    m_info.weight = (wxFontWeight)weight;
     m_info.pointSize = size;
     m_info.underlined = underlined;
     m_info.encoding = encoding;
@@ -248,8 +251,9 @@ wxFontMgrFontRefData::wxFontMgrFontRefData(int size,
 }
 
 wxFontMgrFontRefData::wxFontMgrFontRefData(const wxFontMgrFontRefData& data)
-    : m_info(data.m_info)
 {
+    m_info = data.m_info;
+
     m_fontFace = data.m_fontFace;
     m_fontBundle = data.m_fontBundle;
     m_fontValid = data.m_fontValid;
@@ -277,7 +281,7 @@ wxFontMgrFontRefData::GetFontInstance(float scale, bool antialiased) const
                                        antialiased);
 }
 
-void wxFontMgrFontRefData::SetFractionalPointSize(double pointSize)
+void wxFontMgrFontRefData::SetPointSize(int pointSize)
 {
     m_info.pointSize = pointSize;
     m_fontValid = false;
@@ -295,7 +299,7 @@ void wxFontMgrFontRefData::SetStyle(wxFontStyle style)
     m_fontValid = false;
 }
 
-void wxFontMgrFontRefData::SetNumericWeight(int weight)
+void wxFontMgrFontRefData::SetWeight(wxFontWeight weight)
 {
     m_info.weight = weight;
     m_fontValid = false;

@@ -4,6 +4,7 @@
 // Notes:       Based on htmlhelp.cpp, implementing a monolithic
 //              HTML Help controller class,  by Vaclav Slavik
 // Author:      Harm van der Heijden and Vaclav Slavik
+// RCS-ID:      $Id$
 // Copyright:   (c) Harm van der Heijden and Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -76,11 +77,11 @@ class WXDLLIMPEXP_FWD_HTML wxHtmlHelpController;
 
 class WXDLLIMPEXP_HTML wxHtmlHelpWindow : public wxWindow
 {
-    wxDECLARE_DYNAMIC_CLASS(wxHtmlHelpWindow);
+    DECLARE_DYNAMIC_CLASS(wxHtmlHelpWindow)
 
 public:
     wxHtmlHelpWindow(wxHtmlHelpData* data = NULL) { Init(data); }
-    wxHtmlHelpWindow(wxWindow* parent, wxWindowID id,
+    wxHtmlHelpWindow(wxWindow* parent, wxWindowID wxWindowID,
                     const wxPoint& pos = wxDefaultPosition,
                     const wxSize& size = wxDefaultSize,
                     int style = wxTAB_TRAVERSAL|wxNO_BORDER,
@@ -108,7 +109,7 @@ public:
 
     // Alternative version that works with numeric ID.
     // (uses extension to MS format, <param name="ID" value=id>, see docs)
-    bool Display(int id);
+    bool Display(const int id);
 
     // Displays help window and focuses contents.
     bool DisplayContents();
@@ -261,7 +262,7 @@ private:
     void DisplayIndexItem(const wxHtmlHelpMergedIndexItem *it);
     wxHtmlHelpMergedIndex *m_mergedIndex;
 
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
     wxDECLARE_NO_COPY_CLASS(wxHtmlHelpWindow);
 };
 

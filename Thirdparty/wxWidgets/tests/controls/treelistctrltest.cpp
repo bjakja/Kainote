@@ -3,6 +3,7 @@
 // Purpose:     wxTreeListCtrl unit test.
 // Author:      Vadim Zeitlin
 // Created:     2011-08-27
+// RCS-ID:      $Id$
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -14,6 +15,9 @@
 
 #if wxUSE_TREELISTCTRL
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #include "wx/treelist.h"
 
@@ -28,8 +32,8 @@ class TreeListCtrlTestCase : public CppUnit::TestCase
 public:
     TreeListCtrlTestCase() { }
 
-    virtual void setUp() wxOVERRIDE;
-    virtual void tearDown() wxOVERRIDE;
+    virtual void setUp();
+    virtual void tearDown();
 
 private:
     CPPUNIT_TEST_SUITE( TreeListCtrlTestCase );

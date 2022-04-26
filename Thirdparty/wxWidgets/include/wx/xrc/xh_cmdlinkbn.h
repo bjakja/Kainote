@@ -3,6 +3,7 @@
 // Purpose:     XML resource handler for command link buttons
 // Author:      Kinaou Herve
 // Created:     2010-10-20
+// RCS-ID:      $Id:$
 // Copyright:   (c) 2010 wxWidgets development team
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,8 +20,8 @@ class WXDLLIMPEXP_XRC wxCommandLinkButtonXmlHandler : public wxXmlResourceHandle
 public:
     wxCommandLinkButtonXmlHandler();
 
-    virtual wxObject *DoCreateResource() wxOVERRIDE;
-    virtual bool CanHandle(wxXmlNode *node) wxOVERRIDE;
+    virtual wxObject *DoCreateResource();
+    virtual bool CanHandle(wxXmlNode *node);
 
 private:
     wxDECLARE_DYNAMIC_CLASS(wxCommandLinkButtonXmlHandler);

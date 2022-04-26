@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -18,6 +19,9 @@
 
 #include "wx/wxprec.h"
 
+#if defined(__BORLANDC__)
+    #pragma hdrstop
+#endif
 
 #if wxUSE_GLCANVAS
 
@@ -30,11 +34,14 @@
 #endif
 
 #include "wx/osx/private.h"
-#include "wx/osx/private/available.h"
 
 WXGLContext WXGLCreateContext( WXGLPixelFormat pixelFormat, WXGLContext shareContext )
 {
     WXGLContext context = [[NSOpenGLContext alloc] initWithFormat:pixelFormat shareContext: shareContext];
+    if ( !context )
+    {
+        wxFAIL_MSG("NSOpenGLContext creation failed");
+    }
     return context ;
 }
 
@@ -71,47 +78,154 @@ void WXGLDestroyPixelFormat( WXGLPixelFormat pixelFormat )
     }
 }
 
-// Form a list of attributes by joining canvas attributes and context attributes.
-// OS X uses just one list to find a suitable pixel format.
-WXGLPixelFormat WXGLChoosePixelFormat(const int *GLAttrs,
-                                      int n1,
-                                      const int *ctxAttrs,
-                                      int n2)
+
+WXGLPixelFormat WXGLChoosePixelFormat(const int *attribList)
 {
-    NSOpenGLPixelFormatAttribute data[128];
+    NSOpenGLPixelFormatAttribute data[512];
+    const NSOpenGLPixelFormatAttribute defaultAttribs[] =
+    {
+        NSOpenGLPFADoubleBuffer,
+        NSOpenGLPFAMinimumPolicy,
+        NSOpenGLPFAColorSize,(NSOpenGLPixelFormatAttribute)8,
+        NSOpenGLPFAAlphaSize,(NSOpenGLPixelFormatAttribute)0,
+        NSOpenGLPFADepthSize,(NSOpenGLPixelFormatAttribute)8,
+        (NSOpenGLPixelFormatAttribute)nil
+    };
+
     const NSOpenGLPixelFormatAttribute *attribs;
-    unsigned p = 0;
-
-    // The list should have at least one value and the '0' at end. So the
-    // minimum size is 2.
-    if ( GLAttrs && n1 > 1 )
+    if ( !attribList )
     {
-        n1--; // skip the ending '0'
-        while ( p < (unsigned)n1 )
+        attribs = defaultAttribs;
+    }
+    else
+    {
+        unsigned p = 0;
+        data[p++] = NSOpenGLPFAMinimumPolicy; // make _SIZE tags behave more like GLX
+
+        for ( unsigned arg = 0; attribList[arg] !=0 && p < WXSIZEOF(data); )
         {
-            data[p] = (NSOpenGLPixelFormatAttribute) GLAttrs[p];
-            p++;
+            switch ( attribList[arg++] )
+            {
+                case WX_GL_RGBA:
+                    //data[p++] = AGL_RGBA;
+                    break;
+
+                case WX_GL_BUFFER_SIZE:
+                    //data[p++] = AGL_BUFFER_SIZE;
+                    //data[p++] = attribList[arg++];
+                    break;
+
+                case WX_GL_LEVEL:
+                    //data[p++]=AGL_LEVEL;
+                    //data[p++]=attribList[arg++];
+                    break;
+
+                case WX_GL_DOUBLEBUFFER:
+                    data[p++] = NSOpenGLPFADoubleBuffer;
+                    break;
+
+                case WX_GL_STEREO:
+                    data[p++] = NSOpenGLPFAStereo;
+                    break;
+
+                case WX_GL_AUX_BUFFERS:
+                    data[p++] = NSOpenGLPFAAuxBuffers;
+                    data[p++] = (NSOpenGLPixelFormatAttribute) attribList[arg++];
+                    break;
+
+                case WX_GL_MIN_RED:
+                    data[p++] = NSOpenGLPFAColorSize;
+                    data[p++] = (NSOpenGLPixelFormatAttribute) attribList[arg++];
+                    break;
+
+                case WX_GL_MIN_GREEN:
+                    //data[p++] = AGL_GREEN_SIZE;
+                    //data[p++] = attribList[arg++];
+                    break;
+
+                case WX_GL_MIN_BLUE:
+                    //data[p++] = AGL_BLUE_SIZE;
+                    //data[p++] = attribList[arg++];
+                    break;
+
+                case WX_GL_MIN_ALPHA:
+                    data[p++] = NSOpenGLPFAAlphaSize;
+                    data[p++] = (NSOpenGLPixelFormatAttribute) attribList[arg++];
+                    break;
+
+                case WX_GL_DEPTH_SIZE:
+                    data[p++] = NSOpenGLPFADepthSize;
+                    data[p++] = (NSOpenGLPixelFormatAttribute) attribList[arg++];
+                    break;
+
+                case WX_GL_STENCIL_SIZE:
+                    data[p++] = NSOpenGLPFAStencilSize;
+                    data[p++] = (NSOpenGLPixelFormatAttribute) attribList[arg++];
+                    break;
+
+                case WX_GL_MIN_ACCUM_RED:
+                    data[p++] = NSOpenGLPFAAccumSize;
+                    data[p++] = (NSOpenGLPixelFormatAttribute) attribList[arg++];
+                    break;
+
+                case WX_GL_MIN_ACCUM_GREEN:
+                    //data[p++] = AGL_ACCUM_GREEN_SIZE;
+                    //data[p++] = attribList[arg++];
+                    break;
+
+                case WX_GL_MIN_ACCUM_BLUE:
+                    //data[p++] = AGL_ACCUM_BLUE_SIZE;
+                    //data[p++] = attribList[arg++];
+                    break;
+
+                case WX_GL_MIN_ACCUM_ALPHA:
+                    //data[p++] = AGL_ACCUM_ALPHA_SIZE;
+                    //data[p++] = attribList[arg++];
+                    break;
+
+                case WX_GL_SAMPLE_BUFFERS:
+                    if ( !wxGLCanvas::IsAGLMultiSampleAvailable() )
+                    {
+                        if ( !attribList[arg++] )
+                            break;
+
+                        return nil;
+                    }
+
+                    data[p++] = NSOpenGLPFASampleBuffers;
+                    if ( (data[p++] = (NSOpenGLPixelFormatAttribute) attribList[arg++]) == true )
+                    {
+                        // don't use software fallback
+                        data[p++] = NSOpenGLPFANoRecovery;
+                    }
+                    break;
+
+                case WX_GL_SAMPLES:
+                    if ( !wxGLCanvas::IsAGLMultiSampleAvailable() )
+                    {
+                        if ( !attribList[arg++] )
+                            break;
+
+                        return nil;
+                    }
+
+                    data[p++] = NSOpenGLPFASamples;
+                    data[p++] = (NSOpenGLPixelFormatAttribute) attribList[arg++];
+                    break;
+            }
         }
+
+        data[p] = (NSOpenGLPixelFormatAttribute)nil;
+
+        attribs = data;
     }
-
-    if ( ctxAttrs && n2 > 1 )
-    {
-        n2--; // skip the ending '0'
-        unsigned p2 = 0;
-        while ( p2 < (unsigned)n2 )
-            data[p++] = (NSOpenGLPixelFormatAttribute) ctxAttrs[p2++];
-    }
-
-    // End the list
-    data[p] = (NSOpenGLPixelFormatAttribute) 0;
-
-    attribs = data;
 
     return [[NSOpenGLPixelFormat alloc] initWithAttributes:(NSOpenGLPixelFormatAttribute*) attribs];
 }
 
-@interface wxNSCustomOpenGLView : NSOpenGLView
+@interface wxNSCustomOpenGLView : NSView
 {
+    NSOpenGLContext* context;
 }
 
 @end
@@ -133,49 +247,33 @@ WXGLPixelFormat WXGLChoosePixelFormat(const int *GLAttrs,
     return YES;
 }
 
-- (BOOL) acceptsFirstResponder
-{
-    return YES;
-}
-
-// for special keys
-
-- (void)doCommandBySelector:(SEL)aSelector
-{
-    wxWidgetCocoaImpl* impl = (wxWidgetCocoaImpl* ) wxWidgetImpl::FindFromWXWidget( self );
-    if (impl)
-        impl->doCommandBySelector(aSelector, self, _cmd);
-}
-
-- (NSOpenGLContext *) openGLContext
-{
-    // Prevent the NSOpenGLView from making it's own context
-    // We want to force using wxGLContexts
-    return NULL;
-}
-
 @end
 
-bool wxGLCanvas::DoCreate(wxWindow *parent,
-                          wxWindowID id,
-                          const wxPoint& pos,
-                          const wxSize& size,
-                          long style,
-                          const wxString& name)
+bool wxGLCanvas::Create(wxWindow *parent,
+                        wxWindowID id,
+                        const wxPoint& pos,
+                        const wxSize& size,
+                        long style,
+                        const wxString& name,
+                        const int *attribList,
+                        const wxPalette& WXUNUSED(palette))
 {
-    DontCreatePeer();
+    m_glFormat = WXGLChoosePixelFormat(attribList);
+    if ( !m_glFormat )
+        return false;
+
+    // DontCreatePeer();
     
     if ( !wxWindow::Create(parent, id, pos, size, style, name) )
         return false;
 
-    
+/*
     NSRect r = wxOSXGetFrameForControl( this, pos , size ) ;
     wxNSCustomOpenGLView* v = [[wxNSCustomOpenGLView alloc] initWithFrame:r];
-    [v setWantsBestResolutionOpenGLSurface:YES];
-    
-    wxWidgetCocoaImpl* c = new wxWidgetCocoaImpl( this, v, wxWidgetImpl::Widget_UserKeyEvents | wxWidgetImpl::Widget_UserMouseEvents );
-    SetPeer(c);
+    m_peer = new wxWidgetCocoaImpl( this, v );
+
     MacPostControlCreate(pos, size) ;
+*/
     return true;
 }
 
@@ -198,13 +296,13 @@ bool wxGLCanvas::SwapBuffers()
 bool wxGLContext::SetCurrent(const wxGLCanvas& win) const
 {
     if ( !m_glContext )
-        return false;
+        return false;  
 
     [m_glContext setView: win.GetHandle() ];
     [m_glContext update];
-
+    
     [m_glContext makeCurrentContext];
-
+    
     return true;
 }
 

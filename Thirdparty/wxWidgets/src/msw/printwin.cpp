@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     04/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 // Don't use the Windows printer if we're in wxUniv mode and using
 // the PostScript architecture
@@ -45,8 +49,9 @@
 #include "wx/msw/printdlg.h"
 #include "wx/msw/private.h"
 #include "wx/msw/dcprint.h"
-#include "wx/msw/enhmeta.h"
-
+#if wxUSE_ENH_METAFILE
+    #include "wx/msw/enhmeta.h"
+#endif
 #include <stdlib.h>
 
 // ---------------------------------------------------------------------------
@@ -59,8 +64,8 @@ BOOL CALLBACK wxAbortProc(HDC hdc, int error);
 // wxWin macros
 // ---------------------------------------------------------------------------
 
-    wxIMPLEMENT_DYNAMIC_CLASS(wxWindowsPrinter, wxPrinterBase);
-    wxIMPLEMENT_CLASS(wxWindowsPrintPreview, wxPrintPreviewBase);
+    IMPLEMENT_DYNAMIC_CLASS(wxWindowsPrinter, wxPrinterBase)
+    IMPLEMENT_CLASS(wxWindowsPrintPreview, wxPrintPreviewBase)
 
 // ===========================================================================
 // implementation
@@ -111,13 +116,35 @@ bool wxWindowsPrinter::Print(wxWindow *parent, wxPrintout *printout, bool prompt
         return false;
     }
 
-    // Set printout parameters
-    if (!printout->SetUp(*dc))
+    wxPrinterDCImpl *impl = (wxPrinterDCImpl*) dc->GetImpl();
+
+    HDC hdc = ::GetDC(NULL);
+    int logPPIScreenX = ::GetDeviceCaps(hdc, LOGPIXELSX);
+    int logPPIScreenY = ::GetDeviceCaps(hdc, LOGPIXELSY);
+    ::ReleaseDC(NULL, hdc);
+
+    int logPPIPrinterX = ::GetDeviceCaps((HDC) impl->GetHDC(), LOGPIXELSX);
+    int logPPIPrinterY = ::GetDeviceCaps((HDC) impl->GetHDC(), LOGPIXELSY);
+    if (logPPIPrinterX == 0 || logPPIPrinterY == 0)
     {
         delete dc;
         sm_lastError = wxPRINTER_ERROR;
         return false;
     }
+
+    printout->SetPPIScreen(logPPIScreenX, logPPIScreenY);
+    printout->SetPPIPrinter(logPPIPrinterX, logPPIPrinterY);
+
+    // Set printout parameters
+    printout->SetDC(dc);
+
+    int w, h;
+    dc->GetSize(&w, &h);
+    printout->SetPageSizePixels((int)w, (int)h);
+    printout->SetPaperRectPixels(dc->GetPaperRect());
+
+    dc->GetSizeMM(&w, &h);
+    printout->SetPageSizeMM((int)w, (int)h);
 
     // Create an abort window
     wxBusyCursor busyCursor;
@@ -140,10 +167,10 @@ bool wxWindowsPrinter::Print(wxWindow *parent, wxPrintout *printout, bool prompt
     m_printDialogData.SetMinPage(minPage);
     m_printDialogData.SetMaxPage(maxPage);
 
-    wxPrintAbortDialog *win = CreateAbortWindow(parent, printout);
+    wxWindow *win = CreateAbortWindow(parent, printout);
     wxYield();
 
-    ::SetAbortProc(GetHdcOf(*dc), wxAbortProc);
+    ::SetAbortProc(GetHdcOf(*impl), wxAbortProc);
 
     if (!win)
     {
@@ -163,21 +190,16 @@ bool wxWindowsPrinter::Print(wxWindow *parent, wxPrintout *printout, bool prompt
 
     int minPageNum = minPage, maxPageNum = maxPage;
 
-    if ( !(m_printDialogData.GetAllPages() || m_printDialogData.GetSelection()) )
+    if ( !m_printDialogData.GetAllPages() )
     {
         minPageNum = m_printDialogData.GetFromPage();
         maxPageNum = m_printDialogData.GetToPage();
     }
 
-    // The dc we get from the PrintDialog will do multiple copies without help
-    // if the device supports it. Loop only if we have created a dc from our
-    // own m_printDialogData or the device does not support multiple copies.
-    // m_printDialogData.GetPrintData().GetNoCopies() is set from device
-    // devMode in printdlg.cpp/wxWindowsPrintDialog::ConvertFromNative()
-    const int maxCopyCount = !prompt ||
-                             !m_printDialogData.GetPrintData().GetNoCopies()
-                             ? m_printDialogData.GetNoCopies() : 1;
-    for ( int copyCount = 1; copyCount <= maxCopyCount; copyCount++ )
+    int copyCount;
+    for ( copyCount = 1;
+          copyCount <= m_printDialogData.GetNoCopies();
+          copyCount++ )
     {
         if ( !printout->OnBeginDocument(minPageNum, maxPageNum) )
         {
@@ -197,10 +219,6 @@ bool wxWindowsPrinter::Print(wxWindow *parent, wxPrintout *printout, bool prompt
               pn <= maxPageNum && printout->HasPage(pn);
               pn++ )
         {
-            win->SetProgress(pn - minPageNum + 1,
-                             maxPageNum - minPageNum + 1,
-                             copyCount, maxCopyCount);
-
             if ( sm_abortIt )
             {
                 sm_lastError = wxPRINTER_CANCELLED;
@@ -310,8 +328,10 @@ bool wxWindowsPrintPreview::Print(bool interactive)
 
 void wxWindowsPrintPreview::DetermineScaling()
 {
-    const wxSize logPPIScreen = wxGetDPIofHDC(ScreenHDC());
-    m_previewPrintout->SetPPIScreen(logPPIScreen);
+    ScreenHDC dc;
+    int logPPIScreenX = ::GetDeviceCaps(dc, LOGPIXELSX);
+    int logPPIScreenY = ::GetDeviceCaps(dc, LOGPIXELSY);
+    m_previewPrintout->SetPPIScreen(logPPIScreenX, logPPIScreenY);
 
     // Get a device context for the currently selected printer
     wxPrinterDC printerDC(m_printDialogData.GetPrintData());
@@ -320,24 +340,26 @@ void wxWindowsPrintPreview::DetermineScaling()
     int printerHeightMM;
     int printerXRes;
     int printerYRes;
-    wxSize logPPIPrinter;
+    int logPPIPrinterX;
+    int logPPIPrinterY;
 
     wxRect paperRect;
 
     if ( printerDC.IsOk() )
     {
         wxPrinterDCImpl *impl = (wxPrinterDCImpl*) printerDC.GetImpl();
-        HDC hdc = GetHdcOf(*impl);
-        printerWidthMM = ::GetDeviceCaps(hdc, HORZSIZE);
-        printerHeightMM = ::GetDeviceCaps(hdc, VERTSIZE);
-        printerXRes = ::GetDeviceCaps(hdc, HORZRES);
-        printerYRes = ::GetDeviceCaps(hdc, VERTRES);
-        logPPIPrinter = wxGetDPIofHDC(hdc);
+        HDC dc = GetHdcOf(*impl);
+        printerWidthMM = ::GetDeviceCaps(dc, HORZSIZE);
+        printerHeightMM = ::GetDeviceCaps(dc, VERTSIZE);
+        printerXRes = ::GetDeviceCaps(dc, HORZRES);
+        printerYRes = ::GetDeviceCaps(dc, VERTRES);
+        logPPIPrinterX = ::GetDeviceCaps(dc, LOGPIXELSX);
+        logPPIPrinterY = ::GetDeviceCaps(dc, LOGPIXELSY);
 
         paperRect = printerDC.GetPaperRect();
 
-        if ( logPPIPrinter.x == 0 ||
-                logPPIPrinter.y == 0 ||
+        if ( logPPIPrinterX == 0 ||
+                logPPIPrinterY == 0 ||
                     printerWidthMM == 0 ||
                         printerHeightMM == 0 )
         {
@@ -351,7 +373,8 @@ void wxWindowsPrintPreview::DetermineScaling()
         printerHeightMM = 250;
         printerXRes = 1500;
         printerYRes = 2500;
-        logPPIPrinter = wxSize(600, 600);
+        logPPIPrinterX = 600;
+        logPPIPrinterY = 600;
 
         paperRect = wxRect(0, 0, printerXRes, printerYRes);
         m_isOk = false;
@@ -361,11 +384,11 @@ void wxWindowsPrintPreview::DetermineScaling()
     m_previewPrintout->SetPageSizePixels(printerXRes, printerYRes);
     m_previewPrintout->SetPageSizeMM(printerWidthMM, printerHeightMM);
     m_previewPrintout->SetPaperRectPixels(paperRect);
-    m_previewPrintout->SetPPIPrinter(logPPIPrinter);
+    m_previewPrintout->SetPPIPrinter(logPPIPrinterX, logPPIPrinterY);
 
     // At 100%, the page should look about page-size on the screen.
-    m_previewScaleX = float(logPPIScreen.x) / logPPIPrinter.x;
-    m_previewScaleY = float(logPPIScreen.y) / logPPIPrinter.y;
+    m_previewScaleX = float(logPPIScreenX) / logPPIPrinterX;
+    m_previewScaleY = float(logPPIScreenY) / logPPIPrinterY;
 }
 
 #if wxUSE_ENH_METAFILE

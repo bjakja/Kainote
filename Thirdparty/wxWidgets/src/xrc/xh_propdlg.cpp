@@ -3,6 +3,7 @@
 // Purpose:     XRC resource handler for wxPropertySheetDialog
 // Author:      Sander Berents
 // Created:     2007/07/12
+// RCS-ID:      $Id$
 // Copyright:   (c) 2007 Sander Berents
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -10,6 +11,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_XRC && wxUSE_BOOKCTRL
 
@@ -25,10 +29,12 @@
 #include "wx/propdlg.h"
 #include "wx/imaglist.h"
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxPropertySheetDialogXmlHandler, wxXmlResourceHandler);
+IMPLEMENT_DYNAMIC_CLASS(wxPropertySheetDialogXmlHandler, wxXmlResourceHandler)
 
 wxPropertySheetDialogXmlHandler::wxPropertySheetDialogXmlHandler()
-                               : m_dialog(NULL)
+                     :wxXmlResourceHandler(),
+                      m_isInside(false),
+                      m_dialog(NULL)
 {
     XRC_ADD_STYLE(wxSTAY_ON_TOP);
     XRC_ADD_STYLE(wxCAPTION);
@@ -53,7 +59,46 @@ wxObject *wxPropertySheetDialogXmlHandler::DoCreateResource()
 {
     if (m_class == wxT("propertysheetpage"))
     {
-        return DoCreatePage(m_dialog->GetBookCtrl());
+        wxXmlNode *n = GetParamNode(wxT("object"));
+
+        if (!n) n = GetParamNode(wxT("object_ref"));
+
+        if (n)
+        {
+            wxBookCtrlBase *bookctrl = m_dialog->GetBookCtrl();
+            bool old_ins = m_isInside;
+            m_isInside = false;
+            wxObject *item = CreateResFromNode(n, bookctrl, NULL);
+            m_isInside = old_ins;
+            wxWindow *wnd = wxDynamicCast(item, wxWindow);
+
+            if (wnd)
+            {
+                bookctrl->AddPage(wnd, GetText(wxT("label")), GetBool(wxT("selected")));
+                if (HasParam(wxT("bitmap")))
+                {
+                    wxBitmap bmp = GetBitmap(wxT("bitmap"), wxART_OTHER);
+                    wxImageList *imgList = bookctrl->GetImageList();
+                    if (imgList == NULL)
+                    {
+                        imgList = new wxImageList(bmp.GetWidth(), bmp.GetHeight());
+                        bookctrl->AssignImageList(imgList);
+                    }
+                    int imgIndex = imgList->Add(bmp);
+                    bookctrl->SetPageImage(bookctrl->GetPageCount()-1, imgIndex);
+                }
+            }
+            else
+            {
+                ReportError(n, "propertysheetpage child must be a window");
+            }
+            return wnd;
+        }
+        else
+        {
+            ReportError("propertysheetpage must have a window child");
+            return NULL;
+        }
     }
 
     else
@@ -75,9 +120,10 @@ wxObject *wxPropertySheetDialogXmlHandler::DoCreateResource()
 
         wxPropertySheetDialog *old_par = m_dialog;
         m_dialog = dlg;
-
-        DoCreatePages(m_dialog->GetBookCtrl());
-
+        bool old_ins = m_isInside;
+        m_isInside = true;
+        CreateChildren(m_dialog, true/*only this handler*/);
+        m_isInside = old_ins;
         m_dialog = old_par;
 
         if (GetBool(wxT("centered"), false)) dlg->Centre();
@@ -100,8 +146,8 @@ wxObject *wxPropertySheetDialogXmlHandler::DoCreateResource()
 
 bool wxPropertySheetDialogXmlHandler::CanHandle(wxXmlNode *node)
 {
-    return ((!IsInside() && IsOfClass(node, wxT("wxPropertySheetDialog"))) ||
-            (IsInside() && IsOfClass(node, wxT("propertysheetpage"))));
+    return ((!m_isInside && IsOfClass(node, wxT("wxPropertySheetDialog"))) ||
+            (m_isInside && IsOfClass(node, wxT("propertysheetpage"))));
 }
 
 #endif // wxUSE_XRC && wxUSE_BOOKCTRL

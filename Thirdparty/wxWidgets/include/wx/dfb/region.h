@@ -3,6 +3,7 @@
 // Purpose:     wxRegion class
 // Author:      Vaclav Slavik
 // Created:     2006-08-08
+// RCS-ID:      $Id$
 // Copyright:   (c) 2006 REA Elektronik GmbH
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,7 +18,6 @@ public:
     wxRegion(wxCoord x, wxCoord y, wxCoord w, wxCoord h);
     wxRegion(const wxPoint& topLeft, const wxPoint& bottomRight);
     wxRegion(const wxRect& rect);
-    wxRegion(size_t n, const wxPoint *points, wxPolygonFillMode fillStyle = wxODDEVEN_RULE);
     wxRegion(const wxBitmap& bmp)
     {
         Union(bmp);
@@ -59,7 +59,7 @@ protected:
 
     friend class WXDLLIMPEXP_FWD_CORE wxRegionIterator;
 
-    wxDECLARE_DYNAMIC_CLASS(wxRegion);
+    DECLARE_DYNAMIC_CLASS(wxRegion);
 };
 
 
@@ -89,7 +89,7 @@ public:
 private:
     wxRect m_rect;
 
-    wxDECLARE_DYNAMIC_CLASS(wxRegionIterator);
+    DECLARE_DYNAMIC_CLASS(wxRegionIterator);
 };
 
 #endif // _WX_DFB_REGION_H_

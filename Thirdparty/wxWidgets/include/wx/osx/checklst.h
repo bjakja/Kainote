@@ -5,6 +5,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -25,7 +26,7 @@ public:
                    const wxString *choices = NULL,
                    long style = 0,
                    const wxValidator& validator = wxDefaultValidator,
-                   const wxString& name = wxASCII_STR(wxListBoxNameStr))
+                   const wxString& name = wxListBoxNameStr)
     {
         Init();
 
@@ -38,7 +39,7 @@ public:
                    const wxArrayString& choices,
                    long style = 0,
                    const wxValidator& validator = wxDefaultValidator,
-                   const wxString& name = wxASCII_STR(wxListBoxNameStr))
+                   const wxString& name = wxListBoxNameStr)
     {
         Init();
 
@@ -53,7 +54,7 @@ public:
                 const wxString *choices = NULL,
                 long style = 0,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxASCII_STR(wxListBoxNameStr));
+                const wxString& name = wxListBoxNameStr);
     bool Create(wxWindow *parent,
                 wxWindowID id,
                 const wxPoint& pos,
@@ -61,22 +62,22 @@ public:
                 const wxArrayString& choices,
                 long style = 0,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxASCII_STR(wxListBoxNameStr));
+                const wxString& name = wxListBoxNameStr);
 
     // items may be checked
-    bool  IsChecked(unsigned int uiIndex) const wxOVERRIDE;
-    void  Check(unsigned int uiIndex, bool bCheck = true) wxOVERRIDE;
+    bool  IsChecked(unsigned int uiIndex) const;
+    void  Check(unsigned int uiIndex, bool bCheck = true);
 
     // data callbacks
-    virtual void GetValueCallback( unsigned int n, wxListWidgetColumn* col , wxListWidgetCellValue& value ) wxOVERRIDE;
-    virtual void SetValueCallback( unsigned int n, wxListWidgetColumn* col , wxListWidgetCellValue& value ) wxOVERRIDE;
+    virtual void GetValueCallback( unsigned int n, wxListWidgetColumn* col , wxListWidgetCellValue& value );
+    virtual void SetValueCallback( unsigned int n, wxListWidgetColumn* col , wxListWidgetCellValue& value );
 
 protected:
    // override all methods which add/delete items to update m_checks array as
     // well
-    virtual void OnItemInserted(unsigned int pos) wxOVERRIDE;
-    virtual void DoDeleteOneItem(unsigned int n) wxOVERRIDE;
-    virtual void DoClear() wxOVERRIDE;
+    virtual void OnItemInserted(unsigned int pos);
+    virtual void DoDeleteOneItem(unsigned int n);
+    virtual void DoClear();
 
     // the array containing the checked status of the items
     wxArrayInt m_checks;
@@ -86,8 +87,8 @@ protected:
     void Init();
 
 private:
-    wxDECLARE_EVENT_TABLE();
-    wxDECLARE_DYNAMIC_CLASS(wxCheckListBox);
+    DECLARE_EVENT_TABLE()
+    DECLARE_DYNAMIC_CLASS(wxCheckListBox)
 };
 
 #endif // _WX_MAC_CHECKLST_H_

@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     04.06.02 (extracted from src/*/thread.cpp files)
+// RCS-ID:      $Id$
 // Copyright:   (c) Vadim Zeitlin (2002)
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -71,11 +72,11 @@ wxMutexError wxMutex::Unlock()
 // wxConditionInternal
 // --------------------------------------------------------------------------
 
-// Win32 doesn't have explicit support for the POSIX condition
-// variables and its events/event semaphores have quite different semantics,
+// Win32 and OS/2 don't have explicit support for the POSIX condition
+// variables and their events/event semaphores have quite different semantics,
 // so we reimplement the conditions from scratch using the mutexes and
 // semaphores
-#if defined(__WINDOWS__)
+#if defined(__WINDOWS__) || defined(__OS2__) || defined(__EMX__)
 
 class wxConditionInternal
 {
@@ -222,7 +223,7 @@ wxCondError wxConditionInternal::Broadcast()
     return wxCOND_NO_ERROR;
 }
 
-#endif // __WINDOWS__
+#endif // __WINDOWS__ || __OS2__ || __EMX__
 
 // ----------------------------------------------------------------------------
 // wxCondition
@@ -341,17 +342,9 @@ wxSemaError wxSemaphore::Post()
 // wxThread
 // ----------------------------------------------------------------------------
 
-#include "wx\utils.h"
-#include "wx\private/threadinfo.h"
-#include "wx\scopeguard.h"
+#include "wx/utils.h"
 
 void wxThread::Sleep(unsigned long milliseconds)
 {
     wxMilliSleep(milliseconds);
-}
-
-void *wxThread::CallEntry()
-{
-    wxON_BLOCK_EXIT0(wxThreadSpecificInfo::ThreadCleanUp);
-    return Entry();
 }

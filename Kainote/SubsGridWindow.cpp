@@ -16,7 +16,7 @@
 
 #include "SubsGridWindow.h"
 #include "config.h"
-#include "SubsGrid.h"
+#include "SubsGridBase.h"
 #include "EditBox.h"
 
 #include "kainoteFrame.h"
@@ -1960,8 +1960,8 @@ void SubsGridWindow::SelVideoLine(int curtime)
 
 void SubsGridWindow::ShowSecondComparedLine(int Line, bool showPreview, bool fromPreview, bool setViaScroll)
 {
-	SubsGrid *thisgrid = (SubsGrid*)this;
-	SubsGrid *secondgrid = nullptr;
+	SubsGridWindow* thisgrid = this;
+	SubsGridWindow* secondgrid = nullptr;
 	if (thisgrid == CG1)
 		secondgrid = CG2;
 	else if (thisgrid == CG2)
@@ -2002,7 +2002,7 @@ void SubsGridWindow::RefreshPreview()
 		preview->Refresh(false);
 }
 
-bool SubsGridWindow::ShowPreviewWindow(SubsGrid *previewGrid, SubsGrid *windowToDraw, int activeLine, int diffPosition)
+bool SubsGridWindow::ShowPreviewWindow(SubsGridWindow *previewGrid, SubsGridWindow *windowToDraw, int activeLine, int diffPosition)
 {
 	int w, h;
 	GetClientSize(&w, &h);

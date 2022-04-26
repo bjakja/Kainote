@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     04/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,9 @@
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 // for all others, include the necessary headers (this file is usually all you
 // need because it includes almost all "standard" wxWidgets headers)
@@ -43,7 +47,7 @@
 // resources
 // ----------------------------------------------------------------------------
 
-// the application icon (under Windows it is in resources)
+// the application icon (under Windows and OS/2 it is in resources)
 #ifndef wxHAS_IMAGES_IN_RESOURCES
     #include "emulator.xpm"
 #endif
@@ -55,18 +59,18 @@
 // the event tables connect the wxWidgets events with the functions (event
 // handlers) which process them. It can be also done at run-time, but for the
 // simple menu events like this the static method is much simpler.
-wxBEGIN_EVENT_TABLE(wxEmulatorFrame, wxFrame)
+BEGIN_EVENT_TABLE(wxEmulatorFrame, wxFrame)
     EVT_MENU(Emulator_Quit,  wxEmulatorFrame::OnQuit)
     EVT_MENU(Emulator_About, wxEmulatorFrame::OnAbout)
     EVT_CLOSE(wxEmulatorFrame::OnCloseWindow)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 // Create a new application object: this macro will allow wxWidgets to create
 // the application object during program execution (it's better than using a
 // static object for many reasons) and also declares the accessor function
 // wxGetApp() which will return the reference of the right type (i.e. wxEmulatorApp and
 // not wxApp)
-wxIMPLEMENT_APP(wxEmulatorApp);
+IMPLEMENT_APP(wxEmulatorApp)
 
 static const wxCmdLineEntryDesc sg_cmdLineDesc[] =
 {
@@ -322,13 +326,13 @@ void wxEmulatorFrame::OnCloseWindow(wxCloseEvent& WXUNUSED(event))
     }
 }
 
-wxIMPLEMENT_CLASS(wxEmulatorContainer, wxWindow);
+IMPLEMENT_CLASS(wxEmulatorContainer, wxWindow)
 
-wxBEGIN_EVENT_TABLE(wxEmulatorContainer, wxWindow)
+BEGIN_EVENT_TABLE(wxEmulatorContainer, wxWindow)
     EVT_SIZE(wxEmulatorContainer::OnSize)
     EVT_PAINT(wxEmulatorContainer::OnPaint)
     EVT_ERASE_BACKGROUND(wxEmulatorContainer::OnEraseBackground)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 wxEmulatorContainer::wxEmulatorContainer(wxWindow* parent, wxWindowID id):
     wxWindow(parent, id, wxDefaultPosition, wxDefaultSize)
@@ -393,7 +397,7 @@ void wxEmulatorContainer::OnEraseBackground(wxEraseEvent& event)
         dc = new wxClientDC(this);
     }
 
-    dc->SetBackground(wxBrush(wxGetApp().m_emulatorInfo.m_emulatorBackgroundColour));
+    dc->SetBackground(wxBrush(wxGetApp().m_emulatorInfo.m_emulatorBackgroundColour, wxSOLID));
     dc->Clear();
 
     if (!event.GetDC())

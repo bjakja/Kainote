@@ -4,6 +4,7 @@
 // Author:      Robert Roebling
 // Modified by:
 // Created:     28.06.99
+// RCS-ID:      $Id$
 // Copyright:   (c) Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_CLIPBOARD
 
@@ -33,7 +37,7 @@
 // wxClipboardEvent
 // ---------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxClipboardEvent,wxEvent);
+IMPLEMENT_DYNAMIC_CLASS(wxClipboardEvent,wxEvent)
 
 wxDEFINE_EVENT( wxEVT_CLIPBOARD_CHANGED, wxClipboardEvent );
 
@@ -96,13 +100,13 @@ bool wxClipboardBase::IsSupportedAsync( wxEvtHandler *sink )
 class wxClipboardModule : public wxModule
 {
 public:
-    bool OnInit() wxOVERRIDE { return true; }
-    void OnExit() wxOVERRIDE { wxDELETE(gs_clipboard); }
+    bool OnInit() { return true; }
+    void OnExit() { wxDELETE(gs_clipboard); }
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxClipboardModule);
+    DECLARE_DYNAMIC_CLASS(wxClipboardModule)
 };
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxClipboardModule, wxModule);
+IMPLEMENT_DYNAMIC_CLASS(wxClipboardModule, wxModule)
 
 #endif // wxUSE_CLIPBOARD

@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     2006-10-20
+// RCS-ID:      $Id$
 // Copyright:   (c) wxWidgets team
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -13,28 +14,54 @@
 
 #include "wx/overlay.h"
 
-#if defined(__WXDFB__)
-    #define wxHAS_NATIVE_OVERLAY 1
-#elif defined(__WXOSX__) && wxOSX_USE_COCOA
-    #define wxHAS_NATIVE_OVERLAY 1
-#elif defined(__WXGTK3__)
-    #define wxHAS_NATIVE_OVERLAY 1
-    #define wxHAS_GENERIC_OVERLAY 1
+#ifdef wxHAS_NATIVE_OVERLAY
+
+#if defined(__WXMAC__)
+    #include "wx/osx/carbon/private/overlay.h"
+#elif defined(__WXDFB__)
+    #include "wx/dfb/private/overlay.h"
 #else
-    #define wxHAS_GENERIC_OVERLAY 1
+    #error "unknown native wxOverlay implementation"
 #endif
 
-class wxOverlay::Impl
+#else // !wxHAS_NATIVE_OVERLAY
+
+#include "wx/bitmap.h"
+
+class WXDLLIMPEXP_FWD_CORE wxWindow;
+
+// generic implementation of wxOverlay
+class wxOverlayImpl
 {
 public:
-    virtual ~Impl();
-    virtual bool IsNative() const;
-    virtual bool IsOk() = 0;
-    virtual void Init(wxDC* dc, int x, int y, int width, int height) = 0;
-    virtual void BeginDrawing(wxDC* dc) = 0;
-    virtual void EndDrawing(wxDC* dc) = 0;
-    virtual void Clear(wxDC* dc) = 0;
-    virtual void Reset() = 0;
+    wxOverlayImpl();
+    ~wxOverlayImpl();
+
+
+    // clears the overlay without restoring the former state
+    // to be done eg when the window content has been changed and repainted
+    void Reset();
+
+    // returns true if it has been setup
+    bool IsOk();
+
+    void Init(wxDC* dc, int x , int y , int width , int height);
+
+    void BeginDrawing(wxDC* dc);
+
+    void EndDrawing(wxDC* dc);
+
+    void Clear(wxDC* dc);
+
+private:
+    wxBitmap m_bmpSaved ;
+    int m_x ;
+    int m_y ;
+    int m_width ;
+    int m_height ;
+    wxWindow* m_window ;
 };
+
+#endif // wxHAS_NATIVE_OVERLAY/!wxHAS_NATIVE_OVERLAY
 
 #endif // _WX_PRIVATE_OVERLAY_H_

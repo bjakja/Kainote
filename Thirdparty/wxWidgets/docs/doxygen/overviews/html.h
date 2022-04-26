@@ -2,6 +2,7 @@
 // Name:        html.h
 // Purpose:     topic overview
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -9,11 +10,9 @@
 
 @page overview_html wxHTML Overview
 
-@tableofcontents
-
 The wxHTML library provides classes for parsing and displaying HTML.
 It is not intended to be a high-end HTML browser. If you are looking for
-something like that use wxWebView.
+something like that try <http://www.mozilla.org/>.
 
 wxHTML can be used as a generic rich text viewer - for example to display
 a nice About Box (like those of GNOME apps) or to display the result of
@@ -28,27 +27,36 @@ See @c src/html/m_*.cpp files for details.
 
 There is a generic wxHtmlParser class, independent of wxHtmlWindow.
 
+@li @ref overview_html_quickstart
+@li @ref overview_html_printing
+@li @ref overview_html_helpformats
+@li @ref overview_html_filters
+@li @ref overview_html_cells
+@li @ref overview_html_handlers
+@li @ref overview_html_supptags
 
 
-@section overview_html_quickstart wxHTML Quick Start
+<hr>
+
+
+@section overview_html_quickstart wxHTML quick start
 
 @subsection overview_html_quickstart_disphtml Displaying HTML
 
 First of all, you must include @c wx/wxhtml.h.
 
-Class wxHtmlWindow (derived from ::wxScrolledWindow) is used to display HTML
-documents.
+Class wxHtmlWindow (derived from ::wxScrolledWindow) is used to display HTML documents.
 
 It has two important methods: wxHtmlWindow::LoadPage and wxHtmlWindow::SetPage.
 LoadPage loads and displays HTML file while SetPage displays directly the
 passed @b string. See the example:
 
 @code
-mywin->LoadPage("test.htm");
-mywin->SetPage("htmlbody"
-               "h1Error/h1"
-               "Some error occurred :-H)"
-               "/body/hmtl");
+    mywin -> LoadPage("test.htm");
+    mywin -> SetPage("htmlbody"
+                    "h1Error/h1"
+                    "Some error occurred :-H)"
+                    "/body/hmtl");
 @endcode
 
 @subsection overview_html_quickstart_settingup Setting up wxHtmlWindow
@@ -63,9 +71,9 @@ wxHtmlWindow::SetRelatedFrame and wxHtmlWindow::SetRelatedStatusBar.
 See the example:
 
 @code
-html = new wxHtmlWindow(this);
-html->SetRelatedFrame(this, "HTML : %%s");
-html->SetRelatedStatusBar(0);
+    html = new wxHtmlWindow(this);
+    html -> SetRelatedFrame(this, "HTML : %%s");
+    html -> SetRelatedStatusBar(0);
 @endcode
 
 The first command associates the HTML object with its parent frame
@@ -93,33 +101,32 @@ The last two functions are used to store user customization info wxConfig stuff
 
 @section overview_html_printing HTML Printing
 
-The wxHTML library provides printing facilities with several levels of
-complexity. The easiest way to print an HTML document is to use the
-wxHtmlEasyPrinting class.
+The wxHTML library provides printing facilities with several levels of complexity.
+The easiest way to print an HTML document is to use the wxHtmlEasyPrinting class.
 
-It lets you print HTML documents with only one command and you don't have to
-worry about deriving from the wxPrintout class at all. It is only a simple
-wrapper around the wxHtmlPrintout, normal wxWidgets printout class.
+It lets you print HTML documents with only one command and you don't have to worry
+about deriving from the wxPrintout class at all. It is only a simple wrapper around the
+wxHtmlPrintout, normal wxWidgets printout class.
 
 And finally there is the low level class wxHtmlDCRenderer which you can use to
-render HTML into a rectangular area on any DC. It supports rendering into
-multiple rectangles with the same width. The most common use of this is placing
-one rectangle on each page or printing into two columns.
+render HTML into a rectangular area on any DC.
 
+It supports rendering into multiple rectangles with the same
+width. (The most common use of this is placing one rectangle on each page or
+printing into two columns.)
 
 
 @section overview_html_helpformats Help Files Format
 
-wxHTML library can be used to show an help manual to the user; in fact, it
-supports natively (through wxHtmlHelpController) a reduced version of MS HTML
-Workshop format.
+wxHTML library can be used to show an help manual to the user; in fact, it supports
+natively (through wxHtmlHelpController) a reduced version of MS HTML Workshop format.
 
 A @b book consists of three files: the header file, the contents file
 and the index file.
 
-You can make a regular zip archive of these files, plus the HTML and any image
-files, for wxHTML (or helpview) to read; and the @c ".zip" file can optionally
-be renamed to @c ".htb".
+You can make a regular zip archive of these files, plus the HTML and any
+image files, for wxHTML (or helpview) to read; and the @c ".zip" file can
+optionally be renamed to @c ".htb".
 
 @subsection overview_html_helpformats_hhp Header file (.hhp)
 
@@ -152,54 +159,56 @@ It contains exactly one list (@c &lt;ul&gt;....@c &lt;/ul&gt; statement):
 
 @code
 <ul>
-    <li><object type="text/sitemap">
+
+<li><object type="text/sitemap">
             <param name="Name" value="@topic name@">
             <param name="ID" value=@numeric_id@>
             <param name="Local" value="@filename.htm@">
         </object>
-    <li><object type="text/sitemap">
+<li><object type="text/sitemap">
             <param name="Name" value="@topic name@">
             <param name="ID" value=@numeric_id@>
             <param name="Local" value="@filename.htm@">
         </object>
-    ...
+...
 </ul>
 @endcode
 
-You can modify value attributes of param tags. The <em>topic name</em> is name
-of chapter/topic as is displayed in contents, <em>filename.htm</em> is the HTML
-page name (relative to the @c ".hhp" file) and <em>numeric_id</em> is optional,
-it is used only when you use wxHtmlHelpController::Display(int).
+You can modify value attributes of param tags.
+The <em>topic name</em> is name of chapter/topic as is displayed in
+contents, <em>filename.htm</em> is the HTML page name (relative to the @c ".hhp" file)
+and <em>numeric_id</em> is optional - it is used only when you use wxHtmlHelpController::Display(int).
 
-Items in the list may be nested - one @c &lt;li&gt; statement may contain a
-@c &lt;ul&gt; sub-statement:
+Items in the list may be nested - one @c &lt;li&gt; statement may contain a @c &lt;ul&gt; sub-statement:
 
 @code
 <ul>
-    <li><object type="text/sitemap">
-            <param name="Name" value="Top node">
-            <param name="Local" value="top.htm">
-        </object>
+
+<li><object type="text/sitemap">
+        <param name="Name" value="Top node">
+        <param name="Local" value="top.htm">
+    </object>
     <ul>
         <li><object type="text/sitemap">
             <param name="Name" value="subnode in topnode">
             <param name="Local" value="subnode1.htm">
             </object>
-        ...
-    </ul>
-    <li><object type="text/sitemap">
-            <param name="Name" value="Another Top">
-            <param name="Local" value="top2.htm">
-        </object>
     ...
+    </ul>
+
+<li><object type="text/sitemap">
+        <param name="Name" value="Another Top">
+        <param name="Local" value="top2.htm">
+    </object>
+...
+
 </ul>
 @endcode
 
-@subsection overview_html_helpformats_hhk Index Files (.hhk)
+@subsection overview_html_helpformats_hhk Index file (.hhk)
 
-Index files have same format as contents files except that ID params are
-ignored and sublists are @b not allowed.
-
+Index files have same format as contents files except that ID params are ignored
+and sublists are @b not allowed.
 
 
 @section overview_html_filters Input Filters
@@ -210,7 +219,6 @@ files of many different file formats.
 wxHtmlWindow::LoadPage can load not only HTML files but any known file.
 To make a file type known to wxHtmlWindow you must create a wxHtmlFilter filter and
 register it using wxHtmlWindow::AddFilter.
-
 
 
 @section overview_html_cells Cells and Containers
@@ -254,18 +262,20 @@ to the parent container. See explanation:
 There clearly must be same number of calls to OpenContainer as to
 CloseContainer.
 
-This code creates a new paragraph (container at same depth level) with
-"Hello, world!":
+@subsubsection overview_html_cells_conttaghandler_example Example
+
+This code creates a new paragraph (container at same depth level)
+with "Hello, world!":
 
 @code
-m_WParser->CloseContainer();
-c = m_WParser->OpenContainer();
+m_WParser -> CloseContainer();
+c = m_WParser -> OpenContainer();
 
-m_WParser->AddText("Hello, ");
-m_WParser->AddText("world!");
+m_WParser -> AddText("Hello, ");
+m_WParser -> AddText("world!");
 
-m_WParser->CloseContainer();
-m_WParser->OpenContainer();
+m_WParser -> CloseContainer();
+m_WParser -> OpenContainer();
 @endcode
 
 and here is image of the situation:
@@ -276,14 +286,14 @@ You can see that there was an opened container before the code was executed.
 We closed it, created our own container, then closed our container and opened
 new container.
 
-The result was that we had @e same depth level after executing. This is general
-rule that should be followed by tag handlers: leave depth level of containers
-unmodified (in other words, number of OpenContainer and CloseContainer calls
-should be same within wxHtmlTagHandler::HandleTag's body).
+The result was that we had @e same depth level after executing.
+This is general rule that should be followed by tag handlers:
+leave depth level of containers unmodified (in other words, number of
+OpenContainer and CloseContainer calls should be same within
+wxHtmlTagHandler::HandleTag's body).
 
-Notice that it would be usually better to use wxHtmlContainerCell::InsertCell
-instead of adding text to the parser directly.
-
+Notice that it would be usually better to use wxHtmlContainerCell::InsertCell instead
+of adding text to the parser directly.
 
 
 @section overview_html_handlers Tag Handlers
@@ -417,22 +427,19 @@ See macros reference:
     @endcode
 
 
-
-@section overview_html_supptags Supported HTML Tags
+@section overview_html_supptags Tags supported by wxHTML
 
 wxHTML is not full implementation of HTML standard. Instead, it supports most
 common tags so that it is possible to display @e simple HTML documents with it.
-(For example it works fine with pages created in Netscape Composer or generated
-by tex2rtf).
+(For example it works fine with pages created in Netscape Composer or generated by tex2rtf).
 
-Following tables list all tags known to wxHTML, together with supported
-parameters.
+Following tables list all tags known to wxHTML, together with supported parameters.
 
-A tag has general form of @c tagname param_1 param_2 ... param_n where param_i
-is either @c paramname="paramvalue" or @c paramname=paramvalue - these two are
-equivalent. Unless stated otherwise, wxHTML is case-insensitive.
+A tag has general form of @c tagname param_1 param_2 ... param_n where param_i is
+either @c paramname="paramvalue" or @c paramname=paramvalue - these two are equivalent.
+Unless stated otherwise, wxHTML is case-insensitive.
 
-@subsection overview_html_supptags_commonvalues Common Parameter Values
+@subsection overview_html_supptags_commonvalues Table of common parameter values
 
 We will use these substitutions in tags descriptions:
 
@@ -477,7 +484,7 @@ We will use these substitutions in tags descriptions:
 @endcode
 
 
-@subsection overview_html_supptags_list List of Supported Tags
+@subsection overview_html_supptags_list List of supported tags
 
 @code
 A               NAME=[string]
@@ -505,7 +512,6 @@ DL
 DT
 EM
 FONT            COLOR=[color]
-                BGCOLOR=[color]
                 SIZE=[fontsize]
                 FACE=[comma-separated list of facenames]
 HR              ALIGN=[alignment]
@@ -571,18 +577,18 @@ U
 UL
 @endcode
 
-@subsection overview_html_suppstyles_list Supported Styles
+@subsection overview_html_suppstyles_list List of supported styles
 
 wxHTML doesn't really have CSS support but it does support a few simple styles:
 you can use @c "text-align", @c "width", @c "vertical-align" and @c
 "background" with all elements and for @c SPAN elements a few other styles are
 additionally recognized:
-
-- @c color
-- @c font-family
-- @c font-size (only in point units)
-- @c font-style (only "oblique", "italic" and "normal" values are supported)
-- @c font-weight (only "bold" and "normal" values are supported)
-- @c text-decoration (only "underline" value is supported)
+    - @c color
+    - @c font-family
+    - @c font-size (only in point units)
+    - @c font-style (only "oblique", "italic" and "normal" values are supported)
+    - @c font-weight (only "bold" and "normal" values are supported)
+    - @c text-decoration (only "underline" value is supported)
 
 */
+

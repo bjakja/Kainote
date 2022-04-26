@@ -1,14 +1,18 @@
 ///////////////////////////////////////////////////////////////////////////////
-// Name:        src/generic/bannerwindow.cpp
+// Name:        wx/bannerwindow.h
 // Purpose:     wxBannerWindow class implementation
 // Author:      Vadim Zeitlin
 // Created:     2011-08-16
+// RCS-ID:      $Id$
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_BANNERWINDOW
 
@@ -33,10 +37,10 @@ const int MARGIN_Y = 5;
 
 const char wxBannerWindowNameStr[] = "bannerwindow";
 
-wxBEGIN_EVENT_TABLE(wxBannerWindow, wxWindow)
+BEGIN_EVENT_TABLE(wxBannerWindow, wxWindow)
     EVT_SIZE(wxBannerWindow::OnSize)
     EVT_PAINT(wxBannerWindow::OnPaint)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 void wxBannerWindow::Init()
 {
@@ -71,9 +75,9 @@ wxBannerWindow::Create(wxWindow* parent,
     return true;
 }
 
-void wxBannerWindow::SetBitmap(const wxBitmapBundle& bmp)
+void wxBannerWindow::SetBitmap(const wxBitmap& bmp)
 {
-    m_bitmapBundle = bmp;
+    m_bitmap = bmp;
 
     m_colBitmapBg = wxColour();
 
@@ -109,9 +113,9 @@ wxFont wxBannerWindow::GetTitleFont() const
 
 wxSize wxBannerWindow::DoGetBestClientSize() const
 {
-    if ( m_bitmapBundle.IsOk() )
+    if ( m_bitmap.IsOk() )
     {
-        return m_bitmapBundle.GetPreferredLogicalSizeFor(this);
+        return m_bitmap.GetSize();
     }
     else
     {
@@ -143,7 +147,7 @@ void wxBannerWindow::OnSize(wxSizeEvent& event)
 
 void wxBannerWindow::OnPaint(wxPaintEvent& WXUNUSED(event))
 {
-    if ( m_bitmapBundle.IsOk() && m_title.empty() && m_message.empty() )
+    if ( m_bitmap.IsOk() && m_title.empty() && m_message.empty() )
     {
         // No need for buffering in this case.
         wxPaintDC dc(this);
@@ -155,7 +159,7 @@ void wxBannerWindow::OnPaint(wxPaintEvent& WXUNUSED(event))
         wxAutoBufferedPaintDC dc(this);
 
         // Deal with the background first.
-        if ( m_bitmapBundle.IsOk() )
+        if ( m_bitmap.IsOk() )
         {
             DrawBitmapBackground(dc);
         }
@@ -207,7 +211,7 @@ wxColour wxBannerWindow::GetBitmapBg()
 
     // Determine the colour to use to extend the bitmap. It's the colour of the
     // bitmap pixels at the edge closest to the area where it can be extended.
-    wxImage image(m_bitmapBundle.GetBitmapFor(this).ConvertToImage());
+    wxImage image(m_bitmap.ConvertToImage());
 
     // The point we get the colour from. The choice is arbitrary and in general
     // the bitmap should have the same colour on the entire edge of this point
@@ -260,7 +264,6 @@ void wxBannerWindow::DrawBitmapBackground(wxDC& dc)
     wxRect rectSolid;
 
     const wxSize size = GetClientSize();
-    const wxBitmap currentBitmap = m_bitmapBundle.GetBitmapFor(this);
 
     switch ( m_direction )
     {
@@ -268,9 +271,9 @@ void wxBannerWindow::DrawBitmapBackground(wxDC& dc)
         case wxBOTTOM:
             // Draw the bitmap at the origin, its rightmost could be truncated,
             // as it's meant to be.
-            dc.DrawBitmap(currentBitmap, 0, 0);
+            dc.DrawBitmap(m_bitmap, 0, 0);
 
-            rectSolid.x = currentBitmap.GetLogicalWidth();
+            rectSolid.x = m_bitmap.GetWidth();
             rectSolid.width = size.x - rectSolid.x;
             rectSolid.height = size.y;
             break;
@@ -280,16 +283,16 @@ void wxBannerWindow::DrawBitmapBackground(wxDC& dc)
             // must be always visible so intentionally draw it possibly partly
             // outside of the window.
             rectSolid.width = size.x;
-            rectSolid.height = size.y - currentBitmap.GetLogicalHeight();
-            dc.DrawBitmap(currentBitmap, 0, rectSolid.height);
+            rectSolid.height = size.y - m_bitmap.GetHeight();
+            dc.DrawBitmap(m_bitmap, 0, rectSolid.height);
             break;
 
         case wxRIGHT:
             // Draw the bitmap at the origin, possibly truncating its
             // bottommost part.
-            dc.DrawBitmap(currentBitmap, 0, 0);
+            dc.DrawBitmap(m_bitmap, 0, 0);
 
-            rectSolid.y = currentBitmap.GetLogicalHeight();
+            rectSolid.y = m_bitmap.GetHeight();
             rectSolid.height = size.y - rectSolid.y;
             rectSolid.width = size.x;
             break;

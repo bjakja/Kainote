@@ -2,12 +2,16 @@
 // Name:        tests/streams/backfile.cpp
 // Purpose:     Test wxBackingFile
 // Author:      Mike Wetherell
+// RCS-ID:      $Id$
 // Copyright:   (c) 2006 Mike Wetherell
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "testprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 // for all others, include the necessary headers
 #ifndef WX_PRECOMP
@@ -30,7 +34,7 @@ public:
     TestStream(const void *buf, size_t size)
         : wxMemoryInputStream(buf, size) { }
 
-    wxFileOffset GetLength() const wxOVERRIDE { return wxInvalidOffset; }
+    wxFileOffset GetLength() const { return wxInvalidOffset; }
 };
 
 

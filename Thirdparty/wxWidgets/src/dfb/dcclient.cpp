@@ -3,6 +3,7 @@
 // Purpose:     wxWindowDCImpl, wxClientDCImpl and wxPaintDC
 // Author:      Vaclav Slavik
 // Created:     2006-08-10
+// RCS-ID:      $Id$
 // Copyright:   (c) 2006 REA Elektronik GmbH
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,6 +19,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
     #include "wx/window.h"
@@ -91,7 +95,7 @@ wxIDirectFBSurfacePtr CreateDummySurface(wxWindow *win, const wxRect *rect)
 // wxWindowDCImpl
 //-----------------------------------------------------------------------------
 
-wxIMPLEMENT_ABSTRACT_CLASS(wxWindowDCImpl, wxDFBDCImpl);
+IMPLEMENT_ABSTRACT_CLASS(wxWindowDCImpl, wxDFBDCImpl)
 
 wxWindowDCImpl::wxWindowDCImpl(wxDC *owner, wxWindow *win)
               : wxDFBDCImpl(owner)
@@ -226,7 +230,7 @@ wxWindowDCImpl::~wxWindowDCImpl()
 // wxClientDCImpl
 //-----------------------------------------------------------------------------
 
-wxIMPLEMENT_ABSTRACT_CLASS(wxClientDCImpl, wxWindowDCImpl);
+IMPLEMENT_ABSTRACT_CLASS(wxClientDCImpl, wxWindowDCImpl)
 
 wxClientDCImpl::wxClientDCImpl(wxDC *owner, wxWindow *win)
               : wxWindowDCImpl(owner, win)
@@ -241,4 +245,4 @@ wxClientDCImpl::wxClientDCImpl(wxDC *owner, wxWindow *win)
 // wxPaintDC
 //-----------------------------------------------------------------------------
 
-wxIMPLEMENT_ABSTRACT_CLASS(wxPaintDCImpl, wxWindowDCImpl);
+IMPLEMENT_ABSTRACT_CLASS(wxPaintDCImpl, wxWindowDCImpl)

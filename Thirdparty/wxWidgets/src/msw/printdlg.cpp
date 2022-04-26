@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     04/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 // Don't use the Windows print dialog if we're in wxUniv mode and using
 // the PostScript architecture
@@ -29,14 +33,12 @@
     #include "wx/app.h"
     #include "wx/dcprint.h"
     #include "wx/cmndata.h"
-    #include "wx/utils.h"                   // for wxWindowDisabler
 #endif
 
 #include "wx/printdlg.h"
 #include "wx/msw/printdlg.h"
 #include "wx/msw/dcprint.h"
 #include "wx/paper.h"
-#include "wx/modalhook.h"
 
 #include <stdlib.h>
 
@@ -75,31 +77,6 @@ public:
             m_hPrinter = (HANDLE)NULL;
         }
         return result;
-    }
-
-    // Try to get printer information at the specified level.
-    //
-    // Fills in the provided buffer and returns true on success, otherwise just
-    // returns false.
-    bool GetData(wxMemoryBuffer& buffer, int level)
-    {
-        if ( !m_hPrinter )
-            return false;
-
-        DWORD bufSize = 0;
-        if ( !::GetPrinter(m_hPrinter, level, NULL, 0, &bufSize) || !bufSize )
-            return false;
-
-        if ( !::GetPrinter(m_hPrinter,
-                           level,
-                           (LPBYTE) buffer.GetWriteBuf(bufSize),
-                           bufSize,
-                           &bufSize) )
-            return false;
-
-        buffer.SetDataLen(bufSize);
-
-        return true;
     }
 
     operator HANDLE() { return m_hPrinter; }
@@ -170,9 +147,7 @@ wxCreateDevNames(const wxString& driverName,
                            ( driverName.length() + 1 +
             printerName.length() + 1 +
                              portName.length()+1 ) * sizeof(wxChar) );
-
-        GlobalPtrLock ptr(hDev);
-        LPDEVNAMES lpDev = (LPDEVNAMES)ptr.Get();
+        LPDEVNAMES lpDev = (LPDEVNAMES)GlobalLock(hDev);
         lpDev->wDriverOffset = sizeof(WORD) * 4 / sizeof(wxChar);
         wxStrcpy((wxChar*)lpDev + lpDev->wDriverOffset, driverName);
 
@@ -185,12 +160,14 @@ wxCreateDevNames(const wxString& driverName,
         wxStrcpy((wxChar*)lpDev + lpDev->wOutputOffset, portName);
 
         lpDev->wDefault = 0;
+
+        GlobalUnlock(hDev);
     }
 
     return hDev;
 }
 
-wxIMPLEMENT_CLASS(wxWindowsPrintNativeData, wxPrintNativeDataBase);
+IMPLEMENT_CLASS(wxWindowsPrintNativeData, wxPrintNativeDataBase)
 
 wxWindowsPrintNativeData::wxWindowsPrintNativeData()
 {
@@ -418,7 +395,7 @@ void wxWindowsPrintNativeData::InitializeDevMode(const wxString& printerName, Wi
 
     // From MSDN: How To Modify Printer Settings with the DocumentProperties() Function
     // The purpose of this is to fill the DEVMODE with privdata from printer driver.
-    // If we have a printer name and OpenPrinter successfully returns
+    // If we have a printer name and OpenPrinter sucessfully returns
     // this replaces the PrintDlg function which creates the DEVMODE filled only with data from default printer.
     if ( !m_devMode && !printerName.IsEmpty() )
     {
@@ -436,33 +413,27 @@ void wxWindowsPrintNativeData::InitializeDevMode(const wxString& printerName, Wi
                 NULL,            // these are not used.
                 0 );             // Zero returns buffer size.
 
-            // Some buggy printer drivers (see #16274 which claims that Kyocera
-            // PCL6 driver does this) seem to return a too small value from
-            // DocumentProperties(), resulting in a crash because when we call
-            // it with DM_OUT_BUFFER below, memory beyond the allocated buffer
-            // is overwritten. So add a bit of extra memory to work around this.
-            dwNeeded += 1024;
-
-            GlobalPtr tempDevMode(dwNeeded, GMEM_FIXED | GMEM_ZEROINIT);
-            HGLOBAL hDevMode = tempDevMode;
+            LPDEVMODE tempDevMode = static_cast<LPDEVMODE>( GlobalAlloc( GMEM_FIXED | GMEM_ZEROINIT, dwNeeded ) );
 
             // Step 2:
             // Get the default DevMode for the printer
             dwRet = DocumentProperties( NULL,
                 *printer,
                 szPrinterName,
-                static_cast<LPDEVMODE>(hDevMode), // The buffer to fill.
+                tempDevMode,     // The address of the buffer to fill.
                 NULL,            // Not using the input buffer.
                 DM_OUT_BUFFER ); // Have the output buffer filled.
 
             if ( dwRet != IDOK )
             {
                 // If failure, cleanup
+                GlobalFree( tempDevMode );
                 printer->Close();
             }
             else
             {
-                m_devMode = tempDevMode.Release();
+                m_devMode = tempDevMode;
+                tempDevMode = NULL;
             }
         }
     }
@@ -473,7 +444,11 @@ void wxWindowsPrintNativeData::InitializeDevMode(const wxString& printerName, Wi
         PRINTDLG pd;
 
         memset(&pd, 0, sizeof(PRINTDLG));
+#ifdef __WXWINCE__
+        pd.cbStruct    = sizeof(PRINTDLG);
+#else
         pd.lStructSize    = sizeof(PRINTDLG);
+#endif
 
         pd.hwndOwner      = NULL;
         pd.hDevMode       = NULL; // Will be created by PrintDlg
@@ -514,47 +489,6 @@ void wxWindowsPrintNativeData::InitializeDevMode(const wxString& printerName, Wi
         }
     }
 
-    // Try to initialize devmode to user or system default.
-    if (m_devMode)
-    {
-        GlobalPtrLock lockDevMode(m_devMode);
-        LPDEVMODE tempDevMode = static_cast<LPDEVMODE>(lockDevMode.Get());
-        if (tempDevMode)
-        {
-            WinPrinter winPrinter;
-            if (winPrinter.Open(tempDevMode->dmDeviceName))
-            {
-                DEVMODE* pDevMode = NULL;
-
-                wxMemoryBuffer buffer;
-
-                // Try level 9 (per-user default printer settings) first.
-                if ( winPrinter.GetData(buffer, 9) )
-                    pDevMode = static_cast<PRINTER_INFO_9*>(buffer.GetData())->pDevMode;
-
-                // If not available, try level 8 (global default printer
-                // settings).
-                if ( !pDevMode )
-                {
-                    if ( winPrinter.GetData(buffer, 8) )
-                        pDevMode = static_cast<PRINTER_INFO_8*>(buffer.GetData())->pDevMode;
-                }
-
-                if ( pDevMode )
-                {
-                    DWORD devModeSize = pDevMode->dmSize + pDevMode->dmDriverExtra;
-                    GlobalPtr newDevMode(devModeSize, GMEM_FIXED | GMEM_ZEROINIT);
-                    if ( newDevMode )
-                    {
-                        memcpy(newDevMode, pDevMode, devModeSize);
-
-                        ::GlobalFree(m_devMode);
-                        m_devMode = newDevMode.Release();
-                    }
-                }
-            }
-        }
-    }
 }
 
 bool wxWindowsPrintNativeData::TransferFrom( const wxPrintData &data )
@@ -759,7 +693,7 @@ bool wxWindowsPrintNativeData::TransferFrom( const wxPrintData &data )
 // wxPrintDialog
 // ---------------------------------------------------------------------------
 
-wxIMPLEMENT_CLASS(wxWindowsPrintDialog, wxPrintDialogBase);
+IMPLEMENT_CLASS(wxWindowsPrintDialog, wxPrintDialogBase)
 
 wxWindowsPrintDialog::wxWindowsPrintDialog(wxWindow *p, wxPrintDialogData* data)
 {
@@ -804,18 +738,16 @@ wxWindowsPrintDialog::~wxWindowsPrintDialog()
 
 int wxWindowsPrintDialog::ShowModal()
 {
-    WX_HOOK_MODAL_DIALOG();
-
-    wxWindowDisabler disableOthers(this);
-
-    wxWindow* const parent = GetParentForModalDialog(m_parent, GetWindowStyle());
-    WXHWND hWndParent = parent ? GetHwndOf(parent) : NULL;
-
     ConvertToNative( m_printDialogData );
 
     PRINTDLG *pd = (PRINTDLG*) m_printDlg;
 
-    pd->hwndOwner = hWndParent;
+    if (m_dialogParent)
+        pd->hwndOwner = (HWND) m_dialogParent->GetHWND();
+    else if (wxTheApp->GetTopWindow())
+        pd->hwndOwner = (HWND) wxTheApp->GetTopWindow()->GetHWND();
+    else
+        pd->hwndOwner = 0;
 
     bool ret = (PrintDlg( pd ) != 0);
 
@@ -860,6 +792,24 @@ bool wxWindowsPrintDialog::ConvertToNative( wxPrintDialogData &data )
     pd = new PRINTDLG;
     memset( pd, 0, sizeof(PRINTDLG) );
     m_printDlg = (void*) pd;
+
+    pd->lStructSize    = sizeof(PRINTDLG);
+    pd->hwndOwner      = NULL;
+    pd->hDevMode       = NULL; // Will be created by PrintDlg
+    pd->hDevNames      = NULL; // Ditto
+
+    pd->Flags          = PD_RETURNDEFAULT;
+    pd->nCopies        = 1;
+
+    // Pass the devmode data to the PRINTDLG structure, since it'll
+    // be needed when PrintDlg is called.
+    if (pd->hDevMode)
+        GlobalFree(pd->hDevMode);
+
+    // Pass the devnames data to the PRINTDLG structure, since it'll
+    // be needed when PrintDlg is called.
+    if (pd->hDevNames)
+        GlobalFree(pd->hDevNames);
 
     pd->hDevMode = static_cast<HGLOBAL>(native_data->GetDevMode());
     native_data->SetDevMode(NULL);
@@ -970,7 +920,7 @@ bool wxWindowsPrintDialog::ConvertFromNative( wxPrintDialogData &data )
 // wxWidnowsPageSetupDialog
 // ---------------------------------------------------------------------------
 
-wxIMPLEMENT_CLASS(wxWindowsPageSetupDialog, wxPageSetupDialogBase);
+IMPLEMENT_CLASS(wxWindowsPageSetupDialog, wxPageSetupDialogBase)
 
 wxWindowsPageSetupDialog::wxWindowsPageSetupDialog()
 {
@@ -1007,8 +957,6 @@ wxWindowsPageSetupDialog::~wxWindowsPageSetupDialog()
 
 int wxWindowsPageSetupDialog::ShowModal()
 {
-    WX_HOOK_MODAL_DIALOG();
-
     ConvertToNative( m_pageSetupData );
 
     PAGESETUPDLG *pd = (PAGESETUPDLG *) m_pageDlg;

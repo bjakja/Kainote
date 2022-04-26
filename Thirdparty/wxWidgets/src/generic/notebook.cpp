@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_NOTEBOOK
 
@@ -45,14 +49,14 @@
 // event table
 // ----------------------------------------------------------------------------
 
-wxBEGIN_EVENT_TABLE(wxNotebook, wxBookCtrlBase)
+BEGIN_EVENT_TABLE(wxNotebook, wxBookCtrlBase)
     EVT_NOTEBOOK_PAGE_CHANGED(wxID_ANY, wxNotebook::OnSelChange)
     EVT_SIZE(wxNotebook::OnSize)
     EVT_PAINT(wxNotebook::OnPaint)
     EVT_MOUSE_EVENTS(wxNotebook::OnMouseEvent)
     EVT_SET_FOCUS(wxNotebook::OnSetFocus)
     EVT_NAVIGATION_KEY(wxNotebook::OnNavigationKey)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 // ============================================================================
 // implementation
@@ -71,7 +75,7 @@ WX_DECLARE_HASH_MAP(wxNotebookPage*, int, wxPointerHash, wxPointerEqual,
 // This reuses wxTabView to draw the tabs.
 class WXDLLEXPORT wxNotebookTabView: public wxTabView
 {
-    wxDECLARE_DYNAMIC_CLASS(wxNotebookTabView);
+DECLARE_DYNAMIC_CLASS(wxNotebookTabView)
 public:
     wxNotebookTabView(wxNotebook* notebook, long style = wxTAB_STYLE_DRAW_BOX | wxTAB_STYLE_COLOUR_INTERIOR);
     virtual ~wxNotebookTabView(void);
@@ -278,10 +282,10 @@ bool wxNotebook::DeletePage(size_t nPage)
 
     m_tabView->RemoveTab(GetPageId(m_tabView, pPage));
 
-    m_pages.erase(m_pages.begin() + nPage);
+    m_pages.Remove(pPage);
     delete pPage;
 
-    if (m_pages.empty())
+    if (m_pages.GetCount() == 0)
     {
         m_selection = -1;
         m_tabView->SetTabSelection(-1, false);
@@ -327,9 +331,9 @@ wxWindow* wxNotebook::DoRemovePage(size_t nPage)
 
     m_tabView->RemoveTab(GetPageId(m_tabView, pPage));
 
-    m_pages.erase(m_pages.begin() + nPage);
+    m_pages.Remove(pPage);
 
-    if (m_pages.empty())
+    if (m_pages.GetCount() == 0)
     {
       m_selection = -1;
       m_tabView->SetTabSelection(-1, true);
@@ -389,7 +393,7 @@ bool wxNotebook::DeleteAllPages()
     for ( nPage = 0; nPage < nPageCount; nPage++ )
         delete m_pages[nPage];
 
-    m_pages.clear();
+    m_pages.Clear();
 
     return true;
 }
@@ -410,7 +414,7 @@ bool wxNotebook::InsertPage(size_t nPage,
       pPage->Show(false);
 
     // save the pointer to the page
-    m_pages.insert(m_pages.begin() + nPage, pPage);
+    m_pages.Insert(pPage, nPage);
 
     if (bSelect)
     {
@@ -519,7 +523,7 @@ bool wxNotebook::RefreshLayout(bool force)
 
         // fit the notebook page to the tab control's display area
 
-        size_t nCount = m_pages.size();
+        size_t nCount = m_pages.Count();
         for ( size_t nPage = 0; nPage < nCount; nPage++ ) {
             wxNotebookPage *pPage = m_pages[nPage];
             wxRect clientRect = GetAvailableClientSize();
@@ -670,7 +674,7 @@ wxRect wxNotebook::GetAvailableClientSize()
  * wxNotebookTabView
  */
 
-wxIMPLEMENT_CLASS(wxNotebookTabView, wxTabView);
+IMPLEMENT_CLASS(wxNotebookTabView, wxTabView)
 
 wxNotebookTabView::wxNotebookTabView(wxNotebook *notebook, long style)
     : wxTabView(style), m_nextid(1)
@@ -705,7 +709,7 @@ void wxNotebookTabView::OnTabActivate(int activateId, int deactivateId)
   if (!m_notebook)
     return;
 
-  wxBookCtrlEvent event(wxEVT_NOTEBOOK_PAGE_CHANGED, m_notebook->GetId());
+  wxBookCtrlEvent event(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, m_notebook->GetId());
 
   // Translate from wxTabView's ids (which aren't position-dependent)
   // to wxNotebook's (which are).
@@ -728,7 +732,7 @@ bool wxNotebookTabView::OnTabPreActivate(int activateId, int deactivateId)
 
   if (m_notebook)
   {
-    wxBookCtrlEvent event(wxEVT_NOTEBOOK_PAGE_CHANGING, m_notebook->GetId());
+    wxBookCtrlEvent event(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGING, m_notebook->GetId());
 
     // Translate from wxTabView's ids (which aren't position-dependent)
     // to wxNotebook's (which are).

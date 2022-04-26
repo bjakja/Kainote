@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     2008-08-20
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:       wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -28,12 +29,8 @@ wxWidgetImplType* wxWidgetImpl::CreateCheckBox( wxWindowMac* wxpeer,
     wxNSButton* v = [[wxNSButton alloc] initWithFrame:r];
 
     [v setButtonType:NSSwitchButton];
-    if (style & wxALIGN_RIGHT)
-        [v setImagePosition:NSImageRight];
     if (style & wxCHK_3STATE)
         [v setAllowsMixedState:YES];
-    [v setAlignment: (style & wxALIGN_RIGHT) ?
-                     NSRightTextAlignment : NSLeftTextAlignment];
 
     wxWidgetCocoaImpl* c = new wxWidgetCocoaImpl( wxpeer, v );
     return c;

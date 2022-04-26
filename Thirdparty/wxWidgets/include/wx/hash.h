@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by: VZ at 25.02.00: type safe hashes with WX_DECLARE_HASH()
 // Created:     01/02/97
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,11 +12,11 @@
 #ifndef _WX_HASH_H__
 #define _WX_HASH_H__
 
-#include "wx\defs.h"
-#include "wx\string.h"
+#include "wx/defs.h"
+#include "wx/string.h"
 
 #if !wxUSE_STD_CONTAINERS
-    #include "wx\object.h"
+    #include "wx/object.h"
 #else
     class WXDLLIMPEXP_FWD_BASE wxObject;
 #endif
@@ -40,13 +41,10 @@ union wxHashKeyValue
 // enough, so provide a real forward declaration
 class WXDLLIMPEXP_FWD_BASE wxHashTableBase;
 
-// and clang doesn't like using WXDLLIMPEXP_FWD_BASE inside a typedef.
-class WXDLLIMPEXP_FWD_BASE wxHashTableBase_Node;
-
 class WXDLLIMPEXP_BASE wxHashTableBase_Node
 {
-    friend class wxHashTableBase;
-    typedef class wxHashTableBase_Node _Node;
+    friend class WXDLLIMPEXP_FWD_BASE wxHashTableBase;
+    typedef class WXDLLIMPEXP_FWD_BASE wxHashTableBase_Node _Node;
 public:
     wxHashTableBase_Node( long key, void* value,
                           wxHashTableBase* table );
@@ -119,7 +117,7 @@ private:
     void DoRemoveNode( wxHashTableBase_Node* node );
 
     // destroys data contained in the node if appropriate:
-    // deletes the key if it is a string and destroys
+    // deletes the key if it is a string and destrys
     // the value if m_deleteContents is true
     void DoDestroyNode( wxHashTableBase_Node* node );
 
@@ -244,7 +242,7 @@ protected:
     // m_curr to it and m_currBucket to its bucket
     void GetNextNode( size_t bucketStart );
 private:
-    virtual void DoDeleteContents( wxHashTableBase_Node* node ) wxOVERRIDE;
+    virtual void DoDeleteContents( wxHashTableBase_Node* node );
 
     // current node
     Node* m_curr;
@@ -275,10 +273,10 @@ private:
         eltype *Delete(long lhash, long key)                                  \
             { return (eltype*)DoDelete(key, lhash); }                         \
     private:                                                                  \
-        virtual void DoDeleteContents( wxHashTableBase_Node* node ) wxOVERRIDE\
+        virtual void DoDeleteContents( wxHashTableBase_Node* node )           \
             { delete (eltype*)node->GetData(); }                              \
                                                                               \
-        wxDECLARE_NO_COPY_CLASS(hashclass);                                   \
+        DECLARE_NO_COPY_CLASS(hashclass)                                      \
     }
 
 

@@ -2,12 +2,16 @@
 // Name:        customcombo.cpp
 // Purpose:     Implement some custom wxComboCtrls
 // Author:      Utensil Candel (UtensilCandel@@gmail.com)
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 // for all others, include the necessary headers
 #ifndef WX_PRECOMP
@@ -21,21 +25,21 @@
 #include "customcombo.h"
 
 
-wxBEGIN_EVENT_TABLE(ListViewComboPopup, wxListView)
+BEGIN_EVENT_TABLE(ListViewComboPopup, wxListView)
     EVT_MOTION(ListViewComboPopup::OnMouseMove)
     // NOTE: Left down event is used instead of left up right now
     //       since MSW wxListCtrl doesn't seem to emit left ups
     //       consistently.
     EVT_LEFT_DOWN(ListViewComboPopup::OnMouseClick)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
-wxBEGIN_EVENT_TABLE(TreeCtrlComboPopup, wxTreeCtrl)
+BEGIN_EVENT_TABLE(TreeCtrlComboPopup, wxTreeCtrl)
     EVT_MOTION(TreeCtrlComboPopup::OnMouseMove)
     // NOTE: Left down event is used instead of left up right now
     //       since MSW wxTreeCtrl doesn't seem to emit left ups
     //       consistently.
     EVT_LEFT_DOWN(TreeCtrlComboPopup::OnMouseClick)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 
 
@@ -55,29 +59,29 @@ void PenStyleComboBox::OnDrawItem( wxDC& dc,
     r.Deflate(3);
     r.height -= 2;
 
-    wxPenStyle penStyle = wxPENSTYLE_SOLID;
+    int penStyle = wxSOLID;
 //    if ( item == 1 )
-//        penStyle = wxPENSTYLE_TRANSPARENT;
+//        penStyle = wxTRANSPARENT;
 //    else if ( item == 2 )
-//        penStyle = wxPENSTYLE_DOT;
+//        penStyle = wxDOT;
 //    else if ( item == 3 )
-//        penStyle = wxPENSTYLE_LONG_DASH;
+//        penStyle = wxLONG_DASH;
 //    else if ( item == 4 )
-//        penStyle = wxPENSTYLE_SHORT_DASH;
+//        penStyle = wxSHORT_DASH;
     if ( item == 0 )
-        penStyle = wxPENSTYLE_DOT_DASH;
+        penStyle = wxDOT_DASH;
     else if ( item == 1 )
-        penStyle = wxPENSTYLE_BDIAGONAL_HATCH;
+        penStyle = wxBDIAGONAL_HATCH;
     else if ( item == 2 )
-        penStyle = wxPENSTYLE_CROSSDIAG_HATCH;
+        penStyle = wxCROSSDIAG_HATCH;
 //    else if ( item == 8 )
-//        penStyle = wxPENSTYLE_FDIAGONAL_HATCH;
+//        penStyle = wxFDIAGONAL_HATCH;
 //    else if ( item == 9 )
-//        penStyle = wxPENSTYLE_CROSS_HATCH;
+//        penStyle = wxCROSS_HATCH;
 //    else if ( item == 10 )
-//        penStyle = wxPENSTYLE_HORIZONTAL_HATCH;
+//        penStyle = wxHORIZONTAL_HATCH;
 //    else if ( item == 11 )
-//        penStyle = wxPENSTYLE_VERTICAL_HATCH;
+//        penStyle = wxVERTICAL_HATCH;
 
     wxPen pen( dc.GetTextForeground(), 3, penStyle );
 

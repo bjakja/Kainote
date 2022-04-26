@@ -2,6 +2,7 @@
 // Name:        wx/gtk1/statbox.h
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -23,14 +24,14 @@ public:
                  const wxPoint &pos = wxDefaultPosition,
                  const wxSize &size = wxDefaultSize,
                  long style = 0,
-                 const wxString &name = wxASCII_STR(wxStaticBoxNameStr) );
+                 const wxString &name = wxStaticBoxNameStr );
     bool Create( wxWindow *parent,
                  wxWindowID id,
                  const wxString &label,
                  const wxPoint &pos = wxDefaultPosition,
                  const wxSize &size = wxDefaultSize,
                  long style = 0,
-                 const wxString &name = wxASCII_STR(wxStaticBoxNameStr) );
+                 const wxString &name = wxStaticBoxNameStr );
 
     virtual void SetLabel( const wxString &label );
 
@@ -45,7 +46,7 @@ protected:
     void DoApplyWidgetStyle(GtkRcStyle *style);
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxStaticBox);
+    DECLARE_DYNAMIC_CLASS(wxStaticBox)
 };
 
 #endif // __GTKSTATICBOXH__

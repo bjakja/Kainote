@@ -6,6 +6,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -35,14 +36,20 @@ enum wxSashEdgePosition {
  * wxSashEdge represents one of the four edges of a window.
  */
 
-class WXDLLIMPEXP_CORE wxSashEdge
+class WXDLLIMPEXP_ADV wxSashEdge
 {
 public:
     wxSashEdge()
     { m_show = false;
+#if WXWIN_COMPATIBILITY_2_6
+      m_border = false;
+#endif
       m_margin = 0; }
 
     bool    m_show;     // Is the sash showing?
+#if WXWIN_COMPATIBILITY_2_6
+    bool    m_border;   // Do we draw a border?
+#endif
     int     m_margin;   // The margin size
 };
 
@@ -63,7 +70,7 @@ public:
  * of wxSashWindow.
  */
 
-class WXDLLIMPEXP_CORE wxSashWindow: public wxWindow
+class WXDLLIMPEXP_ADV wxSashWindow: public wxWindow
 {
 public:
     // Default constructor
@@ -90,6 +97,16 @@ public:
 
     // Get whether there's a sash in this position
     bool GetSashVisible(wxSashEdgePosition edge) const { return m_sashes[edge].m_show; }
+
+#if WXWIN_COMPATIBILITY_2_6
+    // Set whether there's a border in this position
+    // This value is unused in wxSashWindow.
+    void SetSashBorder(wxSashEdgePosition edge, bool border) { m_sashes[edge].m_border = border; }
+
+    // Get whether there's a border in this position
+    // This value is unused in wxSashWindow.
+    bool HasBorder(wxSashEdgePosition edge) const { return m_sashes[edge].m_border; }
+#endif
 
     // Get border size
     int GetEdgeMargin(wxSashEdgePosition edge) const { return m_sashes[edge].m_margin; }
@@ -181,14 +198,14 @@ private:
     wxCursor*   m_currentCursor;
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxSashWindow);
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_DYNAMIC_CLASS(wxSashWindow)
+    DECLARE_EVENT_TABLE()
     wxDECLARE_NO_COPY_CLASS(wxSashWindow);
 };
 
-class WXDLLIMPEXP_FWD_CORE wxSashEvent;
+class WXDLLIMPEXP_FWD_ADV wxSashEvent;
 
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_SASH_DRAGGED, wxSashEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_ADV, wxEVT_SASH_DRAGGED, wxSashEvent );
 
 enum wxSashDragStatus
 {
@@ -196,7 +213,7 @@ enum wxSashDragStatus
     wxSASH_STATUS_OUT_OF_RANGE
 };
 
-class WXDLLIMPEXP_CORE wxSashEvent: public wxCommandEvent
+class WXDLLIMPEXP_ADV wxSashEvent: public wxCommandEvent
 {
 public:
     wxSashEvent(int id = 0, wxSashEdgePosition edge = wxSASH_NONE)
@@ -224,7 +241,7 @@ public:
     void SetDragStatus(wxSashDragStatus status) { m_dragStatus = status; }
     wxSashDragStatus GetDragStatus() const { return m_dragStatus; }
 
-    virtual wxEvent *Clone() const wxOVERRIDE { return new wxSashEvent(*this); }
+    virtual wxEvent *Clone() const { return new wxSashEvent(*this); }
 
 private:
     wxSashEdgePosition  m_edge;
@@ -232,7 +249,7 @@ private:
     wxSashDragStatus    m_dragStatus;
 
 private:
-    wxDECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxSashEvent);
+    DECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxSashEvent)
 };
 
 typedef void (wxEvtHandler::*wxSashEventFunction)(wxSashEvent&);

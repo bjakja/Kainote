@@ -3,6 +3,7 @@
 // Purpose:     wxMarkupText implementation
 // Author:      Vadim Zeitlin
 // Created:     2011-02-21
+// RCS-ID:      $Id: wxhead.cpp,v 1.11 2010-04-22 12:44:51 zeitlin Exp $
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -18,6 +19,9 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_MARKUP
 
@@ -27,16 +31,9 @@
     #include "wx/dc.h"
 #endif // WX_PRECOMP
 
-#include "wx/renderer.h"
-
 #include "wx/generic/private/markuptext.h"
 
 #include "wx/private/markupparserattr.h"
-
-#if wxUSE_GRAPHICS_CONTEXT
-    #include "wx/graphics.h"
-    #include "wx/scopedptr.h"
-#endif
 
 namespace
 {
@@ -63,8 +60,10 @@ public:
     const wxSize& GetSize() const { return m_size; }
 
 
-    virtual void OnText(const wxString& text) wxOVERRIDE
+    virtual void OnText(const wxString& text_)
     {
+        const wxString text(wxControl::RemoveMnemonics(text_));
+
         // TODO-MULTILINE-MARKUP: Must use GetMultiLineTextExtent().
         const wxSize size = m_dc.GetTextExtent(text);
 
@@ -81,12 +80,12 @@ public:
         }
     }
 
-    virtual void OnAttrStart(const Attr& attr) wxOVERRIDE
+    virtual void OnAttrStart(const Attr& attr)
     {
         m_dc.SetFont(attr.font);
     }
 
-    virtual void OnAttrEnd(const Attr& WXUNUSED(attr)) wxOVERRIDE
+    virtual void OnAttrEnd(const Attr& WXUNUSED(attr))
     {
         m_dc.SetFont(GetFont());
     }
@@ -120,6 +119,8 @@ public:
           m_dc(dc),
           m_rect(rect),
           m_flags(flags)
+    {
+        m_pos = m_rect.x;
 
         // We don't initialize the base class initial text background colour to
         // the valid value because we want to be able to detect when we revert
@@ -129,79 +130,10 @@ public:
         // background isn't used anyhow when the background mode is transparent
         // but it might affect the caller if it sets the background mode to
         // opaque and draws some text after using us.
-        , m_origTextBackground(dc.GetTextBackground())
-        , m_pos(m_rect.x)
-    {
+        m_origTextBackground = dc.GetTextBackground();
     }
 
-    virtual void OnAttrStart(const Attr& attr) wxOVERRIDE
-    {
-        m_dc.SetFont(attr.font);
-        if ( attr.foreground.IsOk() )
-            m_dc.SetTextForeground(attr.foreground);
-
-        if ( attr.background.IsOk() )
-        {
-            // Setting the background colour is not enough, we must also change
-            // the mode to ensure that it is actually used.
-            m_dc.SetBackgroundMode(wxBRUSHSTYLE_SOLID);
-            m_dc.SetTextBackground(attr.background);
-        }
-    }
-
-    virtual void OnAttrEnd(const Attr& attr) wxOVERRIDE
-    {
-        // We always restore the font because we always change it...
-        m_dc.SetFont(GetFont());
-
-        // ...but we only need to restore the colours if we had changed them.
-        if ( attr.foreground.IsOk() )
-            m_dc.SetTextForeground(GetAttr().effectiveForeground);
-
-        if ( attr.background.IsOk() )
-        {
-            wxColour background = GetAttr().effectiveBackground;
-            if ( !background.IsOk() )
-            {
-                // Invalid background colour indicates that the background
-                // should actually be made transparent and in this case the
-                // actual value of background colour doesn't matter but we also
-                // restore it just in case, see comment in the ctor.
-                m_dc.SetBackgroundMode(wxBRUSHSTYLE_TRANSPARENT);
-                background = m_origTextBackground;
-            }
-
-            m_dc.SetTextBackground(background);
-        }
-    }
-
-protected:
-    wxDC& m_dc;
-    const wxRect m_rect;
-    const int m_flags;
-
-    wxColour m_origTextBackground;
-
-    // Current horizontal text output position.
-    //
-    // TODO-MULTILINE-MARKUP: Must keep vertical position too.
-    int m_pos;
-
-    wxDECLARE_NO_COPY_CLASS(wxMarkupParserRenderOutput);
-};
-
-// An output renderer suitable for control labels.
-class wxMarkupParserRenderLabelOutput : public wxMarkupParserRenderOutput
-{
-public:
-    wxMarkupParserRenderLabelOutput(wxDC& dc,
-                                    const wxRect& rect,
-                                    int flags)
-        : wxMarkupParserRenderOutput(dc, rect, flags)
-    {
-    }
-
-    virtual void OnText(const wxString& text_) wxOVERRIDE
+    virtual void OnText(const wxString& text_)
     {
         wxString text;
         int indexAccel = wxControl::FindAccelIndex(text_, &text);
@@ -226,80 +158,64 @@ public:
                        indexAccel,
                        &bounds);
 
+        // TODO-MULTILINE-MARKUP: Must update vertical position too.
         m_pos += bounds.width;
     }
-};
 
-// An output renderer suitable for multi-item controls items.
-class wxMarkupParserRenderItemOutput : public wxMarkupParserRenderOutput
-{
-public:
-    wxMarkupParserRenderItemOutput(wxWindow *win,
-                                   wxDC& dc,
-                                   const wxRect& rect,
-                                   int rendererFlags,
-                                   wxEllipsizeMode ellipsizeMode)
-        : wxMarkupParserRenderOutput(dc, rect, wxMarkupText::Render_Default),
-          m_win(win),
-          m_rendererFlags(rendererFlags),
-          m_renderer(&wxRendererNative::Get())
+    virtual void OnAttrStart(const Attr& attr)
     {
-        // TODO: Support all ellipsizing modes
-        m_ellipsizeMode = ellipsizeMode == wxELLIPSIZE_NONE ? wxELLIPSIZE_NONE : wxELLIPSIZE_END;
+        m_dc.SetFont(attr.font);
+        if ( attr.foreground.IsOk() )
+            m_dc.SetTextForeground(attr.foreground);
+
+        if ( attr.background.IsOk() )
+        {
+            // Setting the background colour is not enough, we must also change
+            // the mode to ensure that it is actually used.
+            m_dc.SetBackgroundMode(wxSOLID);
+            m_dc.SetTextBackground(attr.background);
+        }
     }
 
-    virtual void OnText(const wxString& text) wxOVERRIDE
+    virtual void OnAttrEnd(const Attr& attr)
     {
-        wxRect rect(m_rect);
-        rect.x = m_pos;
-        rect.SetRight(m_rect.GetRight());
+        // We always restore the font because we always change it...
+        m_dc.SetFont(GetFont());
 
-        const wxSize extent = m_dc.GetTextExtent(text);
+        // ...but we only need to restore the colours if we had changed them.
+        if ( attr.foreground.IsOk() )
+            m_dc.SetTextForeground(GetAttr().foreground);
 
-        // DrawItemText() ignores background color, so render it ourselves
-        if ( m_dc.GetBackgroundMode() == wxBRUSHSTYLE_SOLID)
+        if ( attr.background.IsOk() )
         {
-#if wxUSE_GRAPHICS_CONTEXT
-            // Prefer to use wxGraphicsContext because it supports alpha channel; fall back to wxDC
-            if ( !m_gc )
-                m_gc.reset(wxGraphicsContext::CreateFromUnknownDC(m_dc));
+            wxColour background = GetAttr().background;
+            if ( !background.IsOk() )
+            {
+                // Invalid background colour indicates that the background
+                // should actually be made transparent and in this case the
+                // actual value of background colour doesn't matter but we also
+                // restore it just in case, see comment in the ctor.
+                m_dc.SetBackgroundMode(wxTRANSPARENT);
+                background = m_origTextBackground;
+            }
 
-            if ( m_gc )
-            {
-                m_gc->SetBrush(wxBrush(m_dc.GetTextBackground()));
-                m_gc->SetPen(*wxTRANSPARENT_PEN);
-                m_gc->DrawRectangle(rect.x, rect.y, extent.x, extent.y);
-            }
-            else
-#endif // wxUSE_GRAPHICS_CONTEXT
-            {
-                wxDCPenChanger pen(m_dc, *wxTRANSPARENT_PEN);
-                wxDCBrushChanger brush(m_dc, wxBrush(m_dc.GetTextBackground()));
-                m_dc.DrawRectangle(rect.x, rect.y, extent.x, extent.y);
-            }
+            m_dc.SetTextBackground(background);
         }
-
-        m_renderer->DrawItemText(m_win,
-                                 m_dc,
-                                 text,
-                                 rect,
-                                 wxALIGN_LEFT | wxALIGN_CENTRE_VERTICAL,
-                                 m_rendererFlags,
-                                 m_ellipsizeMode);
-
-        m_pos += extent.x;
     }
 
 private:
-#if wxUSE_GRAPHICS_CONTEXT
-    wxScopedPtr<wxGraphicsContext> m_gc;
-#endif
-    wxWindow* const m_win;
-    int const m_rendererFlags;
-    wxEllipsizeMode m_ellipsizeMode;
-    wxRendererNative* const m_renderer;
+    wxDC& m_dc;
+    const wxRect m_rect;
+    const int m_flags;
 
-    wxDECLARE_NO_COPY_CLASS(wxMarkupParserRenderItemOutput);
+    wxColour m_origTextBackground;
+
+    // Current horizontal text output position.
+    //
+    // TODO-MULTILINE-MARKUP: Must keep vertical position too.
+    int m_pos;
+
+    wxDECLARE_NO_COPY_CLASS(wxMarkupParserRenderOutput);
 };
 
 } // anonymous namespace
@@ -308,22 +224,17 @@ private:
 // wxMarkupText implementation
 // ============================================================================
 
-wxSize wxMarkupTextBase::Measure(wxDC& dc, int *visibleHeight) const
+wxSize wxMarkupText::Measure(wxDC& dc, int *visibleHeight) const
 {
     wxMarkupParserMeasureOutput out(dc, visibleHeight);
     wxMarkupParser parser(out);
-    if ( !parser.Parse(GetMarkupForMeasuring()) )
+    if ( !parser.Parse(m_markup) )
     {
         wxFAIL_MSG( "Invalid markup" );
         return wxDefaultSize;
     }
 
     return out.GetSize();
-}
-
-wxString wxMarkupText::GetMarkupForMeasuring() const
-{
-    return wxControl::RemoveMnemonics(m_markup);
 }
 
 void wxMarkupText::Render(wxDC& dc, const wxRect& rect, int flags)
@@ -335,23 +246,7 @@ void wxMarkupText::Render(wxDC& dc, const wxRect& rect, int flags)
     wxRect rectText(rect.GetPosition(), Measure(dc, &visibleHeight));
     rectText.height = visibleHeight;
 
-    wxMarkupParserRenderLabelOutput out(dc, rectText.CentreIn(rect), flags);
-    wxMarkupParser parser(out);
-    parser.Parse(m_markup);
-}
-
-
-// ============================================================================
-// wxItemMarkupText implementation
-// ============================================================================
-
-void wxItemMarkupText::Render(wxWindow *win,
-                              wxDC& dc,
-                              const wxRect& rect,
-                              int rendererFlags,
-                              wxEllipsizeMode ellipsizeMode)
-{
-    wxMarkupParserRenderItemOutput out(win, dc, rect, rendererFlags, ellipsizeMode);
+    wxMarkupParserRenderOutput out(dc, rectText.CentreIn(rect), flags);
     wxMarkupParser parser(out);
     parser.Parse(m_markup);
 }

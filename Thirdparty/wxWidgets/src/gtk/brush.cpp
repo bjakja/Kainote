@@ -2,6 +2,7 @@
 // Name:        src/gtk/brush.cpp
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -24,17 +25,17 @@ class wxBrushRefData: public wxGDIRefData
 {
 public:
     wxBrushRefData(const wxColour& colour = wxNullColour, wxBrushStyle style = wxBRUSHSTYLE_SOLID)
-        : m_colour(colour)
     {
         m_style = style;
+        m_colour = colour;
     }
 
     wxBrushRefData( const wxBrushRefData& data )
         : wxGDIRefData()
-        , m_colour(data.m_colour)
-        , m_stipple(data.m_stipple)
     {
         m_style = data.m_style;
+        m_stipple = data.m_stipple;
+        m_colour = data.m_colour;
     }
 
     bool operator == (const wxBrushRefData& data) const
@@ -53,17 +54,19 @@ public:
 
 #define M_BRUSHDATA ((wxBrushRefData *)m_refData)
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxBrush,wxGDIObject);
+IMPLEMENT_DYNAMIC_CLASS(wxBrush,wxGDIObject)
 
 wxBrush::wxBrush( const wxColour &colour, wxBrushStyle style )
 {
     m_refData = new wxBrushRefData(colour, style);
 }
 
+#if FUTURE_WXWIN_COMPATIBILITY_3_0
 wxBrush::wxBrush(const wxColour& col, int style)
 {
     m_refData = new wxBrushRefData(col, (wxBrushStyle)style);
 }
+#endif
 
 wxBrush::wxBrush( const wxBitmap &stippleBitmap )
 {
@@ -87,7 +90,7 @@ wxGDIRefData *wxBrush::CreateGDIRefData() const
 
 wxGDIRefData *wxBrush::CloneGDIRefData(const wxGDIRefData *data) const
 {
-    return new wxBrushRefData(*static_cast<const wxBrushRefData*>(data));
+    return new wxBrushRefData(*(wxBrushRefData *)data);
 }
 
 bool wxBrush::operator==(const wxBrush& brush) const

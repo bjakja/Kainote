@@ -4,12 +4,16 @@
 // Author:      Peter Cawley
 // Modified by:
 // Created:     2009-05-25
+// RCS-ID:      $Id$
 // Copyright:   (C) Peter Cawley
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_RIBBON
 
@@ -28,13 +32,13 @@
 #include "wx/msw/private.h"
 #endif
 
-wxDEFINE_EVENT(wxEVT_RIBBONPANEL_EXTBUTTON_ACTIVATED, wxRibbonPanelEvent);
+wxDEFINE_EVENT(wxEVT_COMMAND_RIBBONPANEL_EXTBUTTON_ACTIVATED, wxRibbonPanelEvent);
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxRibbonPanelEvent, wxCommandEvent);
+IMPLEMENT_DYNAMIC_CLASS(wxRibbonPanelEvent, wxCommandEvent)
 
-wxIMPLEMENT_CLASS(wxRibbonPanel, wxRibbonControl);
+IMPLEMENT_CLASS(wxRibbonPanel, wxRibbonControl)
 
-wxBEGIN_EVENT_TABLE(wxRibbonPanel, wxRibbonControl)
+BEGIN_EVENT_TABLE(wxRibbonPanel, wxRibbonControl)
     EVT_ENTER_WINDOW(wxRibbonPanel::OnMouseEnter)
     EVT_ERASE_BACKGROUND(wxRibbonPanel::OnEraseBackground)
     EVT_KILL_FOCUS(wxRibbonPanel::OnKillFocus)
@@ -43,7 +47,7 @@ wxBEGIN_EVENT_TABLE(wxRibbonPanel, wxRibbonControl)
     EVT_LEFT_DOWN(wxRibbonPanel::OnMouseClick)
     EVT_PAINT(wxRibbonPanel::OnPaint)
     EVT_SIZE(wxRibbonPanel::OnSize)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 wxRibbonPanel::wxRibbonPanel() : m_expanded_dummy(NULL), m_expanded_panel(NULL)
 {
@@ -132,7 +136,7 @@ void wxRibbonPanel::CommonInit(const wxString& label, const wxBitmap& icon, long
     }
 
     SetAutoLayout(true);
-    SetBackgroundStyle(wxBG_STYLE_PAINT);
+    SetBackgroundStyle(wxBG_STYLE_CUSTOM);
     SetMinSize(wxSize(20, 20));
 }
 
@@ -224,14 +228,14 @@ void wxRibbonPanel::AddChild(wxWindowBase *child)
     // for children of the window. The panel wants to be in the hovered state
     // whenever the mouse cursor is within its boundary, so the events need to
     // be attached to children too.
-    child->Bind(wxEVT_ENTER_WINDOW, &wxRibbonPanel::OnMouseEnterChild, this);
-    child->Bind(wxEVT_LEAVE_WINDOW, &wxRibbonPanel::OnMouseLeaveChild, this);
+    child->Connect(wxEVT_ENTER_WINDOW, (wxObjectEventFunction)&wxRibbonPanel::OnMouseEnterChild, NULL, this);
+    child->Connect(wxEVT_LEAVE_WINDOW, (wxObjectEventFunction)&wxRibbonPanel::OnMouseLeaveChild, NULL, this);
 }
 
 void wxRibbonPanel::RemoveChild(wxWindowBase *child)
 {
-    child->Unbind(wxEVT_ENTER_WINDOW, &wxRibbonPanel::OnMouseEnterChild, this);
-    child->Unbind(wxEVT_LEAVE_WINDOW, &wxRibbonPanel::OnMouseLeaveChild, this);
+    child->Disconnect(wxEVT_ENTER_WINDOW, (wxObjectEventFunction)&wxRibbonPanel::OnMouseEnterChild, NULL, this);
+    child->Disconnect(wxEVT_LEAVE_WINDOW, (wxObjectEventFunction)&wxRibbonPanel::OnMouseLeaveChild, NULL, this);
 
     wxRibbonControl::RemoveChild(child);
 }
@@ -300,8 +304,8 @@ bool wxRibbonPanel::IsMinimised(wxSize at_size) const
     if(!m_minimised_size.IsFullySpecified())
         return false;
 
-    return (at_size.GetX() < m_minimised_size.GetX() &&
-        at_size.GetY() < m_minimised_size.GetY()) ||
+    return (at_size.GetX() <= m_minimised_size.GetX() &&
+        at_size.GetY() <= m_minimised_size.GetY()) ||
         at_size.GetX() < m_smallest_unminimised_size.GetX() ||
         at_size.GetY() < m_smallest_unminimised_size.GetY();
 }
@@ -349,7 +353,7 @@ wxSize wxRibbonPanel::GetBestSizeForParentSize(const wxSize& parentSize) const
         wxRibbonControl* control = wxDynamicCast(win, wxRibbonControl);
         if (control)
         {
-            wxClientDC temp_dc(const_cast<wxRibbonPanel*>(this));
+            wxClientDC temp_dc((wxRibbonPanel*) this);
             wxSize clientParentSize = m_art->GetPanelClientSize(temp_dc, this, parentSize, NULL);
             wxSize childSize = control->GetBestSizeForParentSize(clientParentSize);
             wxSize overallSize = m_art->GetPanelSize(temp_dc, this, childSize, NULL);
@@ -371,7 +375,7 @@ wxSize wxRibbonPanel::DoGetNextSmallerSize(wxOrientation direction,
 
     if(m_art != NULL)
     {
-        wxClientDC dc(const_cast<wxRibbonPanel*>(this));
+        wxClientDC dc((wxRibbonPanel*) this);
         wxSize child_relative = m_art->GetPanelClientSize(dc, this, relative_to, NULL);
         wxSize smaller(-1, -1);
         bool minimise = false;
@@ -492,7 +496,7 @@ wxSize wxRibbonPanel::DoGetNextLargerSize(wxOrientation direction,
 
     if(m_art != NULL)
     {
-        wxClientDC dc(const_cast<wxRibbonPanel*>(this));
+        wxClientDC dc((wxRibbonPanel*) this);
         wxSize child_relative = m_art->GetPanelClientSize(dc, this, relative_to, NULL);
         wxSize larger(-1, -1);
 
@@ -584,14 +588,14 @@ wxSize wxRibbonPanel::GetMinNotMinimisedSize() const
     // Ask sizer if present
     if(GetSizer())
     {
-        wxClientDC dc(const_cast<wxRibbonPanel*>(this));
+        wxClientDC dc((wxRibbonPanel*) this);
         return m_art->GetPanelSize(dc, this, GetPanelSizerMinSize(), NULL);
     }
     else if(GetChildren().GetCount() == 1)
     {
         // Common case of single child taking up the entire panel
         wxWindow* child = GetChildren().Item(0)->GetData();
-        wxClientDC dc(const_cast<wxRibbonPanel*>(this));
+        wxClientDC dc((wxRibbonPanel*) this);
         return m_art->GetPanelSize(dc, this, child->GetMinSize(), NULL);
     }
 
@@ -612,7 +616,7 @@ wxSize wxRibbonPanel::GetPanelSizerMinSize() const
          return GetSizer()->CalcMin();
     }
     // else use previously calculated m_smallest_unminimised_size
-    wxClientDC dc(const_cast<wxRibbonPanel*>(this));
+    wxClientDC dc((wxRibbonPanel*) this);
     return m_art->GetPanelClientSize(dc,
                                     this,
                                     m_smallest_unminimised_size,
@@ -633,14 +637,14 @@ wxSize wxRibbonPanel::DoGetBestSize() const
     // Ask sizer if present
     if( GetSizer())
     {
-        wxClientDC dc(const_cast<wxRibbonPanel*>(this));
+        wxClientDC dc((wxRibbonPanel*) this);
         return m_art->GetPanelSize(dc, this, GetPanelSizerBestSize(), NULL);
     }
     else if(GetChildren().GetCount() == 1)
     {
         // Common case of no sizer and single child taking up the entire panel
         wxWindow* child = GetChildren().Item(0)->GetData();
-        wxClientDC dc(const_cast<wxRibbonPanel*>(this));
+        wxClientDC dc((wxRibbonPanel*) this);
         return m_art->GetPanelSize(dc, this, child->GetBestSize(), NULL);
     }
 
@@ -668,10 +672,6 @@ bool wxRibbonPanel::Realize()
 
     wxSize minimum_children_size(0, 0);
 
-    // Reset it before calling GetPanelSizerMinSize() below as it shouldn't use
-    // the old value, if we had any.
-    m_smallest_unminimised_size = wxDefaultSize;
-
     // Ask sizer if there is one present
     if(GetSizer())
     {
@@ -693,15 +693,11 @@ bool wxRibbonPanel::Realize()
         wxSize panel_min_size = GetMinNotMinimisedSize();
         m_minimised_size = m_art->GetMinimisedPanelMinimumSize(temp_dc, this,
             &bitmap_size, &m_preferred_expand_direction);
-        if(m_minimised_icon.IsOk() && m_minimised_icon.GetLogicalSize() != bitmap_size)
+        if(m_minimised_icon.IsOk() && m_minimised_icon.GetSize() != bitmap_size)
         {
-            double scale = m_minimised_icon.GetScaleFactor();
-            if (scale > 1.0)
-                scale = 2.0;
-
             wxImage img(m_minimised_icon.ConvertToImage());
-            img.Rescale(int(scale * bitmap_size.GetWidth()), int(scale * bitmap_size.GetHeight()), wxIMAGE_QUALITY_HIGH);
-            m_minimised_icon_resized = wxBitmap(img, -1, scale);
+            img.Rescale(bitmap_size.GetWidth(), bitmap_size.GetHeight(), wxIMAGE_QUALITY_HIGH);
+            m_minimised_icon_resized = wxBitmap(img);
         }
         else
         {
@@ -780,7 +776,7 @@ void wxRibbonPanel::OnMouseClick(wxMouseEvent& WXUNUSED(evt))
     }
     else if(IsExtButtonHovered())
     {
-        wxRibbonPanelEvent notification(wxEVT_RIBBONPANEL_EXTBUTTON_ACTIVATED, GetId());
+        wxRibbonPanelEvent notification(wxEVT_COMMAND_RIBBONPANEL_EXTBUTTON_ACTIVATED, GetId());
         notification.SetEventObject(this);
         notification.SetPanel(this);
         ProcessEvent(notification);
@@ -907,8 +903,9 @@ void wxRibbonPanel::OnKillFocus(wxFocusEvent& evt)
         if(IsAncestorOf(this, receiver))
         {
             m_child_with_focus = receiver;
-            receiver->Bind(wxEVT_KILL_FOCUS,
-                &wxRibbonPanel::OnChildKillFocus, this);
+            receiver->Connect(wxEVT_KILL_FOCUS,
+                wxFocusEventHandler(wxRibbonPanel::OnChildKillFocus),
+                NULL, this);
         }
         else if(receiver == NULL || receiver != m_expanded_dummy)
         {
@@ -922,16 +919,16 @@ void wxRibbonPanel::OnChildKillFocus(wxFocusEvent& evt)
     if(m_child_with_focus == NULL)
         return; // Should never happen, but a check can't hurt
 
-    m_child_with_focus->Unbind(wxEVT_KILL_FOCUS,
-      &wxRibbonPanel::OnChildKillFocus, this);
+    m_child_with_focus->Disconnect(wxEVT_KILL_FOCUS,
+      wxFocusEventHandler(wxRibbonPanel::OnChildKillFocus), NULL, this);
     m_child_with_focus = NULL;
 
     wxWindow *receiver = evt.GetWindow();
     if(receiver == this || IsAncestorOf(this, receiver))
     {
         m_child_with_focus = receiver;
-        receiver->Bind(wxEVT_KILL_FOCUS,
-            &wxRibbonPanel::OnChildKillFocus, this);
+        receiver->Connect(wxEVT_KILL_FOCUS,
+            wxFocusEventHandler(wxRibbonPanel::OnChildKillFocus), NULL, this);
         evt.Skip();
     }
     else if(receiver == NULL || receiver != m_expanded_dummy)
@@ -939,7 +936,7 @@ void wxRibbonPanel::OnChildKillFocus(wxFocusEvent& evt)
         HideExpanded();
         // Do not skip event, as the panel has been de-expanded, causing the
         // child with focus to be reparented (and hidden). If the event
-        // continues propagation then bad things happen.
+        // continues propogation then bad things happen.
     }
     else
     {
@@ -1100,13 +1097,6 @@ wxRect wxRibbonPanel::GetExpandedPosition(wxRect panel,
     }
 
     return best;
-}
-
-void wxRibbonPanel::HideIfExpanded()
-{
-    wxRibbonPage* const containingPage = wxDynamicCast(m_parent, wxRibbonPage);
-    if (containingPage)
-        containingPage->HideIfExpanded();
 }
 
 #endif // wxUSE_RIBBON

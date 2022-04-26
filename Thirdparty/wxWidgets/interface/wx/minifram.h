@@ -2,6 +2,7 @@
 // Name:        minifram.h
 // Purpose:     interface of wxMiniFrame
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 

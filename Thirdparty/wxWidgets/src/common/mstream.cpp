@@ -4,6 +4,7 @@
 // Author:      Guilhem Lavaux
 // Modified by: VZ (23.11.00): general code review
 // Created:     04/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Guilhem Lavaux
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,15 +18,18 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_STREAMS
 
-#include "wx\mstream.h"
+#include "wx/mstream.h"
 
 #ifndef   WX_PRECOMP
-    #include  "wx\stream.h"
+    #include  "wx/stream.h"
 #endif  //WX_PRECOMP
 
 #include <stdlib.h>
@@ -38,7 +42,7 @@
 // wxMemoryInputStream
 // ----------------------------------------------------------------------------
 
-wxIMPLEMENT_ABSTRACT_CLASS(wxMemoryInputStream, wxInputStream);
+IMPLEMENT_ABSTRACT_CLASS(wxMemoryInputStream, wxInputStream)
 
 wxMemoryInputStream::wxMemoryInputStream(const void *data, size_t len)
 {
@@ -149,7 +153,7 @@ wxFileOffset wxMemoryInputStream::OnSysTell() const
 // wxMemoryOutputStream
 // ----------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxMemoryOutputStream, wxOutputStream);
+IMPLEMENT_DYNAMIC_CLASS(wxMemoryOutputStream, wxOutputStream)
 
 wxMemoryOutputStream::wxMemoryOutputStream(void *data, size_t len)
 {

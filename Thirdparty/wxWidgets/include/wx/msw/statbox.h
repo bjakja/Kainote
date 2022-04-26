@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,35 +12,18 @@
 #ifndef _WX_MSW_STATBOX_H_
 #define _WX_MSW_STATBOX_H_
 
-#include "wx/compositewin.h"
-
 // Group box
-class WXDLLIMPEXP_CORE wxStaticBox : public wxCompositeWindowSettersOnly<wxStaticBoxBase>
+class WXDLLIMPEXP_CORE wxStaticBox : public wxStaticBoxBase
 {
 public:
-    wxStaticBox()
-        : wxCompositeWindowSettersOnly<wxStaticBoxBase>()
-    {
-    }
+    wxStaticBox() { }
 
     wxStaticBox(wxWindow *parent, wxWindowID id,
                 const wxString& label,
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = 0,
-                const wxString& name = wxASCII_STR(wxStaticBoxNameStr))
-        : wxCompositeWindowSettersOnly<wxStaticBoxBase>()
-    {
-        Create(parent, id, label, pos, size, style, name);
-    }
-
-    wxStaticBox(wxWindow* parent, wxWindowID id,
-                wxWindow* label,
-                const wxPoint& pos = wxDefaultPosition,
-                const wxSize& size = wxDefaultSize,
-                long style = 0,
-                const wxString &name = wxASCII_STR(wxStaticBoxNameStr))
-        : wxCompositeWindowSettersOnly<wxStaticBoxBase>()
+                const wxString& name = wxStaticBoxNameStr)
     {
         Create(parent, id, label, pos, size, style, name);
     }
@@ -49,35 +33,24 @@ public:
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = 0,
-                const wxString& name = wxASCII_STR(wxStaticBoxNameStr));
-
-    bool Create(wxWindow *parent, wxWindowID id,
-                wxWindow* label,
-                const wxPoint& pos = wxDefaultPosition,
-                const wxSize& size = wxDefaultSize,
-                long style = 0,
-                const wxString& name = wxASCII_STR(wxStaticBoxNameStr));
+                const wxString& name = wxStaticBoxNameStr);
 
     /// Implementation only
-    virtual void GetBordersForSizer(int *borderTop, int *borderOther) const wxOVERRIDE;
+    virtual void GetBordersForSizer(int *borderTop, int *borderOther) const;
 
-    virtual bool SetBackgroundColour(const wxColour& colour) wxOVERRIDE;
-    virtual bool SetFont(const wxFont& font) wxOVERRIDE;
-
-    virtual WXDWORD MSWGetStyle(long style, WXDWORD *exstyle) const wxOVERRIDE;
+    virtual WXDWORD MSWGetStyle(long style, WXDWORD *exstyle) const;
 
     // returns true if the platform should explicitly apply a theme border
-    virtual bool CanApplyThemeBorder() const wxOVERRIDE { return false; }
+    virtual bool CanApplyThemeBorder() const { return false; }
 
 protected:
-    virtual wxSize DoGetBestSize() const wxOVERRIDE;
+    virtual wxSize DoGetBestSize() const;
 
+#ifndef __WXWINCE__
 public:
-    virtual WXLRESULT MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam) wxOVERRIDE;
+    virtual WXLRESULT MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam);
 
 protected:
-    virtual wxWindowList GetCompositeWindowParts() const wxOVERRIDE;
-
     // return the region with all the windows inside this static box excluded
     virtual WXHRGN MSWGetRegionWithoutChildren();
 
@@ -91,15 +64,10 @@ protected:
     virtual void PaintForeground(wxDC& dc, const struct tagRECT& rc);
 
     void OnPaint(wxPaintEvent& event);
+#endif // !__WXWINCE__
 
-private:
-    void PositionLabelWindow();
-
-    wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxStaticBox);
+    DECLARE_DYNAMIC_CLASS_NO_COPY(wxStaticBox)
 };
-
-// Indicate that we have the ctor overload taking wxWindow as label.
-#define wxHAS_WINDOW_LABEL_IN_STATIC_BOX
 
 #endif // _WX_MSW_STATBOX_H_
 

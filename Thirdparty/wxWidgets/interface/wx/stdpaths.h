@@ -2,6 +2,7 @@
 // Name:        stdpaths.h
 // Purpose:     interface of wxStandardPaths
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -19,7 +20,7 @@
     methods.
 
     In the description of the methods below, the example return values are given
-    for the Unix, Windows and macOS systems, however please note that these are
+    for the Unix, Windows and Mac OS X systems, however please note that these are
     just the examples and the actual values may differ. For example, under Windows:
     the system administrator may change the standard directories locations, e.g.
     the Windows directory may be named @c "W:\Win2003" instead of
@@ -66,134 +67,6 @@ public:
         ResourceCat_Messages
     };
 
-    /// Possible values for userDir parameter of GetUserDir().
-    enum Dir
-    {
-        /**
-            Directory for caching files.
-
-            Example return values:
-            - Unix: @c ~/.cache
-            - Windows: @c "C:\Users\username\AppData\Local"
-            - Mac: @c ~/Library/Caches
-        */
-        Dir_Cache,
-
-        /**
-            Directory containing user documents.
-
-            Example return values:
-            - Unix/Mac: @c ~/Documents
-            - Windows: @c "C:\Users\username\Documents"
-        */
-        Dir_Documents,
-
-        /**
-            Directory containing files on the users desktop.
-
-            Example return values:
-            - Unix/Mac: @c ~/Desktop
-            - Windows: @c "C:\Users\username\Desktop"
-        */
-        Dir_Desktop,
-
-        /**
-            Directory for downloaded files
-
-            Example return values:
-            - Unix/Mac: @c ~/Downloads
-            - Windows: @c "C:\Users\username\Downloads" (Only available on Vista and newer)
-        */
-        Dir_Downloads,
-
-        /**
-            Directory containing music files.
-
-            Example return values:
-            - Unix/Mac: @c ~/Music
-            - Windows: @c "C:\Users\username\Music"
-        */
-        Dir_Music,
-
-        /**
-            Directory containing picture files.
-
-            Example return values:
-            - Unix/Mac: @c ~/Pictures
-            - Windows: @c "C:\Users\username\Pictures"
-        */
-        Dir_Pictures,
-
-        /**
-            Directory containing video files.
-
-            Example return values:
-            - Unix: @c ~/Videos
-            - Windows: @c "C:\Users\username\Videos"
-            - Mac: @c ~/Movies
-        */
-        Dir_Videos
-    };
-
-    /**
-        Possible values for SetFileLayout() argument.
-
-        The elements of this enum correspond to the different file layout
-        standards under Unix systems.
-
-        @since 3.1.1
-     */
-    enum FileLayout
-    {
-        /**
-            Use the classic file layout.
-
-            User configuration and data files are located directly in the home
-            directory.
-
-            This is the default behaviour for compatibility reasons.
-        */
-        FileLayout_Classic,
-
-        /**
-            Use a XDG styled file layout.
-
-            File layout follows the XDG Base Directory Specification (see
-            https://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html).
-
-            This is the recommended layout for new applications.
-        */
-        FileLayout_XDG
-    };
-
-    /**
-        Possible values for MakeConfigFileName() naming convention argument.
-
-        The values in this enum are only used under Unix and only when using
-        the classic Unix convention for file layout, in XDG mode, XDG naming
-        convention is used unconditionally.
-
-        @since 3.1.1
-     */
-    enum ConfigFileConv
-    {
-        /**
-            Use the class Unix dot-file convention.
-
-            Prepend the dot to the file base name.
-
-            This value is ignored when in XDG mode, where MakeConfigFileName()
-            always behaves as if ConfigFileConv_Ext was specified.
-        */
-        ConfigFileConv_Dot,
-
-        /**
-            Use @c .conf extension for the file names.
-
-            This convention is always used in XDG mode.
-         */
-        ConfigFileConv_Ext
-    };
 
     /**
         MSW-specific function undoing the effect of IgnoreAppSubDir() calls.
@@ -221,11 +94,12 @@ public:
 
         Example return values:
         - Unix: @c ~/appinfo
-        - Windows: @c "C:\Users\username\Documents\appinfo" or
-                   @c "C:\Documents and Settings\username\My Documents\appinfo"
+        - Windows: @c "C:\Documents and Settings\username\My Documents\appinfo"
         - Mac: @c ~/Documents/appinfo
 
         @since 2.9.0
+
+        @see GetAppDocumentsDir()
      */
     virtual wxString GetAppDocumentsDir() const;
 
@@ -233,19 +107,15 @@ public:
         Return the directory containing the system config files.
         Example return values:
         - Unix: @c /etc
-        - Windows: @c "C:\ProgramData\appinfo" or
-                   @c "C:\Documents and Settings\All Users\Application Data\appinfo"
+        - Windows: @c "C:\Documents and Settings\All Users\Application Data"
         - Mac: @c /Library/Preferences
-
-        @note Under Windows this includes @c appinfo which makes it inconsistent
-        with other ports.
 
         @see wxFileConfig
     */
     virtual wxString GetConfigDir() const;
 
     /**
-        Return the location of the applications global, i.e.\ not user-specific,
+        Return the location of the applications global, i.e. not user-specific,
         data files.
 
         Example return values:
@@ -266,11 +136,16 @@ public:
     virtual wxString GetDataDir() const;
 
     /**
-        Same as calling GetUserDir() with Dir_Documents parameter.
+        Return the directory containing the current user's documents.
+
+        Example return values:
+        - Unix: @c ~ (the home directory)
+        - Windows: @c "C:\Documents and Settings\username\My Documents"
+        - Mac: @c ~/Documents
 
         @since 2.7.0
 
-        @see GetAppDocumentsDir(), GetUserDir()
+        @see GetAppDocumentsDir()
     */
     virtual wxString GetDocumentsDir() const;
 
@@ -284,7 +159,7 @@ public:
     virtual wxString GetExecutablePath() const;
 
     /**
-        Return the program installation prefix, e.g.\ @c /usr, @c /opt or @c /home/zeitlin.
+        Return the program installation prefix, e.g. @c /usr, @c /opt or @c /home/zeitlin.
 
         If the prefix had been previously by SetInstallPrefix(), returns that
         value, otherwise tries to determine it automatically (Linux only right now)
@@ -293,7 +168,7 @@ public:
         @note This function is only available under Unix platforms (but not limited
         to wxGTK mentioned below).
 
-        @onlyfor{wxgtk}
+        @onlyfor{wxos2,wxgtk}
     */
     wxString GetInstallPrefix() const;
 
@@ -310,7 +185,7 @@ public:
         specified category for the given language.
 
         In general this is just the same as @a lang subdirectory of GetResourcesDir()
-        (or @c lang.lproj under macOS) but is something quite different for
+        (or @c lang.lproj under Mac OS X) but is something quite different for
         message catalog category under Unix where it returns the standard
         @c prefix/share/locale/lang/LC_MESSAGES directory.
 
@@ -337,7 +212,7 @@ public:
         The resources are the auxiliary data files needed for the application to run
         and include, for example, image and sound files it might use.
 
-        This function is the same as GetDataDir() for all platforms except macOS.
+        This function is the same as GetDataDir() for all platforms except Mac OS X.
         Example return values:
         - Unix: @c prefix/share/appinfo
         - Windows: the directory where the executable file is located
@@ -350,9 +225,8 @@ public:
     virtual wxString GetResourcesDir() const;
 
     /**
-        Return the directory for storing temporary files, for the current user. Same as
-        wxFileName::GetTempDir().
-        To create unique temporary files, it is best to use wxFileName::CreateTempFileName()
+        Return the directory for storing temporary files.
+        To create unique temporary files, it is best to use wxFileName::CreateTempFileName
         for correct behaviour when multiple processes are attempting to create temporary files.
 
         @since 2.7.2
@@ -360,13 +234,9 @@ public:
     virtual wxString GetTempDir() const;
 
     /**
-        Return the directory for the user config files.
-
-        This directory is:
-        - Unix: @c ~ (the home directory) or @c XDG_CONFIG_HOME depending on
-            GetFileLayout() return value
-        - Windows: @c "C:\Users\username\AppData\Roaming" or
-                   @c "C:\Documents and Settings\username\Application Data"
+        Return the directory for the user config files:
+        - Unix: @c ~ (the home directory)
+        - Windows: @c "C:\Documents and Settings\username\Application Data"
         - Mac: @c ~/Library/Preferences
 
         Only use this method if you have a single configuration file to put in this
@@ -378,31 +248,16 @@ public:
     /**
         Return the directory for the user-dependent application data files:
         - Unix: @c ~/.appinfo
-        - Windows: @c "C:\Users\username\AppData\Roaming\appinfo" or
-                   @c "C:\Documents and Settings\username\Application Data\appinfo"
+        - Windows: @c "C:\Documents and Settings\username\Application Data\appinfo"
         - Mac: @c "~/Library/Application Support/appinfo"
     */
     virtual wxString GetUserDataDir() const;
-
-    /**
-        Return the path of the specified user data directory.
-
-        If the value could not be determined the users home directory is returned.
-
-        @note On Unix this (newer) method always respects the XDG base
-        directory specification, even if SetFileLayout() with @c FileLayout_XDG
-        hadn't been called.
-
-        @since 3.1.0
-    */
-    virtual wxString GetUserDir(Dir userDir) const;
 
     /**
         Return the directory for user data files which shouldn't be shared with
         the other machines.
 
         This is the same as GetUserDataDir() for all platforms except Windows where it returns
-        @c "C:\Users\username\AppData\Local\appinfo" or
         @c "C:\Documents and Settings\username\Local Settings\Application Data\appinfo"
     */
     virtual wxString GetUserLocalDataDir() const;
@@ -486,7 +341,7 @@ public:
         @note This function is only available under Unix platforms (but not limited
         to wxGTK mentioned below).
 
-        @onlyfor{wxgtk}
+        @onlyfor{wxos2,wxgtk}
     */
     void SetInstallPrefix(const wxString& prefix);
 
@@ -508,53 +363,5 @@ public:
         @since 2.9.0
     */
     void UseAppInfo(int info);
-
-    /**
-        Sets the current file layout.
-
-        The default layout is @c FileLayout_Classic for compatibility, however
-        newer applications are encouraged to set it to @c FileLayout_XDG on
-        program startup.
-
-        @since 3.1.1
-    */
-    void SetFileLayout(FileLayout layout);
-
-    /**
-        Returns the current file layout.
-
-        @see SetFileLayout()
-
-        @since 3.1.1
-    */
-    FileLayout GetFileLayout() const;
-
-    /**
-        Return the file name which would be used by wxFileConfig if it were
-        constructed with @a basename.
-
-        @a conv is used to construct the name of the file under Unix and only
-        matters when using the class file layout, i.e. if SetFileLayout() had
-        @e not been called with @c FileLayout_XDG argument. In this case, this
-        argument is used to determine whether to use an extension or a leading
-        dot. When following XDG specification, the function always appends the
-        extension, regardless of @a conv value. Finally, this argument is not
-        used at all under non-Unix platforms.
-
-        @since 3.1.1
-    */
-    virtual wxString
-    MakeConfigFileName(const wxString& basename,
-                       ConfigFileConv conv = ConfigFileConv_Ext) const;
-
-protected:
-    /**
-        Protected default constructor.
-
-        This constructor is protected in order to prevent creation of objects
-        of this class as Get() should be used instead to access the unique
-        global wxStandardPaths object of the correct type.
-     */
-    wxStandardPaths();
 };
 

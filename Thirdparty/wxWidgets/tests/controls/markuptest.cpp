@@ -3,11 +3,15 @@
 // Purpose:     wxMarkupParser and related classes unit tests
 // Author:      Vadim Zeitlin
 // Created:     2011-02-17
+// RCS-ID:      $Id$
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "testprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
 #endif // WX_PRECOMP
@@ -54,30 +58,30 @@ void MarkupTestCase::RoundTrip()
         const wxString& GetText() const { return m_text; }
 
 
-        virtual void OnText(const wxString& text) wxOVERRIDE { m_text += text; }
+        virtual void OnText(const wxString& text) { m_text += text; }
 
-        virtual void OnBoldStart() wxOVERRIDE { m_text += "<b>"; }
-        virtual void OnBoldEnd() wxOVERRIDE { m_text += "</b>"; }
+        virtual void OnBoldStart() { m_text += "<b>"; }
+        virtual void OnBoldEnd() { m_text += "</b>"; }
 
-        virtual void OnItalicStart() wxOVERRIDE { m_text += "<i>"; }
-        virtual void OnItalicEnd() wxOVERRIDE { m_text += "</i>"; }
+        virtual void OnItalicStart() { m_text += "<i>"; }
+        virtual void OnItalicEnd() { m_text += "</i>"; }
 
-        virtual void OnUnderlinedStart() wxOVERRIDE { m_text += "<u>"; }
-        virtual void OnUnderlinedEnd() wxOVERRIDE { m_text += "</u>"; }
+        virtual void OnUnderlinedStart() { m_text += "<u>"; }
+        virtual void OnUnderlinedEnd() { m_text += "</u>"; }
 
-        virtual void OnStrikethroughStart() wxOVERRIDE { m_text += "<s>"; }
-        virtual void OnStrikethroughEnd() wxOVERRIDE { m_text += "</s>"; }
+        virtual void OnStrikethroughStart() { m_text += "<s>"; }
+        virtual void OnStrikethroughEnd() { m_text += "</s>"; }
 
-        virtual void OnBigStart() wxOVERRIDE { m_text += "<big>"; }
-        virtual void OnBigEnd() wxOVERRIDE { m_text += "</big>"; }
+        virtual void OnBigStart() { m_text += "<big>"; }
+        virtual void OnBigEnd() { m_text += "</big>"; }
 
-        virtual void OnSmallStart() wxOVERRIDE { m_text += "<small>"; }
-        virtual void OnSmallEnd() wxOVERRIDE { m_text += "</small>"; }
+        virtual void OnSmallStart() { m_text += "<small>"; }
+        virtual void OnSmallEnd() { m_text += "</small>"; }
 
-        virtual void OnTeletypeStart() wxOVERRIDE { m_text += "<tt>"; }
-        virtual void OnTeletypeEnd() wxOVERRIDE { m_text += "</tt>"; }
+        virtual void OnTeletypeStart() { m_text += "<tt>"; }
+        virtual void OnTeletypeEnd() { m_text += "</tt>"; }
 
-        virtual void OnSpanStart(const wxMarkupSpanAttributes& attrs) wxOVERRIDE
+        virtual void OnSpanStart(const wxMarkupSpanAttributes& attrs)
         {
             m_text << "<span";
 
@@ -102,8 +106,8 @@ void MarkupTestCase::RoundTrip()
 
                 case wxMarkupSpanAttributes::Size_Symbolic:
                     {
-                        CPPUNIT_ASSERT( attrs.m_fontSize >= -3 );
-                        CPPUNIT_ASSERT( attrs.m_fontSize <= 3 );
+                        CPPUNIT_ASSERT( attrs.m_fontSize >= -3 &&
+                                            attrs.m_fontSize <= 3 );
                         static const char *cssSizes[] =
                         {
                             "xx-small", "x-small", "small",
@@ -128,7 +132,7 @@ void MarkupTestCase::RoundTrip()
             m_text << ">";
         }
 
-        virtual void OnSpanEnd(const wxMarkupSpanAttributes& WXUNUSED(attrs)) wxOVERRIDE
+        virtual void OnSpanEnd(const wxMarkupSpanAttributes& WXUNUSED(attrs))
         {
             m_text += "</span>";
         }
@@ -172,7 +176,7 @@ void MarkupTestCase::RoundTrip()
     );
 
     CHECK_PARSES_OK( "foo&bar" );
-    CHECK_PARSES_AS( "foo&amp;bar", "foo&bar" );
+    CHECK_PARSES_AS( "foo&amp;bar", "foo&&bar" );
     CHECK_PARSES_AS( "&lt;O&apos;Reilly&gt;", "<O'Reilly>" );
 
     CHECK_DOESNT_PARSE( "<" );

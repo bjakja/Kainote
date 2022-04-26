@@ -2,6 +2,7 @@
 // Name:        validate.h
 // Purpose:     interface of wxValidator
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -78,18 +79,10 @@ public:
     static void SuppressBellOnError(bool suppress = true);
 
     /**
-       Returns if the error sound is currently disabled.
-    */
-    static bool IsSilent();
-
-    /**
         Associates a window with the validator.
 
-        This function is automatically called by wxWidgets when creating a
-        wxWindow-derived class instance which takes a wxValidator reference.
-        Since wxWidgets 3.1.1, it can be overridden in custom validators in
-        order to perform any one-time initialization or checks of the window
-        when the validator is associated with it.
+        This function is automatically called by wxWidgets when creating a wxWindow-derived
+        class instance which takes a wxValidator reference.
 
         E.g.
         @code
@@ -97,9 +90,9 @@ public:
                        wxTextValidator(wxFILTER_ALPHA, &g_data.m_string));
         @endcode
         will automatically link the wxTextValidator instance with the wxTextCtrl
-        instance and call SetWindow() method on the wxTextValidator object.
+        instance.
     */
-    virtual void SetWindow(wxWindow* window);
+    void SetWindow(wxWindow* window);
 
     /**
         This overridable function is called when the value in the window must

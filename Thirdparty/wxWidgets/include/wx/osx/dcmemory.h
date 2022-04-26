@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -22,14 +23,14 @@ public:
 
     virtual ~wxMemoryDCImpl();
 
-    virtual void DoGetSize( int *width, int *height ) const wxOVERRIDE;
-    virtual wxBitmap DoGetAsBitmap(const wxRect *subrect) const wxOVERRIDE
+    virtual void DoGetSize( int *width, int *height ) const;
+    virtual wxBitmap DoGetAsBitmap(const wxRect *subrect) const
        { return subrect == NULL ? GetSelectedBitmap() : GetSelectedBitmap().GetSubBitmap(*subrect); }
-    virtual void DoSelect(const wxBitmap& bitmap) wxOVERRIDE;
+    virtual void DoSelect(const wxBitmap& bitmap);
 
-    virtual const wxBitmap& GetSelectedBitmap() const wxOVERRIDE
+    virtual const wxBitmap& GetSelectedBitmap() const
         { return m_selected; }
-    virtual wxBitmap& GetSelectedBitmap() wxOVERRIDE
+    virtual wxBitmap& GetSelectedBitmap()
         { return m_selected; }
 
 private:
@@ -37,7 +38,7 @@ private:
 
     wxBitmap  m_selected;
 
-    wxDECLARE_CLASS(wxMemoryDCImpl);
+    DECLARE_CLASS(wxMemoryDCImpl)
     wxDECLARE_NO_COPY_CLASS(wxMemoryDCImpl);
 };
 

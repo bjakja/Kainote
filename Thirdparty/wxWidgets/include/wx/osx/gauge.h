@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,15 +18,15 @@
 class WXDLLIMPEXP_CORE wxGauge: public wxGaugeBase
 {
  public:
-  wxGauge() { }
+  inline wxGauge() { }
 
-  wxGauge(wxWindow *parent, wxWindowID id,
+  inline wxGauge(wxWindow *parent, wxWindowID id,
            int range,
            const wxPoint& pos = wxDefaultPosition,
            const wxSize& size = wxDefaultSize,
            long style = wxGA_HORIZONTAL,
            const wxValidator& validator = wxDefaultValidator,
-           const wxString& name = wxASCII_STR(wxGaugeNameStr))
+           const wxString& name = wxGaugeNameStr)
   {
     Create(parent, id, range, pos, size, style, validator, name);
   }
@@ -36,17 +37,17 @@ class WXDLLIMPEXP_CORE wxGauge: public wxGaugeBase
            const wxSize& size = wxDefaultSize,
            long style = wxGA_HORIZONTAL,
            const wxValidator& validator = wxDefaultValidator,
-           const wxString& name = wxASCII_STR(wxGaugeNameStr));
+           const wxString& name = wxGaugeNameStr);
 
     // set gauge range/value
-    virtual void SetRange(int range) wxOVERRIDE;
-    virtual void SetValue(int pos) wxOVERRIDE;
-    virtual int  GetValue() const  wxOVERRIDE;
+    virtual void SetRange(int range);
+    virtual void SetValue(int pos);
+    virtual int  GetValue() const ;
 
-    void Pulse() wxOVERRIDE;
+    void Pulse();
 
  protected:
-    wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxGauge);
+    DECLARE_DYNAMIC_CLASS_NO_COPY(wxGauge)
 };
 
 #endif

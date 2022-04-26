@@ -4,7 +4,8 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     2005-01-09
-// Copyright:   (c) 2005 Vadim Zeitlin <vadim@wxwidgets.org>
+// RCS-ID:      $Id$
+// Copyright:   (c) 2005 Vadim Zeitlin <vadim@wxwindows.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -44,10 +45,7 @@ enum
 // wxDatePickerCtrl: allow the user to enter the date
 // ----------------------------------------------------------------------------
 
-// The template argument must be a class deriving from wxDateTimePickerCtrlBase
-// (i.e. in practice either this class itself or wxDateTimePickerCtrl).
-template <typename Base>
-class WXDLLIMPEXP_ADV wxDatePickerCtrlCommonBase : public Base
+class WXDLLIMPEXP_ADV wxDatePickerCtrlBase : public wxDateTimePickerCtrl
 {
 public:
     /*
@@ -78,10 +76,6 @@ public:
     virtual bool GetRange(wxDateTime *dt1, wxDateTime *dt2) const = 0;
 };
 
-// This class is defined mostly for compatibility and is used as the base class
-// by native wxDatePickerCtrl implementations.
-typedef wxDatePickerCtrlCommonBase<wxDateTimePickerCtrl> wxDatePickerCtrlBase;
-
 #if defined(__WXMSW__) && !defined(__WXUNIVERSAL__)
     #include "wx/msw/datectrl.h"
 
@@ -110,7 +104,7 @@ typedef wxDatePickerCtrlCommonBase<wxDateTimePickerCtrl> wxDatePickerCtrlBase;
         }
 
     private:
-        wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxDatePickerCtrl);
+        DECLARE_DYNAMIC_CLASS_NO_COPY(wxDatePickerCtrl)
     };
 #endif
 

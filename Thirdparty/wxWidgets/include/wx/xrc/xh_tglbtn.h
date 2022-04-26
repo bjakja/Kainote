@@ -3,6 +3,7 @@
 // Purpose:     XML resource handler for wxToggleButton
 // Author:      Julian Smart
 // Created:     2004-08-30
+// RCS-ID:      $Id$
 // Copyright:   (c) 2004 Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -16,16 +17,16 @@
 
 class WXDLLIMPEXP_XRC wxToggleButtonXmlHandler : public wxXmlResourceHandler
 {
-    wxDECLARE_DYNAMIC_CLASS(wxToggleButtonXmlHandler);
+    DECLARE_DYNAMIC_CLASS(wxToggleButtonXmlHandler)
 
 public:
     wxToggleButtonXmlHandler();
-    virtual wxObject *DoCreateResource() wxOVERRIDE;
-    virtual bool CanHandle(wxXmlNode *node) wxOVERRIDE;
+    virtual wxObject *DoCreateResource();
+    virtual bool CanHandle(wxXmlNode *node);
 
 protected:
     virtual void DoCreateToggleButton(wxObject *control);
-#if !defined(__WXUNIVERSAL__) && !defined(__WXMOTIF__) && !(defined(__WXGTK__) && !defined(__WXGTK20__))
+#if !defined(__WXUNIVERSAL__) && !defined(__WXMOTIF__) && !defined(__WXPM__) && !(defined(__WXGTK__) && !defined(__WXGTK20__))
     virtual void DoCreateBitmapToggleButton(wxObject *control);
 #endif
 };

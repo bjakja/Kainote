@@ -5,6 +5,7 @@
 // Modified by:
 // Created:
 // Copyright:   (c) Julian Smart
+// RCS-ID:      $Id$
 // Licence:     wxWindows Licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -36,7 +37,7 @@ public:
     wxBitmap& GetSelectedBitmap();
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxMemoryDC);
+    DECLARE_DYNAMIC_CLASS(wxMemoryDC)
 };
 
 

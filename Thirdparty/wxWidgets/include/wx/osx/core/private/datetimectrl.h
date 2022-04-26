@@ -3,6 +3,7 @@
 // Purpose:
 // Author:      Vadim Zeitlin
 // Created:     2011-12-19
+// RCS-ID:      $Id: wxhead.h,v 1.12 2010-04-22 12:44:51 zeitlin Exp $
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -29,6 +30,8 @@ enum wxDateTimeWidgetKind
 class wxDateTimeWidgetImpl
 #if wxOSX_USE_COCOA
     : public wxWidgetCocoaImpl
+#elif wxOSX_USE_CARBON
+    : public wxMacControl
 #else
     #error "Unsupported platform"
 #endif
@@ -56,6 +59,10 @@ protected:
         : wxWidgetCocoaImpl(wxpeer, view)
     {
     }
+#elif wxOSX_USE_CARBON
+    // There is no Carbon implementation of this control yet so we don't need
+    // any ctor for it yet but it should be added here if Carbon version is
+    // written later.
 #endif
 };
 

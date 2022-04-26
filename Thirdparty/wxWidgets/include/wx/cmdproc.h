@@ -4,6 +4,7 @@
 // Author:      Julian Smart (extracted from docview.h by VZ)
 // Modified by:
 // Created:     05.11.00
+// RCS-ID:      $Id$
 // Copyright:   (c) wxWidgets team
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -41,7 +42,7 @@ protected:
     wxString m_commandName;
 
 private:
-    wxDECLARE_CLASS(wxCommand);
+    DECLARE_CLASS(wxCommand)
 };
 
 // ----------------------------------------------------------------------------
@@ -132,7 +133,7 @@ protected:
     wxString      m_redoAccelerator;
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxCommandProcessor);
+    DECLARE_DYNAMIC_CLASS(wxCommandProcessor)
     wxDECLARE_NO_COPY_CLASS(wxCommandProcessor);
 };
 

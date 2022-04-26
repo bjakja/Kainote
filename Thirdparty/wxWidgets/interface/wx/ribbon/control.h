@@ -2,6 +2,7 @@
 // Name:        ribbon/control.h
 // Purpose:     interface of wxRibbonControl
 // Author:      Peter Cawley
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 

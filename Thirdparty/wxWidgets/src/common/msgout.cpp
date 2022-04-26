@@ -4,6 +4,7 @@
 // Author:      Mattia Barbon
 // Modified by:
 // Created:     17.07.02
+// RCS-ID:      $Id$
 // Copyright:   (c) the wxWidgets team
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,27 +18,30 @@
 // ---------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#if defined(__BORLANDC__)
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
-    #include "wx\string.h"
-    #include "wx\ffile.h"
-    #include "wx\app.h"
-    #include "wx\intl.h"
-    #include "wx\log.h"
+    #include "wx/string.h"
+    #include "wx/ffile.h"
+    #include "wx/app.h"
+    #include "wx/intl.h"
+    #include "wx/log.h"
     #if wxUSE_GUI
-        #include "wx\msgdlg.h"
+        #include "wx/msgdlg.h"
     #endif // wxUSE_GUI
 #endif
 
-#include "wx\msgout.h"
-#include "wx\apptrait.h"
+#include "wx/msgout.h"
+#include "wx/apptrait.h"
 #include <stdarg.h>
 #include <stdio.h>
 
 #if defined(__WINDOWS__)
-    #include "wx\msw/private.h"
+    #include "wx/msw/private.h"
 #endif
 
 // ===========================================================================
@@ -105,7 +109,7 @@ void wxMessageOutputBest::Output(const wxString& str)
 {
 #ifdef __WINDOWS__
     // decide whether to use console output or not
-    wxAppTraits * const traits = wxApp::GetTraitsIfExists();
+    wxAppTraits * const traits = wxTheApp ? wxTheApp->GetTraits() : NULL;
     const bool hasStderr = traits ? traits->CanUseStderr() : false;
 
     if ( !(m_flags & wxMSGOUT_PREFER_MSGBOX) )
@@ -122,18 +126,16 @@ void wxMessageOutputBest::Output(const wxString& str)
 
     ::MessageBox(NULL, str.t_str(), title.t_str(), MB_ICONINFORMATION | MB_OK);
 #else // !__WINDOWS__
-    wxUnusedVar(m_flags);
-
     // TODO: use the native message box for the other ports too
     wxMessageOutputStderr::Output(str);
 #endif // __WINDOWS__/!__WINDOWS__
 }
 
 // ----------------------------------------------------------------------------
-// wxMessageOutputWithConv
+// wxMessageOutputStderr
 // ----------------------------------------------------------------------------
 
-wxString wxMessageOutputWithConv::AppendLineFeedIfNeeded(const wxString& str)
+wxString wxMessageOutputStderr::AppendLineFeedIfNeeded(const wxString& str)
 {
     wxString strLF(str);
     if ( strLF.empty() || *strLF.rbegin() != '\n' )
@@ -142,37 +144,16 @@ wxString wxMessageOutputWithConv::AppendLineFeedIfNeeded(const wxString& str)
     return strLF;
 }
 
-wxCharBuffer wxMessageOutputWithConv::PrepareForOutput(const wxString& str)
-{
-    wxString strWithLF = AppendLineFeedIfNeeded(str);
-
-#if defined(__WINDOWS__)
-    // Determine whether the encoding is UTF-16. In that case, the file
-    // should have been opened in "wb" mode, and EOL conversion must be done
-    // here as it won't be done at stdio level.
-    if ( m_conv->GetMBNulLen() == 2 )
-    {
-        strWithLF.Replace("\n", "\r\n");
-    }
-#endif // __WINDOWS__
-
-    return m_conv->cWX2MB(strWithLF.c_str());
-}
-
-// ----------------------------------------------------------------------------
-// wxMessageOutputStderr
-// ----------------------------------------------------------------------------
-
-wxMessageOutputStderr::wxMessageOutputStderr(FILE *fp, const wxMBConv& conv)
-                     : wxMessageOutputWithConv(conv),
-                       m_fp(fp)
-{
-}
-
 void wxMessageOutputStderr::Output(const wxString& str)
 {
-    const wxCharBuffer& buf = PrepareForOutput(str);
-    fwrite(buf, buf.length(), 1, m_fp);
+    const wxString strWithLF = AppendLineFeedIfNeeded(str);
+    const wxWX2MBbuf buf = strWithLF.mb_str();
+
+    if ( buf )
+        fprintf(m_fp, "%s", (const char*) buf);
+    else // print at least something
+        fprintf(m_fp, "%s", (const char*) strWithLF.ToAscii());
+
     fflush(m_fp);
 }
 
@@ -182,7 +163,7 @@ void wxMessageOutputStderr::Output(const wxString& str)
 
 void wxMessageOutputDebug::Output(const wxString& str)
 {
-#if defined(__WINDOWS__)
+#if defined(__WINDOWS__) && !defined(__WXMICROWIN__)
     wxString out(AppendLineFeedIfNeeded(str));
     out.Replace(wxT("\t"), wxT("        "));
     out.Replace(wxT("\n"), wxT("\r\n"));
@@ -203,7 +184,7 @@ void wxMessageOutputLog::Output(const wxString& str)
 
     out.Replace(wxT("\t"), wxT("        "));
 
-    wxLogMessage(wxT("%s"), out);
+    wxLogMessage(wxT("%s"), out.c_str());
 }
 
 #endif // wxUSE_BASE

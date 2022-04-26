@@ -4,6 +4,7 @@
 // Author:      Vaclav Slavik
 // Modified by:
 // Created:     18/03/2002
+// RCS-ID:      $Id$
 // Copyright:   (c) Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -15,12 +16,9 @@
 #include "wx/bitmap.h"
 #include "wx/icon.h"
 #include "wx/iconbndl.h"
-#include "wx/bmpbndl.h"
 
 class WXDLLIMPEXP_FWD_CORE wxArtProvidersList;
 class WXDLLIMPEXP_FWD_CORE wxArtProviderCache;
-class WXDLLIMPEXP_FWD_CORE wxWindow;
-
 class wxArtProviderModule;
 
 // ----------------------------------------------------------------------------
@@ -30,7 +28,7 @@ class wxArtProviderModule;
 typedef wxString wxArtClient;
 typedef wxString wxArtID;
 
-#define wxART_MAKE_CLIENT_ID_FROM_STR(id)  ((id) + wxASCII_STR("_C"))
+#define wxART_MAKE_CLIENT_ID_FROM_STR(id)  ((id) + "_C")
 #define wxART_MAKE_CLIENT_ID(id)           (#id "_C")
 #define wxART_MAKE_ART_ID_FROM_STR(id)     (id)
 #define wxART_MAKE_ART_ID(id)              (#id)
@@ -114,14 +112,6 @@ typedef wxString wxArtID;
 #define wxART_FIND                 wxART_MAKE_ART_ID(wxART_FIND)
 #define wxART_FIND_AND_REPLACE     wxART_MAKE_ART_ID(wxART_FIND_AND_REPLACE)
 
-#define wxART_FULL_SCREEN          wxART_MAKE_ART_ID(wxART_FULL_SCREEN)
-
-#define wxART_EDIT                 wxART_MAKE_ART_ID(wxART_EDIT)
-
-#define wxART_WX_LOGO              wxART_MAKE_ART_ID(wxART_WX_LOGO)
-
-#define wxART_REFRESH              wxART_MAKE_ART_ID(wxART_REFRESH)
-#define wxART_STOP                 wxART_MAKE_ART_ID(wxART_STOP)
 
 // ----------------------------------------------------------------------------
 // wxArtProvider class
@@ -146,7 +136,7 @@ public:
 
 #if WXWIN_COMPATIBILITY_2_8
     // use PushBack(), it's the same thing
-    wxDEPRECATED( static void Insert(wxArtProvider *provider) );
+    static wxDEPRECATED( void Insert(wxArtProvider *provider) );
 #endif
 
     // Remove latest added provider and delete it.
@@ -162,21 +152,13 @@ public:
     // Query the providers for bitmap with given ID and return it. Return
     // wxNullBitmap if no provider provides it.
     static wxBitmap GetBitmap(const wxArtID& id,
-                              const wxArtClient& client = wxASCII_STR(wxART_OTHER),
+                              const wxArtClient& client = wxART_OTHER,
                               const wxSize& size = wxDefaultSize);
-
-    // Query the providers for bitmapbundle with given ID and return it.
-    // If none is available, then the search for a bitmap with the same properties
-    // is performed. If successful, the bitmap is wrapped into a bitmap bundle.
-    static wxBitmapBundle
-    GetBitmapBundle(const wxArtID& id,
-                    const wxArtClient& client = wxASCII_STR(wxART_OTHER),
-                    const wxSize& size = wxDefaultSize);
 
     // Query the providers for icon with given ID and return it. Return
     // wxNullIcon if no provider provides it.
     static wxIcon GetIcon(const wxArtID& id,
-                          const wxArtClient& client = wxASCII_STR(wxART_OTHER),
+                          const wxArtClient& client = wxART_OTHER,
                           const wxSize& size = wxDefaultSize);
 
     // Helper used by GetMessageBoxIcon(): return the art id corresponding to
@@ -189,32 +171,33 @@ public:
     // can be set)
     static wxIcon GetMessageBoxIcon(int flags)
     {
-        return GetIcon(GetMessageBoxIconId(flags), wxASCII_STR(wxART_MESSAGE_BOX));
+        return GetIcon(GetMessageBoxIconId(flags), wxART_MESSAGE_BOX);
     }
 
     // Query the providers for iconbundle with given ID and return it. Return
     // wxNullIconBundle if no provider provides it.
     static wxIconBundle GetIconBundle(const wxArtID& id,
-                                      const wxArtClient& client = wxASCII_STR(wxART_OTHER));
+                                      const wxArtClient& client = wxART_OTHER);
 
     // Gets native size for given 'client' or wxDefaultSize if it doesn't
-    // have native equivalent. The first version returns the size in logical
-    // pixels while the second one returns it in DIPs.
-    static wxSize GetNativeSizeHint(const wxArtClient& client, wxWindow* win = NULL);
-    static wxSize GetNativeDIPSizeHint(const wxArtClient& client);
+    // have native equivalent
+    static wxSize GetNativeSizeHint(const wxArtClient& client);
 
-    // Get the size hint of an icon from a specific wxArtClient from the
-    // topmost (i.e. first used) provider.
-    static wxSize GetSizeHint(const wxArtClient& client, wxWindow* win = NULL);
-    static wxSize GetDIPSizeHint(const wxArtClient& client);
+    // Get the size hint of an icon from a specific wxArtClient, queries
+    // the topmost provider if platform_dependent = false
+    static wxSize GetSizeHint(const wxArtClient& client, bool platform_dependent = false);
 
-#if WXWIN_COMPATIBILITY_3_0
-    wxDEPRECATED_MSG("use GetSizeHint() without bool argument or GetNativeSizeHint()")
-    static wxSize GetSizeHint(const wxArtClient& client, bool platform_dependent);
+#if WXWIN_COMPATIBILITY_2_6
+    // use the corresponding methods without redundant "Provider" suffix
+    static wxDEPRECATED( void PushProvider(wxArtProvider *provider) );
+    static wxDEPRECATED( void InsertProvider(wxArtProvider *provider) );
+    static wxDEPRECATED( bool PopProvider() );
 
-    wxDEPRECATED_MSG("use wxBitmap::Rescale() instead.")
-    static void RescaleBitmap(wxBitmap& bmp, const wxSize& sizeNeeded);
-#endif // WXWIN_COMPATIBILITY_3_0
+    // use Delete() if this is what you really need, or just delete the
+    // provider pointer, do not use Remove() as it does not delete the pointer
+    // unlike RemoveProvider() which does
+    static wxDEPRECATED( bool RemoveProvider(wxArtProvider *provider) );
+#endif // WXWIN_COMPATIBILITY_2_6
 
 protected:
     friend class wxArtProviderModule;
@@ -231,20 +214,15 @@ protected:
     // Destroy caches & all providers
     static void CleanUpProviders();
 
-    // Get the default size of an icon for a specific client.
-    //
-    // Although this function doesn't have "DIP" in its name, it should return
-    // the size in DIPs.
-    virtual wxSize DoGetSizeHint(const wxArtClient& client);
+    // Get the default size of an icon for a specific client
+    virtual wxSize DoGetSizeHint(const wxArtClient& client)
+    {
+        return GetSizeHint(client, true);
+    }
 
-    // Derived classes must override at least one of the CreateXXX() functions
-    // below to create requested art resource. Overriding more than one of them
-    // is also possible but is usually not needed, as both GetBitmap() and
-    // GetBitmapBundle() will try using both CreateBitmap() and
-    // CreateBitmapBundle().
-    //
-    // Note that these methods are called only once per instance's lifetime for
-    // each requested wxArtID as the return value is cached.
+    // Derived classes must override CreateBitmap or CreateIconBundle
+    // (or both) to create requested art resource. This method is called
+    // only once per instance's lifetime for each requested wxArtID.
     virtual wxBitmap CreateBitmap(const wxArtID& WXUNUSED(id),
                                   const wxArtClient& WXUNUSED(client),
                                   const wxSize& WXUNUSED(size))
@@ -252,23 +230,11 @@ protected:
         return wxNullBitmap;
     }
 
-    virtual wxBitmapBundle CreateBitmapBundle(const wxArtID& WXUNUSED(id),
-                                              const wxArtClient& WXUNUSED(client),
-                                              const wxSize& WXUNUSED(size))
-    {
-        return wxBitmapBundle();
-    }
-
     virtual wxIconBundle CreateIconBundle(const wxArtID& WXUNUSED(id),
                                           const wxArtClient& WXUNUSED(client))
     {
         return wxNullIconBundle;
     }
-
-    // Helper for resizing the bitmaps to the requested size without scaling
-    // them up nor resizing (16, 15) bitmaps to (16, 16) -- or doing anything
-    // at all if the bitmap is already of the required size.
-    static void RescaleOrResizeIfNeeded(wxBitmap& bmp, const wxSize& sizeNeeded);
 
 private:
     static void CommonAddingProvider();
@@ -281,7 +247,7 @@ private:
     // art resources cache (so that CreateXXX is not called that often):
     static wxArtProviderCache *sm_cache;
 
-    wxDECLARE_ABSTRACT_CLASS(wxArtProvider);
+    DECLARE_ABSTRACT_CLASS(wxArtProvider)
 };
 
 

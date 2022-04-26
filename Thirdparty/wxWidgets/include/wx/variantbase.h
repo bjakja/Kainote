@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by: Francesco Montorsi
 // Created:     10/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -85,9 +86,9 @@ public:
     // If it based on wxObject return the ClassInfo.
     virtual wxClassInfo* GetValueClassInfo() { return NULL; }
 
-    int GetRefCount() const
+    int GetRefCount() const 
         { return m_count; }
-    void IncRef()
+    void IncRef() 
         { m_count++; }
     void DecRef()
     {
@@ -151,7 +152,7 @@ public:
     wxVariantBase(const wxVariantBase& variant);
     wxVariantBase(wxVariantData* data, const wxString& name = wxEmptyString);
 
-    template<typename T>
+    template<typename T> 
         wxVariantBase(const T& data, const wxString& name = wxEmptyString) :
             m_data(new wxVariantDataT<T>(data)), m_name(name) {}
 
@@ -207,36 +208,36 @@ public:
     // FIXME wxXTI methods:
 
     // get the typeinfo of the stored object
-    const wxTypeInfo* GetTypeInfo() const
-    {
+    const wxTypeInfo* GetTypeInfo() const 
+    { 
         if (!m_data)
             return NULL;
-        return m_data->GetTypeInfo();
+        return m_data->GetTypeInfo(); 
     }
 
     // get a ref to the stored data
-    template<typename T> T& Get()
+    template<typename T> T& Get(wxTEMPLATED_MEMBER_FIX(T))
     {
-        wxVariantDataT<T> *dataptr =
+        wxVariantDataT<T> *dataptr = 
             wx_dynamic_cast(wxVariantDataT<T>*, m_data);
-        wxASSERT_MSG( dataptr,
+        wxASSERT_MSG( dataptr, 
             wxString::Format(wxT("Cast to %s not possible"), typeid(T).name()) );
         return dataptr->Get();
     }
 
     // get a const ref to the stored data
-    template<typename T> const T& Get() const
+    template<typename T> const T& Get(wxTEMPLATED_MEMBER_FIX(T)) const
     {
-        const wxVariantDataT<T> *dataptr =
+        const wxVariantDataT<T> *dataptr = 
             wx_dynamic_cast(const wxVariantDataT<T>*, m_data);
-        wxASSERT_MSG( dataptr,
+        wxASSERT_MSG( dataptr, 
             wxString::Format(wxT("Cast to %s not possible"), typeid(T).name()) );
         return dataptr->Get();
     }
 
-    template<typename T> bool HasData() const
+    template<typename T> bool HasData(wxTEMPLATED_MEMBER_FIX(T)) const
     {
-        const wxVariantDataT<T> *dataptr =
+        const wxVariantDataT<T> *dataptr = 
             wx_dynamic_cast(const wxVariantDataT<T>*, m_data);
         return dataptr != NULL;
     }
@@ -244,7 +245,7 @@ public:
     // returns this value as string
     wxString GetAsString() const;
 
-    // gets the stored data casted to a wxObject*,
+    // gets the stored data casted to a wxObject*, 
     // returning NULL if cast is not possible
     wxObject* GetAsObject();
 
@@ -266,11 +267,11 @@ template<typename T>
 void wxStringWriteValue( wxString &s, const T &data);
 
 template<typename T>
-void wxToStringConverter( const wxVariantBase &v, wxString &s ) \
-    { wxStringWriteValue( s, v.Get<T>() ); }
+void wxToStringConverter( const wxVariantBase &v, wxString &s wxTEMPLATED_FUNCTION_FIX(T)) \
+    { wxStringWriteValue( s, v.wxTEMPLATED_MEMBER_CALL(Get, T) ); }
 
 template<typename T>
-void wxFromStringConverter( const wxString &s, wxVariantBase &v ) \
+void wxFromStringConverter( const wxString &s, wxVariantBase &v wxTEMPLATED_FUNCTION_FIX(T)) \
     { T d; wxStringReadValue( s, d ); v = wxVariantBase(d); }
 
 

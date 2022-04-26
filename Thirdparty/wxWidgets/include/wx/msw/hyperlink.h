@@ -3,6 +3,7 @@
 // Purpose:     Hyperlink control
 // Author:      Rickard Westerlund
 // Created:     2010-08-04
+// RCS-ID:      $Id$
 // Copyright:   (c) 2010 wxWidgets team
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -29,7 +30,7 @@ public:
                     const wxPoint& pos = wxDefaultPosition,
                     const wxSize& size = wxDefaultSize,
                     long style = wxHL_DEFAULT_STYLE,
-                    const wxString& name = wxASCII_STR(wxHyperlinkCtrlNameStr))
+                    const wxString& name = wxHyperlinkCtrlNameStr)
     {
         (void)Create(parent, id, label, url, pos, size, style, name);
     }
@@ -41,22 +42,22 @@ public:
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = wxHL_DEFAULT_STYLE,
-                const wxString& name = wxASCII_STR(wxHyperlinkCtrlNameStr));
+                const wxString& name = wxHyperlinkCtrlNameStr);
 
 
     // overridden base class methods
     // -----------------------------
 
-    virtual void SetURL(const wxString &url) wxOVERRIDE;
+    virtual void SetURL(const wxString &url);
 
-    virtual void SetLabel(const wxString &label) wxOVERRIDE;
+    virtual void SetLabel(const wxString &label);
 
 protected:
-    virtual WXDWORD MSWGetStyle(long style, WXDWORD *exstyle) const wxOVERRIDE;
-    virtual wxSize DoGetBestClientSize() const wxOVERRIDE;
+    virtual WXDWORD MSWGetStyle(long style, WXDWORD *exstyle) const;
+    virtual wxSize DoGetBestClientSize() const;
 
 private:
-    virtual bool MSWOnNotify(int idCtrl, WXLPARAM lParam, WXLPARAM *result) wxOVERRIDE;
+    virtual bool MSWOnNotify(int idCtrl, WXLPARAM lParam, WXLPARAM *result);
 
     wxDECLARE_DYNAMIC_CLASS( wxHyperlinkCtrl );
 };

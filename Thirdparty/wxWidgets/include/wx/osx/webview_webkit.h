@@ -5,6 +5,7 @@
 // Author:      Jethro Grassie / Kevin Ollivier / Marianne Gagnon
 // Modified by:
 // Created:     2004-4-16
+// RCS-ID:      $Id$
 // Copyright:   (c) Jethro Grassie / Kevin Ollivier / Marianne Gagnon
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,9 +13,10 @@
 #ifndef _WX_WEBKIT_H
 #define _WX_WEBKIT_H
 
-#include "wx/defs.h"
+#include "wx/setup.h"
 
-#if wxUSE_WEBVIEW && wxUSE_WEBVIEW_WEBKIT && defined(__WXOSX__)
+#if wxUSE_WEBVIEW && wxUSE_WEBVIEW_WEBKIT && (defined(__WXOSX_COCOA__) \
+                                          ||  defined(__WXOSX_CARBON__))
 
 #include "wx/control.h"
 #include "wx/webview.h"
@@ -25,8 +27,6 @@
 // Web Kit Control
 // ----------------------------------------------------------------------------
 
-WX_DECLARE_STRING_HASH_MAP(wxSharedPtr<wxWebViewHandler>, wxStringToWebHandlerMap);
-
 class WXDLLIMPEXP_WEBVIEW wxWebViewWebKit : public wxWebView
 {
 public:
@@ -35,104 +35,129 @@ public:
     wxWebViewWebKit() {}
     wxWebViewWebKit(wxWindow *parent,
                     wxWindowID winID = wxID_ANY,
-                    const wxString& strURL = wxASCII_STR(wxWebViewDefaultURLStr),
+                    const wxString& strURL = wxWebViewDefaultURLStr,
                     const wxPoint& pos = wxDefaultPosition,
                     const wxSize& size = wxDefaultSize, long style = 0,
-                    const wxString& name = wxASCII_STR(wxWebViewNameStr))
+                    const wxString& name = wxWebViewNameStr)
     {
         Create(parent, winID, strURL, pos, size, style, name);
     }
     bool Create(wxWindow *parent,
                 wxWindowID winID = wxID_ANY,
-                const wxString& strURL = wxASCII_STR(wxWebViewDefaultURLStr),
+                const wxString& strURL = wxWebViewDefaultURLStr,
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize, long style = 0,
-                const wxString& name = wxASCII_STR(wxWebViewNameStr)) wxOVERRIDE;
+                const wxString& name = wxWebViewNameStr);
     virtual ~wxWebViewWebKit();
 
-    virtual bool CanGoBack() const wxOVERRIDE;
-    virtual bool CanGoForward() const wxOVERRIDE;
-    virtual void GoBack() wxOVERRIDE;
-    virtual void GoForward() wxOVERRIDE;
-    virtual void Reload(wxWebViewReloadFlags flags = wxWEBVIEW_RELOAD_DEFAULT) wxOVERRIDE;
-    virtual void Stop() wxOVERRIDE;
+    virtual bool CanGoBack() const;
+    virtual bool CanGoForward() const;
+    virtual void GoBack();
+    virtual void GoForward();
+    virtual void Reload(wxWebViewReloadFlags flags = wxWEB_VIEW_RELOAD_DEFAULT);
+    virtual void Stop();
+    virtual wxString GetPageSource() const;
+    virtual wxString GetPageText() const;
 
-    virtual void Print() wxOVERRIDE;
+    //We do not want to hide the other overloads
+    using wxWebView::SetPage;
+    virtual void SetPage(const wxString& html, const wxString& baseUrl);
 
-    virtual void LoadURL(const wxString& url) wxOVERRIDE;
-    virtual wxString GetCurrentURL() const wxOVERRIDE;
-    virtual wxString GetCurrentTitle() const wxOVERRIDE;
-    virtual float GetZoomFactor() const wxOVERRIDE;
-    virtual void SetZoomFactor(float zoom) wxOVERRIDE;
+    virtual void Print();
 
-    virtual void SetZoomType(wxWebViewZoomType zoomType) wxOVERRIDE;
-    virtual wxWebViewZoomType GetZoomType() const wxOVERRIDE;
-    virtual bool CanSetZoomType(wxWebViewZoomType type) const wxOVERRIDE;
+    virtual void LoadURL(const wxString& url);
+    virtual wxString GetCurrentURL() const;
+    virtual wxString GetCurrentTitle() const;
+    virtual wxWebViewZoom GetZoom() const;
+    virtual void SetZoom(wxWebViewZoom zoom);
 
-    virtual bool IsBusy() const wxOVERRIDE;
+    virtual void SetZoomType(wxWebViewZoomType zoomType);
+    virtual wxWebViewZoomType GetZoomType() const;
+    virtual bool CanSetZoomType(wxWebViewZoomType type) const;
 
-    virtual bool IsAccessToDevToolsEnabled() const wxOVERRIDE;
-    virtual void EnableAccessToDevTools(bool enable = true) wxOVERRIDE;
-    virtual bool SetUserAgent(const wxString& userAgent) wxOVERRIDE;
+    virtual bool IsBusy() const { return m_busy; }
 
     //History functions
-    virtual void ClearHistory() wxOVERRIDE;
-    virtual void EnableHistory(bool enable = true) wxOVERRIDE;
-    virtual wxVector<wxSharedPtr<wxWebViewHistoryItem> > GetBackwardHistory() wxOVERRIDE;
-    virtual wxVector<wxSharedPtr<wxWebViewHistoryItem> > GetForwardHistory() wxOVERRIDE;
-    virtual void LoadHistoryItem(wxSharedPtr<wxWebViewHistoryItem> item) wxOVERRIDE;
-
-    virtual void Paste() wxOVERRIDE;
+    virtual void ClearHistory();
+    virtual void EnableHistory(bool enable = true);
+    virtual wxVector<wxSharedPtr<wxWebViewHistoryItem> > GetBackwardHistory();
+    virtual wxVector<wxSharedPtr<wxWebViewHistoryItem> > GetForwardHistory();
+    virtual void LoadHistoryItem(wxSharedPtr<wxWebViewHistoryItem> item);
 
     //Undo / redo functionality
-    virtual bool CanUndo() const wxOVERRIDE;
-    virtual bool CanRedo() const wxOVERRIDE;
-    virtual void Undo() wxOVERRIDE;
-    virtual void Redo() wxOVERRIDE;
+    virtual bool CanUndo() const;
+    virtual bool CanRedo() const;
+    virtual void Undo();
+    virtual void Redo();
+
+    //Clipboard functions
+    virtual bool CanCut() const { return true; }
+    virtual bool CanCopy() const { return true; }
+    virtual bool CanPaste() const { return true; }
+    virtual void Cut();
+    virtual void Copy();
+    virtual void Paste();
 
     //Editing functions
-    virtual void SetEditable(bool enable = true) wxOVERRIDE;
-    virtual bool IsEditable() const wxOVERRIDE;
+    virtual void SetEditable(bool enable = true);
+    virtual bool IsEditable() const;
 
-    virtual void RunScriptAsync(const wxString& javascript, void* clientData = NULL) const wxOVERRIDE;
-    virtual bool AddScriptMessageHandler(const wxString& name) wxOVERRIDE;
-    virtual bool RemoveScriptMessageHandler(const wxString& name) wxOVERRIDE;
-    virtual bool AddUserScript(const wxString& javascript,
-        wxWebViewUserScriptInjectionTime injectionTime = wxWEBVIEW_INJECT_AT_DOCUMENT_START) wxOVERRIDE;
-    virtual void RemoveAllUserScripts() wxOVERRIDE;
+    //Selection
+    virtual void DeleteSelection();
+    virtual bool HasSelection() const;
+    virtual void SelectAll();
+    virtual wxString GetSelectedText() const;
+    virtual wxString GetSelectedSource() const;
+    virtual void ClearSelection();
+
+    void RunScript(const wxString& javascript);
 
     //Virtual Filesystem Support
-    virtual void RegisterHandler(wxSharedPtr<wxWebViewHandler> handler) wxOVERRIDE;
+    virtual void RegisterHandler(wxSharedPtr<wxWebViewHandler> handler);
 
-    virtual void* GetNativeBackend() const wxOVERRIDE { return m_webView; }
+    // ---- methods not from the parent (common) interface
+    bool  CanGetPageSource() const;
+
+    void  SetScrollPos(int pos);
+    int   GetScrollPos();
+
+    bool  CanIncreaseTextSize() const;
+    void  IncreaseTextSize();
+    bool  CanDecreaseTextSize() const;
+    void  DecreaseTextSize();
+
+    float GetWebkitZoom() const;
+    void  SetWebkitZoom(float zoom);
+
+    // don't hide base class virtuals
+    virtual void SetScrollPos( int orient, int pos, bool refresh = true )
+        { return wxControl::SetScrollPos(orient, pos, refresh); }
+    virtual int GetScrollPos( int orient ) const
+        { return wxControl::GetScrollPos(orient); }
+
+    //we need to resize the webview when the control size changes
+    void OnSize(wxSizeEvent &event);
+    void OnMove(wxMoveEvent &event);
+    void OnMouseEvents(wxMouseEvent &event);
+
+    bool m_busy;
 
 protected:
-    virtual void DoSetPage(const wxString& html, const wxString& baseUrl) wxOVERRIDE;
-
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
+    void MacVisibilityChanged();
 
 private:
-    OSXWebViewPtr m_webView;
-    wxStringToWebHandlerMap m_handlers;
-    wxString m_customUserAgent;
+    wxWindow *m_parent;
+    wxWindowID m_windowID;
+    wxString m_pageTitle;
 
-    WX_NSObject m_navigationDelegate;
-    WX_NSObject m_UIDelegate;
-};
+    wxObjCID m_webView;
 
-class WXDLLIMPEXP_WEBVIEW wxWebViewFactoryWebKit : public wxWebViewFactory
-{
-public:
-    virtual wxWebView* Create() wxOVERRIDE { return new wxWebViewWebKit; }
-    virtual wxWebView* Create(wxWindow* parent,
-                              wxWindowID id,
-                              const wxString& url = wxWebViewDefaultURLStr,
-                              const wxPoint& pos = wxDefaultPosition,
-                              const wxSize& size = wxDefaultSize,
-                              long style = 0,
-                              const wxString& name = wxASCII_STR(wxWebViewNameStr)) wxOVERRIDE
-    { return new wxWebViewWebKit(parent, id, url, pos, size, style, name); }
-    virtual wxVersionInfo GetVersionInfo() wxOVERRIDE;
+    // we may use this later to setup our own mouse events,
+    // so leave it in for now.
+    void* m_webKitCtrlEventHandler;
+    //It should be WebView*, but WebView is an Objective-C class
+    //TODO: look into using DECLARE_WXCOCOA_OBJC_CLASS rather than this.
 };
 
 #endif // wxUSE_WEBVIEW && wxUSE_WEBVIEW_WEBKIT

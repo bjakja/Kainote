@@ -2,12 +2,16 @@
 // Name:        src/html/m_pre.cpp
 // Purpose:     wxHtml module for <PRE> ... </PRE> tag (code citation)
 // Author:      Vaclav Slavik
+// RCS-ID:      $Id$
 // Copyright:   (c) 1999 Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_HTML && wxUSE_STREAMS
 
@@ -54,7 +58,7 @@ static wxString LINKAGEMODE HtmlizeLinebreaks(const wxString& str)
                     if ( j != end && *j == '\n' )
                         i = j;
                 }
-                wxFALLTHROUGH;
+                // fall through
             case '\n':
                 out << "<br>";
                 break;

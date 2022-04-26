@@ -4,6 +4,7 @@
 // Author:      Kevin Ollivier, Steven Lamerton, Vadim Zeitlin
 // Modified by:
 // Created:     2010-03-06
+// RCS-ID:      $Id$
 // Copyright:   (c) Kevin Ollivier
 //              (c) 2010 Steven Lamerton
 //              (c) 2010 Vadim Zeitlin
@@ -19,8 +20,6 @@
 #endif
 
 #include "wx/uiaction.h"
-#include "wx/private/uiaction.h"
-
 #include "wx/msw/wrapwin.h"
 
 #include "wx/msw/private/keyboard.h"
@@ -29,31 +28,6 @@
 
 namespace
 {
-
-class wxUIActionSimulatorMSWImpl : public wxUIActionSimulatorImpl
-{
-public:
-    // Returns a pointer to the global simulator object: as it's stateless, we
-    // can reuse the same one without having to allocate it on the heap all the
-    // time.
-    static wxUIActionSimulatorMSWImpl* Get()
-    {
-        static wxUIActionSimulatorMSWImpl s_impl;
-        return &s_impl;
-    }
-
-    virtual bool MouseMove(long x, long y) wxOVERRIDE;
-    virtual bool MouseDown(int button = wxMOUSE_BTN_LEFT) wxOVERRIDE;
-    virtual bool MouseUp(int button = wxMOUSE_BTN_LEFT) wxOVERRIDE;
-
-    virtual bool DoKey(int keycode, int modifiers, bool isDown) wxOVERRIDE;
-
-private:
-    // This class has no public ctors, use Get() instead.
-    wxUIActionSimulatorMSWImpl() { }
-
-    wxDECLARE_NO_COPY_CLASS(wxUIActionSimulatorMSWImpl);
-};
 
 DWORD EventTypeForMouseButton(int button, bool isDown)
 {
@@ -76,7 +50,7 @@ DWORD EventTypeForMouseButton(int button, bool isDown)
 
 } // anonymous namespace
 
-bool wxUIActionSimulatorMSWImpl::MouseDown(int button)
+bool wxUIActionSimulator::MouseDown(int button)
 {
     POINT p;
     wxGetCursorPosMSW(&p);
@@ -84,23 +58,21 @@ bool wxUIActionSimulatorMSWImpl::MouseDown(int button)
     return true;
 }
 
-bool wxUIActionSimulatorMSWImpl::MouseMove(long x, long y)
+bool wxUIActionSimulator::MouseMove(long x, long y)
 {
     // Because MOUSEEVENTF_ABSOLUTE takes measurements scaled between 0 & 65535
     // we need to scale our input too
     int displayx, displayy;
     wxDisplaySize(&displayx, &displayy);
 
-    // Casts are safe because x and y are supposed to be less than the display
-    // size, so there is no danger of overflow.
-    DWORD scaledx = static_cast<DWORD>(ceil(x * 65535.0 / (displayx-1)));
-    DWORD scaledy = static_cast<DWORD>(ceil(y * 65535.0 / (displayy-1)));
+    int scaledx = ceil((float)x * 65535.0 / (displayx-1));
+    int scaledy = ceil((float)y * 65535.0 / (displayy-1));
     mouse_event(MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_MOVE, scaledx, scaledy, 0, 0);
 
     return true;
 }
 
-bool wxUIActionSimulatorMSWImpl::MouseUp(int button)
+bool wxUIActionSimulator::MouseUp(int button)
 {
     POINT p;
     wxGetCursorPosMSW(&p);
@@ -109,7 +81,7 @@ bool wxUIActionSimulatorMSWImpl::MouseUp(int button)
 }
 
 bool
-wxUIActionSimulatorMSWImpl::DoKey(int keycode, int WXUNUSED(modifiers), bool isDown)
+wxUIActionSimulator::DoKey(int keycode, int WXUNUSED(modifiers), bool isDown)
 {
     bool isExtended;
     DWORD vkkeycode = wxMSWKeyboard::WXToVK(keycode, &isExtended);
@@ -123,17 +95,6 @@ wxUIActionSimulatorMSWImpl::DoKey(int keycode, int WXUNUSED(modifiers), bool isD
     keybd_event(vkkeycode, 0, flags, 0);
 
     return true;
-}
-
-wxUIActionSimulator::wxUIActionSimulator()
-                   : m_impl(wxUIActionSimulatorMSWImpl::Get())
-{
-}
-
-wxUIActionSimulator::~wxUIActionSimulator()
-{
-    // We can use a static wxUIActionSimulatorMSWImpl object because it's
-    // stateless, so no need to delete it.
 }
 
 #endif // wxUSE_UIACTIONSIMULATOR

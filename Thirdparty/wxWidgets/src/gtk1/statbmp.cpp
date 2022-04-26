@@ -2,6 +2,7 @@
 // Name:        src/gtk1/statbmp.cpp
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:           wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -24,7 +25,7 @@ wxStaticBitmap::wxStaticBitmap(void)
 {
 }
 
-wxStaticBitmap::wxStaticBitmap( wxWindow *parent, wxWindowID id, const wxBitmapBundle &bitmap,
+wxStaticBitmap::wxStaticBitmap( wxWindow *parent, wxWindowID id, const wxBitmap &bitmap,
       const wxPoint &pos, const wxSize &size,
       long style, const wxString &name )
 {
@@ -38,7 +39,7 @@ static char * bogus_xpm[] = {
 "  ",
 "  "};
 
-bool wxStaticBitmap::Create( wxWindow *parent, wxWindowID id, const wxBitmapBundle &bitmap,
+bool wxStaticBitmap::Create( wxWindow *parent, wxWindowID id, const wxBitmap &bitmap,
                              const wxPoint &pos, const wxSize &size,
                              long style, const wxString &name )
 {
@@ -51,14 +52,13 @@ bool wxStaticBitmap::Create( wxWindow *parent, wxWindowID id, const wxBitmapBund
         return false;
     }
 
-    if (bitmap.IsOk())
-    {
-        m_bitmap = bitmap.GetBitmapFor(this);
-        m_bitmapBundle = bitmap;
-    }
+    m_bitmap = bitmap;
 
-    wxBitmap bmp(m_bitmap.IsOk() ? m_bitmap : wxBitmap(bogus_xpm));
+    wxBitmap bmp(bitmap.IsOk() ? bitmap : wxBitmap(bogus_xpm));
     m_widget = gtk_pixmap_new(bmp.GetPixmap(), NULL);
+
+    if (bitmap.IsOk())
+        SetBitmap(bitmap);
 
     PostCreation(size);
     m_parent->DoAddChild( this );
@@ -66,16 +66,15 @@ bool wxStaticBitmap::Create( wxWindow *parent, wxWindowID id, const wxBitmapBund
     return true;
 }
 
-void wxStaticBitmap::SetBitmap( const wxBitmapBundle &bitmap )
+void wxStaticBitmap::SetBitmap( const wxBitmap &bitmap )
 {
-    m_bitmapBundle = bitmap;
-    m_bitmap = bitmap.GetBitmapFor(this);
+    m_bitmap = bitmap;
 
     if (m_bitmap.IsOk())
     {
         GdkBitmap *mask = NULL;
         if (m_bitmap.GetMask())
-            mask = m_bitmap.GetMask()->m_bitmap;
+            mask = m_bitmap.GetMask()->GetBitmap();
 
         gtk_pixmap_set(GTK_PIXMAP(m_widget), m_bitmap.GetPixmap(), mask);
 

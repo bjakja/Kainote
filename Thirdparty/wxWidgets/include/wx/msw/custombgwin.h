@@ -3,6 +3,7 @@
 // Purpose:     wxMSW implementation of wxCustomBackgroundWindow
 // Author:      Vadim Zeitlin
 // Created:     2011-10-10
+// RCS-ID:      $Id: wxhead.h,v 1.12 2010-04-22 12:44:51 zeitlin Exp $
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -29,7 +30,7 @@ public:
     virtual ~wxCustomBackgroundWindow() { delete m_backgroundBrush; }
 
 protected:
-    virtual void DoSetBackgroundBitmap(const wxBitmap& bmp) wxOVERRIDE
+    virtual void DoSetBackgroundBitmap(const wxBitmap& bmp)
     {
         delete m_backgroundBrush;
         m_backgroundBrush = bmp.IsOk() ? new wxBrush(bmp) : NULL;
@@ -41,7 +42,7 @@ protected:
                                             || BaseWindowClass::UseBgCol();
     }
 
-    virtual WXHBRUSH MSWGetCustomBgBrush() wxOVERRIDE
+    virtual WXHBRUSH MSWGetCustomBgBrush()
     {
         if ( m_backgroundBrush )
             return (WXHBRUSH)m_backgroundBrush->GetResourceHandle();

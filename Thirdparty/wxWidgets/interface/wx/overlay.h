@@ -2,6 +2,7 @@
 // Name:        overlay.h
 // Purpose:     interface of wxOverlay
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -11,7 +12,7 @@
    Creates an overlay over an existing window, allowing for manipulations like
    rubberbanding, etc.  On wxOSX the overlay is implemented with native
    platform APIs, on the other platforms it is simulated using wxMemoryDC.
-
+   
    @library{wxcore}
 
    @see wxDCOverlay, wxDC
@@ -35,11 +36,11 @@ public:
    @class wxDCOverlay
 
    Connects an overlay with a drawing DC.
-
+   
    @library{wxcore}
 
    @see wxOverlay, wxDC
-
+   
  */
 class wxDCOverlay
 {

@@ -5,6 +5,7 @@
 //               (derived in part from dynlib.cpp (c) 1998 Guilhem Lavaux)
 // Modified by:
 // Created:      03/12/01
+// RCS-ID:       $Id$
 // Copyright:    (c) 2001 Ron Lee <ron@debian.org>
 // Licence:      wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -13,26 +14,29 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_DYNAMIC_LOADER
 
 #ifdef __WINDOWS__
-    #include "wx\msw/private.h"
+    #include "wx/msw/private.h"
 #endif
 
 #ifndef WX_PRECOMP
-    #include "wx\log.h"
-    #include "wx\intl.h"
-    #include "wx\hash.h"
-    #include "wx\utils.h"
-    #include "wx\module.h"
+    #include "wx/log.h"
+    #include "wx/intl.h"
+    #include "wx/hash.h"
+    #include "wx/utils.h"
+    #include "wx/module.h"
 #endif
 
-#include "wx\strconv.h"
+#include "wx/strconv.h"
 
-#include "wx\dynload.h"
+#include "wx/dynload.h"
 
 
 // ---------------------------------------------------------------------------
@@ -48,24 +52,24 @@ public:
     wxPluginLibraryModule() { }
 
     // TODO: create ms_classes on demand, why always preallocate it?
-    virtual bool OnInit() wxOVERRIDE
+    virtual bool OnInit()
     {
         wxPluginLibrary::ms_classes = new wxDLImports;
         wxPluginManager::CreateManifest();
         return true;
     }
 
-    virtual void OnExit() wxOVERRIDE
+    virtual void OnExit()
     {
         wxDELETE(wxPluginLibrary::ms_classes);
         wxPluginManager::ClearManifest();
     }
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxPluginLibraryModule);
+    DECLARE_DYNAMIC_CLASS(wxPluginLibraryModule )
 };
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxPluginLibraryModule, wxModule);
+IMPLEMENT_DYNAMIC_CLASS(wxPluginLibraryModule, wxModule)
 
 
 wxPluginLibrary::wxPluginLibrary(const wxString &libname, int flags)
@@ -75,21 +79,20 @@ wxPluginLibrary::wxPluginLibrary(const wxString &libname, int flags)
     const wxClassInfo* const oldFirst = wxClassInfo::GetFirst();
     Load( libname, flags );
 
-    // It is simple to know what is the first object in the linked list of
-    // wxClassInfo that we registered (it's also the last one chronologically),
-    // it's just the new head of the wxClassInfo list:
-    m_ourFirst = wxClassInfo::GetFirst();
+    // It is simple to know what is the last object we registered, it's just
+    // the new head of the wxClassInfo list:
+    m_ourLast = wxClassInfo::GetFirst();
 
     // But to find the first wxClassInfo created by this library we need to
     // iterate until we get to the previous head as we don't have the links in
     // the backwards direction:
-    if ( m_ourFirst != oldFirst )
+    if ( m_ourLast != oldFirst )
     {
-        for ( const wxClassInfo* info = m_ourFirst; ; info = info->GetNext() )
+        for ( const wxClassInfo* info = m_ourLast; ; info = info->GetNext() )
         {
             if ( info->GetNext() == oldFirst )
             {
-                m_ourLast = info;
+                m_ourFirst = info;
                 break;
             }
         }
@@ -280,7 +283,7 @@ wxPluginManager::LoadLibrary(const wxString &libname, int flags)
     wxString realname(libname);
 
     if( !(flags & wxDL_VERBATIM) )
-        realname += wxDynamicLibrary::GetDllExt(wxDL_MODULE);
+        realname += wxDynamicLibrary::GetDllExt();
 
     wxPluginLibrary *entry;
 
@@ -296,7 +299,7 @@ wxPluginManager::LoadLibrary(const wxString &libname, int flags)
     if ( entry )
     {
         wxLogTrace(wxT("dll"),
-                   wxT("LoadLibrary(%s): already loaded."), realname);
+                   wxT("LoadLibrary(%s): already loaded."), realname.c_str());
 
         entry->RefLib();
     }
@@ -309,13 +312,13 @@ wxPluginManager::LoadLibrary(const wxString &libname, int flags)
             (*ms_manifest)[realname] = entry;
 
             wxLogTrace(wxT("dll"),
-                       wxT("LoadLibrary(%s): loaded ok."), realname);
+                       wxT("LoadLibrary(%s): loaded ok."), realname.c_str());
 
         }
         else
         {
             wxLogTrace(wxT("dll"),
-                       wxT("LoadLibrary(%s): failed to load."), realname);
+                       wxT("LoadLibrary(%s): failed to load."), realname.c_str());
 
             // we have created entry just above
             if ( !entry->UnrefLib() )
@@ -339,7 +342,7 @@ bool wxPluginManager::UnloadLibrary(const wxString& libname)
 
     if ( !entry )
     {
-        realname += wxDynamicLibrary::GetDllExt(wxDL_MODULE);
+        realname += wxDynamicLibrary::GetDllExt();
 
         entry = FindByName(realname);
     }
@@ -347,12 +350,12 @@ bool wxPluginManager::UnloadLibrary(const wxString& libname)
     if ( !entry )
     {
         wxLogDebug(wxT("Attempt to unload library '%s' which is not loaded."),
-                   libname);
+                   libname.c_str());
 
         return false;
     }
 
-    wxLogTrace(wxT("dll"), wxT("UnloadLibrary(%s)"), realname);
+    wxLogTrace(wxT("dll"), wxT("UnloadLibrary(%s)"), realname.c_str());
 
     if ( !entry->UnrefLib() )
     {

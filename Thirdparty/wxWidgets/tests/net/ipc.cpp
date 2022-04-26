@@ -2,6 +2,7 @@
 // Name:        tests/net/ipc.cpp
 // Purpose:     IPC classes unit tests
 // Author:      Vadim Zeitlin
+// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Vadim Zeitlin
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -10,6 +11,9 @@
 // and "wx/cppunit.h"
 #include "testprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 // FIXME: this tests currently sometimes hangs in Connect() for unknown reason
 //        and this prevents buildbot builds from working so disabling it, but
@@ -55,7 +59,7 @@ public:
     }
 
 private:
-    wxDECLARE_NO_COPY_CLASS(IPCTestConnection);
+    DECLARE_NO_COPY_CLASS(IPCTestConnection)
 };
 
 // ----------------------------------------------------------------------------
@@ -80,7 +84,7 @@ protected:
         return NULL;
     }
 
-    wxDECLARE_NO_COPY_CLASS(EventThread);
+    DECLARE_NO_COPY_CLASS(EventThread)
 };
 
 // ----------------------------------------------------------------------------
@@ -132,7 +136,7 @@ private:
     EventThread *m_thread;
     IPCTestConnection *m_conn;
 
-    wxDECLARE_NO_COPY_CLASS(IPCTestServer);
+    DECLARE_NO_COPY_CLASS(IPCTestServer)
 };
 
 static IPCTestServer *gs_server = NULL;
@@ -181,7 +185,7 @@ public:
 private:
     wxConnectionBase *m_conn;
 
-    wxDECLARE_NO_COPY_CLASS(IPCTestClient);
+    DECLARE_NO_COPY_CLASS(IPCTestClient)
 };
 
 static IPCTestClient *gs_client = NULL;
@@ -206,7 +210,7 @@ private:
     void Execute();
     void Disconnect();
 
-    wxDECLARE_NO_COPY_CLASS(IPCTestCase);
+    DECLARE_NO_COPY_CLASS(IPCTestCase)
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION( IPCTestCase );

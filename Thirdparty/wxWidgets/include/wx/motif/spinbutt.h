@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -15,7 +16,7 @@ class WXDLLIMPEXP_FWD_CORE wxArrowButton; // internal
 
 class WXDLLIMPEXP_CORE wxSpinButton : public wxSpinButtonBase
 {
-    wxDECLARE_DYNAMIC_CLASS(wxSpinButton);
+    DECLARE_DYNAMIC_CLASS(wxSpinButton)
 
 public:
     wxSpinButton() : m_up( 0 ), m_down( 0 ), m_pos( 0 ) { }
@@ -25,7 +26,7 @@ public:
         const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize,
         long style = wxSP_VERTICAL,
-        const wxString& name = wxASCII_STR("wxSpinButton"))
+        const wxString& name = "wxSpinButton")
         : m_up( 0 ),
         m_down( 0 ),
         m_pos( 0 )
@@ -39,7 +40,7 @@ public:
         const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize,
         long style = wxSP_VERTICAL,
-        const wxString& name = wxASCII_STR("wxSpinButton"));
+        const wxString& name = "wxSpinButton");
 
     // accessors
     int GetValue() const;

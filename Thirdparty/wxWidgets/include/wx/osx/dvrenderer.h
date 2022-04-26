@@ -3,6 +3,7 @@
 // Purpose:     wxDataViewRenderer for OS X wxDataViewCtrl implementations
 // Author:      Vadim Zeitlin
 // Created:     2009-11-07 (extracted from wx/osx/dataview.h)
+// RCS-ID:      $Id$
 // Copyright:   (c) 2009 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -31,31 +32,31 @@ public:
     // inherited methods from wxDataViewRendererBase
     // ---------------------------------------------
 
-    virtual int GetAlignment() const wxOVERRIDE
+    virtual int GetAlignment() const
     {
         return m_alignment;
     }
-    virtual wxDataViewCellMode GetMode() const wxOVERRIDE
+    virtual wxDataViewCellMode GetMode() const
     {
         return m_mode;
     }
-    virtual bool GetValue(wxVariant& value) const wxOVERRIDE
+    virtual bool GetValue(wxVariant& value) const
     {
         value = m_value;
         return true;
     }
 
     // NB: in Carbon this is always identical to the header alignment
-    virtual void SetAlignment(int align) wxOVERRIDE;
-    virtual void SetMode(wxDataViewCellMode mode) wxOVERRIDE;
-    virtual bool SetValue(const wxVariant& newValue) wxOVERRIDE
+    virtual void SetAlignment(int align);
+    virtual void SetMode(wxDataViewCellMode mode);
+    virtual bool SetValue(const wxVariant& newValue)
     {
         m_value = newValue;
         return true;
     }
 
-    virtual void EnableEllipsize(wxEllipsizeMode mode = wxELLIPSIZE_MIDDLE) wxOVERRIDE;
-    virtual wxEllipsizeMode GetEllipsizeMode() const wxOVERRIDE;
+    virtual void EnableEllipsize(wxEllipsizeMode mode = wxELLIPSIZE_MIDDLE);
+    virtual wxEllipsizeMode GetEllipsizeMode() const;
 
     // implementation
     // --------------
@@ -76,7 +77,6 @@ public:
 
     void SetNativeData(wxDataViewRendererNativeData* newNativeDataPtr);
 
-    void OSXUpdateAlignment();
 
 #if wxOSX_USE_COCOA
     // called when a value was edited by user
@@ -84,16 +84,13 @@ public:
                                   const wxDataViewItem& item,
                                   unsigned col);
 
-protected:
-    virtual void SetAttr(const wxDataViewItemAttr& attr) wxOVERRIDE;
-    virtual void SetEnabled(bool enabled) wxOVERRIDE;
-#else
-protected:
-    void SetAttr(const wxDataViewItemAttr& WXUNUSED(attr)) wxOVERRIDE { };
-    void SetEnabled(bool WXUNUSED(enabled)) wxOVERRIDE { };
-#endif
+    // called to ensure that the given attribute will be used for rendering the
+    // next cell (which had been already associated with this renderer before)
+    virtual void OSXApplyAttr(const wxDataViewItemAttr& attr);
 
-    virtual bool IsHighlighted() const wxOVERRIDE;
+    // called to set the state of the next cell to be rendered
+    virtual void OSXApplyEnabled(bool enabled);
+#endif // Cocoa
 
 private:
     // contains the alignment flags
@@ -108,7 +105,7 @@ private:
     // value that is going to be rendered
     wxVariant m_value;
 
-    wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxDataViewRenderer);
+    DECLARE_DYNAMIC_CLASS_NO_COPY(wxDataViewRenderer)
 };
 
 #endif // _WX_OSX_DVRENDERER_H_

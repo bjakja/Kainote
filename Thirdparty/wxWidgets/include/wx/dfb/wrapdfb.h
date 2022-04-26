@@ -3,6 +3,7 @@
 // Purpose:     wx wrappers for DirectFB interfaces
 // Author:      Vaclav Slavik
 // Created:     2006-08-23
+// RCS-ID:      $Id$
 // Copyright:   (c) 2006 REA Elektronik GmbH
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////

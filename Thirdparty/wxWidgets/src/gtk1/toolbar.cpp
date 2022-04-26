@@ -3,6 +3,7 @@
 // Purpose:     GTK toolbar
 // Author:      Robert Roebling
 // Modified:    13.12.99 by VZ to derive from wxToolBarBase
+// RCS-ID:      $Id$
 // Copyright:   (c) Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -75,8 +76,8 @@ public:
     wxToolBarTool(wxToolBar *tbar,
                   int id,
                   const wxString& label,
-                  const wxBitmapBundle& bitmap1,
-                  const wxBitmapBundle& bitmap2,
+                  const wxBitmap& bitmap1,
+                  const wxBitmap& bitmap2,
                   wxItemKind kind,
                   wxObject *clientData,
                   const wxString& shortHelpString,
@@ -123,7 +124,7 @@ public:
     {
         if (bitmap.IsOk())
         {
-            GdkBitmap *mask = bitmap.GetMask() ? bitmap.GetMask()->m_bitmap
+            GdkBitmap *mask = bitmap.GetMask() ? bitmap.GetMask()->GetBitmap()
                                                : NULL;
             gtk_pixmap_set( GTK_PIXMAP(m_pixmap), bitmap.GetPixmap(), mask );
         }
@@ -140,7 +141,7 @@ protected:
 // wxWin macros
 // ----------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxToolBar, wxControl);
+IMPLEMENT_DYNAMIC_CLASS(wxToolBar, wxControl)
 
 // ============================================================================
 // implementation
@@ -234,8 +235,8 @@ void wxToolBarTool::Init()
 
 wxToolBarToolBase *wxToolBar::CreateTool(int id,
                                          const wxString& text,
-                                         const wxBitmapBundle& bitmap1,
-                                         const wxBitmapBundle& bitmap2,
+                                         const wxBitmap& bitmap1,
+                                         const wxBitmap& bitmap2,
                                          wxItemKind kind,
                                          wxObject *clientData,
                                          const wxString& shortHelpString,
@@ -371,7 +372,7 @@ bool wxToolBar::DoInsertTool(size_t pos, wxToolBarToolBase *toolBase)
 
             GdkBitmap *mask = NULL;
             if ( bitmap.GetMask() )
-                mask = bitmap.GetMask()->m_bitmap;
+                mask = bitmap.GetMask()->GetBitmap();
 
             tool_pixmap = gtk_pixmap_new( pixmap, mask );
             gtk_pixmap_set_build_insensitive( GTK_PIXMAP(tool_pixmap), TRUE );
@@ -393,8 +394,8 @@ bool wxToolBar::DoInsertTool(size_t pos, wxToolBarToolBase *toolBase)
 
                 if ( tool->IsRadio() )
                 {
-                    wxToolBarToolsList::compatibility_iterator node =
-                        wxToolBarToolsList::compatibility_iterator();
+                    wxToolBarToolsList::compatibility_iterator node
+                        = wxToolBarToolsList::compatibility_iterator();
                     if ( pos )
                         node = m_tools.Item(pos - 1);
 

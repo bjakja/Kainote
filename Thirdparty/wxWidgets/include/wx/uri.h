@@ -4,6 +4,7 @@
 // Author:      Ryan Norton
 //              Vadim Zeitlin (UTF-8 URI support, many other changes)
 // Created:     07/01/2004
+// RCS-ID:      $Id$
 // Copyright:   (c) 2004 Ryan Norton
 //                  2008 Vadim Zeitlin
 // Licence:     wxWindows Licence
@@ -12,10 +13,10 @@
 #ifndef _WX_URI_H_
 #define _WX_URI_H_
 
-#include "wx\defs.h"
-#include "wx\object.h"
-#include "wx\string.h"
-#include "wx\arrstr.h"
+#include "wx/defs.h"
+#include "wx/object.h"
+#include "wx/string.h"
+#include "wx/arrstr.h"
 
 // Host Type that the server component can be
 enum wxURIHostType
@@ -107,7 +108,6 @@ public:
 
     void Resolve(const wxURI& base, int flags = wxURI_STRICT);
     bool IsReference() const;
-    bool IsRelative() const;
 
 protected:
     void Clear();
@@ -136,6 +136,11 @@ protected:
     static bool ParseIPv4address(const char*& uri);
     static bool ParseIPv6address(const char*& uri);
     static bool ParseIPvFuture(const char*& uri);
+
+    // should be called with i pointing to '%', returns the encoded character
+    // following it or -1 if invalid and advances i past it (so that it points
+    // to the last character consumed on return)
+    static int DecodeEscape(wxString::const_iterator& i);
 
     // append next character pointer to by p to the string in an escaped form
     // and advance p past it
@@ -176,7 +181,7 @@ protected:
 
     size_t m_fields;
 
-    wxDECLARE_DYNAMIC_CLASS(wxURI);
+    DECLARE_DYNAMIC_CLASS(wxURI)
 };
 
 #endif // _WX_URI_H_

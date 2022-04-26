@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     20.08.00
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -62,7 +63,7 @@ public:
                 const wxSize& size = wxDefaultSize,
                 long style = wxSB_HORIZONTAL,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxASCII_STR(wxScrollBarNameStr));
+                const wxString& name = wxScrollBarNameStr);
 
     bool Create(wxWindow *parent,
                 wxWindowID id,
@@ -70,52 +71,52 @@ public:
                 const wxSize& size = wxDefaultSize,
                 long style = wxSB_HORIZONTAL,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxASCII_STR(wxScrollBarNameStr));
+                const wxString& name = wxScrollBarNameStr);
 
     virtual ~wxScrollBar();
 
     // implement base class pure virtuals
-    virtual int GetThumbPosition() const wxOVERRIDE;
-    virtual int GetThumbSize() const wxOVERRIDE;
-    virtual int GetPageSize() const wxOVERRIDE;
-    virtual int GetRange() const wxOVERRIDE;
+    virtual int GetThumbPosition() const;
+    virtual int GetThumbSize() const;
+    virtual int GetPageSize() const;
+    virtual int GetRange() const;
 
-    virtual void SetThumbPosition(int thumbPos) wxOVERRIDE;
+    virtual void SetThumbPosition(int thumbPos);
     virtual void SetScrollbar(int position, int thumbSize,
                               int range, int pageSize,
-                              bool refresh = true) wxOVERRIDE;
+                              bool refresh = true);
 
     // wxScrollBar actions
     void ScrollToStart();
     void ScrollToEnd();
-    bool ScrollLines(int nLines) wxOVERRIDE;
-    bool ScrollPages(int nPages) wxOVERRIDE;
+    bool ScrollLines(int nLines);
+    bool ScrollPages(int nPages);
 
     virtual bool PerformAction(const wxControlAction& action,
                                long numArg = 0,
-                               const wxString& strArg = wxEmptyString) wxOVERRIDE;
+                               const wxString& strArg = wxEmptyString);
 
     static wxInputHandler *GetStdInputHandler(wxInputHandler *handlerDef);
-    virtual wxInputHandler *DoGetStdInputHandler(wxInputHandler *handlerDef) wxOVERRIDE
+    virtual wxInputHandler *DoGetStdInputHandler(wxInputHandler *handlerDef)
     {
         return GetStdInputHandler(handlerDef);
     }
 
     // scrollbars around a normal window should not receive the focus
-    virtual bool AcceptsFocus() const wxOVERRIDE;
+    virtual bool AcceptsFocus() const;
 
     // wxScrollBar sub elements state (combination of wxCONTROL_XXX)
     void SetState(Element which, int flags);
     int GetState(Element which) const;
 
     // implement wxControlWithArrows methods
-    virtual wxRenderer *GetRenderer() const wxOVERRIDE { return m_renderer; }
-    virtual wxWindow *GetWindow() wxOVERRIDE { return this; }
-    virtual bool IsVertical() const wxOVERRIDE { return wxScrollBarBase::IsVertical(); }
-    virtual int GetArrowState(wxScrollArrows::Arrow arrow) const wxOVERRIDE;
-    virtual void SetArrowFlag(wxScrollArrows::Arrow arrow, int flag, bool set) wxOVERRIDE;
-    virtual bool OnArrow(wxScrollArrows::Arrow arrow) wxOVERRIDE;
-    virtual wxScrollArrows::Arrow HitTestArrow(const wxPoint& pt) const wxOVERRIDE;
+    virtual wxRenderer *GetRenderer() const { return m_renderer; }
+    virtual wxWindow *GetWindow() { return this; }
+    virtual bool IsVertical() const { return wxScrollBarBase::IsVertical(); }
+    virtual int GetArrowState(wxScrollArrows::Arrow arrow) const;
+    virtual void SetArrowFlag(wxScrollArrows::Arrow arrow, int flag, bool set);
+    virtual bool OnArrow(wxScrollArrows::Arrow arrow);
+    virtual wxScrollArrows::Arrow HitTestArrow(const wxPoint& pt) const;
 
     // for wxControlRenderer::DrawScrollbar() only
     const wxScrollArrows& GetArrows() const { return m_arrows; }
@@ -124,14 +125,14 @@ public:
     wxHitTest HitTestBar(const wxPoint& pt) const;
 
     // idle processing
-    virtual void OnInternalIdle() wxOVERRIDE;
+    virtual void OnInternalIdle();
 
 protected:
-    virtual wxSize DoGetBestClientSize() const wxOVERRIDE;
-    virtual void DoDraw(wxControlRenderer *renderer) wxOVERRIDE;
-    virtual wxBorder GetDefaultBorder() const wxOVERRIDE { return wxBORDER_NONE; }
+    virtual wxSize DoGetBestClientSize() const;
+    virtual void DoDraw(wxControlRenderer *renderer);
+    virtual wxBorder GetDefaultBorder() const { return wxBORDER_NONE; }
 
-    // forces update of thumb's visual appearance (does nothing if m_dirty=false)
+    // forces update of thumb's visual appearence (does nothing if m_dirty=false)
     void UpdateThumb();
 
     // SetThumbPosition() helper
@@ -191,11 +192,11 @@ private:
     // the object handling the arrows
     wxScrollArrows m_arrows;
 
-    friend class WXDLLIMPEXP_FWD_CORE wxControlRenderer; // for geometry methods
+    friend WXDLLIMPEXP_CORE class wxControlRenderer; // for geometry methods
     friend class wxStdScrollBarInputHandler; // for geometry methods
 
-    wxDECLARE_EVENT_TABLE();
-    wxDECLARE_DYNAMIC_CLASS(wxScrollBar);
+    DECLARE_EVENT_TABLE()
+    DECLARE_DYNAMIC_CLASS(wxScrollBar)
 };
 
 // ----------------------------------------------------------------------------
@@ -212,10 +213,10 @@ public:
 
     virtual bool HandleKey(wxInputConsumer *consumer,
                            const wxKeyEvent& event,
-                           bool pressed) wxOVERRIDE;
+                           bool pressed);
     virtual bool HandleMouse(wxInputConsumer *consumer,
-                             const wxMouseEvent& event) wxOVERRIDE;
-    virtual bool HandleMouseMove(wxInputConsumer *consumer, const wxMouseEvent& event) wxOVERRIDE;
+                             const wxMouseEvent& event);
+    virtual bool HandleMouseMove(wxInputConsumer *consumer, const wxMouseEvent& event);
 
     virtual ~wxStdScrollBarInputHandler();
 

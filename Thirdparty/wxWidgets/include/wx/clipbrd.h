@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     19.10.99
+// RCS-ID:      $Id$
 // Copyright:   (c) wxWidgets Team
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -117,7 +118,7 @@ public:
     bool SupportsFormat(const wxDataFormat& format) const;
     void AddFormat(const wxDataFormat& format);
 
-    virtual wxEvent *Clone() const wxOVERRIDE
+    virtual wxEvent *Clone() const
     {
         return new wxClipboardEvent(*this);
     }
@@ -126,7 +127,7 @@ public:
 protected:
     wxVector<wxDataFormat> m_formats;
 
-    wxDECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxClipboardEvent);
+    DECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxClipboardEvent)
 };
 
 wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_CLIPBOARD_CHANGED, wxClipboardEvent );
@@ -161,8 +162,10 @@ typedef void (wxEvtHandler::*wxClipboardEventFunction)(wxClipboardEvent&);
     #include "wx/x11/clipbrd.h"
 #elif defined(__WXMAC__)
     #include "wx/osx/clipbrd.h"
-#elif defined(__WXQT__)
-    #include "wx/qt/clipbrd.h"
+#elif defined(__WXCOCOA__)
+    #include "wx/cocoa/clipbrd.h"
+#elif defined(__WXPM__)
+    #include "wx/os2/clipbrd.h"
 #endif
 
 // ----------------------------------------------------------------------------

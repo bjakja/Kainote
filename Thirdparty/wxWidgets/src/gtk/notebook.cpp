@@ -2,6 +2,7 @@
 // Name:        src/gtk/notebook.cpp
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling, Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -24,9 +25,9 @@
 #include "wx/imaglist.h"
 #include "wx/fontutil.h"
 
+#include <gtk/gtk.h>
 #include "wx/gtk/private.h"
-#include "wx/gtk/private/image.h"
-#include "wx/gtk/private/stylecontext.h"
+#include "wx/gtk/private/gtk2-compat.h"
 
 //-----------------------------------------------------------------------------
 // wxGtkNotebookPage
@@ -114,7 +115,8 @@ void wxNotebook::AddChildGTK(wxWindowGTK* child)
     // because without it GetBestSize (which is used to set the initial size
     // of controls if an explicit size is not given) will often report
     // incorrect sizes since the widget's style context is not fully known.
-    // See https://github.com/wxWidgets/wxWidgets/issues/20825
+    // See bug #901694 for details
+    // (http://sourceforge.net/tracker/?func=detail&aid=901694&group_id=9863&atid=109863)
     gtk_widget_set_parent(child->m_widget, m_widget);
 
     // NOTE: This should be considered a temporary workaround until we can
@@ -126,9 +128,9 @@ void wxNotebook::AddChildGTK(wxWindowGTK* child)
 // wxNotebook
 //-----------------------------------------------------------------------------
 
-wxBEGIN_EVENT_TABLE(wxNotebook, wxBookCtrlBase)
+BEGIN_EVENT_TABLE(wxNotebook, wxBookCtrlBase)
     EVT_NAVIGATION_KEY(wxNotebook::OnNavigationKey)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 void wxNotebook::Init()
 {
@@ -152,13 +154,6 @@ wxNotebook::wxNotebook( wxWindow *parent, wxWindowID id,
 
 wxNotebook::~wxNotebook()
 {
-    // Ensure that we don't generate page changing events during the
-    // destruction, this is unexpected and may reference the already (half)
-    // destroyed parent window, for example. So make sure our switch_page
-    // callback is not called from inside DeleteAllPages() by disconnecting all
-    // the callbacks associated with this widget.
-    GTKDisconnect(m_widget);
-
     DeleteAllPages();
 }
 
@@ -282,22 +277,28 @@ bool wxNotebook::SetPageImage( size_t page, int image )
     wxCHECK_MSG(page < GetPageCount(), false, "invalid notebook index");
 
     wxGtkNotebookPage* pageData = GetNotebookPage(page);
-
-    const wxBitmapBundle bundle = GetBitmapBundle(image);
-    if ( bundle.IsOk() )
+    if (image >= 0)
     {
-        if (pageData->m_image == NULL)
+        wxCHECK_MSG(HasImageList(), false, "invalid notebook imagelist");
+        const wxBitmap* bitmap = GetImageList()->GetBitmapPtr(image);
+        if (bitmap == NULL)
+            return false;
+        if (pageData->m_image)
         {
-            pageData->m_image = wxGtkImage::New();
+            gtk_image_set_from_pixbuf(
+                GTK_IMAGE(pageData->m_image), bitmap->GetPixbuf());
+        }
+        else
+        {
+            pageData->m_image = gtk_image_new_from_pixbuf(bitmap->GetPixbuf());
             gtk_widget_show(pageData->m_image);
             gtk_box_pack_start(GTK_BOX(pageData->m_box),
                 pageData->m_image, false, false, m_padding);
         }
-        WX_GTK_IMAGE(pageData->m_image)->Set(bundle);
     }
     else if (pageData->m_image)
     {
-        gtk_container_remove(GTK_CONTAINER(pageData->m_box), pageData->m_image);
+        gtk_widget_destroy(pageData->m_image);
         pageData->m_image = NULL;
     }
     pageData->m_imageIndex = image;
@@ -313,72 +314,24 @@ wxSize wxNotebook::CalcSizeFromPage(const wxSize& sizePage) const
     for ( size_t n = 0; n < pageCount; n++ )
     {
         GtkRequisition req;
-        gtk_widget_get_preferred_size(GetNotebookPage(n)->m_box, NULL, &req);
+        gtk_widget_size_request(GetNotebookPage(n)->m_box, &req);
         sizeTabMax.IncTo(wxSize(req.width, req.height));
     }
 
+    // Unfortunately this doesn't account for the real tab size and I don't
+    // know how to find it, e.g. where do the margins below come from.
+    const int PAGE_MARGIN = 3;
+    const int TAB_MARGIN = 4;
+
+    sizeTabMax.IncBy(3*TAB_MARGIN);
+
     wxSize sizeFull(sizePage);
-#ifdef __WXGTK3__
-    GtkBorder b;
-    if (gtk_check_version(3,20,0) == NULL)
-    {
-        wxGtkStyleContext sc;
-        sc.Add(GTK_TYPE_NOTEBOOK, "notebook", "notebook", "frame", NULL);
-        gtk_style_context_get_border(sc, GTK_STATE_FLAG_NORMAL, &b);
-        sizeFull.IncBy(b.left + b.right, b.top + b.bottom);
-
-        sc.Add(G_TYPE_NONE, "header", IsVertical() ? "top" : "left", NULL);
-        sc.Add(G_TYPE_NONE, "tabs", NULL);
-        sc.Add(G_TYPE_NONE, "tab", NULL);
-
-        wxSize tabMin;
-        gtk_style_context_get(sc, GTK_STATE_FLAG_NORMAL,
-            "min-width", &tabMin.x, "min-height", &tabMin.y, NULL);
-        sizeTabMax.IncTo(tabMin);
-
-        gtk_style_context_get_margin(sc, GTK_STATE_FLAG_NORMAL, &b);
-        sizeTabMax.IncBy(b.left + b.right, b.top + b.bottom);
-        gtk_style_context_get_border(sc, GTK_STATE_FLAG_NORMAL, &b);
-        sizeTabMax.IncBy(b.left + b.right, b.top + b.bottom);
-        gtk_style_context_get_padding(sc, GTK_STATE_FLAG_NORMAL, &b);
-        sizeTabMax.IncBy(b.left + b.right, b.top + b.bottom);
-    }
-    else
-    {
-        // Size of tab labels may be reported as zero if we're called too early.
-        // 17 is observed value for text-only label with default Adwaita theme.
-        sizeTabMax.IncTo(wxSize(17, 17));
-
-        GtkStyleContext* sc = gtk_widget_get_style_context(m_widget);
-        gtk_style_context_save(sc);
-        gtk_style_context_add_region(sc, "tab", GtkRegionFlags(0));
-        gtk_style_context_add_class(sc, "top");
-        gtk_style_context_get_padding(sc, GTK_STATE_FLAG_NORMAL, &b);
-        sizeTabMax.IncBy(b.left + b.right, b.top + b.bottom);
-        gtk_style_context_restore(sc);
-
-        sizeFull.IncBy(2 * gtk_container_get_border_width(GTK_CONTAINER(m_widget)));
-    }
-#else // !__WXGTK3__
-    // Size of tab labels may be reported as zero if we're called too early.
-    // 21 is observed value for text-only label with default Adwaita theme.
-    sizeTabMax.IncTo(wxSize(21, 21));
-
-    int tab_hborder, tab_vborder, focus_width;
-    g_object_get(G_OBJECT(m_widget),
-        "tab-hborder", &tab_hborder, "tab-vborder", &tab_vborder, NULL);
-    gtk_widget_style_get(m_widget, "focus-line-width", &focus_width, NULL);
-    sizeTabMax.x += 2 * (tab_hborder + focus_width + m_widget->style->xthickness);
-    sizeTabMax.y += 2 * (tab_vborder + focus_width + m_widget->style->ythickness);
-
-    sizeFull.x += 2 * m_widget->style->xthickness;
-    sizeFull.y += 2 * m_widget->style->ythickness;
-#endif // !__WXGTK3__
-
     if ( IsVertical() )
         sizeFull.y += sizeTabMax.y;
     else
         sizeFull.x += sizeTabMax.x;
+
+    sizeFull.IncBy(2*PAGE_MARGIN);
 
     return sizeFull;
 }
@@ -466,7 +419,7 @@ bool wxNotebook::InsertPage( size_t position,
 
     wxGtkNotebookPage* pageData = new wxGtkNotebookPage;
 
-    m_pages.insert(m_pages.begin() + position, win);
+    m_pages.Insert(win, position);
     m_pagesData.Insert(position, pageData);
 
     // set the label image and text
@@ -476,42 +429,32 @@ bool wxNotebook::InsertPage( size_t position,
     // first page.
     pageData->m_imageIndex = imageId;
 
-    pageData->m_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 1);
-#ifndef __WXGTK3__
+    pageData->m_box = gtk_hbox_new(false, 1);
     gtk_container_set_border_width(GTK_CONTAINER(pageData->m_box), 2);
-#endif
 
-    const wxBitmapBundle bundle = GetBitmapBundle(imageId);
-    if ( bundle.IsOk() )
+    pageData->m_image = NULL;
+    if (imageId != -1)
     {
-        pageData->m_image = wxGtkImage::New();
-        WX_GTK_IMAGE(pageData->m_image)->Set(bundle);
-        gtk_box_pack_start(GTK_BOX(pageData->m_box),
-            pageData->m_image, false, false, m_padding);
-    }
-    else
-    {
-        pageData->m_image = NULL;
+        if (HasImageList())
+        {
+            const wxBitmap* bitmap = GetImageList()->GetBitmapPtr(imageId);
+            pageData->m_image = gtk_image_new_from_pixbuf(bitmap->GetPixbuf());
+            gtk_box_pack_start(GTK_BOX(pageData->m_box),
+                pageData->m_image, false, false, m_padding);
+        }
+        else
+        {
+            wxFAIL_MSG("invalid notebook imagelist");
+        }
     }
 
     /* set the label text */
     pageData->m_label = gtk_label_new(wxGTK_CONV(wxStripMenuCodes(text)));
-
-    if (m_windowStyle & wxBK_LEFT)
-        gtk_label_set_angle(GTK_LABEL(pageData->m_label), 90);
-    if (m_windowStyle & wxBK_RIGHT)
-        gtk_label_set_angle(GTK_LABEL(pageData->m_label), 270);
-
     gtk_box_pack_end(GTK_BOX(pageData->m_box),
         pageData->m_label, false, false, m_padding);
 
     gtk_widget_show_all(pageData->m_box);
-
-    // Inserting the page may generate selection changing events that are not
-    // expected here: we will send them ourselves below if necessary.
-    g_signal_handlers_block_by_func(m_widget, (void*)switch_page, this);
     gtk_notebook_insert_page(notebook, win->m_widget, pageData->m_box, position);
-    g_signal_handlers_unblock_by_func(m_widget, (void*)switch_page, this);
 
     /* apply current style */
 #ifdef __WXGTK3__
@@ -525,7 +468,10 @@ bool wxNotebook::InsertPage( size_t position,
     }
 #endif
 
-    DoSetSelectionAfterInsertion(position, select);
+    if (select && GetPageCount() > 1)
+    {
+        SetSelection( position );
+    }
 
     InvalidateBestSize();
     return true;
@@ -555,14 +501,18 @@ int wxNotebook::HitTest(const wxPoint& pt, long *flags) const
     const int y = a.y;
 
     const size_t count = GetPageCount();
+    size_t i = 0;
 
-    for (size_t i = 0; i < count; i++)
+#if !GTK_CHECK_VERSION(3,0,0) && !defined(GSEAL_ENABLE)
+    GtkNotebook * notebook = GTK_NOTEBOOK(m_widget);
+    if (gtk_notebook_get_scrollable(notebook))
+        i = g_list_position( notebook->children, notebook->first_tab );
+#endif
+
+    for ( ; i < count; i++ )
     {
         wxGtkNotebookPage* pageData = GetNotebookPage(i);
         GtkWidget* box = pageData->m_box;
-
-        if (!gtk_widget_get_child_visible(box))
-            continue;
 
         const gint border = gtk_container_get_border_width(GTK_CONTAINER(box));
 
@@ -645,9 +595,7 @@ GdkWindow *wxNotebook::GTKGetWindow(wxArrayGdkWindows& windows) const
 {
     windows.push_back(gtk_widget_get_window(m_widget));
 #ifdef __WXGTK3__
-    GdkWindow* window = GTKFindWindow(m_widget);
-    if (window)
-        windows.push_back(window);
+    // no access to internal GdkWindows
 #else
     windows.push_back(GTK_NOTEBOOK(m_widget)->event_window);
 #endif
@@ -659,7 +607,7 @@ GdkWindow *wxNotebook::GTKGetWindow(wxArrayGdkWindows& windows) const
 wxVisualAttributes
 wxNotebook::GetClassDefaultAttributes(wxWindowVariant WXUNUSED(variant))
 {
-    return GetDefaultAttributesFromGTKWidget(gtk_notebook_new());
+    return GetDefaultAttributesFromGTKWidget(gtk_notebook_new);
 }
 
 #endif

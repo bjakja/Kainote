@@ -9,19 +9,19 @@
 #ifndef _WX_FS_MEM_H_
 #define _WX_FS_MEM_H_
 
-#include "wx\defs.h"
+#include "wx/defs.h"
 
 #if wxUSE_FILESYSTEM
 
-#include "wx\filesys.h"
+#include "wx/filesys.h"
 
-#include "wx\hashmap.h"
+#include "wx/hashmap.h"
 
 class wxMemoryFSFile;
 WX_DECLARE_STRING_HASH_MAP(wxMemoryFSFile *, wxMemoryFSHash);
 
 #if wxUSE_GUI
-    #include "wx\bitmap.h"
+    #include "wx/bitmap.h"
 #endif // wxUSE_GUI
 
 // ----------------------------------------------------------------------------
@@ -49,10 +49,10 @@ public:
     // Remove file from memory FS and free occupied memory
     static void RemoveFile(const wxString& filename);
 
-    virtual bool CanOpen(const wxString& location) wxOVERRIDE;
-    virtual wxFSFile* OpenFile(wxFileSystem& fs, const wxString& location) wxOVERRIDE;
-    virtual wxString FindFirst(const wxString& spec, int flags = 0) wxOVERRIDE;
-    virtual wxString FindNext() wxOVERRIDE;
+    virtual bool CanOpen(const wxString& location);
+    virtual wxFSFile* OpenFile(wxFileSystem& fs, const wxString& location);
+    virtual wxString FindFirst(const wxString& spec, int flags = 0);
+    virtual wxString FindNext();
 
 protected:
     // check that the given file is not already present in m_Hash; logs an
@@ -64,10 +64,11 @@ protected:
 
     // the file name currently being searched for, i.e. the argument of the
     // last FindFirst() call or empty string if FindFirst() hasn't been called
-    // yet
+    // yet or FindNext() didn't find anything
     wxString m_findArgument;
 
-    // iterator into m_Hash used by FindFirst/Next(), possibly m_Hash.end()
+    // iterator into m_Hash used by FindFirst/Next(), possibly m_Hash.end() or
+    // even invalid (can only be used when m_findArgument is not empty)
     wxMemoryFSHash::const_iterator m_findIter;
 };
 

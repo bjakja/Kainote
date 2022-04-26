@@ -2,6 +2,7 @@
 // Name:        fdrepdlg.h
 // Purpose:     interface of wxFindDialogEvent, wxFindReplaceDialog
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -94,11 +95,11 @@ public:
     const wxString& GetReplaceString() const;
 };
 
-wxEventType wxEVT_FIND;
-wxEventType wxEVT_FIND_NEXT;
-wxEventType wxEVT_FIND_REPLACE;
-wxEventType wxEVT_FIND_REPLACE_ALL;
-wxEventType wxEVT_FIND_CLOSE;
+wxEventType wxEVT_COMMAND_FIND;
+wxEventType wxEVT_COMMAND_FIND_NEXT;
+wxEventType wxEVT_COMMAND_FIND_REPLACE;
+wxEventType wxEVT_COMMAND_FIND_REPLACE_ALL;
+wxEventType wxEVT_COMMAND_FIND_CLOSE;
 
 
 
@@ -129,7 +130,7 @@ public:
     /**
         Get the string to find.
     */
-    const wxString& GetFindString() const;
+    const wxString& GetFindString();
 
     /**
         Get the combination of @c wxFindReplaceFlags values.
@@ -139,7 +140,7 @@ public:
     /**
         Get the replacement string.
     */
-    const wxString& GetReplaceString() const;
+    const wxString& GetReplaceString();
 
     /**
         Set the string to find (used as initial value by the dialog).

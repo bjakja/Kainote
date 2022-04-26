@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -85,10 +86,10 @@ extern wxList wxModelessWindows;
 // wxWin macros
 // ----------------------------------------------------------------------------
 
-wxBEGIN_EVENT_TABLE(wxFrame, wxFrameBase)
+BEGIN_EVENT_TABLE(wxFrame, wxFrameBase)
     EVT_ACTIVATE(wxFrame::OnActivate)
     EVT_SYS_COLOUR_CHANGED(wxFrame::OnSysColourChanged)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 // ============================================================================
 // implementation

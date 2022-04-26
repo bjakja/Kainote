@@ -2,6 +2,7 @@
 // Name:        timer.h
 // Purpose:     interface of wxTimer
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -85,7 +86,7 @@ public:
     wxEvtHandler* GetOwner() const;
 
     /**
-        Returns @true if the timer is one shot, i.e.\ if it will stop after firing
+        Returns @true if the timer is one shot, i.e. if it will stop after firing
         the first notification automatically.
     */
     bool IsOneShot() const;
@@ -127,21 +128,10 @@ public:
         To make your code more readable you may also use the following symbolic constants:
         - wxTIMER_CONTINUOUS: Start a normal, continuously running, timer
         - wxTIMER_ONE_SHOT: Start a one shot timer
-        Alternatively, use StartOnce().
-
         If the timer was already running, it will be stopped by this method before
         restarting it.
     */
-    virtual bool Start(int milliseconds = -1, bool oneShot = wxTIMER_CONTINUOUS);
-
-    /**
-        Starts the timer for a once-only notification.
-
-        This is a simple wrapper for Start() with @c wxTIMER_ONE_SHOT parameter.
-
-        @since 2.9.5
-     */
-    bool StartOnce(int milliseconds = -1);
+    virtual bool Start(int milliseconds = -1, bool oneShot = false);
 
     /**
         Stops the timer.
@@ -154,7 +144,7 @@ public:
    @class wxTimerRunner
 
    Starts the timer in its ctor, stops in the dtor.
-*/
+*/ 
 class wxTimerRunner
 {
 public:
@@ -208,6 +198,7 @@ public:
 class wxTimerEvent : public wxEvent
 {
 public:
+    wxTimerEvent();
     wxTimerEvent(wxTimer& timer);
 
     /**

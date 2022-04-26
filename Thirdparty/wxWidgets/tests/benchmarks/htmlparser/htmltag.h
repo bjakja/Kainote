@@ -2,6 +2,7 @@
 // Name:        htmltag.h
 // Purpose:     wx28HtmlTag class (represents single tag)
 // Author:      Vaclav Slavik
+// RCS-ID:      $Id$
 // Copyright:   (c) 1999 Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -14,6 +15,7 @@
 #include "wx/object.h"
 #include "wx/arrstr.h"
 
+class  wxColour;
 class  wx28HtmlEntitiesParser;
 
 //-----------------------------------------------------------------------------
@@ -25,7 +27,7 @@ struct wx28HtmlCacheItem;
 
 class  wx28HtmlTagsCache : public wxObject
 {
-    wxDECLARE_DYNAMIC_CLASS(wx28HtmlTagsCache);
+    DECLARE_DYNAMIC_CLASS(wx28HtmlTagsCache)
 
 private:
     wx28HtmlCacheItem *m_Cache;
@@ -40,7 +42,7 @@ public:
     // Finds parameters for tag starting at at and fills the variables
     void QueryTag(int at, int* end1, int* end2);
 
-    wxDECLARE_NO_COPY_CLASS(wx28HtmlTagsCache);
+    DECLARE_NO_COPY_CLASS(wx28HtmlTagsCache)
 };
 
 
@@ -52,7 +54,7 @@ public:
 
 class  wx28HtmlTag : public wxObject
 {
-    wxDECLARE_CLASS(wx28HtmlTag);
+    DECLARE_CLASS(wx28HtmlTag)
 
 protected:
     // constructs wx28HtmlTag object based on HTML tag.
@@ -90,6 +92,8 @@ public:
     //                           (or ("WhaT.jpg") if with_commas == true)
     wxString GetParam(const wxString& par, bool with_commas = false) const;
 
+    // Convenience functions:
+    bool GetParamAsColour(const wxString& par, wxColour *clr) const;
     bool GetParamAsInt(const wxString& par, int *clr) const;
 
     // Scans param like scanf() functions family does.
@@ -129,7 +133,7 @@ private:
     wx28HtmlTag *m_FirstChild, *m_LastChild;
     wx28HtmlTag *m_Parent;
 
-    wxDECLARE_NO_COPY_CLASS(wx28HtmlTag);
+    DECLARE_NO_COPY_CLASS(wx28HtmlTag)
 };
 
 

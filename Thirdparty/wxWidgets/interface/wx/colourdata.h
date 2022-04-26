@@ -2,6 +2,7 @@
 // Name:        colourdata.h
 // Purpose:     interface of wxColourData
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -47,16 +48,6 @@ public:
     bool GetChooseFull() const;
 
     /**
-        Indicates whether the colour dialog will display alpha values
-        and an opacity selector. It is meaningful under wxGTK, wxOSX
-        and with regards to generic colour dialog.
-
-        The default value is @false, except wxOSX where it is @true (for
-        the sake of backward compatibility).
-    */
-    bool GetChooseAlpha() const;
-
-    /**
         Gets the current colour associated with the colour dialog.
 
         The default colour is black.
@@ -81,16 +72,6 @@ public:
         The default value is @true.
     */
     void SetChooseFull(bool flag);
-
-    /**
-        Tells the colour dialog to show alpha values and an opacity selector
-        (slider). Currently it has effect under wxGTK, wxOSX and for generic
-        colour dialog.
-
-        The default value is @false, except wxOSX where it is @true for
-        backward compatibility.
-    */
-    void SetChooseAlpha(bool flag);
 
     /**
         Sets the default colour for the colour dialog.

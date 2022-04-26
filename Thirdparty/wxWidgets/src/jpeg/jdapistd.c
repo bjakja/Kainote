@@ -2,7 +2,6 @@
  * jdapistd.c
  *
  * Copyright (C) 1994-1996, Thomas G. Lane.
- * Modified 2002-2013 by Guido Vollbeding.
  * This file is part of the Independent JPEG Group's software.
  * For conditions of distribution and use, see the accompanying README file.
  *
@@ -21,7 +20,7 @@
 
 
 /* Forward declarations */
-LOCAL(boolean) output_pass_setup JPP((j_decompress_ptr cinfo));
+LOCAL(wxjpeg_boolean) output_pass_setup JPP((j_decompress_ptr cinfo));
 
 
 /*
@@ -35,7 +34,7 @@ LOCAL(boolean) output_pass_setup JPP((j_decompress_ptr cinfo));
  * a suspending data source is used.
  */
 
-GLOBAL(boolean)
+GLOBAL(wxjpeg_boolean)
 jpeg_start_decompress (j_decompress_ptr cinfo)
 {
   if (cinfo->global_state == DSTATE_READY) {
@@ -92,7 +91,7 @@ jpeg_start_decompress (j_decompress_ptr cinfo)
  *       If suspended, returns FALSE and sets global_state = DSTATE_PRESCAN.
  */
 
-LOCAL(boolean)
+LOCAL(wxjpeg_boolean)
 output_pass_setup (j_decompress_ptr cinfo)
 {
   if (cinfo->global_state != DSTATE_PRESCAN) {
@@ -203,7 +202,7 @@ jpeg_read_raw_data (j_decompress_ptr cinfo, JSAMPIMAGE data,
   }
 
   /* Verify that at least one iMCU row can be returned. */
-  lines_per_iMCU_row = cinfo->max_v_samp_factor * cinfo->min_DCT_v_scaled_size;
+  lines_per_iMCU_row = cinfo->max_v_samp_factor * cinfo->min_DCT_scaled_size;
   if (max_lines < lines_per_iMCU_row)
     ERREXIT(cinfo, JERR_BUFFER_SIZE);
 
@@ -225,7 +224,7 @@ jpeg_read_raw_data (j_decompress_ptr cinfo, JSAMPIMAGE data,
  * Initialize for an output pass in buffered-image mode.
  */
 
-GLOBAL(boolean)
+GLOBAL(wxjpeg_boolean)
 jpeg_start_output (j_decompress_ptr cinfo, int scan_number)
 {
   if (cinfo->global_state != DSTATE_BUFIMAGE &&
@@ -250,7 +249,7 @@ jpeg_start_output (j_decompress_ptr cinfo, int scan_number)
  * a suspending data source is used.
  */
 
-GLOBAL(boolean)
+GLOBAL(wxjpeg_boolean)
 jpeg_finish_output (j_decompress_ptr cinfo)
 {
   if ((cinfo->global_state == DSTATE_SCANNING ||

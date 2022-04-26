@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -14,7 +15,7 @@
 // Scrollbar item
 class WXDLLIMPEXP_CORE wxScrollBar: public wxScrollBarBase
 {
-    wxDECLARE_DYNAMIC_CLASS(wxScrollBar);
+    DECLARE_DYNAMIC_CLASS(wxScrollBar)
 
 public:
     inline wxScrollBar() { m_pageSize = 0; m_viewSize = 0; m_objectSize = 0; }
@@ -25,7 +26,7 @@ public:
         const wxSize& size = wxDefaultSize,
         long style = wxSB_HORIZONTAL,
         const wxValidator& validator = wxDefaultValidator,
-        const wxString& name = wxASCII_STR(wxScrollBarNameStr))
+        const wxString& name = wxScrollBarNameStr)
     {
         Create(parent, id, pos, size, style, validator, name);
     }
@@ -34,7 +35,7 @@ public:
         const wxSize& size = wxDefaultSize,
         long style = wxSB_HORIZONTAL,
         const wxValidator& validator = wxDefaultValidator,
-        const wxString& name = wxASCII_STR(wxScrollBarNameStr));
+        const wxString& name = wxScrollBarNameStr);
 
     int GetThumbPosition() const ;
     inline int GetThumbSize() const { return m_pageSize; }

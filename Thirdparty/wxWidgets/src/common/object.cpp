@@ -4,35 +4,48 @@
 // Author:      Julian Smart
 // Modified by: Ron Lee
 // Created:     04/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Julian Smart
 //              (c) 2001 Ron Lee <ron@debian.org>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
-    #include "wx\object.h"
-    #include "wx\hash.h"
-    #include "wx\memory.h"
-    #include "wx\crt.h"
+    #include "wx/object.h"
+    #include "wx/hash.h"
+    #include "wx/memory.h"
+    #include "wx/crt.h"
 #endif
 
 #include <string.h>
 
+#if wxUSE_DEBUG_CONTEXT
+    #if defined(__VISAGECPP__)
+        #define DEBUG_PRINTF(NAME) { static int raz=0; \
+            printf( #NAME " %i\n",raz); fflush(stdout); raz++; }
+    #else
+        #define DEBUG_PRINTF(NAME)
+    #endif
+#endif // wxUSE_DEBUG_CONTEXT
+
 // we must disable optimizations for VC.NET because otherwise its too eager
 // linker discards wxClassInfo objects in release build thus breaking many,
 // many things
-#if defined __VISUALC__
+#if defined __VISUALC__ && __VISUALC__ >= 1300
     #pragma optimize("", off)
 #endif
 
 #if wxUSE_EXTENDED_RTTI
 const wxClassInfo* wxObject::ms_classParents[] = { NULL } ;
 wxObject* wxVariantOfPtrToObjectConverterwxObject ( const wxAny &data )
-{ return data.As<wxObject*>(); }
+{ return wxANY_AS(data, wxObject*); }
  wxAny wxObjectToVariantConverterwxObject ( wxObject *data )
  { return wxAny( dynamic_cast<wxObject*> (data)  ) ; }
 
@@ -54,7 +67,7 @@ wxClassInfo wxObject::ms_classInfo( wxT("wxObject"), 0, 0,
 #endif
 
 // restore optimizations
-#if defined __VISUALC__
+#if defined __VISUALC__ && __VISUALC__ >= 1300
     #pragma optimize("", on)
 #endif
 
@@ -62,7 +75,7 @@ wxClassInfo* wxClassInfo::sm_first = NULL;
 wxHashTable* wxClassInfo::sm_classTable = NULL;
 
 // when using XTI, this method is already implemented inline inside
-// wxDECLARE_DYNAMIC_CLASS but otherwise we intentionally make this function
+// DECLARE_DYNAMIC_CLASS but otherwise we intentionally make this function
 // non-inline because this allows us to have a non-inline virtual function in
 // all wx classes and this solves linking problems for HP-UX native toolchain
 // and possibly others (we could make dtor non-inline as well but it's more
@@ -202,7 +215,7 @@ wxClassInfo *wxClassInfo::FindClass(const wxString& className)
 // first time the problem will no longer happen; all the modules it depends on
 // will have been loaded. The assumption is checked using the 'entry' variable
 // as a reentrance guard, it checks that once the hash table is global it is
-// not accessed multiple times simultaneously.
+// not accessed multiple times simulateously.
 
 void wxClassInfo::Register()
 {
@@ -220,12 +233,12 @@ void wxClassInfo::Register()
     }
     else
     {
-        // guard against reentrance once the global has been created
+        // guard againt reentrance once the global has been created
         wxASSERT_MSG(++entry == 1, wxT("wxClassInfo::Register() reentrance"));
         classTable = sm_classTable;
     }
 
-    // Using wxIMPLEMENT_DYNAMIC_CLASS() macro twice (which may happen if you
+    // Using IMPLEMENT_DYNAMIC_CLASS() macro twice (which may happen if you
     // link any object module twice mistakenly, or link twice against wx shared
     // library) will break this function because it will enter an infinite loop
     // and eventually die with "out of memory" - as this is quite hard to
@@ -233,7 +246,7 @@ void wxClassInfo::Register()
     wxASSERT_MSG( classTable->Get(m_className) == NULL,
         wxString::Format
         (
-            wxT("Class \"%s\" already in RTTI table - have you used wxIMPLEMENT_DYNAMIC_CLASS() multiple times or linked some object file twice)?"),
+            wxT("Class \"%s\" already in RTTI table - have you used IMPLEMENT_DYNAMIC_CLASS() multiple times or linked some object file twice)?"),
             m_className
         )
     );
@@ -250,7 +263,7 @@ void wxClassInfo::Register()
         }
         else
         {
-            // the global hash has already been created by a reentrant call,
+            // the gobal hash has already been created by a reentrant call,
             // so delete the local hash and try again
             delete classTable;
             Register();
@@ -276,6 +289,10 @@ void wxClassInfo::Unregister()
 
 wxObject *wxCreateDynamicObject(const wxString& name)
 {
+#if wxUSE_DEBUG_CONTEXT
+    DEBUG_PRINTF(wxObject *wxCreateDynamicObject)
+#endif
+
     if ( wxClassInfo::sm_classTable )
     {
         wxClassInfo *info = (wxClassInfo *)wxClassInfo::sm_classTable->Get(name);
@@ -346,6 +363,10 @@ void wxRefCounter::DecRef()
 
 void wxObject::Ref(const wxObject& clone)
 {
+#if wxUSE_DEBUG_CONTEXT
+    DEBUG_PRINTF(wxObject::Ref)
+#endif
+
     // nothing to be done
     if (m_refData == clone.m_refData)
         return;

@@ -4,6 +4,7 @@
 // Author:      Julian Smart and others
 // Modified by:
 // Created:     01/02/97
+// RCS-ID:      $Id$
 // Copyright:   (c)
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -71,7 +72,8 @@ public:
     bool GetColour() const { return m_colour; }
     wxDuplexMode GetDuplex() const { return m_duplexMode; }
     wxPaperSize GetPaperId() const { return m_paperId; }
-    const wxSize& GetPaperSize() const { return m_paperSize; }
+    const wxSize& GetPaperSize() const { return m_paperSize; } // Not used yet: confusable with paper size
+                                                                      // in wxPageSetupDialogData
     wxPrintQuality GetQuality() const { return m_printQuality; }
     wxPrintBin GetBin() const { return m_bin; }
     wxPrintMode GetPrintMode() const { return m_printMode; }
@@ -137,7 +139,7 @@ private:
     wxPrintNativeDataBase  *m_nativeData;
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxPrintData);
+    DECLARE_DYNAMIC_CLASS(wxPrintData)
 };
 
 /*
@@ -212,7 +214,7 @@ private:
     wxPrintData     m_printData;
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxPrintDialogData);
+    DECLARE_DYNAMIC_CLASS(wxPrintDialogData)
 };
 
 /*
@@ -301,7 +303,7 @@ private:
     wxPrintData     m_printData;
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxPageSetupDialogData);
+    DECLARE_DYNAMIC_CLASS(wxPageSetupDialogData)
 };
 
 #endif // wxUSE_PRINTING_ARCHITECTURE

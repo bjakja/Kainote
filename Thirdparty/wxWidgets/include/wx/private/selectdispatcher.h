@@ -4,6 +4,7 @@
 // Authors:     Lukasz Michalski and Vadim Zeitlin
 // Created:     December 2006
 // Copyright:   (c) Lukasz Michalski
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -14,14 +15,19 @@
 
 #if wxUSE_SELECT_DISPATCHER
 
-#if defined(HAVE_SYS_SELECT_H)
+#if defined(HAVE_SYS_SELECT_H) || defined(__WATCOMC__)
     #include <sys/time.h>
     #include <sys/select.h>
 #endif
 
-#include <sys/types.h>
+#ifdef __WATCOMC__
+    #include <types.h>
+    #include <sys/ioctl.h>
+    #include <tcpustd.h>
+#else
+    #include <sys/types.h>
+#endif
 
-#include "wx/thread.h"
 #include "wx/private/fdiodispatcher.h"
 
 // helper class storing all the select() fd sets
@@ -86,11 +92,11 @@ public:
     wxSelectDispatcher() { m_maxFD = -1; }
 
     // implement pure virtual methods of the base class
-    virtual bool RegisterFD(int fd, wxFDIOHandler *handler, int flags = wxFDIO_ALL) wxOVERRIDE;
-    virtual bool ModifyFD(int fd, wxFDIOHandler *handler, int flags = wxFDIO_ALL) wxOVERRIDE;
-    virtual bool UnregisterFD(int fd) wxOVERRIDE;
-    virtual bool HasPending() const wxOVERRIDE;
-    virtual int Dispatch(int timeout = TIMEOUT_INFINITE) wxOVERRIDE;
+    virtual bool RegisterFD(int fd, wxFDIOHandler *handler, int flags = wxFDIO_ALL);
+    virtual bool ModifyFD(int fd, wxFDIOHandler *handler, int flags = wxFDIO_ALL);
+    virtual bool UnregisterFD(int fd);
+    virtual bool HasPending() const;
+    virtual int Dispatch(int timeout = TIMEOUT_INFINITE);
 
 private:
     // common part of RegisterFD() and ModifyFD()
@@ -108,10 +114,6 @@ private:
     // specified timeout
     int DoSelect(wxSelectSets& sets, int timeout) const;
 
-
-#if wxUSE_THREADS
-    wxCriticalSection m_cs;
-#endif // wxUSE_THREADS
 
     // the select sets containing all the registered fds
     wxSelectSets m_sets;

@@ -2,6 +2,7 @@
 // Name:        src/gtk/combobox.cpp
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -16,22 +17,34 @@
 #ifndef WX_PRECOMP
     #include "wx/intl.h"
     #include "wx/settings.h"
-    #include "wx/textctrl.h"    // for wxEVT_TEXT
+    #include "wx/textctrl.h"    // for wxEVT_COMMAND_TEXT_UPDATED
     #include "wx/arrstr.h"
 #endif
 
+#include <gtk/gtk.h>
 #include "wx/gtk/private.h"
+#include "wx/gtk/private/gtk2-compat.h"
 
 // ----------------------------------------------------------------------------
 // GTK callbacks
 // ----------------------------------------------------------------------------
 
 extern "C" {
+static void
+gtkcombobox_text_changed_callback( GtkWidget *WXUNUSED(widget), wxComboBox *combo )
+{
+    if (!combo->m_hasVMT) return;
+
+    wxCommandEvent event( wxEVT_COMMAND_TEXT_UPDATED, combo->GetId() );
+    event.SetString( combo->GetValue() );
+    event.SetEventObject( combo );
+    combo->HandleWindowEvent( event );
+}
 
 static void
 gtkcombobox_changed_callback( GtkWidget *WXUNUSED(widget), wxComboBox *combo )
 {
-    combo->SendSelectionChangedEvent(wxEVT_COMBOBOX);
+    combo->SendSelectionChangedEvent(wxEVT_COMMAND_COMBOBOX_SELECTED);
 }
 
 static void
@@ -41,32 +54,19 @@ gtkcombobox_popupshown_callback(GObject *WXUNUSED(gobject),
 {
     gboolean isShown;
     g_object_get( combo->m_widget, "popup-shown", &isShown, NULL );
-    wxCommandEvent event( isShown ? wxEVT_COMBOBOX_DROPDOWN
-                                  : wxEVT_COMBOBOX_CLOSEUP,
+    wxCommandEvent event( isShown ? wxEVT_COMMAND_COMBOBOX_DROPDOWN
+                                  : wxEVT_COMMAND_COMBOBOX_CLOSEUP,
                           combo->GetId() );
     event.SetEventObject( combo );
-
-#ifndef __WXGTK3__
-    // Process the close up event once the combobox is already closed with GTK+
-    // 2, otherwise changing the combobox from its handler result in errors.
-    if ( !isShown )
-    {
-        combo->GetEventHandler()->AddPendingEvent( event );
-    }
-    else
-#endif // GTK+ < 3
-    {
-        combo->HandleWindowEvent( event );
-    }
+    combo->HandleWindowEvent( event );
 }
-
 }
 
 //-----------------------------------------------------------------------------
 // wxComboBox
 //-----------------------------------------------------------------------------
 
-wxBEGIN_EVENT_TABLE(wxComboBox, wxChoice)
+BEGIN_EVENT_TABLE(wxComboBox, wxChoice)
     EVT_CHAR(wxComboBox::OnChar)
 
     EVT_MENU(wxID_CUT, wxComboBox::OnCut)
@@ -84,16 +84,7 @@ wxBEGIN_EVENT_TABLE(wxComboBox, wxChoice)
     EVT_UPDATE_UI(wxID_REDO, wxComboBox::OnUpdateRedo)
     EVT_UPDATE_UI(wxID_CLEAR, wxComboBox::OnUpdateDelete)
     EVT_UPDATE_UI(wxID_SELECTALL, wxComboBox::OnUpdateSelectAll)
-wxEND_EVENT_TABLE()
-
-wxComboBox::~wxComboBox()
-{
-    if (m_entry)
-    {
-        GTKDisconnect(m_entry);
-        g_object_remove_weak_pointer(G_OBJECT(m_entry), (void**)&m_entry);
-    }
-}
+END_EVENT_TABLE()
 
 void wxComboBox::Init()
 {
@@ -146,9 +137,6 @@ bool wxComboBox::Create( wxWindow *parent, wxWindowID id, const wxString& value,
                                          !HasFlag(wxTE_PROCESS_ENTER) );
 
         gtk_editable_set_editable(GTK_EDITABLE(entry), true);
-#ifdef __WXGTK3__
-        gtk_entry_set_width_chars(entry, 0);
-#endif
     }
 
     Append(n, choices);
@@ -177,19 +165,22 @@ bool wxComboBox::Create( wxWindow *parent, wxWindowID id, const wxString& value,
             gtk_entry_set_text( entry, wxGTK_CONV(value) );
         }
 
-        GTKConnectChangedSignal();
-        GTKConnectInsertTextSignal(entry);
-        GTKConnectClipboardSignals(GTK_WIDGET(entry));
+        g_signal_connect_after (entry, "changed",
+                                G_CALLBACK (gtkcombobox_text_changed_callback), this);
     }
 
     g_signal_connect_after (m_widget, "changed",
                         G_CALLBACK (gtkcombobox_changed_callback), this);
 
-    if ( wx_is_at_least_gtk2(10) )
+#ifndef __WXGTK3__
+    if ( !gtk_check_version(2,10,0) )
+#endif
     {
         g_signal_connect (m_widget, "notify::popup-shown",
                           G_CALLBACK (gtkcombobox_popupshown_callback), this);
     }
+
+    SetInitialSize(size); // need this too because this is a wxControlWithItems
 
     return true;
 }
@@ -204,12 +195,11 @@ void wxComboBox::GTKCreateComboBoxWidget()
     g_object_ref(m_widget);
 
     m_entry = GTK_ENTRY(gtk_bin_get_child(GTK_BIN(m_widget)));
-    g_object_add_weak_pointer(G_OBJECT(m_entry), (void**)&m_entry);
 }
 
 GtkEditable *wxComboBox::GetEditable() const
 {
-    return GTK_EDITABLE(m_entry);
+    return GTK_EDITABLE(gtk_bin_get_child(GTK_BIN(m_widget)));
 }
 
 void wxComboBox::OnChar( wxKeyEvent &event )
@@ -220,7 +210,7 @@ void wxComboBox::OnChar( wxKeyEvent &event )
             if ( HasFlag(wxTE_PROCESS_ENTER) && GetEntry() )
             {
                 // GTK automatically selects an item if its in the list
-                wxCommandEvent eventEnter(wxEVT_TEXT_ENTER, GetId());
+                wxCommandEvent eventEnter(wxEVT_COMMAND_TEXT_ENTER, GetId());
                 eventEnter.SetString( GetValue() );
                 eventEnter.SetInt( GetSelection() );
                 eventEnter.SetEventObject( this );
@@ -231,17 +221,28 @@ void wxComboBox::OnChar( wxKeyEvent &event )
                     // down list upon RETURN.
                     return;
                 }
-
-                // We disable built-in default button activation when
-                // wxTE_PROCESS_ENTER is used, but we still should activate it
-                // if the event wasn't handled, so do it from here.
-                if ( ClickDefaultButtonIfPossible() )
-                    return;
             }
             break;
     }
 
     event.Skip();
+}
+
+void wxComboBox::EnableTextChangedEvents(bool enable)
+{
+    if ( !GetEntry() )
+        return;
+
+    if ( enable )
+    {
+        g_signal_handlers_unblock_by_func(gtk_bin_get_child(GTK_BIN(m_widget)),
+            (gpointer)gtkcombobox_text_changed_callback, this);
+    }
+    else // disable
+    {
+        g_signal_handlers_block_by_func(gtk_bin_get_child(GTK_BIN(m_widget)),
+            (gpointer)gtkcombobox_text_changed_callback, this);
+    }
 }
 
 void wxComboBox::GTKDisableEvents()
@@ -272,7 +273,8 @@ GtkWidget* wxComboBox::GetConnectWidget()
 GdkWindow* wxComboBox::GTKGetWindow(wxArrayGdkWindows& /* windows */) const
 {
 #ifdef __WXGTK3__
-    return GTKFindWindow(GTK_WIDGET(GetEntry()));
+    // no access to internal GdkWindows
+    return NULL;
 #else
     return gtk_entry_get_text_window(GetEntry());
 #endif
@@ -283,16 +285,10 @@ wxVisualAttributes
 wxComboBox::GetClassDefaultAttributes(wxWindowVariant WXUNUSED(variant))
 {
 #ifdef __WXGTK3__
-    return GetDefaultAttributesFromGTKWidget(gtk_combo_box_new_with_entry(), true);
+    return GetDefaultAttributesFromGTKWidget(gtk_combo_box_new_with_entry, true);
 #else
-    return GetDefaultAttributesFromGTKWidget(gtk_combo_box_entry_new(), true);
+    return GetDefaultAttributesFromGTKWidget(gtk_combo_box_entry_new, true);
 #endif
-}
-
-void wxComboBox::Clear()
-{
-    wxTextEntry::Clear();
-    wxItemContainer::Clear();
 }
 
 void wxComboBox::SetValue(const wxString& value)
@@ -403,21 +399,4 @@ void wxComboBox::Dismiss()
 {
     gtk_combo_box_popdown( GTK_COMBO_BOX(m_widget) );
 }
-
-wxSize wxComboBox::DoGetSizeFromTextSize(int xlen, int ylen) const
-{
-    wxSize tsize( wxChoice::DoGetSizeFromTextSize(xlen, ylen) );
-
-    GtkEntry* entry = GetEntry();
-    if (entry)
-    {
-        // Add the margins we have previously set, but only the horizontal border
-        // as vertical one has been taken account in the previous call.
-        // Also get other GTK+ margins.
-        tsize.IncBy(GTKGetEntryMargins(entry).x, 0);
-    }
-
-    return tsize;
-}
-
 #endif // wxUSE_COMBOBOX

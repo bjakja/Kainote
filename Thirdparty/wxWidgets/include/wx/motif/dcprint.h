@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -25,7 +26,7 @@ public:
 
     wxRect GetPaperRect() const;
 
-    wxDECLARE_CLASS(wxPrinterDCImpl);
+    DECLARE_CLASS(wxPrinterDCImpl)
 };
 
 #endif // _WX_DCPRINT_H_

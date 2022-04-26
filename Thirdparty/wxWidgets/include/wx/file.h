@@ -5,6 +5,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     29/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,13 +13,13 @@
 #ifndef _WX_FILEH__
 #define _WX_FILEH__
 
-#include  "wx\defs.h"
+#include  "wx/defs.h"
 
 #if wxUSE_FILE
 
-#include  "wx\string.h"
-#include  "wx\filefn.h"
-#include  "wx\convauto.h"
+#include  "wx/string.h"
+#include  "wx/filefn.h"
+#include  "wx/strconv.h"
 
 // ----------------------------------------------------------------------------
 // class wxFile: raw file IO
@@ -32,15 +33,10 @@ class WXDLLIMPEXP_BASE wxFile
 public:
   // more file constants
   // -------------------
-  // suppress Xcode 11 warning about shadowing global read() symbol
-  wxCLANG_WARNING_SUPPRESS(shadow)
-
     // opening mode
   enum OpenMode { read, write, read_write, write_append, write_excl };
     // standard values for file descriptor
   enum { fd_invalid = -1, fd_stdin, fd_stdout, fd_stderr };
-
-  wxCLANG_WARNING_RESTORE(shadow)
 
   // static functions
   // ----------------
@@ -70,18 +66,16 @@ public:
 
   // assign an existing file descriptor and get it back from wxFile object
   void Attach(int lfd) { Close(); m_fd = lfd; m_lasterror = 0; }
-  int  Detach() { const int fdOld = m_fd; m_fd = fd_invalid; return fdOld; }
+  void Detach()       { m_fd = fd_invalid;  }
   int  fd() const { return m_fd; }
 
   // read/write (unbuffered)
-    // read all data from the file into a string (useful for text files)
-  bool ReadAll(wxString *str, const wxMBConv& conv = wxConvAuto());
     // returns number of bytes read or wxInvalidOffset on error
   ssize_t Read(void *pBuf, size_t nCount);
     // returns the number of bytes written
   size_t Write(const void *pBuf, size_t nCount);
     // returns true on success
-  bool Write(const wxString& s, const wxMBConv& conv = wxConvAuto());
+  bool Write(const wxString& s, const wxMBConv& conv = wxMBConvUTF8());
     // flush data not yet written
   bool Flush();
 
@@ -147,7 +141,7 @@ public:
     // default
   wxTempFile() { }
     // associates the temp file with the file to be replaced and opens it
-  explicit wxTempFile(const wxString& strName);
+  wxTempFile(const wxString& strName);
 
   // open the temp file (strName is the name of file to be replaced)
   bool Open(const wxString& strName);

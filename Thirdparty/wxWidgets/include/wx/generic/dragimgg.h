@@ -5,6 +5,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     29/2/2000
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -121,6 +122,18 @@ public:
         Create(str, cursor);
     }
 
+#if WXWIN_COMPATIBILITY_2_6
+    // don't use in new code, use versions without hot spot parameter
+    wxDEPRECATED( wxGenericDragImage(const wxCursor& cursor, const wxPoint& cursorHotspot) );
+    wxDEPRECATED( wxGenericDragImage(const wxBitmap& image, const wxCursor& cursor, const wxPoint& cursorHotspot) );
+    wxDEPRECATED( wxGenericDragImage(const wxIcon& image, const wxCursor& cursor, const wxPoint& cursorHotspot) );
+    wxDEPRECATED( wxGenericDragImage(const wxString& str, const wxCursor& cursor, const wxPoint& cursorHotspot) );
+    wxDEPRECATED( bool Create(const wxCursor& cursor, const wxPoint& cursorHotspot) );
+    wxDEPRECATED( bool Create(const wxBitmap& image, const wxCursor& cursor, const wxPoint& cursorHotspot) );
+    wxDEPRECATED( bool Create(const wxIcon& image, const wxCursor& cursor, const wxPoint& cursorHotspot) );
+    wxDEPRECATED( bool Create(const wxString& str, const wxCursor& cursor, const wxPoint& cursorHotspot) );
+#endif // WXWIN_COMPATIBILITY_2_6
+
 #if wxUSE_TREECTRL
     wxGenericDragImage(const wxTreeCtrl& treeCtrl, wxTreeItemId& id)
     {
@@ -144,9 +157,14 @@ public:
     // Attributes
     ////////////////////////////////////////////////////////////////////////////
 
+#ifdef wxHAS_NATIVE_OVERLAY
+    // backing store is not used when native overlays are
+    void SetBackingBitmap(wxBitmap* WXUNUSED(bitmap)) { }
+#else
     // For efficiency, tell wxGenericDragImage to use a bitmap that's already
     // created (e.g. from last drag)
     void SetBackingBitmap(wxBitmap* bitmap) { m_pBackingBitmap = bitmap; }
+#endif // wxHAS_NATIVE_OVERLAY/!wxHAS_NATIVE_OVERLAY
 
     // Operations
     ////////////////////////////////////////////////////////////////////////////
@@ -229,18 +247,24 @@ protected:
     bool            m_isShown;
     wxWindow*       m_window;
     wxDC*           m_windowDC;
+
+#ifdef wxHAS_NATIVE_OVERLAY
     wxOverlay       m_overlay;
+    wxDCOverlay*     m_dcOverlay;
+#else
     // Stores the window contents while we're dragging the image around
     wxBitmap        m_backingBitmap;
     wxBitmap*       m_pBackingBitmap; // Pointer to existing backing bitmap
                                       // (pass to wxGenericDragImage as an efficiency measure)
     // A temporary bitmap for repairing/redrawing
     wxBitmap        m_repairBitmap;
+#endif // !wxHAS_NATIVE_OVERLAY
+
     wxRect          m_boundingRect;
     bool            m_fullScreen;
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxGenericDragImage);
+    DECLARE_DYNAMIC_CLASS(wxGenericDragImage)
     wxDECLARE_NO_COPY_CLASS(wxGenericDragImage);
 };
 

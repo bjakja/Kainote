@@ -10,21 +10,22 @@
 #ifndef _WX_XH_TOOLBK_H_
 #define _WX_XH_TOOLBK_H_
 
-#include "wx/xrc/xh_bookctrlbase.h"
+#include "wx/xrc/xmlres.h"
 
 #if wxUSE_XRC && wxUSE_TOOLBOOK
 
 class WXDLLIMPEXP_FWD_CORE wxToolbook;
 
-class WXDLLIMPEXP_XRC wxToolbookXmlHandler : public wxBookCtrlXmlHandlerBase
+class WXDLLIMPEXP_XRC wxToolbookXmlHandler : public wxXmlResourceHandler
 {
 public:
     wxToolbookXmlHandler();
 
-    virtual wxObject *DoCreateResource() wxOVERRIDE;
-    virtual bool CanHandle(wxXmlNode *node) wxOVERRIDE;
+    virtual wxObject *DoCreateResource();
+    virtual bool CanHandle(wxXmlNode *node);
 
 private:
+    bool m_isInside;
     wxToolbook *m_toolbook;
 
     wxDECLARE_DYNAMIC_CLASS(wxToolbookXmlHandler);

@@ -3,6 +3,7 @@
 // Purpose:     Test keyboard events
 // Author:      Vadim Zeitlin
 // Created:     2010-09-05
+// RCS-ID:      $Id$
 // Copyright:   (c) 2010 Vadim Zeitlin <vadim@wxwidgets.org>
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -12,8 +13,13 @@
 
 #include "testprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
-#if wxUSE_UIACTIONSIMULATOR
+// FIXME: As all the other tests involving wxUIActionSimulator, this one is
+//        broken under OS X, the test window siply never gets any events.
+#if wxUSE_UIACTIONSIMULATOR && !defined(__WXOSX__)
 
 #ifndef WX_PRECOMP
     #include "wx/app.h"
@@ -23,10 +29,6 @@
 
 #include "wx/uiaction.h"
 #include "wx/vector.h"
-
-#ifdef __WXGTK__
-#include "wx/stopwatch.h"
-#endif
 
 namespace
 {
@@ -198,17 +200,17 @@ class KeyboardEventTestCase : public CppUnit::TestCase
 public:
     KeyboardEventTestCase() {}
 
-    virtual void setUp() wxOVERRIDE;
-    virtual void tearDown() wxOVERRIDE;
+    virtual void setUp();
+    virtual void tearDown();
 
 private:
     CPPUNIT_TEST_SUITE( KeyboardEventTestCase );
-        WXUISIM_TEST( NormalLetter );
-        WXUISIM_TEST( NormalSpecial );
-        WXUISIM_TEST( CtrlLetter );
-        WXUISIM_TEST( CtrlSpecial );
-        WXUISIM_TEST( ShiftLetter );
-        WXUISIM_TEST( ShiftSpecial );
+        CPPUNIT_TEST( NormalLetter );
+        CPPUNIT_TEST( NormalSpecial );
+        CPPUNIT_TEST( CtrlLetter );
+        CPPUNIT_TEST( CtrlSpecial );
+        CPPUNIT_TEST( ShiftLetter );
+        CPPUNIT_TEST( ShiftSpecial );
     CPPUNIT_TEST_SUITE_END();
 
     void NormalLetter();
@@ -228,13 +230,8 @@ wxREGISTER_UNIT_TEST(KeyboardEvent);
 void KeyboardEventTestCase::setUp()
 {
     m_win = new KeyboardTestWindow(wxTheApp->GetTopWindow());
-    wxYield();
     m_win->SetFocus();
-
-#ifdef __WXGTK__
-    for ( wxStopWatch sw; sw.Time() < 10; )
-#endif
-        wxYield(); // needed to show the new window
+    wxYield(); // needed to show the new window
 
     // The window might get some key up events when it's being shown if the key
     // was pressed when the program was started and released after the window
@@ -352,22 +349,22 @@ void KeyboardEventTestCase::ShiftLetter()
 void KeyboardEventTestCase::ShiftSpecial()
 {
     wxUIActionSimulator sim;
-    sim.Char(WXK_F3, wxMOD_SHIFT);
+    sim.Char(WXK_TAB, wxMOD_SHIFT);
     wxYield();
 
     CPPUNIT_ASSERT_EQUAL( 2, m_win->GetKeyDownCount() );
     ASSERT_KEY_EVENT_IS( m_win->GetKeyDownEvent(0),
                          ModKeyDown(WXK_SHIFT) );
     ASSERT_KEY_EVENT_IS( m_win->GetKeyDownEvent(1),
-                         KeyDesc(WXK_F3, wxMOD_SHIFT) );
+                         KeyDesc(WXK_TAB, wxMOD_SHIFT) );
 
     CPPUNIT_ASSERT_EQUAL( 1, m_win->GetCharCount() );
     ASSERT_KEY_EVENT_IS( m_win->GetCharEvent(),
-                         KeyDesc(WXK_F3, wxMOD_SHIFT) );
+                         KeyDesc(WXK_TAB, wxMOD_SHIFT) );
 
     CPPUNIT_ASSERT_EQUAL( 2, m_win->GetKeyUpCount() );
     ASSERT_KEY_EVENT_IS( m_win->GetKeyUpEvent(0),
-                         KeyDesc(WXK_F3, wxMOD_SHIFT) );
+                         KeyDesc(WXK_TAB, wxMOD_SHIFT) );
     ASSERT_KEY_EVENT_IS( m_win->GetKeyUpEvent(1),
                          ModKeyUp(WXK_SHIFT) );
 }

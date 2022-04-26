@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -24,7 +25,7 @@ public:
         const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE,
-        const wxString& name = wxASCII_STR(wxDialogNameStr))
+        const wxString& name = wxDialogNameStr)
     {
         Create(parent, id, title, pos, size, style, name);
     }
@@ -34,7 +35,7 @@ public:
         const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_DIALOG_STYLE,
-        const wxString& name = wxASCII_STR(wxDialogNameStr));
+        const wxString& name = wxDialogNameStr);
 
     virtual ~wxDialog();
 
@@ -82,7 +83,7 @@ protected:
 
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxDialog);
+    DECLARE_DYNAMIC_CLASS(wxDialog)
 };
 
 #endif // _WX_DIALOG_H_

@@ -4,7 +4,8 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     01.03.03
-// Copyright:   (c) 2003-2006 Vadim Zeitlin <vadim@wxwidgets.org>
+// RCS-ID:      $Id$
+// Copyright:   (c) 2003-2006 Vadim Zeitlin <vadim@wxwindows.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -19,6 +20,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
     #include "wx/gdicmn.h"
@@ -26,9 +30,8 @@
     #include "wx/module.h"
 #endif //WX_PRECOMP
 
-#include "wx/math.h"
-
-#include "wx/private/display.h"
+#include "wx/display.h"
+#include "wx/display_impl.h"
 
 #if wxUSE_DISPLAY
 
@@ -49,22 +52,59 @@ const wxVideoMode wxDefaultVideoMode;
 static wxDisplayFactory *gs_factory = NULL;
 
 // ----------------------------------------------------------------------------
+// wxDisplayImplSingle: trivial implementation working for main display only
+// ----------------------------------------------------------------------------
+
+class WXDLLEXPORT wxDisplayImplSingle : public wxDisplayImpl
+{
+public:
+    wxDisplayImplSingle() : wxDisplayImpl(0) { }
+
+    virtual wxRect GetGeometry() const
+    {
+        wxRect r;
+        wxDisplaySize(&r.width, &r.height);
+        return r;
+    }
+
+    virtual wxRect GetClientArea() const { return wxGetClientDisplayRect(); }
+
+    virtual wxString GetName() const { return wxString(); }
+
+#if wxUSE_DISPLAY
+    // no video modes support for us, provide just the stubs
+
+    virtual wxArrayVideoModes GetModes(const wxVideoMode& WXUNUSED(mode)) const
+    {
+        return wxArrayVideoModes();
+    }
+
+    virtual wxVideoMode GetCurrentMode() const { return wxVideoMode(); }
+
+    virtual bool ChangeMode(const wxVideoMode& WXUNUSED(mode)) { return false; }
+#endif // wxUSE_DISPLAY
+
+
+    wxDECLARE_NO_COPY_CLASS(wxDisplayImplSingle);
+};
+
+// ----------------------------------------------------------------------------
 // wxDisplayModule is used to cleanup gs_factory
 // ----------------------------------------------------------------------------
 
 class wxDisplayModule : public wxModule
 {
 public:
-    virtual bool OnInit() wxOVERRIDE { return true; }
-    virtual void OnExit() wxOVERRIDE
+    virtual bool OnInit() { return true; }
+    virtual void OnExit()
     {
         wxDELETE(gs_factory);
     }
 
-    wxDECLARE_DYNAMIC_CLASS(wxDisplayModule);
+    DECLARE_DYNAMIC_CLASS(wxDisplayModule)
 };
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxDisplayModule, wxModule);
+IMPLEMENT_DYNAMIC_CLASS(wxDisplayModule, wxModule)
 
 // ============================================================================
 // wxDisplay implementation
@@ -74,25 +114,17 @@ wxIMPLEMENT_DYNAMIC_CLASS(wxDisplayModule, wxModule);
 // ctor/dtor
 // ----------------------------------------------------------------------------
 
-wxDisplay::wxDisplay()
-{
-    m_impl = Factory().GetPrimaryDisplay();
-}
-
 wxDisplay::wxDisplay(unsigned n)
 {
-    wxASSERT_MSG( n == 0 || n < GetCount(),
+    wxASSERT_MSG( n < GetCount(),
                     wxT("An invalid index was passed to wxDisplay") );
 
-    m_impl = Factory().GetDisplay(n);
+    m_impl = Factory().CreateDisplay(n);
 }
 
-wxDisplay::wxDisplay(const wxWindow* window)
+wxDisplay::~wxDisplay()
 {
-    const int n = GetFromWindow(window);
-
-    m_impl = n != wxNOT_FOUND ? Factory().GetDisplay(n)
-                              : Factory().GetPrimaryDisplay();
+    delete m_impl;
 }
 
 // ----------------------------------------------------------------------------
@@ -116,11 +148,6 @@ wxDisplay::wxDisplay(const wxWindow* window)
     return Factory().GetFromWindow(window);
 }
 
-/* static */ void wxDisplay::InvalidateCache()
-{
-    Factory().InvalidateCache();
-}
-
 // ----------------------------------------------------------------------------
 // functions forwarded to wxDisplayImpl
 // ----------------------------------------------------------------------------
@@ -139,27 +166,6 @@ wxRect wxDisplay::GetClientArea() const
     return m_impl->GetClientArea();
 }
 
-wxSize wxDisplay::GetPPI() const
-{
-    wxCHECK_MSG( IsOk(), wxSize(), wxT("invalid wxDisplay object") );
-
-    return m_impl->GetPPI();
-}
-
-double wxDisplay::GetScaleFactor() const
-{
-    wxCHECK_MSG( IsOk(), 0, wxT("invalid wxDisplay object") );
-
-    return m_impl->GetScaleFactor();
-}
-
-int wxDisplay::GetDepth() const
-{
-    wxCHECK_MSG( IsOk(), 0, wxT("invalid wxDisplay object") );
-
-    return m_impl->GetDepth();
-}
-
 wxString wxDisplay::GetName() const
 {
     wxCHECK_MSG( IsOk(), wxString(), wxT("invalid wxDisplay object") );
@@ -169,7 +175,7 @@ wxString wxDisplay::GetName() const
 
 bool wxDisplay::IsPrimary() const
 {
-    return m_impl && m_impl->IsPrimary();
+    return m_impl && m_impl->GetIndex() == 0;
 }
 
 #if wxUSE_DISPLAY
@@ -201,6 +207,16 @@ bool wxDisplay::ChangeMode(const wxVideoMode& mode)
 // static functions implementation
 // ----------------------------------------------------------------------------
 
+// if wxUSE_DISPLAY == 1 this is implemented in port-specific code
+#if !wxUSE_DISPLAY
+
+/* static */ wxDisplayFactory *wxDisplay::CreateFactory()
+{
+    return new wxDisplayFactorySingle;
+}
+
+#endif // !wxUSE_DISPLAY
+
 /* static */ wxDisplayFactory& wxDisplay::Factory()
 {
     if ( !gs_factory )
@@ -215,46 +231,8 @@ bool wxDisplay::ChangeMode(const wxVideoMode& mode)
 // wxDisplayFactory implementation
 // ============================================================================
 
-void wxDisplayFactory::ClearImpls()
-{
-    for ( size_t n = 0; n < m_impls.size(); ++n )
-    {
-        // It can be null, that's ok.
-        delete m_impls[n];
-    }
-
-    m_impls.clear();
-}
-
-wxDisplayImpl* wxDisplayFactory::GetPrimaryDisplay()
-{
-    // Just use dumb linear search -- there seems to be the most reliable way
-    // to do this in general. In particular, primary monitor is not guaranteed
-    // to be the first one and it's not obvious if it always contains (0, 0).
-    const unsigned count = GetCount();
-    for ( unsigned n = 0; n < count; ++n )
-    {
-        wxDisplayImpl* const d = GetDisplay(n);
-        if ( d && d->IsPrimary() )
-            return d;
-    }
-
-    // This is not supposed to happen, but what else can we do if it
-    // somehow does?
-    return NULL;
-}
-
 int wxDisplayFactory::GetFromWindow(const wxWindow *window)
 {
-    wxCHECK_MSG( window, wxNOT_FOUND, "window can't be NULL" );
-
-    // Check if the window is created: we can't find its display before this is
-    // done anyhow, as we simply don't know on which display will it appear,
-    // and trying to do this below would just result in assert failures inside
-    // GetScreenRect() if the window doesn't yet exist, so return immediately.
-    if ( !window->GetHandle() )
-        return wxNOT_FOUND;
-
     // consider that the window belongs to the display containing its centre
     const wxRect r(window->GetScreenRect());
     return GetFromPoint(wxPoint(r.x + r.width/2, r.y + r.height/2));
@@ -264,13 +242,24 @@ int wxDisplayFactory::GetFromWindow(const wxWindow *window)
 // wxDisplayFactorySingle implementation
 // ============================================================================
 
+/* static */
 wxDisplayImpl *wxDisplayFactorySingle::CreateDisplay(unsigned n)
 {
     // we recognize the main display only
-    return n != 0 ? NULL : CreateSingleDisplay();
+    return n != 0 ? NULL : new wxDisplayImplSingle;
 }
 
 int wxDisplayFactorySingle::GetFromPoint(const wxPoint& pt)
 {
-    return wxDisplay().GetGeometry().Contains(pt) ? 0 : wxNOT_FOUND;
+    if ( pt.x >= 0 && pt.y >= 0 )
+    {
+        int w, h;
+        wxDisplaySize(&w, &h);
+
+        if ( pt.x < w && pt.y < h )
+            return 0;
+    }
+
+    // the point is outside of the screen
+    return wxNOT_FOUND;
 }

@@ -3,6 +3,7 @@
 // Purpose:     XML resource handler for wxFileCtrl
 // Author:      Kinaou Hervé
 // Created:     2009-05-11
+// RCS-ID:      $Id$
 // Copyright:   (c) 2009 wxWidgets development team
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -10,13 +11,16 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_XRC && wxUSE_FILECTRL
 
 #include "wx/xrc/xh_filectrl.h"
 #include "wx/filectrl.h"
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxFileCtrlXmlHandler, wxXmlResourceHandler);
+IMPLEMENT_DYNAMIC_CLASS(wxFileCtrlXmlHandler, wxXmlResourceHandler)
 
 wxFileCtrlXmlHandler::wxFileCtrlXmlHandler() : wxXmlResourceHandler()
 {

@@ -65,10 +65,10 @@ public:
 	static void GetProviders(wxArrayString *providerList);
 	void SetVideoParameters(const wxSize& size, unsigned char format, bool isSwapped);
 private:
-	struct csri_frame *m_CsriFrame = nullptr;
-	struct csri_fmt *m_CsriFormat = nullptr;
-	struct csri_inst *m_CsriInstance = nullptr;
-	struct csri_rend *GetVSFilter();
+	csri_frame *m_CsriFrame = nullptr;
+	csri_fmt *m_CsriFormat = nullptr;
+	csri_inst *m_CsriInstance = nullptr;
+	csri_rend *GetVSFilter();
 };
 
 class SubtitlesLibass : public SubtitlesProvider

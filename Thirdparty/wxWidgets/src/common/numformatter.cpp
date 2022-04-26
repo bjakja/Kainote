@@ -12,11 +12,91 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
-#include "wx\numformatter.h"
-#include "wx\uilocale.h"
+#include "wx/numformatter.h"
+#include "wx/intl.h"
+
+#include <locale.h> // for setlocale and LC_ALL
+
+// ----------------------------------------------------------------------------
+// local helpers
+// ----------------------------------------------------------------------------
+
+namespace
+{
+
+// Contains information about the locale which was used to initialize our
+// cached values of the decimal and thousands separators. Notice that it isn't
+// enough to store just wxLocale because the user code may call setlocale()
+// directly and storing just C locale string is not enough because we can use
+// the OS API directly instead of the CRT ones on some platforms. So just store
+// both.
+class LocaleId
+{
+public:
+    LocaleId()
+    {
+#if wxUSE_INTL
+        m_wxloc = NULL;
+#endif // wxUSE_INTL
+        m_cloc = NULL;
+    }
+
+    ~LocaleId()
+    {
+        Free();
+    }
+
+#if wxUSE_INTL
+    // Return true if this is the first time this function is called for this
+    // object or if the program locale has changed since the last time it was
+    // called. Otherwise just return false indicating that updating locale-
+    // dependent information is not necessary.
+    bool NotInitializedOrHasChanged()
+    {
+        wxLocale * const wxloc = wxGetLocale();
+        const char * const cloc = setlocale(LC_ALL, NULL);
+        if ( m_wxloc || m_cloc )
+        {
+            if ( m_wxloc == wxloc && strcmp(m_cloc, cloc) == 0 )
+                return false;
+
+            Free();
+        }
+        //else: Not initialized yet.
+
+        m_wxloc = wxloc;
+        m_cloc = wxCRT_StrdupA(cloc);
+
+        return true;
+    }
+#endif // wxUSE_INTL
+
+private:
+    void Free()
+    {
+#if wxUSE_INTL
+        free(m_cloc);
+#endif // wxUSE_INTL
+    }
+
+#if wxUSE_INTL
+    // Non-owned pointer to wxLocale which was used.
+    wxLocale *m_wxloc;
+#endif // wxUSE_INTL
+
+    // Owned pointer to the C locale string.
+    char *m_cloc;
+
+    wxDECLARE_NO_COPY_CLASS(LocaleId);
+};
+
+} // anonymous namespace
 
 // ============================================================================
 // wxNumberFormatter implementation
@@ -29,56 +109,78 @@
 wxChar wxNumberFormatter::GetDecimalSeparator()
 {
 #if wxUSE_INTL
-    const wxString
-        s = wxUILocale::GetCurrent().GetInfo(wxLOCALE_DECIMAL_POINT, wxLOCALE_CAT_NUMBER);
-    if ( s.length() == 1 )
+    // Notice that while using static variable here is not MT-safe, the worst
+    // that can happen is that we redo the initialization if we're called
+    // concurrently from more than one thread so it's not a real problem.
+    static wxChar s_decimalSeparator = 0;
+
+    // Remember the locale which was current when we initialized, we must redo
+    // the initialization if the locale changed.
+    static LocaleId s_localeUsedForInit;
+
+    if ( s_localeUsedForInit.NotInitializedOrHasChanged() )
     {
-        return s[0];
+        const wxString
+            s = wxLocale::GetInfo(wxLOCALE_DECIMAL_POINT, wxLOCALE_CAT_NUMBER);
+        if ( s.empty() )
+        {
+            // We really must have something for decimal separator, so fall
+            // back to the C locale default.
+            s_decimalSeparator = '.';
+        }
+        else
+        {
+            // To the best of my knowledge there are no locales like this.
+            wxASSERT_MSG( s.length() == 1,
+                          "Multi-character decimal separator?" );
+
+            s_decimalSeparator = s[0];
+        }
     }
 
-    // We really must have something for decimal separator, so fall
-    // back to the C locale default.
-#endif // wxUSE_INTL
-
+    return s_decimalSeparator;
+#else // !wxUSE_INTL
     return wxT('.');
+#endif // wxUSE_INTL/!wxUSE_INTL
 }
 
 bool wxNumberFormatter::GetThousandsSeparatorIfUsed(wxChar *sep)
 {
 #if wxUSE_INTL
-    const wxString
-        s = wxUILocale::GetCurrent().GetInfo(wxLOCALE_THOUSANDS_SEP, wxLOCALE_CAT_NUMBER);
-    if ( s.length() == 1 )
+    static wxChar s_thousandsSeparator = 0;
+    static LocaleId s_localeUsedForInit;
+
+    if ( s_localeUsedForInit.NotInitializedOrHasChanged() )
     {
-        if ( sep )
-            *sep = s[0];
+        const wxString
+            s = wxLocale::GetInfo(wxLOCALE_THOUSANDS_SEP, wxLOCALE_CAT_NUMBER);
+        if ( !s.empty() )
+        {
+            wxASSERT_MSG( s.length() == 1,
+                          "Multi-character thousands separator?" );
 
-        return true;
+            s_thousandsSeparator = s[0];
+        }
+        //else: Unlike above it's perfectly fine for the thousands separator to
+        //      be empty if grouping is not used, so just leave it as 0.
     }
-#endif // wxUSE_INTL
 
+    if ( !s_thousandsSeparator )
+        return false;
+
+    if ( sep )
+        *sep = s_thousandsSeparator;
+
+    return true;
+#else // !wxUSE_INTL
     wxUnusedVar(sep);
     return false;
+#endif // wxUSE_INTL/!wxUSE_INTL
 }
 
 // ----------------------------------------------------------------------------
 // Conversion to string and helpers
 // ----------------------------------------------------------------------------
-
-namespace
-{
-
-void ReplaceSeparatorIfNecessary(wxString& s, wxChar sepOld, wxChar sepNew)
-{
-    if ( sepNew != sepOld )
-    {
-        const size_t posSep = s.find(sepOld);
-        if ( posSep != wxString::npos )
-            s[posSep] = sepNew;
-    }
-}
-
-} // anonymous namespace
 
 wxString wxNumberFormatter::PostProcessIntString(wxString s, int style)
 {
@@ -106,17 +208,10 @@ wxString wxNumberFormatter::ToString(wxLongLong_t val, int style)
 
 #endif // wxHAS_LONG_LONG_T_DIFFERENT_FROM_LONG
 
-wxString wxNumberFormatter::ToString(wxULongLong_t val, int style)
-{
-    return PostProcessIntString(wxString::Format("%" wxLongLongFmtSpec "u", val),
-                                style);
-}
-
 wxString wxNumberFormatter::ToString(double val, int precision, int style)
 {
-    wxString s = wxString::FromCDouble(val,precision);
-
-    ReplaceSeparatorIfNecessary(s, '.', GetDecimalSeparator());
+    const wxString fmt = wxString::Format("%%.%df", precision);
+    wxString s = wxString::Format(fmt, val);
 
     if ( style & Style_WithThousandsSep )
         AddThousandsSeparators(s);
@@ -127,29 +222,8 @@ wxString wxNumberFormatter::ToString(double val, int precision, int style)
     return s;
 }
 
-wxString wxNumberFormatter::Format(const wxString& format, double val)
-{
-    wxString s = wxString::Format(format, val);
-
-    const wxChar sep = GetDecimalSeparator();
-    if ( s.find(sep) == wxString::npos )
-    {
-        const wxChar other = sep == '.' ? ',' : '.';
-        const size_t posSep = s.find(other);
-        if ( posSep != wxString::npos )
-            s[posSep] = sep;
-    }
-    //else: it already uses the correct separator
-
-    return s;
-}
-
 void wxNumberFormatter::AddThousandsSeparators(wxString& s)
 {
-    // Thousands separators for numbers in scientific format are not relevant.
-    if ( s.find_first_of("eE") != wxString::npos )
-        return;
-
     wxChar thousandsSep;
     if ( !GetThousandsSeparatorIfUsed(&thousandsSep) )
         return;
@@ -161,10 +235,6 @@ void wxNumberFormatter::AddThousandsSeparators(wxString& s)
         pos = s.length();
     }
 
-    // End grouping at the beginning of the digits -- there could be at a sign
-    // before their start.
-    const size_t start = s.find_first_of("0123456789");
-
     // We currently group digits by 3 independently of the locale. This is not
     // the right thing to do and we should use lconv::grouping (under POSIX)
     // and GetLocaleInfo(LOCALE_SGROUPING) (under MSW) to get information about
@@ -172,7 +242,7 @@ void wxNumberFormatter::AddThousandsSeparators(wxString& s)
     // wxLocale level first and then used here in the future (TODO).
     const size_t GROUP_LEN = 3;
 
-    while ( pos > start + GROUP_LEN )
+    while ( pos > GROUP_LEN )
     {
         pos -= GROUP_LEN;
         s.insert(pos, thousandsSep);
@@ -181,14 +251,9 @@ void wxNumberFormatter::AddThousandsSeparators(wxString& s)
 
 void wxNumberFormatter::RemoveTrailingZeroes(wxString& s)
 {
-    // If number is in scientific format, trailing zeroes belong to the exponent and cannot be removed.
-    if ( s.find_first_of("eE") != wxString::npos )
-        return;
-
     const size_t posDecSep = s.find(GetDecimalSeparator());
-    // No decimal point => removing trailing zeroes irrelevant for integer number.
-    if ( posDecSep == wxString::npos )
-        return;
+    wxCHECK_RET( posDecSep != wxString::npos,
+                 wxString::Format("No decimal separator in \"%s\"", s) );
     wxCHECK_RET( posDecSep, "Can't start with decimal separator" );
 
     // Find the last character to keep.
@@ -199,9 +264,6 @@ void wxNumberFormatter::RemoveTrailingZeroes(wxString& s)
         posLastNonZero--;
 
     s.erase(posLastNonZero + 1);
-    // Remove sign from orphaned zero.
-    if ( s.compare("-0") == 0 )
-        s = "0";
 }
 
 // ----------------------------------------------------------------------------
@@ -233,30 +295,8 @@ bool wxNumberFormatter::FromString(wxString s, wxLongLong_t *val)
 
 #endif // wxHAS_LONG_LONG_T_DIFFERENT_FROM_LONG
 
-bool wxNumberFormatter::FromString(wxString s, wxULongLong_t *val)
-{
-    RemoveThousandsSeparators(s);
-
-    // wxString::ToULongLong() does accept minus sign for unsigned integers,
-    // consistently with the standard functions behaviour, e.g. strtoul() does
-    // the same thing, but here we really want to accept the "true" unsigned
-    // numbers only, so check for leading minus, possibly preceded by some
-    // whitespace.
-    for ( wxString::const_iterator it = s.begin(); it != s.end(); ++it )
-    {
-        if ( *it == '-' )
-            return false;
-
-        if ( *it != ' ' && *it != '\t' )
-            break;
-    }
-
-    return s.ToULongLong(val);
-}
-
 bool wxNumberFormatter::FromString(wxString s, double *val)
 {
     RemoveThousandsSeparators(s);
-    ReplaceSeparatorIfNecessary(s, GetDecimalSeparator(), '.');
-    return s.ToCDouble(val);
+    return s.ToDouble(val);
 }

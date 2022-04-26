@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,16 +19,13 @@ class WXDLLIMPEXP_FWD_CORE wxPalette;
 // Palette for one display
 class wxXPalette : public wxObject
 {
-    wxDECLARE_DYNAMIC_CLASS(wxXPalette);
+    DECLARE_DYNAMIC_CLASS(wxXPalette)
 
 public:
     wxXPalette();
 
     WXDisplay*        m_display;
     int               m_pix_array_n;
-    unsigned char*    m_red;
-    unsigned char*    m_green;
-    unsigned char*    m_blue;
     unsigned long*    m_pix_array;
     WXColormap        m_cmap;
     bool              m_destroyable;
@@ -48,7 +46,7 @@ protected:
 
 class WXDLLIMPEXP_CORE wxPalette : public wxPaletteBase
 {
-    wxDECLARE_DYNAMIC_CLASS(wxPalette);
+    DECLARE_DYNAMIC_CLASS(wxPalette)
 
 public:
     wxPalette();
@@ -65,7 +63,6 @@ public:
     bool TransferBitmap8(unsigned char *data, unsigned long size, void *dest, unsigned int bpp);
     unsigned long *GetXPixArray(WXDisplay* display, int *pix_array_n);
     void PutXColormap(WXDisplay* display, WXColormap cmap, bool destroyable);
-    virtual int GetColoursCount() const wxOVERRIDE;
 
 protected:
     virtual wxGDIRefData *CreateGDIRefData() const;

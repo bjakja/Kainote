@@ -2,6 +2,7 @@
 // Name:        htmlpars.h
 // Purpose:     wx28HtmlParser class (generic parser)
 // Author:      Vaclav Slavik
+// RCS-ID:      $Id$
 // Copyright:   (c) 1999 Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -38,7 +39,7 @@ enum wx28HtmlURLType
 // 2 tags.
 class  wx28HtmlParser : public wxObject
 {
-    wxDECLARE_ABSTRACT_CLASS(wx28HtmlParser);
+    DECLARE_ABSTRACT_CLASS(wx28HtmlParser)
 
 public:
     wx28HtmlParser();
@@ -171,7 +172,7 @@ protected:
     wxList m_HandlersList;
     wxHashTable m_HandlersHash;
 
-    wxDECLARE_NO_COPY_CLASS(wx28HtmlParser);
+    DECLARE_NO_COPY_CLASS(wx28HtmlParser)
 
     // class for opening files (file system)
     wxFileSystem *m_FS;
@@ -196,7 +197,7 @@ protected:
 // 3. Handler restores original state of the parser
 class  wx28HtmlTagHandler : public wxObject
 {
-    wxDECLARE_ABSTRACT_CLASS(wx28HtmlTagHandler);
+    DECLARE_ABSTRACT_CLASS(wx28HtmlTagHandler)
 
 public:
     wx28HtmlTagHandler() : wxObject () { m_Parser = NULL; }
@@ -234,7 +235,7 @@ protected:
 
     wx28HtmlParser *m_Parser;
 
-    wxDECLARE_NO_COPY_CLASS(wx28HtmlTagHandler);
+    DECLARE_NO_COPY_CLASS(wx28HtmlTagHandler)
 };
 
 
@@ -242,7 +243,7 @@ protected:
 // both named entities and &#xxxx entries where xxxx is Unicode code.
 class  wx28HtmlEntitiesParser : public wxObject
 {
-    wxDECLARE_DYNAMIC_CLASS(wx28HtmlEntitiesParser);
+    DECLARE_DYNAMIC_CLASS(wx28HtmlEntitiesParser)
 
 public:
     wx28HtmlEntitiesParser();
@@ -272,7 +273,7 @@ protected:
     wxFontEncoding m_encoding;
 #endif
 
-    wxDECLARE_NO_COPY_CLASS(wx28HtmlEntitiesParser);
+    DECLARE_NO_COPY_CLASS(wx28HtmlEntitiesParser)
 };
 
 

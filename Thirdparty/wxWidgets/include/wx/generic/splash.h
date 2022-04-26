@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     28/6/2000
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows Licence
 /////////////////////////////////////////////////////////////////////////////
@@ -27,13 +28,13 @@
 #define wxSPLASH_TIMEOUT            0x04
 #define wxSPLASH_NO_TIMEOUT         0x00
 
-class WXDLLIMPEXP_FWD_CORE wxSplashScreenWindow;
+class WXDLLIMPEXP_FWD_ADV wxSplashScreenWindow;
 
 /*
  * wxSplashScreen
  */
 
-class WXDLLIMPEXP_CORE wxSplashScreen: public wxFrame,
+class WXDLLIMPEXP_ADV wxSplashScreen: public wxFrame,
                                       public wxEventFilter
 {
 public:
@@ -54,7 +55,7 @@ public:
     int GetTimeout() const { return m_milliseconds; }
 
     // Override wxEventFilter method to hide splash screen on any user input.
-    virtual int FilterEvent(wxEvent& event) wxOVERRIDE;
+    virtual int FilterEvent(wxEvent& event);
 
 protected:
     // Common part of all ctors.
@@ -65,8 +66,8 @@ protected:
     int                     m_milliseconds;
     wxTimer                 m_timer;
 
-    wxDECLARE_DYNAMIC_CLASS(wxSplashScreen);
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_DYNAMIC_CLASS(wxSplashScreen)
+    DECLARE_EVENT_TABLE()
     wxDECLARE_NO_COPY_CLASS(wxSplashScreen);
 };
 
@@ -74,7 +75,7 @@ protected:
  * wxSplashScreenWindow
  */
 
-class WXDLLIMPEXP_CORE wxSplashScreenWindow: public wxWindow
+class WXDLLIMPEXP_ADV wxSplashScreenWindow: public wxWindow
 {
 public:
     wxSplashScreenWindow(const wxBitmap& bitmap, wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxNO_BORDER);
@@ -88,7 +89,7 @@ public:
 protected:
     wxBitmap    m_bitmap;
 
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
     wxDECLARE_NO_COPY_CLASS(wxSplashScreenWindow);
 };
 

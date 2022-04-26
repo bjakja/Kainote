@@ -3,6 +3,7 @@
 // Purpose:     wxRegConfig unit test
 // Author:      Francesco Montorsi (extracted from console sample)
 // Created:     2010-06-02
+// RCS-ID:      $Id$
 // Copyright:   (c) 2010 wxWidgets team
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -12,6 +13,9 @@
 
 #include "testprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_CONFIG && wxUSE_REGKEY
 
@@ -20,72 +24,61 @@
 
 #include "wx/msw/regconf.h"
 
-#include "wx/scopedptr.h"
-
 // ----------------------------------------------------------------------------
 // test class
 // ----------------------------------------------------------------------------
 
-TEST_CASE("wxRegConfig::ReadWrite", "[regconfig][config][registry]")
+class RegConfigTestCase : public CppUnit::TestCase
 {
-    wxString app = "wxRegConfigTestCase";
-    wxString vendor = "wxWidgets";
+public:
+    RegConfigTestCase() { }
+
+private:
+    CPPUNIT_TEST_SUITE( RegConfigTestCase );
+        CPPUNIT_TEST( ReadWrite );
+    CPPUNIT_TEST_SUITE_END();
+
+    void ReadWrite();
+
+    DECLARE_NO_COPY_CLASS(RegConfigTestCase)
+};
+
+// register in the unnamed registry so that these tests are run by default
+CPPUNIT_TEST_SUITE_REGISTRATION( RegConfigTestCase );
+
+// also include in its own registry so that these tests can be run alone
+CPPUNIT_TEST_SUITE_NAMED_REGISTRATION( RegConfigTestCase, "RegConfigTestCase" );
+
+void RegConfigTestCase::ReadWrite()
+{
+    wxString app = wxT("wxRegConfigTestCase");
+    wxString vendor = wxT("wxWidgets");
 
     // NOTE: we use wxCONFIG_USE_LOCAL_FILE explicitly to test wxRegConfig
     //       with something different from the default value wxCONFIG_USE_GLOBAL_FILE
-    wxScopedPtr<wxConfigBase> config(new wxRegConfig(app, vendor, "", "",
-                                                     wxCONFIG_USE_LOCAL_FILE));
+    wxConfigBase *config = new wxRegConfig(app, vendor, wxT(""), wxT(""),
+                                           wxCONFIG_USE_LOCAL_FILE);
 
     // test writing
-    config->SetPath("/group1");
-    CHECK( config->Write("entry1", "foo") );
-    config->SetPath("/group2");
-    CHECK( config->Write("entry1", "bar") );
-
-    CHECK( config->Write("int32", 1234567) );
-
-    // Note that type of wxLL(0x8000000000000008) literal is somehow unsigned
-    // long long with MinGW, not sure if it's a bug or not, but work around it
-    // by specifying the type explicitly.
-    const wxLongLong_t val64 = wxLL(0x8000000000000008);
-    CHECK( config->Write("int64", val64) );
+    config->SetPath(wxT("/group1"));
+    CPPUNIT_ASSERT( config->Write(wxT("entry1"), wxT("foo")) );
+    config->SetPath(wxT("/group2"));
+    CPPUNIT_ASSERT( config->Write(wxT("entry1"), wxT("bar")) );
 
     // test reading
     wxString str;
     long dummy;
 
-    config->SetPath("/");
-    CHECK( config->GetFirstGroup(str, dummy) );
-    CHECK( str == "group1" );
-    CHECK( config->Read("group1/entry1", "INVALID DEFAULT") == "foo" );
-    CHECK( config->GetNextGroup(str, dummy) );
-    CHECK( str == "group2" );
-    CHECK( config->Read("group2/entry1", "INVALID DEFAULT") == "bar" );
-
-    CHECK( config->ReadLong("group2/int32", 0) == 1234567 );
-    CHECK( config->ReadLongLong("group2/int64", 0) == val64 );
+    config->SetPath(wxT("/"));
+    CPPUNIT_ASSERT( config->GetFirstGroup(str, dummy) );
+    CPPUNIT_ASSERT( str == "group1" );
+    CPPUNIT_ASSERT( config->Read(wxT("group1/entry1"), wxT("INVALID DEFAULT")) == "foo" );
+    CPPUNIT_ASSERT( config->GetNextGroup(str, dummy) );
+    CPPUNIT_ASSERT( str == "group2" );
+    CPPUNIT_ASSERT( config->Read(wxT("group2/entry1"), wxT("INVALID DEFAULT")) == "bar" );
 
     config->DeleteAll();
-}
-
-TEST_CASE("wxRegKey::DeleteFromRedirectedView", "[registry][64bits]")
-{
-    if ( !wxIsPlatform64Bit() )
-    {
-        // Test needs WoW64.
-        return;
-    }
-
-    // Test inside a key that's known to be redirected and is in HKCU so that
-    // admin rights are not required (unlike with HKLM).
-    wxRegKey key(wxRegKey::HKCU, "SOFTWARE\\Classes\\CLSID\\wxWidgetsTestKey",
-        sizeof(void *) == 4
-            ? wxRegKey::WOW64ViewMode_64
-            : wxRegKey::WOW64ViewMode_32);
-
-    REQUIRE( key.Create() );
-    CHECK( key.DeleteSelf() );
-    CHECK( !key.Exists() );
+    delete config;
 }
 
 #endif // wxUSE_CONFIG && wxUSE_REGKEY

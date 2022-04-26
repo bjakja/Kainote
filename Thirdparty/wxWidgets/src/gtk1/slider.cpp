@@ -2,6 +2,7 @@
 // Name:        src/gtk1/slider.cpp
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -62,7 +63,7 @@ ProcessScrollEvent(wxSlider *win, wxEventType evtType, double dvalue)
         win->HandleWindowEvent( event2 );
     }
 
-    wxCommandEvent cevent( wxEVT_SLIDER, win->GetId() );
+    wxCommandEvent cevent( wxEVT_COMMAND_SLIDER_UPDATED, win->GetId() );
     cevent.SetEventObject( win );
     cevent.SetInt( value );
     win->HandleWindowEvent( cevent );

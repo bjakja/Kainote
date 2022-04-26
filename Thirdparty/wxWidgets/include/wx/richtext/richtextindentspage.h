@@ -1,9 +1,10 @@
 /////////////////////////////////////////////////////////////////////////////
 // Name:        wx/richtext/richtextindentspage.h
-// Purpose:     Declares the rich text formatting dialog indent page.
+// Purpose:
 // Author:      Julian Smart
 // Modified by:
 // Created:     10/3/2006 2:28:21 PM
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -47,8 +48,8 @@ class wxRichTextCtrl;
 
 class WXDLLIMPEXP_RICHTEXT wxRichTextIndentsSpacingPage: public wxRichTextDialogPage
 {
-    wxDECLARE_DYNAMIC_CLASS(wxRichTextIndentsSpacingPage);
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_DYNAMIC_CLASS( wxRichTextIndentsSpacingPage )
+    DECLARE_EVENT_TABLE()
     DECLARE_HELP_PROVISION()
 
 public:
@@ -66,8 +67,8 @@ public:
     void CreateControls();
 
     /// Transfer data from/to window
-    virtual bool TransferDataFromWindow() wxOVERRIDE;
-    virtual bool TransferDataToWindow() wxOVERRIDE;
+    virtual bool TransferDataFromWindow();
+    virtual bool TransferDataToWindow();
 
     /// Updates the paragraph preview
     void UpdatePreview();

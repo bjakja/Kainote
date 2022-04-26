@@ -2,6 +2,7 @@
 // Name:        spinbutt.h
 // Purpose:     interface of wxSpinEvent, wxSpinButton
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -54,7 +55,7 @@ public:
 
     A wxSpinButton has two small up and down (or left and right) arrow buttons.
 
-    It is often used next to a text control for incrementing and decrementing a value.
+    It is often used next to a text control for increment and decrementing a value.
     Portable programs should try to use wxSpinCtrl instead as wxSpinButton is not
     implemented for all platforms but wxSpinCtrl is as it degenerates to a simple
     wxTextCtrl on such platforms.
@@ -78,13 +79,11 @@ public:
 
     @beginEventEmissionTable{wxSpinEvent}
     @event{EVT_SPIN(id, func)}
-        Generated whenever pressing an arrow changed the spin button value.
+        Generated whenever an arrow is pressed.
     @event{EVT_SPIN_UP(id, func)}
-        Generated whenever pressing left/up arrow changed the spin button
-        value.
+        Generated when left/up arrow is pressed.
     @event{EVT_SPIN_DOWN(id, func)}
-        Generated whenever pressing right/down arrow changed the spin
-        button value.
+        Generated when right/down arrow is pressed.
     @endEventTable
 
     Note that if you handle both SPIN and UP or DOWN events, you will be notified
@@ -93,7 +92,7 @@ public:
 
     @library{wxcore}
     @category{ctrl}
-    @appearance{spinbutton}
+    @appearance{spinbutton.png}
 
     @see wxSpinCtrl
 */
@@ -147,15 +146,6 @@ public:
                 const wxString& name = "wxSpinButton");
 
     /**
-        Get the value for increment for a spin control.
-
-        The default value is 1 but it can be changed using SetIncrement().
-
-        @since 3.1.6
-    */
-    int GetIncrement() const;
-
-    /**
         Returns the maximum permissible value.
 
         @see SetRange()
@@ -177,30 +167,7 @@ public:
     virtual int GetValue() const;
 
     /**
-        Sets the increment for the control.
-
-        The increment is the number by which the value changes when the up or
-        down arrow is used.
-
-        The default is 1.
-
-        This function is currently implemented only in wxMSW and does nothing
-        under the other platforms.
-
-        @since 3.1.6
-
-        @see wxSpinCtrl::SetIncrement()
-    */
-    void SetIncrement(int value);
-
-    /**
         Sets the range of the spin button.
-
-        In portable code, @a min should be less than or equal to @a max. In
-        wxMSW it is possible to specify minimum greater than maximum and the
-        native control supports the same range as if they were reversed, but
-        swaps the meaning of up and down arrows, however this dubious feature
-        is not supported on other platforms.
 
         @param min
             The minimum value for the spin button.

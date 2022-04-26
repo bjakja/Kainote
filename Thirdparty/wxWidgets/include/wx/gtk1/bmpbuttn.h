@@ -2,6 +2,7 @@
 // Name:        wx/gtk1/bmpbutton.h
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -21,12 +22,12 @@ public:
 
     wxBitmapButton(wxWindow *parent,
                    wxWindowID id,
-                   const wxBitmapBundle& bitmap,
+                   const wxBitmap& bitmap,
                    const wxPoint& pos = wxDefaultPosition,
                    const wxSize& size = wxDefaultSize,
-                   long style = 0,
+                   long style = wxBU_AUTODRAW,
                    const wxValidator& validator = wxDefaultValidator,
-                   const wxString& name = wxASCII_STR(wxButtonNameStr))
+                   const wxString& name = wxButtonNameStr)
     {
         Init();
 
@@ -35,19 +36,15 @@ public:
 
     bool Create(wxWindow *parent,
                 wxWindowID id,
-                const wxBitmapBundle& bitmap,
+                const wxBitmap& bitmap,
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
-                long style = 0,
+                long style = wxBU_AUTODRAW,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxASCII_STR(wxButtonNameStr));
-
-    bool CreateCloseButton(wxWindow* parent,
-                           wxWindowID winid,
-                           const wxString& name = wxString());
+                const wxString& name = wxButtonNameStr);
 
     void SetLabel( const wxString &label );
-    virtual void SetLabel( const wxBitmapBundle& bitmap ) { SetBitmapLabel(bitmap); }
+    virtual void SetLabel( const wxBitmap& bitmap ) { SetBitmapLabel(bitmap); }
 
     virtual bool Enable(bool enable = TRUE);
 
@@ -70,7 +67,7 @@ protected:
     void Init();
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxBitmapButton);
+    DECLARE_DYNAMIC_CLASS(wxBitmapButton)
 };
 
 #endif // __BMPBUTTONH__

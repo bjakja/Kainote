@@ -4,15 +4,19 @@
 // Author:      Mattia Barbon
 // Modified by:
 // Created:     29/01/2002
+// RCS-ID:      $Id$
 // Copyright:   (c) Mattia Barbon
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
-#include "wx\hashmap.h"
+#include "wx/hashmap.h"
 
 /* FYI: This is the "One-at-a-Time" algorithm by Bob Jenkins */
 /* from requirements by Colin Plumb. */

@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,7 +13,6 @@
 
 #include "wx/dialog.h"
 #include "wx/evtloop.h"
-#include "wx/modalhook.h"
 
 #ifndef WX_PRECOMP
     #include "wx/app.h"
@@ -23,39 +23,21 @@
 
 #include "wx/osx/private.h"
 
-wxVector<wxDialog*> wxDialog::s_modalStack;
-#if wxOSX_USE_COCOA
-wxVector<bool> wxDialog::s_modalWorksStack;
-#endif
-
+static int s_openDialogs = 0;
 bool wxDialog::OSXHasModalDialogsOpen()
 {
-    return s_modalStack.size() > 0;
+    return s_openDialogs > 0;
 }
 
 void wxDialog::OSXBeginModalDialog()
 {
-#if wxOSX_USE_COCOA
-    // turning off worksWhenModal on 'parent'
-    if ( s_modalStack.size() > 0 )
-        s_modalStack.back()->OSXSetWorksWhenModal(false);
-    s_modalWorksStack.push_back(OSXGetWorksWhenModal());
-#endif
-    
-    s_modalStack.push_back(this);
+    s_openDialogs++;
 }
 
 void wxDialog::OSXEndModalDialog()
 {
-    wxASSERT_MSG( s_modalStack.back() == this, "incorrect internal modal dialog stack");
-    s_modalStack.pop_back();
-#if wxOSX_USE_COCOA
-    s_modalWorksStack.pop_back();
-    
-    // restore worksWhenModal
-    if ( s_modalStack.size() > 0 )
-        s_modalStack.back()->OSXSetWorksWhenModal(s_modalWorksStack.back());
-#endif
+    wxASSERT_MSG( s_openDialogs > 0, "incorrect internal modal dialog count");
+    s_openDialogs--;
 }
 
 void wxDialog::Init()
@@ -155,8 +137,6 @@ bool wxDialog::Show(bool show)
 // Replacement for Show(true) for modal dialogs - returns return code
 int wxDialog::ShowModal()
 {
-    WX_HOOK_MODAL_DIALOG();
-
     m_modality = wxDIALOG_MODALITY_APP_MODAL;
 
     Show();
@@ -164,9 +144,9 @@ int wxDialog::ShowModal()
     wxModalEventLoop modalLoop(this);
     m_eventLoop = &modalLoop;
 
-    OSXBeginModalDialog();
+    wxDialog::OSXBeginModalDialog();
     modalLoop.Run();
-    OSXEndModalDialog();
+    wxDialog::OSXEndModalDialog();
 
     m_eventLoop = NULL;
 
@@ -196,9 +176,5 @@ void wxDialog::EndModal(int retCode)
 
     SetReturnCode(retCode);
     Show(false);
-
-    // Prevent app frame from taking z-order precedence
-    if( GetParent() )
-        GetParent()->Raise();
 }
 

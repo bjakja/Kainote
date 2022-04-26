@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     24.09.01
+// RCS-ID:      $Id$
 // Copyright:   (c) 2001 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #include "wx/toplevel.h"
 
@@ -35,20 +39,44 @@
 #endif //WX_PRECOMP
 
 #include "wx/dynlib.h"
-#include "wx/scopeguard.h"
-#include "wx/tooltip.h"
 
 #include "wx/msw/private.h"
-#include "wx/msw/private/winstyle.h"
+#if defined(__WXWINCE__) && !defined(__HANDHELDPC__)
+    #include <ole2.h>
+    #include <shellapi.h>
+    // Standard SDK doesn't have aygshell.dll: see include/wx/msw/wince/libraries.h
+    #if _WIN32_WCE < 400 || !defined(__WINCE_STANDARDSDK__)
+        #include <aygshell.h>
+    #endif
+#endif
 
 #include "wx/msw/winundef.h"
 #include "wx/msw/missing.h"
 
 #include "wx/display.h"
 
+#ifndef ICON_BIG
+    #define ICON_BIG 1
+#endif
+
+#ifndef ICON_SMALL
+    #define ICON_SMALL 0
+#endif
+
+// ----------------------------------------------------------------------------
+// stubs for missing functions under MicroWindows
+// ----------------------------------------------------------------------------
+
+#ifdef __WXMICROWIN__
+
+// static inline bool IsIconic(HWND WXUNUSED(hwnd)) { return false; }
+static inline bool IsZoomed(HWND WXUNUSED(hwnd)) { return false; }
+
+#endif // __WXMICROWIN__
+
 // NB: wxDlgProc must be defined here and not in dialog.cpp because the latter
 //     is not included by wxUniv build which does need wxDlgProc
-INT_PTR APIENTRY
+LONG APIENTRY _EXPORT
 wxDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
 // ----------------------------------------------------------------------------
@@ -60,8 +88,8 @@ class wxTLWHiddenParentModule : public wxModule
 {
 public:
     // module init/finalize
-    virtual bool OnInit() wxOVERRIDE;
-    virtual void OnExit() wxOVERRIDE;
+    virtual bool OnInit();
+    virtual void OnExit();
 
     // get the hidden window (creates on demand)
     static HWND GetHWND();
@@ -73,18 +101,18 @@ private:
     // the class used to create it
     static const wxChar *ms_className;
 
-    wxDECLARE_DYNAMIC_CLASS(wxTLWHiddenParentModule);
+    DECLARE_DYNAMIC_CLASS(wxTLWHiddenParentModule)
 };
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxTLWHiddenParentModule, wxModule);
+IMPLEMENT_DYNAMIC_CLASS(wxTLWHiddenParentModule, wxModule)
 
 // ============================================================================
 // wxTopLevelWindowMSW implementation
 // ============================================================================
 
-wxBEGIN_EVENT_TABLE(wxTopLevelWindowMSW, wxTopLevelWindowBase)
+BEGIN_EVENT_TABLE(wxTopLevelWindowMSW, wxTopLevelWindowBase)
     EVT_ACTIVATE(wxTopLevelWindowMSW::OnActivate)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 // ----------------------------------------------------------------------------
 // wxTopLevelWindowMSW creation
@@ -92,13 +120,28 @@ wxEND_EVENT_TABLE()
 
 void wxTopLevelWindowMSW::Init()
 {
-    m_showCmd = SW_SHOWNORMAL;
+    m_iconized =
+    m_maximizeOnShow = false;
 
     // Data to save/restore when calling ShowFullScreen
     m_fsStyle = 0;
     m_fsOldWindowStyle = 0;
     m_fsIsMaximized = false;
     m_fsIsShowing = false;
+
+    m_winLastFocused = NULL;
+
+#if defined(__SMARTPHONE__) && defined(__WXWINCE__)
+    m_MenuBarHWND = 0;
+#endif
+
+#if defined(__SMARTPHONE__) || defined(__POCKETPC__)
+    SHACTIVATEINFO* info = new SHACTIVATEINFO;
+    wxZeroMemory(*info);
+    info->cbSize = sizeof(SHACTIVATEINFO);
+
+    m_activateInfo = (void*) info;
+#endif
 
     m_menuSystem = NULL;
 }
@@ -111,6 +154,13 @@ WXDWORD wxTopLevelWindowMSW::MSWGetStyle(long style, WXDWORD *exflags) const
                       (
                         (style & ~wxBORDER_MASK) | wxBORDER_NONE, exflags
                       ) & ~WS_CHILD & ~WS_VISIBLE;
+
+    // For some reason, WS_VISIBLE needs to be defined on creation for
+    // SmartPhone 2003. The title can fail to be displayed otherwise.
+#if defined(__SMARTPHONE__) || (defined(__WXWINCE__) && _WIN32_WCE < 400)
+    msflags |= WS_VISIBLE;
+    ((wxTopLevelWindowMSW*)this)->wxWindowBase::Show(true);
+#endif
 
     // first select the kind of window being created
     //
@@ -126,13 +176,26 @@ WXDWORD wxTopLevelWindowMSW::MSWGetStyle(long style, WXDWORD *exflags) const
         *exflags |= WS_EX_DLGMODALFRAME;
     else if ( !(style & wxBORDER_NONE) )
         msflags |= WS_BORDER;
+#ifndef __POCKETPC__
     else
         msflags |= WS_POPUP;
+#endif
 
+    // normally we consider that all windows without a caption must be popups,
+    // but CE is an exception: there windows normally do not have the caption
+    // but shouldn't be made popups as popups can't have menus and don't look
+    // like normal windows anyhow
+
+    // TODO: Smartphone appears to like wxCAPTION, but we should check that
+    // we need it.
+#if defined(__SMARTPHONE__) || !defined(__WXWINCE__)
     if ( style & wxCAPTION )
         msflags |= WS_CAPTION;
+#ifndef __WXWINCE__
     else
         msflags |= WS_POPUP;
+#endif // !__WXWINCE__
+#endif
 
     // next translate the individual flags
 
@@ -149,10 +212,12 @@ WXDWORD wxTopLevelWindowMSW::MSWGetStyle(long style, WXDWORD *exflags) const
             msflags |= WS_MAXIMIZEBOX;
     }
 
+#ifndef __WXWINCE__
     // notice that if wxCLOSE_BOX is specified we need to use WS_SYSMENU too as
     // otherwise the close box doesn't appear
     if ( style & (wxSYSTEM_MENU | wxCLOSE_BOX) )
         msflags |= WS_SYSMENU;
+#endif // !__WXWINCE__
 
     // NB: under CE these 2 styles are not supported currently, we should
     //     call Minimize()/Maximize() "manually" if we want to support them
@@ -168,6 +233,8 @@ WXDWORD wxTopLevelWindowMSW::MSWGetStyle(long style, WXDWORD *exflags) const
 
     if ( exflags )
     {
+        // there is no taskbar under CE, so omit all this
+#if !defined(__WXWINCE__)
         if ( !(GetExtraStyle() & wxTOPLEVEL_EX_DIALOG) )
         {
             if ( style & wxFRAME_TOOL_WINDOW )
@@ -201,6 +268,7 @@ WXDWORD wxTopLevelWindowMSW::MSWGetStyle(long style, WXDWORD *exflags) const
 
         if ( GetExtraStyle() & wxWS_EX_CONTEXTHELP )
             *exflags |= WS_EX_CONTEXTHELP;
+#endif // !__WXWINCE__
 
         if ( style & wxSTAY_ON_TOP )
             *exflags |= WS_EX_TOPMOST;
@@ -243,6 +311,19 @@ WXHWND wxTopLevelWindowMSW::MSWGetParent() const
     return (WXHWND)hwndParent;
 }
 
+#if defined(__SMARTPHONE__) || defined(__POCKETPC__)
+bool wxTopLevelWindowMSW::HandleSettingChange(WXWPARAM wParam, WXLPARAM lParam)
+{
+    SHACTIVATEINFO *info = (SHACTIVATEINFO*) m_activateInfo;
+    if ( info )
+    {
+        SHHandleWMSettingChange(GetHwnd(), wParam, lParam, info);
+    }
+
+    return wxWindowMSW::HandleSettingChange(wParam, lParam);
+}
+#endif
+
 WXLRESULT wxTopLevelWindowMSW::MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam)
 {
     WXLRESULT rc = 0;
@@ -250,6 +331,35 @@ WXLRESULT wxTopLevelWindowMSW::MSWWindowProc(WXUINT message, WXWPARAM wParam, WX
 
     switch ( message )
     {
+#if defined(__SMARTPHONE__) || defined(__POCKETPC__)
+        case WM_ACTIVATE:
+        {
+            SHACTIVATEINFO* info = (SHACTIVATEINFO*) m_activateInfo;
+            if (info)
+            {
+                DWORD flags = 0;
+                if (GetExtraStyle() & wxTOPLEVEL_EX_DIALOG) flags = SHA_INPUTDIALOG;
+                SHHandleWMActivate(GetHwnd(), wParam, lParam, info, flags);
+            }
+
+            // This implicitly sends a wxEVT_ACTIVATE_APP event
+            if (wxTheApp)
+                wxTheApp->SetActive(wParam != 0, FindFocus());
+
+            break;
+        }
+        case WM_HIBERNATE:
+        {
+            if (wxTheApp)
+            {
+                wxActivateEvent event(wxEVT_HIBERNATE, true, wxID_ANY);
+                event.SetEventObject(wxTheApp);
+                processed = wxTheApp->ProcessEvent(event);
+            }
+            break;
+        }
+#endif // __SMARTPHONE__ || __POCKETPC__
+
         case WM_SYSCOMMAND:
             {
                 // From MSDN:
@@ -261,9 +371,10 @@ WXLRESULT wxTopLevelWindowMSW::MSWWindowProc(WXUINT message, WXWPARAM wParam, WX
                 //      using the bitwise AND operator.
                 unsigned id = wParam & 0xfff0;
 
-                // Preserve the focus when minimizing/restoring the window:
-                // surprisingly, DefWindowProc() doesn't do it automatically
-                // and so we need to it ourselves. Moreover, our code in
+                // Preserve the focus when minimizing/restoring the window: we
+                // need to do it manually as DefWindowProc() doesn't appear to
+                // do this for us for some reason (perhaps because we don't use
+                // WM_NEXTDLGCTL for setting focus?). Moreover, our code in
                 // OnActivate() doesn't work in this case as we receive the
                 // deactivation event too late when the window is being
                 // minimized and the focus is already NULL by then. Similarly,
@@ -287,22 +398,6 @@ WXLRESULT wxTopLevelWindowMSW::MSWWindowProc(WXUINT message, WXWPARAM wParam, WX
                                                              wParam, lParam);
 
                     DoRestoreLastFocus();
-                }
-                else if ( id == SC_KEYMENU )
-                {
-                    // Alt-Backspace is understood as an accelerator for "Undo"
-                    // by the native EDIT control, but pressing it results in a
-                    // beep by default when the resulting SC_KEYMENU is handled
-                    // by DefWindowProc(), so pretend to handle it ourselves if
-                    // we're editing a text control to avoid the annoying beep.
-                    if ( lParam == VK_BACK )
-                    {
-                        if ( wxWindow* const focus = FindFocus() )
-                        {
-                            if ( focus->WXGetTextEntry() )
-                                processed = true;
-                        }
-                    }
                 }
 
 #ifndef __WXUNIVERSAL__
@@ -332,6 +427,10 @@ bool wxTopLevelWindowMSW::CreateDialog(const void *dlgTemplate,
                                        const wxPoint& pos,
                                        const wxSize& size)
 {
+#ifdef __WXMICROWIN__
+    // no dialogs support under MicroWin yet
+    return CreateFrame(title, pos, size);
+#else // !__WXMICROWIN__
     // static cast is valid as we're only ever called for dialogs
     wxWindow * const
         parent = static_cast<wxDialog *>(this)->GetParentForModalDialog();
@@ -339,7 +438,7 @@ bool wxTopLevelWindowMSW::CreateDialog(const void *dlgTemplate,
     m_hWnd = (WXHWND)::CreateDialogIndirect
                        (
                         wxGetInstance(),
-                        static_cast<const DLGTEMPLATE*>(dlgTemplate),
+                        (DLGTEMPLATE*)dlgTemplate,
                         parent ? GetHwndOf(parent) : NULL,
                         (DLGPROC)wxDlgProc
                        );
@@ -353,6 +452,7 @@ bool wxTopLevelWindowMSW::CreateDialog(const void *dlgTemplate,
         return false;
     }
 
+#if !defined(__WXWINCE__)
     // For some reason, the system menu is activated when we use the
     // WS_EX_CONTEXTHELP style, so let's set a reasonable icon
     if ( HasExtraStyle(wxWS_EX_CONTEXTHELP) )
@@ -369,6 +469,7 @@ bool wxTopLevelWindowMSW::CreateDialog(const void *dlgTemplate,
             }
         }
     }
+#endif // !__WXWINCE__
 
     if ( !title.empty() )
     {
@@ -377,6 +478,7 @@ bool wxTopLevelWindowMSW::CreateDialog(const void *dlgTemplate,
 
     SubclassWin(m_hWnd);
 
+#if !defined(__WXWINCE__) || defined(__WINCE_STANDARDSDK__)
     // move the dialog to its initial position without forcing repainting
     int x, y, w, h;
     (void)MSWGetCreateWindowCoords(pos, size, x, y, w, h);
@@ -395,8 +497,15 @@ bool wxTopLevelWindowMSW::CreateDialog(const void *dlgTemplate,
             wxLogLastError(wxT("MoveWindow"));
         }
     }
+#endif // !__WXWINCE__
+
+#ifdef __SMARTPHONE__
+    // Work around title non-display glitch
+    Show(false);
+#endif
 
     return true;
+#endif // __WXMICROWIN__/!__WXMICROWIN__
 }
 
 bool wxTopLevelWindowMSW::CreateFrame(const wxString& title,
@@ -408,10 +517,13 @@ bool wxTopLevelWindowMSW::CreateFrame(const wxString& title,
 
     const wxSize sz = IsAlwaysMaximized() ? wxDefaultSize : size;
 
-    if ( wxApp::MSWGetDefaultLayout(m_parent) == wxLayout_RightToLeft )
+#ifndef __WXWINCE__
+    if ( wxTheApp->GetLayoutDirection() == wxLayout_RightToLeft )
         exflags |= WS_EX_LAYOUTRTL;
+#endif
 
-    return MSWCreate(GetMSWClassName(GetWindowStyle()), title.t_str(), pos, sz, flags, exflags);
+    return MSWCreate(MSWGetRegisteredClassName(),
+                     title.t_str(), pos, sz, flags, exflags);
 }
 
 bool wxTopLevelWindowMSW::Create(wxWindow *parent,
@@ -433,7 +545,8 @@ bool wxTopLevelWindowMSW::Create(wxWindow *parent,
     // non-TLW windows
     wxTopLevelWindows.Append(this);
 
-    if ( !CreateBase(parent, id, pos, sizeReal, style, name) )
+    bool ret = CreateBase(parent, id, pos, sizeReal, style, name);
+    if ( !ret )
         return false;
 
     if ( parent )
@@ -450,16 +563,13 @@ bool wxTopLevelWindowMSW::Create(wxWindow *parent,
         // don't use DS_SETFONT we don't need the fourth WORD for the font)
         static const int dlgsize = sizeof(DLGTEMPLATE) + (sizeof(WORD) * 3);
         DLGTEMPLATE *dlgTemplate = (DLGTEMPLATE *)malloc(dlgsize);
-        wxON_BLOCK_EXIT1(free, dlgTemplate);
-
         memset(dlgTemplate, 0, dlgsize);
 
         // these values are arbitrary, they won't be used normally anyhow
-        const LONG baseUnits = ::GetDialogBaseUnits();
-        dlgTemplate->x = 34;
+        dlgTemplate->x  = 34;
         dlgTemplate->y  = 22;
-        dlgTemplate->cx = ::MulDiv(sizeReal.x, 4, LOWORD(baseUnits));
-        dlgTemplate->cy = ::MulDiv(sizeReal.y, 8, HIWORD(baseUnits));
+        dlgTemplate->cx = 144;
+        dlgTemplate->cy = 75;
 
         // reuse the code in MSWGetStyle() but correct the results slightly for
         // the dialog
@@ -474,7 +584,8 @@ bool wxTopLevelWindowMSW::Create(wxWindow *parent,
         // all dialogs are popups
         dlgTemplate->style |= WS_POPUP;
 
-        if ( wxApp::MSWGetDefaultLayout(m_parent) == wxLayout_RightToLeft )
+#ifndef __WXWINCE__
+        if ( wxTheApp->GetLayoutDirection() == wxLayout_RightToLeft )
         {
             dlgTemplate->dwExtendedStyle |= WS_EX_LAYOUTRTL;
         }
@@ -482,28 +593,46 @@ bool wxTopLevelWindowMSW::Create(wxWindow *parent,
         // force 3D-look if necessary, it looks impossibly ugly otherwise
         if ( style & (wxRESIZE_BORDER | wxCAPTION) )
             dlgTemplate->style |= DS_MODALFRAME;
+#endif
 
-        if ( !CreateDialog(dlgTemplate, title, pos, sizeReal) )
-            return false;
+        ret = CreateDialog(dlgTemplate, title, pos, sizeReal);
+        free(dlgTemplate);
     }
     else // !dialog
     {
-        if ( !CreateFrame(title, pos, sizeReal) )
-            return false;
+        ret = CreateFrame(title, pos, sizeReal);
     }
 
-    if ( !(GetWindowStyleFlag() & wxCLOSE_BOX) )
+#ifndef __WXWINCE__
+    if ( ret && !(GetWindowStyleFlag() & wxCLOSE_BOX) )
     {
         EnableCloseButton(false);
     }
+#endif
 
     // for standard dialogs the dialog manager generates WM_CHANGEUISTATE
     // itself but for custom windows we have to do it ourselves in order to
     // make the keyboard indicators (such as underlines for accelerators and
     // focus rectangles) work under Win2k+
-    MSWUpdateUIState(UIS_INITIALIZE);
+    if ( ret )
+    {
+        MSWUpdateUIState(UIS_INITIALIZE);
+    }
 
-    return true;
+    // Note: if we include PocketPC in this test, dialogs can fail to show up,
+    // for example the text entry dialog in the dialogs sample. Problem with Maximise()?
+#if defined(__WXWINCE__) && (defined(__SMARTPHONE__) || defined(__WINCE_STANDARDSDK__))
+    if ( ( style & wxMAXIMIZE ) || IsAlwaysMaximized() )
+    {
+        this->Maximize();
+    }
+#endif
+
+#if defined(__SMARTPHONE__) && defined(__WXWINCE__)
+    SetRightMenu(); // to nothing for initialization
+#endif
+
+    return ret;
 }
 
 wxTopLevelWindowMSW::~wxTopLevelWindowMSW()
@@ -511,6 +640,25 @@ wxTopLevelWindowMSW::~wxTopLevelWindowMSW()
     delete m_menuSystem;
 
     SendDestroyEvent();
+
+#if defined(__SMARTPHONE__) || defined(__POCKETPC__)
+    SHACTIVATEINFO* info = (SHACTIVATEINFO*) m_activateInfo;
+    delete info;
+    m_activateInfo = NULL;
+#endif
+
+    // after destroying an owned window, Windows activates the next top level
+    // window in Z order but it may be different from our owner (to reproduce
+    // this simply Alt-TAB to another application and back before closing the
+    // owned frame) whereas we always want to yield activation to our parent
+    if ( HasFlag(wxFRAME_FLOAT_ON_PARENT) )
+    {
+        wxWindow *parent = GetParent();
+        if ( parent )
+        {
+            ::BringWindowToTop(GetHwndOf(parent));
+        }
+    }
 }
 
 // ----------------------------------------------------------------------------
@@ -519,32 +667,15 @@ wxTopLevelWindowMSW::~wxTopLevelWindowMSW()
 
 void wxTopLevelWindowMSW::DoShowWindow(int nShowCmd)
 {
-    // After hiding or minimizing an owned window, Windows activates the next
-    // top level window in Z order but it may be different from our owner (to
-    // reproduce this simply Alt-TAB to another application and back before
-    // closing the owned frame) whereas we always want to yield activation to
-    // our parent, so do it explicitly _before_ yielding activation.
-    switch ( nShowCmd )
-    {
-        case SW_HIDE:
-        case SW_MINIMIZE:
-            if ( HasFlag(wxFRAME_FLOAT_ON_PARENT) )
-            {
-                wxWindow *parent = GetParent();
-                if ( parent )
-                {
-                    ::BringWindowToTop(GetHwndOf(parent));
-                }
-            }
-            break;
-    }
-
     ::ShowWindow(GetHwnd(), nShowCmd);
 
-#if wxUSE_TOOLTIPS
-    // Don't leave a tooltip hanging around if TLW is hidden now.
-    wxToolTip::UpdateVisibility();
-#endif // wxUSE_TOOLTIPS
+    // Hiding the window doesn't change its iconized state.
+    if ( nShowCmd != SW_HIDE )
+    {
+        // Otherwise restoring, maximizing or showing the window normally also
+        // makes it not iconized and only minimizing it does make it iconized.
+        m_iconized = nShowCmd == SW_MINIMIZE;
+    }
 }
 
 void wxTopLevelWindowMSW::ShowWithoutActivating()
@@ -552,12 +683,7 @@ void wxTopLevelWindowMSW::ShowWithoutActivating()
     if ( !wxWindowBase::Show(true) )
         return;
 
-    // We can't show the window in a maximized state without activating it, so
-    // the sequence of hiding the window, calling Maximize() and this function
-    // will end up with the window not being maximized -- but this is arguably
-    // better than activating it and is compatible with the historical
-    // behaviour of this function.
-    DoShowWindow(m_showCmd == SW_MINIMIZE ? SW_SHOWMINNOACTIVE : SW_SHOWNA);
+    DoShowWindow(SW_SHOWNA);
 }
 
 bool wxTopLevelWindowMSW::Show(bool show)
@@ -569,21 +695,22 @@ bool wxTopLevelWindowMSW::Show(bool show)
     int nShowCmd;
     if ( show )
     {
-        // If we need to minimize or maximize the window, do it now.
-        if ( m_showCmd == SW_MAXIMIZE || m_showCmd == SW_MINIMIZE )
+        if ( m_maximizeOnShow )
         {
-            nShowCmd = m_showCmd;
+            // show and maximize
+            nShowCmd = SW_MAXIMIZE;
+
+            // This is necessary, or no window appears
+#if defined( __WINCE_STANDARDSDK__) || defined(__SMARTPHONE__)
+            DoShowWindow(SW_SHOW);
+#endif
+
+            m_maximizeOnShow = false;
         }
-        else if ( ::IsIconic(GetHwnd()) )
+        else if ( m_iconized )
         {
-            // We were restored while we were hidden, so now we need to show
-            // the window in its normal state.
-            //
-            // As below, don't activate some kinds of windows.
-            if ( HasFlag(wxFRAME_TOOL_WINDOW) || !IsEnabled() )
-                nShowCmd = SW_SHOWNOACTIVATE;
-            else
-                nShowCmd = SW_RESTORE;
+            // iconize and show
+            nShowCmd = SW_MINIMIZE;
         }
         else // just show
         {
@@ -599,15 +726,6 @@ bool wxTopLevelWindowMSW::Show(bool show)
     }
     else // hide
     {
-        // When hiding the window, remember if it was maximized or iconized in
-        // order to return the correct value from Is{Maximized,Iconized}().
-        if ( ::IsZoomed(GetHwnd()) )
-            m_showCmd = SW_MAXIMIZE;
-        else if ( ::IsIconic(GetHwnd()) )
-            m_showCmd = SW_MINIMIZE;
-        else
-            m_showCmd = SW_SHOW;
-
         nShowCmd = SW_HIDE;
     }
 
@@ -625,15 +743,12 @@ bool wxTopLevelWindowMSW::Show(bool show)
 
     DoShowWindow(nShowCmd);
 
-    if ( show && nShowCmd == SW_MAXIMIZE )
-    {
-        // We don't receive WM_SHOWWINDOW when shown in the maximized state,
-        // cf. https://docs.microsoft.com/en-us/windows/desktop/winmsg/wm-showwindow
-        // and so we have to issue the event ourselves in this case.
-        wxShowEvent event(GetId(), true);
-        event.SetEventObject(this);
-        AddPendingEvent(event);
-    }
+#if defined(__WXWINCE__) && (_WIN32_WCE >= 400 && !defined(__POCKETPC__) && !defined(__SMARTPHONE__))
+    // Addornments have to be added when the frame is the correct size
+    wxFrame* frame = wxDynamicCast(this, wxFrame);
+    if (frame && frame->GetMenuBar())
+        frame->GetMenuBar()->AddAdornments(GetWindowStyleFlag());
+#endif
 
     return true;
 }
@@ -649,19 +764,16 @@ void wxTopLevelWindowMSW::Raise()
 
 void wxTopLevelWindowMSW::Maximize(bool maximize)
 {
-    // Update m_showCmd to ensure that the window is maximized when it's shown
-    // later even if it's currently hidden.
-    m_showCmd = maximize ? SW_MAXIMIZE : SW_RESTORE;
-
     if ( IsShown() )
     {
         // just maximize it directly
-        DoShowWindow(m_showCmd);
+        DoShowWindow(maximize ? SW_MAXIMIZE : SW_RESTORE);
     }
     else // hidden
     {
         // we can't maximize the hidden frame because it shows it as well,
-        // so don't do anything other than updating m_showCmd for now
+        // so just remember that we should do it later in this case
+        m_maximizeOnShow = maximize;
 
 #if wxUSE_DEFERRED_SIZING
         // after calling Maximize() the client code expects to get the frame
@@ -687,96 +799,61 @@ void wxTopLevelWindowMSW::Maximize(bool maximize)
 
 bool wxTopLevelWindowMSW::IsMaximized() const
 {
-    if ( IsAlwaysMaximized() )
-        return true;
+    return IsAlwaysMaximized() ||
+#if !defined(__SMARTPHONE__) && !defined(__POCKETPC__) && !defined(__WINCE_STANDARDSDK__)
 
-    // If the window is shown, just ask Windows if it's maximized. But hidden
-    // windows are not really maximized, even after Maximize() is called on
-    // them, so for them we check if we're scheduled to maximize the window
-    // when it's shown instead.
-    return IsShown() ? ::IsZoomed(GetHwnd()) != 0 : m_showCmd == SW_MAXIMIZE;
+           (::IsZoomed(GetHwnd()) != 0) ||
+#endif
+           m_maximizeOnShow;
 }
 
 void wxTopLevelWindowMSW::Iconize(bool iconize)
 {
-    if ( iconize == MSWIsIconized() )
+    if ( iconize == m_iconized )
     {
         // Do nothing, in particular don't restore non-iconized windows when
         // Iconize(false) is called as this would wrongly un-maximize them.
         return;
     }
 
-    // Note that we can't change m_showCmd yet as wxFrame WM_SIZE handler uses
-    // its value to determine whether the frame had been iconized before or not
-    // and this handler will be called from inside DoShowWindow() below.
-    const UINT showCmd = iconize ? SW_MINIMIZE : SW_RESTORE;
-
-    // We can't actually iconize the window if it's currently hidden, as this
-    // would also show it unexpectedly.
     if ( IsShown() )
     {
-        DoShowWindow(showCmd);
+        // change the window state immediately
+        DoShowWindow(iconize ? SW_MINIMIZE : SW_RESTORE);
     }
-
-    // Update the internal flag in any case, so that IsIconized() returns the
-    // correct value, for example. And if the window is currently hidden, this
-    // also ensures that the next call to Show() will show it in an iconized
-    // state instead of showing it normally.
-    m_showCmd = showCmd;
+    else // hidden
+    {
+        // iconizing the window shouldn't show it so just remember that we need
+        // to become iconized when shown later
+        m_iconized = true;
+    }
 }
 
 bool wxTopLevelWindowMSW::IsIconized() const
 {
+#ifdef __WXWINCE__
+    return false;
+#else
     if ( !IsShown() )
-    {
-        // Hidden windows are never actually iconized at MSW level, but can be
-        // in wx, so use m_showCmd to determine our status.
-        return m_showCmd == SW_MINIMIZE;
-    }
+        return m_iconized;
 
-    // don't use m_showCmd, it may be briefly out of sync with the real state
+    // don't use m_iconized, it may be briefly out of sync with the real state
     // as it's only modified when we receive a WM_SIZE and we could be called
     // from an event handler from one of the messages we receive before it,
     // such as WM_MOVE
-    return MSWIsIconized();
-}
-
-bool wxTopLevelWindowMSW::MSWIsIconized() const
-{
     return ::IsIconic(GetHwnd()) != 0;
+#endif
 }
 
 void wxTopLevelWindowMSW::Restore()
 {
-    // Forget any previous minimized/maximized status.
-    m_showCmd = SW_SHOW;
-
-    // And actually restore the window to its normal state. Note that here,
-    // unlike in Maximize() and Iconize(), we do it even if the window is
-    // currently hidden, i.e. Restore() is supposed to show it in this case.
     DoShowWindow(SW_RESTORE);
-}
-
-bool wxTopLevelWindowMSW::Destroy()
-{
-    if ( !wxTopLevelWindowBase::Destroy() )
-        return false;
-
-    // Under Windows 10 iconized windows don't get any messages, so delayed
-    // destruction doesn't work for them if we don't force a message dispatch
-    // here (and it doesn't seem useful to test for MSWIsIconized() as doing
-    // this doesn't do any harm for non-iconized windows neither). For that
-    // matter, doing this shouldn't do any harm under previous OS versions
-    // neither, so checking for the OS version doesn't seem useful too.
-    wxWakeUpIdle();
-
-    return true;
 }
 
 void wxTopLevelWindowMSW::SetLayoutDirection(wxLayoutDirection dir)
 {
     if ( dir == wxLayout_Default )
-        dir = wxApp::MSWGetDefaultLayout(m_parent);
+        dir = wxTheApp->GetLayoutDirection();
 
     if ( dir != wxLayout_Default )
         wxTopLevelWindowBase::SetLayoutDirection(dir);
@@ -785,6 +862,8 @@ void wxTopLevelWindowMSW::SetLayoutDirection(wxLayoutDirection dir)
 // ----------------------------------------------------------------------------
 // wxTopLevelWindowMSW geometry
 // ----------------------------------------------------------------------------
+
+#ifndef __WXWINCE__
 
 void wxTopLevelWindowMSW::DoGetPosition(int *x, int *y) const
 {
@@ -802,7 +881,8 @@ void wxTopLevelWindowMSW::DoGetPosition(int *x, int *y) const
             {
                 // we must use the correct display for the translation as the
                 // task bar might be shown on one display but not the other one
-                wxDisplay dpy(this);
+                int n = wxDisplay::GetFromWindow(this);
+                wxDisplay dpy(n == wxNOT_FOUND ? 0 : n);
                 const wxPoint ptOfs = dpy.GetClientArea().GetPosition() -
                                       dpy.GetGeometry().GetPosition();
 
@@ -850,6 +930,8 @@ void wxTopLevelWindowMSW::DoGetSize(int *width, int *height) const
     wxTopLevelWindowBase::DoGetSize(width, height);
 }
 
+#endif // __WXWINCE__
+
 void
 wxTopLevelWindowMSW::MSWGetCreateWindowCoords(const wxPoint& pos,
                                               const wxSize& size,
@@ -896,11 +978,18 @@ wxTopLevelWindowMSW::MSWGetCreateWindowCoords(const wxPoint& pos,
         //     guess a reasonably good size for a new window just as well
         //     ourselves
         //
+        // The only exception is for the Windows CE platform where the system
+        // does know better than we how should the windows be sized
+#ifdef _WIN32_WCE
+        w =
+        h = CW_USEDEFAULT;
+#else // !_WIN32_WCE
         wxSize sizeReal = size;
         sizeReal.SetDefaults(GetDefaultSize());
 
         w = sizeReal.x;
         h = sizeReal.y;
+#endif // _WIN32_WCE/!_WIN32_WCE
     }
     else
     {
@@ -930,38 +1019,51 @@ bool wxTopLevelWindowMSW::ShowFullScreen(bool show, long style)
         // zap the frame borders
 
         // save the 'normal' window style
-        wxMSWWinStyleUpdater updateStyle(GetHwnd());
-        m_fsOldWindowStyle = updateStyle.Get();
+        m_fsOldWindowStyle = GetWindowLong(GetHwnd(), GWL_STYLE);
 
         // save the old position, width & height, maximize state
         m_fsOldSize = GetRect();
         m_fsIsMaximized = IsMaximized();
 
         // decide which window style flags to turn off
+        LONG newStyle = m_fsOldWindowStyle;
         LONG offFlags = 0;
 
         if (style & wxFULLSCREEN_NOBORDER)
         {
             offFlags |= WS_BORDER;
+#ifndef __WXWINCE__
             offFlags |= WS_THICKFRAME;
+#endif
         }
         if (style & wxFULLSCREEN_NOCAPTION)
             offFlags |= WS_CAPTION | WS_SYSMENU;
 
-        updateStyle.TurnOff(offFlags);
-
-        // Full screen windows should logically be popups as they don't have
-        // decorations (and are definitely not children) and while not using
-        // this style doesn't seem to make any difference for most windows, it
-        // breaks wxGLCanvas in some cases, see #15434, so just always use it.
-        updateStyle.TurnOn(WS_POPUP);
+        newStyle &= ~offFlags;
 
         // change our window style to be compatible with full-screen mode
-        updateStyle.Apply();
+        ::SetWindowLong(GetHwnd(), GWL_STYLE, newStyle);
 
-        // resize to the size of the display containing us, falling back to the
-        // primary one
-        const wxRect rect = wxDisplay(this).GetGeometry();
+        wxRect rect;
+#if wxUSE_DISPLAY
+        // resize to the size of the display containing us
+        int dpy = wxDisplay::GetFromWindow(this);
+        if ( dpy != wxNOT_FOUND )
+        {
+            rect = wxDisplay(dpy).GetGeometry();
+        }
+        else // fall back to the main desktop
+#endif // wxUSE_DISPLAY
+        {
+            // resize to the size of the desktop
+            wxCopyRECTToRect(wxGetWindowRect(::GetDesktopWindow()), rect);
+#ifdef __WXWINCE__
+            // FIXME: size of the bottom menu (toolbar)
+            // should be taken in account
+            rect.height += rect.y;
+            rect.y       = 0;
+#endif
+        }
 
         SetSize(rect);
 
@@ -985,6 +1087,10 @@ bool wxTopLevelWindowMSW::ShowFullScreen(bool show, long style)
                      rect.x, rect.y, rect.width, rect.height,
                      flags);
 
+#if !defined(__HANDHELDPC__) && (defined(__WXWINCE__) && (_WIN32_WCE < 400))
+        ::SHFullScreen(GetHwnd(), SHFS_HIDETASKBAR | SHFS_HIDESIPBUTTON);
+#endif
+
         // finally send an event allowing the window to relayout itself &c
         wxSizeEvent event(rect.GetSize(), GetId());
         event.SetEventObject(this);
@@ -992,6 +1098,9 @@ bool wxTopLevelWindowMSW::ShowFullScreen(bool show, long style)
     }
     else // stop showing full screen
     {
+#if !defined(__HANDHELDPC__) && (defined(__WXWINCE__) && (_WIN32_WCE < 400))
+        ::SHFullScreen(GetHwnd(), SHFS_SHOWTASKBAR | SHFS_SHOWSIPBUTTON);
+#endif
         Maximize(m_fsIsMaximized);
         SetWindowLong(GetHwnd(),GWL_STYLE, m_fsOldWindowStyle);
         SetWindowPos(GetHwnd(),HWND_TOP,m_fsOldSize.x, m_fsOldSize.y,
@@ -1020,7 +1129,7 @@ bool wxTopLevelWindowMSW::DoSelectAndSetIcon(const wxIconBundle& icons,
                                              int smY,
                                              int i)
 {
-    const wxSize size(wxGetSystemMetrics(smX, this), wxGetSystemMetrics(smY, this));
+    const wxSize size(::GetSystemMetrics(smX), ::GetSystemMetrics(smY));
 
     wxIcon icon = icons.GetIcon(size, wxIconBundle::FALLBACK_NEAREST_LARGER);
 
@@ -1047,52 +1156,11 @@ void wxTopLevelWindowMSW::SetIcons(const wxIconBundle& icons)
     DoSelectAndSetIcon(icons, SM_CXICON, SM_CYICON, ICON_BIG);
 }
 
-wxContentProtection wxTopLevelWindowMSW::GetContentProtection() const
+bool wxTopLevelWindowMSW::EnableCloseButton(bool enable)
 {
-#if wxUSE_DYNLIB_CLASS
-    typedef BOOL(WINAPI *GetWindowDisplayAffinity_t)(HWND, DWORD *);
-
-    wxDynamicLibrary dllUser32("user32.dll");
-    GetWindowDisplayAffinity_t pfnGetWindowDisplayAffinity =
-        (GetWindowDisplayAffinity_t)dllUser32.RawGetSymbol("GetWindowDisplayAffinity");
-    if (pfnGetWindowDisplayAffinity)
-    {
-        DWORD affinity = 0;
-        if (!pfnGetWindowDisplayAffinity(GetHWND(), &affinity))
-            wxLogLastError("GetWindowDisplayAffinity");
-        else if (affinity & WDA_MONITOR)
-            return wxCONTENT_PROTECTION_ENABLED;
-    }
-#endif
-    return wxCONTENT_PROTECTION_NONE;
-}
-
-bool wxTopLevelWindowMSW::SetContentProtection(wxContentProtection contentProtection)
-{
-#if wxUSE_DYNLIB_CLASS
-    typedef BOOL(WINAPI *SetWindowDisplayAffinity_t)(HWND, DWORD);
-
-    wxDynamicLibrary dllUser32("user32.dll");
-    SetWindowDisplayAffinity_t pfnSetWindowDisplayAffinity =
-        (SetWindowDisplayAffinity_t)dllUser32.RawGetSymbol("SetWindowDisplayAffinity");
-    if (pfnSetWindowDisplayAffinity)
-    {
-        if (pfnSetWindowDisplayAffinity(GetHWND(),
-            (contentProtection == wxCONTENT_PROTECTION_ENABLED) ?
-            WDA_MONITOR : WDA_NONE))
-            return true;
-        else
-            wxLogLastError("SetWindowDisplayAffinity");
-    }
-#endif
-    return false;
-}
-
-// static
-bool wxTopLevelWindowMSW::MSWEnableCloseButton(WXHWND hwnd, bool enable)
-{
+#if !defined(__WXMICROWIN__)
     // get system (a.k.a. window) menu
-    HMENU hmenu = GetSystemMenu(hwnd, FALSE /* get it */);
+    HMENU hmenu = GetSystemMenu(GetHwnd(), FALSE /* get it */);
     if ( !hmenu )
     {
         // no system menu at all -- ok if we want to remove the close button
@@ -1110,94 +1178,65 @@ bool wxTopLevelWindowMSW::MSWEnableCloseButton(WXHWND hwnd, bool enable)
 
         return false;
     }
+#ifndef __WXWINCE__
     // update appearance immediately
-    if ( !::DrawMenuBar(hwnd) )
+    if ( !::DrawMenuBar(GetHwnd()) )
     {
         wxLogLastError(wxT("DrawMenuBar"));
     }
+#endif
+#endif // !__WXMICROWIN__
 
     return true;
 }
 
-bool wxTopLevelWindowMSW::EnableCloseButton(bool enable)
-{
-    return MSWEnableCloseButton(GetHwnd(), enable);
-}
-
-// Window must have wxCAPTION and either wxCLOSE_BOX or wxSYSTEM_MENU for the
-// button to be visible. Also check for wxMAXIMIZE_BOX because we don't want
-// to enable a button that is excluded from the current style.
-
-bool wxTopLevelWindowMSW::EnableMaximizeButton(bool enable)
-{
-    if ( ( HasFlag(wxCAPTION) &&
-         ( HasFlag(wxCLOSE_BOX) || HasFlag(wxSYSTEM_MENU) ) ) &&
-         HasFlag(wxMAXIMIZE_BOX) )
-    {
-        if ( enable )
-        {
-            SetWindowStyleFlag(GetWindowStyleFlag() | wxMAXIMIZE_BOX);
-        }
-        else
-        {
-            SetWindowStyleFlag(GetWindowStyleFlag() ^ wxMAXIMIZE_BOX);
-            // Restore the style to our internal store
-            wxWindowBase::SetWindowStyleFlag(GetWindowStyle() | wxMAXIMIZE_BOX);
-        }
-
-        return true;
-    }
-
-    return false;
-}
-
-bool wxTopLevelWindowMSW::EnableMinimizeButton(bool enable)
-{
-    if ( ( HasFlag(wxCAPTION) &&
-         ( HasFlag(wxCLOSE_BOX) || HasFlag(wxSYSTEM_MENU) ) ) &&
-         HasFlag(wxMINIMIZE_BOX) )
-    {
-        if ( enable )
-        {
-            SetWindowStyleFlag(GetWindowStyleFlag() | wxMINIMIZE_BOX);
-        }
-        else
-        {
-            SetWindowStyleFlag(GetWindowStyleFlag() ^ wxMINIMIZE_BOX);
-            // Restore the style to our internal store
-            wxWindowBase::SetWindowStyleFlag(GetWindowStyle() | wxMINIMIZE_BOX);
-        }
-
-        return true;
-    }
-
-    return false;
-}
-
 void wxTopLevelWindowMSW::RequestUserAttention(int flags)
 {
-#if defined(FLASHW_STOP)
-    WinStruct<FLASHWINFO> fwi;
-    fwi.hwnd = GetHwnd();
-    fwi.dwFlags = FLASHW_ALL;
-    if ( flags & wxUSER_ATTENTION_INFO )
+    // check if we can use FlashWindowEx(): unfortunately a simple test for
+    // FLASHW_STOP doesn't work because MSVC6 headers do #define it but don't
+    // provide FlashWindowEx() declaration, so try to detect whether we have
+    // real headers for WINVER 0x0500 by checking for existence of a symbol not
+    // declated in MSVC6 header
+#if defined(FLASHW_STOP) && defined(VK_XBUTTON1) && wxUSE_DYNLIB_CLASS
+    // available in the headers, check if it is supported by the system
+    typedef BOOL (WINAPI *FlashWindowEx_t)(FLASHWINFO *pfwi);
+    static FlashWindowEx_t s_pfnFlashWindowEx = NULL;
+    if ( !s_pfnFlashWindowEx )
     {
-        // just flash a few times
-        fwi.uCount = 3;
-    }
-    else // wxUSER_ATTENTION_ERROR
-    {
-        // flash until the user notices it
-        fwi.dwFlags |= FLASHW_TIMERNOFG;
+        wxDynamicLibrary dllUser32(wxT("user32.dll"));
+        s_pfnFlashWindowEx = (FlashWindowEx_t)
+                                dllUser32.GetSymbol(wxT("FlashWindowEx"));
+
+        // we can safely unload user32.dll here, it's going to remain loaded as
+        // long as the program is running anyhow
     }
 
-    ::FlashWindowEx(&fwi);
-#else
+    if ( s_pfnFlashWindowEx )
+    {
+        WinStruct<FLASHWINFO> fwi;
+        fwi.hwnd = GetHwnd();
+        fwi.dwFlags = FLASHW_ALL;
+        if ( flags & wxUSER_ATTENTION_INFO )
+        {
+            // just flash a few times
+            fwi.uCount = 3;
+        }
+        else // wxUSER_ATTENTION_ERROR
+        {
+            // flash until the user notices it
+            fwi.dwFlags |= FLASHW_TIMERNOFG;
+        }
+
+        s_pfnFlashWindowEx(&fwi);
+    }
+    else // FlashWindowEx() not available
+#endif // FlashWindowEx() defined
     {
         wxUnusedVar(flags);
+#ifndef __WXWINCE__
         ::FlashWindow(GetHwnd(), TRUE);
+#endif // __WXWINCE__
     }
-#endif // defined(FLASHW_STOP)
 }
 
 wxMenu *wxTopLevelWindowMSW::MSWGetSystemMenu() const
@@ -1239,28 +1278,61 @@ wxMenu *wxTopLevelWindowMSW::MSWGetSystemMenu() const
 
 bool wxTopLevelWindowMSW::SetTransparent(wxByte alpha)
 {
-    wxMSWWinExStyleUpdater updateExStyle(GetHwnd());
+#if wxUSE_DYNLIB_CLASS
+    typedef DWORD (WINAPI *PSETLAYEREDWINDOWATTR)(HWND, DWORD, BYTE, DWORD);
+    static PSETLAYEREDWINDOWATTR
+        pSetLayeredWindowAttributes = (PSETLAYEREDWINDOWATTR)-1;
+
+    if ( pSetLayeredWindowAttributes == (PSETLAYEREDWINDOWATTR)-1 )
+    {
+        wxDynamicLibrary dllUser32(wxT("user32.dll"));
+
+        // use RawGetSymbol() and not GetSymbol() to avoid error messages under
+        // Windows 95: there is nothing the user can do about this anyhow
+        pSetLayeredWindowAttributes = (PSETLAYEREDWINDOWATTR)
+            dllUser32.RawGetSymbol(wxT("SetLayeredWindowAttributes"));
+
+        // it's ok to destroy dllUser32 here, we link statically to user32.dll
+        // anyhow so it won't be unloaded
+    }
+
+    if ( !pSetLayeredWindowAttributes )
+        return false;
+#endif // wxUSE_DYNLIB_CLASS
+
+    LONG exstyle = GetWindowLong(GetHwnd(), GWL_EXSTYLE);
 
     // if setting alpha to fully opaque then turn off the layered style
     if (alpha == 255)
     {
-        updateExStyle.TurnOff(WS_EX_LAYERED).Apply();
+        SetWindowLong(GetHwnd(), GWL_EXSTYLE, exstyle & ~WS_EX_LAYERED);
         Refresh();
         return true;
     }
 
+#if wxUSE_DYNLIB_CLASS
     // Otherwise, set the layered style if needed and set the alpha value
-    updateExStyle.TurnOn(WS_EX_LAYERED).Apply();
+    if ((exstyle & WS_EX_LAYERED) == 0 )
+        SetWindowLong(GetHwnd(), GWL_EXSTYLE, exstyle | WS_EX_LAYERED);
 
-    if ( ::SetLayeredWindowAttributes(GetHwnd(), 0, (BYTE)alpha, LWA_ALPHA) )
+    if ( pSetLayeredWindowAttributes(GetHwnd(), 0, (BYTE)alpha, LWA_ALPHA) )
         return true;
+#endif // wxUSE_DYNLIB_CLASS
 
     return false;
 }
 
 bool wxTopLevelWindowMSW::CanSetTransparent()
 {
-    return true;
+    // The API is available on win2k and above
+
+    static int os_type = -1;
+    static int ver_major = -1;
+
+    if (os_type == -1)
+        os_type = ::wxGetOsVersion(&ver_major);
+
+    return (os_type == wxOS_WINDOWS_NT && ver_major >= 5);
 }
 
 void wxTopLevelWindowMSW::DoFreeze()
@@ -1282,13 +1354,20 @@ void wxTopLevelWindowMSW::DoThaw()
 
 void wxTopLevelWindowMSW::DoSaveLastFocus()
 {
-    if ( MSWIsIconized() )
+    if ( m_iconized )
         return;
 
     // remember the last focused child if it is our child
-    wxWindow* const winFocus = FindFocus();
+    m_winLastFocused = FindFocus();
 
-    m_winLastFocused = IsDescendant(winFocus) ? winFocus : NULL;
+    if ( m_winLastFocused )
+    {
+        // and don't remember it if it's a child from some other frame
+        if ( wxGetTopLevelParent(m_winLastFocused) != this )
+        {
+            m_winLastFocused = NULL;
+        }
+    }
 }
 
 void wxTopLevelWindowMSW::DoRestoreLastFocus()
@@ -1300,9 +1379,7 @@ void wxTopLevelWindowMSW::DoRestoreLastFocus()
         parent = this;
     }
 
-    wxWindow* winPtr = m_winLastFocused;
-    wxSetFocusToChild(parent, &winPtr);
-    m_winLastFocused = winPtr;
+    wxSetFocusToChild(parent, &m_winLastFocused);
 }
 
 void wxTopLevelWindowMSW::OnActivate(wxActivateEvent& event)
@@ -1312,21 +1389,18 @@ void wxTopLevelWindowMSW::OnActivate(wxActivateEvent& event)
         // We get WM_ACTIVATE before being restored from iconized state, so we
         // can be still iconized here. In this case, avoid restoring the focus
         // as it doesn't work anyhow and we will do when we're really restored.
-        if ( MSWIsIconized() )
+        if ( m_iconized )
         {
             event.Skip();
             return;
         }
 
-        // restore focus to the child which was last focused unless one of our
-        // children already has it (the frame having focus on itself does not
-        // count, if only because this would be always the case for an MDI
-        // child frame as the MDI parent sets focus to it before it's
-        // activated)
+        // restore focus to the child which was last focused unless we already
+        // have it
         wxLogTrace(wxT("focus"), wxT("wxTLW %p activated."), m_hWnd);
 
-        wxWindow* const winFocus = FindFocus();
-        if ( winFocus == this || !IsDescendant(winFocus) )
+        wxWindow *winFocus = FindFocus();
+        if ( !winFocus || wxGetTopLevelParent(winFocus) != this )
             DoRestoreLastFocus();
     }
     else // deactivating
@@ -1343,8 +1417,8 @@ void wxTopLevelWindowMSW::OnActivate(wxActivateEvent& event)
 }
 
 // the DialogProc for all wxWidgets dialogs
-INT_PTR APIENTRY
-wxDlgProc(HWND WXUNUSED(hDlg),
+LONG APIENTRY _EXPORT
+wxDlgProc(HWND hDlg,
           UINT message,
           WPARAM WXUNUSED(wParam),
           LPARAM WXUNUSED(lParam))
@@ -1353,6 +1427,27 @@ wxDlgProc(HWND WXUNUSED(hDlg),
     {
         case WM_INITDIALOG:
         {
+            // under CE, add a "Ok" button in the dialog title bar and make it full
+            // screen
+            //
+            // TODO: find the window for this HWND, and take into account
+            // wxMAXIMIZE and wxCLOSE_BOX. For now, assume both are present.
+            //
+            // Standard SDK doesn't have aygshell.dll: see
+            // include/wx/msw/wince/libraries.h
+#if defined(__WXWINCE__) && !defined(__WINCE_STANDARDSDK__) && !defined(__HANDHELDPC__)
+            SHINITDLGINFO shidi;
+            shidi.dwMask = SHIDIM_FLAGS;
+            shidi.dwFlags = SHIDIF_SIZEDLG // take account of the SIP or menubar
+#ifndef __SMARTPHONE__
+                            | SHIDIF_DONEBUTTON
+#endif
+                        ;
+            shidi.hDlg = hDlg;
+            SHInitDialog( &shidi );
+#else // no SHInitDialog()
+            wxUnusedVar(hDlg);
+#endif
             // for WM_INITDIALOG, returning TRUE tells system to set focus to
             // the first control in the dialog box, but as we set the focus
             // ourselves, we return FALSE for it as well

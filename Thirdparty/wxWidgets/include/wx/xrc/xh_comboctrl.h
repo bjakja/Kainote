@@ -3,6 +3,7 @@
 // Purpose:     XML resource handler for wxComboBox
 // Author:      Jaakko Salli
 // Created:     2009/01/25
+// RCS-ID:      $Id$
 // Copyright:   (c) 2009 Jaakko Salli
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -16,12 +17,12 @@
 
 class WXDLLIMPEXP_XRC wxComboCtrlXmlHandler : public wxXmlResourceHandler
 {
-    wxDECLARE_DYNAMIC_CLASS(wxComboCtrlXmlHandler);
+    DECLARE_DYNAMIC_CLASS(wxComboCtrlXmlHandler)
 
 public:
     wxComboCtrlXmlHandler();
-    virtual wxObject *DoCreateResource() wxOVERRIDE;
-    virtual bool CanHandle(wxXmlNode *node) wxOVERRIDE;
+    virtual wxObject *DoCreateResource();
+    virtual bool CanHandle(wxXmlNode *node);
 
 private:
 };

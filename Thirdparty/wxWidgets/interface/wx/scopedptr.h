@@ -2,6 +2,7 @@
 // Name:        wx/scopedptr.h
 // Purpose:     interface of wxScopedPtr
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -57,7 +58,7 @@
 
     @section scopedptr_newpointers Declaring new smart pointer types
 
-    To declare the smart pointer class @c CLASSNAME containing pointer to
+    To declare the smart pointer class @c CLASSNAME containing pointes to
     a (possibly incomplete) type @c TYPE you should use
     @code
         wxDECLARE_SCOPED_PTR( TYPE,        // type of the values
@@ -238,8 +239,8 @@ public:
     T& operator*() const;
 
     /**
-        Smart pointer member access. Returns pointer to object.
-
+        Smart pointer member access. Returns pointer to object. 
+        
         If the internal pointer is @NULL this method will cause an assert in debug mode.
     */
     T* operator->() const;

@@ -3,6 +3,7 @@
 // Purpose:     wxUniversal-specific wxPanel class.
 // Author:      Vadim Zeitlin
 // Created:     2011-03-18
+// RCS-ID:      $Id$
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -24,7 +25,7 @@ public:
             const wxPoint& pos = wxDefaultPosition,
             const wxSize& size = wxDefaultSize,
             long style = wxTAB_TRAVERSAL | wxNO_BORDER,
-            const wxString& name = wxASCII_STR(wxPanelNameStr))
+            const wxString& name = wxPanelNameStr)
     {
         Create(parent, winid, pos, size, style, name);
     }
@@ -36,7 +37,7 @@ public:
     wxPanel(wxWindow *parent,
             int x, int y, int width, int height,
             long style = wxTAB_TRAVERSAL | wxNO_BORDER,
-            const wxString& name = wxASCII_STR(wxPanelNameStr))
+            const wxString& name = wxPanelNameStr)
     {
         Create(parent, wxID_ANY, wxPoint(x, y), wxSize(width, height), style, name);
     }

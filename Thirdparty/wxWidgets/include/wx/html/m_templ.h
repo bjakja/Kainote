@@ -2,6 +2,7 @@
 // Name:        wx/html/m_templ.h
 // Purpose:     Modules template file
 // Author:      Vaclav Slavik
+// RCS-ID:      $Id$
 // Copyright:   (c) Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -31,7 +32,7 @@ I STRONGLY recommend reading and understanding these macros!!
     class wxHTML_Handler_##name : public wxHtmlWinTagHandler              \
     {                                                                     \
         public:                                                           \
-            wxString GetSupportedTags() wxOVERRIDE {return wxT(tags);}
+            wxString GetSupportedTags() {return wxT(tags);}
 
 
 
@@ -45,7 +46,7 @@ I STRONGLY recommend reading and understanding these macros!!
 
 #define TAG_HANDLER_PROC(varib)                                           \
         public:                                                           \
-            bool HandleTag(const wxHtmlTag& varib) wxOVERRIDE
+            bool HandleTag(const wxHtmlTag& varib)
 
 
 
@@ -58,9 +59,9 @@ I STRONGLY recommend reading and understanding these macros!!
 #define TAGS_MODULE_BEGIN(name)                                           \
     class wxHTML_Module##name : public wxHtmlTagsModule                   \
     {                                                                     \
-        wxDECLARE_DYNAMIC_CLASS(wxHTML_Module##name );                    \
+        DECLARE_DYNAMIC_CLASS(wxHTML_Module##name )                       \
         public:                                                           \
-            void FillHandlersTable(wxHtmlWinParser *parser) wxOVERRIDE    \
+            void FillHandlersTable(wxHtmlWinParser *parser)               \
                 {
 
 
@@ -75,7 +76,7 @@ I STRONGLY recommend reading and understanding these macros!!
 #define TAGS_MODULE_END(name)                                             \
                 }                                                         \
     };                                                                    \
-    wxIMPLEMENT_DYNAMIC_CLASS(wxHTML_Module##name , wxHtmlTagsModule)
+    IMPLEMENT_DYNAMIC_CLASS(wxHTML_Module##name , wxHtmlTagsModule)
 
 
 

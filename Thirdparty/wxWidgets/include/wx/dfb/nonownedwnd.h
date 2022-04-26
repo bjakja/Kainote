@@ -4,6 +4,7 @@
 // Author:      Vaclav Slavik
 // Modified by:
 // Created:     2006-12-24
+// RCS-ID:      $Id$
 // Copyright:   (c) 2006 TT-Solutions
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -38,7 +39,7 @@ public:
                      const wxPoint& pos = wxDefaultPosition,
                      const wxSize& size = wxDefaultSize,
                      long style = 0,
-                     const wxString& name = wxASCII_STR(wxPanelNameStr))
+                     const wxString& name = wxPanelNameStr)
     {
         Init();
 
@@ -50,7 +51,7 @@ public:
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = 0,
-                const wxString& name = wxASCII_STR(wxPanelNameStr));
+                const wxString& name = wxPanelNameStr);
 
     virtual ~wxNonOwnedWindow();
 

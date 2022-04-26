@@ -2,6 +2,7 @@
 // Name:        recguard.h
 // Purpose:     interface of wxRecursionGuardFlag
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 

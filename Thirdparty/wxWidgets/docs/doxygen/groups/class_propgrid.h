@@ -2,6 +2,7 @@
 // Name:        class_propgrid.h
 // Purpose:     wxPropertyGrid classes group docs
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 

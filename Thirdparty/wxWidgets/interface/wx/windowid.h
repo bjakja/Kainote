@@ -2,6 +2,7 @@
 // Name:        windowid.h
 // Purpose:     interface of wxIdManager
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -50,6 +51,8 @@ public:
             The first of the range of IDs to unreserve.
         @param count
             The number of sequential IDs to unreserve.
+
+        @return The value of the first ID in the sequence, or wxID_NONE.
     */
     static void UnreserveId(wxWindowID id, int count = 1);
 };

@@ -3,6 +3,7 @@
 // Purpose:     XRC resource handler for wxSearchCtrl
 // Author:      Sander Berents
 // Created:     2007/07/12
+// RCS-ID:      $Id$
 // Copyright:   (c) 2007 Sander Berents
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,10 +20,10 @@ class WXDLLIMPEXP_XRC wxSearchCtrlXmlHandler : public wxXmlResourceHandler
 public:
     wxSearchCtrlXmlHandler();
 
-    virtual wxObject *DoCreateResource() wxOVERRIDE;
-    virtual bool CanHandle(wxXmlNode *node) wxOVERRIDE;
+    virtual wxObject *DoCreateResource();
+    virtual bool CanHandle(wxXmlNode *node);
 
-    wxDECLARE_DYNAMIC_CLASS(wxSearchCtrlXmlHandler);
+    DECLARE_DYNAMIC_CLASS(wxSearchCtrlXmlHandler)
 };
 
 #endif // wxUSE_XRC && wxUSE_SEARCHCTRL

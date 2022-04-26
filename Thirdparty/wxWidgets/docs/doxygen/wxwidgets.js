@@ -2,6 +2,7 @@
  ** Name:        wxwidgets.js
  ** Purpose:     The wxWidgets documentation javascript
  ** Author:      Doxygen team
+ ** RCS-ID:      $Id$
  ** Licence:     wxWindows licence
  *****************************************************************************/
 
@@ -42,5 +43,14 @@ $(function() {
     var display = $('#' + $(this).attr('id') + '-content').css('display');
     setCookie('sectionDiv.style.display', display);
   });
+
+  list_of_members_link = $('a[href$="-members.html"]:first');
+  if(list_of_members_link.length) {
+    summary_div = $('div.header div.summary:first');
+    if(summary_div.length) {
+      summary_div.append(' | ');
+      summary_div.append(list_of_members_link.clone().text('List of All Members'));
+    }
+  }
 
 });

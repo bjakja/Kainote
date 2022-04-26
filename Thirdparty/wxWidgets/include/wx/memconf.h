@@ -6,6 +6,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     22.01.00
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -23,7 +24,7 @@
 
 #if wxUSE_CONFIG
 
-#include "wx\fileconf.h"   // the base class
+#include "wx/fileconf.h"   // the base class
 
 // ----------------------------------------------------------------------------
 // wxMemoryConfig: a config class which stores settings in non-persistent way

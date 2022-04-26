@@ -4,6 +4,7 @@
 // Author:      Vaclav Slavik
 // Modified by:
 // Created:     04/04/2003
+// RCS-ID:      $Id$
 // Copyright:   (c) Vaclav Slavik, 2003
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////
@@ -30,7 +31,7 @@
     #include "wx/dcclient.h"
     #include "wx/statbmp.h"
     #include "wx/sizer.h"
-    #include "wx/bmpbndl.h"
+    #include "wx/bitmap.h"
     #include "wx/image.h"
 #endif
 
@@ -64,11 +65,7 @@
 // ----------------------------------------------------------------------------
 
 #if defined(__WXGTK__)
-    #ifdef __WXGTK20__
-        #include "wx/gtk/private/wrapgtk.h"
-    #else // GTK+ 1.x
-        #include <gtk/gtk.h>
-    #endif
+    #include <gtk/gtk.h>
     #include <gdk/gdkx.h>
     #define GetDisplay()        GDK_DISPLAY()
     #define GetXWindow(wxwin)   GDK_WINDOW_XWINDOW((wxwin)->m_widget->window)
@@ -88,8 +85,8 @@
 class WXDLLIMPEXP_ADV wxTaskBarIconArea : public wxTaskBarIconAreaBase
 {
 public:
-    wxTaskBarIconArea(wxTaskBarIcon *icon, const wxBitmapBundle &bmp);
-    void SetTrayIcon(const wxBitmapBundle& bmp);
+    wxTaskBarIconArea(wxTaskBarIcon *icon, const wxBitmap &bmp);
+    void SetTrayIcon(const wxBitmap& bmp);
     bool IsOk() { return true; }
 
 protected:
@@ -102,25 +99,24 @@ protected:
 
     wxTaskBarIcon *m_icon;
     wxPoint        m_pos;
-    wxBitmapBundle m_bmp;
-    wxBitmap       m_bmpReal;
+    wxBitmap       m_bmp;
 
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
 };
 
-wxBEGIN_EVENT_TABLE(wxTaskBarIconArea, wxTaskBarIconAreaBase)
+BEGIN_EVENT_TABLE(wxTaskBarIconArea, wxTaskBarIconAreaBase)
     EVT_SIZE(wxTaskBarIconArea::OnSizeChange)
     EVT_MOUSE_EVENTS(wxTaskBarIconArea::OnMouseEvent)
     EVT_MENU(wxID_ANY, wxTaskBarIconArea::OnMenuEvent)
     EVT_PAINT(wxTaskBarIconArea::OnPaint)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
-wxTaskBarIconArea::wxTaskBarIconArea(wxTaskBarIcon *icon, const wxBitmapBundle &bmp)
+wxTaskBarIconArea::wxTaskBarIconArea(wxTaskBarIcon *icon, const wxBitmap &bmp)
     : wxTaskBarIconAreaBase(), m_icon(icon), m_bmp(bmp)
 {
     // Set initial size to bitmap size (tray manager may and often will
     // change it):
-    SetClientSize(bmp.GetPreferredLogicalSizeFor(this));
+    SetClientSize(wxSize(bmp.GetWidth(), bmp.GetHeight()));
 
     SetTrayIcon(bmp);
 
@@ -132,19 +128,25 @@ wxTaskBarIconArea::wxTaskBarIconArea(wxTaskBarIcon *icon, const wxBitmapBundle &
     }
 }
 
-void wxTaskBarIconArea::SetTrayIcon(const wxBitmapBundle& bmp)
+void wxTaskBarIconArea::SetTrayIcon(const wxBitmap& bmp)
 {
     m_bmp = bmp;
 
     // determine suitable bitmap size:
-    const wxSize winsize = GetClientSize();
-    wxSize iconsize(m_bmp.GetDefaultSize());
-    iconsize.DecTo(winsize);
+    wxSize winsize(GetClientSize());
+    wxSize bmpsize(m_bmp.GetWidth(), m_bmp.GetHeight());
+    wxSize iconsize(wxMin(winsize.x, bmpsize.x), wxMin(winsize.y, bmpsize.y));
 
-    m_bmpReal = m_bmp.GetBitmap(iconsize);
+    // rescale the bitmap to fit into the tray icon window:
+    if (bmpsize != iconsize)
+    {
+        wxImage img = m_bmp.ConvertToImage();
+        img.Rescale(iconsize.x, iconsize.y);
+        m_bmp = wxBitmap(img);
+    }
 
     wxRegion region;
-    region.Union(m_bmpReal);
+    region.Union(m_bmp);
 
     // if the bitmap is smaller than the window, offset it:
     if (winsize != iconsize)
@@ -191,13 +193,14 @@ void wxTaskBarIconArea::OnSizeChange(wxSizeEvent& WXUNUSED(event))
     wxLogTrace(wxT("systray"), wxT("icon size changed to %i x %i"),
                GetSize().x, GetSize().y);
     // rescale or reposition the icon as needed:
-    SetTrayIcon(m_bmp);
+    wxBitmap bmp(m_bmp);
+    SetTrayIcon(bmp);
 }
 
 void wxTaskBarIconArea::OnPaint(wxPaintEvent& WXUNUSED(event))
 {
     wxPaintDC dc(this);
-    dc.DrawBitmap(m_bmpReal, m_pos.x, m_pos.y, true);
+    dc.DrawBitmap(m_bmp, m_pos.x, m_pos.y, true);
 }
 
 void wxTaskBarIconArea::OnMouseEvent(wxMouseEvent& event)
@@ -244,7 +247,7 @@ bool wxTaskBarIconBase::IsAvailable()
 // wxTaskBarIcon class:
 // ----------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxTaskBarIcon, wxEvtHandler);
+IMPLEMENT_DYNAMIC_CLASS(wxTaskBarIcon, wxEvtHandler)
 
 wxTaskBarIcon::wxTaskBarIcon() : m_iconWnd(NULL)
 {
@@ -254,7 +257,8 @@ wxTaskBarIcon::~wxTaskBarIcon()
 {
     if (m_iconWnd)
     {
-        m_iconWnd->Unbind(wxEVT_DESTROY, &wxTaskBarIcon::OnDestroy, this);
+        m_iconWnd->Disconnect(wxEVT_DESTROY,
+            wxWindowDestroyEventHandler(wxTaskBarIcon::OnDestroy), NULL, this);
         RemoveIcon();
     }
 }
@@ -277,14 +281,19 @@ void wxTaskBarIcon::OnDestroy(wxWindowDestroyEvent&)
     m_iconWnd = NULL;
 }
 
-bool wxTaskBarIcon::SetIcon(const wxBitmapBundle& icon, const wxString& tooltip)
+bool wxTaskBarIcon::SetIcon(const wxIcon& icon, const wxString& tooltip)
 {
+    wxBitmap bmp;
+    bmp.CopyFromIcon(icon);
+
     if (!m_iconWnd)
     {
-        m_iconWnd = new wxTaskBarIconArea(this, icon);
+        m_iconWnd = new wxTaskBarIconArea(this, bmp);
         if (m_iconWnd->IsOk())
         {
-            m_iconWnd->Bind(wxEVT_DESTROY, &wxTaskBarIcon::OnDestroy, this);
+            m_iconWnd->Connect(wxEVT_DESTROY,
+                wxWindowDestroyEventHandler(wxTaskBarIcon::OnDestroy),
+                NULL, this);
             m_iconWnd->Show();
         }
         else
@@ -296,7 +305,7 @@ bool wxTaskBarIcon::SetIcon(const wxBitmapBundle& icon, const wxString& tooltip)
     }
     else
     {
-        m_iconWnd->SetTrayIcon(icon);
+        m_iconWnd->SetTrayIcon(bmp);
     }
 
 #if wxUSE_TOOLTIPS

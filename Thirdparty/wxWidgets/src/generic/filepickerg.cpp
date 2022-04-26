@@ -4,6 +4,7 @@
 // Author:      Francesco Montorsi
 // Modified by:
 // Created:     15/04/2006
+// RCS-ID:      $Id$
 // Copyright:   (c) Francesco Montorsi
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_FILEPICKERCTRL || wxUSE_DIRPICKERCTRL
 
@@ -32,8 +36,8 @@
 // implementation
 // ============================================================================
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxGenericFileButton, wxButton);
-wxIMPLEMENT_DYNAMIC_CLASS(wxGenericDirButton, wxButton);
+IMPLEMENT_DYNAMIC_CLASS(wxGenericFileButton, wxButton)
+IMPLEMENT_DYNAMIC_CLASS(wxGenericDirButton, wxButton)
 
 // ----------------------------------------------------------------------------
 // wxGenericFileButton
@@ -77,7 +81,9 @@ bool wxGenericFileDirButton::Create(wxWindow *parent,
     }
 
     // and handle user clicks on it
-    Bind(wxEVT_BUTTON, &wxGenericFileDirButton::OnButtonClick, this, GetId());
+    Connect(GetId(), wxEVT_COMMAND_BUTTON_CLICKED,
+            wxCommandEventHandler(wxGenericFileDirButton::OnButtonClick),
+            NULL, this);
 
     // create the dialog associated with this button
     m_path = path;
@@ -107,28 +113,46 @@ void wxGenericFileDirButton::SetInitialDirectory(const wxString& dir)
 }
 
 // ----------------------------------------------------------------------------
-// wxGenericFileButton
+// wxGenericFileutton
 // ----------------------------------------------------------------------------
+
+void
+wxGenericFileButton::DoSetInitialDirectory(wxFileDialog* dialog,
+                                           const wxString& dir)
+{
+    if ( m_path.find_first_of(wxFileName::GetPathSeparators()) ==
+            wxString::npos )
+    {
+        dialog->SetDirectory(dir);
+    }
+}
 
 wxDialog *wxGenericFileButton::CreateDialog()
 {
-    // Determine the initial directory for the dialog: it comes either from the
-    // default path, if it has it, or from the separately specified initial
-    // directory that can be set even if the path is e.g. empty.
-    wxFileName fn(m_path);
-    wxString initialDir = fn.GetPath();
-    if ( initialDir.empty() )
-        initialDir = m_initialDir;
+    wxFileDialog* const dialog = new wxFileDialog
+                                     (
+                                        GetDialogParent(),
+                                        m_message,
+                                        wxEmptyString,
+                                        wxEmptyString,
+                                        m_wildcard,
+                                        GetDialogStyle()
+                                     );
 
-    return new wxFileDialog
-               (
-                    GetDialogParent(),
-                    m_message,
-                    initialDir,
-                    fn.GetFullName(),
-                    m_wildcard,
-                    GetDialogStyle()
-               );
+    // If there is no default file or if it doesn't have any path, use the
+    // explicitly set initial directory.
+    //
+    // Notice that it is important to call this before SetPath() below as if we
+    // do have m_initialDir and no directory in m_path, we need to interpret
+    // the path as being relative with respect to m_initialDir.
+    if ( !m_initialDir.empty() )
+        DoSetInitialDirectory(dialog, m_initialDir);
+
+    // This sets both the default file name and the default directory of the
+    // dialog if m_path contains directory part.
+    dialog->SetPath(m_path);
+
+    return dialog;
 }
 
 // ----------------------------------------------------------------------------

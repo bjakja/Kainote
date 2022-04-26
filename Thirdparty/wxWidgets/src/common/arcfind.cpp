@@ -2,17 +2,21 @@
 // Name:        src/common/arcfind.cpp
 // Purpose:     Streams for archive formats
 // Author:      Mike Wetherell
+// RCS-ID:      $Id$
 // Copyright:   (c) Mike Wetherell
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_ARCHIVE_STREAMS
 
-#include "wx\archive.h"
+#include "wx/archive.h"
 
 // These functions are in a separate file so that statically linked apps
 // that do not call them to search for archive handlers will only link in

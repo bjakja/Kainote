@@ -2,6 +2,7 @@
 // Name:        geometry.h
 // Purpose:     interface of geometry classes
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -32,6 +33,7 @@ public :
            wxDouble GetVectorAngle() const;
     void SetVectorLength( wxDouble length );
            void SetVectorAngle( wxDouble degrees );
+           void SetPolarCoordinates( wxInt32 angle , wxInt32 length );
     // set the vector length to 1.0, preserving the angle
     void Normalize();
 
@@ -41,7 +43,7 @@ public :
     wxInt32 GetCrossProduct( const wxPoint2DInt &vec ) const;
 
     // the reflection of this point
-    wxPoint2DInt operator-() const;
+    wxPoint2DInt operator-();
 
     wxPoint2DInt& operator=(const wxPoint2DInt& pt);
     wxPoint2DInt& operator+=(const wxPoint2DInt& pt);
@@ -91,6 +93,7 @@ public :
      wxDouble GetVectorAngle() const ;
     void SetVectorLength( wxDouble length );
     void SetVectorAngle( wxDouble degrees );
+    void SetPolarCoordinates( wxDouble angle , wxDouble length );
     // set the vector length to 1.0, preserving the angle
     void Normalize();
 
@@ -100,7 +103,7 @@ public :
     wxDouble GetCrossProduct( const wxPoint2DDouble &vec ) const;
 
     // the reflection of this point
-    wxPoint2DDouble operator-() const;
+    wxPoint2DDouble operator-();
 
     wxPoint2DDouble& operator=(const wxPoint2DDouble& pt);
     wxPoint2DDouble& operator+=(const wxPoint2DDouble& pt);
@@ -144,8 +147,8 @@ public:
 
     // single attribute accessors
 
-    wxPoint2DDouble GetPosition() const;
-    wxSize GetSize() const;
+    wxPoint2DDouble GetPosition();
+    wxSize GetSize();
 
     // for the edge and corner accessors there are two setters counterparts, the Set.. functions keep the other corners at their
         // position whenever sensible, the Move.. functions keep the size of the rect and move the other corners appropriately
@@ -191,7 +194,7 @@ public:
 
     void ConstrainTo( const wxRect2DDouble &rect );
 
-    wxPoint2DDouble Interpolate( wxInt32 widthfactor, wxInt32 heightfactor ) const;
+    wxPoint2DDouble Interpolate( wxInt32 widthfactor , wxInt32 heightfactor );
 
     static void Intersect( const wxRect2DDouble &src1 , const wxRect2DDouble &src2 , wxRect2DDouble *dest );
     void Intersect( const wxRect2DDouble &otherRect );
@@ -235,8 +238,8 @@ public:
 
         // single attribute accessors
 
-    wxPoint2DInt GetPosition() const;
-    wxSize GetSize() const;
+    wxPoint2DInt GetPosition();
+    wxSize GetSize();
 
         // for the edge and corner accessors there are two setters counterparts, the Set.. functions keep the other corners at their
         // position whenever sensible, the Move.. functions keep the size of the rect and move the other corners appropriately
@@ -279,8 +282,8 @@ public:
     void Inset( wxInt32 x , wxInt32 y );
     void Inset( wxInt32 left , wxInt32 top ,wxInt32 right , wxInt32 bottom  );
     void Offset( const wxPoint2DInt &pt );
-    void ConstrainTo( const wxRect2DInt &rect );
-    wxPoint2DInt Interpolate( wxInt32 widthfactor, wxInt32 heightfactor ) const;
+    void ConstrainTo( const wxRect2DInt &rect );    
+    wxPoint2DInt Interpolate( wxInt32 widthfactor , wxInt32 heightfactor );
 
     static void Intersect( const wxRect2DInt &src1 , const wxRect2DInt &src2 , wxRect2DInt *dest );
     void Intersect( const wxRect2DInt &otherRect );

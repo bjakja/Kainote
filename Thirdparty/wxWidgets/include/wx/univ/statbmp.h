@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     25.08.00
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -25,7 +26,7 @@ public:
     }
 
     wxStaticBitmap(wxWindow *parent,
-                   const wxBitmapBundle& label,
+                   const wxBitmap& label,
                    const wxPoint& pos = wxDefaultPosition,
                    const wxSize& size = wxDefaultSize,
                    long style = 0)
@@ -35,32 +36,39 @@ public:
 
     wxStaticBitmap(wxWindow *parent,
                    wxWindowID id,
-                   const wxBitmapBundle& label,
+                   const wxBitmap& label,
                    const wxPoint& pos = wxDefaultPosition,
                    const wxSize& size = wxDefaultSize,
                    long style = 0,
-                   const wxString& name = wxASCII_STR(wxStaticBitmapNameStr))
+                   const wxString& name = wxStaticBitmapNameStr)
     {
         Create(parent, id, label, pos, size, style, name);
     }
 
     bool Create(wxWindow *parent,
                 wxWindowID id,
-                const wxBitmapBundle& label,
+                const wxBitmap& label,
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = 0,
-                const wxString& name = wxASCII_STR(wxStaticBitmapNameStr));
+                const wxString& name = wxStaticBitmapNameStr);
 
-    virtual void SetBitmap(const wxBitmapBundle& bitmap) wxOVERRIDE;
+    virtual void SetBitmap(const wxBitmap& bitmap);
+    virtual void SetIcon(const wxIcon& icon);
+    virtual wxBitmap GetBitmap() const { return m_bitmap; }
 
-    virtual bool HasTransparentBackground() wxOVERRIDE { return true; }
+    wxIcon GetIcon() const;
+
+    virtual bool HasTransparentBackground() { return true; }
 
 protected:
-    virtual void DoDraw(wxControlRenderer *renderer) wxOVERRIDE;
+    virtual void DoDraw(wxControlRenderer *renderer);
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxStaticBitmap);
+    // the bitmap which we show
+    wxBitmap m_bitmap;
+
+    DECLARE_DYNAMIC_CLASS(wxStaticBitmap)
 };
 
 #endif // _WX_UNIV_STATBMP_H_

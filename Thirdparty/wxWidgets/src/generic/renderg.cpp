@@ -4,7 +4,8 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     20.07.2003
-// Copyright:   (c) 2003 Vadim Zeitlin <vadim@wxwidgets.org>
+// RCS-ID:      $Id$
+// Copyright:   (c) 2003 Vadim Zeitlin <vadim@wxwindows.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -19,6 +20,9 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #include "wx/renderer.h"
 
@@ -31,17 +35,11 @@
     #include "wx/control.h"
 #endif //WX_PRECOMP
 
-#include "wx/dcmirror.h"
-#include "wx/math.h"
 #include "wx/splitter.h"
+#include "wx/dcmirror.h"
 
 #ifdef __WXMAC__
     #include "wx/osx/private.h"
-#endif
-
-#ifdef __WINDOWS__
-    // We only need it to get ::MulDiv() declaration, used by wxMulDivInt32().
-    #include "wx/msw/wrapwin.h"
 #endif
 
 // ----------------------------------------------------------------------------
@@ -58,110 +56,84 @@ public:
                                   const wxRect& rect,
                                   int flags = 0,
                                   wxHeaderSortIconType sortArrow = wxHDR_SORT_ICON_NONE,
-                                  wxHeaderButtonParams* params = NULL) wxOVERRIDE;
+                                  wxHeaderButtonParams* params = NULL);
 
     virtual int  DrawHeaderButtonContents(wxWindow *win,
                                           wxDC& dc,
                                           const wxRect& rect,
                                           int flags = 0,
                                           wxHeaderSortIconType sortArrow = wxHDR_SORT_ICON_NONE,
-                                          wxHeaderButtonParams* params = NULL) wxOVERRIDE;
+                                          wxHeaderButtonParams* params = NULL);
 
-    virtual int GetHeaderButtonHeight(wxWindow *win) wxOVERRIDE;
+    virtual int GetHeaderButtonHeight(wxWindow *win);
 
-    virtual int GetHeaderButtonMargin(wxWindow *win) wxOVERRIDE;
+    virtual int GetHeaderButtonMargin(wxWindow *win);
 
     virtual void DrawTreeItemButton(wxWindow *win,
                                     wxDC& dc,
                                     const wxRect& rect,
-                                    int flags = 0) wxOVERRIDE;
+                                    int flags = 0);
 
     virtual void DrawSplitterBorder(wxWindow *win,
                                     wxDC& dc,
                                     const wxRect& rect,
-                                    int flags = 0) wxOVERRIDE;
+                                    int flags = 0);
 
     virtual void DrawSplitterSash(wxWindow *win,
                                   wxDC& dc,
                                   const wxSize& size,
                                   wxCoord position,
                                   wxOrientation orient,
-                                  int flags = 0) wxOVERRIDE;
+                                  int flags = 0);
 
     virtual void DrawComboBoxDropButton(wxWindow *win,
                                         wxDC& dc,
                                         const wxRect& rect,
-                                        int flags = 0) wxOVERRIDE;
+                                        int flags = 0);
 
     virtual void DrawDropArrow(wxWindow *win,
                                wxDC& dc,
                                const wxRect& rect,
-                               int flags = 0) wxOVERRIDE;
+                               int flags = 0);
 
     virtual void DrawCheckBox(wxWindow *win,
                               wxDC& dc,
                               const wxRect& rect,
-                              int flags = 0) wxOVERRIDE;
+                              int flags = 0);
 
-    virtual void DrawCheckMark(wxWindow *win,
-                               wxDC& dc,
-                               const wxRect& rect,
-                               int flags = 0) wxOVERRIDE;
-
-    virtual wxSize GetCheckBoxSize(wxWindow *win, int flags = 0) wxOVERRIDE;
-
-    virtual wxSize GetCheckMarkSize(wxWindow *win) wxOVERRIDE;
-
-    virtual wxSize GetExpanderSize(wxWindow *win) wxOVERRIDE;
+    virtual wxSize GetCheckBoxSize(wxWindow *win);
 
     virtual void DrawPushButton(wxWindow *win,
                                 wxDC& dc,
                                 const wxRect& rect,
-                                int flags = 0) wxOVERRIDE;
-
-    virtual void DrawCollapseButton(wxWindow *win,
-        wxDC& dc,
-        const wxRect& rect,
-        int flags = 0) wxOVERRIDE;
-
-    virtual wxSize GetCollapseButtonSize(wxWindow *win, wxDC& dc) wxOVERRIDE;
+                                int flags = 0);
 
     virtual void DrawItemSelectionRect(wxWindow *win,
                                        wxDC& dc,
                                        const wxRect& rect,
-                                       int flags = 0) wxOVERRIDE;
+                                       int flags = 0);
 
-    virtual void DrawFocusRect(wxWindow* win, wxDC& dc, const wxRect& rect, int flags = 0) wxOVERRIDE;
+    virtual void DrawFocusRect(wxWindow* win, wxDC& dc, const wxRect& rect, int flags = 0);
 
-    virtual void DrawChoice(wxWindow* win, wxDC& dc, const wxRect& rect, int flags=0) wxOVERRIDE;
+    virtual void DrawChoice(wxWindow* win, wxDC& dc, const wxRect& rect, int flags=0);
 
-    virtual void DrawComboBox(wxWindow* win, wxDC& dc, const wxRect& rect, int flags=0) wxOVERRIDE;
+    virtual void DrawComboBox(wxWindow* win, wxDC& dc, const wxRect& rect, int flags=0);
 
-    virtual void DrawTextCtrl(wxWindow* win, wxDC& dc, const wxRect& rect, int flags=0) wxOVERRIDE;
+    virtual void DrawTextCtrl(wxWindow* win, wxDC& dc, const wxRect& rect, int flags=0);
 
-    virtual void DrawRadioBitmap(wxWindow* win, wxDC& dc, const wxRect& rect, int flags=0) wxOVERRIDE;
+    virtual void DrawRadioBitmap(wxWindow* win, wxDC& dc, const wxRect& rect, int flags=0);
 
 #ifdef wxHAS_DRAW_TITLE_BAR_BITMAP
     virtual void DrawTitleBarBitmap(wxWindow *win,
                                     wxDC& dc,
                                     const wxRect& rect,
                                     wxTitleBarButton button,
-                                    int flags = 0) wxOVERRIDE;
+                                    int flags = 0);
 #endif // wxHAS_DRAW_TITLE_BAR_BITMAP
 
-    virtual void DrawGauge(wxWindow* win, wxDC& dc, const wxRect& rect, int value, int max, int flags = 0) wxOVERRIDE;
+    virtual wxSplitterRenderParams GetSplitterParams(const wxWindow *win);
 
-    virtual void DrawItemText(wxWindow* win,
-                              wxDC& dc,
-                              const wxString& text,
-                              const wxRect& rect,
-                              int align = wxALIGN_LEFT | wxALIGN_TOP,
-                              int flags = 0,
-                              wxEllipsizeMode ellipsizeMode = wxELLIPSIZE_END) wxOVERRIDE;
-
-    virtual wxSplitterRenderParams GetSplitterParams(const wxWindow *win) wxOVERRIDE;
-
-    virtual wxRendererVersion GetVersion() const wxOVERRIDE
+    virtual wxRendererVersion GetVersion() const
     {
         return wxRendererVersion(wxRendererVersion::Current_Version,
                                  wxRendererVersion::Current_Age);
@@ -175,7 +147,7 @@ public:
     static wxRendererGeneric* DoGetGeneric();
 
 protected:
-    // draw the rectangle using the first pen for the left and top sides and
+    // draw the rectange using the first pen for the left and top sides and
     // the second one for the bottom and right ones
     void DrawShadedRect(wxDC& dc, wxRect *rect,
                         const wxPen& pen1, const wxPen& pen2);
@@ -188,46 +160,6 @@ protected:
 
     static wxRendererGeneric* sm_rendererGeneric;
 };
-
-// ----------------------------------------------------------------------------
-// misc. drawing functions
-// ----------------------------------------------------------------------------
-
-// Draw focus rect for individual cell. Unlike native focus rect, we render
-// this in foreground text color (typically white) to enhance contrast and
-// make it visible.
-static void DrawSelectedCellFocusRect(wxDC& dc, const wxRect& rect)
-{
-    // (This code is based on wxRendererGeneric::DrawFocusRect and modified.)
-
-    // draw the pixels manually because the "dots" in wxPen with wxPENSTYLE_DOT style
-    // may be short traits and not really dots
-    //
-    // note that to behave in the same manner as DrawRect(), we must exclude
-    // the bottom and right borders from the rectangle
-    wxCoord x1 = rect.GetLeft(),
-        y1 = rect.GetTop(),
-        x2 = rect.GetRight(),
-        y2 = rect.GetBottom();
-
-    wxDCPenChanger pen(dc, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
-
-    wxCoord z;
-    for (z = x1 + 1; z < x2; z += 2)
-        dc.DrawPoint(z, rect.GetTop());
-
-    wxCoord shift = z == x2 ? 0 : 1;
-    for (z = y1 + shift; z < y2; z += 2)
-        dc.DrawPoint(x2, z);
-
-    shift = z == y2 ? 0 : 1;
-    for (z = x2 - shift; z > x1; z -= 2)
-        dc.DrawPoint(z, y2);
-
-    shift = z == x1 ? 0 : 1;
-    for (z = y2 - shift; z > y1; z -= 2)
-        dc.DrawPoint(x1, z);
-}
 
 // ============================================================================
 // wxRendererGeneric implementation
@@ -277,7 +209,7 @@ wxRendererGeneric::DrawShadedRect(wxDC& dc,
                                   const wxPen& pen2)
 {
     // draw the rectangle
-    wxDCPenChanger setPen(dc, pen1);
+    dc.SetPen(pen1);
     dc.DrawLine(rect->GetLeft(), rect->GetTop(),
                 rect->GetLeft(), rect->GetBottom());
     dc.DrawLine(rect->GetLeft() + 1, rect->GetTop(),
@@ -309,8 +241,8 @@ wxRendererGeneric::DrawHeaderButton(wxWindow* win,
                   w = rect.width,
                   h = rect.height;
 
-    wxDCBrushChanger setBrush(dc, wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
-    wxDCPenChanger setPen(dc, *wxTRANSPARENT_PEN);
+    dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
+    dc.SetPen(*wxTRANSPARENT_PEN);
     dc.DrawRectangle(rect);
 
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
@@ -353,7 +285,7 @@ wxRendererGeneric::DrawHeaderButtonContents(wxWindow *win,
             params->m_selectionColour : wxColour(0x66, 0x66, 0x66);
         wxPen pen(c, penwidth);
         pen.SetCap(wxCAP_BUTT);
-        wxDCPenChanger setPen(dc, pen);
+        dc.SetPen(pen);
         dc.DrawLine(rect.x, y, rect.x + rect.width, y);
     }
 
@@ -364,7 +296,8 @@ wxRendererGeneric::DrawHeaderButtonContents(wxWindow *win,
         wxRect ar = rect;
 
         // make a rect for the arrow
-        ar.SetSize(wxWindow::FromDIP(wxSize(8, 4), win));
+        ar.height = 4;
+        ar.width = 8;
         ar.y += (rect.height - ar.height)/2;
         ar.x = ar.x + rect.width - 3*ar.width/2;
         arrowSpace = 3*ar.width/2; // space to preserve when drawing the label
@@ -405,8 +338,8 @@ wxRendererGeneric::DrawHeaderButtonContents(wxWindow *win,
     // draw the bitmap if there is one
     if ( params && params->m_labelBitmap.IsOk() )
     {
-        int w = params->m_labelBitmap.GetLogicalWidth();
-        int h = params->m_labelBitmap.GetLogicalHeight();
+        int w = params->m_labelBitmap.GetWidth();
+        int h = params->m_labelBitmap.GetHeight();
 
         const int margin = 1; // an extra pixel on either side of the bitmap
 
@@ -453,9 +386,9 @@ wxRendererGeneric::DrawHeaderButtonContents(wxWindow *win,
 
         wxString label( params->m_labelText );
 
-        wxDCFontChanger setFont(dc, font);
-        wxDCTextColourChanger setTextFg(dc, clr);
-        wxDCTextBgModeChanger setBgMode(dc, wxBRUSHSTYLE_TRANSPARENT);
+        dc.SetFont(font);
+        dc.SetTextForeground(clr);
+        dc.SetBackgroundMode(wxBRUSHSTYLE_TRANSPARENT);
 
         int tw, th, td;
         dc.GetTextExtent( label, &tw, &th, &td);
@@ -541,7 +474,7 @@ wxRendererGeneric::DrawTreeItemButton(wxWindow * WXUNUSED(win),
 
     // half of the length of the horz lines in "-" and "+"
     const wxCoord halfWidth = rect.width/2 - 2;
-    wxDCPenChanger setPen(dc, *wxBLACK_PEN);
+    dc.SetPen(*wxBLACK_PEN);
     dc.DrawLine(xMiddle - halfWidth, yMiddle,
                 xMiddle + halfWidth + 1, yMiddle);
 
@@ -635,12 +568,12 @@ wxRendererGeneric::DrawSplitterSash(wxWindow *win,
         offset = 1;
     }
 
-    wxDCPenChanger setPen(dc, *wxTRANSPARENT_PEN);
+    dc.SetPen(*wxTRANSPARENT_PEN);
+    dc.SetBrush(wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
 
     if ( win->HasFlag(wxSP_3DSASH) )
     {
         // Draw the 3D sash
-        wxDCBrushChanger setBrush(dc, wxBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
         dc.DrawRectangle(position + 2, 0, 3, h);
 
         dc.SetPen(m_penLightGrey);
@@ -658,7 +591,6 @@ wxRendererGeneric::DrawSplitterSash(wxWindow *win,
     else
     {
         // Draw a flat sash
-        wxDCBrushChanger setBrush(dc, wxBrush(win->GetBackgroundColour()));
         dc.DrawRectangle(position, 0, 3, h);
     }
 }
@@ -697,8 +629,8 @@ wxRendererGeneric::DrawDropArrow(wxWindow *win,
         wxPoint(rectMid + arrowHalf, arrowTopY),
         wxPoint(rectMid, arrowTopY + arrowHalf)
     };
-    wxDCBrushChanger setBrush(dc, wxBrush(win->GetForegroundColour()));
-    wxDCPenChanger setPen(dc, wxPen(win->GetForegroundColour()));
+    dc.SetBrush(wxBrush(win->GetForegroundColour()));
+    dc.SetPen(wxPen(win->GetForegroundColour()));
     dc.DrawPolygon(WXSIZEOF(pt), pt, rect.x, rect.y);
 }
 
@@ -708,8 +640,8 @@ wxRendererGeneric::DrawCheckBox(wxWindow *WXUNUSED(win),
                                 const wxRect& rect,
                                 int flags)
 {
-    wxDCPenChanger setPen(dc, *(flags & wxCONTROL_DISABLED ? wxGREY_PEN : wxBLACK_PEN));
-    wxDCBrushChanger setBrush(dc, *wxTRANSPARENT_BRUSH);
+    dc.SetPen(*(flags & wxCONTROL_DISABLED ? wxGREY_PEN : wxBLACK_PEN));
+    dc.SetBrush( *wxTRANSPARENT_BRUSH );
     dc.DrawRectangle(rect);
 
     if ( flags & wxCONTROL_CHECKED )
@@ -718,33 +650,9 @@ wxRendererGeneric::DrawCheckBox(wxWindow *WXUNUSED(win),
     }
 }
 
-void
-wxRendererGeneric::DrawCheckMark(wxWindow *WXUNUSED(win),
-                                 wxDC& dc,
-                                 const wxRect& rect,
-                                 int flags)
+wxSize wxRendererGeneric::GetCheckBoxSize(wxWindow *WXUNUSED(win))
 {
-    wxDCPenChanger setPen(dc, *(flags & wxCONTROL_DISABLED ? wxGREY_PEN : wxBLACK_PEN));
-    dc.DrawCheckMark(rect);
-}
-
-wxSize wxRendererGeneric::GetCheckBoxSize(wxWindow *win, int WXUNUSED(flags))
-{
-    wxCHECK_MSG( win, wxSize(0, 0), "Must have a valid window" );
-
-    return win->FromDIP(wxSize(16, 16));
-}
-
-wxSize wxRendererGeneric::GetCheckMarkSize(wxWindow *win)
-{
-    return GetCheckBoxSize(win, wxCONTROL_CELL);
-}
-
-wxSize wxRendererGeneric::GetExpanderSize(wxWindow *win)
-{
-    wxCHECK_MSG( win, wxSize(0, 0), "Must have a valid window" );
-
-    return win->FromDIP(wxSize(16, 16));
+    return wxSize(16, 16);
 }
 
 void
@@ -758,49 +666,13 @@ wxRendererGeneric::DrawPushButton(wxWindow *win,
     wxColour bgCol = flags & wxCONTROL_DISABLED ?
                         wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE) :
                         win->GetBackgroundColour();
-    wxDCBrushChanger setBrush(dc, wxBrush(bgCol));
-    wxDCPenChanger setPen(dc, wxPen(bgCol));
+    dc.SetBrush(wxBrush(bgCol));
+    dc.SetPen(wxPen(bgCol));
     dc.DrawRectangle(rect);
 }
 
 void
-wxRendererGeneric::DrawCollapseButton(wxWindow *win,
-                                wxDC& dc,
-                                const wxRect& rect,
-                                int flags)
-{
-    int arrowHalf = rect.width / 5;
-    int rectMid = rect.width / 2;
-    int arrowTopY = (rect.height / 2) - (arrowHalf / 2);
-
-    wxPoint pt[3];
-    if (flags & wxCONTROL_EXPANDED)
-    {
-        // This should always result in arrow with odd width.
-        pt[0] = wxPoint(rectMid - arrowHalf, arrowTopY);
-        pt[1] = wxPoint(rectMid + arrowHalf, arrowTopY);
-        pt[2] = wxPoint(rectMid, arrowTopY + arrowHalf);
-    }
-    else
-    {
-        // This should always result in arrow with odd height.
-        pt[0] = wxPoint(arrowTopY, rectMid - arrowHalf);
-        pt[1] = wxPoint(arrowTopY + arrowHalf, rectMid);
-        pt[2] = wxPoint(arrowTopY, rectMid + arrowHalf);
-    }
-
-    wxDCBrushChanger setBrush(dc, wxBrush(win->GetForegroundColour()));
-    wxDCPenChanger setPen(dc, wxPen(win->GetForegroundColour()));
-    dc.DrawPolygon(WXSIZEOF(pt), pt, rect.x, rect.y);
-}
-
-wxSize wxRendererGeneric::GetCollapseButtonSize(wxWindow *WXUNUSED(win), wxDC& WXUNUSED(dc))
-{
-    return wxSize(18, 18);
-}
-
-void
-wxRendererGeneric::DrawItemSelectionRect(wxWindow * WXUNUSED(win),
+wxRendererGeneric::DrawItemSelectionRect(wxWindow * win,
                                          wxDC& dc,
                                          const wxRect& rect,
                                          int flags)
@@ -822,27 +694,26 @@ wxRendererGeneric::DrawItemSelectionRect(wxWindow * WXUNUSED(win),
         brush = *wxTRANSPARENT_BRUSH;
     }
 
-    wxDCBrushChanger setBrush(dc, brush);
-    bool drawFocusRect = (flags & wxCONTROL_CURRENT) && (flags & wxCONTROL_FOCUSED);
-
-    bool blackPen = drawFocusRect && !(flags & wxCONTROL_CELL);
-    wxDCPenChanger setPen(dc, *(blackPen ? wxBLACK_PEN : wxTRANSPARENT_PEN));
+    dc.SetBrush(brush);
+    if ((flags & wxCONTROL_CURRENT) && (flags & wxCONTROL_FOCUSED)
+#if defined( __WXMAC__ ) && !defined(__WXUNIVERSAL__) && wxOSX_USE_CARBON
+                && IsControlActive( (ControlRef)win->GetHandle() )
+#endif
+    )
+        dc.SetPen( *wxBLACK_PEN );
+    else
+        dc.SetPen( *wxTRANSPARENT_PEN );
 
     dc.DrawRectangle( rect );
 
-    if ( drawFocusRect && (flags & wxCONTROL_CELL) )
-    {
-        wxRect focusRect(rect);
-        focusRect.Deflate(1);
-
-        DrawSelectedCellFocusRect(dc, focusRect);
-    }
+    // it's unused everywhere except in wxOSX/Carbon
+    wxUnusedVar(win);
 }
 
 void
 wxRendererGeneric::DrawFocusRect(wxWindow* WXUNUSED(win), wxDC& dc, const wxRect& rect, int WXUNUSED(flags))
 {
-    // draw the pixels manually because the "dots" in wxPen with wxPENSTYLE_DOT style
+    // draw the pixels manually because the "dots" in wxPen with wxDOT style
     // may be short traits and not really dots
     //
     // note that to behave in the same manner as DrawRect(), we must exclude
@@ -852,7 +723,7 @@ wxRendererGeneric::DrawFocusRect(wxWindow* WXUNUSED(win), wxDC& dc, const wxRect
             x2 = rect.GetRight(),
             y2 = rect.GetBottom();
 
-    wxDCPenChanger setPen(dc, m_penBlack);
+    dc.SetPen(m_penBlack);
 
 #ifdef __WXMAC__
     dc.SetLogicalFunction(wxCOPY);
@@ -899,21 +770,10 @@ void wxRendererGeneric::DrawRadioBitmap(wxWindow* WXUNUSED(win), wxDC& WXUNUSED(
     wxFAIL_MSG("UNIMPLEMENTED: wxRendererGeneric::DrawRadioBitmap");
 }
 
-void wxRendererGeneric::DrawTextCtrl(wxWindow* WXUNUSED(win),
-                                     wxDC& dc,
-                                     const wxRect& rect,
-                                     int WXUNUSED(flags))
+void wxRendererGeneric::DrawTextCtrl(wxWindow* WXUNUSED(win), wxDC& WXUNUSED(dc),
+                           const wxRect& WXUNUSED(rect), int WXUNUSED(flags))
 {
-    wxColour fill;
-    wxColour bdr;
-    {
-        fill = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
-        bdr = *wxBLACK;
-    }
-
-    wxDCPenChanger setPen(dc, bdr);
-    wxDCBrushChanger setBrush(dc, fill);
-    dc.DrawRectangle(rect);
+    wxFAIL_MSG("UNIMPLEMENTED: wxRendererGeneric::DrawTextCtrl");
 }
 
 #ifdef wxHAS_DRAW_TITLE_BAR_BITMAP
@@ -933,82 +793,6 @@ void wxRendererGeneric::DrawTitleBarBitmap(wxWindow * WXUNUSED(win),
 
 #endif // wxHAS_DRAW_TITLE_BAR_BITMAP
 
-void wxRendererGeneric::DrawGauge(wxWindow* win,
-                                  wxDC& dc,
-                                  const wxRect& rect,
-                                  int value,
-                                  int max,
-                                  int flags)
-{
-    // This is a hack, but we want to allow customizing the colour used for the
-    // gauge body, as this is important for the generic wxDataViewCtrl
-    // implementation which uses this method. So we assume that if the caller
-    // had set up a brush using background colour different from the default,
-    // it should be used. Otherwise we use the default one.
-    const wxBrush& bg = dc.GetBackground();
-    wxColour colBar;
-    if ( bg.IsOk() && bg.GetColour() != win->GetBackgroundColour() )
-        colBar = bg.GetColour();
-    else
-        colBar = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
-
-    // Use same background as text controls.
-    DrawTextCtrl(win, dc, rect);
-
-    // Calculate the progress bar size.
-    wxRect progRect(rect);
-    progRect.Deflate(2);
-    if ( flags & wxCONTROL_SPECIAL )
-    {
-        const int h = wxMulDivInt32(progRect.height, value, max);
-        progRect.y += progRect.height - h;
-        progRect.height = h;
-    }
-    else // Horizontal.
-    {
-        progRect.width = wxMulDivInt32(progRect.width, value, max);
-    }
-
-    wxDCBrushChanger setBrush(dc, colBar);
-    wxDCPenChanger setPen(dc, *wxTRANSPARENT_PEN);
-    dc.DrawRectangle(progRect);
-}
-
-void
-wxRendererGeneric::DrawItemText(wxWindow* WXUNUSED(win),
-                                wxDC& dc,
-                                const wxString& text,
-                                const wxRect& rect,
-                                int align,
-                                int flags,
-                                wxEllipsizeMode ellipsizeMode)
-{
-    // Determine text color
-    wxColour textColour;
-    if ( flags & wxCONTROL_SELECTED )
-    {
-        textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
-    }
-    else if ( flags & wxCONTROL_DISABLED )
-    {
-        textColour = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
-    }
-
-    // Be careful to avoid using the default flags here as otherwise any
-    // ampersands in the text would be consumed (and tabs expanded).
-    const wxString paintText = wxControl::Ellipsize(text, dc,
-                                                    ellipsizeMode,
-                                                    rect.GetWidth(),
-                                                    wxELLIPSIZE_FLAGS_NONE);
-
-    // Draw text taking care not to change its colour if it had been set by the
-    // caller for a normal item to allow having items in non-default colours.
-    wxDCTextColourChanger setTextFg(dc);
-    if ( textColour.IsOk() )
-        setTextFg.Set(textColour);
-    wxDCTextBgColourChanger setTextBg(dc, wxTransparentColour);
-    dc.DrawLabel(paintText, rect, align);
-}
 
 // ----------------------------------------------------------------------------
 // A module to allow cleanup of generic renderer.
@@ -1016,11 +800,11 @@ wxRendererGeneric::DrawItemText(wxWindow* WXUNUSED(win),
 
 class wxGenericRendererModule: public wxModule
 {
-    wxDECLARE_DYNAMIC_CLASS(wxGenericRendererModule);
+DECLARE_DYNAMIC_CLASS(wxGenericRendererModule)
 public:
     wxGenericRendererModule() {}
-    bool OnInit() wxOVERRIDE { return true; }
-    void OnExit() wxOVERRIDE { wxRendererGeneric::Cleanup(); }
+    bool OnInit() { return true; }
+    void OnExit() { wxRendererGeneric::Cleanup(); }
 };
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxGenericRendererModule, wxModule);
+IMPLEMENT_DYNAMIC_CLASS(wxGenericRendererModule, wxModule)

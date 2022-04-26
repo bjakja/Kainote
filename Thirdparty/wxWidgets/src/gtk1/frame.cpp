@@ -2,6 +2,7 @@
 // Name:        src/gtk1/frame.cpp
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -222,6 +223,13 @@ bool wxFrame::Create( wxWindow *parent,
     m_insertCallback = (wxInsertChildFunction) wxInsertChildInFrame;
 
     return rt;
+}
+
+wxFrame::~wxFrame()
+{
+    SendDestroyEvent();
+
+    DeleteAllBars();
 }
 
 // ----------------------------------------------------------------------------

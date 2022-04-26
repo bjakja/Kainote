@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     12.04.99
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -11,8 +12,8 @@
 #ifndef _WX_BUFFER_H
 #define _WX_BUFFER_H
 
-#include "wx\defs.h"
-#include "wx\wxcrtbase.h"
+#include "wx/chartype.h"
+#include "wx/wxcrtbase.h"
 
 #include <stdlib.h>             // malloc() and free()
 
@@ -229,8 +230,7 @@ protected:
     static CharType *StrCopy(const CharType *src, size_t len)
     {
         CharType *dst = (CharType*)malloc(sizeof(CharType) * (len + 1));
-        if ( dst )
-            memcpy(dst, src, sizeof(CharType) * (len + 1));
+        memcpy(dst, src, sizeof(CharType) * (len + 1));
         return dst;
     }
 
@@ -268,22 +268,9 @@ public:
 
     wxCharTypeBuffer(size_t len)
     {
-        CharType* const str = (CharType *)malloc((len + 1)*sizeof(CharType));
-        if ( str )
-        {
-            str[len] = (CharType)0;
-
-            // There is a potential memory leak here if new throws because it
-            // fails to allocate Data, we ought to use new(nothrow) here, but
-            // this might fail to compile under some platforms so until this
-            // can be fully tested, just live with this (rather unlikely, as
-            // Data is a small object) potential leak.
-            this->m_data = new Data(str, len);
-        }
-        else
-        {
-            this->m_data = this->GetNullData();
-        }
+        this->m_data =
+            new Data((CharType *)malloc((len + 1)*sizeof(CharType)), len);
+        this->m_data->Get()[len] = (CharType)0;
     }
 
     wxCharTypeBuffer(const wxCharTypeBuffer& src)
@@ -354,6 +341,9 @@ public:
     }
 };
 
+WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxScopedCharTypeBuffer<char> )
+WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxCharTypeBuffer<char> )
+
 class wxCharBuffer : public wxCharTypeBuffer<char>
 {
 public:
@@ -370,6 +360,9 @@ public:
 
     wxCharBuffer(const wxCStrData& cstr);
 };
+
+WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxScopedCharTypeBuffer<wchar_t> )
+WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxCharTypeBuffer<wchar_t> )
 
 class wxWCharBuffer : public wxCharTypeBuffer<wchar_t>
 {
@@ -445,7 +438,7 @@ public:
 
     friend class wxMemoryBuffer;
 
-    // everything is private as it can only be used by wxMemoryBuffer
+    // everyting is private as it can only be used by wxMemoryBuffer
 private:
     wxMemoryBufferData(size_t size = wxMemoryBufferData::DefBufSize)
         : m_data(size ? malloc(size) : NULL), m_size(size), m_len(0), m_ref(0)
@@ -458,17 +451,13 @@ private:
     {
         if (newSize > m_size)
         {
-            void* const data = realloc(m_data, newSize + wxMemoryBufferData::DefBufSize);
-            if ( !data )
+            void *dataOld = m_data;
+            m_data = realloc(m_data, newSize + wxMemoryBufferData::DefBufSize);
+            if ( !m_data )
             {
-                // It's better to crash immediately dereferencing a null
-                // pointer in the function calling us than overflowing the
-                // buffer which couldn't be made big enough.
-                free(release());
-                return;
+                free(dataOld);
             }
 
-            m_data = data;
             m_size = newSize + wxMemoryBufferData::DefBufSize;
         }
     }

@@ -2,12 +2,16 @@
 // Name:        src/html/htmlfilt.cpp
 // Purpose:     wxHtmlFilter - input filter for translating into HTML format
 // Author:      Vaclav Slavik
+// RCS-ID:      $Id$
 // Copyright:   (c) 1999 Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_HTML && wxUSE_STREAMS
 
@@ -36,14 +40,14 @@ There is code for several default filters:
 
 */
 
-wxIMPLEMENT_ABSTRACT_CLASS(wxHtmlFilter, wxObject);
+IMPLEMENT_ABSTRACT_CLASS(wxHtmlFilter, wxObject)
 
 //--------------------------------------------------------------------------------
 // wxHtmlFilterPlainText
 //          filter for text/plain or uknown
 //--------------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxHtmlFilterPlainText, wxHtmlFilter);
+IMPLEMENT_DYNAMIC_CLASS(wxHtmlFilterPlainText, wxHtmlFilter)
 
 bool wxHtmlFilterPlainText::CanRead(const wxFSFile& WXUNUSED(file)) const
 {
@@ -78,14 +82,14 @@ wxString wxHtmlFilterPlainText::ReadFile(const wxFSFile& file) const
 
 class wxHtmlFilterImage : public wxHtmlFilter
 {
-    wxDECLARE_DYNAMIC_CLASS(wxHtmlFilterImage);
+    DECLARE_DYNAMIC_CLASS(wxHtmlFilterImage)
 
     public:
-        virtual bool CanRead(const wxFSFile& file) const wxOVERRIDE;
-        virtual wxString ReadFile(const wxFSFile& file) const wxOVERRIDE;
+        virtual bool CanRead(const wxFSFile& file) const;
+        virtual wxString ReadFile(const wxFSFile& file) const;
 };
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxHtmlFilterImage, wxHtmlFilter);
+IMPLEMENT_DYNAMIC_CLASS(wxHtmlFilterImage, wxHtmlFilter)
 
 
 
@@ -111,7 +115,7 @@ wxString wxHtmlFilterImage::ReadFile(const wxFSFile& file) const
 //--------------------------------------------------------------------------------
 
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxHtmlFilterHTML, wxHtmlFilter);
+IMPLEMENT_DYNAMIC_CLASS(wxHtmlFilterHTML, wxHtmlFilter)
 
 bool wxHtmlFilterHTML::CanRead(const wxFSFile& file) const
 {
@@ -131,7 +135,7 @@ wxString wxHtmlFilterHTML::ReadFile(const wxFSFile& file) const
 
     if (s == NULL)
     {
-        wxLogError(_("Cannot open HTML document: %s"), file.GetLocation());
+        wxLogError(_("Cannot open HTML document: %s"), file.GetLocation().c_str());
         return wxEmptyString;
     }
 
@@ -150,8 +154,9 @@ wxString wxHtmlFilterHTML::ReadFile(const wxFSFile& file) const
     else
     {
         size_t size = s->GetSize();
-        wxCharBuffer buf( size );
+        wxCharBuffer buf( size+1 );
         s->Read( buf.data(), size );
+        *(buf.data() + size) = 0;
         wxString tmpdoc( buf, wxConvISO8859_1);
 
         wxString charset = wxHtmlParser::ExtractCharsetInformation(tmpdoc);
@@ -170,7 +175,7 @@ wxString wxHtmlFilterHTML::ReadFile(const wxFSFile& file) const
     {
         wxString hdr;
         wxString mime = file.GetMimeType();
-        hdr.Printf(wxT("<meta http-equiv=\"Content-Type\" content=\"%s\">"), mime);
+        hdr.Printf(wxT("<meta http-equiv=\"Content-Type\" content=\"%s\">"), mime.c_str());
         return hdr+doc;
     }
 #endif
@@ -185,18 +190,18 @@ wxString wxHtmlFilterHTML::ReadFile(const wxFSFile& file) const
 
 class wxHtmlFilterModule : public wxModule
 {
-    wxDECLARE_DYNAMIC_CLASS(wxHtmlFilterModule);
+    DECLARE_DYNAMIC_CLASS(wxHtmlFilterModule)
 
     public:
-        virtual bool OnInit() wxOVERRIDE
+        virtual bool OnInit()
         {
             wxHtmlWindow::AddFilter(new wxHtmlFilterHTML);
             wxHtmlWindow::AddFilter(new wxHtmlFilterImage);
             return true;
         }
-        virtual void OnExit() wxOVERRIDE {}
+        virtual void OnExit() {}
 };
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxHtmlFilterModule, wxModule);
+IMPLEMENT_DYNAMIC_CLASS(wxHtmlFilterModule, wxModule)
 
 #endif

@@ -2,6 +2,7 @@
 // Name:        src/gtk/clipbrd.cpp
 // Purpose:     wxClipboard implementation for wxGTK
 // Author:      Robert Roebling, Vadim Zeitlin
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 //              (c) 2007 Vadim Zeitlin
 // Licence:     wxWindows licence
@@ -41,6 +42,7 @@ typedef wxScopedArray<wxDataFormat> wxDataFormatArray;
 // data
 // ----------------------------------------------------------------------------
 
+static GdkAtom  g_clipboardAtom   = 0;
 static GdkAtom  g_targetsAtom     = 0;
 static GdkAtom  g_timestampAtom   = 0;
 
@@ -57,7 +59,7 @@ extern GdkAtom g_altTextAtom;
 // wxClipboardSync: used to perform clipboard operations synchronously
 // ----------------------------------------------------------------------------
 
-// constructing this object on stack will wait until the latest clipboard
+// constructing this object on stack will wait wait until the latest clipboard
 // operation is finished on block exit
 //
 // notice that there can be no more than one such object alive at any moment,
@@ -156,15 +158,15 @@ targets_selection_received( GtkWidget *WXUNUSED(widget),
     wxDataFormat clip(gtk_selection_data_get_selection(selection_data));
     wxLogTrace( TRACE_CLIPBOARD,
                 wxT("Received available formats for clipboard %s"),
-                clip.GetId() );
+                clip.GetId().c_str() );
 
     // the atoms we received, holding a list of targets (= formats)
-    const GdkAtom* const atoms = reinterpret_cast<const GdkAtom*>(gtk_selection_data_get_data(selection_data));
+    const GdkAtom* const atoms = (GdkAtom*)gtk_selection_data_get_data(selection_data);
     for (size_t i = 0; i < selection_data_length / sizeof(GdkAtom); i++)
     {
         const wxDataFormat format(atoms[i]);
 
-        wxLogTrace(TRACE_CLIPBOARD, wxT("\t%s"), format.GetId());
+        wxLogTrace(TRACE_CLIPBOARD, wxT("\t%s"), format.GetId().c_str());
 
         if ( clipboard->GTKOnTargetReceived(format) )
             return;
@@ -230,7 +232,7 @@ selection_clear_clip( GtkWidget *WXUNUSED(widget), GdkEventSelection *event )
 
         kind = wxClipboard::Primary;
     }
-    else if ( event->selection == GDK_SELECTION_CLIPBOARD )
+    else if (event->selection == g_clipboardAtom)
     {
         wxLogTrace(TRACE_CLIPBOARD, wxT("Lost clipboard" ));
 
@@ -269,14 +271,13 @@ selection_handler( GtkWidget *WXUNUSED(widget),
     if ( !data )
         return;
 
-    unsigned timestamp = unsigned(wxUIntPtr(signal_data));
-
     // ICCCM says that TIMESTAMP is a required atom.
     // In particular, it satisfies Klipper, which polls
     // TIMESTAMP to see if the clipboards content has changed.
     // It shall return the time which was used to set the data.
     if (gtk_selection_data_get_target(selection_data) == g_timestampAtom)
     {
+        guint timestamp = GPOINTER_TO_UINT (signal_data);
         gtk_selection_data_set(selection_data,
                                GDK_SELECTION_TYPE_INTEGER,
                                32,
@@ -292,11 +293,11 @@ selection_handler( GtkWidget *WXUNUSED(widget),
 
     wxLogTrace(TRACE_CLIPBOARD,
                wxT("clipboard data in format %s, GtkSelectionData is target=%s type=%s selection=%s timestamp=%u"),
-               format.GetId(),
-               wxString::FromAscii(wxGtkString(gdk_atom_name(gtk_selection_data_get_target(selection_data)))),
-               wxString::FromAscii(wxGtkString(gdk_atom_name(gtk_selection_data_get_data_type(selection_data)))),
-               wxString::FromAscii(wxGtkString(gdk_atom_name(gtk_selection_data_get_selection(selection_data)))),
-               timestamp
+               format.GetId().c_str(),
+               wxString::FromAscii(wxGtkString(gdk_atom_name(gtk_selection_data_get_target(selection_data)))).c_str(),
+               wxString::FromAscii(wxGtkString(gdk_atom_name(gtk_selection_data_get_data_type(selection_data)))).c_str(),
+               wxString::FromAscii(wxGtkString(gdk_atom_name(gtk_selection_data_get_selection(selection_data)))).c_str(),
+               GPOINTER_TO_UINT( signal_data )
                );
 
     if ( !data->IsSupportedFormat( format ) )
@@ -305,8 +306,6 @@ selection_handler( GtkWidget *WXUNUSED(widget),
     int size = data->GetDataSize( format );
     if ( !size )
         return;
-
-    wxLogTrace(TRACE_CLIPBOARD, "Valid clipboard data found");
 
     wxCharBuffer buf(size - 1); // it adds 1 internally (for NUL)
 
@@ -317,7 +316,7 @@ selection_handler( GtkWidget *WXUNUSED(widget),
     // use UTF8_STRING format if requested in Unicode build but just plain
     // STRING one in ANSI or if explicitly asked in Unicode
 #if wxUSE_UNICODE
-    if (format == wxDF_UNICODETEXT)
+    if (format == wxDataFormat(wxDF_UNICODETEXT))
     {
         gtk_selection_data_set_text(
             selection_data,
@@ -329,7 +328,7 @@ selection_handler( GtkWidget *WXUNUSED(widget),
     {
         gtk_selection_data_set(
             selection_data,
-            format.GetFormatId(),
+            GDK_SELECTION_TYPE_STRING,
             8*sizeof(gchar),
             (const guchar*)buf.data(),
             size );
@@ -343,7 +342,7 @@ void wxClipboard::GTKOnSelectionReceived(const GtkSelectionData& sel)
 
     const wxDataFormat format(gtk_selection_data_get_target(const_cast<GtkSelectionData*>(&sel)));
     wxLogTrace(TRACE_CLIPBOARD, wxT("Received selection %s"),
-               format.GetId());
+               format.GetId().c_str());
 
     if ( !m_receivedData->IsSupportedFormat(format, wxDataObject::Set) )
         return;
@@ -405,15 +404,15 @@ async_targets_selection_received( GtkWidget *WXUNUSED(widget),
     wxDataFormat clip(gtk_selection_data_get_selection(selection_data));
     wxLogTrace( TRACE_CLIPBOARD,
                 wxT("Received available formats for clipboard %s"),
-                clip.GetId() );
+                clip.GetId().c_str() );
 
     // the atoms we received, holding a list of targets (= formats)
-    const GdkAtom* const atoms = reinterpret_cast<const GdkAtom*>(gtk_selection_data_get_data(selection_data));
+    const GdkAtom* const atoms = (GdkAtom*)gtk_selection_data_get_data(selection_data);
     for (size_t i = 0; i < selection_data_length / sizeof(GdkAtom); i++)
     {
         const wxDataFormat format(atoms[i]);
 
-        wxLogTrace(TRACE_CLIPBOARD, wxT("\t%s"), format.GetId());
+        wxLogTrace(TRACE_CLIPBOARD, wxT("\t%s"), format.GetId().c_str());
 
         event->AddFormat( format );
     }
@@ -431,12 +430,10 @@ async_targets_selection_received( GtkWidget *WXUNUSED(widget),
 // wxClipboard ctor/dtor
 // ----------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxClipboard,wxObject);
+IMPLEMENT_DYNAMIC_CLASS(wxClipboard,wxObject)
 
 wxClipboard::wxClipboard()
 {
-    m_idSelectionGetHandler = 0;
-
     m_open = false;
 
     m_dataPrimary =
@@ -471,6 +468,8 @@ wxClipboard::wxClipboard()
                       G_CALLBACK (selection_clear_clip), NULL);
 
     // initialize atoms we use if not done yet
+    if ( !g_clipboardAtom )
+        g_clipboardAtom = gdk_atom_intern( "CLIPBOARD", FALSE );
     if ( !g_targetsAtom )
         g_targetsAtom = gdk_atom_intern ("TARGETS", FALSE);
     if ( !g_timestampAtom )
@@ -492,7 +491,7 @@ wxClipboard::~wxClipboard()
 GdkAtom wxClipboard::GTKGetClipboardAtom() const
 {
     return m_usePrimary ? (GdkAtom)GDK_SELECTION_PRIMARY
-                        : (GdkAtom)GDK_SELECTION_CLIPBOARD;
+                        : g_clipboardAtom;
 }
 
 void wxClipboard::GTKClearData(Kind kind)
@@ -551,7 +550,7 @@ bool wxClipboard::DoIsSupported(const wxDataFormat& format)
     wxCHECK_MSG( format, false, wxT("invalid clipboard format") );
 
     wxLogTrace(TRACE_CLIPBOARD, wxT("Checking if format %s is available"),
-               format.GetId());
+               format.GetId().c_str());
 
     // these variables will be used by our GTKOnTargetReceived()
     m_targetRequested = format;
@@ -593,23 +592,6 @@ void wxClipboard::Clear()
     m_formatSupported = false;
 }
 
-bool wxClipboard::Flush()
-{
-    // Only store the non-primary clipboard when flushing. The primary clipboard is a scratch-space
-    // formed using the currently selected text.
-    if ( !m_usePrimary )
-    {
-        GtkClipboard* clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
-
-        gtk_clipboard_set_can_store(clipboard, NULL, 0);
-        gtk_clipboard_store(clipboard);
-
-        return true;
-    }
-
-    return false;
-}
-
 bool wxClipboard::Open()
 {
     wxCHECK_MSG( !m_open, false, wxT("clipboard already open") );
@@ -643,7 +625,7 @@ bool wxClipboard::AddData( wxDataObject *data )
 
     // get formats from wxDataObjects
     const size_t count = data->GetFormatCount();
-    wxDataFormatArray formats(count);
+    wxDataFormatArray formats(new wxDataFormat[count]);
     data->GetAllFormats(formats.get());
 
     // always provide TIMESTAMP as a target, see comments in selection_handler
@@ -655,18 +637,14 @@ bool wxClipboard::AddData( wxDataObject *data )
         const wxDataFormat format(formats[i]);
 
         wxLogTrace(TRACE_CLIPBOARD, wxT("Adding support for %s"),
-                   format.GetId());
+                   format.GetId().c_str());
 
         AddSupportedTarget(format);
     }
 
-    if ( !m_idSelectionGetHandler )
-    {
-        m_idSelectionGetHandler = g_signal_connect (
-                      m_clipboardWidget, "selection_get",
+    g_signal_connect (m_clipboardWidget, "selection_get",
                       G_CALLBACK (selection_handler),
                       GUINT_TO_POINTER (gtk_get_current_event_time()) );
-    }
 
     // tell the world we offer clipboard data
     return SetSelectionOwner();
@@ -707,7 +685,7 @@ bool wxClipboard::GetData( wxDataObject& data )
     // get all supported formats from wxDataObjects: notice that we are setting
     // the object data, so we need them in "Set" direction
     const size_t count = data.GetFormatCount(wxDataObject::Set);
-    wxDataFormatArray formats(count);
+    wxDataFormatArray formats(new wxDataFormat[count]);
     data.GetAllFormats(formats.get(), wxDataObject::Set);
 
     for ( size_t i = 0; i < count; i++ )
@@ -719,7 +697,7 @@ bool wxClipboard::GetData( wxDataObject& data )
             continue;
 
         wxLogTrace(TRACE_CLIPBOARD, wxT("Requesting format %s"),
-                   format.GetId());
+                   format.GetId().c_str());
 
         // these variables will be used by our GTKOnSelectionReceived()
         m_receivedData = &data;
@@ -773,7 +751,7 @@ wxDataObject* wxClipboard::GTKGetDataObject( GdkAtom atom )
 
         return Data( wxClipboard::Primary );
     }
-    else if ( atom == GDK_SELECTION_CLIPBOARD )
+    else if ( atom == g_clipboardAtom )
     {
         wxLogTrace(TRACE_CLIPBOARD, wxT("Clipboard data requested" ));
 

@@ -3,20 +3,24 @@
 // Purpose:     wxFilter file system handler
 // Author:      Mike Wetherell
 // Copyright:   (c) 2006 Mike Wetherell
+// CVS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_FILESYSTEM
 
-#include "wx\fs_filter.h"
+#include "wx/fs_filter.h"
 
 #ifndef WX_PRECOMP
 #endif
 
-#include "wx\scopedptr.h"
+#include "wx/scopedptr.h"
 
 wxDEFINE_SCOPED_PTR_TYPE(wxFSFile)
 wxDEFINE_SCOPED_PTR_TYPE(wxInputStream)

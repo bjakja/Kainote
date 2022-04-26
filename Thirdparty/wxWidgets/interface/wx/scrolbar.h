@@ -2,6 +2,7 @@
 // Name:        scrolbar.h
 // Purpose:     interface of wxScrollBar
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -46,17 +47,17 @@
     @event{EVT_SCROLL(func)}
         Process all scroll events.
     @event{EVT_SCROLL_TOP(func)}
-        Process @c wxEVT_SCROLL_TOP scroll to top or leftmost (minimum) position events.
+        Process @c wxEVT_SCROLL_TOP scroll-to-top events (minimum position).
     @event{EVT_SCROLL_BOTTOM(func)}
-        Process @c wxEVT_SCROLL_BOTTOM scroll to bottom or rightmost (maximum) position events.
+        Process @c wxEVT_SCROLL_BOTTOM scroll-to-bottom events (maximum position).
     @event{EVT_SCROLL_LINEUP(func)}
-        Process @c wxEVT_SCROLL_LINEUP line up or left events.
+        Process @c wxEVT_SCROLL_LINEUP line up events.
     @event{EVT_SCROLL_LINEDOWN(func)}
-        Process @c wxEVT_SCROLL_LINEDOWN line down or right events.
+        Process @c wxEVT_SCROLL_LINEDOWN line down events.
     @event{EVT_SCROLL_PAGEUP(func)}
-        Process @c wxEVT_SCROLL_PAGEUP page up or left events.
+        Process @c wxEVT_SCROLL_PAGEUP page up events.
     @event{EVT_SCROLL_PAGEDOWN(func)}
-        Process @c wxEVT_SCROLL_PAGEDOWN page down or right events.
+        Process @c wxEVT_SCROLL_PAGEDOWN page down events.
     @event{EVT_SCROLL_THUMBTRACK(func)}
         Process @c wxEVT_SCROLL_THUMBTRACK thumbtrack events
         (frequent events sent as the user drags the thumbtrack).
@@ -67,17 +68,17 @@
     @event{EVT_COMMAND_SCROLL(id, func)}
         Process all scroll events.
     @event{EVT_COMMAND_SCROLL_TOP(id, func)}
-        Process @c wxEVT_SCROLL_TOP scroll to top or leftmost (minimum) position events.
+        Process @c wxEVT_SCROLL_TOP scroll-to-top events (minimum position).
     @event{EVT_COMMAND_SCROLL_BOTTOM(id, func)}
-        Process @c wxEVT_SCROLL_BOTTOM scroll to bottom or rightmost (maximum) position events.
+        Process @c wxEVT_SCROLL_BOTTOM scroll-to-bottom events (maximum position).
     @event{EVT_COMMAND_SCROLL_LINEUP(id, func)}
-        Process @c wxEVT_SCROLL_LINEUP line up or left events.
+        Process @c wxEVT_SCROLL_LINEUP line up events.
     @event{EVT_COMMAND_SCROLL_LINEDOWN(id, func)}
-        Process @c wxEVT_SCROLL_LINEDOWN line down or right events.
+        Process @c wxEVT_SCROLL_LINEDOWN line down events.
     @event{EVT_COMMAND_SCROLL_PAGEUP(id, func)}
-        Process @c wxEVT_SCROLL_PAGEUP page up or left events.
+        Process @c wxEVT_SCROLL_PAGEUP page up events.
     @event{EVT_COMMAND_SCROLL_PAGEDOWN(id, func)}
-        Process @c wxEVT_SCROLL_PAGEDOWN page down or right events.
+        Process @c wxEVT_SCROLL_PAGEDOWN page down events.
     @event{EVT_COMMAND_SCROLL_THUMBTRACK(id, func)}
         Process @c wxEVT_SCROLL_THUMBTRACK thumbtrack events
         (frequent events sent as the user drags the thumbtrack).
@@ -98,13 +99,13 @@
     (In all these cases the EVT_SCROLL_THUMBRELEASE event does not happen).
 
     In short, the EVT_SCROLL_CHANGED event is triggered when scrolling/moving has
-    finished independently of the way it had started. Please see the @ref page_samples_widgets
+    finished independently of the way it had started. Please see the widgets sample
     ("Slider" page) to see the difference between EVT_SCROLL_THUMBRELEASE and
     EVT_SCROLL_CHANGED in action.
 
     @library{wxcore}
     @category{ctrl}
-    @appearance{scrollbar}
+    @appearance{scrollbar.png}
 
     @see @ref overview_scrolling, @ref overview_events, wxScrolled
 */
@@ -124,10 +125,10 @@ public:
         @param id
             Window identifier. The value wxID_ANY indicates a default value.
         @param pos
-            Window position.
+            Window position. 
             If ::wxDefaultPosition is specified then a default position is chosen.
         @param size
-            Window size.
+            Window size. 
             If ::wxDefaultSize is specified then a default size is chosen.
         @param style
             Window style. See wxScrollBar.

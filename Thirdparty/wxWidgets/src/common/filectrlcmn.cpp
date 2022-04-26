@@ -4,11 +4,16 @@
 //              platform-specific wxFileCtrl's
 // Author:      Diaa M. Sami
 // Created:     2007-07-07
+// RCS-ID:      $Id$
 // Copyright:   (c) Diaa M. Sami
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "wx/wxprec.h"
+
+#ifdef __BORLANDC__
+#pragma hdrstop
+#endif
 
 #if wxUSE_FILECTRL
 
@@ -25,11 +30,11 @@ wxDEFINE_EVENT( wxEVT_FILECTRL_FILEACTIVATED, wxFileCtrlEvent );
 wxDEFINE_EVENT( wxEVT_FILECTRL_FOLDERCHANGED, wxFileCtrlEvent );
 wxDEFINE_EVENT( wxEVT_FILECTRL_FILTERCHANGED, wxFileCtrlEvent );
 
-wxIMPLEMENT_DYNAMIC_CLASS( wxFileCtrlEvent, wxCommandEvent );
+IMPLEMENT_DYNAMIC_CLASS( wxFileCtrlEvent, wxCommandEvent )
 
 // some helper functions
 
-void wxGenerateFilterChangedEvent( wxFileCtrlBase *fileCtrl, wxWindow *wnd )
+void GenerateFilterChangedEvent( wxFileCtrlBase *fileCtrl, wxWindow *wnd )
 {
     wxFileCtrlEvent event( wxEVT_FILECTRL_FILTERCHANGED, wnd, wnd->GetId() );
 
@@ -38,7 +43,7 @@ void wxGenerateFilterChangedEvent( wxFileCtrlBase *fileCtrl, wxWindow *wnd )
     wnd->GetEventHandler()->ProcessEvent( event );
 }
 
-void wxGenerateFolderChangedEvent( wxFileCtrlBase *fileCtrl, wxWindow *wnd )
+void GenerateFolderChangedEvent( wxFileCtrlBase *fileCtrl, wxWindow *wnd )
 {
     wxFileCtrlEvent event( wxEVT_FILECTRL_FOLDERCHANGED, wnd, wnd->GetId() );
 
@@ -47,7 +52,7 @@ void wxGenerateFolderChangedEvent( wxFileCtrlBase *fileCtrl, wxWindow *wnd )
     wnd->GetEventHandler()->ProcessEvent( event );
 }
 
-void wxGenerateSelectionChangedEvent( wxFileCtrlBase *fileCtrl, wxWindow *wnd)
+void GenerateSelectionChangedEvent( wxFileCtrlBase *fileCtrl, wxWindow *wnd)
 {
     wxFileCtrlEvent event( wxEVT_FILECTRL_SELECTIONCHANGED, wnd, wnd->GetId() );
     event.SetDirectory( fileCtrl->GetDirectory() );
@@ -59,7 +64,7 @@ void wxGenerateSelectionChangedEvent( wxFileCtrlBase *fileCtrl, wxWindow *wnd)
     wnd->GetEventHandler()->ProcessEvent( event );
 }
 
-void wxGenerateFileActivatedEvent( wxFileCtrlBase *fileCtrl, wxWindow *wnd, const wxString& filename )
+void GenerateFileActivatedEvent( wxFileCtrlBase *fileCtrl, wxWindow *wnd, const wxString filename )
 {
     wxFileCtrlEvent event( wxEVT_FILECTRL_FILEACTIVATED, wnd, wnd->GetId() );
     event.SetDirectory( fileCtrl->GetDirectory() );

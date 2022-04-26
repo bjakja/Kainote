@@ -4,32 +4,25 @@
 # there is a change in the stable branch of wxWidgets which could lead to an
 # ABI breakage and thus result in a binary-incompatible change (see tech docs).
 #
+# $Id$
 
 
 expected_abi_file="expected_abi"
 actual_abi_file="actual_abi"
 
-if [[ "$(uname)" == "Darwin" ]]; then
-   file_mask=*.dylib
-   nm_options="-g -U"
-else
-   file_mask=*.so
-   nm_options="-D -g --defined-only"
-fi
-
 if [[ "$1" == "--generate" ]]; then
 
     # IMPORTANT: we need a shared build of wxWidgets to proceed
-    if [[ $(echo $file_mask) == "$file_mask" ]]; then
-        echo "No shared objects ($file_mask) were found... aborting"
+    if [[ $(echo *.so) == "*.so" ]]; then
+        echo "No shared objects (*.so) were found... aborting"
         exit 1
     fi
 
     # generated the "expected ABI" for later comparison
     rm -f $expected_abi_file
-    for library in $file_mask; do
+    for library in *.so; do
         # NOTE: don't use -C option as otherwise cut won't work correctly
-        nm $nm_options $library | cut -d ' ' -f 2,3 | sort >>$expected_abi_file
+        nm -D -g --defined-only $library | cut -d ' ' -f 3 | sort >>$expected_abi_file
     done
 
     echo "Expected wxWidgets ABI generated in \"$expected_abi_file\"..."
@@ -45,15 +38,15 @@ elif [[ -z "$1" ]]; then
     echo "Comparing actual ABI with the expected ABI (loading it from \"$expected_abi_file\")..."
 
     # IMPORTANT: we need a shared build of wxWidgets to do the check
-    if [[ $(echo $file_mask) == "*$file_mask" ]]; then
-        echo "No shared objects ($file_mask) were found... aborting"
+    if [[ $(echo *.so) == "*.so" ]]; then
+        echo "No shared objects (*.so) were found... aborting"
         exit 1
     fi
 
     rm -f $actual_abi_file
-    for library in $file_mask; do
+    for library in *.so; do
         # NOTE: don't use -C option as otherwise cut won't work correctly
-        nm $nm_options $library | cut -d ' ' -f 2,3 | sort >>$actual_abi_file
+        nm -D -g --defined-only $library | cut -d ' ' -f 3 | sort >>$actual_abi_file
     done
 
     result=`diff -u $expected_abi_file $actual_abi_file`

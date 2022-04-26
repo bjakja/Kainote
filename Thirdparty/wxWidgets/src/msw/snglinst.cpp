@@ -5,6 +5,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     08.06.01
+// RCS-ID:      $Id$
 // Copyright:   (c) 2001 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -18,19 +19,22 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
-#if wxUSE_SNGLINST_CHECKER
+#if wxUSE_SNGLINST_CHECKER && defined(__WIN32__)
 
 #ifndef WX_PRECOMP
-    #include "wx\string.h"
-    #include "wx\log.h"
+    #include "wx/string.h"
+    #include "wx/log.h"
 #endif //WX_PRECOMP
 
-#include "wx\snglinst.h"
+#include "wx/snglinst.h"
 
-#include "wx\msw/private.h"
+#include "wx/msw/private.h"
 
 // ----------------------------------------------------------------------------
 // wxSingleInstanceCheckerImpl: the real implementation class

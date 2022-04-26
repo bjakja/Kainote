@@ -2,6 +2,7 @@
 // Name:        gbsizer.h
 // Purpose:     interface of wxGBPosition
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -82,7 +83,7 @@ public:
     //@{
     /**
         Adds the given item to the given position.
-
+        
         @return A valid pointer if the item was successfully placed at the
                  given position, or @NULL if something was already there.
     */
@@ -92,20 +93,12 @@ public:
     wxSizerItem* Add(wxSizer* sizer, const wxGBPosition& pos,
                      const wxGBSpan& span = wxDefaultSpan,
                      int flag = 0, int border = 0, wxObject* userData = NULL);
-    wxSizerItem* Add(wxGBSizerItem* item);
-
-    /**
-        Adds a spacer to the given position.
-        @a width and @a height specify the dimension of the spacer to be added.
-
-        @return A valid pointer if the spacer was successfully placed at the
-                 given position, or @NULL if something was already there.
-    */
     wxSizerItem* Add(int width, int height, const wxGBPosition& pos,
                      const wxGBSpan& span = wxDefaultSpan,
                      int flag = 0, int border = 0, wxObject* userData = NULL);
-
+    wxSizerItem* Add(wxGBSizerItem* item);
     //@}
+
     /**
         Called when the managed size of the sizer is needed or when layout
         needs done.
@@ -187,7 +180,7 @@ public:
         Called when the managed size of the sizer is needed or when layout
         needs done.
     */
-    virtual void RepositionChildren(const wxSize& minSize);
+    void RecalcSizes();
 
     /**
         Set the size used for cells in the grid with no item.
@@ -299,7 +292,7 @@ public:
     */
     bool SetSpan(const wxGBSpan& span);
 
-
+    
     wxGridBagSizer* GetGBSizer() const;
     void SetGBSizer(wxGridBagSizer* sizer);
 };

@@ -20,6 +20,7 @@
 //#include "Utils.h"
 #include "Menu.h"
 #include <wx/clipbrd.h>
+#include <wx/msw/winundef.h>
 #include <wx/dcclient.h>
 
 //std::vector< ItemRow*> List::filteredList = std::vector< ItemRow*>();

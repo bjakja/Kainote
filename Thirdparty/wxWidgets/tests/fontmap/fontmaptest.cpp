@@ -3,6 +3,7 @@
 // Purpose:     wxFontMapper unit test
 // Author:      Vadim Zeitlin
 // Created:     14.02.04
+// RCS-ID:      $Id$
 // Copyright:   (c) 2003 TT-Solutions
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -13,6 +14,9 @@
 
 #include "testprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
     #include "wx/wx.h"
@@ -38,7 +42,7 @@ private:
 
     void NamesAndDesc();
 
-    wxDECLARE_NO_COPY_CLASS(FontMapperTestCase);
+    DECLARE_NO_COPY_CLASS(FontMapperTestCase)
 };
 
 // register in the unnamed registry so that these tests are run by default

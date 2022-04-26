@@ -3,6 +3,7 @@
 // Purpose:     Main file of the benchmarking suite
 // Author:      Vadim Zeitlin
 // Created:     2008-07-19
+// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -15,15 +16,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include <float.h>
-
 #include "wx/app.h"
 #include "wx/cmdline.h"
 #include "wx/stopwatch.h"
-
-#if wxUSE_GUI
-    #include "wx/frame.h"
-#endif
 
 #include "bench.h"
 
@@ -34,7 +29,7 @@
 static const char OPTION_LIST = 'l';
 static const char OPTION_SINGLE = '1';
 
-static const char OPTION_RUN_TIME = 't';
+static const char OPTION_AVG_COUNT = 'a';
 static const char OPTION_NUM_RUNS = 'n';
 static const char OPTION_NUMERIC_PARAM = 'p';
 static const char OPTION_STRING_PARAM = 's';
@@ -66,22 +61,18 @@ public:
     const wxString& GetStringParameter() const { return m_strParam; }
 
 private:
-    // output the results of a single benchmark if successful or just return
-    // false if anything went wrong
-    bool RunSingleBenchmark(Bench::Function* func);
-
     // list all registered benchmarks
     void ListBenchmarks();
 
     // command lines options/parameters
     wxSortedArrayString m_toRun;
-    long m_numRuns, // number of times to run a single benchmark or 0
-         m_runTime, // minimum time to run a single benchmark if m_numRuns == 0
+    long m_numRuns,
+         m_avgCount,
          m_numParam;
     wxString m_strParam;
 };
 
-wxIMPLEMENT_APP_CONSOLE(BenchApp);
+IMPLEMENT_APP_CONSOLE(BenchApp)
 
 // ============================================================================
 // Bench namespace symbols implementation
@@ -89,16 +80,14 @@ wxIMPLEMENT_APP_CONSOLE(BenchApp);
 
 Bench::Function *Bench::Function::ms_head = NULL;
 
-long Bench::GetNumericParameter(long defVal)
+long Bench::GetNumericParameter()
 {
-    const long val = wxGetApp().GetNumericParameter();
-    return val ? val : defVal;
+    return wxGetApp().GetNumericParameter();
 }
 
-wxString Bench::GetStringParameter(const wxString& defVal)
+wxString Bench::GetStringParameter()
 {
-    const wxString& val = wxGetApp().GetStringParameter();
-    return !val.empty() ? val : defVal;
+    return wxGetApp().GetStringParameter();
 }
 
 // ============================================================================
@@ -107,8 +96,8 @@ wxString Bench::GetStringParameter(const wxString& defVal)
 
 BenchApp::BenchApp()
 {
-    m_numRuns = 0; // this means to use m_runTime
-    m_runTime = 500; // default minimum
+    m_avgCount = 10;
+    m_numRuns = 10000; // just some default (TODO: switch to time-based one)
     m_numParam = 0;
 }
 
@@ -140,13 +129,12 @@ void BenchApp::OnInitCmdLine(wxCmdLineParser& parser)
                      "single",
                      "run the benchmark once only");
 
-    parser.AddOption(OPTION_RUN_TIME,
-                     "run-time",
+    parser.AddOption(OPTION_AVG_COUNT,
+                     "avg-count",
                      wxString::Format
                      (
-                        "maximum time to run each benchmark in ms "
-                        "(default: %ld, set to 0 to disable)",
-                        m_runTime
+                        "number of times to run benchmarking loop (default: %ld)",
+                        m_avgCount
                      ),
                      wxCMD_LINE_VAL_NUMBER);
     parser.AddOption(OPTION_NUM_RUNS,
@@ -154,7 +142,7 @@ void BenchApp::OnInitCmdLine(wxCmdLineParser& parser)
                      wxString::Format
                      (
                          "number of times to run each benchmark in a loop "
-                         "(default: %ld, 0 means to run until max time passes)",
+                         "(default: %ld)",
                          m_numRuns
                      ),
                      wxCMD_LINE_VAL_NUMBER);
@@ -197,25 +185,24 @@ bool BenchApp::OnCmdLineParsed(wxCmdLineParser& parser)
         return false;
     }
 
-    const bool runTimeSpecified = parser.Found(OPTION_RUN_TIME, &m_runTime);
-    const bool numRunsSpecified = parser.Found(OPTION_NUM_RUNS, &m_numRuns);
+    bool numRunsSpecified = false;
+    if ( parser.Found(OPTION_AVG_COUNT, &m_avgCount) )
+        numRunsSpecified = true;
+    if ( parser.Found(OPTION_NUM_RUNS, &m_numRuns) )
+        numRunsSpecified = true;
     parser.Found(OPTION_NUMERIC_PARAM, &m_numParam);
     parser.Found(OPTION_STRING_PARAM, &m_strParam);
     if ( parser.Found(OPTION_SINGLE) )
     {
-        if ( runTimeSpecified || numRunsSpecified )
+        if ( numRunsSpecified )
         {
             wxFprintf(stderr, "Incompatible options specified.\n");
 
             return false;
         }
 
+        m_avgCount =
         m_numRuns = 1;
-    }
-    else if ( numRunsSpecified && !runTimeSpecified )
-    {
-        // If only the number of runs is specified, use it only.
-        m_runTime = 0;
     }
 
     // construct sorted array for quick verification of benchmark names
@@ -245,20 +232,6 @@ bool BenchApp::OnCmdLineParsed(wxCmdLineParser& parser)
 int BenchApp::OnRun()
 {
     int rc = EXIT_SUCCESS;
-
-    wxString params;
-    if ( m_numParam )
-        params += wxString::Format("N=%ld", m_numParam);
-    if ( !m_strParam.empty() )
-    {
-        if ( !params.empty() )
-            params += " and ";
-        params += wxString::Format("s=\"%s\"", m_strParam);
-    }
-
-    if ( !params.empty() )
-        wxPrintf("Benchmarks are running with non-default %s\n", params);
-
     for ( Bench::Function *func = Bench::Function::GetFirst();
           func;
           func = func->GetNext() )
@@ -266,101 +239,66 @@ int BenchApp::OnRun()
         if ( m_toRun.Index(func->GetName()) == wxNOT_FOUND )
             continue;
 
-        if ( !RunSingleBenchmark(func) )
+        wxString params;
+        if ( m_numParam )
+            params += wxString::Format(" with N=%ld", m_numParam);
+        if ( !m_strParam.empty() )
         {
-            wxFprintf(stderr, "ERROR running %s\n", func->GetName());
+            if ( !params.empty() )
+                params += " and";
+            params += wxString::Format(" with s=\"%s\"", m_strParam);
+        }
+
+        wxPrintf("Benchmarking %s%s: ", func->GetName(), params);
+
+        long timeMin = LONG_MAX,
+             timeMax = 0,
+             timeTotal = 0;
+        bool ok = func->Init();
+        for ( long a = 0; ok && a < m_avgCount; a++ )
+        {
+            wxStopWatch sw;
+            for ( long n = 0; n < m_numRuns && ok; n++ )
+            {
+                ok = func->Run();
+            }
+
+            sw.Pause();
+
+            const long t = sw.Time();
+            if ( t < timeMin )
+                timeMin = t;
+            if ( t > timeMax )
+                timeMax = t;
+            timeTotal += t;
+        }
+
+        func->Done();
+
+        if ( !ok )
+        {
+            wxPrintf("ERROR\n");
             rc = EXIT_FAILURE;
         }
+        else
+        {
+            wxPrintf("%ldms total, ", timeTotal);
+
+            long times = m_avgCount;
+            if ( m_avgCount > 2 )
+            {
+                timeTotal -= timeMin + timeMax;
+                times -= 2;
+            }
+
+            wxPrintf("%.2f avg (min=%ld, max=%ld)\n",
+                     (float)timeTotal / times, timeMin, timeMax);
+        }
+
+        fflush(stdout);
     }
 
     return rc;
-}
-
-bool BenchApp::RunSingleBenchmark(Bench::Function* func)
-{
-    if ( !func->Init() )
-        return false;
-
-    wxPrintf("Benchmarking %s: ", func->GetName());
-    fflush(stdout);
-
-    // We use the algorithm for iteratively computing the mean and the
-    // standard deviation of the sequence of values described in Knuth's
-    // "The Art of Computer Programming, Volume 2: Seminumerical
-    // Algorithms", section 4.2.2.
-    //
-    // The algorithm defines the sequences M(k) and S(k) as follows:
-    //
-    //  M(1) = x(1), M(k) = M(k-1) + (x(k) - M(k-1)) / k
-    //  S(1) = 0,    S(k) = S(k-1) + (x(k) - M(k-1))*(x(k) - M(k))
-    //
-    // where x(k) is the k-th value. Then the mean is simply the last value
-    // of the first sequence M(N) and the standard deviation is
-    // sqrt(S(N)/(N-1)).
-
-    wxStopWatch swTotal;
-    if ( !func->Run() )
-        return false;
-
-    double timeMin = DBL_MAX,
-           timeMax = 0;
-
-    double m = swTotal.TimeInMicro().ToDouble();
-    double s = 0;
-
-    long n = 0;
-    for ( ;; )
-    {
-        // One termination condition is reaching the maximum number of runs.
-        if ( ++n == m_numRuns )
-            break;
-
-        double t;
-        {
-            wxStopWatch swThis;
-            if ( !func->Run() )
-                return false;
-
-            t = swThis.TimeInMicro().ToDouble();
-        }
-
-        if ( t < timeMin )
-            timeMin = t;
-        if ( t > timeMax )
-            timeMax = t;
-
-        const double lastM = m;
-        m += (t - lastM) / n;
-        s += (t - lastM)*(t - m);
-
-        // The other termination condition is that we are running for at least
-        // m_runTime milliseconds.
-        if ( m_runTime && swTotal.Time() >= m_runTime )
-            break;
-    }
-
-    func->Done();
-
-    // For a single run there is no standard deviation and min/max don't make
-    // much sense.
-    if ( n == 1 )
-    {
-        wxPrintf("single run took %.0fus\n", m);
-    }
-    else
-    {
-        s = sqrt(s / (n - 1));
-
-        wxPrintf
-        (
-            "%ld runs, %.0fus avg, %.0f std dev (%.0f/%.0f min/max)\n",
-            n, m, s, timeMin, timeMax
-        );
-    }
-
-    fflush(stdout);
-
-    return true;
 }
 
 int BenchApp::OnExit()

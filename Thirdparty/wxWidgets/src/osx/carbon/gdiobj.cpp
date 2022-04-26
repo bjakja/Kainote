@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -27,17 +28,17 @@ wxFORCE_LINK_THIS_MODULE(gdiobj)
 class wxStockGDIMac: public wxStockGDI, public wxModule
 {
 public:
-    virtual const wxFont* GetFont(Item item) wxOVERRIDE;
+    virtual const wxFont* GetFont(Item item);
 
-    virtual bool OnInit() wxOVERRIDE;
-    virtual void OnExit() wxOVERRIDE;
+    virtual bool OnInit();
+    virtual void OnExit();
 
 private:
     typedef wxStockGDI super;
-    wxDECLARE_DYNAMIC_CLASS(wxStockGDIMac);
+    DECLARE_DYNAMIC_CLASS(wxStockGDIMac)
 };
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxStockGDIMac, wxModule);
+IMPLEMENT_DYNAMIC_CLASS(wxStockGDIMac, wxModule)
 
 bool wxStockGDIMac::OnInit()
 {

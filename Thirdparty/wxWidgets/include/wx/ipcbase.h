@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     4/1/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,9 +12,9 @@
 #ifndef _WX_IPCBASEH__
 #define _WX_IPCBASEH__
 
-#include "wx\defs.h"
-#include "wx\object.h"
-#include "wx\string.h"
+#include "wx/defs.h"
+#include "wx/object.h"
+#include "wx/string.h"
 
 enum wxIPCFormat
 {
@@ -58,7 +59,7 @@ public:
   virtual ~wxConnectionBase();
 
   void SetConnected( bool c ) { m_connected = c; }
-  bool GetConnected() const { return m_connected; }
+  bool GetConnected() { return m_connected; }
 
   // Calls that CLIENT can make
   bool Execute(const void *data, size_t size, wxIPCFormat fmt = wxIPC_PRIVATE)
@@ -91,7 +92,7 @@ public:
       { return DoPoke(item, ws,
                       size == wxNO_LEN ? (wcslen(ws) + 1)*sizeof(wchar_t)
                                        : size, wxIPC_UNICODETEXT); }
-  bool Poke(const wxString& item, const wxString& s)
+  bool Poke(const wxString& item, const wxString s)
   {
       const wxScopedCharBuffer buf = s.utf8_str();
       return DoPoke(item, buf,  strlen(buf) + 1, wxIPC_UTF8TEXT);
@@ -113,7 +114,7 @@ public:
       { return DoAdvise(item, ws,
                         size == wxNO_LEN ? (wcslen(ws) + 1)*sizeof(wchar_t)
                                          : size, wxIPC_UNICODETEXT); }
-  bool Advise(const wxString& item, const wxString& s)
+  bool Advise(const wxString& item, const wxString s)
   {
       const wxScopedCharBuffer buf = s.utf8_str();
       return DoAdvise(item, buf,  strlen(buf) + 1, wxIPC_UTF8TEXT);
@@ -222,7 +223,7 @@ protected:
   bool          m_connected;
 
   wxDECLARE_NO_ASSIGN_CLASS(wxConnectionBase);
-  wxDECLARE_CLASS(wxConnectionBase);
+  DECLARE_CLASS(wxConnectionBase)
 };
 
 
@@ -238,7 +239,7 @@ public:
   // Callbacks to SERVER - override at will
   virtual wxConnectionBase *OnAcceptConnection(const wxString& topic) = 0;
 
-  wxDECLARE_CLASS(wxServerBase);
+  DECLARE_CLASS(wxServerBase)
 };
 
 class WXDLLIMPEXP_BASE wxClientBase : public wxObject
@@ -257,7 +258,7 @@ public:
   // Callbacks to CLIENT - override at will
   virtual wxConnectionBase *OnMakeConnection() = 0;
 
-  wxDECLARE_CLASS(wxClientBase);
+  DECLARE_CLASS(wxClientBase)
 };
 
 #endif // _WX_IPCBASEH__

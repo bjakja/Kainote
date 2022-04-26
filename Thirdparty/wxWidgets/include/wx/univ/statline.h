@@ -3,6 +3,7 @@
 // Purpose:     wxStaticLine class for wxUniversal
 // Author:      Vadim Zeitlin
 // Created:     28.06.99
+// Version:     $Id$
 // Copyright:   (c) 1999 Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -32,7 +33,7 @@ public:
                  const wxPoint &pos = wxDefaultPosition,
                  const wxSize &size = wxDefaultSize,
                  long style = wxLI_HORIZONTAL,
-                 const wxString &name = wxASCII_STR(wxStaticLineNameStr) )
+                 const wxString &name = wxStaticLineNameStr )
     {
         Create(parent, id, pos, size, style, name);
     }
@@ -42,13 +43,13 @@ public:
                 const wxPoint &pos = wxDefaultPosition,
                 const wxSize &size = wxDefaultSize,
                 long style = wxLI_HORIZONTAL,
-                const wxString &name = wxASCII_STR(wxStaticLineNameStr) );
+                const wxString &name = wxStaticLineNameStr );
 
 protected:
-    virtual void DoDraw(wxControlRenderer *renderer) wxOVERRIDE;
+    virtual void DoDraw(wxControlRenderer *renderer);
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxStaticLine);
+    DECLARE_DYNAMIC_CLASS(wxStaticLine)
 };
 
 #endif // _WX_UNIV_STATLINE_H_

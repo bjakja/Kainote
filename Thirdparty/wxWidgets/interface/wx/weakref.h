@@ -2,6 +2,7 @@
 // Name:        weakref.h
 // Purpose:     interface of wxWeakRefDynamic<T>, wxWeakRef<T>
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 

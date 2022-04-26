@@ -2,6 +2,7 @@
 // Name:        sashwin.h
 // Purpose:     interface of wxSashWindow
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -68,7 +69,7 @@ enum wxSashDragStatus
            with ids in the given range have their sashes dragged.
     @endEventTable
 
-    @library{wxcore}
+    @library{wxadv}
     @category{miscwnd}
 
     @see wxSashEvent, wxSashLayoutWindow, @ref overview_events
@@ -173,42 +174,6 @@ public:
         @see GetSashVisible()
     */
     void SetSashVisible(wxSashEdgePosition edge, bool visible);
-
-
-    /**
-       Get border size
-    */
-    int GetEdgeMargin(wxSashEdgePosition edge) const;
-
-    /**
-       Sets the default sash border size
-    */
-    void SetDefaultBorderSize(int width);
-
-    /**
-       Gets the default sash border size
-    */
-    int GetDefaultBorderSize() const;
-
-    /**
-       Sets the additional border size between child and sash window
-    */
-    void SetExtraBorderSize(int width);
-
-    /**
-       Gets the addition border size between child and sash window
-    */
-    int GetExtraBorderSize() const;
-
-    /**
-       Tests for x, y over sash
-    */
-    wxSashEdgePosition SashHitTest(int x, int y, int tolerance = 2);
-
-    /**
-       Resizes subwindows
-    */
-    void SizeWindows();
 };
 
 
@@ -241,7 +206,7 @@ public:
         the given range have their sashes dragged.
     @endEventTable
 
-    @library{wxcore}
+    @library{wxadv}
     @category{events}
 
     @see wxSashWindow, @ref overview_events
@@ -275,7 +240,7 @@ public:
     */
     wxSashEdgePosition GetEdge() const;
 
-
+    
     void SetEdge(wxSashEdgePosition edge);
     void SetDragRect(const wxRect& rect);
     void SetDragStatus(wxSashDragStatus status);

@@ -4,6 +4,7 @@
 // Author:      Guilhem Lavaux
 // Modified by: Simo Virokannas (authentication, Dec 2005)
 // Created:     August 1997
+// RCS-ID:      $Id$
 // Copyright:   (c) 1997, 1998 Guilhem Lavaux
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -25,17 +26,16 @@ public:
     virtual ~wxHTTP();
 
     virtual bool Connect(const wxString& host, unsigned short port);
-    virtual bool Connect(const wxString& host) wxOVERRIDE { return Connect(host, 0); }
-    virtual bool Connect(const wxSockAddress& addr, bool wait = true) wxOVERRIDE;
-    bool Abort() wxOVERRIDE;
+    virtual bool Connect(const wxString& host) { return Connect(host, 0); }
+    virtual bool Connect(const wxSockAddress& addr, bool wait);
+    bool Abort();
 
-    wxInputStream *GetInputStream(const wxString& path) wxOVERRIDE;
+    wxInputStream *GetInputStream(const wxString& path);
 
-    wxString GetContentType() const wxOVERRIDE;
+    wxString GetContentType() const;
     wxString GetHeader(const wxString& header) const;
     int GetResponse() const { return m_http_response; }
 
-    void SetMethod(const wxString& method) { m_method = method; }
     void SetHeader(const wxString& header, const wxString& h_data);
     bool SetPostText(const wxString& contentType,
                      const wxString& data,
@@ -51,12 +51,19 @@ public:
     wxDEPRECATED(void SetPostBuffer(const wxString& post_buf));
 
 protected:
+    enum wxHTTP_Req
+    {
+        wxHTTP_GET,
+        wxHTTP_POST,
+        wxHTTP_HEAD
+    };
+
     typedef wxStringToStringHashMap::iterator wxHeaderIterator;
     typedef wxStringToStringHashMap::const_iterator wxHeaderConstIterator;
     typedef wxStringToStringHashMap::iterator wxCookieIterator;
     typedef wxStringToStringHashMap::const_iterator wxCookieConstIterator;
 
-    bool BuildRequest(const wxString& path, const wxString& method);
+    bool BuildRequest(const wxString& path, wxHTTP_Req req);
     void SendHeaders();
     bool ParseHeaders();
 
@@ -74,7 +81,6 @@ protected:
 
     // internal variables:
 
-    wxString m_method;
     wxStringToStringHashMap m_cookies;
 
     wxStringToStringHashMap m_headers;
@@ -85,7 +91,7 @@ protected:
     wxString       m_contentType;
     int m_http_response;
 
-    wxDECLARE_DYNAMIC_CLASS(wxHTTP);
+    DECLARE_DYNAMIC_CLASS(wxHTTP)
     DECLARE_PROTOCOL(wxHTTP)
     wxDECLARE_NO_COPY_CLASS(wxHTTP);
 };

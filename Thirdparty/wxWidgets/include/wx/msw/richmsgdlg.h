@@ -3,6 +3,7 @@
 // Purpose:     wxRichMessageDialog
 // Author:      Rickard Westerlund
 // Created:     2010-07-04
+// RCS-ID:      $Id$
 // Copyright:   (c) 2010 wxWidgets team
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -15,13 +16,13 @@ class WXDLLIMPEXP_CORE wxRichMessageDialog : public wxGenericRichMessageDialog
 public:
     wxRichMessageDialog(wxWindow *parent,
                         const wxString& message,
-                        const wxString& caption = wxASCII_STR(wxMessageBoxCaptionStr),
-                        long style = wxOK | wxCENTRE)
+                        const wxString& caption,
+                        long style)
         : wxGenericRichMessageDialog(parent, message, caption, style)
         { }
 
     // overridden base class method showing the native task dialog if possible
-    virtual int ShowModal() wxOVERRIDE;
+    virtual int ShowModal();
 
 private:
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxRichMessageDialog);

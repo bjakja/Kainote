@@ -3,6 +3,7 @@
 // Purpose:     wxLongLong unit test
 // Author:      Vadim Zeitlin, Wlodzimierz ABX Skiba
 // Created:     2004-04-01
+// RCS-ID:      $Id$
 // Copyright:   (c) 2004 Vadim Zeitlin, Wlodzimierz Skiba
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -12,6 +13,9 @@
 
 #include "testprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
     #include "wx/wx.h"
@@ -78,7 +82,7 @@ private:
     void LoHi();
     void Limits();
 
-    wxDECLARE_NO_COPY_CLASS(LongLongTestCase);
+    DECLARE_NO_COPY_CLASS(LongLongTestCase)
 };
 
 // register in the unnamed registry so that these tests are run by default
@@ -337,6 +341,9 @@ void LongLongTestCase::LoHi()
 
 void LongLongTestCase::Limits()
 {
+    // VC6 doesn't specialize numeric_limits<> for __int64 so skip this test
+    // for it.
+#ifndef __VISUALC6__
 #if wxUSE_LONGLONG_NATIVE
     CPPUNIT_ASSERT( std::numeric_limits<wxLongLong>::is_specialized );
     CPPUNIT_ASSERT( std::numeric_limits<wxULongLong>::is_specialized );
@@ -344,6 +351,7 @@ void LongLongTestCase::Limits()
     wxULongLong maxval = std::numeric_limits<wxULongLong>::max();
     CPPUNIT_ASSERT( maxval.ToDouble() > 0 );
 #endif // wxUSE_LONGLONG_NATIVE
+#endif // !__VISUALC6__
 }
 
 #endif // wxUSE_LONGLONG

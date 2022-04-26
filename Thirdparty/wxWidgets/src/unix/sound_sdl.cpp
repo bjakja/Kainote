@@ -4,6 +4,7 @@
 // Author:      Vaclav Slavik
 // Modified by:
 // Created:     2004/01/31
+// RCS-ID:      $Id$
 // Copyright:   (c) 2004, Open Source Applications Foundation
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,6 +12,9 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#if defined(__BORLANDC__)
+    #pragma hdrstop
+#endif
 
 #if wxUSE_SOUND && wxUSE_LIBSDL
 
@@ -34,9 +38,9 @@
 class wxSoundBackendSDLNotification : public wxEvent
 {
 public:
-    wxDECLARE_DYNAMIC_CLASS(wxSoundBackendSDLNotification);
+    DECLARE_DYNAMIC_CLASS(wxSoundBackendSDLNotification)
     wxSoundBackendSDLNotification();
-    wxEvent *Clone() const wxOVERRIDE { return new wxSoundBackendSDLNotification(*this); }
+    wxEvent *Clone() const { return new wxSoundBackendSDLNotification(*this); }
 };
 
 typedef void (wxEvtHandler::*wxSoundBackendSDLNotificationFunction)
@@ -51,7 +55,7 @@ wxDECLARE_EVENT(wxEVT_SOUND_BACKEND_SDL_NOTIFICATION, wxSoundBackendSDLNotificat
                               wxEVENT_HANDLER_CAST( wxSoundBackendSDLNotificationFunction, func ), \
                               NULL ),
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxSoundBackendSDLNotification, wxEvtHandler);
+IMPLEMENT_DYNAMIC_CLASS(wxSoundBackendSDLNotification, wxEvtHandler)
 wxDEFINE_EVENT( wxEVT_SOUND_BACKEND_SDL_NOTIFICATION, wxSoundBackendSDLNotification );
 
 wxSoundBackendSDLNotification::wxSoundBackendSDLNotification()
@@ -69,18 +73,18 @@ public:
           m_data(NULL), m_evtHandler(NULL) {}
     virtual ~wxSoundBackendSDL();
 
-    wxString GetName() const wxOVERRIDE { return wxT("Simple DirectMedia Layer"); }
-    int GetPriority() const wxOVERRIDE { return 9; }
-    bool IsAvailable() const wxOVERRIDE;
-    bool HasNativeAsyncPlayback() const wxOVERRIDE { return true; }
+    wxString GetName() const { return wxT("Simple DirectMedia Layer"); }
+    int GetPriority() const { return 9; }
+    bool IsAvailable() const;
+    bool HasNativeAsyncPlayback() const { return true; }
     bool Play(wxSoundData *data, unsigned flags,
-              volatile wxSoundPlaybackStatus *status) wxOVERRIDE;
+              volatile wxSoundPlaybackStatus *status);
 
     void FillAudioBuffer(Uint8 *stream, int len);
     void FinishedPlayback();
 
-    void Stop() wxOVERRIDE;
-    bool IsPlaying() const wxOVERRIDE { return m_playing; }
+    void Stop();
+    bool IsPlaying() const { return m_playing; }
 
 private:
     bool OpenAudio();
@@ -111,12 +115,12 @@ private:
     }
     wxSoundBackendSDL *m_backend;
 
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
 };
 
-wxBEGIN_EVENT_TABLE(wxSoundBackendSDLEvtHandler, wxEvtHandler)
+BEGIN_EVENT_TABLE(wxSoundBackendSDLEvtHandler, wxEvtHandler)
     EVT_SOUND_BACKEND_SDL_NOTIFICATON(wxSoundBackendSDLEvtHandler::OnNotify)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 wxSoundBackendSDL::~wxSoundBackendSDL()
 {
@@ -209,13 +213,9 @@ bool wxSoundBackendSDL::OpenAudio()
         {
 #if wxUSE_LOG_DEBUG
             char driver[256];
-#if SDL_MAJOR_VERSION == 1
             SDL_AudioDriverName(driver, 256);
-#elif SDL_MAJOR_VERSION > 1            
-            wxStrlcpy(driver, SDL_GetCurrentAudioDriver(), 256);
-#endif
             wxLogTrace(wxT("sound"), wxT("opened audio, driver '%s'"),
-                       wxString(driver, wxConvLocal));
+                       wxString(driver, wxConvLocal).c_str());
 #endif
             m_audioOpen = true;
             return true;
@@ -223,7 +223,7 @@ bool wxSoundBackendSDL::OpenAudio()
         else
         {
             wxString err(SDL_GetError(), wxConvLocal);
-            wxLogError(_("Couldn't open audio: %s"), err);
+            wxLogError(_("Couldn't open audio: %s"), err.c_str());
             return false;
         }
     }

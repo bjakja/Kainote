@@ -4,6 +4,7 @@
 // Author:      Vaclav Slavik
 // Modified by:
 // Created:     2006-12-24
+// RCS-ID:      $Id$
 // Copyright:   (c) 2006 TT-Solutions
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -62,13 +63,13 @@ public:
     // ------------------------------
 
     virtual void AdjustForParentClientOrigin(int& WXUNUSED(x), int& WXUNUSED(y),
-                                             int WXUNUSED(sizeFlags) = 0) const wxOVERRIDE
+                                             int WXUNUSED(sizeFlags) = 0) const
     {
         // Non owned windows positions don't need to be adjusted for parent
         // client area origin so simply do nothing here.
     }
 
-    virtual void InheritAttributes() wxOVERRIDE
+    virtual void InheritAttributes()
     {
         // Non owned windows don't inherit attributes from their parent window
         // (if the parent frame is red, it doesn't mean that all dialogs shown
@@ -100,10 +101,8 @@ protected:
     #include "wx/gtk/nonownedwnd.h"
 #elif defined(__WXMAC__)
     #include "wx/osx/nonownedwnd.h"
-#elif defined(__WXMSW__)
+#elif defined(__WXMSW__) && !defined(__WXWINCE__)
     #include "wx/msw/nonownedwnd.h"
-#elif defined(__WXQT__)
-    #include "wx/qt/nonownedwnd.h"
 #else
     // No special class needed in other ports, they can derive both wxTLW and
     // wxPopupWindow directly from wxWindow and don't implement SetShape().

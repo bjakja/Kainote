@@ -4,6 +4,7 @@
 // Author:      Francesco Montorsi
 // Modified By:
 // Created:     15/04/2006
+// Id:          $Id$
 // Copyright:   (c) Francesco Montorsi
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -49,7 +50,7 @@ static void gtk_fontbutton_setfont_callback(GtkFontButton *widget,
 // wxFontButton
 //-----------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxFontButton, wxButton);
+IMPLEMENT_DYNAMIC_CLASS(wxFontButton, wxButton)
 
 bool wxFontButton::Create( wxWindow *parent, wxWindowID id,
                         const wxFont &initial,
@@ -106,8 +107,4 @@ void wxFontButton::UpdateFont()
     gtk_font_button_set_font_name(GTK_FONT_BUTTON(m_widget), wxGTK_CONV(fontname));
 }
 
-void wxFontButton::SetNativeFontInfo(const char* gtkdescription)
-{
-    m_selectedFont.SetNativeFontInfo(wxString::FromUTF8(gtkdescription));
-}
 #endif // wxUSE_FONTPICKERCTRL

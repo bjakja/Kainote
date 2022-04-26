@@ -3,6 +3,7 @@
 // Purpose:     Declaration of wxMouseState class
 // Author:      Vadim Zeitlin
 // Created:     2008-09-19 (extracted from wx/utils.h)
+// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -10,8 +11,8 @@
 #ifndef _WX_MOUSESTATE_H_
 #define _WX_MOUSESTATE_H_
 
-#include "wx\gdicmn.h"      // for wxPoint
-#include "wx\kbdstate.h"
+#include "wx/gdicmn.h"      // for wxPoint
+#include "wx/kbdstate.h"
 
 // the symbolic names for the mouse buttons
 enum wxMouseButton
@@ -99,18 +100,20 @@ public:
 
             case wxMOUSE_BTN_NONE:
             case wxMOUSE_BTN_MAX:
-                break;
-        }
+                wxFAIL_MSG(wxS("invalid parameter"));
+                return false;
 
-        wxFAIL_MSG(wxS("invalid parameter"));
-        return false;
+            default:
+                wxFAIL_MSG(wxS("unknown parameter"));
+                return false;
+        }
     }
 
 
     // these functions are mostly used by wxWidgets itself
     void SetX(wxCoord x) { m_x = x; }
     void SetY(wxCoord y) { m_y = y; }
-    void SetPosition(const wxPoint& pos) { m_x = pos.x; m_y = pos.y; }
+    void SetPosition(wxPoint pos) { m_x = pos.x, m_y = pos.y; }
 
     void SetLeftDown(bool down)   { m_leftDown = down; }
     void SetMiddleDown(bool down) { m_middleDown = down; }

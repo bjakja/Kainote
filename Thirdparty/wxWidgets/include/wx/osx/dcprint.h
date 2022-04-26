@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -25,24 +26,24 @@ public:
     wxPrinterDCImpl( wxPrinterDC *owner, const wxPrintData& printdata );
     virtual ~wxPrinterDCImpl();
 
-    virtual bool StartDoc( const wxString& WXUNUSED(message) ) wxOVERRIDE;
-    virtual void EndDoc() wxOVERRIDE;
-    virtual void StartPage() wxOVERRIDE;
-    virtual void EndPage() wxOVERRIDE;
+    virtual bool StartDoc( const wxString& WXUNUSED(message) ) ;
+    virtual void EndDoc(void) ;
+    virtual void StartPage(void) ;
+    virtual void EndPage(void) ;
 
-    wxRect GetPaperRect() const wxOVERRIDE;
+    wxRect GetPaperRect() const;
 
     wxPrintData& GetPrintData() { return m_printData; }
-    virtual wxSize GetPPI() const wxOVERRIDE;
+    virtual wxSize GetPPI() const;
 
 protected:
-    virtual void DoGetSize( int *width, int *height ) const wxOVERRIDE;
+    virtual void DoGetSize( int *width, int *height ) const;
 
     wxPrintData        m_printData ;
     wxNativePrinterDC* m_nativePrinterDC ;
 
 private:
-    wxDECLARE_CLASS(wxPrinterDC);
+    DECLARE_CLASS(wxPrinterDC)
 #endif // wxUSE_PRINTING_ARCHITECTURE
 };
 

@@ -3,6 +3,7 @@
 // Purpose:     Implementation of thread local storage
 // Author:      Vadim Zeitlin
 // Created:     2008-08-08
+// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -10,7 +11,7 @@
 #ifndef _WX_TLS_H_
 #define _WX_TLS_H_
 
-#include "wx\defs.h"
+#include "wx/defs.h"
 
 // ----------------------------------------------------------------------------
 // check for compiler support of thread-specific variables
@@ -32,7 +33,7 @@
     #define wxTHREAD_SPECIFIC_DECL __thread
 // MSVC has its own version which might be supported by some other Windows
 // compilers, to be tested
-#elif defined(__VISUALC__)
+#elif wxCHECK_VISUALC_VERSION(7)
     #define wxHAS_COMPILER_TLS
     #define wxTHREAD_SPECIFIC_DECL __declspec(thread)
 #endif // compilers
@@ -44,7 +45,6 @@
 
 #ifdef wxHAS_COMPILER_TLS
     #define wxTLS_TYPE(T) wxTHREAD_SPECIFIC_DECL T
-    #define wxTLS_TYPE_REF(T) T&
     #define wxTLS_PTR(var) (&(var))
     #define wxTLS_VALUE(var) (var)
 #else // !wxHAS_COMPILER_TLS
@@ -55,9 +55,11 @@
     }
 
     #if defined(__WINDOWS__)
-        #include "wx\msw/tls.h"
+        #include "wx/msw/tls.h"
+    #elif defined(__OS2__)
+        #include "wx/os2/tls.h"
     #elif defined(__UNIX__)
-        #include "wx\unix/tls.h"
+        #include "wx/unix/tls.h"
     #else
         // TODO: we could emulate TLS for such platforms...
         #error Neither compiler nor OS support thread-specific variables.
@@ -130,11 +132,10 @@
     private:
         wxTlsKey m_key;
 
-        wxDECLARE_NO_COPY_TEMPLATE_CLASS(wxTlsValue, T);
+        DECLARE_NO_COPY_TEMPLATE_CLASS(wxTlsValue, T)
     };
 
     #define wxTLS_TYPE(T) wxTlsValue<T>
-    #define wxTLS_TYPE_REF(T) wxTLS_TYPE(T)&
     #define wxTLS_PTR(var) ((var).Get())
     #define wxTLS_VALUE(var) (*(var))
 #endif // wxHAS_COMPILER_TLS/!wxHAS_COMPILER_TLS

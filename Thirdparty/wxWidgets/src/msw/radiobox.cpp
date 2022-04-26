@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     04/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_RADIOBOX
 
@@ -33,7 +37,6 @@
 #endif
 
 #include "wx/msw/subwin.h"
-#include "wx/renderer.h"
 
 #if wxUSE_TOOLTIPS
     #include "wx/tooltip.h"
@@ -75,15 +78,15 @@ wxBEGIN_FLAGS( wxRadioBoxStyle )
     wxFLAGS_MEMBER(wxRA_SPECIFY_ROWS)
 wxEND_FLAGS( wxRadioBoxStyle )
 
-wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxRadioBox, wxControl, "wx/radiobox.h");
+IMPLEMENT_DYNAMIC_CLASS_XTI(wxRadioBox, wxControl,"wx/radiobox.h")
 
 wxBEGIN_PROPERTIES_TABLE(wxRadioBox)
-    wxEVENT_PROPERTY( Select , wxEVT_RADIOBOX , wxCommandEvent )
+    wxEVENT_PROPERTY( Select , wxEVT_COMMAND_RADIOBOX_SELECTED , wxCommandEvent )
     wxPROPERTY_FLAGS( WindowStyle , wxRadioBoxStyle , long , SetWindowStyleFlag , GetWindowStyleFlag , , 0 /*flags*/ , wxT("Helpstring") , wxT("group")) // style
 wxEND_PROPERTIES_TABLE()
 
 #else
-wxIMPLEMENT_DYNAMIC_CLASS(wxRadioBox, wxControl);
+IMPLEMENT_DYNAMIC_CLASS(wxRadioBox, wxControl)
 #endif
 
 /*
@@ -99,8 +102,10 @@ wxIMPLEMENT_DYNAMIC_CLASS(wxRadioBox, wxControl);
 // ---------------------------------------------------------------------------
 
 // wnd proc for radio buttons
-LRESULT APIENTRY
-wxRadioBtnWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+LRESULT APIENTRY _EXPORT wxRadioBtnWndProc(HWND hWnd,
+                                           UINT message,
+                                           WPARAM wParam,
+                                           LPARAM lParam);
 
 // ---------------------------------------------------------------------------
 // global vars
@@ -110,7 +115,7 @@ namespace
 {
 
 // the pointer to standard radio button wnd proc
-WXWNDPROC s_wndprocRadioBtn = NULL;
+WXFARPROC s_wndprocRadioBtn = (WXFARPROC)NULL;
 
 // Hash allowing to find wxRadioBox containing the given radio button by its
 // HWND. This is used by (subclassed) radio button window proc to find the
@@ -144,6 +149,8 @@ void wxRadioBox::Init()
     m_selectedButton = wxNOT_FOUND;
     m_radioButtons = NULL;
     m_dummyHwnd = NULL;
+    m_radioWidth = NULL;
+    m_radioHeight = NULL;
 }
 
 bool wxRadioBox::Create(wxWindow *parent,
@@ -182,8 +189,13 @@ bool wxRadioBox::Create(wxWindow *parent,
     // buttons to include the dummy button
     m_radioButtons = new wxSubwindows(n);
 
+    m_radioWidth = new int[n];
+    m_radioHeight = new int[n];
+
     for ( int i = 0; i < n; i++ )
     {
+        m_radioWidth[i] =
+        m_radioHeight[i] = wxDefaultCoord;
         long styleBtn = BS_AUTORADIOBUTTON | WS_TABSTOP | WS_CHILD | WS_VISIBLE;
         if ( i == 0 )
             styleBtn |= WS_GROUP;
@@ -228,10 +240,13 @@ bool wxRadioBox::Create(wxWindow *parent,
 
     m_radioButtons->SetFont(GetFont());
 
+#ifdef __WXWINCE__
+    // Set the z-order correctly
+    SetWindowPos(GetHwnd(), HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
+#endif
+
     SetMajorDim(majorDim == 0 ? n : majorDim, style);
-    // Select the first radio button if we have any buttons at all.
-    if ( n > 0 )
-        SetSelection(0);
+    SetSelection(0);
     SetSize(pos.x, pos.y, size.x, size.y);
 
     // Now that we have items determine what is the best size and set it.
@@ -240,12 +255,6 @@ bool wxRadioBox::Create(wxWindow *parent,
     // And update all the buttons positions to match it.
     const wxSize actualSize = GetSize();
     PositionAllButtons(pos.x, pos.y, actualSize.x, actualSize.y);
-
-    // The base wxStaticBox class never accepts focus, but we do because giving
-    // focus to a wxRadioBox actually gives it to one of its buttons, which are
-    // not visible at wx level and hence are not taken into account by the
-    // logic in wxControlContainer code.
-    m_container.EnableSelfFocus();
 
     return true;
 }
@@ -286,6 +295,9 @@ wxRadioBox::~wxRadioBox()
 
     if ( m_dummyHwnd )
         DestroyWindow((HWND)m_dummyHwnd);
+
+    delete[] m_radioWidth;
+    delete[] m_radioHeight;
 }
 
 // NB: if this code is changed, wxGetWindowForHWND() which relies on having the
@@ -295,7 +307,7 @@ void wxRadioBox::SubclassRadioButton(WXHWND hWndBtn)
     HWND hwndBtn = (HWND)hWndBtn;
 
     if ( !s_wndprocRadioBtn )
-        s_wndprocRadioBtn = wxGetWindowProc(hwndBtn);
+        s_wndprocRadioBtn = (WXFARPROC)wxGetWindowProc(hwndBtn);
 
     wxSetWindowProc(hwndBtn, wxRadioBtnWndProc);
 
@@ -365,7 +377,7 @@ void wxRadioBox::Command(wxCommandEvent & event)
 
 void wxRadioBox::SendNotificationEvent()
 {
-    wxCommandEvent event(wxEVT_RADIOBOX, m_windowId);
+    wxCommandEvent event(wxEVT_COMMAND_RADIOBOX_SELECTED, m_windowId);
     event.SetInt( m_selectedButton );
     event.SetString(GetString(m_selectedButton));
     event.SetEventObject( this );
@@ -384,6 +396,9 @@ unsigned int wxRadioBox::GetCount() const
 void wxRadioBox::SetString(unsigned int item, const wxString& label)
 {
     wxCHECK_RET( IsValid(item), wxT("invalid radiobox index") );
+
+    m_radioWidth[item] =
+    m_radioHeight[item] = wxDefaultCoord;
 
     ::SetWindowText((*m_radioButtons)[item], label.c_str());
 
@@ -421,25 +436,6 @@ void wxRadioBox::SetFocus()
                                         ? 0
                                         : m_selectedButton]);
     }
-}
-
-bool wxRadioBox::CanBeFocused() const
-{
-    // If the control itself is hidden or disabled, no need to check anything
-    // else.
-    if ( !wxStaticBox::CanBeFocused() )
-        return false;
-
-    // Otherwise, check if we have any buttons that can be focused.
-    for ( size_t item = 0; item < m_radioButtons->GetCount(); item++ )
-    {
-        if ( IsItemEnabled(item) && IsItemShown(item) )
-            return true;
-    }
-
-    // We didn't find any items that can accept focus, so neither can we as a
-    // whole accept it.
-    return false;
 }
 
 // Enable a specific button
@@ -523,6 +519,10 @@ bool wxRadioBox::Reparent(wxWindowBase *newParent)
     {
         ::SetParent((*m_radioButtons)[item], hwndParent);
     }
+#ifdef __WXWINCE__
+    // put static box under the buttons in the Z-order
+    SetWindowPos(GetHwnd(), HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
+#endif
     return true;
 }
 
@@ -534,15 +534,6 @@ WX_FORWARD_STD_METHODS_TO_SUBWINDOWS(wxRadioBox, wxStaticBox, m_radioButtons)
 
 wxSize wxRadioBox::GetMaxButtonSize() const
 {
-    // We use GetCheckBox() because there is no dedicated GetRadioBox() method
-    // in wxRendererNative, but check and radio boxes are usually of the same
-    // size anyhow. We also add half a character of width to account for the
-    // extra space after the radio box itself.
-    const int radioWidth =
-        wxRendererNative::Get().GetCheckBoxSize(
-            reinterpret_cast<wxWindow*>(const_cast<wxRadioBox*>(this))).x
-        + GetCharWidth() / 2;
-
     // calculate the max button size
     int widthMax = 0,
         heightMax = 0;
@@ -550,12 +541,21 @@ wxSize wxRadioBox::GetMaxButtonSize() const
     for ( unsigned int i = 0 ; i < count; i++ )
     {
         int width, height;
-        GetTextExtent(wxGetWindowText((*m_radioButtons)[i]), &width, &height);
+        if ( m_radioWidth[i] < 0 )
+        {
+            GetTextExtent(wxGetWindowText((*m_radioButtons)[i]), &width, &height);
 
-        // adjust the size to take into account the radio box itself
-        width += radioWidth;
-        height *= 3;
-        height /= 2;
+            // adjust the size to take into account the radio box itself
+            // FIXME this is totally bogus!
+            width += RADIO_SIZE;
+            height *= 3;
+            height /= 2;
+        }
+        else
+        {
+            width = m_radioWidth[i];
+            height = m_radioHeight[i];
+        }
 
         if ( widthMax < width )
             widthMax = width;
@@ -579,13 +579,14 @@ wxSize wxRadioBox::GetTotalButtonSize(const wxSize& sizeBtn) const
 
     // Add extra space under the label, if it exists.
     if (!wxControl::GetLabel().empty())
-        height += wxRendererNative::Get().GetCheckBoxSize(
-            reinterpret_cast<wxWindow*>(const_cast<wxRadioBox*>(this))).y / 2;
+        height += cy1/2;
 
     // and also wide enough for its label
-    int widthBox = wxStaticBox::DoGetBestSize().x;
-    if ( widthBox > width )
-        width = widthBox;
+    int widthLabel;
+    GetTextExtent(GetLabelText(), &widthLabel, NULL);
+    widthLabel += RADIO_SIZE; // FIXME this is bogus too
+    if ( widthLabel > width )
+        width = widthLabel;
 
     return wxSize(width, height);
 }
@@ -599,7 +600,9 @@ wxSize wxRadioBox::DoGetBestSize() const
         return wxSize(1, 1);
     }
 
-    return GetTotalButtonSize(GetMaxButtonSize());
+    wxSize best = GetTotalButtonSize(GetMaxButtonSize());
+    CacheBestSize(best);
+    return best;
 }
 
 void wxRadioBox::DoSetSize(int x, int y, int width, int height, int sizeFlags)
@@ -655,8 +658,7 @@ wxRadioBox::PositionAllButtons(int x, int y, int width, int WXUNUSED(height))
 
     // Add extra space under the label, if it exists.
     if (!wxControl::GetLabel().empty())
-        y_offset += wxRendererNative::Get().GetCheckBoxSize(
-            reinterpret_cast<wxWindow*>(this)).y / 2;
+        y_offset += cy1/2;
 
     int startX = x_offset;
     int startY = y_offset;
@@ -694,6 +696,8 @@ wxRadioBox::PositionAllButtons(int x, int y, int width, int WXUNUSED(height))
             {
                 x_offset = startX;
                 y_offset += maxHeight;
+                if (m_radioWidth[0]>0)
+                    y_offset += cy1/2;
             }
         }
 
@@ -722,6 +726,8 @@ wxRadioBox::PositionAllButtons(int x, int y, int width, int WXUNUSED(height))
         {
             // below this one
             y_offset += maxHeight;
+            if (m_radioWidth[0]>0)
+                y_offset += cy1/2;
         }
         else
         {
@@ -748,17 +754,11 @@ int wxRadioBox::GetItemFromPoint(const wxPoint& pt) const
     return wxNOT_FOUND;
 }
 
-void wxRadioBox::MSWUpdateFontOnDPIChange(const wxSize& newDPI)
-{
-    wxStaticBox::MSWUpdateFontOnDPIChange(newDPI);
-
-    if ( m_font.IsOk() )
-        m_radioButtons->SetFont(m_font);
-}
-
 // ----------------------------------------------------------------------------
 // radio box drawing
 // ----------------------------------------------------------------------------
+
+#ifndef __WXWINCE__
 
 WXHRGN wxRadioBox::MSWGetRegionWithoutChildren()
 {
@@ -781,12 +781,16 @@ WXHRGN wxRadioBox::MSWGetRegionWithoutChildren()
     return (WXHRGN)hrgn;
 }
 
+#endif // __WXWINCE__
+
 // ---------------------------------------------------------------------------
 // window proc for radio buttons
 // ---------------------------------------------------------------------------
 
-LRESULT APIENTRY
-wxRadioBtnWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT APIENTRY _EXPORT wxRadioBtnWndProc(HWND hwnd,
+                                           UINT message,
+                                           WPARAM wParam,
+                                           LPARAM lParam)
 {
 
     wxRadioBox * const radiobox = wxRadioBox::GetFromRadioButtonHWND(hwnd);
@@ -873,6 +877,7 @@ wxRadioBtnWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
             break;
 
+#ifndef __WXWINCE__
         case WM_HELP:
             {
                 bool processed = false;
@@ -909,6 +914,7 @@ wxRadioBtnWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
                     return 0;
             }
             break;
+#endif // !__WXWINCE__
     }
 
     return ::CallWindowProc(CASTWNDPROC s_wndprocRadioBtn, hwnd, message, wParam, lParam);

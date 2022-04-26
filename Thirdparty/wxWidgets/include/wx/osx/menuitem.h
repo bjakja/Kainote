@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     11.11.97
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -16,7 +17,7 @@
 // ----------------------------------------------------------------------------
 
 #include "wx/defs.h"
-#include "wx/vector.h"
+#include "wx/bitmap.h"
 
 // ----------------------------------------------------------------------------
 // wxMenuItem: an item in the menu, optionally implements owner-drawn behaviour
@@ -37,41 +38,46 @@ public:
     virtual ~wxMenuItem();
 
     // override base class virtuals
-    virtual void SetItemLabel(const wxString& strName) wxOVERRIDE;
+    virtual void SetItemLabel(const wxString& strName);
 
-    virtual void Enable(bool bDoEnable = true) wxOVERRIDE;
-    virtual void Check(bool bDoCheck = true) wxOVERRIDE;
+    virtual void Enable(bool bDoEnable = true);
+    virtual void Check(bool bDoCheck = true);
 
-#if wxUSE_ACCEL
-    virtual void AddExtraAccel(const wxAcceleratorEntry& accel) wxOVERRIDE;
-    virtual void ClearExtraAccels() wxOVERRIDE;
-    void RemoveHiddenItems();
-#endif // wxUSE_ACCEL
-
-    virtual void SetBitmap(const wxBitmapBundle& bitmap) ;
-    virtual wxBitmap GetBitmap() const;
-
-
-    // Implementation only from now on.
+    virtual void SetBitmap(const wxBitmap& bitmap) ;
+    virtual const wxBitmap& GetBitmap() const { return m_bitmap; }
 
     // update the os specific representation
     void UpdateItemBitmap() ;
     void UpdateItemText() ;
     void UpdateItemStatus() ;
 
+    // mark item as belonging to the given radio group
+    void SetAsRadioGroupStart();
+    void SetRadioGroupStart(int start);
+    void SetRadioGroupEnd(int end);
+
     wxMenuItemImpl* GetPeer() { return m_peer; }
 private:
     void UncheckRadio() ;
 
-    wxBitmapBundle m_bitmap; // Bitmap for menuitem, if any
+    // the positions of the first and last items of the radio group this item
+    // belongs to or -1: start is the radio group start and is valid for all
+    // but first radio group items (m_isRadioGroupStart == FALSE), end is valid
+    // only for the first one
+    union
+    {
+        int start;
+        int end;
+    } m_radioGroup;
+
+    // does this item start a radio group?
+    bool m_isRadioGroupStart;
+
+    wxBitmap  m_bitmap; // Bitmap for menuitem, if any
 
     wxMenuItemImpl* m_peer;
 
-#if wxUSE_ACCEL
-    wxVector<wxMenuItem*> m_hiddenMenuItems;
-#endif // wxUSE_ACCEL
-
-    wxDECLARE_DYNAMIC_CLASS(wxMenuItem);
+    DECLARE_DYNAMIC_CLASS(wxMenuItem)
 };
 
 #endif  //_MENUITEM_H

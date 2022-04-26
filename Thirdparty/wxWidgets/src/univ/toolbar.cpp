@@ -4,6 +4,7 @@
 // Author:      Robert Roebling, Vadim Zeitlin (universalization)
 // Modified by:
 // Created:     20.02.02
+// Id:          $Id$
 // Copyright:   (c) 2001 Robert Roebling,
 //              (c) 2002 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
@@ -20,6 +21,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_TOOLBAR
 
@@ -78,8 +82,8 @@ public:
     wxToolBarTool(wxToolBar *tbar,
                   int id,
                   const wxString& label,
-                  const wxBitmapBundle& bmpNormal,
-                  const wxBitmapBundle& bmpDisabled,
+                  const wxBitmap& bmpNormal,
+                  const wxBitmap& bmpDisabled,
                   wxItemKind kind,
                   wxObject *clientData,
                   const wxString& shortHelp,
@@ -150,7 +154,7 @@ private:
 // wxToolBar implementation
 // ============================================================================
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxToolBar, wxControl);
+IMPLEMENT_DYNAMIC_CLASS(wxToolBar, wxControl)
 
 // ----------------------------------------------------------------------------
 // wxToolBar creation
@@ -313,8 +317,8 @@ void wxToolBar::DoSetToggle(wxToolBarToolBase *tool, bool WXUNUSED(toggle))
 
 wxToolBarToolBase *wxToolBar::CreateTool(int id,
                                          const wxString& label,
-                                         const wxBitmapBundle& bmpNormal,
-                                         const wxBitmapBundle& bmpDisabled,
+                                         const wxBitmap& bmpNormal,
+                                         const wxBitmap& bmpDisabled,
                                          wxItemKind kind,
                                          wxObject *clientData,
                                          const wxString& shortHelp,
@@ -560,6 +564,33 @@ wxSize wxToolBar::DoGetBestClientSize() const
     return wxSize(m_maxWidth, m_maxHeight);
 }
 
+void wxToolBar::DoSetSize(int x, int y, int width, int height, int sizeFlags)
+{
+    int old_width, old_height;
+    GetSize(&old_width, &old_height);
+
+    wxToolBarBase::DoSetSize(x, y, width, height, sizeFlags);
+
+    // Correct width and height if needed.
+    if ( width == wxDefaultCoord || height == wxDefaultCoord )
+    {
+        int tmp_width, tmp_height;
+        GetSize(&tmp_width, &tmp_height);
+
+        if ( width == wxDefaultCoord )
+            width = tmp_width;
+        if ( height == wxDefaultCoord )
+            height = tmp_height;
+    }
+
+    // We must refresh the frame size when the toolbar changes size
+    // otherwise the toolbar can be shown incorrectly
+    if ( old_width != width || old_height != height )
+    {
+        SendSizeEventToParent();
+    }
+}
+
 // ----------------------------------------------------------------------------
 // wxToolBar drawing
 // ----------------------------------------------------------------------------
@@ -713,7 +744,7 @@ bool wxToolBar::PerformAction(const wxControlAction& action,
     }
     else if ( action == wxACTION_TOOLBAR_PRESS )
     {
-        wxLogTrace(wxT("toolbar"), wxT("Button '%s' pressed."), tool->GetShortHelp());
+        wxLogTrace(wxT("toolbar"), wxT("Button '%s' pressed."), tool->GetShortHelp().c_str());
 
         tool->Invert();
 
@@ -721,7 +752,7 @@ bool wxToolBar::PerformAction(const wxControlAction& action,
     }
     else if ( action == wxACTION_TOOLBAR_RELEASE )
     {
-        wxLogTrace(wxT("toolbar"), wxT("Button '%s' released."), tool->GetShortHelp());
+        wxLogTrace(wxT("toolbar"), wxT("Button '%s' released."), tool->GetShortHelp().c_str());
 
         wxASSERT_MSG( tool->IsInverted(), wxT("release unpressed button?") );
 

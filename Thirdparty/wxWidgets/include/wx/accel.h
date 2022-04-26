@@ -4,6 +4,7 @@
 // Author:      Julian Smart, Robert Roebling, Vadim Zeitlin
 // Modified by:
 // Created:     31.05.01 (extracted from other files)
+// RCS-ID:      $Id$
 // Copyright:   (c) wxWidgets team
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -32,8 +33,8 @@ enum wxAcceleratorEntryFlags
     wxACCEL_ALT     = 0x0001,   // hold Alt key down
     wxACCEL_CTRL    = 0x0002,   // hold Ctrl key down
     wxACCEL_SHIFT   = 0x0004,   // hold Shift key down
-#if defined(__WXMAC__)
-    wxACCEL_RAW_CTRL= 0x0008,   //
+#if defined(__WXMAC__) || defined(__WXCOCOA__)
+    wxACCEL_RAW_CTRL= 0x0008,   // 
 #else
     wxACCEL_RAW_CTRL= wxACCEL_CTRL,
 #endif
@@ -55,9 +56,23 @@ public:
         , m_item(item)
         { }
 
+    wxAcceleratorEntry(const wxAcceleratorEntry& entry)
+        : m_flags(entry.m_flags)
+        , m_keyCode(entry.m_keyCode)
+        , m_command(entry.m_command)
+        , m_item(entry.m_item)
+        { }
+
     // create accelerator corresponding to the specified string, return NULL if
     // string couldn't be parsed or a pointer to be deleted by the caller
     static wxAcceleratorEntry *Create(const wxString& str);
+
+    wxAcceleratorEntry& operator=(const wxAcceleratorEntry& entry)
+    {
+        if (&entry != this)
+            Set(entry.m_flags, entry.m_keyCode, entry.m_command, entry.m_item);
+        return *this;
+    }
 
     void Set(int flags, int keyCode, int cmd, wxMenuItem *item = NULL)
     {
@@ -100,7 +115,7 @@ public:
     // string <-> wxAcceleratorEntry conversion
     // ----------------------------------------
 
-    // returns a wxString for this accelerator.
+    // returns a wxString for the this accelerator.
     // this function formats it using the <flags>-<keycode> format
     // where <flags> maybe a hyphen-separated list of "shift|alt|ctrl"
     wxString ToString() const { return AsPossiblyLocalizedString(true); }
@@ -150,8 +165,10 @@ private:
     #include "wx/gtk1/accel.h"
 #elif defined(__WXMAC__)
     #include "wx/osx/accel.h"
-#elif defined(__WXQT__)
-    #include "wx/qt/accel.h"
+#elif defined(__WXCOCOA__)
+    #include "wx/generic/accel.h"
+#elif defined(__WXPM__)
+    #include "wx/os2/accel.h"
 #endif
 
 extern WXDLLIMPEXP_DATA_CORE(wxAcceleratorTable) wxNullAcceleratorTable;

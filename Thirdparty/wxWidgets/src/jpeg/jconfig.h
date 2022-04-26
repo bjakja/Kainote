@@ -1,9 +1,10 @@
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(__OS2__)
 #include "jconfig.vc"
 #else
 
+/* jconfig.h.  Generated automatically by configure.  */
 /* jconfig.cfg --- source file edited by configure script */
-/* see jconfig.txt for explanations */
+/* see jconfig.doc for explanations */
 
 /* use wxWidgets' configure */
 #include "wx/setup.h"
@@ -32,10 +33,6 @@
 #define HAVE_STDLIB_H
 #endif
 
-#ifndef HAVE_LOCALE_H
-#define HAVE_LOCALE_H
-#endif
-
 #undef NEED_BSD_STRINGS
 #undef NEED_SYS_TYPES_H
 #undef NEED_FAR_POINTERS
@@ -43,24 +40,20 @@
 /* Define this if you get warnings about undefined structures. */
 #undef INCOMPLETE_TYPES_BROKEN
 
-/* Define "boolean" as unsigned char, not enum, on Windows systems. */
-#ifdef _WIN32
-#ifndef __RPCNDR_H__		/* don't conflict if rpcndr.h already read */
-typedef unsigned char boolean;
-#endif
-#ifndef FALSE			/* in case these macros already exist */
-#define FALSE	0		/* values of boolean */
-#endif
-#ifndef TRUE
-#define TRUE	1
-#endif
-#define HAVE_BOOLEAN		/* prevent jmorecfg.h from redefining it */
-#endif
-
 #ifdef JPEG_INTERNALS
 
 #undef RIGHT_SHIFT_IS_UNSIGNED
-#undef INLINE
+
+/* use wxWidgets' configure */
+/* #define INLINE __inline__ */
+#if defined(__VISAGECPP__) && (__IBMCPP__ >= 400 || __IBMC__ >= 400)
+#define INLINE
+#elif defined(__WATCOMC__)
+#define INLINE
+#else
+#define INLINE inline
+#endif
+
 /* These are for configuring the JPEG memory manager. */
 #undef DEFAULT_MAX_MEM
 #undef NO_MKTEMP

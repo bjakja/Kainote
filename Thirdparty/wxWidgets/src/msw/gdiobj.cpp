@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,6 +12,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #include "wx/gdiobj.h"
 
@@ -26,7 +30,7 @@
 #define M_GDIDATA static_cast<wxGDIRefData*>(m_refData)
 
 /*
-void wxGDIObject::IncrementResourceUsage()
+void wxGDIObject::IncrementResourceUsage(void)
 {
     if ( !M_GDIDATA )
         return;
@@ -35,7 +39,7 @@ void wxGDIObject::IncrementResourceUsage()
   M_GDIDATA->m_usageCount ++;
 };
 
-void wxGDIObject::DecrementResourceUsage()
+void wxGDIObject::DecrementResourceUsage(void)
 {
     if ( !M_GDIDATA )
         return;

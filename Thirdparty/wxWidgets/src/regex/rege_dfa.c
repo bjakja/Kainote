@@ -34,6 +34,17 @@
  - longest - longest-preferred matching engine
  ^ static chr *longest(struct vars *, struct dfa *, chr *, chr *, int *);
  */
+
+#include "regex.h"
+#include "regguts.h"
+#include "regerrs.h"
+#include "regcustom.h"
+
+ /* ASCII character-name table */
+typedef char chr;
+typedef char* pchr;
+//#define NULL 0;
+
 static chr *			/* endpoint, or NULL */
 longest(v, d, start, stop, hitstopp)
 struct vars *v;			/* used only for debug and exec flags */

@@ -4,23 +4,27 @@
 // Author:      Guilhem Lavaux
 // Modified by: Mike Wetherell
 // Created:     11/07/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Guilhem Lavaux
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_ZLIB && wxUSE_STREAMS
 
-#include "wx\zstream.h"
-#include "wx\versioninfo.h"
+#include "wx/zstream.h"
+#include "wx/versioninfo.h"
 
 #ifndef WX_PRECOMP
-    #include "wx\intl.h"
-    #include "wx\log.h"
-    #include "wx\utils.h"
+    #include "wx/intl.h"
+    #include "wx/log.h"
+    #include "wx/utils.h"
 #endif
 
 
@@ -60,7 +64,7 @@ wxVersionInfo wxGetZlibVersionInfo()
 /////////////////////////////////////////////////////////////////////////////
 // Zlib Class factory
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxZlibClassFactory, wxFilterClassFactory);
+IMPLEMENT_DYNAMIC_CLASS(wxZlibClassFactory, wxFilterClassFactory)
 
 static wxZlibClassFactory g_wxZlibClassFactory;
 
@@ -88,7 +92,7 @@ wxZlibClassFactory::GetProtocols(wxStreamProtocolType type) const
 /////////////////////////////////////////////////////////////////////////////
 // Gzip Class factory
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxGzipClassFactory, wxFilterClassFactory);
+IMPLEMENT_DYNAMIC_CLASS(wxGzipClassFactory, wxFilterClassFactory)
 
 static wxGzipClassFactory g_wxGzipClassFactory;
 
@@ -246,7 +250,7 @@ size_t wxZlibInputStream::OnSysRead(void *buffer, size_t size)
       wxString msg(m_inflate->msg, *wxConvCurrent);
       if (!msg)
         msg = wxString::Format(_("zlib error %d"), err);
-      wxLogError(_("Can't read from inflate stream: %s"), msg);
+      wxLogError(_("Can't read from inflate stream: %s"), msg.c_str());
       m_lasterror = wxSTREAM_READ_ERROR;
   }
 
@@ -263,9 +267,9 @@ size_t wxZlibInputStream::OnSysRead(void *buffer, size_t size)
   return major > 1 || (major == 1 && minor >= 2);
 }
 
-bool wxZlibInputStream::SetDictionary(const char *data, size_t datalen)
+bool wxZlibInputStream::SetDictionary(const char *data, const size_t datalen)
 {
-    return inflateSetDictionary(m_inflate, reinterpret_cast<const Bytef*>(data), datalen) == Z_OK;
+    return (inflateSetDictionary(m_inflate, (Bytef*)data, datalen) == Z_OK);
 }
 
 bool wxZlibInputStream::SetDictionary(const wxMemoryBuffer &buf)
@@ -397,7 +401,7 @@ size_t wxZlibOutputStream::OnSysWrite(const void *buffer, size_t size)
     return 0;
 
   int err = Z_OK;
-  m_deflate->next_in = const_cast<unsigned char*>(static_cast<const unsigned char*>(buffer));
+  m_deflate->next_in = (unsigned char *)buffer;
   m_deflate->avail_in = size;
 
   while (err == Z_OK && m_deflate->avail_in > 0) {
@@ -421,7 +425,7 @@ size_t wxZlibOutputStream::OnSysWrite(const void *buffer, size_t size)
     wxString msg(m_deflate->msg, *wxConvCurrent);
     if (!msg)
       msg = wxString::Format(_("zlib error %d"), err);
-    wxLogError(_("Can't write to deflate stream: %s"), msg);
+    wxLogError(_("Can't write to deflate stream: %s"), msg.c_str());
   }
 
   size -= m_deflate->avail_in;
@@ -434,9 +438,9 @@ size_t wxZlibOutputStream::OnSysWrite(const void *buffer, size_t size)
   return wxZlibInputStream::CanHandleGZip();
 }
 
-bool wxZlibOutputStream::SetDictionary(const char *data, size_t datalen)
+bool wxZlibOutputStream::SetDictionary(const char *data, const size_t datalen)
 {
-    return deflateSetDictionary(m_deflate, reinterpret_cast<const Bytef*>(data), datalen) == Z_OK;
+    return (deflateSetDictionary(m_deflate, (Bytef*)data, datalen) == Z_OK);
 }
 
 bool wxZlibOutputStream::SetDictionary(const wxMemoryBuffer &buf)

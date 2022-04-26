@@ -2,11 +2,16 @@
 // Name:        screenshot_app.cpp
 // Purpose:     Implement Application Class
 // Author:      Utensil Candel (UtensilCandel@@gmail.com)
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
+
+#ifdef __BORLANDC__
+#pragma hdrstop
+#endif
 
 // for all others, include the necessary headers wxWidgets headers)
 #ifndef WX_PRECOMP
@@ -23,7 +28,7 @@
 // ScreenshotApp
 // ----------------------------------------------------------------------------
 
-wxIMPLEMENT_APP(ScreenshotApp);
+IMPLEMENT_APP(ScreenshotApp);
 
 bool ScreenshotApp::OnInit()
 {

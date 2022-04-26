@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -16,7 +17,7 @@
 // Slider
 class WXDLLIMPEXP_CORE wxSlider: public wxSliderBase
 {
-    wxDECLARE_DYNAMIC_CLASS(wxSlider);
+    DECLARE_DYNAMIC_CLASS(wxSlider)
 
 public:
     wxSlider();
@@ -27,7 +28,7 @@ public:
         const wxSize& size = wxDefaultSize,
         long style = wxSL_HORIZONTAL,
         const wxValidator& validator = wxDefaultValidator,
-        const wxString& name = wxASCII_STR(wxSliderNameStr))
+        const wxString& name = wxSliderNameStr)
     {
         Create(parent, id, value, minValue, maxValue, pos, size, style, validator, name);
     }
@@ -40,7 +41,7 @@ public:
         const wxSize& size = wxDefaultSize,
         long style = wxSL_HORIZONTAL,
         const wxValidator& validator = wxDefaultValidator,
-        const wxString& name = wxASCII_STR(wxSliderNameStr));
+        const wxString& name = wxSliderNameStr);
 
     virtual int GetValue() const ;
     virtual void SetValue(int);
@@ -71,7 +72,7 @@ protected:
         int sizeFlags = wxSIZE_AUTO);
 
 private:
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
 };
 
 #endif

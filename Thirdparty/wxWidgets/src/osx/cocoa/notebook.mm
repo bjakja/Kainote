@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -22,14 +23,14 @@
 #endif
 
 #include "wx/string.h"
-#include "wx/private/bmpbndl.h"
+#include "wx/imaglist.h"
 #include "wx/osx/private.h"
 
 //
 // controller
 //
 
-@interface wxTabViewController : NSObject <NSTabViewDelegate>
+@interface wxTabViewController : NSObject wxOSX_10_6_AND_LATER(<NSTabViewDelegate>)
 {
 }
 
@@ -93,100 +94,6 @@
 
 @end
 
-// ========================================================================
-// WXCTabViewImageItem
-// ========================================================================
-@interface WXCTabViewImageItem : NSTabViewItem
-{
-    NSImage *m_image;
-}
-- (id)init;
-- (void)dealloc;
-- (NSSize)sizeOfLabel:(BOOL)shouldTruncateLabel;
-- (void)drawLabel:(BOOL)shouldTruncateLabel inRect:(NSRect)tabRect;
-- (NSImage*)image;
-- (void)setImage:(NSImage*)image;
-@end // interface WXCTabViewImageItem : NSTabViewItem
-
-
-@implementation WXCTabViewImageItem : NSTabViewItem
-- (id)init
-{
-    // With 10.12 SDK initWithIdentifier: is declared as taking a non-nil value
-    // and while this was fixed in 10.13 by adding the missing "nullable",
-    // avoid the annoying warning with 10.12 by explicitly disabling it.
-    wxCLANG_WARNING_SUPPRESS(nonnull)
-
-    if (self = [super initWithIdentifier:nil])
-    {
-        m_image = nil;
-    }
-
-    wxCLANG_WARNING_RESTORE(nonnull)
-
-    return self;
-}
-- (void)dealloc
-{
-    [m_image release];
-    [super dealloc];
-}
-- (NSSize)sizeOfLabel:(BOOL)shouldTruncateLabel
-{
-    NSSize labelSize = [super sizeOfLabel:shouldTruncateLabel];
-    if(!m_image)
-        return labelSize;
-    NSSize imageSize = [m_image size];
-    // scale image size
-    if(imageSize.height > labelSize.height)
-    {
-        imageSize.width *= labelSize.height/imageSize.height;
-        imageSize.height *= labelSize.height/imageSize.height;
-        [m_image setSize: imageSize];
-    }
-    labelSize.width += imageSize.width;
-    return labelSize;
-}
-- (void)drawLabel:(BOOL)shouldTruncateLabel inRect:(NSRect)tabRect
-{
-    if(m_image)
-    {
-        NSSize imageSize = [m_image size];
-        NSAffineTransform* imageTransform = [NSAffineTransform transform];
-        if( [[self view] isFlipped] )
-        {
-            [imageTransform translateXBy:tabRect.origin.x yBy:tabRect.origin.y+imageSize.height];
-            [imageTransform scaleXBy:1.0 yBy:-1.0];
-            [imageTransform concat];
-        }
-        [m_image drawAtPoint:NSZeroPoint fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1.0];
-        if( [[self view] isFlipped] )
-        {
-            [imageTransform invert];
-            [imageTransform concat];
-        }
-        tabRect.size.width -= imageSize.width;
-        tabRect.origin.x += imageSize.width;
-    }
-    [super drawLabel:shouldTruncateLabel inRect:tabRect];
-}
-- (NSImage*)image
-{
-    return m_image;
-}
-
-- (void)setImage:(NSImage*)image
-{
-    [image retain];
-    [m_image release];
-    m_image = image;
-    if(!m_image)
-        return;
-}
-
-@end // implementation WXCTabViewImageItem : NSTabViewItem
-
-
 class wxCocoaTabView : public wxWidgetCocoaImpl
 {
 public:
@@ -194,7 +101,7 @@ public:
     {
     }
 
-    void GetContentArea( int &left , int &top , int &width , int &height ) const wxOVERRIDE
+    void GetContentArea( int &left , int &top , int &width , int &height ) const
     {
         wxNSTabView* slf = (wxNSTabView*) m_osxView;
         NSRect r = [slf contentRect];
@@ -204,18 +111,17 @@ public:
         height = (int)r.size.height;
     }
 
-    void SetValue( wxInt32 value ) wxOVERRIDE
+    void SetValue( wxInt32 value )
     {
         wxNSTabView* slf = (wxNSTabView*) m_osxView;
         // avoid 'changed' events when setting the tab programmatically
         wxTabViewController* controller = [slf delegate];
         [slf setDelegate:nil];
-        if ( value > 0 )
-            [slf selectTabViewItemAtIndex:(value-1)];
+        [slf selectTabViewItemAtIndex:(value-1)];
         [slf setDelegate:controller];
     }
 
-    wxInt32 GetValue() const wxOVERRIDE
+    wxInt32 GetValue() const
     {
         wxNSTabView* slf = (wxNSTabView*) m_osxView;
         NSTabViewItem* selectedItem = [slf selectedTabViewItem];
@@ -225,7 +131,7 @@ public:
             return [slf indexOfTabViewItem:selectedItem]+1;
     }
 
-    void SetMaximum( wxInt32 maximum ) wxOVERRIDE
+    void SetMaximum( wxInt32 maximum )
     {
         wxNSTabView* slf = (wxNSTabView*) m_osxView;
         int cocoacount = [slf numberOfTabViewItems ];
@@ -237,7 +143,7 @@ public:
         {
             for ( int i = cocoacount ; i < maximum ; ++i )
             {
-                NSTabViewItem* item = [[WXCTabViewImageItem alloc] init];
+                NSTabViewItem* item = [[NSTabViewItem alloc] init];
                 [slf addTabViewItem:item];
                 [item release];
             }
@@ -253,7 +159,7 @@ public:
         [slf setDelegate:controller];
     }
 
-    void SetupTabs( const wxNotebook& notebook) wxOVERRIDE
+    void SetupTabs( const wxNotebook& notebook)
     {
         int pcount = notebook.GetPageCount();
 
@@ -266,35 +172,15 @@ public:
             [item setView:page->GetHandle() ];
             wxCFStringRef cf( page->GetLabel() , notebook.GetFont().GetEncoding() );
             [item setLabel:cf.AsNSString()];
-
-            const wxBitmapBundle bitmap = notebook.GetPageBitmapBundle(i);
-            if ( bitmap.IsOk() )
+            if ( notebook.GetImageList() && notebook.GetPageImage(i) >= 0 )
             {
-                [(WXCTabViewImageItem*) item setImage: wxOSXGetImageFromBundle(bitmap)];
+                const wxBitmap bmap = notebook.GetImageList()->GetBitmap( notebook.GetPageImage( i ) ) ;
+                if ( bmap.IsOk() )
+                {
+                    // TODO how to set an image on a tab
+                }
             }
         }
-    }
-
-    int TabHitTest(const wxPoint & pt, long* flags) wxOVERRIDE
-    {
-        int retval = wxNOT_FOUND;
-        
-        NSPoint nspt = wxToNSPoint( m_osxView, pt );
-        
-        wxNSTabView* slf = (wxNSTabView*) m_osxView;
-        
-        NSTabViewItem* hitItem = [slf tabViewItemAtPoint:nspt];
-        
-        if (!hitItem) {
-            if ( flags )
-                *flags = wxBK_HITTEST_NOWHERE;
-        } else {
-            retval = [slf indexOfTabViewItem:hitItem];
-            if ( flags )
-                *flags = wxBK_HITTEST_ONLABEL;
-        }
-        
-        return retval; 
     }
 };
 

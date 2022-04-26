@@ -2,27 +2,10 @@
 // Name:        mediactrl.h
 // Purpose:     interface of wxMediaEvent, wxMediaCtrl
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#define wxMC_NO_AUTORESIZE         0x0001
-
-/**
-    Describes the current state of the media.
-
-    @see wxMediaCtrl::GetState()
- */
-enum wxMediaState
-{
-    /** No media is being currently played. */
-    wxMEDIASTATE_STOPPED,
-
-    /** Current media is paused. */
-    wxMEDIASTATE_PAUSED,
-
-    /** There is media currently playing. */
-    wxMEDIASTATE_PLAYING
-};
 
 enum wxMediaCtrlPlayerControls
 {
@@ -50,7 +33,6 @@ enum wxMediaCtrlPlayerControls
     @beginEventTable{wxMediaEvent}
     @event{EVT_MEDIA_LOADED(id\, func)}
            Sent when a media has loaded enough data that it can start playing.
-           Processes a @c wxEVT_MEDIA_LOADED event type.
     @event{EVT_MEDIA_STOP(id\, func)}
            Sent when a media has switched to the @c wxMEDIASTATE_STOPPED state.
            You may be able to Veto this event to prevent it from stopping,
@@ -58,19 +40,14 @@ enum wxMediaCtrlPlayerControls
            the media (note that this may not have the desired effect - if you
            want to loop the media, for example, catch the @c EVT_MEDIA_FINISHED
            and play there instead).
-           Processes a @c wxEVT_MEDIA_STOP event type.
     @event{EVT_MEDIA_FINISHED(id\, func)}
            Sent when a media has finished playing in a wxMediaCtrl.
-           Processes a @c wxEVT_MEDIA_FINISHED event type.
     @event{EVT_MEDIA_STATECHANGED(id\, func)}
            Sent when a media has switched its state (from any media state).
-           Processes a @c wxEVT_MEDIA_STATECHANGED event type.
     @event{EVT_MEDIA_PLAY(id\, func)}
            Sent when a media has switched to the @c wxMEDIASTATE_PLAYING state.
-           Processes a @c wxEVT_MEDIA_PLAY event type.
     @event{EVT_MEDIA_PAUSE(id\, func)}
            Sent when a media has switched to the @c wxMEDIASTATE_PAUSED state.
-           Processes a @c wxEVT_MEDIA_PAUSE event type.
     @endEventTable
 
     @library{wxmedia}
@@ -88,8 +65,8 @@ public:
 /**
     @class wxMediaCtrl
 
-    wxMediaCtrl is a class for displaying various types of media, such as videos,
-    audio files, natively through native codecs.
+    wxMediaCtrl is a class for displaying types of media, such as videos, audio
+    files, natively through native codecs.
 
     wxMediaCtrl uses native backends to render media, for example on Windows
     there is a ActiveMovie/DirectShow backend, and on Macintosh there is a
@@ -122,15 +99,18 @@ public:
     Example:
 
     @code
-    // bind the media event
-    Bind(wxMY_ID, wxEVT_MEDIA_STOP, &MyFrame::OnMediaStop, this);
+    //connect to the media event
+    this->Connect(wxMY_ID, wxEVT_MEDIA_STOP, (wxObjectEventFunction)
+    (wxEventFunction)(wxMediaEventFunction) &MyFrame::OnMediaStop);
 
     //...
-    void MyFrame::OnMediaStop(wxMediaEvent& evt)
+    void MyFrame::OnMediaStop(const wxMediaEvent& evt)
     {
-        if( userWantsToSeek )
+        if(bUserWantsToSeek)
         {
-            m_mediactrl->Seek(m_mediactrl->Length() - 1);
+            m_mediactrl->SetPosition(
+                m_mediactrl->GetDuration() << 1
+                                    );
             evt.Veto();
         }
     }
@@ -146,7 +126,7 @@ public:
 
     Note that when changing the state of the media through Play() and other methods,
     the media may not actually be in the @c wxMEDIASTATE_PLAYING, for example.
-    If you are relying on the media being in certain state, catch the event relevant
+    If you are relying on the media being in certain state catch the event relevant
     to the state. See wxMediaEvent for the kinds of events that you can catch.
 
 
@@ -196,17 +176,22 @@ public:
 
     - @b wxMEDIABACKEND_DIRECTSHOW: Use ActiveMovie/DirectShow.
       Uses the native ActiveMovie (I.E. DirectShow) control.
-      Default backend on Windows and supported by nearly all Windows versions.
+      Default backend on Windows and supported by nearly all Windows versions,
+      even some Windows CE versions.
       May display a windows media player logo while inactive.
     - @b wxMEDIABACKEND_QUICKTIME: Use QuickTime. Mac Only.
-      WARNING: May not work correctly when embedded in a wxNotebook.
+      WARNING: May not working correctly embedded in a wxNotebook.
     - @b wxMEDIABACKEND_GSTREAMER, Use GStreamer. Unix Only.
-      Requires GStreamer 0.10 along with at the very least the xvimagesink,
-      xoverlay and gst-play modules of gstreamer to function.
+      Requires GStreamer 0.8 along with at the very least the xvimagesink, xoverlay,
+      and gst-play modules of gstreamer to function.
       You need the correct modules to play the relevant files, for example the
       mad module to play mp3s, etc.
-    - @b wxMEDIABACKEND_WMP10, Use Windows Media Player 10 (Windows only).
-      Works on systems with either Windows Media Player 9 or 10 installed.
+    - @b wxMEDIABACKEND_WMP10, Uses Windows Media Player 10 (Windows only) -
+      works on mobile machines with Windows Media Player 10 and desktop machines
+      with either Windows Media Player 9 or 10.
+
+    Note that other backends such as wxMEDIABACKEND_MCI can now be found at
+    wxCode (http://wxcode.sourceforge.net/).
 
 
     @section mediactrl_creating_backend Creating a backend
@@ -217,27 +202,15 @@ public:
     wxMediaCtrl::CreateControl which does the actual creation of the control,
     in cases where a custom control is not needed you may simply call wxControl::Create().
 
-    You need to make sure to use the @c wxDECLARE_CLASS and @c wxIMPLEMENT_CLASS macros.
+    You need to make sure to use the @c DECLARE_CLASS and @c IMPLEMENT_CLASS macros.
 
     The only real tricky part is that you need to make sure the file in compiled in,
     which if there are just backends in there will not happen and you may need to
-    use a force link hack (see @c wxFORCE_LINK_MODULE usage in the mediactrl sample).
+    use a force link hack (see http://www.wxwidgets.org/wiki/index.php/RTTI).
 
-    There is a rather simple example of how to create a backend in the
+    This is a rather simple example of how to create a backend in the
     wxActiveXContainer documentation.
 
-
-    @beginStyleTable
-    @style{wxMC_NO_AUTORESIZE}
-           By default, the control will automatically adjust its size to
-           exactly fit the size of a loaded video as soon as a video is loaded.
-           If this flag is given, the control will not change its size
-           automatically and it must be done manually (if desired) using Layout().
-           It is strongly recommended to use this flag and handle control
-           resizing manually (note that this style is only available in
-           wxWidgets 3.1.6, so it is only possible to do it when using this or
-           later version).
-    @endStyleTable
 
     @library{wxmedia}
     @category{media}
@@ -269,8 +242,7 @@ public:
         @param size
             Size to put the control at and to stretch movie to.
         @param style
-            Optional styles. It is recommended to use ::wxMC_NO_AUTORESIZE,
-            although it is not used by default for compatibility reasons.
+            Optional styles.
         @param szBackend
             Name of backend you want to use, leave blank to make wxMediaCtrl figure it out.
         @param validator
@@ -286,8 +258,8 @@ public:
 
     /**
         Creates this control.
-        Returns @false if it can't load the media located at @a fileName
-        or it can't create a backend.
+        Returns @false if it can't load the movie located at @a fileName
+        or it cannot load one of its native backends.
 
         If you specify a file to open via @a fileName and you don't specify a
         backend to use, wxMediaCtrl tries each of its backends until one that
@@ -304,8 +276,7 @@ public:
         @param size
             Size to put the control at and to stretch movie to.
         @param style
-            Optional styles. It is recommended to use ::wxMC_NO_AUTORESIZE,
-            although it is not used by default for compatibility reasons.
+            Optional styles.
         @param szBackend
             Name of backend you want to use, leave blank to make wxMediaCtrl figure it out.
         @param validator
@@ -336,12 +307,12 @@ public:
     double GetPlaybackRate();
 
     /**
-        Obtains the state the playback of the media is in.
+        Obtains the state the playback of the media is in -
 
         @beginTable
-        @row2col{wxMEDIASTATE_STOPPED, The media has stopped.}
-        @row2col{wxMEDIASTATE_PAUSED, The media is paused.}
-        @row2col{wxMEDIASTATE_PLAYING, The media is currently playing.}
+        @row2col{wxMEDIASTATE_STOPPED, The movie has stopped.}
+        @row2col{wxMEDIASTATE_PAUSED, The movie is paused.}
+        @row2col{wxMEDIASTATE_PLAYING, The movie is currently playing.}
         @endTable
     */
     wxMediaState GetState();
@@ -355,7 +326,7 @@ public:
     double GetVolume();
 
     /**
-        Obtains the length - the total amount of time the media has in milliseconds.
+        Obtains the length - the total amount of time the movie has in milliseconds.
     */
     wxFileOffset Length();
 
@@ -381,26 +352,26 @@ public:
     /**
         Same as Load(const wxURI& uri). Kept for wxPython compatibility.
     */
-    bool LoadURI(const wxString& uri);
+    bool LoadURI(const wxString& fileName);
 
     /**
         Same as Load(const wxURI& uri, const wxURI& proxy).
         Kept for wxPython compatibility.
     */
-    bool LoadURIWithProxy(const wxString& uri, const wxString& proxy);
+    bool LoadURIWithProxy(const wxString& fileName, const wxString& proxy);
 
     /**
-        Pauses playback of the media.
+        Pauses playback of the movie.
     */
     bool Pause();
 
     /**
-        Resumes playback of the media.
+        Resumes playback of the movie.
     */
     bool Play();
 
     /**
-        Seeks to a position within the media.
+        Seeks to a position within the movie.
 
         @todo Document the wxSeekMode parameter @a mode, and perhaps also the
               wxFileOffset and wxSeekMode themselves.
@@ -430,7 +401,7 @@ public:
         A special feature to wxMediaCtrl. Applications using native toolkits such as
         QuickTime usually have a scrollbar, play button, and more provided to
         them by the toolkit. By default wxMediaCtrl does not do this. However, on
-        the DirectShow and QuickTime backends you can show or hide the native controls
+        the directshow and quicktime backends you can show or hide the native controls
         provided by the underlying toolkit at will using ShowPlayerControls(). Simply
         calling the function with default parameters tells wxMediaCtrl to use the
         default controls provided by the toolkit. The function takes a
@@ -451,14 +422,8 @@ public:
     bool Stop();
 
     /**
-        Obtains the current position in time within the media in milliseconds.
+        Obtains the current position in time within the movie in milliseconds.
     */
     wxFileOffset Tell();
 };
 
-wxEventType wxEVT_MEDIA_LOADED;
-wxEventType wxEVT_MEDIA_STOP;
-wxEventType wxEVT_MEDIA_FINISHED;
-wxEventType wxEVT_MEDIA_STATECHANGED;
-wxEventType wxEVT_MEDIA_PLAY;
-wxEventType wxEVT_MEDIA_PAUSE;

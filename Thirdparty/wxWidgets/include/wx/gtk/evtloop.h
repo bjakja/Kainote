@@ -3,6 +3,7 @@
 // Purpose:     wxGTK event loop implementation
 // Author:      Vadim Zeitlin
 // Created:     2008-12-27
+// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -21,18 +22,21 @@ class WXDLLIMPEXP_CORE wxGUIEventLoop : public wxEventLoopBase
 public:
     wxGUIEventLoop();
 
-    virtual void ScheduleExit(int rc = 0) wxOVERRIDE;
-    virtual bool Pending() const wxOVERRIDE;
-    virtual bool Dispatch() wxOVERRIDE;
-    virtual int DispatchTimeout(unsigned long timeout) wxOVERRIDE;
-    virtual void WakeUp() wxOVERRIDE;
+    virtual int Run();
+    virtual void Exit(int rc = 0);
+    virtual bool Pending() const;
+    virtual bool Dispatch();
+    virtual int DispatchTimeout(unsigned long timeout);
+    virtual void WakeUp();
+    virtual bool YieldFor(long eventsToProcess);
+
+#if wxUSE_EVENTLOOP_SOURCE
+    virtual wxEventLoopSource *
+      AddSourceForFD(int fd, wxEventLoopSourceHandler *handler, int flags);
+#endif // wxUSE_EVENTLOOP_SOURCE
 
     void StoreGdkEventForLaterProcessing(GdkEvent* ev)
         { m_arrGdkEvents.Add(ev); }
-
-protected:
-    virtual int DoRun() wxOVERRIDE;
-    virtual void DoYieldFor(long eventsToProcess) wxOVERRIDE;
 
 private:
     // the exit code of this event loop

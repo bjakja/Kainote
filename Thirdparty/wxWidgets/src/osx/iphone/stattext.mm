@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     04/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -80,22 +81,22 @@ wxWidgetImplType* wxWidgetImpl::CreateStaticText( wxWindowMac* wxpeer,
     wxUILabel* v = [[wxUILabel alloc] initWithFrame:r];
     v.backgroundColor = [UIColor clearColor];
 
-    NSLineBreakMode linebreak = NSLineBreakByWordWrapping;
-    if ( style & wxST_ELLIPSIZE_MASK )
+    UILineBreakMode linebreak = UILineBreakModeWordWrap;
+    if ( ((wxStaticText*)wxpeer)->IsEllipsized() )
     {
         if ( style & wxST_ELLIPSIZE_MIDDLE )
-            linebreak = NSLineBreakByTruncatingMiddle;
+            linebreak = UILineBreakModeMiddleTruncation;
         else if (style & wxST_ELLIPSIZE_END )
-            linebreak = NSLineBreakByTruncatingTail;
+            linebreak = UILineBreakModeTailTruncation;
         else if (style & wxST_ELLIPSIZE_START )
-            linebreak = NSLineBreakByTruncatingHead;
+            linebreak = UILineBreakModeHeadTruncation;
     }
     [v setLineBreakMode:linebreak];
 
     if (style & wxALIGN_CENTER)
-        [v setTextAlignment: NSTextAlignmentCenter];
+        [v setTextAlignment: UITextAlignmentCenter];
     else if (style & wxALIGN_RIGHT)
-        [v setTextAlignment: NSTextAlignmentRight];
+        [v setTextAlignment: UITextAlignmentRight];
     
     wxWidgetIPhoneImpl* c = new wxStaticTextIPhoneImpl( wxpeer, v );
     return c;

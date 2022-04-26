@@ -4,6 +4,7 @@
 // Author:      Eric Dowty
 // Modified by:
 // Created:     2002-11-18
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,6 +12,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
     #include "wx/wx.h"
@@ -81,7 +85,7 @@ bool rhhcConnection::OnDisconnect()
 
 // wxRemoteHtmlHelpController class
 
-wxIMPLEMENT_CLASS(wxRemoteHtmlHelpController, wxHelpControllerBase);
+IMPLEMENT_CLASS(wxRemoteHtmlHelpController, wxHelpControllerBase)
 
 wxRemoteHtmlHelpController::wxRemoteHtmlHelpController(int style )
 {

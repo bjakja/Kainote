@@ -2,6 +2,7 @@
 // Name:        filefn.h
 // Purpose:     interface of wxPathList and file functions
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -130,6 +131,26 @@ typedef off_t wxFileOffset;
 #define wxCHANGE_UMASK(mask)
 
 /**
+    This function returns the total number of bytes and number of free bytes on
+    the disk containing the directory @a path (it should exist). Both @a total
+    and @a free parameters may be @NULL if the corresponding information is not
+    needed.
+
+    @since 2.3.2
+
+    @note The generic Unix implementation depends on the system having the
+          @c statfs() or @c statvfs() function.
+
+    @return @true on success, @false if an error occurred (for example, the
+             directory doesn’t exist).
+
+    @header{wx/filefn.h}
+*/
+bool wxGetDiskSpace(const wxString& path,
+                    wxLongLong total = NULL,
+                    wxLongLong free = NULL);
+
+/**
     Returns the Windows directory under Windows; other platforms return an
     empty string.
 
@@ -225,21 +246,21 @@ void wxSplitPath(const wxString& fullname,
 time_t wxFileModificationTime(const wxString& filename);
 
 /**
-    Renames @a oldpath to @e newpath, returning @true if successful.
+    Renames @a file1 to @e file2, returning @true if successful.
 
-    If @a newpath is a directory, @a oldpath is moved into it (@a overwrite is
-    ignored in this case). Otherwise, if @a newpath is an existing file, it is
+    If @a file2 is a directory, @a file1 is moved into it (@a overwrite is
+    ignored in this case). Otherwise, if @a file2 is an existing file, it is
     overwritten if @a overwrite is @true (default) and the function fails if @a
     overwrite is @false.
 
     @header{wx/filefn.h}
 */
-bool wxRenameFile(const wxString& oldpath,
-                   const wxString& newpath,
+bool wxRenameFile(const wxString& file1,
+                   const wxString& file2,
                    bool overwrite = true);
 
 /**
-    Copies @a src to @e dest, returning @true if successful. If @a overwrite
+    Copies @a file1 to @e file2, returning @true if successful. If @a overwrite
     parameter is @true (default), the destination file is overwritten if it
     exists, but if @a overwrite is @false, the functions fails in this case.
 
@@ -247,8 +268,8 @@ bool wxRenameFile(const wxString& oldpath,
 
     @header{wx/filefn.h}
 */
-bool wxCopyFile(const wxString& src,
-                 const wxString& dest,
+bool wxCopyFile(const wxString& file1,
+                 const wxString& file2,
                  bool overwrite = true);
 
 /**
@@ -262,9 +283,6 @@ bool wxFileExists(const wxString& filename);
     Returns @true if the @a pattern matches the @e text; if @a dot_special is
     @true, filenames beginning with a dot are not matched with wildcard
     characters.
-
-    @note Matching is always case-sensitive, even on platforms where paths
-          are generally treated as case-insensitive.
 
     @see wxIsWild()
 
@@ -304,7 +322,7 @@ wxString wxPathOnly(const wxString& path);
 bool wxIsWild(const wxString& pattern);
 
 /**
-    Returns @true if the argument is an absolute filename, i.e.\ with a slash
+    Returns @true if the argument is an absolute filename, i.e. with a slash
     or drive name at the beginning.
 
     @header{wx/filefn.h}
@@ -328,14 +346,14 @@ wxString wxGetCwd();
 bool wxSetWorkingDirectory(const wxString& dir);
 
 /**
-    Concatenates @a src1 and @a src2 to @e dest, returning @true if
+    Concatenates @a file1 and @a file2 to @e file3, returning @true if
     successful.
 
     @header{wx/filefn.h}
 */
-bool wxConcatFiles(const wxString& src1,
-                    const wxString& src2,
-                    const wxString& dest);
+bool wxConcatFiles(const wxString& file1,
+                    const wxString& file2,
+                    const wxString& file3);
 
 /**
     Removes @e file, returning @true if successful.

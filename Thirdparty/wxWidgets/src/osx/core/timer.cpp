@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     2008-07-01
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -69,6 +70,10 @@ bool wxOSXTimerImpl::Start( int milliseconds, bool mode )
     wxCHECK_MSG( m_milli > 0, false, wxT("invalid value for timer timeout") );
     wxCHECK_MSG( m_info->m_timerRef == NULL, false, wxT("attempting to restart a timer") );
 
+    CFGregorianUnits gumilli ;
+    memset(&gumilli,0,sizeof(gumilli) );
+    gumilli.seconds = m_milli / 1000.0;
+
     CFRunLoopTimerContext ctx ;
     memset( &ctx, 0 , sizeof(ctx) );
     ctx.version = 0;
@@ -76,7 +81,8 @@ bool wxOSXTimerImpl::Start( int milliseconds, bool mode )
 
     m_info->m_timer = this;
     m_info->m_timerRef = CFRunLoopTimerCreate(
-        kCFAllocatorDefault, CFAbsoluteTimeGetCurrent() + m_milli / 1000.0,
+        kCFAllocatorDefault,
+        CFAbsoluteTimeAddGregorianUnits( CFAbsoluteTimeGetCurrent() , NULL, gumilli ),
         IsOneShot() ? 0 : CFTimeInterval( m_milli / 1000.0 ) ,
         0, 0, wxProcessTimer, &ctx);
 

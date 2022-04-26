@@ -2,6 +2,7 @@
 // Name:        src/gtk1/dc.cpp
 // Purpose:
 // Author:      Robert Roebling
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,7 +19,7 @@
 // wxGTKDCImpl
 //-----------------------------------------------------------------------------
 
-wxIMPLEMENT_ABSTRACT_CLASS(wxGTKDCImpl, wxDCImpl);
+IMPLEMENT_ABSTRACT_CLASS(wxGTKDCImpl, wxDCImpl)
 
 wxGTKDCImpl::wxGTKDCImpl(wxDC *owner)
            : wxDCImpl(owner)
@@ -50,8 +51,8 @@ void wxGTKDCImpl::DoGetSizeMM( int* width, int* height ) const
     int w = 0;
     int h = 0;
     GetSize( &w, &h );
-    if (width) *width = int( double(w) / (m_userScaleX*GetMMToPXx()) );
-    if (height) *height = int( double(h) / (m_userScaleY*GetMMToPXy()) );
+    if (width) *width = int( double(w) / (m_userScaleX*m_mm_to_pix_x) );
+    if (height) *height = int( double(h) / (m_userScaleY*m_mm_to_pix_y) );
 }
 
 // Resolution in pixels per logical inch

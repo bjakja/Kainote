@@ -2,6 +2,7 @@
 // Name:        aui/dockart.h
 // Purpose:     interface of wxAuiDockArt
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -78,7 +79,7 @@ enum wxAuiPaneDockArtGradients
     /// No gradient on the captions, in other words a solid colour
     wxAUI_GRADIENT_NONE = 0,
 
-    /// Vertical gradient on the captions, in other words a gradual change in colours from top to bottom
+    /// Vertical gradient on the captions, in other words a gradal change in colours from top to bottom
     wxAUI_GRADIENT_VERTICAL = 1,
 
     /// Horizontal gradient on the captions, in other words a gradual change in colours from left to right
@@ -182,7 +183,7 @@ enum wxAuiButtonId
     See also @ref overview_aui.
 
     wxAuiDockArt is the art provider: provides all drawing functionality to the
-    wxAui dock manager. This allows the dock manager to have a pluggable look-and-feel.
+    wxAui dock manager. This allows the dock manager to have a plugable look-and-feel.
 
     By default, a wxAuiManager uses an instance of this class called
     wxAuiDefaultDockArt which provides bitmap art and a colour scheme that is
@@ -207,11 +208,6 @@ public:
         Destructor.
     */
     virtual ~wxAuiDockArt();
-
-    /**
-       Create a copy of this wxAuiDockArt instance.
-    */
-    virtual wxAuiDockArt* Clone() = 0;
 
     /**
         Draws a background.
@@ -284,110 +280,5 @@ public:
         @a id can be one of the size values of @b wxAuiPaneDockArtSetting.
     */
     virtual void SetMetric(int id, int new_val) = 0;
-};
-
-
-
-
-/**
-    @class wxAuiDefaultDockArt
-
-    This is the default art provider for @ref wxAuiManager.  Dock art
-    can be customized by creating a class derived from this one,
-    or replacing this class entirely.
-*/
-class  wxAuiDefaultDockArt : public wxAuiDockArt
-{
-public:
-
-    wxAuiDefaultDockArt();
-
-    virtual wxAuiDockArt* Clone();
-    int GetMetric(int metricId);
-    void SetMetric(int metricId, int newVal);
-    wxColour GetColour(int id);
-    void SetColour(int id, const wxColour& colour);
-    void SetFont(int id, const wxFont& font);
-    wxFont GetFont(int id);
-
-    void DrawSash(wxDC& dc,
-                  wxWindow *window,
-                  int orientation,
-                  const wxRect& rect);
-
-    void DrawBackground(wxDC& dc,
-                  wxWindow *window,
-                  int orientation,
-                  const wxRect& rect);
-
-    void DrawCaption(wxDC& dc,
-                  wxWindow *window,
-                  const wxString& text,
-                  const wxRect& rect,
-                  wxAuiPaneInfo& pane);
-
-    void DrawGripper(wxDC& dc,
-                  wxWindow *window,
-                  const wxRect& rect,
-                  wxAuiPaneInfo& pane);
-
-    void DrawBorder(wxDC& dc,
-                  wxWindow *window,
-                  const wxRect& rect,
-                  wxAuiPaneInfo& pane);
-
-    void DrawPaneButton(wxDC& dc,
-                  wxWindow *window,
-                  int button,
-                  int buttonState,
-                  const wxRect& rect,
-                  wxAuiPaneInfo& pane);
-
-    /**
-        @deprecated Not intended for the public API.
-    */
-    void DrawIcon(wxDC& dc,
-                  const wxRect& rect,
-                  wxAuiPaneInfo& pane);
-
-protected:
-
-    void DrawCaptionBackground(wxDC& dc, const wxRect& rect, bool active);
-
-    void DrawIcon(wxDC& dc, wxWindow *window, const wxRect& rect, wxAuiPaneInfo& pane);
-
-    void InitBitmaps();
-
-protected:
-
-    wxPen m_borderPen;
-    wxBrush m_sashBrush;
-    wxBrush m_backgroundBrush;
-    wxBrush m_gripperBrush;
-    wxFont m_captionFont;
-    wxBitmapBundle m_inactiveCloseBitmap;
-    wxBitmapBundle m_inactivePinBitmap;
-    wxBitmapBundle m_inactiveMaximizeBitmap;
-    wxBitmapBundle m_inactiveRestoreBitmap;
-    wxBitmapBundle m_activeCloseBitmap;
-    wxBitmapBundle m_activePinBitmap;
-    wxBitmapBundle m_activeMaximizeBitmap;
-    wxBitmapBundle m_activeRestoreBitmap;
-    wxPen m_gripperPen1;
-    wxPen m_gripperPen2;
-    wxPen m_gripperPen3;
-    wxColour m_baseColour;
-    wxColour m_activeCaptionColour;
-    wxColour m_activeCaptionGradientColour;
-    wxColour m_activeCaptionTextColour;
-    wxColour m_inactiveCaptionColour;
-    wxColour m_inactiveCaptionGradientColour;
-    wxColour m_inactiveCaptionTextColour;
-    int m_borderSize;
-    int m_captionSize;
-    int m_sashSize;
-    int m_buttonSize;
-    int m_gripperSize;
-    int m_gradientType;
 };
 

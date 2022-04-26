@@ -2,6 +2,7 @@
 // Name:        editlbox.h
 // Purpose:     interface of wxEditableListBox
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -32,7 +33,7 @@
 
     The control uses a wxListCtrl internally and emit its events.
 
-    @library{wxcore}
+    @library{wxadv}
     @category{ctrl}
 
     @see wxListBox, wxListCtrl
@@ -58,7 +59,7 @@ public:
             Window position.
             If ::wxDefaultPosition is specified then a default position is chosen.
         @param size
-            Window size.
+            Window size. 
             If ::wxDefaultSize is specified then the window is sized appropriately.
         @param style
             Window style. See wxEditableListBox.

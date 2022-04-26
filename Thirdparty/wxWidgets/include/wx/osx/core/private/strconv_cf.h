@@ -4,6 +4,7 @@
 // Author:      David Elliott, Ryan Norton
 // Modified by:
 // Created:     2007-07-06
+// RCS-ID:      $Id$
 // Copyright:   (c) 2004 Ryan Norton
 //              (c) 2007 David Elliott
 // Licence:     wxWindows licence
@@ -13,7 +14,6 @@
 
 #include <CoreFoundation/CFString.h>
 #include <CoreFoundation/CFStringEncodingExt.h>
-#include "wx/fontmap.h"
 
 // ============================================================================
 // CoreFoundation conversion classes
@@ -290,50 +290,41 @@ inline CFStringEncoding wxCFStringEncFromFontEnc(wxFontEncoding encoding)
 class wxMBConv_cf : public wxMBConv
 {
 public:
-    enum NormalizationForm
-    {
-        None = 0x00,
-        FromWChar_D = 0x01,
-        ToWChar_C = 0x02
-    };
-
     wxMBConv_cf()
     {
-        Init(CFStringGetSystemEncoding(), ToWChar_C) ;
+        Init(CFStringGetSystemEncoding()) ;
     }
 
     wxMBConv_cf(const wxMBConv_cf& conv) : wxMBConv()
     {
         m_encoding = conv.m_encoding;
-        m_normalization = conv.m_normalization;
     }
 
 #if wxUSE_FONTMAP
-    wxMBConv_cf(const char* name, NormalizationForm normalization = ToWChar_C)
+    wxMBConv_cf(const char* name)
     {
-        Init( wxCFStringEncFromFontEnc(wxFontMapperBase::Get()->CharsetToEncoding(name, false) ) , normalization) ;
+        Init( wxCFStringEncFromFontEnc(wxFontMapperBase::Get()->CharsetToEncoding(name, false) ) ) ;
     }
 #endif
 
-    wxMBConv_cf(wxFontEncoding encoding, NormalizationForm normalization = ToWChar_C )
+    wxMBConv_cf(wxFontEncoding encoding)
     {
-        Init( wxCFStringEncFromFontEnc(encoding) , normalization);
+        Init( wxCFStringEncFromFontEnc(encoding) );
     }
 
     virtual ~wxMBConv_cf()
     {
     }
 
-    void Init( CFStringEncoding encoding, NormalizationForm normalization )
+    void Init( CFStringEncoding encoding)
     {
         m_encoding = encoding ;
-        m_normalization = normalization;
     }
 
-    virtual size_t ToWChar(wchar_t * dst, size_t dstSize, const char * src, size_t srcSize = wxNO_LEN) const wxOVERRIDE;
-    virtual size_t FromWChar(char *dst, size_t dstSize, const wchar_t *src, size_t srcSize = wxNO_LEN) const wxOVERRIDE;
+    virtual size_t ToWChar(wchar_t * dst, size_t dstSize, const char * src, size_t srcSize = wxNO_LEN) const;
+    virtual size_t FromWChar(char *dst, size_t dstSize, const wchar_t *src, size_t srcSize = wxNO_LEN) const;
 
-    virtual wxMBConv *Clone() const wxOVERRIDE { return new wxMBConv_cf(*this); }
+    virtual wxMBConv *Clone() const { return new wxMBConv_cf(*this); }
 
     bool IsOk() const
     {
@@ -342,33 +333,6 @@ public:
     }
 
 private:
-    NormalizationForm m_normalization ;
     CFStringEncoding m_encoding ;
 };
 
-// This "decomposing" converter is used as wxConvFileName in wxOSX.
-class wxMBConvD_cf : public wxMBConv_cf
-{
-public:
-    wxMBConvD_cf(wxFontEncoding encoding) : wxMBConv_cf(encoding, (NormalizationForm) (ToWChar_C | FromWChar_D) )
-    {
-    }
-};
-
-// corresponding class for holding UniChars (native unicode characters)
-
-class WXDLLIMPEXP_BASE wxMacUniCharBuffer
-{
-    public :
-    wxMacUniCharBuffer( const wxString &str ) ;
-
-    ~wxMacUniCharBuffer() ;
-
-    UniCharPtr GetBuffer() ;
-
-    UniCharCount GetChars() ;
-
-    private :
-    UniCharPtr m_ubuf ;
-    UniCharCount m_chars ;
-};

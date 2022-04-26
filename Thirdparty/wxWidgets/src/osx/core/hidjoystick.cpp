@@ -4,6 +4,7 @@
 // Author:      Ryan Norton
 // Modified by:
 // Created:     2/13/2005
+// RCS-ID:      $Id$
 // Copyright:   (c) Ryan Norton
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -77,7 +78,7 @@ public:
     virtual ~wxHIDJoystick();
 
     bool Create(int nWhich);
-    virtual void BuildCookies(CFArrayRef Array) wxOVERRIDE;
+    virtual void BuildCookies(CFArrayRef Array);
     void MakeCookies(CFArrayRef Array);
     IOHIDElementCookie* GetCookies();
     IOHIDQueueInterface** GetQueue();
@@ -95,7 +96,7 @@ class wxJoystickThread : public wxThread
 {
 public:
     wxJoystickThread(wxHIDJoystick* hid, int joystick);
-    void* Entry() wxOVERRIDE;
+    void* Entry();
     static void HIDCallback(void* target, IOReturn res, void* context, void* sender);
 
 private:
@@ -133,7 +134,7 @@ void wxGetIntFromCFDictionary(CFTypeRef cfDict, CFStringRef key, int* pOut)
 //
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxJoystick, wxObject);
+IMPLEMENT_DYNAMIC_CLASS(wxJoystick, wxObject)
 
 //---------------------------------------------------------------------------
 // wxJoystick Constructor
@@ -187,14 +188,6 @@ wxPoint wxJoystick::GetPosition() const
     if (m_thread) pos = m_thread->m_lastposition;
     return pos;
 }
-int wxJoystick::GetPosition(unsigned int axis) const
-{
-    wxCHECK_MSG(axis < (unsigned)GetNumberAxes(), 0, "Invalid joystick axis");
-    if (m_thread)
-        return m_thread->m_axe[axis];
-    return 0;
-
-}
 int wxJoystick::GetZPosition() const
 {
     if (m_thread)
@@ -231,14 +224,6 @@ int wxJoystick::GetButtonState() const
     if (m_thread)
         return m_thread->m_buttons;
     return 0;
-}
-
-bool wxJoystick::GetButtonState(unsigned int id) const
-{
-    if (id >= sizeof(int) * 8)
-        return false;
-
-    return (GetButtonState() & (1 << id)) != 0;
 }
 
 //---------------------------------------------------------------------------
@@ -581,7 +566,7 @@ void wxHIDJoystick::BuildCookies(CFArrayRef Array)
 
     //
     // I wasted two hours of my life on this line :(
-    // accidentally removed it during some source cleaning...
+    // accidently removed it during some source cleaning...
     //
     MakeCookies(Array);
 
@@ -797,7 +782,7 @@ void* wxJoystickThread::Entry()
 //
 // This is where the REAL dirty work gets done.
 //
-// 1) Loops through each event the queue has received
+// 1) Loops through each event the queue has recieved
 // 2) First, checks if the thread that is running the loop for
 //    the polling has ended - if so it breaks out
 // 3) Next, it checks if there was an error getting this event from
@@ -808,21 +793,6 @@ void* wxJoystickThread::Entry()
 // 5) Sends the event to the polling window (if any)
 // 6) Gets the next event and goes back to (1)
 //---------------------------------------------------------------------------
-
-// from https://developer.apple.com/documentation/apple_silicon/addressing_architectural_differences_in_your_macos_code
-
-uint64_t MachTimeToNanoseconds(uint64_t machTime)
-{
-    uint64_t nanoseconds = 0;
-    static mach_timebase_info_data_t sTimebase;
-    if (sTimebase.denom == 0)
-        (void)mach_timebase_info(&sTimebase);
-
-    nanoseconds = ((machTime * sTimebase.numer) / sTimebase.denom);
-
-    return nanoseconds;
-}
-
 /*static*/ void wxJoystickThread::HIDCallback(void* WXUNUSED(target),
                                               IOReturn WXUNUSED(res),
                                               void* context,
@@ -874,20 +844,20 @@ uint64_t MachTimeToNanoseconds(uint64_t machTime)
 #endif
 
         //is the cookie a button?
-        if (nIndex < 32)
+        if (nIndex < 40)
         {
             if (hidevent.value)
             {
-                pThis->m_buttons |= (1u << nIndex);
+                pThis->m_buttons |= (1 << nIndex);
                 wxevent.SetEventType(wxEVT_JOY_BUTTON_DOWN);
             }
             else
             {
-                pThis->m_buttons &= ~(1u << nIndex);
+                pThis->m_buttons &= ~(1 << nIndex);
                 wxevent.SetEventType(wxEVT_JOY_BUTTON_UP);
             }
 
-            wxevent.SetButtonChange(1u << nIndex);
+            wxevent.SetButtonChange(nIndex+1);
         }
         else if (nIndex == wxJS_AXIS_X)
         {
@@ -909,9 +879,9 @@ uint64_t MachTimeToNanoseconds(uint64_t machTime)
         else
             wxevent.SetEventType(wxEVT_JOY_MOVE);
 
-        uint64_t timestamp = MachTimeToNanoseconds(*((uint64_t*) &hidevent.timestamp));
+        Nanoseconds timestamp = AbsoluteToNanoseconds(hidevent.timestamp);
 
-        wxULongLong llTime(timestamp);
+        wxULongLong llTime(timestamp.hi, timestamp.lo);
 
         llTime /= 1000000;
 

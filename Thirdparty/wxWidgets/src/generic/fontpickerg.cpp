@@ -4,6 +4,7 @@
 // Author:      Francesco Montorsi
 // Modified by:
 // Created:     15/04/2006
+// RCS-ID:      $Id$
 // Copyright:   (c) Francesco Montorsi
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_FONTPICKERCTRL
 
@@ -31,7 +35,7 @@
 // implementation
 // ============================================================================
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxGenericFontButton, wxButton);
+IMPLEMENT_DYNAMIC_CLASS(wxGenericFontButton, wxButton)
 
 // ----------------------------------------------------------------------------
 // wxGenericFontButton
@@ -55,12 +59,13 @@ bool wxGenericFontButton::Create( wxWindow *parent, wxWindowID id,
     }
 
     // and handle user clicks on it
-    Bind(wxEVT_BUTTON, &wxGenericFontButton::OnButtonClick, this, GetId());
-
-    InitFontData();
+    Connect(GetId(), wxEVT_COMMAND_BUTTON_CLICKED,
+            wxCommandEventHandler(wxGenericFontButton::OnButtonClick),
+            NULL, this);
 
     m_selectedFont = initial.IsOk() ? initial : *wxNORMAL_FONT;
     UpdateFont();
+    InitFontData();
 
     return true;
 }

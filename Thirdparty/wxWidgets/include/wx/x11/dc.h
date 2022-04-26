@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -45,7 +46,7 @@ protected:
     wxCoord YLOG2DEVREL(wxCoord y) const    { return LogicalToDeviceYRel(y); }
 
 private:
-    wxDECLARE_CLASS(wxX11DCImpl);
+    DECLARE_CLASS(wxX11DCImpl)
 };
 
 #endif

@@ -8,6 +8,7 @@
 //              Vadim Zeitlin (added support for Unix sockets) Apr 2002
 //                            (use buffering, many fixes/cleanup) Oct 2008
 // Created:     1993
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart 1993
 //              (c) Guilhem Lavaux 1997, 1998
 //              (c) 2000 Guillermo Rodriguez <guille@iies.es>
@@ -25,6 +26,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_SOCKETS && wxUSE_IPC && wxUSE_STREAMS
 
@@ -123,7 +127,7 @@ public:
 private:
     void HandleDisconnect(wxTCPConnection *connection);
 
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
     wxDECLARE_NO_COPY_CLASS(wxTCPEventHandler);
 };
 
@@ -152,17 +156,17 @@ public:
     }
 
     // as ms_handler is initialized on demand, don't do anything in OnInit()
-    virtual bool OnInit() wxOVERRIDE { return true; }
-    virtual void OnExit() wxOVERRIDE { wxDELETE(ms_handler); }
+    virtual bool OnInit() { return true; }
+    virtual void OnExit() { wxDELETE(ms_handler); }
 
 private:
     static wxTCPEventHandler *ms_handler;
 
-    wxDECLARE_DYNAMIC_CLASS(wxTCPEventHandlerModule);
+    DECLARE_DYNAMIC_CLASS(wxTCPEventHandlerModule)
     wxDECLARE_NO_COPY_CLASS(wxTCPEventHandlerModule);
 };
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxTCPEventHandlerModule, wxModule);
+IMPLEMENT_DYNAMIC_CLASS(wxTCPEventHandlerModule, wxModule)
 
 wxTCPEventHandler *wxTCPEventHandlerModule::ms_handler = NULL;
 
@@ -346,9 +350,9 @@ private:
 // implementation
 // ==========================================================================
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxTCPServer, wxServerBase);
-wxIMPLEMENT_DYNAMIC_CLASS(wxTCPClient, wxClientBase);
-wxIMPLEMENT_CLASS(wxTCPConnection, wxConnectionBase);
+IMPLEMENT_DYNAMIC_CLASS(wxTCPServer, wxServerBase)
+IMPLEMENT_DYNAMIC_CLASS(wxTCPClient, wxClientBase)
+IMPLEMENT_CLASS(wxTCPConnection, wxConnectionBase)
 
 // --------------------------------------------------------------------------
 // wxTCPClient
@@ -524,7 +528,7 @@ wxTCPServer::~wxTCPServer()
     {
         if ( remove(m_filename.fn_str()) != 0 )
         {
-            wxLogDebug(wxT("Stale AF_UNIX file '%s' left."), m_filename);
+            wxLogDebug(wxT("Stale AF_UNIX file '%s' left."), m_filename.c_str());
         }
     }
 #endif // __UNIX_LIKE__
@@ -680,10 +684,10 @@ bool wxTCPConnection::DoAdvise(const wxString& item,
 // wxTCPEventHandler (private class)
 // --------------------------------------------------------------------------
 
-wxBEGIN_EVENT_TABLE(wxTCPEventHandler, wxEvtHandler)
+BEGIN_EVENT_TABLE(wxTCPEventHandler, wxEvtHandler)
     EVT_SOCKET(_CLIENT_ONREQUEST_ID, wxTCPEventHandler::Client_OnRequest)
     EVT_SOCKET(_SERVER_ONREQUEST_ID, wxTCPEventHandler::Server_OnRequest)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 void wxTCPEventHandler::HandleDisconnect(wxTCPConnection *connection)
 {

@@ -3,6 +3,7 @@
 // Purpose:     wxFontEnumerator class
 // Author:      Vaclav Slavik
 // Created:     2006-08-10
+// RCS-ID:      $Id$
 // Copyright:   (c) 2006 REA Elektronik GmbH
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -10,6 +11,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #include "wx/fontenum.h"
 #include "wx/private/fontmgr.h"

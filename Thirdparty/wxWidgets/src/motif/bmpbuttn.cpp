@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -36,7 +37,7 @@ wxBitmapButton::wxBitmapButton()
 }
 
 bool wxBitmapButton::Create(wxWindow *parent, wxWindowID id,
-                            const wxBitmapBundle& bitmap,
+                            const wxBitmap& bitmap,
                             const wxPoint& pos,
                             const wxSize& size, long style,
                             const wxValidator& validator,
@@ -103,7 +104,7 @@ wxBitmapButton::~wxBitmapButton()
                          (Pixmap) m_insensPixmap);
 }
 
-void wxBitmapButton::DoSetBitmap(const wxBitmapBundle& bitmap, State which)
+void wxBitmapButton::DoSetBitmap(const wxBitmap& bitmap, State which)
 {
     m_bitmapsOriginal[which] = bitmap;
 
@@ -114,9 +115,7 @@ void wxBitmapButton::OnSetBitmap()
 {
     wxBitmapButtonBase::OnSetBitmap();
 
-    wxBitmap
-        normalBitmap = m_bitmapsOriginal[State_Normal].GetBitmap(wxDefaultSize);
-    if ( normalBitmap.IsOk() )
+    if ( m_bitmapsOriginal[State_Normal].IsOk() )
     {
         Pixmap pixmap = 0;
         Pixmap insensPixmap = 0;
@@ -124,7 +123,7 @@ void wxBitmapButton::OnSetBitmap()
 
         // Must re-make the bitmap to have its transparent areas drawn
         // in the current widget background colour.
-        if ( normalBitmap.GetMask() )
+        if ( m_bitmapsOriginal[State_Normal].GetMask() )
         {
             WXPixel backgroundPixel;
             XtVaGetValues((Widget) m_mainWidget,
@@ -134,23 +133,22 @@ void wxBitmapButton::OnSetBitmap()
             wxColour col;
             col.SetPixel(backgroundPixel);
 
-            wxBitmap newBitmap = wxCreateMaskedBitmap(normalBitmap, col);
+            wxBitmap newBitmap =
+                wxCreateMaskedBitmap(m_bitmapsOriginal[State_Normal], col);
             m_bitmaps[State_Normal] = newBitmap;
-            m_bitmapCache.SetBitmap( newBitmap );
+            m_bitmapCache.SetBitmap( m_bitmaps[State_Normal] );
 
-            pixmap = (Pixmap) newBitmap.GetDrawable();
+            pixmap = (Pixmap) m_bitmaps[State_Normal].GetDrawable();
         }
         else
         {
-            m_bitmapCache.SetBitmap( normalBitmap );
+            m_bitmapCache.SetBitmap( m_bitmaps[State_Normal] );
             pixmap = (Pixmap) m_bitmapCache.GetLabelPixmap(m_mainWidget);
         }
 
-        wxBitmap
-            disabledBitmap = m_bitmapsOriginal[State_Disabled].GetBitmap(wxDefaultSize);
-        if (disabledBitmap.IsOk())
+        if (m_bitmapsOriginal[State_Disabled].IsOk())
         {
-            if (disabledBitmap.GetMask())
+            if (m_bitmapsOriginal[State_Disabled].GetMask())
             {
                 WXPixel backgroundPixel;
                 XtVaGetValues((Widget) m_mainWidget,
@@ -160,10 +158,11 @@ void wxBitmapButton::OnSetBitmap()
                 wxColour col;
                 col.SetPixel(backgroundPixel);
 
-                wxBitmap newBitmap = wxCreateMaskedBitmap(disabledBitmap, col);
+                wxBitmap newBitmap =
+                    wxCreateMaskedBitmap(m_bitmapsOriginal[State_Disabled], col);
                 m_bitmaps[State_Disabled] = newBitmap;
 
-                insensPixmap = (Pixmap) newBitmap.GetDrawable();
+                insensPixmap = (Pixmap) m_bitmaps[State_Disabled].GetDrawable();
             }
             else
                 insensPixmap = (Pixmap) m_bitmapCache.GetInsensPixmap(m_mainWidget);
@@ -172,11 +171,9 @@ void wxBitmapButton::OnSetBitmap()
             insensPixmap = (Pixmap) m_bitmapCache.GetInsensPixmap(m_mainWidget);
 
         // Now make the bitmap representing the armed state
-        wxBitmap
-            pressedBitmap = m_bitmapsOriginal[State_Pressed].GetBitmap(wxDefaultSize);
-        if (pressedBitmap.IsOk())
+        if (m_bitmapsOriginal[State_Pressed].IsOk())
         {
-            if (pressedBitmap.GetMask())
+            if (m_bitmapsOriginal[State_Pressed].GetMask())
             {
                 WXPixel backgroundPixel;
                 XtVaGetValues((Widget) m_mainWidget,
@@ -186,10 +183,11 @@ void wxBitmapButton::OnSetBitmap()
                 wxColour col;
                 col.SetPixel(backgroundPixel);
 
-                wxBitmap newBitmap = wxCreateMaskedBitmap(pressedBitmap, col);
+                wxBitmap newBitmap =
+                    wxCreateMaskedBitmap(m_bitmapsOriginal[State_Pressed], col);
                 m_bitmaps[State_Pressed] = newBitmap;
 
-                armPixmap = (Pixmap) newBitmap.GetDrawable();
+                armPixmap = (Pixmap) m_bitmaps[State_Pressed].GetDrawable();
             }
             else
                 armPixmap = (Pixmap) m_bitmapCache.GetArmPixmap(m_mainWidget);

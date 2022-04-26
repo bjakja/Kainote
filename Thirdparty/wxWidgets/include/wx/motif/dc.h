@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -55,7 +56,7 @@ public:
         return wxRound((double)(y - m_logicalOriginY) * m_scaleY) * m_signY;
     }
 
-    wxDECLARE_DYNAMIC_CLASS(wxMotifDCImpl);
+    DECLARE_DYNAMIC_CLASS(wxMotifDCImpl)
 };
 
 #endif // _WX_DC_H_

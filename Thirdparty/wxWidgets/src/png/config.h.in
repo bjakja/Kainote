@@ -15,8 +15,14 @@
 /* Define to 1 if you have the `z' library (-lz). */
 #undef HAVE_LIBZ
 
+/* Define to 1 if you have the <malloc.h> header file. */
+#undef HAVE_MALLOC_H
+
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
+
+/* Define to 1 if you have the `memset' function. */
+#undef HAVE_MEMSET
 
 /* Define to 1 if you have the `pow' function. */
 #undef HAVE_POW
@@ -42,7 +48,8 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Define to the sub-directory where libtool stores uninstalled libraries. */
+/* Define to the sub-directory in which libtool stores uninstalled libraries.
+   */
 #undef LT_OBJDIR
 
 /* Name of package */
@@ -66,35 +73,11 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
-/* Turn on ARM Neon optimizations at run-time */
-#undef PNG_ARM_NEON_API_SUPPORTED
+/* Align row buffers */
+#undef PNG_ALIGNED_MEMORY_SUPPORTED
 
-/* Check for ARM Neon support at run-time */
-#undef PNG_ARM_NEON_CHECK_SUPPORTED
-
-/* Enable ARM Neon optimizations */
-#undef PNG_ARM_NEON_OPT
-
-/* Enable Intel SSE optimizations */
-#undef PNG_INTEL_SSE_OPT
-
-/* Turn on MIPS MSA optimizations at run-time */
-#undef PNG_MIPS_MSA_API_SUPPORTED
-
-/* Check for MIPS MSA support at run-time */
-#undef PNG_MIPS_MSA_CHECK_SUPPORTED
-
-/* Enable MIPS MSA optimizations */
-#undef PNG_MIPS_MSA_OPT
-
-/* Turn on POWERPC VSX optimizations at run-time */
-#undef PNG_POWERPC_VSX_API_SUPPORTED
-
-/* Check for POWERPC VSX support at run-time */
-#undef PNG_POWERPC_VSX_CHECK_SUPPORTED
-
-/* Enable POWERPC VSX optimizations */
-#undef PNG_POWERPC_VSX_OPT
+/* Enable ARM NEON optimizations */
+#undef PNG_ARM_NEON
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS

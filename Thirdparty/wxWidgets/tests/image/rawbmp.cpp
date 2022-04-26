@@ -3,6 +3,7 @@
 // Purpose:     Test for using raw bitmap access classes with wxImage
 // Author:      Vadim Zeitlin
 // Created:     2008-05-30
+// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -13,6 +14,9 @@
 
 #include "testprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifdef wxHAS_RAW_BITMAP
 
@@ -47,7 +51,7 @@ private:
 
     void RGBImage();
 
-    wxDECLARE_NO_COPY_CLASS(ImageRawTestCase);
+    DECLARE_NO_COPY_CLASS(ImageRawTestCase)
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION( ImageRawTestCase );

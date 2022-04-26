@@ -2,6 +2,7 @@
 // Name:        src/x11/dataobj.cpp
 // Purpose:     wxDataObject class
 // Author:      Julian Smart
+// Id:          $Id$
 // Copyright:   (c) 1998 Julian Smart
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -213,7 +214,7 @@ bool wxFileDataObject::SetData(size_t WXUNUSED(size), const void *buf)
 {
     // VZ: old format
 #if 0
-    // filenames are stores as a string with #0 as delimitors
+    // filenames are stores as a string with #0 as deliminators
     const char *filenames = (const char*) buf;
     size_t pos = 0;
     for(;;)
@@ -374,16 +375,4 @@ void wxBitmapDataObject::DoConvertToPng()
 #endif
 }
 
-// ----------------------------------------------------------------------------
-// wxTextDataObject
-// ----------------------------------------------------------------------------
-
-#if defined(wxNEEDS_UTF8_FOR_TEXT_DATAOBJ) || defined(wxNEEDS_UTF16_FOR_TEXT_DATAOBJ)
-void
-wxTextDataObject::GetAllFormats(wxDataFormat *formats,
-                                wxDataObjectBase::Direction WXUNUSED(dir)) const
-{
-    *formats++ = GetPreferredFormat();
-}
-#endif
 #endif // wxUSE_DATAOBJ

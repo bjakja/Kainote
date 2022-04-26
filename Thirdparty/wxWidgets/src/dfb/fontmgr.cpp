@@ -3,6 +3,7 @@
 // Purpose:     font management for wxDFB
 // Author:      Vaclav Slavik
 // Created:     2006-11-18
+// RCS-ID:      $Id$
 // Copyright:   (c) 2001-2002 SciTech Software, Inc. (www.scitechsoft.com)
 //              (c) 2006 REA Elektronik GmbH
 // Licence:     wxWindows licence
@@ -11,6 +12,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
     #include "wx/gdicmn.h"
@@ -193,11 +197,11 @@ void wxFontsManager::AddFontsFromDir(const wxString& indexFile)
     if ( !fn.FileExists() )
     {
         wxLogWarning(_("Fonts index file %s disappeared while loading fonts."),
-                     indexFile);
+                     indexFile.c_str());
         return;
     }
 
-    wxLogTrace("font", "adding fonts from %s", dir);
+    wxLogTrace("font", "adding fonts from %s", dir.c_str());
 
     wxFileConfig cfg(wxEmptyString, wxEmptyString,
                      indexFile, wxEmptyString,
@@ -231,9 +235,9 @@ void wxFontsManager::AddFont(const wxString& dir,
                              const wxString& name,
                              wxFileConfig& cfg)
 {
-    wxLogTrace("font", "adding font '%s'", name);
+    wxLogTrace("font", "adding font '%s'", name.c_str());
 
-    wxConfigPathChanger ch(&cfg, wxString::Format("/%s/", name));
+    wxConfigPathChanger ch(&cfg, wxString::Format("/%s/", name.c_str()));
 
     AddBundle
     (

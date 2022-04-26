@@ -2,6 +2,7 @@
 // Name:        src/gtk/timer.cpp
 // Purpose:     wxTimer implementation
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -14,7 +15,7 @@
 #include "wx/gtk/private/timer.h"
 #include "wx/app.h"
 
-#include "wx/gtk/private/wrapgtk.h"
+#include <gtk/gtk.h>
 
 // ----------------------------------------------------------------------------
 // wxTimerImpl

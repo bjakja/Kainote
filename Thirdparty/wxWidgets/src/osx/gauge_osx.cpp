@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:       wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -14,7 +15,6 @@
 
 #include "wx/gauge.h"
 
-#include "wx/appprogress.h"
 #include "wx/osx/private.h"
 
 bool wxGauge::Create( wxWindow *parent,
@@ -67,9 +67,6 @@ int wxGauge::GetValue() const
 void wxGauge::Pulse()
 {
     GetPeer()->PulseGauge();
-
-    if ( m_appProgressIndicator )
-        m_appProgressIndicator->Pulse();
 }
 
 #endif // wxUSE_GAUGE

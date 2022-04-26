@@ -3,6 +3,7 @@
 // Purpose:     XML classes unit test
 // Author:      Vaclav Slavik
 // Created:     2008-03-29
+// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Vaclav Slavik
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -12,6 +13,9 @@
 
 #include "testprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
     #include "wx/wx.h"
@@ -78,9 +82,6 @@ private:
         CPPUNIT_TEST( DetachRoot );
         CPPUNIT_TEST( AppendToProlog );
         CPPUNIT_TEST( SetRoot );
-        CPPUNIT_TEST( CopyNode );
-        CPPUNIT_TEST( CopyDocument );
-        CPPUNIT_TEST( Doctype );
     CPPUNIT_TEST_SUITE_END();
 
     void InsertChild();
@@ -92,11 +93,8 @@ private:
     void DetachRoot();
     void AppendToProlog();
     void SetRoot();
-    void CopyNode();
-    void CopyDocument();
-    void Doctype();
 
-    wxDECLARE_NO_COPY_CLASS(XmlTestCase);
+    DECLARE_NO_COPY_CLASS(XmlTestCase)
 };
 
 // register in the unnamed registry so that these tests are run by default
@@ -208,7 +206,6 @@ void XmlTestCase::LoadSave()
 
     const char *xmlTextProlog =
 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-"<!DOCTYPE resource PUBLIC \"Public-ID\" 'System\"ID\"'>\n"
 "<!-- Prolog comment -->\n"
 "<?xml-stylesheet href=\"style.css\" type=\"text/css\"?>\n"
 "<resource xmlns=\"http://www.wxwidgets.org/wxxrc\" version=\"2.3.0.1\">\n"
@@ -282,7 +279,7 @@ void XmlTestCase::PI()
 void XmlTestCase::Escaping()
 {
     // Verify that attribute values are escaped correctly, see
-    // https://github.com/wxWidgets/wxWidgets/issues/12275
+    // http://trac.wxwidgets.org/ticket/12275
 
     const char *xmlText =
 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -436,11 +433,10 @@ void XmlTestCase::SetRoot()
     CPPUNIT_ASSERT( !doc.IsOk() );
     wxXmlNode *root = new wxXmlNode(wxXML_ELEMENT_NODE, "root");
 
-    // Test for the problem of https://github.com/wxWidgets/wxWidgets/issues/13135
+    // Test for the problem of http://trac.wxwidgets.org/ticket/13135
     doc.SetRoot( root );
     wxXmlNode *docNode = doc.GetDocumentNode();
-    CPPUNIT_ASSERT( docNode );
-    CPPUNIT_ASSERT( root == docNode->GetChildren() );
+    CPPUNIT_ASSERT( docNode && root == docNode->GetChildren() );
     CPPUNIT_ASSERT( doc.IsOk() );
 
     // Other tests.
@@ -472,141 +468,4 @@ void XmlTestCase::SetRoot()
     CPPUNIT_ASSERT( !doc.IsOk() );
     doc.SetRoot(root);
     CPPUNIT_ASSERT( doc.IsOk() );
-}
-
-void XmlTestCase::CopyNode()
-{
-    const char *xmlText =
-"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-"<root>\n"
-"  <first><sub1/><sub2/><sub3/></first>\n"
-"  <second/>\n"
-"</root>\n"
-    ;
-    wxXmlDocument doc;
-    wxStringInputStream sis(xmlText);
-    CPPUNIT_ASSERT( doc.Load(sis) );
-
-    wxXmlNode* const root = doc.GetRoot();
-    CPPUNIT_ASSERT( root );
-
-    wxXmlNode* const first = root->GetChildren();
-    CPPUNIT_ASSERT( first );
-
-    wxXmlNode* const second = first->GetNext();
-    CPPUNIT_ASSERT( second );
-
-    *first = *second;
-
-    wxStringOutputStream sos;
-    CPPUNIT_ASSERT( doc.Save(sos) );
-
-    const char *xmlTextResult =
-"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-"<root>\n"
-"  <second/>\n"
-"  <second/>\n"
-"</root>\n"
-    ;
-    CPPUNIT_ASSERT_EQUAL( xmlTextResult, sos.GetString() );
-}
-
-void XmlTestCase::CopyDocument()
-{
-    const char *xmlText =
-"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-"<!DOCTYPE resource PUBLIC \"Public-ID\" \"System'ID'\">\n"
-"<!-- 1st prolog entry -->\n"
-"<root>\n"
-"  <first>Text</first>\n"
-"  <second/>\n"
-"</root>\n"
-    ;
-    wxXmlDocument doc1;
-    wxStringInputStream sis(xmlText);
-    CPPUNIT_ASSERT( doc1.Load(sis) );
-
-    wxXmlDocument doc2 = doc1;
-
-    wxStringOutputStream sos;
-    CPPUNIT_ASSERT(doc2.Save(sos));
-
-    CPPUNIT_ASSERT_EQUAL( xmlText, sos.GetString() );
-}
-
-void XmlTestCase::Doctype()
-{
-    const char *xmlText =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-        "<!DOCTYPE root PUBLIC \"Public-ID\" 'System\"ID\"'>\n"
-        "<root>\n"
-        "  <content/>\n"
-        "</root>\n"
-    ;
-
-    wxStringInputStream sis(xmlText);
-    wxXmlDocument doc;
-    CPPUNIT_ASSERT( doc.Load(sis) );
-
-    wxXmlDoctype dt = doc.GetDoctype();
-
-    CPPUNIT_ASSERT_EQUAL( "root", dt.GetRootName() );
-    CPPUNIT_ASSERT_EQUAL( "System\"ID\"", dt.GetSystemId() );
-    CPPUNIT_ASSERT_EQUAL( "Public-ID", dt.GetPublicId() );
-
-    CPPUNIT_ASSERT( dt.IsValid() );
-    CPPUNIT_ASSERT_EQUAL( "root PUBLIC \"Public-ID\" 'System\"ID\"'", dt.GetFullString() );
-    dt = wxXmlDoctype( dt.GetRootName(), dt.GetSystemId() );
-    CPPUNIT_ASSERT( dt.IsValid() );
-    CPPUNIT_ASSERT_EQUAL( "root SYSTEM 'System\"ID\"'", dt.GetFullString() );
-    dt = wxXmlDoctype( dt.GetRootName() );
-    CPPUNIT_ASSERT( dt.IsValid() );
-    CPPUNIT_ASSERT_EQUAL( "root", dt.GetFullString() );
-
-    doc.SetDoctype(dt);
-    wxStringOutputStream sos;
-    CPPUNIT_ASSERT(doc.Save(sos));
-    const char *xmlText1 =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-        "<!DOCTYPE root>\n"
-        "<root>\n"
-        "  <content/>\n"
-        "</root>\n"
-    ;
-    CPPUNIT_ASSERT_EQUAL( xmlText1, sos.GetString() );
-
-    doc.SetDoctype(wxXmlDoctype());
-    wxStringOutputStream sos2;
-    CPPUNIT_ASSERT(doc.Save(sos2));
-    const char *xmlText2 =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-        "<root>\n"
-        "  <content/>\n"
-        "</root>\n"
-    ;
-    CPPUNIT_ASSERT_EQUAL( xmlText2, sos2.GetString() );
-
-    doc.SetDoctype(wxXmlDoctype("root", "Sys'id"));
-    wxStringOutputStream sos3;
-    CPPUNIT_ASSERT(doc.Save(sos3));
-    const char *xmlText3 =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-        "<!DOCTYPE root SYSTEM \"Sys'id\">\n"
-        "<root>\n"
-        "  <content/>\n"
-        "</root>\n"
-    ;
-    CPPUNIT_ASSERT_EQUAL( xmlText3, sos3.GetString() );
-
-    dt = wxXmlDoctype( "", "System\"ID\"", "Public-ID" );
-    CPPUNIT_ASSERT( !dt.IsValid() );
-    CPPUNIT_ASSERT_EQUAL( "", dt.GetFullString() );
-    // Strictly speaking, this is illegal for XML but is legal for SGML.
-    dt = wxXmlDoctype( "root", "", "Public-ID" );
-    CPPUNIT_ASSERT( dt.IsValid() );
-    CPPUNIT_ASSERT_EQUAL( "root PUBLIC \"Public-ID\"", dt.GetFullString() );
-
-    // Using both single and double quotes in system ID is not allowed.
-    dt = wxXmlDoctype( "root", "O'Reilly (\"editor\")", "Public-ID" );
-    CPPUNIT_ASSERT( !dt.IsValid() );
 }

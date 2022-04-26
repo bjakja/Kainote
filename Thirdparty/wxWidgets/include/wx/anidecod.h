@@ -2,6 +2,7 @@
 // Name:        wx/anidecod.h
 // Purpose:     wxANIDecoder, ANI reader for wxImage and wxAnimation
 // Author:      Francesco Montorsi
+// CVS-ID:      $Id$
 // Copyright:   (c) 2006 Francesco Montorsi
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -36,29 +37,28 @@ public:
     ~wxANIDecoder();
 
 
-    virtual wxSize GetFrameSize(unsigned int frame) const wxOVERRIDE;
-    virtual wxPoint GetFramePosition(unsigned int frame) const wxOVERRIDE;
-    virtual wxAnimationDisposal GetDisposalMethod(unsigned int frame) const wxOVERRIDE;
-    virtual long GetDelay(unsigned int frame) const wxOVERRIDE;
-    virtual wxColour GetTransparentColour(unsigned int frame) const wxOVERRIDE;
+    virtual wxSize GetFrameSize(unsigned int frame) const;
+    virtual wxPoint GetFramePosition(unsigned int frame) const;
+    virtual wxAnimationDisposal GetDisposalMethod(unsigned int frame) const;
+    virtual long GetDelay(unsigned int frame) const;
+    virtual wxColour GetTransparentColour(unsigned int frame) const;
 
     // implementation of wxAnimationDecoder's pure virtuals
 
-    virtual bool Load( wxInputStream& stream ) wxOVERRIDE;
+    virtual bool Load( wxInputStream& stream );
 
-    bool ConvertToImage(unsigned int frame, wxImage *image) const wxOVERRIDE;
+    bool ConvertToImage(unsigned int frame, wxImage *image) const;
 
-    wxAnimationDecoder *Clone() const wxOVERRIDE
+    wxAnimationDecoder *Clone() const
         { return new wxANIDecoder; }
-    wxAnimationType GetType() const wxOVERRIDE
+    wxAnimationType GetType() const
         { return wxANIMATION_TYPE_ANI; }
 
-protected:
+private:
     // wxAnimationDecoder pure virtual:
-    virtual bool DoCanRead( wxInputStream& stream ) const wxOVERRIDE;
+    virtual bool DoCanRead( wxInputStream& stream ) const;
             // modifies current stream position (see wxAnimationDecoder::CanRead)
 
-private:
     // frames stored as wxImage(s): ANI files are meant to be used mostly for animated
     // cursors and thus they do not use any optimization to encode differences between
     // two frames: they are just a list of images to display sequentially.

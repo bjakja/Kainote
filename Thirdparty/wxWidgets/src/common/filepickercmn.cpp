@@ -4,6 +4,7 @@
 // Author:      Francesco Montorsi (readapted code written by Vadim Zeitlin)
 // Modified by:
 // Created:     15/04/2006
+// RCS-ID:      $Id$
 // Copyright:   (c) Vadim Zeitlin, Francesco Montorsi
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_FILEPICKERCTRL || wxUSE_DIRPICKERCTRL
 
@@ -40,9 +44,9 @@ const char wxDirPickerWidgetNameStr[] = "dirpickerwidget";
 const char wxFilePickerWidgetLabel[] = wxTRANSLATE("Browse");
 const char wxDirPickerWidgetLabel[] = wxTRANSLATE("Browse");
 
-wxDEFINE_EVENT( wxEVT_FILEPICKER_CHANGED, wxFileDirPickerEvent );
-wxDEFINE_EVENT( wxEVT_DIRPICKER_CHANGED,  wxFileDirPickerEvent );
-wxIMPLEMENT_DYNAMIC_CLASS(wxFileDirPickerEvent, wxCommandEvent);
+wxDEFINE_EVENT( wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEvent );
+wxDEFINE_EVENT( wxEVT_COMMAND_DIRPICKER_CHANGED,  wxFileDirPickerEvent );
+IMPLEMENT_DYNAMIC_CLASS(wxFileDirPickerEvent, wxCommandEvent)
 
 // ----------------------------------------------------------------------------
 // wxFileDirPickerCtrlBase
@@ -59,6 +63,8 @@ bool wxFileDirPickerCtrlBase::CreateBase(wxWindow *parent,
                                          const wxValidator& validator,
                                          const wxString &name )
 {
+    wxASSERT_MSG(path.empty() || CheckPath(path), wxT("Invalid initial path!"));
+
     if (!wxPickerBase::CreateBase(parent, id, path, pos, size,
                                    style, validator, name))
         return false;
@@ -109,17 +115,19 @@ void wxFileDirPickerCtrlBase::UpdatePickerFromTextCtrl()
 {
     wxASSERT(m_text);
 
+    if (m_bIgnoreNextTextCtrlUpdate)
+    {
+        // ignore this update
+        m_bIgnoreNextTextCtrlUpdate = false;
+        return;
+    }
+
     // remove the eventually present path-separator from the end of the textctrl
     // string otherwise we would generate a wxFileDirPickerEvent when changing
     // from e.g. /home/user to /home/user/ and we want to avoid it !
     wxString newpath(GetTextCtrlValue());
-
-    // Notice that we use to check here whether the current path is valid, i.e.
-    // if the corresponding file or directory exists for the controls with
-    // wxFLP_FILE_MUST_EXIST or wxDIRP_DIR_MUST_EXIST flag, however we don't do
-    // this any more as we still must notify the program about any changes in
-    // the control, otherwise its view of it would be different from what is
-    // actually shown on the screen, resulting in very confusing UI.
+    if (!CheckPath(newpath))
+        return;       // invalid user input
 
     if (m_pickerIface->GetPath() != newpath)
     {
@@ -142,10 +150,11 @@ void wxFileDirPickerCtrlBase::UpdateTextCtrlFromPicker()
     if (!m_text)
         return;     // no textctrl to update
 
-    // Take care to use ChangeValue() here and not SetValue() to avoid
-    // generating an event that would trigger UpdateTextCtrlFromPicker()
-    // resulting in infinite recursion.
-    m_text->ChangeValue(m_pickerIface->GetPath());
+    // NOTE: this SetValue() will generate an unwanted wxEVT_COMMAND_TEXT_UPDATED
+    //       which will trigger a unneeded UpdateFromTextCtrl(); thus before using
+    //       SetValue() we set the m_bIgnoreNextTextCtrlUpdate flag...
+    m_bIgnoreNextTextCtrlUpdate = true;
+    m_text->SetValue(m_pickerIface->GetPath());
 }
 
 
@@ -172,7 +181,7 @@ void wxFileDirPickerCtrlBase::OnFileDirChange(wxFileDirPickerEvent &ev)
 
 #if wxUSE_FILEPICKERCTRL
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxFilePickerCtrl, wxPickerBase);
+IMPLEMENT_DYNAMIC_CLASS(wxFilePickerCtrl, wxPickerBase)
 
 bool wxFilePickerCtrl::Create(wxWindow *parent,
                               wxWindowID id,
@@ -198,10 +207,17 @@ bool wxFilePickerCtrl::Create(wxWindow *parent,
     return true;
 }
 
+bool wxFilePickerCtrl::CheckPath(const wxString& path) const
+{
+    // if wxFLP_SAVE was given or wxFLP_FILE_MUST_EXIST has NOT been given we
+    // must accept any path
+    return HasFlag(wxFLP_SAVE) ||
+            !HasFlag(wxFLP_FILE_MUST_EXIST) ||
+                wxFileName::FileExists(path);
+}
+
 wxString wxFilePickerCtrl::GetTextCtrlValue() const
 {
-    wxCHECK_MSG( m_text, wxString(), "Can't be used if no text control" );
-
     // filter it through wxFileName to remove any spurious path separator
     return wxFileName(m_text->GetValue()).GetFullPath();
 }
@@ -213,7 +229,7 @@ wxString wxFilePickerCtrl::GetTextCtrlValue() const
 // ----------------------------------------------------------------------------
 
 #if wxUSE_DIRPICKERCTRL
-wxIMPLEMENT_DYNAMIC_CLASS(wxDirPickerCtrl, wxPickerBase);
+IMPLEMENT_DYNAMIC_CLASS(wxDirPickerCtrl, wxPickerBase)
 
 bool wxDirPickerCtrl::Create(wxWindow *parent,
                              wxWindowID id,
@@ -238,10 +254,14 @@ bool wxDirPickerCtrl::Create(wxWindow *parent,
     return true;
 }
 
+bool wxDirPickerCtrl::CheckPath(const wxString& path) const
+{
+    // if wxDIRP_DIR_MUST_EXIST has NOT been given we must accept any path
+    return !HasFlag(wxDIRP_DIR_MUST_EXIST) || wxFileName::DirExists(path);
+}
+
 wxString wxDirPickerCtrl::GetTextCtrlValue() const
 {
-    wxCHECK_MSG( m_text, wxString(), "Can't be used if no text control" );
-
     // filter it through wxFileName to remove any spurious path separator
     return wxFileName::DirName(m_text->GetValue()).GetPath();
 }

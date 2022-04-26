@@ -4,12 +4,17 @@
 // Author:      Chris Breeze
 // Modified by:
 // Created:     21/07/97
+// RCS-ID:      $Id$
 // Copyright:   (c) 1993-1998 Chris Breeze
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
+
+#ifdef __BORLANDC__
+#pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
 #include "wx/wx.h"
@@ -43,9 +48,9 @@ ScoreCanvas::ScoreCanvas(wxWindow* parent, ScoreFile* scoreFile, const wxPoint& 
 {
     SetBackgroundColour(*wxWHITE);
 #ifdef __WXGTK__
-    m_font = wxTheFontList->FindOrCreateFont(wxFontInfo(12).Family(wxFONTFAMILY_ROMAN));
+    m_font = wxTheFontList->FindOrCreateFont(12, wxROMAN, wxNORMAL, wxNORMAL);
 #else
-    m_font = wxTheFontList->FindOrCreateFont(wxFontInfo(10).Family(wxFONTFAMILY_SWISS));
+    m_font = wxTheFontList->FindOrCreateFont(10, wxSWISS, wxNORMAL, wxNORMAL);
 #endif
 
     wxArrayString players;
@@ -81,14 +86,14 @@ void ScoreCanvas::OnDraw(wxDC& dc)
 {
     dc.SetFont(* m_font);
 
-    const wxChar* str = m_text.c_str();
+    const wxChar* str = m_text;
     unsigned int tab = 0;
     unsigned int tabstops[] = { 5, 100, 150, 200 };
 
     // get the line spacing for the current font
     int lineSpacing;
     {
-        wxCoord w, h;
+        long w, h;
         dc.GetTextExtent(wxT("Testing"), &w, &h);
         lineSpacing = (int)h;
     }
@@ -102,7 +107,7 @@ void ScoreCanvas::OnDraw(wxDC& dc)
         while (*str && *str >= ' ') *dest++ = *str++;
         *dest = '\0';
 
-        dc.DrawText(text, FromDIP(tabstops[tab]), y);
+        dc.DrawText(text, tabstops[tab], y);
 
         if (*str == '\t')
         {
@@ -121,13 +126,14 @@ void ScoreCanvas::OnDraw(wxDC& dc)
 }
 #endif
 
-wxBEGIN_EVENT_TABLE(ScoreDialog, wxDialog)
+BEGIN_EVENT_TABLE(ScoreDialog, wxDialog)
     EVT_CLOSE(ScoreDialog::OnCloseWindow)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 ScoreDialog::ScoreDialog(wxWindow* parent, ScoreFile* file) :
     wxDialog(parent, wxID_ANY, _("Scores"),
-            wxDefaultPosition, wxSize(400, 300))
+            wxDefaultPosition, wxSize(400, 300)),
+    m_scoreFile(file)
 {
     // create grid with players
     wxArrayString players;
@@ -172,7 +178,7 @@ ScoreDialog::ScoreDialog(wxWindow* parent, ScoreFile* file) :
     list->EnableEditing(false);
     sz.x = wxDefaultCoord;
 #else
-    ScoreCanvas* list = new ScoreCanvas(this, file, wxDefaultPosition, sz);
+    ScoreCanvas* list = new ScoreCanvas(this, m_scoreFile, wxDefaultPosition, sz);
 #endif
 
     list->SetInitialSize(sz);

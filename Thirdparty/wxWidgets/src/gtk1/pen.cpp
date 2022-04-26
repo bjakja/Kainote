@@ -2,6 +2,7 @@
 // Name:        src/gtk1/pen.cpp
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -46,18 +47,6 @@ public:
         m_dash = data.m_dash;
     }
 
-    wxPenRefData( const wxPenInfo& info )
-    {
-        m_width = info.GetWidth();
-        m_style = info.GetStyle();
-        m_joinStyle = info.GetJoin();
-        m_capStyle = info.GetCap();
-        m_colour = info.GetColour();
-        wxDash* dash;
-        m_countDashes = info.GetDashes(&dash);
-        m_dash = (wxGTKDash*)dash;
-    }
-
     bool operator == (const wxPenRefData& data) const
     {
         if ( m_countDashes != data.m_countDashes )
@@ -97,25 +86,25 @@ public:
 
 #define M_PENDATA ((wxPenRefData *)m_refData)
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxPen, wxGDIObject);
+IMPLEMENT_DYNAMIC_CLASS(wxPen,wxGDIObject)
 
 wxPen::wxPen( const wxColour &colour, int width, wxPenStyle style )
 {
-    m_refData = new wxPenRefData(wxPenInfo(colour, width).Style(style));
+    m_refData = new wxPenRefData();
+    M_PENDATA->m_width = width;
+    M_PENDATA->m_style = style;
+    M_PENDATA->m_colour = colour;
 }
 
+#if FUTURE_WXWIN_COMPATIBILITY_3_0
 wxPen::wxPen(const wxColour& colour, int width, int style)
 {
-    m_refData = new wxPenRefData
-                    (
-                        wxPenInfo(colour, width).Style((wxPenStyle)style)
-                    );
+    m_refData = new wxPenRefData();
+    M_PENDATA->m_width = width;
+    M_PENDATA->m_style = (wxPenStyle)style;
+    M_PENDATA->m_colour = colour;
 }
-
-wxPen::wxPen(const wxPenInfo& info)
-{
-    m_refData = new wxPenRefData(info);
-}
+#endif
 
 wxGDIRefData *wxPen::CreateGDIRefData() const
 {

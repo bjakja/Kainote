@@ -2,6 +2,7 @@
 // Name:        wx/html/htmlfilt.h
 // Purpose:     filters
 // Author:      Vaclav Slavik
+// RCS-ID:      $Id$
 // Copyright:   (c) 1999 Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -26,7 +27,7 @@
 
 class WXDLLIMPEXP_HTML wxHtmlFilter : public wxObject
 {
-    wxDECLARE_ABSTRACT_CLASS(wxHtmlFilter);
+    DECLARE_ABSTRACT_CLASS(wxHtmlFilter)
 
 public:
     wxHtmlFilter() : wxObject() {}
@@ -45,18 +46,18 @@ public:
 //--------------------------------------------------------------------------------
 // wxHtmlFilterPlainText
 //                  This filter is used as default filter if no other can
-//                  be used (= unknown type of file). It is used by
+//                  be used (= uknown type of file). It is used by
 //                  wxHtmlWindow itself.
 //--------------------------------------------------------------------------------
 
 
 class WXDLLIMPEXP_HTML wxHtmlFilterPlainText : public wxHtmlFilter
 {
-    wxDECLARE_DYNAMIC_CLASS(wxHtmlFilterPlainText);
+    DECLARE_DYNAMIC_CLASS(wxHtmlFilterPlainText)
 
 public:
-    virtual bool CanRead(const wxFSFile& file) const wxOVERRIDE;
-    virtual wxString ReadFile(const wxFSFile& file) const wxOVERRIDE;
+    virtual bool CanRead(const wxFSFile& file) const;
+    virtual wxString ReadFile(const wxFSFile& file) const;
 };
 
 //--------------------------------------------------------------------------------
@@ -66,11 +67,11 @@ public:
 
 class wxHtmlFilterHTML : public wxHtmlFilter
 {
-    wxDECLARE_DYNAMIC_CLASS(wxHtmlFilterHTML);
+    DECLARE_DYNAMIC_CLASS(wxHtmlFilterHTML)
 
     public:
-        virtual bool CanRead(const wxFSFile& file) const wxOVERRIDE;
-        virtual wxString ReadFile(const wxFSFile& file) const wxOVERRIDE;
+        virtual bool CanRead(const wxFSFile& file) const;
+        virtual wxString ReadFile(const wxFSFile& file) const;
 };
 
 

@@ -2,6 +2,7 @@
 // Name:        file.h
 // Purpose:     topic overview
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -9,7 +10,9 @@
 
 @page overview_file File Classes and Functions
 
-@tableofcontents
+Classes: wxFile, wxDir, wxTempFile,  wxTextFile
+
+Functions: see @ref group_funcmacro_file.
 
 wxWidgets provides some functions and classes to facilitate working with files.
 As usual, the accent is put on cross-platform features which explains, for
@@ -35,6 +38,5 @@ wxDir is a helper class for enumerating the files or subdirectories of a
 directory. It may be used to enumerate all files, only files satisfying the
 given template mask or only non-hidden files.
 
-@see wxFile, wxDir, wxTempFile,  wxTextFile, @ref group_funcmacro_file
-
 */
+

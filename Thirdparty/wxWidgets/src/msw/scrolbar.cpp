@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     04/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,6 +12,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_SCROLLBAR
 
@@ -41,7 +45,7 @@ bool wxScrollBar::Create(wxWindow *parent, wxWindowID id,
     return true;
 }
 
-wxScrollBar::~wxScrollBar()
+wxScrollBar::~wxScrollBar(void)
 {
 }
 
@@ -150,7 +154,7 @@ void wxScrollBar::SetThumbPosition(int viewStart)
     ::SetScrollInfo((HWND) GetHWND(), SB_CTL, &info, TRUE);
 }
 
-int wxScrollBar::GetThumbPosition() const
+int wxScrollBar::GetThumbPosition(void) const
 {
     WinStruct<SCROLLINFO> scrollInfo;
     scrollInfo.fMask = SIF_POS;
@@ -205,14 +209,16 @@ wxSize wxScrollBar::DoGetBestSize() const
 
     if ( IsVertical() )
     {
-        w = wxSystemSettings::GetMetric(wxSYS_VSCROLL_X, m_parent);
+        w = wxSystemSettings::GetMetric(wxSYS_VSCROLL_X);
     }
     else
     {
-        h = wxSystemSettings::GetMetric(wxSYS_HSCROLL_Y, m_parent);
+        h = wxSystemSettings::GetMetric(wxSYS_HSCROLL_Y);
     }
 
-    return wxSize(w, h);
+    wxSize best(w, h);
+    CacheBestSize(best);
+    return best;
 }
 
 WXDWORD wxScrollBar::MSWGetStyle(long style, WXDWORD *exstyle) const

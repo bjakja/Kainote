@@ -3,7 +3,8 @@
 // Purpose:     generic wxMask implementation
 // Author:      Vadim Zeitlin
 // Created:     2006-09-28
-// Copyright:   (c) 2006 Vadim Zeitlin <vadim@wxwidgets.org>
+// RCS-ID:      $Id$
+// Copyright:   (c) 2006 Vadim Zeitlin <vadim@wxwindows.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -18,6 +19,9 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
     #include "wx/bitmap.h"
@@ -30,7 +34,7 @@
 // wxMask implementation
 // ============================================================================
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxMask, wxObject);
+IMPLEMENT_DYNAMIC_CLASS(wxMask, wxObject)
 
 void wxMask::FreeData()
 {

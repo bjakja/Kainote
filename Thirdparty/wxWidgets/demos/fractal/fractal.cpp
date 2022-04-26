@@ -4,6 +4,7 @@
 // Author:      Andrew Davison
 // Modified by:
 // Created:     05.04.94
+// RCS-ID:      $Id$
 // Copyright:   (c) 1994 Andrew Davison
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -28,6 +29,9 @@ hack doesn't fix.
 
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef  WX_PRECOMP
   #include "wx/wx.h"
@@ -51,10 +55,10 @@ static wxMenuBar *menuBar = NULL;
 class MyApp: public wxApp
 {
 public:
-    bool OnInit() wxOVERRIDE;
+    bool OnInit();
 };
 
-wxIMPLEMENT_APP(MyApp);
+IMPLEMENT_APP(MyApp)
 
 // Define a new frame type
 class MyFrame: public wxFrame
@@ -65,7 +69,7 @@ public:
     void OnCloseWindow(wxCloseEvent& event);
     void OnExit(wxCommandEvent& event);
 
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
 };
 
 // Define a new canvas which can receive some events
@@ -82,7 +86,7 @@ private:
     wxBrush WaterBrush;
     int Sealevel;
 
-    wxDECLARE_EVENT_TABLE();
+DECLARE_EVENT_TABLE()
 };
 
 // `Main program' equivalent, creating windows and returning main app frame
@@ -109,10 +113,10 @@ bool MyApp::OnInit()
   return true;
 }
 
-wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
+BEGIN_EVENT_TABLE(MyFrame, wxFrame)
   EVT_CLOSE(MyFrame::OnCloseWindow)
   EVT_MENU(wxID_EXIT, MyFrame::OnExit)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 // My frame constructor
 MyFrame::MyFrame(wxFrame *frame, const wxString& title, const wxPoint& pos, const wxSize& size):
@@ -137,25 +141,25 @@ void MyFrame::OnCloseWindow(wxCloseEvent& WXUNUSED(event))
     destroyed = true;
 }
 
-wxBEGIN_EVENT_TABLE(MyCanvas, wxWindow)
+BEGIN_EVENT_TABLE(MyCanvas, wxWindow)
   EVT_PAINT(MyCanvas::OnPaint)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 // Define a constructor for my canvas
 MyCanvas::MyCanvas(wxFrame *frame):
  wxWindow(frame, wxID_ANY)
 {
     wxColour wxCol1(255,255,255);
-    SnowPen = wxPen(wxCol1, 2);
+    SnowPen = wxPen(wxCol1, 2, wxSOLID);
 
     wxColour wxCol2(128,0,0);
-    MtnPen = wxPen(wxCol2);
+    MtnPen = wxPen(wxCol2, 1, wxSOLID);
 
     wxColour wxCol3(0,128,0);
-    GreenPen = wxPen(wxCol3);
+    GreenPen = wxPen(wxCol3, 1, wxSOLID);
 
     wxColour wxCol4(0,0,128);
-    WaterBrush = wxBrush(wxCol4);
+    WaterBrush = wxBrush(wxCol4, wxSOLID);
 }
 
 void MyCanvas::OnPaint(wxPaintEvent& WXUNUSED(event))

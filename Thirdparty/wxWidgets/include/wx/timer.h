@@ -5,6 +5,7 @@
 // Modified by: Vadim Zeitlin (wxTimerBase)
 //              Guillermo Rodriguez (global clean up)
 // Created:     04/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,15 +13,15 @@
 #ifndef _WX_TIMER_H_BASE_
 #define _WX_TIMER_H_BASE_
 
-#include "wx\defs.h"
+#include "wx/defs.h"
 
 #if wxUSE_TIMER
 
-#include "wx\object.h"
-#include "wx\longlong.h"
-#include "wx\event.h"
-#include "wx\stopwatch.h" // for backwards compatibility
-#include "wx\utils.h"
+#include "wx/object.h"
+#include "wx/longlong.h"
+#include "wx/event.h"
+#include "wx/stopwatch.h" // for backwards compatibility
+#include "wx/utils.h"
 
 
 // more readable flags for Start():
@@ -79,10 +80,6 @@ public:
     // it is now valid to call Start() multiple times: this just restarts the
     // timer if it is already running
     virtual bool Start(int milliseconds = -1, bool oneShot = false);
-
-    // start the timer for one iteration only, this is just a simple wrapper
-    // for Start()
-    bool StartOnce(int milliseconds = -1) { return Start(milliseconds, true); }
 
     // stop the timer, does nothing if the timer is not running
     virtual void Stop();
@@ -159,6 +156,9 @@ private:
 class WXDLLIMPEXP_BASE wxTimerEvent : public wxEvent
 {
 public:
+    wxTimerEvent()
+        : wxEvent(wxID_ANY, wxEVT_TIMER) { m_timer=NULL; }
+
     wxTimerEvent(wxTimer& timer)
         : wxEvent(timer.GetId(), wxEVT_TIMER),
           m_timer(&timer)
@@ -171,21 +171,13 @@ public:
     wxTimer& GetTimer() const { return *m_timer; }
 
     // implement the base class pure virtual
-    virtual wxEvent *Clone() const wxOVERRIDE { return new wxTimerEvent(*this); }
-    virtual wxEventCategory GetEventCategory() const wxOVERRIDE { return wxEVT_CATEGORY_TIMER; }
-
-    // default ctor creates an unusable event object and should not be used (in
-    // fact, no code outside wxWidgets is supposed to create event objects)
-#if WXWIN_COMPATIBILITY_3_0
-    wxDEPRECATED_MSG("wxTimerEvent not supposed to be created by user code")
-    wxTimerEvent()
-        : wxEvent(wxID_ANY, wxEVT_TIMER) { m_timer=NULL; }
-#endif // WXWIN_COMPATIBILITY_3_0
+    virtual wxEvent *Clone() const { return new wxTimerEvent(*this); }
+    virtual wxEventCategory GetEventCategory() const { return wxEVT_CATEGORY_TIMER; }
 
 private:
     wxTimer* m_timer;
 
-    wxDECLARE_DYNAMIC_CLASS_NO_ASSIGN_DEF_COPY(wxTimerEvent);
+    DECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxTimerEvent)
 };
 
 typedef void (wxEvtHandler::*wxTimerEventFunction)(wxTimerEvent&);

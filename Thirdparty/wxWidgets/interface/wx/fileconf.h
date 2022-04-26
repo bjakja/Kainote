@@ -2,6 +2,7 @@
 // Name:        fileconf.h
 // Purpose:     interface of wxFileConfig
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -96,30 +97,7 @@ public:
     virtual bool Save(wxOutputStream& os, const wxMBConv& conv = wxConvAuto());
 
     /**
-        Enables saving data to the disk file when this object is destroyed.
-
-        This is the default behaviour and this function doesn't need to be
-        called explicitly unless DisableAutoSave() had been previously called.
-
-        @since 3.1.3
-    */
-    void EnableAutoSave();
-
-    /**
-        Prevent this object from saving data to the disk file when it is
-        destroyed.
-
-        By default, changes to this object are only saved permanently when
-        Flush() is explicitly called or when it is destroyed. If this method is
-        called, Flush() won't be called automatically from the destructor,
-        meaning that any non-explicitly-flushed changes will be lost.
-
-        @since 3.1.3
-    */
-    void DisableAutoSave();
-
-    /**
-        Allows setting the mode to be used for the config file creation. For example, to
+        Allows to set the mode to be used for the config file creation. For example, to
         create a config file which is not readable by other users (useful if it stores
         some sensitive information, such as passwords), you could use @c SetUmask(0077).
 
@@ -128,7 +106,7 @@ public:
         @see wxCHANGE_UMASK()
     */
     void SetUmask(int mode);
-
+    
   // implement inherited pure virtual functions
   virtual void SetPath(const wxString& strPath);
   virtual const wxString& GetPath() const;

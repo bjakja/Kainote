@@ -4,6 +4,7 @@
 // Author:      Ryan Norton <wxprojects@comcast.net>
 // Modified by:
 // Created:     8/18/05
+// RCS-ID:      $Id$
 // Copyright:   (c) Ryan Norton
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -34,7 +35,9 @@ class FrameSite;
 #include <oleidl.h>
 #include <olectl.h>
 
+#if !defined(__WXWINCE__) || defined(__WINCE_STANDARDSDK__)
 #include <exdisp.h>
+#endif
 
 #include <docobj.h>
 
@@ -165,7 +168,7 @@ public:
     void OnPaint(wxPaintEvent&);
     void OnSetFocus(wxFocusEvent&);
     void OnKillFocus(wxFocusEvent&);
-    virtual bool MSWTranslateMessage(WXMSG* pMsg) wxOVERRIDE;
+    virtual bool MSWTranslateMessage(WXMSG* pMsg);
     virtual bool QueryClientSiteInterface(REFIID iid, void **_interface, const char *&desc);
 
 protected:
@@ -220,7 +223,7 @@ private:
     DISPID m_dispid;
 
 public:
-    virtual wxEvent *Clone() const wxOVERRIDE
+    virtual wxEvent *Clone() const
     { return new wxActiveXEvent(*this); }
 
     size_t ParamCount() const;

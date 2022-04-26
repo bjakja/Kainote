@@ -3,13 +3,15 @@
 // Purpose:     wxListView unit test
 // Author:      Steven Lamerton
 // Created:     2010-07-10
+// RCS-ID:      $Id$
 // Copyright:   (c) 2010 Steven Lamerton
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "testprec.h"
 
-#if wxUSE_LISTCTRL
-
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
     #include "wx/app.h"
@@ -17,17 +19,16 @@
 
 #include "wx/listctrl.h"
 #include "listbasetest.h"
-#include "testableframe.h"
 
 class ListViewTestCase : public ListBaseTestCase, public CppUnit::TestCase
 {
 public:
     ListViewTestCase() { }
 
-    virtual void setUp() wxOVERRIDE;
-    virtual void tearDown() wxOVERRIDE;
+    virtual void setUp();
+    virtual void tearDown();
 
-    virtual wxListCtrl *GetList() const wxOVERRIDE { return m_list; }
+    virtual wxListCtrl *GetList() const { return m_list; }
 
 private:
     CPPUNIT_TEST_SUITE( ListViewTestCase );
@@ -41,7 +42,7 @@ private:
 
     wxListView *m_list;
 
-    wxDECLARE_NO_COPY_CLASS(ListViewTestCase);
+    DECLARE_NO_COPY_CLASS(ListViewTestCase)
 };
 
 // register in the unnamed registry so that these tests are run by default
@@ -59,8 +60,7 @@ void ListViewTestCase::setUp()
 
 void ListViewTestCase::tearDown()
 {
-    DeleteTestWindow(m_list);
-    m_list = NULL;
+    wxDELETE(m_list);
 }
 
 void ListViewTestCase::Selection()
@@ -103,8 +103,6 @@ void ListViewTestCase::Selection()
 
 void ListViewTestCase::Focus()
 {
-    EventCounter focused(m_list, wxEVT_LIST_ITEM_FOCUSED);
-
     m_list->InsertColumn(0, "Column 0");
 
     m_list->InsertItem(0, "Item 0");
@@ -112,13 +110,9 @@ void ListViewTestCase::Focus()
     m_list->InsertItem(2, "Item 2");
     m_list->InsertItem(3, "Item 3");
 
-    CPPUNIT_ASSERT_EQUAL(0, focused.GetCount());
     CPPUNIT_ASSERT_EQUAL(-1, m_list->GetFocusedItem());
 
     m_list->Focus(0);
 
-    CPPUNIT_ASSERT_EQUAL(1, focused.GetCount());
     CPPUNIT_ASSERT_EQUAL(0, m_list->GetFocusedItem());
 }
-
-#endif

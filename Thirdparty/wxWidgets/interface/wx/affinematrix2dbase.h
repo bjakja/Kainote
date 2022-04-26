@@ -36,7 +36,7 @@ struct wxMatrix2D
 
 /**
    @class wxAffineMatrix2DBase
-
+   
    A 2x3 matrix representing an affine 2D transformation.
 
    This is an abstract base class implemented by wxAffineMatrix2D only so far,
@@ -116,7 +116,7 @@ public:
 
     //@{
     /**
-        Check that this matrix is identical with @a t.
+        Check that this matrix is identical with @t.
 
         @param t
             The matrix compared with this.
@@ -126,7 +126,7 @@ public:
     //@}
 
     /**
-        Check that this matrix differs from @a t.
+        Check that this matrix differs from @t.
 
         @param t
             The matrix compared with this.
@@ -160,7 +160,7 @@ public:
 
         @param cRadians
             Rotation angle in radians, clockwise.
-    */
+    */    
     virtual void Rotate(wxDouble cRadians) = 0;
 
     /**
@@ -181,18 +181,18 @@ public:
 
         @return The point with the transformations applied.
     */
-    wxPoint2DDouble TransformPoint(const wxPoint2DDouble& p) const;
+    wxPoint2DDouble TransformPoint(const wxPoint2DDouble& src) const;
     void TransformPoint(wxDouble* x, wxDouble* y) const;
 
     /**
-        Applies the linear part of this matrix, i.e.\ without translation.
+        Applies the linear part of this matrix, i.e. without translation.
 
         @param p
             The source receiving the transformations.
 
         @return The source with the transformations applied.
     */
-    wxPoint2DDouble TransformDistance(const wxPoint2DDouble& p) const;
+    wxPoint2DDouble TransformDistance(const wxPoint2DDouble& src) const;
     void TransformDistance(wxDouble* dx, wxDouble* dy) const;
 
 };

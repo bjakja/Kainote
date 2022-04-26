@@ -134,6 +134,8 @@
 /* --- Systemspezifische Definitionen */
 #if defined(VMS)
 #define strcasecmp(s1, s2) strcmp(s1, s2)
+#elif defined(__EMX__)
+#define strcasecmp stricmp
 #endif
 
 /* --- sonstiger Quark */

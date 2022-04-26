@@ -31,6 +31,7 @@
 #include <wx/event.h>
 #include <wx/regex.h>
 #include <wx/ffile.h>
+#include <wx/window.h>
 #include "KaiMessageBox.h"
 #include "SubsGridPreview.h"
 #include "SubsGrid.h"
@@ -1730,6 +1731,9 @@ void SubsGridBase::SubsComparison()
 	bool compareByStyles = (comparisonType & COMPARE_BY_STYLES) != 0;
 	bool compareByChosenStyles = compareStyles.size() > 0;
 	bool compareBySelections = (comparisonType & COMPARE_BY_SELECTIONS) != 0;
+	SubsGridBase* CCG1 = CG1;
+	SubsGridBase* CCG2 = CG2;
+
 	int firstSize = CG1->file->GetCount(), 
 		secondSize = CG2->file->GetCount();
 	if (CG1->Comparison){ CG1->Comparison->clear(); }
@@ -1759,11 +1763,11 @@ void SubsGridBase::SubsComparison()
 
 			if (compareBySelections && (!CG1->file->IsSelected(i) || !CG2->file->IsSelected(j))){ j++; continue; }
 
-			compareData & firstCompare = CG1->Comparison->at(i);
-			compareData & secondCompare = CG2->Comparison->at(j);
+			compareData & firstCompare = CCG1->Comparison->at(i);
+			compareData & secondCompare = CCG2->Comparison->at(j);
 			CompareTexts(firstCompare, secondCompare, 
-				(CG1->hasTLMode && dial1->TextTl != emptyString) ? dial1->TextTl : dial1->Text,
-				(CG2->hasTLMode && dial2->TextTl != emptyString) ? dial2->TextTl : dial2->Text);
+				(CCG1->hasTLMode && dial1->TextTl != emptyString) ? dial1->TextTl : dial1->Text,
+				(CCG2->hasTLMode && dial2->TextTl != emptyString) ? dial2->TextTl : dial2->Text);
 			firstCompare.secondComparedLine = j;
 			secondCompare.secondComparedLine = i;
 			lastJ = j + 1;

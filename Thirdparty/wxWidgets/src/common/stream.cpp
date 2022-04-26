@@ -5,6 +5,7 @@
 // Modified by: VZ (23.11.00) to fix realloc()ing new[]ed memory,
 //                            general code review
 // Created:     11/07/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Guilhem Lavaux
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,21 +19,24 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_STREAMS
 
-#include "wx\stream.h"
+#include "wx/stream.h"
 
 #ifndef WX_PRECOMP
-    #include "wx\log.h"
+    #include "wx/log.h"
 #endif
 
 #include <ctype.h>
-#include "wx\datstrm.h"
-#include "wx\textfile.h"
-#include "wx\scopeguard.h"
+#include "wx/datstrm.h"
+#include "wx/textfile.h"
+#include "wx/scopeguard.h"
 
 // ----------------------------------------------------------------------------
 // constants
@@ -387,7 +391,7 @@ char wxStreamBuffer::GetChar()
 
 size_t wxStreamBuffer::Read(void *buffer, size_t size)
 {
-    wxCHECK_MSG( buffer, 0, wxT("NULL data pointer") );
+    wxASSERT_MSG( buffer, wxT("Warning: Null pointer is about to be used") );
 
     /* Clear buffer first */
     memset(buffer, 0x00, size);
@@ -468,7 +472,7 @@ size_t wxStreamBuffer::Read(wxStreamBuffer *dbuf)
 
 size_t wxStreamBuffer::Write(const void *buffer, size_t size)
 {
-    wxCHECK_MSG( buffer, 0, wxT("NULL data pointer") );
+    wxASSERT_MSG( buffer, wxT("Warning: Null pointer is about to be send") );
 
     if (m_stream)
     {
@@ -508,7 +512,7 @@ size_t wxStreamBuffer::Write(const void *buffer, size_t size)
             {
                 PutToBuffer(buffer, left);
                 size -= left;
-                buffer = static_cast<const char*>(buffer) + left;
+                buffer = (char *)buffer + left;
 
                 if ( !FlushBuffer() )
                 {
@@ -673,7 +677,7 @@ wxFileOffset wxStreamBuffer::Tell() const
 // wxStreamBase
 // ----------------------------------------------------------------------------
 
-wxIMPLEMENT_ABSTRACT_CLASS(wxStreamBase, wxObject);
+IMPLEMENT_ABSTRACT_CLASS(wxStreamBase, wxObject)
 
 wxStreamBase::wxStreamBase()
 {
@@ -711,7 +715,7 @@ wxFileOffset wxStreamBase::OnSysTell() const
 // wxInputStream
 // ----------------------------------------------------------------------------
 
-wxIMPLEMENT_ABSTRACT_CLASS(wxInputStream, wxStreamBase);
+IMPLEMENT_ABSTRACT_CLASS(wxInputStream, wxStreamBase)
 
 wxInputStream::wxInputStream()
 {
@@ -768,7 +772,7 @@ char *wxInputStream::AllocSpaceWBack(size_t needed_size)
 
 size_t wxInputStream::GetWBack(void *buf, size_t size)
 {
-    wxCHECK_MSG( buf, 0, wxT("NULL data pointer") );
+    wxASSERT_MSG( buf, wxT("Warning: Null pointer is about to be used") );
 
     /* Clear buffer first */
     memset(buf, 0x00, size);
@@ -804,7 +808,7 @@ size_t wxInputStream::GetWBack(void *buf, size_t size)
 
 size_t wxInputStream::Ungetch(const void *buf, size_t bufsize)
 {
-    wxCHECK_MSG( buf, 0, wxT("NULL data pointer") );
+    wxASSERT_MSG( buf, wxT("Warning: Null pointer is about to be used in Ungetch()") );
 
     if ( m_lasterror != wxSTREAM_NO_ERROR && m_lasterror != wxSTREAM_EOF )
     {
@@ -838,7 +842,7 @@ int wxInputStream::GetC()
 
 wxInputStream& wxInputStream::Read(void *buf, size_t size)
 {
-    wxCHECK_MSG( buf, *this, wxT("NULL data pointer") );
+    wxASSERT_MSG( buf, wxT("Warning: Null pointer is about to be read") );
 
     char *p = (char *)buf;
     m_lastcount = 0;
@@ -907,47 +911,6 @@ wxInputStream& wxInputStream::Read(wxOutputStream& stream_out)
     m_lastcount = lastcount;
 
     return *this;
-}
-
-bool wxInputStream::ReadAll(void *buffer_, size_t size)
-{
-    char* buffer = static_cast<char*>(buffer_);
-
-    size_t totalCount = 0;
-
-    for ( ;; )
-    {
-        const size_t lastCount = Read(buffer, size).LastRead();
-
-        // There is no point in continuing looping if we can't read anything at
-        // all.
-        if ( !lastCount )
-            break;
-
-        totalCount += lastCount;
-
-        // ... Or if an error occurred on the stream.
-        if ( !IsOk() )
-            break;
-
-        // Return successfully if we read exactly the requested number of
-        // bytes (normally the ">" case should never occur and so we could use
-        // "==" test, but be safe and avoid overflowing size even in case of
-        // bugs in LastRead()).
-        if ( lastCount >= size )
-        {
-            size = 0;
-            break;
-        }
-
-        // Advance the buffer before trying to read the rest of data.
-        size -= lastCount;
-        buffer += lastCount;
-    }
-
-    m_lastcount = totalCount;
-
-    return size == 0;
 }
 
 wxFileOffset wxInputStream::SeekI(wxFileOffset pos, wxSeekMode mode)
@@ -1034,7 +997,7 @@ wxFileOffset wxInputStream::TellI() const
 // wxOutputStream
 // ----------------------------------------------------------------------------
 
-wxIMPLEMENT_ABSTRACT_CLASS(wxOutputStream, wxStreamBase);
+IMPLEMENT_ABSTRACT_CLASS(wxOutputStream, wxStreamBase)
 
 wxOutputStream::wxOutputStream()
 {
@@ -1067,38 +1030,6 @@ wxOutputStream& wxOutputStream::Write(wxInputStream& stream_in)
     return *this;
 }
 
-bool wxOutputStream::WriteAll(const void *buffer_, size_t size)
-{
-    // This exactly mirrors ReadAll(), see there for more comments.
-    const char* buffer = static_cast<const char*>(buffer_);
-
-    size_t totalCount = 0;
-
-    for ( ;; )
-    {
-        const size_t lastCount = Write(buffer, size).LastWrite();
-        if ( !lastCount )
-            break;
-
-        totalCount += lastCount;
-
-        if ( !IsOk() )
-            break;
-
-        if ( lastCount >= size )
-        {
-            size = 0;
-            break;
-        }
-
-        size -= lastCount;
-        buffer += lastCount;
-    }
-
-    m_lastcount = totalCount;
-    return size == 0;
-}
-
 wxFileOffset wxOutputStream::TellO() const
 {
     return OnSysTell();
@@ -1118,27 +1049,26 @@ void wxOutputStream::Sync()
 // wxCountingOutputStream
 // ----------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxCountingOutputStream, wxOutputStream);
+IMPLEMENT_DYNAMIC_CLASS(wxCountingOutputStream, wxOutputStream)
 
 wxCountingOutputStream::wxCountingOutputStream ()
 {
-    m_currentPos =
-    m_lastPos = 0;
+     m_currentPos = 0;
 }
 
 wxFileOffset wxCountingOutputStream::GetLength() const
 {
-    return m_lastPos;
+    return m_lastcount;
 }
 
 size_t wxCountingOutputStream::OnSysWrite(const void *WXUNUSED(buffer),
                                           size_t size)
 {
     m_currentPos += size;
-    if ( m_currentPos > m_lastPos )
-        m_lastPos = m_currentPos;
+    if (m_currentPos > m_lastcount)
+        m_lastcount = m_currentPos;
 
-    return size;
+    return m_currentPos;
 }
 
 wxFileOffset wxCountingOutputStream::OnSysSeek(wxFileOffset pos, wxSeekMode mode)
@@ -1152,12 +1082,12 @@ wxFileOffset wxCountingOutputStream::OnSysSeek(wxFileOffset pos, wxSeekMode mode
             break;
 
         case wxFromEnd:
-            new_pos += m_lastPos;
-            wxCHECK_MSG( (wxFileOffset)new_pos == (wxFileOffset)(m_lastPos + pos), wxInvalidOffset, wxT("huge position not supported") );
+            new_pos = m_lastcount + new_pos;
+            wxCHECK_MSG( (wxFileOffset)new_pos == (wxFileOffset)(m_lastcount + pos), wxInvalidOffset, wxT("huge position not supported") );
             break;
 
         case wxFromCurrent:
-            new_pos += m_currentPos;
+            new_pos = m_currentPos + new_pos;
             wxCHECK_MSG( (wxFileOffset)new_pos == (wxFileOffset)(m_currentPos + pos), wxInvalidOffset, wxT("huge position not supported") );
             break;
 
@@ -1168,8 +1098,8 @@ wxFileOffset wxCountingOutputStream::OnSysSeek(wxFileOffset pos, wxSeekMode mode
 
     m_currentPos = new_pos;
 
-    if ( m_currentPos > m_lastPos )
-        m_lastPos = m_currentPos;
+    if (m_currentPos > m_lastcount)
+        m_lastcount = m_currentPos;
 
     return m_currentPos;
 }
@@ -1183,7 +1113,7 @@ wxFileOffset wxCountingOutputStream::OnSysTell() const
 // wxFilterInputStream
 // ----------------------------------------------------------------------------
 
-wxIMPLEMENT_ABSTRACT_CLASS(wxFilterInputStream, wxInputStream);
+IMPLEMENT_ABSTRACT_CLASS(wxFilterInputStream, wxInputStream)
 
 wxFilterInputStream::wxFilterInputStream()
  :  m_parent_i_stream(NULL),
@@ -1213,7 +1143,7 @@ wxFilterInputStream::~wxFilterInputStream()
 // wxFilterOutputStream
 // ----------------------------------------------------------------------------
 
-wxIMPLEMENT_ABSTRACT_CLASS(wxFilterOutputStream, wxOutputStream);
+IMPLEMENT_ABSTRACT_CLASS(wxFilterOutputStream, wxOutputStream)
 
 wxFilterOutputStream::wxFilterOutputStream()
  :  m_parent_o_stream(NULL),
@@ -1251,7 +1181,7 @@ wxFilterOutputStream::~wxFilterOutputStream()
 // wxFilterClassFactoryBase
 // ----------------------------------------------------------------------------
 
-wxIMPLEMENT_ABSTRACT_CLASS(wxFilterClassFactoryBase, wxObject);
+IMPLEMENT_ABSTRACT_CLASS(wxFilterClassFactoryBase, wxObject)
 
 wxString wxFilterClassFactoryBase::PopExtension(const wxString& location) const
 {
@@ -1287,7 +1217,7 @@ bool wxFilterClassFactoryBase::CanHandle(const wxString& protocol,
 // wxFilterClassFactory
 // ----------------------------------------------------------------------------
 
-wxIMPLEMENT_ABSTRACT_CLASS(wxFilterClassFactory, wxFilterClassFactoryBase);
+IMPLEMENT_ABSTRACT_CLASS(wxFilterClassFactory, wxFilterClassFactoryBase)
 
 wxFilterClassFactory *wxFilterClassFactory::sm_first = NULL;
 
@@ -1485,11 +1415,8 @@ wxFileOffset wxBufferedOutputStream::TellO() const
 
 void wxBufferedOutputStream::Sync()
 {
-    if (m_o_streambuf)
-    {
-        m_o_streambuf->FlushBuffer();
-        m_parent_o_stream->Sync();
-    }
+    m_o_streambuf->FlushBuffer();
+    m_parent_o_stream->Sync();
 }
 
 size_t wxBufferedOutputStream::OnSysWrite(const void *buffer, size_t bufsize)

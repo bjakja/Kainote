@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -451,9 +452,9 @@ void wxListBoxCallback (Widget WXUNUSED(w), XtPointer clientData,
     wxEventType evtType;
 
     if( cbs->reason == XmCR_DEFAULT_ACTION )
-        evtType = wxEVT_LISTBOX_DCLICK;
+        evtType = wxEVT_COMMAND_LISTBOX_DOUBLECLICKED;
     else
-        evtType = wxEVT_LISTBOX;
+        evtType = wxEVT_COMMAND_LISTBOX_SELECTED;
 
     int n = cbs->item_position - 1;
     wxCommandEvent event (evtType, item->GetId());

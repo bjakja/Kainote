@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -120,9 +121,9 @@ protected:
         wxCoord width, wxCoord height);
     virtual void DoSetDeviceClippingRegion(const wxRegion& region);
 
-    virtual void DoDrawLines(int n, const wxPoint points[],
+    virtual void DoDrawLines(int n, wxPoint points[],
         wxCoord xoffset, wxCoord yoffset);
-    virtual void DoDrawPolygon(int n, const wxPoint points[],
+    virtual void DoDrawPolygon(int n, wxPoint points[],
         wxCoord xoffset, wxCoord yoffset,
         wxPolygonFillMode fillStyle = wxODDEVEN_RULE);
 
@@ -154,7 +155,7 @@ protected:
     int          m_currentFill ;
     int          m_autoSetting ; // See comment in dcclient.cpp
 
-    wxDECLARE_DYNAMIC_CLASS(wxWindowDCImpl);
+    DECLARE_DYNAMIC_CLASS(wxWindowDCImpl)
 };
 
 class WXDLLIMPEXP_CORE wxPaintDCImpl: public wxWindowDCImpl
@@ -165,7 +166,7 @@ public:
 
     virtual ~wxPaintDCImpl();
 
-    wxDECLARE_DYNAMIC_CLASS(wxPaintDCImpl);
+    DECLARE_DYNAMIC_CLASS(wxPaintDCImpl)
 };
 
 class WXDLLIMPEXP_CORE wxClientDCImpl: public wxWindowDCImpl
@@ -175,7 +176,7 @@ public:
     wxClientDCImpl(wxDC *owner, wxWindow* win)
         : wxWindowDCImpl(owner, win) { }
 
-    wxDECLARE_DYNAMIC_CLASS(wxClientDCImpl);
+    DECLARE_DYNAMIC_CLASS(wxClientDCImpl)
 };
 
 #endif // _WX_DCCLIENT_H_

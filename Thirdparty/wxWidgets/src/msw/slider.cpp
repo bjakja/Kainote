@@ -1,9 +1,10 @@
 /////////////////////////////////////////////////////////////////////////////
 // Name:        src/msw/slider.cpp
-// Purpose:     wxSlider, using trackbar control
+// Purpose:     wxSlider, using the Win95 (and later) trackbar control
 // Author:      Julian Smart
 // Modified by:
 // Created:     04/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart 1998
 //                  Vadim Zeitlin 2004
 // Licence:     wxWindows licence
@@ -20,6 +21,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_SLIDER
 
@@ -51,7 +55,10 @@ enum
 // the gaps between the slider and the labels, in pixels
 const int HGAP = 5;
 const int VGAP = 4;
-// this value is arbitrary:
+// the width of the borders including white space
+const int BORDERPAD = 8;
+// these 2 values are arbitrary:
+const int THUMB = 24;
 const int TICK = 8;
 
 } // anonymous namespace
@@ -67,8 +74,6 @@ const int TICK = 8;
 void wxSlider::Init()
 {
     m_labels = NULL;
-
-    m_hBrushBg = NULL;
 
     m_pageSize = 1;
     m_lineSize = 1;
@@ -116,7 +121,7 @@ bool wxSlider::Create(wxWindow *parent,
                 // no, choose default
                 style |= wxSL_BOTTOM | wxSL_HORIZONTAL;
             }
-    }
+    };
 
     wxASSERT_MSG( !(style & wxSL_VERTICAL) || !(style & wxSL_HORIZONTAL),
                     wxT("incompatible slider direction and orientation") );
@@ -160,16 +165,12 @@ bool wxSlider::Create(wxWindow *parent,
 
             m_labels->Set(n, wnd, lblid);
         }
+        m_labels->SetFont(GetFont());
     }
 
     // now create the main control too
     if ( !MSWCreateControl(TRACKBAR_CLASS, wxEmptyString, pos, size) )
         return false;
-
-    if ( m_labels )
-    {
-        m_labels->SetFont(GetFont());
-    }
 
     // and initialize everything
     SetRange(minValue, maxValue);
@@ -184,8 +185,6 @@ bool wxSlider::Create(wxWindow *parent,
         SetSize(size);
     }
 
-    Bind(wxEVT_DPI_CHANGED, &wxSlider::OnDPIChanged, this);
-
     return true;
 }
 
@@ -195,9 +194,6 @@ WXDWORD wxSlider::MSWGetStyle(long style, WXDWORD *exstyle) const
 
     // TBS_HORZ, TBS_RIGHT and TBS_BOTTOM are 0 but do include them for clarity
     msStyle |= style & wxSL_VERTICAL ? TBS_VERT : TBS_HORZ;
-
-    // allow setting thumb size
-    msStyle |= TBS_FIXEDLENGTH;
 
     if ( style & wxSL_BOTH )
     {
@@ -310,28 +306,15 @@ bool wxSlider::MSWOnScroll(int WXUNUSED(orientation),
     SetValue(newPos);
 
     wxScrollEvent event(scrollEvent, m_windowId);
-    bool          processed = false;
-
     event.SetPosition(newPos);
     event.SetEventObject( this );
-    processed = HandleWindowEvent(event);
+    HandleWindowEvent(event);
 
-    // Do not generate wxEVT_SLIDER when the native scroll message
-    // parameter is SB_ENDSCROLL, which always follows only after
-    // another scroll message which already changed the slider value.
-    // Therefore, sending wxEVT_SLIDER after SB_ENDSCROLL
-    // would result in two wxEVT_SLIDER events with the same value.
-    if ( wParam != SB_ENDSCROLL )
-    {
-        wxCommandEvent cevent( wxEVT_SLIDER, GetId() );
+    wxCommandEvent cevent( wxEVT_COMMAND_SLIDER_UPDATED, GetId() );
+    cevent.SetInt( newPos );
+    cevent.SetEventObject( this );
 
-        cevent.SetInt( newPos );
-        cevent.SetEventObject( this );
-
-        processed = HandleWindowEvent( cevent );
-    }
-
-    return processed;
+    return HandleWindowEvent( cevent );
 }
 
 void wxSlider::Command (wxCommandEvent & event)
@@ -408,9 +391,6 @@ void wxSlider::DoMoveWindow(int x, int y, int width, int height)
         return;
     }
 
-    const int thumbSize = GetThumbLength();
-    const int tickSize = FromDIP(TICK);
-
     int minLabelWidth,
         maxLabelWidth;
     const int labelHeight = GetLabelsSize(&minLabelWidth, &maxLabelWidth);
@@ -422,105 +402,82 @@ void wxSlider::DoMoveWindow(int x, int y, int width, int height)
     }
 
     int tickOffset = 0;
-    if ( HasFlag(wxSL_TICKS) )
-        tickOffset = tickSize;
-    if ( HasFlag(wxSL_BOTH) )
-        tickOffset *= 2;
+    if ( HasFlag(wxSL_TICKS))
+       tickOffset = TICK;
+    if ( HasFlag(wxSL_BOTH))
+       tickOffset *= 2;
 
     // be careful to position the slider itself after moving the labels as
     // otherwise our GetBoundingBox(), which is called from WM_SIZE handler,
     // would return a wrong result and wrong size would be cached internally
     if ( HasFlag(wxSL_VERTICAL) )
     {
-        // Position of the slider.
-        int sliderOffset = 0;
-        if ( HasFlag(wxSL_VALUE_LABEL) )
+        int labelOffset =  0;
+        int holdTopX;
+        int holdBottomX;
+        int xLabel = (wxMax((THUMB + (BORDERPAD * 2)), longestLabelWidth) / 2) -
+            (longestLabelWidth / 2) + x;
+        if ( HasFlag(wxSL_LEFT) )
         {
-            if ( !HasFlag(wxSL_LEFT) )
-                sliderOffset += longestLabelWidth + HGAP;
+            holdTopX = xLabel;
+            holdBottomX = xLabel - (abs(maxLabelWidth - minLabelWidth) / 2);
         }
+        else // wxSL_RIGHT
+        {
+            holdTopX = xLabel + longestLabelWidth + (abs(maxLabelWidth - minLabelWidth) / 2);
+            holdBottomX = xLabel + longestLabelWidth;
 
-        int labelHeightUsed = 0;
+            labelOffset = longestLabelWidth + HGAP;
+        }
 
         if ( HasFlag(wxSL_MIN_MAX_LABELS) )
         {
-            int xPos;
-            int holdTopX;
-            int holdBottomX;
-            if ( HasFlag(wxSL_LEFT) )
+            if ( HasFlag(wxSL_INVERSE) )
             {
-                // Label aligned to the left edge of the slider.
-                xPos = sliderOffset + thumbSize / 2;
-                if ( HasFlag(wxSL_TICKS) )
-                    xPos += tickSize;
-
-                holdTopX = xPos - minLabelWidth / 2;
-                holdBottomX = xPos - maxLabelWidth / 2;
-                if ( holdTopX + minLabelWidth > width )
-                    holdTopX = width - minLabelWidth;
-                if ( holdBottomX + maxLabelWidth > width )
-                    holdBottomX = width - maxLabelWidth;
-            }
-            else // wxSL_RIGHT
-            {
-                // Label aligned to the right edge of the slider.
-                xPos = sliderOffset + thumbSize / 2;
-                if ( HasFlag(wxSL_TICKS) && HasFlag(wxSL_BOTH) )
-                    xPos += tickSize;
-
-                holdTopX = xPos - minLabelWidth / 2;
-                holdBottomX = xPos - maxLabelWidth / 2;
-                if ( holdTopX < 0 )
-                    holdTopX = 0;
-                if ( holdBottomX < 0 )
-                    holdBottomX = 0;
+                wxSwap(holdTopX, holdBottomX);
             }
 
             DoMoveSibling((HWND)(*m_labels)[SliderLabel_Min],
-                x + holdTopX,
+                holdTopX,
                 y,
                 minLabelWidth, labelHeight);
             DoMoveSibling((HWND)(*m_labels)[SliderLabel_Max],
-                x + holdBottomX,
+                holdBottomX,
                 y + height - labelHeight,
                 maxLabelWidth, labelHeight);
-
-            labelHeightUsed = labelHeight;
         }
 
         if ( HasFlag(wxSL_VALUE_LABEL) )
         {
             DoMoveSibling((HWND)(*m_labels)[SliderLabel_Value],
-                x + ( HasFlag(wxSL_LEFT) ? thumbSize + tickOffset + HGAP : 0 ),
-                y + (height - labelHeight) / 2,
+                x + ( HasFlag(wxSL_LEFT) ? THUMB + tickOffset + HGAP : 0 ),
+                y + (height - labelHeight)/2,
                 longestLabelWidth, labelHeight);
         }
 
         // position the slider itself along the left/right edge
         wxSliderBase::DoMoveWindow(
-            x + sliderOffset,
-            y + labelHeightUsed,
-            thumbSize + tickOffset,
-            height - (labelHeightUsed * 2));
+            x + labelOffset,
+            y + labelHeight,
+            THUMB + tickOffset + HGAP,
+            height - (labelHeight * 2));
     }
     else // horizontal
     {
         int yLabelMinMax =
-            ((thumbSize + tickOffset) / 2) - (labelHeight / 2);
+            (y + ((THUMB + tickOffset) / 2)) - (labelHeight / 2);
         int xLabelValue =
-            minLabelWidth +
-            ((width - (minLabelWidth + maxLabelWidth)) / 2) -
+            x + minLabelWidth +
+            ((width  - (minLabelWidth + maxLabelWidth)) / 2) -
             (longestLabelWidth / 2);
 
-        int ySlider = 0;
-        int minLabelWidthUsed = 0;
-        int maxLabelWidthUsed = 0;
+        int ySlider = y;
 
         if ( HasFlag(wxSL_VALUE_LABEL) )
         {
             DoMoveSibling((HWND)(*m_labels)[SliderLabel_Value],
-                x + xLabelValue,
-                y + (HasFlag(wxSL_BOTTOM) ? 0 : thumbSize + tickOffset),
+                xLabelValue,
+                y + (HasFlag(wxSL_BOTTOM) ? 0 : THUMB + tickOffset),
                 longestLabelWidth, labelHeight);
 
             if ( HasFlag(wxSL_BOTTOM) )
@@ -534,42 +491,34 @@ void wxSlider::DoMoveWindow(int x, int y, int width, int height)
         {
             DoMoveSibling((HWND)(*m_labels)[SliderLabel_Min],
                 x,
-                y + yLabelMinMax,
+                yLabelMinMax,
                 minLabelWidth, labelHeight);
             DoMoveSibling((HWND)(*m_labels)[SliderLabel_Max],
                 x + width - maxLabelWidth,
-                y + yLabelMinMax,
+                yLabelMinMax,
                 maxLabelWidth, labelHeight);
-
-            minLabelWidthUsed = minLabelWidth + VGAP;
-            maxLabelWidthUsed = maxLabelWidth + VGAP;
         }
 
         // position the slider itself along the top/bottom edge
         wxSliderBase::DoMoveWindow(
-            x + minLabelWidthUsed,
-            y + ySlider,
-            width - (minLabelWidthUsed + maxLabelWidthUsed),
-            thumbSize + tickOffset);
+            x + minLabelWidth + VGAP,
+            ySlider,
+            width  - (minLabelWidth + maxLabelWidth  + (VGAP*2)),
+            THUMB + tickOffset);
     }
 }
 
 wxSize wxSlider::DoGetBestSize() const
 {
     // this value is arbitrary:
-    const int length = FromDIP(100);
-
-    // We need 2 extra pixels (which are not scaled by the DPI by the native
-    // control) on either side to account for the focus rectangle.
-    const int thumbSize = GetThumbLength() + 4;
-
-    const int tickSize = FromDIP(TICK);
+    static const int length = 100;
 
     int *width;
     wxSize size;
     if ( HasFlag(wxSL_VERTICAL) )
     {
-        size.Set(thumbSize, length);
+        size.x = THUMB;
+        size.y = length;
         width = &size.x;
 
         if ( m_labels )
@@ -577,30 +526,29 @@ wxSize wxSlider::DoGetBestSize() const
             int widthMin,
                 widthMax;
             int hLabel = GetLabelsSize(&widthMin, &widthMax);
-            const int longestLabelWidth = wxMax(widthMin, widthMax);
 
             // account for the labels
-            if ( HasFlag(wxSL_VALUE_LABEL) )
-                size.x += longestLabelWidth + HGAP;
-
             if ( HasFlag(wxSL_MIN_MAX_LABELS) )
-            {
-                size.x = wxMax(size.x, longestLabelWidth);
-                size.y += hLabel * 2;
-            }
+                size.x += HGAP + wxMax(widthMin, widthMax);
+
+            // labels are indented relative to the slider itself
+            size.y += hLabel;
         }
     }
     else // horizontal
     {
-        size.Set(length, thumbSize);
+        size.x = length;
+        size.y = THUMB;
         width = &size.y;
 
         if ( m_labels )
         {
             int labelSize = GetLabelsSize();
 
-            // Min/max labels are compensated by the thumb so we don't need
-            // extra space for them
+            // Min/max labels are compensated by the ticks so we don't need
+            // extra space for them if we're also showing ticks.
+            if ( HasFlag(wxSL_MIN_MAX_LABELS) && !HasFlag(wxSL_TICKS) )
+                size.y += labelSize;
 
             // The value label is always on top of the control and so does need
             // extra space in any case.
@@ -612,50 +560,12 @@ wxSize wxSlider::DoGetBestSize() const
     // need extra space to show ticks
     if ( HasFlag(wxSL_TICKS) )
     {
-        *width += tickSize;
+        *width += TICK;
         // and maybe twice as much if we show them on both sides
         if ( HasFlag(wxSL_BOTH) )
-            *width += tickSize;
+            *width += TICK;
     }
     return size;
-}
-
-WXHBRUSH wxSlider::DoMSWControlColor(WXHDC pDC, wxColour colBg, WXHWND hWnd)
-{
-    const WXHBRUSH hBrush = wxSliderBase::DoMSWControlColor(pDC, colBg, hWnd);
-
-    // The native control doesn't repaint itself when it's invalidated, so we
-    // do it explicitly from here, as this is the only way to propagate the
-    // parent background colour to the slider when it changes.
-    if ( hWnd == GetHwnd() && hBrush != m_hBrushBg )
-    {
-        m_hBrushBg = hBrush;
-
-        // Anything really refreshing the slider would work here, we use a
-        // dummy WM_ENABLE but using TBM_SETPOS would work too, for example.
-        ::PostMessage(hWnd, WM_ENABLE, ::IsWindowEnabled(hWnd), 0);
-    }
-
-    return hBrush;
-}
-
-void wxSlider::MSWUpdateFontOnDPIChange(const wxSize& newDPI)
-{
-    wxSliderBase::MSWUpdateFontOnDPIChange(newDPI);
-
-    if ( m_labels && m_font.IsOk() )
-    {
-        m_labels->SetFont(m_font);
-    }
-}
-
-void wxSlider::OnDPIChanged(wxDPIChangedEvent& event)
-{
-    int thumbLen = GetThumbLength();
-
-    SetThumbLength(event.ScaleX(thumbLen));
-
-    event.Skip();
 }
 
 // ----------------------------------------------------------------------------
@@ -692,14 +602,6 @@ void wxSlider::SetRange(int minValue, int maxValue)
 
     if ( m_labels )
     {
-        Move(wxDefaultPosition, wxSIZE_FORCE); // Force a re-layout the labels.
-
-        // Update the label with the value adjusted by the control as
-        // old value can be out of the new range.
-        if ( HasFlag(wxSL_VALUE_LABEL) )
-        {
-            SetValue(GetValue());
-        }
         ::SetWindowText((*m_labels)[SliderLabel_Min],
                         Format(ValueInvertOrNot(m_rangeMin)).t_str());
         ::SetWindowText((*m_labels)[SliderLabel_Max],
@@ -773,8 +675,6 @@ void wxSlider::SetSelection(int minPos, int maxPos)
 void wxSlider::SetThumbLength(int len)
 {
     ::SendMessage(GetHwnd(), TBM_SETTHUMBLENGTH, (WPARAM) len, (LPARAM) 0);
-
-    InvalidateBestSize();
 }
 
 int wxSlider::GetThumbLength() const

@@ -2,6 +2,7 @@
 // Name:        filectrl.h
 // Purpose:     interface of wxFileCtrl
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -56,7 +57,7 @@ enum
 
     @library{wxcore}
     @category{ctrl}
-    @appearance{filectrl}
+    @appearance{filectrl.png}
 
     @nativeimpl{wxgtk}
 
@@ -91,6 +92,9 @@ public:
             Initial size.
         @param name
             Control name.
+
+        @return @true if the control was successfully created or @false if
+                 creation failed.
     */
 
     wxFileCtrl(wxWindow* parent, wxWindowID id,
@@ -104,9 +108,6 @@ public:
 
     /**
         Create function for two-step construction. See wxFileCtrl() for details.
-
-        @return @true if the control was successfully created or @false if
-                 creation failed.
     */
     bool Create(wxWindow* parent, wxWindowID id,
                 const wxString& defaultDirectory = wxEmptyString,
@@ -117,7 +118,7 @@ public:
                 const wxString& name = wxFileCtrlNameStr);
 
     /**
-        Returns the current directory of the file control (i.e.\ the directory shown by it).
+        Returns the current directory of the file control (i.e. the directory shown by it).
     */
     virtual wxString GetDirectory() const;
 
@@ -180,9 +181,9 @@ public:
 
     /**
         Changes to a certain directory and selects a certain file.
-
-        If @a path includes the directory part, it must exist, otherwise @false
-        is returned and nothing else is done.
+        
+        In case the filename specified isn't found/couldn't be shown with
+        currently selected filter, false is returned.
 
         @return Returns @true on success, @false otherwise
     */
@@ -229,7 +230,7 @@ wxEventType wxEVT_FILECTRL_FILTERCHANGED;
         The current file filter of the file control has been changed
     @endEventTable
 
-    @library{wxcore}
+    @library{wxbase}
     @category{events}
 */
 class wxFileCtrlEvent : public wxCommandEvent

@@ -2,36 +2,46 @@
 // Name:        topics.h
 // Purpose:     Topic overviews page of the Doxygen manual
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 /**
 
-@page page_topics Programming Guides
+@page page_topics Topic Overviews
 
-@tableofcontents
+This chapter contains a selection of topic overviews.
+The following is a basic categorization of them:
 
-The guides here cover all high level details of a full range of development
-topics related to building applications with wxWidgets.
+@li @ref page_topics_starting
+@li @ref page_topics_programming
+@li @ref page_topics_nongui
+@li @ref page_topics_drawing
+@li @ref page_topics_gui
+@li @ref page_topics_indivctrl
+@li @ref page_topics_other
 
+
+<hr>
 
 
 @section page_topics_starting Starting with wxWidgets
 
-@li @subpage overview_install
-@li @subpage overview_helloworld
-@li @subpage overview_roughguide
 @li @subpage overview_referencenotes
+@li @subpage overview_roughguide
+@li @subpage overview_helloworld
+@li @subpage overview_python
+@li @subpage overview_changes_since28
 
-@section page_topics_programming Conceptual Overviews
+@section page_topics_programming Important wxWidgets Topics
 
 @li @subpage overview_app
+@li @subpage overview_unicode
+@li @subpage overview_i18n
 @li @subpage overview_events
 @li @subpage overview_windowsizing
 @li @subpage overview_windowids
 @li @subpage overview_log
-@li @subpage overview_unicode
-@li @subpage overview_i18n
 
 @section page_topics_nongui Non-GUI Classes
 
@@ -99,6 +109,6 @@ topics related to building applications with wxWidgets.
 @li @subpage overview_windowdeletion
 @li @subpage overview_envvars
 @li @subpage overview_customwidgets
-@li @subpage overview_high_dpi
 
 */
+

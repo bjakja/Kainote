@@ -12,15 +12,11 @@
 namespace Scintilla {
 #endif
 
-#ifdef SCI_LEXER
-class LexState;
-#endif
-
 /**
  */
 class ScintillaBase : public Editor {
 	// Private so ScintillaBase objects can not be copied
-	explicit ScintillaBase(const ScintillaBase &);
+	ScintillaBase(const ScintillaBase &);
 	ScintillaBase &operator=(const ScintillaBase &);
 
 protected:
@@ -38,9 +34,7 @@ protected:
 		idcmdSelectAll=16
 	};
 
-	enum { maxLenInputIME = 200 };
-
-	int displayPopupMenu;
+	bool displayPopupMenu;
 	Menu popup;
 	AutoComplete ac;
 
@@ -48,10 +42,14 @@ protected:
 
 	int listType;			///< 0 is an autocomplete list
 	int maxListWidth;		/// Maximum width of list, in average character widths
-	int multiAutoCMode; /// Mode for autocompleting when multiple selections are present
 
 #ifdef SCI_LEXER
-	LexState *DocumentLexState();
+	bool performingStyle;	///< Prevent reentrance
+	int lexLanguage;
+	const LexerModule *lexCurrent;
+	PropSetSimple props;
+	enum {numWordLists=KEYWORDSET_MAX+1};
+	WordList *keyWordLists[numWordLists+1];
 	void SetLexer(uptr_t wParam);
 	void SetLexerLanguage(const char *languageName);
 	void Colourise(int start, int end);
@@ -60,40 +58,36 @@ protected:
 	ScintillaBase();
 	virtual ~ScintillaBase();
 	virtual void Initialise() = 0;
-	virtual void Finalise();
+	virtual void Finalise() = 0;
 
-	virtual void AddCharUTF(const char *s, unsigned int len, bool treatAsDBCS=false);
+	virtual void RefreshColourPalette(Palette &pal, bool want);
+
+	virtual void AddCharUTF(char *s, unsigned int len, bool treatAsDBCS=false);
 	void Command(int cmdId);
 	virtual void CancelModes();
 	virtual int KeyCommand(unsigned int iMessage);
 
-	void AutoCompleteInsert(Position startPos, int removeLen, const char *text, int textLen);
 	void AutoCompleteStart(int lenEntered, const char *list);
 	void AutoCompleteCancel();
 	void AutoCompleteMove(int delta);
-	int AutoCompleteGetCurrent() const;
-	int AutoCompleteGetCurrentText(char *buffer) const;
+	int AutoCompleteGetCurrent();
+	int AutoCompleteGetCurrentText(char *buffer);
 	void AutoCompleteCharacterAdded(char ch);
 	void AutoCompleteCharacterDeleted();
-	void AutoCompleteCompleted(char ch, unsigned int completionMethod);
+	void AutoCompleteCompleted();
 	void AutoCompleteMoveToCurrentWord();
-	static void AutoCompleteDoubleClick(void *p);
+	static void AutoCompleteDoubleClick(void* p);
 
 	void CallTipClick();
 	void CallTipShow(Point pt, const char *defn);
 	virtual void CreateCallTipWindow(PRectangle rc) = 0;
 
 	virtual void AddToPopUp(const char *label, int cmd=0, bool enabled=true) = 0;
-	bool ShouldDisplayPopup(Point ptInWindowCoordinates) const;
 	void ContextMenu(Point pt);
 
-	virtual void ButtonDownWithModifiers(Point pt, unsigned int curTime, int modifiers);
 	virtual void ButtonDown(Point pt, unsigned int curTime, bool shift, bool ctrl, bool alt);
-	virtual void RightButtonDownWithModifiers(Point pt, unsigned int curTime, int modifiers);
 
-	void NotifyStyleToNeeded(int endStyleNeeded);
-	void NotifyLexerChanged(Document *doc, void *userData);
-
+	virtual void NotifyStyleToNeeded(int endStyleNeeded);
 public:
 	// Public so scintilla_send_message can use it
 	virtual sptr_t WndProc(unsigned int iMessage, uptr_t wParam, sptr_t lParam);

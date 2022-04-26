@@ -3,6 +3,7 @@
 // Purpose:     XRC resource for dialogs
 // Author:      Vaclav Slavik & Aleks.
 // Created:     2000/03/05
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -10,6 +11,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_XRC
 
@@ -22,7 +26,7 @@
     #include "wx/dialog.h" // to get wxDEFAULT_DIALOG_STYLE
 #endif
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxFrameXmlHandler, wxXmlResourceHandler);
+IMPLEMENT_DYNAMIC_CLASS(wxFrameXmlHandler, wxXmlResourceHandler)
 
 wxFrameXmlHandler::wxFrameXmlHandler() : wxXmlResourceHandler()
 {
@@ -30,8 +34,14 @@ wxFrameXmlHandler::wxFrameXmlHandler() : wxXmlResourceHandler()
     XRC_ADD_STYLE(wxCAPTION);
     XRC_ADD_STYLE(wxDEFAULT_DIALOG_STYLE);
     XRC_ADD_STYLE(wxDEFAULT_FRAME_STYLE);
+#if WXWIN_COMPATIBILITY_2_6
+    XRC_ADD_STYLE(wxTHICK_FRAME);
+#endif // WXWIN_COMPATIBILITY_2_6
     XRC_ADD_STYLE(wxSYSTEM_MENU);
     XRC_ADD_STYLE(wxRESIZE_BORDER);
+#if WXWIN_COMPATIBILITY_2_6
+    XRC_ADD_STYLE(wxRESIZE_BOX);
+#endif // WXWIN_COMPATIBILITY_2_6
     XRC_ADD_STYLE(wxCLOSE_BOX);
 
     XRC_ADD_STYLE(wxFRAME_NO_TASKBAR);
@@ -42,6 +52,9 @@ wxFrameXmlHandler::wxFrameXmlHandler() : wxXmlResourceHandler()
     XRC_ADD_STYLE(wxMINIMIZE_BOX);
     XRC_ADD_STYLE(wxSTAY_ON_TOP);
 
+#if WXWIN_COMPATIBILITY_2_6
+    XRC_ADD_STYLE(wxNO_3D);
+#endif // WXWIN_COMPATIBILITY_2_6
     XRC_ADD_STYLE(wxTAB_TRAVERSAL);
     XRC_ADD_STYLE(wxWS_EX_VALIDATE_RECURSIVELY);
     XRC_ADD_STYLE(wxFRAME_EX_METAL);
@@ -52,7 +65,7 @@ wxFrameXmlHandler::wxFrameXmlHandler() : wxXmlResourceHandler()
 
 wxObject *wxFrameXmlHandler::DoCreateResource()
 {
-    XRC_MAKE_INSTANCE(frame, wxFrame)
+    XRC_MAKE_INSTANCE(frame, wxFrame);
 
     frame->Create(m_parentAsWindow,
                   GetID(),

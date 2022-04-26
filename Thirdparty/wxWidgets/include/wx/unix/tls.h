@@ -3,6 +3,7 @@
 // Purpose:     Pthreads implementation of wxTlsValue<>
 // Author:      Vadim Zeitlin
 // Created:     2008-08-08
+// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////

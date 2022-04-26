@@ -2,6 +2,7 @@
 // Name:        tests/streams/memstream.cpp
 // Purpose:     Test wxMemoryInputStream/wxMemoryOutputStream
 // Author:      Hans Van Leemputten
+// RCS-ID:      $Id$
 // Copyright:   (c) 2004 Hans Van Leemputten
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -10,6 +11,9 @@
 // and "wx/cppunit.h"
 #include "testprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 // for all others, include the necessary headers
 #ifndef WX_PRECOMP
@@ -67,8 +71,8 @@ private:
 
 private:
     // Implement base class functions.
-    virtual wxMemoryInputStream  *DoCreateInStream() wxOVERRIDE;
-    virtual wxMemoryOutputStream *DoCreateOutStream() wxOVERRIDE;
+    virtual wxMemoryInputStream  *DoCreateInStream();
+    virtual wxMemoryOutputStream *DoCreateOutStream();
 
 private:
     char    m_DataBuffer[DATABUFFER_SIZE];

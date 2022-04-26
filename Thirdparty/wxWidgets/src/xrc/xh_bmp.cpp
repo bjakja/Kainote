@@ -3,6 +3,7 @@
 // Purpose:     XRC resource for wxBitmap and wxIcon
 // Author:      Vaclav Slavik
 // Created:     2000/09/09
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -10,6 +11,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_XRC
 
@@ -19,7 +23,7 @@
     #include "wx/bitmap.h"
 #endif
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxBitmapXmlHandler, wxXmlResourceHandler);
+IMPLEMENT_DYNAMIC_CLASS(wxBitmapXmlHandler, wxXmlResourceHandler)
 
 wxBitmapXmlHandler::wxBitmapXmlHandler()
                    :wxXmlResourceHandler()
@@ -36,7 +40,7 @@ bool wxBitmapXmlHandler::CanHandle(wxXmlNode *node)
     return IsOfClass(node, wxT("wxBitmap"));
 }
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxIconXmlHandler, wxXmlResourceHandler);
+IMPLEMENT_DYNAMIC_CLASS(wxIconXmlHandler, wxXmlResourceHandler)
 
 wxIconXmlHandler::wxIconXmlHandler()
 : wxXmlResourceHandler()

@@ -17,7 +17,7 @@ namespace Scintilla {
 class CallTip {
 	int startHighlight;    // character offset to start and...
 	int endHighlight;      // ...end of highlighted text
-	std::string val;
+	char *val;
 	Font font;
 	PRectangle rectUp;      // rectangle of last up angle in the tip
 	PRectangle rectDown;    // rectangle of last down arrow in the tip
@@ -25,7 +25,6 @@ class CallTip {
 	int offsetMain;         // The alignment point of the call tip
 	int tabSize;            // Tab size in pixels, <=0 no TAB expand
 	bool useStyleCallTip;   // if true, STYLE_CALLTIP should be used
-	bool above;		// if true, display calltip above text
 
 	// Private so CallTip objects can not be copied
 	CallTip(const CallTip &);
@@ -34,38 +33,36 @@ class CallTip {
 		int posStart, int posEnd, int ytext, PRectangle rcClient,
 		bool highlight, bool draw);
 	int PaintContents(Surface *surfaceWindow, bool draw);
-	bool IsTabCharacter(char c) const;
-	int NextTabPos(int x) const;
+	bool IsTabCharacter(char c);
+	int NextTabPos(int x);
 
 public:
 	Window wCallTip;
 	Window wDraw;
 	bool inCallTipMode;
 	int posStartCallTip;
-	ColourDesired colourBG;
-	ColourDesired colourUnSel;
-	ColourDesired colourSel;
-	ColourDesired colourShade;
-	ColourDesired colourLight;
+	ColourPair colourBG;
+	ColourPair colourUnSel;
+	ColourPair colourSel;
+	ColourPair colourShade;
+	ColourPair colourLight;
 	int codePage;
 	int clickPlace;
 
-	int insetX; // text inset in x from calltip border
-	int widthArrow;
-	int borderHeight;
-	int verticalOffset; // pixel offset up or down of the calltip with respect to the line
-
 	CallTip();
 	~CallTip();
+
+	/// Claim or accept palette entries for the colours required to paint a calltip.
+	void RefreshColourPalette(Palette &pal, bool want);
 
 	void PaintCT(Surface *surfaceWindow);
 
 	void MouseClick(Point pt);
 
 	/// Setup the calltip and return a rectangle of the area required.
-	PRectangle CallTipStart(int pos, Point pt, int textHeight, const char *defn,
-		const char *faceName, int size, int codePage_,
-		int characterSet, int technology, Window &wParent);
+	PRectangle CallTipStart(int pos, Point pt, const char *defn,
+		const char *faceName, int size, int codePage_, 
+		int characterSet, Window &wParent);
 
 	void CallTipCancel();
 
@@ -76,14 +73,11 @@ public:
 	/// Set the tab size in pixels for the call tip. 0 or -ve means no tab expand.
 	void SetTabSize(int tabSz);
 
-	/// Set calltip position.
-	void SetPosition(bool aboveText);
-
 	/// Used to determine which STYLE_xxxx to use for call tip information
 	bool UseStyleCallTip() const { return useStyleCallTip;}
 
 	// Modify foreground and background colours
-	void SetForeBack(const ColourDesired &fore, const ColourDesired &back);
+	void SetForeBack(const ColourPair &fore, const ColourPair &back);
 };
 
 #ifdef SCI_NAMESPACE

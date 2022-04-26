@@ -1,9 +1,10 @@
 /////////////////////////////////////////////////////////////////////////////
 // Name:        wx/richtext/richtextimagedlg.h
-// Purpose:     A dialog for editing image properties.
+// Purpose:
 // Author:      Mingquan Yang
 // Modified by: Julian Smart
 // Created:     Wed 02 Jun 2010 11:27:23 CST
+// RCS-ID:
 // Copyright:   (c) Mingquan Yang, Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -33,20 +34,22 @@ class WXDLLIMPEXP_FWD_CORE wxTextCtrl;
  * Control identifiers
  */
 
+////@begin control identifiers
 #define SYMBOL_WXRICHTEXTOBJECTPROPERTIESDIALOG_STYLE wxDEFAULT_DIALOG_STYLE|wxTAB_TRAVERSAL
-#define SYMBOL_WXRICHTEXTOBJECTPROPERTIESDIALOG_TITLE wxGetTranslation("Object Properties")
+#define SYMBOL_WXRICHTEXTOBJECTPROPERTIESDIALOG_TITLE _("Object Properties")
 #define SYMBOL_WXRICHTEXTOBJECTPROPERTIESDIALOG_IDNAME ID_RICHTEXTOBJECTPROPERTIESDIALOG
 #define SYMBOL_WXRICHTEXTOBJECTPROPERTIESDIALOG_SIZE wxSize(400, 300)
 #define SYMBOL_WXRICHTEXTOBJECTPROPERTIESDIALOG_POSITION wxDefaultPosition
+////@end control identifiers
 
 /*!
  * wxRichTextObjectPropertiesDialog class declaration
  */
 
 class WXDLLIMPEXP_RICHTEXT wxRichTextObjectPropertiesDialog: public wxRichTextFormattingDialog
-{
-    wxDECLARE_DYNAMIC_CLASS(wxRichTextObjectPropertiesDialog);
-    wxDECLARE_EVENT_TABLE();
+{    
+    DECLARE_DYNAMIC_CLASS( wxRichTextObjectPropertiesDialog )
+    DECLARE_EVENT_TABLE()
 
 public:
     /// Constructors

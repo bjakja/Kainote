@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-
+#include <wx/msw/winundef.h>
 #include <wx/window.h>
 #include "SubsTime.h"
 #include "KaiTextCtrl.h"

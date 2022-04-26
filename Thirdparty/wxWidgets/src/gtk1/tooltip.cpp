@@ -2,6 +2,7 @@
 // Name:        src/gtk1/tooltip.cpp
 // Purpose:     wxToolTip implementation
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -29,7 +30,7 @@ static GtkTooltips *ss_tooltips = NULL;
 // wxToolTip
 //-----------------------------------------------------------------------------
 
-wxIMPLEMENT_ABSTRACT_CLASS(wxToolTip, wxObject);
+IMPLEMENT_ABSTRACT_CLASS(wxToolTip, wxObject)
 
 wxToolTip::wxToolTip( const wxString &tip )
 {

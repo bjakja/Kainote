@@ -3,6 +3,7 @@
 // Purpose:     wxBitmapComboBox
 // Author:      Jaakko Salli
 // Created:     2008-04-09
+// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Jaakko Salli
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,6 +18,9 @@
 
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #include "wx/bmpcbox.h"
 
@@ -47,6 +51,10 @@ const char wxBitmapComboBoxNameStr[] = "bitmapComboBox";
 #define wxBCB_DEFAULT_ITEM_HEIGHT  13
 
 
+// This macros allows wxArrayPtrVoid to be used in more convenient manner
+#define GetBitmapPtr(n)     ((wxBitmap*)m_bitmaps[n])
+
+
 // ----------------------------------------------------------------------------
 // Initialization
 // ----------------------------------------------------------------------------
@@ -61,29 +69,26 @@ void wxBitmapComboBoxBase::Init()
 
 void wxBitmapComboBoxBase::UpdateInternals()
 {
-    m_fontHeight = GetControl()->GetCharHeight()
-        + GetControl()->FromDIP(EXTRA_FONT_HEIGHT);
+    m_fontHeight = GetControl()->GetCharHeight() + EXTRA_FONT_HEIGHT;
 
-    while ( m_bitmapbundles.size() < GetItemContainer()->GetCount() )
-        m_bitmapbundles.push_back( wxBitmapBundle() );
+    while ( m_bitmaps.GetCount() < GetItemContainer()->GetCount() )
+        m_bitmaps.Add( new wxBitmap() );
 }
 
 // ----------------------------------------------------------------------------
 // Item manipulation
 // ----------------------------------------------------------------------------
 
-void wxBitmapComboBoxBase::DoSetItemBitmap(unsigned int n, const wxBitmapBundle& bitmap)
+void wxBitmapComboBoxBase::DoSetItemBitmap(unsigned int n, const wxBitmap& bitmap)
 {
-    wxCHECK_RET( n < m_bitmapbundles.size(), "invalid item index" );
-    m_bitmapbundles.at(n) = bitmap;
+    wxCHECK_RET( n < m_bitmaps.size(), "invalid item index" );
+    *GetBitmapPtr(n) = bitmap;
 }
 
 wxBitmap wxBitmapComboBoxBase::GetItemBitmap(unsigned int n) const
 {
-    wxCHECK_MSG( n < m_bitmapbundles.size(), wxNullBitmap, "invalid item index" );
-    return m_bitmapbundles.at(n).GetBitmapFor(
-        const_cast<wxBitmapComboBoxBase*>(this)->GetControl()
-    );
+    wxCHECK_MSG( n < m_bitmaps.size(), wxNullBitmap, "invalid item index" );
+    return *GetBitmapPtr(n);
 }
 
 // ----------------------------------------------------------------------------
@@ -92,7 +97,10 @@ wxBitmap wxBitmapComboBoxBase::GetItemBitmap(unsigned int n) const
 
 void wxBitmapComboBoxBase::BCBDoClear()
 {
-    m_bitmapbundles.clear();
+    for ( unsigned i = 0; i < m_bitmaps.size(); i++ )
+        delete GetBitmapPtr(i);
+
+    m_bitmaps.Empty();
 
     m_usedImgSize.x = -1;
     m_usedImgSize.y = -1;
@@ -102,23 +110,20 @@ void wxBitmapComboBoxBase::BCBDoClear()
 
 void wxBitmapComboBoxBase::BCBDoDeleteOneItem(unsigned int n)
 {
-    if ( n < m_bitmapbundles.size() )
-    {
-        m_bitmapbundles.erase(m_bitmapbundles.begin() + n);
-    }
+    delete GetBitmapPtr(n);
+    m_bitmaps.RemoveAt(n);
 }
 
 // ----------------------------------------------------------------------------
 // Preparation and Calculations
 // ----------------------------------------------------------------------------
 
-bool wxBitmapComboBoxBase::OnAddBitmap(const wxBitmapBundle& bitmap)
+bool wxBitmapComboBoxBase::OnAddBitmap(const wxBitmap& bitmap)
 {
     if ( bitmap.IsOk() )
     {
-        wxSize bmpDefaultSize = bitmap.GetPreferredLogicalSizeFor(GetControl());
-        int width = bmpDefaultSize.GetWidth();
-        int height = bmpDefaultSize.GetHeight();
+        int width = bitmap.GetWidth();
+        int height = bitmap.GetHeight();
 
         if ( m_usedImgSize.x < 0 )
         {
@@ -155,9 +160,7 @@ int wxBitmapComboBoxBase::DetermineIndent()
 
     if ( m_usedImgSize.x > 0 )
     {
-        indent = GetControl()->FromDIP(m_usedImgSize.x)
-            + GetControl()->FromDIP(IMAGE_SPACING_LEFT)
-            + GetControl()->FromDIP(IMAGE_SPACING_RIGHT);
+        indent = m_usedImgSize.x + IMAGE_SPACING_LEFT + IMAGE_SPACING_RIGHT;
         m_imgAreaWidth = indent;
 
         indent -= 3;
@@ -206,20 +209,15 @@ void wxBitmapComboBoxBase::DrawItem(wxDC& dc,
                                     const wxString& text,
                                     int WXUNUSED(flags)) const
 {
-    const wxBitmapBundle& bb = m_bitmapbundles.at(item);
-    if ( bb.IsOk() )
+    const wxBitmap& bmp = *GetBitmapPtr(item);
+    if ( bmp.IsOk() )
     {
-        const wxWindow* win = const_cast<wxBitmapComboBoxBase*>(this)->GetControl();
-        wxBitmap bmp = bb.GetBitmapFor(win);
-
-        wxCoord w = bmp.GetLogicalWidth();
-        wxCoord h = bmp.GetLogicalHeight();
-
-        const int imgSpacingLeft = win->FromDIP(IMAGE_SPACING_LEFT);
+        wxCoord w = bmp.GetWidth();
+        wxCoord h = bmp.GetHeight();
 
         // Draw the image centered
         dc.DrawBitmap(bmp,
-                      rect.x + (m_usedImgSize.x-w)/2 + imgSpacingLeft,
+                      rect.x + (m_usedImgSize.x-w)/2 + IMAGE_SPACING_LEFT,
                       rect.y + (rect.height-h)/2,
                       true);
     }
@@ -238,8 +236,7 @@ wxCoord wxBitmapComboBoxBase::MeasureItem(size_t WXUNUSED(item)) const
         return imgHeightArea > m_fontHeight ? imgHeightArea : m_fontHeight;
     }
 
-    const wxWindow* win = const_cast<wxBitmapComboBoxBase*>(this)->GetControl();
-    return win->FromDIP(wxBCB_DEFAULT_ITEM_HEIGHT);
+    return wxBCB_DEFAULT_ITEM_HEIGHT;
 }
 
 #endif // wxBITMAPCOMBOBOX_OWNERDRAWN_BASED

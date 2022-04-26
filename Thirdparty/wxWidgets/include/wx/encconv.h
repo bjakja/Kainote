@@ -10,11 +10,11 @@
 #ifndef _WX_ENCCONV_H_
 #define _WX_ENCCONV_H_
 
-#include "wx\defs.h"
+#include "wx/defs.h"
 
-#include "wx\object.h"
-#include "wx\fontenc.h"
-#include "wx\dynarray.h"
+#include "wx/object.h"
+#include "wx/fontenc.h"
+#include "wx/dynarray.h"
 
 // ----------------------------------------------------------------------------
 // constants
@@ -33,6 +33,7 @@ enum
 
     wxPLATFORM_UNIX = 0,
     wxPLATFORM_WINDOWS,
+    wxPLATFORM_OS2,
     wxPLATFORM_MAC
 };
 
@@ -53,7 +54,7 @@ class WXDLLIMPEXP_BASE wxEncodingConverter : public wxObject
     public:
 
             wxEncodingConverter();
-            virtual ~wxEncodingConverter() { delete[] m_Table; }
+            virtual ~wxEncodingConverter() { if (m_Table) delete[] m_Table; }
 
             // Initialize conversion. Both output or input encoding may
             // be wxFONTENCODING_UNICODE.
@@ -75,7 +76,7 @@ class WXDLLIMPEXP_BASE wxEncodingConverter : public wxObject
             //              try some (lossy) substitutions - e.g. replace
             //              unconvertable latin capitals with acute by ordinary
             //              capitals, replace en-dash or em-dash by '-' etc.
-            //     both modes guarantee that output string will have same length
+            //     both modes gurantee that output string will have same length
             //     as input string
             //
             // Returns false if given conversion is impossible, true otherwise
@@ -96,7 +97,7 @@ class WXDLLIMPEXP_BASE wxEncodingConverter : public wxObject
             bool Convert(wchar_t* str) const { return Convert(str, str); }
 
             // Return equivalent(s) for given font that are used
-            // under given platform. wxPLATFORM_CURRENT means the platform
+            // under given platform. wxPLATFORM_CURRENT means the plaform
             // this binary was compiled for
             //
             // Examples:
@@ -108,9 +109,9 @@ class WXDLLIMPEXP_BASE wxEncodingConverter : public wxObject
             //
             // Equivalence is defined in terms of convertibility:
             // 2 encodings are equivalent if you can convert text between
-            // then without losing information (it may - and will - happen
-            // that you lose special chars like quotation marks or em-dashes
-            // but you shouldn't lose any diacritics and language-specific
+            // then without loosing information (it may - and will - happen
+            // that you loose special chars like quotation marks or em-dashes
+            // but you shouldn't loose any diacritics and language-specific
             // characters when converting between equivalent encodings).
             //
             // Convert() method is not limited to converting between

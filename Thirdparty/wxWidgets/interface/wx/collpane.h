@@ -2,6 +2,7 @@
 // Name:        collpane.h
 // Purpose:     interface of wxCollapsiblePane
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -43,7 +44,7 @@ public:
     void SetCollapsed(bool collapsed);
 };
 
-wxEventType wxEVT_COLLAPSIBLEPANE_CHANGED;
+wxEventType wxEVT_COMMAND_COLLPANE_CHANGED;
 
 /**
     @class wxCollapsiblePane
@@ -87,7 +88,7 @@ wxEventType wxEVT_COLLAPSIBLEPANE_CHANGED;
         The default style. It includes wxTAB_TRAVERSAL and wxBORDER_NONE.
     @style{wxCP_NO_TLW_RESIZE}
         By default wxCollapsiblePane resizes the top level window containing it
-        when its own size changes. This allows easily implementing dialogs
+        when its own size changes. This allows to easily implement dialogs
         containing an optionally shown part, for example, and so is the default
         behaviour but can be inconvenient in some specific cases -- use this
         flag to disable this automatic parent resizing then.
@@ -102,7 +103,7 @@ wxEventType wxEVT_COLLAPSIBLEPANE_CHANGED;
 
     @library{wxcore}
     @category{ctrl}
-    @appearance{collapsiblepane}
+    @appearance{collapsiblepane.png}
 
     @see wxPanel, wxCollapsiblePaneEvent
 */
@@ -140,7 +141,7 @@ public:
         @param style
             The window style, see wxCP_* flags.
         @param validator
-            Validator which can be used for additional data checks.
+            Validator which can be used for additional date checks.
         @param name
             Control name.
 

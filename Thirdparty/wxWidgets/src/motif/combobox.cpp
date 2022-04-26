@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -231,7 +232,7 @@ void  wxComboBoxCallback (Widget WXUNUSED(w), XtPointer clientData,
     case XmCR_SINGLE_SELECT:
     case XmCR_BROWSE_SELECT:
         {
-            wxCommandEvent event (wxEVT_COMBOBOX,
+            wxCommandEvent event (wxEVT_COMMAND_COMBOBOX_SELECTED,
                                   item->GetId());
             event.SetInt(cbs->index - 1);
             event.SetString( item->GetString ( event.GetInt() ) );
@@ -246,7 +247,7 @@ void  wxComboBoxCallback (Widget WXUNUSED(w), XtPointer clientData,
         }
     case XmCR_VALUE_CHANGED:
         {
-            wxCommandEvent event (wxEVT_TEXT, item->GetId());
+            wxCommandEvent event (wxEVT_COMMAND_TEXT_UPDATED, item->GetId());
             event.SetInt(-1);
             event.SetString( item->GetValue() );
             event.SetExtraLong(true);

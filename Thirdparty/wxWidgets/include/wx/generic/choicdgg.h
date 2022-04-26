@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by: 03.11.00: VZ to add wxArrayString and multiple sel functions
 // Created:     01/02/97
+// RCS-ID:      $Id$
 // Copyright:   (c) wxWidgets team
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -23,8 +24,13 @@ class WXDLLIMPEXP_FWD_CORE wxListBoxBase;
 #define wxCHOICE_HEIGHT 150
 #define wxCHOICE_WIDTH 200
 
+#ifdef __WXWINCE__
+#define wxCHOICEDLG_STYLE \
+    (wxDEFAULT_DIALOG_STYLE | wxOK | wxCANCEL | wxCENTRE)
+#else
 #define wxCHOICEDLG_STYLE \
     (wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxOK | wxCANCEL | wxCENTRE)
+#endif
 
 // ----------------------------------------------------------------------------
 // wxAnyChoiceDialog: a base class for dialogs containing a listbox
@@ -33,7 +39,7 @@ class WXDLLIMPEXP_FWD_CORE wxListBoxBase;
 class WXDLLIMPEXP_CORE wxAnyChoiceDialog : public wxDialog
 {
 public:
-    wxAnyChoiceDialog() : m_listbox(NULL) { }
+    wxAnyChoiceDialog() { }
 
     wxAnyChoiceDialog(wxWindow *parent,
                       const wxString& message,
@@ -209,7 +215,12 @@ public:
 
     // implementation from now on
     void OnOK(wxCommandEvent& event);
+#ifndef __SMARTPHONE__
     void OnListBoxDClick(wxCommandEvent& event);
+#endif
+#ifdef __WXWINCE__
+    void OnJoystickButtonDown(wxJoystickEvent& event);
+#endif
 
 protected:
     int         m_selection;
@@ -218,8 +229,8 @@ protected:
     void DoChoice();
 
 private:
-    wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxSingleChoiceDialog);
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_DYNAMIC_CLASS_NO_COPY(wxSingleChoiceDialog)
+    DECLARE_EVENT_TABLE()
 };
 
 // ----------------------------------------------------------------------------
@@ -269,19 +280,19 @@ public:
     wxArrayInt GetSelections() const { return m_selections; }
 
     // implementation from now on
-    virtual bool TransferDataFromWindow() wxOVERRIDE;
+    virtual bool TransferDataFromWindow();
 
 protected:
 #if wxUSE_CHECKLISTBOX
     virtual wxListBoxBase *CreateList(int n,
                                       const wxString *choices,
-                                      long styleLbox) wxOVERRIDE;
+                                      long styleLbox);
 #endif // wxUSE_CHECKLISTBOX
 
     wxArrayInt m_selections;
 
 private:
-    wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxMultiChoiceDialog);
+    DECLARE_DYNAMIC_CLASS_NO_COPY(wxMultiChoiceDialog)
 };
 
 // ----------------------------------------------------------------------------

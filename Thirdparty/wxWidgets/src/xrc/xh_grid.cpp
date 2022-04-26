@@ -3,6 +3,7 @@
 // Purpose:     XML resource handler for the grid control
 // Author:      Agron Selimaj
 // Created:     2005/08/11
+// RCS-ID:      $Id$
 // Copyright:   (c) 2005 Agron Selimaj, Freepour Controls Inc.
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -10,13 +11,16 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_XRC && wxUSE_GRID
 
 #include "wx/xrc/xh_grid.h"
 #include "wx/grid.h"
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxGridXmlHandler, wxXmlResourceHandler);
+IMPLEMENT_DYNAMIC_CLASS(wxGridXmlHandler, wxXmlResourceHandler)
 
 wxGridXmlHandler::wxGridXmlHandler()
                 : wxXmlResourceHandler()

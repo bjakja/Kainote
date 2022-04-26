@@ -2,6 +2,7 @@
 // Name:        src/gtk1/cursor.cpp
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -58,7 +59,7 @@ wxCursorRefData::~wxCursorRefData()
 
 #define M_CURSORDATA ((wxCursorRefData *)m_refData)
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxCursor, wxObject);
+IMPLEMENT_DYNAMIC_CLASS(wxCursor,wxObject)
 
 wxCursor::wxCursor()
 {
@@ -159,38 +160,9 @@ wxCursor::wxCursor(const char bits[], int width, int  height,
     gdk_bitmap_unref( mask );
 }
 
-wxCursor::wxCursor(const wxString& cursor_file,
-                   wxBitmapType type,
-                   int hotSpotX, int hotSpotY)
-{
-#if wxUSE_IMAGE
-    wxImage img;
-    if (!img.LoadFile(cursor_file, type))
-        return;
-
-    // eventually set the hotspot:
-    if (!img.HasOption(wxIMAGE_OPTION_CUR_HOTSPOT_X))
-        img.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_X, hotSpotX);
-    if (!img.HasOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y))
-        img.SetOption(wxIMAGE_OPTION_CUR_HOTSPOT_Y, hotSpotY);
-
-    InitFromImage(img);
-#endif // wxUSE_IMAGE
-}
-
 #if wxUSE_IMAGE
 
 wxCursor::wxCursor( const wxImage & image )
-{
-    InitFromImage(image);
-}
-
-wxCursor::wxCursor(const char* const* xpmData)
-{
-    InitFromImage(wxImage(xpmData));
-}
-
-void wxCursor::InitFromImage( const wxImage & image )
 {
     unsigned char * rgbBits = image.GetData();
     int w = image.GetWidth() ;
@@ -341,6 +313,7 @@ void wxCursor::InitFromImage( const wxImage & image )
     delete [] bits;
     delete [] maskBits;
 }
+
 #endif // wxUSE_IMAGE
 
 wxCursor::~wxCursor()

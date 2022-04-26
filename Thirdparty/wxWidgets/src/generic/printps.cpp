@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     04/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,6 +12,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 // ============================================================================
 // declarations
@@ -45,8 +49,8 @@
 // wxWin macros
 // ----------------------------------------------------------------------------
 
-    wxIMPLEMENT_DYNAMIC_CLASS(wxPostScriptPrinter, wxPrinterBase);
-    wxIMPLEMENT_CLASS(wxPostScriptPrintPreview, wxPrintPreviewBase);
+    IMPLEMENT_DYNAMIC_CLASS(wxPostScriptPrinter, wxPrinterBase)
+    IMPLEMENT_CLASS(wxPostScriptPrintPreview, wxPrintPreviewBase)
 
 // ============================================================================
 // implementation
@@ -97,13 +101,29 @@ bool wxPostScriptPrinter::Print(wxWindow *parent, wxPrintout *printout, bool pro
     // May have pressed cancel.
     if (!dc || !dc->IsOk())
     {
-        delete dc;
+        if (dc) delete dc;
         sm_lastError = wxPRINTER_ERROR;
         return false;
     }
 
+    wxSize ScreenPixels = wxGetDisplaySize();
+    wxSize ScreenMM = wxGetDisplaySizeMM();
+
+    printout->SetPPIScreen( (int) ((ScreenPixels.GetWidth() * 25.4) / ScreenMM.GetWidth()),
+                            (int) ((ScreenPixels.GetHeight() * 25.4) / ScreenMM.GetHeight()) );
+    printout->SetPPIPrinter( dc->GetResolution(),
+                             dc->GetResolution() );
+
     // Set printout parameters
-    printout->SetUp(*dc);
+    printout->SetDC(dc);
+
+    int w, h;
+    dc->GetSize(&w, &h);
+    printout->SetPageSizePixels((int)w, (int)h);
+    printout->SetPaperRectPixels(wxRect(0, 0, w, h));
+    int mw, mh;
+    dc->GetSizeMM(&mw, &mh);
+    printout->SetPageSizeMM((int)mw, (int)mh);
 
     // Create an abort window
     wxBeginBusyCursor();
@@ -322,8 +342,8 @@ void wxPostScriptPrintPreview::DetermineScaling()
         m_previewPrintout->SetPPIPrinter( logPPIPrinterX, logPPIPrinterY );
 
         wxSize sizeDevUnits(paper->GetSizeDeviceUnits());
-        sizeDevUnits.x = sizeDevUnits.x * resolution / 72;
-        sizeDevUnits.y = sizeDevUnits.y * resolution / 72;
+        sizeDevUnits.x = (wxCoord)((float)sizeDevUnits.x * resolution / 72.0);
+        sizeDevUnits.y = (wxCoord)((float)sizeDevUnits.y * resolution / 72.0);
         wxSize sizeTenthsMM(paper->GetSize());
         wxSize sizeMM(sizeTenthsMM.x / 10, sizeTenthsMM.y / 10);
 

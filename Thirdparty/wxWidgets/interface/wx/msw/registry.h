@@ -2,6 +2,7 @@
 // Name:        msw/registry.h
 // Purpose:     interface of wxRegKey
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -9,12 +10,11 @@
     @class wxRegKey
 
     wxRegKey is a class representing the Windows registry (it is only available
-    under Windows) which can be used to create, query, set and delete registry keys.
+    under Windows). One can create, query and delete registry keys using this
+    class.
 
-    The Windows registry contains data stored by Windows and the applications.
-    The data are stored in a tree structure, where a tree node is called a key.
-    Each key can contain subkeys as well as values. There are several predefined keys
-    that are used as main entry points to the registry, the most commonly used being:
+    The Windows registry is easy to understand. There are five registry keys,
+    namely:
 
     @li @c HKEY_CLASSES_ROOT (HKCR)
     @li @c HKEY_CURRENT_USER (HKCU)
@@ -22,7 +22,7 @@
     @li @c HKEY_CURRENT_CONFIG (HKCC)
     @li @c HKEY_USERS (HKU)
 
-    The values can be in these formats:
+    After creating a key, it can hold a value. The values can be:
 
     @li String Value
     @li Binary Value
@@ -35,9 +35,9 @@
     @b Example:
 
     @code
-    // This assumes that the key already exists, use HasSubKey() to check
+    // This assume that the key already exists, use HasSubKey() to check
     // for the key existence if necessary.
-    wxRegKey key(wxRegKey::HKCU, "Software\\MyKey");
+    wxRegKey key(wxRegKey::HKLM, "Software\\MyKey");
 
     // Create a new value "MyValue" and set it to 12.
     key.SetValue("MyValue", 12);
@@ -45,17 +45,18 @@
     // Read the value back.
     long value;
     key.QueryValue("MyValue", &value);
-    wxLogMessage("Registry value: %ld", value);
+    wxMessageBox(wxString::Format("%d", value), "Registry Value", wxOK);
 
-    // Enumerate the subkeys.
-    wxString keyName;
-    long index = 0;
+    // Get the number of subkeys and enumerate them.
+    size_t subkeys;
+    key.GetKeyInfo(&subkeys, NULL, NULL, NULL);
 
-    for ( bool cont = key.GetFirstKey(keyName, index);
-          cont;
-          cont = key.GetNextKey(keyName, index) )
+    wxString key_name;
+    key.GetFirstKey(key_name, 1);
+    for(int i = 0; i < subkeys; i++)
     {
-        wxLogMessage("Subkey name: %s", keyName);
+        wxMessageBox(key_name, "Subkey Name", wxOK);
+        key.GetNextKey(key_name, 1);
     }
     @endcode
 
@@ -81,8 +82,7 @@ public:
         WOW64ViewMode viewMode = WOW64ViewMode_Default);
     /**
         The constructor to set the full name of the key using one of the
-        standard keys, that is, HKCR, HKCU, HKLM, HKUSR, HKPD (obsolete),
-        HKCC or HKDD (obsolete).
+        standard keys, that is, HKCR, HKCU, HKLM, HKUSR, HKPD, HKCC or HKDD.
         The @a viewMode parameter is new since wxWidgets 2.9.2.
     */
     wxRegKey(StdKey keyParent, const wxString& strKey,
@@ -111,9 +111,9 @@ public:
     HKCU,  ///< HKEY_CURRENT_USER
     HKLM,  ///< HKEY_LOCAL_MACHINE
     HKUSR, ///< HKEY_USERS
-    HKPD,  ///< HKEY_PERFORMANCE_DATA (Obsolete under XP and later)
+    HKPD,  ///< HKEY_PERFORMANCE_DATA (Windows NT and 2K only)
     HKCC,  ///< HKEY_CURRENT_CONFIG
-    HKDD,  ///< HKEY_DYN_DATA (Obsolete under XP and later)
+    HKDD,  ///< HKEY_DYN_DATA (Windows 95 and 98 only)
     HKMAX
     };
 
@@ -351,14 +351,6 @@ public:
     bool QueryValue(const wxString& szValue, long* plValue) const;
 
     /**
-        Retrieves the 64-bit value. Returns @true if successful.
-        An empty @a szValue queries the default/unnamed key value.
-
-        @since 3.1.5
-    */
-    bool QueryValue64(const wxString& szValue, wxLongLong_t* plValue) const;
-
-    /**
         Retrieves the binary structure. Returns @true if successful.
         An empty @a szValue queries the default/unnamed key value.
     */
@@ -405,17 +397,6 @@ public:
         An empty @a szValue sets the default/unnamed key value.
     */
     bool SetValue(const wxString& szValue, long lValue);
-
-    /**
-        Sets a 64-bit value.
-
-        This function creates or modifies a field of @c QWORD type in the
-        registry.
-
-        @since 3.1.5
-     */
-    bool SetValue64(const wxString& szValue, wxLongLong_t lValue);
-
     /**
         Sets the given @a szValue which must be string. If the value doesn't
         exist, it is created. Returns @true if successful.

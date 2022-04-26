@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by: VZ at 11.12.99 (wxScrollableToolBar split off)
 // Created:     04/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_TOOLBAR
 
@@ -32,7 +36,6 @@
         #include "wx/image.h"
     #endif // WXWIN_COMPATIBILITY_2_8
     #include "wx/menu.h"
-    #include "wx/vector.h"
 #endif
 
 extern WXDLLEXPORT_DATA(const char) wxToolBarNameStr[] = "toolbar";
@@ -41,8 +44,8 @@ extern WXDLLEXPORT_DATA(const char) wxToolBarNameStr[] = "toolbar";
 // wxWidgets macros
 // ----------------------------------------------------------------------------
 
-wxBEGIN_EVENT_TABLE(wxToolBarBase, wxControl)
-wxEND_EVENT_TABLE()
+BEGIN_EVENT_TABLE(wxToolBarBase, wxControl)
+END_EVENT_TABLE()
 
 #include "wx/listimpl.cpp"
 
@@ -56,7 +59,7 @@ WX_DEFINE_LIST(wxToolBarToolsList)
 // wxToolBarToolBase
 // ----------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxToolBarToolBase, wxObject);
+IMPLEMENT_DYNAMIC_CLASS(wxToolBarToolBase, wxObject)
 
 wxToolBarToolBase::~wxToolBarToolBase()
 {
@@ -157,8 +160,8 @@ void wxToolBarBase::FixupStyle()
 
 wxToolBarToolBase *wxToolBarBase::DoAddTool(int toolid,
                                             const wxString& label,
-                                            const wxBitmapBundle& bitmap,
-                                            const wxBitmapBundle& bmpDisabled,
+                                            const wxBitmap& bitmap,
+                                            const wxBitmap& bmpDisabled,
                                             wxItemKind kind,
                                             const wxString& shortHelp,
                                             const wxString& longHelp,
@@ -174,8 +177,8 @@ wxToolBarToolBase *wxToolBarBase::DoAddTool(int toolid,
 wxToolBarToolBase *wxToolBarBase::InsertTool(size_t pos,
                                              int toolid,
                                              const wxString& label,
-                                             const wxBitmapBundle& bitmap,
-                                             const wxBitmapBundle& bmpDisabled,
+                                             const wxBitmap& bitmap,
+                                             const wxBitmap& bmpDisabled,
                                              wxItemKind kind,
                                              const wxString& shortHelp,
                                              const wxString& longHelp,
@@ -433,82 +436,23 @@ void wxToolBarBase::ClearTools()
     }
 }
 
-void wxToolBarBase::DoSetToolBitmapSize(const wxSize& size)
-{
-    m_defaultWidth = size.x;
-    m_defaultHeight = size.y;
-}
-
-void wxToolBarBase::SetToolBitmapSize(const wxSize& size)
-{
-    m_requestedBitmapSize = size;
-
-    DoSetToolBitmapSize(size);
-}
-
-wxSize wxToolBarBase::GetToolBitmapSize() const
-{
-    return wxSize(m_defaultWidth, m_defaultHeight);
-}
-
 void wxToolBarBase::AdjustToolBitmapSize()
 {
-    if ( HasFlag(wxTB_NOICONS) )
-    {
-        DoSetToolBitmapSize(wxSize(0, 0));
-        return;
-    }
-
     const wxSize sizeOrig(m_defaultWidth, m_defaultHeight);
 
-    // Check if we should be using a different size because we have bitmaps
-    // that shouldn't be scaled to the size we use right now.
+    wxSize sizeActual(sizeOrig);
 
-    wxVector<wxBitmapBundle> bundles;
     for ( wxToolBarToolsList::const_iterator i = m_tools.begin();
           i != m_tools.end();
           ++i )
     {
-        const wxBitmapBundle& bmp = (*i)->GetNormalBitmapBundle();
+        const wxBitmap& bmp = (*i)->GetNormalBitmap();
         if ( bmp.IsOk() )
-            bundles.push_back(bmp);
+            sizeActual.IncTo(bmp.GetSize());
     }
 
-    if ( !bundles.empty() )
-    {
-        wxSize sizePreferred = wxBitmapBundle::GetConsensusSizeFor
-                               (
-                                this,
-                                bundles,
-                                sizeOrig
-                               );
-
-        // Don't do anything if it doesn't change, our current size is supposed
-        // to satisfy any constraints we might have anyhow.
-        if ( sizePreferred == sizeOrig )
-            return;
-
-        // This size is supposed to be in logical units for the platforms where
-        // they differ from physical ones, so convert it.
-        //
-        // Note that this could introduce rounding problems but, in fact,
-        // neither wxGTK nor wxOSX (that are the only ports where contents
-        // scale factor may be different from 1) use this size at all
-        // currently, so it shouldn't matter. But if/when they are modified to
-        // use the size computed here, this would need to be revisited.
-        sizePreferred /= GetContentScaleFactor();
-
-        // Don't decrease the bitmap below the size requested by the application
-        // as using larger bitmaps shouldn't shrink them to the small default
-        // size.
-        sizePreferred.IncTo(m_requestedBitmapSize);
-
-        // Call DoSetToolBitmapSize() and not SetToolBitmapSize() to avoid
-        // changing the requested bitmap size: if we set our own adjusted size
-        // as the preferred one, we wouldn't decrease it later even if we ought
-        // to, as when moving from a monitor with higher DPI to a lower-DPI one.
-        DoSetToolBitmapSize(sizePreferred);
-    }
+    if ( sizeActual != sizeOrig )
+        SetToolBitmapSize(sizeActual);
 }
 
 bool wxToolBarBase::Realize()
@@ -679,24 +623,6 @@ bool wxToolBarBase::IsVertical() const
     return HasFlag(wxTB_LEFT | wxTB_RIGHT);
 }
 
-// wxTB_HORIZONTAL is same as wxTB_TOP and wxTB_VERTICAL is same as wxTB_LEFT,
-// so a toolbar created with wxTB_HORIZONTAL | wxTB_BOTTOM style can have set both
-// wxTB_TOP and wxTB_BOTTOM, similarly wxTB_VERTICAL | wxTB_RIGHT == wxTB_LEFT | wxTB_RIGHT.
-// GetDirection() makes things less confusing and returns just one of wxTB_TOP, wxTB_BOTTOM,
-// wxTB_LEFT, wxTB_RIGHT indicating where the toolbar is placed in the associated frame.
-int wxToolBarBase::GetDirection() const
-{
-    if ( HasFlag(wxTB_BOTTOM) )
-        return wxTB_BOTTOM;
-
-    if ( HasFlag(wxTB_RIGHT) )
-        return wxTB_RIGHT;
-
-    if ( HasFlag(wxTB_LEFT) )
-        return wxTB_LEFT;
-
-    return wxTB_TOP;
-}
 
 // ----------------------------------------------------------------------------
 // event processing
@@ -705,7 +631,7 @@ int wxToolBarBase::GetDirection() const
 // Only allow toggle if returns true
 bool wxToolBarBase::OnLeftClick(int toolid, bool toggleDown)
 {
-    wxCommandEvent event(wxEVT_TOOL, toolid);
+    wxCommandEvent event(wxEVT_COMMAND_TOOL_CLICKED, toolid);
     event.SetEventObject(this);
 
     // we use SetInt() to make wxCommandEvent::IsChecked() return toggleDown
@@ -725,7 +651,7 @@ void wxToolBarBase::OnRightClick(int toolid,
                                  long WXUNUSED(x),
                                  long WXUNUSED(y))
 {
-    wxCommandEvent event(wxEVT_TOOL_RCLICKED, toolid);
+    wxCommandEvent event(wxEVT_COMMAND_TOOL_RCLICKED, toolid);
     event.SetEventObject(this);
     event.SetInt(toolid);
 
@@ -739,11 +665,11 @@ void wxToolBarBase::OnRightClick(int toolid,
 // the tool toolid.
 void wxToolBarBase::OnMouseEnter(int toolid)
 {
-    wxCommandEvent event(wxEVT_TOOL_ENTER, GetId());
+    wxCommandEvent event(wxEVT_COMMAND_TOOL_ENTER, GetId());
     event.SetEventObject(this);
     event.SetInt(toolid);
 
-    wxFrame *frame = wxDynamicCast(wxGetTopLevelParent(this), wxFrame);
+    wxFrame *frame = wxDynamicCast(GetParent(), wxFrame);
     if ( frame )
     {
         wxString help;
@@ -789,9 +715,6 @@ void wxToolBarBase::UpdateWindowUI(long flags)
 
         wxUpdateUIEvent event(toolid);
         event.SetEventObject(this);
-
-        if ( !tool->CanBeToggled() )
-            event.DisallowCheck();
 
         if ( evtHandler->ProcessEvent(event) )
         {

@@ -2,6 +2,7 @@
 // Name:        wx/gtk/statbmp.h
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -21,26 +22,38 @@ public:
     wxStaticBitmap();
     wxStaticBitmap( wxWindow *parent,
                     wxWindowID id,
-                    const wxBitmapBundle& label,
+                    const wxBitmap& label,
                     const wxPoint& pos = wxDefaultPosition,
                     const wxSize& size = wxDefaultSize,
                     long style = 0,
-                    const wxString& name = wxASCII_STR(wxStaticBitmapNameStr));
+                    const wxString& name = wxStaticBitmapNameStr );
     bool Create( wxWindow *parent,
                  wxWindowID id,
-                 const wxBitmapBundle& label,
+                 const wxBitmap& label,
                  const wxPoint& pos = wxDefaultPosition,
                  const wxSize& size = wxDefaultSize,
                  long style = 0,
-                 const wxString& name = wxASCII_STR(wxStaticBitmapNameStr));
+                 const wxString& name = wxStaticBitmapNameStr);
 
-    virtual void SetBitmap( const wxBitmapBundle& bitmap ) wxOVERRIDE;
+    virtual void SetIcon(const wxIcon& icon) { SetBitmap( icon ); }
+    virtual void SetBitmap( const wxBitmap& bitmap );
+    virtual wxBitmap GetBitmap() const { return m_bitmap; }
+
+    // for compatibility with wxMSW
+    wxIcon GetIcon() const
+    {
+        // don't use wxDynamicCast, icons and bitmaps are really the same thing
+        // in wxGTK
+        return (const wxIcon &)m_bitmap;
+    }
 
     static wxVisualAttributes
     GetClassDefaultAttributes(wxWindowVariant variant = wxWINDOW_VARIANT_NORMAL);
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxStaticBitmap);
+    wxBitmap   m_bitmap;
+
+    DECLARE_DYNAMIC_CLASS(wxStaticBitmap)
 };
 
 #endif // __GTKSTATICBITMAPH__

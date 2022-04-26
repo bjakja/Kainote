@@ -2,6 +2,7 @@
 // Name:        wx/gtk/dcmemory.h
 // Purpose:
 // Author:      Robert Roebling
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -26,32 +27,31 @@ public:
     virtual ~wxMemoryDCImpl();
 
     // these get reimplemented for mono-bitmaps to behave
-    // more like their Win32 counterparts. They now interpret
+    // more like their Win32 couterparts. They now interpret
     // wxWHITE, wxWHITE_BRUSH and wxWHITE_PEN as drawing 0
     // and everything else as drawing 1.
-    virtual void SetPen( const wxPen &pen ) wxOVERRIDE;
-    virtual void SetBrush( const wxBrush &brush ) wxOVERRIDE;
-    virtual void SetBackground( const wxBrush &brush ) wxOVERRIDE;
-    virtual void SetTextForeground( const wxColour &col ) wxOVERRIDE;
-    virtual void SetTextBackground( const wxColour &col ) wxOVERRIDE;
+    virtual void SetPen( const wxPen &pen );
+    virtual void SetBrush( const wxBrush &brush );
+    virtual void SetBackground( const wxBrush &brush );
+    virtual void SetTextForeground( const wxColour &col );
+    virtual void SetTextBackground( const wxColour &col );
 
     // overridden from wxDCImpl
-    virtual void DoGetSize( int *width, int *height ) const wxOVERRIDE;
-    virtual wxBitmap DoGetAsBitmap(const wxRect *subrect) const wxOVERRIDE;
-    virtual void* GetHandle() const wxOVERRIDE;
+    virtual void DoGetSize( int *width, int *height ) const;
+    virtual wxBitmap DoGetAsBitmap(const wxRect *subrect) const;
 
     // overridden for wxMemoryDC Impl
-    virtual void DoSelect(const wxBitmap& bitmap) wxOVERRIDE;
+    virtual void DoSelect(const wxBitmap& bitmap);
 
-    virtual const wxBitmap& GetSelectedBitmap() const wxOVERRIDE;
-    virtual wxBitmap& GetSelectedBitmap() wxOVERRIDE;
+    virtual const wxBitmap& GetSelectedBitmap() const;
+    virtual wxBitmap& GetSelectedBitmap();
 
 private:
     wxBitmap  m_selected;
 
     void Init();
 
-    wxDECLARE_ABSTRACT_CLASS(wxMemoryDCImpl);
+    DECLARE_ABSTRACT_CLASS(wxMemoryDCImpl)
 };
 
 #endif

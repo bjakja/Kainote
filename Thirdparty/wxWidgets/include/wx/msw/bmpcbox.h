@@ -3,6 +3,7 @@
 // Purpose:     wxBitmapComboBox
 // Author:      Jaakko Salli
 // Created:     2008-04-06
+// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Jaakko Salli
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -38,7 +39,7 @@ public:
                      const wxString choices[] = NULL,
                      long style = 0,
                      const wxValidator& validator = wxDefaultValidator,
-                     const wxString& name = wxASCII_STR(wxBitmapComboBoxNameStr))
+                     const wxString& name = wxBitmapComboBoxNameStr)
         : wxComboBox(),
           wxBitmapComboBoxBase()
     {
@@ -56,7 +57,7 @@ public:
                      const wxArrayString& choices,
                      long style,
                      const wxValidator& validator = wxDefaultValidator,
-                     const wxString& name = wxASCII_STR(wxBitmapComboBoxNameStr));
+                     const wxString& name = wxBitmapComboBoxNameStr);
 
     bool Create(wxWindow *parent,
                 wxWindowID id,
@@ -67,7 +68,7 @@ public:
                 const wxString choices[],
                 long style = 0,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxASCII_STR(wxBitmapComboBoxNameStr));
+                const wxString& name = wxBitmapComboBoxNameStr);
 
     bool Create(wxWindow *parent,
                 wxWindowID id,
@@ -77,50 +78,49 @@ public:
                 const wxArrayString& choices,
                 long style = 0,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxASCII_STR(wxBitmapComboBoxNameStr));
+                const wxString& name = wxBitmapComboBoxNameStr);
 
     virtual ~wxBitmapComboBox();
 
     // Sets the image for the given item.
-    virtual void SetItemBitmap(unsigned int n, const wxBitmapBundle& bitmap) wxOVERRIDE;
+    virtual void SetItemBitmap(unsigned int n, const wxBitmap& bitmap);
 
-    virtual bool SetFont(const wxFont& font) wxOVERRIDE;
+    virtual bool SetFont(const wxFont& font);
 
     // Adds item with image to the end of the combo box.
-    int Append(const wxString& item, const wxBitmapBundle& bitmap = wxBitmapBundle());
-    int Append(const wxString& item, const wxBitmapBundle& bitmap, void *clientData);
-    int Append(const wxString& item, const wxBitmapBundle& bitmap, wxClientData *clientData);
+    int Append(const wxString& item, const wxBitmap& bitmap = wxNullBitmap);
+    int Append(const wxString& item, const wxBitmap& bitmap, void *clientData);
+    int Append(const wxString& item, const wxBitmap& bitmap, wxClientData *clientData);
 
     // Inserts item with image into the list before pos. Not valid for wxCB_SORT
     // styles, use Append instead.
-    int Insert(const wxString& item, const wxBitmapBundle& bitmap, unsigned int pos);
-    int Insert(const wxString& item, const wxBitmapBundle& bitmap,
+    int Insert(const wxString& item, const wxBitmap& bitmap, unsigned int pos);
+    int Insert(const wxString& item, const wxBitmap& bitmap,
                unsigned int pos, void *clientData);
-    int Insert(const wxString& item, const wxBitmapBundle& bitmap,
+    int Insert(const wxString& item, const wxBitmap& bitmap,
                unsigned int pos, wxClientData *clientData);
 
 protected:
 
-    WXDWORD MSWGetStyle(long style, WXDWORD *exstyle) const wxOVERRIDE;
-    virtual bool MSWOnDraw(WXDRAWITEMSTRUCT *item) wxOVERRIDE;
-    virtual bool MSWOnMeasure(WXMEASUREITEMSTRUCT *item) wxOVERRIDE;
-    virtual void MSWUpdateFontOnDPIChange(const wxSize& newDPI) wxOVERRIDE;
+    WXDWORD MSWGetStyle(long style, WXDWORD *exstyle) const;
+    virtual bool MSWOnDraw(WXDRAWITEMSTRUCT *item);
+    virtual bool MSWOnMeasure(WXMEASUREITEMSTRUCT *item);
 
     // Event handlers
     void OnSize(wxSizeEvent& event);
 
-    virtual wxItemContainer* GetItemContainer() wxOVERRIDE { return this; }
-    virtual wxWindow* GetControl() wxOVERRIDE { return this; }
+    virtual wxItemContainer* GetItemContainer() { return this; }
+    virtual wxWindow* GetControl() { return this; }
 
     // wxItemContainer implementation
     virtual int DoInsertItems(const wxArrayStringsAdapter & items,
                               unsigned int pos,
-                              void **clientData, wxClientDataType type) wxOVERRIDE;
-    virtual void DoClear() wxOVERRIDE;
-    virtual void DoDeleteOneItem(unsigned int n) wxOVERRIDE;
+                              void **clientData, wxClientDataType type);
+    virtual void DoClear();
+    virtual void DoDeleteOneItem(unsigned int n);
 
-    virtual bool OnAddBitmap(const wxBitmapBundle& bitmap) wxOVERRIDE;
-    virtual wxSize DoGetBestSize() const wxOVERRIDE;
+    virtual bool OnAddBitmap(const wxBitmap& bitmap);
+    virtual wxSize DoGetBestSize() const;
     void RecreateControl();
 
 private:
@@ -128,9 +128,9 @@ private:
 
     bool m_inResize;
 
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
 
-    wxDECLARE_DYNAMIC_CLASS(wxBitmapComboBox);
+    DECLARE_DYNAMIC_CLASS(wxBitmapComboBox)
 };
 
 #endif // _WX_MSW_BMPCBOX_H_

@@ -4,7 +4,8 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     31.05.03
-// Copyright:   (c) 2003 Vadim Zeitlin <vadim@wxwidgets.org>
+// RCS-ID:      $Id$
+// Copyright:   (c) 2003 Vadim Zeitlin <vadim@wxwindows.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -19,6 +20,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_LISTBOX
 
@@ -38,7 +42,7 @@
 // event tables
 // ----------------------------------------------------------------------------
 
-wxBEGIN_EVENT_TABLE(wxVListBox, wxVScrolledWindow)
+BEGIN_EVENT_TABLE(wxVListBox, wxVScrolledWindow)
     EVT_PAINT(wxVListBox::OnPaint)
 
     EVT_KEY_DOWN(wxVListBox::OnKeyDown)
@@ -49,13 +53,13 @@ wxBEGIN_EVENT_TABLE(wxVListBox, wxVScrolledWindow)
     EVT_KILL_FOCUS(wxVListBox::OnSetOrKillFocus)
 
     EVT_SIZE(wxVListBox::OnSize)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 // ============================================================================
 // implementation
 // ============================================================================
 
-wxIMPLEMENT_ABSTRACT_CLASS(wxVListBox, wxVScrolledWindow);
+IMPLEMENT_ABSTRACT_CLASS(wxVListBox, wxVScrolledWindow)
 const char wxVListBoxNameStr[] = "wxVListBox";
 
 // ----------------------------------------------------------------------------
@@ -76,6 +80,11 @@ bool wxVListBox::Create(wxWindow *parent,
                         long style,
                         const wxString& name)
 {
+#ifdef __WXMSW__
+    if ( (style & wxBORDER_MASK) == wxDEFAULT )
+        style |= wxBORDER_THEME;
+#endif
+
     style |= wxWANTS_CHARS | wxFULL_REPAINT_ON_RESIZE;
     if ( !wxVScrolledWindow::Create(parent, id, pos, size, style, name) )
         return false;
@@ -92,7 +101,7 @@ bool wxVListBox::Create(wxWindow *parent,
     m_colBgSel = wxNullColour;
 
     // flicker-free drawing requires this
-    SetBackgroundStyle(wxBG_STYLE_PAINT);
+    SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 
     return true;
 }
@@ -266,7 +275,7 @@ void wxVListBox::SendSelectedEvent()
     wxASSERT_MSG( m_current != wxNOT_FOUND,
                     wxT("SendSelectedEvent() shouldn't be called") );
 
-    wxCommandEvent event(wxEVT_LISTBOX, GetId());
+    wxCommandEvent event(wxEVT_COMMAND_LISTBOX_SELECTED, GetId());
     InitEvent(event, m_current);
     (void)GetEventHandler()->ProcessEvent(event);
 }
@@ -656,7 +665,6 @@ void wxVListBox::OnKeyDown(wxKeyEvent& event)
             // events for the tabs on MSW
             HandleAsNavigationKey(event);
             // fall through to default
-            wxFALLTHROUGH;
 #endif
         default:
             event.Skip();
@@ -689,7 +697,13 @@ void wxVListBox::OnLeftDown(wxMouseEvent& event)
         if ( event.ShiftDown() )
            flags |= ItemClick_Shift;
 
+        // under Mac Apple-click is used in the same way as Ctrl-click
+        // elsewhere
+#ifdef __WXMAC__
+        if ( event.MetaDown() )
+#else
         if ( event.ControlDown() )
+#endif
             flags |= ItemClick_Ctrl;
 
         DoHandleItemClick(item, flags);
@@ -706,7 +720,7 @@ void wxVListBox::OnLeftDClick(wxMouseEvent& eventMouse)
         // this event as a left-click instead
         if ( item == m_current )
         {
-            wxCommandEvent event(wxEVT_LISTBOX_DCLICK, GetId());
+            wxCommandEvent event(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, GetId());
             InitEvent(event, item);
             (void)GetEventHandler()->ProcessEvent(event);
         }

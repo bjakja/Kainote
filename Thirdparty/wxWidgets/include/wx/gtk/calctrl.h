@@ -2,6 +2,7 @@
 // Name:        wx/gtk/calctrl.h
 // Purpose:     wxGtkCalendarCtrl control
 // Author:      Marcin Wojdyr
+// RCS-ID:      $Id$
 // Copyright:   (C) 2008 Marcin Wojdyr
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,7 +20,7 @@ public:
                           const wxPoint& pos = wxDefaultPosition,
                           const wxSize& size = wxDefaultSize,
                           long style = wxCAL_SHOW_HOLIDAYS,
-                          const wxString& name = wxASCII_STR(wxCalendarNameStr))
+                          const wxString& name = wxCalendarNameStr)
     {
         Create(parent, id, date, pos, size, style, name);
     }
@@ -30,20 +31,20 @@ public:
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = wxCAL_SHOW_HOLIDAYS,
-                const wxString& name = wxASCII_STR(wxCalendarNameStr));
+                const wxString& name = wxCalendarNameStr);
 
     virtual ~wxGtkCalendarCtrl() {}
 
-    virtual bool SetDate(const wxDateTime& date) wxOVERRIDE;
-    virtual wxDateTime GetDate() const wxOVERRIDE;
+    virtual bool SetDate(const wxDateTime& date);
+    virtual wxDateTime GetDate() const;
 
     virtual bool SetDateRange(const wxDateTime& lowerdate = wxDefaultDateTime,
-                              const wxDateTime& upperdate = wxDefaultDateTime) wxOVERRIDE;
-    virtual bool GetDateRange(wxDateTime *lowerdate, wxDateTime *upperdate) const wxOVERRIDE;
+                              const wxDateTime& upperdate = wxDefaultDateTime);
+    virtual bool GetDateRange(wxDateTime *lowerdate, wxDateTime *upperdate) const;
 
-    virtual bool EnableMonthChange(bool enable = true) wxOVERRIDE;
+    virtual bool EnableMonthChange(bool enable = true);
 
-    virtual void Mark(size_t day, bool mark) wxOVERRIDE;
+    virtual void Mark(size_t day, bool mark);
 
     // implementation
     // --------------
@@ -62,7 +63,7 @@ private:
     // the control while a handler for day-selected is running.
     wxDateTime m_selectedDate;
 
-    wxDECLARE_DYNAMIC_CLASS(wxGtkCalendarCtrl);
+    DECLARE_DYNAMIC_CLASS(wxGtkCalendarCtrl)
     wxDECLARE_NO_COPY_CLASS(wxGtkCalendarCtrl);
 };
 

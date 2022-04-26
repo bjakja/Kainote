@@ -3,6 +3,7 @@
 // Purpose:     wxUniChar and wxUniCharRef classes
 // Author:      Vaclav Slavik
 // Created:     2007-03-19
+// RCS-ID:      $Id$
 // Copyright:   (c) 2007 REA Elektronik GmbH
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -10,16 +11,9 @@
 #ifndef _WX_UNICHAR_H_
 #define _WX_UNICHAR_H_
 
-#include "wx\defs.h"
-#include "wx\chartype.h"
-#include "wx\stringimpl.h"
-
-// We need to get std::swap() declaration in order to specialize it below and
-// it is declared in different headers for C++98 and C++11. Instead of testing
-// which one is being used, just include both of them as it's simpler and less
-// error-prone.
-#include <algorithm>        // std::swap() for C++98
-#include <utility>          // std::swap() for C++11
+#include "wx/defs.h"
+#include "wx/chartype.h"
+#include "wx/stringimpl.h"
 
 class WXDLLIMPEXP_FWD_BASE wxUniCharRef;
 class WXDLLIMPEXP_FWD_BASE wxString;
@@ -41,10 +35,17 @@ public:
     wxUniChar(char c) { m_value = From8bit(c); }
     wxUniChar(unsigned char c) { m_value = From8bit((char)c); }
 
-#define wxUNICHAR_DEFINE_CTOR(type) \
-    wxUniChar(type c) { m_value = (value_type)c; }
-    wxDO_FOR_INT_TYPES(wxUNICHAR_DEFINE_CTOR)
-#undef wxUNICHAR_DEFINE_CTOR
+    // Create the character from a wchar_t character value.
+#if wxWCHAR_T_IS_REAL_TYPE
+    wxUniChar(wchar_t c) { m_value = c; }
+#endif
+
+    wxUniChar(int c) { m_value = c; }
+    wxUniChar(unsigned int c) { m_value = c; }
+    wxUniChar(long int c) { m_value = c; }
+    wxUniChar(unsigned long int c) { m_value = c; }
+    wxUniChar(short int c) { m_value = c; }
+    wxUniChar(unsigned short int c) { m_value = c; }
 
     wxUniChar(const wxUniCharRef& c);
 
@@ -88,48 +89,20 @@ public:
         return true;
     }
 
-    // Returns true if the character is a BMP character:
-    static bool IsBMP(wxUint32 value) { return value < 0x10000; }
-
-    // Returns true if the character is a supplementary character:
-    static bool IsSupplementary(wxUint32 value) { return 0x10000 <= value && value < 0x110000; }
-
-    // Returns the high surrogate code unit for the supplementary character
-    static wxUint16 HighSurrogate(wxUint32 value)
-    {
-        wxASSERT_MSG(IsSupplementary(value), "wxUniChar::HighSurrogate() must be called on a supplementary character");
-        return static_cast<wxUint16>(0xD800 | ((value - 0x10000) >> 10));
-    }
-
-    // Returns the low surrogate code unit for the supplementary character
-    static wxUint16 LowSurrogate(wxUint32 value)
-    {
-        wxASSERT_MSG(IsSupplementary(value), "wxUniChar::LowSurrogate() must be called on a supplementary character");
-        return static_cast<wxUint16>(0xDC00 | ((value - 0x10000) & 0x03FF));
-    }
-
-    // Returns true if the character is a BMP character:
-    bool IsBMP() const { return IsBMP(m_value); }
-
-    // Returns true if the character is a supplementary character:
-    bool IsSupplementary() const { return IsSupplementary(m_value); }
-
-    // Returns the high surrogate code unit for the supplementary character
-    wxUint16 HighSurrogate() const { return HighSurrogate(m_value); }
-
-    // Returns the low surrogate code unit for the supplementary character
-    wxUint16 LowSurrogate() const { return LowSurrogate(m_value); }
-
     // Conversions to char and wchar_t types: all of those are needed to be
-    // able to pass wxUniChars to various standard narrow and wide character
+    // able to pass wxUniChars to verious standard narrow and wide character
     // functions
     operator char() const { return To8bit(m_value); }
     operator unsigned char() const { return (unsigned char)To8bit(m_value); }
-
-#define wxUNICHAR_DEFINE_OPERATOR_PAREN(type) \
-    operator type() const { return (type)m_value; }
-    wxDO_FOR_INT_TYPES(wxUNICHAR_DEFINE_OPERATOR_PAREN)
-#undef wxUNICHAR_DEFINE_OPERATOR_PAREN
+#if wxWCHAR_T_IS_REAL_TYPE
+    operator wchar_t() const { return (wchar_t)m_value; }
+#endif
+    operator int() const { return (int)m_value; }
+    operator unsigned int() const { return (unsigned int)m_value; }
+    operator long int() const { return (long int)m_value; }
+    operator unsigned long int() const { return (unsigned long)m_value; }
+    operator short int() const { return (short int)m_value; }
+    operator unsigned short int() const { return (unsigned short int)m_value; }
 
     // We need this operator for the "*p" part of expressions like "for (
     // const_iterator p = begin() + nStart; *p; ++p )". In this case,
@@ -144,30 +117,38 @@ public:
     bool operator&&(bool v) const { return (bool)*this && v; }
 
     // Assignment operators:
+    wxUniChar& operator=(const wxUniChar& c) { if (&c != this) m_value = c.m_value; return *this; }
     wxUniChar& operator=(const wxUniCharRef& c);
     wxUniChar& operator=(char c) { m_value = From8bit(c); return *this; }
     wxUniChar& operator=(unsigned char c) { m_value = From8bit((char)c); return *this; }
-
-#define wxUNICHAR_DEFINE_OPERATOR_EQUAL(type) \
-    wxUniChar& operator=(type c) { m_value = (value_type)c; return *this; }
-    wxDO_FOR_INT_TYPES(wxUNICHAR_DEFINE_OPERATOR_EQUAL)
-#undef wxUNICHAR_DEFINE_OPERATOR_EQUAL
+#if wxWCHAR_T_IS_REAL_TYPE
+    wxUniChar& operator=(wchar_t c) { m_value = c; return *this; }
+#endif
+    wxUniChar& operator=(int c) { m_value = c; return *this; }
+    wxUniChar& operator=(unsigned int c) { m_value = c; return *this; }
+    wxUniChar& operator=(long int c) { m_value = c; return *this; }
+    wxUniChar& operator=(unsigned long int c) { m_value = c; return *this; }
+    wxUniChar& operator=(short int c) { m_value = c; return *this; }
+    wxUniChar& operator=(unsigned short int c) { m_value = c; return *this; }
 
     // Comparison operators:
-#define wxDEFINE_UNICHAR_CMP_WITH_INT(T, op) \
-    bool operator op(T c) const { return m_value op (value_type)c; }
 
     // define the given comparison operator for all the types
 #define wxDEFINE_UNICHAR_OPERATOR(op)                                         \
     bool operator op(const wxUniChar& c) const { return m_value op c.m_value; }\
     bool operator op(char c) const { return m_value op From8bit(c); }         \
     bool operator op(unsigned char c) const { return m_value op From8bit((char)c); } \
-    wxDO_FOR_INT_TYPES_1(wxDEFINE_UNICHAR_CMP_WITH_INT, op)
+    wxIF_WCHAR_T_TYPE( bool operator op(wchar_t c) const { return m_value op (value_type)c; } )    \
+    bool operator op(int c) const { return m_value op (value_type)c; }        \
+    bool operator op(unsigned int c) const { return m_value op (value_type)c; }        \
+    bool operator op(short int c) const { return m_value op (value_type)c; }  \
+    bool operator op(unsigned short int c) const { return m_value op (value_type)c; }  \
+    bool operator op(long int c) const { return m_value op (value_type)c; }   \
+    bool operator op(unsigned long int c) const { return m_value op (value_type)c; }
 
     wxFOR_ALL_COMPARISONS(wxDEFINE_UNICHAR_OPERATOR)
 
 #undef wxDEFINE_UNICHAR_OPERATOR
-#undef wxDEFINE_UNCHAR_CMP_WITH_INT
 
     // this is needed for expressions like 'Z'-c
     int operator-(const wxUniChar& c) const { return m_value - c.m_value; }
@@ -199,7 +180,7 @@ private:
 
         return ToHi8bit(c);
 #else
-        return wx_truncate_cast(char, c);
+        return c;
 #endif
     }
 
@@ -252,11 +233,6 @@ public:
     bool IsAscii() const { return UniChar().IsAscii(); }
     bool GetAsChar(char *c) const { return UniChar().GetAsChar(c); }
 
-    bool IsBMP() const { return UniChar().IsBMP(); }
-    bool IsSupplementary() const { return UniChar().IsSupplementary(); }
-    wxUint16 HighSurrogate() const { return UniChar().HighSurrogate(); }
-    wxUint16 LowSurrogate() const { return UniChar().LowSurrogate(); }
-
     // Assignment operators:
 #if wxUSE_UNICODE_UTF8
     wxUniCharRef& operator=(const wxUniChar& c);
@@ -267,39 +243,53 @@ public:
     wxUniCharRef& operator=(const wxUniCharRef& c)
         { if (&c != this) *this = c.UniChar(); return *this; }
 
-#ifdef wxHAS_MEMBER_DEFAULT
-    wxUniCharRef(const wxUniCharRef&) = default;
+    wxUniCharRef& operator=(char c) { return *this = wxUniChar(c); }
+    wxUniCharRef& operator=(unsigned char c) { return *this = wxUniChar(c); }
+#if wxWCHAR_T_IS_REAL_TYPE
+    wxUniCharRef& operator=(wchar_t c) { return *this = wxUniChar(c); }
 #endif
-
-#define wxUNICHAR_REF_DEFINE_OPERATOR_EQUAL(type) \
-    wxUniCharRef& operator=(type c) { return *this = wxUniChar(c); }
-    wxDO_FOR_CHAR_INT_TYPES(wxUNICHAR_REF_DEFINE_OPERATOR_EQUAL)
-#undef wxUNICHAR_REF_DEFINE_OPERATOR_EQUAL
+    wxUniCharRef& operator=(int c) { return *this = wxUniChar(c); }
+    wxUniCharRef& operator=(unsigned int c) { return *this = wxUniChar(c); }
+    wxUniCharRef& operator=(short int c) { return *this = wxUniChar(c); }
+    wxUniCharRef& operator=(unsigned short int c) { return *this = wxUniChar(c); }
+    wxUniCharRef& operator=(long int c) { return *this = wxUniChar(c); }
+    wxUniCharRef& operator=(unsigned long int c) { return *this = wxUniChar(c); }
 
     // Conversions to the same types as wxUniChar is convertible too:
-#define wxUNICHAR_REF_DEFINE_OPERATOR_PAREN(type) \
-    operator type() const { return UniChar(); }
-    wxDO_FOR_CHAR_INT_TYPES(wxUNICHAR_REF_DEFINE_OPERATOR_PAREN)
-#undef wxUNICHAR_REF_DEFINE_OPERATOR_PAREN
+    operator char() const { return UniChar(); }
+    operator unsigned char() const { return UniChar(); }
+#if wxWCHAR_T_IS_REAL_TYPE
+    operator wchar_t() const { return UniChar(); }
+#endif
+    operator int() const { return UniChar(); }
+    operator unsigned int() const { return UniChar(); }
+    operator short int() const { return UniChar(); }
+    operator unsigned short int() const { return UniChar(); }
+    operator long int() const { return UniChar(); }
+    operator unsigned long int() const { return UniChar(); }
 
     // see wxUniChar::operator bool etc. for explanation
     operator bool() const { return (bool)UniChar(); }
     bool operator!() const { return !UniChar(); }
     bool operator&&(bool v) const { return UniChar() && v; }
 
-#define wxDEFINE_UNICHARREF_CMP_WITH_INT(T, op) \
-    bool operator op(T c) const { return UniChar() op c; }
-
     // Comparison operators:
 #define wxDEFINE_UNICHARREF_OPERATOR(op)                                      \
     bool operator op(const wxUniCharRef& c) const { return UniChar() op c.UniChar(); }\
     bool operator op(const wxUniChar& c) const { return UniChar() op c; }     \
-    wxDO_FOR_CHAR_INT_TYPES_1(wxDEFINE_UNICHARREF_CMP_WITH_INT, op)
+    bool operator op(char c) const { return UniChar() op c; }                 \
+    bool operator op(unsigned char c) const { return UniChar() op c; }        \
+    wxIF_WCHAR_T_TYPE( bool operator op(wchar_t c) const { return UniChar() op c; } ) \
+    bool operator op(int c) const { return UniChar() op c; }                  \
+    bool operator op(unsigned int c) const { return UniChar() op c; }         \
+    bool operator op(short int c) const { return UniChar() op c; }             \
+    bool operator op(unsigned short int c) const { return UniChar() op c; }    \
+    bool operator op(long int c) const { return UniChar() op c; }             \
+    bool operator op(unsigned long int c) const { return UniChar() op c; }
 
     wxFOR_ALL_COMPARISONS(wxDEFINE_UNICHARREF_OPERATOR)
 
 #undef wxDEFINE_UNICHARREF_OPERATOR
-#undef wxDEFINE_UNICHARREF_CMP_WITH_INT
 
     // for expressions like c-'A':
     int operator-(const wxUniCharRef& c) const { return UniChar() - c.UniChar(); }
@@ -336,61 +326,20 @@ inline wxUniChar& wxUniChar::operator=(const wxUniCharRef& c)
     return *this;
 }
 
-// wxUniCharRef doesn't behave quite like a reference, notably because template
-// deduction from wxUniCharRef doesn't yield wxUniChar as would have been the
-// case if it were a real reference. This results in a number of problems and
-// we can't fix all of them but we can at least provide a working swap() for
-// it, instead of the default version which doesn't work because a "wrong" type
-// is deduced.
-namespace std
-{
-
-template <>
-inline
-void swap<wxUniCharRef>(wxUniCharRef& lhs, wxUniCharRef& rhs)
-{
-    if ( &lhs != &rhs )
-    {
-        // The use of wxUniChar here is the crucial difference: in the default
-        // implementation, tmp would be wxUniCharRef and so assigning to lhs
-        // would modify it too. Here we make a real copy, not affected by
-        // changing lhs, instead.
-        wxUniChar tmp = lhs;
-        lhs = rhs;
-        rhs = tmp;
-    }
-}
-
-} // namespace std
-
-#if __cplusplus >= 201103L || wxCHECK_VISUALC_VERSION(10)
-
-// For std::iter_swap() to work with wxString::iterator, which uses
-// wxUniCharRef as its reference type, we need to ensure that swap() works with
-// wxUniCharRef objects by defining this overload.
-//
-// See https://bugs.llvm.org/show_bug.cgi?id=28559#c9
-inline
-void swap(wxUniCharRef&& lhs, wxUniCharRef&& rhs)
-{
-    wxUniChar tmp = lhs;
-    lhs = rhs;
-    rhs = tmp;
-}
-
-#endif // C++11
-
-
 // Comparison operators for the case when wxUniChar(Ref) is the second operand
 // implemented in terms of member comparison functions
 
-wxDEFINE_COMPARISONS_BY_REV(char, const wxUniChar&)
-wxDEFINE_COMPARISONS_BY_REV(char, const wxUniCharRef&)
+#define wxCMP_REVERSE(c1, c2, op) c2 op c1
 
-wxDEFINE_COMPARISONS_BY_REV(wchar_t, const wxUniChar&)
-wxDEFINE_COMPARISONS_BY_REV(wchar_t, const wxUniCharRef&)
+wxDEFINE_COMPARISONS(char, const wxUniChar&, wxCMP_REVERSE)
+wxDEFINE_COMPARISONS(char, const wxUniCharRef&, wxCMP_REVERSE)
 
-wxDEFINE_COMPARISONS_BY_REV(const wxUniChar&, const wxUniCharRef&)
+wxDEFINE_COMPARISONS(wchar_t, const wxUniChar&, wxCMP_REVERSE)
+wxDEFINE_COMPARISONS(wchar_t, const wxUniCharRef&, wxCMP_REVERSE)
+
+wxDEFINE_COMPARISONS(const wxUniChar&, const wxUniCharRef&, wxCMP_REVERSE)
+
+#undef wxCMP_REVERSE
 
 // for expressions like c-'A':
 inline int operator-(char c1, const wxUniCharRef& c2) { return -(c2 - c1); }

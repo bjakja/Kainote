@@ -4,6 +4,7 @@
 // Author:      Francesco Montorsi
 // Modified by:
 // Created:     20/4/2006
+// RCS-ID:      $Id$
 // Copyright:   (c) Francesco Montorsi
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,6 +13,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #include "wx/colour.h"
 
@@ -72,9 +76,9 @@ wxEMPTY_HANDLERS_TABLE(wxColour)
 #else
 
 #if wxCOLOUR_IS_GDIOBJECT
-wxIMPLEMENT_DYNAMIC_CLASS(wxColour, wxGDIObject);
+wxIMPLEMENT_DYNAMIC_CLASS(wxColour, wxGDIObject)
 #else
-wxIMPLEMENT_DYNAMIC_CLASS(wxColour, wxObject);
+wxIMPLEMENT_DYNAMIC_CLASS(wxColour, wxObject)
 #endif
 
 #endif
@@ -102,8 +106,8 @@ bool wxColourBase::FromString(const wxString& str)
             // use point as decimal separator, regardless of locale. So parse
             // the tail of the string manually by putting it in a buffer and
             // using wxString::ToCDouble() below. Notice that we can't use "%s"
-            // for this as it stops at white space, so we use "[^)] )" to take
-            // everything until the closing bracket.
+            // for this as it stops at white space and we need "%c" to avoid
+            // this and really get all the rest of the string into the buffer.
 
             const unsigned len = str.length(); // always big enough
             wxCharBuffer alphaBuf(len);
@@ -115,7 +119,7 @@ bool wxColourBase::FromString(const wxString& str)
             // Construct the format string which ensures that the last argument
             // receives all the rest of the string.
             wxString formatStr;
-            formatStr << wxS("( %d , %d , %d , %") << len << wxS("[^)] )");
+            formatStr << wxS("( %d , %d , %d , %") << len << 'c';
 
             // Notice that we use sscanf() here because if the string is not
             // ASCII it can't represent a valid RGB colour specification anyhow
@@ -131,9 +135,10 @@ bool wxColourBase::FromString(const wxString& str)
             // Notice that we must explicitly specify the length to get rid of
             // trailing NULs.
             wxString alphaStr(alphaPtr, wxStrlen(alphaPtr));
-            if ( alphaStr.empty() )
+            if ( alphaStr.empty() || alphaStr.Last() != ')' )
                 return false;
 
+            alphaStr.RemoveLast();
             alphaStr.Trim();
 
             double a;
@@ -154,42 +159,16 @@ bool wxColourBase::FromString(const wxString& str)
             (unsigned char)wxClip(blue, 0, 255),
             (unsigned char)wxClip(alpha, 0, 255));
     }
-    else if ( str[0] == wxT('#') )
+    else if ( str[0] == wxT('#') && wxStrlen(str) == 7 )
     {
-        // hexadecimal prefixed with # ("HTML syntax")
-        // see https://drafts.csswg.org/css-color/#hex-notation
-        size_t len = wxStrlen(str) - 1;
+        // hexadecimal prefixed with # (HTML syntax)
         unsigned long tmp;
         if (wxSscanf(str.wx_str() + 1, wxT("%lx"), &tmp) != 1)
             return false;
 
-        switch ( len )
-        {
-            case 6: // #rrggbb
-                tmp = (tmp << 8) + wxALPHA_OPAQUE;
-                wxFALLTHROUGH;
-
-            case 8: // #rrggbbaa
-                Set((unsigned char)((tmp >> 24) & 0xFF),
-                    (unsigned char)((tmp >> 16) & 0xFF),
-                    (unsigned char)((tmp >> 8)  & 0xFF),
-                    (unsigned char)( tmp        & 0xFF));
-                break;
-
-            case 3: // #rgb
-                tmp = (tmp << 4) + 0xF;
-                wxFALLTHROUGH;
-
-            case 4: // #rgba
-                Set((unsigned char)(((tmp >> 12) & 0xF) * 0x11),
-                    (unsigned char)(((tmp >> 8)  & 0xF) * 0x11),
-                    (unsigned char)(((tmp >> 4)  & 0xF) * 0x11),
-                    (unsigned char)(( tmp        & 0xF) * 0x11));
-                break;
-
-            default:
-                return false; // unrecognized
-        }
+        Set((unsigned char)(tmp >> 16),
+            (unsigned char)(tmp >> 8),
+            (unsigned char)tmp);
     }
     else if (wxTheColourDatabase) // a colour name ?
     {
@@ -198,80 +177,59 @@ bool wxColourBase::FromString(const wxString& str)
         // because this place can be called from constructor
         // and 'this' could not be available yet
         wxColour clr = wxTheColourDatabase->Find(str);
-        if (!clr.IsOk())
-            return false;
-
-        Set((unsigned char)clr.Red(),
-            (unsigned char)clr.Green(),
-            (unsigned char)clr.Blue());
-    }
-    else // unrecognized
-    {
-        return false;
+        if (clr.IsOk())
+            Set((unsigned char)clr.Red(),
+                (unsigned char)clr.Green(),
+                (unsigned char)clr.Blue());
     }
 
-    return true;
+    if (IsOk())
+        return true;
+
+    wxLogDebug(wxT("wxColour::Set - couldn't set to colour string '%s'"), str);
+    return false;
 }
 
 wxString wxColourBase::GetAsString(long flags) const
 {
-    if ( !IsOk() )
-        return wxString();
-
     wxString colName;
 
-    if ( IsSolid() )
+    const bool isOpaque = Alpha() == wxALPHA_OPAQUE;
+
+    // we can't use the name format if the colour is not opaque as the alpha
+    // information would be lost
+    if ( (flags & wxC2S_NAME) && isOpaque )
     {
-        const int alpha = Alpha();
-        const bool isOpaque = alpha == wxALPHA_OPAQUE;
-
-        // we can't use the name format if the colour is not opaque as the alpha
-        // information would be lost
-        if ( (flags & wxC2S_NAME) && isOpaque )
-        {
-            colName = wxTheColourDatabase->FindName(
-                        static_cast<const wxColour &>(*this)).MakeLower();
-        }
-
-        if ( colName.empty() )
-        {
-            const int red = Red(),
-                      green = Green(),
-                      blue = Blue();
-
-            if ( flags & wxC2S_CSS_SYNTAX )
-            {
-                // no name for this colour; return it in CSS syntax
-                if ( isOpaque )
-                {
-                    colName.Printf(wxT("rgb(%d, %d, %d)"), red, green, blue);
-                }
-                else // use rgba() form
-                {
-                    colName.Printf(wxT("rgba(%d, %d, %d, %s)"),
-                                   red, green, blue,
-                                   wxString::FromCDouble(alpha / 255., 3));
-                }
-            }
-            else if ( flags & wxC2S_HTML_SYNTAX )
-            {
-                // no name for this colour; return it in HTML syntax
-                if ( isOpaque )
-                    colName.Printf(wxT("#%02X%02X%02X"), red, green, blue);
-                else
-                    colName.Printf(wxT("#%02X%02X%02X%02X"), red, green, blue, alpha);
-            }
-        }
+        colName = wxTheColourDatabase->FindName(
+                    static_cast<const wxColour &>(*this)).MakeLower();
     }
-    else
+
+    if ( colName.empty() )
     {
+        const int red = Red(),
+                  blue = Blue(),
+                  green = Green();
+
         if ( flags & wxC2S_CSS_SYNTAX )
         {
-            colName = wxS("rgb(??, ??, \?\?)"); // \? form to avoid ??) trigraph
+            // no name for this colour; return it in CSS syntax
+            if ( isOpaque )
+            {
+                colName.Printf(wxT("rgb(%d, %d, %d)"), red, green, blue);
+            }
+            else // use rgba() form
+            {
+                colName.Printf(wxT("rgba(%d, %d, %d, %s)"),
+                               red, green, blue,
+                               wxString::FromCDouble(Alpha() / 255., 3));
+            }
         }
         else if ( flags & wxC2S_HTML_SYNTAX )
         {
-            colName = wxS("#??????");
+            wxASSERT_MSG( isOpaque, "alpha is lost in HTML syntax" );
+
+            // no name for this colour; return it in HTML syntax
+            colName.Printf(wxT("#%02X%02X%02X"), red, green, blue);
         }
     }
 
@@ -280,11 +238,6 @@ wxString wxColourBase::GetAsString(long flags) const
                  wxT("Invalid wxColour -> wxString conversion flags"));
 
     return colName;
-}
-
-double wxColourBase::GetLuminance() const
-{
-    return (0.299*Red() + 0.587*Green() + 0.114*Blue()) / 255.0;
 }
 
 // static
@@ -318,16 +271,6 @@ void wxColourBase::MakeDisabled(unsigned char* r, unsigned char* g, unsigned cha
     *r = AlphaBlend(*r, brightness, 0.4);
     *g = AlphaBlend(*g, brightness, 0.4);
     *b = AlphaBlend(*b, brightness, 0.4);
-}
-
-wxColour& wxColourBase::MakeDisabled(unsigned char brightness)
-{
-    unsigned char r = Red(),
-                  g = Green(),
-                  b = Blue();
-    MakeDisabled(&r, &g, &b, brightness);
-    Set(r, g, b, Alpha());
-    return static_cast<wxColour&>(*this);
 }
 
 // AlphaBlend is used by ChangeLightness and MakeDisabled
@@ -387,6 +330,21 @@ wxColour wxColourBase::ChangeLightness(int ialpha) const
     ChangeLightness(&r, &g, &b, ialpha);
     return wxColour(r,g,b);
 }
+
+#if WXWIN_COMPATIBILITY_2_6
+
+// static
+wxColour wxColourBase::CreateByName(const wxString& name)
+{
+    return wxColour(name);
+}
+
+void wxColourBase::InitFromName(const wxString& col)
+{
+    Set(col);
+}
+
+#endif // WXWIN_COMPATIBILITY_2_6
 
 // wxColour <-> wxString utilities, used by wxConfig
 wxString wxToString(const wxColourBase& col)

@@ -1,3 +1,5 @@
+/* $Id$ */
+
 /*
  * Copyright (c) 1989, 1993
  *	The Regents of the University of California.  All rights reserved.
@@ -35,11 +37,7 @@ static char sccsid[] = "@(#)lsearch.c	8.1 (Berkeley) 6/4/93";
 __RCSID("$NetBSD: lsearch.c,v 1.2 2005/07/06 15:47:15 drochner Exp $");
 #endif
 
-#ifdef _WIN32_WCE
-# include <wce_types.h>
-#else
-# include <sys/types.h>
-#endif
+#include <sys/types.h>
 
 #ifndef NULL
 # define NULL 0

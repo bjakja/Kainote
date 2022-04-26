@@ -2,6 +2,7 @@
 // Name:        stockitem.h
 // Purpose:     interface of global functions
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -39,7 +40,7 @@ enum wxStockLabelQueryFlag
         Return the label without any ellipsis at the end.
 
         By default, stock items text is returned with ellipsis, if appropriate,
-        this flag allows one to avoid having it. So using the same example as
+        this flag allows to avoid having it. So using the same example as
         above, the returned string would be "Print" or "&Print" if
         wxSTOCK_WITH_MNEMONIC were also used.
 

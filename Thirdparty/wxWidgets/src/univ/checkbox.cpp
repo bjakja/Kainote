@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     25.08.00
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,6 +19,9 @@
 
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_CHECKBOX
 
@@ -213,7 +217,6 @@ void wxCheckBox::DoSet3StateValue(wxCheckBoxState state)
         case wxCHK_UNCHECKED:    status = Status_Unchecked;   break;
         case wxCHK_CHECKED:      status = Status_Checked; break;
         default:                 wxFAIL_MSG(wxT("Unknown checkbox state"));
-        wxFALLTHROUGH;
         case wxCHK_UNDETERMINED: status = Status_3rdState;  break;
     }
     if ( status != m_status )
@@ -295,7 +298,7 @@ void wxCheckBox::ChangeValue(bool value)
 
 void wxCheckBox::SendEvent()
 {
-    wxCommandEvent event(wxEVT_CHECKBOX, GetId());
+    wxCommandEvent event(wxEVT_COMMAND_CHECKBOX_CLICKED, GetId());
     InitCommandEvent(event);
     wxCheckBoxState state = Get3StateValue();
 

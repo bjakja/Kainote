@@ -3,6 +3,7 @@
 // Purpose:     Miscellaneous time-related functions.
 // Author:      Vadim Zeitlin
 // Created:     2011-11-26
+// RCS-ID:      $Id: wxhead.h,v 1.12 2010-04-22 12:44:51 zeitlin Exp $
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -10,7 +11,7 @@
 #ifndef _WX_TIME_H_
 #define _WX_TIME_H_
 
-#include "wx\longlong.h"
+#include "wx/longlong.h"
 
 // Returns the difference between UTC and local time in seconds.
 WXDLLIMPEXP_BASE int wxGetTimeZone();
@@ -57,7 +58,7 @@ wxLongLong WXDLLIMPEXP_BASE wxGetUTCTimeUSec();
 #define wxLocaltime_r localtime_r
 #else
 WXDLLIMPEXP_BASE struct tm *wxLocaltime_r(const time_t*, struct tm*);
-#if wxUSE_THREADS && !defined(__WINDOWS__)
+#if wxUSE_THREADS && !defined(__WINDOWS__) && !defined(__WATCOMC__)
      // On Windows, localtime _is_ threadsafe!
 #warning using pseudo thread-safe wrapper for localtime to emulate localtime_r
 #endif
@@ -67,7 +68,7 @@ WXDLLIMPEXP_BASE struct tm *wxLocaltime_r(const time_t*, struct tm*);
 #define wxGmtime_r gmtime_r
 #else
 WXDLLIMPEXP_BASE struct tm *wxGmtime_r(const time_t*, struct tm*);
-#if wxUSE_THREADS && !defined(__WINDOWS__)
+#if wxUSE_THREADS && !defined(__WINDOWS__) && !defined(__WATCOMC__)
      // On Windows, gmtime _is_ threadsafe!
 #warning using pseudo thread-safe wrapper for gmtime to emulate gmtime_r
 #endif

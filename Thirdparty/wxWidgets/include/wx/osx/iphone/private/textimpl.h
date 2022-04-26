@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     03/02/99
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -34,10 +35,10 @@ public :
     virtual void WriteText(const wxString& str) ;
     virtual bool HasOwnContextMenu() const { return true; }
 
-    virtual wxSize GetBestSize() const;
-
+    virtual wxSize GetBestSize() const;    
+    
     virtual bool SetHint(const wxString& hint);
-
+    
     virtual void controlAction(WXWidget slf, void* _cmd, void *sender);
 protected :
     UITextField* m_textField;
@@ -62,7 +63,7 @@ public:
     virtual void GetSelection( long* from, long* to) const ;
     virtual void SetSelection( long from , long to );
     virtual void WriteText(const wxString& str) ;
-    virtual void SetFont(const wxFont & font);
+    virtual void SetFont( const wxFont & font , const wxColour& foreground , long windowStyle, bool ignoreBlack = true );
 
     virtual bool GetStyle(long position, wxTextAttr& style);
     virtual void SetStyle(long start, long end, const wxTextAttr& style);
@@ -71,6 +72,7 @@ public:
 
     virtual bool HasOwnContextMenu() const { return true; }
 
+    virtual void CheckSpelling(bool check);
     virtual wxSize GetBestSize() const;
 
 protected:

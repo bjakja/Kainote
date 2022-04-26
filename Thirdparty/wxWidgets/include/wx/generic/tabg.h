@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -28,7 +29,7 @@ class WXDLLIMPEXP_FWD_CORE wxTabView;
 
 class WXDLLIMPEXP_CORE wxTabControl: public wxObject
 {
-    wxDECLARE_DYNAMIC_CLASS(wxTabControl);
+DECLARE_DYNAMIC_CLASS(wxTabControl)
 public:
     wxTabControl(wxTabView *v = NULL);
     virtual ~wxTabControl(void);
@@ -95,7 +96,7 @@ WX_DECLARE_LIST(wxTabLayer, wxTabLayerList);
 
 class WXDLLIMPEXP_CORE wxTabView: public wxObject
 {
-    wxDECLARE_DYNAMIC_CLASS(wxTabView);
+DECLARE_DYNAMIC_CLASS(wxTabView)
 public:
   wxTabView(long style = wxTAB_STYLE_DRAW_BOX | wxTAB_STYLE_COLOUR_INTERIOR);
   virtual ~wxTabView();
@@ -267,7 +268,7 @@ protected:
 
 class WXDLLIMPEXP_CORE wxTabbedDialog : public wxDialog
 {
-    wxDECLARE_DYNAMIC_CLASS(wxTabbedDialog);
+    DECLARE_DYNAMIC_CLASS(wxTabbedDialog)
 
 public:
     wxTabbedDialog(wxWindow *parent,
@@ -276,7 +277,7 @@ public:
                    const wxPoint& pos = wxDefaultPosition,
                    const wxSize& size = wxDefaultSize,
                    long windowStyle = wxDEFAULT_DIALOG_STYLE,
-                   const wxString& name = wxASCII_STR(wxDialogNameStr));
+                   const wxString& name = wxDialogNameStr);
     virtual ~wxTabbedDialog();
 
     wxTabView *GetTabView() const { return m_tabView; }
@@ -290,7 +291,7 @@ protected:
     wxTabView*   m_tabView;
 
 private:
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
 };
 
 /*
@@ -299,7 +300,7 @@ private:
 
 class WXDLLIMPEXP_CORE wxTabbedPanel : public wxPanel
 {
-    wxDECLARE_DYNAMIC_CLASS(wxTabbedPanel);
+    DECLARE_DYNAMIC_CLASS(wxTabbedPanel)
 
 public:
     wxTabbedPanel(wxWindow *parent,
@@ -307,7 +308,7 @@ public:
                   const wxPoint& pos = wxDefaultPosition,
                   const wxSize& size = wxDefaultSize,
                   long windowStyle = 0,
-                  const wxString& name = wxASCII_STR(wxPanelNameStr));
+                  const wxString& name = wxPanelNameStr);
     virtual ~wxTabbedPanel();
 
     wxTabView *GetTabView() const { return m_tabView; }
@@ -320,7 +321,7 @@ protected:
     wxTabView*   m_tabView;
 
 private:
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
 };
 
 WX_DECLARE_HASH_MAP(int, wxWindow*, wxIntegerHash, wxIntegerEqual,
@@ -328,7 +329,7 @@ WX_DECLARE_HASH_MAP(int, wxWindow*, wxIntegerHash, wxIntegerEqual,
 
 class WXDLLIMPEXP_CORE wxPanelTabView : public wxTabView
 {
-    wxDECLARE_DYNAMIC_CLASS(wxPanelTabView);
+    DECLARE_DYNAMIC_CLASS(wxPanelTabView)
 
 public:
     wxPanelTabView(wxPanel *pan, long style = wxTAB_STYLE_DRAW_BOX | wxTAB_STYLE_COLOUR_INTERIOR);

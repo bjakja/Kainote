@@ -2,6 +2,7 @@
 // Name:        wx/osx/dnd.h
 // Purpose:     Declaration of the wxDropTarget, wxDropSource class etc.
 // Author:      Stefan Csomor
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Stefan Csomor
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -30,8 +31,6 @@ class WXDLLIMPEXP_FWD_CORE wxFileDropTarget;
 
 class WXDLLIMPEXP_FWD_CORE wxDropSource;
 
-class WXDLLIMPEXP_FWD_CORE wxOSXDataSource;
-
 // ----------------------------------------------------------------------------
 // macros
 // ----------------------------------------------------------------------------
@@ -52,18 +51,17 @@ class WXDLLIMPEXP_CORE wxDropTarget: public wxDropTargetBase
 
     wxDropTarget(wxDataObject *dataObject = NULL );
 
-    virtual wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult def) wxOVERRIDE;
-    virtual bool OnDrop(wxCoord x, wxCoord y) wxOVERRIDE;
-    virtual wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def) wxOVERRIDE;
-    virtual bool GetData() wxOVERRIDE;
+    virtual wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult def);
+    virtual bool OnDrop(wxCoord x, wxCoord y);
+    virtual wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def);
+    virtual bool GetData();
     // NOTE: This is needed by the generic wxDataViewCtrl, not sure how to implement.
     virtual wxDataFormat GetMatchingPair();
 
     bool CurrentDragHasSupportedFormat() ;
-    
-    void SetCurrentDragSource( wxOSXDataSource* dragpasteboard ) { m_currentDragPasteboard = dragpasteboard ; }
+    void SetCurrentDragPasteboard( void* dragpasteboard ) { m_currentDragPasteboard = dragpasteboard ; }
   protected :
-    wxOSXDataSource* m_currentDragPasteboard ;
+    void* m_currentDragPasteboard ;
 };
 
 //-------------------------------------------------------------------------
@@ -93,7 +91,7 @@ public:
 
     // do it (call this in response to a mouse button press, for example)
     // params: if bAllowMove is false, data can be only copied
-    virtual wxDragResult DoDragDrop(int flags = wxDrag_CopyOnly) wxOVERRIDE;
+    virtual wxDragResult DoDragDrop(int flags = wxDrag_CopyOnly);
 
     wxWindow*     GetWindow() { return m_window ; }
     void SetCurrentDragPasteboard( void* dragpasteboard ) { m_currentDragPasteboard = dragpasteboard ; }

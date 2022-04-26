@@ -2,6 +2,7 @@
 // Name:        src/gtk1/dialog.cpp
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,7 +19,6 @@
 #endif // WX_PRECOMP
 
 #include "wx/evtloop.h"
-#include "wx/modalhook.h"
 
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
@@ -36,12 +36,12 @@ extern int g_openDialogs;
 // wxDialog
 //-----------------------------------------------------------------------------
 
-wxBEGIN_EVENT_TABLE(wxDialog,wxDialogBase)
+BEGIN_EVENT_TABLE(wxDialog,wxDialogBase)
     EVT_BUTTON  (wxID_OK,       wxDialog::OnOK)
     EVT_BUTTON  (wxID_CANCEL,   wxDialog::OnCancel)
     EVT_BUTTON  (wxID_APPLY,    wxDialog::OnApply)
     EVT_CLOSE   (wxDialog::OnCloseWindow)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 void wxDialog::Init()
 {
@@ -137,7 +137,7 @@ void wxDialog::OnCloseWindow(wxCloseEvent& WXUNUSED(event))
 
     s_closing.Append(this);
 
-    wxCommandEvent cancelEvent(wxEVT_BUTTON, wxID_CANCEL);
+    wxCommandEvent cancelEvent(wxEVT_COMMAND_BUTTON_CLICKED, wxID_CANCEL);
     cancelEvent.SetEventObject( this );
     HandleWindowEvent(cancelEvent);
     s_closing.DeleteObject(this);
@@ -182,8 +182,6 @@ void wxDialog::SetModal( bool WXUNUSED(flag) )
 
 int wxDialog::ShowModal()
 {
-    WX_HOOK_MODAL_DIALOG();
-
     if (IsModal())
     {
        wxFAIL_MSG( wxT("wxDialog:ShowModal called twice") );

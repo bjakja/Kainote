@@ -3,6 +3,7 @@
 // Purpose:     wxControlBase::*Ellipsize* unit test
 // Author:      Francesco Montorsi
 // Created:     2010-03-10
+// RCS-ID:      $Id$
 // Copyright:   (c) 2010 Francesco Montorsi
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -12,6 +13,9 @@
 
 #include "testprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #include "wx/control.h"
 #include "wx/dcmemory.h"
@@ -20,7 +24,34 @@
 // test class
 // ----------------------------------------------------------------------------
 
-TEST_CASE("Ellipsization::NormalCase", "[ellipsization]")
+class EllipsizationTestCase : public CppUnit::TestCase
+{
+public:
+    EllipsizationTestCase() { }
+
+private:
+    CPPUNIT_TEST_SUITE( EllipsizationTestCase );
+        CPPUNIT_TEST( NormalCase );
+        CPPUNIT_TEST( EnoughSpace );
+        CPPUNIT_TEST( VeryLittleSpace );
+        CPPUNIT_TEST( HasThreeDots );
+    CPPUNIT_TEST_SUITE_END();
+
+    void NormalCase();
+    void EnoughSpace();
+    void VeryLittleSpace();
+    void HasThreeDots();
+
+    DECLARE_NO_COPY_CLASS(EllipsizationTestCase)
+};
+
+// register in the unnamed registry so that these tests are run by default
+CPPUNIT_TEST_SUITE_REGISTRATION( EllipsizationTestCase );
+
+// also include in its own registry so that these tests can be run alone
+CPPUNIT_TEST_SUITE_NAMED_REGISTRATION( EllipsizationTestCase, "EllipsizationTestCase" );
+
+void EllipsizationTestCase::NormalCase()
 {
     wxMemoryDC dc;
 
@@ -56,8 +87,7 @@ TEST_CASE("Ellipsization::NormalCase", "[ellipsization]")
         wxELLIPSIZE_END
     };
 
-    const int charWidth = dc.GetCharWidth();
-    int widthsToTest[] = { 6*charWidth, 10*charWidth, 15*charWidth };
+    int widthsToTest[] = { 50, 100, 150 };
 
     for ( unsigned int s = 0; s < WXSIZEOF(stringsToTest); s++ )
     {
@@ -78,28 +108,15 @@ TEST_CASE("Ellipsization::NormalCase", "[ellipsization]")
                                     flagsToTest[f]
                                    );
 
-                    // Note that we must measure the width of the text that
-                    // will be rendered, and when mnemonics are used, this
-                    // means we have to remove them first.
-                    const wxString
-                        displayed = flagsToTest[f] & wxELLIPSIZE_FLAGS_PROCESS_MNEMONICS
-                                        ? wxControl::RemoveMnemonics(ret)
-                                        : ret;
-                    const int
-                        width = dc.GetMultiLineTextExtent(displayed).GetWidth();
-
                     WX_ASSERT_MESSAGE
                     (
                      (
-                        "Test #(%u,%u.%u): %s\n\"%s\" -> \"%s\"; width=%dpx > %dpx",
-                        s, f, m,
-                        dc.GetFont().GetNativeFontInfoUserDesc(),
+                        "invalid ellipsization for \"%s\" (%dpx, should be <=%dpx)",
                         str,
-                        ret,
-                        width,
+                        dc.GetMultiLineTextExtent(ret).GetWidth(),
                         widthsToTest[w]
                      ),
-                     width <= widthsToTest[w]
+                     dc.GetMultiLineTextExtent(ret).GetWidth() <= widthsToTest[w]
                     );
                 }
             }
@@ -108,49 +125,48 @@ TEST_CASE("Ellipsization::NormalCase", "[ellipsization]")
 }
 
 
-TEST_CASE("Ellipsization::EnoughSpace", "[ellipsization]")
+void EllipsizationTestCase::EnoughSpace()
 {
     // No ellipsization should occur if there's plenty of space.
 
     wxMemoryDC dc;
 
-    wxString testString("some label");
-    const int width = dc.GetTextExtent(testString).GetWidth() + 50;
-
-    CHECK( wxControl::Ellipsize(testString, dc, wxELLIPSIZE_START, width) == testString );
-    CHECK( wxControl::Ellipsize(testString, dc, wxELLIPSIZE_MIDDLE, width) == testString );
-    CHECK( wxControl::Ellipsize(testString, dc, wxELLIPSIZE_END, width) == testString );
+    CPPUNIT_ASSERT_EQUAL("some label",
+                         wxControl::Ellipsize("some label", dc, wxELLIPSIZE_START, 200));
+    CPPUNIT_ASSERT_EQUAL("some label",
+                         wxControl::Ellipsize("some label", dc, wxELLIPSIZE_MIDDLE, 200));
+    CPPUNIT_ASSERT_EQUAL("some label",
+                         wxControl::Ellipsize("some label", dc, wxELLIPSIZE_END, 200));
 }
 
 
-TEST_CASE("Ellipsization::VeryLittleSpace", "[ellipsization]")
+void EllipsizationTestCase::VeryLittleSpace()
 {
     // If there's not enough space, the shortened label should still contain "..." and one character
 
     wxMemoryDC dc;
 
-    const int width = dc.GetTextExtent("s...").GetWidth();
-
-    CHECK( wxControl::Ellipsize("some label", dc, wxELLIPSIZE_START, width) == "...l" );
-    CHECK( wxControl::Ellipsize("some label", dc, wxELLIPSIZE_MIDDLE, width) == "s..." );
-    CHECK( wxControl::Ellipsize("some label1", dc, wxELLIPSIZE_MIDDLE, width) == "s..." );
-    CHECK( wxControl::Ellipsize("some label", dc, wxELLIPSIZE_END, width) == "s..." );
+    CPPUNIT_ASSERT_EQUAL("...l",
+                         wxControl::Ellipsize("some label", dc, wxELLIPSIZE_START, 5));
+    CPPUNIT_ASSERT_EQUAL("s...",
+                         wxControl::Ellipsize("some label", dc, wxELLIPSIZE_MIDDLE, 5));
+    CPPUNIT_ASSERT_EQUAL("s...",
+                         wxControl::Ellipsize("some label1", dc, wxELLIPSIZE_MIDDLE, 5));
+    CPPUNIT_ASSERT_EQUAL("s...",
+                         wxControl::Ellipsize("some label", dc, wxELLIPSIZE_END, 5));
 }
 
 
-TEST_CASE("Ellipsization::HasThreeDots", "[ellipsization]")
+void EllipsizationTestCase::HasThreeDots()
 {
     wxMemoryDC dc;
 
-    wxString testString("some longer text");
-    const int width = dc.GetTextExtent(testString).GetWidth() - 5;
+    CPPUNIT_ASSERT( wxControl::Ellipsize("some longer text", dc, wxELLIPSIZE_START, 80).StartsWith("...") );
+    CPPUNIT_ASSERT( !wxControl::Ellipsize("some longer text", dc, wxELLIPSIZE_START, 80).EndsWith("...") );
 
-    CHECK( wxControl::Ellipsize(testString, dc, wxELLIPSIZE_START, width).StartsWith("...") );
-    CHECK( !wxControl::Ellipsize(testString, dc, wxELLIPSIZE_START, width).EndsWith("...") );
+    CPPUNIT_ASSERT( wxControl::Ellipsize("some longer text", dc, wxELLIPSIZE_END, 80).EndsWith("...") );
 
-    CHECK( wxControl::Ellipsize(testString, dc, wxELLIPSIZE_END, width).EndsWith("...") );
-
-    CHECK( wxControl::Ellipsize(testString, dc, wxELLIPSIZE_MIDDLE, width).Contains("...") );
-    CHECK( !wxControl::Ellipsize(testString, dc, wxELLIPSIZE_MIDDLE, width).StartsWith("...") );
-    CHECK( !wxControl::Ellipsize(testString, dc, wxELLIPSIZE_MIDDLE, width).EndsWith("...") );
+    CPPUNIT_ASSERT( wxControl::Ellipsize("some longer text", dc, wxELLIPSIZE_MIDDLE, 80).Contains("...") );
+    CPPUNIT_ASSERT( !wxControl::Ellipsize("some longer text", dc, wxELLIPSIZE_MIDDLE, 80).StartsWith("...") );
+    CPPUNIT_ASSERT( !wxControl::Ellipsize("some longer text", dc, wxELLIPSIZE_MIDDLE, 80).EndsWith("...") );
 }

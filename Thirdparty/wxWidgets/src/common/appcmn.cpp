@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     18.10.99
+// RCS-ID:      $Id$
 // Copyright:   (c) Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,13 +20,15 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#if defined(__BORLANDC__)
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
     #include "wx/app.h"
     #include "wx/window.h"
     #include "wx/bitmap.h"
     #include "wx/log.h"
-    #include "wx/module.h"
     #include "wx/msgdlg.h"
     #include "wx/confbase.h"
     #include "wx/utils.h"
@@ -35,7 +38,6 @@
 #include "wx/apptrait.h"
 #include "wx/cmdline.h"
 #include "wx/msgout.h"
-#include "wx/richmsgdlg.h"
 #include "wx/thread.h"
 #include "wx/vidmode.h"
 #include "wx/evtloop.h"
@@ -82,27 +84,6 @@ wxAppBase::wxAppBase()
 
 bool wxAppBase::Initialize(int& argcOrig, wxChar **argvOrig)
 {
-#ifdef __DARWIN__
-    // Mac OS X passes a process serial number command line argument when
-    // the application is launched from the Finder. This argument must be
-    // removed from the command line arguments before being handled by the
-    // application (otherwise applications would need to handle it)
-    //
-    // Notice that this has to be done for all ports that can be used under OS
-    // X (e.g. wxGTK) and not just wxOSX itself, hence this code is here and
-    // not in a port-specific file.
-    if ( argcOrig > 1 )
-    {
-        static const wxChar *ARG_PSN = wxT("-psn_");
-        if ( wxStrncmp(argvOrig[1], ARG_PSN, wxStrlen(ARG_PSN)) == 0 )
-        {
-            // remove this argument
-            --argcOrig;
-            memmove(argvOrig + 1, argvOrig + 2, argcOrig * sizeof(wxChar*));
-        }
-    }
-#endif // __DARWIN__
-
     if ( !wxAppConsole::Initialize(argcOrig, argvOrig) )
         return false;
 
@@ -126,28 +107,19 @@ wxAppBase::~wxAppBase()
     // this destructor is required for Darwin
 }
 
-void wxAppBase::DeleteAllTLWs()
+void wxAppBase::CleanUp()
 {
-    // TLWs remove themselves from wxTopLevelWindows when destroyed, so iterate
-    // until none are left.
+    // clean up all the pending objects
+    DeletePendingObjects();
+
+    // and any remaining TLWs (they remove themselves from wxTopLevelWindows
+    // when destroyed, so iterate until none are left)
     while ( !wxTopLevelWindows.empty() )
     {
         // do not use Destroy() here as it only puts the TLW in pending list
         // but we want to delete them now
         delete wxTopLevelWindows.GetFirst()->GetData();
     }
-}
-
-void wxAppBase::CleanUp()
-{
-    // Clean up any still pending objects. Normally there shouldn't any as we
-    // already do this in OnExit(), but this could happen if the user code has
-    // somehow managed to create more of them since then or just forgot to call
-    // the base class OnExit().
-    DeletePendingObjects();
-
-    // and any remaining TLWs
-    DeleteAllTLWs();
 
     // undo everything we did in Initialize() above
     wxBitmap::CleanUpHandlers();
@@ -168,34 +140,9 @@ void wxAppBase::CleanUp()
 wxWindow* wxAppBase::GetTopWindow() const
 {
     wxWindow* window = m_topWindow;
-
-    // If there is no top window or it is about to be destroyed,
-    // we need to search for the first TLW which is not pending delete
-    if ( !window || wxPendingDelete.Member(window) )
-    {
-        window = NULL;
-        wxWindowList::compatibility_iterator node = wxTopLevelWindows.GetFirst();
-        while ( node )
-        {
-            wxWindow* win = node->GetData();
-            if ( !wxPendingDelete.Member(win) )
-            {
-                window = win;
-                break;
-            }
-            node = node->GetNext();
-        }
-    }
-
+    if (window == NULL && wxTopLevelWindows.GetCount() > 0)
+        window = wxTopLevelWindows.GetFirst()->GetData();
     return window;
-}
-
-/* static */
-wxWindow* wxAppBase::GetMainTopWindow()
-{
-    const wxAppBase* const app = GetGUIInstance();
-
-    return app ? app->GetTopWindow() : NULL;
 }
 
 wxVideoMode wxAppBase::GetDisplayMode() const
@@ -227,12 +174,8 @@ wxLayoutDirection wxAppBase::GetLayoutDirection() const
 // GUI-specific command line options handling
 // ----------------------------------------------------------------------------
 
-#ifdef __WXUNIVERSAL__
 #define OPTION_THEME   "theme"
-#endif
-#if defined(__WXDFB__)
 #define OPTION_MODE    "mode"
-#endif
 
 void wxAppBase::OnInitCmdLine(wxCmdLineParser& parser)
 {
@@ -283,7 +226,7 @@ bool wxAppBase::OnCmdLineParsed(wxCmdLineParser& parser)
         wxTheme *theme = wxTheme::Create(themeName);
         if ( !theme )
         {
-            wxLogError(_("Unsupported theme '%s'."), themeName);
+            wxLogError(_("Unsupported theme '%s'."), themeName.c_str());
             return false;
         }
 
@@ -298,9 +241,9 @@ bool wxAppBase::OnCmdLineParsed(wxCmdLineParser& parser)
     if ( parser.Found(OPTION_MODE, &modeDesc) )
     {
         unsigned w, h, bpp;
-        if ( wxSscanf(modeDesc, wxT("%ux%u-%u"), &w, &h, &bpp) != 3 )
+        if ( wxSscanf(modeDesc.c_str(), wxT("%ux%u-%u"), &w, &h, &bpp) != 3 )
         {
-            wxLogError(_("Invalid display mode specification '%s'."), modeDesc);
+            wxLogError(_("Invalid display mode specification '%s'."), modeDesc.c_str());
             return false;
         }
 
@@ -481,94 +424,51 @@ wxRendererNative *wxGUIAppTraitsBase::CreateRenderer()
 bool wxGUIAppTraitsBase::ShowAssertDialog(const wxString& msg)
 {
 #if wxDEBUG_LEVEL
-    // If possible, show the assert using a dialog allowing to hide the stack
-    // trace by default to avoid frightening people unnecessarily.
+    // under MSW we prefer to use the base class version using ::MessageBox()
+    // even if wxMessageBox() is available because it has less chances to
+    // double fault our app than our wxMessageBox()
     //
-    // Otherwise, show the assert using a basic message box, but under MSW
-    // we prefer to use the base class version using ::MessageBox() even if
-    // wxMessageBox() is available because it has less chances to double
-    // fault our app than our wxMessageBox()
+    // under DFB the message dialog is not always functional right now
     //
-    // Notice that under DFB the message dialog is not always functional right
-    // now and, finally, we can't use wxMessageBox() if it wasn't compiled in.
-#if wxUSE_RICHMSGDLG || \
-    (wxUSE_MSGDLG && !defined(__WXMSW__) && !defined(__WXDFB__))
+    // and finally we can't use wxMessageBox() if it wasn't compiled in, of
+    // course
+#if !defined(__WXMSW__) && !defined(__WXDFB__) && wxUSE_MSGDLG
 
     // we can't (safely) show the GUI dialog from another thread, only do it
     // for the asserts in the main thread
     if ( wxIsMainThread() )
     {
-        // Note that this and the other messages here are intentionally not
-        // translated -- they are for developers only.
-        static const wxStringCharType* caption = wxS("wxWidgets Debug Alert");
-
-        wxString msgDlg = wxS("A debugging check in this application ")
-                          wxS("has failed.\n\n") + msg;
-
-        // "No" button means to continue execution, so it should be the default
-        // action as leaving the "Yes" button the default one would mean that
-        // accidentally pressing Space or Enter would trap and kill the program.
-        const int flags = wxYES_NO | wxNO_DEFAULT | wxICON_STOP;
+        wxString msgDlg = msg;
 
 #if wxUSE_STACKWALKER
         const wxString stackTrace = GetAssertStackTrace();
-#endif // wxUSE_STACKWALKER
-
-#if wxUSE_RICHMSGDLG
-        wxRichMessageDialog dlg(NULL, msgDlg, caption, flags);
-
-        dlg.SetYesNoLabels("Stop", "Continue");
-
-        dlg.ShowCheckBox("Don't show this dialog again");
-
-#if wxUSE_STACKWALKER
-        if ( !stackTrace.empty() )
-            dlg.ShowDetailedText(stackTrace);
-#endif // wxUSE_STACKWALKER
-#else // !wxUSE_RICHMSGDLG
-#if wxUSE_STACKWALKER
         if ( !stackTrace.empty() )
             msgDlg << wxT("\n\nCall stack:\n") << stackTrace;
 #endif // wxUSE_STACKWALKER
 
+        // this message is intentionally not translated -- it is for
+        // developpers only
         msgDlg += wxT("\nDo you want to stop the program?\n")
                   wxT("You can also choose [Cancel] to suppress ")
                   wxT("further warnings.");
 
-        wxMessageDialog dlg(NULL, msg, caption, flags);
-#endif // wxUSE_RICHMSGDLG/!wxUSE_RICHMSGDLG
-
-        switch ( dlg.ShowModal() )
+        switch ( wxMessageBox(msgDlg, wxT("wxWidgets Debug Alert"),
+                              wxYES_NO | wxCANCEL | wxICON_STOP ) )
         {
-            case wxID_YES:
-                // See the comment about using the same variable in
-                // DoShowAssertDialog().
-                wxTrapInAssert = true;
+            case wxYES:
+                wxTrap();
                 break;
 
-            case wxID_CANCEL:
-                // This button is used with the plain message dialog only to
-                // indicate that no more assert dialogs should be shown, as
-                // there is no other way to do it with it.
+            case wxCANCEL:
+                // no more asserts
                 return true;
 
-            case wxID_NO:
-#if wxUSE_RICHMSGDLG
-                if ( dlg.IsCheckBoxChecked() )
-                {
-                    // With this dialog, the checkbox is used to indicate that
-                    // the subsequent asserts should be skipped.
-                    return true;
-                }
-#endif // wxUSE_RICHMSGDLG
-
-                // Nothing to do otherwise.
-                break;
+            //case wxNO: nothing to do
         }
 
         return false;
     }
-#endif // wxUSE_RICHMSGDLG || wxUSE_MSGDLG
+#endif // wxUSE_MSGDLG
 #endif // wxDEBUG_LEVEL
 
     return wxAppTraitsBase::ShowAssertDialog(msg);
@@ -585,21 +485,3 @@ bool wxGUIAppTraitsBase::HasStderr()
 #endif
 }
 
-#ifndef __WIN32__
-
-bool wxGUIAppTraitsBase::SafeMessageBox(const wxString& text,
-                                        const wxString& title)
-{
-    // The modules are initialized only after a successful call to
-    // wxApp::Initialize() in wxEntryStart, so it can be used as a proxy for
-    // GUI availability (note that the mere existence of wxTheApp is not enough
-    // for this).
-    if ( !wxModule::AreInitialized() )
-        return false;
-
-    wxMessageBox(text, title, wxOK | wxICON_ERROR);
-
-    return true;
-}
-
-#endif // !__WIN32__

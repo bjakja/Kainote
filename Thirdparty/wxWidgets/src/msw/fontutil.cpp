@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     05.11.99
+// RCS-ID:      $Id$
 // Copyright:   (c) 1999 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #include "wx/fontutil.h"
 
@@ -33,6 +37,11 @@
 #include "wx/encinfo.h"
 #include "wx/fontmap.h"
 #include "wx/tokenzr.h"
+
+// for MSVC5 and old w32api
+#ifndef HANGUL_CHARSET
+#    define HANGUL_CHARSET  129
+#endif
 
 // ============================================================================
 // implementation
@@ -179,7 +188,6 @@ wxFontEncoding wxGetFontEncFromCharSet(int cs)
         default:
             wxFAIL_MSG( wxT("unexpected Win32 charset") );
             // fall through and assume the system charset
-            wxFALLTHROUGH;
 
         case DEFAULT_CHARSET:
             fontEncoding = wxFONTENCODING_SYSTEM;
@@ -194,6 +202,7 @@ wxFontEncoding wxGetFontEncFromCharSet(int cs)
             fontEncoding = wxFONTENCODING_MAX;
             break;
 
+#if defined(__WIN32__) && !defined(__WXMICROWIN__)
         case EASTEUROPE_CHARSET:
             fontEncoding = wxFONTENCODING_CP1250;
             break;
@@ -250,9 +259,7 @@ wxFontEncoding wxGetFontEncFromCharSet(int cs)
             fontEncoding = wxFONTENCODING_CP1361;
             break;
 
-        case MAC_CHARSET:
-            fontEncoding = wxFONTENCODING_MACROMAN;
-            break;
+#endif // Win32
 
         case OEM_CHARSET:
             fontEncoding = wxFONTENCODING_CP437;
@@ -263,19 +270,33 @@ wxFontEncoding wxGetFontEncFromCharSet(int cs)
 }
 
 // ----------------------------------------------------------------------------
-// Deprecated wxFont <-> LOGFONT conversion functions
+// wxFont <-> LOGFONT conversion
 // ----------------------------------------------------------------------------
-
-#if WXWIN_COMPATIBILITY_3_0
 
 void wxFillLogFont(LOGFONT *logFont, const wxFont *font)
 {
-    *logFont = font->GetNativeFontInfo()->lf;
+    wxNativeFontInfo fi;
+
+    // maybe we already have LOGFONT for this font?
+    const wxNativeFontInfo *pFI = font->GetNativeFontInfo();
+    if ( !pFI )
+    {
+        // use wxNativeFontInfo methods to build a LOGFONT for this font
+        fi.InitFromFont(*font);
+
+        pFI = &fi;
+    }
+
+    // transfer all the data to LOGFONT
+    *logFont = pFI->lf;
 }
 
 wxFont wxCreateFontFromLogFont(const LOGFONT *logFont)
 {
-    return wxFont(wxNativeFontInfo(*logFont, NULL));
+    wxNativeFontInfo info;
+
+    info.lf = *logFont;
+
+    return wxFont(info);
 }
 
-#endif // WXWIN_COMPATIBILITY_3_0

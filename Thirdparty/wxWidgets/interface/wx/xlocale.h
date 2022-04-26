@@ -2,6 +2,7 @@
 // Name:        xlocale.h
 // Purpose:     interface of wxXLocale
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -30,7 +31,7 @@
 
     This class is fully implemented only under the platforms where xlocale POSIX
     API or equivalent is available. Currently the xlocale API is available under
-    most of the recent Unix systems (including Linux, various BSD and macOS) and
+    most of the recent Unix systems (including Linux, various BSD and Mac OS X) and
     Microsoft Visual C++ standard library provides a similar API starting from
     version 8 (Visual Studio 2005).
 
@@ -49,7 +50,7 @@
 
     @stdobjects
     @li ::wxNullXLocale
-
+    
     @see wxLocale
 */
 class wxXLocale
@@ -81,11 +82,11 @@ public:
     static wxXLocale& GetCLocale();
 
     /**
-        Returns @true if this object is initialized, i.e.\ represents a valid locale
+        Returns @true if this object is initialized, i.e. represents a valid locale
         or @false otherwise.
     */
     bool IsOk() const;
-
+    
     /**
         Comparison operator.
     */

@@ -2,6 +2,7 @@
 // Name:        stopwatch.h
 // Purpose:     interface of wxStopWatch
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -21,10 +22,10 @@
         ... stopwatch is stopped now ...
         sw.Resume();
         CallLongRunningFunction();
-        wxLogMessage("And calling it twice took %ldms in all", sw.Time());
+        wxLogMessage("And calling it twice took $ldms in all", sw.Time());
     @endcode
 
-    Since wxWidgets 2.9.3 this class uses @c QueryPerformanceCounter()
+    Since wxWidgets 2.9.3 this class uses @c ::QueryPerformanceCounter()
     function under MSW to measure the elapsed time. It provides higher
     precision than the usual timer functions but can suffer from bugs in its
     implementation in some Windows XP versions. If you encounter such problems,

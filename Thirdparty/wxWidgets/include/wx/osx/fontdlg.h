@@ -4,6 +4,7 @@
 // Author:      Ryan Norton
 // Modified by:
 // Created:     2004-09-25
+// RCS-ID:      $Id$
 // Copyright:   (c) Ryan Norton
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -41,13 +42,13 @@ public:
     bool Create(wxWindow *parent);
     bool Create(wxWindow *parent, const wxFontData& data);
 
-    int ShowModal() wxOVERRIDE;
+    int ShowModal();
     wxFontData& GetFontData() { return m_fontData; }
 
 protected:
     wxFontData m_fontData;
 
-    wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxFontDialog);
+    DECLARE_DYNAMIC_CLASS_NO_COPY(wxFontDialog)
 };
 
 extern "C" int RunMixedFontDialog(wxFontDialog* dialog) ;
@@ -87,10 +88,10 @@ class WXDLLIMPEXP_FWD_CORE wxCheckBox;
 
 class WXDLLIMPEXP_CORE wxFontDialog: public wxDialog
 {
-    wxDECLARE_DYNAMIC_CLASS(wxFontDialog);
+DECLARE_DYNAMIC_CLASS(wxFontDialog)
 
 #if !USE_NATIVE_FONT_DIALOG_FOR_MACOSX
-    wxDECLARE_EVENT_TABLE();
+DECLARE_EVENT_TABLE()
 #endif
 
 public:
@@ -123,25 +124,25 @@ public:
     /// Respond to colour change
     void OnColourChanged(wxCommandEvent& event);
 
-    /// wxEVT_LISTBOX event handler for wxID_FONTDIALOG_FACENAME
+    /// wxEVT_COMMAND_LISTBOX_SELECTED event handler for wxID_FONTDIALOG_FACENAME
     void OnFontdialogFacenameSelected( wxCommandEvent& event );
 
-    /// wxEVT_SPINCTRL event handler for wxID_FONTDIALOG_FONTSIZE
+    /// wxEVT_COMMAND_SPINCTRL_UPDATED event handler for wxID_FONTDIALOG_FONTSIZE
     void OnFontdialogFontsizeUpdated( wxSpinEvent& event );
 
-    /// wxEVT_TEXT event handler for wxID_FONTDIALOG_FONTSIZE
+    /// wxEVT_COMMAND_TEXT_UPDATED event handler for wxID_FONTDIALOG_FONTSIZE
     void OnFontdialogFontsizeTextUpdated( wxCommandEvent& event );
 
-    /// wxEVT_CHECKBOX event handler for wxID_FONTDIALOG_BOLD
+    /// wxEVT_COMMAND_CHECKBOX_CLICKED event handler for wxID_FONTDIALOG_BOLD
     void OnFontdialogBoldClick( wxCommandEvent& event );
 
-    /// wxEVT_CHECKBOX event handler for wxID_FONTDIALOG_ITALIC
+    /// wxEVT_COMMAND_CHECKBOX_CLICKED event handler for wxID_FONTDIALOG_ITALIC
     void OnFontdialogItalicClick( wxCommandEvent& event );
 
-    /// wxEVT_CHECKBOX event handler for wxID_FONTDIALOG_UNDERLINED
+    /// wxEVT_COMMAND_CHECKBOX_CLICKED event handler for wxID_FONTDIALOG_UNDERLINED
     void OnFontdialogUnderlinedClick( wxCommandEvent& event );
 
-    /// wxEVT_BUTTON event handler for wxID_OK
+    /// wxEVT_COMMAND_BUTTON_CLICKED event handler for wxID_OK
     void OnOkClick( wxCommandEvent& event );
 
     /// Should we show tooltips?

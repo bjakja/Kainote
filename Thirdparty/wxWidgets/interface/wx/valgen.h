@@ -2,6 +2,7 @@
 // Name:        valgen.h
 // Purpose:     interface of wxGenericValidator
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 

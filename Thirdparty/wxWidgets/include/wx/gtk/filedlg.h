@@ -2,6 +2,7 @@
 // Name:        wx/gtk/filedlg.h
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -21,44 +22,42 @@ public:
     wxFileDialog() { }
 
     wxFileDialog(wxWindow *parent,
-                 const wxString& message = wxASCII_STR(wxFileSelectorPromptStr),
+                 const wxString& message = wxFileSelectorPromptStr,
                  const wxString& defaultDir = wxEmptyString,
                  const wxString& defaultFile = wxEmptyString,
-                 const wxString& wildCard = wxASCII_STR(wxFileSelectorDefaultWildcardStr),
+                 const wxString& wildCard = wxFileSelectorDefaultWildcardStr,
                  long style = wxFD_DEFAULT_STYLE,
                  const wxPoint& pos = wxDefaultPosition,
                  const wxSize& sz = wxDefaultSize,
-                 const wxString& name = wxASCII_STR(wxFileDialogNameStr));
+                 const wxString& name = wxFileDialogNameStr);
     bool Create(wxWindow *parent,
-                 const wxString& message = wxASCII_STR(wxFileSelectorPromptStr),
+                 const wxString& message = wxFileSelectorPromptStr,
                  const wxString& defaultDir = wxEmptyString,
                  const wxString& defaultFile = wxEmptyString,
-                 const wxString& wildCard = wxASCII_STR(wxFileSelectorDefaultWildcardStr),
+                 const wxString& wildCard = wxFileSelectorDefaultWildcardStr,
                  long style = wxFD_DEFAULT_STYLE,
                  const wxPoint& pos = wxDefaultPosition,
                  const wxSize& sz = wxDefaultSize,
-                 const wxString& name = wxASCII_STR(wxFileDialogNameStr));
+                 const wxString& name = wxFileDialogNameStr);
     virtual ~wxFileDialog();
 
-    virtual wxString GetPath() const wxOVERRIDE;
-    virtual void GetPaths(wxArrayString& paths) const wxOVERRIDE;
-    virtual wxString GetFilename() const wxOVERRIDE;
-    virtual void GetFilenames(wxArrayString& files) const wxOVERRIDE;
-    virtual int GetFilterIndex() const wxOVERRIDE;
+    virtual wxString GetPath() const;
+    virtual void GetPaths(wxArrayString& paths) const;
+    virtual wxString GetDirectory() const;
+    virtual wxString GetFilename() const;
+    virtual void GetFilenames(wxArrayString& files) const;
+    virtual int GetFilterIndex() const;
 
-    virtual void SetMessage(const wxString& message) wxOVERRIDE;
-    virtual void SetPath(const wxString& path) wxOVERRIDE;
-    virtual void SetDirectory(const wxString& dir) wxOVERRIDE;
-    virtual void SetFilename(const wxString& name) wxOVERRIDE;
-    virtual void SetWildcard(const wxString& wildCard) wxOVERRIDE;
-    virtual void SetFilterIndex(int filterIndex) wxOVERRIDE;
+    virtual void SetMessage(const wxString& message);
+    virtual void SetPath(const wxString& path);
+    virtual void SetDirectory(const wxString& dir);
+    virtual void SetFilename(const wxString& name);
+    virtual void SetWildcard(const wxString& wildCard);
+    virtual void SetFilterIndex(int filterIndex);
 
-    virtual int ShowModal() wxOVERRIDE;
+    virtual int ShowModal();
 
-    virtual bool SupportsExtraControl() const wxOVERRIDE { return true; }
-
-    // Implementation only.
-    void GTKSelectionChanged(const wxString& filename);
+    virtual bool SupportsExtraControl() const { return true; }
 
 
 protected:
@@ -66,18 +65,18 @@ protected:
     // form doesn't have any m_wxwindow
     virtual void DoSetSize(int x, int y,
                            int width, int height,
-                           int sizeFlags = wxSIZE_AUTO) wxOVERRIDE;
+                           int sizeFlags = wxSIZE_AUTO);
 
 
 private:
     void OnFakeOk( wxCommandEvent &event );
     void OnSize(wxSizeEvent&);
-    virtual void AddChildGTK(wxWindowGTK* child) wxOVERRIDE;
+    virtual void AddChildGTK(wxWindowGTK* child);
 
     wxGtkFileChooser    m_fc;
 
-    wxDECLARE_DYNAMIC_CLASS(wxFileDialog);
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_DYNAMIC_CLASS(wxFileDialog)
+    DECLARE_EVENT_TABLE()
 };
 
 #endif // _WX_GTKFILEDLG_H_

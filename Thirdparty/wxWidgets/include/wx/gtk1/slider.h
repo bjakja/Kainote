@@ -2,6 +2,7 @@
 // Name:        wx/gtk1/slider.h
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -24,7 +25,7 @@ public:
              const wxSize& size = wxDefaultSize,
              long style = wxSL_HORIZONTAL,
              const wxValidator& validator = wxDefaultValidator,
-             const wxString& name = wxASCII_STR(wxSliderNameStr))
+             const wxString& name = wxSliderNameStr)
     {
         Create( parent, id, value, minValue, maxValue,
                 pos, size, style, validator, name );
@@ -37,7 +38,7 @@ public:
                 const wxSize& size = wxDefaultSize,
                 long style = wxSL_HORIZONTAL,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxASCII_STR(wxSliderNameStr));
+                const wxString& name = wxSliderNameStr);
 
     // implement the base class pure virtuals
     virtual int GetValue() const;
@@ -67,7 +68,7 @@ public:
     float           m_oldPos;
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxSlider);
+    DECLARE_DYNAMIC_CLASS(wxSlider)
 };
 
 #endif // __GTKSLIDERH__

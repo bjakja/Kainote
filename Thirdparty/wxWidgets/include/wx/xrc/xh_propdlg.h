@@ -3,6 +3,7 @@
 // Purpose:     XML resource handler for wxPropertySheetDialog
 // Author:      Sander Berents
 // Created:     2007/07/12
+// RCS-ID:      $Id$
 // Copyright:   (c) 2007 Sander Berents
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -10,25 +11,26 @@
 #ifndef _WX_XH_PROPDLG_H_
 #define _WX_XH_PROPDLG_H_
 
-#include "wx/xrc/xh_bookctrlbase.h"
+#include "wx/xrc/xmlres.h"
 
-#if wxUSE_XRC && wxUSE_BOOKCTRL
+#if wxUSE_XRC
 
-class WXDLLIMPEXP_FWD_CORE wxPropertySheetDialog;
+class WXDLLIMPEXP_FWD_ADV wxPropertySheetDialog;
 
-class WXDLLIMPEXP_XRC wxPropertySheetDialogXmlHandler : public wxBookCtrlXmlHandlerBase
+class WXDLLIMPEXP_XRC wxPropertySheetDialogXmlHandler : public wxXmlResourceHandler
 {
-    wxDECLARE_DYNAMIC_CLASS(wxPropertySheetDialogXmlHandler);
+    DECLARE_DYNAMIC_CLASS(wxPropertySheetDialogXmlHandler)
 
 public:
     wxPropertySheetDialogXmlHandler();
-    virtual wxObject *DoCreateResource() wxOVERRIDE;
-    virtual bool CanHandle(wxXmlNode *node) wxOVERRIDE;
+    virtual wxObject *DoCreateResource();
+    virtual bool CanHandle(wxXmlNode *node);
 
 private:
+    bool m_isInside;
     wxPropertySheetDialog *m_dialog;
 };
 
-#endif // wxUSE_XRC && wxUSE_BOOKCTRL
+#endif // wxUSE_XRC
 
 #endif // _WX_XH_PROPDLG_H_

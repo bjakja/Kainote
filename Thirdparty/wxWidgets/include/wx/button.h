@@ -1,10 +1,11 @@
 /////////////////////////////////////////////////////////////////////////////
 // Name:        wx/button.h
 // Purpose:     wxButtonBase class
-// Author:      Vadim Zeitlin
+// Author:      Vadim Zetlin
 // Modified by:
 // Created:     15.08.00
-// Copyright:   (c) Vadim Zeitlin
+// RCS-ID:      $Id$
+// Copyright:   (c) Vadim Zetlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -39,9 +40,8 @@ public:
     // returns the old default item (possibly NULL)
     virtual wxWindow *SetDefault();
 
-    // returns the default button size for this platform, and optionally for a
-    // specific window when the platform supports per-monitor DPI
-    static wxSize GetDefaultSize(wxWindow* win = NULL);
+    // returns the default button size for this platform
+    static wxSize GetDefaultSize();
 
 protected:
     wxDECLARE_NO_COPY_CLASS(wxButtonBase);
@@ -59,8 +59,10 @@ protected:
     #include "wx/gtk1/button.h"
 #elif defined(__WXMAC__)
     #include "wx/osx/button.h"
-#elif defined(__WXQT__)
-    #include "wx/qt/button.h"
+#elif defined(__WXCOCOA__)
+    #include "wx/cocoa/button.h"
+#elif defined(__WXPM__)
+    #include "wx/os2/button.h"
 #endif
 
 #endif // wxUSE_BUTTON

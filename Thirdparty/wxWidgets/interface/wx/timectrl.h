@@ -3,6 +3,7 @@
 // Purpose:     interface of wxTimePickerCtrl
 // Author:      Vadim Zeitlin
 // Created:     2011-09-22
+// RCS-ID:      $Id$
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,7 +13,7 @@
 
     Currently no special styles are defined for this object.
 
-    @library{wxcore}
+    @library{wxadv}
     @category{pickers}
 
     @since 2.9.3
@@ -38,15 +39,15 @@ enum
 
     @beginEventEmissionTable{wxDateEvent}
     @event{EVT_TIME_CHANGED(id, func)}
-           Process a wxEVT_TIME_CHANGED event, which fires when the user
-           changes the current selection in the control.
+           This event fires when the user changes the current selection in the
+           control.
     @endEventTable
 
-    @library{wxcore}
+    @library{wxadv}
     @category{pickers}
-    @appearance{timepickerctrl}
+    @appearance{timepickerctrl.png}
 
-    @see wxDatePickerCtrl, wxCalendarCtrl, wxDateEvent
+    @see wxDatePickerCtrl, wxDateEvent
 
     @since 2.9.3
 */
@@ -57,7 +58,7 @@ public:
        Default constructor.
     */
     wxTimePickerCtrl();
-
+    
     /**
         Initializes the object and calls Create() with all the parameters.
     */
@@ -67,7 +68,7 @@ public:
                      const wxSize& size = wxDefaultSize,
                      long style = wxTP_DEFAULT,
                      const wxValidator& validator = wxDefaultValidator,
-                     const wxString& name = wxTimePickerCtrlNameStr);
+                     const wxString& name = "timectrl");
 
     /**
         Create the control window.
@@ -103,9 +104,9 @@ public:
                 const wxDateTime& dt = wxDefaultDateTime,
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
-                long style = wxTP_DEFAULT,
+                long style = wxDP_DEFAULT | wxDP_SHOWCENTURY,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxTimePickerCtrlNameStr);
+                const wxString& name = "timectrl");
 
     /**
         Returns the currently entered time as hours, minutes and seconds.
@@ -150,11 +151,11 @@ public:
         The date part of @a dt is ignored, only the time part is displayed in
         the control. The @a dt object must however be valid.
 
-        In particular, notice that it is a bad idea to use default wxDateTime
+        In particular notice that it is a bad idea to use default wxDateTime
         constructor from hour, minute and second values as it uses the today
-        date for the date part, which means that some values can be invalid if
+        date for the date part which means that some times can be invalid if
         today happens to be the day of DST change. For example, when switching
-        to summer time, the time 2:00 typically doesn't exist as the clocks jump
+        to summer time the time 2:00 typically doesn't exist as the clocks jump
         directly to 3:00. To avoid this problem, use a fixed date on which DST
         is known not to change (e.g. Jan 1, 2012) for the date part of the
         argument or use SetTime().

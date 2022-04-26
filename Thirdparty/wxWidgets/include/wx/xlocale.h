@@ -3,6 +3,7 @@
 // Purpose:     Header to provide some xlocale wrappers
 // Author:      Brian Vanderburg II, Vadim Zeitlin
 // Created:     2008-01-07
+// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Brian Vanderburg II
 //                  2008 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
@@ -26,26 +27,22 @@
 #ifndef _WX_XLOCALE_H_
 #define _WX_XLOCALE_H_
 
-#include "wx\defs.h"    // wxUSE_XLOCALE
+#include "wx/defs.h"    // wxUSE_XLOCALE
 
 #if wxUSE_XLOCALE
 
-#include "wx\crt.h"     // Includes wx/chartype.h, wx/wxcrt.h(wx/string.h)
-#include "wx\intl.h"    // wxLanguage
+#include "wx/crt.h"     // Includes wx/chartype.h, wx/wxcrt.h(wx/string.h)
+#include "wx/intl.h"    // wxLanguage
 
 // The platform-specific locale type
 // If wxXLocale_t is not defined, then only "C" locale support is provided
 #ifdef wxHAS_XLOCALE_SUPPORT
-    #if wxCHECK_VISUALC_VERSION(8)
+    #if wxCHECK_VISUALC_VERSION(8) && !defined(__WXWINCE__)
         typedef _locale_t wxXLocale_t;
         #define wxXLOCALE_IDENT(name) _ ## name
     #elif defined(HAVE_LOCALE_T)
-        // Some systems (notably macOS) require including a separate header for
-        // locale_t and related functions.
-        #ifdef HAVE_XLOCALE_H
-            #include <xlocale.h>
-        #endif
         #include <locale.h>
+        #include <xlocale.h>
         #include <ctype.h>
         #include <stdlib.h>
 
@@ -80,10 +77,8 @@ public:
     // Construct an uninitialized locale
     wxXLocale() { m_locale = NULL; }
 
-#if wxUSE_INTL
     // Construct from a symbolic language constant
     wxXLocale(wxLanguage lang);
-#endif
 
     // Construct from the given language string
     wxXLocale(const char *loc) { Init(loc); }
@@ -139,7 +134,7 @@ public:
     wxXLocale() { m_isC = false; }
 
     // Construct from a symbolic language constant: unless the language is
-    // wxLANGUAGE_ENGLISH_US (which we assume to be the same as "C" locale)
+    // wxLANGUAGE_ENGLISH_US (which we suppose to be the same as "C" locale)
     // the object will be invalid
     wxXLocale(wxLanguage lang)
     {
@@ -154,8 +149,8 @@ public:
     }
 
     // Default copy ctor, assignment operator and dtor are ok (or would be if
-    // we didn't use wxDECLARE_NO_COPY_CLASS() for consistency with the
-    // xlocale version)
+    // we didn't use DECLARE_NO_COPY_CLASS() for consistency with the xlocale
+    // version)
 
 
     // Get the global "C" locale object

@@ -3,7 +3,8 @@
 // Purpose:     native GTK+ wxAboutBox() implementation
 // Author:      Vadim Zeitlin
 // Created:     2006-10-08
-// Copyright:   (c) 2006 Vadim Zeitlin <vadim@wxwidgets.org>
+// RCS-ID:      $Id$
+// Copyright:   (c) 2006 Vadim Zeitlin <vadim@wxwindows.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -18,15 +19,21 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#if wxUSE_ABOUTDLG
+#if wxUSE_ABOUTDLG && defined(__WXGTK26__)
 
 #include "wx/aboutdlg.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/window.h"
+    #include "wx/utils.h"       // for wxLaunchDefaultBrowser()
 #endif //WX_PRECOMP
 
+#ifndef __WXGTK3__
+#include "wx/generic/aboutdlgg.h"
+#endif
+
+#include <gtk/gtk.h>
 #include "wx/gtk/private.h"
+#include "wx/gtk/private/gtk2-compat.h"
 
 // ----------------------------------------------------------------------------
 // GtkArray: temporary array of GTK strings
@@ -129,116 +136,121 @@ static void wxGtkAboutDialogOnLink(GtkAboutDialog*, const char* link, void*)
 }
 #endif
 
-void wxAboutBox(const wxAboutDialogInfo& info, wxWindow* parent)
+void wxAboutBox(const wxAboutDialogInfo& info, wxWindow* WXUNUSED(parent))
 {
-    // don't create another dialog if one is already present
-    if ( !gs_aboutDialog )
-        gs_aboutDialog = GTK_ABOUT_DIALOG(gtk_about_dialog_new());
-
-    GtkAboutDialog * const dlg = gs_aboutDialog;
-    gtk_about_dialog_set_program_name(dlg, wxGTK_CONV_SYS(info.GetName()));
-    if ( info.HasVersion() )
-        gtk_about_dialog_set_version(dlg, wxGTK_CONV_SYS(info.GetVersion()));
-    else
-        gtk_about_dialog_set_version(dlg, NULL);
-    if ( info.HasCopyright() )
-        gtk_about_dialog_set_copyright(dlg, wxGTK_CONV_SYS(info.GetCopyrightToDisplay()));
-    else
-        gtk_about_dialog_set_copyright(dlg, NULL);
-    if ( info.HasDescription() )
-        gtk_about_dialog_set_comments(dlg, wxGTK_CONV_SYS(info.GetDescription()));
-    else
-        gtk_about_dialog_set_comments(dlg, NULL);
-    if ( info.HasLicence() )
-        gtk_about_dialog_set_license(dlg, wxGTK_CONV_SYS(info.GetLicence()));
-    else
-        gtk_about_dialog_set_license(dlg, NULL);
-
-    wxIcon icon = info.GetIcon();
-    if ( icon.IsOk() )
-        gtk_about_dialog_set_logo(dlg, info.GetIcon().GetPixbuf());
-
-    if ( info.HasWebSite() )
-    {
-#ifdef __WXGTK3__
-        g_signal_connect(dlg, "activate-link", G_CALLBACK(activate_link), dlg);
-#else
-        // NB: must be called before gtk_about_dialog_set_website() as
-        //     otherwise it has no effect (although GTK+ docs don't mention
-        //     this...)
-        gtk_about_dialog_set_url_hook(wxGtkAboutDialogOnLink, NULL, NULL);
+#ifndef __WXGTK3__
+    if ( !gtk_check_version(2,6,0) )
 #endif
-
-        gtk_about_dialog_set_website(dlg, wxGTK_CONV_SYS(info.GetWebSiteURL()));
-        gtk_about_dialog_set_website_label
-        (
-            dlg,
-            wxGTK_CONV_SYS(info.GetWebSiteDescription())
-        );
-    }
-    else
     {
-        gtk_about_dialog_set_website(dlg, NULL);
-        gtk_about_dialog_set_website_label(dlg, NULL);
-#ifdef __WXGTK3__
-        g_signal_connect(dlg, "activate-link", G_CALLBACK(activate_link), NULL);
-#else
-        gtk_about_dialog_set_url_hook(NULL, NULL, NULL);
-#endif
-    }
+        // don't create another dialog if one is already present
+        if ( !gs_aboutDialog )
+            gs_aboutDialog = GTK_ABOUT_DIALOG(gtk_about_dialog_new());
 
-    if ( info.HasDevelopers() )
-        gtk_about_dialog_set_authors(dlg, GtkArray(info.GetDevelopers()));
-    else
-        gtk_about_dialog_set_authors(dlg, GtkArray());
-    if ( info.HasDocWriters() )
-        gtk_about_dialog_set_documenters(dlg, GtkArray(info.GetDocWriters()));
-    else
-        gtk_about_dialog_set_documenters(dlg, GtkArray());
-    if ( info.HasArtists() )
-        gtk_about_dialog_set_artists(dlg, GtkArray(info.GetArtists()));
-    else
-        gtk_about_dialog_set_artists(dlg, GtkArray());
+        GtkAboutDialog * const dlg = gs_aboutDialog;
+        gtk_about_dialog_set_program_name(dlg, wxGTK_CONV_SYS(info.GetName()));
+        if ( info.HasVersion() )
+            gtk_about_dialog_set_version(dlg, wxGTK_CONV_SYS(info.GetVersion()));
+        else
+            gtk_about_dialog_set_version(dlg, NULL);
+        if ( info.HasCopyright() )
+            gtk_about_dialog_set_copyright(dlg, wxGTK_CONV_SYS(info.GetCopyrightToDisplay()));
+        else
+            gtk_about_dialog_set_copyright(dlg, NULL);
+        if ( info.HasDescription() )
+            gtk_about_dialog_set_comments(dlg, wxGTK_CONV_SYS(info.GetDescription()));
+        else
+            gtk_about_dialog_set_comments(dlg, NULL);
+        if ( info.HasLicence() )
+            gtk_about_dialog_set_license(dlg, wxGTK_CONV_SYS(info.GetLicence()));
+        else
+            gtk_about_dialog_set_license(dlg, NULL);
 
-    wxString transCredits;
-    if ( info.HasTranslators() )
-    {
-        const wxArrayString& translators = info.GetTranslators();
-        const size_t count = translators.size();
-        for ( size_t n = 0; n < count; n++ )
+        wxIcon icon = info.GetIcon();
+        if ( icon.IsOk() )
+            gtk_about_dialog_set_logo(dlg, info.GetIcon().GetPixbuf());
+
+        if ( info.HasWebSite() )
         {
-            transCredits << translators[n] << wxT('\n');
+#ifdef __WXGTK3__
+            g_signal_connect(dlg, "activate-link", G_CALLBACK(activate_link), dlg);
+#else
+            // NB: must be called before gtk_about_dialog_set_website() as
+            //     otherwise it has no effect (although GTK+ docs don't mention
+            //     this...)
+            gtk_about_dialog_set_url_hook(wxGtkAboutDialogOnLink, NULL, NULL);
+#endif
+
+            gtk_about_dialog_set_website(dlg, wxGTK_CONV_SYS(info.GetWebSiteURL()));
+            gtk_about_dialog_set_website_label
+            (
+                dlg,
+                wxGTK_CONV_SYS(info.GetWebSiteDescription())
+            );
         }
-    }
-    else // no translators explicitly specified
-    {
-        // maybe we have translator credits in the message catalog?
-        wxString translator = _("translator-credits");
+        else
+        {
+            gtk_about_dialog_set_website(dlg, NULL);
+            gtk_about_dialog_set_website_label(dlg, NULL);
+#ifdef __WXGTK3__
+            g_signal_connect(dlg, "activate-link", G_CALLBACK(activate_link), NULL);
+#else
+            gtk_about_dialog_set_url_hook(NULL, NULL, NULL);
+#endif
+        }
 
-        // gtk_about_dialog_set_translator_credits() is smart enough to
-        // detect if "translator-credits" is untranslated and hide the
-        // translators tab in that case, however it will still show the
-        // "credits" button, (at least GTK 2.10.6) even if there are no
-        // credits informations at all, so we still need to do the check
-        // ourselves
-        if ( translator != wxT("translator-credits") ) // untranslated!
-            transCredits = translator;
-    }
+        if ( info.HasDevelopers() )
+            gtk_about_dialog_set_authors(dlg, GtkArray(info.GetDevelopers()));
+        else
+            gtk_about_dialog_set_authors(dlg, GtkArray());
+        if ( info.HasDocWriters() )
+            gtk_about_dialog_set_documenters(dlg, GtkArray(info.GetDocWriters()));
+        else
+            gtk_about_dialog_set_documenters(dlg, GtkArray());
+        if ( info.HasArtists() )
+            gtk_about_dialog_set_artists(dlg, GtkArray(info.GetArtists()));
+        else
+            gtk_about_dialog_set_artists(dlg, GtkArray());
 
-    if ( !transCredits.empty() )
-        gtk_about_dialog_set_translator_credits(dlg, wxGTK_CONV_SYS(transCredits));
+        wxString transCredits;
+        if ( info.HasTranslators() )
+        {
+            const wxArrayString& translators = info.GetTranslators();
+            const size_t count = translators.size();
+            for ( size_t n = 0; n < count; n++ )
+            {
+                transCredits << translators[n] << wxT('\n');
+            }
+        }
+        else // no translators explicitly specified
+        {
+            // maybe we have translator credits in the message catalog?
+            wxString translator = _("translator-credits");
+
+            // gtk_about_dialog_set_translator_credits() is smart enough to
+            // detect if "translator-credits" is untranslated and hide the
+            // translators tab in that case, however it will still show the
+            // "credits" button, (at least GTK 2.10.6) even if there are no
+            // credits informations at all, so we still need to do the check
+            // ourselves
+            if ( translator != wxT("translator-credits") ) // untranslated!
+                transCredits = translator;
+        }
+
+        if ( !transCredits.empty() )
+            gtk_about_dialog_set_translator_credits(dlg, wxGTK_CONV_SYS(transCredits));
+        else
+            gtk_about_dialog_set_translator_credits(dlg, NULL);
+
+        g_signal_connect(dlg, "response",
+                            G_CALLBACK(wxGtkAboutDialogOnClose), NULL);
+
+        gtk_window_present(GTK_WINDOW(dlg));
+    }
+#ifndef __WXGTK3__
     else
-        gtk_about_dialog_set_translator_credits(dlg, NULL);
-
-    g_signal_connect(dlg, "response",
-                        G_CALLBACK(wxGtkAboutDialogOnClose), NULL);
-
-    GtkWindow* gtkParent = NULL;
-    if (parent && parent->m_widget)
-        gtkParent = (GtkWindow*)gtk_widget_get_ancestor(parent->m_widget, GTK_TYPE_WINDOW);
-    gtk_window_set_transient_for(GTK_WINDOW(dlg), gtkParent);
-
-    gtk_window_present(GTK_WINDOW(dlg));
+        // native about dialog not available, fall back to the generic one
+        wxGenericAboutBox(info);
+#endif
 }
 
-#endif // wxUSE_ABOUTDLG
+#endif // wxUSE_ABOUTDLG && GTK+ 2.6+

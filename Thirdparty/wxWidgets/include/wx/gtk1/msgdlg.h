@@ -4,6 +4,7 @@
 // Author:      Vaclav Slavik
 // Modified by:
 // Created:     2003/02/28
+// RCS-ID:      $Id$
 // Copyright:   (c) Vaclav Slavik, 2003
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -44,7 +45,7 @@ private:
     wxString m_caption;
     wxString m_message;
 
-    wxDECLARE_DYNAMIC_CLASS(wxMessageDialog);
+    DECLARE_DYNAMIC_CLASS(wxMessageDialog)
 };
 
 #endif

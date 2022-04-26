@@ -3,6 +3,7 @@
 // Purpose:     wxRichMessageDialogBase
 // Author:      Rickard Westerlund
 // Created:     2010-07-03
+// RCS-ID:      $Id$
 // Copyright:   (c) 2010 wxWidgets team
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -26,10 +27,9 @@ public:
                              const wxString& caption,
                              long style )
         : wxGenericMessageDialog( parent, message, caption, style ),
-          m_detailsExpanderCollapsedLabel( wxGetTranslation("&See details") ),
-          m_detailsExpanderExpandedLabel( wxGetTranslation("&Hide details") ),
-          m_checkBoxValue( false ),
-          m_footerIcon( 0 )
+          m_detailsExpanderCollapsedLabel( _("&See details") ),
+          m_detailsExpanderExpandedLabel( _("&Hide details") ),
+          m_checkBoxValue( false )
         { }
 
     void ShowCheckBox(const wxString& checkBoxText, bool checked = false)
@@ -47,16 +47,6 @@ public:
 
     virtual bool IsCheckBoxChecked() const { return m_checkBoxValue; }
 
-    void SetFooterText(const wxString& footerText)
-        { m_footerText = footerText; }
-
-    wxString GetFooterText() const { return m_footerText; }
-
-    void SetFooterIcon(int icon)
-        { m_footerIcon = icon; }
-
-    int GetFooterIcon() const { return m_footerIcon; }
-
 protected:
     const wxString m_detailsExpanderCollapsedLabel;
     const wxString m_detailsExpanderExpandedLabel;
@@ -64,8 +54,6 @@ protected:
     wxString m_checkBoxText;
     bool m_checkBoxValue;
     wxString m_detailedText;
-    wxString m_footerText;
-    int m_footerIcon;
 
 private:
     void ShowDetails(bool shown);
@@ -86,8 +74,8 @@ private:
     public:
         wxRichMessageDialog( wxWindow *parent,
                              const wxString& message,
-                             const wxString& caption = wxASCII_STR(wxMessageBoxCaptionStr),
-                             long style = wxOK | wxCENTRE )
+                             const wxString& caption,
+                             long style )
             : wxGenericRichMessageDialog( parent, message, caption, style )
             { }
 

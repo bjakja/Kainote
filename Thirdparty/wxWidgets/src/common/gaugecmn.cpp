@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     20.02.01
+// RCS-ID:      $Id$
 // Copyright:   (c) 2001 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
 #endif //WX_PRECOMP
@@ -26,7 +30,6 @@
 #if wxUSE_GAUGE
 
 #include "wx/gauge.h"
-#include "wx/appprogress.h"
 
 const char wxGaugeNameStr[] = "gauge";
 
@@ -37,7 +40,6 @@ const char wxGaugeNameStr[] = "gauge";
 wxGaugeBase::~wxGaugeBase()
 {
     // this destructor is required for Darwin
-    delete m_appProgressIndicator;
 }
 
 // ----------------------------------------------------------------------------
@@ -75,17 +77,23 @@ wxFLAGS_MEMBER(wxHSCROLL)
 
 wxFLAGS_MEMBER(wxGA_HORIZONTAL)
 wxFLAGS_MEMBER(wxGA_VERTICAL)
+#if WXWIN_COMPATIBILITY_2_6
+wxFLAGS_MEMBER(wxGA_PROGRESSBAR)
+#endif // WXWIN_COMPATIBILITY_2_6
 wxFLAGS_MEMBER(wxGA_SMOOTH)
-wxFLAGS_MEMBER(wxGA_PROGRESS)
 wxEND_FLAGS( wxGaugeStyle )
 
-wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxGauge, wxControl, "wx/gauge.h");
+wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxGauge, wxControl, "wx/gauge.h")
 
 wxBEGIN_PROPERTIES_TABLE(wxGauge)
 wxPROPERTY( Value, int, SetValue, GetValue, 0, 0 /*flags*/, \
            wxT("Helpstring"), wxT("group"))
 wxPROPERTY( Range, int, SetRange, GetRange, 0, 0 /*flags*/, \
            wxT("Helpstring"), wxT("group"))
+wxPROPERTY( ShadowWidth, int, SetShadowWidth, GetShadowWidth, \
+           0, 0 /*flags*/, wxT("Helpstring"), wxT("group"))
+wxPROPERTY( BezelFace, int, SetBezelFace, GetBezelFace, \
+           0, 0 /*flags*/, wxT("Helpstring"), wxT("group"))
 
 wxPROPERTY_FLAGS( WindowStyle, wxGaugeStyle, long, SetWindowStyleFlag, \
                  GetWindowStyleFlag, wxEMPTY_PARAMETER_VALUE, 0 /*flags*/, \
@@ -100,20 +108,6 @@ wxCONSTRUCTOR_6( wxGauge, wxWindow*, Parent, wxWindowID, Id, int, Range, \
 // ----------------------------------------------------------------------------
 // wxGauge creation
 // ----------------------------------------------------------------------------
-
-void wxGaugeBase::InitProgressIndicatorIfNeeded()
-{
-    m_appProgressIndicator = NULL;
-    if ( HasFlag(wxGA_PROGRESS) )
-    {
-        wxWindow* topParent = wxGetTopLevelParent(this);
-        if ( topParent != NULL )
-        {
-            m_appProgressIndicator =
-                new wxAppProgressIndicator(topParent, GetRange());
-        }
-    }
-}
 
 bool wxGaugeBase::Create(wxWindow *parent,
                          wxWindowID id,
@@ -135,12 +129,9 @@ bool wxGaugeBase::Create(wxWindow *parent,
 
     SetRange(range);
     SetValue(0);
-
 #if wxGAUGE_EMULATE_INDETERMINATE_MODE
     m_nDirection = wxRIGHT;
 #endif
-
-    InitProgressIndicatorIfNeeded();
 
     return true;
 }
@@ -152,9 +143,6 @@ bool wxGaugeBase::Create(wxWindow *parent,
 void wxGaugeBase::SetRange(int range)
 {
     m_rangeMax = range;
-
-    if ( m_appProgressIndicator )
-        m_appProgressIndicator->SetRange(m_rangeMax);
 }
 
 int wxGaugeBase::GetRange() const
@@ -165,15 +153,6 @@ int wxGaugeBase::GetRange() const
 void wxGaugeBase::SetValue(int pos)
 {
     m_gaugePos = pos;
-
-    if ( m_appProgressIndicator )
-    {
-        m_appProgressIndicator->SetValue(pos);
-        if ( pos == 0 )
-        {
-            m_appProgressIndicator->Reset();
-        }
-    }
 }
 
 int wxGaugeBase::GetValue() const
@@ -212,9 +191,29 @@ void wxGaugeBase::Pulse()
         }
     }
 #endif
+}
 
-    if ( m_appProgressIndicator )
-        m_appProgressIndicator->Pulse();
+// ----------------------------------------------------------------------------
+// wxGauge appearance params
+// ----------------------------------------------------------------------------
+
+void wxGaugeBase::SetShadowWidth(int WXUNUSED(w))
+{
+}
+
+int wxGaugeBase::GetShadowWidth() const
+{
+    return 0;
+}
+
+
+void wxGaugeBase::SetBezelFace(int WXUNUSED(w))
+{
+}
+
+int wxGaugeBase::GetBezelFace() const
+{
+    return 0;
 }
 
 #endif // wxUSE_GAUGE

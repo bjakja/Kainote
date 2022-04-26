@@ -3,6 +3,7 @@
 // Purpose:     wxAppConsole implementation for Unix
 // Author:      Lukasz Michalski
 // Created:     28/01/2005
+// RCS-ID:      $Id$
 // Copyright:   (c) Lukasz Michalski
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -10,19 +11,12 @@
 //Ensure that sigset_t is being defined
 #include <signal.h>
 
-class wxFDIODispatcher;
-class wxFDIOHandler;
-class wxWakeUpPipe;
-
 // wxApp subclass implementing event processing for console applications
 class WXDLLIMPEXP_BASE wxAppConsole : public wxAppConsoleBase
 {
 public:
-    wxAppConsole();
-    virtual ~wxAppConsole();
-
     // override base class initialization
-    virtual bool Initialize(int& argc, wxChar** argv) wxOVERRIDE;
+    virtual bool Initialize(int& argc, wxChar** argv);
 
 
     // Unix-specific: Unix signal handling
@@ -44,14 +38,6 @@ public:
     // handlers for them
     void CheckSignal();
 
-    // Register the signal wake up pipe with the given dispatcher.
-    //
-    // This is used by wxExecute(wxEXEC_NOEVENTS) implementation only.
-    //
-    // The pointer to the handler used for processing events on this descriptor
-    // is returned so that it can be deleted when we no longer needed it.
-    wxFDIOHandler* RegisterSignalWakeUpPipe(wxFDIODispatcher& dispatcher);
-
 private:
     // signal handler set up by SetSignalHandler() for all signals we handle,
     // it just adds the signal to m_signalsCaught -- the real processing is
@@ -66,8 +52,4 @@ private:
     // the signal handlers
     WX_DECLARE_HASH_MAP(int, SignalHandler, wxIntegerHash, wxIntegerEqual, SignalHandlerHash);
     SignalHandlerHash m_signalHandlerHash;
-
-    // pipe used for wake up signal handling: if a signal arrives while we're
-    // blocking for input, writing to this pipe triggers a call to our CheckSignal()
-    wxWakeUpPipe *m_signalWakeUpPipe;
 };

@@ -3,6 +3,7 @@
 // Purpose:     xlocale wrappers/impl to provide some xlocale wrappers
 // Author:      Brian Vanderburg II, Vadim Zeitlin
 // Created:     2008-01-07
+// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Brian Vanderburg II
 //                  2008 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
@@ -16,16 +17,19 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_XLOCALE
 
 #ifndef WX_PRECOMP
-    #include "wx\module.h"
+    #include "wx/module.h"
 #endif
 
-#include "wx\xlocale.h"
+#include "wx/xlocale.h"
 
 #include <errno.h>
 #include <locale.h>
@@ -51,13 +55,13 @@ wxXLocale wxNullXLocale;
 class wxXLocaleModule : public wxModule
 {
 public:
-    virtual bool OnInit() wxOVERRIDE { return true; }
-    virtual void OnExit() wxOVERRIDE { wxDELETE(gs_cLocale); }
+    virtual bool OnInit() { return true; }
+    virtual void OnExit() { wxDELETE(gs_cLocale); }
 
-    wxDECLARE_DYNAMIC_CLASS(wxXLocaleModule);
+    DECLARE_DYNAMIC_CLASS(wxXLocaleModule)
 };
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxXLocaleModule, wxModule);
+IMPLEMENT_DYNAMIC_CLASS(wxXLocaleModule, wxModule)
 
 
 // ============================================================================
@@ -73,10 +77,9 @@ wxXLocale& wxXLocale::GetCLocale()
 {
     if ( !gs_cLocale )
     {
-        // Notice that we need a separate variable because clang 3.1 refuses to
-        // cast nullptr (which is how NULL is defined in it) to anything.
-        static wxXLocaleCTag* const tag = NULL;
-        gs_cLocale = new wxXLocale(tag);
+        // NOTE: bcc551 has trouble doing static_cast with incomplete
+        //       type definition. reinterpret_cast used as workaround
+        gs_cLocale = new wxXLocale( reinterpret_cast<wxXLocaleCTag *>(NULL) );
     }
 
     return *gs_cLocale;
@@ -84,18 +87,18 @@ wxXLocale& wxXLocale::GetCLocale()
 
 #ifdef wxHAS_XLOCALE_SUPPORT
 
-#if wxUSE_INTL
 wxXLocale::wxXLocale(wxLanguage lang)
 {
-    m_locale = NULL;
-
     const wxLanguageInfo * const info = wxLocale::GetLanguageInfo(lang);
-    if ( info )
+    if ( !info )
+    {
+        m_locale = NULL;
+    }
+    else
     {
         Init(info->GetLocaleName().c_str());
     }
 }
-#endif // wxUSE_INTL
 
 #if wxCHECK_VISUALC_VERSION(8)
 

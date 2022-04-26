@@ -5,6 +5,7 @@
 // Modified by:
 // Created:
 // Copyright:   (c) Julian Smart
+// RCS-ID:      $Id$
 // Licence:     wxWindows Licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -56,7 +57,7 @@ public:
     // because it's still widely used)
     bool Ok() const { return IsOk(); }
 
-#if defined(__WXMSW__)
+#if defined(__WXMSW__) || defined(__WXPM__)
     // Creates the resource
     virtual bool RealizeResource() { return false; }
 
@@ -66,19 +67,19 @@ public:
     virtual bool IsFree() const { return false; }
 
     // Returns handle.
-    virtual WXHANDLE GetResourceHandle() const { return NULL; }
-#endif // defined(__WXMSW__)
+    virtual WXHANDLE GetResourceHandle() const { return 0; }
+#endif // defined(__WXMSW__) || defined(__WXPM__)
 
 protected:
     // replace base class functions using wxObjectRefData with our own which
     // use wxGDIRefData to ensure that we always work with data objects of the
     // correct type (i.e. derived from wxGDIRefData)
-    virtual wxObjectRefData *CreateRefData() const wxOVERRIDE
+    virtual wxObjectRefData *CreateRefData() const
     {
         return CreateGDIRefData();
     }
 
-    virtual wxObjectRefData *CloneRefData(const wxObjectRefData *data) const wxOVERRIDE
+    virtual wxObjectRefData *CloneRefData(const wxObjectRefData *data) const
     {
         return CloneGDIRefData(static_cast<const wxGDIRefData *>(data));
     }
@@ -86,7 +87,7 @@ protected:
     virtual wxGDIRefData *CreateGDIRefData() const = 0;
     virtual wxGDIRefData *CloneGDIRefData(const wxGDIRefData *data) const = 0;
 
-    wxDECLARE_DYNAMIC_CLASS(wxGDIObject);
+    DECLARE_DYNAMIC_CLASS(wxGDIObject)
 };
 
 #endif // _WX_GDIOBJ_H_BASE_

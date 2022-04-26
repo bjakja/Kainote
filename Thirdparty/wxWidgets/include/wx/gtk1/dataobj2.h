@@ -3,6 +3,7 @@
 // Purpose:     declaration of standard wxDataObjectSimple-derived classes
 // Author:      Robert Roebling
 // Created:     19.10.99 (extracted from gtk/dataobj.h)
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998, 1999 Vadim Zeitlin, Robert Roebling
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -45,7 +46,7 @@ protected:
     void DoConvertToPng();
 
 private:
-    // virtual function hiding suppression
+    // virtual function hiding supression
     size_t GetDataSize(const wxDataFormat& format) const
         { return(wxDataObjectSimple::GetDataSize(format)); }
     bool GetDataHere(const wxDataFormat& format, void* pBuf) const
@@ -71,7 +72,7 @@ public:
     virtual bool SetData(size_t len, const void *buf);
 
 private:
-    // virtual function hiding suppression
+    // virtual function hiding supression
     size_t GetDataSize(const wxDataFormat& format) const
         { return(wxDataObjectSimple::GetDataSize(format)); }
     bool GetDataHere(const wxDataFormat& format, void* pBuf) const

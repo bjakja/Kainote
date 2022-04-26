@@ -3,6 +3,7 @@
 // Purpose:     wxOverlay implementation for wxDFB
 // Author:      Vaclav Slavik
 // Created:     2006-10-20
+// RCS-ID:      $Id$
 // Copyright:   (c) wxWidgets team
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,24 +19,22 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
     #include "wx/window.h"
     #include "wx/dcclient.h"
 #endif
 
-#include "wx/dfb/private/overlay.h"
+#include "wx/private/overlay.h"
 #include "wx/dfb/dcclient.h"
 #include "wx/dfb/private.h"
 
 // ============================================================================
 // implementation
 // ============================================================================
-
-wxOverlay::Impl* wxOverlay::Create()
-{
-    return new wxOverlayImpl;
-}
 
 // ----------------------------------------------------------------------------
 // wxOverlay
@@ -60,7 +59,7 @@ bool wxOverlayImpl::IsOk()
 void wxOverlayImpl::Init(wxDC *dc, int x, int y, int width, int height)
 {
     wxCHECK_RET( dc, "NULL dc pointer" );
-    wxASSERT_MSG( !IsOk() , "You cannot Init an overlay twice" );
+    wxASSERT_MSG( !IsOk() , _("You cannot Init an overlay twice") );
 
     wxDFBDCImpl * const dcimpl = wxDynamicCast(dc->GetImpl(), wxDFBDCImpl);
     wxCHECK_RET( dcimpl, "must have a DFB wxDC" );

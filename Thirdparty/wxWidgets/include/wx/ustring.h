@@ -3,14 +3,15 @@
 // Purpose:     32-bit string (UCS-4)
 // Author:      Robert Roebling
 // Copyright:   (c) Robert Roebling
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_USTRING_H_
 #define _WX_USTRING_H_
 
-#include "wx\defs.h"
-#include "wx\string.h"
+#include "wx/defs.h"
+#include "wx/string.h"
 
 #include <string>
 
@@ -134,9 +135,9 @@ public:
        return utf16_str();
     }
 #else
-    const wchar_t *wc_str() const
+    wchar_t *wc_str() const
     {
-        return c_str();
+        return (wchar_t*) c_str();
     }
 #endif
 
@@ -154,18 +155,18 @@ public:
     }
 
 #if wxUSE_UNICODE_UTF8
-    wxScopedCharBuffer wx_str() const
+    wxScopedCharBuffer wx_str()
     {
         return utf8_str();
     }
 #else
 #if SIZEOF_WCHAR_T == 2
-    wxScopedWCharBuffer wx_str() const
+    wxScopedWCharBuffer wx_str()
     {
         return utf16_str();
     }
 #else
-    const wchar_t* wx_str() const
+    const wchar_t* wx_str()
     {
         return c_str();
     }
@@ -198,17 +199,43 @@ public:
         return (wxUString &) base->assign( str, pos, n );
     }
 
-    wxUString &assign( wxChar32 ch )
-    {
-        std::basic_string<wxChar32> *base = this;
-        return (wxUString &) base->assign( (size_type) 1, ch );
-    }
+    // FIXME-VC6:  VC 6.0 stl does not support all types of assign functions
+    #ifdef __VISUALC6__
+        wxUString &assign( wxChar32 ch )
+        {
+            wxChar32 chh[1];
+            chh[0] = ch;
+            std::basic_string<wxChar32> *base = this;
+            return (wxUString &)base->assign(chh);
+        }
 
-    wxUString &assign( size_type n, wxChar32 ch )
-    {
-        std::basic_string<wxChar32> *base = this;
-        return (wxUString &) base->assign( n, ch );
-    }
+        wxUString &assign( size_type n, wxChar32 ch )
+        {
+            wxU32CharBuffer buffer(n);
+            wxChar32 *p = buffer.data();
+            size_type i;
+            for (i = 0; i < n; i++)
+            {
+               *p = ch;
+               p++;
+            }
+
+            std::basic_string<wxChar32> *base = this;
+            return (wxUString &)base->assign(buffer.data());
+        }
+    #else
+        wxUString &assign( wxChar32 ch )
+        {
+            std::basic_string<wxChar32> *base = this;
+            return (wxUString &) base->assign( (size_type) 1, ch );
+        }
+
+        wxUString &assign( size_type n, wxChar32 ch )
+        {
+            std::basic_string<wxChar32> *base = this;
+            return (wxUString &) base->assign( n, ch );
+        }
+    #endif // __VISUALC6__
 
     wxUString &assign( const wxScopedU32CharBuffer &buf )
     {
@@ -355,11 +382,29 @@ public:
         return (wxUString &) base->append( s, n );
     }
 
-    wxUString &append( size_type n, wxChar32 c )
-    {
-        std::basic_string<wxChar32> *base = this;
-        return (wxUString &) base->append( n, c );
-    }
+    // FIXME-VC6:  VC 6.0 stl does not support all types of append functions
+    #ifdef __VISUALC6__
+        wxUString &append( size_type n, wxChar32 c )
+        {
+            wxU32CharBuffer buffer(n);
+            wxChar32 *p = buffer.data();
+            size_type i;
+            for (i = 0; i < n; i++)
+            {
+               *p = c;
+               p++;
+            }
+
+            std::basic_string<wxChar32> *base = this;
+            return (wxUString &) base->append(buffer.data());
+        }
+    #else
+        wxUString &append( size_type n, wxChar32 c )
+        {
+            std::basic_string<wxChar32> *base = this;
+            return (wxUString &) base->append( n, c );
+        }
+    #endif // __VISUALC6__
 
     wxUString &append( wxChar32 c )
     {
@@ -549,13 +594,13 @@ public:
         { return assign( s ); }
     wxUString& operator=(const wxScopedU32CharBuffer &s)
         { return assign( s ); }
-    wxUString& operator=(char ch)
+    wxUString& operator=(const char ch)
         { return assign( ch ); }
-    wxUString& operator=(wxChar16 ch)
+    wxUString& operator=(const wxChar16 ch)
         { return assign( ch ); }
-    wxUString& operator=(wxChar32 ch)
+    wxUString& operator=(const wxChar32 ch)
         { return assign( ch ); }
-    wxUString& operator=(wxUniChar ch)
+    wxUString& operator=(const wxUniChar ch)
         { return assign( ch ); }
     wxUString& operator=(const wxUniCharRef ch)
         { return assign( ch ); }
@@ -579,13 +624,13 @@ public:
         { return append( s ); }
     wxUString& operator+=(const wxScopedU32CharBuffer &s)
         { return append( s ); }
-    wxUString& operator+=(char ch)
+    wxUString& operator+=(const char ch)
         { return append( ch ); }
-    wxUString& operator+=(wxChar16 ch)
+    wxUString& operator+=(const wxChar16 ch)
         { return append( ch ); }
-    wxUString& operator+=(wxChar32 ch)
+    wxUString& operator+=(const wxChar32 ch)
         { return append( ch ); }
-    wxUString& operator+=(wxUniChar ch)
+    wxUString& operator+=(const wxUniChar ch)
         { return append( ch ); }
     wxUString& operator+=(const wxUniCharRef ch)
         { return append( ch ); }

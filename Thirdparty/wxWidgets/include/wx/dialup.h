@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     07.07.99
+// RCS-ID:      $Id$
 // Copyright:   (c) Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -66,7 +67,7 @@ public:
     // parameter to Dial() on this machine and returns their number (may be 0)
     virtual size_t GetISPNames(wxArrayString& names) const = 0;
 
-    // dial the given ISP, use username and password to authenticate
+    // dial the given ISP, use username and password to authentificate
     //
     // if no nameOfISP is given, the function will select the default one
     //
@@ -118,11 +119,11 @@ public:
     // set misc wxDialUpManager options
     // --------------------------------
 
-    // enable automatic checks for the connection status and sending of
+    // enable automatical checks for the connection status and sending of
     // wxEVT_DIALUP_CONNECTED/wxEVT_DIALUP_DISCONNECTED events. The interval
     // parameter is only for Unix where we do the check manually: under
     // Windows, the notification about the change of connection status is
-    // instantaneous.
+    // instantenous.
     //
     // Returns false if couldn't set up automatic check for online status.
     virtual bool EnableAutoCheckOnlineStatus(size_t nSeconds = 60) = 0;
@@ -176,10 +177,10 @@ public:
     bool IsOwnEvent() const { return m_id != 0; }
 
     // implement the base class pure virtual
-    virtual wxEvent *Clone() const wxOVERRIDE { return new wxDialUpEvent(*this); }
+    virtual wxEvent *Clone() const { return new wxDialUpEvent(*this); }
 
 private:
-    wxDECLARE_NO_ASSIGN_DEF_COPY(wxDialUpEvent);
+    wxDECLARE_NO_ASSIGN_CLASS(wxDialUpEvent);
 };
 
 // the type of dialup event handler function

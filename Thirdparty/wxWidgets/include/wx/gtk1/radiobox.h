@@ -2,6 +2,7 @@
 // Name:        wx/gtk1/radiobox.h
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -31,7 +32,7 @@ public:
                int majorDim = 1,
                long style = wxRA_SPECIFY_COLS,
                const wxValidator& val = wxDefaultValidator,
-               const wxString& name = wxASCII_STR(wxRadioBoxNameStr))
+               const wxString& name = wxRadioBoxNameStr)
     {
         Init();
 
@@ -47,7 +48,7 @@ public:
                int majorDim = 1,
                long style = wxRA_SPECIFY_COLS,
                const wxValidator& val = wxDefaultValidator,
-               const wxString& name = wxASCII_STR(wxRadioBoxNameStr))
+               const wxString& name = wxRadioBoxNameStr)
     {
         Init();
 
@@ -64,7 +65,7 @@ public:
                 int majorDim = 0,
                 long style = wxRA_SPECIFY_COLS,
                 const wxValidator& val = wxDefaultValidator,
-                const wxString& name = wxASCII_STR(wxRadioBoxNameStr));
+                const wxString& name = wxRadioBoxNameStr);
     bool Create(wxWindow *parent,
                 wxWindowID id,
                 const wxString& title,
@@ -74,7 +75,7 @@ public:
                 int majorDim = 0,
                 long style = wxRA_SPECIFY_COLS,
                 const wxValidator& val = wxDefaultValidator,
-                const wxString& name = wxASCII_STR(wxRadioBoxNameStr));
+                const wxString& name = wxRadioBoxNameStr);
 
     virtual ~wxRadioBox();
 
@@ -129,7 +130,7 @@ protected:
     void Init();
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxRadioBox);
+    DECLARE_DYNAMIC_CLASS(wxRadioBox)
 };
 
 #endif // _WX_GTK_RADIOBOX_H_

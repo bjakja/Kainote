@@ -4,7 +4,8 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     2004-10-19
-// Copyright:   (c) 2004 Vadim Zeitlin <vadim@wxwidgets.org>
+// RCS-ID:      $Id$
+// Copyright:   (c) 2004 Vadim Zeitlin <vadim@wxwindows.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -37,26 +38,18 @@ public:
 
 
     // implement base class pure virtuals
-    virtual wxString GetExecutablePath() const wxOVERRIDE;
-    virtual wxString GetConfigDir() const wxOVERRIDE;
-    virtual wxString GetUserConfigDir() const wxOVERRIDE;
-    virtual wxString GetDataDir() const wxOVERRIDE;
-    virtual wxString GetLocalDataDir() const wxOVERRIDE;
-    virtual wxString GetUserDataDir() const wxOVERRIDE;
-    virtual wxString GetPluginsDir() const wxOVERRIDE;
+    virtual wxString GetExecutablePath() const;
+    virtual wxString GetConfigDir() const;
+    virtual wxString GetUserConfigDir() const;
+    virtual wxString GetDataDir() const;
+    virtual wxString GetLocalDataDir() const;
+    virtual wxString GetUserDataDir() const;
+    virtual wxString GetPluginsDir() const;
     virtual wxString GetLocalizedResourcesDir(const wxString& lang,
-                                              ResourceCat category) const wxOVERRIDE;
+                                              ResourceCat category) const;
 #ifndef __VMS
-    virtual wxString GetUserDir(Dir userDir) const wxOVERRIDE;
+    virtual wxString GetDocumentsDir() const;
 #endif
-    virtual wxString MakeConfigFileName(const wxString& basename,
-                                        ConfigFileConv conv = ConfigFileConv_Ext
-                                        ) const wxOVERRIDE;
-
-protected:
-    // Ctor is protected, use wxStandardPaths::Get() instead of instantiating
-    // objects of this class directly.
-    wxStandardPaths() { }
 
 private:
     wxString m_prefix;

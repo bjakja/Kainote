@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -22,7 +23,6 @@
 
 #include "wx/tokenzr.h"
 #include "wx/stockitem.h"
-#include "wx/modalhook.h"
 
 #ifdef __VMS__
 #pragma message disable nosimpint
@@ -43,7 +43,7 @@
 
 #include "wx/motif/private.h"
 
-wxIMPLEMENT_CLASS(wxFileDialog, wxFileDialogBase);
+IMPLEMENT_CLASS(wxFileDialog, wxFileDialogBase)
 
 #define DEFAULT_FILE_SELECTOR_SIZE 0
 // Let Motif defines the size of File
@@ -151,8 +151,6 @@ static void wxChangeListBoxColours(wxWindow* WXUNUSED(win), Widget widget)
 
 int wxFileDialog::ShowModal()
 {
-    WX_HOOK_MODAL_DIALOG();
-
     wxBeginBusyCursor();
 
     //  static char fileBuf[512];

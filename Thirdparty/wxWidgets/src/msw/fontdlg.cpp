@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,11 +20,13 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_FONTDLG
 
 #include "wx/fontdlg.h"
-#include "wx/modalhook.h"
 
 #ifndef WX_PRECOMP
     #include "wx/msw/wrapcdlg.h"
@@ -33,9 +36,6 @@
     #include "wx/math.h"
 #endif
 
-#include "wx/fontutil.h"
-#include "wx/msw/private/dpiaware.h"
-
 #include <stdlib.h>
 #include <string.h>
 
@@ -43,59 +43,18 @@
 // wxWin macros
 // ----------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxFontDialog, wxDialog);
+IMPLEMENT_DYNAMIC_CLASS(wxFontDialog, wxDialog)
 
 // ============================================================================
 // implementation
 // ============================================================================
 
 // ----------------------------------------------------------------------------
-// font dialog hook proc used for setting the dialog title if necessary
-// ----------------------------------------------------------------------------
-
-static
-UINT_PTR CALLBACK
-wxFontDialogHookProc(HWND hwnd,
-                     UINT uiMsg,
-                     WPARAM WXUNUSED(wParam),
-                     LPARAM lParam)
-{
-    if ( uiMsg == WM_INITDIALOG )
-    {
-        CHOOSEFONT *pCH = (CHOOSEFONT *)lParam;
-        wxFontDialog * const
-            dialog = reinterpret_cast<wxFontDialog *>(pCH->lCustData);
-
-        ::SetWindowText(hwnd, dialog->GetTitle().t_str());
-    }
-
-    return 0;
-}
-
-// ----------------------------------------------------------------------------
 // wxFontDialog
 // ----------------------------------------------------------------------------
 
-void wxFontDialog::SetTitle(const wxString& title)
-{
-    // Just store the title here, we can't set it right now because the dialog
-    // doesn't exist yet -- it will be created only when ShowModal() is called.
-    m_title = title;
-}
-
-wxString wxFontDialog::GetTitle() const
-{
-    return m_title;
-}
-
 int wxFontDialog::ShowModal()
 {
-    WX_HOOK_MODAL_DIALOG();
-
-    wxWindowDisabler disableOthers(this);
-
-    wxWindow* const parent = GetParentForModalDialog(m_parent, GetWindowStyle());
-    WXHWND hWndParent = parent ? GetHwndOf(parent) : NULL;
     // It should be OK to always use GDI simulations
     DWORD flags = CF_SCREENFONTS /* | CF_NOSIMULATIONS */ ;
 
@@ -105,22 +64,14 @@ int wxFontDialog::ShowModal()
     wxZeroMemory(chooseFontStruct);
 
     chooseFontStruct.lStructSize = sizeof(CHOOSEFONT);
-    chooseFontStruct.hwndOwner = hWndParent;
+    if ( m_parent )
+        chooseFontStruct.hwndOwner = GetHwndOf(m_parent);
     chooseFontStruct.lpLogFont = &logFont;
-
-    // Currently we only use the hook to set the title, so only set it up if
-    // we really need to do this.
-    if ( !m_title.empty() )
-    {
-        flags |= CF_ENABLEHOOK;
-        chooseFontStruct.lCustData = (LPARAM)this;
-        chooseFontStruct.lpfnHook = wxFontDialogHookProc;
-    }
 
     if ( m_fontData.m_initialFont.IsOk() )
     {
         flags |= CF_INITTOLOGFONTSTRUCT;
-        logFont = m_fontData.m_initialFont.GetNativeFontInfo()->lf;
+        wxFillLogFont(&logFont, &m_fontData.m_initialFont);
     }
 
     if ( m_fontData.m_fontColour.IsOk() )
@@ -139,10 +90,6 @@ int wxFontDialog::ShowModal()
       flags |= CF_EFFECTS;
     if ( m_fontData.GetShowHelp() )
       flags |= CF_SHOWHELP;
-    if ( m_fontData.GetRestrictSelection() & wxFONTRESTRICT_SCALABLE )
-      flags |= CF_SCALABLEONLY;
-    if ( m_fontData.GetRestrictSelection() & wxFONTRESTRICT_FIXEDPITCH )
-      flags |= CF_FIXEDPITCHONLY;
 
     if ( m_fontData.m_minSize != 0 || m_fontData.m_maxSize != 0 )
     {
@@ -153,12 +100,10 @@ int wxFontDialog::ShowModal()
 
     chooseFontStruct.Flags = flags;
 
-    wxMSWImpl::AutoSystemDpiAware dpiAwareness;
-
     if ( ChooseFont(&chooseFontStruct) != 0 )
     {
         wxRGBToColour(m_fontData.m_fontColour, chooseFontStruct.rgbColors);
-        m_fontData.m_chosenFont = wxFont(wxNativeFontInfo(logFont, this));
+        m_fontData.m_chosenFont = wxCreateFontFromLogFont(&logFont);
         m_fontData.EncodingInfo().facename = logFont.lfFaceName;
         m_fontData.EncodingInfo().charset = logFont.lfCharSet;
 

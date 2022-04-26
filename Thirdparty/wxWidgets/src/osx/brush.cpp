@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,7 +19,7 @@
 
 #include "wx/osx/private.h"
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxBrush, wxGDIObject);
+IMPLEMENT_DYNAMIC_CLASS(wxBrush, wxGDIObject)
 
 class WXDLLEXPORT wxBrushRefData: public wxGDIRefData
 {
@@ -99,10 +100,12 @@ wxBrush::wxBrush(const wxColour& col, wxBrushStyle style)
     m_refData = new wxBrushRefData( col, style );
 }
 
+#if FUTURE_WXWIN_COMPATIBILITY_3_0
 wxBrush::wxBrush(const wxColour& col, int style)
 {
     m_refData = new wxBrushRefData(col, (wxBrushStyle)style);
 }
+#endif
 
 wxBrush::wxBrush(const wxBitmap& stipple)
 {

@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by: Marcin Malich
 // Created:     11.11.97
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -43,21 +44,21 @@ public:
     void SetFont(const wxFont& font)
         { m_font = font; m_ownerDrawn = true; }
 
-    wxFont& GetFont() { return m_font; }
-    const wxFont& GetFont() const { return m_font; }
+    wxFont& GetFont() const
+        { return (wxFont&) m_font; }
 
 
     void SetTextColour(const wxColour& colText)
         { m_colText = colText; m_ownerDrawn = true; }
 
-    wxColour& GetTextColour() { return m_colText; }
-    const wxColour& GetTextColour() const { return m_colText; }
+    wxColour& GetTextColour() const
+        { return (wxColour&) m_colText; }
 
     void SetBackgroundColour(const wxColour& colBack)
         { m_colBack = colBack; m_ownerDrawn = true; }
 
-    wxColour& GetBackgroundColour() { return m_colBack; }
-    const wxColour& GetBackgroundColour() const { return m_colBack ; }
+    wxColour& GetBackgroundColour() const
+        { return (wxColour&) m_colBack ; }
 
 
     void SetMarginWidth(int width)
@@ -135,6 +136,8 @@ private:
 
 #if defined(__WXMSW__)
     #include "wx/msw/ownerdrw.h"
+#elif defined(__WXPM__)
+    #include "wx/os2/ownerdrw.h"
 #endif
 
 #endif // wxUSE_OWNER_DRAWN

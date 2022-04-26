@@ -2,6 +2,7 @@
 // Name:        wx/stack.h
 // Purpose:     interface of wxStack<T>
 // Author:      Vadim Zeitlin
+// RCS-ID:      $Id$
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////

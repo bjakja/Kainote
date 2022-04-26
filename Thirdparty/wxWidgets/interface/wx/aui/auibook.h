@@ -2,34 +2,9 @@
 // Name:        aui/auibook.h
 // Purpose:     interface of wxAuiNotebook
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
-
-enum wxAuiNotebookOption
-{
-    wxAUI_NB_TOP                 = 1 << 0,
-    wxAUI_NB_LEFT                = 1 << 1,  // not implemented yet
-    wxAUI_NB_RIGHT               = 1 << 2,  // not implemented yet
-    wxAUI_NB_BOTTOM              = 1 << 3,
-    wxAUI_NB_TAB_SPLIT           = 1 << 4,
-    wxAUI_NB_TAB_MOVE            = 1 << 5,
-    wxAUI_NB_TAB_EXTERNAL_MOVE   = 1 << 6,
-    wxAUI_NB_TAB_FIXED_WIDTH     = 1 << 7,
-    wxAUI_NB_SCROLL_BUTTONS      = 1 << 8,
-    wxAUI_NB_WINDOWLIST_BUTTON   = 1 << 9,
-    wxAUI_NB_CLOSE_BUTTON        = 1 << 10,
-    wxAUI_NB_CLOSE_ON_ACTIVE_TAB = 1 << 11,
-    wxAUI_NB_CLOSE_ON_ALL_TABS   = 1 << 12,
-    wxAUI_NB_MIDDLE_CLICK_CLOSE  = 1 << 13,
-
-    wxAUI_NB_DEFAULT_STYLE = wxAUI_NB_TOP |
-                             wxAUI_NB_TAB_SPLIT |
-                             wxAUI_NB_TAB_MOVE |
-                             wxAUI_NB_SCROLL_BUTTONS |
-                             wxAUI_NB_CLOSE_ON_ACTIVE_TAB |
-                             wxAUI_NB_MIDDLE_CLICK_CLOSE
-};
-
 
 /**
     @class wxAuiNotebook
@@ -83,35 +58,35 @@ enum wxAuiNotebookOption
 
     @beginEventEmissionTable{wxAuiNotebookEvent}
     @event{EVT_AUINOTEBOOK_PAGE_CLOSE(id, func)}
-        A page is about to be closed. Processes a @c wxEVT_AUINOTEBOOK_PAGE_CLOSE event.
+        A page is about to be closed. Processes a @c wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSE event.
     @event{EVT_AUINOTEBOOK_PAGE_CLOSED(winid, fn)}
-        A page has been closed. Processes a @c wxEVT_AUINOTEBOOK_PAGE_CLOSED event.
+        A page has been closed. Processes a @c wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSED event.
     @event{EVT_AUINOTEBOOK_PAGE_CHANGED(id, func)}
-        The page selection was changed. Processes a @c wxEVT_AUINOTEBOOK_PAGE_CHANGED event.
+        The page selection was changed. Processes a @c wxEVT_COMMAND_AUINOTEBOOK_PAGE_CHANGED event.
     @event{EVT_AUINOTEBOOK_PAGE_CHANGING(id, func)}
-        The page selection is about to be changed. Processes a  @c wxEVT_AUINOTEBOOK_PAGE_CHANGING event. This event can be vetoed.
+        The page selection is about to be changed. Processes a  @c wxEVT_COMMAND_AUINOTEBOOK_PAGE_CHANGING event. This event can be vetoed.
     @event{EVT_AUINOTEBOOK_BUTTON(id, func)}
-        The window list button has been pressed. Processes a @c wxEVT_AUINOTEBOOK_BUTTON event.
+        The window list button has been pressed. Processes a @c wxEVT_COMMAND_AUINOTEBOOK_BUTTON event.
     @event{EVT_AUINOTEBOOK_BEGIN_DRAG(id, func)}
-        Dragging is about to begin. Processes a @c wxEVT_AUINOTEBOOK_BEGIN_DRAG event.
+        Dragging is about to begin. Processes a @c wxEVT_COMMAND_AUINOTEBOOK_BEGIN_DRAG event.
     @event{EVT_AUINOTEBOOK_END_DRAG(id, func)}
-        Dragging has ended. Processes a @c wxEVT_AUINOTEBOOK_END_DRAG event.
+        Dragging has ended. Processes a @c wxEVT_COMMAND_AUINOTEBOOK_END_DRAG event.
     @event{EVT_AUINOTEBOOK_DRAG_MOTION(id, func)}
-        Emitted during a drag and drop operation. Processes a @c wxEVT_AUINOTEBOOK_DRAG_MOTION event.
+        Emitted during a drag and drop operation. Processes a @c wxEVT_COMMAND_AUINOTEBOOK_DRAG_MOTION event.
     @event{EVT_AUINOTEBOOK_ALLOW_DND(id, func)}
-        Whether to allow a tab to be dropped. Processes a @c wxEVT_AUINOTEBOOK_ALLOW_DND event. This event must be specially allowed.
+        Whether to allow a tab to be dropped. Processes a @c wxEVT_COMMAND_AUINOTEBOOK_ALLOW_DND event. This event must be specially allowed.
     @event{EVT_AUINOTEBOOK_DRAG_DONE(winid, fn)}
-        Notify that the tab has been dragged. Processes a @c wxEVT_AUINOTEBOOK_DRAG_DONE event.
+        Notify that the tab has been dragged. Processes a @c wxEVT_COMMAND_AUINOTEBOOK_DRAG_DONE event.
     @event{EVT_AUINOTEBOOK_TAB_MIDDLE_DOWN(winid, fn)}
-        The middle mouse button is pressed on a tab. Processes a @c wxEVT_AUINOTEBOOK_TAB_MIDDLE_DOWN event.
+        The middle mouse button is pressed on a tab. Processes a @c wxEVT_COMMAND_AUINOTEBOOK_TAB_MIDDLE_DOWN event.
     @event{EVT_AUINOTEBOOK_TAB_MIDDLE_UP(winid, fn)}
-        The middle mouse button is released on a tab. Processes a @c wxEVT_AUINOTEBOOK_TAB_MIDDLE_UP event.
+        The middle mouse button is released on a tab. Processes a @c wxEVT_COMMAND_AUINOTEBOOK_TAB_MIDDLE_UP event.
     @event{EVT_AUINOTEBOOK_TAB_RIGHT_DOWN(winid, fn)}
-        The right mouse button is pressed on a tab. Processes a @c wxEVT_AUINOTEBOOK_TAB_RIGHT_DOWN event.
+        The right mouse button is pressed on a tab. Processes a @c wxEVT_COMMAND_AUINOTEBOOK_TAB_RIGHT_DOWN event.
     @event{EVT_AUINOTEBOOK_TAB_RIGHT_UP(winid, fn)}
-        The right mouse button is released on a tab. Processes a @c wxEVT_AUINOTEBOOK_TAB_RIGHT_UP event.
+        The right mouse button is released on a tab. Processes a @c wxEVT_COMMAND_AUINOTEBOOK_TAB_RIGHT_UP event.
     @event{EVT_AUINOTEBOOK_BG_DCLICK(winid, fn)}
-        Double clicked on the tabs background area. Processes a @c wxEVT_AUINOTEBOOK_BG_DCLICK event.
+        Double clicked on the tabs background area. Processes a @c wxEVT_COMMAND_AUINOTEBOOK_BG_DCLICK event.
     @endEventTable
 
     @library{wxaui}
@@ -139,7 +114,7 @@ public:
     */
     bool AddPage(wxWindow* page, const wxString& caption,
                  bool select = false,
-                 const wxBitmapBundle& bitmap = wxBitmapBundle());
+                 const wxBitmap& bitmap = wxNullBitmap);
 
     /**
         Adds a new page.
@@ -272,7 +247,7 @@ public:
     bool InsertPage(size_t page_idx, wxWindow* page,
                     const wxString& caption,
                     bool select = false,
-                    const wxBitmapBundle& bitmap = wxBitmapBundle());
+                    const wxBitmap& bitmap = wxNullBitmap);
 
     /**
         Inserts a new page at the specified position.
@@ -296,7 +271,7 @@ public:
         @since 2.9.3
     */
     virtual bool InsertPage(size_t index, wxWindow *page, const wxString &text,
-                            bool select, int imageId);
+                            bool select=false, int imageId=NO_IMAGE);
 
     /**
         Removes a page, without deleting the window pointer.
@@ -326,9 +301,9 @@ public:
 
     /**
         Sets the bitmap for the page.  To remove a bitmap from the tab caption, pass
-        an empty wxBitmapBundle.
+        wxNullBitmap.
     */
-    bool SetPageBitmap(size_t page, const wxBitmapBundle& bitmap);
+    bool SetPageBitmap(size_t page, const wxBitmap& bitmap);
 
     /**
         Sets the image index for the given page. @a image is an index into
@@ -361,7 +336,7 @@ public:
     /**
         Sets the page selection.  Calling this method will generate a page change event.
     */
-    int SetSelection(size_t new_page);
+    size_t SetSelection(size_t new_page);
 
     /**
         Sets the tab height. By default, the tab control height is calculated
@@ -375,15 +350,7 @@ public:
     */
     virtual void SetTabCtrlHeight(int height);
 
-    /**
-        Ensure that all tabs have the same height, even if some of them don't
-        have bitmaps.
-
-        Passing ::wxDefaultSize as @a size undoes the effect of a previous call
-        to this function and instructs the control to use dynamic tab height.
-     */
-    virtual void SetUniformBitmapSize(const wxSize& size);
-
+    //@{
     /**
         Split performs a split operation programmatically. The argument @a page
         indicates the page that will be split off.  This page will also become the
@@ -392,64 +359,16 @@ public:
         The @a direction argument specifies where the pane should go, it should be one
         of the following: wxTOP, wxBOTTOM, wxLEFT, or wxRIGHT.
     */
+    virtual void SetUniformBitmapSize(const wxSize& size);
     virtual void Split(size_t page, int direction);
+    //@}
 
     /**
         Shows the window menu for the active tab control associated with this notebook,
         and returns @true if a selection was made.
     */
     bool ShowWindowMenu();
-
-
-    /**
-        Returns the image index for the given page.
-    */
-    virtual int GetPageImage(size_t nPage) const;
-
-    /**
-        Returns tab control based on point coordinates inside the tab frame.
-
-        @since 3.1.4
-    */
-    wxAuiTabCtrl* GetTabCtrlFromPoint(const wxPoint& pt);
-
-    /**
-        Returns active tab control for this notebook.
-
-        @since 3.1.4
-    */
-    wxAuiTabCtrl* GetActiveTabCtrl();
-
-    /**
-        Finds tab control associated with a given window and its tab index.
-
-        @return @true when the tab control is found, @false otherwise.
-
-        @since 3.1.4
-    */
-    bool FindTab(wxWindow* page, wxAuiTabCtrl** ctrl, int* idx);
 };
-
-
-/**
-    @class wxAuiNotebookPage
-
-    A simple class which holds information about the notebook's pages and their state.
-
-    @library{wxaui}
-    @category{aui}
-*/
-class wxAuiNotebookPage
-{
-public:
-    wxWindow* window;     // page's associated window
-    wxString caption;     // caption displayed on the tab
-    wxString tooltip;     // tooltip displayed when hovering over tab title
-    wxBitmapBundle bitmap;// tab's bitmap
-    wxRect rect;          // tab's hit rectangle
-    bool active;          // true if the page is currently active
-};
-
 
 /**
     @class wxAuiTabContainerButton
@@ -469,9 +388,9 @@ public:
     /// buttons location (wxLEFT, wxRIGHT, or wxCENTER)
     int location;
     /// button's hover bitmap
-    wxBitmapBundle bitmap;
+    wxBitmap bitmap;
     /// button's disabled bitmap
-    wxBitmapBundle disBitmap;
+    wxBitmap disBitmap;
     /// button's hit rectangle
     wxRect rect;
 };
@@ -534,13 +453,13 @@ public:
     void SetColour(const wxColour& colour);
     void SetActiveColour(const wxColour& colour);
     void DoShowHide();
-    void SetRect(const wxRect& rect, wxWindow* wnd = NULL);
+    void SetRect(const wxRect& rect);
 
     void RemoveButton(int id);
     void AddButton(int id,
                    int location,
-                   const wxBitmapBundle& normalBitmap = wxBitmapBundle(),
-                   const wxBitmapBundle& disabledBitmap = wxBitmapBundle());
+                   const wxBitmap& normalBitmap = wxNullBitmap,
+                   const wxBitmap& disabledBitmap = wxNullBitmap);
 
     size_t GetTabOffset() const;
     void SetTabOffset(size_t offset);
@@ -633,7 +552,7 @@ public:
         Returns the tab size for the given caption, bitmap and state.
     */
     virtual wxSize GetTabSize(wxDC& dc, wxWindow* wnd, const wxString& caption,
-                              const wxBitmapBundle& bitmap, bool active,
+                              const wxBitmap& bitmap, bool active,
                               int close_button_state, int* x_extent) = 0;
 
     /**
@@ -672,13 +591,8 @@ public:
 
     /**
         Sets sizing information.
-
-        The @a wnd argument is only present in wxWidgets 3.1.6 and newer and is
-        required, it only has @NULL default value for compatibility reasons.
     */
-    virtual void SetSizingInfo(const wxSize& tab_ctrl_size,
-                               size_t tab_count,
-                               wxWindow* wnd = NULL) = 0;
+    virtual void SetSizingInfo(const wxSize& tab_ctrl_size, size_t tab_count) = 0;
 };
 
 /**
@@ -688,35 +602,35 @@ public:
 
     @beginEventEmissionTable{wxAuiNotebookEvent}
     @event{EVT_AUINOTEBOOK_PAGE_CLOSE(id, func)}
-        A page is about to be closed. Processes a @c wxEVT_AUINOTEBOOK_PAGE_CLOSE event.
+        A page is about to be closed. Processes a @c wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSE event.
     @event{EVT_AUINOTEBOOK_PAGE_CLOSED(winid, fn)}
-        A page has been closed. Processes a @c wxEVT_AUINOTEBOOK_PAGE_CLOSED event.
+        A page has been closed. Processes a @c wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSED event.
     @event{EVT_AUINOTEBOOK_PAGE_CHANGED(id, func)}
-        The page selection was changed. Processes a @c wxEVT_AUINOTEBOOK_PAGE_CHANGED event.
+        The page selection was changed. Processes a @c wxEVT_COMMAND_AUINOTEBOOK_PAGE_CHANGED event.
     @event{EVT_AUINOTEBOOK_PAGE_CHANGING(id, func)}
-        The page selection is about to be changed. Processes a  @c wxEVT_AUINOTEBOOK_PAGE_CHANGING event. This event can be vetoed.
+        The page selection is about to be changed. Processes a  @c wxEVT_COMMAND_AUINOTEBOOK_PAGE_CHANGING event. This event can be vetoed.
     @event{EVT_AUINOTEBOOK_BUTTON(id, func)}
-        The window list button has been pressed. Processes a @c wxEVT_AUINOTEBOOK_BUTTON event.
+        The window list button has been pressed. Processes a @c wxEVT_COMMAND_AUINOTEBOOK_BUTTON event.
     @event{EVT_AUINOTEBOOK_BEGIN_DRAG(id, func)}
-        Dragging is about to begin. Processes a @c wxEVT_AUINOTEBOOK_BEGIN_DRAG event.
+        Dragging is about to begin. Processes a @c wxEVT_COMMAND_AUINOTEBOOK_BEGIN_DRAG event.
     @event{EVT_AUINOTEBOOK_END_DRAG(id, func)}
-        Dragging has ended. Processes a @c wxEVT_AUINOTEBOOK_END_DRAG event.
+        Dragging has ended. Processes a @c wxEVT_COMMAND_AUINOTEBOOK_END_DRAG event.
     @event{EVT_AUINOTEBOOK_DRAG_MOTION(id, func)}
-        Emitted during a drag and drop operation. Processes a @c wxEVT_AUINOTEBOOK_DRAG_MOTION event.
+        Emitted during a drag and drop operation. Processes a @c wxEVT_COMMAND_AUINOTEBOOK_DRAG_MOTION event.
     @event{EVT_AUINOTEBOOK_ALLOW_DND(id, func)}
-        Whether to allow a tab to be dropped. Processes a @c wxEVT_AUINOTEBOOK_ALLOW_DND event. This event must be specially allowed.
+        Whether to allow a tab to be dropped. Processes a @c wxEVT_COMMAND_AUINOTEBOOK_ALLOW_DND event. This event must be specially allowed.
     @event{EVT_AUINOTEBOOK_DRAG_DONE(winid, fn)}
-        Notify that the tab has been dragged. Processes a @c wxEVT_AUINOTEBOOK_DRAG_DONE event.
+        Notify that the tab has been dragged. Processes a @c wxEVT_COMMAND_AUINOTEBOOK_DRAG_DONE event.
     @event{EVT_AUINOTEBOOK_TAB_MIDDLE_DOWN(winid, fn)}
-        The middle mouse button is pressed on a tab. Processes a @c wxEVT_AUINOTEBOOK_TAB_MIDDLE_DOWN event.
+        The middle mouse button is pressed on a tab. Processes a @c wxEVT_COMMAND_AUINOTEBOOK_TAB_MIDDLE_DOWN event.
     @event{EVT_AUINOTEBOOK_TAB_MIDDLE_UP(winid, fn)}
-        The middle mouse button is released on a tab. Processes a @c wxEVT_AUINOTEBOOK_TAB_MIDDLE_UP event.
+        The middle mouse button is released on a tab. Processes a @c wxEVT_COMMAND_AUINOTEBOOK_TAB_MIDDLE_UP event.
     @event{EVT_AUINOTEBOOK_TAB_RIGHT_DOWN(winid, fn)}
-        The right mouse button is pressed on a tab. Processes a @c wxEVT_AUINOTEBOOK_TAB_RIGHT_DOWN event.
+        The right mouse button is pressed on a tab. Processes a @c wxEVT_COMMAND_AUINOTEBOOK_TAB_RIGHT_DOWN event.
     @event{EVT_AUINOTEBOOK_TAB_RIGHT_UP(winid, fn)}
-        The right mouse button is released on a tab. Processes a @c wxEVT_AUINOTEBOOK_TAB_RIGHT_UP event.
+        The right mouse button is released on a tab. Processes a @c wxEVT_COMMAND_AUINOTEBOOK_TAB_RIGHT_UP event.
     @event{EVT_AUINOTEBOOK_BG_DCLICK(winid, fn)}
-        Double clicked on the tabs background area. Processes a @c wxEVT_AUINOTEBOOK_BG_DCLICK event.
+        Double clicked on the tabs background area. Processes a @c wxEVT_COMMAND_AUINOTEBOOK_BG_DCLICK event.
     @endEventTable
 
     @library{wxaui}
@@ -735,28 +649,12 @@ public:
     wxEvent *Clone();
 };
 
-wxEventType wxEVT_AUINOTEBOOK_PAGE_CLOSE;
-wxEventType wxEVT_AUINOTEBOOK_PAGE_CHANGED;
-wxEventType wxEVT_AUINOTEBOOK_PAGE_CHANGING;
-wxEventType wxEVT_AUINOTEBOOK_PAGE_CLOSED;
-wxEventType wxEVT_AUINOTEBOOK_BUTTON;
-wxEventType wxEVT_AUINOTEBOOK_BEGIN_DRAG;
-wxEventType wxEVT_AUINOTEBOOK_END_DRAG;
-wxEventType wxEVT_AUINOTEBOOK_DRAG_MOTION;
-wxEventType wxEVT_AUINOTEBOOK_ALLOW_DND;
-wxEventType wxEVT_AUINOTEBOOK_TAB_MIDDLE_DOWN;
-wxEventType wxEVT_AUINOTEBOOK_TAB_MIDDLE_UP;
-wxEventType wxEVT_AUINOTEBOOK_TAB_RIGHT_DOWN;
-wxEventType wxEVT_AUINOTEBOOK_TAB_RIGHT_UP;
-wxEventType wxEVT_AUINOTEBOOK_DRAG_DONE;
-wxEventType wxEVT_AUINOTEBOOK_BG_DCLICK;
-
 /**
     Default art provider for wxAuiNotebook.
 
     @see wxAuiTabArt
 
-    @genericAppearance{auidefaulttabart}
+    @genericAppearance{auidefaulttabart.png}
 
     @library{wxaui}
     @category{aui}
@@ -772,8 +670,7 @@ public:
     wxAuiTabArt* Clone();
     void SetFlags(unsigned int flags);
     void SetSizingInfo(const wxSize& tabCtrlSize,
-                       size_t tabCount,
-                       wxWindow* wnd = NULL);
+                       size_t tabCount);
 
     void SetNormalFont(const wxFont& font);
     void SetSelectedFont(const wxFont& font);
@@ -810,7 +707,7 @@ public:
                  wxDC& dc,
                  wxWindow* wnd,
                  const wxString& caption,
-                 const wxBitmapBundle& bitmap,
+                 const wxBitmap& bitmap,
                  bool active,
                  int closeButtonState,
                  int* xExtent);
@@ -836,14 +733,14 @@ protected:
     wxPen m_borderPen;
     wxBrush m_baseColourBrush;
     wxColour m_activeColour;
-    wxBitmapBundle m_activeCloseBmp;
-    wxBitmapBundle m_disabledCloseBmp;
-    wxBitmapBundle m_activeLeftBmp;
-    wxBitmapBundle m_disabledLeftBmp;
-    wxBitmapBundle m_activeRightBmp;
-    wxBitmapBundle m_disabledRightBmp;
-    wxBitmapBundle m_activeWindowListBmp;
-    wxBitmapBundle m_disabledWindowListBmp;
+    wxBitmap m_activeCloseBmp;
+    wxBitmap m_disabledCloseBmp;
+    wxBitmap m_activeLeftBmp;
+    wxBitmap m_disabledLeftBmp;
+    wxBitmap m_activeRightBmp;
+    wxBitmap m_disabledRightBmp;
+    wxBitmap m_activeWindowListBmp;
+    wxBitmap m_disabledWindowListBmp;
 
     int m_fixedTabWidth;
     int m_tabCtrlHeight;
@@ -860,7 +757,7 @@ protected:
     completely new tab art class. It can also be used as alternative to
     wxAuiDefaultTabArt.
 
-    @genericAppearance{auisimpletabart}
+    @genericAppearance{auisimpletabart.png}
 
     @library{wxaui}
     @category{aui}
@@ -878,8 +775,7 @@ public:
     void SetFlags(unsigned int flags);
 
     void SetSizingInfo(const wxSize& tabCtrlSize,
-                       size_t tabCount,
-                       wxWindow* wnd = NULL);
+                       size_t tabCount);
 
     void SetNormalFont(const wxFont& font);
     void SetSelectedFont(const wxFont& font);
@@ -940,14 +836,14 @@ protected:
     wxBrush m_normalBkBrush;
     wxBrush m_selectedBkBrush;
     wxBrush m_bkBrush;
-    wxBitmapBundle m_activeCloseBmp;
-    wxBitmapBundle m_disabledCloseBmp;
-    wxBitmapBundle m_activeLeftBmp;
-    wxBitmapBundle m_disabledLeftBmp;
-    wxBitmapBundle m_activeRightBmp;
-    wxBitmapBundle m_disabledRightBmp;
-    wxBitmapBundle m_activeWindowListBmp;
-    wxBitmapBundle m_disabledWindowListBmp;
+    wxBitmap m_activeCloseBmp;
+    wxBitmap m_disabledCloseBmp;
+    wxBitmap m_activeLeftBmp;
+    wxBitmap m_disabledLeftBmp;
+    wxBitmap m_activeRightBmp;
+    wxBitmap m_disabledRightBmp;
+    wxBitmap m_activeWindowListBmp;
+    wxBitmap m_disabledWindowListBmp;
 
     int m_fixedTabWidth;
     unsigned int m_flags;

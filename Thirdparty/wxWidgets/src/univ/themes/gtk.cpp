@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     06.08.00
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,9 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #include "wx/univ/theme.h"
 
@@ -198,9 +202,9 @@ public:
 #endif // wxUSE_SCROLLBAR
 
     virtual wxSize GetCheckBitmapSize() const
-        { return wxSize(14, 14); }
+        { return wxSize(10, 10); }
     virtual wxSize GetRadioBitmapSize() const
-        { return wxSize(14, 14); }
+        { return wxSize(11, 11); }
     virtual wxCoord GetCheckItemMargin() const
         { return 2; }
 
@@ -825,10 +829,14 @@ void wxGTKRenderer::DrawTextBorder(wxDC& dc,
 
     if ( border != wxBORDER_NONE )
     {
-        DrawRect(dc, &rect, m_penBlack);
         if ( flags & wxCONTROL_FOCUSED )
         {
+            DrawRect(dc, &rect, m_penBlack);
             DrawAntiShadedRect(dc, &rect, m_penDarkGrey, m_penHighlight);
+        }
+        else // !focused
+        {
+            DrawInnerShadedRect(dc, &rect);
         }
     }
 
@@ -932,7 +940,7 @@ void wxGTKRenderer::DrawUndeterminedBitmap(wxDC& dc,
                                            bool isPressed)
 {
     // FIXME: For sure it is not GTK look but it is better than nothing.
-    // Show me correct look and I will immediately make it better (ABX)
+    // Show me correct look and I will immediatelly make it better (ABX)
     wxRect rect = rectTotal;
 
     wxColour col1, col2;
@@ -991,46 +999,48 @@ void wxGTKRenderer::DrawRadioButtonBitmap(wxDC& dc,
                                           const wxRect& rect,
                                           int flags)
 {
-    wxCoord y = rect.y,
+    wxCoord x = rect.x,
+            y = rect.y,
             xRight = rect.GetRight(),
             yBottom = rect.GetBottom();
 
     wxCoord yMid = (y + yBottom) / 2;
-    DrawBackground(dc, wxSCHEME_COLOUR(m_scheme, CONTROL_CURRENT), rect);
 
-    dc.SetPen(m_penDarkGrey);
-    dc.SetBrush(wxSCHEME_COLOUR(m_scheme, CONTROL_CURRENT)); 
-    // draw the normal border
-    dc.DrawCircle(xRight/2,yBottom/2,yMid);
-
-    wxColor checkedCol, uncheckedCol;
-    checkedCol = wxSCHEME_COLOUR(m_scheme, SHADOW_DARK);
-    uncheckedCol = wxSCHEME_COLOUR(m_scheme, SHADOW_HIGHLIGHT);
-    dc.SetBrush(flags & wxCONTROL_CHECKED ? checkedCol : uncheckedCol);
-
-    // inner dot
-    dc.DrawCircle(xRight/2,yBottom/2,yMid/2);
+    // then draw the upper half
+    dc.SetPen(flags & wxCONTROL_CHECKED ? m_penDarkGrey : m_penHighlight);
+    DrawUpZag(dc, x, xRight, yMid, y);
+    DrawUpZag(dc, x + 1, xRight - 1, yMid, y + 1);
 
     bool drawIt = true;
-
-    if ( flags & wxCONTROL_PRESSED )
-        dc.SetBrush(wxSCHEME_COLOUR(m_scheme, CONTROL_PRESSED));
+    if ( flags & wxCONTROL_CHECKED )
+        dc.SetPen(m_penBlack);
+    else if ( flags & wxCONTROL_PRESSED )
+        dc.SetPen(wxPen(wxSCHEME_COLOUR(m_scheme, CONTROL_PRESSED)));
     else // unchecked and unpressed
         drawIt = false;
 
     if ( drawIt )
-        dc.DrawCircle(xRight/2, yBottom/2, yMid/2);
+        DrawUpZag(dc, x + 2, xRight - 2, yMid, y + 2);
 
-    if ( flags & wxCONTROL_PRESSED )
+    // and then the lower one
+    dc.SetPen(flags & wxCONTROL_CHECKED ? m_penHighlight : m_penBlack);
+    DrawDownZag(dc, x, xRight, yMid, yBottom);
+    if ( !(flags & wxCONTROL_CHECKED) )
+        dc.SetPen(m_penDarkGrey);
+    DrawDownZag(dc, x + 1, xRight - 1, yMid, yBottom - 1);
+
+    if ( !(flags & wxCONTROL_CHECKED) )
+        drawIt = true; // with the same pen
+    else if ( flags & wxCONTROL_PRESSED )
     {
-        dc.SetBrush(wxSCHEME_COLOUR(m_scheme, CONTROL_PRESSED));
+        dc.SetPen(wxPen(wxSCHEME_COLOUR(m_scheme, CONTROL_PRESSED)));
         drawIt = true;
     }
     else // checked and unpressed
         drawIt = false;
 
     if ( drawIt )
-        dc.DrawCircle(xRight/2, yBottom/2, yMid/2);
+        DrawDownZag(dc, x + 2, xRight - 2, yMid, yBottom - 2);
 }
 
 void wxGTKRenderer::DrawUpZag(wxDC& dc,
@@ -1080,7 +1090,7 @@ wxBitmap wxGTKRenderer::GetCheckBitmap(int flags)
         dc.SelectObject(m_bitmapsCheckbox[0][1]);
         DrawUncheckBitmap(dc, rect, false);
 
-        // normal undetermined
+        // normal undeterminated
         dc.SelectObject(m_bitmapsCheckbox[0][2]);
         DrawUndeterminedBitmap(dc, rect, false);
 
@@ -1091,7 +1101,7 @@ wxBitmap wxGTKRenderer::GetCheckBitmap(int flags)
         dc.SelectObject(m_bitmapsCheckbox[1][1]);
         DrawUncheckBitmap(dc, rect, true);
 
-        // pressed undetermined
+        // pressed undeterminated
         dc.SelectObject(m_bitmapsCheckbox[1][2]);
         DrawUndeterminedBitmap(dc, rect, true);
     }
@@ -1809,7 +1819,7 @@ wxMenuGeometryInfo *wxGTKRenderer::GetMenuGeometry(wxWindow *win,
     gi->m_ofsAccel = gi->m_ofsLabel + widthLabelMax;
     if ( widthAccelMax > 0 )
     {
-        // if we actually have any accels, add a margin
+        // if we actually have any accesl, add a margin
         gi->m_ofsAccel += MENU_ACCEL_MARGIN;
     }
 

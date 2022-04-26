@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     14.10.01
+// RCS-ID:      $Id$
 // Copyright:   (c) 2001 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -26,7 +27,7 @@ public:
     wxStatusBarUniv(wxWindow *parent,
                     wxWindowID id = wxID_ANY,
                     long style = wxSTB_DEFAULT_STYLE,
-                    const wxString& name = wxASCII_STR(wxPanelNameStr))
+                    const wxString& name = wxPanelNameStr)
     {
         Init();
 
@@ -36,38 +37,38 @@ public:
     bool Create(wxWindow *parent,
                 wxWindowID id = wxID_ANY,
                 long style = wxSTB_DEFAULT_STYLE,
-                const wxString& name = wxASCII_STR(wxPanelNameStr));
+                const wxString& name = wxPanelNameStr);
 
     // implement base class methods
-    virtual void SetFieldsCount(int number = 1, const int *widths = NULL) wxOVERRIDE;
-    virtual void SetStatusWidths(int n, const int widths[]) wxOVERRIDE;
+    virtual void SetFieldsCount(int number = 1, const int *widths = NULL);
+    virtual void SetStatusWidths(int n, const int widths[]);
 
-    virtual bool GetFieldRect(int i, wxRect& rect) const wxOVERRIDE;
-    virtual void SetMinHeight(int height) wxOVERRIDE;
+    virtual bool GetFieldRect(int i, wxRect& rect) const;
+    virtual void SetMinHeight(int height);
 
-    virtual int GetBorderX() const wxOVERRIDE;
-    virtual int GetBorderY() const wxOVERRIDE;
+    virtual int GetBorderX() const;
+    virtual int GetBorderY() const;
 
     // wxInputConsumer pure virtual
-    virtual wxWindow *GetInputWindow() const wxOVERRIDE
+    virtual wxWindow *GetInputWindow() const
         { return const_cast<wxStatusBar*>(this); }
 
 protected:
-    virtual void DoUpdateStatusText(int i) wxOVERRIDE;
+    virtual void DoUpdateStatusText(int i);
 
     // recalculate the field widths
     void OnSize(wxSizeEvent& event);
 
     // draw the statusbar
-    virtual void DoDraw(wxControlRenderer *renderer) wxOVERRIDE;
+    virtual void DoDraw(wxControlRenderer *renderer);
 
     // tell them about our preferred height
-    virtual wxSize DoGetBestSize() const wxOVERRIDE;
+    virtual wxSize DoGetBestSize() const;
 
     // override DoSetSize() to prevent the status bar height from changing
     virtual void DoSetSize(int x, int y,
                            int width, int height,
-                           int sizeFlags = wxSIZE_AUTO) wxOVERRIDE;
+                           int sizeFlags = wxSIZE_AUTO);
 
     // get the (fixed) status bar height
     wxCoord GetHeight() const;
@@ -90,8 +91,8 @@ private:
     // the absolute status fields widths
     wxArrayInt m_widthsAbs;
 
-    wxDECLARE_DYNAMIC_CLASS(wxStatusBarUniv);
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_DYNAMIC_CLASS(wxStatusBarUniv)
+    DECLARE_EVENT_TABLE()
     WX_DECLARE_INPUT_CONSUMER()
 };
 

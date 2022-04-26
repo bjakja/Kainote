@@ -2,6 +2,7 @@
 // Name:        rawbmp.h
 // Purpose:     interface of wxPixelData
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -14,7 +15,7 @@
     possible to extend this class (interface) to other types of
     image content.
 
-    Implemented on Windows, GTK+ and macOS:
+    Implemented on Windows, GTK+ and OS X:
        @li wxNativePixelData: Class to access to wxBitmap's internal data
            without alpha channel (RGB).
        @li wxAlphaPixelData: Class to access to wxBitmap's internal data with
@@ -24,16 +25,10 @@
        @li wxImagePixelData: Class to access to wxImage's internal data with
            alpha channel (RGBA).
 
-    wxMSW note: efficient access is only possible to the bits of the so called
-    device independent bitmaps (DIB) under MSW. To ensure that wxBitmap uses a
-    DIB internally and not a device dependent bitmap (DDB), you need to pass an
-    explicit depth to its ctor, i.e. either 24 or 32, as by default wxBitmap
-    creates a DDB of the screen depth.
-
     Example:
 
     @code
-    wxBitmap bmp(width, size, 24); // explicit depth important under MSW
+    wxBitmap bmp;
     wxNativePixelData data(bmp);
     if ( !data )
     {

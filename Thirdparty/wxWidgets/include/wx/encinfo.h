@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     19.09.2003 (extracted from wx/fontenc.h)
+// RCS-ID:      $Id$
 // Copyright:   (c) 2003 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -23,8 +24,8 @@
 // Under X, it contains the last 2 elements of the font specifications
 // (registry and encoding).
 //
-// Under Windows, it contains a number which is one of predefined XXX_CHARSET
-// values (https://msdn.microsoft.com/en-us/library/cc250412.aspx).
+// Under Windows, it contains a number which is one of predefined CHARSET_XXX
+// values.
 //
 // Under all platforms it also contains a facename string which should be
 // used, if not empty, to create fonts in this encoding (this is the only way
@@ -37,8 +38,9 @@ struct WXDLLIMPEXP_CORE wxNativeEncodingInfo
     wxFontEncoding encoding;    // so that we know what this struct represents
 
 #if defined(__WXMSW__) || \
+    defined(__WXPM__)  || \
     defined(__WXMAC__) || \
-    defined(__WXQT__)
+    defined(__WXCOCOA__) // FIXME: __WXCOCOA__
 
     wxNativeEncodingInfo()
         : facename()

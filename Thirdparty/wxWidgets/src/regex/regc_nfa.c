@@ -35,6 +35,8 @@
  * the color chains.
  */
 
+#include "regguts.h"
+
 #define	NISERR()	VISERR(nfa->v)
 #define	NERR(e)		(void)VERR(nfa->v, (e))
 

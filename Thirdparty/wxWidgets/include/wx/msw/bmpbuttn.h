@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -22,30 +23,28 @@ public:
 
     wxBitmapButton(wxWindow *parent,
                    wxWindowID id,
-                   const wxBitmapBundle& bitmap,
+                   const wxBitmap& bitmap,
                    const wxPoint& pos = wxDefaultPosition,
                    const wxSize& size = wxDefaultSize,
-                   long style = 0,
+                   long style = wxBU_AUTODRAW,
                    const wxValidator& validator = wxDefaultValidator,
-                   const wxString& name = wxASCII_STR(wxButtonNameStr))
+                   const wxString& name = wxButtonNameStr)
     {
         Create(parent, id, bitmap, pos, size, style, validator, name);
     }
 
     bool Create(wxWindow *parent,
                 wxWindowID id,
-                const wxBitmapBundle& bitmap,
+                const wxBitmap& bitmap,
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
-                long style = 0,
+                long style = wxBU_AUTODRAW,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxASCII_STR(wxButtonNameStr));
+                const wxString& name = wxButtonNameStr);
 
-    bool CreateCloseButton(wxWindow* parent,
-                           wxWindowID winid,
-                           const wxString& name = wxString());
 protected:
-    wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxBitmapButton);
+    DECLARE_EVENT_TABLE()
+    DECLARE_DYNAMIC_CLASS_NO_COPY(wxBitmapButton)
 };
 
 #endif // _WX_BMPBUTTN_H_

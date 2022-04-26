@@ -3,6 +3,7 @@
 // Purpose:     MSW version of wxStaticLine class
 // Author:      Vadim Zeitlin
 // Created:     28.06.99
+// Version:     $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,6 +19,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #include "wx/statline.h"
 
@@ -61,7 +65,9 @@ WXDWORD wxStaticLine::MSWGetStyle(long style, WXDWORD *exstyle) const
 
     // add our default styles
     msStyle |= SS_SUNKEN | SS_NOTIFY | WS_CLIPSIBLINGS;
+#ifndef __WXWINCE__
     msStyle |= SS_GRAYRECT ;
+#endif
 
     return msStyle ;
 }

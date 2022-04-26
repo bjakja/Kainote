@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     25.10.99
+// RCS-ID:      $Id$
 // Copyright:   (c) 1999 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -21,19 +22,11 @@
 
 #include "wx/object.h"  // base class
 
-#include "wx/bmpbndl.h"
-
-#include "wx/windowid.h"
-
-#include "wx/vector.h"
-
 // ----------------------------------------------------------------------------
 // forward declarations
 // ----------------------------------------------------------------------------
 
-#if wxUSE_ACCEL
 class WXDLLIMPEXP_FWD_CORE wxAcceleratorEntry;
-#endif // wxUSE_ACCEL
 class WXDLLIMPEXP_FWD_CORE wxMenuItem;
 class WXDLLIMPEXP_FWD_CORE wxMenu;
 
@@ -89,13 +82,7 @@ public:
     void SetKind(wxItemKind kind) { m_kind = kind; }
     bool IsSeparator() const { return m_kind == wxITEM_SEPARATOR; }
 
-    bool IsCheck() const { return m_kind == wxITEM_CHECK; }
-    bool IsRadio() const { return m_kind == wxITEM_RADIO; }
-
-    virtual void SetCheckable(bool checkable)
-        { m_kind = checkable ? wxITEM_CHECK : wxITEM_NORMAL; }
-
-    // Notice that this doesn't quite match SetCheckable().
+    virtual void SetCheckable(bool checkable) { m_kind = checkable ? wxITEM_CHECK : wxITEM_NORMAL; }
     bool IsCheckable() const
         { return m_kind == wxITEM_CHECK || m_kind == wxITEM_RADIO; }
 
@@ -126,14 +113,6 @@ public:
     // set the accel for this item - this may also be done indirectly with
     // SetText()
     virtual void SetAccel(wxAcceleratorEntry *accel);
-
-    // add the accel to extra accels list
-    virtual void AddExtraAccel(const wxAcceleratorEntry& accel);
-
-    // return vector of extra accels. Implementation only.
-    const wxVector<wxAcceleratorEntry>& GetExtraAccels() const { return m_extraAccels; }
-
-    virtual void ClearExtraAccels();
 #endif // wxUSE_ACCEL
 
 #if WXWIN_COMPATIBILITY_2_8
@@ -148,7 +127,7 @@ public:
     wxDEPRECATED( const wxString& GetText() const );
 
     // Now use GetLabelText to strip the accelerators
-    wxDEPRECATED( static wxString GetLabelFromText(const wxString& text) );
+    static wxDEPRECATED( wxString GetLabelFromText(const wxString& text) );
 
     // Now use SetItemLabel
     wxDEPRECATED( virtual void SetText(const wxString& str) );
@@ -166,10 +145,6 @@ public:
     }
 
 protected:
-    // Helper function returning the appropriate bitmap from the given bundle
-    // (which may be invalid, in which case invalid bitmap is returned).
-    wxBitmap GetBitmapFromBundle(const wxBitmapBundle& bundle) const;
-
     wxWindowIDRef m_id;             // numeric id of the item >= 0 or wxID_ANY or wxID_SEPARATOR
     wxMenu       *m_parentMenu,     // the menu we belong to
                  *m_subMenu;        // our sub menu or NULL
@@ -178,10 +153,6 @@ protected:
     wxItemKind    m_kind;           // separator/normal/check/radio item?
     bool          m_isChecked;      // is checked?
     bool          m_isEnabled;      // is enabled?
-
-#if wxUSE_ACCEL
-    wxVector<wxAcceleratorEntry> m_extraAccels; // extra accels will work, but won't be shown in wxMenuItem title
-#endif // wxUSE_ACCEL
 
     // this ctor is for the derived classes only, we're never created directly
     wxMenuItemBase(wxMenu *parentMenu = NULL,
@@ -228,8 +199,10 @@ inline void wxMenuItemBase::SetText(const wxString& text) { SetItemLabel(text); 
     #include "wx/gtk1/menuitem.h"
 #elif defined(__WXMAC__)
     #include "wx/osx/menuitem.h"
-#elif defined(__WXQT__)
-    #include "wx/qt/menuitem.h"
+#elif defined(__WXCOCOA__)
+    #include "wx/cocoa/menuitem.h"
+#elif defined(__WXPM__)
+    #include "wx/os2/menuitem.h"
 #endif
 #endif // wxUSE_BASE_CLASSES_ONLY/!wxUSE_BASE_CLASSES_ONLY
 

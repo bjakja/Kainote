@@ -3,6 +3,7 @@
 // Purpose:     Rich text printing classes
 // Author:      Julian Smart
 // Created:     2006-10-23
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -86,7 +87,7 @@ public:
     void SetTextColour(const wxColour& col) { m_colour = col; }
     const wxColour& GetTextColour() const { return m_colour; }
 
-    wxDECLARE_CLASS(wxRichTextHeaderFooterData);
+    DECLARE_CLASS(wxRichTextHeaderFooterData)
 
 private:
 
@@ -106,7 +107,7 @@ private:
 class WXDLLIMPEXP_RICHTEXT wxRichTextPrintout : public wxPrintout
 {
 public:
-    wxRichTextPrintout(const wxString& title = wxGetTranslation("Printout"));
+    wxRichTextPrintout(const wxString& title = _("Printout"));
     virtual ~wxRichTextPrintout();
 
     /// The buffer to print
@@ -124,11 +125,11 @@ public:
     void CalculateScaling(wxDC* dc, wxRect& textRect, wxRect& headerRect, wxRect& footerRect);
 
     // wxPrintout virtual functions
-    virtual bool OnPrintPage(int page) wxOVERRIDE;
-    virtual bool HasPage(int page) wxOVERRIDE;
-    virtual void GetPageInfo(int *minPage, int *maxPage, int *selPageFrom, int *selPageTo) wxOVERRIDE;
-    virtual bool OnBeginDocument(int startPage, int endPage) wxOVERRIDE;
-    virtual void OnPreparePrinting() wxOVERRIDE;
+    virtual bool OnPrintPage(int page);
+    virtual bool HasPage(int page);
+    virtual void GetPageInfo(int *minPage, int *maxPage, int *selPageFrom, int *selPageTo);
+    virtual bool OnBeginDocument(int startPage, int endPage);
+    virtual void OnPreparePrinting();
 
 private:
 
@@ -160,19 +161,15 @@ private:
 class WXDLLIMPEXP_RICHTEXT wxRichTextPrinting : public wxObject
 {
 public:
-    wxRichTextPrinting(const wxString& name = wxGetTranslation("Printing"), wxWindow *parentWindow = NULL);
+    wxRichTextPrinting(const wxString& name = _("Printing"), wxWindow *parentWindow = NULL);
     virtual ~wxRichTextPrinting();
 
     /// Preview the file or buffer
-#if wxUSE_FFILE && wxUSE_STREAMS
     bool PreviewFile(const wxString& richTextFile);
-#endif
     bool PreviewBuffer(const wxRichTextBuffer& buffer);
 
     /// Print the file or buffer
-#if wxUSE_FFILE && wxUSE_STREAMS
     bool PrintFile(const wxString& richTextFile, bool showPrintDialog = true);
-#endif
     bool PrintBuffer(const wxRichTextBuffer& buffer, bool showPrintDialog = true);
 
     /// Shows page setup dialog

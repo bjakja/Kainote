@@ -3,22 +3,32 @@
 // Purpose:     wxArchive file system
 // Author:      Vaclav Slavik, Mike Wetherell
 // Copyright:   (c) 1999 Vaclav Slavik, (c) 2006 Mike Wetherell
+// CVS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
+
+#ifdef __BORLANDC__
+#pragma hdrstop
+#endif
 
 #if wxUSE_FS_ARCHIVE
 
-#include "wx\fs_arc.h"
+#include "wx/fs_arc.h"
 
 #ifndef WX_PRECOMP
-    #include "wx\intl.h"
-    #include "wx\log.h"
+    #include "wx/intl.h"
+    #include "wx/log.h"
 #endif
 
-#include "wx\archive.h"
-#include "wx\private/fileback.h"
+#if WXWIN_COMPATIBILITY_2_6 && wxUSE_ZIPSTREAM
+    #include "wx/zipstrm.h"
+#else
+    #include "wx/archive.h"
+#endif
+
+#include "wx/private/fileback.h"
 
 //---------------------------------------------------------------------------
 // wxArchiveFSCacheDataImpl
@@ -182,7 +192,7 @@ wxArchiveFSEntry *wxArchiveFSCacheDataImpl::GetNext(wxArchiveFSEntry *fse)
 //---------------------------------------------------------------------------
 // wxArchiveFSCacheData
 //
-// This is the interface for wxArchiveFSCacheDataImpl above. Holds the catalog
+// This is the inteface for wxArchiveFSCacheDataImpl above. Holds the catalog
 // of an archive file, and if it is being read from a non-seekable stream, a
 // copy of its backing file.
 //---------------------------------------------------------------------------
@@ -301,13 +311,14 @@ wxArchiveFSCacheData *wxArchiveFSCache::Get(const wxString& name)
 // wxArchiveFSHandler
 //----------------------------------------------------------------------------
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxArchiveFSHandler, wxFileSystemHandler);
+IMPLEMENT_DYNAMIC_CLASS(wxArchiveFSHandler, wxFileSystemHandler)
 
 wxArchiveFSHandler::wxArchiveFSHandler()
  :  wxFileSystemHandler()
 {
     m_Archive = NULL;
     m_FindEntry = NULL;
+    m_ZipFile = m_Pattern = m_BaseDir = wxEmptyString;
     m_AllowDirs = m_AllowFiles = true;
     m_DirsFound = NULL;
     m_cache = NULL;
@@ -393,6 +404,11 @@ wxFSFile* wxArchiveFSHandler::OpenFile(
         return NULL;
     }
 
+#if WXWIN_COMPATIBILITY_2_6 && wxUSE_ZIPSTREAM
+    if (wxDynamicCast(factory, wxZipClassFactory))
+        ((wxZipInputStream*)s)->m_allowSeeking = true;
+#endif // WXWIN_COMPATIBILITY_2_6
+
     return new wxFSFile(s,
                         key + right,
                         wxEmptyString,
@@ -472,9 +488,9 @@ wxString wxArchiveFSHandler::FindNext()
 wxString wxArchiveFSHandler::DoFind()
 {
     wxString namestr, dir, filename;
-    wxString match;
+    wxString match = wxEmptyString;
 
-    while (match.empty())
+    while (match == wxEmptyString)
     {
         m_FindEntry = m_Archive->GetNext(m_FindEntry);
 
@@ -501,7 +517,7 @@ wxString wxArchiveFSHandler::DoFind()
                         match = m_ZipFile + dir + wxT("/") + filename;
                 }
                 else
-                    break; // already transversed
+                    break; // already tranversed
             }
         }
 

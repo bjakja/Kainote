@@ -3,6 +3,7 @@
 // Purpose:     html printing classes
 // Author:      Vaclav Slavik
 // Created:     25/09/99
+// RCS-ID:      $Id$
 // Copyright:   (c) Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -20,7 +21,6 @@
 
 #include "wx/print.h"
 #include "wx/printdlg.h"
-#include "wx/vector.h"
 
 #include <limits.h> // INT_MAX
 
@@ -54,11 +54,6 @@ public:
     // (see wxFileSystem for detailed explanation)
     void SetHtmlText(const wxString& html, const wxString& basepath = wxEmptyString, bool isdir = true);
 
-    // Sets the HTML cell that will be rendered: this is more efficient than
-    // using text as it allows to parse it only once. Note that the cell will
-    // be modified by this call.
-    void SetHtmlCell(wxHtmlContainerCell& cell);
-
     // Sets fonts to be used when displaying HTML page. (if size null then default sizes used).
     void SetFonts(const wxString& normal_face, const wxString& fixed_face, const int *sizes = NULL);
 
@@ -68,30 +63,38 @@ public:
                           const wxString& normal_face = wxEmptyString,
                           const wxString& fixed_face = wxEmptyString);
 
-    // Finds the next page break after the specified (vertical) position.
-    // Returns wxNOT_FOUND if passed in position is the last page break.
-    int FindNextPageBreak(int pos) const;
-
     // [x,y] is position of upper-left corner of printing rectangle (see SetSize)
     // from is y-coordinate of the very first visible cell
     // to is y-coordinate of the next following page break, if any
-    void Render(int x, int y, int from = 0, int to = INT_MAX);
+    // Returned value is y coordinate of first cell than didn't fit onto page.
+    // Use this value as 'from' in next call to Render in order to print multiple pages
+    // document
+    // If dont_render is TRUE then nothing is rendered into DC and it only counts
+    // pixels and return y coord of the next page
+    //
+    // known_pagebreaks and number_of_pages are used only when counting pages;
+    // otherwise, their default values should be used. Their purpose is to
+    // support pagebreaks using a subset of CSS2's <DIV>. The <DIV> handler
+    // needs to know what pagebreaks have already been set so that it doesn't
+    // set the same pagebreak twice.
+    //
+    // CAUTION! Render() changes DC's user scale and does NOT restore it!
+    int Render(int x, int y, wxArrayInt& known_pagebreaks, int from = 0,
+               int dont_render = false, int to = INT_MAX);
 
     // returns total width of the html document
     int GetTotalWidth() const;
 
     // returns total height of the html document
+    // (compare Render's return value with this)
     int GetTotalHeight() const;
 
 private:
-    void DoSetHtmlCell(wxHtmlContainerCell* cell);
-
     wxDC *m_DC;
-    wxFileSystem m_FS;
-    wxHtmlWinParser m_Parser;
+    wxHtmlWinParser *m_Parser;
+    wxFileSystem *m_FS;
     wxHtmlContainerCell *m_Cells;
-    int m_Width, m_Height;
-    bool m_ownsCells;
+    int m_MaxWidth, m_Width, m_Height;
 
     wxDECLARE_NO_COPY_CLASS(wxHtmlDCRenderer);
 };
@@ -119,6 +122,7 @@ class WXDLLIMPEXP_HTML wxHtmlPrintout : public wxPrintout
 {
 public:
     wxHtmlPrintout(const wxString& title = wxT("Printout"));
+    virtual ~wxHtmlPrintout();
 
     void SetHtmlText(const wxString& html, const wxString &basepath = wxEmptyString, bool isdir = true);
             // prepares the class for printing this html document.
@@ -151,19 +155,17 @@ public:
                           const wxString& normal_face = wxEmptyString,
                           const wxString& fixed_face = wxEmptyString);
 
-    void SetMargins(float top = 25.2f, float bottom = 25.2f, float left = 25.2f, float right = 25.2f,
+    void SetMargins(float top = 25.2, float bottom = 25.2, float left = 25.2, float right = 25.2,
                     float spaces = 5);
-            // sets margins in millimeters. Defaults to 1 inch for margins and 0.5cm for space
+            // sets margins in milimeters. Defaults to 1 inch for margins and 0.5cm for space
             // between text and header and/or footer
 
-    void SetMargins(const wxPageSetupDialogData& pageSetupData);
-
     // wxPrintout stuff:
-    bool OnPrintPage(int page) wxOVERRIDE;
-    bool HasPage(int page) wxOVERRIDE;
-    void GetPageInfo(int *minPage, int *maxPage, int *selPageFrom, int *selPageTo) wxOVERRIDE;
-    bool OnBeginDocument(int startPage, int endPage) wxOVERRIDE;
-    void OnPreparePrinting() wxOVERRIDE;
+    bool OnPrintPage(int page);
+    bool HasPage(int page);
+    void GetPageInfo(int *minPage, int *maxPage, int *selPageFrom, int *selPageTo);
+    bool OnBeginDocument(int startPage, int endPage);
+    void OnPreparePrinting();
 
     // Adds input filter
     static void AddFilter(wxHtmlFilter *filter);
@@ -192,22 +194,23 @@ private:
     wxString TranslateHeader(const wxString& instr, int page);
             // substitute @PAGENUM@ and @PAGESCNT@ by real values
     void CountPages();
-            // fills m_PageBreaks, which indirectly gives the number of pages
+            // counts pages and fills m_NumPages and m_PageBreaks
 
 
 private:
-    wxVector<int> m_PageBreaks;
+    int m_NumPages;
+    wxArrayInt m_PageBreaks;
 
     wxString m_Document, m_BasePath;
     bool m_BasePathIsDir;
     wxString m_Headers[2], m_Footers[2];
 
     int m_HeaderHeight, m_FooterHeight;
-    wxHtmlDCRenderer m_Renderer, m_RendererHdr;
+    wxHtmlDCRenderer *m_Renderer, *m_RendererHdr;
     float m_MarginTop, m_MarginBottom, m_MarginLeft, m_MarginRight, m_MarginSpace;
 
     // list of HTML filters
-    static wxVector<wxHtmlFilter*> m_Filters;
+    static wxList m_Filters;
 
     wxDECLARE_NO_COPY_CLASS(wxHtmlPrintout);
 };
@@ -257,7 +260,7 @@ public:
             // pg is one of wxPAGE_ODD, wxPAGE_EVEN and wx_PAGE_ALL constants.
             // You can set different header/footer for odd and even pages
 
-    void SetFonts(const wxString& normal_face, const wxString& fixed_face, const int* sizes = NULL);
+    void SetFonts(const wxString& normal_face, const wxString& fixed_face, const int *sizes = 0);
     // Sets fonts to be used when displaying HTML page. (if size null then default sizes used)
 
     // Sets font sizes to be relative to the given size or the system
@@ -281,16 +284,6 @@ public:
     void SetName(const wxString& name) { m_Name = name; }
             // set the printout name
 
-    // Controls showing the dialog when printing: by default, always shown.
-    enum PromptMode
-    {
-        Prompt_Never,
-        Prompt_Once,
-        Prompt_Always
-    };
-
-    void SetPromptMode(PromptMode promptMode) { m_promptMode = promptMode; }
-
 protected:
     virtual wxHtmlPrintout *CreatePrintout();
     virtual bool DoPreview(wxHtmlPrintout *printout1, wxHtmlPrintout *printout2);
@@ -313,8 +306,6 @@ private:
 
     wxString m_Headers[2], m_Footers[2];
     wxWindow *m_ParentWindow;
-
-    PromptMode m_promptMode;
 
     wxDECLARE_NO_COPY_CLASS(wxHtmlEasyPrinting);
 };

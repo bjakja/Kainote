@@ -3,6 +3,7 @@
 // Purpose:     Generic implementation of wxCustomBackgroundWindow.
 // Author:      Vadim Zeitlin
 // Created:     2011-10-10
+// RCS-ID:      $Id: wxhead.h,v 1.12 2010-04-22 12:44:51 zeitlin Exp $
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -11,9 +12,6 @@
 #define _WX_GENERIC_CUSTOMBGWIN_H_
 
 #include "wx/bitmap.h"
-#include "wx/dc.h"
-#include "wx/event.h"
-#include "wx/window.h"
 
 // A helper to avoid template bloat: this class contains all type-independent
 // code of wxCustomBackgroundWindow<> below.
@@ -61,24 +59,24 @@ public:
     wxCustomBackgroundWindow() { }
 
 protected:
-    virtual void DoSetBackgroundBitmap(const wxBitmap& bmp) wxOVERRIDE
+    virtual void DoSetBackgroundBitmap(const wxBitmap& bmp)
     {
         m_bitmapBg = bmp;
 
         if ( m_bitmapBg.IsOk() )
         {
-            BaseWindowClass::Bind
+            BaseWindowClass::Connect
             (
                 wxEVT_ERASE_BACKGROUND,
-                &wxCustomBackgroundWindow::OnEraseBackground, this
+                wxEraseEventHandler(wxCustomBackgroundWindow::OnEraseBackground)
             );
         }
         else
         {
-            BaseWindowClass::Unbind
+            BaseWindowClass::Disconnect
             (
                 wxEVT_ERASE_BACKGROUND,
-                &wxCustomBackgroundWindow::OnEraseBackground, this
+                wxEraseEventHandler(wxCustomBackgroundWindow::OnEraseBackground)
             );
         }
     }

@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     19.05.01
+// RCS-ID:      $Id$
 // Copyright:   (c) 2001 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #include "wx/frame.h"
 
@@ -33,10 +37,10 @@
 // implementation
 // ============================================================================
 
-wxBEGIN_EVENT_TABLE(wxFrame, wxFrameBase)
+BEGIN_EVENT_TABLE(wxFrame, wxFrameBase)
     EVT_SIZE(wxFrame::OnSize)
     EVT_SYS_COLOUR_CHANGED(wxFrame::OnSysColourChanged)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 // ----------------------------------------------------------------------------
 // ctors
@@ -104,7 +108,12 @@ void wxFrame::PositionMenuBar()
 #endif // wxUSE_TOOLBAR
 
         m_frameMenuBar->SetSize(0,
+#ifdef __WXPM__   // FIXME -- remove this, make wxOS2/Univ behave as
+                 //          the rest of the world!!!
+                                GetClientSize().y - heightMbar - heightTbar,
+#else
                                 - (heightMbar + heightTbar),
+#endif
                                 GetClientSize().x, heightMbar);
     }
 }
@@ -185,7 +194,7 @@ wxPoint wxFrame::GetClientAreaOrigin() const
 {
     wxPoint pt = wxFrameBase::GetClientAreaOrigin();
 
-#if wxUSE_MENUS
+#if wxUSE_MENUS && !defined(__WXPM__)
     if ( m_frameMenuBar )
     {
         pt.y += m_frameMenuBar->GetSize().y;
@@ -298,5 +307,9 @@ bool wxFrame::Enable(bool enable)
 {
     if (!wxFrameBase::Enable(enable))
         return false;
+#ifdef __WXMICROWIN__
+    if (m_frameMenuBar)
+        m_frameMenuBar->Enable(enable);
+#endif
     return true;
 }

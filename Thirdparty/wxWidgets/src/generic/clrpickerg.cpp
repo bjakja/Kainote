@@ -4,6 +4,7 @@
 // Author:      Francesco Montorsi (readapted code written by Vadim Zeitlin)
 // Modified by:
 // Created:     15/04/2006
+// RCS-ID:      $Id$
 // Copyright:   (c) Vadim Zeitlin, Francesco Montorsi
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -19,6 +20,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_COLOURPICKERCTRL
 
@@ -26,17 +30,13 @@
 #include "wx/colordlg.h"
 #include "wx/dcmemory.h"
 
-namespace // anonymous namespace
-{
-const wxSize defaultBitmapSize(60, 13);
-}
 
 // ============================================================================
 // implementation
 // ============================================================================
 
 wxColourData wxGenericColourButton::ms_data;
-wxIMPLEMENT_DYNAMIC_CLASS(wxGenericColourButton, wxBitmapButton);
+IMPLEMENT_DYNAMIC_CLASS(wxGenericColourButton, wxBitmapButton)
 
 // ----------------------------------------------------------------------------
 // wxGenericColourButton
@@ -47,24 +47,24 @@ bool wxGenericColourButton::Create( wxWindow *parent, wxWindowID id,
                         const wxSize &size, long style,
                         const wxValidator& validator, const wxString &name)
 {
+    m_bitmap = wxBitmap( 60, 13 );
+
     // create this button
     if (!wxBitmapButton::Create( parent, id, m_bitmap, pos,
-                           size, style, validator, name ))
+                           size, style | wxBU_AUTODRAW, validator, name ))
     {
         wxFAIL_MSG( wxT("wxGenericColourButton creation failed") );
         return false;
     }
 
     // and handle user clicks on it
-    Bind(wxEVT_BUTTON, &wxGenericColourButton::OnButtonClick, this, GetId());
+    Connect(GetId(), wxEVT_COMMAND_BUTTON_CLICKED,
+            wxCommandEventHandler(wxGenericColourButton::OnButtonClick),
+            NULL, this);
 
-    m_bitmap = wxBitmap(FromDIP(defaultBitmapSize));
     m_colour = col;
     UpdateColour();
     InitColourData();
-    ms_data.SetChooseAlpha((style & wxCLRP_SHOW_ALPHA) != 0);
-
-    Bind(wxEVT_DPI_CHANGED, &wxGenericColourButton::OnDPIChanged, this);
 
     return true;
 }
@@ -88,44 +88,15 @@ void wxGenericColourButton::OnButtonClick(wxCommandEvent& WXUNUSED(ev))
 
     // create the colour dialog and display it
     wxColourDialog dlg(this, &ms_data);
-    dlg.Bind(wxEVT_COLOUR_CHANGED, &wxGenericColourButton::OnColourChanged, this);
-
-    wxEventType eventType;
     if (dlg.ShowModal() == wxID_OK)
     {
         ms_data = dlg.GetColourData();
         SetColour(ms_data.GetColour());
 
-        eventType = wxEVT_COLOURPICKER_CHANGED;
+        // fire an event
+        wxColourPickerEvent event(this, GetId(), m_colour);
+        GetEventHandler()->ProcessEvent(event);
     }
-    else
-    {
-        eventType = wxEVT_COLOURPICKER_DIALOG_CANCELLED;
-    }
-
-    // Fire the corresponding event: note that we want it to appear as
-    // originating from our parent, which is the user-visible window, and not
-    // this button itself, which is just an implementation detail.
-    wxWindow* const parent = GetParent();
-    wxColourPickerEvent event(parent, parent->GetId(), m_colour, eventType);
-
-    ProcessWindowEvent(event);
-}
-
-void wxGenericColourButton::OnColourChanged(wxColourDialogEvent& ev)
-{
-    wxWindow* const parent = GetParent();
-    wxColourPickerEvent event(parent, parent->GetId(), ev.GetColour(),
-                              wxEVT_COLOURPICKER_CURRENT_CHANGED);
-    parent->ProcessWindowEvent(event);
-}
-
-void wxGenericColourButton::OnDPIChanged(wxDPIChangedEvent& event)
-{
-    m_bitmap = wxBitmap(FromDIP(defaultBitmapSize));
-    UpdateColour();
-
-    event.Skip();
 }
 
 void wxGenericColourButton::UpdateColour()
@@ -140,17 +111,10 @@ void wxGenericColourButton::UpdateColour()
         wxColour col( ~m_colour.Red(), ~m_colour.Green(), ~m_colour.Blue() );
         dc.SetTextForeground( col );
         dc.SetFont( GetFont() );
-
-        const wxString text = m_colour.GetAsString(wxC2S_HTML_SYNTAX);
-        const wxSize textSize = dc.GetTextExtent(text);
-        const int x = (m_bitmap.GetWidth() - textSize.GetWidth()) / 2;
-        const int y = (m_bitmap.GetHeight() - textSize.GetHeight()) / 2;
-        dc.DrawText(text, x, y);
+        dc.DrawText( m_colour.GetAsString(wxC2S_HTML_SYNTAX), 0, 0 );
     }
 
     dc.SelectObject( wxNullBitmap );
-
-    SetBitmapLabel( wxNullBitmap );
     SetBitmapLabel( m_bitmap );
 }
 

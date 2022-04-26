@@ -1,3 +1,5 @@
+/* $Id$ */
+
 /*
  * tiff-palette.c -- create a Class P (palette) TIFF file
  *
@@ -217,7 +219,6 @@ int main(int argc, char **argv)
 
     if ((tif = TIFFOpen(argv[3], "w")) == NULL) {
         fprintf(stderr, "can't open %s as a TIFF file\n", argv[3]);
-		free(red);free(green);free(blue);
         return 0;
     }
 
@@ -273,10 +274,3 @@ Usage()
     fprintf(stderr, "Usage: %s -depth (8 | 4 | 2 | 1) tiff-image\n", programName);
     exit(0);
 }
-/*
- * Local Variables:
- * mode: c
- * c-basic-offset: 8
- * fill-column: 78
- * End:
- */

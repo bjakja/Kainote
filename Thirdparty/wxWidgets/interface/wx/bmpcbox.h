@@ -2,6 +2,7 @@
 // Name:        bmpcbox.h
 // Purpose:     interface of wxBitmapComboBox
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -27,7 +28,7 @@
     @style{wxCB_SORT}
            Sorts the entries in the list alphabetically.
     @style{wxTE_PROCESS_ENTER}
-           The control will generate the event wxEVT_TEXT_ENTER
+           The control will generate the event wxEVT_COMMAND_TEXT_ENTER
            (otherwise pressing Enter key is either processed internally by the
            control or used for navigation between dialog controls).
            Windows only.
@@ -37,18 +38,18 @@
 
     @beginEventEmissionTable{wxCommandEvent}
     @event{EVT_COMBOBOX(id, func)}
-           Process a @c wxEVT_COMBOBOX event, when an item on
+           Process a @c wxEVT_COMMAND_COMBOBOX_SELECTED event, when an item on
            the list is selected.
     @event{EVT_TEXT(id, func)}
-           Process a @c wxEVT_TEXT event, when the combobox text changes.
+           Process a @c wxEVT_COMMAND_TEXT_UPDATED event, when the combobox text changes.
     @event{EVT_TEXT_ENTER(id, func)}
-           Process a @c wxEVT_TEXT_ENTER event, when RETURN is pressed in
+           Process a @c wxEVT_COMMAND_TEXT_ENTER event, when RETURN is pressed in
            the combobox.
     @endEventTable
 
-    @library{wxcore}
+    @library{wxadv}
     @category{ctrl}
-    @appearance{bitmapcombobox}
+    @appearance{bitmapcombobox.png}
 
     @see wxComboBox, wxChoice, wxOwnerDrawnComboBox, wxCommandEvent
 */
@@ -110,7 +111,7 @@ public:
         @param size
             Initial size.
         @param choices
-            A wxArrayString with which to initialise the control.
+            An wxArrayString with which to initialise the control.
         @param style
             The window style, see wxCB_* flags.
         @param validator

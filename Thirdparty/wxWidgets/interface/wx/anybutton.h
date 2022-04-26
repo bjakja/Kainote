@@ -2,6 +2,7 @@
 // Name:        anybutton.h
 // Purpose:     interface of wxAnyButton
 // Author:      wxWidgets team
+// RCS-ID:      $Id: button.h 69135 2011-09-18 04:38:01Z RD $
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -13,7 +14,7 @@
 
 #define wxBU_EXACTFIT        0x0001
 #define wxBU_NOTEXT          0x0002
-#define wxBU_AUTODRAW        0x0004 ///< Obsolete, has no effect.
+#define wxBU_AUTODRAW        0x0004
 
 
 /**
@@ -41,10 +42,10 @@ public:
     wxBitmap GetBitmap() const;
 
     /**
-        Returns the bitmap used when the mouse is over the button.
+        Returns the bitmap used when the mouse is over the button, which may be
+        invalid.
 
-        The returned bitmap is only valid if SetBitmapCurrent() had been
-        previously called.
+        @see SetBitmapCurrent()
 
         @since 2.9.1 (available as wxBitmapButton::GetBitmapHover() in previous
             versions)
@@ -52,20 +53,18 @@ public:
     wxBitmap GetBitmapCurrent() const;
 
     /**
-        Returns the bitmap used for the disabled state.
+        Returns the bitmap for the disabled state, which may be invalid.
 
-        The returned bitmap is only valid if SetBitmapDisabled() had been
-        previously called.
+        @see SetBitmapDisabled()
 
         @since 2.9.1 (available in wxBitmapButton only in previous versions)
     */
     wxBitmap GetBitmapDisabled() const;
 
     /**
-        Returns the bitmap used for the focused state.
+        Returns the bitmap for the focused state, which may be invalid.
 
-        The returned bitmap is only valid if SetBitmapFocus() had been
-        previously called.
+        @see SetBitmapFocus()
 
         @since 2.9.1 (available in wxBitmapButton only in previous versions)
     */
@@ -84,17 +83,16 @@ public:
     wxBitmap GetBitmapLabel() const;
 
     /**
-        Returns the bitmap used when the button is pressed.
+        Returns the bitmap for the pressed state, which may be invalid.
 
-        The returned bitmap is only valid if SetBitmapPressed() had been
-        previously called.
+        @see SetBitmapPressed()
 
         @since 2.9.1 (available as wxBitmapButton::GetBitmapSelected() in
             previous versions)
     */
     wxBitmap GetBitmapPressed() const;
 
-
+    
     /**
         Sets the bitmap to display in the button.
 
@@ -105,11 +103,8 @@ public:
         states.
 
         @param bitmap
-            The bitmap bundle containing the resolution-dependent bitmaps to
-            display in the button. At default DPI, the size of the bitmap is
-            determined by the default bundle size, i.e. the value returned from
-            wxBitmapBundle::GetDefaultSize(). If the bitmap bundle is invalid,
-            any currently shown bitmaps are removed from the button.
+            The bitmap to display in the button. May be invalid to remove any
+            currently displayed bitmap.
         @param dir
             The position of the bitmap inside the button. By default it is
             positioned to the left of the text, near to the left button border.
@@ -119,50 +114,38 @@ public:
 
         @since 2.9.1
      */
-    void SetBitmap(const wxBitmapBundle& bitmap, wxDirection dir = wxLEFT);
+    void SetBitmap(const wxBitmap& bitmap, wxDirection dir = wxLEFT);
 
     /**
         Sets the bitmap to be shown when the mouse is over the button.
-
-        If @a bitmap is invalid, the normal bitmap will be used in the current
-        state.
 
         @see GetBitmapCurrent()
 
         @since 2.9.1 (available as wxBitmapButton::SetBitmapHover() in previous
             versions)
     */
-    void SetBitmapCurrent(const wxBitmapBundle& bitmap);
+    void SetBitmapCurrent(const wxBitmap& bitmap);
 
     /**
         Sets the bitmap for the disabled button appearance.
-
-        If @a bitmap is invalid, the disabled bitmap is set to the
-        automatically generated greyed out version of the normal bitmap, i.e.
-        the same bitmap as is used by default if this method is not called at
-        all. Use SetBitmap() with an invalid bitmap to remove the bitmap
-        completely (for all states).
 
         @see GetBitmapDisabled(), SetBitmapLabel(),
              SetBitmapPressed(), SetBitmapFocus()
 
         @since 2.9.1 (available in wxBitmapButton only in previous versions)
     */
-    void SetBitmapDisabled(const wxBitmapBundle& bitmap);
+    void SetBitmapDisabled(const wxBitmap& bitmap);
 
     /**
         Sets the bitmap for the button appearance when it has the keyboard
         focus.
-
-        If @a bitmap is invalid, the normal bitmap will be used in the focused
-        state.
 
         @see GetBitmapFocus(), SetBitmapLabel(),
              SetBitmapPressed(), SetBitmapDisabled()
 
         @since 2.9.1 (available in wxBitmapButton only in previous versions)
     */
-    void SetBitmapFocus(const wxBitmapBundle& bitmap);
+    void SetBitmapFocus(const wxBitmap& bitmap);
 
     /**
         Sets the bitmap label for the button.
@@ -174,7 +157,7 @@ public:
 
         @since 2.9.1 (available in wxBitmapButton only in previous versions)
     */
-    void SetBitmapLabel(const wxBitmapBundle& bitmap);
+    void SetBitmapLabel(const wxBitmap& bitmap);
 
     /**
         Sets the bitmap for the selected (depressed) button appearance.
@@ -182,8 +165,8 @@ public:
         @since 2.9.1 (available as wxBitmapButton::SetBitmapSelected() in
             previous versions)
     */
-    void SetBitmapPressed(const wxBitmapBundle& bitmap);
-
+    void SetBitmapPressed(const wxBitmap& bitmap);
+    
 
     /**
         Get the margins between the bitmap and the text of the button.

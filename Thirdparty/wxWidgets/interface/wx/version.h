@@ -2,6 +2,7 @@
 // Name:        version.h
 // Purpose:     wxWidgets version numbers
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 

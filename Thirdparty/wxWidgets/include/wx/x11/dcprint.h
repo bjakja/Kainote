@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -16,7 +17,7 @@
 class WXDLLIMPEXP_CORE wxPrinterDC: public wxDC
 {
 public:
-    wxDECLARE_CLASS(wxPrinterDC);
+    DECLARE_CLASS(wxPrinterDC)
 
     // Create a printer DC
     wxPrinterDC(const wxString& driver, const wxString& device, const wxString& output, bool interactive = TRUE, wxPrintOrientation orientation = wxPORTRAIT);

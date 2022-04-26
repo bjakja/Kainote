@@ -2,6 +2,7 @@
 // Name:        src/gtk1/toplevel.cpp
 // Purpose:
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -1103,7 +1104,7 @@ void wxTopLevelWindowGTK::SetIcons( const wxIconBundle &icons )
     {
         wxMask *mask = icon.GetMask();
         GdkBitmap *bm = NULL;
-        if (mask) bm = mask->m_bitmap;
+        if (mask) bm = mask->GetBitmap();
 
         gdk_window_set_icon( m_widget->window, NULL, icon.GetPixmap(), bm );
     }
@@ -1197,7 +1198,7 @@ static bool do_shape_combine_region(GdkWindow* window, const wxRegion& region)
         {
             wxBitmap bmp = region.ConvertToBitmap();
             bmp.SetMask(new wxMask(bmp, *wxBLACK));
-            GdkBitmap* mask = bmp.GetMask()->m_bitmap;
+            GdkBitmap* mask = bmp.GetMask()->GetBitmap();
             gdk_window_shape_combine_mask(window, mask, 0, 0);
             return true;
         }

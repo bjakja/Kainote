@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     29/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -21,9 +22,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx\defs.h"        // everybody should include this
-#include "wx\chartype.h"    // for wxChar
-#include "wx\wxcrtbase.h"   // for wxStrlen() etc.
+#include "wx/defs.h"        // everybody should include this
+#include "wx/chartype.h"    // for wxChar
+#include "wx/wxcrtbase.h"   // for wxStrlen() etc.
 
 #include <stdlib.h>
 
@@ -62,9 +63,9 @@ extern WXDLLIMPEXP_DATA_BASE(const wxStringCharType*) wxEmptyStringImpl;
 // in both cases we need to define wxStdString
 #if wxUSE_STL_BASED_WXSTRING || wxUSE_STD_STRING
 
-#include "wx\beforestd.h"
+#include "wx/beforestd.h"
 #include <string>
-#include "wx\afterstd.h"
+#include "wx/afterstd.h"
 
 #ifdef HAVE_STD_WSTRING
     typedef std::wstring wxStdWideString;
@@ -87,6 +88,13 @@ extern WXDLLIMPEXP_DATA_BASE(const wxStringCharType*) wxEmptyStringImpl;
     #undef wxUSE_STD_STRING
     #define wxUSE_STD_STRING 1
 
+    // the versions of std::string included with gcc 2.95 and VC6 (for which
+    // _MSC_VER == 1200) and eVC4 (_MSC_VER == 1201) lack clear() method
+    #if (defined(__GNUG__) && (__GNUG__ < 3)) || \
+        !wxCHECK_VISUALC_VERSION(7) || defined(__EVC4__)
+        #define wxSTRING_BASE_HASNT_CLEAR
+    #endif
+
     typedef wxStdString wxStringImpl;
 #else // if !wxUSE_STL_BASED_WXSTRING
 
@@ -105,8 +113,7 @@ struct WXDLLIMPEXP_BASE wxStringData
           nAllocLength; // allocated memory size
 
   // mimics declaration 'wxStringCharType data[nAllocLength]'
-  wxStringCharType* data() { return reinterpret_cast<wxStringCharType*>(this + 1); }
-  const wxStringCharType* data() const { return reinterpret_cast<const wxStringCharType*>(this + 1); }
+  wxStringCharType* data() const { return (wxStringCharType*)(this + 1); }
 
   // empty string has a special ref count so it's never deleted
   bool  IsEmpty()   const { return (nRefs == -1); }
@@ -116,7 +123,7 @@ struct WXDLLIMPEXP_BASE wxStringData
   void  Lock()   { if ( !IsEmpty() ) nRefs++;                    }
 
   // VC++ will refuse to inline Unlock but profiling shows that it is wrong
-#if defined(__VISUALC__)
+#if defined(__VISUALC__) && (__VISUALC__ >= 1200)
   __forceinline
 #endif
   // VC++ free must take place in same DLL as allocation when using non dll
@@ -152,9 +159,9 @@ protected:
     // initializes the string to the empty value (must be called only from
     // ctors, use Reinit() otherwise)
 #if wxUSE_UNICODE_UTF8
-  void Init() { m_pchData = const_cast<wxStringCharType*>(wxEmptyStringImpl); } // FIXME-UTF8
+  void Init() { m_pchData = (wxStringCharType *)wxEmptyStringImpl; } // FIXME-UTF8
 #else
-  void Init() { m_pchData = const_cast<wxStringCharType*>(wxEmptyString); }
+  void Init() { m_pchData = (wxStringCharType *)wxEmptyString; }
 #endif
     // initializes the string with (a part of) C-string
   void InitWith(const wxStringCharType *psz, size_t nPos = 0, size_t nLen = npos);
@@ -328,7 +335,7 @@ public:
       { return wxStdString(c_str(), length()); }
 #endif
 
-#if defined(__VISUALC__)
+#if defined(__VISUALC__) && (__VISUALC__ >= 1200)
     // disable warning about Unlock() below not being inlined (first, it
     // seems to be inlined nevertheless and second, even if it isn't, there
     // is nothing we can do about this
@@ -342,7 +349,7 @@ public:
       GetStringData()->Unlock();
   }
 
-#if defined(__VISUALC__)
+#if defined(__VISUALC__) && (__VISUALC__ >= 1200)
     #pragma warning(pop)
 #endif
 

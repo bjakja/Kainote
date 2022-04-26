@@ -2,13 +2,14 @@
 // Name:        mstream.h
 // Purpose:     interface of wxMemoryOutputStream, wxMemoryInputStream
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 /**
     @class wxMemoryOutputStream
 
-    This class allows using all methods taking a wxOutputStream reference to write
+    This class allows to use all methods taking a wxOutputStream reference to write
     to in-memory data.
 
     Example:
@@ -72,7 +73,7 @@ public:
 /**
     @class wxMemoryInputStream
 
-    This class allows using all methods taking a wxInputStream reference to read
+    This class allows to use all methods taking a wxInputStream reference to read
     in-memory data.
 
     Example:

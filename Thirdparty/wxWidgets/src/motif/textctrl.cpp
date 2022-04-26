@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -58,9 +59,9 @@ static void wxTextWindowGainFocusProc(Widget w, XtPointer clientData, XmAnyCallb
 static void wxTextWindowLoseFocusProc(Widget w, XtPointer clientData, XmAnyCallbackStruct *cbs);
 static void wxTextWindowActivateProc(Widget w, XtPointer clientData, XmAnyCallbackStruct *ptr);
 
-wxBEGIN_EVENT_TABLE(wxTextCtrl, wxTextCtrlBase)
-    EVT_DROP_FILES(wxTextCtrl::OnDropFiles)
-    EVT_CHAR(wxTextCtrl::OnChar)
+    BEGIN_EVENT_TABLE(wxTextCtrl, wxTextCtrlBase)
+        EVT_DROP_FILES(wxTextCtrl::OnDropFiles)
+        EVT_CHAR(wxTextCtrl::OnChar)
 
     EVT_MENU(wxID_CUT, wxTextCtrl::OnCut)
     EVT_MENU(wxID_COPY, wxTextCtrl::OnCopy)
@@ -74,7 +75,7 @@ wxBEGIN_EVENT_TABLE(wxTextCtrl, wxTextCtrlBase)
     EVT_UPDATE_UI(wxID_UNDO, wxTextCtrl::OnUpdateUndo)
     EVT_UPDATE_UI(wxID_REDO, wxTextCtrl::OnUpdateRedo)
 
-wxEND_EVENT_TABLE()
+    END_EVENT_TABLE()
 
 // ============================================================================
 // implementation
@@ -341,13 +342,13 @@ wxString wxTextCtrl::GetLineText(long lineNo) const
         for (i = 0; currentLine != lineNo && s[i]; i++ )
             if (s[i] == '\n')
                 currentLine++;
-        // Now get the text
-        int j;
-        for (j = 0; s[i] && s[i] != '\n'; i++, j++ )
-            buf += s[i];
+            // Now get the text
+            int j;
+            for (j = 0; s[i] && s[i] != '\n'; i++, j++ )
+                buf += s[i];
 
-        XtFree(s);
-        return buf;
+            XtFree(s);
+            return buf;
     }
     else
         return wxEmptyString;
@@ -469,7 +470,7 @@ void wxTextCtrl::DoSendEvents(void *wxcbs, long keycode)
     if ( !InSetValue() && m_processedDefault )
     {
         // Can generate a command
-        wxCommandEvent commandEvent(wxEVT_TEXT, GetId());
+        wxCommandEvent commandEvent(wxEVT_COMMAND_TEXT_UPDATED, GetId());
         commandEvent.SetEventObject(this);
         ProcessCommand(commandEvent);
     }
@@ -686,7 +687,7 @@ static void wxTextWindowActivateProc(Widget w, XtPointer clientData,
     if (tw->InSetValue())
         return;
 
-    wxCommandEvent event(wxEVT_TEXT_ENTER);
+    wxCommandEvent event(wxEVT_COMMAND_TEXT_ENTER);
     event.SetId(tw->GetId());
     event.SetEventObject(tw);
     tw->ProcessCommand(event);

@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -27,11 +28,20 @@ public:
     // ctors and such
     wxFont() { }
 
-    wxFont(const wxFontInfo& info);
-
-    wxFont(const wxString& nativeFontInfoString);
-
     wxFont(const wxNativeFontInfo& info);
+
+#if FUTURE_WXWIN_COMPATIBILITY_3_0
+    wxFont(int size,
+           int family,
+           int style,
+           int weight,
+           bool underlined = false,
+           const wxString& face = wxEmptyString,
+           wxFontEncoding encoding = wxFONTENCODING_DEFAULT)
+    {
+        (void)Create(size, (wxFontFamily)family, (wxFontStyle)style, (wxFontWeight)weight, underlined, face, encoding);
+    }
+#endif
 
     wxFont(int size,
            wxFontFamily family,
@@ -56,6 +66,19 @@ public:
         SetPixelSize(pixelSize);
     }
 
+    wxFont(int pointSize,
+           wxFontFamily family,
+           int flags = wxFONTFLAG_DEFAULT,
+           const wxString& face = wxEmptyString,
+           wxFontEncoding encoding = wxFONTENCODING_DEFAULT)
+    {
+        Create(pointSize, family,
+               GetStyleFromFlags(flags),
+               GetWeightFromFlags(flags),
+               GetUnderlinedFromFlags(flags),
+               face, encoding);
+    }
+
     bool Create(int size,
                 wxFontFamily family,
                 wxFontStyle style,
@@ -72,36 +95,23 @@ public:
     virtual ~wxFont();
 
     // implement base class pure virtuals
-    virtual double GetFractionalPointSize() const;
+    virtual int GetPointSize() const;
     virtual wxFontStyle GetStyle() const;
-    virtual int GetNumericWeight() const;
+    virtual wxFontWeight GetWeight() const;
     virtual bool GetUnderlined() const;
     virtual wxString GetFaceName() const;
     virtual wxFontEncoding GetEncoding() const;
     virtual const wxNativeFontInfo *GetNativeFontInfo() const;
 
-    virtual void SetFractionalPointSize(double pointSize);
+    virtual void SetPointSize(int pointSize);
     virtual void SetFamily(wxFontFamily family);
     virtual void SetStyle(wxFontStyle style);
-    virtual void SetNumericWeight(int weight);
+    virtual void SetWeight(wxFontWeight weight);
     virtual bool SetFaceName(const wxString& faceName);
     virtual void SetUnderlined(bool underlined);
     virtual void SetEncoding(wxFontEncoding encoding);
 
     wxDECLARE_COMMON_FONT_METHODS();
-
-    wxDEPRECATED_MSG("use wxFONT{FAMILY,STYLE,WEIGHT}_XXX constants")
-    wxFont(int size,
-           int family,
-           int style,
-           int weight,
-           bool underlined = false,
-           const wxString& face = wxEmptyString,
-           wxFontEncoding encoding = wxFONTENCODING_DEFAULT)
-    {
-        (void)Create(size, (wxFontFamily)family, (wxFontStyle)style, (wxFontWeight)weight, underlined, face, encoding);
-    }
-
 
     // Implementation
 
@@ -147,7 +157,7 @@ protected:
     void Unshare();
 
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxFont);
+    DECLARE_DYNAMIC_CLASS(wxFont)
 };
 
 #endif // _WX_FONT_H_

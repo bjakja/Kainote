@@ -4,6 +4,7 @@
 // Author:      Robert Roebling and Robin Dunn
 // Modified by: Ron Lee, Vadim Zeitlin (wxSizerFlags)
 // Created:
+// RCS-ID:      $Id$
 // Copyright:   (c) Robin Dunn, Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -25,7 +26,12 @@ class WXDLLIMPEXP_FWD_CORE wxSizerItem;
 class WXDLLIMPEXP_FWD_CORE wxSizer;
 
 #ifndef wxUSE_BORDER_BY_DEFAULT
-    #define wxUSE_BORDER_BY_DEFAULT 1
+    #ifdef __SMARTPHONE__
+        // no borders by default on limited size screen
+        #define wxUSE_BORDER_BY_DEFAULT 0
+    #else
+        #define wxUSE_BORDER_BY_DEFAULT 1
+    #endif
 #endif
 
 // ----------------------------------------------------------------------------
@@ -69,27 +75,9 @@ public:
         return *this;
     }
 
-    // this is just a shortcut for Align()
+    // some shortcuts for Align()
     wxSizerFlags& Centre() { return Align(wxALIGN_CENTRE); }
     wxSizerFlags& Center() { return Centre(); }
-
-    // but all the remaining methods turn on the corresponding alignment flag
-    // without affecting the existing ones
-    wxSizerFlags& CentreVertical()
-    {
-        m_flags = (m_flags & ~wxALIGN_BOTTOM) | wxALIGN_CENTRE_VERTICAL;
-        return *this;
-    }
-
-    wxSizerFlags& CenterVertical() { return CentreVertical(); }
-
-    wxSizerFlags& CentreHorizontal()
-    {
-        m_flags = (m_flags & ~wxALIGN_RIGHT) | wxALIGN_CENTRE_HORIZONTAL;
-        return *this;
-    }
-
-    wxSizerFlags& CenterHorizontal() { return CentreHorizontal(); }
 
     wxSizerFlags& Top()
     {
@@ -119,25 +107,15 @@ public:
     // default border size used by Border() below
     static int GetDefaultBorder()
     {
-        return wxRound(GetDefaultBorderFractional());
-    }
-
-    static float GetDefaultBorderFractional()
-    {
 #if wxUSE_BORDER_BY_DEFAULT
     #ifdef __WXGTK20__
         // GNOME HIG says to use 6px as the base unit:
         // http://library.gnome.org/devel/hig-book/stable/design-window.html.en
         return 6;
-    #elif defined(__WXMAC__)
-        // Not sure if this is really the correct size for the border.
-        return 5;
     #else
-        // For the other platforms, we need to scale raw pixel values using the
-        // current DPI, do it once (and cache the result) in another function.
-        #define wxNEEDS_BORDER_IN_PX
-
-        return DoGetDefaultBorderInPx();
+        // FIXME: default border size shouldn't be hardcoded and at the very
+        //        least they should depend on the current font size
+        return 5;
     #endif
 #else
         return 0;
@@ -147,10 +125,6 @@ public:
 
     wxSizerFlags& Border(int direction, int borderInPixels)
     {
-        wxCHECK_MSG( !(direction & ~wxALL), *this,
-                     wxS("direction must be a combination of wxDirection ")
-                     wxS("enum values.") );
-
         m_flags &= ~wxALL;
         m_flags |= direction;
 
@@ -162,7 +136,7 @@ public:
     wxSizerFlags& Border(int direction = wxALL)
     {
 #if wxUSE_BORDER_BY_DEFAULT
-        return Border(direction, wxRound(GetDefaultBorderFractional()));
+        return Border(direction, GetDefaultBorder());
 #else
         // no borders by default on limited size screen
         wxUnusedVar(direction);
@@ -174,7 +148,7 @@ public:
     wxSizerFlags& DoubleBorder(int direction = wxALL)
     {
 #if wxUSE_BORDER_BY_DEFAULT
-        return Border(direction, wxRound(2 * GetDefaultBorderFractional()));
+        return Border(direction, 2*GetDefaultBorder());
 #else
         wxUnusedVar(direction);
 
@@ -185,7 +159,7 @@ public:
     wxSizerFlags& TripleBorder(int direction = wxALL)
     {
 #if wxUSE_BORDER_BY_DEFAULT
-        return Border(direction, wxRound(3 * GetDefaultBorderFractional()));
+        return Border(direction, 3*GetDefaultBorder());
 #else
         wxUnusedVar(direction);
 
@@ -196,7 +170,7 @@ public:
     wxSizerFlags& HorzBorder()
     {
 #if wxUSE_BORDER_BY_DEFAULT
-        return Border(wxLEFT | wxRIGHT, wxRound(GetDefaultBorderFractional()));
+        return Border(wxLEFT | wxRIGHT, GetDefaultBorder());
 #else
         return *this;
 #endif
@@ -205,7 +179,7 @@ public:
     wxSizerFlags& DoubleHorzBorder()
     {
 #if wxUSE_BORDER_BY_DEFAULT
-        return Border(wxLEFT | wxRIGHT, wxRound(2 * GetDefaultBorderFractional()));
+        return Border(wxLEFT | wxRIGHT, 2*GetDefaultBorder());
 #else
         return *this;
 #endif
@@ -238,14 +212,7 @@ public:
     int GetFlags() const { return m_flags; }
     int GetBorderInPixels() const { return m_borderInPixels; }
 
-    // Disablee sizer flags (in)consistency asserts.
-    static void DisableConsistencyChecks();
-
 private:
-#ifdef wxNEEDS_BORDER_IN_PX
-    static float DoGetDefaultBorderInPx();
-#endif // wxNEEDS_BORDER_IN_PX
-
     int m_proportion;
     int m_flags;
     int m_borderInPixels;
@@ -336,10 +303,6 @@ public:
     // Enable deleting the SizerItem without destroying the contained sizer.
     void DetachSizer() { m_sizer = NULL; }
 
-    // Enable deleting the SizerItem without resetting the sizer in the
-    // contained window.
-    void DetachWindow() { m_window = NULL; m_kind = Item_None; }
-
     virtual wxSize GetSize() const;
     virtual wxSize CalcMin();
     virtual void SetDimension( const wxPoint& pos, const wxSize& size );
@@ -347,10 +310,6 @@ public:
     wxSize GetMinSize() const
         { return m_minSize; }
     wxSize GetMinSizeWithBorder() const;
-
-    wxSize GetMaxSize() const
-        { return IsWindow() ? m_window->GetMaxSize() : wxDefaultSize; }
-    wxSize GetMaxSizeWithBorder() const;
 
     void SetMinSize(const wxSize& size)
     {
@@ -384,6 +343,12 @@ public:
     bool IsWindow() const { return m_kind == Item_Window; }
     bool IsSizer() const { return m_kind == Item_Sizer; }
     bool IsSpacer() const { return m_kind == Item_Spacer; }
+
+#if WXWIN_COMPATIBILITY_2_6
+    // Deprecated in 2.6, use {G,S}etProportion instead.
+    wxDEPRECATED( void SetOption( int option ) );
+    wxDEPRECATED( int GetOption() const );
+#endif // WXWIN_COMPATIBILITY_2_6
 
     void SetProportion( int proportion )
         { m_proportion = proportion; }
@@ -471,10 +436,6 @@ protected:
     void DoSetSizer(wxSizer *sizer);
     void DoSetSpacer(const wxSize& size);
 
-    // Add the border specified for this item to the given size
-    // if it's != wxDefaultSize, just return wxDefaultSize otherwise.
-    wxSize AddBorderToSize(const wxSize& size) const;
-
     // discriminated union: depending on m_kind one of the fields is valid
     enum
     {
@@ -509,7 +470,7 @@ protected:
     wxObject    *m_userData;
 
 private:
-    wxDECLARE_CLASS(wxSizerItem);
+    DECLARE_CLASS(wxSizerItem)
     wxDECLARE_NO_COPY_CLASS(wxSizerItem);
 };
 
@@ -619,6 +580,12 @@ public:
     void SetContainingWindow(wxWindow *window);
     wxWindow *GetContainingWindow() const { return m_containingWindow; }
 
+#if WXWIN_COMPATIBILITY_2_6
+    // Deprecated in 2.6 since historically it does not delete the window,
+    // use Detach instead.
+    wxDEPRECATED( virtual bool Remove( wxWindow *window ) );
+#endif // WXWIN_COMPATIBILITY_2_6
+
     virtual bool Remove( wxSizer *sizer );
     virtual bool Remove( int index );
 
@@ -634,11 +601,7 @@ public:
     virtual void DeleteWindows();
 
     // Inform sizer about the first direction that has been decided (by parent item)
-    // Returns true if it made use of the information (and recalculated min size)
-    //
-    // Note that while this method doesn't do anything by default, it should
-    // almost always be overridden in the derived classes and should have been
-    // pure virtual if not for backwards compatibility constraints.
+    // Returns true if it made use of the informtion (and recalculated min size)
     virtual bool InformFirstDirection( int WXUNUSED(direction), int WXUNUSED(size), int WXUNUSED(availableOtherDir) )
         { return false; }
 
@@ -674,26 +637,10 @@ public:
 
     // These virtual functions are used by the layout algorithm: first
     // CalcMin() is called to calculate the minimal size of the sizer and
-    // prepare for laying it out and then RepositionChildren() is called with
-    // this size to really update all the sizer items.
+    // prepare for laying it out and then RecalcSizes() is called to really
+    // update all the sizer items
     virtual wxSize CalcMin() = 0;
-
-    // This method should be overridden but isn't pure virtual for backwards
-    // compatibility.
-    virtual void RepositionChildren(const wxSize& WXUNUSED(minSize))
-    {
-        RecalcSizes();
-    }
-
-    // This is a deprecated version of RepositionChildren() which doesn't take
-    // the minimal size parameter which is not needed for very simple sizers
-    // but typically is for anything more complicated, so prefer to override
-    // RepositionChildren() in new code.
-    //
-    // If RepositionChildren() is not overridden, this method must be
-    // overridden, calling the base class version results in an assertion
-    // failure.
-    virtual void RecalcSizes();
+    virtual void RecalcSizes() = 0;
 
     virtual void Layout();
 
@@ -756,10 +703,6 @@ public:
 
     void Show(bool show) { ShowItems(show); }
 
-    // This is the ShowItems() counterpart and returns true if any of the sizer
-    // items are shown.
-    virtual bool AreAnyItemsShown() const;
-
 protected:
     wxSize              m_size;
     wxSize              m_minSize;
@@ -783,7 +726,7 @@ protected:
     virtual wxSizerItem* DoInsert(size_t index, wxSizerItem *item);
 
 private:
-    wxDECLARE_CLASS(wxSizer);
+    DECLARE_CLASS(wxSizer)
 };
 
 //---------------------------------------------------------------------------
@@ -802,8 +745,8 @@ public:
     wxGridSizer( int rows, int cols, int vgap, int hgap );
     wxGridSizer( int rows, int cols, const wxSize& gap );
 
-    virtual void RepositionChildren(const wxSize& minSize) wxOVERRIDE;
-    virtual wxSize CalcMin() wxOVERRIDE;
+    virtual void RecalcSizes();
+    virtual wxSize CalcMin();
 
     void SetCols( int cols )
     {
@@ -841,7 +784,7 @@ protected:
     int    m_vgap;
     int    m_hgap;
 
-    virtual wxSizerItem *DoInsert(size_t index, wxSizerItem *item) wxOVERRIDE;
+    virtual wxSizerItem *DoInsert(size_t index, wxSizerItem *item);
 
     void SetItemBounds( wxSizerItem *item, int x, int y, int w, int h );
 
@@ -855,7 +798,7 @@ protected:
             "Can't calculate number of cols if number of rows is not specified"
         );
 
-        return int(m_children.GetCount() + m_rows - 1) / m_rows;
+        return (m_children.GetCount() + m_rows - 1) / m_rows;
     }
 
     int CalcRows() const
@@ -866,11 +809,11 @@ protected:
             "Can't calculate number of cols if number of rows is not specified"
         );
 
-        return int(m_children.GetCount() + m_cols - 1) / m_cols;
+        return (m_children.GetCount() + m_cols - 1) / m_cols;
     }
 
 private:
-    wxDECLARE_CLASS(wxGridSizer);
+    DECLARE_CLASS(wxGridSizer)
 };
 
 //---------------------------------------------------------------------------
@@ -933,13 +876,13 @@ public:
     const wxArrayInt& GetColWidths() const  { return m_colWidths; }
 
     // implementation
-    virtual void RepositionChildren(const wxSize& minSize) wxOVERRIDE;
-    virtual wxSize CalcMin() wxOVERRIDE;
+    virtual void RecalcSizes();
+    virtual wxSize CalcMin();
 
 protected:
     void AdjustForFlexDirection();
-    void AdjustForGrowables(const wxSize& sz, const wxSize& minSize);
-    wxSize FindWidthsAndHeights(int nrows, int ncols);
+    void AdjustForGrowables(const wxSize& sz);
+    void FindWidthsAndHeights(int nrows, int ncols);
 
     // the heights/widths of all rows/columns
     wxArrayInt  m_rowHeights,
@@ -958,8 +901,11 @@ protected:
     int m_flexDirection;
     wxFlexSizerGrowMode m_growMode;
 
+    // saves CalcMin result to optimize RecalcSizes
+    wxSize m_calculatedMinSize;
+
 private:
-    wxDECLARE_CLASS(wxFlexGridSizer);
+    DECLARE_CLASS(wxFlexGridSizer)
     wxDECLARE_NO_COPY_CLASS(wxFlexGridSizer);
 };
 
@@ -979,7 +925,7 @@ public:
                       wxT("invalid value for wxBoxSizer orientation") );
     }
 
-    virtual wxSizerItem *AddSpacer(int size) wxOVERRIDE;
+    virtual wxSizerItem *AddSpacer(int size);
 
     int GetOrientation() const { return m_orient; }
 
@@ -988,17 +934,10 @@ public:
     void SetOrientation(int orient) { m_orient = orient; }
 
     // implementation of our resizing logic
-    virtual wxSize CalcMin() wxOVERRIDE;
-    virtual void RepositionChildren(const wxSize& minSize) wxOVERRIDE;
-
-    virtual bool InformFirstDirection(int direction,
-                                      int size,
-                                      int availableOtherDir) wxOVERRIDE;
+    virtual wxSize CalcMin();
+    virtual void RecalcSizes();
 
 protected:
-    // Only overridden to perform extra debugging checks.
-    virtual wxSizerItem *DoInsert(size_t index, wxSizerItem *item) wxOVERRIDE;
-
     // helpers for our code: this returns the component of the given wxSize in
     // the direction of the sizer and in the other direction, respectively
     int GetSizeInMajorDir(const wxSize& sz) const
@@ -1051,8 +990,12 @@ protected:
     // the sum of proportion of all of our elements
     int m_totalProportion;
 
+    // the minimal size needed for this sizer as calculated by the last call to
+    // our CalcMin()
+    wxSize m_minSize;
+
 private:
-    wxDECLARE_CLASS(wxBoxSizer);
+    DECLARE_CLASS(wxBoxSizer)
 };
 
 //---------------------------------------------------------------------------
@@ -1070,25 +1013,24 @@ public:
     wxStaticBoxSizer(int orient, wxWindow *win, const wxString& label = wxEmptyString);
     virtual ~wxStaticBoxSizer();
 
-    virtual wxSize CalcMin() wxOVERRIDE;
-    virtual void RepositionChildren(const wxSize& minSize) wxOVERRIDE;
+    void RecalcSizes();
+    wxSize CalcMin();
 
     wxStaticBox *GetStaticBox() const
         { return m_staticBox; }
 
     // override to hide/show the static box as well
-    virtual void ShowItems (bool show) wxOVERRIDE;
-    virtual bool AreAnyItemsShown() const wxOVERRIDE;
+    virtual void ShowItems (bool show);
 
-    virtual bool Detach( wxWindow *window ) wxOVERRIDE;
-    virtual bool Detach( wxSizer *sizer ) wxOVERRIDE { return wxBoxSizer::Detach(sizer); }
-    virtual bool Detach( int index ) wxOVERRIDE { return wxBoxSizer::Detach(index); }
+    virtual bool Detach( wxWindow *window );
+    virtual bool Detach( wxSizer *sizer ) { return wxBoxSizer::Detach(sizer); }
+    virtual bool Detach( int index ) { return wxBoxSizer::Detach(index); }
 
 protected:
     wxStaticBox   *m_staticBox;
 
 private:
-    wxDECLARE_CLASS(wxStaticBoxSizer);
+    DECLARE_CLASS(wxStaticBoxSizer)
     wxDECLARE_NO_COPY_CLASS(wxStaticBoxSizer);
 };
 
@@ -1140,7 +1082,7 @@ protected:
     wxButton *m_buttonHelp;         // wxID_HELP, wxID_CONTEXT_HELP
 
 private:
-    wxDECLARE_CLASS(wxStdDialogButtonSizer);
+    DECLARE_CLASS(wxStdDialogButtonSizer)
     wxDECLARE_NO_COPY_CLASS(wxStdDialogButtonSizer);
 };
 

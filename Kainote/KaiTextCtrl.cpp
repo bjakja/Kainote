@@ -15,6 +15,7 @@
 #include "KaiTextCtrl.h"
 
 #include <wx/clipbrd.h>
+#include <wx/msw/winundef.h>
 #include <wx/dc.h>
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>

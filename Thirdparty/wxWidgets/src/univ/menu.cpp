@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     25.08.00
+// RCS-ID:      $Id$
 // Copyright:   (c) 2000 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,6 +19,9 @@
 
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_MENUS
 
@@ -180,12 +184,10 @@ protected:
     virtual void DoDraw(wxControlRenderer *renderer);
 
     // event handlers
-    void OnLeftDown(wxMouseEvent& event);
     void OnLeftUp(wxMouseEvent& event);
     void OnMouseMove(wxMouseEvent& event);
     void OnMouseLeave(wxMouseEvent& event);
     void OnKeyDown(wxKeyEvent& event);
-    void OnCaptureLost(wxMouseCaptureLostEvent& event);
 
     // reset the current item and node
     void ResetCurrent();
@@ -207,7 +209,7 @@ protected:
     // show the submenu for this item
     void OpenSubmenu(wxMenuItem *item, InputMethod how = WithKeyboard);
 
-    // can this time be opened?
+    // can this tiem be opened?
     bool CanOpen(wxMenuItem *item)
     {
         return item && item->IsEnabled() && item->IsSubMenu();
@@ -216,7 +218,7 @@ protected:
     // dismiss the menu and all parent menus too
     void DismissAndNotify();
 
-    // react to dismissing this menu and also dismiss the parent if
+    // react to dimissing this menu and also dismiss the parent if
     // dismissParent
     void HandleDismiss(bool dismissParent);
 
@@ -245,7 +247,7 @@ private:
     // do we currently have an opened submenu?
     bool m_hasOpenSubMenu;
 
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
 };
 
 // ----------------------------------------------------------------------------
@@ -279,27 +281,25 @@ private:
 // wxWin macros
 // ----------------------------------------------------------------------------
 
-wxBEGIN_EVENT_TABLE(wxPopupMenuWindow, wxPopupTransientWindow)
+BEGIN_EVENT_TABLE(wxPopupMenuWindow, wxPopupTransientWindow)
     EVT_KEY_DOWN(wxPopupMenuWindow::OnKeyDown)
 
-    EVT_LEFT_DOWN(wxPopupMenuWindow::OnLeftDown)
     EVT_LEFT_UP(wxPopupMenuWindow::OnLeftUp)
     EVT_MOTION(wxPopupMenuWindow::OnMouseMove)
     EVT_LEAVE_WINDOW(wxPopupMenuWindow::OnMouseLeave)
-    EVT_MOUSE_CAPTURE_LOST(wxPopupMenuWindow::OnCaptureLost)
 #ifdef __WXMSW__
     EVT_IDLE(wxPopupMenuWindow::OnIdle)
 #endif
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
-wxBEGIN_EVENT_TABLE(wxMenuBar, wxMenuBarBase)
+BEGIN_EVENT_TABLE(wxMenuBar, wxMenuBarBase)
     EVT_KILL_FOCUS(wxMenuBar::OnKillFocus)
+
     EVT_KEY_DOWN(wxMenuBar::OnKeyDown)
+
     EVT_LEFT_DOWN(wxMenuBar::OnLeftDown)
-    EVT_LEFT_UP(wxMenuBar::OnLeftUp)
     EVT_MOTION(wxMenuBar::OnMouseMove)
-    EVT_MOUSE_CAPTURE_LOST(wxMenuBar::OnCaptureLost)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 // ============================================================================
 // implementation
@@ -359,7 +359,7 @@ void wxPopupMenuWindow::ChangeCurrent(wxMenuItemIter node)
             wxCHECK_RET( item, wxT("no current item?") );
 
             // if it was the currently opened menu, close it
-            if ( node && item->IsSubMenu() && item->GetSubMenu()->IsShown() )
+            if ( item->IsSubMenu() && item->GetSubMenu()->IsShown() )
             {
                 item->GetSubMenu()->Dismiss();
                 OnSubmenuDismiss( false );
@@ -369,13 +369,7 @@ void wxPopupMenuWindow::ChangeCurrent(wxMenuItemIter node)
         }
 
         if ( m_nodeCurrent )
-        {
-            wxMenuItem *item = m_nodeCurrent->GetData();
-            if ( item && item->GetMenu()->IsShown() )
-            {
-                RefreshItem(m_nodeCurrent->GetData());
-            }
-        }
+            RefreshItem(m_nodeCurrent->GetData());
     }
 }
 
@@ -480,9 +474,6 @@ void wxPopupMenuWindow::Dismiss()
         win->Dismiss();
         OnSubmenuDismiss( false );
     }
-
-    if ( HasCapture() )
-        ReleaseMouse();
 
     wxPopupTransientWindow::Dismiss();
 
@@ -730,35 +721,12 @@ bool wxPopupMenuWindow::ProcessLeftDown(wxMouseEvent& event)
     return false;
 }
 
-void wxPopupMenuWindow::OnLeftDown(wxMouseEvent& event)
-{
-    wxMenuBar* menubar = m_menu->GetMenuBar();
-    if ( menubar && !GetMenuItemFromPoint(event.GetPosition()) && !ProcessLeftDown(event) )
-    {
-        wxPoint pos = event.GetPosition();
-        wxPoint posScreen = ClientToScreen(pos);
-        event.SetPosition(menubar->ScreenToClient(posScreen));
-        menubar->ProcessEvent(event);
-    }
-}
-
 void wxPopupMenuWindow::OnLeftUp(wxMouseEvent& event)
 {
     wxMenuItemIter node = GetMenuItemFromPoint(event.GetPosition());
     if ( node )
     {
         ActivateItem(node->GetData(), WithMouse);
-    }
-    else
-    {
-        wxMenuBar* menubar = m_menu->GetMenuBar();
-        if ( menubar && !ProcessLeftDown(event) )
-        {
-            wxPoint pos = event.GetPosition();
-            wxPoint posScreen = ClientToScreen(pos);
-            event.SetPosition(menubar->ScreenToClient(posScreen));
-            menubar->ProcessEvent(event);
-        }
     }
 }
 
@@ -1077,11 +1045,6 @@ bool wxPopupMenuWindow::ProcessKeyDown(int key)
     return processed;
 }
 
-void wxPopupMenuWindow::OnCaptureLost(wxMouseCaptureLostEvent& WXUNUSED(event))
-{
-    DismissAndNotify();
-}
-
 // ----------------------------------------------------------------------------
 // wxMenu
 // ----------------------------------------------------------------------------
@@ -1165,11 +1128,6 @@ wxMenuItem* wxMenu::DoAppend(wxMenuItem *item)
             // for now it has just one element
             item->SetAsRadioGroupStart();
             item->SetRadioGroupEnd(m_startRadioGroup);
-
-            if ( !wxMenuBase::DoAppend(item) )
-                return NULL;
-
-            item->Check(true);
         }
         else // extend the current radio group
         {
@@ -1185,18 +1143,15 @@ wxMenuItem* wxMenu::DoAppend(wxMenuItem *item)
             {
                 wxFAIL_MSG( wxT("where is the radio group start item?") );
             }
-
-            if ( !wxMenuBase::DoAppend(item) )
-                return NULL;
         }
     }
     else // not a radio item
     {
         EndRadioGroup();
-
-        if ( !wxMenuBase::DoAppend(item) )
-            return NULL;
     }
+
+    if ( !wxMenuBase::DoAppend(item) )
+        return NULL;
 
     OnItemAdded(item);
 
@@ -1205,69 +1160,8 @@ wxMenuItem* wxMenu::DoAppend(wxMenuItem *item)
 
 wxMenuItem* wxMenu::DoInsert(size_t pos, wxMenuItem *item)
 {
-    if ( item->GetKind() == wxITEM_RADIO )
-    {
-        unsigned int start, end;
-        wxMenuItemIter firstRadio;
-
-        if ( m_startRadioGroup == -1 )
-        {
-            // start a new radio group
-            m_startRadioGroup = pos;
-
-            // set this element as the first of radio group
-            item->SetAsRadioGroupStart();
-            item->SetRadioGroupEnd(m_startRadioGroup);
-
-            if ( !wxMenuBase::DoInsert(pos, item) )
-                return NULL;
-
-            item->Check(true);
-        }
-        else // extend the current radio group
-        {
-            // get current first radio item in radio group
-            firstRadio = GetMenuItems().Item(m_startRadioGroup);
-
-            // get current radio group range
-            start = firstRadio->GetData()->GetRadioGroupStart();
-            end = firstRadio->GetData()->GetRadioGroupEnd();
-
-            if ( pos <= start )
-            {
-                // Item is inserted in the beginning of the range
-                // we need to update its end item
-                m_startRadioGroup = pos;
-                item->SetAsRadioGroupStart();
-                item->SetRadioGroupEnd(end + 1);
-            }
-            else if ( (pos >= start) && (pos <= end) )
-            {
-                // we need to update its end item
-                item->SetRadioGroupStart(m_startRadioGroup);
-
-                // Item is inserted in the middle of this range or immediately
-                // after it in which case it extends this range so make it span
-                // one more item in any case.
-                if ( firstRadio )
-                {
-                    firstRadio->GetData()->SetRadioGroupEnd(end + 1);
-                }
-                else
-                {
-                    wxFAIL_MSG( wxT("where is the radio group start item?") );
-                }
-            }
-
-            if ( !wxMenuBase::DoInsert(pos, item) )
-                return NULL;
-        }
-    }
-    else
-    {
-        if ( !wxMenuBase::DoInsert(pos, item) )
-            return NULL;
-    }
+    if ( !wxMenuBase::DoInsert(pos, item) )
+        return NULL;
 
     OnItemAdded(item);
 
@@ -1465,7 +1359,7 @@ bool wxMenu::ClickItem(wxMenuItem *item)
     }
     else
     {
-        // not applicable
+        // not applicabled
         isChecked = -1;
     }
 
@@ -1550,6 +1444,8 @@ wxMenuItem::wxMenuItem(wxMenu *parentMenu,
     m_radioGroup.start = -1;
     m_isRadioGroupStart = false;
 
+    m_bmpDisabled = wxNullBitmap;
+
     UpdateAccelInfo();
 }
 
@@ -1613,8 +1509,8 @@ void wxMenuItem::SetCheckable(bool checkable)
     }
 }
 
-void wxMenuItem::SetBitmaps(const wxBitmapBundle& bmpChecked,
-                            const wxBitmapBundle& bmpUnchecked)
+void wxMenuItem::SetBitmaps(const wxBitmap& bmpChecked,
+                            const wxBitmap& bmpUnchecked)
 {
     m_bmpChecked = bmpChecked;
     m_bmpUnchecked = bmpUnchecked;
@@ -1709,16 +1605,6 @@ void wxMenuItem::SetRadioGroupEnd(int end)
     m_radioGroup.end = end;
 }
 
-int wxMenuItem::GetRadioGroupStart()
-{
-    return m_radioGroup.start;
-}
-
-int wxMenuItem::GetRadioGroupEnd()
-{
-    return m_radioGroup.end;
-}
-
 // ----------------------------------------------------------------------------
 // wxMenuBar creation
 // ----------------------------------------------------------------------------
@@ -1806,8 +1692,6 @@ bool wxMenuBar::Insert(size_t pos, wxMenu *menu, const wxString& title)
 {
     if ( !wxMenuBarBase::Insert(pos, menu, title) )
         return false;
-
-    menu->SetTitle( title );
 
     wxMenuInfo *info = new wxMenuInfo(title);
     m_menuInfos.Insert(info, pos);
@@ -2144,33 +2028,20 @@ void wxMenuBar::OnLeftDown(wxMouseEvent& event)
     if ( HasCapture() )
     {
         OnDismiss();
+
         event.Skip();
     }
     else // we didn't have mouse capture, capture it now
     {
-        int item = GetMenuFromPoint(event.GetPosition());
-        if ( item == -1 )
+        m_current = GetMenuFromPoint(event.GetPosition());
+        if ( m_current == -1 )
         {
-            if ( IsShowingMenu() )
-            {
-                DismissMenu(); // event outside menubar - dismiss
-                ReleaseMouseCapture(); // we could get capture back from popup window so release it
-                RefreshItem((size_t)m_current);
-                m_current = -1;
-            }
-        }
-        else if ( item == m_current && IsShowingMenu() )
-        {
-            // double-click
-            DismissMenu();
-            ReleaseMouseCapture();
-            RefreshItem((size_t)m_current);
-            m_current = -1;
+            // unfortunately, we can't prevent wxMSW from giving us the focus,
+            // so we can only give it back
+            GiveAwayFocus();
         }
         else // on item
         {
-            m_current = item;
-
             wxLogTrace(wxT("mousecapture"), wxT("Capturing mouse from wxMenuBar::OnLeftDown"));
             CaptureMouse();
 
@@ -2180,17 +2051,6 @@ void wxMenuBar::OnLeftDown(wxMouseEvent& event)
             // show the menu
             PopupCurrentMenu(false /* don't select first item - as Windows does */);
         }
-    }
-}
-
-void wxMenuBar::OnLeftUp(wxMouseEvent& event)
-{
-    if ( !HasCapture() && IsShowingMenu() && GetMenuFromPoint(event.GetPosition()) == -1 )
-    {
-        DismissMenu();
-        ReleaseMouseCapture();
-        RefreshItem((size_t)m_current);
-        m_current = -1;
     }
 }
 
@@ -2377,14 +2237,6 @@ void wxMenuBar::OnKeyDown(wxKeyEvent& event)
     }
 }
 
-void wxMenuBar::OnCaptureLost(wxMouseCaptureLostEvent& WXUNUSED(event))
-{
-    if ( IsShowingMenu() )
-    {
-        DismissMenu();
-    }
-}
-
 // ----------------------------------------------------------------------------
 // wxMenuBar accel handling
 // ----------------------------------------------------------------------------
@@ -2561,7 +2413,6 @@ void wxMenuBar::OnDismiss()
         m_current = -1;
 
         RefreshItem(current);
-        Update();
     }
 
     GiveAwayFocus();

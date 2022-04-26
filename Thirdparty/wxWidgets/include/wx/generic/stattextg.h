@@ -3,6 +3,7 @@
 // Purpose:     wxGenericStaticText header
 // Author:      Marcin Wojdyr
 // Created:     2008-06-26
+// Id:          $Id$
 // Copyright:   Marcin Wojdyr
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -29,7 +30,7 @@ public:
                  const wxPoint& pos = wxDefaultPosition,
                  const wxSize& size = wxDefaultSize,
                  long style = 0,
-                 const wxString& name = wxASCII_STR(wxStaticTextNameStr))
+                 const wxString& name = wxStaticTextNameStr)
     {
         Init();
 
@@ -42,25 +43,25 @@ public:
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = 0,
-                const wxString& name = wxASCII_STR(wxStaticTextNameStr));
+                const wxString& name = wxStaticTextNameStr);
 
     virtual ~wxGenericStaticText();
 
 
     // overridden base class virtual methods
-    virtual void SetLabel(const wxString& label) wxOVERRIDE;
-    virtual bool SetFont(const wxFont &font) wxOVERRIDE;
+    virtual void SetLabel(const wxString& label);
+    virtual bool SetFont(const wxFont &font);
 
 protected:
-    virtual wxSize DoGetBestClientSize() const wxOVERRIDE;
+    virtual wxSize DoGetBestClientSize() const;
 
-    virtual wxString WXGetVisibleLabel() const wxOVERRIDE { return m_label; }
-    virtual void WXSetVisibleLabel(const wxString& label) wxOVERRIDE;
+    virtual wxString DoGetLabel() const { return m_label; }
+    virtual void DoSetLabel(const wxString& label);
 
-    void DoSetSize(int x, int y, int width, int height, int sizeFlags) wxOVERRIDE;
+    void DoSetSize(int x, int y, int width, int height, int sizeFlags);
 
 #if wxUSE_MARKUP
-    virtual bool DoSetLabelMarkup(const wxString& markup) wxOVERRIDE;
+    virtual bool DoSetLabelMarkup(const wxString& markup);
 #endif // wxUSE_MARKUP
 
 private:
@@ -83,7 +84,7 @@ private:
     class wxMarkupText *m_markupText;
 #endif // wxUSE_MARKUP
 
-    wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxGenericStaticText);
+    DECLARE_DYNAMIC_CLASS_NO_COPY(wxGenericStaticText)
 };
 
 #endif // _WX_GENERIC_STATTEXTG_H_

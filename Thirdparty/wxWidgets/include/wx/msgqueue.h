@@ -3,6 +3,7 @@
 // Purpose:     Message queues for inter-thread communication
 // Author:      Evgeniy Tarassov
 // Created:     2007-10-31
+// RCS-ID:      $Id$
 // Copyright:   (C) 2007 TT-Solutions SARL
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -14,15 +15,15 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx\thread.h"
+#include "wx/thread.h"
 
 #if wxUSE_THREADS
 
-#include "wx\stopwatch.h"
+#include "wx/stopwatch.h"
 
-#include "wx\beforestd.h"
+#include "wx/beforestd.h"
 #include <queue>
-#include "wx\afterstd.h"
+#include "wx/afterstd.h"
 
 enum wxMessageQueueError
 {

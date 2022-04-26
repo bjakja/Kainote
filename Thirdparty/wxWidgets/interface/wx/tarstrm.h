@@ -2,6 +2,7 @@
 // Name:        tarstrm.h
 // Purpose:     interface of wxTar* classes
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -400,6 +401,6 @@ public:
     /**
         Assignment operator.
     */
-    wxTarEntry& operator=(const wxTarEntry& entry);
+    wxTarEntry& operator operator=(const wxTarEntry& entry);
 };
 

@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin, Ryan Norton
 // Modified by:
 // Created:     29/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 //              (c) 2004 Ryan Norton <wxprojects@comcast.net>
 // Licence:     wxWindows licence
@@ -21,20 +22,43 @@
 // ===========================================================================
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
-    #include "wx\stringimpl.h"
-    #include "wx\wxcrt.h"
+    #include "wx/stringimpl.h"
+    #include "wx/wxcrt.h"
 #endif
 
 #include <ctype.h>
 
-#include <errno.h>
+#ifndef __WXWINCE__
+    #include <errno.h>
+#endif
 
 #include <string.h>
 #include <stdlib.h>
+
+// allocating extra space for each string consumes more memory but speeds up
+// the concatenation operations (nLen is the current string's length)
+// NB: EXTRA_ALLOC must be >= 0!
+#define EXTRA_ALLOC       (19 - nLen % 16)
+
+
+// string handling functions used by wxString:
+#if wxUSE_UNICODE_UTF8
+    #define wxStringMemcpy   memcpy
+    #define wxStringMemcmp   memcmp
+    #define wxStringMemchr   memchr
+#else
+    #define wxStringMemcpy   wxTmemcpy
+    #define wxStringMemcmp   wxTmemcmp
+    #define wxStringMemchr   wxTmemchr
+#endif
+
 
 // ---------------------------------------------------------------------------
 // static class variables definition
@@ -58,22 +82,6 @@ const wxStringCharType WXDLLIMPEXP_BASE *wxEmptyStringImpl = "";
 const wxChar WXDLLIMPEXP_BASE *wxEmptyString = wxT("");
 
 #else
-
-// allocating extra space for each string consumes more memory but speeds up
-// the concatenation operations (nLen is the current string's length)
-// NB: EXTRA_ALLOC must be >= 0!
-#define EXTRA_ALLOC       (19 - nLen % 16)
-
-// string handling functions used by wxString:
-#if wxUSE_UNICODE_UTF8
-    #define wxStringMemcpy   memcpy
-    #define wxStringMemcmp   memcmp
-    #define wxStringMemchr   memchr
-#else
-    #define wxStringMemcpy   wxTmemcpy
-    #define wxStringMemcmp   wxTmemcmp
-    #define wxStringMemchr   wxTmemchr
-#endif
 
 // for an empty string, GetStringData() will return this address: this
 // structure has the same layout as wxStringData and it's data() method will

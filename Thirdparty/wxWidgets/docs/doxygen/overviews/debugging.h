@@ -3,6 +3,7 @@
 // Purpose:     topic overview
 // Author:      Vadim Zeitlin
 // Copyright:   (c) 2009 Vadim Zeitlin <vadim@wxwidgets.org>
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -10,22 +11,19 @@
 
 @page overview_debugging Debugging
 
-@tableofcontents
+Classes, functions and macros: wxLog, @ref group_funcmacro_log, @ref group_funcmacro_debug
 
-Various classes, functions and macros are provided in wxWidgets to help you
-debug your application. Assertion macros allow you to insert various checks in
-your application which can be compiled out or disabled in release builds but
-are extremely useful while developing. Logging functions are also provided
-which are useful for inserting traces into your application code as well as
-debugging. Both assertions and debug logging are also used by wxWidgets itself
-so you may encounter them even if you don't use either of these features
-yourself.
-
-@see wxLog, @ref group_funcmacro_log, @ref group_funcmacro_debug
+Various classes, functions and macros are provided in wxWidgets to help you debug
+your application: @ref overview_debugging_dbgmacros allow you to insert various
+checks in your application which can be compiled out or disabled in release
+builds but are extremely useful while developing and @ref
+overview_debugging_logging which are not limited to debugging but are also
+useful for inserting traces into your application code. Both assertions and
+debug logging are also used by wxWidgets itself so you may encounter them even
+if you don't use either of these features yourself.
 
 
-
-@section overview_debugging_config Configuring Debug Support
+@section overview_debugging_config Configuring debugging support
 
 Starting with wxWidgets 2.9.1 debugging features are always available by
 default (and not only in a special "debug" build of the library) and you need
@@ -38,14 +36,14 @@ be running on are unusually constrained (notice that when asserts are disabled
 their condition is not even evaluated so the only run-time cost is a single
 condition check and the extra space taken by the asserts in the code).
 
-This automatic deactivation of debugging code is done by wxIMPLEMENT_APP()
-macro so if you don't use you may need to explicitly call
-wxDISABLE_DEBUG_SUPPORT() yourself.
+This automatic deactivation of debugging code is done by IMPLEMENT_APP() macro
+so if you don't use you may need to explicitly call wxDISABLE_DEBUG_SUPPORT()
+yourself.
 
 Also notice that it is possible to build your own application with a different
 value of wxDEBUG_LEVEL than the one which was used for wxWidgets itself. E.g.
-you may be using an official binary version of the library which will have been
-compiled with default @code wxDEBUG_LEVEL == 1 @endcode but still predefine
+you may be using an official binary version of the library which will have
+been compiled with default @code wxDEBUG_LEVEL == 1 @endcode but still predefine
 wxDEBUG_LEVEL as 0 for your own code.
 
 On the other hand, if you do want to keep the asserts even in production
@@ -58,8 +56,7 @@ application log file or maybe notify the user about the problem in some more
 user-friendly way.
 
 
-
-@section overview_debugging_dbgmacros Assertion Macros
+@section overview_debugging_dbgmacros Assertion macros
 
 wxASSERT(), wxFAIL(), wxCHECK() as well as their other variants (see @ref
 group_funcmacro_debug) are similar to the standard assert() macro but are more
@@ -104,9 +101,12 @@ message box in the @ref page_samples_except.
 
 
 
-@section overview_debugging_logging Logging Functions
+@section overview_debugging_logging Logging functions
 
-You can use the wxLogDebug and wxLogTrace functions to output debugging
-information in debug mode; it will do nothing for non-debugging code.
+You can use the wxLogDebug and wxLogTrace functions to output debugging information in
+debug mode; it will do nothing for non-debugging code.
+
+
 
 */
+

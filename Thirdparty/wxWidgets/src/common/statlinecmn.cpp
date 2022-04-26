@@ -3,6 +3,7 @@
 // Purpose:     wxStaticLine common code
 // Author:      Vadim Zeitlin
 // Created:     28.06.99
+// Version:     $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,6 +19,9 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #include "wx/statline.h"
 
@@ -62,7 +66,7 @@ wxBEGIN_FLAGS( wxStaticLineStyle )
     wxFLAGS_MEMBER(wxLI_VERTICAL)
 wxEND_FLAGS( wxStaticLineStyle )
 
-wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxStaticLine, wxControl, "wx/statline.h");
+wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxStaticLine, wxControl, "wx/statline.h")
 
 wxBEGIN_PROPERTIES_TABLE(wxStaticLine)
     wxPROPERTY_FLAGS( WindowStyle, wxStaticLineStyle, long, SetWindowStyleFlag, \

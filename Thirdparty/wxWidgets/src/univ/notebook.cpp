@@ -4,6 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     01.02.01
+// RCS-ID:      $Id$
 // Copyright:   (c) 2001 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,6 +19,9 @@
 
 #include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_NOTEBOOK
 
@@ -90,12 +94,12 @@ protected:
 private:
     wxNotebook *m_nb;
 
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
 };
 
-wxBEGIN_EVENT_TABLE(wxNotebookSpinBtn, wxSpinButton)
+BEGIN_EVENT_TABLE(wxNotebookSpinBtn, wxSpinButton)
     EVT_SPIN(wxID_ANY, wxNotebookSpinBtn::OnSpin)
-wxEND_EVENT_TABLE()
+END_EVENT_TABLE()
 
 // ============================================================================
 // implementation
@@ -163,7 +167,7 @@ bool wxNotebook::SetPageText(size_t nPage, const wxString& strText)
 
         if ( FixedSizeTabs() )
         {
-            // it's enough to just refresh this one
+            // it's enough to just reresh this one
             RefreshTab(nPage);
         }
         else // var width tabs
@@ -301,7 +305,7 @@ bool wxNotebook::InsertPage(size_t nPage,
                  wxT("invalid notebook page in InsertPage()") );
 
     // modify the data
-    m_pages.insert(m_pages.begin() + nPage, pPage);
+    m_pages.Insert(pPage, nPage);
 
     wxString label;
     m_accels.Insert(FindAccelIndex(strText, &label), nPage);
@@ -328,6 +332,9 @@ bool wxNotebook::InsertPage(size_t nPage,
     // it's enough to just redraw the tabs
     if ( nPages == 0 )
     {
+        // always select the first tab to have at least some selection
+        bSelect = true;
+
         Relayout();
         Refresh();
     }
@@ -342,11 +349,7 @@ bool wxNotebook::InsertPage(size_t nPage,
     }
     else // pages added to the notebook are initially hidden
     {
-        // always select the first tab to have at least some selection
-        if ( nPages == 0 )
-            ChangeSelection(0);
-        else
-            pPage->Hide();
+        pPage->Hide();
     }
 
     return true;
@@ -376,7 +379,7 @@ wxNotebookPage *wxNotebook::DoRemovePage(size_t nPage)
     wxCHECK_MSG( IS_VALID_PAGE(nPage), NULL, wxT("invalid notebook page") );
 
     wxNotebookPage *page = m_pages[nPage];
-    m_pages.erase(m_pages.begin() + nPage);
+    m_pages.RemoveAt(nPage);
     m_titles.RemoveAt(nPage);
     m_accels.RemoveAt(nPage);
     m_widths.RemoveAt(nPage);
@@ -473,7 +476,7 @@ void wxNotebook::DoDrawTab(wxDC& dc, const wxRect& rect, size_t n)
         bmp.Create(w, h);
         wxMemoryDC dc;
         dc.SelectObject(bmp);
-        dc.SetBackground(wxBrush(GetBackgroundColour(), wxBRUSHSTYLE_SOLID));
+        dc.SetBackground(wxBrush(GetBackgroundColour(), wxSOLID));
         GetImageList()->Draw(image, dc, 0, 0, wxIMAGELIST_DRAW_NORMAL, true);
         dc.SelectObject(wxNullBitmap);
 #else
@@ -556,7 +559,7 @@ void wxNotebook::DoDraw(wxControlRenderer *renderer)
         {
             // unfortunately we can't do this because the selected tab hangs
             // over its neighbours and so we might need to refresh more tabs -
-            // of course, we could still avoid refreshing some of them with more
+            // of course, we could still avoid rereshing some of them with more
             // complicated checks, but it doesn't seem too bad to refresh all
             // of them, I still don't see flicker, so leaving as is for now
 
@@ -1105,7 +1108,7 @@ void wxNotebook::UpdateSpinBtn()
             // efficient
             m_offset -= GetTabWidth(m_firstVisible--);
 
-            // recalculate after m_firstVisible change
+            // reclaculate after m_firstVisible change
             CalcLastVisibleTab();
         }
 
@@ -1144,8 +1147,6 @@ void wxNotebook::UpdateSpinBtn()
         {
             m_spinbtn->Hide();
         }
-        // reset offset to zero if all tabs are visible
-        m_offset = 0;
     }
 }
 
@@ -1249,7 +1250,7 @@ void wxNotebook::ScrollLastTo(size_t page)
     // go to it
     ScrollTo(m_firstVisible);
 
-    // consistency check: the page we were asked to show should be shown
+    // consitency check: the page we were asked to show should be shown
     wxASSERT_MSG( (size_t)page < m_lastVisible, wxT("bug in ScrollLastTo") );
 }
 

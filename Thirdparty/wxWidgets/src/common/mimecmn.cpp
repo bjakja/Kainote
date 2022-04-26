@@ -5,6 +5,7 @@
 // Modified by:
 //  Chris Elliott (biol75@york.ac.uk) 5 Dec 00: write support for Win32
 // Created:     23.09.98
+// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence (part of wxExtra library)
 /////////////////////////////////////////////////////////////////////////////
@@ -18,36 +19,44 @@
 // ----------------------------------------------------------------------------
 
 // for compilers that support precompilation, includes "wx.h".
-#include "wx\wxprec.h"
+#include "wx/wxprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #if wxUSE_MIMETYPE
 
-#include "wx\mimetype.h"
+#include "wx/mimetype.h"
 
 #ifndef WX_PRECOMP
-    #include "wx\dynarray.h"
-    #include "wx\string.h"
-    #include "wx\intl.h"
-    #include "wx\log.h"
-    #include "wx\module.h"
-    #include "wx\crt.h"
+    #include "wx/dynarray.h"
+    #include "wx/string.h"
+    #include "wx/intl.h"
+    #include "wx/log.h"
+    #include "wx/module.h"
+    #include "wx/crt.h"
 #endif //WX_PRECOMP
 
-#include "wx\file.h"
-#include "wx\iconloc.h"
-#include "wx\confbase.h"
+#include "wx/file.h"
+#include "wx/iconloc.h"
+#include "wx/confbase.h"
 
 // other standard headers
 #include <ctype.h>
 
 // implementation classes:
 #if defined(__WINDOWS__)
-    #include "wx\msw/mimetype.h"
-#elif ( defined(__DARWIN__) )
-    #include "wx\osx/mimetype.h"
+    #include "wx/msw/mimetype.h"
+#elif ( defined(__WXMAC__) )
+    #include "wx/osx/mimetype.h"
+#elif defined(__WXPM__) || defined (__EMX__)
+    #include "wx/os2/mimetype.h"
+    #undef __UNIX__
+#elif defined(__DOS__)
+    #include "wx/msdos/mimetype.h"
 #else // Unix
-    #include "wx\unix/mimetype.h"
+    #include "wx/unix/mimetype.h"
 #endif
 
 // ============================================================================
@@ -153,11 +162,12 @@ void wxFileTypeInfo::VarArgInit(const wxString *mimeType,
 
 
 wxFileTypeInfo::wxFileTypeInfo(const wxArrayString& sArray)
-    : m_mimeType(sArray[0u])
-    , m_openCmd( sArray[1u])
-    , m_printCmd(sArray[2u])
-    , m_desc(    sArray[3u])
 {
+    m_mimeType = sArray [0u];
+    m_openCmd  = sArray [1u];
+    m_printCmd = sArray [2u];
+    m_desc     = sArray [3u];
+
     size_t count = sArray.GetCount();
     for ( size_t i = 4; i < count; i++ )
     {
@@ -165,7 +175,7 @@ wxFileTypeInfo::wxFileTypeInfo(const wxArrayString& sArray)
     }
 }
 
-#include "wx\arrimpl.cpp"
+#include "wx/arrimpl.cpp"
 WX_DEFINE_OBJARRAY(wxArrayFileTypeInfo)
 
 // ============================================================================
@@ -287,7 +297,8 @@ wxFileType::wxFileType()
 
 wxFileType::~wxFileType()
 {
-    delete m_impl;
+    if ( m_impl )
+        delete m_impl;
 }
 
 bool wxFileType::GetExtensions(wxArrayString& extensions)
@@ -421,13 +432,6 @@ wxFileType::GetPrintCommand(wxString *printCmd,
     }
 
     return m_impl->GetPrintCommand(printCmd, params);
-}
-
-wxString
-wxFileType::GetExpandedCommand(const wxString& verb,
-                               const wxFileType::MessageParameters& params) const
-{
-    return m_impl->GetExpandedCommand(verb, params);
 }
 
 
@@ -585,7 +589,8 @@ wxMimeTypesManager::wxMimeTypesManager()
 
 wxMimeTypesManager::~wxMimeTypesManager()
 {
-    delete m_impl;
+    if ( m_impl )
+        delete m_impl;
 }
 
 bool wxMimeTypesManager::Unassociate(wxFileType *ft)
@@ -737,8 +742,8 @@ class wxMimeTypeCmnModule: public wxModule
 public:
     wxMimeTypeCmnModule() : wxModule() { }
 
-    virtual bool OnInit() wxOVERRIDE { return true; }
-    virtual void OnExit() wxOVERRIDE
+    virtual bool OnInit() { return true; }
+    virtual void OnExit()
     {
         wxMimeTypesManagerFactory::Set(NULL);
 
@@ -749,9 +754,9 @@ public:
         }
     }
 
-    wxDECLARE_DYNAMIC_CLASS(wxMimeTypeCmnModule);
+    DECLARE_DYNAMIC_CLASS(wxMimeTypeCmnModule)
 };
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxMimeTypeCmnModule, wxModule);
+IMPLEMENT_DYNAMIC_CLASS(wxMimeTypeCmnModule, wxModule)
 
 #endif // wxUSE_MIMETYPE

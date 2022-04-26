@@ -2,6 +2,7 @@
 // Name:        splitterwindow.h
 // Purpose:     topic overview
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -9,10 +10,12 @@
 
 @page overview_splitterwindow wxSplitterWindow Overview
 
-@tableofcontents
+Classes: wxSplitterWindow
 
-@see wxSplitterWindow
+@li @ref overview_splitterwindow_appearance
+@li @ref overview_splitterwindow_example
 
+<hr>
 
 
 @section overview_splitterwindow_appearance Appearance
@@ -77,3 +80,4 @@ void MyFrame::OnUnsplit(wxCommandEvent& event)
 @endcode
 
 */
+

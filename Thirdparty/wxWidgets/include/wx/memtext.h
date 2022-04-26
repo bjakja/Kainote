@@ -10,7 +10,7 @@
 #ifndef _WX_MEMTEXT_H
 #define _WX_MEMTEXT_H
 
-#include "wx\defs.h"
+#include "wx/defs.h"
 
 // there is no separate setting for wxMemoryText, it's smallish anyhow
 #if wxUSE_TEXTBUFFER
@@ -27,21 +27,21 @@ public:
     wxMemoryText(const wxString& name) : wxTextBuffer(name) { }
 
 protected:
-    virtual bool OnExists() const wxOVERRIDE
+    virtual bool OnExists() const
         { return false; }
 
     virtual bool OnOpen(const wxString & WXUNUSED(strBufferName),
-                        wxTextBufferOpenMode WXUNUSED(OpenMode)) wxOVERRIDE
+                        wxTextBufferOpenMode WXUNUSED(OpenMode))
         { return true; }
 
-    virtual bool OnClose() wxOVERRIDE
+    virtual bool OnClose()
         { return true; }
 
-    virtual bool OnRead(const wxMBConv& WXUNUSED(conv)) wxOVERRIDE
+    virtual bool OnRead(const wxMBConv& WXUNUSED(conv))
         { return true; }
 
     virtual bool OnWrite(wxTextFileType WXUNUSED(typeNew),
-                         const wxMBConv& WXUNUSED(conv) = wxMBConvUTF8()) wxOVERRIDE
+                         const wxMBConv& WXUNUSED(conv) = wxMBConvUTF8())
         { return true; }
 
 private:

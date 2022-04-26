@@ -2,14 +2,13 @@
 // Name:        backwardcompatibility.h
 // Purpose:     topic overview
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 /**
 
 @page overview_backwardcompat Backwards Compatibility
-
-@tableofcontents
 
 Many of the GUIs and platforms supported by wxWidgets are continuously
 evolving, and some of the new platforms wxWidgets now supports were quite
@@ -21,6 +20,13 @@ interface across many platforms, but also to provide an interface that is
 reasonably stable over time, to help protect its users from some of the
 uncertainty of the future.
 
+@li @ref overview_backwardcompat_versionnumbering
+@li @ref overview_backwardcompat_sourcecompat
+@li @ref overview_backwardcompat_libbincompat
+@li @ref overview_backwardcompat_appbincompat
+
+
+<hr>
 
 
 @section overview_backwardcompat_versionnumbering The Version Numbering Scheme
@@ -87,7 +93,7 @@ next earlier stable branch the default is 0, so @c WXWIN_COMPATIBILITY_2_4 = 0
 for 2.8.x. Earlier than that, obsolete features are removed.
 
 These macros can be changed in @c setup.h. Or on UNIX-like systems you can set
-them using the @c \--disable-compat26 and @c \--enable-compat24 options to
+them using the @c --disable-compat26 and @c --enable-compat24 options to
 configure.
 
 They can be useful in two ways:
@@ -108,7 +114,7 @@ compatible but can also be binary compatible.
 
 Binary compatibility makes it possible to get the maximum benefit from using
 shared libraries, also known as dynamic link libraries (DLLs) on Windows or
-dynamic shared libraries on macOS.
+dynamic shared libraries on OS X.
 
 For example, suppose several applications are installed on a system requiring
 wxWidgets 2.6.0, 2.6.1 and 2.6.2. Since 2.6.2 is backward compatible with the
@@ -164,3 +170,4 @@ numbers. It won't, for example, help you write code compatible with 2.6.x using
 wxWidgets 2.8.x.
 
 */
+

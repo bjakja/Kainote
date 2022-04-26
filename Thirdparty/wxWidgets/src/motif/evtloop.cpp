@@ -4,6 +4,7 @@
 // Author:      Mattia Barbon
 // Modified by:
 // Created:     01.11.02
+// RCS-ID:      $Id$
 // Copyright:   (c) 2002 Mattia Barbon
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -101,8 +102,13 @@ wxGUIEventLoop::~wxGUIEventLoop()
     wxASSERT_MSG( !m_impl, wxT("should have been deleted in Run()") );
 }
 
-int wxGUIEventLoop::DoRun()
+int wxGUIEventLoop::Run()
 {
+    // event loops are not recursive, you need to create another loop!
+    wxCHECK_MSG( !IsRunning(), -1, wxT("can't reenter a message loop") );
+
+    wxEventLoopActivator activate(this);
+
     m_impl = new wxEventLoopImpl;
     m_impl->SetKeepGoing( true );
 
@@ -120,9 +126,9 @@ int wxGUIEventLoop::DoRun()
     return exitcode;
 }
 
-void wxGUIEventLoop::ScheduleExit(int rc)
+void wxGUIEventLoop::Exit(int rc)
 {
-    wxCHECK_RET( IsInsideRun(), wxT("can't call ScheduleExit() if not started") );
+    wxCHECK_RET( IsRunning(), wxT("can't call Exit() if not running") );
 
     m_impl->SetExitCode(rc);
     m_impl->SetKeepGoing( false );
@@ -130,13 +136,18 @@ void wxGUIEventLoop::ScheduleExit(int rc)
     ::wxBreakDispatch();
 }
 
-void wxGUIEventLoop::DoYieldFor(long eventsToProcess)
+bool wxGUIEventLoop::YieldFor(long eventsToProcess)
 {
+    m_isInsideYield = true;
+    m_eventsToProcessInsideYield = eventsToProcess;
+
     while (wxTheApp && wxTheApp->Pending())
         // TODO: implement event filtering using the eventsToProcess mask
         wxTheApp->Dispatch();
 
-    wxEventLoopBase::DoYieldFor(eventsToProcess);
+    m_isInsideYield = false;
+
+    return true;
 }
 
 // ----------------------------------------------------------------------------
@@ -405,10 +416,10 @@ public:
         close( idleFds[1] );
     }
 private:
-    wxDECLARE_DYNAMIC_CLASS(wxIdlePipeModule);
+    DECLARE_DYNAMIC_CLASS(wxIdlePipeModule)
 };
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxIdlePipeModule, wxModule);
+IMPLEMENT_DYNAMIC_CLASS(wxIdlePipeModule, wxModule)
 
 static void wxInputCallback( XtPointer, int* fd, XtInputId* )
 {

@@ -2,6 +2,7 @@
 // Name:        dialup.h
 // Purpose:     interface of wxDialUpManager
 // Author:      wxWidgets team
+// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -118,7 +119,7 @@ public:
     virtual bool HangUp() = 0;
 
     /**
-        Returns @true if the computer has a permanent network connection (i.e.\
+        Returns @true if the computer has a permanent network connection (i.e.
         is on a LAN) and so there is no need to use Dial() function to go
         online.
 
@@ -162,7 +163,7 @@ public:
     /**
         Sometimes the built-in logic for determining the online status may
         fail, so, in general, the user should be allowed to override it. This
-        function allows forcefully setting the online status - whatever our
+        function allows to forcefully set the online status - whatever our
         internal algorithm may think about it.
 
         @see IsOnline()

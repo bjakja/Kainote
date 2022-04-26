@@ -3,6 +3,7 @@
 // Purpose:     wxList unit test
 // Author:      Vadim Zeitlin, Mattia Barbon
 // Created:     2004-12-08
+// RCS-ID:      $Id$
 // Copyright:   (c) 2004 Vadim Zeitlin, Mattia Barbon
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -12,13 +13,15 @@
 
 #include "testprec.h"
 
+#ifdef __BORLANDC__
+    #pragma hdrstop
+#endif
 
 #ifndef WX_PRECOMP
     #include "wx/wx.h"
 #endif // WX_PRECOMP
 
 #include "wx/list.h"
-#include "wx/scopedptr.h"
 
 // --------------------------------------------------------------------------
 // test class
@@ -40,7 +43,7 @@ private:
     void wxStdListTest();
     void wxListCtorTest();
 
-    wxDECLARE_NO_COPY_CLASS(ListsTestCase);
+    DECLARE_NO_COPY_CLASS(ListsTestCase)
 };
 
 // register in the unnamed registry so that these tests are run by default
@@ -130,13 +133,12 @@ void ListsTestCase::wxStdListTest()
         CPPUNIT_ASSERT( *rit == i + &i );
     }
 
-    CPPUNIT_ASSERT( *list1.rbegin() == *--list1.end() );
-    CPPUNIT_ASSERT( *list1.begin() == *--list1.rend() );
-    CPPUNIT_ASSERT( *list1.begin() == *--++list1.begin() );
-    CPPUNIT_ASSERT( *list1.rbegin() == *--++list1.rbegin() );
+    CPPUNIT_ASSERT( *list1.rbegin() == *--list1.end() &&
+                    *list1.begin() == *--list1.rend() );
+    CPPUNIT_ASSERT( *list1.begin() == *--++list1.begin() &&
+                    *list1.rbegin() == *--++list1.rbegin() );
 
-    CPPUNIT_ASSERT( list1.front() == &i );
-    CPPUNIT_ASSERT( list1.back() == &i + 4 );
+    CPPUNIT_ASSERT( list1.front() == &i && list1.back() == &i + 4 );
 
     list1.erase(list1.begin());
     list1.erase(--list1.end());
@@ -208,71 +210,3 @@ void ListsTestCase::wxListCtorTest()
     CPPUNIT_ASSERT( Baz::GetNumber() == 0 );
 }
 
-// Check for WX_DECLARE_LIST_3 which is used to define wxWindowList: we can't
-// use this class itself here, as it's in the GUI library, so declare something
-// similar.
-struct ListElementBase
-{
-    virtual ~ListElementBase() { }
-};
-
-struct ListElement : ListElementBase
-{
-    explicit ListElement(int n) : m_n(n) { }
-
-    int m_n;
-};
-
-WX_DECLARE_LIST_3(ListElement, ListElementBase, ElementsList, ElementsListNode, class);
-
-#if wxUSE_STD_CONTAINERS
-
-#include "wx/listimpl.cpp"
-WX_DEFINE_LIST(ElementsList)
-
-#else // !wxUSE_STD_CONTAINERS
-
-void ElementsListNode::DeleteData()
-{
-    delete static_cast<ListElement *>(GetData());
-}
-
-#endif // wxUSE_STD_CONTAINERS/!wxUSE_STD_CONTAINERS
-
-TEST_CASE("wxWindowList::Find", "[list]")
-{
-    ListElement* const el = new ListElement(17);
-    wxScopedPtr<ListElementBase> elb(el);
-
-    ElementsList l;
-    l.Append(el);
-
-    // We should be able to call Find() with the base class pointer.
-    ElementsList::compatibility_iterator it = l.Find(elb.get());
-    CHECK( it == l.GetFirst() );
-}
-
-#if wxUSE_STD_CONTAINERS_COMPATIBLY
-
-#include <list>
-
-// Check that we convert wxList to std::list using the latter's ctor taking 2
-// iterators: this used to be broken in C++11 because wxList iterators didn't
-// fully implement input iterator requirements.
-TEST_CASE("wxList::iterator", "[list][std][iterator]")
-{
-    Baz baz1("one"),
-        baz2("two");
-
-    wxListBazs li;
-    li.push_back(&baz1);
-    li.push_back(&baz2);
-
-    std::list<Baz*> stdli(li.begin(), li.end());
-    CHECK( stdli.size() == 2 );
-
-    const wxListBazs cli;
-    CHECK( std::list<Baz*>(cli.begin(), cli.end()).empty() );
-}
-
-#endif // wxUSE_STD_CONTAINERS_COMPATIBLY

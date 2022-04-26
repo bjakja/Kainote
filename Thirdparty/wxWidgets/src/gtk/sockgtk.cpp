@@ -3,6 +3,7 @@
 // Purpose:     implementation of wxGTK-specific socket event handling
 // Author:      Guilhem Lavaux, Vadim Zeitlin
 // Created:     1999
+// RCS-ID:      $Id$
 // Copyright:   (c) 1999, 2007 wxWidgets dev team
 //              (c) 2009 Vadim Zeitlin
 // Licence:     wxWindows licence
@@ -44,20 +45,17 @@ static gboolean wxSocket_Input(GIOChannel*, GIOCondition condition, gpointer dat
 class GTKFDIOManager : public wxFDIOManager
 {
 public:
-    virtual int AddInput(wxFDIOHandler *handler, int fd, Direction d) wxOVERRIDE
+    virtual int AddInput(wxFDIOHandler *handler, int fd, Direction d)
     {
-        GIOChannel* channel = g_io_channel_unix_new(fd);
-        unsigned id = g_io_add_watch(
-            channel,
+        return g_io_add_watch(
+            g_io_channel_unix_new(fd),
             d == OUTPUT ? G_IO_OUT : G_IO_IN,
             wxSocket_Input,
             handler);
-        g_io_channel_unref(channel);
-        return id;
     }
 
     virtual void
-    RemoveInput(wxFDIOHandler* WXUNUSED(handler), int fd, Direction WXUNUSED(d)) wxOVERRIDE
+    RemoveInput(wxFDIOHandler* WXUNUSED(handler), int fd, Direction WXUNUSED(d))
     {
         g_source_remove(fd);
     }

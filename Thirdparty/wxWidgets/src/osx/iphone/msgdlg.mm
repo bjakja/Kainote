@@ -4,6 +4,7 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     04/01/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,10 +20,9 @@
 
 #include "wx/thread.h"
 #include "wx/osx/private.h"
-#include "wx/modalhook.h"
 
 
-wxIMPLEMENT_CLASS(wxMessageDialog, wxDialog);
+IMPLEMENT_CLASS(wxMessageDialog, wxDialog)
 
 
 wxMessageDialog::wxMessageDialog(wxWindow *parent,
@@ -36,8 +36,6 @@ wxMessageDialog::wxMessageDialog(wxWindow *parent,
 
 int wxMessageDialog::ShowModal()
 {
-    WX_HOOK_MODAL_DIALOG();
-
     int resultbutton = wxID_CANCEL;
 
     const long style = GetMessageDialogStyle();

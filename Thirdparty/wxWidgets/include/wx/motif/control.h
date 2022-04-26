@@ -4,6 +4,7 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
+// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,7 +19,7 @@
 // General item class
 class WXDLLIMPEXP_CORE wxControl: public wxControlBase
 {
-    wxDECLARE_ABSTRACT_CLASS(wxControl);
+    DECLARE_ABSTRACT_CLASS(wxControl)
 
 public:
     wxControl();
@@ -28,7 +29,7 @@ public:
         const wxSize &size = wxDefaultSize,
         long style = 0,
         const wxValidator& validator = wxDefaultValidator,
-        const wxString &name = wxASCII_STR(wxControlNameStr) )
+        const wxString &name = wxControlNameStr )
     {
         Create(parent, id, pos, size, style, validator, name);
     }
@@ -37,7 +38,7 @@ public:
         const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize, long style = 0,
         const wxValidator& validator = wxDefaultValidator,
-        const wxString& name = wxASCII_STR(wxControlNameStr));
+        const wxString& name = wxControlNameStr);
 
     // simulates the event, returns true if the event was processed
     virtual void Command(wxCommandEvent& WXUNUSED(event)) { }
@@ -68,7 +69,7 @@ protected:
     // Motif: prevent callbacks being called while in SetValue
     bool m_inSetValue;
 
-    wxDECLARE_EVENT_TABLE();
+    DECLARE_EVENT_TABLE()
 };
 
 #endif // _WX_CONTROL_H_

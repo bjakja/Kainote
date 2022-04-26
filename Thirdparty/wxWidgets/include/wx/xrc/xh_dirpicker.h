@@ -3,6 +3,7 @@
 // Purpose:     XML resource handler for wxDirPickerCtrl
 // Author:      Francesco Montorsi
 // Created:     2006-04-17
+// RCS-ID:      $Id$
 // Copyright:   (c) 2006 Francesco Montorsi
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -16,12 +17,12 @@
 
 class WXDLLIMPEXP_XRC wxDirPickerCtrlXmlHandler : public wxXmlResourceHandler
 {
-    wxDECLARE_DYNAMIC_CLASS(wxDirPickerCtrlXmlHandler);
+    DECLARE_DYNAMIC_CLASS(wxDirPickerCtrlXmlHandler)
 
 public:
     wxDirPickerCtrlXmlHandler();
-    virtual wxObject *DoCreateResource() wxOVERRIDE;
-    virtual bool CanHandle(wxXmlNode *node) wxOVERRIDE;
+    virtual wxObject *DoCreateResource();
+    virtual bool CanHandle(wxXmlNode *node);
 };
 
 #endif // wxUSE_XRC && wxUSE_DIRPICKERCTRL

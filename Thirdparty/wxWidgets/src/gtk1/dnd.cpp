@@ -2,6 +2,7 @@
 // Name:        src/gtk1/dnd.cpp
 // Purpose:     wxDropTarget class
 // Author:      Robert Roebling
+// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -801,7 +802,7 @@ void wxDropSource::PrepareIcon( int action, GdkDragContext *context )
 
     GdkBitmap *mask;
     if ( icon->GetMask() )
-        mask = icon->GetMask()->m_bitmap;
+        mask = icon->GetMask()->GetBitmap();
     else
         mask = NULL;
 
