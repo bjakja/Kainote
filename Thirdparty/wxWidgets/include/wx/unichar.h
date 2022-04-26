@@ -85,7 +85,7 @@ public:
         }
 #endif // wxUSE_UNICODE
 
-        *c = wx_truncate_cast(char, m_value);
+        *c = (char) m_value;
         return true;
     }
 
@@ -176,7 +176,7 @@ private:
     {
 #if wxUSE_UNICODE
         if ( c < 0x80 )
-            return wx_truncate_cast(char, c);
+            return (char) c;
 
         return ToHi8bit(c);
 #else

@@ -419,7 +419,7 @@ public:
 #ifdef __VISUALC6__
     double ToDouble() const;
 #else
-    /*double ToDouble() const { return wx_truncate_cast(double, m_ll); }*/
+    double ToDouble() const { return (double)m_ll; }
 #endif
 
     // operations

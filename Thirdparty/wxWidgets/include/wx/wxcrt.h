@@ -30,7 +30,7 @@
 /* checks whether the passed in pointer is NULL and if the string is empty */
 inline bool wxIsEmpty(const char *s) { return !s || !*s; }
 inline bool wxIsEmpty(const wchar_t *s) { return !s || !*s; }
-inline bool wxIsEmpty(const wxScopedCharBuffer& s) { return wxIsEmpty(s.data()); }
+//inline bool wxIsEmpty(const wxScopedCharBuffer& s) { return wxIsEmpty(s.data()); }
 inline bool wxIsEmpty(const wxScopedWCharBuffer& s) { return wxIsEmpty(s.data()); }
 inline bool wxIsEmpty(const wxString& s) { return s.empty(); }
 inline bool wxIsEmpty(const wxCStrData& s) { return s.AsString().empty(); }
@@ -147,13 +147,13 @@ inline char* wxTmemset(char* szOut, const char cIn, size_t len)
 // NB: we can't provide const wchar_t* (= wxChar*) overload, because calling
 //     wxSetlocale(category, NULL) -- which is a common thing to do -- would be
 //     ambiguous
-WXDLLIMPEXP_BASE char* wxSetlocale(int category, const char *locale);
-inline char* wxSetlocale(int category, const wxScopedCharBuffer& locale)
-    { return wxSetlocale(category, locale.data()); }
-inline char* wxSetlocale(int category, const wxString& locale)
-    { return wxSetlocale(category, locale.mb_str()); }
-inline char* wxSetlocale(int category, const wxCStrData& locale)
-    { return wxSetlocale(category, locale.AsCharBuf()); }
+wchar_t* wxSetlocale(int category, const wchar_t * locale);
+/*nline char* wxSetlocale(int category, const wxScopedCharBuffer& locale)
+    { return wxSetlocale(category, locale.data()); }*/
+//inline wchar_t* wxSetlocale(int category, const wxString& locale)
+    //{ return wxSetlocale(category, locale.wc_str()); }
+//inline char* wxSetlocale(int category, const wxCStrData& locale)
+//    { return wxSetlocale(category, locale.AsCharBuf()); }
 
 // ----------------------------------------------------------------------------
 //                              string functions
@@ -563,12 +563,12 @@ inline wchar_t *wxStrtok(wchar_t *str, const wchar_t *delim, wchar_t **saveptr)
 template<typename T>
 inline T *wxStrtok(T *str, const wxScopedCharTypeBuffer<T>& delim, T **saveptr)
     { return wxStrtok(str, delim.data(), saveptr); }
-inline char *wxStrtok(char *str, const wxCStrData& delim, char **saveptr)
-    { return wxCRT_StrtokA(str, delim.AsCharBuf(), saveptr); }
+//inline char *wxStrtok(char *str, const wxCStrData& delim, char **saveptr)
+//    { return wxCRT_StrtokA(str, delim.AsCharBuf(), saveptr); }
 inline wchar_t *wxStrtok(wchar_t *str, const wxCStrData& delim, wchar_t **saveptr)
     { return wxCRT_StrtokW(str, delim.AsWCharBuf(), saveptr); }
-inline char *wxStrtok(char *str, const wxString& delim, char **saveptr)
-    { return wxCRT_StrtokA(str, delim.mb_str(), saveptr); }
+//inline char *wxStrtok(char *str, const wxString& delim, char **saveptr)
+//    { return wxCRT_StrtokA(str, delim.mb_str(), saveptr); }
 inline wchar_t *wxStrtok(wchar_t *str, const wxString& delim, wchar_t **saveptr)
     { return wxCRT_StrtokW(str, delim.wc_str(), saveptr); }
 
@@ -576,21 +576,21 @@ inline const char *wxStrstr(const char *haystack, const char *needle)
     { return wxCRT_StrstrA(haystack, needle); }
 inline const wchar_t *wxStrstr(const wchar_t *haystack, const wchar_t *needle)
     { return wxCRT_StrstrW(haystack, needle); }
-inline const char *wxStrstr(const char *haystack, const wxString& needle)
-    { return wxCRT_StrstrA(haystack, needle.mb_str()); }
+//inline const char *wxStrstr(const char *haystack, const wxString& needle)
+//    { return wxCRT_StrstrA(haystack, needle.mb_str()); }
 inline const wchar_t *wxStrstr(const wchar_t *haystack, const wxString& needle)
     { return wxCRT_StrstrW(haystack, needle.wc_str()); }
 // these functions return char* pointer into the non-temporary conversion buffer
 // used by c_str()'s implicit conversion to char*, for ANSI build compatibility
-inline const char *wxStrstr(const wxString& haystack, const wxString& needle)
+/*nline const char *wxStrstr(const wxString& haystack, const wxString& needle)
     { return wxCRT_StrstrA(haystack.c_str(), needle.mb_str()); }
 inline const char *wxStrstr(const wxCStrData& haystack, const wxString& needle)
     { return wxCRT_StrstrA(haystack, needle.mb_str()); }
 inline const char *wxStrstr(const wxCStrData& haystack, const wxCStrData& needle)
-    { return wxCRT_StrstrA(haystack, needle.AsCharBuf()); }
+    { return wxCRT_StrstrA(haystack, needle.AsCharBuf()); }*/
 // if 'needle' is char/wchar_t, then the same is probably wanted as return value
-inline const char *wxStrstr(const wxString& haystack, const char *needle)
-    { return wxCRT_StrstrA(haystack.c_str(), needle); }
+//inline const char *wxStrstr(const wxString& haystack, const char *needle)
+//    { return wxCRT_StrstrA(haystack.c_str(), needle); }
 inline const char *wxStrstr(const wxCStrData& haystack, const char *needle)
     { return wxCRT_StrstrA(haystack, needle); }
 inline const wchar_t *wxStrstr(const wxString& haystack, const wchar_t *needle)
@@ -807,7 +807,7 @@ inline long wxAtol(const wxString& str) { return wxCRT_AtolA(str.mb_str()); }
 #ifdef wxCRT_AtofW
 inline double wxAtof(const wxString& str) { return wxCRT_AtofW(str.wc_str()); }
 #else
-inline double wxAtof(const wxString& str) { return wxCRT_AtofA(str.mb_str()); }
+//inline double wxAtof(const wxString& str) { return wxCRT_AtofA(str.mb_str()); }
 #endif
 
 inline double wxStrtod(const char *nptr, char **endptr)
@@ -923,9 +923,9 @@ inline int wxSystem(const wxString& str) { return wxCRT_SystemA(str.mb_str()); }
 
 inline char* wxGetenv(const char *name) { return wxCRT_GetenvA(name); }
 inline wchar_t* wxGetenv(const wchar_t *name) { return wxCRT_GetenvW(name); }
-inline char* wxGetenv(const wxString& name) { return wxCRT_GetenvA(name.mb_str()); }
-inline char* wxGetenv(const wxCStrData& name) { return wxCRT_GetenvA(name.AsCharBuf()); }
-inline char* wxGetenv(const wxScopedCharBuffer& name) { return wxCRT_GetenvA(name.data()); }
+//inline char* wxGetenv(const wxString& name) { return wxCRT_GetenvA(name.mb_str()); }
+//inline char* wxGetenv(const wxCStrData& name) { return wxCRT_GetenvA(name.AsCharBuf()); }
+//inline char* wxGetenv(const wxScopedCharBuffer& name) { return wxCRT_GetenvA(name.data()); }
 inline wchar_t* wxGetenv(const wxScopedWCharBuffer& name) { return wxCRT_GetenvW(name.data()); }
 
 // ----------------------------------------------------------------------------

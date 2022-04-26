@@ -628,7 +628,7 @@ void wxAppConsoleBase::OnUnhandledException()
     }
 
     wxMessageOutputBest().Printf(
-        "*** Caught unhandled %s; terminating\n", what
+        L"*** Caught unhandled %s; terminating\n", what
     );
 #endif // __WXDEBUG__
 }
@@ -834,7 +834,7 @@ bool wxConsoleAppTraitsBase::HasStderr()
 #if wxUSE_INTL
 void wxAppTraitsBase::SetLocale()
 {
-    wxSetlocale(LC_ALL, "");
+    wxSetlocale(LC_ALL, L"");
     wxUpdateLocaleIsUtf8();
 }
 #endif
@@ -919,7 +919,7 @@ wxString wxAppTraitsBase::GetAssertStackTrace()
             m_stackTrace << wxString::Format
                             (
                               wxT("[%02d] "),
-                              wx_truncate_cast(int, frame.GetLevel())
+                              (int)frame.GetLevel()
                             );
 
             wxString name = frame.GetName();
@@ -937,7 +937,7 @@ wxString wxAppTraitsBase::GetAssertStackTrace()
                 m_stackTrace << wxT('\t')
                              << frame.GetFileName()
                              << wxT(':')
-                             << frame.GetLine();
+                             << (long)frame.GetLine();
             }
 
             m_stackTrace << wxT('\n');
@@ -1250,7 +1250,7 @@ void ShowAssertDialog(const wxString& file,
     // since dialogs cannot be displayed
     if ( !wxThread::IsMain() )
     {
-        msg += wxString::Format(" [in thread %lx]", wxThread::GetCurrentId());
+        msg += wxString::Format(L" [in thread %lx]", wxThread::GetCurrentId());
     }
 #endif // wxUSE_THREADS
 

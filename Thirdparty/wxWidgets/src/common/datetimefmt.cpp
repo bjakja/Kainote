@@ -560,12 +560,12 @@ wxString wxDateTime::Format(const wxString& formatp, const TimeZone& tz) const
                         while ( str.find(replacement) != wxString::npos )
                             replacement += '|';
 
-                        str.Replace(wxString::Format("%d", year),
+                        str.Replace(wxString::Format(L"%d", year),
                                     replacement);
-                        str.Replace(wxString::Format("%d", year % 100),
-                                    wxString::Format("%d", yearReal % 100));
+                        str.Replace(wxString::Format(L"%d", year % 100),
+                                    wxString::Format(L"%d", yearReal % 100));
                         str.Replace(replacement,
-                                    wxString::Format("%d", yearReal));
+                                    wxString::Format(L"%d", yearReal));
 
                         res += str;
                     }

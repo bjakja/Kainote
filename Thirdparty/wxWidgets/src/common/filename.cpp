@@ -1638,8 +1638,8 @@ bool wxFileName::GetShortcutTarget(const wxString& shortcutPath,
         {
             WCHAR wsz[MAX_PATH];
 
-            MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, shortcutPath.mb_str(), -1, wsz,
-                                MAX_PATH);
+           /* MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, shortcutPath.wc_str(), -1, wsz,
+                                MAX_PATH);*/
 
             hres = ppf->Load(wsz, 0);
             ppf->Release();
@@ -2744,7 +2744,7 @@ wxString wxFileName::GetHumanReadableSize(const wxULongLong &bs,
     const double bytesize = bs.ToDouble();
 
     wxString result;
-    if ( bytesize < kiloByteSize )
+    /*if ( bytesize < kiloByteSize )
         result.Printf("%s B", bs.ToString());
     else if ( bytesize < megaByteSize )
         result.Printf("%.*f K%sB", precision, bytesize/kiloByteSize, biInfix);
@@ -2753,7 +2753,7 @@ wxString wxFileName::GetHumanReadableSize(const wxULongLong &bs,
     else if (bytesize < teraByteSize)
         result.Printf("%.*f G%sB", precision, bytesize/gigaByteSize, biInfix);
     else
-        result.Printf("%.*f T%sB", precision, bytesize/teraByteSize, biInfix);
+        result.Printf("%.*f T%sB", precision, bytesize/teraByteSize, biInfix);*/
 
     return result;
 }

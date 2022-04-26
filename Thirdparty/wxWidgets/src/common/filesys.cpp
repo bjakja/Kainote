@@ -685,7 +685,7 @@ static wxString EscapeFileNameCharsInURL(const char *in)
         }
         else
         {
-            s << wxString::Format("%%%02x", c);
+            s << wxString::Format(L"%%%02x", c);
         }
     }
 
@@ -719,7 +719,7 @@ wxString wxFileSystem::FileNameToURL(const wxFileName& filename)
 
     // Do wxURI- and common practice-compatible escaping: encode the string
     // into UTF-8, then escape anything non-ASCII:
-    return wxT("file:") + EscapeFileNameCharsInURL(url.utf8_str());
+    return wxT("file:");/* + EscapeFileNameCharsInURL(url.utf8_str());*/
 }
 
 

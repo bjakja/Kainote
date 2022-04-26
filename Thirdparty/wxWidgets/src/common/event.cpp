@@ -1192,7 +1192,7 @@ void wxEvtHandler::QueueEvent(wxEvent *event)
     {
         // we need an event loop which manages the list of event handlers with
         // pending events... cannot proceed without it!
-        wxLogDebug("No application object! Cannot queue this event!");
+        //wxLogDebug("No application object! Cannot queue this event!");
 
         // anyway delete the given event to avoid memory leaks
         delete event;
@@ -1239,7 +1239,7 @@ void wxEvtHandler::ProcessPendingEvents()
     {
         // we need an event loop which manages the list of event handlers with
         // pending events... cannot proceed without it!
-        wxLogDebug("No application object! Cannot process pending events!");
+        //wxLogDebug("No application object! Cannot process pending events!");
         return;
     }
 

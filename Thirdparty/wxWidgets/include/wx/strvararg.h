@@ -137,16 +137,16 @@ class  wxString;
 class  wxFormatString
 {
 public:
-    wxFormatString(const char *str)
-        : m_char(wxScopedCharBuffer::CreateNonOwned(str)), m_str(NULL), m_cstr(NULL) {}
+    /*wxFormatString(const char *str)
+        : m_char(wxScopedCharBuffer::CreateNonOwned(str)), m_str(NULL), m_cstr(NULL) {}*/
     wxFormatString(const wchar_t *str)
         : m_wchar(wxScopedWCharBuffer::CreateNonOwned(str)), m_str(NULL), m_cstr(NULL) {}
     wxFormatString(const wxString& str)
         : m_str(&str), m_cstr(NULL) {}
     wxFormatString(const wxCStrData& str)
         : m_str(NULL), m_cstr(&str) {}
-    wxFormatString(const wxScopedCharBuffer& str)
-        : m_char(str), m_str(NULL), m_cstr(NULL)  {}
+    /*wxFormatString(const wxScopedCharBuffer& str)
+        : m_char(str), m_str(NULL), m_cstr(NULL)  {}*/
     wxFormatString(const wxScopedWCharBuffer& str)
         : m_wchar(str), m_str(NULL), m_cstr(NULL) {}
 
@@ -226,7 +226,7 @@ private:
 #endif // wxUSE_UNICODE && !wxUSE_UTF8_LOCALE_ONLY
 
 private:
-    wxScopedCharBuffer  m_char;
+    /*wxScopedCharBuffer  m_char;*/
     wxScopedWCharBuffer m_wchar;
 
     // NB: we can use a pointer here, because wxFormatString is only used
@@ -283,9 +283,9 @@ template<>
 struct wxFormatStringArgumentFinder<wxString>
     : public wxFormatStringArgumentFinder<const wxString&> {};
 
-template<>
-struct wxFormatStringArgumentFinder<wxScopedCharBuffer>
-    : public wxFormatStringArgumentFinder<const wxScopedCharBuffer&> {};
+//template<>
+//struct wxFormatStringArgumentFinder<wxScopedCharBuffer>
+//    : public wxFormatStringArgumentFinder<const wxScopedCharBuffer&> {};
 
 template<>
 struct wxFormatStringArgumentFinder<wxScopedWCharBuffer>
@@ -348,7 +348,7 @@ struct wxFormatStringSpecifier
 #elif defined HAVE_TR1_TYPE_TRAITS
     typedef std::/*tr1::*/is_enum<T> is_enum;
 #endif
-    enum { value = wxFormatStringSpecifierNonPodType<is_enum::value>::value };
+    enum { value/* = wxFormatStringSpecifierNonPodType<is_enum::value>::value*/ };
 };
 
 #else // !HAVE_(TR1_)TYPE_TRAITS
@@ -683,8 +683,8 @@ WX_ARG_NORMALIZER_FORWARD(char*, const char*);
 WX_ARG_NORMALIZER_FORWARD(wchar_t*, const wchar_t*);
 
 // versions for passing wx[W]CharBuffer:
-WX_ARG_NORMALIZER_FORWARD(wxScopedCharBuffer, const char*);
-WX_ARG_NORMALIZER_FORWARD(const wxScopedCharBuffer&, const char*);
+//WX_ARG_NORMALIZER_FORWARD(wxScopedCharBuffer, const char*);
+//WX_ARG_NORMALIZER_FORWARD(const wxScopedCharBuffer&, const char*);
 WX_ARG_NORMALIZER_FORWARD(wxScopedWCharBuffer, const wchar_t*);
 WX_ARG_NORMALIZER_FORWARD(const wxScopedWCharBuffer&, const wchar_t*);
 WX_ARG_NORMALIZER_FORWARD(wxCharBuffer, const char*);
@@ -772,9 +772,9 @@ struct wxArgNormalizerNarrowChar
 
         // FIXME-UTF8: which one is better default in absence of fmt string
         //             (i.e. when used like e.g. Foo("foo", "bar", 'c', NULL)?
-        if ( !fmt || fmt->GetArgumentType(index) == wxFormatString::Arg_Char )
+        /*if ( !fmt || fmt->GetArgumentType(index) == wxFormatString::Arg_Char )
             m_value = wx_truncate_cast(T, wxUniChar(value).GetValue());
-        else
+        else*/
             m_value = value;
     }
 

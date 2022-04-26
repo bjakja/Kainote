@@ -209,7 +209,7 @@ public:
     wxVariant(const char* val, const wxString& name = wxEmptyString);
     wxVariant(const wchar_t* val, const wxString& name = wxEmptyString);
     wxVariant(const wxCStrData& val, const wxString& name = wxEmptyString);
-    wxVariant(const wxScopedCharBuffer& val, const wxString& name = wxEmptyString);
+    //wxVariant(const wxScopedCharBuffer& val, const wxString& name = wxEmptyString);
     wxVariant(const wxScopedWCharBuffer& val, const wxString& name = wxEmptyString);
 
     bool operator== (const wxString& value) const;
@@ -238,7 +238,7 @@ public:
         { return operator!=(wxString(value)); }
     wxVariant& operator=(const std::string& value)
         { return operator=(wxString(value)); }
-    operator std::string() const { return (operator wxString()).ToStdString(); }
+    //operator std::string() const { return (operator wxString()).ToStdString(); }
 
     wxVariant(const wxStdWideString& val, const wxString& name = wxEmptyString);
     bool operator==(const wxStdWideString& value) const

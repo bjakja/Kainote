@@ -35,19 +35,19 @@ wxBase64Encode(char *dst, size_t dstLen, const void *src, size_t srcLen);
 
 // encode the contents of the given buffer using base64 and return as string
 // (there is no error return)
-inline wxString wxBase64Encode(const void *src, size_t srcLen)
-{
-    const size_t dstLen = wxBase64EncodedSize(srcLen);
-    wxCharBuffer dst(dstLen);
-    wxBase64Encode(dst.data(), dstLen, src, srcLen);
+//inline wxString wxBase64Encode(const void *src, size_t srcLen)
+//{
+//    const size_t dstLen = wxBase64EncodedSize(srcLen);
+//    wxString dst(dstLen);
+//    wxBase64Encode(dst.data(), dstLen, src, srcLen);
+//
+//    return dst;
+//}
 
-    return dst;
-}
-
-inline wxString wxBase64Encode(const wxMemoryBuffer& buf)
-{
-    return wxBase64Encode(buf.GetData(), buf.GetDataLen());
-}
+//inline wxString wxBase64Encode(const wxMemoryBuffer& buf)
+//{
+//    return wxBase64Encode(buf.GetData(), buf.GetDataLen());
+//}
 
 // ----------------------------------------------------------------------------
 // decoding functions
@@ -97,7 +97,7 @@ wxBase64Decode(void *dst, size_t dstLen,
 {
     // don't use str.length() here as the ASCII buffer is shorter than it for
     // strings with embedded NULs
-    return wxBase64Decode(dst, dstLen, src.ToAscii(), wxNO_LEN, mode, posErr);
+    return wxBase64Decode(dst, dstLen, src, wxNO_LEN, mode, posErr);
 }
 
 // decode the contents of the given string; the returned buffer is empty if an
@@ -114,7 +114,7 @@ wxBase64Decode(const wxString& src,
 {
     // don't use str.length() here as the ASCII buffer is shorter than it for
     // strings with embedded NULs
-    return wxBase64Decode(src.ToAscii(), wxNO_LEN, mode, posErr);
+    return wxBase64Decode(src, wxNO_LEN, mode, posErr);
 }
 
 #endif // wxUSE_BASE64

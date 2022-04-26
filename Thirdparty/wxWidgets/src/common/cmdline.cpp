@@ -250,7 +250,7 @@ namespace
 //
 // We define it because wxSetlocale() can't be easily used with wxScopeGuard as
 // it has several overloads -- while this one can.
-inline char *SetAllLocaleFacets(const char *loc)
+inline wchar_t *SetAllLocaleFacets(const wchar_t *loc)
 {
     return wxSetlocale(LC_ALL, loc);
 }
@@ -268,7 +268,7 @@ void wxCmdLineParserData::SetArguments(int argc, char **argv)
     // temporarily change the locale here. The only drawback is that changing
     // the locale is thread-unsafe but precisely because we're called so early
     // it's hopefully safe to assume that no other threads had been created yet.
-    char * const locOld = SetAllLocaleFacets("");
+    wchar_t * const locOld = SetAllLocaleFacets(L"");
     wxON_BLOCK_EXIT1( SetAllLocaleFacets, locOld );
 
     for ( int n = 0; n < argc; n++ )

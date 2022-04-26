@@ -143,7 +143,7 @@ public:
         CtorString(const wchar_t *str) : m_str(str) {}
         CtorString(const wxString& str) : m_str(str) {}
         CtorString(const wxCStrData& str) : m_str(str) {}
-        CtorString(const wxScopedCharBuffer& str) : m_str(str) {}
+        //CtorString(const wxScopedCharBuffer& str) : m_str(str) {}
         CtorString(const wxScopedWCharBuffer& str) : m_str(str) {}
 
         operator const wxString*() const { return &m_str; }

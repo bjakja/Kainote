@@ -209,17 +209,17 @@ wxDateTime::Country wxDateTime::ms_country = wxDateTime::Country_Unknown;
 
 // debugger helper: this function can be called from a debugger to show what
 // the date really is
-extern const char *wxDumpDate(const wxDateTime* dt)
-{
-    static char buf[128];
-
-    wxString fmt(dt->Format("%Y-%m-%d (%a) %H:%M:%S"));
-    wxStrlcpy(buf,
-              (fmt + " (" + dt->GetValue().ToString() + " ticks)").ToAscii(),
-              WXSIZEOF(buf));
-
-    return buf;
-}
+//extern const char *wxDumpDate(const wxDateTime* dt)
+//{
+//    static wchar_t buf[128];
+//
+//    wxString fmt(dt->Format("%Y-%m-%d (%a) %H:%M:%S"));
+//    wxStrlcpy(buf,
+//              (fmt + " (" + dt->GetValue().ToString() + " ticks)").ToAscii(),
+//              WXSIZEOF(buf));
+//
+//    return buf;
+//}
 
 // get the number of days in the given month of the given year
 static inline

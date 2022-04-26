@@ -296,7 +296,7 @@ void *wxDynamicLibrary::RawGetSymbol(wxDllType handle, const wxString& name)
 #ifdef __WXWINCE__
                                             name.c_str()
 #else
-                                            name.ToAscii()
+                                            name.c_str()
 #endif // __WXWINCE__
                                    );
 }

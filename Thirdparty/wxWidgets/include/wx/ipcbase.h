@@ -73,8 +73,8 @@ public:
                                               : size, wxIPC_UNICODETEXT); }
   bool Execute(const wxString& s)
   {
-      const wxScopedCharBuffer buf = s.utf8_str();
-      return DoExecute(buf, strlen(buf) + 1, wxIPC_UTF8TEXT);
+      const auto buf = s.wc_str();
+      return DoExecute(buf, wcslen(buf) + 1, wxIPC_UTF8TEXT);
   }
   bool Execute(const wxCStrData& cs)
       { return Execute(cs.AsString()); }

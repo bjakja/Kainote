@@ -97,7 +97,7 @@ bool wxFFile::ReadAll(wxString *str, const wxMBConv& conv)
     wxCHECK_MSG( str, false, wxT("invalid parameter") );
     wxCHECK_MSG( IsOpened(), false, wxT("can't read from closed file") );
     wxCHECK_MSG( Length() >= 0, false, wxT("invalid length") );
-    size_t length = wx_truncate_cast(size_t, Length());
+    size_t length = (size_t) Length();
     wxCHECK_MSG( (wxFileOffset)length == Length(), false, wxT("huge file not supported") );
 
     clearerr(m_fp);
@@ -152,11 +152,11 @@ size_t wxFFile::Write(const void *pBuf, size_t nCount)
 
 bool wxFFile::Write(const wxString& s, const wxMBConv& conv)
 {
-  const wxWX2MBbuf buf = s.mb_str(conv);
+  const auto buf = s.wc_str(conv);
   if ( !buf )
       return false;
 
-  const size_t size = strlen(buf); // FIXME: use buf.length() when available
+  const size_t size = wcslen(buf); // FIXME: use buf.length() when available
   return Write(buf, size) == size;
 }
 

@@ -238,7 +238,7 @@ protected:
     Data *m_data;
 };
 
-typedef wxScopedCharTypeBuffer<char> wxScopedCharBuffer;
+//typedef wxScopedCharTypeBuffer<char> wxScopedCharBuffer;
 typedef wxScopedCharTypeBuffer<wchar_t> wxScopedWCharBuffer;
 
 
@@ -256,8 +256,8 @@ public:
     {
         if ( str )
         {
-            if ( len == wxNO_LEN )
-                len = wxStrlen(str);
+            //if ( len == wxNO_LEN )
+                //len = wxStrlen(str);
             this->m_data = new Data(this->StrCopy(str, len), len);
         }
         else

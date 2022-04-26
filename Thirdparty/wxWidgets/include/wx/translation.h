@@ -73,8 +73,8 @@ public:
     static wxMsgCatalog *CreateFromFile(const wxString& filename,
                                         const wxString& domain);
 
-    static wxMsgCatalog *CreateFromData(const wxScopedCharBuffer& data,
-                                        const wxString& domain);
+    /*static wxMsgCatalog *CreateFromData(const wxScopedCharBuffer& data,
+                                        const wxString& domain);*/
 
     // get name of the catalog
     wxString GetDomain() const { return m_domain; }
