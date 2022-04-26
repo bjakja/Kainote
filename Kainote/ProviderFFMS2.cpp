@@ -169,7 +169,7 @@ int ProviderFFMS2::Init()
 	m_errInfo.ErrorType = FFMS_ERROR_SUCCESS;
 	m_errInfo.SubType = FFMS_ERROR_SUCCESS;
 
-	FFMS_Indexer* Indexer = FFMS_CreateIndexer(m_filename.utf8_str(), &m_errInfo);
+	FFMS_Indexer* Indexer = FFMS_CreateIndexer(m_filename.wc_str(), &m_errInfo);
 	if (!Indexer) {
 		KaiLogDebug(wxString::Format(_("Wystąpił błąd indeksowania: %s"), m_errInfo.Buffer)); return 0;
 	}
@@ -284,9 +284,9 @@ done:
 		wxString::Format(L"_%i.ffindex", audiotrack);
 
 	if (wxFileExists(m_indexPath)) {
-		m_index = FFMS_ReadIndex(m_indexPath.utf8_str(), &m_errInfo);
+		m_index = FFMS_ReadIndex(m_indexPath.wc_str(), &m_errInfo);
 		if (!m_index) {/*do nothing to skip*/ }
-		else if (FFMS_IndexBelongsToFile(m_index, m_filename.utf8_str(), &m_errInfo))
+		else if (FFMS_IndexBelongsToFile(m_index, m_filename.wc_str(), &m_errInfo))
 		{
 			FFMS_DestroyIndex(m_index);
 			m_index = nullptr;
@@ -317,7 +317,7 @@ done:
 		{
 			wxDir::Make(m_indexPath.BeforeLast(L'\\'));
 		}
-		if (FFMS_WriteIndex(m_indexPath.utf8_str(), m_index, &m_errInfo))
+		if (FFMS_WriteIndex(m_indexPath.wc_str(), m_index, &m_errInfo))
 		{
 			KaiLogDebug(wxString::Format(_("Nie można zapisać indeksu, wystąpił błąd %s"), m_errInfo.Buffer));
 			//FFMS_DestroyIndex(index);
@@ -333,7 +333,7 @@ done:
 		GetSystemInfo(&sysinfo);
 		try {
 			m_videoSource = FFMS_CreateVideoSource(
-				m_filename.utf8_str(),
+				m_filename.wc_str(),
 				videotrack,
 				m_index,
 				sysinfo.dwNumberOfProcessors,
@@ -448,7 +448,7 @@ done:
 audio:
 
 	if (audiotrack != -1) {
-		m_audioSource = FFMS_CreateAudioSource(m_filename.utf8_str(), audiotrack, m_index, FFMS_DELAY_FIRST_VIDEO_TRACK, &m_errInfo);
+		m_audioSource = FFMS_CreateAudioSource(m_filename.wc_str(), audiotrack, m_index, FFMS_DELAY_FIRST_VIDEO_TRACK, &m_errInfo);
 		if (m_audioSource == nullptr) {
 			KaiLog(wxString::Format(_("Wystąpił błąd tworzenia źródła audio: %s"), m_errInfo.Buffer));
 			return 0;

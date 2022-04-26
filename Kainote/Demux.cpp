@@ -39,7 +39,7 @@ bool Demux::Open(const wxString& filename)
 	errInfo.ErrorType = FFMS_ERROR_SUCCESS;
 	errInfo.SubType = FFMS_ERROR_SUCCESS;
 
-	indexer = FFMS_CreateIndexer(filename.utf8_str(), &errInfo);
+	indexer = FFMS_CreateIndexer(filename.wc_str(), &errInfo);
 	if (!indexer) {
 		KaiLog(wxString::Format(_("Wystąpił błąd indeksowania: %s"), errInfo.Buffer)); return false;
 	}

@@ -1268,7 +1268,7 @@ TabPanel *Notebook::GetTab()
 	if(sthis->iter < sthis->Size())
 		return sthis->Pages[sthis->iter];
 	else {
-		KaiLog(wxString::Format("bad iter %i / %i sleep 5000 and crash", sthis->iter, (int)sthis->Size()));
+		KaiLog(wxString::Format(L"bad iter %i / %i sleep 5000 and crash", sthis->iter, (int)sthis->Size()));
 		Sleep(5000);
 		return nullptr;
 	}

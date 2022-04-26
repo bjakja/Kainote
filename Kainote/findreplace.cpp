@@ -1558,7 +1558,7 @@ int FindReplace::ReplaceCheckedInSubs(std::vector<SeekResults *> &results, const
 		if (SeekResult->keyLine != lineNum){
 
 			if (isSRT)
-				replacedText << (lineNum + 1) << L"\r\n";
+				replacedText << int(lineNum + 1) << L"\r\n";
 
 			replacedText << token << L"\r\n";
 
@@ -1597,7 +1597,7 @@ int FindReplace::ReplaceCheckedInSubs(std::vector<SeekResults *> &results, const
 				break;
 		}
 		if (isSRT)
-			replacedText << (lineNum + 1) << L"\r\n";
+			replacedText << int(lineNum + 1) << L"\r\n";
 
 		dial->SetTextElement(dialogueColumn, dialtxt);
 		//else{ replacedText << dialtxt << L"\r\n"; }

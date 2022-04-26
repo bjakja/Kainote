@@ -273,7 +273,7 @@ void RotationXY::ChangeVisual(wxString *txt, Dialogue *dial, size_t numOfSelecti
 	if (type != 1){
 		if (changeAllTags) {
 			auto replfunc = [=](const FindData& data, wxString* result) {
-				float oldangle = data.finding.empty()? oldAngle.x : std::stof(data.finding.ToStdString());
+				float oldangle = data.finding.empty()? oldAngle.x : wxAtof(data.finding);
 				angle.x = (to.x - firstmove.x) + oldangle;
 				angle.x = fmodf(angle.x + 360.f, 360.f);
 				*result = getfloat(angle.x);
@@ -291,7 +291,7 @@ void RotationXY::ChangeVisual(wxString *txt, Dialogue *dial, size_t numOfSelecti
 	if (type != 0){
 		if (changeAllTags) {
 			auto replfunc = [=](const FindData& data, wxString* result) {
-				float oldangle = data.finding.empty() ? oldAngle.y : std::stof(data.finding.ToStdString());
+				float oldangle = data.finding.empty() ? oldAngle.y : wxAtof(data.finding);
 				//swap plus to minus to not keep oldAngle and angle in minuses
 				float angy = (to.y - firstmove.y) - oldangle;
 				angle.y = fmodf((-angy) + 360.f, 360.f);
@@ -327,7 +327,7 @@ wxPoint RotationXY::ChangeVisual(wxString* txt)
 	if (type != 1) {
 		if (changeAllTags) {
 			auto replfunc = [=](const FindData& data, wxString* result) {
-				float oldangle = data.finding.empty() ? oldAngle.x : std::stof(data.finding.ToStdString());
+				float oldangle = data.finding.empty() ? oldAngle.x : wxAtof(data.finding);
 				angle.x = (to.x - firstmove.x) + oldangle;
 				angle.x = fmodf(angle.x + 360.f, 360.f);
 				*result = getfloat(angle.x);
@@ -347,7 +347,7 @@ wxPoint RotationXY::ChangeVisual(wxString* txt)
 	if (type != 0) {
 		if (changeAllTags) {
 			auto replfunc = [=](const FindData& data, wxString* result) {
-				float oldangle = data.finding.empty() ? oldAngle.y : std::stof(data.finding.ToStdString());
+				float oldangle = data.finding.empty() ? oldAngle.y : wxAtof(data.finding);
 				//swap plus to minus to not keep oldAngle and angle in minuses
 				float angy = (to.y - firstmove.y) - oldangle;
 				angle.y = fmodf((-angy) + 360.f, 360.f);

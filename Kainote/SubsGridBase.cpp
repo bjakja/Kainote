@@ -387,7 +387,7 @@ void SubsGridBase::SaveFile(const wxString &filename, bool normalSave, bool load
 			else{
 
 				if (subsFormat == SRT){
-					raw << i + 1 << L"\r\n";
+					raw << int(i + 1) << L"\r\n";
 				}
 				dial->GetRaw(&raw);
 			}
@@ -415,7 +415,7 @@ void SubsGridBase::SaveFile(const wxString &filename, bool normalSave, bool load
 			else{
 
 				if (subsFormat == SRT){
-					raw << i + 1 << L"\r\n";
+					raw << int(i + 1) << L"\r\n";
 				}
 				dial->GetRaw(&raw);
 			}

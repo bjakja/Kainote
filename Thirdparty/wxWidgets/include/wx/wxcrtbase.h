@@ -557,11 +557,11 @@ extern "C" {
     #define  wxCRT_AtoiW           _wtoi
     #define  wxCRT_AtolW           _wtol
     /* _wtof doesn't exist */
-#else
-#ifndef __VMS
+//#else
+//#ifndef __VMS
     #define wxCRT_AtofW(s)         wcstod(s, NULL)
-#endif
-    #define wxCRT_AtolW(s)         wcstol(s, NULL, 10)
+//#endif
+    //#define wxCRT_AtolW(s)         wcstol(s, NULL, 10)
     /* wcstoi doesn't exist */
 #endif
 

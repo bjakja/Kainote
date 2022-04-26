@@ -214,9 +214,9 @@ public:
 	wxString & Trim(bool fromRight = true){
 		return stored->Trim(fromRight);
 	}
-	const wxScopedCharBuffer mb_str(const wxMBConv& conv = wxConvLibc) const{
+	/*const wxScopedCharBuffer mb_str(const wxMBConv& conv = wxConvLibc) const{
 		return stored->mb_str(conv);
-	}
+	}*/
 	wxString *Copy(){
 		if ((*deleteReference) > 0){ StoreText(*stored); }
 		return stored;

@@ -86,13 +86,13 @@
 
 	char *clipboard_get()
 	{
-		std::string data;
+		wxString data;
 		wxClipboard *cb = wxClipboard::Get();
 		if (cb->Open()) {
 			if (cb->IsSupported(wxDF_TEXT) || cb->IsSupported(wxDF_UNICODETEXT)) {
 				wxTextDataObject raw_data;
 				cb->GetData(raw_data);
-				data = raw_data.GetText().ToStdString();
+				data = raw_data.GetText();
 			}
 			cb->Close();
 		}
@@ -525,7 +525,7 @@
 		for (auto macro : macros) {
 			if (macro->StrDisplay() == command->StrDisplay()) {
 				error(L, wxString::Format(_("Makro o nazwie '%s' jest już zdefiniowane w skrypcie '%s'"),
-					command->StrDisplay().utf8_str().data(), name.utf8_str().data()).mb_str(wxConvUTF8).data());
+					command->StrDisplay(), name));
 			}
 		}
 		macros.push_back(command);
@@ -773,7 +773,7 @@
 		SAFE_DELETE(subsobj);
 
 		if (err) {
-			KaiLog(wxString::Format("Runtime error in Lua macro validation function:\n%s", get_string(L, -1)));
+			KaiLog(wxString::Format(L"Runtime error in Lua macro validation function:\n%s", get_string(L, -1)));
 			lua_pop(L, 2);
 			return false;
 		}
@@ -840,7 +840,7 @@
 		if (lua_isnumber(L, -1)) {
 			active_idx = lua_tointeger(L, -1) - original_offset;
 			if (active_idx < 0 || active_idx >= dialsCount) {
-				KaiLog(wxString::Format("Active row %d is out of bounds (must be 1-%u)", active_idx, dialsCount));
+				KaiLog(wxString::Format(L"Active row %d is out of bounds (must be 1-%u)", active_idx, dialsCount));
 				active_idx = original_active;
 			}
 			else
@@ -858,7 +858,7 @@
 					return;
 				int cur = lua_tointeger(L, -1) - original_offset;
 				if (cur < 0 || cur >= dialsCount) {
-					KaiLog(wxString::Format("Selected row %d is out of bounds (must be 1-%u)", cur, dialsCount));
+					KaiLog(wxString::Format(L"Selected row %d is out of bounds (must be 1-%u)", cur, dialsCount));
 					throw LuaForEachBreak();
 				}
 				if (active_idx == -1)
@@ -904,7 +904,7 @@
 
 		bool result = false;
 		if (err)
-			KaiLog(wxString::Format("Runtime error in Lua macro IsActive function:\n%s", get_string(L, -1)));
+			KaiLog(wxString::Format(L"Runtime error in Lua macro IsActive function:\n%s", get_string(L, -1)));
 		else
 			result = !!lua_toboolean(L, -1);
 
@@ -1183,7 +1183,7 @@
 			for (size_t p = 0; p < macros.size(); p++){
 				auto macro = macros[p];
 				wxString text;
-				text << L"Script " << script->GetFilename() << L"-" << p;
+				text << L"Script " << script->GetFilename() << L"-" << (int)p;
 				MenuItem *mi = submenu->SetAccMenu(new MenuItem(start, macro->StrDisplay(), macro->StrHelp()), text);
 				mi->Enable(macro->Validate(c));
 				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
@@ -1230,7 +1230,7 @@
 			auto macros = script->GetMacros();
 			for (size_t p = 0; p < macros.size(); p++){
 				auto macro = macros[p];
-				wxString text; text << L"Script " << script->GetFilename() << L"-" << p;
+				wxString text; text << L"Script " << script->GetFilename() << L"-" << (int)p;
 				MenuItem *mi = submenu->SetAccMenu(new MenuItem(start, macro->StrDisplay(), macro->StrHelp()), text);
 				mi->Enable(macro->Validate(c));
 				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {

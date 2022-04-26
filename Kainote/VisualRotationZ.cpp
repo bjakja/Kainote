@@ -349,7 +349,7 @@ void RotationZ::ChangeVisual(wxString *txt, Dialogue *dial, size_t numOfSelectio
 		}
 		auto replfunc = [=](const FindData& data, wxString* result) {
 			float newangle = angle;
-			float oldangle = data.finding.empty()? 0 : std::stof(data.finding.ToStdString());
+			float oldangle = data.finding.empty()? 0 : wxAtof(data.finding);
 			newangle = oldangle - (lastAngle - angle);
 			newangle = fmodf(newangle + 360.f, 360.f);
 			if (isfirst) {
@@ -396,7 +396,7 @@ wxPoint RotationZ::ChangeVisual(wxString* txt)
 		auto replfunc = [=](const FindData& data, wxString* result) {
 			float newangle = angle;
 			if (!data.finding.empty()) {
-				float oldangle = std::stof(data.finding.ToStdString());
+				float oldangle = wxAtof(data.finding);
 				newangle = oldangle - (lastAngle - angle);
 				newangle = fmodf(newangle + 360.f, 360.f);
 			}

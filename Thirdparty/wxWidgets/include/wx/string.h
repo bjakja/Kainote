@@ -2042,8 +2042,8 @@ public:
       // string += char
   wxString& operator<<(wxUniChar ch) { append(1, ch); return *this; }
   wxString& operator<<(wxUniCharRef ch) { append(1, ch); return *this; }
-  wxString& operator<<(char ch) { append(1, ch); return *this; }
-  wxString& operator<<(unsigned char ch) { append(1, ch); return *this; }
+  //wxString& operator<<(char ch) { append(1, ch); return *this; }
+  //wxString& operator<<(unsigned char ch) { append(1, ch); return *this; }
   wxString& operator<<(wchar_t ch) { append(1, ch); return *this; }
 
       // string += buffer (i.e. from wxGetString)
