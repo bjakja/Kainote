@@ -20,17 +20,17 @@
 #include "wx/gdicmn.h"          // wxBITMAP_TYPE_INVALID
 #include "wx/list.h"
 
-class WXDLLIMPEXP_FWD_CORE wxGDIImageRefData;
-class WXDLLIMPEXP_FWD_CORE wxGDIImageHandler;
-class WXDLLIMPEXP_FWD_CORE wxGDIImage;
+class  wxGDIImageRefData;
+class  wxGDIImageHandler;
+class  wxGDIImage;
 
-WX_DECLARE_EXPORTED_LIST(wxGDIImageHandler, wxGDIImageHandlerList);
+wxGDIImageHandler wxGDIImageHandlerList;
 
 // ----------------------------------------------------------------------------
 // wxGDIImageRefData: common data fields for all derived classes
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxGDIImageRefData : public wxGDIRefData
+class  wxGDIImageRefData : public wxGDIRefData
 {
 public:
     wxGDIImageRefData()
@@ -82,7 +82,7 @@ public:
 // format. It also falls back to wxImage if no appropriate image is found.
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxGDIImage : public wxGDIObject
+class  wxGDIImage : public wxGDIObject
 {
 public:
     // handlers list interface
@@ -157,7 +157,7 @@ protected:
 // wxGDIImageHandler: a class which knows how to load/save wxGDIImages.
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxGDIImageHandler : public wxObject
+class  wxGDIImageHandler : public wxObject
 {
 public:
     // ctor

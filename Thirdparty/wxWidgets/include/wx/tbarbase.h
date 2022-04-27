@@ -24,17 +24,17 @@
 #include "wx/list.h"
 #include "wx/control.h"
 
-class WXDLLIMPEXP_FWD_CORE wxToolBarBase;
-class WXDLLIMPEXP_FWD_CORE wxToolBarToolBase;
-class WXDLLIMPEXP_FWD_CORE wxImage;
+class  wxToolBarBase;
+class  wxToolBarToolBase;
+class  wxImage;
 
 // ----------------------------------------------------------------------------
 // constants
 // ----------------------------------------------------------------------------
 
-extern WXDLLIMPEXP_DATA_CORE(const char) wxToolBarNameStr[];
-extern WXDLLIMPEXP_DATA_CORE(const wxSize) wxDefaultSize;
-extern WXDLLIMPEXP_DATA_CORE(const wxPoint) wxDefaultPosition;
+extern const char wxToolBarNameStr[];
+extern const wxSize wxDefaultSize;
+extern const wxPoint wxDefaultPosition;
 
 enum wxToolBarToolStyle
 {
@@ -54,7 +54,7 @@ enum wxToolBarToolStyle
 // for the applications status bar.
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxToolBarToolBase : public wxObject
+class  wxToolBarToolBase : public wxObject
 {
 public:
     // ctors & dtor
@@ -276,7 +276,7 @@ WX_DECLARE_EXPORTED_LIST(wxToolBarToolBase, wxToolBarToolsList);
 // the base class for all toolbars
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxToolBarBase : public wxControl
+class  wxToolBarBase : public wxControl
 {
 public:
     wxToolBarBase();

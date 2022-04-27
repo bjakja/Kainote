@@ -85,9 +85,9 @@ const unsigned char wxIMAGE_ALPHA_OPAQUE = 0xff;
 // classes
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_CORE wxImageHandler;
-class WXDLLIMPEXP_FWD_CORE wxImage;
-class WXDLLIMPEXP_FWD_CORE wxPalette;
+class  wxImageHandler;
+class  wxImage;
+class  wxPalette;
 
 //-----------------------------------------------------------------------------
 // wxVariant support
@@ -102,7 +102,7 @@ DECLARE_VARIANT_OBJECT_EXPORTED(wxImage,WXDLLIMPEXP_CORE)
 // wxImageHandler
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxImageHandler: public wxObject
+class  wxImageHandler: public wxObject
 {
 public:
     wxImageHandler()
@@ -179,7 +179,7 @@ private:
 // wxImageHistogram
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxImageHistogramEntry
+class  wxImageHistogramEntry
 {
 public:
     wxImageHistogramEntry() { index = value = 0; }
@@ -191,7 +191,7 @@ WX_DECLARE_EXPORTED_HASH_MAP(unsigned long, wxImageHistogramEntry,
                              wxIntegerHash, wxIntegerEqual,
                              wxImageHistogramBase);
 
-class WXDLLIMPEXP_CORE wxImageHistogram : public wxImageHistogramBase
+class  wxImageHistogram : public wxImageHistogramBase
 {
 public:
     wxImageHistogram() : wxImageHistogramBase(256) { }
@@ -221,7 +221,7 @@ public:
 // wxImage
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxImage: public wxObject
+class  wxImage: public wxObject
 {
 public:
     // red, green and blue are 8 bit unsigned integers in the range of 0..255
@@ -627,9 +627,9 @@ private:
 };
 
 
-extern void WXDLLIMPEXP_CORE wxInitAllImageHandlers();
+extern void  wxInitAllImageHandlers();
 
-extern WXDLLIMPEXP_DATA_CORE(wxImage)    wxNullImage;
+extern wxImage    wxNullImage;
 
 //-----------------------------------------------------------------------------
 // wxImage handlers

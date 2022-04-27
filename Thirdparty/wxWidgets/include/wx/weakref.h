@@ -342,8 +342,8 @@ protected:
 
 
 // Provide some basic types of weak references
-class WXDLLIMPEXP_FWD_BASE wxEvtHandler;
-class WXDLLIMPEXP_FWD_CORE wxWindow;
+class  wxEvtHandler;
+class  wxWindow;
 
 
 typedef wxWeakRef<wxEvtHandler>  wxEvtHandlerRef;

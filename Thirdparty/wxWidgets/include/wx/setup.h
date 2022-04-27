@@ -889,7 +889,7 @@
 // Default is 1
 //
 // Recommended setting: 1
-#define wxUSE_STATUSBAR    1
+#define wxUSE_STATUSBAR    0
 
 // Two status bar implementations are available under Win32: the generic one
 // or the wrapper around native control. For native look and feel the native
@@ -907,8 +907,8 @@
 // Default is 1 for all settings.
 //
 // Recommended setting: 1 for wxUSE_TOOLBAR and wxUSE_TOOLBAR_NATIVE.
-#define wxUSE_TOOLBAR 1
-#define wxUSE_TOOLBAR_NATIVE 1
+#define wxUSE_TOOLBAR 0
+#define wxUSE_TOOLBAR_NATIVE 0
 
 // wxNotebook is a control with several "tabs" located on one of its sides. It
 // may be used to logically organise the data presented to the user instead of
@@ -1085,7 +1085,7 @@
 // Default is 1.
 //
 // Recommended setting: 1 (can't be disabled under MSW)
-#define wxUSE_MENUS         1
+#define wxUSE_MENUS         0
 
 // Use wxNotificationMessage.
 //

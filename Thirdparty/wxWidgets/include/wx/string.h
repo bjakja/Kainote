@@ -47,7 +47,7 @@
     #include <strings.h>    // for strcasecmp()
 #endif // HAVE_STRCASECMP_IN_STRINGS_H
 
-#include "wx/wxcrtbase.h"   // for wxChar, wxStrlen() etc.
+#include "wx/wxcrt.h"   // for wxChar, wxStrlen() etc.
 #include "wx/strvararg.h"
 #include "wx/buffer.h"      // for wxCharBuffer
 #include "wx/strconv.h"     // for wxConvertXXX() macros and wxMBConv classes
@@ -87,7 +87,7 @@
     #endif
 #endif // wxUSE_STRING_POS_CACHE
 
-class  wxString;
+class wxString;
 
 // unless this symbol is predefined to disable the compatibility functions, do
 // use them
@@ -519,7 +519,7 @@ private:
   static const wchar_t* ImplStr(const wchar_t* str)
     { return str ? str : wxT(""); }
   static const SubstrBufFromWC ImplStr(const wchar_t* str, size_t n)
-    { return SubstrBufFromWC(str, (str && n == npos) ? wxWcslen(str) : n); }
+    { return SubstrBufFromWC(str, (str && n == npos) ? wcslen(str) : n); }
   static wxScopedWCharBuffer ImplStr(const char* str,
                                      const wxMBConv& conv = wxConvLibc)
     { return ConvertStr(str, npos, conv).data; }
@@ -3918,7 +3918,7 @@ public:
 
 #if wxUSE_STL_BASED_WXSTRING
 
-WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxStringTypeBufferBase<wxStringCharType> )
+//WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxStringTypeBufferBase<wxStringCharType> )
 
 class wxStringInternalBuffer : public wxStringTypeBufferBase<wxStringCharType>
 {
@@ -3931,8 +3931,8 @@ public:
     wxDECLARE_NO_COPY_CLASS(wxStringInternalBuffer);
 };
 
-WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE(
-    wxStringTypeBufferLengthBase<wxStringCharType> )
+//WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE(
+    //wxStringTypeBufferLengthBase<wxStringCharType> )
 
 class wxStringInternalBufferLength
     : public wxStringTypeBufferLengthBase<wxStringCharType>
@@ -3965,7 +3965,7 @@ typedef wxStringInternalBuffer                wxUTF8StringBuffer;
 typedef wxStringInternalBufferLength          wxUTF8StringBufferLength;
 #elif wxUSE_UNICODE_WCHAR
 
-WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxStringTypeBufferBase<char> )
+//WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxStringTypeBufferBase<char> )
 
 // Note about inlined dtors in the classes below: this is done not for
 // performance reasons but just to avoid linking errors in the MSVC DLL build
@@ -3999,7 +3999,7 @@ public:
     wxDECLARE_NO_COPY_CLASS(wxUTF8StringBuffer);
 };
 
-WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxStringTypeBufferLengthBase<char> )
+//WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxStringTypeBufferLengthBase<char> )
 
 class wxUTF8StringBufferLength : public wxStringTypeBufferLengthBase<char>
 {

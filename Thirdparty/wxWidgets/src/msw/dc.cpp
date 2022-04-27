@@ -24,7 +24,7 @@
     #pragma hdrstop
 #endif
 
-
+#include "wx/bitmap.h"
 #include "wx/msw/wrapcdlg.h"
 #include "wx/dcmemory.h"
 #include "wx/app.h"

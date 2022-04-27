@@ -47,10 +47,10 @@ typedef unsigned long wxLogLevel;
 // forward declarations
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_BASE wxObject;
+class  wxObject;
 
 #if wxUSE_GUI
-    class WXDLLIMPEXP_FWD_CORE wxFrame;
+    class  wxFrame;
 #endif // wxUSE_GUI
 
 #if wxUSE_LOG
@@ -1494,12 +1494,12 @@ wxDEFINE_EMPTY_LOG_FUNCTION(Verbose);
 wxDEFINE_EMPTY_LOG_FUNCTION2(Generic, wxLogLevel);
 
 #if wxUSE_GUI
-    wxDEFINE_EMPTY_LOG_FUNCTION(Status);
-    wxDEFINE_EMPTY_LOG_FUNCTION2(Status, wxFrame *);
+    //wxDEFINE_EMPTY_LOG_FUNCTION(Status);
+    //wxDEFINE_EMPTY_LOG_FUNCTION2(Status, wxFrame *);
 #endif // wxUSE_GUI
 
 // Empty Class to fake wxLogNull
-class WXDLLIMPEXP_BASE wxLogNull
+class  wxLogNull
 {
 public:
     wxLogNull() { }
@@ -1581,7 +1581,7 @@ public:
 
 // wxLogFatalError helper: show the (fatal) error to the user in a safe way,
 // i.e. without using wxMessageBox() for example because it could crash
-void WXDLLIMPEXP_BASE
+void 
 wxSafeShowMessage(const wxString& title, const wxString& text);
 
 // ----------------------------------------------------------------------------

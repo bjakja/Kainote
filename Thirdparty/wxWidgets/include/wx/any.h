@@ -584,7 +584,7 @@ public: \
 // be needed).
 #if wxUSE_DATETIME
     #include "wx/datetime.h"
-    wxDECLARE_ANY_TYPE(wxDateTime, WXDLLIMPEXP_BASE)
+    wxDECLARE_ANY_TYPE(wxDateTime, )
 #endif
 
 //#include "wx/object.h"
@@ -596,7 +596,7 @@ public: \
 
 #if wxUSE_VARIANT
 
-class WXDLLIMPEXP_FWD_BASE wxAnyToVariantRegistration;
+class  wxAnyToVariantRegistration;
 
 // Because of header inter-dependencies, cannot include this earlier
 #include "wx/variant.h"
@@ -677,7 +677,7 @@ public:
     optimization, mostly. Implementation of this value type is
     "hidden" in the source file.
 */
-extern WXDLLIMPEXP_DATA_BASE(wxAnyValueType*) wxAnyNullValueType;
+extern wxAnyValueType* wxAnyNullValueType;
 
 
 //
@@ -1103,7 +1103,7 @@ inline bool wxAnyValueType::CheckType(T* reserved) const
     return wxAnyValueTypeImpl<T>::IsSameClass(this);
 }
 
-WX_DECLARE_LIST_WITH_DECL(wxAny, wxAnyList, class WXDLLIMPEXP_BASE);
+WX_DECLARE_LIST_WITH_DECL(wxAny, wxAnyList, class);
 
 #endif // wxUSE_ANY
 

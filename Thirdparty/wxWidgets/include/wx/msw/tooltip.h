@@ -15,10 +15,10 @@
 #include "wx/object.h"
 #include "wx/gdicmn.h"
 
-class WXDLLIMPEXP_FWD_CORE wxWindow;
+class  wxWindow;
 class wxToolTipOtherWindows;
 
-class WXDLLIMPEXP_CORE wxToolTip : public wxObject
+class  wxToolTip : public wxObject
 {
 public:
     // ctor & dtor

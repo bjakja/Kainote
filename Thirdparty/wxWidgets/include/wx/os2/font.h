@@ -21,7 +21,7 @@ WXDLLIMPEXP_DATA_CORE(extern const wxChar*) wxEmptyString;
 // wxFont
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxFont : public wxFontBase
+class  wxFont : public wxFontBase
 {
 public:
     // ctors and such

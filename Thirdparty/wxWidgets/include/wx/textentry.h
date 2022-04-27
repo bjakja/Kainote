@@ -15,10 +15,10 @@
 // and should probably be replaced with int anyhow)
 typedef long wxTextPos;
 
-class WXDLLIMPEXP_FWD_BASE wxArrayString;
-class WXDLLIMPEXP_FWD_CORE wxTextCompleter;
-class WXDLLIMPEXP_FWD_CORE wxTextEntryHintData;
-class WXDLLIMPEXP_FWD_CORE wxWindow;
+class  wxArrayString;
+class  wxTextCompleter;
+class  wxTextEntryHintData;
+class  wxWindow;
 
 #include "wx/filefn.h"              // for wxFILE and wxDIR only
 #include "wx/gdicmn.h"              // for wxPoint
@@ -27,7 +27,7 @@ class WXDLLIMPEXP_FWD_CORE wxWindow;
 // wxTextEntryBase
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxTextEntryBase
+class  wxTextEntryBase
 {
 public:
     wxTextEntryBase() { m_eventsBlock = 0; m_hintData = NULL; }

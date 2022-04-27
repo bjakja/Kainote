@@ -32,8 +32,8 @@ class wxEventLoopBase;
 class wxMessageOutput;
 
 #if wxUSE_GUI
-    struct WXDLLIMPEXP_FWD_CORE wxVideoMode;
-    class WXDLLIMPEXP_FWD_CORE wxWindow;
+    struct  wxVideoMode;
+    class  wxWindow;
 #endif
 
 // this macro should be used in any main() or equivalent functions defined in wx
@@ -65,13 +65,13 @@ enum
 // use of this list is strongly deprecated, use wxApp ScheduleForDestruction()
 // and IsScheduledForDestruction()  methods instead of this list directly, it
 // is here for compatibility purposes only
-extern WXDLLIMPEXP_DATA_BASE(wxList) wxPendingDelete;
+extern wxList wxPendingDelete;
 
 // ----------------------------------------------------------------------------
 // wxAppConsoleBase: wxApp for non-GUI applications
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxAppConsoleBase : public wxEvtHandler,
+class  wxAppConsoleBase : public wxEvtHandler,
                                           public wxEventFilter
 {
 public:
@@ -507,7 +507,7 @@ protected:
 
 #if wxUSE_GUI
 
-class WXDLLIMPEXP_CORE wxAppBase : public wxAppConsole
+class  wxAppBase : public wxAppConsole
 {
 public:
     wxAppBase();
@@ -732,7 +732,7 @@ protected:
 // ------------------------------------------------------
 
 // Force an exit from main loop
-WXDLLIMPEXP_BASE void wxExit();
+ void wxExit();
 
 // avoid redeclaring this function here if it had been already declared by
 // wx/utils.h, this results in warnings from g++ with -Wredundant-decls
@@ -745,7 +745,7 @@ WXDLLIMPEXP_CORE bool wxYield();
 #endif // wx_YIELD_DECLARED
 
 // Yield to other apps/messages
-WXDLLIMPEXP_BASE void wxWakeUpIdle();
+ void wxWakeUpIdle();
 
 // ----------------------------------------------------------------------------
 // macros for dynamic creation of the application object
@@ -755,7 +755,7 @@ WXDLLIMPEXP_BASE void wxWakeUpIdle();
 // creator function. wxApp can then call this function to create a new app
 // object. Convoluted, but necessary.
 
-class WXDLLIMPEXP_BASE wxAppInitializer
+class  wxAppInitializer
 {
 public:
     wxAppInitializer(wxAppInitializerFunction fn)

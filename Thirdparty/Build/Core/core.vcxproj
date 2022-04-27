@@ -160,7 +160,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\wxWidgets\include\wx\msw;$(solutionDir)Thirdparty\wxWidgets\include\;$(solutionDir)Thirdparty\wxWidgets\include\wx;$(solutionDir)thirdparty\src\png;$(solutionDir)thirdparty\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_LIB;__WXMSW__;NDEBUG;_UNICODE;WXBUILDING;wxUSE_BASE=0;_WX_DEBUG_H_;_WX_DDE_H_;_CMATH_;_CSTRING_;_CTIME_;_CSTDLIB_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_LIB;__WXMSW__;NDEBUG;_UNICODE;WXBUILDING;wxUSE_BASE=0;_WX_DEBUG_H_;_WX_DDE_H_;_WX_OS2_PRIVATE_H_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>

@@ -24,7 +24,7 @@
 
 // notice that although wxIconRefData inherits from wxBitmapRefData, it is not
 // a valid wxBitmapRefData
-class WXDLLIMPEXP_CORE wxIconRefData : public wxGDIImageRefData
+class  wxIconRefData : public wxGDIImageRefData
 {
 public:
     wxIconRefData() { }
@@ -37,7 +37,7 @@ public:
 // Icon
 // ---------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxIcon : public wxGDIImage
+class  wxIcon : public wxGDIImage
 {
 public:
     // ctors

@@ -38,7 +38,7 @@ enum wxStringTokenizerMode
 // wxStringTokenizer: replaces infamous strtok() and has some other features
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxStringTokenizer : public wxObject
+class  wxStringTokenizer : public wxObject
 {
 public:
     // ctors and initializers
@@ -141,7 +141,7 @@ protected:
 
 // the function takes the same parameters as wxStringTokenizer ctor and returns
 // the array containing all tokens
-wxArrayString WXDLLIMPEXP_BASE
+wxArrayString 
 wxStringTokenize(const wxString& str,
                  const wxString& delims = wxDEFAULT_DELIMITERS,
                  wxStringTokenizerMode mode = wxTOKEN_DEFAULT);

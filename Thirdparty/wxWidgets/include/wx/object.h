@@ -20,7 +20,7 @@
 #include "wx/memory.h"
 
 #define wxDECLARE_CLASS_INFO_ITERATORS()                                     \
-class WXDLLIMPEXP_BASE const_iterator                                    \
+class  const_iterator                                    \
     {                                                                        \
     typedef wxHashTable_Node Node;                                       \
     public:                                                                  \
@@ -239,7 +239,7 @@ inline T *wxCheckCast(const void *ptr, T * = NULL)
 // wxRefCounter: ref counted data "manager"
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxRefCounter
+class  wxRefCounter
 {
 public:
     wxRefCounter() { m_count = 1; }
@@ -353,7 +353,7 @@ private:
 // wxObject: the root class of wxWidgets object hierarchy
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxObject
+class  wxObject
 {
     wxDECLARE_ABSTRACT_CLASS(wxObject);
 

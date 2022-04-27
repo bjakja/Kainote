@@ -27,7 +27,7 @@
 
 #include <stdlib.h>
 
-class  wxString;
+//class  wxString;
 
 // the error value returned by wxMBConv methods
 #define wxCONV_FAILED ((size_t)-1)
@@ -594,14 +594,14 @@ WX_DECLARE_GLOBAL_CONV(wxMBConvUTF7, wxConvUTF7)
 //
 // by default UTF-8 under Mac OS X and wxConvLibc elsewhere (but it's not used
 // under Windows normally)
-extern WXDLLIMPEXP_DATA_BASE(wxMBConv *) wxConvFileName;
+extern wxMBConv * wxConvFileName;
 
 // backwards compatible define
 #define wxConvFile (*wxConvFileName)
 
 // the current conversion object, may be set to any conversion, is used by
 // default in a couple of places inside wx (initially same as wxConvLibc)
-extern WXDLLIMPEXP_DATA_BASE(wxMBConv *) wxConvCurrent;
+extern wxMBConv * wxConvCurrent;
 
 // the conversion corresponding to the current locale
 WX_DECLARE_GLOBAL_CONV(wxCSConv, wxConvLocal)
@@ -611,7 +611,7 @@ WX_DECLARE_GLOBAL_CONV(wxCSConv, wxConvLocal)
 //
 // by default this is the same as wxConvLocal but may be changed if the program
 // needs to use a fixed encoding
-extern WXDLLIMPEXP_DATA_BASE(wxMBConv *) wxConvUI;
+extern wxMBConv * wxConvUI;
 
 #undef WX_DECLARE_GLOBAL_CONV
 

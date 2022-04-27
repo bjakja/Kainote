@@ -18,8 +18,8 @@
 
 #include "wx/event.h"
 
-class WXDLLIMPEXP_FWD_CORE wxWindow;
-class WXDLLIMPEXP_FWD_CORE wxWindowBase;
+class  wxWindow;
+class  wxWindowBase;
 
 /*
  A validator has up to three purposes:
@@ -33,7 +33,7 @@ class WXDLLIMPEXP_FWD_CORE wxWindowBase;
  Note that wxValidator and derived classes use reference counting.
 */
 
-class WXDLLIMPEXP_CORE wxValidator : public wxEvtHandler
+class  wxValidator : public wxEvtHandler
 {
 public:
     wxValidator();

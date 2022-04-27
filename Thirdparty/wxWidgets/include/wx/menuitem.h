@@ -26,16 +26,16 @@
 // forward declarations
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_CORE wxAcceleratorEntry;
-class WXDLLIMPEXP_FWD_CORE wxMenuItem;
-class WXDLLIMPEXP_FWD_CORE wxMenu;
+class  wxAcceleratorEntry;
+class  wxMenuItem;
+class  wxMenu;
 
 // ----------------------------------------------------------------------------
 // wxMenuItem is an item in the menu which may be either a normal item, a sub
 // menu or a separator
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxMenuItemBase : public wxObject
+class  wxMenuItemBase : public wxObject
 {
 public:
     // creation

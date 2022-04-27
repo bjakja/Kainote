@@ -21,6 +21,7 @@
 #include "wx/strconv.h"
 #include "wx/buffer.h"
 #include "wx/unichar.h"
+//#include "wx/string.h"
 
 #if defined(HAVE_TYPE_TRAITS)
     #include <type_traits>

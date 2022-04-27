@@ -47,7 +47,7 @@
 // wxBitmapRefData
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxBitmapRefData : public wxGDIImageRefData
+class  wxBitmapRefData : public wxGDIImageRefData
 {
 public:
     wxBitmapRefData();

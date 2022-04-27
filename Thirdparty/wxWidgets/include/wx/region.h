@@ -15,9 +15,9 @@
 #include "wx/gdiobj.h"
 #include "wx/gdicmn.h"
 
-class WXDLLIMPEXP_FWD_CORE wxBitmap;
-class WXDLLIMPEXP_FWD_CORE wxColour;
-class WXDLLIMPEXP_FWD_CORE wxRegion;
+class  wxBitmap;
+class  wxColour;
+class  wxRegion;
 
 // ----------------------------------------------------------------------------
 // constants
@@ -55,7 +55,7 @@ enum wxRegionOp
 // wxRegionBase defines wxRegion API
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxRegionBase : public wxGDIObject
+class  wxRegionBase : public wxGDIObject
 {
 public:
     // ctors
@@ -187,7 +187,7 @@ protected:
 
 #define wxHAS_REGION_COMBINE
 
-class WXDLLIMPEXP_CORE wxRegionWithCombine : public wxRegionBase
+class  wxRegionWithCombine : public wxRegionBase
 {
 public:
     // these methods are not part of public API as they're not implemented on

@@ -15,18 +15,18 @@
 #include "wx/palette.h"
 
 // Bitmap
-class WXDLLIMPEXP_FWD_CORE wxBitmap;
-class WXDLLIMPEXP_FWD_CORE wxIcon;
-class WXDLLIMPEXP_FWD_CORE wxCursor;
-class WXDLLIMPEXP_FWD_CORE wxImage;
-class WXDLLIMPEXP_FWD_CORE wxPixelDataBase;
+class  wxBitmap;
+class  wxIcon;
+class  wxCursor;
+class  wxImage;
+class  wxPixelDataBase;
 
 // ========================================================================
 // wxMask
 // ========================================================================
 
 // A mask is a 1-bit alpha bitmap used for drawing bitmaps transparently.
-class WXDLLIMPEXP_CORE wxMask: public wxObject
+class  wxMask: public wxObject
 {
     DECLARE_DYNAMIC_CLASS(wxMask)
 public:
@@ -64,7 +64,7 @@ protected:
 // wxBitmap
 // ========================================================================
 
-class WXDLLIMPEXP_CORE wxBitmap: public wxGDIObject
+class  wxBitmap: public wxGDIObject
 {
 // ------------------------------------------------------------------------
 // initialization

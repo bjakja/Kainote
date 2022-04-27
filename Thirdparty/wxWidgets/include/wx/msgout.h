@@ -73,7 +73,7 @@ protected:
     #pragma warning (disable:4275)
 #endif
 
-class WXDLLIMPEXP_BASE wxMessageOutput : public wxMessageOutputBase
+class  wxMessageOutput : public wxMessageOutputBase
 {
 public:
     virtual ~wxMessageOutput() { }
@@ -105,7 +105,7 @@ private:
 // implementation which sends output to stderr or specified file
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxMessageOutputStderr : public wxMessageOutput
+class  wxMessageOutputStderr : public wxMessageOutput
 {
 public:
     wxMessageOutputStderr(FILE *fp = stderr) : m_fp(fp) { }
@@ -131,7 +131,7 @@ enum wxMessageOutputFlags
     wxMSGOUT_PREFER_MSGBOX = 1  // always use message box if available
 };
 
-class WXDLLIMPEXP_BASE wxMessageOutputBest : public wxMessageOutputStderr
+class  wxMessageOutputBest : public wxMessageOutputStderr
 {
 public:
     wxMessageOutputBest(wxMessageOutputFlags flags = wxMSGOUT_PREFER_STDERR)
@@ -149,7 +149,7 @@ private:
 
 #if wxUSE_GUI && wxUSE_MSGDLG
 
-class WXDLLIMPEXP_CORE wxMessageOutputMessageBox : public wxMessageOutput
+class  wxMessageOutputMessageBox : public wxMessageOutput
 {
 public:
     wxMessageOutputMessageBox() { }
@@ -163,7 +163,7 @@ public:
 // implementation using the native way of outputting debug messages
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxMessageOutputDebug : public wxMessageOutputStderr
+class  wxMessageOutputDebug : public wxMessageOutputStderr
 {
 public:
     wxMessageOutputDebug() { }
@@ -175,7 +175,7 @@ public:
 // implementation using wxLog (mainly for backwards compatibility)
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxMessageOutputLog : public wxMessageOutput
+class  wxMessageOutputLog : public wxMessageOutput
 {
 public:
     wxMessageOutputLog() { }

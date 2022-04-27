@@ -61,7 +61,7 @@ enum wxPenCap
 };
 
 
-class WXDLLIMPEXP_CORE wxPenBase : public wxGDIObject
+class  wxPenBase : public wxGDIObject
 {
 public:
     virtual ~wxPenBase() { }
@@ -116,7 +116,7 @@ public:
     #include "wx/os2/pen.h"
 #endif
 
-class WXDLLIMPEXP_CORE wxPenList: public wxGDIObjListBase
+class  wxPenList: public wxGDIObjListBase
 {
 public:
     wxPen *FindOrCreatePen(const wxColour& colour,
@@ -133,7 +133,7 @@ public:
 #endif
 };
 
-extern WXDLLIMPEXP_DATA_CORE(wxPenList*)   wxThePenList;
+extern wxPenList*   wxThePenList;
 
 // provide comparison operators to allow code such as
 //

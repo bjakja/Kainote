@@ -13,11 +13,12 @@
 #define _WX_BUFFER_H
 
 #include "wx/chartype.h"
-#include "wx/wxcrtbase.h"
+#include "wx/defs.h"
+#include "wx/string.h"
 
 #include <stdlib.h>             // malloc() and free()
 
-class  wxCStrData;
+//class  wxCStrData;
 
 // ----------------------------------------------------------------------------
 // Special classes for (wide) character strings: they use malloc/free instead
@@ -341,8 +342,8 @@ public:
     }
 };
 
-WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxScopedCharTypeBuffer<char> )
-WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxCharTypeBuffer<char> )
+//WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxScopedCharTypeBuffer<char> )
+//WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxCharTypeBuffer<char> )
 
 class wxCharBuffer : public wxCharTypeBuffer<char>
 {
@@ -361,8 +362,8 @@ public:
     wxCharBuffer(const wxCStrData& cstr);
 };
 
-WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxScopedCharTypeBuffer<wchar_t> )
-WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxCharTypeBuffer<wchar_t> )
+//WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxScopedCharTypeBuffer<wchar_t> )
+//WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxCharTypeBuffer<wchar_t> )
 
 class wxWCharBuffer : public wxCharTypeBuffer<wchar_t>
 {

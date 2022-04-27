@@ -44,7 +44,7 @@
 // wxPenRefData: contains information about an HPEN and its handle
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxPenRefData : public wxGDIRefData
+class  wxPenRefData : public wxGDIRefData
 {
 public:
     // ctors and dtor

@@ -17,21 +17,21 @@
 #include "wx/palette.h"
 #include "wx/gdiobj.h"
 
-class WXDLLIMPEXP_FWD_CORE wxPixelDataBase;
+class  wxPixelDataBase;
 
 //-----------------------------------------------------------------------------
 // classes
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_CORE wxMask;
-class WXDLLIMPEXP_FWD_CORE wxBitmap;
-class WXDLLIMPEXP_FWD_CORE wxImage;
+class  wxMask;
+class  wxBitmap;
+class  wxImage;
 
 //-----------------------------------------------------------------------------
 // wxMask
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxMask: public wxObject
+class  wxMask: public wxObject
 {
 public:
     wxMask();
@@ -61,7 +61,7 @@ private:
 // wxBitmap
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxBitmap: public wxBitmapBase
+class  wxBitmap: public wxBitmapBase
 {
 public:
     wxBitmap() {}

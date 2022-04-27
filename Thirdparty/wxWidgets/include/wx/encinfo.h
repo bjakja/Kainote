@@ -32,7 +32,7 @@
 // to create a font of non-standard encoding (like KOI8) under Windows - the
 // facename specifies the encoding then)
 
-struct WXDLLIMPEXP_CORE wxNativeEncodingInfo
+struct  wxNativeEncodingInfo
 {
     wxString facename;          // may be empty meaning "any"
     wxFontEncoding encoding;    // so that we know what this struct represents

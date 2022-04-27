@@ -14,10 +14,10 @@
 
 #include "wx/msw/gdiimage.h"
 
-class WXDLLIMPEXP_FWD_CORE wxImage;
+class  wxImage;
 
 // Cursor
-class WXDLLIMPEXP_CORE wxCursor : public wxGDIImage
+class  wxCursor : public wxGDIImage
 {
 public:
     // constructors

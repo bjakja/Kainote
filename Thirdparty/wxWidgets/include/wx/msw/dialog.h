@@ -33,7 +33,7 @@ extern WXDLLIMPEXP_DATA_CORE(const char) wxToolBarNameStr[];
 #endif
 
 // Dialog boxes
-class WXDLLIMPEXP_CORE wxDialog : public wxDialogBase
+class  wxDialog : public wxDialogBase
 {
 public:
     wxDialog() { Init(); }

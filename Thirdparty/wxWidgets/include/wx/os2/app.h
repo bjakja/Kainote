@@ -37,20 +37,20 @@
 #include "wx/event.h"
 #include "wx/icon.h"
 
-class WXDLLIMPEXP_FWD_CORE wxFrame;
-class WXDLLIMPEXP_FWD_CORE wxWindow;
-class WXDLLIMPEXP_FWD_CORE wxApp;
-class WXDLLIMPEXP_FWD_CORE wxKeyEvent;
-class WXDLLIMPEXP_FWD_BASE wxLog;
+class  wxFrame;
+class  wxWindow;
+class  wxApp;
+class  wxKeyEvent;
+class  wxLog;
 
-WXDLLIMPEXP_DATA_CORE(extern wxApp*) wxTheApp;
-WXDLLIMPEXP_DATA_CORE(extern HAB)    vHabmain;
+extern wxApp* wxTheApp;
+extern HAB    vHabmain;
 
 // Force an exit from main loop
-void WXDLLIMPEXP_CORE wxExit(void);
+void  wxExit(void);
 
 // Yield to other apps/messages
-bool WXDLLIMPEXP_CORE wxYield(void);
+bool  wxYield(void);
 
 extern MRESULT EXPENTRY wxWndProc( HWND
                                   ,ULONG
@@ -61,7 +61,7 @@ extern MRESULT EXPENTRY wxWndProc( HWND
 
 // Represents the application. Derive OnInit and declare
 // a new App object to start application
-class WXDLLIMPEXP_CORE wxApp : public wxAppBase
+class  wxApp : public wxAppBase
 {
     DECLARE_DYNAMIC_CLASS(wxApp)
 

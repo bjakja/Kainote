@@ -38,7 +38,7 @@
 // private classes
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxBrushRefData: public wxGDIRefData
+class wxBrushRefData: public wxGDIRefData
 {
 public:
     wxBrushRefData(const wxColour& colour = wxNullColour, wxBrushStyle style = wxBRUSHSTYLE_SOLID);

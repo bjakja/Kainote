@@ -64,15 +64,15 @@ enum
 
 #define wxFD_DEFAULT_STYLE      wxFD_OPEN
 
-extern WXDLLIMPEXP_DATA_CORE(const char) wxFileDialogNameStr[];
-extern WXDLLIMPEXP_DATA_CORE(const char) wxFileSelectorPromptStr[];
-extern WXDLLIMPEXP_DATA_CORE(const char) wxFileSelectorDefaultWildcardStr[];
+extern const char wxFileDialogNameStr[];
+extern const char wxFileSelectorPromptStr[];
+extern const char wxFileSelectorDefaultWildcardStr[];
 
 //----------------------------------------------------------------------------
 // wxFileDialogBase
 //----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxFileDialogBase: public wxDialog
+class  wxFileDialogBase: public wxDialog
 {
 public:
     wxFileDialogBase () { Init(); }
@@ -179,7 +179,7 @@ private:
 //----------------------------------------------------------------------------
 
 // File selector - backward compatibility
-WXDLLIMPEXP_CORE wxString
+ wxString
 wxFileSelector(const wxString& message = wxFileSelectorPromptStr,
                const wxString& default_path = wxEmptyString,
                const wxString& default_filename = wxEmptyString,
@@ -190,7 +190,7 @@ wxFileSelector(const wxString& message = wxFileSelectorPromptStr,
                int x = wxDefaultCoord, int y = wxDefaultCoord);
 
 // An extended version of wxFileSelector
-WXDLLIMPEXP_CORE wxString
+ wxString
 wxFileSelectorEx(const wxString& message = wxFileSelectorPromptStr,
                  const wxString& default_path = wxEmptyString,
                  const wxString& default_filename = wxEmptyString,
@@ -201,14 +201,14 @@ wxFileSelectorEx(const wxString& message = wxFileSelectorPromptStr,
                  int x = wxDefaultCoord, int y = wxDefaultCoord);
 
 // Ask for filename to load
-WXDLLIMPEXP_CORE wxString
+ wxString
 wxLoadFileSelector(const wxString& what,
                    const wxString& extension,
                    const wxString& default_name = wxEmptyString,
                    wxWindow *parent = NULL);
 
 // Ask for filename to save
-WXDLLIMPEXP_CORE wxString
+ wxString
 wxSaveFileSelector(const wxString& what,
                    const wxString& extension,
                    const wxString& default_name = wxEmptyString,

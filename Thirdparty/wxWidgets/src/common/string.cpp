@@ -25,13 +25,13 @@
     #include "wx/string.h"
     #include "wx/wxcrtvararg.h"
     #include "wx/intl.h"
-    #include "wx/log.h"
+    //#include "wx/log.h"
 #endif
 
-#include <ctype.h>
+//#include <ctype.h>
 
 #ifndef __WXWINCE__
-    #include <errno.h>
+    //#include <errno.h>
 #endif
 
 #include <string.h>
@@ -665,7 +665,7 @@ wxString operator+(const wxString& str, const wchar_t *pwz)
 #endif
 
     wxString s;
-    if ( !s.Alloc(wxWcslen(pwz) + str.length()) ) {
+    if ( !s.Alloc(wcslen(pwz) + str.length()) ) {
         //wxFAIL_MSG( wxT("out of memory in wxString::operator+") );
     }
     s += str;
@@ -697,7 +697,7 @@ wxString operator+(const wchar_t *pwz, const wxString& str)
 #endif
 
     wxString s;
-    if ( !s.Alloc(wxWcslen(pwz) + str.length()) ) {
+    if ( !s.Alloc(wcslen(pwz) + str.length()) ) {
         //wxFAIL_MSG( wxT("out of memory in wxString::operator+") );
     }
     s = pwz;
@@ -1700,7 +1700,7 @@ bool wxString::ToLong(long *pVal, int base) const
     //wxASSERT_MSG( !base || (base > 1 && base <= 36), wxT("invalid base") );
 
     WX_STRING_TO_X_TYPE_START
-    long val = wxStrtol(start, &end, base);
+    long val = wxStrtoul(start, &end, base);
     WX_STRING_TO_X_TYPE_END
 }
 

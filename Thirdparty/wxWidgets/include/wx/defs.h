@@ -491,7 +491,7 @@ typedef short int WXTYPE;
 /*  generic calling convention for the extern "C" functions */
 
 #if defined(__VISUALC__)
-  #define   wxC_CALLING_CONV    _cdecl
+  #define   wxC_CALLING_CONV    //_cdecl
 #elif defined(__VISAGECPP__)
   #define   wxC_CALLING_CONV    _Optlink
 #else   /*  !Visual C++ */
@@ -505,7 +505,7 @@ typedef short int WXTYPE;
 #define CMPFUNC_CONV wxCMPFUNC_CONV
 
 /*  DLL import/export declarations */
-#include "wx/dlimpexp.h"
+//#include "wx/dlimpexp.h"
 
 /*  ---------------------------------------------------------------------------- */
 /*  Very common macros */

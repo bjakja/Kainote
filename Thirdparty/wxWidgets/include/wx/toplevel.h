@@ -24,9 +24,9 @@
 #include "wx/weakref.h"
 
 // the default names for various classes
-extern WXDLLIMPEXP_DATA_CORE(const char) wxFrameNameStr[];
+extern const char wxFrameNameStr[];
 
-class WXDLLIMPEXP_FWD_CORE wxTopLevelWindowBase;
+class  wxTopLevelWindowBase;
 
 // ----------------------------------------------------------------------------
 // constants
@@ -157,7 +157,7 @@ enum
 // wxTopLevelWindow: a top level (as opposed to child) window
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxTopLevelWindowBase :
+class  wxTopLevelWindowBase :
     public wxNavigationEnabled<wxNonOwnedWindow>
 {
 public:
@@ -389,7 +389,7 @@ protected:
 #ifdef __WXUNIVERSAL__
     #include "wx/univ/toplevel.h"
 #else // !__WXUNIVERSAL__
-    class WXDLLIMPEXP_CORE wxTopLevelWindow : public wxTopLevelWindowNative
+    class  wxTopLevelWindow : public wxTopLevelWindowNative
     {
     public:
         // construction

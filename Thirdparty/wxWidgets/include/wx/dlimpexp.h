@@ -24,9 +24,9 @@
        __declspec works in BC++ 5 and later, Watcom C++ 11.0 and later as well
        as VC++.
      */
-#    if defined(__VISUALC__) || defined(__BORLANDC__) || defined(__WATCOMC__)
-#        define WXEXPORT __declspec(dllexport)
-#        define WXIMPORT __declspec(dllimport)
+//#    if defined(__VISUALC__) || defined(__BORLANDC__) || defined(__WATCOMC__)
+//#        define WXEXPORT __declspec(dllexport)
+//#        define WXIMPORT __declspec(dllimport)
     /*
         While gcc also supports __declspec(dllexport), it creates unusably huge
         DLL files since gcc 4.5 (while taking horribly long amounts of time),
@@ -34,14 +34,14 @@
         we rely on binutils auto export/import support which seems to work
         quite well for 4.5+.
      */
-#    elif defined(__GNUC__) && !wxCHECK_GCC_VERSION(4, 5)
-        /*
-            __declspec could be used here too but let's use the native
-            __attribute__ instead for clarity.
-        */
-#       define WXEXPORT __attribute__((dllexport))
-#       define WXIMPORT __attribute__((dllimport))
-#    endif
+//#    elif defined(__GNUC__) && !wxCHECK_GCC_VERSION(4, 5)
+//        /*
+//            __declspec could be used here too but let's use the native
+//            __attribute__ instead for clarity.
+//        */
+//#       define WXEXPORT __attribute__((dllexport))
+//#       define WXIMPORT __attribute__((dllimport))
+//#    endif
 #elif defined(__WXPM__)
 #    if defined (__WATCOMC__)
 #        define WXEXPORT __declspec(dllexport)
@@ -64,8 +64,8 @@
 
 /* for other platforms/compilers we don't anything */
 #ifndef WXEXPORT
-#    define WXEXPORT
-#    define WXIMPORT
+//#    define WXEXPORT
+//#    define WXIMPORT
 #endif
 
 /*

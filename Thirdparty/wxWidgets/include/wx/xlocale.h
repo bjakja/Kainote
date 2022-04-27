@@ -71,7 +71,7 @@
 // that would be clearer
 #ifdef wxHAS_XLOCALE_SUPPORT
 
-class WXDLLIMPEXP_BASE wxXLocale
+class  wxXLocale
 {
 public:
     // Construct an uninitialized locale
@@ -127,7 +127,7 @@ private:
 
 // Skeleton version supporting only the "C" locale for the systems without
 // xlocale support
-class WXDLLIMPEXP_BASE wxXLocale
+class  wxXLocale
 {
 public:
     // Construct an uninitialized locale
@@ -181,7 +181,7 @@ private:
 
 // A shorter synonym for the most commonly used locale object
 #define wxCLocale (wxXLocale::GetCLocale())
-extern WXDLLIMPEXP_DATA_BASE(wxXLocale) wxNullXLocale;
+extern wxXLocale wxNullXLocale;
 
 // Wrappers for various functions:
 #ifdef wxHAS_XLOCALE_SUPPORT

@@ -34,17 +34,17 @@
 
 #define wxUSE_NEW_DC 1
 
-class WXDLLIMPEXP_FWD_CORE wxDC;
-class WXDLLIMPEXP_FWD_CORE wxClientDC;
-class WXDLLIMPEXP_FWD_CORE wxPaintDC;
-class WXDLLIMPEXP_FWD_CORE wxWindowDC;
-class WXDLLIMPEXP_FWD_CORE wxScreenDC;
-class WXDLLIMPEXP_FWD_CORE wxMemoryDC;
-class WXDLLIMPEXP_FWD_CORE wxPrinterDC;
-class WXDLLIMPEXP_FWD_CORE wxPrintData;
+class  wxDC;
+class  wxClientDC;
+class  wxPaintDC;
+class  wxWindowDC;
+class  wxScreenDC;
+class  wxMemoryDC;
+class  wxPrinterDC;
+class  wxPrintData;
 
 #if wxUSE_GRAPHICS_CONTEXT
-class WXDLLIMPEXP_FWD_CORE wxGraphicsContext;
+class  wxGraphicsContext;
 #endif
 
 //  Logical ops
@@ -146,7 +146,7 @@ struct wxFontMetrics
 // wxDrawObject helper class
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxDrawObject
+class  wxDrawObject
 {
 public:
     wxDEPRECATED_CONSTRUCTOR(wxDrawObject)()
@@ -209,9 +209,9 @@ protected:
 // wxDCFactory
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_CORE wxDCImpl;
+class  wxDCImpl;
 
-class WXDLLIMPEXP_CORE wxDCFactory
+class  wxDCFactory
 {
 public:
     wxDCFactory() {}
@@ -239,7 +239,7 @@ private:
 // wxNativeDCFactory
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxNativeDCFactory: public wxDCFactory
+class  wxNativeDCFactory: public wxDCFactory
 {
 public:
     wxNativeDCFactory() {}
@@ -260,7 +260,7 @@ public:
 // wxDCImpl
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxDCImpl: public wxObject
+class  wxDCImpl: public wxObject
 {
 public:
     wxDCImpl( wxDC *owner );
@@ -771,7 +771,7 @@ private:
 };
 
 
-class WXDLLIMPEXP_CORE wxDC : public wxObject
+class  wxDC : public wxObject
 {
 public:
     // copy attributes (font, colours and writing direction) from another DC
@@ -1367,7 +1367,7 @@ private:
 // restore it automatically when the object goes out of scope
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxDCTextColourChanger
+class  wxDCTextColourChanger
 {
 public:
     wxDCTextColourChanger(wxDC& dc) : m_dc(dc), m_colFgOld() { }
@@ -1403,7 +1403,7 @@ private:
 // restore it automatically when the object goes out of scope
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxDCPenChanger
+class  wxDCPenChanger
 {
 public:
     wxDCPenChanger(wxDC& dc, const wxPen& pen) : m_dc(dc), m_penOld(dc.GetPen())
@@ -1430,7 +1430,7 @@ private:
 // restore it automatically when the object goes out of scope
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxDCBrushChanger
+class  wxDCBrushChanger
 {
 public:
     wxDCBrushChanger(wxDC& dc, const wxBrush& brush) : m_dc(dc), m_brushOld(dc.GetBrush())
@@ -1457,7 +1457,7 @@ private:
 // destroys it in the dtor
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxDCClipper
+class  wxDCClipper
 {
 public:
     wxDCClipper(wxDC& dc, const wxRegion& r) : m_dc(dc)
@@ -1480,7 +1480,7 @@ private:
 // restore it automatically when the object goes out of scope
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxDCFontChanger
+class  wxDCFontChanger
 {
 public:
     wxDCFontChanger(wxDC& dc)

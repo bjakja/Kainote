@@ -19,8 +19,8 @@
     #include "wx/event.h"
 #endif
 
-class WXDLLIMPEXP_FWD_CORE wxWindow;
-class WXDLLIMPEXP_FWD_CORE wxWindowBase;
+class  wxWindow;
+class  wxWindowBase;
 
 /*
     This header declares wxControlContainer class however it's not a real
@@ -34,7 +34,7 @@ class WXDLLIMPEXP_FWD_CORE wxWindowBase;
 // wxControlContainerBase: common part used in both native and generic cases
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxControlContainerBase
+class  wxControlContainerBase
 {
 public:
     // default ctor, SetContainerWindow() must be called later
@@ -112,7 +112,7 @@ private:
 // ----------------------------------------------------------------------------
 
 // this must be a real class as we forward-declare it elsewhere
-class WXDLLIMPEXP_CORE wxControlContainer : public wxControlContainerBase
+class  wxControlContainer : public wxControlContainerBase
 {
 protected:
     // set the focus to the child which had it the last time
@@ -125,7 +125,7 @@ protected:
 // wxControlContainer for TAB navigation implemented in wx itself
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxControlContainer : public wxControlContainerBase
+class  wxControlContainer : public wxControlContainerBase
 {
 public:
     // default ctor, SetContainerWindow() must be called later
@@ -148,7 +148,7 @@ protected:
 #endif // wxHAS_NATIVE_TAB_TRAVERSAL/!wxHAS_NATIVE_TAB_TRAVERSAL
 
 // this function is for wxWidgets internal use only
-extern WXDLLIMPEXP_CORE bool wxSetFocusToChild(wxWindow *win, wxWindow **child);
+extern  bool wxSetFocusToChild(wxWindow *win, wxWindow **child);
 
 // ----------------------------------------------------------------------------
 // wxNavigationEnabled: Derive from this class to support keyboard navigation

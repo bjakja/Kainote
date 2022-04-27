@@ -16,17 +16,17 @@
 // classes
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_CORE wxDC;
-class WXDLLIMPEXP_FWD_CORE wxPaintDC;
-class WXDLLIMPEXP_FWD_CORE wxWindow;
+class  wxDC;
+class  wxPaintDC;
+class  wxWindow;
 
-class WXDLLIMPEXP_FWD_CORE wxFont;
+class  wxFont;
 
 // ----------------------------------------------------------------------------
 // wxFont
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxFont : public wxFontBase
+class  wxFont : public wxFontBase
 {
 public:
     // ctors and such

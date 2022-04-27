@@ -39,7 +39,7 @@
 // array/list types
 // ----------------------------------------------------------------------------
 
-struct WXDLLEXPORT wxPaintDCInfo
+struct  wxPaintDCInfo
 {
     wxPaintDCInfo(wxWindow *win, wxPaintDCImpl *dc)
     {

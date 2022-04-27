@@ -14,9 +14,9 @@
 
 #if wxUSE_GUI
 
-class WXDLLIMPEXP_FWD_CORE wxTextCtrl;
-class WXDLLIMPEXP_FWD_CORE wxLogFrame;
-class WXDLLIMPEXP_FWD_CORE wxWindow;
+class  wxTextCtrl;
+class  wxLogFrame;
+class  wxWindow;
 
 // ----------------------------------------------------------------------------
 // the following log targets are only compiled in if the we're compiling the
@@ -110,7 +110,7 @@ private:
 
 #if wxUSE_LOGWINDOW
 
-class WXDLLIMPEXP_CORE wxLogWindow : public wxLogPassThrough
+class  wxLogWindow : public wxLogPassThrough
 {
 public:
     wxLogWindow(wxWindow *pParent,        // the parent frame (can be NULL)

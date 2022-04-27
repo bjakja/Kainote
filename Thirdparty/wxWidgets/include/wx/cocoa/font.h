@@ -30,7 +30,7 @@ class wxFontRefData;
 
     See the documentation in src/cocoa/font.mm for more implementatoin details.
  */
-class WXDLLIMPEXP_CORE wxFont : public wxFontBase
+class  wxFont : public wxFontBase
 {
     friend class wxCocoaFontFactory;
 public:

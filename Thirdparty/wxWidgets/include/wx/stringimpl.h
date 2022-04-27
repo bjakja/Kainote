@@ -142,7 +142,7 @@ struct WXDLLIMPEXP_BASE wxStringData
   bool  IsValid() const   { return (nRefs != 0); }
 };
 
-class WXDLLIMPEXP_BASE wxStringImpl
+class  wxStringImpl
 {
 public:
   // an 'invalid' value for string index, moved to this place due to a CW bug

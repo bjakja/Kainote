@@ -20,14 +20,14 @@
 #include "wx/statusbr.h"
 
 // the default names for various classs
-extern WXDLLIMPEXP_DATA_CORE(const char) wxStatusLineNameStr[];
-extern WXDLLIMPEXP_DATA_CORE(const char) wxToolBarNameStr[];
+extern const char wxStatusLineNameStr[];
+extern const char wxToolBarNameStr[];
 
-class WXDLLIMPEXP_FWD_CORE wxFrame;
-class WXDLLIMPEXP_FWD_CORE wxMenuBar;
-class WXDLLIMPEXP_FWD_CORE wxMenuItem;
-class WXDLLIMPEXP_FWD_CORE wxStatusBar;
-class WXDLLIMPEXP_FWD_CORE wxToolBar;
+class  wxFrame;
+class  wxMenuBar;
+class  wxMenuItem;
+class  wxStatusBar;
+class  wxToolBar;
 
 // ----------------------------------------------------------------------------
 // constants
@@ -52,7 +52,7 @@ class WXDLLIMPEXP_FWD_CORE wxToolBar;
 // CreateXXXBar() is called.
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxFrameBase : public wxTopLevelWindow
+class  wxFrameBase : public wxTopLevelWindow
 {
 public:
     // construction

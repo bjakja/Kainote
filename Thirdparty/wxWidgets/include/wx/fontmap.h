@@ -28,10 +28,10 @@
     class WXDLLIMPEXP_FWD_BASE wxConfigBase;
 #endif // wxUSE_CONFIG
 
-class WXDLLIMPEXP_FWD_CORE wxFontMapper;
+class  wxFontMapper;
 
 #if wxUSE_GUI
-    class WXDLLIMPEXP_FWD_CORE wxWindow;
+    class  wxWindow;
 #endif // wxUSE_GUI
 
 // ============================================================================
@@ -47,7 +47,7 @@ class WXDLLIMPEXP_FWD_CORE wxFontMapper;
 //                   in knowledge of the encodings equivalence
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxFontMapperBase
+class  wxFontMapperBase
 {
 public:
     // constructor and such
@@ -188,7 +188,7 @@ private:
 
 #if wxUSE_GUI
 
-class WXDLLIMPEXP_CORE wxFontMapper : public wxFontMapperBase
+class  wxFontMapper : public wxFontMapperBase
 {
 public:
     // default ctor

@@ -37,14 +37,14 @@
 // forward declarations
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_BASE wxList;
-class WXDLLIMPEXP_FWD_BASE wxEvent;
-class WXDLLIMPEXP_FWD_BASE wxEventFilter;
+class  wxList;
+class  wxEvent;
+class  wxEventFilter;
 #if wxUSE_GUI
-    class WXDLLIMPEXP_FWD_CORE wxDC;
-    class WXDLLIMPEXP_FWD_CORE wxMenu;
-    class WXDLLIMPEXP_FWD_CORE wxWindow;
-    class WXDLLIMPEXP_FWD_CORE wxWindowBase;
+    class  wxDC;
+    class  wxMenu;
+    class  wxWindow;
+    class  wxWindowBase;
 #endif // wxUSE_GUI
 
 // We operate with pointer to members of wxEvtHandler (such functions are used
@@ -64,7 +64,7 @@ class WXDLLIMPEXP_FWD_BASE wxEventFilter;
     #define wxMSVC_FWD_MULTIPLE_BASES
 #endif
 
-class WXDLLIMPEXP_FWD_BASE wxMSVC_FWD_MULTIPLE_BASES wxEvtHandler;
+class  wxMSVC_FWD_MULTIPLE_BASES wxEvtHandler;
 class wxEventConnectionRef;
 
 // ----------------------------------------------------------------------------
@@ -87,7 +87,7 @@ typedef int wxEventType;
     wxEventTableEntry(wxEVT_NULL, 0, 0, 0, 0)
 
 // generate a new unique event type
-extern WXDLLIMPEXP_BASE wxEventType wxNewEventType();
+extern  wxEventType wxNewEventType();
 
 // define macros to create new event types:
 #ifdef wxHAS_EVENT_BIND
@@ -180,7 +180,7 @@ typedef void (wxEvtHandler::*wxEventFunction)(wxEvent&);
 typedef wxEventFunction wxObjectEventFunction;
 
 // The event functor which is stored in the static and dynamic event tables:
-class WXDLLIMPEXP_BASE wxEventFunctor
+class  wxEventFunctor
 {
 public:
     virtual ~wxEventFunctor();
@@ -209,7 +209,7 @@ private:
 };
 
 // A plain method functor for the untyped legacy event types:
-class WXDLLIMPEXP_BASE wxObjectEventFunctor : public wxEventFunctor
+class  wxObjectEventFunctor : public wxEventFunctor
 {
 public:
     wxObjectEventFunctor(wxObjectEventFunction method, wxEvtHandler *handler)
@@ -614,49 +614,49 @@ wxNewEventTableFunctor(const EventTag&, void (Class::*method)(EventArg&))
 // many, but not all, standard event types
 
     // some generic events
-extern WXDLLIMPEXP_BASE const wxEventType wxEVT_NULL;
-extern WXDLLIMPEXP_BASE const wxEventType wxEVT_FIRST;
-extern WXDLLIMPEXP_BASE const wxEventType wxEVT_USER_FIRST;
+extern  const wxEventType wxEVT_NULL;
+extern  const wxEventType wxEVT_FIRST;
+extern  const wxEventType wxEVT_USER_FIRST;
 
     // Need events declared to do this
-class WXDLLIMPEXP_FWD_BASE wxIdleEvent;
-class WXDLLIMPEXP_FWD_BASE wxThreadEvent;
-class WXDLLIMPEXP_FWD_CORE wxCommandEvent;
-class WXDLLIMPEXP_FWD_CORE wxMouseEvent;
-class WXDLLIMPEXP_FWD_CORE wxFocusEvent;
-class WXDLLIMPEXP_FWD_CORE wxChildFocusEvent;
-class WXDLLIMPEXP_FWD_CORE wxKeyEvent;
-class WXDLLIMPEXP_FWD_CORE wxNavigationKeyEvent;
-class WXDLLIMPEXP_FWD_CORE wxSetCursorEvent;
-class WXDLLIMPEXP_FWD_CORE wxScrollEvent;
-class WXDLLIMPEXP_FWD_CORE wxSpinEvent;
-class WXDLLIMPEXP_FWD_CORE wxScrollWinEvent;
-class WXDLLIMPEXP_FWD_CORE wxSizeEvent;
-class WXDLLIMPEXP_FWD_CORE wxMoveEvent;
-class WXDLLIMPEXP_FWD_CORE wxCloseEvent;
-class WXDLLIMPEXP_FWD_CORE wxActivateEvent;
-class WXDLLIMPEXP_FWD_CORE wxWindowCreateEvent;
-class WXDLLIMPEXP_FWD_CORE wxWindowDestroyEvent;
-class WXDLLIMPEXP_FWD_CORE wxShowEvent;
-class WXDLLIMPEXP_FWD_CORE wxIconizeEvent;
-class WXDLLIMPEXP_FWD_CORE wxMaximizeEvent;
-class WXDLLIMPEXP_FWD_CORE wxMouseCaptureChangedEvent;
-class WXDLLIMPEXP_FWD_CORE wxMouseCaptureLostEvent;
-class WXDLLIMPEXP_FWD_CORE wxPaintEvent;
-class WXDLLIMPEXP_FWD_CORE wxEraseEvent;
-class WXDLLIMPEXP_FWD_CORE wxNcPaintEvent;
-class WXDLLIMPEXP_FWD_CORE wxMenuEvent;
-class WXDLLIMPEXP_FWD_CORE wxContextMenuEvent;
-class WXDLLIMPEXP_FWD_CORE wxSysColourChangedEvent;
-class WXDLLIMPEXP_FWD_CORE wxDisplayChangedEvent;
-class WXDLLIMPEXP_FWD_CORE wxQueryNewPaletteEvent;
-class WXDLLIMPEXP_FWD_CORE wxPaletteChangedEvent;
-class WXDLLIMPEXP_FWD_CORE wxJoystickEvent;
-class WXDLLIMPEXP_FWD_CORE wxDropFilesEvent;
-class WXDLLIMPEXP_FWD_CORE wxInitDialogEvent;
-class WXDLLIMPEXP_FWD_CORE wxUpdateUIEvent;
-class WXDLLIMPEXP_FWD_CORE wxClipboardTextEvent;
-class WXDLLIMPEXP_FWD_CORE wxHelpEvent;
+class  wxIdleEvent;
+class  wxThreadEvent;
+class  wxCommandEvent;
+class  wxMouseEvent;
+class  wxFocusEvent;
+class  wxChildFocusEvent;
+class  wxKeyEvent;
+class  wxNavigationKeyEvent;
+class  wxSetCursorEvent;
+class  wxScrollEvent;
+class  wxSpinEvent;
+class  wxScrollWinEvent;
+class  wxSizeEvent;
+class  wxMoveEvent;
+class  wxCloseEvent;
+class  wxActivateEvent;
+class  wxWindowCreateEvent;
+class  wxWindowDestroyEvent;
+class  wxShowEvent;
+class  wxIconizeEvent;
+class  wxMaximizeEvent;
+class  wxMouseCaptureChangedEvent;
+class  wxMouseCaptureLostEvent;
+class  wxPaintEvent;
+class  wxEraseEvent;
+class  wxNcPaintEvent;
+class  wxMenuEvent;
+class  wxContextMenuEvent;
+class  wxSysColourChangedEvent;
+class  wxDisplayChangedEvent;
+class  wxQueryNewPaletteEvent;
+class  wxPaletteChangedEvent;
+class  wxJoystickEvent;
+class  wxDropFilesEvent;
+class  wxInitDialogEvent;
+class  wxUpdateUIEvent;
+class  wxClipboardTextEvent;
+class  wxHelpEvent;
 
 
     // Command events
@@ -913,7 +913,7 @@ enum wxEventCategory
  *
  */
 
-class WXDLLIMPEXP_BASE wxEvent : public wxObject
+class  wxEvent : public wxObject
 {
 public:
     wxEvent(int winid = 0, wxEventType commandType = wxEVT_NULL );
@@ -1039,10 +1039,10 @@ protected:
 
 private:
     // it needs to access our m_propagationLevel
-    friend class WXDLLIMPEXP_FWD_BASE wxPropagateOnce;
+    friend class  wxPropagateOnce;
 
     // and this one needs to access our m_handlerToProcessOnlyIn
-    friend class WXDLLIMPEXP_FWD_BASE wxEventProcessInHandlerOnly;
+    friend class  wxEventProcessInHandlerOnly;
 
 
     DECLARE_ABSTRACT_CLASS(wxEvent)
@@ -1051,7 +1051,7 @@ private:
 /*
  * Helper class to temporarily change an event not to propagate.
  */
-class WXDLLIMPEXP_BASE wxPropagationDisabler
+class  wxPropagationDisabler
 {
 public:
     wxPropagationDisabler(wxEvent& event) : m_event(event)
@@ -1074,7 +1074,7 @@ private:
 /*
  * Another one to temporarily lower propagation level.
  */
-class WXDLLIMPEXP_BASE wxPropagateOnce
+class  wxPropagateOnce
 {
 public:
     wxPropagateOnce(wxEvent& event) : m_event(event)
@@ -1121,7 +1121,7 @@ private:
 };
 
 
-class WXDLLIMPEXP_BASE wxEventBasicPayloadMixin
+class  wxEventBasicPayloadMixin
 {
 public:
     wxEventBasicPayloadMixin()
@@ -1149,7 +1149,7 @@ protected:
     wxDECLARE_NO_ASSIGN_CLASS(wxEventBasicPayloadMixin);
 };
 
-class WXDLLIMPEXP_BASE wxEventAnyPayloadMixin : public wxEventBasicPayloadMixin
+class  wxEventAnyPayloadMixin : public wxEventBasicPayloadMixin
 {
 public:
     wxEventAnyPayloadMixin() : wxEventBasicPayloadMixin() {}
@@ -1194,7 +1194,7 @@ enum wxIdleMode
     wxIDLE_PROCESS_SPECIFIED
 };
 
-class WXDLLIMPEXP_BASE wxIdleEvent : public wxEvent
+class  wxIdleEvent : public wxEvent
 {
 public:
     wxIdleEvent()
@@ -1230,7 +1230,7 @@ private:
 
 // Thread event
 
-class WXDLLIMPEXP_BASE wxThreadEvent : public wxEvent,
+class  wxThreadEvent : public wxEvent,
                                        public wxEventAnyPayloadMixin
 {
 public:
@@ -2858,7 +2858,7 @@ private:
 
 // struct containing the members common to static and dynamic event tables
 // entries
-struct WXDLLIMPEXP_BASE wxEventTableEntryBase
+struct  wxEventTableEntryBase
 {
     wxEventTableEntryBase(int winid, int idLast,
                           wxEventFunctor* fn, wxObject *data)
@@ -2907,7 +2907,7 @@ private:
 };
 
 // an entry from a static event table
-struct WXDLLIMPEXP_BASE wxEventTableEntry : public wxEventTableEntryBase
+struct  wxEventTableEntry : public wxEventTableEntryBase
 {
     wxEventTableEntry(const int& evType, int winid, int idLast,
                       wxEventFunctor* fn, wxObject *data)
@@ -2928,7 +2928,7 @@ private:
 };
 
 // an entry used in dynamic event table managed by wxEvtHandler::Connect()
-struct WXDLLIMPEXP_BASE wxDynamicEventTableEntry : public wxEventTableEntryBase
+struct  wxDynamicEventTableEntry : public wxEventTableEntryBase
 {
     wxDynamicEventTableEntry(int evType, int winid, int idLast,
                              wxEventFunctor* fn, wxObject *data)
@@ -2949,7 +2949,7 @@ private:
 // wxEventTable: an array of event entries terminated with {0, 0, 0, 0, 0}
 // ----------------------------------------------------------------------------
 
-struct WXDLLIMPEXP_BASE wxEventTable
+struct  wxEventTable
 {
     const wxEventTable *baseTable;    // base event table (next in chain)
     const wxEventTableEntry *entries; // bottom of entry array
@@ -2961,7 +2961,7 @@ struct WXDLLIMPEXP_BASE wxEventTable
 
 WX_DEFINE_ARRAY_PTR(const wxEventTableEntry*, wxEventTableEntryPointerArray);
 
-class WXDLLIMPEXP_BASE wxEventHashTable
+class  wxEventHashTable
 {
 private:
     // Internal data structs
@@ -3023,7 +3023,7 @@ protected:
 // wxEvtHandler: the base class for all objects handling wxWidgets events
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxEvtHandler : public wxObject
+class  wxEvtHandler : public wxObject
                                     , public wxTrackable
 {
 public:

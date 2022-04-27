@@ -48,9 +48,9 @@
 // forward decls
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_BASE wxArrayString;
-class WXDLLIMPEXP_FWD_BASE wxTranslationsLoader;
-class WXDLLIMPEXP_FWD_BASE wxLocale;
+class  wxArrayString;
+class  wxTranslationsLoader;
+class  wxLocale;
 
 class wxPluralFormsCalculator;
 wxDECLARE_SCOPED_PTR(wxPluralFormsCalculator, wxPluralFormsCalculatorPtr)
@@ -59,7 +59,7 @@ wxDECLARE_SCOPED_PTR(wxPluralFormsCalculator, wxPluralFormsCalculatorPtr)
 // wxMsgCatalog corresponds to one loaded message catalog.
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxMsgCatalog
+class  wxMsgCatalog
 {
 public:
     // Ctor is protected, because CreateFromXXX functions must be used,
@@ -112,7 +112,7 @@ private:
 // ----------------------------------------------------------------------------
 
 // this class allows to get translations for strings
-class WXDLLIMPEXP_BASE wxTranslations
+class  wxTranslations
 {
 public:
     wxTranslations();
@@ -188,7 +188,7 @@ private:
 
 
 // abstraction of translations discovery and loading
-class WXDLLIMPEXP_BASE wxTranslationsLoader
+class  wxTranslationsLoader
 {
 public:
     wxTranslationsLoader() {}
@@ -202,7 +202,7 @@ public:
 
 
 // standard wxTranslationsLoader implementation, using filesystem
-class WXDLLIMPEXP_BASE wxFileTranslationsLoader
+class  wxFileTranslationsLoader
     : public wxTranslationsLoader
 {
 public:
@@ -217,7 +217,7 @@ public:
 
 #ifdef __WINDOWS__
 // loads translations from win32 resources
-class WXDLLIMPEXP_BASE wxResourceTranslationsLoader
+class  wxResourceTranslationsLoader
     : public wxTranslationsLoader
 {
 public:

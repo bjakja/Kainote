@@ -19,27 +19,27 @@
 
 #include "wx/panel.h"
 
-class WXDLLIMPEXP_FWD_CORE wxBookCtrlBase;
-class WXDLLIMPEXP_FWD_CORE wxBookCtrlEvent;
-class WXDLLIMPEXP_FWD_CORE wxIcon;
-class WXDLLIMPEXP_FWD_CORE wxIconBundle;
-class WXDLLIMPEXP_FWD_CORE wxNotebook;
+class wxBookCtrlBase;
+class  wxBookCtrlEvent;
+class  wxIcon;
+class  wxIconBundle;
+class  wxNotebook;
 
 #if wxUSE_GENERIC_MDI_AS_NATIVE
     #define wxGenericMDIParentFrame wxMDIParentFrame
     #define wxGenericMDIChildFrame wxMDIChildFrame
     #define wxGenericMDIClientWindow wxMDIClientWindow
 #else // !wxUSE_GENERIC_MDI_AS_NATIVE
-    class WXDLLIMPEXP_FWD_CORE wxGenericMDIParentFrame;
-    class WXDLLIMPEXP_FWD_CORE wxGenericMDIChildFrame;
-    class WXDLLIMPEXP_FWD_CORE wxGenericMDIClientWindow;
+    class  wxGenericMDIParentFrame;
+    class  wxGenericMDIChildFrame;
+    class  wxGenericMDIClientWindow;
 #endif // wxUSE_GENERIC_MDI_AS_NATIVE/!wxUSE_GENERIC_MDI_AS_NATIVE
 
 // ----------------------------------------------------------------------------
 // wxGenericMDIParentFrame
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxGenericMDIParentFrame : public wxMDIParentFrameBase
+class  wxGenericMDIParentFrame : public wxMDIParentFrameBase
 {
 public:
     wxGenericMDIParentFrame() { Init(); }
@@ -133,7 +133,7 @@ private:
 // wxGenericMDIChildFrame
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxGenericMDIChildFrame : public wxTDIChildFrame
+class  wxGenericMDIChildFrame : public wxTDIChildFrame
 {
 public:
     wxGenericMDIChildFrame() { Init(); }
@@ -213,7 +213,7 @@ private:
 // wxGenericMDIClientWindow
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxGenericMDIClientWindow : public wxMDIClientWindowBase
+class  wxGenericMDIClientWindow : public wxMDIClientWindowBase
 {
 public:
     wxGenericMDIClientWindow() { }

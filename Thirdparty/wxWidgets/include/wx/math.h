@@ -139,8 +139,8 @@
     extern "C" {
 #endif
     /* functions from common/extended.c */
-    WXDLLIMPEXP_BASE wxFloat64 wxConvertFromIeeeExtended(const wxInt8 *bytes);
-    WXDLLIMPEXP_BASE void wxConvertToIeeeExtended(wxFloat64 num, wxInt8 *bytes);
+     wxFloat64 wxConvertFromIeeeExtended(const wxInt8 *bytes);
+     void wxConvertToIeeeExtended(wxFloat64 num, wxInt8 *bytes);
 
     /* use wxConvertFromIeeeExtended() and wxConvertToIeeeExtended() instead */
 #if WXWIN_COMPATIBILITY_2_8

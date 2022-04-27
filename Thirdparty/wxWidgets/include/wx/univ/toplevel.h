@@ -88,7 +88,7 @@ enum
 // wxTopLevelWindow
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxTopLevelWindow : public wxTopLevelWindowNative,
+class  wxTopLevelWindow : public wxTopLevelWindowNative,
                                      public wxInputConsumer
 {
 public:

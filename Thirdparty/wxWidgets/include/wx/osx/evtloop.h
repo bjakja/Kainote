@@ -17,9 +17,9 @@
 DECLARE_WXOSX_OPAQUE_CFREF( CFRunLoop );
 DECLARE_WXOSX_OPAQUE_CFREF( CFRunLoopObserver );
 
-class WXDLLIMPEXP_BASE wxCFEventLoopPauseIdleEvents;
+class  wxCFEventLoopPauseIdleEvents;
 
-class WXDLLIMPEXP_BASE wxCFEventLoop : public wxEventLoopBase
+class  wxCFEventLoop : public wxEventLoopBase
 {
     friend class wxCFEventLoopPauseIdleEvents;
 public:
@@ -103,7 +103,7 @@ private:
     wxDECLARE_NO_COPY_CLASS(wxCFEventLoop);
 };
 
-class WXDLLIMPEXP_BASE wxCFEventLoopPauseIdleEvents : public wxObject
+class  wxCFEventLoopPauseIdleEvents : public wxObject
 {
 public:
     wxCFEventLoopPauseIdleEvents();
@@ -118,10 +118,10 @@ public:
     #include "wx/osx/carbon/evtloop.h"
 #endif
 
-class WXDLLIMPEXP_FWD_CORE wxWindow;
-class WXDLLIMPEXP_FWD_CORE wxNonOwnedWindow;
+class  wxWindow;
+class  wxNonOwnedWindow;
 
-class WXDLLIMPEXP_CORE wxModalEventLoop : public wxGUIEventLoop
+class  wxModalEventLoop : public wxGUIEventLoop
 {
 public:
     wxModalEventLoop(wxWindow *modalWindow);

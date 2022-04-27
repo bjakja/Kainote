@@ -22,11 +22,11 @@
 // ----------------------------------------------------------------------------
 
 // Returns true if the ID is in the list of recognized stock actions
-WXDLLIMPEXP_CORE bool wxIsStockID(wxWindowID id);
+ bool wxIsStockID(wxWindowID id);
 
 // Returns true of the label is empty or label of a stock button with
 // given ID
-WXDLLIMPEXP_CORE bool wxIsStockLabel(wxWindowID id, const wxString& label);
+ bool wxIsStockLabel(wxWindowID id, const wxString& label);
 
 enum wxStockLabelQueryFlag
 {
@@ -48,14 +48,14 @@ enum wxStockLabelQueryFlag
 // for wxSTOCK_OK); if wxSTOCK_WITH_MNEMONIC is given, the & character
 // is included; if wxSTOCK_WITH_ACCELERATOR is given, the stock accelerator
 // for given ID is concatenated to the label using \t as separator
-WXDLLIMPEXP_CORE wxString wxGetStockLabel(wxWindowID id,
+ wxString wxGetStockLabel(wxWindowID id,
                                      long flags = wxSTOCK_WITH_MNEMONIC);
 
 #if wxUSE_ACCEL
 
     // Returns the accelerator that should be used for given stock UI element
     // (e.g. "Ctrl+x" for wxSTOCK_EXIT)
-    WXDLLIMPEXP_CORE wxAcceleratorEntry wxGetStockAccelerator(wxWindowID id);
+     wxAcceleratorEntry wxGetStockAccelerator(wxWindowID id);
 
 #endif
 
@@ -67,7 +67,7 @@ enum wxStockHelpStringClient
 };
 
 // Returns an help string for the given stock UI element and for the given "context".
-WXDLLIMPEXP_CORE wxString wxGetStockHelpString(wxWindowID id,
+ wxString wxGetStockHelpString(wxWindowID id,
                                           wxStockHelpStringClient client = wxSTOCK_MENU);
 
 

@@ -13,10 +13,10 @@
 
 #include "wx/defs.h"
 #include "wx/chartype.h"
-#include "wx/stringimpl.h"
+#include "wx/string.h"
 
 class wxUniCharRef;
-class wxString;
+//class wxString;
 
 // This class represents single Unicode character. It can be converted to
 // and from char or wchar_t and implements commonly used character operations.

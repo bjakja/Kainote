@@ -66,20 +66,20 @@
 // forward declarations
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_CORE wxCaret;
-class WXDLLIMPEXP_FWD_CORE wxControl;
-class WXDLLIMPEXP_FWD_CORE wxCursor;
-class WXDLLIMPEXP_FWD_CORE wxDC;
-class WXDLLIMPEXP_FWD_CORE wxDropTarget;
-class WXDLLIMPEXP_FWD_CORE wxLayoutConstraints;
-class WXDLLIMPEXP_FWD_CORE wxSizer;
-class WXDLLIMPEXP_FWD_CORE wxToolTip;
-class WXDLLIMPEXP_FWD_CORE wxWindowBase;
-class WXDLLIMPEXP_FWD_CORE wxWindow;
-class WXDLLIMPEXP_FWD_CORE wxScrollHelper;
+class  wxCaret;
+class  wxControl;
+class  wxCursor;
+class  wxDC;
+class  wxDropTarget;
+class  wxLayoutConstraints;
+class  wxSizer;
+class  wxToolTip;
+class  wxWindowBase;
+class  wxWindow;
+class  wxScrollHelper;
 
 #if wxUSE_ACCESSIBILITY
-class WXDLLIMPEXP_FWD_CORE wxAccessible;
+class  wxAccessible;
 #endif
 
 // ----------------------------------------------------------------------------
@@ -87,7 +87,7 @@ class WXDLLIMPEXP_FWD_CORE wxAccessible;
 // ----------------------------------------------------------------------------
 
 // struct containing all the visual attributes of a control
-struct WXDLLIMPEXP_CORE wxVisualAttributes
+struct wxVisualAttributes
 {
     // the font used for control label/text inside it
     wxFont font;
@@ -142,16 +142,16 @@ enum
 // (pseudo)template list classes
 // ----------------------------------------------------------------------------
 
-WX_DECLARE_LIST_3(wxWindow, wxWindowBase, wxWindowList, wxWindowListNode, class WXDLLIMPEXP_CORE);
+WX_DECLARE_LIST_3(wxWindow, wxWindowBase, wxWindowList, wxWindowListNode, class );
 
 // ----------------------------------------------------------------------------
 // global variables
 // ----------------------------------------------------------------------------
 
-extern WXDLLIMPEXP_DATA_CORE(wxWindowList) wxTopLevelWindows;
+extern wxWindowList wxTopLevelWindows;
 
 // declared here for compatibility only, main declaration is in wx/app.h
-extern WXDLLIMPEXP_DATA_BASE(wxList) wxPendingDelete;
+extern wxList wxPendingDelete;
 
 // ----------------------------------------------------------------------------
 // wxWindowBase is the base class for all GUI controls/widgets, this is the public
@@ -164,7 +164,7 @@ extern WXDLLIMPEXP_DATA_BASE(wxList) wxPendingDelete;
 // temporarily switches event handlers).
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxWindowBase : public wxEvtHandler
+class wxWindowBase : public wxEvtHandler
 {
 public:
     // creating the window
@@ -1920,16 +1920,16 @@ inline wxWindow *wxWindowBase::GetGrandParent() const
 
 // Find the wxWindow at the current mouse position, also returning the mouse
 // position.
-extern WXDLLIMPEXP_CORE wxWindow* wxFindWindowAtPointer(wxPoint& pt);
+extern  wxWindow* wxFindWindowAtPointer(wxPoint& pt);
 
 // Get the current mouse position.
-extern WXDLLIMPEXP_CORE wxPoint wxGetMousePosition();
+extern  wxPoint wxGetMousePosition();
 
 // get the currently active window of this application or NULL
-extern WXDLLIMPEXP_CORE wxWindow *wxGetActiveWindow();
+extern  wxWindow *wxGetActiveWindow();
 
 // get the (first) top level parent window
-WXDLLIMPEXP_CORE wxWindow* wxGetTopLevelParent(wxWindow *win);
+ wxWindow* wxGetTopLevelParent(wxWindow *win);
 
 #if WXWIN_COMPATIBILITY_2_6
     // deprecated (doesn't start with 'wx' prefix), use wxWindow::NewControlId()
@@ -1942,7 +1942,7 @@ WXDLLIMPEXP_CORE wxWindow* wxGetTopLevelParent(wxWindow *win);
 // accessible object for windows
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxWindowAccessible: public wxAccessible
+class  wxWindowAccessible: public wxAccessible
 {
 public:
     wxWindowAccessible(wxWindow* win): wxAccessible(win) { if (win) win->SetAccessible(this); }

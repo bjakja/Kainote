@@ -15,7 +15,7 @@
 #include "wx/gdiobj.h"
 #include "wx/gdicmn.h"
 
-class WXDLLIMPEXP_FWD_CORE wxImage;
+class  wxImage;
 
 // Cursor
 class WXDLLIMPEXP_CORE wxCursor : public wxGDIObject
@@ -65,7 +65,7 @@ private:
     DECLARE_DYNAMIC_CLASS(wxCursor)
 };
 
-extern WXDLLIMPEXP_CORE void wxSetCursor(const wxCursor& cursor);
+extern  void wxSetCursor(const wxCursor& cursor);
 
 #endif
 // _WX_CURSOR_H_

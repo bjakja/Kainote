@@ -17,7 +17,7 @@
 // wxKeyboardState stores the state of the keyboard modifier keys
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxKeyboardState
+class  wxKeyboardState
 {
 public:
     wxKeyboardState(bool controlDown = false,

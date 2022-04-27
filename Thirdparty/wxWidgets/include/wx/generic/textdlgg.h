@@ -23,10 +23,10 @@
 #include "wx/textctrl.h"
 #endif
 
-class WXDLLIMPEXP_FWD_CORE wxTextCtrl;
+class wxTextCtrl;
 
-extern WXDLLIMPEXP_DATA_CORE(const char) wxGetTextFromUserPromptStr[];
-extern WXDLLIMPEXP_DATA_CORE(const char) wxGetPasswordFromUserPromptStr[];
+extern const char wxGetTextFromUserPromptStr[];
+extern const char wxGetPasswordFromUserPromptStr[];
 
 #define wxTextEntryDialogStyle (wxOK | wxCANCEL | wxCENTRE | wxWS_EX_VALIDATE_RECURSIVELY)
 
@@ -34,7 +34,7 @@ extern WXDLLIMPEXP_DATA_CORE(const char) wxGetPasswordFromUserPromptStr[];
 // wxTextEntryDialog: a dialog with text control, [ok] and [cancel] buttons
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxTextEntryDialog : public wxDialog
+class  wxTextEntryDialog : public wxDialog
 {
 public:
     wxTextEntryDialog(wxWindow *parent,
@@ -75,7 +75,7 @@ private:
 // wxPasswordEntryDialog: dialog with password control, [ok] and [cancel]
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxPasswordEntryDialog : public wxTextEntryDialog
+class  wxPasswordEntryDialog : public wxTextEntryDialog
 {
 public:
     wxPasswordEntryDialog(wxWindow *parent,
@@ -93,7 +93,7 @@ private:
 // function to get a string from user
 // ----------------------------------------------------------------------------
 
-WXDLLIMPEXP_CORE wxString
+ wxString
     wxGetTextFromUser(const wxString& message,
                     const wxString& caption = wxGetTextFromUserPromptStr,
                     const wxString& default_value = wxEmptyString,
@@ -102,7 +102,7 @@ WXDLLIMPEXP_CORE wxString
                     wxCoord y = wxDefaultCoord,
                     bool centre = true);
 
-WXDLLIMPEXP_CORE wxString
+ wxString
     wxGetPasswordFromUser(const wxString& message,
                         const wxString& caption = wxGetPasswordFromUserPromptStr,
                         const wxString& default_value = wxEmptyString,

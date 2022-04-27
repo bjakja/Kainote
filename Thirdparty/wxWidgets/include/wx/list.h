@@ -45,7 +45,7 @@
 // types
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_BASE wxObjectListNode;
+class  wxObjectListNode;
 typedef wxObjectListNode wxNode;
 
 #if wxUSE_STD_CONTAINERS
@@ -368,7 +368,7 @@ union wxListKeyValue
 // for any keyed operation instead of 2 almost equivalent. OTOH, it's needed to
 // resolve ambiguity which we would otherwise have with wxStringList::Find() and
 // wxList::Find(const char *).
-class WXDLLIMPEXP_BASE wxListKey
+class  wxListKey
 {
 public:
     // implicit ctors
@@ -411,11 +411,11 @@ private:
 // wxNodeBase class is a (base for) node in a double linked list
 // -----------------------------------------------------------------------------
 
-extern WXDLLIMPEXP_DATA_BASE(wxListKey) wxDefaultListKey;
+extern wxListKey wxDefaultListKey;
 
-class WXDLLIMPEXP_FWD_BASE wxListBase;
+class  wxListBase;
 
-class WXDLLIMPEXP_BASE wxNodeBase
+class  wxNodeBase
 {
 friend class wxListBase;
 public:
@@ -475,9 +475,9 @@ private:
 // a double-linked list class
 // -----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_BASE wxList;
+class  wxList;
 
-class WXDLLIMPEXP_BASE wxListBase
+class  wxListBase
 {
 friend class wxNodeBase; // should be able to call DetachNode()
 friend class wxHashTableBase;   // should be able to call untyped Find()
@@ -1192,9 +1192,9 @@ inline wxListBase::operator wxList&() const { return *(wxList*)this; }
 // ----------------------------------------------------------------------------
 
 WX_DECLARE_LIST_2(wxObject, wxObjectList, wxObjectListNode,
-                        class WXDLLIMPEXP_BASE);
+                        class);
 
-class WXDLLIMPEXP_BASE wxList : public wxObjectList
+class wxList : public wxObjectList
 {
 public:
 #if defined(wxWARN_COMPAT_LIST_USE) && !wxUSE_STD_CONTAINERS
@@ -1221,9 +1221,9 @@ public:
 // -----------------------------------------------------------------------------
 // wxStringList class for compatibility with the old code
 // -----------------------------------------------------------------------------
-WX_DECLARE_LIST_2(wxChar, wxStringListBase, wxStringListNode, class WXDLLIMPEXP_BASE);
+WX_DECLARE_LIST_2(wxChar, wxStringListBase, wxStringListNode, class);
 
-class WXDLLIMPEXP_BASE wxStringList : public wxStringListBase
+class wxStringList : public wxStringListBase
 {
 public:
     // ctors and such

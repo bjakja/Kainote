@@ -829,13 +829,13 @@ private:                                                                 \
 // ----------------------------------------------------------------------------
 
 WX_DECLARE_USER_EXPORTED_BASEARRAY(const void *, wxBaseArrayPtrVoid,
-                                   WXDLLIMPEXP_BASE);
-WX_DECLARE_USER_EXPORTED_BASEARRAY(char, wxBaseArrayChar, WXDLLIMPEXP_BASE);
-WX_DECLARE_USER_EXPORTED_BASEARRAY(short, wxBaseArrayShort, WXDLLIMPEXP_BASE);
-WX_DECLARE_USER_EXPORTED_BASEARRAY(int, wxBaseArrayInt, WXDLLIMPEXP_BASE);
-WX_DECLARE_USER_EXPORTED_BASEARRAY(long, wxBaseArrayLong, WXDLLIMPEXP_BASE);
-WX_DECLARE_USER_EXPORTED_BASEARRAY(size_t, wxBaseArraySizeT, WXDLLIMPEXP_BASE);
-WX_DECLARE_USER_EXPORTED_BASEARRAY(double, wxBaseArrayDouble, WXDLLIMPEXP_BASE);
+                                   );
+WX_DECLARE_USER_EXPORTED_BASEARRAY(char, wxBaseArrayChar, );
+WX_DECLARE_USER_EXPORTED_BASEARRAY(short, wxBaseArrayShort, );
+WX_DECLARE_USER_EXPORTED_BASEARRAY(int, wxBaseArrayInt, );
+WX_DECLARE_USER_EXPORTED_BASEARRAY(long, wxBaseArrayLong, );
+WX_DECLARE_USER_EXPORTED_BASEARRAY(size_t, wxBaseArraySizeT, );
+WX_DECLARE_USER_EXPORTED_BASEARRAY(double, wxBaseArrayDouble, );
 
 // ----------------------------------------------------------------------------
 // Convenience macros to define arrays from base arrays
@@ -1012,11 +1012,11 @@ WX_DECLARE_USER_EXPORTED_BASEARRAY(double, wxBaseArrayDouble, WXDLLIMPEXP_BASE);
 // Some commonly used predefined arrays
 // ----------------------------------------------------------------------------
 
-WX_DEFINE_USER_EXPORTED_ARRAY_SHORT(short, wxArrayShort, class WXDLLIMPEXP_BASE);
-WX_DEFINE_USER_EXPORTED_ARRAY_INT(int, wxArrayInt, class WXDLLIMPEXP_BASE);
-WX_DEFINE_USER_EXPORTED_ARRAY_DOUBLE(double, wxArrayDouble, class WXDLLIMPEXP_BASE);
-WX_DEFINE_USER_EXPORTED_ARRAY_LONG(long, wxArrayLong, class WXDLLIMPEXP_BASE);
-WX_DEFINE_USER_EXPORTED_ARRAY_PTR(void *, wxArrayPtrVoid, class WXDLLIMPEXP_BASE);
+WX_DEFINE_USER_EXPORTED_ARRAY_SHORT(short, wxArrayShort, class );
+WX_DEFINE_USER_EXPORTED_ARRAY_INT(int, wxArrayInt, class );
+WX_DEFINE_USER_EXPORTED_ARRAY_DOUBLE(double, wxArrayDouble, class );
+WX_DEFINE_USER_EXPORTED_ARRAY_LONG(long, wxArrayLong, class );
+WX_DEFINE_USER_EXPORTED_ARRAY_PTR(void *, wxArrayPtrVoid, class );
 
 // -----------------------------------------------------------------------------
 // convenience macros

@@ -66,8 +66,8 @@
 //#include <string.h>
 //#include <ctype.h>
 
-//#include "wx/msw/missing.h"
-//#include <windows.h>
+#include "wx/msw/missing.h"
+#include <windows.h>
 
 // instead of including <shlwapi.h> which is not part of the core SDK and not
 // shipped at all with other compilers, we always define the parts of it we
