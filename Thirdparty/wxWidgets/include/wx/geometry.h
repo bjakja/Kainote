@@ -11,6 +11,7 @@
 
 #ifndef _WX_GEOMETRY_H_
 #define _WX_GEOMETRY_H_
+#include <math.h>
 
 #include "wx/defs.h"
 
@@ -19,7 +20,7 @@
 #include "wx/utils.h"
 #include "wx/gdicmn.h"
 //#include "wx/math.h"
-#include <math.h>
+
 
 class WXDLLIMPEXP_FWD_BASE wxDataInputStream;
 class WXDLLIMPEXP_FWD_BASE wxDataOutputStream;
@@ -133,7 +134,7 @@ inline void wxPoint2DInt::GetRounded( wxInt32 *x , wxInt32 *y ) const
 inline wxDouble wxPoint2DInt::GetVectorLength() const
 {
     // cast needed MIPSpro compiler under SGI
-    return sqrt( (double)(m_x)*(m_x) + (m_y)*(m_y) );
+    return ::sqrt( (double)(m_x)*(m_x) + (m_y)*(m_y) );
 }
 
 inline void wxPoint2DInt::SetVectorLength( wxDouble length )
@@ -150,7 +151,7 @@ inline void wxPoint2DInt::Normalize()
 
 inline wxDouble wxPoint2DInt::GetDistance( const wxPoint2DInt &pt ) const
 {
-    return sqrt( GetDistanceSquare( pt ) );
+    return ::sqrt( GetDistanceSquare( pt ) );
 }
 
 inline wxDouble wxPoint2DInt::GetDistanceSquare( const wxPoint2DInt &pt ) const
@@ -370,7 +371,7 @@ inline void wxPoint2DDouble::GetRounded( wxInt32 *x , wxInt32 *y ) const
 
 inline wxDouble wxPoint2DDouble::GetVectorLength() const
 {
-    return sqrt( (m_x)*(m_x) + (m_y)*(m_y) ) ;
+    return ::sqrt( (m_x)*(m_x) + (m_y)*(m_y) ) ;
 }
 
 inline void wxPoint2DDouble::SetVectorLength( wxDouble length )
@@ -387,7 +388,7 @@ inline void wxPoint2DDouble::Normalize()
 
 inline wxDouble wxPoint2DDouble::GetDistance( const wxPoint2DDouble &pt ) const
 {
-    return sqrt( GetDistanceSquare( pt ) );
+    return ::sqrt( GetDistanceSquare( pt ) );
 }
 
 inline wxDouble wxPoint2DDouble::GetDistanceSquare( const wxPoint2DDouble &pt ) const

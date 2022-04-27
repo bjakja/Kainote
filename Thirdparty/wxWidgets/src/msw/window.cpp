@@ -98,8 +98,8 @@
     #include "wx/spinctrl.h"
 #endif // wxUSE_SPINCTRL
 
-#include "wx/notebook.h"
-#include "wx/listctrl.h"
+//#include "wx/notebook.h"
+//#include "wx/listctrl.h"
 #include "wx/dynlib.h"
 
 #include <string.h>
@@ -523,7 +523,7 @@ bool wxWindowMSW::Create(wxWindow *parent,
                          long style,
                          const wxString& name)
 {
-    wxCHECK_MSG( parent, false, wxT("can't create wxWindow without parent") );
+    //wxCHECK_MSG( parent, false, wxT("can't create wxWindow without parent") );
 
     if ( !CreateBase(parent, id, pos, size, style, wxDefaultValidator, name) )
         return false;
@@ -563,7 +563,7 @@ bool wxWindowMSW::Create(wxWindow *parent,
 void wxWindowMSW::SetFocus()
 {
     HWND hWnd = GetHwnd();
-    wxCHECK_RET( hWnd, wxT("can't set focus to invalid window") );
+    //wxCHECK_RET( hWnd, wxT("can't set focus to invalid window") );
 
 #if !defined(__WXWINCE__)
     ::SetLastError(0);
@@ -750,11 +750,11 @@ wxWindowMSW::MSWShowWithEffect(bool show,
 
 
         case wxSHOW_EFFECT_MAX:
-            wxFAIL_MSG( wxT("invalid window show effect") );
+            //wxFAIL_MSG( wxT("invalid window show effect") );
             return false;
 
         default:
-            wxFAIL_MSG( wxT("unknown window show effect") );
+            //wxFAIL_MSG( wxT("unknown window show effect") );
             return false;
     }
 
@@ -821,7 +821,7 @@ bool wxWindowMSW::SetFont(const wxFont& font)
         // GetFont() returns
         WXHANDLE hFont = GetFont().GetResourceHandle();
 
-        wxASSERT_MSG( hFont, wxT("should have valid font") );
+        //wxASSERT_MSG( hFont, wxT("should have valid font") );
 
         ::SendMessage(hWnd, WM_SETFONT, (WPARAM)hFont, MAKELPARAM(TRUE, 0));
     }
@@ -946,7 +946,7 @@ inline UINT WXOrientToSB(int orient)
 int wxWindowMSW::GetScrollPos(int orient) const
 {
     HWND hWnd = GetHwnd();
-    wxCHECK_MSG( hWnd, 0, wxT("no HWND in GetScrollPos") );
+    //wxCHECK_MSG( hWnd, 0, wxT("no HWND in GetScrollPos") );
 
     return GetScrollPosition(hWnd, WXOrientToSB(orient));
 }
@@ -981,7 +981,7 @@ int wxWindowMSW::GetScrollThumb(int orient) const
 void wxWindowMSW::SetScrollPos(int orient, int pos, bool refresh)
 {
     HWND hWnd = GetHwnd();
-    wxCHECK_RET( hWnd, wxT("SetScrollPos: no HWND") );
+    //wxCHECK_RET( hWnd, wxT("SetScrollPos: no HWND") );
 
     WinStruct<SCROLLINFO> info;
     info.nPage = 0;
@@ -1113,8 +1113,8 @@ void wxWindowMSW::SetLayoutDirection(wxLayoutDirection dir)
 #ifdef __WXWINCE__
     wxUnusedVar(dir);
 #else
-    wxCHECK_RET( GetHwnd(),
-                 wxT("layout direction must be set after window creation") );
+    //wxCHECK_RET( GetHwnd(),
+                 //wxT("layout direction must be set after window creation") );
 
     LONG styleOld = wxGetWindowExStyle(this);
 
@@ -1130,7 +1130,7 @@ void wxWindowMSW::SetLayoutDirection(wxLayoutDirection dir)
             break;
 
         default:
-            wxFAIL_MSG(wxT("unsupported layout direction"));
+            //wxFAIL_MSG(wxT("unsupported layout direction"));
             break;
     }
 
@@ -1146,7 +1146,7 @@ wxLayoutDirection wxWindowMSW::GetLayoutDirection() const
 #ifdef __WXWINCE__
     return wxLayout_Default;
 #else
-    wxCHECK_MSG( GetHwnd(), wxLayout_Default, wxT("invalid window") );
+    //wxCHECK_MSG( GetHwnd(), wxLayout_Default, wxT("invalid window") );
 
     return wxHasWindowExStyle(this, WS_EX_LAYOUTRTL) ? wxLayout_RightToLeft
                                                      : wxLayout_LeftToRight;
@@ -1169,10 +1169,10 @@ wxWindowMSW::AdjustForLayoutDirection(wxCoord x,
 
 void wxWindowMSW::SubclassWin(WXHWND hWnd)
 {
-    wxASSERT_MSG( !m_oldWndProc, wxT("subclassing window twice?") );
+    //wxASSERT_MSG( !m_oldWndProc, wxT("subclassing window twice?") );
 
     HWND hwnd = (HWND)hWnd;
-    wxCHECK_RET( ::IsWindow(hwnd), wxT("invalid HWND in SubclassWin") );
+    //wxCHECK_RET( ::IsWindow(hwnd), wxT("invalid HWND in SubclassWin") );
 
     SetHWND(hWnd);
 
@@ -1210,7 +1210,7 @@ void wxWindowMSW::UnsubclassWin()
     {
         SetHWND(0);
 
-        wxCHECK_RET( ::IsWindow(hwnd), wxT("invalid HWND in UnsubclassWin") );
+        //wxCHECK_RET( ::IsWindow(hwnd), wxT("invalid HWND in UnsubclassWin") );
 
         if ( m_oldWndProc )
         {
@@ -1457,7 +1457,7 @@ WXDWORD wxWindowMSW::MSWGetStyle(long flags, WXDWORD *exstyle) const
         {
             default:
             case wxBORDER_DEFAULT:
-                wxFAIL_MSG( wxT("unknown border style") );
+                //wxFAIL_MSG( wxT("unknown border style") );
                 // fall through
 
             case wxBORDER_NONE:
@@ -2124,7 +2124,7 @@ wxSize wxWindowMSW::DoGetBorderSize() const
             break;
 
         default:
-            wxFAIL_MSG( wxT("unknown border style") );
+            //wxFAIL_MSG( wxT("unknown border style") );
             // fall through
 
         case wxBORDER_NONE:
@@ -2160,8 +2160,8 @@ void wxWindowMSW::DoGetTextExtent(const wxString& string,
                                   int *externalLeading,
                                   const wxFont *fontToUse) const
 {
-    wxASSERT_MSG( !fontToUse || fontToUse->IsOk(),
-                    wxT("invalid font in GetTextExtent()") );
+    /*wxASSERT_MSG( !fontToUse || fontToUse->IsOk(),
+                    wxT("invalid font in GetTextExtent()") );*/
 
     HFONT hfontToUse;
     if ( fontToUse )
@@ -3640,8 +3640,8 @@ void wxAssociateWinWithHandle(HWND hwnd, wxWindowMSW *win)
 {
     // adding NULL hwnd is (first) surely a result of an error and
     // (secondly) breaks menu command processing
-    wxCHECK_RET( hwnd != (HWND)NULL,
-                 wxT("attempt to add a NULL hwnd to window list ignored") );
+    //wxCHECK_RET( hwnd != (HWND)NULL,
+                 //wxT("attempt to add a NULL hwnd to window list ignored") );
 
 #if wxDEBUG_LEVEL
     WindowHandles::const_iterator i = gs_windowHandles.find(hwnd);
@@ -3731,11 +3731,11 @@ bool wxWindowMSW::MSWCreate(const wxChar *wclass,
     // non-default ctor and Create() is called too, we'd create 2 HWND for a
     // single wxWindow object and this results in all sorts of trouble,
     // especially for wxTLWs
-    wxCHECK_MSG( !m_hWnd, true, "window can't be recreated" );
+    //wxCHECK_MSG( !m_hWnd, true, "window can't be recreated" );
 
     // this can happen if this function is called using the return value of
     // wxApp::GetRegisteredClassName() which failed
-    wxCHECK_MSG( wclass, false, "failed to register window class?" );
+    //wxCHECK_MSG( wclass, false, "failed to register window class?" );
 
 
     // choose the position/size for the new window
@@ -4367,8 +4367,8 @@ wxWindowMSW::MSWOnDrawItem(int WXUNUSED_UNLESS_ODRAWN(id),
         if ( !pMenuItem )
             return false;
 
-        wxCHECK_MSG( wxDynamicCast(pMenuItem, wxMenuItem),
-                         false, wxT("MSWOnDrawItem: bad wxMenuItem pointer") );
+        //wxCHECK_MSG( wxDynamicCast(pMenuItem, wxMenuItem),
+                         //false, wxT("MSWOnDrawItem: bad wxMenuItem pointer") );
 
         // prepare to call OnDrawItem(): notice using of wxDCTemp to prevent
         // the DC from being released
@@ -4433,8 +4433,8 @@ wxWindowMSW::MSWOnMeasureItem(int id, WXMEASUREITEMSTRUCT *itemStruct)
         if ( !pMenuItem )
             return false;
 
-        wxCHECK_MSG( wxDynamicCast(pMenuItem, wxMenuItem),
-                        false, wxT("MSWOnMeasureItem: bad wxMenuItem pointer") );
+        //wxCHECK_MSG( wxDynamicCast(pMenuItem, wxMenuItem),
+                        //false, wxT("MSWOnMeasureItem: bad wxMenuItem pointer") );
 
         size_t w, h;
         bool rc = pMenuItem->OnMeasureItem(&w, &h);
@@ -4665,8 +4665,8 @@ extern wxCOLORMAP *wxGetStdColourMap()
             if ( stdColourBitmap.IsOk() )
             {
                 // the pixels in the bitmap must correspond to wxSTD_COL_XXX!
-                wxASSERT_MSG( stdColourBitmap.GetWidth() == wxSTD_COL_MAX,
-                              wxT("forgot to update wxBITMAP_STD_COLOURS!") );
+                /*wxASSERT_MSG( stdColourBitmap.GetWidth() == wxSTD_COL_MAX,
+                              wxT("forgot to update wxBITMAP_STD_COLOURS!") );*/
 
                 wxMemoryDC memDC;
                 memDC.SelectObject(stdColourBitmap);
@@ -4740,7 +4740,7 @@ wxColour wxWindowMSW::MSWGetThemeColour(const wchar_t *themeName,
                 themeProperty = TMT_BORDERCOLOR;
                 break;
             default:
-                wxFAIL_MSG(wxT("unsupported theme colour"));
+                break;//wxFAIL_MSG(wxT("unsupported theme colour"));
         };
 
         wxUxThemeHandle hTheme((const wxWindow *)this, themeName);
@@ -4897,7 +4897,7 @@ bool wxWindowMSW::HandleEraseBkgnd(WXHDC hdc)
             break;
 
         default:
-            wxFAIL_MSG( "unknown background style" );
+            break;//wxFAIL_MSG( "unknown background style" );
     }
 
     return true;
@@ -4918,14 +4918,14 @@ void wxWindowMSW::MSWSetEraseBgHook(wxWindow *child)
         if ( !gs_eraseBgHooks.insert(
                 EraseBgHooks::value_type(this, child)).second )
         {
-            wxFAIL_MSG( wxT("Setting erase background hook twice?") );
+            //wxFAIL_MSG( wxT("Setting erase background hook twice?") );
         }
     }
     else // reset the hook
     {
         if ( gs_eraseBgHooks.erase(this) != 1 )
         {
-            wxFAIL_MSG( wxT("Resetting erase background which was not set?") );
+            //wxFAIL_MSG( wxT("Resetting erase background which was not set?") );
         }
     }
 }
@@ -5141,7 +5141,7 @@ bool wxWindowMSW::HandleSize(int WXUNUSED(w), int WXUNUSED(h), WXUINT wParam)
     switch ( wParam )
     {
         default:
-            wxFAIL_MSG( wxT("unexpected WM_SIZE parameter") );
+            //wxFAIL_MSG( wxT("unexpected WM_SIZE parameter") );
             // fall through nevertheless
 
         case SIZE_MAXHIDE:
@@ -5712,8 +5712,8 @@ wxWindowMSW::CreateKeyEvent(wxEventType evType,
 {
     // Catch any attempts to use this with WM_CHAR, it wouldn't work because
     // wParam is supposed to be a virtual key and not a character here.
-    wxASSERT_MSG( evType != wxEVT_CHAR && evType != wxEVT_CHAR_HOOK,
-                    "CreateKeyEvent() can't be used for char events" );
+    /*wxASSERT_MSG( evType != wxEVT_CHAR && evType != wxEVT_CHAR_HOOK,
+                    "CreateKeyEvent() can't be used for char events" );*/
 
     wxKeyEvent event(evType);
     InitAnyKeyEvent(event, wParam, lParam);
@@ -5959,7 +5959,7 @@ bool wxWindowMSW::HandleJoystickEvent(WXUINT msg, int x, int y, WXUINT flags)
             break;
 
         default:
-            wxFAIL_MSG(wxT("no such joystick event"));
+            //wxFAIL_MSG(wxT("no such joystick event"));
 
             return false;
     }
@@ -6067,8 +6067,8 @@ bool wxWindowMSW::MSWOnScroll(int orientation, WXWORD wParam,
 /* static */ bool
 wxWindowMSW::MSWRegisterMessageHandler(int msg, MSWMessageHandler handler)
 {
-    wxCHECK_MSG( gs_messageHandlers.find(msg) == gs_messageHandlers.end(),
-                 false, wxT("registering handler for the same message twice") );
+    //wxCHECK_MSG( gs_messageHandlers.find(msg) == gs_messageHandlers.end(),
+                 //false, wxT("registering handler for the same message twice") );
 
     gs_messageHandlers[msg] = handler;
     return true;
@@ -6078,8 +6078,8 @@ wxWindowMSW::MSWRegisterMessageHandler(int msg, MSWMessageHandler handler)
 wxWindowMSW::MSWUnregisterMessageHandler(int msg, MSWMessageHandler handler)
 {
     const MSWMessageHandlers::iterator i = gs_messageHandlers.find(msg);
-    wxCHECK_RET( i != gs_messageHandlers.end() && i->second == handler,
-                 wxT("unregistering non-registered handler?") );
+    //wxCHECK_RET( i != gs_messageHandlers.end() && i->second == handler,
+                 //wxT("unregistering non-registered handler?") );
 
     gs_messageHandlers.erase(i);
 }
@@ -6490,10 +6490,10 @@ bool wxGetKeyState(wxKeyCode key)
 {
     // although this does work under Windows, it is not supported under other
     // platforms so don't allow it, you must use wxGetMouseState() instead
-    wxASSERT_MSG( key != VK_LBUTTON &&
+    /*wxASSERT_MSG( key != VK_LBUTTON &&
                     key != VK_RBUTTON &&
                         key != VK_MBUTTON,
-                    wxT("can't use wxGetKeyState() for mouse buttons") );
+                    wxT("can't use wxGetKeyState() for mouse buttons") );*/
 
     const WXWORD vk = wxMSWKeyboard::WXToVK(key);
 

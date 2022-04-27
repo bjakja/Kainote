@@ -131,7 +131,8 @@ static int module_loader(lua_State *L) {
 
 
 		if (!LoadFile(L, filename))
-			return error(L, "Error loading Lua module \"%s\":\n%s", filename.utf8_str().data(), check_string(L, 1).utf8_str().data());
+			return error(L, "Error loading Lua module \"%s\":\n%s", 
+				filename.utf8_str().data(), check_string(L, 1).utf8_str().data());
 		break;
 
 	}

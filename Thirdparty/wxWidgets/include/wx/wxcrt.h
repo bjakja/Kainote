@@ -520,15 +520,15 @@ inline int wxStrcoll_String(const wxString& s1, const T& s2)
 #define WX_STR_DECL(name, T1, T2)  name(T1 s1, T2 s2, size_t n)
 #define WX_STR_CALL(func, a1, a2)  func(a1, a2, n)
 
-//template<typename T>
-//inline int wxStrncmp_String(const wxString& s1, const T& s2, size_t n)
-//    { return s1.compare(0, n, s2, 0, n); }
+template<typename T>
+inline int wxStrncmp_String(const wxString& s1, const T& s2, size_t n)
+    { return s1.compare(0, n, s2, 0, n); }
 //WX_STRCMP_FUNC(wxStrncmp, wxCRT_StrncmpA, wxCRT_StrncmpW, wxStrncmp_String)
-//
-//template<typename T>
-//inline int wxStrnicmp_String(const wxString& s1, const T& s2, size_t n)
-//    { return s1.substr(0, n).CmpNoCase(wxString(s2).substr(0, n)); }
-///WX_STRCMP_FUNC(wxStrnicmp, wxCRT_StrnicmpA, wxCRT_StrnicmpW, wxStrnicmp_String)
+
+template<typename T>
+inline int wxStrnicmp_String(const wxString& s1, const T& s2, size_t n)
+    { return s1.substr(0, n).CmpNoCase(wxString(s2).substr(0, n)); }
+//WX_STRCMP_FUNC(wxStrnicmp, wxCRT_StrnicmpA, wxCRT_StrnicmpW, wxStrnicmp_String)
 
 #undef WX_STR_DECL
 #undef WX_STR_CALL

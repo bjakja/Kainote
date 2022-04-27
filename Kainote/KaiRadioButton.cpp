@@ -66,7 +66,7 @@ void KaiRadioButton::DeselectRest()
 {
 	const wxWindowList& siblings = GetParent()->GetChildren();
 	wxWindowList::compatibility_iterator nodeThis = siblings.Find(this);
-	wxCHECK_RET(nodeThis, wxT("radio button not a child of its parent?"));
+	//wxCHECK_RET(nodeThis, wxT("radio button not a child of its parent?"));
 
 	if (!HasFlag(wxRB_GROUP))
 	{
@@ -136,7 +136,7 @@ void KaiRadioButton::SelectPrev(bool first)
 {
 	const wxWindowList& siblings = GetParent()->GetChildren();
 	wxWindowList::compatibility_iterator nodeThis = siblings.Find(this);
-	wxCHECK_RET(nodeThis, wxT("radio button not a child of its parent?"));
+	//wxCHECK_RET(nodeThis, wxT("radio button not a child of its parent?"));
 
 	if (!HasFlag(wxRB_GROUP))
 	{
@@ -191,7 +191,7 @@ void KaiRadioButton::SelectNext(bool last)
 {
 	const wxWindowList& siblings = GetParent()->GetChildren();
 	wxWindowList::compatibility_iterator nodeThis = siblings.Find(this);
-	wxCHECK_RET(nodeThis, wxT("radio button not a child of its parent?"));
+	//wxCHECK_RET(nodeThis, wxT("radio button not a child of its parent?"));
 	bool done = false;
 	KaiRadioButton *btntmp = nullptr;
 

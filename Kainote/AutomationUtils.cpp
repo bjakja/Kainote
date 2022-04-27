@@ -182,9 +182,11 @@ extern "C" int luaopen_lpeg(lua_State *L);
 				else if (*ar.what == 'C')
 					function += '?';
 				else if (!*ar.namewhat)
-					function += wxString::Format(" <anonymous function at lines %d-%d>", real_line(ar.linedefined), real_line(ar.lastlinedefined - 1));
+					function += wxString::Format(L" <anonymous function at lines %d-%d>", 
+						real_line(ar.linedefined), real_line(ar.lastlinedefined - 1));
 
-				frames << wxString::Format("File \"%s\", line %d %s\n%s\n\n", file, real_line(ar.currentline), function, message);
+				frames << wxString::Format(L"File \"%s\", line %d %s\n%s\n\n", 
+					file, real_line(ar.currentline), function, message);
 			}
 		}
 

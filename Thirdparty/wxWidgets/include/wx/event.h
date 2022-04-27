@@ -371,9 +371,9 @@ public:
     wxEventFunctorMethod(void (Class::*method)(EventArg&), EventHandler *handler)
         : m_handler( handler ), m_method( method )
     {
-        wxASSERT_MSG( handler || this->IsEvtHandler(),
+        /*wxASSERT_MSG( handler || this->IsEvtHandler(),
                       "handlers defined in non-wxEvtHandler-derived classes "
-                      "must be connected with a valid sink object" );
+                      "must be connected with a valid sink object" );*/
 
         // if you get an error here it means that the signature of the handler
         // you're trying to use is not compatible with (i.e. is not the same as
@@ -389,7 +389,7 @@ public:
             realHandler = this->ConvertFromEvtHandler(handler);
 
             // this is not supposed to happen but check for it nevertheless
-            wxCHECK_RET( realHandler, "invalid event handler" );
+            //wxCHECK_RET( realHandler, "invalid event handler" );
         }
 
         // the real (run-time) type of event is EventClass and we checked in

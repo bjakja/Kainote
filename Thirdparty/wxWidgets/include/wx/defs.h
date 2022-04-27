@@ -604,7 +604,7 @@ typedef short int WXTYPE;
 #ifdef __cplusplus
 
 // everybody gets the assert and other debug macros
-#include "wx/debug.h"
+//#include "wx/debug.h"
 
     // delete pointer if it is not nullptr and nullptr it afterwards
     template <typename T>

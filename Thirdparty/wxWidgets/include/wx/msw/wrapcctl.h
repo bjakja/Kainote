@@ -14,6 +14,7 @@
 
 #include "wx/msw/wrapwin.h"
 
+
 #include <commctrl.h>
 
 // define things which might be missing from our commctrl.h

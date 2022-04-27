@@ -24,21 +24,12 @@
     #pragma hdrstop
 #endif
 
-#ifndef WX_PRECOMP
-    #include "wx/msw/wrapcdlg.h"
-    #include "wx/image.h"
-    #include "wx/window.h"
-    #include "wx/utils.h"
-    #include "wx/dialog.h"
-    #include "wx/app.h"
-    #include "wx/bitmap.h"
-    #include "wx/dcmemory.h"
-    #include "wx/log.h"
-    #include "wx/math.h"
-    #include "wx/icon.h"
-    #include "wx/dcprint.h"
-    #include "wx/module.h"
-#endif
+
+#include "wx/msw/wrapcdlg.h"
+#include "wx/dcmemory.h"
+#include "wx/app.h"
+#include "wx/module.h"
+
 
 #include "wx/msw/dc.h"
 #include "wx/sysopt.h"
@@ -49,7 +40,7 @@
 #endif
 
 #include <string.h>
-#include <cmath>
+#include <math.h>
 
 #include "wx/msw/private/dc.h"
 
@@ -532,7 +523,7 @@ wxMSWDCImpl::DoGetClippingBox(wxCoord *x, wxCoord *y, wxCoord *w, wxCoord *h) co
 // common part of DoSetClippingRegion() and DoSetDeviceClippingRegion()
 void wxMSWDCImpl::SetClippingHrgn(WXHRGN hrgn)
 {
-    wxCHECK_RET( hrgn, wxT("invalid clipping region") );
+    //wxCHECK_RET( hrgn, wxT("invalid clipping region") );
 
     WXMICROWIN_CHECK_HDC
 
@@ -737,7 +728,7 @@ bool wxMSWDCImpl::DoGetPixel(wxCoord x, wxCoord y, wxColour *col) const
 {
     WXMICROWIN_CHECK_HDC_RET(false)
 
-    wxCHECK_MSG( col, false, wxT("NULL colour parameter in wxMSWDCImpl::GetPixel") );
+    //wxCHECK_MSG( col, false, wxT("NULL colour parameter in wxMSWDCImpl::GetPixel") );
 
     // get the color of the pixel
     COLORREF pixelcolor = ::GetPixel(GetHdc(), XLOG2DEV(x), YLOG2DEV(y));
@@ -1113,10 +1104,10 @@ void wxMSWDCImpl::DoDrawSpline(const wxPointList *points)
 
     WXMICROWIN_CHECK_HDC
 
-    wxASSERT_MSG( points, wxT("NULL pointer to spline points?") );
+    //wxASSERT_MSG( points, wxT("NULL pointer to spline points?") );
 
     const size_t n_points = points->GetCount();
-    wxASSERT_MSG( n_points > 2 , wxT("incomplete list of spline points?") );
+    //wxASSERT_MSG( n_points > 2 , wxT("incomplete list of spline points?") );
 
     const size_t n_bezier_points = n_points * 3 + 1;
     POINT *lppt = (POINT *)malloc(n_bezier_points*sizeof(POINT));
@@ -1254,7 +1245,7 @@ void wxMSWDCImpl::DoDrawIcon(const wxIcon& icon, wxCoord x, wxCoord y)
 {
     WXMICROWIN_CHECK_HDC
 
-    wxCHECK_RET( icon.IsOk(), wxT("invalid icon in DrawIcon") );
+    //wxCHECK_RET( icon.IsOk(), wxT("invalid icon in DrawIcon") );
 
 #ifdef __WIN32__
     ::DrawIconEx(GetHdc(), XLOG2DEV(x), YLOG2DEV(y), GetHiconOf(icon), icon.GetWidth(), icon.GetHeight(), 0, NULL, DI_NORMAL);
@@ -1270,7 +1261,7 @@ void wxMSWDCImpl::DoDrawBitmap( const wxBitmap &bmp, wxCoord x, wxCoord y, bool 
 {
     WXMICROWIN_CHECK_HDC
 
-    wxCHECK_RET( bmp.IsOk(), wxT("invalid bitmap in wxMSWDCImpl::DrawBitmap") );
+    //wxCHECK_RET( bmp.IsOk(), wxT("invalid bitmap in wxMSWDCImpl::DrawBitmap") );
 
     int width = bmp.GetWidth(),
         height = bmp.GetHeight();
@@ -1371,7 +1362,7 @@ void wxMSWDCImpl::DoDrawBitmap( const wxBitmap &bmp, wxCoord x, wxCoord y, bool 
         HDC memdc = ::CreateCompatibleDC( cdc );
         HBITMAP hbitmap = (HBITMAP) bmp.GetHBITMAP( );
 
-        wxASSERT_MSG( hbitmap, wxT("bitmap is ok but HBITMAP is NULL?") );
+        //wxASSERT_MSG( hbitmap, wxT("bitmap is ok but HBITMAP is NULL?") );
 
         wxTextColoursChanger textCol(GetHdc(), *this);
 
@@ -1767,7 +1758,7 @@ void wxMSWDCImpl::SetRop(WXHDC dc)
         case wxOR:           rop = R2_MERGEPEN;      break;
         case wxSET:          rop = R2_WHITE;         break;
         default:
-            wxFAIL_MSG( wxS("unknown logical function") );
+            //wxFAIL_MSG( wxS("unknown logical function") );
             return;
     }
 
@@ -1861,7 +1852,7 @@ void wxMSWDCImpl::DoGetTextExtent(const wxString& string, wxCoord *x, wxCoord *y
     HFONT hfontOld;
     if ( font )
     {
-        wxASSERT_MSG( font->IsOk(), wxT("invalid font in wxMSWDCImpl::GetTextExtent") );
+        //wxASSERT_MSG( font->IsOk(), wxT("invalid font in wxMSWDCImpl::GetTextExtent") );
 
         hfontOld = (HFONT)::SelectObject(GetHdc(), GetHfontOf(*font));
     }
@@ -2064,7 +2055,7 @@ void wxMSWDCImpl::SetMapMode(wxMappingMode mode)
                 break;
 
             default:
-                wxFAIL_MSG( wxT("unknown mapping mode in SetMapMode") );
+                break; //wxFAIL_MSG(wxT("unknown mapping mode in SetMapMode"));
         }
     }
 
@@ -2236,7 +2227,7 @@ bool wxMSWDCImpl::DoStretchBlit(wxCoord xdest, wxCoord ydest,
                          wxRasterOperationMode rop, bool useMask,
                          wxCoord xsrcMask, wxCoord ysrcMask)
 {
-    wxCHECK_MSG( source, false, wxT("wxMSWDCImpl::Blit(): NULL wxDC pointer") );
+    //wxCHECK_MSG( source, false, wxT("wxMSWDCImpl::Blit(): NULL wxDC pointer") );
 
     WXMICROWIN_CHECK_HDC_RET(false)
 
@@ -2300,7 +2291,7 @@ bool wxMSWDCImpl::DoStretchBlit(wxCoord xdest, wxCoord ydest,
         case wxSRC_INVERT:   dwRop = NOTSRCCOPY;       break;
         case wxNOR:          dwRop = NOTSRCCOPY;       break;
         default:
-           wxFAIL_MSG( wxT("unsupported logical function") );
+           //wxFAIL_MSG( wxT("unsupported logical function") );
            return false;
     }
 
@@ -2552,7 +2543,7 @@ void wxMSWDCImpl::DoGetSizeMM(int *w, int *h) const
     {
         int wTotal = ::GetDeviceCaps(GetHdc(), HORZRES);
 
-        wxCHECK_RET( wTotal, wxT("0 width device?") );
+        //wxCHECK_RET( wTotal, wxT("0 width device?") );
 
         *w = (wPixels * ::GetDeviceCaps(GetHdc(), HORZSIZE)) / wTotal;
     }
@@ -2561,7 +2552,7 @@ void wxMSWDCImpl::DoGetSizeMM(int *w, int *h) const
     {
         int hTotal = ::GetDeviceCaps(GetHdc(), VERTRES);
 
-        wxCHECK_RET( hTotal, wxT("0 height device?") );
+        //wxCHECK_RET( hTotal, wxT("0 height device?") );
 
         *h = (hPixels * ::GetDeviceCaps(GetHdc(), VERTSIZE)) / hTotal;
     }
@@ -2725,8 +2716,8 @@ static bool AlphaBlt(HDC hdcDst,
                      HDC hdcSrc,
                      const wxBitmap& bmp)
 {
-    wxASSERT_MSG( bmp.IsOk() && bmp.HasAlpha(), wxT("AlphaBlt(): invalid bitmap") );
-    wxASSERT_MSG( hdcDst && hdcSrc, wxT("AlphaBlt(): invalid HDC") );
+    //wxASSERT_MSG( bmp.IsOk() && bmp.HasAlpha(), wxT("AlphaBlt(): invalid bitmap") );
+    //wxASSERT_MSG( hdcDst && hdcSrc, wxT("AlphaBlt(): invalid HDC") );
 
     // do we have AlphaBlend() and company in the headers?
 #if defined(AC_SRC_OVER) && wxUSE_DYNLIB_CLASS
@@ -2798,8 +2789,8 @@ wxAlphaBlend(HDC hdcDst, int xDst, int yDst,
     wxAlphaPixelData dataDst(bmpDst),
                      dataSrc((wxBitmap &)bmpSrc);
 
-    wxCHECK_RET( dataDst && dataSrc,
-                    wxT("failed to get raw data in wxAlphaBlend") );
+    //wxCHECK_RET( dataDst && dataSrc,
+                    //wxT("failed to get raw data in wxAlphaBlend") );
 
     wxAlphaPixelData::Iterator pDst(dataDst),
                                pSrc(dataSrc);

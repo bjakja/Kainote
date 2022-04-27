@@ -686,7 +686,7 @@
    done after setting wxUSE_UNICODE correctly as it is used in wx/chkconf.h
    and after defining the compiler macros which are used in it too
  */
-#include "wx/chkconf.h"
+//#include "wx/chkconf.h"
 
 
 /*

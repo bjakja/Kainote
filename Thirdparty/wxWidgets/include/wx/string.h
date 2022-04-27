@@ -3874,7 +3874,7 @@ public:
 
     ~wxStringTypeBufferLengthBase()
     {
-        wxASSERT_MSG( this->m_lenSet, "forgot to call SetLength()" );
+        //wxASSERT_MSG( this->m_lenSet, "forgot to call SetLength()" );
     }
 
     void SetLength(size_t length) { m_len = length; m_lenSet = true; }

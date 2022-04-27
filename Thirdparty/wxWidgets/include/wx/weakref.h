@@ -64,7 +64,7 @@ public:
     virtual void OnObjectDestroy()
     {
         // Tracked object itself removes us from list of trackers
-        wxASSERT(m_pobj != NULL);
+        //wxASSERT(m_pobj != NULL);
         m_pobj = NULL;
     }
 

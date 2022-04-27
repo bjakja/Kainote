@@ -208,7 +208,7 @@
 // Default is 1
 //
 // Recommended setting: 1 (always)
-#define wxUSE_LOG 1
+#define wxUSE_LOG 0
 
 // Recommended setting: 1
 #define wxUSE_LOGWINDOW 1
@@ -865,14 +865,14 @@
 #define wxUSE_HYPERLINKCTRL 1   // wxHyperlinkCtrl
 #define wxUSE_LISTBOX       1   // wxListBox
 #define wxUSE_LISTCTRL      1   // wxListCtrl
-#define wxUSE_RADIOBOX      1   // wxRadioBox
+#define wxUSE_RADIOBOX      0   // wxRadioBox
 #define wxUSE_RADIOBTN      1   // wxRadioButton
 #define wxUSE_RICHMSGDLG    1   // wxRichMessageDialog
 #define wxUSE_SCROLLBAR     1   // wxScrollBar
 #define wxUSE_SEARCHCTRL    1   // wxSearchCtrl
 #define wxUSE_SLIDER        1   // wxSlider
 #define wxUSE_SPINBTN       1   // wxSpinButton
-#define wxUSE_SPINCTRL      1   // wxSpinCtrl
+#define wxUSE_SPINCTRL      0   // wxSpinCtrl
 #define wxUSE_STATBOX       1   // wxStaticBox
 #define wxUSE_STATLINE      1   // wxStaticLine
 #define wxUSE_STATTEXT      1   // wxStaticText
@@ -1061,7 +1061,7 @@
 #define wxUSE_DISPLAY       1
 
 // Miscellaneous geometry code: needed for Canvas library
-#define wxUSE_GEOMETRY            1
+#define wxUSE_GEOMETRY            0
 
 // Use wxImageList. This class is needed by wxNotebook, wxTreeCtrl and
 // wxListCtrl.
@@ -1419,7 +1419,7 @@
 // probably).
 //
 // Recommended setting: 1.
-#define wxUSE_DC_TRANSFORM_MATRIX 1
+#define wxUSE_DC_TRANSFORM_MATRIX 0
 
 // ----------------------------------------------------------------------------
 // image format support
