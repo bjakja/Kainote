@@ -238,7 +238,7 @@ protected:
     Data *m_data;
 };
 
-//typedef wxScopedCharTypeBuffer<char> wxScopedCharBuffer;
+typedef wxScopedCharTypeBuffer<char> wxScopedCharBuffer;
 typedef wxScopedCharTypeBuffer<wchar_t> wxScopedWCharBuffer;
 
 

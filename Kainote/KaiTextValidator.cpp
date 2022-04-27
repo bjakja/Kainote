@@ -170,9 +170,9 @@ KaiTextCtrl *KaiTextValidator::GetKaiTextCtrl()
         return (KaiTextCtrl*)m_validatorWindow;
     }
 
-	wxFAIL_MSG(
-        "KaiTextValidator can only be used with KaiTextCtrl"
-    );
+	/*wxFAIL_MSG(
+        "KaiTextValidator can only be used with KaiTextCtrl"*/
+    //);
 
     return nullptr;
 }

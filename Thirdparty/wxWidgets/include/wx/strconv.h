@@ -83,8 +83,8 @@ public:
     // Convenience functions for translating NUL-terminated strings: returns
     // the buffer containing the converted string or NULL pointer if the
     // conversion failed.
-    //const wxWCharBuffer cMB2WC(const char *in) const;
-    //const wxCharBuffer cWC2MB(const wchar_t *in) const;
+    const wxWCharBuffer cMB2WC(const char *in) const;
+    const wxCharBuffer cWC2MB(const wchar_t *in) const;
 
     // Convenience functions for converting strings which may contain embedded
     // NULs and don't have to be NUL-terminated.
@@ -109,8 +109,8 @@ public:
     // And yet more convenience functions for converting the entire buffers:
     // these are the simplest and least error-prone as you never need to bother
     // with lengths/sizes directly.
-    //const wxWCharBuffer cMB2WC(const wxScopedCharBuffer& in) const;
-    //const wxCharBuffer cWC2MB(const wxScopedWCharBuffer& in) const;
+    const wxWCharBuffer cMB2WC(const wxScopedCharBuffer& in) const;
+    const wxCharBuffer cWC2MB(const wxScopedWCharBuffer& in) const;
 
     // convenience functions for converting MB or WC to/from wxWin default
 #if wxUSE_UNICODE

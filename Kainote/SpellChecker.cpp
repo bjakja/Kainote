@@ -221,7 +221,7 @@ bool SpellChecker::RemoveWords(const wxArrayString &words)
 			int foundWord = words.Index(curLine);
 			if (foundWord != -1){
 				found = true;
-				succeded = hunspell->remove(words[foundWord].wc_str(*conv));
+				succeded = hunspell->remove(words[foundWord].mb_str(*conv));
 				continue;
 			}
 			newTxt << curLine << L"\r\n";

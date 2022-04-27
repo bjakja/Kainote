@@ -221,9 +221,9 @@ bool AutoToFile::LineToLua(lua_State *L, int i)
 		lua_pushnumber(L, adial->End.mstime);
 		lua_setfield(L, -2, "end_time");
 
-		lua_pushstring(L, adial->Style.mb_str(wxConvUTF8).data());
+		lua_pushstring(L, adial->Style->mb_str(wxConvUTF8).data());
 		lua_setfield(L, -2, "style");
-		lua_pushstring(L, adial->Actor.mb_str(wxConvUTF8).data());
+		lua_pushstring(L, adial->Actor->mb_str(wxConvUTF8).data());
 		lua_setfield(L, -2, "actor");
 
 		lua_pushnumber(L, (int)adial->MarginL);
@@ -235,12 +235,13 @@ bool AutoToFile::LineToLua(lua_State *L, int i)
 		lua_pushnumber(L, (int)adial->MarginV);
 		lua_setfield(L, -2, "margin_b");
 
-		lua_pushstring(L, adial->Effect.mb_str(wxConvUTF8).data());
+		lua_pushstring(L, adial->Effect->mb_str(wxConvUTF8).data());
 		lua_setfield(L, -2, "effect");
 
 		bool isTl = false;
-		const StoreTextHelper & text = (isTl = adial->TextTl != emptyString) ? adial->TextTl : adial->Text;
-		lua_pushstring(L, text.mb_str(wxConvUTF8).data());
+		const char * text = (isTl = adial->TextTl != emptyString) ? 
+			adial->TextTl->mb_str(wxConvUTF8).data() : adial->Text->mb_str(wxConvUTF8).data();
+		lua_pushstring(L, text);
 		lua_setfield(L, -2, "text");
 
 		lua_pushboolean(L, (int)isTl);
@@ -683,7 +684,7 @@ int AutoToFile::ObjectDelete(lua_State *L)
 		while (itemcount > 0) {
 			if (!lua_isnumber(L, itemcount)) {
 				wxString err("You trying to delete non number line");
-				lua_pushstring(L, err.ToUTF8().data());
+				lua_pushstring(L, err.utf8_str());
 				lua_error(L);
 				return 0;
 			}
@@ -958,7 +959,7 @@ int AutoToFile::LuaParseKaraokeData(lua_State *L)
 		set_field(L, "start_time", e->adial->Start.mstime);
 		set_field(L, "end_time", e->adial->End.mstime);
 		set_field(L, "tag", "k");
-		set_field(L, "text", e->adial->Text.mb_str(wxConvUTF8).data());
+		set_field(L, "text", e->adial->Text->mb_str(wxConvUTF8).data());
 		set_field(L, "text_stripped", ktext_stripped.mb_str(wxConvUTF8).data());
 		lua_rawseti(L, -2, kcount++);
 	}

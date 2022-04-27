@@ -1796,7 +1796,7 @@ public:
                       "string must be valid UTF-8" );*/
         return s;
     }
-    //const wxScopedCharBuffer utf8_str() const { return mb_str(wxMBConvUTF8()); }
+    const wxScopedCharBuffer utf8_str() const { return mb_str(wxMBConvUTF8()); }
 #else // ANSI
     static wxString FromUTF8(const char *utf8)
       { return wxString(wxMBConvUTF8().cMB2WC(utf8)); }
@@ -1872,10 +1872,10 @@ public:
         return AsCharBuf(conv);
     }
 #else // !wxUSE_UTF8_LOCALE_ONLY
-    /*const wxScopedCharBuffer mb_str(const wxMBConv& conv = wxConvLibc) const
+    const wxScopedCharBuffer mb_str(const wxMBConv& conv = wxConvLibc) const
     {
         return AsCharBuf(conv);
-    }*/
+    }
 #endif // wxUSE_UTF8_LOCALE_ONLY/!wxUSE_UTF8_LOCALE_ONLY
 
     /*const wxWX2MBbuf mbc_str() const { return mb_str(*wxConvCurrent); }*/
@@ -3574,38 +3574,38 @@ private:
   const char *AsChar(const wxMBConv& conv) const;
 
   // mb_str() implementation helper
-//  wxScopedCharBuffer AsCharBuf(const wxMBConv& conv) const
-//  {
-//#if wxUSE_UNICODE_UTF8
-//      // avoid conversion if we can
-//      if ( conv.IsUTF8() )
-//      {
-//          return wxScopedCharBuffer::CreateNonOwned(m_impl.c_str(),
-//                  m_impl.length());
-//      }
-//#endif // wxUSE_UNICODE_UTF8
-//
-//      // call this solely in order to fill in m_convertedToChar as AsChar()
-//      // updates it as a side effect: this is a bit ugly but it's a completely
-//      // internal function so the users of this class shouldn't care or know
-//      // about it and doing it like this, i.e. having a separate AsChar(),
-//      // allows us to avoid the creation and destruction of a temporary buffer
-//      // when using wxCStrData without duplicating any code
-//      if ( !AsChar(conv) )
-//      {
-//          // although it would be probably more correct to return NULL buffer
-//          // from here if the conversion fails, a lot of existing code doesn't
-//          // expect mb_str() (or wc_str()) to ever return NULL so return an
-//          // empty string otherwise to avoid crashes in it
-//          //
-//          // also, some existing code does check for the conversion success and
-//          // so asserting here would be bad too -- even if it does mean that
-//          // silently losing data is possible for badly written code
-//          return wxScopedCharBuffer::CreateNonOwned("", 0);
-//      }
-//
-//      return m_convertedToChar.AsScopedBuffer();
-//  }
+ wxScopedCharBuffer AsCharBuf(const wxMBConv& conv) const
+ {
+#if wxUSE_UNICODE_UTF8
+     // avoid conversion if we can
+     if ( conv.IsUTF8() )
+     {
+         return wxScopedCharBuffer::CreateNonOwned(m_impl.c_str(),
+                 m_impl.length());
+     }
+#endif // wxUSE_UNICODE_UTF8
+
+     // call this solely in order to fill in m_convertedToChar as AsChar()
+     // updates it as a side effect: this is a bit ugly but it's a completely
+     // internal function so the users of this class shouldn't care or know
+     // about it and doing it like this, i.e. having a separate AsChar(),
+     // allows us to avoid the creation and destruction of a temporary buffer
+     // when using wxCStrData without duplicating any code
+     if ( !AsChar(conv) )
+     {
+         // although it would be probably more correct to return NULL buffer
+         // from here if the conversion fails, a lot of existing code doesn't
+         // expect mb_str() (or wc_str()) to ever return NULL so return an
+         // empty string otherwise to avoid crashes in it
+         //
+         // also, some existing code does check for the conversion success and
+         // so asserting here would be bad too -- even if it does mean that
+         // silently losing data is possible for badly written code
+         return wxScopedCharBuffer::CreateNonOwned("", 0);
+     }
+
+     return m_convertedToChar.AsScopedBuffer();
+ }
 
   ConvertedBuffer<char> m_convertedToChar;
 #endif // !wxUSE_UNICODE

@@ -19,12 +19,12 @@ class wxArrayString;
 class wxConfigBase;
 class wxEventLoopBase;
 #if wxUSE_FONTMAP
-    class WXDLLIMPEXP_FWD_CORE wxFontMapper;
+    class wxFontMapper;
 #endif // wxUSE_FONTMAP
 class wxLog;
 class wxMessageOutput;
 class wxObject;
-class WXDLLIMPEXP_FWD_CORE wxRendererNative;
+class wxRendererNative;
 class wxStandardPaths;
 class wxString;
 class wxTimer;
@@ -37,7 +37,7 @@ class wxSocketManager;
 // wxAppTraits: this class defines various configurable aspects of wxApp
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxAppTraitsBase
+class wxAppTraitsBase
 {
 public:
     // needed since this class declares virtual members
@@ -185,7 +185,7 @@ private:
     #include "wx/os2/apptbase.h"
 #else // no platform-specific methods to add to wxAppTraits
     // wxAppTraits must be a class because it was forward declared as class
-    class WXDLLIMPEXP_BASE wxAppTraits : public wxAppTraitsBase
+    class wxAppTraits : public wxAppTraitsBase
     {
     };
 #endif // platform
@@ -198,7 +198,7 @@ private:
 // wxConsoleAppTraitsBase: wxAppTraits implementation for the console apps
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxConsoleAppTraitsBase : public wxAppTraits
+class wxConsoleAppTraitsBase : public wxAppTraits
 {
 public:
 #if !wxUSE_CONSOLE_EVENTLOOP

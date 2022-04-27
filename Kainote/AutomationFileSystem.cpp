@@ -167,7 +167,7 @@ DirectoryIterator::DirectoryIterator(path const& p, std::string const& filter)
 		return;
 	}
 
-	value = wxString(data.cFileName).ToStdString();
+	value = wxString(data.cFileName);
 	while (value[0] == '.' && (value[1] == 0 || value[1] == '.'))
 		++*this;
 }
@@ -179,7 +179,7 @@ bool DirectoryIterator::operator==(DirectoryIterator const& rhs) const {
 DirectoryIterator& DirectoryIterator::operator++() {
 	WIN32_FIND_DATA data;
 	if (handle && FindNextFile(handle, &data))
-		value = wxString(data.cFileName).ToStdString();
+		value = wxString(data.cFileName);
 	else {
 		//if(privdata){privdata.reset();}
 		//if(privdata){delete privdata; privdata=nullptr;}
@@ -200,7 +200,7 @@ auto wrap(char **err, Func f) -> decltype(f()) {
 		*err = _strdup(e.what());
 	}
 	catch (wxString const& e) {
-		*err = _strdup(e.ToUTF8().data());
+		*err = _strdup(e.utf8_str());
 	}
 	catch (...) {
 		*err = _strdup("Unknown error");
