@@ -449,14 +449,14 @@ inline wchar_t *wxStrncat(wchar_t *dest, const wxScopedWCharBuffer& src, size_t 
     inline rettype WX_STR_DECL(name, const wxScopedWCharBuffer&, const wxString&)   \
         { return WX_STR_CALL(crtW, s1.data(), s2.wc_str()); }
 
-//template<typename T>
-//inline int wxStrcmp_String(const wxString& s1, const T& s2)
-//    { return s1.compare(s2); }
+template<typename T>
+inline int wxStrcmp_String(const wxString& s1, const T& s2)
+   { return s1.compare(s2); }
 //WX_STRCMP_FUNC(wxStrcmp, wxCRT_StrcmpA, wxCRT_StrcmpW, wxStrcmp_String)
 //
-//template<typename T>
-//inline int wxStricmp_String(const wxString& s1, const T& s2)
-//    { return s1.CmpNoCase(s2); }
+template<typename T>
+inline int wxStricmp_String(const wxString& s1, const T& s2)
+   { return s1.CmpNoCase(s2); }
 ///WX_STRCMP_FUNC(wxStricmp, wxCRT_StricmpA, wxCRT_StricmpW, wxStricmp_String)
 
 #if defined(wxCRT_StrcollA) && defined(wxCRT_StrcollW)

@@ -23,7 +23,6 @@
 #ifdef __BORLANDC__
     #pragma hdrstop
 #endif
-
 #include "wx/brush.h"
 
 #ifndef WX_PRECOMP
@@ -233,12 +232,6 @@ wxBrush::wxBrush(const wxColour& col, wxBrushStyle style)
     m_refData = new wxBrushRefData(col, style);
 }
 
-#if FUTURE_WXWIN_COMPATIBILITY_3_0
-wxBrush::wxBrush(const wxColour& col, int style)
-{
-    m_refData = new wxBrushRefData(col, (wxBrushStyle)style);
-}
-#endif
 
 wxBrush::wxBrush(const wxBitmap& stipple)
 {

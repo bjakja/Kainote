@@ -315,7 +315,7 @@ public:
     // miscellaneous
 
         // return the string representation of this number
-    wxString ToString() const;
+    //wxString ToString() const;
 
         // conversion to byte array: returns a pointer to static buffer!
     void *asArray() const;
@@ -543,7 +543,7 @@ public:
     // miscellaneous
 
         // return the string representation of this number
-    wxString ToString() const;
+    //wxString ToString() const;
 
         // conversion to byte array: returns a pointer to static buffer!
     void *asArray() const;

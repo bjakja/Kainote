@@ -26,19 +26,7 @@
 
 #include "wx/bitmap.h"
 
-#ifndef WX_PRECOMP
-    //#include <stdio.h>
-
-    #include "wx/list.h"
-    #include "wx/utils.h"
-    #include "wx/app.h"
-    #include "wx/palette.h"
-    #include "wx/dcmemory.h"
-    #include "wx/icon.h"
-    #include "wx/log.h"
-    #include "wx/image.h"
-#endif
-
+#include "wx/icon.h"
 #include "wx/msw/private.h"
 #include "wx/msw/dc.h"
 

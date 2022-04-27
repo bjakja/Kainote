@@ -219,10 +219,10 @@ wxSTD ostream& operator<<(wxSTD ostream& os, const wxString& str)
 //}
 
 #ifndef __BORLANDC__
-wxSTD ostream& operator<<(wxSTD ostream& os, const wxScopedWCharBuffer& str)
-{
-    return os << str.data();
-}
+//wxSTD ostream& operator<<(wxSTD ostream& os, const wxScopedWCharBuffer& str)
+//{
+//    return os << str.data();
+//}
 #endif
 
 #if wxUSE_UNICODE && defined(HAVE_WOSTREAM)
@@ -385,23 +385,23 @@ wxString::~wxString()
 
 #if wxUSE_UNICODE_WCHAR
 /* static */
-wxString::SubstrBufFromMB wxString::ConvertStr(const char *psz, size_t nLength,
-                                               const wxMBConv& conv)
-{
-    // anything to do?
-    if ( !psz || nLength == 0 )
-        return SubstrBufFromMB(wxWCharBuffer(L""), 0);
-
-    if ( nLength == npos )
-        nLength = wxNO_LEN;
-
-    size_t wcLen;
-    wxScopedWCharBuffer wcBuf(conv.cMB2WC(psz, nLength, &wcLen));
-    if ( !wcLen )
-        return SubstrBufFromMB(wxWCharBuffer(L""), 0);
-    else
-        return SubstrBufFromMB(wcBuf, wcLen);
-}
+//wxString::SubstrBufFromMB wxString::ConvertStr(const char *psz, size_t nLength,
+//                                               const wxMBConv& conv)
+//{
+//    // anything to do?
+//    if ( !psz || nLength == 0 )
+//        return SubstrBufFromMB(wxWCharBuffer(L""), 0);
+//
+//    if ( nLength == npos )
+//        nLength = wxNO_LEN;
+//
+//    size_t wcLen;
+//    wxScopedWCharBuffer wcBuf(conv.cMB2WC(psz, nLength, &wcLen));
+//    if ( !wcLen )
+//        return SubstrBufFromMB(wxWCharBuffer(L""), 0);
+//    else
+//        return SubstrBufFromMB(wcBuf, wcLen);
+//}
 #endif // wxUSE_UNICODE_WCHAR
 
 #if wxUSE_UNICODE_UTF8
@@ -649,9 +649,9 @@ wxString operator+(const wxString& str, const char *psz)
 #endif
 
     wxString s;
-    if ( !s.Alloc(strlen(psz) + str.length()) ) {
-        //wxFAIL_MSG( wxT("out of memory in wxString::operator+") );
-    }
+    //if ( !s.Alloc(strlen(psz) + str.length()) ) {
+    //    //wxFAIL_MSG( wxT("out of memory in wxString::operator+") );
+    //}
     s += str;
     s += psz;
 
@@ -681,9 +681,9 @@ wxString operator+(const char *psz, const wxString& str)
 #endif
 
     wxString s;
-    if ( !s.Alloc(strlen(psz) + str.length()) ) {
-        //wxFAIL_MSG( wxT("out of memory in wxString::operator+") );
-    }
+    //if ( !s.Alloc(strlen(psz) + str.length()) ) {
+    //    //wxFAIL_MSG( wxT("out of memory in wxString::operator+") );
+    //}
     s = psz;
     s += str;
 
