@@ -23,20 +23,20 @@
 // classes
 //-------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_CORE wxWindow;
+class  wxWindow;
 
-class WXDLLIMPEXP_FWD_CORE wxDropTarget;
-class WXDLLIMPEXP_FWD_CORE wxTextDropTarget;
-class WXDLLIMPEXP_FWD_CORE wxFileDropTarget;
-class WXDLLIMPEXP_FWD_CORE wxPrivateDropTarget;
+class  wxDropTarget;
+class  wxTextDropTarget;
+class  wxFileDropTarget;
+class  wxPrivateDropTarget;
 
-class WXDLLIMPEXP_FWD_CORE wxDropSource;
+class  wxDropSource;
 
 //-------------------------------------------------------------------------
 // wxDropTarget
 //-------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxDropTarget: public wxObject
+class  wxDropTarget: public wxObject
 {
 public:
 
@@ -59,7 +59,7 @@ public:
 // wxTextDropTarget
 //-------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxTextDropTarget: public wxDropTarget
+class  wxTextDropTarget: public wxDropTarget
 {
 public:
 
@@ -77,7 +77,7 @@ protected:
 // wxPrivateDropTarget
 //-------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxPrivateDropTarget: public wxDropTarget
+class  wxPrivateDropTarget: public wxDropTarget
 {
 public:
 
@@ -107,7 +107,7 @@ private:
 // A drop target which accepts files (dragged from File Manager or Explorer)
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxFileDropTarget: public wxDropTarget
+class  wxFileDropTarget: public wxDropTarget
 {
 public:
 
@@ -136,7 +136,7 @@ enum wxDragResult
         wxDragCancel    // the operation was cancelled by user (not an error)
 };
 
-class WXDLLIMPEXP_CORE wxDropSource: public wxObject
+class  wxDropSource: public wxObject
 {
 public:
 

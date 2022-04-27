@@ -90,7 +90,7 @@ private:
     wxDECLARE_NO_COPY_CLASS(wxValidator);
 };
 
-extern WXDLLIMPEXP_DATA_CORE(const wxValidator) wxDefaultValidator;
+extern const wxValidator wxDefaultValidator;
 
 #define wxVALIDATOR_PARAM(val) val
 

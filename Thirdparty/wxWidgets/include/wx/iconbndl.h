@@ -18,14 +18,14 @@
 
 #include "wx/dynarray.h"
 
-class WXDLLIMPEXP_FWD_BASE wxInputStream;
+class  wxInputStream;
 
 WX_DECLARE_EXPORTED_OBJARRAY(wxIcon, wxIconArray);
 
 // this class can't load bitmaps of type wxBITMAP_TYPE_ICO_RESOURCE,
 // if you need them, you have to load them manually and call
 // wxIconCollection::AddIcon
-class WXDLLIMPEXP_CORE wxIconBundle : public wxGDIObject
+class  wxIconBundle : public wxGDIObject
 {
 public:
     // Flags that determine what happens if GetIcon() doesn't find the icon of

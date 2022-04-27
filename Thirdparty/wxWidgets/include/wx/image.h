@@ -95,7 +95,7 @@ class  wxPalette;
 
 #if wxUSE_VARIANT
 #include "wx/variant.h"
-DECLARE_VARIANT_OBJECT_EXPORTED(wxImage,WXDLLIMPEXP_CORE)
+DECLARE_VARIANT_OBJECT_EXPORTED(wxImage,)
 #endif
 
 //-----------------------------------------------------------------------------
@@ -593,7 +593,7 @@ protected:
     virtual wxObjectRefData* CloneRefData(const wxObjectRefData* data) const;
 
 private:
-    friend class WXDLLIMPEXP_FWD_CORE wxImageHandler;
+    friend class  wxImageHandler;
 
     // Possible values for MakeEmptyClone() flags.
     enum

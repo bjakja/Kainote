@@ -32,14 +32,14 @@
 // only send the notification once and then stop the timer
 #define wxTIMER_ONE_SHOT true
 
-class WXDLLIMPEXP_FWD_BASE wxTimerImpl;
-class WXDLLIMPEXP_FWD_BASE wxTimerEvent;
+class  wxTimerImpl;
+class  wxTimerEvent;
 
 // timer event type
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_BASE, wxEVT_TIMER, wxTimerEvent);
 
 // the interface of wxTimer class
-class WXDLLIMPEXP_BASE wxTimer : public wxEvtHandler
+class  wxTimer : public wxEvtHandler
 {
 public:
     // ctors and initializers
@@ -120,7 +120,7 @@ protected:
 // wxTimerRunner: starts the timer in its ctor, stops in the dtor
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxTimerRunner
+class  wxTimerRunner
 {
 public:
     wxTimerRunner(wxTimer& timer) : m_timer(timer) { }
@@ -153,7 +153,7 @@ private:
 // wxTimerEvent
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxTimerEvent : public wxEvent
+class  wxTimerEvent : public wxEvent
 {
 public:
     wxTimerEvent()

@@ -33,7 +33,7 @@ class wxPalette;
 
 #if wxUSE_VARIANT
 #include "wx/variant.h"
-DECLARE_VARIANT_OBJECT_EXPORTED(wxBitmap,WXDLLIMPEXP_CORE)
+DECLARE_VARIANT_OBJECT_EXPORTED(wxBitmap,)
 #endif
 
 // ----------------------------------------------------------------------------

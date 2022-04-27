@@ -806,7 +806,7 @@ private:                                                                 \
     WX_DECLARE_USER_EXPORTED_OBJARRAY(T, name, wxARRAY_DEFAULT_EXPORT)
 
 #define WX_DECLARE_EXPORTED_OBJARRAY(T, name)               \
-    WX_DECLARE_USER_EXPORTED_OBJARRAY(T, name, WXDLLIMPEXP_CORE)
+    WX_DECLARE_USER_EXPORTED_OBJARRAY(T, name, )
 
 #define WX_DECLARE_OBJARRAY_WITH_DECL(T, name, decl) \
     typedef T _wxObjArray##name;                            \

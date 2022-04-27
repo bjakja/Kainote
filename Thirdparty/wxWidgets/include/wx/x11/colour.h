@@ -22,12 +22,12 @@
 // classes
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_CORE wxDC;
-class WXDLLIMPEXP_FWD_CORE wxPaintDC;
-class WXDLLIMPEXP_FWD_CORE wxBitmap;
-class WXDLLIMPEXP_FWD_CORE wxWindow;
+class  wxDC;
+class  wxPaintDC;
+class  wxBitmap;
+class  wxWindow;
 
-class WXDLLIMPEXP_FWD_CORE wxColour;
+class  wxColour;
 
 //-----------------------------------------------------------------------------
 // wxColour

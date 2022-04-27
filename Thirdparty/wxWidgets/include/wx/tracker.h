@@ -17,7 +17,7 @@ class wxEventConnectionRef;
 
 // This class represents an object tracker and is stored in a linked list
 // in the tracked object. It is only used in one of its derived forms.
-class WXDLLIMPEXP_BASE wxTrackerNode
+class  wxTrackerNode
 {
 public:
     wxTrackerNode() : m_nxt(NULL) { }
@@ -35,7 +35,7 @@ private:
 };
 
 // Add-on base class for a trackable object.
-class WXDLLIMPEXP_BASE wxTrackable
+class  wxTrackable
 {
 public:
     void AddNode(wxTrackerNode *prn)

@@ -13,7 +13,7 @@
 #define _WX_CHECKBOX_H_
 
 // Checkbox item (single checkbox)
-class WXDLLIMPEXP_CORE wxCheckBox : public wxCheckBoxBase
+class  wxCheckBox : public wxCheckBoxBase
 {
 public:
     wxCheckBox() { }
@@ -46,8 +46,8 @@ protected:
     DECLARE_DYNAMIC_CLASS(wxCheckBox)
 };
 
-class WXDLLIMPEXP_FWD_CORE wxBitmap;
-class WXDLLIMPEXP_CORE wxBitmapCheckBox: public wxCheckBox
+class  wxBitmap;
+class  wxBitmapCheckBox: public wxCheckBox
 {
 public:
     int checkWidth;

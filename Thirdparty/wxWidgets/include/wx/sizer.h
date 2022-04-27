@@ -20,10 +20,10 @@
 // classes
 //---------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_CORE wxButton;
-class WXDLLIMPEXP_FWD_CORE wxBoxSizer;
-class WXDLLIMPEXP_FWD_CORE wxSizerItem;
-class WXDLLIMPEXP_FWD_CORE wxSizer;
+class  wxButton;
+class  wxBoxSizer;
+class  wxSizerItem;
+class  wxSizer;
 
 #ifndef wxUSE_BORDER_BY_DEFAULT
     #ifdef __SMARTPHONE__
@@ -38,7 +38,7 @@ class WXDLLIMPEXP_FWD_CORE wxSizer;
 // wxSizerFlags: flags used for an item in the sizer
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxSizerFlags
+class  wxSizerFlags
 {
 public:
     // construct the flags object initialized with the given proportion (0 by
@@ -223,7 +223,7 @@ private:
 // wxSizerSpacer: used by wxSizerItem to represent a spacer
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxSizerSpacer
+class  wxSizerSpacer
 {
 public:
     wxSizerSpacer(const wxSize& size) : m_size(size), m_isShown(true) { }
@@ -246,7 +246,7 @@ private:
 // wxSizerItem
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxSizerItem : public wxObject
+class  wxSizerItem : public wxObject
 {
 public:
     // window
@@ -481,7 +481,7 @@ WX_DECLARE_EXPORTED_LIST( wxSizerItem, wxSizerItemList );
 // wxSizer
 //---------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxSizer: public wxObject, public wxClientDataContainer
+class  wxSizer: public wxObject, public wxClientDataContainer
 {
 public:
     wxSizer() { m_containingWindow = NULL; }
@@ -733,7 +733,7 @@ private:
 // wxGridSizer
 //---------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxGridSizer: public wxSizer
+class  wxGridSizer: public wxSizer
 {
 public:
     // ctors specifying the number of columns only: number of rows will be
@@ -834,7 +834,7 @@ enum wxFlexSizerGrowMode
     wxFLEX_GROWMODE_ALL
 };
 
-class WXDLLIMPEXP_CORE wxFlexGridSizer: public wxGridSizer
+class  wxFlexGridSizer: public wxGridSizer
 {
 public:
     // ctors specifying the number of columns only: number of rows will be
@@ -913,7 +913,7 @@ private:
 // wxBoxSizer
 //---------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxBoxSizer: public wxSizer
+class  wxBoxSizer: public wxSizer
 {
 public:
     wxBoxSizer(int orient)
@@ -1004,7 +1004,7 @@ private:
 
 #if wxUSE_STATBOX
 
-class WXDLLIMPEXP_FWD_CORE wxStaticBox;
+class  wxStaticBox;
 
 class WXDLLIMPEXP_CORE wxStaticBoxSizer: public wxBoxSizer
 {

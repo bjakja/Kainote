@@ -18,15 +18,15 @@
 // classes
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_CORE wxBrush;
-class WXDLLIMPEXP_FWD_CORE wxColour;
-class WXDLLIMPEXP_FWD_CORE wxBitmap;
+class  wxBrush;
+class  wxColour;
+class  wxBitmap;
 
 //-----------------------------------------------------------------------------
 // wxBrush
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxBrush : public wxBrushBase
+class  wxBrush : public wxBrushBase
 {
 public:
     wxBrush() { }

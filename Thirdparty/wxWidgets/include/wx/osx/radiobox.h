@@ -13,11 +13,11 @@
 #define _WX_RADIOBOX_H_
 
 // List box item
-class WXDLLIMPEXP_FWD_CORE wxBitmap ;
+class  wxBitmap ;
 
-class WXDLLIMPEXP_FWD_CORE wxRadioButton ;
+class  wxRadioButton ;
 
-class WXDLLIMPEXP_CORE wxRadioBox: public wxControl, public wxRadioBoxBase
+class  wxRadioBox: public wxControl, public wxRadioBoxBase
 {
     DECLARE_DYNAMIC_CLASS(wxRadioBox)
 public:

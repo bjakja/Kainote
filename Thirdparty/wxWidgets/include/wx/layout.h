@@ -32,8 +32,8 @@
 // forward declrations
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_CORE wxWindowBase;
-class WXDLLIMPEXP_FWD_CORE wxLayoutConstraints;
+class  wxWindowBase;
+class  wxLayoutConstraints;
 
 // ----------------------------------------------------------------------------
 // constants
@@ -64,7 +64,7 @@ enum wxRelationship
 // wxIndividualLayoutConstraint: a constraint on window position
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxIndividualLayoutConstraint : public wxObject
+class  wxIndividualLayoutConstraint : public wxObject
 {
 public:
     wxIndividualLayoutConstraint();
@@ -155,7 +155,7 @@ protected:
 // wxLayoutConstraints: the complete set of constraints for a window
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxLayoutConstraints : public wxObject
+class  wxLayoutConstraints : public wxObject
 {
 public:
     // Edge constraints

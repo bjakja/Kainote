@@ -41,13 +41,13 @@
  */
 #define wxCHK_ALLOW_3RD_STATE_FOR_USER 0x2000
 
-extern WXDLLIMPEXP_DATA_CORE(const char) wxCheckBoxNameStr[];
+extern const char wxCheckBoxNameStr[];
 
 // ----------------------------------------------------------------------------
 // wxCheckBox: a control which shows a label and a box which may be checked
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxCheckBoxBase : public wxControl
+class  wxCheckBoxBase : public wxControl
 {
 public:
     wxCheckBoxBase() { }

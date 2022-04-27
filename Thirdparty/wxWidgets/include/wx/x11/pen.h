@@ -19,9 +19,9 @@
 // classes
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_CORE wxPen;
-class WXDLLIMPEXP_FWD_CORE wxColour;
-class WXDLLIMPEXP_FWD_CORE wxBitmap;
+class  wxPen;
+class  wxColour;
+class  wxBitmap;
 
 typedef char wxX11Dash;
 
@@ -29,7 +29,7 @@ typedef char wxX11Dash;
 // wxPen
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxPen: public wxPenBase
+class  wxPen: public wxPenBase
 {
 public:
     wxPen() { }

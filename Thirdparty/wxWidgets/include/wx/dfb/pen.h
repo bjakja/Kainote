@@ -21,14 +21,14 @@
 // classes
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_CORE wxBitmap;
-class WXDLLIMPEXP_FWD_CORE wxPen;
+class  wxBitmap;
+class  wxPen;
 
 //-----------------------------------------------------------------------------
 // wxPen
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxPen: public wxPenBase
+class  wxPen: public wxPenBase
 {
 public:
     wxPen() {}

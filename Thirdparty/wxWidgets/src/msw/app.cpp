@@ -128,7 +128,7 @@ wxVector<ClassRegInfo> gs_regClassesInfo;
 // private functions
 // ----------------------------------------------------------------------------
 
-LRESULT WXDLLEXPORT APIENTRY wxWndProc(HWND, UINT, WPARAM, LPARAM);
+LRESULT  APIENTRY wxWndProc(HWND, UINT, WPARAM, LPARAM);
 
 // ===========================================================================
 // wxGUIAppTraits implementation

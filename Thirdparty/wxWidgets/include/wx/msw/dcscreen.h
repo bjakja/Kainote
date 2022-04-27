@@ -15,7 +15,7 @@
 #include "wx/dcscreen.h"
 #include "wx/msw/dc.h"
 
-class WXDLLIMPEXP_CORE wxScreenDCImpl : public wxMSWDCImpl
+class  wxScreenDCImpl : public wxMSWDCImpl
 {
 public:
     // Create a DC representing the whole screen

@@ -23,13 +23,13 @@
 // classes
 //-------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_CORE wxWindow;
+class  wxWindow;
 
-class WXDLLIMPEXP_FWD_CORE wxDropTarget;
-class WXDLLIMPEXP_FWD_CORE wxTextDropTarget;
-class WXDLLIMPEXP_FWD_CORE wxFileDropTarget;
+class  wxDropTarget;
+class  wxTextDropTarget;
+class  wxFileDropTarget;
 
-class WXDLLIMPEXP_FWD_CORE wxDropSource;
+class  wxDropSource;
 
 // ----------------------------------------------------------------------------
 // macros
@@ -45,7 +45,7 @@ class WXDLLIMPEXP_FWD_CORE wxDropSource;
 // wxDropTarget
 //-------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxDropTarget: public wxDropTargetBase
+class  wxDropTarget: public wxDropTargetBase
 {
   public:
 
@@ -68,7 +68,7 @@ class WXDLLIMPEXP_CORE wxDropTarget: public wxDropTargetBase
 // wxDropSource
 //-------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxDropSource: public wxDropSourceBase
+class  wxDropSource: public wxDropSourceBase
 {
 public:
     // ctors: if you use default ctor you must call SetData() later!

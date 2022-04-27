@@ -18,18 +18,18 @@
 #include "wx/dynarray.h"
 
 // declare a linked list of modules
-class WXDLLIMPEXP_FWD_BASE wxModule;
-WX_DECLARE_USER_EXPORTED_LIST(wxModule, wxModuleList, WXDLLIMPEXP_BASE);
+class  wxModule;
+WX_DECLARE_USER_EXPORTED_LIST(wxModule, wxModuleList, );
 
 // and an array of class info objects
 WX_DEFINE_USER_EXPORTED_ARRAY_PTR(wxClassInfo *, wxArrayClassInfo,
-                                    class WXDLLIMPEXP_BASE);
+                                    class );
 
 
 // declaring a class derived from wxModule will automatically create an
 // instance of this class on program startup, call its OnInit() method and call
 // OnExit() on program termination (but only if OnInit() succeeded)
-class WXDLLIMPEXP_BASE wxModule : public wxObject
+class  wxModule : public wxObject
 {
 public:
     wxModule() {}

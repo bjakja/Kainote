@@ -16,7 +16,7 @@
 // wxTopLevelWindowMSW
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxTopLevelWindowMSW : public wxTopLevelWindowBase
+class wxTopLevelWindowMSW : public wxTopLevelWindowBase
 {
 public:
     // constructors and such

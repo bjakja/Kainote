@@ -16,7 +16,7 @@
 #include "wx/private/timer.h"
 #include "wx/msw/wrapwin.h"     // for WPARAM
 
-class WXDLLIMPEXP_BASE wxMSWTimerImpl : public wxTimerImpl
+class  wxMSWTimerImpl : public wxTimerImpl
 {
 public:
     wxMSWTimerImpl(wxTimer *timer) : wxTimerImpl(timer) { m_id = 0; }

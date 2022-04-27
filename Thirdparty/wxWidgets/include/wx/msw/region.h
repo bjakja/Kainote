@@ -12,7 +12,7 @@
 #ifndef _WX_MSW_REGION_H_
 #define _WX_MSW_REGION_H_
 
-class WXDLLIMPEXP_CORE wxRegion : public wxRegionWithCombine
+class  wxRegion : public wxRegionWithCombine
 {
 public:
     wxRegion();
@@ -54,12 +54,12 @@ protected:
     virtual bool DoOffset(wxCoord x, wxCoord y);
     virtual bool DoCombine(const wxRegion& region, wxRegionOp op);
 
-    friend class WXDLLIMPEXP_FWD_CORE wxRegionIterator;
+    friend class  wxRegionIterator;
 
     DECLARE_DYNAMIC_CLASS(wxRegion)
 };
 
-class WXDLLIMPEXP_CORE wxRegionIterator : public wxObject
+class  wxRegionIterator : public wxObject
 {
 public:
     wxRegionIterator() { Init(); }

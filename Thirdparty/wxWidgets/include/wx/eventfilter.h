@@ -13,8 +13,8 @@
 
 #include "wx/defs.h"
 
-class WXDLLIMPEXP_FWD_BASE wxEvent;
-class WXDLLIMPEXP_FWD_BASE wxEvtHandler;
+class  wxEvent;
+class  wxEvtHandler;
 
 // ----------------------------------------------------------------------------
 // wxEventFilter is used with wxEvtHandler::AddFilter() and ProcessEvent().
