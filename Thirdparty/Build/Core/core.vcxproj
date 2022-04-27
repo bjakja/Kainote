@@ -197,6 +197,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\wxWidgets\src\common\string.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\accel.cpp" />
+    <ClCompile Include="..\..\wxWidgets\src\msw\app.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\bitmap.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\brush.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\colour.cpp" />

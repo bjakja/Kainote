@@ -19,5 +19,6 @@
     <ClCompile Include="..\..\wxWidgets\src\msw\accel.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\bitmap.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\string.cpp" />
+    <ClCompile Include="..\..\wxWidgets\src\msw\app.cpp" />
   </ItemGroup>
 </Project>
