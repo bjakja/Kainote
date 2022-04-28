@@ -211,10 +211,10 @@ CSRIAPI void csri_render(csri_inst *inst, struct csri_frame *frame, double time)
 	spd.h = inst->screen_res.cy;
 	spd.vidrect = inst->video_rect;
 
-	//inst->rts->Render(spd, (REFERENCE_TIME)(time*10000000), 25.0, inst->video_rect);
-	CComPtr<ISimpleSubPic> pSubPic;
+	inst->rts->Render(spd, (REFERENCE_TIME)(time*10000000), 25.0, inst->video_rect);
+	/*CComPtr<ISimpleSubPic> pSubPic;
 	if(!inst->spp->LookupSubPic((time*10000000), &pSubPic)){return;}
-	pSubPic->AlphaBlt(&spd);
+	pSubPic->AlphaBlt(&spd);*/
 }
 
 

@@ -249,12 +249,12 @@ HRESULT CSubPicQueueImpl::RenderTo(ISubPicEx* pSubPic, REFERENCE_TIME rtStart, R
 
 			hr = pSubPicProviderEx->RenderEx(spd, bIsAnimated ? rtStart : ((rtStart+rtStop)/2), fps, rectList);
 
-			DbgLog((LOG_TRACE, 3, "CSubPicQueueImpl::RenderTo => GetStartPosition"));
+			//DbgLog((LOG_TRACE, 3, "CSubPicQueueImpl::RenderTo => GetStartPosition"));
 			POSITION pos = pSubPicProviderEx->GetStartPosition(rtStart, fps);
 
-			DbgLog((LOG_TRACE, 3, "CSubPicQueueImpl::RenderTo => GetStartStop rtStart:%lu", (ULONG)rtStart/10000));
+			//DbgLog((LOG_TRACE, 3, "CSubPicQueueImpl::RenderTo => GetStartStop rtStart:%lu", (ULONG)rtStart/10000));
 			pSubPicProviderEx->GetStartStop(pos, fps, rtStart, rtStop);
-			DbgLog((LOG_TRACE, 3, "rtStart:%lu", (ULONG)rtStart/10000));
+			//DbgLog((LOG_TRACE, 3, "rtStart:%lu", (ULONG)rtStart/10000));
 
 			//DbgLog((LOG_TRACE, 3, TEXT("rtStart=%lu rtStop=%lu pos:%x fps:%f"), (ULONG)rtStart/10000, (ULONG)rtStop/10000, pos, fps));
 
@@ -281,7 +281,7 @@ CSubPicQueue::CSubPicQueue(int nMaxSubPic, BOOL bDisableAnim, ISubPicExAllocator
 	, m_rtQueueStart(0)
 {
 	//InitTracer;
-	DbgLog((LOG_TRACE, 3, "CSubPicQueue::CSubPicQueue"));
+	//DbgLog((LOG_TRACE, 3, "CSubPicQueue::CSubPicQueue"));
 	//Trace(_T("SubPicQueue constructing\n"));
 
 	if(phr && FAILED(*phr))
@@ -316,7 +316,7 @@ CSubPicQueue::~CSubPicQueue()
 		CloseHandle(m_QueueEvents[i]);
 	for(int i = 0; i < EVENT_COUNT; i++)
 		CloseHandle(m_ThreadEvents[i]);
-	DbgLog((LOG_TRACE, 3, "CSubPicQueue::~CSubPicQueue"));
+	//DbgLog((LOG_TRACE, 3, "CSubPicQueue::~CSubPicQueue"));
 	//ReleaseTracer;
 }
 
@@ -508,7 +508,7 @@ DWORD CSubPicQueue::ThreadProc()
 	SetThreadPriority(m_hThread, bDisableAnim ? THREAD_PRIORITY_LOWEST : THREAD_PRIORITY_ABOVE_NORMAL/*THREAD_PRIORITY_BELOW_NORMAL*/);
 
 	//Trace(_T("CSubPicQueue Thread Start\n"));
-	DbgLog((LOG_TRACE, 3, "CSubPicQueue Thread Start"));
+	//DbgLog((LOG_TRACE, 3, "CSubPicQueue Thread Start"));
 	//while((WaitForMultipleObjects(EVENT_COUNT, m_ThreadEvents, FALSE, INFINITE) - WAIT_OBJECT_0) == EVENT_TIME)
 	DWORD request;
 	while(true)
@@ -638,7 +638,7 @@ DWORD CSubPicQueue::ThreadProc()
 	}
 
 	//Trace(_T("CSubPicQueue Thread Return\n"));
-	DbgLog((LOG_TRACE, 3, "CSubPicQueue Thread Return"));
+	//DbgLog((LOG_TRACE, 3, "CSubPicQueue Thread Return"));
 	Reply(EVENT_EXIT);
 	return(0);
 }

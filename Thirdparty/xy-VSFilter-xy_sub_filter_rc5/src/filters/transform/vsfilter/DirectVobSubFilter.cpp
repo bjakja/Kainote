@@ -79,7 +79,8 @@ CDirectVobSubFilter::CDirectVobSubFilter(LPUNKNOWN punk, HRESULT* phr, const GUI
 
     ZeroObj4OSD();
 
-    theApp.WriteProfileString(ResStr(IDS_R_DEFTEXTPATHES), _T("Hint"), _T("The first three are fixed, but you can add more up to ten entries."));
+    theApp.WriteProfileString(ResStr(IDS_R_DEFTEXTPATHES), _T("Hint"), 
+        _T("The first three are fixed, but you can add more up to ten entries."));
 
     CString tmp;
     tmp.Format(ResStr(IDS_RP_PATH), 0);

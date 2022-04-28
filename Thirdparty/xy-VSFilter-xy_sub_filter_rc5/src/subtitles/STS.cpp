@@ -3294,76 +3294,124 @@ bool CSimpleTextSubtitle::Open(CTextFile* f, int CharSet, CString name)
 
 bool CSimpleTextSubtitle::Open(BYTE* data, int len, int CharSet, CString name)
 {
+    ((CRenderedTextSubtitle*) this)->Lock();
+    Empty();
     bool fRet = false;
-
+    
     int version = 3, sver = 3;
-    CSimpleTextSubtitle ret;
-    ret.m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_BT601;
-    ret.m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_TV;
+   
+    m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_BT601;
+    m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_TV;
+    
+    
+    DWORD minSize;
+    minSize = MultiByteToWideChar(CP_UTF8, 0, (char*)data, -1, NULL, 0);
 
-    CStringW dat(data);
+    if (len < minSize)
+    {
+        MessageBoxW(NULL, L"size is not ok", L"Open", MB_OK);
+        return false;
+    }
+    wchar_t *unicode = new wchar_t[minSize + 1];
+    unicode[minSize] = 0;
+    MultiByteToWideChar(CP_UTF8, 0, (char*)data, -1, unicode, minSize);
+
+    CStringW decoded(unicode);
+    //MessageBoxW(NULL, decoded, L"Open", MB_OK);
+    
     while (true)
     {
-        CStringW buff = GetStrWW(dat, '\n');
+        //MessageBoxW(NULL, decoded, L"Open", MB_OK);
+        if (decoded.IsEmpty())
+            break;
+        CStringW buff = GetStrWW(decoded, '\n');
         FastTrim(buff);
+        
         if (buff.IsEmpty() || buff.GetAt(0) == ';') continue;
 
         CStringW entry = GetStrWW(buff, ':');
        
 
         entry.MakeLower();
-
+        
         if (entry == L"dialogue")
         {
             try
             {
+                //MessageBoxW(NULL, buff, L"Open", MB_OK);
                 CStringW::PXSTR __buff = buff.GetBuffer();
+                //MessageBoxW(NULL, L"getbuffer", L"Open", MB_OK);
                 int hh1, mm1, ss1, ms1_div10, hh2, mm2, ss2, ms2_div10, layer = 0;
                 CString Style, Actor, Effect;
                 CRect marginRect;
 
+               
                 if (version <= 4) { TryNextStr(&__buff, L'='); NextInt(&__buff); } /* Marked = */
+                //MessageBoxW(NULL, L"ver4", L"Open", MB_OK);
                 if (version >= 5)layer = NextInt(&__buff);
+                //MessageBoxW(NULL, L"ver5", L"Open", MB_OK);;
                 hh1 = NextInt(&__buff, L':');
+                //MessageBoxW(NULL, L"hh1", L"Open", MB_OK);;
                 mm1 = NextInt(&__buff, L':');
+                //MessageBoxW(NULL, L"mm1", L"Open", MB_OK);;
                 ss1 = NextInt(&__buff, L'.');
+                //MessageBoxW(NULL, L"ss1", L"Open", MB_OK);;
                 ms1_div10 = NextInt(&__buff);
+                //MessageBoxW(NULL, L"ms1_div10", L"Open", MB_OK);;
                 hh2 = NextInt(&__buff, L':');
+                //MessageBoxW(NULL, L"hh2", L"Open", MB_OK);;
                 mm2 = NextInt(&__buff, L':');
+                //MessageBoxW(NULL, L"mm2", L"Open", MB_OK);;
                 ss2 = NextInt(&__buff, L'.');
+                //MessageBoxW(NULL, L"ss2", L"Open", MB_OK);;
                 ms2_div10 = NextInt(&__buff);
+                //MessageBoxW(NULL, L"ms2_div10", L"Open", MB_OK);;
                 Style = TryNextStr(&__buff);
+                //MessageBoxW(NULL, L"Style", L"Open", MB_OK);;
                 Actor = TryNextStr(&__buff);
+                //MessageBoxW(NULL, L"Actor", L"Open", MB_OK);;
                 marginRect.left = NextInt(&__buff);
+                //MessageBoxW(NULL, L"marginRect.left", L"Open", MB_OK);;
                 marginRect.right = NextInt(&__buff);
+                //MessageBoxW(NULL, L"marginRect.right", L"Open", MB_OK);;
                 marginRect.top = marginRect.bottom = NextInt(&__buff);
+                //MessageBoxW(NULL, L"marginRect.top", L"Open", MB_OK);;
                 if (version >= 6)marginRect.bottom = NextInt(&__buff);
+                //MessageBoxW(NULL, L"ver6", L"Open", MB_OK);;
                 Effect = TryNextStr(&__buff);
+                //MessageBoxW(NULL, L"Effect2", L"Open", MB_OK);;
 
                 CStringW buff2 = __buff;
                 int len = min(Effect.GetLength(), buff2.GetLength());
+                //MessageBoxW(NULL, L"Effect", L"Open", MB_OK);;
                 if (Effect.Left(len) == buff2.Left(len)) Effect.Empty();
+                //MessageBoxW(NULL, L"Effect1", L"Open", MB_OK);;
 
                 Style.TrimLeft(_T('*'));
+                //MessageBoxW(NULL, L"Style", L"Open", MB_OK);;
                 if (!Style.CompareNoCase(_T("Default"))) Style = _T("Default");
-
-                ret.AddSTSEntryOnly(buff2,
+                //MessageBoxW(NULL, L"Style1", L"Open", MB_OK);;
+                //MessageBoxW(NULL, buff2, L"Open", MB_OK);;
+                AddSTSEntryOnly(buff2,
                     true,
                     MS2RT((((hh1 * 60i64 + mm1) * 60i64) + ss1) * 1000i64 + ms1_div10 * 10i64),
                     MS2RT((((hh2 * 60i64 + mm2) * 60i64) + ss2) * 1000i64 + ms2_div10 * 10i64),
                     Style, Actor, Effect,
                     marginRect,
                     layer);
+                //MessageBoxW(NULL, buff2, L"Open", MB_OK);
             }
             catch (...)
             {
                 //                ASSERT(0);
                 //                throw;
+                MessageBoxW(NULL, L"assert", L"Open", MB_OK);
                 return(false);
             }
         }
         else if (entry == L"style")
         {
+            
             STSStyle* style = DEBUG_NEW STSStyle;
             if (!style) return(false);
 
@@ -3417,7 +3465,7 @@ bool CSimpleTextSubtitle::Open(BYTE* data, int len, int CharSet, CString name)
 
                 StyleName.TrimLeft(_T('*'));
 
-                ret.AddStyle(StyleName, style);
+                AddStyle(StyleName, style);
             }
             catch (...)
             {
@@ -3427,76 +3475,88 @@ bool CSimpleTextSubtitle::Open(BYTE* data, int len, int CharSet, CString name)
         }
         else if (entry == L"[script info]")
         {
-            fRet = true;
+        //MessageBoxW(NULL, entry, L"Open", MB_OK);
+        fRet = true;
         }
         else if (entry == L"playresx")
         {
-            try { ret.m_dstScreenSize.cx = GetInt(buff); }
-            catch (...) { ret.m_dstScreenSize = CSize(0, 0); return(false); }
+        //MessageBoxW(NULL, entry, L"Open", MB_OK);
+            try { m_dstScreenSize.cx = GetInt(buff); }
+            catch (...) { m_dstScreenSize = CSize(0, 0); return(false); }
 
-            if (ret.m_dstScreenSize.cy <= 0)
+            if (m_dstScreenSize.cy <= 0)
             {
-                ret.m_dstScreenSize.cy = (ret.m_dstScreenSize.cx == 1280)
+                m_dstScreenSize.cy = (m_dstScreenSize.cx == 1280)
                     ? 1024
-                    : ret.m_dstScreenSize.cx * 3 / 4;
+                    : m_dstScreenSize.cx * 3 / 4;
             }
         }
         else if (entry == L"playresy")
         {
-            try { ret.m_dstScreenSize.cy = GetInt(buff); }
-            catch (...) { ret.m_dstScreenSize = CSize(0, 0); return(false); }
+        //MessageBoxW(NULL, entry, L"Open", MB_OK);
+            try { m_dstScreenSize.cy = GetInt(buff); }
+            catch (...) { m_dstScreenSize = CSize(0, 0); return(false); }
 
-            if (ret.m_dstScreenSize.cx <= 0)
+            if (m_dstScreenSize.cx <= 0)
             {
-                ret.m_dstScreenSize.cx = (ret.m_dstScreenSize.cy == 1024)
+                m_dstScreenSize.cx = (m_dstScreenSize.cy == 1024)
                     ? 1280
-                    : ret.m_dstScreenSize.cy * 4 / 3;
+                    : m_dstScreenSize.cy * 4 / 3;
             }
         }
         else if (entry == L"wrapstyle")
         {
-            try { ret.m_defaultWrapStyle = GetInt(buff); }
-            catch (...) { ret.m_defaultWrapStyle = 1; return(false); }
+        //MessageBoxW(NULL, entry, L"Open", MB_OK);
+            try { m_defaultWrapStyle = GetInt(buff); }
+            catch (...) { m_defaultWrapStyle = 1; return(false); }
         }
         else if (entry == L"scripttype")
         {
-            if (buff.GetLength() >= 4 && !buff.Right(4).CompareNoCase(L"4.00")) version = sver = 4;
+        //MessageBoxW(NULL, entry, L"Open", MB_OK);
+        if (buff.GetLength() >= 4 && !buff.Right(4).CompareNoCase(L"4.00")) version = sver = 4;
             else if (buff.GetLength() >= 5 && !buff.Right(5).CompareNoCase(L"4.00+")) version = sver = 5;
             else if (buff.GetLength() >= 6 && !buff.Right(6).CompareNoCase(L"4.00++")) version = sver = 6;
         }
         else if (entry == L"collisions")
         {
+        //MessageBoxW(NULL, entry, L"Open", MB_OK);
             buff = GetStrWW(buff);
             buff.MakeLower();
-            ret.m_collisions = buff.Find(L"reverse") >= 0 ? 1 : 0;
+            m_collisions = buff.Find(L"reverse") >= 0 ? 1 : 0;
         }
         else if (entry == L"scaledborderandshadow")
         {
+        //MessageBoxW(NULL, entry, L"Open", MB_OK);
             buff = GetStrWW(buff);
             buff.MakeLower();
-            ret.m_fScaledBAS = buff.Find(L"yes") >= 0;
+            m_fScaledBAS = buff.Find(L"yes") >= 0;
         }
         else if (entry == L"[v4 styles]")
         {
+        //MessageBoxW(NULL, entry, L"Open", MB_OK);
             fRet = true;
             sver = 4;
         }
         else if (entry == L"[v4+ styles]")
         {
+        //MessageBoxW(NULL, entry, L"Open", MB_OK);
             fRet = true;
             sver = 5;
         }
         else if (entry == L"[v4++ styles]")
         {
+        //MessageBoxW(NULL, entry, L"Open", MB_OK);
             fRet = true;
             sver = 6;
         }
         else if (entry == L"[events]")
         {
+        //MessageBoxW(NULL, entry, L"Open", MB_OK);
             fRet = true;
         }
         else if (entry == L"fontname")
         {
+        //MessageBoxW(NULL, entry, L"Open", MB_OK);
             //LoadUUEFont(file);
             CString font;
             
@@ -3523,52 +3583,57 @@ bool CSimpleTextSubtitle::Open(BYTE* data, int len, int CharSet, CString name)
         }
         else if (entry == L"ycbcr matrix")
         {
+        //MessageBoxW(NULL, entry, L"Open", MB_OK);
             buff = GetStrWW(buff);
             buff.MakeLower();
             if (buff.Left(4) == L"none")
             {
-                ret.m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_AUTO;
-                ret.m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_AUTO;
+                m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_AUTO;
+                m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_AUTO;
             }
             else if (buff.Left(6) == L"tv.601")
             {
-                ret.m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_BT601;
-                ret.m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_TV;
+                m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_BT601;
+                m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_TV;
             }
             else if (buff.Left(6) == L"tv.709")
             {
-                ret.m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_BT709;
-                ret.m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_TV;
+                m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_BT709;
+                m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_TV;
             }
             else if (buff.Left(7) == L"tv.2020")
             {
-                ret.m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_BT2020;
-                ret.m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_TV;
+                m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_BT2020;
+                m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_TV;
             }
             else if (buff.Left(6) == L"pc.601")
             {
-                ret.m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_BT601;
-                ret.m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_PC;
+                m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_BT601;
+                m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_PC;
             }
             else if (buff.Left(6) == L"pc.709")
             {
-                ret.m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_BT709;
-                ret.m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_PC;
+                m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_BT709;
+                m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_PC;
             }
             else if (buff.Left(7) == L"pc.2020")
             {
-                ret.m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_BT2020;
-                ret.m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_PC;
+                m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_BT2020;
+                m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_PC;
             }
         }
         //if (fEOF) break;
+        //MessageBoxW(NULL, L"eof", L"Open", MB_OK);
     }
     //    ret.Sort();
     CreateSegments();
+    //MessageBoxW(NULL, L"segments", L"Open", MB_OK);
 
     ChangeUnknownStylesToDefault();
+    //MessageBoxW(NULL, L"change unknow styles to defaults", L"Open", MB_OK);
 
     if (m_dstScreenSize == CSize(0, 0)) m_dstScreenSize = CSize(384, 288);
+    ((CRenderedTextSubtitle*)this)->Unlock();
     return true;
 }
 

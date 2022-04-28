@@ -140,7 +140,7 @@ CBaseVideoFilter::CBaseVideoFilter(TCHAR* pName, LPUNKNOWN lpunk, HRESULT* phr, 
 	if(phr) 
         *phr = S_OK;
     HRESULT hr = S_OK;
-    m_pInput = new CBaseVideoInputPin(NAME("CBaseVideoInputPin"), this, &hr, L"Video");
+    m_pInput = new CBaseVideoInputPin("CBaseVideoInputPin", this, &hr, L"Video");
 	if(!m_pInput)
     {
         if (phr) *phr = E_OUTOFMEMORY;
@@ -151,7 +151,7 @@ CBaseVideoFilter::CBaseVideoFilter(TCHAR* pName, LPUNKNOWN lpunk, HRESULT* phr, 
         if (phr) *phr = hr;
         return;
     }
-    m_pOutput = new CBaseVideoOutputPin(NAME("CBaseVideoOutputPin"), this, &hr, L"Output");
+    m_pOutput = new CBaseVideoOutputPin("CBaseVideoOutputPin", this, &hr, L"Output");
 	if(!m_pOutput)
     {
         delete m_pInput, m_pInput = NULL;
