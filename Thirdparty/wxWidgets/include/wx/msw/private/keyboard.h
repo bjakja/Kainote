@@ -30,12 +30,12 @@ namespace wxMSWKeyboard
 // for dead keys and in this case uc will be WXK_NONE too) or if the key
 // corresponds to a non-Latin-1 character in which case uc is filled with its
 // Unicode value.
-WXDLLIMPEXP_CORE int VKToWX(WXWORD vk, WXLPARAM lParam = 0, wchar_t *uc = NULL);
+ int VKToWX(WXWORD vk, WXLPARAM lParam = 0, wchar_t *uc = NULL);
 
 // Translate wxKeyCode enum element (passed as int for compatibility reasons)
 // to MSW virtual key code. isExtended is set to true if the key corresponds to
 // a non-numpad version of a key that exists both on numpad and outside it.
-WXDLLIMPEXP_CORE WXWORD WXToVK(int id, bool *isExtended = NULL);
+ WXWORD WXToVK(int id, bool *isExtended = NULL);
 
 } // namespace wxMSWKeyboard
 

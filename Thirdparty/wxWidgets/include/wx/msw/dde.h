@@ -38,10 +38,10 @@
  *
  */
 
-class WXDLLIMPEXP_FWD_BASE wxDDEServer;
-class WXDLLIMPEXP_FWD_BASE wxDDEClient;
+class  wxDDEServer;
+class  wxDDEClient;
 
-class WXDLLIMPEXP_BASE wxDDEConnection : public wxConnectionBase
+class  wxDDEConnection : public wxConnectionBase
 {
 public:
   wxDDEConnection(void *buffer, size_t size); // use external buffer
@@ -77,7 +77,7 @@ public:
   DECLARE_DYNAMIC_CLASS(wxDDEConnection)
 };
 
-class WXDLLIMPEXP_BASE wxDDEServer : public wxServerBase
+class  wxDDEServer : public wxServerBase
 {
 public:
     wxDDEServer();
@@ -102,7 +102,7 @@ protected:
     DECLARE_DYNAMIC_CLASS(wxDDEServer)
 };
 
-class WXDLLIMPEXP_BASE wxDDEClient: public wxClientBase
+class  wxDDEClient: public wxClientBase
 {
 public:
     wxDDEClient();
@@ -132,7 +132,7 @@ protected:
     DECLARE_DYNAMIC_CLASS(wxDDEClient)
 };
 
-void WXDLLIMPEXP_BASE wxDDEInitialize();
-void WXDLLIMPEXP_BASE wxDDECleanUp();
+void  wxDDEInitialize();
+void  wxDDECleanUp();
 
 #endif // _WX_DDE_H_

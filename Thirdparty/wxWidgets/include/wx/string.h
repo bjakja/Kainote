@@ -87,7 +87,7 @@
     #endif
 #endif // wxUSE_STRING_POS_CACHE
 
-class wxString;
+//class wxString;
 
 // unless this symbol is predefined to disable the compatibility functions, do
 // use them
@@ -4298,10 +4298,10 @@ inline size_t operator-(const wchar_t *p, const wxCStrData& cs)
 //{
 //}
 
-inline wxWCharBuffer::wxWCharBuffer(const wxCStrData& cstr)
-                    : wxCharTypeBufferBase(cstr.AsWCharBuf())
-{
-}
+//inline wxWCharBuffer::wxWCharBuffer(const wxCStrData& cstr)
+//                    : wxCharTypeBufferBase(cstr.AsWCharBuf())
+//{
+//}
 
 #if wxUSE_UNICODE_UTF8
 // ----------------------------------------------------------------------------

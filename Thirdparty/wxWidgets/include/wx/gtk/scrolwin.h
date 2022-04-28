@@ -16,7 +16,7 @@
 // wxScrolledWindow
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxScrollHelper : public wxScrollHelperBase
+class  wxScrollHelper : public wxScrollHelperBase
 {
     typedef wxScrollHelperBase base_type;
 public:

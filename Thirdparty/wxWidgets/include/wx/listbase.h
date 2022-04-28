@@ -18,7 +18,7 @@
 #include "wx/event.h"
 #include "wx/control.h"
 
-class WXDLLIMPEXP_FWD_CORE wxImageList;
+class  wxImageList;
 
 // ----------------------------------------------------------------------------
 // types
@@ -165,7 +165,7 @@ enum
 // TODO: this should be renamed to wxItemAttr or something general like this
 //       and used as base class for wxTextAttr which duplicates this class
 //       entirely currently
-class WXDLLIMPEXP_CORE wxListItemAttr
+class  wxListItemAttr
 {
 public:
     // ctors
@@ -217,7 +217,7 @@ private:
 // wxListItem: the item or column info, used to exchange data with wxListCtrl
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxListItem : public wxObject
+class  wxListItem : public wxObject
 {
 public:
     wxListItem() { Init(); m_attr = NULL; }
@@ -382,7 +382,7 @@ private:
 // the real control class but is just used for implementation convenience. We
 // should define the public class functions as pure virtual here in the future
 // however.
-class WXDLLIMPEXP_CORE wxListCtrlBase : public wxControl
+class  wxListCtrlBase : public wxControl
 {
 public:
     wxListCtrlBase() { }
@@ -466,7 +466,7 @@ protected:
 // wxListEvent - the event class for the wxListCtrl notifications
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxListEvent : public wxNotifyEvent
+class  wxListEvent : public wxNotifyEvent
 {
 public:
     wxListEvent(wxEventType commandType = wxEVT_NULL, int winid = 0)
@@ -532,27 +532,27 @@ private:
 // wxListCtrl event macros
 // ----------------------------------------------------------------------------
 
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_LIST_BEGIN_DRAG, wxListEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_LIST_BEGIN_RDRAG, wxListEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_LIST_BEGIN_LABEL_EDIT, wxListEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_LIST_END_LABEL_EDIT, wxListEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_LIST_DELETE_ITEM, wxListEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_LIST_DELETE_ALL_ITEMS, wxListEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_LIST_BEGIN_DRAG, wxListEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_LIST_BEGIN_RDRAG, wxListEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_LIST_BEGIN_LABEL_EDIT, wxListEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_LIST_END_LABEL_EDIT, wxListEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_LIST_DELETE_ITEM, wxListEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_LIST_DELETE_ALL_ITEMS, wxListEvent );
 
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_LIST_KEY_DOWN, wxListEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_LIST_INSERT_ITEM, wxListEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_LIST_COL_CLICK, wxListEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_LIST_ITEM_RIGHT_CLICK, wxListEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_LIST_ITEM_MIDDLE_CLICK, wxListEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_LIST_CACHE_HINT, wxListEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_LIST_COL_RIGHT_CLICK, wxListEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_LIST_COL_BEGIN_DRAG, wxListEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_LIST_COL_DRAGGING, wxListEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_LIST_COL_END_DRAG, wxListEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_LIST_ITEM_FOCUSED, wxListEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_LIST_ITEM_DESELECTED, wxListEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_LIST_KEY_DOWN, wxListEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_LIST_INSERT_ITEM, wxListEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_LIST_COL_CLICK, wxListEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_LIST_ITEM_RIGHT_CLICK, wxListEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_LIST_ITEM_MIDDLE_CLICK, wxListEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_LIST_ITEM_ACTIVATED, wxListEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_LIST_CACHE_HINT, wxListEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_LIST_COL_RIGHT_CLICK, wxListEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_LIST_COL_BEGIN_DRAG, wxListEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_LIST_COL_DRAGGING, wxListEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_LIST_COL_END_DRAG, wxListEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_LIST_ITEM_FOCUSED, wxListEvent );
 
 typedef void (wxEvtHandler::*wxListEventFunction)(wxListEvent&);
 

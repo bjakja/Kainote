@@ -128,41 +128,41 @@
                                  string.h
    ------------------------------------------------------------------------- */
 
-#define wxCRT_StrcatA    strcat
-#define wxCRT_StrchrA    strchr
-#define wxCRT_StrcmpA    strcmp
-#define wxCRT_StrcpyA    strcpy
-#define wxCRT_StrcspnA   strcspn
-#define wxCRT_StrlenA    strlen
-#define wxCRT_StrncatA   strncat
-#define wxCRT_StrncmpA   strncmp
-#define wxCRT_StrncpyA   strncpy
-#define wxCRT_StrpbrkA   strpbrk
-#define wxCRT_StrrchrA   strrchr
-#define wxCRT_StrspnA    strspn
-#define wxCRT_StrstrA    strstr
-
-#define wxCRT_StrcatW    wcscat
-#define wxCRT_StrchrW    wcschr
-#define wxCRT_StrcmpW    wcscmp
-#define wxCRT_StrcpyW    wcscpy
-#define wxCRT_StrcspnW   wcscspn
-#define wxCRT_StrncatW   wcsncat
-#define wxCRT_StrncmpW   wcsncmp
-#define wxCRT_StrncpyW   wcsncpy
-#define wxCRT_StrpbrkW   wcspbrk
-#define wxCRT_StrrchrW   wcsrchr
-#define wxCRT_StrspnW    wcsspn
-#define wxCRT_StrstrW    wcsstr
-
-/* these functions are not defined under CE, at least in VC8 CRT */
-#if !defined(__WXWINCE__)
-    #define wxCRT_StrcollA   strcoll
-    #define wxCRT_StrxfrmA   strxfrm
-
-    #define wxCRT_StrcollW   wcscoll
-    #define wxCRT_StrxfrmW   wcsxfrm
-#endif /* __WXWINCE__ */
+//#define wxCRT_StrcatA    strcat
+//#define wxCRT_StrchrA    strchr
+//#define wxCRT_StrcmpA    strcmp
+//#define wxCRT_StrcpyA    strcpy
+//#define wxCRT_StrcspnA   strcspn
+//#define wxCRT_StrlenA    strlen
+//#define wxCRT_StrncatA   strncat
+//#define wxCRT_StrncmpA   strncmp
+//#define wxCRT_StrncpyA   strncpy
+//#define wxCRT_StrpbrkA   strpbrk
+//#define wxCRT_StrrchrA   strrchr
+//#define wxCRT_StrspnA    strspn
+//#define wxCRT_StrstrA    strstr
+//
+//#define wxCRT_StrcatW    wcscat
+//#define wxCRT_StrchrW    wcschr
+//#define wxCRT_StrcmpW    wcscmp
+//#define wxCRT_StrcpyW    wcscpy
+//#define wxCRT_StrcspnW   wcscspn
+//#define wxCRT_StrncatW   wcsncat
+//#define wxCRT_StrncmpW   wcsncmp
+//#define wxCRT_StrncpyW   wcsncpy
+//#define wxCRT_StrpbrkW   wcspbrk
+//#define wxCRT_StrrchrW   wcsrchr
+//#define wxCRT_StrspnW    wcsspn
+//#define wxCRT_StrstrW    wcsstr
+//
+///* these functions are not defined under CE, at least in VC8 CRT */
+//#if !defined(__WXWINCE__)
+//    #define wxCRT_StrcollA   strcoll
+//    #define wxCRT_StrxfrmA   strxfrm
+//
+//    #define wxCRT_StrcollW   wcscoll
+//    #define wxCRT_StrxfrmW   wcsxfrm
+//#endif /* __WXWINCE__ */
 
 /* Almost all compiler have strdup(), but VC++ for CE doesn't provide it.
    Another special case is gcc in strict ANSI mode: normally it doesn't provide
@@ -190,35 +190,35 @@
     #endif
 #endif /* wxHAVE_TCHAR_SUPPORT */
 
-#ifdef HAVE_WCSLEN
-    #define wxCRT_StrlenW wcslen
-#endif
-
-#define wxCRT_StrtodA    strtod
-#define wxCRT_StrtolA    strtol
-#define wxCRT_StrtoulA   strtoul
-#define wxCRT_StrtodW    wcstod
-#define wxCRT_StrtolW    wcstol
-#define wxCRT_StrtoulW   wcstoul
-
-#ifdef __VISUALC__
-    #if __VISUALC__ >= 1300 && !defined(__WXWINCE__)
-        #define wxCRT_StrtollA   _strtoi64
-        #define wxCRT_StrtoullA  _strtoui64
-        #define wxCRT_StrtollW   _wcstoi64
-        #define wxCRT_StrtoullW  _wcstoui64
-    #endif /* VC++ 7+ */
-#else
-    #ifdef HAVE_STRTOULL
-        #define wxCRT_StrtollA   strtoll
-        #define wxCRT_StrtoullA  strtoull
-    #endif /* HAVE_STRTOULL */
-    #ifdef HAVE_WCSTOULL
-        /* assume that we have wcstoull(), which is also C99, too */
-        #define wxCRT_StrtollW   wcstoll
-        #define wxCRT_StrtoullW  wcstoull
-    #endif /* HAVE_WCSTOULL */
-#endif
+//#ifdef HAVE_WCSLEN
+//    #define wxCRT_StrlenW wcslen
+//#endif
+//
+//#define wxCRT_StrtodA    strtod
+//#define wxCRT_StrtolA    strtol
+//#define wxCRT_StrtoulA   strtoul
+//#define wxCRT_StrtodW    wcstod
+//#define wxCRT_StrtolW    wcstol
+//#define wxCRT_StrtoulW   wcstoul
+//
+//#ifdef __VISUALC__
+//    #if __VISUALC__ >= 1300 && !defined(__WXWINCE__)
+//        #define wxCRT_StrtollA   _strtoi64
+//        #define wxCRT_StrtoullA  _strtoui64
+//        #define wxCRT_StrtollW   _wcstoi64
+//        #define wxCRT_StrtoullW  _wcstoui64
+//    #endif /* VC++ 7+ */
+//#else
+//    #ifdef HAVE_STRTOULL
+//        #define wxCRT_StrtollA   strtoll
+//        #define wxCRT_StrtoullA  strtoull
+//    #endif /* HAVE_STRTOULL */
+//    #ifdef HAVE_WCSTOULL
+//        /* assume that we have wcstoull(), which is also C99, too */
+//        #define wxCRT_StrtollW   wcstoll
+//        #define wxCRT_StrtoullW  wcstoull
+//    #endif /* HAVE_WCSTOULL */
+//#endif
 
 /*
     Only VC8 and later provide strnlen() and wcsnlen() functions under Windows
@@ -305,69 +305,69 @@ extern "C" {
     #define wxCRT_TolowerNative tolower
 #endif
 
-#ifndef wxCRT_StrcatW
- wchar_t *wxCRT_StrcatW(wchar_t *dest, const wchar_t *src);
-#endif
-
-#ifndef wxCRT_StrchrW
- const wchar_t *wxCRT_StrchrW(const wchar_t *s, wchar_t c);
-#endif
-
-#ifndef wxCRT_StrcmpW
- int wxCRT_StrcmpW(const wchar_t *s1, const wchar_t *s2);
-#endif
-
-#ifndef wxCRT_StrcollW
- int wxCRT_StrcollW(const wchar_t *s1, const wchar_t *s2);
-#endif
-
-#ifndef wxCRT_StrcpyW
- wchar_t *wxCRT_StrcpyW(wchar_t *dest, const wchar_t *src);
-#endif
-
-#ifndef wxCRT_StrcspnW
- size_t wxCRT_StrcspnW(const wchar_t *s, const wchar_t *reject);
-#endif
-
-#ifndef wxCRT_StrncatW
- wchar_t *wxCRT_StrncatW(wchar_t *dest, const wchar_t *src, size_t n);
-#endif
-
-#ifndef wxCRT_StrncpyW
- wchar_t *wxCRT_StrncpyW(wchar_t *dest, const wchar_t *src, size_t n);
-#endif
-
-#ifndef wxCRT_StrpbrkW
- const wchar_t *wxCRT_StrpbrkW(const wchar_t *s, const wchar_t *accept);
-#endif
-
-#ifndef wxCRT_StrrchrW
- const wchar_t *wxCRT_StrrchrW(const wchar_t *s, wchar_t c);
-#endif
-
-#ifndef wxCRT_StrspnW
- size_t wxCRT_StrspnW(const wchar_t *s, const wchar_t *accept);
-#endif
-
-#ifndef wxCRT_StrstrW
- const wchar_t *wxCRT_StrstrW(const wchar_t *haystack, const wchar_t *needle);
-#endif
-
-#ifndef wxCRT_StrtodW
- double wxCRT_StrtodW(const wchar_t *nptr, wchar_t **endptr);
-#endif
-
-#ifndef wxCRT_StrtolW
- long int wxCRT_StrtolW(const wchar_t *nptr, wchar_t **endptr, int base);
-#endif
-
-#ifndef wxCRT_StrtoulW
- unsigned long int wxCRT_StrtoulW(const wchar_t *nptr, wchar_t **endptr, int base);
-#endif
-
-#ifndef wxCRT_StrxfrmW
- size_t wxCRT_StrxfrmW(wchar_t *dest, const wchar_t *src, size_t n);
-#endif
+//#ifndef wxCRT_StrcatW
+// wchar_t *wxCRT_StrcatW(wchar_t *dest, const wchar_t *src);
+//#endif
+//
+//#ifndef wxCRT_StrchrW
+// const wchar_t *wxCRT_StrchrW(const wchar_t *s, wchar_t c);
+//#endif
+//
+//#ifndef wxCRT_StrcmpW
+// int wxCRT_StrcmpW(const wchar_t *s1, const wchar_t *s2);
+//#endif
+//
+//#ifndef wxCRT_StrcollW
+// int wxCRT_StrcollW(const wchar_t *s1, const wchar_t *s2);
+//#endif
+//
+//#ifndef wxCRT_StrcpyW
+// wchar_t *wxCRT_StrcpyW(wchar_t *dest, const wchar_t *src);
+//#endif
+//
+//#ifndef wxCRT_StrcspnW
+// size_t wxCRT_StrcspnW(const wchar_t *s, const wchar_t *reject);
+//#endif
+//
+//#ifndef wxCRT_StrncatW
+// wchar_t *wxCRT_StrncatW(wchar_t *dest, const wchar_t *src, size_t n);
+//#endif
+//
+//#ifndef wxCRT_StrncpyW
+// wchar_t *wxCRT_StrncpyW(wchar_t *dest, const wchar_t *src, size_t n);
+//#endif
+//
+//#ifndef wxCRT_StrpbrkW
+// const wchar_t *wxCRT_StrpbrkW(const wchar_t *s, const wchar_t *accept);
+//#endif
+//
+//#ifndef wxCRT_StrrchrW
+// const wchar_t *wxCRT_StrrchrW(const wchar_t *s, wchar_t c);
+//#endif
+//
+//#ifndef wxCRT_StrspnW
+// size_t wxCRT_StrspnW(const wchar_t *s, const wchar_t *accept);
+//#endif
+//
+//#ifndef wxCRT_StrstrW
+// const wchar_t *wxCRT_StrstrW(const wchar_t *haystack, const wchar_t *needle);
+//#endif
+//
+//#ifndef wxCRT_StrtodW
+// double wxCRT_StrtodW(const wchar_t *nptr, wchar_t **endptr);
+//#endif
+//
+//#ifndef wxCRT_StrtolW
+// long int wxCRT_StrtolW(const wchar_t *nptr, wchar_t **endptr, int base);
+//#endif
+//
+//#ifndef wxCRT_StrtoulW
+// unsigned long int wxCRT_StrtoulW(const wchar_t *nptr, wchar_t **endptr, int base);
+//#endif
+//
+//#ifndef wxCRT_StrxfrmW
+// size_t wxCRT_StrxfrmW(wchar_t *dest, const wchar_t *src, size_t n);
+//#endif
 
 #ifndef wxCRT_StrdupA
  char *wxCRT_StrdupA(const char *psz);
@@ -682,7 +682,7 @@ extern "C" {
  *     string.h, which is required by wxcrt.h) to have them here: */
 
 /* safe version of strlen() (returns 0 if passed NULL pointer) */
-inline size_t wxStrlen(const char *s) { return s ? strlen(s) : 0; }
+//inline size_t wxStrlen(const char *s) { return s ? ::strlen(s) : 0; }
 inline size_t wxStrlen(const wchar_t *s) { return s ? wxCRT_StrlenW(s) : 0; }
 //#ifndef wxWCHAR_T_IS_WXCHAR16
 //        size_t wxStrlen(const wxChar16 *s );
@@ -695,7 +695,7 @@ inline size_t wxStrlen(const wchar_t *s) { return s ? wxCRT_StrlenW(s) : 0; }
 #define wxStrdupA wxCRT_StrdupA
 #define wxStrdupW wxCRT_StrdupW
 //inline char* wxStrdup(const char *s) { return wxCRT_StrdupA(s); }
-inline wchar_t* wxStrdup(const wchar_t *s) { return wxCRT_StrdupW(s); }
+inline wchar_t* wxStrdup(const wchar_t *s) { return _wcsdup(s); }
 //#ifndef wxWCHAR_T_IS_WXCHAR16
 //        wxChar16* wxStrdup(const wxChar16* s);
 //#endif

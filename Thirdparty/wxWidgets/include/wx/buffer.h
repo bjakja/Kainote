@@ -359,7 +359,7 @@ public:
     wxCharBuffer(const CharType *str = NULL) : wxCharTypeBufferBase(str) {}
     wxCharBuffer(size_t len) : wxCharTypeBufferBase(len) {}
 
-    wxCharBuffer(const wxCStrData& cstr);
+    //wxCharBuffer(const wxCStrData& cstr);
 };
 
 //WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxScopedCharTypeBuffer<wchar_t> )
@@ -379,7 +379,7 @@ public:
     wxWCharBuffer(const CharType *str = NULL) : wxCharTypeBufferBase(str) {}
     wxWCharBuffer(size_t len) : wxCharTypeBufferBase(len) {}
 
-    wxWCharBuffer(const wxCStrData& cstr);
+    //wxWCharBuffer(const wxCStrData& cstr);
 };
 
 // wxCharTypeBuffer<T> implicitly convertible to T*

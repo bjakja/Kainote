@@ -22,14 +22,14 @@
 
 #include "wx/dynarray.h"
 
-class WXDLLIMPEXP_FWD_CORE wxChoice;
+class  wxChoice;
 WX_DEFINE_EXPORTED_ARRAY_PTR(wxChoice *, wxArrayChoiceSpins);
 
 // ----------------------------------------------------------------------------
 // Choice item
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxChoice : public wxChoiceBase
+class  wxChoice : public wxChoiceBase
 {
 public:
     // ctors

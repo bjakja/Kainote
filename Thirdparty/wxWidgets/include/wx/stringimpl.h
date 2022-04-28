@@ -106,7 +106,7 @@ extern WXDLLIMPEXP_DATA_BASE(const wxStringCharType*) wxEmptyStringImpl;
 // is never used directly (but had to be put here to allow inlining)
 // ---------------------------------------------------------------------------
 
-struct WXDLLIMPEXP_BASE wxStringData
+struct  wxStringData
 {
   int     nRefs;        // reference count
   size_t  nDataLength,  // actual string length

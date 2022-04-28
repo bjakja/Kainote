@@ -48,10 +48,10 @@ enum wxIPCFormat
   wxIPC_PRIVATE =          20
 };
 
-class WXDLLIMPEXP_FWD_BASE wxServerBase;
-class WXDLLIMPEXP_FWD_BASE wxClientBase;
+class  wxServerBase;
+class  wxClientBase;
 
-class WXDLLIMPEXP_BASE wxConnectionBase: public wxObject
+class  wxConnectionBase: public wxObject
 {
 public:
   wxConnectionBase(void *buffer, size_t size); // use external buffer
@@ -228,7 +228,7 @@ protected:
 };
 
 
-class WXDLLIMPEXP_BASE wxServerBase : public wxObject
+class  wxServerBase : public wxObject
 {
 public:
   wxServerBase() { }
@@ -243,7 +243,7 @@ public:
   DECLARE_CLASS(wxServerBase)
 };
 
-class WXDLLIMPEXP_BASE wxClientBase : public wxObject
+class  wxClientBase : public wxObject
 {
 public:
   wxClientBase() { }

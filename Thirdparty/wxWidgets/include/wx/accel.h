@@ -45,7 +45,7 @@ enum wxAcceleratorEntryFlags
 // an entry in wxAcceleratorTable corresponds to one accelerator
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxAcceleratorEntry
+class  wxAcceleratorEntry
 {
 public:
     wxAcceleratorEntry(int flags = 0, int keyCode = 0, int cmd = 0,
@@ -171,7 +171,7 @@ private:
     #include "wx/os2/accel.h"
 #endif
 
-extern WXDLLIMPEXP_DATA_CORE(wxAcceleratorTable) wxNullAcceleratorTable;
+extern wxAcceleratorTable wxNullAcceleratorTable;
 
 #endif // wxUSE_ACCEL
 

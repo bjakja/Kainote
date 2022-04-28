@@ -30,9 +30,9 @@
 //#endif // Cygwin
 
 // fwd decl
-class  WXDLLIMPEXP_FWD_CORE wxImageList;
-class  WXDLLIMPEXP_FWD_CORE wxDragImage;
-struct WXDLLIMPEXP_FWD_CORE wxTreeViewItem;
+class   wxImageList;
+class   wxDragImage;
+struct  wxTreeViewItem;
 
 #if WXWIN_COMPATIBILITY_2_6
     // NB: all the following flags are for compatbility only and will be removed in the
@@ -50,7 +50,7 @@ WX_DECLARE_EXPORTED_VOIDPTR_HASH_MAP(wxTreeItemAttr *, wxMapTreeAttr);
 // wxTreeCtrl
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxTreeCtrl : public wxTreeCtrlBase
+class  wxTreeCtrl : public wxTreeCtrlBase
 {
 public:
     // creation

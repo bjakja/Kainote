@@ -30,7 +30,7 @@ enum wxBOM
     wxBOM_UTF8
 };
 
-class WXDLLIMPEXP_BASE wxConvAuto : public wxMBConv
+class  wxConvAuto : public wxMBConv
 {
 public:
     // default ctor, the real conversion will be created on demand

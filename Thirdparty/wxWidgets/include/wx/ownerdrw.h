@@ -19,7 +19,7 @@
 #include "wx/font.h"
 #include "wx/colour.h"
 
-class WXDLLIMPEXP_FWD_CORE wxDC;
+class  wxDC;
 
 // ----------------------------------------------------------------------------
 // wxOwnerDrawn - a mix-in base class, derive from it to implement owner-drawn
@@ -30,7 +30,7 @@ class WXDLLIMPEXP_FWD_CORE wxDC;
 // element or one unchangeable bitmap otherwise.
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxOwnerDrawnBase
+class  wxOwnerDrawnBase
 {
 public:
     wxOwnerDrawnBase()

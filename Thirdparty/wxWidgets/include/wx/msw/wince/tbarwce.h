@@ -19,7 +19,7 @@
 // Smartphones don't have toolbars, so use a dummy class
 #ifdef __SMARTPHONE__
 
-class WXDLLIMPEXP_CORE wxToolBar : public wxToolBarBase
+class  wxToolBar : public wxToolBarBase
 {
 public:
     // ctors and dtor
@@ -78,7 +78,7 @@ private:
 
 #include "wx/msw/toolbar.h"
 
-class WXDLLIMPEXP_CORE wxToolMenuBar : public wxToolBar
+class  wxToolMenuBar : public wxToolBar
 {
 public:
     // ctors and dtor

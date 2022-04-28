@@ -21,7 +21,6 @@
 #include "wx/strconv.h"
 #include "wx/buffer.h"
 #include "wx/unichar.h"
-//#include "wx/string.h"
 
 #if defined(HAVE_TYPE_TRAITS)
     #include <type_traits>
@@ -344,11 +343,11 @@ struct wxFormatStringSpecifierNonPodType<true>
 template<typename T>
 struct wxFormatStringSpecifier
 {
-#ifdef HAVE_TYPE_TRAITS
+//#ifdef HAVE_TYPE_TRAITS
     typedef std::is_enum<T> is_enum;
-#elif defined HAVE_TR1_TYPE_TRAITS
-    typedef std::/*tr1::*/is_enum<T> is_enum;
-#endif
+//#elif defined HAVE_TR1_TYPE_TRAITS
+    //typedef std::/*tr1::*/is_enum<T> is_enum;
+//#endif
     enum { value/* = wxFormatStringSpecifierNonPodType<is_enum::value>::value*/ };
 };
 
@@ -684,8 +683,8 @@ WX_ARG_NORMALIZER_FORWARD(char*, const char*);
 WX_ARG_NORMALIZER_FORWARD(wchar_t*, const wchar_t*);
 
 // versions for passing wx[W]CharBuffer:
-//WX_ARG_NORMALIZER_FORWARD(wxScopedCharBuffer, const char*);
-//WX_ARG_NORMALIZER_FORWARD(const wxScopedCharBuffer&, const char*);
+WX_ARG_NORMALIZER_FORWARD(wxScopedCharBuffer, const char*);
+WX_ARG_NORMALIZER_FORWARD(const wxScopedCharBuffer&, const char*);
 WX_ARG_NORMALIZER_FORWARD(wxScopedWCharBuffer, const wchar_t*);
 WX_ARG_NORMALIZER_FORWARD(const wxScopedWCharBuffer&, const wchar_t*);
 WX_ARG_NORMALIZER_FORWARD(wxCharBuffer, const char*);

@@ -12,10 +12,10 @@
 #ifndef _WX_SLIDER_H_
 #define _WX_SLIDER_H_
 
-class WXDLLIMPEXP_FWD_CORE wxSubwindows;
+class  wxSubwindows;
 
 // Slider
-class WXDLLIMPEXP_CORE wxSlider : public wxSliderBase
+class  wxSlider : public wxSliderBase
 {
 public:
     wxSlider() { Init(); }

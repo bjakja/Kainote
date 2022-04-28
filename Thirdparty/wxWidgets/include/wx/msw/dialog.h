@@ -23,9 +23,9 @@
     #define wxUSE_DIALOG_SIZEGRIP 1
 #endif
 
-extern WXDLLIMPEXP_DATA_CORE(const char) wxDialogNameStr[];
+extern const char wxDialogNameStr[];
 
-class WXDLLIMPEXP_FWD_CORE wxDialogModalData;
+class  wxDialogModalData;
 
 #if wxUSE_TOOLBAR && (defined(__SMARTPHONE__) || defined(__POCKETPC__))
 class WXDLLIMPEXP_FWD_CORE wxToolBar;

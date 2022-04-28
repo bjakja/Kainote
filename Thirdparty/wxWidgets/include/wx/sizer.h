@@ -1006,7 +1006,7 @@ private:
 
 class  wxStaticBox;
 
-class WXDLLIMPEXP_CORE wxStaticBoxSizer: public wxBoxSizer
+class  wxStaticBoxSizer: public wxBoxSizer
 {
 public:
     wxStaticBoxSizer(wxStaticBox *box, int orient);
@@ -1042,7 +1042,7 @@ private:
 
 #if wxUSE_BUTTON
 
-class WXDLLIMPEXP_CORE wxStdDialogButtonSizer: public wxBoxSizer
+class  wxStdDialogButtonSizer: public wxBoxSizer
 {
 public:
     // Constructor just creates a new wxBoxSizer, not much else.

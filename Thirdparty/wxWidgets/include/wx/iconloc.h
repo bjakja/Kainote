@@ -18,7 +18,7 @@
 // wxIconLocation: describes the location of an icon
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxIconLocationBase
+class  wxIconLocationBase
 {
 public:
     // ctor takes the name of the file where the icon is
@@ -43,7 +43,7 @@ private:
 // index of the icon
 #if defined(__WINDOWS__)
 
-class WXDLLIMPEXP_BASE wxIconLocation : public wxIconLocationBase
+class  wxIconLocation : public wxIconLocationBase
 {
 public:
     // ctor takes the name of the file where the icon is and the icons index in

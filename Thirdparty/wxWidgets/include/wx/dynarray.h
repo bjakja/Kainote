@@ -650,7 +650,7 @@ private:                                                                 \
     WX_DECLARE_USER_EXPORTED_BASEARRAY(T, name, wxARRAY_DEFAULT_EXPORT)
 
 #define WX_DECLARE_EXPORTED_BASEARRAY(T, name)                    \
-    WX_DECLARE_USER_EXPORTED_BASEARRAY(T, name, WXDLLIMPEXP_CORE)
+    WX_DECLARE_USER_EXPORTED_BASEARRAY(T, name, )
 
 #define WX_DECLARE_USER_EXPORTED_BASEARRAY(T, name, expmode)      \
     typedef T _wxArray##name;                                     \
@@ -671,10 +671,10 @@ private:                                                                 \
     WX_DEFINE_TYPEARRAY_WITH_DECL_PTR(T, name, base, class wxARRAY_DEFAULT_EXPORT)
 
 #define WX_DEFINE_EXPORTED_TYPEARRAY(T, name, base)               \
-    WX_DEFINE_TYPEARRAY_WITH_DECL(T, name, base, class WXDLLIMPEXP_CORE)
+    WX_DEFINE_TYPEARRAY_WITH_DECL(T, name, base, class )
 
 #define WX_DEFINE_EXPORTED_TYPEARRAY_PTR(T, name, base)               \
-    WX_DEFINE_TYPEARRAY_WITH_DECL_PTR(T, name, base, class WXDLLIMPEXP_CORE)
+    WX_DEFINE_TYPEARRAY_WITH_DECL_PTR(T, name, base, class )
 
 #define WX_DEFINE_USER_EXPORTED_TYPEARRAY(T, name, base, expdecl) \
     WX_DEFINE_TYPEARRAY_WITH_DECL(T, name, base, class expdecl)

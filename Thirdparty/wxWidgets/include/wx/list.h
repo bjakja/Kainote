@@ -1128,11 +1128,11 @@ private:
     WX_DECLARE_LIST_2(elementtype, listname, wx##listname##Node, decl)
 
 #define WX_DECLARE_EXPORTED_LIST(elementtype, listname)                     \
-    WX_DECLARE_LIST_WITH_DECL(elementtype, listname, class WXDLLIMPEXP_CORE)
+    WX_DECLARE_LIST_WITH_DECL(elementtype, listname, class )
 
 #define WX_DECLARE_EXPORTED_LIST_PTR(elementtype, listname)                     \
     typedef elementtype _WX_LIST_ITEM_TYPE_##listname;                      \
-    WX_DECLARE_LIST_PTR_2(elementtype, listname, wx##listname##Node, class WXDLLIMPEXP_CORE)
+    WX_DECLARE_LIST_PTR_2(elementtype, listname, wx##listname##Node, class )
 
 #define WX_DECLARE_USER_EXPORTED_LIST(elementtype, listname, usergoo)       \
     typedef elementtype _WX_LIST_ITEM_TYPE_##listname;                      \

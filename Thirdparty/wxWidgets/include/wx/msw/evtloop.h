@@ -22,7 +22,7 @@
 // wxEventLoop
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxMSWEventLoopBase : public wxEventLoopManual
+class  wxMSWEventLoopBase : public wxEventLoopManual
 {
 public:
     wxMSWEventLoopBase();
@@ -44,7 +44,7 @@ protected:
 
 WX_DECLARE_EXPORTED_OBJARRAY(MSG, wxMSGArray);
 
-class WXDLLIMPEXP_CORE wxGUIEventLoop : public wxMSWEventLoopBase
+class  wxGUIEventLoop : public wxMSWEventLoopBase
 {
 public:
     wxGUIEventLoop() { }

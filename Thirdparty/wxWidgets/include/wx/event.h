@@ -792,7 +792,7 @@ wxDECLARE_EXPORTED_EVENT(, wxEVT_JOY_MOVE, wxJoystickEvent);
 wxDECLARE_EXPORTED_EVENT(, wxEVT_JOY_ZMOVE, wxJoystickEvent);
 wxDECLARE_EXPORTED_EVENT(, wxEVT_DROP_FILES, wxDropFilesEvent);
 wxDECLARE_EXPORTED_EVENT(, wxEVT_INIT_DIALOG, wxInitDialogEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_BASE, wxEVT_IDLE, wxIdleEvent);
+wxDECLARE_EXPORTED_EVENT(, wxEVT_IDLE, wxIdleEvent);
 wxDECLARE_EXPORTED_EVENT(, wxEVT_UPDATE_UI, wxUpdateUIEvent);
 wxDECLARE_EXPORTED_EVENT(, wxEVT_SIZING, wxSizeEvent);
 wxDECLARE_EXPORTED_EVENT(, wxEVT_MOVING, wxMoveEvent);
@@ -3412,7 +3412,7 @@ private:
     DECLARE_DYNAMIC_CLASS_NO_COPY(wxEvtHandler)
 };
 
-WX_DEFINE_ARRAY_WITH_DECL_PTR(wxEvtHandler *, wxEvtHandlerArray, class WXDLLIMPEXP_BASE);
+WX_DEFINE_ARRAY_WITH_DECL_PTR(wxEvtHandler *, wxEvtHandlerArray, class );
 
 
 // Define an inline method of wxObjectEventFunctor which couldn't be defined

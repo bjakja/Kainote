@@ -24,7 +24,7 @@ class  wxGDIImageRefData;
 class  wxGDIImageHandler;
 class  wxGDIImage;
 
-wxGDIImageHandler wxGDIImageHandlerList;
+//wxGDIImageHandler wxGDIImageHandlerList;
 
 // ----------------------------------------------------------------------------
 // wxGDIImageRefData: common data fields for all derived classes
@@ -86,7 +86,7 @@ class  wxGDIImage : public wxGDIObject
 {
 public:
     // handlers list interface
-    static wxGDIImageHandlerList& GetHandlers() { return ms_handlers; }
+    //static wxGDIImageHandlerList& GetHandlers() { return ms_handlers; }
 
     static void AddHandler(wxGDIImageHandler *handler);
     static void InsertHandler(wxGDIImageHandler *handler);
@@ -150,7 +150,7 @@ protected:
         return NULL;
     }
 
-    static wxGDIImageHandlerList ms_handlers;
+    //static wxGDIImageHandlerList ms_handlers;
 };
 
 // ----------------------------------------------------------------------------

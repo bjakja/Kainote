@@ -16,7 +16,7 @@
 
 #if wxUSE_VALIDATORS && (wxUSE_TEXTCTRL || wxUSE_COMBOBOX)
 
-class WXDLLIMPEXP_FWD_CORE wxTextEntry;
+class  wxTextEntry;
 
 #include "wx/validate.h"
 
@@ -35,7 +35,7 @@ enum wxTextValidatorStyle
     wxFILTER_EXCLUDE_CHAR_LIST = 0x200
 };
 
-class WXDLLIMPEXP_CORE wxTextValidator: public wxValidator
+class  wxTextValidator: public wxValidator
 {
 public:
     wxTextValidator(long style = wxFILTER_NONE, wxString *val = NULL);

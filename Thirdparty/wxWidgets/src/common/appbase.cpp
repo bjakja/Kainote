@@ -114,7 +114,7 @@ wxAppInitializerFunction wxAppConsoleBase::ms_appInitFn = NULL;
 
 wxSocketManager *wxAppTraitsBase::ms_manager = NULL;
 
-WXDLLIMPEXP_DATA_BASE(wxList) wxPendingDelete;
+wxList wxPendingDelete;
 
 // ----------------------------------------------------------------------------
 // wxEventLoopPtr

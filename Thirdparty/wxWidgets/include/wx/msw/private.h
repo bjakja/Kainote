@@ -60,7 +60,7 @@ extern HFONT wxSTATUS_LINE_FONT;
 // global data
 // ---------------------------------------------------------------------------
 
-extern (HINSTANCE) wxhInstance;
+extern HINSTANCE wxhInstance;
 
 extern "C"
 {

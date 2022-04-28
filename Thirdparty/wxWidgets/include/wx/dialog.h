@@ -385,7 +385,7 @@ private:
     DECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxWindowModalDialogEvent )
 };
 
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_WINDOW_MODAL_DIALOG_CLOSED , wxWindowModalDialogEvent );
+wxDECLARE_EXPORTED_EVENT(, wxEVT_WINDOW_MODAL_DIALOG_CLOSED , wxWindowModalDialogEvent );
 
 typedef void (wxEvtHandler::*wxWindowModalDialogEventFunction)(wxWindowModalDialogEvent &);
 

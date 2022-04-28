@@ -11,13 +11,13 @@
 #ifndef _WX_MSW_PANEL_H_
 #define _WX_MSW_PANEL_H_
 
-class WXDLLIMPEXP_FWD_CORE wxBrush;
+class  wxBrush;
 
 // ----------------------------------------------------------------------------
 // wxPanel
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxPanel : public wxPanelBase
+class  wxPanel : public wxPanelBase
 {
 public:
     wxPanel() { }

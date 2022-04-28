@@ -1790,7 +1790,7 @@ private:
     wxSize GetDlgUnitBase() const;
 
     // the stack of windows which have captured the mouse
-    static struct WXDLLIMPEXP_FWD_CORE wxWindowNext *ms_winCaptureNext;
+    static struct  wxWindowNext *ms_winCaptureNext;
 
     // the window that currently has mouse capture
     static wxWindow *ms_winCaptureCurrent;

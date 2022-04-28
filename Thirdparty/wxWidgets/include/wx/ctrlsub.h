@@ -30,7 +30,7 @@
 // implements an extended interface deriving from this one)
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxItemContainerImmutable
+class  wxItemContainerImmutable
 {
 public:
     wxItemContainerImmutable() { }
@@ -97,7 +97,7 @@ protected:
 // in this case DoInsertItem() needs to be overridden.
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxItemContainer : public wxItemContainerImmutable
+class  wxItemContainer : public wxItemContainerImmutable
 {
 private:
     // AppendItems() and InsertItems() helpers just call DoAppend/InsertItems()
@@ -431,7 +431,7 @@ public:
         { return wxItemContainer::GetClientObject(n); }
 };
 
-class WXDLLIMPEXP_CORE wxControlWithItemsBase :
+class  wxControlWithItemsBase :
     public wxWindowWithItems<wxControl, wxItemContainer>
 {
 public:
@@ -458,7 +458,7 @@ private:
 #elif defined(__WXMOTIF__)
     #include "wx/motif/ctrlsub.h"
 #else
-    class WXDLLIMPEXP_CORE wxControlWithItems : public wxControlWithItemsBase
+    class  wxControlWithItems : public wxControlWithItemsBase
     {
     public:
         wxControlWithItems() { }

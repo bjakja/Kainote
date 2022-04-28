@@ -19,7 +19,7 @@
 #include "wx/object.h"
 #include "wx/base64.h"
 
-class WXDLLIMPEXP_FWD_BASE wxArrayString;
+class  wxArrayString;
 
 // ----------------------------------------------------------------------------
 // constants
@@ -81,7 +81,7 @@ enum
 // (long) type (TODO doubles and other types such as wxDate coming soon).
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxConfigBase : public wxObject
+class  wxConfigBase : public wxObject
 {
 public:
   // constants
@@ -412,7 +412,7 @@ private:
 // you work in the entry directory and the path is automatically restored
 // when the function returns
 // Taken out of wxConfig since not all compilers can cope with nested classes.
-class WXDLLIMPEXP_BASE wxConfigPathChanger
+class  wxConfigPathChanger
 {
 public:
   // ctor/dtor do path changing/restoring of the path
@@ -448,12 +448,12 @@ private:
   '_' only. '$' must be escaped ('\$') in order to be taken literally.
 */
 
-WXDLLIMPEXP_BASE wxString wxExpandEnvVars(const wxString &sz);
+ wxString wxExpandEnvVars(const wxString &sz);
 
 /*
   Split path into parts removing '..' in progress
  */
-WXDLLIMPEXP_BASE void wxSplitPath(wxArrayString& aParts, const wxString& path);
+ void wxSplitPath(wxArrayString& aParts, const wxString& path);
 
 #endif // _WX_CONFBASE_H_
 

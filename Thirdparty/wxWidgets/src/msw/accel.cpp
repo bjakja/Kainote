@@ -41,9 +41,9 @@ IMPLEMENT_DYNAMIC_CLASS(wxAcceleratorTable, wxObject)
 // data defining wxAcceleratorTable
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxAcceleratorRefData: public wxObjectRefData
+class  wxAcceleratorRefData: public wxObjectRefData
 {
-    friend class WXDLLIMPEXP_FWD_CORE wxAcceleratorTable;
+    friend class  wxAcceleratorTable;
 public:
     wxAcceleratorRefData();
     virtual ~wxAcceleratorRefData();

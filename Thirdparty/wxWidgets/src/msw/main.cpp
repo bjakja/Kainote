@@ -18,7 +18,7 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-//#include "wx/wxprec.h"
+#include "wx/defs.h"
 
 #ifdef __BORLANDC__
     #pragma hdrstop
@@ -344,8 +344,7 @@ struct wxMSWCommandLineArguments
 static wxMSWCommandLineArguments wxArgs;
 
 // common part of wxMSW-specific wxEntryStart() and wxEntry() overloads
-static bool
-wxMSWEntryCommon(HINSTANCE hInstance, int nCmdShow)
+static bool wxMSWEntryCommon(HINSTANCE hInstance, int nCmdShow)
 {
     // the first thing to do is to check if we're trying to run an Unicode
     // program under Win9x w/o MSLU emulation layer - if so, abort right now
@@ -385,7 +384,7 @@ wxMSWEntryCommon(HINSTANCE hInstance, int nCmdShow)
     return true;
 }
 
-WXDLLEXPORT bool wxEntryStart(HINSTANCE hInstance,
+ bool wxEntryStart(HINSTANCE hInstance,
                               HINSTANCE WXUNUSED(hPrevInstance),
                               wxCmdLineArgType WXUNUSED(pCmdLine),
                               int nCmdShow)
@@ -396,7 +395,7 @@ WXDLLEXPORT bool wxEntryStart(HINSTANCE hInstance,
     return wxEntryStart(wxArgs.argc, wxArgs.argv);
 }
 
-WXDLLEXPORT int wxEntry(HINSTANCE hInstance,
+ int wxEntry(HINSTANCE hInstance,
                         HINSTANCE WXUNUSED(hPrevInstance),
                         wxCmdLineArgType WXUNUSED(pCmdLine),
                         int nCmdShow)

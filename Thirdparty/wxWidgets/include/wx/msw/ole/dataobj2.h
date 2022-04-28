@@ -21,7 +21,7 @@
 //     rarely used). This is ugly, but I haven't found a solution for it yet.
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxBitmapDataObject : public wxBitmapDataObjectBase
+class  wxBitmapDataObject : public wxBitmapDataObjectBase
 {
 public:
     // ctors
@@ -60,7 +60,7 @@ private:
 // FIXME did I already mention it was ugly?
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxBitmapDataObject2 : public wxBitmapDataObjectBase
+class  wxBitmapDataObject2 : public wxBitmapDataObjectBase
 {
 public:
     // ctors
@@ -91,7 +91,7 @@ private:
 // wxFileDataObject - data object for CF_HDROP
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxFileDataObject : public wxFileDataObjectBase
+class  wxFileDataObject : public wxFileDataObjectBase
 {
 public:
     wxFileDataObject() { }
@@ -119,7 +119,7 @@ private:
 // wxURLDataObject: data object for URLs
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxURLDataObject : public wxDataObjectComposite
+class  wxURLDataObject : public wxDataObjectComposite
 {
 public:
     // initialize with URL in ctor or use SetURL later

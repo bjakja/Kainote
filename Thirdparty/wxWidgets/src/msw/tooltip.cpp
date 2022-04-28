@@ -251,7 +251,7 @@ void wxToolTip::SetReshow(long milliseconds)
 
 void wxToolTip::SetMaxWidth(int width)
 {
-    wxASSERT_MSG( width == -1 || width >= 0, wxT("invalid width value") );
+    //wxASSERT_MSG( width == -1 || width >= 0, wxT("invalid width value") );
 
     ms_maxWidth = width;
 }
@@ -524,7 +524,7 @@ void wxToolTip::SetWindow(wxWindow *win)
             }
 
             // must have it by now!
-            wxASSERT_MSG( hwnd, wxT("no hwnd for subcontrol?") );
+            //wxASSERT_MSG( hwnd, wxT("no hwnd for subcontrol?") );
 
             AddOtherWindow((WXHWND)hwnd);
         }

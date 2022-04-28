@@ -34,7 +34,7 @@ enum wxZLibFlags {
     wxZLIB_AUTO = 3          // autodetect header zlib or gzip
 };
 
-class WXDLLIMPEXP_BASE wxZlibInputStream: public wxFilterInputStream {
+class  wxZlibInputStream: public wxFilterInputStream {
  public:
   wxZlibInputStream(wxInputStream& stream, int flags = wxZLIB_AUTO);
   wxZlibInputStream(wxInputStream *stream, int flags = wxZLIB_AUTO);
@@ -64,7 +64,7 @@ class WXDLLIMPEXP_BASE wxZlibInputStream: public wxFilterInputStream {
   wxDECLARE_NO_COPY_CLASS(wxZlibInputStream);
 };
 
-class WXDLLIMPEXP_BASE wxZlibOutputStream: public wxFilterOutputStream {
+class  wxZlibOutputStream: public wxFilterOutputStream {
  public:
   wxZlibOutputStream(wxOutputStream& stream, int level = -1, int flags = wxZLIB_ZLIB);
   wxZlibOutputStream(wxOutputStream *stream, int level = -1, int flags = wxZLIB_ZLIB);
@@ -118,7 +118,7 @@ private:
     DECLARE_DYNAMIC_CLASS(wxZlibClassFactory)
 };
 
-class WXDLLIMPEXP_BASE wxGzipClassFactory: public wxFilterClassFactory
+class  wxGzipClassFactory: public wxFilterClassFactory
 {
 public:
     wxGzipClassFactory();
@@ -139,7 +139,7 @@ private:
     DECLARE_DYNAMIC_CLASS(wxGzipClassFactory)
 };
 
-WXDLLIMPEXP_BASE wxVersionInfo wxGetZlibVersionInfo();
+ wxVersionInfo wxGetZlibVersionInfo();
 
 #endif
   // wxUSE_ZLIB && wxUSE_STREAMS

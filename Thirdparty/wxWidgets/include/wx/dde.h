@@ -14,13 +14,13 @@
 
 #include "wx/list.h"
 
-class WXDLLIMPEXP_FWD_BASE wxDDEClient;
-class WXDLLIMPEXP_FWD_BASE wxDDEServer;
-class WXDLLIMPEXP_FWD_BASE wxDDEConnection;
+class  wxDDEClient;
+class  wxDDEServer;
+class  wxDDEConnection;
 
-WX_DECLARE_USER_EXPORTED_LIST(wxDDEClient, wxDDEClientList, WXDLLIMPEXP_BASE);
-WX_DECLARE_USER_EXPORTED_LIST(wxDDEServer, wxDDEServerList, WXDLLIMPEXP_BASE);
-WX_DECLARE_USER_EXPORTED_LIST(wxDDEConnection, wxDDEConnectionList, WXDLLIMPEXP_BASE);
+WX_DECLARE_USER_EXPORTED_LIST(wxDDEClient, wxDDEClientList, );
+WX_DECLARE_USER_EXPORTED_LIST(wxDDEServer, wxDDEServerList, );
+WX_DECLARE_USER_EXPORTED_LIST(wxDDEConnection, wxDDEConnectionList, );
 
 #if defined(__WINDOWS__)
     #include "wx/msw/dde.h"

@@ -15,7 +15,7 @@
 // generic wxScrollHelper implementation
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxScrollHelper : public wxScrollHelperBase
+class  wxScrollHelper : public wxScrollHelperBase
 {
 public:
     wxScrollHelper(wxWindow *winToScroll);

@@ -112,14 +112,14 @@ enum wxZipFlags
 
 // Forward decls
 //
-class WXDLLIMPEXP_FWD_BASE wxZipEntry;
-class WXDLLIMPEXP_FWD_BASE wxZipInputStream;
+class  wxZipEntry;
+class  wxZipInputStream;
 
 
 /////////////////////////////////////////////////////////////////////////////
 // wxZipNotifier
 
-class WXDLLIMPEXP_BASE wxZipNotifier
+class  wxZipNotifier
 {
 public:
     virtual ~wxZipNotifier() { }
@@ -131,7 +131,7 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 // Zip Entry - holds the meta data for a file in the zip
 
-class WXDLLIMPEXP_BASE wxZipEntry : public wxArchiveEntry
+class  wxZipEntry : public wxArchiveEntry
 {
 public:
     wxZipEntry(const wxString& name = wxEmptyString,
@@ -269,9 +269,9 @@ private:
 /////////////////////////////////////////////////////////////////////////////
 // wxZipOutputStream
 
-WX_DECLARE_LIST_WITH_DECL(wxZipEntry, wxZipEntryList_, class WXDLLIMPEXP_BASE);
+WX_DECLARE_LIST_WITH_DECL(wxZipEntry, wxZipEntryList_, class );
 
-class WXDLLIMPEXP_BASE wxZipOutputStream : public wxArchiveOutputStream
+class  wxZipOutputStream : public wxArchiveOutputStream
 {
 public:
     wxZipOutputStream(wxOutputStream& stream,
@@ -355,7 +355,7 @@ private:
 /////////////////////////////////////////////////////////////////////////////
 // wxZipInputStream
 
-class WXDLLIMPEXP_BASE wxZipInputStream : public wxArchiveInputStream
+class  wxZipInputStream : public wxArchiveInputStream
 {
 public:
     typedef wxZipEntry entry_type;
@@ -463,7 +463,7 @@ typedef wxArchiveIterator<wxZipInputStream,
 /////////////////////////////////////////////////////////////////////////////
 // wxZipClassFactory
 
-class WXDLLIMPEXP_BASE wxZipClassFactory : public wxArchiveClassFactory
+class  wxZipClassFactory : public wxArchiveClassFactory
 {
 public:
     typedef wxZipEntry        entry_type;

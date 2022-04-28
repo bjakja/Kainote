@@ -17,7 +17,7 @@
 
 #if wxUSE_SPINBTN
 
-class WXDLLIMPEXP_CORE wxSpinButton : public wxSpinButtonBase
+class  wxSpinButton : public wxSpinButtonBase
 {
 public:
     // construction

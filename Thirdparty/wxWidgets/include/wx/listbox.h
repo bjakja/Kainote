@@ -23,20 +23,20 @@
 #include "wx/ctrlsub.h"         // base class
 
 // forward declarations are enough here
-class WXDLLIMPEXP_FWD_BASE wxArrayInt;
-class WXDLLIMPEXP_FWD_BASE wxArrayString;
+class  wxArrayInt;
+class  wxArrayString;
 
 // ----------------------------------------------------------------------------
 // global data
 // ----------------------------------------------------------------------------
 
-extern WXDLLIMPEXP_DATA_CORE(const char) wxListBoxNameStr[];
+extern const char wxListBoxNameStr[];
 
 // ----------------------------------------------------------------------------
 // wxListBox interface is defined by the class wxListBoxBase
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxListBoxBase : public wxControlWithItems
+class  wxListBoxBase : public wxControlWithItems
 {
 public:
     wxListBoxBase() { }

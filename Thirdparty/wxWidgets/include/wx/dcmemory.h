@@ -19,7 +19,7 @@
 // wxMemoryDC
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxMemoryDC: public wxDC
+class  wxMemoryDC: public wxDC
 {
 public:
     wxMemoryDC();
