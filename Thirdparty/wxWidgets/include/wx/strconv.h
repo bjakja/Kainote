@@ -27,7 +27,7 @@
 
 #include <stdlib.h>
 
-//class  wxString;
+class  wxString;
 
 // the error value returned by wxMBConv methods
 #define wxCONV_FAILED ((size_t)-1)

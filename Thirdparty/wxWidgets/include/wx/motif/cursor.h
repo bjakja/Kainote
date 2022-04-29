@@ -18,7 +18,7 @@
 class  wxImage;
 
 // Cursor
-class WXDLLIMPEXP_CORE wxCursor : public wxGDIObject
+class  wxCursor : public wxGDIObject
 {
 public:
     wxCursor();

@@ -683,7 +683,7 @@ extern "C" {
 
 /* safe version of strlen() (returns 0 if passed NULL pointer) */
 //inline size_t wxStrlen(const char *s) { return s ? ::strlen(s) : 0; }
-inline size_t wxStrlen(const wchar_t *s) { return s ? wxCRT_StrlenW(s) : 0; }
+//inline size_t wxStrlen(const wchar_t *s) { return s ? wxCRT_StrlenW(s) : 0; }
 //#ifndef wxWCHAR_T_IS_WXCHAR16
 //        size_t wxStrlen(const wxChar16 *s );
 //#endif

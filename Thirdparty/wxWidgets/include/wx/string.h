@@ -1079,8 +1079,8 @@ public:
       iterator() {}
       iterator(const iterator& i) : m_cur(i.m_cur) {}
 
-      reference operator*()
-        { return wxUniCharRef::CreateForString(m_cur); }
+      //reference operator*()
+        //{ return wxUniCharRef::CreateForString(m_cur); }
 
       iterator operator+(ptrdiff_t n) const
         { return iterator(wxStringOperations::AddToIter(m_cur, n)); }

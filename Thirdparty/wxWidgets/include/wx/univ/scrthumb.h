@@ -20,10 +20,10 @@
 // This class is similar to wxScrollThumb.
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_CORE wxControlWithThumb;
-class WXDLLIMPEXP_FWD_CORE wxMouseEvent;
-class WXDLLIMPEXP_FWD_CORE wxRect;
-class WXDLLIMPEXP_FWD_CORE wxScrollTimer;
+class  wxControlWithThumb;
+class  wxMouseEvent;
+class  wxRect;
+class  wxScrollTimer;
 
 #include "wx/timer.h"
 
@@ -31,7 +31,7 @@ class WXDLLIMPEXP_FWD_CORE wxScrollTimer;
 // wxScrollThumb: an abstraction of scrollbar thumb
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxScrollThumb
+class  wxScrollThumb
 {
 public:
     enum Shaft
@@ -83,7 +83,7 @@ private:
 // wxControlWithThumb: interface implemented by controls using wxScrollThumb
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxControlWithThumb
+class  wxControlWithThumb
 {
 public:
     virtual ~wxControlWithThumb() {}

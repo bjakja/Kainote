@@ -19,14 +19,14 @@
 #include "wx/prntbase.h"
 #include "wx/printdlg.h"
 
-class WXDLLIMPEXP_FWD_CORE wxDC;
+class  wxDC;
 class WinPrinter;
 
 //----------------------------------------------------------------------------
 // wxWindowsPrintNativeData
 //----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxWindowsPrintNativeData: public wxPrintNativeDataBase
+class  wxWindowsPrintNativeData: public wxPrintNativeDataBase
 {
 public:
     wxWindowsPrintNativeData();
@@ -58,7 +58,7 @@ private:
 // wxWindowsPrintDialog: the MSW dialog for printing
 // ---------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxWindowsPrintDialog : public wxPrintDialogBase
+class  wxWindowsPrintDialog : public wxPrintDialogBase
 {
 public:
     wxWindowsPrintDialog(wxWindow *parent, wxPrintDialogData* data = NULL);
@@ -95,7 +95,7 @@ private:
 // wxWindowsPageSetupDialog: the MSW page setup dialog
 // ---------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxWindowsPageSetupDialog: public wxPageSetupDialogBase
+class  wxWindowsPageSetupDialog: public wxPageSetupDialogBase
 {
 public:
     wxWindowsPageSetupDialog();
