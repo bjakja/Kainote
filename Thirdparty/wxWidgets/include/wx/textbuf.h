@@ -42,11 +42,11 @@ enum wxTextFileType
 
 WX_DEFINE_USER_EXPORTED_ARRAY_INT(wxTextFileType,
                                   wxArrayLinesType,
-                                  class WXDLLIMPEXP_BASE);
+                                  class );
 
 #endif // wxUSE_TEXTBUFFER
 
-class WXDLLIMPEXP_BASE wxTextBuffer
+class  wxTextBuffer
 {
 public:
     // constants and static functions
@@ -123,7 +123,7 @@ public:
         { return ++m_nCurLine == m_aLines.size() ? ms_eof
                                                  : m_aLines[m_nCurLine]; }
     wxString& GetPrevLine()  /* const */
-        { wxASSERT(m_nCurLine > 0); return m_aLines[--m_nCurLine]; }
+        { /*wxASSERT(m_nCurLine > 0);*/ return m_aLines[--m_nCurLine]; }
     wxString& GetLastLine() /* const */
         { m_nCurLine = m_aLines.size() - 1; return m_aLines.Last(); }
 

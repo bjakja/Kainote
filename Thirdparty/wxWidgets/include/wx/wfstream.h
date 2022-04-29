@@ -28,7 +28,7 @@
 // wxFileStream using wxFile
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxFileInputStream : public wxInputStream
+class  wxFileInputStream : public wxInputStream
 {
 public:
     wxFileInputStream(const wxString& ifileName);
@@ -56,7 +56,7 @@ protected:
     wxDECLARE_NO_COPY_CLASS(wxFileInputStream);
 };
 
-class WXDLLIMPEXP_BASE wxFileOutputStream : public wxOutputStream
+class  wxFileOutputStream : public wxOutputStream
 {
 public:
     wxFileOutputStream(const wxString& fileName);
@@ -86,15 +86,15 @@ protected:
     wxDECLARE_NO_COPY_CLASS(wxFileOutputStream);
 };
 
-class WXDLLIMPEXP_BASE wxTempFileOutputStream : public wxOutputStream
+class  wxTempFileOutputStream : public wxOutputStream
 {
 public:
     wxTempFileOutputStream(const wxString& fileName);
     virtual ~wxTempFileOutputStream();
 
     bool Close() { return Commit(); }
-    WXDLLIMPEXP_INLINE_BASE virtual bool Commit() { return m_file->Commit(); }
-    WXDLLIMPEXP_INLINE_BASE virtual void Discard() { m_file->Discard(); }
+    virtual bool Commit() { return m_file->Commit(); }
+    virtual void Discard() { m_file->Discard(); }
 
     wxFileOffset GetLength() const { return m_file->Length(); }
     bool IsSeekable() const { return true; }
@@ -111,7 +111,7 @@ private:
     wxDECLARE_NO_COPY_CLASS(wxTempFileOutputStream);
 };
 
-class WXDLLIMPEXP_BASE wxFileStream : public wxFileInputStream,
+class  wxFileStream : public wxFileInputStream,
                                       public wxFileOutputStream
 {
 public:
@@ -155,7 +155,7 @@ private:
 // wxFFileStream using wxFFile
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxFFileInputStream : public wxInputStream
+class  wxFFileInputStream : public wxInputStream
 {
 public:
     wxFFileInputStream(const wxString& fileName, const wxString& mode = "rb");
@@ -183,7 +183,7 @@ protected:
     wxDECLARE_NO_COPY_CLASS(wxFFileInputStream);
 };
 
-class WXDLLIMPEXP_BASE wxFFileOutputStream : public wxOutputStream
+class  wxFFileOutputStream : public wxOutputStream
 {
 public:
     wxFFileOutputStream(const wxString& fileName, const wxString& mode = "wb");
@@ -213,7 +213,7 @@ protected:
     wxDECLARE_NO_COPY_CLASS(wxFFileOutputStream);
 };
 
-class WXDLLIMPEXP_BASE wxFFileStream : public wxFFileInputStream,
+class  wxFFileStream : public wxFFileInputStream,
                                        public wxFFileOutputStream
 {
 public:

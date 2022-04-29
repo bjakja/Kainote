@@ -90,16 +90,16 @@
   (it's on by default, the current status can be retrieved with
    IsExpandingEnvVars function).
 */
-class WXDLLIMPEXP_FWD_BASE wxFileConfigGroup;
-class WXDLLIMPEXP_FWD_BASE wxFileConfigEntry;
-class WXDLLIMPEXP_FWD_BASE wxFileConfigLineList;
+class  wxFileConfigGroup;
+class  wxFileConfigEntry;
+class  wxFileConfigLineList;
 
 #if wxUSE_STREAMS
-class WXDLLIMPEXP_FWD_BASE wxInputStream;
-class WXDLLIMPEXP_FWD_BASE wxOutputStream;
+class  wxInputStream;
+class  wxOutputStream;
 #endif // wxUSE_STREAMS
 
-class WXDLLIMPEXP_BASE wxFileConfig : public wxConfigBase
+class  wxFileConfig : public wxConfigBase
 {
 public:
   // construct the "standard" full name for global (system-wide) and

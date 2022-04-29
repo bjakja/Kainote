@@ -27,9 +27,9 @@
 #include "wx/filename.h"
 #include "wx/hashmap.h"
 
-class WXDLLIMPEXP_FWD_BASE wxFSFile;
-class WXDLLIMPEXP_FWD_BASE wxFileSystemHandler;
-class WXDLLIMPEXP_FWD_BASE wxFileSystem;
+class  wxFSFile;
+class  wxFileSystemHandler;
+class  wxFileSystem;
 
 //--------------------------------------------------------------------------------
 // wxFSFile

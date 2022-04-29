@@ -55,7 +55,7 @@ wxFFile::wxFFile(const wxString& filename, const wxString& mode)
 
 bool wxFFile::Open(const wxString& filename, const wxString& mode)
 {
-    wxASSERT_MSG( !m_fp, wxT("should close or detach the old file first") );
+    //wxASSERT_MSG( !m_fp, wxT("should close or detach the old file first") );
 
     m_fp = wxFopen(filename, mode);
 

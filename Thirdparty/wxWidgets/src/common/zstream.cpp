@@ -175,7 +175,7 @@ void wxZlibInputStream::Init(int flags)
         case wxZLIB_ZLIB:       windowBits = MAX_WBITS; break;
         case wxZLIB_GZIP:       windowBits = MAX_WBITS | ZSTREAM_GZIP; break;
         case wxZLIB_AUTO:       windowBits = MAX_WBITS | ZSTREAM_AUTO; break;
-        default:                wxFAIL_MSG(wxT("Invalid zlib flag"));
+        default:                break;//wxFAIL_MSG(wxT("Invalid zlib flag")); 
       }
 
       if (inflateInit2(m_inflate, windowBits) == Z_OK)
@@ -197,7 +197,7 @@ wxZlibInputStream::~wxZlibInputStream()
 
 size_t wxZlibInputStream::OnSysRead(void *buffer, size_t size)
 {
-  wxASSERT_MSG(m_inflate && m_z_buffer, wxT("Inflate stream not open"));
+  //wxASSERT_MSG(m_inflate && m_z_buffer, wxT("Inflate stream not open"));
 
   if (!m_inflate || !m_z_buffer)
     m_lasterror = wxSTREAM_READ_ERROR;
@@ -311,7 +311,7 @@ void wxZlibOutputStream::Init(int level, int flags)
   }
   else
   {
-    wxASSERT_MSG(level >= 0 && level <= 9, wxT("wxZlibOutputStream compression level must be between 0 and 9!"));
+    //wxASSERT_MSG(level >= 0 && level <= 9, wxT("wxZlibOutputStream compression level must be between 0 and 9!"));
   }
 
   // if gzip is asked for but not supported...
@@ -335,7 +335,7 @@ void wxZlibOutputStream::Init(int level, int flags)
         case wxZLIB_NO_HEADER:  windowBits = -MAX_WBITS; break;
         case wxZLIB_ZLIB:       windowBits = MAX_WBITS; break;
         case wxZLIB_GZIP:       windowBits = MAX_WBITS | ZSTREAM_GZIP; break;
-        default:                wxFAIL_MSG(wxT("Invalid zlib flag"));
+        default:                //wxFAIL_MSG(wxT("Invalid zlib flag"));
       }
 
       if (deflateInit2(m_deflate, level, Z_DEFLATED, windowBits,
@@ -389,7 +389,7 @@ void wxZlibOutputStream::DoFlush(bool final)
 
 size_t wxZlibOutputStream::OnSysWrite(const void *buffer, size_t size)
 {
-  wxASSERT_MSG(m_deflate && m_z_buffer, wxT("Deflate stream not open"));
+  //wxASSERT_MSG(m_deflate && m_z_buffer, wxT("Deflate stream not open"));
 
   if (!m_deflate || !m_z_buffer)
   {

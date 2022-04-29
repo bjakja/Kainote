@@ -25,7 +25,7 @@
 #endif // wxUSE_GUI
 
 #if wxUSE_CONFIG && wxUSE_FILECONFIG
-    class WXDLLIMPEXP_FWD_BASE wxConfigBase;
+    class  wxConfigBase;
 #endif // wxUSE_CONFIG
 
 class  wxFontMapper;

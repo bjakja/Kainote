@@ -97,7 +97,7 @@ class  wxZlibOutputStream: public wxFilterOutputStream {
   wxDECLARE_NO_COPY_CLASS(wxZlibOutputStream);
 };
 
-class WXDLLIMPEXP_BASE wxZlibClassFactory: public wxFilterClassFactory
+class  wxZlibClassFactory: public wxFilterClassFactory
 {
 public:
     wxZlibClassFactory();
