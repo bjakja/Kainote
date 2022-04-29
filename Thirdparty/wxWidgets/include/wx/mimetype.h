@@ -29,9 +29,9 @@
 #include <stdarg.h>
 
 // fwd decls
-class WXDLLIMPEXP_FWD_BASE wxIconLocation;
-class WXDLLIMPEXP_FWD_BASE wxFileTypeImpl;
-class WXDLLIMPEXP_FWD_BASE wxMimeTypesManagerImpl;
+class  wxIconLocation;
+class  wxFileTypeImpl;
+class  wxMimeTypesManagerImpl;
 
 // these constants define the MIME informations source under UNIX and are used
 // by wxMimeTypesManager::Initialize()
@@ -71,7 +71,7 @@ public:
 
 // wxMimeTypeCommands stores the verbs defined for the given MIME type with
 // their values
-class WXDLLIMPEXP_BASE wxMimeTypeCommands
+class  wxMimeTypeCommands
 {
 public:
     wxMimeTypeCommands() {}
@@ -116,7 +116,7 @@ private:
 // This class is used with wxMimeTypesManager::AddFallbacks() and Associate()
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxFileTypeInfo
+class  wxFileTypeInfo
 {
 private:
     void DoVarArgInit(const wxString& mimeType,
@@ -291,7 +291,7 @@ private:
 };
 
 WX_DECLARE_USER_EXPORTED_OBJARRAY(wxFileTypeInfo, wxArrayFileTypeInfo,
-                                  WXDLLIMPEXP_BASE);
+                                  );
 
 // ----------------------------------------------------------------------------
 // wxFileType: gives access to all information about the files of given type.
@@ -304,9 +304,9 @@ WX_DECLARE_USER_EXPORTED_OBJARRAY(wxFileTypeInfo, wxArrayFileTypeInfo,
 // the accessors *must* be checked!
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxFileType
+class  wxFileType
 {
-friend class WXDLLIMPEXP_FWD_BASE wxMimeTypesManagerImpl;  // it has access to m_impl
+friend class  wxMimeTypesManagerImpl;  // it has access to m_impl
 
 public:
     // An object of this class must be passed to Get{Open|Print}Command. The
@@ -418,7 +418,7 @@ private:
 // wxMimeTypesManagerFactory
 //----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxMimeTypesManagerFactory
+class  wxMimeTypesManagerFactory
 {
 public:
     wxMimeTypesManagerFactory() {}
@@ -441,7 +441,7 @@ private:
 // given type) about them.
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxMimeTypesManager
+class  wxMimeTypesManager
 {
 public:
     // static helper functions
@@ -529,7 +529,7 @@ private:
 // ----------------------------------------------------------------------------
 
 // the default mime manager for wxWidgets programs
-extern WXDLLIMPEXP_DATA_BASE(wxMimeTypesManager *) wxTheMimeTypesManager;
+extern wxMimeTypesManager * wxTheMimeTypesManager;
 
 #endif // wxUSE_MIMETYPE
 

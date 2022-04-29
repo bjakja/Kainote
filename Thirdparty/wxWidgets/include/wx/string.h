@@ -47,7 +47,7 @@
     #include <strings.h>    // for strcasecmp()
 #endif // HAVE_STRCASECMP_IN_STRINGS_H
 
-#include "wx/wxcrt.h"   // for wxChar, wxStrlen() etc.
+//#include "wx/wxcrt.h"   // for wxChar, wxStrlen() etc.
 #include "wx/strvararg.h"
 #include "wx/buffer.h"      // for wxCharBuffer
 #include "wx/strconv.h"     // for wxConvertXXX() macros and wxMBConv classes

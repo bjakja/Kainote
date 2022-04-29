@@ -97,7 +97,7 @@ private:
 
 #if wxUSE_CONSOLE_EVENTLOOP
 
-class WXDLLIMPEXP_BASE wxConsoleEventLoop : public wxMSWEventLoopBase
+class  wxConsoleEventLoop : public wxMSWEventLoopBase
 {
 public:
     wxConsoleEventLoop() { }

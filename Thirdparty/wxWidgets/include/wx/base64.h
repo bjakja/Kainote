@@ -30,7 +30,7 @@ inline size_t wxBase64EncodedSize(size_t len) { return 4*((len+2)/3); }
 // large enough; to determine the needed size you can either allocate a buffer
 // of wxBase64EncodedSize(srcLen) size or call the function with NULL buffer in
 // which case the required size will be returned
-WXDLLIMPEXP_BASE size_t
+ size_t
 wxBase64Encode(char *dst, size_t dstLen, const void *src, size_t srcLen);
 
 // encode the contents of the given buffer using base64 and return as string
@@ -83,7 +83,7 @@ inline size_t wxBase64DecodedSize(size_t srcLen) { return 3*srcLen/4; }
 // such as the buffer is too small or the encoded string is invalid; in the
 // latter case the posErr is filled with the position where the decoding
 // stopped if it is not NULL
-WXDLLIMPEXP_BASE size_t
+ size_t
 wxBase64Decode(void *dst, size_t dstLen,
                const char *src, size_t srcLen = wxNO_LEN,
                wxBase64DecodeMode mode = wxBase64DecodeMode_Strict,
@@ -102,7 +102,7 @@ wxBase64Decode(void *dst, size_t dstLen,
 
 // decode the contents of the given string; the returned buffer is empty if an
 // error occurs during decoding
-WXDLLIMPEXP_BASE wxMemoryBuffer
+ wxMemoryBuffer
 wxBase64Decode(const char *src, size_t srcLen = wxNO_LEN,
                wxBase64DecodeMode mode = wxBase64DecodeMode_Strict,
                size_t *posErr = NULL);

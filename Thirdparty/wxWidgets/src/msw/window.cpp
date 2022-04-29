@@ -157,7 +157,7 @@
 #ifdef __WXWINCE__
     #define wxUSE_MOUSEEVENT_HACK 0
 #else
-    #define wxUSE_MOUSEEVENT_HACK 1
+    //#define wxUSE_MOUSEEVENT_HACK 1
 #endif
 
 // not all compilers/platforms have X button related declarations (notably
@@ -4347,7 +4347,7 @@ void wxWindowMSW::SetDoubleBuffered(bool on)
         (wxUSE_CONTROLS && !defined(__WXUNIVERSAL__))
     #define WXUNUSED_UNLESS_ODRAWN(param) param
 #else
-    #define WXUNUSED_UNLESS_ODRAWN(param)
+    //#define WXUNUSED_UNLESS_ODRAWN(param)
 #endif
 
 bool

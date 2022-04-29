@@ -248,7 +248,7 @@ wxString wxPathList::FindValidPath (const wxString& file) const
     if (!fn.Normalize(wxPATH_NORM_TILDE|wxPATH_NORM_LONG|wxPATH_NORM_ENV_VARS))
         return wxEmptyString;
 
-    wxASSERT_MSG(!fn.IsDir(), wxT("Cannot search for directories; only for files"));
+    //wxASSERT_MSG(!fn.IsDir(), wxT("Cannot search for directories; only for files"));
     if (fn.IsAbsolute())
         strend = fn.GetFullName();      // search for the file name and ignore the path part
     else
@@ -1352,7 +1352,7 @@ wxString wxFindFirstFile(const wxString& spec, int flags)
 
 wxString wxFindNextFile()
 {
-    wxCHECK_MSG( gs_dir, "", "You must call wxFindFirstFile before!" );
+    //wxCHECK_MSG( gs_dir, "", "You must call wxFindFirstFile before!" );
 
     wxString result;
     gs_dir->GetNext(&result);
@@ -1593,8 +1593,8 @@ bool wxEndsWithPathSeparator(const wxString& filename)
 bool wxFindFileInPath(wxString *pStr, const wxString& szPath, const wxString& szFile)
 {
     // we assume that it's not empty
-    wxCHECK_MSG( !szFile.empty(), false,
-                 wxT("empty file name in wxFindFileInPath"));
+    /*wxCHECK_MSG( !szFile.empty(), false,
+                 wxT("empty file name in wxFindFileInPath"));*/
 
     // skip path separator in the beginning of the file name if present
     wxString szFile2;
@@ -1634,7 +1634,7 @@ void WXDLLIMPEXP_BASE wxSplitPath(const wxString& fileName,
 
 #if wxUSE_DATETIME
 
-time_t WXDLLIMPEXP_BASE wxFileModificationTime(const wxString& filename)
+time_t  wxFileModificationTime(const wxString& filename)
 {
     wxDateTime mtime;
     if ( !wxFileName(filename).GetTimes(NULL, &mtime, NULL) )
@@ -1650,7 +1650,7 @@ time_t WXDLLIMPEXP_BASE wxFileModificationTime(const wxString& filename)
 // Returns 0 if none or if there's a problem.
 // filterStr is in the form: "All files (*.*)|*.*|JPEG Files (*.jpeg)|*.jpeg"
 
-int WXDLLIMPEXP_BASE wxParseCommonDialogsFilter(const wxString& filterStr,
+int  wxParseCommonDialogsFilter(const wxString& filterStr,
                                            wxArrayString& descriptions,
                                            wxArrayString& filters)
 {
@@ -1675,7 +1675,7 @@ int WXDLLIMPEXP_BASE wxParseCommonDialogsFilter(const wxString& filterStr,
             }
             else
             {
-                wxFAIL_MSG( wxT("missing '|' in the wildcard string!") );
+                //wxFAIL_MSG( wxT("missing '|' in the wildcard string!") );
             }
 
             break;

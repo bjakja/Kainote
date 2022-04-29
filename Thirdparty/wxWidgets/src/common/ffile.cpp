@@ -94,11 +94,11 @@ bool wxFFile::Close()
 
 bool wxFFile::ReadAll(wxString *str, const wxMBConv& conv)
 {
-    wxCHECK_MSG( str, false, wxT("invalid parameter") );
+   /* wxCHECK_MSG( str, false, wxT("invalid parameter") );
     wxCHECK_MSG( IsOpened(), false, wxT("can't read from closed file") );
-    wxCHECK_MSG( Length() >= 0, false, wxT("invalid length") );
+    wxCHECK_MSG( Length() >= 0, false, wxT("invalid length") );*/
     size_t length = (size_t) Length();
-    wxCHECK_MSG( (wxFileOffset)length == Length(), false, wxT("huge file not supported") );
+    //wxCHECK_MSG( (wxFileOffset)length == Length(), false, wxT("huge file not supported") );
 
     clearerr(m_fp);
 
@@ -124,8 +124,8 @@ bool wxFFile::ReadAll(wxString *str, const wxMBConv& conv)
 
 size_t wxFFile::Read(void *pBuf, size_t nCount)
 {
-    wxCHECK_MSG( pBuf, 0, wxT("invalid parameter") );
-    wxCHECK_MSG( IsOpened(), 0, wxT("can't read from closed file") );
+    /*wxCHECK_MSG( pBuf, 0, wxT("invalid parameter") );
+    wxCHECK_MSG( IsOpened(), 0, wxT("can't read from closed file") );*/
 
     size_t nRead = fread(pBuf, 1, nCount, m_fp);
     if ( (nRead < nCount) && Error() )
@@ -138,8 +138,8 @@ size_t wxFFile::Read(void *pBuf, size_t nCount)
 
 size_t wxFFile::Write(const void *pBuf, size_t nCount)
 {
-    wxCHECK_MSG( pBuf, 0, wxT("invalid parameter") );
-    wxCHECK_MSG( IsOpened(), 0, wxT("can't write to closed file") );
+    /*wxCHECK_MSG( pBuf, 0, wxT("invalid parameter") );
+    wxCHECK_MSG( IsOpened(), 0, wxT("can't write to closed file") );*/
 
     size_t nWritten = fwrite(pBuf, 1, nCount, m_fp);
     if ( nWritten < nCount )
@@ -181,13 +181,13 @@ bool wxFFile::Flush()
 
 bool wxFFile::Seek(wxFileOffset ofs, wxSeekMode mode)
 {
-    wxCHECK_MSG( IsOpened(), false, wxT("can't seek on closed file") );
+    //wxCHECK_MSG( IsOpened(), false, wxT("can't seek on closed file") );
 
     int origin;
     switch ( mode )
     {
         default:
-            wxFAIL_MSG(wxT("unknown seek mode"));
+            //wxFAIL_MSG(wxT("unknown seek mode"));
             // still fall through
 
         case wxFromStart:
@@ -226,8 +226,8 @@ bool wxFFile::Seek(wxFileOffset ofs, wxSeekMode mode)
 
 wxFileOffset wxFFile::Tell() const
 {
-    wxCHECK_MSG( IsOpened(), wxInvalidOffset,
-                 wxT("wxFFile::Tell(): file is closed!") );
+    /*wxCHECK_MSG( IsOpened(), wxInvalidOffset,
+                 wxT("wxFFile::Tell(): file is closed!") );*/
 
     wxFileOffset rc = wxFtell(m_fp);
     if ( rc == wxInvalidOffset )
@@ -241,8 +241,8 @@ wxFileOffset wxFFile::Tell() const
 
 wxFileOffset wxFFile::Length() const
 {
-    wxCHECK_MSG( IsOpened(), wxInvalidOffset,
-                 wxT("wxFFile::Length(): file is closed!") );
+    /*wxCHECK_MSG( IsOpened(), wxInvalidOffset,
+                 wxT("wxFFile::Length(): file is closed!") );*/
 
     wxFFile& self = *const_cast<wxFFile *>(this);
 

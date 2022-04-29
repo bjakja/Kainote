@@ -43,8 +43,8 @@ class  wxHashTableBase;
 
 class  wxHashTableBase_Node
 {
-    friend class WXDLLIMPEXP_FWD_BASE wxHashTableBase;
-    typedef class WXDLLIMPEXP_FWD_BASE wxHashTableBase_Node _Node;
+    friend class  wxHashTableBase;
+    typedef class  wxHashTableBase_Node _Node;
 public:
     wxHashTableBase_Node( long key, void* value,
                           wxHashTableBase* table );
@@ -79,12 +79,12 @@ protected:
     wxHashTableBase* m_hashPtr;
 };
 
-class WXDLLIMPEXP_BASE wxHashTableBase
+class  wxHashTableBase
 #if !wxUSE_STD_CONTAINERS
     : public wxObject
 #endif
 {
-    friend class WXDLLIMPEXP_FWD_BASE wxHashTableBase_Node;
+    friend class  wxHashTableBase_Node;
 public:
     typedef wxHashTableBase_Node Node;
 
@@ -159,7 +159,7 @@ private:
 
 class  wxHashTable_Node : public wxHashTableBase_Node
 {
-    friend class WXDLLIMPEXP_FWD_BASE wxHashTable;
+    friend class  wxHashTable;
 public:
     wxHashTable_Node( long key, void* value,
                       wxHashTableBase* table )

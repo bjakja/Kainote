@@ -16,13 +16,13 @@
 
 #if wxUSE_REGKEY
 
-class WXDLLIMPEXP_FWD_BASE wxOutputStream;
+class  wxOutputStream;
 
 // ----------------------------------------------------------------------------
 // class wxRegKey encapsulates window HKEY handle
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxRegKey
+class  wxRegKey
 {
 public:
   // NB: do _not_ change the values of elements in these enumerations!

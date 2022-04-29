@@ -36,7 +36,7 @@ class  wxTimerImpl;
 class  wxTimerEvent;
 
 // timer event type
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_BASE, wxEVT_TIMER, wxTimerEvent);
+wxDECLARE_EXPORTED_EVENT(, wxEVT_TIMER, wxTimerEvent);
 
 // the interface of wxTimer class
 class  wxTimer : public wxEvtHandler

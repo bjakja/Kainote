@@ -9,7 +9,7 @@
 #include <iostream>
 #include <vector>
 
-#include "H:\Kainote\Thirdparty\zlib\contrib\minizip/zip.h"
+#include "L:\Kainote\Thirdparty\zlib\contrib\minizip/zip.h"
 #if _DEBUG
 	#include <vld.h>
 #endif

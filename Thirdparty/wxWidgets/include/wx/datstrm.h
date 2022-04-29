@@ -18,7 +18,7 @@
 
 #if wxUSE_STREAMS
 
-class WXDLLIMPEXP_BASE wxDataInputStream
+class  wxDataInputStream
 {
 public:
 #if wxUSE_UNICODE
@@ -94,7 +94,7 @@ protected:
     wxDECLARE_NO_COPY_CLASS(wxDataInputStream);
 };
 
-class WXDLLIMPEXP_BASE wxDataOutputStream
+class  wxDataOutputStream
 {
 public:
 #if wxUSE_UNICODE

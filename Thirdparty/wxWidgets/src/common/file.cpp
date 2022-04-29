@@ -151,7 +151,7 @@ bool wxFile::Access(const wxString& name, OpenMode mode)
     switch ( mode )
     {
         default:
-            wxFAIL_MSG(wxT("bad wxFile::Access mode parameter."));
+            //wxFAIL_MSG(wxT("bad wxFile::Access mode parameter."));
             // fall through
 
         case read:
@@ -294,7 +294,7 @@ bool wxFile::Close()
 // read
 ssize_t wxFile::Read(void *pBuf, size_t nCount)
 {
-    wxCHECK( (pBuf != NULL) && IsOpened(), 0 );
+    //wxCHECK( (pBuf != NULL) && IsOpened(), 0 );
 
     ssize_t iRc = wxRead(m_fd, pBuf, nCount);
 
@@ -310,7 +310,7 @@ ssize_t wxFile::Read(void *pBuf, size_t nCount)
 // write
 size_t wxFile::Write(const void *pBuf, size_t nCount)
 {
-    wxCHECK( (pBuf != NULL) && IsOpened(), 0 );
+    //wxCHECK( (pBuf != NULL) && IsOpened(), 0 );
 
     ssize_t iRc = wxWrite(m_fd, pBuf, nCount);
 
@@ -364,15 +364,15 @@ bool wxFile::Flush()
 // seek
 wxFileOffset wxFile::Seek(wxFileOffset ofs, wxSeekMode mode)
 {
-    wxASSERT_MSG( IsOpened(), wxT("can't seek on closed file") );
+    /*wxASSERT_MSG( IsOpened(), wxT("can't seek on closed file") );
     wxCHECK_MSG( ofs != wxInvalidOffset || mode != wxFromStart,
                  wxInvalidOffset,
-                 wxT("invalid absolute file offset") );
+                 wxT("invalid absolute file offset") );*/
 
     int origin;
     switch ( mode ) {
         default:
-            wxFAIL_MSG(wxT("unknown seek origin"));
+            //wxFAIL_MSG(wxT("unknown seek origin"));
 
         case wxFromStart:
             origin = SEEK_SET;
@@ -399,7 +399,7 @@ wxFileOffset wxFile::Seek(wxFileOffset ofs, wxSeekMode mode)
 // get current file offset
 wxFileOffset wxFile::Tell() const
 {
-    wxASSERT( IsOpened() );
+    //wxASSERT( IsOpened() );
 
     wxFileOffset iRc = wxTell(m_fd);
     if ( CheckForError(iRc) )
@@ -413,7 +413,7 @@ wxFileOffset wxFile::Tell() const
 // get current file length
 wxFileOffset wxFile::Length() const
 {
-    wxASSERT( IsOpened() );
+    //wxASSERT( IsOpened() );
 
     // we use a special method for Linux systems where files in sysfs (i.e.
     // those under /sys typically) return length of 4096 bytes even when
@@ -456,7 +456,7 @@ wxFileOffset wxFile::Length() const
 // is end of file reached?
 bool wxFile::Eof() const
 {
-    wxASSERT( IsOpened() );
+    //wxASSERT( IsOpened() );
 
     wxFileOffset iRc;
 
@@ -481,7 +481,7 @@ bool wxFile::Eof() const
     }
     else if ( iRc != 1 )
     {
-        wxFAIL_MSG(wxT("invalid eof() return value."));
+        //wxFAIL_MSG(wxT("invalid eof() return value."));
     }
 
     return true;

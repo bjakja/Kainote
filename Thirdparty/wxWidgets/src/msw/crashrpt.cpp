@@ -292,7 +292,7 @@ wxCrashContext::wxCrashContext(_EXCEPTION_POINTERS *ep)
 
     if ( !ep )
     {
-        wxCHECK_RET( wxGlobalSEInformation, wxT("no exception info available") );
+        //wxCHECK_RET( wxGlobalSEInformation, wxT("no exception info available") );
         ep = wxGlobalSEInformation;
     }
 
