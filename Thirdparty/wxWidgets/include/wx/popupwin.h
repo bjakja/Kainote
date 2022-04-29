@@ -23,7 +23,7 @@
 // combobox popups and such.
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxPopupWindowBase : public wxNonOwnedWindow
+class  wxPopupWindowBase : public wxNonOwnedWindow
 {
 public:
     wxPopupWindowBase() { }
@@ -77,10 +77,10 @@ public:
 // when the user clicks mouse outside it or if it loses focus in any other way
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_CORE wxPopupWindowHandler;
-class WXDLLIMPEXP_FWD_CORE wxPopupFocusHandler;
+class  wxPopupWindowHandler;
+class  wxPopupFocusHandler;
 
-class WXDLLIMPEXP_CORE wxPopupTransientWindow : public wxPopupWindow
+class  wxPopupTransientWindow : public wxPopupWindow
 {
 public:
     // ctors

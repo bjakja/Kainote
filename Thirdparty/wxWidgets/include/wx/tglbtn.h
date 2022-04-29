@@ -20,15 +20,15 @@
 #include "wx/event.h"
 #include "wx/anybutton.h"     // base class
 
-extern WXDLLIMPEXP_DATA_CORE(const char) wxCheckBoxNameStr[];
+extern const char wxCheckBoxNameStr[];
 
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEvent );
 
 // ----------------------------------------------------------------------------
 // wxToggleButtonBase
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxToggleButtonBase : public wxAnyButton
+class  wxToggleButtonBase : public wxAnyButton
 {
 public:
     wxToggleButtonBase() { }

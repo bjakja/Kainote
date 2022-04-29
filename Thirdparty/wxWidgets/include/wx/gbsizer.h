@@ -28,7 +28,7 @@
 // is used for this and also for wxGridCellCoords.
 //---------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxGBPosition
+class  wxGBPosition
 {
 public:
     wxGBPosition() : m_row(0), m_col(0) {}
@@ -50,7 +50,7 @@ private:
 };
 
 
-class WXDLLIMPEXP_CORE wxGBSpan
+class  wxGBSpan
 {
 public:
     wxGBSpan() { Init(); }
@@ -98,17 +98,17 @@ private:
 };
 
 
-extern WXDLLIMPEXP_DATA_CORE(const wxGBSpan) wxDefaultSpan;
+extern const wxGBSpan wxDefaultSpan;
 
 
 //---------------------------------------------------------------------------
 // wxGBSizerItem
 //---------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_CORE wxGridBagSizer;
+class  wxGridBagSizer;
 
 
-class WXDLLIMPEXP_CORE wxGBSizerItem : public wxSizerItem
+class  wxGBSizerItem : public wxSizerItem
 {
 public:
     // spacer
@@ -191,7 +191,7 @@ private:
 //---------------------------------------------------------------------------
 
 
-class WXDLLIMPEXP_CORE wxGridBagSizer : public wxFlexGridSizer
+class  wxGridBagSizer : public wxFlexGridSizer
 {
 public:
     wxGridBagSizer(int vgap = 0, int hgap = 0 );

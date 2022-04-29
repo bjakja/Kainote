@@ -16,7 +16,7 @@
 // wxStandardPaths
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxStandardPaths : public wxStandardPathsBase
+class  wxStandardPaths : public wxStandardPathsBase
 {
 public:
     // ctor calls IgnoreAppBuildSubDirs() and also sets up the object to use
@@ -83,7 +83,7 @@ protected:
 
 // override config file locations to be compatible with the values used by
 // wxFileConfig (dating from Win16 days which explains the class name)
-class WXDLLIMPEXP_BASE wxStandardPathsWin16 : public wxStandardPaths
+class  wxStandardPathsWin16 : public wxStandardPaths
 {
 public:
     virtual wxString GetConfigDir() const;

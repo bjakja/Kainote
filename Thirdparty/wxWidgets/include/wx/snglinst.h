@@ -22,7 +22,7 @@
 // wxSingleInstanceChecker
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxSingleInstanceChecker
+class  wxSingleInstanceChecker
 {
 public:
     // default ctor, use Create() after it
@@ -87,7 +87,7 @@ private:
     bool DoIsAnotherRunning() const;
 
     // the implementation details (platform specific)
-    class WXDLLIMPEXP_FWD_BASE wxSingleInstanceCheckerImpl *m_impl;
+    class  wxSingleInstanceCheckerImpl *m_impl;
 
     wxDECLARE_NO_COPY_CLASS(wxSingleInstanceChecker);
 };
