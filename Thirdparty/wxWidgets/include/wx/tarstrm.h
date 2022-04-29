@@ -45,7 +45,7 @@ enum wxTarFormat
 /////////////////////////////////////////////////////////////////////////////
 // wxTarNotifier
 
-class WXDLLIMPEXP_BASE wxTarNotifier
+class  wxTarNotifier
 {
 public:
     virtual ~wxTarNotifier() { }
@@ -57,7 +57,7 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 // Tar Entry - hold the meta data for a file in the tar
 
-class WXDLLIMPEXP_BASE wxTarEntry : public wxArchiveEntry
+class  wxTarEntry : public wxArchiveEntry
 {
 public:
     wxTarEntry(const wxString& name = wxEmptyString,
@@ -152,7 +152,7 @@ private:
 
 WX_DECLARE_STRING_HASH_MAP(wxString, wxTarHeaderRecords);
 
-class WXDLLIMPEXP_BASE wxTarInputStream : public wxArchiveInputStream
+class  wxTarInputStream : public wxArchiveInputStream
 {
 public:
     typedef wxTarEntry entry_type;
@@ -207,7 +207,7 @@ private:
 /////////////////////////////////////////////////////////////////////////////
 // wxTarOutputStream
 
-class WXDLLIMPEXP_BASE wxTarOutputStream : public wxArchiveOutputStream
+class  wxTarOutputStream : public wxArchiveOutputStream
 {
 public:
     wxTarOutputStream(wxOutputStream& stream,
@@ -300,7 +300,7 @@ typedef wxArchiveIterator<wxTarInputStream,
 /////////////////////////////////////////////////////////////////////////////
 // wxTarClassFactory
 
-class WXDLLIMPEXP_BASE wxTarClassFactory : public wxArchiveClassFactory
+class  wxTarClassFactory : public wxArchiveClassFactory
 {
 public:
     typedef wxTarEntry        entry_type;

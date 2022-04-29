@@ -114,31 +114,31 @@ struct wxCmdLineOption
     // types increases, so always use the accessor functions and don't access
     // the fields directly!)
 
-    void Check(wxCmdLineParamType WXUNUSED_UNLESS_DEBUG(typ)) const
-    {
-        /*wxASSERT_MSG( type == typ, wxT("type mismatch in wxCmdLineOption") );*/
-    }
+    //void Check(wxCmdLineParamType WXUNUSED_UNLESS_DEBUG(typ)) const
+    //{
+    //    /*wxASSERT_MSG( type == typ, wxT("type mismatch in wxCmdLineOption") );*/
+    //}
 
     double GetDoubleVal() const
-        { Check(wxCMD_LINE_VAL_DOUBLE); return m_doubleVal; }
+        { /*Check(wxCMD_LINE_VAL_DOUBLE);*/ return m_doubleVal; }
     long GetLongVal() const
-        { Check(wxCMD_LINE_VAL_NUMBER); return m_longVal; }
+        { /*Check(wxCMD_LINE_VAL_NUMBER);*/ return m_longVal; }
     const wxString& GetStrVal() const
-        { Check(wxCMD_LINE_VAL_STRING); return m_strVal;  }
+        { /*Check(wxCMD_LINE_VAL_STRING);*/ return m_strVal;  }
 #if wxUSE_DATETIME
     const wxDateTime& GetDateVal() const
-        { Check(wxCMD_LINE_VAL_DATE);   return m_dateVal; }
+        { /*Check(wxCMD_LINE_VAL_DATE);*/   return m_dateVal; }
 #endif // wxUSE_DATETIME
 
     void SetDoubleVal(double val)
-        { Check(wxCMD_LINE_VAL_DOUBLE); m_doubleVal = val; m_hasVal = true; }
+        { /*Check(wxCMD_LINE_VAL_DOUBLE);*/ m_doubleVal = val; m_hasVal = true; }
     void SetLongVal(long val)
-        { Check(wxCMD_LINE_VAL_NUMBER); m_longVal = val; m_hasVal = true; }
+        { /*Check(wxCMD_LINE_VAL_NUMBER);*/ m_longVal = val; m_hasVal = true; }
     void SetStrVal(const wxString& val)
-        { Check(wxCMD_LINE_VAL_STRING); m_strVal = val; m_hasVal = true; }
+        { /*Check(wxCMD_LINE_VAL_STRING);*/ m_strVal = val; m_hasVal = true; }
 #if wxUSE_DATETIME
     void SetDateVal(const wxDateTime& val)
-        { Check(wxCMD_LINE_VAL_DATE); m_dateVal = val; m_hasVal = true; }
+        { /*Check(wxCMD_LINE_VAL_DATE);*/ m_dateVal = val; m_hasVal = true; }
 #endif // wxUSE_DATETIME
 
     void SetHasValue() { m_hasVal = true; }
@@ -686,7 +686,7 @@ int wxCmdLineParser::Parse(bool showUsage)
         // empty argument or just '-' is not an option but a parameter
         if ( maybeOption && arg.length() > 1 &&
                 // FIXME-UTF8: use wc_str() after removing ANSI build
-                wxStrchr(m_data->m_switchChars.c_str(), arg[0u]) )
+                strchr(m_data->m_switchChars.c_str(), arg[0u]) )
         {
             bool isLong;
             wxString name;

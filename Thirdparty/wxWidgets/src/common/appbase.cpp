@@ -290,7 +290,7 @@ wxAppTraits *wxAppConsoleBase::GetTraits()
     {
         m_traits = CreateTraits();
 
-        wxASSERT_MSG( m_traits, wxT("wxApp::CreateTraits() failed?") );
+        //wxASSERT_MSG( m_traits, wxT("wxApp::CreateTraits() failed?") );
     }
 
     return m_traits;
@@ -427,8 +427,8 @@ void wxAppConsoleBase::RemovePendingEventHandler(wxEvtHandler* toRemove)
         m_handlersWithPendingEvents.Remove(toRemove);
 
         // check that the handler was present only once in the list
-        wxASSERT_MSG( m_handlersWithPendingEvents.Index(toRemove) == wxNOT_FOUND,
-                        "Handler occurs twice in the m_handlersWithPendingEvents list!" );
+        /*wxASSERT_MSG( m_handlersWithPendingEvents.Index(toRemove) == wxNOT_FOUND,
+                        "Handler occurs twice in the m_handlersWithPendingEvents list!" );*/
     }
     //else: it wasn't in this list at all, it's ok
 
@@ -437,8 +437,8 @@ void wxAppConsoleBase::RemovePendingEventHandler(wxEvtHandler* toRemove)
         m_handlersWithPendingDelayedEvents.Remove(toRemove);
 
         // check that the handler was present only once in the list
-        wxASSERT_MSG( m_handlersWithPendingDelayedEvents.Index(toRemove) == wxNOT_FOUND,
-                        "Handler occurs twice in m_handlersWithPendingDelayedEvents list!" );
+        /*wxASSERT_MSG( m_handlersWithPendingDelayedEvents.Index(toRemove) == wxNOT_FOUND,
+                        "Handler occurs twice in m_handlersWithPendingDelayedEvents list!" );*/
     }
     //else: it wasn't in this list at all, it's ok
 
@@ -482,8 +482,8 @@ void wxAppConsoleBase::ProcessPendingEvents()
     {
         wxENTER_CRIT_SECT(m_handlersWithPendingEventsLocker);
 
-        wxCHECK_RET( m_handlersWithPendingDelayedEvents.IsEmpty(),
-                     "this helper list should be empty" );
+        /*wxCHECK_RET( m_handlersWithPendingDelayedEvents.IsEmpty(),
+                     "this helper list should be empty" );*/
 
         // iterate until the list becomes empty: the handlers remove themselves
         // from it when they don't have any more pending events
@@ -521,8 +521,8 @@ void wxAppConsoleBase::DeletePendingEvents()
 {
     wxENTER_CRIT_SECT(m_handlersWithPendingEventsLocker);
 
-    wxCHECK_RET( m_handlersWithPendingDelayedEvents.IsEmpty(),
-                 "this helper list should be empty" );
+    /*wxCHECK_RET( m_handlersWithPendingDelayedEvents.IsEmpty(),
+                 "this helper list should be empty" );*/
 
     for (unsigned int i=0; i<m_handlersWithPendingEvents.GetCount(); i++)
         m_handlersWithPendingEvents[i]->DeletePendingEvents();
@@ -853,14 +853,14 @@ void wxAppTraitsBase::MutexGuiLeave()
     wxMutexGuiLeaveImpl();
 }
 
-void WXDLLIMPEXP_BASE wxMutexGuiEnter()
+void  wxMutexGuiEnter()
 {
     wxAppTraits * const traits = wxAppConsoleBase::GetTraitsIfExists();
     if ( traits )
         traits->MutexGuiEnter();
 }
 
-void WXDLLIMPEXP_BASE wxMutexGuiLeave()
+void  wxMutexGuiLeave()
 {
     wxAppTraits * const traits = wxAppConsoleBase::GetTraitsIfExists();
     if ( traits )

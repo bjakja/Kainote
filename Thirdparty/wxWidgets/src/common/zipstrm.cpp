@@ -200,20 +200,20 @@ wxZipHeader::wxZipHeader(wxInputStream& stream, size_t size)
     m_pos(0),
     m_ok(false)
 {
-    wxCHECK_RET(size <= sizeof(m_data), wxT("buffer too small"));
+    //wxCHECK_RET(size <= sizeof(m_data), wxT("buffer too small"));
     m_size = stream.Read(m_data, size).LastRead();
     m_ok = m_size == size;
 }
 
 inline wxUint8 wxZipHeader::Read8()
 {
-    wxASSERT(m_pos < m_size);
+    //wxASSERT(m_pos < m_size);
     return m_data[m_pos++];
 }
 
 inline wxUint16 wxZipHeader::Read16()
 {
-    wxASSERT(m_pos + 2 <= m_size);
+    //wxASSERT(m_pos + 2 <= m_size);
     wxUint16 n = CrackUint16(m_data + m_pos);
     m_pos += 2;
     return n;
@@ -221,7 +221,7 @@ inline wxUint16 wxZipHeader::Read16()
 
 inline wxUint32 wxZipHeader::Read32()
 {
-    wxASSERT(m_pos + 4 <= m_size);
+    //wxASSERT(m_pos + 4 <= m_size);
     wxUint32 n = CrackUint32(m_data + m_pos);
     m_pos += 4;
     return n;
@@ -404,7 +404,7 @@ size_t wxTeeInputStream::GetData(char *buffer, size_t size)
         len = len > m_wbacksize ? len - m_wbacksize : 0;
         m_buf.SetDataLen(len);
         if (m_end > len) {
-            wxFAIL; // we've already returned data that's now being ungot
+            //wxFAIL; // we've already returned data that's now being ungot
             m_end = len;
         }
         m_parent_i_stream->Reset();
@@ -420,7 +420,7 @@ size_t wxTeeInputStream::GetData(char *buffer, size_t size)
     if (size) {
         memcpy(buffer, m_buf + m_start, size);
         m_start += size;
-        wxASSERT(m_start <= m_end);
+        //wxASSERT(m_start <= m_end);
     }
 
     if (m_start == m_end && m_start > 0 && m_buf.GetDataLen() > 0) {
@@ -516,7 +516,7 @@ public:
 
 bool wxZlibOutputStream2::Open(wxOutputStream& stream)
 {
-    wxCHECK(m_pos == wxInvalidOffset, false);
+    //wxCHECK(m_pos == wxInvalidOffset, false);
 
     m_deflate->next_out = m_z_buffer;
     m_deflate->avail_out = m_z_size;
@@ -659,7 +659,7 @@ public:
     bool IsEmpty() const { return m_entries.empty(); }
 
 private:
-    ~wxZipWeakLinks() { wxASSERT(IsEmpty()); }
+    ~wxZipWeakLinks() { /*wxASSERT(IsEmpty());*/ }
 
     typedef wxOffsetZipEntryMap_::key_type key_type;
 
@@ -1432,7 +1432,7 @@ wxZipStreamLink *wxZipInputStream::MakeLink(wxZipOutputStream *out)
 
 bool wxZipInputStream::LoadEndRecord()
 {
-    wxCHECK(m_position == wxInvalidOffset, false);
+    //wxCHECK(m_position == wxInvalidOffset, false);
     if (!IsOk())
         return false;
 
@@ -1700,7 +1700,7 @@ bool wxZipInputStream::DoOpen(wxZipEntry *entry, bool raw)
         if (AfterHeader() && entry->GetKey() == m_entry.GetOffset())
             return true;
         // can only open the current entry on a non-seekable stream
-        wxCHECK(m_parentSeekable, false);
+        //wxCHECK(m_parentSeekable, false);
     }
 
     m_lasterror = wxSTREAM_READ_ERROR;
@@ -1741,7 +1741,7 @@ bool wxZipInputStream::DoOpen(wxZipEntry *entry, bool raw)
 
 bool wxZipInputStream::OpenDecompressor(bool raw /*=false*/)
 {
-    wxASSERT(AfterHeader());
+    //wxASSERT(AfterHeader());
 
     wxFileOffset compressedSize = m_entry.GetCompressedSize();
 
@@ -2202,7 +2202,7 @@ bool wxZipOutputStream::CloseCompressor(wxOutputStream *comp)
 //
 void wxZipOutputStream::CreatePendingEntry(const void *buffer, size_t size)
 {
-    wxASSERT(IsOk() && m_pending && !m_comp);
+    //wxASSERT(IsOk() && m_pending && !m_comp);
     wxZipEntryPtr_ spPending(m_pending);
     m_pending = NULL;
 
@@ -2243,7 +2243,7 @@ void wxZipOutputStream::CreatePendingEntry(const void *buffer, size_t size)
 //
 void wxZipOutputStream::CreatePendingEntry()
 {
-    wxASSERT(IsOk() && m_pending && !m_comp);
+    //wxASSERT(IsOk() && m_pending && !m_comp);
     wxZipEntryPtr_ spPending(m_pending);
     m_pending = NULL;
     m_lasterror = wxSTREAM_WRITE_ERROR;
@@ -2359,7 +2359,7 @@ bool wxZipOutputStream::CloseEntry()
 
     // Write the sums in the trailing 'data descriptor' if necessary
     if (entry.m_Flags & wxZIP_SUMS_FOLLOW) {
-        wxASSERT(!IsParentSeekable());
+        //wxASSERT(!IsParentSeekable());
         m_headerOffset +=
             entry.WriteDescriptor(*m_parent_o_stream, m_crcAccumulator,
                                   compressedSize, m_entrySize);

@@ -206,7 +206,7 @@ void wxConvAuto::InitFromBOM(wxBOM bomType)
             break;
 
         default:
-            //wxFAIL_MSG( "unknown BOM type" );
+            break;//wxFAIL_MSG( "unknown BOM type" );
     }
 
     if ( !m_conv )

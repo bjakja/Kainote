@@ -18,6 +18,6 @@
 // Returns true if we are running under Unicode emulation in Win9x environment.
 // Workaround hacks take effect only if this condition is met
 // (NB: this function is needed even if !wxUSE_UNICODE_MSLU)
-WXDLLIMPEXP_BASE bool wxUsingUnicowsDll();
+ bool wxUsingUnicowsDll();
 
 #endif // _WX_MSLU_H_

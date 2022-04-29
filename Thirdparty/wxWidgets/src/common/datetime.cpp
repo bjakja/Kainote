@@ -502,7 +502,7 @@ wxDateTime::TimeZone::TimeZone(wxDateTime::TZ tz)
             break;
 
         default:
-            //wxFAIL_MSG( wxT("unknown time zone") );
+            break;//wxFAIL_MSG( wxT("unknown time zone") );
     }
 }
 
@@ -665,7 +665,7 @@ int NameArrayIndexFromFlag(wxDateTime::NameFlags flags)
             return 1;
 
         default:
-            //wxFAIL_MSG( "unknown wxDateTime::NameFlags value" );
+            break;//wxFAIL_MSG( "unknown wxDateTime::NameFlags value" );
     }
 
     return -1;

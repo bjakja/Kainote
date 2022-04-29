@@ -740,7 +740,7 @@ protected:
 #define wx_YIELD_DECLARED
 
 // Yield to other apps/messages
-WXDLLIMPEXP_CORE bool wxYield();
+ bool wxYield();
 
 #endif // wx_YIELD_DECLARED
 
