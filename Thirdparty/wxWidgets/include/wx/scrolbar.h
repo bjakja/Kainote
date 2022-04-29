@@ -18,13 +18,13 @@
 
 #include "wx/control.h"
 
-extern WXDLLIMPEXP_DATA_CORE(const char) wxScrollBarNameStr[];
+extern const char wxScrollBarNameStr[];
 
 // ----------------------------------------------------------------------------
 // wxScrollBar: a scroll bar control
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxScrollBarBase : public wxControl
+class  wxScrollBarBase : public wxControl
 {
 public:
     wxScrollBarBase() { }

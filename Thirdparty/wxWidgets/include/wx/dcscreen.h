@@ -15,7 +15,7 @@
 #include "wx/defs.h"
 #include "wx/dc.h"
 
-class WXDLLIMPEXP_CORE wxScreenDC : public wxDC
+class  wxScreenDC : public wxDC
 {
 public:
     wxScreenDC();

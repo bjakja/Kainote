@@ -27,9 +27,9 @@
 #define wxST_ELLIPSIZE_MIDDLE      0x0008
 #define wxST_ELLIPSIZE_END         0x0010
 
-extern WXDLLIMPEXP_DATA_CORE(const char) wxStaticTextNameStr[];
+extern const char wxStaticTextNameStr[];
 
-class WXDLLIMPEXP_CORE wxStaticTextBase : public wxControl
+class  wxStaticTextBase : public wxControl
 {
 public:
     wxStaticTextBase() { }

@@ -1262,7 +1262,7 @@ private:
 };
 
 
-#if wxUSE_GUI
+//#if wxUSE_GUI
 
 
 // Item or menu event class
@@ -2848,7 +2848,7 @@ private:
  wxEVT_COMPARE_ITEM
 */
 
-#endif // wxUSE_GUI
+//#endif // wxUSE_GUI
 
 
 // ============================================================================

@@ -12,7 +12,7 @@
 #ifndef _WX_DIRDLG_H_BASE_
 #define _WX_DIRDLG_H_BASE_
 
-#if wxUSE_DIRDLG
+//#if wxUSE_DIRDLG
 
 #include "wx/dialog.h"
 
@@ -21,7 +21,7 @@
 // ----------------------------------------------------------------------------
 
 extern const char wxDirDialogNameStr[];
-extern (const char wxDirDialogDefaultFolderStr[];
+extern const char wxDirDialogDefaultFolderStr[];
 extern const char wxDirSelectorPromptStr[];
 
 #define wxDD_CHANGE_DIR         0x0100
@@ -133,7 +133,7 @@ wxDirSelector(const wxString& message = wxDirSelectorPromptStr,
               const wxPoint& pos = wxDefaultPosition,
               wxWindow *parent = NULL);
 
-#endif // wxUSE_DIRDLG
+//#endif // wxUSE_DIRDLG
 
 #endif
     // _WX_DIRDLG_H_BASE_

@@ -15,13 +15,13 @@
 
 #include "wx/frame.h"
 
-class WXDLLIMPEXP_FWD_CORE wxAcceleratorTable;
+class  wxAcceleratorTable;
 
 // ---------------------------------------------------------------------------
 // wxMDIParentFrame
 // ---------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxMDIParentFrame : public wxMDIParentFrameBase
+class  wxMDIParentFrame : public wxMDIParentFrameBase
 {
 public:
     wxMDIParentFrame() { Init(); }
@@ -149,7 +149,7 @@ private:
     int GetChildFramesCount() const;
 
 
-    friend class WXDLLIMPEXP_FWD_CORE wxMDIChildFrame;
+    friend class  wxMDIChildFrame;
 
     DECLARE_EVENT_TABLE()
     DECLARE_DYNAMIC_CLASS(wxMDIParentFrame)
@@ -160,7 +160,7 @@ private:
 // wxMDIChildFrame
 // ---------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxMDIChildFrame : public wxMDIChildFrameBase
+class  wxMDIChildFrame : public wxMDIChildFrameBase
 {
 public:
     wxMDIChildFrame() { Init(); }
@@ -240,7 +240,7 @@ private:
 // wxMDIClientWindow
 // ---------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxMDIClientWindow : public wxMDIClientWindowBase
+class  wxMDIClientWindow : public wxMDIClientWindowBase
 {
 public:
     wxMDIClientWindow() { Init(); }

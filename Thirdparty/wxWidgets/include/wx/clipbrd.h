@@ -130,7 +130,7 @@ protected:
     DECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxClipboardEvent)
 };
 
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_CLIPBOARD_CHANGED, wxClipboardEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_CLIPBOARD_CHANGED, wxClipboardEvent );
 
 typedef void (wxEvtHandler::*wxClipboardEventFunction)(wxClipboardEvent&);
 

@@ -690,12 +690,12 @@ inline size_t wxStrlen(const wchar_t *s) { return s ? wxCRT_StrlenW(s) : 0; }
 //#ifndef wxWCHAR_T_IS_WXCHAR32
 //        size_t wxStrlen(const wxChar32 *s );
 //#endif
-#define wxWcslen wxCRT_StrlenW
+//#define wxWcslen wxCRT_StrlenW
 
-#define wxStrdupA wxCRT_StrdupA
-#define wxStrdupW wxCRT_StrdupW
+//#define wxStrdupA wxCRT_StrdupA
+//#define wxStrdupW wxCRT_StrdupW
 //inline char* wxStrdup(const char *s) { return wxCRT_StrdupA(s); }
-inline wchar_t* wxStrdup(const wchar_t *s) { return _wcsdup(s); }
+//inline wchar_t* wxStrdup(const wchar_t *s) { return _wcsdup(s); }
 //#ifndef wxWCHAR_T_IS_WXCHAR16
 //        wxChar16* wxStrdup(const wxChar16* s);
 //#endif

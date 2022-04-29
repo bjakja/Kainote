@@ -26,13 +26,13 @@
 // global data
 // ----------------------------------------------------------------------------
 
-extern WXDLLIMPEXP_DATA_CORE(const char) wxChoiceNameStr[];
+extern const char wxChoiceNameStr[];
 
 // ----------------------------------------------------------------------------
 // wxChoice allows to select one of a non-modifiable list of strings
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxChoiceBase : public wxControlWithItems
+class  wxChoiceBase : public wxControlWithItems
 {
 public:
     wxChoiceBase() { }

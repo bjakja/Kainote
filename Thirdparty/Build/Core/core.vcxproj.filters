@@ -2,5 +2,21 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="..\..\wxWidgets\src\msw\window.cpp" />
+    <ClCompile Include="..\..\wxWidgets\src\msw\dc.cpp" />
+    <ClCompile Include="..\..\wxWidgets\src\msw\dcclient.cpp" />
+    <ClCompile Include="..\..\wxWidgets\src\msw\dcmemory.cpp" />
+    <ClCompile Include="..\..\wxWidgets\src\msw\dcprint.cpp" />
+    <ClCompile Include="..\..\wxWidgets\src\msw\dcscreen.cpp" />
+    <ClCompile Include="..\..\wxWidgets\src\msw\accel.cpp" />
+    <ClCompile Include="..\..\wxWidgets\src\msw\bitmap.cpp" />
+    <ClCompile Include="..\..\wxWidgets\src\msw\brush.cpp" />
+    <ClCompile Include="..\..\wxWidgets\src\msw\caret.cpp" />
+    <ClCompile Include="..\..\wxWidgets\src\msw\clipbrd.cpp" />
+    <ClCompile Include="..\..\wxWidgets\src\msw\utils.cpp" />
+    <ClCompile Include="..\..\wxWidgets\src\msw\dib.cpp" />
+    <ClCompile Include="..\..\wxWidgets\src\msw\evtloop.cpp" />
+    <ClCompile Include="..\..\wxWidgets\src\msw\font.cpp" />
+    <ClCompile Include="..\..\wxWidgets\src\msw\frame.cpp" />
+    <ClCompile Include="..\..\wxWidgets\src\msw\pen.cpp" />
   </ItemGroup>
 </Project>

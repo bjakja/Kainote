@@ -37,7 +37,7 @@ public:
 
 #if wxUSE_GUI
 
-class WXDLLIMPEXP_CORE wxGUIAppTraits : public wxGUIAppTraitsBase
+class  wxGUIAppTraits : public wxGUIAppTraitsBase
 {
 public:
     virtual wxEventLoopBase *CreateEventLoop();

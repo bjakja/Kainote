@@ -83,7 +83,7 @@ static int gs_htmlcfid = 0;
 
 bool wxOpenClipboard()
 {
-    wxCHECK_MSG( !gs_wxClipboardIsOpen, true, wxT("clipboard already opened.") );
+    //wxCHECK_MSG( !gs_wxClipboardIsOpen, true, wxT("clipboard already opened.") );
 
     wxWindow *win = wxTheApp->GetTopWindow();
     if ( win )
@@ -107,7 +107,7 @@ bool wxOpenClipboard()
 
 bool wxCloseClipboard()
 {
-    wxCHECK_MSG( gs_wxClipboardIsOpen, false, wxT("clipboard is not opened") );
+    //wxCHECK_MSG( gs_wxClipboardIsOpen, false, wxT("clipboard is not opened") );
 
     gs_wxClipboardIsOpen = false;
 
@@ -639,7 +639,7 @@ bool wxClipboard::AddData( wxDataObject *data )
     if ( IsUsingPrimarySelection() )
         return false;
 
-    wxCHECK_MSG( data, false, wxT("data is invalid") );
+    //wxCHECK_MSG( data, false, wxT("data is invalid") );
 
 #if wxUSE_OLE_CLIPBOARD
     HRESULT hr = OleSetClipboard(data->GetInterface());

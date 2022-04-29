@@ -30,12 +30,12 @@
 // ============================================================================
 
 /* checks whether the passed in pointer is NULL and if the string is empty */
-//inline bool wxIsEmpty(const char *s) { return !s || !*s; }
-//inline bool wxIsEmpty(const wchar_t *s) { return !s || !*s; }
-//inline bool wxIsEmpty(const wxScopedCharBuffer& s) { return wxIsEmpty(s.data()); }
-//inline bool wxIsEmpty(const wxScopedWCharBuffer& s) { return wxIsEmpty(s.data()); }
-//inline bool wxIsEmpty(const wxString& s) { return s.empty(); }
-//inline bool wxIsEmpty(const wxCStrData& s) { return s.AsString().empty(); }
+inline bool wxIsEmpty(const char *s) { return !s || !*s; }
+inline bool wxIsEmpty(const wchar_t *s) { return !s || !*s; }
+inline bool wxIsEmpty(const wxScopedCharBuffer& s) { return wxIsEmpty(s.data()); }
+inline bool wxIsEmpty(const wxScopedWCharBuffer& s) { return wxIsEmpty(s.data()); }
+inline bool wxIsEmpty(const wxString& s) { return s.empty(); }
+inline bool wxIsEmpty(const wxCStrData& s) { return s.AsString().empty(); }
 
 
 

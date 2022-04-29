@@ -13,7 +13,7 @@
 #define _WX_CHECKBOX_H_
 
 // Checkbox item (single checkbox)
-class WXDLLIMPEXP_CORE wxCheckBox : public wxCheckBoxBase
+class  wxCheckBox : public wxCheckBoxBase
 {
 public:
     wxCheckBox() { }

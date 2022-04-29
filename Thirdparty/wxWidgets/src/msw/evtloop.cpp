@@ -281,8 +281,8 @@ bool wxGUIEventLoop::Dispatch()
         return false;
 
 #if wxUSE_THREADS
-    wxASSERT_MSG( wxThread::IsMain(),
-                  wxT("only the main thread can process Windows messages") );
+    //wxASSERT_MSG( wxThread::IsMain(),
+                  //wxT("only the main thread can process Windows messages") );
 
     static bool s_hadGuiLock = true;
     static wxMsgList s_aSavedMessages;

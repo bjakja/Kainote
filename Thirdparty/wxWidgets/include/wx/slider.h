@@ -47,13 +47,13 @@
     #define wxSL_NOTIFY_DRAG     0x0000
 #endif // WXWIN_COMPATIBILITY_2_6
 
-extern WXDLLIMPEXP_DATA_CORE(const char) wxSliderNameStr[];
+extern const char wxSliderNameStr[];
 
 // ----------------------------------------------------------------------------
 // wxSliderBase: define wxSlider interface
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxSliderBase : public wxControl
+class  wxSliderBase : public wxControl
 {
 public:
     /* the ctor of the derived class should have the following form:

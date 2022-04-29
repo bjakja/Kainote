@@ -22,7 +22,7 @@
 // wxPrinterDC
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxPrinterDC : public wxDC
+class  wxPrinterDC : public wxDC
 {
 public:
     wxPrinterDC();
