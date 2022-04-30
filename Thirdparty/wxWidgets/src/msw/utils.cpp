@@ -18,7 +18,7 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx/string.h"
 
 #ifdef __BORLANDC__
     #pragma hdrstop
@@ -421,7 +421,7 @@ const wxChar* wxGetHomeDir(wxString *pstr)
             // create it in our program's dir. However, if the user took care
             // to set HOMEPATH to something other than "\\", we suppose that he
             // knows what he is doing and use the supplied value.
-            if ( wxStrcmp(szHome, wxT("\\")) == 0 )
+            if (wxStrcmp_String(szHome, wxT("\\")) == 0 )
                 strDir.clear();
         }
     }

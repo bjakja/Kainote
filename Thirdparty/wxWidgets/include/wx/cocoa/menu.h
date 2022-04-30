@@ -22,7 +22,7 @@
 // wxMenu
 // ========================================================================
 
-class WXDLLIMPEXP_CORE wxMenu : public wxMenuBase, public wxCocoaNSMenu
+class  wxMenu : public wxMenuBase, public wxCocoaNSMenu
 {
 public:
     // ctors and dtor
@@ -73,7 +73,7 @@ private:
 // ========================================================================
 // wxMenuBar
 // ========================================================================
-class WXDLLIMPEXP_CORE wxMenuBar : public wxMenuBarBase
+class  wxMenuBar : public wxMenuBarBase
 {
 public:
     // ctors and dtor

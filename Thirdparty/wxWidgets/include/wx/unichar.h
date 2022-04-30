@@ -13,7 +13,7 @@
 
 #include "wx/defs.h"
 #include "wx/chartype.h"
-#include "wx/string.h"
+#include "wx/stringimpl.h"
 
 class wxUniCharRef;
 //class wxString;

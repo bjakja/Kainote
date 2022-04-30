@@ -19,18 +19,18 @@
 #include "wx/dynarray.h"
 
 // fwd declarations
-class WXDLLIMPEXP_FWD_CORE wxMenuInfo;
+class  wxMenuInfo;
 WX_DECLARE_EXPORTED_OBJARRAY(wxMenuInfo, wxMenuInfoArray);
 
-class WXDLLIMPEXP_FWD_CORE wxMenuGeometryInfo;
-class WXDLLIMPEXP_FWD_CORE wxPopupMenuWindow;
-class WXDLLIMPEXP_FWD_CORE wxRenderer;
+class  wxMenuGeometryInfo;
+class  wxPopupMenuWindow;
+class  wxRenderer;
 
 // ----------------------------------------------------------------------------
 // wxMenu
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxMenu : public wxMenuBase
+class  wxMenu : public wxMenuBase
 {
 public:
     // ctors and dtor
@@ -138,7 +138,7 @@ private:
 // wxMenuBar
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxMenuBar : public wxMenuBarBase
+class  wxMenuBar : public wxMenuBarBase
 {
 public:
     // ctors and dtor

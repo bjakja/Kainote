@@ -1261,7 +1261,7 @@ public:
     inline wxLongLong GetValue() const;
 
     // a helper function to get the current time_t
-    //static time_t GetTimeNow() { return time(NULL); }
+    static time_t GetTimeNow() { return time(NULL); }
 
     // another one to get the current time broken down
     static struct tm *GetTmNow()

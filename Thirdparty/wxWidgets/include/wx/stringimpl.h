@@ -45,7 +45,7 @@
 extern const wxChar* wxEmptyString;
 #if wxUSE_UNICODE_UTF8
 // FIXME-UTF8: we should have only one wxEmptyString
-extern WXDLLIMPEXP_DATA_BASE(const wxStringCharType*) wxEmptyStringImpl;
+extern const wxStringCharType* wxEmptyStringImpl;
 #endif
 
 
@@ -263,9 +263,9 @@ public:
   // we need to declare const_iterator in wxStringImpl scope, the friend
   // declaration inside iterator class itself is not enough, or at least not
   // for g++ 3.4 (g++ 4 is ok)
-  class WXDLLIMPEXP_FWD_BASE const_iterator;
+  class const_iterator;
 
-  class WXDLLIMPEXP_BASE iterator
+  class iterator
   {
     WX_DEFINE_STRINGIMPL_ITERATOR(iterator,
                                   wxStringCharType&,
@@ -274,7 +274,7 @@ public:
     friend class const_iterator;
   };
 
-  class WXDLLIMPEXP_BASE const_iterator
+  class const_iterator
   {
   public:
       const_iterator(iterator i) : m_ptr(i.m_ptr) { }
@@ -293,8 +293,7 @@ public:
     // copy ctor
   wxStringImpl(const wxStringImpl& stringSrc)
   {
-    wxASSERT_MSG( stringSrc.GetStringData()->IsValid(),
-                  wxT("did you forget to call UngetWriteBuf()?") );
+    
 
     if ( stringSrc.empty() ) {
       // nothing to do for an empty string
@@ -316,8 +315,7 @@ public:
     // take nLen chars starting at nPos
   wxStringImpl(const wxStringImpl& str, size_t nPos, size_t nLen)
   {
-    wxASSERT_MSG( str.GetStringData()->IsValid(),
-                  wxT("did you forget to call UngetWriteBuf()?") );
+    
     Init();
     size_t strLen = str.length() - nPos; nLen = strLen < nLen ? strLen : nLen;
     InitWith(str.c_str(), nPos, nLen);
@@ -386,7 +384,7 @@ public:
   reference operator[](size_type n) { CopyBeforeWrite(); return m_pchData[n]; }
   reference at(size_type n)
   {
-    wxASSERT_VALID_INDEX( n );
+    
     CopyBeforeWrite();
     return m_pchData[n];
   } // FIXME-UTF8: not useful for us...?
@@ -395,7 +393,7 @@ public:
     // append elements str[pos], ..., str[pos+n]
   wxStringImpl& append(const wxStringImpl& str, size_t pos, size_t n)
   {
-    wxASSERT(pos <= str.length());
+    
     ConcatSelf(n, str.c_str() + pos, str.length() - pos);
     return *this;
   }
@@ -441,14 +439,13 @@ public:
     // insert another string
   wxStringImpl& insert(size_t nPos, const wxStringImpl& str)
   {
-    wxASSERT( str.GetStringData()->IsValid() );
+    
     return insert(nPos, str.c_str(), str.length());
   }
     // insert n chars of str starting at nStart (in str)
   wxStringImpl& insert(size_t nPos, const wxStringImpl& str, size_t nStart, size_t n)
   {
-    wxASSERT( str.GetStringData()->IsValid() );
-    wxASSERT( nStart < str.length() );
+    
     size_t strLen = str.length() - nStart;
     n = strLen < n ? strLen : n;
     return insert(nPos, str.c_str() + nStart, n);
@@ -554,7 +551,7 @@ public:
   void DoUngetWriteBuf();
   void DoUngetWriteBuf(size_t nLen);
 
-  friend class WXDLLIMPEXP_FWD_BASE wxString;
+  friend class wxString;
 };
 
 #endif // !wxUSE_STL_BASED_WXSTRING

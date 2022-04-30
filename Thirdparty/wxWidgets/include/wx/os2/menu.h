@@ -28,7 +28,7 @@ void wxSetShortCutKey(wxChar* zText);
 // Menu
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxMenu : public wxMenuBase
+class  wxMenu : public wxMenuBase
 {
 public:
     //
@@ -172,7 +172,7 @@ private:
 // Menu Bar (a la Windows)
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxMenuBar : public wxMenuBarBase
+class  wxMenuBar : public wxMenuBarBase
 {
 public:
     //

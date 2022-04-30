@@ -589,7 +589,7 @@ bool wxMouseEvent::ButtonDClick(int but) const
     switch (but)
     {
         default:
-            wxFAIL_MSG(wxT("invalid parameter in wxMouseEvent::ButtonDClick"));
+            break;//wxFAIL_MSG(wxT("invalid parameter in wxMouseEvent::ButtonDClick"));
             // fall through
 
         case wxMOUSE_BTN_ANY:
@@ -619,7 +619,7 @@ bool wxMouseEvent::ButtonDown(int but) const
     switch (but)
     {
         default:
-            wxFAIL_MSG(wxT("invalid parameter in wxMouseEvent::ButtonDown"));
+            break;//wxFAIL_MSG(wxT("invalid parameter in wxMouseEvent::ButtonDown"));
             // fall through
 
         case wxMOUSE_BTN_ANY:
@@ -649,7 +649,7 @@ bool wxMouseEvent::ButtonUp(int but) const
     switch (but)
     {
         default:
-            wxFAIL_MSG(wxT("invalid parameter in wxMouseEvent::ButtonUp"));
+            break;//wxFAIL_MSG(wxT("invalid parameter in wxMouseEvent::ButtonUp"));
             // fall through
 
         case wxMOUSE_BTN_ANY:
@@ -679,7 +679,7 @@ bool wxMouseEvent::Button(int but) const
     switch (but)
     {
         default:
-            wxFAIL_MSG(wxT("invalid parameter in wxMouseEvent::Button"));
+            break;//wxFAIL_MSG(wxT("invalid parameter in wxMouseEvent::Button"));
             // fall through
 
         case wxMOUSE_BTN_ANY:
@@ -1793,7 +1793,7 @@ wxWindow* wxFindFocusDescendant(wxWindow* ancestor)
 
 wxEventBlocker::wxEventBlocker(wxWindow *win, wxEventType type)
 {
-    wxCHECK_RET(win, wxT("Null window given to wxEventBlocker"));
+    //wxCHECK_RET(win, wxT("Null window given to wxEventBlocker"));
 
     m_window = win;
 
@@ -1804,8 +1804,8 @@ wxEventBlocker::wxEventBlocker(wxWindow *win, wxEventType type)
 wxEventBlocker::~wxEventBlocker()
 {
     wxEvtHandler *popped = m_window->PopEventHandler(false);
-    wxCHECK_RET(popped == this,
-        wxT("Don't push other event handlers into a window managed by wxEventBlocker!"));
+    /*wxCHECK_RET(popped == this,
+        wxT("Don't push other event handlers into a window managed by wxEventBlocker!"));*/
 }
 
 bool wxEventBlocker::ProcessEvent(wxEvent& event)

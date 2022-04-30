@@ -22,7 +22,7 @@ class WXDLLIMPEXP_FWD_CORE wxFrame;
 
 class WXDLLIMPEXP_FWD_CORE wxMenuImpl ;
 
-class WXDLLIMPEXP_CORE wxMenu : public wxMenuBase
+class  wxMenu : public wxMenuBase
 {
 public:
     // ctors & dtor
