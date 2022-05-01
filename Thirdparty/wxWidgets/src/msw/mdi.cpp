@@ -1113,8 +1113,8 @@ bool wxMDIChildFrame::HandleMDIActivate(long WXUNUSED(activate),
     }
     else if ( m_hWnd == hwndDeact )
     {
-        wxASSERT_MSG( parent->GetActiveChild() == this,
-                      wxT("can't deactivate MDI child which wasn't active!") );
+        //wxASSERT_MSG( parent->GetActiveChild() == this,
+                      //wxT("can't deactivate MDI child which wasn't active!") );
 
         activated = false;
         parent->SetActiveChild(NULL);
@@ -1441,7 +1441,7 @@ void MDISetMenu(wxWindow *win, HMENU hmenuFrame, HMENU hmenuWindow)
 
     // update menu bar of the parent window
     wxWindow *parent = win->GetParent();
-    wxCHECK_RET( parent, wxT("MDI client without parent frame? weird...") );
+    //wxCHECK_RET( parent, wxT("MDI client without parent frame? weird...") );
 
     ::SendMessage(GetWinHwnd(win), WM_MDIREFRESHMENU, 0, 0L);
 

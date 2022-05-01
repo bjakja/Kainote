@@ -284,7 +284,7 @@ int wxBitmapComboBox::DoInsertItems(const wxArrayStringsAdapter & items,
     const unsigned int numItems = items.GetCount();
     const unsigned int countNew = GetCount() + numItems;
 
-    wxASSERT( numItems == 1 || !HasFlag(wxCB_SORT) );  // Sanity check
+    //wxASSERT( numItems == 1 || !HasFlag(wxCB_SORT) );  // Sanity check
 
     m_bitmaps.Alloc(countNew);
 

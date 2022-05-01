@@ -459,7 +459,7 @@ bool wxDisplayMSW::ChangeMode(const wxVideoMode& mode)
             break;
 
         default:
-            //wxFAIL_MSG( wxT("unexpected ChangeDisplaySettingsEx() return value") );
+            break;//wxFAIL_MSG( wxT("unexpected ChangeDisplaySettingsEx() return value") );
     }
 
     return false;
@@ -575,7 +575,7 @@ wxDisplayFactoryMSW::MultimonEnumProc(
 
 wxDisplayImpl *wxDisplayFactoryMSW::CreateDisplay(unsigned n)
 {
-    wxCHECK_MSG( n < m_displays.size(), NULL, wxT("An invalid index was passed to wxDisplay") );
+    //wxCHECK_MSG( n < m_displays.size(), NULL, wxT("An invalid index was passed to wxDisplay") );
 
     return new wxDisplayMSW(n, m_displays[n]);
 }

@@ -1061,7 +1061,7 @@
 #define wxUSE_DISPLAY       1
 
 // Miscellaneous geometry code: needed for Canvas library
-#define wxUSE_GEOMETRY            0
+#define wxUSE_GEOMETRY            1
 
 // Use wxImageList. This class is needed by wxNotebook, wxTreeCtrl and
 // wxListCtrl.

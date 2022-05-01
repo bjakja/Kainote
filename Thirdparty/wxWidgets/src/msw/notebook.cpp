@@ -334,7 +334,7 @@ wxNotebook::~wxNotebook()
 size_t wxNotebook::GetPageCount() const
 {
     // consistency check
-    wxASSERT( (int)m_pages.Count() == TabCtrl_GetItemCount(GetHwnd()) );
+    //wxASSERT( (int)m_pages.Count() == TabCtrl_GetItemCount(GetHwnd()) );
 
     return m_pages.Count();
 }
@@ -346,7 +346,7 @@ int wxNotebook::GetRowCount() const
 
 int wxNotebook::SetSelection(size_t nPage)
 {
-    wxCHECK_MSG( IS_VALID_PAGE(nPage), wxNOT_FOUND, wxT("notebook page out of range") );
+    //wxCHECK_MSG( IS_VALID_PAGE(nPage), wxNOT_FOUND, wxT("notebook page out of range") );
 
     if ( m_selection == wxNOT_FOUND || nPage != (size_t)m_selection )
     {
@@ -392,7 +392,7 @@ void wxNotebook::UpdateSelection(int selNew)
 
 int wxNotebook::ChangeSelection(size_t nPage)
 {
-    wxCHECK_MSG( IS_VALID_PAGE(nPage), wxNOT_FOUND, wxT("notebook page out of range") );
+    //wxCHECK_MSG( IS_VALID_PAGE(nPage), wxNOT_FOUND, wxT("notebook page out of range") );
 
     const int selOld = m_selection;
 
@@ -408,7 +408,7 @@ int wxNotebook::ChangeSelection(size_t nPage)
 
 bool wxNotebook::SetPageText(size_t nPage, const wxString& strText)
 {
-    wxCHECK_MSG( IS_VALID_PAGE(nPage), false, wxT("notebook page out of range") );
+    //wxCHECK_MSG( IS_VALID_PAGE(nPage), false, wxT("notebook page out of range") );
 
     TC_ITEM tcItem;
     tcItem.mask = TCIF_TEXT;
@@ -434,7 +434,7 @@ bool wxNotebook::SetPageText(size_t nPage, const wxString& strText)
 
 wxString wxNotebook::GetPageText(size_t nPage) const
 {
-    wxCHECK_MSG( IS_VALID_PAGE(nPage), wxEmptyString, wxT("notebook page out of range") );
+    //wxCHECK_MSG( IS_VALID_PAGE(nPage), wxEmptyString, wxT("notebook page out of range") );
 
     wxChar buf[256];
     TC_ITEM tcItem;
@@ -451,7 +451,7 @@ wxString wxNotebook::GetPageText(size_t nPage) const
 
 int wxNotebook::GetPageImage(size_t nPage) const
 {
-    wxCHECK_MSG( IS_VALID_PAGE(nPage), wxNOT_FOUND, wxT("notebook page out of range") );
+    //wxCHECK_MSG( IS_VALID_PAGE(nPage), wxNOT_FOUND, wxT("notebook page out of range") );
 
     TC_ITEM tcItem;
     tcItem.mask = TCIF_IMAGE;
@@ -462,7 +462,7 @@ int wxNotebook::GetPageImage(size_t nPage) const
 
 bool wxNotebook::SetPageImage(size_t nPage, int nImage)
 {
-    wxCHECK_MSG( IS_VALID_PAGE(nPage), false, wxT("notebook page out of range") );
+    //wxCHECK_MSG( IS_VALID_PAGE(nPage), false, wxT("notebook page out of range") );
 
     TC_ITEM tcItem;
     tcItem.mask = TCIF_IMAGE;
@@ -569,7 +569,7 @@ wxSize wxNotebook::CalcSizeFromPage(const wxSize& sizePage) const
 
 void wxNotebook::AdjustPageSize(wxNotebookPage *page)
 {
-    wxCHECK_RET( page, wxT("NULL page in wxNotebook::AdjustPageSize") );
+    //wxCHECK_RET( page, wxT("NULL page in wxNotebook::AdjustPageSize") );
 
     const wxRect r = GetPageSize();
     if ( !r.IsEmpty() )
@@ -629,7 +629,7 @@ wxNotebookPage *wxNotebook::DoRemovePage(size_t nPage)
         }
         else
         {
-            wxFAIL; // Windows did not behave ok.
+            //wxFAIL; // Windows did not behave ok.
         }
     }
 
@@ -661,12 +661,12 @@ bool wxNotebook::InsertPage(size_t nPage,
                             bool bSelect,
                             int imageId)
 {
-    wxCHECK_MSG( pPage != NULL, false, wxT("NULL page in wxNotebook::InsertPage") );
-    wxCHECK_MSG( IS_VALID_PAGE(nPage) || nPage == GetPageCount(), false,
-                 wxT("invalid index in wxNotebook::InsertPage") );
+    //wxCHECK_MSG( pPage != NULL, false, wxT("NULL page in wxNotebook::InsertPage") );
+    //wxCHECK_MSG( IS_VALID_PAGE(nPage) || nPage == GetPageCount(), false,
+                 //wxT("invalid index in wxNotebook::InsertPage") );
 
-    wxASSERT_MSG( pPage->GetParent() == this,
-                    wxT("notebook pages must have notebook as parent") );
+    //wxASSERT_MSG( pPage->GetParent() == this,
+                    //wxT("notebook pages must have notebook as parent") );
 
     // add a new tab to the control
     // ----------------------------

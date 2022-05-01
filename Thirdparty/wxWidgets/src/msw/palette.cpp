@@ -26,7 +26,7 @@
 // wxPaletteRefData
 // ============================================================================
 
-class WXDLLEXPORT wxPaletteRefData: public wxGDIRefData
+class  wxPaletteRefData: public wxGDIRefData
 {
 public:
     wxPaletteRefData() { Init(); }
@@ -105,7 +105,7 @@ private:
 
     HPALETTE m_hPalette;
 
-    friend class WXDLLIMPEXP_FWD_CORE wxPalette;
+    friend class  wxPalette;
 };
 
 // ============================================================================

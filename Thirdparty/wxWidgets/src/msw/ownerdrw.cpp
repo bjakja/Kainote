@@ -140,7 +140,7 @@ BOOL wxDrawStateBitmap(HDC hDC, HBITMAP hBitmap, int x, int y, UINT uState)
             break;
 
         default:
-            wxFAIL_MSG( wxT("DrawStateBitmap: unknown wxDSBStates value") );
+            //wxFAIL_MSG( wxT("DrawStateBitmap: unknown wxDSBStates value") );
             result = FALSE;
     }
 

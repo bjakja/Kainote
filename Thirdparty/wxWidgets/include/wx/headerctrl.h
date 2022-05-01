@@ -23,7 +23,7 @@
 // notice that the classes in this header are defined in the core library even
 // although currently they're only used by wxGrid which is in wxAdv because we
 // plan to use it in wxListCtrl which is in core too in the future
-class WXDLLIMPEXP_FWD_CORE wxHeaderCtrlEvent;
+class  wxHeaderCtrlEvent;
 
 // ----------------------------------------------------------------------------
 // constants
@@ -42,7 +42,7 @@ enum
     wxHD_DEFAULT_STYLE = wxHD_ALLOW_REORDER
 };
 
-extern WXDLLIMPEXP_DATA_CORE(const char) wxHeaderCtrlNameStr[];
+extern const char wxHeaderCtrlNameStr[];
 
 // ----------------------------------------------------------------------------
 // wxHeaderCtrlBase defines the interface of a header control
@@ -188,7 +188,7 @@ protected:
     virtual void UpdateColumnVisibility(unsigned int WXUNUSED(idx),
                                         bool WXUNUSED(show))
     {
-        wxFAIL_MSG( "must be overridden if called" );
+        //wxFAIL_MSG( "must be overridden if called" );
     }
 
     // this method is called from ShowCustomizeDialog() to reorder all columns

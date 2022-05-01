@@ -11,13 +11,13 @@
 #ifndef _WX_MSW_HEADERCTRL_H_
 #define _WX_MSW_HEADERCTRL_H_
 
-class WXDLLIMPEXP_FWD_CORE wxImageList;
+class  wxImageList;
 
 // ----------------------------------------------------------------------------
 // wxHeaderCtrl
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxHeaderCtrl : public wxHeaderCtrlBase
+class  wxHeaderCtrl : public wxHeaderCtrlBase
 {
 public:
     wxHeaderCtrl()

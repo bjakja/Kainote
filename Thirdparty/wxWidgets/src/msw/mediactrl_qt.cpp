@@ -532,7 +532,7 @@ public:
                 if ( m_parent->SendStopEvent() )
                 {
                     m_parent->Stop();
-                    wxASSERT(m_pLib->GetMoviesError() == noErr);
+                    //wxASSERT(m_pLib->GetMoviesError() == noErr);
 
                     m_parent->QueueFinishEvent();
                 }
@@ -841,7 +841,7 @@ void wxQTMediaBackend::FinishLoad()
     Rect outRect;
     memset(&outRect, 0, sizeof(Rect)); // suppress annoying VC6 warning
     m_lib.GetMovieNaturalBoundsRect (m_movie, &outRect);
-    wxASSERT(m_lib.GetMoviesError() == noErr);
+    //wxASSERT(m_lib.GetMoviesError() == noErr);
 
     m_bestSize.x = outRect.right - outRect.left;
     m_bestSize.y = outRect.bottom - outRect.top;
@@ -1235,7 +1235,7 @@ void wxQTMediaBackend::Move(int WXUNUSED(x), int WXUNUSED(y), int w, int h)
             m_lib.SetMovieBox(m_movie, &theRect);
         }
 
-        wxASSERT(m_lib.GetMoviesError() == noErr);
+        //wxASSERT(m_lib.GetMoviesError() == noErr);
     }
 }
 
@@ -1266,7 +1266,7 @@ void wxQTMediaEvtHandler::OnEraseBackground(wxEraseEvent& evt)
 
         m_pLib.BeginUpdate(port);
         m_pLib.UpdateMovie(m_qtb->m_movie);
-        wxASSERT(m_pLib.GetMoviesError() == noErr);
+        //wxASSERT(m_pLib.GetMoviesError() == noErr);
         m_pLib.EndUpdate(port);
     }
     else

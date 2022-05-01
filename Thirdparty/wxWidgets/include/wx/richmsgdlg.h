@@ -19,7 +19,7 @@
 
 // Extends a message dialog with an optional checkbox and user-expandable
 // detailed text.
-class WXDLLIMPEXP_CORE wxRichMessageDialogBase : public wxGenericMessageDialog
+class  wxRichMessageDialogBase : public wxGenericMessageDialog
 {
 public:
     wxRichMessageDialogBase( wxWindow *parent,

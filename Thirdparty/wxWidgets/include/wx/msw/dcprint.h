@@ -62,7 +62,7 @@ private:
 };
 
 // Gets an HDC for the specified printer configuration
-WXHDC WXDLLIMPEXP_CORE wxGetPrinterDC(const wxPrintData& data);
+WXHDC  wxGetPrinterDC(const wxPrintData& data);
 
 // ------------------------------------------------------------------------
 //    wxPrinterDCromHDC

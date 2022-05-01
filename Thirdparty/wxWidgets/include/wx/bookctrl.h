@@ -55,7 +55,7 @@ enum
 // wxBookCtrlBase
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxBookCtrlBase : public wxControl,
+class  wxBookCtrlBase : public wxControl,
                                         public wxWithImages
 {
 public:

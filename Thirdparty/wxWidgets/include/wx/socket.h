@@ -94,7 +94,7 @@ enum wxSocketType
 
 
 // event
-class WXDLLIMPEXP_FWD_NET wxSocketEvent;
+class  wxSocketEvent;
 wxDECLARE_EXPORTED_EVENT(, wxEVT_SOCKET, wxSocketEvent);
 
 // --------------------------------------------------------------------------
@@ -287,7 +287,7 @@ private:
 // wxSocketServer
 // --------------------------------------------------------------------------
 
-class WXDLLIMPEXP_NET wxSocketServer : public wxSocketBase
+class  wxSocketServer : public wxSocketBase
 {
 public:
     wxSocketServer(const wxSockAddress& addr,

@@ -973,7 +973,7 @@ wxGDIPlusBitmapData::wxGDIPlusBitmapData( wxGraphicsRenderer* renderer,
         image = new Bitmap(width,height,PixelFormat32bppPARGB) ;
 
         Bitmap interimMask((HBITMAP)bmp.GetMask()->GetMaskBitmap(),NULL);
-        wxASSERT(interimMask.GetPixelFormat() == PixelFormat1bppIndexed);
+        //wxASSERT(interimMask.GetPixelFormat() == PixelFormat1bppIndexed);
 
         BitmapData dataMask ;
         interimMask.LockBits(&bounds,ImageLockModeRead,

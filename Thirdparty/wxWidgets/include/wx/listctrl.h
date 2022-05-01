@@ -22,7 +22,7 @@
 // constants
 // ----------------------------------------------------------------------------
 
-extern WXDLLIMPEXP_DATA_CORE(const char) wxListCtrlNameStr[];
+extern const char wxListCtrlNameStr[];
 
 // ----------------------------------------------------------------------------
 // include the wxListCtrl class declaration
@@ -40,7 +40,7 @@ extern WXDLLIMPEXP_DATA_CORE(const char) wxListCtrlNameStr[];
 // wxListView: a class which provides a better API for list control
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxListView : public wxListCtrl
+class  wxListView : public wxListCtrl
 {
 public:
     wxListView() { }

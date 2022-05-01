@@ -50,7 +50,7 @@
 // private classes
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxCursorRefData : public wxGDIImageRefData
+class  wxCursorRefData : public wxGDIImageRefData
 {
 public:
     // the second parameter is used to tell us to delete the cursor when we're

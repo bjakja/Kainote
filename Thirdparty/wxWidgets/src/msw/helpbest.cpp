@@ -98,7 +98,7 @@ wxString wxBestHelpController::GetValidFilename( const wxString& filename ) cons
 
         default:
             // we CAN'T get here
-            wxFAIL_MSG( wxT("wxBestHelpController: Must call Initialize, first!") );
+            break;// wxFAIL_MSG(wxT("wxBestHelpController: Must call Initialize, first!"));
     }
 
     return wxEmptyString;
