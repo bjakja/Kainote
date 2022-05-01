@@ -19,7 +19,7 @@ class WXDLLIMPEXP_FWD_CORE wxMenu;
 
 class wxTaskBarIconCocoaImpl;
 
-class WXDLLIMPEXP_ADV wxTaskBarIcon : public wxTaskBarIconBase
+class  wxTaskBarIcon : public wxTaskBarIconBase
 {
     friend class wxTaskBarIconCocoaImpl;
     DECLARE_DYNAMIC_CLASS_NO_COPY(wxTaskBarIcon)

@@ -251,8 +251,8 @@ wxTaskBarIcon::ShowBalloon(const wxString& title,
                            unsigned msec,
                            int flags)
 {
-    wxCHECK_MSG( m_iconAdded, false,
-                    wxT("can't be used before the icon is created") );
+    //wxCHECK_MSG( m_iconAdded, false,
+                    //wxT("can't be used before the icon is created") );
 
     const HWND hwnd = GetHwndOf(m_win);
 
@@ -381,7 +381,7 @@ long wxTaskBarIcon::WindowProc(unsigned int msg,
     }
 
     // this function should only be called for gs_msg(Restart)Taskbar messages
-    wxASSERT( msg == gs_msgTaskbar );
+    //wxASSERT( msg == gs_msgTaskbar );
 
     wxEventType eventType = 0;
     switch ( lParam )

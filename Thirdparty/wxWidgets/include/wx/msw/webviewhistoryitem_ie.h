@@ -14,7 +14,7 @@
 
 #if wxUSE_WEBVIEW && wxUSE_WEBVIEW_IE && defined(__WXMSW__)
 
-class WXDLLIMPEXP_WEBVIEW wxWebViewHistoryItem
+class  wxWebViewHistoryItem
 {
 public:
     wxWebViewHistoryItem(const wxString& url, const wxString& title) :

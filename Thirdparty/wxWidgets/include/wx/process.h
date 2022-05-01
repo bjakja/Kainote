@@ -35,7 +35,7 @@ enum
 // function will be called when the process terminates.
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxProcess : public wxEvtHandler
+class  wxProcess : public wxEvtHandler
 {
 public:
     // kill the process with the given PID
@@ -135,11 +135,11 @@ protected:
 // wxProcess events
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_BASE wxProcessEvent;
+class  wxProcessEvent;
 
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_BASE, wxEVT_END_PROCESS, wxProcessEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_END_PROCESS, wxProcessEvent );
 
-class WXDLLIMPEXP_BASE wxProcessEvent : public wxEvent
+class  wxProcessEvent : public wxEvent
 {
 public:
     wxProcessEvent(int nId = 0, int pid = 0, int exitcode = 0) : wxEvent(nId)

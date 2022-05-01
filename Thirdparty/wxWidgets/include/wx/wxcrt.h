@@ -165,8 +165,8 @@ inline wchar_t* wxSetlocale(int category, const wxString& locale)
 // NB: these are defined in wxcrtbase.h, see the comment there
 inline size_t wxStrlen(const char *s) { return s ? ::strlen(s) : 0; }
 inline size_t wxStrlen(const wchar_t* s) { return s ? wcslen(s) : 0; }
-inline size_t wxStrlen(const wxScopedCharBuffer& s) { return wxStrlen(s.data()); }
-inline size_t wxStrlen(const wxScopedWCharBuffer& s) { return wxStrlen(s.data()); }
+//inline size_t wxStrlen(const wxScopedCharBuffer& s) { return wxStrlen(s.data()); }
+//inline size_t wxStrlen(const wxScopedWCharBuffer& s) { return wxStrlen(s.data()); }
 inline size_t wxStrlen(const wxString& s) { return s.length(); }
 inline size_t wxStrlen(const wxCStrData& s) { return s.AsString().length(); }
 
@@ -704,11 +704,11 @@ inline const char *wxStrpbrk(const wxString& s, const char *accept)
 inline const wchar_t *wxStrpbrk(const wxString& s, const wchar_t *accept)
     { return wcspbrk(s.wc_str(), accept); }
 //inline const char *wxStrpbrk(const wxString& s, const wxCStrData& accept)
-//    { return wcspbrkA(s.c_str(), accept.AsCharBuf()); }
-//inline const char *wxStrpbrk(const wxCStrData& s, const wxString& accept)
-//    { return wcspbrkA(s.AsChar(), accept.mb_str()); }
-//inline const char *wxStrpbrk(const wxCStrData& s, const char *accept)
-//    { return wcspbrkA(s.AsChar(), accept); }
+//    { return strpbrk(s.c_str(), accept.AsCharBuf()); }
+inline const char *wxStrpbrk(const wxCStrData& s, const wxString& accept)
+    { return strpbrk(s.AsChar(), accept.mb_str()); }
+inline const char *wxStrpbrk(const wxCStrData& s, const char *accept)
+    { return strpbrk(s.AsChar(), accept); }
 inline const wchar_t *wxStrpbrk(const wxCStrData& s, const wchar_t *accept)
     { return wcspbrk(s.AsWChar(), accept); }
 //inline const char *wxStrpbrk(const wxCStrData& s, const wxCStrData& accept)

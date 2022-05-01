@@ -99,7 +99,7 @@
  * wxDragImage
  */
 
-class WXDLLIMPEXP_CORE wxDragImage: public wxObject
+class  wxDragImage: public wxObject
 {
 public:
 

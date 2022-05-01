@@ -183,7 +183,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;libboost_locale-vc142-mt-x64-1_73.lib;libboost_regex-vc142-mt-x64-1_73.lib;libboost_filesystem-vc142-mt-x64-1_73.lib;libboost_system-vc142-mt-x64-1_73.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;libcpmt.lib;libboost_regex-vc143-mt-x64-1_79.lib;libboost_system-vc143-mt-x64-1_79.lib;libboost_filesystem-vc143-mt-x64-1_79.lib;libboost_locale-vc143-mt-x64-1_79.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
@@ -663,6 +663,26 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <None Include="Bitmaps\eyedropper.cur" />
     <None Include="bitmaps\rcdata1.bin" />
     <None Include="kai.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Thirdparty\Build\BaseClasses\baseclasses.vcxproj">
+      <Project>{e8a3f6fa-ae1c-4c8e-a0b6-9c8480324eaa}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Thirdparty\Build\Base\base.vcxproj">
+      <Project>{3fcc50c2-81e9-5db2-b8d8-2129427568b1}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Thirdparty\Build\Boost\Boost.vcxproj">
+      <Project>{c91e1d87-614c-47e8-9587-393568d41738}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Thirdparty\Build\FFMS2\ffms2.vcxproj">
+      <Project>{2cf8c7d2-55e5-4861-a58a-a79b84d0d9ea}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Thirdparty\Build\Libass\Libass.vcxproj">
+      <Project>{dd6c83b0-c8e0-4c46-bfce-c758b31904b1}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Thirdparty\Hunspell\msvc\libhunspell.vcxproj">
+      <Project>{53609bb3-d874-465c-af7b-df626db0d89b}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

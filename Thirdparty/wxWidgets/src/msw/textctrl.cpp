@@ -147,8 +147,8 @@ public:
     UpdatesCountFilter(int& count)
         : m_count(count)
     {
-        wxASSERT_MSG( m_count == -1 || m_count == -2,
-                      wxT("wrong initial m_updatesCount value") );
+        //wxASSERT_MSG( m_count == -1 || m_count == -2,
+                      //wxT("wrong initial m_updatesCount value") );
 
         if (m_count != -2)
             m_count = 0;
@@ -1777,7 +1777,7 @@ bool wxTextCtrl::MSWShouldPreProcessMessage(WXMSG* msg)
             switch ( ctrl + shift )
             {
                 default:
-                    wxFAIL_MSG( wxT("how many modifiers have we got?") );
+                    //wxFAIL_MSG( wxT("how many modifiers have we got?") );
                     // fall through
 
                 case 0:
@@ -2006,7 +2006,7 @@ bool wxTextCtrl::SendUpdateEvent()
             return false;
 
         default:
-            wxFAIL_MSG( wxT("unexpected wxTextCtrl::m_updatesCount value") );
+            break; // wxFAIL_MSG(wxT("unexpected wxTextCtrl::m_updatesCount value"));
             // fall through
 
         case -1:
@@ -2889,8 +2889,8 @@ bool wxRichEditModule::Load(Version version)
         wxT("msftedit"),
     };
 
-    wxCOMPILE_TIME_ASSERT( WXSIZEOF(dllnames) == Version_Max,
-                            RichEditDllNamesVersionsMismatch );
+    /*wxCOMPILE_TIME_ASSERT( WXSIZEOF(dllnames) == Version_Max,
+                            RichEditDllNamesVersionsMismatch );*/
 
     ms_hRichEdit[version] = ::LoadLibrary(dllnames[version]);
 

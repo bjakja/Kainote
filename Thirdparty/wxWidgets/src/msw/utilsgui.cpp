@@ -76,8 +76,8 @@ void wxBeginBusyCursor(const wxCursor *cursor)
 // Restore cursor to normal
 void wxEndBusyCursor()
 {
-    wxCHECK_RET( gs_wxBusyCursorCount > 0,
-                 wxT("no matching wxBeginBusyCursor() for wxEndBusyCursor()") );
+    /*wxCHECK_RET( gs_wxBusyCursorCount > 0,
+                 wxT("no matching wxBeginBusyCursor() for wxEndBusyCursor()") );*/
 
     if ( --gs_wxBusyCursorCount == 0 )
     {
@@ -98,7 +98,7 @@ bool wxIsBusy()
 // in long calculations.
 bool wxCheckForInterrupt(wxWindow *wnd)
 {
-    wxCHECK( wnd, false );
+    //wxCHECK( wnd, false );
 
     MSG msg;
     while ( ::PeekMessage(&msg, GetHwndOf(wnd), 0, 0, PM_REMOVE) )
@@ -219,7 +219,7 @@ void wxClientDisplayRect(int *x, int *y, int *width, int *height)
 // window information functions
 // ---------------------------------------------------------------------------
 
-wxString WXDLLEXPORT wxGetWindowText(WXHWND hWnd)
+wxString  wxGetWindowText(WXHWND hWnd)
 {
     wxString str;
 
@@ -232,7 +232,7 @@ wxString WXDLLEXPORT wxGetWindowText(WXHWND hWnd)
     return str;
 }
 
-wxString WXDLLEXPORT wxGetWindowClass(WXHWND hWnd)
+wxString wxGetWindowClass(WXHWND hWnd)
 {
     wxString str;
 
@@ -263,7 +263,7 @@ wxString WXDLLEXPORT wxGetWindowClass(WXHWND hWnd)
     return str;
 }
 
-int WXDLLEXPORT wxGetWindowId(WXHWND hWnd)
+int  wxGetWindowId(WXHWND hWnd)
 {
     return ::GetWindowLong((HWND)hWnd, GWL_ID);
 }

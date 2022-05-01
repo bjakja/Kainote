@@ -76,7 +76,7 @@ class wxMSWListItemData;
 
  */
 
-class WXDLLIMPEXP_CORE wxListCtrl: public wxListCtrlBase
+class  wxListCtrl: public wxListCtrlBase
 {
 public:
     /*

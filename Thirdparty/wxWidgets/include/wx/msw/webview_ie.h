@@ -249,7 +249,7 @@ class ClassFactory;
 class wxIEContainer;
 class DocHostUIHandler;
 
-class WXDLLIMPEXP_WEBVIEW wxWebViewIE : public wxWebView
+class  wxWebViewIE : public wxWebView
 {
 public:
 

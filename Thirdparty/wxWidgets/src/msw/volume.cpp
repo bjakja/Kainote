@@ -581,8 +581,8 @@ void wxFSVolume::InitIcons()
 
 wxIcon wxFSVolume::GetIcon(wxFSIconType type) const
 {
-    wxCHECK_MSG( type >= 0 && (size_t)type < m_icons.GetCount(), wxNullIcon,
-                 wxT("wxFSIconType::GetIcon(): invalid icon index") );
+    //wxCHECK_MSG( type >= 0 && (size_t)type < m_icons.GetCount(), wxNullIcon,
+                 //wxT("wxFSIconType::GetIcon(): invalid icon index") );
 
 #ifdef __WXMSW__
     // Load on demand.
@@ -608,7 +608,7 @@ wxIcon wxFSVolume::GetIcon(wxFSIconType type) const
             break;
 
         case wxFS_VOL_ICO_MAX:
-            wxFAIL_MSG(wxT("wxFS_VOL_ICO_MAX is not valid icon type"));
+            //wxFAIL_MSG(wxT("wxFS_VOL_ICO_MAX is not valid icon type"));
             break;
         }
 
@@ -623,7 +623,7 @@ wxIcon wxFSVolume::GetIcon(wxFSIconType type) const
 
     return m_icons[type];
 #else
-    wxFAIL_MSG(wxS("Can't convert HICON to wxIcon in this port."));
+    //wxFAIL_MSG(wxS("Can't convert HICON to wxIcon in this port."));
     return wxNullIcon;
 #endif
 } // GetIcon

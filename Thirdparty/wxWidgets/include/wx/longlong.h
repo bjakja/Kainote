@@ -1132,7 +1132,7 @@ struct  wxArgNormalizer<wxLongLong>
                      const wxFormatString *fmt, unsigned index)
          : m_value(value)
      {
-         wxASSERT_ARG_TYPE( fmt, index, wxFormatString::Arg_LongLongInt );
+         //wxASSERT_ARG_TYPE( fmt, index, wxFormatString::Arg_LongLongInt );
      }
 
      wxLongLong_t get() const { return m_value.GetValue(); }

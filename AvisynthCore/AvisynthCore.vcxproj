@@ -313,10 +313,11 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_WINDOWS;RELEASE_TARBALL;NDEBUG;_CRT_SECURE_NO_WARNINGS;_SECURE_SCL=0;_CRTDBG_MAP_ALLOC;__SSE2__;INTEL_INTRINSICS;BUILDING_AVSCORE;CMAKE_INTDIR="Release";AvsCore_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(SolutionDir)Thirdparty\Build\AvisynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\filters;$(SolutionDir)Thirdparty\AviSynthPlus\plugins\ImageSeq\lib\DevIL_x64;$(SolutionDir)Thirdparty\Build\AvisynthPlus\avs_core;$(SolutionDir)Thirdparty\baseclasses;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions512</EnableEnhancedInstructionSet>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

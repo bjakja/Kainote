@@ -76,7 +76,7 @@ enum wxWebViewBackend
 };
 
 //Base class for custom scheme handlers
-class WXDLLIMPEXP_WEBVIEW wxWebViewHandler
+class  wxWebViewHandler
 {
 public:
     wxWebViewHandler(const wxString& scheme) : m_scheme(scheme) {}
@@ -87,10 +87,10 @@ private:
     wxString m_scheme;
 };
 
-extern WXDLLIMPEXP_DATA_WEBVIEW(const char) wxWebViewNameStr[];
-extern WXDLLIMPEXP_DATA_WEBVIEW(const char) wxWebViewDefaultURLStr[];
+extern const char wxWebViewNameStr[];
+extern const char wxWebViewDefaultURLStr[];
 
-class WXDLLIMPEXP_WEBVIEW wxWebView : public wxControl
+class  wxWebView : public wxControl
 {
 public:
     virtual ~wxWebView() {}
@@ -179,7 +179,7 @@ public:
     wxDECLARE_ABSTRACT_CLASS(wxWebView);
 };
 
-class WXDLLIMPEXP_WEBVIEW wxWebViewEvent : public wxNotifyEvent
+class  wxWebViewEvent : public wxNotifyEvent
 {
 public:
     wxWebViewEvent() {}
@@ -200,12 +200,12 @@ private:
     wxDECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxWebViewEvent);
 };
 
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_WEBVIEW, wxEVT_COMMAND_WEB_VIEW_NAVIGATING, wxWebViewEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_WEBVIEW, wxEVT_COMMAND_WEB_VIEW_NAVIGATED, wxWebViewEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_WEBVIEW, wxEVT_COMMAND_WEB_VIEW_LOADED, wxWebViewEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_WEBVIEW, wxEVT_COMMAND_WEB_VIEW_ERROR, wxWebViewEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_WEBVIEW, wxEVT_COMMAND_WEB_VIEW_NEWWINDOW, wxWebViewEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_WEBVIEW, wxEVT_COMMAND_WEB_VIEW_TITLE_CHANGED, wxWebViewEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_WEB_VIEW_NAVIGATING, wxWebViewEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_WEB_VIEW_NAVIGATED, wxWebViewEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_WEB_VIEW_LOADED, wxWebViewEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_WEB_VIEW_ERROR, wxWebViewEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_WEB_VIEW_NEWWINDOW, wxWebViewEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_WEB_VIEW_TITLE_CHANGED, wxWebViewEvent );
 
 typedef void (wxEvtHandler::*wxWebViewEventFunction)
              (wxWebViewEvent&);

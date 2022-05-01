@@ -27,7 +27,7 @@
        || __GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__ < 30402)
 #define WXZIPFIX WXDLLIMPEXP_BASE
 #else
-#define WXZIPFIX
+//#define WXZIPFIX
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
@@ -280,39 +280,39 @@ public:
     wxZipOutputStream(wxOutputStream *stream,
                       int level = -1,
                       wxMBConv& conv = wxConvLocal);
-    virtual WXZIPFIX ~wxZipOutputStream();
+    virtual  ~wxZipOutputStream();
 
     bool PutNextEntry(wxZipEntry *entry)        { return DoCreate(entry); }
 
-    bool WXZIPFIX PutNextEntry(const wxString& name,
+    bool  PutNextEntry(const wxString& name,
                                const wxDateTime& dt = wxDateTime::Now(),
                                wxFileOffset size = wxInvalidOffset);
 
-    bool WXZIPFIX PutNextDirEntry(const wxString& name,
+    bool  PutNextDirEntry(const wxString& name,
                                   const wxDateTime& dt = wxDateTime::Now());
 
-    bool WXZIPFIX CopyEntry(wxZipEntry *entry, wxZipInputStream& inputStream);
-    bool WXZIPFIX CopyArchiveMetaData(wxZipInputStream& inputStream);
+    bool  CopyEntry(wxZipEntry *entry, wxZipInputStream& inputStream);
+    bool  CopyArchiveMetaData(wxZipInputStream& inputStream);
 
-    void WXZIPFIX Sync();
-    bool WXZIPFIX CloseEntry();
-    bool WXZIPFIX Close();
+    void  Sync();
+    bool  CloseEntry();
+    bool  Close();
 
     void SetComment(const wxString& comment)    { m_Comment = comment; }
 
     int  GetLevel() const                       { return m_level; }
-    void WXZIPFIX SetLevel(int level);
+    void  SetLevel(int level);
 
 protected:
-    virtual size_t WXZIPFIX OnSysWrite(const void *buffer, size_t size);
+    virtual size_t  OnSysWrite(const void *buffer, size_t size);
     virtual wxFileOffset OnSysTell() const      { return m_entrySize; }
 
     // this protected interface isn't yet finalised
     struct Buffer { const char *m_data; size_t m_size; };
-    virtual wxOutputStream* WXZIPFIX OpenCompressor(wxOutputStream& stream,
+    virtual wxOutputStream*  OpenCompressor(wxOutputStream& stream,
                                                     wxZipEntry& entry,
                                                     const Buffer bufs[]);
-    virtual bool WXZIPFIX CloseCompressor(wxOutputStream *comp);
+    virtual bool  CloseCompressor(wxOutputStream *comp);
 
     bool IsParentSeekable() const
         { return m_offsetAdjustment != wxInvalidOffset; }
@@ -320,9 +320,9 @@ protected:
 private:
     void Init(int level);
 
-    bool WXZIPFIX PutNextEntry(wxArchiveEntry *entry);
-    bool WXZIPFIX CopyEntry(wxArchiveEntry *entry, wxArchiveInputStream& stream);
-    bool WXZIPFIX CopyArchiveMetaData(wxArchiveInputStream& stream);
+    bool  PutNextEntry(wxArchiveEntry *entry);
+    bool  CopyEntry(wxArchiveEntry *entry, wxArchiveInputStream& stream);
+    bool  CopyArchiveMetaData(wxArchiveInputStream& stream);
 
     bool IsOpened() const { return m_comp || m_pending; }
 
@@ -368,20 +368,20 @@ public:
      : wxArchiveInputStream(OpenFile(archive), wxConvLocal) { Init(file); }
 #endif
 
-    virtual WXZIPFIX ~wxZipInputStream();
+    virtual  ~wxZipInputStream();
 
     bool OpenEntry(wxZipEntry& entry)   { return DoOpen(&entry); }
-    bool WXZIPFIX CloseEntry();
+    bool  CloseEntry();
 
     wxZipEntry *GetNextEntry();
 
-    wxString WXZIPFIX GetComment();
-    int WXZIPFIX GetTotalEntries();
+    wxString  GetComment();
+    int  GetTotalEntries();
 
     virtual wxFileOffset GetLength() const { return m_entry.GetSize(); }
 
 protected:
-    size_t WXZIPFIX OnSysRead(void *buffer, size_t size);
+    size_t  OnSysRead(void *buffer, size_t size);
     wxFileOffset OnSysTell() const { return m_decomp ? m_decomp->TellI() : 0; }
 
 #if WXWIN_COMPATIBILITY_2_6
@@ -389,8 +389,8 @@ protected:
 #endif
 
     // this protected interface isn't yet finalised
-    virtual wxInputStream* WXZIPFIX OpenDecompressor(wxInputStream& stream);
-    virtual bool WXZIPFIX CloseDecompressor(wxInputStream *decomp);
+    virtual wxInputStream*  OpenDecompressor(wxInputStream& stream);
+    virtual bool  CloseDecompressor(wxInputStream *decomp);
 
 private:
     void Init();
@@ -401,7 +401,7 @@ private:
 
     wxArchiveEntry *DoGetNextEntry()    { return GetNextEntry(); }
 
-    bool WXZIPFIX OpenEntry(wxArchiveEntry& entry);
+    bool  OpenEntry(wxArchiveEntry& entry);
 
     wxStreamError ReadLocal(bool readEndRec = false);
     wxStreamError ReadCentral();

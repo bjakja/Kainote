@@ -116,7 +116,7 @@ public:
     HRESULT QueryInterface(REFIID riid, IUnknown *pUnk)
     {
         Free();
-        wxASSERT(pUnk != NULL);
+        //wxASSERT(pUnk != NULL);
         return pUnk->QueryInterface(riid, (void **)&m_interface);
     }
 
@@ -158,7 +158,7 @@ typedef wxAutoOleInterface<IOleInPlaceActiveObject> wxAutoIOleInPlaceActiveObjec
 typedef wxAutoOleInterface<IOleDocumentView> wxAutoIOleDocumentView;
 typedef wxAutoOleInterface<IViewObject> wxAutoIViewObject;
 
-class WXDLLIMPEXP_CORE wxActiveXContainer : public wxWindow
+class  wxActiveXContainer : public wxWindow
 {
 public:
     wxActiveXContainer(wxWindow * parent, REFIID iid, IUnknown* pUnk);
@@ -215,7 +215,7 @@ struct wxActiveXEventNativeMSW
 };
 
 // Events
-class WXDLLIMPEXP_CORE wxActiveXEvent : public wxCommandEvent
+class  wxActiveXEvent : public wxCommandEvent
 {
 private:
     friend class wxActiveXEvents;
@@ -230,13 +230,13 @@ public:
 
     wxString ParamType(size_t idx) const
     {
-        wxASSERT(idx < ParamCount());
+        //wxASSERT(idx < ParamCount());
         return m_params[idx].GetType();
     }
 
     wxString ParamName(size_t idx) const
     {
-        wxASSERT(idx < ParamCount());
+        //wxASSERT(idx < ParamCount());
         return m_params[idx].GetName();
     }
 
@@ -250,7 +250,7 @@ public:
 };
 
 // #define wxACTIVEX_ID    14001
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_ACTIVEX, wxActiveXEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_ACTIVEX, wxActiveXEvent );
 
 typedef void (wxEvtHandler::*wxActiveXEventFunction)(wxActiveXEvent&);
 

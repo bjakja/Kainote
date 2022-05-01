@@ -43,7 +43,7 @@ DWORD EventTypeForMouseButton(int button, bool isDown)
             return isDown ? MOUSEEVENTF_MIDDLEDOWN : MOUSEEVENTF_MIDDLEUP;
 
         default:
-            wxFAIL_MSG("Unsupported button passed in.");
+            //wxFAIL_MSG("Unsupported button passed in.");
             return (DWORD)-1;
     }
 }

@@ -17,7 +17,7 @@
 
 #include "wx/osx/core/objcid.h"
 
-class WXDLLIMPEXP_WEBVIEW wxWebViewHistoryItem
+class  wxWebViewHistoryItem
 {
 public:
     wxWebViewHistoryItem(const wxString& url, const wxString& title) :

@@ -16,9 +16,9 @@
 #include "wx/icon.h"
 
 // private helper class:
-class WXDLLIMPEXP_FWD_ADV wxTaskBarIconWindow;
+class  wxTaskBarIconWindow;
 
-class WXDLLIMPEXP_ADV wxTaskBarIcon : public wxTaskBarIconBase
+class  wxTaskBarIcon : public wxTaskBarIconBase
 {
 public:
     wxTaskBarIcon(wxTaskBarIconType iconType = wxTBI_DEFAULT_TYPE);

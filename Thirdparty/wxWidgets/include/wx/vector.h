@@ -380,7 +380,7 @@ public:
     {
         if ( first == last )
             return first;
-        wxASSERT( first < end() && last <= end() );
+        //wxASSERT( first < end() && last <= end() );
 
         const size_type idx = first - begin();
         const size_type count = last - first;

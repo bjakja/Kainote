@@ -150,8 +150,8 @@ static bool gs_waitingForThread = false;
 
 wxCriticalSection::wxCriticalSection( wxCriticalSectionType WXUNUSED(critSecType) )
 {
-    wxCOMPILE_TIME_ASSERT( sizeof(CRITICAL_SECTION) <= sizeof(wxCritSectBuffer),
-                           wxCriticalSectionBufferTooSmall );
+    /*wxCOMPILE_TIME_ASSERT( sizeof(CRITICAL_SECTION) <= sizeof(wxCritSectBuffer),
+                           wxCriticalSectionBufferTooSmall );*/
 
     ::InitializeCriticalSection((CRITICAL_SECTION *)m_buffer);
 }
@@ -287,7 +287,7 @@ wxMutexError wxMutexInternal::LockTimeout(DWORD milliseconds)
             return wxMUTEX_TIMEOUT;
 
         default:
-            wxFAIL_MSG(wxT("impossible return value in wxMutex::Lock"));
+            break; /* wxFAIL_MSG(wxT("impossible return value in wxMutex::Lock"));*/
             // fall through
 
         case WAIT_FAILED:
@@ -644,7 +644,7 @@ void wxThreadInternal::SetPriority(unsigned int priority)
         win_priority = THREAD_PRIORITY_HIGHEST;
     else
     {
-        wxFAIL_MSG(wxT("invalid value of thread priority parameter"));
+        //wxFAIL_MSG(wxT("invalid value of thread priority parameter"));
         win_priority = THREAD_PRIORITY_NORMAL;
     }
 
@@ -656,8 +656,8 @@ void wxThreadInternal::SetPriority(unsigned int priority)
 
 bool wxThreadInternal::Create(wxThread *thread, unsigned int stackSize)
 {
-    wxASSERT_MSG( m_state == STATE_NEW && !m_hThread,
-                    wxT("Create()ing thread twice?") );
+    /*wxASSERT_MSG( m_state == STATE_NEW && !m_hThread,
+                    wxT("Create()ing thread twice?") );*/
 
     // for compilers which have it, we should use C RTL function for thread
     // creation instead of Win32 API one because otherwise we will have memory
@@ -858,7 +858,7 @@ wxThreadInternal::WaitForTerminate(wxCriticalSection& cs,
                 break;
 
             default:
-                wxFAIL_MSG(wxT("unexpected result of MsgWaitForMultipleObject"));
+               break; /*wxFAIL_MSG(wxT("unexpected result of MsgWaitForMultipleObject"));*/
         }
     } while ( result != WAIT_OBJECT_0 );
 
@@ -979,7 +979,7 @@ bool wxThread::SetConcurrency(size_t WXUNUSED_IN_WINCE(level))
 #ifdef __WXWINCE__
     return false;
 #else
-    wxASSERT_MSG( IsMain(), wxT("should only be called from the main thread") );
+    //wxASSERT_MSG( IsMain(), wxT("should only be called from the main thread") );
 
     // ok only for the default one
     if ( level == 0 )
@@ -1052,8 +1052,8 @@ bool wxThread::SetConcurrency(size_t WXUNUSED_IN_WINCE(level))
         }
 
         // we've discovered a MT version of Win9x!
-        wxASSERT_MSG( pfnSetProcessAffinityMask,
-                      wxT("this system has several CPUs but no SetProcessAffinityMask function?") );
+        /*wxASSERT_MSG( pfnSetProcessAffinityMask,
+                      wxT("this system has several CPUs but no SetProcessAffinityMask function?") );*/
     }
 
     if ( !pfnSetProcessAffinityMask )
@@ -1105,8 +1105,8 @@ wxThreadError wxThread::Run()
 {
     wxCriticalSectionLocker lock(m_critsect);
 
-    wxCHECK_MSG( m_internal->GetState() == STATE_NEW, wxTHREAD_RUNNING,
-             wxT("thread may only be started once after Create()") );
+    /*wxCHECK_MSG( m_internal->GetState() == STATE_NEW, wxTHREAD_RUNNING,
+             wxT("thread may only be started once after Create()") );*/
 
     // the thread has just been created and is still suspended - let it run
     return Resume();
@@ -1138,8 +1138,8 @@ wxThread::ExitCode wxThread::Wait(wxThreadWait waitMode)
 
     // although under Windows we can wait for any thread, it's an error to
     // wait for a detached one in wxWin API
-    wxCHECK_MSG( !IsDetached(), rc,
-                 wxT("wxThread::Wait(): can't wait for detached thread") );
+    /*wxCHECK_MSG( !IsDetached(), rc,
+                 wxT("wxThread::Wait(): can't wait for detached thread") );*/
 
     (void)m_internal->WaitForTerminate(m_critsect, &rc, waitMode);
 
@@ -1195,7 +1195,7 @@ void wxThread::Exit(ExitCode status)
     ::ExitThread((DWORD)status);
 #endif // VC++/!VC++
 
-    wxFAIL_MSG(wxT("Couldn't return from ExitThread()!"));
+    //wxFAIL_MSG(wxT("Couldn't return from ExitThread()!"));
 }
 
 // priority setting
@@ -1331,8 +1331,8 @@ void wxThreadModule::OnExit()
 void wxMutexGuiEnterImpl()
 {
     // this would dead lock everything...
-    wxASSERT_MSG( !wxThread::IsMain(),
-                  wxT("main thread doesn't want to block in wxMutexGuiEnter()!") );
+    /*wxASSERT_MSG( !wxThread::IsMain(),
+                  wxT("main thread doesn't want to block in wxMutexGuiEnter()!") );*/
 
     // the order in which we enter the critical sections here is crucial!!
 
@@ -1361,8 +1361,8 @@ void wxMutexGuiLeaveImpl()
     else
     {
         // decrement the number of threads waiting for GUI access now
-        wxASSERT_MSG( gs_nWaitingForGui > 0,
-                      wxT("calling wxMutexGuiLeave() without entering it first?") );
+        /*wxASSERT_MSG( gs_nWaitingForGui > 0,
+                      wxT("calling wxMutexGuiLeave() without entering it first?") );*/
 
         gs_nWaitingForGui--;
 
@@ -1372,10 +1372,10 @@ void wxMutexGuiLeaveImpl()
     gs_critsectGui->Leave();
 }
 
-void WXDLLIMPEXP_BASE wxMutexGuiLeaveOrEnter()
+void  wxMutexGuiLeaveOrEnter()
 {
-    wxASSERT_MSG( wxThread::IsMain(),
-                  wxT("only main thread may call wxMutexGuiLeaveOrEnter()!") );
+    /*wxASSERT_MSG( wxThread::IsMain(),
+                  wxT("only main thread may call wxMutexGuiLeaveOrEnter()!") );*/
 
     wxCriticalSectionLocker enter(*gs_critsectWaitingForGui);
 
@@ -1402,13 +1402,13 @@ void WXDLLIMPEXP_BASE wxMutexGuiLeaveOrEnter()
     }
 }
 
-bool WXDLLIMPEXP_BASE wxGuiOwnedByMainThread()
+bool  wxGuiOwnedByMainThread()
 {
     return gs_bGuiOwnedByMainThread;
 }
 
 // wake up the main thread if it's in ::GetMessage()
-void WXDLLIMPEXP_BASE wxWakeUpMainThread()
+void  wxWakeUpMainThread()
 {
     // sending any message would do - hopefully WM_NULL is harmless enough
     if ( !::PostThreadMessage(wxThread::GetMainId(), WM_NULL, 0, 0) )
@@ -1418,7 +1418,7 @@ void WXDLLIMPEXP_BASE wxWakeUpMainThread()
     }
 }
 
-bool WXDLLIMPEXP_BASE wxIsWaitingForThread()
+bool  wxIsWaitingForThread()
 {
     return gs_waitingForThread;
 }

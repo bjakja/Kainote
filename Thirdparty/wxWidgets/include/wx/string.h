@@ -1079,8 +1079,8 @@ public:
       iterator() {}
       iterator(const iterator& i) : m_cur(i.m_cur) {}
 
-      //reference operator*()
-        //{ return wxUniCharRef::CreateForString(m_cur); }
+      reference operator*()
+        { return wxUniCharRef::CreateForString(m_cur); }
 
       iterator operator+(ptrdiff_t n) const
         { return iterator(wxStringOperations::AddToIter(m_cur, n)); }
@@ -4065,24 +4065,24 @@ inline bool operator!=(const wxString& s1, const wxScopedWCharBuffer& s2)
 inline bool operator!=(const wxScopedWCharBuffer& s1, const wxString& s2)
     { return (s2.Cmp((const wchar_t *)s1) != 0); }
 
-/*nline bool operator==(const wxString& s1, const wxScopedCharBuffer& s2)
+inline bool operator==(const wxString& s1, const wxScopedCharBuffer& s2)
     { return (s1.Cmp((const char *)s2) == 0); }
 inline bool operator==(const wxScopedCharBuffer& s1, const wxString& s2)
     { return (s2.Cmp((const char *)s1) == 0); }
 inline bool operator!=(const wxString& s1, const wxScopedCharBuffer& s2)
     { return (s1.Cmp((const char *)s2) != 0); }
 inline bool operator!=(const wxScopedCharBuffer& s1, const wxString& s2)
-    { return (s2.Cmp((const char *)s1) != 0); }*/
+    { return (s2.Cmp((const char *)s1) != 0); }
 
 inline wxString operator+(const wxString& string, const wxScopedWCharBuffer& buf)
     { return string + (const wchar_t *)buf; }
 inline wxString operator+(const wxScopedWCharBuffer& buf, const wxString& string)
     { return (const wchar_t *)buf + string; }
 
-//inline wxString operator+(const wxString& string, const wxScopedCharBuffer& buf)
-//    { return string + (const char *)buf; }
-//inline wxString operator+(const wxScopedCharBuffer& buf, const wxString& string)
-//    { return (const char *)buf + string; }
+inline wxString operator+(const wxString& string, const wxScopedCharBuffer& buf)
+    { return string + (const char *)buf; }
+inline wxString operator+(const wxScopedCharBuffer& buf, const wxString& string)
+    { return (const char *)buf + string; }
 
 // comparison with char
 inline bool operator==(const wxUniChar& c, const wxString& s) { return s.IsSameAs(c); }
@@ -4297,7 +4297,7 @@ inline size_t operator-(const wchar_t *p, const wxCStrData& cs)
 //                    : wxCharTypeBufferBase(cstr.AsCharBuf())
 //{
 //}
-
+//
 //inline wxWCharBuffer::wxWCharBuffer(const wxCStrData& cstr)
 //                    : wxCharTypeBufferBase(cstr.AsWCharBuf())
 //{

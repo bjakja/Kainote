@@ -45,7 +45,7 @@ enum wxAutomationInstanceFlags
  * Wraps up an IDispatch pointer and invocation; does variant conversion.
  */
 
-class WXDLLIMPEXP_CORE wxAutomationObject: public wxObject
+class  wxAutomationObject: public wxObject
 {
 public:
     wxAutomationObject(WXIDISPATCH* dispatchPtr = NULL);

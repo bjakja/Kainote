@@ -76,7 +76,7 @@ bool g_fAutoRefreshLevels = false;
 
 LPCTSTR pBaseKey = TEXT("SOFTWARE\\Microsoft\\DirectShow\\Debug");
 LPCTSTR pGlobalKey = TEXT("GLOBAL");
-static CHAR *pUnknownName = "UNKNOWN";
+static const CHAR *pUnknownName = "UNKNOWN";
 
 LPCTSTR TimeoutName = TEXT("TIMEOUT");
 
@@ -1084,14 +1084,16 @@ void WINAPI DbgSetWaitTimeout(DWORD dwTimeout)
             }
         }
         if (guid == GUID_NULL) {
-            return "GUID_NULL";
+            //return "GUID_NULL";
         }
 
 	// !!! add something to print FOURCC guids?
 	
 	// shouldn't this print the hex CLSID?
-        return "Unknown GUID Name";
+        //return "Unknown GUID Name";
+        return g_GuidNames[0].szName;
     }
+   
 
 #endif /* _OBJBASE_H_ */
 

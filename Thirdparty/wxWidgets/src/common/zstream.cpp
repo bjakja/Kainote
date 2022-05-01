@@ -335,7 +335,7 @@ void wxZlibOutputStream::Init(int level, int flags)
         case wxZLIB_NO_HEADER:  windowBits = -MAX_WBITS; break;
         case wxZLIB_ZLIB:       windowBits = MAX_WBITS; break;
         case wxZLIB_GZIP:       windowBits = MAX_WBITS | ZSTREAM_GZIP; break;
-        default:                //wxFAIL_MSG(wxT("Invalid zlib flag"));
+        default:                break;//wxFAIL_MSG(wxT("Invalid zlib flag"));
       }
 
       if (deflateInit2(m_deflate, level, Z_DEFLATED, windowBits,
