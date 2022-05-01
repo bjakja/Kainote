@@ -45,7 +45,7 @@ enum
 // wxDatePickerCtrl: allow the user to enter the date
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_ADV wxDatePickerCtrlBase : public wxDateTimePickerCtrl
+class  wxDatePickerCtrlBase : public wxDateTimePickerCtrl
 {
 public:
     /*

@@ -23,7 +23,7 @@
 // wxFontDialog interface
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxFontDialogBase : public wxDialog
+class  wxFontDialogBase : public wxDialog
 {
 public:
     // create the font dialog

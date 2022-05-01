@@ -260,14 +260,14 @@ bool wxCheckListBox::MSWOnMeasure(WXMEASUREITEMSTRUCT *item)
 
 bool wxCheckListBox::IsChecked(unsigned int uiIndex) const
 {
-    wxCHECK_MSG( IsValid(uiIndex), false, wxT("bad wxCheckListBox index") );
+    //wxCHECK_MSG( IsValid(uiIndex), false, wxT("bad wxCheckListBox index") );
 
     return GetItem(uiIndex)->IsChecked();
 }
 
 void wxCheckListBox::Check(unsigned int uiIndex, bool bCheck)
 {
-    wxCHECK_RET( IsValid(uiIndex), wxT("bad wxCheckListBox index") );
+    //wxCHECK_RET( IsValid(uiIndex), wxT("bad wxCheckListBox index") );
 
     GetItem(uiIndex)->Check(bCheck);
     RefreshItem(uiIndex);
@@ -275,7 +275,7 @@ void wxCheckListBox::Check(unsigned int uiIndex, bool bCheck)
 
 void wxCheckListBox::Toggle(unsigned int uiIndex)
 {
-    wxCHECK_RET( IsValid(uiIndex), wxT("bad wxCheckListBox index") );
+   // wxCHECK_RET( IsValid(uiIndex), wxT("bad wxCheckListBox index") );
 
     GetItem(uiIndex)->Toggle();
     RefreshItem(uiIndex);
@@ -349,7 +349,7 @@ void wxCheckListBox::OnKeyDown(wxKeyEvent& event)
                     break;
 
                 default:
-                    wxFAIL_MSG( wxT("what should this key do?") );
+                    break;// wxFAIL_MSG(wxT("what should this key do?"));
             }
 
             // we should send an event as this has been done by the user and

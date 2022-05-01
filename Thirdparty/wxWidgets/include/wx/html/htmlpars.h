@@ -31,10 +31,10 @@ class wxHtmlParserState;
 WX_DECLARE_HASH_SET_WITH_DECL_PTR(wxHtmlTagHandler*,
                                   ::wxPointerHash, ::wxPointerEqual,
                                   wxHtmlTagHandlersSet,
-                                  class WXDLLIMPEXP_HTML);
+                                  class );
 WX_DECLARE_STRING_HASH_MAP_WITH_DECL(wxHtmlTagHandler*,
                                      wxHtmlTagHandlersHash,
-                                     class WXDLLIMPEXP_HTML);
+                                     class );
 
 
 enum wxHtmlURLType

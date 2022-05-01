@@ -41,7 +41,7 @@
 // is private style and not returned by GetStyle.
 #define wxBUFFER_USES_SHARED_BUFFER 0x04
 
-class WXDLLIMPEXP_CORE wxBufferedDC : public wxMemoryDC
+class  wxBufferedDC : public wxMemoryDC
 {
 public:
     // Default ctor, must subsequently call Init for two stage construction.
@@ -112,7 +112,7 @@ private:
     // common part of Init()s
     void InitCommon(wxDC *dc, int style)
     {
-        wxASSERT_MSG( !m_dc, wxT("wxBufferedDC already initialised") );
+        //wxASSERT_MSG( !m_dc, wxT("wxBufferedDC already initialised") );
 
         m_dc = dc;
         m_style = style;
@@ -147,7 +147,7 @@ private:
 
 // Creates a double buffered wxPaintDC, optionally allowing the
 // user to specify their own buffer to use.
-class WXDLLIMPEXP_CORE wxBufferedPaintDC : public wxBufferedDC
+class  wxBufferedPaintDC : public wxBufferedDC
 {
 public:
     // If no bitmap is supplied by the user, a temporary one will be created.
@@ -214,16 +214,16 @@ private:
     #define wxAutoBufferedPaintDCBase           wxBufferedPaintDC
 #endif
 
-class WXDLLIMPEXP_CORE wxAutoBufferedPaintDC : public wxAutoBufferedPaintDCBase
+class  wxAutoBufferedPaintDC : public wxAutoBufferedPaintDCBase
 {
 public:
 
     wxAutoBufferedPaintDC(wxWindow* win)
         : wxAutoBufferedPaintDCBase(win)
     {
-        wxASSERT_MSG( win->GetBackgroundStyle() == wxBG_STYLE_PAINT,
+        /*wxASSERT_MSG( win->GetBackgroundStyle() == wxBG_STYLE_PAINT,
             "You need to call SetBackgroundStyle(wxBG_STYLE_PAINT) in ctor, "
-            "and also, if needed, paint the background in wxEVT_PAINT handler."
+            "and also, if needed, paint the background in wxEVT_PAINT handler."*/
         );
     }
 

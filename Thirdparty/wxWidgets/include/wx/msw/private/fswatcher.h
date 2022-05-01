@@ -132,8 +132,8 @@ public:
     // associates a wxFSWatchEntryMSW with completion port
     bool Add(wxSharedPtr<wxFSWatchEntryMSW> watch)
     {
-        wxCHECK_MSG( m_iocp != INVALID_HANDLE_VALUE, false, "IOCP not init" );
-        wxCHECK_MSG( watch->IsOk(), false, "Invalid watch" );
+        //wxCHECK_MSG( m_iocp != INVALID_HANDLE_VALUE, false, "IOCP not init" );
+        //wxCHECK_MSG( watch->IsOk(), false, "Invalid watch" );
 
         // associate with IOCP
         HANDLE ret = CreateIoCompletionPort(watch->GetHandle(), m_iocp,
@@ -145,7 +145,7 @@ public:
         }
         else if (ret != m_iocp)
         {
-            wxFAIL_MSG(_("Unexpectedly new I/O completion port was created"));
+            //wxFAIL_MSG(_("Unexpectedly new I/O completion port was created"));
             return false;
         }
 
@@ -160,13 +160,13 @@ public:
     // using it.
     bool ScheduleForRemoval(const wxSharedPtr<wxFSWatchEntryMSW>& watch)
     {
-        wxCHECK_MSG( m_iocp != INVALID_HANDLE_VALUE, false, "IOCP not init" );
-        wxCHECK_MSG( watch->IsOk(), false, "Invalid watch" );
+       /* wxCHECK_MSG( m_iocp != INVALID_HANDLE_VALUE, false, "IOCP not init" );
+        wxCHECK_MSG( watch->IsOk(), false, "Invalid watch" );*/
 
         const wxString path = watch->GetPath();
         wxFSWatchEntries::iterator it = m_watches.find(path);
-        wxCHECK_MSG( it != m_watches.end(), false,
-                     "Can't remove a watch we don't use" );
+        /*wxCHECK_MSG( it != m_watches.end(), false,
+                     "Can't remove a watch we don't use" );*/
 
         // We can't just delete the watch here as we can have pending events
         // for it and if we destroyed it now, we could get a dangling (or,
@@ -199,7 +199,7 @@ public:
     // post completion packet
     bool PostEmptyStatus()
     {
-        wxCHECK_MSG( m_iocp != INVALID_HANDLE_VALUE, false, "IOCP not init" );
+        //wxCHECK_MSG( m_iocp != INVALID_HANDLE_VALUE, false, "IOCP not init" );
 
         int ret = PostQueuedCompletionStatus(m_iocp, 0, 0, NULL);
         if (!ret)
@@ -216,11 +216,11 @@ public:
     bool GetStatus(unsigned long* count, wxFSWatchEntryMSW** watch,
                    OVERLAPPED** overlapped)
     {
-        wxCHECK_MSG( m_iocp != INVALID_HANDLE_VALUE, false, "IOCP not init" );
-        wxCHECK_MSG( count != NULL, false, "Null out parameter 'count'");
+        //wxCHECK_MSG( m_iocp != INVALID_HANDLE_VALUE, false, "IOCP not init" );
+        /*wxCHECK_MSG( count != NULL, false, "Null out parameter 'count'");
         wxCHECK_MSG( watch != NULL, false, "Null out parameter 'watch'");
         wxCHECK_MSG( overlapped != NULL, false,
-                     "Null out parameter 'overlapped'");
+                     "Null out parameter 'overlapped'");*/
 
         int ret = GetQueuedCompletionStatus(m_iocp, count, (ULONG_PTR *)watch,
                                             overlapped, INFINITE);

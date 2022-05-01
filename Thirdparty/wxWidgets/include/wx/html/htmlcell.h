@@ -20,16 +20,16 @@
 #include "wx/window.h"
 
 
-class WXDLLIMPEXP_FWD_HTML wxHtmlWindowInterface;
-class WXDLLIMPEXP_FWD_HTML wxHtmlLinkInfo;
-class WXDLLIMPEXP_FWD_HTML wxHtmlCell;
-class WXDLLIMPEXP_FWD_HTML wxHtmlContainerCell;
+class  wxHtmlWindowInterface;
+class  wxHtmlLinkInfo;
+class  wxHtmlCell;
+class  wxHtmlContainerCell;
 
 
 // wxHtmlSelection is data holder with information about text selection.
 // Selection is defined by two positions (beginning and end of the selection)
 // and two leaf(!) cells at these positions.
-class WXDLLIMPEXP_HTML wxHtmlSelection
+class  wxHtmlSelection
 {
 public:
     wxHtmlSelection()
@@ -79,7 +79,7 @@ enum wxHtmlSelectionState
 
 // Selection state is passed to wxHtmlCell::Draw so that it can render itself
 // differently e.g. when inside text selection or outside it.
-class WXDLLIMPEXP_HTML wxHtmlRenderingState
+class  wxHtmlRenderingState
 {
 public:
     wxHtmlRenderingState() : m_selState(wxHTML_SEL_OUT) {}
@@ -100,7 +100,7 @@ private:
 
 // HTML rendering customization. This class is used when rendering wxHtmlCells
 // as a callback:
-class WXDLLIMPEXP_HTML wxHtmlRenderingStyle
+class  wxHtmlRenderingStyle
 {
 public:
     virtual ~wxHtmlRenderingStyle() {}
@@ -109,7 +109,7 @@ public:
 };
 
 // Standard style:
-class WXDLLIMPEXP_HTML wxDefaultHtmlRenderingStyle : public wxHtmlRenderingStyle
+class  wxDefaultHtmlRenderingStyle : public wxHtmlRenderingStyle
 {
 public:
     virtual wxColour GetSelectedTextColour(const wxColour& clr);
@@ -120,7 +120,7 @@ public:
 // Information given to cells when drawing them. Contains rendering state,
 // selection information and rendering style object that can be used to
 // customize the output.
-class WXDLLIMPEXP_HTML wxHtmlRenderingInfo
+class  wxHtmlRenderingInfo
 {
 public:
     wxHtmlRenderingInfo() : m_selection(NULL), m_style(NULL) {}
@@ -167,7 +167,7 @@ enum wxHtmlScriptMode
 // ---------------------------------------------------------------------------
 
 
-class WXDLLIMPEXP_HTML wxHtmlCell : public wxObject
+class  wxHtmlCell : public wxObject
 {
 public:
     wxHtmlCell();
@@ -374,7 +374,7 @@ protected:
 //                  Single word in input stream.
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_HTML wxHtmlWordCell : public wxHtmlCell
+class  wxHtmlWordCell : public wxHtmlCell
 {
 public:
     wxHtmlWordCell(const wxString& word, const wxDC& dc);
@@ -408,7 +408,7 @@ protected:
 // wxHtmlWordCell specialization for storing text fragments with embedded
 // '\t's; these differ from normal words in that the displayed text is
 // different from the text copied to clipboard
-class WXDLLIMPEXP_HTML wxHtmlWordWithTabsCell : public wxHtmlWordCell
+class  wxHtmlWordWithTabsCell : public wxHtmlWordCell
 {
 public:
     wxHtmlWordWithTabsCell(const wxString& word,
@@ -431,7 +431,7 @@ protected:
 
 // Container contains other cells, thus forming tree structure of rendering
 // elements. Basic code of layout algorithm is contained in this class.
-class WXDLLIMPEXP_HTML wxHtmlContainerCell : public wxHtmlCell
+class  wxHtmlContainerCell : public wxHtmlCell
 {
 public:
     wxHtmlContainerCell(wxHtmlContainerCell *parent);
@@ -559,7 +559,7 @@ protected:
 //                  Color changer.
 // ---------------------------------------------------------------------------
 
-class WXDLLIMPEXP_HTML wxHtmlColourCell : public wxHtmlCell
+class  wxHtmlColourCell : public wxHtmlCell
 {
 public:
     wxHtmlColourCell(const wxColour& clr, int flags = wxHTML_CLR_FOREGROUND) : wxHtmlCell() {m_Colour = clr; m_Flags = flags;}
@@ -584,7 +584,7 @@ protected:
 //                  Sets actual font used for text rendering
 //--------------------------------------------------------------------------------
 
-class WXDLLIMPEXP_HTML wxHtmlFontCell : public wxHtmlCell
+class  wxHtmlFontCell : public wxHtmlCell
 {
 public:
     wxHtmlFontCell(wxFont *font) : wxHtmlCell() { m_Font = (*font); }
@@ -612,7 +612,7 @@ protected:
 //                  (buttons, input boxes etc.)
 //--------------------------------------------------------------------------------
 
-class WXDLLIMPEXP_HTML wxHtmlWidgetCell : public wxHtmlCell
+class  wxHtmlWidgetCell : public wxHtmlCell
 {
 public:
     // !!! wnd must have correct parent!
@@ -643,7 +643,7 @@ protected:
 //                  Internal data structure. It represents hypertext link
 //--------------------------------------------------------------------------------
 
-class WXDLLIMPEXP_HTML wxHtmlLinkInfo : public wxObject
+class  wxHtmlLinkInfo : public wxObject
 {
 public:
     wxHtmlLinkInfo() : wxObject()
@@ -677,7 +677,7 @@ private:
 // wxHtmlTerminalCellsInterator
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_HTML wxHtmlTerminalCellsInterator
+class  wxHtmlTerminalCellsInterator
 {
 public:
     wxHtmlTerminalCellsInterator(const wxHtmlCell *from, const wxHtmlCell *to)

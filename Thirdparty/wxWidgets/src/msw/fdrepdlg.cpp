@@ -416,9 +416,9 @@ bool wxFindReplaceDialog::Show(bool show)
         return true;
     }
 
-    wxCHECK_MSG( m_FindReplaceData, false, wxT("call Create() first!") );
+    //wxCHECK_MSG( m_FindReplaceData, false, wxT("call Create() first!") );
 
-    wxASSERT_MSG( !m_impl, wxT("why don't we have the window then?") );
+    //wxASSERT_MSG( !m_impl, wxT("why don't we have the window then?") );
 
     m_impl = new wxFindReplaceDialogImpl(this, m_FindReplaceData->GetFlags());
 

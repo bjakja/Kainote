@@ -14,12 +14,12 @@
 
 #include "wx/compositewin.h"
 
-class WXDLLIMPEXP_FWD_CORE wxComboCtrl;
+class  wxComboCtrl;
 
-class WXDLLIMPEXP_FWD_ADV wxCalendarCtrl;
-class WXDLLIMPEXP_FWD_ADV wxCalendarComboPopup;
+class  wxCalendarCtrl;
+class  wxCalendarComboPopup;
 
-class WXDLLIMPEXP_ADV wxDatePickerCtrlGeneric
+class  wxDatePickerCtrlGeneric
     : public wxCompositeWindow<wxDatePickerCtrlBase>
 {
 public:

@@ -17,9 +17,9 @@
 
 #include "wx/dialog.h"
 
-class WXDLLIMPEXP_FWD_ADV wxAboutDialogInfo;
-class WXDLLIMPEXP_FWD_CORE wxSizer;
-class WXDLLIMPEXP_FWD_CORE wxSizerFlags;
+class  wxAboutDialogInfo;
+class  wxSizer;
+class  wxSizerFlags;
 
 // Under GTK and OS X "About" dialogs are not supposed to be modal, unlike MSW
 // and, presumably, all the other platforms.
@@ -35,7 +35,7 @@ class WXDLLIMPEXP_FWD_CORE wxSizerFlags;
 // wxGenericAboutDialog: generic "About" dialog implementation
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_ADV wxGenericAboutDialog : public wxDialog
+class  wxGenericAboutDialog : public wxDialog
 {
 public:
     // constructors and Create() method
@@ -95,7 +95,7 @@ private:
 
 // unlike wxAboutBox which can show either the native or generic about dialog,
 // this function always shows the generic one
-WXDLLIMPEXP_ADV void wxGenericAboutBox(const wxAboutDialogInfo& info, wxWindow* parent = NULL);
+ void wxGenericAboutBox(const wxAboutDialogInfo& info, wxWindow* parent = NULL);
 
 #endif // wxUSE_ABOUTDLG
 

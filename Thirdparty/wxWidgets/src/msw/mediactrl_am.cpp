@@ -1407,7 +1407,7 @@ struct IBaseFilter : public IMediaFilter
 
 typedef BOOL (WINAPI* LPAMGETERRORTEXT)(HRESULT, wxChar *, DWORD);
 
-class WXDLLIMPEXP_MEDIA wxAMMediaBackend : public wxMediaBackendCommonBase
+class  wxAMMediaBackend : public wxMediaBackendCommonBase
 {
 public:
     wxAMMediaBackend();
@@ -1490,7 +1490,7 @@ public:
     DECLARE_DYNAMIC_CLASS(wxAMMediaBackend)
 };
 
-class WXDLLIMPEXP_MEDIA wxAMMediaEvtHandler : public wxEvtHandler
+class  wxAMMediaEvtHandler : public wxEvtHandler
 {
 public:
     wxAMMediaEvtHandler(wxAMMediaBackend *amb) :

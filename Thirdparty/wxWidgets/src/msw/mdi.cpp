@@ -506,8 +506,8 @@ void wxMDIParentFrame::Cascade()
 
 void wxMDIParentFrame::Tile(wxOrientation orient)
 {
-    wxASSERT_MSG( orient == wxHORIZONTAL || orient == wxVERTICAL,
-                  wxT("invalid orientation value") );
+    /*wxASSERT_MSG( orient == wxHORIZONTAL || orient == wxVERTICAL,
+                  wxT("invalid orientation value") );*/
 
     ::SendMessage(GetWinHwnd(GetClientWindow()), WM_MDITILE,
                   orient == wxHORIZONTAL ? MDITILE_HORIZONTAL

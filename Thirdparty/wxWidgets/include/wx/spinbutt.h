@@ -37,7 +37,7 @@
 //  wxSP_WRAP:         value wraps at either end
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxSpinButtonBase : public wxControl
+class  wxSpinButtonBase : public wxControl
 {
 public:
     // ctor initializes the range with the default (0..100) values
@@ -97,7 +97,7 @@ protected:
 // the wxSpinButton event
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxSpinEvent : public wxNotifyEvent
+class  wxSpinEvent : public wxNotifyEvent
 {
 public:
     wxSpinEvent(wxEventType commandType = wxEVT_NULL, int winid = 0)

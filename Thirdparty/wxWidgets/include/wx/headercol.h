@@ -52,7 +52,7 @@ enum
 //                 wxListCtrl, wxDataViewCtrl or wxGrid
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxHeaderColumn
+class  wxHeaderColumn
 {
 public:
     // ctors and dtor
@@ -158,7 +158,7 @@ protected:
 // wxSettableHeaderColumn: column which allows to change its fields too
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxSettableHeaderColumn : public wxHeaderColumn
+class  wxSettableHeaderColumn : public wxHeaderColumn
 {
 public:
     virtual void SetTitle(const wxString& title) = 0;
