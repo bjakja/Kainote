@@ -15,7 +15,7 @@
 #include "wx/window.h"                      // base class declaration
 #include "wx/containr.h"                    // wxControlContainer
 
-class WXDLLIMPEXP_FWD_CORE wxSplitterEvent;
+class  wxSplitterEvent;
 
 // ---------------------------------------------------------------------------
 // splitter constants
@@ -49,7 +49,7 @@ enum
 //    to prevent flickering. (WS_CLIPCHILDREN doesn't work in all cases so can't be
 //    standard).
 
-class WXDLLIMPEXP_CORE wxSplitterWindow: public wxNavigationEnabled<wxWindow>
+class  wxSplitterWindow: public wxNavigationEnabled<wxWindow>
 {
 public:
 
@@ -90,8 +90,8 @@ public:
     // Sets the split mode
     void SetSplitMode(int mode)
     {
-        wxASSERT_MSG( mode == wxSPLIT_VERTICAL || mode == wxSPLIT_HORIZONTAL,
-                      wxT("invalid split mode") );
+       /* wxASSERT_MSG( mode == wxSPLIT_VERTICAL || mode == wxSPLIT_HORIZONTAL,
+                      wxT("invalid split mode") );*/
 
         m_splitMode = (wxSplitMode)mode;
     }
@@ -315,7 +315,7 @@ private:
 // usual wxWin convention, but the three event types have different kind of
 // data associated with them, so the accessors can be only used if the real
 // event type matches with the one for which the accessors make sense
-class WXDLLIMPEXP_CORE wxSplitterEvent : public wxNotifyEvent
+class  wxSplitterEvent : public wxNotifyEvent
 {
 public:
     wxSplitterEvent(wxEventType type = wxEVT_NULL,
@@ -334,16 +334,16 @@ public:
     // all
     void SetSashPosition(int pos)
     {
-        wxASSERT( GetEventType() == wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED
-                || GetEventType() == wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGING);
+        /*wxASSERT( GetEventType() == wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED
+                || GetEventType() == wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGING);*/
 
         m_data.pos = pos;
     }
 
     int GetSashPosition() const
     {
-        wxASSERT( GetEventType() == wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED
-                || GetEventType() == wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGING);
+        /*wxASSERT( GetEventType() == wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED
+                || GetEventType() == wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGING);*/
 
         return m_data.pos;
     }
@@ -351,7 +351,7 @@ public:
     // UNSPLIT event methods
     wxWindow *GetWindowBeingRemoved() const
     {
-        wxASSERT( GetEventType() == wxEVT_COMMAND_SPLITTER_UNSPLIT );
+        /*wxASSERT( GetEventType() == wxEVT_COMMAND_SPLITTER_UNSPLIT );*/
 
         return m_data.win;
     }
@@ -359,14 +359,14 @@ public:
     // DCLICK event methods
     int GetX() const
     {
-        wxASSERT( GetEventType() == wxEVT_COMMAND_SPLITTER_DOUBLECLICKED );
+        /*wxASSERT( GetEventType() == wxEVT_COMMAND_SPLITTER_DOUBLECLICKED );*/
 
         return m_data.pt.x;
     }
 
     int GetY() const
     {
-        wxASSERT( GetEventType() == wxEVT_COMMAND_SPLITTER_DOUBLECLICKED );
+       /* wxASSERT( GetEventType() == wxEVT_COMMAND_SPLITTER_DOUBLECLICKED );*/
 
         return m_data.pt.y;
     }
@@ -374,7 +374,7 @@ public:
     virtual wxEvent *Clone() const { return new wxSplitterEvent(*this); }
 
 private:
-    friend class WXDLLIMPEXP_FWD_CORE wxSplitterWindow;
+    friend class  wxSplitterWindow;
 
     // data for the different types of event
     union

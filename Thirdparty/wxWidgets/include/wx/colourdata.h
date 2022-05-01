@@ -11,7 +11,7 @@
 
 #include "wx/colour.h"
 
-class WXDLLIMPEXP_CORE wxColourData : public wxObject
+class  wxColourData : public wxObject
 {
 public:
     // number of custom colours we store

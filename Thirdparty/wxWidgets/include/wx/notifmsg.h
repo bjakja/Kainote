@@ -21,7 +21,7 @@
 
 // notice that this class is not a window and so doesn't derive from wxWindow
 
-class WXDLLIMPEXP_ADV wxNotificationMessageBase : public wxEvtHandler
+class  wxNotificationMessageBase : public wxEvtHandler
 {
 public:
     // ctors and initializers
@@ -66,9 +66,9 @@ public:
     // wxICON_ERROR only (but not wxICON_QUESTION)
     void SetFlags(int flags)
     {
-        wxASSERT_MSG( flags == wxICON_INFORMATION ||
+        /*wxASSERT_MSG( flags == wxICON_INFORMATION ||
                         flags == wxICON_WARNING || flags == wxICON_ERROR,
-                            "Invalid icon flags specified" );
+                            "Invalid icon flags specified" );*/
 
         m_flags = flags;
     }

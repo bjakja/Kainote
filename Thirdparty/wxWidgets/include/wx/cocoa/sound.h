@@ -16,7 +16,7 @@
 #include "wx/object.h"
 #include "wx/cocoa/ObjcRef.h"
 
-class WXDLLIMPEXP_ADV wxSound : public wxSoundBase
+class  wxSound : public wxSoundBase
 {
 public:
     wxSound()

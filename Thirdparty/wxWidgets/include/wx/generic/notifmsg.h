@@ -17,7 +17,7 @@ class wxNotificationMessageDialog;
 // wxGenericNotificationMessage
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_ADV wxGenericNotificationMessage : public wxNotificationMessageBase
+class  wxGenericNotificationMessage : public wxNotificationMessageBase
 {
 public:
     wxGenericNotificationMessage() { Init(); }

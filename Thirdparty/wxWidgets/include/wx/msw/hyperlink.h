@@ -17,7 +17,7 @@
 // wxHyperlinkCtrl
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_ADV wxHyperlinkCtrl : public wxGenericHyperlinkCtrl
+class  wxHyperlinkCtrl : public wxGenericHyperlinkCtrl
 {
 public:
     // Default constructor (for two-step construction).

@@ -121,7 +121,7 @@ public:
                 break;
 
             default:
-                wxFAIL_MSG( "unsupported socket address family" );
+                //wxFAIL_MSG( "unsupported socket address family" );
                 InitUnspec();
                 return;
         }
@@ -188,7 +188,7 @@ public:
 #endif // wxHAS_UNIX_DOMAIN_SOCKETS
 
             default:
-                wxFAIL_MSG( "unsupported socket address family" );
+                break;// wxFAIL_MSG("unsupported socket address family");
         }
     }
 

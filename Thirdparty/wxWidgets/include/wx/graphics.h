@@ -69,25 +69,25 @@ enum wxCompositionMode
     wxCOMPOSITION_ADD /* R = S + D */
 };
 
-class WXDLLIMPEXP_FWD_CORE wxWindowDC;
-class WXDLLIMPEXP_FWD_CORE wxMemoryDC;
+class  wxWindowDC;
+class  wxMemoryDC;
 #if wxUSE_PRINTING_ARCHITECTURE
-class WXDLLIMPEXP_FWD_CORE wxPrinterDC;
+class  wxPrinterDC;
 #endif
 #ifdef __WXMSW__
 #if wxUSE_ENH_METAFILE
-class WXDLLIMPEXP_FWD_CORE wxEnhMetaFileDC;
+class  wxEnhMetaFileDC;
 #endif
 #endif
-class WXDLLIMPEXP_FWD_CORE wxGraphicsContext;
-class WXDLLIMPEXP_FWD_CORE wxGraphicsPath;
-class WXDLLIMPEXP_FWD_CORE wxGraphicsMatrix;
-class WXDLLIMPEXP_FWD_CORE wxGraphicsFigure;
-class WXDLLIMPEXP_FWD_CORE wxGraphicsRenderer;
-class WXDLLIMPEXP_FWD_CORE wxGraphicsPen;
-class WXDLLIMPEXP_FWD_CORE wxGraphicsBrush;
-class WXDLLIMPEXP_FWD_CORE wxGraphicsFont;
-class WXDLLIMPEXP_FWD_CORE wxGraphicsBitmap;
+class  wxGraphicsContext;
+class  wxGraphicsPath;
+class  wxGraphicsMatrix;
+class  wxGraphicsFigure;
+class  wxGraphicsRenderer;
+class  wxGraphicsPen;
+class  wxGraphicsBrush;
+class  wxGraphicsFont;
+class  wxGraphicsBitmap;
 
 /*
  * notes about the graphics context apis
@@ -106,12 +106,12 @@ class WXDLLIMPEXP_FWD_CORE wxGraphicsBitmap;
 // instance from the other instances that were shared - using copy on write semantics
 //
 
-class WXDLLIMPEXP_FWD_CORE wxGraphicsObjectRefData;
-class WXDLLIMPEXP_FWD_CORE wxGraphicsBitmapData;
-class WXDLLIMPEXP_FWD_CORE wxGraphicsMatrixData;
-class WXDLLIMPEXP_FWD_CORE wxGraphicsPathData;
+class  wxGraphicsObjectRefData;
+class  wxGraphicsBitmapData;
+class  wxGraphicsMatrixData;
+class  wxGraphicsPathData;
 
-class WXDLLIMPEXP_CORE wxGraphicsObject : public wxObject
+class  wxGraphicsObject : public wxObject
 {
 public:
     wxGraphicsObject();
@@ -130,7 +130,7 @@ protected:
     DECLARE_DYNAMIC_CLASS(wxGraphicsObject)
 };
 
-class WXDLLIMPEXP_CORE wxGraphicsPen : public wxGraphicsObject
+class  wxGraphicsPen : public wxGraphicsObject
 {
 public:
     wxGraphicsPen() {}
@@ -139,9 +139,9 @@ private:
     DECLARE_DYNAMIC_CLASS(wxGraphicsPen)
 };
 
-extern WXDLLIMPEXP_DATA_CORE(wxGraphicsPen) wxNullGraphicsPen;
+extern wxGraphicsPen wxNullGraphicsPen;
 
-class WXDLLIMPEXP_CORE wxGraphicsBrush : public wxGraphicsObject
+class  wxGraphicsBrush : public wxGraphicsObject
 {
 public:
     wxGraphicsBrush() {}
@@ -150,9 +150,9 @@ private:
     DECLARE_DYNAMIC_CLASS(wxGraphicsBrush)
 };
 
-extern WXDLLIMPEXP_DATA_CORE(wxGraphicsBrush) wxNullGraphicsBrush;
+extern wxGraphicsBrush wxNullGraphicsBrush;
 
-class WXDLLIMPEXP_CORE wxGraphicsFont : public wxGraphicsObject
+class  wxGraphicsFont : public wxGraphicsObject
 {
 public:
     wxGraphicsFont() {}
@@ -161,9 +161,9 @@ private:
     DECLARE_DYNAMIC_CLASS(wxGraphicsFont)
 };
 
-extern WXDLLIMPEXP_DATA_CORE(wxGraphicsFont) wxNullGraphicsFont;
+extern wxGraphicsFont wxNullGraphicsFont;
 
-class WXDLLIMPEXP_CORE wxGraphicsBitmap : public wxGraphicsObject
+class  wxGraphicsBitmap : public wxGraphicsObject
 {
 public:
     wxGraphicsBitmap() {}
@@ -187,9 +187,9 @@ private:
     DECLARE_DYNAMIC_CLASS(wxGraphicsBitmap)
 };
 
-extern WXDLLIMPEXP_DATA_CORE(wxGraphicsBitmap) wxNullGraphicsBitmap;
+extern wxGraphicsBitmap wxNullGraphicsBitmap;
 
-class WXDLLIMPEXP_CORE wxGraphicsMatrix : public wxGraphicsObject
+class  wxGraphicsMatrix : public wxGraphicsObject
 {
 public:
     wxGraphicsMatrix() {}
@@ -253,9 +253,9 @@ private:
     DECLARE_DYNAMIC_CLASS(wxGraphicsMatrix)
 };
 
-extern WXDLLIMPEXP_DATA_CORE(wxGraphicsMatrix) wxNullGraphicsMatrix;
+extern wxGraphicsMatrix wxNullGraphicsMatrix;
 
-class WXDLLIMPEXP_CORE wxGraphicsPath : public wxGraphicsObject
+class  wxGraphicsPath : public wxGraphicsObject
 {
 public:
     wxGraphicsPath()  {}
@@ -339,7 +339,7 @@ private:
     DECLARE_DYNAMIC_CLASS(wxGraphicsPath)
 };
 
-extern WXDLLIMPEXP_DATA_CORE(wxGraphicsPath) wxNullGraphicsPath;
+extern wxGraphicsPath wxNullGraphicsPath;
 
 
 // Describes a single gradient stop.
@@ -361,7 +361,7 @@ public:
     float GetPosition() const { return m_pos; }
     void SetPosition(float pos)
     {
-        wxASSERT_MSG( pos >= 0 && pos <= 1, "invalid gradient stop position" );
+        //wxASSERT_MSG( pos >= 0 && pos <= 1, "invalid gradient stop position" );
 
         m_pos = pos;
     }
@@ -378,7 +378,7 @@ private:
 // highest). The first stop (index 0, position 0.0) is always the starting
 // colour and the last one (index GetCount() - 1, position 1.0) is the end
 // colour.
-class WXDLLIMPEXP_CORE wxGraphicsGradientStops
+class  wxGraphicsGradientStops
 {
 public:
     wxGraphicsGradientStops(wxColour startCol = wxTransparentColour,
@@ -418,7 +418,7 @@ private:
     wxVector<wxGraphicsGradientStop> m_stops;
 };
 
-class WXDLLIMPEXP_CORE wxGraphicsContext : public wxGraphicsObject
+class  wxGraphicsContext : public wxGraphicsObject
 {
 public:
     wxGraphicsContext(wxGraphicsRenderer* renderer);
@@ -784,7 +784,7 @@ private:
 // paths at any point from a given matrix etc.
 //
 
-class WXDLLIMPEXP_CORE wxGraphicsRenderer : public wxObject
+class  wxGraphicsRenderer : public wxObject
 {
 public:
     wxGraphicsRenderer() {}

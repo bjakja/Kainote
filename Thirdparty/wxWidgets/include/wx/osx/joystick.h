@@ -14,7 +14,7 @@
 
 #include "wx/event.h"
 
-class WXDLLIMPEXP_ADV wxJoystick: public wxObject
+class  wxJoystick: public wxObject
 {
   DECLARE_DYNAMIC_CLASS(wxJoystick)
  public:

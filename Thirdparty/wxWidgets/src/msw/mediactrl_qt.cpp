@@ -43,10 +43,10 @@
 //---------------------------------------------------------------------------
 // Externals (somewhere in src/msw/app.cpp and src/msw/window.cpp)
 //---------------------------------------------------------------------------
-extern "C" WXDLLIMPEXP_BASE HINSTANCE wxGetInstance(void);
-extern WXDLLIMPEXP_CORE const wxChar *wxCanvasClassName;
+extern "C"  HINSTANCE wxGetInstance(void);
+extern  const wxChar *wxCanvasClassName;
 
-LRESULT WXDLLIMPEXP_CORE APIENTRY _EXPORT wxWndProc(HWND hWnd, UINT message,
+LRESULT  APIENTRY _EXPORT wxWndProc(HWND hWnd, UINT message,
                                    WPARAM wParam, LPARAM lParam);
 
 //---------------------------------------------------------------------------
@@ -168,7 +168,7 @@ enum
 //  QT Library
 //---------------------------------------------------------------------------
 
-class WXDLLIMPEXP_MEDIA wxQuickTimeLibrary
+class  wxQuickTimeLibrary
 {
 public:
     ~wxQuickTimeLibrary()
@@ -344,7 +344,7 @@ bool wxQuickTimeLibrary::Initialize()
     return m_ok;
 }
 
-class WXDLLIMPEXP_MEDIA wxQTMediaBackend : public wxMediaBackendCommonBase
+class  wxQTMediaBackend : public wxMediaBackendCommonBase
 {
 public:
     wxQTMediaBackend();
@@ -412,7 +412,7 @@ public:
 };
 
 // helper to hijack background erasing for the QT window
-class WXDLLIMPEXP_MEDIA wxQTMediaEvtHandler : public wxEvtHandler
+class  wxQTMediaEvtHandler : public wxEvtHandler
 {
 public:
     wxQTMediaEvtHandler(wxQTMediaBackend *qtb, WXHWND hwnd)
@@ -643,7 +643,7 @@ bool wxQTMediaBackend::CreateControl(wxControl* ctrl, wxWindow* parent,
     int nError = m_lib.InitializeQTML(0);
     if (nError != noErr)    //-2093 no dll
     {
-        wxFAIL_MSG(wxString::Format(wxT("Couldn't Initialize Quicktime-%i"), nError));
+        //wxFAIL_MSG(wxString::Format(wxT("Couldn't Initialize Quicktime-%i"), nError));
         return false;
     }
 
@@ -744,9 +744,9 @@ void wxQTMediaBackend::PPRMProc (Movie theMovie,
                                  OSErr WXUNUSED_UNLESS_DEBUG(theErr),
                                  void* theRefCon)
 {
-    wxASSERT( theMovie );
+    /*wxASSERT( theMovie );
     wxASSERT( theRefCon );
-    wxASSERT( theErr == noErr );
+    wxASSERT( theErr == noErr );*/
 
     wxQTMediaBackend* pBE = (wxQTMediaBackend*) theRefCon;
 
@@ -776,7 +776,7 @@ bool wxQTMediaBackend::Load(const wxURI& location)
     wxString theURI = location.BuildURI();
 
     Handle theHandle = m_lib.NewHandleClear(theURI.length() + 1);
-    wxASSERT(theHandle);
+    /*wxASSERT(theHandle);*/
 
     m_lib.BlockMove(theURI.mb_str(), *theHandle, theURI.length() + 1);
 
@@ -795,10 +795,10 @@ bool wxQTMediaBackend::Load(const wxURI& location)
         Fixed playRate;
 
         timeNow = m_lib.GetMovieTime(m_movie, NULL);
-        wxASSERT(m_lib.GetMoviesError() == noErr);
+        //wxASSERT(m_lib.GetMoviesError() == noErr);
 
         playRate = m_lib.GetMoviePreferredRate(m_movie);
-        wxASSERT(m_lib.GetMoviesError() == noErr);
+        //wxASSERT(m_lib.GetMoviesError() == noErr);
 
         // Note that the callback here is optional,
         // but without it PrePrerollMovie can be buggy
@@ -833,7 +833,7 @@ void wxQTMediaBackend::FinishLoad()
 {
     // Create the playing/streaming timer
     m_timer = new wxQTPlayTimer(m_movie, (wxQTMediaBackend*) this, &m_lib);
-    wxASSERT(m_timer);
+    //wxASSERT(m_timer);
 
     m_timer->Start(MOVIE_DELAY, wxTIMER_CONTINUOUS);
 
@@ -866,7 +866,7 @@ void wxQTMediaBackend::FinishLoad()
 
     // Set the movie to millisecond precision
     m_lib.SetMovieTimeScale(m_movie, 1000);
-    wxASSERT(m_lib.GetMoviesError() == noErr);
+    //wxASSERT(m_lib.GetMoviesError() == noErr);
 
     NotifyMovieLoaded();
 }
@@ -1002,7 +1002,7 @@ wxLongLong wxQTMediaBackend::GetPosition()
 double wxQTMediaBackend::GetVolume()
 {
     short sVolume = m_lib.GetMovieVolume(m_movie);
-    wxASSERT(m_lib.GetMoviesError() == noErr);
+    //wxASSERT(m_lib.GetMoviesError() == noErr);
 
     if (sVolume & (128 << 8)) //negative - no sound
         return 0.0;

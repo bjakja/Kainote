@@ -1171,7 +1171,7 @@ bool wxAnyButton::MSWOnDraw(WXDRAWITEMSTRUCT *wxdis)
             switch ( m_imageData->GetBitmapPosition() )
             {
                 default:
-                    wxFAIL_MSG( "invalid direction" );
+                    //wxFAIL_MSG( "invalid direction" );
                     // fall through
 
                 case wxLEFT:

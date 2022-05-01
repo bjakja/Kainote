@@ -55,7 +55,7 @@ IMPLEMENT_DYNAMIC_CLASS(wxFindReplaceDialog, wxDialog)
 // wxFindReplaceDialogImpl: the internals of wxFindReplaceDialog
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxFindReplaceDialogImpl
+class  wxFindReplaceDialogImpl
 {
 public:
     wxFindReplaceDialogImpl(wxFindReplaceDialog *dialog, int flagsWX);
@@ -210,7 +210,7 @@ wxFindReplaceDialogImpl::FindMessageHandler(wxWindow * WXUNUSED(win),
     static bool s_blockMsg = false;
 #endif // wxUSE_UNICODE_MSLU
 
-    wxASSERT_MSG( nMsg == ms_msgFindDialog, wxT("unexpected message received") );
+    //wxASSERT_MSG( nMsg == ms_msgFindDialog, wxT("unexpected message received") );
 
     FINDREPLACE *pFR = (FINDREPLACE *)lParam;
 
@@ -260,7 +260,7 @@ wxFindReplaceDialogImpl::FindMessageHandler(wxWindow * WXUNUSED(win),
     }
     else
     {
-        wxFAIL_MSG( wxT("unknown find dialog event") );
+        //wxFAIL_MSG( wxT("unknown find dialog event") );
 
         return 0;
     }

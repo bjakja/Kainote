@@ -14,7 +14,7 @@
 class wxProgressDialogTaskRunner;
 class wxProgressDialogSharedData;
 
-class WXDLLIMPEXP_CORE wxProgressDialog : public wxGenericProgressDialog
+class  wxProgressDialog : public wxGenericProgressDialog
 {
 public:
     wxProgressDialog(const wxString& title, const wxString& message,

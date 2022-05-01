@@ -32,7 +32,7 @@ enum wxHelpSearchMode
 };
 
 // Defines the API for help controllers
-class WXDLLIMPEXP_CORE wxHelpControllerBase: public wxObject
+class  wxHelpControllerBase: public wxObject
 {
 public:
     inline wxHelpControllerBase(wxWindow* parentWindow = NULL) { m_parentWindow = parentWindow; }

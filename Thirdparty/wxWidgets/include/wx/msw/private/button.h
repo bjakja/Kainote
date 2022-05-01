@@ -52,7 +52,7 @@ enum
 
 // Compute the button size (as if wxBU_EXACTFIT were specified, i.e. without
 // adjusting it to be of default size if it's smaller) for the given label size
-WXDLLIMPEXP_CORE wxSize
+ wxSize
 GetFittingSize(wxWindow *win, const wxSize& sizeLabel, int flags = 0);
 
 // Compute the button size (as if wxBU_EXACTFIT were specified) by computing

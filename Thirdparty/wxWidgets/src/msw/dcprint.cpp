@@ -303,7 +303,7 @@ static bool wxGetDefaultDeviceName(wxString& deviceName, wxString& portName)
 #endif // !wxUSE_PS_PRINTING
 
 // Gets an HDC for the specified printer configuration
-WXHDC WXDLLEXPORT wxGetPrinterDC(const wxPrintData& printDataConst)
+WXHDC  wxGetPrinterDC(const wxPrintData& printDataConst)
 {
 #if wxUSE_PS_PRINTING
     // TODO

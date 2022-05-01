@@ -16,7 +16,7 @@
 
 #if wxUSE_STACKWALKER
 
-class WXDLLIMPEXP_FWD_BASE wxStackFrame;
+class  wxStackFrame;
 
 #define wxSTACKWALKER_MAX_DEPTH       (200)
 
@@ -24,7 +24,7 @@ class WXDLLIMPEXP_FWD_BASE wxStackFrame;
 // wxStackFrame: a single stack level
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxStackFrameBase
+class  wxStackFrameBase
 {
 private:
     // put this inline function here so that it is defined before use
@@ -119,7 +119,7 @@ protected:
 // wxStackWalker: class for enumerating stack frames
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxStackWalkerBase
+class  wxStackWalkerBase
 {
 public:
     // ctor does nothing, use Walk() to walk the stack

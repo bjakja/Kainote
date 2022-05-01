@@ -114,7 +114,7 @@ public:
                 break;
 
             case wxICON_QUESTION:
-                wxFAIL_MSG("Question icon doesn't make sense for a tooltip");
+                //wxFAIL_MSG("Question icon doesn't make sense for a tooltip");
                 break;
 
             case wxICON_NONE:

@@ -25,7 +25,7 @@ struct _SYMBOL_INFO;
 // wxStackFrame
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxStackFrame : public wxStackFrameBase
+class  wxStackFrame : public wxStackFrameBase
 {
 private:
     wxStackFrame *ConstCast() const
@@ -83,7 +83,7 @@ private:
 // wxStackWalker
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxStackWalker : public wxStackWalkerBase
+class  wxStackWalker : public wxStackWalkerBase
 {
 public:
     // we don't use ctor argument, it is for compatibility with Unix version

@@ -17,8 +17,8 @@
 #include "wx/object.h"
 #include "wx/arrstr.h"
 
-class WXDLLIMPEXP_FWD_CORE wxColour;
-class WXDLLIMPEXP_FWD_HTML wxHtmlEntitiesParser;
+class  wxColour;
+class  wxHtmlEntitiesParser;
 
 //-----------------------------------------------------------------------------
 // wxHtmlTagsCache
@@ -27,7 +27,7 @@ class WXDLLIMPEXP_FWD_HTML wxHtmlEntitiesParser;
 
 class wxHtmlTagsCacheData;
 
-class WXDLLIMPEXP_HTML wxHtmlTagsCache
+class  wxHtmlTagsCache
 {
 private:
     wxHtmlTagsCacheData *m_Cache;
@@ -57,7 +57,7 @@ public:
 //                  by wxHtmlParser.
 //--------------------------------------------------------------------------------
 
-class WXDLLIMPEXP_HTML wxHtmlTag
+class  wxHtmlTag
 {
 protected:
     // constructs wxHtmlTag object based on HTML tag.

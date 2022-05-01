@@ -315,8 +315,8 @@ wxManualNotifMsgImpl::DoShow(const wxString& title,
                              int WXUNUSED_UNLESS_DEBUG(timeout),
                              int flags)
 {
-    wxASSERT_MSG( timeout == wxNotificationMessage::Timeout_Never,
-                    wxT("shouldn't be used") );
+    /*wxASSERT_MSG( timeout == wxNotificationMessage::Timeout_Never,
+                    wxT("shouldn't be used") );*/
 
     // base class creates the icon for us initially but we could have destroyed
     // it in DoClose(), recreate it if this was the case
@@ -367,8 +367,8 @@ wxAutoNotifMsgImpl::DoShow(const wxString& title,
                            int timeout,
                            int flags)
 {
-    wxASSERT_MSG( timeout != wxNotificationMessage::Timeout_Never,
-                    wxT("shouldn't be used") );
+    /*wxASSERT_MSG( timeout != wxNotificationMessage::Timeout_Never,
+                    wxT("shouldn't be used") );*/
 
     if ( timeout == wxNotificationMessage::Timeout_Auto )
     {
@@ -416,7 +416,7 @@ bool wxNotificationMessage::Show(int timeout)
 
 bool wxNotificationMessage::Close()
 {
-    wxCHECK_MSG( m_impl, false, "must show the notification first" );
+    /*wxCHECK_MSG( m_impl, false, "must show the notification first" );*/
 
     return m_impl->DoClose();
 }

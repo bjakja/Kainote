@@ -22,7 +22,7 @@
 //    wxPrinterDCImpl
 //
 
-class WXDLLIMPEXP_CORE wxPrinterDCImpl : public wxMSWDCImpl
+class  wxPrinterDCImpl : public wxMSWDCImpl
 {
 public:
     // Create from print data
@@ -68,7 +68,7 @@ WXHDC WXDLLIMPEXP_CORE wxGetPrinterDC(const wxPrintData& data);
 //    wxPrinterDCromHDC
 //
 
-class WXDLLIMPEXP_CORE wxPrinterDCFromHDC: public wxPrinterDC
+class  wxPrinterDCFromHDC: public wxPrinterDC
 {
 public:
     wxPrinterDCFromHDC( WXHDC theDC )

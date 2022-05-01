@@ -54,7 +54,7 @@ enum
 
 typedef wxWindow wxNotebookPage;  // so far, any window can be a page
 
-extern WXDLLIMPEXP_DATA_CORE(const char) wxNotebookNameStr[];
+extern const char wxNotebookNameStr[];
 
 #if wxUSE_EXTENDED_RTTI
 
@@ -102,7 +102,7 @@ WX_DECLARE_EXPORTED_LIST(wxNotebookPageInfo, wxNotebookPageInfoList );
 // wxNotebookBase: define wxNotebook interface
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxNotebookBase : public wxBookCtrlBase
+class  wxNotebookBase : public wxBookCtrlBase
 {
 public:
     // ctors
@@ -169,8 +169,8 @@ protected:
 typedef wxBookCtrlEventFunction wxNotebookEventFunction;
 #define wxNotebookEventHandler(func) wxBookCtrlEventHandler(func)
 
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, wxBookCtrlEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGING, wxBookCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, wxBookCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGING, wxBookCtrlEvent );
 
 #define EVT_NOTEBOOK_PAGE_CHANGED(winid, fn) \
     wx__DECLARE_EVT1(wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, winid, wxBookCtrlEventHandler(fn))

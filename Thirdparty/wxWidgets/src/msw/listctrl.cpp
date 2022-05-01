@@ -144,7 +144,7 @@ public:
     // init without conversion
     void Init(LV_ITEM_NATIVE& item)
     {
-        wxASSERT_MSG( !m_pItem, wxT("Init() called twice?") );
+        //wxASSERT_MSG( !m_pItem, wxT("Init() called twice?") );
 
         m_pItem = &item;
     }
@@ -156,8 +156,8 @@ public:
         // point to our own m_item
 
         // memcpy() can't work if the struct sizes are different
-        wxCOMPILE_TIME_ASSERT( sizeof(LV_ITEM_OTHER) == sizeof(LV_ITEM_NATIVE),
-                               CodeCantWorkIfDiffSizes);
+        /*wxCOMPILE_TIME_ASSERT( sizeof(LV_ITEM_OTHER) == sizeof(LV_ITEM_NATIVE),
+                               CodeCantWorkIfDiffSizes);*/
 
         memcpy(&m_item, &item, sizeof(LV_ITEM_NATIVE));
 

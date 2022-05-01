@@ -22,7 +22,7 @@
 // wxGLContext: OpenGL rendering context
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_GL wxGLContext : public wxGLContextBase
+class  wxGLContext : public wxGLContextBase
 {
 public:
     wxGLContext(wxGLCanvas *win, const wxGLContext* other = NULL);
@@ -43,7 +43,7 @@ private:
 // wxGLCanvas: OpenGL output window
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_GL wxGLCanvas : public wxGLCanvasBase
+class  wxGLCanvas : public wxGLCanvasBase
 {
 public:
     wxEXPLICIT // avoid implicitly converting a wxWindow* to wxGLCanvas

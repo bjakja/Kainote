@@ -19,7 +19,7 @@
 // run-time if the command link buttons are not supported by the system we're
 // running under.
 
-class WXDLLIMPEXP_ADV wxCommandLinkButton : public wxGenericCommandLinkButton
+class  wxCommandLinkButton : public wxGenericCommandLinkButton
 {
 public:
     wxCommandLinkButton () : wxGenericCommandLinkButton() { }

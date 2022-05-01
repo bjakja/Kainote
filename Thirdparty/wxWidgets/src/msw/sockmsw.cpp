@@ -332,8 +332,8 @@ LRESULT CALLBACK wxSocket_Internal_WinProc(HWND hWnd,
         if ( socket->m_fd == INVALID_SOCKET )
             return 0;
 
-        wxASSERT_MSG( socket->m_fd == (SOCKET)wParam,
-                      "mismatch between message and socket?" );
+        /*wxASSERT_MSG( socket->m_fd == (SOCKET)wParam,
+                      "mismatch between message and socket?" );*/
 
         switch ( WSAGETSELECTEVENT(lParam) )
         {
@@ -375,7 +375,7 @@ LRESULT CALLBACK wxSocket_Internal_WinProc(HWND hWnd,
                 break;
 
             default:
-                wxFAIL_MSG( "unexpected socket notification" );
+                //wxFAIL_MSG( "unexpected socket notification" );
                 return 0;
         }
     } // unlock gs_critical

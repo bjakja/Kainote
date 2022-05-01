@@ -25,7 +25,7 @@
 // fonts with given attributes
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxFontEnumerator
+class  wxFontEnumerator
 {
 public:
     wxFontEnumerator() {}

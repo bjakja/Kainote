@@ -20,10 +20,10 @@
 #include "wx/vector.h"
 #include "wx/fontenc.h"
 
-class WXDLLIMPEXP_FWD_BASE wxMBConv;
-class WXDLLIMPEXP_FWD_HTML wxHtmlParser;
-class WXDLLIMPEXP_FWD_HTML wxHtmlTagHandler;
-class WXDLLIMPEXP_FWD_HTML wxHtmlEntitiesParser;
+class  wxMBConv;
+class  wxHtmlParser;
+class  wxHtmlTagHandler;
+class  wxHtmlEntitiesParser;
 
 class wxHtmlTextPieces;
 class wxHtmlParserState;
@@ -48,7 +48,7 @@ enum wxHtmlURLType
 // the document and divides it into blocks of tags (where one block
 // consists of starting and ending tag and of text between these
 // 2 tags.
-class WXDLLIMPEXP_HTML wxHtmlParser : public wxObject
+class  wxHtmlParser : public wxObject
 {
     DECLARE_ABSTRACT_CLASS(wxHtmlParser)
 
@@ -214,7 +214,7 @@ protected:
 //    (using its public methods)
 // 2. Parser parses source between starting and ending tag
 // 3. Handler restores original state of the parser
-class WXDLLIMPEXP_HTML wxHtmlTagHandler : public wxObject
+class  wxHtmlTagHandler : public wxObject
 {
     DECLARE_ABSTRACT_CLASS(wxHtmlTagHandler)
 
@@ -260,7 +260,7 @@ protected:
 
 // This class is used to parse HTML entities in strings. It can handle
 // both named entities and &#xxxx entries where xxxx is Unicode code.
-class WXDLLIMPEXP_HTML wxHtmlEntitiesParser : public wxObject
+class  wxHtmlEntitiesParser : public wxObject
 {
     DECLARE_DYNAMIC_CLASS(wxHtmlEntitiesParser)
 

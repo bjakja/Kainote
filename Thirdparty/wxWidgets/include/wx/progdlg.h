@@ -34,7 +34,7 @@
 #if defined(__WXMSW__) && wxUSE_THREADS && !defined(__WXUNIVERSAL__)
     #include "wx/msw/progdlg.h"
 #else
-    class WXDLLIMPEXP_CORE wxProgressDialog
+    class  wxProgressDialog
                            : public wxGenericProgressDialog
     {
     public:

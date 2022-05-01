@@ -52,7 +52,7 @@
 // wxNativeContainerWindow: can be used for creating other wxWindows inside it
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxNativeContainerWindow : public wxTopLevelWindow
+class  wxNativeContainerWindow : public wxTopLevelWindow
 {
 public:
     // default ctor, call Create() later
@@ -90,31 +90,31 @@ public:
     // provide (trivial) implementation of the base class pure virtuals
     virtual void SetTitle(const wxString& WXUNUSED(title))
     {
-        wxFAIL_MSG( "not implemented for native windows" );
+        //wxFAIL_MSG( "not implemented for native windows" );
     }
 
     virtual wxString GetTitle() const
     {
-        wxFAIL_MSG( "not implemented for native windows" );
+        //wxFAIL_MSG( "not implemented for native windows" );
 
         return wxString();
     }
 
     virtual void Maximize(bool WXUNUSED(maximize) = true)
     {
-        wxFAIL_MSG( "not implemented for native windows" );
+        //wxFAIL_MSG( "not implemented for native windows" );
     }
 
     virtual bool IsMaximized() const
     {
-        wxFAIL_MSG( "not implemented for native windows" );
+        //wxFAIL_MSG( "not implemented for native windows" );
 
         return false;
     }
 
     virtual void Iconize(bool WXUNUSED(iconize) = true)
     {
-        wxFAIL_MSG( "not implemented for native windows" );
+        //wxFAIL_MSG( "not implemented for native windows" );
     }
 
     virtual bool IsIconized() const
@@ -125,20 +125,20 @@ public:
 
     virtual void Restore()
     {
-        wxFAIL_MSG( "not implemented for native windows" );
+        //wxFAIL_MSG( "not implemented for native windows" );
     }
 
     virtual bool ShowFullScreen(bool WXUNUSED(show),
                                 long WXUNUSED(style) = wxFULLSCREEN_ALL)
     {
-        wxFAIL_MSG( "not implemented for native windows" );
+        //wxFAIL_MSG( "not implemented for native windows" );
 
         return false;
     }
 
     virtual bool IsFullScreen() const
     {
-        wxFAIL_MSG( "not implemented for native windows" );
+        //wxFAIL_MSG( "not implemented for native windows" );
 
         return false;
     }

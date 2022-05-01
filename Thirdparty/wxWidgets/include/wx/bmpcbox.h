@@ -19,8 +19,8 @@
 
 #include "wx/bitmap.h"
 
-class WXDLLIMPEXP_FWD_CORE wxWindow;
-class WXDLLIMPEXP_FWD_CORE wxItemContainer;
+class  wxWindow;
+class  wxItemContainer;
 
 // Define wxBITMAPCOMBOBOX_OWNERDRAWN_BASED for platforms which
 // wxBitmapComboBox implementation utilizes ownerdrawn combobox
@@ -28,13 +28,13 @@ class WXDLLIMPEXP_FWD_CORE wxItemContainer;
 #if !defined(__WXGTK20__) || defined(__WXUNIVERSAL__)
     #define wxBITMAPCOMBOBOX_OWNERDRAWN_BASED
 
-class WXDLLIMPEXP_FWD_CORE wxDC;
+class  wxDC;
 #endif
 
-extern WXDLLIMPEXP_DATA_ADV(const char) wxBitmapComboBoxNameStr[];
+extern const char wxBitmapComboBoxNameStr[];
 
 
-class WXDLLIMPEXP_ADV wxBitmapComboBoxBase
+class  wxBitmapComboBoxBase
 {
 public:
     // ctors and such
