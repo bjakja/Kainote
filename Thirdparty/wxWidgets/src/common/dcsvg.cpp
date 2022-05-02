@@ -376,7 +376,7 @@ void wxSVGFileDCImpl::DoDrawArc(wxCoord x1, wxCoord y1, wxCoord x2, wxCoord y2, 
     double r1 = sqrt ( double( (x1-xc)*(x1-xc) ) + double( (y1-yc)*(y1-yc) ) );
     double r2 = sqrt ( double( (x2-xc)*(x2-xc) ) + double( (y2-yc)*(y2-yc) ) );
 
-    wxASSERT_MSG( (fabs ( r2-r1 ) <= 3), wxT("wxSVGFileDC::DoDrawArc Error in getting radii of circle"));
+    //wxASSERT_MSG( (fabs ( r2-r1 ) <= 3), wxT("wxSVGFileDC::DoDrawArc Error in getting radii of circle"));
     if ( fabs ( r2-r1 ) > 3 )    //pixels
     {
         s = wxT("<!--- wxSVGFileDC::DoDrawArc Error in getting radii of circle --> \n");
@@ -585,12 +585,12 @@ bool wxSVGFileDCImpl::DoBlit(wxCoord xdest, wxCoord ydest, wxCoord width, wxCoor
 {
     if (logicalFunc != wxCOPY)
     {
-        wxASSERT_MSG(false, wxT("wxSVGFileDC::DoBlit Call requested nonCopy mode; this is not possible"));
+        //wxASSERT_MSG(false, wxT("wxSVGFileDC::DoBlit Call requested nonCopy mode; this is not possible"));
         return false;
     }
     if (useMask != false)
     {
-        wxASSERT_MSG(false, wxT("wxSVGFileDC::DoBlit Call requested false mask; this is not possible"));
+        //wxASSERT_MSG(false, wxT("wxSVGFileDC::DoBlit Call requested false mask; this is not possible"));
         return false;
     }
     wxBitmap myBitmap (width, height);

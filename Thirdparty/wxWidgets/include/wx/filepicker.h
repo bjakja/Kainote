@@ -236,7 +236,7 @@ protected:
     #define wxFLP_DEFAULT_STYLE       (wxFLP_USE_TEXTCTRL|wxFLP_OPEN|wxFLP_FILE_MUST_EXIST)
 #endif
 
-class WXDLLIMPEXP_CORE wxFilePickerCtrl : public wxFileDirPickerCtrlBase
+class  wxFilePickerCtrl : public wxFileDirPickerCtrlBase
 {
 public:
     wxFilePickerCtrl() {}
@@ -345,7 +345,7 @@ private:
     #define wxDIRP_DEFAULT_STYLE       (wxDIRP_USE_TEXTCTRL|wxDIRP_DIR_MUST_EXIST)
 #endif
 
-class WXDLLIMPEXP_CORE wxDirPickerCtrl : public wxFileDirPickerCtrlBase
+class  wxDirPickerCtrl : public wxFileDirPickerCtrlBase
 {
 public:
     wxDirPickerCtrl() {}

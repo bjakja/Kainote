@@ -182,7 +182,7 @@ private:
     DECLARE_EVENT_TABLE()
 };
 
-class WXDLLIMPEXP_CORE wxGenericFileCtrl : public wxNavigationEnabled<wxControl>,
+class  wxGenericFileCtrl : public wxNavigationEnabled<wxControl>,
                                            public wxFileCtrlBase
 {
 public:
