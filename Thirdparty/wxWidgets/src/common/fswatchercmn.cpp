@@ -52,11 +52,11 @@ static wxString GetFSWEventChangeTypeName(int type)
 // wxFileSystemWatcherEvent implementation
 // ============================================================================
 
-wxString wxFileSystemWatcherEvent::ToString() const
-{
-    return wxString::Format("FSW_EVT type=%d (%s) path='%s'", m_changeType,
-            GetFSWEventChangeTypeName(m_changeType), GetPath().GetFullPath());
-}
+//wxString wxFileSystemWatcherEvent::ToString() const
+//{
+//    return wxString::Format("FSW_EVT type=%d (%s) path='%s'", m_changeType,
+//            GetFSWEventChangeTypeName(m_changeType), GetPath().GetFullPath());
+//}
 
 
 // ============================================================================

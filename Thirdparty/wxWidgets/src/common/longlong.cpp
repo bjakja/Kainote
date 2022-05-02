@@ -51,14 +51,14 @@ void *wxLongLongNative::asArray() const
 {
     static unsigned char temp[8];
 
-    temp[0] = wx_truncate_cast(unsigned char, ((m_ll >> 56) & 0xFF));
-    temp[1] = wx_truncate_cast(unsigned char, ((m_ll >> 48) & 0xFF));
-    temp[2] = wx_truncate_cast(unsigned char, ((m_ll >> 40) & 0xFF));
-    temp[3] = wx_truncate_cast(unsigned char, ((m_ll >> 32) & 0xFF));
-    temp[4] = wx_truncate_cast(unsigned char, ((m_ll >> 24) & 0xFF));
-    temp[5] = wx_truncate_cast(unsigned char, ((m_ll >> 16) & 0xFF));
-    temp[6] = wx_truncate_cast(unsigned char, ((m_ll >> 8)  & 0xFF));
-    temp[7] = wx_truncate_cast(unsigned char, ((m_ll >> 0)  & 0xFF));
+    temp[0] = ((m_ll >> 56) & 0xFF);
+    temp[1] = ((m_ll >> 48) & 0xFF);
+    temp[2] = ((m_ll >> 40) & 0xFF);
+    temp[3] = ((m_ll >> 32) & 0xFF);
+    temp[4] = ((m_ll >> 24) & 0xFF);
+    temp[5] = ((m_ll >> 16) & 0xFF);
+    temp[6] = ((m_ll >> 8)  & 0xFF);
+    temp[7] = ((m_ll >> 0)  & 0xFF);
 
     return temp;
 }
@@ -67,14 +67,14 @@ void *wxULongLongNative::asArray() const
 {
     static unsigned char temp[8];
 
-    temp[0] = wx_truncate_cast(unsigned char, ((m_ll >> 56) & 0xFF));
-    temp[1] = wx_truncate_cast(unsigned char, ((m_ll >> 48) & 0xFF));
-    temp[2] = wx_truncate_cast(unsigned char, ((m_ll >> 40) & 0xFF));
-    temp[3] = wx_truncate_cast(unsigned char, ((m_ll >> 32) & 0xFF));
-    temp[4] = wx_truncate_cast(unsigned char, ((m_ll >> 24) & 0xFF));
-    temp[5] = wx_truncate_cast(unsigned char, ((m_ll >> 16) & 0xFF));
-    temp[6] = wx_truncate_cast(unsigned char, ((m_ll >> 8)  & 0xFF));
-    temp[7] = wx_truncate_cast(unsigned char, ((m_ll >> 0)  & 0xFF));
+    temp[0] = ((m_ll >> 56) & 0xFF);
+    temp[1] = ((m_ll >> 48) & 0xFF);
+    temp[2] = ((m_ll >> 40) & 0xFF);
+    temp[3] = ((m_ll >> 32) & 0xFF);
+    temp[4] = ((m_ll >> 24) & 0xFF);
+    temp[5] = ((m_ll >> 16) & 0xFF);
+    temp[6] = ((m_ll >> 8)  & 0xFF);
+    temp[7] = ((m_ll >> 0)  & 0xFF);
 
     return temp;
 }

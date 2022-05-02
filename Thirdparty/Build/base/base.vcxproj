@@ -150,7 +150,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>wx\wxprec.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(SolutionDir)obj\$(Platform)\$(Configuration)\base.pch</PrecompiledHeaderOutputFile>
-      <PreprocessorDefinitions>_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;_WX_X_FONTLIKE%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\wxWidgets\include;$(solutionDir)Thirdparty\wxWidgets\src\regex;$(solutionDir)Thirdparty\zlib;$(solutionDir)Thirdparty\wxWidgets\3rdparty\pcre\src\wx</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions512</EnableEnhancedInstructionSet>

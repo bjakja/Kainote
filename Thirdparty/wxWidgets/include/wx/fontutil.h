@@ -109,6 +109,14 @@ public:
     wxNativeFontInfo(const LOGFONT& lf_) : lf(lf_) { }
 
     LOGFONT      lf;
+    int           pointSize;
+    wxFontFamily  family;
+    wxFontStyle   style;
+    wxFontWeight  weight;
+    bool          underlined;
+    bool          strikethrough;
+    wxString      faceName;
+    wxFontEncoding encoding;
 #elif defined(__WXPM__)
     // OS/2 native structures that define a font
     FATTRS       fa;

@@ -160,7 +160,7 @@ wxBitmap::wxBitmap(const char* const* bits)
 
     *this = wxBitmap(image);
 #else
-    wxFAIL_MSG(wxT("creating bitmaps from XPMs not supported"));
+    //wxFAIL_MSG(wxT("creating bitmaps from XPMs not supported"));
 #endif // wxUSE_IMAGE && wxUSE_XPM
 }
 #endif // !(defined(__WXGTK__) || defined(__WXMOTIF__) || defined(__WXX11__))
