@@ -97,7 +97,6 @@
     <ClCompile Include="..\..\wxWidgets\src\common\fileconf.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\filectrlcmn.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\filefn.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\common\filehistorycmn.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\filename.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\filepickercmn.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\filesys.cpp" />
@@ -146,7 +145,6 @@
     <ClCompile Include="..\..\wxWidgets\src\common\imagpng.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\imagpnm.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\imagtga.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\common\imagtiff.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\imagxpm.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\init.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\intl.cpp" />
@@ -202,7 +200,6 @@
     <ClCompile Include="..\..\wxWidgets\src\common\sizer.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\slidercmn.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\socket.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\common\socketiohandler.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\spinbtncmn.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\spinctrlcmn.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\srchcmn.cpp" />

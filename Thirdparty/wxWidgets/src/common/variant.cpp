@@ -969,11 +969,11 @@ wxVariant::wxVariant(const wxCStrData& val, const wxString& name)
     m_name = name;
 }
 
-wxVariant::wxVariant(const wxScopedCharBuffer& val, const wxString& name)
-{
-    m_refData = new wxVariantDataString(wxString(val));
-    m_name = name;
-}
+//wxVariant::wxVariant(const wxScopedCharBuffer& val, const wxString& name)
+//{
+//    m_refData = new wxVariantDataString(wxString(val));
+//    m_name = name;
+//}
 
 wxVariant::wxVariant(const wxScopedWCharBuffer& val, const wxString& name)
 {

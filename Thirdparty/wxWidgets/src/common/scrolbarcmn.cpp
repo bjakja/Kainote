@@ -25,7 +25,7 @@
     #include "wx/settings.h"
 #endif
 
-extern WXDLLEXPORT_DATA(const char) wxScrollBarNameStr[] = "scrollBar";
+extern const char wxScrollBarNameStr[] = "scrollBar";
 
 // ----------------------------------------------------------------------------
 // XTI

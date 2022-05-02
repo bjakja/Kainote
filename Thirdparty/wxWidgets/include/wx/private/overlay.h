@@ -28,7 +28,7 @@
 
 #include "wx/bitmap.h"
 
-class WXDLLIMPEXP_FWD_CORE wxWindow;
+class  wxWindow;
 
 // generic implementation of wxOverlay
 class wxOverlayImpl

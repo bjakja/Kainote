@@ -318,7 +318,7 @@ wxImage wxImage::ShrinkBy( int xFactor , int yFactor ) const
          old_width  = M_IMGDATA->m_width;
 
     //wxCHECK_MSG( (old_height > 0) && (old_width > 0), image,
-                 wxT("invalid old image size") );
+    // wxT("invalid old image size") );
 
     long width = old_width / xFactor ;
     long height = old_height / yFactor ;
@@ -1315,12 +1315,12 @@ wxImage wxImage::GetSubImage( const wxRect &rect ) const
     unsigned char *subdata = image.GetData();
     unsigned char *subalpha = NULL;
 
-    wxCHECK_MSG( subdata, image, wxT("unable to create image") );
+    //wxCHECK_MSG( subdata, image, wxT("unable to create image") );
 
     if ( src_alpha ) {
         image.SetAlpha();
         subalpha = image.GetAlpha();
-        wxCHECK_MSG( subalpha, image, wxT("unable to create alpha channel"));
+        //wxCHECK_MSG( subalpha, image, wxT("unable to create alpha channel"));
     }
 
     if (M_IMGDATA->m_hasMask)
@@ -1701,9 +1701,9 @@ void wxImage::SetRGB( const wxRect& rect_, unsigned char r, unsigned char g, uns
     }
     else
     {
-        wxCHECK_RET( imageRect.Contains(rect.GetTopLeft()) &&
+        /*wxCHECK_RET( imageRect.Contains(rect.GetTopLeft()) &&
                      imageRect.Contains(rect.GetBottomRight()),
-                     wxT("invalid bounding rectangle") );
+                     wxT("invalid bounding rectangle") );*/
     }
 
     int x1 = rect.GetLeft(),
@@ -2385,7 +2385,7 @@ bool wxImage::SaveFile( const wxString& WXUNUSED_UNLESS_STREAMS(filename),
                         wxBitmapType WXUNUSED_UNLESS_STREAMS(type) ) const
 {
 #if HAS_FILE_STREAMS
-    wxCHECK_MSG( IsOk(), false, wxT("invalid image") );
+    //wxCHECK_MSG( IsOk(), false, wxT("invalid image") );
 
     ((wxImage*)this)->SetOption(wxIMAGE_OPTION_FILENAME, filename);
 
@@ -2405,7 +2405,7 @@ bool wxImage::SaveFile( const wxString& WXUNUSED_UNLESS_STREAMS(filename),
                         const wxString& WXUNUSED_UNLESS_STREAMS(mimetype) ) const
 {
 #if HAS_FILE_STREAMS
-    wxCHECK_MSG( IsOk(), false, wxT("invalid image") );
+    //wxCHECK_MSG( IsOk(), false, wxT("invalid image") );
 
     ((wxImage*)this)->SetOption(wxIMAGE_OPTION_FILENAME, filename);
 

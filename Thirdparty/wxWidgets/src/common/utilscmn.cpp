@@ -1378,46 +1378,46 @@ int wxMessageBox(const wxString& message, const wxString& caption, long style,
     return wxCANCEL;
 }
 
-wxVersionInfo wxGetLibraryVersionInfo()
-{
-    // don't translate these strings, they're for diagnostics purposes only
-    wxString msg;
-    msg.Printf(wxS("wxWidgets Library (%s port)\n")
-               wxS("Version %d.%d.%d (Unicode: %s, debug level: %d),\n")
-               wxS("compiled at %s %s\n\n")
-               wxS("Runtime version of toolkit used is %d.%d.\n"),
-               wxPlatformInfo::Get().GetPortIdName(),
-               wxMAJOR_VERSION,
-               wxMINOR_VERSION,
-               wxRELEASE_NUMBER,
-#if wxUSE_UNICODE_UTF8
-               "UTF-8",
-#elif wxUSE_UNICODE
-               "wchar_t",
-#else
-               "none",
-#endif
-               wxDEBUG_LEVEL,
-               __TDATE__,
-               __TTIME__,
-               wxPlatformInfo::Get().GetToolkitMajorVersion(),
-               wxPlatformInfo::Get().GetToolkitMinorVersion()
-              );
-
-#ifdef __WXGTK__
-    msg += wxString::Format("Compile-time GTK+ version is %d.%d.%d.\n",
-                            GTK_MAJOR_VERSION,
-                            GTK_MINOR_VERSION,
-                            GTK_MICRO_VERSION);
-#endif // __WXGTK__
-
-    return wxVersionInfo(wxS("wxWidgets"),
-                         wxMAJOR_VERSION,
-                         wxMINOR_VERSION,
-                         wxRELEASE_NUMBER,
-                         msg,
-                         wxS("Copyright (c) 1995-2011 wxWidgets team"));
-}
+//wxVersionInfo wxGetLibraryVersionInfo()
+//{
+//    // don't translate these strings, they're for diagnostics purposes only
+//    wxString msg;
+//    msg.Printf(wxS("wxWidgets Library (%s port)\n")
+//               wxS("Version %d.%d.%d (Unicode: %s, debug level: %d),\n")
+//               wxS("compiled at %s %s\n\n")
+//               wxS("Runtime version of toolkit used is %d.%d.\n"),
+//               wxPlatformInfo::Get().GetPortIdName(),
+//               wxMAJOR_VERSION,
+//               wxMINOR_VERSION,
+//               wxRELEASE_NUMBER,
+//#if wxUSE_UNICODE_UTF8
+//               "UTF-8",
+//#elif wxUSE_UNICODE
+//               "wchar_t",
+//#else
+//               "none",
+//#endif
+//               wxDEBUG_LEVEL,
+//               __TDATE__,
+//               __TTIME__,
+//               wxPlatformInfo::Get().GetToolkitMajorVersion(),
+//               wxPlatformInfo::Get().GetToolkitMinorVersion()
+//              );
+//
+//#ifdef __WXGTK__
+//    msg += wxString::Format("Compile-time GTK+ version is %d.%d.%d.\n",
+//                            GTK_MAJOR_VERSION,
+//                            GTK_MINOR_VERSION,
+//                            GTK_MICRO_VERSION);
+//#endif // __WXGTK__
+//
+//    return wxVersionInfo(wxS("wxWidgets"),
+//                         wxMAJOR_VERSION,
+//                         wxMINOR_VERSION,
+//                         wxRELEASE_NUMBER,
+//                         msg,
+//                         wxS("Copyright (c) 1995-2011 wxWidgets team"));
+//}
 
 void wxInfoMessageBox(wxWindow* parent)
 {

@@ -553,7 +553,7 @@ public:                                                               \
     { base::erase(begin() + uiIndex, begin() + uiIndex + nRemove); }  \
   void Remove(T lItem)                                                \
     { int iIndex = Index(lItem);                                      \
-      wxCHECK_RET( iIndex != wxNOT_FOUND, _WX_ERROR_REMOVE );         \
+      /*wxCHECK_RET( iIndex != wxNOT_FOUND, _WX_ERROR_REMOVE );*/         \
       base::erase(begin() + iIndex); }                                \
                                                                       \
 private:                                                              \

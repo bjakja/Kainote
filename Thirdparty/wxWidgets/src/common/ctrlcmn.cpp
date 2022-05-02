@@ -399,7 +399,7 @@ wxString wxControlBase::DoEllipsizeSingleLine(const wxString& curLine, const wxD
 {
     //wxASSERT_MSG(replacementWidthPx > 0, "Invalid parameters");
     //wxASSERT_LEVEL_2_MSG(!curLine.Contains('\n'),
-                         "//Use Ellipsize() instead!");
+                         //"//Use Ellipsize() instead!");
 
     //wxASSERT_MSG( mode != wxELLIPSIZE_NONE, "shouldn't be called at all then" );
 

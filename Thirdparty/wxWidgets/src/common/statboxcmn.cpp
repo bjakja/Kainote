@@ -28,7 +28,7 @@
 
 #include "wx/statbox.h"
 
-extern WXDLLEXPORT_DATA(const char) wxStaticBoxNameStr[] = "groupBox";
+extern const char wxStaticBoxNameStr[] = "groupBox";
 
 // ----------------------------------------------------------------------------
 // XTI

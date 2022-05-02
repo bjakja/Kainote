@@ -34,7 +34,7 @@
     #include "wx/log.h"
 #endif
 
-extern WXDLLEXPORT_DATA(const char) wxListBoxNameStr[] = "listBox";
+extern const char wxListBoxNameStr[] = "listBox";
 
 // ============================================================================
 // implementation
@@ -298,8 +298,8 @@ bool wxListBoxBase::CalcAndSendEvent()
         }
     }
 
-    wxASSERT_MSG( item != wxNOT_FOUND,
-                  "Logic error in wxListBox selection event generation code" );
+    /*wxASSERT_MSG( item != wxNOT_FOUND,
+                  "Logic error in wxListBox selection event generation code" );*/
 
     m_oldSelections = selections;
 
@@ -324,7 +324,7 @@ void wxListBoxBase::SetFirstItem(const wxString& s)
 {
     int n = FindString(s);
 
-    wxCHECK_RET( n != wxNOT_FOUND, wxT("invalid string in wxListBox::SetFirstItem") );
+    //wxCHECK_RET( n != wxNOT_FOUND, wxT("invalid string in wxListBox::SetFirstItem") );
 
     DoSetFirstItem(n);
 }

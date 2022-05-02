@@ -1369,12 +1369,12 @@ wxSizerItem *wxGridSizer::DoInsert(size_t index, wxSizerItem *item)
         const int nitems = m_children.GetCount();
         if ( nitems == m_cols*m_rows )
         {
-            wxFAIL_MSG(
+            /*wxFAIL_MSG(
                 wxString::Format(
                     "too many items (%d > %d*%d) in grid sizer (maybe you "
                     "should omit the number of either rows or columns?)",
                 nitems + 1, m_cols, m_rows)
-            );
+            );*/
 
             // additionally, continuing to use the specified number of columns
             // and rows is not a good idea as callers of CalcRowsCols() expect

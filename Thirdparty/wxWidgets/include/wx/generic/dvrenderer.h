@@ -16,7 +16,7 @@
 // wxDataViewRenderer
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_ADV wxDataViewRenderer: public wxDataViewCustomRendererBase
+class  wxDataViewRenderer: public wxDataViewCustomRendererBase
 {
 public:
     wxDataViewRenderer( const wxString &varianttype,

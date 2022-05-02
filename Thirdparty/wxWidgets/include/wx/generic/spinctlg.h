@@ -166,7 +166,7 @@ private:
 
 #include "wx/textctrl.h"
 
-class WXDLLIMPEXP_CORE wxSpinCtrlGenericBase : public wxTextCtrl
+class  wxSpinCtrlGenericBase : public wxTextCtrl
 {
 public:
     wxSpinCtrlGenericBase() : m_value(0), m_min(0), m_max(100),
@@ -254,7 +254,7 @@ protected:
 // wxSpinCtrl
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxSpinCtrl : public wxSpinCtrlGenericBase
+class  wxSpinCtrl : public wxSpinCtrlGenericBase
 {
 public:
     wxSpinCtrl() {}
@@ -308,7 +308,7 @@ protected:
 // wxSpinCtrlDouble
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxSpinCtrlDouble : public wxSpinCtrlGenericBase
+class  wxSpinCtrlDouble : public wxSpinCtrlGenericBase
 {
 public:
     wxSpinCtrlDouble() : m_digits(0) { }

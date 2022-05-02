@@ -86,8 +86,8 @@ wxMarkupParser::ParseAttrs(wxString attrs, TagAndAttrs& tagAndAttrs)
 {
     if ( tagAndAttrs.name.CmpNoCase("span") != 0 && !attrs.empty() )
     {
-        return wxString::Format("tag \"%s\" can't have attributes",
-                                tagAndAttrs.name);
+        //return wxString::Format("tag \"%s\" can't have attributes",
+                                //tagAndAttrs.name);
     }
 
     // TODO: Parse more attributes described at
@@ -115,8 +115,8 @@ wxMarkupParser::ParseAttrs(wxString attrs, TagAndAttrs& tagAndAttrs)
                 (value[0] != value.Last()) ||
                     (value[0] != '"' && value[0] != '\'') )
         {
-            return wxString::Format("bad quoting for value of \"%s\"",
-                                    nameOrig);
+            //return wxString::Format("bad quoting for value of \"%s\"",
+                                    //nameOrig);
         }
 
         value.assign(value, 1, value.length() - 2);
@@ -144,8 +144,8 @@ wxMarkupParser::ParseAttrs(wxString attrs, TagAndAttrs& tagAndAttrs)
             else if ( value.ToULong(&weight) )
                 spanAttrs.m_isBold = weight >= 600 ? wxMarkupSpanAttributes::Yes
                                                    : wxMarkupSpanAttributes::No;
-            else
-                return wxString::Format("invalid font weight \"%s\"", valueOrig);
+            //else
+                //return wxString::Format("invalid font weight \"%s\"", valueOrig);
         }
         else if ( name == "font_style" || name == "style" )
         {
@@ -153,8 +153,8 @@ wxMarkupParser::ParseAttrs(wxString attrs, TagAndAttrs& tagAndAttrs)
                 spanAttrs.m_isItalic = wxMarkupSpanAttributes::No;
             else if ( value == "oblique" || value == "italic" )
                 spanAttrs.m_isItalic = wxMarkupSpanAttributes::Yes;
-            else
-                return wxString::Format("invalid font style \"%s\"", valueOrig);
+            //else
+                //return wxString::Format("invalid font style \"%s\"", valueOrig);
         }
         else if ( name == "size" )
         {
@@ -186,9 +186,9 @@ wxMarkupParser::ParseAttrs(wxString attrs, TagAndAttrs& tagAndAttrs)
                 {
                     if ( rest == "small" )
                         cssSize = -cssSize;
-                    else if ( rest != "large" )
-                        return wxString::Format("invalid font size \"%s\"",
-                                                valueOrig);
+                    //else if ( rest != "large" )
+                        //return wxString::Format("invalid font size \"%s\"",
+                                                //valueOrig);
                 }
 
                 spanAttrs.m_sizeKind = wxMarkupSpanAttributes::Size_Symbolic;

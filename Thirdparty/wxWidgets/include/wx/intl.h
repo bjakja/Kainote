@@ -343,7 +343,7 @@ private:
                    m_strShort;        // short name for the locale
     int            m_language;        // this locale wxLanguage value
 
-    const char  *m_pszOldLocale;      // previous locale from setlocale()
+    const wchar_t  *m_pszOldLocale;      // previous locale from setlocale()
     wxLocale      *m_pOldLocale;      // previous wxLocale
 
     bool           m_initialized;

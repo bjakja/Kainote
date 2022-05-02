@@ -1331,7 +1331,7 @@ size_t wxMBConvUTF8::ToWChar(wchar_t *buf, size_t n,
 #ifdef WC_UTF16
                         // cast is ok because wchar_t == wxUuint16 if WC_UTF16
                         size_t pa = encode_utf16((unsigned char)*opsz + wxUnicodePUA, (wxUint16 *)buf);
-                        wxASSERT(pa != wxCONV_FAILED);
+                        //wxASSERT(pa != wxCONV_FAILED);
                         if (buf)
                             buf += pa;
                         opsz++;
@@ -1789,8 +1789,8 @@ wxMBConvUTF16swap::FromWChar(char *dst, size_t dstLen,
 #endif
 
 
-WXDLLIMPEXP_DATA_BASE(wxMBConvUTF32LE) wxConvUTF32LE;
-WXDLLIMPEXP_DATA_BASE(wxMBConvUTF32BE) wxConvUTF32BE;
+wxMBConvUTF32LE wxConvUTF32LE;
+wxMBConvUTF32BE wxConvUTF32BE;
 
 /* static */
 size_t wxMBConvUTF32Base::GetLength(const char *src, size_t srcLen)
@@ -2536,8 +2536,8 @@ bool wxMBConv_iconv::IsUTF8() const
 
 // from utils.cpp
 #if wxUSE_FONTMAP
-extern WXDLLIMPEXP_BASE long wxCharsetToCodepage(const char *charset);
-extern WXDLLIMPEXP_BASE long wxEncodingToCodepage(wxFontEncoding encoding);
+extern  long wxCharsetToCodepage(const char *charset);
+extern  long wxEncodingToCodepage(wxFontEncoding encoding);
 #endif
 
 class wxMBConv_win32 : public wxMBConv
@@ -3010,7 +3010,7 @@ wxCSConv::wxCSConv(const wxString& charset)
 
     if ( !charset.empty() )
     {
-        SetName(charset.ToAscii());
+        //SetName(charset.ToAscii());
     }
 
 #if wxUSE_FONTMAP

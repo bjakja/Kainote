@@ -82,7 +82,7 @@ struct wxVectorMemOpsGeneric
 
     static void MemmoveBackward(T* dest, T* source, size_t count)
     {
-        wxASSERT( dest < source );
+        //wxASSERT( dest < source );
         T* destptr = dest;
         T* sourceptr = source;
         for ( size_t i = count; i > 0; --i, ++destptr, ++sourceptr )
@@ -94,7 +94,7 @@ struct wxVectorMemOpsGeneric
 
     static void MemmoveForward(T* dest, T* source, size_t count)
     {
-        wxASSERT( dest > source );
+        //wxASSERT( dest > source );
         T* destptr = dest + count - 1;
         T* sourceptr = source + count - 1;
         for ( size_t i = count; i > 0; --i, --destptr, --sourceptr )

@@ -281,7 +281,7 @@ bool wxGIFHandler::DoSaveFile(const wxImage& image, wxOutputStream *stream,
             rgb.green = src[1];
             rgb.blue  = src[2];
             int index = wxGIFHandler_PaletteFind(rgb, pal, palCount);
-            wxASSERT(index != wxNOT_FOUND);
+            //wxASSERT(index != wxNOT_FOUND);
             eightBitData[x] = (wxUint8)index;
             src+=3;
         }

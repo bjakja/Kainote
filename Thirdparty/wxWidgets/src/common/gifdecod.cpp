@@ -104,7 +104,7 @@ wxGIFDecoder::~wxGIFDecoder()
 
 void wxGIFDecoder::Destroy()
 {
-    wxASSERT(m_nFrames==m_frames.GetCount());
+    //wxASSERT(m_nFrames==m_frames.GetCount());
     for (unsigned int i=0; i<m_nFrames; i++)
     {
         GIFImage *f = (GIFImage*)m_frames[i];
@@ -446,7 +446,7 @@ wxGIFDecoder::dgif(wxInputStream& stream, GIFImage *img, int interl, int bits)
             // don't like being forced to ask "Who in .text could have
             // written there?!" And I wouldn't have been forced to ask if
             // this line had already been here.
-            wxASSERT(ab_free < allocSize);
+            //wxASSERT(ab_free < allocSize);
 
             ab_prefix[ab_free] = lastcode;
             ab_tail[ab_free]   = code;

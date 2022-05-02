@@ -51,8 +51,8 @@ void wxSocketFDBasedManager::Install_Callback(wxSocketImpl *socket_,
     wxSocketImplUnix * const
         socket = static_cast<wxSocketImplUnix *>(socket_);
 
-    wxCHECK_RET( socket->m_fd != -1,
-                    "shouldn't be called on invalid socket" );
+    //wxCHECK_RET( socket->m_fd != -1,
+                    //"shouldn't be called on invalid socket" );
 
     const wxFDIOManager::Direction d = GetDirForEvent(socket, event);
 
@@ -86,11 +86,11 @@ wxSocketFDBasedManager::GetDirForEvent(wxSocketImpl *socket,
     switch ( event )
     {
         default:
-            wxFAIL_MSG( "unknown socket event" );
+            //wxFAIL_MSG( "unknown socket event" );
             return wxFDIOManager::INPUT; // we must return something
 
         case wxSOCKET_LOST:
-            wxFAIL_MSG( "unexpected socket event" );
+            //wxFAIL_MSG( "unexpected socket event" );
             return wxFDIOManager::INPUT; // as above
 
         case wxSOCKET_INPUT:

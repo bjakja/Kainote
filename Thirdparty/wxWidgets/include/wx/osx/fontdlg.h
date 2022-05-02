@@ -31,7 +31,7 @@
 
 #if wxOSX_USE_EXPERIMENTAL_FONTDIALOG
 
-class WXDLLIMPEXP_CORE wxFontDialog : public wxDialog
+class  wxFontDialog : public wxDialog
 {
 public:
     wxFontDialog();
@@ -63,13 +63,13 @@ extern "C" int RunMixedFontDialog(wxFontDialog* dialog) ;
 
 class wxFontColourSwatchCtrl;
 class wxFontPreviewCtrl;
-class WXDLLIMPEXP_FWD_CORE wxSpinCtrl;
-class WXDLLIMPEXP_FWD_CORE wxSpinEvent;
-class WXDLLIMPEXP_FWD_CORE wxListBox;
-class WXDLLIMPEXP_FWD_CORE wxChoice;
-class WXDLLIMPEXP_FWD_CORE wxButton;
-class WXDLLIMPEXP_FWD_CORE wxStaticText;
-class WXDLLIMPEXP_FWD_CORE wxCheckBox;
+class  wxSpinCtrl;
+class  wxSpinEvent;
+class  wxListBox;
+class  wxChoice;
+class  wxButton;
+class  wxStaticText;
+class  wxCheckBox;
 
 /*!
  * Control identifiers

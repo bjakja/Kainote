@@ -1138,7 +1138,7 @@ private:
 };
 
 WX_DECLARE_LIST_WITH_DECL(wxDataViewTreeStoreNode, wxDataViewTreeStoreNodeList,
-                          class WXDLLIMPEXP_ADV);
+                          class );
 
 class  wxDataViewTreeStoreContainerNode: public wxDataViewTreeStoreNode
 {

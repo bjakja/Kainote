@@ -717,7 +717,7 @@ wxFormatString::ArgumentType wxFormatString::GetArgumentType(unsigned n) const
 {
     /*if ( m_char )
         return DoGetArgumentType(m_char.data(), n);*/
-    else if ( m_wchar )
+     if ( m_wchar )
         return DoGetArgumentType(m_wchar.data(), n);
     else if ( m_str )
         return DoGetArgumentType(m_str->wx_str(), n);

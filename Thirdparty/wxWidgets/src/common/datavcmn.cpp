@@ -487,7 +487,7 @@ unsigned int wxDataViewIndexListModel::GetRow( const wxDataViewItem &item ) cons
 
 wxDataViewItem wxDataViewIndexListModel::GetItem( unsigned int row ) const
 {
-    wxASSERT( row < m_hash.GetCount() );
+    //wxASSERT( row < m_hash.GetCount() );
     return wxDataViewItem( m_hash[row] );
 }
 
@@ -618,7 +618,7 @@ unsigned int wxDataViewVirtualListModel::GetChildren( const wxDataViewItem &WXUN
 
 IMPLEMENT_DYNAMIC_CLASS(wxDataViewIconText,wxObject)
 
-IMPLEMENT_VARIANT_OBJECT_EXPORTED(wxDataViewIconText, WXDLLIMPEXP_ADV)
+//IMPLEMENT_VARIANT_OBJECT_EXPORTED(wxDataViewIconText, )
 
 // ---------------------------------------------------------
 // wxDataViewRendererBase
@@ -804,7 +804,7 @@ void wxDataViewCustomRendererBase::RenderBackground(wxDC* dc, const wxRect& rect
 void
 wxDataViewCustomRendererBase::WXCallRender(wxRect rectCell, wxDC *dc, int state)
 {
-    wxCHECK_RET( dc, "no DC to draw on in custom renderer?" );
+    //wxCHECK_RET( dc, "no DC to draw on in custom renderer?" );
 
     // adjust the rectangle ourselves to account for the alignment
     wxRect rectItem = rectCell;
@@ -1081,7 +1081,7 @@ wxDataViewItem wxDataViewCtrlBase::GetCurrentItem() const
 
 void wxDataViewCtrlBase::SetCurrentItem(const wxDataViewItem& item)
 {
-    wxCHECK_RET( item.IsOk(), "Can't make current an invalid item." );
+    //wxCHECK_RET( item.IsOk(), "Can't make current an invalid item." );
 
     if ( HasFlag(wxDV_MULTIPLE) )
         DoSetCurrentItem(item);
