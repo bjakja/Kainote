@@ -406,11 +406,11 @@ WXLRESULT wxTopLevelWindowMSW::MSWWindowProc(WXUINT message, WXWPARAM wParam, WX
                 // As SC_SIZE is the first of the system-defined commands, we
                 // only do this for the custom commands before it and leave
                 // SC_SIZE and everything after it to DefWindowProc().
-                if ( m_menuSystem && id < SC_SIZE )
-                {
-                    if ( m_menuSystem->MSWCommand(0 /* unused anyhow */, id) )
-                        processed = true;
-                }
+                //if ( m_menuSystem && id < SC_SIZE )
+                //{
+                //    if ( m_menuSystem->MSWCommand(0 /* unused anyhow */, id) )
+                //        processed = true;
+                //}
 #endif // #ifndef __WXUNIVERSAL__
             }
             break;
@@ -1239,38 +1239,38 @@ void wxTopLevelWindowMSW::RequestUserAttention(int flags)
     }
 }
 
-wxMenu *wxTopLevelWindowMSW::MSWGetSystemMenu() const
-{
-#ifndef __WXUNIVERSAL__
-    if ( !m_menuSystem )
-    {
-        HMENU hmenu = ::GetSystemMenu(GetHwnd(), FALSE);
-        if ( !hmenu )
-        {
-            wxLogLastError(wxT("GetSystemMenu()"));
-            return NULL;
-        }
-
-        wxTopLevelWindowMSW * const
-            self = const_cast<wxTopLevelWindowMSW *>(this);
-
-        self->m_menuSystem = wxMenu::MSWNewFromHMENU(hmenu);
-
-        // We need to somehow associate this menu with this window to ensure
-        // that we get events from it. A natural idea would be to pretend that
-        // it's attached to our menu bar but this wouldn't work if we don't
-        // have any menu bar which is a common case for applications using
-        // custom items in the system menu (they mostly do it exactly because
-        // they don't have any other menus).
-        //
-        // So reuse the invoking window pointer instead, this is not exactly
-        // correct but doesn't seem to have any serious drawbacks.
-        m_menuSystem->SetInvokingWindow(self);
-    }
-#endif // #ifndef __WXUNIVERSAL__
-
-    return m_menuSystem;
-}
+//wxMenu *wxTopLevelWindowMSW::MSWGetSystemMenu() const
+//{
+//#ifndef __WXUNIVERSAL__
+//    if ( !m_menuSystem )
+//    {
+//        HMENU hmenu = ::GetSystemMenu(GetHwnd(), FALSE);
+//        if ( !hmenu )
+//        {
+//            wxLogLastError(wxT("GetSystemMenu()"));
+//            return NULL;
+//        }
+//
+//        wxTopLevelWindowMSW * const
+//            self = const_cast<wxTopLevelWindowMSW *>(this);
+//
+//        //self->m_menuSystem = wxMenu::MSWNewFromHMENU(hmenu);
+//
+//        // We need to somehow associate this menu with this window to ensure
+//        // that we get events from it. A natural idea would be to pretend that
+//        // it's attached to our menu bar but this wouldn't work if we don't
+//        // have any menu bar which is a common case for applications using
+//        // custom items in the system menu (they mostly do it exactly because
+//        // they don't have any other menus).
+//        //
+//        // So reuse the invoking window pointer instead, this is not exactly
+//        // correct but doesn't seem to have any serious drawbacks.
+//        //m_menuSystem->SetInvokingWindow(self);
+//    }
+//#endif // #ifndef __WXUNIVERSAL__
+//
+//    return m_menuSystem;
+//}
 
 // ----------------------------------------------------------------------------
 // Transparency support

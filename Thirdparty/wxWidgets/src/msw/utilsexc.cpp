@@ -43,6 +43,7 @@
 
 
 #include "wx/msw/private.h"
+#include "wx/ipcbase.h"
 
 #include <ctype.h>
 
@@ -76,9 +77,9 @@
 #endif
 #include <stdarg.h>
 
-#if wxUSE_IPC
+//#if wxUSE_IPC
     #include "wx/dde.h"         // for WX_DDE hack in wxExecute
-#endif // wxUSE_IPC
+//#endif // wxUSE_IPC
 
 #include "wx/msw/private/hiddenwin.h"
 

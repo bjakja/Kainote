@@ -21,7 +21,7 @@
 #include "wx/msw/missing.h"
 
 // Set Unicode format for a common control
-inline void wxSetCCUnicodeFormat(HWND WXUNUSED_IN_WINCE(hwnd))
+inline void wxSetCCUnicodeFormat(HWND hwnd)
 {
 #ifndef __WXWINCE__
     ::SendMessage(hwnd, CCM_SETUNICODEFORMAT, wxUSE_UNICODE, 0);

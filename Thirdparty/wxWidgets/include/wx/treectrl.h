@@ -362,7 +362,7 @@ public:
     virtual int OnCompareItems(const wxTreeItemId& item1,
                                const wxTreeItemId& item2)
     {
-        return wxStrcmp(GetItemText(item1), GetItemText(item2));
+        //return wxStrcmp(GetItemText(item1), GetItemText(item2));
     }
 
         // sort the children of this item using OnCompareItems

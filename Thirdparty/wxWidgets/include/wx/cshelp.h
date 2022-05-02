@@ -36,7 +36,7 @@
  * window for the application to display help for.
  */
 
-class WXDLLIMPEXP_CORE wxContextHelp : public wxObject
+class  wxContextHelp : public wxObject
 {
 public:
     wxContextHelp(wxWindow* win = NULL, bool beginHelp = true);
@@ -65,7 +65,7 @@ private:
  * to put the application into context help mode.
  */
 
-class WXDLLIMPEXP_CORE wxContextHelpButton : public wxBitmapButton
+class  wxContextHelpButton : public wxBitmapButton
 {
 public:
     wxContextHelpButton(wxWindow* parent,
@@ -106,7 +106,7 @@ private:
 // and overriding ShowHelp() but calling the base class version wouldn't work
 // any more, which forces us to use a rather ugly hack and pass the extra
 // parameters of ShowHelpAtPoint() to ShowHelp() via member variables.
-class WXDLLIMPEXP_CORE wxHelpProvider
+class  wxHelpProvider
 {
 public:
     // get/set the current (application-global) help provider (Set() returns
@@ -134,7 +134,7 @@ public:
                                  const wxPoint& pt,
                                  wxHelpEvent::Origin origin)
     {
-        wxCHECK_MSG( window, false, wxT("window must not be NULL") );
+        //wxCHECK_MSG( window, false, wxT("window must not be NULL") );
 
         m_helptextAtPoint = pt;
         m_helptextOrigin = origin;
@@ -188,7 +188,7 @@ WX_DECLARE_EXPORTED_HASH_MAP( wxUIntPtr, wxString, wxIntegerHash,
 // wxSimpleHelpProvider is an implementation of wxHelpProvider which supports
 // only plain text help strings and shows the string associated with the
 // control (if any) in a tooltip
-class WXDLLIMPEXP_CORE wxSimpleHelpProvider : public wxHelpProvider
+class  wxSimpleHelpProvider : public wxHelpProvider
 {
 public:
     // implement wxHelpProvider methods
@@ -212,7 +212,7 @@ protected:
 // both context identifiers and plain text help strings. If the help text is an integer,
 // it is passed to wxHelpController::DisplayContextPopup. Otherwise, it shows the string
 // in a tooltip as per wxSimpleHelpProvider.
-class WXDLLIMPEXP_CORE wxHelpControllerHelpProvider : public wxSimpleHelpProvider
+class  wxHelpControllerHelpProvider : public wxSimpleHelpProvider
 {
 public:
     // Note that it doesn't own the help controller. The help controller
@@ -236,7 +236,7 @@ protected:
 };
 
 // Convenience function for turning context id into wxString
-WXDLLIMPEXP_CORE wxString wxContextId(int id);
+ wxString wxContextId(int id);
 
 #endif // wxUSE_HELP
 

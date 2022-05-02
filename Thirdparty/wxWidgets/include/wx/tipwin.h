@@ -26,13 +26,13 @@
 #endif
 #include "wx/arrstr.h"
 
-class WXDLLIMPEXP_FWD_CORE wxTipWindowView;
+class  wxTipWindowView;
 
 // ----------------------------------------------------------------------------
 // wxTipWindow
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxTipWindow : public wxTipWindowBase
+class  wxTipWindow : public wxTipWindowBase
 {
 public:
     // the mandatory ctor parameters are: the parent window and the text to

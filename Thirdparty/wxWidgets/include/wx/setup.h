@@ -918,7 +918,7 @@
 // Default is 1.
 //
 // Recommended setting: 1
-#define wxUSE_NOTEBOOK 1
+#define wxUSE_NOTEBOOK 0
 
 // wxListbook control is similar to wxNotebook but uses wxListCtrl instead of
 // the tabs
@@ -1383,7 +1383,7 @@
 
 
 // Use wxHTML-based help controller?
-#define wxUSE_WXHTML_HELP 1
+#define wxUSE_WXHTML_HELP 0
 
 #define wxUSE_CONSTRAINTS 1
                                 // 0 for no window layout constraint system

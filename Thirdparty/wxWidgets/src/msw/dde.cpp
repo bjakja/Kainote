@@ -33,12 +33,13 @@
     #include "wx/module.h"
 #endif
 
-#include "wx/dde.h"
+#include "wx/msw/dde.h"
 #include "wx/intl.h"
 #include "wx/buffer.h"
 #include "wx/strconv.h"
 
 #include "wx/msw/private.h"
+#include "wx/ipcbase.h"
 
 #include <string.h>
 #include <ddeml.h>

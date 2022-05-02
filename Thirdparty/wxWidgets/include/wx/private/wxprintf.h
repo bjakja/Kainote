@@ -763,7 +763,7 @@ int wxPrintfConvSpec<CharType>::Process(CharType *buf, size_t lenMax, wxPrintfAr
         case wxPAT_LONGDOUBLE:
         case wxPAT_DOUBLE:
         case wxPAT_POINTER:
-            wxASSERT(lenScratch < wxMAX_SVNPRINTF_SCRATCHBUFFER_LEN);
+            //wxASSERT(lenScratch < wxMAX_SVNPRINTF_SCRATCHBUFFER_LEN);
             // NB: 1) we can compare lenMax (for CharType*, i.e. possibly
             //        wchar_t*) with lenScratch (char*) because this code is
             //        formatting integers and that will have the same length

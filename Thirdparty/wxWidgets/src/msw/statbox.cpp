@@ -390,7 +390,7 @@ void wxStaticBox::PaintForeground(wxDC& dc, const RECT& rc)
         }
         else // no font set, use the one set by the theme
         {
-            wxUxThemeHandle hTheme(this, L"BUTTON");
+           /* wxUxThemeHandle hTheme(this, L"BUTTON");
             if ( hTheme )
             {
                 wxUxThemeFont themeFont;
@@ -408,7 +408,7 @@ void wxStaticBox::PaintForeground(wxDC& dc, const RECT& rc)
                     if ( font )
                         selFont.Init(hdc, font);
                 }
-            }
+            }*/
         }
 
         // Get the font extent
@@ -475,13 +475,13 @@ void wxStaticBox::PaintForeground(wxDC& dc, const RECT& rc)
         if ( !rtl )
         {
             RECT rc2 = { x, 0, x + width, y };
-            ::DrawText(hdc, label.t_str(), label.length(), &rc2,
+            ::DrawTextW(hdc, label.t_str(), label.length(), &rc2,
                        drawTextFlags);
         }
         else // RTL
         {
             RECT rc2 = { x, 0, x - width, y };
-            ::DrawText(hdc, label.t_str(), label.length(), &rc2,
+            ::DrawTextW(hdc, label.t_str(), label.length(), &rc2,
                        drawTextFlags | DT_RTLREADING);
         }
     }

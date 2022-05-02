@@ -196,7 +196,7 @@ wxFindReplaceDialogImpl::~wxFindReplaceDialogImpl()
 
 bool
 wxFindReplaceDialogImpl::FindMessageHandler(wxWindow * WXUNUSED(win),
-                                            WXUINT WXUNUSED_UNLESS_DEBUG(nMsg),
+                                            WXUINT (nMsg),
                                             WPARAM WXUNUSED(wParam),
                                             LPARAM lParam)
 {
