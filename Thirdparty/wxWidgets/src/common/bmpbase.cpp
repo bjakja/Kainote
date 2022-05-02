@@ -28,8 +28,8 @@
 // ----------------------------------------------------------------------------
 
 #if wxUSE_VARIANT
-IMPLEMENT_VARIANT_OBJECT_EXPORTED_SHALLOWCMP(wxBitmap,WXDLLEXPORT)
-IMPLEMENT_VARIANT_OBJECT_EXPORTED_SHALLOWCMP(wxIcon,WXDLLEXPORT)
+//IMPLEMENT_VARIANT_OBJECT_EXPORTED_SHALLOWCMP(wxBitmap,)
+//IMPLEMENT_VARIANT_OBJECT_EXPORTED_SHALLOWCMP(wxIcon,)
 #endif
 
 #if wxUSE_EXTENDED_RTTI
@@ -152,11 +152,11 @@ IMPLEMENT_DYNAMIC_CLASS(wxBitmapBaseModule, wxModule)
 
 wxBitmap::wxBitmap(const char* const* bits)
 {
-    wxCHECK2_MSG(bits != NULL, return, wxT("invalid bitmap data"));
+    //wxCHECK2_MSG(bits != NULL, return, wxT("invalid bitmap data"));
 
 #if wxUSE_IMAGE && wxUSE_XPM
     wxImage image(bits);
-    wxCHECK2_MSG(image.IsOk(), return, wxT("invalid bitmap data"));
+    //wxCHECK2_MSG(image.IsOk(), return, wxT("invalid bitmap data"));
 
     *this = wxBitmap(image);
 #else
@@ -182,8 +182,8 @@ bool wxMaskBase::Create(const wxBitmap& bitmap, int paletteIndex)
 {
     wxPalette *pal = bitmap.GetPalette();
 
-    wxCHECK_MSG( pal, false,
-                 wxT("Cannot create mask from palette index of a bitmap without palette") );
+    //wxCHECK_MSG( pal, false,
+                 //wxT("Cannot create mask from palette index of a bitmap without palette") );
 
     unsigned char r,g,b;
     pal->GetRGB(paletteIndex, &r, &g, &b);

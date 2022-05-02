@@ -513,9 +513,9 @@ public:                                                               \
 // ----------------------------------------------------------------------------
 
 #define _WX_DEFINE_SORTED_TYPEARRAY_2(T, name, base, defcomp, classexp, comptype)\
-wxCOMPILE_TIME_ASSERT2(sizeof(T) <= sizeof(base::base_type),          \
+/*wxCOMPILE_TIME_ASSERT2(sizeof(T) <= sizeof(base::base_type),          \
                        TypeTooBigToBeStoredInSorted##base,            \
-                       name);                                         \
+                       name);*/                                         \
 classexp name : public base                                           \
 {                                                                     \
   typedef comptype SCMPFUNC;                                          \

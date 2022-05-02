@@ -917,7 +917,7 @@ bool wxFileConfig::DoReadLong(const wxString& key, long *pl) const
 
 bool wxFileConfig::DoReadBinary(const wxString& key, wxMemoryBuffer* buf) const
 {
-    wxCHECK_MSG( buf, false, wxT("NULL buffer") );
+    //wxCHECK_MSG( buf, false, wxT("NULL buffer") );
 
     wxString str;
     if ( !Read(key, &str) )
@@ -944,7 +944,7 @@ bool wxFileConfig::DoWriteString(const wxString& key, const wxString& szValue)
     {
             // setting the value of a group is an error
 
-        wxASSERT_MSG( szValue.empty(), wxT("can't set value of a group!") );
+        //wxASSERT_MSG( szValue.empty(), wxT("can't set value of a group!") );
 
             // ... except if it's empty in which case it's a way to force it's creation
 
@@ -1082,8 +1082,8 @@ bool wxFileConfig::Save(wxOutputStream& os, const wxMBConv& conv)
 bool wxFileConfig::RenameEntry(const wxString& oldName,
                                const wxString& newName)
 {
-    wxASSERT_MSG( oldName.find(wxCONFIG_PATH_SEPARATOR) == wxString::npos,
-                   wxT("RenameEntry(): paths are not supported") );
+    /*wxASSERT_MSG( oldName.find(wxCONFIG_PATH_SEPARATOR) == wxString::npos,
+                   wxT("RenameEntry(): paths are not supported") );*/
 
     // check that the entry exists
     wxFileConfigEntry *oldEntry = m_pCurrentGroup->FindEntry(oldName);
@@ -1378,8 +1378,8 @@ void wxFileConfigGroup::SetLine(wxFileConfigLineList *pLine)
 {
     // for a normal (i.e. not root) group this method shouldn't be called twice
     // unless we are resetting the line
-    wxASSERT_MSG( !m_pParent || !m_pLine || !pLine,
-                   wxT("changing line for a non-root group?") );
+    /*wxASSERT_MSG( !m_pParent || !m_pLine || !pLine,
+                   wxT("changing line for a non-root group?") );*/
 
     m_pLine = pLine;
 }
@@ -1466,7 +1466,7 @@ wxFileConfigLineList *wxFileConfigGroup::GetLastGroupLine()
     {
         wxFileConfigLineList *pLine = m_pLastGroup->GetLastGroupLine();
 
-        wxASSERT_MSG( pLine, wxT("last group must have !NULL associated line") );
+        //wxASSERT_MSG( pLine, wxT("last group must have !NULL associated line") );
 
         return pLine;
     }
@@ -1488,7 +1488,7 @@ wxFileConfigLineList *wxFileConfigGroup::GetLastEntryLine()
     {
         wxFileConfigLineList    *pLine = m_pLastEntry->GetLine();
 
-        wxASSERT_MSG( pLine, wxT("last entry must have !NULL associated line") );
+        //wxASSERT_MSG( pLine, wxT("last entry must have !NULL associated line") );
 
         return pLine;
     }
@@ -1506,7 +1506,7 @@ void wxFileConfigGroup::SetLastEntry(wxFileConfigEntry *pEntry)
         // the only situation in which a group without its own line can have
         // an entry is when the first entry is added to the initially empty
         // root pseudo-group
-        wxASSERT_MSG( !m_pParent, wxT("unexpected for non root group") );
+        //wxASSERT_MSG( !m_pParent, wxT("unexpected for non root group") );
 
         // let the group know that it does have a line in the file now
         m_pLine = pEntry->GetLine();
@@ -1521,7 +1521,7 @@ void wxFileConfigGroup::UpdateGroupAndSubgroupsLines()
 {
     // update the line of this group
     wxFileConfigLineList *line = GetGroupLine();
-    wxCHECK_RET( line, wxT("a non root group must have a corresponding line!") );
+    //wxCHECK_RET( line, wxT("a non root group must have a corresponding line!") );
 
     // +1: skip the leading '/'
     line->SetText(wxString::Format(wxT("[%s]"), GetFullName().c_str() + 1));
@@ -1537,7 +1537,7 @@ void wxFileConfigGroup::UpdateGroupAndSubgroupsLines()
 
 void wxFileConfigGroup::Rename(const wxString& newName)
 {
-    wxCHECK_RET( m_pParent, wxT("the root group can't be renamed") );
+    //wxCHECK_RET( m_pParent, wxT("the root group can't be renamed") );
 
     if ( newName == m_strName )
         return;
@@ -1635,7 +1635,7 @@ wxFileConfigGroup::FindSubgroup(const wxString& name) const
 // create a new entry and add it to the current group
 wxFileConfigEntry *wxFileConfigGroup::AddEntry(const wxString& strName, int nLine)
 {
-    wxASSERT( FindEntry(strName) == 0 );
+    //wxASSERT( FindEntry(strName) == 0 );
 
     wxFileConfigEntry   *pEntry = new wxFileConfigEntry(this, strName, nLine);
 
@@ -1646,7 +1646,7 @@ wxFileConfigEntry *wxFileConfigGroup::AddEntry(const wxString& strName, int nLin
 // create a new group and add it to the current group
 wxFileConfigGroup *wxFileConfigGroup::AddSubgroup(const wxString& strName)
 {
-    wxASSERT( FindSubgroup(strName) == 0 );
+    //wxASSERT( FindSubgroup(strName) == 0 );
 
     wxFileConfigGroup   *pGroup = new wxFileConfigGroup(this, strName, m_pConfig);
 
@@ -1676,7 +1676,7 @@ bool wxFileConfigGroup::DeleteSubgroupByName(const wxString& name)
 // other data structures.
 bool wxFileConfigGroup::DeleteSubgroup(wxFileConfigGroup *pGroup)
 {
-    wxCHECK_MSG( pGroup, false, wxT("deleting non existing group?") );
+    //wxCHECK_MSG( pGroup, false, wxT("deleting non existing group?") );
 
     wxLogTrace( FILECONF_TRACE_MASK,
                 wxT("Deleting group '%s' from '%s'"),
@@ -1801,7 +1801,7 @@ bool wxFileConfigGroup::DeleteEntry(const wxString& name)
     // last entry's line is surely !NULL
     if ( pEntry == m_pLastEntry ) {
       // our last entry is being deleted - find the last one which stays
-      wxASSERT( m_pLine != NULL );  // if we have an entry with !NULL pLine...
+      //wxASSERT( m_pLine != NULL );  // if we have an entry with !NULL pLine...
 
       // find the previous entry (if any)
       wxFileConfigEntry *pNewLast = NULL;
@@ -1846,7 +1846,7 @@ wxFileConfigEntry::wxFileConfigEntry(wxFileConfigGroup *pParent,
                                        int nLine)
                          : m_strName(strName)
 {
-  wxASSERT( !strName.empty() );
+  //wxASSERT( !strName.empty() );
 
   m_pParent = pParent;
   m_nLine   = nLine;

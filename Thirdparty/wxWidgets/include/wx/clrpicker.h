@@ -95,7 +95,7 @@ protected:
 #define wxCLRP_USE_TEXTCTRL       (wxPB_USE_TEXTCTRL)
 #define wxCLRP_DEFAULT_STYLE      0
 
-class WXDLLIMPEXP_CORE wxColourPickerCtrl : public wxPickerBase
+class  wxColourPickerCtrl : public wxPickerBase
 {
 public:
     wxColourPickerCtrl() : m_bIgnoreNextTextCtrlUpdate(false) {}
@@ -160,9 +160,9 @@ private:
 // wxColourPickerEvent: used by wxColourPickerCtrl only
 // ----------------------------------------------------------------------------
 
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEvent );
 
-class WXDLLIMPEXP_CORE wxColourPickerEvent : public wxCommandEvent
+class  wxColourPickerEvent : public wxCommandEvent
 {
 public:
     wxColourPickerEvent() {}

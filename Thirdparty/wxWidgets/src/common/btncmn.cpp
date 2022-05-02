@@ -30,7 +30,7 @@
     #include "wx/toplevel.h"
 #endif //WX_PRECOMP
 
-extern WXDLLEXPORT_DATA(const char) wxButtonNameStr[] = "button";
+extern const char wxButtonNameStr[] = "button";
 
 // ----------------------------------------------------------------------------
 // XTI
@@ -102,19 +102,19 @@ wxWindow *wxButtonBase::SetDefault()
     wxTopLevelWindow * const
         tlw = wxDynamicCast(wxGetTopLevelParent(this), wxTopLevelWindow);
 
-    wxCHECK_MSG( tlw, NULL, wxT("button without top level window?") );
+    //wxCHECK_MSG( tlw, NULL, wxT("button without top level window?") );
 
     return tlw->SetDefaultItem(this);
 }
 
 void wxAnyButtonBase::SetBitmapPosition(wxDirection dir)
 {
-    wxASSERT_MSG( !(dir & ~wxDIRECTION_MASK), "non-direction flag used" );
+    /*wxASSERT_MSG( !(dir & ~wxDIRECTION_MASK), "non-direction flag used" );
     wxASSERT_MSG( !!(dir & wxLEFT) +
                     !!(dir & wxRIGHT) +
                       !!(dir & wxTOP) +
                        !!(dir & wxBOTTOM) == 1,
-                   "exactly one direction flag must be set" );
+                   "exactly one direction flag must be set" );*/
 
     DoSetBitmapPosition(dir);
 

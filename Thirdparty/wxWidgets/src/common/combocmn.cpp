@@ -25,7 +25,7 @@
 
 #if wxUSE_COMBOBOX
 #include "wx/combobox.h"
-extern WXDLLEXPORT_DATA(const char) wxComboBoxNameStr[] = "comboBox";
+extern const char wxComboBoxNameStr[] = "comboBox";
 #endif
 
 #if wxUSE_COMBOCTRL
@@ -517,8 +517,8 @@ bool wxComboPopupWindow::ProcessLeftDown(wxMouseEvent& event)
 void wxComboPopupWindow::OnDismiss()
 {
     wxComboCtrlBase* combo = (wxComboCtrlBase*) GetParent();
-    wxASSERT_MSG( wxDynamicCast(combo, wxComboCtrlBase),
-                  wxT("parent might not be wxComboCtrl, but check IMPLEMENT_DYNAMIC_CLASS(2) macro for correctness") );
+    /*wxASSERT_MSG( wxDynamicCast(combo, wxComboCtrlBase),
+                  wxT("parent might not be wxComboCtrl, but check IMPLEMENT_DYNAMIC_CLASS(2) macro for correctness") );*/
 
     combo->OnPopupDismiss(true);
 }
@@ -2157,7 +2157,7 @@ void wxComboCtrlBase::DestroyPopup()
 
 void wxComboCtrlBase::DoSetPopupControl(wxComboPopup* iface)
 {
-    wxCHECK_RET( iface, wxT("no popup interface set for wxComboCtrl") );
+    //wxCHECK_RET( iface, wxT("no popup interface set for wxComboCtrl") );
 
     DestroyPopup();
 
@@ -2223,7 +2223,7 @@ void wxComboCtrlBase::Popup()
 void wxComboCtrlBase::ShowPopup()
 {
     EnsurePopupControl();
-    wxCHECK_RET( !IsPopupWindowState(Visible), wxT("popup window already shown") );
+    //wxCHECK_RET( !IsPopupWindowState(Visible), wxT("popup window already shown") );
 
     if ( IsPopupWindowState(Animating) )
         return;
@@ -2286,7 +2286,7 @@ void wxComboCtrlBase::ShowPopup()
 
     winPopup->Enable();
 
-    wxASSERT( !m_popup || m_popup == popup ); // Consistency check.
+    //wxASSERT( !m_popup || m_popup == popup ); // Consistency check.
 
     wxSize adjustedSize = m_popupInterface->GetAdjustedSize(widthPopup,
                                                             m_heightPopup<=0?DEFAULT_POPUP_HEIGHT:m_heightPopup,
@@ -2436,7 +2436,7 @@ void wxComboCtrlBase::DoShowPopup( const wxRect& rect, int WXUNUSED(flags) )
     {
         // Animation was aborted
 
-        wxASSERT( !winPopup->IsShown() );
+        //wxASSERT( !winPopup->IsShown() );
 
         m_popupWinState = Hidden;
     }

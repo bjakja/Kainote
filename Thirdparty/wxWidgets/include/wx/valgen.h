@@ -15,8 +15,8 @@
 
 #if wxUSE_VALIDATORS
 
-class WXDLLIMPEXP_FWD_BASE wxDateTime;
-class WXDLLIMPEXP_FWD_BASE wxFileName;
+class  wxDateTime;
+class  wxFileName;
 
 // ----------------------------------------------------------------------------
 // wxGenericValidator performs data transfer between many standard controls and
@@ -25,7 +25,7 @@ class WXDLLIMPEXP_FWD_BASE wxFileName;
 // It doesn't do any validation so its name is a slight misnomer.
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxGenericValidator: public wxValidator
+class  wxGenericValidator: public wxValidator
 {
 public:
     // Different constructors: each of them creates a validator which can only

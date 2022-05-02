@@ -411,8 +411,8 @@ wxFFileStream::wxFFileStream(const wxString& fileName, const wxString& mode)
              : wxFFileInputStream(),
                wxFFileOutputStream()
 {
-    wxASSERT_MSG( mode.find_first_of('+') != wxString::npos,
-                  "must be opened in read-write mode for this class to work" );
+    //wxASSERT_MSG( mode.find_first_of('+') != wxString::npos,
+                  //"must be opened in read-write mode for this class to work" );
 
     wxFFileOutputStream::m_file =
     wxFFileInputStream::m_file = new wxFFile(fileName, mode);

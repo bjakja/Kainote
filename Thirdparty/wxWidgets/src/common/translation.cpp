@@ -1271,7 +1271,7 @@ wxTranslations::~wxTranslations()
 
 void wxTranslations::SetLoader(wxTranslationsLoader *loader)
 {
-    wxCHECK_RET( loader, "loader can't be NULL" );
+    //wxCHECK_RET( loader, "loader can't be NULL" );
 
     delete m_loader;
     m_loader = loader;
@@ -1294,7 +1294,7 @@ void wxTranslations::SetLanguage(const wxString& lang)
 
 wxArrayString wxTranslations::GetAvailableTranslations(const wxString& domain) const
 {
-    wxCHECK_MSG( m_loader, wxArrayString(), "loader can't be NULL" );
+    //wxCHECK_MSG( m_loader, wxArrayString(), "loader can't be NULL" );
 
     return m_loader->GetAvailableTranslations(domain);
 }
@@ -1363,7 +1363,7 @@ bool wxTranslations::AddCatalog(const wxString& domain,
 bool wxTranslations::LoadCatalog(const wxString& domain, const wxString& lang)
 {
     m_loader->GetAvailableTranslations(domain);
-    wxCHECK_MSG( m_loader, false, "loader can't be NULL" );
+    //wxCHECK_MSG( m_loader, false, "loader can't be NULL" );
 
     wxMsgCatalog *cat = NULL;
 

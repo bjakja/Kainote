@@ -81,13 +81,13 @@ void wxBitmapComboBoxBase::UpdateInternals()
 
 void wxBitmapComboBoxBase::DoSetItemBitmap(unsigned int n, const wxBitmap& bitmap)
 {
-    wxCHECK_RET( n < m_bitmaps.size(), "invalid item index" );
+    //wxCHECK_RET( n < m_bitmaps.size(), "invalid item index" );
     *GetBitmapPtr(n) = bitmap;
 }
 
 wxBitmap wxBitmapComboBoxBase::GetItemBitmap(unsigned int n) const
 {
-    wxCHECK_MSG( n < m_bitmaps.size(), wxNullBitmap, "invalid item index" );
+    //wxCHECK_MSG( n < m_bitmaps.size(), wxNullBitmap, "invalid item index" );
     return *GetBitmapPtr(n);
 }
 
@@ -142,9 +142,9 @@ bool wxBitmapComboBoxBase::OnAddBitmap(const wxBitmap& bitmap)
                 DetermineIndent();
         }
 
-        wxCHECK_MSG( width == m_usedImgSize.x && height == m_usedImgSize.y,
+        /*wxCHECK_MSG( width == m_usedImgSize.x && height == m_usedImgSize.y,
                      false,
-                     "you can only add images of same size" );
+                     "you can only add images of same size" );*/
 
         return true;
     }

@@ -552,7 +552,7 @@ void wxWindowBase::SendDestroyEvent()
     GetEventHandler()->ProcessEvent(event);
 }
 
-struct WXDLLEXPORT wxWindowNext
+struct  wxWindowNext
 {
 	wxWindow *win;
 	wxWindowNext *next;
