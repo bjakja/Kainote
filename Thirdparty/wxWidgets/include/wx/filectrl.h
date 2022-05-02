@@ -29,9 +29,9 @@ enum
 };
 
 #define wxFC_DEFAULT_STYLE wxFC_OPEN
-extern WXDLLIMPEXP_DATA_CORE(const char) wxFileCtrlNameStr[]; // in filectrlcmn.cpp
+extern const char wxFileCtrlNameStr[]; // in filectrlcmn.cpp
 
-class WXDLLIMPEXP_CORE wxFileCtrlBase
+class  wxFileCtrlBase
 {
 public:
     virtual ~wxFileCtrlBase() {}
@@ -88,7 +88,7 @@ void GenerateFileActivatedEvent( wxFileCtrlBase *fileCtrl, wxWindow *wnd, const 
 // file(s).
 // In wxGTK, after each wxEVT_FILECTRL_FOLDERCHANGED, wxEVT_FILECTRL_SELECTIONCHANGED
 // is fired automatically once or more with 0 files.
-class WXDLLIMPEXP_CORE wxFileCtrlEvent : public wxCommandEvent
+class  wxFileCtrlEvent : public wxCommandEvent
 {
 public:
     wxFileCtrlEvent() {}
@@ -121,10 +121,10 @@ protected:
 
 typedef void ( wxEvtHandler::*wxFileCtrlEventFunction )( wxFileCtrlEvent& );
 
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_FILECTRL_SELECTIONCHANGED, wxFileCtrlEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_FILECTRL_FILEACTIVATED, wxFileCtrlEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_FILECTRL_FOLDERCHANGED, wxFileCtrlEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_FILECTRL_FILTERCHANGED, wxFileCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_FILECTRL_SELECTIONCHANGED, wxFileCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_FILECTRL_FILEACTIVATED, wxFileCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_FILECTRL_FOLDERCHANGED, wxFileCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_FILECTRL_FILTERCHANGED, wxFileCtrlEvent );
 
 #define wxFileCtrlEventHandler(func) \
     wxEVENT_HANDLER_CAST( wxFileCtrlEventFunction, func )

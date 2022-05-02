@@ -548,7 +548,7 @@ wxString wxGetCurrentDir()
 
 bool wxGetEnvMap(wxEnvVariableHashMap *map)
 {
-    wxCHECK_MSG( map, false, wxS("output pointer can't be NULL") );
+    //wxCHECK_MSG( map, false, wxS("output pointer can't be NULL") );
 
 #if defined(__VISUALC__)
     // This variable only exists to force the CRT to fill the wide char array,
@@ -626,7 +626,7 @@ bool wxGetEnvMap(wxEnvVariableHashMap *map)
 #if wxUSE_STREAMS
 static bool ReadAll(wxInputStream *is, wxArrayString& output)
 {
-    wxCHECK_MSG( is, false, wxT("NULL stream in wxExecute()?") );
+    //wxCHECK_MSG( is, false, wxT("NULL stream in wxExecute()?") );
 
     // the stream could be already at EOF or in wxSTREAM_BROKEN_PIPE state
     is->Reset();
@@ -1182,7 +1182,7 @@ wxChar *wxStripMenuCodes(const wxChar *in, wxChar *out)
 
 wxString wxStripMenuCodes(const wxString& in, int flags)
 {
-    wxASSERT_MSG( flags, wxT("this is useless to call without any flags") );
+    //wxASSERT_MSG( flags, wxT("this is useless to call without any flags") );
 
     wxString out;
 
@@ -1373,7 +1373,7 @@ int wxMessageBox(const wxString& message, const wxString& caption, long style,
             return wxHELP;
     }
 
-    wxFAIL_MSG( wxT("unexpected return code from wxMessageDialog") );
+    //wxFAIL_MSG( wxT("unexpected return code from wxMessageDialog") );
 
     return wxCANCEL;
 }
@@ -1505,7 +1505,7 @@ wxColour wxGetColourFromUser(wxWindow *parent,
         {
             if ( !data.FromString(s_strColourData) )
             {
-                wxFAIL_MSG( "bug in wxColourData::FromString()?" );
+                //wxFAIL_MSG( "bug in wxColourData::FromString()?" );
             }
 
 #ifdef __WXMSW__

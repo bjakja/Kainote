@@ -38,7 +38,7 @@
 // ============================================================================
 
 extern
-WXDLLIMPEXP_DATA_CORE(const char) wxRearrangeListNameStr[] = "wxRearrangeList";
+const char wxRearrangeListNameStr[] = "wxRearrangeList";
 
 BEGIN_EVENT_TABLE(wxRearrangeList, wxCheckListBox)
     EVT_CHECKLISTBOX(wxID_ANY, wxRearrangeList::OnCheck)

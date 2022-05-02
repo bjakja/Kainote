@@ -39,7 +39,7 @@ typedef wxScopedCharTypeBuffer<wxChar32> wxScopedU32CharBuffer;
     #pragma warning(disable:4275)
 #endif
 
-class WXDLLIMPEXP_BASE wxUString: public std::basic_string<wxChar32>
+class  wxUString: public std::basic_string<wxChar32>
 {
 public:
     wxUString() { }

@@ -19,24 +19,24 @@
 #include "wx/pickerbase.h"
 #include "wx/filename.h"
 
-class WXDLLIMPEXP_FWD_CORE wxDialog;
-class WXDLLIMPEXP_FWD_CORE wxFileDirPickerEvent;
+class  wxDialog;
+class  wxFileDirPickerEvent;
 
-extern WXDLLIMPEXP_DATA_CORE(const char) wxFilePickerWidgetLabel[];
-extern WXDLLIMPEXP_DATA_CORE(const char) wxFilePickerWidgetNameStr[];
-extern WXDLLIMPEXP_DATA_CORE(const char) wxFilePickerCtrlNameStr[];
-extern WXDLLIMPEXP_DATA_CORE(const char) wxFileSelectorPromptStr[];
+extern const char wxFilePickerWidgetLabel[];
+extern const char wxFilePickerWidgetNameStr[];
+extern const char wxFilePickerCtrlNameStr[];
+extern const char wxFileSelectorPromptStr[];
 
-extern WXDLLIMPEXP_DATA_CORE(const char) wxDirPickerWidgetLabel[];
-extern WXDLLIMPEXP_DATA_CORE(const char) wxDirPickerWidgetNameStr[];
-extern WXDLLIMPEXP_DATA_CORE(const char) wxDirPickerCtrlNameStr[];
-extern WXDLLIMPEXP_DATA_CORE(const char) wxDirSelectorPromptStr[];
+extern const char wxDirPickerWidgetLabel[];
+extern const char wxDirPickerWidgetNameStr[];
+extern const char wxDirPickerCtrlNameStr[];
+extern const char wxDirSelectorPromptStr[];
 
 // ----------------------------------------------------------------------------
 // wxFileDirPickerEvent: used by wxFilePickerCtrl and wxDirPickerCtrl only
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxFileDirPickerEvent : public wxCommandEvent
+class  wxFileDirPickerEvent : public wxCommandEvent
 {
 public:
     wxFileDirPickerEvent() {}
@@ -59,8 +59,8 @@ private:
     DECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxFileDirPickerEvent)
 };
 
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEvent );
 
 // ----------------------------------------------------------------------------
 // event types and macros
@@ -81,7 +81,7 @@ typedef void (wxEvtHandler::*wxFileDirPickerEventFunction)(wxFileDirPickerEvent&
 //                           implemented by controls used by wxFileDirPickerCtrlBase
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxFileDirPickerWidgetBase
+class  wxFileDirPickerWidgetBase
 {
 public:
     wxFileDirPickerWidgetBase() {  }
@@ -145,7 +145,7 @@ protected:
 // wxFileDirPickerCtrlBase
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxFileDirPickerCtrlBase : public wxPickerBase
+class  wxFileDirPickerCtrlBase : public wxPickerBase
 {
 public:
     wxFileDirPickerCtrlBase() : m_bIgnoreNextTextCtrlUpdate(false) {}

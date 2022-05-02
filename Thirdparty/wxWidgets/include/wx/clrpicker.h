@@ -20,10 +20,10 @@
 #include "wx/pickerbase.h"
 
 
-class WXDLLIMPEXP_FWD_CORE wxColourPickerEvent;
+class  wxColourPickerEvent;
 
-extern WXDLLIMPEXP_DATA_CORE(const char) wxColourPickerWidgetNameStr[];
-extern WXDLLIMPEXP_DATA_CORE(const char) wxColourPickerCtrlNameStr[];
+extern const char wxColourPickerWidgetNameStr[];
+extern const char wxColourPickerCtrlNameStr[];
 
 // show the colour in HTML form (#AABBCC) as colour button label
 #define wxCLRBTN_SHOW_LABEL     100
@@ -38,7 +38,7 @@ extern WXDLLIMPEXP_DATA_CORE(const char) wxColourPickerCtrlNameStr[];
 //                           implemented by controls used by wxColourPickerCtrl
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxColourPickerWidgetBase
+class  wxColourPickerWidgetBase
 {
 public:
     wxColourPickerWidgetBase() { m_colour = *wxBLACK; }

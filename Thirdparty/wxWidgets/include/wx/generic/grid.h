@@ -24,7 +24,7 @@
 // constants
 // ----------------------------------------------------------------------------
 
-extern WXDLLIMPEXP_DATA_ADV(const char) wxGridNameStr[];
+extern const char wxGridNameStr[];
 
 // Default parameters for wxGrid
 //
@@ -83,22 +83,22 @@ enum wxGridRenderStyle
 // forward declarations
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_ADV wxGrid;
-class WXDLLIMPEXP_FWD_ADV wxGridCellAttr;
-class WXDLLIMPEXP_FWD_ADV wxGridCellAttrProviderData;
-class WXDLLIMPEXP_FWD_ADV wxGridColLabelWindow;
-class WXDLLIMPEXP_FWD_ADV wxGridCornerLabelWindow;
-class WXDLLIMPEXP_FWD_ADV wxGridRowLabelWindow;
-class WXDLLIMPEXP_FWD_ADV wxGridWindow;
-class WXDLLIMPEXP_FWD_ADV wxGridTypeRegistry;
-class WXDLLIMPEXP_FWD_ADV wxGridSelection;
+class  wxGrid;
+class  wxGridCellAttr;
+class  wxGridCellAttrProviderData;
+class  wxGridColLabelWindow;
+class  wxGridCornerLabelWindow;
+class  wxGridRowLabelWindow;
+class  wxGridWindow;
+class  wxGridTypeRegistry;
+class  wxGridSelection;
 
-class WXDLLIMPEXP_FWD_CORE wxHeaderCtrl;
-class WXDLLIMPEXP_FWD_CORE wxCheckBox;
-class WXDLLIMPEXP_FWD_CORE wxComboBox;
-class WXDLLIMPEXP_FWD_CORE wxTextCtrl;
+class  wxHeaderCtrl;
+class  wxCheckBox;
+class  wxComboBox;
+class  wxTextCtrl;
 #if wxUSE_SPINCTRL
-class WXDLLIMPEXP_FWD_CORE wxSpinCtrl;
+class  wxSpinCtrl;
 #endif
 
 class wxGridFixedIndicesSet;
@@ -124,7 +124,7 @@ class wxGridDirectionOperations;
 //     class is not documented and is not public at all
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_ADV wxGridCellWorker : public wxClientDataContainer, public wxRefCounter
+class  wxGridCellWorker : public wxClientDataContainer, public wxRefCounter
 {
 public:
     wxGridCellWorker() { }
@@ -152,7 +152,7 @@ private:
 // predefined derived classes or derive your own class from it.
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_ADV wxGridCellRenderer : public wxGridCellWorker
+class  wxGridCellRenderer : public wxGridCellWorker
 {
 public:
     // draw the given cell on the provided DC inside the given rectangle
@@ -187,7 +187,7 @@ public:
 // even for the entire grid.
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_ADV wxGridCellEditor : public wxGridCellWorker
+class  wxGridCellEditor : public wxGridCellWorker
 {
 public:
     wxGridCellEditor();
@@ -302,7 +302,7 @@ protected:
 
 // Base class for corner window renderer: it is the simplest of all renderers
 // and only has a single function
-class WXDLLIMPEXP_ADV wxGridCornerHeaderRenderer
+class  wxGridCornerHeaderRenderer
 {
 public:
     // Draw the border around the corner window.
@@ -318,7 +318,7 @@ public:
 
 
 // Base class for the row/column header cells renderers
-class WXDLLIMPEXP_ADV wxGridHeaderLabelsRenderer
+class  wxGridHeaderLabelsRenderer
     : public wxGridCornerHeaderRenderer
 {
 public:

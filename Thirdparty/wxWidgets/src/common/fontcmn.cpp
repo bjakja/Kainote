@@ -142,8 +142,8 @@ void wxFontBase::SetDefaultEncoding(wxFontEncoding encoding)
 {
     // GetDefaultEncoding() should return something != wxFONTENCODING_DEFAULT
     // and, besides, using this value here doesn't make any sense
-    wxCHECK_RET( encoding != wxFONTENCODING_DEFAULT,
-                 wxT("can't set default encoding to wxFONTENCODING_DEFAULT") );
+    /*wxCHECK_RET( encoding != wxFONTENCODING_DEFAULT,
+                 wxT("can't set default encoding to wxFONTENCODING_DEFAULT") );*/
 
     ms_encodingDefault = encoding;
 }
@@ -241,8 +241,8 @@ bool wxFontBase::IsUsingSizeInPixels() const
 
 void wxFontBase::SetPixelSize( const wxSize& pixelSize )
 {
-    wxCHECK_RET( pixelSize.GetWidth() >= 0 && pixelSize.GetHeight() > 0,
-                 "Negative values for the pixel size or zero pixel height are not allowed" );
+    /*wxCHECK_RET( pixelSize.GetWidth() >= 0 && pixelSize.GetHeight() > 0,
+                 "Negative values for the pixel size or zero pixel height are not allowed" );*/
 
     wxScreenDC dc;
 
@@ -320,18 +320,18 @@ void wxFontBase::DoSetNativeFontInfo(const wxNativeFontInfo& info)
 
 wxString wxFontBase::GetNativeFontInfoDesc() const
 {
-    wxCHECK_MSG( IsOk(), wxEmptyString, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), wxEmptyString, wxT("invalid font") );
 
     wxString fontDesc;
     const wxNativeFontInfo *fontInfo = GetNativeFontInfo();
     if ( fontInfo )
     {
         fontDesc = fontInfo->ToString();
-        wxASSERT_MSG(!fontDesc.empty(), wxT("This should be a non-empty string!"));
+        //wxASSERT_MSG(!fontDesc.empty(), wxT("This should be a non-empty string!"));
     }
     else
     {
-        wxFAIL_MSG(wxT("Derived class should have created the wxNativeFontInfo!"));
+        //wxFAIL_MSG(wxT("Derived class should have created the wxNativeFontInfo!"));
     }
 
     return fontDesc;
@@ -339,18 +339,18 @@ wxString wxFontBase::GetNativeFontInfoDesc() const
 
 wxString wxFontBase::GetNativeFontInfoUserDesc() const
 {
-    wxCHECK_MSG( IsOk(), wxEmptyString, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), wxEmptyString, wxT("invalid font") );
 
     wxString fontDesc;
     const wxNativeFontInfo *fontInfo = GetNativeFontInfo();
     if ( fontInfo )
     {
         fontDesc = fontInfo->ToUserString();
-        wxASSERT_MSG(!fontDesc.empty(), wxT("This should be a non-empty string!"));
+        //wxASSERT_MSG(!fontDesc.empty(), wxT("This should be a non-empty string!"));
     }
     else
     {
-        wxFAIL_MSG(wxT("Derived class should have created the wxNativeFontInfo!"));
+        //wxFAIL_MSG(wxT("Derived class should have created the wxNativeFontInfo!"));
     }
 
     return fontDesc;
@@ -406,7 +406,7 @@ bool wxFontBase::operator==(const wxFont& font) const
 
 wxFontFamily wxFontBase::GetFamily() const
 {
-    wxCHECK_MSG( IsOk(), wxFONTFAMILY_UNKNOWN, wxS("invalid font") );
+    //wxCHECK_MSG( IsOk(), wxFONTFAMILY_UNKNOWN, wxS("invalid font") );
 
     // Don't return wxFONTFAMILY_UNKNOWN from here because it prevents the code
     // like wxFont(size, wxNORMAL_FONT->GetFamily(), ...) from working (see
@@ -420,7 +420,7 @@ wxFontFamily wxFontBase::GetFamily() const
 
 wxString wxFontBase::GetFamilyString() const
 {
-    wxCHECK_MSG( IsOk(), "wxFONTFAMILY_DEFAULT", "invalid font" );
+    //wxCHECK_MSG( IsOk(), "wxFONTFAMILY_DEFAULT", "invalid font" );
 
     switch ( GetFamily() )
     {
@@ -437,7 +437,7 @@ wxString wxFontBase::GetFamilyString() const
 
 wxString wxFontBase::GetStyleString() const
 {
-    wxCHECK_MSG( IsOk(), "wxFONTSTYLE_DEFAULT", "invalid font" );
+    //wxCHECK_MSG( IsOk(), "wxFONTSTYLE_DEFAULT", "invalid font" );
 
     switch ( GetStyle() )
     {
@@ -450,7 +450,7 @@ wxString wxFontBase::GetStyleString() const
 
 wxString wxFontBase::GetWeightString() const
 {
-    wxCHECK_MSG( IsOk(), "wxFONTWEIGHT_DEFAULT", "invalid font" );
+    //wxCHECK_MSG( IsOk(), "wxFONTWEIGHT_DEFAULT", "invalid font" );
 
     switch ( GetWeight() )
     {
@@ -490,11 +490,11 @@ int wxFontBase::AdjustToSymbolicSize(wxFontSymbolicSize size, int base)
     // instead.
     static const float factors[] = { 0.60f, 0.75f, 0.89f, 1.f, 1.2f, 1.5f, 2.f };
 
-    wxCOMPILE_TIME_ASSERT
+    /*wxCOMPILE_TIME_ASSERT
     (
         WXSIZEOF(factors) == wxFONTSIZE_XX_LARGE - wxFONTSIZE_XX_SMALL + 1,
         WrongFontSizeFactorsSize
-    );
+    );*/
 
     return wxRound(factors[size - wxFONTSIZE_XX_SMALL]*base);
 }
@@ -799,7 +799,7 @@ wxString wxNativeFontInfo::ToUserString() const
     switch ( GetWeight() )
     {
         default:
-            wxFAIL_MSG( wxT("unknown font weight") );
+            break;// wxFAIL_MSG(wxT("unknown font weight"));
             // fall through
 
         case wxFONTWEIGHT_NORMAL:
@@ -817,7 +817,7 @@ wxString wxNativeFontInfo::ToUserString() const
     switch ( GetStyle() )
     {
         default:
-            wxFAIL_MSG( wxT("unknown font style") );
+            break;// wxFAIL_MSG(wxT("unknown font style"));
             // fall through
 
         case wxFONTSTYLE_NORMAL:
@@ -883,7 +883,7 @@ wxString wxNativeFontInfo::ToUserString() const
                 break;
 
             default:
-                wxFAIL_MSG( "unknown font family" );
+                break;//wxFAIL_MSG( "unknown font family" );
         }
 
         if ( !familyStr.empty() )
@@ -1110,7 +1110,7 @@ wxString wxToString(const wxFontBase& font)
 
 bool wxFromString(const wxString& str, wxFontBase *font)
 {
-    wxCHECK_MSG( font, false, wxT("NULL output parameter") );
+    //wxCHECK_MSG( font, false, wxT("NULL output parameter") );
 
     if ( str.empty() )
     {

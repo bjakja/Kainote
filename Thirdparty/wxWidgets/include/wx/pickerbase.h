@@ -16,10 +16,10 @@
 #include "wx/sizer.h"
 #include "wx/containr.h"
 
-class WXDLLIMPEXP_FWD_CORE wxTextCtrl;
-class WXDLLIMPEXP_FWD_CORE wxToolTip;
+class  wxTextCtrl;
+class  wxToolTip;
 
-extern WXDLLIMPEXP_DATA_CORE(const char) wxButtonNameStr[];
+extern const char wxButtonNameStr[];
 
 // ----------------------------------------------------------------------------
 // wxPickerBase is the base class for the picker controls which support
@@ -33,7 +33,7 @@ extern WXDLLIMPEXP_DATA_CORE(const char) wxButtonNameStr[];
 #define wxPB_USE_TEXTCTRL           0x0002
 #define wxPB_SMALL                  0x8000
 
-class WXDLLIMPEXP_CORE wxPickerBase : public wxNavigationEnabled<wxControl>
+class  wxPickerBase : public wxNavigationEnabled<wxControl>
 {
 public:
     // ctor: text is the associated text control
@@ -146,7 +146,7 @@ protected:
 
     wxSizerItem *GetTextCtrlItem() const
     {
-        wxASSERT(this->HasTextCtrl());
+        //wxASSERT(this->HasTextCtrl());
         return m_sizer->GetItem((size_t)0);
     }
 

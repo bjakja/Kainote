@@ -74,7 +74,7 @@
     #include <xlocale.h>
 #endif
 
-WXDLLIMPEXP_BASE size_t wxMB2WC(wchar_t *buf, const char *psz, size_t n)
+ size_t wxMB2WC(wchar_t *buf, const char *psz, size_t n)
 {
   // assume that we have mbsrtowcs() too if we have wcsrtombs()
 #ifdef HAVE_WCSRTOMBS
@@ -107,7 +107,7 @@ WXDLLIMPEXP_BASE size_t wxMB2WC(wchar_t *buf, const char *psz, size_t n)
 #endif
 }
 
-WXDLLIMPEXP_BASE size_t wxWC2MB(char *buf, const wchar_t *pwz, size_t n)
+ size_t wxWC2MB(char *buf, const wchar_t *pwz, size_t n)
 {
 #ifdef HAVE_WCSRTOMBS
   mbstate_t mbstate;
@@ -898,7 +898,7 @@ WXDLLIMPEXP_BASE int wxCRT_StrnicmpW(const wchar_t *s1, const wchar_t *s2, size_
 // this (and wxCRT_StrncmpW below) are extern "C" because they are needed
 // by regex code, the rest isn't needed, so it's not declared as extern "C"
 #ifndef wxCRT_StrlenW
-extern "C" WXDLLIMPEXP_BASE size_t wxCRT_StrlenW(const wchar_t *s)
+extern "C" size_t wxCRT_StrlenW(const wchar_t *s)
 {
     size_t n = 0;
     while ( *s++ )
@@ -1293,7 +1293,7 @@ void wxPerror(const wxString& s)
 
 wchar_t *wxFgets(wchar_t *s, int size, FILE *stream)
 {
-    wxCHECK_MSG( s, NULL, "empty buffer passed to wxFgets()" );
+    //wxCHECK_MSG( s, NULL, "empty buffer passed to wxFgets()" );
 
     wxCharBuffer buf(size - 1);
     // FIXME: this reads too little data if wxConvLibc uses UTF-8 ('size' wide

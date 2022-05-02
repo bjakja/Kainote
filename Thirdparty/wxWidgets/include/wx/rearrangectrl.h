@@ -20,8 +20,8 @@
 
 #include "wx/arrstr.h"
 
-extern WXDLLIMPEXP_DATA_CORE(const char) wxRearrangeListNameStr[];
-extern WXDLLIMPEXP_DATA_CORE(const char) wxRearrangeDialogNameStr[];
+extern const char wxRearrangeListNameStr[];
+extern const char wxRearrangeDialogNameStr[];
 
 // ----------------------------------------------------------------------------
 // wxRearrangeList: a (check) list box allowing to move items around
@@ -40,7 +40,7 @@ extern WXDLLIMPEXP_DATA_CORE(const char) wxRearrangeDialogNameStr[];
 // array ["first", "second", "third"] means that the items are displayed in the
 // order "second", "third", "first" and the "third" item is unchecked while the
 // other two are checked.
-class WXDLLIMPEXP_CORE wxRearrangeList : public wxCheckListBox
+class  wxRearrangeList : public wxCheckListBox
 {
 public:
     // ctors and such
@@ -116,7 +116,7 @@ private:
 // wxRearrangeCtrl: composite control containing a wxRearrangeList and buttons
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxRearrangeCtrl : public wxPanel
+class  wxRearrangeCtrl : public wxPanel
 {
 public:
     // ctors/Create function are the same as for wxRearrangeList
@@ -173,7 +173,7 @@ private:
 // wxRearrangeDialog: dialog containing a wxRearrangeCtrl
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxRearrangeDialog : public wxDialog
+class  wxRearrangeDialog : public wxDialog
 {
 public:
     // default ctor, use Create() later

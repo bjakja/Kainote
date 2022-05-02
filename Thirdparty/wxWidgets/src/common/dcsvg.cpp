@@ -80,7 +80,7 @@ wxString wxPenString(wxColour c, int style = wxPENSTYLE_SOLID)
             s += wxT("stroke-opacity:0.0; ");
             break;
         default :
-            wxASSERT_MSG(false, wxT("wxSVGFileDC::Requested Pen Style not available"));
+            break;//wxASSERT_MSG(false, wxT("wxSVGFileDC::Requested Pen Style not available"));
     }
 
     return s;
@@ -100,7 +100,7 @@ wxString wxBrushString(wxColour c, int style = wxBRUSHSTYLE_SOLID)
             s += wxT("fill-opacity:0.0; ");
             break;
         default :
-            wxASSERT_MSG(false, wxT("wxSVGFileDC::Requested Brush Style not available"));
+            break;//wxASSERT_MSG(false, wxT("wxSVGFileDC::Requested Brush Style not available"));
     }
 
     return s;

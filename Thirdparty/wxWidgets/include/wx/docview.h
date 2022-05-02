@@ -26,14 +26,14 @@
     #include "wx/print.h"
 #endif
 
-class WXDLLIMPEXP_FWD_CORE wxWindow;
-class WXDLLIMPEXP_FWD_CORE wxDocument;
-class WXDLLIMPEXP_FWD_CORE wxView;
-class WXDLLIMPEXP_FWD_CORE wxDocTemplate;
-class WXDLLIMPEXP_FWD_CORE wxDocManager;
-class WXDLLIMPEXP_FWD_CORE wxPrintInfo;
-class WXDLLIMPEXP_FWD_CORE wxCommandProcessor;
-class WXDLLIMPEXP_FWD_BASE wxConfigBase;
+class  wxWindow;
+class  wxDocument;
+class  wxView;
+class  wxDocTemplate;
+class  wxDocManager;
+class  wxPrintInfo;
+class  wxCommandProcessor;
+class  wxConfigBase;
 
 class wxDocChildFrameAnyBase;
 
@@ -60,7 +60,7 @@ enum
 
 #define wxMAX_FILE_HISTORY 9
 
-class WXDLLIMPEXP_CORE wxDocument : public wxEvtHandler
+class  wxDocument : public wxEvtHandler
 {
 public:
     wxDocument(wxDocument *parent = NULL);
@@ -211,7 +211,7 @@ private:
     wxDECLARE_NO_COPY_CLASS(wxDocument);
 };
 
-class WXDLLIMPEXP_CORE wxView: public wxEvtHandler
+class  wxView: public wxEvtHandler
 {
 public:
     wxView();
@@ -282,7 +282,7 @@ private:
 };
 
 // Represents user interface (and other) properties of documents and views
-class WXDLLIMPEXP_CORE wxDocTemplate: public wxObject
+class  wxDocTemplate: public wxObject
 {
 
 friend class WXDLLIMPEXP_FWD_CORE wxDocManager;
@@ -368,7 +368,7 @@ private:
 
 // One object of this class may be created in an application, to manage all
 // the templates and documents.
-class WXDLLIMPEXP_CORE wxDocManager: public wxEvtHandler
+class  wxDocManager: public wxEvtHandler
 {
 public:
     // NB: flags are unused, don't pass wxDOC_XXX to this ctor
@@ -570,7 +570,7 @@ inline size_t wxDocManager::GetNoHistoryFiles() const
 // wxDocChildFrameAny does
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxDocChildFrameAnyBase
+class  wxDocChildFrameAnyBase
 {
 public:
     // default ctor, use Create() after it
@@ -656,7 +656,7 @@ protected:
 // ----------------------------------------------------------------------------
 
 template <class ChildFrame, class ParentFrame>
-class WXDLLIMPEXP_CORE wxDocChildFrameAny : public ChildFrame,
+class  wxDocChildFrameAny : public ChildFrame,
                                             public wxDocChildFrameAnyBase
 {
 public:
@@ -754,7 +754,7 @@ private:
 
 typedef wxDocChildFrameAny<wxFrame, wxFrame> wxDocChildFrameBase;
 
-class WXDLLIMPEXP_CORE wxDocChildFrame : public wxDocChildFrameBase
+class  wxDocChildFrame : public wxDocChildFrameBase
 {
 public:
     wxDocChildFrame()
@@ -808,7 +808,7 @@ private:
 //
 // Similarly to wxDocChildFrameAnyBase, this class is a mix-in and doesn't
 // derive from wxWindow.
-class WXDLLIMPEXP_CORE wxDocParentFrameAnyBase
+class  wxDocParentFrameAnyBase
 {
 public:
     wxDocParentFrameAnyBase() { m_docManager = NULL; }
@@ -824,7 +824,7 @@ protected:
 // This is similar to wxDocChildFrameAny and is used to provide common
 // implementation for both wxDocParentFrame and wxDocMDIParentFrame
 template <class BaseFrame>
-class WXDLLIMPEXP_CORE wxDocParentFrameAny : public BaseFrame,
+class  wxDocParentFrameAny : public BaseFrame,
                                              public wxDocParentFrameAnyBase
 {
 public:
@@ -899,7 +899,7 @@ private:
 
 typedef wxDocParentFrameAny<wxFrame> wxDocParentFrameBase;
 
-class WXDLLIMPEXP_CORE wxDocParentFrame : public wxDocParentFrameBase
+class  wxDocParentFrame : public wxDocParentFrameBase
 {
 public:
     wxDocParentFrame() : wxDocParentFrameBase() { }
@@ -946,7 +946,7 @@ private:
 // ----------------------------------------------------------------------------
 
 #if wxUSE_PRINTING_ARCHITECTURE
-class WXDLLIMPEXP_CORE wxDocPrintout : public wxPrintout
+class  wxDocPrintout : public wxPrintout
 {
 public:
     wxDocPrintout(wxView *view = NULL, const wxString& title = wxString());
@@ -972,14 +972,14 @@ private:
 // For compatibility with existing file formats:
 // converts from/to a stream to/from a temporary file.
 #if wxUSE_STD_IOSTREAM
-bool WXDLLIMPEXP_CORE
+bool 
 wxTransferFileToStream(const wxString& filename, wxSTD ostream& stream);
-bool WXDLLIMPEXP_CORE
+bool 
 wxTransferStreamToFile(wxSTD istream& stream, const wxString& filename);
 #else
-bool WXDLLIMPEXP_CORE
+bool 
 wxTransferFileToStream(const wxString& filename, wxOutputStream& stream);
-bool WXDLLIMPEXP_CORE
+bool 
 wxTransferStreamToFile(wxInputStream& stream, const wxString& filename);
 #endif // wxUSE_STD_IOSTREAM
 

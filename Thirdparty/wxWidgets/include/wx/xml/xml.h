@@ -26,15 +26,15 @@
 #elif defined(WXUSINGDLL)
     #define WXDLLIMPEXP_XML WXIMPORT
 #else // not making nor using DLL
-    #define WXDLLIMPEXP_XML
+    //#define WXDLLIMPEXP_XML
 #endif
 
-class WXDLLIMPEXP_FWD_XML wxXmlNode;
-class WXDLLIMPEXP_FWD_XML wxXmlAttribute;
-class WXDLLIMPEXP_FWD_XML wxXmlDocument;
-class WXDLLIMPEXP_FWD_XML wxXmlIOHandler;
-class WXDLLIMPEXP_FWD_BASE wxInputStream;
-class WXDLLIMPEXP_FWD_BASE wxOutputStream;
+class  wxXmlNode;
+class  wxXmlAttribute;
+class  wxXmlDocument;
+class  wxXmlIOHandler;
+class  wxInputStream;
+class  wxOutputStream;
 
 // Represents XML node type.
 enum wxXmlNodeType
@@ -60,7 +60,7 @@ enum wxXmlNodeType
 // Example: in <img src="hello.gif" id="3"/> "src" is property with value
 //          "hello.gif" and "id" is prop. with value "3".
 
-class WXDLLIMPEXP_XML wxXmlAttribute
+class  wxXmlAttribute
 {
 public:
     wxXmlAttribute() : m_next(NULL) {}
@@ -99,7 +99,7 @@ private:
 // If wxUSE_UNICODE is 0, all strings are encoded in the encoding given to Load
 // (default is UTF-8).
 
-class WXDLLIMPEXP_XML wxXmlNode
+class  wxXmlNode
 {
 public:
     wxXmlNode()
@@ -249,7 +249,7 @@ enum wxXmlDocumentLoadFlag
 
 // This class holds XML data/document as parsed by XML parser.
 
-class WXDLLIMPEXP_XML wxXmlDocument : public wxObject
+class  wxXmlDocument : public wxObject
 {
 public:
     wxXmlDocument();

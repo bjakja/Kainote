@@ -26,8 +26,8 @@
 // classes
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_CORE wxTextCtrl;
-class WXDLLIMPEXP_FWD_BASE wxHashTable;
+class  wxTextCtrl;
+class  wxHashTable;
 
 //-----------------------------------------------------------------------------
 // Extra styles for wxGenericDirCtrl
@@ -55,7 +55,7 @@ enum
 // wxDirItemData
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxDirItemData : public wxTreeItemData
+class  wxDirItemData : public wxTreeItemData
 {
 public:
     wxDirItemData(const wxString& path, const wxString& name, bool isDir);
@@ -75,9 +75,9 @@ public:
 // wxDirCtrl
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_CORE wxDirFilterListCtrl;
+class  wxDirFilterListCtrl;
 
-class WXDLLIMPEXP_CORE wxGenericDirCtrl: public wxControl
+class  wxGenericDirCtrl: public wxControl
 {
 public:
     wxGenericDirCtrl();
@@ -211,7 +211,7 @@ private:
 // wxDirFilterListCtrl
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxDirFilterListCtrl: public wxChoice
+class  wxDirFilterListCtrl: public wxChoice
 {
 public:
     wxDirFilterListCtrl() { Init(); }
@@ -263,9 +263,9 @@ protected:
 
 #if wxUSE_DIRDLG || wxUSE_FILEDLG || wxUSE_FILECTRL
 
-class WXDLLIMPEXP_FWD_CORE wxImageList;
+class  wxImageList;
 
-class WXDLLIMPEXP_CORE wxFileIconsTable
+class  wxFileIconsTable
 {
 public:
     wxFileIconsTable();
@@ -295,7 +295,7 @@ protected:
 };
 
 // The global fileicons table
-extern WXDLLIMPEXP_DATA_CORE(wxFileIconsTable *) wxTheFileIconsTable;
+extern wxFileIconsTable * wxTheFileIconsTable;
 
 #endif // wxUSE_DIRDLG || wxUSE_FILEDLG || wxUSE_FILECTRL
 

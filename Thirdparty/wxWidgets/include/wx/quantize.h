@@ -22,8 +22,8 @@
  * For conditions of distribution and use, see the accompanying README file.
  */
 
-class WXDLLIMPEXP_FWD_CORE wxImage;
-class WXDLLIMPEXP_FWD_CORE wxPalette;
+class  wxImage;
+class  wxPalette;
 
 /*
  * wxQuantize
@@ -34,7 +34,7 @@ class WXDLLIMPEXP_FWD_CORE wxPalette;
 #define wxQUANTIZE_RETURN_8BIT_DATA             0x02
 #define wxQUANTIZE_FILL_DESTINATION_IMAGE       0x04
 
-class WXDLLIMPEXP_CORE wxQuantize: public wxObject
+class  wxQuantize: public wxObject
 {
 public:
 DECLARE_DYNAMIC_CLASS(wxQuantize)

@@ -967,7 +967,7 @@
 //
 // Recommended setting: 1
 //
-#define wxUSE_GRID         1
+#define wxUSE_GRID         0
 
 // wxMiniFrame class: a frame with narrow title bar
 //

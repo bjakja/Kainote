@@ -18,9 +18,9 @@
 // wxAnimation
 // ----------------------------------------------------------------------------
 
-WX_DECLARE_LIST_WITH_DECL(wxAnimationDecoder, wxAnimationDecoderList, class WXDLLIMPEXP_ADV);
+WX_DECLARE_LIST_WITH_DECL(wxAnimationDecoder, wxAnimationDecoderList, class );
 
-class WXDLLIMPEXP_ADV wxAnimation : public wxAnimationBase
+class  wxAnimation : public wxAnimationBase
 {
 public:
     wxAnimation() {}
@@ -67,7 +67,7 @@ public:
 // wxAnimationCtrl
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_ADV wxAnimationCtrl: public wxAnimationCtrlBase
+class  wxAnimationCtrl: public wxAnimationCtrlBase
 {
 public:
     wxAnimationCtrl() { Init(); }

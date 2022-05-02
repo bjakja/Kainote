@@ -19,7 +19,7 @@
 #include "wx/log.h"
 #include "wx/stream.h"
 
-class WXDLLIMPEXP_FWD_CORE wxImage;
+class  wxImage;
 
 /*
 
@@ -85,7 +85,7 @@ enum wxAnimationType
 // wxAnimationDecoder class
 // --------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxAnimationDecoder : public wxObjectRefData
+class  wxAnimationDecoder : public wxObjectRefData
 {
 public:
     wxAnimationDecoder()
