@@ -52,7 +52,7 @@ const wxChar *wxTextBuffer::GetEOL(wxTextFileType type)
 {
     switch ( type ) {
         default:
-            wxFAIL_MSG(wxT("bad buffer type in wxTextBuffer::GetEOL."));
+            break;// wxFAIL_MSG(wxT("bad buffer type in wxTextBuffer::GetEOL."));
             // fall through nevertheless - we must return something...
 
         case wxTextFileType_None: return wxEmptyString;
@@ -164,7 +164,7 @@ bool wxTextBuffer::Create(const wxString& strBufferName)
 bool wxTextBuffer::Create()
 {
     // buffer name must be either given in ctor or in Create(const wxString&)
-    wxASSERT( !m_strBufferName.empty() );
+    //wxASSERT( !m_strBufferName.empty() );
 
     // if the buffer already exists do nothing
     if ( Exists() ) return false;
@@ -186,7 +186,7 @@ bool wxTextBuffer::Open(const wxString& strBufferName, const wxMBConv& conv)
 bool wxTextBuffer::Open(const wxMBConv& conv)
 {
     // buffer name must be either given in ctor or in Open(const wxString&)
-    wxASSERT( !m_strBufferName.empty() );
+    //wxASSERT( !m_strBufferName.empty() );
 
     // open buffer in read-only mode
     if ( !OnOpen(m_strBufferName, ReadAccess) )
@@ -204,7 +204,7 @@ bool wxTextBuffer::Open(const wxMBConv& conv)
 // if it fails, it assumes the native type for our platform.
 wxTextFileType wxTextBuffer::GuessType() const
 {
-    wxASSERT( IsOpened() );
+    //wxASSERT( IsOpened() );
 
     // scan the buffer lines
     size_t nUnix = 0,     // number of '\n's alone
@@ -221,7 +221,7 @@ wxTextFileType wxTextBuffer::GuessType() const
             case wxTextFileType_Unix: nUnix++; break;   \
             case wxTextFileType_Dos:  nDos++;  break;   \
             case wxTextFileType_Mac:  nMac++;  break;   \
-            default: wxFAIL_MSG(wxT("unknown line terminator")); \
+            default: break;//wxFAIL_MSG(wxT("unknown line terminator")); \
         }
 
     size_t n;

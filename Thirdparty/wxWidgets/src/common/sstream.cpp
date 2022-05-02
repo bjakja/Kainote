@@ -46,9 +46,9 @@ wxStringInputStream::wxStringInputStream(const wxString& s)
     : m_str(s), m_buf(s.mb_str()), m_len(s.length())
 #endif
 {
-#if wxUSE_UNICODE
-    wxASSERT_MSG(m_buf.data() != NULL, wxT("Could not convert string to UTF8!"));
-#endif
+//#if wxUSE_UNICODE
+//    wxASSERT_MSG(m_buf.data() != NULL, wxT("Could not convert string to UTF8!"));
+//#endif
     m_pos = 0;
 }
 
@@ -82,7 +82,7 @@ wxFileOffset wxStringInputStream::OnSysSeek(wxFileOffset ofs, wxSeekMode mode)
             break;
 
         default:
-            wxFAIL_MSG( wxT("invalid seek mode") );
+            //wxFAIL_MSG( wxT("invalid seek mode") );
             return wxInvalidOffset;
     }
 

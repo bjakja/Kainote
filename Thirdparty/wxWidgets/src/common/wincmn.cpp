@@ -1453,11 +1453,11 @@ wxEvtHandler *wxWindowBase::PopEventHandler(bool deleteHandler)
     /*wxCHECK_MSG( firstHandler != NULL, NULL, "wxWindow cannot have a NULL event handler" );
     wxCHECK_MSG( firstHandler != this, NULL, "cannot pop the wxWindow itself" );
     wxCHECK_MSG( firstHandler->GetPreviousHandler() == NULL, NULL,*/
-        "the first handler of the wxWindow stack should have no previous handlers set" );
+        //"the first handler of the wxWindow stack should have no previous handlers set" );
 
     wxEvtHandler *secondHandler = firstHandler->GetNextHandler();
     //wxCHECK_MSG( secondHandler != NULL, NULL,
-        "the first handler of the wxWindow stack should have non-NULL next handler" );
+        //"the first handler of the wxWindow stack should have non-NULL next handler" );
 
     firstHandler->SetNextHandler(NULL);
 

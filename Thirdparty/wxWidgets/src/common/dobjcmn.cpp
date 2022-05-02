@@ -37,7 +37,7 @@ WX_DEFINE_LIST(wxSimpleDataObjectList)
 // ----------------------------------------------------------------------------
 
 static wxDataFormat dataFormatInvalid;
-WXDLLEXPORT const wxDataFormat& wxFormatInvalid = dataFormatInvalid;
+ const wxDataFormat& wxFormatInvalid = dataFormatInvalid;
 
 // ============================================================================
 // implementation
@@ -127,7 +127,7 @@ wxDataObjectComposite::GetPreferredFormat(Direction WXUNUSED(dir)) const
 {
     wxSimpleDataObjectList::compatibility_iterator node = m_dataObjects.Item( m_preferred );
 
-    wxCHECK_MSG( node, wxFormatInvalid, wxT("no preferred format") );
+    //wxCHECK_MSG( node, wxFormatInvalid, wxT("no preferred format") );
 
     wxDataObjectSimple* dataObj = node->GetData();
 
@@ -140,8 +140,8 @@ size_t wxDataObjectComposite::GetBufferOffset( const wxDataFormat& format )
 {
     wxDataObjectSimple *dataObj = GetObject(format);
 
-    wxCHECK_MSG( dataObj, 0,
-                 wxT("unsupported format in wxDataObjectComposite"));
+    /*wxCHECK_MSG( dataObj, 0,
+                 wxT("unsupported format in wxDataObjectComposite"));*/
 
     return dataObj->GetBufferOffset( format );
 }
@@ -153,8 +153,8 @@ const void* wxDataObjectComposite::GetSizeFromBuffer( const void* buffer,
 {
     wxDataObjectSimple *dataObj = GetObject(format);
 
-    wxCHECK_MSG( dataObj, NULL,
-                 wxT("unsupported format in wxDataObjectComposite"));
+    /*wxCHECK_MSG( dataObj, NULL,
+                 wxT("unsupported format in wxDataObjectComposite"));*/
 
     return dataObj->GetSizeFromBuffer( buffer, size, format );
 }
@@ -165,8 +165,8 @@ void* wxDataObjectComposite::SetSizeInBuffer( void* buffer, size_t size,
 {
     wxDataObjectSimple *dataObj = GetObject( format );
 
-    wxCHECK_MSG( dataObj, NULL,
-                 wxT("unsupported format in wxDataObjectComposite"));
+    /*wxCHECK_MSG( dataObj, NULL,
+                 wxT("unsupported format in wxDataObjectComposite"));*/
 
     return dataObj->SetSizeInBuffer( buffer, size, format );
 }
@@ -207,8 +207,8 @@ size_t wxDataObjectComposite::GetDataSize(const wxDataFormat& format) const
 {
     wxDataObjectSimple *dataObj = GetObject(format);
 
-    wxCHECK_MSG( dataObj, 0,
-                 wxT("unsupported format in wxDataObjectComposite"));
+    /*wxCHECK_MSG( dataObj, 0,
+                 wxT("unsupported format in wxDataObjectComposite"));*/
 
     return dataObj->GetDataSize();
 }
@@ -218,8 +218,8 @@ bool wxDataObjectComposite::GetDataHere(const wxDataFormat& format,
 {
     wxDataObjectSimple *dataObj = GetObject( format );
 
-    wxCHECK_MSG( dataObj, false,
-                 wxT("unsupported format in wxDataObjectComposite"));
+    /*wxCHECK_MSG( dataObj, false,
+                 wxT("unsupported format in wxDataObjectComposite"));*/
 
     return dataObj->GetDataHere( buf );
 }
@@ -230,8 +230,8 @@ bool wxDataObjectComposite::SetData(const wxDataFormat& format,
 {
     wxDataObjectSimple *dataObj = GetObject( format );
 
-    wxCHECK_MSG( dataObj, false,
-                 wxT("unsupported format in wxDataObjectComposite"));
+    /*wxCHECK_MSG( dataObj, false,
+                 wxT("unsupported format in wxDataObjectComposite"));*/
 
     m_receivedFormat = format;
 

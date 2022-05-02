@@ -35,7 +35,7 @@
 
 #include "wx/ffile.h"
 
-extern WXDLLEXPORT_DATA(const char) wxTextCtrlNameStr[] = "text";
+extern const char wxTextCtrlNameStr[] = "text";
 
 // ----------------------------------------------------------------------------
 // macros
@@ -1185,8 +1185,8 @@ wxTextAreaBase::HitTest(const wxPoint& WXUNUSED(pt), long * WXUNUSED(pos)) const
 
 wxPoint wxTextAreaBase::PositionToCoords(long pos) const
 {
-    wxCHECK_MSG( IsValidPosition(pos), wxDefaultPosition,
-                 wxS("Position argument out of range.") );
+    /*wxCHECK_MSG( IsValidPosition(pos), wxDefaultPosition,
+                 wxS("Position argument out of range.") );*/
 
     return DoPositionToCoords(pos);
 }

@@ -314,7 +314,7 @@ bool wxFileType::GetExtensions(wxArrayString& extensions)
 
 bool wxFileType::GetMimeType(wxString *mimeType) const
 {
-    wxCHECK_MSG( mimeType, false, wxT("invalid parameter in GetMimeType") );
+    //wxCHECK_MSG( mimeType, false, wxT("invalid parameter in GetMimeType") );
 
     if ( m_info )
     {
@@ -378,7 +378,7 @@ wxFileType::GetIcon(wxIconLocation *iconloc,
 
 bool wxFileType::GetDescription(wxString *desc) const
 {
-    wxCHECK_MSG( desc, false, wxT("invalid parameter in GetDescription") );
+    //wxCHECK_MSG( desc, false, wxT("invalid parameter in GetDescription") );
 
     if ( m_info )
     {
@@ -394,7 +394,7 @@ bool
 wxFileType::GetOpenCommand(wxString *openCmd,
                            const wxFileType::MessageParameters& params) const
 {
-    wxCHECK_MSG( openCmd, false, wxT("invalid parameter in GetOpenCommand") );
+    //wxCHECK_MSG( openCmd, false, wxT("invalid parameter in GetOpenCommand") );
 
     if ( m_info )
     {
@@ -422,7 +422,7 @@ bool
 wxFileType::GetPrintCommand(wxString *printCmd,
                             const wxFileType::MessageParameters& params) const
 {
-    wxCHECK_MSG( printCmd, false, wxT("invalid parameter in GetPrintCommand") );
+    //wxCHECK_MSG( printCmd, false, wxT("invalid parameter in GetPrintCommand") );
 
     if ( m_info )
     {
@@ -510,7 +510,7 @@ bool wxFileType::SetDefaultIcon(const wxString& cmd, int index)
     if ( sTmp.empty() )
         GetOpenCommand(&sTmp, wxFileType::MessageParameters(wxEmptyString, wxEmptyString));
 #endif
-    wxCHECK_MSG( !sTmp.empty(), false, wxT("need the icon file") );
+    //wxCHECK_MSG( !sTmp.empty(), false, wxT("need the icon file") );
 
 #if defined (__WINDOWS__) || defined(__UNIX__)
     return m_impl->SetDefaultIcon (cmd, index);
@@ -562,8 +562,8 @@ void wxMimeTypesManager::EnsureImpl()
 bool wxMimeTypesManager::IsOfType(const wxString& mimeType,
                                   const wxString& wildcard)
 {
-    wxASSERT_MSG( mimeType.Find(wxT('*')) == wxNOT_FOUND,
-                  wxT("first MIME type can't contain wildcards") );
+    /*wxASSERT_MSG( mimeType.Find(wxT('*')) == wxNOT_FOUND,
+                  wxT("first MIME type can't contain wildcards") );*/
 
     // all comparaisons are case insensitive (2nd arg of IsSameAs() is false)
     if ( wildcard.BeforeFirst(wxT('/')).
@@ -632,7 +632,7 @@ wxMimeTypesManager::GetFileTypeFromExtension(const wxString& ext)
     else
         extWithoutDot = ext;
 
-    wxCHECK_MSG( !ext.empty(), NULL, wxT("extension can't be empty") );
+    //wxCHECK_MSG( !ext.empty(), NULL, wxT("extension can't be empty") );
 
     wxFileType *ft = m_impl->GetFileTypeFromExtension(extWithoutDot);
 

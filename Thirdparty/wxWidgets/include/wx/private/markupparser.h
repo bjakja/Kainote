@@ -119,7 +119,7 @@ private:
 // wxMarkupParser: parses the given markup text into wxMarkupParserOutput.
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxMarkupParser
+class  wxMarkupParser
 {
 public:
     // Initialize the parser with the object that will receive parsing results.

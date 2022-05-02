@@ -234,7 +234,7 @@ void wxClassInfo::Register()
     else
     {
         // guard againt reentrance once the global has been created
-        wxASSERT_MSG(++entry == 1, wxT("wxClassInfo::Register() reentrance"));
+        //wxASSERT_MSG(++entry == 1, wxT("wxClassInfo::Register() reentrance"));
         classTable = sm_classTable;
     }
 
@@ -243,7 +243,7 @@ void wxClassInfo::Register()
     // library) will break this function because it will enter an infinite loop
     // and eventually die with "out of memory" - as this is quite hard to
     // detect if you're unaware of this, try to do some checks here.
-    wxASSERT_MSG( classTable->Get(m_className) == NULL,
+    //wxASSERT_MSG( classTable->Get(m_className) == NULL,
         wxString::Format
         (
             wxT("Class \"%s\" already in RTTI table - have you used IMPLEMENT_DYNAMIC_CLASS() multiple times or linked some object file twice)?"),
@@ -350,7 +350,7 @@ wxClassInfo::const_iterator wxClassInfo::end_classinfo()
 
 void wxRefCounter::DecRef()
 {
-    wxASSERT_MSG( m_count > 0, "invalid ref data count" );
+    //wxASSERT_MSG( m_count > 0, "invalid ref data count" );
 
     if ( --m_count == 0 )
         delete this;
@@ -408,14 +408,14 @@ void wxObject::AllocExclusive()
     }
     //else: ref count is 1, we are exclusive owners of m_refData anyhow
 
-    wxASSERT_MSG( m_refData && m_refData->GetRefCount() == 1,
-                  wxT("wxObject::AllocExclusive() failed.") );
+    /*wxASSERT_MSG( m_refData && m_refData->GetRefCount() == 1,
+                  wxT("wxObject::AllocExclusive() failed.") );*/
 }
 
 wxObjectRefData *wxObject::CreateRefData() const
 {
     // if you use AllocExclusive() you must override this method
-    wxFAIL_MSG( wxT("CreateRefData() must be overridden if called!") );
+    //wxFAIL_MSG( wxT("CreateRefData() must be overridden if called!") );
 
     return NULL;
 }
@@ -424,7 +424,7 @@ wxObjectRefData *
 wxObject::CloneRefData(const wxObjectRefData * WXUNUSED(data)) const
 {
     // if you use AllocExclusive() you must override this method
-    wxFAIL_MSG( wxT("CloneRefData() must be overridden if called!") );
+    //wxFAIL_MSG( wxT("CloneRefData() must be overridden if called!") );
 
     return NULL;
 }

@@ -28,7 +28,7 @@
 
 #include "wx/checkbox.h"
 
-extern WXDLLEXPORT_DATA(const char) wxCheckBoxNameStr[] = "check";
+extern const char wxCheckBoxNameStr[] = "check";
 
 // ----------------------------------------------------------------------------
 // XTI

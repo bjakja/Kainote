@@ -1207,7 +1207,7 @@ wxMBConvStrictUTF8::FromWChar(char *dst, size_t dstLen,
         }
         else
         {
-            wxFAIL_MSG( wxT("trying to encode undefined Unicode character") );
+            //wxFAIL_MSG( wxT("trying to encode undefined Unicode character") );
             break;
         }
 
@@ -2806,7 +2806,7 @@ private:
                     break;
             }
 
-            wxASSERT_MSG( s_isWin98Or2k != -1, wxT("should be set above") );
+            //wxASSERT_MSG( s_isWin98Or2k != -1, wxT("should be set above") );
         }
 
         return s_isWin98Or2k == 1;
@@ -2945,7 +2945,7 @@ private:
 };
 
 // make the constructors available for unit testing
-WXDLLIMPEXP_BASE wxMBConv* new_wxMBConv_wxwin( const char* name )
+ wxMBConv* new_wxMBConv_wxwin( const char* name )
 {
     wxMBConv_wxwin* result = new wxMBConv_wxwin( name );
     if ( !result->IsOk() )
@@ -3026,7 +3026,7 @@ wxCSConv::wxCSConv(wxFontEncoding encoding)
 {
     if ( encoding == wxFONTENCODING_MAX || encoding == wxFONTENCODING_DEFAULT )
     {
-        wxFAIL_MSG( wxT("invalid encoding value in wxCSConv ctor") );
+        //wxFAIL_MSG( wxT("invalid encoding value in wxCSConv ctor") );
 
         encoding = wxFONTENCODING_SYSTEM;
     }
@@ -3413,8 +3413,8 @@ bool wxCSConv::IsUTF8() const
 #undef wxConvISO8859_1
 
 #define WX_DEFINE_GLOBAL_CONV2(klass, impl_klass, name, ctor_args)      \
-    WXDLLIMPEXP_DATA_BASE(klass*) name##Ptr = NULL;                     \
-    WXDLLIMPEXP_BASE klass* wxGet_##name##Ptr()                         \
+    klass* name##Ptr = NULL;                     \
+    klass* wxGet_##name##Ptr()                         \
     {                                                                   \
         static impl_klass name##Obj ctor_args;                          \
         return &name##Obj;                                              \
@@ -3452,8 +3452,8 @@ WX_DEFINE_GLOBAL_CONV(wxMBConvUTF7, wxConvUTF7, ;);
 WX_DEFINE_GLOBAL_CONV(wxCSConv, wxConvLocal, (wxFONTENCODING_SYSTEM));
 WX_DEFINE_GLOBAL_CONV(wxCSConv, wxConvISO8859_1, (wxFONTENCODING_ISO8859_1));
 
-WXDLLIMPEXP_DATA_BASE(wxMBConv *) wxConvCurrent = wxGet_wxConvLibcPtr();
-WXDLLIMPEXP_DATA_BASE(wxMBConv *) wxConvUI = wxGet_wxConvLocalPtr();
+wxMBConv * wxConvCurrent = wxGet_wxConvLibcPtr();
+wxMBConv * wxConvUI = wxGet_wxConvLocalPtr();
 
 #ifdef __DARWIN__
 // It is important to use this conversion object under Darwin as it ensures
@@ -3462,7 +3462,7 @@ WXDLLIMPEXP_DATA_BASE(wxMBConv *) wxConvUI = wxGet_wxConvLocalPtr();
 static wxMBConv_cf wxConvMacUTF8DObj(wxFONTENCODING_UTF8);
 #endif
 
-WXDLLIMPEXP_DATA_BASE(wxMBConv *) wxConvFileName =
+wxMBConv * wxConvFileName =
 #ifdef __DARWIN__
                                     &wxConvMacUTF8DObj;
 #else // !__DARWIN__

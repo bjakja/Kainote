@@ -23,7 +23,7 @@ WX_DECLARE_STRING_HASH_MAP(int, wxArchiveFilenameHashMap);
 // wxArchiveFSHandler
 //---------------------------------------------------------------------------
 
-class WXDLLIMPEXP_BASE wxArchiveFSHandler : public wxFileSystemHandler
+class  wxArchiveFSHandler : public wxFileSystemHandler
 {
 public:
     wxArchiveFSHandler();

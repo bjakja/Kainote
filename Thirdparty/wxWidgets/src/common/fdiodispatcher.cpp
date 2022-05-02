@@ -58,7 +58,7 @@ wxFDIODispatcher *wxFDIODispatcher::Get()
 #endif // wxUSE_SELECT_DISPATCHER
     }
 
-    wxASSERT_MSG( gs_dispatcher, "failed to create any IO dispatchers" );
+    //wxASSERT_MSG( gs_dispatcher, "failed to create any IO dispatchers" );
 
     return gs_dispatcher;
 }
@@ -85,7 +85,7 @@ wxFDIOHandler *wxMappedFDIODispatcher::FindHandler(int fd) const
 bool
 wxMappedFDIODispatcher::RegisterFD(int fd, wxFDIOHandler *handler, int flags)
 {
-    wxCHECK_MSG( handler, false, "handler can't be NULL" );
+    //wxCHECK_MSG( handler, false, "handler can't be NULL" );
 
     // notice that it's not an error to register a handler for the same fd
     // twice as it can be done with different flags -- but it is an error to
@@ -93,10 +93,10 @@ wxMappedFDIODispatcher::RegisterFD(int fd, wxFDIOHandler *handler, int flags)
     wxFDIOHandlerMap::iterator i = m_handlers.find(fd);
     if ( i != m_handlers.end() )
     {
-        wxASSERT_MSG( i->second.handler == handler,
+        /*wxASSERT_MSG( i->second.handler == handler,
                         "registering different handler for the same fd?" );
         wxASSERT_MSG( i->second.flags != flags,
-                        "reregistering with the same flags?" );
+                        "reregistering with the same flags?" );*/
     }
 
     m_handlers[fd] = wxFDIOHandlerEntry(handler, flags);
@@ -107,11 +107,11 @@ wxMappedFDIODispatcher::RegisterFD(int fd, wxFDIOHandler *handler, int flags)
 bool
 wxMappedFDIODispatcher::ModifyFD(int fd, wxFDIOHandler *handler, int flags)
 {
-    wxCHECK_MSG( handler, false, "handler can't be NULL" );
+    //wxCHECK_MSG( handler, false, "handler can't be NULL" );
 
     wxFDIOHandlerMap::iterator i = m_handlers.find(fd);
-    wxCHECK_MSG( i != m_handlers.end(), false,
-                    "modifying unregistered handler?" );
+    /*wxCHECK_MSG( i != m_handlers.end(), false,
+                    "modifying unregistered handler?" );*/
 
     i->second = wxFDIOHandlerEntry(handler, flags);
 

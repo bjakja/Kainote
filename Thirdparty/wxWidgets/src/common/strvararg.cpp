@@ -608,7 +608,7 @@ const wchar_t* wxFormatString::InputAsWChar()
 
     // the last case is that narrow string was passed in: in that case, we need
     // to convert it:
-    wxASSERT( m_char );
+    //wxASSERT( m_char );
 
     m_wchar = wxConvLibc.cMB2WC(m_char.data());
 
@@ -632,10 +632,10 @@ wxString wxFormatString::InputAsString() const
         return m_cstr->AsString();
     if ( m_wchar )
         return wxString(m_wchar);
-    if ( m_char )
+    /*if ( m_char )
         return wxString(m_char);
 
-    wxFAIL_MSG( "invalid wxFormatString - not initialized?" );
+    wxFAIL_MSG( "invalid wxFormatString - not initialized?" );*/
     return wxString();
 }
 
@@ -707,7 +707,7 @@ wxFormatString::ArgumentType DoGetArgumentType(const CharType *format,
     }
 
     // silence warning
-    wxFAIL_MSG( "unexpected argument type" );
+    //wxFAIL_MSG( "unexpected argument type" );
     return wxFormatString::Arg_Unknown;
 }
 
@@ -715,8 +715,8 @@ wxFormatString::ArgumentType DoGetArgumentType(const CharType *format,
 
 wxFormatString::ArgumentType wxFormatString::GetArgumentType(unsigned n) const
 {
-    if ( m_char )
-        return DoGetArgumentType(m_char.data(), n);
+    /*if ( m_char )
+        return DoGetArgumentType(m_char.data(), n);*/
     else if ( m_wchar )
         return DoGetArgumentType(m_wchar.data(), n);
     else if ( m_str )
@@ -724,6 +724,6 @@ wxFormatString::ArgumentType wxFormatString::GetArgumentType(unsigned n) const
     else if ( m_cstr )
         return DoGetArgumentType(m_cstr->AsInternal(), n);
 
-    wxFAIL_MSG( "unreachable code" );
+    //wxFAIL_MSG( "unreachable code" );
     return Arg_Unknown;
 }

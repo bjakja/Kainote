@@ -235,8 +235,8 @@ wxGCDCImpl::~wxGCDCImpl()
 void wxGCDCImpl::DoDrawBitmap( const wxBitmap &bmp, wxCoord x, wxCoord y,
                                bool useMask )
 {
-    wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoDrawBitmap - invalid DC") );
-    wxCHECK_RET( bmp.IsOk(), wxT("wxGCDC(cg)::DoDrawBitmap - invalid bitmap") );
+    /*wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoDrawBitmap - invalid DC") );
+    wxCHECK_RET( bmp.IsOk(), wxT("wxGCDC(cg)::DoDrawBitmap - invalid bitmap") );*/
 
     int w = bmp.GetWidth();
     int h = bmp.GetHeight();
@@ -264,8 +264,8 @@ void wxGCDCImpl::DoDrawBitmap( const wxBitmap &bmp, wxCoord x, wxCoord y,
 
 void wxGCDCImpl::DoDrawIcon( const wxIcon &icon, wxCoord x, wxCoord y )
 {
-    wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoDrawIcon - invalid DC") );
-    wxCHECK_RET( icon.IsOk(), wxT("wxGCDC(cg)::DoDrawIcon - invalid icon") );
+    /*wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoDrawIcon - invalid DC") );
+    wxCHECK_RET( icon.IsOk(), wxT("wxGCDC(cg)::DoDrawIcon - invalid icon") );*/
 
     wxCoord w = icon.GetWidth();
     wxCoord h = icon.GetHeight();
@@ -297,7 +297,7 @@ void wxGCDCImpl::Flush()
 
 void wxGCDCImpl::DoSetClippingRegion( wxCoord x, wxCoord y, wxCoord w, wxCoord h )
 {
-    wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoSetClippingRegion - invalid DC") );
+    //wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoSetClippingRegion - invalid DC") );
 
     m_graphicContext->Clip( x, y, w, h );
     if ( m_clipping )
@@ -321,7 +321,7 @@ void wxGCDCImpl::DoSetClippingRegion( wxCoord x, wxCoord y, wxCoord w, wxCoord h
 void wxGCDCImpl::DoSetDeviceClippingRegion( const wxRegion &region )
 {
     // region is in device coordinates
-    wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoSetDeviceClippingRegion - invalid DC") );
+    //wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoSetDeviceClippingRegion - invalid DC") );
 
     if (region.Empty())
     {
@@ -382,7 +382,7 @@ void wxGCDCImpl::DoGetSizeMM( int* width, int* height ) const
 
 void wxGCDCImpl::SetTextForeground( const wxColour &col )
 {
-    wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::SetTextForeground - invalid DC") );
+    //wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::SetTextForeground - invalid DC") );
 
     // don't set m_textForegroundColour to an invalid colour as we'd crash
     // later then (we use m_textForegroundColour.GetColor() without checking
@@ -396,7 +396,7 @@ void wxGCDCImpl::SetTextForeground( const wxColour &col )
 
 void wxGCDCImpl::SetTextBackground( const wxColour &col )
 {
-    wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::SetTextBackground - invalid DC") );
+    //wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::SetTextBackground - invalid DC") );
 
     m_textBackgroundColour = col;
 }
@@ -507,7 +507,7 @@ bool wxGCDCImpl::DoGetPixel( wxCoord WXUNUSED(x), wxCoord WXUNUSED(y), wxColour 
 
 void wxGCDCImpl::DoDrawLine( wxCoord x1, wxCoord y1, wxCoord x2, wxCoord y2 )
 {
-    wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoDrawLine - invalid DC") );
+    //wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoDrawLine - invalid DC") );
 
     if ( !m_logicalFunctionSupported )
         return;
@@ -520,7 +520,7 @@ void wxGCDCImpl::DoDrawLine( wxCoord x1, wxCoord y1, wxCoord x2, wxCoord y2 )
 
 void wxGCDCImpl::DoCrossHair( wxCoord x, wxCoord y )
 {
-    wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoCrossHair - invalid DC") );
+    //wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoCrossHair - invalid DC") );
 
     if ( !m_logicalFunctionSupported )
         return;
@@ -540,7 +540,7 @@ void wxGCDCImpl::DoDrawArc( wxCoord x1, wxCoord y1,
                         wxCoord x2, wxCoord y2,
                         wxCoord xc, wxCoord yc )
 {
-    wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoDrawArc - invalid DC") );
+    //wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoDrawArc - invalid DC") );
 
     if ( !m_logicalFunctionSupported )
         return;
@@ -585,7 +585,7 @@ void wxGCDCImpl::DoDrawArc( wxCoord x1, wxCoord y1,
 void wxGCDCImpl::DoDrawEllipticArc( wxCoord x, wxCoord y, wxCoord w, wxCoord h,
                                 double sa, double ea )
 {
-    wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoDrawEllipticArc - invalid DC") );
+    //wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoDrawEllipticArc - invalid DC") );
 
     if ( !m_logicalFunctionSupported )
         return;
@@ -621,7 +621,7 @@ void wxGCDCImpl::DoDrawEllipticArc( wxCoord x, wxCoord y, wxCoord w, wxCoord h,
 
 void wxGCDCImpl::DoDrawPoint( wxCoord x, wxCoord y )
 {
-    wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoDrawPoint - invalid DC") );
+    //wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoDrawPoint - invalid DC") );
 
     DoDrawLine( x , y , x + 1 , y + 1 );
 }
@@ -629,7 +629,7 @@ void wxGCDCImpl::DoDrawPoint( wxCoord x, wxCoord y )
 void wxGCDCImpl::DoDrawLines(int n, wxPoint points[],
                          wxCoord xoffset, wxCoord yoffset)
 {
-    wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoDrawLines - invalid DC") );
+    //wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoDrawLines - invalid DC") );
 
     if ( !m_logicalFunctionSupported )
         return;
@@ -648,7 +648,7 @@ void wxGCDCImpl::DoDrawLines(int n, wxPoint points[],
 #if wxUSE_SPLINES
 void wxGCDCImpl::DoDrawSpline(const wxPointList *points)
 {
-    wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoDrawSpline - invalid DC") );
+    //wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoDrawSpline - invalid DC") );
 
     if ( !m_logicalFunctionSupported )
         return;
@@ -708,7 +708,7 @@ void wxGCDCImpl::DoDrawPolygon( int n, wxPoint points[],
                                 wxCoord xoffset, wxCoord yoffset,
                                 wxPolygonFillMode fillStyle )
 {
-    wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoDrawPolygon - invalid DC") );
+    //wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoDrawPolygon - invalid DC") );
 
     if ( n <= 0 || (m_brush.GetStyle() == wxTRANSPARENT && m_pen.GetStyle() == wxTRANSPARENT ) )
         return;
@@ -739,7 +739,7 @@ void wxGCDCImpl::DoDrawPolyPolygon(int n,
                                wxCoord yoffset,
                                wxPolygonFillMode fillStyle)
 {
-    wxASSERT(n > 1);
+    //wxASSERT(n > 1);
     wxGraphicsPath path = m_graphicContext->CreatePath();
 
     int i = 0;
@@ -763,7 +763,7 @@ void wxGCDCImpl::DoDrawPolyPolygon(int n,
 
 void wxGCDCImpl::DoDrawRectangle(wxCoord x, wxCoord y, wxCoord w, wxCoord h)
 {
-    wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoDrawRectangle - invalid DC") );
+    //wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoDrawRectangle - invalid DC") );
 
     if ( !m_logicalFunctionSupported )
         return;
@@ -786,7 +786,7 @@ void wxGCDCImpl::DoDrawRoundedRectangle(wxCoord x, wxCoord y,
                                     wxCoord w, wxCoord h,
                                     double radius)
 {
-    wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoDrawRoundedRectangle - invalid DC") );
+    //wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoDrawRoundedRectangle - invalid DC") );
 
     if ( !m_logicalFunctionSupported )
         return;
@@ -810,7 +810,7 @@ void wxGCDCImpl::DoDrawRoundedRectangle(wxCoord x, wxCoord y,
 
 void wxGCDCImpl::DoDrawEllipse(wxCoord x, wxCoord y, wxCoord w, wxCoord h)
 {
-    wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoDrawEllipse - invalid DC") );
+    //wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoDrawEllipse - invalid DC") );
 
     if ( !m_logicalFunctionSupported )
         return;
@@ -847,8 +847,8 @@ bool wxGCDCImpl::DoStretchBlit(
     wxRasterOperationMode logical_func , bool useMask,
     wxCoord xsrcMask, wxCoord ysrcMask )
 {
-    wxCHECK_MSG( IsOk(), false, wxT("wxGCDC(cg)::DoStretchBlit - invalid DC") );
-    wxCHECK_MSG( source->IsOk(), false, wxT("wxGCDC(cg)::DoStretchBlit - invalid source DC") );
+    //wxCHECK_MSG( IsOk(), false, wxT("wxGCDC(cg)::DoStretchBlit - invalid DC") );
+    //wxCHECK_MSG( source->IsOk(), false, wxT("wxGCDC(cg)::DoStretchBlit - invalid source DC") );
 
     if ( logical_func == wxNO_OP )
         return true;
@@ -856,7 +856,7 @@ bool wxGCDCImpl::DoStretchBlit(
     wxCompositionMode mode = TranslateRasterOp(logical_func);
     if ( mode == wxCOMPOSITION_INVALID )
     {
-        wxFAIL_MSG( wxT("Blitting is not supported with this logical operation.") );
+        //wxFAIL_MSG( wxT("Blitting is not supported with this logical operation.") );
         return false;
     }
 
@@ -912,7 +912,7 @@ bool wxGCDCImpl::DoStretchBlit(
         }
         else
         {
-            wxFAIL_MSG( wxT("Cannot Blit. Unable to get contents of DC as bitmap.") );
+            //wxFAIL_MSG( wxT("Cannot Blit. Unable to get contents of DC as bitmap.") );
             retval = false;
         }
 
@@ -930,7 +930,7 @@ bool wxGCDCImpl::DoStretchBlit(
 void wxGCDCImpl::DoDrawRotatedText(const wxString& str, wxCoord x, wxCoord y,
                                double angle)
 {
-    wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoDrawRotatedText - invalid DC") );
+    //wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoDrawRotatedText - invalid DC") );
 
     if ( str.empty() )
         return;
@@ -957,7 +957,7 @@ void wxGCDCImpl::DoDrawText(const wxString& str, wxCoord x, wxCoord y)
         return;
     }
 
-    wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoDrawText - invalid DC") );
+    //wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoDrawText - invalid DC") );
 
     if ( str.empty() )
         return;
@@ -973,7 +973,7 @@ void wxGCDCImpl::DoDrawText(const wxString& str, wxCoord x, wxCoord y)
 
 bool wxGCDCImpl::CanGetTextExtent() const
 {
-    wxCHECK_MSG( IsOk(), false, wxT("wxGCDC(cg)::CanGetTextExtent - invalid DC") );
+    //wxCHECK_MSG( IsOk(), false, wxT("wxGCDC(cg)::CanGetTextExtent - invalid DC") );
 
     return true;
 }
@@ -982,7 +982,7 @@ void wxGCDCImpl::DoGetTextExtent( const wxString &str, wxCoord *width, wxCoord *
                               wxCoord *descent, wxCoord *externalLeading ,
                               const wxFont *theFont ) const
 {
-    wxCHECK_RET( m_graphicContext, wxT("wxGCDC(cg)::DoGetTextExtent - invalid DC") );
+    //wxCHECK_RET( m_graphicContext, wxT("wxGCDC(cg)::DoGetTextExtent - invalid DC") );
 
     if ( theFont )
     {
@@ -1010,7 +1010,7 @@ void wxGCDCImpl::DoGetTextExtent( const wxString &str, wxCoord *width, wxCoord *
 
 bool wxGCDCImpl::DoGetPartialTextExtents(const wxString& text, wxArrayInt& widths) const
 {
-    wxCHECK_MSG( m_graphicContext, false, wxT("wxGCDC(cg)::DoGetPartialTextExtents - invalid DC") );
+    //wxCHECK_MSG( m_graphicContext, false, wxT("wxGCDC(cg)::DoGetPartialTextExtents - invalid DC") );
     widths.Clear();
     widths.Add(0,text.Length());
     if ( text.IsEmpty() )
@@ -1043,7 +1043,7 @@ wxCoord wxGCDCImpl::GetCharHeight(void) const
 
 void wxGCDCImpl::Clear(void)
 {
-    wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::Clear - invalid DC") );
+    //wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::Clear - invalid DC") );
     // TODO better implementation / incorporate size info into wxGCDC or context
     m_graphicContext->SetBrush( m_backgroundBrush );
     wxPen p = *wxTRANSPARENT_PEN;
@@ -1058,7 +1058,7 @@ void wxGCDCImpl::Clear(void)
 
 void wxGCDCImpl::DoGetSize(int *width, int *height) const
 {
-    wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoGetSize - invalid DC") );
+    //wxCHECK_RET( IsOk(), wxT("wxGCDC(cg)::DoGetSize - invalid DC") );
     wxDouble w,h;
     m_graphicContext->GetSize( &w, &h );
     if ( height )
@@ -1150,7 +1150,7 @@ void wxGCDCImpl::DoDrawCheckMark(wxCoord x, wxCoord y,
 wxRect wxGCDCImpl::MSWApplyGDIPlusTransform(const wxRect& r) const
 {
     wxGraphicsContext* const gc = GetGraphicsContext();
-    wxCHECK_MSG( gc, r, wxT("Invalid wxGCDC") );
+    //wxCHECK_MSG( gc, r, wxT("Invalid wxGCDC") );
 
     double x = 0,
            y = 0;
