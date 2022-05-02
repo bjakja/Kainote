@@ -49,12 +49,12 @@
  *
  */
 
-class WXDLLIMPEXP_FWD_NET wxTCPServer;
-class WXDLLIMPEXP_FWD_NET wxTCPClient;
+class  wxTCPServer;
+class  wxTCPClient;
 
 class wxIPCSocketStreams;
 
-class WXDLLIMPEXP_NET wxTCPConnection : public wxConnectionBase
+class  wxTCPConnection : public wxConnectionBase
 {
 public:
     wxTCPConnection() { Init(); }
@@ -113,7 +113,7 @@ private:
     DECLARE_DYNAMIC_CLASS(wxTCPConnection)
 };
 
-class WXDLLIMPEXP_NET wxTCPServer : public wxServerBase
+class  wxTCPServer : public wxServerBase
 {
 public:
     wxTCPServer();
@@ -136,7 +136,7 @@ protected:
     DECLARE_DYNAMIC_CLASS(wxTCPServer)
 };
 
-class WXDLLIMPEXP_NET wxTCPClient : public wxClientBase
+class  wxTCPClient : public wxClientBase
 {
 public:
     wxTCPClient();

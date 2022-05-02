@@ -501,7 +501,7 @@ bool wxSockAddressImpl::SetPortName(const wxString& name, const char *protocol)
 
 void wxSockAddressImpl::CreateINET()
 {
-    wxASSERT_MSG( Is(FAMILY_UNSPEC), "recreating address as different type?" );
+    //wxASSERT_MSG( Is(FAMILY_UNSPEC), "recreating address as different type?" );
 
     m_family = FAMILY_INET;
     sockaddr_in * const addr = ALLOC(sockaddr_in);
@@ -802,7 +802,7 @@ wxSockAddressImpl& wxIPaddress::GetImpl()
 
 bool wxIPaddress::Hostname(const wxString& name)
 {
-    wxCHECK_MSG( !name.empty(), false, "empty host name is invalid" );
+    //wxCHECK_MSG( !name.empty(), false, "empty host name is invalid" );
 
     m_origHostname = name;
 

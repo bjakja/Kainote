@@ -57,7 +57,7 @@ bool wxRearrangeList::Create(wxWindow *parent,
     // construct the array of items in the order in which they should appear in
     // the control
     const size_t count = items.size();
-    wxCHECK_MSG( order.size() == count, false, "arrays not in sync" );
+    //wxCHECK_MSG( order.size() == count, false, "arrays not in sync" );
 
     wxArrayString itemsInOrder;
     itemsInOrder.reserve(count);
@@ -173,8 +173,8 @@ void wxRearrangeList::OnCheck(wxCommandEvent& event)
 
     m_order[n] = ~m_order[n];
 
-    wxASSERT_MSG( (m_order[n] >= 0) == IsChecked(n),
-                  "discrepancy between internal state and GUI" );
+    /*wxASSERT_MSG( (m_order[n] >= 0) == IsChecked(n),
+                  "discrepancy between internal state and GUI" );*/
 }
 
 // ============================================================================
@@ -250,7 +250,7 @@ void wxRearrangeCtrl::OnButton(wxCommandEvent& event)
 // ============================================================================
 
 extern
-WXDLLIMPEXP_DATA_CORE(const char) wxRearrangeDialogNameStr[] = "wxRearrangeDlg";
+const char wxRearrangeDialogNameStr[] = "wxRearrangeDlg";
 
 namespace
 {
@@ -310,10 +310,10 @@ bool wxRearrangeDialog::Create(wxWindow *parent,
 void wxRearrangeDialog::AddExtraControls(wxWindow *win)
 {
     wxSizer * const sizer = GetSizer();
-    wxCHECK_RET( sizer, "the dialog must be created first" );
+    /*wxCHECK_RET( sizer, "the dialog must be created first" );
 
     wxASSERT_MSG( sizer->GetChildren().GetCount() == Pos_Max,
-                  "calling AddExtraControls() twice?" );
+                  "calling AddExtraControls() twice?" );*/
 
     sizer->Insert(Pos_Buttons, win, wxSizerFlags().Expand().Border());
 
@@ -325,14 +325,14 @@ void wxRearrangeDialog::AddExtraControls(wxWindow *win)
 
 wxRearrangeList *wxRearrangeDialog::GetList() const
 {
-    wxCHECK_MSG( m_ctrl, NULL, "the dialog must be created first" );
+    //wxCHECK_MSG( m_ctrl, NULL, "the dialog must be created first" );
 
     return m_ctrl->GetList();
 }
 
 wxArrayInt wxRearrangeDialog::GetOrder() const
 {
-    wxCHECK_MSG( m_ctrl, wxArrayInt(), "the dialog must be created first" );
+    //wxCHECK_MSG( m_ctrl, wxArrayInt(), "the dialog must be created first" );
 
     return m_ctrl->GetList()->GetCurrentOrder();
 }

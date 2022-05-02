@@ -17,15 +17,15 @@
 #include "wx/dirdlg.h"
 
 
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_DIRPICKER_CHANGED, wxFileDirPickerEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_FILEPICKER_CHANGED, wxFileDirPickerEvent );
 
 
 //-----------------------------------------------------------------------------
 // wxGenericFileDirButton: a button which brings up a wx{File|Dir}Dialog
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxGenericFileDirButton : public wxButton,
+class  wxGenericFileDirButton : public wxButton,
                                                 public wxFileDirPickerWidgetBase
 {
 public:
@@ -99,7 +99,7 @@ private:
 
 #define wxFILEBTN_DEFAULT_STYLE                     (wxFLP_OPEN)
 
-class WXDLLIMPEXP_CORE wxGenericFileButton : public wxGenericFileDirButton
+class  wxGenericFileButton : public wxGenericFileDirButton
 {
 public:
     wxGenericFileButton() {}
@@ -125,8 +125,8 @@ public:     // overridable
     {
         // the derived class must initialize it if it doesn't use the
         // non-default wxGenericFileDirButton ctor
-        wxASSERT_MSG( m_pickerStyle != -1,
-                      "forgot to initialize m_pickerStyle?" );
+        /*wxASSERT_MSG( m_pickerStyle != -1,
+                      "forgot to initialize m_pickerStyle?" );*/
 
 
         long filedlgstyle = 0;
@@ -171,7 +171,7 @@ private:
 
 #define wxDIRBTN_DEFAULT_STYLE                     0
 
-class WXDLLIMPEXP_CORE wxGenericDirButton : public wxGenericFileDirButton
+class  wxGenericDirButton : public wxGenericFileDirButton
 {
 public:
     wxGenericDirButton() {}

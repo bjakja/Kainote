@@ -39,7 +39,7 @@ IMPLEMENT_DYNAMIC_CLASS(wxIconBundle, wxGDIObject)
 // wxIconBundleRefData
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxIconBundleRefData : public wxGDIRefData
+class  wxIconBundleRefData : public wxGDIRefData
 {
 public:
     wxIconBundleRefData() { }
@@ -195,7 +195,7 @@ void wxIconBundle::AddIcon(wxInputStream& stream, wxBitmapType type)
 
 wxIcon wxIconBundle::GetIcon(const wxSize& size, int flags) const
 {
-    wxASSERT( size == wxDefaultSize || (size.x >= 0 && size.y > 0) );
+    //wxASSERT( size == wxDefaultSize || (size.x >= 0 && size.y > 0) );
 
     // We need the standard system icon size when using FALLBACK_SYSTEM.
     wxCoord sysX = 0,
@@ -211,8 +211,8 @@ wxIcon wxIconBundle::GetIcon(const wxSize& size, int flags) const
     wxCoord sizeY = size.y;
     if ( size == wxDefaultSize )
     {
-        wxASSERT_MSG( flags == FALLBACK_SYSTEM,
-                      wxS("Must have valid size if not using FALLBACK_SYSTEM") );
+        /*wxASSERT_MSG( flags == FALLBACK_SYSTEM,
+                      wxS("Must have valid size if not using FALLBACK_SYSTEM") );*/
 
         sizeX = sysX;
         sizeY = sysY;
@@ -291,7 +291,7 @@ wxIcon wxIconBundle::GetIconOfExactSize(const wxSize& size) const
 
 void wxIconBundle::AddIcon(const wxIcon& icon)
 {
-    wxCHECK_RET( icon.IsOk(), wxT("invalid icon") );
+    //wxCHECK_RET( icon.IsOk(), wxT("invalid icon") );
 
     AllocExclusive();
 
@@ -322,7 +322,7 @@ size_t wxIconBundle::GetIconCount() const
 
 wxIcon wxIconBundle::GetIconByIndex(size_t n) const
 {
-    wxCHECK_MSG( n < GetIconCount(), wxNullIcon, wxT("invalid index") );
+    //wxCHECK_MSG( n < GetIconCount(), wxNullIcon, wxT("invalid index") );
 
     return M_ICONBUNDLEDATA->m_icons[n];
 }

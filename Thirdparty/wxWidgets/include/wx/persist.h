@@ -41,7 +41,7 @@ wxPersistentObject *wxCreatePersistentObject(T *obj);
 // wxPersistenceManager: global aspects of persistent windows
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxPersistenceManager
+class  wxPersistenceManager
 {
 public:
     // Call this method to specify a non-default persistence manager to use.
