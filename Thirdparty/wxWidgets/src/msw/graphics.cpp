@@ -272,7 +272,7 @@ private:
     GraphicsPath* m_brushPath;
 };
 
-class WXDLLIMPEXP_CORE wxGDIPlusBitmapData : public wxGraphicsBitmapData
+class  wxGDIPlusBitmapData : public wxGraphicsBitmapData
 {
 public:
     wxGDIPlusBitmapData( wxGraphicsRenderer* renderer, Bitmap* bitmap );
@@ -1634,7 +1634,7 @@ void wxGDIPlusContext::PushState()
 
 void wxGDIPlusContext::PopState()
 {
-    wxCHECK_RET( !m_stateStack.empty(), wxT("No state to pop") );
+    //wxCHECK_RET( !m_stateStack.empty(), wxT("No state to pop") );
 
     GraphicsState state = m_stateStack.top();
     m_stateStack.pop();
@@ -1737,8 +1737,8 @@ void wxGDIPlusContext::DoDrawText(const wxString& str,
    if (m_composition == wxCOMPOSITION_DEST)
         return;
 
-    wxCHECK_RET( !m_font.IsNull(),
-                 wxT("wxGDIPlusContext::DrawText - no valid font set") );
+    //wxCHECK_RET( !m_font.IsNull(),
+                // wxT("wxGDIPlusContext::DrawText - no valid font set") );
 
     if ( str.IsEmpty())
         return ;
@@ -1760,7 +1760,7 @@ void wxGDIPlusContext::DoDrawText(const wxString& str,
 void wxGDIPlusContext::GetTextExtent( const wxString &str, wxDouble *width, wxDouble *height,
                                      wxDouble *descent, wxDouble *externalLeading ) const
 {
-    wxCHECK_RET( !m_font.IsNull(), wxT("wxGDIPlusContext::GetTextExtent - no valid font set") );
+    //wxCHECK_RET( !m_font.IsNull(), wxT("wxGDIPlusContext::GetTextExtent - no valid font set") );
 
     wxWCharBuffer s = str.wc_str( *wxConvUI );
     FontFamily ffamily ;
@@ -1811,7 +1811,7 @@ void wxGDIPlusContext::GetPartialTextExtents(const wxString& text, wxArrayDouble
     widths.Empty();
     widths.Add(0, text.length());
 
-    wxCHECK_RET( !m_font.IsNull(), wxT("wxGDIPlusContext::GetPartialTextExtents - no valid font set") );
+    //wxCHECK_RET( !m_font.IsNull(), wxT("wxGDIPlusContext::GetPartialTextExtents - no valid font set") );
 
     if (text.empty())
         return;
@@ -1819,7 +1819,7 @@ void wxGDIPlusContext::GetPartialTextExtents(const wxString& text, wxArrayDouble
     Font* f = ((wxGDIPlusFontData*)m_font.GetRefData())->GetGDIPlusFont();
     wxWCharBuffer ws = text.wc_str( *wxConvUI );
     size_t len = wcslen( ws ) ;
-    wxASSERT_MSG(text.length() == len , wxT("GetPartialTextExtents not yet implemented for multichar situations"));
+    //wxASSERT_MSG(text.length() == len , wxT("GetPartialTextExtents not yet implemented for multichar situations"));
 
     RectF layoutRect(0,0, 100000.0f, 100000.0f);
     StringFormat strFormat( StringFormat::GenericTypographic() );
@@ -2291,7 +2291,7 @@ void wxGCDC::ReleaseHDC(WXHDC hdc)
         return;
 
     wxGraphicsContext * const gc = GetGraphicsContext();
-    wxCHECK_RET( gc, "can't release HDC because there is no wxGraphicsContext" );
+    //wxCHECK_RET( gc, "can't release HDC because there is no wxGraphicsContext" );
 
 #if wxUSE_CAIRO
     // we can't get the HDC if it is not a GDI+ context
@@ -2302,7 +2302,7 @@ void wxGCDC::ReleaseHDC(WXHDC hdc)
 #endif
 
     Graphics * const g = static_cast<Graphics *>(gc->GetNativeContext());
-    wxCHECK_RET( g, "can't release HDC because there is no Graphics" );
+    //wxCHECK_RET( g, "can't release HDC because there is no Graphics" );
 
     g->ReleaseHDC((HDC)hdc);
 }

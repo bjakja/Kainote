@@ -30,7 +30,7 @@
  *
  */
 
-#include "regex.h"
+//#include "regex.h"
 #include "regguts.h"
 #include <malloc.h>
 //#define	COLORLESS	(-1)	/* impossible color */

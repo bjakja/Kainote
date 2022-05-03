@@ -17,11 +17,11 @@
 #include "wx/object.h"
 #include "wx/clntdata.h"
 
-#if wxUSE_GUI
+//#if wxUSE_GUI
     #include "wx/gdicmn.h"
     #include "wx/cursor.h"
     #include "wx/mousestate.h"
-#endif
+//#endif
 
 #include "wx/dynarray.h"
 #include "wx/thread.h"
@@ -40,12 +40,12 @@
 class  wxList;
 class  wxEvent;
 class  wxEventFilter;
-#if wxUSE_GUI
+
     class  wxDC;
     class  wxMenu;
     class  wxWindow;
     class  wxWindowBase;
-#endif // wxUSE_GUI
+
 
 // We operate with pointer to members of wxEvtHandler (such functions are used
 // as event handlers in the event tables or as arguments to Connect()) but by

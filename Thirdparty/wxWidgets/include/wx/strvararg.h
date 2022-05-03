@@ -137,16 +137,16 @@ class  wxString;
 class  wxFormatString
 {
 public:
-    /*wxFormatString(const char *str)
-        : m_char(wxScopedCharBuffer::CreateNonOwned(str)), m_str(NULL), m_cstr(NULL) {}*/
+    wxFormatString(const char *str)
+        : m_char(wxScopedCharBuffer::CreateNonOwned(str)), m_str(NULL), m_cstr(NULL) {}
     wxFormatString(const wchar_t *str)
         : m_wchar(wxScopedWCharBuffer::CreateNonOwned(str)), m_str(NULL), m_cstr(NULL) {}
     wxFormatString(const wxString& str)
         : m_str(&str), m_cstr(NULL) {}
     wxFormatString(const wxCStrData& str)
         : m_str(NULL), m_cstr(&str) {}
-    /*wxFormatString(const wxScopedCharBuffer& str)
-        : m_char(str), m_str(NULL), m_cstr(NULL)  {}*/
+    wxFormatString(const wxScopedCharBuffer& str)
+        : m_char(str), m_str(NULL), m_cstr(NULL)  {}
     wxFormatString(const wxScopedWCharBuffer& str)
         : m_wchar(str), m_str(NULL), m_cstr(NULL) {}
 
@@ -226,7 +226,7 @@ private:
 #endif // wxUSE_UNICODE && !wxUSE_UTF8_LOCALE_ONLY
 
 private:
-    /*wxScopedCharBuffer  m_char;*/
+    wxScopedCharBuffer  m_char;
     wxScopedWCharBuffer m_wchar;
 
     // NB: we can use a pointer here, because wxFormatString is only used
@@ -395,24 +395,24 @@ struct wxFormatStringSpecifier<const T*>
         enum { value = arg };                                               \
     };
 
-//wxFORMAT_STRING_SPECIFIER(bool, wxFormatString::Arg_Int)
-//wxFORMAT_STRING_SPECIFIER(int, wxFormatString::Arg_Int)
-//wxFORMAT_STRING_SPECIFIER(unsigned int, wxFormatString::Arg_Int)
-//wxFORMAT_STRING_SPECIFIER(short int, wxFormatString::Arg_Int)
-//wxFORMAT_STRING_SPECIFIER(short unsigned int, wxFormatString::Arg_Int)
-//wxFORMAT_STRING_SPECIFIER(long int, wxFormatString::Arg_LongInt)
-//wxFORMAT_STRING_SPECIFIER(long unsigned int, wxFormatString::Arg_LongInt)
-//#ifdef wxLongLong_t
-//wxFORMAT_STRING_SPECIFIER(wxLongLong_t, wxFormatString::Arg_LongLongInt)
-//wxFORMAT_STRING_SPECIFIER(wxULongLong_t, wxFormatString::Arg_LongLongInt)
-//#endif
-//wxFORMAT_STRING_SPECIFIER(float, wxFormatString::Arg_Double)
-//wxFORMAT_STRING_SPECIFIER(double, wxFormatString::Arg_Double)
-//wxFORMAT_STRING_SPECIFIER(long double, wxFormatString::Arg_LongDouble)
-//
-//#if wxWCHAR_T_IS_REAL_TYPE
-//wxFORMAT_STRING_SPECIFIER(wchar_t, wxFormatString::Arg_Char | wxFormatString::Arg_Int)
-//#endif
+wxFORMAT_STRING_SPECIFIER(bool, wxFormatString::Arg_Int)
+wxFORMAT_STRING_SPECIFIER(int, wxFormatString::Arg_Int)
+wxFORMAT_STRING_SPECIFIER(unsigned int, wxFormatString::Arg_Int)
+wxFORMAT_STRING_SPECIFIER(short int, wxFormatString::Arg_Int)
+wxFORMAT_STRING_SPECIFIER(short unsigned int, wxFormatString::Arg_Int)
+wxFORMAT_STRING_SPECIFIER(long int, wxFormatString::Arg_LongInt)
+wxFORMAT_STRING_SPECIFIER(long unsigned int, wxFormatString::Arg_LongInt)
+#ifdef wxLongLong_t
+wxFORMAT_STRING_SPECIFIER(wxLongLong_t, wxFormatString::Arg_LongLongInt)
+wxFORMAT_STRING_SPECIFIER(wxULongLong_t, wxFormatString::Arg_LongLongInt)
+#endif
+wxFORMAT_STRING_SPECIFIER(float, wxFormatString::Arg_Double)
+wxFORMAT_STRING_SPECIFIER(double, wxFormatString::Arg_Double)
+wxFORMAT_STRING_SPECIFIER(long double, wxFormatString::Arg_LongDouble)
+
+#if wxWCHAR_T_IS_REAL_TYPE
+wxFORMAT_STRING_SPECIFIER(wchar_t, wxFormatString::Arg_Char | wxFormatString::Arg_Int)
+#endif
 
 #if !wxUSE_UNICODE
 wxFORMAT_STRING_SPECIFIER(char, wxFormatString::Arg_Char | wxFormatString::Arg_Int)
@@ -575,14 +575,14 @@ struct  wxArgNormalizerWchar<const wxCStrData&>
 // char* for wchar_t Unicode build or UTF8):
 #if wxUSE_UNICODE_WCHAR
 
-//template<>
-//struct wxArgNormalizerWchar<const char*>
-//    : public wxArgNormalizerWithBuffer<wchar_t>
-//{
-//    wxArgNormalizerWchar(const char* s,
-//                         const wxFormatString *fmt, unsigned index)
-//        : wxArgNormalizerWithBuffer<wchar_t>(wxConvLibc.cMB2WC(s), fmt, index) {}
-//};
+template<>
+struct wxArgNormalizerWchar<const char*>
+    : public wxArgNormalizerWithBuffer<wchar_t>
+{
+    wxArgNormalizerWchar(const char* s,
+                         const wxFormatString *fmt, unsigned index)
+        : wxArgNormalizerWithBuffer<wchar_t>(wxConvLibc.cMB2WC(s), fmt, index) {}
+};
 
 #elif wxUSE_UNICODE_UTF8
 

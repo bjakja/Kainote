@@ -31,20 +31,20 @@
 
 #include "wx/xml/xml.h"
 
-class WXDLLIMPEXP_FWD_BASE wxFileName;
+class  wxFileName;
 
-class WXDLLIMPEXP_FWD_CORE wxIconBundle;
-class WXDLLIMPEXP_FWD_CORE wxImageList;
-class WXDLLIMPEXP_FWD_CORE wxMenu;
-class WXDLLIMPEXP_FWD_CORE wxMenuBar;
-class WXDLLIMPEXP_FWD_CORE wxDialog;
-class WXDLLIMPEXP_FWD_CORE wxPanel;
-class WXDLLIMPEXP_FWD_CORE wxWindow;
-class WXDLLIMPEXP_FWD_CORE wxFrame;
-class WXDLLIMPEXP_FWD_CORE wxToolBar;
+class  wxIconBundle;
+class  wxImageList;
+class  wxMenu;
+class  wxMenuBar;
+class  wxDialog;
+class  wxPanel;
+class  wxWindow;
+class  wxFrame;
+class  wxToolBar;
 
-class WXDLLIMPEXP_FWD_XRC wxXmlResourceHandler;
-class WXDLLIMPEXP_FWD_XRC wxXmlSubclassFactory;
+class  wxXmlResourceHandler;
+class  wxXmlSubclassFactory;
 class wxXmlSubclassFactories;
 class wxXmlResourceModule;
 class wxXmlResourceDataRecords;
@@ -83,7 +83,7 @@ enum wxXmlResourceFlags
 // This class holds XML resources from one or more .xml files
 // (or derived forms, either binary or zipped -- see manual for
 // details).
-class WXDLLIMPEXP_XRC wxXmlResource : public wxObject
+class  wxXmlResource : public wxObject
 {
 public:
     // Constructor.
@@ -446,7 +446,7 @@ private:
 // wxXmlResourceHandler is an abstract base class for resource handlers
 // capable of creating a control from an XML node.
 
-class WXDLLIMPEXP_XRC wxXmlResourceHandler : public wxObject
+class  wxXmlResourceHandler : public wxObject
 {
 DECLARE_ABSTRACT_CLASS(wxXmlResourceHandler)
 public:
@@ -641,7 +641,7 @@ protected:
 
 
 // FIXME -- remove this $%^#$%#$@# as soon as Ron checks his changes in!!
-WXDLLIMPEXP_XRC void wxXmlInitResourceModule();
+ void wxXmlInitResourceModule();
 
 
 // This class is used to create instances of XRC "object" nodes with "subclass"
@@ -649,7 +649,7 @@ WXDLLIMPEXP_XRC void wxXmlInitResourceModule();
 // register your subclasses via wxWidgets' RTTI mechanism. This class is useful
 // only for language bindings developer who need a way to implement subclassing
 // in wxWidgets ports that don't support wxRTTI (e.g. wxPython).
-class WXDLLIMPEXP_XRC wxXmlSubclassFactory
+class  wxXmlSubclassFactory
 {
 public:
     // Try to create instance of given class and return it, return NULL on

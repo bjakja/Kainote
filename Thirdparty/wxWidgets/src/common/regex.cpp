@@ -98,12 +98,12 @@ public:
     // absolutely impractical anyhow
     size_t Start(size_t n) const
     {
-        return wx_truncate_cast(size_t, m_matches[n].rm_so);
+        return m_matches[n].rm_so;
     }
 
     size_t End(size_t n) const
     {
-        return wx_truncate_cast(size_t, m_matches[n].rm_eo);
+        return m_matches[n].rm_eo;
     }
 
     regmatch_t *get() const         { return m_matches; }

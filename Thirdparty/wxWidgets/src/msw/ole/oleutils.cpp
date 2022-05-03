@@ -58,7 +58,7 @@
 // ============================================================================
 
 // return true if the iid is in the array
-WXDLLEXPORT bool IsIidFromList(REFIID riid, const IID *aIids[], size_t nCount)
+ bool IsIidFromList(REFIID riid, const IID *aIids[], size_t nCount)
 {
   for ( size_t i = 0; i < nCount; i++ ) {
     if ( riid == *aIids[i] )
@@ -68,12 +68,12 @@ WXDLLEXPORT bool IsIidFromList(REFIID riid, const IID *aIids[], size_t nCount)
   return false;
 }
 
-WXDLLEXPORT BSTR wxConvertStringToOle(const wxString& str)
+ BSTR wxConvertStringToOle(const wxString& str)
 {
     return wxBasicString(str).Get();
 }
 
-WXDLLEXPORT wxString wxConvertStringFromOle(BSTR bStr)
+ wxString wxConvertStringFromOle(BSTR bStr)
 {
     // NULL BSTR is equivalent to an empty string (this is the convention used
     // by VB and hence we must follow it)
@@ -221,7 +221,7 @@ void wxSafeArrayHelper::Unlock()
 } // unnamed namespace
 
 
-WXDLLEXPORT bool wxConvertVariantToOle(const wxVariant& variant, VARIANTARG& oleVariant)
+ bool wxConvertVariantToOle(const wxVariant& variant, VARIANTARG& oleVariant)
 {
     VariantInit(&oleVariant);
     if (variant.IsNull())
@@ -334,7 +334,7 @@ WXDLLEXPORT bool wxConvertVariantToOle(const wxVariant& variant, VARIANTARG& ole
 #define VT_TYPEMASK 0xfff
 #endif
 
-WXDLLEXPORT bool
+ bool
 wxConvertOleToVariant(const VARIANTARG& oleVariant, wxVariant& variant)
 {
     bool ok = true;

@@ -34,6 +34,7 @@
 #endif
 
 #include "wx/msw/dde.h"
+#include "wx/dde.h"
 #include "wx/intl.h"
 #include "wx/buffer.h"
 #include "wx/strconv.h"

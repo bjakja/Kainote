@@ -14,8 +14,8 @@
 
 #include "wx/icon.h"
 
-class WXDLLIMPEXP_FWD_CORE wxIcon;
-class WXDLLIMPEXP_FWD_CORE wxMenu;
+class  wxIcon;
+class  wxMenu;
 
 class wxTaskBarIconCocoaImpl;
 

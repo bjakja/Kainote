@@ -101,10 +101,10 @@ public:
     // number of characters converted, whether the last one of them was NUL or
     // not. But if inLen == wxNO_LEN then outLen doesn't account for the last
     // NUL even though it is present.
-    //const wxWCharBuffer
-        //cMB2WC(const char *in, size_t inLen, size_t *outLen) const;
-    //const wxCharBuffer
-        //cWC2MB(const wchar_t *in, size_t inLen, size_t *outLen) const;
+    const wxWCharBuffer
+        cMB2WC(const char *in, size_t inLen, size_t *outLen) const;
+    const wxCharBuffer
+        cWC2MB(const wchar_t *in, size_t inLen, size_t *outLen) const;
 
     // And yet more convenience functions for converting the entire buffers:
     // these are the simplest and least error-prone as you never need to bother
@@ -114,8 +114,8 @@ public:
 
     // convenience functions for converting MB or WC to/from wxWin default
 #if wxUSE_UNICODE
-    //const wxWCharBuffer cMB2WX(const char *psz) const { return cMB2WC(psz); }
-    //const wxCharBuffer cWX2MB(const wchar_t *psz) const { return cWC2MB(psz); }
+    const wxWCharBuffer cMB2WX(const char *psz) const { return cMB2WC(psz); }
+    const wxCharBuffer cWX2MB(const wchar_t *psz) const { return cWC2MB(psz); }
     const wchar_t* cWC2WX(const wchar_t *psz) const { return psz; }
     const wchar_t* cWX2WC(const wchar_t *psz) const { return psz; }
 #else // ANSI

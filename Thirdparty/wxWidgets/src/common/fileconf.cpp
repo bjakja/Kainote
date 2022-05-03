@@ -996,10 +996,10 @@ bool wxFileConfig::DoWriteLong(const wxString& key, long lValue)
 
 #if wxUSE_BASE64
 
-bool wxFileConfig::DoWriteBinary(const wxString& key, const wxMemoryBuffer& buf)
-{
-  return Write(key, wxBase64Encode(buf));
-}
+//bool wxFileConfig::DoWriteBinary(const wxString& key, const wxMemoryBuffer& buf)
+//{
+//  return Write(key, wxBase64Encode(buf));
+//}
 
 #endif // wxUSE_BASE64
 

@@ -17,7 +17,7 @@
  * This will produce a big PCH file.
  */
 
-//#include "wx/wxprec.h"
+#include "wx/wxprec.h"
 
 #ifdef __BORLANDC__
     #pragma hdrstop

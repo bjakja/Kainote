@@ -62,7 +62,7 @@ extern const char wxNotebookNameStr[];
 // XTI accessor
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxNotebookPageInfo : public wxObject
+class  wxNotebookPageInfo : public wxObject
 {
 public:
     wxNotebookPageInfo() { m_page = NULL; m_imageId = -1; m_selected = false; }

@@ -73,22 +73,22 @@ public:
         //wxFAIL_MSG(wxT("wxSVGFILEDC::SetPalette not implemented"));
     }
 
-    /*virtual void GetClippingBox(wxCoord *WXUNUSED(x), wxCoord *WXUNUSED(y),
+    virtual void GetClippingBox(wxCoord *WXUNUSED(x), wxCoord *WXUNUSED(y),
                                 wxCoord *WXUNUSED(w), wxCoord *WXUNUSED(h))
     {
-        wxFAIL_MSG(wxT("wxSVGFILEDC::GetClippingBox not implemented"));
+        //wxFAIL_MSG(wxT("wxSVGFILEDC::GetClippingBox not implemented"));
     }
 
     virtual void SetLogicalFunction(wxRasterOperationMode WXUNUSED(function))
     {
-        wxFAIL_MSG(wxT("wxSVGFILEDC::SetLogicalFunction Call not implemented"));
+        //wxFAIL_MSG(wxT("wxSVGFILEDC::SetLogicalFunction Call not implemented"));
     }
 
     virtual wxRasterOperationMode GetLogicalFunction() const
     {
-        wxFAIL_MSG(wxT("wxSVGFILEDC::GetLogicalFunction() not implemented"));
+        //wxFAIL_MSG(wxT("wxSVGFILEDC::GetLogicalFunction() not implemented"));
         return wxCOPY;
-    }*/
+    }
 
     virtual void SetBackground( const wxBrush &brush );
     virtual void SetBackgroundMode( int mode );
@@ -97,20 +97,20 @@ public:
     virtual void SetPen(const wxPen& pen);
 
 private:
-   /*virtual bool DoGetPixel(wxCoord, wxCoord, wxColour *) const
+   virtual bool DoGetPixel(wxCoord, wxCoord, wxColour *) const
    {
-       wxFAIL_MSG(wxT("wxSVGFILEDC::DoGetPixel Call not implemented"));
+       //wxFAIL_MSG(wxT("wxSVGFILEDC::DoGetPixel Call not implemented"));
        return true;
-   }*/
+   }
 
    virtual bool DoBlit(wxCoord, wxCoord, wxCoord, wxCoord, wxDC *,
                        wxCoord, wxCoord, wxRasterOperationMode = wxCOPY,
                        bool = 0, int = -1, int = -1);
 
-   /*virtual void DoCrossHair(wxCoord, wxCoord)
+   virtual void DoCrossHair(wxCoord, wxCoord)
    {
-       wxFAIL_MSG(wxT("wxSVGFILEDC::CrossHair Call not implemented"));
-   }*/
+       //wxFAIL_MSG(wxT("wxSVGFILEDC::CrossHair Call not implemented"));
+   }
 
    virtual void DoDrawArc(wxCoord, wxCoord, wxCoord, wxCoord, wxCoord, wxCoord);
 
@@ -147,13 +147,13 @@ private:
 
    virtual void DoDrawText(const wxString& text, wxCoord x, wxCoord y);
 
-   /*virtual bool DoFloodFill(wxCoord WXUNUSED(x), wxCoord WXUNUSED(y),
+   virtual bool DoFloodFill(wxCoord WXUNUSED(x), wxCoord WXUNUSED(y),
                             const wxColour& WXUNUSED(col),
                             wxFloodFillStyle WXUNUSED(style) = wxFLOOD_SURFACE)
    {
-       wxFAIL_MSG(wxT("wxSVGFILEDC::DoFloodFill Call not implemented"));
+       //wxFAIL_MSG(wxT("wxSVGFILEDC::DoFloodFill Call not implemented"));
        return false;
-   }*/
+   }
 
    virtual void DoGetSize(int * x, int *y) const
    {
@@ -168,15 +168,15 @@ private:
                                 wxCoord *externalLeading = NULL,
                                 const wxFont *font = NULL) const;
 
-   /*virtual void DoSetDeviceClippingRegion(const wxRegion& WXUNUSED(region))
+   virtual void DoSetDeviceClippingRegion(const wxRegion& WXUNUSED(region))
    {
-       wxFAIL_MSG(wxT("wxSVGFILEDC::DoSetDeviceClippingRegion not yet implemented"));
+       //wxFAIL_MSG(wxT("wxSVGFILEDC::DoSetDeviceClippingRegion not yet implemented"));
    }
 
    virtual void DoSetClippingRegion( int WXUNUSED(x),  int WXUNUSED(y), int WXUNUSED(width), int WXUNUSED(height) )
    {
-       wxFAIL_MSG(wxT("wxSVGFILEDC::DoSetClippingRegion not yet implemented"));
-   }*/
+       //wxFAIL_MSG(wxT("wxSVGFILEDC::DoSetClippingRegion not yet implemented"));
+   }
 
    virtual void DoGetSizeMM( int *width, int *height ) const;
 

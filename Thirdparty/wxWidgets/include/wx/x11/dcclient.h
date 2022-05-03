@@ -21,13 +21,13 @@
 // fwd declarations
 // -----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_CORE wxWindow;
+class  wxWindow;
 
 //-----------------------------------------------------------------------------
 // wxWindowDCImpl
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxWindowDCImpl : public wxX11DCImpl
+class  wxWindowDCImpl : public wxX11DCImpl
 {
 public:
     wxWindowDCImpl( wxDC *owner );
@@ -148,7 +148,7 @@ private:
 // wxClientDC
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxClientDCImpl : public wxWindowDCImpl
+class  wxClientDCImpl : public wxWindowDCImpl
 {
 public:
     wxClientDCImpl( wxDC *owner ) : wxWindowDCImpl( owner ) { }
@@ -165,7 +165,7 @@ private:
 // wxPaintDC
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxPaintDCImpl : public wxClientDCImpl
+class  wxPaintDCImpl : public wxClientDCImpl
 {
 public:
     wxPaintDCImpl( wxDC *owner ) : wxClientDCImpl( owner ) { }

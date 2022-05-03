@@ -351,7 +351,7 @@ wxString wxFileData::GetEntry( fileListFieldType num ) const
 #endif // defined(__UNIX__) || defined(__WIN32__)
 
         default:
-            wxFAIL_MSG( wxT("unexpected field in wxFileData::GetEntry()") );
+            break;//wxFAIL_MSG( wxT("unexpected field in wxFileData::GetEntry()") );
     }
 
     return s;
@@ -500,7 +500,7 @@ long wxFileListCtrl::Add( wxFileData *fd, wxListItem &item )
 void wxFileListCtrl::UpdateItem(const wxListItem &item)
 {
     wxFileData *fd = (wxFileData*)GetItemData(item);
-    wxCHECK_RET(fd, wxT("invalid filedata"));
+    //wxCHECK_RET(fd, wxT("invalid filedata"));
 
     fd->ReadData();
 
@@ -775,7 +775,7 @@ void wxFileListCtrl::FreeAllItemsData()
 void wxFileListCtrl::OnListEndLabelEdit( wxListEvent &event )
 {
     wxFileData *fd = (wxFileData*)event.m_item.m_data;
-    wxASSERT( fd );
+    //wxASSERT( fd );
 
     if ((event.GetLabel().empty()) ||
         (event.GetLabel() == wxT(".")) ||
@@ -910,11 +910,11 @@ bool wxGenericFileCtrl::Create( wxWindow *parent,
     m_check = NULL;
 
     // check that the styles are not contradictory
-    wxASSERT_MSG( !( ( m_style & wxFC_SAVE ) && ( m_style & wxFC_OPEN ) ),
-                  wxT( "can't specify both wxFC_SAVE and wxFC_OPEN at once" ) );
+    //wxASSERT_MSG( !( ( m_style & wxFC_SAVE ) && ( m_style & wxFC_OPEN ) ),
+                  //wxT( "can't specify both wxFC_SAVE and wxFC_OPEN at once" ) );
 
-    wxASSERT_MSG( !( ( m_style & wxFC_SAVE ) && ( m_style & wxFC_MULTIPLE ) ),
-                  wxT( "wxFC_MULTIPLE can't be used with wxFC_SAVE" ) );
+    //wxASSERT_MSG( !( ( m_style & wxFC_SAVE ) && ( m_style & wxFC_MULTIPLE ) ),
+                  //wxT( "wxFC_MULTIPLE can't be used with wxFC_SAVE" ) );
 
     wxNavigationEnabled<wxControl>::Create( parent, id,
                                             pos, size,
@@ -1028,14 +1028,14 @@ bool wxGenericFileCtrl::Create( wxWindow *parent,
 //     GetPath() while our GetPath() is wxFileName::GetFullPath()
 wxString wxGenericFileCtrl::GetPath() const
 {
-    wxASSERT_MSG ( !(m_style & wxFC_MULTIPLE), "use GetPaths() instead" );
+    //wxASSERT_MSG ( !(m_style & wxFC_MULTIPLE), "use GetPaths() instead" );
 
     return DoGetFileName().GetFullPath();
 }
 
 wxString wxGenericFileCtrl::GetFilename() const
 {
-    wxASSERT_MSG ( !(m_style & wxFC_MULTIPLE), "use GetFilenames() instead" );
+    //wxASSERT_MSG ( !(m_style & wxFC_MULTIPLE), "use GetFilenames() instead" );
 
     return DoGetFileName().GetFullName();
 }
@@ -1207,7 +1207,7 @@ void wxGenericFileCtrl::SetWildcard( const wxString& wildCard )
     const size_t count = wxParseCommonDialogsFilter( m_wildCard,
                          wildDescriptions,
                          wildFilters );
-    wxCHECK_RET( count, wxT( "wxFileDialog: bad wildcard string" ) );
+    //wxCHECK_RET( count, wxT( "wxFileDialog: bad wildcard string" ) );
 
     m_choice->Clear();
 

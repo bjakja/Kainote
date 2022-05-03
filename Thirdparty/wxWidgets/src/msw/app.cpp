@@ -451,7 +451,7 @@ bool wxConsoleStderr::DoInit()
             wxLogLastError(wxT("ReadConsoleOutputCharacterA"));
             return false;
         }
-    } while (wxStrnicmp_String("    ", buf, WXSIZEOF(buf)) != 0 );
+    } while (wxStrnicmp("    ", buf, WXSIZEOF(buf)) != 0 );
 
     // calculate line offset and length of data
     m_dataLine = csbi.dwCursorPosition.Y - pos.Y;

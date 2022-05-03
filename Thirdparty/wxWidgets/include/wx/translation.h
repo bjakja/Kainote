@@ -73,15 +73,15 @@ public:
     static wxMsgCatalog *CreateFromFile(const wxString& filename,
                                         const wxString& domain);
 
-    /*static wxMsgCatalog *CreateFromData(const wxScopedCharBuffer& data,
-                                        const wxString& domain);*/
+    static wxMsgCatalog *CreateFromData(const wxScopedCharBuffer& data,
+                                        const wxString& domain);
 
     // get name of the catalog
     wxString GetDomain() const { return m_domain; }
 
     // get the translated string: returns NULL if not found
     const wxString *GetString(const wxString& sz, unsigned n = UINT_MAX) const;
-
+    
 protected:
     wxMsgCatalog(const wxString& domain)
         : m_pNext(NULL), m_domain(domain)
@@ -90,12 +90,14 @@ protected:
 #endif
     {}
 
+    
+
 private:
     // variable pointing to the next element in a linked list (or NULL)
     wxMsgCatalog *m_pNext;
     friend class wxTranslations;
 
-    wxStringToStringHashMap m_messages; // all messages in the catalog
+    
     wxString                m_domain;   // name of the domain
 
 #if !wxUSE_UNICODE
@@ -104,6 +106,7 @@ private:
     wxCSConv *m_conv;
 #endif
 
+    wxStringToStringHashMap m_messages; // all messages in the catalog
     wxPluralFormsCalculatorPtr m_pluralFormsCalculator;
 };
 

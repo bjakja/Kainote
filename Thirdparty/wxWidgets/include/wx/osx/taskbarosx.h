@@ -12,8 +12,8 @@
 #ifndef _TASKBAR_H_
 #define _TASKBAR_H_
 
-class WXDLLIMPEXP_FWD_CORE wxIcon;
-class WXDLLIMPEXP_FWD_CORE wxMenu;
+class  wxIcon;
+class  wxMenu;
 
 class  wxTaskBarIcon : public wxTaskBarIconBase
 {

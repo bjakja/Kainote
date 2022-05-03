@@ -27,7 +27,7 @@ class  wxWindow;
 #if wxUSE_TEXTCTRL
 
 // log everything to a text window (GUI only of course)
-class WXDLLIMPEXP_CORE wxLogTextCtrl : public wxLog
+class  wxLogTextCtrl : public wxLog
 {
 public:
     wxLogTextCtrl(wxTextCtrl *pTextCtrl);
@@ -51,7 +51,7 @@ private:
 
 #if wxUSE_LOGGUI
 
-class WXDLLIMPEXP_CORE wxLogGui : public wxLog
+class  wxLogGui : public wxLog
 {
 public:
     // ctor

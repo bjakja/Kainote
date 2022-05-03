@@ -186,7 +186,7 @@ bool wxTreebook::DoInsertPage(size_t pagePos,
         }
         else // no prev siblings -- insert as a first child
         {
-            wxASSERT_MSG( parentId.IsOk(), wxT( "Tree has no root node?" ) );
+            //wxASSERT_MSG( parentId.IsOk(), wxT( "Tree has no root node?" ) );
 
             newId = tree->PrependItem(parentId, text, imageId);
         }
@@ -197,7 +197,7 @@ bool wxTreebook::DoInsertPage(size_t pagePos,
         //something wrong -> cleaning and returning with false
         (void)wxBookCtrlBase::DoRemovePage(pagePos);
 
-        wxFAIL_MSG( wxT("Failed to insert treebook page") );
+        //wxFAIL_MSG( wxT("Failed to insert treebook page") );
         return false;
     }
 
@@ -216,8 +216,8 @@ bool wxTreebook::DoAddSubPage(wxWindow *page, const wxString& text, bool bSelect
 
     wxTreeItemId lastNodeId = tree->GetLastChild(rootId);
 
-    wxCHECK_MSG( lastNodeId.IsOk(), false,
-                        wxT("Can't insert sub page when there are no pages") );
+    //wxCHECK_MSG( lastNodeId.IsOk(), false,
+                        //wxT("Can't insert sub page when there are no pages") );
 
     // now calculate its position (should we save/update it too?)
     size_t newPos = tree->GetCount() -
@@ -233,13 +233,13 @@ bool wxTreebook::DoInsertSubPage(size_t pagePos,
                                  int imageId)
 {
     wxTreeItemId parentId = DoInternalGetPage(pagePos);
-    wxCHECK_MSG( parentId.IsOk(), false, wxT("invalid tree item") );
+    //wxCHECK_MSG( parentId.IsOk(), false, wxT("invalid tree item") );
 
     wxTreeCtrl *tree = GetTreeCtrl();
 
     size_t newPos = pagePos + tree->GetChildrenCount(parentId, true) + 1;
-    wxASSERT_MSG( newPos <= DoInternalGetPageCount(),
-                    wxT("Internal error in tree insert point calculation") );
+    //wxASSERT_MSG( newPos <= DoInternalGetPageCount(),
+                    //wxT("Internal error in tree insert point calculation") );
 
     if ( !wxBookCtrlBase::InsertPage(newPos, page, text, bSelect, imageId) )
         return false;

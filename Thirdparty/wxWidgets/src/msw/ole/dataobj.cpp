@@ -876,7 +876,7 @@ bool wxBitmapDataObject2::SetData(size_t WXUNUSED(len), const void *pBuf)
     bitmap.SetHBITMAP((WXHBITMAP)hbmp);
 
     if ( !bitmap.IsOk() ) {
-        wxFAIL_MSG(wxT("pasting/dropping invalid bitmap"));
+        //wxFAIL_MSG(wxT("pasting/dropping invalid bitmap"));
 
         return false;
     }

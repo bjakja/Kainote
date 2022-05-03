@@ -13,7 +13,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx/wxcrt.h"
 
 #ifdef __BORLANDC__
     #pragma hdrstop
@@ -308,7 +308,7 @@ wxMBConv::FromWChar(char *dst, size_t dstLen,
     wxWCharBuffer bufTmp;
     if ( isNulTerminated )
     {
-        srcLen = wxWcslen(src) + 1;
+        srcLen = wxStrlen(src) + 1;
     }
     else if ( srcLen != 0 && src[srcLen - 1] != L'\0' )
     {
@@ -331,7 +331,7 @@ wxMBConv::FromWChar(char *dst, size_t dstLen,
         dstWritten += lenChunk;
 
         const wchar_t * const
-            chunkEnd = isNulTerminated ? srcEnd - 1 : src + wxWcslen(src);
+            chunkEnd = isNulTerminated ? srcEnd - 1 : src + wxStrlen(src);
 
         // our return value accounts for the trailing NUL(s), unlike that of
         // WC2MB(), however don't do it for the last NUL we artificially added
@@ -834,7 +834,7 @@ size_t wxMBConvUTF7::FromWChar(char *dst, size_t dstLen,
         // once
         statePtr = &stateOrig;
 
-        srcLen = wxWcslen(src) + 1;
+        srcLen = wxStrlen(src) + 1;
     }
     else // do use the mode we left the output in previously
     {
@@ -1547,7 +1547,7 @@ wxMBConvUTF16straight::FromWChar(char *dst, size_t dstLen,
                                  const wchar_t *src, size_t srcLen) const
 {
     if ( srcLen == wxNO_LEN )
-        srcLen = wxWcslen(src) + 1;
+        srcLen = wxStrlen(src) + 1;
 
     srcLen *= BYTES_PER_CHAR;
 
@@ -1596,7 +1596,7 @@ wxMBConvUTF16swap::FromWChar(char *dst, size_t dstLen,
                              const wchar_t *src, size_t srcLen) const
 {
     if ( srcLen == wxNO_LEN )
-        srcLen = wxWcslen(src) + 1;
+        srcLen = wxStrlen(src) + 1;
 
     srcLen *= BYTES_PER_CHAR;
 
@@ -1862,7 +1862,7 @@ wxMBConvUTF32straight::FromWChar(char *dst, size_t dstLen,
                                  const wchar_t *src, size_t srcLen) const
 {
     if ( srcLen == wxNO_LEN )
-        srcLen = wxWcslen(src) + 1;
+        srcLen = wxStrlen(src) + 1;
 
     if ( !dst )
     {
@@ -1940,7 +1940,7 @@ wxMBConvUTF32swap::FromWChar(char *dst, size_t dstLen,
                              const wchar_t *src, size_t srcLen) const
 {
     if ( srcLen == wxNO_LEN )
-        srcLen = wxWcslen(src) + 1;
+        srcLen = wxStrlen(src) + 1;
 
     if ( !dst )
     {
@@ -2902,7 +2902,7 @@ public:
 
     size_t WC2MB(char *buf, const wchar_t *psz, size_t WXUNUSED(n)) const
     {
-        const size_t inbuf = wxWcslen(psz);
+        const size_t inbuf = wxStrlen(psz);
         if (buf)
         {
             if (!w2m.Convert(psz, buf))
@@ -3316,7 +3316,7 @@ size_t wxCSConv::FromWChar(char *dst, size_t dstLen,
 
     // latin-1 (direct)
     if ( srcLen == wxNO_LEN )
-        srcLen = wxWcslen(src) + 1;
+        srcLen = wxStrlen(src) + 1;
 
     if ( dst )
     {

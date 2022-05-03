@@ -1103,7 +1103,7 @@ int wxString::CmpNoCase(const wxString& s) const
     {
         // Compare until the next NUL, if the strings differ this is the final
         // result.
-        rc = wxStricmp_String(thisCur, thatCur);
+        rc = wxStricmp(thisCur, thatCur);
         if ( rc )
             break;
 

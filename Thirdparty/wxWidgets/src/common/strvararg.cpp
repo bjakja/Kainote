@@ -344,7 +344,7 @@ private:
 
     void CopyAllBefore()
     {
-        wxASSERT_MSG( m_fmtOrig && m_fmt.data() == NULL, "logic error" );
+        //wxASSERT_MSG( m_fmtOrig && m_fmt.data() == NULL, "logic error" );
 
         // the modified format string is guaranteed to be no longer than
         // 3/2 of the original (worst case: the entire format string consists
@@ -643,87 +643,87 @@ wxString wxFormatString::InputAsString() const
 // wxFormatString::GetArgumentType()
 // ----------------------------------------------------------------------------
 
-namespace
-{
+//namespace
+//{
 
-template<typename CharType>
-wxFormatString::ArgumentType DoGetArgumentType(const CharType *format,
-                                               unsigned n)
-{
-    wxCHECK_MSG( format, wxFormatString::Arg_Unknown,
-                 "empty format string not allowed here" );
+//template<typename CharType>
+//wxFormatString::ArgumentType DoGetArgumentType(const CharType *format,
+//                                               unsigned n)
+//{
+//    //wxCHECK_MSG( format, wxFormatString::Arg_Unknown,
+//                 "empty format string not allowed here" );
+//
+//    wxPrintfConvSpecParser<CharType> parser(format);
+//
+//   /* wxCHECK_MSG( n <= parser.nargs, wxFormatString::Arg_Unknown,
+//                 "more arguments than format string specifiers?" );*/
+//
+//    /*wxCHECK_MSG( parser.pspec[n-1] != NULL, wxFormatString::Arg_Unknown,
+//                 "requested argument not found - invalid format string?" );*/
+//
+//    switch ( parser.pspec[n-1]->m_type )
+//    {
+//        case wxPAT_CHAR:
+//        case wxPAT_WCHAR:
+//            return wxFormatString::Arg_Char;
+//
+//        case wxPAT_PCHAR:
+//        case wxPAT_PWCHAR:
+//            return wxFormatString::Arg_String;
+//
+//        case wxPAT_INT:
+//            return wxFormatString::Arg_Int;
+//        case wxPAT_LONGINT:
+//            return wxFormatString::Arg_LongInt;
+//#ifdef wxLongLong_t
+//        case wxPAT_LONGLONGINT:
+//            return wxFormatString::Arg_LongLongInt;
+//#endif
+//        case wxPAT_SIZET:
+//            return wxFormatString::Arg_Size_t;
+//
+//        case wxPAT_DOUBLE:
+//            return wxFormatString::Arg_Double;
+//        case wxPAT_LONGDOUBLE:
+//            return wxFormatString::Arg_LongDouble;
+//
+//        case wxPAT_POINTER:
+//            return wxFormatString::Arg_Pointer;
+//
+//        case wxPAT_NINT:
+//            return wxFormatString::Arg_IntPtr;
+//        case wxPAT_NSHORTINT:
+//            return wxFormatString::Arg_ShortIntPtr;
+//        case wxPAT_NLONGINT:
+//            return wxFormatString::Arg_LongIntPtr;
+//
+//        case wxPAT_STAR:
+//            // "*" requires argument of type int
+//            return wxFormatString::Arg_Int;
+//
+//        case wxPAT_INVALID:
+//            // (handled after the switch statement)
+//            break;
+//    }
+//
+//    // silence warning
+//    //wxFAIL_MSG( "unexpected argument type" );
+//    return wxFormatString::Arg_Unknown;
+//}
+//
+//} // anonymous namespace
 
-    wxPrintfConvSpecParser<CharType> parser(format);
-
-    wxCHECK_MSG( n <= parser.nargs, wxFormatString::Arg_Unknown,
-                 "more arguments than format string specifiers?" );
-
-    wxCHECK_MSG( parser.pspec[n-1] != NULL, wxFormatString::Arg_Unknown,
-                 "requested argument not found - invalid format string?" );
-
-    switch ( parser.pspec[n-1]->m_type )
-    {
-        case wxPAT_CHAR:
-        case wxPAT_WCHAR:
-            return wxFormatString::Arg_Char;
-
-        case wxPAT_PCHAR:
-        case wxPAT_PWCHAR:
-            return wxFormatString::Arg_String;
-
-        case wxPAT_INT:
-            return wxFormatString::Arg_Int;
-        case wxPAT_LONGINT:
-            return wxFormatString::Arg_LongInt;
-#ifdef wxLongLong_t
-        case wxPAT_LONGLONGINT:
-            return wxFormatString::Arg_LongLongInt;
-#endif
-        case wxPAT_SIZET:
-            return wxFormatString::Arg_Size_t;
-
-        case wxPAT_DOUBLE:
-            return wxFormatString::Arg_Double;
-        case wxPAT_LONGDOUBLE:
-            return wxFormatString::Arg_LongDouble;
-
-        case wxPAT_POINTER:
-            return wxFormatString::Arg_Pointer;
-
-        case wxPAT_NINT:
-            return wxFormatString::Arg_IntPtr;
-        case wxPAT_NSHORTINT:
-            return wxFormatString::Arg_ShortIntPtr;
-        case wxPAT_NLONGINT:
-            return wxFormatString::Arg_LongIntPtr;
-
-        case wxPAT_STAR:
-            // "*" requires argument of type int
-            return wxFormatString::Arg_Int;
-
-        case wxPAT_INVALID:
-            // (handled after the switch statement)
-            break;
-    }
-
-    // silence warning
-    //wxFAIL_MSG( "unexpected argument type" );
-    return wxFormatString::Arg_Unknown;
-}
-
-} // anonymous namespace
-
-wxFormatString::ArgumentType wxFormatString::GetArgumentType(unsigned n) const
-{
-    /*if ( m_char )
-        return DoGetArgumentType(m_char.data(), n);*/
-     if ( m_wchar )
-        return DoGetArgumentType(m_wchar.data(), n);
-    else if ( m_str )
-        return DoGetArgumentType(m_str->wx_str(), n);
-    else if ( m_cstr )
-        return DoGetArgumentType(m_cstr->AsInternal(), n);
-
-    //wxFAIL_MSG( "unreachable code" );
-    return Arg_Unknown;
-}
+//wxFormatString::ArgumentType wxFormatString::GetArgumentType(unsigned n) const
+//{
+//    /*if ( m_char )
+//        return DoGetArgumentType(m_char.data(), n);*/
+//     if ( m_wchar )
+//        return DoGetArgumentType(m_wchar.data(), n);
+//    else if ( m_str )
+//        return DoGetArgumentType(m_str->wx_str(), n);
+//    else if ( m_cstr )
+//        return DoGetArgumentType(m_cstr->AsInternal(), n);
+//
+//    //wxFAIL_MSG( "unreachable code" );
+//    return Arg_Unknown;
+//}

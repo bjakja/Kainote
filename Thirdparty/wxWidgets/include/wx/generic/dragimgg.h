@@ -88,7 +88,7 @@
  * wxGenericDragImage
  */
 
-class WXDLLIMPEXP_CORE wxGenericDragImage: public wxObject
+class  wxGenericDragImage: public wxObject
 {
 public:
 

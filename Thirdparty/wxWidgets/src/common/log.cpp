@@ -353,7 +353,7 @@ wxLog::OnLog(wxLogLevel level,
     {
         wxSafeShowMessage(wxS("Fatal Error"), msg);
 
-        wxAbort();
+        //wxAbort();
     }
 
     wxLog *logger;
@@ -480,7 +480,7 @@ void wxLog::DoLogText(const wxString& WXUNUSED(msg))
     // in 2.8-compatible build the derived class might override DoLog() or
     // DoLogString() instead so we can't have this assert there
 #if !WXWIN_COMPATIBILITY_2_8
-    wxFAIL_MSG( "must be overridden if it is called" );
+    //wxFAIL_MSG( "must be overridden if it is called" );
 #endif // WXWIN_COMPATIBILITY_2_8
 }
 
@@ -563,7 +563,7 @@ wxLog *wxLog::SetActiveTarget(wxLog *pLogger)
 /* static */
 wxLog *wxLog::SetThreadActiveTarget(wxLog *logger)
 {
-    wxASSERT_MSG( !wxThread::IsMain(), "use SetActiveTarget() for main thread" );
+    //wxASSERT_MSG( !wxThread::IsMain(), "use SetActiveTarget() for main thread" );
 
     wxLog * const oldLogger = wxThreadInfo.logger;
     if ( oldLogger )

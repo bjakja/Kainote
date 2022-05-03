@@ -28,13 +28,13 @@
     #include "wx/dcps.h"
 #endif
 
-class WXDLLIMPEXP_FWD_CORE wxTextCtrl;
-class WXDLLIMPEXP_FWD_CORE wxButton;
-class WXDLLIMPEXP_FWD_CORE wxCheckBox;
-class WXDLLIMPEXP_FWD_CORE wxComboBox;
-class WXDLLIMPEXP_FWD_CORE wxStaticText;
-class WXDLLIMPEXP_FWD_CORE wxRadioBox;
-class WXDLLIMPEXP_FWD_CORE wxPageSetupDialogData;
+class  wxTextCtrl;
+class  wxButton;
+class  wxCheckBox;
+class  wxComboBox;
+class  wxStaticText;
+class  wxRadioBox;
+class  wxPageSetupDialogData;
 
 // ----------------------------------------------------------------------------
 // constants
@@ -78,7 +78,7 @@ enum
 // wxPostScriptNativeData
 //----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxPostScriptPrintNativeData: public wxPrintNativeDataBase
+class  wxPostScriptPrintNativeData: public wxPrintNativeDataBase
 {
 public:
     wxPostScriptPrintNativeData();
@@ -137,7 +137,7 @@ private:
 // Windows using PostScript print/preview)
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxGenericPrintDialog : public wxPrintDialogBase
+class  wxGenericPrintDialog : public wxPrintDialogBase
 {
 public:
     wxGenericPrintDialog(wxWindow *parent,
@@ -182,7 +182,7 @@ private:
     DECLARE_DYNAMIC_CLASS(wxGenericPrintDialog)
 };
 
-class WXDLLIMPEXP_CORE wxGenericPrintSetupDialog : public wxDialog
+class  wxGenericPrintSetupDialog : public wxDialog
 {
 public:
     // There are no configuration options for the dialog, so we
@@ -220,7 +220,7 @@ private:
 #endif
     // wxUSE_POSTSCRIPT
 
-class WXDLLIMPEXP_CORE wxGenericPageSetupDialog : public wxPageSetupDialogBase
+class  wxGenericPageSetupDialog : public wxPageSetupDialogBase
 {
 public:
     wxGenericPageSetupDialog(wxWindow *parent = NULL,

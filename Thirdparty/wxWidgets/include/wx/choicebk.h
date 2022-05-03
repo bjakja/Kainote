@@ -20,10 +20,10 @@
 #include "wx/choice.h"
 #include "wx/containr.h"
 
-class WXDLLIMPEXP_FWD_CORE wxChoice;
+class  wxChoice;
 
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGED,  wxBookCtrlEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGING, wxBookCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGED,  wxBookCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGING, wxBookCtrlEvent );
 
 // wxChoicebook flags
 #define wxCHB_DEFAULT          wxBK_DEFAULT
@@ -37,7 +37,7 @@ wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGI
 // wxChoicebook
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxChoicebook : public wxNavigationEnabled<wxBookCtrlBase>
+class  wxChoicebook : public wxNavigationEnabled<wxBookCtrlBase>
 {
 public:
     wxChoicebook() { }

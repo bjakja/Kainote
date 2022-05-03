@@ -208,7 +208,7 @@
 // Default is 1
 //
 // Recommended setting: 1 (always)
-#define wxUSE_LOG 0
+#define wxUSE_LOG 1
 
 // Recommended setting: 1
 #define wxUSE_LOGWINDOW 1
@@ -872,7 +872,7 @@
 #define wxUSE_SEARCHCTRL    1   // wxSearchCtrl
 #define wxUSE_SLIDER        1   // wxSlider
 #define wxUSE_SPINBTN       1   // wxSpinButton
-#define wxUSE_SPINCTRL      0   // wxSpinCtrl
+#define wxUSE_SPINCTRL      1   // wxSpinCtrl
 #define wxUSE_STATBOX       1   // wxStaticBox
 #define wxUSE_STATLINE      1   // wxStaticLine
 #define wxUSE_STATTEXT      1   // wxStaticText
@@ -907,8 +907,8 @@
 // Default is 1 for all settings.
 //
 // Recommended setting: 1 for wxUSE_TOOLBAR and wxUSE_TOOLBAR_NATIVE.
-#define wxUSE_TOOLBAR 0
-#define wxUSE_TOOLBAR_NATIVE 0
+#define wxUSE_TOOLBAR 1
+#define wxUSE_TOOLBAR_NATIVE 1
 
 // wxNotebook is a control with several "tabs" located on one of its sides. It
 // may be used to logically organise the data presented to the user instead of
@@ -1085,7 +1085,7 @@
 // Default is 1.
 //
 // Recommended setting: 1 (can't be disabled under MSW)
-#define wxUSE_MENUS         0
+#define wxUSE_MENUS         1
 
 // Use wxNotificationMessage.
 //
@@ -1600,7 +1600,7 @@
 #define wxUSE_TASKBARICON_BALLOONS 1
 
 // Set to 1 to compile MS Windows XP theme engine support
-#define wxUSE_UXTHEME           0
+#define wxUSE_UXTHEME           1
 
 // Set to 1 to use InkEdit control (Tablet PC), if available
 #define wxUSE_INKEDIT  0

@@ -168,7 +168,7 @@ STDMETHODIMP wxIDropTarget::DragEnter(IDataObject *pIDataSource,
 {
     wxLogTrace(wxTRACE_OleCalls, wxT("IDropTarget::DragEnter"));
 
-    wxASSERT_MSG( m_pIDataObject == NULL,
+    //wxASSERT_MSG( m_pIDataObject == NULL,
                   wxT("drop target must have data object") );
 
     // show the list of formats supported by the source data object for the
@@ -300,7 +300,7 @@ STDMETHODIMP wxIDropTarget::Drop(IDataObject *pIDataSource,
 
     // TODO I don't know why there is this parameter, but so far I assume
     //      that it's the same we've already got in DragEnter
-    wxASSERT( m_pIDataObject == pIDataSource );
+    //wxASSERT( m_pIDataObject == pIDataSource );
 
     // we need client coordinates to pass to wxWin functions
     if ( !ScreenToClient(m_hwnd, (POINT *)&pt) )
@@ -438,7 +438,7 @@ bool wxDropTarget::GetData()
     wxDataFormat format = MSWGetSupportedFormat(m_pIDataSource);
     if ( format == wxDF_INVALID ) {
         // this is strange because IsAcceptedData() succeeded previously!
-        wxFAIL_MSG(wxT("strange - did supported formats list change?"));
+        //wxFAIL_MSG(wxT("strange - did supported formats list change?"));
 
         return false;
     }
@@ -556,7 +556,7 @@ static wxDragResult ConvertDragEffectToResult(DWORD dwEffect)
             return wxDragMove;
 
         default:
-            wxFAIL_MSG(wxT("invalid value in ConvertDragEffectToResult"));
+            break;// wxFAIL_MSG(wxT("invalid value in ConvertDragEffectToResult"));
             // fall through
 
         case DROPEFFECT_NONE:
@@ -577,7 +577,7 @@ static DWORD ConvertDragResultToEffect(wxDragResult result)
             return DROPEFFECT_MOVE;
 
         default:
-            wxFAIL_MSG(wxT("invalid value in ConvertDragResultToEffect"));
+            break;// wxFAIL_MSG(wxT("invalid value in ConvertDragResultToEffect"));
             // fall through
 
         case wxDragNone:

@@ -30,27 +30,27 @@
 
 #include "wx/renderer.h"
 
-class WXDLLIMPEXP_FWD_CORE wxWindow;
-class WXDLLIMPEXP_FWD_CORE wxDC;
-class WXDLLIMPEXP_FWD_CORE wxCheckListBox;
+class  wxWindow;
+class  wxDC;
+class  wxCheckListBox;
 
 #if wxUSE_LISTBOX
-    class WXDLLIMPEXP_FWD_CORE wxListBox;
+    class  wxListBox;
 #endif // wxUSE_LISTBOX
 
 #if wxUSE_MENUS
-   class WXDLLIMPEXP_FWD_CORE wxMenu;
-   class WXDLLIMPEXP_FWD_CORE wxMenuGeometryInfo;
+   class  wxMenu;
+   class  wxMenuGeometryInfo;
 #endif // wxUSE_MENUS
 
-class WXDLLIMPEXP_FWD_CORE wxScrollBar;
+class  wxScrollBar;
 
 #if wxUSE_TEXTCTRL
-    class WXDLLIMPEXP_FWD_CORE wxTextCtrl;
+    class  wxTextCtrl;
 #endif
 
 #if wxUSE_GAUGE
-    class WXDLLIMPEXP_FWD_CORE wxGauge;
+    class  wxGauge;
 #endif // wxUSE_GAUGE
 
 #include "wx/string.h"
@@ -58,7 +58,7 @@ class WXDLLIMPEXP_FWD_CORE wxScrollBar;
 #include "wx/icon.h"
 
 // helper class used by wxMenu-related functions
-class WXDLLIMPEXP_CORE wxMenuGeometryInfo
+class  wxMenuGeometryInfo
 {
 public:
     // get the total size of the menu
@@ -71,7 +71,7 @@ public:
 // wxRenderer: abstract renderers interface
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxRenderer : public wxDelegateRendererNative
+class  wxRenderer : public wxDelegateRendererNative
 {
 public:
     // drawing functions
@@ -493,7 +493,7 @@ public:
 // will be left to the original renderer
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxDelegateRenderer : public wxRenderer
+class  wxDelegateRenderer : public wxRenderer
 {
 public:
     wxDelegateRenderer(wxRenderer *renderer) : m_renderer(renderer) { }
@@ -863,7 +863,7 @@ protected:
 // OnPaint()
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxControlRenderer
+class  wxControlRenderer
 {
 public:
     // create a renderer for this dc with this "fundamental" renderer

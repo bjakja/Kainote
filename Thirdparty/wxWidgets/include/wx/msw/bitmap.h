@@ -14,6 +14,8 @@
 
 #include "wx/msw/gdiimage.h"
 #include "wx/palette.h"
+#include "wx/image.h"
+#include "wx/bitmap.h"
 
 class  wxBitmap;
 class  wxBitmapHandler;

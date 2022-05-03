@@ -13,19 +13,20 @@
 #define _WX_COLLAPSABLE_PANE_H_GENERIC_
 
 // forward declared
-class WXDLLIMPEXP_FWD_CORE wxButton;
-class WXDLLIMPEXP_FWD_CORE wxStaticLine;
+class  wxButton;
+class  wxStaticLine;
 #if defined( __WXMAC__ ) && !defined(__WXUNIVERSAL__)
-class WXDLLIMPEXP_FWD_CORE wxDisclosureTriangle;
+class  wxDisclosureTriangle;
 #endif
 
 #include "wx/containr.h"
+#include "wx/collpane.h"
 
 // ----------------------------------------------------------------------------
 // wxGenericCollapsiblePane
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxGenericCollapsiblePane :
+class  wxGenericCollapsiblePane :
     public wxNavigationEnabled<wxCollapsiblePaneBase>
 {
 public:

@@ -197,7 +197,7 @@ wxShowEffect wxInfoBarGeneric::GetShowEffect() const
             return wxSHOW_EFFECT_SLIDE_TO_TOP;
 
         default:
-            wxFAIL_MSG( "unknown info bar placement" );
+            break;// wxFAIL_MSG("unknown info bar placement");
             // fall through
 
         case BarPlacement_Unknown:
@@ -219,7 +219,7 @@ wxShowEffect wxInfoBarGeneric::GetHideEffect() const
             return wxSHOW_EFFECT_SLIDE_TO_BOTTOM;
 
         default:
-            wxFAIL_MSG( "unknown info bar placement" );
+            break;// wxFAIL_MSG("unknown info bar placement");
             // fall through
 
         case BarPlacement_Unknown:
@@ -305,7 +305,7 @@ void wxInfoBarGeneric::Dismiss()
 void wxInfoBarGeneric::AddButton(wxWindowID btnid, const wxString& label)
 {
     wxSizer * const sizer = GetSizer();
-    wxCHECK_RET( sizer, "must be created first" );
+    //wxCHECK_RET( sizer, "must be created first" );
 
     // user-added buttons replace the standard close button so remove it if we
     // hadn't done it yet
@@ -327,7 +327,7 @@ void wxInfoBarGeneric::AddButton(wxWindowID btnid, const wxString& label)
 void wxInfoBarGeneric::RemoveButton(wxWindowID btnid)
 {
     wxSizer * const sizer = GetSizer();
-    wxCHECK_RET( sizer, "must be created first" );
+    //wxCHECK_RET( sizer, "must be created first" );
 
     // iterate over the sizer items in reverse order to find the last added
     // button with this id (ids of all buttons should be unique anyhow but if
@@ -344,7 +344,7 @@ void wxInfoBarGeneric::RemoveButton(wxWindowID btnid)
         // there at all
         if ( item->IsSpacer() )
         {
-            wxFAIL_MSG( wxString::Format("button with id %d not found", btnid) );
+            //wxFAIL_MSG( wxString::Format("button with id %d not found", btnid) );
             return;
         }
 

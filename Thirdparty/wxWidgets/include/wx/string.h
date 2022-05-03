@@ -235,10 +235,10 @@ public:
     operator const void*() const { return AsChar(); }
 
     // returns buffers that are valid as long as the associated wxString exists
-    /*const wxScopedCharBuffer AsCharBuf() const
+    const wxScopedCharBuffer AsCharBuf() const
     {
         return wxScopedCharBuffer::CreateNonOwned(AsChar());
-    }*/
+    }
 
     const wxScopedWCharBuffer AsWCharBuf() const
     {
@@ -1699,21 +1699,21 @@ public:
     // FIXME-VC6: the second argument only exists for VC6 which doesn't support
     //            explicit template function selection, do not use it unless
     //            you must support VC6!
-//    template <typename T>
-//    wxCharTypeBuffer<T> tchar_str(size_t *len = NULL,
-//                                  T * WXUNUSED(dummy) = NULL) const
-//    {
-//#if wxUSE_UNICODE
-//        // we need a helper dispatcher depending on type
-//        return wxPrivate::wxStringAsBufHelper<T>::Get(*this, len);
-//#else // ANSI
-//        // T can only be char in ANSI build
-//        if ( len )
-//            *len = length();
-//
-//        return wxCharTypeBuffer<T>::CreateNonOwned(wx_str(), length());
-//#endif // Unicode build kind
-//    }
+   template <typename T>
+   wxCharTypeBuffer<T> tchar_str(size_t *len = NULL,
+                                 T * WXUNUSED(dummy) = NULL) const
+   {
+#if wxUSE_UNICODE
+       // we need a helper dispatcher depending on type
+       return wxPrivate::wxStringAsBufHelper<T>::Get(*this, len);
+#else // ANSI
+       // T can only be char in ANSI build
+       if ( len )
+           *len = length();
+
+       return wxCharTypeBuffer<T>::CreateNonOwned(wx_str(), length());
+#endif // Unicode build kind
+   }
 
     // conversion to/from plain (i.e. 7 bit) ASCII: this is useful for
     // converting numbers or strings which are certain not to contain special
@@ -1836,8 +1836,8 @@ public:
     // version for NUL-terminated data:
     static wxString From8BitData(const char *data)
       { return wxString(data, wxConvISO8859_1); }
-    /*const wxScopedCharBuffer To8BitData() const
-        { return mb_str(wxConvISO8859_1); }*/
+    const wxScopedCharBuffer To8BitData() const
+        { return mb_str(wxConvISO8859_1); }
 #else // ANSI
     static wxString From8BitData(const char *data, size_t len)
       { return wxString(data, len); }

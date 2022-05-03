@@ -20,7 +20,7 @@
 #include "wx/control.h"
 
 // class name
-extern WXDLLIMPEXP_DATA_CORE(const char) wxCollapsiblePaneNameStr[];
+extern const char wxCollapsiblePaneNameStr[];
 
 // ----------------------------------------------------------------------------
 // wxCollapsiblePaneBase: interface for wxCollapsiblePane
@@ -29,7 +29,7 @@ extern WXDLLIMPEXP_DATA_CORE(const char) wxCollapsiblePaneNameStr[];
 #define wxCP_DEFAULT_STYLE          (wxTAB_TRAVERSAL | wxNO_BORDER)
 #define wxCP_NO_TLW_RESIZE          (0x0002)
 
-class WXDLLIMPEXP_CORE wxCollapsiblePaneBase : public wxControl
+class  wxCollapsiblePaneBase : public wxControl
 {
 public:
     wxCollapsiblePaneBase() {}
@@ -51,11 +51,11 @@ public:
 // event types and macros
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_CORE wxCollapsiblePaneEvent;
+class  wxCollapsiblePaneEvent;
 
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_COLLPANE_CHANGED, wxCollapsiblePaneEvent );
+wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_COLLPANE_CHANGED, wxCollapsiblePaneEvent );
 
-class WXDLLIMPEXP_CORE wxCollapsiblePaneEvent : public wxCommandEvent
+class  wxCollapsiblePaneEvent : public wxCommandEvent
 {
 public:
     wxCollapsiblePaneEvent() {}

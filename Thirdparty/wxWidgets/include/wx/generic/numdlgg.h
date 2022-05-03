@@ -19,16 +19,16 @@
 #include "wx/dialog.h"
 
 #if wxUSE_SPINCTRL
-    class WXDLLIMPEXP_FWD_CORE wxSpinCtrl;
+    class  wxSpinCtrl;
 #else
-    class WXDLLIMPEXP_FWD_CORE wxTextCtrl;
+    class  wxTextCtrl;
 #endif // wxUSE_SPINCTRL
 
 // ----------------------------------------------------------------------------
 // wxNumberEntryDialog: a dialog with spin control, [ok] and [cancel] buttons
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxNumberEntryDialog : public wxDialog
+class  wxNumberEntryDialog : public wxDialog
 {
 public:
     wxNumberEntryDialog(wxWindow *parent,
@@ -64,7 +64,7 @@ private:
 // function to get a number from user
 // ----------------------------------------------------------------------------
 
-WXDLLIMPEXP_CORE long
+ long
     wxGetNumberFromUser(const wxString& message,
                         const wxString& prompt,
                         const wxString& caption,

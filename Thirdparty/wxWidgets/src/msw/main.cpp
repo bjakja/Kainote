@@ -121,7 +121,7 @@ void wxSETranslator(unsigned int WXUNUSED(code), EXCEPTION_POINTERS *ep)
     switch ( wxGlobalSEHandler(ep) )
     {
         default:
-            wxFAIL_MSG( wxT("unexpected wxGlobalSEHandler() return value") );
+            break;// wxFAIL_MSG(wxT("unexpected wxGlobalSEHandler() return value"));
             // fall through
 
         case EXCEPTION_EXECUTE_HANDLER:

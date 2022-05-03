@@ -91,13 +91,13 @@ public:
     bool DeleteConnection(WXHCONV conv);
     wxString& GetServiceName() const { return (wxString&) m_serviceName; }
 
-    //wxDDEConnectionList& GetConnections() const
-        //{ return (wxDDEConnectionList&) m_connections; }
+    wxDDEConnectionList& GetConnections() const
+        { return (wxDDEConnectionList&) m_connections; }
 
 protected:
     int       m_lastError;
     wxString  m_serviceName;
-    //wxDDEConnectionList m_connections;
+    wxDDEConnectionList m_connections;
 
     DECLARE_DYNAMIC_CLASS(wxDDEServer)
 };
@@ -122,12 +122,12 @@ public:
     wxDDEConnection *FindConnection(WXHCONV conv);
     bool DeleteConnection(WXHCONV conv);
 
-    //wxDDEConnectionList& GetConnections() const
-        //{ return (wxDDEConnectionList&) m_connections; }
+    wxDDEConnectionList& GetConnections() const
+        { return (wxDDEConnectionList&) m_connections; }
 
 protected:
     int       m_lastError;
-    //wxDDEConnectionList m_connections;
+    wxDDEConnectionList m_connections;
 
     DECLARE_DYNAMIC_CLASS(wxDDEClient)
 };

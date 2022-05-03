@@ -105,7 +105,7 @@
  * and a 64-bit mantissa, with no hidden bit.
  ****************************************************************/
 
-WXDLLIMPEXP_BASE wxFloat64 wxConvertFromIeeeExtended(const wxInt8 *bytes)
+ wxFloat64 wxConvertFromIeeeExtended(const wxInt8 *bytes)
 {
     wxFloat64 f;
     wxInt32 expon;
@@ -145,7 +145,7 @@ WXDLLIMPEXP_BASE wxFloat64 wxConvertFromIeeeExtended(const wxInt8 *bytes)
 /****************************************************************/
 
 
-WXDLLIMPEXP_BASE void wxConvertToIeeeExtended(wxFloat64 num, wxInt8 *bytes)
+ void wxConvertToIeeeExtended(wxFloat64 num, wxInt8 *bytes)
 {
     wxInt32 sign;
     wxInt32 expon;
@@ -192,12 +192,12 @@ WXDLLIMPEXP_BASE void wxConvertToIeeeExtended(wxFloat64 num, wxInt8 *bytes)
 }
 
 #if WXWIN_COMPATIBILITY_2_8
-WXDLLIMPEXP_BASE wxFloat64 ConvertFromIeeeExtended(const wxInt8 *bytes)
+ wxFloat64 ConvertFromIeeeExtended(const wxInt8 *bytes)
 {
     return wxConvertFromIeeeExtended(bytes);
 }
 
-WXDLLIMPEXP_BASE void ConvertToIeeeExtended(wxFloat64 num, wxInt8 *bytes)
+ void ConvertToIeeeExtended(wxFloat64 num, wxInt8 *bytes)
 {
     wxConvertToIeeeExtended(num, bytes);
 }

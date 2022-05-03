@@ -386,7 +386,7 @@ void CopyDataFromPNG(wxImage *image,
 
                         // must be opaque then as otherwise we shouldn't be
                         // using the mask at all
-                        wxASSERT_MSG( IsOpaque(a), wxT("logic error") );
+                        //wxASSERT_MSG( IsOpaque(a), wxT("logic error") );
 
                         // fall through
 
@@ -454,7 +454,7 @@ void CopyDataFromPNG(wxImage *image,
                         {
                             // must be opaque then as otherwise we shouldn't be
                             // using the mask at all
-                            wxASSERT_MSG( IsOpaque(a), wxT("logic error") );
+                            //wxASSERT_MSG( IsOpaque(a), wxT("logic error") );
 
                             // if we couldn't find a unique colour for the
                             // mask, we can have real pixels with the same
@@ -855,7 +855,7 @@ bool wxPNGHandler::SaveFile( wxImage *image, wxOutputStream& stream, bool verbos
 
             if (bHasMask && !pAlpha)
             {
-                wxASSERT(PaletteFind(palette, mask) == 0);
+                //wxASSERT(PaletteFind(palette, mask) == 0);
                 png_trans[0] = 0;
                 png_set_tRNS(png_ptr, info_ptr, png_trans, 1, NULL);
             }
@@ -965,7 +965,7 @@ bool wxPNGHandler::SaveFile( wxImage *image, wxOutputStream& stream, bool verbos
             break;
 
         default:
-            wxFAIL_MSG( wxT("unsupported image resolution units") );
+            break;// wxFAIL_MSG(wxT("unsupported image resolution units"));
     }
 
     if ( resX && resY )
@@ -1004,7 +1004,7 @@ bool wxPNGHandler::SaveFile( wxImage *image, wxOutputStream& stream, bool verbos
             switch ( iColorType )
             {
                 default:
-                    wxFAIL_MSG( wxT("unknown wxPNG_TYPE_XXX") );
+                    break;// wxFAIL_MSG(wxT("unknown wxPNG_TYPE_XXX"));
                     // fall through
 
                 case wxPNG_TYPE_COLOUR:

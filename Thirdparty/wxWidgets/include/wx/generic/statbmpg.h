@@ -13,7 +13,7 @@
 
 #include "wx/statbmp.h"
 
-class WXDLLIMPEXP_CORE wxGenericStaticBitmap : public wxStaticBitmapBase
+class  wxGenericStaticBitmap : public wxStaticBitmapBase
 {
 public:
     wxGenericStaticBitmap() {}

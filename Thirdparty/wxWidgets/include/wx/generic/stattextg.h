@@ -19,7 +19,7 @@
 #include "wx/stattext.h"
 #undef wxNO_PORT_STATTEXT_INCLUDE
 
-class WXDLLIMPEXP_CORE wxGenericStaticText : public wxStaticTextBase
+class  wxGenericStaticText : public wxStaticTextBase
 {
 public:
     wxGenericStaticText() { Init(); }

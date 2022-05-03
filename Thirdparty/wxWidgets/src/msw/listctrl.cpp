@@ -2731,7 +2731,7 @@ bool HandleSubItemPrepaint(LPNMLVCUSTOMDRAW pLVCD, HFONT hfont, int colCount)
     }
     //else: failed to get alignment, assume it's DT_LEFT (default)
 
-    DrawText(hdc, text, -1, &rc, fmt);
+    DrawTextW(hdc, text, -1, &rc, fmt);
 
     return true;
 }

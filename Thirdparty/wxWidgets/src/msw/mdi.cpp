@@ -638,7 +638,7 @@ void wxMDIParentFrame::OnMDIChild(wxCommandEvent& event)
         node = node->GetNext();
     }
 
-    wxFAIL_MSG( "unknown MDI child selected?" );
+    //wxFAIL_MSG( "unknown MDI child selected?" );
 }
 
 void wxMDIParentFrame::OnMDICommand(wxCommandEvent& event)
@@ -679,7 +679,7 @@ void wxMDIParentFrame::OnMDICommand(wxCommandEvent& event)
             break;
 
         default:
-            wxFAIL_MSG( "unknown MDI command" );
+            break;// wxFAIL_MSG("unknown MDI command");
             return;
     }
 

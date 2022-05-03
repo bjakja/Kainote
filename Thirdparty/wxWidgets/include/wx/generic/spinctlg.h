@@ -22,8 +22,8 @@
 
 #if wxUSE_SPINBTN
 
-class WXDLLIMPEXP_FWD_CORE wxSpinButton;
-class WXDLLIMPEXP_FWD_CORE wxTextCtrl;
+class  wxSpinButton;
+class  wxTextCtrl;
 
 class wxSpinCtrlTextGeneric; // wxTextCtrl used for the wxSpinCtrlGenericBase
 
@@ -40,7 +40,7 @@ class wxSpinCtrlTextGeneric; // wxTextCtrl used for the wxSpinCtrlGenericBase
 // function ambiguity.
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxSpinCtrlGenericBase : public wxSpinCtrlBase
+class  wxSpinCtrlGenericBase : public wxSpinCtrlBase
 {
 public:
     wxSpinCtrlGenericBase() { Init(); }

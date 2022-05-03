@@ -90,7 +90,7 @@ wxFileOffset wxStringInputStream::OnSysSeek(wxFileOffset ofs, wxSeekMode mode)
         return wxInvalidOffset;
 
     // FIXME: this can't be right
-    m_pos = wx_truncate_cast(size_t, ofs);
+    m_pos = ofs;
 
     return ofs;
 }

@@ -165,8 +165,8 @@ inline wchar_t* wxSetlocale(int category, const wxString& locale)
 // NB: these are defined in wxcrtbase.h, see the comment there
 inline size_t wxStrlen(const char *s) { return s ? ::strlen(s) : 0; }
 inline size_t wxStrlen(const wchar_t* s) { return s ? wcslen(s) : 0; }
-//inline size_t wxStrlen(const wxScopedCharBuffer& s) { return wxStrlen(s.data()); }
-//inline size_t wxStrlen(const wxScopedWCharBuffer& s) { return wxStrlen(s.data()); }
+inline size_t wxStrlen(const wxScopedCharBuffer& s) { return wxStrlen(s.data()); }
+inline size_t wxStrlen(const wxScopedWCharBuffer& s) { return wxStrlen(s.data()); }
 inline size_t wxStrlen(const wxString& s) { return s.length(); }
 inline size_t wxStrlen(const wxCStrData& s) { return s.AsString().length(); }
 
@@ -452,12 +452,12 @@ inline char *wxStrncat(char *dest, const wchar_t *src, size_t n)
         { return WX_STR_CALL(crtW, s1.data(), s2.wc_str()); }
 
 template<typename T>
-inline int wxStrcmp_String(const wxString& s1, const T& s2)
+inline int wxStrcmp(const wxString& s1, const T& s2)
    { return s1.compare(s2); }
 //WX_STRCMP_FUNC(wxStrcmp, wcscmpA, wcscmpW, wxStrcmp_String)
 //
 template<typename T>
-inline int wxStricmp_String(const wxString& s1, const T& s2)
+inline int wxStricmp(const wxString& s1, const T& s2)
    { return s1.CmpNoCase(s2); }
 ///WX_STRCMP_FUNC(wxStricmp, wcsicmpA, wcsicmpW, wxStricmp_String)
 
@@ -501,20 +501,20 @@ inline int wxStrcoll_String(const wxString& s1, const T& s2)
 
 #endif // defined(wcscoll[AW])
 
-//template<typename T>
-//inline size_t wxStrspn_String(const wxString& s1, const T& s2)
-//{
-//    size_t pos = s1.find_first_not_of(s2);
-//    return pos == wxString::npos ? s1.length() : pos;
-//}
+template<typename T>
+inline size_t wxStrspn(const wxString& s1, const T& s2)
+{
+    size_t pos = s1.find_first_not_of(s2);
+    return pos == wxString::npos ? s1.length() : pos;
+}
 //WX_STR_FUNC(size_t, wxStrspn, wcsspnA, wcsspnW, wxStrspn_String)
-//
-//template<typename T>
-//inline size_t wxStrcspn_String(const wxString& s1, const T& s2)
-//{
-//    size_t pos = s1.find_first_of(s2);
-//    return pos == wxString::npos ? s1.length() : pos;
-//}
+
+template<typename T>
+inline size_t wxStrcspn(const wxString& s1, const T& s2)
+{
+    size_t pos = s1.find_first_of(s2);
+    return pos == wxString::npos ? s1.length() : pos;
+}
 //WX_STR_FUNC(size_t, wxStrcspn, wcscspnA, wcscspnW, wxStrcspn_String)
 
 #undef WX_STR_DECL
@@ -523,12 +523,12 @@ inline int wxStrcoll_String(const wxString& s1, const T& s2)
 #define WX_STR_CALL(func, a1, a2)  func(a1, a2, n)
 
 template<typename T>
-inline int wxStrncmp_String(const wxString& s1, const T& s2, size_t n)
+inline int wxStrncmp(const wxString& s1, const T& s2, size_t n)
     { return s1.compare(0, n, s2, 0, n); }
 //WX_STRCMP_FUNC(wxStrncmp, wcsncmpA, wcsncmpW, wxStrncmp_String)
 
 template<typename T>
-inline int wxStrnicmp_String(const wxString& s1, const T& s2, size_t n)
+inline int wxStrnicmp(const wxString& s1, const T& s2, size_t n)
     { return s1.substr(0, n).CmpNoCase(wxString(s2).substr(0, n)); }
 //WX_STRCMP_FUNC(wxStrnicmp, wcsnicmpA, wcsnicmpW, wxStrnicmp_String)
 
@@ -839,15 +839,15 @@ template<> struct wxStrtoxCharType<wchar_t**>
     typedef const wchar_t* Type;
     static wchar_t** AsPointer(wchar_t **p) { return p; }
 };
-//template<> struct wxStrtoxCharType<int>
-//{
-//    typedef const char* Type; /* this one is never used */
-//    static char** AsPointer(int WXUNUSED_UNLESS_DEBUG(p))
-//    {
-//        //wxASSERT_MSG( p == 0, "passing non-NULL int is invalid" );
-//        return NULL;
-//    }
-//};
+template<> struct wxStrtoxCharType<int>
+{
+    typedef const char* Type; /* this one is never used */
+    static char** AsPointer(int p)
+    {
+        //wxASSERT_MSG( p == 0, "passing non-NULL int is invalid" );
+        return NULL;
+    }
+};
 
 template<typename T>
 inline double wxStrtod(const wxString& nptr, T endptr)
@@ -900,11 +900,11 @@ inline double wxStrtod(const wxCStrData& nptr, T endptr)
     inline rettype name(const wxCStrData& nptr, T endptr, int base)           \
         { return name(nptr.AsString(), endptr, base); }
 //
-//WX_STRTOX_FUNC(long, wxStrtol, strtol, wcstol)
-//WX_STRTOX_FUNC(unsigned long, wxStrtoul, strtoul, wcstoul)
+WX_STRTOX_FUNC(long, wxStrtol, strtol, wcstol)
+WX_STRTOX_FUNC(unsigned long, wxStrtoul, strtoul, wcstoul)
 //#ifdef wxLongLong_t
-//WX_STRTOX_FUNC(wxLongLong_t, wxStrtoll, _strtoi64, _wcstoi64)
-//WX_STRTOX_FUNC(wxULongLong_t, wxStrtoull, _strtoui64, _wcstoui64)
+WX_STRTOX_FUNC(wxLongLong_t, wxStrtoll, _strtoi64, _wcstoi64)
+WX_STRTOX_FUNC(wxULongLong_t, wxStrtoull, _strtoui64, _wcstoui64)
 //#endif // wxLongLong_t
 
 #undef WX_STRTOX_FUNC
@@ -925,9 +925,9 @@ inline int wxSystem(const wxString& str) { return _wsystem(str.wc_str()); }
 
 inline char* wxGetenv(const char *name) { return getenv(name); }
 inline wchar_t* wxGetenv(const wchar_t *name) { return _wgetenv(name); }
-//inline char* wxGetenv(const wxString& name) { return wxCRT_GetenvA(name.mb_str()); }
-//inline char* wxGetenv(const wxCStrData& name) { return wxCRT_GetenvA(name.AsCharBuf()); }
-//inline char* wxGetenv(const wxScopedCharBuffer& name) { return wxCRT_GetenvA(name.data()); }
+inline char* wxGetenv(const wxString& name) { return getenv(name.mb_str()); }
+inline char* wxGetenv(const wxCStrData& name) { return getenv(name.AsCharBuf()); }
+inline char* wxGetenv(const wxScopedCharBuffer& name) { return getenv(name.data()); }
 inline wchar_t* wxGetenv(const wxScopedWCharBuffer& name) { return _wgetenv(name.data()); }
 
 // ----------------------------------------------------------------------------

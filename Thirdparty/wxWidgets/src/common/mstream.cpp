@@ -64,7 +64,7 @@ wxMemoryInputStream::wxMemoryInputStream(const wxMemoryOutputStream& stream)
         return;
     }
 
-    const size_t len = wx_truncate_cast(size_t, lenFile);
+    const size_t len = lenFile;
     //wxASSERT_MSG( len == lenFile + size_t(0), wxT("huge files not supported") );
 
     m_i_streambuf = new wxStreamBuffer(wxStreamBuffer::read);
@@ -88,7 +88,7 @@ wxMemoryInputStream::InitFromStream(wxInputStream& stream, wxFileOffset lenFile)
         return;
     }
 
-    const size_t len = wx_truncate_cast(size_t, lenFile);
+    const size_t len = lenFile;
     //wxASSERT_MSG( (wxFileOffset)len == lenFile, wxT("huge files not supported") );
 
     m_i_streambuf = new wxStreamBuffer(wxStreamBuffer::read);
