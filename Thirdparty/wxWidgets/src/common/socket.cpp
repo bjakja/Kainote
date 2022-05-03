@@ -172,8 +172,8 @@ public:
           m_oldflags(socket->GetFlags())
 
     {
-        /*wxASSERT_MSG( flag == wxSOCKET_WAITALL || flag == wxSOCKET_NOWAIT,
-                      "not a wait flag" );*/
+        wxASSERT_MSG( flag == wxSOCKET_WAITALL || flag == wxSOCKET_NOWAIT,
+                      "not a wait flag" );
 
         // preserve wxSOCKET_BLOCK value when switching to wxSOCKET_WAITALL
         // mode but not when switching to wxSOCKET_NOWAIT as the latter is
@@ -204,7 +204,7 @@ public:
     wxSocketReadGuard(wxSocketBase *socket)
         : m_socket(socket)
     {
-        //wxASSERT_MSG( !m_socket->m_reading, "read reentrancy?" );
+        wxASSERT_MSG( !m_socket->m_reading, "read reentrancy?" );
 
         m_socket->m_reading = true;
     }
@@ -232,7 +232,7 @@ public:
     wxSocketWriteGuard(wxSocketBase *socket)
         : m_socket(socket)
     {
-        //wxASSERT_MSG( !m_socket->m_writing, "write reentrancy?" );
+        wxASSERT_MSG( !m_socket->m_writing, "write reentrancy?" );
 
         m_socket->m_writing = true;
     }
@@ -261,7 +261,7 @@ wxSocketManager *wxSocketManager::ms_manager = NULL;
 /* static */
 void wxSocketManager::Set(wxSocketManager *manager)
 {
-    //wxASSERT_MSG( !ms_manager, "too late to set manager now" );
+    wxASSERT_MSG( !ms_manager, "too late to set manager now" );
 
     ms_manager = manager;
 }
@@ -269,7 +269,7 @@ void wxSocketManager::Set(wxSocketManager *manager)
 /* static */
 void wxSocketManager::Init()
 {
-    //wxASSERT_MSG( !ms_manager, "shouldn't be initialized twice" );
+    wxASSERT_MSG( !ms_manager, "shouldn't be initialized twice" );
 
     /*
         Details: Initialize() creates a hidden window as a sink for socket
@@ -287,11 +287,11 @@ void wxSocketManager::Init()
         adding event notifications to the "Current" loop would have no
         effect at all, events would never fire.
     */
-    //wxASSERT_MSG( wxIsMainThread(),
-                    //"sockets must be initialized from the main thread" );
+    wxASSERT_MSG( wxIsMainThread(),
+                    "sockets must be initialized from the main thread" );
 
     wxAppConsole * const app = wxAppConsole::GetInstance();
-    //wxCHECK_RET( app, "sockets can't be initialized without wxApp" );
+    wxCHECK_RET( app, "sockets can't be initialized without wxApp" );
 
     ms_manager = app->GetTraits()->GetSocketManager();
 }
@@ -353,7 +353,7 @@ void wxSocketImpl::PostCreation()
 
     if ( m_broadcast )
     {
-        //wxASSERT_MSG( !m_stream, "broadcasting is for datagram sockets only" );
+        wxASSERT_MSG( !m_stream, "broadcasting is for datagram sockets only" );
 
         EnableSocketOption(SO_BROADCAST);
     }
@@ -763,15 +763,15 @@ int gs_socketInitCount = 0;
 
 bool wxSocketBase::IsInitialized()
 {
-    //wxASSERT_MSG( wxIsMainThread(), "unsafe to call from other threads" );
+    wxASSERT_MSG( wxIsMainThread(), "unsafe to call from other threads" );
 
     return gs_socketInitCount != 0;
 }
 
 bool wxSocketBase::Initialize()
 {
-    /*wxCHECK_MSG( wxIsMainThread(), false,
-                 "must be called from the main thread" );*/
+    wxCHECK_MSG( wxIsMainThread(), false,
+                 "must be called from the main thread" );
 
     if ( !gs_socketInitCount )
     {
@@ -787,14 +787,14 @@ bool wxSocketBase::Initialize()
 
 void wxSocketBase::Shutdown()
 {
-    /*wxCHECK_RET( wxIsMainThread(), "must be called from the main thread" );
+    wxCHECK_RET( wxIsMainThread(), "must be called from the main thread" );
 
-    wxCHECK_RET( gs_socketInitCount > 0, "too many calls to Shutdown()" );*/
+    wxCHECK_RET( gs_socketInitCount > 0, "too many calls to Shutdown()" );
 
     if ( !--gs_socketInitCount )
     {
         wxSocketManager * const manager = wxSocketManager::Get();
-        //wxCHECK_RET( manager, "should have a socket manager" );
+        wxCHECK_RET( manager, "should have a socket manager" );
 
         manager->OnExit();
     }
@@ -950,11 +950,11 @@ wxSocketBase& wxSocketBase::Read(void* buffer, wxUint32 nbytes)
 
 wxUint32 wxSocketBase::DoRead(void* buffer_, wxUint32 nbytes)
 {
-    //wxCHECK_MSG( m_impl, 0, "socket must be valid" );
+    wxCHECK_MSG( m_impl, 0, "socket must be valid" );
 
     // We use pointer arithmetic here which doesn't work with void pointers.
     char *buffer = static_cast<char *>(buffer_);
-    //wxCHECK_MSG( buffer, 0, "NULL buffer" );
+    wxCHECK_MSG( buffer, 0, "NULL buffer" );
 
     // Try the push back buffer first, even before checking whether the socket
     // is valid to allow reading previously pushed back data from an already
@@ -1137,10 +1137,10 @@ wxSocketBase& wxSocketBase::Write(const void *buffer, wxUint32 nbytes)
 // shouldn't happen at all here), so please see comments there for explanations
 wxUint32 wxSocketBase::DoWrite(const void *buffer_, wxUint32 nbytes)
 {
-    //wxCHECK_MSG( m_impl, 0, "socket must be valid" );
+    wxCHECK_MSG( m_impl, 0, "socket must be valid" );
 
     const char *buffer = static_cast<const char *>(buffer_);
-    //wxCHECK_MSG( buffer, 0, "NULL buffer" );
+    wxCHECK_MSG( buffer, 0, "NULL buffer" );
 
     wxUint32 total = 0;
     while ( nbytes )
@@ -1342,7 +1342,7 @@ wxSocketEventFlags wxSocketImpl::Select(wxSocketEventFlags flags,
     if ( rc == 0 )
         return 0;
 
-    //wxASSERT_MSG( rc == 1, "unexpected select() return value" );
+    wxASSERT_MSG( rc == 1, "unexpected select() return value" );
 
     wxSocketEventFlags detected = 0;
     if ( preadfds && wxFD_ISSET(m_fd, preadfds) )
@@ -1388,7 +1388,7 @@ wxSocketBase::DoWait(long seconds, long milliseconds, wxSocketEventFlags flags)
 int
 wxSocketBase::DoWait(long timeout, wxSocketEventFlags flags)
 {
-    //wxCHECK_MSG( m_impl, -1, "can't wait on invalid socket" );
+    wxCHECK_MSG( m_impl, -1, "can't wait on invalid socket" );
 
     // we're never going to become ready in a TCP client if we're not connected
     // any more (OTOH a server can call this to precisely wait for a connection
@@ -1546,7 +1546,7 @@ bool wxSocketBase::WaitForLost(long seconds, long milliseconds)
 
 bool wxSocketBase::GetPeer(wxSockAddress& addr) const
 {
-    //wxCHECK_MSG( m_impl, false, "invalid socket" );
+    wxCHECK_MSG( m_impl, false, "invalid socket" );
 
     const wxSockAddressImpl& peer = m_impl->GetPeer();
     if ( !peer.IsOk() )
@@ -1559,7 +1559,7 @@ bool wxSocketBase::GetPeer(wxSockAddress& addr) const
 
 bool wxSocketBase::GetLocal(wxSockAddress& addr) const
 {
-    //wxCHECK_MSG( m_impl, false, "invalid socket" );
+    wxCHECK_MSG( m_impl, false, "invalid socket" );
 
     const wxSockAddressImpl& local = m_impl->GetLocal();
     if ( !local.IsOk() )
@@ -1624,10 +1624,10 @@ void wxSocketBase::SetFlags(wxSocketFlags flags)
 {
     // Do some sanity checking on the flags used: not all values can be used
     // together.
-    /*wxASSERT_MSG( !(flags & wxSOCKET_NOWAIT) ||
+    wxASSERT_MSG( !(flags & wxSOCKET_NOWAIT) ||
                   !(flags & (wxSOCKET_WAITALL | wxSOCKET_BLOCK)),
                   "Using wxSOCKET_WAITALL or wxSOCKET_BLOCK with "
-                  "wxSOCKET_NOWAIT doesn't make sense" );*/
+                  "wxSOCKET_NOWAIT doesn't make sense" );
 
     m_flags = flags;
 }
@@ -1672,7 +1672,7 @@ void wxSocketBase::OnRequest(wxSocketNotify notification)
             break;
 
         default:
-            break;// wxFAIL_MSG("unknown wxSocket notification");
+            wxFAIL_MSG( "unknown wxSocket notification" );
     }
 
     // remember the events which were generated for this socket, we're going to
@@ -1744,7 +1744,7 @@ void wxSocketBase::Pushback(const void *buffer, wxUint32 size)
 
 wxUint32 wxSocketBase::GetPushback(void *buffer, wxUint32 size, bool peek)
 {
-    //wxCHECK_MSG( buffer, 0, "NULL buffer" );
+    wxCHECK_MSG( buffer, 0, "NULL buffer" );
 
     if (!m_unrd_size)
         return 0;
@@ -1829,7 +1829,7 @@ bool wxSocketServer::AcceptWith(wxSocketBase& sock, bool wait)
 {
     if ( !m_impl || (m_impl->m_fd == INVALID_SOCKET) || !m_impl->IsServer() )
     {
-        //wxFAIL_MSG( "can only be called for a valid server socket" );
+        wxFAIL_MSG( "can only be called for a valid server socket" );
 
         SetError(wxSOCKET_INVSOCK);
 
@@ -1884,7 +1884,7 @@ bool wxSocketServer::WaitForAccept(long seconds, long milliseconds)
 
 bool wxSocketBase::GetOption(int level, int optname, void *optval, int *optlen)
 {
-    //wxASSERT_MSG( m_impl, wxT("Socket not initialised") );
+    wxASSERT_MSG( m_impl, wxT("Socket not initialised") );
 
     SOCKOPTLEN_T lenreal = *optlen;
     if ( getsockopt(m_impl->m_fd, level, optname,
@@ -1899,7 +1899,7 @@ bool wxSocketBase::GetOption(int level, int optname, void *optval, int *optlen)
 bool
 wxSocketBase::SetOption(int level, int optname, const void *optval, int optlen)
 {
-    //wxASSERT_MSG( m_impl, wxT("Socket not initialised") );
+    wxASSERT_MSG( m_impl, wxT("Socket not initialised") );
 
     return setsockopt(m_impl->m_fd, level, optname,
                       static_cast<const char *>(optval), optlen) == 0;
@@ -1978,7 +1978,7 @@ bool wxSocketClient::DoConnect(const wxSockAddress& remote,
     {
         if ( err == wxSOCKET_WOULDBLOCK )
         {
-            //wxASSERT_MSG( !wait, "shouldn't get this for blocking connect" );
+            wxASSERT_MSG( !wait, "shouldn't get this for blocking connect" );
 
             m_establishing = true;
         }
@@ -2011,8 +2011,8 @@ bool wxSocketClient::WaitOnConnect(long seconds, long milliseconds)
         return true;
     }
 
-    /*wxCHECK_MSG( m_establishing && m_impl, false,
-                 "No connection establishment attempt in progress" );*/
+    wxCHECK_MSG( m_establishing && m_impl, false,
+                 "No connection establishment attempt in progress" );
 
     // notice that we return true even if DoWait() returned -1, i.e. if an
     // error occurred and connection was lost: this is intentional as we should
@@ -2074,7 +2074,7 @@ wxDatagramSocket& wxDatagramSocket::SendTo( const wxSockAddress& addr,
                                             const void* buf,
                                             wxUint32 nBytes )
 {
-    //wxASSERT_MSG( m_impl, wxT("Socket not initialised") );
+    wxASSERT_MSG( m_impl, wxT("Socket not initialised") );
 
     m_impl->SetPeer(addr.GetAddress());
     Write(buf, nBytes);

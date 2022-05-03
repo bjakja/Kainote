@@ -19,7 +19,7 @@
 // ----------------------------------------------------------------------------
 
 #if wxUSE_OWNER_DRAWN
-  class  wxOwnerDrawn;
+  class WXDLLIMPEXP_FWD_CORE wxOwnerDrawn;
 
   // define the array of list box items
   #include  "wx/dynarray.h"
@@ -28,13 +28,13 @@
 #endif // wxUSE_OWNER_DRAWN
 
 // forward decl for GetSelections()
-class  wxArrayInt;
+class WXDLLIMPEXP_FWD_BASE wxArrayInt;
 
 // ----------------------------------------------------------------------------
 // List box control
 // ----------------------------------------------------------------------------
 
-class  wxListBox : public wxListBoxBase
+class WXDLLIMPEXP_CORE wxListBox : public wxListBoxBase
 {
 public:
     // ctors and such

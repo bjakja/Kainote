@@ -15,7 +15,7 @@
 // Common button functionality
 // ----------------------------------------------------------------------------
 
-class  wxAnyButton : public wxAnyButtonBase
+class WXDLLIMPEXP_CORE wxAnyButton : public wxAnyButtonBase
 {
 public:
     wxAnyButton() {}

@@ -80,7 +80,7 @@ bool wxControlBase::CreateControl(wxWindowBase *parent,
     // even if it's possible to create controls without parents in some port,
     // it should surely be discouraged because it doesn't work at all under
     // Windows
-    //wxCHECK_MSG( parent, false, wxT("all controls must have parents") );
+    wxCHECK_MSG( parent, false, wxT("all controls must have parents") );
 
     if ( !CreateBase(parent, id, pos, size, style, validator, name) )
         return false;
@@ -202,7 +202,7 @@ int wxControlBase::FindAccelIndex(const wxString& label, wxString *labelOnly)
                 }
                 else
                 {
-                    //wxFAIL_MSG(wxT("duplicate accel char in control label"));
+                    wxFAIL_MSG(wxT("duplicate accel char in control label"));
                 }
             }
         }
@@ -280,7 +280,7 @@ struct EllipsizeCalculator
           m_replacementWidthPx(replacementWidthPx)
     {
         m_isOk = dc.GetPartialTextExtents(s, m_charOffsetsPx);
-        //wxASSERT( m_charOffsetsPx.GetCount() == s.length() );
+        wxASSERT( m_charOffsetsPx.GetCount() == s.length() );
     }
 
     bool IsOk() const { return m_isOk; }
@@ -316,8 +316,8 @@ struct EllipsizeCalculator
     {
         if ( m_outputNeedsUpdate )
         {
-            //wxASSERT(m_initialCharToRemove <= m_str.length() - 1);  // see valid range for initialCharToRemove above
-            //wxASSERT(m_nCharsToRemove >= 1 && m_nCharsToRemove <= m_str.length() - m_initialCharToRemove);  // see valid range for nCharsToRemove above
+            wxASSERT(m_initialCharToRemove <= m_str.length() - 1);  // see valid range for initialCharToRemove above
+            wxASSERT(m_nCharsToRemove >= 1 && m_nCharsToRemove <= m_str.length() - m_initialCharToRemove);  // see valid range for nCharsToRemove above
 
             // erase m_nCharsToRemove characters after m_initialCharToRemove (included);
             // e.g. if we have the string "foobar" (len = 6)
@@ -397,11 +397,11 @@ wxString wxControlBase::DoEllipsizeSingleLine(const wxString& curLine, const wxD
                                               wxEllipsizeMode mode, int maxFinalWidthPx,
                                               int replacementWidthPx)
 {
-    //wxASSERT_MSG(replacementWidthPx > 0, "Invalid parameters");
-    //wxASSERT_LEVEL_2_MSG(!curLine.Contains('\n'),
-                         //"//Use Ellipsize() instead!");
+    wxASSERT_MSG(replacementWidthPx > 0, "Invalid parameters");
+    wxASSERT_LEVEL_2_MSG(!curLine.Contains('\n'),
+                         "Use Ellipsize() instead!");
 
-    //wxASSERT_MSG( mode != wxELLIPSIZE_NONE, "shouldn't be called at all then" );
+    wxASSERT_MSG( mode != wxELLIPSIZE_NONE, "shouldn't be called at all then" );
 
     // NOTE: this function assumes that any mnemonic/tab character has already
     //       been handled if it was necessary to handle them (see Ellipsize())
@@ -503,7 +503,7 @@ wxString wxControlBase::DoEllipsizeSingleLine(const wxString& curLine, const wxD
 
         case wxELLIPSIZE_NONE:
         default:
-            //wxFAIL_MSG("invalid ellipsize mode");
+            wxFAIL_MSG("invalid ellipsize mode");
             return curLine;
     }
 

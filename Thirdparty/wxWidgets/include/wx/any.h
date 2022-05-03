@@ -49,7 +49,7 @@ union wxAnyValueBuffer
 // types used with wxAny. Usually the default template (wxAnyValueTypeImpl<>)
 // will create a satisfactory wxAnyValueType implementation for a data type.
 //
-class wxAnyValueType
+class WXDLLIMPEXP_BASE wxAnyValueType
 {
     WX_DECLARE_ABSTRACT_TYPEINFO(wxAnyValueType)
 public:
@@ -408,7 +408,7 @@ _WX_ANY_DEFINE_SUB_TYPE(T, CLSTYPE)\
 #endif
 
 
-class wxAnyValueTypeImplInt :
+class WXDLLIMPEXP_BASE wxAnyValueTypeImplInt :
     public wxAnyValueTypeImplBase<wxAnyBaseIntType>
 {
     WX_DECLARE_ANY_VALUE_TYPE(wxAnyValueTypeImplInt)
@@ -423,7 +423,7 @@ public:
 };
 
 
-class wxAnyValueTypeImplUint :
+class WXDLLIMPEXP_BASE wxAnyValueTypeImplUint :
     public wxAnyValueTypeImplBase<wxAnyBaseUintType>
 {
     WX_DECLARE_ANY_VALUE_TYPE(wxAnyValueTypeImplUint)
@@ -460,7 +460,7 @@ WX_ANY_DEFINE_SUB_TYPE(wxULongLong_t, Uint)
 // WX_IMPLEMENT_ANY_VALUE_TYPE(wxAnyValueTypeImpl##TYPENAME)
 //
 #define _WX_ANY_DEFINE_CONVERTIBLE_TYPE(T, TYPENAME, CONVFUNC, GV) \
-class wxAnyValueTypeImpl##TYPENAME : \
+class WXDLLIMPEXP_BASE wxAnyValueTypeImpl##TYPENAME : \
     public wxAnyValueTypeImplBase<T> \
 { \
     WX_DECLARE_ANY_VALUE_TYPE(wxAnyValueTypeImpl##TYPENAME) \
@@ -496,7 +496,7 @@ _WX_ANY_DEFINE_CONVERTIBLE_TYPE(T, TYPENAME, \
 //
 
 // Convert wxString to destination wxAny value type
-extern bool wxAnyConvertString(const wxString& value,
+extern WXDLLIMPEXP_BASE bool wxAnyConvertString(const wxString& value,
                                                 wxAnyValueType* dstType,
                                                 wxAnyValueBuffer& dst);
 
@@ -510,7 +510,7 @@ WX_ANY_DEFINE_CONVERTIBLE_TYPE(const wchar_t*, ConstWchar_tPtr,
 // Bool value type
 //
 template<>
-class wxAnyValueTypeImpl<bool> :
+class WXDLLIMPEXP_BASE wxAnyValueTypeImpl<bool> :
     public wxAnyValueTypeImplBase<bool>
 {
     WX_DECLARE_ANY_VALUE_TYPE(wxAnyValueTypeImpl<bool>)
@@ -527,7 +527,7 @@ public:
 //
 // Floating point value type
 //
-class wxAnyValueTypeImplDouble :
+class WXDLLIMPEXP_BASE wxAnyValueTypeImplDouble :
     public wxAnyValueTypeImplBase<double>
 {
     WX_DECLARE_ANY_VALUE_TYPE(wxAnyValueTypeImplDouble)
@@ -584,7 +584,7 @@ public: \
 // be needed).
 #if wxUSE_DATETIME
     #include "wx/datetime.h"
-    wxDECLARE_ANY_TYPE(wxDateTime, )
+    wxDECLARE_ANY_TYPE(wxDateTime, WXDLLIMPEXP_BASE)
 #endif
 
 //#include "wx/object.h"
@@ -596,7 +596,7 @@ public: \
 
 #if wxUSE_VARIANT
 
-class  wxAnyToVariantRegistration;
+class WXDLLIMPEXP_FWD_BASE wxAnyToVariantRegistration;
 
 // Because of header inter-dependencies, cannot include this earlier
 #include "wx/variant.h"
@@ -606,7 +606,7 @@ class  wxAnyToVariantRegistration;
 // wxAny<->wxVariant conversion code is missing.
 //
 
-class wxAnyValueTypeImplVariantData :
+class WXDLLIMPEXP_BASE wxAnyValueTypeImplVariantData :
     public wxAnyValueTypeImplBase<wxVariantData*>
 {
     WX_DECLARE_ANY_VALUE_TYPE(wxAnyValueTypeImplVariantData)
@@ -677,7 +677,7 @@ public:
     optimization, mostly. Implementation of this value type is
     "hidden" in the source file.
 */
-extern wxAnyValueType* wxAnyNullValueType;
+extern WXDLLIMPEXP_DATA_BASE(wxAnyValueType*) wxAnyNullValueType;
 
 
 //
@@ -712,11 +712,11 @@ bool operator==(TUS value) const \
 // so that it can reside entirely in header and lack the export declaration.
 
 // Helper function used to associate wxAnyValueType with a wxVariantData.
-extern void
+extern WXDLLIMPEXP_BASE void
 wxPreRegisterAnyToVariant(wxAnyToVariantRegistration* reg);
 
 // This function performs main wxAny to wxVariant conversion duties.
-extern bool
+extern WXDLLIMPEXP_BASE bool
 wxConvertAnyToVariant(const wxAny& any, wxVariant* variant);
 
 #endif // wxUSE_VARIANT
@@ -970,7 +970,7 @@ public:
     {
         if ( !wxAnyValueTypeImpl<T>::IsSameClass(m_type) )
         {
-            //wxFAIL_MSG("Incorrect or non-convertible data type");
+            wxFAIL_MSG("Incorrect or non-convertible data type");
         }
 
         return static_cast<T>(wxAnyValueTypeImpl<T>::GetValue(m_buffer));
@@ -984,7 +984,7 @@ public:
         wxString value;
         if ( !GetAs(&value) )
         {
-            //wxFAIL_MSG("Incorrect or non-convertible data type");
+            wxFAIL_MSG("Incorrect or non-convertible data type");
         }
         return value;
     }
@@ -1103,7 +1103,7 @@ inline bool wxAnyValueType::CheckType(T* reserved) const
     return wxAnyValueTypeImpl<T>::IsSameClass(this);
 }
 
-WX_DECLARE_LIST_WITH_DECL(wxAny, wxAnyList, class);
+WX_DECLARE_LIST_WITH_DECL(wxAny, wxAnyList, class WXDLLIMPEXP_BASE);
 
 #endif // wxUSE_ANY
 

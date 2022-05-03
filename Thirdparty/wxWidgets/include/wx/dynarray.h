@@ -229,7 +229,7 @@ public:                                                             \
                                                                     \
 protected:                                                          \
   T& Item(size_t uiIndex) const                                     \
-    { /*wxASSERT( uiIndex < m_nCount );*/ return m_pItems[uiIndex]; }   \
+    { wxASSERT( uiIndex < m_nCount ); return m_pItems[uiIndex]; }   \
   T& operator[](size_t uiIndex) const { return Item(uiIndex); }     \
                                                                     \
   int Index(T lItem, bool bFromEnd = false) const;                  \
@@ -340,9 +340,9 @@ private:                                                            \
 // common declaration used by both _WX_DEFINE_TYPEARRAY and
 // _WX_DEFINE_TYPEARRAY_PTR
 #define  _WX_DEFINE_TYPEARRAY_HELPER(T, name, base, classexp, ptrop)  \
-/*wxCOMPILE_TIME_ASSERT2(sizeof(T) <= sizeof(base::base_type),          \
+wxCOMPILE_TIME_ASSERT2(sizeof(T) <= sizeof(base::base_type),          \
                        TypeTooBigToBeStoredIn##base,                  \
-                       name); */                                        \
+                       name);                                         \
 typedef int (CMPFUNC_CONV *CMPFUNC##T)(T *pItem1, T *pItem2);         \
 classexp name : public base                                           \
 {                                                                     \
@@ -369,7 +369,7 @@ public:                                                               \
     { base::RemoveAt(uiIndex, nRemove); }                             \
   void Remove(T lItem)                                                \
     { int iIndex = Index(lItem);                                      \
-      /*wxCHECK_RET( iIndex != wxNOT_FOUND, _WX_ERROR_REMOVE);*/          \
+      wxCHECK_RET( iIndex != wxNOT_FOUND, _WX_ERROR_REMOVE);          \
       base::RemoveAt((size_t)iIndex); }                               \
                                                                       \
   void Sort(CMPFUNC##T fCmp) { base::Sort((CMPFUNC)fCmp); }           \
@@ -513,9 +513,9 @@ public:                                                               \
 // ----------------------------------------------------------------------------
 
 #define _WX_DEFINE_SORTED_TYPEARRAY_2(T, name, base, defcomp, classexp, comptype)\
-/*wxCOMPILE_TIME_ASSERT2(sizeof(T) <= sizeof(base::base_type),          \
+wxCOMPILE_TIME_ASSERT2(sizeof(T) <= sizeof(base::base_type),          \
                        TypeTooBigToBeStoredInSorted##base,            \
-                       name);*/                                         \
+                       name);                                         \
 classexp name : public base                                           \
 {                                                                     \
   typedef comptype SCMPFUNC;                                          \
@@ -553,7 +553,7 @@ public:                                                               \
     { base::erase(begin() + uiIndex, begin() + uiIndex + nRemove); }  \
   void Remove(T lItem)                                                \
     { int iIndex = Index(lItem);                                      \
-      /*wxCHECK_RET( iIndex != wxNOT_FOUND, _WX_ERROR_REMOVE );*/         \
+      wxCHECK_RET( iIndex != wxNOT_FOUND, _WX_ERROR_REMOVE );         \
       base::erase(begin() + iIndex); }                                \
                                                                       \
 private:                                                              \
@@ -650,7 +650,7 @@ private:                                                                 \
     WX_DECLARE_USER_EXPORTED_BASEARRAY(T, name, wxARRAY_DEFAULT_EXPORT)
 
 #define WX_DECLARE_EXPORTED_BASEARRAY(T, name)                    \
-    WX_DECLARE_USER_EXPORTED_BASEARRAY(T, name, )
+    WX_DECLARE_USER_EXPORTED_BASEARRAY(T, name, WXDLLIMPEXP_CORE)
 
 #define WX_DECLARE_USER_EXPORTED_BASEARRAY(T, name, expmode)      \
     typedef T _wxArray##name;                                     \
@@ -671,10 +671,10 @@ private:                                                                 \
     WX_DEFINE_TYPEARRAY_WITH_DECL_PTR(T, name, base, class wxARRAY_DEFAULT_EXPORT)
 
 #define WX_DEFINE_EXPORTED_TYPEARRAY(T, name, base)               \
-    WX_DEFINE_TYPEARRAY_WITH_DECL(T, name, base, class )
+    WX_DEFINE_TYPEARRAY_WITH_DECL(T, name, base, class WXDLLIMPEXP_CORE)
 
 #define WX_DEFINE_EXPORTED_TYPEARRAY_PTR(T, name, base)               \
-    WX_DEFINE_TYPEARRAY_WITH_DECL_PTR(T, name, base, class )
+    WX_DEFINE_TYPEARRAY_WITH_DECL_PTR(T, name, base, class WXDLLIMPEXP_CORE)
 
 #define WX_DEFINE_USER_EXPORTED_TYPEARRAY(T, name, base, expdecl) \
     WX_DEFINE_TYPEARRAY_WITH_DECL(T, name, base, class expdecl)
@@ -753,7 +753,7 @@ private:                                                                 \
 
 #define WX_DEFINE_SORTED_EXPORTED_TYPEARRAY_CMP(T, cmpfunc, name, base)      \
     WX_DEFINE_SORTED_USER_EXPORTED_TYPEARRAY_CMP(T, cmpfunc, name, base,     \
-                                                 )
+                                                 WXDLLIMPEXP_CORE)
 
 #define WX_DEFINE_SORTED_USER_EXPORTED_TYPEARRAY_CMP(T, cmpfunc, name, base, \
                                                      expmode)                \
@@ -806,7 +806,7 @@ private:                                                                 \
     WX_DECLARE_USER_EXPORTED_OBJARRAY(T, name, wxARRAY_DEFAULT_EXPORT)
 
 #define WX_DECLARE_EXPORTED_OBJARRAY(T, name)               \
-    WX_DECLARE_USER_EXPORTED_OBJARRAY(T, name, )
+    WX_DECLARE_USER_EXPORTED_OBJARRAY(T, name, WXDLLIMPEXP_CORE)
 
 #define WX_DECLARE_OBJARRAY_WITH_DECL(T, name, decl) \
     typedef T _wxObjArray##name;                            \
@@ -829,13 +829,13 @@ private:                                                                 \
 // ----------------------------------------------------------------------------
 
 WX_DECLARE_USER_EXPORTED_BASEARRAY(const void *, wxBaseArrayPtrVoid,
-                                   );
-WX_DECLARE_USER_EXPORTED_BASEARRAY(char, wxBaseArrayChar, );
-WX_DECLARE_USER_EXPORTED_BASEARRAY(short, wxBaseArrayShort, );
-WX_DECLARE_USER_EXPORTED_BASEARRAY(int, wxBaseArrayInt, );
-WX_DECLARE_USER_EXPORTED_BASEARRAY(long, wxBaseArrayLong, );
-WX_DECLARE_USER_EXPORTED_BASEARRAY(size_t, wxBaseArraySizeT, );
-WX_DECLARE_USER_EXPORTED_BASEARRAY(double, wxBaseArrayDouble, );
+                                   WXDLLIMPEXP_BASE);
+WX_DECLARE_USER_EXPORTED_BASEARRAY(char, wxBaseArrayChar, WXDLLIMPEXP_BASE);
+WX_DECLARE_USER_EXPORTED_BASEARRAY(short, wxBaseArrayShort, WXDLLIMPEXP_BASE);
+WX_DECLARE_USER_EXPORTED_BASEARRAY(int, wxBaseArrayInt, WXDLLIMPEXP_BASE);
+WX_DECLARE_USER_EXPORTED_BASEARRAY(long, wxBaseArrayLong, WXDLLIMPEXP_BASE);
+WX_DECLARE_USER_EXPORTED_BASEARRAY(size_t, wxBaseArraySizeT, WXDLLIMPEXP_BASE);
+WX_DECLARE_USER_EXPORTED_BASEARRAY(double, wxBaseArrayDouble, WXDLLIMPEXP_BASE);
 
 // ----------------------------------------------------------------------------
 // Convenience macros to define arrays from base arrays
@@ -1012,11 +1012,11 @@ WX_DECLARE_USER_EXPORTED_BASEARRAY(double, wxBaseArrayDouble, );
 // Some commonly used predefined arrays
 // ----------------------------------------------------------------------------
 
-WX_DEFINE_USER_EXPORTED_ARRAY_SHORT(short, wxArrayShort, class );
-WX_DEFINE_USER_EXPORTED_ARRAY_INT(int, wxArrayInt, class );
-WX_DEFINE_USER_EXPORTED_ARRAY_DOUBLE(double, wxArrayDouble, class );
-WX_DEFINE_USER_EXPORTED_ARRAY_LONG(long, wxArrayLong, class );
-WX_DEFINE_USER_EXPORTED_ARRAY_PTR(void *, wxArrayPtrVoid, class );
+WX_DEFINE_USER_EXPORTED_ARRAY_SHORT(short, wxArrayShort, class WXDLLIMPEXP_BASE);
+WX_DEFINE_USER_EXPORTED_ARRAY_INT(int, wxArrayInt, class WXDLLIMPEXP_BASE);
+WX_DEFINE_USER_EXPORTED_ARRAY_DOUBLE(double, wxArrayDouble, class WXDLLIMPEXP_BASE);
+WX_DEFINE_USER_EXPORTED_ARRAY_LONG(long, wxArrayLong, class WXDLLIMPEXP_BASE);
+WX_DEFINE_USER_EXPORTED_ARRAY_PTR(void *, wxArrayPtrVoid, class WXDLLIMPEXP_BASE);
 
 // -----------------------------------------------------------------------------
 // convenience macros

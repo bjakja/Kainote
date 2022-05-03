@@ -19,11 +19,11 @@
 #include "wx/bookctrl.h"
 #include "wx/containr.h"
 
-class  wxToolBarBase;
-class  wxCommandEvent;
+class WXDLLIMPEXP_FWD_CORE wxToolBarBase;
+class WXDLLIMPEXP_FWD_CORE wxCommandEvent;
 
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_TOOLBOOK_PAGE_CHANGED,  wxBookCtrlEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_TOOLBOOK_PAGE_CHANGING, wxBookCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TOOLBOOK_PAGE_CHANGED,  wxBookCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TOOLBOOK_PAGE_CHANGING, wxBookCtrlEvent );
 
 
 // Use wxButtonToolBar
@@ -41,7 +41,7 @@ wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_TOOLBOOK_PAGE_CHANGING, wxBookCtrlEven
 // wxToolbook
 // ----------------------------------------------------------------------------
 
-class  wxToolbook : public wxNavigationEnabled<wxBookCtrlBase>
+class WXDLLIMPEXP_CORE wxToolbook : public wxNavigationEnabled<wxBookCtrlBase>
 {
 public:
     wxToolbook()

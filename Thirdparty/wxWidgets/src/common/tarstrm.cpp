@@ -1183,7 +1183,7 @@ bool wxTarOutputStream::CloseEntry()
         return true;
 
     if (m_pos < m_maxpos) {
-        //wxASSERT(m_parent_o_stream->IsSeekable());
+        wxASSERT(m_parent_o_stream->IsSeekable());
         m_parent_o_stream->SeekO(m_datapos + m_maxpos);
         m_lasterror = m_parent_o_stream->GetLastError();
         m_pos = m_maxpos;
@@ -1272,7 +1272,7 @@ bool wxTarOutputStream::WriteHeaders(wxTarEntry& entry)
     // (if any) will be needed. Output any extended headers before writing
     // the main header.
     if (m_extendedHdr && *m_extendedHdr) {
-        //wxASSERT(m_pax);
+        wxASSERT(m_pax);
         // the extended headers are written to the tar as a file entry,
         // so prepare a regular header block for the pseudo-file.
         if (!m_hdr2)
@@ -1316,7 +1316,7 @@ bool wxTarOutputStream::WriteHeaders(wxTarEntry& entry)
 
     // if don't have extended headers just report error
     if (!m_badfit.empty()) {
-        //wxASSERT(!m_pax);
+        wxASSERT(!m_pax);
         wxLogWarning(_("%s did not fit the tar header for entry '%s'"),
                      m_badfit.c_str(), entry.GetName().c_str());
         m_badfit.clear();

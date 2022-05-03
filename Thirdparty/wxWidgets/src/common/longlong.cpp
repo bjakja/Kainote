@@ -51,14 +51,14 @@ void *wxLongLongNative::asArray() const
 {
     static unsigned char temp[8];
 
-    temp[0] = ((m_ll >> 56) & 0xFF);
-    temp[1] = ((m_ll >> 48) & 0xFF);
-    temp[2] = ((m_ll >> 40) & 0xFF);
-    temp[3] = ((m_ll >> 32) & 0xFF);
-    temp[4] = ((m_ll >> 24) & 0xFF);
-    temp[5] = ((m_ll >> 16) & 0xFF);
-    temp[6] = ((m_ll >> 8)  & 0xFF);
-    temp[7] = ((m_ll >> 0)  & 0xFF);
+    temp[0] = wx_truncate_cast(unsigned char, ((m_ll >> 56) & 0xFF));
+    temp[1] = wx_truncate_cast(unsigned char, ((m_ll >> 48) & 0xFF));
+    temp[2] = wx_truncate_cast(unsigned char, ((m_ll >> 40) & 0xFF));
+    temp[3] = wx_truncate_cast(unsigned char, ((m_ll >> 32) & 0xFF));
+    temp[4] = wx_truncate_cast(unsigned char, ((m_ll >> 24) & 0xFF));
+    temp[5] = wx_truncate_cast(unsigned char, ((m_ll >> 16) & 0xFF));
+    temp[6] = wx_truncate_cast(unsigned char, ((m_ll >> 8)  & 0xFF));
+    temp[7] = wx_truncate_cast(unsigned char, ((m_ll >> 0)  & 0xFF));
 
     return temp;
 }
@@ -67,14 +67,14 @@ void *wxULongLongNative::asArray() const
 {
     static unsigned char temp[8];
 
-    temp[0] = ((m_ll >> 56) & 0xFF);
-    temp[1] = ((m_ll >> 48) & 0xFF);
-    temp[2] = ((m_ll >> 40) & 0xFF);
-    temp[3] = ((m_ll >> 32) & 0xFF);
-    temp[4] = ((m_ll >> 24) & 0xFF);
-    temp[5] = ((m_ll >> 16) & 0xFF);
-    temp[6] = ((m_ll >> 8)  & 0xFF);
-    temp[7] = ((m_ll >> 0)  & 0xFF);
+    temp[0] = wx_truncate_cast(unsigned char, ((m_ll >> 56) & 0xFF));
+    temp[1] = wx_truncate_cast(unsigned char, ((m_ll >> 48) & 0xFF));
+    temp[2] = wx_truncate_cast(unsigned char, ((m_ll >> 40) & 0xFF));
+    temp[3] = wx_truncate_cast(unsigned char, ((m_ll >> 32) & 0xFF));
+    temp[4] = wx_truncate_cast(unsigned char, ((m_ll >> 24) & 0xFF));
+    temp[5] = wx_truncate_cast(unsigned char, ((m_ll >> 16) & 0xFF));
+    temp[6] = wx_truncate_cast(unsigned char, ((m_ll >> 8)  & 0xFF));
+    temp[7] = wx_truncate_cast(unsigned char, ((m_ll >> 0)  & 0xFF));
 
     return temp;
 }
@@ -1243,13 +1243,13 @@ void *wxULongLongWx::asArray(void) const
 #if wxUSE_STD_IOSTREAM
 
 // input/output
-
+WXDLLIMPEXP_BASE
 wxSTD ostream& operator<< (wxSTD ostream& o, const wxLongLong& ll)
 {
     return o << ll.ToString();
 }
 
-
+WXDLLIMPEXP_BASE
 wxSTD ostream& operator<< (wxSTD ostream& o, const wxULongLong& ll)
 {
     return o << ll.ToString();
@@ -1257,31 +1257,31 @@ wxSTD ostream& operator<< (wxSTD ostream& o, const wxULongLong& ll)
 
 #endif // wxUSE_STD_IOSTREAM
 
- wxString& operator<< (wxString& s, const wxLongLong& ll)
+WXDLLIMPEXP_BASE wxString& operator<< (wxString& s, const wxLongLong& ll)
 {
     return s << ll.ToString();
 }
 
- wxString& operator<< (wxString& s, const wxULongLong& ll)
+WXDLLIMPEXP_BASE wxString& operator<< (wxString& s, const wxULongLong& ll)
 {
     return s << ll.ToString();
 }
 
 #if wxUSE_STREAMS
 
- wxTextOutputStream& operator<< (wxTextOutputStream& o, const wxULongLong& ll)
+WXDLLIMPEXP_BASE wxTextOutputStream& operator<< (wxTextOutputStream& o, const wxULongLong& ll)
 {
     return o << ll.ToString();
 }
 
- wxTextOutputStream& operator<< (wxTextOutputStream& o, const wxLongLong& ll)
+WXDLLIMPEXP_BASE wxTextOutputStream& operator<< (wxTextOutputStream& o, const wxLongLong& ll)
 {
     return o << ll.ToString();
 }
 
 #define READ_STRING_CHAR(s, idx, len) ((idx!=len) ? (wxChar)s[idx++] : wxT('\0'))
 
- class wxTextInputStream &operator>>(class wxTextInputStream &o, wxULongLong &ll)
+WXDLLIMPEXP_BASE class wxTextInputStream &operator>>(class wxTextInputStream &o, wxULongLong &ll)
 {
     wxString s = o.ReadWord();
 
@@ -1306,7 +1306,7 @@ wxSTD ostream& operator<< (wxSTD ostream& o, const wxULongLong& ll)
     return o;
 }
 
- class wxTextInputStream &operator>>(class wxTextInputStream &o, wxLongLong &ll)
+WXDLLIMPEXP_BASE class wxTextInputStream &operator>>(class wxTextInputStream &o, wxLongLong &ll)
 {
     wxString s = o.ReadWord();
 
@@ -1346,17 +1346,17 @@ wxSTD ostream& operator<< (wxSTD ostream& o, const wxULongLong& ll)
 
 #if wxUSE_LONGLONG_NATIVE
 
- class wxTextOutputStream &operator<<(class wxTextOutputStream &o, wxULongLong_t value)
+WXDLLIMPEXP_BASE class wxTextOutputStream &operator<<(class wxTextOutputStream &o, wxULongLong_t value)
 {
     return o << wxULongLong(value).ToString();
 }
 
- class wxTextOutputStream &operator<<(class wxTextOutputStream &o, wxLongLong_t value)
+WXDLLIMPEXP_BASE class wxTextOutputStream &operator<<(class wxTextOutputStream &o, wxLongLong_t value)
 {
     return o << wxLongLong(value).ToString();
 }
 
- class wxTextInputStream &operator>>(class wxTextInputStream &o, wxULongLong_t &value)
+WXDLLIMPEXP_BASE class wxTextInputStream &operator>>(class wxTextInputStream &o, wxULongLong_t &value)
 {
     wxULongLong ll;
     o >> ll;
@@ -1364,7 +1364,7 @@ wxSTD ostream& operator<< (wxSTD ostream& o, const wxULongLong& ll)
     return o;
 }
 
- class wxTextInputStream &operator>>(class wxTextInputStream &o, wxLongLong_t &value)
+WXDLLIMPEXP_BASE class wxTextInputStream &operator>>(class wxTextInputStream &o, wxLongLong_t &value)
 {
     wxLongLong ll;
     o >> ll;

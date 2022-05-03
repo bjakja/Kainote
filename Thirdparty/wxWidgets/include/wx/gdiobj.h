@@ -20,7 +20,7 @@
 // the same native GDI object
 // ----------------------------------------------------------------------------
 
-class  wxGDIRefData : public wxObjectRefData
+class WXDLLIMPEXP_CORE wxGDIRefData : public wxObjectRefData
 {
 public:
     // Default ctor which needs to be defined just because we use
@@ -39,7 +39,7 @@ private:
 // wxGDIObject: base class for bitmaps, pens, brushes, ...
 // ----------------------------------------------------------------------------
 
-class  wxGDIObject : public wxObject
+class WXDLLIMPEXP_CORE wxGDIObject : public wxObject
 {
 public:
     // checks if the object can be used

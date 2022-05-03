@@ -18,9 +18,9 @@
 
 #include "wx/object.h"
 
-class wxAcceleratorTable;
-class wxMenuItem;
-class wxKeyEvent;
+class WXDLLIMPEXP_FWD_CORE wxAcceleratorTable;
+class WXDLLIMPEXP_FWD_CORE wxMenuItem;
+class WXDLLIMPEXP_FWD_CORE wxKeyEvent;
 
 // ----------------------------------------------------------------------------
 // constants
@@ -45,7 +45,7 @@ enum wxAcceleratorEntryFlags
 // an entry in wxAcceleratorTable corresponds to one accelerator
 // ----------------------------------------------------------------------------
 
-class  wxAcceleratorEntry
+class WXDLLIMPEXP_CORE wxAcceleratorEntry
 {
 public:
     wxAcceleratorEntry(int flags = 0, int keyCode = 0, int cmd = 0,
@@ -145,7 +145,7 @@ private:
     wxMenuItem *m_item;
 
     // for compatibility with old code, use accessors now!
-    friend class wxMenu;
+    friend class WXDLLIMPEXP_FWD_CORE wxMenu;
 };
 
 // ----------------------------------------------------------------------------
@@ -171,7 +171,7 @@ private:
     #include "wx/os2/accel.h"
 #endif
 
-extern wxAcceleratorTable wxNullAcceleratorTable;
+extern WXDLLIMPEXP_DATA_CORE(wxAcceleratorTable) wxNullAcceleratorTable;
 
 #endif // wxUSE_ACCEL
 

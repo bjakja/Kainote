@@ -90,8 +90,8 @@ public:
     // only be used to initialize the pointer, not to modify an existing one.
     T** operator&()
     {
-        //wxASSERT_MSG(!m_ptr,
-                     //wxS("Can't get direct access to initialized pointer"));
+        wxASSERT_MSG(!m_ptr,
+                     wxS("Can't get direct access to initialized pointer"));
 
         return &m_ptr;
     }

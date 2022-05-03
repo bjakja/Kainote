@@ -36,22 +36,22 @@
 
 #if wxUSE_EXTENDED_RTTI
 
-class  wxAny;
-class  wxAnyList;
-class  wxObject;
-class  wxString;
-class  wxClassInfo;
-class  wxHashTable;
-class  wxObject;
-class  wxPluginLibrary;
-class  wxHashTable;
-class  wxHashTable_Node;
+class WXDLLIMPEXP_FWD_BASE wxAny;
+class WXDLLIMPEXP_FWD_BASE wxAnyList;
+class WXDLLIMPEXP_FWD_BASE wxObject;
+class WXDLLIMPEXP_FWD_BASE wxString;
+class WXDLLIMPEXP_FWD_BASE wxClassInfo;
+class WXDLLIMPEXP_FWD_BASE wxHashTable;
+class WXDLLIMPEXP_FWD_BASE wxObject;
+class WXDLLIMPEXP_FWD_BASE wxPluginLibrary;
+class WXDLLIMPEXP_FWD_BASE wxHashTable;
+class WXDLLIMPEXP_FWD_BASE wxHashTable_Node;
 
-class  wxStringToAnyHashMap;
-class  wxPropertyInfoMap;
-class  wxPropertyAccessor;
-class  wxObjectAllocatorAndCreator;
-class  wxObjectAllocator;
+class WXDLLIMPEXP_FWD_BASE wxStringToAnyHashMap;
+class WXDLLIMPEXP_FWD_BASE wxPropertyInfoMap;
+class WXDLLIMPEXP_FWD_BASE wxPropertyAccessor;
+class WXDLLIMPEXP_FWD_BASE wxObjectAllocatorAndCreator;
+class WXDLLIMPEXP_FWD_BASE wxObjectAllocator;
 
 
 #define wx_dynamic_cast(t, x) dynamic_cast<t>(x)

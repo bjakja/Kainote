@@ -29,7 +29,7 @@
     #include "wx/compositewin.h"
     #include "wx/containr.h"
 
-    class  wxSearchCtrlBaseBaseClass
+    class WXDLLIMPEXP_CORE wxSearchCtrlBaseBaseClass
         : public wxCompositeWindow< wxNavigationEnabled<wxControl> >,
           public wxTextCtrlIface
     {
@@ -40,17 +40,17 @@
 // constants
 // ----------------------------------------------------------------------------
 
-extern const char wxSearchCtrlNameStr[];
+extern WXDLLIMPEXP_DATA_CORE(const char) wxSearchCtrlNameStr[];
 
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_SEARCHCTRL_SEARCH_BTN, wxCommandEvent);
 
 // ----------------------------------------------------------------------------
 // a search ctrl is a text control with a search button and a cancel button
 // it is based on the MacOSX 10.3 control HISearchFieldCreate
 // ----------------------------------------------------------------------------
 
-class  wxSearchCtrlBase : public wxSearchCtrlBaseBaseClass
+class WXDLLIMPEXP_CORE wxSearchCtrlBase : public wxSearchCtrlBaseBaseClass
 {
 public:
     wxSearchCtrlBase() { }

@@ -25,7 +25,7 @@
 // forward declarations
 // ----------------------------------------------------------------------------
 
-class  wxFont;
+class WXDLLIMPEXP_FWD_CORE wxFont;
 
 // ----------------------------------------------------------------------------
 // font constants
@@ -115,9 +115,9 @@ enum wxFontFlag
 // wxFontBase represents a font object
 // ----------------------------------------------------------------------------
 
-class  wxNativeFontInfo;
+class WXDLLIMPEXP_FWD_CORE wxNativeFontInfo;
 
-class  wxFontBase : public wxGDIObject
+class WXDLLIMPEXP_CORE wxFontBase : public wxGDIObject
 {
 public:
     /*
@@ -328,8 +328,8 @@ private:
 };
 
 // wxFontBase <-> wxString utilities, used by wxConfig
- wxString wxToString(const wxFontBase& font);
- bool wxFromString(const wxString& str, wxFontBase* font);
+WXDLLIMPEXP_CORE wxString wxToString(const wxFontBase& font);
+WXDLLIMPEXP_CORE bool wxFromString(const wxString& str, wxFontBase* font);
 
 
 #if FUTURE_WXWIN_COMPATIBILITY_3_0
@@ -392,7 +392,7 @@ private:
     #include "wx/os2/font.h"
 #endif
 
-class  wxFontList: public wxGDIObjListBase
+class WXDLLIMPEXP_CORE wxFontList: public wxGDIObjListBase
 {
 public:
     wxFont *FindOrCreateFont(int pointSize,
@@ -418,7 +418,7 @@ public:
 #endif
 };
 
-extern wxFontList*    wxTheFontList;
+extern WXDLLIMPEXP_DATA_CORE(wxFontList*)    wxTheFontList;
 
 
 // provide comparison operators to allow code such as

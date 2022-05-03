@@ -49,7 +49,7 @@
 // wxAnyButton: common button functionality
 // ----------------------------------------------------------------------------
 
-class  wxAnyButtonBase : public wxControl
+class WXDLLIMPEXP_CORE wxAnyButtonBase : public wxControl
 {
 public:
     wxAnyButtonBase() { }

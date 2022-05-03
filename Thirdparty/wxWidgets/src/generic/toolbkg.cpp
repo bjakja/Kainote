@@ -164,14 +164,14 @@ wxString wxToolbook::GetPageText(size_t n) const
 
 int wxToolbook::GetPageImage(size_t WXUNUSED(n)) const
 {
-    //wxFAIL_MSG( wxT("wxToolbook::GetPageImage() not implemented") );
+    wxFAIL_MSG( wxT("wxToolbook::GetPageImage() not implemented") );
 
     return wxNOT_FOUND;
 }
 
 bool wxToolbook::SetPageImage(size_t n, int imageId)
 {
-    //wxASSERT( GetImageList() != NULL );
+    wxASSERT( GetImageList() != NULL );
     if (!GetImageList())
         return false;
 
@@ -297,7 +297,7 @@ bool wxToolbook::InsertPage(size_t n,
 
     m_needsRealizing = true;
 
-    //wxASSERT(GetImageList() != NULL);
+    wxASSERT(GetImageList() != NULL);
 
     if (!GetImageList())
         return false;

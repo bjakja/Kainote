@@ -82,7 +82,7 @@ WXDLLIMPEXP_BASE long wxMacTranslateKey(unsigned char key, unsigned char code);
 #include "wx/bitmap.h"
 #include "wx/window.h"
 
-class  wxMacCGContextStateSaver
+class WXDLLIMPEXP_CORE wxMacCGContextStateSaver
 {
     wxDECLARE_NO_COPY_CLASS(wxMacCGContextStateSaver);
 
@@ -100,7 +100,7 @@ private:
     CGContextRef m_cg;
 };
 
-class  wxDeferredObjectDeleter : public wxObject
+class WXDLLIMPEXP_CORE wxDeferredObjectDeleter : public wxObject
 {
 public :
     wxDeferredObjectDeleter( wxObject* obj ) : m_obj(obj)
@@ -116,11 +116,11 @@ protected :
 
 // Quartz
 
- CGImageRef wxMacCreateCGImageFromBitmap( const wxBitmap& bitmap );
+WXDLLIMPEXP_CORE CGImageRef wxMacCreateCGImageFromBitmap( const wxBitmap& bitmap );
 
- CGDataProviderRef wxMacCGDataProviderCreateWithCFData( CFDataRef data );
- CGDataConsumerRef wxMacCGDataConsumerCreateWithCFData( CFMutableDataRef data );
- CGDataProviderRef wxMacCGDataProviderCreateWithMemoryBuffer( const wxMemoryBuffer& buf );
+WXDLLIMPEXP_CORE CGDataProviderRef wxMacCGDataProviderCreateWithCFData( CFDataRef data );
+WXDLLIMPEXP_CORE CGDataConsumerRef wxMacCGDataConsumerCreateWithCFData( CFMutableDataRef data );
+WXDLLIMPEXP_CORE CGDataProviderRef wxMacCGDataProviderCreateWithMemoryBuffer( const wxMemoryBuffer& buf );
 
 CGColorSpaceRef WXDLLIMPEXP_CORE wxMacGetGenericRGBColorSpace(void);
 
@@ -138,7 +138,7 @@ class wxNotebook;
 class wxTextCtrl;
 class wxSearchCtrl;
 
- wxWindowMac * wxFindWindowFromWXWidget(WXWidget inControl );
+WXDLLIMPEXP_CORE wxWindowMac * wxFindWindowFromWXWidget(WXWidget inControl );
 
 #if wxOSX_USE_CARBON
 typedef wxMacControl wxWidgetImplType;
@@ -212,7 +212,7 @@ protected :
 #endif
 
 
-class  wxWidgetImpl : public wxObject
+class WXDLLIMPEXP_CORE wxWidgetImpl : public wxObject
 {
 public :
     wxWidgetImpl( wxWindowMac* peer , bool isRootControl = false, bool isUserPane = false );

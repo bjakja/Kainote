@@ -156,8 +156,8 @@ void wxControlContainer::SetLastFocus(wxWindow *win)
                 // which has pushed itself as an event handler for the menubar.
                 // (under wxGTK)
 
-                /*wxASSERT_MSG( winParent,
-                              wxT("Setting last focus for a window that is not our child?") );*/
+                wxASSERT_MSG( winParent,
+                              wxT("Setting last focus for a window that is not our child?") );
             }
         }
 
@@ -190,7 +190,7 @@ wxRadioButton* wxGetPreviousButtonInGroup(wxRadioButton *btn)
 
     const wxWindowList& siblings = btn->GetParent()->GetChildren();
     wxWindowList::compatibility_iterator nodeThis = siblings.Find(btn);
-    //wxCHECK_MSG( nodeThis, NULL, wxT("radio button not a child of its parent?") );
+    wxCHECK_MSG( nodeThis, NULL, wxT("radio button not a child of its parent?") );
 
     // Iterate over all previous siblings until we find the next radio button
     wxWindowList::compatibility_iterator nodeBefore = nodeThis->GetPrevious();
@@ -220,7 +220,7 @@ wxRadioButton* wxGetNextButtonInGroup(wxRadioButton *btn)
 
     const wxWindowList& siblings = btn->GetParent()->GetChildren();
     wxWindowList::compatibility_iterator nodeThis = siblings.Find(btn);
-    //wxCHECK_MSG( nodeThis, NULL, wxT("radio button not a child of its parent?") );
+    wxCHECK_MSG( nodeThis, NULL, wxT("radio button not a child of its parent?") );
 
     // Iterate over all previous siblings until we find the next radio button
     wxWindowList::compatibility_iterator nodeNext = nodeThis->GetNext();
@@ -631,7 +631,7 @@ bool wxControlContainer::SetFocusToChild()
 
 bool wxSetFocusToChild(wxWindow *win, wxWindow **childLastFocused)
 {
-    //wxCHECK_MSG( win, false, wxT("wxSetFocusToChild(): invalid window") );
+    wxCHECK_MSG( win, false, wxT("wxSetFocusToChild(): invalid window") );
     //    wxCHECK_MSG( childLastFocused, false,
     //             wxT("wxSetFocusToChild(): NULL child poonter") );
 

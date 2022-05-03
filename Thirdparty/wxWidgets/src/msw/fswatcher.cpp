@@ -77,8 +77,8 @@ wxFSWatcherImplMSW::~wxFSWatcherImplMSW()
 
 bool wxFSWatcherImplMSW::Init()
 {
-    //wxCHECK_MSG( !m_workerThread.IsAlive(), false,
-                 //"Watcher service is already initialized" );
+    wxCHECK_MSG( !m_workerThread.IsAlive(), false,
+                 "Watcher service is already initialized" );
 
     if (m_workerThread.Create() != wxTHREAD_NO_ERROR)
     {
@@ -116,7 +116,7 @@ wxFSWatcherImplMSW::DoRemove(wxSharedPtr<wxFSWatchEntryMSW> watch)
 // TODO ensuring that we have not already set watch for this handle/dir?
 bool wxFSWatcherImplMSW::SetUpWatch(wxFSWatchEntryMSW& watch)
 {
-    //wxCHECK_MSG( watch.IsOk(), false, "Invalid watch" );
+    wxCHECK_MSG( watch.IsOk(), false, "Invalid watch" );
     if (m_watches.find(watch.GetPath()) == m_watches.end())
     {
         wxLogTrace(wxTRACE_FSWATCHER, "Path '%s' is not watched",
@@ -153,7 +153,7 @@ bool wxFSWatcherImplMSW::DoSetUpWatch(wxFSWatchEntryMSW& watch)
             break;
 
         case wxFSWPath_None:
-            //wxFAIL_MSG( "Invalid watch type." );
+            wxFAIL_MSG( "Invalid watch type." );
             return false;
     }
 
@@ -348,7 +348,7 @@ int wxIOCPThread::Native2WatcherFlags(int flags)
     }
 
     // never reached
-    //wxFAIL_MSG(wxString::Format("Unknown file notify change %u", flags));
+    wxFAIL_MSG(wxString::Format("Unknown file notify change %u", flags));
     return -1;
 }
 

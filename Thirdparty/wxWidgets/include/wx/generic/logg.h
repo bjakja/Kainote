@@ -14,9 +14,9 @@
 
 #if wxUSE_GUI
 
-class  wxTextCtrl;
-class  wxLogFrame;
-class  wxWindow;
+class WXDLLIMPEXP_FWD_CORE wxTextCtrl;
+class WXDLLIMPEXP_FWD_CORE wxLogFrame;
+class WXDLLIMPEXP_FWD_CORE wxWindow;
 
 // ----------------------------------------------------------------------------
 // the following log targets are only compiled in if the we're compiling the
@@ -27,7 +27,7 @@ class  wxWindow;
 #if wxUSE_TEXTCTRL
 
 // log everything to a text window (GUI only of course)
-class  wxLogTextCtrl : public wxLog
+class WXDLLIMPEXP_CORE wxLogTextCtrl : public wxLog
 {
 public:
     wxLogTextCtrl(wxTextCtrl *pTextCtrl);
@@ -51,7 +51,7 @@ private:
 
 #if wxUSE_LOGGUI
 
-class  wxLogGui : public wxLog
+class WXDLLIMPEXP_CORE wxLogGui : public wxLog
 {
 public:
     // ctor
@@ -110,7 +110,7 @@ private:
 
 #if wxUSE_LOGWINDOW
 
-class  wxLogWindow : public wxLogPassThrough
+class WXDLLIMPEXP_CORE wxLogWindow : public wxLogPassThrough
 {
 public:
     wxLogWindow(wxWindow *pParent,        // the parent frame (can be NULL)

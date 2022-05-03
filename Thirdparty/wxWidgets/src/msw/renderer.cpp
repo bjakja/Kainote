@@ -435,7 +435,7 @@ wxRendererMSW::DrawComboBoxDropButton(wxWindow * WXUNUSED(win),
                                       const wxRect& rect,
                                       int flags)
 {
-    ////wxCHECK_RET( dc.GetImpl(), wxT("Invalid wxDC") );
+    wxCHECK_RET( dc.GetImpl(), wxT("Invalid wxDC") );
 
     wxRect adjustedRect = dc.GetImpl()->MSWApplyGDIPlusTransform(rect);
     
@@ -459,7 +459,7 @@ wxRendererMSW::DoDrawFrameControl(UINT type,
                                   const wxRect& rect,
                                   int flags)
 {
-    ////wxCHECK_RET( dc.GetImpl(), wxT("Invalid wxDC") );
+    wxCHECK_RET( dc.GetImpl(), wxT("Invalid wxDC") );
 
     wxRect adjustedRect = dc.GetImpl()->MSWApplyGDIPlusTransform(rect);
 
@@ -537,7 +537,7 @@ wxRendererMSW::DrawTitleBarBitmap(wxWindow *win,
             break;
 
         default:
-            //wxFAIL_MSG( "unsupported title bar button" );
+            wxFAIL_MSG( "unsupported title bar button" );
             return;
     }
 
@@ -627,7 +627,7 @@ wxRendererXP::DrawComboBoxDropButton(wxWindow * win,
         return;
     }
 
-    //wxCHECK_RET( dc.GetImpl(), wxT("Invalid wxDC") );
+    wxCHECK_RET( dc.GetImpl(), wxT("Invalid wxDC") );
 
     wxRect adjustedRect = dc.GetImpl()->MSWApplyGDIPlusTransform(rect);
 
@@ -670,7 +670,7 @@ wxRendererXP::DrawHeaderButton(wxWindow *win,
         return m_rendererNative.DrawHeaderButton(win, dc, rect, flags, sortArrow, params);
     }
 
-    //wxCHECK_MSG( dc.GetImpl(), -1, wxT("Invalid wxDC") );
+    wxCHECK_MSG( dc.GetImpl(), -1, wxT("Invalid wxDC") );
 
     wxRect adjustedRect = dc.GetImpl()->MSWApplyGDIPlusTransform(rect);
 
@@ -716,7 +716,7 @@ wxRendererXP::DrawTreeItemButton(wxWindow *win,
         return;
     }
 
-    //wxCHECK_RET( dc.GetImpl(), wxT("Invalid wxDC") );
+    wxCHECK_RET( dc.GetImpl(), wxT("Invalid wxDC") );
 
     wxRect adjustedRect = dc.GetImpl()->MSWApplyGDIPlusTransform(rect);
 
@@ -758,7 +758,7 @@ wxRendererXP::DoDrawButtonLike(HTHEME htheme,
                                const wxRect& rect,
                                int flags)
 {
-    //wxCHECK_RET( dc.GetImpl(), wxT("Invalid wxDC") );
+    wxCHECK_RET( dc.GetImpl(), wxT("Invalid wxDC") );
 
     wxRect adjustedRect = dc.GetImpl()->MSWApplyGDIPlusTransform(rect);
 
@@ -846,7 +846,7 @@ wxRendererXP::DrawTitleBarBitmap(wxWindow *win,
             break;
 
         default:
-            //wxFAIL_MSG( "unsupported title bar button" );
+            wxFAIL_MSG( "unsupported title bar button" );
             return;
     }
 

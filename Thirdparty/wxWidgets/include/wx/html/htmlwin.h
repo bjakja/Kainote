@@ -28,10 +28,10 @@ class wxHtmlProcessor;
 class wxHtmlWinModule;
 class wxHtmlHistoryArray;
 class wxHtmlProcessorList;
-class  wxHtmlWinAutoScrollTimer;
-class  wxHtmlCellEvent;
-class  wxHtmlLinkEvent;
-class  wxStatusBar;
+class WXDLLIMPEXP_FWD_HTML wxHtmlWinAutoScrollTimer;
+class WXDLLIMPEXP_FWD_HTML wxHtmlCellEvent;
+class WXDLLIMPEXP_FWD_HTML wxHtmlLinkEvent;
+class WXDLLIMPEXP_FWD_CORE wxStatusBar;
 
 // wxHtmlWindow flags:
 #define wxHW_SCROLLBAR_NEVER    0x0002
@@ -56,7 +56,7 @@ enum wxHtmlOpeningStatus
     wxHtmlListBox) that is passed to wxHtmlWinParser. It encapsulates all
     communication from the parser to the window.
  */
-class  wxHtmlWindowInterface
+class WXDLLIMPEXP_HTML wxHtmlWindowInterface
 {
 public:
     /// Ctor
@@ -134,7 +134,7 @@ public:
     wxHtmlListBox. Cursor changes and clicking on links are handled, text
     selection is not.
  */
-class  wxHtmlWindowMouseHelper
+class WXDLLIMPEXP_HTML wxHtmlWindowMouseHelper
 {
 protected:
     /**
@@ -232,7 +232,7 @@ private:
 //                  SetPage(text) or LoadPage(filename).
 // ----------------------------------------------------------------------------
 
-class  wxHtmlWindow : public wxScrolledWindow,
+class WXDLLIMPEXP_HTML wxHtmlWindow : public wxScrolledWindow,
                                       public wxHtmlWindowInterface,
                                       public wxHtmlWindowMouseHelper
 {
@@ -558,18 +558,18 @@ private:
     wxDECLARE_NO_COPY_CLASS(wxHtmlWindow);
 };
 
-class  wxHtmlCellEvent;
+class WXDLLIMPEXP_FWD_HTML wxHtmlCellEvent;
 
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_HTML_CELL_CLICKED, wxHtmlCellEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_HTML_CELL_HOVER, wxHtmlCellEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_HTML_LINK_CLICKED, wxHtmlLinkEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_HTML, wxEVT_COMMAND_HTML_CELL_CLICKED, wxHtmlCellEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_HTML, wxEVT_COMMAND_HTML_CELL_HOVER, wxHtmlCellEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_HTML, wxEVT_COMMAND_HTML_LINK_CLICKED, wxHtmlLinkEvent );
 
 
 /*!
  * Html cell window event
  */
 
-class  wxHtmlCellEvent : public wxCommandEvent
+class WXDLLIMPEXP_HTML wxHtmlCellEvent : public wxCommandEvent
 {
 public:
     wxHtmlCellEvent() {}
@@ -610,7 +610,7 @@ private:
  * Html link event
  */
 
-class  wxHtmlLinkEvent : public wxCommandEvent
+class WXDLLIMPEXP_HTML wxHtmlLinkEvent : public wxCommandEvent
 {
 public:
     wxHtmlLinkEvent() {}

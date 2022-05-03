@@ -17,7 +17,7 @@
 #include "wx/dynarray.h"
 #include "wx/imaglist.h"
 
-class  wxToolBar : public wxToolBarBase
+class WXDLLIMPEXP_CORE wxToolBar : public wxToolBarBase
 {
 public:
     // ctors and dtor

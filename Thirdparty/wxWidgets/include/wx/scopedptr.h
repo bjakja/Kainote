@@ -63,7 +63,7 @@ public:
     {
         if ( ptr != m_ptr )
         {
-            //wxCHECKED_DELETE(m_ptr);
+            wxCHECKED_DELETE(m_ptr);
             m_ptr = ptr;
         }
     }
@@ -77,13 +77,13 @@ public:
 
     T & operator*() const
     {
-        //wxASSERT(m_ptr != NULL);
+        wxASSERT(m_ptr != NULL);
         return *m_ptr;
     }
 
     T * operator->() const
     {
-        /*wxASSERT(m_ptr != NULL);*/
+        wxASSERT(m_ptr != NULL);
         return m_ptr;
     }
 
@@ -140,13 +140,13 @@ public:                             \
                                     \
     T & operator*() const           \
     {                               \
-        /*wxASSERT(m_ptr != NULL);*/    \
+        wxASSERT(m_ptr != NULL);    \
         return *m_ptr;              \
     }                               \
                                     \
     T * operator->() const          \
     {                               \
-        /*wxASSERT(m_ptr != NULL);*/    \
+        wxASSERT(m_ptr != NULL);    \
         return m_ptr;               \
     }                               \
                                     \
@@ -168,13 +168,13 @@ void name::reset(T * ptr)           \
 {                                   \
     if (m_ptr != ptr)               \
     {                               \
-        /*wxCHECKED_DELETE(m_ptr);*/if(m_ptr) delete m_ptr;    \
+        wxCHECKED_DELETE(m_ptr);    \
         m_ptr = ptr;                \
     }                               \
 }                                   \
 name::~name()                       \
 {                                   \
-    /*wxCHECKED_DELETE(m_ptr)*/if(m_ptr) delete m_ptr;        \
+    wxCHECKED_DELETE(m_ptr);        \
 }
 
 // this macro can be used for the most common case when you want to declare and

@@ -10,7 +10,7 @@
 #ifndef _WX_MSW_CALCTRL_H_
 #define _WX_MSW_CALCTRL_H_
 
-class  wxCalendarCtrl : public wxCalendarCtrlBase
+class WXDLLIMPEXP_ADV wxCalendarCtrl : public wxCalendarCtrlBase
 {
 public:
     wxCalendarCtrl() { Init(); }

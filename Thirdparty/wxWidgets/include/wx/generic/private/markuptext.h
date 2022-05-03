@@ -13,14 +13,14 @@
 
 #include "wx/defs.h"
 
-class  wxDC;
-class  wxRect;
+class WXDLLIMPEXP_FWD_CORE wxDC;
+class WXDLLIMPEXP_FWD_CORE wxRect;
 
 // ----------------------------------------------------------------------------
 // wxMarkupText: allows to measure and draw the text containing markup.
 // ----------------------------------------------------------------------------
 
-class  wxMarkupText
+class WXDLLIMPEXP_CORE wxMarkupText
 {
 public:
     // Constants for Render() flags.

@@ -17,7 +17,7 @@ class wxNonOwnedWindowShapeImpl;
 // wxNonOwnedWindow
 // ----------------------------------------------------------------------------
 
-class  wxNonOwnedWindow : public wxNonOwnedWindowBase
+class WXDLLIMPEXP_CORE wxNonOwnedWindow : public wxNonOwnedWindowBase
 {
 public:
     wxNonOwnedWindow();

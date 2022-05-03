@@ -282,7 +282,7 @@ wxDbgHelpDLL::DumpBaseType(BasicType bt, DWORD64 length, PVOID pAddress)
         }
         else // opaque 64 bit value
         {
-            s.Printf(L"%#" wxLongLongFmtSpec L"x", *(wxLongLong_t *)pAddress);
+            s.Printf("%#" wxLongLongFmtSpec "x", *(wxLongLong_t *)pAddress);
         }
     }
 

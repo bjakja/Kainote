@@ -123,7 +123,7 @@ void wxFontPickerCtrl::SetSelectedFont(const wxFont &f)
 
 void wxFontPickerCtrl::UpdatePickerFromTextCtrl()
 {
-    //wxASSERT(m_text);
+    wxASSERT(m_text);
 
     if (m_bIgnoreNextTextCtrlUpdate)
     {

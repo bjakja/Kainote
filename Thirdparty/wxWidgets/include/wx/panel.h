@@ -20,15 +20,15 @@
 #include "wx/window.h"
 #include "wx/containr.h"
 
-class  wxControlContainer;
+class WXDLLIMPEXP_FWD_CORE wxControlContainer;
 
-extern const char wxPanelNameStr[];
+extern WXDLLIMPEXP_DATA_CORE(const char) wxPanelNameStr[];
 
 // ----------------------------------------------------------------------------
 // wxPanel contains other controls and implements TAB traversal between them
 // ----------------------------------------------------------------------------
 
-class  wxPanelBase : public wxNavigationEnabled<wxWindow>
+class WXDLLIMPEXP_CORE wxPanelBase : public wxNavigationEnabled<wxWindow>
 {
 public:
     wxPanelBase() { }

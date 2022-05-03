@@ -14,7 +14,7 @@
 
 #include "wx/dialog.h"
 
-class  wxColourDialog : public wxDialog
+class WXDLLIMPEXP_CORE wxColourDialog : public wxDialog
 {
 public:
     wxColourDialog() {}

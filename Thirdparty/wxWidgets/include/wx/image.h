@@ -85,9 +85,9 @@ const unsigned char wxIMAGE_ALPHA_OPAQUE = 0xff;
 // classes
 //-----------------------------------------------------------------------------
 
-class  wxImageHandler;
-class  wxImage;
-class  wxPalette;
+class WXDLLIMPEXP_FWD_CORE wxImageHandler;
+class WXDLLIMPEXP_FWD_CORE wxImage;
+class WXDLLIMPEXP_FWD_CORE wxPalette;
 
 //-----------------------------------------------------------------------------
 // wxVariant support
@@ -95,14 +95,14 @@ class  wxPalette;
 
 #if wxUSE_VARIANT
 #include "wx/variant.h"
-DECLARE_VARIANT_OBJECT_EXPORTED(wxImage,)
+DECLARE_VARIANT_OBJECT_EXPORTED(wxImage,WXDLLIMPEXP_CORE)
 #endif
 
 //-----------------------------------------------------------------------------
 // wxImageHandler
 //-----------------------------------------------------------------------------
 
-class  wxImageHandler: public wxObject
+class WXDLLIMPEXP_CORE wxImageHandler: public wxObject
 {
 public:
     wxImageHandler()
@@ -179,7 +179,7 @@ private:
 // wxImageHistogram
 //-----------------------------------------------------------------------------
 
-class  wxImageHistogramEntry
+class WXDLLIMPEXP_CORE wxImageHistogramEntry
 {
 public:
     wxImageHistogramEntry() { index = value = 0; }
@@ -191,7 +191,7 @@ WX_DECLARE_EXPORTED_HASH_MAP(unsigned long, wxImageHistogramEntry,
                              wxIntegerHash, wxIntegerEqual,
                              wxImageHistogramBase);
 
-class  wxImageHistogram : public wxImageHistogramBase
+class WXDLLIMPEXP_CORE wxImageHistogram : public wxImageHistogramBase
 {
 public:
     wxImageHistogram() : wxImageHistogramBase(256) { }
@@ -221,7 +221,7 @@ public:
 // wxImage
 //-----------------------------------------------------------------------------
 
-class  wxImage: public wxObject
+class WXDLLIMPEXP_CORE wxImage: public wxObject
 {
 public:
     // red, green and blue are 8 bit unsigned integers in the range of 0..255
@@ -593,7 +593,7 @@ protected:
     virtual wxObjectRefData* CloneRefData(const wxObjectRefData* data) const;
 
 private:
-    friend class  wxImageHandler;
+    friend class WXDLLIMPEXP_FWD_CORE wxImageHandler;
 
     // Possible values for MakeEmptyClone() flags.
     enum
@@ -627,9 +627,9 @@ private:
 };
 
 
-extern void  wxInitAllImageHandlers();
+extern void WXDLLIMPEXP_CORE wxInitAllImageHandlers();
 
-extern wxImage    wxNullImage;
+extern WXDLLIMPEXP_DATA_CORE(wxImage)    wxNullImage;
 
 //-----------------------------------------------------------------------------
 // wxImage handlers

@@ -37,8 +37,8 @@
     #define wxHAS_TEXT_WINDOW_STREAM 0
 #endif
 
-class  wxTextCtrl;
-class  wxTextCtrlBase;
+class WXDLLIMPEXP_FWD_CORE wxTextCtrl;
+class WXDLLIMPEXP_FWD_CORE wxTextCtrlBase;
 
 // ----------------------------------------------------------------------------
 // wxTextCtrl types
@@ -52,7 +52,7 @@ typedef long wxTextCoord;
 // constants
 // ----------------------------------------------------------------------------
 
-extern const char wxTextCtrlNameStr[];
+extern WXDLLIMPEXP_DATA_CORE(const char) wxTextCtrlNameStr[];
 
 // this is intentionally not enum to avoid warning fixes with
 // typecasting from enum type to wxTextCoord
@@ -278,7 +278,7 @@ enum wxTextAttrLineSpacing
 // wxTextAttr: a structure containing the visual attributes of a text
 // ----------------------------------------------------------------------------
 
-class  wxTextAttr
+class WXDLLIMPEXP_CORE wxTextAttr
 {
 public:
     // ctors
@@ -530,7 +530,7 @@ private:
 // wxTextAreaBase: multiline text control specific methods
 // ----------------------------------------------------------------------------
 
-class  wxTextAreaBase
+class WXDLLIMPEXP_CORE wxTextAreaBase
 {
 public:
     wxTextAreaBase() { }
@@ -635,7 +635,7 @@ protected:
 // and so any classes which "look like" wxTextCtrl (such as wxRichTextCtrl)
 // but don't need the (native) implementation bits from wxTextEntry should
 // actually derive from this one and not wxTextCtrlBase
-class  wxTextCtrlIface : public wxTextAreaBase,
+class WXDLLIMPEXP_CORE wxTextCtrlIface : public wxTextAreaBase,
                                          public wxTextEntryBase
 {
 public:
@@ -665,7 +665,7 @@ private:
 // wxTextCtrl: a single or multiple line text zone where user can edit text
 // ----------------------------------------------------------------------------
 
-class  wxTextCtrlBase : public wxControl,
+class WXDLLIMPEXP_CORE wxTextCtrlBase : public wxControl,
 #if wxHAS_TEXT_WINDOW_STREAM
                                    public wxSTD streambuf,
 #endif
@@ -795,14 +795,14 @@ protected:
 // wxTextCtrl events
 // ----------------------------------------------------------------------------
 
-class  wxTextUrlEvent;
+class WXDLLIMPEXP_FWD_CORE wxTextUrlEvent;
 
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_TEXT_UPDATED, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_TEXT_ENTER, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_TEXT_URL, wxTextUrlEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_TEXT_MAXLEN, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_TEXT_UPDATED, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_TEXT_ENTER, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_TEXT_URL, wxTextUrlEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_TEXT_MAXLEN, wxCommandEvent);
 
-class  wxTextUrlEvent : public wxCommandEvent
+class WXDLLIMPEXP_CORE wxTextUrlEvent : public wxCommandEvent
 {
 public:
     wxTextUrlEvent(int winid, const wxMouseEvent& evtMouse,
@@ -867,7 +867,7 @@ typedef void (wxEvtHandler::*wxTextUrlEventFunction)(wxTextUrlEvent&);
 // C++ stream to the wxTextCtrl given to its ctor during its lifetime.
 // ----------------------------------------------------------------------------
 
-class  wxStreamToTextRedirector
+class WXDLLIMPEXP_CORE wxStreamToTextRedirector
 {
 private:
     void Init(wxTextCtrl *text)

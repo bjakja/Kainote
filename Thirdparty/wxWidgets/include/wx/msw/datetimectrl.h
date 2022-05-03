@@ -20,7 +20,7 @@ struct tagNMDATETIMECHANGE;
 // wxDateTimePickerCtrl
 // ----------------------------------------------------------------------------
 
-class  wxDateTimePickerCtrl : public wxDateTimePickerCtrlBase
+class WXDLLIMPEXP_ADV wxDateTimePickerCtrl : public wxDateTimePickerCtrlBase
 {
 public:
     // set/get the date
@@ -59,14 +59,14 @@ protected:
     // Override to return the date/time format used by this control.
     virtual wxLocaleInfo MSWGetFormat() const /* = 0 */
     {
-        //wxFAIL_MSG( "Unreachable" );
+        wxFAIL_MSG( "Unreachable" );
         return wxLOCALE_TIME_FMT;
     }
 
     // Override to indicate whether we can have no date at all.
     virtual bool MSWAllowsNone() const /* = 0 */
     {
-        //wxFAIL_MSG( "Unreachable" );
+        wxFAIL_MSG( "Unreachable" );
         return false;
     }
 
@@ -75,7 +75,7 @@ protected:
     virtual bool MSWOnDateTimeChange(const tagNMDATETIMECHANGE& dtch) /* = 0 */
     {
         wxUnusedVar(dtch);
-        //wxFAIL_MSG( "Unreachable" );
+        wxFAIL_MSG( "Unreachable" );
         return false;
     }
 

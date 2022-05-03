@@ -114,7 +114,7 @@ wxAppInitializerFunction wxAppConsoleBase::ms_appInitFn = NULL;
 
 wxSocketManager *wxAppTraitsBase::ms_manager = NULL;
 
-wxList wxPendingDelete;
+WXDLLIMPEXP_DATA_BASE(wxList) wxPendingDelete;
 
 // ----------------------------------------------------------------------------
 // wxEventLoopPtr
@@ -290,7 +290,7 @@ wxAppTraits *wxAppConsoleBase::GetTraits()
     {
         m_traits = CreateTraits();
 
-        //wxASSERT_MSG( m_traits, wxT("wxApp::CreateTraits() failed?") );
+        wxASSERT_MSG( m_traits, wxT("wxApp::CreateTraits() failed?") );
     }
 
     return m_traits;
@@ -427,8 +427,8 @@ void wxAppConsoleBase::RemovePendingEventHandler(wxEvtHandler* toRemove)
         m_handlersWithPendingEvents.Remove(toRemove);
 
         // check that the handler was present only once in the list
-        /*wxASSERT_MSG( m_handlersWithPendingEvents.Index(toRemove) == wxNOT_FOUND,
-                        "Handler occurs twice in the m_handlersWithPendingEvents list!" );*/
+        wxASSERT_MSG( m_handlersWithPendingEvents.Index(toRemove) == wxNOT_FOUND,
+                        "Handler occurs twice in the m_handlersWithPendingEvents list!" );
     }
     //else: it wasn't in this list at all, it's ok
 
@@ -437,8 +437,8 @@ void wxAppConsoleBase::RemovePendingEventHandler(wxEvtHandler* toRemove)
         m_handlersWithPendingDelayedEvents.Remove(toRemove);
 
         // check that the handler was present only once in the list
-        /*wxASSERT_MSG( m_handlersWithPendingDelayedEvents.Index(toRemove) == wxNOT_FOUND,
-                        "Handler occurs twice in m_handlersWithPendingDelayedEvents list!" );*/
+        wxASSERT_MSG( m_handlersWithPendingDelayedEvents.Index(toRemove) == wxNOT_FOUND,
+                        "Handler occurs twice in m_handlersWithPendingDelayedEvents list!" );
     }
     //else: it wasn't in this list at all, it's ok
 
@@ -482,8 +482,8 @@ void wxAppConsoleBase::ProcessPendingEvents()
     {
         wxENTER_CRIT_SECT(m_handlersWithPendingEventsLocker);
 
-        /*wxCHECK_RET( m_handlersWithPendingDelayedEvents.IsEmpty(),
-                     "this helper list should be empty" );*/
+        wxCHECK_RET( m_handlersWithPendingDelayedEvents.IsEmpty(),
+                     "this helper list should be empty" );
 
         // iterate until the list becomes empty: the handlers remove themselves
         // from it when they don't have any more pending events
@@ -521,8 +521,8 @@ void wxAppConsoleBase::DeletePendingEvents()
 {
     wxENTER_CRIT_SECT(m_handlersWithPendingEventsLocker);
 
-    /*wxCHECK_RET( m_handlersWithPendingDelayedEvents.IsEmpty(),
-                 "this helper list should be empty" );*/
+    wxCHECK_RET( m_handlersWithPendingDelayedEvents.IsEmpty(),
+                 "this helper list should be empty" );
 
     for (unsigned int i=0; i<m_handlersWithPendingEvents.GetCount(); i++)
         m_handlersWithPendingEvents[i]->DeletePendingEvents();
@@ -628,7 +628,7 @@ void wxAppConsoleBase::OnUnhandledException()
     }
 
     wxMessageOutputBest().Printf(
-        L"*** Caught unhandled %s; terminating\n", what
+        "*** Caught unhandled %s; terminating\n", what
     );
 #endif // __WXDEBUG__
 }
@@ -834,7 +834,7 @@ bool wxConsoleAppTraitsBase::HasStderr()
 #if wxUSE_INTL
 void wxAppTraitsBase::SetLocale()
 {
-    wxSetlocale(LC_ALL, L"");
+    wxSetlocale(LC_ALL, "");
     wxUpdateLocaleIsUtf8();
 }
 #endif
@@ -853,14 +853,14 @@ void wxAppTraitsBase::MutexGuiLeave()
     wxMutexGuiLeaveImpl();
 }
 
-void  wxMutexGuiEnter()
+void WXDLLIMPEXP_BASE wxMutexGuiEnter()
 {
     wxAppTraits * const traits = wxAppConsoleBase::GetTraitsIfExists();
     if ( traits )
         traits->MutexGuiEnter();
 }
 
-void  wxMutexGuiLeave()
+void WXDLLIMPEXP_BASE wxMutexGuiLeave()
 {
     wxAppTraits * const traits = wxAppConsoleBase::GetTraitsIfExists();
     if ( traits )
@@ -919,7 +919,7 @@ wxString wxAppTraitsBase::GetAssertStackTrace()
             m_stackTrace << wxString::Format
                             (
                               wxT("[%02d] "),
-                              (int)frame.GetLevel()
+                              wx_truncate_cast(int, frame.GetLevel())
                             );
 
             wxString name = frame.GetName();
@@ -937,7 +937,7 @@ wxString wxAppTraitsBase::GetAssertStackTrace()
                 m_stackTrace << wxT('\t')
                              << frame.GetFileName()
                              << wxT(':')
-                             << (long)frame.GetLine();
+                             << frame.GetLine();
             }
 
             m_stackTrace << wxT('\n');
@@ -1250,7 +1250,7 @@ void ShowAssertDialog(const wxString& file,
     // since dialogs cannot be displayed
     if ( !wxThread::IsMain() )
     {
-        msg += wxString::Format(L" [in thread %lx]", wxThread::GetCurrentId());
+        msg += wxString::Format(" [in thread %lx]", wxThread::GetCurrentId());
     }
 #endif // wxUSE_THREADS
 

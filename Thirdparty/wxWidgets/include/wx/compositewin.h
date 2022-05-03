@@ -14,7 +14,7 @@
 #include "wx/window.h"
 #include "wx/containr.h"
 
-class  wxToolTip;
+class WXDLLIMPEXP_FWD_CORE wxToolTip;
 
 // NB: This is an experimental and, as for now, undocumented class used only by
 //     wxWidgets itself internally. Don't use it in your code until its API is

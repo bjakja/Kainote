@@ -19,11 +19,11 @@
 #include "wx/bookctrl.h"
 #include "wx/containr.h"
 
-class  wxListView;
-class  wxListEvent;
+class WXDLLIMPEXP_FWD_CORE wxListView;
+class WXDLLIMPEXP_FWD_CORE wxListEvent;
 
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_LISTBOOK_PAGE_CHANGED,  wxBookCtrlEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_LISTBOOK_PAGE_CHANGING, wxBookCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_LISTBOOK_PAGE_CHANGED,  wxBookCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_LISTBOOK_PAGE_CHANGING, wxBookCtrlEvent );
 
 // wxListbook flags
 #define wxLB_DEFAULT          wxBK_DEFAULT
@@ -37,7 +37,7 @@ wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_LISTBOOK_PAGE_CHANGING, wxBookCtrlEven
 // wxListbook
 // ----------------------------------------------------------------------------
 
-class  wxListbook : public wxNavigationEnabled<wxBookCtrlBase>
+class WXDLLIMPEXP_CORE wxListbook : public wxNavigationEnabled<wxBookCtrlBase>
 {
 public:
     wxListbook() { }

@@ -27,7 +27,7 @@
 
 #if wxUSE_STATLINE
 
-extern const char wxStaticLineNameStr[] = "staticLine";
+extern WXDLLEXPORT_DATA(const char) wxStaticLineNameStr[] = "staticLine";
 
 // ----------------------------------------------------------------------------
 // XTI

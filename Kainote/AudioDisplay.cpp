@@ -326,7 +326,7 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 		if (!InitDX(wxSize(w, displayH))){
 			ClearDX();
 			if (!InitDX(wxSize(w, displayH))){
-				KaiLog(_("Nie można zresetować Direct3D"));
+				KaiLogSilent(_("Nie można zresetować Direct3D"));
 				needToReset = true;
 				return;
 			}

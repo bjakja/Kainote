@@ -26,7 +26,7 @@ typedef int wxWindowID;
 //
 // This class is always defined but it is trivial if wxUSE_AUTOID_MANAGEMENT is
 // off.
-class wxWindowIDRef
+class WXDLLIMPEXP_CORE wxWindowIDRef
 {
 public:
     // default ctor
@@ -118,61 +118,61 @@ private:
 };
 
 // comparison operators
-//inline bool operator==(const wxWindowIDRef& lhs, const wxWindowIDRef& rhs)
-//{
-//    return lhs.GetValue() == rhs.GetValue();
-//}
-//
-//inline bool operator==(const wxWindowIDRef& lhs, int rhs)
-//{
-//    return lhs.GetValue() == rhs;
-//}
-//
-//inline bool operator==(const wxWindowIDRef& lhs, long rhs)
-//{
-//    return lhs.GetValue() == rhs;
-//}
-//
-//inline bool operator==(int lhs, const wxWindowIDRef& rhs)
-//{
-//    return rhs == lhs;
-//}
-//
-//inline bool operator==(long lhs, const wxWindowIDRef& rhs)
-//{
-//    return rhs == lhs;
-//}
-//
-//inline bool operator!=(const wxWindowIDRef& lhs, const wxWindowIDRef& rhs)
-//{
-//    return !(lhs == rhs);
-//}
-//
-//inline bool operator!=(const wxWindowIDRef& lhs, int rhs)
-//{
-//    return !(lhs == rhs);
-//}
-//
-//inline bool operator!=(const wxWindowIDRef& lhs, long rhs)
-//{
-//    return !(lhs == rhs);
-//}
-//
-//inline bool operator!=(int lhs, const wxWindowIDRef& rhs)
-//{
-//    return !(lhs == rhs);
-//}
-//
-//inline bool operator!=(long lhs, const wxWindowIDRef& rhs)
-//{
-//    return !(lhs == rhs);
-//}
+inline bool operator==(const wxWindowIDRef& lhs, const wxWindowIDRef& rhs)
+{
+    return lhs.GetValue() == rhs.GetValue();
+}
+
+inline bool operator==(const wxWindowIDRef& lhs, int rhs)
+{
+    return lhs.GetValue() == rhs;
+}
+
+inline bool operator==(const wxWindowIDRef& lhs, long rhs)
+{
+    return lhs.GetValue() == rhs;
+}
+
+inline bool operator==(int lhs, const wxWindowIDRef& rhs)
+{
+    return rhs == lhs;
+}
+
+inline bool operator==(long lhs, const wxWindowIDRef& rhs)
+{
+    return rhs == lhs;
+}
+
+inline bool operator!=(const wxWindowIDRef& lhs, const wxWindowIDRef& rhs)
+{
+    return !(lhs == rhs);
+}
+
+inline bool operator!=(const wxWindowIDRef& lhs, int rhs)
+{
+    return !(lhs == rhs);
+}
+
+inline bool operator!=(const wxWindowIDRef& lhs, long rhs)
+{
+    return !(lhs == rhs);
+}
+
+inline bool operator!=(int lhs, const wxWindowIDRef& rhs)
+{
+    return !(lhs == rhs);
+}
+
+inline bool operator!=(long lhs, const wxWindowIDRef& rhs)
+{
+    return !(lhs == rhs);
+}
 
 // ----------------------------------------------------------------------------
 // wxIdManager
 // ----------------------------------------------------------------------------
 
-class wxIdManager
+class WXDLLIMPEXP_CORE wxIdManager
 {
 public:
     // This returns an id value and not an wxWindowIDRef.  The returned value

@@ -13,7 +13,7 @@
 #include "wx/defs.h"
 #include "wx/string.h"
 
-//#include <string>
+#include <string>
 
 #if SIZEOF_WCHAR_T == 2
 typedef wxWCharBuffer wxU16CharBuffer;
@@ -39,7 +39,7 @@ typedef wxScopedCharTypeBuffer<wxChar32> wxScopedU32CharBuffer;
     #pragma warning(disable:4275)
 #endif
 
-class  wxUString: public std::basic_string<wxChar32>
+class WXDLLIMPEXP_BASE wxUString: public std::basic_string<wxChar32>
 {
 public:
     wxUString() { }

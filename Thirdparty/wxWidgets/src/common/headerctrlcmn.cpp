@@ -74,7 +74,7 @@ public:
 // wxHeaderCtrlBase implementation
 // ============================================================================
 
-extern const char wxHeaderCtrlNameStr[] = "wxHeaderCtrl";
+extern WXDLLIMPEXP_DATA_CORE(const char) wxHeaderCtrlNameStr[] = "wxHeaderCtrl";
 
 BEGIN_EVENT_TABLE(wxHeaderCtrlBase, wxControl)
     EVT_HEADER_SEPARATOR_DCLICK(wxID_ANY, wxHeaderCtrlBase::OnSeparatorDClick)
@@ -84,16 +84,16 @@ BEGIN_EVENT_TABLE(wxHeaderCtrlBase, wxControl)
 END_EVENT_TABLE()
 
 void wxHeaderCtrlBase::ScrollWindow(int dx,
-                                    int dy,
-                                    const wxRect * rect)
+                                    int WXUNUSED_UNLESS_DEBUG(dy),
+                                    const wxRect * WXUNUSED_UNLESS_DEBUG(rect))
 
 {
     // this doesn't make sense at all
-    //wxASSERT_MSG( !dy, "header window can't be scrolled vertically" );
+    wxASSERT_MSG( !dy, "header window can't be scrolled vertically" );
 
-    //// this would actually be nice to support for "frozen" headers but it isn't
-    //// supported currently
-    //wxASSERT_MSG( !rect, "header window can't be scrolled partially" );
+    // this would actually be nice to support for "frozen" headers but it isn't
+    // supported currently
+    wxASSERT_MSG( !rect, "header window can't be scrolled partially" );
 
     DoScrollHorz(dx);
 }
@@ -168,15 +168,15 @@ void wxHeaderCtrlBase::OnRClick(wxHeaderCtrlEvent& event)
 void wxHeaderCtrlBase::SetColumnsOrder(const wxArrayInt& order)
 {
     const unsigned count = GetColumnCount();
-    //wxCHECK_RET( order.size() == count, "wrong number of columns" );
+    wxCHECK_RET( order.size() == count, "wrong number of columns" );
 
     // check the array validity
     wxArrayInt seen(count, 0);
     for ( unsigned n = 0; n < count; n++ )
     {
         const unsigned idx = order[n];
-        //wxCHECK_RET( idx < count, "invalid column index" );
-        //wxCHECK_RET( !seen[idx], "duplicate column index" );
+        wxCHECK_RET( idx < count, "invalid column index" );
+        wxCHECK_RET( !seen[idx], "duplicate column index" );
 
         seen[idx] = 1;
     }
@@ -200,14 +200,14 @@ wxArrayInt wxHeaderCtrlBase::GetColumnsOrder() const
 {
     const wxArrayInt order = DoGetColumnsOrder();
 
-    //wxASSERT_MSG( order.size() == GetColumnCount(), "invalid order array" );
+    wxASSERT_MSG( order.size() == GetColumnCount(), "invalid order array" );
 
     return order;
 }
 
 unsigned int wxHeaderCtrlBase::GetColumnAt(unsigned int pos) const
 {
-    //wxCHECK_MSG( pos < GetColumnCount(), wxNO_COLUMN, "invalid position" );
+    wxCHECK_MSG( pos < GetColumnCount(), wxNO_COLUMN, "invalid position" );
 
     return GetColumnsOrder()[pos];
 }
@@ -216,7 +216,7 @@ unsigned int wxHeaderCtrlBase::GetColumnPos(unsigned int idx) const
 {
     const unsigned count = GetColumnCount();
 
-    //wxCHECK_MSG( idx < count, wxNO_COLUMN, "invalid index" );
+    wxCHECK_MSG( idx < count, wxNO_COLUMN, "invalid index" );
 
     const wxArrayInt order = GetColumnsOrder();
     for ( unsigned n = 0; n < count; n++ )
@@ -225,7 +225,7 @@ unsigned int wxHeaderCtrlBase::GetColumnPos(unsigned int idx) const
             return n;
     }
 
-    //wxFAIL_MSG( "column unexpectedly not displayed at all" );
+    wxFAIL_MSG( "column unexpectedly not displayed at all" );
 
     return wxNO_COLUMN;
 }
@@ -290,7 +290,7 @@ wxHeaderCtrlBase::DoResizeColumnIndices(wxArrayInt& colIndices, unsigned int cou
     }
     //else: count didn't really change, nothing to do
 
-    //wxASSERT_MSG( colIndices.size() == count, "logic error" );
+    wxASSERT_MSG( colIndices.size() == count, "logic error" );
 }
 
 // ----------------------------------------------------------------------------

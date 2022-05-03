@@ -18,7 +18,7 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-//#include "wx/wxprec.h"
+#include "wx/wxprec.h"
 
 #ifdef __BORLANDC__
     #pragma hdrstop
@@ -41,9 +41,9 @@ IMPLEMENT_DYNAMIC_CLASS(wxAcceleratorTable, wxObject)
 // data defining wxAcceleratorTable
 // ----------------------------------------------------------------------------
 
-class  wxAcceleratorRefData: public wxObjectRefData
+class WXDLLEXPORT wxAcceleratorRefData: public wxObjectRefData
 {
-    friend class  wxAcceleratorTable;
+    friend class WXDLLIMPEXP_FWD_CORE wxAcceleratorTable;
 public:
     wxAcceleratorRefData();
     virtual ~wxAcceleratorRefData();

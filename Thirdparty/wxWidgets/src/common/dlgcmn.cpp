@@ -48,7 +48,7 @@
 #include "wx/display.h"
 #endif
 
-extern const char wxDialogNameStr[] = "dialog";
+extern WXDLLEXPORT_DATA(const char) wxDialogNameStr[] = "dialog";
 
 // ----------------------------------------------------------------------------
 // XTI
@@ -145,7 +145,7 @@ wxWindow *wxDialogBase::CheckIfCanBeUsedAsParent(wxWindow *parent) const
     if ( !parent )
         return NULL;
 
-    extern wxList wxPendingDelete;
+    extern WXDLLIMPEXP_DATA_BASE(wxList) wxPendingDelete;
     if ( wxPendingDelete.Member(parent) || parent->IsBeingDeleted() )
     {
         // this window is being deleted and we shouldn't create any children

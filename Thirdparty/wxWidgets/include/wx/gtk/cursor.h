@@ -13,14 +13,14 @@
 #include "wx/gdiobj.h"
 #include "wx/gdicmn.h"
 
-class  wxColour;
-class  wxImage;
+class WXDLLIMPEXP_FWD_CORE wxColour;
+class WXDLLIMPEXP_FWD_CORE wxImage;
 
 //-----------------------------------------------------------------------------
 // wxCursor
 //-----------------------------------------------------------------------------
 
-class  wxCursor : public wxGDIObject
+class WXDLLIMPEXP_CORE wxCursor : public wxGDIObject
 {
 public:
     wxCursor();

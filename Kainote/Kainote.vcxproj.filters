@@ -180,12 +180,6 @@
     <ClCompile Include="BitmapButton.cpp">
       <Filter>B</Filter>
     </ClCompile>
-    <ClCompile Include="Demux.cpp">
-      <Filter>D</Filter>
-    </ClCompile>
-    <ClCompile Include="DialogueTextEditor.cpp">
-      <Filter>D</Filter>
-    </ClCompile>
     <ClCompile Include="DropFiles.cpp">
       <Filter>D</Filter>
     </ClCompile>
@@ -253,9 +247,6 @@
       <Filter>K</Filter>
     </ClCompile>
     <ClCompile Include="KainoteApp.cpp">
-      <Filter>K</Filter>
-    </ClCompile>
-    <ClCompile Include="KainoteFrame.cpp">
       <Filter>K</Filter>
     </ClCompile>
     <ClCompile Include="KaiPanel.cpp">
@@ -363,11 +354,17 @@
     <ClCompile Include="NewCatalog.cpp">
       <Filter>N</Filter>
     </ClCompile>
+    <ClCompile Include="NumCtrl.cpp">
+      <Filter>N</Filter>
+    </ClCompile>
+    <ClCompile Include="DialogueTextEditor.cpp">
+      <Filter>D</Filter>
+    </ClCompile>
     <ClCompile Include="Notebook.cpp">
       <Filter>N</Filter>
     </ClCompile>
-    <ClCompile Include="NumCtrl.cpp">
-      <Filter>N</Filter>
+    <ClCompile Include="Demux.cpp">
+      <Filter>D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -486,12 +483,6 @@
     <ClInclude Include="BitmapButton.h">
       <Filter>B</Filter>
     </ClInclude>
-    <ClInclude Include="Demux.h">
-      <Filter>D</Filter>
-    </ClInclude>
-    <ClInclude Include="DialogueTextEditor.h">
-      <Filter>D</Filter>
-    </ClInclude>
     <ClInclude Include="DropFiles.h">
       <Filter>D</Filter>
     </ClInclude>
@@ -509,9 +500,6 @@
     </ClInclude>
     <ClInclude Include="EnumFactory.h">
       <Filter>E</Filter>
-    </ClInclude>
-    <ClInclude Include="GFFT\Factory.h">
-      <Filter>F</Filter>
     </ClInclude>
     <ClInclude Include="FindReplace.h">
       <Filter>F</Filter>
@@ -568,9 +556,6 @@
       <Filter>K</Filter>
     </ClInclude>
     <ClInclude Include="KainoteApp.h">
-      <Filter>K</Filter>
-    </ClInclude>
-    <ClInclude Include="KainoteFrame.h">
       <Filter>K</Filter>
     </ClInclude>
     <ClInclude Include="KaiPanel.h">
@@ -678,14 +663,18 @@
     <ClInclude Include="NewCatalog.h">
       <Filter>N</Filter>
     </ClInclude>
-    <ClInclude Include="Notebook.h">
-      <Filter>N</Filter>
-    </ClInclude>
     <ClInclude Include="NumCtrl.h">
       <Filter>N</Filter>
     </ClInclude>
-    <ClInclude Include="VisualClips.h" />
-    <ClInclude Include="VisualClipPoint.h" />
+    <ClInclude Include="DialogueTextEditor.h">
+      <Filter>D</Filter>
+    </ClInclude>
+    <ClInclude Include="Notebook.h">
+      <Filter>N</Filter>
+    </ClInclude>
+    <ClInclude Include="Demux.h">
+      <Filter>D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc">

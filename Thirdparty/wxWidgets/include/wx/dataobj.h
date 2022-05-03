@@ -92,7 +92,7 @@ public:
 
 // the value for default argument to some functions (corresponds to
 // wxDF_INVALID)
-extern  const wxDataFormat& wxFormatInvalid;
+extern WXDLLIMPEXP_CORE const wxDataFormat& wxFormatInvalid;
 
 // ----------------------------------------------------------------------------
 // wxDataObject represents a piece of data which knows which formats it
@@ -114,7 +114,7 @@ extern  const wxDataFormat& wxFormatInvalid;
 // to be supported by SetData() or GetDataHere().
 // ----------------------------------------------------------------------------
 
-class  wxDataObjectBase
+class WXDLLIMPEXP_CORE wxDataObjectBase
 {
 public:
     enum Direction
@@ -194,7 +194,7 @@ public:
 // Otherwise, you should use wxDataObjectComposite or wxDataObject directly.
 // ----------------------------------------------------------------------------
 
-class  wxDataObjectSimple : public wxDataObject
+class WXDLLIMPEXP_CORE wxDataObjectSimple : public wxDataObject
 {
 public:
     // ctor takes the format we support, but it can also be set later with
@@ -261,7 +261,7 @@ private:
 
 WX_DECLARE_EXPORTED_LIST(wxDataObjectSimple, wxSimpleDataObjectList);
 
-class  wxDataObjectComposite : public wxDataObject
+class WXDLLIMPEXP_CORE wxDataObjectComposite : public wxDataObject
 {
 public:
     // ctor
@@ -334,7 +334,7 @@ private:
     #endif
 #endif // wxUSE_UNICODE
 
-class  wxHTMLDataObject : public wxDataObjectSimple
+class WXDLLIMPEXP_CORE wxHTMLDataObject : public wxDataObjectSimple
 {
 public:
     // ctor: you can specify the text here or in SetText(), or override
@@ -373,7 +373,7 @@ private:
     wxString m_html;
 };
 
-class  wxTextDataObject : public wxDataObjectSimple
+class WXDLLIMPEXP_CORE wxTextDataObject : public wxDataObjectSimple
 {
 public:
     // ctor: you can specify the text here or in SetText(), or override
@@ -441,7 +441,7 @@ private:
 // wxBitmapDataObject contains a bitmap
 // ----------------------------------------------------------------------------
 
-class  wxBitmapDataObjectBase : public wxDataObjectSimple
+class WXDLLIMPEXP_CORE wxBitmapDataObjectBase : public wxDataObjectSimple
 {
 public:
     // ctor: you can specify the bitmap here or in SetBitmap(), or override
@@ -469,7 +469,7 @@ protected:
 //     data from drag and drop operation.
 // ----------------------------------------------------------------------------
 
-class  wxFileDataObjectBase : public wxDataObjectSimple
+class WXDLLIMPEXP_CORE wxFileDataObjectBase : public wxDataObjectSimple
 {
 public:
     // ctor: use AddFile() later to fill the array
@@ -490,7 +490,7 @@ protected:
 // It is understood that this data can be copied bitwise.
 // ----------------------------------------------------------------------------
 
-class  wxCustomDataObject : public wxDataObjectSimple
+class WXDLLIMPEXP_CORE wxCustomDataObject : public wxDataObjectSimple
 {
 public:
     // if you don't specify the format in the ctor, you can still use

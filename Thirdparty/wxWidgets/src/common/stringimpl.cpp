@@ -79,7 +79,7 @@ const size_t wxStringImpl::npos = (size_t) -1;
 #if wxUSE_UNICODE_UTF8
 const wxStringCharType WXDLLIMPEXP_BASE *wxEmptyStringImpl = "";
 #endif
-const wxChar  *wxEmptyString = wxT("");
+const wxChar WXDLLIMPEXP_BASE *wxEmptyString = wxT("");
 
 #else
 

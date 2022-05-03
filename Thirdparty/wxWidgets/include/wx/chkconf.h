@@ -406,7 +406,7 @@
 #   ifdef wxABORT_ON_CONFIG_ERROR
 #       error "wxUSE_ACCEL must be defined, please read comment near the top of this file."
 #   else
-#       define wxUSE_ACCEL 1
+#       define wxUSE_ACCEL 0
 #   endif
 #endif /* !defined(wxUSE_ACCEL) */
 
@@ -1648,7 +1648,7 @@
 
 #if wxUSE_GRAPHICS_CONTEXT && !wxUSE_GEOMETRY
 #   ifdef wxABORT_ON_CONFIG_ERROR
-#       //error "wxUSE_GRAPHICS_CONTEXT requires wxUSE_GEOMETRY"
+#       error "wxUSE_GRAPHICS_CONTEXT requires wxUSE_GEOMETRY"
 #   else
 #       undef wxUSE_GRAPHICS_CONTEXT
 #       define wxUSE_GRAPHICS_CONTEXT 0
@@ -1807,7 +1807,7 @@
 #if wxUSE_WXHTML_HELP
 #   if !wxUSE_HELP || !wxUSE_HTML || !wxUSE_COMBOBOX || !wxUSE_NOTEBOOK || !wxUSE_SPINCTRL
 #       ifdef wxABORT_ON_CONFIG_ERROR
-#           //error "Built in help controller can't be compiled"
+#           error "Built in help controller can't be compiled"
 #       else
 #           undef wxUSE_HELP
 #           define wxUSE_HELP 1

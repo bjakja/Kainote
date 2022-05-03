@@ -15,7 +15,7 @@
 #include "wx/dynarray.h"
 
 // General item class
-class  wxControl : public wxControlBase
+class WXDLLIMPEXP_CORE wxControl : public wxControlBase
 {
 public:
     wxControl() { }

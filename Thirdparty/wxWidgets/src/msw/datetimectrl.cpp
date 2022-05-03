@@ -80,8 +80,8 @@ wxDateTimePickerCtrl::MSWCreateDateTimePicker(wxWindow *parent,
 
 void wxDateTimePickerCtrl::SetValue(const wxDateTime& dt)
 {
-    /*wxCHECK_RET( dt.IsValid() || MSWAllowsNone(),
-                    wxT("this control requires a valid date") );*/
+    wxCHECK_RET( dt.IsValid() || MSWAllowsNone(),
+                    wxT("this control requires a valid date") );
 
     SYSTEMTIME st;
     if ( dt.IsValid() )
@@ -93,7 +93,7 @@ void wxDateTimePickerCtrl::SetValue(const wxDateTime& dt)
     {
         // The only expected failure is when the date is out of range but we
         // already checked for this above.
-        //wxFAIL_MSG( wxT("Setting the calendar date unexpectedly failed.") );
+        wxFAIL_MSG( wxT("Setting the calendar date unexpectedly failed.") );
 
         // In any case, skip updating m_date below.
         return;

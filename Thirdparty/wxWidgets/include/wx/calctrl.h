@@ -82,7 +82,7 @@ enum wxCalendarDateBorder
 // wxCalendarDateAttr: custom attributes for a calendar date
 // ----------------------------------------------------------------------------
 
-class  wxCalendarDateAttr
+class WXDLLIMPEXP_ADV wxCalendarDateAttr
 {
 public:
     // ctors
@@ -153,9 +153,9 @@ private:
 // wxCalendarCtrl events
 // ----------------------------------------------------------------------------
 
-class  wxCalendarCtrl;
+class WXDLLIMPEXP_FWD_ADV wxCalendarCtrl;
 
-class  wxCalendarEvent : public wxDateEvent
+class WXDLLIMPEXP_ADV wxCalendarEvent : public wxDateEvent
 {
 public:
     wxCalendarEvent() : m_wday(wxDateTime::Inv_WeekDay)  { }
@@ -180,7 +180,7 @@ private:
 // wxCalendarCtrlBase
 // ----------------------------------------------------------------------------
 
-class  wxCalendarCtrlBase : public wxControl
+class WXDLLIMPEXP_ADV wxCalendarCtrlBase : public wxControl
 {
 public:
     // do we allow changing the month/year?
@@ -361,16 +361,16 @@ protected:
 // calendar event types and macros for handling them
 // ----------------------------------------------------------------------------
 
-wxDECLARE_EXPORTED_EVENT( , wxEVT_CALENDAR_SEL_CHANGED, wxCalendarEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_CALENDAR_PAGE_CHANGED, wxCalendarEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_CALENDAR_DOUBLECLICKED, wxCalendarEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_CALENDAR_WEEKDAY_CLICKED, wxCalendarEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_CALENDAR_WEEK_CLICKED, wxCalendarEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_ADV, wxEVT_CALENDAR_SEL_CHANGED, wxCalendarEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_ADV, wxEVT_CALENDAR_PAGE_CHANGED, wxCalendarEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_ADV, wxEVT_CALENDAR_DOUBLECLICKED, wxCalendarEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_ADV, wxEVT_CALENDAR_WEEKDAY_CLICKED, wxCalendarEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_ADV, wxEVT_CALENDAR_WEEK_CLICKED, wxCalendarEvent );
 
 // deprecated events
-wxDECLARE_EXPORTED_EVENT( , wxEVT_CALENDAR_DAY_CHANGED, wxCalendarEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_CALENDAR_MONTH_CHANGED, wxCalendarEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_CALENDAR_YEAR_CHANGED, wxCalendarEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_ADV, wxEVT_CALENDAR_DAY_CHANGED, wxCalendarEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_ADV, wxEVT_CALENDAR_MONTH_CHANGED, wxCalendarEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_ADV, wxEVT_CALENDAR_YEAR_CHANGED, wxCalendarEvent );
 
 typedef void (wxEvtHandler::*wxCalendarEventFunction)(wxCalendarEvent&);
 

@@ -10,14 +10,14 @@
 #ifndef __GTKCHOICEH__
 #define __GTKCHOICEH__
 
-class  wxSortedArrayString;
-class  wxArrayString;
+class WXDLLIMPEXP_FWD_BASE wxSortedArrayString;
+class WXDLLIMPEXP_FWD_BASE wxArrayString;
 
 //-----------------------------------------------------------------------------
 // wxChoice
 //-----------------------------------------------------------------------------
 
-class  wxChoice : public wxChoiceBase
+class WXDLLIMPEXP_CORE wxChoice : public wxChoiceBase
 {
 public:
     wxChoice();

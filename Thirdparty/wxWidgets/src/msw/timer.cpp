@@ -153,7 +153,7 @@ void wxMSWTimerImpl::Stop()
 
 void wxProcessTimer(wxMSWTimerImpl& timer)
 {
-    //wxASSERT_MSG( timer.IsRunning(), wxT("bogus timer id") );
+    wxASSERT_MSG( timer.IsRunning(), wxT("bogus timer id") );
 
     if ( timer.IsOneShot() )
         timer.Stop();

@@ -64,7 +64,7 @@ public:
     virtual void OnObjectDestroy()
     {
         // Tracked object itself removes us from list of trackers
-        //wxASSERT(m_pobj != NULL);
+        wxASSERT(m_pobj != NULL);
         m_pobj = NULL;
     }
 
@@ -160,7 +160,7 @@ protected:
         }
         else
         {
-            //wxFAIL_MSG( "Tracked class should inherit from wxTrackable" );
+            wxFAIL_MSG( "Tracked class should inherit from wxTrackable" );
 
             Release();
         }
@@ -180,7 +180,7 @@ protected:
         if( pobj )
         {
             // Add ourselves to object tracker list
-            //wxASSERT( ptbase );
+            wxASSERT( ptbase );
             ptbase->AddNode( this );
             m_pobj = pobj;
             m_ptbase = ptbase;
@@ -330,7 +330,7 @@ protected:
             {
                 // If the object we want to track does not support wxTackable, then
                 // log a message and keep the NULL object pointer.
-                //wxFAIL_MSG( "Tracked class should inherit from wxTrackable" );
+                wxFAIL_MSG( "Tracked class should inherit from wxTrackable" );
             }
         }
     }
@@ -342,8 +342,8 @@ protected:
 
 
 // Provide some basic types of weak references
-class  wxEvtHandler;
-class  wxWindow;
+class WXDLLIMPEXP_FWD_BASE wxEvtHandler;
+class WXDLLIMPEXP_FWD_CORE wxWindow;
 
 
 typedef wxWeakRef<wxEvtHandler>  wxEvtHandlerRef;

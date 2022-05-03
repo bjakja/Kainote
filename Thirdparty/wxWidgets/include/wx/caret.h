@@ -13,6 +13,7 @@
 #define _WX_CARET_H_BASE_
 
 #include "wx/defs.h"
+#include "wx/window.h"
 
 #if wxUSE_CARET
 
@@ -21,8 +22,7 @@
 // ---------------------------------------------------------------------------
 
 //class WXDLLIMPEXP_FWD_CORE wxWindow;
-//class WXDLLIMPEXP_FWD_CORE wxWindowBase;
-#include "wx/window.h"
+class WXDLLIMPEXP_FWD_CORE wxWindowBase;
 
 // ----------------------------------------------------------------------------
 // headers we have to include
@@ -35,7 +35,7 @@
 // appear. It can be either a solid block or a custom bitmap (TODO)
 // ----------------------------------------------------------------------------
 
-class wxCaretBase
+class WXDLLIMPEXP_CORE wxCaretBase
 {
 public:
     // ctors
@@ -209,7 +209,7 @@ private:
 #ifdef wxHAS_CARET_USING_OVERLAYS
 
 // we don't need to hide the caret if it's rendered using overlays
-class wxCaretSuspend
+class WXDLLIMPEXP_CORE wxCaretSuspend
 {
 public:
     wxCaretSuspend(wxWindow *WXUNUSED(win)) {}
@@ -219,7 +219,7 @@ public:
 
 #else // !wxHAS_CARET_USING_OVERLAYS
 
-class wxCaretSuspend
+class WXDLLIMPEXP_CORE wxCaretSuspend
 {
 public:
     wxCaretSuspend(wxWindow *win)

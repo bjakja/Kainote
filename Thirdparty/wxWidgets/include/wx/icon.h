@@ -67,7 +67,7 @@
 
 #if wxUSE_VARIANT
 #include "wx/variant.h"
-//DECLARE_VARIANT_OBJECT_EXPORTED(wxIcon,)
+DECLARE_VARIANT_OBJECT_EXPORTED(wxIcon,WXDLLIMPEXP_CORE)
 #endif
 
 

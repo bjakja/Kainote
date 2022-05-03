@@ -19,8 +19,8 @@
 // ----------------------------------------------------------------------------
 
 class wxIDropSource;
-class  wxDataObject;
-class  wxWindow;
+class WXDLLIMPEXP_FWD_CORE wxDataObject;
+class WXDLLIMPEXP_FWD_CORE wxWindow;
 
 // ----------------------------------------------------------------------------
 // macros
@@ -37,7 +37,7 @@ class  wxWindow;
 // wxDataObject object. It's responsible for giving UI feedback while dragging.
 // ----------------------------------------------------------------------------
 
-class  wxDropSource : public wxDropSourceBase
+class WXDLLIMPEXP_CORE wxDropSource : public wxDropSourceBase
 {
 public:
     // ctors: if you use default ctor you must call SetData() later!

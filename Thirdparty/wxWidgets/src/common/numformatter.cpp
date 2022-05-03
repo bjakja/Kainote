@@ -131,8 +131,8 @@ wxChar wxNumberFormatter::GetDecimalSeparator()
         else
         {
             // To the best of my knowledge there are no locales like this.
-            /*wxASSERT_MSG( s.length() == 1,
-                          "Multi-character decimal separator?" );*/
+            wxASSERT_MSG( s.length() == 1,
+                          "Multi-character decimal separator?" );
 
             s_decimalSeparator = s[0];
         }
@@ -156,8 +156,8 @@ bool wxNumberFormatter::GetThousandsSeparatorIfUsed(wxChar *sep)
             s = wxLocale::GetInfo(wxLOCALE_THOUSANDS_SEP, wxLOCALE_CAT_NUMBER);
         if ( !s.empty() )
         {
-           /* wxASSERT_MSG( s.length() == 1,
-                          "Multi-character thousands separator?" );*/
+            wxASSERT_MSG( s.length() == 1,
+                          "Multi-character thousands separator?" );
 
             s_thousandsSeparator = s[0];
         }
@@ -187,8 +187,8 @@ wxString wxNumberFormatter::PostProcessIntString(wxString s, int style)
     if ( style & Style_WithThousandsSep )
         AddThousandsSeparators(s);
 
-    /*wxASSERT_MSG( !(style & Style_NoTrailingZeroes),
-                  "Style_NoTrailingZeroes can't be used with integer values" );*/
+    wxASSERT_MSG( !(style & Style_NoTrailingZeroes),
+                  "Style_NoTrailingZeroes can't be used with integer values" );
 
     return s;
 }
@@ -252,9 +252,9 @@ void wxNumberFormatter::AddThousandsSeparators(wxString& s)
 void wxNumberFormatter::RemoveTrailingZeroes(wxString& s)
 {
     const size_t posDecSep = s.find(GetDecimalSeparator());
-    /*wxCHECK_RET( posDecSep != wxString::npos,
+    wxCHECK_RET( posDecSep != wxString::npos,
                  wxString::Format("No decimal separator in \"%s\"", s) );
-    wxCHECK_RET( posDecSep, "Can't start with decimal separator" );*/
+    wxCHECK_RET( posDecSep, "Can't start with decimal separator" );
 
     // Find the last character to keep.
     size_t posLastNonZero = s.find_last_not_of("0");

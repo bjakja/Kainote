@@ -14,17 +14,17 @@
 
 #include "wx/dialog.h"
 
-class  wxButton;
-class  wxEventLoop;
-class  wxGauge;
-class  wxStaticText;
-class  wxWindowDisabler;
+class WXDLLIMPEXP_FWD_CORE wxButton;
+class WXDLLIMPEXP_FWD_CORE wxEventLoop;
+class WXDLLIMPEXP_FWD_CORE wxGauge;
+class WXDLLIMPEXP_FWD_CORE wxStaticText;
+class WXDLLIMPEXP_FWD_CORE wxWindowDisabler;
 
 /*
     Progress dialog which shows a moving progress bar.
     Taken from the Mahogany project.
 */
-class  wxGenericProgressDialog : public wxDialog
+class WXDLLIMPEXP_CORE wxGenericProgressDialog : public wxDialog
 {
 public:
     wxGenericProgressDialog();

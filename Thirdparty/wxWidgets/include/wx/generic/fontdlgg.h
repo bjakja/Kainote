@@ -17,7 +17,7 @@
 
 #ifdef __WXWINCE__
 #define USE_SPINCTRL_FOR_POINT_SIZE 1
-class  wxSpinEvent;
+class WXDLLIMPEXP_FWD_CORE wxSpinEvent;
 #else
 #define USE_SPINCTRL_FOR_POINT_SIZE 0
 #endif
@@ -26,10 +26,10 @@ class  wxSpinEvent;
  * FONT DIALOG
  */
 
-class  wxChoice;
-class  wxText;
-class  wxCheckBox;
-class  wxFontPreviewer;
+class WXDLLIMPEXP_FWD_CORE wxChoice;
+class WXDLLIMPEXP_FWD_CORE wxText;
+class WXDLLIMPEXP_FWD_CORE wxCheckBox;
+class WXDLLIMPEXP_FWD_CORE wxFontPreviewer;
 
 enum
 {
@@ -41,7 +41,7 @@ enum
     wxID_FONT_SIZE
 };
 
-class  wxGenericFontDialog : public wxFontDialogBase
+class WXDLLIMPEXP_CORE wxGenericFontDialog : public wxFontDialogBase
 {
 public:
     wxGenericFontDialog() { Init(); }

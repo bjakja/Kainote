@@ -162,8 +162,8 @@ void wxFileHistoryBase::AddFileToHistory(const wxString& file)
 void wxFileHistoryBase::RemoveFileFromHistory(size_t i)
 {
     size_t numFiles = m_fileHistory.size();
-    //wxCHECK_RET( i < numFiles,
-                 //wxT("invalid index in wxFileHistoryBase::RemoveFileFromHistory") );
+    wxCHECK_RET( i < numFiles,
+                 wxT("invalid index in wxFileHistoryBase::RemoveFileFromHistory") );
 
     // delete the element from the array
     m_fileHistory.RemoveAt(i);

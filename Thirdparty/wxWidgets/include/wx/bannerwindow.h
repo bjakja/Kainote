@@ -19,17 +19,17 @@
 #include "wx/event.h"
 #include "wx/window.h"
 
-class  wxBitmap;
-class  wxColour;
-class  wxDC;
+class WXDLLIMPEXP_FWD_CORE wxBitmap;
+class WXDLLIMPEXP_FWD_CORE wxColour;
+class WXDLLIMPEXP_FWD_CORE wxDC;
 
-extern const char wxBannerWindowNameStr[];
+extern WXDLLIMPEXP_DATA_ADV(const char) wxBannerWindowNameStr[];
 
 // ----------------------------------------------------------------------------
 // A simple banner window showing either a bitmap or text.
 // ----------------------------------------------------------------------------
 
-class  wxBannerWindow : public wxWindow
+class WXDLLIMPEXP_ADV wxBannerWindow : public wxWindow
 {
 public:
     // Default constructor, use Create() later.

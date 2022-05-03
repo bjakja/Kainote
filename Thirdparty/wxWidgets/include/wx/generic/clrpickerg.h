@@ -20,7 +20,7 @@
 // wxGenericColourButton: a button which brings up a wxColourDialog
 //-----------------------------------------------------------------------------
 
-class  wxGenericColourButton : public wxBitmapButton,
+class WXDLLIMPEXP_CORE wxGenericColourButton : public wxBitmapButton,
                                                public wxColourPickerWidgetBase
 {
 public:

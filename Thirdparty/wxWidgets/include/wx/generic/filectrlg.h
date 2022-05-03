@@ -19,18 +19,18 @@
 #include "wx/filectrl.h"
 #include "wx/filename.h"
 
-class  wxCheckBox;
-class  wxChoice;
-class  wxStaticText;
-class  wxTextCtrl;
+class WXDLLIMPEXP_FWD_CORE wxCheckBox;
+class WXDLLIMPEXP_FWD_CORE wxChoice;
+class WXDLLIMPEXP_FWD_CORE wxStaticText;
+class WXDLLIMPEXP_FWD_CORE wxTextCtrl;
 
-extern const char wxFileSelectorDefaultWildcardStr[];
+extern WXDLLIMPEXP_DATA_CORE(const char) wxFileSelectorDefaultWildcardStr[];
 
 //-----------------------------------------------------------------------------
 //  wxFileData - a class to hold the file info for the wxFileListCtrl
 //-----------------------------------------------------------------------------
 
-class  wxFileData
+class WXDLLIMPEXP_CORE wxFileData
 {
 public:
     enum fileType
@@ -125,7 +125,7 @@ private:
 //  wxFileListCtrl
 //-----------------------------------------------------------------------------
 
-class  wxFileListCtrl : public wxListCtrl
+class WXDLLIMPEXP_CORE wxFileListCtrl : public wxListCtrl
 {
 public:
     wxFileListCtrl();
@@ -182,7 +182,7 @@ private:
     DECLARE_EVENT_TABLE()
 };
 
-class  wxGenericFileCtrl : public wxNavigationEnabled<wxControl>,
+class WXDLLIMPEXP_CORE wxGenericFileCtrl : public wxNavigationEnabled<wxControl>,
                                            public wxFileCtrlBase
 {
 public:

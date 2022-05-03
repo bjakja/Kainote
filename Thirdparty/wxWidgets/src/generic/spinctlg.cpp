@@ -473,7 +473,7 @@ bool wxSpinCtrlGenericBase::SyncSpinToText()
 
 void wxSpinCtrlGenericBase::SetValue(const wxString& text)
 {
-    //wxCHECK_RET( m_textCtrl, wxT("invalid call to wxSpinCtrl::SetValue") );
+    wxCHECK_RET( m_textCtrl, wxT("invalid call to wxSpinCtrl::SetValue") );
 
     double val;
     if ( text.ToDouble(&val) && InRange(val) )
@@ -490,7 +490,7 @@ void wxSpinCtrlGenericBase::SetValue(const wxString& text)
 
 bool wxSpinCtrlGenericBase::DoSetValue(double val)
 {
-    //wxCHECK_MSG( m_textCtrl, false, wxT("invalid call to wxSpinCtrl::SetValue") );
+    wxCHECK_MSG( m_textCtrl, false, wxT("invalid call to wxSpinCtrl::SetValue") );
 
     if (!InRange(val))
         return false;
@@ -552,7 +552,7 @@ void wxSpinCtrlGenericBase::SetSnapToTicks(bool snap_to_ticks)
 
 void wxSpinCtrlGenericBase::SetSelection(long from, long to)
 {
-    //wxCHECK_RET( m_textCtrl, wxT("invalid call to wxSpinCtrl::SetSelection") );
+    wxCHECK_RET( m_textCtrl, wxT("invalid call to wxSpinCtrl::SetSelection") );
 
     m_textCtrl->SetSelection(from, to);
 }
@@ -591,7 +591,7 @@ void wxSpinCtrlDouble::DoSendEvent()
 
 void wxSpinCtrlDouble::SetDigits(unsigned digits)
 {
-    //wxCHECK_RET( digits <= 20, "too many digits for wxSpinCtrlDouble" );
+    wxCHECK_RET( digits <= 20, "too many digits for wxSpinCtrlDouble" );
 
     if ( digits == m_digits )
         return;

@@ -78,7 +78,7 @@ public:
     {
         if ( buffer == ms_buffer )
         {
-            //wxASSERT_MSG( ms_usingSharedBuffer, wxT("shared buffer already released") );
+            wxASSERT_MSG( ms_usingSharedBuffer, wxT("shared buffer already released") );
             ms_usingSharedBuffer = false;
         }
         else
@@ -105,7 +105,7 @@ IMPLEMENT_DYNAMIC_CLASS(wxSharedDCBufferManager, wxModule)
 
 void wxBufferedDC::UseBuffer(wxCoord w, wxCoord h)
 {
-    //wxCHECK_RET( w >= -1 && h >= -1, "Invalid buffer size" );
+    wxCHECK_RET( w >= -1 && h >= -1, "Invalid buffer size" );
 
     if ( !m_buffer || !m_buffer->IsOk() )
     {
@@ -129,8 +129,8 @@ void wxBufferedDC::UseBuffer(wxCoord w, wxCoord h)
 
 void wxBufferedDC::UnMask()
 {
-    /*wxCHECK_RET( m_dc, wxT("no underlying wxDC?") );
-    wxASSERT_MSG( m_buffer && m_buffer->IsOk(), wxT("invalid backing store") );*/
+    wxCHECK_RET( m_dc, wxT("no underlying wxDC?") );
+    wxASSERT_MSG( m_buffer && m_buffer->IsOk(), wxT("invalid backing store") );
 
     wxCoord x = 0,
             y = 0;

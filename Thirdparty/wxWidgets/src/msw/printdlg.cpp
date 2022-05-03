@@ -246,7 +246,7 @@ bool wxWindowsPrintNativeData::TransferTo( wxPrintData &data )
     }
     if (devMode->dmFields & DM_MEDIATYPE)
     {
-        //wxASSERT( (int)devMode->dmMediaType != wxPRINTMEDIA_DEFAULT );
+        wxASSERT( (int)devMode->dmMediaType != wxPRINTMEDIA_DEFAULT );
         data.SetMedia(devMode->dmMediaType);
     }
     //// Printer name
@@ -289,7 +289,7 @@ bool wxWindowsPrintNativeData::TransferTo( wxPrintData &data )
         else
         {
             // Shouldn't really get here
-            //wxFAIL_MSG(wxT("Paper database wasn't initialized in wxPrintData::ConvertFromNative."));
+            wxFAIL_MSG(wxT("Paper database wasn't initialized in wxPrintData::ConvertFromNative."));
             data.SetPaperId( wxPAPER_NONE );
             data.SetPaperSize( wxSize(0,0) );
             m_customWindowsPaperId = 0;

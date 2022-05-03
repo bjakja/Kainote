@@ -66,10 +66,10 @@ public:
 // always be allocated on the heap!
 // ----------------------------------------------------------------------------
 
-class  wxTreeItemData: public wxClientData
+class WXDLLIMPEXP_CORE wxTreeItemData: public wxClientData
 {
-friend class  wxTreeCtrl;
-friend class  wxGenericTreeCtrl;
+friend class WXDLLIMPEXP_FWD_CORE wxTreeCtrl;
+friend class WXDLLIMPEXP_FWD_CORE wxGenericTreeCtrl;
 public:
     // creation/destruction
     // --------------------
@@ -93,7 +93,7 @@ WX_DEFINE_EXPORTED_ARRAY_PTR(wxTreeItemIdValue, wxArrayTreeItemIdsBase);
 // this is a wrapper around the array class defined above which allow to wok
 // with values of natural wxTreeItemId type instead of using wxTreeItemIdValue
 // and does it without any loss of efficiency
-class  wxArrayTreeItemIds : public wxArrayTreeItemIdsBase
+class WXDLLIMPEXP_CORE wxArrayTreeItemIds : public wxArrayTreeItemIdsBase
 {
 public:
     void Add(const wxTreeItemId& id)
@@ -199,13 +199,13 @@ static const int wxTREE_HITTEST_ONITEM  = wxTREE_HITTEST_ONITEMICON |
                                           wxTREE_HITTEST_ONITEMLABEL;
 
 // tree ctrl default name
-extern const char wxTreeCtrlNameStr[];
+extern WXDLLIMPEXP_DATA_CORE(const char) wxTreeCtrlNameStr[];
 
 // ----------------------------------------------------------------------------
 // wxTreeItemAttr: a structure containing the visual attributes of an item
 // ----------------------------------------------------------------------------
 
-class  wxTreeItemAttr
+class WXDLLIMPEXP_CORE wxTreeItemAttr
 {
 public:
     // ctors
@@ -242,9 +242,9 @@ private:
 //     descriptions below
 // ----------------------------------------------------------------------------
 
-class  wxTreeCtrlBase;
+class WXDLLIMPEXP_FWD_CORE wxTreeCtrlBase;
 
-class  wxTreeEvent : public wxNotifyEvent
+class WXDLLIMPEXP_CORE wxTreeEvent : public wxNotifyEvent
 {
 public:
     wxTreeEvent(wxEventType commandType = wxEVT_NULL, int id = 0);
@@ -297,8 +297,8 @@ private:
     wxString      m_label;
     bool          m_editCancelled;
 
-    friend class  wxTreeCtrl;
-    friend class  wxGenericTreeCtrl;
+    friend class WXDLLIMPEXP_FWD_CORE wxTreeCtrl;
+    friend class WXDLLIMPEXP_FWD_CORE wxGenericTreeCtrl;
 
     DECLARE_DYNAMIC_CLASS(wxTreeEvent)
 };
@@ -309,27 +309,27 @@ typedef void (wxEvtHandler::*wxTreeEventFunction)(wxTreeEvent&);
 // tree control events and macros for handling them
 // ----------------------------------------------------------------------------
 
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_TREE_BEGIN_DRAG, wxTreeEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_TREE_BEGIN_RDRAG, wxTreeEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT, wxTreeEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_TREE_END_LABEL_EDIT, wxTreeEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_TREE_DELETE_ITEM, wxTreeEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_TREE_GET_INFO, wxTreeEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_TREE_SET_INFO, wxTreeEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_TREE_ITEM_EXPANDED, wxTreeEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEvent );
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_TREE_ITEM_COLLAPSED, wxTreeEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_TREE_ITEM_COLLAPSING, wxTreeEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_TREE_SEL_CHANGING, wxTreeEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_TREE_KEY_DOWN, wxTreeEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_TREE_ITEM_RIGHT_CLICK, wxTreeEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_TREE_ITEM_MIDDLE_CLICK, wxTreeEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_TREE_END_DRAG, wxTreeEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_TREE_STATE_IMAGE_CLICK, wxTreeEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_TREE_ITEM_GETTOOLTIP, wxTreeEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TREE_BEGIN_DRAG, wxTreeEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TREE_BEGIN_RDRAG, wxTreeEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT, wxTreeEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TREE_END_LABEL_EDIT, wxTreeEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TREE_DELETE_ITEM, wxTreeEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TREE_GET_INFO, wxTreeEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TREE_SET_INFO, wxTreeEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TREE_ITEM_EXPANDED, wxTreeEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TREE_ITEM_COLLAPSED, wxTreeEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TREE_ITEM_COLLAPSING, wxTreeEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TREE_SEL_CHANGING, wxTreeEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TREE_KEY_DOWN, wxTreeEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TREE_ITEM_RIGHT_CLICK, wxTreeEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TREE_ITEM_MIDDLE_CLICK, wxTreeEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TREE_END_DRAG, wxTreeEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TREE_STATE_IMAGE_CLICK, wxTreeEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TREE_ITEM_GETTOOLTIP, wxTreeEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEvent );
 
 #define wxTreeEventHandler(func) \
     wxEVENT_HANDLER_CAST(wxTreeEventFunction, func)

@@ -22,7 +22,7 @@
 
 #include "wx/window.h"      // base class
 
-extern const char wxControlNameStr[];
+extern WXDLLIMPEXP_DATA_CORE(const char) wxControlNameStr[];
 
 
 // ----------------------------------------------------------------------------
@@ -53,7 +53,7 @@ enum wxEllipsizeMode
 // wxControl is the base class for all controls
 // ----------------------------------------------------------------------------
 
-class  wxControlBase : public wxWindow
+class WXDLLIMPEXP_CORE wxControlBase : public wxWindow
 {
 public:
     wxControlBase() { }

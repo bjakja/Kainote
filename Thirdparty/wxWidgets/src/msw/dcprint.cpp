@@ -18,7 +18,7 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-//#include "wx/wxprec.h"
+#include "wx/wxprec.h"
 
 #ifdef __BORLANDC__
     #pragma hdrstop
@@ -303,7 +303,7 @@ static bool wxGetDefaultDeviceName(wxString& deviceName, wxString& portName)
 #endif // !wxUSE_PS_PRINTING
 
 // Gets an HDC for the specified printer configuration
-WXHDC  wxGetPrinterDC(const wxPrintData& printDataConst)
+WXHDC WXDLLEXPORT wxGetPrinterDC(const wxPrintData& printDataConst)
 {
 #if wxUSE_PS_PRINTING
     // TODO
@@ -401,7 +401,7 @@ void wxPrinterDCImpl::DoDrawBitmap(const wxBitmap& bmp,
                                wxCoord x, wxCoord y,
                                bool useMask)
 {
-    //wxCHECK_RET( bmp.IsOk(), wxT("invalid bitmap in wxPrinterDC::DrawBitmap") );
+    wxCHECK_RET( bmp.IsOk(), wxT("invalid bitmap in wxPrinterDC::DrawBitmap") );
 
     int width = bmp.GetWidth(),
         height = bmp.GetHeight();

@@ -16,7 +16,7 @@
 // Choice item
 // ----------------------------------------------------------------------------
 
-class  wxChoice : public wxChoiceBase
+class WXDLLIMPEXP_CORE wxChoice : public wxChoiceBase
 {
 public:
     // ctors

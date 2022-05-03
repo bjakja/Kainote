@@ -28,8 +28,8 @@
     #include "wx/mousestate.h"
 #endif
 
-class  wxArrayString;
-class  wxArrayInt;
+class WXDLLIMPEXP_FWD_BASE wxArrayString;
+class WXDLLIMPEXP_FWD_BASE wxArrayInt;
 
 // need this for wxGetDiskSpace() as we can't, unfortunately, forward declare
 // wxLongLong
@@ -51,11 +51,11 @@ class  wxArrayInt;
 // Forward declaration
 // ----------------------------------------------------------------------------
 
-class  wxProcess;
-class  wxFrame;
-class  wxWindow;
-class  wxWindowList;
-class  wxEventLoop;
+class WXDLLIMPEXP_FWD_BASE wxProcess;
+class WXDLLIMPEXP_FWD_CORE wxFrame;
+class WXDLLIMPEXP_FWD_CORE wxWindow;
+class WXDLLIMPEXP_FWD_CORE wxWindowList;
+class WXDLLIMPEXP_FWD_CORE wxEventLoop;
 
 // ----------------------------------------------------------------------------
 // Arithmetic functions
@@ -130,27 +130,27 @@ wxDEPRECATED_INLINE(inline bool wxStringEq(const wchar_t *s1, const wchar_t *s2)
 // ----------------------------------------------------------------------------
 
 // Sound the bell
- void wxBell();
+WXDLLIMPEXP_CORE void wxBell();
 
 #if wxUSE_MSGDLG
 // Show wxWidgets information
- void wxInfoMessageBox(wxWindow* parent);
+WXDLLIMPEXP_CORE void wxInfoMessageBox(wxWindow* parent);
 #endif // wxUSE_MSGDLG
 
- wxVersionInfo wxGetLibraryVersionInfo();
+WXDLLIMPEXP_CORE wxVersionInfo wxGetLibraryVersionInfo();
 
 // Get OS description as a user-readable string
- wxString wxGetOsDescription();
+WXDLLIMPEXP_BASE wxString wxGetOsDescription();
 
 // Get OS version
- wxOperatingSystemId wxGetOsVersion(int *majorVsn = NULL,
+WXDLLIMPEXP_BASE wxOperatingSystemId wxGetOsVersion(int *majorVsn = NULL,
                                                     int *minorVsn = NULL);
 
 // Get platform endianness
- bool wxIsPlatformLittleEndian();
+WXDLLIMPEXP_BASE bool wxIsPlatformLittleEndian();
 
 // Get platform architecture
- bool wxIsPlatform64Bit();
+WXDLLIMPEXP_BASE bool wxIsPlatform64Bit();
 
 #ifdef __LINUX__
 // Get linux-distro informations
@@ -158,27 +158,27 @@ WXDLLIMPEXP_BASE wxLinuxDistributionInfo wxGetLinuxDistributionInfo();
 #endif
 
 // Return a string with the current date/time
- wxString wxNow();
+WXDLLIMPEXP_BASE wxString wxNow();
 
 // Return path where wxWidgets is installed (mostly useful in Unices)
- const wxChar *wxGetInstallPrefix();
+WXDLLIMPEXP_BASE const wxChar *wxGetInstallPrefix();
 // Return path to wxWin data (/usr/share/wx/%{version}) (Unices)
- wxString wxGetDataDir();
+WXDLLIMPEXP_BASE wxString wxGetDataDir();
 
 #if wxUSE_GUI
 
 // Get the state of a key (true if pressed, false if not)
 // This is generally most useful getting the state of
 // the modifier or toggle keys.
- bool wxGetKeyState(wxKeyCode key);
+WXDLLIMPEXP_CORE bool wxGetKeyState(wxKeyCode key);
 
 // Don't synthesize KeyUp events holding down a key and producing
 // KeyDown events with autorepeat. On by default and always on
 // in wxMSW.
- bool wxSetDetectableAutoRepeat( bool flag );
+WXDLLIMPEXP_CORE bool wxSetDetectableAutoRepeat( bool flag );
 
 // Returns the current state of the mouse position, buttons and modifers
- wxMouseState wxGetMouseState();
+WXDLLIMPEXP_CORE wxMouseState wxGetMouseState();
 
 #endif // wxUSE_GUI
 
@@ -204,7 +204,7 @@ WXDLLIMPEXP_BASE wxLinuxDistributionInfo wxGetLinuxDistributionInfo();
  *
  */
 
-class  wxPlatform
+class WXDLLIMPEXP_BASE wxPlatform
 {
 public:
     wxPlatform() { Init(); }
@@ -273,20 +273,20 @@ inline bool wxPlatformIs(int platform) { return wxPlatform::Is(platform); }
 // ----------------------------------------------------------------------------
 
 // Ensure subsequent IDs don't clash with this one
- void wxRegisterId(long id);
+WXDLLIMPEXP_BASE void wxRegisterId(long id);
 
 // Return the current ID
- long wxGetCurrentId();
+WXDLLIMPEXP_BASE long wxGetCurrentId();
 
 // Generate a unique ID
- long wxNewId();
+WXDLLIMPEXP_BASE long wxNewId();
 
 // ----------------------------------------------------------------------------
 // Various conversions
 // ----------------------------------------------------------------------------
 
 // Convert 2-digit hex number to decimal
- int wxHexToDec(const wxString& buf);
+WXDLLIMPEXP_BASE int wxHexToDec(const wxString& buf);
 
 // Convert 2-digit hex number to decimal
 inline int wxHexToDec(const char* buf)
@@ -308,9 +308,9 @@ inline int wxHexToDec(const char* buf)
 
 
 // Convert decimal integer to 2-character hex string
- void wxDecToHex(int dec, wxChar *buf);
- void wxDecToHex(int dec, char* ch1, char* ch2);
- wxString wxDecToHex(int dec);
+WXDLLIMPEXP_BASE void wxDecToHex(int dec, wxChar *buf);
+WXDLLIMPEXP_BASE void wxDecToHex(int dec, char* ch1, char* ch2);
+WXDLLIMPEXP_BASE wxString wxDecToHex(int dec);
 
 // ----------------------------------------------------------------------------
 // Process management
@@ -376,16 +376,16 @@ struct wxExecuteEnv
 // If flags contain wxEXEC_SYNC, return -1 on failure and the exit code of the
 // process if everything was ok. Otherwise (i.e. if wxEXEC_ASYNC), return 0 on
 // failure and the PID of the launched process if ok.
- long wxExecute(const wxString& command,
+WXDLLIMPEXP_BASE long wxExecute(const wxString& command,
                                 int flags = wxEXEC_ASYNC,
                                 wxProcess *process = NULL,
                                 const wxExecuteEnv *env = NULL);
- long wxExecute(char **argv,
+WXDLLIMPEXP_BASE long wxExecute(char **argv,
                                 int flags = wxEXEC_ASYNC,
                                 wxProcess *process = NULL,
                                 const wxExecuteEnv *env = NULL);
 #if wxUSE_UNICODE
- long wxExecute(wchar_t **argv,
+WXDLLIMPEXP_BASE long wxExecute(wchar_t **argv,
                                 int flags = wxEXEC_ASYNC,
                                 wxProcess *process = NULL,
                                 const wxExecuteEnv *env = NULL);
@@ -393,13 +393,13 @@ struct wxExecuteEnv
 
 // execute the command capturing its output into an array line by line, this is
 // always synchronous
- long wxExecute(const wxString& command,
+WXDLLIMPEXP_BASE long wxExecute(const wxString& command,
                                 wxArrayString& output,
                                 int flags = 0,
                                 const wxExecuteEnv *env = NULL);
 
 // also capture stderr (also synchronous)
- long wxExecute(const wxString& command,
+WXDLLIMPEXP_BASE long wxExecute(const wxString& command,
                                 wxArrayString& output,
                                 wxArrayString& error,
                                 int flags = 0,
@@ -407,7 +407,7 @@ struct wxExecuteEnv
 
 #if defined(__WINDOWS__) && wxUSE_IPC
 // ask a DDE server to execute the DDE request with given parameters
- bool wxExecuteDDE(const wxString& ddeServer,
+WXDLLIMPEXP_BASE bool wxExecuteDDE(const wxString& ddeServer,
                                    const wxString& ddeTopic,
                                    const wxString& ddeCommand);
 #endif // __WINDOWS__ && wxUSE_IPC
@@ -459,33 +459,33 @@ enum wxShutdownFlags
 };
 
 // Shutdown or reboot the PC
- bool wxShutdown(int flags = wxSHUTDOWN_POWEROFF);
+WXDLLIMPEXP_BASE bool wxShutdown(int flags = wxSHUTDOWN_POWEROFF);
 
 // send the given signal to the process (only NONE and KILL are supported under
 // Windows, all others mean TERM), return 0 if ok and -1 on error
 //
 // return detailed error in rc if not NULL
- int wxKill(long pid,
+WXDLLIMPEXP_BASE int wxKill(long pid,
                        wxSignal sig = wxSIGTERM,
                        wxKillError *rc = NULL,
                        int flags = wxKILL_NOCHILDREN);
 
 // Execute a command in an interactive shell window (always synchronously)
 // If no command then just the shell
- bool wxShell(const wxString& command = wxEmptyString);
+WXDLLIMPEXP_BASE bool wxShell(const wxString& command = wxEmptyString);
 
 // As wxShell(), but must give a (non interactive) command and its output will
 // be returned in output array
- bool wxShell(const wxString& command, wxArrayString& output);
+WXDLLIMPEXP_BASE bool wxShell(const wxString& command, wxArrayString& output);
 
 // Sleep for nSecs seconds
- void wxSleep(int nSecs);
+WXDLLIMPEXP_BASE void wxSleep(int nSecs);
 
 // Sleep for a given amount of milliseconds
- void wxMilliSleep(unsigned long milliseconds);
+WXDLLIMPEXP_BASE void wxMilliSleep(unsigned long milliseconds);
 
 // Sleep for a given amount of microseconds
- void wxMicroSleep(unsigned long microseconds);
+WXDLLIMPEXP_BASE void wxMicroSleep(unsigned long microseconds);
 
 #if WXWIN_COMPATIBILITY_2_8
 // Sleep for a given amount of milliseconds (old, bad name), use wxMilliSleep
@@ -493,15 +493,15 @@ wxDEPRECATED( WXDLLIMPEXP_BASE void wxUsleep(unsigned long milliseconds) );
 #endif
 
 // Get the process id of the current process
- unsigned long wxGetProcessId();
+WXDLLIMPEXP_BASE unsigned long wxGetProcessId();
 
 // Get free memory in bytes, or -1 if cannot determine amount (e.g. on UNIX)
- wxMemorySize wxGetFreeMemory();
+WXDLLIMPEXP_BASE wxMemorySize wxGetFreeMemory();
 
 #if wxUSE_ON_FATAL_EXCEPTION
 
 // should wxApp::OnFatalException() be called?
- bool wxHandleFatalExceptions(bool doit = true);
+WXDLLIMPEXP_BASE bool wxHandleFatalExceptions(bool doit = true);
 
 #endif // wxUSE_ON_FATAL_EXCEPTION
 
@@ -511,13 +511,13 @@ wxDEPRECATED( WXDLLIMPEXP_BASE void wxUsleep(unsigned long milliseconds) );
 
 // returns true if variable exists (value may be NULL if you just want to check
 // for this)
- bool wxGetEnv(const wxString& var, wxString *value);
+WXDLLIMPEXP_BASE bool wxGetEnv(const wxString& var, wxString *value);
 
 // set the env var name to the given value, return true on success
- bool wxSetEnv(const wxString& var, const wxString& value);
+WXDLLIMPEXP_BASE bool wxSetEnv(const wxString& var, const wxString& value);
 
 // remove the env var from environment
- bool wxUnsetEnv(const wxString& var);
+WXDLLIMPEXP_BASE bool wxUnsetEnv(const wxString& var);
 
 #if WXWIN_COMPATIBILITY_2_8
 inline bool wxSetEnv(const wxString& var, const char *value)
@@ -544,7 +544,7 @@ inline bool wxSetEnv(const wxString& var, int value)
 
 // Retrieve the complete environment by filling specified map.
 // Returns true on success or false if an error occurred.
- bool wxGetEnvMap(wxEnvVariableHashMap *map);
+WXDLLIMPEXP_BASE bool wxGetEnvMap(wxEnvVariableHashMap *map);
 
 // ----------------------------------------------------------------------------
 // Network and username functions.
@@ -553,32 +553,32 @@ inline bool wxSetEnv(const wxString& var, int value)
 // NB: "char *" functions are deprecated, use wxString ones!
 
 // Get eMail address
- bool wxGetEmailAddress(wxChar *buf, int maxSize);
- wxString wxGetEmailAddress();
+WXDLLIMPEXP_BASE bool wxGetEmailAddress(wxChar *buf, int maxSize);
+WXDLLIMPEXP_BASE wxString wxGetEmailAddress();
 
 // Get hostname.
- bool wxGetHostName(wxChar *buf, int maxSize);
- wxString wxGetHostName();
+WXDLLIMPEXP_BASE bool wxGetHostName(wxChar *buf, int maxSize);
+WXDLLIMPEXP_BASE wxString wxGetHostName();
 
 // Get FQDN
- wxString wxGetFullHostName();
- bool wxGetFullHostName(wxChar *buf, int maxSize);
+WXDLLIMPEXP_BASE wxString wxGetFullHostName();
+WXDLLIMPEXP_BASE bool wxGetFullHostName(wxChar *buf, int maxSize);
 
 // Get user ID e.g. jacs (this is known as login name under Unix)
- bool wxGetUserId(wxChar *buf, int maxSize);
- wxString wxGetUserId();
+WXDLLIMPEXP_BASE bool wxGetUserId(wxChar *buf, int maxSize);
+WXDLLIMPEXP_BASE wxString wxGetUserId();
 
 // Get user name e.g. Julian Smart
- bool wxGetUserName(wxChar *buf, int maxSize);
- wxString wxGetUserName();
+WXDLLIMPEXP_BASE bool wxGetUserName(wxChar *buf, int maxSize);
+WXDLLIMPEXP_BASE wxString wxGetUserName();
 
 // Get current Home dir and copy to dest (returns pstr->c_str())
- wxString wxGetHomeDir();
- const wxChar* wxGetHomeDir(wxString *pstr);
+WXDLLIMPEXP_BASE wxString wxGetHomeDir();
+WXDLLIMPEXP_BASE const wxChar* wxGetHomeDir(wxString *pstr);
 
 // Get the user's (by default use the current user name) home dir,
 // return empty string on error
- wxString wxGetUserHome(const wxString& user = wxEmptyString);
+WXDLLIMPEXP_BASE wxString wxGetUserHome(const wxString& user = wxEmptyString);
 
 
 #if wxUSE_LONGLONG
@@ -588,7 +588,7 @@ inline bool wxSetEnv(const wxString& var, int value)
 #endif
 
 // get number of total/free bytes on the disk where path belongs
- bool wxGetDiskSpace(const wxString& path,
+WXDLLIMPEXP_BASE bool wxGetDiskSpace(const wxString& path,
                                      wxDiskspaceSize_t *pTotal = NULL,
                                      wxDiskspaceSize_t *pFree = NULL);
 
@@ -599,7 +599,7 @@ typedef int (*wxSortCallback)(const void* pItem1,
                               const void* user_data);
 
 
- void wxQsort(void* pbase, size_t total_elems,
+WXDLLIMPEXP_BASE void wxQsort(void* pbase, size_t total_elems,
                               size_t size, wxSortCallback cmp,
                               const void* user_data);
 
@@ -618,10 +618,10 @@ enum
 };
 
 // Launch url in the user's default internet browser
- bool wxLaunchDefaultBrowser(const wxString& url, int flags = 0);
+WXDLLIMPEXP_CORE bool wxLaunchDefaultBrowser(const wxString& url, int flags = 0);
 
 // Launch document in the user's default application
- bool wxLaunchDefaultApplication(const wxString& path, int flags = 0);
+WXDLLIMPEXP_CORE bool wxLaunchDefaultApplication(const wxString& path, int flags = 0);
 
 // ----------------------------------------------------------------------------
 // Menu accelerators related things
@@ -641,7 +641,7 @@ enum
 };
 
 // strip mnemonics and/or accelerators from the label
- wxString
+WXDLLIMPEXP_CORE wxString
 wxStripMenuCodes(const wxString& str, int flags = wxStrip_All);
 
 #if WXWIN_COMPATIBILITY_2_6
@@ -666,45 +666,45 @@ wxDEPRECATED(
 // ----------------------------------------------------------------------------
 
 // Returns menu item id or wxNOT_FOUND if none.
- int wxFindMenuItemId(wxFrame *frame, const wxString& menuString, const wxString& itemString);
+WXDLLIMPEXP_CORE int wxFindMenuItemId(wxFrame *frame, const wxString& menuString, const wxString& itemString);
 
 // Find the wxWindow at the given point. wxGenericFindWindowAtPoint
 // is always present but may be less reliable than a native version.
- wxWindow* wxGenericFindWindowAtPoint(const wxPoint& pt);
- wxWindow* wxFindWindowAtPoint(const wxPoint& pt);
+WXDLLIMPEXP_CORE wxWindow* wxGenericFindWindowAtPoint(const wxPoint& pt);
+WXDLLIMPEXP_CORE wxWindow* wxFindWindowAtPoint(const wxPoint& pt);
 
 // NB: this function is obsolete, use wxWindow::FindWindowByLabel() instead
 //
 // Find the window/widget with the given title or label.
 // Pass a parent to begin the search from, or NULL to look through
 // all windows.
- wxWindow* wxFindWindowByLabel(const wxString& title, wxWindow *parent = NULL);
+WXDLLIMPEXP_CORE wxWindow* wxFindWindowByLabel(const wxString& title, wxWindow *parent = NULL);
 
 // NB: this function is obsolete, use wxWindow::FindWindowByName() instead
 //
 // Find window by name, and if that fails, by label.
- wxWindow* wxFindWindowByName(const wxString& name, wxWindow *parent = NULL);
+WXDLLIMPEXP_CORE wxWindow* wxFindWindowByName(const wxString& name, wxWindow *parent = NULL);
 
 // ----------------------------------------------------------------------------
 // Message/event queue helpers
 // ----------------------------------------------------------------------------
 
 // Yield to other apps/messages and disable user input
- bool wxSafeYield(wxWindow *win = NULL, bool onlyIfNeeded = false);
+WXDLLIMPEXP_CORE bool wxSafeYield(wxWindow *win = NULL, bool onlyIfNeeded = false);
 
 // Enable or disable input to all top level windows
- void wxEnableTopLevelWindows(bool enable = true);
+WXDLLIMPEXP_CORE void wxEnableTopLevelWindows(bool enable = true);
 
 // Check whether this window wants to process messages, e.g. Stop button
 // in long calculations.
- bool wxCheckForInterrupt(wxWindow *wnd);
+WXDLLIMPEXP_CORE bool wxCheckForInterrupt(wxWindow *wnd);
 
 // Consume all events until no more left
- void wxFlushEvents();
+WXDLLIMPEXP_CORE void wxFlushEvents();
 
 // a class which disables all windows (except, may be, the given one) in its
 // ctor and enables them back in its dtor
-class  wxWindowDisabler
+class WXDLLIMPEXP_CORE wxWindowDisabler
 {
 public:
     // this ctor conditionally disables all windows: if the argument is false,
@@ -735,16 +735,16 @@ private:
 // ----------------------------------------------------------------------------
 
 // Set the cursor to the busy cursor for all windows
- void wxBeginBusyCursor(const wxCursor *cursor = wxHOURGLASS_CURSOR);
+WXDLLIMPEXP_CORE void wxBeginBusyCursor(const wxCursor *cursor = wxHOURGLASS_CURSOR);
 
 // Restore cursor to normal
- void wxEndBusyCursor();
+WXDLLIMPEXP_CORE void wxEndBusyCursor();
 
 // true if we're between the above two calls
- bool wxIsBusy();
+WXDLLIMPEXP_CORE bool wxIsBusy();
 
 // Convenience class so we can just create a wxBusyCursor object on the stack
-class  wxBusyCursor
+class WXDLLIMPEXP_CORE wxBusyCursor
 {
 public:
     wxBusyCursor(const wxCursor* cursor = wxHOURGLASS_CURSOR)
@@ -761,7 +761,7 @@ public:
     static const wxCursor GetBusyCursor();
 };
 
-void  wxGetMousePosition( int* x, int* y );
+void WXDLLIMPEXP_CORE wxGetMousePosition( int* x, int* y );
 
 // ----------------------------------------------------------------------------
 // X11 Display access
@@ -799,12 +799,12 @@ inline struct _XDisplay *wxGetX11Display()
 #define wx_YIELD_DECLARED
 
 // Yield to other apps/messages
- bool wxYield();
+WXDLLIMPEXP_CORE bool wxYield();
 
 #endif // wx_YIELD_DECLARED
 
 // Like wxYield, but fails silently if the yield is recursive.
- bool wxYieldIfNeeded();
+WXDLLIMPEXP_CORE bool wxYieldIfNeeded();
 
 // ----------------------------------------------------------------------------
 // Windows resources access
@@ -813,7 +813,7 @@ inline struct _XDisplay *wxGetX11Display()
 // Windows only: get user-defined resource from the .res file.
 #ifdef __WINDOWS__
     // default resource type for wxLoadUserResource()
-    extern const wxChar* wxUserResourceStr;
+    extern WXDLLIMPEXP_DATA_BASE(const wxChar*) wxUserResourceStr;
 
     // Return the pointer to the resource data. This pointer is read-only, use
     // the overload below if you need to modify the data.
@@ -821,7 +821,7 @@ inline struct _XDisplay *wxGetX11Display()
     // Returns true on success, false on failure. Doesn't log an error message
     // if the resource is not found (because this could be expected) but does
     // log one if any other error occurs.
-     bool
+    WXDLLIMPEXP_BASE bool
     wxLoadUserResource(const void **outData,
                        size_t *outLen,
                        const wxString& resourceName,
@@ -833,7 +833,7 @@ inline struct _XDisplay *wxGetX11Display()
     // the overload above can be used.
     //
     // Returns NULL on failure.
-     char*
+    WXDLLIMPEXP_BASE char*
     wxLoadUserResource(const wxString& resourceName,
                        const wxString& resourceType = wxUserResourceStr,
                        int* pLen = NULL,

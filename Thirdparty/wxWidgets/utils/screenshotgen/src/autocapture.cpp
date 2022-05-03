@@ -26,7 +26,7 @@
 #include <ctime>
 
 #ifdef __WXMAC__
-//#include <cstring>
+#include <cstring>
 #endif
 
 

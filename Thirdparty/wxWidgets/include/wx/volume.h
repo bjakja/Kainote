@@ -50,7 +50,7 @@ enum wxFSVolumeKind
     wxFS_VOL_MAX
 };
 
-class  wxFSVolumeBase
+class WXDLLIMPEXP_BASE wxFSVolumeBase
 {
 public:
     // return the array containing the names of the volumes
@@ -119,7 +119,7 @@ enum wxFSIconType
 };
 
 // wxFSVolume adds GetIcon() to wxFSVolumeBase
-class  wxFSVolume : public wxFSVolumeBase
+class WXDLLIMPEXP_CORE wxFSVolume : public wxFSVolumeBase
 {
 public:
     wxFSVolume() : wxFSVolumeBase() { InitIcons(); }

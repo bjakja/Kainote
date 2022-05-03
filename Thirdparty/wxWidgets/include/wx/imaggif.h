@@ -23,9 +23,9 @@
 
 struct wxRGB;
 struct GifHashTableType;
-class  wxImageArray; // anidecod.h
+class WXDLLIMPEXP_FWD_CORE wxImageArray; // anidecod.h
 
-class  wxGIFHandler : public wxImageHandler
+class WXDLLIMPEXP_CORE wxGIFHandler : public wxImageHandler
 {
 public:
     inline wxGIFHandler()

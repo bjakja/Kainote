@@ -20,12 +20,12 @@
 #include "wx/gdiobj.h"
 
 // wxPaletteBase
-class  wxPaletteBase: public wxGDIObject
+class WXDLLIMPEXP_CORE wxPaletteBase: public wxGDIObject
 {
 public:
     virtual ~wxPaletteBase() { }
 
-    virtual int GetColoursCount() const { /*wxFAIL_MSG( wxT("not implemented") );*/ return 0; }
+    virtual int GetColoursCount() const { wxFAIL_MSG( wxT("not implemented") ); return 0; }
 };
 
 #if defined(__WXMSW__)

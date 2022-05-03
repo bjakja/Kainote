@@ -14,7 +14,7 @@
 
 #include "wx/gdiobj.h"
 
-class  wxPalette : public wxPaletteBase
+class WXDLLIMPEXP_CORE wxPalette : public wxPaletteBase
 {
 public:
     wxPalette() { }

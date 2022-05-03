@@ -18,13 +18,13 @@
 
 #include "wx/control.h"
 
-extern const char wxStaticBoxNameStr[];
+extern WXDLLIMPEXP_DATA_CORE(const char) wxStaticBoxNameStr[];
 
 // ----------------------------------------------------------------------------
 // wxStaticBox: a grouping box with a label
 // ----------------------------------------------------------------------------
 
-class  wxStaticBoxBase : public wxControl
+class WXDLLIMPEXP_CORE wxStaticBoxBase : public wxControl
 {
 public:
     wxStaticBoxBase() { }

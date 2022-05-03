@@ -27,11 +27,11 @@
 // included wx/menu.h
 #include "wx/menuitem.h"
 
-class  wxFrame;
-class  wxMenu;
-class  wxMenuBarBase;
-class  wxMenuBar;
-class  wxMenuItem;
+class WXDLLIMPEXP_FWD_CORE wxFrame;
+class WXDLLIMPEXP_FWD_CORE wxMenu;
+class WXDLLIMPEXP_FWD_CORE wxMenuBarBase;
+class WXDLLIMPEXP_FWD_CORE wxMenuBar;
+class WXDLLIMPEXP_FWD_CORE wxMenuItem;
 
 // pseudo template list classes
 WX_DECLARE_EXPORTED_LIST(wxMenu, wxMenuList);
@@ -41,7 +41,7 @@ WX_DECLARE_EXPORTED_LIST(wxMenuItem, wxMenuItemList);
 // wxMenu
 // ----------------------------------------------------------------------------
 
-class  wxMenuBase : public wxEvtHandler
+class WXDLLIMPEXP_CORE wxMenuBase : public wxEvtHandler
 {
 public:
     // create a menu
@@ -398,7 +398,7 @@ protected:
 // XTI accessor
 // ----------------------------------------------------------------------------
 
-class  wxMenuInfoHelper : public wxObject
+class WXDLLEXPORT wxMenuInfoHelper : public wxObject
 {
 public:
     wxMenuInfoHelper() { m_menu = NULL; }
@@ -429,7 +429,7 @@ WX_DECLARE_EXPORTED_LIST(wxMenuInfoHelper, wxMenuInfoHelperList );
 // wxMenuBar
 // ----------------------------------------------------------------------------
 
-class  wxMenuBarBase : public wxWindow
+class WXDLLIMPEXP_CORE wxMenuBarBase : public wxWindow
 {
 public:
     // default ctor

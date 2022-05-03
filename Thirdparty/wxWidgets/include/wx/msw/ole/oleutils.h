@@ -82,7 +82,7 @@ inline void ReleaseInterface(IUnknown *pIUnk)
 #define   RELEASE_AND_NULL(p)   if ( (p) != NULL ) { p->Release(); p = NULL; };
 
 // return true if the iid is in the array
-extern  bool IsIidFromList(REFIID riid, const IID *aIids[], size_t nCount);
+extern WXDLLIMPEXP_CORE bool IsIidFromList(REFIID riid, const IID *aIids[], size_t nCount);
 
 // ============================================================================
 // IUnknown implementation helpers
@@ -212,7 +212,7 @@ WXDLLIMPEXP_CORE void wxLogRelease(const wxChar *szInterface, ULONG cRef);
 
 // wrapper around BSTR type (by Vadim Zeitlin)
 
-class  wxBasicString
+class WXDLLIMPEXP_CORE wxBasicString
 {
 public:
     // ctors & dtor
@@ -235,17 +235,17 @@ private:
 
 #if wxUSE_VARIANT
 // Convert variants
-class  wxVariant;
+class WXDLLIMPEXP_FWD_BASE wxVariant;
 
- bool wxConvertVariantToOle(const wxVariant& variant, VARIANTARG& oleVariant);
- bool wxConvertOleToVariant(const VARIANTARG& oleVariant, wxVariant& variant);
+WXDLLIMPEXP_CORE bool wxConvertVariantToOle(const wxVariant& variant, VARIANTARG& oleVariant);
+WXDLLIMPEXP_CORE bool wxConvertOleToVariant(const VARIANTARG& oleVariant, wxVariant& variant);
 #endif // wxUSE_VARIANT
 
 // Convert string to Unicode
- BSTR wxConvertStringToOle(const wxString& str);
+WXDLLIMPEXP_CORE BSTR wxConvertStringToOle(const wxString& str);
 
 // Convert string from BSTR to wxString
- wxString wxConvertStringFromOle(BSTR bStr);
+WXDLLIMPEXP_CORE wxString wxConvertStringFromOle(BSTR bStr);
 
 #else // !wxUSE_OLE
 

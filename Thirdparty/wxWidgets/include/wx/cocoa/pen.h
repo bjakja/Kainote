@@ -15,13 +15,13 @@
 #include "wx/gdiobj.h"
 #include "wx/gdicmn.h"
 
-class  wxColour;
-class  wxBitmap;
+class WXDLLIMPEXP_FWD_CORE wxColour;
+class WXDLLIMPEXP_FWD_CORE wxBitmap;
 
 // ========================================================================
 // wxPen
 // ========================================================================
-class  wxPen: public wxGDIObject
+class WXDLLIMPEXP_CORE wxPen: public wxGDIObject
 {
 public:
     wxPen();

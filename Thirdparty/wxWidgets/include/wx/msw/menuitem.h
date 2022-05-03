@@ -27,7 +27,7 @@
 // wxMenuItem: an item in the menu, optionally implements owner-drawn behaviour
 // ----------------------------------------------------------------------------
 
-class  wxMenuItem : public wxMenuItemBase
+class WXDLLIMPEXP_CORE wxMenuItem : public wxMenuItemBase
 #if wxUSE_OWNER_DRAWN
                              , public wxOwnerDrawn
 #endif

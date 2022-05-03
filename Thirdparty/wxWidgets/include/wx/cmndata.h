@@ -22,7 +22,7 @@
 #include "wx/stream.h"
 #endif
 
-class  wxPrintNativeDataBase;
+class WXDLLIMPEXP_FWD_CORE wxPrintNativeDataBase;
 
 /*
  * wxPrintData
@@ -52,7 +52,7 @@ enum wxPrintBin
 
 const int wxPRINTMEDIA_DEFAULT = 0;
 
-class  wxPrintData: public wxObject
+class WXDLLIMPEXP_CORE wxPrintData: public wxObject
 {
 public:
     wxPrintData();
@@ -149,7 +149,7 @@ private:
  * from the dialog.
  */
 
-class  wxPrintDialogData: public wxObject
+class WXDLLIMPEXP_CORE wxPrintDialogData: public wxObject
 {
 public:
     wxPrintDialogData();
@@ -224,7 +224,7 @@ private:
 // Compatibility with old name
 #define wxPageSetupData wxPageSetupDialogData
 
-class  wxPageSetupDialogData: public wxObject
+class WXDLLIMPEXP_CORE wxPageSetupDialogData: public wxObject
 {
 public:
     wxPageSetupDialogData();

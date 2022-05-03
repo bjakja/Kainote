@@ -30,7 +30,7 @@
 // implements an extended interface deriving from this one)
 // ----------------------------------------------------------------------------
 
-class  wxItemContainerImmutable
+class WXDLLIMPEXP_CORE wxItemContainerImmutable
 {
 public:
     wxItemContainerImmutable() { }
@@ -97,7 +97,7 @@ protected:
 // in this case DoInsertItem() needs to be overridden.
 // ----------------------------------------------------------------------------
 
-class  wxItemContainer : public wxItemContainerImmutable
+class WXDLLIMPEXP_CORE wxItemContainer : public wxItemContainerImmutable
 {
 private:
     // AppendItems() and InsertItems() helpers just call DoAppend/InsertItems()
@@ -121,8 +121,8 @@ private:
 
     int AppendItems(const wxArrayStringsAdapter& items, void **clientData)
     {
-        /*wxASSERT_MSG( GetClientDataType() != wxClientData_Object,
-                      wxT("can't mix different types of client data") );*/
+        wxASSERT_MSG( GetClientDataType() != wxClientData_Object,
+                      wxT("can't mix different types of client data") );
 
         return AppendItems(items, clientData, wxClientData_Void);
     }
@@ -130,8 +130,8 @@ private:
     int AppendItems(const wxArrayStringsAdapter& items,
                     wxClientData **clientData)
     {
-        /*wxASSERT_MSG( GetClientDataType() != wxClientData_Void,
-                      wxT("can't mix different types of client data") );*/
+        wxASSERT_MSG( GetClientDataType() != wxClientData_Void,
+                      wxT("can't mix different types of client data") );
 
         return AppendItems(items, reinterpret_cast<void **>(clientData),
                            wxClientData_Object);
@@ -142,17 +142,17 @@ private:
                     void **clientData,
                     wxClientDataType type)
     {
-        /*wxASSERT_MSG( !IsSorted(), wxT("can't insert items in sorted control") );
+        wxASSERT_MSG( !IsSorted(), wxT("can't insert items in sorted control") );
 
         wxCHECK_MSG( pos <= GetCount(), wxNOT_FOUND,
-                     wxT("position out of range") );*/
+                     wxT("position out of range") );
 
         // not all derived classes handle empty arrays correctly in
         // DoInsertItems() and besides it really doesn't make much sense to do
         // this (for append it could correspond to creating an initially empty
         // control but why would anybody need to insert 0 items?)
-        /*wxCHECK_MSG( !items.IsEmpty(), wxNOT_FOUND,
-                     wxT("need something to insert") );*/
+        wxCHECK_MSG( !items.IsEmpty(), wxNOT_FOUND,
+                     wxT("need something to insert") );
 
         return DoInsertItems(items, pos, clientData, type);
     }
@@ -166,8 +166,8 @@ private:
                      unsigned int pos,
                      void **clientData)
     {
-        /*wxASSERT_MSG( GetClientDataType() != wxClientData_Object,
-                      wxT("can't mix different types of client data") );*/
+        wxASSERT_MSG( GetClientDataType() != wxClientData_Object,
+                      wxT("can't mix different types of client data") );
 
         return InsertItems(items, pos, clientData, wxClientData_Void);
     }
@@ -176,8 +176,8 @@ private:
                      unsigned int pos,
                      wxClientData **clientData)
     {
-        /*wxASSERT_MSG( GetClientDataType() != wxClientData_Void,
-                      wxT("can't mix different types of client data") );*/
+        wxASSERT_MSG( GetClientDataType() != wxClientData_Void,
+                      wxT("can't mix different types of client data") );
 
         return InsertItems(items, pos,
                            reinterpret_cast<void **>(clientData),
@@ -431,7 +431,7 @@ public:
         { return wxItemContainer::GetClientObject(n); }
 };
 
-class  wxControlWithItemsBase :
+class WXDLLIMPEXP_CORE wxControlWithItemsBase :
     public wxWindowWithItems<wxControl, wxItemContainer>
 {
 public:
@@ -458,7 +458,7 @@ private:
 #elif defined(__WXMOTIF__)
     #include "wx/motif/ctrlsub.h"
 #else
-    class  wxControlWithItems : public wxControlWithItemsBase
+    class WXDLLIMPEXP_CORE wxControlWithItems : public wxControlWithItemsBase
     {
     public:
         wxControlWithItems() { }

@@ -45,7 +45,7 @@ WX_DEFINE_LIST(wxArtProvidersList)
 WX_DECLARE_EXPORTED_STRING_HASH_MAP(wxBitmap, wxArtProviderBitmapsHash);
 WX_DECLARE_EXPORTED_STRING_HASH_MAP(wxIconBundle, wxArtProviderIconBundlesHash);
 
-class  wxArtProviderCache
+class WXDLLEXPORT wxArtProviderCache
 {
 public:
     bool GetBitmap(const wxString& full_id, wxBitmap* bmp);
@@ -168,8 +168,8 @@ wxArtProvider::~wxArtProvider()
 
 /*static*/ bool wxArtProvider::Pop()
 {
-    /*wxCHECK_MSG( sm_providers, false, wxT("no wxArtProvider exists") );
-    wxCHECK_MSG( !sm_providers->empty(), false, wxT("wxArtProviders stack is empty") );*/
+    wxCHECK_MSG( sm_providers, false, wxT("no wxArtProvider exists") );
+    wxCHECK_MSG( !sm_providers->empty(), false, wxT("wxArtProviders stack is empty") );
 
     delete sm_providers->GetFirst()->GetData();
     sm_cache->Clear();
@@ -178,7 +178,7 @@ wxArtProvider::~wxArtProvider()
 
 /*static*/ bool wxArtProvider::Remove(wxArtProvider *provider)
 {
-    /*wxCHECK_MSG( sm_providers, false, wxT("no wxArtProvider exists") );*/
+    wxCHECK_MSG( sm_providers, false, wxT("no wxArtProvider exists") );
 
     if ( sm_providers->DeleteObject(provider) )
     {
@@ -218,9 +218,9 @@ wxArtProvider::~wxArtProvider()
                                              const wxSize& size)
 {
     // safety-check against writing client,id,size instead of id,client,size:
-    /*wxASSERT_MSG( client.Last() == wxT('C'), wxT("invalid 'client' parameter") );
+    wxASSERT_MSG( client.Last() == wxT('C'), wxT("invalid 'client' parameter") );
 
-    wxCHECK_MSG( sm_providers, wxNullBitmap, wxT("no wxArtProvider exists") );*/
+    wxCHECK_MSG( sm_providers, wxNullBitmap, wxT("no wxArtProvider exists") );
 
     wxString hashId = wxArtProviderCache::ConstructHashID(id, client, size);
 
@@ -295,9 +295,9 @@ wxIconBundle wxArtProvider::GetIconBundle(const wxArtID& id, const wxArtClient& 
 wxIconBundle wxArtProvider::DoGetIconBundle(const wxArtID& id, const wxArtClient& client)
 {
     // safety-check against writing client,id,size instead of id,client,size:
-    /*wxASSERT_MSG( client.Last() == wxT('C'), wxT("invalid 'client' parameter") );
+    wxASSERT_MSG( client.Last() == wxT('C'), wxT("invalid 'client' parameter") );
 
-    wxCHECK_MSG( sm_providers, wxNullIconBundle, wxT("no wxArtProvider exists") );*/
+    wxCHECK_MSG( sm_providers, wxNullIconBundle, wxT("no wxArtProvider exists") );
 
     wxString hashId = wxArtProviderCache::ConstructHashID(id, client);
 
@@ -338,7 +338,7 @@ wxArtID wxArtProvider::GetMessageBoxIconId(int flags)
     switch ( flags & wxICON_MASK )
     {
         default:
-            break;// wxFAIL_MSG(wxT("incorrect message box icon flags"));
+            wxFAIL_MSG(wxT("incorrect message box icon flags"));
             // fall through
 
         case wxICON_ERROR:

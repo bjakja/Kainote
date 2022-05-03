@@ -94,14 +94,14 @@ enum wxSocketType
 
 
 // event
-class  wxSocketEvent;
-wxDECLARE_EXPORTED_EVENT(, wxEVT_SOCKET, wxSocketEvent);
+class WXDLLIMPEXP_FWD_NET wxSocketEvent;
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_NET, wxEVT_SOCKET, wxSocketEvent);
 
 // --------------------------------------------------------------------------
 // wxSocketBase
 // --------------------------------------------------------------------------
 
-class  wxSocketBase : public wxObject
+class WXDLLIMPEXP_NET wxSocketBase : public wxObject
 {
 public:
     // Public interface
@@ -287,7 +287,7 @@ private:
 // wxSocketServer
 // --------------------------------------------------------------------------
 
-class  wxSocketServer : public wxSocketBase
+class WXDLLIMPEXP_NET wxSocketServer : public wxSocketBase
 {
 public:
     wxSocketServer(const wxSockAddress& addr,
@@ -307,7 +307,7 @@ public:
 // wxSocketClient
 // --------------------------------------------------------------------------
 
-class  wxSocketClient : public wxSocketBase
+class WXDLLIMPEXP_NET wxSocketClient : public wxSocketBase
 {
 public:
     wxSocketClient(wxSocketFlags flags = wxSOCKET_NONE);
@@ -348,7 +348,7 @@ private:
 
 // WARNING: still in alpha stage
 
-class  wxDatagramSocket : public wxSocketBase
+class WXDLLIMPEXP_NET wxDatagramSocket : public wxSocketBase
 {
 public:
     wxDatagramSocket(const wxSockAddress& addr,
@@ -375,7 +375,7 @@ private:
 // wxSocketEvent
 // --------------------------------------------------------------------------
 
-class  wxSocketEvent : public wxEvent
+class WXDLLIMPEXP_NET wxSocketEvent : public wxEvent
 {
 public:
     wxSocketEvent(int id = 0)

@@ -41,13 +41,13 @@
  */
 #define wxCHK_ALLOW_3RD_STATE_FOR_USER 0x2000
 
-extern const char wxCheckBoxNameStr[];
+extern WXDLLIMPEXP_DATA_CORE(const char) wxCheckBoxNameStr[];
 
 // ----------------------------------------------------------------------------
 // wxCheckBox: a control which shows a label and a box which may be checked
 // ----------------------------------------------------------------------------
 
-class  wxCheckBoxBase : public wxControl
+class WXDLLIMPEXP_CORE wxCheckBoxBase : public wxControl
 {
 public:
     wxCheckBoxBase() { }
@@ -58,8 +58,8 @@ public:
 
     bool IsChecked() const
     {
-       /* wxASSERT_MSG( !Is3State(), wxT("Calling IsChecked() doesn't make sense for")
-            wxT(" a three state checkbox, Use Get3StateValue() instead") );*/
+        wxASSERT_MSG( !Is3State(), wxT("Calling IsChecked() doesn't make sense for")
+            wxT(" a three state checkbox, Use Get3StateValue() instead") );
 
         return GetValue();
     }
@@ -71,8 +71,8 @@ public:
         if ( state == wxCHK_UNDETERMINED && !Is3State() )
         {
             // Undetermined state with a 2-state checkbox??
-            /*wxFAIL_MSG( wxT("DoGet3StateValue() says the 2-state checkbox is ")
-                wxT("in an undetermined/third state") );*/
+            wxFAIL_MSG( wxT("DoGet3StateValue() says the 2-state checkbox is ")
+                wxT("in an undetermined/third state") );
 
             state = wxCHK_UNCHECKED;
         }
@@ -84,7 +84,7 @@ public:
     {
         if ( state == wxCHK_UNDETERMINED && !Is3State() )
         {
-            //wxFAIL_MSG(wxT("Setting a 2-state checkbox to undetermined state"));
+            wxFAIL_MSG(wxT("Setting a 2-state checkbox to undetermined state"));
             state = wxCHK_UNCHECKED;
         }
 
@@ -113,11 +113,11 @@ protected:
     // choose the default border for this window
     virtual wxBorder GetDefaultBorder() const { return wxBORDER_NONE; }
 
-    virtual void DoSet3StateValue(wxCheckBoxState WXUNUSED(state)) { /*wxFAIL;*/ }
+    virtual void DoSet3StateValue(wxCheckBoxState WXUNUSED(state)) { wxFAIL; }
 
     virtual wxCheckBoxState DoGet3StateValue() const
     {
-        //wxFAIL;
+        wxFAIL;
         return wxCHK_UNCHECKED;
     }
 
@@ -143,8 +143,8 @@ protected:
         {
             if ( style & wxCHK_2STATE )
             {
-                /*wxFAIL_MSG( "wxCHK_2STATE and wxCHK_3STATE can't be used "
-                            "together" );*/
+                wxFAIL_MSG( "wxCHK_2STATE and wxCHK_3STATE can't be used "
+                            "together" );
                 style &= ~wxCHK_3STATE;
             }
         }
@@ -152,8 +152,8 @@ protected:
         {
             if ( style & wxCHK_ALLOW_3RD_STATE_FOR_USER )
             {
-                /*wxFAIL_MSG( "wxCHK_ALLOW_3RD_STATE_FOR_USER doesn't make sense "
-                            "without wxCHK_3STATE" );*/
+                wxFAIL_MSG( "wxCHK_ALLOW_3RD_STATE_FOR_USER doesn't make sense "
+                            "without wxCHK_3STATE" );
                 style &= ~wxCHK_ALLOW_3RD_STATE_FOR_USER;
             }
         }

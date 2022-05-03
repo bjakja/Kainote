@@ -1,24 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Rel_AVX2|x64">
-      <Configuration>Rel_AVX2</Configuration>
-      <Platform>x64</Platform>
+    <ProjectConfiguration Include="Rel_AVX512|Win32">
+      <Configuration>Rel_AVX512</Configuration>
+      <Platform>Win32</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Rel_AVX512|x64">
       <Configuration>Rel_AVX512</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Rel_AVX|x64">
-      <Configuration>Rel_AVX</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
@@ -29,19 +33,19 @@
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <CharacterSet>Unicode</CharacterSet>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v143</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <CharacterSet>Unicode</CharacterSet>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v143</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -52,6 +56,12 @@
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -65,12 +75,6 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -81,65 +85,52 @@
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">
-    </IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(LibraryPath)</LibraryPath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">$(LibraryPath)</LibraryPath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">$(LibraryPath)</LibraryPath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(LibraryPath)</LibraryPath>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">false</LinkIncremental>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <EmbedManifest>true</EmbedManifest>
     <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\$(ProjectName)</IntDir>
-    <ExternalIncludePath>L:\Kainote\Thirdparty\DirectX9</ExternalIncludePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">
-    <OutDir>$(SolutionDir)$(Platform) AVX\$(Configuration)\</OutDir>
-    <IntDir>$(Platform) AVX\$(Configuration)\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">
-    <OutDir>$(SolutionDir)$(Platform) AVX\$(Configuration)\</OutDir>
-    <IntDir>$(Platform) AVX\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">
-    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\$(ProjectName)</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\$(ProjectName)</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(solutionDir)kainote.;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;L:\Kainote\Thirdparty\DirectX9;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;WIN32;__WXMSW__;_WINDOWS;_DEBUG;__WXDEBUG__;BOOST_LOCALE_WITH_ICU=1;BOOST_LOCALE_NO_STD_BACKEND=1;BOOST_LOCALE_NO_WINAPI_BACKEND=1;BOOST_LOCALE_NO_POSIX_BACKEND=1;BOOST_THREAD_BUILD_LIB;BOOST_ALL_NO_LIB		;BOOST_HAS_ICU				;BOOST_SYSTEM_NO_DEPRECATED;BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;U_ENABLE_DYLOAD=0;U_CHECK_DYLOAD=0;UCONFIG_NO_FILE_IO=1;UCONFIG_NO_LEGACY_CONVERSION=1;U_CHARSET_IS_UTF8=1;UCONFIG_NO_IDNA=1;UCONFIG_NO_FORMATTING=1;UCONFIG_NO_TRANSLITERATION=1;U_ATTRIBUTE_DEPRECATED=;_CRT_SECURE_NO_DEPRECATE;U_COMMON_IMPLEMENTATION;U_I18N_IMPLEMENTATION;U_STATIC_IMPLEMENTATION;_WINSOCK2API_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Thirdparty\wxWidgets\src\zlib;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;WIN32;__WXMSW__;_WINDOWS;_DEBUG;__WXDEBUG__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions512</EnableEnhancedInstructionSet>
       <FloatingPointModel>Precise</FloatingPointModel>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;__WXMSW__;__WXDEBUG__;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>usp10.lib;core.lib;base.lib;wxpng.lib;wxregex.lib;zlib.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;Dbghelp.lib;strmbasd.lib;ffms2.lib;Luajit.lib;LuaBins.lib;d3d9.lib;D3dx9d.lib;Boost.lib;libhunspell.lib;icu.lib;%(AdditionalDependencies);libass.lib;dsound.lib;dxguid.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)bin\$(Platform)\$(Configuration)\;L:\Kainote\Thirdparty\DirectX9\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>usp10.lib;core.lib;base.lib;wxpng.lib;wxregex.lib;zlib.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;Dbghelp.lib;strmbasd.lib;ffms2.lib;Luajit.lib;LuaBins.lib;d3d9.lib;D3dx9d.lib;Boost.lib;libhunspell.lib;libass.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>c:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(SolutionDir)bin\$(Platform)\$(Configuration)\;$(SolutionDir)$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <IgnoreSpecificDefaultLibraries>LIBCMTD.lib</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>libboost_locale-vc143-mt-sgd-x64-1_79.lib;libboost_regex-vc143-mt-sgd-x64-1_79.lib;libboost_system-vc143-mt-sgd-x64-1_79.lib;libboost_filesystem-vc143-mt-sgd-x64-1_79.lib</IgnoreSpecificDefaultLibraries>
       <LargeAddressAware>true</LargeAddressAware>
+      <SubSystem>Windows</SubSystem>
+      <EntryPointSymbol>main</EntryPointSymbol>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -162,121 +153,31 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>..\Thirdparty\zlib;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;HUNSPELL_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <MinimalRebuild>false</MinimalRebuild>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions512</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>__WXMSW__;__WXDEBUG__;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;core.lib;base.lib;wxpng.lib;zlib.lib;wxregex.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;strmbase.lib;Boost.lib;libhunspell.lib;libass.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)bin\$(Platform)\$(Configuration)\;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;core.lib;wxpng.lib;zlib.lib;wxregex.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;strmbase.lib;Boost.lib;libhunspell.lib;libass.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Platform)\$(Configuration);C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;libcpmt.lib;libboost_regex-vc143-mt-x64-1_79.lib;libboost_system-vc143-mt-x64-1_79.lib;libboost_filesystem-vc143-mt-x64-1_79.lib;libboost_locale-vc143-mt-x64-1_79.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;libcpmt.lib;base.lib;libboost_locale-vc143-mt-s-x64-1_79.lib;libboost_regex-vc143-mt-s-x64-1_79.lib;libboost_filesystem-vc143-mt-s-x64-1_79.lib;libboost_system-vc143-mt-s-x64-1_79.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <LargeAddressAware>true</LargeAddressAware>
-    </Link>
-    <PostBuildEvent>
-      <Command>$(SolutionDir)AutoVersioning "$(ProjectDir)VersionKainote.h"
-$(SolutionDir)AutoSending/x64/Release/AutoSending "$(SolutionDir)x64\Release\Kainote x64.zip" "H:\Google Drive\Kainote x64.zip" "x64"
-</Command>
-    </PostBuildEvent>
-    <PreBuildEvent>
-      <Command>echo | set /p dummyName=#define GIT_CUR_COMMIT &gt;  gitparams.h
-git rev-parse --verify HEAD &gt;&gt;  gitparams.h
-
-echo | set /p dummyName=#define GIT_BRANCH &gt;&gt;  gitparams.h
-git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
-    </PreBuildEvent>
-    <Manifest>
-      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
-    </Manifest>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">
-    <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\Thirdparty\zlib;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;HUNSPELL_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <MinimalRebuild>false</MinimalRebuild>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
-    </ClCompile>
-    <ResourceCompile>
-      <PreprocessorDefinitions>__WXMSW__;__WXDEBUG__;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ResourceCompile>
-    <Link>
-      <AdditionalDependencies>usp10.lib;core.lib;base.lib;wxpng.lib;wxregex.lib;zlib.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;Dbghelp.lib;strmbasd.lib;ffms2.lib;Luajit.lib;LuaBins.lib;d3d9.lib;D3dx9d.lib;Boost.lib;libhunspell.lib;%(AdditionalDependencies);libass.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)bin\$(Platform)\$(Configuration)\;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <OptimizeReferences>true</OptimizeReferences>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;libboost_locale-vc142-mt-x64-1_73.lib;libboost_regex-vc142-mt-x64-1_73.lib;libboost_filesystem-vc142-mt-x64-1_73.lib;libboost_system-vc142-mt-x64-1_73.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <LargeAddressAware>true</LargeAddressAware>
-    </Link>
-    <PostBuildEvent>
-      <Command>$(SolutionDir)AutoVersioning "$(ProjectDir)VersionKainote.h"
-$(SolutionDir)AutoSending/x64/Release/AutoSending "$(SolutionDir)x64\Release\Kainote x64.zip" "H:\Google Drive\Kainote x64.zip" "x64"
-</Command>
-    </PostBuildEvent>
-    <PreBuildEvent>
-      <Command>echo | set /p dummyName=#define GIT_CUR_COMMIT &gt;  gitparams.h
-git rev-parse --verify HEAD &gt;&gt;  gitparams.h
-
-echo | set /p dummyName=#define GIT_BRANCH &gt;&gt;  gitparams.h
-git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
-    </PreBuildEvent>
-    <Manifest>
-      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
-    </Manifest>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">
-    <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\Thirdparty\zlib;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;HUNSPELL_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
-      <MinimalRebuild>false</MinimalRebuild>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
-    </ClCompile>
-    <ResourceCompile>
-      <PreprocessorDefinitions>__WXMSW__;__WXDEBUG__;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ResourceCompile>
-    <Link>
-      <AdditionalDependencies>usp10.lib;core.lib;base.lib;wxpng.lib;wxregex.lib;zlib.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;Dbghelp.lib;strmbasd.lib;ffms2.lib;Luajit.lib;LuaBins.lib;d3d9.lib;D3dx9d.lib;Boost.lib;libhunspell.lib;%(AdditionalDependencies);libass.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)bin\$(Platform)\$(Configuration)\;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <OptimizeReferences>true</OptimizeReferences>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;libboost_locale-vc142-mt-x64-1_73.lib;libboost_regex-vc142-mt-x64-1_73.lib;libboost_filesystem-vc142-mt-x64-1_73.lib;libboost_system-vc142-mt-x64-1_73.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <LargeAddressAware>true</LargeAddressAware>
+      <SubSystem>Windows</SubSystem>
+      <EntryPointSymbol>Main</EntryPointSymbol>
     </Link>
     <PostBuildEvent>
       <Command>$(SolutionDir)AutoVersioning "$(ProjectDir)VersionKainote.h"
@@ -298,9 +199,9 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\directx9;$(solutionDir)Thirdparty\zlib;$(solutionDir)Thirdparty\Hunspell\src\hunspell;$(solutionDir)Thirdparty\luabins\include;$(solutionDir)Thirdparty\luajit\src;$(solutionDir)Thirdparty\boost;$(solutionDir)Thirdparty\icu\source\i18n;$(solutionDir)Thirdparty\icu\source\common;$(solutionDir)Thirdparty\libass;$(SolutionDir)Thirdparty\BaseClasses;$(solutionDir)Thirdparty\wxwidgets\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;HUNSPELL_STATIC;_WS2DEF_;_WINSOCK2API_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>..\Thirdparty\zlib;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;HUNSPELL_STATIC;U_STATIC_IMPLEMENTATION;U_ENABLE_DYLOAD=0;U_CHECK_DYLOAD=0;UCONFIG_NO_FILE_IO=1;UCONFIG_NO_LEGACY_CONVERSION=1;U_CHARSET_IS_UTF8=1;UCONFIG_NO_IDNA=1;UCONFIG_NO_FORMATTING=1;U_ATTRIBUTE_DEPRECATED=;_CRT_SECURE_NO_DEPRECATE;U_COMMON_IMPLEMENTATION;U_I18N_IMPLEMENTATION;UCLN_AUTO_ATEXIT;BOOST_HAS_ICU;BOOST_SYSTEM_NO_DEPRECATED;BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -308,23 +209,26 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <MinimalRebuild>false</MinimalRebuild>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions512</EnableEnhancedInstructionSet>
-      <LanguageStandard>stdcpp14</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <LanguageStandard>Default</LanguageStandard>
+      <LanguageStandard_C>Default</LanguageStandard_C>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>__WXMSW__;__WXDEBUG__;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>usp10.lib;base.lib;core.lib;wxpng.lib;wxregex.lib;zlib.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;Dbghelp.lib;strmbase.lib;ffms2.lib;Luajit.lib;LuaBins.lib;d3d9.lib;D3dx9d.lib;Dxva2.lib;Boost.lib;libhunspell.lib;%(AdditionalDependencies);libass.lib;Dwmapi.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)bin\$(Platform)\$(Configuration)\;$(SolutionDir)Thirdparty\DirectX9;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Dsound.lib;kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;base.lib;core.lib;wxpng.lib;wxregex.lib;zlib.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;strmbase.lib;Boost.lib;libhunspell.lib;libass.lib;dxva2.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Platform)\$(Configuration);C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(SolutionDir)\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;libboost_filesystem-vc143-mt-s-x64-1_79.lib;libboost_locale-vc143-mt-s-x64-1_79.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;libboost_locale-vc143-mt-x64-1_79.lib;libboost_regex-vc143-mt-s-x64-1_79.lib;libboost_filesystem-vc143-mt-x64-1_79.lib;libboost_system-vc143-mt-s-x64-1_79.lib;libboost_filesystem-vc143-mt-s-x64-1_79.lib;libboost_locale-vc143-mt-s-x64-1_79.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <LargeAddressAware>true</LargeAddressAware>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
+      <SubSystem>Windows</SubSystem>
     </Link>
     <PostBuildEvent>
       <Command>$(SolutionDir)AutoVersioning "$(ProjectDir)VersionKainote.h"
@@ -341,10 +245,14 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <Manifest>
       <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
     </Manifest>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Demux.cpp" />
-    <ClCompile Include="DshowRenderer.cpp" />
+    <ClCompile Include="DialogueTextEditor.cpp" />
+    <ClCompile Include="Notebook.cpp" />
     <ClCompile Include="TagFindReplace.cpp" />
     <ClCompile Include="VisualAllTags.cpp" />
     <ClCompile Include="AudioBox.cpp" />
@@ -367,23 +275,26 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="ConfigConverter.cpp" />
     <ClCompile Include="Context.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="ContextVulkan.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="ContextDX9.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="DummyVideo.cpp" />
@@ -416,7 +327,6 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="KaiListCtrl.cpp" />
     <ClCompile Include="KaiMessageBox.cpp" />
     <ClCompile Include="KainoteApp.cpp" />
-    <ClCompile Include="KainoteFrame.cpp" />
     <ClCompile Include="KaiRadioButton.cpp" />
     <ClCompile Include="KaiScrollbar.cpp" />
     <ClCompile Include="KaiSlider.cpp" />
@@ -463,13 +373,13 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="StyleChange.cpp" />
     <ClCompile Include="ColorPicker.cpp" />
     <ClCompile Include="DropFiles.cpp" />
+    <ClCompile Include="DshowRenderer.cpp" />
     <ClCompile Include="EditBox.cpp" />
     <ClCompile Include="FontCollector.cpp" />
     <ClCompile Include="FontDialog.cpp" />
     <ClCompile Include="SubsGrid.cpp" />
     <ClCompile Include="Hotkeys.cpp" />
     <ClCompile Include="KaraokeSplitting.cpp" />
-    <ClCompile Include="DialogueTextEditor.cpp" />
     <ClCompile Include="NewCatalog.cpp" />
     <ClCompile Include="NumCtrl.cpp" />
     <ClCompile Include="OpennWrite.cpp" />
@@ -483,13 +393,12 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="SubsDialogue.cpp" />
     <ClCompile Include="SubsFile.cpp" />
     <ClCompile Include="SubsGridBase.cpp" />
-    <ClCompile Include="Notebook.cpp" />
     <ClCompile Include="TabPanel.cpp" />
     <ClCompile Include="SubsTime.cpp" />
     <ClCompile Include="TimeCtrl.cpp" />
     <ClCompile Include="TLDialog.cpp" />
     <ClCompile Include="Toolbar.cpp" />
-    <ClCompile Include="VideoBox.cpp" />
+    <ClCompile Include="Videobox.cpp" />
     <ClCompile Include="VideoFullscreen.cpp" />
     <ClCompile Include="VideoSlider.cpp" />
     <ClCompile Include="VisualClips.cpp" />
@@ -522,33 +431,36 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="ConfigConverter.h" />
     <ClInclude Include="Context.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="ContextVulkan.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="ContextDX9.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="D2DInit.h" />
     <ClInclude Include="Demux.h" />
+    <ClInclude Include="DialogueTextEditor.h" />
     <ClInclude Include="DummyVideo.h" />
     <ClInclude Include="FontCatalogList.h" />
-    <ClInclude Include="GFFT\Factory.h" />
     <ClInclude Include="KaiGauge.h" />
     <ClInclude Include="KaiPanel.h" />
     <ClInclude Include="LineParse.h" />
+    <ClInclude Include="Notebook.h" />
     <ClInclude Include="Provider.h" />
     <ClInclude Include="ProviderDummy.h" />
     <ClInclude Include="ProviderFFMS2.h" />
@@ -558,6 +470,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="ShiftTimes.h" />
     <ClInclude Include="ColorSpace.h" />
     <ClInclude Include="Config.h" />
+    <ClInclude Include="D2DInit.h" />
     <ClInclude Include="DShowPlayer.h" />
     <ClInclude Include="FindReplace.h" />
     <ClInclude Include="FindReplaceDialog.h" />
@@ -574,7 +487,6 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="KaiListCtrl.h" />
     <ClInclude Include="KaiMessageBox.h" />
     <ClInclude Include="KainoteApp.h" />
-    <ClInclude Include="KainoteFrame.h" />
     <ClInclude Include="KaiRadioButton.h" />
     <ClInclude Include="KaiScrollbar.h" />
     <ClInclude Include="KaiSlider.h" />
@@ -622,7 +534,6 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="VersionKainote.h" />
     <ClInclude Include="Hotkeys.h" />
     <ClInclude Include="KaraokeSplitting.h" />
-    <ClInclude Include="DialogueTextEditor.h" />
     <ClInclude Include="NewCatalog.h" />
     <ClInclude Include="NumCtrl.h" />
     <ClInclude Include="OpennWrite.h" />
@@ -637,19 +548,16 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="SubsDialogue.h" />
     <ClInclude Include="SubsFile.h" />
     <ClInclude Include="SubsGridBase.h" />
-    <ClInclude Include="Notebook.h" />
     <ClInclude Include="TabPanel.h" />
     <ClInclude Include="SubsTime.h" />
     <ClInclude Include="TimeCtrl.h" />
     <ClInclude Include="TLDialog.h" />
-    <ClInclude Include="VideoBox.h" />
+    <ClInclude Include="Videobox.h" />
     <ClInclude Include="VideoFullscreen.h" />
     <ClInclude Include="VideoSlider.h" />
     <ClInclude Include="VideoToolbar.h" />
     <ClInclude Include="VisualAllTagsControls.h" />
     <ClInclude Include="VisualAllTagsEdition.h" />
-    <ClInclude Include="VisualClipPoint.h" />
-    <ClInclude Include="VisualClips.h" />
     <ClInclude Include="VisualDrawingShapes.h" />
     <ClInclude Include="Visuals.h" />
     <ClInclude Include="CsriMod.h" />
@@ -665,14 +573,14 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <None Include="kai.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Thirdparty\Build\BaseClasses\baseclasses.vcxproj">
-      <Project>{e8a3f6fa-ae1c-4c8e-a0b6-9c8480324eaa}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\Thirdparty\Build\Base\base.vcxproj">
       <Project>{3fcc50c2-81e9-5db2-b8d8-2129427568b1}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Thirdparty\Build\Boost\Boost.vcxproj">
       <Project>{c91e1d87-614c-47e8-9587-393568d41738}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Thirdparty\Build\Core\core.vcxproj">
+      <Project>{6744dad8-9c70-574a-bff2-9f8dddb24a75}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Thirdparty\Build\FFMS2\ffms2.vcxproj">
       <Project>{2cf8c7d2-55e5-4861-a58a-a79b84d0d9ea}</Project>
@@ -680,8 +588,8 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ProjectReference Include="..\Thirdparty\Build\Libass\Libass.vcxproj">
       <Project>{dd6c83b0-c8e0-4c46-bfce-c758b31904b1}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\Build\LuaBins\LuaBins.vcxproj">
-      <Project>{af5cd8a9-c5dc-4780-ba28-5ed5ef9a3536}</Project>
+    <ProjectReference Include="..\Thirdparty\Build\Zlib\Zlib.vcxproj">
+      <Project>{56e35122-0b51-43d4-a721-472f2f956e0f}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Thirdparty\Hunspell\msvc\libhunspell.vcxproj">
       <Project>{53609bb3-d874-465c-af7b-df626db0d89b}</Project>

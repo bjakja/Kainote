@@ -19,7 +19,7 @@
 // wxMemoryText
 // ----------------------------------------------------------------------------
 
-class  wxMemoryText : public wxTextBuffer
+class WXDLLIMPEXP_BASE wxMemoryText : public wxTextBuffer
 {
 public:
     // Constructors.

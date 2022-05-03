@@ -38,23 +38,23 @@
 IMPLEMENT_ABSTRACT_CLASS(wxGDIObject, wxObject)
 
 
-wxBrushList* wxTheBrushList;
-wxFontList*  wxTheFontList;
-wxPenList*   wxThePenList;
+WXDLLIMPEXP_DATA_CORE(wxBrushList*) wxTheBrushList;
+WXDLLIMPEXP_DATA_CORE(wxFontList*)  wxTheFontList;
+WXDLLIMPEXP_DATA_CORE(wxPenList*)   wxThePenList;
 
-wxColourDatabase* wxTheColourDatabase;
+WXDLLIMPEXP_DATA_CORE(wxColourDatabase*) wxTheColourDatabase;
 
-wxBitmap  wxNullBitmap;
-wxBrush   wxNullBrush;
-wxColour  wxNullColour;
-wxCursor  wxNullCursor;
-wxFont    wxNullFont;
-wxIcon    wxNullIcon;
-wxPen     wxNullPen;
+WXDLLIMPEXP_DATA_CORE(wxBitmap)  wxNullBitmap;
+WXDLLIMPEXP_DATA_CORE(wxBrush)   wxNullBrush;
+WXDLLIMPEXP_DATA_CORE(wxColour)  wxNullColour;
+WXDLLIMPEXP_DATA_CORE(wxCursor)  wxNullCursor;
+WXDLLIMPEXP_DATA_CORE(wxFont)    wxNullFont;
+WXDLLIMPEXP_DATA_CORE(wxIcon)    wxNullIcon;
+WXDLLIMPEXP_DATA_CORE(wxPen)     wxNullPen;
 #if wxUSE_PALETTE
-wxPalette wxNullPalette;
+WXDLLIMPEXP_DATA_CORE(wxPalette) wxNullPalette;
 #endif
-wxIconBundle wxNullIconBundle;
+WXDLLIMPEXP_DATA_CORE(wxIconBundle) wxNullIconBundle;
 
 const wxSize wxDefaultSize(wxDefaultCoord, wxDefaultCoord);
 const wxPoint wxDefaultPosition(wxDefaultCoord, wxDefaultCoord);
@@ -571,7 +571,7 @@ const wxBrush* wxStockGDI::GetBrush(Item item)
             brush = new wxBrush(*GetColour(COLOUR_WHITE), wxBRUSHSTYLE_SOLID);
             break;
         default:
-            break;//wxFAIL;
+            wxFAIL;
         }
         ms_stockObject[item] = brush;
     }
@@ -610,7 +610,7 @@ const wxColour* wxStockGDI::GetColour(Item item)
             colour = new wxColour(255, 255, 255);
             break;
         default:
-            break;
+            wxFAIL;
         }
         ms_stockObject[item] = colour;
     }
@@ -634,7 +634,7 @@ const wxCursor* wxStockGDI::GetCursor(Item item)
             cursor = new wxCursor(wxCURSOR_ARROW);
             break;
         default:
-            break;
+            wxFAIL;
         }
         ms_stockObject[item] = cursor;
     }
@@ -673,7 +673,7 @@ const wxFont* wxStockGDI::GetFont(Item item)
             font = new wxFont(GetFont(FONT_NORMAL)->GetPointSize(), wxSWISS, wxNORMAL, wxNORMAL);
             break;
         default:
-            break;
+            wxFAIL;
         }
         ms_stockObject[item] = font;
     }
@@ -724,7 +724,7 @@ const wxPen* wxStockGDI::GetPen(Item item)
             pen = new wxPen(*GetColour(COLOUR_WHITE), 1, wxPENSTYLE_SOLID);
             break;
         default:
-            break;
+            wxFAIL;
         }
         ms_stockObject[item] = pen;
     }

@@ -19,10 +19,10 @@
 #include "wx/spinbutt.h"        // should make wxSpinEvent visible to the app
 
 // Events
-class  wxSpinDoubleEvent;
+class WXDLLIMPEXP_FWD_CORE wxSpinDoubleEvent;
 
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_SPINCTRL_UPDATED, wxSpinEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, wxSpinDoubleEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_SPINCTRL_UPDATED, wxSpinEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, wxSpinDoubleEvent);
 
 // ----------------------------------------------------------------------------
 // A spin ctrl is a text control with a spin button which is usually used to
@@ -30,7 +30,7 @@ wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_SPINCTRLDOUBLE_UPDATED, wxSpinDoubleEve
 // There are two kinds for number types T=integer or T=double.
 // ----------------------------------------------------------------------------
 
-class  wxSpinCtrlBase : public wxControl
+class WXDLLIMPEXP_CORE wxSpinCtrlBase : public wxControl
 {
 public:
     wxSpinCtrlBase() {}
@@ -62,7 +62,7 @@ private:
 // wxSpinDoubleEvent - a wxSpinEvent for double valued controls
 // ----------------------------------------------------------------------------
 
-class  wxSpinDoubleEvent : public wxNotifyEvent
+class WXDLLIMPEXP_CORE wxSpinDoubleEvent : public wxNotifyEvent
 {
 public:
     wxSpinDoubleEvent(wxEventType commandType = wxEVT_NULL, int winid = 0,

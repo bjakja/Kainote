@@ -126,8 +126,8 @@ wxPluginLibrary::~wxPluginLibrary()
 
 wxPluginLibrary *wxPluginLibrary::RefLib()
 {
-    /*wxCHECK_MSG( m_linkcount > 0, NULL,
-                 wxT("Library had been already deleted!") );*/
+    wxCHECK_MSG( m_linkcount > 0, NULL,
+                 wxT("Library had been already deleted!") );
 
     ++m_linkcount;
     return this;
@@ -135,8 +135,8 @@ wxPluginLibrary *wxPluginLibrary::RefLib()
 
 bool wxPluginLibrary::UnrefLib()
 {
-    /*wxASSERT_MSG( m_objcount == 0,
-                  wxT("Library unloaded before all objects were destroyed") );*/
+    wxASSERT_MSG( m_objcount == 0,
+                  wxT("Library unloaded before all objects were destroyed") );
 
     if ( m_linkcount == 0 || --m_linkcount == 0 )
     {
@@ -198,8 +198,8 @@ void wxPluginLibrary::RegisterModules()
     // the library is.  We do have to keep a copy of the module's pointer
     // though, as there is currently no way to Unregister it without it.
 
-    /*wxASSERT_MSG( m_linkcount == 1,
-                  wxT("RegisterModules should only be called for the first load") );*/
+    wxASSERT_MSG( m_linkcount == 1,
+                  wxT("RegisterModules should only be called for the first load") );
 
     if ( m_ourFirst )
     {
@@ -209,7 +209,7 @@ void wxPluginLibrary::RegisterModules()
             {
                 wxModule *m = wxDynamicCast(info->CreateObject(), wxModule);
 
-                //wxASSERT_MSG( m, wxT("wxDynamicCast of wxModule failed") );
+                wxASSERT_MSG( m, wxT("wxDynamicCast of wxModule failed") );
 
                 m_wxmodules.push_back(m);
                 wxModule::RegisterModule(m);
@@ -324,7 +324,7 @@ wxPluginManager::LoadLibrary(const wxString &libname, int flags)
             if ( !entry->UnrefLib() )
             {
                 // ... so UnrefLib() is supposed to delete it
-                //wxFAIL_MSG( wxT("Currently linked library is not loaded?") );
+                wxFAIL_MSG( wxT("Currently linked library is not loaded?") );
             }
 
             entry = NULL;
@@ -381,7 +381,7 @@ bool wxPluginManager::Load(const wxString &libname, int flags)
 
 void wxPluginManager::Unload()
 {
-    //wxCHECK_RET( m_entry, wxT("unloading an invalid wxPluginManager?") );
+    wxCHECK_RET( m_entry, wxT("unloading an invalid wxPluginManager?") );
 
     for ( wxDLManifest::iterator i = ms_manifest->begin();
           i != ms_manifest->end();

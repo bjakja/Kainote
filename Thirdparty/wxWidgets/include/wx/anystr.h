@@ -80,17 +80,17 @@ public:
         // long as wxString is not modified -- which is long enough for our
         // needs
         const char *p = m_str->c_str().AsChar();
-        //if ( *p )
-        //{
-        //    // find the offset of the character corresponding to this iterator
-        //    // position in bytes: we don't have any direct way to do it so we
-        //    // need to redo the conversion again for the part of the string
-        //    // before the iterator to find its length in bytes in current
-        //    // locale
-        //    //
-        //    // NB: conversion won't fail as it succeeded for the entire string
-        //    p += strlen(wxString(m_str->begin(), m_iter).mb_str());
-        //}
+        if ( *p )
+        {
+            // find the offset of the character corresponding to this iterator
+            // position in bytes: we don't have any direct way to do it so we
+            // need to redo the conversion again for the part of the string
+            // before the iterator to find its length in bytes in current
+            // locale
+            //
+            // NB: conversion won't fail as it succeeded for the entire string
+            p += strlen(wxString(m_str->begin(), m_iter).mb_str());
+        }
         //else: conversion failed, return "" as we can't do anything else
 
         return p;

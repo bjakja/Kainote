@@ -17,13 +17,13 @@
 
 #if wxUSE_STREAMS
 
-class  wxTextInputStream;
-class  wxTextOutputStream;
+class WXDLLIMPEXP_FWD_BASE wxTextInputStream;
+class WXDLLIMPEXP_FWD_BASE wxTextOutputStream;
 
 typedef wxTextInputStream& (*__wxTextInputManip)(wxTextInputStream&);
 typedef wxTextOutputStream& (*__wxTextOutputManip)(wxTextOutputStream&);
 
- wxTextOutputStream &endl( wxTextOutputStream &stream );
+WXDLLIMPEXP_BASE wxTextOutputStream &endl( wxTextOutputStream &stream );
 
 
 #define wxEOT wxT('\4') // the End-Of-Text control code (used only inside wxTextInputStream)
@@ -33,7 +33,7 @@ typedef wxTextOutputStream& (*__wxTextOutputManip)(wxTextOutputStream&);
 // You should however be prepared to receive an empty item (empty string / zero number) at the
 // end of file, especially on Windows systems. This is unavoidable because most (but not all) files end
 // with whitespace (i.e. usually a newline).
-class  wxTextInputStream
+class WXDLLIMPEXP_BASE wxTextInputStream
 {
 public:
 #if wxUSE_UNICODE
@@ -106,7 +106,7 @@ typedef enum
   wxEOL_DOS
 } wxEOL;
 
-class  wxTextOutputStream
+class WXDLLIMPEXP_BASE wxTextOutputStream
 {
 public:
 #if wxUSE_UNICODE

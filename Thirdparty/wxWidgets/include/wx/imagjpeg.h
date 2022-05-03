@@ -21,7 +21,7 @@
 #include "wx/image.h"
 #include "wx/versioninfo.h"
 
-class  wxJPEGHandler: public wxImageHandler
+class WXDLLIMPEXP_CORE wxJPEGHandler: public wxImageHandler
 {
 public:
     inline wxJPEGHandler()

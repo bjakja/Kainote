@@ -16,18 +16,18 @@
 
 #include "wx/bitmap.h"      // for m_bitmapBg
 
-class  wxControlRenderer;
-class  wxEventLoop;
+class WXDLLIMPEXP_FWD_CORE wxControlRenderer;
+class WXDLLIMPEXP_FWD_CORE wxEventLoop;
 
 #if wxUSE_MENUS
-    class  wxMenu;
-    class  wxMenuBar;
+    class WXDLLIMPEXP_FWD_CORE wxMenu;
+    class WXDLLIMPEXP_FWD_CORE wxMenuBar;
 #endif // wxUSE_MENUS
 
-class  wxRenderer;
+class WXDLLIMPEXP_FWD_CORE wxRenderer;
 
 #if wxUSE_SCROLLBAR
-    class  wxScrollBar;
+    class WXDLLIMPEXP_FWD_CORE wxScrollBar;
 #endif // wxUSE_SCROLLBAR
 
 #ifdef __WXX11__
@@ -50,7 +50,7 @@ class  wxRenderer;
 #define wxWindowNative wxWindowMac
 #endif
 
-class  wxWindow : public wxWindowNative
+class WXDLLIMPEXP_CORE wxWindow : public wxWindowNative
 {
 public:
     // ctors and create functions

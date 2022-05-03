@@ -25,7 +25,7 @@
 
 #if wxUSE_COLLPANE && wxUSE_BUTTON && wxUSE_STATLINE
 
-#include "wx\generic\collpaneg.h"
+#include "wx/collpane.h"
 
 #ifndef WX_PRECOMP
     #include "wx/toplevel.h"
@@ -253,7 +253,7 @@ int wxGenericCollapsiblePane::GetBorder() const
 #if defined( __WXMAC__ )
     return 6;
 #elif defined(__WXMSW__)
-    //wxASSERT(m_pButton);
+    wxASSERT(m_pButton);
     return m_pButton->ConvertDialogToPixels(wxSize(2, 0)).x;
 #else
     return 5;

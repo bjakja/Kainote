@@ -26,7 +26,7 @@
     #include "wx/menu.h"
 #endif
 
-extern wxList wxPendingDelete;
+extern WXDLLIMPEXP_DATA_CORE(wxList) wxPendingDelete;
 
 // DLL options compatibility check:
 WX_CHECK_BUILD_OPTIONS("wxAdvanced")

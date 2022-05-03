@@ -154,8 +154,8 @@ wxMessageDialog::HookFunction(int code, WXWPARAM wParam, WXLPARAM lParam)
     // Find the thread-local instance of wxMessageDialog
     const DWORD tid = ::GetCurrentThreadId();
     wxMessageDialogMap::iterator node = HookMap().find(tid);
-    //wxCHECK_MSG( node != HookMap().end(), false,
-                    //wxT("bogus thread id in wxMessageDialog::Hook") );
+    wxCHECK_MSG( node != HookMap().end(), false,
+                    wxT("bogus thread id in wxMessageDialog::Hook") );
 
     wxMessageDialog *  const wnd = node->second;
 
@@ -365,8 +365,8 @@ void wxMessageDialog::AdjustButtonLabels()
         }
         else
         {
-            //wxASSERT_MSG( wBtnOld == rc.right - rc.left,
-                          //"all buttons are supposed to be of same width" );
+            wxASSERT_MSG( wBtnOld == rc.right - rc.left,
+                          "all buttons are supposed to be of same width" );
         }
 
         const int widthNeeded = wxMSWButton::GetFittingSize(this, sizeLabel).x;
@@ -595,7 +595,7 @@ int wxMessageDialog::ShowModal()
     if ( HasNativeTaskDialog() )
     {
         TaskDialogIndirect_t taskDialogIndirect = GetTaskDialogIndirectFunc();
-        //wxCHECK_MSG( taskDialogIndirect, wxID_CANCEL, wxS("no task dialog?") );
+        wxCHECK_MSG( taskDialogIndirect, wxID_CANCEL, wxS("no task dialog?") );
 
         WinStruct<TASKDIALOGCONFIG> tdc;
         wxMSWTaskDialogConfig wxTdc( *this );
@@ -807,7 +807,7 @@ void wxMSWTaskDialogConfig::AddTaskDialogButton(TASKDIALOGCONFIG &tdc,
 
         // We should never have more than 4 buttons currently as this is the
         // maximal number of buttons supported by the message dialog.
-        //wxASSERT_MSG( tdc.cButtons <= MAX_BUTTONS, wxT("Too many buttons") );
+        wxASSERT_MSG( tdc.cButtons <= MAX_BUTTONS, wxT("Too many buttons") );
     }
     else
     {
@@ -862,7 +862,7 @@ int wxMSWMessageDialog::MSWTranslateReturnCode(int msAns)
     switch (msAns)
     {
         default:
-            break;//wxFAIL_MSG(wxT("unexpected return code"));
+            wxFAIL_MSG(wxT("unexpected return code"));
             // fall through
 
         case IDCANCEL:

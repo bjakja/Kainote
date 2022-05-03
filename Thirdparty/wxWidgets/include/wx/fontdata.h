@@ -13,7 +13,7 @@
 #include "wx/colour.h"
 #include "wx/encinfo.h"
 
-class  wxFontData : public wxObject
+class WXDLLIMPEXP_CORE wxFontData : public wxObject
 {
 public:
     wxFontData();

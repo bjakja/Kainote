@@ -93,27 +93,27 @@ wxString wxFileSystemHandler::GetMimeTypeFromExt(const wxString& location)
                     wxEmptyString,
                     wxEmptyString,
                     wxT("JPEG image (from fallback)"),
-                    wxT("jpg"), wxT("jpeg"), wxT("JPG"), wxT("JPEG"), nullptr),
+                    wxT("jpg"), wxT("jpeg"), wxT("JPG"), wxT("JPEG"), wxNullPtr),
                 wxFileTypeInfo(wxT("image/gif"),
                     wxEmptyString,
                     wxEmptyString,
                     wxT("GIF image (from fallback)"),
-                    wxT("gif"), wxT("GIF"), nullptr),
+                    wxT("gif"), wxT("GIF"), wxNullPtr),
                 wxFileTypeInfo(wxT("image/png"),
                     wxEmptyString,
                     wxEmptyString,
                     wxT("PNG image (from fallback)"),
-                    wxT("png"), wxT("PNG"), nullptr),
+                    wxT("png"), wxT("PNG"), wxNullPtr),
                 wxFileTypeInfo(wxT("image/bmp"),
                     wxEmptyString,
                     wxEmptyString,
                     wxT("windows bitmap image (from fallback)"),
-                    wxT("bmp"), wxT("BMP"), nullptr),
+                    wxT("bmp"), wxT("BMP"), wxNullPtr),
                 wxFileTypeInfo(wxT("text/html"),
                     wxEmptyString,
                     wxEmptyString,
                     wxT("HTML document (from fallback)"),
-                    wxT("htm"), wxT("html"), wxT("HTM"), wxT("HTML"), nullptr),
+                    wxT("htm"), wxT("html"), wxT("HTM"), wxT("HTML"), wxNullPtr),
                 // must terminate the table with this!
                 wxFileTypeInfo()
             };
@@ -542,8 +542,8 @@ bool wxFileSystem::FindFileInPath(wxString *pStr,
                                   const wxString& basename)
 {
     // we assume that it's not empty
-    /*wxCHECK_MSG( !basename.empty(), false,
-                wxT("empty file name in wxFileSystem::FindFileInPath"));*/
+    wxCHECK_MSG( !basename.empty(), false,
+                wxT("empty file name in wxFileSystem::FindFileInPath"));
 
     wxString name;
     // skip path separator in the beginning of the file name if present
@@ -685,7 +685,7 @@ static wxString EscapeFileNameCharsInURL(const char *in)
         }
         else
         {
-            s << wxString::Format(L"%%%02x", c);
+            s << wxString::Format("%%%02x", c);
         }
     }
 
@@ -719,7 +719,7 @@ wxString wxFileSystem::FileNameToURL(const wxFileName& filename)
 
     // Do wxURI- and common practice-compatible escaping: encode the string
     // into UTF-8, then escape anything non-ASCII:
-    return wxT("file:");/* + EscapeFileNameCharsInURL(url.utf8_str());*/
+    return wxT("file:") + EscapeFileNameCharsInURL(url.utf8_str());
 }
 
 

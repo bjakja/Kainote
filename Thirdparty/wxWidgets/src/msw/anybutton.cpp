@@ -276,7 +276,7 @@ public:
         switch ( m_data.uAlign )
         {
             default:
-                break;// wxFAIL_MSG( "invalid image alignment" );
+                wxFAIL_MSG( "invalid image alignment" );
                 // fall through
 
             case BUTTON_IMAGELIST_ALIGN_LEFT:
@@ -299,7 +299,7 @@ public:
         switch ( dir )
         {
             default:
-                break;// wxFAIL_MSG( "invalid direction" );
+                wxFAIL_MSG( "invalid direction" );
                 // fall through
 
             case wxLEFT:
@@ -493,7 +493,7 @@ void wxAnyButton::SetLabel(const wxString& label)
 
 void wxAnyButton::AdjustForBitmapSize(wxSize &size) const
 {
-    //wxCHECK_RET( m_imageData, wxT("shouldn't be called if no image") );
+    wxCHECK_RET( m_imageData, wxT("shouldn't be called if no image") );
 
     // account for the bitmap size
     const wxSize sizeBmp = m_imageData->GetBitmap(State_Normal).GetSize();
@@ -656,8 +656,8 @@ void wxAnyButton::DoSetBitmap(const wxBitmap& bitmap, State which)
     if ( m_imageData &&
           bitmap.GetSize() != m_imageData->GetBitmap(State_Normal).GetSize() )
     {
-       /* wxASSERT_MSG( (which == State_Normal) || bitmap.IsNull(),
-                      "Must set normal bitmap with the new size first" );*/
+        wxASSERT_MSG( (which == State_Normal) || bitmap.IsNull(),
+                      "Must set normal bitmap with the new size first" );
 
 #if wxUSE_UXTHEME
         if ( ShowsLabel() && wxUxThemeEngine::GetIfActive() )
@@ -726,7 +726,7 @@ wxSize wxAnyButton::DoGetBitmapMargins() const
 
 void wxAnyButton::DoSetBitmapMargins(wxCoord x, wxCoord y)
 {
-    //wxCHECK_RET( m_imageData, "SetBitmap() must be called first" );
+    wxCHECK_RET( m_imageData, "SetBitmap() must be called first" );
 
     m_imageData->SetBitmapMargins(x, y);
     InvalidateBestSize();
@@ -734,7 +734,7 @@ void wxAnyButton::DoSetBitmapMargins(wxCoord x, wxCoord y)
 
 void wxAnyButton::DoSetBitmapPosition(wxDirection dir)
 {
-    //wxCHECK_RET( m_imageData, "SetBitmap() must be called first" );
+    wxCHECK_RET( m_imageData, "SetBitmap() must be called first" );
 
     m_imageData->SetBitmapPosition(dir);
     InvalidateBestSize();
@@ -1171,7 +1171,7 @@ bool wxAnyButton::MSWOnDraw(WXDRAWITEMSTRUCT *wxdis)
             switch ( m_imageData->GetBitmapPosition() )
             {
                 default:
-                    //wxFAIL_MSG( "invalid direction" );
+                    wxFAIL_MSG( "invalid direction" );
                     // fall through
 
                 case wxLEFT:

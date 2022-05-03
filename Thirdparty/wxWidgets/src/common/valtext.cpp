@@ -134,10 +134,10 @@ wxTextEntry *wxTextValidator::GetTextEntry()
     }
 #endif
 
-    /*wxFAIL_MSG(
+    wxFAIL_MSG(
         "wxTextValidator can only be used with wxTextCtrl, wxComboBox, "
-        "or wxComboCtrl"*/
-    //);
+        "or wxComboCtrl"
+    );
 
     return NULL;
 }

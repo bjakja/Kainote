@@ -21,7 +21,7 @@
 // wxCursor
 //-----------------------------------------------------------------------------
 
-class wxCursor : public wxGDIObject
+class WXDLLIMPEXP_CORE wxCursor : public wxGDIObject
 {
 public:
     wxCursor();

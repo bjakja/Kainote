@@ -18,7 +18,7 @@
 #include "wx/helpbase.h"
 #include "wx/html/helpfrm.h"        // for wxHF_DEFAULT_STYLE
 
-class wxBestHelpController: public wxHelpControllerBase
+class WXDLLIMPEXP_HTML wxBestHelpController: public wxHelpControllerBase
 {
 public:
     wxBestHelpController(wxWindow* parentWindow = NULL,

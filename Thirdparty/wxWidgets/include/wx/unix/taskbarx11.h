@@ -12,9 +12,9 @@
 #ifndef _WX_UNIX_TASKBAR_H_
 #define _WX_UNIX_TASKBAR_H_
 
-class  wxTaskBarIconArea;
+class WXDLLIMPEXP_FWD_ADV wxTaskBarIconArea;
 
-class  wxTaskBarIcon: public wxTaskBarIconBase
+class WXDLLIMPEXP_ADV wxTaskBarIcon: public wxTaskBarIconBase
 {
 public:
     wxTaskBarIcon();

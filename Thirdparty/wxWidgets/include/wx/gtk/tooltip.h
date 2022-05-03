@@ -17,13 +17,13 @@
 // forward declarations
 //-----------------------------------------------------------------------------
 
-class  wxWindow;
+class WXDLLIMPEXP_FWD_CORE wxWindow;
 
 //-----------------------------------------------------------------------------
 // wxToolTip
 //-----------------------------------------------------------------------------
 
-class  wxToolTip : public wxObject
+class WXDLLIMPEXP_CORE wxToolTip : public wxObject
 {
 public:
     wxToolTip( const wxString &tip );

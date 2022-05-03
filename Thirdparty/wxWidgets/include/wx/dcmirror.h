@@ -18,7 +18,7 @@
 // wxMirrorDC allows to write the same code for horz/vertical layout
 // ----------------------------------------------------------------------------
 
-class  wxMirrorDCImpl : public wxDCImpl
+class WXDLLIMPEXP_CORE wxMirrorDCImpl : public wxDCImpl
 {
 public:
     // constructs a mirror DC associated with the given real DC
@@ -127,7 +127,7 @@ protected:
                            wxCoord x2, wxCoord y2,
                            wxCoord xc, wxCoord yc)
     {
-        //wxFAIL_MSG( wxT("this is probably wrong") );
+        wxFAIL_MSG( wxT("this is probably wrong") );
 
         m_dc.DoDrawArc(GetX(x1, y1), GetY(x1, y1),
                        GetX(x2, y2), GetY(x2, y2),
@@ -144,7 +144,7 @@ protected:
     virtual void DoDrawEllipticArc(wxCoord x, wxCoord y, wxCoord w, wxCoord h,
                                    double sa, double ea)
     {
-        //wxFAIL_MSG( wxT("this is probably wrong") );
+        wxFAIL_MSG( wxT("this is probably wrong") );
 
         m_dc.DoDrawEllipticArc(GetX(x, y), GetY(x, y),
                                GetX(w, h), GetY(w, h),
@@ -249,7 +249,7 @@ protected:
 
     virtual void DoSetDeviceClippingRegion(const wxRegion& WXUNUSED(region))
     {
-        //wxFAIL_MSG( wxT("not implemented") );
+        wxFAIL_MSG( wxT("not implemented") );
     }
 
     virtual void DoSetClippingRegion(wxCoord x, wxCoord y,
@@ -276,7 +276,7 @@ private:
     wxDECLARE_NO_COPY_CLASS(wxMirrorDCImpl);
 };
 
-class  wxMirrorDC : public wxDC
+class WXDLLIMPEXP_CORE wxMirrorDC : public wxDC
 {
 public:
     wxMirrorDC(wxDC& dc, bool mirror)

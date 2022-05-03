@@ -34,7 +34,7 @@
 #define wxIMAGE_OPTION_COMPRESSION                 wxIMAGE_OPTION_TIFF_COMPRESSION
 #define wxIMAGE_OPTION_IMAGEDESCRIPTOR             wxIMAGE_OPTION_TIFF_IMAGEDESCRIPTOR
 
-class  wxTIFFHandler: public wxImageHandler
+class WXDLLIMPEXP_CORE wxTIFFHandler: public wxImageHandler
 {
 public:
     wxTIFFHandler();

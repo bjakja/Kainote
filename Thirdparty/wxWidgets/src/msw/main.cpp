@@ -18,7 +18,7 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/defs.h"
+#include "wx/wxprec.h"
 
 #ifdef __BORLANDC__
     #pragma hdrstop
@@ -121,7 +121,7 @@ void wxSETranslator(unsigned int WXUNUSED(code), EXCEPTION_POINTERS *ep)
     switch ( wxGlobalSEHandler(ep) )
     {
         default:
-            break;// wxFAIL_MSG(wxT("unexpected wxGlobalSEHandler() return value"));
+            wxFAIL_MSG( wxT("unexpected wxGlobalSEHandler() return value") );
             // fall through
 
         case EXCEPTION_EXECUTE_HANDLER:
@@ -344,7 +344,8 @@ struct wxMSWCommandLineArguments
 static wxMSWCommandLineArguments wxArgs;
 
 // common part of wxMSW-specific wxEntryStart() and wxEntry() overloads
-static bool wxMSWEntryCommon(HINSTANCE hInstance, int nCmdShow)
+static bool
+wxMSWEntryCommon(HINSTANCE hInstance, int nCmdShow)
 {
     // the first thing to do is to check if we're trying to run an Unicode
     // program under Win9x w/o MSLU emulation layer - if so, abort right now
@@ -384,7 +385,7 @@ static bool wxMSWEntryCommon(HINSTANCE hInstance, int nCmdShow)
     return true;
 }
 
- bool wxEntryStart(HINSTANCE hInstance,
+WXDLLEXPORT bool wxEntryStart(HINSTANCE hInstance,
                               HINSTANCE WXUNUSED(hPrevInstance),
                               wxCmdLineArgType WXUNUSED(pCmdLine),
                               int nCmdShow)
@@ -395,7 +396,7 @@ static bool wxMSWEntryCommon(HINSTANCE hInstance, int nCmdShow)
     return wxEntryStart(wxArgs.argc, wxArgs.argv);
 }
 
- int wxEntry(HINSTANCE hInstance,
+WXDLLEXPORT int wxEntry(HINSTANCE hInstance,
                         HINSTANCE WXUNUSED(hPrevInstance),
                         wxCmdLineArgType WXUNUSED(pCmdLine),
                         int nCmdShow)

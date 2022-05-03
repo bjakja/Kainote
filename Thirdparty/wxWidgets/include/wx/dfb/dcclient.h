@@ -13,13 +13,13 @@
 
 #include "wx/dfb/dc.h"
 
-class  wxWindow;
+class WXDLLIMPEXP_FWD_CORE wxWindow;
 
 //-----------------------------------------------------------------------------
 // wxWindowDCImpl
 //-----------------------------------------------------------------------------
 
-class  wxWindowDCImpl : public wxDFBDCImpl
+class WXDLLIMPEXP_CORE wxWindowDCImpl : public wxDFBDCImpl
 {
 public:
     wxWindowDCImpl(wxDC *owner) : wxDFBDCImpl(owner), m_shouldFlip(false) { }
@@ -46,7 +46,7 @@ private:
 // wxClientDCImpl
 //-----------------------------------------------------------------------------
 
-class  wxClientDCImpl : public wxWindowDCImpl
+class WXDLLIMPEXP_CORE wxClientDCImpl : public wxWindowDCImpl
 {
 public:
     wxClientDCImpl(wxDC *owner) : wxWindowDCImpl(owner) { }
@@ -61,7 +61,7 @@ public:
 // wxPaintDCImpl
 //-----------------------------------------------------------------------------
 
-class  wxPaintDCImpl : public wxClientDCImpl
+class WXDLLIMPEXP_CORE wxPaintDCImpl : public wxClientDCImpl
 {
 public:
     wxPaintDCImpl(wxDC *owner) : wxClientDCImpl(owner) { }

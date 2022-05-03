@@ -58,7 +58,7 @@ WX_DEFINE_LIST(wxGDIImageHandlerList)
 // all image handlers are declared/defined in this file because the outside
 // world doesn't have to know about them (but only about wxBITMAP_TYPE_XXX ids)
 
-class  wxBMPFileHandler : public wxBitmapHandler
+class WXDLLEXPORT wxBMPFileHandler : public wxBitmapHandler
 {
 public:
     wxBMPFileHandler() : wxBitmapHandler(wxT("Windows bitmap file"), wxT("bmp"),
@@ -77,7 +77,7 @@ private:
     DECLARE_DYNAMIC_CLASS(wxBMPFileHandler)
 };
 
-class  wxBMPResourceHandler: public wxBitmapHandler
+class WXDLLEXPORT wxBMPResourceHandler: public wxBitmapHandler
 {
 public:
     wxBMPResourceHandler() : wxBitmapHandler(wxT("Windows bitmap resource"),
@@ -94,7 +94,7 @@ private:
     DECLARE_DYNAMIC_CLASS(wxBMPResourceHandler)
 };
 
-class  wxIconHandler : public wxGDIImageHandler
+class WXDLLEXPORT wxIconHandler : public wxGDIImageHandler
 {
 public:
     wxIconHandler(const wxString& name, const wxString& ext, wxBitmapType type)
@@ -126,7 +126,7 @@ public:
                       int desiredWidth, int desiredHeight)
     {
         wxIcon *icon = wxDynamicCast(image, wxIcon);
-        //wxCHECK_MSG( icon, false, wxT("wxIconHandler only works with icons") );
+        wxCHECK_MSG( icon, false, wxT("wxIconHandler only works with icons") );
 
         return LoadIcon(icon, name, flags, desiredWidth, desiredHeight);
     }
@@ -137,7 +137,7 @@ protected:
                           int desiredWidth = -1, int desiredHeight = -1) = 0;
 };
 
-class  wxICOFileHandler : public wxIconHandler
+class WXDLLEXPORT wxICOFileHandler : public wxIconHandler
 {
 public:
     wxICOFileHandler() : wxIconHandler(wxT("ICO icon file"),
@@ -155,7 +155,7 @@ private:
     DECLARE_DYNAMIC_CLASS(wxICOFileHandler)
 };
 
-class  wxICOResourceHandler: public wxIconHandler
+class WXDLLEXPORT wxICOResourceHandler: public wxIconHandler
 {
 public:
     wxICOResourceHandler() : wxIconHandler(wxT("ICO resource"),
@@ -356,7 +356,7 @@ bool wxBMPFileHandler::LoadFile(wxBitmap *bitmap,
                                 int WXUNUSED(desiredHeight))
 {
 #if wxUSE_WXDIB
-    //wxCHECK_MSG( bitmap, false, wxT("NULL bitmap in LoadFile") );
+    wxCHECK_MSG( bitmap, false, wxT("NULL bitmap in LoadFile") );
 
     wxDIB dib(name);
 
@@ -372,7 +372,7 @@ bool wxBMPFileHandler::SaveFile(const wxBitmap *bitmap,
                                 const wxPalette * WXUNUSED(pal)) const
 {
 #if wxUSE_WXDIB
-    //wxCHECK_MSG( bitmap, false, wxT("NULL bitmap in SaveFile") );
+    wxCHECK_MSG( bitmap, false, wxT("NULL bitmap in SaveFile") );
 
     wxDIB dib(*bitmap);
 
@@ -507,8 +507,8 @@ bool wxICOResourceHandler::LoadIcon(wxIcon *icon,
     // do we need the icon of the specific size or would any icon do?
     bool hasSize = desiredWidth != -1 || desiredHeight != -1;
 
-    /*wxASSERT_MSG( !hasSize || (desiredWidth != -1 && desiredHeight != -1),
-                  wxT("width and height should be either both -1 or not") );*/
+    wxASSERT_MSG( !hasSize || (desiredWidth != -1 && desiredHeight != -1),
+                  wxT("width and height should be either both -1 or not") );
 
     // try to load the icon from this program first to allow overriding the
     // standard icons (although why one would want to do it considering that

@@ -47,8 +47,8 @@
 #include "wx/bitmap.h" // wxBitmap used by-value
 #include "wx/textentry.h"
 
-class  wxTextCtrl;
-class  wxComboPopup;
+class WXDLLIMPEXP_FWD_CORE wxTextCtrl;
+class WXDLLIMPEXP_FWD_CORE wxComboPopup;
 
 //
 // New window styles for wxComboCtrlBase
@@ -140,7 +140,7 @@ struct wxComboCtrlFeatures
 };
 
 
-class  wxComboCtrlBase : public wxControl,
+class WXDLLIMPEXP_CORE wxComboCtrlBase : public wxControl,
                                          public wxTextEntry
 {
     friend class wxComboPopup;
@@ -378,8 +378,8 @@ public:
     // frame will appear as if the focus has been lost from it.
     void UseAltPopupWindow( bool enable = true )
     {
-        //wxASSERT_MSG( !m_winPopup,
-                     // wxT("call this only before SetPopupControl") );
+        wxASSERT_MSG( !m_winPopup,
+                      wxT("call this only before SetPopupControl") );
 
         if ( enable )
             m_iFlags |= wxCC_IFLAG_USE_ALT_POPUP;
@@ -743,10 +743,10 @@ enum
     wxCP_IFLAG_CREATED      = 0x0001 // Set by wxComboCtrlBase after Create is called
 };
 
-class  wxComboCtrl;
+class WXDLLIMPEXP_FWD_CORE wxComboCtrl;
 
 
-class  wxComboPopup
+class WXDLLIMPEXP_CORE wxComboPopup
 {
     friend class wxComboCtrlBase;
 public:

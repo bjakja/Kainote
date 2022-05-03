@@ -39,7 +39,7 @@
 #include <time.h>
 
 #if defined(__WINDOWS__) && !defined(__WXWINCE__)
-    //#include <io.h>
+    #include <io.h>
 #endif
 
 #if defined(HAVE_STRTOK_R) && defined(__DARWIN__) && defined(_MSL_USING_MW_C_HEADERS) && _MSL_USING_MW_C_HEADERS
@@ -92,13 +92,13 @@
 #endif /* strdup */
 
 #ifdef wxNEED_STRDUP
-     char *strdup(const char* s);
+    WXDLLIMPEXP_BASE char *strdup(const char* s);
 #endif
 
 /* missing functions in some WinCE versions */
 #ifdef _WIN32_WCE
 #if (_WIN32_WCE < 300)
- void *calloc( size_t num, size_t size );
+WXDLLIMPEXP_BASE void *calloc( size_t num, size_t size );
 #endif
 #endif /* _WIN32_WCE */
 
@@ -114,10 +114,10 @@
         #if wxUSE_UTF8_LOCALE_ONLY
         #define wxLocaleIsUtf8 true
         #else
-        extern  bool wxLocaleIsUtf8;
+        extern WXDLLIMPEXP_BASE bool wxLocaleIsUtf8;
         #endif
         /* function used to update the flag: */
-        extern  void wxUpdateLocaleIsUtf8();
+        extern WXDLLIMPEXP_BASE void wxUpdateLocaleIsUtf8();
     #else /* !wxUSE_UNICODE_UTF8 */
         inline void wxUpdateLocaleIsUtf8() {}
     #endif /* wxUSE_UNICODE_UTF8/!wxUSE_UNICODE_UTF8 */
@@ -128,41 +128,41 @@
                                  string.h
    ------------------------------------------------------------------------- */
 
-//#define wxCRT_StrcatA    strcat
-//#define wxCRT_StrchrA    strchr
-//#define wxCRT_StrcmpA    strcmp
-//#define wxCRT_StrcpyA    strcpy
-//#define wxCRT_StrcspnA   strcspn
-//#define wxCRT_StrlenA    strlen
-//#define wxCRT_StrncatA   strncat
-//#define wxCRT_StrncmpA   strncmp
-//#define wxCRT_StrncpyA   strncpy
-//#define wxCRT_StrpbrkA   strpbrk
-//#define wxCRT_StrrchrA   strrchr
-//#define wxCRT_StrspnA    strspn
-//#define wxCRT_StrstrA    strstr
-//
-//#define wxCRT_StrcatW    wcscat
-//#define wxCRT_StrchrW    wcschr
-//#define wxCRT_StrcmpW    wcscmp
-//#define wxCRT_StrcpyW    wcscpy
-//#define wxCRT_StrcspnW   wcscspn
-//#define wxCRT_StrncatW   wcsncat
-//#define wxCRT_StrncmpW   wcsncmp
-//#define wxCRT_StrncpyW   wcsncpy
-//#define wxCRT_StrpbrkW   wcspbrk
-//#define wxCRT_StrrchrW   wcsrchr
-//#define wxCRT_StrspnW    wcsspn
-//#define wxCRT_StrstrW    wcsstr
-//
-///* these functions are not defined under CE, at least in VC8 CRT */
-//#if !defined(__WXWINCE__)
-//    #define wxCRT_StrcollA   strcoll
-//    #define wxCRT_StrxfrmA   strxfrm
-//
-//    #define wxCRT_StrcollW   wcscoll
-//    #define wxCRT_StrxfrmW   wcsxfrm
-//#endif /* __WXWINCE__ */
+#define wxCRT_StrcatA    strcat
+#define wxCRT_StrchrA    strchr
+#define wxCRT_StrcmpA    strcmp
+#define wxCRT_StrcpyA    strcpy
+#define wxCRT_StrcspnA   strcspn
+#define wxCRT_StrlenA    strlen
+#define wxCRT_StrncatA   strncat
+#define wxCRT_StrncmpA   strncmp
+#define wxCRT_StrncpyA   strncpy
+#define wxCRT_StrpbrkA   strpbrk
+#define wxCRT_StrrchrA   strrchr
+#define wxCRT_StrspnA    strspn
+#define wxCRT_StrstrA    strstr
+
+#define wxCRT_StrcatW    wcscat
+#define wxCRT_StrchrW    wcschr
+#define wxCRT_StrcmpW    wcscmp
+#define wxCRT_StrcpyW    wcscpy
+#define wxCRT_StrcspnW   wcscspn
+#define wxCRT_StrncatW   wcsncat
+#define wxCRT_StrncmpW   wcsncmp
+#define wxCRT_StrncpyW   wcsncpy
+#define wxCRT_StrpbrkW   wcspbrk
+#define wxCRT_StrrchrW   wcsrchr
+#define wxCRT_StrspnW    wcsspn
+#define wxCRT_StrstrW    wcsstr
+
+/* these functions are not defined under CE, at least in VC8 CRT */
+#if !defined(__WXWINCE__)
+    #define wxCRT_StrcollA   strcoll
+    #define wxCRT_StrxfrmA   strxfrm
+
+    #define wxCRT_StrcollW   wcscoll
+    #define wxCRT_StrxfrmW   wcsxfrm
+#endif /* __WXWINCE__ */
 
 /* Almost all compiler have strdup(), but VC++ for CE doesn't provide it.
    Another special case is gcc in strict ANSI mode: normally it doesn't provide
@@ -190,35 +190,35 @@
     #endif
 #endif /* wxHAVE_TCHAR_SUPPORT */
 
-//#ifdef HAVE_WCSLEN
-//    #define wxCRT_StrlenW wcslen
-//#endif
-//
-//#define wxCRT_StrtodA    strtod
-//#define wxCRT_StrtolA    strtol
-//#define wxCRT_StrtoulA   strtoul
-//#define wxCRT_StrtodW    wcstod
-//#define wxCRT_StrtolW    wcstol
-//#define wxCRT_StrtoulW   wcstoul
-//
-//#ifdef __VISUALC__
-//    #if __VISUALC__ >= 1300 && !defined(__WXWINCE__)
-//        #define wxCRT_StrtollA   _strtoi64
-//        #define wxCRT_StrtoullA  _strtoui64
-//        #define wxCRT_StrtollW   _wcstoi64
-//        #define wxCRT_StrtoullW  _wcstoui64
-//    #endif /* VC++ 7+ */
-//#else
-//    #ifdef HAVE_STRTOULL
-//        #define wxCRT_StrtollA   strtoll
-//        #define wxCRT_StrtoullA  strtoull
-//    #endif /* HAVE_STRTOULL */
-//    #ifdef HAVE_WCSTOULL
-//        /* assume that we have wcstoull(), which is also C99, too */
-//        #define wxCRT_StrtollW   wcstoll
-//        #define wxCRT_StrtoullW  wcstoull
-//    #endif /* HAVE_WCSTOULL */
-//#endif
+#ifdef HAVE_WCSLEN
+    #define wxCRT_StrlenW wcslen
+#endif
+
+#define wxCRT_StrtodA    strtod
+#define wxCRT_StrtolA    strtol
+#define wxCRT_StrtoulA   strtoul
+#define wxCRT_StrtodW    wcstod
+#define wxCRT_StrtolW    wcstol
+#define wxCRT_StrtoulW   wcstoul
+
+#ifdef __VISUALC__
+    #if __VISUALC__ >= 1300 && !defined(__WXWINCE__)
+        #define wxCRT_StrtollA   _strtoi64
+        #define wxCRT_StrtoullA  _strtoui64
+        #define wxCRT_StrtollW   _wcstoi64
+        #define wxCRT_StrtoullW  _wcstoui64
+    #endif /* VC++ 7+ */
+#else
+    #ifdef HAVE_STRTOULL
+        #define wxCRT_StrtollA   strtoll
+        #define wxCRT_StrtoullA  strtoull
+    #endif /* HAVE_STRTOULL */
+    #ifdef HAVE_WCSTOULL
+        /* assume that we have wcstoull(), which is also C99, too */
+        #define wxCRT_StrtollW   wcstoll
+        #define wxCRT_StrtoullW  wcstoull
+    #endif /* HAVE_WCSTOULL */
+#endif
 
 /*
     Only VC8 and later provide strnlen() and wcsnlen() functions under Windows
@@ -281,11 +281,11 @@ extern "C" {
 #endif
 
 #ifndef wxCRT_StrlenW
- size_t wxCRT_StrlenW(const wchar_t *s);
+WXDLLIMPEXP_BASE size_t wxCRT_StrlenW(const wchar_t *s);
 #endif
 
 #ifndef wxCRT_StrncmpW
- int wxCRT_StrncmpW(const wchar_t *s1, const wchar_t *s2, size_t n);
+WXDLLIMPEXP_BASE int wxCRT_StrncmpW(const wchar_t *s1, const wchar_t *s2, size_t n);
 #endif
 
 #ifdef __cplusplus
@@ -305,117 +305,117 @@ extern "C" {
     #define wxCRT_TolowerNative tolower
 #endif
 
-//#ifndef wxCRT_StrcatW
-// wchar_t *wxCRT_StrcatW(wchar_t *dest, const wchar_t *src);
-//#endif
-//
-//#ifndef wxCRT_StrchrW
-// const wchar_t *wxCRT_StrchrW(const wchar_t *s, wchar_t c);
-//#endif
-//
-//#ifndef wxCRT_StrcmpW
-// int wxCRT_StrcmpW(const wchar_t *s1, const wchar_t *s2);
-//#endif
-//
-//#ifndef wxCRT_StrcollW
-// int wxCRT_StrcollW(const wchar_t *s1, const wchar_t *s2);
-//#endif
-//
-//#ifndef wxCRT_StrcpyW
-// wchar_t *wxCRT_StrcpyW(wchar_t *dest, const wchar_t *src);
-//#endif
-//
-//#ifndef wxCRT_StrcspnW
-// size_t wxCRT_StrcspnW(const wchar_t *s, const wchar_t *reject);
-//#endif
-//
-//#ifndef wxCRT_StrncatW
-// wchar_t *wxCRT_StrncatW(wchar_t *dest, const wchar_t *src, size_t n);
-//#endif
-//
-//#ifndef wxCRT_StrncpyW
-// wchar_t *wxCRT_StrncpyW(wchar_t *dest, const wchar_t *src, size_t n);
-//#endif
-//
-//#ifndef wxCRT_StrpbrkW
-// const wchar_t *wxCRT_StrpbrkW(const wchar_t *s, const wchar_t *accept);
-//#endif
-//
-//#ifndef wxCRT_StrrchrW
-// const wchar_t *wxCRT_StrrchrW(const wchar_t *s, wchar_t c);
-//#endif
-//
-//#ifndef wxCRT_StrspnW
-// size_t wxCRT_StrspnW(const wchar_t *s, const wchar_t *accept);
-//#endif
-//
-//#ifndef wxCRT_StrstrW
-// const wchar_t *wxCRT_StrstrW(const wchar_t *haystack, const wchar_t *needle);
-//#endif
-//
-//#ifndef wxCRT_StrtodW
-// double wxCRT_StrtodW(const wchar_t *nptr, wchar_t **endptr);
-//#endif
-//
-//#ifndef wxCRT_StrtolW
-// long int wxCRT_StrtolW(const wchar_t *nptr, wchar_t **endptr, int base);
-//#endif
-//
-//#ifndef wxCRT_StrtoulW
-// unsigned long int wxCRT_StrtoulW(const wchar_t *nptr, wchar_t **endptr, int base);
-//#endif
-//
-//#ifndef wxCRT_StrxfrmW
-// size_t wxCRT_StrxfrmW(wchar_t *dest, const wchar_t *src, size_t n);
-//#endif
+#ifndef wxCRT_StrcatW
+WXDLLIMPEXP_BASE wchar_t *wxCRT_StrcatW(wchar_t *dest, const wchar_t *src);
+#endif
+
+#ifndef wxCRT_StrchrW
+WXDLLIMPEXP_BASE const wchar_t *wxCRT_StrchrW(const wchar_t *s, wchar_t c);
+#endif
+
+#ifndef wxCRT_StrcmpW
+WXDLLIMPEXP_BASE int wxCRT_StrcmpW(const wchar_t *s1, const wchar_t *s2);
+#endif
+
+#ifndef wxCRT_StrcollW
+WXDLLIMPEXP_BASE int wxCRT_StrcollW(const wchar_t *s1, const wchar_t *s2);
+#endif
+
+#ifndef wxCRT_StrcpyW
+WXDLLIMPEXP_BASE wchar_t *wxCRT_StrcpyW(wchar_t *dest, const wchar_t *src);
+#endif
+
+#ifndef wxCRT_StrcspnW
+WXDLLIMPEXP_BASE size_t wxCRT_StrcspnW(const wchar_t *s, const wchar_t *reject);
+#endif
+
+#ifndef wxCRT_StrncatW
+WXDLLIMPEXP_BASE wchar_t *wxCRT_StrncatW(wchar_t *dest, const wchar_t *src, size_t n);
+#endif
+
+#ifndef wxCRT_StrncpyW
+WXDLLIMPEXP_BASE wchar_t *wxCRT_StrncpyW(wchar_t *dest, const wchar_t *src, size_t n);
+#endif
+
+#ifndef wxCRT_StrpbrkW
+WXDLLIMPEXP_BASE const wchar_t *wxCRT_StrpbrkW(const wchar_t *s, const wchar_t *accept);
+#endif
+
+#ifndef wxCRT_StrrchrW
+WXDLLIMPEXP_BASE const wchar_t *wxCRT_StrrchrW(const wchar_t *s, wchar_t c);
+#endif
+
+#ifndef wxCRT_StrspnW
+WXDLLIMPEXP_BASE size_t wxCRT_StrspnW(const wchar_t *s, const wchar_t *accept);
+#endif
+
+#ifndef wxCRT_StrstrW
+WXDLLIMPEXP_BASE const wchar_t *wxCRT_StrstrW(const wchar_t *haystack, const wchar_t *needle);
+#endif
+
+#ifndef wxCRT_StrtodW
+WXDLLIMPEXP_BASE double wxCRT_StrtodW(const wchar_t *nptr, wchar_t **endptr);
+#endif
+
+#ifndef wxCRT_StrtolW
+WXDLLIMPEXP_BASE long int wxCRT_StrtolW(const wchar_t *nptr, wchar_t **endptr, int base);
+#endif
+
+#ifndef wxCRT_StrtoulW
+WXDLLIMPEXP_BASE unsigned long int wxCRT_StrtoulW(const wchar_t *nptr, wchar_t **endptr, int base);
+#endif
+
+#ifndef wxCRT_StrxfrmW
+WXDLLIMPEXP_BASE size_t wxCRT_StrxfrmW(wchar_t *dest, const wchar_t *src, size_t n);
+#endif
 
 #ifndef wxCRT_StrdupA
- char *wxCRT_StrdupA(const char *psz);
+WXDLLIMPEXP_BASE char *wxCRT_StrdupA(const char *psz);
 #endif
 
 #ifndef wxCRT_StrdupW
- wchar_t *wxCRT_StrdupW(const wchar_t *pwz);
+WXDLLIMPEXP_BASE wchar_t *wxCRT_StrdupW(const wchar_t *pwz);
 #endif
 
 #ifndef wxCRT_StricmpA
- int wxCRT_StricmpA(const char *psz1, const char *psz2);
+WXDLLIMPEXP_BASE int wxCRT_StricmpA(const char *psz1, const char *psz2);
 #endif
 
 #ifndef wxCRT_StricmpW
- int wxCRT_StricmpW(const wchar_t *psz1, const wchar_t *psz2);
+WXDLLIMPEXP_BASE int wxCRT_StricmpW(const wchar_t *psz1, const wchar_t *psz2);
 #endif
 
 #ifndef wxCRT_StrnicmpA
- int wxCRT_StrnicmpA(const char *psz1, const char *psz2, size_t len);
+WXDLLIMPEXP_BASE int wxCRT_StrnicmpA(const char *psz1, const char *psz2, size_t len);
 #endif
 
 #ifndef wxCRT_StrnicmpW
- int wxCRT_StrnicmpW(const wchar_t *psz1, const wchar_t *psz2, size_t len);
+WXDLLIMPEXP_BASE int wxCRT_StrnicmpW(const wchar_t *psz1, const wchar_t *psz2, size_t len);
 #endif
 
 #ifndef wxCRT_StrtokA
- char *wxCRT_StrtokA(char *psz, const char *delim, char **save_ptr);
+WXDLLIMPEXP_BASE char *wxCRT_StrtokA(char *psz, const char *delim, char **save_ptr);
 #endif
 
 #ifndef wxCRT_StrtokW
- wchar_t *wxCRT_StrtokW(wchar_t *psz, const wchar_t *delim, wchar_t **save_ptr);
+WXDLLIMPEXP_BASE wchar_t *wxCRT_StrtokW(wchar_t *psz, const wchar_t *delim, wchar_t **save_ptr);
 #endif
 
 /* supply strtoll and strtoull, if needed */
 #ifdef wxLongLong_t
     #ifndef wxCRT_StrtollA
-         wxLongLong_t wxCRT_StrtollA(const char* nptr,
+        WXDLLIMPEXP_BASE wxLongLong_t wxCRT_StrtollA(const char* nptr,
                                                      char** endptr,
                                                      int base);
-         wxULongLong_t wxCRT_StrtoullA(const char* nptr,
+        WXDLLIMPEXP_BASE wxULongLong_t wxCRT_StrtoullA(const char* nptr,
                                                        char** endptr,
                                                        int base);
     #endif
     #ifndef wxCRT_StrtollW
-         wxLongLong_t wxCRT_StrtollW(const wchar_t* nptr,
+        WXDLLIMPEXP_BASE wxLongLong_t wxCRT_StrtollW(const wchar_t* nptr,
                                                      wchar_t** endptr,
                                                      int base);
-         wxULongLong_t wxCRT_StrtoullW(const wchar_t* nptr,
+        WXDLLIMPEXP_BASE wxULongLong_t wxCRT_StrtoullW(const wchar_t* nptr,
                                                        wchar_t** endptr,
                                                        int base);
     #endif
@@ -446,10 +446,10 @@ extern "C" {
     /* special case: these functions are missing under Win9x with Unicows so we
        have to implement them ourselves */
     #if wxUSE_UNICODE_MSLU || defined(__WX_STRICT_ANSI_GCC__)
-             FILE* wxMSLU__wfopen(const wchar_t *name, const wchar_t *mode);
-             FILE* wxMSLU__wfreopen(const wchar_t *name, const wchar_t *mode, FILE *stream);
-             int wxMSLU__wrename(const wchar_t *oldname, const wchar_t *newname);
-             int wxMSLU__wremove(const wchar_t *name);
+            WXDLLIMPEXP_BASE FILE* wxMSLU__wfopen(const wchar_t *name, const wchar_t *mode);
+            WXDLLIMPEXP_BASE FILE* wxMSLU__wfreopen(const wchar_t *name, const wchar_t *mode, FILE *stream);
+            WXDLLIMPEXP_BASE int wxMSLU__wrename(const wchar_t *oldname, const wchar_t *newname);
+            WXDLLIMPEXP_BASE int wxMSLU__wremove(const wchar_t *name);
             #define wxCRT_Fopen     wxMSLU__wfopen
             #define wxCRT_Freopen   wxMSLU__wfreopen
             #define wxCRT_Remove    wxMSLU__wremove
@@ -457,9 +457,9 @@ extern "C" {
     #else
         /* WinCE CRT doesn't provide these functions so use our own */
         #ifdef __WXWINCE__
-             int wxCRT_Rename(const wchar_t *src,
+            WXDLLIMPEXP_BASE int wxCRT_Rename(const wchar_t *src,
                                               const wchar_t *dst);
-             int wxCRT_Remove(const wchar_t *path);
+            WXDLLIMPEXP_BASE int wxCRT_Remove(const wchar_t *path);
         #else
             #define wxCRT_Rename   _wrename
             #define wxCRT_Remove _wremove
@@ -494,15 +494,15 @@ extern "C" {
 #define wxCRT_FgetsW  fgetws
 
 #ifndef wxCRT_PutsW
- int wxCRT_PutsW(const wchar_t *ws);
+WXDLLIMPEXP_BASE int wxCRT_PutsW(const wchar_t *ws);
 #endif
 
 #ifndef wxCRT_FputsW
- int wxCRT_FputsW(const wchar_t *ch, FILE *stream);
+WXDLLIMPEXP_BASE int wxCRT_FputsW(const wchar_t *ch, FILE *stream);
 #endif
 
 #ifndef wxCRT_FputcW
- int wxCRT_FputcW(wchar_t wc, FILE *stream);
+WXDLLIMPEXP_BASE int wxCRT_FputcW(wchar_t wc, FILE *stream);
 #endif
 
 /*
@@ -539,7 +539,7 @@ extern "C" {
 #endif
 
 #ifndef wxCRT_GetenvW
- wchar_t * wxCRT_GetenvW(const wchar_t *name);
+WXDLLIMPEXP_BASE wchar_t * wxCRT_GetenvW(const wchar_t *name);
 #endif
 
 
@@ -557,11 +557,11 @@ extern "C" {
     #define  wxCRT_AtoiW           _wtoi
     #define  wxCRT_AtolW           _wtol
     /* _wtof doesn't exist */
-//#else
-//#ifndef __VMS
+#else
+#ifndef __VMS
     #define wxCRT_AtofW(s)         wcstod(s, NULL)
-//#endif
-    //#define wxCRT_AtolW(s)         wcstol(s, NULL, 10)
+#endif
+    #define wxCRT_AtolW(s)         wcstol(s, NULL, 10)
     /* wcstoi doesn't exist */
 #endif
 
@@ -574,8 +574,8 @@ extern "C" {
 #ifdef wxNEED_WX_MBSTOWCS
     /* even though they are defined and "implemented", they are bad and just
        stubs so we need our own - we need these even in ANSI builds!! */
-     size_t wxMbstowcs(wchar_t *, const char *, size_t);
-     size_t wxWcstombs(char *, const wchar_t *, size_t);
+    WXDLLIMPEXP_BASE size_t wxMbstowcs(wchar_t *, const char *, size_t);
+    WXDLLIMPEXP_BASE size_t wxWcstombs(char *, const wchar_t *, size_t);
 #else
     #define wxMbstowcs mbstowcs
     #define wxWcstombs wcstombs
@@ -620,7 +620,7 @@ extern "C" {
 #endif
 
 #ifndef wxCRT_StrftimeW
- size_t wxCRT_StrftimeW(wchar_t *s, size_t max,
+WXDLLIMPEXP_BASE size_t wxCRT_StrftimeW(wchar_t *s, size_t max,
                                         const wchar_t *fmt,
                                         const struct tm *tm);
 #endif
@@ -682,26 +682,26 @@ extern "C" {
  *     string.h, which is required by wxcrt.h) to have them here: */
 
 /* safe version of strlen() (returns 0 if passed NULL pointer) */
-//inline size_t wxStrlen(const char *s) { return s ? ::strlen(s) : 0; }
-//inline size_t wxStrlen(const wchar_t *s) { return s ? wxCRT_StrlenW(s) : 0; }
-//#ifndef wxWCHAR_T_IS_WXCHAR16
-//        size_t wxStrlen(const wxChar16 *s );
-//#endif
-//#ifndef wxWCHAR_T_IS_WXCHAR32
-//        size_t wxStrlen(const wxChar32 *s );
-//#endif
-//#define wxWcslen wxCRT_StrlenW
+inline size_t wxStrlen(const char *s) { return s ? wxCRT_StrlenA(s) : 0; }
+inline size_t wxStrlen(const wchar_t *s) { return s ? wxCRT_StrlenW(s) : 0; }
+#ifndef wxWCHAR_T_IS_WXCHAR16
+       WXDLLIMPEXP_BASE size_t wxStrlen(const wxChar16 *s );
+#endif
+#ifndef wxWCHAR_T_IS_WXCHAR32
+       WXDLLIMPEXP_BASE size_t wxStrlen(const wxChar32 *s );
+#endif
+#define wxWcslen wxCRT_StrlenW
 
-//#define wxStrdupA wxCRT_StrdupA
-//#define wxStrdupW wxCRT_StrdupW
-//inline char* wxStrdup(const char *s) { return wxCRT_StrdupA(s); }
-//inline wchar_t* wxStrdup(const wchar_t *s) { return _wcsdup(s); }
-//#ifndef wxWCHAR_T_IS_WXCHAR16
-//        wxChar16* wxStrdup(const wxChar16* s);
-//#endif
-//#ifndef wxWCHAR_T_IS_WXCHAR32
-//        wxChar32* wxStrdup(const wxChar32* s);
-//#endif
+#define wxStrdupA wxCRT_StrdupA
+#define wxStrdupW wxCRT_StrdupW
+inline char* wxStrdup(const char *s) { return wxCRT_StrdupA(s); }
+inline wchar_t* wxStrdup(const wchar_t *s) { return wxCRT_StrdupW(s); }
+#ifndef wxWCHAR_T_IS_WXCHAR16
+       WXDLLIMPEXP_BASE wxChar16* wxStrdup(const wxChar16* s);
+#endif
+#ifndef wxWCHAR_T_IS_WXCHAR32
+       WXDLLIMPEXP_BASE wxChar32* wxStrdup(const wxChar32* s);
+#endif
 
 #endif /* __cplusplus */
 

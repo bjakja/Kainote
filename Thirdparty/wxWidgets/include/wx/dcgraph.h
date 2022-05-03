@@ -18,10 +18,10 @@
 #include "wx/geometry.h"
 #include "wx/graphics.h"
 
-class  wxWindowDC;
+class WXDLLIMPEXP_FWD_CORE wxWindowDC;
 
 
-class  wxGCDC: public wxDC
+class WXDLLIMPEXP_CORE wxGCDC: public wxDC
 {
 public:
     wxGCDC( const wxWindowDC& dc );
@@ -53,7 +53,7 @@ private:
 };
 
 
-class  wxGCDCImpl: public wxDCImpl
+class WXDLLIMPEXP_CORE wxGCDCImpl: public wxDCImpl
 {
 public:
     wxGCDCImpl( wxDC *owner, const wxWindowDC& dc );

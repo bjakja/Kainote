@@ -31,7 +31,7 @@ struct IDataObject;
 // (all of them, including protected ones which are called by the class itself)
 // ----------------------------------------------------------------------------
 
-class  wxDropTarget : public wxDropTargetBase
+class WXDLLIMPEXP_CORE wxDropTarget : public wxDropTargetBase
 {
 public:
     // ctor & dtor

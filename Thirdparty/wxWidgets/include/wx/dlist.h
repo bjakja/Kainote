@@ -425,7 +425,7 @@ public:
             if ( index-- == 0 )
                return current;
         }
-        //wxFAIL_MSG( "invalid index in Item()" );
+        wxFAIL_MSG( "invalid index in Item()" );
         return NULL;
     }
 
@@ -437,9 +437,9 @@ public:
 
     nodetype *DetachNode( nodetype *node )
     {
-       /* wxCHECK_MSG( node, NULL, "detaching NULL wxNodeBase" );
+        wxCHECK_MSG( node, NULL, "detaching NULL wxNodeBase" );
         wxCHECK_MSG( node->m_list == this, NULL,
-                     "detaching node which is not from this list" );*/
+                     "detaching node which is not from this list" );
         // update the list
         nodetype **prevNext = node->GetPrevious() ? &node->GetPrevious()->m_next
                                                   : &m_nodeFirst;

@@ -50,7 +50,7 @@ wxUniChar::value_type wxUniChar::FromHi8bit(char c)
     wchar_t wbuf[2];
     if ( wxConvLibc.ToWChar(wbuf, 2, cbuf, 2) != 2 )
     {
-        //wxFAIL_MSG( "invalid multibyte character" );
+        wxFAIL_MSG( "invalid multibyte character" );
         return wxT('?'); // FIXME-UTF8: what to use as failure character?
     }
     return wbuf[0];
@@ -63,7 +63,7 @@ char wxUniChar::ToHi8bit(wxUniChar::value_type v)
     char c;
     if ( !GetAsHi8bit(v, &c) )
     {
-        //wxFAIL_MSG( "character cannot be converted to single byte" );
+        wxFAIL_MSG( "character cannot be converted to single byte" );
         c = '?'; // FIXME-UTF8: what to use as failure character?
     }
 

@@ -427,13 +427,13 @@ wxGenericProgressDialog::Update(int value, const wxString& newmsg, bool *skip)
     if ( !DoBeforeUpdate(skip) )
         return false;
 
-    //wxCHECK_MSG( m_gauge, false, "dialog should be fully created" );
+    wxCHECK_MSG( m_gauge, false, "dialog should be fully created" );
 
 #ifdef __WXMSW__
     value /= m_factor;
 #endif // __WXMSW__
 
-    //wxASSERT_MSG( value <= m_maximum, wxT("invalid progress value") );
+    wxASSERT_MSG( value <= m_maximum, wxT("invalid progress value") );
 
     m_gauge->SetValue(value);
 
@@ -518,7 +518,7 @@ bool wxGenericProgressDialog::Pulse(const wxString& newmsg, bool *skip)
     if ( !DoBeforeUpdate(skip) )
         return false;
 
-    //wxCHECK_MSG( m_gauge, false, "dialog should be fully created" );
+    wxCHECK_MSG( m_gauge, false, "dialog should be fully created" );
 
     // show a bit of progress
     m_gauge->Pulse();
@@ -591,7 +591,7 @@ bool wxGenericProgressDialog::Show( bool show )
 
 int wxGenericProgressDialog::GetValue() const
 {
-    //wxCHECK_MSG( m_gauge, -1, "dialog should be fully created" );
+    wxCHECK_MSG( m_gauge, -1, "dialog should be fully created" );
 
     return m_gauge->GetValue();
 }
@@ -608,9 +608,9 @@ wxString wxGenericProgressDialog::GetMessage() const
 
 void wxGenericProgressDialog::SetRange(int maximum)
 {
-    //wxCHECK_RET( m_gauge, "dialog should be fully created" );
+    wxCHECK_RET( m_gauge, "dialog should be fully created" );
 
-    //wxCHECK_RET( maximum > 0, "Invalid range" );
+    wxCHECK_RET( maximum > 0, "Invalid range" );
 
     m_gauge->SetRange(maximum);
 

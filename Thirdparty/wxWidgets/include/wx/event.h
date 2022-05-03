@@ -17,11 +17,11 @@
 #include "wx/object.h"
 #include "wx/clntdata.h"
 
-//#if wxUSE_GUI
+#if wxUSE_GUI
     #include "wx/gdicmn.h"
     #include "wx/cursor.h"
     #include "wx/mousestate.h"
-//#endif
+#endif
 
 #include "wx/dynarray.h"
 #include "wx/thread.h"
@@ -37,15 +37,15 @@
 // forward declarations
 // ----------------------------------------------------------------------------
 
-class  wxList;
-class  wxEvent;
-class  wxEventFilter;
-
-    class  wxDC;
-    class  wxMenu;
-    class  wxWindow;
-    class  wxWindowBase;
-
+class WXDLLIMPEXP_FWD_BASE wxList;
+class WXDLLIMPEXP_FWD_BASE wxEvent;
+class WXDLLIMPEXP_FWD_BASE wxEventFilter;
+#if wxUSE_GUI
+    class WXDLLIMPEXP_FWD_CORE wxDC;
+    class WXDLLIMPEXP_FWD_CORE wxMenu;
+    class WXDLLIMPEXP_FWD_CORE wxWindow;
+    class WXDLLIMPEXP_FWD_CORE wxWindowBase;
+#endif // wxUSE_GUI
 
 // We operate with pointer to members of wxEvtHandler (such functions are used
 // as event handlers in the event tables or as arguments to Connect()) but by
@@ -64,7 +64,7 @@ class  wxEventFilter;
     #define wxMSVC_FWD_MULTIPLE_BASES
 #endif
 
-class  wxMSVC_FWD_MULTIPLE_BASES wxEvtHandler;
+class WXDLLIMPEXP_FWD_BASE wxMSVC_FWD_MULTIPLE_BASES wxEvtHandler;
 class wxEventConnectionRef;
 
 // ----------------------------------------------------------------------------
@@ -87,7 +87,7 @@ typedef int wxEventType;
     wxEventTableEntry(wxEVT_NULL, 0, 0, 0, 0)
 
 // generate a new unique event type
-extern  wxEventType wxNewEventType();
+extern WXDLLIMPEXP_BASE wxEventType wxNewEventType();
 
 // define macros to create new event types:
 #ifdef wxHAS_EVENT_BIND
@@ -180,7 +180,7 @@ typedef void (wxEvtHandler::*wxEventFunction)(wxEvent&);
 typedef wxEventFunction wxObjectEventFunction;
 
 // The event functor which is stored in the static and dynamic event tables:
-class  wxEventFunctor
+class WXDLLIMPEXP_BASE wxEventFunctor
 {
 public:
     virtual ~wxEventFunctor();
@@ -209,7 +209,7 @@ private:
 };
 
 // A plain method functor for the untyped legacy event types:
-class  wxObjectEventFunctor : public wxEventFunctor
+class WXDLLIMPEXP_BASE wxObjectEventFunctor : public wxEventFunctor
 {
 public:
     wxObjectEventFunctor(wxObjectEventFunction method, wxEvtHandler *handler)
@@ -371,9 +371,9 @@ public:
     wxEventFunctorMethod(void (Class::*method)(EventArg&), EventHandler *handler)
         : m_handler( handler ), m_method( method )
     {
-        /*wxASSERT_MSG( handler || this->IsEvtHandler(),
+        wxASSERT_MSG( handler || this->IsEvtHandler(),
                       "handlers defined in non-wxEvtHandler-derived classes "
-                      "must be connected with a valid sink object" );*/
+                      "must be connected with a valid sink object" );
 
         // if you get an error here it means that the signature of the handler
         // you're trying to use is not compatible with (i.e. is not the same as
@@ -389,7 +389,7 @@ public:
             realHandler = this->ConvertFromEvtHandler(handler);
 
             // this is not supposed to happen but check for it nevertheless
-            //wxCHECK_RET( realHandler, "invalid event handler" );
+            wxCHECK_RET( realHandler, "invalid event handler" );
         }
 
         // the real (run-time) type of event is EventClass and we checked in
@@ -614,126 +614,126 @@ wxNewEventTableFunctor(const EventTag&, void (Class::*method)(EventArg&))
 // many, but not all, standard event types
 
     // some generic events
-extern  const wxEventType wxEVT_NULL;
-extern  const wxEventType wxEVT_FIRST;
-extern  const wxEventType wxEVT_USER_FIRST;
+extern WXDLLIMPEXP_BASE const wxEventType wxEVT_NULL;
+extern WXDLLIMPEXP_BASE const wxEventType wxEVT_FIRST;
+extern WXDLLIMPEXP_BASE const wxEventType wxEVT_USER_FIRST;
 
     // Need events declared to do this
-class  wxIdleEvent;
-class  wxThreadEvent;
-class  wxCommandEvent;
-class  wxMouseEvent;
-class  wxFocusEvent;
-class  wxChildFocusEvent;
-class  wxKeyEvent;
-class  wxNavigationKeyEvent;
-class  wxSetCursorEvent;
-class  wxScrollEvent;
-class  wxSpinEvent;
-class  wxScrollWinEvent;
-class  wxSizeEvent;
-class  wxMoveEvent;
-class  wxCloseEvent;
-class  wxActivateEvent;
-class  wxWindowCreateEvent;
-class  wxWindowDestroyEvent;
-class  wxShowEvent;
-class  wxIconizeEvent;
-class  wxMaximizeEvent;
-class  wxMouseCaptureChangedEvent;
-class  wxMouseCaptureLostEvent;
-class  wxPaintEvent;
-class  wxEraseEvent;
-class  wxNcPaintEvent;
-class  wxMenuEvent;
-class  wxContextMenuEvent;
-class  wxSysColourChangedEvent;
-class  wxDisplayChangedEvent;
-class  wxQueryNewPaletteEvent;
-class  wxPaletteChangedEvent;
-class  wxJoystickEvent;
-class  wxDropFilesEvent;
-class  wxInitDialogEvent;
-class  wxUpdateUIEvent;
-class  wxClipboardTextEvent;
-class  wxHelpEvent;
+class WXDLLIMPEXP_FWD_BASE wxIdleEvent;
+class WXDLLIMPEXP_FWD_BASE wxThreadEvent;
+class WXDLLIMPEXP_FWD_CORE wxCommandEvent;
+class WXDLLIMPEXP_FWD_CORE wxMouseEvent;
+class WXDLLIMPEXP_FWD_CORE wxFocusEvent;
+class WXDLLIMPEXP_FWD_CORE wxChildFocusEvent;
+class WXDLLIMPEXP_FWD_CORE wxKeyEvent;
+class WXDLLIMPEXP_FWD_CORE wxNavigationKeyEvent;
+class WXDLLIMPEXP_FWD_CORE wxSetCursorEvent;
+class WXDLLIMPEXP_FWD_CORE wxScrollEvent;
+class WXDLLIMPEXP_FWD_CORE wxSpinEvent;
+class WXDLLIMPEXP_FWD_CORE wxScrollWinEvent;
+class WXDLLIMPEXP_FWD_CORE wxSizeEvent;
+class WXDLLIMPEXP_FWD_CORE wxMoveEvent;
+class WXDLLIMPEXP_FWD_CORE wxCloseEvent;
+class WXDLLIMPEXP_FWD_CORE wxActivateEvent;
+class WXDLLIMPEXP_FWD_CORE wxWindowCreateEvent;
+class WXDLLIMPEXP_FWD_CORE wxWindowDestroyEvent;
+class WXDLLIMPEXP_FWD_CORE wxShowEvent;
+class WXDLLIMPEXP_FWD_CORE wxIconizeEvent;
+class WXDLLIMPEXP_FWD_CORE wxMaximizeEvent;
+class WXDLLIMPEXP_FWD_CORE wxMouseCaptureChangedEvent;
+class WXDLLIMPEXP_FWD_CORE wxMouseCaptureLostEvent;
+class WXDLLIMPEXP_FWD_CORE wxPaintEvent;
+class WXDLLIMPEXP_FWD_CORE wxEraseEvent;
+class WXDLLIMPEXP_FWD_CORE wxNcPaintEvent;
+class WXDLLIMPEXP_FWD_CORE wxMenuEvent;
+class WXDLLIMPEXP_FWD_CORE wxContextMenuEvent;
+class WXDLLIMPEXP_FWD_CORE wxSysColourChangedEvent;
+class WXDLLIMPEXP_FWD_CORE wxDisplayChangedEvent;
+class WXDLLIMPEXP_FWD_CORE wxQueryNewPaletteEvent;
+class WXDLLIMPEXP_FWD_CORE wxPaletteChangedEvent;
+class WXDLLIMPEXP_FWD_CORE wxJoystickEvent;
+class WXDLLIMPEXP_FWD_CORE wxDropFilesEvent;
+class WXDLLIMPEXP_FWD_CORE wxInitDialogEvent;
+class WXDLLIMPEXP_FWD_CORE wxUpdateUIEvent;
+class WXDLLIMPEXP_FWD_CORE wxClipboardTextEvent;
+class WXDLLIMPEXP_FWD_CORE wxHelpEvent;
 
 
     // Command events
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_MENU_SELECTED, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_SLIDER_UPDATED, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_SLIDER_UPDATED, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEvent);
 
 // wxEVT_COMMAND_SCROLLBAR_UPDATED is deprecated, use wxEVT_SCROLL... events
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_SCROLLBAR_UPDATED, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_VLBOX_SELECTED, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_TOOL_RCLICKED, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_TOOL_DROPDOWN_CLICKED, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_TOOL_ENTER, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_COMBOBOX_DROPDOWN, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_COMBOBOX_CLOSEUP, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_SCROLLBAR_UPDATED, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_VLBOX_SELECTED, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_TOOL_RCLICKED, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_TOOL_DROPDOWN_CLICKED, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_TOOL_ENTER, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_COMBOBOX_DROPDOWN, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_COMBOBOX_CLOSEUP, wxCommandEvent);
 
     // Thread events
-wxDECLARE_EXPORTED_EVENT(, wxEVT_THREAD, wxThreadEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_BASE, wxEVT_THREAD, wxThreadEvent);
 
     // Mouse event types
-wxDECLARE_EXPORTED_EVENT(, wxEVT_LEFT_DOWN, wxMouseEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_LEFT_UP, wxMouseEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_MIDDLE_DOWN, wxMouseEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_MIDDLE_UP, wxMouseEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_RIGHT_DOWN, wxMouseEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_RIGHT_UP, wxMouseEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_MOTION, wxMouseEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_ENTER_WINDOW, wxMouseEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_LEAVE_WINDOW, wxMouseEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_LEFT_DCLICK, wxMouseEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_MIDDLE_DCLICK, wxMouseEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_RIGHT_DCLICK, wxMouseEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_SET_FOCUS, wxFocusEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_KILL_FOCUS, wxFocusEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_CHILD_FOCUS, wxChildFocusEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_MOUSEWHEEL, wxMouseEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_AUX1_DOWN, wxMouseEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_AUX1_UP, wxMouseEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_AUX1_DCLICK, wxMouseEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_AUX2_DOWN, wxMouseEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_AUX2_UP, wxMouseEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_AUX2_DCLICK, wxMouseEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_LEFT_DOWN, wxMouseEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_LEFT_UP, wxMouseEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_MIDDLE_DOWN, wxMouseEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_MIDDLE_UP, wxMouseEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_RIGHT_DOWN, wxMouseEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_RIGHT_UP, wxMouseEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_MOTION, wxMouseEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_ENTER_WINDOW, wxMouseEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_LEAVE_WINDOW, wxMouseEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_LEFT_DCLICK, wxMouseEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_MIDDLE_DCLICK, wxMouseEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_RIGHT_DCLICK, wxMouseEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_SET_FOCUS, wxFocusEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_KILL_FOCUS, wxFocusEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_CHILD_FOCUS, wxChildFocusEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_MOUSEWHEEL, wxMouseEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_AUX1_DOWN, wxMouseEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_AUX1_UP, wxMouseEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_AUX1_DCLICK, wxMouseEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_AUX2_DOWN, wxMouseEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_AUX2_UP, wxMouseEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_AUX2_DCLICK, wxMouseEvent);
 
     // Character input event type
-wxDECLARE_EXPORTED_EVENT(, wxEVT_CHAR, wxKeyEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_CHAR_HOOK, wxKeyEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_NAVIGATION_KEY, wxNavigationKeyEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_KEY_DOWN, wxKeyEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_KEY_UP, wxKeyEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_CHAR, wxKeyEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_CHAR_HOOK, wxKeyEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_NAVIGATION_KEY, wxNavigationKeyEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_KEY_DOWN, wxKeyEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_KEY_UP, wxKeyEvent);
 #if wxUSE_HOTKEY
-wxDECLARE_EXPORTED_EVENT(, wxEVT_HOTKEY, wxKeyEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_HOTKEY, wxKeyEvent);
 #endif
 // This is a private event used by wxMSW code only and subject to change or
 // disappear in the future. Don't use.
-wxDECLARE_EXPORTED_EVENT(, wxEVT_AFTER_CHAR, wxKeyEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_AFTER_CHAR, wxKeyEvent);
 
     // Set cursor event
-wxDECLARE_EXPORTED_EVENT(, wxEVT_SET_CURSOR, wxSetCursorEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_SET_CURSOR, wxSetCursorEvent);
 
     // wxScrollBar and wxSlider event identifiers
-wxDECLARE_EXPORTED_EVENT(, wxEVT_SCROLL_TOP, wxScrollEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_SCROLL_BOTTOM, wxScrollEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_SCROLL_LINEUP, wxScrollEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_SCROLL_LINEDOWN, wxScrollEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_SCROLL_PAGEUP, wxScrollEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_SCROLL_PAGEDOWN, wxScrollEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_SCROLL_THUMBTRACK, wxScrollEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_SCROLL_THUMBRELEASE, wxScrollEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_SCROLL_CHANGED, wxScrollEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_SCROLL_TOP, wxScrollEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_SCROLL_BOTTOM, wxScrollEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_SCROLL_LINEUP, wxScrollEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_SCROLL_LINEDOWN, wxScrollEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_SCROLL_PAGEUP, wxScrollEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_SCROLL_PAGEDOWN, wxScrollEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_SCROLL_THUMBTRACK, wxScrollEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_SCROLL_THUMBRELEASE, wxScrollEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_SCROLL_CHANGED, wxScrollEvent);
 
 // Due to a bug in older wx versions, wxSpinEvents were being sent with type of
 // wxEVT_SCROLL_LINEUP, wxEVT_SCROLL_LINEDOWN and wxEVT_SCROLL_THUMBTRACK. But
@@ -744,80 +744,80 @@ wxDECLARE_EXPORTED_EVENT(, wxEVT_SCROLL_CHANGED, wxScrollEvent);
 
 #if wxUSE_SPINBTN
 
-wxDECLARE_EXPORTED_EVENT_ALIAS( , wxEVT_SPIN_UP,   wxSpinEvent );
-wxDECLARE_EXPORTED_EVENT_ALIAS( , wxEVT_SPIN_DOWN, wxSpinEvent );
-wxDECLARE_EXPORTED_EVENT_ALIAS( , wxEVT_SPIN,      wxSpinEvent );
+wxDECLARE_EXPORTED_EVENT_ALIAS( WXDLLIMPEXP_CORE, wxEVT_SPIN_UP,   wxSpinEvent );
+wxDECLARE_EXPORTED_EVENT_ALIAS( WXDLLIMPEXP_CORE, wxEVT_SPIN_DOWN, wxSpinEvent );
+wxDECLARE_EXPORTED_EVENT_ALIAS( WXDLLIMPEXP_CORE, wxEVT_SPIN,      wxSpinEvent );
 
 #endif
 
     // Scroll events from wxWindow
-wxDECLARE_EXPORTED_EVENT(, wxEVT_SCROLLWIN_TOP, wxScrollWinEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_SCROLLWIN_BOTTOM, wxScrollWinEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_SCROLLWIN_LINEUP, wxScrollWinEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_SCROLLWIN_LINEDOWN, wxScrollWinEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_SCROLLWIN_PAGEUP, wxScrollWinEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_SCROLLWIN_PAGEDOWN, wxScrollWinEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_SCROLLWIN_THUMBTRACK, wxScrollWinEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_SCROLLWIN_THUMBRELEASE, wxScrollWinEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_SCROLLWIN_TOP, wxScrollWinEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_SCROLLWIN_BOTTOM, wxScrollWinEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_SCROLLWIN_LINEUP, wxScrollWinEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_SCROLLWIN_LINEDOWN, wxScrollWinEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_SCROLLWIN_PAGEUP, wxScrollWinEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_SCROLLWIN_PAGEDOWN, wxScrollWinEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_SCROLLWIN_THUMBTRACK, wxScrollWinEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_SCROLLWIN_THUMBRELEASE, wxScrollWinEvent);
 
     // System events
-wxDECLARE_EXPORTED_EVENT(, wxEVT_SIZE, wxSizeEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_MOVE, wxMoveEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_CLOSE_WINDOW, wxCloseEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_END_SESSION, wxCloseEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_QUERY_END_SESSION, wxCloseEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_ACTIVATE_APP, wxActivateEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_ACTIVATE, wxActivateEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_CREATE, wxWindowCreateEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_DESTROY, wxWindowDestroyEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_SHOW, wxShowEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_ICONIZE, wxIconizeEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_MAXIMIZE, wxMaximizeEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_MOUSE_CAPTURE_CHANGED, wxMouseCaptureChangedEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_PAINT, wxPaintEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_ERASE_BACKGROUND, wxEraseEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_NC_PAINT, wxNcPaintEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_MENU_OPEN, wxMenuEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_MENU_CLOSE, wxMenuEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_MENU_HIGHLIGHT, wxMenuEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_CONTEXT_MENU, wxContextMenuEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_SYS_COLOUR_CHANGED, wxSysColourChangedEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_DISPLAY_CHANGED, wxDisplayChangedEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_QUERY_NEW_PALETTE, wxQueryNewPaletteEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_PALETTE_CHANGED, wxPaletteChangedEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_JOY_BUTTON_DOWN, wxJoystickEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_JOY_BUTTON_UP, wxJoystickEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_JOY_MOVE, wxJoystickEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_JOY_ZMOVE, wxJoystickEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_DROP_FILES, wxDropFilesEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_INIT_DIALOG, wxInitDialogEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_IDLE, wxIdleEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_UPDATE_UI, wxUpdateUIEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_SIZING, wxSizeEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_MOVING, wxMoveEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_MOVE_START, wxMoveEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_MOVE_END, wxMoveEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_HIBERNATE, wxActivateEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_SIZE, wxSizeEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_MOVE, wxMoveEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_CLOSE_WINDOW, wxCloseEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_END_SESSION, wxCloseEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_QUERY_END_SESSION, wxCloseEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_ACTIVATE_APP, wxActivateEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_ACTIVATE, wxActivateEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_CREATE, wxWindowCreateEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_DESTROY, wxWindowDestroyEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_SHOW, wxShowEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_ICONIZE, wxIconizeEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_MAXIMIZE, wxMaximizeEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_MOUSE_CAPTURE_CHANGED, wxMouseCaptureChangedEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_PAINT, wxPaintEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_ERASE_BACKGROUND, wxEraseEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_NC_PAINT, wxNcPaintEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_MENU_OPEN, wxMenuEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_MENU_CLOSE, wxMenuEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_MENU_HIGHLIGHT, wxMenuEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_CONTEXT_MENU, wxContextMenuEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_SYS_COLOUR_CHANGED, wxSysColourChangedEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_DISPLAY_CHANGED, wxDisplayChangedEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_QUERY_NEW_PALETTE, wxQueryNewPaletteEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_PALETTE_CHANGED, wxPaletteChangedEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_JOY_BUTTON_DOWN, wxJoystickEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_JOY_BUTTON_UP, wxJoystickEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_JOY_MOVE, wxJoystickEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_JOY_ZMOVE, wxJoystickEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_DROP_FILES, wxDropFilesEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_INIT_DIALOG, wxInitDialogEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_BASE, wxEVT_IDLE, wxIdleEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_UPDATE_UI, wxUpdateUIEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_SIZING, wxSizeEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_MOVING, wxMoveEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_MOVE_START, wxMoveEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_MOVE_END, wxMoveEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_HIBERNATE, wxActivateEvent);
 
     // Clipboard events
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_TEXT_COPY, wxClipboardTextEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_TEXT_CUT, wxClipboardTextEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_TEXT_PASTE, wxClipboardTextEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_TEXT_COPY, wxClipboardTextEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_TEXT_CUT, wxClipboardTextEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_TEXT_PASTE, wxClipboardTextEvent);
 
     // Generic command events
     // Note: a click is a higher-level event than button down/up
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_LEFT_CLICK, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_LEFT_DCLICK, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_RIGHT_CLICK, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_RIGHT_DCLICK, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_SET_FOCUS, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_KILL_FOCUS, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_ENTER, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_LEFT_CLICK, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_LEFT_DCLICK, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_RIGHT_CLICK, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_RIGHT_DCLICK, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_SET_FOCUS, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_KILL_FOCUS, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_ENTER, wxCommandEvent);
 
     // Help events
-wxDECLARE_EXPORTED_EVENT(, wxEVT_HELP, wxHelpEvent);
-wxDECLARE_EXPORTED_EVENT(, wxEVT_DETAILED_HELP, wxHelpEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_HELP, wxHelpEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_DETAILED_HELP, wxHelpEvent);
 
 // these 2 events are the same
 #define wxEVT_COMMAND_TOOL_CLICKED wxEVT_COMMAND_MENU_SELECTED
@@ -830,7 +830,7 @@ wxDECLARE_EXPORTED_EVENT(, wxEVT_DETAILED_HELP, wxHelpEvent);
 // wx/textctrl.h in all ports [yet], so declare it here as well
 //
 // still, any new code using it should include wx/textctrl.h explicitly
-wxDECLARE_EXPORTED_EVENT(, wxEVT_COMMAND_TEXT_UPDATED, wxCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_COMMAND_TEXT_UPDATED, wxCommandEvent);
 
 
 // ----------------------------------------------------------------------------
@@ -913,7 +913,7 @@ enum wxEventCategory
  *
  */
 
-class  wxEvent : public wxObject
+class WXDLLIMPEXP_BASE wxEvent : public wxObject
 {
 public:
     wxEvent(int winid = 0, wxEventType commandType = wxEVT_NULL );
@@ -1039,10 +1039,10 @@ protected:
 
 private:
     // it needs to access our m_propagationLevel
-    friend class  wxPropagateOnce;
+    friend class WXDLLIMPEXP_FWD_BASE wxPropagateOnce;
 
     // and this one needs to access our m_handlerToProcessOnlyIn
-    friend class  wxEventProcessInHandlerOnly;
+    friend class WXDLLIMPEXP_FWD_BASE wxEventProcessInHandlerOnly;
 
 
     DECLARE_ABSTRACT_CLASS(wxEvent)
@@ -1051,7 +1051,7 @@ private:
 /*
  * Helper class to temporarily change an event not to propagate.
  */
-class  wxPropagationDisabler
+class WXDLLIMPEXP_BASE wxPropagationDisabler
 {
 public:
     wxPropagationDisabler(wxEvent& event) : m_event(event)
@@ -1074,13 +1074,13 @@ private:
 /*
  * Another one to temporarily lower propagation level.
  */
-class  wxPropagateOnce
+class WXDLLIMPEXP_BASE wxPropagateOnce
 {
 public:
     wxPropagateOnce(wxEvent& event) : m_event(event)
     {
-        /*wxASSERT_MSG( m_event.m_propagationLevel > 0,
-                        wxT("shouldn't be used unless ShouldPropagate()!") );*/
+        wxASSERT_MSG( m_event.m_propagationLevel > 0,
+                        wxT("shouldn't be used unless ShouldPropagate()!") );
 
         m_event.m_propagationLevel--;
     }
@@ -1121,7 +1121,7 @@ private:
 };
 
 
-class  wxEventBasicPayloadMixin
+class WXDLLIMPEXP_BASE wxEventBasicPayloadMixin
 {
 public:
     wxEventBasicPayloadMixin()
@@ -1149,7 +1149,7 @@ protected:
     wxDECLARE_NO_ASSIGN_CLASS(wxEventBasicPayloadMixin);
 };
 
-class  wxEventAnyPayloadMixin : public wxEventBasicPayloadMixin
+class WXDLLIMPEXP_BASE wxEventAnyPayloadMixin : public wxEventBasicPayloadMixin
 {
 public:
     wxEventAnyPayloadMixin() : wxEventBasicPayloadMixin() {}
@@ -1194,7 +1194,7 @@ enum wxIdleMode
     wxIDLE_PROCESS_SPECIFIED
 };
 
-class  wxIdleEvent : public wxEvent
+class WXDLLIMPEXP_BASE wxIdleEvent : public wxEvent
 {
 public:
     wxIdleEvent()
@@ -1230,7 +1230,7 @@ private:
 
 // Thread event
 
-class  wxThreadEvent : public wxEvent,
+class WXDLLIMPEXP_BASE wxThreadEvent : public wxEvent,
                                        public wxEventAnyPayloadMixin
 {
 public:
@@ -1262,7 +1262,7 @@ private:
 };
 
 
-//#if wxUSE_GUI
+#if wxUSE_GUI
 
 
 // Item or menu event class
@@ -1284,7 +1284,7 @@ private:
  wxEVT_COMMAND_TOGGLEBUTTON_CLICKED
 */
 
-class  wxCommandEvent : public wxEvent,
+class WXDLLIMPEXP_CORE wxCommandEvent : public wxEvent,
                                         public wxEventBasicPayloadMixin
 {
 public:
@@ -1331,7 +1331,7 @@ private:
 
 // this class adds a possibility to react (from the user) code to a control
 // notification: allow or veto the operation being reported.
-class  wxNotifyEvent  : public wxCommandEvent
+class WXDLLIMPEXP_CORE wxNotifyEvent  : public wxCommandEvent
 {
 public:
     wxNotifyEvent(wxEventType commandType = wxEVT_NULL, int winid = 0)
@@ -1375,7 +1375,7 @@ private:
  wxEVT_SCROLL_CHANGED
 */
 
-class  wxScrollEvent : public wxCommandEvent
+class WXDLLIMPEXP_CORE wxScrollEvent : public wxCommandEvent
 {
 public:
     wxScrollEvent(wxEventType commandType = wxEVT_NULL,
@@ -1405,7 +1405,7 @@ private:
  wxEVT_SCROLLWIN_THUMBRELEASE
 */
 
-class  wxScrollWinEvent : public wxEvent
+class WXDLLIMPEXP_CORE wxScrollWinEvent : public wxEvent
 {
 public:
     wxScrollWinEvent(wxEventType commandType = wxEVT_NULL,
@@ -1454,7 +1454,7 @@ enum wxMouseWheelAxis
     wxMOUSE_WHEEL_HORIZONTAL
 };
 
-class  wxMouseEvent : public wxEvent,
+class WXDLLIMPEXP_CORE wxMouseEvent : public wxEvent,
                                       public wxMouseState
 {
 public:
@@ -1584,7 +1584,7 @@ private:
    wxEVT_SET_CURSOR
  */
 
-class  wxSetCursorEvent : public wxEvent
+class WXDLLIMPEXP_CORE wxSetCursorEvent : public wxEvent
 {
 public:
     wxSetCursorEvent(wxCoord x = 0, wxCoord y = 0)
@@ -1653,7 +1653,7 @@ enum wxKeyCategoryFlags
                               WXK_CATEGORY_JUMP
 };
 
-class  wxKeyEvent : public wxEvent,
+class WXDLLIMPEXP_CORE wxKeyEvent : public wxEvent,
                                     public wxKeyboardState
 {
 public:
@@ -1789,7 +1789,7 @@ private:
  wxEVT_SIZE
  */
 
-class  wxSizeEvent : public wxEvent
+class WXDLLIMPEXP_CORE wxSizeEvent : public wxEvent
 {
 public:
     wxSizeEvent() : wxEvent(0, wxEVT_SIZE)
@@ -1828,7 +1828,7 @@ private:
  wxEVT_MOVE
  */
 
-class  wxMoveEvent : public wxEvent
+class WXDLLIMPEXP_CORE wxMoveEvent : public wxEvent
 {
 public:
     wxMoveEvent()
@@ -1871,10 +1871,10 @@ private:
     #define wxHAS_PAINT_DEBUG
 
     // see comments in src/msw|os2/dcclient.cpp where g_isPainting is defined
-    extern  int g_isPainting;
+    extern WXDLLIMPEXP_CORE int g_isPainting;
 #endif // debug
 
-class  wxPaintEvent : public wxEvent
+class WXDLLIMPEXP_CORE wxPaintEvent : public wxEvent
 {
 public:
     wxPaintEvent(int Id = 0)
@@ -1907,7 +1907,7 @@ private:
     DECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxPaintEvent)
 };
 
-class  wxNcPaintEvent : public wxEvent
+class WXDLLIMPEXP_CORE wxNcPaintEvent : public wxEvent
 {
 public:
     wxNcPaintEvent(int winid = 0)
@@ -1925,7 +1925,7 @@ private:
  wxEVT_ERASE_BACKGROUND
  */
 
-class  wxEraseEvent : public wxEvent
+class WXDLLIMPEXP_CORE wxEraseEvent : public wxEvent
 {
 public:
     wxEraseEvent(int Id = 0, wxDC *dc = NULL)
@@ -1955,7 +1955,7 @@ private:
  wxEVT_KILL_FOCUS
  */
 
-class  wxFocusEvent : public wxEvent
+class WXDLLIMPEXP_CORE wxFocusEvent : public wxEvent
 {
 public:
     wxFocusEvent(wxEventType type = wxEVT_NULL, int winid = 0)
@@ -1983,7 +1983,7 @@ private:
 
 // wxChildFocusEvent notifies the parent that a child has got the focus: unlike
 // wxFocusEvent it is propagated upwards the window chain
-class  wxChildFocusEvent : public wxCommandEvent
+class WXDLLIMPEXP_CORE wxChildFocusEvent : public wxCommandEvent
 {
 public:
     wxChildFocusEvent(wxWindow *win = NULL);
@@ -2003,7 +2003,7 @@ private:
  wxEVT_HIBERNATE
  */
 
-class  wxActivateEvent : public wxEvent
+class WXDLLIMPEXP_CORE wxActivateEvent : public wxEvent
 {
 public:
     wxActivateEvent(wxEventType type = wxEVT_NULL, bool active = true, int Id = 0)
@@ -2029,7 +2029,7 @@ private:
  wxEVT_INIT_DIALOG
  */
 
-class  wxInitDialogEvent : public wxEvent
+class WXDLLIMPEXP_CORE wxInitDialogEvent : public wxEvent
 {
 public:
     wxInitDialogEvent(int Id = 0)
@@ -2049,7 +2049,7 @@ private:
  wxEVT_MENU_HIGHLIGHT,
 */
 
-class  wxMenuEvent : public wxEvent
+class WXDLLIMPEXP_CORE wxMenuEvent : public wxEvent
 {
 public:
     wxMenuEvent(wxEventType type = wxEVT_NULL, int winid = 0, wxMenu* menu = NULL)
@@ -2084,7 +2084,7 @@ private:
  wxEVT_QUERY_END_SESSION
  */
 
-class  wxCloseEvent : public wxEvent
+class WXDLLIMPEXP_CORE wxCloseEvent : public wxEvent
 {
 public:
     wxCloseEvent(wxEventType type = wxEVT_NULL, int winid = 0)
@@ -2104,8 +2104,8 @@ public:
     {
         // m_loggingOff flag is only used by wxEVT_[QUERY_]END_SESSION, it
         // doesn't make sense for wxEVT_CLOSE_WINDOW
-        /*wxASSERT_MSG( m_eventType != wxEVT_CLOSE_WINDOW,
-                      wxT("this flag is for end session events only") );*/
+        wxASSERT_MSG( m_eventType != wxEVT_CLOSE_WINDOW,
+                      wxT("this flag is for end session events only") );
 
         return m_loggingOff;
     }
@@ -2113,8 +2113,8 @@ public:
     void Veto(bool veto = true)
     {
         // GetVeto() will return false anyhow...
-        /*wxCHECK_RET( m_canVeto,
-                     wxT("call to Veto() ignored (can't veto this event)") );*/
+        wxCHECK_RET( m_canVeto,
+                     wxT("call to Veto() ignored (can't veto this event)") );
 
         m_veto = veto;
     }
@@ -2137,7 +2137,7 @@ private:
  wxEVT_SHOW
  */
 
-class  wxShowEvent : public wxEvent
+class WXDLLIMPEXP_CORE wxShowEvent : public wxEvent
 {
 public:
     wxShowEvent(int winid = 0, bool show = false)
@@ -2169,7 +2169,7 @@ private:
  wxEVT_ICONIZE
  */
 
-class  wxIconizeEvent : public wxEvent
+class WXDLLIMPEXP_CORE wxIconizeEvent : public wxEvent
 {
 public:
     wxIconizeEvent(int winid = 0, bool iconized = true)
@@ -2197,7 +2197,7 @@ private:
  wxEVT_MAXIMIZE
  */
 
-class  wxMaximizeEvent : public wxEvent
+class WXDLLIMPEXP_CORE wxMaximizeEvent : public wxEvent
 {
 public:
     wxMaximizeEvent(int winid = 0)
@@ -2235,7 +2235,7 @@ enum
     wxJOY_BUTTON4    = 8
 };
 
-class  wxJoystickEvent : public wxEvent
+class WXDLLIMPEXP_CORE wxJoystickEvent : public wxEvent
 {
 protected:
     wxPoint   m_pos;
@@ -2314,7 +2314,7 @@ private:
  wxEVT_DROP_FILES
  */
 
-class  wxDropFilesEvent : public wxEvent
+class WXDLLIMPEXP_CORE wxDropFilesEvent : public wxEvent
 {
 public:
     int       m_noFiles;
@@ -2378,7 +2378,7 @@ enum wxUpdateUIMode
     wxUPDATE_UI_PROCESS_SPECIFIED
 };
 
-class  wxUpdateUIEvent : public wxCommandEvent
+class WXDLLIMPEXP_CORE wxUpdateUIEvent : public wxCommandEvent
 {
 public:
     wxUpdateUIEvent(wxWindowID commandId = 0)
@@ -2466,7 +2466,7 @@ private:
  */
 
 // TODO: shouldn't all events record the window ID?
-class  wxSysColourChangedEvent : public wxEvent
+class WXDLLIMPEXP_CORE wxSysColourChangedEvent : public wxEvent
 {
 public:
     wxSysColourChangedEvent()
@@ -2485,7 +2485,7 @@ private:
  (even if it released the capture itself).
  */
 
-class  wxMouseCaptureChangedEvent : public wxEvent
+class WXDLLIMPEXP_CORE wxMouseCaptureChangedEvent : public wxEvent
 {
 public:
     wxMouseCaptureChangedEvent(wxWindowID winid = 0, wxWindow* gainedCapture = NULL)
@@ -2515,7 +2515,7 @@ private:
  (and so capture will be restored when the new capturer releases it).
  */
 
-class  wxMouseCaptureLostEvent : public wxEvent
+class WXDLLIMPEXP_CORE wxMouseCaptureLostEvent : public wxEvent
 {
 public:
     wxMouseCaptureLostEvent(wxWindowID winid = 0)
@@ -2534,7 +2534,7 @@ public:
 /*
  wxEVT_DISPLAY_CHANGED
  */
-class  wxDisplayChangedEvent : public wxEvent
+class WXDLLIMPEXP_CORE wxDisplayChangedEvent : public wxEvent
 {
 private:
     DECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxDisplayChangedEvent)
@@ -2551,7 +2551,7 @@ public:
  wxEVT_PALETTE_CHANGED
  */
 
-class  wxPaletteChangedEvent : public wxEvent
+class WXDLLIMPEXP_CORE wxPaletteChangedEvent : public wxEvent
 {
 public:
     wxPaletteChangedEvent(wxWindowID winid = 0)
@@ -2581,7 +2581,7 @@ private:
  Indicates the window is getting keyboard focus and should re-do its palette.
  */
 
-class  wxQueryNewPaletteEvent : public wxEvent
+class WXDLLIMPEXP_CORE wxQueryNewPaletteEvent : public wxEvent
 {
 public:
     wxQueryNewPaletteEvent(wxWindowID winid = 0)
@@ -2611,7 +2611,7 @@ private:
  wxEVT_NAVIGATION_KEY
  */
 // NB: don't derive from command event to avoid being propagated to the parent
-class  wxNavigationKeyEvent : public wxEvent
+class WXDLLIMPEXP_CORE wxNavigationKeyEvent : public wxEvent
 {
 public:
     wxNavigationKeyEvent()
@@ -2683,7 +2683,7 @@ private:
  wxEVT_DESTROY
  */
 
-class  wxWindowCreateEvent : public wxCommandEvent
+class WXDLLIMPEXP_CORE wxWindowCreateEvent : public wxCommandEvent
 {
 public:
     wxWindowCreateEvent(wxWindow *win = NULL);
@@ -2696,7 +2696,7 @@ private:
     DECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxWindowCreateEvent)
 };
 
-class  wxWindowDestroyEvent : public wxCommandEvent
+class WXDLLIMPEXP_CORE wxWindowDestroyEvent : public wxCommandEvent
 {
 public:
     wxWindowDestroyEvent(wxWindow *win = NULL);
@@ -2715,7 +2715,7 @@ private:
  wxEVT_DETAILED_HELP
 */
 
-class  wxHelpEvent : public wxCommandEvent
+class WXDLLIMPEXP_CORE wxHelpEvent : public wxCommandEvent
 {
 public:
     // how was this help event generated?
@@ -2785,7 +2785,7 @@ wxEVT_COMMAND_TEXT_CUT
 wxEVT_COMMAND_TEXT_PASTE
 */
 
-class  wxClipboardTextEvent : public wxCommandEvent
+class WXDLLIMPEXP_CORE wxClipboardTextEvent : public wxCommandEvent
 {
 public:
     wxClipboardTextEvent(wxEventType type = wxEVT_NULL,
@@ -2810,7 +2810,7 @@ private:
  wxEVT_CONTEXT_MENU
 */
 
-class  wxContextMenuEvent : public wxCommandEvent
+class WXDLLIMPEXP_CORE wxContextMenuEvent : public wxCommandEvent
 {
 public:
     wxContextMenuEvent(wxEventType type = wxEVT_NULL,
@@ -2848,7 +2848,7 @@ private:
  wxEVT_COMPARE_ITEM
 */
 
-//#endif // wxUSE_GUI
+#endif // wxUSE_GUI
 
 
 // ============================================================================
@@ -2858,7 +2858,7 @@ private:
 
 // struct containing the members common to static and dynamic event tables
 // entries
-struct  wxEventTableEntryBase
+struct WXDLLIMPEXP_BASE wxEventTableEntryBase
 {
     wxEventTableEntryBase(int winid, int idLast,
                           wxEventFunctor* fn, wxObject *data)
@@ -2867,8 +2867,8 @@ struct  wxEventTableEntryBase
           m_fn(fn),
           m_callbackUserData(data)
     {
-        /*wxASSERT_MSG( idLast == wxID_ANY || winid <= idLast,
-                      "invalid IDs range: lower bound > upper bound" );*/
+        wxASSERT_MSG( idLast == wxID_ANY || winid <= idLast,
+                      "invalid IDs range: lower bound > upper bound" );
     }
 
     wxEventTableEntryBase( const wxEventTableEntryBase &entry )
@@ -2907,7 +2907,7 @@ private:
 };
 
 // an entry from a static event table
-struct  wxEventTableEntry : public wxEventTableEntryBase
+struct WXDLLIMPEXP_BASE wxEventTableEntry : public wxEventTableEntryBase
 {
     wxEventTableEntry(const int& evType, int winid, int idLast,
                       wxEventFunctor* fn, wxObject *data)
@@ -2928,7 +2928,7 @@ private:
 };
 
 // an entry used in dynamic event table managed by wxEvtHandler::Connect()
-struct  wxDynamicEventTableEntry : public wxEventTableEntryBase
+struct WXDLLIMPEXP_BASE wxDynamicEventTableEntry : public wxEventTableEntryBase
 {
     wxDynamicEventTableEntry(int evType, int winid, int idLast,
                              wxEventFunctor* fn, wxObject *data)
@@ -2949,7 +2949,7 @@ private:
 // wxEventTable: an array of event entries terminated with {0, 0, 0, 0, 0}
 // ----------------------------------------------------------------------------
 
-struct  wxEventTable
+struct WXDLLIMPEXP_BASE wxEventTable
 {
     const wxEventTable *baseTable;    // base event table (next in chain)
     const wxEventTableEntry *entries; // bottom of entry array
@@ -2961,7 +2961,7 @@ struct  wxEventTable
 
 WX_DEFINE_ARRAY_PTR(const wxEventTableEntry*, wxEventTableEntryPointerArray);
 
-class  wxEventHashTable
+class WXDLLIMPEXP_BASE wxEventHashTable
 {
 private:
     // Internal data structs
@@ -3023,7 +3023,7 @@ protected:
 // wxEvtHandler: the base class for all objects handling wxWidgets events
 // ----------------------------------------------------------------------------
 
-class  wxEvtHandler : public wxObject
+class WXDLLIMPEXP_BASE wxEvtHandler : public wxObject
                                     , public wxTrackable
 {
 public:
@@ -3412,7 +3412,7 @@ private:
     DECLARE_DYNAMIC_CLASS_NO_COPY(wxEvtHandler)
 };
 
-WX_DEFINE_ARRAY_WITH_DECL_PTR(wxEvtHandler *, wxEvtHandlerArray, class );
+WX_DEFINE_ARRAY_WITH_DECL_PTR(wxEvtHandler *, wxEvtHandlerArray, class WXDLLIMPEXP_BASE);
 
 
 // Define an inline method of wxObjectEventFunctor which couldn't be defined
@@ -3480,7 +3480,7 @@ private:
 // Notice that this one is not thread-safe, use wxQueueEvent()
 inline void wxPostEvent(wxEvtHandler *dest, const wxEvent& event)
 {
-    //wxCHECK_RET( dest, "need an object to post event to" );
+    wxCHECK_RET( dest, "need an object to post event to" );
 
     dest->AddPendingEvent(event);
 }
@@ -3490,7 +3490,7 @@ inline void wxPostEvent(wxEvtHandler *dest, const wxEvent& event)
 // for events with wxString members
 inline void wxQueueEvent(wxEvtHandler *dest, wxEvent *event)
 {
-    //wxCHECK_RET( dest, "need an object to queue event for" );
+    wxCHECK_RET( dest, "need an object to queue event for" );
 
     dest->QueueEvent(event);
 }
@@ -3512,7 +3512,7 @@ typedef void (wxEvtHandler::*wxThreadEventFunction)(wxThreadEvent&);
 // wxEventBlocker: helper class to temporarily disable event handling for a window
 // ----------------------------------------------------------------------------
 
-class  wxEventBlocker : public wxEvtHandler
+class WXDLLIMPEXP_CORE wxEventBlocker : public wxEvtHandler
 {
 public:
     wxEventBlocker(wxWindow *win, wxEventType type = wxEVT_ANY);
@@ -4102,7 +4102,7 @@ typedef void (wxEvtHandler::*wxClipboardTextEventFunction)(wxClipboardTextEvent&
 
 // Find a window with the focus, that is also a descendant of the given window.
 // This is used to determine the window to initially send commands to.
- wxWindow* wxFindFocusDescendant(wxWindow* ancestor);
+WXDLLIMPEXP_CORE wxWindow* wxFindFocusDescendant(wxWindow* ancestor);
 
 #endif // wxUSE_GUI
 
@@ -4135,7 +4135,7 @@ typedef void (wxEvtHandler::*wxClipboardTextEventFunction)(wxClipboardTextEvent&
 #define DECLARE_EXPORTED_EVENT_TYPE(expdecl, name, value) \
     extern expdecl const wxEventType name;
 #define DECLARE_EVENT_TYPE(name, value) \
-    DECLARE_EXPORTED_EVENT_TYPE(, name, value)
+    DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_CORE, name, value)
 #define DECLARE_LOCAL_EVENT_TYPE(name, value) \
     DECLARE_EXPORTED_EVENT_TYPE(wxEMPTY_PARAMETER_VALUE, name, value)
 #define DEFINE_EVENT_TYPE(name) const wxEventType name = wxNewEventType();

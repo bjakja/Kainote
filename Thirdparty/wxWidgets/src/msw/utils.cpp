@@ -18,7 +18,7 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/string.h"
+#include "wx/wxprec.h"
 
 #ifdef __BORLANDC__
     #pragma hdrstop
@@ -119,7 +119,7 @@ static const wxChar WX_SECTION[] = wxT("wxWindows");
 static const wxChar eUSERNAME[]  = wxT("UserName");
 #endif
 
-const wxChar * wxUserResourceStr = wxT("TEXT");
+WXDLLIMPEXP_DATA_BASE(const wxChar *) wxUserResourceStr = wxT("TEXT");
 
 // ============================================================================
 // implementation
@@ -266,8 +266,8 @@ bool wxGetUserId(wxChar *WXUNUSED_IN_WINCE(buf),
 // Get user name e.g. Julian Smart
 bool wxGetUserName(wxChar *buf, int maxSize)
 {
-    /*wxCHECK_MSG( buf && ( maxSize > 0 ), false,
-                    wxT("empty buffer in wxGetUserName") );*/
+    wxCHECK_MSG( buf && ( maxSize > 0 ), false,
+                    wxT("empty buffer in wxGetUserName") );
 #if defined(__WXWINCE__) && wxUSE_REGKEY
     wxLogNull noLog;
     wxRegKey key(wxRegKey::HKCU, wxT("ControlPanel\\Owner"));
@@ -421,7 +421,7 @@ const wxChar* wxGetHomeDir(wxString *pstr)
             // create it in our program's dir. However, if the user took care
             // to set HOMEPATH to something other than "\\", we suppose that he
             // knows what he is doing and use the supplied value.
-            if (wxStrcmp(szHome, wxT("\\")) == 0 )
+            if ( wxStrcmp(szHome, wxT("\\")) == 0 )
                 strDir.clear();
         }
     }
@@ -828,7 +828,7 @@ int wxKill(long pid, wxSignal sig, wxKillError *krc, int flags)
                 break;
 
             default:
-                //wxFAIL_MSG( wxT("unexpected WaitForSingleObject() return") );
+                wxFAIL_MSG( wxT("unexpected WaitForSingleObject() return") );
                 // fall through
 
             case WAIT_FAILED:
@@ -1040,7 +1040,7 @@ bool wxShutdown(int WXUNUSED_IN_WINCE(flags))
                 break;
 
             default:
-                //wxFAIL_MSG( wxT("unknown wxShutdown() flag") );
+                wxFAIL_MSG( wxT("unknown wxShutdown() flag") );
                 return false;
         }
 
@@ -1106,7 +1106,7 @@ wxLoadUserResource(const void **outData,
                    const wxString& resourceType,
                    WXHINSTANCE instance)
 {
-    //wxCHECK_MSG( outData && outLen, false, "output pointers can't be NULL" );
+    wxCHECK_MSG( outData && outLen, false, "output pointers can't be NULL" );
 
     HRSRC hResource = ::FindResource(instance,
                                      resourceName.t_str(),
@@ -1327,7 +1327,7 @@ wxString wxGetOsDescription()
     }
     else
     {
-        //wxFAIL_MSG( wxT("GetVersionEx() failed") ); // should never happen
+        wxFAIL_MSG( wxT("GetVersionEx() failed") ); // should never happen
     }
 
     return str;
@@ -1502,7 +1502,7 @@ void wxSleep(int nSecs)
 // font encoding <-> Win32 codepage conversion functions
 // ----------------------------------------------------------------------------
 
-extern  long wxEncodingToCharset(wxFontEncoding encoding)
+extern WXDLLIMPEXP_BASE long wxEncodingToCharset(wxFontEncoding encoding)
 {
     switch ( encoding )
     {
@@ -1575,7 +1575,7 @@ extern  long wxEncodingToCharset(wxFontEncoding encoding)
 
 #include "wx/fontmap.h"
 
-extern  long wxEncodingToCodepage(wxFontEncoding encoding)
+extern WXDLLIMPEXP_BASE long wxEncodingToCodepage(wxFontEncoding encoding)
 {
     // There don't seem to be symbolic names for
     // these under Windows so I just copied the
@@ -1717,10 +1717,11 @@ extern long wxCharsetToCodepage(const char *name)
 
 #endif // wxUSE_FONTMAP/!wxUSE_FONTMAP
 
-extern  HWND
+extern "C" WXDLLIMPEXP_BASE HWND
 wxCreateHiddenWindow(LPCTSTR *pclassname, LPCTSTR classname, WNDPROC wndproc)
 {
-    
+    wxCHECK_MSG( classname && pclassname && wndproc, NULL,
+                    wxT("NULL parameter in wxCreateHiddenWindow") );
 
     // register the class fi we need to first
     if ( *pclassname == NULL )

@@ -14,13 +14,13 @@
 
 #include "wx/statbox.h"
 
-class  wxSubwindows;
+class WXDLLIMPEXP_FWD_CORE wxSubwindows;
 
 // ----------------------------------------------------------------------------
 // wxRadioBox
 // ----------------------------------------------------------------------------
 
-class  wxRadioBox : public wxStaticBox, public wxRadioBoxBase
+class WXDLLIMPEXP_CORE wxRadioBox : public wxStaticBox, public wxRadioBoxBase
 {
 public:
     wxRadioBox() { Init(); }

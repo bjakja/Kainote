@@ -24,7 +24,7 @@
 // wxBackedInputStream using it is destroyed.
 // ----------------------------------------------------------------------------
 
-class  wxBackingFile
+class WXDLLIMPEXP_BASE wxBackingFile
 {
 public:
     enum { DefaultBufSize = 16384 };
@@ -52,7 +52,7 @@ private:
 // An input stream to read from a wxBackingFile.
 // ----------------------------------------------------------------------------
 
-class  wxBackedInputStream : public wxInputStream
+class WXDLLIMPEXP_BASE wxBackedInputStream : public wxInputStream
 {
 public:
     wxBackedInputStream(const wxBackingFile& backer);

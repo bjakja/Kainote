@@ -21,7 +21,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // wxArchiveNotifier
 
-class wxArchiveNotifier
+class WXDLLIMPEXP_BASE wxArchiveNotifier
 {
 public:
     virtual ~wxArchiveNotifier() { }
@@ -35,7 +35,7 @@ public:
 //
 // Holds an entry's meta data, such as filename and timestamp.
 
-class wxArchiveEntry : public wxObject
+class WXDLLIMPEXP_BASE wxArchiveEntry : public wxObject
 {
 public:
     virtual ~wxArchiveEntry() { }
@@ -88,7 +88,7 @@ private:
 //
 // When there are no more entries, GetNextEntry() returns NULL and sets Eof().
 
-class wxArchiveInputStream : public wxFilterInputStream
+class WXDLLIMPEXP_BASE wxArchiveInputStream : public wxFilterInputStream
 {
 public:
     typedef wxArchiveEntry entry_type;
@@ -127,7 +127,7 @@ private:
 // The overload 'bool PutNextEntry(wxArchiveEntry *entry)' takes ownership
 // of the entry object.
 
-class wxArchiveOutputStream : public wxFilterOutputStream
+class WXDLLIMPEXP_BASE wxArchiveOutputStream : public wxFilterOutputStream
 {
 public:
     virtual ~wxArchiveOutputStream() { }
@@ -310,9 +310,9 @@ typedef wxArchiveIterator<wxArchiveInputStream,
 // A wxArchiveClassFactory instance for a particular archive type allows
 // the creation of the other classes that may be needed.
 
-void wxUseArchiveClasses();
+void WXDLLIMPEXP_BASE wxUseArchiveClasses();
 
-class wxArchiveClassFactory : public wxFilterClassFactoryBase
+class WXDLLIMPEXP_BASE wxArchiveClassFactory : public wxFilterClassFactoryBase
 {
 public:
     typedef wxArchiveEntry        entry_type;

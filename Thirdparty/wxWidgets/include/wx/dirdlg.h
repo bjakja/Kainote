@@ -12,7 +12,7 @@
 #ifndef _WX_DIRDLG_H_BASE_
 #define _WX_DIRDLG_H_BASE_
 
-//#if wxUSE_DIRDLG
+#if wxUSE_DIRDLG
 
 #include "wx/dialog.h"
 
@@ -20,9 +20,9 @@
 // constants
 // ----------------------------------------------------------------------------
 
-extern const char wxDirDialogNameStr[];
-extern const char wxDirDialogDefaultFolderStr[];
-extern const char wxDirSelectorPromptStr[];
+extern WXDLLIMPEXP_DATA_CORE(const char) wxDirDialogNameStr[];
+extern WXDLLIMPEXP_DATA_CORE(const char) wxDirDialogDefaultFolderStr[];
+extern WXDLLIMPEXP_DATA_CORE(const char) wxDirSelectorPromptStr[];
 
 #define wxDD_CHANGE_DIR         0x0100
 #define wxDD_DIR_MUST_EXIST     0x0200
@@ -40,7 +40,7 @@ extern const char wxDirSelectorPromptStr[];
 // wxDirDialogBase
 //-------------------------------------------------------------------------
 
-class  wxDirDialogBase : public wxDialog
+class WXDLLIMPEXP_CORE wxDirDialogBase : public wxDialog
 {
 public:
     wxDirDialogBase() {}
@@ -126,14 +126,14 @@ protected:
 // common ::wxDirSelector() function
 // ----------------------------------------------------------------------------
 
- wxString
+WXDLLIMPEXP_CORE wxString
 wxDirSelector(const wxString& message = wxDirSelectorPromptStr,
               const wxString& defaultPath = wxEmptyString,
               long style = wxDD_DEFAULT_STYLE,
               const wxPoint& pos = wxDefaultPosition,
               wxWindow *parent = NULL);
 
-//#endif // wxUSE_DIRDLG
+#endif // wxUSE_DIRDLG
 
 #endif
     // _WX_DIRDLG_H_BASE_

@@ -16,7 +16,7 @@
 
 #include "wx/graphics.h"
 
-class  wxGraphicsObjectRefData : public wxObjectRefData
+class WXDLLIMPEXP_CORE wxGraphicsObjectRefData : public wxObjectRefData
 {
     public :
     wxGraphicsObjectRefData( wxGraphicsRenderer* renderer );
@@ -28,7 +28,7 @@ class  wxGraphicsObjectRefData : public wxObjectRefData
     wxGraphicsRenderer* m_renderer;
 } ;
 
-class  wxGraphicsBitmapData : public wxGraphicsObjectRefData
+class WXDLLIMPEXP_CORE wxGraphicsBitmapData : public wxGraphicsObjectRefData
 {
 public :
     wxGraphicsBitmapData( wxGraphicsRenderer* renderer) :
@@ -40,7 +40,7 @@ public :
        virtual void * GetNativeBitmap() const = 0;
 } ;
 
-class  wxGraphicsMatrixData : public wxGraphicsObjectRefData
+class WXDLLIMPEXP_CORE wxGraphicsMatrixData : public wxGraphicsObjectRefData
 {
 public :
     wxGraphicsMatrixData( wxGraphicsRenderer* renderer) :
@@ -95,7 +95,7 @@ public :
        virtual void * GetNativeMatrix() const = 0;
 } ;
 
-class  wxGraphicsPathData : public wxGraphicsObjectRefData
+class WXDLLIMPEXP_CORE wxGraphicsPathData : public wxGraphicsObjectRefData
 {
 public :
     wxGraphicsPathData(wxGraphicsRenderer* renderer) : wxGraphicsObjectRefData(renderer) {}

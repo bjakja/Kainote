@@ -36,7 +36,7 @@
 
 #if !wxUSE_STD_CONTAINERS && !wxUSE_STD_IOSTREAM && !wxUSE_STD_STRING
     #include "wx/beforestd.h"
-    //#include <string>
+    #include <string>
     #include "wx/afterstd.h"
 #endif
 

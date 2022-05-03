@@ -15,14 +15,14 @@
 
 #include "wx/bitmap.h"
 
-class  wxSearchButton;
-class  wxSearchTextCtrl;
+class WXDLLIMPEXP_FWD_CORE wxSearchButton;
+class WXDLLIMPEXP_FWD_CORE wxSearchTextCtrl;
 
 // ----------------------------------------------------------------------------
 // wxSearchCtrl is a combination of wxTextCtrl and wxSearchButton
 // ----------------------------------------------------------------------------
 
-class  wxSearchCtrl : public wxSearchCtrlBase
+class WXDLLIMPEXP_CORE wxSearchCtrl : public wxSearchCtrlBase
 {
 public:
     // creation

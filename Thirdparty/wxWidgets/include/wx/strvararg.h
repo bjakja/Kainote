@@ -26,14 +26,14 @@
     #include <type_traits>
 #elif defined(HAVE_TR1_TYPE_TRAITS)
     #ifdef __VISUALC__
-        //#include <type_traits>
+        #include <type_traits>
     #else
         #include <tr1/type_traits>
     #endif
 #endif
 
-class  wxCStrData;
-class  wxString;
+class WXDLLIMPEXP_FWD_BASE wxCStrData;
+class WXDLLIMPEXP_FWD_BASE wxString;
 
 // ----------------------------------------------------------------------------
 // WX_DEFINE_VARARG_FUNC* macros
@@ -134,7 +134,7 @@ class  wxString;
 // accounts for string changes done by wxArgNormalizer<>
 //
 // Note that this class can _only_ be used for function arguments!
-class  wxFormatString
+class WXDLLIMPEXP_BASE wxFormatString
 {
 public:
     wxFormatString(const char *str)
@@ -248,8 +248,8 @@ struct wxFormatStringArgument
     // overriding this operator allows us to reuse _WX_VARARG_JOIN macro
     wxFormatStringArgument operator,(const wxFormatStringArgument& a) const
     {
-        //wxASSERT_MSG( m_str == NULL || a.m_str == NULL,
-                      //"can't have two format strings in vararg function" );
+        wxASSERT_MSG( m_str == NULL || a.m_str == NULL,
+                      "can't have two format strings in vararg function" );
         return wxFormatStringArgument(m_str ? m_str : a.m_str);
     }
 
@@ -283,9 +283,9 @@ template<>
 struct wxFormatStringArgumentFinder<wxString>
     : public wxFormatStringArgumentFinder<const wxString&> {};
 
-//template<>
-//struct wxFormatStringArgumentFinder<wxScopedCharBuffer>
-//    : public wxFormatStringArgumentFinder<const wxScopedCharBuffer&> {};
+template<>
+struct wxFormatStringArgumentFinder<wxScopedCharBuffer>
+    : public wxFormatStringArgumentFinder<const wxScopedCharBuffer&> {};
 
 template<>
 struct wxFormatStringArgumentFinder<wxScopedWCharBuffer>
@@ -343,11 +343,11 @@ struct wxFormatStringSpecifierNonPodType<true>
 template<typename T>
 struct wxFormatStringSpecifier
 {
-//#ifdef HAVE_TYPE_TRAITS
+#ifdef HAVE_TYPE_TRAITS
     typedef std::is_enum<T> is_enum;
-//#elif defined HAVE_TR1_TYPE_TRAITS
-    //typedef std::/*tr1::*/is_enum<T> is_enum;
-//#endif
+#elif defined HAVE_TR1_TYPE_TRAITS
+    typedef std::is_enum<T> is_enum;
+#endif
     enum { value = wxFormatStringSpecifierNonPodType<is_enum::value>::value };
 };
 
@@ -519,7 +519,7 @@ struct wxArgNormalizerWithBuffer
 
 // string objects:
 template<>
-struct  wxArgNormalizerNative<const wxString&>
+struct WXDLLIMPEXP_BASE wxArgNormalizerNative<const wxString&>
 {
     wxArgNormalizerNative(const wxString& s,
                           const wxFormatString *fmt,
@@ -536,7 +536,7 @@ struct  wxArgNormalizerNative<const wxString&>
 
 // c_str() values:
 template<>
-struct  wxArgNormalizerNative<const wxCStrData&>
+struct WXDLLIMPEXP_BASE wxArgNormalizerNative<const wxCStrData&>
 {
     wxArgNormalizerNative(const wxCStrData& value,
                           const wxFormatString *fmt,
@@ -554,7 +554,7 @@ struct  wxArgNormalizerNative<const wxCStrData&>
 // wxString/wxCStrData conversion to wchar_t* value
 #if wxUSE_UNICODE_UTF8 && !wxUSE_UTF8_LOCALE_ONLY
 template<>
-struct  wxArgNormalizerWchar<const wxString&>
+struct WXDLLIMPEXP_BASE wxArgNormalizerWchar<const wxString&>
     : public wxArgNormalizerWithBuffer<wchar_t>
 {
     wxArgNormalizerWchar(const wxString& s,
@@ -562,7 +562,7 @@ struct  wxArgNormalizerWchar<const wxString&>
 };
 
 template<>
-struct  wxArgNormalizerWchar<const wxCStrData&>
+struct WXDLLIMPEXP_BASE wxArgNormalizerWchar<const wxCStrData&>
     : public wxArgNormalizerWithBuffer<wchar_t>
 {
     wxArgNormalizerWchar(const wxCStrData& s,
@@ -772,9 +772,9 @@ struct wxArgNormalizerNarrowChar
 
         // FIXME-UTF8: which one is better default in absence of fmt string
         //             (i.e. when used like e.g. Foo("foo", "bar", 'c', NULL)?
-        /*if ( !fmt || fmt->GetArgumentType(index) == wxFormatString::Arg_Char )
+        if ( !fmt || fmt->GetArgumentType(index) == wxFormatString::Arg_Char )
             m_value = wx_truncate_cast(T, wxUniChar(value).GetValue());
-        else*/
+        else
             m_value = value;
     }
 
@@ -834,7 +834,7 @@ WX_ARG_NORMALIZER_FORWARD(const signed char&, signed char);
 // Replacement for va_arg() for use with strings in functions that accept
 // strings normalized by wxArgNormalizer<T>:
 
-struct  wxArgNormalizedString
+struct WXDLLIMPEXP_BASE wxArgNormalizedString
 {
     wxArgNormalizedString(const void* ptr) : m_ptr(ptr) {}
 

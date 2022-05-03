@@ -630,7 +630,7 @@ void wxDCImpl::GetMultiLineTextExtent(const wxString& text,
 void wxDCImpl::DoDrawCheckMark(wxCoord x1, wxCoord y1,
                                wxCoord width, wxCoord height)
 {
-    //wxCHECK_RET( IsOk(), wxT("invalid window dc") );
+    wxCHECK_RET( IsOk(), wxT("invalid window dc") );
 
     wxCoord x2 = x1 + width,
             y2 = y1 + height;
@@ -659,8 +659,8 @@ wxDCImpl::DoStretchBlit(wxCoord xdest, wxCoord ydest,
                         wxCoord xsrcMask,
                         wxCoord ysrcMask)
 {
-    /*wxCHECK_MSG( srcWidth && srcHeight && dstWidth && dstHeight, false,
-                 wxT("invalid blit size") );*/
+    wxCHECK_MSG( srcWidth && srcHeight && dstWidth && dstHeight, false,
+                 wxT("invalid blit size") );
 
     // emulate the stretching by modifying the DC scale
     double xscale = (double)srcWidth/dstWidth,
@@ -895,7 +895,7 @@ static void wx_spline_draw_point_array(wxDC *dc)
 
 void wxDCImpl::DoDrawSpline( const wxPointList *points )
 {
-    //wxCHECK_RET( IsOk(), wxT("invalid window dc") );
+    wxCHECK_RET( IsOk(), wxT("invalid window dc") );
 
     wxPoint *p;
     double           cx1, cy1, cx2, cy2, cx3, cy3, cx4, cy4;
@@ -1122,7 +1122,7 @@ void wxDCImpl::DoGradientFillConcentric(const wxRect& rect,
 
 void wxDCImpl::InheritAttributes(wxWindow *win)
 {
-    //wxCHECK_RET( win, "window can't be NULL" );
+    wxCHECK_RET( win, "window can't be NULL" );
 
     SetFont(win->GetFont());
     SetTextForeground(win->GetForegroundColour());

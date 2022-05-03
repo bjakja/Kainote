@@ -15,7 +15,7 @@
 
 #include "wx/tls.h"
 
-class  wxLog;
+class WXDLLIMPEXP_FWD_BASE wxLog;
 
 // ----------------------------------------------------------------------------
 // wxThreadSpecificInfo: contains all thread-specific information used by wx

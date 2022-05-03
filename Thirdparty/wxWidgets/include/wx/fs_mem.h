@@ -28,7 +28,7 @@ WX_DECLARE_STRING_HASH_MAP(wxMemoryFSFile *, wxMemoryFSHash);
 // wxMemoryFSHandlerBase
 // ----------------------------------------------------------------------------
 
-class  wxMemoryFSHandlerBase : public wxFileSystemHandler
+class WXDLLIMPEXP_BASE wxMemoryFSHandlerBase : public wxFileSystemHandler
 {
 public:
     wxMemoryFSHandlerBase();
@@ -79,7 +79,7 @@ protected:
 #if wxUSE_GUI
 
 // add GUI-only operations to the base class
-class  wxMemoryFSHandler : public wxMemoryFSHandlerBase
+class WXDLLIMPEXP_CORE wxMemoryFSHandler : public wxMemoryFSHandlerBase
 {
 public:
     // bring the base class versions into the scope, otherwise they would be

@@ -28,9 +28,9 @@
     #include "wx/window.h"
 #endif // WX_PRECOMP
 
-extern const char wxFileDialogNameStr[] = "filedlg";
-extern const char wxFileSelectorPromptStr[] = "Select a file";
-extern const char wxFileSelectorDefaultWildcardStr[] =
+extern WXDLLEXPORT_DATA(const char) wxFileDialogNameStr[] = "filedlg";
+extern WXDLLEXPORT_DATA(const char) wxFileSelectorPromptStr[] = "Select a file";
+extern WXDLLEXPORT_DATA(const char) wxFileSelectorDefaultWildcardStr[] =
 #if defined(__WXMSW__) || defined(__OS2__)
     "*.*"
 #else // Unix/Mac
@@ -75,7 +75,7 @@ bool wxFileDialogBase::Create(wxWindow *parent,
         m_windowStyle |= wxFD_OPEN;     // wxFD_OPEN is the default
 
     // check that the styles are not contradictory
-    /*wxASSERT_MSG( !(HasFdFlag(wxFD_SAVE) && HasFdFlag(wxFD_OPEN)),
+    wxASSERT_MSG( !(HasFdFlag(wxFD_SAVE) && HasFdFlag(wxFD_OPEN)),
                   wxT("can't specify both wxFD_SAVE and wxFD_OPEN at once") );
 
     wxASSERT_MSG( !HasFdFlag(wxFD_SAVE) ||
@@ -83,7 +83,7 @@ bool wxFileDialogBase::Create(wxWindow *parent,
                    wxT("wxFD_MULTIPLE or wxFD_FILE_MUST_EXIST can't be used with wxFD_SAVE" ) );
 
     wxASSERT_MSG( !HasFdFlag(wxFD_OPEN) || !HasFdFlag(wxFD_OVERWRITE_PROMPT),
-                  wxT("wxFD_OVERWRITE_PROMPT can't be used with wxFD_OPEN") );*/
+                  wxT("wxFD_OVERWRITE_PROMPT can't be used with wxFD_OPEN") );
 
     if ( wildCard.empty() || wildCard == wxFileSelectorDefaultWildcardStr )
     {
@@ -164,8 +164,8 @@ wxString wxFileDialogBase::AppendExtension(const wxString &filePath,
 
 bool wxFileDialogBase::SetExtraControlCreator(ExtraControlCreatorFunction creator)
 {
-    /*wxCHECK_MSG( !m_extraControlCreator, false,
-                 "wxFileDialog::SetExtraControl() called second time" );*/
+    wxCHECK_MSG( !m_extraControlCreator, false,
+                 "wxFileDialog::SetExtraControl() called second time" );
 
     m_extraControlCreator = creator;
     return SupportsExtraControl();
@@ -353,7 +353,7 @@ static wxString wxDefaultFileSelector(bool load,
 // wxLoadFileSelector
 //----------------------------------------------------------------------------
 
- wxString wxLoadFileSelector(const wxString& what,
+WXDLLEXPORT wxString wxLoadFileSelector(const wxString& what,
                                         const wxString& extension,
                                         const wxString& default_name,
                                         wxWindow *parent)
@@ -365,7 +365,7 @@ static wxString wxDefaultFileSelector(bool load,
 // wxSaveFileSelector
 //----------------------------------------------------------------------------
 
- wxString wxSaveFileSelector(const wxString& what,
+WXDLLEXPORT wxString wxSaveFileSelector(const wxString& what,
                                         const wxString& extension,
                                         const wxString& default_name,
                                         wxWindow *parent)

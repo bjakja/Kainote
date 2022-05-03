@@ -38,7 +38,7 @@
 typedef
   wxDocParentFrameAny<wxMDIParentFrame> wxDocMDIParentFrameBase;
 
-class  wxDocMDIParentFrame : public wxDocMDIParentFrameBase
+class WXDLLIMPEXP_CORE wxDocMDIParentFrame : public wxDocMDIParentFrameBase
 {
 public:
     wxDocMDIParentFrame() : wxDocMDIParentFrameBase() { }
@@ -68,7 +68,7 @@ private:
 typedef
   wxDocChildFrameAny<wxMDIChildFrame, wxMDIParentFrame> wxDocMDIChildFrameBase;
 
-class  wxDocMDIChildFrame : public wxDocMDIChildFrameBase
+class WXDLLIMPEXP_CORE wxDocMDIChildFrame : public wxDocMDIChildFrameBase
 {
 public:
     wxDocMDIChildFrame() { }

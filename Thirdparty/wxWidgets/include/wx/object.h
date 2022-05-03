@@ -20,7 +20,7 @@
 #include "wx/memory.h"
 
 #define wxDECLARE_CLASS_INFO_ITERATORS()                                     \
-class  const_iterator                                    \
+class WXDLLIMPEXP_BASE const_iterator                                    \
     {                                                                        \
     typedef wxHashTable_Node Node;                                       \
     public:                                                                  \
@@ -158,7 +158,7 @@ name##PluginSentinel  m_pluginsentinel
 template <class T>
 inline T *wxCheckCast(const void *ptr, T * = NULL)
 {
-    //wxASSERT_MSG( wxDynamicCast(ptr, T), "wxStaticCast() used incorrectly" );
+    wxASSERT_MSG( wxDynamicCast(ptr, T), "wxStaticCast() used incorrectly" );
     return const_cast<T *>(static_cast<const T *>(ptr));
 }
 
@@ -239,7 +239,7 @@ inline T *wxCheckCast(const void *ptr, T * = NULL)
 // wxRefCounter: ref counted data "manager"
 // ----------------------------------------------------------------------------
 
-class  wxRefCounter
+class WXDLLIMPEXP_BASE wxRefCounter
 {
 public:
     wxRefCounter() { m_count = 1; }
@@ -353,7 +353,7 @@ private:
 // wxObject: the root class of wxWidgets object hierarchy
 // ----------------------------------------------------------------------------
 
-class  wxObject
+class WXDLLIMPEXP_BASE wxObject
 {
     wxDECLARE_ABSTRACT_CLASS(wxObject);
 

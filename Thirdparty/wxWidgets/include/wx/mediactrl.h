@@ -80,7 +80,7 @@ enum wxMediaCtrlPlayerControls
 //
 // ----------------------------------------------------------------------------
 
-class  wxMediaEvent : public wxNotifyEvent
+class WXDLLIMPEXP_MEDIA wxMediaEvent : public wxNotifyEvent
 {
 public:
     // ------------------------------------------------------------------------
@@ -121,7 +121,7 @@ public:
 //
 // ----------------------------------------------------------------------------
 
-class  wxMediaCtrl : public wxControl
+class WXDLLIMPEXP_MEDIA wxMediaCtrl : public wxControl
 {
 public:
     wxMediaCtrl() : m_imp(NULL), m_bLoaded(false)
@@ -247,7 +247,7 @@ protected:
 //
 // ----------------------------------------------------------------------------
 
-class  wxMediaBackend : public wxObject
+class WXDLLIMPEXP_MEDIA wxMediaBackend : public wxObject
 {
 public:
     wxMediaBackend()
@@ -327,8 +327,8 @@ public:
 
 
 //Our events
-wxDECLARE_EXPORTED_EVENT( , wxEVT_MEDIA_FINISHED, wxMediaEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_MEDIA_STOP, wxMediaEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_MEDIA, wxEVT_MEDIA_FINISHED, wxMediaEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_MEDIA, wxEVT_MEDIA_STOP, wxMediaEvent );
 
 //Function type(s) our events need
 typedef void (wxEvtHandler::*wxMediaEventFunction)(wxMediaEvent&);
@@ -340,12 +340,12 @@ typedef void (wxEvtHandler::*wxMediaEventFunction)(wxMediaEvent&);
 #define EVT_MEDIA_FINISHED(winid, fn)   wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_FINISHED, winid, wxID_ANY, wxMediaEventHandler(fn), NULL ),
 #define EVT_MEDIA_STOP(winid, fn)       wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_STOP, winid, wxID_ANY, wxMediaEventHandler(fn), NULL ),
 
-wxDECLARE_EXPORTED_EVENT( , wxEVT_MEDIA_LOADED, wxMediaEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_MEDIA, wxEVT_MEDIA_LOADED, wxMediaEvent );
 #define EVT_MEDIA_LOADED(winid, fn)     wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_LOADED, winid, wxID_ANY, wxMediaEventHandler(fn), NULL ),
 
-wxDECLARE_EXPORTED_EVENT( , wxEVT_MEDIA_STATECHANGED, wxMediaEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_MEDIA_PLAY, wxMediaEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_MEDIA_PAUSE, wxMediaEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_MEDIA, wxEVT_MEDIA_STATECHANGED, wxMediaEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_MEDIA, wxEVT_MEDIA_PLAY, wxMediaEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_MEDIA, wxEVT_MEDIA_PAUSE, wxMediaEvent );
 #define EVT_MEDIA_STATECHANGED(winid, fn)   wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_STATECHANGED, winid, wxID_ANY, wxMediaEventHandler(fn), NULL ),
 #define EVT_MEDIA_PLAY(winid, fn)           wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_PLAY, winid, wxID_ANY, wxMediaEventHandler(fn), NULL ),
 #define EVT_MEDIA_PAUSE(winid, fn)          wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_MEDIA_PAUSE, winid, wxID_ANY, wxMediaEventHandler(fn), NULL ),
@@ -354,7 +354,7 @@ wxDECLARE_EXPORTED_EVENT( , wxEVT_MEDIA_PAUSE, wxMediaEvent );
 // common backend base class used by many other backends
 // ----------------------------------------------------------------------------
 
-class  wxMediaBackendCommonBase : public wxMediaBackend
+class WXDLLIMPEXP_MEDIA wxMediaBackendCommonBase : public wxMediaBackend
 {
 public:
     // add a pending wxMediaEvent of the given type

@@ -63,7 +63,7 @@
 // wxEventLoopBase: interface for wxEventLoop
 // ----------------------------------------------------------------------------
 
-class  wxEventLoopBase
+class WXDLLIMPEXP_BASE wxEventLoopBase
 {
 public:
     // trivial, but needed (because of wxEventLoopBase) ctor
@@ -192,7 +192,7 @@ protected:
 // Pending() and Dispatch()
 //
 // it also handles idle processing automatically
-class  wxEventLoopManual : public wxEventLoopBase
+class WXDLLIMPEXP_BASE wxEventLoopManual : public wxEventLoopBase
 {
 public:
     wxEventLoopManual();
@@ -256,9 +256,9 @@ private:
 
 #include "wx/stopwatch.h"   // for wxMilliClock_t
 
-class  wxEventLoopImpl;
+class WXDLLIMPEXP_FWD_CORE wxEventLoopImpl;
 
-class  wxGUIEventLoop : public wxEventLoopBase
+class WXDLLIMPEXP_CORE wxGUIEventLoop : public wxEventLoopBase
 {
 public:
     wxGUIEventLoop() { m_impl = NULL; }
@@ -339,7 +339,7 @@ inline bool wxEventLoopBase::IsRunning() const { return GetActive() == this; }
 // implement modality, we will surely need platform-specific implementations
 // too, this generic implementation is here only temporarily to see how it
 // works
-class  wxModalEventLoop : public wxGUIEventLoop
+class WXDLLIMPEXP_CORE wxModalEventLoop : public wxGUIEventLoop
 {
 public:
     wxModalEventLoop(wxWindow *winModal)

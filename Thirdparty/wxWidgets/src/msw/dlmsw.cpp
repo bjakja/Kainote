@@ -70,7 +70,7 @@ private:
 };
 
 // class used to create wxDynamicLibraryDetails objects
-class  wxDynamicLibraryDetailsCreator
+class WXDLLIMPEXP_BASE wxDynamicLibraryDetailsCreator
 {
 public:
     // type of parameters being passed to EnumModulesProc
@@ -296,7 +296,7 @@ void *wxDynamicLibrary::RawGetSymbol(wxDllType handle, const wxString& name)
 #ifdef __WXWINCE__
                                             name.c_str()
 #else
-                                            name.c_str()
+                                            name.ToAscii()
 #endif // __WXWINCE__
                                    );
 }

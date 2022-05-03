@@ -22,8 +22,8 @@
 
 #if wxUSE_SPINBTN
 
-class  wxSpinButton;
-class  wxTextCtrl;
+class WXDLLIMPEXP_FWD_CORE wxSpinButton;
+class WXDLLIMPEXP_FWD_CORE wxTextCtrl;
 
 class wxSpinCtrlTextGeneric; // wxTextCtrl used for the wxSpinCtrlGenericBase
 
@@ -40,7 +40,7 @@ class wxSpinCtrlTextGeneric; // wxTextCtrl used for the wxSpinCtrlGenericBase
 // function ambiguity.
 // ----------------------------------------------------------------------------
 
-class  wxSpinCtrlGenericBase : public wxSpinCtrlBase
+class WXDLLIMPEXP_CORE wxSpinCtrlGenericBase : public wxSpinCtrlBase
 {
 public:
     wxSpinCtrlGenericBase() { Init(); }
@@ -166,7 +166,7 @@ private:
 
 #include "wx/textctrl.h"
 
-class  wxSpinCtrlGenericBase : public wxTextCtrl
+class WXDLLIMPEXP_CORE wxSpinCtrlGenericBase : public wxTextCtrl
 {
 public:
     wxSpinCtrlGenericBase() : m_value(0), m_min(0), m_max(100),
@@ -254,7 +254,7 @@ protected:
 // wxSpinCtrl
 //-----------------------------------------------------------------------------
 
-class  wxSpinCtrl : public wxSpinCtrlGenericBase
+class WXDLLIMPEXP_CORE wxSpinCtrl : public wxSpinCtrlGenericBase
 {
 public:
     wxSpinCtrl() {}
@@ -308,7 +308,7 @@ protected:
 // wxSpinCtrlDouble
 //-----------------------------------------------------------------------------
 
-class  wxSpinCtrlDouble : public wxSpinCtrlGenericBase
+class WXDLLIMPEXP_CORE wxSpinCtrlDouble : public wxSpinCtrlGenericBase
 {
 public:
     wxSpinCtrlDouble() : m_digits(0) { }

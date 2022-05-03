@@ -135,7 +135,7 @@ struct wxLinuxDistributionInfo
 
 // Information about the toolkit that the app is running under and some basic
 // platform and architecture info
-class  wxPlatformInfo
+class WXDLLIMPEXP_BASE wxPlatformInfo
 {
 public:
     wxPlatformInfo();

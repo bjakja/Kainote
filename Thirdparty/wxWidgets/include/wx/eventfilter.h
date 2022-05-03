@@ -13,8 +13,8 @@
 
 #include "wx/defs.h"
 
-class  wxEvent;
-class  wxEvtHandler;
+class WXDLLIMPEXP_FWD_BASE wxEvent;
+class WXDLLIMPEXP_FWD_BASE wxEvtHandler;
 
 // ----------------------------------------------------------------------------
 // wxEventFilter is used with wxEvtHandler::AddFilter() and ProcessEvent().
@@ -46,7 +46,7 @@ public:
 
     virtual ~wxEventFilter()
     {
-        //wxASSERT_MSG( !m_next, "Forgot to call wxEvtHandler::RemoveFilter()?" );
+        wxASSERT_MSG( !m_next, "Forgot to call wxEvtHandler::RemoveFilter()?" );
     }
 
     // This method allows to filter all the events processed by the program, so

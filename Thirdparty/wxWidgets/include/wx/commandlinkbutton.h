@@ -27,7 +27,7 @@
 // label and queried by breaking the label into the parts before the first new
 // line and after it.
 
-class  wxCommandLinkButtonBase : public wxButton
+class WXDLLIMPEXP_ADV wxCommandLinkButtonBase : public wxButton
 {
 public:
     wxCommandLinkButtonBase() : wxButton() { }
@@ -89,7 +89,7 @@ private:
 // Trivial generic implementation simply using a multiline label to show both
 // the main label and the note.
 
-class  wxGenericCommandLinkButton
+class WXDLLIMPEXP_ADV wxGenericCommandLinkButton
                       : public wxCommandLinkButtonBase
 {
 public:
@@ -135,7 +135,7 @@ private:
 #if defined(__WXMSW__) && !defined(__WXUNIVERSAL__)
     #include "wx/msw/commandlinkbutton.h"
 #else
-    class  wxCommandLinkButton : public wxGenericCommandLinkButton
+    class WXDLLIMPEXP_ADV wxCommandLinkButton : public wxGenericCommandLinkButton
     {
     public:
         wxCommandLinkButton() : wxGenericCommandLinkButton() { }

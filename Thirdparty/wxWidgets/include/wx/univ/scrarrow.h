@@ -23,17 +23,17 @@
 // to derive from the wxControlWithArrows interface and implement its methods.
 // ----------------------------------------------------------------------------
 
-class  wxControlWithArrows;
-class  wxDC;
-class  wxMouseEvent;
-class  wxRect;
-class  wxRenderer;
+class WXDLLIMPEXP_FWD_CORE wxControlWithArrows;
+class WXDLLIMPEXP_FWD_CORE wxDC;
+class WXDLLIMPEXP_FWD_CORE wxMouseEvent;
+class WXDLLIMPEXP_FWD_CORE wxRect;
+class WXDLLIMPEXP_FWD_CORE wxRenderer;
 
 // ----------------------------------------------------------------------------
 // wxScrollArrows: an abstraction of scrollbar arrow
 // ----------------------------------------------------------------------------
 
-class  wxScrollArrows
+class WXDLLIMPEXP_CORE wxScrollArrows
 {
 public:
     enum Arrow
@@ -79,7 +79,7 @@ private:
 // wxControlWithArrows: interface implemented by controls using wxScrollArrows
 // ----------------------------------------------------------------------------
 
-class  wxControlWithArrows
+class WXDLLIMPEXP_CORE wxControlWithArrows
 {
 public:
     virtual ~wxControlWithArrows() {}

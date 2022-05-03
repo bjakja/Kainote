@@ -18,13 +18,13 @@
 
 #include "wx/anybutton.h"
 
-extern const char wxButtonNameStr[];
+extern WXDLLIMPEXP_DATA_CORE(const char) wxButtonNameStr[];
 
 // ----------------------------------------------------------------------------
 // wxButton: a push button
 // ----------------------------------------------------------------------------
 
-class wxButtonBase : public wxAnyButton
+class WXDLLIMPEXP_CORE wxButtonBase : public wxAnyButton
 {
 public:
     wxButtonBase() { }

@@ -1105,7 +1105,7 @@ public:
     // is 0 if the current controls contents is invalid.
     void SetPageNumber(int page)
     {
-        //wxASSERT( IsValidPage(page) );
+        wxASSERT( IsValidPage(page) );
 
         SetValue(PageAsString(page));
     }
@@ -1316,7 +1316,7 @@ bool wxPreviewControlBar::IsLastEnabled() const
 void wxPreviewControlBar::DoGotoPage(int page)
 {
     wxPrintPreviewBase *preview = GetPrintPreview();
-    //wxCHECK_RET( preview, "Shouldn't be called if there is no preview." );
+    wxCHECK_RET( preview, "Shouldn't be called if there is no preview." );
 
     preview->SetCurrentPage(page);
 
@@ -1978,7 +1978,7 @@ bool wxPrintPreviewBase::RenderPage(int pageNum)
 
     if (!m_previewCanvas)
     {
-        //wxFAIL_MSG(wxT("wxPrintPreviewBase::RenderPage: must use wxPrintPreviewBase::SetCanvas to let me know about the canvas!"));
+        wxFAIL_MSG(wxT("wxPrintPreviewBase::RenderPage: must use wxPrintPreviewBase::SetCanvas to let me know about the canvas!"));
         return false;
     }
 

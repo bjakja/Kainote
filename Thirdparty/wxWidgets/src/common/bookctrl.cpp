@@ -174,7 +174,7 @@ wxRect wxBookCtrlBase::GetPageRect() const
     switch ( GetWindowStyle() & wxBK_ALIGN_MASK )
     {
         default:
-            break;// wxFAIL_MSG(wxT("unexpected alignment"));
+            wxFAIL_MSG( wxT("unexpected alignment") );
             // fall through
 
         case wxBK_TOP:
@@ -233,7 +233,7 @@ void wxBookCtrlBase::DoSize()
         switch ( GetWindowStyle() & wxBK_ALIGN_MASK )
         {
             default:
-                break;//wxFAIL_MSG( wxT("unexpected alignment") );
+                wxFAIL_MSG( wxT("unexpected alignment") );
                 // fall through
 
             case wxBK_TOP:
@@ -262,8 +262,8 @@ void wxBookCtrlBase::DoSize()
         wxWindow * const page = m_pages[i];
         if ( !page )
         {
-            //wxASSERT_MSG( AllowNullPage(),
-                //wxT("Null page in a control that does not allow null pages?") );
+            wxASSERT_MSG( AllowNullPage(),
+                wxT("Null page in a control that does not allow null pages?") );
             continue;
         }
 
@@ -378,10 +378,10 @@ wxBookCtrlBase::InsertPage(size_t nPage,
                            bool WXUNUSED(bSelect),
                            int WXUNUSED(imageId))
 {
-    //wxCHECK_MSG( page || AllowNullPage(), false,
-                 //wxT("NULL page in wxBookCtrlBase::InsertPage()") );
-    //wxCHECK_MSG( nPage <= m_pages.size(), false,
-                 //wxT("invalid page index in wxBookCtrlBase::InsertPage()") );
+    wxCHECK_MSG( page || AllowNullPage(), false,
+                 wxT("NULL page in wxBookCtrlBase::InsertPage()") );
+    wxCHECK_MSG( nPage <= m_pages.size(), false,
+                 wxT("invalid page index in wxBookCtrlBase::InsertPage()") );
 
     m_pages.Insert(page, nPage);
     if ( page )
@@ -406,8 +406,8 @@ bool wxBookCtrlBase::DeletePage(size_t nPage)
 
 wxWindow *wxBookCtrlBase::DoRemovePage(size_t nPage)
 {
-    //wxCHECK_MSG( nPage < m_pages.size(), NULL,
-                 //wxT("invalid page index in wxBookCtrlBase::DoRemovePage()") );
+    wxCHECK_MSG( nPage < m_pages.size(), NULL,
+                 wxT("invalid page index in wxBookCtrlBase::DoRemovePage()") );
 
     wxWindow *pageRemoved = m_pages[nPage];
     m_pages.RemoveAt(nPage);
@@ -454,8 +454,8 @@ bool wxBookCtrlBase::DoSetSelectionAfterInsertion(size_t n, bool bSelect)
 
 int wxBookCtrlBase::DoSetSelection(size_t n, int flags)
 {
-    //wxCHECK_MSG( n < GetPageCount(), wxNOT_FOUND,
-                 //wxT("invalid page index in wxBookCtrlBase::DoSetSelection()") );
+    wxCHECK_MSG( n < GetPageCount(), wxNOT_FOUND,
+                 wxT("invalid page index in wxBookCtrlBase::DoSetSelection()") );
 
     const int oldSel = GetSelection();
 

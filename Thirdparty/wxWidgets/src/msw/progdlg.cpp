@@ -367,7 +367,7 @@ bool wxProgressDialog::Update(int value, const wxString& newmsg, bool *skip)
 
             value /= m_factor;
 
-            //wxASSERT_MSG( value <= m_maximum, wxT("invalid progress value") );
+            wxASSERT_MSG( value <= m_maximum, wxT("invalid progress value") );
 
             m_sharedData->m_value = value;
             m_sharedData->m_notifications |= wxSPDD_VALUE_CHANGED;
@@ -481,7 +481,7 @@ bool wxProgressDialog::DoNativeBeforeUpdate(bool *skip)
 #endif // wxHAS_MSW_TASKDIALOG
 
     wxUnusedVar(skip);
-    //wxFAIL_MSG( "unreachable" );
+    wxFAIL_MSG( "unreachable" );
 
     return false;
 }
@@ -691,13 +691,13 @@ bool wxProgressDialog::Show(bool show)
         // Do launch the thread.
         if ( m_taskDialogRunner->Create() != wxTHREAD_NO_ERROR )
         {
-            //wxLogError( "Unable to create thread!" );
+            wxLogError( "Unable to create thread!" );
             return false;
         }
 
         if ( m_taskDialogRunner->Run() != wxTHREAD_NO_ERROR )
         {
-            //wxLogError( "Unable to start thread!" );
+            wxLogError( "Unable to start thread!" );
             return false;
         }
 
@@ -905,12 +905,12 @@ wxProgressDialogTaskRunner::TaskDialogCallbackProc
                     // a finished dialog.
                     if ( sharedData->m_style & wxPD_CAN_ABORT )
                     {
-                        /*wxCHECK_MSG
+                        wxCHECK_MSG
                         (
                             sharedData->m_state == wxProgressDialog::Continue,
                             TRUE,
                             "Dialog not in a cancelable state!"
-                        );*/
+                        );
 
                         ::SendMessage(hwnd, TDM_ENABLE_BUTTON, Id_SkipBtn, FALSE);
                         ::SendMessage(hwnd, TDM_ENABLE_BUTTON, IDCANCEL, FALSE);

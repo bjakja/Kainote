@@ -20,7 +20,7 @@
 
 #include "wx/mousestate.h"  // for wxMOUSE_BTN_XXX constants
 
-class wxUIActionSimulator
+class WXDLLIMPEXP_CORE wxUIActionSimulator
 {
 public:
     wxUIActionSimulator() { }

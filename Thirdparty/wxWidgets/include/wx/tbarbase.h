@@ -24,17 +24,17 @@
 #include "wx/list.h"
 #include "wx/control.h"
 
-class  wxToolBarBase;
-class  wxToolBarToolBase;
-class  wxImage;
+class WXDLLIMPEXP_FWD_CORE wxToolBarBase;
+class WXDLLIMPEXP_FWD_CORE wxToolBarToolBase;
+class WXDLLIMPEXP_FWD_CORE wxImage;
 
 // ----------------------------------------------------------------------------
 // constants
 // ----------------------------------------------------------------------------
 
-extern const char wxToolBarNameStr[];
-extern const wxSize wxDefaultSize;
-extern const wxPoint wxDefaultPosition;
+extern WXDLLIMPEXP_DATA_CORE(const char) wxToolBarNameStr[];
+extern WXDLLIMPEXP_DATA_CORE(const wxSize) wxDefaultSize;
+extern WXDLLIMPEXP_DATA_CORE(const wxPoint) wxDefaultPosition;
 
 enum wxToolBarToolStyle
 {
@@ -54,7 +54,7 @@ enum wxToolBarToolStyle
 // for the applications status bar.
 // ----------------------------------------------------------------------------
 
-class  wxToolBarToolBase : public wxObject
+class WXDLLIMPEXP_CORE wxToolBarToolBase : public wxObject
 {
 public:
     // ctors & dtor
@@ -111,7 +111,7 @@ public:
 
     wxControl *GetControl() const
     {
-        //wxASSERT_MSG( IsControl(), wxT("this toolbar tool is not a control") );
+        wxASSERT_MSG( IsControl(), wxT("this toolbar tool is not a control") );
 
         return m_control;
     }
@@ -127,14 +127,14 @@ public:
     int GetStyle() const { return m_toolStyle; }
     wxItemKind GetKind() const
     {
-        //wxASSERT_MSG( IsButton(), wxT("only makes sense for buttons") );
+        wxASSERT_MSG( IsButton(), wxT("only makes sense for buttons") );
 
         return m_kind;
     }
 
     void MakeStretchable()
     {
-        //wxASSERT_MSG( IsSeparator(), "only separators can be stretchable" );
+        wxASSERT_MSG( IsSeparator(), "only separators can be stretchable" );
 
         m_stretchable = true;
     }
@@ -276,7 +276,7 @@ WX_DECLARE_EXPORTED_LIST(wxToolBarToolBase, wxToolBarToolsList);
 // the base class for all toolbars
 // ----------------------------------------------------------------------------
 
-class  wxToolBarBase : public wxControl
+class WXDLLIMPEXP_CORE wxToolBarBase : public wxControl
 {
 public:
     wxToolBarBase();

@@ -12,7 +12,7 @@
 #ifndef _WX_CARET_H_
 #define _WX_CARET_H_
 
-class  wxCaret : public wxCaretBase
+class WXDLLIMPEXP_CORE wxCaret : public wxCaretBase
 {
 public:
     wxCaret() { Init(); }
@@ -22,7 +22,7 @@ public:
     {
         Init();
 
-        (void)Create((wxWindowBase *)window, width, height);
+        (void)Create((wxWindowBase*)window, width, height);
     }
         // same as above
     wxCaret(wxWindowBase *window, const wxSize& size)

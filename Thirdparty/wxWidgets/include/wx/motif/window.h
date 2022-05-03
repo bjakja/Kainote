@@ -18,10 +18,10 @@
 // wxWindow class for Motif - see also wxWindowBase
 // ----------------------------------------------------------------------------
 
-class  wxWindow : public wxWindowBase
+class WXDLLIMPEXP_CORE wxWindow : public wxWindowBase
 {
-    friend class  wxDC;
-    friend class  wxWindowDC;
+    friend class WXDLLIMPEXP_FWD_CORE wxDC;
+    friend class WXDLLIMPEXP_FWD_CORE wxWindowDC;
 
 public:
     wxWindow() { Init(); }

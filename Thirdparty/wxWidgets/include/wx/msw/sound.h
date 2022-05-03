@@ -14,7 +14,7 @@
 
 #if wxUSE_SOUND
 
-class  wxSound : public wxSoundBase
+class WXDLLIMPEXP_ADV wxSound : public wxSoundBase
 {
 public:
     wxSound();

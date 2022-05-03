@@ -16,7 +16,7 @@
 #include "wx/string.h"
 #include "wx/filefn.h"      // for wxS_DIR_DEFAULT
 
-class  wxArrayString;
+class WXDLLIMPEXP_FWD_BASE wxArrayString;
 
 // ----------------------------------------------------------------------------
 // constants
@@ -47,7 +47,7 @@ enum wxDirTraverseResult
 // wxDirTraverser: helper class for wxDir::Traverse()
 // ----------------------------------------------------------------------------
 
-class  wxDirTraverser
+class WXDLLIMPEXP_BASE wxDirTraverser
 {
 public:
     /// a virtual dtor has been provided since this class has virtual members
@@ -79,9 +79,9 @@ public:
 // wxDir: portable equivalent of {open/read/close}dir functions
 // ----------------------------------------------------------------------------
 
-class  wxDirData;
+class WXDLLIMPEXP_FWD_BASE wxDirData;
 
-class  wxDir
+class WXDLLIMPEXP_BASE wxDir
 {
 public:
 

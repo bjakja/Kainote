@@ -25,7 +25,7 @@
 
 // FIXME-UTF8: only wchar after we remove ANSI build
 #if wxUSE_UNICODE_WCHAR || !wxUSE_UNICODE
-struct wxStringOperationsWchar
+struct WXDLLIMPEXP_BASE wxStringOperationsWchar
 {
     // moves the iterator to the next Unicode character
     template <typename Iterator>
@@ -56,7 +56,7 @@ struct wxStringOperationsWchar
 
 
 #if wxUSE_UNICODE_UTF8
-struct wxStringOperationsUtf8
+struct WXDLLIMPEXP_BASE wxStringOperationsUtf8
 {
     // checks correctness of UTF-8 sequence
     static bool IsValidUtf8String(const char *c,

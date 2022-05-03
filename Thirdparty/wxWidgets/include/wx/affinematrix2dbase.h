@@ -35,7 +35,7 @@ struct wxMatrix2D
 // This is an abstract base class implemented by wxAffineMatrix2D only so far,
 // but in the future we also plan to derive wxGraphicsMatrix from it (it should
 // also be documented then as currently only wxAffineMatrix2D itself is).
-class wxAffineMatrix2DBase
+class WXDLLIMPEXP_CORE wxAffineMatrix2DBase
 {
 public:
     wxAffineMatrix2DBase() {}
@@ -92,7 +92,7 @@ public:
 
     void TransformPoint(wxDouble* x, wxDouble* y) const
     {
-        /*wxCHECK_RET( x && y, "Can't be NULL" );*/
+        wxCHECK_RET( x && y, "Can't be NULL" );
 
         const wxPoint2DDouble dst = DoTransformPoint(wxPoint2DDouble(*x, *y));
         *x = dst.m_x;
@@ -107,7 +107,7 @@ public:
 
     void TransformDistance(wxDouble* dx, wxDouble* dy) const
     {
-        /*wxCHECK_RET( dx && dy, "Can't be NULL" );*/
+        wxCHECK_RET( dx && dy, "Can't be NULL" );
 
         const wxPoint2DDouble
             dst = DoTransformDistance(wxPoint2DDouble(*dx, *dy));

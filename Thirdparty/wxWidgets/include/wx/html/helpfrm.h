@@ -32,10 +32,10 @@
 #include "wx/html/helpwnd.h"
 #include "wx/html/htmprint.h"
 
-class  wxButton;
-class  wxTextCtrl;
-class  wxTreeEvent;
-class  wxTreeCtrl;
+class WXDLLIMPEXP_FWD_CORE wxButton;
+class WXDLLIMPEXP_FWD_CORE wxTextCtrl;
+class WXDLLIMPEXP_FWD_CORE wxTreeEvent;
+class WXDLLIMPEXP_FWD_CORE wxTreeCtrl;
 
 
 // style flags for the Help Frame
@@ -62,11 +62,11 @@ class  wxTreeCtrl;
 struct wxHtmlHelpMergedIndexItem;
 class wxHtmlHelpMergedIndex;
 
-class  wxHelpControllerBase;
-class  wxHtmlHelpController;
-class  wxHtmlHelpWindow;
+class WXDLLIMPEXP_FWD_CORE wxHelpControllerBase;
+class WXDLLIMPEXP_FWD_HTML wxHtmlHelpController;
+class WXDLLIMPEXP_FWD_HTML wxHtmlHelpWindow;
 
-class  wxHtmlHelpFrame : public wxFrame
+class WXDLLIMPEXP_HTML wxHtmlHelpFrame : public wxFrame
 {
     DECLARE_DYNAMIC_CLASS(wxHtmlHelpFrame)
 

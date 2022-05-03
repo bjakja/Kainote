@@ -45,7 +45,7 @@
 // types
 // ----------------------------------------------------------------------------
 
-class  wxObjectListNode;
+class WXDLLIMPEXP_FWD_BASE wxObjectListNode;
 typedef wxObjectListNode wxNode;
 
 #if wxUSE_STD_CONTAINERS
@@ -368,7 +368,7 @@ union wxListKeyValue
 // for any keyed operation instead of 2 almost equivalent. OTOH, it's needed to
 // resolve ambiguity which we would otherwise have with wxStringList::Find() and
 // wxList::Find(const char *).
-class  wxListKey
+class WXDLLIMPEXP_BASE wxListKey
 {
 public:
     // implicit ctors
@@ -386,9 +386,9 @@ public:
     // accessors
     wxKeyType GetKeyType() const { return m_keyType; }
     const wxString GetString() const
-        { /*wxASSERT( m_keyType == wxKEY_STRING );*/ return *m_key.string; }
+        { wxASSERT( m_keyType == wxKEY_STRING ); return *m_key.string; }
     long GetNumber() const
-        { /*wxASSERT( m_keyType == wxKEY_INTEGER );*/ return m_key.integer; }
+        { wxASSERT( m_keyType == wxKEY_INTEGER ); return m_key.integer; }
 
     // comparison
     // Note: implementation moved to list.cpp to prevent BC++ inline
@@ -411,11 +411,11 @@ private:
 // wxNodeBase class is a (base for) node in a double linked list
 // -----------------------------------------------------------------------------
 
-extern wxListKey wxDefaultListKey;
+extern WXDLLIMPEXP_DATA_BASE(wxListKey) wxDefaultListKey;
 
-class  wxListBase;
+class WXDLLIMPEXP_FWD_BASE wxListBase;
 
-class  wxNodeBase
+class WXDLLIMPEXP_BASE wxNodeBase
 {
 friend class wxListBase;
 public:
@@ -475,9 +475,9 @@ private:
 // a double-linked list class
 // -----------------------------------------------------------------------------
 
-class  wxList;
+class WXDLLIMPEXP_FWD_BASE wxList;
 
-class  wxListBase
+class WXDLLIMPEXP_BASE wxListBase
 {
 friend class wxNodeBase; // should be able to call DetachNode()
 friend class wxHashTableBase;   // should be able to call untyped Find()
@@ -513,7 +513,7 @@ public:
 
       // set the keytype (required by the serial code)
     void SetKeyType(wxKeyType keyType)
-        {/* wxASSERT( m_count==0 );*/ m_keyType = keyType; }
+        { wxASSERT( m_count==0 ); m_keyType = keyType; }
 
 #ifdef wxLIST_COMPATIBILITY
     // compatibility methods from old wxList
@@ -821,14 +821,14 @@ private:
             ptrop                                                           \
             itor& operator++()                                              \
             {                                                               \
-                /*wxASSERT_MSG( m_node, wxT("uninitialized iterator") ); */     \
+                wxASSERT_MSG( m_node, wxT("uninitialized iterator") );      \
                 m_node = m_node->GetNext();                                 \
                 return *this;                                               \
             }                                                               \
             const itor operator++(int)                                      \
             {                                                               \
                 itor tmp = *this;                                           \
-                /*wxASSERT_MSG( m_node, wxT("uninitialized iterator") );*/      \
+                wxASSERT_MSG( m_node, wxT("uninitialized iterator") );      \
                 m_node = m_node->GetNext();                                 \
                 return tmp;                                                 \
             }                                                               \
@@ -874,14 +874,14 @@ private:
             ptrop                                                           \
             itor& operator++()                                              \
             {                                                               \
-                /*wxASSERT_MSG( m_node, wxT("uninitialized iterator") );*/      \
+                wxASSERT_MSG( m_node, wxT("uninitialized iterator") );      \
                 m_node = m_node->GetNext();                                 \
                 return *this;                                               \
             }                                                               \
             const itor operator++(int)                                      \
             {                                                               \
                 itor tmp = *this;                                           \
-                /*wxASSERT_MSG( m_node, wxT("uninitialized iterator") );*/      \
+                wxASSERT_MSG( m_node, wxT("uninitialized iterator") );      \
                 m_node = m_node->GetNext();                                 \
                 return tmp;                                                 \
             }                                                               \
@@ -1128,11 +1128,11 @@ private:
     WX_DECLARE_LIST_2(elementtype, listname, wx##listname##Node, decl)
 
 #define WX_DECLARE_EXPORTED_LIST(elementtype, listname)                     \
-    WX_DECLARE_LIST_WITH_DECL(elementtype, listname, class )
+    WX_DECLARE_LIST_WITH_DECL(elementtype, listname, class WXDLLIMPEXP_CORE)
 
 #define WX_DECLARE_EXPORTED_LIST_PTR(elementtype, listname)                     \
     typedef elementtype _WX_LIST_ITEM_TYPE_##listname;                      \
-    WX_DECLARE_LIST_PTR_2(elementtype, listname, wx##listname##Node, class )
+    WX_DECLARE_LIST_PTR_2(elementtype, listname, wx##listname##Node, class WXDLLIMPEXP_CORE)
 
 #define WX_DECLARE_USER_EXPORTED_LIST(elementtype, listname, usergoo)       \
     typedef elementtype _WX_LIST_ITEM_TYPE_##listname;                      \
@@ -1192,9 +1192,9 @@ inline wxListBase::operator wxList&() const { return *(wxList*)this; }
 // ----------------------------------------------------------------------------
 
 WX_DECLARE_LIST_2(wxObject, wxObjectList, wxObjectListNode,
-                        class);
+                        class WXDLLIMPEXP_BASE);
 
-class wxList : public wxObjectList
+class WXDLLIMPEXP_BASE wxList : public wxObjectList
 {
 public:
 #if defined(wxWARN_COMPAT_LIST_USE) && !wxUSE_STD_CONTAINERS
@@ -1221,9 +1221,9 @@ public:
 // -----------------------------------------------------------------------------
 // wxStringList class for compatibility with the old code
 // -----------------------------------------------------------------------------
-WX_DECLARE_LIST_2(wxChar, wxStringListBase, wxStringListNode, class);
+WX_DECLARE_LIST_2(wxChar, wxStringListBase, wxStringListNode, class WXDLLIMPEXP_BASE);
 
-class wxStringList : public wxStringListBase
+class WXDLLIMPEXP_BASE wxStringList : public wxStringListBase
 {
 public:
     // ctors and such

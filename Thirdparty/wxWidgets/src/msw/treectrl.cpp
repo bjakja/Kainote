@@ -123,7 +123,7 @@ class TempSetter
 public:
     TempSetter(bool& var) : m_var(var)
     {
-        //wxASSERT_MSG( !m_var, "variable shouldn't be already set" );
+        wxASSERT_MSG( !m_var, "variable shouldn't be already set" );
         m_var = true;
     }
 
@@ -469,7 +469,7 @@ public:
                     break;
 
                 default:
-                    break; // wxFAIL_MSG(wxT("unsupported wxTreeItemIcon value"));
+                    wxFAIL_MSG( wxT("unsupported wxTreeItemIcon value") );
             }
         }
 
@@ -840,8 +840,8 @@ wxTreeCtrl::GetClassDefaultAttributes(wxWindowVariant variant)
 
 bool wxTreeCtrl::DoGetItem(wxTreeViewItem *tvItem) const
 {
-    //wxCHECK_MSG( tvItem->hItem != TVI_ROOT, false,
-                 //wxT("can't retrieve virtual root item") );
+    wxCHECK_MSG( tvItem->hItem != TVI_ROOT, false,
+                 wxT("can't retrieve virtual root item") );
 
     if ( !TreeView_GetItem(GetHwnd(), tvItem) )
     {
@@ -905,7 +905,7 @@ void wxTreeCtrl::SetStateImageList(wxImageList *imageList)
 size_t wxTreeCtrl::GetChildrenCount(const wxTreeItemId& item,
                                     bool recursively) const
 {
-    //wxCHECK_MSG( item.IsOk(), 0u, wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), 0u, wxT("invalid tree item") );
 
     TraverseCounter counter(this, item, recursively);
     return counter.GetCount() - 1;
@@ -946,7 +946,7 @@ bool wxTreeCtrl::IsHiddenRoot(const wxTreeItemId& item) const
 
 wxString wxTreeCtrl::GetItemText(const wxTreeItemId& item) const
 {
-    //wxCHECK_MSG( item.IsOk(), wxEmptyString, wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), wxEmptyString, wxT("invalid tree item") );
 
     wxChar buf[512];  // the size is arbitrary...
 
@@ -964,7 +964,7 @@ wxString wxTreeCtrl::GetItemText(const wxTreeItemId& item) const
 
 void wxTreeCtrl::SetItemText(const wxTreeItemId& item, const wxString& text)
 {
-    //wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
+    wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
 
     if ( IS_VIRTUAL_ROOT(item) )
         return;
@@ -991,7 +991,7 @@ void wxTreeCtrl::SetItemText(const wxTreeItemId& item, const wxString& text)
 int wxTreeCtrl::GetItemImage(const wxTreeItemId& item,
                              wxTreeItemIcon which) const
 {
-    //wxCHECK_MSG( item.IsOk(), -1, wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), -1, wxT("invalid tree item") );
 
     if ( IsHiddenRoot(item) )
     {
@@ -1007,10 +1007,10 @@ int wxTreeCtrl::GetItemImage(const wxTreeItemId& item,
 void wxTreeCtrl::SetItemImage(const wxTreeItemId& item, int image,
                               wxTreeItemIcon which)
 {
-    /*wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
+    wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
     wxCHECK_RET( which >= 0 &&
                  which < wxTreeItemIcon_Max,
-                 wxT("invalid image index"));*/
+                 wxT("invalid image index"));
 
 
     if ( IsHiddenRoot(item) )
@@ -1030,7 +1030,7 @@ void wxTreeCtrl::SetItemImage(const wxTreeItemId& item, int image,
 
 wxTreeItemParam *wxTreeCtrl::GetItemParam(const wxTreeItemId& item) const
 {
-    //wxCHECK_MSG( item.IsOk(), NULL, wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), NULL, wxT("invalid tree item") );
 
     wxTreeViewItem tvItem(item, TVIF_PARAM);
 
@@ -1076,14 +1076,14 @@ void wxTreeCtrl::SetItemData(const wxTreeItemId& item, wxTreeItemData *data)
 
     wxTreeItemParam *param = GetItemParam(item);
 
-    //wxCHECK_RET( param, wxT("failed to change tree items data") );
+    wxCHECK_RET( param, wxT("failed to change tree items data") );
 
     param->SetData(data);
 }
 
 void wxTreeCtrl::SetItemHasChildren(const wxTreeItemId& item, bool has)
 {
-    //wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
+    wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
 
     if ( IS_VIRTUAL_ROOT(item) )
         return;
@@ -1095,7 +1095,7 @@ void wxTreeCtrl::SetItemHasChildren(const wxTreeItemId& item, bool has)
 
 void wxTreeCtrl::SetItemBold(const wxTreeItemId& item, bool bold)
 {
-    //wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
+    wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
 
     if ( IS_VIRTUAL_ROOT(item) )
         return;
@@ -1129,7 +1129,7 @@ void wxTreeCtrl::RefreshItem(const wxTreeItemId& item)
 
 wxColour wxTreeCtrl::GetItemTextColour(const wxTreeItemId& item) const
 {
-    //wxCHECK_MSG( item.IsOk(), wxNullColour, wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), wxNullColour, wxT("invalid tree item") );
 
     wxMapTreeAttr::const_iterator it = m_attrs.find(item.m_pItem);
     return it == m_attrs.end() ? wxNullColour : it->second->GetTextColour();
@@ -1137,7 +1137,7 @@ wxColour wxTreeCtrl::GetItemTextColour(const wxTreeItemId& item) const
 
 wxColour wxTreeCtrl::GetItemBackgroundColour(const wxTreeItemId& item) const
 {
-    //wxCHECK_MSG( item.IsOk(), wxNullColour, wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), wxNullColour, wxT("invalid tree item") );
 
     wxMapTreeAttr::const_iterator it = m_attrs.find(item.m_pItem);
     return it == m_attrs.end() ? wxNullColour : it->second->GetBackgroundColour();
@@ -1145,7 +1145,7 @@ wxColour wxTreeCtrl::GetItemBackgroundColour(const wxTreeItemId& item) const
 
 wxFont wxTreeCtrl::GetItemFont(const wxTreeItemId& item) const
 {
-    //wxCHECK_MSG( item.IsOk(), wxNullFont, wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), wxNullFont, wxT("invalid tree item") );
 
     wxMapTreeAttr::const_iterator it = m_attrs.find(item.m_pItem);
     return it == m_attrs.end() ? wxNullFont : it->second->GetFont();
@@ -1154,7 +1154,7 @@ wxFont wxTreeCtrl::GetItemFont(const wxTreeItemId& item) const
 void wxTreeCtrl::SetItemTextColour(const wxTreeItemId& item,
                                    const wxColour& col)
 {
-    //wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
+    wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
 
     wxTreeItemAttr *attr;
     wxMapTreeAttr::iterator it = m_attrs.find(item.m_pItem);
@@ -1178,7 +1178,7 @@ void wxTreeCtrl::SetItemTextColour(const wxTreeItemId& item,
 void wxTreeCtrl::SetItemBackgroundColour(const wxTreeItemId& item,
                                          const wxColour& col)
 {
-    //wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
+    wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
 
     wxTreeItemAttr *attr;
     wxMapTreeAttr::iterator it = m_attrs.find(item.m_pItem);
@@ -1201,7 +1201,7 @@ void wxTreeCtrl::SetItemBackgroundColour(const wxTreeItemId& item,
 
 void wxTreeCtrl::SetItemFont(const wxTreeItemId& item, const wxFont& font)
 {
-    //wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
+    wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
 
     wxTreeItemAttr *attr;
     wxMapTreeAttr::iterator it = m_attrs.find(item.m_pItem);
@@ -1232,7 +1232,7 @@ void wxTreeCtrl::SetItemFont(const wxTreeItemId& item, const wxFont& font)
 
 bool wxTreeCtrl::IsVisible(const wxTreeItemId& item) const
 {
-    //wxCHECK_MSG( item.IsOk(), false, wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), false, wxT("invalid tree item") );
 
     if ( item == wxTreeItemId(TVI_ROOT) )
     {
@@ -1259,7 +1259,7 @@ bool wxTreeCtrl::IsVisible(const wxTreeItemId& item) const
 
 bool wxTreeCtrl::ItemHasChildren(const wxTreeItemId& item) const
 {
-    //wxCHECK_MSG( item.IsOk(), false, wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), false, wxT("invalid tree item") );
 
     if ( IS_VIRTUAL_ROOT(item) )
     {
@@ -1275,7 +1275,7 @@ bool wxTreeCtrl::ItemHasChildren(const wxTreeItemId& item) const
 
 bool wxTreeCtrl::IsExpanded(const wxTreeItemId& item) const
 {
-    //wxCHECK_MSG( item.IsOk(), false, wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), false, wxT("invalid tree item") );
 
     wxTreeViewItem tvItem(item, TVIF_STATE, TVIS_EXPANDED);
     DoGetItem(&tvItem);
@@ -1285,7 +1285,7 @@ bool wxTreeCtrl::IsExpanded(const wxTreeItemId& item) const
 
 bool wxTreeCtrl::IsSelected(const wxTreeItemId& item) const
 {
-    //wxCHECK_MSG( item.IsOk(), false, wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), false, wxT("invalid tree item") );
 
     wxTreeViewItem tvItem(item, TVIF_STATE, TVIS_SELECTED);
     DoGetItem(&tvItem);
@@ -1295,7 +1295,7 @@ bool wxTreeCtrl::IsSelected(const wxTreeItemId& item) const
 
 bool wxTreeCtrl::IsBold(const wxTreeItemId& item) const
 {
-    //wxCHECK_MSG( item.IsOk(), false, wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), false, wxT("invalid tree item") );
 
     wxTreeViewItem tvItem(item, TVIF_STATE, TVIS_BOLD);
     DoGetItem(&tvItem);
@@ -1318,8 +1318,8 @@ wxTreeItemId wxTreeCtrl::GetRootItem() const
 
 wxTreeItemId wxTreeCtrl::GetSelection() const
 {
-    //wxCHECK_MSG( !HasFlag(wxTR_MULTIPLE), wxTreeItemId(),
-                 //wxT("this only works with single selection controls") );
+    wxCHECK_MSG( !HasFlag(wxTR_MULTIPLE), wxTreeItemId(),
+                 wxT("this only works with single selection controls") );
 
     return GetFocusedItem();
 }
@@ -1331,7 +1331,7 @@ wxTreeItemId wxTreeCtrl::GetFocusedItem() const
 
 wxTreeItemId wxTreeCtrl::GetItemParent(const wxTreeItemId& item) const
 {
-    //wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
 
     HTREEITEM hItem;
 
@@ -1356,7 +1356,7 @@ wxTreeItemId wxTreeCtrl::GetItemParent(const wxTreeItemId& item) const
 wxTreeItemId wxTreeCtrl::GetFirstChild(const wxTreeItemId& item,
                                        wxTreeItemIdValue& cookie) const
 {
-    //wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
 
     // remember the last child returned in 'cookie'
     cookie = TreeView_GetChild(GetHwnd(), HITEM(item));
@@ -1382,7 +1382,7 @@ wxTreeItemId wxTreeCtrl::GetNextChild(const wxTreeItemId& WXUNUSED(item),
 
 wxTreeItemId wxTreeCtrl::GetLastChild(const wxTreeItemId& item) const
 {
-    //wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
 
     // can this be done more efficiently?
     wxTreeItemIdValue cookie;
@@ -1400,13 +1400,13 @@ wxTreeItemId wxTreeCtrl::GetLastChild(const wxTreeItemId& item) const
 
 wxTreeItemId wxTreeCtrl::GetNextSibling(const wxTreeItemId& item) const
 {
-    //wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
     return wxTreeItemId(TreeView_GetNextSibling(GetHwnd(), HITEM(item)));
 }
 
 wxTreeItemId wxTreeCtrl::GetPrevSibling(const wxTreeItemId& item) const
 {
-    //wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
     return wxTreeItemId(TreeView_GetPrevSibling(GetHwnd(), HITEM(item)));
 }
 
@@ -1417,8 +1417,8 @@ wxTreeItemId wxTreeCtrl::GetFirstVisibleItem() const
 
 wxTreeItemId wxTreeCtrl::GetNextVisible(const wxTreeItemId& item) const
 {
-    //wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
-    //wxASSERT_MSG( IsVisible(item), wxT("The item you call GetNextVisible() for must be visible itself!"));
+    wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
+    wxASSERT_MSG( IsVisible(item), wxT("The item you call GetNextVisible() for must be visible itself!"));
 
     wxTreeItemId next(TreeView_GetNextVisible(GetHwnd(), HITEM(item)));
     if ( next.IsOk() && !IsVisible(next) )
@@ -1433,8 +1433,8 @@ wxTreeItemId wxTreeCtrl::GetNextVisible(const wxTreeItemId& item) const
 
 wxTreeItemId wxTreeCtrl::GetPrevVisible(const wxTreeItemId& item) const
 {
-    //wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
-    //wxASSERT_MSG( IsVisible(item), wxT("The item you call GetPrevVisible() for must be visible itself!"));
+    wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
+    wxASSERT_MSG( IsVisible(item), wxT("The item you call GetPrevVisible() for must be visible itself!"));
 
     wxTreeItemId prev(TreeView_GetPrevVisible(GetHwnd(), HITEM(item)));
     if ( prev.IsOk() && !IsVisible(prev) )
@@ -1468,9 +1468,9 @@ wxTreeItemId wxTreeCtrl::DoInsertAfter(const wxTreeItemId& parent,
                                        int image, int selectedImage,
                                        wxTreeItemData *data)
 {
-    //wxCHECK_MSG( parent.IsOk() || !TreeView_GetRoot(GetHwnd()),
-                 //wxTreeItemId(),
-                 //wxT("can't have more than one root in the tree") );
+    wxCHECK_MSG( parent.IsOk() || !TreeView_GetRoot(GetHwnd()),
+                 wxTreeItemId(),
+                 wxT("can't have more than one root in the tree") );
 
     TV_INSERTSTRUCT tvIns;
     tvIns.hParent = HITEM(parent);
@@ -1552,7 +1552,7 @@ wxTreeItemId wxTreeCtrl::AddRoot(const wxString& text,
 {
     if ( HasFlag(wxTR_HIDE_ROOT) )
     {
-        //wxASSERT_MSG( !m_pVirtualRoot, wxT("tree can have only a single root") );
+        wxASSERT_MSG( !m_pVirtualRoot, wxT("tree can have only a single root") );
 
         // create a virtual root item, the parent for all the others
         wxTreeItemParam *param = new wxTreeItemParam;
@@ -1593,7 +1593,7 @@ wxTreeItemId wxTreeCtrl::DoInsertItem(const wxTreeItemId& parent,
 
         // assert, not check: if the index is invalid, we will append the item
         // to the end
-        //wxASSERT_MSG( index == 0, wxT("bad index in wxTreeCtrl::InsertItem") );
+        wxASSERT_MSG( index == 0, wxT("bad index in wxTreeCtrl::InsertItem") );
     }
 
     return DoInsertAfter(parent, idPrev, text, image, selectedImage, data);
@@ -1715,15 +1715,15 @@ void wxTreeCtrl::DeleteAllItems()
 
 void wxTreeCtrl::DoExpand(const wxTreeItemId& item, int flag)
 {
-    //wxASSERT_MSG( flag == TVE_COLLAPSE ||
-    //              flag == (TVE_COLLAPSE | TVE_COLLAPSERESET) ||
-    //              flag == TVE_EXPAND   ||
-    //              flag == TVE_TOGGLE,
-    //              wxT("Unknown flag in wxTreeCtrl::DoExpand") );
+    wxASSERT_MSG( flag == TVE_COLLAPSE ||
+                  flag == (TVE_COLLAPSE | TVE_COLLAPSERESET) ||
+                  flag == TVE_EXPAND   ||
+                  flag == TVE_TOGGLE,
+                  wxT("Unknown flag in wxTreeCtrl::DoExpand") );
 
-    //// A hidden root can be neither expanded nor collapsed.
-    //wxCHECK_RET( !IsHiddenRoot(item),
-    //             wxT("Can't expand/collapse hidden root node!") );
+    // A hidden root can be neither expanded nor collapsed.
+    wxCHECK_RET( !IsHiddenRoot(item),
+                 wxT("Can't expand/collapse hidden root node!") );
 
     // TreeView_Expand doesn't send TVN_ITEMEXPAND(ING) messages, so we must
     // emulate them. This behaviour has changed slightly with comctl32.dll
@@ -1779,8 +1779,8 @@ void wxTreeCtrl::Toggle(const wxTreeItemId& item)
 
 void wxTreeCtrl::Unselect()
 {
-    /*wxASSERT_MSG( !HasFlag(wxTR_MULTIPLE),
-                  wxT("doesn't make sense, may be you want UnselectAll()?") );*/
+    wxASSERT_MSG( !HasFlag(wxTR_MULTIPLE),
+                  wxT("doesn't make sense, may be you want UnselectAll()?") );
 
     // the current focus
     HTREEITEM htFocus = (HTREEITEM)TreeView_GetSelection(GetHwnd());
@@ -1865,8 +1865,8 @@ void wxTreeCtrl::DoSelectChildren(const wxTreeItemId& parent)
 
 void wxTreeCtrl::SelectChildren(const wxTreeItemId& parent)
 {
-    /*wxCHECK_RET( HasFlag(wxTR_MULTIPLE),
-                 "this only works with multiple selection controls" );*/
+    wxCHECK_RET( HasFlag(wxTR_MULTIPLE),
+                 "this only works with multiple selection controls" );
 
     HTREEITEM htFocus = (HTREEITEM)TreeView_GetSelection(GetHwnd());
 
@@ -1892,7 +1892,7 @@ void wxTreeCtrl::DoSelectItem(const wxTreeItemId& item, bool select)
 
 void wxTreeCtrl::SelectItem(const wxTreeItemId& item, bool select)
 {
-    //wxCHECK_RET( !IsHiddenRoot(item), wxT("can't select hidden root item") );
+    wxCHECK_RET( !IsHiddenRoot(item), wxT("can't select hidden root item") );
 
     if ( select == IsSelected(item) )
     {
@@ -1965,7 +1965,7 @@ void wxTreeCtrl::SelectItem(const wxTreeItemId& item, bool select)
 
 void wxTreeCtrl::EnsureVisible(const wxTreeItemId& item)
 {
-    //wxCHECK_RET( !IsHiddenRoot(item), wxT("can't show hidden root item") );
+    wxCHECK_RET( !IsHiddenRoot(item), wxT("can't show hidden root item") );
 
     // no error return
     TreeView_EnsureVisible(GetHwnd(), HITEM(item));
@@ -2007,7 +2007,7 @@ void wxTreeCtrl::DeleteTextCtrl()
 wxTextCtrl *wxTreeCtrl::EditLabel(const wxTreeItemId& item,
                                   wxClassInfo *textControlClass)
 {
-    //wxASSERT( textControlClass->IsKindOf(wxCLASSINFO(wxTextCtrl)) );
+    wxASSERT( textControlClass->IsKindOf(wxCLASSINFO(wxTextCtrl)) );
 
     DeleteTextCtrl();
 
@@ -2104,7 +2104,7 @@ void wxTreeCtrl::ClearFocusedItem()
 
 void wxTreeCtrl::SetFocusedItem(const wxTreeItemId& item)
 {
-    //wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
+    wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
 
     TempSetter set(m_changingSelection);
 
@@ -2147,8 +2147,8 @@ int CALLBACK wxTreeSortHelper::Compare(LPARAM pItem1,
                                        LPARAM pItem2,
                                        LPARAM htree)
 {
-    //wxCHECK_MSG( pItem1 && pItem2, 0,
-                 //wxT("sorting tree without data doesn't make sense") );
+    wxCHECK_MSG( pItem1 && pItem2, 0,
+                 wxT("sorting tree without data doesn't make sense") );
 
     wxTreeCtrl *tree = (wxTreeCtrl *)htree;
 
@@ -2158,7 +2158,7 @@ int CALLBACK wxTreeSortHelper::Compare(LPARAM pItem1,
 
 void wxTreeCtrl::SortChildren(const wxTreeItemId& item)
 {
-    //wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
+    wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
 
     // rely on the fact that TreeView_SortChildren does the same thing as our
     // default behaviour, i.e. sorts items alphabetically and so call it
@@ -3522,7 +3522,7 @@ bool wxTreeCtrl::MSWOnNotify(int idCtrl, WXLPARAM lParam, WXLPARAM *result)
                                 // but I don't care enough about Win95 support
                                 // to write it now -- if anybody does, please
                                 // do it
-                                //wxFAIL_MSG("TODO: implement this for Win95");
+                                wxFAIL_MSG("TODO: implement this for Win95");
                                 break;
                             }
 
@@ -3713,7 +3713,7 @@ bool wxTreeCtrl::MSWOnNotify(int idCtrl, WXLPARAM lParam, WXLPARAM *result)
             {
                 // normally this is impossible because the m_dragImage is
                 // deleted once the drag operation is over
-                //wxASSERT_MSG( !m_dragImage, wxT("starting to drag once again?") );
+                wxASSERT_MSG( !m_dragImage, wxT("starting to drag once again?") );
 
                 m_dragImage = new wxDragImage(*this, event.m_item);
                 m_dragImage->BeginDrag(wxPoint(0,0), this);
@@ -3897,7 +3897,7 @@ bool wxTreeCtrl::MSWOnNotify(int idCtrl, WXLPARAM lParam, WXLPARAM *result)
 
 int wxTreeCtrl::DoGetItemState(const wxTreeItemId& item) const
 {
-    //wxCHECK_MSG( item.IsOk(), wxTREE_ITEMSTATE_NONE, wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), wxTREE_ITEMSTATE_NONE, wxT("invalid tree item") );
 
     // receive the desired information
     wxTreeViewItem tvItem(item, TVIF_STATE, TVIS_STATEIMAGEMASK);
@@ -3909,7 +3909,7 @@ int wxTreeCtrl::DoGetItemState(const wxTreeItemId& item) const
 
 void wxTreeCtrl::DoSetItemState(const wxTreeItemId& item, int state)
 {
-    //wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
+    wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
 
     wxTreeViewItem tvItem(item, TVIF_STATE, TVIS_STATEIMAGEMASK);
 

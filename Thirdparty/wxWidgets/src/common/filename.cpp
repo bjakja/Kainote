@@ -454,7 +454,7 @@ void wxFileName::SetPath( const wxString& pathOrig, wxPathFormat format )
             break;
 
         default:
-            //wxFAIL_MSG( wxT("Unknown path format") );
+            wxFAIL_MSG( wxT("Unknown path format") );
             // !! Fall through !!
 
         case wxPATH_UNIX:
@@ -523,15 +523,15 @@ void wxFileName::Assign(const wxString& fullpathOrig,
 
     SplitPath(fullname, &volDummy, &pathDummy, &name, &ext, &hasExt, format);
 
-    /*wxASSERT_MSG( volDummy.empty() && pathDummy.empty(),
-                  wxT("the file name shouldn't contain the path") );*/
+    wxASSERT_MSG( volDummy.empty() && pathDummy.empty(),
+                  wxT("the file name shouldn't contain the path") );
 
     SplitPath(fullpath, &volume, &path, &nameDummy, &extDummy, format);
 
 #ifndef __VMS
    // This test makes no sense on an OpenVMS system.
-   /*wxASSERT_MSG( nameDummy.empty() && extDummy.empty(),
-                  wxT("the path shouldn't contain file name nor extension") );*/
+   wxASSERT_MSG( nameDummy.empty() && extDummy.empty(),
+                  wxT("the path shouldn't contain file name nor extension") );
 #endif
     Assign(volume, path, name, ext, hasExt, format);
 }
@@ -871,7 +871,7 @@ static wxString wxCreateTempImpl(
         bool *deleteOnClose = NULL)
 {
 #if wxUSE_FILE && wxUSE_FFILE
-    //wxASSERT(fileTemp == NULL || ffileTemp == NULL);
+    wxASSERT(fileTemp == NULL || ffileTemp == NULL);
 #endif
     wxString path, dir, name;
     bool wantDeleteOnClose = false;
@@ -1638,8 +1638,8 @@ bool wxFileName::GetShortcutTarget(const wxString& shortcutPath,
         {
             WCHAR wsz[MAX_PATH];
 
-           /* MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, shortcutPath.wc_str(), -1, wsz,
-                                MAX_PATH);*/
+            MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, shortcutPath.mb_str(), -1, wsz,
+                                MAX_PATH);
 
             hres = ppf->Load(wsz, 0);
             ppf->Release();
@@ -1806,11 +1806,11 @@ wxString wxFileName::GetForbiddenChars(wxPathFormat format)
 
     // If asserts, wxPathFormat has been changed. In case of a new path format
     // addition, the following code might have to be updated.
-    //wxCOMPILE_TIME_ASSERT(wxPATH_MAX == 5, wxPathFormatChanged);
+    wxCOMPILE_TIME_ASSERT(wxPATH_MAX == 5, wxPathFormatChanged);
     switch ( GetFormat(format) )
     {
         default :
-            //wxFAIL_MSG( wxT("Unknown path format") );
+            wxFAIL_MSG( wxT("Unknown path format") );
             // !! Fall through !!
 
         case wxPATH_UNIX:
@@ -1865,7 +1865,7 @@ wxString wxFileName::GetPathSeparators(wxPathFormat format)
             break;
 
         default:
-            //wxFAIL_MSG( wxT("Unknown wxPATH_XXX style") );
+            wxFAIL_MSG( wxT("Unknown wxPATH_XXX style") );
             // fall through
 
         case wxPATH_UNIX:
@@ -1922,7 +1922,7 @@ wxFileName::IsMSWUniqueVolumeNamePath(const wxString& path, wxPathFormat format)
 {
     if ( dir.empty() )
     {
-        //wxFAIL_MSG( wxT("empty directory passed to wxFileName::InsertDir()") );
+        wxFAIL_MSG( wxT("empty directory passed to wxFileName::InsertDir()") );
 
         return false;
     }
@@ -1932,7 +1932,7 @@ wxFileName::IsMSWUniqueVolumeNamePath(const wxString& path, wxPathFormat format)
     {
         if ( dir[n] == GetVolumeSeparator() || IsPathSeparator(dir[n]) )
         {
-            //wxFAIL_MSG( wxT("invalid directory component in wxFileName") );
+            wxFAIL_MSG( wxT("invalid directory component in wxFileName") );
 
             return false;
         }
@@ -2010,7 +2010,7 @@ wxString wxFileName::GetPath( int flags, wxPathFormat format ) const
             break;
 
         default:
-            //wxFAIL_MSG( wxT("Unknown path format") );
+            wxFAIL_MSG( wxT("Unknown path format") );
             // fall through
 
         case wxPATH_UNIX:
@@ -2059,7 +2059,7 @@ wxString wxFileName::GetPath( int flags, wxPathFormat format ) const
                 break;
 
             default:
-                //wxFAIL_MSG( wxT("Unexpected path format") );
+                wxFAIL_MSG( wxT("Unexpected path format") );
                 // still fall through
 
             case wxPATH_DOS:
@@ -2271,7 +2271,7 @@ wxPathFormat wxFileName::GetFormat( wxPathFormat format )
 /* static */
 wxString wxFileName::GetVolumeString(char drive, int flags)
 {
-    //wxASSERT_MSG( !(flags & ~wxPATH_GET_SEPARATOR), "invalid flag specified" );
+    wxASSERT_MSG( !(flags & ~wxPATH_GET_SEPARATOR), "invalid flag specified" );
 
     wxString vol(drive);
     vol += wxFILE_SEP_DSK;
@@ -2744,7 +2744,7 @@ wxString wxFileName::GetHumanReadableSize(const wxULongLong &bs,
     const double bytesize = bs.ToDouble();
 
     wxString result;
-    /*if ( bytesize < kiloByteSize )
+    if ( bytesize < kiloByteSize )
         result.Printf("%s B", bs.ToString());
     else if ( bytesize < megaByteSize )
         result.Printf("%.*f K%sB", precision, bytesize/kiloByteSize, biInfix);
@@ -2753,7 +2753,7 @@ wxString wxFileName::GetHumanReadableSize(const wxULongLong &bs,
     else if (bytesize < teraByteSize)
         result.Printf("%.*f G%sB", precision, bytesize/gigaByteSize, biInfix);
     else
-        result.Printf("%.*f T%sB", precision, bytesize/teraByteSize, biInfix);*/
+        result.Printf("%.*f T%sB", precision, bytesize/teraByteSize, biInfix);
 
     return result;
 }

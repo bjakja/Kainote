@@ -50,7 +50,7 @@
 // private classes
 // ----------------------------------------------------------------------------
 
-class  wxCursorRefData : public wxGDIImageRefData
+class WXDLLEXPORT wxCursorRefData : public wxGDIImageRefData
 {
 public:
     // the second parameter is used to tell us to delete the cursor when we're
@@ -182,9 +182,9 @@ wxCursor::wxCursor(const wxImage& image)
     int image_w = image.GetWidth();
     int image_h = image.GetHeight();
 
-    /*wxASSERT_MSG( hotSpotX >= 0 && hotSpotX < image_w &&
+    wxASSERT_MSG( hotSpotX >= 0 && hotSpotX < image_w &&
                   hotSpotY >= 0 && hotSpotY < image_h,
-                  wxT("invalid cursor hot spot coordinates") );*/
+                  wxT("invalid cursor hot spot coordinates") );
 
     wxImage imageSized(image); // final image of correct size
 
@@ -320,11 +320,11 @@ void wxCursor::InitFromStock(wxStockCursor idCursor)
         // no entry for wxCURSOR_MAX
     };
 
-    /*wxCOMPILE_TIME_ASSERT( WXSIZEOF(stdCursors) == wxCURSOR_MAX,
+    wxCOMPILE_TIME_ASSERT( WXSIZEOF(stdCursors) == wxCURSOR_MAX,
                            CursorsIdArrayMismatch );
 
     wxCHECK_RET( idCursor > 0 && (size_t)idCursor < WXSIZEOF(stdCursors),
-                 wxT("invalid cursor id in wxCursor() ctor") );*/
+                 wxT("invalid cursor id in wxCursor() ctor") );
 
     const StdCursor& stdCursor = stdCursors[idCursor];
     bool deleteLater = !stdCursor.isStd;
@@ -345,9 +345,9 @@ void wxCursor::InitFromStock(wxStockCursor idCursor)
         {
             // it may be not obvious to the programmer why did loading fail,
             // try to help by pointing to the by far the most probable reason
-            /*wxFAIL_MSG(wxT("Loading a cursor defined by wxWidgets failed, ")
+            wxFAIL_MSG(wxT("Loading a cursor defined by wxWidgets failed, ")
                        wxT("did you include include/wx/msw/wx.rc file from ")
-                       wxT("your resource file?"));*/
+                       wxT("your resource file?"));
         }
 
         wxLogLastError(wxT("LoadCursor"));

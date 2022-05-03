@@ -18,14 +18,14 @@
 // forward declarations
 //-----------------------------------------------------------------------------
 
-class  wxToolTip;
-class  wxWindow;
+class WXDLLIMPEXP_FWD_CORE wxToolTip;
+class WXDLLIMPEXP_FWD_CORE wxWindow;
 
 //-----------------------------------------------------------------------------
 // wxToolTip
 //-----------------------------------------------------------------------------
 
-class  wxToolTip : public wxObject
+class WXDLLIMPEXP_CORE wxToolTip : public wxObject
 {
 public:
     // globally change the tooltip parameters

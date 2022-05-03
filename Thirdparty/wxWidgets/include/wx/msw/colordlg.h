@@ -18,7 +18,7 @@
 // wxColourDialog: dialog for choosing a colours
 // ----------------------------------------------------------------------------
 
-class  wxColourDialog : public wxDialog
+class WXDLLIMPEXP_CORE wxColourDialog : public wxDialog
 {
 public:
     wxColourDialog() { Init(); }

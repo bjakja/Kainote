@@ -18,7 +18,7 @@
 
 // A simple implementation of wxAffineMatrix2DBase interface done entirely in
 // wxWidgets.
-class wxAffineMatrix2D : public wxAffineMatrix2DBase
+class WXDLLIMPEXP_CORE wxAffineMatrix2D : public wxAffineMatrix2DBase
 {
 public:
     wxAffineMatrix2D() : m_11(1), m_12(0),

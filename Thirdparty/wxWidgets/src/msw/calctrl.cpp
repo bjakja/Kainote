@@ -200,7 +200,7 @@ wxCalendarCtrl::HitTest(const wxPoint& pos,
     {
         default:
         case MCHT_CALENDARWEEKNUM:
-            //wxFAIL_MSG( "unexpected" );
+            wxFAIL_MSG( "unexpected" );
             // fall through
 
         case MCHT_NOWHERE:
@@ -259,7 +259,7 @@ wxCalendarCtrl::HitTest(const wxPoint& pos,
 
 bool wxCalendarCtrl::SetDate(const wxDateTime& dt)
 {
-    //wxCHECK_MSG( dt.IsValid(), false, "invalid date" );
+    wxCHECK_MSG( dt.IsValid(), false, "invalid date" );
 
     SYSTEMTIME st;
     dt.GetAsMSWSysDate(&st);
@@ -375,7 +375,7 @@ bool wxCalendarCtrl::EnableMonthChange(bool enable)
 
 void wxCalendarCtrl::Mark(size_t day, bool mark)
 {
-    //wxCHECK_RET( day > 0 && day < 32, "invalid day" );
+    wxCHECK_RET( day > 0 && day < 32, "invalid day" );
 
     int mask = 1 << (day - 1);
     if ( mark )
@@ -389,7 +389,7 @@ void wxCalendarCtrl::Mark(size_t day, bool mark)
 
 void wxCalendarCtrl::SetHoliday(size_t day)
 {
-    //wxCHECK_RET( day > 0 && day < 32, "invalid day" );
+    wxCHECK_RET( day > 0 && day < 32, "invalid day" );
 
     m_holidays |= 1 << (day - 1);
 }

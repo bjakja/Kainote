@@ -20,18 +20,18 @@
 // classes
 //-----------------------------------------------------------------------------
 
-class  wxDC;
-class  wxPaintDC;
-class  wxBitmap;
-class  wxWindow;
+class WXDLLIMPEXP_FWD_CORE wxDC;
+class WXDLLIMPEXP_FWD_CORE wxPaintDC;
+class WXDLLIMPEXP_FWD_CORE wxBitmap;
+class WXDLLIMPEXP_FWD_CORE wxWindow;
 
-class  wxColour;
+class WXDLLIMPEXP_FWD_CORE wxColour;
 
 //-----------------------------------------------------------------------------
 // wxColour
 //-----------------------------------------------------------------------------
 
-class  wxColour : public wxColourBase
+class WXDLLIMPEXP_CORE wxColour : public wxColourBase
 {
 public:
     // constructors

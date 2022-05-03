@@ -8,12 +8,11 @@
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
-#pragma once
-//#ifndef _WX_DDE_H_
-//#define _WX_DDE_H_
+
+#ifndef _WX_DDE_H_
+#define _WX_DDE_H_
 
 #include "wx/ipcbase.h"
-#include "wx/dde.h"
 
 /*
  * Mini-DDE implementation
@@ -39,10 +38,10 @@
  *
  */
 
-class  wxDDEServer;
-class  wxDDEClient;
+class WXDLLIMPEXP_FWD_BASE wxDDEServer;
+class WXDLLIMPEXP_FWD_BASE wxDDEClient;
 
-class  wxDDEConnection : public wxConnectionBase
+class WXDLLIMPEXP_BASE wxDDEConnection : public wxConnectionBase
 {
 public:
   wxDDEConnection(void *buffer, size_t size); // use external buffer
@@ -78,7 +77,7 @@ public:
   DECLARE_DYNAMIC_CLASS(wxDDEConnection)
 };
 
-class  wxDDEServer : public wxServerBase
+class WXDLLIMPEXP_BASE wxDDEServer : public wxServerBase
 {
 public:
     wxDDEServer();
@@ -103,7 +102,7 @@ protected:
     DECLARE_DYNAMIC_CLASS(wxDDEServer)
 };
 
-class  wxDDEClient: public wxClientBase
+class WXDLLIMPEXP_BASE wxDDEClient: public wxClientBase
 {
 public:
     wxDDEClient();
@@ -133,7 +132,7 @@ protected:
     DECLARE_DYNAMIC_CLASS(wxDDEClient)
 };
 
-void  wxDDEInitialize();
-void  wxDDECleanUp();
+void WXDLLIMPEXP_BASE wxDDEInitialize();
+void WXDLLIMPEXP_BASE wxDDECleanUp();
 
-//#endif // _WX_DDE_H_
+#endif // _WX_DDE_H_

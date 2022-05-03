@@ -34,9 +34,9 @@ typedef enum {
 } wxURLError;
 
 #if wxUSE_URL_NATIVE
-class  wxURL;
+class WXDLLIMPEXP_FWD_NET wxURL;
 
-class  wxURLNativeImp : public wxObject
+class WXDLLIMPEXP_NET wxURLNativeImp : public wxObject
 {
 public:
     virtual ~wxURLNativeImp() { }
@@ -44,7 +44,7 @@ public:
 };
 #endif // wxUSE_URL_NATIVE
 
-class  wxURL : public wxURI
+class WXDLLIMPEXP_NET wxURL : public wxURI
 {
 public:
     wxURL(const wxString& sUrl = wxEmptyString);

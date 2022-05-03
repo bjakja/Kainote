@@ -25,13 +25,13 @@
 // forward declarations
 // ----------------------------------------------------------------------------
 
-class wxObject;
-class  wxString;
-class  wxClassInfo;
-class  wxHashTable;
-class  wxObject;
-class  wxPluginLibrary;
-class  wxHashTable_Node;
+class WXDLLIMPEXP_FWD_BASE wxObject;
+class WXDLLIMPEXP_FWD_BASE wxString;
+class WXDLLIMPEXP_FWD_BASE wxClassInfo;
+class WXDLLIMPEXP_FWD_BASE wxHashTable;
+class WXDLLIMPEXP_FWD_BASE wxObject;
+class WXDLLIMPEXP_FWD_BASE wxPluginLibrary;
+class WXDLLIMPEXP_FWD_BASE wxHashTable_Node;
 
 // ----------------------------------------------------------------------------
 // wxClassInfo
@@ -39,10 +39,10 @@ class  wxHashTable_Node;
 
 typedef wxObject *(*wxObjectConstructorFn)(void);
 
-class wxClassInfo
+class WXDLLIMPEXP_BASE wxClassInfo
 {
-    friend class wxObject;
-    friend wxObject *wxCreateDynamicObject(const wxString& name);
+    friend class WXDLLIMPEXP_FWD_BASE wxObject;
+    friend WXDLLIMPEXP_BASE wxObject *wxCreateDynamicObject(const wxString& name);
 public:
     wxClassInfo( const wxChar *className,
                  const wxClassInfo *baseInfo1,
@@ -120,7 +120,7 @@ protected:
     wxDECLARE_NO_COPY_CLASS(wxClassInfo);
 };
 
- wxObject *wxCreateDynamicObject(const wxString& name);
+WXDLLIMPEXP_BASE wxObject *wxCreateDynamicObject(const wxString& name);
 
 // ----------------------------------------------------------------------------
 // Dynamic class macros

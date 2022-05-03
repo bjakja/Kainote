@@ -11,7 +11,7 @@
 #ifndef _WX_MSW_RICHMSGDLG_H_
 #define _WX_MSW_RICHMSGDLG_H_
 
-class  wxRichMessageDialog : public wxGenericRichMessageDialog
+class WXDLLIMPEXP_CORE wxRichMessageDialog : public wxGenericRichMessageDialog
 {
 public:
     wxRichMessageDialog(wxWindow *parent,

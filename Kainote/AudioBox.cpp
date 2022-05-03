@@ -37,7 +37,6 @@
 
 
 
-#include <wx/slider.h>
 #include "Editbox.h"
 #include "AudioBox.h"
 //#include "KainoteFrame.h"
@@ -50,7 +49,8 @@
 //#include "Visuals.h"
 //#include "VisualDrawingShapes.h"
 //#include "TabPanel.h"
-
+#include <wx/msw/winundef.h>
+#include <wx/slider.h>
 #include <math.h>
 //#include <dxgicommon.h>
 

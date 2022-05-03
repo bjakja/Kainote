@@ -12,8 +12,8 @@
 #ifndef _WX_UNIV_INPCONS_H_
 #define _WX_UNIV_INPCONS_H_
 
-class  wxInputHandler;
-class  wxWindow;
+class WXDLLIMPEXP_FWD_CORE wxInputHandler;
+class WXDLLIMPEXP_FWD_CORE wxWindow;
 
 #include "wx/object.h"
 #include "wx/event.h"
@@ -35,7 +35,7 @@ typedef wxString wxControlAction;
 // wxControl and wxTopLevelWindow).
 // ----------------------------------------------------------------------------
 
-class  wxInputConsumer
+class WXDLLIMPEXP_CORE wxInputConsumer
 {
 public:
     wxInputConsumer() { m_inputHandler = NULL; }

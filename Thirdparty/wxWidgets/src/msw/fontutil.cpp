@@ -137,14 +137,14 @@ wxString wxNativeEncodingInfo::ToString() const
 bool wxGetNativeFontEncoding(wxFontEncoding encoding,
                              wxNativeEncodingInfo *info)
 {
-    //wxCHECK_MSG( info, false, wxT("bad pointer in wxGetNativeFontEncoding") );
+    wxCHECK_MSG( info, false, wxT("bad pointer in wxGetNativeFontEncoding") );
 
     if ( encoding == wxFONTENCODING_DEFAULT )
     {
         encoding = wxFont::GetDefaultEncoding();
     }
 
-    extern  long wxEncodingToCharset(wxFontEncoding encoding);
+    extern WXDLLIMPEXP_BASE long wxEncodingToCharset(wxFontEncoding encoding);
     info->charset = wxEncodingToCharset(encoding);
     if ( info->charset == -1 )
         return false;
@@ -186,7 +186,7 @@ wxFontEncoding wxGetFontEncFromCharSet(int cs)
     switch ( cs )
     {
         default:
-            //wxFAIL_MSG( wxT("unexpected Win32 charset") );
+            wxFAIL_MSG( wxT("unexpected Win32 charset") );
             // fall through and assume the system charset
 
         case DEFAULT_CHARSET:

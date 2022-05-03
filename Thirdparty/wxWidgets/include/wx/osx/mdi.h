@@ -13,7 +13,7 @@
 #ifndef _WX_OSX_CARBON_MDI_H_
 #define _WX_OSX_CARBON_MDI_H_
 
-class  wxMDIParentFrame : public wxMDIParentFrameBase
+class WXDLLIMPEXP_CORE wxMDIParentFrame : public wxMDIParentFrameBase
 {
 public:
     wxMDIParentFrame() { Init(); }
@@ -87,13 +87,13 @@ protected:
     bool m_shouldBeShown;
 
 private:
-    friend class  wxMDIChildFrame;
+    friend class WXDLLIMPEXP_FWD_CORE wxMDIChildFrame;
 
     DECLARE_EVENT_TABLE()
     DECLARE_DYNAMIC_CLASS(wxMDIParentFrame)
 };
 
-class  wxMDIChildFrame : public wxMDIChildFrameBase
+class WXDLLIMPEXP_CORE wxMDIChildFrame : public wxMDIChildFrameBase
 {
 public:
     wxMDIChildFrame() { Init(); }
@@ -136,7 +136,7 @@ protected:
     DECLARE_DYNAMIC_CLASS(wxMDIChildFrame)
 };
 
-class  wxMDIClientWindow : public wxMDIClientWindowBase
+class WXDLLIMPEXP_CORE wxMDIClientWindow : public wxMDIClientWindowBase
 {
 public:
     wxMDIClientWindow() { }

@@ -29,7 +29,7 @@
 #include "wx/treectrl.h"
 #include "wx/imaglist.h"
 
-extern const char wxTreeCtrlNameStr[] = "treeCtrl";
+extern WXDLLEXPORT_DATA(const char) wxTreeCtrlNameStr[] = "treeCtrl";
 
 // ----------------------------------------------------------------------------
 // events

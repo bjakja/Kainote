@@ -25,11 +25,11 @@
 #include "wx/hashmap.h"
 #include "wx/module.h"
 
-class  wxPluginLibrary;
+class WXDLLIMPEXP_FWD_BASE wxPluginLibrary;
 
 
 WX_DECLARE_STRING_HASH_MAP_WITH_DECL(wxPluginLibrary *, wxDLManifest,
-                                     class );
+                                     class WXDLLIMPEXP_BASE);
 typedef wxDLManifest wxDLImports;
 
 // ---------------------------------------------------------------------------
@@ -44,7 +44,7 @@ typedef wxDLManifest wxDLImports;
 //       instantiate this class directly anyway, use wxPluginManager
 //       instead.
 
-class  wxPluginLibrary : public wxDynamicLibrary
+class WXDLLIMPEXP_BASE wxPluginLibrary : public wxDynamicLibrary
 {
 public:
 
@@ -71,7 +71,7 @@ public:
     void  RefObj() { ++m_objcount; }
     void  UnrefObj()
     {
-        /*wxASSERT_MSG( m_objcount > 0, wxT("Too many objects deleted??") );*/
+        wxASSERT_MSG( m_objcount > 0, wxT("Too many objects deleted??") );
         --m_objcount;
     }
 
@@ -101,7 +101,7 @@ private:
 };
 
 
-class  wxPluginManager
+class WXDLLIMPEXP_BASE wxPluginManager
 {
 public:
 

@@ -22,7 +22,7 @@
 // wxAboutDialogInfo: information shown by the standard "About" dialog
 // ----------------------------------------------------------------------------
 
-class  wxAboutDialogInfo
+class WXDLLIMPEXP_ADV wxAboutDialogInfo
 {
 public:
     // all fields are initially uninitialized
@@ -162,7 +162,7 @@ private:
 };
 
 // functions to show the about dialog box
- void wxAboutBox(const wxAboutDialogInfo& info, wxWindow* parent = NULL);
+WXDLLIMPEXP_ADV void wxAboutBox(const wxAboutDialogInfo& info, wxWindow* parent = NULL);
 
 #endif // wxUSE_ABOUTDLG
 

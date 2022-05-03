@@ -22,7 +22,7 @@
 //    wxPrinterDCImpl
 //
 
-class  wxPrinterDCImpl : public wxMSWDCImpl
+class WXDLLIMPEXP_CORE wxPrinterDCImpl : public wxMSWDCImpl
 {
 public:
     // Create from print data
@@ -62,13 +62,13 @@ private:
 };
 
 // Gets an HDC for the specified printer configuration
-WXHDC  wxGetPrinterDC(const wxPrintData& data);
+WXHDC WXDLLIMPEXP_CORE wxGetPrinterDC(const wxPrintData& data);
 
 // ------------------------------------------------------------------------
 //    wxPrinterDCromHDC
 //
 
-class  wxPrinterDCFromHDC: public wxPrinterDC
+class WXDLLIMPEXP_CORE wxPrinterDCFromHDC: public wxPrinterDC
 {
 public:
     wxPrinterDCFromHDC( WXHDC theDC )

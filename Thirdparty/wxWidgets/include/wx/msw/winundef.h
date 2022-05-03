@@ -234,17 +234,17 @@
 
 #ifdef DrawText
    #undef DrawText
-//   #ifdef _UNICODE
-//   inline int DrawText(HDC h, LPCWSTR str, int count, LPRECT rect, UINT format)
-//   {
-//      return DrawTextW(h, str, count, rect, format);
-//   }
-//   #else
-//   inline int DrawText(HDC h, LPCSTR str, int count, LPRECT rect, UINT format)
-//   {
-//      return DrawTextA(h, str, count, rect, format);
-//   }
-//   #endif
+   /*#ifdef _UNICODE
+   inline int DrawText(HDC h, LPCWSTR str, int count, LPRECT rect, UINT format)
+   {
+      return DrawTextW(h, str, count, rect, format);
+   }
+   #else
+   inline int DrawText(HDC h, LPCSTR str, int count, LPRECT rect, UINT format)
+   {
+      return DrawTextA(h, str, count, rect, format);
+   }
+   #endif*/
 #endif
 
 

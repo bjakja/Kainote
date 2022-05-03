@@ -45,7 +45,7 @@
 // in the version after it completely.
 //
 // Recommended setting: 0 (please update your code)
-#define WXWIN_COMPATIBILITY_2_8 0
+#define WXWIN_COMPATIBILITY_2_8 1
 
 // MSW-only: Set to 0 for accurate dialog units, else 1 for old behaviour when
 // default system font is used for wxWindow::GetCharWidth/Height() instead of
@@ -618,7 +618,7 @@
 // The settings for the individual URL schemes
 #define wxUSE_PROTOCOL_FILE 1
 #define wxUSE_PROTOCOL_FTP 1
-#define wxUSE_PROTOCOL_HTTP 0
+#define wxUSE_PROTOCOL_HTTP 1
 
 // Define this to use wxURL class.
 #define wxUSE_URL 1
@@ -721,7 +721,7 @@
 // Default is 1
 //
 // Recommended setting: 1
-#define wxUSE_WEBVIEW 0
+#define wxUSE_WEBVIEW 1
 
 // Use the IE wxWebView backend
 //
@@ -853,7 +853,7 @@
 #define wxUSE_COLOURPICKERCTRL 1    // wxColourPickerCtrl
 #define wxUSE_COMBOBOX      1   // wxComboBox
 #define wxUSE_COMMANDLINKBUTTON 1   // wxCommandLinkButton
-#define wxUSE_DATAVIEWCTRL  0   // wxDataViewCtrl
+#define wxUSE_DATAVIEWCTRL  1   // wxDataViewCtrl
 #define wxUSE_DATEPICKCTRL  1   // wxDatePickerCtrl
 #define wxUSE_DIRPICKERCTRL 1   // wxDirPickerCtrl
 #define wxUSE_EDITABLELISTBOX 1 // wxEditableListBox
@@ -889,7 +889,7 @@
 // Default is 1
 //
 // Recommended setting: 1
-#define wxUSE_STATUSBAR    0
+#define wxUSE_STATUSBAR    1
 
 // Two status bar implementations are available under Win32: the generic one
 // or the wrapper around native control. For native look and feel the native
@@ -918,7 +918,7 @@
 // Default is 1.
 //
 // Recommended setting: 1
-#define wxUSE_NOTEBOOK 0
+#define wxUSE_NOTEBOOK 1
 
 // wxListbook control is similar to wxNotebook but uses wxListCtrl instead of
 // the tabs
@@ -967,7 +967,7 @@
 //
 // Recommended setting: 1
 //
-#define wxUSE_GRID         0
+#define wxUSE_GRID         1
 
 // wxMiniFrame class: a frame with narrow title bar
 //
@@ -1383,7 +1383,7 @@
 
 
 // Use wxHTML-based help controller?
-#define wxUSE_WXHTML_HELP 0
+#define wxUSE_WXHTML_HELP 1
 
 #define wxUSE_CONSTRAINTS 1
                                 // 0 for no window layout constraint system
@@ -1419,7 +1419,7 @@
 // probably).
 //
 // Recommended setting: 1.
-#define wxUSE_DC_TRANSFORM_MATRIX 0
+#define wxUSE_DC_TRANSFORM_MATRIX 1
 
 // ----------------------------------------------------------------------------
 // image format support
@@ -1440,7 +1440,7 @@
 #define wxUSE_LIBPNG        1
 
 // Set to 1 for JPEG format support (requires libjpeg)
-#define wxUSE_LIBJPEG       0
+#define wxUSE_LIBJPEG       1
 
 // Set to 1 for TIFF format support (requires libtiff)
 #define wxUSE_LIBTIFF       1
@@ -1461,7 +1461,7 @@
 #define wxUSE_IFF           0
 
 // Set to 1 for XPM format support
-#define wxUSE_XPM           0
+#define wxUSE_XPM           1
 
 // Set to 1 for MS Icons and Cursors format support
 #define wxUSE_ICO_CUR       1

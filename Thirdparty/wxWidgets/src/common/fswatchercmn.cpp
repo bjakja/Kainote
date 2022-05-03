@@ -43,7 +43,7 @@ static wxString GetFSWEventChangeTypeName(int type)
     }
 
     // should never be reached!
-    //wxFAIL_MSG("Unknown change type");
+    wxFAIL_MSG("Unknown change type");
     return "INVALID_TYPE";
 }
 
@@ -52,11 +52,11 @@ static wxString GetFSWEventChangeTypeName(int type)
 // wxFileSystemWatcherEvent implementation
 // ============================================================================
 
-//wxString wxFileSystemWatcherEvent::ToString() const
-//{
-//    return wxString::Format("FSW_EVT type=%d (%s) path='%s'", m_changeType,
-//            GetFSWEventChangeTypeName(m_changeType), GetPath().GetFullPath());
-//}
+wxString wxFileSystemWatcherEvent::ToString() const
+{
+    return wxString::Format("FSW_EVT type=%d (%s) path='%s'", m_changeType,
+            GetFSWEventChangeTypeName(m_changeType), GetPath().GetFullPath());
+}
 
 
 // ============================================================================
@@ -107,8 +107,8 @@ wxFileSystemWatcherBase::DoAdd(const wxFileName& path,
     if (canonical.IsEmpty())
         return false;
 
-    /*wxCHECK_MSG(m_watches.find(canonical) == m_watches.end(), false,
-                wxString::Format("Path '%s' is already watched", canonical));*/
+    wxCHECK_MSG(m_watches.find(canonical) == m_watches.end(), false,
+                wxString::Format("Path '%s' is already watched", canonical));
 
     // adding a path in a platform specific way
     wxFSWatchInfo watch(canonical, events, type);
@@ -128,8 +128,8 @@ bool wxFileSystemWatcherBase::Remove(const wxFileName& path)
         return false;
 
     wxFSWatchInfoMap::iterator it = m_watches.find(canonical);
-    /*wxCHECK_MSG(it != m_watches.end(), false,
-                wxString::Format("Path '%s' is not watched", canonical));*/
+    wxCHECK_MSG(it != m_watches.end(), false,
+                wxString::Format("Path '%s' is not watched", canonical));
 
     // remove from watch-list
     wxFSWatchInfo watch = it->second;
@@ -238,7 +238,7 @@ int wxFileSystemWatcherBase::GetWatchedPathsCount() const
 
 int wxFileSystemWatcherBase::GetWatchedPaths(wxArrayString* paths) const
 {
-    /*wxCHECK_MSG( paths != NULL, -1, "Null array passed to retrieve paths");*/
+    wxCHECK_MSG( paths != NULL, -1, "Null array passed to retrieve paths");
 
     wxFSWatchInfoMap::const_iterator it = m_watches.begin();
     for ( ; it != m_watches.end(); ++it)

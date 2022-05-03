@@ -24,7 +24,7 @@
 #endif
 
 #ifdef __WINDOWS__
-    //#include "wx/msw/msvcrt.h"
+    #include "wx/msw/msvcrt.h"
 #endif
 
 #ifdef __VISAGECPP__

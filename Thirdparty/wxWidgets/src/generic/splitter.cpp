@@ -421,7 +421,7 @@ void wxSplitterWindow::OnSize(wxSizeEvent& event)
     }
     else
     {
-        //wxFAIL_MSG(wxT("should have a top level parent!"));
+        wxFAIL_MSG(wxT("should have a top level parent!"));
 
         iconized = false;
     }
@@ -478,8 +478,8 @@ void wxSplitterWindow::OnSize(wxSizeEvent& event)
 
 void wxSplitterWindow::SetSashGravity(double gravity)
 {
-    //wxCHECK_RET( gravity >= 0. && gravity <= 1.,
-                    //wxT("invalid gravity value") );
+    wxCHECK_RET( gravity >= 0. && gravity <= 1.,
+                    wxT("invalid gravity value") );
 
     m_sashGravity = gravity;
 }
@@ -736,8 +736,8 @@ void wxSplitterWindow::SizeWindows()
 // Set pane for unsplit window
 void wxSplitterWindow::Initialize(wxWindow *window)
 {
-    //wxASSERT_MSG( (!window || window->GetParent() == this),
-                  //wxT("windows in the splitter should have it as parent!") );
+    wxASSERT_MSG( (!window || window->GetParent() == this),
+                  wxT("windows in the splitter should have it as parent!") );
 
     if (window && !window->IsShown())
         window->Show();
@@ -757,11 +757,11 @@ bool wxSplitterWindow::DoSplit(wxSplitMode mode,
     if ( IsSplit() )
         return false;
 
-    //wxCHECK_MSG( window1 && window2, false,
-                 //wxT("cannot split with NULL window(s)") );
+    wxCHECK_MSG( window1 && window2, false,
+                 wxT("cannot split with NULL window(s)") );
 
-    //wxCHECK_MSG( window1->GetParent() == this && window2->GetParent() == this, false,
-                  //wxT("windows in the splitter should have it as parent!") );
+    wxCHECK_MSG( window1->GetParent() == this && window2->GetParent() == this, false,
+                  wxT("windows in the splitter should have it as parent!") );
 
     if (! window1->IsShown())
         window1->Show();
@@ -816,7 +816,7 @@ bool wxSplitterWindow::Unsplit(wxWindow *toRemove)
     }
     else
     {
-        //wxFAIL_MSG(wxT("splitter: attempt to remove a non-existent window"));
+        wxFAIL_MSG(wxT("splitter: attempt to remove a non-existent window"));
 
         return false;
     }
@@ -831,8 +831,8 @@ bool wxSplitterWindow::Unsplit(wxWindow *toRemove)
 // Replace a window with another one
 bool wxSplitterWindow::ReplaceWindow(wxWindow *winOld, wxWindow *winNew)
 {
-    //wxCHECK_MSG( winOld, false, wxT("use one of Split() functions instead") );
-    //wxCHECK_MSG( winNew, false, wxT("use Unsplit() functions instead") );
+    wxCHECK_MSG( winOld, false, wxT("use one of Split() functions instead") );
+    wxCHECK_MSG( winNew, false, wxT("use Unsplit() functions instead") );
 
     if ( winOld == m_windowTwo )
     {
@@ -844,7 +844,7 @@ bool wxSplitterWindow::ReplaceWindow(wxWindow *winOld, wxWindow *winNew)
     }
     else
     {
-        //wxFAIL_MSG(wxT("splitter: attempt to replace a non-existent window"));
+        wxFAIL_MSG(wxT("splitter: attempt to replace a non-existent window"));
 
         return false;
     }
@@ -1010,7 +1010,7 @@ int wxSplitterWindow::OnSashPositionChanging(int newSashPosition)
 // the sash if the minimum pane size is zero.
 void wxSplitterWindow::OnDoubleClickSash(int x, int y)
 {
-    //wxCHECK_RET(m_windowTwo, wxT("splitter: no window to remove"));
+    wxCHECK_RET(m_windowTwo, wxT("splitter: no window to remove"));
 
     // new code should handle events instead of using the virtual functions
     wxSplitterEvent event(wxEVT_COMMAND_SPLITTER_DOUBLECLICKED, this);

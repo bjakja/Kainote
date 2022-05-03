@@ -372,8 +372,8 @@ bool wxDisplayMSW::ChangeMode(const wxVideoMode& mode)
     }
     else // change to the given mode
     {
-        /*wxCHECK_MSG( mode.GetWidth() && mode.GetHeight(), false,
-                        wxT("at least the width and height must be specified") );*/
+        wxCHECK_MSG( mode.GetWidth() && mode.GetHeight(), false,
+                        wxT("at least the width and height must be specified") );
 
         wxZeroMemory(dm);
         dm.dmSize = sizeof(dm);
@@ -459,7 +459,7 @@ bool wxDisplayMSW::ChangeMode(const wxVideoMode& mode)
             break;
 
         default:
-            break;//wxFAIL_MSG( wxT("unexpected ChangeDisplaySettingsEx() return value") );
+            wxFAIL_MSG( wxT("unexpected ChangeDisplaySettingsEx() return value") );
     }
 
     return false;
@@ -487,7 +487,7 @@ wxDisplayFactoryMSW::wxDisplayFactoryMSW()
 {
     // This is not supposed to happen with the current code, the factory is
     // implicitly a singleton.
-    //wxASSERT_MSG( !ms_factory, wxS("Using more than one factory?") );
+    wxASSERT_MSG( !ms_factory, wxS("Using more than one factory?") );
 
     ms_factory = this;
 
@@ -575,7 +575,7 @@ wxDisplayFactoryMSW::MultimonEnumProc(
 
 wxDisplayImpl *wxDisplayFactoryMSW::CreateDisplay(unsigned n)
 {
-    //wxCHECK_MSG( n < m_displays.size(), NULL, wxT("An invalid index was passed to wxDisplay") );
+    wxCHECK_MSG( n < m_displays.size(), NULL, wxT("An invalid index was passed to wxDisplay") );
 
     return new wxDisplayMSW(n, m_displays[n]);
 }

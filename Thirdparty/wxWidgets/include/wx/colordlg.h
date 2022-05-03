@@ -31,7 +31,7 @@
 #endif
 
 // get the colour from user and return it
- wxColour wxGetColourFromUser(wxWindow *parent = NULL,
+WXDLLIMPEXP_CORE wxColour wxGetColourFromUser(wxWindow *parent = NULL,
                                               const wxColour& colInit = wxNullColour,
                                               const wxString& caption = wxEmptyString,
                                               wxColourData *data = NULL);

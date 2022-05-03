@@ -18,24 +18,24 @@
 // implement wxClipboard, and for compatibility.
 
 // open/close the clipboard
- bool wxOpenClipboard();
- bool wxIsClipboardOpened();
+WXDLLIMPEXP_CORE bool wxOpenClipboard();
+WXDLLIMPEXP_CORE bool wxIsClipboardOpened();
 #define wxClipboardOpen wxIsClipboardOpened
- bool wxCloseClipboard();
+WXDLLIMPEXP_CORE bool wxCloseClipboard();
 
 // get/set data
- bool wxEmptyClipboard();
- bool wxSetClipboardData(wxDataFormat dataFormat,
+WXDLLIMPEXP_CORE bool wxEmptyClipboard();
+WXDLLIMPEXP_CORE bool wxSetClipboardData(wxDataFormat dataFormat,
                                     const void *data,
                                     int width = 0, int height = 0);
- void* wxGetClipboardData(wxDataFormat dataFormat,
+WXDLLIMPEXP_CORE void* wxGetClipboardData(wxDataFormat dataFormat,
                                      long *len = NULL);
 
 // clipboard formats
- bool wxIsClipboardFormatAvailable(wxDataFormat dataFormat);
- wxDataFormat wxEnumClipboardFormats(wxDataFormat dataFormat);
- int  wxRegisterClipboardFormat(wxChar *formatName);
- bool wxGetClipboardFormatName(wxDataFormat dataFormat,
+WXDLLIMPEXP_CORE bool wxIsClipboardFormatAvailable(wxDataFormat dataFormat);
+WXDLLIMPEXP_CORE wxDataFormat wxEnumClipboardFormats(wxDataFormat dataFormat);
+WXDLLIMPEXP_CORE int  wxRegisterClipboardFormat(wxChar *formatName);
+WXDLLIMPEXP_CORE bool wxGetClipboardFormatName(wxDataFormat dataFormat,
                                           wxChar *formatName,
                                           int maxCount);
 
@@ -43,7 +43,7 @@
 // wxClipboard
 //-----------------------------------------------------------------------------
 
-class  wxClipboard : public wxClipboardBase
+class WXDLLIMPEXP_CORE wxClipboard : public wxClipboardBase
 {
 public:
     wxClipboard();

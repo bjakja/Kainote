@@ -73,7 +73,7 @@ bool wxWebViewIE::Create(wxWindow* parent,
                            CLSCTX_INPROC_SERVER, // CLSCTX_INPROC,
                            IID_IWebBrowser2 , (void**)&m_webBrowser) != 0)
     {
-        //wxLogError("Failed to initialize IE, CoCreateInstance returned an error");
+        wxLogError("Failed to initialize IE, CoCreateInstance returned an error");
         return false;
     }
 
@@ -163,12 +163,12 @@ void wxWebViewIE::SetPage(const wxString& html, const wxString& baseUrl)
         }
         else
         {
-            //wxLogError("wxWebViewIE::SetPage() : psaStrings is NULL");
+            wxLogError("wxWebViewIE::SetPage() : psaStrings is NULL");
         }
     }
     else
     {
-        //wxLogError("wxWebViewIE::SetPage() : psaStrings is NULL during clear");
+        wxLogError("wxWebViewIE::SetPage() : psaStrings is NULL during clear");
     }
 }
 
@@ -209,7 +209,7 @@ wxWebViewZoom wxWebViewIE::GetZoom() const
         case wxWEB_VIEW_ZOOM_TYPE_TEXT:
             return GetIETextZoom();
         default:
-            break;//wxFAIL;
+            wxFAIL;
     }
 
     //Dummy return to stop compiler warnings
@@ -228,7 +228,7 @@ void wxWebViewIE::SetZoom(wxWebViewZoom zoom)
             SetIETextZoom(zoom);
             break;
         default:
-            break;
+            wxFAIL;
     }
 }
 
@@ -248,7 +248,7 @@ void wxWebViewIE::SetIETextZoom(wxWebViewZoom level)
             m_webBrowser->ExecWB(OLECMDID_ZOOM,
                                  OLECMDEXECOPT_DONTPROMPTUSER,
                                  &zoomVariant, NULL);
-    //wxASSERT(result == S_OK);
+    wxASSERT(result == S_OK);
 }
 
 wxWebViewZoom wxWebViewIE::GetIETextZoom() const
@@ -263,7 +263,7 @@ wxWebViewZoom wxWebViewIE::GetIETextZoom() const
             m_webBrowser->ExecWB(OLECMDID_ZOOM,
                                  OLECMDEXECOPT_DONTPROMPTUSER,
                                  NULL, &zoomVariant);
-    //wxASSERT(result == S_OK);
+    wxASSERT(result == S_OK);
 
     //We can safely cast here as we know that the range matches our enum
     return static_cast<wxWebViewZoom>(V_I4(&zoomVariant));
@@ -296,7 +296,7 @@ void wxWebViewIE::SetIEOpticalZoom(wxWebViewZoom level)
             V_I4(&zoomVariant) = 160;
             break;
         default:
-            break;
+            wxFAIL;
     }
 
 #if wxDEBUG_LEVEL
@@ -306,7 +306,7 @@ void wxWebViewIE::SetIEOpticalZoom(wxWebViewZoom level)
                                  OLECMDEXECOPT_DODEFAULT,
                                  &zoomVariant,
                                  NULL);
-    //wxASSERT(result == S_OK);
+    wxASSERT(result == S_OK);
 }
 
 wxWebViewZoom wxWebViewIE::GetIEOpticalZoom() const
@@ -321,7 +321,7 @@ wxWebViewZoom wxWebViewIE::GetIEOpticalZoom() const
             m_webBrowser->ExecWB((OLECMDID)63 /*OLECMDID_OPTICAL_ZOOM*/,
                                  OLECMDEXECOPT_DODEFAULT, NULL,
                                  &zoomVariant);
-    //wxASSERT(result == S_OK);
+    wxASSERT(result == S_OK);
 
     const int zoom = V_I4(&zoomVariant);
 
@@ -404,8 +404,8 @@ void wxWebViewIE::LoadHistoryItem(wxSharedPtr<wxWebViewHistoryItem> item)
         if(m_historyList[i].get() == item.get())
             pos = i;
     }
-    //wxASSERT_MSG(pos != static_cast<int>(m_historyList.size()),
-                 //"invalid history item");
+    wxASSERT_MSG(pos != static_cast<int>(m_historyList.size()),
+                 "invalid history item");
     m_historyLoadingFromList = true;
     LoadURL(item->GetUrl());
     m_historyPosition = pos;
@@ -478,7 +478,7 @@ void wxWebViewIE::Reload(wxWebViewReloadFlags flags)
             V_I2(&level) = REFRESH_COMPLETELY;
             break;
         default:
-            break;
+            wxFAIL_MSG("Unexpected reload type");
     }
 
     m_webBrowser->Refresh2(&level);
@@ -488,7 +488,7 @@ bool wxWebViewIE::IsOfflineMode()
 {
     wxVariant out = m_ie.GetProperty("Offline");
 
-    //wxASSERT(out.GetType() == "bool");
+    wxASSERT(out.GetType() == "bool");
 
     return out.GetBool();
 }
@@ -503,7 +503,7 @@ void wxWebViewIE::SetOfflineMode(bool offline)
             m_ie.PutProperty("Offline", (offline ?
                                          VARIANT_TRUE :
                                          VARIANT_FALSE));
-    //wxASSERT(success);
+    wxASSERT(success);
 }
 
 bool wxWebViewIE::IsBusy() const
@@ -512,7 +512,7 @@ bool wxWebViewIE::IsBusy() const
 
     wxVariant out = m_ie.GetProperty("Busy");
 
-    //wxASSERT(out.GetType() == "bool");
+    wxASSERT(out.GetType() == "bool");
 
     return out.GetBool();
 }
@@ -521,7 +521,7 @@ wxString wxWebViewIE::GetCurrentURL() const
 {
     wxVariant out = m_ie.GetProperty("LocationURL");
 
-    //wxASSERT(out.GetType() == "string");
+    wxASSERT(out.GetType() == "string");
     return out.GetString();
 }
 
@@ -796,7 +796,7 @@ void wxWebViewIE::RegisterHandler(wxSharedPtr<wxWebViewHandler> handler)
         HRESULT res = (*pfnCoInternetGetSession)(0, &session, 0);
         if(FAILED(res))
         {
-            //wxFAIL_MSG("Could not retrive internet session");
+            wxFAIL_MSG("Could not retrive internet session");
         }
 
         HRESULT hr = session->RegisterNameSpace(cf, CLSID_FileProtocol,
@@ -804,13 +804,13 @@ void wxWebViewIE::RegisterHandler(wxSharedPtr<wxWebViewHandler> handler)
                                                 0, NULL, 0);
         if(FAILED(hr))
         {
-            //wxFAIL_MSG("Could not register protocol");
+            wxFAIL_MSG("Could not register protocol");
         }
         m_factories.push_back(cf);
     }
     else
     {
-        //wxFAIL_MSG("urlmon does not contain CoInternetGetSession");
+        wxFAIL_MSG("urlmon does not contain CoInternetGetSession");
     }
 }
 
@@ -1234,7 +1234,7 @@ HRESULT VirtualProtocol::Read(void *pv, ULONG cb, ULONG *pcbRead)
     else
     {
         //Dummy return to surpress a compiler warning
-        //wxFAIL;
+        wxFAIL;
         return INET_E_DOWNLOAD_FAILURE;
     }
 }

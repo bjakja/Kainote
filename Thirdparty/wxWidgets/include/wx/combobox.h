@@ -20,7 +20,7 @@
 // styles with wxComboBox without explicitly including it in the user code.
 #include "wx/textctrl.h"
 
-extern const char wxComboBoxNameStr[];
+extern WXDLLIMPEXP_DATA_CORE(const char) wxComboBoxNameStr[];
 
 // ----------------------------------------------------------------------------
 // wxComboBoxBase: this interface defines the methods wxComboBox must implement
@@ -29,7 +29,7 @@ extern const char wxComboBoxNameStr[];
 #include "wx/ctrlsub.h"
 #include "wx/textentry.h"
 
-class  wxComboBoxBase : public wxItemContainer,
+class WXDLLIMPEXP_CORE wxComboBoxBase : public wxItemContainer,
                                         public wxTextEntry
 {
 public:
@@ -57,8 +57,8 @@ public:
     virtual int GetSelection() const = 0;
     virtual void GetSelection(long *from, long *to) const = 0;
 
-    virtual void Popup() { /*wxFAIL_MSG( wxT("Not implemented") );*/ }
-    virtual void Dismiss() { /*wxFAIL_MSG( wxT("Not implemented") );*/ }
+    virtual void Popup() { wxFAIL_MSG( wxT("Not implemented") ); }
+    virtual void Dismiss() { wxFAIL_MSG( wxT("Not implemented") ); }
 
     // may return value different from GetSelection() when the combobox
     // dropdown is shown and the user selected, but not yet accepted, a value

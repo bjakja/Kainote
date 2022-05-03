@@ -15,7 +15,7 @@
 // wxTextCompleter: used by wxTextEnter::AutoComplete()
 // ----------------------------------------------------------------------------
 
-class  wxTextCompleter
+class WXDLLIMPEXP_CORE wxTextCompleter
 {
 public:
     wxTextCompleter() { }
@@ -37,7 +37,7 @@ private:
 // wxTextCompleterSimple: returns the entire set of completions at once
 // ----------------------------------------------------------------------------
 
-class  wxTextCompleterSimple : public wxTextCompleter
+class WXDLLIMPEXP_CORE wxTextCompleterSimple : public wxTextCompleter
 {
 public:
     wxTextCompleterSimple() { }

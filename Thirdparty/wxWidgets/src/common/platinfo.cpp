@@ -104,7 +104,7 @@ static const wxChar* const wxEndiannessNames[] =
 // corresponding indexes of the string arrays above
 static unsigned wxGetIndexFromEnumValue(int value)
 {
-    //wxCHECK_MSG( value, (unsigned)-1, wxT("invalid enum value") );
+    wxCHECK_MSG( value, (unsigned)-1, wxT("invalid enum value") );
 
     int n = 0;
     while ( !(value & 1) )
@@ -113,7 +113,7 @@ static unsigned wxGetIndexFromEnumValue(int value)
         n++;
     }
 
-    //wxASSERT_MSG( value == 1, wxT("more than one bit set in enum value") );
+    wxASSERT_MSG( value == 1, wxT("more than one bit set in enum value") );
 
     return n;
 }
@@ -169,7 +169,7 @@ void wxPlatformInfo::InitForCurrentPlatform()
     const wxAppTraits * const traits = wxTheApp ? wxTheApp->GetTraits() : NULL;
     if ( !traits )
     {
-        //wxFAIL_MSG( wxT("failed to initialize wxPlatformInfo") );
+        wxFAIL_MSG( wxT("failed to initialize wxPlatformInfo") );
 
         m_port = wxPORT_UNKNOWN;
         m_usingUniversal = false;
@@ -240,8 +240,8 @@ wxString wxPlatformInfo::GetOperatingSystemIdName(wxOperatingSystemId os)
 {
     const unsigned idx = wxGetIndexFromEnumValue(os);
 
-    /*wxCHECK_MSG( idx < WXSIZEOF(wxOperatingSystemIdNames), wxEmptyString,
-                 wxT("invalid OS id") );*/
+    wxCHECK_MSG( idx < WXSIZEOF(wxOperatingSystemIdNames), wxEmptyString,
+                 wxT("invalid OS id") );
 
     return wxOperatingSystemIdNames[idx];
 }
@@ -250,8 +250,8 @@ wxString wxPlatformInfo::GetPortIdName(wxPortId port, bool usingUniversal)
 {
     const unsigned idx = wxGetIndexFromEnumValue(port);
 
-    /*wxCHECK_MSG( idx < WXSIZEOF(wxPortIdNames), wxEmptyString,
-                 wxT("invalid port id") );*/
+    wxCHECK_MSG( idx < WXSIZEOF(wxPortIdNames), wxEmptyString,
+                 wxT("invalid port id") );
 
     wxString ret = wxPortIdNames[idx];
 
@@ -265,8 +265,8 @@ wxString wxPlatformInfo::GetPortIdShortName(wxPortId port, bool usingUniversal)
 {
     const unsigned idx = wxGetIndexFromEnumValue(port);
 
-    /*wxCHECK_MSG( idx < WXSIZEOF(wxPortIdNames), wxEmptyString,
-                 wxT("invalid port id") );*/
+    wxCHECK_MSG( idx < WXSIZEOF(wxPortIdNames), wxEmptyString,
+                 wxT("invalid port id") );
 
     wxString ret = wxPortIdNames[idx];
     ret = ret.Mid(2).Lower();       // remove 'wx' prefix
@@ -279,16 +279,16 @@ wxString wxPlatformInfo::GetPortIdShortName(wxPortId port, bool usingUniversal)
 
 wxString wxPlatformInfo::GetArchName(wxArchitecture arch)
 {
-    /*wxCOMPILE_TIME_ASSERT( WXSIZEOF(wxArchitectureNames) == wxARCH_MAX,
-                           wxArchitectureNamesMismatch );*/
+    wxCOMPILE_TIME_ASSERT( WXSIZEOF(wxArchitectureNames) == wxARCH_MAX,
+                           wxArchitectureNamesMismatch );
 
     return wxArchitectureNames[arch];
 }
 
 wxString wxPlatformInfo::GetEndiannessName(wxEndianness end)
 {
-    /*wxCOMPILE_TIME_ASSERT( WXSIZEOF(wxEndiannessNames) == wxENDIAN_MAX,
-                           wxEndiannessNamesMismatch );*/
+    wxCOMPILE_TIME_ASSERT( WXSIZEOF(wxEndiannessNames) == wxENDIAN_MAX,
+                           wxEndiannessNamesMismatch );
 
     return wxEndiannessNames[end];
 }

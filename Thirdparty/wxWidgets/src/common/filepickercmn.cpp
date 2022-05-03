@@ -63,7 +63,7 @@ bool wxFileDirPickerCtrlBase::CreateBase(wxWindow *parent,
                                          const wxValidator& validator,
                                          const wxString &name )
 {
-    //wxASSERT_MSG(path.empty() || CheckPath(path), wxT("Invalid initial path!"));
+    wxASSERT_MSG(path.empty() || CheckPath(path), wxT("Invalid initial path!"));
 
     if (!wxPickerBase::CreateBase(parent, id, path, pos, size,
                                    style, validator, name))
@@ -73,14 +73,14 @@ bool wxFileDirPickerCtrlBase::CreateBase(wxWindow *parent,
         m_windowStyle |= wxFLP_OPEN;     // wxFD_OPEN is the default
 
     // check that the styles are not contradictory
-    /*wxASSERT_MSG( !(HasFlag(wxFLP_SAVE) && HasFlag(wxFLP_OPEN)),
+    wxASSERT_MSG( !(HasFlag(wxFLP_SAVE) && HasFlag(wxFLP_OPEN)),
                   wxT("can't specify both wxFLP_SAVE and wxFLP_OPEN at once") );
 
     wxASSERT_MSG( !HasFlag(wxFLP_SAVE) || !HasFlag(wxFLP_FILE_MUST_EXIST),
                    wxT("wxFLP_FILE_MUST_EXIST can't be used with wxFLP_SAVE" ) );
 
     wxASSERT_MSG( !HasFlag(wxFLP_OPEN) || !HasFlag(wxFLP_OVERWRITE_PROMPT),
-                  wxT("wxFLP_OVERWRITE_PROMPT can't be used with wxFLP_OPEN") );*/
+                  wxT("wxFLP_OVERWRITE_PROMPT can't be used with wxFLP_OPEN") );
 
     // create a wxFilePickerWidget or a wxDirPickerWidget...
     m_pickerIface = CreatePicker(this, path, message, wildcard);
@@ -113,7 +113,7 @@ void wxFileDirPickerCtrlBase::SetPath(const wxString &path)
 
 void wxFileDirPickerCtrlBase::UpdatePickerFromTextCtrl()
 {
-    //wxASSERT(m_text);
+    wxASSERT(m_text);
 
     if (m_bIgnoreNextTextCtrlUpdate)
     {

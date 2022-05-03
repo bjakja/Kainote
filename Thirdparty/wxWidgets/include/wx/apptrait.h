@@ -15,20 +15,20 @@
 #include "wx/string.h"
 #include "wx/platinfo.h"
 
-class wxArrayString;
-class wxConfigBase;
-class wxEventLoopBase;
+class WXDLLIMPEXP_FWD_BASE wxArrayString;
+class WXDLLIMPEXP_FWD_BASE wxConfigBase;
+class WXDLLIMPEXP_FWD_BASE wxEventLoopBase;
 #if wxUSE_FONTMAP
-    class wxFontMapper;
+    class WXDLLIMPEXP_FWD_CORE wxFontMapper;
 #endif // wxUSE_FONTMAP
-class wxLog;
-class wxMessageOutput;
-class wxObject;
-class wxRendererNative;
-class wxStandardPaths;
-class wxString;
-class wxTimer;
-class wxTimerImpl;
+class WXDLLIMPEXP_FWD_BASE wxLog;
+class WXDLLIMPEXP_FWD_BASE wxMessageOutput;
+class WXDLLIMPEXP_FWD_BASE wxObject;
+class WXDLLIMPEXP_FWD_CORE wxRendererNative;
+class WXDLLIMPEXP_FWD_BASE wxStandardPaths;
+class WXDLLIMPEXP_FWD_BASE wxString;
+class WXDLLIMPEXP_FWD_BASE wxTimer;
+class WXDLLIMPEXP_FWD_BASE wxTimerImpl;
 
 class wxSocketManager;
 
@@ -37,7 +37,7 @@ class wxSocketManager;
 // wxAppTraits: this class defines various configurable aspects of wxApp
 // ----------------------------------------------------------------------------
 
-class wxAppTraitsBase
+class WXDLLIMPEXP_BASE wxAppTraitsBase
 {
 public:
     // needed since this class declares virtual members
@@ -185,7 +185,7 @@ private:
     #include "wx/os2/apptbase.h"
 #else // no platform-specific methods to add to wxAppTraits
     // wxAppTraits must be a class because it was forward declared as class
-    class wxAppTraits : public wxAppTraitsBase
+    class WXDLLIMPEXP_BASE wxAppTraits : public wxAppTraitsBase
     {
     };
 #endif // platform
@@ -198,7 +198,7 @@ private:
 // wxConsoleAppTraitsBase: wxAppTraits implementation for the console apps
 // ----------------------------------------------------------------------------
 
-class wxConsoleAppTraitsBase : public wxAppTraits
+class WXDLLIMPEXP_BASE wxConsoleAppTraitsBase : public wxAppTraits
 {
 public:
 #if !wxUSE_CONSOLE_EVENTLOOP
@@ -238,7 +238,7 @@ public:
 
 #if wxUSE_GUI
 
-class  wxGUIAppTraitsBase : public wxAppTraits
+class WXDLLIMPEXP_CORE wxGUIAppTraitsBase : public wxAppTraits
 {
 public:
 #if wxUSE_LOG

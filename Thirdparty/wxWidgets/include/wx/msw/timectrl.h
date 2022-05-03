@@ -15,7 +15,7 @@
 // wxTimePickerCtrl
 // ----------------------------------------------------------------------------
 
-class  wxTimePickerCtrl : public wxTimePickerCtrlBase
+class WXDLLIMPEXP_ADV wxTimePickerCtrl : public wxTimePickerCtrlBase
 {
 public:
     // ctors

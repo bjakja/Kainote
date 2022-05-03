@@ -18,7 +18,7 @@
 // wxXPMHandler
 //-----------------------------------------------------------------------------
 
-class  wxXPMHandler : public wxImageHandler
+class WXDLLIMPEXP_CORE wxXPMHandler : public wxImageHandler
 {
 public:
     inline wxXPMHandler()

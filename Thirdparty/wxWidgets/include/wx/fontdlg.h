@@ -23,7 +23,7 @@
 // wxFontDialog interface
 // ----------------------------------------------------------------------------
 
-class  wxFontDialogBase : public wxDialog
+class WXDLLIMPEXP_CORE wxFontDialogBase : public wxDialog
 {
 public:
     // create the font dialog
@@ -106,7 +106,7 @@ inline bool wxFontDialogBase::Create(wxWindow *parent, const wxFontData *data)
 
 // get the font from user and return it, returns wxNullFont if the dialog was
 // cancelled
- wxFont wxGetFontFromUser(wxWindow *parent = NULL,
+WXDLLIMPEXP_CORE wxFont wxGetFontFromUser(wxWindow *parent = NULL,
                                           const wxFont& fontInit = wxNullFont,
                                           const wxString& caption = wxEmptyString);
 

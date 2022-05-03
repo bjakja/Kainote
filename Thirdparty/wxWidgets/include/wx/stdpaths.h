@@ -17,7 +17,7 @@
 #include "wx/string.h"
 #include "wx/filefn.h"
 
-class  wxStandardPaths;
+class WXDLLIMPEXP_FWD_BASE wxStandardPaths;
 
 // ----------------------------------------------------------------------------
 // wxStandardPaths returns the standard locations in the file system
@@ -25,7 +25,7 @@ class  wxStandardPaths;
 
 // NB: This is always compiled in, wxUSE_STDPATHS=0 only disables native
 //     wxStandardPaths class, but a minimal version is always available
-class  wxStandardPathsBase
+class WXDLLIMPEXP_BASE wxStandardPathsBase
 {
 public:
     // possible resources categories

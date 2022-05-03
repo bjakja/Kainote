@@ -30,7 +30,7 @@ enum
 // wxTimePickerCtrl: Allow the user to enter the time.
 // ----------------------------------------------------------------------------
 
-class  wxTimePickerCtrlBase : public wxDateTimePickerCtrl
+class WXDLLIMPEXP_ADV wxTimePickerCtrlBase : public wxDateTimePickerCtrl
 {
 public:
     /*
@@ -76,7 +76,8 @@ public:
     // Get the current time components. All pointers must be non-NULL.
     bool GetTime(int* hour, int* min, int* sec) const
     {
-       
+        wxCHECK_MSG( hour && min && sec, false,
+                     wxS("Time component pointers must be non-NULL") );
 
         const wxDateTime::Tm tm = GetValue().GetTm();
         *hour = tm.hour;
@@ -98,7 +99,7 @@ public:
 #else
     #include "wx/generic/timectrl.h"
 
-    class  wxTimePickerCtrl : public wxTimePickerCtrlGeneric
+    class WXDLLIMPEXP_ADV wxTimePickerCtrl : public wxTimePickerCtrlGeneric
     {
     public:
         wxTimePickerCtrl() { }

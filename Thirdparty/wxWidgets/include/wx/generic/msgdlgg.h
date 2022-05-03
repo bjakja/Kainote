@@ -12,9 +12,9 @@
 #ifndef _WX_GENERIC_MSGDLGG_H_
 #define _WX_GENERIC_MSGDLGG_H_
 
-class  wxSizer;
+class WXDLLIMPEXP_FWD_CORE wxSizer;
 
-class  wxGenericMessageDialog : public wxMessageDialogBase
+class WXDLLIMPEXP_CORE wxGenericMessageDialog : public wxMessageDialogBase
 {
 public:
     wxGenericMessageDialog(wxWindow *parent,

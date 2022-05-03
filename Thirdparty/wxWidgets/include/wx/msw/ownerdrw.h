@@ -14,7 +14,7 @@
 
 #if wxUSE_OWNER_DRAWN
 
-class  wxOwnerDrawn : public wxOwnerDrawnBase
+class WXDLLIMPEXP_CORE wxOwnerDrawn : public wxOwnerDrawnBase
 {
 public:
     wxOwnerDrawn() {}

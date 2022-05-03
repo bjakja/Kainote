@@ -34,7 +34,7 @@
 
 // A simple wxFontEnumerator which doesn't perform any filtering and
 // just returns all facenames and encodings found in the system
-class  wxSimpleFontEnumerator : public wxFontEnumerator
+class WXDLLEXPORT wxSimpleFontEnumerator : public wxFontEnumerator
 {
 public:
     wxSimpleFontEnumerator() { }

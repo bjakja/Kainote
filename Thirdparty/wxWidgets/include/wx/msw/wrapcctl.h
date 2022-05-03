@@ -14,14 +14,13 @@
 
 #include "wx/msw/wrapwin.h"
 
-
 #include <commctrl.h>
 
 // define things which might be missing from our commctrl.h
 #include "wx/msw/missing.h"
 
 // Set Unicode format for a common control
-inline void wxSetCCUnicodeFormat(HWND hwnd)
+inline void wxSetCCUnicodeFormat(HWND WXUNUSED_IN_WINCE(hwnd))
 {
 #ifndef __WXWINCE__
     ::SendMessage(hwnd, CCM_SETUNICODEFORMAT, wxUSE_UNICODE, 0);

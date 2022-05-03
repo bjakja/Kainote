@@ -23,7 +23,7 @@
 // notice that the classes in this header are defined in the core library even
 // although currently they're only used by wxGrid which is in wxAdv because we
 // plan to use it in wxListCtrl which is in core too in the future
-class  wxHeaderCtrlEvent;
+class WXDLLIMPEXP_FWD_CORE wxHeaderCtrlEvent;
 
 // ----------------------------------------------------------------------------
 // constants
@@ -42,13 +42,13 @@ enum
     wxHD_DEFAULT_STYLE = wxHD_ALLOW_REORDER
 };
 
-extern const char wxHeaderCtrlNameStr[];
+extern WXDLLIMPEXP_DATA_CORE(const char) wxHeaderCtrlNameStr[];
 
 // ----------------------------------------------------------------------------
 // wxHeaderCtrlBase defines the interface of a header control
 // ----------------------------------------------------------------------------
 
-class  wxHeaderCtrlBase : public wxControl
+class WXDLLIMPEXP_CORE wxHeaderCtrlBase : public wxControl
 {
 public:
     /*
@@ -87,7 +87,7 @@ public:
     // update the column with the given index
     void UpdateColumn(unsigned int idx)
     {
-        //wxCHECK_RET( idx < GetColumnCount(), "invalid column index" );
+        wxCHECK_RET( idx < GetColumnCount(), "invalid column index" );
 
         DoUpdate(idx);
     }
@@ -188,7 +188,7 @@ protected:
     virtual void UpdateColumnVisibility(unsigned int WXUNUSED(idx),
                                         bool WXUNUSED(show))
     {
-        //wxFAIL_MSG( "must be overridden if called" );
+        wxFAIL_MSG( "must be overridden if called" );
     }
 
     // this method is called from ShowCustomizeDialog() to reorder all columns
@@ -197,7 +197,7 @@ protected:
     // done by the control itself)
     virtual void UpdateColumnsOrder(const wxArrayInt& WXUNUSED(order))
     {
-        //wxFAIL_MSG( "must be overridden if called" );
+        wxFAIL_MSG( "must be overridden if called" );
     }
 
     // this method can be overridden in the derived classes to do something
@@ -253,7 +253,7 @@ private:
 // wxHeaderCtrlSimple: concrete header control which can be used standalone
 // ----------------------------------------------------------------------------
 
-class  wxHeaderCtrlSimple : public wxHeaderCtrl
+class WXDLLIMPEXP_CORE wxHeaderCtrlSimple : public wxHeaderCtrl
 {
 public:
     // control creation
@@ -279,7 +279,7 @@ public:
     // position appends it at the end
     void InsertColumn(const wxHeaderColumnSimple& col, unsigned int idx)
     {
-        //wxCHECK_RET( idx <= GetColumnCount(), "invalid column index" );
+        wxCHECK_RET( idx <= GetColumnCount(), "invalid column index" );
 
         DoInsert(col, idx);
     }
@@ -293,7 +293,7 @@ public:
     // delete the column at the given index
     void DeleteColumn(unsigned int idx)
     {
-        //wxCHECK_RET( idx < GetColumnCount(), "invalid column index" );
+        wxCHECK_RET( idx < GetColumnCount(), "invalid column index" );
 
         DoDelete(idx);
     }
@@ -309,7 +309,7 @@ public:
     // still account for it when using indices
     void ShowColumn(unsigned int idx, bool show = true)
     {
-        //wxCHECK_RET( idx < GetColumnCount(), "invalid column index" );
+        wxCHECK_RET( idx < GetColumnCount(), "invalid column index" );
 
         DoShowColumn(idx, show);
     }
@@ -322,7 +322,7 @@ public:
     // indicate that the column is used for sorting
     void ShowSortIndicator(unsigned int idx, bool ascending = true)
     {
-        //wxCHECK_RET( idx < GetColumnCount(), "invalid column index" );
+        wxCHECK_RET( idx < GetColumnCount(), "invalid column index" );
 
         DoShowSortIndicator(idx, ascending);
     }
@@ -375,7 +375,7 @@ private:
 // wxHeaderCtrl events
 // ----------------------------------------------------------------------------
 
-class  wxHeaderCtrlEvent : public wxNotifyEvent
+class WXDLLIMPEXP_CORE wxHeaderCtrlEvent : public wxNotifyEvent
 {
 public:
     wxHeaderCtrlEvent(wxEventType commandType = wxEVT_NULL, int winid = 0)
@@ -423,24 +423,24 @@ private:
 };
 
 
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_HEADER_CLICK, wxHeaderCtrlEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_HEADER_RIGHT_CLICK, wxHeaderCtrlEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_HEADER_MIDDLE_CLICK, wxHeaderCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_HEADER_CLICK, wxHeaderCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_HEADER_RIGHT_CLICK, wxHeaderCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_HEADER_MIDDLE_CLICK, wxHeaderCtrlEvent );
 
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_HEADER_DCLICK, wxHeaderCtrlEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_HEADER_RIGHT_DCLICK, wxHeaderCtrlEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_HEADER_MIDDLE_DCLICK, wxHeaderCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_HEADER_DCLICK, wxHeaderCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_HEADER_RIGHT_DCLICK, wxHeaderCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_HEADER_MIDDLE_DCLICK, wxHeaderCtrlEvent );
 
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_HEADER_SEPARATOR_DCLICK, wxHeaderCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_HEADER_SEPARATOR_DCLICK, wxHeaderCtrlEvent );
 
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_HEADER_BEGIN_RESIZE, wxHeaderCtrlEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_HEADER_RESIZING, wxHeaderCtrlEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_HEADER_END_RESIZE, wxHeaderCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_HEADER_BEGIN_RESIZE, wxHeaderCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_HEADER_RESIZING, wxHeaderCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_HEADER_END_RESIZE, wxHeaderCtrlEvent );
 
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_HEADER_BEGIN_REORDER, wxHeaderCtrlEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_HEADER_END_REORDER, wxHeaderCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_HEADER_BEGIN_REORDER, wxHeaderCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_HEADER_END_REORDER, wxHeaderCtrlEvent );
 
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_HEADER_DRAGGING_CANCELLED, wxHeaderCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_HEADER_DRAGGING_CANCELLED, wxHeaderCtrlEvent );
 
 typedef void (wxEvtHandler::*wxHeaderCtrlEventFunction)(wxHeaderCtrlEvent&);
 

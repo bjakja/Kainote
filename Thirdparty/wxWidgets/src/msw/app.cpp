@@ -18,20 +18,36 @@
 // ---------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-//#include "wx/wxprec.h"
+#include "wx/wxprec.h"
 
 #if defined(__BORLANDC__)
     #pragma hdrstop
 #endif
 
+#ifndef WX_PRECOMP
+    #include "wx/msw/wrapcctl.h"
+    #include "wx/dynarray.h"
+    #include "wx/frame.h"
+    #include "wx/app.h"
+    #include "wx/utils.h"
+    #include "wx/gdicmn.h"
+    #include "wx/pen.h"
+    #include "wx/brush.h"
+    #include "wx/cursor.h"
+    #include "wx/icon.h"
+    #include "wx/palette.h"
+    #include "wx/dc.h"
+    #include "wx/dialog.h"
+    #include "wx/msgdlg.h"
+    #include "wx/intl.h"
+    #include "wx/crt.h"
+    #include "wx/log.h"
+    #include "wx/module.h"
+#endif
 
-#include "wx/msw/wrapcctl.h"
-#include "wx/dynarray.h"
-#include "wx/frame.h"
-#include "wx/app.h"
-    
 #include "wx/apptrait.h"
 #include "wx/filename.h"
+#include "wx/dynlib.h"
 #include "wx/evtloop.h"
 #include "wx/thread.h"
 #include "wx/scopeguard.h"
@@ -60,14 +76,13 @@
 #endif
 
 #if wxUSE_OLE
-    //#include <ole2.h>
+    #include <ole2.h>
 #endif
 
-//#include <string.h>
-//#include <ctype.h>
+#include <string.h>
+#include <ctype.h>
 
 #include "wx/msw/missing.h"
-#include <windows.h>
 
 // instead of including <shlwapi.h> which is not part of the core SDK and not
 // shipped at all with other compilers, we always define the parts of it we
@@ -128,7 +143,7 @@ wxVector<ClassRegInfo> gs_regClassesInfo;
 // private functions
 // ----------------------------------------------------------------------------
 
-LRESULT  APIENTRY wxWndProc(HWND, UINT, WPARAM, LPARAM);
+LRESULT WXDLLEXPORT APIENTRY wxWndProc(HWND, UINT, WPARAM, LPARAM);
 
 // ===========================================================================
 // wxGUIAppTraits implementation
@@ -451,7 +466,7 @@ bool wxConsoleStderr::DoInit()
             wxLogLastError(wxT("ReadConsoleOutputCharacterA"));
             return false;
         }
-    } while (wxStrnicmp("    ", buf, WXSIZEOF(buf)) != 0 );
+    } while ( wxStrncmp("    ", buf, WXSIZEOF(buf)) != 0 );
 
     // calculate line offset and length of data
     m_dataLine = csbi.dwCursorPosition.Y - pos.Y;
@@ -491,7 +506,7 @@ int wxConsoleStderr::GetCommandHistory(wxWxCharBuffer& buf) const
 
         if ( len2 != len )
         {
-            //wxFAIL_MSG( wxT("failed getting history?") );
+            wxFAIL_MSG( wxT("failed getting history?") );
         }
     }
 
@@ -500,7 +515,7 @@ int wxConsoleStderr::GetCommandHistory(wxWxCharBuffer& buf) const
 
 bool wxConsoleStderr::IsHistoryUnchanged() const
 {
-    //wxASSERT_MSG( m_ok == 1, wxT("shouldn't be called if not initialized") );
+    wxASSERT_MSG( m_ok == 1, wxT("shouldn't be called if not initialized") );
 
     // get (possibly changed) command history
     wxWxCharBuffer history;
@@ -513,8 +528,8 @@ bool wxConsoleStderr::IsHistoryUnchanged() const
 
 bool wxConsoleStderr::Write(const wxString& text)
 {
-    //wxASSERT_MSG( m_hStderr != INVALID_HANDLE_VALUE,
-                    //wxT("should only be called if Init() returned true") );
+    wxASSERT_MSG( m_hStderr != INVALID_HANDLE_VALUE,
+                    wxT("should only be called if Init() returned true") );
 
     // get current position
     CONSOLE_SCREEN_BUFFER_INFO csbi;
@@ -1037,7 +1052,7 @@ terminate the program,\r\n\
             throw;
 
         default:
-            //wxFAIL_MSG( wxT("unexpected MessageBox() return code") );
+            wxFAIL_MSG( wxT("unexpected MessageBox() return code") );
             // fall through
 
         case IDRETRY:

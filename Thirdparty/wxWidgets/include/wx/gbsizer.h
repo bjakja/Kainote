@@ -28,7 +28,7 @@
 // is used for this and also for wxGridCellCoords.
 //---------------------------------------------------------------------------
 
-class  wxGBPosition
+class WXDLLIMPEXP_CORE wxGBPosition
 {
 public:
     wxGBPosition() : m_row(0), m_col(0) {}
@@ -50,7 +50,7 @@ private:
 };
 
 
-class  wxGBSpan
+class WXDLLIMPEXP_CORE wxGBSpan
 {
 public:
     wxGBSpan() { Init(); }
@@ -71,14 +71,14 @@ public:
     int GetColspan() const { return m_colspan; }
     void SetRowspan(int rowspan)
     {
-        //wxCHECK_RET( rowspan > 0, "Row span should be strictly positive" );
+        wxCHECK_RET( rowspan > 0, "Row span should be strictly positive" );
 
         m_rowspan = rowspan;
     }
 
     void SetColspan(int colspan)
     {
-        //wxCHECK_RET( colspan > 0, "Column span should be strictly positive" );
+        wxCHECK_RET( colspan > 0, "Column span should be strictly positive" );
 
         m_colspan = colspan;
     }
@@ -98,17 +98,17 @@ private:
 };
 
 
-extern const wxGBSpan wxDefaultSpan;
+extern WXDLLIMPEXP_DATA_CORE(const wxGBSpan) wxDefaultSpan;
 
 
 //---------------------------------------------------------------------------
 // wxGBSizerItem
 //---------------------------------------------------------------------------
 
-class  wxGridBagSizer;
+class WXDLLIMPEXP_FWD_CORE wxGridBagSizer;
 
 
-class  wxGBSizerItem : public wxSizerItem
+class WXDLLIMPEXP_CORE wxGBSizerItem : public wxSizerItem
 {
 public:
     // spacer
@@ -191,7 +191,7 @@ private:
 //---------------------------------------------------------------------------
 
 
-class  wxGridBagSizer : public wxFlexGridSizer
+class WXDLLIMPEXP_CORE wxGridBagSizer : public wxFlexGridSizer
 {
 public:
     wxGridBagSizer(int vgap = 0, int hgap = 0 );

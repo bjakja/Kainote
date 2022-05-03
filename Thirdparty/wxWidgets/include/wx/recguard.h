@@ -24,7 +24,7 @@ typedef int wxRecursionGuardFlag;
 // wxRecursionGuard is the simplest way to protect a function from reentrancy
 // ----------------------------------------------------------------------------
 
-class  wxRecursionGuard
+class WXDLLIMPEXP_BASE wxRecursionGuard
 {
 public:
     wxRecursionGuard(wxRecursionGuardFlag& flag)
@@ -35,7 +35,7 @@ public:
 
     ~wxRecursionGuard()
     {
-        //wxASSERT_MSG( m_flag > 0, wxT("unbalanced wxRecursionGuards!?") );
+        wxASSERT_MSG( m_flag > 0, wxT("unbalanced wxRecursionGuards!?") );
 
         m_flag--;
     }

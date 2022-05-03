@@ -12,7 +12,7 @@
 #ifndef _WX_UNIV_RADIOBOX_H_
 #define _WX_UNIV_RADIOBOX_H_
 
-class  wxRadioButton;
+class WXDLLIMPEXP_FWD_CORE wxRadioButton;
 
 #include "wx/statbox.h"
 #include "wx/dynarray.h"
@@ -23,7 +23,7 @@ WX_DEFINE_EXPORTED_ARRAY_PTR(wxRadioButton *, wxArrayRadioButtons);
 // wxRadioBox: a box full of radio buttons
 // ----------------------------------------------------------------------------
 
-class  wxRadioBox : public wxStaticBox,
+class WXDLLIMPEXP_CORE wxRadioBox : public wxStaticBox,
                                public wxRadioBoxBase
 {
 public:

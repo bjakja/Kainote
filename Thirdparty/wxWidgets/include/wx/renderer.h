@@ -25,8 +25,8 @@
 #ifndef _WX_RENDERER_H_
 #define _WX_RENDERER_H_
 
-class  wxDC;
-class  wxWindow;
+class WXDLLIMPEXP_FWD_CORE wxDC;
+class WXDLLIMPEXP_FWD_CORE wxWindow;
 
 #include "wx/gdicmn.h" // for wxPoint, wxSize
 #include "wx/colour.h"
@@ -93,7 +93,7 @@ enum wxTitleBarButton
 // ----------------------------------------------------------------------------
 
 // wxSplitterWindow parameters
-struct  wxSplitterRenderParams
+struct WXDLLIMPEXP_CORE wxSplitterRenderParams
 {
     // the only way to initialize this struct is by using this ctor
     wxSplitterRenderParams(wxCoord widthSash_, wxCoord border_, bool isSens_)
@@ -113,7 +113,7 @@ struct  wxSplitterRenderParams
 
 
 // extra optional parameters for DrawHeaderButton
-struct  wxHeaderButtonParams
+struct WXDLLIMPEXP_CORE wxHeaderButtonParams
 {
     wxHeaderButtonParams()
         : m_labelAlignment(wxALIGN_LEFT)
@@ -137,7 +137,7 @@ enum wxHeaderSortIconType
 
 
 // wxRendererNative interface version
-struct  wxRendererVersion
+struct WXDLLIMPEXP_CORE wxRendererVersion
 {
     wxRendererVersion(int version_, int age_) : version(version_), age(age_) { }
 
@@ -171,7 +171,7 @@ struct  wxRendererVersion
 // wxRendererNative: abstracts drawing methods needed by the native controls
 // ----------------------------------------------------------------------------
 
-class  wxRendererNative
+class WXDLLIMPEXP_CORE wxRendererNative
 {
 public:
     // drawing functions
@@ -375,7 +375,7 @@ public:
 // wxDelegateRendererNative: allows reuse of renderers code
 // ----------------------------------------------------------------------------
 
-class  wxDelegateRendererNative : public wxRendererNative
+class WXDLLIMPEXP_CORE wxDelegateRendererNative : public wxRendererNative
 {
 public:
     wxDelegateRendererNative()

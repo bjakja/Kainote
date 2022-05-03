@@ -27,9 +27,9 @@
 #include "wx/filename.h"
 #include "wx/hashmap.h"
 
-class  wxFSFile;
-class  wxFileSystemHandler;
-class  wxFileSystem;
+class WXDLLIMPEXP_FWD_BASE wxFSFile;
+class WXDLLIMPEXP_FWD_BASE wxFileSystemHandler;
+class WXDLLIMPEXP_FWD_BASE wxFileSystem;
 
 //--------------------------------------------------------------------------------
 // wxFSFile
@@ -38,7 +38,7 @@ class  wxFileSystem;
 //                  (in 'index.htm#chapter2', 'chapter2' is anchor)
 //--------------------------------------------------------------------------------
 
-class  wxFSFile : public wxObject
+class WXDLLIMPEXP_BASE wxFSFile : public wxObject
 {
 public:
     wxFSFile(wxInputStream *stream, const wxString& loc,
@@ -113,7 +113,7 @@ private:
 //                  kinds of files (HTPP, FTP, local, tar.gz etc..)
 //--------------------------------------------------------------------------------
 
-class  wxFileSystemHandler : public wxObject
+class WXDLLIMPEXP_BASE wxFileSystemHandler : public wxObject
 {
 public:
     wxFileSystemHandler() : wxObject() {}
@@ -174,9 +174,9 @@ enum wxFileSystemOpenFlags
     wxFS_SEEKABLE = 4   // Returned stream will be seekable
 };
 
-WX_DECLARE_VOIDPTR_HASH_MAP_WITH_DECL(wxFileSystemHandler*, wxFSHandlerHash, class );
+WX_DECLARE_VOIDPTR_HASH_MAP_WITH_DECL(wxFileSystemHandler*, wxFSHandlerHash, class WXDLLIMPEXP_BASE);
 
-class  wxFileSystem : public wxObject
+class WXDLLIMPEXP_BASE wxFileSystem : public wxObject
 {
 public:
     wxFileSystem() : wxObject() { m_FindFileHandler = NULL;}
@@ -275,7 +275,7 @@ special characters :
 */
 
 
-class  wxLocalFSHandler : public wxFileSystemHandler
+class WXDLLIMPEXP_BASE wxLocalFSHandler : public wxFileSystemHandler
 {
 public:
     virtual bool CanOpen(const wxString& location);
@@ -295,7 +295,7 @@ protected:
 
 // Stream reading data from wxFSFile: this allows to use virtual files with any
 // wx functions accepting streams.
-class  wxFSInputStream : public wxWrapperInputStream
+class WXDLLIMPEXP_BASE wxFSInputStream : public wxWrapperInputStream
 {
 public:
     // Notice that wxFS_READ is implied in flags.

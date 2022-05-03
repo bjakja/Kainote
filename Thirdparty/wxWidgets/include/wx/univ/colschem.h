@@ -12,7 +12,7 @@
 #ifndef _WX_UNIV_COLSCHEM_H_
 #define _WX_UNIV_COLSCHEM_H_
 
-class  wxWindow;
+class WXDLLIMPEXP_FWD_CORE wxWindow;
 
 #include "wx/colour.h"
 #include "wx/checkbox.h"
@@ -21,7 +21,7 @@ class  wxWindow;
 // wxColourScheme
 // ----------------------------------------------------------------------------
 
-class  wxColourScheme
+class WXDLLIMPEXP_CORE wxColourScheme
 {
 public:
     // the standard colours

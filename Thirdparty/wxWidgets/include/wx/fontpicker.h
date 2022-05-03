@@ -20,10 +20,10 @@
 #include "wx/pickerbase.h"
 
 
-class  wxFontPickerEvent;
+class WXDLLIMPEXP_FWD_CORE wxFontPickerEvent;
 
-extern const char wxFontPickerWidgetNameStr[];
-extern const char wxFontPickerCtrlNameStr[];
+extern WXDLLIMPEXP_DATA_CORE(const char) wxFontPickerWidgetNameStr[];
+extern WXDLLIMPEXP_DATA_CORE(const char) wxFontPickerCtrlNameStr[];
 
 
 // ----------------------------------------------------------------------------
@@ -31,7 +31,7 @@ extern const char wxFontPickerCtrlNameStr[];
 //                         implemented by controls used by wxFontPickerCtrl
 // ----------------------------------------------------------------------------
 
-class  wxFontPickerWidgetBase
+class WXDLLIMPEXP_CORE wxFontPickerWidgetBase
 {
 public:
     wxFontPickerWidgetBase() { m_selectedFont = *wxNORMAL_FONT; }
@@ -96,7 +96,7 @@ protected:
 // used, a textctrl next to it.
 // ----------------------------------------------------------------------------
 
-class  wxFontPickerCtrl : public wxPickerBase
+class WXDLLIMPEXP_CORE wxFontPickerCtrl : public wxPickerBase
 {
 public:
     wxFontPickerCtrl()
@@ -180,9 +180,9 @@ private:
 // wxFontPickerEvent: used by wxFontPickerCtrl only
 // ----------------------------------------------------------------------------
 
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_FONTPICKER_CHANGED, wxFontPickerEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_FONTPICKER_CHANGED, wxFontPickerEvent );
 
-class  wxFontPickerEvent : public wxCommandEvent
+class WXDLLIMPEXP_CORE wxFontPickerEvent : public wxCommandEvent
 {
 public:
     wxFontPickerEvent() {}

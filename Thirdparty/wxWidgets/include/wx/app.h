@@ -25,15 +25,15 @@
 #include "wx/intl.h"        // for wxLayoutDirection
 #include "wx/log.h"         // for wxDISABLE_DEBUG_LOGGING_IN_RELEASE_BUILD()
 
-class wxAppConsole;
-class wxAppTraits;
-class wxCmdLineParser;
-class wxEventLoopBase;
-class wxMessageOutput;
+class WXDLLIMPEXP_FWD_BASE wxAppConsole;
+class WXDLLIMPEXP_FWD_BASE wxAppTraits;
+class WXDLLIMPEXP_FWD_BASE wxCmdLineParser;
+class WXDLLIMPEXP_FWD_BASE wxEventLoopBase;
+class WXDLLIMPEXP_FWD_BASE wxMessageOutput;
 
 #if wxUSE_GUI
-    struct  wxVideoMode;
-    class  wxWindow;
+    struct WXDLLIMPEXP_FWD_CORE wxVideoMode;
+    class WXDLLIMPEXP_FWD_CORE wxWindow;
 #endif
 
 // this macro should be used in any main() or equivalent functions defined in wx
@@ -65,13 +65,13 @@ enum
 // use of this list is strongly deprecated, use wxApp ScheduleForDestruction()
 // and IsScheduledForDestruction()  methods instead of this list directly, it
 // is here for compatibility purposes only
-extern wxList wxPendingDelete;
+extern WXDLLIMPEXP_DATA_BASE(wxList) wxPendingDelete;
 
 // ----------------------------------------------------------------------------
 // wxAppConsoleBase: wxApp for non-GUI applications
 // ----------------------------------------------------------------------------
 
-class  wxAppConsoleBase : public wxEvtHandler,
+class WXDLLIMPEXP_BASE wxAppConsoleBase : public wxEvtHandler,
                                           public wxEventFilter
 {
 public:
@@ -487,7 +487,7 @@ protected:
     // flag modified by Suspend/ResumeProcessingOfPendingEvents()
     bool m_bDoPendingEventProcessing;
 
-    friend class wxEvtHandler;
+    friend class WXDLLIMPEXP_FWD_BASE wxEvtHandler;
 
     // the application object is a singleton anyhow, there is no sense in
     // copying it
@@ -507,7 +507,7 @@ protected:
 
 #if wxUSE_GUI
 
-class  wxAppBase : public wxAppConsole
+class WXDLLIMPEXP_CORE wxAppBase : public wxAppConsole
 {
 public:
     wxAppBase();
@@ -732,7 +732,7 @@ protected:
 // ------------------------------------------------------
 
 // Force an exit from main loop
- void wxExit();
+WXDLLIMPEXP_BASE void wxExit();
 
 // avoid redeclaring this function here if it had been already declared by
 // wx/utils.h, this results in warnings from g++ with -Wredundant-decls
@@ -740,12 +740,12 @@ protected:
 #define wx_YIELD_DECLARED
 
 // Yield to other apps/messages
- bool wxYield();
+WXDLLIMPEXP_CORE bool wxYield();
 
 #endif // wx_YIELD_DECLARED
 
 // Yield to other apps/messages
- void wxWakeUpIdle();
+WXDLLIMPEXP_BASE void wxWakeUpIdle();
 
 // ----------------------------------------------------------------------------
 // macros for dynamic creation of the application object
@@ -755,7 +755,7 @@ protected:
 // creator function. wxApp can then call this function to create a new app
 // object. Convoluted, but necessary.
 
-class  wxAppInitializer
+class WXDLLIMPEXP_BASE wxAppInitializer
 {
 public:
     wxAppInitializer(wxAppInitializerFunction fn)

@@ -16,7 +16,7 @@
 // wxDataViewCustomRenderer
 // ---------------------------------------------------------
 
-class  wxDataViewCustomRenderer: public wxDataViewRenderer
+class WXDLLIMPEXP_ADV wxDataViewCustomRenderer: public wxDataViewRenderer
 {
 public:
     wxDataViewCustomRenderer( const wxString &varianttype = wxT("string"),
@@ -44,7 +44,7 @@ private:
 // wxDataViewTextRenderer
 // ---------------------------------------------------------
 
-class  wxDataViewTextRenderer: public wxDataViewRenderer
+class WXDLLIMPEXP_ADV wxDataViewTextRenderer: public wxDataViewRenderer
 {
 public:
     wxDataViewTextRenderer( const wxString &varianttype = wxT("string"),
@@ -74,7 +74,7 @@ protected:
 // wxDataViewBitmapRenderer
 // ---------------------------------------------------------
 
-class  wxDataViewBitmapRenderer: public wxDataViewRenderer
+class WXDLLIMPEXP_ADV wxDataViewBitmapRenderer: public wxDataViewRenderer
 {
 public:
     wxDataViewBitmapRenderer( const wxString &varianttype = wxT("wxBitmap"),
@@ -99,7 +99,7 @@ protected:
 // wxDataViewToggleRenderer
 // ---------------------------------------------------------
 
-class  wxDataViewToggleRenderer: public wxDataViewRenderer
+class WXDLLIMPEXP_ADV wxDataViewToggleRenderer: public wxDataViewRenderer
 {
 public:
     wxDataViewToggleRenderer( const wxString &varianttype = wxT("bool"),
@@ -129,7 +129,7 @@ protected:
 // wxDataViewProgressRenderer
 // ---------------------------------------------------------
 
-class  wxDataViewProgressRenderer: public wxDataViewRenderer
+class WXDLLIMPEXP_ADV wxDataViewProgressRenderer: public wxDataViewRenderer
 {
 public:
     wxDataViewProgressRenderer( const wxString &label = wxEmptyString,
@@ -155,7 +155,7 @@ protected:
 // wxDataViewIconTextRenderer
 // ---------------------------------------------------------
 
-class  wxDataViewIconTextRenderer: public wxDataViewRenderer
+class WXDLLIMPEXP_ADV wxDataViewIconTextRenderer: public wxDataViewRenderer
 {
 public:
     wxDataViewIconTextRenderer( const wxString &varianttype = wxT("wxDataViewIconText"),

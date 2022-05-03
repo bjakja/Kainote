@@ -66,20 +66,20 @@
 // forward declarations
 // ----------------------------------------------------------------------------
 
-class  wxCaret;
-class  wxControl;
-class  wxCursor;
-class  wxDC;
-class  wxDropTarget;
-class  wxLayoutConstraints;
-class  wxSizer;
-class  wxToolTip;
-class  wxWindowBase;
-class  wxWindow;
-class  wxScrollHelper;
+class WXDLLIMPEXP_FWD_CORE wxCaret;
+class WXDLLIMPEXP_FWD_CORE wxControl;
+class WXDLLIMPEXP_FWD_CORE wxCursor;
+class WXDLLIMPEXP_FWD_CORE wxDC;
+class WXDLLIMPEXP_FWD_CORE wxDropTarget;
+class WXDLLIMPEXP_FWD_CORE wxLayoutConstraints;
+class WXDLLIMPEXP_FWD_CORE wxSizer;
+class WXDLLIMPEXP_FWD_CORE wxToolTip;
+class WXDLLIMPEXP_FWD_CORE wxWindowBase;
+class WXDLLIMPEXP_FWD_CORE wxWindow;
+class WXDLLIMPEXP_FWD_CORE wxScrollHelper;
 
 #if wxUSE_ACCESSIBILITY
-class  wxAccessible;
+class WXDLLIMPEXP_FWD_CORE wxAccessible;
 #endif
 
 // ----------------------------------------------------------------------------
@@ -87,7 +87,7 @@ class  wxAccessible;
 // ----------------------------------------------------------------------------
 
 // struct containing all the visual attributes of a control
-struct wxVisualAttributes
+struct WXDLLIMPEXP_CORE wxVisualAttributes
 {
     // the font used for control label/text inside it
     wxFont font;
@@ -142,16 +142,16 @@ enum
 // (pseudo)template list classes
 // ----------------------------------------------------------------------------
 
-WX_DECLARE_LIST_3(wxWindow, wxWindowBase, wxWindowList, wxWindowListNode, class );
+WX_DECLARE_LIST_3(wxWindow, wxWindowBase, wxWindowList, wxWindowListNode, class WXDLLIMPEXP_CORE);
 
 // ----------------------------------------------------------------------------
 // global variables
 // ----------------------------------------------------------------------------
 
-extern wxWindowList wxTopLevelWindows;
+extern WXDLLIMPEXP_DATA_CORE(wxWindowList) wxTopLevelWindows;
 
 // declared here for compatibility only, main declaration is in wx/app.h
-extern wxList wxPendingDelete;
+extern WXDLLIMPEXP_DATA_BASE(wxList) wxPendingDelete;
 
 // ----------------------------------------------------------------------------
 // wxWindowBase is the base class for all GUI controls/widgets, this is the public
@@ -164,7 +164,7 @@ extern wxList wxPendingDelete;
 // temporarily switches event handlers).
 // ----------------------------------------------------------------------------
 
-class wxWindowBase : public wxEvtHandler
+class WXDLLIMPEXP_CORE wxWindowBase : public wxEvtHandler
 {
 public:
     // creating the window
@@ -1790,7 +1790,7 @@ private:
     wxSize GetDlgUnitBase() const;
 
     // the stack of windows which have captured the mouse
-    static struct  wxWindowNext *ms_winCaptureNext;
+    static struct WXDLLIMPEXP_FWD_CORE wxWindowNext *ms_winCaptureNext;
 
     // the window that currently has mouse capture
     static wxWindow *ms_winCaptureCurrent;
@@ -1920,16 +1920,16 @@ inline wxWindow *wxWindowBase::GetGrandParent() const
 
 // Find the wxWindow at the current mouse position, also returning the mouse
 // position.
-extern  wxWindow* wxFindWindowAtPointer(wxPoint& pt);
+extern WXDLLIMPEXP_CORE wxWindow* wxFindWindowAtPointer(wxPoint& pt);
 
 // Get the current mouse position.
-extern  wxPoint wxGetMousePosition();
+extern WXDLLIMPEXP_CORE wxPoint wxGetMousePosition();
 
 // get the currently active window of this application or NULL
-extern  wxWindow *wxGetActiveWindow();
+extern WXDLLIMPEXP_CORE wxWindow *wxGetActiveWindow();
 
 // get the (first) top level parent window
- wxWindow* wxGetTopLevelParent(wxWindow *win);
+WXDLLIMPEXP_CORE wxWindow* wxGetTopLevelParent(wxWindow *win);
 
 #if WXWIN_COMPATIBILITY_2_6
     // deprecated (doesn't start with 'wx' prefix), use wxWindow::NewControlId()
@@ -1942,7 +1942,7 @@ extern  wxWindow *wxGetActiveWindow();
 // accessible object for windows
 // ----------------------------------------------------------------------------
 
-class  wxWindowAccessible: public wxAccessible
+class WXDLLIMPEXP_CORE wxWindowAccessible: public wxAccessible
 {
 public:
     wxWindowAccessible(wxWindow* win): wxAccessible(win) { if (win) win->SetAccessible(this); }

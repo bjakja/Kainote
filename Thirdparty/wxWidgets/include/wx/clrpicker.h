@@ -20,10 +20,10 @@
 #include "wx/pickerbase.h"
 
 
-class  wxColourPickerEvent;
+class WXDLLIMPEXP_FWD_CORE wxColourPickerEvent;
 
-extern const char wxColourPickerWidgetNameStr[];
-extern const char wxColourPickerCtrlNameStr[];
+extern WXDLLIMPEXP_DATA_CORE(const char) wxColourPickerWidgetNameStr[];
+extern WXDLLIMPEXP_DATA_CORE(const char) wxColourPickerCtrlNameStr[];
 
 // show the colour in HTML form (#AABBCC) as colour button label
 #define wxCLRBTN_SHOW_LABEL     100
@@ -38,7 +38,7 @@ extern const char wxColourPickerCtrlNameStr[];
 //                           implemented by controls used by wxColourPickerCtrl
 // ----------------------------------------------------------------------------
 
-class  wxColourPickerWidgetBase
+class WXDLLIMPEXP_CORE wxColourPickerWidgetBase
 {
 public:
     wxColourPickerWidgetBase() { m_colour = *wxBLACK; }
@@ -95,7 +95,7 @@ protected:
 #define wxCLRP_USE_TEXTCTRL       (wxPB_USE_TEXTCTRL)
 #define wxCLRP_DEFAULT_STYLE      0
 
-class  wxColourPickerCtrl : public wxPickerBase
+class WXDLLIMPEXP_CORE wxColourPickerCtrl : public wxPickerBase
 {
 public:
     wxColourPickerCtrl() : m_bIgnoreNextTextCtrlUpdate(false) {}
@@ -160,9 +160,9 @@ private:
 // wxColourPickerEvent: used by wxColourPickerCtrl only
 // ----------------------------------------------------------------------------
 
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEvent );
 
-class  wxColourPickerEvent : public wxCommandEvent
+class WXDLLIMPEXP_CORE wxColourPickerEvent : public wxCommandEvent
 {
 public:
     wxColourPickerEvent() {}

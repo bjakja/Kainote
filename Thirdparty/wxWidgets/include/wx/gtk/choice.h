@@ -10,8 +10,8 @@
 #ifndef _WX_GTK_CHOICE_H_
 #define _WX_GTK_CHOICE_H_
 
-class  wxSortedArrayString;
-class  wxArrayString;
+class WXDLLIMPEXP_FWD_BASE wxSortedArrayString;
+class WXDLLIMPEXP_FWD_BASE wxArrayString;
 
 //-----------------------------------------------------------------------------
 // wxChoice
@@ -19,7 +19,7 @@ class  wxArrayString;
 
 class wxGtkCollatedArrayString;
 
-class  wxChoice : public wxChoiceBase
+class WXDLLIMPEXP_CORE wxChoice : public wxChoiceBase
 {
 public:
     wxChoice()

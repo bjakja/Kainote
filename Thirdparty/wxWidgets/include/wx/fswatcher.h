@@ -68,11 +68,11 @@ enum wxFSWPathType
 /**
  * Event containing information about file system change.
  */
-class  wxFileSystemWatcherEvent;
-wxDECLARE_EXPORTED_EVENT(, wxEVT_FSWATCHER,
+class WXDLLIMPEXP_FWD_BASE wxFileSystemWatcherEvent;
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_BASE, wxEVT_FSWATCHER,
                          wxFileSystemWatcherEvent);
 
-class  wxFileSystemWatcherEvent: public wxEvent
+class WXDLLIMPEXP_BASE wxFileSystemWatcherEvent: public wxEvent
 {
 public:
     wxFileSystemWatcherEvent(int changeType, int watchid = wxID_ANY) :
@@ -237,7 +237,7 @@ class wxFSWatcherImpl;
  * Main entry point for clients interested in file system events.
  * Defines interface that can be used to receive that kind of events.
  */
-class  wxFileSystemWatcherBase: public wxEvtHandler
+class WXDLLIMPEXP_BASE wxFileSystemWatcherBase: public wxEvtHandler
 {
 public:
     wxFileSystemWatcherBase();
@@ -312,8 +312,8 @@ protected:
         wxFileName path_copy = wxFileName(path);
         if ( !path_copy.Normalize() )
         {
-           /* wxFAIL_MSG(wxString::Format("Unable to normalize path '%s'",
-                                         path.GetFullPath()));*/
+            wxFAIL_MSG(wxString::Format("Unable to normalize path '%s'",
+                                         path.GetFullPath()));
             return wxEmptyString;
         }
 

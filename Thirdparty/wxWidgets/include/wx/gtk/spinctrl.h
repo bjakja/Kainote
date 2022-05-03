@@ -20,7 +20,7 @@
 // function ambiguity.
 //-----------------------------------------------------------------------------
 
-class  wxSpinCtrlGTKBase : public wxSpinCtrlBase
+class WXDLLIMPEXP_CORE wxSpinCtrlGTKBase : public wxSpinCtrlBase
 {
 public:
     bool Create(wxWindow *parent,
@@ -87,7 +87,7 @@ protected:
 // wxSpinCtrl - An integer valued spin control
 //-----------------------------------------------------------------------------
 
-class  wxSpinCtrl : public wxSpinCtrlGTKBase
+class WXDLLIMPEXP_CORE wxSpinCtrl : public wxSpinCtrlGTKBase
 {
 public:
     wxSpinCtrl() {}
@@ -135,7 +135,7 @@ public:
 // wxSpinCtrlDouble - a double valued spin control
 //-----------------------------------------------------------------------------
 
-class  wxSpinCtrlDouble : public wxSpinCtrlGTKBase
+class WXDLLIMPEXP_CORE wxSpinCtrlDouble : public wxSpinCtrlGTKBase
 {
 public:
     wxSpinCtrlDouble() {}

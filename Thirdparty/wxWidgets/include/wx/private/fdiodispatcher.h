@@ -24,7 +24,7 @@ enum wxFDIODispatcherEntryFlags
 };
 
 // base class for wxSelectDispatcher and wxEpollDispatcher
-class  wxFDIODispatcher
+class WXDLLIMPEXP_BASE wxFDIODispatcher
 {
 public:
     enum { TIMEOUT_INFINITE = -1 };
@@ -93,7 +93,7 @@ WX_DECLARE_HASH_MAP(
 //
 // notice that all functions for FD management have implementation
 // in the base class and should be called from the derived classes
-class  wxMappedFDIODispatcher : public wxFDIODispatcher
+class WXDLLIMPEXP_BASE wxMappedFDIODispatcher : public wxFDIODispatcher
 {
 public:
     // find the handler for the given fd, return NULL if none

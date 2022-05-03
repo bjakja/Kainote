@@ -21,15 +21,15 @@
 #include "wx/string.h"
 #include "wx/arrstr.h"
 
-class  wxMenu;
-class  wxConfigBase;
-class  wxFileName;
+class WXDLLIMPEXP_FWD_CORE wxMenu;
+class WXDLLIMPEXP_FWD_BASE wxConfigBase;
+class WXDLLIMPEXP_FWD_BASE wxFileName;
 
 // ----------------------------------------------------------------------------
 // File history management
 // ----------------------------------------------------------------------------
 
-class  wxFileHistoryBase : public wxObject
+class WXDLLIMPEXP_CORE wxFileHistoryBase : public wxObject
 {
 public:
     wxFileHistoryBase(size_t maxFiles = 9, wxWindowID idBase = wxID_FILE1);
@@ -99,7 +99,7 @@ inline size_t wxFileHistoryBase::GetNoHistoryFiles() const
     #include "wx/gtk/filehistory.h"
 #else
     // no platform-specific implementation of wxFileHistory yet
-    class  wxFileHistory : public wxFileHistoryBase
+    class WXDLLIMPEXP_CORE wxFileHistory : public wxFileHistoryBase
     {
     public:
         wxFileHistory(size_t maxFiles = 9, wxWindowID idBase = wxID_FILE1)

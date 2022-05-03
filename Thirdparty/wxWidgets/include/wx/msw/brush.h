@@ -12,20 +12,22 @@
 #ifndef _WX_BRUSH_H_
 #define _WX_BRUSH_H_
 
-class wxBrush;
-class wxColour;
-class wxBitmap;
+class WXDLLIMPEXP_FWD_CORE wxBrush;
+class WXDLLIMPEXP_FWD_CORE wxColour;
+class WXDLLIMPEXP_FWD_CORE wxBitmap;
 
 // ----------------------------------------------------------------------------
 // wxBrush
 // ----------------------------------------------------------------------------
 
-class wxBrush : public wxBrushBase
+class WXDLLIMPEXP_CORE wxBrush : public wxBrushBase
 {
 public:
     wxBrush();
     wxBrush(const wxColour& col, wxBrushStyle style = wxBRUSHSTYLE_SOLID);
-
+#if FUTURE_WXWIN_COMPATIBILITY_3_0
+    wxDEPRECATED_FUTURE( wxBrush(const wxColour& col, int style) );
+#endif
     wxBrush(const wxBitmap& stipple);
     virtual ~wxBrush();
 
@@ -41,6 +43,10 @@ public:
     wxBrushStyle GetStyle() const;
     wxBitmap *GetStipple() const;
 
+#if FUTURE_WXWIN_COMPATIBILITY_3_0
+    wxDEPRECATED_FUTURE( void SetStyle(int style) )
+        { SetStyle((wxBrushStyle)style); }
+#endif
 
     // return the HBRUSH for this brush
     virtual WXHANDLE GetResourceHandle() const;

@@ -26,8 +26,8 @@
     #include "wx/msw/wrapwin.h"
 #endif
 
-class  wxArrayString;
-struct  wxNativeEncodingInfo;
+class WXDLLIMPEXP_FWD_BASE wxArrayString;
+struct WXDLLIMPEXP_FWD_CORE wxNativeEncodingInfo;
 
 #if defined(_WX_X_FONTLIKE)
 
@@ -66,7 +66,7 @@ enum wxXLFDField
 // somewhere and pass it somewhere else (possibly save them somewhere using
 // ToString() and restore them using FromString())
 
-class wxNativeFontInfo
+class WXDLLIMPEXP_CORE wxNativeFontInfo
 {
 public:
 #if wxUSE_PANGO
@@ -109,14 +109,6 @@ public:
     wxNativeFontInfo(const LOGFONT& lf_) : lf(lf_) { }
 
     LOGFONT      lf;
-    int           pointSize;
-    wxFontFamily  family;
-    wxFontStyle   style;
-    wxFontWeight  weight;
-    bool          underlined;
-    bool          strikethrough;
-    wxString      faceName;
-    wxFontEncoding encoding;
 #elif defined(__WXPM__)
     // OS/2 native structures that define a font
     FATTRS       fa;
@@ -304,12 +296,12 @@ public:
 // translate a wxFontEncoding into native encoding parameter (defined above),
 // returning true if an (exact) macth could be found, false otherwise (without
 // attempting any substitutions)
- bool wxGetNativeFontEncoding(wxFontEncoding encoding,
+WXDLLIMPEXP_CORE bool wxGetNativeFontEncoding(wxFontEncoding encoding,
                                               wxNativeEncodingInfo *info);
 
 // test for the existence of the font described by this facename/encoding,
 // return true if such font(s) exist, false otherwise
- bool wxTestFontEncoding(const wxNativeEncodingInfo& info);
+WXDLLIMPEXP_CORE bool wxTestFontEncoding(const wxNativeEncodingInfo& info);
 
 // ----------------------------------------------------------------------------
 // font-related functions (X and GTK)

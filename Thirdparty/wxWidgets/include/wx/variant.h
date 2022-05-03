@@ -54,7 +54,7 @@ class wxAny;
  * overloading wxVariant with unnecessary functionality.
  */
 
-class  wxVariantData : public wxObjectRefData
+class WXDLLIMPEXP_BASE wxVariantData : public wxObjectRefData
 {
     friend class wxVariant;
 public:
@@ -97,11 +97,11 @@ protected:
  * built in.
  */
 
-class  wxVariant;
+class WXDLLIMPEXP_FWD_BASE wxVariant;
 
-WX_DECLARE_LIST_WITH_DECL(wxVariant, wxVariantList, class );
+WX_DECLARE_LIST_WITH_DECL(wxVariant, wxVariantList, class WXDLLIMPEXP_BASE);
 
-class  wxVariant: public wxObject
+class WXDLLIMPEXP_BASE wxVariant: public wxObject
 {
 public:
     wxVariant();
@@ -209,7 +209,7 @@ public:
     wxVariant(const char* val, const wxString& name = wxEmptyString);
     wxVariant(const wchar_t* val, const wxString& name = wxEmptyString);
     wxVariant(const wxCStrData& val, const wxString& name = wxEmptyString);
-    //wxVariant(const wxScopedCharBuffer& val, const wxString& name = wxEmptyString);
+    wxVariant(const wxScopedCharBuffer& val, const wxString& name = wxEmptyString);
     wxVariant(const wxScopedWCharBuffer& val, const wxString& name = wxEmptyString);
 
     bool operator== (const wxString& value) const;
@@ -238,7 +238,7 @@ public:
         { return operator!=(wxString(value)); }
     wxVariant& operator=(const std::string& value)
         { return operator=(wxString(value)); }
-    //operator std::string() const { return (operator wxString()).ToStdString(); }
+    operator std::string() const { return (operator wxString()).ToStdString(); }
 
     wxVariant(const wxStdWideString& val, const wxString& name = wxEmptyString);
     bool operator==(const wxStdWideString& value) const
@@ -410,7 +410,7 @@ typedef wxVariantData* (*wxVariantDataFactory)(const wxAny& any);
 // wxAnyToVariantRegistration instances are kept in global scope and
 // wxAnyValueTypeGlobals in any.cpp will use their data when the time is
 // right.
-class  wxAnyToVariantRegistration
+class WXDLLIMPEXP_BASE wxAnyToVariantRegistration
 {
 public:
     wxAnyToVariantRegistration(wxVariantDataFactory factory);
@@ -572,7 +572,7 @@ bool classname##VariantData::Eq(wxVariantData& data) const \
 // Replacement for using wxDynamicCast on a wxVariantData object
 #define wxDynamicCastVariantData(data, classname) dynamic_cast<classname*>(data)
 
-extern wxVariant  wxNullVariant;
+extern wxVariant WXDLLIMPEXP_BASE wxNullVariant;
 
 #endif // wxUSE_VARIANT
 

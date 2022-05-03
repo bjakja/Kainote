@@ -17,13 +17,13 @@
 // Styles that can be used with any wxNonOwnedWindow:
 #define wxFRAME_SHAPED          0x0010  // Create a window that is able to be shaped
 
-class  wxGraphicsPath;
+class WXDLLIMPEXP_FWD_CORE wxGraphicsPath;
 
 // ----------------------------------------------------------------------------
 // wxNonOwnedWindow: a window that is not a child window of another one.
 // ----------------------------------------------------------------------------
 
-class  wxNonOwnedWindowBase : public wxWindow
+class WXDLLIMPEXP_CORE wxNonOwnedWindowBase : public wxWindow
 {
 public:
     // Set the shape of the window to the given region.
@@ -35,11 +35,11 @@ public:
         // use this port any more, we could get rid of this requirement, but
         // for now you must specify wxFRAME_SHAPED for SetShape() to work on
         // all platforms.
-        /*wxCHECK_MSG
+        wxCHECK_MSG
         (
             HasFlag(wxFRAME_SHAPED), false,
             wxS("Shaped windows must be created with the wxFRAME_SHAPED style.")
-        );*/
+        );
 
         return region.IsEmpty() ? DoClearShape() : DoSetRegionShape(region);
     }
@@ -48,11 +48,11 @@ public:
     // Set the shape using the specified path.
     bool SetShape(const wxGraphicsPath& path)
     {
-        /*wxCHECK_MSG
+        wxCHECK_MSG
         (
             HasFlag(wxFRAME_SHAPED), false,
             wxS("Shaped windows must be created with the wxFRAME_SHAPED style.")
-        );*/
+        );
 
         return DoSetPathShape(path);
     }

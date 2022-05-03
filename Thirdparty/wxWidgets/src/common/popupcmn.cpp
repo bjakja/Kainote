@@ -229,8 +229,8 @@ wxPopupTransientWindow::~wxPopupTransientWindow()
     if (m_handlerPopup && m_handlerPopup->GetNextHandler())
         PopHandlers();
 
-    /*wxASSERT(!m_handlerFocus || !m_handlerFocus->GetNextHandler());
-    wxASSERT(!m_handlerPopup || !m_handlerPopup->GetNextHandler());*/
+    wxASSERT(!m_handlerFocus || !m_handlerFocus->GetNextHandler());
+    wxASSERT(!m_handlerPopup || !m_handlerPopup->GetNextHandler());
 
     delete m_handlerFocus;
     delete m_handlerPopup;
@@ -279,8 +279,8 @@ void wxPopupTransientWindow::Popup(wxWindow *winFocus)
     Show();
 
     // There is a problem if these are still in use
-    /*wxASSERT(!m_handlerFocus || !m_handlerFocus->GetNextHandler());
-    wxASSERT(!m_handlerPopup || !m_handlerPopup->GetNextHandler());*/
+    wxASSERT(!m_handlerFocus || !m_handlerFocus->GetNextHandler());
+    wxASSERT(!m_handlerPopup || !m_handlerPopup->GetNextHandler());
 
     if (!m_handlerPopup)
         m_handlerPopup = new wxPopupWindowHandler(this);
@@ -395,8 +395,8 @@ bool wxPopupTransientWindow::Destroy()
     // are still being processed for it, so delay its real destruction until
     // the next idle time when we're sure that it's safe to really destroy it.
 
-    /*wxCHECK_MSG( !wxPendingDelete.Member(this), false,
-                 wxS("Shouldn't destroy the popup twice.") );*/
+    wxCHECK_MSG( !wxPendingDelete.Member(this), false,
+                 wxS("Shouldn't destroy the popup twice.") );
 
     wxPendingDelete.Append(this);
 
@@ -573,7 +573,7 @@ void wxPopupWindowHandler::OnLeftDown(wxMouseEvent& event)
 
         default:
             // forgot to update the switch after adding a new hit test code?
-            //wxFAIL_MSG( wxT("unexpected HitTest() return value") );
+            wxFAIL_MSG( wxT("unexpected HitTest() return value") );
             // fall through
 
         case wxHT_WINDOW_CORNER:

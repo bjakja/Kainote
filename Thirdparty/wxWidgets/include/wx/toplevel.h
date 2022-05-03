@@ -24,9 +24,9 @@
 #include "wx/weakref.h"
 
 // the default names for various classes
-extern const char wxFrameNameStr[];
+extern WXDLLIMPEXP_DATA_CORE(const char) wxFrameNameStr[];
 
-class  wxTopLevelWindowBase;
+class WXDLLIMPEXP_FWD_CORE wxTopLevelWindowBase;
 
 // ----------------------------------------------------------------------------
 // constants
@@ -157,7 +157,7 @@ enum
 // wxTopLevelWindow: a top level (as opposed to child) window
 // ----------------------------------------------------------------------------
 
-class  wxTopLevelWindowBase :
+class WXDLLIMPEXP_CORE wxTopLevelWindowBase :
     public wxNavigationEnabled<wxNonOwnedWindow>
 {
 public:
@@ -205,7 +205,7 @@ public:
     // shows the window, but doesn't activate it. If the base code is being run,
     // it means the port doesn't implement this method yet and so alert the user.
     virtual void ShowWithoutActivating() {
-        /*wxFAIL_MSG("ShowWithoutActivating not implemented on this platform.");*/
+        wxFAIL_MSG("ShowWithoutActivating not implemented on this platform.");
     }
 
     // return true if the frame is in fullscreen mode
@@ -389,7 +389,7 @@ protected:
 #ifdef __WXUNIVERSAL__
     #include "wx/univ/toplevel.h"
 #else // !__WXUNIVERSAL__
-    class  wxTopLevelWindow : public wxTopLevelWindowNative
+    class WXDLLIMPEXP_CORE wxTopLevelWindow : public wxTopLevelWindowNative
     {
     public:
         // construction

@@ -25,7 +25,7 @@
     #define kCFStringEncodingUTF32Native kCFStringEncodingUTF32LE
 #endif
 
-class wxString;
+class WXDLLIMPEXP_FWD_BASE wxString;
 
 WXDLLIMPEXP_BASE void wxMacConvertNewlines13To10( wxString *data ) ;
 WXDLLIMPEXP_BASE void wxMacConvertNewlines10To13( wxString *data ) ;

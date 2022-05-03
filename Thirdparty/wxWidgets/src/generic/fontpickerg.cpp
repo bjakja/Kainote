@@ -54,7 +54,7 @@ bool wxGenericFontButton::Create( wxWindow *parent, wxWindowID id,
     if (!wxButton::Create( parent, id, label, pos,
                            size, style, validator, name ))
     {
-        //wxFAIL_MSG( wxT("wxGenericFontButton creation failed") );
+        wxFAIL_MSG( wxT("wxGenericFontButton creation failed") );
         return false;
     }
 

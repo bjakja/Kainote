@@ -16,7 +16,7 @@
 // wxGUI/ConsoleAppTraits: must derive from wxAppTraits, not wxAppTraitsBase
 // ----------------------------------------------------------------------------
 
-class wxConsoleAppTraits : public wxConsoleAppTraitsBase
+class WXDLLIMPEXP_BASE wxConsoleAppTraits : public wxConsoleAppTraitsBase
 {
 public:
     virtual wxEventLoopBase *CreateEventLoop();
@@ -37,7 +37,7 @@ public:
 
 #if wxUSE_GUI
 
-class  wxGUIAppTraits : public wxGUIAppTraitsBase
+class WXDLLIMPEXP_CORE wxGUIAppTraits : public wxGUIAppTraitsBase
 {
 public:
     virtual wxEventLoopBase *CreateEventLoop();

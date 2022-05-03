@@ -151,8 +151,8 @@ void wxMessageOutputStderr::Output(const wxString& str)
 
     if ( buf )
         fprintf(m_fp, "%s", (const char*) buf);
-    //else // print at least something
-    //    fprintf(m_fp, "%s", (const char*) strWithLF.ToAscii());
+    else // print at least something
+        fprintf(m_fp, "%s", (const char*) strWithLF.ToAscii());
 
     fflush(m_fp);
 }
@@ -195,7 +195,7 @@ void wxMessageOutputLog::Output(const wxString& str)
 
 #if wxUSE_GUI && wxUSE_MSGDLG
 
-extern const char wxMessageBoxCaptionStr[] = "Message";
+extern WXDLLEXPORT_DATA(const char) wxMessageBoxCaptionStr[] = "Message";
 
 void wxMessageOutputMessageBox::Output(const wxString& str)
 {

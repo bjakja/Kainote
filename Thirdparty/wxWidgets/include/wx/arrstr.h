@@ -43,7 +43,7 @@ _WX_DEFINE_SORTED_TYPEARRAY_2(wxString, wxSortedArrayStringBase,
                               wxBaseArrayStringBase, = wxStringSortAscending,
                               class WXDLLIMPEXP_BASE, CMPFUNCwxString);
 
-class wxArrayString : public wxArrayStringBase
+class WXDLLIMPEXP_BASE wxArrayString : public wxArrayStringBase
 {
 public:
     // type of function used by wxArrayString::Sort()
@@ -69,7 +69,7 @@ public:
     }
 };
 
-class wxSortedArrayString : public wxSortedArrayStringBase
+class WXDLLIMPEXP_BASE wxSortedArrayString : public wxSortedArrayStringBase
 {
 public:
     wxSortedArrayString() : wxSortedArrayStringBase(wxStringSortAscending)
@@ -118,7 +118,7 @@ private:
     #include "wx/afterstd.h"
 #endif // wxHAS_VECTOR_TEMPLATE_ASSIGN
 
-class wxArrayString
+class WXDLLIMPEXP_BASE wxArrayString
 {
 public:
   // type of function used by wxArrayString::Sort()
@@ -175,8 +175,8 @@ public:
     // get item at position uiIndex
   wxString& Item(size_t nIndex)
     {
-        //wxASSERT_MSG( nIndex < m_nCount,
-                     // wxT("wxArrayString: index out of bounds") );
+        wxASSERT_MSG( nIndex < m_nCount,
+                      wxT("wxArrayString: index out of bounds") );
 
         return m_pItems[nIndex];
     }
@@ -188,8 +188,8 @@ public:
     // get last item
   wxString& Last()
   {
-      //wxASSERT_MSG( !IsEmpty(),
-                   // wxT("wxArrayString: index out of bounds") );
+      wxASSERT_MSG( !IsEmpty(),
+                    wxT("wxArrayString: index out of bounds") );
       return Item(GetCount() - 1);
   }
   const wxString& Last() const { return const_cast<wxArrayString*>(this)->Last(); }
@@ -375,7 +375,7 @@ private:
   bool    m_autoSort; // if true, keep the array always sorted
 };
 
-class wxSortedArrayString : public wxArrayString
+class WXDLLIMPEXP_BASE wxSortedArrayString : public wxArrayString
 {
 public:
   wxSortedArrayString() : wxArrayString(true)
@@ -388,7 +388,7 @@ public:
 
 // this class provides a temporary wxString* from a
 // wxArrayString
-class wxCArrayString
+class WXDLLIMPEXP_BASE wxCArrayString
 {
 public:
     wxCArrayString( const wxArrayString& array )
@@ -428,11 +428,11 @@ private:
 // separators occuring inside the string to be joined, this can be disabled by
 // passing '\0' as escape
 
-wxString wxJoin(const wxArrayString& arr,
+WXDLLIMPEXP_BASE wxString wxJoin(const wxArrayString& arr,
                                  const wxChar sep,
                                  const wxChar escape = wxT('\\'));
 
-wxArrayString wxSplit(const wxString& str,
+WXDLLIMPEXP_BASE wxArrayString wxSplit(const wxString& str,
                                        const wxChar sep,
                                        const wxChar escape = wxT('\\'));
 
@@ -482,7 +482,7 @@ public:
     bool IsEmpty() const { return GetCount() == 0; }
     const wxString& operator[] (unsigned int i) const
     {
-        //wxASSERT_MSG( i < GetCount(), wxT("index out of bounds") );
+        wxASSERT_MSG( i < GetCount(), wxT("index out of bounds") );
         if(m_type == wxSTRING_POINTER)
             return m_data.ptr[i];
         return m_data.array->Item(i);

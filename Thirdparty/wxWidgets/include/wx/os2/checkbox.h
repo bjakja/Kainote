@@ -15,8 +15,8 @@
 #include "wx/control.h"
 
 // Checkbox item (single checkbox)
-class  wxBitmap;
-class  wxCheckBox : public wxCheckBoxBase
+class WXDLLIMPEXP_FWD_CORE wxBitmap;
+class WXDLLIMPEXP_CORE wxCheckBox : public wxCheckBoxBase
 {
  public:
     inline wxCheckBox() { }
@@ -66,7 +66,7 @@ private:
   DECLARE_DYNAMIC_CLASS(wxCheckBox)
 };
 
-class  wxBitmapCheckBox: public wxCheckBox
+class WXDLLIMPEXP_CORE wxBitmapCheckBox: public wxCheckBox
 {
  public:
 

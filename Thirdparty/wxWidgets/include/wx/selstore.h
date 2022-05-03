@@ -37,7 +37,7 @@ WX_DEFINE_SORTED_EXPORTED_ARRAY_CMP_INT(unsigned, wxUIntCmp, wxSelectedIndices);
 // individual items) without changing its API.
 // ----------------------------------------------------------------------------
 
-class  wxSelectionStore
+class WXDLLIMPEXP_CORE wxSelectionStore
 {
 public:
     wxSelectionStore() : m_itemsSel(wxUIntCmp) { Init(); }
@@ -49,7 +49,7 @@ public:
     void Clear() { m_itemsSel.Clear(); m_count = 0; m_defaultState = false; }
 
     // must be called when a new item is inserted/added
-    void OnItemAdd(unsigned WXUNUSED(item)) { /*wxFAIL_MSG( wxT("TODO") );*/ }
+    void OnItemAdd(unsigned WXUNUSED(item)) { wxFAIL_MSG( wxT("TODO") ); }
 
     // must be called when an item is deleted
     void OnItemDelete(unsigned item);

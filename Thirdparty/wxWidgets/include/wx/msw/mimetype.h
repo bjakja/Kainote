@@ -23,7 +23,7 @@
 // and is never used directly by the application
 // ----------------------------------------------------------------------------
 
-class  wxFileTypeImpl
+class WXDLLIMPEXP_BASE wxFileTypeImpl
 {
 public:
     // ctor
@@ -88,7 +88,7 @@ private:
     bool RemoveDescription();
 };
 
-class  wxMimeTypesManagerImpl
+class WXDLLIMPEXP_BASE wxMimeTypesManagerImpl
 {
 public:
     // nothing to do here, we don't load any data but just go and fetch it from

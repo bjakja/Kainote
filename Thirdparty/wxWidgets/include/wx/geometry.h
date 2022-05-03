@@ -11,7 +11,6 @@
 
 #ifndef _WX_GEOMETRY_H_
 #define _WX_GEOMETRY_H_
-#include <math.h>
 
 #include "wx/defs.h"
 
@@ -19,11 +18,10 @@
 
 #include "wx/utils.h"
 #include "wx/gdicmn.h"
-//#include "wx/math.h"
+#include "wx/math.h"
 
-
-class  wxDataInputStream;
-class  wxDataOutputStream;
+class WXDLLIMPEXP_FWD_BASE wxDataInputStream;
+class WXDLLIMPEXP_FWD_BASE wxDataOutputStream;
 
 // clipping from Cohen-Sutherland
 
@@ -36,7 +34,7 @@ enum wxOutCode
     wxOutBottom = 0x04
 };
 
-class  wxPoint2DInt
+class WXDLLIMPEXP_CORE wxPoint2DInt
 {
 public :
     inline wxPoint2DInt();
@@ -134,7 +132,7 @@ inline void wxPoint2DInt::GetRounded( wxInt32 *x , wxInt32 *y ) const
 inline wxDouble wxPoint2DInt::GetVectorLength() const
 {
     // cast needed MIPSpro compiler under SGI
-    return ::sqrt( (double)(m_x)*(m_x) + (m_y)*(m_y) );
+    return sqrt( (double)(m_x)*(m_x) + (m_y)*(m_y) );
 }
 
 inline void wxPoint2DInt::SetVectorLength( wxDouble length )
@@ -151,7 +149,7 @@ inline void wxPoint2DInt::Normalize()
 
 inline wxDouble wxPoint2DInt::GetDistance( const wxPoint2DInt &pt ) const
 {
-    return ::sqrt( GetDistanceSquare( pt ) );
+    return sqrt( GetDistanceSquare( pt ) );
 }
 
 inline wxDouble wxPoint2DInt::GetDistanceSquare( const wxPoint2DInt &pt ) const
@@ -280,7 +278,7 @@ inline wxPoint2DInt operator/(const wxPoint2DInt& pt , wxDouble n)
 
 // wxPoint2Ds represent a point or a vector in a 2d coordinate system
 
-class  wxPoint2DDouble
+class WXDLLIMPEXP_CORE wxPoint2DDouble
 {
 public :
     inline wxPoint2DDouble();
@@ -371,7 +369,7 @@ inline void wxPoint2DDouble::GetRounded( wxInt32 *x , wxInt32 *y ) const
 
 inline wxDouble wxPoint2DDouble::GetVectorLength() const
 {
-    return ::sqrt( (m_x)*(m_x) + (m_y)*(m_y) ) ;
+    return sqrt( (m_x)*(m_x) + (m_y)*(m_y) ) ;
 }
 
 inline void wxPoint2DDouble::SetVectorLength( wxDouble length )
@@ -388,7 +386,7 @@ inline void wxPoint2DDouble::Normalize()
 
 inline wxDouble wxPoint2DDouble::GetDistance( const wxPoint2DDouble &pt ) const
 {
-    return ::sqrt( GetDistanceSquare( pt ) );
+    return sqrt( GetDistanceSquare( pt ) );
 }
 
 inline wxDouble wxPoint2DDouble::GetDistanceSquare( const wxPoint2DDouble &pt ) const
@@ -514,7 +512,7 @@ inline wxPoint2DDouble operator/(const wxPoint2DDouble& pt , wxInt32 n)
 // top left and bottom right corner, or by the top left corner and size. A point is contained within the rectangle if
 // left <= x < right  and top <= m_y < bottom , thus it is a half open interval.
 
-class  wxRect2DDouble
+class WXDLLIMPEXP_CORE wxRect2DDouble
 {
 public:
     wxRect2DDouble()
@@ -645,7 +643,7 @@ public:
 // top left and bottom right corner, or by the top left corner and size. A point is contained within the rectangle if
 // left <= x < right  and top <= m_y < bottom , thus it is a half open interval.
 
-class  wxRect2DInt
+class WXDLLIMPEXP_CORE wxRect2DInt
 {
 public:
        wxRect2DInt() { m_x = m_y = m_width = m_height = 0; }

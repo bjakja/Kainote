@@ -43,6 +43,7 @@
 #include "AudioDisplay.h"
 #include "KaiPanel.h"
 #include "KaiSlider.h"
+
 #include <wx/sizer.h>
 #include <wx/string.h>
 

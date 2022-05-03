@@ -50,7 +50,7 @@
 #ifdef wxHAS_REGEX_ADVANCED
 
 #include "wx/regex.h"
-//#include <string>
+#include <string>
 #include <vector>
 
 using CppUnit::Test;

@@ -158,7 +158,7 @@ const size_t wxRegKey::nStdKeys = WXSIZEOF(aStdKeys);
 const wxChar *wxRegKey::GetStdKeyName(size_t key)
 {
   // return empty string if key is invalid
-  //wxCHECK_MSG( key < nStdKeys, wxEmptyString, wxT("invalid key in wxRegKey::GetStdKeyName") );
+  wxCHECK_MSG( key < nStdKeys, wxEmptyString, wxT("invalid key in wxRegKey::GetStdKeyName") );
 
   return aStdKeys[key].szName;
 }
@@ -166,7 +166,7 @@ const wxChar *wxRegKey::GetStdKeyName(size_t key)
 const wxChar *wxRegKey::GetStdKeyShortName(size_t key)
 {
   // return empty string if key is invalid
-  //wxCHECK( key < nStdKeys, wxEmptyString );
+  wxCHECK( key < nStdKeys, wxEmptyString );
 
   return aStdKeys[key].szShortName;
 }
@@ -184,7 +184,7 @@ wxRegKey::StdKey wxRegKey::ExtractKeyName(wxString& strKey)
   }
 
   if ( ui == nStdKeys ) {
-    //wxFAIL_MSG(wxT("invalid key prefix in wxRegKey::ExtractKeyName."));
+    wxFAIL_MSG(wxT("invalid key prefix in wxRegKey::ExtractKeyName."));
 
     ui = HKCR;
   }
@@ -204,7 +204,7 @@ wxRegKey::StdKey wxRegKey::GetStdKeyFromHkey(WXHKEY hkey)
       return (StdKey)ui;
   }
 
-  //wxFAIL_MSG(wxT("non root hkey passed to wxRegKey::GetStdKeyFromHkey."));
+  wxFAIL_MSG(wxT("non root hkey passed to wxRegKey::GetStdKeyFromHkey."));
 
   return HKCR;
 }
@@ -361,7 +361,7 @@ bool wxRegKey::GetKeyInfo(size_t *pnSubKeys,
                           size_t *pnMaxValueLen) const
 {
   // it might be unexpected to some that this function doesn't open the key
-  //wxASSERT_MSG( IsOpened(), wxT("key should be opened in GetKeyInfo") );
+  wxASSERT_MSG( IsOpened(), wxT("key should be opened in GetKeyInfo") );
 
   // We need to use intermediate variables in 64 bit build as the function
   // parameters must be 32 bit DWORDs and not 64 bit size_t values.
@@ -589,7 +589,7 @@ bool wxRegKey::CopyValue(const wxString& szValue,
 
 bool wxRegKey::Rename(const wxString& szNewName)
 {
-    //wxCHECK_MSG( !m_strKey.empty(), false, wxT("registry hives can't be renamed") );
+    wxCHECK_MSG( !m_strKey.empty(), false, wxT("registry hives can't be renamed") );
 
     if ( !Exists() ) {
         wxLogError(_("Registry key '%s' does not exist, cannot rename it."),
@@ -913,8 +913,8 @@ bool wxRegKey::QueryValue(const wxString& szValue, long *plValue) const
     }
     else {
       // check that we read the value of right type
-      //wxASSERT_MSG( IsNumericValue(szValue),
-                    //wxT("Type mismatch in wxRegKey::QueryValue().")  );
+      wxASSERT_MSG( IsNumericValue(szValue),
+                    wxT("Type mismatch in wxRegKey::QueryValue().")  );
 
       return true;
     }
@@ -1038,8 +1038,8 @@ bool wxRegKey::QueryValue(const wxString& szValue,
             if ( m_dwLastError == ERROR_SUCCESS )
             {
                 // check that it was the right type
-                //wxASSERT_MSG( !IsNumericValue(szValue),
-                              //wxT("Type mismatch in wxRegKey::QueryValue().") );
+                wxASSERT_MSG( !IsNumericValue(szValue),
+                              wxT("Type mismatch in wxRegKey::QueryValue().") );
 
               return true;
             }
@@ -1092,7 +1092,7 @@ bool wxRegKey::GetFirstValue(wxString& strValueName, long& lIndex)
 
 bool wxRegKey::GetNextValue(wxString& strValueName, long& lIndex) const
 {
-  //wxASSERT( IsOpened() );
+  wxASSERT( IsOpened() );
 
   // are we already at the end of enumeration?
   if ( lIndex == -1 )
@@ -1137,7 +1137,7 @@ bool wxRegKey::GetFirstKey(wxString& strKeyName, long& lIndex)
 
 bool wxRegKey::GetNextKey(wxString& strKeyName, long& lIndex) const
 {
-  //wxASSERT( IsOpened() );
+  wxASSERT( IsOpened() );
 
   // are we already at the end of enumeration?
   if ( lIndex == -1 )
@@ -1518,7 +1518,7 @@ long GetMSWViewFlags(wxRegKey::WOW64ViewMode viewMode)
             break;
 
         default:
-            break; // wxFAIL_MSG("Unknown registry view.");
+            wxFAIL_MSG("Unknown registry view.");
             // fall through
 
         case wxRegKey::WOW64ViewMode_Default:

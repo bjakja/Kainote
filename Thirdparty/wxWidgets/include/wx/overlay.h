@@ -28,10 +28,10 @@
 // internal code
 // ----------------------------------------------------------------------------
 
-class  wxOverlayImpl;
-class  wxDC;
+class WXDLLIMPEXP_FWD_CORE wxOverlayImpl;
+class WXDLLIMPEXP_FWD_CORE wxDC;
 
-class  wxOverlay
+class WXDLLIMPEXP_CORE wxOverlay
 {
 public:
     wxOverlay();
@@ -45,7 +45,7 @@ public:
     wxOverlayImpl *GetImpl() { return m_impl; }
 
 private:
-    friend class  wxDCOverlay;
+    friend class WXDLLIMPEXP_FWD_CORE wxDCOverlay;
 
     // returns true if it has been setup
     bool IsOk();
@@ -67,7 +67,7 @@ private:
 };
 
 
-class  wxDCOverlay
+class WXDLLIMPEXP_CORE wxDCOverlay
 {
 public:
     // connects this overlay to the corresponding drawing dc, if the overlay is

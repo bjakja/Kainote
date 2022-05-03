@@ -30,7 +30,7 @@
     multiple items which can be identified by a positive integer index and you
     just need to implement its pure virtual functions to use it.
  */
-class  wxMouseEventsManager : public wxEvtHandler
+class WXDLLIMPEXP_CORE wxMouseEventsManager : public wxEvtHandler
 {
 public:
     // a mouse event manager is always associated with a window and must be

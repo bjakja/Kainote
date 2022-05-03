@@ -24,7 +24,7 @@
     #define wxHAVE_DYNLIB_ERROR
 #endif
 
-class  wxDynamicLibraryDetailsCreator;
+class WXDLLIMPEXP_FWD_BASE wxDynamicLibraryDetailsCreator;
 
 // ----------------------------------------------------------------------------
 // conditional compilation
@@ -171,7 +171,7 @@ enum wxPluginCategory
 // wxDynamicLibraryDetails: contains details about a loaded wxDynamicLibrary
 // ----------------------------------------------------------------------------
 
-class  wxDynamicLibraryDetails
+class WXDLLIMPEXP_BASE wxDynamicLibraryDetails
 {
 public:
     // ctor, normally never used as these objects are only created by
@@ -218,13 +218,13 @@ private:
 
 WX_DECLARE_USER_EXPORTED_OBJARRAY(wxDynamicLibraryDetails,
                                   wxDynamicLibraryDetailsArray,
-                                  );
+                                  WXDLLIMPEXP_BASE);
 
 // ----------------------------------------------------------------------------
 // wxDynamicLibrary: represents a handle to a DLL/shared object
 // ----------------------------------------------------------------------------
 
-class  wxDynamicLibrary
+class WXDLLIMPEXP_BASE wxDynamicLibrary
 {
 public:
     // return a valid handle for the main program itself or NULL if back

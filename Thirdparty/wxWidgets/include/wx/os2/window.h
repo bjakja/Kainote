@@ -34,13 +34,13 @@
 // forward declarations
 // ---------------------------------------------------------------------------
 
-class  wxButton;
+class WXDLLIMPEXP_FWD_CORE wxButton;
 
 // ---------------------------------------------------------------------------
 // wxWindow declaration for OS/2 PM
 // ---------------------------------------------------------------------------
 
-class  wxWindowOS2 : public wxWindowBase
+class WXDLLIMPEXP_CORE wxWindowOS2 : public wxWindowBase
 {
 public:
     wxWindowOS2()

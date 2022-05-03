@@ -22,7 +22,7 @@
 // wxSingleInstanceChecker
 // ----------------------------------------------------------------------------
 
-class  wxSingleInstanceChecker
+class WXDLLIMPEXP_BASE wxSingleInstanceChecker
 {
 public:
     // default ctor, use Create() after it
@@ -56,7 +56,7 @@ public:
     // been created until then
     bool CreateDefault()
     {
-        /*wxCHECK_MSG( wxTheApp, false, "must have application instance" );*/
+        wxCHECK_MSG( wxTheApp, false, "must have application instance" );
         return Create(wxTheApp->GetAppName() + '-' + wxGetUserId());
     }
 
@@ -87,7 +87,7 @@ private:
     bool DoIsAnotherRunning() const;
 
     // the implementation details (platform specific)
-    class  wxSingleInstanceCheckerImpl *m_impl;
+    class WXDLLIMPEXP_FWD_BASE wxSingleInstanceCheckerImpl *m_impl;
 
     wxDECLARE_NO_COPY_CLASS(wxSingleInstanceChecker);
 };

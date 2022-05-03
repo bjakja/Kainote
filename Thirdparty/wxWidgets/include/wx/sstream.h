@@ -20,7 +20,7 @@
 // wxStringInputStream is a stream reading from the given (fixed size) string
 // ----------------------------------------------------------------------------
 
-class  wxStringInputStream : public wxInputStream
+class WXDLLIMPEXP_BASE wxStringInputStream : public wxInputStream
 {
 public:
     // ctor associates the stream with the given string which makes a copy of
@@ -55,7 +55,7 @@ private:
 // wxStringOutputStream writes data to the given string, expanding it as needed
 // ----------------------------------------------------------------------------
 
-class  wxStringOutputStream : public wxOutputStream
+class WXDLLIMPEXP_BASE wxStringOutputStream : public wxOutputStream
 {
 public:
     // The stream will write data either to the provided string or to an

@@ -24,13 +24,13 @@
 #pragma warn -8066
 #endif
 
-class  wxFileOutputStream;
+class WXDLLIMPEXP_FWD_BASE wxFileOutputStream;
 
 
 
-class  wxSVGFileDC;
+class WXDLLIMPEXP_FWD_CORE wxSVGFileDC;
 
-class  wxSVGFileDCImpl : public wxDCImpl
+class WXDLLIMPEXP_CORE wxSVGFileDCImpl : public wxDCImpl
 {
 public:
     wxSVGFileDCImpl( wxSVGFileDC *owner, const wxString &filename,
@@ -45,18 +45,18 @@ public:
 
     virtual int GetDepth() const
     {
-        //wxFAIL_MSG(wxT("wxSVGFILEDC::GetDepth Call not implemented"));
+        wxFAIL_MSG(wxT("wxSVGFILEDC::GetDepth Call not implemented"));
         return -1;
     }
 
     virtual void Clear()
     {
-        //wxFAIL_MSG(wxT("wxSVGFILEDC::Clear() Call not implemented \nNot sensible for an output file?"));
+        wxFAIL_MSG(wxT("wxSVGFILEDC::Clear() Call not implemented \nNot sensible for an output file?"));
     }
 
     virtual void DestroyClippingRegion()
     {
-        //wxFAIL_MSG(wxT("wxSVGFILEDC::void Call not yet implemented"));
+        wxFAIL_MSG(wxT("wxSVGFILEDC::void Call not yet implemented"));
     }
 
     virtual wxCoord GetCharHeight() const;
@@ -65,28 +65,28 @@ public:
     virtual void SetClippingRegion(wxCoord WXUNUSED(x), wxCoord WXUNUSED(y),
                                    wxCoord WXUNUSED(w), wxCoord WXUNUSED(h))
     {
-        //wxFAIL_MSG(wxT("wxSVGFILEDC::SetClippingRegion not implemented"));
+        wxFAIL_MSG(wxT("wxSVGFILEDC::SetClippingRegion not implemented"));
     }
 
     virtual void SetPalette(const wxPalette&  WXUNUSED(palette))
     {
-        //wxFAIL_MSG(wxT("wxSVGFILEDC::SetPalette not implemented"));
+        wxFAIL_MSG(wxT("wxSVGFILEDC::SetPalette not implemented"));
     }
 
     virtual void GetClippingBox(wxCoord *WXUNUSED(x), wxCoord *WXUNUSED(y),
                                 wxCoord *WXUNUSED(w), wxCoord *WXUNUSED(h))
     {
-        //wxFAIL_MSG(wxT("wxSVGFILEDC::GetClippingBox not implemented"));
+        wxFAIL_MSG(wxT("wxSVGFILEDC::GetClippingBox not implemented"));
     }
 
     virtual void SetLogicalFunction(wxRasterOperationMode WXUNUSED(function))
     {
-        //wxFAIL_MSG(wxT("wxSVGFILEDC::SetLogicalFunction Call not implemented"));
+        wxFAIL_MSG(wxT("wxSVGFILEDC::SetLogicalFunction Call not implemented"));
     }
 
     virtual wxRasterOperationMode GetLogicalFunction() const
     {
-        //wxFAIL_MSG(wxT("wxSVGFILEDC::GetLogicalFunction() not implemented"));
+        wxFAIL_MSG(wxT("wxSVGFILEDC::GetLogicalFunction() not implemented"));
         return wxCOPY;
     }
 
@@ -99,7 +99,7 @@ public:
 private:
    virtual bool DoGetPixel(wxCoord, wxCoord, wxColour *) const
    {
-       //wxFAIL_MSG(wxT("wxSVGFILEDC::DoGetPixel Call not implemented"));
+       wxFAIL_MSG(wxT("wxSVGFILEDC::DoGetPixel Call not implemented"));
        return true;
    }
 
@@ -109,7 +109,7 @@ private:
 
    virtual void DoCrossHair(wxCoord, wxCoord)
    {
-       //wxFAIL_MSG(wxT("wxSVGFILEDC::CrossHair Call not implemented"));
+       wxFAIL_MSG(wxT("wxSVGFILEDC::CrossHair Call not implemented"));
    }
 
    virtual void DoDrawArc(wxCoord, wxCoord, wxCoord, wxCoord, wxCoord, wxCoord);
@@ -151,7 +151,7 @@ private:
                             const wxColour& WXUNUSED(col),
                             wxFloodFillStyle WXUNUSED(style) = wxFLOOD_SURFACE)
    {
-       //wxFAIL_MSG(wxT("wxSVGFILEDC::DoFloodFill Call not implemented"));
+       wxFAIL_MSG(wxT("wxSVGFILEDC::DoFloodFill Call not implemented"));
        return false;
    }
 
@@ -170,12 +170,12 @@ private:
 
    virtual void DoSetDeviceClippingRegion(const wxRegion& WXUNUSED(region))
    {
-       //wxFAIL_MSG(wxT("wxSVGFILEDC::DoSetDeviceClippingRegion not yet implemented"));
+       wxFAIL_MSG(wxT("wxSVGFILEDC::DoSetDeviceClippingRegion not yet implemented"));
    }
 
    virtual void DoSetClippingRegion( int WXUNUSED(x),  int WXUNUSED(y), int WXUNUSED(width), int WXUNUSED(height) )
    {
-       //wxFAIL_MSG(wxT("wxSVGFILEDC::DoSetClippingRegion not yet implemented"));
+       wxFAIL_MSG(wxT("wxSVGFILEDC::DoSetClippingRegion not yet implemented"));
    }
 
    virtual void DoGetSizeMM( int *width, int *height ) const;
@@ -202,7 +202,7 @@ private:
 };
 
 
-class  wxSVGFileDC : public wxDC
+class WXDLLIMPEXP_CORE wxSVGFileDC : public wxDC
 {
 public:
     wxSVGFileDC(const wxString& filename,

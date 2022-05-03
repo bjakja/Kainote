@@ -20,7 +20,7 @@
 // misc
 // ----------------------------------------------------------------------------
 
-class  wxArrayString;
+class WXDLLIMPEXP_FWD_BASE wxArrayString;
 
 #define WXDIALUP_MANAGER_DEFAULT_BEACONHOST  wxT("www.yahoo.com")
 
@@ -43,7 +43,7 @@ class  wxArrayString;
  *    main thread?
  */
 
-class  wxDialUpManager
+class WXDLLIMPEXP_CORE wxDialUpManager
 {
 public:
     // this function should create and return the object of the
@@ -152,13 +152,13 @@ public:
 // wxDialUpManager events
 // ----------------------------------------------------------------------------
 
-class  wxDialUpEvent;
+class WXDLLIMPEXP_FWD_CORE wxDialUpEvent;
 
-wxDECLARE_EXPORTED_EVENT( , wxEVT_DIALUP_CONNECTED, wxDialUpEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_DIALUP_DISCONNECTED, wxDialUpEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_DIALUP_CONNECTED, wxDialUpEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_DIALUP_DISCONNECTED, wxDialUpEvent );
 
 // the event class for the dialup events
-class  wxDialUpEvent : public wxEvent
+class WXDLLIMPEXP_CORE wxDialUpEvent : public wxEvent
 {
 public:
     wxDialUpEvent(bool isConnected, bool isOwnEvent) : wxEvent(isOwnEvent)

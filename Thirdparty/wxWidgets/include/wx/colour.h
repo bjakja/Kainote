@@ -15,7 +15,7 @@
 #include "wx/defs.h"
 #include "wx/gdiobj.h"
 
-class  wxColour;
+class WXDLLIMPEXP_FWD_CORE wxColour;
 
 // A macro to define the standard wxColour constructors:
 //
@@ -54,7 +54,7 @@ const unsigned char wxALPHA_OPAQUE = 0xff;
 
 #if wxUSE_VARIANT
 #include "wx/variant.h"
-//DECLARE_VARIANT_OBJECT_EXPORTED(wxColour,)
+DECLARE_VARIANT_OBJECT_EXPORTED(wxColour,WXDLLIMPEXP_CORE)
 #endif
 
 //-----------------------------------------------------------------------------
@@ -72,7 +72,7 @@ const unsigned char wxALPHA_OPAQUE = 0xff;
 #define wxCOLOUR_IS_GDIOBJECT 1
 #endif
 
-class  wxColourBase : public
+class WXDLLIMPEXP_CORE wxColourBase : public
 #if wxCOLOUR_IS_GDIOBJECT
     wxGDIObject
 #else
@@ -208,8 +208,8 @@ protected:
 
 
 // wxColour <-> wxString utilities, used by wxConfig, defined in colourcmn.cpp
- wxString wxToString(const wxColourBase& col);
- bool wxFromString(const wxString& str, wxColourBase* col);
+WXDLLIMPEXP_CORE wxString wxToString(const wxColourBase& col);
+WXDLLIMPEXP_CORE bool wxFromString(const wxString& str, wxColourBase* col);
 
 
 

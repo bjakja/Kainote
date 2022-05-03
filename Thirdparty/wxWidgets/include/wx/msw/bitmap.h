@@ -14,22 +14,20 @@
 
 #include "wx/msw/gdiimage.h"
 #include "wx/palette.h"
-#include "wx/image.h"
-#include "wx/bitmap.h"
 
-class  wxBitmap;
-class  wxBitmapHandler;
-class  wxBitmapRefData;
-class  wxControl;
-class  wxCursor;
-class  wxDC;
+class WXDLLIMPEXP_FWD_CORE wxBitmap;
+class WXDLLIMPEXP_FWD_CORE wxBitmapHandler;
+class WXDLLIMPEXP_FWD_CORE wxBitmapRefData;
+class WXDLLIMPEXP_FWD_CORE wxControl;
+class WXDLLIMPEXP_FWD_CORE wxCursor;
+class WXDLLIMPEXP_FWD_CORE wxDC;
 #if wxUSE_WXDIB
-class  wxDIB;
+class WXDLLIMPEXP_FWD_CORE wxDIB;
 #endif
-class  wxIcon;
-class  wxMask;
-class  wxPalette;
-class  wxPixelDataBase;
+class WXDLLIMPEXP_FWD_CORE wxIcon;
+class WXDLLIMPEXP_FWD_CORE wxMask;
+class WXDLLIMPEXP_FWD_CORE wxPalette;
+class WXDLLIMPEXP_FWD_CORE wxPixelDataBase;
 
 // What kind of transparency should a bitmap copied from an icon or cursor
 // have?
@@ -45,7 +43,7 @@ enum wxBitmapTransparency
 // NOTE: for wxMSW we don't use the wxBitmapBase base class declared in bitmap.h!
 // ----------------------------------------------------------------------------
 
-class  wxBitmap : public wxGDIImage
+class WXDLLIMPEXP_CORE wxBitmap : public wxGDIImage
 {
 public:
     // default ctor creates an invalid bitmap, you must Create() it later
@@ -211,7 +209,7 @@ private:
 // wxMask: a mono bitmap used for drawing bitmaps transparently.
 // ----------------------------------------------------------------------------
 
-class  wxMask : public wxObject
+class WXDLLIMPEXP_CORE wxMask : public wxObject
 {
 public:
     wxMask();
@@ -255,7 +253,7 @@ protected:
 // NOTE: for wxMSW we don't use the wxBitmapHandler class declared in bitmap.h!
 // ----------------------------------------------------------------------------
 
-class  wxBitmapHandler : public wxGDIImageHandler
+class WXDLLIMPEXP_CORE wxBitmapHandler : public wxGDIImageHandler
 {
 public:
     wxBitmapHandler() { }

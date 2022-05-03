@@ -27,7 +27,7 @@
 
 #if wxUSE_STOPWATCH
 
-class  wxStopWatch
+class WXDLLIMPEXP_BASE wxStopWatch
 {
 public:
     // ctor starts the stop watch
@@ -48,8 +48,8 @@ public:
     // resume it
     void Resume()
     {
-        /*wxASSERT_MSG( m_pauseCount > 0,
-                      wxT("Resuming stop watch which is not paused") );*/
+        wxASSERT_MSG( m_pauseCount > 0,
+                      wxT("Resuming stop watch which is not paused") );
 
         if ( --m_pauseCount == 0 )
         {

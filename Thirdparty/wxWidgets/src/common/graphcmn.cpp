@@ -114,17 +114,17 @@ IMPLEMENT_DYNAMIC_CLASS(wxGraphicsBrush, wxGraphicsObject)
 IMPLEMENT_DYNAMIC_CLASS(wxGraphicsFont, wxGraphicsObject)
 IMPLEMENT_DYNAMIC_CLASS(wxGraphicsBitmap, wxGraphicsObject)
 
-wxGraphicsPen wxNullGraphicsPen;
-wxGraphicsBrush wxNullGraphicsBrush;
-wxGraphicsFont wxNullGraphicsFont;
-wxGraphicsBitmap wxNullGraphicsBitmap;
+WXDLLIMPEXP_DATA_CORE(wxGraphicsPen) wxNullGraphicsPen;
+WXDLLIMPEXP_DATA_CORE(wxGraphicsBrush) wxNullGraphicsBrush;
+WXDLLIMPEXP_DATA_CORE(wxGraphicsFont) wxNullGraphicsFont;
+WXDLLIMPEXP_DATA_CORE(wxGraphicsBitmap) wxNullGraphicsBitmap;
 
 //-----------------------------------------------------------------------------
 // matrix
 //-----------------------------------------------------------------------------
 
 IMPLEMENT_DYNAMIC_CLASS(wxGraphicsMatrix, wxGraphicsObject)
-wxGraphicsMatrix wxNullGraphicsMatrix;
+WXDLLIMPEXP_DATA_CORE(wxGraphicsMatrix) wxNullGraphicsMatrix;
 
 // concatenates the matrix
 void wxGraphicsMatrix::Concat( const wxGraphicsMatrix *t )
@@ -215,7 +215,7 @@ void * wxGraphicsMatrix::GetNativeMatrix() const
 //-----------------------------------------------------------------------------
 
 IMPLEMENT_DYNAMIC_CLASS(wxGraphicsPath, wxGraphicsObject)
-wxGraphicsPath wxNullGraphicsPath;
+WXDLLIMPEXP_DATA_CORE(wxGraphicsPath) wxNullGraphicsPath;
 
 // convenience functions, for using wxPoint2DDouble etc
 
@@ -507,7 +507,7 @@ void wxGraphicsGradientStops::Add(const wxGraphicsGradientStop& stop)
             }
             else // we shouldn't be inserting it at the beginning
             {
-                //wxFAIL_MSG( "invalid gradient stop position < 0" );
+                wxFAIL_MSG( "invalid gradient stop position < 0" );
             }
 
             return;
@@ -520,7 +520,7 @@ void wxGraphicsGradientStops::Add(const wxGraphicsGradientStop& stop)
     }
     else
     {
-        //wxFAIL_MSG( "invalid gradient stop position > 1" );
+        wxFAIL_MSG( "invalid gradient stop position > 1" );
     }
 }
 
@@ -739,7 +739,7 @@ void wxGraphicsContext::DrawRoundedRectangle( wxDouble x, wxDouble y, wxDouble w
 
 void wxGraphicsContext::StrokeLines( size_t n, const wxPoint2DDouble *points)
 {
-    //wxASSERT(n > 1);
+    wxASSERT(n > 1);
     wxGraphicsPath path = CreatePath();
     path.MoveToPoint(points[0].m_x, points[0].m_y);
     for ( size_t i = 1; i < n; ++i)
@@ -749,7 +749,7 @@ void wxGraphicsContext::StrokeLines( size_t n, const wxPoint2DDouble *points)
 
 void wxGraphicsContext::DrawLines( size_t n, const wxPoint2DDouble *points, wxPolygonFillMode fillStyle)
 {
-    //wxASSERT(n > 1);
+    wxASSERT(n > 1);
     wxGraphicsPath path = CreatePath();
     path.MoveToPoint(points[0].m_x, points[0].m_y);
     for ( size_t i = 1; i < n; ++i)
@@ -759,7 +759,7 @@ void wxGraphicsContext::DrawLines( size_t n, const wxPoint2DDouble *points, wxPo
 
 void wxGraphicsContext::StrokeLines( size_t n, const wxPoint2DDouble *beginPoints, const wxPoint2DDouble *endPoints)
 {
-    //wxASSERT(n > 0);
+    wxASSERT(n > 0);
     wxGraphicsPath path = CreatePath();
     for ( size_t i = 0; i < n; ++i)
     {

@@ -21,20 +21,20 @@
 // forward declaration
 // -----------------------------------------------------------------------------
 
-class  wxGenericTreeItem;
+class WXDLLIMPEXP_FWD_CORE wxGenericTreeItem;
 
-class  wxTreeItemData;
+class WXDLLIMPEXP_FWD_CORE wxTreeItemData;
 
-class  wxTreeRenameTimer;
-class  wxTreeFindTimer;
-class  wxTreeTextCtrl;
-class  wxTextCtrl;
+class WXDLLIMPEXP_FWD_CORE wxTreeRenameTimer;
+class WXDLLIMPEXP_FWD_CORE wxTreeFindTimer;
+class WXDLLIMPEXP_FWD_CORE wxTreeTextCtrl;
+class WXDLLIMPEXP_FWD_CORE wxTextCtrl;
 
 // -----------------------------------------------------------------------------
 // wxGenericTreeCtrl - the tree control
 // -----------------------------------------------------------------------------
 
-class  wxGenericTreeCtrl : public wxTreeCtrlBase,
+class WXDLLIMPEXP_CORE wxGenericTreeCtrl : public wxTreeCtrlBase,
                                       public wxScrollHelper
 {
 public:
@@ -114,8 +114,8 @@ public:
     virtual wxTreeItemId GetRootItem() const { return m_anchor; }
     virtual wxTreeItemId GetSelection() const
     {
-        //wxASSERT_MSG( !HasFlag(wxTR_MULTIPLE),
-                       //wxT("must use GetSelections() with this control") );
+        wxASSERT_MSG( !HasFlag(wxTR_MULTIPLE),
+                       wxT("must use GetSelections() with this control") );
 
         return m_current;
     }

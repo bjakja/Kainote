@@ -82,7 +82,7 @@ struct wxVectorMemOpsGeneric
 
     static void MemmoveBackward(T* dest, T* source, size_t count)
     {
-        //wxASSERT( dest < source );
+        wxASSERT( dest < source );
         T* destptr = dest;
         T* sourceptr = source;
         for ( size_t i = count; i > 0; --i, ++destptr, ++sourceptr )
@@ -94,7 +94,7 @@ struct wxVectorMemOpsGeneric
 
     static void MemmoveForward(T* dest, T* source, size_t count)
     {
-        //wxASSERT( dest > source );
+        wxASSERT( dest > source );
         T* destptr = dest + count - 1;
         T* sourceptr = source + count - 1;
         for ( size_t i = count; i > 0; --i, --destptr, --sourceptr )
@@ -310,13 +310,13 @@ public:
 
     const value_type& at(size_type idx) const
     {
-        //wxASSERT(idx < m_size);
+        wxASSERT(idx < m_size);
         return m_values[idx];
     }
 
     value_type& at(size_type idx)
     {
-        //wxASSERT(idx < m_size);
+        wxASSERT(idx < m_size);
         return m_values[idx];
     }
 
@@ -380,7 +380,7 @@ public:
     {
         if ( first == last )
             return first;
-        //wxASSERT( first < end() && last <= end() );
+        wxASSERT( first < end() && last <= end() );
 
         const size_type idx = first - begin();
         const size_type count = last - first;

@@ -11,11 +11,11 @@
 #ifndef _WX_GENERIC_RICHMSGDLGG_H_
 #define _WX_GENERIC_RICHMSGDLGG_H_
 
-class  wxCheckBox;
-class  wxCollapsiblePane;
-class  wxCollapsiblePaneEvent;
+class WXDLLIMPEXP_FWD_CORE wxCheckBox;
+class WXDLLIMPEXP_FWD_CORE wxCollapsiblePane;
+class WXDLLIMPEXP_FWD_CORE wxCollapsiblePaneEvent;
 
-class  wxGenericRichMessageDialog
+class WXDLLIMPEXP_CORE wxGenericRichMessageDialog
                         : public wxRichMessageDialogBase
 {
 public:

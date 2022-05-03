@@ -24,8 +24,8 @@
  * The Mac dialog for printing
  */
 
-class  wxDC;
-class  wxMacPrintDialog: public wxPrintDialogBase
+class WXDLLIMPEXP_FWD_CORE wxDC;
+class WXDLLIMPEXP_CORE wxMacPrintDialog: public wxPrintDialogBase
 {
 public:
     wxMacPrintDialog();

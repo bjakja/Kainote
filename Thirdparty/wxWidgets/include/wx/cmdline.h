@@ -28,7 +28,7 @@ enum wxCmdLineSplitType
 
 #if wxUSE_CMDLINE_PARSER
 
-class  wxDateTime;
+class WXDLLIMPEXP_FWD_BASE wxDateTime;
 
 // ----------------------------------------------------------------------------
 // constants
@@ -112,7 +112,7 @@ struct wxCmdLineEntryDesc
 // 4. use GetXXX() to retrieve the parsed info
 // ----------------------------------------------------------------------------
 
-class  wxCmdLineParser
+class WXDLLIMPEXP_BASE wxCmdLineParser
 {
 public:
     // ctors and initializers

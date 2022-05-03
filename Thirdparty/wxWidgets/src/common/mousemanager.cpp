@@ -54,7 +54,7 @@ void wxMouseEventsManager::Init()
 
 bool wxMouseEventsManager::Create(wxWindow *win)
 {
-    //wxASSERT_MSG( !m_win, "Create() must not be called twice" );
+    wxASSERT_MSG( !m_win, "Create() must not be called twice" );
 
     m_win = win;
     win->PushEventHandler(this);
@@ -73,7 +73,7 @@ void wxMouseEventsManager::OnCaptureLost(wxMouseCaptureLostEvent& WXUNUSED(event
     switch ( m_state )
     {
         case State_Normal:
-            //wxFAIL_MSG( "mouse shouldn't be captured in normal state" );
+            wxFAIL_MSG( "mouse shouldn't be captured in normal state" );
             break;
 
         case State_Pressed:
@@ -91,8 +91,8 @@ void wxMouseEventsManager::OnCaptureLost(wxMouseCaptureLostEvent& WXUNUSED(event
 
 void wxMouseEventsManager::OnLeftDown(wxMouseEvent& event)
 {
-    /*wxASSERT_MSG( m_state == State_Normal,
-                  "state hasn't been reset to normal somehow" );*/
+    wxASSERT_MSG( m_state == State_Normal,
+                  "state hasn't been reset to normal somehow" );
 
     m_posLast = event.GetPosition();
     m_item = MouseHitTest(m_posLast);
@@ -147,8 +147,8 @@ void wxMouseEventsManager::OnMove(wxMouseEvent& event)
             break;
 
         case State_Pressed:
-            /*wxASSERT_MSG( event.LeftIsDown(),
-                          "should have detected mouse being released" );*/
+            wxASSERT_MSG( event.LeftIsDown(),
+                          "should have detected mouse being released" );
 
             {
                 // it's probably a bad idea to query the system for these

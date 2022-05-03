@@ -28,6 +28,7 @@
 #include "Stylelistbox.h"
 #include "SubsFile.h"
 #include <regex>
+#include <wx/window.h>
 
 wxDEFINE_EVENT(CURSOR_MOVED, wxCommandEvent);
 

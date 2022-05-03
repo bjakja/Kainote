@@ -22,7 +22,7 @@
 #include "wx/dataobj.h"     // for wxDataFormat
 #include "wx/vector.h"
 
-class wxClipboard;
+class WXDLLIMPEXP_FWD_CORE wxClipboard;
 
 // ----------------------------------------------------------------------------
 // wxClipboard represents the system clipboard. Normally, you should use
@@ -32,7 +32,7 @@ class wxClipboard;
 // with wxDataObject.
 // ----------------------------------------------------------------------------
 
-class wxClipboardBase : public wxObject
+class WXDLLIMPEXP_CORE wxClipboardBase : public wxObject
 {
 public:
     wxClipboardBase() { m_usePrimary = false; }
@@ -101,7 +101,7 @@ public:
 // asynchronous clipboard event
 // ----------------------------------------------------------------------------
 
-class wxClipboardEvent : public wxEvent
+class WXDLLIMPEXP_CORE wxClipboardEvent : public wxEvent
 {
 public:
     wxClipboardEvent(wxEventType evtType = wxEVT_NULL)
@@ -130,7 +130,7 @@ protected:
     DECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxClipboardEvent)
 };
 
-wxDECLARE_EXPORTED_EVENT( , wxEVT_CLIPBOARD_CHANGED, wxClipboardEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_CLIPBOARD_CHANGED, wxClipboardEvent );
 
 typedef void (wxEvtHandler::*wxClipboardEventFunction)(wxClipboardEvent&);
 
@@ -172,7 +172,7 @@ typedef void (wxEvtHandler::*wxClipboardEventFunction)(wxClipboardEvent&);
 // helpful class for opening the clipboard and automatically closing it
 // ----------------------------------------------------------------------------
 
-class wxClipboardLocker
+class WXDLLIMPEXP_CORE wxClipboardLocker
 {
 public:
     wxClipboardLocker(wxClipboard *clipboard = NULL)

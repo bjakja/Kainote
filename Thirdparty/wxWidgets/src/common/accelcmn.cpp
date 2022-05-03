@@ -267,7 +267,7 @@ wxAcceleratorEntry::ParseAccel(const wxString& text, int *flagsOut, int *keyOut)
     }
 
 
-    //wxASSERT_MSG( keyCode, wxT("logic error: should have key code here") );
+    wxASSERT_MSG( keyCode, wxT("logic error: should have key code here") );
 
     if ( flagsOut )
         *flagsOut = accelFlags;
@@ -367,7 +367,7 @@ wxString wxAcceleratorEntry::AsPossiblyLocalizedString(bool localized) const
             }
             else
             {
-                //wxFAIL_MSG( wxT("unknown keyboard accelerator code") );
+                wxFAIL_MSG( wxT("unknown keyboard accelerator code") );
             }
         }
     }

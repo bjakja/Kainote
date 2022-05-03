@@ -489,7 +489,7 @@ bool wxMenu::DoInsertOrAppend(wxMenuItem *pItem, size_t pos)
     UINT_PTR id;
     wxMenu *submenu = pItem->GetSubMenu();
     if ( submenu != NULL ) {
-        //wxASSERT_MSG( submenu->GetHMenu(), wxT("invalid submenu") );
+        wxASSERT_MSG( submenu->GetHMenu(), wxT("invalid submenu") );
 
         submenu->SetParent(this);
 
@@ -777,7 +777,7 @@ wxMenuItem *wxMenu::DoRemove(wxMenuItem *item)
     }
 
     // DoRemove() (unlike Remove) can only be called for an existing item!
-    //wxCHECK_MSG( node, NULL, wxT("bug in wxMenu::Remove logic") );
+    wxCHECK_MSG( node, NULL, wxT("bug in wxMenu::Remove logic") );
 
 #if wxUSE_ACCEL
     // remove the corresponding accel from the accel table
@@ -849,7 +849,7 @@ wxAcceleratorTable *wxMenu::CreateAccelTable() const
 
 void wxMenu::CalculateMaxAccelWidth()
 {
-    //wxASSERT_MSG( m_maxAccelWidth == -1, wxT("it's really needed?") );
+    wxASSERT_MSG( m_maxAccelWidth == -1, wxT("it's really needed?") );
 
     wxMenuItemList::compatibility_iterator node = GetMenuItems().GetFirst();
     while (node)
@@ -1079,7 +1079,7 @@ void wxMenuBar::Refresh()
     if ( IsFrozen() )
         return;
 
-    //wxCHECK_RET( IsAttached(), wxT("can't refresh unattached menubar") );
+    wxCHECK_RET( IsAttached(), wxT("can't refresh unattached menubar") );
 
 #if defined(WINCE_WITHOUT_COMMANDBAR)
     if (GetToolBar())
@@ -1169,9 +1169,9 @@ WXHMENU wxMenuBar::Create()
 
 int wxMenuBar::MSWPositionForWxMenu(wxMenu *menu, int wxpos)
 {
-    /*wxASSERT(menu);
+    wxASSERT(menu);
     wxASSERT(menu->GetHMenu());
-    wxASSERT(m_hMenu);*/
+    wxASSERT(m_hMenu);
 
 #if defined(__WXWINCE__)
     int totalMSWItems = GetMenuCount();
@@ -1190,7 +1190,7 @@ int wxMenuBar::MSWPositionForWxMenu(wxMenu *menu, int wxpos)
         if(GetSubMenu((HMENU)m_hMenu,i)==(HMENU)menu->GetHMenu())
             return i;
     }
-    //wxFAIL;
+    wxFAIL;
     return -1;
 }
 
@@ -1203,8 +1203,8 @@ int wxMenuBar::MSWPositionForWxMenu(wxMenu *menu, int wxpos)
 
 void wxMenuBar::EnableTop(size_t pos, bool enable)
 {
-    //wxCHECK_RET( IsAttached(), wxT("doesn't work with unattached menubars") );
-    //wxCHECK_RET( pos < GetMenuCount(), wxT("invalid menu index") );
+    wxCHECK_RET( IsAttached(), wxT("doesn't work with unattached menubars") );
+    wxCHECK_RET( pos < GetMenuCount(), wxT("invalid menu index") );
 
     int flag = enable ? MF_ENABLED : MF_GRAYED;
 
@@ -1215,7 +1215,7 @@ void wxMenuBar::EnableTop(size_t pos, bool enable)
 
 bool wxMenuBar::IsEnabledTop(size_t pos) const
 {
-    //wxCHECK_MSG( pos < GetMenuCount(), false, wxS("invalid menu index") );
+    wxCHECK_MSG( pos < GetMenuCount(), false, wxS("invalid menu index") );
     WinStruct<MENUITEMINFO> mii;
     mii.fMask = MIIM_STATE;
     if ( !::GetMenuItemInfo(GetHmenu(), pos, TRUE, &mii) )
@@ -1228,7 +1228,7 @@ bool wxMenuBar::IsEnabledTop(size_t pos) const
 
 void wxMenuBar::SetMenuLabel(size_t pos, const wxString& label)
 {
-    //wxCHECK_RET( pos < GetMenuCount(), wxT("invalid menu index") );
+    wxCHECK_RET( pos < GetMenuCount(), wxT("invalid menu index") );
 
     m_menus[pos]->wxMenuBase::SetTitle(label);
 
@@ -1284,8 +1284,8 @@ void wxMenuBar::SetMenuLabel(size_t pos, const wxString& label)
 
 wxString wxMenuBar::GetMenuLabel(size_t pos) const
 {
-    //wxCHECK_MSG( pos < GetMenuCount(), wxEmptyString,
-                 //wxT("invalid menu index in wxMenuBar::GetMenuLabel") );
+    wxCHECK_MSG( pos < GetMenuCount(), wxEmptyString,
+                 wxT("invalid menu index in wxMenuBar::GetMenuLabel") );
 
     return m_menus[pos]->GetTitle();
 }
@@ -1408,7 +1408,7 @@ bool wxMenuBar::Insert(size_t pos, wxMenu *menu, const wxString& title)
 bool wxMenuBar::Append(wxMenu *menu, const wxString& title)
 {
     WXHMENU submenu = menu ? menu->GetHMenu() : 0;
-    //wxCHECK_MSG( submenu, false, wxT("can't append invalid menu to menubar") );
+    wxCHECK_MSG( submenu, false, wxT("can't append invalid menu to menubar") );
 
     if ( !wxMenuBarBase::Append(menu, title) )
         return false;
@@ -1593,8 +1593,8 @@ void wxMenuBar::Detach()
 // get the menu with given handle (recursively)
 wxMenu* wxMenuBar::MSWGetMenu(WXHMENU hMenu)
 {
-    //wxCHECK_MSG( GetHMenu() != hMenu, NULL,
-                 //wxT("wxMenuBar::MSWGetMenu(): menu handle is wxMenuBar, not wxMenu") );
+    wxCHECK_MSG( GetHMenu() != hMenu, NULL,
+                 wxT("wxMenuBar::MSWGetMenu(): menu handle is wxMenuBar, not wxMenu") );
 
 #if wxUSE_OWNER_DRAWN
     // query all menus

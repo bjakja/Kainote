@@ -19,7 +19,7 @@ wxDFB_DECLARE_INTERFACE(IDirectFBFont);
 // wxFont
 // ----------------------------------------------------------------------------
 
-class  wxFont : public wxFontBase
+class WXDLLIMPEXP_CORE wxFont : public wxFontBase
 {
 public:
     wxFont() {}

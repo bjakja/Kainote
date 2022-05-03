@@ -548,7 +548,7 @@ wxString wxGetCurrentDir()
 
 bool wxGetEnvMap(wxEnvVariableHashMap *map)
 {
-    //wxCHECK_MSG( map, false, wxS("output pointer can't be NULL") );
+    wxCHECK_MSG( map, false, wxS("output pointer can't be NULL") );
 
 #if defined(__VISUALC__)
     // This variable only exists to force the CRT to fill the wide char array,
@@ -626,7 +626,7 @@ bool wxGetEnvMap(wxEnvVariableHashMap *map)
 #if wxUSE_STREAMS
 static bool ReadAll(wxInputStream *is, wxArrayString& output)
 {
-    //wxCHECK_MSG( is, false, wxT("NULL stream in wxExecute()?") );
+    wxCHECK_MSG( is, false, wxT("NULL stream in wxExecute()?") );
 
     // the stream could be already at EOF or in wxSTREAM_BROKEN_PIPE state
     is->Reset();
@@ -823,7 +823,7 @@ typedef struct
 void wxQsort(void* pbase, size_t total_elems,
              size_t size, wxSortCallback cmp, const void* user_data)
 {
-  /*register */char *base_ptr = (char *) pbase;
+  register char *base_ptr = (char *) pbase;
   const size_t max_thresh = MAX_THRESH * size;
 
   if (total_elems == 0)
@@ -1182,7 +1182,7 @@ wxChar *wxStripMenuCodes(const wxChar *in, wxChar *out)
 
 wxString wxStripMenuCodes(const wxString& in, int flags)
 {
-    //wxASSERT_MSG( flags, wxT("this is useless to call without any flags") );
+    wxASSERT_MSG( flags, wxT("this is useless to call without any flags") );
 
     wxString out;
 
@@ -1373,51 +1373,51 @@ int wxMessageBox(const wxString& message, const wxString& caption, long style,
             return wxHELP;
     }
 
-    //wxFAIL_MSG( wxT("unexpected return code from wxMessageDialog") );
+    wxFAIL_MSG( wxT("unexpected return code from wxMessageDialog") );
 
     return wxCANCEL;
 }
 
-//wxVersionInfo wxGetLibraryVersionInfo()
-//{
-//    // don't translate these strings, they're for diagnostics purposes only
-//    wxString msg;
-//    msg.Printf(wxS("wxWidgets Library (%s port)\n")
-//               wxS("Version %d.%d.%d (Unicode: %s, debug level: %d),\n")
-//               wxS("compiled at %s %s\n\n")
-//               wxS("Runtime version of toolkit used is %d.%d.\n"),
-//               wxPlatformInfo::Get().GetPortIdName(),
-//               wxMAJOR_VERSION,
-//               wxMINOR_VERSION,
-//               wxRELEASE_NUMBER,
-//#if wxUSE_UNICODE_UTF8
-//               "UTF-8",
-//#elif wxUSE_UNICODE
-//               "wchar_t",
-//#else
-//               "none",
-//#endif
-//               wxDEBUG_LEVEL,
-//               __TDATE__,
-//               __TTIME__,
-//               wxPlatformInfo::Get().GetToolkitMajorVersion(),
-//               wxPlatformInfo::Get().GetToolkitMinorVersion()
-//              );
-//
-//#ifdef __WXGTK__
-//    msg += wxString::Format("Compile-time GTK+ version is %d.%d.%d.\n",
-//                            GTK_MAJOR_VERSION,
-//                            GTK_MINOR_VERSION,
-//                            GTK_MICRO_VERSION);
-//#endif // __WXGTK__
-//
-//    return wxVersionInfo(wxS("wxWidgets"),
-//                         wxMAJOR_VERSION,
-//                         wxMINOR_VERSION,
-//                         wxRELEASE_NUMBER,
-//                         msg,
-//                         wxS("Copyright (c) 1995-2011 wxWidgets team"));
-//}
+wxVersionInfo wxGetLibraryVersionInfo()
+{
+    // don't translate these strings, they're for diagnostics purposes only
+    wxString msg;
+    msg.Printf(wxS("wxWidgets Library (%s port)\n")
+               wxS("Version %d.%d.%d (Unicode: %s, debug level: %d),\n")
+               wxS("compiled at %s %s\n\n")
+               wxS("Runtime version of toolkit used is %d.%d.\n"),
+               wxPlatformInfo::Get().GetPortIdName(),
+               wxMAJOR_VERSION,
+               wxMINOR_VERSION,
+               wxRELEASE_NUMBER,
+#if wxUSE_UNICODE_UTF8
+               "UTF-8",
+#elif wxUSE_UNICODE
+               "wchar_t",
+#else
+               "none",
+#endif
+               wxDEBUG_LEVEL,
+               __TDATE__,
+               __TTIME__,
+               wxPlatformInfo::Get().GetToolkitMajorVersion(),
+               wxPlatformInfo::Get().GetToolkitMinorVersion()
+              );
+
+#ifdef __WXGTK__
+    msg += wxString::Format("Compile-time GTK+ version is %d.%d.%d.\n",
+                            GTK_MAJOR_VERSION,
+                            GTK_MINOR_VERSION,
+                            GTK_MICRO_VERSION);
+#endif // __WXGTK__
+
+    return wxVersionInfo(wxS("wxWidgets"),
+                         wxMAJOR_VERSION,
+                         wxMINOR_VERSION,
+                         wxRELEASE_NUMBER,
+                         msg,
+                         wxS("Copyright (c) 1995-2011 wxWidgets team"));
+}
 
 void wxInfoMessageBox(wxWindow* parent)
 {
@@ -1505,7 +1505,7 @@ wxColour wxGetColourFromUser(wxWindow *parent,
         {
             if ( !data.FromString(s_strColourData) )
             {
-                //wxFAIL_MSG( "bug in wxColourData::FromString()?" );
+                wxFAIL_MSG( "bug in wxColourData::FromString()?" );
             }
 
 #ifdef __WXMSW__

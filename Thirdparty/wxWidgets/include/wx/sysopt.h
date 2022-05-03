@@ -19,6 +19,9 @@
 // ----------------------------------------------------------------------------
 
 class
+#if wxUSE_SYSTEM_OPTIONS
+WXDLLIMPEXP_BASE
+#endif
 wxSystemOptions : public wxObject
 {
 public:

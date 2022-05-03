@@ -23,9 +23,9 @@
     #define wxUSE_DIALOG_SIZEGRIP 1
 #endif
 
-extern const char wxDialogNameStr[];
+extern WXDLLIMPEXP_DATA_CORE(const char) wxDialogNameStr[];
 
-class  wxDialogModalData;
+class WXDLLIMPEXP_FWD_CORE wxDialogModalData;
 
 #if wxUSE_TOOLBAR && (defined(__SMARTPHONE__) || defined(__POCKETPC__))
 class WXDLLIMPEXP_FWD_CORE wxToolBar;
@@ -33,7 +33,7 @@ extern WXDLLIMPEXP_DATA_CORE(const char) wxToolBarNameStr[];
 #endif
 
 // Dialog boxes
-class  wxDialog : public wxDialogBase
+class WXDLLIMPEXP_CORE wxDialog : public wxDialogBase
 {
 public:
     wxDialog() { Init(); }

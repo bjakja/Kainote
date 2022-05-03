@@ -68,9 +68,9 @@ enum
 // wxRegEx: a regular expression
 // ----------------------------------------------------------------------------
 
-class  wxRegExImpl;
+class WXDLLIMPEXP_FWD_BASE wxRegExImpl;
 
-class  wxRegEx
+class WXDLLIMPEXP_BASE wxRegEx
 {
 public:
     // default ctor: use Compile() later

@@ -15,13 +15,13 @@
 #include "wx/defs.h"
 #include "wx/toplevel.h"
 
-class  wxSizer;
-class  wxStdDialogButtonSizer;
-class  wxBoxSizer;
-class  wxDialogLayoutAdapter;
-class  wxDialog;
-class  wxButton;
-class  wxScrolledWindow;
+class WXDLLIMPEXP_FWD_CORE wxSizer;
+class WXDLLIMPEXP_FWD_CORE wxStdDialogButtonSizer;
+class WXDLLIMPEXP_FWD_CORE wxBoxSizer;
+class WXDLLIMPEXP_FWD_CORE wxDialogLayoutAdapter;
+class WXDLLIMPEXP_FWD_CORE wxDialog;
+class WXDLLIMPEXP_FWD_CORE wxButton;
+class WXDLLIMPEXP_FWD_CORE wxScrolledWindow;
 class wxTextSizerWrapper;
 
 // Also see the bit summary table in wx/toplevel.h.
@@ -63,9 +63,9 @@ enum wxDialogModality
     wxDIALOG_MODALITY_APP_MODAL = 2
 };
 
-extern const char wxDialogNameStr[];
+extern WXDLLIMPEXP_DATA_CORE(const char) wxDialogNameStr[];
 
-class  wxDialogBase : public wxTopLevelWindow
+class WXDLLIMPEXP_CORE wxDialogBase : public wxTopLevelWindow
 {
 public:
     wxDialogBase() { Init(); }
@@ -280,7 +280,7 @@ private:
  * a help mechanism.
  */
 
-class  wxDialogLayoutAdapter: public wxObject
+class WXDLLIMPEXP_CORE wxDialogLayoutAdapter: public wxObject
 {
     DECLARE_CLASS(wxDialogLayoutAdapter)
 public:
@@ -298,7 +298,7 @@ public:
  *
  */
 
-class  wxStandardDialogLayoutAdapter: public wxDialogLayoutAdapter
+class WXDLLIMPEXP_CORE wxStandardDialogLayoutAdapter: public wxDialogLayoutAdapter
 {
     DECLARE_CLASS(wxStandardDialogLayoutAdapter)
 public:
@@ -367,7 +367,7 @@ public:
     #endif
 #endif
 
-class  wxWindowModalDialogEvent  : public wxCommandEvent
+class WXDLLIMPEXP_CORE wxWindowModalDialogEvent  : public wxCommandEvent
 {
 public:
     wxWindowModalDialogEvent (wxEventType commandType = wxEVT_NULL, int id = 0)
@@ -385,7 +385,7 @@ private:
     DECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxWindowModalDialogEvent )
 };
 
-wxDECLARE_EXPORTED_EVENT(, wxEVT_WINDOW_MODAL_DIALOG_CLOSED , wxWindowModalDialogEvent );
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CORE, wxEVT_WINDOW_MODAL_DIALOG_CLOSED , wxWindowModalDialogEvent );
 
 typedef void (wxEvtHandler::*wxWindowModalDialogEventFunction)(wxWindowModalDialogEvent &);
 

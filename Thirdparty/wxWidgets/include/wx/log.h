@@ -47,10 +47,10 @@ typedef unsigned long wxLogLevel;
 // forward declarations
 // ----------------------------------------------------------------------------
 
-class  wxObject;
+class WXDLLIMPEXP_FWD_BASE wxObject;
 
 #if wxUSE_GUI
-    class  wxFrame;
+    class WXDLLIMPEXP_FWD_CORE wxFrame;
 #endif // wxUSE_GUI
 
 #if wxUSE_LOG
@@ -92,7 +92,7 @@ class  wxObject;
 #ifndef wxLOG_COMPONENT
     // this is a variable and not a macro in order to allow the user code to
     // just #define wxLOG_COMPONENT without #undef'ining it first
-    extern const char * wxLOG_COMPONENT;
+    extern WXDLLIMPEXP_DATA_BASE(const char *) wxLOG_COMPONENT;
 
     #ifdef WXBUILDING
         #define wxLOG_COMPONENT "wx"
@@ -311,7 +311,7 @@ struct wxLogRecord
 // Derive from this class to customize format of log messages.
 // ----------------------------------------------------------------------------
 
-class  wxLogFormatter
+class WXDLLIMPEXP_BASE wxLogFormatter
 {
 public:
     // Default constructor.
@@ -340,7 +340,7 @@ protected:
 // normally, only a single instance of this class exists but it's not enforced
 // ----------------------------------------------------------------------------
 
-class  wxLog
+class WXDLLIMPEXP_BASE wxLog
 {
 public:
     // ctor
@@ -702,7 +702,7 @@ private:
 
 // log everything except for the debug/trace messages (which are passed to
 // wxMessageOutputDebug) to a buffer
-class  wxLogBuffer : public wxLog
+class WXDLLIMPEXP_BASE wxLogBuffer : public wxLog
 {
 public:
     wxLogBuffer() { }
@@ -725,7 +725,7 @@ private:
 
 
 // log everything to a "FILE *", stderr by default
-class  wxLogStderr : public wxLog
+class WXDLLIMPEXP_BASE wxLogStderr : public wxLog
 {
 public:
     // redirect log output to a FILE
@@ -743,7 +743,7 @@ protected:
 #if wxUSE_STD_IOSTREAM
 
 // log everything to an "ostream", cerr by default
-class  wxLogStream : public wxLog
+class WXDLLIMPEXP_BASE wxLogStream : public wxLog
 {
 public:
     // redirect log output to an ostream
@@ -779,7 +779,7 @@ protected:
         // ~wxLogNull called, old log sink restored
     }
  */
-class  wxLogNull
+class WXDLLIMPEXP_BASE wxLogNull
 {
 public:
     wxLogNull() : m_flagOld(wxLog::EnableLogging(false)) { }
@@ -798,7 +798,7 @@ private:
 // does it itself in its ctor
 // ----------------------------------------------------------------------------
 
-class  wxLogChain : public wxLog
+class WXDLLIMPEXP_BASE wxLogChain : public wxLog
 {
 public:
     wxLogChain(wxLog *logger);
@@ -846,7 +846,7 @@ private:
 
 #define wxLogPassThrough wxLogInterposer
 
-class  wxLogInterposer : public wxLogChain
+class WXDLLIMPEXP_BASE wxLogInterposer : public wxLogChain
 {
 public:
     wxLogInterposer();
@@ -858,7 +858,7 @@ private:
 // a temporary interposer which doesn't destroy the old log target
 // (calls DetachOldLog)
 
-class  wxLogInterposerTemp : public wxLogChain
+class WXDLLIMPEXP_BASE wxLogInterposerTemp : public wxLogChain
 {
 public:
     wxLogInterposerTemp();
@@ -912,7 +912,7 @@ public:
     // given key (while by default 0 value will be used)
     wxLogger& MaybeStore(const wxString& key, wxUIntPtr value = 0)
     {
-        //wxASSERT_MSG( m_optKey.empty(), "can only have one optional value" );
+        wxASSERT_MSG( m_optKey.empty(), "can only have one optional value" );
         m_optKey = key;
 
         m_info.StoreValue(key, value);
@@ -1275,10 +1275,10 @@ private:
 // ----------------------------------------------------------------------------
 
 // return the last system error code
- unsigned long wxSysErrorCode();
+WXDLLIMPEXP_BASE unsigned long wxSysErrorCode();
 
 // return the error message for given (or last if 0) error code
- const wxChar* wxSysErrorMsg(unsigned long nErrCode = 0);
+WXDLLIMPEXP_BASE const wxChar* wxSysErrorMsg(unsigned long nErrCode = 0);
 
 // ----------------------------------------------------------------------------
 // define wxLog<level>() functions which can be used by application instead of
@@ -1494,12 +1494,12 @@ wxDEFINE_EMPTY_LOG_FUNCTION(Verbose);
 wxDEFINE_EMPTY_LOG_FUNCTION2(Generic, wxLogLevel);
 
 #if wxUSE_GUI
-    //wxDEFINE_EMPTY_LOG_FUNCTION(Status);
-    //wxDEFINE_EMPTY_LOG_FUNCTION2(Status, wxFrame *);
+    wxDEFINE_EMPTY_LOG_FUNCTION(Status);
+    wxDEFINE_EMPTY_LOG_FUNCTION2(Status, wxFrame *);
 #endif // wxUSE_GUI
 
 // Empty Class to fake wxLogNull
-class  wxLogNull
+class WXDLLIMPEXP_BASE wxLogNull
 {
 public:
     wxLogNull() { }
@@ -1581,7 +1581,7 @@ public:
 
 // wxLogFatalError helper: show the (fatal) error to the user in a safe way,
 // i.e. without using wxMessageBox() for example because it could crash
-void 
+void WXDLLIMPEXP_BASE
 wxSafeShowMessage(const wxString& title, const wxString& text);
 
 // ----------------------------------------------------------------------------

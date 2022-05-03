@@ -29,7 +29,7 @@
 // wxWindow declaration for MSW
 // ---------------------------------------------------------------------------
 
-class  wxWindowMSW : public wxWindowBase
+class WXDLLIMPEXP_CORE wxWindowMSW : public wxWindowBase
 {
     friend class wxSpinCtrl;
     friend class wxSlider;

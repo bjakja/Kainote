@@ -15,7 +15,6 @@
 #include "wx/defs.h"
 #include "wx/object.h"
 #include "wx/string.h"
-#include <string.h>
 
 enum wxIPCFormat
 {
@@ -48,10 +47,10 @@ enum wxIPCFormat
   wxIPC_PRIVATE =          20
 };
 
-class  wxServerBase;
-class  wxClientBase;
+class WXDLLIMPEXP_FWD_BASE wxServerBase;
+class WXDLLIMPEXP_FWD_BASE wxClientBase;
 
-class  wxConnectionBase: public wxObject
+class WXDLLIMPEXP_BASE wxConnectionBase: public wxObject
 {
 public:
   wxConnectionBase(void *buffer, size_t size); // use external buffer
@@ -65,16 +64,16 @@ public:
   // Calls that CLIENT can make
   bool Execute(const void *data, size_t size, wxIPCFormat fmt = wxIPC_PRIVATE)
       { return DoExecute(data, size, fmt); }
-  /*bool Execute(const char *s, size_t size = wxNO_LEN)
+  bool Execute(const char *s, size_t size = wxNO_LEN)
       { return DoExecute(s, size == wxNO_LEN ? strlen(s) + 1
-                                             : size, wxIPC_TEXT); }*/
+                                             : size, wxIPC_TEXT); }
   bool Execute(const wchar_t *ws, size_t size = wxNO_LEN)
       { return DoExecute(ws, size == wxNO_LEN ? (wcslen(ws) + 1)*sizeof(wchar_t)
                                               : size, wxIPC_UNICODETEXT); }
   bool Execute(const wxString& s)
   {
-      const auto buf = s.wc_str();
-      return DoExecute(buf, wcslen(buf) + 1, wxIPC_UTF8TEXT);
+      const wxScopedCharBuffer buf = s.utf8_str();
+      return DoExecute(buf, strlen(buf) + 1, wxIPC_UTF8TEXT);
   }
   bool Execute(const wxCStrData& cs)
       { return Execute(cs.AsString()); }
@@ -86,20 +85,20 @@ public:
   bool Poke(const wxString& item, const void *data, size_t size,
             wxIPCFormat fmt = wxIPC_PRIVATE)
       { return DoPoke(item, data, size, fmt); }
-  /*bool Poke(const wxString& item, const char *s, size_t size = wxNO_LEN)
+  bool Poke(const wxString& item, const char *s, size_t size = wxNO_LEN)
       { return DoPoke(item, s, size == wxNO_LEN ? strlen(s) + 1
-                                                : size, wxIPC_TEXT); }*/
+                                                : size, wxIPC_TEXT); }
   bool Poke(const wxString& item, const wchar_t *ws, size_t size = wxNO_LEN)
       { return DoPoke(item, ws,
                       size == wxNO_LEN ? (wcslen(ws) + 1)*sizeof(wchar_t)
                                        : size, wxIPC_UNICODETEXT); }
-  /*bool Poke(const wxString& item, const wxString s)
+  bool Poke(const wxString& item, const wxString s)
   {
       const wxScopedCharBuffer buf = s.utf8_str();
       return DoPoke(item, buf,  strlen(buf) + 1, wxIPC_UTF8TEXT);
-  }*/
-  /*bool Poke(const wxString& item, const wxCStrData& cs)
-      { return Poke(item, cs.AsString()); }*/
+  }
+  bool Poke(const wxString& item, const wxCStrData& cs)
+      { return Poke(item, cs.AsString()); }
 
   virtual bool StartAdvise(const wxString& item) = 0;
   virtual bool StopAdvise(const wxString& item) = 0;
@@ -108,20 +107,20 @@ public:
   bool Advise(const wxString& item, const void *data, size_t size,
               wxIPCFormat fmt = wxIPC_PRIVATE)
       { return DoAdvise(item, data, size, fmt); }
-  /*bool Advise(const wxString& item, const char *s, size_t size = wxNO_LEN)
+  bool Advise(const wxString& item, const char *s, size_t size = wxNO_LEN)
       { return DoAdvise(item, s, size == wxNO_LEN ? strlen(s) + 1
-                                                  : size, wxIPC_TEXT); }*/
+                                                  : size, wxIPC_TEXT); }
   bool Advise(const wxString& item, const wchar_t *ws, size_t size = wxNO_LEN)
       { return DoAdvise(item, ws,
                         size == wxNO_LEN ? (wcslen(ws) + 1)*sizeof(wchar_t)
                                          : size, wxIPC_UNICODETEXT); }
-  /*bool Advise(const wxString& item, const wxString s)
+  bool Advise(const wxString& item, const wxString s)
   {
       const wxScopedCharBuffer buf = s.utf8_str();
       return DoAdvise(item, buf,  strlen(buf) + 1, wxIPC_UTF8TEXT);
   }
   bool Advise(const wxString& item, const wxCStrData& cs)
-      { return Advise(item, cs.AsString()); }*/
+      { return Advise(item, cs.AsString()); }
 
   // Calls that both can make
   virtual bool Disconnect() = 0;
@@ -131,11 +130,11 @@ public:
   virtual bool OnExec(const wxString& WXUNUSED(topic),
                       const wxString& WXUNUSED(data))
   {
-     /* wxFAIL_MSG( "This method shouldn't be called, if it is, it probably "
+      wxFAIL_MSG( "This method shouldn't be called, if it is, it probably "
                   "means that you didn't update your old code overriding "
                   "OnExecute() to use the new parameter types (\"const void *\" "
                   "instead of \"wxChar *\" and \"size_t\" instead of \"int\"), "
-                  "you must do it or your code wouldn't be executed at all!" );*/
+                  "you must do it or your code wouldn't be executed at all!" );
       return false;
   }
 
@@ -228,7 +227,7 @@ protected:
 };
 
 
-class  wxServerBase : public wxObject
+class WXDLLIMPEXP_BASE wxServerBase : public wxObject
 {
 public:
   wxServerBase() { }
@@ -243,7 +242,7 @@ public:
   DECLARE_CLASS(wxServerBase)
 };
 
-class  wxClientBase : public wxObject
+class WXDLLIMPEXP_BASE wxClientBase : public wxObject
 {
 public:
   wxClientBase() { }

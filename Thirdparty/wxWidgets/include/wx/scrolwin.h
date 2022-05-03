@@ -14,8 +14,8 @@
 
 #include "wx/panel.h"
 
-class  wxScrollHelperEvtHandler;
-class  wxTimer;
+class WXDLLIMPEXP_FWD_CORE wxScrollHelperEvtHandler;
+class WXDLLIMPEXP_FWD_BASE wxTimer;
 
 // default scrolled window style: scroll in both directions
 #define wxScrolledWindowStyle (wxHSCROLL | wxVSCROLL)
@@ -56,7 +56,7 @@ enum wxScrollbarVisibility
 //
 // ----------------------------------------------------------------------------
 
-class  wxScrollHelperBase
+class WXDLLIMPEXP_CORE wxScrollHelperBase
 {
 public:
     // ctor must be given the associated window
@@ -332,7 +332,7 @@ public:                                                                       \
 // ----------------------------------------------------------------------------
 
 // helper class for wxScrolled<T> below
-struct  wxScrolledT_Helper
+struct WXDLLIMPEXP_CORE wxScrolledT_Helper
 {
     static wxSize FilterBestSize(const wxWindow *win,
                                  const wxScrollHelper *helper,
@@ -433,7 +433,7 @@ private:
 // "typedef" for wxScrolled<wxPanel>. It's not a real typedef because we
 // want wxScrolledWindow to show in wxRTTI information (the class is widely
 // used and likelihood of its wxRTTI information being used too is high):
-class  wxScrolledWindow : public wxScrolled<wxPanel>
+class WXDLLIMPEXP_CORE wxScrolledWindow : public wxScrolled<wxPanel>
 {
 public:
     wxScrolledWindow() : wxScrolled<wxPanel>() {}

@@ -48,9 +48,9 @@
 // forward decls
 // ----------------------------------------------------------------------------
 
-class  wxArrayString;
-class  wxTranslationsLoader;
-class  wxLocale;
+class WXDLLIMPEXP_FWD_BASE wxArrayString;
+class WXDLLIMPEXP_FWD_BASE wxTranslationsLoader;
+class WXDLLIMPEXP_FWD_BASE wxLocale;
 
 class wxPluralFormsCalculator;
 wxDECLARE_SCOPED_PTR(wxPluralFormsCalculator, wxPluralFormsCalculatorPtr)
@@ -59,7 +59,7 @@ wxDECLARE_SCOPED_PTR(wxPluralFormsCalculator, wxPluralFormsCalculatorPtr)
 // wxMsgCatalog corresponds to one loaded message catalog.
 // ----------------------------------------------------------------------------
 
-class  wxMsgCatalog
+class WXDLLIMPEXP_BASE wxMsgCatalog
 {
 public:
     // Ctor is protected, because CreateFromXXX functions must be used,
@@ -81,7 +81,7 @@ public:
 
     // get the translated string: returns NULL if not found
     const wxString *GetString(const wxString& sz, unsigned n = UINT_MAX) const;
-    
+
 protected:
     wxMsgCatalog(const wxString& domain)
         : m_pNext(NULL), m_domain(domain)
@@ -90,14 +90,12 @@ protected:
 #endif
     {}
 
-    
-
 private:
     // variable pointing to the next element in a linked list (or NULL)
     wxMsgCatalog *m_pNext;
     friend class wxTranslations;
 
-    
+    wxStringToStringHashMap m_messages; // all messages in the catalog
     wxString                m_domain;   // name of the domain
 
 #if !wxUSE_UNICODE
@@ -106,7 +104,6 @@ private:
     wxCSConv *m_conv;
 #endif
 
-    wxStringToStringHashMap m_messages; // all messages in the catalog
     wxPluralFormsCalculatorPtr m_pluralFormsCalculator;
 };
 
@@ -115,7 +112,7 @@ private:
 // ----------------------------------------------------------------------------
 
 // this class allows to get translations for strings
-class  wxTranslations
+class WXDLLIMPEXP_BASE wxTranslations
 {
 public:
     wxTranslations();
@@ -191,7 +188,7 @@ private:
 
 
 // abstraction of translations discovery and loading
-class  wxTranslationsLoader
+class WXDLLIMPEXP_BASE wxTranslationsLoader
 {
 public:
     wxTranslationsLoader() {}
@@ -205,7 +202,7 @@ public:
 
 
 // standard wxTranslationsLoader implementation, using filesystem
-class  wxFileTranslationsLoader
+class WXDLLIMPEXP_BASE wxFileTranslationsLoader
     : public wxTranslationsLoader
 {
 public:
@@ -220,7 +217,7 @@ public:
 
 #ifdef __WINDOWS__
 // loads translations from win32 resources
-class  wxResourceTranslationsLoader
+class WXDLLIMPEXP_BASE wxResourceTranslationsLoader
     : public wxTranslationsLoader
 {
 public:

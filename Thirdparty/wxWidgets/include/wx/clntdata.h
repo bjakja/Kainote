@@ -16,73 +16,73 @@
 #include "wx/string.h"
 #include "wx/hashmap.h"
 
-//typedef int (*wxShadowObjectMethod)(void*, void*);
-//WX_DECLARE_STRING_HASH_MAP_WITH_DECL(
-//    wxShadowObjectMethod,
-//    wxShadowObjectMethods,
-//    class WXDLLIMPEXP_BASE
-//);
-//WX_DECLARE_STRING_HASH_MAP_WITH_DECL(
-//    void *,
-//    wxShadowObjectFields,
-//    class WXDLLIMPEXP_BASE
-//);
+typedef int (*wxShadowObjectMethod)(void*, void*);
+WX_DECLARE_STRING_HASH_MAP_WITH_DECL(
+    wxShadowObjectMethod,
+    wxShadowObjectMethods,
+    class WXDLLIMPEXP_BASE
+);
+WX_DECLARE_STRING_HASH_MAP_WITH_DECL(
+    void *,
+    wxShadowObjectFields,
+    class WXDLLIMPEXP_BASE
+);
 
-//class  wxShadowObject
-//{
-//public:
-//    wxShadowObject() { }
-//
-//    void AddMethod( const wxString &name, wxShadowObjectMethod method )
-//    {
-//        wxShadowObjectMethods::iterator it = m_methods.find( name );
-//        if (it == m_methods.end())
-//            m_methods[ name ] = method;
-//        else
-//            it->second = method;
-//    }
-//
-//    bool InvokeMethod( const wxString &name, void* window, void* param, int* returnValue )
-//    {
-//        wxShadowObjectMethods::iterator it = m_methods.find( name );
-//        if (it == m_methods.end())
-//            return false;
-//        wxShadowObjectMethod method = it->second;
-//        int ret = (*method)(window, param);
-//        if (returnValue)
-//            *returnValue = ret;
-//        return true;
-//    }
-//
-//    void AddField( const wxString &name, void* initialValue = NULL )
-//    {
-//        wxShadowObjectFields::iterator it = m_fields.find( name );
-//        if (it == m_fields.end())
-//            m_fields[ name ] = initialValue;
-//        else
-//            it->second = initialValue;
-//    }
-//
-//    void SetField( const wxString &name, void* value )
-//    {
-//        wxShadowObjectFields::iterator it = m_fields.find( name );
-//        if (it == m_fields.end())
-//            return;
-//        it->second = value;
-//    }
-//
-//    void* GetField( const wxString &name, void *defaultValue = NULL )
-//    {
-//        wxShadowObjectFields::iterator it = m_fields.find( name );
-//        if (it == m_fields.end())
-//            return defaultValue;
-//        return it->second;
-//    }
-//
-//private:
-//    wxShadowObjectMethods   m_methods;
-//    wxShadowObjectFields    m_fields;
-//};
+class WXDLLIMPEXP_BASE wxShadowObject
+{
+public:
+    wxShadowObject() { }
+
+    void AddMethod( const wxString &name, wxShadowObjectMethod method )
+    {
+        wxShadowObjectMethods::iterator it = m_methods.find( name );
+        if (it == m_methods.end())
+            m_methods[ name ] = method;
+        else
+            it->second = method;
+    }
+
+    bool InvokeMethod( const wxString &name, void* window, void* param, int* returnValue )
+    {
+        wxShadowObjectMethods::iterator it = m_methods.find( name );
+        if (it == m_methods.end())
+            return false;
+        wxShadowObjectMethod method = it->second;
+        int ret = (*method)(window, param);
+        if (returnValue)
+            *returnValue = ret;
+        return true;
+    }
+
+    void AddField( const wxString &name, void* initialValue = NULL )
+    {
+        wxShadowObjectFields::iterator it = m_fields.find( name );
+        if (it == m_fields.end())
+            m_fields[ name ] = initialValue;
+        else
+            it->second = initialValue;
+    }
+
+    void SetField( const wxString &name, void* value )
+    {
+        wxShadowObjectFields::iterator it = m_fields.find( name );
+        if (it == m_fields.end())
+            return;
+        it->second = value;
+    }
+
+    void* GetField( const wxString &name, void *defaultValue = NULL )
+    {
+        wxShadowObjectFields::iterator it = m_fields.find( name );
+        if (it == m_fields.end())
+            return defaultValue;
+        return it->second;
+    }
+
+private:
+    wxShadowObjectMethods   m_methods;
+    wxShadowObjectFields    m_fields;
+};
 
 
 // ----------------------------------------------------------------------------
@@ -95,14 +95,14 @@ enum wxClientDataType
     wxClientData_Void     // client data is untyped and we don't own it
 };
 
-class  wxClientData
+class WXDLLIMPEXP_BASE wxClientData
 {
 public:
     wxClientData() { }
     virtual ~wxClientData() { }
 };
 
-class  wxStringClientData : public wxClientData
+class WXDLLIMPEXP_BASE wxStringClientData : public wxClientData
 {
 public:
     wxStringClientData() : m_data() { }
@@ -123,7 +123,7 @@ private:
 // NOTE:  This functionality is currently duplicated in wxEvtHandler in order
 //        to avoid having more than one vtable in that class hierarchy.
 
-class  wxClientDataContainer
+class WXDLLIMPEXP_BASE wxClientDataContainer
 {
 public:
     wxClientDataContainer();

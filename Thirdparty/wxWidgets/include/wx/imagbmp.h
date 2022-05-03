@@ -40,7 +40,7 @@ enum
 // wxBMPHandler
 // ----------------------------------------------------------------------------
 
-class  wxBMPHandler : public wxImageHandler
+class WXDLLIMPEXP_CORE wxBMPHandler : public wxImageHandler
 {
 public:
     wxBMPHandler()
@@ -74,7 +74,7 @@ private:
 // wxICOHandler
 // ----------------------------------------------------------------------------
 
-class  wxICOHandler : public wxBMPHandler
+class WXDLLIMPEXP_CORE wxICOHandler : public wxBMPHandler
 {
 public:
     wxICOHandler()
@@ -104,7 +104,7 @@ private:
 // wxCURHandler
 // ----------------------------------------------------------------------------
 
-class  wxCURHandler : public wxICOHandler
+class WXDLLIMPEXP_CORE wxCURHandler : public wxICOHandler
 {
 public:
     wxCURHandler()
@@ -131,7 +131,7 @@ private:
 // wxANIHandler
 // ----------------------------------------------------------------------------
 
-class  wxANIHandler : public wxCURHandler
+class WXDLLIMPEXP_CORE wxANIHandler : public wxCURHandler
 {
 public:
     wxANIHandler()

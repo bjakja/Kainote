@@ -32,15 +32,15 @@
 #define wxSOUND_LOOP  ((unsigned)2)
 
 // Base class for wxSound implementations
-class  wxSoundBase : public wxObject
+class WXDLLIMPEXP_ADV wxSoundBase : public wxObject
 {
 public:
     // Play the sound:
     bool Play(unsigned flags = wxSOUND_ASYNC) const
     {
-        /*wxASSERT_MSG( (flags & wxSOUND_LOOP) == 0 ||
+        wxASSERT_MSG( (flags & wxSOUND_LOOP) == 0 ||
                       (flags & wxSOUND_ASYNC) != 0,
-                     wxT("sound can only be looped asynchronously") );*/
+                     wxT("sound can only be looped asynchronously") );
         return DoPlay(flags);
     }
 

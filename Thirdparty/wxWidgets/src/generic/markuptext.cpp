@@ -230,7 +230,7 @@ wxSize wxMarkupText::Measure(wxDC& dc, int *visibleHeight) const
     wxMarkupParser parser(out);
     if ( !parser.Parse(m_markup) )
     {
-        //wxFAIL_MSG( "Invalid markup" );
+        wxFAIL_MSG( "Invalid markup" );
         return wxDefaultSize;
     }
 

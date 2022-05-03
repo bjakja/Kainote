@@ -18,7 +18,7 @@
 // Colour
 // ----------------------------------------------------------------------------
 
-class  wxColour : public wxColourBase
+class WXDLLIMPEXP_CORE wxColour : public wxColourBase
 {
 public:
     // constructors

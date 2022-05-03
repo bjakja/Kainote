@@ -44,7 +44,7 @@
 #include "wx/string.h"
 #include "wx/tokenzr.h"
 
-wxVariant  wxNullVariant;
+wxVariant WXDLLIMPEXP_BASE wxNullVariant;
 
 
 #include "wx/listimpl.cpp"
@@ -99,7 +99,7 @@ wxVariant::~wxVariant()
 wxObjectRefData *wxVariant::CreateRefData() const
 {
     // We cannot create any particular wxVariantData.
-    //wxFAIL_MSG("wxVariant::CreateRefData() cannot be implemented");
+    wxFAIL_MSG("wxVariant::CreateRefData() cannot be implemented");
     return NULL;
 }
 
@@ -211,7 +211,7 @@ wxVariant::wxVariant(const wxAny& any)
     wxVariant variant;
     if ( !any.GetAs(&variant) )
     {
-        //wxFAIL_MSG("wxAny of this type cannot be converted to wxVariant");
+        wxFAIL_MSG("wxAny of this type cannot be converted to wxVariant");
         return;
     }
 
@@ -239,7 +239,7 @@ wxAny wxVariant::GetAny() const
 // wxVariantDataLong
 // -----------------------------------------------------------------
 
-class  wxVariantDataLong: public wxVariantData
+class WXDLLIMPEXP_BASE wxVariantDataLong: public wxVariantData
 {
 public:
     wxVariantDataLong() { m_value = 0; }
@@ -290,7 +290,7 @@ IMPLEMENT_TRIVIAL_WXANY_CONVERSION(long, wxVariantDataLong)
 
 bool wxVariantDataLong::Eq(wxVariantData& data) const
 {
-    //wxASSERT_MSG( (data.GetType() == wxT("long")), wxT("wxVariantDataLong::Eq: argument mismatch") );
+    wxASSERT_MSG( (data.GetType() == wxT("long")), wxT("wxVariantDataLong::Eq: argument mismatch") );
 
     wxVariantDataLong& otherData = (wxVariantDataLong&) data;
 
@@ -399,7 +399,7 @@ long wxVariant::GetLong() const
         return value;
     else
     {
-        //wxFAIL_MSG(wxT("Could not convert to a long"));
+        wxFAIL_MSG(wxT("Could not convert to a long"));
         return 0;
     }
 }
@@ -408,7 +408,7 @@ long wxVariant::GetLong() const
 // wxVariantDoubleData
 // -----------------------------------------------------------------
 
-class  wxVariantDoubleData: public wxVariantData
+class WXDLLIMPEXP_BASE wxVariantDoubleData: public wxVariantData
 {
 public:
     wxVariantDoubleData() { m_value = 0.0; }
@@ -443,7 +443,7 @@ IMPLEMENT_TRIVIAL_WXANY_CONVERSION(double, wxVariantDoubleData)
 
 bool wxVariantDoubleData::Eq(wxVariantData& data) const
 {
-    //wxASSERT_MSG( (data.GetType() == wxT("double")), wxT("wxVariantDoubleData::Eq: argument mismatch") );
+    wxASSERT_MSG( (data.GetType() == wxT("double")), wxT("wxVariantDoubleData::Eq: argument mismatch") );
 
     wxVariantDoubleData& otherData = (wxVariantDoubleData&) data;
 
@@ -539,7 +539,7 @@ double wxVariant::GetDouble() const
         return value;
     else
     {
-        //wxFAIL_MSG(wxT("Could not convert to a double number"));
+        wxFAIL_MSG(wxT("Could not convert to a double number"));
         return 0.0;
     }
 }
@@ -548,7 +548,7 @@ double wxVariant::GetDouble() const
 // wxVariantBoolData
 // -----------------------------------------------------------------
 
-class  wxVariantDataBool: public wxVariantData
+class WXDLLIMPEXP_BASE wxVariantDataBool: public wxVariantData
 {
 public:
     wxVariantDataBool() { m_value = 0; }
@@ -583,7 +583,7 @@ IMPLEMENT_TRIVIAL_WXANY_CONVERSION(bool, wxVariantDataBool)
 
 bool wxVariantDataBool::Eq(wxVariantData& data) const
 {
-    //wxASSERT_MSG( (data.GetType() == wxT("bool")), wxT("wxVariantDataBool::Eq: argument mismatch") );
+    wxASSERT_MSG( (data.GetType() == wxT("bool")), wxT("wxVariantDataBool::Eq: argument mismatch") );
 
     wxVariantDataBool& otherData = (wxVariantDataBool&) data;
 
@@ -609,7 +609,7 @@ bool wxVariantDataBool::Write(wxString& str) const
 #if wxUSE_STD_IOSTREAM
 bool wxVariantDataBool::Read(wxSTD istream& WXUNUSED(str))
 {
-    //wxFAIL_MSG(wxT("Unimplemented"));
+    wxFAIL_MSG(wxT("Unimplemented"));
 //    str >> (long) m_value;
     return false;
 }
@@ -682,7 +682,7 @@ bool wxVariant::GetBool() const
         return value;
     else
     {
-        //wxFAIL_MSG(wxT("Could not convert to a bool"));
+        wxFAIL_MSG(wxT("Could not convert to a bool"));
         return 0;
     }
 }
@@ -691,7 +691,7 @@ bool wxVariant::GetBool() const
 // wxVariantDataChar
 // -----------------------------------------------------------------
 
-class  wxVariantDataChar: public wxVariantData
+class WXDLLIMPEXP_BASE wxVariantDataChar: public wxVariantData
 {
 public:
     wxVariantDataChar() { m_value = 0; }
@@ -723,7 +723,7 @@ IMPLEMENT_TRIVIAL_WXANY_CONVERSION(wxUniChar, wxVariantDataChar)
 
 bool wxVariantDataChar::Eq(wxVariantData& data) const
 {
-    //wxASSERT_MSG( (data.GetType() == wxT("char")), wxT("wxVariantDataChar::Eq: argument mismatch") );
+    wxASSERT_MSG( (data.GetType() == wxT("char")), wxT("wxVariantDataChar::Eq: argument mismatch") );
 
     wxVariantDataChar& otherData = (wxVariantDataChar&) data;
 
@@ -747,7 +747,7 @@ bool wxVariantDataChar::Write(wxString& str) const
 #if wxUSE_STD_IOSTREAM
 bool wxVariantDataChar::Read(wxSTD istream& WXUNUSED(str))
 {
-    //wxFAIL_MSG(wxT("Unimplemented"));
+    wxFAIL_MSG(wxT("Unimplemented"));
 
     return false;
 }
@@ -835,7 +835,7 @@ wxUniChar wxVariant::GetChar() const
         return value;
     else
     {
-        //wxFAIL_MSG(wxT("Could not convert to a char"));
+        wxFAIL_MSG(wxT("Could not convert to a char"));
         return wxUniChar(0);
     }
 }
@@ -844,7 +844,7 @@ wxUniChar wxVariant::GetChar() const
 // wxVariantDataString
 // ----------------------------------------------------------------------------
 
-class  wxVariantDataString: public wxVariantData
+class WXDLLIMPEXP_BASE wxVariantDataString: public wxVariantData
 {
 public:
     wxVariantDataString() { }
@@ -898,7 +898,7 @@ _REGISTER_WXANY_CONVERSION(const wchar_t*,
 
 bool wxVariantDataString::Eq(wxVariantData& data) const
 {
-    //wxASSERT_MSG( (data.GetType() == wxT("string")), wxT("wxVariantDataString::Eq: argument mismatch") );
+    wxASSERT_MSG( (data.GetType() == wxT("string")), wxT("wxVariantDataString::Eq: argument mismatch") );
 
     wxVariantDataString& otherData = (wxVariantDataString&) data;
 
@@ -969,11 +969,11 @@ wxVariant::wxVariant(const wxCStrData& val, const wxString& name)
     m_name = name;
 }
 
-//wxVariant::wxVariant(const wxScopedCharBuffer& val, const wxString& name)
-//{
-//    m_refData = new wxVariantDataString(wxString(val));
-//    m_name = name;
-//}
+wxVariant::wxVariant(const wxScopedCharBuffer& val, const wxString& name)
+{
+    m_refData = new wxVariantDataString(wxString(val));
+    m_name = name;
+}
 
 wxVariant::wxVariant(const wxScopedWCharBuffer& val, const wxString& name)
 {
@@ -1029,7 +1029,7 @@ wxString wxVariant::GetString() const
     wxString value;
     if (!Convert(& value))
     {
-        //wxFAIL_MSG(wxT("Could not convert to a string"));
+        wxFAIL_MSG(wxT("Could not convert to a string"));
     }
 
     return value;
@@ -1071,7 +1071,7 @@ IMPLEMENT_TRIVIAL_WXANY_CONVERSION(wxObject*, wxVariantDataWxObjectPtr)
 
 bool wxVariantDataWxObjectPtr::Eq(wxVariantData& data) const
 {
-    //wxASSERT_MSG( data.GetType() == GetType(), wxT("wxVariantDataWxObjectPtr::Eq: argument mismatch") );
+    wxASSERT_MSG( data.GetType() == GetType(), wxT("wxVariantDataWxObjectPtr::Eq: argument mismatch") );
 
     wxVariantDataWxObjectPtr& otherData = (wxVariantDataWxObjectPtr&) data;
 
@@ -1193,7 +1193,7 @@ IMPLEMENT_TRIVIAL_WXANY_CONVERSION(void*, wxVariantDataVoidPtr)
 
 bool wxVariantDataVoidPtr::Eq(wxVariantData& data) const
 {
-    //wxASSERT_MSG( data.GetType() == wxT("void*"), wxT("wxVariantDataVoidPtr::Eq: argument mismatch") );
+    wxASSERT_MSG( data.GetType() == wxT("void*"), wxT("wxVariantDataVoidPtr::Eq: argument mismatch") );
 
     wxVariantDataVoidPtr& otherData = (wxVariantDataVoidPtr&) data;
 
@@ -1267,7 +1267,7 @@ void* wxVariant::GetVoidPtr() const
     if ( IsNull() )
         return NULL;
 
-    //wxASSERT( GetType() == wxT("void*") );
+    wxASSERT( GetType() == wxT("void*") );
 
     return (void*) ((wxVariantDataVoidPtr*) m_refData)->GetValue();
 }
@@ -1308,7 +1308,7 @@ IMPLEMENT_TRIVIAL_WXANY_CONVERSION(wxDateTime, wxVariantDataDateTime)
 
 bool wxVariantDataDateTime::Eq(wxVariantData& data) const
 {
-    //wxASSERT_MSG( (data.GetType() == wxT("datetime")), wxT("wxVariantDataDateTime::Eq: argument mismatch") );
+    wxASSERT_MSG( (data.GetType() == wxT("datetime")), wxT("wxVariantDataDateTime::Eq: argument mismatch") );
 
     wxVariantDataDateTime& otherData = (wxVariantDataDateTime&) data;
 
@@ -1399,7 +1399,7 @@ wxDateTime wxVariant::GetDateTime() const
     wxDateTime value;
     if (!Convert(& value))
     {
-        //wxFAIL_MSG(wxT("Could not convert to a datetime"));
+        wxFAIL_MSG(wxT("Could not convert to a datetime"));
     }
 
     return value;
@@ -1441,7 +1441,7 @@ IMPLEMENT_TRIVIAL_WXANY_CONVERSION(wxArrayString, wxVariantDataArrayString)
 
 bool wxVariantDataArrayString::Eq(wxVariantData& data) const
 {
-    //wxASSERT_MSG( data.GetType() == GetType(), wxT("wxVariantDataArrayString::Eq: argument mismatch") );
+    wxASSERT_MSG( data.GetType() == GetType(), wxT("wxVariantDataArrayString::Eq: argument mismatch") );
 
     wxVariantDataArrayString& otherData = (wxVariantDataArrayString&) data;
 
@@ -1501,7 +1501,7 @@ wxVariant::wxVariant(const wxArrayString& val, const wxString& name) // Strings
 
 bool wxVariant::operator==(const wxArrayString& WXUNUSED(value)) const
 {
-    //wxFAIL_MSG( wxT("TODO") );
+    wxFAIL_MSG( wxT("TODO") );
 
     return false;
 }
@@ -1539,7 +1539,7 @@ wxArrayString wxVariant::GetArrayString() const
 
 #if wxUSE_LONGLONG
 
-class  wxVariantDataLongLong : public wxVariantData
+class WXDLLIMPEXP_BASE wxVariantDataLongLong : public wxVariantData
 {
 public:
     wxVariantDataLongLong() { m_value = 0; }
@@ -1612,8 +1612,8 @@ REGISTER_WXANY_CONVERSION(wxLongLong, wxVariantDataLongLong)
 
 bool wxVariantDataLongLong::Eq(wxVariantData& data) const
 {
-    /*wxASSERT_MSG( (data.GetType() == wxS("longlong")),
-                  "wxVariantDataLongLong::Eq: argument mismatch" );*/
+    wxASSERT_MSG( (data.GetType() == wxS("longlong")),
+                  "wxVariantDataLongLong::Eq: argument mismatch" );
 
     wxVariantDataLongLong& otherData = (wxVariantDataLongLong&) data;
 
@@ -1643,7 +1643,7 @@ bool wxVariantDataLongLong::Write(wxString& str) const
 #if wxUSE_STD_IOSTREAM
 bool wxVariantDataLongLong::Read(wxSTD istream& WXUNUSED(str))
 {
-    //wxFAIL_MSG(wxS("Unimplemented"));
+    wxFAIL_MSG(wxS("Unimplemented"));
     return false;
 }
 #endif
@@ -1725,7 +1725,7 @@ wxLongLong wxVariant::GetLongLong() const
     }
     else
     {
-        //wxFAIL_MSG(wxT("Could not convert to a long long"));
+        wxFAIL_MSG(wxT("Could not convert to a long long"));
         return 0;
     }
 }
@@ -1738,7 +1738,7 @@ wxLongLong wxVariant::GetLongLong() const
 
 #if wxUSE_LONGLONG
 
-class  wxVariantDataULongLong : public wxVariantData
+class WXDLLIMPEXP_BASE wxVariantDataULongLong : public wxVariantData
 {
 public:
     wxVariantDataULongLong() { m_value = 0; }
@@ -1812,8 +1812,8 @@ REGISTER_WXANY_CONVERSION(wxULongLong, wxVariantDataULongLong)
 
 bool wxVariantDataULongLong::Eq(wxVariantData& data) const
 {
-    /*wxASSERT_MSG( (data.GetType() == wxS("ulonglong")),
-                  "wxVariantDataULongLong::Eq: argument mismatch" );*/
+    wxASSERT_MSG( (data.GetType() == wxS("ulonglong")),
+                  "wxVariantDataULongLong::Eq: argument mismatch" );
 
     wxVariantDataULongLong& otherData = (wxVariantDataULongLong&) data;
 
@@ -1843,7 +1843,7 @@ bool wxVariantDataULongLong::Write(wxString& str) const
 #if wxUSE_STD_IOSTREAM
 bool wxVariantDataULongLong::Read(wxSTD istream& WXUNUSED(str))
 {
-    //wxFAIL_MSG(wxS("Unimplemented"));
+    wxFAIL_MSG(wxS("Unimplemented"));
     return false;
 }
 #endif
@@ -1925,7 +1925,7 @@ wxULongLong wxVariant::GetULongLong() const
     }
     else
     {
-        //wxFAIL_MSG(wxT("Could not convert to a long long"));
+        wxFAIL_MSG(wxT("Could not convert to a long long"));
         return 0;
     }
 }
@@ -1936,7 +1936,7 @@ wxULongLong wxVariant::GetULongLong() const
 // wxVariantDataList
 // ----------------------------------------------------------------------------
 
-class  wxVariantDataList: public wxVariantData
+class WXDLLIMPEXP_BASE wxVariantDataList: public wxVariantData
 {
 public:
     wxVariantDataList() {}
@@ -2042,7 +2042,7 @@ void wxVariantDataList::Clear()
 
 bool wxVariantDataList::Eq(wxVariantData& data) const
 {
-    //wxASSERT_MSG( (data.GetType() == wxT("list")), wxT("wxVariantDataList::Eq: argument mismatch") );
+    wxASSERT_MSG( (data.GetType() == wxT("list")), wxT("wxVariantDataList::Eq: argument mismatch") );
 
     wxVariantDataList& listData = (wxVariantDataList&) data;
     wxVariantList::compatibility_iterator node1 = m_value.GetFirst();
@@ -2090,7 +2090,7 @@ bool wxVariantDataList::Write(wxString& str) const
 #if wxUSE_STD_IOSTREAM
 bool wxVariantDataList::Read(wxSTD istream& WXUNUSED(str))
 {
-    //wxFAIL_MSG(wxT("Unimplemented"));
+    wxFAIL_MSG(wxT("Unimplemented"));
     // TODO
     return false;
 }
@@ -2098,7 +2098,7 @@ bool wxVariantDataList::Read(wxSTD istream& WXUNUSED(str))
 
 bool wxVariantDataList::Read(wxString& WXUNUSED(str))
 {
-    //wxFAIL_MSG(wxT("Unimplemented"));
+    wxFAIL_MSG(wxT("Unimplemented"));
     // TODO
     return false;
 }
@@ -2113,7 +2113,7 @@ wxVariant::wxVariant(const wxVariantList& val, const wxString& name) // List of 
 
 bool wxVariant::operator== (const wxVariantList& value) const
 {
-    //wxASSERT_MSG( (GetType() == wxT("list")), wxT("Invalid type for == operator") );
+    wxASSERT_MSG( (GetType() == wxT("list")), wxT("Invalid type for == operator") );
 
     wxVariantDataList other(value);
     return (GetData()->Eq(other));
@@ -2140,7 +2140,7 @@ void wxVariant::operator= (const wxVariantList& value)
 
 wxVariantList& wxVariant::GetList() const
 {
-    //wxASSERT( (GetType() == wxT("list")) );
+    wxASSERT( (GetType() == wxT("list")) );
 
     return (wxVariantList&) ((wxVariantDataList*) m_refData)->GetValue();
 }
@@ -2188,7 +2188,7 @@ bool wxVariant::Delete(size_t item)
 {
     wxVariantList& list = GetList();
 
-    //wxASSERT_MSG( (item < list.GetCount()), wxT("Invalid index to Delete") );
+    wxASSERT_MSG( (item < list.GetCount()), wxT("Invalid index to Delete") );
     wxVariantList::compatibility_iterator node = list.Item(item);
     wxVariant* variant = node->GetData();
     delete variant;
@@ -2215,12 +2215,12 @@ void wxVariant::ClearList()
 // Treat a list variant as an array
 wxVariant wxVariant::operator[] (size_t idx) const
 {
-    //wxASSERT_MSG( GetType() == wxT("list"), wxT("Invalid type for array operator") );
+    wxASSERT_MSG( GetType() == wxT("list"), wxT("Invalid type for array operator") );
 
     if (GetType() == wxT("list"))
     {
         wxVariantDataList* data = (wxVariantDataList*) m_refData;
-        //wxASSERT_MSG( (idx < data->GetValue().GetCount()), wxT("Invalid index for array") );
+        wxASSERT_MSG( (idx < data->GetValue().GetCount()), wxT("Invalid index for array") );
         return *(data->GetValue().Item(idx)->GetData());
     }
     return wxNullVariant;
@@ -2231,10 +2231,10 @@ wxVariant& wxVariant::operator[] (size_t idx)
     // We can't return a reference to a variant for a string list, since the string
     // is actually stored as a char*, not a variant.
 
-    //wxASSERT_MSG( (GetType() == wxT("list")), wxT("Invalid type for array operator") );
+    wxASSERT_MSG( (GetType() == wxT("list")), wxT("Invalid type for array operator") );
 
     wxVariantDataList* data = (wxVariantDataList*) m_refData;
-    //wxASSERT_MSG( (idx < data->GetValue().GetCount()), wxT("Invalid index for array") );
+    wxASSERT_MSG( (idx < data->GetValue().GetCount()), wxT("Invalid index for array") );
 
     return * (data->GetValue().Item(idx)->GetData());
 }
@@ -2242,7 +2242,7 @@ wxVariant& wxVariant::operator[] (size_t idx)
 // Return the number of elements in a list
 size_t wxVariant::GetCount() const
 {
-    //wxASSERT_MSG( GetType() == wxT("list"), wxT("Invalid type for GetCount()") );
+    wxASSERT_MSG( GetType() == wxT("list"), wxT("Invalid type for GetCount()") );
 
     if (GetType() == wxT("list"))
     {

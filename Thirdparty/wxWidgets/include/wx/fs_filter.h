@@ -20,7 +20,7 @@
 // wxFilterFSHandler
 //---------------------------------------------------------------------------
 
-class  wxFilterFSHandler : public wxFileSystemHandler
+class WXDLLIMPEXP_BASE wxFilterFSHandler : public wxFileSystemHandler
 {
 public:
     wxFilterFSHandler() : wxFileSystemHandler() { }

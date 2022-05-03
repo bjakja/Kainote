@@ -130,7 +130,7 @@ wxString wxURI::Unescape(const wxString& uri)
             if ( n == -1 )
                 return wxString();
 
-            //wxASSERT_MSG( n >= 0 && n <= 0xff, "unexpected character value" );
+            wxASSERT_MSG( n >= 0 && n <= 0xff, "unexpected character value" );
 
             c = static_cast<char>(n);
         }
@@ -651,8 +651,8 @@ wxArrayString wxURI::SplitInSegments(const wxString& path)
 
 void wxURI::Resolve(const wxURI& base, int flags)
 {
-    /*wxASSERT_MSG(!base.IsReference(),
-                "wxURI to inherit from must not be a reference!");*/
+    wxASSERT_MSG(!base.IsReference(),
+                "wxURI to inherit from must not be a reference!");
 
     // If we aren't being strict, enable the older (pre-RFC2396) loophole that
     // allows this uri to inherit other properties from the base uri - even if

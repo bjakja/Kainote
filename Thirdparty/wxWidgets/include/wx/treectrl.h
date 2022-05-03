@@ -24,7 +24,7 @@
 #include "wx/treebase.h"
 #include "wx/textctrl.h" // wxTextCtrl::ms_classinfo used through wxCLASSINFO macro
 
-class  wxImageList;
+class WXDLLIMPEXP_FWD_CORE wxImageList;
 
 
 #undef GetNextSibling
@@ -33,7 +33,7 @@ class  wxImageList;
 // wxTreeCtrlBase
 // ----------------------------------------------------------------------------
 
-class  wxTreeCtrlBase : public wxControl
+class WXDLLIMPEXP_CORE wxTreeCtrlBase : public wxControl
 {
 public:
     wxTreeCtrlBase();
@@ -360,9 +360,9 @@ public:
         // second one. The base class version performs alphabetic comparaison
         // of item labels (GetText)
     virtual int OnCompareItems(const wxTreeItemId& item1,
-                              const wxTreeItemId& item2)
+                               const wxTreeItemId& item2)
     {
-       return wxStrcmp(GetItemText(item1), GetItemText(item2));
+        return wxStrcmp(GetItemText(item1), GetItemText(item2));
     }
 
         // sort the children of this item using OnCompareItems

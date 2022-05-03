@@ -112,7 +112,7 @@ IMPLEMENT_CLASS(wxGLContext, wxObject)
 wxGLContext::wxGLContext(wxGLCanvas *win, const wxGLContext* other)
 {
     m_glContext = wglCreateContext(win->GetHDC());
-    //wxCHECK_RET( m_glContext, wxT("Couldn't create OpenGL context") );
+    wxCHECK_RET( m_glContext, wxT("Couldn't create OpenGL context") );
 
     if ( other )
     {
@@ -194,7 +194,7 @@ bool wxGLCanvas::CreateWindow(wxWindow *parent,
                               long style,
                               const wxString& name)
 {
-    //wxCHECK_MSG( parent, false, wxT("can't create wxWindow without parent") );
+    wxCHECK_MSG( parent, false, wxT("can't create wxWindow without parent") );
 
     if ( !CreateBase(parent, id, pos, size, style, wxDefaultValidator, name) )
         return false;

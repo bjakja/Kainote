@@ -19,13 +19,13 @@
 #include "wx/dialog.h"
 #include "wx/stockitem.h"
 
-extern const char wxMessageBoxCaptionStr[];
+extern WXDLLIMPEXP_DATA_CORE(const char) wxMessageBoxCaptionStr[];
 
 // ----------------------------------------------------------------------------
 // wxMessageDialogBase: base class defining wxMessageDialog interface
 // ----------------------------------------------------------------------------
 
-class  wxMessageDialogBase : public wxDialog
+class WXDLLIMPEXP_CORE wxMessageDialogBase : public wxDialog
 {
 public:
     // helper class for SetXXXLabels() methods: it makes it possible to pass
@@ -38,7 +38,7 @@ public:
         ButtonLabel(int stockId)
             : m_stockId(stockId)
         {
-            //wxASSERT_MSG( wxIsStockID(stockId), "invalid stock id" );
+            wxASSERT_MSG( wxIsStockID(stockId), "invalid stock id" );
         }
 
         ButtonLabel(const wxString& label)
@@ -119,7 +119,7 @@ public:
     // change the dialog style flag
     void SetMessageDialogStyle(long style)
     {
-        /*wxASSERT_MSG( ((style & wxYES_NO) == wxYES_NO) || !(style & wxYES_NO),
+        wxASSERT_MSG( ((style & wxYES_NO) == wxYES_NO) || !(style & wxYES_NO),
                       "wxYES and wxNO may only be used together" );
 
         wxASSERT_MSG( !(style & wxYES) || !(style & wxOK),
@@ -138,7 +138,7 @@ public:
                       "wxCANCEL_DEFAULT is invalid without wxCANCEL" );
 
         wxASSERT_MSG( !(style & wxCANCEL_DEFAULT) || !(style & wxNO_DEFAULT),
-                      "only one default button can be specified" );*/
+                      "only one default button can be specified" );
 
         m_dialogStyle = style;
     }
@@ -306,7 +306,7 @@ private:
 // wxMessageBox: the simplest way to use wxMessageDialog
 // ----------------------------------------------------------------------------
 
-int wxMessageBox(const wxString& message,
+int WXDLLIMPEXP_CORE wxMessageBox(const wxString& message,
                              const wxString& caption = wxMessageBoxCaptionStr,
                              long style = wxOK | wxCENTRE,
                              wxWindow *parent = NULL,

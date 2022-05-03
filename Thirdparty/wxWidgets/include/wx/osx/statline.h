@@ -17,7 +17,7 @@ class wxStaticBox;
 // wxStaticLine
 // ----------------------------------------------------------------------------
 
-class  wxStaticLine : public wxStaticLineBase
+class WXDLLIMPEXP_CORE wxStaticLine : public wxStaticLineBase
 {
 public:
     // constructors and pseudo-constructors

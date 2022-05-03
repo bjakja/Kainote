@@ -26,7 +26,7 @@
 // as it's used for compatibility, it tries to look as much as traditional
 // (char **) argv as possible, in particular it provides implicit conversions
 // to "char **" and also array-like operator[]
-class  wxCmdLineArgsArray
+class WXDLLIMPEXP_BASE wxCmdLineArgsArray
 {
 public:
     wxCmdLineArgsArray() { m_argsA = NULL; m_argsW = NULL; }
@@ -47,7 +47,7 @@ public:
         return *this;
     }
 
-   /* operator char**() const
+    operator char**() const
     {
         if ( !m_argsA )
         {
@@ -58,7 +58,7 @@ public:
         }
 
         return m_argsA;
-    }*/
+    }
 
     operator wchar_t**() const
     {
@@ -67,7 +67,7 @@ public:
             const size_t count = m_args.size();
             m_argsW = new wchar_t *[count];
             for ( size_t n = 0; n < count; n++ )
-                m_argsW[n] = _wcsdup(m_args[n].wc_str());
+                m_argsW[n] = wxStrdup(m_args[n].wc_str());
         }
 
         return m_argsW;

@@ -167,8 +167,8 @@ wxString wxDataFormat::GetId() const
 
     wxString s;
 
-    //wxCHECK_MSG( !IsStandard(), s,
-                 //wxT("name of predefined format cannot be retrieved") );
+    wxCHECK_MSG( !IsStandard(), s,
+                 wxT("name of predefined format cannot be retrieved") );
 
     int len = ::GetClipboardFormatName(m_format, wxStringBuffer(s, max), max);
 
@@ -490,7 +490,7 @@ STDMETHODIMP wxIDataObject::SetData(FORMATETC *pformatetc,
 #if ( defined(__BORLANDC__) && (__BORLANDC__ > 0x530) )
                         size = std::wcslen((const wchar_t *)pBuf) * sizeof(wchar_t);
 #else
-                        size = wxStrlen((const wchar_t *)pBuf) * sizeof(wchar_t);
+                        size = wxWcslen((const wchar_t *)pBuf) * sizeof(wchar_t);
 #endif
                         break;
 #endif
@@ -640,7 +640,7 @@ STDMETHODIMP wxIDataObject::EnumFormatEtc(DWORD dwDir,
     wxDataObject::Direction dir = dwDir == DATADIR_GET ? wxDataObject::Get
                                                        : wxDataObject::Set;
 
-    ULONG nFormatCount = m_pDataObject->GetFormatCount(dir);
+    ULONG nFormatCount = wx_truncate_cast(ULONG, m_pDataObject->GetFormatCount(dir));
     wxDataFormat format;
     wxDataFormat *formats;
     formats = nFormatCount == 1 ? &format : new wxDataFormat[nFormatCount];
@@ -823,7 +823,7 @@ bool wxBitmapDataObject::SetData(size_t WXUNUSED(len), const void *buf)
 
     HBITMAP hbmp = wxDIB::ConvertToBitmap(pbmi);
 
-    //wxCHECK_MSG( hbmp, FALSE, wxT("pasting/dropping invalid bitmap") );
+    wxCHECK_MSG( hbmp, FALSE, wxT("pasting/dropping invalid bitmap") );
 
     const BITMAPINFOHEADER * const pbmih = &pbmi->bmiHeader;
     wxBitmap bitmap(pbmih->biWidth, pbmih->biHeight, pbmih->biBitCount);
@@ -876,7 +876,7 @@ bool wxBitmapDataObject2::SetData(size_t WXUNUSED(len), const void *pBuf)
     bitmap.SetHBITMAP((WXHBITMAP)hbmp);
 
     if ( !bitmap.IsOk() ) {
-        //wxFAIL_MSG(wxT("pasting/dropping invalid bitmap"));
+        wxFAIL_MSG(wxT("pasting/dropping invalid bitmap"));
 
         return false;
     }
@@ -1028,7 +1028,7 @@ bool wxFileDataObject::SetData(size_t WXUNUSED(size),
     // get number of files (magic value -1)
     UINT nFiles = ::DragQueryFile(hdrop, (unsigned)-1, NULL, 0u);
 
-    //wxCHECK_MSG ( nFiles != (UINT)-1, FALSE, wxT("wrong HDROP handle") );
+    wxCHECK_MSG ( nFiles != (UINT)-1, FALSE, wxT("wrong HDROP handle") );
 
     // for each file get the length, allocate memory and then get the name
     wxString str;
@@ -1231,8 +1231,8 @@ bool wxURLDataObject::SetData(const wxDataFormat& format,
 {
     m_dataObjectLast = GetObject(format);
 
-    //wxCHECK_MSG( m_dataObjectLast, FALSE,
-                 //wxT("unsupported format in wxURLDataObject"));
+    wxCHECK_MSG( m_dataObjectLast, FALSE,
+                 wxT("unsupported format in wxURLDataObject"));
 
     return m_dataObjectLast->SetData(len, buf);
 }
@@ -1240,7 +1240,7 @@ bool wxURLDataObject::SetData(const wxDataFormat& format,
 wxString wxURLDataObject::GetURL() const
 {
     wxString url;
-    //wxCHECK_MSG( m_dataObjectLast, url, wxT("no data in wxURLDataObject") );
+    wxCHECK_MSG( m_dataObjectLast, url, wxT("no data in wxURLDataObject") );
 
     if ( m_dataObjectLast->GetPreferredFormat() == CFSTR_SHELLURL )
     {

@@ -23,14 +23,14 @@
 // forward declarations
 // ----------------------------------------------------------------------------
 
-class  wxFrame;
-class  wxWindow;
-class  wxApp;
-class  wxKeyEvent;
-class  wxLog;
-class  wxEventLoop;
-class  wxXVisualInfo;
-class  wxPerDisplayData;
+class WXDLLIMPEXP_FWD_CORE wxFrame;
+class WXDLLIMPEXP_FWD_CORE wxWindow;
+class WXDLLIMPEXP_FWD_CORE wxApp;
+class WXDLLIMPEXP_FWD_CORE wxKeyEvent;
+class WXDLLIMPEXP_FWD_BASE wxLog;
+class WXDLLIMPEXP_FWD_CORE wxEventLoop;
+class WXDLLIMPEXP_FWD_CORE wxXVisualInfo;
+class WXDLLIMPEXP_FWD_CORE wxPerDisplayData;
 
 // ----------------------------------------------------------------------------
 // the wxApp class for Motif - see wxAppBase for more details
@@ -38,7 +38,7 @@ class  wxPerDisplayData;
 
 WX_DECLARE_VOIDPTR_HASH_MAP( wxPerDisplayData*, wxPerDisplayDataMap );
 
-class  wxApp : public wxAppBase
+class WXDLLIMPEXP_CORE wxApp : public wxAppBase
 {
     DECLARE_DYNAMIC_CLASS(wxApp)
 

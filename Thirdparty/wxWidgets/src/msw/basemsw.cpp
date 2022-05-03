@@ -99,5 +99,5 @@ wxEventLoopBase *wxConsoleAppTraits::CreateEventLoop()
 
 bool wxConsoleAppTraits::WriteToStderr(const wxString& text)
 {
-    return wxFprintf(stderr, L"%s", text) != -1;
+    return wxFprintf(stderr, "%s", text) != -1;
 }

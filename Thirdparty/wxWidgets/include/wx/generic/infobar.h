@@ -11,15 +11,15 @@
 #ifndef _WX_GENERIC_INFOBAR_H_
 #define _WX_GENERIC_INFOBAR_H_
 
-class  wxBitmapButton;
-class  wxStaticBitmap;
-class  wxStaticText;
+class WXDLLIMPEXP_FWD_CORE wxBitmapButton;
+class WXDLLIMPEXP_FWD_CORE wxStaticBitmap;
+class WXDLLIMPEXP_FWD_CORE wxStaticText;
 
 // ----------------------------------------------------------------------------
 // wxInfoBar
 // ----------------------------------------------------------------------------
 
-class  wxInfoBarGeneric : public wxInfoBarBase
+class WXDLLIMPEXP_CORE wxInfoBarGeneric : public wxInfoBarBase
 {
 public:
     // the usual ctors and Create() but remember that info bar is created

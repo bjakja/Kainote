@@ -58,7 +58,7 @@ enum
 // wxCrashContext: information about the crash context
 // ----------------------------------------------------------------------------
 
-struct  wxCrashContext
+struct WXDLLIMPEXP_BASE wxCrashContext
 {
     // initialize this object with the given information or from the current
     // global exception info which is only valid inside wxApp::OnFatalException
@@ -90,7 +90,7 @@ struct  wxCrashContext
 // wxCrashReport: this class is used to create crash reports
 // ----------------------------------------------------------------------------
 
-struct  wxCrashReport
+struct WXDLLIMPEXP_BASE wxCrashReport
 {
     // set the name of the file to which the report is written, it is
     // constructed from the .exe name by default

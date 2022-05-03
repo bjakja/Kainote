@@ -19,7 +19,7 @@
 // wxTimerImpl: abstract base class for wxTimer implementations
 // ----------------------------------------------------------------------------
 
-class  wxTimerImpl
+class WXDLLIMPEXP_BASE wxTimerImpl
 {
 public:
     // default ctor, SetOwner() must be called after it (wxTimer does it)

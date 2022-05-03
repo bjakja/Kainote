@@ -15,7 +15,7 @@
 #include "wx/colour.h"
 #include "wx/font.h"
 
-class  wxWindow;
+class WXDLLIMPEXP_FWD_CORE wxWindow;
 
 // possible values for wxSystemSettings::GetFont() parameter
 //
@@ -171,7 +171,7 @@ enum wxSystemScreenType
 // files (i.e. this is not a real base class as we can't override its virtual
 // functions because it doesn't have any)
 
-class  wxSystemSettingsNative
+class WXDLLIMPEXP_CORE wxSystemSettingsNative
 {
 public:
     // get a standard system colour
@@ -191,7 +191,7 @@ public:
 // include the declaration of the real platform-dependent class
 // ----------------------------------------------------------------------------
 
-class  wxSystemSettings : public wxSystemSettingsNative
+class WXDLLIMPEXP_CORE wxSystemSettings : public wxSystemSettingsNative
 {
 public:
 #ifdef __WXUNIVERSAL__

@@ -17,7 +17,7 @@ class wxTextAutoCompleteData; // private class used only by wxTextEntry itself
 // wxTextEntry: common part of wxComboBox and (single line) wxTextCtrl
 // ----------------------------------------------------------------------------
 
-class  wxTextEntry : public wxTextEntryBase
+class WXDLLIMPEXP_CORE wxTextEntry : public wxTextEntryBase
 {
 public:
     wxTextEntry();

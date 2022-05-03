@@ -30,24 +30,24 @@ inline size_t wxBase64EncodedSize(size_t len) { return 4*((len+2)/3); }
 // large enough; to determine the needed size you can either allocate a buffer
 // of wxBase64EncodedSize(srcLen) size or call the function with NULL buffer in
 // which case the required size will be returned
- size_t
+WXDLLIMPEXP_BASE size_t
 wxBase64Encode(char *dst, size_t dstLen, const void *src, size_t srcLen);
 
 // encode the contents of the given buffer using base64 and return as string
 // (there is no error return)
-//inline wxString wxBase64Encode(const void *src, size_t srcLen)
-//{
-//    const size_t dstLen = wxBase64EncodedSize(srcLen);
-//    wxString dst(dstLen);
-//    wxBase64Encode(dst.data(), dstLen, src, srcLen);
-//
-//    return dst;
-//}
+inline wxString wxBase64Encode(const void *src, size_t srcLen)
+{
+    const size_t dstLen = wxBase64EncodedSize(srcLen);
+    wxCharBuffer dst(dstLen);
+    wxBase64Encode(dst.data(), dstLen, src, srcLen);
 
-//inline wxString wxBase64Encode(const wxMemoryBuffer& buf)
-//{
-//    return wxBase64Encode(buf.GetData(), buf.GetDataLen());
-//}
+    return dst;
+}
+
+inline wxString wxBase64Encode(const wxMemoryBuffer& buf)
+{
+    return wxBase64Encode(buf.GetData(), buf.GetDataLen());
+}
 
 // ----------------------------------------------------------------------------
 // decoding functions
@@ -83,7 +83,7 @@ inline size_t wxBase64DecodedSize(size_t srcLen) { return 3*srcLen/4; }
 // such as the buffer is too small or the encoded string is invalid; in the
 // latter case the posErr is filled with the position where the decoding
 // stopped if it is not NULL
- size_t
+WXDLLIMPEXP_BASE size_t
 wxBase64Decode(void *dst, size_t dstLen,
                const char *src, size_t srcLen = wxNO_LEN,
                wxBase64DecodeMode mode = wxBase64DecodeMode_Strict,
@@ -97,12 +97,12 @@ wxBase64Decode(void *dst, size_t dstLen,
 {
     // don't use str.length() here as the ASCII buffer is shorter than it for
     // strings with embedded NULs
-    return wxBase64Decode(dst, dstLen, src, wxNO_LEN, mode, posErr);
+    return wxBase64Decode(dst, dstLen, src.ToAscii(), wxNO_LEN, mode, posErr);
 }
 
 // decode the contents of the given string; the returned buffer is empty if an
 // error occurs during decoding
- wxMemoryBuffer
+WXDLLIMPEXP_BASE wxMemoryBuffer
 wxBase64Decode(const char *src, size_t srcLen = wxNO_LEN,
                wxBase64DecodeMode mode = wxBase64DecodeMode_Strict,
                size_t *posErr = NULL);
@@ -114,7 +114,7 @@ wxBase64Decode(const wxString& src,
 {
     // don't use str.length() here as the ASCII buffer is shorter than it for
     // strings with embedded NULs
-    return wxBase64Decode(src, wxNO_LEN, mode, posErr);
+    return wxBase64Decode(src.ToAscii(), wxNO_LEN, mode, posErr);
 }
 
 #endif // wxUSE_BASE64

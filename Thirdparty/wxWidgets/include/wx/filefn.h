@@ -542,19 +542,19 @@ const int wxInvalidOffset = -1;
 // ----------------------------------------------------------------------------
 // functions
 // ----------------------------------------------------------------------------
- bool wxFileExists(const wxString& filename);
+WXDLLIMPEXP_BASE bool wxFileExists(const wxString& filename);
 
 // does the path exist? (may have or not '/' or '\\' at the end)
- bool wxDirExists(const wxString& pathName);
+WXDLLIMPEXP_BASE bool wxDirExists(const wxString& pathName);
 
- bool wxIsAbsolutePath(const wxString& filename);
+WXDLLIMPEXP_BASE bool wxIsAbsolutePath(const wxString& filename);
 
 // Get filename
- wxChar* wxFileNameFromPath(wxChar *path);
- wxString wxFileNameFromPath(const wxString& path);
+WXDLLIMPEXP_BASE wxChar* wxFileNameFromPath(wxChar *path);
+WXDLLIMPEXP_BASE wxString wxFileNameFromPath(const wxString& path);
 
 // Get directory
- wxString wxPathOnly(const wxString& path);
+WXDLLIMPEXP_BASE wxString wxPathOnly(const wxString& path);
 
 // all deprecated functions below are deprecated in favour of wxFileName's methods
 #if WXWIN_COMPATIBILITY_2_8
@@ -607,29 +607,29 @@ wxDEPRECATED( WXDLLIMPEXP_BASE wxChar* wxCopyAbsolutePath(const wxString& path) 
 // Flags are reserved for future use.
 #define wxFILE  1
 #define wxDIR   2
- wxString wxFindFirstFile(const wxString& spec, int flags = wxFILE);
- wxString wxFindNextFile();
+WXDLLIMPEXP_BASE wxString wxFindFirstFile(const wxString& spec, int flags = wxFILE);
+WXDLLIMPEXP_BASE wxString wxFindNextFile();
 
 // Does the pattern contain wildcards?
- bool wxIsWild(const wxString& pattern);
+WXDLLIMPEXP_BASE bool wxIsWild(const wxString& pattern);
 
 // Does the pattern match the text (usually a filename)?
 // If dot_special is true, doesn't match * against . (eliminating
 // `hidden' dot files)
- bool wxMatchWild(const wxString& pattern,  const wxString& text, bool dot_special = true);
+WXDLLIMPEXP_BASE bool wxMatchWild(const wxString& pattern,  const wxString& text, bool dot_special = true);
 
 // Concatenate two files to form third
- bool wxConcatFiles(const wxString& file1, const wxString& file2, const wxString& file3);
+WXDLLIMPEXP_BASE bool wxConcatFiles(const wxString& file1, const wxString& file2, const wxString& file3);
 
 // Copy file1 to file2
- bool wxCopyFile(const wxString& file1, const wxString& file2,
+WXDLLIMPEXP_BASE bool wxCopyFile(const wxString& file1, const wxString& file2,
                                  bool overwrite = true);
 
 // Remove file
- bool wxRemoveFile(const wxString& file);
+WXDLLIMPEXP_BASE bool wxRemoveFile(const wxString& file);
 
 // Rename file
- bool wxRenameFile(const wxString& file1, const wxString& file2, bool overwrite = true);
+WXDLLIMPEXP_BASE bool wxRenameFile(const wxString& file1, const wxString& file2, bool overwrite = true);
 
 // Get current working directory.
 #if WXWIN_COMPATIBILITY_2_6
@@ -641,20 +641,20 @@ wxDEPRECATED( WXDLLIMPEXP_BASE wxChar* wxGetWorkingDirectory(wxChar *buf = NULL,
 // new and preferred version of wxGetWorkingDirectory
 // NB: can't have the same name because of overloading ambiguity
 #endif // WXWIN_COMPATIBILITY_2_6
- wxString wxGetCwd();
+WXDLLIMPEXP_BASE wxString wxGetCwd();
 
 // Set working directory
- bool wxSetWorkingDirectory(const wxString& d);
+WXDLLIMPEXP_BASE bool wxSetWorkingDirectory(const wxString& d);
 
 // Make directory
- bool wxMkdir(const wxString& dir, int perm = wxS_DIR_DEFAULT);
+WXDLLIMPEXP_BASE bool wxMkdir(const wxString& dir, int perm = wxS_DIR_DEFAULT);
 
 // Remove directory. Flags reserved for future use.
- bool wxRmdir(const wxString& dir, int flags = 0);
+WXDLLIMPEXP_BASE bool wxRmdir(const wxString& dir, int flags = 0);
 
 // Return the type of an open file
- wxFileKind wxGetFileKind(int fd);
- wxFileKind wxGetFileKind(FILE *fp);
+WXDLLIMPEXP_BASE wxFileKind wxGetFileKind(int fd);
+WXDLLIMPEXP_BASE wxFileKind wxGetFileKind(FILE *fp);
 
 #if WXWIN_COMPATIBILITY_2_6
 // compatibility defines, don't use in new code
@@ -666,9 +666,9 @@ inline bool wxPathExists(const wxChar *pszPathName)
 #endif //WXWIN_COMPATIBILITY_2_6
 
 // permissions; these functions work both on files and directories:
- bool wxIsWritable(const wxString &path);
- bool wxIsReadable(const wxString &path);
- bool wxIsExecutable(const wxString &path);
+WXDLLIMPEXP_BASE bool wxIsWritable(const wxString &path);
+WXDLLIMPEXP_BASE bool wxIsReadable(const wxString &path);
+WXDLLIMPEXP_BASE bool wxIsExecutable(const wxString &path);
 
 // ----------------------------------------------------------------------------
 // separators in file names
@@ -727,7 +727,7 @@ inline bool wxIsPathSeparator(wxChar c)
 }
 
 // does the string ends with path separator?
- bool wxEndsWithPathSeparator(const wxString& filename);
+WXDLLIMPEXP_BASE bool wxEndsWithPathSeparator(const wxString& filename);
 
 #if WXWIN_COMPATIBILITY_2_8
 // split the full path into path (including drive for DOS), name and extension
@@ -740,16 +740,16 @@ wxDEPRECATED( WXDLLIMPEXP_BASE void wxSplitPath(const wxString& fileName,
 #endif
 
 // find a file in a list of directories, returns false if not found
- bool wxFindFileInPath(wxString *pStr, const wxString& szPath, const wxString& szFile);
+WXDLLIMPEXP_BASE bool wxFindFileInPath(wxString *pStr, const wxString& szPath, const wxString& szFile);
 
 // Get the OS directory if appropriate (such as the Windows directory).
 // On non-Windows platform, probably just return the empty string.
- wxString wxGetOSDirectory();
+WXDLLIMPEXP_BASE wxString wxGetOSDirectory();
 
 #if wxUSE_DATETIME
 
 // Get file modification time
- time_t wxFileModificationTime(const wxString& filename);
+WXDLLIMPEXP_BASE time_t wxFileModificationTime(const wxString& filename);
 
 #endif // wxUSE_DATETIME
 
@@ -758,7 +758,7 @@ wxDEPRECATED( WXDLLIMPEXP_BASE void wxSplitPath(const wxString& fileName,
 // The arrays will contain an equal number of items found before the error.
 // wildCard is in the form:
 // "All files (*)|*|Image Files (*.jpeg *.png)|*.jpg;*.png"
- int wxParseCommonDialogsFilter(const wxString& wildCard, wxArrayString& descriptions, wxArrayString& filters);
+WXDLLIMPEXP_BASE int wxParseCommonDialogsFilter(const wxString& wildCard, wxArrayString& descriptions, wxArrayString& filters);
 
 // ----------------------------------------------------------------------------
 // classes
@@ -800,7 +800,7 @@ private:
 
 
 // Path searching
-class  wxPathList : public wxArrayString
+class WXDLLIMPEXP_BASE wxPathList : public wxArrayString
 {
 public:
     wxPathList() {}
@@ -824,6 +824,10 @@ public:
     // Given full path and filename, add path to list
     bool EnsureFileAccessible(const wxString& path);
 
+#if WXWIN_COMPATIBILITY_2_6
+    // Returns true if the path is in the list
+    wxDEPRECATED( bool Member(const wxString& path) const );
+#endif
 };
 
 #endif // _WX_FILEFN_H_

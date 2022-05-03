@@ -15,12 +15,12 @@
 #include "wx/chartype.h"
 #include "wx/stringimpl.h"
 
-class wxUniCharRef;
-//class wxString;
+class WXDLLIMPEXP_FWD_BASE wxUniCharRef;
+class WXDLLIMPEXP_FWD_BASE wxString;
 
 // This class represents single Unicode character. It can be converted to
 // and from char or wchar_t and implements commonly used character operations.
-class  wxUniChar
+class WXDLLIMPEXP_BASE wxUniChar
 {
 public:
     // NB: this is not wchar_t on purpose, it needs to represent the entire
@@ -85,7 +85,7 @@ public:
         }
 #endif // wxUSE_UNICODE
 
-        *c = (char) m_value;
+        *c = wx_truncate_cast(char, m_value);
         return true;
     }
 
@@ -176,7 +176,7 @@ private:
     {
 #if wxUSE_UNICODE
         if ( c < 0x80 )
-            return (char) c;
+            return wx_truncate_cast(char, c);
 
         return ToHi8bit(c);
 #else
@@ -198,7 +198,7 @@ private:
 //
 // This class can be used in the same way wxChar is used, except that changing
 // its value updates the underlying string object.
-class  wxUniCharRef
+class WXDLLIMPEXP_BASE wxUniCharRef
 {
 private:
     typedef wxStringImpl::iterator iterator;
@@ -305,7 +305,7 @@ private:
     wxUniChar UniChar() const { return *m_pos; }
 #endif
 
-    friend class wxUniChar;
+    friend class WXDLLIMPEXP_FWD_BASE wxUniChar;
 
 private:
     // reference to the string and pointer to the character in string
@@ -331,19 +331,19 @@ inline wxUniChar& wxUniChar::operator=(const wxUniCharRef& c)
 
 #define wxCMP_REVERSE(c1, c2, op) c2 op c1
 
-//wxDEFINE_COMPARISONS(char, const wxUniChar&, wxCMP_REVERSE)
-//wxDEFINE_COMPARISONS(char, const wxUniCharRef&, wxCMP_REVERSE)
-//
-//wxDEFINE_COMPARISONS(wchar_t, const wxUniChar&, wxCMP_REVERSE)
-//wxDEFINE_COMPARISONS(wchar_t, const wxUniCharRef&, wxCMP_REVERSE)
-//
-//wxDEFINE_COMPARISONS(const wxUniChar&, const wxUniCharRef&, wxCMP_REVERSE)
+wxDEFINE_COMPARISONS(char, const wxUniChar&, wxCMP_REVERSE)
+wxDEFINE_COMPARISONS(char, const wxUniCharRef&, wxCMP_REVERSE)
+
+wxDEFINE_COMPARISONS(wchar_t, const wxUniChar&, wxCMP_REVERSE)
+wxDEFINE_COMPARISONS(wchar_t, const wxUniCharRef&, wxCMP_REVERSE)
+
+wxDEFINE_COMPARISONS(const wxUniChar&, const wxUniCharRef&, wxCMP_REVERSE)
 
 #undef wxCMP_REVERSE
 
 // for expressions like c-'A':
-//inline int operator-(char c1, const wxUniCharRef& c2) { return -(c2 - c1); }
-//inline int operator-(const wxUniChar& c1, const wxUniCharRef& c2) { return -(c2 - c1); }
-//inline int operator-(wchar_t c1, const wxUniCharRef& c2) { return -(c2 - c1); }
+inline int operator-(char c1, const wxUniCharRef& c2) { return -(c2 - c1); }
+inline int operator-(const wxUniChar& c1, const wxUniCharRef& c2) { return -(c2 - c1); }
+inline int operator-(wchar_t c1, const wxUniCharRef& c2) { return -(c2 - c1); }
 
 #endif /* _WX_UNICHAR_H_ */

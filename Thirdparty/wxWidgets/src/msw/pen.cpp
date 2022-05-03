@@ -18,7 +18,7 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-//#include "wx/wxprec.h"
+#include "wx/wxprec.h"
 
 #ifdef __BORLANDC__
     #pragma hdrstop
@@ -44,7 +44,7 @@
 // wxPenRefData: contains information about an HPEN and its handle
 // ----------------------------------------------------------------------------
 
-class  wxPenRefData : public wxGDIRefData
+class WXDLLEXPORT wxPenRefData : public wxGDIRefData
 {
 public:
     // ctors and dtor
@@ -218,7 +218,7 @@ static int ConvertPenStyle(wxPenStyle style)
             return PS_NULL;
 
         default:
-            //wxFAIL_MSG( wxT("unknown pen style") );
+            wxFAIL_MSG( wxT("unknown pen style") );
             // fall through
 
 #ifdef wxHAVE_EXT_CREATE_PEN
@@ -258,7 +258,7 @@ static int ConvertJoinStyle(wxPenJoin join)
             return PS_JOIN_MITER;
 
         default:
-            //wxFAIL_MSG( wxT("unknown pen join style") );
+            wxFAIL_MSG( wxT("unknown pen join style") );
             // fall through
 
         case wxJOIN_ROUND:
@@ -277,7 +277,7 @@ static int ConvertCapStyle(wxPenCap cap)
             return PS_ENDCAP_FLAT;
 
         default:
-            //wxFAIL_MSG( wxT("unknown pen cap style") );
+            wxFAIL_MSG( wxT("unknown pen cap style") );
             // fall through
 
         case wxCAP_ROUND:
@@ -540,42 +540,42 @@ void wxPen::SetCap(wxPenCap cap)
 
 wxColour wxPen::GetColour() const
 {
-    //wxCHECK_MSG( IsOk(), wxNullColour, wxT("invalid pen") );
+    wxCHECK_MSG( IsOk(), wxNullColour, wxT("invalid pen") );
 
     return M_PENDATA->GetColour();
 }
 
 int wxPen::GetWidth() const
 {
-    //wxCHECK_MSG( IsOk(), -1, wxT("invalid pen") );
+    wxCHECK_MSG( IsOk(), -1, wxT("invalid pen") );
 
     return M_PENDATA->GetWidth();
 }
 
 wxPenStyle wxPen::GetStyle() const
 {
-    //wxCHECK_MSG( IsOk(), wxPENSTYLE_INVALID, wxT("invalid pen") );
+    wxCHECK_MSG( IsOk(), wxPENSTYLE_INVALID, wxT("invalid pen") );
 
     return M_PENDATA->GetStyle();
 }
 
 wxPenJoin wxPen::GetJoin() const
 {
-    //wxCHECK_MSG( IsOk(), wxJOIN_INVALID, wxT("invalid pen") );
+    wxCHECK_MSG( IsOk(), wxJOIN_INVALID, wxT("invalid pen") );
 
     return M_PENDATA->GetJoin();
 }
 
 wxPenCap wxPen::GetCap() const
 {
-    //wxCHECK_MSG( IsOk(), wxCAP_INVALID, wxT("invalid pen") );
+    wxCHECK_MSG( IsOk(), wxCAP_INVALID, wxT("invalid pen") );
 
     return M_PENDATA->GetCap();
 }
 
 int wxPen::GetDashes(wxDash** ptr) const
 {
-    /*wxCHECK_MSG( IsOk(), -1, wxT("invalid pen") );*/
+    wxCHECK_MSG( IsOk(), -1, wxT("invalid pen") );
 
     *ptr = M_PENDATA->GetDash();
     return M_PENDATA->GetDashCount();
@@ -583,21 +583,21 @@ int wxPen::GetDashes(wxDash** ptr) const
 
 wxDash* wxPen::GetDash() const
 {
-    /*wxCHECK_MSG( IsOk(), NULL, wxT("invalid pen") );*/
+    wxCHECK_MSG( IsOk(), NULL, wxT("invalid pen") );
 
     return m_refData ? M_PENDATA->GetDash() : NULL;
 }
 
 int wxPen::GetDashCount() const
 {
-    /*wxCHECK_MSG( IsOk(), -1, wxT("invalid pen") );*/
+    wxCHECK_MSG( IsOk(), -1, wxT("invalid pen") );
 
     return m_refData ? M_PENDATA->GetDashCount() : 0;
 }
 
 wxBitmap* wxPen::GetStipple() const
 {
-    /*wxCHECK_MSG( IsOk(), NULL, wxT("invalid pen") );*/
+    wxCHECK_MSG( IsOk(), NULL, wxT("invalid pen") );
 
     return m_refData ? M_PENDATA->GetStipple() : NULL;
 }

@@ -18,7 +18,7 @@
 #if !wxUSE_STD_CONTAINERS
     #include "wx/object.h"
 #else
-    class wxObject;
+    class WXDLLIMPEXP_FWD_BASE wxObject;
 #endif
 
 // the default size of the hash
@@ -39,12 +39,12 @@ union wxHashKeyValue
 
 // for some compilers (AIX xlC), defining it as friend inside the class is not
 // enough, so provide a real forward declaration
-class  wxHashTableBase;
+class WXDLLIMPEXP_FWD_BASE wxHashTableBase;
 
-class  wxHashTableBase_Node
+class WXDLLIMPEXP_BASE wxHashTableBase_Node
 {
-    friend class  wxHashTableBase;
-    typedef class  wxHashTableBase_Node _Node;
+    friend class WXDLLIMPEXP_FWD_BASE wxHashTableBase;
+    typedef class WXDLLIMPEXP_FWD_BASE wxHashTableBase_Node _Node;
 public:
     wxHashTableBase_Node( long key, void* value,
                           wxHashTableBase* table );
@@ -79,12 +79,12 @@ protected:
     wxHashTableBase* m_hashPtr;
 };
 
-class  wxHashTableBase
+class WXDLLIMPEXP_BASE wxHashTableBase
 #if !wxUSE_STD_CONTAINERS
     : public wxObject
 #endif
 {
-    friend class  wxHashTableBase_Node;
+    friend class WXDLLIMPEXP_FWD_BASE wxHashTableBase_Node;
 public:
     typedef wxHashTableBase_Node Node;
 
@@ -157,9 +157,9 @@ private:
 // for compatibility only
 // ----------------------------------------------------------------------------
 
-class  wxHashTable_Node : public wxHashTableBase_Node
+class WXDLLIMPEXP_BASE wxHashTable_Node : public wxHashTableBase_Node
 {
-    friend class  wxHashTable;
+    friend class WXDLLIMPEXP_FWD_BASE wxHashTable;
 public:
     wxHashTable_Node( long key, void* value,
                       wxHashTableBase* table )
@@ -179,7 +179,7 @@ public:
 
 // should inherit protectedly, but it is public for compatibility in
 // order to publicly inherit from wxObject
-class  wxHashTable : public wxHashTableBase
+class WXDLLIMPEXP_BASE wxHashTable : public wxHashTableBase
 {
     typedef wxHashTableBase hash;
 public:

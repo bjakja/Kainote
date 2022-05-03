@@ -18,13 +18,13 @@
 #include "wx/string.h"
 #include "wx/arrstr.h"
 
-class  wxXmlNode;
+class WXDLLIMPEXP_FWD_XML wxXmlNode;
 
 // ----------------------------------------------------------------------------
 // wxDebugReport: generate a debug report, processing is done in derived class
 // ----------------------------------------------------------------------------
 
-class  wxDebugReport
+class WXDLLIMPEXP_QA wxDebugReport
 {
 public:
     // this is used for the functions which may report either the current state
@@ -129,7 +129,7 @@ private:
 // wxDebugReportCompress: compress all files of this debug report in a .ZIP
 // ----------------------------------------------------------------------------
 
-class  wxDebugReportCompress : public wxDebugReport
+class WXDLLIMPEXP_QA wxDebugReportCompress : public wxDebugReport
 {
 public:
     wxDebugReportCompress() { }
@@ -162,7 +162,7 @@ private:
 // wxDebugReportUploader: uploads compressed file using HTTP POST request
 // ----------------------------------------------------------------------------
 
-class  wxDebugReportUpload : public wxDebugReportCompress
+class WXDLLIMPEXP_QA wxDebugReportUpload : public wxDebugReportCompress
 {
 public:
     // this class will upload the compressed file created by its base class to
@@ -210,7 +210,7 @@ private:
 //                       to veto report entirely or remove some parts of it
 // ----------------------------------------------------------------------------
 
-class  wxDebugReportPreview
+class WXDLLIMPEXP_QA wxDebugReportPreview
 {
 public:
     // ctor is trivial
@@ -233,7 +233,7 @@ public:
 // wxDebugReportPreviewStd: standard debug report preview window
 // ----------------------------------------------------------------------------
 
-class  wxDebugReportPreviewStd : public wxDebugReportPreview
+class WXDLLIMPEXP_QA wxDebugReportPreviewStd : public wxDebugReportPreview
 {
 public:
     wxDebugReportPreviewStd() { }

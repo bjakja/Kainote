@@ -70,7 +70,7 @@ typedef int ptrdiff_t;
 #endif
 
 // private
-struct _wxHashTable_NodeBase
+struct WXDLLIMPEXP_BASE _wxHashTable_NodeBase
 {
     _wxHashTable_NodeBase() : m_next(NULL) {}
 
@@ -82,7 +82,7 @@ struct _wxHashTable_NodeBase
 };
 
 // private
-class _wxHashTableBase2
+class WXDLLIMPEXP_BASE _wxHashTableBase2
 {
 public:
     typedef void (*NodeDtor)(_wxHashTable_NodeBase*);
@@ -483,7 +483,7 @@ inline bool grow_lf70( size_t buckets, size_t items )
 #ifndef wxNEEDS_WX_HASH_MAP
 
 // integer types
-class wxIntegerHash
+class WXDLLIMPEXP_BASE wxIntegerHash
 {
     WX_HASH_MAP_NAMESPACE::hash<long> longHash;
     WX_HASH_MAP_NAMESPACE::hash<unsigned long> ulongHash;
@@ -527,7 +527,7 @@ public:
 #else // wxNEEDS_WX_HASH_MAP
 
 // integer types
-class wxIntegerHash
+class WXDLLIMPEXP_BASE wxIntegerHash
 {
 public:
     wxIntegerHash() { }
@@ -547,7 +547,7 @@ public:
 
 #endif // !wxNEEDS_WX_HASH_MAP/wxNEEDS_WX_HASH_MAP
 
-class wxIntegerEqual
+class WXDLLIMPEXP_BASE wxIntegerEqual
 {
 public:
     wxIntegerEqual() { }
@@ -566,7 +566,7 @@ public:
 };
 
 // pointers
-class wxPointerHash
+class WXDLLIMPEXP_BASE wxPointerHash
 {
 public:
     wxPointerHash() { }
@@ -580,7 +580,7 @@ public:
     wxPointerHash& operator=(const wxPointerHash&) { return *this; }
 };
 
-class wxPointerEqual
+class WXDLLIMPEXP_BASE wxPointerEqual
 {
 public:
     wxPointerEqual() { }
@@ -590,7 +590,7 @@ public:
 };
 
 // wxString, char*, wchar_t*
-class wxStringHash
+class WXDLLIMPEXP_BASE wxStringHash
 {
 public:
     wxStringHash() {}
@@ -616,17 +616,17 @@ public:
     wxStringHash& operator=(const wxStringHash&) { return *this; }
 };
 
-class wxStringEqual
+class WXDLLIMPEXP_BASE wxStringEqual
 {
 public:
     wxStringEqual() {}
     bool operator()( const wxString& a, const wxString& b ) const
         { return a == b; }
-    /*bool operator()( const wxChar* a, const wxChar* b ) const
-        { return wxStrcmp( a, b ) == 0; }*/
+    bool operator()( const wxChar* a, const wxChar* b ) const
+        { return wxStrcmp( a, b ) == 0; }
 #if wxUSE_UNICODE
-    /*bool operator()( const char* a, const char* b ) const
-        { return strcmp( a, b ) == 0; }*/
+    bool operator()( const char* a, const char* b ) const
+        { return strcmp( a, b ) == 0; }
 #endif // wxUSE_UNICODE
 
     wxStringEqual& operator=(const wxStringEqual&) { return *this; }
@@ -714,7 +714,7 @@ public: \
 
 #define WX_DECLARE_EXPORTED_HASH_MAP( KEY_T, VALUE_T, HASH_T, KEY_EQ_T, CLASSNAME) \
     WX_DECLARE_HASH_MAP_WITH_DECL( KEY_T, VALUE_T, HASH_T, KEY_EQ_T, \
-                                   CLASSNAME, class  )
+                                   CLASSNAME, class WXDLLIMPEXP_CORE )
 
 #define WX_DECLARE_STRING_HASH_MAP_WITH_DECL( VALUE_T, CLASSNAME, DECL ) \
     _WX_DECLARE_HASH_MAP( wxString, VALUE_T, wxStringHash, wxStringEqual, \
@@ -722,7 +722,7 @@ public: \
 
 #define WX_DECLARE_EXPORTED_STRING_HASH_MAP( VALUE_T, CLASSNAME ) \
     WX_DECLARE_STRING_HASH_MAP_WITH_DECL( VALUE_T, CLASSNAME, \
-                                          class  )
+                                          class WXDLLIMPEXP_CORE )
 
 #define WX_DECLARE_VOIDPTR_HASH_MAP_WITH_DECL( VALUE_T, CLASSNAME, DECL ) \
     _WX_DECLARE_HASH_MAP( void*, VALUE_T, wxPointerHash, wxPointerEqual, \
@@ -730,7 +730,7 @@ public: \
 
 #define WX_DECLARE_EXPORTED_VOIDPTR_HASH_MAP( VALUE_T, CLASSNAME ) \
     WX_DECLARE_VOIDPTR_HASH_MAP_WITH_DECL( VALUE_T, CLASSNAME, \
-                                           class  )
+                                           class WXDLLIMPEXP_CORE )
 
 // delete all hash elements
 //
@@ -750,13 +750,13 @@ public: \
 // Declarations of common hashmap classes
 
 WX_DECLARE_HASH_MAP_WITH_DECL( long, long, wxIntegerHash, wxIntegerEqual,
-                               wxLongToLongHashMap, class );
+                               wxLongToLongHashMap, class WXDLLIMPEXP_BASE );
 
 WX_DECLARE_STRING_HASH_MAP_WITH_DECL( wxString, wxStringToStringHashMap,
-                                      class );
+                                      class WXDLLIMPEXP_BASE );
 
 WX_DECLARE_STRING_HASH_MAP_WITH_DECL( wxUIntPtr, wxStringToNumHashMap,
-                                      class );
+                                      class WXDLLIMPEXP_BASE );
 
 
 #endif // _WX_HASHMAP_H_

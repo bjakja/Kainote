@@ -29,6 +29,7 @@
 #include "Toolbar.h"
 #include "TabPanel.h"
 #include "shiftTimes.h"
+#include "KainoteFrame.h"
 
 
 Notebook::Notebook(wxWindow *parent, int id)

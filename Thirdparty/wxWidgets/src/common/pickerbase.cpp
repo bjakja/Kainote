@@ -78,7 +78,7 @@ bool wxPickerBase::CreateBase(wxWindow *parent,
                                 GetTextCtrlStyle(style));
         if (!m_text)
         {
-            //wxFAIL_MSG( wxT("wxPickerBase's textctrl creation failed") );
+            wxFAIL_MSG( wxT("wxPickerBase's textctrl creation failed") );
             return false;
         }
 

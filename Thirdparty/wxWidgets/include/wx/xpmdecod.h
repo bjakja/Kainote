@@ -14,14 +14,14 @@
 
 #if wxUSE_IMAGE && wxUSE_XPM
 
-class  wxImage;
-class  wxInputStream;
+class WXDLLIMPEXP_FWD_CORE wxImage;
+class WXDLLIMPEXP_FWD_BASE wxInputStream;
 
 // --------------------------------------------------------------------------
 // wxXPMDecoder class
 // --------------------------------------------------------------------------
 
-class  wxXPMDecoder
+class WXDLLIMPEXP_CORE wxXPMDecoder
 {
 public:
     // constructor, destructor, etc.

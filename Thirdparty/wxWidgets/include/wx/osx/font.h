@@ -31,7 +31,7 @@ enum wxOSXSystemFont
 };
 
 
-class  wxFont : public wxFontBase
+class WXDLLIMPEXP_CORE wxFont : public wxFontBase
 {
 public:
     // ctors and such

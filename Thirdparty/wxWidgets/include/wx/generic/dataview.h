@@ -19,14 +19,14 @@
 #include "wx/icon.h"
 #include "wx/vector.h"
 
-class  wxDataViewMainWindow;
-class  wxDataViewHeaderWindow;
+class WXDLLIMPEXP_FWD_ADV wxDataViewMainWindow;
+class WXDLLIMPEXP_FWD_ADV wxDataViewHeaderWindow;
 
 // ---------------------------------------------------------
 // wxDataViewColumn
 // ---------------------------------------------------------
 
-class  wxDataViewColumn : public wxDataViewColumnBase
+class WXDLLIMPEXP_ADV wxDataViewColumn : public wxDataViewColumnBase
 {
 public:
     wxDataViewColumn(const wxString& title,
@@ -103,9 +103,9 @@ private:
 // ---------------------------------------------------------
 
 WX_DECLARE_LIST_WITH_DECL(wxDataViewColumn, wxDataViewColumnList,
-                          class );
+                          class WXDLLIMPEXP_ADV);
 
-class  wxDataViewCtrl : public wxDataViewCtrlBase,
+class WXDLLIMPEXP_ADV wxDataViewCtrl : public wxDataViewCtrlBase,
                                        public wxScrollHelper
 {
     friend class wxDataViewMainWindow;

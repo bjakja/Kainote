@@ -29,7 +29,7 @@
 //     dtor which is _not_ virtual, so it shouldn't be used as a base class.
 // ----------------------------------------------------------------------------
 
-class  wxFFile
+class WXDLLIMPEXP_BASE wxFFile
 {
 public:
   // ctors

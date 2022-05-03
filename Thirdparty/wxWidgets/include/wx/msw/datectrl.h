@@ -16,7 +16,7 @@
 // wxDatePickerCtrl
 // ----------------------------------------------------------------------------
 
-class  wxDatePickerCtrl : public wxDatePickerCtrlBase
+class WXDLLIMPEXP_ADV wxDatePickerCtrl : public wxDatePickerCtrlBase
 {
 public:
     // ctors

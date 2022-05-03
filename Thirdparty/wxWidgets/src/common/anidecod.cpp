@@ -291,7 +291,7 @@ bool wxANIDecoder::Load( wxInputStream& stream )
             if (m_nFrames == 0)
                 return false;       // rate chunks should always be placed after anih chunk
 
-            //wxASSERT(m_info.GetCount() == m_nFrames);
+            wxASSERT(m_info.GetCount() == m_nFrames);
             for (unsigned int i=0; i<m_nFrames; i++)
             {
                 if (!stream.Read(&FCC2, 4))
@@ -305,7 +305,7 @@ bool wxANIDecoder::Load( wxInputStream& stream )
             if (m_nFrames == 0)
                 return false;       // seq chunks should always be placed after anih chunk
 
-            //wxASSERT(m_info.GetCount() == m_nFrames);
+            wxASSERT(m_info.GetCount() == m_nFrames);
             for (unsigned int i=0; i<m_nFrames; i++)
             {
                 if (!stream.Read(&FCC2, 4))

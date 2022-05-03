@@ -19,7 +19,7 @@
 // wxInternetFSHandler
 // ----------------------------------------------------------------------------
 
-class  wxInternetFSHandler : public wxFileSystemHandler
+class WXDLLIMPEXP_NET wxInternetFSHandler : public wxFileSystemHandler
 {
     public:
         virtual bool CanOpen(const wxString& location);

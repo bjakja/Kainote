@@ -16,7 +16,7 @@
 #include "wx/bitmap.h"
 
 // Checkbox item (single checkbox)
-class  wxToggleButton : public wxToggleButtonBase
+class WXDLLIMPEXP_CORE wxToggleButton : public wxToggleButtonBase
 {
 public:
     wxToggleButton() { Init(); }
@@ -71,7 +71,7 @@ private:
 //-----------------------------------------------------------------------------
 
 
-class  wxBitmapToggleButton: public wxToggleButton
+class WXDLLIMPEXP_CORE wxBitmapToggleButton: public wxToggleButton
 {
 public:
     // construction/destruction

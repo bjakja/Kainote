@@ -17,8 +17,8 @@
 #include "wx/icon.h"
 #include "wx/iconbndl.h"
 
-class wxArtProvidersList;
-class wxArtProviderCache;
+class WXDLLIMPEXP_FWD_CORE wxArtProvidersList;
+class WXDLLIMPEXP_FWD_CORE wxArtProviderCache;
 class wxArtProviderModule;
 
 // ----------------------------------------------------------------------------
@@ -117,7 +117,7 @@ typedef wxString wxArtID;
 // wxArtProvider class
 // ----------------------------------------------------------------------------
 
-class wxArtProvider : public wxObject
+class WXDLLIMPEXP_CORE wxArtProvider : public wxObject
 {
 public:
     // Dtor removes the provider from providers stack if it's still on it

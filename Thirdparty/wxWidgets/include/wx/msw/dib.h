@@ -12,7 +12,7 @@
 #ifndef _WX_MSW_DIB_H_
 #define _WX_MSW_DIB_H_
 
-class  wxPalette;
+class WXDLLIMPEXP_FWD_CORE wxPalette;
 
 #include "wx/msw/private.h"
 
@@ -26,7 +26,7 @@ class  wxPalette;
 // wxDIB: represents a DIB section
 // ----------------------------------------------------------------------------
 
-class  wxDIB
+class WXDLLIMPEXP_CORE wxDIB
 {
 public:
     // ctors and such

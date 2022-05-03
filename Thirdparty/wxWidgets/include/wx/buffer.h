@@ -11,15 +11,13 @@
 
 #ifndef _WX_BUFFER_H
 #define _WX_BUFFER_H
-//#include "wx/wxcrt.h"
-#include "wx/chartype.h"
-#include "wx/defs.h"
-#include "wx/string.h"
 
+#include "wx/chartype.h"
+#include "wx/wxcrtbase.h"
 
 #include <stdlib.h>             // malloc() and free()
 
-class  wxCStrData;
+class WXDLLIMPEXP_FWD_BASE wxCStrData;
 
 // ----------------------------------------------------------------------------
 // Special classes for (wide) character strings: they use malloc/free instead
@@ -57,12 +55,10 @@ struct UntypedBufferData
 };
 
 // NB: this is defined in string.cpp and not the (non-existent) buffer.cpp
- UntypedBufferData * GetUntypedNullData();
+WXDLLIMPEXP_BASE UntypedBufferData * GetUntypedNullData();
 
 } // namespace wxPrivate
 
-inline size_t wxStrlen1(const wchar_t* s) { return s ? ::wcslen(s) : 0; }
-inline size_t wxStrlen1(const char* s) { return s ? ::strlen(s) : 0; }
 
 // Reference-counted character buffer for storing string data. The buffer
 // is only valid for as long as the "parent" object that provided the data
@@ -85,9 +81,8 @@ public:
     const wxScopedCharTypeBuffer CreateNonOwned(const CharType *str,
                                                 size_t len = wxNO_LEN)
     {
-        
-        if (len == wxNO_LEN)
-            len = wxStrlen1(str);
+        if ( len == wxNO_LEN )
+            len = wxStrlen(str);
 
         wxScopedCharTypeBuffer buf;
         if ( str )
@@ -102,7 +97,7 @@ public:
                                              size_t len = wxNO_LEN )
     {
         if ( len == wxNO_LEN )
-            len = wxStrlen1(str);
+            len = wxStrlen(str);
 
         wxScopedCharTypeBuffer buf;
         if ( str )
@@ -141,8 +136,8 @@ public:
         if ( m_data == GetNullData() )
             return NULL;
 
-        //wxASSERT_MSG( m_data->m_owned, wxT("can't release non-owned buffer") );
-        //wxASSERT_MSG( m_data->m_ref == 1, wxT("can't release shared buffer") );
+        wxASSERT_MSG( m_data->m_owned, wxT("can't release non-owned buffer") );
+        wxASSERT_MSG( m_data->m_ref == 1, wxT("can't release shared buffer") );
 
         CharType * const p = m_data->Get();
 
@@ -262,7 +257,7 @@ public:
         if ( str )
         {
             if ( len == wxNO_LEN )
-                len = wxStrlen1(str);
+                len = wxStrlen(str);
             this->m_data = new Data(this->StrCopy(str, len), len);
         }
         else
@@ -309,8 +304,8 @@ public:
 
     bool extend(size_t len)
     {
-        //wxASSERT_MSG( this->m_data->m_owned, "cannot extend non-owned buffer" );
-        //wxASSERT_MSG( this->m_data->m_ref == 1, "can't extend shared buffer" );
+        wxASSERT_MSG( this->m_data->m_owned, "cannot extend non-owned buffer" );
+        wxASSERT_MSG( this->m_data->m_ref == 1, "can't extend shared buffer" );
 
         CharType *str =
             (CharType *)realloc(this->data(), (len + 1) * sizeof(CharType));
@@ -336,18 +331,18 @@ public:
 
     void shrink(size_t len)
     {
-        //wxASSERT_MSG( this->m_data->m_owned, "cannot shrink non-owned buffer" );
-        //wxASSERT_MSG( this->m_data->m_ref == 1, "can't shrink shared buffer" );
+        wxASSERT_MSG( this->m_data->m_owned, "cannot shrink non-owned buffer" );
+        wxASSERT_MSG( this->m_data->m_ref == 1, "can't shrink shared buffer" );
 
-        //wxASSERT( len <= this->length() );
+        wxASSERT( len <= this->length() );
 
         this->m_data->m_length = len;
         this->data()[len] = 0;
     }
 };
 
-//WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxScopedCharTypeBuffer<char> )
-//WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxCharTypeBuffer<char> )
+WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxScopedCharTypeBuffer<char> )
+WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxCharTypeBuffer<char> )
 
 class wxCharBuffer : public wxCharTypeBuffer<char>
 {
@@ -363,11 +358,11 @@ public:
     wxCharBuffer(const CharType *str = NULL) : wxCharTypeBufferBase(str) {}
     wxCharBuffer(size_t len) : wxCharTypeBufferBase(len) {}
 
-    //wxCharBuffer(const wxCStrData& cstr);
+    wxCharBuffer(const wxCStrData& cstr);
 };
 
-//WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxScopedCharTypeBuffer<wchar_t> )
-//WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxCharTypeBuffer<wchar_t> )
+WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxScopedCharTypeBuffer<wchar_t> )
+WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxCharTypeBuffer<wchar_t> )
 
 class wxWCharBuffer : public wxCharTypeBuffer<wchar_t>
 {
@@ -383,7 +378,7 @@ public:
     wxWCharBuffer(const CharType *str = NULL) : wxCharTypeBufferBase(str) {}
     wxWCharBuffer(size_t len) : wxCharTypeBufferBase(len) {}
 
-    //wxWCharBuffer(const wxCStrData& cstr);
+    wxWCharBuffer(const wxCStrData& cstr);
 };
 
 // wxCharTypeBuffer<T> implicitly convertible to T*
@@ -480,7 +475,7 @@ private:
         if ( m_data == NULL )
             return NULL;
 
-        //wxASSERT_MSG( m_ref == 1, "can't release shared buffer" );
+        wxASSERT_MSG( m_ref == 1, "can't release shared buffer" );
 
         void *p = m_data;
         m_data = NULL;
@@ -549,7 +544,7 @@ public:
     void   SetBufSize(size_t size) { m_bufdata->ResizeIfNeeded(size); }
     void   SetDataLen(size_t len)
     {
-        //wxASSERT(len <= m_bufdata->m_size);
+        wxASSERT(len <= m_bufdata->m_size);
         m_bufdata->m_len = len;
     }
 
@@ -581,7 +576,7 @@ public:
     // Other ways to append to the buffer
     void  AppendByte(char data)
     {
-        //wxCHECK_RET( m_bufdata->m_data, wxT("invalid wxMemoryBuffer") );
+        wxCHECK_RET( m_bufdata->m_data, wxT("invalid wxMemoryBuffer") );
 
         m_bufdata->ResizeIfNeeded(m_bufdata->m_len + 1);
         *(((char*)m_bufdata->m_data) + m_bufdata->m_len) = data;

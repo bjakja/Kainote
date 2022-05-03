@@ -211,7 +211,7 @@ wxString wxGetStockLabel(wxWindowID id, long flags)
         STOCKITEM(wxID_ZOOM_OUT,            _("Zoom &Out"),           _("Zoom Out"));
 
         default:
-            //wxFAIL_MSG( wxT("invalid stock item ID") );
+            wxFAIL_MSG( wxT("invalid stock item ID") );
             break;
     };
 
@@ -226,8 +226,8 @@ wxString wxGetStockLabel(wxWindowID id, long flags)
         // accelerators only make sense for the menu items which should have
         // ellipsis too while wxSTOCK_WITHOUT_ELLIPSIS is mostly useful for
         // buttons which shouldn't have accelerators in their labels
-        //wxASSERT_MSG( !(flags & wxSTOCK_WITH_ACCELERATOR),
-                        //"labels without ellipsis shouldn't use accelerators" );
+        wxASSERT_MSG( !(flags & wxSTOCK_WITH_ACCELERATOR),
+                        "labels without ellipsis shouldn't use accelerators" );
     }
 
 #if wxUSE_ACCEL

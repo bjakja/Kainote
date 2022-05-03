@@ -22,13 +22,13 @@
 #include "wx/dynarray.h"
 #include "wx/font.h"
 
-class  wxHtmlHelpData;
+class WXDLLIMPEXP_FWD_HTML wxHtmlHelpData;
 
 //--------------------------------------------------------------------------------
 // helper classes & structs
 //--------------------------------------------------------------------------------
 
-class  wxHtmlBookRecord
+class WXDLLIMPEXP_HTML wxHtmlBookRecord
 {
 public:
     wxHtmlBookRecord(const wxString& bookfile, const wxString& basepath,
@@ -74,9 +74,9 @@ protected:
 
 
 WX_DECLARE_USER_EXPORTED_OBJARRAY(wxHtmlBookRecord, wxHtmlBookRecArray,
-                                  );
+                                  WXDLLIMPEXP_HTML);
 
-struct  wxHtmlHelpDataItem
+struct WXDLLIMPEXP_HTML wxHtmlHelpDataItem
 {
     wxHtmlHelpDataItem() : level(0), parent(NULL), id(wxID_ANY), book(NULL) {}
 
@@ -95,7 +95,7 @@ struct  wxHtmlHelpDataItem
 };
 
 WX_DECLARE_USER_EXPORTED_OBJARRAY(wxHtmlHelpDataItem, wxHtmlHelpDataItems,
-                                  );
+                                  WXDLLIMPEXP_HTML);
 
 
 //------------------------------------------------------------------------------
@@ -104,7 +104,7 @@ WX_DECLARE_USER_EXPORTED_OBJARRAY(wxHtmlHelpDataItem, wxHtmlHelpDataItems,
 //                  of keyword(s)
 //------------------------------------------------------------------------------
 
-class  wxHtmlSearchEngine : public wxObject
+class WXDLLIMPEXP_HTML wxHtmlSearchEngine : public wxObject
 {
 public:
     wxHtmlSearchEngine() : wxObject() {}
@@ -130,7 +130,7 @@ private:
 // nested class inside wxHtmlHelpData, but that's against coding standards :-(
 // Never construct this class yourself, obtain a copy from
 // wxHtmlHelpData::PrepareKeywordSearch(const wxString& key)
-class  wxHtmlSearchStatus
+class WXDLLIMPEXP_HTML wxHtmlSearchStatus
 {
 public:
     // constructor; supply wxHtmlHelpData ptr, the keyword and (optionally) the
@@ -160,7 +160,7 @@ private:
     wxDECLARE_NO_COPY_CLASS(wxHtmlSearchStatus);
 };
 
-class  wxHtmlHelpData : public wxObject
+class WXDLLIMPEXP_HTML wxHtmlHelpData : public wxObject
 {
     DECLARE_DYNAMIC_CLASS(wxHtmlHelpData)
     friend class wxHtmlSearchStatus;

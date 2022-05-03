@@ -16,7 +16,7 @@
 // wxFileDialog
 //-------------------------------------------------------------------------
 
-class  wxFileDialog: public wxFileDialogBase
+class WXDLLIMPEXP_CORE wxFileDialog: public wxFileDialogBase
 {
 public:
     wxFileDialog(wxWindow *parent,

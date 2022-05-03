@@ -31,11 +31,11 @@
 #include "wx/file.h"
 
 #if wxUSE_FILE
-class  wxFile;
+class WXDLLIMPEXP_FWD_BASE wxFile;
 #endif
 
 #if wxUSE_FFILE
-class  wxFFile;
+class WXDLLIMPEXP_FWD_BASE wxFFile;
 #endif
 
 // this symbol is defined for the platforms where file systems use volumes in
@@ -110,7 +110,7 @@ enum
 
 #if wxUSE_LONGLONG
 // error code of wxFileName::GetSize()
-extern const wxULongLong wxInvalidSize;
+extern WXDLLIMPEXP_DATA_BASE(const wxULongLong) wxInvalidSize;
 #endif // wxUSE_LONGLONG
 
 
@@ -119,7 +119,7 @@ extern const wxULongLong wxInvalidSize;
 // wxFileName: encapsulates a file path
 // ----------------------------------------------------------------------------
 
-class  wxFileName
+class WXDLLIMPEXP_BASE wxFileName
 {
 public:
     // constructors and assignment

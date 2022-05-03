@@ -26,7 +26,7 @@
 #include "wx/busyinfo.h"
 #include "wx/generic/stattextg.h"
 
-class  wxInfoFrame : public wxFrame
+class WXDLLEXPORT wxInfoFrame : public wxFrame
 {
 public:
     wxInfoFrame(wxWindow *parent, const wxString& message);

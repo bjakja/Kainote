@@ -94,7 +94,7 @@ bool wxColourPickerCtrl::SetColour(const wxString &text)
 
 void wxColourPickerCtrl::UpdatePickerFromTextCtrl()
 {
-    //wxASSERT(m_text);
+    wxASSERT(m_text);
 
     if (m_bIgnoreNextTextCtrlUpdate)
     {

@@ -20,8 +20,8 @@
 #include "wx/palette.h"
 #include "wx/window.h"
 
-class  wxGLCanvas;
-class  wxGLContext;
+class WXDLLIMPEXP_FWD_GL wxGLCanvas;
+class WXDLLIMPEXP_FWD_GL wxGLContext;
 
 // ----------------------------------------------------------------------------
 // Constants for attributes list
@@ -58,7 +58,7 @@ enum
 // wxGLContextBase: OpenGL rendering context
 // ----------------------------------------------------------------------------
 
-class  wxGLContextBase : public wxObject
+class WXDLLIMPEXP_GL wxGLContextBase : public wxObject
 {
 public:
     /*
@@ -75,7 +75,7 @@ public:
 // wxGLCanvasBase: window which can be used for OpenGL rendering
 // ----------------------------------------------------------------------------
 
-class  wxGLCanvasBase : public wxWindow
+class WXDLLIMPEXP_GL wxGLCanvasBase : public wxWindow
 {
 public:
     // default ctor doesn't initialize the window, use Create() later
@@ -174,7 +174,7 @@ protected:
 //          to select a visual compatible with the given attributes
 // ----------------------------------------------------------------------------
 
-class  wxGLAppBase : public wxApp
+class WXDLLIMPEXP_GL wxGLAppBase : public wxApp
 {
 public:
     wxGLAppBase() : wxApp() { }
@@ -204,7 +204,7 @@ public:
 // wxMac and wxMSW don't need anything extra in wxGLAppBase, so declare it here
 #ifndef wxGL_APP_DEFINED
 
-class  wxGLApp : public wxGLAppBase
+class WXDLLIMPEXP_GL wxGLApp : public wxGLAppBase
 {
 public:
     wxGLApp() : wxGLAppBase() { }
@@ -227,7 +227,7 @@ private:
     #define wxUSE_OPENGL_EMULATION 0
 #endif
 
-class  wxGLAPI : public wxObject
+class WXDLLIMPEXP_GL wxGLAPI : public wxObject
 {
 public:
     wxGLAPI();

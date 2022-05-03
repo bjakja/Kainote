@@ -44,8 +44,8 @@ enum wxLayoutDirection
 // forward decls
 // ----------------------------------------------------------------------------
 
-class  wxLocale;
-class  wxLanguageInfoArray;
+class WXDLLIMPEXP_FWD_BASE wxLocale;
+class WXDLLIMPEXP_FWD_BASE wxLanguageInfoArray;
 
 // ============================================================================
 // locale support
@@ -56,7 +56,7 @@ class  wxLanguageInfoArray;
 //                 translation information
 // ----------------------------------------------------------------------------
 
-struct  wxLanguageInfo
+struct WXDLLIMPEXP_BASE wxLanguageInfo
 {
     int Language;                   // wxLanguage id
     wxString CanonicalName;         // Canonical name, e.g. fr_FR
@@ -145,7 +145,7 @@ enum wxLocaleInitFlags
 #endif
 };
 
-class  wxLocale
+class WXDLLIMPEXP_BASE wxLocale
 {
 public:
     // ctor & dtor
@@ -343,7 +343,7 @@ private:
                    m_strShort;        // short name for the locale
     int            m_language;        // this locale wxLanguage value
 
-    const wchar_t  *m_pszOldLocale;      // previous locale from setlocale()
+    const char  *m_pszOldLocale;      // previous locale from setlocale()
     wxLocale      *m_pOldLocale;      // previous wxLocale
 
     bool           m_initialized;
@@ -360,7 +360,7 @@ private:
 // ----------------------------------------------------------------------------
 
 // get the current locale object (note that it may be NULL!)
-extern  wxLocale* wxGetLocale();
+extern WXDLLIMPEXP_BASE wxLocale* wxGetLocale();
 
 #endif // wxUSE_INTL
 

@@ -30,7 +30,7 @@ class WXDLLIMPEXP_FWD_CORE wxTabView;
 // wxNotebook
 // ----------------------------------------------------------------------------
 
-class  wxNotebook : public wxNotebookBase
+class WXDLLIMPEXP_CORE wxNotebook : public wxNotebookBase
 {
 public:
   // ctors

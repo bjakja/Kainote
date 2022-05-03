@@ -19,7 +19,7 @@
     WX_DEFINE_EXPORTED_ARRAY_PTR(wxAcceleratorEntry *, wxAcceleratorArray);
 #endif // wxUSE_ACCEL
 
-class  wxFrame;
+class WXDLLIMPEXP_FWD_CORE wxFrame;
 
 #if defined(__WXWINCE__) && wxUSE_TOOLBAR
 class WXDLLIMPEXP_FWD_CORE wxToolBar;
@@ -46,7 +46,7 @@ class wxMenuRadioItemsData;
 // Menu
 // ----------------------------------------------------------------------------
 
-class  wxMenu : public wxMenuBase
+class WXDLLIMPEXP_CORE wxMenu : public wxMenuBase
 {
 public:
     // ctors & dtor
@@ -178,7 +178,7 @@ private:
 // Menu Bar (a la Windows)
 // ----------------------------------------------------------------------------
 
-class  wxMenuBar : public wxMenuBarBase
+class WXDLLIMPEXP_CORE wxMenuBar : public wxMenuBarBase
 {
 public:
     // ctors & dtor

@@ -78,7 +78,7 @@ template<> inline EventParamType wxMacGetEventParamType<CGContextRef>() { return
  template<> EventParamType wxMacGetEventParamType<GWorldPtr>() { return typeGWorldPtr; }
  */
 
-class  wxMacCarbonEvent
+class WXDLLIMPEXP_CORE wxMacCarbonEvent
 {
 
 public :
@@ -197,9 +197,9 @@ protected :
 
 #if wxUSE_GUI
 
-class  wxMacToolTipTimer ;
+class WXDLLIMPEXP_FWD_CORE wxMacToolTipTimer ;
 
-class  wxMacToolTip
+class WXDLLIMPEXP_CORE wxMacToolTip
 {
 public :
     wxMacToolTip() ;
@@ -231,8 +231,8 @@ private :
 
 // Quartz
 
- void wxMacCreateBitmapButton( ControlButtonContentInfo*info , const wxBitmap& bitmap , int forceType = 0 );
- void wxMacReleaseBitmapButton( ControlButtonContentInfo*info );
+WXDLLIMPEXP_CORE void wxMacCreateBitmapButton( ControlButtonContentInfo*info , const wxBitmap& bitmap , int forceType = 0 );
+WXDLLIMPEXP_CORE void wxMacReleaseBitmapButton( ControlButtonContentInfo*info );
 
 #define MAC_WXHBITMAP(a) (GWorldPtr(a))
 #define MAC_WXHMETAFILE(a) (PicHandle(a))
@@ -252,19 +252,19 @@ private :
     WindowRef m_data;
 };
 
- void wxMacRectToNative( const wxRect *wx , Rect *n );
- void wxMacNativeToRect( const Rect *n , wxRect* wx );
- void wxMacPointToNative( const wxPoint* wx , Point *n );
- void wxMacNativeToPoint( const Point *n , wxPoint* wx );
+WXDLLIMPEXP_CORE void wxMacRectToNative( const wxRect *wx , Rect *n );
+WXDLLIMPEXP_CORE void wxMacNativeToRect( const Rect *n , wxRect* wx );
+WXDLLIMPEXP_CORE void wxMacPointToNative( const wxPoint* wx , Point *n );
+WXDLLIMPEXP_CORE void wxMacNativeToPoint( const Point *n , wxPoint* wx );
 
- wxMenu* wxFindMenuFromMacMenu(MenuRef inMenuRef);
+WXDLLIMPEXP_CORE wxMenu* wxFindMenuFromMacMenu(MenuRef inMenuRef);
 
- int wxMacCommandToId( UInt32 macCommandId );
- UInt32 wxIdToMacCommand( int wxId );
- wxMenu* wxFindMenuFromMacCommand( const HICommand &macCommandId , wxMenuItem* &item );
+WXDLLIMPEXP_CORE int wxMacCommandToId( UInt32 macCommandId );
+WXDLLIMPEXP_CORE UInt32 wxIdToMacCommand( int wxId );
+WXDLLIMPEXP_CORE wxMenu* wxFindMenuFromMacCommand( const HICommand &macCommandId , wxMenuItem* &item );
 
- pascal OSStatus wxMacTopLevelMouseEventHandler( EventHandlerCallRef handler , EventRef event , void *data );
- Rect wxMacGetBoundsForControl( wxWindowMac* window , const wxPoint& pos , const wxSize &size , bool adjustForOrigin = true );
+WXDLLIMPEXP_CORE pascal OSStatus wxMacTopLevelMouseEventHandler( EventHandlerCallRef handler , EventRef event , void *data );
+WXDLLIMPEXP_CORE Rect wxMacGetBoundsForControl( wxWindowMac* window , const wxPoint& pos , const wxSize &size , bool adjustForOrigin = true );
 
 ControlActionUPP GetwxMacLiveScrollbarActionProc();
 
@@ -276,7 +276,7 @@ enum {
 };
 #endif
 
-class  wxMacControl : public wxWidgetImpl
+class WXDLLIMPEXP_CORE wxMacControl : public wxWidgetImpl
 {
 public :
     wxMacControl( wxWindowMac* peer , bool isRootControl = false, bool isUserPane = false );
@@ -467,7 +467,7 @@ protected :
 // basing on DataBrowserItemIDs
 //
 
-class  wxMacDataBrowserControl : public wxMacControl
+class WXDLLIMPEXP_CORE wxMacDataBrowserControl : public wxMacControl
 {
 public :
     wxMacDataBrowserControl( wxWindow* peer, const wxPoint& pos, const wxSize& size, long style);
@@ -629,7 +629,7 @@ enum DataItemType {
 };
 
 /*
-class  wxMacDataItem
+class WXDLLIMPEXP_CORE wxMacDataItem
 {
 public :
     wxMacDataItem();
@@ -637,7 +637,7 @@ public :
 } ;
 */
 
-class  wxMacDataItem
+class WXDLLIMPEXP_CORE wxMacDataItem
 {
 public :
     wxMacDataItem();
@@ -675,9 +675,9 @@ typedef wxMacDataItem* wxMacDataItemPtr;
 const wxMacDataItemPtr wxMacDataBrowserRootContainer = NULL;
 typedef void * wxListColumnId ;
 
-WX_DEFINE_USER_EXPORTED_ARRAY_PTR(wxMacDataItemPtr, wxArrayMacDataItemPtr, class );
+WX_DEFINE_USER_EXPORTED_ARRAY_PTR(wxMacDataItemPtr, wxArrayMacDataItemPtr, class WXDLLIMPEXP_CORE);
 
-class  wxMacDataItemBrowserControl : public wxMacDataBrowserControl
+class WXDLLIMPEXP_CORE wxMacDataItemBrowserControl : public wxMacDataBrowserControl
 {
 public :
     wxMacDataItemBrowserControl( wxWindow* peer , const wxPoint& pos, const wxSize& size, long style);
@@ -775,7 +775,7 @@ private :
     DECLARE_DYNAMIC_CLASS_NO_COPY(wxMacDataItemBrowserControl)
 };
 
-class  wxMacDataItemBrowserSelectionSuppressor
+class WXDLLIMPEXP_CORE wxMacDataItemBrowserSelectionSuppressor
 {
 public :
     wxMacDataItemBrowserSelectionSuppressor(wxMacDataItemBrowserControl *browser);
@@ -793,7 +793,7 @@ private :
 
 // exposed for reuse in wxCheckListBox
 
-class  wxMacListBoxItem : public wxMacDataItem
+class WXDLLIMPEXP_CORE wxMacListBoxItem : public wxMacDataItem
 {
 public :
     wxMacListBoxItem();
@@ -811,7 +811,7 @@ public :
 protected :
 };
 
-class  wxMacDataBrowserColumn : public wxListWidgetColumn
+class WXDLLIMPEXP_CORE wxMacDataBrowserColumn : public wxListWidgetColumn
 {
 public :
     wxMacDataBrowserColumn( DataBrowserPropertyID propertyId, DataBrowserPropertyType colType, bool editable )
@@ -836,7 +836,7 @@ protected :
 WX_DEFINE_ARRAY_PTR(wxMacDataBrowserColumn *, wxArrayMacDataBrowserColumns);
 
 
-class  wxMacDataBrowserCellValue : public wxListWidgetCellValue
+class WXDLLIMPEXP_CORE wxMacDataBrowserCellValue : public wxListWidgetCellValue
 {
 public :
     wxMacDataBrowserCellValue(DataBrowserItemDataRef data) : m_data(data) {}
@@ -854,7 +854,7 @@ protected :
 } ;
 
 
-class  wxMacDataBrowserListControl : public wxMacDataItemBrowserControl, public wxListWidgetImpl
+class WXDLLIMPEXP_CORE wxMacDataBrowserListControl : public wxMacDataItemBrowserControl, public wxListWidgetImpl
 {
 public:
     wxMacDataBrowserListControl( wxWindow *peer, const wxPoint& pos, const wxSize& size, long style );
@@ -920,12 +920,12 @@ private:
 
 // draw the image 'upside down' corrected as HIViewDrawCGImage does
 
-OSStatus  wxMacDrawCGImage(
+OSStatus WXDLLIMPEXP_CORE wxMacDrawCGImage(
                                CGContextRef    inContext,
                                const HIRect *  inBounds,
                                CGImageRef      inImage) ;
 
-CGColorRef  wxMacCreateCGColorFromHITheme( ThemeBrush brush ) ;
+CGColorRef WXDLLIMPEXP_CORE wxMacCreateCGColorFromHITheme( ThemeBrush brush ) ;
 
 #endif // wxUSE_GUI
 

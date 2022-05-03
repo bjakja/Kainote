@@ -22,13 +22,13 @@
 
 typedef wxWindow wxTreebookPage;
 
-class  wxTreeEvent;
+class WXDLLIMPEXP_FWD_CORE wxTreeEvent;
 
 // ----------------------------------------------------------------------------
 // wxTreebook
 // ----------------------------------------------------------------------------
 
-class  wxTreebook : public wxNavigationEnabled<wxBookCtrlBase>
+class WXDLLIMPEXP_CORE wxTreebook : public wxNavigationEnabled<wxBookCtrlBase>
 {
 public:
     // Constructors and such
@@ -235,10 +235,10 @@ typedef wxBookCtrlEventFunction wxTreebookEventFunction;
 #define wxTreebookEventHandler(func) wxBookCtrlEventHandler(func)
 
 
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_TREEBOOK_PAGE_CHANGED, wxBookCtrlEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_TREEBOOK_PAGE_CHANGING, wxBookCtrlEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_TREEBOOK_NODE_COLLAPSED, wxBookCtrlEvent );
-wxDECLARE_EXPORTED_EVENT( , wxEVT_COMMAND_TREEBOOK_NODE_EXPANDED, wxBookCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TREEBOOK_PAGE_CHANGED, wxBookCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TREEBOOK_PAGE_CHANGING, wxBookCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TREEBOOK_NODE_COLLAPSED, wxBookCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TREEBOOK_NODE_EXPANDED, wxBookCtrlEvent );
 
 #define EVT_TREEBOOK_PAGE_CHANGED(winid, fn) \
     wx__DECLARE_EVT1(wxEVT_COMMAND_TREEBOOK_PAGE_CHANGED, winid, wxBookCtrlEventHandler(fn))

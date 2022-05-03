@@ -135,7 +135,7 @@ static const wxChar *gs_classForDialUpWindow = NULL;
 #endif // ASCII/Unicode
 
 // structure passed to the secondary thread
-struct  wxRasThreadData
+struct WXDLLEXPORT wxRasThreadData
 {
     wxRasThreadData()
     {
@@ -161,14 +161,14 @@ struct  wxRasThreadData
     HANDLE  hEventRas,  // automatic event which RAS signals when status changes
             hEventQuit; // manual event which we signal when we terminate
 
-    class  wxDialUpManagerMSW *dialUpManager;  // the owner
+    class WXDLLIMPEXP_FWD_CORE wxDialUpManagerMSW *dialUpManager;  // the owner
 };
 
 // ----------------------------------------------------------------------------
 // wxDialUpManager class for MSW
 // ----------------------------------------------------------------------------
 
-class  wxDialUpManagerMSW : public wxDialUpManager
+class WXDLLEXPORT wxDialUpManagerMSW : public wxDialUpManager
 {
 public:
     // ctor & dtor
@@ -224,7 +224,7 @@ private:
     int m_autoCheckLevel;
 
     // timer used for polling RAS status
-    class  RasTimer : public wxTimer
+    class WXDLLEXPORT RasTimer : public wxTimer
     {
     public:
         RasTimer(wxDialUpManagerMSW *dialUpManager)
@@ -741,11 +741,11 @@ bool wxDialUpManagerMSW::Dial(const wxString& nameOfISP,
                               bool async)
 {
     // check preconditions
-    //wxCHECK_MSG( IsOk(), false, wxT("using uninitialized wxDialUpManager") );
+    wxCHECK_MSG( IsOk(), false, wxT("using uninitialized wxDialUpManager") );
 
     if ( ms_hRasConnection )
     {
-        //wxFAIL_MSG(wxT("there is already an active connection"));
+        wxFAIL_MSG(wxT("there is already an active connection"));
 
         return true;
     }
@@ -918,7 +918,7 @@ bool wxDialUpManagerMSW::CancelDialing()
         return false;
     }
 
-    //wxASSERT_MSG( ms_hRasConnection, wxT("dialing but no connection?") );
+    wxASSERT_MSG( ms_hRasConnection, wxT("dialing but no connection?") );
 
     ms_dialer = NULL;
 
@@ -927,7 +927,7 @@ bool wxDialUpManagerMSW::CancelDialing()
 
 bool wxDialUpManagerMSW::HangUp()
 {
-    //wxCHECK_MSG( IsOk(), false, wxT("using uninitialized wxDialUpManager") );
+    wxCHECK_MSG( IsOk(), false, wxT("using uninitialized wxDialUpManager") );
 
     // we may terminate either the connection we initiated or another one which
     // is active now
@@ -1004,7 +1004,7 @@ bool wxDialUpManagerMSW::IsAlwaysOnline() const
 
 bool wxDialUpManagerMSW::IsOnline() const
 {
-    //wxCHECK_MSG( IsOk(), false, wxT("using uninitialized wxDialUpManager") );
+    wxCHECK_MSG( IsOk(), false, wxT("using uninitialized wxDialUpManager") );
 
     if ( IsAlwaysOnline() )
     {
@@ -1026,14 +1026,14 @@ bool wxDialUpManagerMSW::IsOnline() const
 
 void wxDialUpManagerMSW::SetOnlineStatus(bool isOnline)
 {
-    //wxCHECK_RET( IsOk(), wxT("using uninitialized wxDialUpManager") );
+    wxCHECK_RET( IsOk(), wxT("using uninitialized wxDialUpManager") );
 
     ms_userSpecifiedOnlineStatus = isOnline;
 }
 
 bool wxDialUpManagerMSW::EnableAutoCheckOnlineStatus(size_t nSeconds)
 {
-    //wxCHECK_MSG( IsOk(), false, wxT("using uninitialized wxDialUpManager") );
+    wxCHECK_MSG( IsOk(), false, wxT("using uninitialized wxDialUpManager") );
 
     if ( m_autoCheckLevel++ )
     {
@@ -1189,7 +1189,7 @@ bool wxDialUpManagerMSW::EnableAutoCheckOnlineStatus(size_t nSeconds)
 
 void wxDialUpManagerMSW::DisableAutoCheckOnlineStatus()
 {
-    //wxCHECK_RET( IsOk(), wxT("using uninitialized wxDialUpManager") );
+    wxCHECK_RET( IsOk(), wxT("using uninitialized wxDialUpManager") );
 
     if ( --m_autoCheckLevel != 0 )
     {
@@ -1219,7 +1219,7 @@ void wxDialUpManagerMSW::DisableAutoCheckOnlineStatus()
 void wxDialUpManagerMSW::SetWellKnownHost(const wxString& WXUNUSED(hostname),
                                           int WXUNUSED(port))
 {
-    //wxCHECK_RET( IsOk(), wxT("using uninitialized wxDialUpManager") );
+    wxCHECK_RET( IsOk(), wxT("using uninitialized wxDialUpManager") );
 
     // nothing to do - we don't use this
 }
@@ -1227,7 +1227,7 @@ void wxDialUpManagerMSW::SetWellKnownHost(const wxString& WXUNUSED(hostname),
 void wxDialUpManagerMSW::SetConnectCommand(const wxString& WXUNUSED(dial),
                                            const wxString& WXUNUSED(hangup))
 {
-    //wxCHECK_RET( IsOk(), wxT("using uninitialized wxDialUpManager") );
+    wxCHECK_RET( IsOk(), wxT("using uninitialized wxDialUpManager") );
 
     // nothing to do - we don't use this
 }
@@ -1260,7 +1260,7 @@ static DWORD wxRasMonitorThread(wxRasThreadData *data)
                 break;
 
             default:
-                //wxFAIL_MSG( wxT("unexpected return of WaitForMultipleObjects()") );
+                wxFAIL_MSG( wxT("unexpected return of WaitForMultipleObjects()") );
                 // fall through
 
             case WAIT_FAILED:
@@ -1321,7 +1321,7 @@ static void WINAPI wxRasDialFunc(UINT WXUNUSED(unMsg),
 {
     wxDialUpManagerMSW *dialUpManager = wxDialUpManagerMSW::GetDialer();
 
-    //wxCHECK_RET( dialUpManager, wxT("who started to dial then?") );
+    wxCHECK_RET( dialUpManager, wxT("who started to dial then?") );
 
     SendMessage(wxDialUpManagerMSW::GetRasWindow(), wxWM_RAS_DIALING_PROGRESS,
                 rasconnstate, dwError);

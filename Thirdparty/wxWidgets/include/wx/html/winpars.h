@@ -19,11 +19,11 @@
 #include "wx/html/htmlcell.h"
 #include "wx/encconv.h"
 
-class  wxHtmlWindow;
-class  wxHtmlWindowInterface;
-class  wxHtmlWinParser;
-class  wxHtmlWinTagHandler;
-class  wxHtmlTagsModule;
+class WXDLLIMPEXP_FWD_HTML wxHtmlWindow;
+class WXDLLIMPEXP_FWD_HTML wxHtmlWindowInterface;
+class WXDLLIMPEXP_FWD_HTML wxHtmlWinParser;
+class WXDLLIMPEXP_FWD_HTML wxHtmlWinTagHandler;
+class WXDLLIMPEXP_FWD_HTML wxHtmlTagsModule;
 
 
 //--------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ class  wxHtmlTagsModule;
 //                  wxHtmlWindow. It uses special wxHtmlWinTagHandler.
 //--------------------------------------------------------------------------------
 
-class  wxHtmlWinParser : public wxHtmlParser
+class WXDLLIMPEXP_HTML wxHtmlWinParser : public wxHtmlParser
 {
     DECLARE_ABSTRACT_CLASS(wxHtmlWinParser)
     friend class wxHtmlWindow;
@@ -248,7 +248,7 @@ private:
 //                  the wxHtmlWinParser object
 //-----------------------------------------------------------------------------
 
-class  wxHtmlWinTagHandler : public wxHtmlTagHandler
+class WXDLLIMPEXP_HTML wxHtmlWinTagHandler : public wxHtmlTagHandler
 {
     DECLARE_ABSTRACT_CLASS(wxHtmlWinTagHandler)
 
@@ -276,7 +276,7 @@ protected:
 //                  (See documentation for details)
 //----------------------------------------------------------------------------
 
-class  wxHtmlTagsModule : public wxModule
+class WXDLLIMPEXP_HTML wxHtmlTagsModule : public wxModule
 {
     DECLARE_DYNAMIC_CLASS(wxHtmlTagsModule)
 

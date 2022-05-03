@@ -21,14 +21,14 @@
 #include "wx/string.h"
 #include "wx/filefn.h"  // for wxFileOffset, wxInvalidOffset and wxSeekMode
 
-class  wxStreamBase;
-class  wxInputStream;
-class  wxOutputStream;
+class WXDLLIMPEXP_FWD_BASE wxStreamBase;
+class WXDLLIMPEXP_FWD_BASE wxInputStream;
+class WXDLLIMPEXP_FWD_BASE wxOutputStream;
 
 typedef wxInputStream& (*__wxInputManip)(wxInputStream&);
 typedef wxOutputStream& (*__wxOutputManip)(wxOutputStream&);
 
- wxOutputStream& wxEndL(wxOutputStream& o_stream);
+WXDLLIMPEXP_BASE wxOutputStream& wxEndL(wxOutputStream& o_stream);
 
 // ----------------------------------------------------------------------------
 // constants
@@ -52,7 +52,7 @@ const int wxEOF = -1;
 // wxStreamBase: common (but non virtual!) base for all stream classes
 // ---------------------------------------------------------------------------
 
-class  wxStreamBase : public wxObject
+class WXDLLIMPEXP_BASE wxStreamBase : public wxObject
 {
 public:
     wxStreamBase();
@@ -90,7 +90,7 @@ protected:
 // wxInputStream: base class for the input streams
 // ----------------------------------------------------------------------------
 
-class  wxInputStream : public wxStreamBase
+class WXDLLIMPEXP_BASE wxInputStream : public wxStreamBase
 {
 public:
     // ctor and dtor, nothing exciting
@@ -225,7 +225,7 @@ protected:
 // wxOutputStream: base for the output streams
 // ----------------------------------------------------------------------------
 
-class  wxOutputStream : public wxStreamBase
+class WXDLLIMPEXP_BASE wxOutputStream : public wxStreamBase
 {
 public:
     wxOutputStream();
@@ -265,7 +265,7 @@ protected:
 // A stream for measuring streamed output
 // ---------------------------------------------------------------------------
 
-class  wxCountingOutputStream : public wxOutputStream
+class WXDLLIMPEXP_BASE wxCountingOutputStream : public wxOutputStream
 {
 public:
     wxCountingOutputStream();
@@ -289,7 +289,7 @@ protected:
 // "Filter" streams
 // ---------------------------------------------------------------------------
 
-class  wxFilterInputStream : public wxInputStream
+class WXDLLIMPEXP_BASE wxFilterInputStream : public wxInputStream
 {
 public:
     wxFilterInputStream();
@@ -311,7 +311,7 @@ protected:
     wxDECLARE_NO_COPY_CLASS(wxFilterInputStream);
 };
 
-class  wxFilterOutputStream : public wxOutputStream
+class WXDLLIMPEXP_BASE wxFilterOutputStream : public wxOutputStream
 {
 public:
     wxFilterOutputStream();
@@ -341,9 +341,9 @@ enum wxStreamProtocolType
     wxSTREAM_FILEEXT    // File extensions the stream handles
 };
 
-void  wxUseFilterClasses();
+void WXDLLIMPEXP_BASE wxUseFilterClasses();
 
-class  wxFilterClassFactoryBase : public wxObject
+class WXDLLIMPEXP_BASE wxFilterClassFactoryBase : public wxObject
 {
 public:
     virtual ~wxFilterClassFactoryBase() { }
@@ -364,7 +364,7 @@ protected:
     DECLARE_ABSTRACT_CLASS(wxFilterClassFactoryBase)
 };
 
-class  wxFilterClassFactory : public wxFilterClassFactoryBase
+class WXDLLIMPEXP_BASE wxFilterClassFactory : public wxFilterClassFactoryBase
 {
 public:
     virtual ~wxFilterClassFactory() { }
@@ -406,7 +406,7 @@ private:
 // wxBufferedStreams to implement custom buffering
 // ---------------------------------------------------------------------------
 
-class  wxStreamBuffer
+class WXDLLIMPEXP_BASE wxStreamBuffer
 {
 public:
     enum BufMode
@@ -537,7 +537,7 @@ protected:
 // wxBufferedInputStream
 // ---------------------------------------------------------------------------
 
-class  wxBufferedInputStream : public wxFilterInputStream
+class WXDLLIMPEXP_BASE wxBufferedInputStream : public wxFilterInputStream
 {
 public:
     // create a buffered stream on top of the specified low-level stream
@@ -586,7 +586,7 @@ protected:
 // wxBufferedOutputStream
 // ----------------------------------------------------------------------------
 
-class  wxBufferedOutputStream : public wxFilterOutputStream
+class WXDLLIMPEXP_BASE wxBufferedOutputStream : public wxFilterOutputStream
 {
 public:
     // create a buffered stream on top of the specified low-level stream
@@ -644,7 +644,7 @@ protected:
 // wxWrapperInputStream: forwards all IO to another stream.
 // ---------------------------------------------------------------------------
 
-class  wxWrapperInputStream : public wxFilterInputStream
+class WXDLLIMPEXP_BASE wxWrapperInputStream : public wxFilterInputStream
 {
 public:
     // Constructor fully initializing the stream. The overload taking pointer

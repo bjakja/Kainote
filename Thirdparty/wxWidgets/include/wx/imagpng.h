@@ -37,7 +37,7 @@ enum
     wxPNG_TYPE_PALETTE = 4
 };
 
-class  wxPNGHandler: public wxImageHandler
+class WXDLLIMPEXP_CORE wxPNGHandler: public wxImageHandler
 {
 public:
     inline wxPNGHandler()

@@ -11,13 +11,13 @@
 #ifndef _WX_MSW_NOTIFMSG_H_
 #define _WX_MSW_NOTIFMSG_H_
 
-class  wxTaskBarIcon;
+class WXDLLIMPEXP_FWD_ADV wxTaskBarIcon;
 
 // ----------------------------------------------------------------------------
 // wxNotificationMessage
 // ----------------------------------------------------------------------------
 
-class  wxNotificationMessage : public wxNotificationMessageBase
+class WXDLLIMPEXP_ADV wxNotificationMessage : public wxNotificationMessageBase
 {
 public:
     wxNotificationMessage() { Init(); }

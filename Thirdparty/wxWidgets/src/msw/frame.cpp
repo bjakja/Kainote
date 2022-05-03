@@ -18,7 +18,7 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-//#include "wx/wxprec.h"
+#include "wx/wxprec.h"
 
 #ifdef __BORLANDC__
     #pragma hdrstop
@@ -406,7 +406,7 @@ void wxFrame::AttachMenuBar(wxMenuBar *menubar)
 
             if ( !m_hMenu )
             {
-                //wxFAIL_MSG( wxT("failed to create menu bar") );
+                wxFAIL_MSG( wxT("failed to create menu bar") );
                 return;
             }
         }

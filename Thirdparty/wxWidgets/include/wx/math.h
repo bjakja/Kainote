@@ -116,8 +116,8 @@
 
     inline int wxRound(double x)
     {
-        //wxASSERT_MSG( x > INT_MIN - 0.5 && x < INT_MAX + 0.5,
-                      //wxT("argument out of supported range") );
+        wxASSERT_MSG( x > INT_MIN - 0.5 && x < INT_MAX + 0.5,
+                      wxT("argument out of supported range") );
 
         #if defined(HAVE_ROUND)
             return int(round(x));
@@ -139,8 +139,8 @@
     extern "C" {
 #endif
     /* functions from common/extended.c */
-     wxFloat64 wxConvertFromIeeeExtended(const wxInt8 *bytes);
-     void wxConvertToIeeeExtended(wxFloat64 num, wxInt8 *bytes);
+    WXDLLIMPEXP_BASE wxFloat64 wxConvertFromIeeeExtended(const wxInt8 *bytes);
+    WXDLLIMPEXP_BASE void wxConvertToIeeeExtended(wxFloat64 num, wxInt8 *bytes);
 
     /* use wxConvertFromIeeeExtended() and wxConvertToIeeeExtended() instead */
 #if WXWIN_COMPATIBILITY_2_8

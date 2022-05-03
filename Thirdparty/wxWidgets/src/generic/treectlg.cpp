@@ -49,7 +49,7 @@
 // array types
 // -----------------------------------------------------------------------------
 
-class  wxGenericTreeItem;
+class WXDLLIMPEXP_FWD_CORE wxGenericTreeItem;
 
 WX_DEFINE_ARRAY_PTR(wxGenericTreeItem *, wxArrayGenericTreeItems);
 
@@ -72,7 +72,7 @@ static const int MARGIN_BETWEEN_IMAGE_AND_TEXT = 4;
 // -----------------------------------------------------------------------------
 
 // timer used for enabling in-place edit
-class  wxTreeRenameTimer: public wxTimer
+class WXDLLEXPORT wxTreeRenameTimer: public wxTimer
 {
 public:
     // start editing the current item after half a second (if the mouse hasn't
@@ -90,7 +90,7 @@ private:
 };
 
 // control used for in-place edit
-class  wxTreeTextCtrl: public wxTextCtrl
+class WXDLLEXPORT wxTreeTextCtrl: public wxTextCtrl
 {
 public:
     wxTreeTextCtrl(wxGenericTreeCtrl *owner, wxGenericTreeItem *item);
@@ -119,7 +119,7 @@ private:
 
 // timer used to clear wxGenericTreeCtrl::m_findPrefix if no key was pressed
 // for a sufficiently long time
-class  wxTreeFindTimer : public wxTimer
+class WXDLLEXPORT wxTreeFindTimer : public wxTimer
 {
 public:
     // reset the current prefix after half a second of inactivity
@@ -136,7 +136,7 @@ private:
 };
 
 // a tree item
-class  wxGenericTreeItem
+class WXDLLEXPORT wxGenericTreeItem
 {
 public:
     // ctors & dtor
@@ -204,14 +204,14 @@ public:
 
     int GetTextHeight() const
     {
-        ////wxASSERT_MSG( m_heightText != -1, "must call CalculateSize() first" );
+        wxASSERT_MSG( m_heightText != -1, "must call CalculateSize() first" );
 
         return m_heightText;
     }
 
     int GetTextWidth() const
     {
-        ////wxASSERT_MSG( m_widthText != -1, "must call CalculateSize() first" );
+        wxASSERT_MSG( m_widthText != -1, "must call CalculateSize() first" );
 
         return m_widthText;
     }
@@ -609,8 +609,8 @@ wxGenericTreeItem::~wxGenericTreeItem()
 
     if (m_ownsAttr) delete m_attr;
 
-    ////wxASSERT_MSG( m_children.IsEmpty(),
-                  //"must call DeleteChildren() before deleting the item" );
+    wxASSERT_MSG( m_children.IsEmpty(),
+                  "must call DeleteChildren() before deleting the item" );
 }
 
 void wxGenericTreeItem::DeleteChildren(wxGenericTreeCtrl *tree)
@@ -1077,7 +1077,7 @@ size_t
 wxGenericTreeCtrl::GetChildrenCount(const wxTreeItemId& item,
                                     bool recursively) const
 {
-    ////wxCHECK_MSG( item.IsOk(), 0u, wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), 0u, wxT("invalid tree item") );
 
     return ((wxGenericTreeItem*) item.m_pItem)->GetChildrenCount(recursively);
 }
@@ -1106,7 +1106,7 @@ void wxGenericTreeCtrl::SetWindowStyle(const long styles)
 
 wxString wxGenericTreeCtrl::GetItemText(const wxTreeItemId& item) const
 {
-    ////wxCHECK_MSG( item.IsOk(), wxEmptyString, wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), wxEmptyString, wxT("invalid tree item") );
 
     return ((wxGenericTreeItem*) item.m_pItem)->GetText();
 }
@@ -1114,21 +1114,21 @@ wxString wxGenericTreeCtrl::GetItemText(const wxTreeItemId& item) const
 int wxGenericTreeCtrl::GetItemImage(const wxTreeItemId& item,
                              wxTreeItemIcon which) const
 {
-    ////wxCHECK_MSG( item.IsOk(), -1, wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), -1, wxT("invalid tree item") );
 
     return ((wxGenericTreeItem*) item.m_pItem)->GetImage(which);
 }
 
 wxTreeItemData *wxGenericTreeCtrl::GetItemData(const wxTreeItemId& item) const
 {
-    ////wxCHECK_MSG( item.IsOk(), NULL, wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), NULL, wxT("invalid tree item") );
 
     return ((wxGenericTreeItem*) item.m_pItem)->GetData();
 }
 
 int wxGenericTreeCtrl::DoGetItemState(const wxTreeItemId& item) const
 {
-    ////wxCHECK_MSG( item.IsOk(), wxTREE_ITEMSTATE_NONE, wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), wxTREE_ITEMSTATE_NONE, wxT("invalid tree item") );
 
     wxGenericTreeItem *pItem = (wxGenericTreeItem*) item.m_pItem;
     return pItem->GetState();
@@ -1136,7 +1136,7 @@ int wxGenericTreeCtrl::DoGetItemState(const wxTreeItemId& item) const
 
 wxColour wxGenericTreeCtrl::GetItemTextColour(const wxTreeItemId& item) const
 {
-    ////wxCHECK_MSG( item.IsOk(), wxNullColour, wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), wxNullColour, wxT("invalid tree item") );
 
     wxGenericTreeItem *pItem = (wxGenericTreeItem*) item.m_pItem;
     return pItem->Attr().GetTextColour();
@@ -1145,7 +1145,7 @@ wxColour wxGenericTreeCtrl::GetItemTextColour(const wxTreeItemId& item) const
 wxColour
 wxGenericTreeCtrl::GetItemBackgroundColour(const wxTreeItemId& item) const
 {
-    ////wxCHECK_MSG( item.IsOk(), wxNullColour, wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), wxNullColour, wxT("invalid tree item") );
 
     wxGenericTreeItem *pItem = (wxGenericTreeItem*) item.m_pItem;
     return pItem->Attr().GetBackgroundColour();
@@ -1153,7 +1153,7 @@ wxGenericTreeCtrl::GetItemBackgroundColour(const wxTreeItemId& item) const
 
 wxFont wxGenericTreeCtrl::GetItemFont(const wxTreeItemId& item) const
 {
-    ////wxCHECK_MSG( item.IsOk(), wxNullFont, wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), wxNullFont, wxT("invalid tree item") );
 
     wxGenericTreeItem *pItem = (wxGenericTreeItem*) item.m_pItem;
     return pItem->Attr().GetFont();
@@ -1162,7 +1162,7 @@ wxFont wxGenericTreeCtrl::GetItemFont(const wxTreeItemId& item) const
 void
 wxGenericTreeCtrl::SetItemText(const wxTreeItemId& item, const wxString& text)
 {
-    ////wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
+    wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
 
     wxGenericTreeItem *pItem = (wxGenericTreeItem*) item.m_pItem;
     pItem->SetText(text);
@@ -1174,7 +1174,7 @@ void wxGenericTreeCtrl::SetItemImage(const wxTreeItemId& item,
                               int image,
                               wxTreeItemIcon which)
 {
-    ////wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
+    wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
 
     wxGenericTreeItem *pItem = (wxGenericTreeItem*) item.m_pItem;
     pItem->SetImage(image, which);
@@ -1185,7 +1185,7 @@ void wxGenericTreeCtrl::SetItemImage(const wxTreeItemId& item,
 void
 wxGenericTreeCtrl::SetItemData(const wxTreeItemId& item, wxTreeItemData *data)
 {
-    ////wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
+    wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
 
     if (data)
         data->SetId( item );
@@ -1195,7 +1195,7 @@ wxGenericTreeCtrl::SetItemData(const wxTreeItemId& item, wxTreeItemData *data)
 
 void wxGenericTreeCtrl::DoSetItemState(const wxTreeItemId& item, int state)
 {
-    ////wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
+    wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
 
     wxGenericTreeItem *pItem = (wxGenericTreeItem*) item.m_pItem;
     pItem->SetState(state);
@@ -1205,7 +1205,7 @@ void wxGenericTreeCtrl::DoSetItemState(const wxTreeItemId& item, int state)
 
 void wxGenericTreeCtrl::SetItemHasChildren(const wxTreeItemId& item, bool has)
 {
-    ////wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
+    wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
 
     wxGenericTreeItem *pItem = (wxGenericTreeItem*) item.m_pItem;
     pItem->SetHasPlus(has);
@@ -1214,7 +1214,7 @@ void wxGenericTreeCtrl::SetItemHasChildren(const wxTreeItemId& item, bool has)
 
 void wxGenericTreeCtrl::SetItemBold(const wxTreeItemId& item, bool bold)
 {
-    ////wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
+    wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
 
     // avoid redrawing the tree if no real change
     wxGenericTreeItem *pItem = (wxGenericTreeItem*) item.m_pItem;
@@ -1232,7 +1232,7 @@ void wxGenericTreeCtrl::SetItemBold(const wxTreeItemId& item, bool bold)
 void wxGenericTreeCtrl::SetItemDropHighlight(const wxTreeItemId& item,
                                              bool highlight)
 {
-    //wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
+    wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
 
     wxColour fg, bg;
 
@@ -1251,7 +1251,7 @@ void wxGenericTreeCtrl::SetItemDropHighlight(const wxTreeItemId& item,
 void wxGenericTreeCtrl::SetItemTextColour(const wxTreeItemId& item,
                                    const wxColour& col)
 {
-    //wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
+    wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
 
     wxGenericTreeItem *pItem = (wxGenericTreeItem*) item.m_pItem;
     pItem->Attr().SetTextColour(col);
@@ -1261,7 +1261,7 @@ void wxGenericTreeCtrl::SetItemTextColour(const wxTreeItemId& item,
 void wxGenericTreeCtrl::SetItemBackgroundColour(const wxTreeItemId& item,
                                          const wxColour& col)
 {
-    //wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
+    wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
 
     wxGenericTreeItem *pItem = (wxGenericTreeItem*) item.m_pItem;
     pItem->Attr().SetBackgroundColour(col);
@@ -1271,7 +1271,7 @@ void wxGenericTreeCtrl::SetItemBackgroundColour(const wxTreeItemId& item,
 void
 wxGenericTreeCtrl::SetItemFont(const wxTreeItemId& item, const wxFont& font)
 {
-    //wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
+    wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
 
     wxGenericTreeItem *pItem = (wxGenericTreeItem*) item.m_pItem;
     pItem->Attr().SetFont(font);
@@ -1300,7 +1300,7 @@ bool wxGenericTreeCtrl::SetFont( const wxFont &font )
 
 bool wxGenericTreeCtrl::IsVisible(const wxTreeItemId& item) const
 {
-    //wxCHECK_MSG( item.IsOk(), false, wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), false, wxT("invalid tree item") );
 
     // An item is only visible if it's not a descendant of a collapsed item
     wxGenericTreeItem *pItem = (wxGenericTreeItem*) item.m_pItem;
@@ -1332,7 +1332,7 @@ bool wxGenericTreeCtrl::IsVisible(const wxTreeItemId& item) const
 
 bool wxGenericTreeCtrl::ItemHasChildren(const wxTreeItemId& item) const
 {
-    //wxCHECK_MSG( item.IsOk(), false, wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), false, wxT("invalid tree item") );
 
     // consider that the item does have children if it has the "+" button: it
     // might not have them (if it had never been expanded yet) but then it
@@ -1344,21 +1344,21 @@ bool wxGenericTreeCtrl::ItemHasChildren(const wxTreeItemId& item) const
 
 bool wxGenericTreeCtrl::IsExpanded(const wxTreeItemId& item) const
 {
-    //wxCHECK_MSG( item.IsOk(), false, wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), false, wxT("invalid tree item") );
 
     return ((wxGenericTreeItem*) item.m_pItem)->IsExpanded();
 }
 
 bool wxGenericTreeCtrl::IsSelected(const wxTreeItemId& item) const
 {
-    //wxCHECK_MSG( item.IsOk(), false, wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), false, wxT("invalid tree item") );
 
     return ((wxGenericTreeItem*) item.m_pItem)->IsSelected();
 }
 
 bool wxGenericTreeCtrl::IsBold(const wxTreeItemId& item) const
 {
-    //wxCHECK_MSG( item.IsOk(), false, wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), false, wxT("invalid tree item") );
 
     return ((wxGenericTreeItem*) item.m_pItem)->IsBold();
 }
@@ -1369,7 +1369,7 @@ bool wxGenericTreeCtrl::IsBold(const wxTreeItemId& item) const
 
 wxTreeItemId wxGenericTreeCtrl::GetItemParent(const wxTreeItemId& item) const
 {
-    //wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
 
     return ((wxGenericTreeItem*) item.m_pItem)->GetParent();
 }
@@ -1377,7 +1377,7 @@ wxTreeItemId wxGenericTreeCtrl::GetItemParent(const wxTreeItemId& item) const
 wxTreeItemId wxGenericTreeCtrl::GetFirstChild(const wxTreeItemId& item,
                                               wxTreeItemIdValue& cookie) const
 {
-    //wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
 
     cookie = 0;
     return GetNextChild(item, cookie);
@@ -1386,7 +1386,7 @@ wxTreeItemId wxGenericTreeCtrl::GetFirstChild(const wxTreeItemId& item,
 wxTreeItemId wxGenericTreeCtrl::GetNextChild(const wxTreeItemId& item,
                                              wxTreeItemIdValue& cookie) const
 {
-    //wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
 
     wxArrayGenericTreeItems&
         children = ((wxGenericTreeItem*) item.m_pItem)->GetChildren();
@@ -1407,7 +1407,7 @@ wxTreeItemId wxGenericTreeCtrl::GetNextChild(const wxTreeItemId& item,
 
 wxTreeItemId wxGenericTreeCtrl::GetLastChild(const wxTreeItemId& item) const
 {
-    //wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
 
     wxArrayGenericTreeItems&
         children = ((wxGenericTreeItem*) item.m_pItem)->GetChildren();
@@ -1416,7 +1416,7 @@ wxTreeItemId wxGenericTreeCtrl::GetLastChild(const wxTreeItemId& item) const
 
 wxTreeItemId wxGenericTreeCtrl::GetNextSibling(const wxTreeItemId& item) const
 {
-    //wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
 
     wxGenericTreeItem *i = (wxGenericTreeItem*) item.m_pItem;
     wxGenericTreeItem *parent = i->GetParent();
@@ -1428,7 +1428,7 @@ wxTreeItemId wxGenericTreeCtrl::GetNextSibling(const wxTreeItemId& item) const
 
     wxArrayGenericTreeItems& siblings = parent->GetChildren();
     int index = siblings.Index(i);
-    //wxASSERT( index != wxNOT_FOUND ); // I'm not a child of my parent?
+    wxASSERT( index != wxNOT_FOUND ); // I'm not a child of my parent?
 
     size_t n = (size_t)(index + 1);
     return n == siblings.GetCount() ? wxTreeItemId()
@@ -1437,7 +1437,7 @@ wxTreeItemId wxGenericTreeCtrl::GetNextSibling(const wxTreeItemId& item) const
 
 wxTreeItemId wxGenericTreeCtrl::GetPrevSibling(const wxTreeItemId& item) const
 {
-    //wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
 
     wxGenericTreeItem *i = (wxGenericTreeItem*) item.m_pItem;
     wxGenericTreeItem *parent = i->GetParent();
@@ -1449,7 +1449,7 @@ wxTreeItemId wxGenericTreeCtrl::GetPrevSibling(const wxTreeItemId& item) const
 
     wxArrayGenericTreeItems& siblings = parent->GetChildren();
     int index = siblings.Index(i);
-    //wxASSERT( index != wxNOT_FOUND ); // I'm not a child of my parent?
+    wxASSERT( index != wxNOT_FOUND ); // I'm not a child of my parent?
 
     return index == 0 ? wxTreeItemId()
                       : wxTreeItemId(siblings[(size_t)(index - 1)]);
@@ -1458,7 +1458,7 @@ wxTreeItemId wxGenericTreeCtrl::GetPrevSibling(const wxTreeItemId& item) const
 // Only for internal use right now, but should probably be public
 wxTreeItemId wxGenericTreeCtrl::GetNext(const wxTreeItemId& item) const
 {
-    //wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
+    wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
 
     wxGenericTreeItem *i = (wxGenericTreeItem*) item.m_pItem;
 
@@ -1500,8 +1500,8 @@ wxTreeItemId wxGenericTreeCtrl::GetFirstVisibleItem() const
 
 wxTreeItemId wxGenericTreeCtrl::GetNextVisible(const wxTreeItemId& item) const
 {
-    //wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
-    //wxASSERT_MSG( IsVisible(item), wxT("this item itself should be visible") );
+    wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
+    wxASSERT_MSG( IsVisible(item), wxT("this item itself should be visible") );
 
     wxTreeItemId id = item;
     if (id.IsOk())
@@ -1517,8 +1517,8 @@ wxTreeItemId wxGenericTreeCtrl::GetNextVisible(const wxTreeItemId& item) const
 
 wxTreeItemId wxGenericTreeCtrl::GetPrevVisible(const wxTreeItemId& item) const
 {
-    //wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
-    //wxASSERT_MSG( IsVisible(item), wxT("this item itself should be visible") );
+    wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
+    wxASSERT_MSG( IsVisible(item), wxT("this item itself should be visible") );
 
     // find out the starting point
     wxTreeItemId prevItem = GetPrevSibling(item);
@@ -1646,7 +1646,7 @@ wxTreeItemId wxGenericTreeCtrl::AddRoot(const wxString& text,
                                         int selImage,
                                         wxTreeItemData *data)
 {
-    //wxCHECK_MSG( !m_anchor, wxTreeItemId(), "tree can have only one root" );
+    wxCHECK_MSG( !m_anchor, wxTreeItemId(), "tree can have only one root" );
 
     m_dirty = true;     // do this first so stuff below doesn't cause flicker
 
@@ -1694,9 +1694,9 @@ wxTreeItemId wxGenericTreeCtrl::DoInsertAfter(const wxTreeItemId& parentId,
     {
         index = parent->GetChildren().Index(
                     (wxGenericTreeItem*) idPrevious.m_pItem);
-        //wxASSERT_MSG( index != wxNOT_FOUND,
-                      //"previous item in wxGenericTreeCtrl::InsertItem() "
-                      //"is not a sibling" );
+        wxASSERT_MSG( index != wxNOT_FOUND,
+                      "previous item in wxGenericTreeCtrl::InsertItem() "
+                      "is not a sibling" );
     }
 
     return DoInsertItem(parentId, (size_t)++index, text, image, selImage, data);
@@ -1834,9 +1834,9 @@ void wxGenericTreeCtrl::Expand(const wxTreeItemId& itemId)
 {
     wxGenericTreeItem *item = (wxGenericTreeItem*) itemId.m_pItem;
 
-    //wxCHECK_RET( item, wxT("invalid item in wxGenericTreeCtrl::Expand") );
-    //wxCHECK_RET( !HasFlag(wxTR_HIDE_ROOT) || itemId != GetRootItem(),
-                 //wxT("can't expand hidden root") );
+    wxCHECK_RET( item, wxT("invalid item in wxGenericTreeCtrl::Expand") );
+    wxCHECK_RET( !HasFlag(wxTR_HIDE_ROOT) || itemId != GetRootItem(),
+                 wxT("can't expand hidden root") );
 
     if ( !item->HasPlus() )
         return;
@@ -1870,8 +1870,8 @@ void wxGenericTreeCtrl::Expand(const wxTreeItemId& itemId)
 
 void wxGenericTreeCtrl::Collapse(const wxTreeItemId& itemId)
 {
-    //wxCHECK_RET( !HasFlag(wxTR_HIDE_ROOT) || itemId != GetRootItem(),
-                 //wxT("can't collapse hidden root") );
+    wxCHECK_RET( !HasFlag(wxTR_HIDE_ROOT) || itemId != GetRootItem(),
+                 wxT("can't collapse hidden root") );
 
     wxGenericTreeItem *item = (wxGenericTreeItem*) itemId.m_pItem;
 
@@ -1942,7 +1942,7 @@ void wxGenericTreeCtrl::ClearFocusedItem()
 
 void wxGenericTreeCtrl::SetFocusedItem(const wxTreeItemId& item)
 {
-    //wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
+    wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
 
     SelectItem(item, true);
 }
@@ -1979,8 +1979,8 @@ void wxGenericTreeCtrl::UnselectAll()
 
 void wxGenericTreeCtrl::SelectChildren(const wxTreeItemId& parent)
 {
-    //wxCHECK_RET( HasFlag(wxTR_MULTIPLE),
-                 //"this only works with multiple selection controls" );
+    wxCHECK_RET( HasFlag(wxTR_MULTIPLE),
+                 "this only works with multiple selection controls" );
 
     UnselectAll();
 
@@ -2031,7 +2031,7 @@ wxGenericTreeCtrl::TagNextChildren(wxGenericTreeItem *crt_item,
 
     wxArrayGenericTreeItems& children = parent->GetChildren();
     int index = children.Index(crt_item);
-    //wxASSERT( index != wxNOT_FOUND ); // I'm not a child of my parent?
+    wxASSERT( index != wxNOT_FOUND ); // I'm not a child of my parent?
 
     size_t count = children.GetCount();
     for (size_t n=(size_t)(index+1); n<count; ++n)
@@ -2092,14 +2092,14 @@ void wxGenericTreeCtrl::DoSelectItem(const wxTreeItemId& itemId,
                                      bool unselect_others,
                                      bool extended_select)
 {
-    //wxCHECK_RET( itemId.IsOk(), wxT("invalid tree item") );
+    wxCHECK_RET( itemId.IsOk(), wxT("invalid tree item") );
 
     m_select_me = NULL;
 
     bool is_single=!(GetWindowStyleFlag() & wxTR_MULTIPLE);
     wxGenericTreeItem *item = (wxGenericTreeItem*) itemId.m_pItem;
 
-    ////wxCHECK_RET( ( (!unselect_others) && is_single),
+    //wxCHECK_RET( ( (!unselect_others) && is_single),
     //           wxT("this is a single selection tree") );
 
     // to keep going anyhow !!!
@@ -2178,7 +2178,7 @@ void wxGenericTreeCtrl::DoSelectItem(const wxTreeItemId& itemId,
 void wxGenericTreeCtrl::SelectItem(const wxTreeItemId& itemId, bool select)
 {
     wxGenericTreeItem * const item = (wxGenericTreeItem*) itemId.m_pItem;
-    //wxCHECK_RET( item, wxT("SelectItem(): invalid tree item") );
+    wxCHECK_RET( item, wxT("SelectItem(): invalid tree item") );
 
     if ( select )
     {
@@ -2229,7 +2229,7 @@ size_t wxGenericTreeCtrl::GetSelections(wxArrayTreeItemIds &array) const
 
 void wxGenericTreeCtrl::EnsureVisible(const wxTreeItemId& item)
 {
-    //wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
+    wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
 
     if (!item.IsOk()) return;
 
@@ -2306,20 +2306,20 @@ static wxGenericTreeCtrl *s_treeBeingSorted = NULL;
 static int LINKAGEMODE tree_ctrl_compare_func(wxGenericTreeItem **item1,
                                   wxGenericTreeItem **item2)
 {
-    //wxCHECK_MSG( s_treeBeingSorted, 0,
-                 //"bug in wxGenericTreeCtrl::SortChildren()" );
+    wxCHECK_MSG( s_treeBeingSorted, 0,
+                 "bug in wxGenericTreeCtrl::SortChildren()" );
 
     return s_treeBeingSorted->OnCompareItems(*item1, *item2);
 }
 
 void wxGenericTreeCtrl::SortChildren(const wxTreeItemId& itemId)
 {
-    //wxCHECK_RET( itemId.IsOk(), wxT("invalid tree item") );
+    wxCHECK_RET( itemId.IsOk(), wxT("invalid tree item") );
 
     wxGenericTreeItem *item = (wxGenericTreeItem*) itemId.m_pItem;
 
-    //wxCHECK_RET( !s_treeBeingSorted,
-                 //wxT("wxGenericTreeCtrl::SortChildren is not reentrant") );
+    wxCHECK_RET( !s_treeBeingSorted,
+                 wxT("wxGenericTreeCtrl::SortChildren is not reentrant") );
 
     wxArrayGenericTreeItems& children = item->GetChildren();
     if ( children.GetCount() > 1 )
@@ -2921,7 +2921,7 @@ void wxGenericTreeCtrl::DrawDropEffect(wxGenericTreeItem *item)
 
 void wxGenericTreeCtrl::DrawBorder(const wxTreeItemId &item)
 {
-    //wxCHECK_RET( item.IsOk(), "invalid item in wxGenericTreeCtrl::DrawLine" );
+    wxCHECK_RET( item.IsOk(), "invalid item in wxGenericTreeCtrl::DrawLine" );
 
     wxGenericTreeItem *i = (wxGenericTreeItem*) item.m_pItem;
 
@@ -2943,7 +2943,7 @@ void wxGenericTreeCtrl::DrawBorder(const wxTreeItemId &item)
 
 void wxGenericTreeCtrl::DrawLine(const wxTreeItemId &item, bool below)
 {
-    //wxCHECK_RET( item.IsOk(), "invalid item in wxGenericTreeCtrl::DrawLine" );
+    wxCHECK_RET( item.IsOk(), "invalid item in wxGenericTreeCtrl::DrawLine" );
 
     wxGenericTreeItem *i = (wxGenericTreeItem*) item.m_pItem;
 
@@ -3360,8 +3360,8 @@ bool wxGenericTreeCtrl::GetBoundingRect(const wxTreeItemId& item,
                                         wxRect& rect,
                                         bool textOnly) const
 {
-    //wxCHECK_MSG( item.IsOk(), false,
-                 //"invalid item in wxGenericTreeCtrl::GetBoundingRect" );
+    wxCHECK_MSG( item.IsOk(), false,
+                 "invalid item in wxGenericTreeCtrl::GetBoundingRect" );
 
     wxGenericTreeItem *i = (wxGenericTreeItem*) item.m_pItem;
 
@@ -3408,7 +3408,7 @@ bool wxGenericTreeCtrl::GetBoundingRect(const wxTreeItemId& item,
 wxTextCtrl *wxGenericTreeCtrl::EditLabel(const wxTreeItemId& item,
                                   wxClassInfo * WXUNUSED(textCtrlClass))
 {
-    //wxCHECK_MSG( item.IsOk(), NULL, wxT("can't edit an invalid item") );
+    wxCHECK_MSG( item.IsOk(), NULL, wxT("can't edit an invalid item") );
 
     wxGenericTreeItem *itemEdit = (wxGenericTreeItem *)item.m_pItem;
 
@@ -3448,7 +3448,7 @@ wxTextCtrl* wxGenericTreeCtrl::GetEditControl() const
 void wxGenericTreeCtrl::EndEditLabel(const wxTreeItemId& WXUNUSED(item),
                                      bool discardChanges)
 {
-    //wxCHECK_RET( m_textCtrl, wxT("not editing label") );
+    wxCHECK_RET( m_textCtrl, wxT("not editing label") );
 
     m_textCtrl->EndEdit(discardChanges);
 }

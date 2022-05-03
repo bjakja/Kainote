@@ -21,17 +21,17 @@
 #include "wx/timer.h"
 #include "wx/bitmap.h"
 
-class  wxAnimation;
+class WXDLLIMPEXP_FWD_ADV wxAnimation;
 
-extern wxAnimation wxNullAnimation;
-extern const char wxAnimationCtrlNameStr[];
+extern WXDLLIMPEXP_DATA_ADV(wxAnimation) wxNullAnimation;
+extern WXDLLIMPEXP_DATA_ADV(const char) wxAnimationCtrlNameStr[];
 
 
 // ----------------------------------------------------------------------------
 // wxAnimationBase
 // ----------------------------------------------------------------------------
 
-class  wxAnimationBase : public wxObject
+class WXDLLIMPEXP_ADV wxAnimationBase : public wxObject
 {
 public:
     wxAnimationBase() {}
@@ -67,7 +67,7 @@ protected:
 // auto-resizes by default to fit the new animation when SetAnimation() is called
 #define wxAC_DEFAULT_STYLE       (wxBORDER_NONE)
 
-class  wxAnimationCtrlBase : public wxControl
+class WXDLLIMPEXP_ADV wxAnimationCtrlBase : public wxControl
 {
 public:
     wxAnimationCtrlBase() { }

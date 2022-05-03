@@ -16,8 +16,8 @@
 
 #include "wx/object.h"
 
-class  wxFrame;
-class  wxWindow;
+class WXDLLIMPEXP_FWD_CORE wxFrame;
+class WXDLLIMPEXP_FWD_CORE wxWindow;
 
 //--------------------------------------------------------------------------------
 // wxBusyInfo
@@ -25,7 +25,7 @@ class  wxWindow;
 //                  Can be used in exactly same way as wxBusyCursor
 //--------------------------------------------------------------------------------
 
-class  wxBusyInfo : public wxObject
+class WXDLLIMPEXP_CORE wxBusyInfo : public wxObject
 {
 public:
     wxBusyInfo(const wxString& message, wxWindow *parent = NULL);

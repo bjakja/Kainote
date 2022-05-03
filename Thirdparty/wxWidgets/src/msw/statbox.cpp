@@ -390,7 +390,7 @@ void wxStaticBox::PaintForeground(wxDC& dc, const RECT& rc)
         }
         else // no font set, use the one set by the theme
         {
-           /* wxUxThemeHandle hTheme(this, L"BUTTON");
+            wxUxThemeHandle hTheme(this, L"BUTTON");
             if ( hTheme )
             {
                 wxUxThemeFont themeFont;
@@ -408,7 +408,7 @@ void wxStaticBox::PaintForeground(wxDC& dc, const RECT& rc)
                     if ( font )
                         selFont.Init(hdc, font);
                 }
-            }*/
+            }
         }
 
         // Get the font extent

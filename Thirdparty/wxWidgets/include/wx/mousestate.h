@@ -34,7 +34,7 @@ enum wxMouseButton
 
 // wxMouseState is used to hold information about button and modifier state
 // and is what is returned from wxGetMouseState.
-class  wxMouseState : public wxKeyboardState
+class WXDLLIMPEXP_CORE wxMouseState : public wxKeyboardState
 {
 public:
     wxMouseState()
@@ -100,11 +100,11 @@ public:
 
             case wxMOUSE_BTN_NONE:
             case wxMOUSE_BTN_MAX:
-                //wxFAIL_MSG(wxS("invalid parameter"));
+                wxFAIL_MSG(wxS("invalid parameter"));
                 return false;
 
             default:
-                //wxFAIL_MSG(wxS("unknown parameter"));
+                wxFAIL_MSG(wxS("unknown parameter"));
                 return false;
         }
     }

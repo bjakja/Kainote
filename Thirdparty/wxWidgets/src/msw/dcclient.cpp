@@ -18,7 +18,7 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-//#include "wx/wxprec.h"
+#include "wx/wxprec.h"
 
 #ifdef __BORLANDC__
     #pragma hdrstop
@@ -39,7 +39,7 @@
 // array/list types
 // ----------------------------------------------------------------------------
 
-struct  wxPaintDCInfo
+struct WXDLLEXPORT wxPaintDCInfo
 {
     wxPaintDCInfo(wxWindow *win, wxPaintDCImpl *dc)
     {
@@ -93,7 +93,7 @@ wxWindowDCImpl::wxWindowDCImpl( wxDC *owner ) :
 wxWindowDCImpl::wxWindowDCImpl( wxDC *owner, wxWindow *window ) :
    wxMSWDCImpl( owner )
 {
-    //wxCHECK_RET( window, wxT("invalid window in wxWindowDCImpl") );
+    wxCHECK_RET( window, wxT("invalid window in wxWindowDCImpl") );
 
     m_window = window;
     m_hDC = (WXHDC) ::GetWindowDC(GetHwndOf(m_window));
@@ -117,7 +117,7 @@ void wxWindowDCImpl::InitDC()
 
 void wxWindowDCImpl::DoGetSize(int *width, int *height) const
 {
-    //wxCHECK_RET( m_window, wxT("wxWindowDCImpl without a window?") );
+    wxCHECK_RET( m_window, wxT("wxWindowDCImpl without a window?") );
 
     m_window->GetSize(width, height);
 }
@@ -136,7 +136,7 @@ wxClientDCImpl::wxClientDCImpl( wxDC *owner ) :
 wxClientDCImpl::wxClientDCImpl( wxDC *owner, wxWindow *window ) :
    wxWindowDCImpl( owner )
 {
-    //wxCHECK_RET( window, wxT("invalid window in wxClientDCImpl") );
+    wxCHECK_RET( window, wxT("invalid window in wxClientDCImpl") );
 
     m_window = window;
     m_hDC = (WXHDC)::GetDC(GetHwndOf(window));
@@ -177,7 +177,7 @@ wxClientDCImpl::~wxClientDCImpl()
 
 void wxClientDCImpl::DoGetSize(int *width, int *height) const
 {
-    //wxCHECK_RET( m_window, wxT("wxClientDCImpl without a window?") );
+    wxCHECK_RET( m_window, wxT("wxClientDCImpl without a window?") );
 
     m_window->GetClientSize(width, height);
 }
@@ -214,7 +214,7 @@ wxPaintDCImpl::wxPaintDCImpl( wxDC *owner ) :
 wxPaintDCImpl::wxPaintDCImpl( wxDC *owner, wxWindow *window ) :
    wxClientDCImpl( owner )
 {
-    //wxCHECK_RET( window, wxT("NULL canvas in wxPaintDCImpl ctor") );
+    wxCHECK_RET( window, wxT("NULL canvas in wxPaintDCImpl ctor") );
 
 #ifdef wxHAS_PAINT_DEBUG
     if ( g_isPainting <= 0 )
@@ -268,7 +268,7 @@ wxPaintDCImpl::~wxPaintDCImpl()
         size_t index;
         wxPaintDCInfo *info = FindInCache(&index);
 
-        //wxCHECK_RET( info, wxT("existing DC should have a cache entry") );
+        wxCHECK_RET( info, wxT("existing DC should have a cache entry") );
 
         if ( --info->count == 0 )
         {
@@ -348,7 +348,7 @@ wxPaintDCEx::wxPaintDCEx(wxWindow *window, WXHDC dc)
 wxPaintDCExImpl::wxPaintDCExImpl(wxDC *owner, wxWindow *window, WXHDC dc)
                : wxPaintDCImpl( owner )
 {
-        //wxCHECK_RET( dc, wxT("wxPaintDCEx requires an existing device context") );
+        wxCHECK_RET( dc, wxT("wxPaintDCEx requires an existing device context") );
 
         m_saveState = 0;
 
@@ -373,7 +373,7 @@ wxPaintDCExImpl::~wxPaintDCExImpl()
         size_t index;
         wxPaintDCInfo *info = FindInCache(&index);
 
-        //wxCHECK_RET( info, wxT("existing DC should have a cache entry") );
+        wxCHECK_RET( info, wxT("existing DC should have a cache entry") );
 
         if ( --info->count == 0 )
         {

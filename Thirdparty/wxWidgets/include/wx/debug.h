@@ -12,17 +12,17 @@
 #define _WX_DEBUG_H_
 
 #if !defined(__WXWINCE__)
-    //#include  <assert.h>
+    #include  <assert.h>
 #endif // systems without assert.h
 
-//#include <limits.h>          // for CHAR_BIT used below
+#include <limits.h>          // for CHAR_BIT used below
 
 #include "wx/chartype.h"     // for __TFILE__ and wxChar
 #include "wx/cpp.h"          // for __WXFUNCTION__
 #include "wx/dlimpexp.h"     // for WXDLLIMPEXP_FWD_BASE
 
-class  wxString;
-class  wxCStrData;
+class WXDLLIMPEXP_FWD_BASE wxString;
+class WXDLLIMPEXP_FWD_BASE wxCStrData;
 
 // ----------------------------------------------------------------------------
 // Defines controlling the debugging macros
@@ -125,7 +125,7 @@ inline wxAssertHandler_t wxSetAssertHandler(wxAssertHandler_t handler)
     This may be used to enable asserts, which are disabled by default in this
     case, for programs built in release build (NDEBUG defined).
  */
-extern void wxSetDefaultAssertHandler();
+extern void WXDLLIMPEXP_BASE wxSetDefaultAssertHandler();
 
 #else // !wxDEBUG_LEVEL
 
@@ -178,18 +178,18 @@ inline void wxDisableAsserts() { wxSetAssertHandler(NULL); }
 //
 // also notice that these functions can't be inline as wxString is not defined
 // yet (and can't be as wxString code itself may use assertions)
-void wxOnAssert(const char *file,
+extern WXDLLIMPEXP_BASE void wxOnAssert(const char *file,
                                         int line,
                                         const char *func,
                                         const char *cond);
 
-void wxOnAssert(const char *file,
+extern WXDLLIMPEXP_BASE void wxOnAssert(const char *file,
                                         int line,
                                         const char *func,
                                         const char *cond,
                                         const char *msg);
 
-void wxOnAssert(const char *file,
+extern WXDLLIMPEXP_BASE void wxOnAssert(const char *file,
                                         int line,
                                         const char *func,
                                         const char *cond,
@@ -199,7 +199,7 @@ void wxOnAssert(const char *file,
 // this version is for compatibility with wx 2.8 Unicode build only, we don't
 // use it ourselves any more except in ANSI-only build in which case it is all
 // we need
-void wxOnAssert(const wxChar *file,
+extern WXDLLIMPEXP_BASE void wxOnAssert(const wxChar *file,
                                         int line,
                                         const char *func,
                                         const wxChar *cond,
@@ -208,24 +208,24 @@ void wxOnAssert(const wxChar *file,
 // these overloads work when msg passed to debug macro is a string and we
 // also have to provide wxCStrData overload to resolve ambiguity which would
 // otherwise arise from wxASSERT( s.c_str() )
-void wxOnAssert(const wxString& file,
+extern WXDLLIMPEXP_BASE void wxOnAssert(const wxString& file,
                                         int line,
                                         const wxString& func,
                                         const wxString& cond,
                                         const wxString& msg);
 
-void wxOnAssert(const wxString& file,
+extern WXDLLIMPEXP_BASE void wxOnAssert(const wxString& file,
                                         int line,
                                         const wxString& func,
                                         const wxString& cond);
 
-void wxOnAssert(const char *file,
+extern WXDLLIMPEXP_BASE void wxOnAssert(const char *file,
                                         int line,
                                         const char *func,
                                         const char *cond,
                                         const wxCStrData& msg);
 
-void wxOnAssert(const char *file,
+extern WXDLLIMPEXP_BASE void wxOnAssert(const char *file,
                                         int line,
                                         const char *func,
                                         const char *cond,
@@ -253,7 +253,7 @@ void wxOnAssert(const char *file,
 #if wxDEBUG_LEVEL
     // call this function to break into the debugger unconditionally (assuming
     // the program is running under debugger, of course)
-    extern void wxTrap();
+    extern void WXDLLIMPEXP_BASE wxTrap();
 
     // assert checks if the condition is true and calls the assert handler with
     // the provided message if it isn't
@@ -305,7 +305,7 @@ void wxOnAssert(const char *file,
 // It isn't really debug-related but there doesn't seem to be any better place
 // for it, so declare it here and define it in appbase.cpp, together with
 // wxTrap().
-extern void wxAbort();
+extern void WXDLLIMPEXP_BASE wxAbort();
 
 /*
     wxCHECK macros always check their conditions, setting debug level to 0 only
@@ -440,7 +440,7 @@ template<int x> struct static_assert_test{};
     Currently only really works under Win32 and just returns false elsewhere.
  */
 #if defined(__WIN32__)
-    extern bool wxIsDebuggerRunning();
+    extern bool WXDLLIMPEXP_BASE wxIsDebuggerRunning();
 #else // !Mac
     inline bool wxIsDebuggerRunning() { return false; }
 #endif // Mac/!Mac
@@ -452,7 +452,7 @@ template<int x> struct static_assert_test{};
 //
 // NB: this is made obsolete by wxCOMPILE_TIME_ASSERT() and should no
 //     longer be used.
-extern bool wxAssertIsEqual(int x, int y);
+extern bool WXDLLIMPEXP_BASE wxAssertIsEqual(int x, int y);
 
 // Use of wxFalse instead of false suppresses compiler warnings about testing
 // constant expression

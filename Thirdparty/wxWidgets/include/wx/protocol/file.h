@@ -18,7 +18,7 @@
 
 #include "wx/protocol/protocol.h"
 
-class  wxFileProto: public wxProtocol
+class WXDLLIMPEXP_NET wxFileProto: public wxProtocol
 {
 public:
     wxFileProto();

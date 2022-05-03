@@ -32,7 +32,7 @@ enum wxNumValidatorStyle
 // Base class for all numeric validators.
 // ----------------------------------------------------------------------------
 
-class  wxNumValidatorBase : public wxValidator
+class WXDLLIMPEXP_CORE wxNumValidatorBase : public wxValidator
 {
 public:
     // Change the validator style. Usually it's specified during construction.
@@ -140,11 +140,11 @@ public:
     // typedef declared in class 'wxIntegerValidatorBase'" so just disable the
     // check for it.
 #ifndef __VISUALC6__
-    /*wxCOMPILE_TIME_ASSERT
+    wxCOMPILE_TIME_ASSERT
     (
         sizeof(ValueType) <= sizeof(LongestValueType),
         UnsupportedType
-    );*/
+    );
 #endif // __VISUALC6__
 
     void SetMin(ValueType min)
@@ -246,7 +246,7 @@ private:
 // type-dependent code of wxIntegerValidator<> and always works with values of
 // type LongestValueType. It is not meant to be used directly, please use
 // wxIntegerValidator<> only instead.
-class  wxIntegerValidatorBase : public wxNumValidatorBase
+class WXDLLIMPEXP_CORE wxIntegerValidatorBase : public wxNumValidatorBase
 {
 protected:
     // Define the type we use here, it should be the maximal-sized integer type
@@ -261,8 +261,8 @@ protected:
     wxIntegerValidatorBase(int style)
         : wxNumValidatorBase(style)
     {
-        /*wxASSERT_MSG( !(style & wxNUM_VAL_NO_TRAILING_ZEROES),
-                      "This style doesn't make sense for integers." );*/
+        wxASSERT_MSG( !(style & wxNUM_VAL_NO_TRAILING_ZEROES),
+                      "This style doesn't make sense for integers." );
     }
 
     wxIntegerValidatorBase(const wxIntegerValidatorBase& other)
@@ -339,7 +339,7 @@ wxMakeIntegerValidator(T *value, int style = wxNUM_VAL_DEFAULT)
 
 // Similar to wxIntegerValidatorBase, this class is not meant to be used
 // directly, only wxFloatingPointValidator<> should be used in the user code.
-class  wxFloatingPointValidatorBase : public wxNumValidatorBase
+class WXDLLIMPEXP_CORE wxFloatingPointValidatorBase : public wxNumValidatorBase
 {
 public:
     // Set precision i.e. the number of digits shown (and accepted on input)

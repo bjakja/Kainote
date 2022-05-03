@@ -15,7 +15,7 @@
 // ===========================================================================
 
 // For compilers that support precompilation, includes "wx.h".
-//#include "wx/wxprec.h"
+#include "wx/wxprec.h"
 
 #ifdef __BORLANDC__
     #pragma hdrstop
@@ -25,13 +25,13 @@
     #include "wx/string.h"
     #include "wx/wxcrtvararg.h"
     #include "wx/intl.h"
-    //#include "wx/log.h"
+    #include "wx/log.h"
 #endif
 
-//#include <ctype.h>
+#include <ctype.h>
 
 #ifndef __WXWINCE__
-    //#include <errno.h>
+    #include <errno.h>
 #endif
 
 #include <string.h>
@@ -193,30 +193,30 @@ static wxStrCacheStatsDumper s_showCacheStats;
 
 #include <iostream>
 
-//wxSTD ostream& operator<<(wxSTD ostream& os, const wxCStrData& str)
-//{
-//#if wxUSE_UNICODE && !wxUSE_UNICODE_UTF8
-//    const wxScopedCharBuffer buf(str.AsCharBuf());
-//    if ( !buf )
-//        os.clear(wxSTD ios_base::failbit);
-//    else
-//        os << buf.data();
-//
-//    return os;
-//#else
-//    return os << str.AsInternal();
-//#endif
-//}
+wxSTD ostream& operator<<(wxSTD ostream& os, const wxCStrData& str)
+{
+#if wxUSE_UNICODE && !wxUSE_UNICODE_UTF8
+    const wxScopedCharBuffer buf(str.AsCharBuf());
+    if ( !buf )
+        os.clear(wxSTD ios_base::failbit);
+    else
+        os << buf.data();
+
+    return os;
+#else
+    return os << str.AsInternal();
+#endif
+}
 
 wxSTD ostream& operator<<(wxSTD ostream& os, const wxString& str)
 {
     return os << str.c_str();
 }
 
-//wxSTD ostream& operator<<(wxSTD ostream& os, const wxScopedCharBuffer& str)
-//{
-//    return os << str.data();
-//}
+wxSTD ostream& operator<<(wxSTD ostream& os, const wxScopedCharBuffer& str)
+{
+    return os << str.data();
+}
 
 #ifndef __BORLANDC__
 //wxSTD ostream& operator<<(wxSTD ostream& os, const wxScopedWCharBuffer& str)
@@ -385,23 +385,23 @@ wxString::~wxString()
 
 #if wxUSE_UNICODE_WCHAR
 /* static */
-//wxString::SubstrBufFromMB wxString::ConvertStr(const char *psz, size_t nLength,
-//                                               const wxMBConv& conv)
-//{
-//    // anything to do?
-//    if ( !psz || nLength == 0 )
-//        return SubstrBufFromMB(wxWCharBuffer(L""), 0);
-//
-//    if ( nLength == npos )
-//        nLength = wxNO_LEN;
-//
-//    size_t wcLen;
-//    wxScopedWCharBuffer wcBuf(conv.cMB2WC(psz, nLength, &wcLen));
-//    if ( !wcLen )
-//        return SubstrBufFromMB(wxWCharBuffer(L""), 0);
-//    else
-//        return SubstrBufFromMB(wcBuf, wcLen);
-//}
+wxString::SubstrBufFromMB wxString::ConvertStr(const char *psz, size_t nLength,
+                                               const wxMBConv& conv)
+{
+    // anything to do?
+    if ( !psz || nLength == 0 )
+        return SubstrBufFromMB(wxWCharBuffer(L""), 0);
+
+    if ( nLength == npos )
+        nLength = wxNO_LEN;
+
+    size_t wcLen;
+    wxScopedWCharBuffer wcBuf(conv.cMB2WC(psz, nLength, &wcLen));
+    if ( !wcLen )
+        return SubstrBufFromMB(wxWCharBuffer(L""), 0);
+    else
+        return SubstrBufFromMB(wcBuf, wcLen);
+}
 #endif // wxUSE_UNICODE_WCHAR
 
 #if wxUSE_UNICODE_UTF8
@@ -649,9 +649,9 @@ wxString operator+(const wxString& str, const char *psz)
 #endif
 
     wxString s;
-    //if ( !s.Alloc(strlen(psz) + str.length()) ) {
-    //    //wxFAIL_MSG( wxT("out of memory in wxString::operator+") );
-    //}
+    if ( !s.Alloc(strlen(psz) + str.length()) ) {
+        wxFAIL_MSG( wxT("out of memory in wxString::operator+") );
+    }
     s += str;
     s += psz;
 
@@ -665,8 +665,8 @@ wxString operator+(const wxString& str, const wchar_t *pwz)
 #endif
 
     wxString s;
-    if ( !s.Alloc(wcslen(pwz) + str.length()) ) {
-        //wxFAIL_MSG( wxT("out of memory in wxString::operator+") );
+    if ( !s.Alloc(wxWcslen(pwz) + str.length()) ) {
+        wxFAIL_MSG( wxT("out of memory in wxString::operator+") );
     }
     s += str;
     s += pwz;
@@ -681,9 +681,9 @@ wxString operator+(const char *psz, const wxString& str)
 #endif
 
     wxString s;
-    //if ( !s.Alloc(strlen(psz) + str.length()) ) {
-    //    //wxFAIL_MSG( wxT("out of memory in wxString::operator+") );
-    //}
+    if ( !s.Alloc(strlen(psz) + str.length()) ) {
+        wxFAIL_MSG( wxT("out of memory in wxString::operator+") );
+    }
     s = psz;
     s += str;
 
@@ -697,8 +697,8 @@ wxString operator+(const wchar_t *pwz, const wxString& str)
 #endif
 
     wxString s;
-    if ( !s.Alloc(wcslen(pwz) + str.length()) ) {
-        //wxFAIL_MSG( wxT("out of memory in wxString::operator+") );
+    if ( !s.Alloc(wxWcslen(pwz) + str.length()) ) {
+        wxFAIL_MSG( wxT("out of memory in wxString::operator+") );
     }
     s = pwz;
     s += str;
@@ -1183,8 +1183,8 @@ wxString wxString::FromAscii(const char *ascii, size_t len)
         for ( ; len > 0; --len )
         {
             unsigned char c = (unsigned char)*ascii++;
-            /*wxASSERT_MSG( c < 0x80,
-                          wxT("Non-ASCII value passed to FromAscii().") );*/
+            wxASSERT_MSG( c < 0x80,
+                          wxT("Non-ASCII value passed to FromAscii().") );
 
             *dest++ = (wchar_t)c;
         }
@@ -1193,10 +1193,10 @@ wxString wxString::FromAscii(const char *ascii, size_t len)
     return res;
 }
 
-//wxString wxString::FromAscii(const char *ascii)
-//{
-//    return FromAscii(ascii, wxStrlen(ascii));
-//}
+wxString wxString::FromAscii(const char *ascii)
+{
+    return FromAscii(ascii, wxStrlen(ascii));
+}
 
 wxString wxString::FromAscii(char ascii)
 {
@@ -1204,32 +1204,32 @@ wxString wxString::FromAscii(char ascii)
 
     unsigned char c = (unsigned char)ascii;
 
-    //wxASSERT_MSG( c < 0x80, wxT("Non-ASCII value passed to FromAscii().") );
+    wxASSERT_MSG( c < 0x80, wxT("Non-ASCII value passed to FromAscii().") );
 
     // NB: the cast to wchar_t causes interpretation of 'ascii' as Latin1 value
     return wxString(wxUniChar((wchar_t)c));
 }
 
-//const wxScopedCharBuffer wxString::ToAscii() const
-//{
-//    // this will allocate enough space for the terminating NUL too
-//    wxCharBuffer buffer(length());
-//    char *dest = buffer.data();
-//
-//    for ( const_iterator i = begin(); i != end(); ++i )
-//    {
-//        wxUniChar c(*i);
-//        // FIXME-UTF8: unify substituted char ('_') with wxUniChar ('?')
-//        *dest++ = c.IsAscii() ? (char)c : '_';
-//
-//        // the output string can't have embedded NULs anyhow, so we can safely
-//        // stop at first of them even if we do have any
-//        if ( !c )
-//            break;
-//    }
-//
-//    return buffer;
-//}
+const wxScopedCharBuffer wxString::ToAscii() const
+{
+    // this will allocate enough space for the terminating NUL too
+    wxCharBuffer buffer(length());
+    char *dest = buffer.data();
+
+    for ( const_iterator i = begin(); i != end(); ++i )
+    {
+        wxUniChar c(*i);
+        // FIXME-UTF8: unify substituted char ('_') with wxUniChar ('?')
+        *dest++ = c.IsAscii() ? (char)c : '_';
+
+        // the output string can't have embedded NULs anyhow, so we can safely
+        // stop at first of them even if we do have any
+        if ( !c )
+            break;
+    }
+
+    return buffer;
+}
 
 #endif // wxUSE_UNICODE
 
@@ -1259,7 +1259,7 @@ wxString wxString::Mid(size_t nFirst, size_t nCount) const
     wxString dest(*this, nFirst, nCount);
     if ( dest.length() != nCount )
     {
-        //wxFAIL_MSG( wxT("out of memory in wxString::Mid") );
+        wxFAIL_MSG( wxT("out of memory in wxString::Mid") );
     }
 
     return dest;
@@ -1309,7 +1309,7 @@ wxString wxString::Right(size_t nCount) const
 
   wxString dest(*this, length() - nCount, nCount);
   if ( dest.length() != nCount ) {
-    //wxFAIL_MSG( wxT("out of memory in wxString::Right") );
+    wxFAIL_MSG( wxT("out of memory in wxString::Right") );
   }
   return dest;
 }
@@ -1336,7 +1336,7 @@ wxString wxString::Left(size_t nCount) const
 
   wxString dest(*this, 0, nCount);
   if ( dest.length() != nCount ) {
-    /*wxFAIL_MSG( wxT("out of memory in wxString::Left") );*/
+    wxFAIL_MSG( wxT("out of memory in wxString::Left") );
   }
   return dest;
 }
@@ -1401,8 +1401,8 @@ size_t wxString::Replace(const wxString& strOld,
                          const wxString& strNew, bool bReplaceAll)
 {
     // if we tried to replace an empty string we'd enter an infinite loop below
-    /*wxCHECK_MSG( !strOld.empty(), 0,
-                 wxT("wxString::Replace(): invalid parameter") );*/
+    wxCHECK_MSG( !strOld.empty(), 0,
+                 wxT("wxString::Replace(): invalid parameter") );
 
     wxSTRING_INVALIDATE_CACHE();
 
@@ -1681,7 +1681,7 @@ int wxString::Find(wxUniChar ch, bool bFromEnd) const
 #endif
 
 #define WX_STRING_TO_X_TYPE_START                                           \
-    /*wxCHECK_MSG( pVal, false, wxT("NULL output pointer") ); */                 \
+    wxCHECK_MSG( pVal, false, wxT("NULL output pointer") );                  \
     DO_IF_NOT_WINCE( errno = 0; )                                           \
     const wxStringCharType *start = wx_str();                               \
     wxStringCharType *end;
@@ -1697,16 +1697,16 @@ int wxString::Find(wxUniChar ch, bool bFromEnd) const
 
 bool wxString::ToLong(long *pVal, int base) const
 {
-    //wxASSERT_MSG( !base || (base > 1 && base <= 36), wxT("invalid base") );
+    wxASSERT_MSG( !base || (base > 1 && base <= 36), wxT("invalid base") );
 
     WX_STRING_TO_X_TYPE_START
-    long val = wxStrtoul(start, &end, base);
+    long val = wxStrtol(start, &end, base);
     WX_STRING_TO_X_TYPE_END
 }
 
 bool wxString::ToULong(unsigned long *pVal, int base) const
 {
-    //wxASSERT_MSG( !base || (base > 1 && base <= 36), wxT("invalid base") );
+    wxASSERT_MSG( !base || (base > 1 && base <= 36), wxT("invalid base") );
 
     WX_STRING_TO_X_TYPE_START
     unsigned long val = wxStrtoul(start, &end, base);
@@ -1715,7 +1715,7 @@ bool wxString::ToULong(unsigned long *pVal, int base) const
 
 bool wxString::ToLongLong(wxLongLong_t *pVal, int base) const
 {
-    //wxASSERT_MSG( !base || (base > 1 && base <= 36), wxT("invalid base") );
+    wxASSERT_MSG( !base || (base > 1 && base <= 36), wxT("invalid base") );
 
     WX_STRING_TO_X_TYPE_START
     wxLongLong_t val = wxStrtoll(start, &end, base);
@@ -1724,7 +1724,7 @@ bool wxString::ToLongLong(wxLongLong_t *pVal, int base) const
 
 bool wxString::ToULongLong(wxULongLong_t *pVal, int base) const
 {
-    //wxASSERT_MSG( !base || (base > 1 && base <= 36), wxT("invalid base") );
+    wxASSERT_MSG( !base || (base > 1 && base <= 36), wxT("invalid base") );
 
     WX_STRING_TO_X_TYPE_START
     wxULongLong_t val = wxStrtoull(start, &end, base);
@@ -1742,7 +1742,7 @@ bool wxString::ToDouble(double *pVal) const
 
 bool wxString::ToCLong(long *pVal, int base) const
 {
-    //wxASSERT_MSG( !base || (base > 1 && base <= 36), wxT("invalid base") );
+    wxASSERT_MSG( !base || (base > 1 && base <= 36), wxT("invalid base") );
 
     WX_STRING_TO_X_TYPE_START
 #if (wxUSE_UNICODE_UTF8 || !wxUSE_UNICODE) && defined(wxHAS_XLOCALE_SUPPORT)
@@ -1755,7 +1755,7 @@ bool wxString::ToCLong(long *pVal, int base) const
 
 bool wxString::ToCULong(unsigned long *pVal, int base) const
 {
-    //wxASSERT_MSG( !base || (base > 1 && base <= 36), wxT("invalid base") );
+    wxASSERT_MSG( !base || (base > 1 && base <= 36), wxT("invalid base") );
 
     WX_STRING_TO_X_TYPE_START
 #if (wxUSE_UNICODE_UTF8 || !wxUSE_UNICODE) && defined(wxHAS_XLOCALE_SUPPORT)
@@ -1835,7 +1835,7 @@ bool wxString::ToCDouble(double *pVal) const
 /* static */
 wxString wxString::FromDouble(double val, int precision)
 {
-    //wxCHECK_MSG( precision >= -1, wxString(), "Invalid negative precision" );
+    wxCHECK_MSG( precision >= -1, wxString(), "Invalid negative precision" );
 
     wxString format;
     if ( precision == -1 )
@@ -1844,7 +1844,7 @@ wxString wxString::FromDouble(double val, int precision)
     }
     else // Use fixed precision.
     {
-        format.Printf(L"%%.%df", precision);
+        format.Printf("%%.%df", precision);
     }
 
     return wxString::Format(format, val);
@@ -1853,7 +1853,7 @@ wxString wxString::FromDouble(double val, int precision)
 /* static */
 wxString wxString::FromCDouble(double val, int precision)
 {
-   // wxCHECK_MSG( precision >= -1, wxString(), "Invalid negative precision" );
+    wxCHECK_MSG( precision >= -1, wxString(), "Invalid negative precision" );
 
 #if wxUSE_STD_IOSTREAM && wxUSE_STD_STRING
     // We assume that we can use the ostream and not wstream for numbers.

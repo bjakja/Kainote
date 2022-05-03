@@ -121,7 +121,7 @@ public:
                 break;
 
             default:
-                //wxFAIL_MSG( "unsupported socket address family" );
+                wxFAIL_MSG( "unsupported socket address family" );
                 InitUnspec();
                 return;
         }
@@ -188,7 +188,7 @@ public:
 #endif // wxHAS_UNIX_DOMAIN_SOCKETS
 
             default:
-                break;// wxFAIL_MSG("unsupported socket address family");
+                wxFAIL_MSG( "unsupported socket address family" );
         }
     }
 
@@ -264,9 +264,9 @@ private:
     template <class T>
     T *Get(T *) const
     {
-        /*wxCHECK_MSG( static_cast<int>(m_family) == AddressFamily<T>::value,
+        wxCHECK_MSG( static_cast<int>(m_family) == AddressFamily<T>::value,
                      NULL,
-                     "socket address family mismatch" );*/
+                     "socket address family mismatch" );
 
         return reinterpret_cast<T *>(m_addr);
     }

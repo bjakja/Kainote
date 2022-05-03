@@ -18,9 +18,9 @@
 
 #include "wx/stream.h"
 
-class  wxMemoryOutputStream;
+class WXDLLIMPEXP_FWD_BASE wxMemoryOutputStream;
 
-class  wxMemoryInputStream : public wxInputStream
+class WXDLLIMPEXP_BASE wxMemoryInputStream : public wxInputStream
 {
 public:
     wxMemoryInputStream(const void *data, size_t length);
@@ -68,7 +68,7 @@ private:
     wxDECLARE_NO_ASSIGN_CLASS(wxMemoryInputStream);
 };
 
-class  wxMemoryOutputStream : public wxOutputStream
+class WXDLLIMPEXP_BASE wxMemoryOutputStream : public wxOutputStream
 {
 public:
     // if data is !NULL it must be allocated with malloc()

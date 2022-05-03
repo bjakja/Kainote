@@ -14,7 +14,7 @@
 
 // Helper class for formatting numbers with thousands separators which also
 // supports parsing the numbers formatted by it.
-class  wxNumberFormatter
+class WXDLLIMPEXP_BASE wxNumberFormatter
 {
 public:
     // Bit masks for ToString()

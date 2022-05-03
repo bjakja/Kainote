@@ -15,8 +15,8 @@
 #include "wx/vscroll.h"         // base class
 #include "wx/bitmap.h"
 
-class  wxSelectionStore;
-extern const char wxVListBoxNameStr[];
+class WXDLLIMPEXP_FWD_CORE wxSelectionStore;
+extern WXDLLIMPEXP_DATA_CORE(const char) wxVListBoxNameStr[];
 
 // ----------------------------------------------------------------------------
 // wxVListBox
@@ -31,7 +31,7 @@ extern const char wxVListBoxNameStr[];
     It emits the same events as wxListBox and the same event macros may be used
     with it.
  */
-class  wxVListBox : public wxVScrolledWindow
+class WXDLLIMPEXP_CORE wxVListBox : public wxVScrolledWindow
 {
 public:
     // constructors and such
@@ -84,8 +84,8 @@ public:
     // this method is only valid for the single selection listboxes
     int GetSelection() const
     {
-        //wxASSERT_MSG( !HasMultipleSelection(),
-                        //wxT("GetSelection() can't be used with wxLB_MULTIPLE") );
+        wxASSERT_MSG( !HasMultipleSelection(),
+                        wxT("GetSelection() can't be used with wxLB_MULTIPLE") );
 
         return m_current;
     }

@@ -19,8 +19,8 @@
     #include "wx/event.h"
 #endif
 
-class  wxWindow;
-class  wxWindowBase;
+class WXDLLIMPEXP_FWD_CORE wxWindow;
+class WXDLLIMPEXP_FWD_CORE wxWindowBase;
 
 /*
     This header declares wxControlContainer class however it's not a real
@@ -34,7 +34,7 @@ class  wxWindowBase;
 // wxControlContainerBase: common part used in both native and generic cases
 // ----------------------------------------------------------------------------
 
-class  wxControlContainerBase
+class WXDLLIMPEXP_CORE wxControlContainerBase
 {
 public:
     // default ctor, SetContainerWindow() must be called later
@@ -52,7 +52,7 @@ public:
 
     void SetContainerWindow(wxWindow *winParent)
     {
-        //wxASSERT_MSG( !m_winParent, wxT("shouldn't be called twice") );
+        wxASSERT_MSG( !m_winParent, wxT("shouldn't be called twice") );
 
         m_winParent = winParent;
     }
@@ -112,7 +112,7 @@ private:
 // ----------------------------------------------------------------------------
 
 // this must be a real class as we forward-declare it elsewhere
-class  wxControlContainer : public wxControlContainerBase
+class WXDLLIMPEXP_CORE wxControlContainer : public wxControlContainerBase
 {
 protected:
     // set the focus to the child which had it the last time
@@ -125,7 +125,7 @@ protected:
 // wxControlContainer for TAB navigation implemented in wx itself
 // ----------------------------------------------------------------------------
 
-class  wxControlContainer : public wxControlContainerBase
+class WXDLLIMPEXP_CORE wxControlContainer : public wxControlContainerBase
 {
 public:
     // default ctor, SetContainerWindow() must be called later
@@ -148,7 +148,7 @@ protected:
 #endif // wxHAS_NATIVE_TAB_TRAVERSAL/!wxHAS_NATIVE_TAB_TRAVERSAL
 
 // this function is for wxWidgets internal use only
-extern  bool wxSetFocusToChild(wxWindow *win, wxWindow **child);
+extern WXDLLIMPEXP_CORE bool wxSetFocusToChild(wxWindow *win, wxWindow **child);
 
 // ----------------------------------------------------------------------------
 // wxNavigationEnabled: Derive from this class to support keyboard navigation
@@ -179,29 +179,29 @@ public:
 #endif // !wxHAS_NATIVE_TAB_TRAVERSAL
     }
 
-     virtual bool AcceptsFocus() const
+    WXDLLIMPEXP_INLINE_CORE virtual bool AcceptsFocus() const
     {
         return m_container.AcceptsFocus();
     }
 
-     virtual bool AcceptsFocusRecursively() const
+    WXDLLIMPEXP_INLINE_CORE virtual bool AcceptsFocusRecursively() const
     {
         return m_container.AcceptsFocusRecursively();
     }
 
-     virtual bool AcceptsFocusFromKeyboard() const
+    WXDLLIMPEXP_INLINE_CORE virtual bool AcceptsFocusFromKeyboard() const
     {
         return m_container.AcceptsFocusFromKeyboard();
     }
 
-     virtual void AddChild(wxWindowBase *child)
+    WXDLLIMPEXP_INLINE_CORE virtual void AddChild(wxWindowBase *child)
     {
         BaseWindowClass::AddChild(child);
 
         m_container.UpdateCanFocus();
     }
 
-     virtual void RemoveChild(wxWindowBase *child)
+    WXDLLIMPEXP_INLINE_CORE virtual void RemoveChild(wxWindowBase *child)
     {
 #ifndef wxHAS_NATIVE_TAB_TRAVERSAL
         m_container.HandleOnWindowDestroy(child);
@@ -212,7 +212,7 @@ public:
         m_container.UpdateCanFocus();
     }
 
-     virtual void SetFocus()
+    WXDLLIMPEXP_INLINE_CORE virtual void SetFocus()
     {
         if ( !m_container.DoSetFocus() )
             BaseWindowClass::SetFocus();

@@ -30,7 +30,7 @@
 //                  portion of DC
 //--------------------------------------------------------------------------------
 
-class  wxHtmlDCRenderer : public wxObject
+class WXDLLIMPEXP_HTML wxHtmlDCRenderer : public wxObject
 {
 public:
     wxHtmlDCRenderer();
@@ -118,7 +118,7 @@ enum {
 //--------------------------------------------------------------------------------
 
 
-class  wxHtmlPrintout : public wxPrintout
+class WXDLLIMPEXP_HTML wxHtmlPrintout : public wxPrintout
 {
 public:
     wxHtmlPrintout(const wxString& title = wxT("Printout"));
@@ -231,7 +231,7 @@ private:
 //                         stores page&printer settings in it.
 //--------------------------------------------------------------------------------
 
-class  wxHtmlEasyPrinting : public wxObject
+class WXDLLIMPEXP_HTML wxHtmlEasyPrinting : public wxObject
 {
 public:
     wxHtmlEasyPrinting(const wxString& name = wxT("Printing"), wxWindow *parentWindow = NULL);

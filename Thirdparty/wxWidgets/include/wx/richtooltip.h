@@ -17,9 +17,9 @@
 
 #include "wx/colour.h"
 
-class  wxFont;
-class  wxIcon;
-class  wxWindow;
+class WXDLLIMPEXP_FWD_CORE wxFont;
+class WXDLLIMPEXP_FWD_CORE wxIcon;
+class WXDLLIMPEXP_FWD_CORE wxWindow;
 
 class wxRichToolTipImpl;
 
@@ -52,7 +52,7 @@ enum wxTipKind
 // ----------------------------------------------------------------------------
 
 // Notice that this class does not inherit from wxWindow.
-class  wxRichToolTip
+class WXDLLIMPEXP_ADV wxRichToolTip
 {
 public:
     // Ctor must specify the tooltip title and main message, additional

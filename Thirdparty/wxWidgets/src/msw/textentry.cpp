@@ -771,7 +771,7 @@ bool wxTextEntry::DoAutoCompleteFileNames(int flags)
         dwFlags |= SHACF_FILESYS_DIRS;
     else
     {
-        //wxFAIL_MSG(wxS("No flags for file name auto completion?"));
+        wxFAIL_MSG(wxS("No flags for file name auto completion?"));
         return false;
     }
 

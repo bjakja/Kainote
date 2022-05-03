@@ -19,7 +19,7 @@
 // wxWithImages: mix-in class providing access to wxImageList.
 // ----------------------------------------------------------------------------
 
-class  wxWithImages
+class WXDLLIMPEXP_CORE wxWithImages
 {
 public:
     enum

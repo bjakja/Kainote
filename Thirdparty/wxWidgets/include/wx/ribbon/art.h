@@ -22,8 +22,8 @@
 #include "wx/pen.h"
 #include "wx/bitmap.h"
 
-class  wxDC;
-class  wxWindow;
+class WXDLLIMPEXP_FWD_CORE wxDC;
+class WXDLLIMPEXP_FWD_CORE wxWindow;
 
 enum wxRibbonArtSetting
 {
@@ -192,7 +192,7 @@ class wxRibbonGalleryItem;
 class wxRibbonPageTabInfo;
 class wxRibbonPageTabInfoArray;
 
-class  wxRibbonArtProvider
+class WXDLLIMPEXP_RIBBON wxRibbonArtProvider
 {
 public:
     wxRibbonArtProvider();
@@ -382,7 +382,7 @@ public:
                         wxRect* dropdown_region) = 0;
 };
 
-class  wxRibbonMSWArtProvider : public wxRibbonArtProvider
+class WXDLLIMPEXP_RIBBON wxRibbonMSWArtProvider : public wxRibbonArtProvider
 {
 public:
     wxRibbonMSWArtProvider(bool set_colour_scheme = true);
@@ -716,7 +716,7 @@ protected:
     int m_gallery_bitmap_padding_bottom_size;
 };
 
-class  wxRibbonAUIArtProvider : public wxRibbonMSWArtProvider
+class WXDLLIMPEXP_RIBBON wxRibbonAUIArtProvider : public wxRibbonMSWArtProvider
 {
 public:
     wxRibbonAUIArtProvider();

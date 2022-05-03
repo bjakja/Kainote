@@ -12,13 +12,13 @@
 #ifndef _WX_ACCEL_H_
 #define _WX_ACCEL_H_
 
-class  wxWindow;
+class WXDLLIMPEXP_FWD_CORE wxWindow;
 
 // ----------------------------------------------------------------------------
 // the accel table has all accelerators for a given window or menu
 // ----------------------------------------------------------------------------
 
-class  wxAcceleratorTable : public wxObject
+class WXDLLIMPEXP_CORE wxAcceleratorTable : public wxObject
 {
 public:
     // default ctor

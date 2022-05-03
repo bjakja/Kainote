@@ -47,7 +47,7 @@
     #include <strings.h>    // for strcasecmp()
 #endif // HAVE_STRCASECMP_IN_STRINGS_H
 
-//#include "wx/wxcrt.h"   // for wxChar, wxStrlen() etc.
+#include "wx/wxcrtbase.h"   // for wxChar, wxStrlen() etc.
 #include "wx/strvararg.h"
 #include "wx/buffer.h"      // for wxCharBuffer
 #include "wx/strconv.h"     // for wxConvertXXX() macros and wxMBConv classes
@@ -87,7 +87,7 @@
     #endif
 #endif // wxUSE_STRING_POS_CACHE
 
-//class wxString;
+class WXDLLIMPEXP_FWD_BASE wxString;
 
 // unless this symbol is predefined to disable the compatibility functions, do
 // use them
@@ -276,8 +276,8 @@ public:
     // example):
     wxCStrData operator-(ptrdiff_t n) const
     {
-        /*wxASSERT_MSG( n <= (ptrdiff_t)m_offset,
-                      wxT("attempt to construct address before the beginning of the string") );*/
+        wxASSERT_MSG( n <= (ptrdiff_t)m_offset,
+                      wxT("attempt to construct address before the beginning of the string") );
         return wxCStrData(m_str, m_offset - n, m_owned);
     }
 
@@ -298,7 +298,7 @@ private:
     // should m_str be deleted, i.e. is it owned by us?
     bool m_owned;
 
-    friend class  wxString;
+    friend class WXDLLIMPEXP_FWD_BASE wxString;
 };
 
 // ----------------------------------------------------------------------------
@@ -308,7 +308,7 @@ private:
 // NB: VC6 has a bug that causes linker errors if you have template methods
 //     in a class using __declspec(dllimport). The solution is to split such
 //     class into two classes, one that contains the template methods and does
-//     *not* use  and another class that contains the rest
+//     *not* use WXDLLIMPEXP_BASE and another class that contains the rest
 //     (with DLL linkage).
 //
 //     We only do this for VC6 here, because the code is less efficient
@@ -322,7 +322,7 @@ private:
 #ifdef wxNEEDS_WXSTRING_PRINTF_MIXIN
 // this class contains implementation of wxString's vararg methods, it's
 // exported from wxBase DLL
-class  wxStringPrintfMixinBase
+class WXDLLIMPEXP_BASE wxStringPrintfMixinBase
 {
 protected:
     wxStringPrintfMixinBase() {}
@@ -403,7 +403,7 @@ protected:
 
 #if wxUSE_UNICODE_UTF8
 // see the comment near wxString::iterator for why we need this
-class  wxStringIteratorNode
+class WXDLLIMPEXP_BASE wxStringIteratorNode
 {
 public:
     wxStringIteratorNode()
@@ -438,7 +438,7 @@ private:
 };
 #endif // wxUSE_UNICODE_UTF8
 
-class  wxString
+class WXDLLIMPEXP_BASE wxString
 #ifdef wxNEEDS_WXSTRING_PRINTF_MIXIN
                                 : public wxStringPrintfMixin
 #endif
@@ -478,7 +478,7 @@ private:
       SubstrBufFromType(const T& data_, size_t len_)
           : data(data_), len(len_)
       {
-          /*wxASSERT_MSG( len != npos, "must have real length" );*/
+          wxASSERT_MSG( len != npos, "must have real length" );
       }
   };
 
@@ -519,7 +519,7 @@ private:
   static const wchar_t* ImplStr(const wchar_t* str)
     { return str ? str : wxT(""); }
   static const SubstrBufFromWC ImplStr(const wchar_t* str, size_t n)
-    { return SubstrBufFromWC(str, (str && n == npos) ? wcslen(str) : n); }
+    { return SubstrBufFromWC(str, (str && n == npos) ? wxWcslen(str) : n); }
   static wxScopedWCharBuffer ImplStr(const char* str,
                                      const wxMBConv& conv = wxConvLibc)
     { return ConvertStr(str, npos, conv).data; }
@@ -950,7 +950,7 @@ public:
       private:                                                              \
           underlying_iterator m_cur
 
-  class  const_iterator;
+  class WXDLLIMPEXP_FWD_BASE const_iterator;
 
 #if wxUSE_UNICODE_UTF8
   // NB: In UTF-8 build, (non-const) iterator needs to keep reference
@@ -967,7 +967,7 @@ public:
   //     string and traversing it in wxUniCharRef::operator=(). Head of the
   //     list is stored in wxString. (FIXME-UTF8)
 
-  class  iterator
+  class WXDLLIMPEXP_BASE iterator
   {
       WX_STR_ITERATOR_IMPL(iterator, wxChar*, wxUniCharRef);
 
@@ -1014,7 +1014,7 @@ public:
       friend class const_iterator;
   };
 
-  class  const_iterator
+  class WXDLLIMPEXP_BASE const_iterator
   {
       // NB: reference_type is intentionally value, not reference, the character
       //     may be encoded differently in wxString data:
@@ -1071,7 +1071,7 @@ public:
     { return const_iterator(this, m_impl.begin() + PosToImpl(n)); }
 #else // !wxUSE_UNICODE_UTF8
 
-  class  iterator
+  class WXDLLIMPEXP_BASE iterator
   {
       WX_STR_ITERATOR_IMPL(iterator, wxChar*, wxUniCharRef);
 
@@ -1104,7 +1104,7 @@ public:
       friend class const_iterator;
   };
 
-  class  const_iterator
+  class WXDLLIMPEXP_BASE const_iterator
   {
       // NB: reference_type is intentionally value, not reference, the character
       //     may be encoded differently in wxString data:
@@ -1321,8 +1321,8 @@ public:
   wxString(const wchar_t *pwz, const wxMBConv& WXUNUSED(conv), size_t nLength)
     { assign(pwz, nLength); }
 
-  /*wxString(const wxScopedCharBuffer& buf)
-    { assign(buf.data(), buf.length()); }*/
+  wxString(const wxScopedCharBuffer& buf)
+    { assign(buf.data(), buf.length()); }
   wxString(const wxScopedWCharBuffer& buf)
     { assign(buf.data(), buf.length()); }
 
@@ -1408,11 +1408,11 @@ public:
   #else
     // wxStringImpl is either not std::string or needs conversion
     #define wxStringToStdStringRetType std::string
-    /*std::string ToStdString() const
+    std::string ToStdString() const
     {
         wxScopedCharBuffer buf(mb_str());
         return std::string(buf.data(), buf.length());
-    }*/
+    }
   #endif
 
 #if wxUSE_STD_STRING_CONV_IN_WXSTRING
@@ -1574,14 +1574,14 @@ public:
     // get last character
     wxUniChar Last() const
     {
-     /* wxASSERT_MSG( !empty(), wxT("wxString: index out of bounds") );*/
+      wxASSERT_MSG( !empty(), wxT("wxString: index out of bounds") );
       return *rbegin();
     }
 
     // get writable last character
     wxUniCharRef Last()
     {
-      /*wxASSERT_MSG( !empty(), wxT("wxString: index out of bounds") );*/
+      wxASSERT_MSG( !empty(), wxT("wxString: index out of bounds") );
       return *rbegin();
     }
 
@@ -1687,8 +1687,8 @@ public:
     // conversion to *non-const* multibyte or widestring buffer; modifying
     // returned buffer won't affect the string, these methods are only useful
     // for passing values to const-incorrect functions
-    /*wxWritableCharBuffer char_str(const wxMBConv& conv = wxConvLibc) const
-        { return mb_str(conv); }*/
+    wxWritableCharBuffer char_str(const wxMBConv& conv = wxConvLibc) const
+        { return mb_str(conv); }
     wxWritableWCharBuffer wchar_str() const { return wc_str(); }
 
     // conversion to the buffer of the given type T (= char or wchar_t) and
@@ -1699,21 +1699,21 @@ public:
     // FIXME-VC6: the second argument only exists for VC6 which doesn't support
     //            explicit template function selection, do not use it unless
     //            you must support VC6!
-   template <typename T>
-   wxCharTypeBuffer<T> tchar_str(size_t *len = NULL,
-                                 T * WXUNUSED(dummy) = NULL) const
-   {
+    template <typename T>
+    wxCharTypeBuffer<T> tchar_str(size_t *len = NULL,
+                                  T * WXUNUSED(dummy) = NULL) const
+    {
 #if wxUSE_UNICODE
-       // we need a helper dispatcher depending on type
-       return wxPrivate::wxStringAsBufHelper<T>::Get(*this, len);
+        // we need a helper dispatcher depending on type
+        return wxPrivate::wxStringAsBufHelper<T>::Get(*this, len);
 #else // ANSI
-       // T can only be char in ANSI build
-       if ( len )
-           *len = length();
+        // T can only be char in ANSI build
+        if ( len )
+            *len = length();
 
-       return wxCharTypeBuffer<T>::CreateNonOwned(wx_str(), length());
+        return wxCharTypeBuffer<T>::CreateNonOwned(wx_str(), length());
 #endif // Unicode build kind
-   }
+    }
 
     // conversion to/from plain (i.e. 7 bit) ASCII: this is useful for
     // converting numbers or strings which are certain not to contain special
@@ -1725,7 +1725,7 @@ public:
     static wxString FromAscii(const char *ascii, size_t len);
     static wxString FromAscii(const char *ascii);
     static wxString FromAscii(char ascii);
-    //const wxScopedCharBuffer ToAscii() const;
+    const wxScopedCharBuffer ToAscii() const;
 #else // ANSI
     static wxString FromAscii(const char *ascii) { return wxString( ascii ); }
     static wxString FromAscii(const char *ascii, size_t len)
@@ -1792,8 +1792,8 @@ public:
     static wxString FromUTF8Unchecked(const char *utf8, size_t len = npos)
     {
         const wxString s(utf8, wxMBConvUTF8(), len);
-        /*wxASSERT_MSG( !utf8 || !*utf8 || !s.empty(),
-                      "string must be valid UTF-8" );*/
+        wxASSERT_MSG( !utf8 || !*utf8 || !s.empty(),
+                      "string must be valid UTF-8" );
         return s;
     }
     const wxScopedCharBuffer utf8_str() const { return mb_str(wxMBConvUTF8()); }
@@ -1827,7 +1827,7 @@ public:
       { return wxMBConvUTF8().cWC2MB(wc_str()); }
 #endif
 
-    //const wxScopedCharBuffer ToUTF8() const { return utf8_str(); }
+    const wxScopedCharBuffer ToUTF8() const { return utf8_str(); }
 
     // functions for storing binary data in wxString:
 #if wxUSE_UNICODE
@@ -1878,7 +1878,7 @@ public:
     }
 #endif // wxUSE_UTF8_LOCALE_ONLY/!wxUSE_UTF8_LOCALE_ONLY
 
-    /*const wxWX2MBbuf mbc_str() const { return mb_str(*wxConvCurrent); }*/
+    const wxWX2MBbuf mbc_str() const { return mb_str(*wxConvCurrent); }
 
 #if wxUSE_UNICODE_WCHAR
     const wchar_t* wc_str() const { return wx_str(); }
@@ -2011,8 +2011,8 @@ public:
   wxString& operator=(const wxScopedWCharBuffer& s)
     { return assign(s); }
     // from wxScopedCharBuffer
-  /*wxString& operator=(const wxScopedCharBuffer& s)
-    { return assign(s); }*/
+  wxString& operator=(const wxScopedCharBuffer& s)
+    { return assign(s); }
 
   // string concatenation
     // in place concatenation
@@ -2042,15 +2042,15 @@ public:
       // string += char
   wxString& operator<<(wxUniChar ch) { append(1, ch); return *this; }
   wxString& operator<<(wxUniCharRef ch) { append(1, ch); return *this; }
-  //wxString& operator<<(char ch) { append(1, ch); return *this; }
-  //wxString& operator<<(unsigned char ch) { append(1, ch); return *this; }
+  wxString& operator<<(char ch) { append(1, ch); return *this; }
+  wxString& operator<<(unsigned char ch) { append(1, ch); return *this; }
   wxString& operator<<(wchar_t ch) { append(1, ch); return *this; }
 
       // string += buffer (i.e. from wxGetString)
   wxString& operator<<(const wxScopedWCharBuffer& s)
     { return append(s); }
-  /*wxString& operator<<(const wxScopedCharBuffer& s)
-    { return append(s); }*/
+  wxString& operator<<(const wxScopedCharBuffer& s)
+    { return append(s); }
 
     // string += C string
   wxString& Append(const wxString& s)
@@ -2068,8 +2068,8 @@ public:
     { append(pwz); return *this; }
   wxString& Append(const wxCStrData& psz)
     { append(psz); return *this; }
- /* wxString& Append(const wxScopedCharBuffer& psz)
-    { append(psz); return *this; }*/
+  wxString& Append(const wxScopedCharBuffer& psz)
+    { append(psz); return *this; }
   wxString& Append(const wxScopedWCharBuffer& psz)
     { append(psz); return *this; }
   wxString& Append(const char* psz, size_t nLen)
@@ -2078,8 +2078,8 @@ public:
     { append(pwz, nLen); return *this; }
   wxString& Append(const wxCStrData& psz, size_t nLen)
     { append(psz, nLen); return *this; }
- /* wxString& Append(const wxScopedCharBuffer& psz, size_t nLen)
-    { append(psz, nLen); return *this; }*/
+  wxString& Append(const wxScopedCharBuffer& psz, size_t nLen)
+    { append(psz, nLen); return *this; }
   wxString& Append(const wxScopedWCharBuffer& psz, size_t nLen)
     { append(psz, nLen); return *this; }
     // append count copies of given character
@@ -2100,21 +2100,21 @@ public:
 
     // non-destructive concatenation
       // two strings
-  friend wxString  operator+(const wxString& string1,
+  friend wxString WXDLLIMPEXP_BASE operator+(const wxString& string1,
                                              const wxString& string2);
       // string with a single char
-  friend wxString  operator+(const wxString& string, wxUniChar ch);
+  friend wxString WXDLLIMPEXP_BASE operator+(const wxString& string, wxUniChar ch);
       // char with a string
-  friend wxString  operator+(wxUniChar ch, const wxString& string);
+  friend wxString WXDLLIMPEXP_BASE operator+(wxUniChar ch, const wxString& string);
       // string with C string
-  friend wxString  operator+(const wxString& string,
+  friend wxString WXDLLIMPEXP_BASE operator+(const wxString& string,
                                              const char *psz);
-  friend wxString  operator+(const wxString& string,
+  friend wxString WXDLLIMPEXP_BASE operator+(const wxString& string,
                                              const wchar_t *pwz);
       // C string with string
-  friend wxString  operator+(const char *psz,
+  friend wxString WXDLLIMPEXP_BASE operator+(const char *psz,
                                              const wxString& string);
-  friend wxString  operator+(const wchar_t *pwz,
+  friend wxString WXDLLIMPEXP_BASE operator+(const wchar_t *pwz,
                                              const wxString& string);
 
   // stream-like functions
@@ -2132,15 +2132,15 @@ public:
     { return (*this) << Format(wxT("%lu"), ul); }
 #ifdef wxHAS_LONG_LONG_T_DIFFERENT_FROM_LONG
       // insert a long long if they exist and aren't longs
-  //wxString& operator<<(wxLongLong_t ll)
-  //  {
-  //    return (*this) << Format("%" wxLongLongFmtSpec "d", ll);
-  //  }
-  //    // insert an unsigned long long
-  //wxString& operator<<(wxULongLong_t ull)
-  //  {
-  //    return (*this) << Format("%" wxLongLongFmtSpec "u" , ull);
-  //  }
+  wxString& operator<<(wxLongLong_t ll)
+    {
+      return (*this) << Format("%" wxLongLongFmtSpec "d", ll);
+    }
+      // insert an unsigned long long
+  wxString& operator<<(wxULongLong_t ull)
+    {
+      return (*this) << Format("%" wxLongLongFmtSpec "u" , ull);
+    }
 #endif // wxHAS_LONG_LONG_T_DIFFERENT_FROM_LONG
       // insert a float into string
   wxString& operator<<(float f)
@@ -2159,8 +2159,8 @@ public:
     { return compare(s); }
   int Cmp(const wxCStrData& s) const
     { return compare(s); }
-  /*int Cmp(const wxScopedCharBuffer& s) const
-    { return compare(s); }*/
+  int Cmp(const wxScopedCharBuffer& s) const
+    { return compare(s); }
   int Cmp(const wxScopedWCharBuffer& s) const
     { return compare(s); }
     // same as Cmp() but not case-sensitive
@@ -2184,8 +2184,8 @@ public:
 
   bool IsSameAs(const wxCStrData& str, bool compareWithCase = true) const
     { return IsSameAs(str.AsString(), compareWithCase); }
-  /*bool IsSameAs(const wxScopedCharBuffer& str, bool compareWithCase = true) const
-    { return IsSameAs(str.data(), compareWithCase); }*/
+  bool IsSameAs(const wxScopedCharBuffer& str, bool compareWithCase = true) const
+    { return IsSameAs(str.data(), compareWithCase); }
   bool IsSameAs(const wxScopedWCharBuffer& str, bool compareWithCase = true) const
     { return IsSameAs(str.data(), compareWithCase); }
     // comparison with a single character: returns true if equal
@@ -2295,8 +2295,8 @@ public:
 
   int Find(const wxCStrData& sub) const
     { return Find(sub.AsString()); }
-  /*int Find(const wxScopedCharBuffer& sub) const
-    { return Find(sub.data()); }*/
+  int Find(const wxScopedCharBuffer& sub) const
+    { return Find(sub.data()); }
   int Find(const wxScopedWCharBuffer& sub) const
     { return Find(sub.data()); }
 
@@ -2495,8 +2495,8 @@ public:
       : m_impl(CreateConstIterator(first).impl(),
                CreateConstIterator(last).impl())
   {
-     /* wxASSERT_MSG( first.m_str == last.m_str,
-                    wxT("pointers must be into the same string") );*/
+      wxASSERT_MSG( first.m_str == last.m_str,
+                    wxT("pointers must be into the same string") );
   }
 #endif // WXWIN_COMPATIBILITY_STRING_PTR_AS_ITER
 
@@ -2556,14 +2556,14 @@ public:
 
   wxString& append(const wxCStrData& str)
     { return append(str.AsString()); }
-  /*wxString& append(const wxScopedCharBuffer& str)
-    { return append(str.data(), str.length()); }*/
+  wxString& append(const wxScopedCharBuffer& str)
+    { return append(str.data(), str.length()); }
   wxString& append(const wxScopedWCharBuffer& str)
     { return append(str.data(), str.length()); }
   wxString& append(const wxCStrData& str, size_t n)
     { return append(str.AsString(), 0, n); }
-  /*wxString& append(const wxScopedCharBuffer& str, size_t n)
-    { return append(str.data(), n); }*/
+  wxString& append(const wxScopedCharBuffer& str, size_t n)
+    { return append(str.data(), n); }
   wxString& append(const wxScopedWCharBuffer& str, size_t n)
     { return append(str.data(), n); }
 
@@ -2700,14 +2700,14 @@ public:
 
   wxString& assign(const wxCStrData& str)
     { return assign(str.AsString()); }
-  /*wxString& assign(const wxScopedCharBuffer& str)
-    { return assign(str.data(), str.length()); }*/
+  wxString& assign(const wxScopedCharBuffer& str)
+    { return assign(str.data(), str.length()); }
   wxString& assign(const wxScopedWCharBuffer& str)
     { return assign(str.data(), str.length()); }
   wxString& assign(const wxCStrData& str, size_t len)
     { return assign(str.AsString(), len); }
-  /*wxString& assign(const wxScopedCharBuffer& str, size_t len)
-    { return assign(str.data(), len); }*/
+  wxString& assign(const wxScopedCharBuffer& str, size_t len)
+    { return assign(str.data(), len); }
   wxString& assign(const wxScopedWCharBuffer& str, size_t len)
     { return assign(str.data(), len); }
 
@@ -2759,8 +2759,8 @@ public:
   int compare(const wchar_t* sz) const;
   int compare(const wxCStrData& str) const
     { return compare(str.AsString()); }
-  /*int compare(const wxScopedCharBuffer& str) const
-    { return compare(str.data()); }*/
+  int compare(const wxScopedCharBuffer& str) const
+    { return compare(str.data()); }
   int compare(const wxScopedWCharBuffer& str) const
     { return compare(str.data()); }
     // comparison with a substring
@@ -3142,8 +3142,8 @@ public:
       SubstrBufFromWC str(ImplStr(sz, n));
       return PosFromImpl(m_impl.find(str.data, PosToImpl(nStart), str.len));
   }
- /* size_t find(const wxScopedCharBuffer& s, size_t nStart = 0, size_t n = npos) const
-    { return find(s.data(), nStart, n); }*/
+  size_t find(const wxScopedCharBuffer& s, size_t nStart = 0, size_t n = npos) const
+    { return find(s.data(), nStart, n); }
   size_t find(const wxScopedWCharBuffer& s, size_t nStart = 0, size_t n = npos) const
     { return find(s.data(), nStart, n); }
   size_t find(const wxCStrData& s, size_t nStart = 0, size_t n = npos) const
@@ -3188,8 +3188,8 @@ public:
       SubstrBufFromWC str(ImplStr(sz, n));
       return PosFromImpl(m_impl.rfind(str.data, PosToImpl(nStart), str.len));
   }
-  /*size_t rfind(const wxScopedCharBuffer& s, size_t nStart = npos, size_t n = npos) const
-    { return rfind(s.data(), nStart, n); }*/
+  size_t rfind(const wxScopedCharBuffer& s, size_t nStart = npos, size_t n = npos) const
+    { return rfind(s.data(), nStart, n); }
   size_t rfind(const wxScopedWCharBuffer& s, size_t nStart = npos, size_t n = npos) const
     { return rfind(s.data(), nStart, n); }
   size_t rfind(const wxCStrData& s, size_t nStart = npos, size_t n = npos) const
@@ -3376,53 +3376,53 @@ public:
   // and additional overloads for the versions taking strings:
   size_t find_first_of(const wxCStrData& sz, size_t nStart = 0) const
     { return find_first_of(sz.AsString(), nStart); }
-  /*size_t find_first_of(const wxScopedCharBuffer& sz, size_t nStart = 0) const
-    { return find_first_of(sz.data(), nStart); }*/
+  size_t find_first_of(const wxScopedCharBuffer& sz, size_t nStart = 0) const
+    { return find_first_of(sz.data(), nStart); }
   size_t find_first_of(const wxScopedWCharBuffer& sz, size_t nStart = 0) const
     { return find_first_of(sz.data(), nStart); }
   size_t find_first_of(const wxCStrData& sz, size_t nStart, size_t n) const
     { return find_first_of(sz.AsWChar(), nStart, n); }
-  /*size_t find_first_of(const wxScopedCharBuffer& sz, size_t nStart, size_t n) const
-    { return find_first_of(sz.data(), nStart, n); }*/
+  size_t find_first_of(const wxScopedCharBuffer& sz, size_t nStart, size_t n) const
+    { return find_first_of(sz.data(), nStart, n); }
   size_t find_first_of(const wxScopedWCharBuffer& sz, size_t nStart, size_t n) const
     { return find_first_of(sz.data(), nStart, n); }
 
   size_t find_last_of(const wxCStrData& sz, size_t nStart = 0) const
     { return find_last_of(sz.AsString(), nStart); }
-  /*size_t find_last_of(const wxScopedCharBuffer& sz, size_t nStart = 0) const
-    { return find_last_of(sz.data(), nStart); }*/
+  size_t find_last_of(const wxScopedCharBuffer& sz, size_t nStart = 0) const
+    { return find_last_of(sz.data(), nStart); }
   size_t find_last_of(const wxScopedWCharBuffer& sz, size_t nStart = 0) const
     { return find_last_of(sz.data(), nStart); }
   size_t find_last_of(const wxCStrData& sz, size_t nStart, size_t n) const
     { return find_last_of(sz.AsWChar(), nStart, n); }
-  /*size_t find_last_of(const wxScopedCharBuffer& sz, size_t nStart, size_t n) const
-    { return find_last_of(sz.data(), nStart, n); }*/
+  size_t find_last_of(const wxScopedCharBuffer& sz, size_t nStart, size_t n) const
+    { return find_last_of(sz.data(), nStart, n); }
   size_t find_last_of(const wxScopedWCharBuffer& sz, size_t nStart, size_t n) const
     { return find_last_of(sz.data(), nStart, n); }
 
   size_t find_first_not_of(const wxCStrData& sz, size_t nStart = 0) const
     { return find_first_not_of(sz.AsString(), nStart); }
-  /*size_t find_first_not_of(const wxScopedCharBuffer& sz, size_t nStart = 0) const
-    { return find_first_not_of(sz.data(), nStart); }*/
+  size_t find_first_not_of(const wxScopedCharBuffer& sz, size_t nStart = 0) const
+    { return find_first_not_of(sz.data(), nStart); }
   size_t find_first_not_of(const wxScopedWCharBuffer& sz, size_t nStart = 0) const
     { return find_first_not_of(sz.data(), nStart); }
   size_t find_first_not_of(const wxCStrData& sz, size_t nStart, size_t n) const
     { return find_first_not_of(sz.AsWChar(), nStart, n); }
-  /*size_t find_first_not_of(const wxScopedCharBuffer& sz, size_t nStart, size_t n) const
-    { return find_first_not_of(sz.data(), nStart, n); }*/
+  size_t find_first_not_of(const wxScopedCharBuffer& sz, size_t nStart, size_t n) const
+    { return find_first_not_of(sz.data(), nStart, n); }
   size_t find_first_not_of(const wxScopedWCharBuffer& sz, size_t nStart, size_t n) const
     { return find_first_not_of(sz.data(), nStart, n); }
 
   size_t find_last_not_of(const wxCStrData& sz, size_t nStart = 0) const
     { return find_last_not_of(sz.AsString(), nStart); }
-  /*size_t find_last_not_of(const wxScopedCharBuffer& sz, size_t nStart = 0) const
-    { return find_last_not_of(sz.data(), nStart); }*/
+  size_t find_last_not_of(const wxScopedCharBuffer& sz, size_t nStart = 0) const
+    { return find_last_not_of(sz.data(), nStart); }
   size_t find_last_not_of(const wxScopedWCharBuffer& sz, size_t nStart = 0) const
     { return find_last_not_of(sz.data(), nStart); }
   size_t find_last_not_of(const wxCStrData& sz, size_t nStart, size_t n) const
     { return find_last_not_of(sz.AsWChar(), nStart, n); }
-  /*size_t find_last_not_of(const wxScopedCharBuffer& sz, size_t nStart, size_t n) const
-    { return find_last_not_of(sz.data(), nStart, n); }*/
+  size_t find_last_not_of(const wxScopedCharBuffer& sz, size_t nStart, size_t n) const
+    { return find_last_not_of(sz.data(), nStart, n); }
   size_t find_last_not_of(const wxScopedWCharBuffer& sz, size_t nStart, size_t n) const
     { return find_last_not_of(sz.data(), nStart, n); }
 
@@ -3456,8 +3456,8 @@ public:
       m_impl += s.AsString().m_impl;
       return *this;
   }
-  /*wxString& operator+=(const wxScopedCharBuffer& s)
-    { return append(s); }*/
+  wxString& operator+=(const wxScopedCharBuffer& s)
+    { return append(s); }
   wxString& operator+=(const wxScopedWCharBuffer& s)
     { return append(s); }
       // string += char
@@ -3574,38 +3574,38 @@ private:
   const char *AsChar(const wxMBConv& conv) const;
 
   // mb_str() implementation helper
- wxScopedCharBuffer AsCharBuf(const wxMBConv& conv) const
- {
+  wxScopedCharBuffer AsCharBuf(const wxMBConv& conv) const
+  {
 #if wxUSE_UNICODE_UTF8
-     // avoid conversion if we can
-     if ( conv.IsUTF8() )
-     {
-         return wxScopedCharBuffer::CreateNonOwned(m_impl.c_str(),
-                 m_impl.length());
-     }
+      // avoid conversion if we can
+      if ( conv.IsUTF8() )
+      {
+          return wxScopedCharBuffer::CreateNonOwned(m_impl.c_str(),
+                  m_impl.length());
+      }
 #endif // wxUSE_UNICODE_UTF8
 
-     // call this solely in order to fill in m_convertedToChar as AsChar()
-     // updates it as a side effect: this is a bit ugly but it's a completely
-     // internal function so the users of this class shouldn't care or know
-     // about it and doing it like this, i.e. having a separate AsChar(),
-     // allows us to avoid the creation and destruction of a temporary buffer
-     // when using wxCStrData without duplicating any code
-     if ( !AsChar(conv) )
-     {
-         // although it would be probably more correct to return NULL buffer
-         // from here if the conversion fails, a lot of existing code doesn't
-         // expect mb_str() (or wc_str()) to ever return NULL so return an
-         // empty string otherwise to avoid crashes in it
-         //
-         // also, some existing code does check for the conversion success and
-         // so asserting here would be bad too -- even if it does mean that
-         // silently losing data is possible for badly written code
-         return wxScopedCharBuffer::CreateNonOwned("", 0);
-     }
+      // call this solely in order to fill in m_convertedToChar as AsChar()
+      // updates it as a side effect: this is a bit ugly but it's a completely
+      // internal function so the users of this class shouldn't care or know
+      // about it and doing it like this, i.e. having a separate AsChar(),
+      // allows us to avoid the creation and destruction of a temporary buffer
+      // when using wxCStrData without duplicating any code
+      if ( !AsChar(conv) )
+      {
+          // although it would be probably more correct to return NULL buffer
+          // from here if the conversion fails, a lot of existing code doesn't
+          // expect mb_str() (or wc_str()) to ever return NULL so return an
+          // empty string otherwise to avoid crashes in it
+          //
+          // also, some existing code does check for the conversion success and
+          // so asserting here would be bad too -- even if it does mean that
+          // silently losing data is possible for badly written code
+          return wxScopedCharBuffer::CreateNonOwned("", 0);
+      }
 
-     return m_convertedToChar.AsScopedBuffer();
- }
+      return m_convertedToChar.AsScopedBuffer();
+  }
 
   ConvertedBuffer<char> m_convertedToChar;
 #endif // !wxUSE_UNICODE
@@ -3647,11 +3647,11 @@ private:
 
   wxStringIteratorNodeHead m_iterators;
 
-  friend class  wxStringIteratorNode;
-  friend class  wxUniCharRef;
+  friend class WXDLLIMPEXP_FWD_BASE wxStringIteratorNode;
+  friend class WXDLLIMPEXP_FWD_BASE wxUniCharRef;
 #endif // wxUSE_UNICODE_UTF8
 
-  friend class  wxCStrData;
+  friend class WXDLLIMPEXP_FWD_BASE wxCStrData;
   friend class wxStringInternalBuffer;
   friend class wxStringInternalBufferLength;
 };
@@ -3675,14 +3675,14 @@ inline wxString::const_reverse_iterator operator+(ptrdiff_t n, wxString::const_r
 // enough, from the point of view of C++ standard we must have the declarations
 // here as friend ones are not injected in the enclosing namespace and without
 // them the code fails to compile with conforming compilers such as xlC or g++4
-wxString  operator+(const wxString& string1, const wxString& string2);
-wxString  operator+(const wxString& string, const char *psz);
-wxString  operator+(const wxString& string, const wchar_t *pwz);
-wxString  operator+(const char *psz, const wxString& string);
-wxString  operator+(const wchar_t *pwz, const wxString& string);
+wxString WXDLLIMPEXP_BASE operator+(const wxString& string1, const wxString& string2);
+wxString WXDLLIMPEXP_BASE operator+(const wxString& string, const char *psz);
+wxString WXDLLIMPEXP_BASE operator+(const wxString& string, const wchar_t *pwz);
+wxString WXDLLIMPEXP_BASE operator+(const char *psz, const wxString& string);
+wxString WXDLLIMPEXP_BASE operator+(const wchar_t *pwz, const wxString& string);
 
-wxString  operator+(const wxString& string, wxUniChar ch);
-wxString  operator+(wxUniChar ch, const wxString& string);
+wxString WXDLLIMPEXP_BASE operator+(const wxString& string, wxUniChar ch);
+wxString WXDLLIMPEXP_BASE operator+(wxUniChar ch, const wxString& string);
 
 inline wxString operator+(const wxString& string, wxUniCharRef ch)
     { return string + (wxUniChar)ch; }
@@ -3709,17 +3709,17 @@ namespace wxPrivate
 
 #if wxUSE_UNICODE_WCHAR
 
-//template <>
-//struct wxStringAsBufHelper<char>
-//{
-//    static wxScopedCharBuffer Get(const wxString& s, size_t *len)
-//    {
-//        wxScopedCharBuffer buf(s.mb_str());
-//        if ( len )
-//            *len = buf ? strlen(buf) : 0;
-//        return buf;
-//    }
-//};
+template <>
+struct wxStringAsBufHelper<char>
+{
+    static wxScopedCharBuffer Get(const wxString& s, size_t *len)
+    {
+        wxScopedCharBuffer buf(s.mb_str());
+        if ( len )
+            *len = buf ? strlen(buf) : 0;
+        return buf;
+    }
+};
 
 template <>
 struct wxStringAsBufHelper<wchar_t>
@@ -3837,20 +3837,20 @@ public:
 
         // FIXME-VC6: remove the ugly (CharType *)NULL and use normal
         //            tchar_str<CharType>
-        //size_t len;
-        //const wxCharTypeBuffer<CharType> buf(str.wc_str(&len, (CharType *)NULL));
-        //if ( buf )
-        //{
-        //    if ( len > lenWanted )
-        //    {
-        //        // in this case there is not enough space for terminating NUL,
-        //        // ensure that we still put it there
-        //        m_buf.data()[lenWanted] = 0;
-        //        len = lenWanted - 1;
-        //    }
+        size_t len;
+        const wxCharTypeBuffer<CharType> buf(str.tchar_str(&len, (CharType *)NULL));
+        if ( buf )
+        {
+            if ( len > lenWanted )
+            {
+                // in this case there is not enough space for terminating NUL,
+                // ensure that we still put it there
+                m_buf.data()[lenWanted] = 0;
+                len = lenWanted - 1;
+            }
 
-        //    memcpy(m_buf.data(), buf, (len + 1)*sizeof(CharType));
-        //}
+            memcpy(m_buf.data(), buf, (len + 1)*sizeof(CharType));
+        }
         //else: conversion failed, this can happen when trying to get Unicode
         //      string contents into a char string
     }
@@ -3874,7 +3874,7 @@ public:
 
     ~wxStringTypeBufferLengthBase()
     {
-        //wxASSERT_MSG( this->m_lenSet, "forgot to call SetLength()" );
+        wxASSERT_MSG( this->m_lenSet, "forgot to call SetLength()" );
     }
 
     void SetLength(size_t length) { m_len = length; m_lenSet = true; }
@@ -3918,7 +3918,7 @@ public:
 
 #if wxUSE_STL_BASED_WXSTRING
 
-//WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxStringTypeBufferBase<wxStringCharType> )
+WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxStringTypeBufferBase<wxStringCharType> )
 
 class wxStringInternalBuffer : public wxStringTypeBufferBase<wxStringCharType>
 {
@@ -3931,8 +3931,8 @@ public:
     wxDECLARE_NO_COPY_CLASS(wxStringInternalBuffer);
 };
 
-//WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE(
-    //wxStringTypeBufferLengthBase<wxStringCharType> )
+WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE(
+    wxStringTypeBufferLengthBase<wxStringCharType> )
 
 class wxStringInternalBufferLength
     : public wxStringTypeBufferLengthBase<wxStringCharType>
@@ -3965,7 +3965,7 @@ typedef wxStringInternalBuffer                wxUTF8StringBuffer;
 typedef wxStringInternalBufferLength          wxUTF8StringBufferLength;
 #elif wxUSE_UNICODE_WCHAR
 
-//WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxStringTypeBufferBase<char> )
+WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxStringTypeBufferBase<char> )
 
 // Note about inlined dtors in the classes below: this is done not for
 // performance reasons but just to avoid linking errors in the MSVC DLL build
@@ -3977,7 +3977,7 @@ typedef wxStringInternalBufferLength          wxUTF8StringBufferLength;
 // _inheriting_ from a class can change whether it is being exported from DLL)
 //
 // But this results in link errors because the base template class is not DLL-
-// exported, whether it is declared with  or not, because it
+// exported, whether it is declared with WXDLLIMPEXP_BASE or not, because it
 // does have only inline functions. So the simplest fix is to just make all the
 // functions of these classes inline too.
 
@@ -3990,7 +3990,7 @@ public:
     {
         wxMBConvStrictUTF8 conv;
         size_t wlen = conv.ToWChar(NULL, 0, m_buf);
-        /*wxCHECK_RET( wlen != wxCONV_FAILED, "invalid UTF-8 data in string buffer?" );*/
+        wxCHECK_RET( wlen != wxCONV_FAILED, "invalid UTF-8 data in string buffer?" );
 
         wxStringInternalBuffer wbuf(m_str, wlen);
         conv.ToWChar(wbuf, wlen, m_buf);
@@ -3999,7 +3999,7 @@ public:
     wxDECLARE_NO_COPY_CLASS(wxUTF8StringBuffer);
 };
 
-//WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxStringTypeBufferLengthBase<char> )
+WXDLLIMPEXP_TEMPLATE_INSTANCE_BASE( wxStringTypeBufferLengthBase<char> )
 
 class wxUTF8StringBufferLength : public wxStringTypeBufferLengthBase<char>
 {
@@ -4008,11 +4008,11 @@ public:
         : wxStringTypeBufferLengthBase<char>(str, lenWanted) {}
     ~wxUTF8StringBufferLength()
     {
-        /*wxCHECK_RET(m_lenSet, "length not set");*/
+        wxCHECK_RET(m_lenSet, "length not set");
 
         wxMBConvStrictUTF8 conv;
         size_t wlen = conv.ToWChar(NULL, 0, m_buf, m_len);
-        /*wxCHECK_RET( wlen != wxCONV_FAILED, "invalid UTF-8 data in string buffer?" );*/
+        wxCHECK_RET( wlen != wxCONV_FAILED, "invalid UTF-8 data in string buffer?" );
 
         wxStringInternalBufferLength wbuf(m_str, wlen);
         conv.ToWChar(wbuf, wlen, m_buf, m_len);
@@ -4152,18 +4152,18 @@ wxDEFINE_ALL_COMPARISONS(const char *, const wxCStrData&, wxCMP_CHAR_CSTRDATA)
 
 #include "wx/iosfwrap.h"
 
- wxSTD ostream& operator<<(wxSTD ostream&, const wxString&);
- wxSTD ostream& operator<<(wxSTD ostream&, const wxCStrData&);
- /*wxSTD ostream& operator<<(wxSTD ostream&, const wxScopedCharBuffer&);*/
+WXDLLIMPEXP_BASE wxSTD ostream& operator<<(wxSTD ostream&, const wxString&);
+WXDLLIMPEXP_BASE wxSTD ostream& operator<<(wxSTD ostream&, const wxCStrData&);
+WXDLLIMPEXP_BASE wxSTD ostream& operator<<(wxSTD ostream&, const wxScopedCharBuffer&);
 #ifndef __BORLANDC__
- wxSTD ostream& operator<<(wxSTD ostream&, const wxScopedWCharBuffer&);
+WXDLLIMPEXP_BASE wxSTD ostream& operator<<(wxSTD ostream&, const wxScopedWCharBuffer&);
 #endif
 
 #if wxUSE_UNICODE && defined(HAVE_WOSTREAM)
 
- wxSTD wostream& operator<<(wxSTD wostream&, const wxString&);
- wxSTD wostream& operator<<(wxSTD wostream&, const wxCStrData&);
- wxSTD wostream& operator<<(wxSTD wostream&, const wxScopedWCharBuffer&);
+WXDLLIMPEXP_BASE wxSTD wostream& operator<<(wxSTD wostream&, const wxString&);
+WXDLLIMPEXP_BASE wxSTD wostream& operator<<(wxSTD wostream&, const wxCStrData&);
+WXDLLIMPEXP_BASE wxSTD wostream& operator<<(wxSTD wostream&, const wxScopedWCharBuffer&);
 
 #endif  // wxUSE_UNICODE && defined(HAVE_WOSTREAM)
 
@@ -4293,15 +4293,15 @@ inline size_t operator-(const wchar_t *p, const wxCStrData& cs)
 // ----------------------------------------------------------------------------
 
 // FIXME-UTF8: move this to buffer.h
-//inline wxCharBuffer::wxCharBuffer(const wxCStrData& cstr)
-//                    : wxCharTypeBufferBase(cstr.AsCharBuf())
-//{
-//}
-//
-//inline wxWCharBuffer::wxWCharBuffer(const wxCStrData& cstr)
-//                    : wxCharTypeBufferBase(cstr.AsWCharBuf())
-//{
-//}
+inline wxCharBuffer::wxCharBuffer(const wxCStrData& cstr)
+                    : wxCharTypeBufferBase(cstr.AsCharBuf())
+{
+}
+
+inline wxWCharBuffer::wxWCharBuffer(const wxCStrData& cstr)
+                    : wxCharTypeBufferBase(cstr.AsWCharBuf())
+{
+}
 
 #if wxUSE_UNICODE_UTF8
 // ----------------------------------------------------------------------------

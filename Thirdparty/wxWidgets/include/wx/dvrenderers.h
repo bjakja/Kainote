@@ -28,13 +28,13 @@
     rest of the renderer classes.
  */
 
-class  wxDataViewCustomRenderer;
+class WXDLLIMPEXP_FWD_ADV wxDataViewCustomRenderer;
 
 // ----------------------------------------------------------------------------
 // wxDataViewIconText: helper class used by wxDataViewIconTextRenderer
 // ----------------------------------------------------------------------------
 
-class  wxDataViewIconText : public wxObject
+class WXDLLIMPEXP_ADV wxDataViewIconText : public wxObject
 {
 public:
     wxDataViewIconText( const wxString &text = wxEmptyString,
@@ -76,7 +76,7 @@ private:
     DECLARE_DYNAMIC_CLASS(wxDataViewIconText)
 };
 
-DECLARE_VARIANT_OBJECT_EXPORTED(wxDataViewIconText, )
+DECLARE_VARIANT_OBJECT_EXPORTED(wxDataViewIconText, WXDLLIMPEXP_ADV)
 
 // ----------------------------------------------------------------------------
 // wxDataViewRendererBase
@@ -97,7 +97,7 @@ enum wxDataViewCellRenderState
     wxDATAVIEW_CELL_FOCUSED     = 8
 };
 
-class  wxDataViewRendererBase: public wxObject
+class WXDLLIMPEXP_ADV wxDataViewRendererBase: public wxObject
 {
 public:
     wxDataViewRendererBase( const wxString &varianttype,
@@ -208,7 +208,7 @@ protected:
 // wxDataViewCustomRendererBase
 // ----------------------------------------------------------------------------
 
-class  wxDataViewCustomRendererBase
+class WXDLLIMPEXP_ADV wxDataViewCustomRendererBase
     : public wxDataViewCustomRendererRealBase
 {
 public:
@@ -330,7 +330,7 @@ private:
 // wxDataViewSpinRenderer
 // ----------------------------------------------------------------------------
 
-class  wxDataViewSpinRenderer: public wxDataViewCustomRenderer
+class WXDLLIMPEXP_ADV wxDataViewSpinRenderer: public wxDataViewCustomRenderer
 {
 public:
     wxDataViewSpinRenderer( int min, int max,
@@ -355,7 +355,7 @@ private:
 // wxDataViewChoiceRenderer
 // ----------------------------------------------------------------------------
 
-class  wxDataViewChoiceRenderer: public wxDataViewCustomRenderer
+class WXDLLIMPEXP_ADV wxDataViewChoiceRenderer: public wxDataViewCustomRenderer
 {
 public:
     wxDataViewChoiceRenderer( const wxArrayString &choices,
@@ -381,7 +381,7 @@ private:
 // wxDataViewChoiceByIndexRenderer
 // ----------------------------------------------------------------------------
 
-class  wxDataViewChoiceByIndexRenderer: public wxDataViewChoiceRenderer
+class WXDLLIMPEXP_ADV wxDataViewChoiceByIndexRenderer: public wxDataViewChoiceRenderer
 {
 public:
     wxDataViewChoiceByIndexRenderer( const wxArrayString &choices,
@@ -405,7 +405,7 @@ public:
 // ----------------------------------------------------------------------------
 
 #if wxUSE_DATEPICKCTRL
-class  wxDataViewDateRenderer: public wxDataViewCustomRenderer
+class WXDLLIMPEXP_ADV wxDataViewDateRenderer: public wxDataViewCustomRenderer
 {
 public:
     wxDataViewDateRenderer(const wxString &varianttype = wxT("datetime"),

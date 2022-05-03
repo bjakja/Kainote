@@ -18,7 +18,7 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-//#include "wx/wxprec.h"
+#include "wx/wxprec.h"
 
 #ifdef __BORLANDC__
     #pragma hdrstop
@@ -291,7 +291,7 @@ WXHWND wxTopLevelWindowMSW::MSWGetParent() const
         if ( !parent )
         {
             // this flag doesn't make sense then and will be ignored
-            //wxFAIL_MSG( wxT("wxFRAME_FLOAT_ON_PARENT but no parent?") );
+            wxFAIL_MSG( wxT("wxFRAME_FLOAT_ON_PARENT but no parent?") );
         }
         else
         {
@@ -406,11 +406,11 @@ WXLRESULT wxTopLevelWindowMSW::MSWWindowProc(WXUINT message, WXWPARAM wParam, WX
                 // As SC_SIZE is the first of the system-defined commands, we
                 // only do this for the custom commands before it and leave
                 // SC_SIZE and everything after it to DefWindowProc().
-                //if ( m_menuSystem && id < SC_SIZE )
-                //{
-                //    if ( m_menuSystem->MSWCommand(0 /* unused anyhow */, id) )
-                //        processed = true;
-                //}
+                if ( m_menuSystem && id < SC_SIZE )
+                {
+                    if ( m_menuSystem->MSWCommand(0 /* unused anyhow */, id) )
+                        processed = true;
+                }
 #endif // #ifndef __WXUNIVERSAL__
             }
             break;
@@ -445,7 +445,7 @@ bool wxTopLevelWindowMSW::CreateDialog(const void *dlgTemplate,
 
     if ( !m_hWnd )
     {
-        //wxFAIL_MSG(wxT("Failed to create dialog. Incorrect DLGTEMPLATE?"));
+        wxFAIL_MSG(wxT("Failed to create dialog. Incorrect DLGTEMPLATE?"));
 
         wxLogSysError(wxT("Can't create dialog using memory template"));
 
@@ -1148,7 +1148,7 @@ void wxTopLevelWindowMSW::SetIcons(const wxIconBundle& icons)
     {
         // FIXME: SetIcons(wxNullIconBundle) should unset existing icons,
         //        but we currently don't do that
-        //wxASSERT_MSG( m_icons.IsEmpty(), "unsetting icons doesn't work" );
+        wxASSERT_MSG( m_icons.IsEmpty(), "unsetting icons doesn't work" );
         return;
     }
 
@@ -1239,38 +1239,38 @@ void wxTopLevelWindowMSW::RequestUserAttention(int flags)
     }
 }
 
-//wxMenu *wxTopLevelWindowMSW::MSWGetSystemMenu() const
-//{
-//#ifndef __WXUNIVERSAL__
-//    if ( !m_menuSystem )
-//    {
-//        HMENU hmenu = ::GetSystemMenu(GetHwnd(), FALSE);
-//        if ( !hmenu )
-//        {
-//            wxLogLastError(wxT("GetSystemMenu()"));
-//            return NULL;
-//        }
-//
-//        wxTopLevelWindowMSW * const
-//            self = const_cast<wxTopLevelWindowMSW *>(this);
-//
-//        //self->m_menuSystem = wxMenu::MSWNewFromHMENU(hmenu);
-//
-//        // We need to somehow associate this menu with this window to ensure
-//        // that we get events from it. A natural idea would be to pretend that
-//        // it's attached to our menu bar but this wouldn't work if we don't
-//        // have any menu bar which is a common case for applications using
-//        // custom items in the system menu (they mostly do it exactly because
-//        // they don't have any other menus).
-//        //
-//        // So reuse the invoking window pointer instead, this is not exactly
-//        // correct but doesn't seem to have any serious drawbacks.
-//        //m_menuSystem->SetInvokingWindow(self);
-//    }
-//#endif // #ifndef __WXUNIVERSAL__
-//
-//    return m_menuSystem;
-//}
+wxMenu *wxTopLevelWindowMSW::MSWGetSystemMenu() const
+{
+#ifndef __WXUNIVERSAL__
+    if ( !m_menuSystem )
+    {
+        HMENU hmenu = ::GetSystemMenu(GetHwnd(), FALSE);
+        if ( !hmenu )
+        {
+            wxLogLastError(wxT("GetSystemMenu()"));
+            return NULL;
+        }
+
+        wxTopLevelWindowMSW * const
+            self = const_cast<wxTopLevelWindowMSW *>(this);
+
+        self->m_menuSystem = wxMenu::MSWNewFromHMENU(hmenu);
+
+        // We need to somehow associate this menu with this window to ensure
+        // that we get events from it. A natural idea would be to pretend that
+        // it's attached to our menu bar but this wouldn't work if we don't
+        // have any menu bar which is a common case for applications using
+        // custom items in the system menu (they mostly do it exactly because
+        // they don't have any other menus).
+        //
+        // So reuse the invoking window pointer instead, this is not exactly
+        // correct but doesn't seem to have any serious drawbacks.
+        m_menuSystem->SetInvokingWindow(self);
+    }
+#endif // #ifndef __WXUNIVERSAL__
+
+    return m_menuSystem;
+}
 
 // ----------------------------------------------------------------------------
 // Transparency support
