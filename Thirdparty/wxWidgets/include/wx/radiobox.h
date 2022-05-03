@@ -22,13 +22,13 @@
 
 #include "wx/dynarray.h"
 
-class WXDLLIMPEXP_FWD_CORE wxToolTip;
+class  wxToolTip;
 
 WX_DEFINE_EXPORTED_ARRAY_PTR(wxToolTip *, wxToolTipArray);
 
 #endif // wxUSE_TOOLTIPS
 
-extern WXDLLIMPEXP_DATA_CORE(const char) wxRadioBoxNameStr[];
+extern const char wxRadioBoxNameStr[];
 
 // ----------------------------------------------------------------------------
 // wxRadioBoxBase is not a normal base class, but rather a mix-in because the
@@ -36,7 +36,7 @@ extern WXDLLIMPEXP_DATA_CORE(const char) wxRadioBoxNameStr[];
 // example, it is a wxStaticBox in wxUniv and wxMSW but not in other ports
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxRadioBoxBase : public wxItemContainerImmutable
+class  wxRadioBoxBase : public wxItemContainerImmutable
 {
 public:
     virtual ~wxRadioBoxBase();

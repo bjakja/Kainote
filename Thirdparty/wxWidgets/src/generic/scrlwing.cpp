@@ -69,7 +69,7 @@
 // them to wxScrollHelper
 // ----------------------------------------------------------------------------
 
-class WXDLLEXPORT wxScrollHelperEvtHandler : public wxEvtHandler
+class  wxScrollHelperEvtHandler : public wxEvtHandler
 {
 public:
     wxScrollHelperEvtHandler(wxScrollHelperBase *scrollHelper)
@@ -329,7 +329,7 @@ bool wxScrollHelperEvtHandler::ProcessEvent(wxEvent& event)
 
 wxScrollHelperBase::wxScrollHelperBase(wxWindow *win)
 {
-    wxASSERT_MSG( win, wxT("associated window can't be NULL in wxScrollHelper") );
+    //wxASSERT_MSG( win, wxT("associated window can't be NULL in wxScrollHelper") );
 
     m_xScrollPixelsPerLine =
     m_yScrollPixelsPerLine =
@@ -463,7 +463,7 @@ void wxScrollHelperBase::DeleteEvtHandler()
 
 void wxScrollHelperBase::ResetDrawnFlag()
 {
-    wxCHECK_RET( m_handler, "invalid use of ResetDrawnFlag - no handler?" );
+    //wxCHECK_RET( m_handler, "invalid use of ResetDrawnFlag - no handler?" );
     m_handler->ResetDrawnFlag();
 }
 
@@ -489,7 +489,7 @@ void wxScrollHelperBase::DoSetTargetWindow(wxWindow *target)
 
 void wxScrollHelperBase::SetTargetWindow(wxWindow *target)
 {
-    wxCHECK_RET( target, wxT("target window must not be NULL") );
+    //wxCHECK_RET( target, wxT("target window must not be NULL") );
 
     if ( target == m_targetWindow )
         return;
@@ -1289,7 +1289,7 @@ wxScrollHelper::DoAdjustScrollbar(int orient,
             break;
 
         default:
-            wxFAIL_MSG( wxS("unknown scrollbar visibility") );
+            break;// wxFAIL_MSG(wxS("unknown scrollbar visibility"));
             // fall through
 
         case wxSHOW_SB_DEFAULT:

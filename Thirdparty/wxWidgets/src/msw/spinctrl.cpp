@@ -168,8 +168,8 @@ wxSpinCtrl *wxSpinCtrl::GetSpinForTextCtrl(WXHWND hwndBuddy)
     wxSpinCtrl * const spin = it->second;
 
     // sanity check
-    wxASSERT_MSG( spin->m_hwndBuddy == hwndBuddy,
-                  wxT("wxSpinCtrl has incorrect buddy HWND!") );
+    //wxASSERT_MSG( spin->m_hwndBuddy == hwndBuddy,
+                  //wxT("wxSpinCtrl has incorrect buddy HWND!") );
 
     return spin;
 }
@@ -634,7 +634,7 @@ void wxSpinCtrl::SendSpinUpdate(int value)
 bool wxSpinCtrl::MSWOnScroll(int WXUNUSED(orientation), WXWORD wParam,
                                WXWORD pos, WXHWND control)
 {
-    wxCHECK_MSG( control, false, wxT("scrolling what?") );
+    //wxCHECK_MSG( control, false, wxT("scrolling what?") );
 
     if ( wParam != SB_THUMBPOSITION )
     {

@@ -1594,7 +1594,7 @@ void wxMenuBar::Detach()
 wxMenu* wxMenuBar::MSWGetMenu(WXHMENU hMenu)
 {
     //wxCHECK_MSG( GetHMenu() != hMenu, NULL,
-                 wxT("wxMenuBar::MSWGetMenu(): menu handle is wxMenuBar, not wxMenu") );
+                 //wxT("wxMenuBar::MSWGetMenu(): menu handle is wxMenuBar, not wxMenu") );
 
 #if wxUSE_OWNER_DRAWN
     // query all menus

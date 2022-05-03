@@ -29,7 +29,7 @@
 
 #if wxUSE_BASE
 
-bool WXDLLIMPEXP_BASE wxUsingUnicowsDll()
+bool  wxUsingUnicowsDll()
 {
 #if wxUSE_UNICODE_MSLU
     return (wxGetOsVersion() == wxOS_WINDOWS_9X);

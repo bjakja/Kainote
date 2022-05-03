@@ -632,7 +632,7 @@ int wxListCtrl::GetColumnIndexFromOrder(int order) const
 {
     const int numCols = GetColumnCount();
     //wxCHECK_MSG( order >= 0 && order < numCols, -1,
-                wxT("Column position out of bounds") );
+                //wxT("Column position out of bounds") );
 
     wxArrayInt indexArray(numCols);
     if ( !ListView_GetColumnOrderArray(GetHwnd(), numCols, &indexArray[0]) )
@@ -1911,7 +1911,7 @@ bool wxListCtrl::MSWCommand(WXUINT cmd, WXWORD id_)
 }
 
 // utility used by wxListCtrl::MSWOnNotify and by wxDataViewHeaderWindowMSW::MSWOnNotify
-int WXDLLIMPEXP_CORE wxMSWGetColumnClicked(NMHDR *nmhdr, POINT *ptClick)
+int  wxMSWGetColumnClicked(NMHDR *nmhdr, POINT *ptClick)
 {
     // find the column clicked: we have to search for it ourselves as the
     // notification message doesn't provide this info
@@ -3078,7 +3078,7 @@ int wxListCtrl::OnGetItemColumnImage(long item, long column) const
     return -1;
 }
 
-wxListItemAttr *wxListCtrl::OnGetItemAttr(long WXUNUSED_UNLESS_DEBUG(item)) const
+wxListItemAttr *wxListCtrl::OnGetItemAttr(long item) const
 {
     /*wxASSERT_MSG( item >= 0 && item < GetItemCount(),
                   wxT("invalid item index in OnGetItemAttr()") );*/

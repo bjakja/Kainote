@@ -737,7 +737,7 @@ bool wxToolBarBase::SetDropdownMenu(int toolid, wxMenu* menu)
     //wxCHECK_MSG( tool, false, wxT("invalid tool toolid") );
 
     //wxCHECK_MSG( tool->GetKind() == wxITEM_DROPDOWN, false,
-                    wxT("menu can be only associated with drop down tools") );
+                    //wxT("menu can be only associated with drop down tools") );
 
     tool->SetDropdownMenu(menu);
 

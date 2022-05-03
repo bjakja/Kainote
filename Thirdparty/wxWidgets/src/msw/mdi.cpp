@@ -92,11 +92,11 @@ void UnpackMDIActivate(WXWPARAM wParam, WXLPARAM lParam,
 //
 // this function works correctly even when we don't have a window menu and just
 // returns 0 then
-//inline HMENU GetMDIWindowMenu(wxMDIParentFrame *frame)
-//{
-//    wxMenu *menu = frame->GetWindowMenu();
-//    return menu ? GetHmenuOf(menu) : 0;
-//}
+inline HMENU GetMDIWindowMenu(wxMDIParentFrame *frame)
+{
+   wxMenu *menu = frame->GetWindowMenu();
+   return menu ? GetHmenuOf(menu) : 0;
+}
 
 } // anonymous namespace
 

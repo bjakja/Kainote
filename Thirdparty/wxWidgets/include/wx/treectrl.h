@@ -359,11 +359,11 @@ public:
         // or +1 if the first item is less than, equal to or greater than the
         // second one. The base class version performs alphabetic comparaison
         // of item labels (GetText)
-    //virtual int OnCompareItems(const wxTreeItemId& item1,
-    //                           const wxTreeItemId& item2)
-    //{
-    //    //return wxStrcmp(GetItemText(item1), GetItemText(item2));
-    //}
+    virtual int OnCompareItems(const wxTreeItemId& item1,
+                              const wxTreeItemId& item2)
+    {
+       return wxStrcmp(GetItemText(item1), GetItemText(item2));
+    }
 
         // sort the children of this item using OnCompareItems
         //

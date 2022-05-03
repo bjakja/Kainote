@@ -508,8 +508,8 @@ bool wxSingleChoiceDialog::Create( wxWindow *parent,
 // Set the selection
 void wxSingleChoiceDialog::SetSelection(int sel)
 {
-    wxCHECK_RET( sel >= 0 && (unsigned)sel < m_listbox->GetCount(),
-                 "Invalid initial selection" );
+    //wxCHECK_RET( sel >= 0 && (unsigned)sel < m_listbox->GetCount(),
+                 //"Invalid initial selection" );
 
     m_listbox->SetSelection(sel);
     m_selection = sel;
@@ -634,7 +634,7 @@ bool wxMultiChoiceDialog::TransferDataFromWindow()
     m_selections.Empty();
 
 #if wxUSE_CHECKLISTBOX
-    wxCheckListBox* checkListBox = wxDynamicCast(m_listbox, wxCheckListBox);
+    wxCheckListBox * checkListBox = wxDynamicCast(m_listbox, wxCheckListBox);
     if (checkListBox)
     {
         size_t count = checkListBox->GetCount();

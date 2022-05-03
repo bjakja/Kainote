@@ -169,7 +169,7 @@ STDMETHODIMP wxIDropTarget::DragEnter(IDataObject *pIDataSource,
     wxLogTrace(wxTRACE_OleCalls, wxT("IDropTarget::DragEnter"));
 
     //wxASSERT_MSG( m_pIDataObject == NULL,
-                  wxT("drop target must have data object") );
+                  //wxT("drop target must have data object") );
 
     // show the list of formats supported by the source data object for the
     // debugging purposes, this is quite useful sometimes - please don't remove

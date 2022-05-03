@@ -38,7 +38,7 @@
     #include "wx/cshelp.h"
 #endif
 
-extern WXDLLEXPORT_DATA(const char) wxRadioBoxNameStr[] = "radioBox";
+extern const char wxRadioBoxNameStr[] = "radioBox";
 
 // ============================================================================
 // implementation
@@ -111,7 +111,7 @@ wxEND_PROPERTIES_TABLE()
 
 void wxRadioBoxBase::SetMajorDim(unsigned int majorDim, long style)
 {
-    wxCHECK_RET( majorDim != 0, wxT("major radiobox dimension can't be 0") );
+    //wxCHECK_RET( majorDim != 0, wxT("major radiobox dimension can't be 0") );
 
     m_majorDim = majorDim;
 
@@ -192,7 +192,7 @@ int wxRadioBoxBase::GetNextItem(int item, wxDirection dir, long style) const
                 break;
 
             default:
-                wxFAIL_MSG( wxT("unexpected wxDirection value") );
+                //wxFAIL_MSG( wxT("unexpected wxDirection value") );
                 return wxNOT_FOUND;
         }
 
@@ -224,8 +224,8 @@ int wxRadioBoxBase::GetNextItem(int item, wxDirection dir, long style) const
                 item = 0;
         }
 
-        wxASSERT_MSG( item < count && item >= 0,
-                      wxT("logic error in wxRadioBox::GetNextItem()") );
+        /*wxASSERT_MSG( item < count && item >= 0,
+                      wxT("logic error in wxRadioBox::GetNextItem()") );*/
     }
     // we shouldn't select the non-active items, continue looking for a
     // visible and shown one unless we came back to the item we started from in
@@ -239,7 +239,7 @@ int wxRadioBoxBase::GetNextItem(int item, wxDirection dir, long style) const
 
 void wxRadioBoxBase::SetItemToolTip(unsigned int item, const wxString& text)
 {
-    wxASSERT_MSG( item < GetCount(), wxT("Invalid item index") );
+    //wxASSERT_MSG( item < GetCount(), wxT("Invalid item index") );
 
     // extend the array to have entries for all our items on first use
     if ( !m_itemsTooltips )
@@ -313,7 +313,7 @@ wxRadioBoxBase::~wxRadioBoxBase()
 // set helptext for a particular item
 void wxRadioBoxBase::SetItemHelpText(unsigned int n, const wxString& helpText)
 {
-    wxCHECK_RET( n < GetCount(), wxT("Invalid item index") );
+    //wxCHECK_RET( n < GetCount(), wxT("Invalid item index") );
 
     if ( m_itemsHelpTexts.empty() )
     {
@@ -327,7 +327,7 @@ void wxRadioBoxBase::SetItemHelpText(unsigned int n, const wxString& helpText)
 // retrieve helptext for a particular item
 wxString wxRadioBoxBase::GetItemHelpText( unsigned int n ) const
 {
-    wxCHECK_MSG( n < GetCount(), wxEmptyString, wxT("Invalid item index") );
+    //wxCHECK_MSG( n < GetCount(), wxEmptyString, wxT("Invalid item index") );
 
     return m_itemsHelpTexts.empty() ? wxString() : m_itemsHelpTexts[n];
 }
@@ -349,7 +349,7 @@ wxString wxRadioBoxBase::DoGetHelpTextAtPoint(const wxWindow *derived,
             break;
 
         default:
-            wxFAIL_MSG( "unknown help even origin" );
+            break;// wxFAIL_MSG("unknown help even origin");
             // fall through
 
         case wxHelpEvent::Origin_Unknown:
