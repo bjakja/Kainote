@@ -13,6 +13,7 @@
 //#define _WX_DDE_H_
 
 #include "wx/ipcbase.h"
+#include "wx/dde.h"
 
 /*
  * Mini-DDE implementation

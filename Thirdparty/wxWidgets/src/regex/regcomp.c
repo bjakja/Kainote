@@ -30,76 +30,7 @@
  *
  */
 
-//#include "regex.h"
 #include "regguts.h"
-#include <malloc.h>
-//#define	COLORLESS	(-1)	/* impossible color */
-//#define	WHITE		0	/* default color, parent of all others */
-//#define	NOTREACHED	0
-//#define	xxx		1
-//#ifndef _POSIX2_RE_DUP_MAX
-//#define	_POSIX2_RE_DUP_MAX	255	/* normally from <limits.h> */
-//#endif
-//#define	DUPMAX	_POSIX2_RE_DUP_MAX
-//#define	INFINITY	(DUPMAX+1)
-//#define	REMAGIC	0xfed7	
-//
-//#define	GUTSMAGIC	0xfed9
-//#define NOCELT  (-1)
-//
-///* token type codes, some also used as NFA arc types */
-//#define	EMPTY	'n'		/* no token present */
-//#define	EOS	'e'		/* end of string */
-//#define	PLAIN	'p'		/* ordinary character */
-//#define	DIGIT	'd'		/* digit (in bound) */
-//#define	BACKREF	'b'		/* back reference */
-//#define	COLLEL	'I'		/* start of [. */
-//#define	ECLASS	'E'		/* start of [= */
-//#define	CCLASS	'C'		/* start of [: */
-//#define	END	'X'		/* end of [. [= [: */
-//#define	RANGE	'R'		/* - within [] which might be range delim. */
-//#define	LACON	'L'		/* lookahead constraint subRE */
-//#define	AHEAD	'a'		/* color-lookahead arc */
-//#define	BEHIND	'r'		/* color-lookbehind arc */
-//#define	WBDRY	'w'		/* word boundary constraint */
-//#define	NWBDRY	'W'		/* non-word-boundary constraint */
-//#define	SBEGIN	'A'		/* beginning of string (even if not BOL) */
-//#define	SEND	'Z'		/* end of string (even if not EOL) */
-//#define	PREFER	'P'		/* length preference */
-//
-//#define	INCOMPATIBLE	1	/* destroys arc */
-//#define	SATISFIED	2	/* constraint satisfied */
-//#define	COMPATIBLE	3	/* compatible but not satisfied yet */
-//
-//#define	FEWSTATES	20	/* must be less than UBITS */
-//#define	FEWCOLORS	15
-//
-//#define	LONGER	01	/* prefers longer match */
-//#		define	SHORTER	02	/* prefers shorter match */
-//#		define	MIXED	04	/* mixed preference below */
-//#		define	CAP	010	/* capturing parens below */
-//#		define	BACKR	020	/* back reference below */
-//#		define	INUSE	0100	/* in use in final tree */
-//#		define	LOCAL	03	/* bits which may not propagate up */
-//#		define	LMIX(f)	((f)<<2)	/* LONGER -> MIXED */
-//#		define	SMIX(f)	((f)<<1)	/* SHORTER -> MIXED */
-//#		define	UP(f)	(((f)&~LOCAL) | (LMIX(f) & SMIX(f) & MIXED))
-//#		define	MESSY(f)	((f)&(MIXED|CAP|BACKR))
-//#		define	PREF(f)	((f)&LOCAL)
-//#		define	PREF2(f1, f2)	((PREF(f1) != 0) ? PREF(f1) : PREF(f2))
-//#		define	COMBINE(f1, f2)	(UP((f1)|(f2)) | PREF2(f1, f2))
-//
-//#ifndef DISCARD
-//#define	DISCARD	VOID			/* for throwing values away */
-//#endif
-
-//#define	VISERR(vv)	((vv)->err != 0)	/* have we seen an error yet? */
-//#define	ISERR()	VISERR(v)
-//#define	VERR(vv,e)	(((vv)->err) ? (vv)->err : ((vv)->err = (e)))
-//#define	ERR(e)	(void)VERR(v, e)		/* record an error */
-//#define	NOERR()	{if (ISERR()) return v->err;}	/* if error seen, return it */
-//#define	OFF(p)	((p) - v->start)
-//#define	LOFF(p)	((long)OFF(p))
 
 /*
  * forward declarations, up here so forward datatypes etc. are defined early
@@ -107,159 +38,194 @@
 /* =====^!^===== begin forwards =====^!^===== */
 /* automatically gathered by fwd; do not hand-edit */
 /* === regcomp.c === */
-//int compile (regex_t *, const chr *, size_t, int);
-static void moresubs (struct vars *, int);
-static int freev (struct vars *, int);
-static void makesearch (struct vars *, struct nfa *);
-static struct subre *parse (struct vars *, int, int, struct state *, struct state *);
-static struct subre *parsebranch (struct vars *, int, int, struct state *, struct state *, int);
-static void parseqatom (struct vars *, int, int, struct state *, struct state *, struct subre *);
-static void nonword (struct vars *, int, struct state *, struct state *);
-static void word (struct vars *, int, struct state *, struct state *);
-static int scannum (struct vars *);
-static void repeat (struct vars *, struct state *, struct state *, int, int);
-static void bracket (struct vars *, struct state *, struct state *);
-static void cbracket (struct vars *, struct state *, struct state *);
-static void brackpart (struct vars *, struct state *, struct state *);
-static chr *scanplain (struct vars *);
-static void leaders (struct vars *, struct cvec *);
-static void onechr (struct vars *, pchr, struct state *, struct state *);
-static void dovec (struct vars *, struct cvec *, struct state *, struct state *);
-static celt nextleader (struct vars *, pchr, pchr);
-static void wordchrs (struct vars *);
-static struct subre *subre (struct vars *, int, int, struct state *, struct state *);
-static void freesubre (struct vars *, struct subre *);
-static void freesrnode (struct vars *, struct subre *);
-static void optst (struct vars *, struct subre *);
-static int numst (struct subre *, int);
-static void markst (struct subre *);
-static void cleanst (struct vars *);
-static long nfatree (struct vars *, struct subre *, FILE *);
-static long nfanode (struct vars *, struct subre *, FILE *);
-static int newlacon (struct vars *, struct state *, struct state *, int);
-static void freelacons (struct subre *, int);
-static void rfree (regex_t *);
-static void dump (regex_t *, FILE *);
-static void dumpst (struct subre *, FILE *, int);
-static void stdump (struct subre *, FILE *, int);
-static char *stid (struct subre *, char *, size_t);
+int compile _ANSI_ARGS_((regex_t *, CONST chr *, size_t, int));
+static VOID moresubs _ANSI_ARGS_((struct vars *, int));
+static int freev _ANSI_ARGS_((struct vars *, int));
+static VOID makesearch _ANSI_ARGS_((struct vars *, struct nfa *));
+static struct subre *parse _ANSI_ARGS_((struct vars *, int, int, struct state *, struct state *));
+static struct subre *parsebranch _ANSI_ARGS_((struct vars *, int, int, struct state *, struct state *, int));
+static VOID parseqatom _ANSI_ARGS_((struct vars *, int, int, struct state *, struct state *, struct subre *));
+static VOID nonword _ANSI_ARGS_((struct vars *, int, struct state *, struct state *));
+static VOID word _ANSI_ARGS_((struct vars *, int, struct state *, struct state *));
+static int scannum _ANSI_ARGS_((struct vars *));
+static VOID repeat _ANSI_ARGS_((struct vars *, struct state *, struct state *, int, int));
+static VOID bracket _ANSI_ARGS_((struct vars *, struct state *, struct state *));
+static VOID cbracket _ANSI_ARGS_((struct vars *, struct state *, struct state *));
+static VOID brackpart _ANSI_ARGS_((struct vars *, struct state *, struct state *));
+static chr *scanplain _ANSI_ARGS_((struct vars *));
+static VOID leaders _ANSI_ARGS_((struct vars *, struct cvec *));
+static VOID onechr _ANSI_ARGS_((struct vars *, pchr, struct state *, struct state *));
+static VOID dovec _ANSI_ARGS_((struct vars *, struct cvec *, struct state *, struct state *));
+static celt nextleader _ANSI_ARGS_((struct vars *, pchr, pchr));
+static VOID wordchrs _ANSI_ARGS_((struct vars *));
+static struct subre *subre _ANSI_ARGS_((struct vars *, int, int, struct state *, struct state *));
+static VOID freesubre _ANSI_ARGS_((struct vars *, struct subre *));
+static VOID freesrnode _ANSI_ARGS_((struct vars *, struct subre *));
+static VOID optst _ANSI_ARGS_((struct vars *, struct subre *));
+static int numst _ANSI_ARGS_((struct subre *, int));
+static VOID markst _ANSI_ARGS_((struct subre *));
+static VOID cleanst _ANSI_ARGS_((struct vars *));
+static long nfatree _ANSI_ARGS_((struct vars *, struct subre *, FILE *));
+static long nfanode _ANSI_ARGS_((struct vars *, struct subre *, FILE *));
+static int newlacon _ANSI_ARGS_((struct vars *, struct state *, struct state *, int));
+static VOID freelacons _ANSI_ARGS_((struct subre *, int));
+static VOID rfree _ANSI_ARGS_((regex_t *));
+static VOID dump _ANSI_ARGS_((regex_t *, FILE *));
+static VOID dumpst _ANSI_ARGS_((struct subre *, FILE *, int));
+static VOID stdump _ANSI_ARGS_((struct subre *, FILE *, int));
+static char *stid _ANSI_ARGS_((struct subre *, char *, size_t));
 /* === regc_lex.c === */
-static void lexstart (struct vars *);
-static void prefixes (struct vars *);
-static void lexnest (struct vars *, chr *, chr *);
-static void lexword (struct vars *);
-static int next (struct vars *);
-static int lexescape (struct vars *);
-static chr lexdigits (struct vars *, int, int, int);
-static int brenext (struct vars *, pchr);
-static void skip (struct vars *);
-static chr newline (NOPARMS);
+static VOID lexstart _ANSI_ARGS_((struct vars *));
+static VOID prefixes _ANSI_ARGS_((struct vars *));
+static VOID lexnest _ANSI_ARGS_((struct vars *, chr *, chr *));
+static VOID lexword _ANSI_ARGS_((struct vars *));
+static int next _ANSI_ARGS_((struct vars *));
+static int lexescape _ANSI_ARGS_((struct vars *));
+static chr lexdigits _ANSI_ARGS_((struct vars *, int, int, int));
+static int brenext _ANSI_ARGS_((struct vars *, pchr));
+static VOID skip _ANSI_ARGS_((struct vars *));
+static chr newline _ANSI_ARGS_((NOPARMS));
 #ifdef REG_DEBUG
-static chr *ch (NOPARMS));
+static chr *ch _ANSI_ARGS_((NOPARMS));
 #endif
-static chr chrnamed (struct vars *, chr *, chr *, pchr);
+static chr chrnamed _ANSI_ARGS_((struct vars *, chr *, chr *, pchr));
 /* === regc_color.c === */
-static void initcm (struct vars *, struct colormap *);
-static void freecm (struct colormap *);
-static void cmtreefree (struct colormap *, union tree *, int);
-static color setcolor (struct colormap *, pchr, pcolor);
-static color maxcolor (struct colormap *);
-static color newcolor (struct colormap *);
-static void freecolor (struct colormap *, pcolor);
-static color pseudocolor (struct colormap *);
-static color subcolor (struct colormap *, pchr c);
-static color newsub (struct colormap *, pcolor);
-static void subrange (struct vars *, pchr, pchr, struct state *, struct state *);
-static void subblock (struct vars *, pchr, struct state *, struct state *);
-static void okcolors (struct nfa *, struct colormap *);
-static void colorchain (struct colormap *, struct arc *);
-static void uncolorchain (struct colormap *, struct arc *);
-static int singleton (struct colormap *, pchr c);
-static void rainbow (struct nfa *, struct colormap *, int, pcolor, struct state *, struct state *);
-static void colorcomplement (struct nfa *, struct colormap *, int, struct state *, struct state *, struct state *);
+static VOID initcm _ANSI_ARGS_((struct vars *, struct colormap *));
+static VOID freecm _ANSI_ARGS_((struct colormap *));
+static VOID cmtreefree _ANSI_ARGS_((struct colormap *, union tree *, int));
+static color setcolor _ANSI_ARGS_((struct colormap *, pchr, pcolor));
+static color maxcolor _ANSI_ARGS_((struct colormap *));
+static color newcolor _ANSI_ARGS_((struct colormap *));
+static VOID freecolor _ANSI_ARGS_((struct colormap *, pcolor));
+static color pseudocolor _ANSI_ARGS_((struct colormap *));
+static color subcolor _ANSI_ARGS_((struct colormap *, pchr c));
+static color newsub _ANSI_ARGS_((struct colormap *, pcolor));
+static VOID subrange _ANSI_ARGS_((struct vars *, pchr, pchr, struct state *, struct state *));
+static VOID subblock _ANSI_ARGS_((struct vars *, pchr, struct state *, struct state *));
+static VOID okcolors _ANSI_ARGS_((struct nfa *, struct colormap *));
+static VOID colorchain _ANSI_ARGS_((struct colormap *, struct arc *));
+static VOID uncolorchain _ANSI_ARGS_((struct colormap *, struct arc *));
+static int singleton _ANSI_ARGS_((struct colormap *, pchr c));
+static VOID rainbow _ANSI_ARGS_((struct nfa *, struct colormap *, int, pcolor, struct state *, struct state *));
+static VOID colorcomplement _ANSI_ARGS_((struct nfa *, struct colormap *, int, struct state *, struct state *, struct state *));
 #ifdef REG_DEBUG
-static void dumpcolors (struct colormap *, FILE *);
-static void fillcheck (struct colormap *, union tree *, int, FILE *);
-static void dumpchr (pchr, FILE *);
+static VOID dumpcolors _ANSI_ARGS_((struct colormap *, FILE *));
+static VOID fillcheck _ANSI_ARGS_((struct colormap *, union tree *, int, FILE *));
+static VOID dumpchr _ANSI_ARGS_((pchr, FILE *));
 #endif
 /* === regc_nfa.c === */
-static struct nfa *newnfa (struct vars *, struct colormap *, struct nfa *);
-static void freenfa (struct nfa *);
-static struct state *newstate (struct nfa *);
-static struct state *newfstate (struct nfa *, int flag);
-static void dropstate (struct nfa *, struct state *);
-static void freestate (struct nfa *, struct state *);
-static void destroystate (struct nfa *, struct state *);
-static void newarc (struct nfa *, int, pcolor, struct state *, struct state *);
-static struct arc *allocarc (struct nfa *, struct state *);
-static void freearc (struct nfa *, struct arc *);
-static struct arc *findarc (struct state *, int, pcolor);
-static void cparc (struct nfa *, struct arc *, struct state *, struct state *);
-static void moveins (struct nfa *, struct state *, struct state *);
-static void copyins (struct nfa *, struct state *, struct state *);
-static void moveouts (struct nfa *, struct state *, struct state *);
-static void copyouts (struct nfa *, struct state *, struct state *);
-static void cloneouts (struct nfa *, struct state *, struct state *, struct state *, int);
-static void delsub (struct nfa *, struct state *, struct state *);
-static void deltraverse (struct nfa *, struct state *, struct state *);
-static void dupnfa (struct nfa *, struct state *, struct state *, struct state *, struct state *);
-static void duptraverse (struct nfa *, struct state *, struct state *);
-static void cleartraverse (struct nfa *, struct state *);
-static void specialcolors (struct nfa *);
-static long optimize (struct nfa *, FILE *);
-static void pullback (struct nfa *, FILE *);
-static int pull (struct nfa *, struct arc *);
-static void pushfwd (struct nfa *, FILE *);
-static int push (struct nfa *, struct arc *);
-
-static int combine (struct arc *, struct arc *);
-static void fixempties (struct nfa *, FILE *);
-static int unempty (struct nfa *, struct arc *);
-static void cleanup (struct nfa *);
-static void markreachable (struct nfa *, struct state *, struct state *, struct state *);
-static void markcanreach (struct nfa *, struct state *, struct state *, struct state *);
-static long analyze (struct nfa *);
-static void compact (struct nfa *, struct cnfa *);
-static void carcsort (struct carc *, struct carc *);
-static void freecnfa (struct cnfa *);
-static void dumpnfa (struct nfa *, FILE *);
+static struct nfa *newnfa _ANSI_ARGS_((struct vars *, struct colormap *, struct nfa *));
+static VOID freenfa _ANSI_ARGS_((struct nfa *));
+static struct state *newstate _ANSI_ARGS_((struct nfa *));
+static struct state *newfstate _ANSI_ARGS_((struct nfa *, int flag));
+static VOID dropstate _ANSI_ARGS_((struct nfa *, struct state *));
+static VOID freestate _ANSI_ARGS_((struct nfa *, struct state *));
+static VOID destroystate _ANSI_ARGS_((struct nfa *, struct state *));
+static VOID newarc _ANSI_ARGS_((struct nfa *, int, pcolor, struct state *, struct state *));
+static struct arc *allocarc _ANSI_ARGS_((struct nfa *, struct state *));
+static VOID freearc _ANSI_ARGS_((struct nfa *, struct arc *));
+static struct arc *findarc _ANSI_ARGS_((struct state *, int, pcolor));
+static VOID cparc _ANSI_ARGS_((struct nfa *, struct arc *, struct state *, struct state *));
+static VOID moveins _ANSI_ARGS_((struct nfa *, struct state *, struct state *));
+static VOID copyins _ANSI_ARGS_((struct nfa *, struct state *, struct state *));
+static VOID moveouts _ANSI_ARGS_((struct nfa *, struct state *, struct state *));
+static VOID copyouts _ANSI_ARGS_((struct nfa *, struct state *, struct state *));
+static VOID cloneouts _ANSI_ARGS_((struct nfa *, struct state *, struct state *, struct state *, int));
+static VOID delsub _ANSI_ARGS_((struct nfa *, struct state *, struct state *));
+static VOID deltraverse _ANSI_ARGS_((struct nfa *, struct state *, struct state *));
+static VOID dupnfa _ANSI_ARGS_((struct nfa *, struct state *, struct state *, struct state *, struct state *));
+static VOID duptraverse _ANSI_ARGS_((struct nfa *, struct state *, struct state *));
+static VOID cleartraverse _ANSI_ARGS_((struct nfa *, struct state *));
+static VOID specialcolors _ANSI_ARGS_((struct nfa *));
+static long optimize _ANSI_ARGS_((struct nfa *, FILE *));
+static VOID pullback _ANSI_ARGS_((struct nfa *, FILE *));
+static int pull _ANSI_ARGS_((struct nfa *, struct arc *));
+static VOID pushfwd _ANSI_ARGS_((struct nfa *, FILE *));
+static int push _ANSI_ARGS_((struct nfa *, struct arc *));
+#define	INCOMPATIBLE	1	/* destroys arc */
+#define	SATISFIED	2	/* constraint satisfied */
+#define	COMPATIBLE	3	/* compatible but not satisfied yet */
+static int combine _ANSI_ARGS_((struct arc *, struct arc *));
+static VOID fixempties _ANSI_ARGS_((struct nfa *, FILE *));
+static int unempty _ANSI_ARGS_((struct nfa *, struct arc *));
+static VOID cleanup _ANSI_ARGS_((struct nfa *));
+static VOID markreachable _ANSI_ARGS_((struct nfa *, struct state *, struct state *, struct state *));
+static VOID markcanreach _ANSI_ARGS_((struct nfa *, struct state *, struct state *, struct state *));
+static long analyze _ANSI_ARGS_((struct nfa *));
+static VOID compact _ANSI_ARGS_((struct nfa *, struct cnfa *));
+static VOID carcsort _ANSI_ARGS_((struct carc *, struct carc *));
+static VOID freecnfa _ANSI_ARGS_((struct cnfa *));
+static VOID dumpnfa _ANSI_ARGS_((struct nfa *, FILE *));
 #ifdef REG_DEBUG
-static void dumpstate (struct state *, FILE *);
-static void dumparcs (struct state *, FILE *);
-static int dumprarcs (struct arc *, struct state *, FILE *, int);
-static void dumparc (struct arc *, struct state *, FILE *);
+static VOID dumpstate _ANSI_ARGS_((struct state *, FILE *));
+static VOID dumparcs _ANSI_ARGS_((struct state *, FILE *));
+static int dumprarcs _ANSI_ARGS_((struct arc *, struct state *, FILE *, int));
+static VOID dumparc _ANSI_ARGS_((struct arc *, struct state *, FILE *));
 #endif
-static void dumpcnfa (struct cnfa *, FILE *);
+static VOID dumpcnfa _ANSI_ARGS_((struct cnfa *, FILE *));
 #ifdef REG_DEBUG
-static void dumpcstate (int, struct carc *, struct cnfa *, FILE *);
+static VOID dumpcstate _ANSI_ARGS_((int, struct carc *, struct cnfa *, FILE *));
 #endif
 /* === regc_cvec.c === */
-static struct cvec *newcvec (int, int, int);
-static struct cvec *clearcvec (struct cvec *);
-static void addchr (struct cvec *, pchr);
-static void addrange (struct cvec *, pchr, pchr);
-static void addmcce (struct cvec *, chr *, chr *);
-static int haschr (struct cvec *, pchr);
-static struct cvec *getcvec (struct vars *, int, int, int);
-static void freecvec (struct cvec *);
+static struct cvec *newcvec _ANSI_ARGS_((int, int, int));
+static struct cvec *clearcvec _ANSI_ARGS_((struct cvec *));
+static VOID addchr _ANSI_ARGS_((struct cvec *, pchr));
+static VOID addrange _ANSI_ARGS_((struct cvec *, pchr, pchr));
+static VOID addmcce _ANSI_ARGS_((struct cvec *, chr *, chr *));
+static int haschr _ANSI_ARGS_((struct cvec *, pchr));
+static struct cvec *getcvec _ANSI_ARGS_((struct vars *, int, int, int));
+static VOID freecvec _ANSI_ARGS_((struct cvec *));
 /* === regc_locale.c === */
-static int nmcces (struct vars *);
-static int nleaders (struct vars *);
-static struct cvec *allmcces (struct vars *, struct cvec *);
-static celt element (struct vars *, chr *, chr *);
-static struct cvec *range (struct vars *, celt, celt, int);
-static int before (celt, celt);
-static struct cvec *eclass (struct vars *, celt, int);
-static struct cvec *cclass (struct vars *, chr *, chr *, int);
-static struct cvec *allcases (struct vars *, pchr);
-static int cmp (const chr *, const chr *, size_t);
-static int casecmp (const chr *, const chr *, size_t);
+static int nmcces _ANSI_ARGS_((struct vars *));
+static int nleaders _ANSI_ARGS_((struct vars *));
+static struct cvec *allmcces _ANSI_ARGS_((struct vars *, struct cvec *));
+static celt element _ANSI_ARGS_((struct vars *, chr *, chr *));
+static struct cvec *range _ANSI_ARGS_((struct vars *, celt, celt, int));
+static int before _ANSI_ARGS_((celt, celt));
+static struct cvec *eclass _ANSI_ARGS_((struct vars *, celt, int));
+static struct cvec *cclass _ANSI_ARGS_((struct vars *, chr *, chr *, int));
+static struct cvec *allcases _ANSI_ARGS_((struct vars *, pchr));
+static int cmp _ANSI_ARGS_((CONST chr *, CONST chr *, size_t));
+static int casecmp _ANSI_ARGS_((CONST chr *, CONST chr *, size_t));
 /* automatically gathered by fwd; do not hand-edit */
 /* =====^!^===== end forwards =====^!^===== */
 
 
 
 /* internal variables, bundled for easy passing around */
+struct vars {
+	regex_t *re;
+	chr *now;		/* scan pointer into string */
+	chr *stop;		/* end of string */
+	chr *savenow;		/* saved now and stop for "subroutine call" */
+	chr *savestop;
+	int err;		/* error code (0 if none) */
+	int cflags;		/* copy of compile flags */
+	int lasttype;		/* type of previous token */
+	int nexttype;		/* type of next token */
+	chr nextvalue;		/* value (if any) of next token */
+	int lexcon;		/* lexical context type (see lex.c) */
+	int nsubexp;		/* subexpression count */
+	struct subre **subs;	/* subRE pointer vector */
+	size_t nsubs;		/* length of vector */
+	struct subre *sub10[10];	/* initial vector, enough for most */
+	struct nfa *nfa;	/* the NFA */
+	struct colormap *cm;	/* character color map */
+	color nlcolor;		/* color of newline */
+	struct state *wordchrs;	/* state in nfa holding word-char outarcs */
+	struct subre *tree;	/* subexpression tree */
+	struct subre *treechain;	/* all tree nodes allocated */
+	struct subre *treefree;		/* any free tree nodes */
+	int ntree;		/* number of tree nodes */
+	struct cvec *cv;	/* interface cvec */
+	struct cvec *cv2;	/* utility cvec */
+	struct cvec *mcces;	/* collating-element information */
+#		define	ISCELEADER(v,c)	(v->mcces != NULL && haschr(v->mcces, (c)))
+	struct state *mccepbegin;	/* in nfa, start of MCCE prototypes */
+	struct state *mccepend;	/* in nfa, end of MCCE prototypes */
+	struct subre *lacons;	/* lookahead-constraint vector */
+	int nlacons;		/* size of lacons */
+};
 
 /* parsing macros; most know that `v' is the struct vars pointer */
 #define	NEXT()	(next(v))		/* advance by one token */
@@ -267,17 +233,35 @@ static int casecmp (const chr *, const chr *, size_t);
 #define	EAT(t)	(SEE(t) && next(v))	/* if next is this, swallow it */
 #define	VISERR(vv)	((vv)->err != 0)	/* have we seen an error yet? */
 #define	ISERR()	VISERR(v)
-//#define	VERR(vv,e)	((vv)->nexttype = EOS, ((vv)->err) ? (vv)->err :\
-							//((vv)->err = (e)))
+#define	VERR(vv,e)	((vv)->nexttype = EOS, ((vv)->err) ? (vv)->err :\
+							((vv)->err = (e)))
 #define	ERR(e)	(void)VERR(v, e)		/* record an error */
-//#define	NOERR()	{if (ISERR()) return;}	/* if error seen, return */
+#define	NOERR()	{if (ISERR()) return;}	/* if error seen, return */
 #define	NOERRN()	{if (ISERR()) return NULL;}	/* NOERR with retval */
 #define	NOERRZ()	{if (ISERR()) return 0;}	/* NOERR with retval */
 #define	INSIST(c, e)	(void)((c) ? (void)0 : ERR(e))	/* if condition false, error */
 #define	NOTE(b)	(v->re->re_info |= (b))		/* note visible condition */
 #define	EMPTYARC(x, y)	newarc(v->nfa, EMPTY, 0, x, y)
 
-
+/* token type codes, some also used as NFA arc types */
+#define	EMPTY	'n'		/* no token present */
+#define	EOS	'e'		/* end of string */
+#define	PLAIN	'p'		/* ordinary character */
+#define	DIGIT	'd'		/* digit (in bound) */
+#define	BACKREF	'b'		/* back reference */
+#define	COLLEL	'I'		/* start of [. */
+#define	ECLASS	'E'		/* start of [= */
+#define	CCLASS	'C'		/* start of [: */
+#define	END	'X'		/* end of [. [= [: */
+#define	RANGE	'R'		/* - within [] which might be range delim. */
+#define	LACON	'L'		/* lookahead constraint subRE */
+#define	AHEAD	'a'		/* color-lookahead arc */
+#define	BEHIND	'r'		/* color-lookbehind arc */
+#define	WBDRY	'w'		/* word boundary constraint */
+#define	NWBDRY	'W'		/* non-word-boundary constraint */
+#define	SBEGIN	'A'		/* beginning of string (even if not BOL) */
+#define	SEND	'Z'		/* end of string (even if not EOL) */
+#define	PREFER	'P'		/* length preference */
 
 /* is an arc colored, and hence on a color chain? */
 #define	COLORED(a)	((a)->type == PLAIN || (a)->type == AHEAD || \
@@ -294,12 +278,12 @@ static struct fns functions = {
 
 /*
  - compile - compile regular expression
- ^ int compile(regex_t *, const chr *, size_t, int);
+ ^ int compile(regex_t *, CONST chr *, size_t, int);
  */
 int
 compile(re, string, len, flags)
 regex_t *re;
-const chr *string;
+CONST chr *string;
 size_t len;
 int flags;
 {
@@ -455,9 +439,9 @@ int flags;
 
 /*
  - moresubs - enlarge subRE vector
- ^ static void moresubs(struct vars *, int);
+ ^ static VOID moresubs(struct vars *, int);
  */
-static void
+static VOID
 moresubs(v, wanted)
 struct vars *v;
 int wanted;			/* want enough room for this one */
@@ -475,7 +459,7 @@ int wanted;			/* want enough room for this one */
 	} else
 		p = (struct subre **)REALLOC(v->subs, n*sizeof(struct subre *));
 	if (p == NULL) {
-		//ERR(REG_ESPACE);
+		ERR(REG_ESPACE);
 		return;
 	}
 	v->subs = p;
@@ -514,7 +498,7 @@ int err;
 		freecvec(v->mcces);
 	if (v->lacons != NULL)
 		freelacons(v->lacons, v->nlacons);
-	/*ERR(err);*/			/* nop if err==0 */
+	ERR(err);			/* nop if err==0 */
 
 	return v->err;
 }
@@ -522,9 +506,9 @@ int err;
 /*
  - makesearch - turn an NFA into a search NFA (implicit prepend of .*?)
  * NFA must have been optimize()d already.
- ^ static void makesearch(struct vars *, struct nfa *);
+ ^ static VOID makesearch(struct vars *, struct nfa *);
  */
-static void
+static VOID
 makesearch(v, nfa)
 struct vars *v;
 struct nfa *nfa;
@@ -648,7 +632,7 @@ struct state *final;		/* final state */
 
 	if (!SEE(stopper)) {
 		assert(stopper == ')' && SEE(EOS));
-		//ERR(REG_EPAREN);
+		ERR(REG_EPAREN);
 	}
 
 	/* optimize out simple cases */
@@ -721,10 +705,10 @@ int partial;			/* is this only part of a branch? */
  * The bookkeeping near the end cooperates very closely with parsebranch();
  * in particular, it contains a recursion that can involve parsing the rest
  * of the branch, making this function's name somewhat inaccurate.
- ^ static void parseqatom(struct vars *, int, int, struct state *,
+ ^ static VOID parseqatom(struct vars *, int, int, struct state *,
  ^ 	struct state *, struct subre *);
  */
-static void
+static VOID
 parseqatom(v, stopper, type, lp, rp, top)
 struct vars *v;
 int stopper;			/* EOS or ')' */
@@ -786,7 +770,7 @@ struct subre *top;		/* subtree top */
 	case '<':
 		wordchrs(v);	/* does NEXT() */
 		s = newstate(v->nfa);
-		//
+		NOERR();
 		nonword(v, BEHIND, lp, s);
 		word(v, AHEAD, s, rp);
 		return;
@@ -794,7 +778,7 @@ struct subre *top;		/* subtree top */
 	case '>':
 		wordchrs(v);	/* does NEXT() */
 		s = newstate(v->nfa);
-		//
+		NOERR();
 		word(v, BEHIND, lp, s);
 		nonword(v, AHEAD, s, rp);
 		return;
@@ -802,11 +786,11 @@ struct subre *top;		/* subtree top */
 	case WBDRY:
 		wordchrs(v);	/* does NEXT() */
 		s = newstate(v->nfa);
-		//
+		NOERR();
 		nonword(v, BEHIND, lp, s);
 		word(v, AHEAD, s, rp);
 		s = newstate(v->nfa);
-		//
+		NOERR();
 		word(v, BEHIND, lp, s);
 		nonword(v, AHEAD, s, rp);
 		return;
@@ -814,11 +798,11 @@ struct subre *top;		/* subtree top */
 	case NWBDRY:
 		wordchrs(v);	/* does NEXT() */
 		s = newstate(v->nfa);
-		//
+		NOERR();
 		word(v, BEHIND, lp, s);
 		word(v, AHEAD, s, rp);
 		s = newstate(v->nfa);
-		//
+		NOERR();
 		nonword(v, BEHIND, lp, s);
 		nonword(v, AHEAD, s, rp);
 		return;
@@ -828,13 +812,13 @@ struct subre *top;		/* subtree top */
 		NEXT();
 		s = newstate(v->nfa);
 		s2 = newstate(v->nfa);
-		//
+		NOERR();
 		t = parse(v, ')', LACON, s, s2);
 		freesubre(v, t);	/* internal structure irrelevant */
 		assert(SEE(')') || ISERR());
 		NEXT();
 		n = newlacon(v, s, s2, pos);
-		//
+		NOERR();
 		ARCV(LACON, n);
 		return;
 		break;
@@ -843,27 +827,27 @@ struct subre *top;		/* subtree top */
 	case '+':
 	case '?':
 	case '{':
-		//ERR(REG_BADRPT);
+		ERR(REG_BADRPT);
 		return;
 		break;
 	default:
-		//ERR(REG_ASSERT);
+		ERR(REG_ASSERT);
 		return;
 		break;
 	/* then plain characters, and minor variants on that theme */
 	case ')':		/* unbalanced paren */
 		if ((v->cflags&REG_ADVANCED) != REG_EXTENDED) {
-			//ERR(REG_EPAREN);
+			ERR(REG_EPAREN);
 			return;
 		}
 		/* legal in EREs due to specification botch */
-		//NOTE(REG_UPBOTCH);
+		NOTE(REG_UPBOTCH);
 		/* fallthrough into case PLAIN */
 	case PLAIN:
 		onechr(v, v->nextvalue, lp, rp);
 		okcolors(v->nfa, v->cm);
-		//
-		//NEXT();
+		NOERR();
+		NEXT();
 		break;
 	case '[':
 		if (v->nextvalue == 1)
@@ -894,18 +878,18 @@ struct subre *top;		/* subtree top */
 		/* need new endpoints because tree will contain pointers */
 		s = newstate(v->nfa);
 		s2 = newstate(v->nfa);
-		//
+		NOERR();
 		EMPTYARC(lp, s);
 		EMPTYARC(s2, rp);
-		//
+		NOERR();
 		atom = parse(v, ')', PLAIN, s, s2);
 		assert(SEE(')') || ISERR());
 		NEXT();
-		//
+		NOERR();
 		if (cap) {
 			v->subs[subno] = atom;
 			t = subre(v, '(', atom->flags|CAP, lp, rp);
-			//
+			NOERR();
 			t->subno = subno;
 			t->left = atom;
 			atom = t;
@@ -913,10 +897,10 @@ struct subre *top;		/* subtree top */
 		/* postpone everything else pending possible {0} */
 		break;
 	case BACKREF:	/* the Feature From The Black Lagoon */
-		//INSIST(type != LACON, REG_ESUBREG);
-		//INSIST(v->nextvalue < v->nsubs, REG_ESUBREG);
-		//INSIST(v->subs[(int)v->nextvalue] != NULL, REG_ESUBREG);
-		//
+		INSIST(type != LACON, REG_ESUBREG);
+		INSIST(v->nextvalue < v->nsubs, REG_ESUBREG);
+		INSIST(v->subs[(int)v->nextvalue] != NULL, REG_ESUBREG);
+		NOERR();
 		assert(v->nextvalue > 0);
 		atom = subre(v, 'b', BACKR, lp, rp);
 		subno = v->nextvalue;
@@ -955,7 +939,7 @@ struct subre *top;		/* subtree top */
 			else
 				n = INFINITY;
 			if (m > n) {
-				/*ERR(REG_BADBR);*/
+				ERR(REG_BADBR);
 				return;
 			}
 			/* {m,n} exercises preference, even if it's {m,m} */
@@ -966,7 +950,7 @@ struct subre *top;		/* subtree top */
 			qprefer = 0;
 		}
 		if (!SEE('}')) {	/* catches errors too */
-			/*ERR(REG_BADBR);*/
+			ERR(REG_BADBR);
 			return;
 		}
 		NEXT();
@@ -1009,7 +993,7 @@ struct subre *top;		/* subtree top */
 	/* now we'll need a subre for the contents even if they're boring */
 	if (atom == NULL) {
 		atom = subre(v, '=', 0, lp, rp);
-		/**/
+		NOERR();
 	}
 
 	/*
@@ -1023,18 +1007,18 @@ struct subre *top;		/* subtree top */
 	 */
 	s = newstate(v->nfa);		/* first, new endpoints for the atom */
 	s2 = newstate(v->nfa);
-	//
+	NOERR();
 	moveouts(v->nfa, lp, s);
 	moveins(v->nfa, rp, s2);
-	//
+	NOERR();
 	atom->begin = s;
 	atom->end = s2;
 	s = newstate(v->nfa);		/* and spots for prefix and bypass */
 	s2 = newstate(v->nfa);
-	//
+	NOERR();
 	EMPTYARC(lp, s);
 	EMPTYARC(lp, s2);
-	//
+	NOERR();
 
 	/* break remaining subRE into x{...} and what follows */
 	t = subre(v, '.', COMBINE(qprefer, atom->flags), lp, rp);
@@ -1058,7 +1042,7 @@ struct subre *top;		/* subtree top */
 		/* hit a backref that wants to copy the filled-in skeleton */
 		dupnfa(v->nfa, v->subs[subno]->begin, v->subs[subno]->end,
 						atom->begin, atom->end);
-		//
+		NOERR();
 	}
 
 	/* it's quantifier time; first, turn x{0,...} into x{1,...}|empty */
@@ -1067,12 +1051,12 @@ struct subre *top;		/* subtree top */
 		assert(PREF(qprefer) != 0);
 		f = COMBINE(qprefer, atom->flags);
 		t = subre(v, '|', f, lp, atom->end);
-		//
+		NOERR();
 		t->left = atom;
 		t->right = subre(v, '|', PREF(f), s2, atom->end);
-		//
+		NOERR();
 		t->right->left = subre(v, '=', 0, s2, atom->end);
-		//
+		NOERR();
 		*atomp = t;
 		atomp = &t->left;
 		m = 1;
@@ -1098,9 +1082,9 @@ struct subre *top;		/* subtree top */
 		repeat(v, s, atom->begin, m-1, (n == INFINITY) ? n : n-1);
 		f = COMBINE(qprefer, atom->flags);
 		t = subre(v, '.', f, s, atom->end);	/* prefix and atom */
-		//
+		NOERR();
 		t->left = subre(v, '=', PREF(f), s, atom->begin);
-		//
+		NOERR();
 		t->right = atom;
 		*atomp = t;
 	}
@@ -1120,9 +1104,9 @@ struct subre *top;		/* subtree top */
 
 /*
  - nonword - generate arcs for non-word-character ahead or behind
- ^ static void nonword(struct vars *, int, struct state *, struct state *);
+ ^ static VOID nonword(struct vars *, int, struct state *, struct state *);
  */
-static void
+static VOID
 nonword(v, dir, lp, rp)
 struct vars *v;
 int dir;			/* AHEAD or BEHIND */
@@ -1140,9 +1124,9 @@ struct state *rp;
 
 /*
  - word - generate arcs for word character ahead or behind
- ^ static void word(struct vars *, int, struct state *, struct state *);
+ ^ static VOID word(struct vars *, int, struct state *, struct state *);
  */
-static void
+static VOID
 word(v, dir, lp, rp)
 struct vars *v;
 int dir;			/* AHEAD or BEHIND */
@@ -1169,7 +1153,7 @@ struct vars *v;
 		NEXT();
 	}
 	if (SEE(DIGIT) || n > DUPMAX) {
-		//ERR(REG_BADBR);
+		ERR(REG_BADBR);
 		return 0;
 	}
 	return n;
@@ -1183,9 +1167,9 @@ struct vars *v;
  * left and right end states, however!)  This used to be important for the
  * subRE tree, although the important bits are now handled by the in-line
  * code in parse(), and when this is called, it doesn't matter any more.
- ^ static void repeat(struct vars *, struct state *, struct state *, int, int);
+ ^ static VOID repeat(struct vars *, struct state *, struct state *, int, int);
  */
-static void
+static VOID
 repeat(v, lp, rp, m, n)
 struct vars *v;
 struct state *lp;
@@ -1197,8 +1181,8 @@ int n;
 #	define	INF	3
 #	define	PAIR(x, y)	((x)*4 + (y))
 #	define	REDUCE(x)	( ((x) == INFINITY) ? INF : (((x) > 1) ? SOME : (x)) )
-	const int rm = REDUCE(m);
-	const int rn = REDUCE(n);
+	CONST int rm = REDUCE(m);
+	CONST int rn = REDUCE(n);
 	struct state *s;
 	struct state *s2;
 
@@ -1212,12 +1196,12 @@ int n;
 		break;
 	case PAIR(0, SOME):		/* do as x{1,n}| */
 		repeat(v, lp, rp, 1, n);
-		//
+		NOERR();
 		EMPTYARC(lp, rp);
 		break;
 	case PAIR(0, INF):		/* loop x around */
 		s = newstate(v->nfa);
-		//
+		NOERR();
 		moveouts(v->nfa, lp, s);
 		moveins(v->nfa, rp, s);
 		EMPTYARC(lp, s);
@@ -1227,18 +1211,18 @@ int n;
 		break;
 	case PAIR(1, SOME):		/* do as x{0,n-1}x = (x{1,n-1}|)x */
 		s = newstate(v->nfa);
-		//
+		NOERR();
 		moveouts(v->nfa, lp, s);
 		dupnfa(v->nfa, s, rp, lp, s);
-		//
+		NOERR();
 		repeat(v, lp, s, 1, n-1);
-		//
+		NOERR();
 		EMPTYARC(lp, s);
 		break;
 	case PAIR(1, INF):		/* add loopback arc */
 		s = newstate(v->nfa);
 		s2 = newstate(v->nfa);
-		//
+		NOERR();
 		moveouts(v->nfa, lp, s);
 		moveins(v->nfa, rp, s2);
 		EMPTYARC(lp, s);
@@ -1247,22 +1231,22 @@ int n;
 		break;
 	case PAIR(SOME, SOME):		/* do as x{m-1,n-1}x */
 		s = newstate(v->nfa);
-		//
+		NOERR();
 		moveouts(v->nfa, lp, s);
 		dupnfa(v->nfa, s, rp, lp, s);
-		//
+		NOERR();
 		repeat(v, lp, s, m-1, n-1);
 		break;
 	case PAIR(SOME, INF):		/* do as x{m-1,}x */
 		s = newstate(v->nfa);
-		//
+		NOERR();
 		moveouts(v->nfa, lp, s);
 		dupnfa(v->nfa, s, rp, lp, s);
-		//
+		NOERR();
 		repeat(v, lp, s, m-1, n);
 		break;
 	default:
-		//ERR(REG_ASSERT);
+		ERR(REG_ASSERT);
 		break;
 	}
 }
@@ -1270,9 +1254,9 @@ int n;
 /*
  - bracket - handle non-complemented bracket expression
  * Also called from cbracket for complemented bracket expressions.
- ^ static void bracket(struct vars *, struct state *, struct state *);
+ ^ static VOID bracket(struct vars *, struct state *, struct state *);
  */
-static void
+static VOID
 bracket(v, lp, rp)
 struct vars *v;
 struct state *lp;
@@ -1291,9 +1275,9 @@ struct state *rp;
  * We do it by calling bracket() with dummy endpoints, and then complementing
  * the result.  The alternative would be to invoke rainbow(), and then delete
  * arcs as the b.e. is seen... but that gets messy.
- ^ static void cbracket(struct vars *, struct state *, struct state *);
+ ^ static VOID cbracket(struct vars *, struct state *, struct state *);
  */
-static void
+static VOID
 cbracket(v, lp, rp)
 struct vars *v;
 struct state *lp;
@@ -1309,17 +1293,17 @@ struct state *rp;
 	chr *p;
 	int i;
 
-	//
+	NOERR();
 	bracket(v, left, right);
 	if (v->cflags&REG_NLSTOP)
 		newarc(v->nfa, PLAIN, v->nlcolor, left, right);
-	//
+	NOERR();
 
 	assert(lp->nouts == 0);		/* all outarcs will be ours */
 
 	/* easy part of complementing */
 	colorcomplement(v->nfa, v->cm, PLAIN, left, lp, rp);
-	
+	NOERR();
 	if (v->mcces == NULL) {		/* no MCCEs -- we're done */
 		dropstate(v->nfa, left);
 		assert(right->nins == 0);
@@ -1340,9 +1324,9 @@ struct state *rp;
 			assert(a == NULL);
 		}
 		s = newstate(v->nfa);
-		
+		NOERR();
 		newarc(v->nfa, PLAIN, co, lp, s);
-		
+		NOERR();
 		pa = findarc(v->mccepbegin, PLAIN, co);
 		assert(pa != NULL);
 		if (ba == NULL) {	/* easy case, need all of them */
@@ -1363,7 +1347,7 @@ struct state *rp;
 			if (s->nouts == 0)	/* limit of selectivity: none */
 				dropstate(v->nfa, s);	/* frees arc too */
 		}
-		
+		NOERR();
 	}
 
 	delsub(v->nfa, left, right);
@@ -1375,9 +1359,9 @@ struct state *rp;
 			
 /*
  - brackpart - handle one item (or range) within a bracket expression
- ^ static void brackpart(struct vars *, struct state *, struct state *);
+ ^ static VOID brackpart(struct vars *, struct state *, struct state *);
  */
-static void
+static VOID
 brackpart(v, lp, rp)
 struct vars *v;
 struct state *lp;
@@ -1405,25 +1389,25 @@ struct state *rp;
 			return;
 		}
 		startc = element(v, c, c+1);
-		
+		NOERR();
 		break;
 	case COLLEL:
 		startp = v->now;
 		endp = scanplain(v);
 		INSIST(startp < endp, REG_ECOLLATE);
-		
+		NOERR();
 		startc = element(v, startp, endp);
-		
+		NOERR();
 		break;
 	case ECLASS:
 		startp = v->now;
 		endp = scanplain(v);
 		INSIST(startp < endp, REG_ECOLLATE);
-		
+		NOERR();
 		startc = element(v, startp, endp);
-		
+		NOERR();
 		cv = eclass(v, startc, (v->cflags&REG_ICASE));
-		
+		NOERR();
 		dovec(v, cv, lp, rp);
 		return;
 		break;
@@ -1431,9 +1415,9 @@ struct state *rp;
 		startp = v->now;
 		endp = scanplain(v);
 		INSIST(startp < endp, REG_ECTYPE);
-		
+		NOERR();
 		cv = cclass(v, startp, endp, (v->cflags&REG_ICASE));
-		
+		NOERR();
 		dovec(v, cv, lp, rp);
 		return;
 		break;
@@ -1451,15 +1435,15 @@ struct state *rp;
 			c[0] = v->nextvalue;
 			NEXT();
 			endc = element(v, c, c+1);
-			
+			NOERR();
 			break;
 		case COLLEL:
 			startp = v->now;
 			endp = scanplain(v);
 			INSIST(startp < endp, REG_ECOLLATE);
-			
+			NOERR();
 			endc = element(v, startp, endp);
-			
+			NOERR();
 			break;
 		default:
 			ERR(REG_ERANGE);
@@ -1477,7 +1461,7 @@ struct state *rp;
 	if (startc != endc)
 		NOTE(REG_UUNPORT);
 	cv = range(v, startc, endc, (v->cflags&REG_ICASE));
-	
+	NOERR();
 	dovec(v, cv, lp, rp);
 }
 
@@ -1512,9 +1496,9 @@ struct vars *v;
  - leaders - process a cvec of collating elements to also include leaders
  * Also gives all characters involved their own colors, which is almost
  * certainly necessary, and sets up little disconnected subNFA.
- ^ static void leaders(struct vars *, struct cvec *);
+ ^ static VOID leaders(struct vars *, struct cvec *);
  */
-static void
+static VOID
 leaders(v, cv)
 struct vars *v;
 struct cvec *cv;
@@ -1527,7 +1511,7 @@ struct cvec *cv;
 
 	v->mccepbegin = newstate(v->nfa);
 	v->mccepend = newstate(v->nfa);
-	
+	NOERR();
 
 	for (mcce = 0; mcce < cv->nmcces; mcce++) {
 		p = cv->mcces[mcce];
@@ -1555,9 +1539,9 @@ struct cvec *cv;
 /*
  - onechr - fill in arcs for a plain character, and possible case complements
  * This is mostly a shortcut for efficient handling of the common case.
- ^ static void onechr(struct vars *, pchr, struct state *, struct state *);
+ ^ static VOID onechr(struct vars *, pchr, struct state *, struct state *);
  */
-static void
+static VOID
 onechr(v, c, lp, rp)
 struct vars *v;
 pchr c;
@@ -1576,10 +1560,10 @@ struct state *rp;
 /*
  - dovec - fill in arcs for each element of a cvec
  * This one has to handle the messy cases, like MCCEs and MCCE leaders.
- ^ static void dovec(struct vars *, struct cvec *, struct state *,
+ ^ static VOID dovec(struct vars *, struct cvec *, struct state *,
  ^ 	struct state *);
  */
-static void
+static VOID
 dovec(v, cv, lp, rp)
 struct vars *v;
 struct cvec *cv;
@@ -1604,7 +1588,7 @@ struct state *rp;
 			if (v->cv2 != NULL)
 				free(v->cv2);
 			v->cv2 = newcvec(v->mcces->nchrs, 0, v->mcces->nmcces);
-			//
+			NOERR();
 			leads = v->cv2;
 		} else
 			leads = clearcvec(v->cv2);
@@ -1653,9 +1637,9 @@ struct state *rp;
 			s = a->to;
 		else {
 			s = newstate(v->nfa);
-			//
+			NOERR();
 			newarc(v->nfa, PLAIN, co, lp, s);
-			//
+			NOERR();
 		}
 		pa = findarc(v->mccepbegin, PLAIN, co);
 		assert(pa != NULL);
@@ -1663,7 +1647,7 @@ struct state *rp;
 		newarc(v->nfa, '$', 1, s, rp);
 		newarc(v->nfa, '$', 0, s, rp);
 		colorcomplement(v->nfa, v->cm, AHEAD, ps, s, rp);
-		//
+		NOERR();
 	}
 
 	/* and the MCCEs */
@@ -1681,9 +1665,9 @@ struct state *rp;
 			s = a->to;
 		else {
 			s = newstate(v->nfa);
-			//
+			NOERR();
 			newarc(v->nfa, PLAIN, co, lp, s);
-			//
+			NOERR();
 		}
 		assert(*p != 0);	/* at least two chars */
 		assert(singleton(v->cm, *p));
@@ -1691,7 +1675,7 @@ struct state *rp;
 		co = GETCOLOR(v->cm, ch);
 		assert(*p == 0);	/* and only two, for now */
 		newarc(v->nfa, PLAIN, co, s, rp);
-		
+		NOERR();
 	}
 }
 
@@ -1729,9 +1713,9 @@ pchr to;
  * Does NEXT().  Must not be called from any unusual lexical context.
  * This should be reconciled with the \w etc. handling in lex.c, and
  * should be cleaned up to reduce dependencies on input scanning.
- ^ static void wordchrs(struct vars *);
+ ^ static VOID wordchrs(struct vars *);
  */
-static void
+static VOID
 wordchrs(v)
 struct vars *v;
 {
@@ -1745,7 +1729,7 @@ struct vars *v;
 
 	left = newstate(v->nfa);
 	right = newstate(v->nfa);
-	
+	NOERR();
 	/* fine point:  implemented with [::], and lexer will set REG_ULOCALE */
 	lexword(v);
 	NEXT();
@@ -1753,7 +1737,7 @@ struct vars *v;
 	bracket(v, left, right);
 	assert((v->savenow != NULL && SEE(']')) || ISERR());
 	NEXT();
-	
+	NOERR();
 	v->wordchrs = left;
 }
 
@@ -1803,9 +1787,9 @@ struct state *end;
 
 /*
  - freesubre - free a subRE subtree
- ^ static void freesubre(struct vars *, struct subre *);
+ ^ static VOID freesubre(struct vars *, struct subre *);
  */
-static void
+static VOID
 freesubre(v, sr)
 struct vars *v;			/* might be NULL */
 struct subre *sr;
@@ -1823,9 +1807,9 @@ struct subre *sr;
 
 /*
  - freesrnode - free one node in a subRE subtree
- ^ static void freesrnode(struct vars *, struct subre *);
+ ^ static VOID freesrnode(struct vars *, struct subre *);
  */
-static void
+static VOID
 freesrnode(v, sr)
 struct vars *v;			/* might be NULL */
 struct subre *sr;
@@ -1846,9 +1830,9 @@ struct subre *sr;
 
 /*
  - optst - optimize a subRE subtree
- ^ static void optst(struct vars *, struct subre *);
+ ^ static VOID optst(struct vars *, struct subre *);
  */
-static void
+static VOID
 optst(v, t)
 struct vars *v;
 struct subre *t;
@@ -1887,9 +1871,9 @@ int start;			/* starting point for subtree numbers */
 
 /*
  - markst - mark tree nodes as INUSE
- ^ static void markst(struct subre *);
+ ^ static VOID markst(struct subre *);
  */
-static void
+static VOID
 markst(t)
 struct subre *t;
 {
@@ -1904,9 +1888,9 @@ struct subre *t;
 
 /*
  - cleanst - free any tree nodes not marked INUSE
- ^ static void cleanst(struct vars *);
+ ^ static VOID cleanst(struct vars *);
  */
-static void
+static VOID
 cleanst(v)
 struct vars *v;
 {
@@ -2012,9 +1996,9 @@ int pos;
 
 /*
  - freelacons - free lookahead-constraint subRE vector
- ^ static void freelacons(struct subre *, int);
+ ^ static VOID freelacons(struct subre *, int);
  */
-static void
+static VOID
 freelacons(subs, n)
 struct subre *subs;
 int n;
@@ -2031,9 +2015,9 @@ int n;
 
 /*
  - rfree - free a whole RE (insides of regfree)
- ^ static void rfree(regex_t *);
+ ^ static VOID rfree(regex_t *);
  */
-static void
+static VOID
 rfree(re)
 regex_t *re;
 {
@@ -2059,9 +2043,9 @@ regex_t *re;
 
 /*
  - dump - dump an RE in human-readable form
- ^ static void dump(regex_t *, FILE *);
+ ^ static VOID dump(regex_t *, FILE *);
  */
-static void
+static VOID
 dump(re, f)
 regex_t *re;
 FILE *f;
@@ -2103,9 +2087,9 @@ FILE *f;
 
 /*
  - dumpst - dump a subRE tree
- ^ static void dumpst(struct subre *, FILE *, int);
+ ^ static VOID dumpst(struct subre *, FILE *, int);
  */
-static void
+static VOID
 dumpst(t, f, nfapresent)
 struct subre *t;
 FILE *f;
@@ -2120,9 +2104,9 @@ int nfapresent;			/* is the original NFA still around? */
 
 /*
  - stdump - recursive guts of dumpst
- ^ static void stdump(struct subre *, FILE *, int);
+ ^ static VOID stdump(struct subre *, FILE *, int);
  */
-static void
+static VOID
 stdump(t, f, nfapresent)
 struct subre *t;
 FILE *f;

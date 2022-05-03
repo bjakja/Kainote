@@ -33,8 +33,8 @@
     #include "wx/statusbr.h"
 #endif // WX_PRECOMP
 
-extern const char wxFrameNameStr[] = "frame";
-extern const char wxStatusLineNameStr[] = "status_line";
+//extern const char wxFrameNameStr[] = "frame";
+//extern const char wxStatusLineNameStr[] = "status_line";
 
 // ----------------------------------------------------------------------------
 // event table

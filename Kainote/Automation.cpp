@@ -1119,7 +1119,7 @@
 			Options.SaveOptions();
 		}
 
-		wxWCharBuffer editorbuf = editor.c_str(), sfnamebuf = Filename.c_str();
+		wxWCharBuffer editorbuf = editor.wc_str(), sfnamebuf = Filename.wc_str();
 		wchar_t **cmdline = new wchar_t*[3];
 		cmdline[0] = editorbuf.data();
 		cmdline[1] = sfnamebuf.data();

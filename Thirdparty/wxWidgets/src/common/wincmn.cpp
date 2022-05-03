@@ -87,7 +87,7 @@ wxWindowList wxTopLevelWindows;
 wxMenu *wxCurrentPopupMenu = NULL;
 #endif // wxUSE_MENUS
 
-extern const char wxPanelNameStr[] = "panel";
+//extern const char wxPanelNameStr[] = "panel";
 
 // ----------------------------------------------------------------------------
 // static data

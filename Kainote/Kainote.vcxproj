@@ -309,7 +309,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <MinimalRebuild>false</MinimalRebuild>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions512</EnableEnhancedInstructionSet>
       <LanguageStandard>stdcpp14</LanguageStandard>
-      <LanguageStandard_C>Default</LanguageStandard_C>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>__WXMSW__;__WXDEBUG__;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -679,6 +679,9 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     </ProjectReference>
     <ProjectReference Include="..\Thirdparty\Build\Libass\Libass.vcxproj">
       <Project>{dd6c83b0-c8e0-4c46-bfce-c758b31904b1}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Thirdparty\Build\LuaBins\LuaBins.vcxproj">
+      <Project>{af5cd8a9-c5dc-4780-ba28-5ed5ef9a3536}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Thirdparty\Hunspell\msvc\libhunspell.vcxproj">
       <Project>{53609bb3-d874-465c-af7b-df626db0d89b}</Project>

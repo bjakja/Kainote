@@ -31,6 +31,92 @@
 
 #include "regguts.h"
 
+
+
+/* lazy-DFA representation */
+struct arcp {			/* "pointer" to an outarc */
+	struct sset *ss;
+	color co;
+};
+
+struct sset {			/* state set */
+	unsigned *states;	/* pointer to bitvector */
+	unsigned hash;		/* hash of bitvector */
+#		define	HASH(bv, nw)	(((nw) == 1) ? *(bv) : hash(bv, nw))
+#	define	HIT(h,bv,ss,nw)	((ss)->hash == (h) && ((nw) == 1 || \
+		memcmp(VS(bv), VS((ss)->states), (nw)*sizeof(unsigned)) == 0))
+	int flags;
+#		define	STARTER		01	/* the initial state set */
+#		define	POSTSTATE	02	/* includes the goal state */
+#		define	LOCKED		04	/* locked in cache */
+#		define	NOPROGRESS	010	/* zero-progress state set */
+	struct arcp ins;	/* chain of inarcs pointing here */
+	chr *lastseen;		/* last entered on arrival here */
+	struct sset **outs;	/* outarc vector indexed by color */
+	struct arcp *inchain;	/* chain-pointer vector for outarcs */
+};
+
+struct dfa {
+	int nssets;		/* size of cache */
+	int nssused;		/* how many entries occupied yet */
+	int nstates;		/* number of states */
+	int ncolors;		/* length of outarc and inchain vectors */
+	int wordsper;		/* length of state-set bitvectors */
+	struct sset *ssets;	/* state-set cache */
+	unsigned *statesarea;	/* bitvector storage */
+	unsigned *work;		/* pointer to work area within statesarea */
+	struct sset **outsarea;	/* outarc-vector storage */
+	struct arcp *incarea;	/* inchain storage */
+	struct cnfa *cnfa;
+	struct colormap *cm;
+	chr *lastpost;		/* location of last cache-flushed success */
+	chr *lastnopr;		/* location of last cache-flushed NOPROGRESS */
+	struct sset *search;	/* replacement-search-pointer memory */
+	int cptsmalloced;	/* were the areas individually malloced? */
+	char *mallocarea;	/* self, or master malloced area, or NULL */
+};
+
+#define	WORK	1		/* number of work bitvectors needed */
+
+/* setup for non-malloc allocation for small cases */
+#define	FEWSTATES	20	/* must be less than UBITS */
+#define	FEWCOLORS	15
+struct smalldfa {
+	struct dfa dfa;
+	struct sset ssets[FEWSTATES*2];
+	unsigned statesarea[FEWSTATES*2 + WORK];
+	struct sset *outsarea[FEWSTATES*2 * FEWCOLORS];
+	struct arcp incarea[FEWSTATES*2 * FEWCOLORS];
+};
+#define	DOMALLOC	((struct smalldfa *)NULL)	/* force malloc */
+
+
+
+/* internal variables, bundled for easy passing around */
+struct vars {
+	regex_t *re;
+	struct guts *g;
+	int eflags;		/* copies of arguments */
+	size_t nmatch;
+	regmatch_t *pmatch;
+	rm_detail_t *details;
+	chr *start;		/* start of string */
+	chr *stop;		/* just past end of string */
+	int err;		/* error code if any (0 none) */
+	regoff_t *mem;		/* memory vector for backtracking */
+	struct smalldfa dfa1;
+	struct smalldfa dfa2;
+};
+#define	VISERR(vv)	((vv)->err != 0)	/* have we seen an error yet? */
+#define	ISERR()	VISERR(v)
+#define	VERR(vv,e)	(((vv)->err) ? (vv)->err : ((vv)->err = (e)))
+#define	ERR(e)	(void)VERR(v, e)		/* record an error */
+#define	NOERR()	{if (ISERR()) return v->err;}	/* if error seen, return it */
+#define	OFF(p)	((p) - v->start)
+#define	LOFF(p)	((long)OFF(p))
+
+
+
 /*
  * forward declarations
  */
@@ -189,12 +275,12 @@ struct colormap *cm;
 	/* first, a shot with the search RE */
 	s = newdfa(v, &v->g->search, cm, &v->dfa1);
 	assert(!(ISERR() && s != NULL));
-	//NOERR();
+	NOERR();
 	MDEBUG(("\nsearch at %ld\n", LOFF(v->start)));
 	cold = NULL;
 	close = shortest(v, s, v->start, v->start, v->stop, &cold, (int *)NULL);
 	freedfa(s);
-	//NOERR();
+	NOERR();
 	if (v->g->cflags&REG_EXPECT) {
 		assert(v->details != NULL);
 		if (cold != NULL)
@@ -215,7 +301,7 @@ struct colormap *cm;
 	MDEBUG(("between %ld and %ld\n", LOFF(open), LOFF(close)));
 	d = newdfa(v, cnfa, cm, &v->dfa1);
 	assert(!(ISERR() && d != NULL));
-	/*NOERR();*/
+	NOERR();
 	for (begin = open; begin <= close; begin++) {
 		MDEBUG(("\nfind trying at %ld\n", LOFF(begin)));
 		if (shorter)
@@ -223,7 +309,7 @@ struct colormap *cm;
 							(chr **)NULL, &hitend);
 		else
 			end = longest(v, d, begin, v->stop, &hitend);
-		/*NOERR();*/
+		NOERR();
 		if (hitend && cold == NULL)
 			cold = begin;
 		if (end != NULL)
@@ -267,19 +353,19 @@ struct colormap *cm;
 	int ret;
 
 	s = newdfa(v, &v->g->search, cm, &v->dfa1);
-	//NOERR();
+	NOERR();
 	d = newdfa(v, cnfa, cm, &v->dfa2);
-	/*if (ISERR()) {
+	if (ISERR()) {
 		assert(d == NULL);
 		freedfa(s);
 		return v->err;
-	}*/
+	}
     cold = NULL;// WX: fix gcc warnings about cold being possibly uninitialized
 	ret = cfindloop(v, cnfa, cm, d, s, &cold);
 
 	freedfa(d);
 	freedfa(s);
-	//NOERR();
+	NOERR();
 	if (v->g->cflags&REG_EXPECT) {
 		assert(v->details != NULL);
 		if (cold != NULL)
@@ -356,7 +442,7 @@ chr **coldp;			/* where to put coldstart pointer */
 					return REG_OKAY;
 				}
 				if (er != REG_NOMATCH) {
-					//ERR(er);
+					ERR(er);
 					return er;
 				}
 				if ((shorter) ? end == estop : end == begin) {
@@ -507,13 +593,13 @@ chr *end;			/* end of same */
 	assert(t->right != NULL && t->right->cnfa.nstates > 0);
 
 	d = newdfa(v, &t->left->cnfa, &v->g->cmap, &v->dfa1);
-	//NOERR();
+	NOERR();
 	d2 = newdfa(v, &t->right->cnfa, &v->g->cmap, &v->dfa2);
-	/*if (ISERR()) {
+	if (ISERR()) {
 		assert(d2 == NULL);
 		freedfa(d);
 		return v->err;
-	}*/
+	}
 
 	/* pick a tentative midpoint */
 	if (shorter)
@@ -584,8 +670,8 @@ chr *end;			/* end of same */
 		MDEBUG(("trying %dth\n", i));
 		assert(t->left != NULL && t->left->cnfa.nstates > 0);
 		d = newdfa(v, &t->left->cnfa, &v->g->cmap, &v->dfa1);
-		/*if (ISERR())
-			return v->err;*/
+		if (ISERR())
+			return v->err;
 		if (longest(v, d, begin, end, (int *)NULL) == end) {
 			MDEBUG(("success\n"));
 			freedfa(d);
@@ -671,13 +757,13 @@ chr *end;			/* end of same */
 		return crevdissect(v, t, begin, end);
 
 	d = newdfa(v, &t->left->cnfa, &v->g->cmap, DOMALLOC);
-	//if (ISERR())
-		//return v->err;
+	if (ISERR())
+		return v->err;
 	d2 = newdfa(v, &t->right->cnfa, &v->g->cmap, DOMALLOC);
-	/*if (ISERR()) {
+	if (ISERR()) {
 		freedfa(d);
 		return v->err;
-	}*/
+	}
 	MDEBUG(("cconcat %d\n", t->retry));
 
 	/* pick a tentative midpoint */
@@ -764,13 +850,13 @@ chr *end;			/* end of same */
 
 	/* concatenation -- need to split the substring between parts */
 	d = newdfa(v, &t->left->cnfa, &v->g->cmap, DOMALLOC);
-	/*if (ISERR())
-		return v->err;*/
+	if (ISERR())
+		return v->err;
 	d2 = newdfa(v, &t->right->cnfa, &v->g->cmap, DOMALLOC);
-	/*if (ISERR()) {
+	if (ISERR()) {
 		freedfa(d);
 		return v->err;
-	}*/
+	}
 	MDEBUG(("crev %d\n", t->retry));
 
 	/* pick a tentative midpoint */
@@ -927,8 +1013,8 @@ chr *end;			/* end of same */
 
 	if (v->mem[t->retry] == UNTRIED) {
 		d = newdfa(v, &t->left->cnfa, &v->g->cmap, DOMALLOC);
-		//if (ISERR())
-			//return v->err;
+		if (ISERR())
+			return v->err;
 		if (longest(v, d, begin, end, (int *)NULL) != end) {
 			freedfa(d);
 			v->mem[t->retry] = TRIED;
