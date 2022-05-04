@@ -29,7 +29,7 @@
 #include "Visuals.h"
 
 
-//csri_rend *SubtitlesProvider::m_CsriRenderer = nullptr;
+csri_rend *SubtitlesProvider::m_CsriRenderer = nullptr;
 ASS_Renderer *SubtitlesProvider::m_Libass = nullptr;
 ASS_Library *SubtitlesProvider::m_Library = nullptr;
 

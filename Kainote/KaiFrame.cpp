@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifdef guano
+
 #include "kainoteApp.h"
 #include "KaiFrame.h"
 #include "Config.h"
@@ -22,6 +22,7 @@
 #include "EditBox.h"
 #include "VideoBox.h"
 #include "Notebook.h"
+#include "AudioBox.h"
 #include <wx/dc.h>
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
@@ -564,4 +565,3 @@ bool KaiFrame::SetFont(const wxFont &font)
 
 wxIMPLEMENT_ABSTRACT_CLASS(KaiFrame, wxTopLevelWindow);
 
-#endif

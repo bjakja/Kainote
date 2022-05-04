@@ -366,6 +366,9 @@
     <ClCompile Include="Demux.cpp">
       <Filter>D</Filter>
     </ClCompile>
+    <ClCompile Include="KainoteFrame.cpp">
+      <Filter>K</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ContextDX9.h">
@@ -675,6 +678,11 @@
     <ClInclude Include="Demux.h">
       <Filter>D</Filter>
     </ClInclude>
+    <ClInclude Include="KainoteFrame.h">
+      <Filter>K</Filter>
+    </ClInclude>
+    <ClInclude Include="VisualClipPoint.h" />
+    <ClInclude Include="VisualClips.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc">

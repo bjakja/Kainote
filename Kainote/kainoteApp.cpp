@@ -19,7 +19,7 @@
  * along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
  **************************************************************/
 
-#ifdef guano
+
  
 #include "KainoteApp.h"
 #include "OpennWrite.h"
@@ -375,4 +375,3 @@ bool kainoteApp::IsBusy()
 	return false;
 }
 
-#endif

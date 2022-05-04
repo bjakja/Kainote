@@ -14,10 +14,10 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifdef guano
+
 #include "StyleStore.h"
 #include "kainoteFrame.h"
-
+#include "KaiStaticBoxSizer.h"
 #include "config.h"
 #include "SubsGrid.h"
 #include "Notebook.h"
@@ -31,6 +31,7 @@
 #include "Styles.h"
 #include <wx/intl.h>
 #include <wx/string.h>
+#include <wx/filedlg.h>
 #include "StyleChange.h"
 #include "KaiMessageBox.h"
 #include "FontEnumerator.h"
@@ -758,7 +759,7 @@ void StyleStore::OnCleanStyles(wxCommandEvent& event)
 	}
 	if (existsStyles.IsEmpty()){ existsStyles = _("Brak"); }
 	if (delStyles.IsEmpty()){ delStyles = _("Brak"); }
-	wxWindow *parent = (tab->video->IsFullScreen()) ? tab->video->GetFullScreenWindow() : nullptr;
+	wxWindow *parent = (tab->video->IsFullScreen()) ? (wxWindow*)tab->video->GetFullScreenWindow() : nullptr;
 	KaiMessageBox(wxString::Format(_("Używane style:\n%s\nUsunięte style:\n%s"), existsStyles, delStyles), 
 		_("Status usuniętych stylów"), 4L, parent);
 }
@@ -1026,4 +1027,3 @@ bool StyleStore::HaveMultiEdition()
 	return numsels > 1;
 }
 
-#endif

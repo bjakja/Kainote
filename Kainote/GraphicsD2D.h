@@ -8,7 +8,7 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-//#ifdef guano
+
 #pragma once
 
 #include <wx/colour.h>
@@ -16,25 +16,25 @@
 #include <wx/object.h>
 #include <wx/font.h>
 
-enum wxAntialiasMode
-{
-	wxANTIALIAS_NONE, // should be 0
-	wxANTIALIAS_DEFAULT
-};
-
-enum wxInterpolationQuality
-{
-	// default interpolation
-	wxINTERPOLATION_DEFAULT,
-	// no interpolation
-	wxINTERPOLATION_NONE,
-	// fast interpolation, suited for interactivity
-	wxINTERPOLATION_FAST,
-	// better quality
-	wxINTERPOLATION_GOOD,
-	// best quality, not suited for interactivity
-	wxINTERPOLATION_BEST
-};
+enum wxAntialiasMode;
+//{
+//	wxANTIALIAS_NONE, // should be 0
+//	wxANTIALIAS_DEFAULT
+//};
+//
+enum wxInterpolationQuality;
+//{
+//	// default interpolation
+//	wxINTERPOLATION_DEFAULT,
+//	// no interpolation
+//	wxINTERPOLATION_NONE,
+//	// fast interpolation, suited for interactivity
+//	wxINTERPOLATION_FAST,
+//	// better quality
+//	wxINTERPOLATION_GOOD,
+//	// best quality, not suited for interactivity
+//	wxINTERPOLATION_BEST
+//};
 
 enum wxGradientType
 {

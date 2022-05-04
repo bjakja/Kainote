@@ -217,7 +217,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>Dsound.lib;kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;base.lib;core.lib;wxpng.lib;wxregex.lib;zlib.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;strmbase.lib;Boost.lib;libhunspell.lib;libass.lib;dxva2.lib</AdditionalDependencies>
+      <AdditionalDependencies>Dsound.lib;kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;base.lib;core.lib;wxpng.lib;wxregex.lib;zlib.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;strmbase.lib;Boost.lib;libhunspell.lib;libass.lib;dxva2.lib;Dwmapi.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Platform)\$(Configuration);C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(SolutionDir)\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
@@ -252,6 +252,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
   <ItemGroup>
     <ClCompile Include="Demux.cpp" />
     <ClCompile Include="DialogueTextEditor.cpp" />
+    <ClCompile Include="KainoteFrame.cpp" />
     <ClCompile Include="Notebook.cpp" />
     <ClCompile Include="TagFindReplace.cpp" />
     <ClCompile Include="VisualAllTags.cpp" />
@@ -458,6 +459,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="DummyVideo.h" />
     <ClInclude Include="FontCatalogList.h" />
     <ClInclude Include="KaiGauge.h" />
+    <ClInclude Include="KainoteFrame.h" />
     <ClInclude Include="KaiPanel.h" />
     <ClInclude Include="LineParse.h" />
     <ClInclude Include="Notebook.h" />
@@ -558,6 +560,8 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="VideoToolbar.h" />
     <ClInclude Include="VisualAllTagsControls.h" />
     <ClInclude Include="VisualAllTagsEdition.h" />
+    <ClInclude Include="VisualClipPoint.h" />
+    <ClInclude Include="VisualClips.h" />
     <ClInclude Include="VisualDrawingShapes.h" />
     <ClInclude Include="Visuals.h" />
     <ClInclude Include="CsriMod.h" />

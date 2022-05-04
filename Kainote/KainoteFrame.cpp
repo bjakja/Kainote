@@ -20,7 +20,7 @@
 
 **************************************************************/
 
-#ifdef guano
+
 #include "KainoteFrame.h"
 
 #include "SubsTime.h"
@@ -54,6 +54,11 @@
 #include "shiftTimes.h"
 #include "Menu.h"
 #include "KaiFrame.h"
+#include "SubtitlesProviderManager.h"
+#include "VideoToolbar.h"
+#include "Audiobox.h"
+#include "TabPanel.h"
+#include "VideoFullscreen.h"
 #include <wx/accel.h>
 #include <wx/dir.h>
 #include <wx/sysopt.h>
@@ -2418,4 +2423,3 @@ void KainoteFrame::SetStatusText(const wxString& label, int field) {
 	StatusBar->SetLabelText(field, label); 
 }
 
-#endif
