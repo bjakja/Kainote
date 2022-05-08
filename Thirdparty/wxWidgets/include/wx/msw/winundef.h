@@ -366,7 +366,7 @@
 
 #ifdef IsMaximized
     #undef IsMaximized
-    inline BOOL IsMaximized(HWND WXUNUSED_IN_WINCE(hwnd))
+    inline BOOL IsMaximized(HWND hwnd)
     {
 #ifdef __WXWINCE__
         return FALSE;

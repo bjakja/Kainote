@@ -32,6 +32,7 @@ class VideoToolbar;
 class VideoSlider;
 class VolSlider;
 
+
 enum PlaybackState;
 
 class VideoBox : public wxWindow

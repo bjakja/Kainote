@@ -19,15 +19,16 @@
 //#include "Videobox.h"
 //#include "dshowplayer.h"
 //#include "Visuals.h"
-#include "Menu.h"
-#include "SubtitlesProviderManager.h"
-#include <dxva2api.h>
-#include <vector>
 
 
+
+
+#include <wx/msw/winundef.h>
+#include <wx/window.h>
 #include <d3d9.h>
 #include <d3dx9.h>
-
+#include <dxva2api.h>
+#include <vector>
 
 
 enum PlaybackState
@@ -74,6 +75,8 @@ class Menu;
 class Provider;
 class VideoBox;
 class Visuals;
+class TabPanel;
+class SubtitlesProviderManager;
 
 class RendererVideo
 {

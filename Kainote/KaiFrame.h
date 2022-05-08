@@ -16,11 +16,12 @@
 
 #pragma once
 #include "Config.h"
+#include <wx/msw/winundef.h>
 #include <wx/window.h>
 #include <wx/toplevel.h>
 #include <wx/sizer.h>
 #include <vector>
-#undef CreateDialog
+
 
 class GraphicsContext;
 

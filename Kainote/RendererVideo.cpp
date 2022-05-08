@@ -21,6 +21,9 @@
 #include "DshowRenderer.h"
 #include "RendererFFMS2.h"
 #include "VideoFullscreen.h"
+#include "Menu.h"
+#include "SubtitlesProviderManager.h"
+#include "TabPanel.h"
 #include <wx/dir.h>
 #include <wx/clipbrd.h>
 

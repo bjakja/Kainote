@@ -16,6 +16,7 @@
 #pragma once
 //#include "Utils.h"
 #include "Menu.h"
+#include <wx/msw/winundef.h>
 #include <wx/window.h>
 #include <wx/dialog.h>
 #include <vector>
