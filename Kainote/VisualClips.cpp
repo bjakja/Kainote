@@ -157,13 +157,13 @@ void DrawingAndClip::DrawVisual(int time)
 	if (lastpos >= 0 && lastpos < (int)Points.size()){
 		D3DXVECTOR2 pos = Points[lastpos].GetVector(this);
 		int rcsize = 3;
-		vertex v9[4];
+		VERTEX v9[4];
 		D3DXCOLOR color(0xAACC8748);
-		CreateVERTEX(&v9[0], pos.x - rcsize, pos.y - rcsize, &color);
-		CreateVERTEX(&v9[1], pos.x + rcsize, pos.y - rcsize, &color);
-		CreateVERTEX(&v9[2], pos.x - rcsize, pos.y + rcsize, &color);
-		CreateVERTEX(&v9[3], pos.x + rcsize, pos.y + rcsize, &color);
-		HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(vertex)), L"primitive failed");
+		CreateVERTEX(&v9[0], pos.x - rcsize, pos.y - rcsize, color);
+		CreateVERTEX(&v9[1], pos.x + rcsize, pos.y - rcsize, color);
+		CreateVERTEX(&v9[2], pos.x - rcsize, pos.y + rcsize, color);
+		CreateVERTEX(&v9[3], pos.x + rcsize, pos.y + rcsize, color);
+		HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX)), L"primitive failed");
 	}
 	if (drawCross){
 		D3DXVECTOR2 v2[2] = { D3DXVECTOR2(x, 0), D3DXVECTOR2(x, this->VideoSize.GetHeight()) };

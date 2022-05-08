@@ -36,64 +36,64 @@ extern "C" {
 
 #include "SubsDialogue.h"
 #include "SubsFile.h"
-//#include "AudioSpectrum.h"
 
 class AudioSpectrum;
 
 
 
-class SubsEntry{
-public:
-	Dialogue *adial;
-	Styles *astyle;
-	SInfo *info;
-	wxString lclass;
-	SubsEntry();
-	~SubsEntry();
-};
+	class SubsEntry{
+	public:
+		Dialogue *adial;
+		Styles *astyle;
+		SInfo *info;
+		wxString lclass;
+		SubsEntry();
+		~SubsEntry();
+	};
 
-class AutoToFile{
+	class AutoToFile{
 
-public:
-	AutoToFile(lua_State *_L, File *subsfile, bool _can_modify, char subsFormat);
-	~AutoToFile();
-	static bool LineToLua(lua_State *L, int i); 
-	static SubsEntry *LuaToLine(lua_State *L);
-	void Cancel();
+	public:
+		AutoToFile(lua_State *_L, File *subsfile, bool _can_modify, char subsFormat);
+		~AutoToFile();
+		static bool LineToLua(lua_State *L, int i); 
+		static SubsEntry *LuaToLine(lua_State *L);
+		void Cancel();
 	
-private:
-	File *file;
-	AudioSpectrum *spectrum = nullptr;
-	lua_State *L;
+	private:
+		File *file;
+		AudioSpectrum *spectrum = NULL;
+		lua_State *L;
 
-	bool can_modify;
-	char subsFormat = ASS;
-	void CheckAllowModify(); // throws an error if modification is disallowed
+		bool can_modify;
+		char subsFormat = ASS;
+		void CheckAllowModify(); // throws an error if modification is disallowed
 
-		// keep a cursor of last accessed item to avoid walking over the entire file on every access
-	//void InitScriptInfoIfNeeded();
+			// keep a cursor of last accessed item to avoid walking over the entire file on every access
+		//void InitScriptInfoIfNeeded();
 
-	static int ObjectIndexRead(lua_State *L);
-	static int ObjectIndexWrite(lua_State *L);
-	static int ObjectGetLen(lua_State *L);
-	static int ObjectDelete(lua_State *L);
-	static int ObjectDeleteRange(lua_State *L);
-	static int ObjectAppend(lua_State *L);
-	static int ObjectInsert(lua_State *L);
-	static int ObjectLens(lua_State *L);
-	static int ObjectGarbageCollect(lua_State *L);
-	static int ObjectIPairs(lua_State *L);
-	static int IterNext(lua_State *L);
+		static int ObjectIndexRead(lua_State *L);
+		static int ObjectIndexWrite(lua_State *L);
+		static int ObjectGetLen(lua_State *L);
+		static int ObjectDelete(lua_State *L);
+		static int ObjectDeleteRange(lua_State *L);
+		static int ObjectAppend(lua_State *L);
+		static int ObjectInsert(lua_State *L);
+		static int ObjectLens(lua_State *L);
+		static int ObjectGarbageCollect(lua_State *L);
+		static int ObjectIPairs(lua_State *L);
+		static int IterNext(lua_State *L);
 
-	static int LuaParseKaraokeData(lua_State *L);
-	static int LuaGetScriptResolution(lua_State *L);
-	static int LuaSetUndoPoint(lua_State *L) {return 0;};
-	//static int LuaGenerateFFT(lua_State *L);
-	static int LuaGetFreqencyReach(lua_State *L);
-	static File* GetSubs(lua_State* L);
+		static int LuaParseKaraokeData(lua_State *L);
+		static int LuaGetScriptResolution(lua_State *L);
+		static int LuaSetUndoPoint(lua_State *L) {return 0;};
+		//static int LuaGenerateFFT(lua_State *L);
+		static int LuaGetFreqencyReach(lua_State *L);
+		static File* GetSubs(lua_State* L);
 
-	static AutoToFile *laf;
-};
+		static AutoToFile *laf;//GetObjPointer(lua_State *L, int idx);
+
+	};
 
 
 

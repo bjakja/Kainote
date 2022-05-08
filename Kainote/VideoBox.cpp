@@ -1780,10 +1780,7 @@ void VideoBox::GetWindowSize(int* x, int* y)
 }
 
 PlaybackState VideoBox::GetState() {
-	if (renderer)
-		return renderer->GetState();
-	else
-		return None;
+	m_State;
 }
 void VideoBox::CaptureMouse() {
 	if (m_IsFullscreen && m_FullScreenWindow) {

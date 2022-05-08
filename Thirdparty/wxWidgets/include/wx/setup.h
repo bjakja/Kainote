@@ -429,7 +429,7 @@
 // Default is 1
 //
 // Recommended setting: 1 (but may be safely disabled if you don't use it)
-#define wxUSE_FSVOLUME      1
+#define wxUSE_FSVOLUME      0
 
 // Use wxStandardPaths class which allows to retrieve some standard locations
 // in the file system

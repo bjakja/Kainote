@@ -19,7 +19,7 @@
 #include "VideoBox.h"
 #include "Hotkeys.h"
 #include <wmsdkidl.h>
-//#include <d3d9.h>
+#include <d3d9.h>
 #include <dxva2api.h>
 #include <Dvdmedia.h>
 

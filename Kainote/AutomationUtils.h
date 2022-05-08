@@ -19,20 +19,22 @@ extern "C" {
 }
 #include <algorithm>
 #include <boost/range/irange.hpp>
+//#include <string>
 #include <vector>
 #include <memory>
+//#include <type_traits>
 #include <wx/string.h>
 
-
+struct tm;
 
 
 
 
 	/// Clamp `b` to the range [`a`,`c`]
-	template<typename T>
+	/*template<typename T>
 	static inline T mid(T a, T b, T c) {
-		return MID(a, b, c);
-	}
+		return std::max(a, std::min(b, c));
+	}*/
 
 	bool try_parse(wxString const& str, double *out);
 	bool try_parse(wxString const& str, int *out);

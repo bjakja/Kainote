@@ -35,8 +35,7 @@
 #include <map>
 #include <wx/window.h>
 #include <wx/thread.h>
-#include <lua.h>
-//#include <windows.h>
+
 
 //class LuaCommand;
 class TabPanel;
@@ -44,181 +43,183 @@ struct lua_State;
 
 
 class Menu;
-class MenuEvent;
+#ifndef HANDLE
 typedef void* HANDLE;
-
-
-enum CommandFlags {
-	/// Default command type
-	COMMAND_NORMAL = 0,
-
-	/// Invoking this command toggles a setting of some sort. Any command
-	/// of this type should have IsActive implemented to signal the
-	/// current state of the thing being toggled, and invoking the command
-	/// twice should be a no-op
-	///
-	/// This is mutually exclusive with COMMAND_RADIO
-	COMMAND_TOGGLE = 1,
-
-	/// Invoking this command sets a setting to a specific value. Any
-	/// command of this type should have IsActive implemented, and if
-	/// IsActive returns true, invoking the command should have no effect
-	///
-	/// This is mutually exclusive with COMMAND_TOGGLE
-	COMMAND_RADIO = 2,
-
-	/// This command has an overridden Validate method
-	COMMAND_VALIDATE = 4,
-
-	/// This command's name may change based on the state of the project
-	COMMAND_DYNAMIC_NAME = 8,
-
-	/// This command's help string may change
-	COMMAND_DYNAMIC_HELP = 16,
-
-	/// This command's icon may change based on the state of the project
-	COMMAND_DYNAMIC_ICON = 32
-};
-
-class LuaFeature {
-	int myid;
-protected:
-	lua_State *L;
-
-	void RegisterFeature();
-	void UnregisterFeature();
-
-	void GetFeatureFunction(const char *function) const;
-
-	LuaFeature(lua_State *L) : L(L) { }
-};
+#endif
 
 
 
-class LuaCommand : private LuaFeature {
-	//wxString cmd_name;
-	wxString display;
-	wxString help;
-	wxString hotkey;
-	int cmd_type;
+	enum CommandFlags {
+		/// Default command type
+		COMMAND_NORMAL = 0,
 
-public:
-	LuaCommand(lua_State *L);
-	~LuaCommand();
+		/// Invoking this command toggles a setting of some sort. Any command
+		/// of this type should have IsActive implemented to signal the
+		/// current state of the thing being toggled, and invoking the command
+		/// twice should be a no-op
+		///
+		/// This is mutually exclusive with COMMAND_RADIO
+		COMMAND_TOGGLE = 1,
 
-	//const char* name() const { return cmd_name.c_str(); }
-	const wxString &StrMenu() const { return display; }
-	const wxString &StrDisplay() const { return display; }
-	const wxString &StrHelp() const { return help; }
-	const wxString &StrHotkey() const { return hotkey; }
-	void SetHotkey(const wxString &_hotkey){ hotkey = _hotkey; }
+		/// Invoking this command sets a setting to a specific value. Any
+		/// command of this type should have IsActive implemented, and if
+		/// IsActive returns true, invoking the command should have no effect
+		///
+		/// This is mutually exclusive with COMMAND_TOGGLE
+		COMMAND_RADIO = 2,
 
-	int Type() const { return cmd_type; }
+		/// This command has an overridden Validate method
+		COMMAND_VALIDATE = 4,
 
-	void Run(TabPanel *c);
-	bool Validate(const TabPanel *c);
-	virtual bool IsActive(const TabPanel *c);
+		/// This command's name may change based on the state of the project
+		COMMAND_DYNAMIC_NAME = 8,
 
-	static int LuaRegister(lua_State *L);
-	void RunScript();
-};
+		/// This command's help string may change
+		COMMAND_DYNAMIC_HELP = 16,
 
-class LuaScript {
-	lua_State *L;
-	wxString filename;
-	wxString name;
-	wxString description;
-	wxString author;
-	wxString version;
-	int LowTime, HighTime;
-	std::vector<wxString> include_path;
-	std::vector<LuaCommand*> macros;
+		/// This command's icon may change based on the state of the project
+		COMMAND_DYNAMIC_ICON = 32
+	};
 
-	/// load script and create internal structures etc.
-	void Create();
-	/// destroy internal structures, unreg features and delete environment
-	void Destroy();
+	class LuaFeature {
+		int myid;
+	protected:
+		lua_State *L;
 
-	static int LuaInclude(lua_State *L);
+		void RegisterFeature();
+		void UnregisterFeature();
 
-public:
+		void GetFeatureFunction(const char *function) const;
 
-	LuaScript(wxString const& filename);
-	~LuaScript() { Destroy(); }
+		LuaFeature(lua_State *L) : L(L) { }
+	};
 
-	const wxString &GetFilename() { return filename; }
-	/// The script's file name without path
-	const wxString GetPrettyFilename() { return filename.AfterLast(L'\\'); }
-	/// The script's name. Not required to be unique.
 
-	void RegisterCommand(LuaCommand *command);
-	void UnregisterCommand(LuaCommand *command);
 
-	static LuaScript* GetScriptObject(lua_State *L);
+	class LuaCommand : private LuaFeature {
+		//wxString cmd_name;
+		wxString display;
+		wxString help;
+		wxString hotkey;
+		int cmd_type;
 
-	// Script implementation
-	void Reload();// { Create(); }
+	public:
+		LuaCommand(lua_State *L);
+		~LuaCommand();
 
-	wxString GetName() const { return name; }
-	wxString GetDescription() const { return description; }
-	wxString GetAuthor() const { return author; }
-	wxString GetVersion() const { return version; }
-	bool GetLoadedState() const { return L != nullptr; }
+		//const char* name() const { return cmd_name.c_str(); }
+		wxString StrMenu() const { return display; }
+		wxString StrDisplay() const { return display; }
+		wxString StrHelp() const { return help; }
+		wxString StrHotkey() const { return hotkey; }
+		void SetHotkey(const wxString &_hotkey){ hotkey = _hotkey; }
 
-	LuaCommand* GetMacro(int macro) const{
-		if (macro < (int)macros.size()){
-			return macros[macro];
+		int Type() const { return cmd_type; }
+
+		void Run(TabPanel *c);
+		bool Validate(const TabPanel *c);
+		virtual bool IsActive(const TabPanel *c);
+
+		static int LuaRegister(lua_State *L);
+		void RunScript();
+	};
+
+	class LuaScript {
+		lua_State *L;
+		wxString filename;
+		wxString name;
+		wxString description;
+		wxString author;
+		wxString version;
+		int LowTime, HighTime;
+		std::vector<wxString> include_path;
+		std::vector<LuaCommand*> macros;
+
+		/// load script and create internal structures etc.
+		void Create();
+		/// destroy internal structures, unreg features and delete environment
+		void Destroy();
+
+		static int LuaInclude(lua_State *L);
+
+	public:
+
+		LuaScript(wxString const& filename);
+		~LuaScript() { Destroy(); }
+
+		wxString GetFilename() const { return filename; }
+		/// The script's file name without path
+		wxString GetPrettyFilename() const { return filename.AfterLast(L'\\'); }
+		/// The script's name. Not required to be unique.
+
+		void RegisterCommand(LuaCommand *command);
+		void UnregisterCommand(LuaCommand *command);
+
+		static LuaScript* GetScriptObject(lua_State *L);
+
+		// Script implementation
+		void Reload();// { Create(); }
+
+		wxString GetName() const { return name; }
+		wxString GetDescription() const { return description; }
+		wxString GetAuthor() const { return author; }
+		wxString GetVersion() const { return version; }
+		bool GetLoadedState() const { return L != nullptr; }
+
+		LuaCommand* GetMacro(int macro) const{
+			if (macro < (int)macros.size()){
+				return macros[macro];
+			}
+			else{ return NULL; }
 		}
-		else{ return nullptr; }
-	}
-	std::vector<LuaCommand*> GetMacros() const{ return macros; }
-	bool CheckLastModified(bool check = true);
-};
-// @class Automation
-// @brief manage lua scripts Lua
+		std::vector<LuaCommand*> GetMacros() const{ return macros; }
+		bool CheckLastModified(bool check = true);
+	};
+	// @class Automation
+	// @brief manage lua scripts Lua
 
 
 
-class Automation
-{
-public:
-	Automation(bool loadSubsScripts = false, bool loadNow = false);
-	~Automation();
+	class Automation
+	{
+	public:
+		Automation(bool loadSubsScripts = false, bool loadNow = false);
+		~Automation();
 
-	bool Add(wxString filename, bool addToSinfo = true, bool autoload = false);
-	void Remove(int script);
-	void RemoveAll(bool autoload = false);
-	void ReloadMacro(int script, bool autoload = false);
-	void ReloadScripts(bool first = false);
-	bool AddFromSubs();
-	static void OnEdit(const wxString &Filename);
-	bool CheckChanges();
-	// make menu with all macros or error message
-	void BuildMenu(Menu **bar, bool all = false);
-	void ShowScriptHotkeysWindow(wxWindow *parent);
-	LuaScript *FindScript(const wxString &path);
+		bool Add(wxString filename, bool addToSinfo = true, bool autoload = false);
+		void Remove(int script);
+		void RemoveAll(bool autoload = false);
+		void ReloadMacro(int script, bool autoload = false);
+		void ReloadScripts(bool first = false);
+		bool AddFromSubs();
+		static void OnEdit(wxString &Filename);
+		bool CheckChanges();
+		// make menu with all macros or error message
+		void BuildMenu(Menu **bar, bool all = false);
+		void ShowScriptHotkeysWindow(wxWindow *parent);
+		LuaScript *FindScript(const wxString &path);
 
-	std::vector<LuaScript*> Scripts;
-	std::vector<LuaScript*> ASSScripts;
-	HANDLE handle;
-	HANDLE eventEndAutoload = nullptr;
-private:
-	wxString AutoloadPath;
-	bool HasChanges;
-	wxString scriptpaths;
-	bool initialized;
-	volatile bool breakLoading = false;
-};
+		std::vector<LuaScript*> Scripts;
+		std::vector<LuaScript*> ASSScripts;
+		HANDLE handle;
+		HANDLE eventEndAutoload = NULL;
+	private:
+		wxString AutoloadPath;
+		bool HasChanges;
+		wxString scriptpaths;
+		bool initialized;
+		volatile bool breakLoading = false;
+	};
 
-// Run a lua function on a background thread
+	// Run a lua function on a background thread
 
 
-class LuaThreadedCall : public wxThread {
-private:
-	lua_State *L;
-public:
-	LuaThreadedCall(lua_State *_L);
-	virtual ExitCode Entry();
-};
+	class LuaThreadedCall : public wxThread {
+	private:
+		lua_State *L;
+	public:
+		LuaThreadedCall(lua_State *_L);
+		virtual ExitCode Entry();
+	};
 
 

@@ -1425,7 +1425,7 @@ void KainoteFrame::OnSize(wxSizeEvent& event)
 	int statusbarHeight = StatusBar->GetSize().GetHeight();
 	//0 left, 1 top, 2 right, 3 bottom
 	int toolbarAlignment = Options.GetInt(TOOLBAR_ALIGNMENT);
-	borders.x += menuHeight;
+	borders.y += menuHeight;
 	borders.height += statusbarHeight;
 	Menubar->SetSize(fborder, ftopBorder, size.x - (fborder * 2), menuHeight);
 	switch (toolbarAlignment){
@@ -1456,7 +1456,7 @@ void KainoteFrame::OnSize(wxSizeEvent& event)
 		break;
 	}
 	Tabs->SetSize(borders.GetX(), borders.y, 
-		size.x - borders.GetX() - borders.width, size.y - borders.x - borders.height);
+		size.x - borders.GetX() - borders.width, size.y - borders.y - borders.height);
 	StatusBar->SetSize(fborder, size.y - statusbarHeight - fborder,
 		size.x - (fborder * 2), statusbarHeight);
 	borders.height += Tabs->GetHeight();

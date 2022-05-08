@@ -62,21 +62,21 @@ void RotationZ::DrawVisual(int time)
 	//changed every function to float version
 	float radius = sqrtf(powf(fabs(org.x - from.x), 2) + powf(fabs(org.y - from.y), 2)) + 40;
 	D3DXVECTOR2 v2[6];
-	vertex v5[726];
-	D3DXCOLOR color(0xAA121150);
-	D3DXCOLOR color1(0xAAFF0000);
-	CreateVERTEX(&v5[0], org.x, org.y + (radius + 10.f), &color);
-	CreateVERTEX(&v5[1], org.x, org.y + radius, &color);
+	VERTEX v5[726];
+	D3DCOLOR color(0xAA121150);
+	D3DCOLOR color1(0xAAFF0000);
+	CreateVERTEX(&v5[0], org.x, org.y + (radius + 10.f), color);
+	CreateVERTEX(&v5[1], org.x, org.y + radius, color);
 	for (int j = 0; j < 181; j++){
 		float xx = org.x + ((radius + 10.f) * sin((j * 2) * rad));
 		float yy = org.y + ((radius + 10.f) * cos((j * 2) * rad));
 		float xx1 = org.x + (radius * sin((j * 2) * rad));
 		float yy1 = org.y + (radius * cos((j * 2) * rad));
-		CreateVERTEX(&v5[j + 364], xx, yy, &color1);
-		CreateVERTEX(&v5[j + 545], xx1, yy1, &color1);
+		CreateVERTEX(&v5[j + 364], xx, yy, color1);
+		CreateVERTEX(&v5[j + 545], xx1, yy1, color1);
 		if (j < 1){ continue; }
-		CreateVERTEX(&v5[(j * 2)], xx, yy, &color);
-		CreateVERTEX(&v5[(j * 2) + 1], xx1, yy1, &color);
+		CreateVERTEX(&v5[(j * 2)], xx, yy, color);
+		CreateVERTEX(&v5[(j * 2) + 1], xx1, yy1, color);
 
 	}
 	if (radius){
@@ -119,9 +119,12 @@ void RotationZ::DrawVisual(int time)
 	v2[5].y = org.y + 10.0f;
 	line->SetWidth(5.f);
 
-	HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 360, v5, sizeof(vertex)), L"primitive failed");
-	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 180, &v5[364], sizeof(vertex)), L"primitive failed");
-	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 180, &v5[545], sizeof(vertex)), L"primitive failed");
+	HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 360, v5, 
+		sizeof(VERTEX)), L"primitive failed");
+	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 180, &v5[364], 
+		sizeof(VERTEX)), L"primitive failed");
+	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 180, &v5[545], 
+		sizeof(VERTEX)), L"primitive failed");
 	line->SetWidth(2.f);
 	line->Begin();
 	line->Draw(&v2[2], 2, 0xFFBB0000);

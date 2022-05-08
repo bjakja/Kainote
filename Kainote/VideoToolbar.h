@@ -332,7 +332,7 @@ public:
 	}
 	static std::vector<ShapesSetting>* GetShapesSettings() {
 		if (!shapes.size()) {
-			//LoadSettings(&shapes);
+			LoadSettings(&shapes);
 		}
 		return &shapes;
 	}

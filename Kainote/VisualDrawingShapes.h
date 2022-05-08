@@ -117,11 +117,11 @@ private:
 	D3DXVECTOR2 PointToVideo(const D3DXVECTOR2& point);
 	D3DXVECTOR2 PointToSubtitles(float x, float y);
 	int HitTest(const D3DXVECTOR2& pos, bool diff = false);
-	//D3DXVECTOR2 CalcDrawingAnchor(int alignment, const std::vector<ClipPoint>* points);
+	D3DXVECTOR2 CalcDrawingAnchor(int alignment, const std::vector<ClipPoint>* points);
 	std::vector<ShapesSetting>* shapes = nullptr;
 	int shape = -1;
 	ShapesSetting currentShape;
-	//std::vector<ClipPoint> points;
+	std::vector<ClipPoint> points;
 	D3DXVECTOR2 shapeSize;
 	D3DXVECTOR2 shapeScale = D3DXVECTOR2(1.f, 1.f);
 

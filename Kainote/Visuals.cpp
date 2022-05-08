@@ -322,7 +322,7 @@ void Visuals::DrawArrow(D3DXVECTOR2 from, D3DXVECTOR2 *to, int diff)
 	D3DXVECTOR2 pend = (*to) + (diffUnits * (12 + diff));
 	D3DXVECTOR2 halfbase = D3DXVECTOR2(-diffUnits.y, diffUnits.x) * 5.f;
 
-	vertex v4[7];
+	VERTEX v4[7];
 	D3DXVECTOR2 v3[3];
 	v3[0] = pend - diffUnits * 12;
 	v3[1] = pend + halfbase;
@@ -331,16 +331,16 @@ void Visuals::DrawArrow(D3DXVECTOR2 from, D3DXVECTOR2 *to, int diff)
 	D3DXCOLOR fill = 0xAA121150;
 	D3DXCOLOR border = 0xFFBB0000;
 
-	CreateVERTEX(&v4[0], v3[0].x, v3[0].y, &fill);
-	CreateVERTEX(&v4[1], v3[1].x, v3[1].y, &fill);
-	CreateVERTEX(&v4[2], v3[2].x, v3[2].y, &fill);
-	CreateVERTEX(&v4[3], v3[0].x, v3[0].y, &border);
-	CreateVERTEX(&v4[4], v3[1].x, v3[1].y, &border);
-	CreateVERTEX(&v4[5], v3[2].x, v3[2].y, &border);
-	CreateVERTEX(&v4[6], v3[0].x, v3[0].y, &border);
+	CreateVERTEX(&v4[0], v3[0].x, v3[0].y, fill);
+	CreateVERTEX(&v4[1], v3[1].x, v3[1].y, fill);
+	CreateVERTEX(&v4[2], v3[2].x, v3[2].y, fill);
+	CreateVERTEX(&v4[3], v3[0].x, v3[0].y, border);
+	CreateVERTEX(&v4[4], v3[1].x, v3[1].y, border);
+	CreateVERTEX(&v4[5], v3[2].x, v3[2].y, border);
+	CreateVERTEX(&v4[6], v3[0].x, v3[0].y, border);
 
-	HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, v4, sizeof(vertex)), L"primitive failed");
-	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 3, &v4[3], sizeof(vertex)), L"primitive failed");
+	HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, v4, sizeof(VERTEX)), L"primitive failed");
+	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 3, &v4[3], sizeof(VERTEX)), L"primitive failed");
 	*to = pend;
 }
 
@@ -366,19 +366,21 @@ void Visuals::DrawRect(D3DXVECTOR2 pos, bool sel, float rcsize)
 {
 	D3DXCOLOR fill = (sel) ? 0xAAFCE6B1 : 0xAA121150;
 	D3DXCOLOR border = 0xFFBB0000;
-	vertex v9[9];
-	CreateVERTEX(&v9[0], pos.x - rcsize, pos.y - rcsize, &fill);
-	CreateVERTEX(&v9[1], pos.x + rcsize, pos.y - rcsize, &fill);
-	CreateVERTEX(&v9[2], pos.x - rcsize, pos.y + rcsize, &fill);
-	CreateVERTEX(&v9[3], pos.x + rcsize, pos.y + rcsize, &fill);
-	CreateVERTEX(&v9[4], pos.x - rcsize, pos.y - rcsize, &border);
-	CreateVERTEX(&v9[5], pos.x + rcsize, pos.y - rcsize, &border);
-	CreateVERTEX(&v9[6], pos.x + rcsize, pos.y + rcsize, &border);
-	CreateVERTEX(&v9[7], pos.x - rcsize, pos.y + rcsize, &border);
-	CreateVERTEX(&v9[8], pos.x - rcsize, pos.y - rcsize, &border);
+	VERTEX v9[9];
+	CreateVERTEX(&v9[0], pos.x - rcsize, pos.y - rcsize, fill);
+	CreateVERTEX(&v9[1], pos.x + rcsize, pos.y - rcsize, fill);
+	CreateVERTEX(&v9[2], pos.x - rcsize, pos.y + rcsize, fill);
+	CreateVERTEX(&v9[3], pos.x + rcsize, pos.y + rcsize, fill);
+	CreateVERTEX(&v9[4], pos.x - rcsize, pos.y - rcsize, border);
+	CreateVERTEX(&v9[5], pos.x + rcsize, pos.y - rcsize, border);
+	CreateVERTEX(&v9[6], pos.x + rcsize, pos.y + rcsize, border);
+	CreateVERTEX(&v9[7], pos.x - rcsize, pos.y + rcsize, border);
+	CreateVERTEX(&v9[8], pos.x - rcsize, pos.y - rcsize, border);
 
-	HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(vertex)), L"primitive failed");
-	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 4, &v9[4], sizeof(vertex)), L"primitive failed");
+	HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, 
+		sizeof(VERTEX)), L"primitive failed");
+	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 4, &v9[4], 
+		sizeof(VERTEX)), L"primitive failed");
 }
 
 
@@ -386,25 +388,27 @@ void Visuals::DrawCircle(D3DXVECTOR2 pos, bool sel, float crsize)
 {
 	D3DXCOLOR fill = (sel) ? 0xAAFCE6B1 : 0xAA121150;
 	D3DXCOLOR border = 0xFFBB0000;
-	vertex v5[41];
+	VERTEX v5[41];
 	float rad = 0.01745329251994329576923690768489f;
 
 	float xx = pos.x;
 	float yy = pos.y;
-	CreateVERTEX(&v5[0], xx, yy, &fill);
+	CreateVERTEX(&v5[0], xx, yy, fill);
 	for (int j = 0; j < 20; j++)
 	{
 		float xx1 = pos.x + (crsize * sin((j * 20) * rad));
 		float yy1 = pos.y + (crsize * cos((j * 20) * rad));
-		CreateVERTEX(&v5[j + 1], xx1, yy1, &fill);
-		CreateVERTEX(&v5[j + 21], xx1, yy1, &border);
+		CreateVERTEX(&v5[j + 1], xx1, yy1, fill);
+		CreateVERTEX(&v5[j + 21], xx1, yy1, border);
 		xx = xx1;
 		yy = yy1;
 
 	}
 
-	HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 18, v5, sizeof(vertex)), L"primitive failed");
-	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 18, &v5[21], sizeof(vertex)), L"primitive failed");
+	HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 18, v5, 
+		sizeof(VERTEX)), L"primitive failed");
+	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 18, &v5[21], 
+		sizeof(VERTEX)), L"primitive failed");
 }
 
 void Visuals::DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen, unsigned int color)

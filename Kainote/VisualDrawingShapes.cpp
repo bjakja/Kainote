@@ -16,8 +16,6 @@
 
 
 
-
-//#include <wx/msw/winundef.h>
 #include "VisualDrawingShapes.h"
 #include "KaiStaticBoxSizer.h"
 #include "MappedButton.h"
@@ -30,7 +28,8 @@
 #include "VideoBox.h"
 #include "Visuals.h"
 #include "RendererVideo.h"
-//
+#include "VideoToolbar.h"
+
 
 enum {
 	LEFT = 1,
@@ -497,110 +496,110 @@ void Shapes::DrawVisual(int time)
 	}
 }
 
-//void Shapes::SetShape(int curshape)
-//{
-//	shapes = VideoToolbar::GetShapesSettings();
-//	if (!shapes->size() || curshape - 1 == shape)
-//		return;
-//
-//	if (curshape <= 0) {
-//		shape = -1;
-//		return;
-//	}
-//	else if (curshape > shapes->size()) {
-//		shape = shapes->size() - 1;
-//	}
-//	else {
-//		//first iteration is "choose" shapes starts from 1
-//		shape = curshape - 1;
-//	}
-//	currentShape = (*shapes)[shape];
-//	points.clear();
-//	GetVectorPoints(currentShape.shape, &points);
-//	shapeSize = CalcDrawingSize(alignment, &points, true);
-//}
-//
-//void Shapes::GetVisual(wxString* drawing)
-//{
-//	if (shape < 0) {
-//		DrawingAndClip::GetVisual(drawing);
-//		return;
-//	}
-//	if (shapeScale.x > 0.f && rectangleVisible) {
-//		wxString format = L"6.2f";
-//		wxString lasttype;
-//		int countB = 0;
-//		bool spline = false;
-//		size_t psize = points.size();
-//		//nothing to do with frz cause drawing already rotated, cannot rotate 
-//		//drawing only can make red rectangle to be more on drawing
-//		//get -minx and -miny with scale
-//		D3DXVECTOR2 offsetxy = CalcDrawingAnchor(alignment, &points);
-//		//get rectangle x < x1
-//		float rectx = drawingRectangle[0].x < drawingRectangle[1].x ?
-//			drawingRectangle[0].x : drawingRectangle[1].x;
-//		float recty = drawingRectangle[0].y < drawingRectangle[1].y ?
-//			drawingRectangle[0].y : drawingRectangle[1].y;
-//		float rectx1 = drawingRectangle[0].x > drawingRectangle[1].x ?
-//			drawingRectangle[0].x : drawingRectangle[1].x;
-//		float recty1 = drawingRectangle[0].y > drawingRectangle[1].y ?
-//			drawingRectangle[0].y : drawingRectangle[1].y;
-//		//subtract diff of position and rect
-//		//position is already / by line scale
-//		offsetxy.x -= ((_x - rectx) - 1);
-//		offsetxy.y -= ((_y - recty) - 1);
-//		//add diffs for alignments
-//		if (alignment % 3 == 2) {
-//			offsetxy.x += (rectx1 - rectx) / 2;
-//		}
-//		else if (alignment % 3 == 0) {
-//			offsetxy.x += (rectx1 - rectx);
-//		}
-//		if (alignment < 4) {
-//			offsetxy.y += (recty1 - recty);
-//		}
-//		else if (alignment < 7) {
-//			offsetxy.y += (recty1 - recty) / 2;
-//		}
-//		
-//		
-//		//get drawing as string
-//		for (size_t i = 0; i < psize; i++)
-//		{
-//			ClipPoint pos = points[i];
-//			pos.x = (pos.x * shapeScale.x) + offsetxy.x;
-//			pos.y = (pos.y * shapeScale.y) + offsetxy.y;
-//
-//			if (countB && !pos.start) {
-//				*drawing << getfloat(pos.x, format) << L" " << getfloat(pos.y, format) << L" ";
-//				countB++;
-//			}
-//			else {
-//				if (spline) {
-//					*drawing << L"c ";
-//					spline = false;
-//				}
-//				if (lasttype != pos.type || pos.type == L"m") {
-//					*drawing << pos.type << L" ";
-//					lasttype = pos.type;
-//				}
-//				*drawing << getfloat(pos.x, format) << L" " << getfloat(pos.y, format) << L" ";
-//				if (pos.type == L"b" || pos.type == L"s") {
-//					countB = 1;
-//					if (pos.type == L"s")
-//						spline = true;
-//				}
-//			}
-//			//fix for m one after another
-//			if (pos.type == L"m" && psize > 1 && ((i >= psize - 1) ||
-//				(i < psize - 1 && points[i + 1].type == L"m"))) {
-//				*drawing << L"l " << getfloat(pos.x, format) << L" " << getfloat(pos.y, format) << L" ";
-//			}
-//		}
-//		if (spline) { *drawing << L"c "; }
-//		drawing->Trim();
-//	}
-//}
+void Shapes::SetShape(int curshape)
+{
+	shapes = VideoToolbar::GetShapesSettings();
+	if (!shapes->size() || curshape - 1 == shape)
+		return;
+
+	if (curshape <= 0) {
+		shape = -1;
+		return;
+	}
+	else if (curshape > shapes->size()) {
+		shape = shapes->size() - 1;
+	}
+	else {
+		//first iteration is "choose" shapes starts from 1
+		shape = curshape - 1;
+	}
+	currentShape = (*shapes)[shape];
+	points.clear();
+	GetVectorPoints(currentShape.shape, &points);
+	shapeSize = CalcDrawingSize(alignment, &points, true);
+}
+
+void Shapes::GetVisual(wxString* drawing)
+{
+	if (shape < 0) {
+		DrawingAndClip::GetVisual(drawing);
+		return;
+	}
+	if (shapeScale.x > 0.f && rectangleVisible) {
+		wxString format = L"6.2f";
+		wxString lasttype;
+		int countB = 0;
+		bool spline = false;
+		size_t psize = points.size();
+		//nothing to do with frz cause drawing already rotated, cannot rotate 
+		//drawing only can make red rectangle to be more on drawing
+		//get -minx and -miny with scale
+		D3DXVECTOR2 offsetxy = CalcDrawingAnchor(alignment, &points);
+		//get rectangle x < x1
+		float rectx = drawingRectangle[0].x < drawingRectangle[1].x ?
+			drawingRectangle[0].x : drawingRectangle[1].x;
+		float recty = drawingRectangle[0].y < drawingRectangle[1].y ?
+			drawingRectangle[0].y : drawingRectangle[1].y;
+		float rectx1 = drawingRectangle[0].x > drawingRectangle[1].x ?
+			drawingRectangle[0].x : drawingRectangle[1].x;
+		float recty1 = drawingRectangle[0].y > drawingRectangle[1].y ?
+			drawingRectangle[0].y : drawingRectangle[1].y;
+		//subtract diff of position and rect
+		//position is already / by line scale
+		offsetxy.x -= ((_x - rectx) - 1);
+		offsetxy.y -= ((_y - recty) - 1);
+		//add diffs for alignments
+		if (alignment % 3 == 2) {
+			offsetxy.x += (rectx1 - rectx) / 2;
+		}
+		else if (alignment % 3 == 0) {
+			offsetxy.x += (rectx1 - rectx);
+		}
+		if (alignment < 4) {
+			offsetxy.y += (recty1 - recty);
+		}
+		else if (alignment < 7) {
+			offsetxy.y += (recty1 - recty) / 2;
+		}
+		
+		
+		//get drawing as string
+		for (size_t i = 0; i < psize; i++)
+		{
+			ClipPoint pos = points[i];
+			pos.x = (pos.x * shapeScale.x) + offsetxy.x;
+			pos.y = (pos.y * shapeScale.y) + offsetxy.y;
+
+			if (countB && !pos.start) {
+				*drawing << getfloat(pos.x, format) << L" " << getfloat(pos.y, format) << L" ";
+				countB++;
+			}
+			else {
+				if (spline) {
+					*drawing << L"c ";
+					spline = false;
+				}
+				if (lasttype != pos.type || pos.type == L"m") {
+					*drawing << pos.type << L" ";
+					lasttype = pos.type;
+				}
+				*drawing << getfloat(pos.x, format) << L" " << getfloat(pos.y, format) << L" ";
+				if (pos.type == L"b" || pos.type == L"s") {
+					countB = 1;
+					if (pos.type == L"s")
+						spline = true;
+				}
+			}
+			//fix for m one after another
+			if (pos.type == L"m" && psize > 1 && ((i >= psize - 1) ||
+				(i < psize - 1 && points[i + 1].type == L"m"))) {
+				*drawing << L"l " << getfloat(pos.x, format) << L" " << getfloat(pos.y, format) << L" ";
+			}
+		}
+		if (spline) { *drawing << L"c "; }
+		drawing->Trim();
+	}
+}
 
 void Shapes::SetScale(wxString* txt, size_t position, int* diff)
 {
@@ -758,22 +757,22 @@ D3DXVECTOR2 Shapes::PointToSubtitles(float x, float y)
 	return D3DXVECTOR2(pointx, pointy);
 }
 
-//D3DXVECTOR2 Shapes::CalcDrawingAnchor(int alignment, const std::vector<ClipPoint>* points)
-//{
-//	if (points->size() < 1) { return D3DXVECTOR2(0, 0); }
-//
-//	float minx = FLT_MAX;
-//	float miny = FLT_MAX;
-//	for (size_t i = 0; i < points->size(); i++)
-//	{
-//		ClipPoint p = points->at(i);
-//		p.x *= shapeScale.x;
-//		p.y *= shapeScale.y;
-//		if (p.x < minx) { minx = p.x; }
-//		if (p.y < miny) { miny = p.y; }
-//	}
-//	D3DXVECTOR2 result = D3DXVECTOR2(0, 0);
-//	result.x = -(minx);
-//	result.y = -(miny);
-//	return result;
-//}
+D3DXVECTOR2 Shapes::CalcDrawingAnchor(int alignment, const std::vector<ClipPoint>* points)
+{
+	if (points->size() < 1) { return D3DXVECTOR2(0, 0); }
+
+	float minx = FLT_MAX;
+	float miny = FLT_MAX;
+	for (size_t i = 0; i < points->size(); i++)
+	{
+		ClipPoint p = points->at(i);
+		p.x *= shapeScale.x;
+		p.y *= shapeScale.y;
+		if (p.x < minx) { minx = p.x; }
+		if (p.y < miny) { miny = p.y; }
+	}
+	D3DXVECTOR2 result = D3DXVECTOR2(0, 0);
+	result.x = -(minx);
+	result.y = -(miny);
+	return result;
+}

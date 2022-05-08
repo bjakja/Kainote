@@ -306,7 +306,6 @@ void KaiToolbar::OnSize(wxSizeEvent &evt)
 	bool vertical = alignment % 2 == 0;
 	float maxx = (vertical) ? h : w;
 	int toolbarrows = ((tools.size() * thickness) - 2) / maxx;
-
 	wh = (toolbarrows + 1) * thickness;
 	int maxxwh = (vertical) ? w : h;
 	if (maxxwh != wh){

@@ -170,6 +170,7 @@ private:
 	RendererVideo *renderer = nullptr;
 	wxSize m_VideoWindowLastSize;
 	Fullscreen *m_FullScreenWindow;
+	PlaybackState m_State = None;
 	//bool m_HasArrow;
 	int m_LastCursor = wxCURSOR_ARROW;
 	int m_LastFullScreenCursor = wxCURSOR_ARROW;
@@ -201,6 +202,7 @@ private:
 	void OnChangeVisual(wxCommandEvent &evt);
 	void OnLostCapture(wxMouseCaptureLostEvent &evt);
 	void ChangeButtonBMP(bool play = false);
+	
 	wxTimer idletime;
 	DECLARE_EVENT_TABLE()
 };

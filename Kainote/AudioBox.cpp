@@ -45,7 +45,7 @@
 #include "KeyframesLoader.h"
 #include "KaiMessageBox.h"
 #include "KaiSlider.h"
-//#include "SubsGrid.h"
+#include "editbox.h"
 //#include "Visuals.h"
 //#include "VisualDrawingShapes.h"
 //#include "TabPanel.h"

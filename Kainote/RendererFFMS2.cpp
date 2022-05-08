@@ -170,8 +170,8 @@ void RendererFFMS2::Render(bool redrawSubsOnFrame, bool wait)
 #if byvertices
 
 
-	// Render the vertex buffer contents
-	hr = m_D3DDevice->SetStreamSource(0, vertex, 0, sizeof(CUSTOMVERTEX));
+	// Render the VERTEX buffer contents
+	hr = m_D3DDevice->SetStreamSource(0, VERTEX, 0, sizeof(CUSTOMVERTEX));
 	hr = m_D3DDevice->SetVertexShader(nullptr);
 	hr = m_D3DDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
 	hr = m_D3DDevice->SetTexture(0, texture);

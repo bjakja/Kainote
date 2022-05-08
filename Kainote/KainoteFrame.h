@@ -24,8 +24,10 @@
 
 #include "KaiFrame.h"
 #include "FontCollector.h"
+#include "KaiStatusBar.h"
 #include <wx/timer.h>
 #include <wx/window.h>
+
 
 //class FontCollector;
 class FindReplaceDialog;
@@ -33,7 +35,6 @@ class SelectLines;
 class MisspellReplacer;
 class Automation;
 class Notebook;
-class KaiStatusBar;
 class Menu;
 class MenuBar;
 class KaiToolbar;
@@ -89,7 +90,7 @@ public:
 	void UpdateToolbar();
 	void OnOpenAudio(wxCommandEvent& event);
 	void SetStatusText(const wxString& label, int field);
-	wxString GetStatusText(int field);
+	wxString GetStatusText(int field) { return StatusBar->GetStatusText(field); }
 	void SetSubsResolution(bool dialog = false);
 	void SetVideoResolution(int w, int h, bool dialog = false);
 	void ShowBadResolutionDialog(const wxSize &videoRes, const wxSize &subsRes);

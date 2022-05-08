@@ -40,6 +40,11 @@
 #include <wx/ffile.h>
 #include <wx/window.h>
 
+SubsGridBase* SubsGridBase::CG1 = NULL;
+SubsGridBase* SubsGridBase::CG2 = NULL;
+bool SubsGridBase::hasCompare = false;
+wxArrayString SubsGridBase::compareStyles = wxArrayString();
+
 
 bool sortstart(Dialogue *i, Dialogue *j)
 {
@@ -1947,8 +1952,5 @@ size_t SubsGridBase::GetKeyFromPosition(size_t position, int delta, bool safe /*
 }
 
 
-//SubsGrid* SubsGridBase::CG1 = nullptr;
-//SubsGrid* SubsGridBase::CG2 = nullptr;
-//bool SubsGridBase::hasCompare = false;
-//wxArrayString SubsGridBase::compareStyles = wxArrayString();
+
 

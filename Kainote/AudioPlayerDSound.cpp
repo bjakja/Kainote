@@ -463,7 +463,7 @@ DirectSoundPlayer2Thread::DirectSoundPlayer2Thread(Provider *provider, int _Want
 DirectSoundPlayer2Thread::~DirectSoundPlayer2Thread()
 {
 	SetEvent(event_kill_self);
-	WaitForSingleObject(thread_handle, INFINITE);
+	WaitForSingleObject(thread_handle, 2000);
 }
 
 

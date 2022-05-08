@@ -36,7 +36,7 @@ public:
 		AutomationHotkeysDialog::allHotkeys[idAndType(id, GLOBAL_HOTKEY)] = hdata(name, accelerator);
 		//modified = true;
 	}
-	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /*= nullptr*/)
+	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /*= NULL*/)
 	{
 		if (enter){
 			if (needTooltip)
@@ -252,7 +252,7 @@ void AutomationHotkeysDialog::OnMapHkey(wxCommandEvent &evt)
 				result = msg.ShowModal();
 			}
 			if (result == wxYES || result == wxOK){
-				if (result == wxYES){ hotkey = emptyString; }
+				if (result == wxYES){ hotkey = L""; }
 				for (auto &idtype : idtypes){
 					if (doubledHotkey && idtype->first.Type != hkd.type)
 						continue;
@@ -287,10 +287,10 @@ void AutomationHotkeysDialog::OnDeleteHkey(wxCommandEvent &evt)
 	if (id < 0)
 		return;
 
-	ChangeHotkey(inum, id, emptyString);
+	ChangeHotkey(inum, id, L"");
 	hotkeysList->SetModified(true);
 	hotkeysList->PushHistory();
-	allHotkeys[idAndType(id, GLOBAL_HOTKEY)] = hdata(name, emptyString);
+	allHotkeys[idAndType(id, GLOBAL_HOTKEY)] = hdata(name, L"");
 }
 
 void AutomationHotkeysDialog::ChangeHotkey(int row, int id, const wxString &hotkey)
