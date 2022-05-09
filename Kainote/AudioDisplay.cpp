@@ -1,47 +1,25 @@
-﻿// Copyright (c) 2005, Rodrigo Braz Monteiro
-// All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
-//
-//   * Redistributions of source code must retain the above copyright notice,
-//     this list of conditions and the following disclaimer.
-//   * Redistributions in binary form must reproduce the above copyright notice,
-//     this list of conditions and the following disclaimer in the documentation
-//     and/or other materials provided with the distribution.
-//   * Neither the name of the Aegisub Group nor the names of its contributors
-//     may be used to endorse or promote products derived from this software
-//     without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-// POSSIBILITY OF SUCH DAMAGE.
-//
-// -----------------------------------------------------------------------------
-//
-// AEGISUB
-//
-// Website: http://aegisub.cellosoft.com
-// Contact: mailto:zeratul@cellosoft.com
-//
+﻿//  Copyright (c) 2016-2022, Marcin Drob
+
+//  Kainote is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+
+//  Kainote is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+
+//  You should have received a copy of the GNU General Public License
+//  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
+
+//this code piervously was taken from Aegisub 2 it's rewritten by me almost all.
+//old trash licence not OpenSource.
 
 
-///////////
 // Headers
-
-#include "UtilsWindows.h"
 #include "KaiMessageBox.h"
-#include <wx/filename.h>
-#include <math.h>
-#include <vector>
+
 #include "AudioDisplay.h"
 #include "EditBox.h"
 
@@ -53,10 +31,14 @@
 #include "SubsGrid.h"
 #include "kainoteApp.h"
 #include "RendererVideo.h"
-#include "ShiftTimes.h"
-#include <math.h>
+#include "shiftTimes.h"
+#include "VideoBox.h"
 #include <process.h>
-//#undef DrawText
+#include <wx/filename.h>
+#include <vector>
+#include "UtilsWindows.h"
+
+
 
 wxDEFINE_EVENT(EVENT_UPDATE_SCROLLBAR, wxThreadEvent);
 
@@ -64,11 +46,9 @@ wxDEFINE_EVENT(EVENT_UPDATE_SCROLLBAR, wxThreadEvent);
 inline D3DCOLOR D3DCOLOR_FROM_WX(const wxColour &col){
 	return (D3DCOLOR)((((col.Alpha()) & 0xff) << 24) | (((col.Red()) & 0xff) << 16) | (((col.Green()) & 0xff) << 8) | ((col.Blue()) & 0xff));
 }
-//inline D3DCOLOR D3DCOLOR_FROM_WXA(col, alpha){
-//	((D3DCOLOR)((((alpha)& 0xff) << 24) | (((col.Red()) & 0xff) << 16) | (((col.Green()) & 0xff) << 8) | ((col.Blue()) & 0xff)))
-//}
 
-int64_t abs64(int64_t input) {
+
+long long abs64(long long input) {
 	if (input < 0) return -input;
 	return input;
 }
@@ -76,29 +56,14 @@ int64_t abs64(int64_t input) {
 
 
 
-///////////////
 // Constructor
 AudioDisplay::AudioDisplay(wxWindow *parent)
 	: wxWindow(parent, -1, wxDefaultPosition, wxSize(100, 100), 0/*wxWANTS_CHARS*/, _T("Audio Display"))
-	, spectrumSurface(NULL)
-	, d3dDevice(NULL)
-	, d3dObject(NULL)
-	, d3dLine(NULL)
-	, d3dFontTahoma13(NULL)
-	, d3dFontTahoma8(NULL)
-	, d3dFontVerdana11(NULL)
-	, backBuffer(NULL)
 	, PlayEvent(CreateEvent(0, FALSE, FALSE, 0))
 	, DestroyEvent(CreateEvent(0, FALSE, FALSE, 0))
 {
 	// Set variables
 	deviceLost = false;
-	spectrumRenderer = NULL;
-	ScrollBar = NULL;
-	karaoke = NULL;
-	peak = NULL;
-	min = NULL;
-	dialogue = NULL;
 	cursorPaint = false;
 	defCursor = true;
 	karaAuto = Options.GetBool(AUDIO_KARAOKE_SPLIT_MODE);
@@ -119,8 +84,6 @@ AudioDisplay::AudioDisplay(wxWindow *parent)
 	PositionSample = 0;
 	oldCurPos = 0;
 	scale = 1.0f;
-	provider = NULL;
-	player = NULL;
 	hold = 0;
 	samples = 0;
 	samplesPercent = 100;
@@ -136,7 +99,7 @@ AudioDisplay::AudioDisplay(wxWindow *parent)
 	tahoma13 = wxFont(fontSize + 3, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, L"Tahoma");
 	tahoma8 = *Options.GetFont(-1);
 	int fh;
-	GetTextExtent(L"#TWFfGH", NULL, &fh, NULL, NULL, &tahoma8);
+	GetTextExtent(L"#TWFfGH", nullptr, &fh, nullptr, nullptr, &tahoma8);
 	timelineHeight = fh + 8;
 	//UpdateTimer.SetOwner(this, Audio_Update_Timer);
 	GetClientSize(&w, &h);
@@ -174,11 +137,11 @@ AudioDisplay::~AudioDisplay() {
 		CloseHandle(UpdateTimerHandle);
 		CloseHandle(PlayEvent);
 		CloseHandle(DestroyEvent);
-		UpdateTimerHandle = NULL;
+		UpdateTimerHandle = nullptr;
 		
 	}
 	if (player) { player->CloseStream(); delete player; }
-	if (ownProvider && provider) { delete provider; provider = NULL; }
+	if (ownProvider && provider) { delete provider; provider = nullptr; }
 	ClearDX();
 	if (karaoke){ delete karaoke; }
 	if (spectrumRenderer){ delete spectrumRenderer; };
@@ -188,11 +151,11 @@ AudioDisplay::~AudioDisplay() {
 	}
 
 
-	player = NULL;
-	karaoke = NULL;
-	spectrumRenderer = NULL;
-	peak = NULL;
-	min = NULL;
+	player = nullptr;
+	karaoke = nullptr;
+	spectrumRenderer = nullptr;
+	peak = nullptr;
+	min = nullptr;
 }
 
 /////////
@@ -344,7 +307,7 @@ bool AudioDisplay::InitDX(const wxSize &size)
 	//HR(d3dLine->SetAntialias(TRUE), _("Linia nie ustawi AA"));
 	HR(d3dDevice->CreateOffscreenPlainSurface(size.x, size.y, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &spectrumSurface, 0), _("Nie można stworzyć plain surface"));
 	//HR(d3dDevice->CreateTexture(size.x, size.y, 1, D3DUSAGE_RENDERTARGET,
-	//D3DFMT_R8G8B8,D3DPOOL_DEFAULT,&texture, NULL), "Nie można utworzyć tekstury" );
+	//D3DFMT_R8G8B8,D3DPOOL_DEFAULT,&texture, nullptr), "Nie można utworzyć tekstury" );
 	HR(d3dDevice->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE), L"FVF failed");
 
 	return true;
@@ -363,7 +326,7 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 		if (!InitDX(wxSize(w, displayH))){
 			ClearDX();
 			if (!InitDX(wxSize(w, displayH))){
-				KaiLog(_("Nie można zresetować Direct3D"));
+				KaiLogSilent(_("Nie można zresetować Direct3D"));
 				needToReset = true;
 				return;
 			}
@@ -400,7 +363,7 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 	}
 
 	// Background
-	hr = d3dDevice->Clear(0, NULL, D3DCLEAR_TARGET, background, 1.0f, 0);
+	hr = d3dDevice->Clear(0, nullptr, D3DCLEAR_TARGET, background, 1.0f, 0);
 
 
 	hr = d3dDevice->BeginScene();
@@ -417,8 +380,8 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 		lineEnd = 0;
 		selStartCap = 0;
 		selEndCap = 0;
-		int64_t drawSelStart = 0;
-		int64_t drawSelEnd = 0;
+		long long drawSelStart = 0;
+		long long drawSelEnd = 0;
 
 		GetDialoguePos(lineStart, lineEnd, false);
 		hasSel = true;
@@ -438,12 +401,12 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 			D3DCOLOR fill;
 			if (NeedCommit) fill = selectionBackgroundModified;
 			else fill = selectionBackground;
-			VERTEX v9[4];
+			vertex v9[4];
 			CreateVERTEX(&v9[0], drawSelStart, 0, fill);
 			CreateVERTEX(&v9[1], drawSelEnd + 1, 0, fill);
 			CreateVERTEX(&v9[2], drawSelStart, h, fill);
 			CreateVERTEX(&v9[3], drawSelEnd + 1, h, fill);
-			HRN(hr = d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX)), L"primitive failed");
+			HRN(hr = d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(vertex)), L"primitive failed");
 
 		}
 
@@ -473,7 +436,7 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 		// Draw seconds boundaries
 		if (drawBoundaryLines) {
 			d3dLine->Begin();
-			int64_t start = Position*samples;
+			long long start = Position*samples;
 			int rate = provider->GetSampleRate();
 			int pixBounds = rate / samples;
 			D3DXVECTOR2 v2[2] = { D3DXVECTOR2(0, 0), D3DXVECTOR2(0, h) };
@@ -502,18 +465,19 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 			d3dLine->Begin();
 			d3dLine->Draw(v2, 2, lineStartBondaryColor);
 			d3dLine->End();
-			VERTEX v6[6];
-			CreateVERTEX(&v6[0], startDraw, 0, lineStartBondaryColor);
-			CreateVERTEX(&v6[1], startDraw + 10, 0, lineStartBondaryColor);
-			CreateVERTEX(&v6[2], startDraw, 10, lineStartBondaryColor);
-			CreateVERTEX(&v6[3], startDraw, h - 10, lineStartBondaryColor);
-			CreateVERTEX(&v6[4], startDraw + 10, h, lineStartBondaryColor);
-			CreateVERTEX(&v6[5], startDraw, h, lineStartBondaryColor);
+			vertex v6[6];
+			D3DCOLOR color(lineStartBondaryColor);
+			CreateVERTEX(&v6[0], startDraw, 0, color);
+			CreateVERTEX(&v6[1], startDraw + 10, 0, color);
+			CreateVERTEX(&v6[2], startDraw, 10, color);
+			CreateVERTEX(&v6[3], startDraw, h - 10, color);
+			CreateVERTEX(&v6[4], startDraw + 10, h, color);
+			CreateVERTEX(&v6[5], startDraw, h, color);
 
-			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, v6, sizeof(VERTEX)), L"primitive failed");
-			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, &v6[3], sizeof(VERTEX)), L"primitive failed");
-			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 1, v6, sizeof(VERTEX)), L"primitive failed");
-			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 1, &v6[3], sizeof(VERTEX)), L"primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, v6, sizeof(vertex)), L"primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, &v6[3], sizeof(vertex)), L"primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 1, v6, sizeof(vertex)), L"primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 1, &v6[3], sizeof(vertex)), L"primitive failed");
 
 			// Draw end boundary
 
@@ -524,17 +488,17 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 			d3dLine->Draw(v2, 2, lineEndBondaryColor);
 			d3dLine->End();
 			d3dLine->SetWidth(1.f);
-			CreateVERTEX(&v6[0], startDraw, 0, lineEndBondaryColor);
-			CreateVERTEX(&v6[1], startDraw - 10, 0, lineEndBondaryColor);
-			CreateVERTEX(&v6[2], startDraw, 10, lineEndBondaryColor);
-			CreateVERTEX(&v6[3], startDraw, h - 10, lineEndBondaryColor);
-			CreateVERTEX(&v6[4], startDraw - 10, h, lineEndBondaryColor);
-			CreateVERTEX(&v6[5], startDraw, h, lineEndBondaryColor);
+			CreateVERTEX(&v6[0], startDraw, 0, color);
+			CreateVERTEX(&v6[1], startDraw - 10, 0, color);
+			CreateVERTEX(&v6[2], startDraw, 10, color);
+			CreateVERTEX(&v6[3], startDraw, h - 10, color);
+			CreateVERTEX(&v6[4], startDraw - 10, h, color);
+			CreateVERTEX(&v6[5], startDraw, h, color);
 
-			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, v6, sizeof(VERTEX)), L"primitive failed");
-			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, &v6[3], sizeof(VERTEX)), L"primitive failed");
-			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 1, v6, sizeof(VERTEX)), L"primitive failed");
-			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 1, &v6[3], sizeof(VERTEX)), L"primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, v6, sizeof(vertex)), L"primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, &v6[3], sizeof(vertex)), L"primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 1, v6, sizeof(vertex)), L"primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 1, &v6[3], sizeof(vertex)), L"primitive failed");
 
 			// Draw karaoke
 			if (hasKara) {
@@ -566,7 +530,7 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 						d3dLine->End();
 						d3dLine->SetWidth(1);
 						RECT rect = { center + karstart, 0, center + karstart + fw, fh };
-						d3dFontVerdana11->DrawTextW(NULL, acsyl.wchar_str(), -1, &rect, DT_LEFT, syllableTextColor);
+						d3dFontVerdana11->DrawTextW(nullptr, acsyl.wchar_str(), -1, &rect, DT_LEFT, syllableTextColor);
 						//border of active syllable
 						if (currentCharacter >= 0 && syllableHover >= 0 && syllableHover == j){
 							int start, end;
@@ -651,11 +615,11 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 		}
 		// Draw current frame
 		if (drawVideoPos) {
-			VideoBox *Video = tab->video;
-			if (Video->GetState() == Paused) {
+			VideoBox *video = tab->video;
+			if (video->GetState() == Paused) {
 				d3dLine->SetWidth(2);
 
-				float x = GetXAtMS(Video->Tell());
+				float x = GetXAtMS(video->Tell());
 				d3dLine->Begin();
 				D3DXVECTOR2 v2[2] = { D3DXVECTOR2(x, 0), D3DXVECTOR2(x, h) };
 				DrawDashedLine(v2, 2, AudioCursor);
@@ -700,7 +664,7 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 	}
 	hr = d3dDevice->EndScene();
 
-	hr = d3dDevice->Present(NULL, NULL, NULL, NULL);
+	hr = d3dDevice->Present(nullptr, nullptr, nullptr, nullptr);
 
 	if (D3DERR_DEVICELOST == hr ||
 		D3DERR_DRIVERINTERNALERROR == hr){
@@ -777,17 +741,20 @@ void AudioDisplay::DrawInactiveLines() {
 		x1 = MIN(x1, selX1);
 		x2 = MIN(x2, selX1);
 
-		VERTEX v9[4];
-		CreateVERTEX(&v9[0], x1, 0, inactiveLinesBackground);
-		CreateVERTEX(&v9[1], x2 + 1, 0, inactiveLinesBackground);
-		CreateVERTEX(&v9[2], x1, h, inactiveLinesBackground);
-		CreateVERTEX(&v9[3], x2 + 1, h, inactiveLinesBackground);
-		HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX)), L"inactive lines primitive failed");
-		CreateVERTEX(&v9[0], x3, 0, inactiveLinesBackground);
-		CreateVERTEX(&v9[1], x4 + 1, 0, inactiveLinesBackground);
-		CreateVERTEX(&v9[2], x3, h, inactiveLinesBackground);
-		CreateVERTEX(&v9[3], x4 + 1, h, inactiveLinesBackground);
-		HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX)), L"inactive lines primitive failed");
+		vertex v9[4];
+		D3DCOLOR color(inactiveLinesBackground);
+		CreateVERTEX(&v9[0], x1, 0, color);
+		CreateVERTEX(&v9[1], x2 + 1, 0, color);
+		CreateVERTEX(&v9[2], x1, h, color);
+		CreateVERTEX(&v9[3], x2 + 1, h, color);
+		HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(vertex)), 
+			L"inactive lines primitive failed");
+		CreateVERTEX(&v9[0], x3, 0, color);
+		CreateVERTEX(&v9[1], x4 + 1, 0, color);
+		CreateVERTEX(&v9[2], x3, h, color);
+		CreateVERTEX(&v9[3], x4 + 1, h, color);
+		HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(vertex)), 
+			L"inactive lines primitive failed");
 
 		if (!spectrum) {
 			d3dLine->Begin();
@@ -829,21 +796,22 @@ void AudioDisplay::DrawInactiveLines() {
 void AudioDisplay::DrawTimescale() {
 
 	// Set colours
-	VERTEX v9[4];
+	vertex v9[4];
 	D3DXVECTOR2 v2[2];
-	CreateVERTEX(&v9[0], 0, h, timescaleBackground);
-	CreateVERTEX(&v9[1], w, h, timescaleBackground);
-	CreateVERTEX(&v9[2], 0, h + timelineHeight, timescaleBackground);
-	CreateVERTEX(&v9[3], w, h + timelineHeight, timescaleBackground);
+	D3DCOLOR timescaleBackGround(timescaleBackground);
+	CreateVERTEX(&v9[0], 0, h, timescaleBackGround);
+	CreateVERTEX(&v9[1], w, h, timescaleBackGround);
+	CreateVERTEX(&v9[2], 0, h + timelineHeight, timescaleBackGround);
+	CreateVERTEX(&v9[3], w, h + timelineHeight, timescaleBackGround);
 
-	HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX)), L"primitive failed");
+	HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(vertex)), L"primitive failed");
 	d3dLine->Begin();
 	v2[0] = D3DXVECTOR2(0, h);
 	v2[1] = D3DXVECTOR2(w, h);
 	d3dLine->Draw(v2, 2, timescaleText);
 	
 	// Timescale ticks
-	int64_t start = Position*samples;
+	long long start = Position*samples;
 	int rate = provider->GetSampleRate();
 	/*int lastTextPos = -1000;
 	int lastLinePos = -20;*/
@@ -851,7 +819,7 @@ void AudioDisplay::DrawTimescale() {
 	int otherLinesModulo = 0;
 	int LinesModulo = 1;
 	for (int x = 0;; x++) {
-		int64_t pos = (x * samples) + start;
+		long long pos = (x * samples) + start;
 		// Second boundary
 		if (pos % rate < samples) {
 			if (lineStart) {
@@ -863,11 +831,11 @@ void AudioDisplay::DrawTimescale() {
 				int m = s / 60;
 				int textW;
 				if(hr)
-					GetTextExtent(L"X0:00:00X", &textW, NULL, NULL, NULL, &tahoma8);
+					GetTextExtent(L"X0:00:00X", &textW, nullptr, nullptr, nullptr, &tahoma8);
 				else if(m)
-					GetTextExtent(L"X00:00X", &textW, NULL, NULL, NULL, &tahoma8);
+					GetTextExtent(L"X00:00X", &textW, nullptr, nullptr, nullptr, &tahoma8);
 				else
-					GetTextExtent(L"X00X", &textW, NULL, NULL, NULL, &tahoma8);
+					GetTextExtent(L"X00X", &textW, nullptr, nullptr, nullptr, &tahoma8);
 
 				float numTextPlaced = (float)lineDist / (float)textW;
 				if (numTextPlaced > 9.f)
@@ -887,7 +855,7 @@ void AudioDisplay::DrawTimescale() {
 		}
 		
 	}
-	auto drawTime = [=](int x, int64_t pos/*, int *lastTextPos*/, bool drawMS){
+	auto drawTime = [=](int x, long long pos/*, int *lastTextPos*/, bool drawMS){
 		//wxCoord textW;
 		int s = pos / rate;
 		int hr = s / 3600;
@@ -903,7 +871,7 @@ void AudioDisplay::DrawTimescale() {
 			if (ms)
 				text << wxString::Format(_T(".%i"), ms);
 		}
-		//GetTextExtent(text, &textW, NULL, NULL, NULL, &tahoma8);
+		//GetTextExtent(text, &textW, nullptr, nullptr, nullptr, &tahoma8);
 		//if (drawMS)
 		//textW += 20;
 		//if (x > (*lastTextPos) + textW){
@@ -912,7 +880,7 @@ void AudioDisplay::DrawTimescale() {
 			rect.top = h + 8;
 			rect.right = rect.left + 100;
 			rect.bottom = rect.top + 40;
-			d3dFontTahoma8->DrawTextW(NULL, text.wchar_str(), -1, &rect, DT_CENTER, timescaleText);
+			d3dFontTahoma8->DrawTextW(nullptr, text.wchar_str(), -1, &rect, DT_CENTER, timescaleText);
 			//(*lastTextPos) = x;
 		//}
 	};
@@ -928,7 +896,7 @@ void AudioDisplay::DrawTimescale() {
 		}
 		//int linesCounter = 1;
 		for (int x = 0; x < w; x++) {
-			int64_t pos = (x * samples) + start;
+			long long pos = (x * samples) + start;
 			// Second boundary
 			if (pos % rate < samples) {
 				v2[0] = D3DXVECTOR2(x, h + 2);
@@ -963,7 +931,7 @@ void AudioDisplay::DrawTimescale() {
 // Waveform
 void AudioDisplay::DrawWaveform(bool weak) {
 	// Prepare Waveform
-	if (!weak || peak == NULL || min == NULL) {
+	if (!weak || peak == nullptr || min == nullptr) {
 		if (peak) delete[] peak;
 		if (min) delete[] min;
 		peak = new int[w];
@@ -979,7 +947,7 @@ void AudioDisplay::DrawWaveform(bool weak) {
 	if (!hasSel) selStartCap = w;
 	D3DXVECTOR2 v2[2];
 	HRESULT hr;
-	for (int64_t i = 0; i < selStartCap; i++) {
+	for (long long i = 0; i < selStartCap; i++) {
 		v2[0] = D3DXVECTOR2(i, peak[i]);
 		v2[1] = D3DXVECTOR2(i, min[i] - 1);
 		hr = d3dLine->Draw(v2, 2, waveform);
@@ -992,14 +960,14 @@ void AudioDisplay::DrawWaveform(bool weak) {
 			if (NeedCommit) waveformSel = waveformModified;
 			else waveformSel = waveformSelected;
 		}
-		for (int64_t i = selStartCap; i < selEndCap; i++) {
+		for (long long i = selStartCap; i < selEndCap; i++) {
 			v2[0] = D3DXVECTOR2(i, peak[i]);
 			v2[1] = D3DXVECTOR2(i, min[i] - 1);
 			d3dLine->Draw(v2, 2, waveformSel);
 		}
 
 		// Draw post-selection
-		for (int64_t i = selEndCap; i < w; i++) {
+		for (long long i = selEndCap; i < w; i++) {
 			v2[0] = D3DXVECTOR2(i, peak[i]);
 			v2[1] = D3DXVECTOR2(i, min[i] - 1);
 			d3dLine->Draw(v2, 2, waveform);
@@ -1079,7 +1047,7 @@ void AudioDisplay::DrawProgress()
 	textParcent.top = halfY - 20;
 	textParcent.bottom = halfY + 20;
 	wxString txt = std::to_string((int)(provider->GetAudioProgress() * 100.f)) + L"%";
-	
+
 	d3dLine->SetWidth(1);
 	d3dLine->Begin();
 	d3dLine->Draw(&vectors[4], 5, 0xFF00FFFF);
@@ -1089,13 +1057,14 @@ void AudioDisplay::DrawProgress()
 	d3dLine->Begin();
 	d3dLine->Draw(&vectors[14], 2, 0xFFFFFFFF);
 	d3dLine->End();
-
-	DRAWOUTTEXT(d3dFontTahoma13, txt, textParcent, DT_CENTER | DT_VCENTER, 0xFFFFFFFF)
+	if (d3dFontTahoma13) {
+		DRAWOUTTEXT(d3dFontTahoma13, txt, textParcent, DT_CENTER | DT_VCENTER, 0xFFFFFFFF)
+	}
 }
 
 //////////////////////////
 // Get selection position
-void AudioDisplay::GetDialoguePos(int64_t &selStart, int64_t &selEnd, bool cap) {
+void AudioDisplay::GetDialoguePos(long long &selStart, long long &selEnd, bool cap) {
 	selStart = GetXAtMS(curStartMS);
 	selEnd = GetXAtMS(curEndMS);
 
@@ -1225,7 +1194,7 @@ void AudioDisplay::SetSamplesPercent(int percent, bool update, float pivot) {
 		// Center scroll
 		int oldSamples = samples;
 		UpdateSamples();
-		PositionSample += int64_t((oldSamples - samples)*w1*pivot);
+		PositionSample += long long((oldSamples - samples)*w1*pivot);
 		if (PositionSample < 0) PositionSample = 0;
 
 		// Update
@@ -1245,7 +1214,7 @@ void AudioDisplay::UpdateSamples() {
 	// Set samples
 	if (!provider) return;
 	if (w) {
-		int64_t totalSamples = provider->GetNumSamples();
+		long long totalSamples = provider->GetNumSamples();
 		//to make not scaling with window change
 		//w to constant number for example 500
 		//spectrum posiotion have to changed that number too
@@ -1289,11 +1258,11 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 			catch (const wxChar *e) {
 				wxLogError(e);
 			}
-			if (ownProvider && provider){ delete provider; provider = NULL; }
+			if (ownProvider && provider){ delete provider; provider = nullptr; }
 			delete player;
-			if (spectrumRenderer){ delete spectrumRenderer; spectrumRenderer = NULL; }
+			if (spectrumRenderer){ delete spectrumRenderer; spectrumRenderer = nullptr; }
 
-			player = NULL;
+			player = nullptr;
 			Reset();
 			loaded = false;
 		}
@@ -1318,10 +1287,10 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 			if (FFMS2 && fromvideo){
 				provider = FFMS2;
 				ownProvider = (!provider->HasVideo());
-				if (ownProvider){ FFMS2 = NULL; }
+				if (ownProvider){ FFMS2 = nullptr; }
 			}
 			else{
-				provider = Provider::Get(file, NULL, Kaia->Frame, &success);
+				provider = Provider::Get(file, nullptr, Kaia->Frame, &success);
 				if (!success || provider->GetSampleRate() < 0) {
 					delete provider; provider = 0;
 					loaded = false; return;
@@ -1368,7 +1337,7 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 
 	if (!loaded) return;
 
-	assert(loaded == (provider != NULL));
+	//assert(loaded == (provider != nullptr));
 	if (provider->AudioNotInitialized()){
 		ProgressTimer.Start(50);
 	}
@@ -1396,42 +1365,42 @@ void AudioDisplay::UpdateScrollbar() {
 
 //////////////////////////////////////////////
 // Gets the sample number at the x coordinate
-int64_t AudioDisplay::GetSampleAtX(int x) {
+long long AudioDisplay::GetSampleAtX(int x) {
 	return (x + Position)*samples;
 }
 
 
 /////////////////////////////////////////////////
 // Gets the x coordinate corresponding to sample
-float AudioDisplay::GetXAtSample(int64_t n) {
+float AudioDisplay::GetXAtSample(long long n) {
 	return samples ? ((double)n / (double)samples) - Position : 0;
 }
 
 
 /////////////////
 // Get MS from X
-int AudioDisplay::GetMSAtX(int64_t x) {
+int AudioDisplay::GetMSAtX(long long x) {
 	return (PositionSample + (x*samples)) * 1000 / provider->GetSampleRate();
 }
 
 
 /////////////////
 // Get X from MS
-float AudioDisplay::GetXAtMS(int64_t ms) {
+float AudioDisplay::GetXAtMS(long long ms) {
 	return ((ms * provider->GetSampleRate() / 1000.0) - PositionSample) / (double)samples;
 }
 
 
 ////////////////////
 // Get MS At sample
-int AudioDisplay::GetMSAtSample(int64_t x) {
+int AudioDisplay::GetMSAtSample(long long x) {
 	return x * 1000 / provider->GetSampleRate();
 }
 
 
 ////////////////////
 // Get Sample at MS
-int64_t AudioDisplay::GetSampleAtMS(int64_t ms) {
+long long AudioDisplay::GetSampleAtMS(long long ms) {
 	return ms * provider->GetSampleRate() / 1000;
 }
 
@@ -1481,7 +1450,7 @@ void AudioDisplay::Play(int start, int end, bool pause) {
 
 	// Set defaults
 	playingToEnd = end < 0;
-	int64_t num_samples = provider->GetNumSamples();
+	long long num_samples = provider->GetNumSamples();
 	start = GetSampleAtMS(start);
 	if (end != -1) end = GetSampleAtMS(end);
 	else end = num_samples - 1;
@@ -1521,7 +1490,7 @@ void AudioDisplay::Stop(bool stopVideo) {
 
 void AudioDisplay::ChangePosition(int time, bool center /*= true*/)
 {
-	int64_t samplepos = GetSampleAtMS(time);
+	long long samplepos = GetSampleAtMS(time);
 	if (center)
 		samplepos = (samplepos / samples) - (w / 2);
 
@@ -1678,8 +1647,8 @@ void AudioDisplay::OnPaint(wxPaintEvent& event) {
 // Mouse event
 void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 	// Get x,y
-	int64_t x = event.GetX();
-	int64_t y = event.GetY();
+	long long x = event.GetX();
+	long long y = event.GetY();
 
 	bool shiftDown = event.m_shiftDown;
 	if (box->arrows){ box->SetCursor(wxCURSOR_ARROW); box->arrows = false; }
@@ -2098,7 +2067,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 		if (updated) {
 
 			if (!playingToEnd) {
-				int64_t slend;
+				long long slend;
 				if (hasKara && Grabbed >= 0){
 					slend = GetSampleAtMS(karaoke->syltimes[Grabbed]);
 				}
@@ -2180,7 +2149,7 @@ int AudioDisplay::GetBoundarySnap(int ms, int rangeX, bool shiftHeld, bool start
 	if (snapKey && drawKeyframes) {
 		const wxArrayInt& keyFrames = provider->GetKeyframes();
 		size_t timecodesSize = provider->GetTimecodes().size();
-		int64_t keyMS;
+		long long keyMS;
 
 		for (unsigned int i = 0; i < keyFrames.Count(); i++) {
 			keyMS = keyFrames[i];
@@ -2262,7 +2231,7 @@ int AudioDisplay::GetBoundarySnap(int ms, int rangeX, bool shiftHeld, bool start
 void AudioDisplay::GetTextExtentPixel(const wxString &text, int *x, int *y)
 {
 	RECT rcRect = { 0, 0, 0, 0 };
-	d3dFontVerdana11->DrawTextW(NULL, text.wchar_str(), -1, &rcRect, DT_CALCRECT, 0xFF000000);
+	d3dFontVerdana11->DrawTextW(nullptr, text.wchar_str(), -1, &rcRect, DT_CALCRECT, 0xFF000000);
 	*x = rcRect.right - rcRect.left;
 	*y = rcRect.bottom - rcRect.top;
 	if (text.StartsWith(L" "))
@@ -2334,7 +2303,7 @@ void AudioDisplay::UpdateTimer()
 	curpos = -1;
 	if (player->IsPlaying()) {
 		cursorPaint = true;
-		int64_t curPos = player->GetCurrentPosition();
+		long long curPos = player->GetCurrentPosition();
 		if (curPos > player->GetStartPosition() && curPos < player->GetEndPosition()) {
 			// Scroll if needed
 			int posX = GetXAtSample(curPos);
@@ -2455,7 +2424,7 @@ void AudioDisplay::Prev(bool play) {
 
 	}
 	else{
-		//if(tab->Video->GetState()==Playing){tab->Video->Pause();}
+		//if(tab->video->GetState()==Playing){tab->video->Pause();}
 		ChangeLine(-1);
 	}
 
@@ -2514,7 +2483,8 @@ void AudioDisplay::Commit(bool moveToEnd)
 		return;
 	}
 	if (!Options.GetBool(DISABLE_LIVE_VIDEO_EDITING)){ 
-		edit->OnEdit(wxCommandEvent()); 
+		wxCommandEvent evt;
+		edit->OnEdit(evt); 
 	}
 }
 
@@ -2560,7 +2530,7 @@ bool AudioDisplay::SetFont(const wxFont &font)
 	tahoma13 = wxFont(fontSize + 3, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, L"Tahoma");
 	tahoma8 = *Options.GetFont(-1);
 	int fh;
-	GetTextExtent(L"#TWFfGH", NULL, &fh, NULL, NULL, &tahoma8);
+	GetTextExtent(L"#TWFfGH", nullptr, &fh, nullptr, nullptr, &tahoma8);
 	timelineHeight = fh + 8;
 	GetClientSize(&w, &h);
 	h -= timelineHeight;
@@ -2580,3 +2550,4 @@ EVT_KILL_FOCUS(AudioDisplay::OnLoseFocus)
 EVT_MOUSE_CAPTURE_LOST(AudioDisplay::OnLostCapture)
 EVT_ERASE_BACKGROUND(AudioDisplay::OnEraseBackground)
 END_EVENT_TABLE()
+

@@ -75,12 +75,12 @@ void AssColor::SetAlphaString(wxString alpha)
 	alpha.Replace(L"H", emptyString);
 	alpha.ToLong(&a, 16);
 }
-void AssColor::SetWX(const wxColour &kolor, int alpha)
+void AssColor::SetWX(const wxColour &color, int alpha)
 {
 	a = alpha;
-	b = kolor.Blue();
-	g = kolor.Green();
-	r = kolor.Red();
+	b = color.Blue();
+	g = color.Green();
+	r = color.Red();
 }
 
 

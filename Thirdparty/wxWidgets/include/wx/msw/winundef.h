@@ -380,7 +380,7 @@
 
 #ifdef GetFirstChild
     #undef GetFirstChild
-    inline HWND GetFirstChild(HWND WXUNUSED_IN_WINCE(hwnd))
+    inline HWND GetFirstChild(HWND hwnd)
     {
 #ifdef __WXWINCE__
         return 0;

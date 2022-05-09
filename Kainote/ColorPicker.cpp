@@ -730,7 +730,7 @@ int DialogColorPicker::GetColorType()
 	return -1;
 }
 
-void DialogColorPicker::AddRecent(const AssColor &color)
+void DialogColorPicker::AddRecent(const AssColor color)
 {
 	if (DCP){
 		DCP->recent_box->AddColor(color.GetWX());

@@ -171,7 +171,7 @@ private:
 	RendererVideo *renderer = nullptr;
 	wxSize m_VideoWindowLastSize;
 	Fullscreen *m_FullScreenWindow;
-	PlaybackState m_State = None;
+	PlaybackState m_State;
 	//bool m_HasArrow;
 	int m_LastCursor = wxCURSOR_ARROW;
 	int m_LastFullScreenCursor = wxCURSOR_ARROW;

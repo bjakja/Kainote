@@ -134,7 +134,7 @@ void KaiFrame::OnPaint(wxPaintEvent &evt)
 		if (GetTitle() != emptyString){
 			int startX = icons.GetIconCount() ? iconScale + 14 : 6 + maximizeDiff;
 			int maxWidth = w - 75 - maximizeDiff - startX;
-			mdc.DrawTextW(GetTruncateText(GetTitle(), maxWidth, this), startX, 5 + maximizeDiff);
+			mdc.DrawText(GetTruncateText(GetTitle(), maxWidth, this), startX, 5 + maximizeDiff);
 		}
 
 		int buttonScale = ((frameTopBorder - 8) / 2) * 2;

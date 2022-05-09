@@ -1569,7 +1569,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 	if (!cursorWasSet){
 		caret->Move(0, -50);
 	}
-	const wxColour &border = Options.GetColour(hasFocus ? EDITOR_BORDER_ON_FOCUS : EDITOR_BORDER);
+	const wxColour border = Options.GetColour(hasFocus ? EDITOR_BORDER_ON_FOCUS : EDITOR_BORDER);
 	//here we go our status bar
 	if (statusBarHeight > 0){
 		gc->SetBrush(cbackground);
@@ -1987,7 +1987,7 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 	if (!cursorWasSet){
 		caret->Move(0, -50);
 	}
-	const wxColour &border = Options.GetColour(hasFocus ? EDITOR_BORDER_ON_FOCUS : EDITOR_BORDER);
+	const wxColour border = Options.GetColour(hasFocus ? EDITOR_BORDER_ON_FOCUS : EDITOR_BORDER);
 	//here we go our status bar
 	if (statusBarHeight > 0){
 		dc.SetBrush(cbackground);

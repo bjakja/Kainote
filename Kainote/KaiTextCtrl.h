@@ -75,8 +75,8 @@ public:
 	void SetMaxLength(int maxLen);
 	void AppendText(const wxString &text);
 	//now only color;font later
-	void AppendTextWithStyle(const wxString &text, const wxColour &color);
-	void SetStyle(size_t from, size_t to, const wxColour &color);
+	void AppendTextWithStyle(const wxString &text, const wxColour color);
+	void SetStyle(size_t from, size_t to, const wxColour color);
 	bool FindStyle(size_t pos, size_t *ret, bool returnSize = false);
 	void MoveStyles(size_t textPos, int moveIndex);
 	void DeleteStyles(size_t textStart, size_t textEnd);

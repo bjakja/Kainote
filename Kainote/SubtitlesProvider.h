@@ -16,6 +16,7 @@
 #pragma  once
 #include "SubtitlesProviderManager.h"
 #include "CsriMod.h"
+#include "wx/msw/winundef.h"
 #include <wx/window.h>
 #include <wx/arrstr.h>
 #include <atomic>
@@ -46,8 +47,8 @@ private:
 	SubtitlesProvider(const SubtitlesProvider &copy) = delete;
 protected:
 	wxSize m_VideoSize;
-	unsigned char m_Format;
-	bool m_IsSwapped;
+	unsigned char m_Format = 0;
+	bool m_IsSwapped = false;
 	bool m_HasParameters = false;
 	char m_BytesPerColor = 4;
 	static csri_rend *m_CsriRenderer;

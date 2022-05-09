@@ -235,7 +235,7 @@ public:
 	AssColor GetColor();
 	int GetColorType();
 	//instead of getting unnecessery color there will be better add function for that
-	static void AddRecent(const AssColor &color);
+	static void AddRecent(const AssColor color);
 	static DialogColorPicker *DCP;
 	static DialogColorPicker *Get(wxWindow *parent, AssColor color = wxColour(L"#000000"), int colorType = -1);
 
@@ -259,7 +259,7 @@ typedef ButtonColorPicker ColorButton;
 //class TextColorPicker : public wxWindow
 //{
 //public:
-//	TextColorPicker(wxWindow *parent, int id, const AssColor &color, const wxPoint &pos = wxDefaultPosition, const wxSize &size=wxDefaultSize, int style = 0);
+//	TextColorPicker(wxWindow *parent, int id, const AssColor color, const wxPoint &pos = wxDefaultPosition, const wxSize &size=wxDefaultSize, int style = 0);
 //	virtual ~TextColorPicker(){};
 //	AssColor GetColor();
 //	void SetColor(const AssColor& color);

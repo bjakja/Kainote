@@ -127,7 +127,7 @@
       <AdditionalLibraryDirectories>c:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(SolutionDir)bin\$(Platform)\$(Configuration)\;$(SolutionDir)$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <IgnoreSpecificDefaultLibraries>libboost_locale-vc143-mt-sgd-x64-1_79.lib;libboost_regex-vc143-mt-sgd-x64-1_79.lib;libboost_system-vc143-mt-sgd-x64-1_79.lib;libboost_filesystem-vc143-mt-sgd-x64-1_79.lib</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>msvcrtd.lib;libboost_locale-vc143-mt-sgd-x64-1_79.lib;libboost_regex-vc143-mt-sgd-x64-1_79.lib;libboost_system-vc143-mt-sgd-x64-1_79.lib;libboost_filesystem-vc143-mt-sgd-x64-1_79.lib</IgnoreSpecificDefaultLibraries>
       <LargeAddressAware>true</LargeAddressAware>
       <SubSystem>Windows</SubSystem>
       <EntryPointSymbol>

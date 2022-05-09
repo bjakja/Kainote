@@ -35,7 +35,7 @@ public:
 	virtual ~MappedButton();
 	void SetToolTip(const wxString &toolTip = emptyString);
 	void SetBitmap(const wxBitmap & bitmap){ icon = bitmap; Refresh(false); };
-	bool SetBackgroundColour(const wxColour &color){
+	bool SetBackgroundColour(const wxColour color){
 		isColorButton = true;
 		buttonColor = color;
 		Refresh(false);

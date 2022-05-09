@@ -65,7 +65,7 @@ public:
 
 class ItemColor : public Item{
 public:
-	ItemColor(const AssColor &color, int i) : Item(TYPE_COLOR){col = color;colOptNum=i;}
+	ItemColor(const AssColor color, int i) : Item(TYPE_COLOR){col = color;colOptNum=i;}
 	virtual ~ItemColor(){}
 	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed = nullptr);
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList);

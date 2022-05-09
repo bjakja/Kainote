@@ -20,8 +20,8 @@
 #include "OpennWrite.h"
 #include "kainoteFrame.h"
 #include "DshowRenderer.h"
+#include <wx/msw/winundef.h>
 #include <wx/thread.h>
-#include <boost/gil/algorithm.hpp>
 #include <process.h>
 #include "config.h"
 #include "utilswindows.h"

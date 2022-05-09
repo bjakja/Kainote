@@ -190,7 +190,7 @@ void KaiTextCtrl::AppendText(const wxString &text)
 	MakeCursorVisible();
 }
 
-void KaiTextCtrl::AppendTextWithStyle(const wxString &text, const wxColour &color)
+void KaiTextCtrl::AppendTextWithStyle(const wxString &text, const wxColour color)
 {
 	size_t textLen = KText.length();
 	size_t size = textStyles.size();
@@ -203,7 +203,7 @@ void KaiTextCtrl::AppendTextWithStyle(const wxString &text, const wxColour &colo
 	AppendText(text);
 }
 
-void KaiTextCtrl::SetStyle(size_t from, size_t to, const wxColour &color)
+void KaiTextCtrl::SetStyle(size_t from, size_t to, const wxColour color)
 {
 	size_t ret;
 	FindStyle(from, &ret, true);

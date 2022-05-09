@@ -385,8 +385,8 @@ void RendererDirectShow::Render(bool redrawSubsOnFrame, bool wait)
 #if byvertices
 
 
-	// Render the VERTEX buffer contents
-	hr = m_D3DDevice->SetStreamSource(0, VERTEX, 0, sizeof(CUSTOMVERTEX));
+	// Render the vertex buffer contents
+	hr = m_D3DDevice->SetStreamSource(0, vertex, 0, sizeof(CUSTOMVERTEX));
 	hr = m_D3DDevice->SetVertexShader(nullptr);
 	hr = m_D3DDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
 	hr = m_D3DDevice->SetTexture(0, texture);
@@ -662,7 +662,7 @@ void RendererDirectShow::SetupVertices()
 		"Nie można utworzyć bufora wertex")
 	CUSTOMVERTEX* pVertices;
 	HRESULT hr;
-	HRN(hr = m_D3DVertex->Lock(0, 0, (void**)&pVertices, 0), "nie można zablokować bufora VERTEX");
+	HRN(hr = m_D3DVertex->Lock(0, 0, (void**)&pVertices, 0), "nie można zablokować bufora vertex");
 	// looks like it places 1px border that's position is moved by 1
 	//m_MainStreamRect.top
 	pVertices[0].position = D3DXVECTOR3(m_BackBufferRect.left, m_BackBufferRect.top, 0.0f);
@@ -681,7 +681,7 @@ void RendererDirectShow::SetupVertices()
 	pVertices[4].tu = m_MainStreamRect.left / width;//0.2f;
 	pVertices[4].tv = m_MainStreamRect.top / height;//0.2f;
 
-	HRN(hr = m_D3DVertex->Unlock(), "Canot unlock VERTEX buffer");
+	HRN(hr = m_D3DVertex->Unlock(), "Canot unlock vertex buffer");
 }
 
 void RendererDirectShow::ZoomChanged()

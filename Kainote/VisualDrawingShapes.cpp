@@ -1,4 +1,4 @@
-﻿//  Copyright (c) 2021, Marcin Drob
+﻿//  Copyright (c) 2021 - 2022, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -15,7 +15,6 @@
 
 
 
-
 #include "VisualDrawingShapes.h"
 #include "KaiStaticBoxSizer.h"
 #include "MappedButton.h"
@@ -29,7 +28,7 @@
 #include "Visuals.h"
 #include "RendererVideo.h"
 #include "VideoToolbar.h"
-
+//
 
 enum {
 	LEFT = 1,
@@ -603,7 +602,7 @@ void Shapes::GetVisual(wxString* drawing)
 
 void Shapes::SetScale(wxString* txt, size_t position, int* diff)
 {
-	/*if (currentShape.scalingMode == ShapesSetting::CHANGE_SCALE && shapeScale.x > 0.f) {
+	if (currentShape.scalingMode == ShapesSetting::CHANGE_SCALE && shapeScale.x > 0.f) {
 		SetFromTo(0, position);
 		FindTag(L"fscx([0-9.-]+)", *txt, 3);
 		wxPoint textPos = GetPositionInText();
@@ -621,7 +620,7 @@ void Shapes::SetScale(wxString* txt, size_t position, int* diff)
 				*diff += (textPos.y - textPos.x + 1) - newTag.length();
 			}
 		}
-	}*/
+	}
 }
 
 int Shapes::HitTest(const D3DXVECTOR2& pos, bool diff)

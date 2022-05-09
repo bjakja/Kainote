@@ -131,6 +131,7 @@ VideoBox::VideoBox(wxWindow *parent, const wxSize &size)
 	, m_IsOnAnotherMonitor(false)
 	, m_ShownKeyframe(false)
 	, m_IsFullscreen(false)
+	, m_State(None)
 {
 	int fw;
 	GetTextExtent(L"#TWFfGH", &fw, &m_ToolBarHeight);
@@ -1780,7 +1781,7 @@ void VideoBox::GetWindowSize(int* x, int* y)
 }
 
 PlaybackState VideoBox::GetState() {
-	m_State;
+	return m_State;
 }
 void VideoBox::CaptureMouse() {
 	if (m_IsFullscreen && m_FullScreenWindow) {

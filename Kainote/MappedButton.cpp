@@ -23,7 +23,7 @@
 //#include "GraphicsD2D.h"
 
 
-wxColour WhiteUp(const wxColour &color)
+wxColour WhiteUp(const wxColour color)
 {
 	int r = color.Red() + 45, g = color.Green() + 45, b = color.Blue() + 45;
 	r = (r < 0xFF) ? r : 0xFF;
