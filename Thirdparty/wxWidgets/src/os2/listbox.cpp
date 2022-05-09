@@ -238,7 +238,7 @@ void wxListBox::SetupColours()
 
 void wxListBox::DoSetFirstItem(int N)
 {
-    wxCHECK_RET( IsValid(N),
+    //wxCHECK_RET( IsValid(N),
                  wxT("invalid index in wxListBox::SetFirstItem") );
 
     ::WinSendMsg(GetHwnd(), LM_SETTOPINDEX, MPFROMLONG(N), (MPARAM)0);
@@ -246,7 +246,7 @@ void wxListBox::DoSetFirstItem(int N)
 
 void wxListBox::DoDeleteOneItem(unsigned int n)
 {
-    wxCHECK_RET( IsValid(n),
+    //wxCHECK_RET( IsValid(n),
                  wxT("invalid index in wxListBox::Delete") );
 
 #if wxUSE_OWNER_DRAWN
@@ -323,7 +323,7 @@ void wxListBox::DoClear()
 
 void wxListBox::DoSetSelection( int N, bool bSelect)
 {
-    wxCHECK_RET( IsValid(N),
+    //wxCHECK_RET( IsValid(N),
                  wxT("invalid index in wxListBox::SetSelection") );
     ::WinSendMsg( GetHwnd()
                  ,LM_SELECTITEM
@@ -336,7 +336,7 @@ void wxListBox::DoSetSelection( int N, bool bSelect)
 
 bool wxListBox::IsSelected( int N ) const
 {
-    wxCHECK_MSG( IsValid(N), false,
+    //wxCHECK_MSG( IsValid(N), false,
                  wxT("invalid index in wxListBox::Selected") );
 
     LONG                            lItem;
@@ -357,7 +357,7 @@ bool wxListBox::IsSelected( int N ) const
 
 void* wxListBox::DoGetItemClientData(unsigned int n) const
 {
-    wxCHECK_MSG( IsValid(n), NULL,
+    //wxCHECK_MSG( IsValid(n), NULL,
                  wxT("invalid index in wxListBox::GetClientData") );
 
     return((void *)::WinSendMsg(GetHwnd(), LM_QUERYITEMHANDLE, MPFROMLONG(n), (MPARAM)0));
@@ -365,7 +365,7 @@ void* wxListBox::DoGetItemClientData(unsigned int n) const
 
 void wxListBox::DoSetItemClientData(unsigned int n, void* pClientData)
 {
-    wxCHECK_RET( IsValid(n),
+    //wxCHECK_RET( IsValid(n),
                  wxT("invalid index in wxListBox::SetClientData") );
 
     ::WinSendMsg(GetHwnd(), LM_SETITEMHANDLE, MPFROMLONG(n), MPFROMP(pClientData));
@@ -440,7 +440,7 @@ int wxListBox::GetSelections( wxArrayInt& raSelections ) const
 
 int wxListBox::GetSelection() const
 {
-    wxCHECK_MSG( !HasMultipleSelection(),
+    //wxCHECK_MSG( !HasMultipleSelection(),
                  -1,
                  wxT("GetSelection() can't be used with multiple-selection "
                     "listboxes, use GetSelections() instead.") );
@@ -459,7 +459,7 @@ wxString wxListBox::GetString(unsigned int n) const
     wxChar*  zBuf;
     wxString sResult;
 
-    wxCHECK_MSG( IsValid(n), wxEmptyString,
+    //wxCHECK_MSG( IsValid(n), wxEmptyString,
                  wxT("invalid index in wxListBox::GetClientData") );
 
     lLen = LONGFROMMR(::WinSendMsg(GetHwnd(), LM_QUERYITEMTEXTLENGTH, (MPARAM)n, (MPARAM)0));
@@ -473,7 +473,7 @@ wxString wxListBox::GetString(unsigned int n) const
 
 void wxListBox::SetString(unsigned int n, const wxString& rsString)
 {
-    wxCHECK_RET( IsValid(n),
+    //wxCHECK_RET( IsValid(n),
                  wxT("invalid index in wxListBox::SetString") );
 
     //

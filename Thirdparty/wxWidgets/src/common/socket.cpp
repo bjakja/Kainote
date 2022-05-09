@@ -291,7 +291,7 @@ void wxSocketManager::Init()
                     "sockets must be initialized from the main thread" );
 
     wxAppConsole * const app = wxAppConsole::GetInstance();
-    wxCHECK_RET( app, "sockets can't be initialized without wxApp" );
+    //wxCHECK_RET( app, "sockets can't be initialized without wxApp" );
 
     ms_manager = app->GetTraits()->GetSocketManager();
 }
@@ -770,7 +770,7 @@ bool wxSocketBase::IsInitialized()
 
 bool wxSocketBase::Initialize()
 {
-    wxCHECK_MSG( wxIsMainThread(), false,
+    //wxCHECK_MSG( wxIsMainThread(), false,
                  "must be called from the main thread" );
 
     if ( !gs_socketInitCount )
@@ -787,14 +787,14 @@ bool wxSocketBase::Initialize()
 
 void wxSocketBase::Shutdown()
 {
-    wxCHECK_RET( wxIsMainThread(), "must be called from the main thread" );
+    //wxCHECK_RET( wxIsMainThread(), "must be called from the main thread" );
 
-    wxCHECK_RET( gs_socketInitCount > 0, "too many calls to Shutdown()" );
+    //wxCHECK_RET( gs_socketInitCount > 0, "too many calls to Shutdown()" );
 
     if ( !--gs_socketInitCount )
     {
         wxSocketManager * const manager = wxSocketManager::Get();
-        wxCHECK_RET( manager, "should have a socket manager" );
+        //wxCHECK_RET( manager, "should have a socket manager" );
 
         manager->OnExit();
     }
@@ -950,11 +950,11 @@ wxSocketBase& wxSocketBase::Read(void* buffer, wxUint32 nbytes)
 
 wxUint32 wxSocketBase::DoRead(void* buffer_, wxUint32 nbytes)
 {
-    wxCHECK_MSG( m_impl, 0, "socket must be valid" );
+    //wxCHECK_MSG( m_impl, 0, "socket must be valid" );
 
     // We use pointer arithmetic here which doesn't work with void pointers.
     char *buffer = static_cast<char *>(buffer_);
-    wxCHECK_MSG( buffer, 0, "NULL buffer" );
+    //wxCHECK_MSG( buffer, 0, "NULL buffer" );
 
     // Try the push back buffer first, even before checking whether the socket
     // is valid to allow reading previously pushed back data from an already
@@ -1137,10 +1137,10 @@ wxSocketBase& wxSocketBase::Write(const void *buffer, wxUint32 nbytes)
 // shouldn't happen at all here), so please see comments there for explanations
 wxUint32 wxSocketBase::DoWrite(const void *buffer_, wxUint32 nbytes)
 {
-    wxCHECK_MSG( m_impl, 0, "socket must be valid" );
+    //wxCHECK_MSG( m_impl, 0, "socket must be valid" );
 
     const char *buffer = static_cast<const char *>(buffer_);
-    wxCHECK_MSG( buffer, 0, "NULL buffer" );
+    //wxCHECK_MSG( buffer, 0, "NULL buffer" );
 
     wxUint32 total = 0;
     while ( nbytes )
@@ -1388,7 +1388,7 @@ wxSocketBase::DoWait(long seconds, long milliseconds, wxSocketEventFlags flags)
 int
 wxSocketBase::DoWait(long timeout, wxSocketEventFlags flags)
 {
-    wxCHECK_MSG( m_impl, -1, "can't wait on invalid socket" );
+    //wxCHECK_MSG( m_impl, -1, "can't wait on invalid socket" );
 
     // we're never going to become ready in a TCP client if we're not connected
     // any more (OTOH a server can call this to precisely wait for a connection
@@ -1546,7 +1546,7 @@ bool wxSocketBase::WaitForLost(long seconds, long milliseconds)
 
 bool wxSocketBase::GetPeer(wxSockAddress& addr) const
 {
-    wxCHECK_MSG( m_impl, false, "invalid socket" );
+    //wxCHECK_MSG( m_impl, false, "invalid socket" );
 
     const wxSockAddressImpl& peer = m_impl->GetPeer();
     if ( !peer.IsOk() )
@@ -1559,7 +1559,7 @@ bool wxSocketBase::GetPeer(wxSockAddress& addr) const
 
 bool wxSocketBase::GetLocal(wxSockAddress& addr) const
 {
-    wxCHECK_MSG( m_impl, false, "invalid socket" );
+    //wxCHECK_MSG( m_impl, false, "invalid socket" );
 
     const wxSockAddressImpl& local = m_impl->GetLocal();
     if ( !local.IsOk() )
@@ -1744,7 +1744,7 @@ void wxSocketBase::Pushback(const void *buffer, wxUint32 size)
 
 wxUint32 wxSocketBase::GetPushback(void *buffer, wxUint32 size, bool peek)
 {
-    wxCHECK_MSG( buffer, 0, "NULL buffer" );
+    //wxCHECK_MSG( buffer, 0, "NULL buffer" );
 
     if (!m_unrd_size)
         return 0;
@@ -2011,7 +2011,7 @@ bool wxSocketClient::WaitOnConnect(long seconds, long milliseconds)
         return true;
     }
 
-    wxCHECK_MSG( m_establishing && m_impl, false,
+    //wxCHECK_MSG( m_establishing && m_impl, false,
                  "No connection establishment attempt in progress" );
 
     // notice that we return true even if DoWait() returned -1, i.e. if an

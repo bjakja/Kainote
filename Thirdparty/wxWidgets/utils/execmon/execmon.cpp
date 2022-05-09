@@ -124,7 +124,7 @@ bool TestExec(const wxVector<wxFileName>& programs, long timeout)
         {
             wxLogMessage("started program '%s' (pid %d)...",
                          programs[i].GetFullPath(), pid);
-            wxASSERT(dt->process.GetPid() == pid);
+            //wxASSERT(dt->process.GetPid() == pid);
 
             data.push_back(dt);
         }

@@ -83,7 +83,7 @@ void wxNonOwnedWindowImpl::Associate( WXWindow window, wxNonOwnedWindowImpl *imp
 {
     // adding NULL WindowRef is (first) surely a result of an error and
     // nothing else :-)
-    wxCHECK_RET( window != (WXWindow) NULL, wxT("attempt to add a NULL WindowRef to window list") );
+    //wxCHECK_RET( window != (WXWindow) NULL, wxT("attempt to add a NULL WindowRef to window list") );
 
     wxWinMacWindowList[window] = impl;
 }

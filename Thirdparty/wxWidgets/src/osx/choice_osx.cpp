@@ -139,7 +139,7 @@ int wxChoice::DoInsertItems(const wxArrayStringsAdapter & items,
 
 void wxChoice::DoDeleteOneItem(unsigned int n)
 {
-    wxCHECK_RET( IsValid(n) , wxT("wxChoice::Delete: invalid index") );
+    //wxCHECK_RET( IsValid(n) , wxT("wxChoice::Delete: invalid index") );
 
     if ( HasClientObjectData() )
         delete GetClientObject( n );
@@ -200,7 +200,7 @@ int wxChoice::FindString( const wxString& s, bool bCase ) const
 
 void wxChoice::SetString(unsigned int n, const wxString& s)
 {
-    wxCHECK_RET( IsValid(n), wxT("wxChoice::SetString(): invalid index") );
+    //wxCHECK_RET( IsValid(n), wxT("wxChoice::SetString(): invalid index") );
 
     m_strings[n] = s ;
 
@@ -209,7 +209,7 @@ void wxChoice::SetString(unsigned int n, const wxString& s)
 
 wxString wxChoice::GetString(unsigned int n) const
 {
-    wxCHECK_MSG( IsValid(n), wxEmptyString, wxT("wxChoice::GetString(): invalid index") );
+    //wxCHECK_MSG( IsValid(n), wxEmptyString, wxT("wxChoice::GetString(): invalid index") );
 
     return m_strings[n] ;
 }

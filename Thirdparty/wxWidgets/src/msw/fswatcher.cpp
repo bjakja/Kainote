@@ -77,7 +77,7 @@ wxFSWatcherImplMSW::~wxFSWatcherImplMSW()
 
 bool wxFSWatcherImplMSW::Init()
 {
-    wxCHECK_MSG( !m_workerThread.IsAlive(), false,
+    //wxCHECK_MSG( !m_workerThread.IsAlive(), false,
                  "Watcher service is already initialized" );
 
     if (m_workerThread.Create() != wxTHREAD_NO_ERROR)
@@ -116,7 +116,7 @@ wxFSWatcherImplMSW::DoRemove(wxSharedPtr<wxFSWatchEntryMSW> watch)
 // TODO ensuring that we have not already set watch for this handle/dir?
 bool wxFSWatcherImplMSW::SetUpWatch(wxFSWatchEntryMSW& watch)
 {
-    wxCHECK_MSG( watch.IsOk(), false, "Invalid watch" );
+    //wxCHECK_MSG( watch.IsOk(), false, "Invalid watch" );
     if (m_watches.find(watch.GetPath()) == m_watches.end())
     {
         wxLogTrace(wxTRACE_FSWATCHER, "Path '%s' is not watched",

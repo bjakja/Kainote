@@ -477,7 +477,7 @@ public:
     */
     wxVariant& GetValue()
     {
-        wxASSERT(m_pValue);
+        //wxASSERT(m_pValue);
         return *m_pValue;
     }
 
@@ -1268,7 +1268,7 @@ public:
     {
         wxPG_PROP_ARG_CALL_PROLOG()
         wxPropertyCategory* pc = wxDynamicCast(p, wxPropertyCategory);
-        wxASSERT(pc);
+        //wxASSERT(pc);
         m_pState->m_currentCategory = pc;
     }
 
@@ -1436,7 +1436,7 @@ public:
     */
     wxString GetCommonValueLabel( unsigned int i ) const
     {
-        wxASSERT( GetCommonValue(i) );
+        //wxASSERT( GetCommonValue(i) );
         return GetCommonValue(i)->GetLabel();
     }
 
@@ -2416,7 +2416,7 @@ public:
 
     wxPGProperty* GetMainParent() const
     {
-        wxASSERT(m_property);
+        //wxASSERT(m_property);
         return m_property->GetMainParent();
     }
 
@@ -2428,7 +2428,7 @@ public:
 
     wxPGValidationInfo& GetValidationInfo()
     {
-        wxASSERT(m_validationInfo);
+        //wxASSERT(m_validationInfo);
         return *m_validationInfo;
     }
 
@@ -2494,7 +2494,7 @@ public:
     */
     void SetValidationFailureBehavior( wxPGVFBFlags flags )
     {
-        wxASSERT( GetEventType() == wxEVT_PG_CHANGING );
+        //wxASSERT( GetEventType() == wxEVT_PG_CHANGING );
         m_validationInfo->SetFailureBehavior( flags );
     }
 
@@ -2503,13 +2503,13 @@ public:
     */
     void SetValidationFailureMessage( const wxString& message )
     {
-        wxASSERT( GetEventType() == wxEVT_PG_CHANGING );
+        //wxASSERT( GetEventType() == wxEVT_PG_CHANGING );
         m_validationInfo->SetFailureMessage( message );
     }
 
     wxPGVFBFlags GetValidationFailureBehavior() const
     {
-        wxASSERT( GetEventType() == wxEVT_PG_CHANGING );
+        //wxASSERT( GetEventType() == wxEVT_PG_CHANGING );
         return m_validationInfo->GetFailureBehavior();
     }
 
@@ -2542,8 +2542,8 @@ public:
 
     void SetupValidationInfo()
     {
-        wxASSERT(m_pg);
-        wxASSERT( GetEventType() == wxEVT_PG_CHANGING );
+        //wxASSERT(m_pg);
+        //wxASSERT( GetEventType() == wxEVT_PG_CHANGING );
         m_validationInfo = &m_pg->GetValidationInfo();
         m_value = m_validationInfo->GetValue();
     }

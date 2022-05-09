@@ -297,7 +297,7 @@ bool wxMethod::IsOk() const
         return false;
     }
 
-    wxASSERT(!m_bPureVirtual || (m_bPureVirtual && m_bVirtual));
+    //wxASSERT(!m_bPureVirtual || (m_bPureVirtual && m_bVirtual));
 
     for (unsigned int i=0; i<m_args.GetCount(); i++)
         if (!m_args[i].IsOk()) {

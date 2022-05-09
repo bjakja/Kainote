@@ -542,7 +542,7 @@ bool wxFileSystem::FindFileInPath(wxString *pStr,
                                   const wxString& basename)
 {
     // we assume that it's not empty
-    wxCHECK_MSG( !basename.empty(), false,
+    //wxCHECK_MSG( !basename.empty(), false,
                 wxT("empty file name in wxFileSystem::FindFileInPath"));
 
     wxString name;

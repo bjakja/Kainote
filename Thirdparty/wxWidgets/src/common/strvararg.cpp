@@ -562,7 +562,7 @@ const char* wxFormatString::InputAsChar()
 
     // the last case is that wide string was passed in: in that case, we need
     // to convert it:
-    wxASSERT( m_wchar );
+    //wxASSERT( m_wchar );
 
     m_char = wxConvLibc.cWC2MB(m_wchar.data());
 
@@ -608,7 +608,7 @@ const wchar_t* wxFormatString::InputAsWChar()
 
     // the last case is that narrow string was passed in: in that case, we need
     // to convert it:
-    wxASSERT( m_char );
+    //wxASSERT( m_char );
 
     m_wchar = wxConvLibc.cMB2WC(m_char.data());
 
@@ -650,15 +650,15 @@ template<typename CharType>
 wxFormatString::ArgumentType DoGetArgumentType(const CharType *format,
                                                unsigned n)
 {
-    wxCHECK_MSG( format, wxFormatString::Arg_Unknown,
+    //wxCHECK_MSG( format, wxFormatString::Arg_Unknown,
                  "empty format string not allowed here" );
 
     wxPrintfConvSpecParser<CharType> parser(format);
 
-    wxCHECK_MSG( n <= parser.nargs, wxFormatString::Arg_Unknown,
+    //wxCHECK_MSG( n <= parser.nargs, wxFormatString::Arg_Unknown,
                  "more arguments than format string specifiers?" );
 
-    wxCHECK_MSG( parser.pspec[n-1] != NULL, wxFormatString::Arg_Unknown,
+    //wxCHECK_MSG( parser.pspec[n-1] != NULL, wxFormatString::Arg_Unknown,
                  "requested argument not found - invalid format string?" );
 
     switch ( parser.pspec[n-1]->m_type )

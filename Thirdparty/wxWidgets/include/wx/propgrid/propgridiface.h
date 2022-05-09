@@ -1027,7 +1027,7 @@ public:
     void SetPropertyEditor( wxPGPropArg id, const wxPGEditor* editor )
     {
         wxPG_PROP_ARG_CALL_PROLOG()
-        wxCHECK_RET( editor, wxT("unknown/NULL editor") );
+        //wxCHECK_RET( editor, wxT("unknown/NULL editor") );
         p->SetEditor(editor);
         RefreshProperty(p);
     }

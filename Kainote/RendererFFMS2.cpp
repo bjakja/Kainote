@@ -46,15 +46,15 @@ void RendererFFMS2::DestroyFFMS2()
 	//SAFE_DELETE(m_FFMS2);
 }
 
-bool RendererFFMS2::DrawTexture(byte *nframe, bool copy)
+bool RendererFFMS2::DrawTexture(unsigned char *nframe, bool copy)
 {
 	wxCriticalSectionLocker lock(m_MutexRendering);
 	if (!m_MainSurface)
 		return false;
 
-	byte *fdata = nullptr;
-	byte *texbuf;
-	byte bytes = 4;
+	unsigned char * fdata = nullptr;
+	unsigned char * texbuf;
+	unsigned char bytes = 4;
 
 	D3DLOCKED_RECT d3dlr;
 
@@ -81,12 +81,12 @@ bool RendererFFMS2::DrawTexture(byte *nframe, bool copy)
 #else
 	HR(m_MainSurface->LockRect(&d3dlr, 0, D3DLOCK_NOSYSLOCK), _("Nie można zablokować bufora tekstury"));
 #endif
-	texbuf = static_cast<byte *>(d3dlr.pBits);
+	texbuf = static_cast<unsigned char*>(d3dlr.pBits);
 
 	diff = d3dlr.Pitch - (m_Width*bytes);
 	if (m_SwapFrame) {
 		int framePitch = m_Width * bytes;
-		byte * reversebyte = fdata + (framePitch * m_Height) - framePitch;
+		unsigned char* reversebyte = fdata + (framePitch * m_Height) - framePitch;
 		for (int j = 0; j < m_Height; ++j) {
 			memcpy(texbuf, reversebyte, framePitch);
 			texbuf += framePitch + diff;

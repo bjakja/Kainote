@@ -495,13 +495,13 @@ void wxWizard::DoCreateControls()
 
 void wxWizard::SetPageSize(const wxSize& size)
 {
-    wxCHECK_RET(!m_started, wxT("wxWizard::SetPageSize after RunWizard"));
+    //wxCHECK_RET(!m_started, wxT("wxWizard::SetPageSize after RunWizard"));
     m_sizePage = size;
 }
 
 void wxWizard::FitToPage(const wxWizardPage *page)
 {
-    wxCHECK_RET(!m_started, wxT("wxWizard::FitToPage after RunWizard"));
+    //wxCHECK_RET(!m_started, wxT("wxWizard::FitToPage after RunWizard"));
 
     while ( page )
     {
@@ -686,7 +686,7 @@ void wxWizard::DoWizardLayout()
 
 bool wxWizard::RunWizard(wxWizardPage *firstPage)
 {
-    wxCHECK_MSG( firstPage, false, wxT("can't run empty wizard") );
+    //wxCHECK_MSG( firstPage, false, wxT("can't run empty wizard") );
 
     // can't return false here because there is no old page
     (void)ShowPage(firstPage, true /* forward */);
@@ -746,7 +746,7 @@ wxSizer *wxWizard::GetPageAreaSizer() const
 
 void wxWizard::SetBorder(int border)
 {
-    wxCHECK_RET(!m_started, wxT("wxWizard::SetBorder after RunWizard"));
+    //wxCHECK_RET(!m_started, wxT("wxWizard::SetBorder after RunWizard"));
 
     m_border = border;
 }
@@ -780,7 +780,7 @@ void wxWizard::OnBackOrNext(wxCommandEvent& event)
                   (event.GetEventObject() == m_btnPrev),
                   wxT("unknown button") );
 
-    wxCHECK_RET( m_page, wxT("should have a valid current page") );
+    //wxCHECK_RET( m_page, wxT("should have a valid current page") );
 
     // ask the current page first: notice that we do it before calling
     // GetNext/Prev() because the data transferred from the controls of the page

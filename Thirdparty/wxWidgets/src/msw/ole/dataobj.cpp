@@ -167,7 +167,7 @@ wxString wxDataFormat::GetId() const
 
     wxString s;
 
-    wxCHECK_MSG( !IsStandard(), s,
+    //wxCHECK_MSG( !IsStandard(), s,
                  wxT("name of predefined format cannot be retrieved") );
 
     int len = ::GetClipboardFormatName(m_format, wxStringBuffer(s, max), max);
@@ -823,7 +823,7 @@ bool wxBitmapDataObject::SetData(size_t WXUNUSED(len), const void *buf)
 
     HBITMAP hbmp = wxDIB::ConvertToBitmap(pbmi);
 
-    wxCHECK_MSG( hbmp, FALSE, wxT("pasting/dropping invalid bitmap") );
+    //wxCHECK_MSG( hbmp, FALSE, wxT("pasting/dropping invalid bitmap") );
 
     const BITMAPINFOHEADER * const pbmih = &pbmi->bmiHeader;
     wxBitmap bitmap(pbmih->biWidth, pbmih->biHeight, pbmih->biBitCount);
@@ -1231,7 +1231,7 @@ bool wxURLDataObject::SetData(const wxDataFormat& format,
 {
     m_dataObjectLast = GetObject(format);
 
-    wxCHECK_MSG( m_dataObjectLast, FALSE,
+    //wxCHECK_MSG( m_dataObjectLast, FALSE,
                  wxT("unsupported format in wxURLDataObject"));
 
     return m_dataObjectLast->SetData(len, buf);
@@ -1240,7 +1240,7 @@ bool wxURLDataObject::SetData(const wxDataFormat& format,
 wxString wxURLDataObject::GetURL() const
 {
     wxString url;
-    wxCHECK_MSG( m_dataObjectLast, url, wxT("no data in wxURLDataObject") );
+    //wxCHECK_MSG( m_dataObjectLast, url, wxT("no data in wxURLDataObject") );
 
     if ( m_dataObjectLast->GetPreferredFormat() == CFSTR_SHELLURL )
     {

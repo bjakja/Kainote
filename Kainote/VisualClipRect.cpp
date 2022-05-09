@@ -86,7 +86,7 @@ void ClipRect::DrawVisual(int time)
 	if (!invClip){
 
 		
-		vertex v24[12];
+		VERTEX v24[12];
 		CreateVERTEX(&v24[0], 0, 0, color);
 		CreateVERTEX(&v24[1], s.x, 0, color);
 		CreateVERTEX(&v24[2], v2[2].x, v2[0].y, color);
@@ -100,16 +100,16 @@ void ClipRect::DrawVisual(int time)
 		CreateVERTEX(&v24[10], v2[2].x, v2[0].y, color);
 		CreateVERTEX(&v24[11], s.x, 0, color);
 
-		HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, v24, sizeof(vertex)), L"primitive failed");
-		HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, &v24[6], sizeof(vertex)), L"primitive failed");
+		HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, v24, sizeof(VERTEX)), L"primitive failed");
+		HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, &v24[6], sizeof(VERTEX)), L"primitive failed");
 	}
 	else{
-		vertex v24[4];
+		VERTEX v24[4];
 		CreateVERTEX(&v24[0], v2[0].x, v2[0].y, color);
 		CreateVERTEX(&v24[1], v2[2].x, v2[0].y, color);
 		CreateVERTEX(&v24[2], v2[0].x, v2[2].y, color);
 		CreateVERTEX(&v24[3], v2[2].x, v2[2].y, color);
-		HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v24, sizeof(vertex)), L"primitive failed");
+		HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v24, sizeof(VERTEX)), L"primitive failed");
 	}
 	line->SetWidth(1);
 	line->Begin();

@@ -1553,7 +1553,7 @@ wxString wxAMMediaBackend::GetErrorString(HRESULT hrdsv)
 }
 
 #define wxAMFAIL(x) wxFAIL_MSG(GetErrorString(x));
-#define wxVERIFY(x) wxASSERT((x))
+#define wxVERIFY(x) //wxASSERT((x))
 #define wxAMLOG(x) wxLogDebug(GetErrorString(x))
 #else
 #define wxAMVERIFY(x) (x)

@@ -89,7 +89,7 @@ bool wxStatusBarPane::PushText(const wxString& text)
 
 bool wxStatusBarPane::PopText()
 {
-    wxCHECK_MSG( !m_arrStack.empty(), false, "no status message to pop" );
+    //wxCHECK_MSG( !m_arrStack.empty(), false, "no status message to pop" );
 
     const wxString text = m_arrStack.back();
 
@@ -137,7 +137,7 @@ wxStatusBarBase::~wxStatusBarBase()
 
 void wxStatusBarBase::SetFieldsCount(int number, const int *widths)
 {
-    wxCHECK_RET( number > 0, wxT("invalid field number in SetFieldsCount") );
+    //wxCHECK_RET( number > 0, wxT("invalid field number in SetFieldsCount") );
 
     if ( (size_t)number > m_panes.GetCount() )
     {
@@ -184,7 +184,7 @@ void wxStatusBarBase::SetStatusWidths(int WXUNUSED_UNLESS_DEBUG(n),
 void wxStatusBarBase::SetStatusStyles(int WXUNUSED_UNLESS_DEBUG(n),
                                     const int styles[])
 {
-    wxCHECK_RET( styles, wxT("NULL pointer in SetStatusStyles") );
+    //wxCHECK_RET( styles, wxT("NULL pointer in SetStatusStyles") );
 
     wxASSERT_MSG( (size_t)n == m_panes.GetCount(), wxT("field number mismatch") );
 
@@ -259,7 +259,7 @@ wxArrayInt wxStatusBarBase::CalculateAbsWidths(wxCoord widthTotal) const
 
 void wxStatusBarBase::SetStatusText(const wxString& text, int number)
 {
-    wxCHECK_RET( (unsigned)number < m_panes.size(),
+    //wxCHECK_RET( (unsigned)number < m_panes.size(),
                     "invalid status bar field index" );
 
     if ( m_panes[number].SetText(text) )
@@ -268,7 +268,7 @@ void wxStatusBarBase::SetStatusText(const wxString& text, int number)
 
 wxString wxStatusBarBase::GetStatusText(int number) const
 {
-    wxCHECK_MSG( (unsigned)number < m_panes.size(), wxString(),
+    //wxCHECK_MSG( (unsigned)number < m_panes.size(), wxString(),
                     "invalid status bar field index" );
 
     return m_panes[number].GetText();
@@ -276,7 +276,7 @@ wxString wxStatusBarBase::GetStatusText(int number) const
 
 void wxStatusBarBase::SetEllipsizedFlag(int number, bool isEllipsized)
 {
-    wxCHECK_RET( (unsigned)number < m_panes.size(),
+    //wxCHECK_RET( (unsigned)number < m_panes.size(),
                     "invalid status bar field index" );
 
     m_panes[number].SetIsEllipsized(isEllipsized);
@@ -288,7 +288,7 @@ void wxStatusBarBase::SetEllipsizedFlag(int number, bool isEllipsized)
 
 void wxStatusBarBase::PushStatusText(const wxString& text, int number)
 {
-    wxCHECK_RET( (unsigned)number < m_panes.size(),
+    //wxCHECK_RET( (unsigned)number < m_panes.size(),
                     "invalid status bar field index" );
 
     if ( m_panes[number].PushText(text) )
@@ -297,7 +297,7 @@ void wxStatusBarBase::PushStatusText(const wxString& text, int number)
 
 void wxStatusBarBase::PopStatusText(int number)
 {
-    wxCHECK_RET( (unsigned)number < m_panes.size(),
+    //wxCHECK_RET( (unsigned)number < m_panes.size(),
                     "invalid status bar field index" );
 
     if ( m_panes[number].PopText() )

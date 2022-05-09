@@ -58,7 +58,7 @@ void wxConvAuto::SetFallbackEncoding(wxFontEncoding enc)
 /* static */
 const char* wxConvAuto::GetBOMChars(wxBOM bom, size_t* count)
 {
-    wxCHECK_MSG( count , NULL, wxS("count pointer must be provided") );
+    //wxCHECK_MSG( count , NULL, wxS("count pointer must be provided") );
 
     switch ( bom )
     {

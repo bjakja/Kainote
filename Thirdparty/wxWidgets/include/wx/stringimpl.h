@@ -395,7 +395,7 @@ public:
     // append elements str[pos], ..., str[pos+n]
   wxStringImpl& append(const wxStringImpl& str, size_t pos, size_t n)
   {
-    wxASSERT(pos <= str.length());
+    //wxASSERT(pos <= str.length());
     ConcatSelf(n, str.c_str() + pos, str.length() - pos);
     return *this;
   }
@@ -441,14 +441,14 @@ public:
     // insert another string
   wxStringImpl& insert(size_t nPos, const wxStringImpl& str)
   {
-    wxASSERT( str.GetStringData()->IsValid() );
+    //wxASSERT( str.GetStringData()->IsValid() );
     return insert(nPos, str.c_str(), str.length());
   }
     // insert n chars of str starting at nStart (in str)
   wxStringImpl& insert(size_t nPos, const wxStringImpl& str, size_t nStart, size_t n)
   {
-    wxASSERT( str.GetStringData()->IsValid() );
-    wxASSERT( nStart < str.length() );
+    //wxASSERT( str.GetStringData()->IsValid() );
+    //wxASSERT( nStart < str.length() );
     size_t strLen = str.length() - nStart;
     n = strLen < n ? strLen : n;
     return insert(nPos, str.c_str() + nStart, n);

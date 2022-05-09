@@ -270,7 +270,7 @@ void wxFontRefData::Free()
 
 wxFontRefData::wxFontRefData(wxOSXSystemFont font, int size)
 {
-    wxASSERT( font != wxOSX_SYSTEM_FONT_NONE );
+    //wxASSERT( font != wxOSX_SYSTEM_FONT_NONE );
     Init();
 
 #if wxOSX_USE_CORE_TEXT
@@ -461,7 +461,7 @@ void wxFontRefData::MacFindFont()
     if ( m_fontValid )
         return;
 
-    wxCHECK_RET( m_info.m_pointSize > 0, wxT("Point size should not be zero.") );
+    //wxCHECK_RET( m_info.m_pointSize > 0, wxT("Point size should not be zero.") );
 
     m_info.EnsureValid();
 
@@ -720,7 +720,7 @@ void wxFont::SetUnderlined(bool underlined)
 
 int wxFont::GetPointSize() const
 {
-    wxCHECK_MSG( M_FONTDATA != NULL , 0, wxT("invalid font") );
+    //wxCHECK_MSG( M_FONTDATA != NULL , 0, wxT("invalid font") );
 
     return M_FONTDATA->GetPointSize();
 }
@@ -742,7 +742,7 @@ wxSize wxFont::GetPixelSize() const
 
 bool wxFont::IsFixedWidth() const
 {
-    wxCHECK_MSG( M_FONTDATA != NULL , false, wxT("invalid font") );
+    //wxCHECK_MSG( M_FONTDATA != NULL , false, wxT("invalid font") );
     
     // cast away constness otherwise lazy font resolution is not possible
     const_cast<wxFont *>(this)->RealizeResource();
@@ -757,35 +757,35 @@ wxFontFamily wxFont::DoGetFamily() const
 
 wxFontStyle wxFont::GetStyle() const
 {
-    wxCHECK_MSG( M_FONTDATA != NULL , wxFONTSTYLE_MAX, wxT("invalid font") );
+    //wxCHECK_MSG( M_FONTDATA != NULL , wxFONTSTYLE_MAX, wxT("invalid font") );
 
     return M_FONTDATA->GetStyle() ;
 }
 
 wxFontWeight wxFont::GetWeight() const
 {
-    wxCHECK_MSG( M_FONTDATA != NULL , wxFONTWEIGHT_MAX, wxT("invalid font") );
+    //wxCHECK_MSG( M_FONTDATA != NULL , wxFONTWEIGHT_MAX, wxT("invalid font") );
 
     return M_FONTDATA->GetWeight();
 }
 
 bool wxFont::GetUnderlined() const
 {
-    wxCHECK_MSG( M_FONTDATA != NULL , false, wxT("invalid font") );
+    //wxCHECK_MSG( M_FONTDATA != NULL , false, wxT("invalid font") );
 
     return M_FONTDATA->GetUnderlined();
 }
 
 wxString wxFont::GetFaceName() const
 {
-    wxCHECK_MSG( M_FONTDATA != NULL , wxEmptyString , wxT("invalid font") );
+    //wxCHECK_MSG( M_FONTDATA != NULL , wxEmptyString , wxT("invalid font") );
 
     return M_FONTDATA->GetFaceName() ;
 }
 
 wxFontEncoding wxFont::GetEncoding() const
 {
-    wxCHECK_MSG( M_FONTDATA != NULL , wxFONTENCODING_DEFAULT , wxT("invalid font") );
+    //wxCHECK_MSG( M_FONTDATA != NULL , wxFONTENCODING_DEFAULT , wxT("invalid font") );
 
     return M_FONTDATA->GetEncoding() ;
 }
@@ -794,7 +794,7 @@ wxFontEncoding wxFont::GetEncoding() const
 
 short wxFont::MacGetFontNum() const
 {
-    wxCHECK_MSG( M_FONTDATA != NULL , 0, wxT("invalid font") );
+    //wxCHECK_MSG( M_FONTDATA != NULL , 0, wxT("invalid font") );
 
     // cast away constness otherwise lazy font resolution is not possible
     const_cast<wxFont *>(this)->RealizeResource();
@@ -804,7 +804,7 @@ short wxFont::MacGetFontNum() const
 
 wxByte wxFont::MacGetFontStyle() const
 {
-    wxCHECK_MSG( M_FONTDATA != NULL , 0, wxT("invalid font") );
+    //wxCHECK_MSG( M_FONTDATA != NULL , 0, wxT("invalid font") );
 
     // cast away constness otherwise lazy font resolution is not possible
     const_cast<wxFont *>(this)->RealizeResource();
@@ -814,7 +814,7 @@ wxByte wxFont::MacGetFontStyle() const
 
 wxUint16 wxFont::MacGetThemeFontID() const
 {
-    wxCHECK_MSG( M_FONTDATA != NULL , 0, wxT("invalid font") );
+    //wxCHECK_MSG( M_FONTDATA != NULL , 0, wxT("invalid font") );
 
     return M_FONTDATA->m_macThemeFontID;
 }
@@ -824,7 +824,7 @@ wxUint16 wxFont::MacGetThemeFontID() const
 #if wxOSX_USE_ATSU_TEXT
 void * wxFont::MacGetATSUStyle() const
 {
-    wxCHECK_MSG( M_FONTDATA != NULL , NULL, wxT("invalid font") );
+    //wxCHECK_MSG( M_FONTDATA != NULL , NULL, wxT("invalid font") );
 
     // cast away constness otherwise lazy font resolution is not possible
     const_cast<wxFont *>(this)->RealizeResource();
@@ -834,7 +834,7 @@ void * wxFont::MacGetATSUStyle() const
 
 wxUint32 wxFont::MacGetATSUFontID() const
 {
-    wxCHECK_MSG( M_FONTDATA != NULL, 0, wxT("invalid font") );
+    //wxCHECK_MSG( M_FONTDATA != NULL, 0, wxT("invalid font") );
 
     // cast away constness otherwise lazy font resolution is not possible
     const_cast<wxFont *>(this)->RealizeResource();
@@ -844,7 +844,7 @@ wxUint32 wxFont::MacGetATSUFontID() const
 
 wxUint32 wxFont::MacGetATSUAdditionalQDStyles() const
 {
-    wxCHECK_MSG( M_FONTDATA != NULL, 0, wxT("invalid font") );
+    //wxCHECK_MSG( M_FONTDATA != NULL, 0, wxT("invalid font") );
 
     // cast away constness otherwise lazy font resolution is not possible
     const_cast<wxFont *>(this)->RealizeResource();
@@ -857,7 +857,7 @@ wxUint32 wxFont::MacGetATSUAdditionalQDStyles() const
 
 CTFontRef wxFont::OSXGetCTFont() const
 {
-    wxCHECK_MSG( M_FONTDATA != NULL , 0, wxT("invalid font") );
+    //wxCHECK_MSG( M_FONTDATA != NULL , 0, wxT("invalid font") );
 
     // cast away constness otherwise lazy font resolution is not possible
     const_cast<wxFont *>(this)->RealizeResource();
@@ -871,7 +871,7 @@ CTFontRef wxFont::OSXGetCTFont() const
 
 CGFontRef wxFont::OSXGetCGFont() const
 {
-    wxCHECK_MSG( M_FONTDATA != NULL , 0, wxT("invalid font") );
+    //wxCHECK_MSG( M_FONTDATA != NULL , 0, wxT("invalid font") );
 
     // cast away constness otherwise lazy font resolution is not possible
     const_cast<wxFont *>(this)->RealizeResource();
@@ -886,7 +886,7 @@ CGFontRef wxFont::OSXGetCGFont() const
 
 NSFont* wxFont::OSXGetNSFont() const
 {
-    wxCHECK_MSG( M_FONTDATA != NULL , 0, wxT("invalid font") );
+    //wxCHECK_MSG( M_FONTDATA != NULL , 0, wxT("invalid font") );
 
     // cast away constness otherwise lazy font resolution is not possible
     const_cast<wxFont *>(this)->RealizeResource();
@@ -900,7 +900,7 @@ NSFont* wxFont::OSXGetNSFont() const
 
 UIFont* wxFont::OSXGetUIFont() const
 {
-    wxCHECK_MSG( M_FONTDATA != NULL , 0, wxT("invalid font") );
+    //wxCHECK_MSG( M_FONTDATA != NULL , 0, wxT("invalid font") );
 
     // cast away constness otherwise lazy font resolution is not possible
     const_cast<wxFont *>(this)->RealizeResource();
@@ -912,8 +912,8 @@ UIFont* wxFont::OSXGetUIFont() const
 
 const wxNativeFontInfo * wxFont::GetNativeFontInfo() const
 {
-    wxCHECK_MSG( M_FONTDATA != NULL , NULL, wxT("invalid font") );
-    wxCHECK_MSG( IsOk(), NULL, wxT("invalid font") );
+    //wxCHECK_MSG( M_FONTDATA != NULL , NULL, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), NULL, wxT("invalid font") );
 
     // cast away constness otherwise lazy font resolution is not possible
     const_cast<wxFont *>(this)->RealizeResource();
@@ -936,11 +936,11 @@ static CTFontDescriptorRef wxMacCreateCTFontDescriptor(CFStringRef iFamilyName, 
     CTFontDescriptorRef descriptor = NULL;
     CFMutableDictionaryRef attributes;
 
-    wxASSERT(iFamilyName != NULL);
+    //wxASSERT(iFamilyName != NULL);
     // Create a mutable dictionary to hold our attributes.
     attributes = CFDictionaryCreateMutable(kCFAllocatorDefault, 0,
                                            &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-    wxASSERT(attributes != NULL);
+    //wxASSERT(attributes != NULL);
 
     if (attributes != NULL) {
         // Add a family name to our attributes.
@@ -954,13 +954,13 @@ static CTFontDescriptorRef wxMacCreateCTFontDescriptor(CFStringRef iFamilyName, 
             // Create the traits dictionary.
             symTraits = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type,
                                        &iTraits);
-            wxASSERT(symTraits != NULL);
+            //wxASSERT(symTraits != NULL);
 
             if (symTraits != NULL) {
                 // Create a dictionary to hold our traits values.
                 traits = CFDictionaryCreateMutable(kCFAllocatorDefault, 0,
                                                    &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-                wxASSERT(traits != NULL);
+                //wxASSERT(traits != NULL);
 
                 if (traits != NULL) {
                     // Add the symbolic traits value to the traits dictionary.
@@ -975,7 +975,7 @@ static CTFontDescriptorRef wxMacCreateCTFontDescriptor(CFStringRef iFamilyName, 
         }
         // Create the font descriptor with our attributes
         descriptor = CTFontDescriptorCreateWithAttributes(attributes);
-        wxASSERT(descriptor != NULL);
+        //wxASSERT(descriptor != NULL);
 
         CFRelease(attributes);
     }

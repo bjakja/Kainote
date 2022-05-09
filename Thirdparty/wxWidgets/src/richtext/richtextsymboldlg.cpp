@@ -882,7 +882,7 @@ void wxSymbolListCtrl::SendSelectedEvent()
 
 void wxSymbolListCtrl::SetSelection(int selection)
 {
-    wxCHECK_RET( selection == wxNOT_FOUND ||
+    //wxCHECK_RET( selection == wxNOT_FOUND ||
                   (selection >= m_minSymbolValue && selection < m_maxSymbolValue),
                   wxT("wxSymbolListCtrl::SetSelection(): invalid symbol value") );
 

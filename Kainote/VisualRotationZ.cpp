@@ -62,7 +62,7 @@ void RotationZ::DrawVisual(int time)
 	//changed every function to float version
 	float radius = sqrtf(powf(fabs(org.x - from.x), 2) + powf(fabs(org.y - from.y), 2)) + 40;
 	D3DXVECTOR2 v2[6];
-	vertex v5[726];
+	VERTEX v5[726];
 	D3DCOLOR color(0xAA121150);
 	D3DCOLOR color1(0xAAFF0000);
 	CreateVERTEX(&v5[0], org.x, org.y + (radius + 10.f), color);
@@ -119,9 +119,9 @@ void RotationZ::DrawVisual(int time)
 	v2[5].y = org.y + 10.0f;
 	line->SetWidth(5.f);
 
-	HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 360, v5, sizeof(vertex)), L"primitive failed");
-	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 180, &v5[364], sizeof(vertex)), L"primitive failed");
-	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 180, &v5[545], sizeof(vertex)), L"primitive failed");
+	HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 360, v5, sizeof(VERTEX)), L"primitive failed");
+	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 180, &v5[364], sizeof(VERTEX)), L"primitive failed");
+	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 180, &v5[545], sizeof(VERTEX)), L"primitive failed");
 	line->SetWidth(2.f);
 	line->Begin();
 	line->Draw(&v2[2], 2, 0xFFBB0000);

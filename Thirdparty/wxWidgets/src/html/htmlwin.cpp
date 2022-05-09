@@ -493,7 +493,7 @@ bool wxHtmlWindow::AppendToPage(const wxString& source)
 
 bool wxHtmlWindow::LoadPage(const wxString& location)
 {
-    wxCHECK_MSG( !location.empty(), false, "location must be non-empty" );
+    //wxCHECK_MSG( !location.empty(), false, "location must be non-empty" );
 
     wxBusyCursor busyCursor;
 

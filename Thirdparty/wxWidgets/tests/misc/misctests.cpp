@@ -58,7 +58,7 @@ namespace
 
 bool AssertIfOdd(int n)
 {
-    wxCHECK_MSG( !(n % 2), false, "parameter must be even" );
+    //wxCHECK_MSG( !(n % 2), false, "parameter must be even" );
 
     return true;
 }

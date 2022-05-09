@@ -31,11 +31,11 @@
 #include <dxva2api.h>
 
 
-void CreateVERTEX(vertex *v, float X, float Y, D3DCOLOR colour, float Z)
+void CreateVERTEX(VERTEX * v, float X, float Y, D3DCOLOR colour, float Z)
 {
-	v->floatX = X;
-	v->floatX = Y;
-	v->floatX = Z;
+	v->fX = X;
+	v->fY = Y;
+	v->fZ = Z;
 	v->Color = colour;
 }
 
@@ -49,25 +49,15 @@ RendererVideo::RendererVideo(VideoBox *control, bool visualDisabled)
 
 	//---------------------------- format
 	m_D3DFormat = D3DFORMAT('2YUY');//D3DFORMAT('21VN');
-	//-----------------------------------
 	m_Format = NV12;
-	m_Time = 0;
-	m_PlayEndTime = 0;
-	m_State = None;
+	//-----------------------------------
 	m_Visual = (tab->editor && !visualDisabled)? 
 		Visuals::Get(CROSS, videoControl) : nullptr;
-	m_VideoResized = m_DirectShowSeeking = 
-		m_BlockResize = m_HasVisualEdition = false;
-	m_DeviceLost = false;
 	m_WindowRect.bottom = 0;
 	m_WindowRect.right = 0;
 	m_WindowRect.left = 0;
 	m_WindowRect.top = 0;
-	m_Frame = 0;
-	diff = 0;
-	m_AverangeFrameTime = 42;
-	m_ZoomParcent = 1.f;
-
+	
 }
 
 RendererVideo::~RendererVideo()
@@ -382,7 +372,7 @@ void RendererVideo::DrawZoom()
 	v2[4].y = v2[0].y;
 
 	D3DCOLOR color = 0x88000000;
-	vertex v24[12];
+	VERTEX v24[12];
 	CreateVERTEX(&v24[0], 0, 0, color);
 	CreateVERTEX(&v24[1], s.x, 0, color);
 	CreateVERTEX(&v24[2], v2[2].x, v2[0].y, color);
@@ -397,8 +387,8 @@ void RendererVideo::DrawZoom()
 	CreateVERTEX(&v24[11], s.x, 0, color);
 
 	HRN(m_D3DDevice->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE), L"FVF failed");
-	HRN(m_D3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, v24, sizeof(vertex)), L"Primitive failed");
-	HRN(m_D3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, &v24[6], sizeof(vertex)), L"Primitive failed");
+	HRN(m_D3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, v24, sizeof(VERTEX)), L"Primitive failed");
+	HRN(m_D3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, &v24[6], sizeof(VERTEX)), L"Primitive failed");
 	m_D3DLine->SetWidth(1);
 	m_D3DLine->Begin();
 	m_D3DLine->Draw(v2, 5, 0xFFBB0000);

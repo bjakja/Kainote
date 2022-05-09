@@ -427,7 +427,7 @@ bool wxBitmap::CopyFromIcon(const wxIcon& icon, wxBitmapTransparency transp)
 
 bool wxBitmap::CopyFromDIB(const wxDIB& dib)
 {
-    wxCHECK_MSG( dib.IsOk(), false, wxT("invalid DIB in CopyFromDIB") );
+    //wxCHECK_MSG( dib.IsOk(), false, wxT("invalid DIB in CopyFromDIB") );
 
 #ifdef SOMETIMES_USE_DIB
     HBITMAP hbitmap = dib.CreateDDB();
@@ -553,7 +553,7 @@ bool wxBitmap::Create(int width, int height, int depth)
 
 bool wxBitmap::Create(int width, int height, const wxDC& dc)
 {
-    wxCHECK_MSG( dc.IsOk(), false, wxT("invalid HDC in wxBitmap::Create()") );
+    //wxCHECK_MSG( dc.IsOk(), false, wxT("invalid HDC in wxBitmap::Create()") );
 
     const wxMSWDCImpl *impl = wxDynamicCast( dc.GetImpl(), wxMSWDCImpl );
 
@@ -767,7 +767,7 @@ wxImage wxBitmap::ConvertToImage() const
 
     wxImage image;
 
-    wxCHECK_MSG( IsOk(), wxNullImage, wxT("invalid bitmap") );
+    //wxCHECK_MSG( IsOk(), wxNullImage, wxT("invalid bitmap") );
 
     // create an wxImage object
     int width = GetWidth();
@@ -828,7 +828,7 @@ bool wxBitmap::CreateFromImage(const wxImage& image, int depth)
 
 bool wxBitmap::CreateFromImage(const wxImage& image, const wxDC& dc)
 {
-    wxCHECK_MSG( dc.IsOk(), false,
+    //wxCHECK_MSG( dc.IsOk(), false,
                     wxT("invalid HDC in wxBitmap::CreateFromImage()") );
 
     const wxMSWDCImpl *impl = wxDynamicCast( dc.GetImpl(), wxMSWDCImpl );
@@ -843,7 +843,7 @@ bool wxBitmap::CreateFromImage(const wxImage& image, const wxDC& dc)
 
 bool wxBitmap::CreateFromImage(const wxImage& image, int depth, WXHDC hdc)
 {
-    wxCHECK_MSG( image.IsOk(), false, wxT("invalid image") );
+    //wxCHECK_MSG( image.IsOk(), false, wxT("invalid image") );
 
     UnRef();
 
@@ -1126,7 +1126,7 @@ wxBitmap wxBitmap::GetSubBitmap( const wxRect& rect ) const
 
 wxBitmap wxBitmap::GetSubBitmapOfHDC( const wxRect& rect, WXHDC hdc ) const
 {
-    wxCHECK_MSG( IsOk() &&
+    //wxCHECK_MSG( IsOk() &&
                  (rect.x >= 0) && (rect.y >= 0) &&
                  (rect.x+rect.width <= GetWidth()) &&
                  (rect.y+rect.height <= GetHeight()),
@@ -1280,7 +1280,7 @@ void *wxBitmap::GetRawData(wxPixelDataBase& data, int bpp)
     HBITMAP hDIB;
     if ( !GetBitmapData()->m_isDIB )
     {
-        wxCHECK_MSG( !GetBitmapData()->m_dib, NULL,
+        //wxCHECK_MSG( !GetBitmapData()->m_dib, NULL,
                         wxT("GetRawData() may be called only once") );
 
         wxDIB *dib = new wxDIB(*this);
@@ -1447,7 +1447,7 @@ wxMask::~wxMask()
 bool wxMask::Create(const wxBitmap& bitmap)
 {
 #ifndef __WXMICROWIN__
-    wxCHECK_MSG( bitmap.IsOk() && bitmap.GetDepth() == 1, false,
+    //wxCHECK_MSG( bitmap.IsOk() && bitmap.GetDepth() == 1, false,
                  wxT("can't create mask from invalid or not monochrome bitmap") );
 
     if ( m_maskBitmap )
@@ -1507,7 +1507,7 @@ bool wxMask::Create(const wxBitmap& bitmap, int paletteIndex)
 bool wxMask::Create(const wxBitmap& bitmap, const wxColour& colour)
 {
 #ifndef __WXMICROWIN__
-    wxCHECK_MSG( bitmap.IsOk(), false, wxT("invalid bitmap in wxMask::Create") );
+    //wxCHECK_MSG( bitmap.IsOk(), false, wxT("invalid bitmap in wxMask::Create") );
 
     if ( m_maskBitmap )
     {
@@ -1749,7 +1749,7 @@ HCURSOR wxBitmapToHCURSOR(const wxBitmap& bmp, int hotSpotX, int hotSpotY)
 HBITMAP wxInvertMask(HBITMAP hbmpMask, int w, int h)
 {
 #ifndef __WXMICROWIN__
-    wxCHECK_MSG( hbmpMask, 0, wxT("invalid bitmap in wxInvertMask") );
+    //wxCHECK_MSG( hbmpMask, 0, wxT("invalid bitmap in wxInvertMask") );
 
     // get width/height from the bitmap if not given
     if ( !w || !h )

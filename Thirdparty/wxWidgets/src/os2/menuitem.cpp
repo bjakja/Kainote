@@ -247,7 +247,7 @@ void wxMenuItem::Check(
 {
     bool                            bOk;
 
-    wxCHECK_RET( IsCheckable(), wxT("only checkable items may be checked") );
+    //wxCHECK_RET( IsCheckable(), wxT("only checkable items may be checked") );
     if (m_isChecked == bCheck)
         return;
 
@@ -267,7 +267,7 @@ void wxMenuItem::Check(
         const wxMenuItemList&       rItems = m_parentMenu->GetMenuItems();
         int                         nPos = rItems.IndexOf(this);
 
-        wxCHECK_RET( nPos != wxNOT_FOUND
+        //wxCHECK_RET( nPos != wxNOT_FOUND
                     ,wxT("menuitem not found in the menu items list?")
                    );
 
@@ -358,7 +358,7 @@ void wxMenuItem::SetItemLabel( const wxString& rText )
 
     HWND hMenu = GetHmenuOf(m_parentMenu);
 
-    wxCHECK_RET(hMenu, wxT("menuitem without menu"));
+    //wxCHECK_RET(hMenu, wxT("menuitem without menu"));
 
 #if wxUSE_ACCEL
     m_parentMenu->UpdateAccel(this);
@@ -745,7 +745,7 @@ bool wxMenuItem::OnDrawItem( wxDC& rDC,
             //
             // There should be enough space!
             //
-            wxASSERT((nBmpWidth <= rRect.width) && (nBmpHeight <= rRect.height));
+            //wxASSERT((nBmpWidth <= rRect.width) && (nBmpHeight <= rRect.height));
 
             int                     nHeightDiff = m_nHeight - nBmpHeight;
 

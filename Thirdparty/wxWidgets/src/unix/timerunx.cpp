@@ -124,7 +124,7 @@ bool wxTimerScheduler::GetNext(wxUsecClock_t *remaining) const
     if ( m_timers.empty() )
       return false;
 
-    wxCHECK_MSG( remaining, false, wxT("NULL pointer") );
+    //wxCHECK_MSG( remaining, false, wxT("NULL pointer") );
 
     *remaining = (*m_timers.begin())->m_expiration - wxGetUTCTimeUSec();
     if ( *remaining < 0 )

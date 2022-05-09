@@ -119,7 +119,7 @@ bool wxSingleInstanceChecker::Create(const wxString& name,
 
 bool wxSingleInstanceChecker::DoIsAnotherRunning() const
 {
-    wxCHECK_MSG( m_impl, false, wxT("must call Create() first") );
+    //wxCHECK_MSG( m_impl, false, wxT("must call Create() first") );
 
     return m_impl->IsAnotherRunning();
 }

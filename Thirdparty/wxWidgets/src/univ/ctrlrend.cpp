@@ -485,7 +485,7 @@ void wxControlRenderer::DrawProgressBar(const wxGauge *gauge)
         int step = gauge->IsVertical() ? sizeStep.y : sizeStep.x;
 
         // we divide by it below!
-        wxCHECK_RET( step, wxT("invalid wxGauge step") );
+        //wxCHECK_RET( step, wxT("invalid wxGauge step") );
 
         // round up to make the progress appear to start faster
         int lenTotal = gauge->IsVertical() ? rect.height : rect.width;

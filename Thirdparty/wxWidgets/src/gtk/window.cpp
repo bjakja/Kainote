@@ -2435,7 +2435,7 @@ bool wxWindowGTK::PreCreation( wxWindowGTK *parent, const wxPoint &pos,  const w
 {
     if ( GTKNeedsParent() )
     {
-        wxCHECK_MSG( parent, false, wxT("Must have non-NULL parent") );
+        //wxCHECK_MSG( parent, false, wxT("Must have non-NULL parent") );
     }
 
     // Use either the given size, or the default if -1 is given.
@@ -2695,7 +2695,7 @@ void wxWindowGTK::ConstrainSize()
 
 void wxWindowGTK::DoSetSize( int x, int y, int width, int height, int sizeFlags )
 {
-    wxCHECK_RET(m_widget, "invalid window");
+    //wxCHECK_RET(m_widget, "invalid window");
 
     int scrollX = 0, scrollY = 0;
     GtkWidget* parent = gtk_widget_get_parent(m_widget);
@@ -2814,7 +2814,7 @@ void wxWindowGTK::DoGetSize( int *width, int *height ) const
 
 void wxWindowGTK::DoSetClientSize( int width, int height )
 {
-    wxCHECK_RET( (m_widget != NULL), wxT("invalid window") );
+    //wxCHECK_RET( (m_widget != NULL), wxT("invalid window") );
 
     const wxSize size = GetSize();
     const wxSize clientSize = GetClientSize();
@@ -2823,7 +2823,7 @@ void wxWindowGTK::DoSetClientSize( int width, int height )
 
 void wxWindowGTK::DoGetClientSize( int *width, int *height ) const
 {
-    wxCHECK_RET( (m_widget != NULL), wxT("invalid window") );
+    //wxCHECK_RET( (m_widget != NULL), wxT("invalid window") );
 
     int w = m_width;
     int h = m_height;
@@ -2937,7 +2937,7 @@ void wxWindowGTK::DoGetPosition( int *x, int *y ) const
 
 void wxWindowGTK::DoClientToScreen( int *x, int *y ) const
 {
-    wxCHECK_RET( (m_widget != NULL), wxT("invalid window") );
+    //wxCHECK_RET( (m_widget != NULL), wxT("invalid window") );
 
     if (gtk_widget_get_window(m_widget) == NULL) return;
 
@@ -2976,7 +2976,7 @@ void wxWindowGTK::DoClientToScreen( int *x, int *y ) const
 
 void wxWindowGTK::DoScreenToClient( int *x, int *y ) const
 {
-    wxCHECK_RET( (m_widget != NULL), wxT("invalid window") );
+    //wxCHECK_RET( (m_widget != NULL), wxT("invalid window") );
 
     if (!gtk_widget_get_realized(m_widget)) return;
 
@@ -3052,7 +3052,7 @@ bool wxWindowGTK::Show( bool show )
 
 void wxWindowGTK::DoEnable( bool enable )
 {
-    wxCHECK_RET( (m_widget != NULL), wxT("invalid window") );
+    //wxCHECK_RET( (m_widget != NULL), wxT("invalid window") );
 
     gtk_widget_set_sensitive( m_widget, enable );
     if (m_wxwindow && (m_wxwindow != m_widget))
@@ -3061,10 +3061,10 @@ void wxWindowGTK::DoEnable( bool enable )
 
 int wxWindowGTK::GetCharHeight() const
 {
-    wxCHECK_MSG( (m_widget != NULL), 12, wxT("invalid window") );
+    //wxCHECK_MSG( (m_widget != NULL), 12, wxT("invalid window") );
 
     wxFont font = GetFont();
-    wxCHECK_MSG( font.IsOk(), 12, wxT("invalid font") );
+    //wxCHECK_MSG( font.IsOk(), 12, wxT("invalid font") );
 
     PangoContext* context = gtk_widget_get_pango_context(m_widget);
 
@@ -3087,10 +3087,10 @@ int wxWindowGTK::GetCharHeight() const
 
 int wxWindowGTK::GetCharWidth() const
 {
-    wxCHECK_MSG( (m_widget != NULL), 8, wxT("invalid window") );
+    //wxCHECK_MSG( (m_widget != NULL), 8, wxT("invalid window") );
 
     wxFont font = GetFont();
-    wxCHECK_MSG( font.IsOk(), 8, wxT("invalid font") );
+    //wxCHECK_MSG( font.IsOk(), 8, wxT("invalid font") );
 
     PangoContext* context = gtk_widget_get_pango_context(m_widget);
 
@@ -3120,7 +3120,7 @@ void wxWindowGTK::DoGetTextExtent( const wxString& string,
 {
     wxFont fontToUse = theFont ? *theFont : GetFont();
 
-    wxCHECK_RET( fontToUse.IsOk(), wxT("invalid font") );
+    //wxCHECK_RET( fontToUse.IsOk(), wxT("invalid font") );
 
     if (string.empty())
     {
@@ -3333,7 +3333,7 @@ void wxWindowGTK::GTKHandleDeferredFocusOut()
 
 void wxWindowGTK::SetFocus()
 {
-    wxCHECK_RET( m_widget != NULL, wxT("invalid window") );
+    //wxCHECK_RET( m_widget != NULL, wxT("invalid window") );
 
     // Setting "physical" focus is not immediate in GTK+ and while
     // gtk_widget_is_focus ("determines if the widget is the focus widget
@@ -3380,16 +3380,16 @@ void wxWindowGTK::SetCanFocus(bool canFocus)
 
 bool wxWindowGTK::Reparent( wxWindowBase *newParentBase )
 {
-    wxCHECK_MSG( (m_widget != NULL), false, wxT("invalid window") );
+    //wxCHECK_MSG( (m_widget != NULL), false, wxT("invalid window") );
 
     wxWindowGTK * const newParent = (wxWindowGTK *)newParentBase;
 
-    wxASSERT( GTK_IS_WIDGET(m_widget) );
+    //wxASSERT( GTK_IS_WIDGET(m_widget) );
 
     if ( !wxWindowBase::Reparent(newParent) )
         return false;
 
-    wxASSERT( GTK_IS_WIDGET(m_widget) );
+    //wxASSERT( GTK_IS_WIDGET(m_widget) );
 
     // Notice that old m_parent pointer might be non-NULL here but the widget
     // still not have any parent at GTK level if it's a notebook page that had
@@ -3397,7 +3397,7 @@ bool wxWindowGTK::Reparent( wxWindowBase *newParentBase )
     if ( GtkWidget *parentGTK = gtk_widget_get_parent(m_widget) )
         gtk_container_remove(GTK_CONTAINER(parentGTK), m_widget);
 
-    wxASSERT( GTK_IS_WIDGET(m_widget) );
+    //wxASSERT( GTK_IS_WIDGET(m_widget) );
 
     if (newParent)
     {
@@ -3516,7 +3516,7 @@ bool wxWindowGTK::DoNavigateIn(int flags)
     else // navigate inside the container
     {
         wxWindow *parent = wxGetTopLevelParent((wxWindow *)this);
-        wxCHECK_MSG( parent, false, wxT("every window must have a TLW parent") );
+        //wxCHECK_MSG( parent, false, wxT("every window must have a TLW parent") );
 
         GtkDirectionType dir;
         dir = flags & wxNavigationKeyEvent::IsForward ? GTK_DIR_TAB_FORWARD
@@ -3606,7 +3606,7 @@ void wxWindowGTK::RealizeTabOrder()
 
 void wxWindowGTK::Raise()
 {
-    wxCHECK_RET( (m_widget != NULL), wxT("invalid window") );
+    //wxCHECK_RET( (m_widget != NULL), wxT("invalid window") );
 
     if (m_wxwindow && gtk_widget_get_window(m_wxwindow))
     {
@@ -3620,7 +3620,7 @@ void wxWindowGTK::Raise()
 
 void wxWindowGTK::Lower()
 {
-    wxCHECK_RET( (m_widget != NULL), wxT("invalid window") );
+    //wxCHECK_RET( (m_widget != NULL), wxT("invalid window") );
 
     if (m_wxwindow && gtk_widget_get_window(m_wxwindow))
     {
@@ -3680,7 +3680,7 @@ void wxWindowGTK::GTKUpdateCursor(bool update_self /*=true*/, bool recurse /*=tr
 
 void wxWindowGTK::WarpPointer( int x, int y )
 {
-    wxCHECK_RET( (m_widget != NULL), wxT("invalid window") );
+    //wxCHECK_RET( (m_widget != NULL), wxT("invalid window") );
 
     ClientToScreen(&x, &y);
     GdkDisplay* display = gtk_widget_get_display(m_widget);
@@ -3994,7 +3994,7 @@ void wxWindowGTK::GTKSendPaintEvents(const GdkRegion* region)
 
 void wxWindowGTK::SetDoubleBuffered( bool on )
 {
-    wxCHECK_RET( (m_widget != NULL), wxT("invalid window") );
+    //wxCHECK_RET( (m_widget != NULL), wxT("invalid window") );
 
     if ( m_wxwindow )
         gtk_widget_set_double_buffered( m_wxwindow, on );
@@ -4007,7 +4007,7 @@ bool wxWindowGTK::IsDoubleBuffered() const
 
 void wxWindowGTK::ClearBackground()
 {
-    wxCHECK_RET( m_widget != NULL, wxT("invalid window") );
+    //wxCHECK_RET( m_widget != NULL, wxT("invalid window") );
 }
 
 #if wxUSE_TOOLTIPS
@@ -4032,7 +4032,7 @@ void wxWindowGTK::GTKApplyToolTip(const char* tip)
 
 bool wxWindowGTK::SetBackgroundColour( const wxColour &colour )
 {
-    wxCHECK_MSG( m_widget != NULL, false, wxT("invalid window") );
+    //wxCHECK_MSG( m_widget != NULL, false, wxT("invalid window") );
 
     if (!wxWindowBase::SetBackgroundColour(colour))
         return false;
@@ -4054,7 +4054,7 @@ bool wxWindowGTK::SetBackgroundColour( const wxColour &colour )
 
 bool wxWindowGTK::SetForegroundColour( const wxColour &colour )
 {
-    wxCHECK_MSG( m_widget != NULL, false, wxT("invalid window") );
+    //wxCHECK_MSG( m_widget != NULL, false, wxT("invalid window") );
 
     if (!wxWindowBase::SetForegroundColour(colour))
     {
@@ -4328,7 +4328,7 @@ void wxPopupMenuPositionCallback( GtkMenu *menu,
 
 bool wxWindowGTK::DoPopupMenu( wxMenu *menu, int x, int y )
 {
-    wxCHECK_MSG( m_widget != NULL, false, wxT("invalid window") );
+    //wxCHECK_MSG( m_widget != NULL, false, wxT("invalid window") );
 
     menu->UpdateUI();
 
@@ -4373,7 +4373,7 @@ bool wxWindowGTK::DoPopupMenu( wxMenu *menu, int x, int y )
 
 void wxWindowGTK::SetDropTarget( wxDropTarget *dropTarget )
 {
-    wxCHECK_RET( m_widget != NULL, wxT("invalid window") );
+    //wxCHECK_RET( m_widget != NULL, wxT("invalid window") );
 
     GtkWidget *dnd_widget = GetConnectWidget();
 
@@ -4411,7 +4411,7 @@ GdkWindow *wxWindowGTK::GTKGetWindow(wxArrayGdkWindows& WXUNUSED(windows)) const
 
 bool wxWindowGTK::SetFont( const wxFont &font )
 {
-    wxCHECK_MSG( m_widget != NULL, false, wxT("invalid window") );
+    //wxCHECK_MSG( m_widget != NULL, false, wxT("invalid window") );
 
     if (!wxWindowBase::SetFont(font))
         return false;
@@ -4425,7 +4425,7 @@ bool wxWindowGTK::SetFont( const wxFont &font )
 
 void wxWindowGTK::DoCaptureMouse()
 {
-    wxCHECK_RET( m_widget != NULL, wxT("invalid window") );
+    //wxCHECK_RET( m_widget != NULL, wxT("invalid window") );
 
     GdkWindow *window = NULL;
     if (m_wxwindow)
@@ -4433,7 +4433,7 @@ void wxWindowGTK::DoCaptureMouse()
     else
         window = gtk_widget_get_window(GetConnectWidget());
 
-    wxCHECK_RET( window, wxT("CaptureMouse() failed") );
+    //wxCHECK_RET( window, wxT("CaptureMouse() failed") );
 
     const wxCursor* cursor = &m_cursor;
     if (!cursor->IsOk())
@@ -4454,9 +4454,9 @@ void wxWindowGTK::DoCaptureMouse()
 
 void wxWindowGTK::DoReleaseMouse()
 {
-    wxCHECK_RET( m_widget != NULL, wxT("invalid window") );
+    //wxCHECK_RET( m_widget != NULL, wxT("invalid window") );
 
-    wxCHECK_RET( g_captureWindow, wxT("can't release mouse - not captured") );
+    //wxCHECK_RET( g_captureWindow, wxT("can't release mouse - not captured") );
 
     g_captureWindow = NULL;
 
@@ -4499,7 +4499,7 @@ void wxWindowGTK::SetScrollbar(int orient,
 {
     const int dir = ScrollDirFromOrient(orient);
     GtkRange* const sb = m_scrollBar[dir];
-    wxCHECK_RET( sb, wxT("this window is not scrollable") );
+    //wxCHECK_RET( sb, wxT("this window is not scrollable") );
 
     if (range <= 0)
     {
@@ -4525,7 +4525,7 @@ void wxWindowGTK::SetScrollPos(int orient, int pos, bool WXUNUSED(refresh))
 {
     const int dir = ScrollDirFromOrient(orient);
     GtkRange * const sb = m_scrollBar[dir];
-    wxCHECK_RET( sb, wxT("this window is not scrollable") );
+    //wxCHECK_RET( sb, wxT("this window is not scrollable") );
 
     // This check is more than an optimization. Without it, the slider
     //   will not move smoothly while tracking when using wxScrollHelper.
@@ -4545,7 +4545,7 @@ void wxWindowGTK::SetScrollPos(int orient, int pos, bool WXUNUSED(refresh))
 int wxWindowGTK::GetScrollThumb(int orient) const
 {
     GtkRange * const sb = m_scrollBar[ScrollDirFromOrient(orient)];
-    wxCHECK_MSG( sb, 0, wxT("this window is not scrollable") );
+    //wxCHECK_MSG( sb, 0, wxT("this window is not scrollable") );
 
     return wxRound(gtk_adjustment_get_page_size(gtk_range_get_adjustment(sb)));
 }
@@ -4553,7 +4553,7 @@ int wxWindowGTK::GetScrollThumb(int orient) const
 int wxWindowGTK::GetScrollPos( int orient ) const
 {
     GtkRange * const sb = m_scrollBar[ScrollDirFromOrient(orient)];
-    wxCHECK_MSG( sb, 0, wxT("this window is not scrollable") );
+    //wxCHECK_MSG( sb, 0, wxT("this window is not scrollable") );
 
     return wxRound(gtk_range_get_value(sb));
 }
@@ -4561,7 +4561,7 @@ int wxWindowGTK::GetScrollPos( int orient ) const
 int wxWindowGTK::GetScrollRange( int orient ) const
 {
     GtkRange * const sb = m_scrollBar[ScrollDirFromOrient(orient)];
-    wxCHECK_MSG( sb, 0, wxT("this window is not scrollable") );
+    //wxCHECK_MSG( sb, 0, wxT("this window is not scrollable") );
 
     return wxRound(gtk_adjustment_get_upper(gtk_range_get_adjustment(sb)));
 }
@@ -4570,14 +4570,14 @@ int wxWindowGTK::GetScrollRange( int orient ) const
 //   difference due to possible inexactness in floating point arithmetic
 static inline bool IsScrollIncrement(double increment, double x)
 {
-    wxASSERT(increment > 0);
+    //wxASSERT(increment > 0);
     const double tolerance = 1.0 / 1024;
     return fabs(increment - fabs(x)) < tolerance;
 }
 
 wxEventType wxWindowGTK::GTKGetScrollEventType(GtkRange* range)
 {
-    wxASSERT(range == m_scrollBar[0] || range == m_scrollBar[1]);
+    //wxASSERT(range == m_scrollBar[0] || range == m_scrollBar[1]);
 
     const int barIndex = range == m_scrollBar[1];
 
@@ -4620,9 +4620,9 @@ wxEventType wxWindowGTK::GTKGetScrollEventType(GtkRange* range)
 
 void wxWindowGTK::ScrollWindow( int dx, int dy, const wxRect* WXUNUSED(rect) )
 {
-    wxCHECK_RET( m_widget != NULL, wxT("invalid window") );
+    //wxCHECK_RET( m_widget != NULL, wxT("invalid window") );
 
-    wxCHECK_RET( m_wxwindow != NULL, wxT("window needs client area for scrolling") );
+    //wxCHECK_RET( m_wxwindow != NULL, wxT("window needs client area for scrolling") );
 
     // No scrolling requested.
     if ((dx == 0) && (dy == 0)) return;
@@ -4719,8 +4719,8 @@ extern "C"
 // is realized (and so can be frozen):
 static void wx_frozen_widget_realize(GtkWidget* w, wxWindowGTK* win)
 {
-    wxASSERT( w && gtk_widget_get_has_window(w) );
-    wxASSERT( gtk_widget_get_realized(w) );
+    //wxASSERT( w && gtk_widget_get_has_window(w) );
+    //wxASSERT( gtk_widget_get_realized(w) );
 
     g_signal_handlers_disconnect_by_func
     (

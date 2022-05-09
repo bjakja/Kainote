@@ -278,7 +278,7 @@ public:
             if ( m_parent->SendStopEvent() )
             {
                     m_parent->Stop();
-                    wxASSERT(::GetMoviesError() == noErr);
+                    //wxASSERT(::GetMoviesError() == noErr);
 
                 m_parent->QueueFinishEvent();
             }
@@ -484,7 +484,7 @@ bool wxQTMediaBackend::Load(const wxURI& location)
 #endif
 
     Handle theHandle = ::NewHandleClear(len + 1);
-    wxASSERT(theHandle);
+    //wxASSERT(theHandle);
 
     ::BlockMoveData(theURIString, *theHandle, len + 1);
 
@@ -506,10 +506,10 @@ bool wxQTMediaBackend::Load(const wxURI& location)
         Fixed playRate;
 
         timeNow = ::GetMovieTime(m_movie, NULL);
-        wxASSERT(::GetMoviesError() == noErr);
+        //wxASSERT(::GetMoviesError() == noErr);
 
         playRate = ::GetMoviePreferredRate(m_movie);
-        wxASSERT(::GetMoviesError() == noErr);
+        //wxASSERT(::GetMoviesError() == noErr);
 
         //
         //  Note that the callback here is optional,
@@ -548,7 +548,7 @@ void wxQTMediaBackend::DoNewMovieController()
         ::SetMovieGWorld(m_movie,
                        (CGrafPtr) GetWindowPort(wrTLW),
                        NULL);
-        wxASSERT(::GetMoviesError() == noErr);
+        //wxASSERT(::GetMoviesError() == noErr);
 
         Rect bounds = wxMacGetBoundsForControl(
             m_ctrl,
@@ -558,16 +558,16 @@ void wxQTMediaBackend::DoNewMovieController()
         m_mc = ::NewMovieController(
             m_movie, &bounds,
             mcTopLeftMovie | mcNotVisible /* | mcWithFrame */ );
-        wxASSERT(::GetMoviesError() == noErr);
+        //wxASSERT(::GetMoviesError() == noErr);
 
         ::MCDoAction(m_mc, 32, (void*)true); // mcActionSetKeysEnabled
-        wxASSERT(::GetMoviesError() == noErr);
+        //wxASSERT(::GetMoviesError() == noErr);
 
         // Setup a callback so we can tell when the user presses
         // play on the player controls
         m_mcactionupp = wxQTMediaBackend::MCFilterProc;
         ::MCSetActionFilterWithRefCon( m_mc, m_mcactionupp, (long)this );
-        wxASSERT(::GetMoviesError() == noErr);
+        //wxASSERT(::GetMoviesError() == noErr);
 
         // Part of a suggestion from Greg Hazel to repaint movie when idle
         m_ctrl->PushEventHandler(new wxQTMediaEvtHandler(this));
@@ -611,7 +611,7 @@ void wxQTMediaBackend::DoNewMovieController()
         ::MCSetMovie(m_mc, m_movie,
               (WindowRef)m_ctrl->MacGetTopLevelWindowRef(),
               thePoint);
-        wxASSERT(::GetMoviesError() == noErr);
+        //wxASSERT(::GetMoviesError() == noErr);
     }
 }
 
@@ -631,11 +631,11 @@ void wxQTMediaBackend::FinishLoad()
 
     // we want millisecond precision
     ::SetMovieTimeScale(m_movie, 1000);
-    wxASSERT(::GetMoviesError() == noErr);
+    //wxASSERT(::GetMoviesError() == noErr);
 
     // start movie progress timer
     m_timer = new wxQTMediaPlayTimer(this);
-    wxASSERT(m_timer);
+    //wxASSERT(m_timer);
     m_timer->Start(MOVIE_DELAY, wxTIMER_CONTINUOUS);
 
     // send loaded event and refresh size
@@ -652,7 +652,7 @@ void wxQTMediaBackend::DoLoadBestSize()
     // get the real size of the movie
     Rect outRect;
     ::GetMovieNaturalBoundsRect(m_movie, &outRect);
-    wxASSERT(::GetMoviesError() == noErr);
+    //wxASSERT(::GetMoviesError() == noErr);
 
     // determine best size
     m_bestSize.x = outRect.right - outRect.left;
@@ -671,7 +671,7 @@ bool wxQTMediaBackend::Play()
     if (!fixRate)
         fixRate = ::GetMoviePreferredRate(m_movie);
 
-    wxASSERT(fixRate != 0);
+    //wxASSERT(fixRate != 0);
 
     if (!m_bPlaying)
         ::MCDoAction( m_mc, 8 /* mcActionPlay */, (void*) fixRate);
@@ -927,17 +927,17 @@ void wxQTMediaBackend::Move(int x, int y, int w, int h)
 
 #if 0 // see note above
         ::MCSetControllerAttached(m_mc, false);
-         wxASSERT(::GetMoviesError() == noErr);
+         //wxASSERT(::GetMoviesError() == noErr);
 #endif
 
         ::MCSetControllerBoundsRect(m_mc, &theRect);
-        wxASSERT(::GetMoviesError() == noErr);
+        //wxASSERT(::GetMoviesError() == noErr);
 
 #if 0 // see note above
         if (m_interfaceflags)
         {
             ::MCSetVisible(m_mc, true);
-            wxASSERT(::GetMoviesError() == noErr);
+            //wxASSERT(::GetMoviesError() == noErr);
         }
 #endif
     }
@@ -1102,14 +1102,14 @@ void wxQTMediaBackend::MacVisibilityChanged()
             (WindowRef) m_ctrl->MacGetTopLevelWindowRef();
 
         ::MCSetControllerPort(m_mc, (CGrafPtr) GetWindowPort(wrTLW));
-        wxASSERT(::GetMoviesError() == noErr);
+        //wxASSERT(::GetMoviesError() == noErr);
     }
     else
     {
         //We are being hidden - set the GWorld of the controller
         //to the offscreen GWorld
         ::MCSetControllerPort(m_mc, m_movieWorld);
-        wxASSERT(::GetMoviesError() == noErr);
+        //wxASSERT(::GetMoviesError() == noErr);
     }
 }
 
@@ -1142,9 +1142,9 @@ pascal void wxQTMediaBackend::PPRMProc(
     OSErr WXUNUSED_UNLESS_DEBUG(theErr),
     void* theRefCon)
 {
-    wxASSERT( theMovie );
-    wxASSERT( theRefCon );
-    wxASSERT( theErr == noErr );
+    //wxASSERT( theMovie );
+    //wxASSERT( theRefCon );
+    //wxASSERT( theErr == noErr );
 
     wxQTMediaBackend* pBE = (wxQTMediaBackend*) theRefCon;
 

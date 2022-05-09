@@ -78,7 +78,7 @@ public:
             return wxRIBBON_BUTTONBAR_BUTTON_LARGE;
         if(sizes[wxRIBBON_BUTTONBAR_BUTTON_MEDIUM].is_supported)
             return wxRIBBON_BUTTONBAR_BUTTON_MEDIUM;
-        wxASSERT(sizes[wxRIBBON_BUTTONBAR_BUTTON_SMALL].is_supported);
+        //wxASSERT(sizes[wxRIBBON_BUTTONBAR_BUTTON_SMALL].is_supported);
         return wxRIBBON_BUTTONBAR_BUTTON_SMALL;
     }
 
@@ -297,7 +297,7 @@ wxRibbonButtonBarButtonBase* wxRibbonButtonBar::InsertButton(
                 const wxString& help_string,
                 wxObject* client_data)
 {
-    wxASSERT(bitmap.IsOk() || bitmap_small.IsOk());
+    //wxASSERT(bitmap.IsOk() || bitmap_small.IsOk());
     if(m_buttons.IsEmpty())
     {
         if(bitmap.IsOk())

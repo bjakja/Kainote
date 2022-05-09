@@ -355,7 +355,7 @@ void wxAnimationCtrl::Stop()
 
 void wxAnimationCtrl::DisplayStaticImage()
 {
-    wxASSERT(!IsPlaying());
+    //wxASSERT(!IsPlaying());
 
     // m_bmpStaticReal will be updated only if necessary...
     UpdateStaticImage();
@@ -442,7 +442,7 @@ bool wxAnimationCtrl::SetBackgroundColour( const wxColour &colour )
 
 void wxAnimationCtrl::OnTimer(wxTimerEvent& WXUNUSED(ev))
 {
-    wxASSERT(m_iter != NULL);
+    //wxASSERT(m_iter != NULL);
 
     // gdk_pixbuf_animation_iter_advance() will automatically restart
     // the animation, if necessary and we have no way to know !!

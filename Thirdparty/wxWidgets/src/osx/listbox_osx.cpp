@@ -148,7 +148,7 @@ void wxListBox::EnsureVisible(int n)
 
 void wxListBox::DoDeleteOneItem(unsigned int n)
 {
-    wxCHECK_RET( IsValid(n), wxT("invalid index in wxListBox::Delete") );
+    //wxCHECK_RET( IsValid(n), wxT("invalid index in wxListBox::Delete") );
 
     m_blockEvents = true;
     if ( IsSorted() )
@@ -179,7 +179,7 @@ void wxListBox::DoClear()
 
 void wxListBox::DoSetSelection(int n, bool select)
 {
-    wxCHECK_RET( n == wxNOT_FOUND || IsValid(n),
+    //wxCHECK_RET( n == wxNOT_FOUND || IsValid(n),
         wxT("invalid index in wxListBox::SetSelection") );
 
     m_blockEvents = true;
@@ -196,7 +196,7 @@ void wxListBox::DoSetSelection(int n, bool select)
 
 bool wxListBox::IsSelected(int n) const
 {
-    wxCHECK_MSG( IsValid(n), false, wxT("invalid index in wxListBox::Selected") );
+    //wxCHECK_MSG( IsValid(n), false, wxT("invalid index in wxListBox::Selected") );
 
     return GetListPeer()->ListIsSelected( n );
 }
@@ -377,7 +377,7 @@ int wxListBox::DoInsertItems(const wxArrayStringsAdapter& items,
 
 void wxListBox::SetString(unsigned int n, const wxString& s)
 {
-    wxCHECK_RET( !IsSorted(), wxT("can't set string in sorted listbox") );
+    //wxCHECK_RET( !IsSorted(), wxT("can't set string in sorted listbox") );
 
     if ( IsSorted() )
         (*m_strings.sorted)[n] = s;

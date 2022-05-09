@@ -60,7 +60,7 @@ int wxMacDataBrowserListControl::DoListHitTest(const wxPoint& inpoint) const
     // get column property ID (req. for call to itempartbounds)
     DataBrowserTableViewColumnID colId = 0;
     err = GetDataBrowserTableViewColumnProperty(GetControlRef(), 0, &colId);
-    wxCHECK_MSG(err == noErr, wxNOT_FOUND, wxT("Unexpected error from GetDataBrowserTableViewColumnProperty"));
+    //wxCHECK_MSG(err == noErr, wxNOT_FOUND, wxT("Unexpected error from GetDataBrowserTableViewColumnProperty"));
 
     // OK, first we need to find the first visible item we have -
     // this will be the "low" for our binary search. There is no real
@@ -69,11 +69,11 @@ int wxMacDataBrowserListControl::DoListHitTest(const wxPoint& inpoint) const
     // via the row height to speed things up a bit
     UInt32 scrollx, scrolly;
     err = GetDataBrowserScrollPosition(GetControlRef(), &scrollx, &scrolly);
-    wxCHECK_MSG(err == noErr, wxNOT_FOUND, wxT("Unexpected error from GetDataBrowserScrollPosition"));
+    //wxCHECK_MSG(err == noErr, wxNOT_FOUND, wxT("Unexpected error from GetDataBrowserScrollPosition"));
 
     UInt16 height;
     err = GetDataBrowserTableViewRowHeight(GetControlRef(), &height);
-    wxCHECK_MSG(err == noErr, wxNOT_FOUND, wxT("Unexpected error from GetDataBrowserTableViewRowHeight"));
+    //wxCHECK_MSG(err == noErr, wxNOT_FOUND, wxT("Unexpected error from GetDataBrowserTableViewRowHeight"));
 
     wxListBox *list = wxDynamicCast( GetWXPeer() , wxListBox );
 
@@ -97,7 +97,7 @@ int wxMacDataBrowserListControl::DoListHitTest(const wxPoint& inpoint) const
 
         // errDataBrowserItemNotFound is expected as it simply means that the
         // item is not currently visible -- but other errors are not
-        wxCHECK_MSG( err == errDataBrowserItemNotFound, wxNOT_FOUND,
+        //wxCHECK_MSG( err == errDataBrowserItemNotFound, wxNOT_FOUND,
                      wxT("Unexpected error from GetDataBrowserItemPartBounds") );
 
         low++;
@@ -114,7 +114,7 @@ int wxMacDataBrowserListControl::DoListHitTest(const wxPoint& inpoint) const
             GetControlRef(), mid + 1, colId,
             kDataBrowserPropertyEnclosingPart,
             &bounds); //note +1 to trans to mac id
-        wxCHECK_MSG( err == noErr || err == errDataBrowserItemNotFound,
+        //wxCHECK_MSG( err == noErr || err == errDataBrowserItemNotFound,
                      wxNOT_FOUND,
                      wxT("Unexpected error from GetDataBrowserItemPartBounds") );
 
@@ -247,7 +247,7 @@ void wxMacListBoxItem::Notification(wxMacDataItemBrowserControl *owner ,
     }
 
     wxListBox *list = wxDynamicCast( lb->GetWXPeer() , wxListBox );
-    wxCHECK_RET( list != NULL , wxT("Listbox expected"));
+    //wxCHECK_RET( list != NULL , wxT("Listbox expected"));
 
     if (message == kDataBrowserItemDoubleClicked)
     {
@@ -352,7 +352,7 @@ void wxMacDataBrowserListControl::ItemNotification(
                         DataBrowserItemDataRef itemData)
 {
     wxListBox *list = wxDynamicCast( GetWXPeer() , wxListBox );
-    wxCHECK_RET( list != NULL , wxT("Listbox expected"));
+    //wxCHECK_RET( list != NULL , wxT("Listbox expected"));
 
     if (list->HasMultipleSelection() && (message == kDataBrowserSelectionSetChanged) && (!list->MacGetBlockEvents()))
     {

@@ -373,7 +373,7 @@ bool wxSingleInstanceChecker::Create(const wxString& name,
 
 bool wxSingleInstanceChecker::DoIsAnotherRunning() const
 {
-    wxCHECK_MSG( m_impl, false, wxT("must call Create() first") );
+    //wxCHECK_MSG( m_impl, false, wxT("must call Create() first") );
 
     const pid_t lockerPid = m_impl->GetLockerPID();
 

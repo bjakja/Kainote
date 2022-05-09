@@ -1292,7 +1292,7 @@ bool wxToolBar::Realize()
                                         wxFAIL_MSG("Reference count of native tool was illegal before removal");
                                     }
 
-                                    wxASSERT( IsValidControlHandle(tool2->GetControl()->GetPeer()->GetControlRef() )) ;
+                                    //wxASSERT( IsValidControlHandle(tool2->GetControl()->GetPeer()->GetControlRef() )) ;
                                 }
                                 err = HIToolbarRemoveItemAtIndex(refTB, idx);
                                 if ( err != noErr )
@@ -1308,7 +1308,7 @@ bool wxToolBar::Realize()
                                         wxFAIL_MSG("Reference count of native tool was not 2 after removal");
                                     }
 
-                                    wxASSERT( IsValidControlHandle(tool2->GetControl()->GetPeer()->GetControlRef() )) ;
+                                    //wxASSERT( IsValidControlHandle(tool2->GetControl()->GetPeer()->GetControlRef() )) ;
                                 }
 
                                 tool2->SetIndex(-1);
@@ -1330,7 +1330,7 @@ bool wxToolBar::Realize()
                         {
                             wxFAIL_MSG("Reference count of native tool was illegal before removal");
                         }
-                        wxASSERT( IsValidControlHandle(tool->GetControl()->GetPeer()->GetControlRef() )) ;
+                        //wxASSERT( IsValidControlHandle(tool->GetControl()->GetPeer()->GetControlRef() )) ;
 
                         wxString label = tool->GetLabel();
                         if ( !label.empty() )
@@ -1498,7 +1498,7 @@ void wxToolBar::SetToolNormalBitmap( int id, const wxBitmap& bitmap )
     wxToolBarTool* tool = static_cast<wxToolBarTool*>(FindById(id));
     if ( tool )
     {
-        wxCHECK_RET( tool->IsButton(), wxT("Can only set bitmap on button tools."));
+        //wxCHECK_RET( tool->IsButton(), wxT("Can only set bitmap on button tools."));
 
         tool->SetNormalBitmap(bitmap);
 
@@ -1512,7 +1512,7 @@ void wxToolBar::SetToolDisabledBitmap( int id, const wxBitmap& bitmap )
     wxToolBarTool* tool = static_cast<wxToolBarTool*>(FindById(id));
     if ( tool )
     {
-        wxCHECK_RET( tool->IsButton(), wxT("Can only set bitmap on button tools."));
+        //wxCHECK_RET( tool->IsButton(), wxT("Can only set bitmap on button tools."));
 
         tool->SetDisabledBitmap(bitmap);
 
@@ -1585,7 +1585,7 @@ bool wxToolBar::DoInsertTool(size_t WXUNUSED(pos), wxToolBarToolBase *toolBase)
     {
         case wxTOOL_STYLE_SEPARATOR:
             {
-                wxASSERT( tool->GetControlHandle() == NULL );
+                //wxASSERT( tool->GetControlHandle() == NULL );
                 toolSize.x /= 4;
                 toolSize.y /= 4;
                 if ( GetWindowStyleFlag() & (wxTB_LEFT|wxTB_RIGHT) )
@@ -1616,7 +1616,7 @@ bool wxToolBar::DoInsertTool(size_t WXUNUSED(pos), wxToolBarToolBase *toolBase)
 
         case wxTOOL_STYLE_BUTTON:
             {
-                wxASSERT( tool->GetControlHandle() == NULL );
+                //wxASSERT( tool->GetControlHandle() == NULL );
                 ControlButtonContentInfo info;
                 wxMacCreateBitmapButton( &info, tool->GetNormalBitmap() );
 
@@ -1686,7 +1686,7 @@ bool wxToolBar::DoInsertTool(size_t WXUNUSED(pos), wxToolBarToolBase *toolBase)
 #if wxOSX_USE_NATIVE_TOOLBAR
             if (m_macToolbar != NULL)
             {
-                wxCHECK_MSG( tool->GetControl(), false, wxT("control must be non-NULL") );
+                //wxCHECK_MSG( tool->GetControl(), false, wxT("control must be non-NULL") );
                 HIToolbarItemRef    item;
                 HIViewRef viewRef = (HIViewRef) tool->GetControl()->GetHandle() ;
                 CFDataRef data = CFDataCreate( kCFAllocatorDefault , (UInt8*) &viewRef , sizeof(viewRef) ) ;

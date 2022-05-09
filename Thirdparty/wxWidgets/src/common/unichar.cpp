@@ -131,7 +131,7 @@ wxUniCharRef& wxUniCharRef::operator=(const wxUniChar& c)
         wxStringIteratorNode *it;
         for ( it = m_str.m_iterators.ptr; it; it = it->m_next, ++iterNum )
         {
-            wxASSERT( it->m_iter || it->m_citer );
+            //wxASSERT( it->m_iter || it->m_citer );
 
             if ( iterNum == STATIC_SIZE )
             {
@@ -166,8 +166,8 @@ wxUniCharRef& wxUniCharRef::operator=(const wxUniChar& c)
         size_t i;
         for ( i = 0, it = m_str.m_iterators.ptr; it; it = it->m_next, ++i )
         {
-            wxASSERT( i < iterNum );
-            wxASSERT( it->m_iter || it->m_citer );
+            //wxASSERT( i < iterNum );
+            //wxASSERT( it->m_iter || it->m_citer );
 
             if ( it->m_iter )
                 *it->m_iter = strimpl.begin() + indexes[i];

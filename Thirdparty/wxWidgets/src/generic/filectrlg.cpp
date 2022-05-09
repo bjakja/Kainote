@@ -500,7 +500,7 @@ long wxFileListCtrl::Add( wxFileData *fd, wxListItem &item )
 void wxFileListCtrl::UpdateItem(const wxListItem &item)
 {
     wxFileData *fd = (wxFileData*)GetItemData(item);
-    wxCHECK_RET(fd, wxT("invalid filedata"));
+    //wxCHECK_RET(fd, wxT("invalid filedata"));
 
     fd->ReadData();
 
@@ -775,7 +775,7 @@ void wxFileListCtrl::FreeAllItemsData()
 void wxFileListCtrl::OnListEndLabelEdit( wxListEvent &event )
 {
     wxFileData *fd = (wxFileData*)event.m_item.m_data;
-    wxASSERT( fd );
+    //wxASSERT( fd );
 
     if ((event.GetLabel().empty()) ||
         (event.GetLabel() == wxT(".")) ||
@@ -1207,7 +1207,7 @@ void wxGenericFileCtrl::SetWildcard( const wxString& wildCard )
     const size_t count = wxParseCommonDialogsFilter( m_wildCard,
                          wildDescriptions,
                          wildFilters );
-    wxCHECK_RET( count, wxT( "wxFileDialog: bad wildcard string" ) );
+    //wxCHECK_RET( count, wxT( "wxFileDialog: bad wildcard string" ) );
 
     m_choice->Clear();
 

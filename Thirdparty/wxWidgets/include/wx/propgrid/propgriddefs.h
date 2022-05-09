@@ -579,7 +579,7 @@ expdecl const classname& classname##RefFromVariant( const wxVariant& variant ) \
 #define WX_PG_IMPLEMENT_VARIANT_DATA_GETTER(classname, expdecl) \
 expdecl classname& operator << ( classname &value, const wxVariant &variant )\
 {\
-    wxASSERT( variant.GetType() == #classname );\
+    //wxASSERT( variant.GetType() == #classname );\
     \
     classname##VariantData *data = (classname##VariantData*) variant.GetData();\
     value = data->GetValue();\
@@ -589,7 +589,7 @@ expdecl classname& operator << ( classname &value, const wxVariant &variant )\
 #define WX_PG_IMPLEMENT_VARIANT_DATA_EQ(classname, expdecl) \
 bool classname##VariantData::Eq(wxVariantData& data) const \
 {\
-    wxASSERT( GetType() == data.GetType() );\
+    //wxASSERT( GetType() == data.GetType() );\
 \
     classname##VariantData & otherData = (classname##VariantData &) data;\
 \

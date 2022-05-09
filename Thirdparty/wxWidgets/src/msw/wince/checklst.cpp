@@ -152,7 +152,7 @@ void wxCheckListBox::OnSize(wxSizeEvent& event)
 
 void wxCheckListBox::DoDeleteOneItem(unsigned int n)
 {
-    wxCHECK_RET( IsValid( n ), wxT("invalid index in wxCheckListBox::Delete") );
+    //wxCHECK_RET( IsValid( n ), wxT("invalid index in wxCheckListBox::Delete") );
 
     if ( !ListView_DeleteItem(GetHwnd(), n) )
     {
@@ -166,7 +166,7 @@ void wxCheckListBox::DoDeleteOneItem(unsigned int n)
 
 bool wxCheckListBox::IsChecked(unsigned int uiIndex) const
 {
-    wxCHECK_MSG( IsValid( uiIndex ), false,
+    //wxCHECK_MSG( IsValid( uiIndex ), false,
                  wxT("invalid index in wxCheckListBox::IsChecked") );
 
     return (ListView_GetCheckState(((HWND)GetHWND()), uiIndex) != 0);
@@ -174,7 +174,7 @@ bool wxCheckListBox::IsChecked(unsigned int uiIndex) const
 
 void wxCheckListBox::Check(unsigned int uiIndex, bool bCheck)
 {
-    wxCHECK_RET( IsValid( uiIndex ),
+    //wxCHECK_RET( IsValid( uiIndex ),
                  wxT("invalid index in wxCheckListBox::Check") );
 
     ListView_SetCheckState(((HWND)GetHWND()), uiIndex, bCheck)
@@ -245,7 +245,7 @@ bool wxCheckListBox::IsSelected(int n) const
 
 void wxCheckListBox::SetString(unsigned int n, const wxString& s)
 {
-    wxCHECK_RET( IsValid( n ),
+    //wxCHECK_RET( IsValid( n ),
                  wxT("invalid index in wxCheckListBox::SetString") );
     wxChar *buf = new wxChar[s.length()+1];
     wxStrcpy(buf, s.c_str());
@@ -274,7 +274,7 @@ int wxCheckListBox::DoInsertItems(const wxArrayStringsAdapter & items,
         wxZeroMemory(newItem);
         newItem.iItem = pos + i;
         n = ListView_InsertItem( (HWND)GetHWND(), & newItem );
-        wxCHECK_MSG( n != -1, -1, wxT("Item not added") );
+        //wxCHECK_MSG( n != -1, -1, wxT("Item not added") );
         SetString( n, items[i] );
         m_itemsClientData.Insert(NULL, n);
 
@@ -290,7 +290,7 @@ void wxCheckListBox::DoSetFirstItem(int n)
     if(pos == n) return;
     POINT ppt;
     BOOL ret = ListView_GetItemPosition( (HWND)GetHWND(), n, &ppt );
-    wxCHECK_RET( ret == TRUE, wxT("Broken DoSetFirstItem") );
+    //wxCHECK_RET( ret == TRUE, wxT("Broken DoSetFirstItem") );
     ListView_Scroll( (HWND)GetHWND(), 0, 0 );
     ListView_Scroll( (HWND)GetHWND(), 0, ppt.y );
 }

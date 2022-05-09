@@ -2157,7 +2157,7 @@ void wxComboCtrlBase::DestroyPopup()
 
 void wxComboCtrlBase::DoSetPopupControl(wxComboPopup* iface)
 {
-    wxCHECK_RET( iface, wxT("no popup interface set for wxComboCtrl") );
+    //wxCHECK_RET( iface, wxT("no popup interface set for wxComboCtrl") );
 
     DestroyPopup();
 
@@ -2223,7 +2223,7 @@ void wxComboCtrlBase::Popup()
 void wxComboCtrlBase::ShowPopup()
 {
     EnsurePopupControl();
-    wxCHECK_RET( !IsPopupWindowState(Visible), wxT("popup window already shown") );
+    //wxCHECK_RET( !IsPopupWindowState(Visible), wxT("popup window already shown") );
 
     if ( IsPopupWindowState(Animating) )
         return;
@@ -2286,7 +2286,7 @@ void wxComboCtrlBase::ShowPopup()
 
     winPopup->Enable();
 
-    wxASSERT( !m_popup || m_popup == popup ); // Consistency check.
+    //wxASSERT( !m_popup || m_popup == popup ); // Consistency check.
 
     wxSize adjustedSize = m_popupInterface->GetAdjustedSize(widthPopup,
                                                             m_heightPopup<=0?DEFAULT_POPUP_HEIGHT:m_heightPopup,
@@ -2365,7 +2365,7 @@ void wxComboCtrlBase::ShowPopup()
             m_toplevEvtHandler = new wxComboFrameEventHandler(this);
 
         wxWindow* toplev = ::wxGetTopLevelParent( this );
-        wxASSERT( toplev );
+        //wxASSERT( toplev );
         ((wxComboFrameEventHandler*)m_toplevEvtHandler)->OnPopup();
         toplev->PushEventHandler( m_toplevEvtHandler );
     }
@@ -2436,7 +2436,7 @@ void wxComboCtrlBase::DoShowPopup( const wxRect& rect, int WXUNUSED(flags) )
     {
         // Animation was aborted
 
-        wxASSERT( !winPopup->IsShown() );
+        //wxASSERT( !winPopup->IsShown() );
 
         m_popupWinState = Hidden;
     }

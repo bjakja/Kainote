@@ -1104,7 +1104,7 @@ wxThreadError wxThread::Run()
 {
     wxCriticalSectionLocker lock(m_critsect);
 
-    wxCHECK_MSG( m_internal->GetState() == STATE_NEW, wxTHREAD_RUNNING,
+    //wxCHECK_MSG( m_internal->GetState() == STATE_NEW, wxTHREAD_RUNNING,
              wxT("thread may only be started once after Create()") );
 
     // the thread has just been created and is still suspended - let it run
@@ -1137,7 +1137,7 @@ wxThread::ExitCode wxThread::Wait(wxThreadWait waitMode)
 
     // although under Windows we can wait for any thread, it's an error to
     // wait for a detached one in wxWin API
-    wxCHECK_MSG( !IsDetached(), rc,
+    //wxCHECK_MSG( !IsDetached(), rc,
                  wxT("wxThread::Wait(): can't wait for detached thread") );
 
     (void)m_internal->WaitForTerminate(m_critsect, &rc, waitMode);

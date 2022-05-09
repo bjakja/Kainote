@@ -128,7 +128,7 @@ bool wxXPMDecoder::CanRead(wxInputStream& stream)
 wxImage wxXPMDecoder::ReadFile(wxInputStream& stream)
 {
     size_t length = stream.GetSize();
-    wxCHECK_MSG( length != 0, wxNullImage,
+    //wxCHECK_MSG( length != 0, wxNullImage,
                  wxT("Cannot read XPM from stream of unknown size") );
 
     // use a smart buffer to be sure to free memory even when we return on
@@ -657,7 +657,7 @@ WX_DECLARE_STRING_HASH_MAP(wxXPMColourMapData, wxXPMColourMap);
 
 wxImage wxXPMDecoder::ReadData(const char* const* xpm_data)
 {
-    wxCHECK_MSG(xpm_data, wxNullImage, wxT("NULL XPM data") );
+    //wxCHECK_MSG(xpm_data, wxNullImage, wxT("NULL XPM data") );
 
     wxImage img;
     int count;
@@ -685,7 +685,7 @@ wxImage wxXPMDecoder::ReadData(const char* const* xpm_data)
     // VS: XPM color map this large would be insane, since XPMs are encoded with
     //     92 possible values on each position, 92^64 is *way* larger space than
     //     8bit RGB...
-    wxCHECK_MSG(chars_per_pixel < 64, wxNullImage, wxT("XPM colormaps this large not supported."));
+    //wxCHECK_MSG(chars_per_pixel < 64, wxNullImage, wxT("XPM colormaps this large not supported."));
 
     if (!img.Create(width, height, false))
         return wxNullImage;
@@ -819,7 +819,7 @@ wxImage wxXPMDecoder::ReadData(const char* const* xpm_data)
         g[i] = it->second.G;
         b[i] = it->second.B;
     }
-    wxASSERT(i == colors_cnt);
+    //wxASSERT(i == colors_cnt);
     img.SetPalette(wxPalette(colors_cnt, r, g, b));
     delete[] r;
     delete[] g;

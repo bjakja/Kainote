@@ -371,7 +371,7 @@ bool wxWindow::DoDrawBackground(wxDC& dc)
         // drawn and there's no point in (imperfectly!) duplicating the work
         // here:
 #ifndef __WXDFB__
-        wxASSERT( !IsTopLevel() );
+        //wxASSERT( !IsTopLevel() );
 
         wxPoint pos = GetPosition();
 

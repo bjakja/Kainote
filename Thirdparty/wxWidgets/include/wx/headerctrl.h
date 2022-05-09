@@ -87,7 +87,7 @@ public:
     // update the column with the given index
     void UpdateColumn(unsigned int idx)
     {
-        wxCHECK_RET( idx < GetColumnCount(), "invalid column index" );
+        //wxCHECK_RET( idx < GetColumnCount(), "invalid column index" );
 
         DoUpdate(idx);
     }
@@ -279,7 +279,7 @@ public:
     // position appends it at the end
     void InsertColumn(const wxHeaderColumnSimple& col, unsigned int idx)
     {
-        wxCHECK_RET( idx <= GetColumnCount(), "invalid column index" );
+        //wxCHECK_RET( idx <= GetColumnCount(), "invalid column index" );
 
         DoInsert(col, idx);
     }
@@ -293,7 +293,7 @@ public:
     // delete the column at the given index
     void DeleteColumn(unsigned int idx)
     {
-        wxCHECK_RET( idx < GetColumnCount(), "invalid column index" );
+        //wxCHECK_RET( idx < GetColumnCount(), "invalid column index" );
 
         DoDelete(idx);
     }
@@ -309,7 +309,7 @@ public:
     // still account for it when using indices
     void ShowColumn(unsigned int idx, bool show = true)
     {
-        wxCHECK_RET( idx < GetColumnCount(), "invalid column index" );
+        //wxCHECK_RET( idx < GetColumnCount(), "invalid column index" );
 
         DoShowColumn(idx, show);
     }
@@ -322,7 +322,7 @@ public:
     // indicate that the column is used for sorting
     void ShowSortIndicator(unsigned int idx, bool ascending = true)
     {
-        wxCHECK_RET( idx < GetColumnCount(), "invalid column index" );
+        //wxCHECK_RET( idx < GetColumnCount(), "invalid column index" );
 
         DoShowSortIndicator(idx, ascending);
     }

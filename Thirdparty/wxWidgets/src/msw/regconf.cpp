@@ -101,7 +101,7 @@ wxRegConfig::wxRegConfig(const wxString& appName, const wxString& vendorName,
 
     if ( appName.empty() )
     {
-      wxCHECK_RET( wxTheApp, wxT("No application name in wxRegConfig ctor!") );
+      //wxCHECK_RET( wxTheApp, wxT("No application name in wxRegConfig ctor!") );
       strRoot << wxTheApp->GetAppName();
     }
     else
@@ -336,7 +336,7 @@ void wxRegConfig::SetPath(const wxString& strPath)
     }
 
 #ifdef WX_DEBUG_SET_PATH
-    wxASSERT( m_strPath == m_strPathAlt );
+    //wxASSERT( m_strPath == m_strPathAlt );
 #endif
 
     if ( m_strPath == strOldPath )
@@ -556,7 +556,7 @@ wxConfigBase::EntryType wxRegConfig::GetEntryType(const wxString& key) const
 
 bool wxRegConfig::DoReadString(const wxString& key, wxString *pStr) const
 {
-    wxCHECK_MSG( pStr, false, wxT("wxRegConfig::Read(): NULL param") );
+    //wxCHECK_MSG( pStr, false, wxT("wxRegConfig::Read(): NULL param") );
 
   wxConfigPathChanger path(this, key);
 
@@ -593,7 +593,7 @@ bool wxRegConfig::DoReadString(const wxString& key, wxString *pStr) const
 
 bool wxRegConfig::DoReadLong(const wxString& key, long *plResult) const
 {
-    wxCHECK_MSG( plResult, false, wxT("wxRegConfig::Read(): NULL param") );
+    //wxCHECK_MSG( plResult, false, wxT("wxRegConfig::Read(): NULL param") );
 
   wxConfigPathChanger path(this, key);
 
@@ -627,7 +627,7 @@ bool wxRegConfig::DoReadLong(const wxString& key, long *plResult) const
 
 bool wxRegConfig::DoReadBinary(const wxString& key, wxMemoryBuffer *buf) const
 {
-    wxCHECK_MSG( buf, false, wxT("wxRegConfig::Read(): NULL param") );
+    //wxCHECK_MSG( buf, false, wxT("wxRegConfig::Read(): NULL param") );
 
   wxConfigPathChanger path(this, key);
 

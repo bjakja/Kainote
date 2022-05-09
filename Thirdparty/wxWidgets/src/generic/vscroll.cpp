@@ -423,7 +423,7 @@ void wxVarScrollHelperBase::DoSetTargetWindow(wxWindow *target)
 
 void wxVarScrollHelperBase::SetTargetWindow(wxWindow *target)
 {
-    wxCHECK_RET( target, wxT("target window must not be NULL") );
+    //wxCHECK_RET( target, wxT("target window must not be NULL") );
 
     if ( target == m_targetWindow )
         return;

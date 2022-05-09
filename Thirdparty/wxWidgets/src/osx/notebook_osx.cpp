@@ -91,7 +91,7 @@ wxSize wxNotebook::CalcSizeFromPage(const wxSize& sizePage) const
 
 int wxNotebook::DoSetSelection(size_t nPage, int flags)
 {
-    wxCHECK_MSG( IS_VALID_PAGE(nPage), wxNOT_FOUND, wxT("DoSetSelection: invalid notebook page") );
+    //wxCHECK_MSG( IS_VALID_PAGE(nPage), wxNOT_FOUND, wxT("DoSetSelection: invalid notebook page") );
 
     if ( m_selection == wxNOT_FOUND || nPage != (size_t)m_selection )
     {
@@ -116,7 +116,7 @@ int wxNotebook::DoSetSelection(size_t nPage, int flags)
 
 bool wxNotebook::SetPageText(size_t nPage, const wxString& strText)
 {
-    wxCHECK_MSG( IS_VALID_PAGE(nPage), false, wxT("SetPageText: invalid notebook page") );
+    //wxCHECK_MSG( IS_VALID_PAGE(nPage), false, wxT("SetPageText: invalid notebook page") );
 
     wxNotebookPage *page = m_pages[nPage];
     page->SetLabel(wxStripMenuCodes(strText));
@@ -127,7 +127,7 @@ bool wxNotebook::SetPageText(size_t nPage, const wxString& strText)
 
 wxString wxNotebook::GetPageText(size_t nPage) const
 {
-    wxCHECK_MSG( IS_VALID_PAGE(nPage), wxEmptyString, wxT("GetPageText: invalid notebook page") );
+    //wxCHECK_MSG( IS_VALID_PAGE(nPage), wxEmptyString, wxT("GetPageText: invalid notebook page") );
 
     wxNotebookPage *page = m_pages[nPage];
 
@@ -136,16 +136,16 @@ wxString wxNotebook::GetPageText(size_t nPage) const
 
 int wxNotebook::GetPageImage(size_t nPage) const
 {
-    wxCHECK_MSG( IS_VALID_PAGE(nPage), wxNOT_FOUND, wxT("GetPageImage: invalid notebook page") );
+    //wxCHECK_MSG( IS_VALID_PAGE(nPage), wxNOT_FOUND, wxT("GetPageImage: invalid notebook page") );
 
     return m_images[nPage];
 }
 
 bool wxNotebook::SetPageImage(size_t nPage, int nImage)
 {
-    wxCHECK_MSG( IS_VALID_PAGE(nPage), false,
+    //wxCHECK_MSG( IS_VALID_PAGE(nPage), false,
         wxT("SetPageImage: invalid notebook page") );
-    wxCHECK_MSG( HasImageList() && nImage < GetImageList()->GetImageCount(), false,
+    //wxCHECK_MSG( HasImageList() && nImage < GetImageList()->GetImageCount(), false,
         wxT("SetPageImage: invalid image index") );
 
     if ( nImage != m_images[nPage] )
@@ -168,7 +168,7 @@ bool wxNotebook::SetPageImage(size_t nPage, int nImage)
 // remove one page from the notebook, without deleting the window
 wxNotebookPage* wxNotebook::DoRemovePage(size_t nPage)
 {
-    wxCHECK_MSG( IS_VALID_PAGE(nPage), NULL,
+    //wxCHECK_MSG( IS_VALID_PAGE(nPage), NULL,
         wxT("DoRemovePage: invalid notebook page") );
 
     wxNotebookPage* page = m_pages[nPage] ;

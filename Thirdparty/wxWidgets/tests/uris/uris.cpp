@@ -412,7 +412,7 @@ void URITestCase::URLCompat()
         CPPUNIT_ASSERT(is != NULL);
 
         wxFile fOut(wxT("test.html"), wxFile::write);
-        wxASSERT(fOut.IsOpened());
+        //wxASSERT(fOut.IsOpened());
 
         char buf[1001];
         for( ;; )

@@ -137,7 +137,7 @@ bool wxDIB::Create(int width, int height, int depth)
 
 bool wxDIB::Create(HBITMAP hbmp)
 {
-    wxCHECK_MSG( hbmp, false, wxT("wxDIB::Create(): invalid bitmap") );
+    //wxCHECK_MSG( hbmp, false, wxT("wxDIB::Create(): invalid bitmap") );
 
     // this bitmap could already be a DIB section in which case we don't need
     // to convert it to DIB
@@ -287,7 +287,7 @@ bool wxDIB::Load(const wxString& filename)
 
 bool wxDIB::Save(const wxString& filename)
 {
-    wxCHECK_MSG( m_handle, false, wxT("wxDIB::Save(): invalid object") );
+    //wxCHECK_MSG( m_handle, false, wxT("wxDIB::Save(): invalid object") );
 
 #if wxUSE_FILE
     wxFile file(filename, wxFile::write);
@@ -370,7 +370,7 @@ void wxDIB::DoGetObject() const
 
 HBITMAP wxDIB::CreateDDB(HDC hdc) const
 {
-    wxCHECK_MSG( m_handle, 0, wxT("wxDIB::CreateDDB(): invalid object") );
+    //wxCHECK_MSG( m_handle, 0, wxT("wxDIB::CreateDDB(): invalid object") );
 
     DIBSECTION ds;
     if ( !GetDIBSection(m_handle, &ds) )
@@ -410,7 +410,7 @@ HBITMAP wxDIB::CreateDDB(HDC hdc) const
 /* static */
 HBITMAP wxDIB::ConvertToBitmap(const BITMAPINFO *pbmi, HDC hdc, void *bits)
 {
-    wxCHECK_MSG( pbmi, 0, wxT("invalid DIB in ConvertToBitmap") );
+    //wxCHECK_MSG( pbmi, 0, wxT("invalid DIB in ConvertToBitmap") );
 
     // here we get BITMAPINFO struct followed by the actual bitmap bits and
     // BITMAPINFO starts with BITMAPINFOHEADER followed by colour info
@@ -578,7 +578,7 @@ wxPalette *wxDIB::CreatePalette() const
 #if !defined(__WXMSW__) || defined(_WIN32_WCE) && _WIN32_WCE < 400
     return NULL;
 #else
-    wxCHECK_MSG( m_handle, NULL, wxT("wxDIB::CreatePalette(): invalid object") );
+    //wxCHECK_MSG( m_handle, NULL, wxT("wxDIB::CreatePalette(): invalid object") );
 
     DIBSECTION ds;
     if ( !GetDIBSection(m_handle, &ds) )
@@ -611,7 +611,7 @@ wxPalette *wxDIB::CreatePalette() const
     // going to have biClrUsed of them so add necessary space
     LOGPALETTE *pPalette = (LOGPALETTE *)
         malloc(sizeof(LOGPALETTE) + (biClrUsed - 1)*sizeof(PALETTEENTRY));
-    wxCHECK_MSG( pPalette, NULL, wxT("out of memory") );
+    //wxCHECK_MSG( pPalette, NULL, wxT("out of memory") );
 
     // initialize the palette header
     pPalette->palVersion = 0x300;  // magic number, not in docs but works
@@ -658,7 +658,7 @@ wxPalette *wxDIB::CreatePalette() const
 
 bool wxDIB::Create(const wxImage& image, PixelFormat pf)
 {
-    wxCHECK_MSG( image.IsOk(), false, wxT("invalid wxImage in wxDIB ctor") );
+    //wxCHECK_MSG( image.IsOk(), false, wxT("invalid wxImage in wxDIB ctor") );
 
     const int h = image.GetHeight();
     const int w = image.GetWidth();
@@ -744,7 +744,7 @@ bool wxDIB::Create(const wxImage& image, PixelFormat pf)
 
 wxImage wxDIB::ConvertToImage() const
 {
-    wxCHECK_MSG( IsOk(), wxNullImage,
+    //wxCHECK_MSG( IsOk(), wxNullImage,
                     wxT("can't convert invalid DIB to wxImage") );
 
     // create the wxImage object

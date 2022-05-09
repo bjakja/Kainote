@@ -739,7 +739,7 @@ void wxGraphicsContext::DrawRoundedRectangle( wxDouble x, wxDouble y, wxDouble w
 
 void wxGraphicsContext::StrokeLines( size_t n, const wxPoint2DDouble *points)
 {
-    wxASSERT(n > 1);
+    //wxASSERT(n > 1);
     wxGraphicsPath path = CreatePath();
     path.MoveToPoint(points[0].m_x, points[0].m_y);
     for ( size_t i = 1; i < n; ++i)
@@ -749,7 +749,7 @@ void wxGraphicsContext::StrokeLines( size_t n, const wxPoint2DDouble *points)
 
 void wxGraphicsContext::DrawLines( size_t n, const wxPoint2DDouble *points, wxPolygonFillMode fillStyle)
 {
-    wxASSERT(n > 1);
+    //wxASSERT(n > 1);
     wxGraphicsPath path = CreatePath();
     path.MoveToPoint(points[0].m_x, points[0].m_y);
     for ( size_t i = 1; i < n; ++i)
@@ -759,7 +759,7 @@ void wxGraphicsContext::DrawLines( size_t n, const wxPoint2DDouble *points, wxPo
 
 void wxGraphicsContext::StrokeLines( size_t n, const wxPoint2DDouble *beginPoints, const wxPoint2DDouble *endPoints)
 {
-    wxASSERT(n > 0);
+    //wxASSERT(n > 0);
     wxGraphicsPath path = CreatePath();
     for ( size_t i = 0; i < n; ++i)
     {

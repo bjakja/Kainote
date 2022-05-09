@@ -74,7 +74,7 @@ void wxRichToolTip::SetTitleFont(const wxFont& font)
 
 void wxRichToolTip::ShowFor(wxWindow* win)
 {
-    wxCHECK_RET( win, wxS("Must have a valid window") );
+    //wxCHECK_RET( win, wxS("Must have a valid window") );
 
     m_impl->ShowFor(win);
 }

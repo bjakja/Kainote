@@ -28,7 +28,7 @@ static void gtk_checklist_toggled(GtkCellRendererToggle * WXUNUSED(renderer),
                                   gchar                 *stringpath,
                                   wxCheckListBox        *listbox)
 {
-    wxCHECK_RET( listbox->m_treeview != NULL, wxT("invalid listbox") );
+    //wxCHECK_RET( listbox->m_treeview != NULL, wxT("invalid listbox") );
 
     GtkTreePath* path = gtk_tree_path_new_from_string(stringpath);
     wxCommandEvent new_event( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED,
@@ -104,7 +104,7 @@ void wxCheckListBox::DoCreateCheckList()
 
 bool wxCheckListBox::IsChecked(unsigned int index) const
 {
-    wxCHECK_MSG( m_treeview != NULL, false, wxT("invalid checklistbox") );
+    //wxCHECK_MSG( m_treeview != NULL, false, wxT("invalid checklistbox") );
 
     GtkTreeIter iter;
     gboolean res = gtk_tree_model_iter_nth_child(
@@ -126,7 +126,7 @@ bool wxCheckListBox::IsChecked(unsigned int index) const
 
 void wxCheckListBox::Check(unsigned int index, bool check)
 {
-    wxCHECK_RET( m_treeview != NULL, wxT("invalid checklistbox") );
+    //wxCHECK_RET( m_treeview != NULL, wxT("invalid checklistbox") );
 
     GtkTreeIter iter;
     gboolean res = gtk_tree_model_iter_nth_child(
@@ -145,7 +145,7 @@ void wxCheckListBox::Check(unsigned int index, bool check)
 
 int wxCheckListBox::GetItemHeight() const
 {
-    wxCHECK_MSG( m_treeview != NULL, 0, wxT("invalid listbox"));
+    //wxCHECK_MSG( m_treeview != NULL, 0, wxT("invalid listbox"));
 
     gint height;
     gtk_tree_view_column_cell_get_size(

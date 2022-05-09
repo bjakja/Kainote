@@ -284,12 +284,12 @@ bool wxOSXQuickTimeSoundData::Play(unsigned flags)
         err = QTNewDataReferenceFromFullPathCFString(wxCFStringRef(m_sndname,wxLocale::GetSystemEncoding()),
                                                      (UInt32)kQTNativeDefaultPathStyle, 0, &dataRef, &dataRefType);
 
-        wxASSERT(err == noErr);
+        //wxASSERT(err == noErr);
 
         if (NULL != dataRef || err != noErr)
         {
             err = NewMovieFromDataRef( &m_movie, newMovieDontAskUnresolvedDataRefs , NULL, dataRef, dataRefType );
-            wxASSERT(err == noErr);
+            //wxASSERT(err == noErr);
             DisposeHandle(dataRef);
         }
 

@@ -884,7 +884,7 @@ public:
     /** Simple interface constructor. */
     wxPGChoices( wxPGChoicesData* data )
     {
-        wxASSERT(data);
+        //wxASSERT(data);
         m_data = data;
         data->IncRef();
     }
@@ -1020,13 +1020,13 @@ public:
 
     const wxPGChoiceEntry& Item( unsigned int i ) const
     {
-        wxASSERT( IsOk() );
+        //wxASSERT( IsOk() );
         return m_data->Item(i);
     }
 
     wxPGChoiceEntry& Item( unsigned int i )
     {
-        wxASSERT( IsOk() );
+        //wxASSERT( IsOk() );
         return m_data->Item(i);
     }
 
@@ -1059,7 +1059,7 @@ public:
     // Returns data, increases refcount.
     wxPGChoicesData* GetData()
     {
-        wxASSERT( m_data->GetRefCount() != -1 );
+        //wxASSERT( m_data->GetRefCount() != -1 );
         m_data->IncRef();
         return m_data;
     }

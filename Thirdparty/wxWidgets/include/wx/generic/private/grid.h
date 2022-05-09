@@ -28,7 +28,7 @@ struct wxGridCellWithAttr
     wxGridCellWithAttr(int row, int col, wxGridCellAttr *attr_)
         : coords(row, col), attr(attr_)
     {
-        wxASSERT( attr );
+        //wxASSERT( attr );
     }
 
     wxGridCellWithAttr(const wxGridCellWithAttr& other)
@@ -808,7 +808,7 @@ public:
         for ( ;; )
         {
             // This is not supposed to happen if IsAtBoundary() returned false.
-            wxCHECK_RET( pos, "can't advance when already at boundary" );
+            //wxCHECK_RET( pos, "can't advance when already at boundary" );
 
             int line = GetLineAt(--pos);
             if ( IsLineVisible(line) )
@@ -857,7 +857,7 @@ public:
         int pos = GetLinePos(coords);
         for ( ;; )
         {
-            wxCHECK_RET( pos < m_numLines - 1,
+            //wxCHECK_RET( pos < m_numLines - 1,
                          "can't advance when already at boundary" );
 
             int line = GetLineAt(++pos);

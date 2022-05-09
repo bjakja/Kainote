@@ -1505,7 +1505,7 @@ typedef double wxDouble;
         MyClass *ptr = new MyClass;
         ...
         wxDELETE(ptr);
-        wxASSERT(!ptr);
+        //wxASSERT(!ptr);
     @endcode
 
     @header{wx/defs.h}
@@ -1523,7 +1523,7 @@ template <typename T> wxDELETE(T*& ptr);
         MyClass *array = new MyClass[17];
         ...
         wxDELETEA(array);
-        wxASSERT(!array);
+        //wxASSERT(!array);
     @endcode
 
     @see wxDELETE()
@@ -1680,7 +1680,7 @@ template <typename T> wxDELETEA(T*& array);
         int x = 3,
             y = 4;
         wxSwap(x, y);
-        wxASSERT( x == 4 && y == 3 );
+        //wxASSERT( x == 4 && y == 3 );
     @endcode
  */
 template <typename T> wxSwap(T& first, T& second);

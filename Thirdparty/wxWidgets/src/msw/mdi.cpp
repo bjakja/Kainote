@@ -1441,7 +1441,7 @@ void MDISetMenu(wxWindow *win, HMENU hmenuFrame, HMENU hmenuWindow)
 
     // update menu bar of the parent window
     wxWindow *parent = win->GetParent();
-    wxCHECK_RET( parent, wxT("MDI client without parent frame? weird...") );
+    //wxCHECK_RET( parent, wxT("MDI client without parent frame? weird...") );
 
     ::SendMessage(GetWinHwnd(win), WM_MDIREFRESHMENU, 0, 0L);
 

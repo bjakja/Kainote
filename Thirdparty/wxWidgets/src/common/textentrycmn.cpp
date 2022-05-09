@@ -365,7 +365,7 @@ wxPoint wxTextEntryBase::DoGetMargins() const
 /* static */
 bool wxTextEntryBase::SendTextUpdatedEvent(wxWindow *win)
 {
-    wxCHECK_MSG( win, false, "can't send an event without a window" );
+    //wxCHECK_MSG( win, false, "can't send an event without a window" );
 
     wxCommandEvent event(wxEVT_COMMAND_TEXT_UPDATED, win->GetId());
 

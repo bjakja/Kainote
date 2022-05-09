@@ -322,7 +322,7 @@ void wxGenericDirDialog::OnNew( wxCommandEvent& WXUNUSED(event) )
 
     wxTreeItemId parent = id ; // m_dirCtrl->GetTreeCtrl()->GetItemParent( id );
     wxDirItemData *data = (wxDirItemData*)m_dirCtrl->GetTreeCtrl()->GetItemData( parent );
-    wxASSERT( data );
+    //wxASSERT( data );
 
     wxString new_name( _("NewName") );
     wxString path( data->m_path );

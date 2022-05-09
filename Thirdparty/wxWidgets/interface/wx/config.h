@@ -130,10 +130,10 @@
     conf->Write("../GroupEntry", 2);
     conf->SetPath("..");
 
-    wxASSERT( conf->ReadLong("Subgroup/SubgroupEntry", 0) == 3 );
+    //wxASSERT( conf->ReadLong("Subgroup/SubgroupEntry", 0) == 3 );
 
     // use absolute path: it is allowed, too
-    wxASSERT( conf->ReadLong("/RootEntry", 0) == 1 );
+    //wxASSERT( conf->ReadLong("/RootEntry", 0) == 1 );
     @endcode
 
     It is highly recommended that you restore the path to its old value on
@@ -163,7 +163,7 @@
         foo(config);
 
         // we're reading "/Foo/Data/Test" here! -1 will probably be returned...
-        wxASSERT( config->ReadLong("Test", -1) == 17 );
+        //wxASSERT( config->ReadLong("Test", -1) == 17 );
     }
     @endcode
 

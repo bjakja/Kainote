@@ -122,7 +122,7 @@ bool wxCheckBox::Create(wxWindow *parent,
 
 void wxCheckBox::SetValue( bool state )
 {
-    wxCHECK_RET( m_widgetCheckbox != NULL, wxT("invalid checkbox") );
+    //wxCHECK_RET( m_widgetCheckbox != NULL, wxT("invalid checkbox") );
 
     if (state == GetValue())
         return;
@@ -136,14 +136,14 @@ void wxCheckBox::SetValue( bool state )
 
 bool wxCheckBox::GetValue() const
 {
-    wxCHECK_MSG( m_widgetCheckbox != NULL, false, wxT("invalid checkbox") );
+    //wxCHECK_MSG( m_widgetCheckbox != NULL, false, wxT("invalid checkbox") );
 
     return GTK_TOGGLE_BUTTON(m_widgetCheckbox)->active;
 }
 
 void wxCheckBox::SetLabel( const wxString& label )
 {
-    wxCHECK_RET( m_widgetLabel != NULL, wxT("invalid checkbox") );
+    //wxCHECK_RET( m_widgetLabel != NULL, wxT("invalid checkbox") );
 
     GTKSetLabelForLabel(GTK_LABEL(m_widgetLabel), label);
 }

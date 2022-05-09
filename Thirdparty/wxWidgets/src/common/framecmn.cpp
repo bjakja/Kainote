@@ -253,7 +253,7 @@ bool wxFrameBase::ProcessCommand(int id)
 
 bool wxFrameBase::ProcessCommand(wxMenuItem *item)
 {
-    wxCHECK_MSG( item, false, wxS("Menu item can't be NULL") );
+    //wxCHECK_MSG( item, false, wxS("Menu item can't be NULL") );
 
     if (!item->IsEnabled())
         return true;
@@ -275,7 +275,7 @@ bool wxFrameBase::ProcessCommand(wxMenuItem *item)
     }
 
     wxMenu* const menu = item->GetMenu();
-    wxCHECK_MSG( menu, false, wxS("Menu item should be attached to a menu") );
+    //wxCHECK_MSG( menu, false, wxS("Menu item should be attached to a menu") );
 
     return menu->SendEvent(item->GetId(), checked);
 }
@@ -362,7 +362,7 @@ wxStatusBar* wxFrameBase::CreateStatusBar(int number,
 {
     // the main status bar can only be created once (or else it should be
     // deleted before calling CreateStatusBar() again)
-    wxCHECK_MSG( !m_frameStatusBar, NULL,
+    //wxCHECK_MSG( !m_frameStatusBar, NULL,
                  wxT("recreating status bar in wxFrame") );
 
     SetStatusBar(OnCreateStatusBar(number, style, id, name));
@@ -384,14 +384,14 @@ wxStatusBar *wxFrameBase::OnCreateStatusBar(int number,
 
 void wxFrameBase::SetStatusText(const wxString& text, int number)
 {
-    wxCHECK_RET( m_frameStatusBar != NULL, wxT("no statusbar to set text for") );
+    //wxCHECK_RET( m_frameStatusBar != NULL, wxT("no statusbar to set text for") );
 
     m_frameStatusBar->SetStatusText(text, number);
 }
 
 void wxFrameBase::SetStatusWidths(int n, const int widths_field[] )
 {
-    wxCHECK_RET( m_frameStatusBar != NULL, wxT("no statusbar to set widths for") );
+    //wxCHECK_RET( m_frameStatusBar != NULL, wxT("no statusbar to set widths for") );
 
     m_frameStatusBar->SetStatusWidths(n, widths_field);
 
@@ -400,14 +400,14 @@ void wxFrameBase::SetStatusWidths(int n, const int widths_field[] )
 
 void wxFrameBase::PushStatusText(const wxString& text, int number)
 {
-    wxCHECK_RET( m_frameStatusBar != NULL, wxT("no statusbar to set text for") );
+    //wxCHECK_RET( m_frameStatusBar != NULL, wxT("no statusbar to set text for") );
 
     m_frameStatusBar->PushStatusText(text, number);
 }
 
 void wxFrameBase::PopStatusText(int number)
 {
-    wxCHECK_RET( m_frameStatusBar != NULL, wxT("no statusbar to set text for") );
+    //wxCHECK_RET( m_frameStatusBar != NULL, wxT("no statusbar to set text for") );
 
     m_frameStatusBar->PopStatusText(number);
 }
@@ -534,7 +534,7 @@ wxToolBar* wxFrameBase::CreateToolBar(long style,
 {
     // the main toolbar can't be recreated (unless it was explicitly deleted
     // before)
-    wxCHECK_MSG( !m_frameToolBar, NULL,
+    //wxCHECK_MSG( !m_frameToolBar, NULL,
                  wxT("recreating toolbar in wxFrame") );
 
     if ( style == -1 )

@@ -128,7 +128,7 @@ void wxDynamicLibrary::Unload(wxDllType handle)
 
 void *wxDynamicLibrary::DoGetSymbol(const wxString &name, bool *success) const
 {
-    wxCHECK_MSG( IsLoaded(), NULL,
+    //wxCHECK_MSG( IsLoaded(), NULL,
                  wxT("Can't load symbol from unloaded library") );
 
     void    *symbol = 0;

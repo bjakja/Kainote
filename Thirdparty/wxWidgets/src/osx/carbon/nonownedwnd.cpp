@@ -1348,7 +1348,7 @@ void wxNonOwnedWindowCarbonImpl::Create(
     if ( err == noErr && m_macWindow != NULL && group != NULL )
         SetWindowGroup( (WindowRef) m_macWindow , group ) ;
 
-    wxCHECK_RET( err == noErr, wxT("Mac OS error when trying to create new window") );
+    //wxCHECK_RET( err == noErr, wxT("Mac OS error when trying to create new window") );
 
     // setup a separate group for each window, so that overlays can be handled easily
 

@@ -821,7 +821,7 @@ int wxMimeTypesManagerImpl::AddToMimeData(const wxString& strType,
     }
 
     // check data integrity
-    wxASSERT( m_aTypes.GetCount() == m_aEntries.GetCount() &&
+    //wxASSERT( m_aTypes.GetCount() == m_aEntries.GetCount() &&
               m_aTypes.GetCount() == m_aExtensions.GetCount() &&
               m_aTypes.GetCount() == m_aIcons.GetCount() &&
               m_aTypes.GetCount() == m_aDescriptions.GetCount() );
@@ -1019,7 +1019,7 @@ bool wxMimeTypesManagerImpl::Unassociate(wxFileType *ft)
         }
     }
     // check data integrity
-    wxASSERT( m_aTypes.GetCount() == m_aEntries.GetCount() &&
+    //wxASSERT( m_aTypes.GetCount() == m_aEntries.GetCount() &&
             m_aTypes.GetCount() == m_aExtensions.GetCount() &&
             m_aTypes.GetCount() == m_aIcons.GetCount() &&
             m_aTypes.GetCount() == m_aDescriptions.GetCount() );

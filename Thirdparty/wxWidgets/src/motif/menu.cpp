@@ -122,7 +122,7 @@ wxMenuItem* wxMenu::DoInsert(size_t pos, wxMenuItem *item)
     {
         // this is a dynamic Append
 #ifndef XmNpositionIndex
-    wxCHECK_MSG( pos == GetMenuItemCount(), -1, wxT("insert not implemented"));
+    //wxCHECK_MSG( pos == GetMenuItemCount(), -1, wxT("insert not implemented"));
 #endif
         item->CreateItem(m_menuWidget, GetMenuBar(), m_topLevelMenu, pos);
     }
@@ -182,7 +182,7 @@ void wxMenuBar::Init()
 
 wxMenuBar::wxMenuBar(size_t n, wxMenu *menus[], const wxArrayString& titles, long WXUNUSED(style))
 {
-    wxASSERT( n == titles.GetCount() );
+    //wxASSERT( n == titles.GetCount() );
 
     Init();
 
@@ -233,7 +233,7 @@ void wxMenuBar::SetMenuLabel(size_t pos, const wxString& label)
 
 wxString wxMenuBar::GetMenuLabel(size_t pos) const
 {
-    wxCHECK_MSG( pos < GetMenuCount(), wxEmptyString,
+    //wxCHECK_MSG( pos < GetMenuCount(), wxEmptyString,
                  wxT("invalid menu index in wxMenuBar::GetMenuLabel") );
     return m_titles[pos];
 }
@@ -245,16 +245,16 @@ bool wxMenuBar::Append(wxMenu * menu, const wxString& title)
 
 bool wxMenuBar::Insert(size_t pos, wxMenu *menu, const wxString& title)
 {
-    wxCHECK_MSG( pos <= GetMenuCount(), false, wxT("invalid position") );
-    wxCHECK_MSG( menu, false, wxT("invalid menu") );
-    wxCHECK_MSG( !menu->GetParent() && !menu->GetButtonWidget(), false,
+    //wxCHECK_MSG( pos <= GetMenuCount(), false, wxT("invalid position") );
+    //wxCHECK_MSG( menu, false, wxT("invalid menu") );
+    //wxCHECK_MSG( !menu->GetParent() && !menu->GetButtonWidget(), false,
                  wxT("menu already appended") );
 
     if ( m_menuBarFrame )
     {
         WXWidget w = menu->CreateMenu(this, GetMainWidget(), menu,
                                       pos, title, true);
-        wxCHECK_MSG( w, false, wxT("failed to create menu") );
+        //wxCHECK_MSG( w, false, wxT("failed to create menu") );
         menu->SetButtonWidget(w);
     }
 

@@ -41,7 +41,7 @@ wxGTKCairoDCImpl::wxGTKCairoDCImpl(wxDC* owner, wxWindow* window)
 
 void wxGTKCairoDCImpl::DoDrawBitmap(const wxBitmap& bitmap, int x, int y, bool useMask)
 {
-    wxCHECK_RET(IsOk(), "invalid DC");
+    //wxCHECK_RET(IsOk(), "invalid DC");
 
     cairo_t* cr = NULL;
     if (m_graphicContext)
@@ -110,8 +110,8 @@ void wxGTKCairoDCImpl::DoGetSize(int* width, int* height) const
 
 bool wxGTKCairoDCImpl::DoStretchBlit(int xdest, int ydest, int dstWidth, int dstHeight, wxDC* source, int xsrc, int ysrc, int srcWidth, int srcHeight, wxRasterOperationMode rop, bool useMask, int xsrcMask, int ysrcMask)
 {
-    wxCHECK_MSG(IsOk(), false, "invalid DC");
-    wxCHECK_MSG(source && source->IsOk(), false, "invalid source DC");
+    //wxCHECK_MSG(IsOk(), false, "invalid DC");
+    //wxCHECK_MSG(source && source->IsOk(), false, "invalid source DC");
 
     cairo_t* cr = NULL;
     if (m_graphicContext)
@@ -269,7 +269,7 @@ wxPaintDCImpl::wxPaintDCImpl(wxPaintDC* owner, wxWindow* window)
     : base_type(owner, window)
 {
     cairo_t* cr = window->GTKPaintContext();
-    wxCHECK_RET(cr, "using wxPaintDC without being in a native paint event");
+    //wxCHECK_RET(cr, "using wxPaintDC without being in a native paint event");
     GdkWindow* gdkWindow = gtk_widget_get_window(window->m_wxwindow);
     m_width = gdk_window_get_width(gdkWindow);
     m_height = gdk_window_get_height(gdkWindow);

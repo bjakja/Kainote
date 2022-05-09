@@ -400,7 +400,7 @@ bool wxWindowMac::Create(wxWindowMac *parent,
     long style,
     const wxString& name)
 {
-    wxCHECK_MSG( parent, false, wxT("can't create wxWindowMac without parent") );
+    //wxCHECK_MSG( parent, false, wxT("can't create wxWindowMac without parent") );
 
     if ( !CreateBase(parent, id, pos, size, style, wxDefaultValidator, name) )
         return false;
@@ -476,7 +476,7 @@ void wxWindowMac::DoSetWindowVariant( wxWindowVariant variant )
 {
     // Don't assert, in case we set the window variant before
     // the window is created
-    // wxASSERT( GetPeer()->IsOk() ) ;
+    // //wxASSERT( GetPeer()->IsOk() ) ;
 
     m_windowVariant = variant ;
 
@@ -749,7 +749,7 @@ void wxWindowMac::DoGetPosition(int *x, int *y) const
 void wxWindowMac::DoScreenToClient(int *x, int *y) const
 {
     wxNonOwnedWindow* tlw = MacGetTopLevelWindow() ;
-    wxCHECK_RET( tlw , wxT("TopLevel Window missing") ) ;
+    //wxCHECK_RET( tlw , wxT("TopLevel Window missing") ) ;
     tlw->GetNonOwnedPeer()->ScreenToWindow( x, y);
     MacRootWindowToWindow( x , y ) ;
 
@@ -763,7 +763,7 @@ void wxWindowMac::DoScreenToClient(int *x, int *y) const
 void wxWindowMac::DoClientToScreen(int *x, int *y) const
 {
     wxNonOwnedWindow* tlw = MacGetTopLevelWindow() ;
-    wxCHECK_RET( tlw , wxT("TopLevel window missing") ) ;
+    //wxCHECK_RET( tlw , wxT("TopLevel window missing") ) ;
 
     wxPoint origin = GetClientAreaOrigin() ;
     if (x)
@@ -1553,7 +1553,7 @@ void  wxWindowMac::MacPaintGrowBox()
     {
 #if 0
         CGContextRef cgContext = (CGContextRef) MacGetCGContextRef() ;
-        wxASSERT( cgContext ) ;
+        //wxASSERT( cgContext ) ;
 
         int tx,ty,tw,th;
 
@@ -1611,7 +1611,7 @@ void wxWindowMac::MacPaintBorders( int WXUNUSED(leftOrigin) , int WXUNUSED(right
             th+2 ) ;
 
         CGContextRef cgContext = (CGContextRef) GetParent()->MacGetCGContextRef() ;
-        wxASSERT( cgContext ) ;
+        //wxASSERT( cgContext ) ;
 
         if ( GetPeer()->NeedsFrame() )
         {
@@ -2809,7 +2809,7 @@ void wxWidgetImpl::Associate(WXWidget inControl, wxWidgetImpl *impl)
 {
     // adding NULL ControlRef is (first) surely a result of an error and
     // (secondly) breaks native event processing
-    wxCHECK_RET( inControl != (WXWidget) NULL, wxT("attempt to add a NULL WXWidget to control map") );
+    //wxCHECK_RET( inControl != (WXWidget) NULL, wxT("attempt to add a NULL WXWidget to control map") );
 
     wxWinMacControlList[inControl] = impl;
 }

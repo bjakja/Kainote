@@ -372,7 +372,7 @@ bool wxDir::GetFirst(
 , int                               nFlags
 ) const
 {
-    wxCHECK_MSG( IsOpened(), false, wxT("must wxDir::Open() first") );
+    //wxCHECK_MSG( IsOpened(), false, wxT("must wxDir::Open() first") );
     M_DIR->Rewind();
     M_DIR->SetFileSpec(rsFilespec);
     M_DIR->SetFlags(nFlags);
@@ -383,8 +383,8 @@ bool wxDir::GetNext(
   wxString*                         psFilename
 ) const
 {
-    wxCHECK_MSG( IsOpened(), false, wxT("must wxDir::Open() first") );
-    wxCHECK_MSG( psFilename, false, wxT("bad pointer in wxDir::GetNext()") );
+    //wxCHECK_MSG( IsOpened(), false, wxT("must wxDir::Open() first") );
+    //wxCHECK_MSG( psFilename, false, wxT("bad pointer in wxDir::GetNext()") );
     return M_DIR->Read(psFilename);
 } // end of wxDir::GetNext
 

@@ -353,7 +353,7 @@ void wxHtmlParser::PushTagHandler(wxHtmlTagHandler *handler, const wxString& tag
 
 void wxHtmlParser::PopTagHandler()
 {
-    wxCHECK_RET( !m_HandlersStack.empty(),
+    //wxCHECK_RET( !m_HandlersStack.empty(),
                  "attempt to remove HTML tag handler from empty stack" );
 
     wxHtmlTagHandlersHash *prev = m_HandlersStack.back();

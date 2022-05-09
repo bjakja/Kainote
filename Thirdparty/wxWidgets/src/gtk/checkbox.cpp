@@ -162,7 +162,7 @@ void wxCheckBox::GTKEnableEvents()
 
 void wxCheckBox::SetValue( bool state )
 {
-    wxCHECK_RET( m_widgetCheckbox != NULL, wxT("invalid checkbox") );
+    //wxCHECK_RET( m_widgetCheckbox != NULL, wxT("invalid checkbox") );
 
     if (state == GetValue())
         return;
@@ -176,7 +176,7 @@ void wxCheckBox::SetValue( bool state )
 
 bool wxCheckBox::GetValue() const
 {
-    wxCHECK_MSG( m_widgetCheckbox != NULL, false, wxT("invalid checkbox") );
+    //wxCHECK_MSG( m_widgetCheckbox != NULL, false, wxT("invalid checkbox") );
 
     return gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(m_widgetCheckbox)) != 0;
 }
@@ -202,7 +202,7 @@ wxCheckBoxState wxCheckBox::DoGet3StateValue() const
 
 void wxCheckBox::SetLabel( const wxString& label )
 {
-    wxCHECK_RET( m_widgetLabel != NULL, wxT("invalid checkbox") );
+    //wxCHECK_RET( m_widgetLabel != NULL, wxT("invalid checkbox") );
 
     // save the label inside m_label in case user calls GetLabel() later
     wxControl::SetLabel(label);

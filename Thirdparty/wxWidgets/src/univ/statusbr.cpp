@@ -215,7 +215,7 @@ void wxStatusBarUniv::OnSize(wxSizeEvent& event)
 
 bool wxStatusBarUniv::GetFieldRect(int n, wxRect& rect) const
 {
-    wxCHECK_MSG( n >= 0 && (size_t)n < m_panes.GetCount(), false,
+    //wxCHECK_MSG( n >= 0 && (size_t)n < m_panes.GetCount(), false,
                  wxT("invalid field index in GetFieldRect()") );
 
     // this is a fix for a bug exhibited by the statbar sample: if
@@ -238,7 +238,7 @@ wxRect wxStatusBarUniv::DoGetFieldRect(int n) const
 
     // it's the caller responsability to check this, if unsure - call
     // GetFieldRect() instead
-    wxCHECK_MSG( !m_widthsAbs.IsEmpty(), rect,
+    //wxCHECK_MSG( !m_widthsAbs.IsEmpty(), rect,
                  wxT("can't be called if we don't have the widths") );
 
     for ( int i = 0; i <= n; i++ )

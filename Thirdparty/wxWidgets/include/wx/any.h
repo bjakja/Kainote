@@ -984,7 +984,7 @@ public:
         wxString value;
         if ( !GetAs(&value) )
         {
-            wxFAIL_MSG("Incorrect or non-convertible data type");
+            //wxFAIL_MSG("Incorrect or non-convertible data type");
         }
         return value;
     }

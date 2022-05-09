@@ -380,21 +380,21 @@ bool wxRegionGeneric::DoOffset(wxCoord x, wxCoord y)
 
 bool wxRegionGeneric::IsEmpty() const
 {
-    wxASSERT(m_refData);
+    //wxASSERT(m_refData);
     return REGION::XEmptyRegion(M_REGIONDATA);
 }
 
 // Does the region contain the point (x,y)?
 wxRegionContain wxRegionGeneric::DoContainsPoint(wxCoord x, wxCoord y) const
 {
-    wxASSERT(m_refData);
+    //wxASSERT(m_refData);
     return REGION::XPointInRegion(M_REGIONDATA,x,y) ? wxInRegion : wxOutRegion;
 }
 
 // Does the region contain the rectangle rect?
 wxRegionContain wxRegionGeneric::DoContainsRect(const wxRect& rect) const
 {
-    wxASSERT(m_refData);
+    //wxASSERT(m_refData);
     return REGION::XRectInRegion(M_REGIONDATA,rect.x,rect.y,rect.width,rect.height);
 }
 
@@ -446,9 +446,9 @@ wxRegionIteratorGeneric wxRegionIteratorGeneric::operator++(int)
 
 wxRect wxRegionIteratorGeneric::GetRect() const
 {
-    wxASSERT(m_region.m_refData);
+    //wxASSERT(m_region.m_refData);
     const Box *box = M_REGIONDATA_OF(m_region)->GetBox(m_current);
-    wxASSERT(box);
+    //wxASSERT(box);
     return wxRect
     (   box->x1
     ,   box->y1
@@ -459,33 +459,33 @@ wxRect wxRegionIteratorGeneric::GetRect() const
 
 long wxRegionIteratorGeneric::GetX() const
 {
-    wxASSERT(m_region.m_refData);
+    //wxASSERT(m_region.m_refData);
     const Box *box = M_REGIONDATA_OF(m_region)->GetBox(m_current);
-    wxASSERT(box);
+    //wxASSERT(box);
     return box->x1;
 }
 
 long wxRegionIteratorGeneric::GetY() const
 {
-    wxASSERT(m_region.m_refData);
+    //wxASSERT(m_region.m_refData);
     const Box *box = M_REGIONDATA_OF(m_region)->GetBox(m_current);
-    wxASSERT(box);
+    //wxASSERT(box);
     return box->y1;
 }
 
 long wxRegionIteratorGeneric::GetW() const
 {
-    wxASSERT(m_region.m_refData);
+    //wxASSERT(m_region.m_refData);
     const Box *box = M_REGIONDATA_OF(m_region)->GetBox(m_current);
-    wxASSERT(box);
+    //wxASSERT(box);
     return box->x2 - box->x1;
 }
 
 long wxRegionIteratorGeneric::GetH() const
 {
-    wxASSERT(m_region.m_refData);
+    //wxASSERT(m_region.m_refData);
     const Box *box = M_REGIONDATA_OF(m_region)->GetBox(m_current);
-    wxASSERT(box);
+    //wxASSERT(box);
     return box->y2 - box->y1;
 }
 
@@ -1792,11 +1792,11 @@ bool REGION::XXorRegion(Region sra, Region srb, Region dr)
 {
     Region tra = XCreateRegion();
 
-    wxCHECK_MSG( tra, false, wxT("region not created") );
+    //wxCHECK_MSG( tra, false, wxT("region not created") );
 
     Region trb = XCreateRegion();
 
-    wxCHECK_MSG( trb, false, wxT("region not created") );
+    //wxCHECK_MSG( trb, false, wxT("region not created") );
 
     (void) XSubtractRegion(sra,srb,tra);
     (void) XSubtractRegion(srb,sra,trb);

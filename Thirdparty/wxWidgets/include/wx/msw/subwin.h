@@ -115,7 +115,7 @@ public:
     void SetFont(const wxFont& font)
     {
         HFONT hfont = GetHfontOf(font);
-        wxCHECK_RET( hfont, wxT("invalid font") );
+        //wxCHECK_RET( hfont, wxT("invalid font") );
 
         for ( size_t n = 0; n < m_count; n++ )
         {

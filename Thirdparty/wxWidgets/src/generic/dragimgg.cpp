@@ -236,7 +236,7 @@ bool wxGenericDragImage::BeginDrag(const wxPoint& hotspot,
                                    bool fullScreen,
                                    wxRect* rect)
 {
-    wxCHECK_MSG( window, false, wxT("Window must not be null in BeginDrag."));
+    //wxCHECK_MSG( window, false, wxT("Window must not be null in BeginDrag."));
 
     // The image should be offset by this amount
     m_offset = hotspot;

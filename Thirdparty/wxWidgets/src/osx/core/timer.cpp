@@ -67,8 +67,8 @@ bool wxOSXTimerImpl::Start( int milliseconds, bool mode )
 {
     (void)wxTimerImpl::Start(milliseconds, mode);
 
-    wxCHECK_MSG( m_milli > 0, false, wxT("invalid value for timer timeout") );
-    wxCHECK_MSG( m_info->m_timerRef == NULL, false, wxT("attempting to restart a timer") );
+    //wxCHECK_MSG( m_milli > 0, false, wxT("invalid value for timer timeout") );
+    //wxCHECK_MSG( m_info->m_timerRef == NULL, false, wxT("attempting to restart a timer") );
 
     CFGregorianUnits gumilli ;
     memset(&gumilli,0,sizeof(gumilli) );

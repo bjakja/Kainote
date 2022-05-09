@@ -159,7 +159,7 @@ void wxWrapSizer::AdjustLastRowItemProp(size_t n, wxSizerItem *itemLast)
     }
 
     wxSizerItem * const item = m_rows.GetItem(n);
-    wxCHECK_RET( item, "invalid sizer item" );
+    //wxCHECK_RET( item, "invalid sizer item" );
 
     // store the item we modified and its original proportion
     item->SetUserData(new wxPropChanger(*this, *itemLast));

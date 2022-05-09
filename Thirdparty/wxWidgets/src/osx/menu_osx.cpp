@@ -149,7 +149,7 @@ void wxMenu::EndRadioGroup()
 
 wxMenuItem* wxMenu::DoAppend(wxMenuItem *item)
 {
-    wxCHECK_MSG( item, NULL, wxT("NULL item in wxMenu::DoAppend") );
+    //wxCHECK_MSG( item, NULL, wxT("NULL item in wxMenu::DoAppend") );
 
     bool check = false;
 
@@ -235,7 +235,7 @@ wxMenuItem *wxMenu::DoRemove(wxMenuItem *item)
     }
 
     // DoRemove() (unlike Remove) can only be called for existing item!
-    wxCHECK_MSG( node, NULL, wxT("bug in wxMenu::Remove logic") );
+    //wxCHECK_MSG( node, NULL, wxT("bug in wxMenu::Remove logic") );
 
     wxOSXMenuRemoveItem(m_hMenu , pos );
     */
@@ -604,7 +604,7 @@ wxMenuBar::~wxMenuBar()
 
 void wxMenuBar::Refresh(bool WXUNUSED(eraseBackground), const wxRect *WXUNUSED(rect))
 {
-    wxCHECK_RET( IsAttached(), wxT("can't refresh unatteched menubar") );
+    //wxCHECK_RET( IsAttached(), wxT("can't refresh unatteched menubar") );
 }
 
 void wxMenuBar::MacInstallMenuBar()
@@ -822,7 +822,7 @@ void wxMenuBar::MacInstallMenuBar()
 
 void wxMenuBar::EnableTop(size_t pos, bool enable)
 {
-    wxCHECK_RET( IsAttached(), wxT("doesn't work with unattached menubars") );
+    //wxCHECK_RET( IsAttached(), wxT("doesn't work with unattached menubars") );
 
     m_rootMenu->FindItemByPosition(pos+firstMenuPos)->Enable(enable);
 
@@ -831,18 +831,18 @@ void wxMenuBar::EnableTop(size_t pos, bool enable)
 
 bool wxMenuBar::IsEnabledTop(size_t pos) const
 {
-    wxCHECK_MSG( IsAttached(), true,
+    //wxCHECK_MSG( IsAttached(), true,
                  wxT("doesn't work with unattached menubars") );
 
     wxMenuItem* const item = m_rootMenu->FindItemByPosition(pos+firstMenuPos);
-    wxCHECK_MSG( item, false, wxT("invalid menu index") );
+    //wxCHECK_MSG( item, false, wxT("invalid menu index") );
 
     return item->IsEnabled();
 }
 
 bool wxMenuBar::Enable(bool enable)
 {
-    wxCHECK_MSG( IsAttached(), false, wxT("doesn't work with unattached menubars") );
+    //wxCHECK_MSG( IsAttached(), false, wxT("doesn't work with unattached menubars") );
 
     size_t i;
     for (i = 0; i < GetMenuCount(); i++)
@@ -853,14 +853,14 @@ bool wxMenuBar::Enable(bool enable)
 
 void wxMenuBar::SetMenuLabel(size_t pos, const wxString& label)
 {
-    wxCHECK_RET( pos < GetMenuCount(), wxT("invalid menu index") );
+    //wxCHECK_RET( pos < GetMenuCount(), wxT("invalid menu index") );
 
     GetMenu(pos)->SetTitle( label ) ;
 }
 
 wxString wxMenuBar::GetMenuLabel(size_t pos) const
 {
-    wxCHECK_MSG( pos < GetMenuCount(), wxEmptyString,
+    //wxCHECK_MSG( pos < GetMenuCount(), wxEmptyString,
                  wxT("invalid menu index in wxMenuBar::GetMenuLabel") );
 
     return GetMenu(pos)->GetTitle();
@@ -908,7 +908,7 @@ wxMenu *wxMenuBar::Remove(size_t pos)
 bool wxMenuBar::Append(wxMenu *menu, const wxString& title)
 {
     WXHMENU submenu = menu ? menu->GetHMenu() : 0;
-        wxCHECK_MSG( submenu, false, wxT("can't append invalid menu to menubar") );
+        //wxCHECK_MSG( submenu, false, wxT("can't append invalid menu to menubar") );
 
     if ( !wxMenuBarBase::Append(menu, title) )
         return false;

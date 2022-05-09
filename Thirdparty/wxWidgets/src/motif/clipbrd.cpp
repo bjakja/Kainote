@@ -218,7 +218,7 @@ void wxClipboard::Clear()
 
 bool wxClipboard::Open()
 {
-    wxCHECK_MSG( !m_open, false, "clipboard already open" );
+    //wxCHECK_MSG( !m_open, false, "clipboard already open" );
 
     m_open = true;
 
@@ -227,8 +227,8 @@ bool wxClipboard::Open()
 
 bool wxClipboard::SetData( wxDataObject *data )
 {
-    wxCHECK_MSG( data, false, "data is invalid" );
-    wxCHECK_MSG( m_open, false, "clipboard not open" );
+    //wxCHECK_MSG( data, false, "data is invalid" );
+    //wxCHECK_MSG( m_open, false, "clipboard not open" );
 
     Clear();
 
@@ -278,8 +278,8 @@ void wxClipboardCallback( Widget xwidget, long* data_id,
 
 bool wxClipboard::AddData( wxDataObject *data )
 {
-    wxCHECK_MSG( data, false, "data is invalid" );
-    wxCHECK_MSG( m_open, false, "clipboard not open" );
+    //wxCHECK_MSG( data, false, "data is invalid" );
+    //wxCHECK_MSG( m_open, false, "clipboard not open" );
 
     m_data.Append( data );
 
@@ -326,7 +326,7 @@ bool wxClipboard::AddData( wxDataObject *data )
 
 void wxClipboard::Close()
 {
-    wxCHECK_RET( m_open, "clipboard not open" );
+    //wxCHECK_RET( m_open, "clipboard not open" );
 
     m_open = false;
 }
@@ -391,7 +391,7 @@ private:
 
 bool wxClipboard::GetData( wxDataObject& data )
 {
-    wxCHECK_MSG( m_open, false, "clipboard not open" );
+    //wxCHECK_MSG( m_open, false, "clipboard not open" );
 
     Display* xdisplay = wxGlobalDisplay();
     Window xwindow = XtWindow( (Widget)wxTheApp->GetTopLevelRealizedWidget() );

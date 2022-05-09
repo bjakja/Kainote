@@ -102,7 +102,7 @@ gtk_insert_text_callback(GtkEditable *editable,
     // we should only be called if we have a max len limit at all
     GtkEntry *entry = GTK_ENTRY (editable);
 
-    wxCHECK_RET( entry->text_max_length, wxT("shouldn't be called") );
+    //wxCHECK_RET( entry->text_max_length, wxT("shouldn't be called") );
 
     // check that we don't overflow the max length limit
     //
@@ -189,7 +189,7 @@ static void wxgtk_text_draw( GtkWidget *widget, GdkRectangle *rect)
     wxEventLoopBase* loop = wxEventLoopBase::GetActive();
     if ( loop && !loop->IsYielding() )
     {
-        wxCHECK_RET( gs_gtk_text_draw != wxgtk_text_draw,
+        //wxCHECK_RET( gs_gtk_text_draw != wxgtk_text_draw,
                      wxT("infinite recursion in wxgtk_text_draw aborted") );
 
         gs_gtk_text_draw(widget, rect);
@@ -406,7 +406,7 @@ void wxTextCtrl::CalculateScrollbar()
 
 wxString wxTextCtrl::DoGetValue() const
 {
-    wxCHECK_MSG( m_text != NULL, wxEmptyString, wxT("invalid text ctrl") );
+    //wxCHECK_MSG( m_text != NULL, wxEmptyString, wxT("invalid text ctrl") );
 
     wxString tmp;
     if (m_windowStyle & wxTE_MULTILINE)
@@ -426,7 +426,7 @@ wxString wxTextCtrl::DoGetValue() const
 
 void wxTextCtrl::DoSetValue( const wxString &value, int flags )
 {
-    wxCHECK_RET( m_text != NULL, wxT("invalid text ctrl") );
+    //wxCHECK_RET( m_text != NULL, wxT("invalid text ctrl") );
 
     if ( !(flags & SetValue_SendEvent) )
     {
@@ -456,7 +456,7 @@ void wxTextCtrl::DoSetValue( const wxString &value, int flags )
 
 void wxTextCtrl::WriteText( const wxString &text )
 {
-    wxCHECK_RET( m_text != NULL, wxT("invalid text ctrl") );
+    //wxCHECK_RET( m_text != NULL, wxT("invalid text ctrl") );
 
     if ( text.empty() )
         return;
@@ -644,7 +644,7 @@ int wxTextCtrl::GetNumberOfLines() const
 
 void wxTextCtrl::SetInsertionPoint( long pos )
 {
-    wxCHECK_RET( m_text != NULL, wxT("invalid text ctrl") );
+    //wxCHECK_RET( m_text != NULL, wxT("invalid text ctrl") );
 
     if ( IsMultiLine() )
     {
@@ -676,7 +676,7 @@ void wxTextCtrl::SetInsertionPoint( long pos )
 
 void wxTextCtrl::SetInsertionPointEnd()
 {
-    wxCHECK_RET( m_text != NULL, wxT("invalid text ctrl") );
+    //wxCHECK_RET( m_text != NULL, wxT("invalid text ctrl") );
 
     if (m_windowStyle & wxTE_MULTILINE)
     {
@@ -690,7 +690,7 @@ void wxTextCtrl::SetInsertionPointEnd()
 
 void wxTextCtrl::SetEditable( bool editable )
 {
-    wxCHECK_RET( m_text != NULL, wxT("invalid text ctrl") );
+    //wxCHECK_RET( m_text != NULL, wxT("invalid text ctrl") );
 
     if (m_windowStyle & wxTE_MULTILINE)
     {
@@ -804,7 +804,7 @@ void wxTextCtrl::SetMaxLength(unsigned long len)
 
 void wxTextCtrl::SetSelection( long from, long to )
 {
-    wxCHECK_RET( m_text != NULL, wxT("invalid text ctrl") );
+    //wxCHECK_RET( m_text != NULL, wxT("invalid text ctrl") );
 
     if (from == -1 && to == -1)
     {
@@ -847,13 +847,13 @@ void wxTextCtrl::ShowPosition( long pos )
 
 long wxTextCtrl::GetInsertionPoint() const
 {
-    wxCHECK_MSG( m_text != NULL, 0, wxT("invalid text ctrl") );
+    //wxCHECK_MSG( m_text != NULL, 0, wxT("invalid text ctrl") );
     return (long) GET_EDITABLE_POS(m_text);
 }
 
 wxTextPos wxTextCtrl::GetLastPosition() const
 {
-    wxCHECK_MSG( m_text != NULL, 0, wxT("invalid text ctrl") );
+    //wxCHECK_MSG( m_text != NULL, 0, wxT("invalid text ctrl") );
 
     int pos = 0;
 
@@ -871,13 +871,13 @@ wxTextPos wxTextCtrl::GetLastPosition() const
 
 void wxTextCtrl::Remove( long from, long to )
 {
-    wxCHECK_RET( m_text != NULL, wxT("invalid text ctrl") );
+    //wxCHECK_RET( m_text != NULL, wxT("invalid text ctrl") );
     gtk_editable_delete_text( GTK_EDITABLE(m_text), (gint)from, (gint)to );
 }
 
 void wxTextCtrl::Replace( long from, long to, const wxString &value )
 {
-    wxCHECK_RET( m_text != NULL, wxT("invalid text ctrl") );
+    //wxCHECK_RET( m_text != NULL, wxT("invalid text ctrl") );
 
     Remove( from, to );
 
@@ -895,19 +895,19 @@ void wxTextCtrl::Replace( long from, long to, const wxString &value )
 
 void wxTextCtrl::Cut()
 {
-    wxCHECK_RET( m_text != NULL, wxT("invalid text ctrl") );
+    //wxCHECK_RET( m_text != NULL, wxT("invalid text ctrl") );
     gtk_editable_cut_clipboard(GTK_EDITABLE(m_text) DUMMY_CLIPBOARD_ARG);
 }
 
 void wxTextCtrl::Copy()
 {
-    wxCHECK_RET( m_text != NULL, wxT("invalid text ctrl") );
+    //wxCHECK_RET( m_text != NULL, wxT("invalid text ctrl") );
     gtk_editable_copy_clipboard(GTK_EDITABLE(m_text) DUMMY_CLIPBOARD_ARG);
 }
 
 void wxTextCtrl::Paste()
 {
-    wxCHECK_RET( m_text != NULL, wxT("invalid text ctrl") );
+    //wxCHECK_RET( m_text != NULL, wxT("invalid text ctrl") );
     gtk_editable_paste_clipboard(GTK_EDITABLE(m_text) DUMMY_CLIPBOARD_ARG);
 }
 
@@ -942,7 +942,7 @@ bool wxTextCtrl::CanRedo() const
 // selection.
 void wxTextCtrl::GetSelection(long* fromOut, long* toOut) const
 {
-    wxCHECK_RET( m_text != NULL, wxT("invalid text ctrl") );
+    //wxCHECK_RET( m_text != NULL, wxT("invalid text ctrl") );
 
     gint from = -1;
     gint to = -1;
@@ -975,7 +975,7 @@ void wxTextCtrl::GetSelection(long* fromOut, long* toOut) const
 
 bool wxTextCtrl::IsEditable() const
 {
-    wxCHECK_MSG( m_text != NULL, false, wxT("invalid text ctrl") );
+    //wxCHECK_MSG( m_text != NULL, false, wxT("invalid text ctrl") );
     return GTK_EDITABLE(m_text)->editable;
 }
 
@@ -991,7 +991,7 @@ void wxTextCtrl::Clear()
 
 void wxTextCtrl::OnChar( wxKeyEvent &key_event )
 {
-    wxCHECK_RET( m_text != NULL, wxT("invalid text ctrl") );
+    //wxCHECK_RET( m_text != NULL, wxT("invalid text ctrl") );
 
     if ((key_event.GetKeyCode() == WXK_RETURN) && (m_windowStyle & wxTE_PROCESS_ENTER))
     {
@@ -1045,7 +1045,7 @@ bool wxTextCtrl::IsOwnGtkWindow( GdkWindow *window )
 // the font will change for subsequent text insertiongs
 bool wxTextCtrl::SetFont( const wxFont &font )
 {
-    wxCHECK_MSG( m_text != NULL, false, wxT("invalid text ctrl") );
+    //wxCHECK_MSG( m_text != NULL, false, wxT("invalid text ctrl") );
 
     if ( !wxTextCtrlBase::SetFont(font) )
     {
@@ -1102,7 +1102,7 @@ bool wxTextCtrl::SetForegroundColour(const wxColour& colour)
 
 bool wxTextCtrl::SetBackgroundColour( const wxColour &colour )
 {
-    wxCHECK_MSG( m_text != NULL, false, wxT("invalid text ctrl") );
+    //wxCHECK_MSG( m_text != NULL, false, wxT("invalid text ctrl") );
 
     if ( !wxControl::SetBackgroundColour( colour ) )
         return false;
@@ -1144,7 +1144,7 @@ bool wxTextCtrl::SetStyle( long start, long end, const wxTextAttr& style )
 
         gint l = gtk_text_get_length( GTK_TEXT(m_text) );
 
-        wxCHECK_MSG( start >= 0 && end <= l, false,
+        //wxCHECK_MSG( start >= 0 && end <= l, false,
                      wxT("invalid range in wxTextCtrl::SetStyle") );
 
         gint old_pos = gtk_editable_get_position( GTK_EDITABLE(m_text) );

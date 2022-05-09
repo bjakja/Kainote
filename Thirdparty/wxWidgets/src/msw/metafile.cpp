@@ -252,7 +252,7 @@ void wxMetafileDCImpl::DoGetTextExtent(const wxString& string,
 
 void wxMetafileDCImpl::DoGetSize(int *width, int *height) const
 {
-    wxCHECK_RET( m_refData, wxT("invalid wxMetafileDC") );
+    //wxCHECK_RET( m_refData, wxT("invalid wxMetafileDC") );
 
     if ( width )
         *width = M_METAFILEDATA->m_width;
@@ -484,7 +484,7 @@ bool wxMetafileDataObject::GetDataHere(void *buf) const
     METAFILEPICT *mfpict = (METAFILEPICT *)buf;
     const wxMetafile& mf = GetMetafile();
 
-    wxCHECK_MSG( mf.GetHMETAFILE(), false, wxT("copying invalid metafile") );
+    //wxCHECK_MSG( mf.GetHMETAFILE(), false, wxT("copying invalid metafile") );
 
     // doesn't seem to work with any other mapping mode...
     mfpict->mm   = MM_ANISOTROPIC; //mf.GetWindowsMappingMode();
@@ -520,7 +520,7 @@ bool wxMetafileDataObject::SetData(size_t WXUNUSED(len), const void *buf)
     mf.SetHeight(h);
     mf.SetHMETAFILE((WXHANDLE)mfpict->hMF);
 
-    wxCHECK_MSG( mfpict->hMF, false, wxT("pasting invalid metafile") );
+    //wxCHECK_MSG( mfpict->hMF, false, wxT("pasting invalid metafile") );
 
     SetMetafile(mf);
 

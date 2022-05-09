@@ -871,7 +871,7 @@ static wxString wxCreateTempImpl(
         bool *deleteOnClose = NULL)
 {
 #if wxUSE_FILE && wxUSE_FFILE
-    wxASSERT(fileTemp == NULL || ffileTemp == NULL);
+    //wxASSERT(fileTemp == NULL || ffileTemp == NULL);
 #endif
     wxString path, dir, name;
     bool wantDeleteOnClose = false;

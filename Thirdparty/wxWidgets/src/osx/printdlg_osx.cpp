@@ -132,7 +132,7 @@ wxMacPageMarginsDialog::wxMacPageMarginsDialog(wxFrame *parent, wxPageSetupDialo
 
 bool wxMacPageMarginsDialog::TransferToWindow()
   {
-  wxASSERT(m_pageSetupDialogData);
+  //wxASSERT(m_pageSetupDialogData);
   wxPoint topLeft = m_pageSetupDialogData->GetMarginTopLeft();
   wxPoint bottomRight = m_pageSetupDialogData->GetMarginBottomRight();
   wxPoint minTopLeft = m_pageSetupDialogData->GetMinMarginTopLeft();

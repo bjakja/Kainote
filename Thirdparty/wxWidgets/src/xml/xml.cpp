@@ -155,7 +155,7 @@ bool wxXmlNode::HasAttribute(const wxString& attrName) const
 
 bool wxXmlNode::GetAttribute(const wxString& attrName, wxString *value) const
 {
-    wxCHECK_MSG( value, false, "value argument must not be NULL" );
+    //wxCHECK_MSG( value, false, "value argument must not be NULL" );
 
     wxXmlAttribute *attr = GetAttributes();
 
@@ -198,10 +198,10 @@ void wxXmlNode::AddChild(wxXmlNode *child)
 // inserts a new node in front of 'followingNode'
 bool wxXmlNode::InsertChild(wxXmlNode *child, wxXmlNode *followingNode)
 {
-    wxCHECK_MSG( child, false, "cannot insert a NULL node!" );
-    wxCHECK_MSG( child->m_parent == NULL, false, "node already has a parent" );
-    wxCHECK_MSG( child->m_next == NULL, false, "node already has m_next" );
-    wxCHECK_MSG( followingNode == NULL || followingNode->GetParent() == this,
+    //wxCHECK_MSG( child, false, "cannot insert a NULL node!" );
+    //wxCHECK_MSG( child->m_parent == NULL, false, "node already has a parent" );
+    //wxCHECK_MSG( child->m_next == NULL, false, "node already has m_next" );
+    //wxCHECK_MSG( followingNode == NULL || followingNode->GetParent() == this,
                  false,
                  "wxXmlNode::InsertChild - followingNode has incorrect parent" );
 
@@ -237,10 +237,10 @@ bool wxXmlNode::InsertChild(wxXmlNode *child, wxXmlNode *followingNode)
 // inserts a new node right after 'precedingNode'
 bool wxXmlNode::InsertChildAfter(wxXmlNode *child, wxXmlNode *precedingNode)
 {
-    wxCHECK_MSG( child, false, "cannot insert a NULL node!" );
-    wxCHECK_MSG( child->m_parent == NULL, false, "node already has a parent" );
-    wxCHECK_MSG( child->m_next == NULL, false, "node already has m_next" );
-    wxCHECK_MSG( precedingNode == NULL || precedingNode->m_parent == this, false,
+    //wxCHECK_MSG( child, false, "cannot insert a NULL node!" );
+    //wxCHECK_MSG( child->m_parent == NULL, false, "node already has a parent" );
+    //wxCHECK_MSG( child->m_next == NULL, false, "node already has m_next" );
+    //wxCHECK_MSG( precedingNode == NULL || precedingNode->m_parent == this, false,
                  "precedingNode has wrong parent" );
 
     if ( precedingNode )
@@ -250,7 +250,7 @@ bool wxXmlNode::InsertChildAfter(wxXmlNode *child, wxXmlNode *precedingNode)
     }
     else // precedingNode == NULL
     {
-        wxCHECK_MSG( m_children == NULL, false,
+        //wxCHECK_MSG( m_children == NULL, false,
                      "NULL precedingNode only makes sense when there are no children" );
 
         child->m_next = m_children;
@@ -615,9 +615,9 @@ struct wxXmlParsingContext
 
 // checks that ctx->lastChild is in consistent state
 #define ASSERT_LAST_CHILD_OK(ctx)                                   \
-    wxASSERT( ctx->lastChild == NULL ||                             \
+    //wxASSERT( ctx->lastChild == NULL ||                             \
               ctx->lastChild->GetNext() == NULL );                  \
-    wxASSERT( ctx->lastChild == NULL ||                             \
+    //wxASSERT( ctx->lastChild == NULL ||                             \
               ctx->lastChild->GetParent() == ctx->node )
 
 extern "C" {

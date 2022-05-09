@@ -305,7 +305,7 @@ void wxAssociateMenuWithMacMenu(WXHMENU inMenuRef, wxMenu *menu)
 {
     // adding NULL MenuRef is (first) surely a result of an error and
     // (secondly) breaks menu command processing
-    wxCHECK_RET( inMenuRef != (WXHMENU) NULL, wxT("attempt to add a NULL MenuRef to menu list") );
+    //wxCHECK_RET( inMenuRef != (WXHMENU) NULL, wxT("attempt to add a NULL MenuRef to menu list") );
 
     wxWinMacMenuList[inMenuRef] = menu;
 }

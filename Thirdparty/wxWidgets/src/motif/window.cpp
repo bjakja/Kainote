@@ -229,7 +229,7 @@ bool wxWindow::Create(wxWindow *parent, wxWindowID id,
     style &= ~wxBORDER_MASK;
     style |= border;
 
-    wxCHECK_MSG( parent, false, "can't create wxWindow without parent" );
+    //wxCHECK_MSG( parent, false, "can't create wxWindow without parent" );
 
     CreateBase(parent, id, pos, size, style, wxDefaultValidator, name);
 
@@ -464,7 +464,7 @@ WXWidget wxWindow::DoCreateScrollBar(WXWidget parent,
 // Helper function
 void wxWindow::CreateScrollbar(wxOrientation orientation)
 {
-    wxCHECK_RET( m_drawingArea, "this window can't have scrollbars" );
+    //wxCHECK_RET( m_drawingArea, "this window can't have scrollbars" );
 
     XtVaSetValues( (Widget) m_scrolledWindow,
                    XmNresizePolicy, XmRESIZE_NONE,
@@ -510,7 +510,7 @@ void wxWindow::CreateScrollbar(wxOrientation orientation)
 
 void wxWindow::DestroyScrollbar(wxOrientation orientation)
 {
-    wxCHECK_RET( m_drawingArea, "this window can't have scrollbars" );
+    //wxCHECK_RET( m_drawingArea, "this window can't have scrollbars" );
 
     XtVaSetValues((Widget) m_scrolledWindow,
                   XmNresizePolicy, XmRESIZE_NONE,
@@ -744,7 +744,7 @@ int wxWindow::GetScrollRange(int orient) const
     Widget scrollBar = (Widget)GetScrollbar((wxOrientation)orient);
     // CE scintilla windows don't always have these scrollbars
     // and it tends to pile up a whole bunch of asserts
-    //wxCHECK_MSG( scrollBar, 0, "no such scrollbar" );
+    ////wxCHECK_MSG( scrollBar, 0, "no such scrollbar" );
 
     int range = 0;
     if (scrollBar)
@@ -755,7 +755,7 @@ int wxWindow::GetScrollRange(int orient) const
 int wxWindow::GetScrollThumb(int orient) const
 {
     Widget scrollBar = (Widget)GetScrollbar((wxOrientation)orient);
-    //wxCHECK_MSG( scrollBar, 0, "no such scrollbar" );
+    ////wxCHECK_MSG( scrollBar, 0, "no such scrollbar" );
 
     int thumb = 0;
     if (scrollBar)
@@ -2088,7 +2088,7 @@ static void wxScrollBarCallback(Widget scrollbar,
                                 XmScrollBarCallbackStruct *cbs)
 {
     wxWindow *win = wxGetWindowFromTable(scrollbar);
-    wxCHECK_RET( win, wxT("invalid widget in scrollbar callback") );
+    //wxCHECK_RET( win, wxT("invalid widget in scrollbar callback") );
 
     wxOrientation orientation = (wxOrientation)wxPtrToUInt(clientData);
 

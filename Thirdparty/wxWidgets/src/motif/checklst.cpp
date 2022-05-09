@@ -47,7 +47,7 @@ static const char checkChar = 'x', uncheckChar = ' ';
 static inline const wxString& Prefix(bool checked)
     { return checked ? prefixChecked : prefixUnchecked; }
 static inline bool IsChecked(const wxString& s)
-    { wxASSERT(s.length() >=4); return s[1] == checkChar; }
+    { //wxASSERT(s.length() >=4); return s[1] == checkChar; }
 
 // def ctor: use Create() to really create the control
 wxCheckListBox::wxCheckListBox() : wxCheckListBoxBase()

@@ -133,7 +133,7 @@ int wxChoice::DoInsertItems(const wxArrayStringsAdapter & items,
                             unsigned int pos,
                             void **clientData, wxClientDataType type)
 {
-    wxCHECK_MSG( m_widget != NULL, -1, wxT("invalid control") );
+    //wxCHECK_MSG( m_widget != NULL, -1, wxT("invalid control") );
 
     wxASSERT_MSG( !IsSorted() || (pos == GetCount()),
                  wxT("In a sorted choice data could only be appended"));
@@ -173,7 +173,7 @@ void* wxChoice::DoGetItemClientData(unsigned int n) const
 
 void wxChoice::DoClear()
 {
-    wxCHECK_RET( m_widget != NULL, wxT("invalid control") );
+    //wxCHECK_RET( m_widget != NULL, wxT("invalid control") );
 
     GTKDisableEvents();
 
@@ -193,8 +193,8 @@ void wxChoice::DoClear()
 
 void wxChoice::DoDeleteOneItem(unsigned int n)
 {
-    wxCHECK_RET( m_widget != NULL, wxT("invalid control") );
-    wxCHECK_RET( IsValid(n), wxT("invalid index in wxChoice::Delete") );
+    //wxCHECK_RET( m_widget != NULL, wxT("invalid control") );
+    //wxCHECK_RET( IsValid(n), wxT("invalid index in wxChoice::Delete") );
 
     GtkComboBox* combobox = GTK_COMBO_BOX( m_widget );
     GtkTreeModel* model = gtk_combo_box_get_model( combobox );
@@ -213,7 +213,7 @@ void wxChoice::DoDeleteOneItem(unsigned int n)
 
 int wxChoice::FindString( const wxString &item, bool bCase ) const
 {
-    wxCHECK_MSG( m_widget != NULL, wxNOT_FOUND, wxT("invalid control") );
+    //wxCHECK_MSG( m_widget != NULL, wxNOT_FOUND, wxT("invalid control") );
 
     GtkComboBox* combobox = GTK_COMBO_BOX( m_widget );
     GtkTreeModel* model = gtk_combo_box_get_model( combobox );
@@ -246,10 +246,10 @@ int wxChoice::GetSelection() const
 
 void wxChoice::SetString(unsigned int n, const wxString &text)
 {
-    wxCHECK_RET( m_widget != NULL, wxT("invalid control") );
+    //wxCHECK_RET( m_widget != NULL, wxT("invalid control") );
 
     GtkComboBox* combobox = GTK_COMBO_BOX( m_widget );
-    wxCHECK_RET( IsValid(n), wxT("invalid index") );
+    //wxCHECK_RET( IsValid(n), wxT("invalid index") );
 
     GtkTreeModel *model = gtk_combo_box_get_model( combobox );
     GtkTreeIter iter;
@@ -267,7 +267,7 @@ void wxChoice::SetString(unsigned int n, const wxString &text)
 
 wxString wxChoice::GetString(unsigned int n) const
 {
-    wxCHECK_MSG( m_widget != NULL, wxEmptyString, wxT("invalid control") );
+    //wxCHECK_MSG( m_widget != NULL, wxEmptyString, wxT("invalid control") );
 
     wxString str;
 
@@ -288,7 +288,7 @@ wxString wxChoice::GetString(unsigned int n) const
 
 unsigned int wxChoice::GetCount() const
 {
-    wxCHECK_MSG( m_widget != NULL, 0, wxT("invalid control") );
+    //wxCHECK_MSG( m_widget != NULL, 0, wxT("invalid control") );
 
     GtkComboBox* combobox = GTK_COMBO_BOX( m_widget );
     GtkTreeModel* model = gtk_combo_box_get_model( combobox );
@@ -304,7 +304,7 @@ unsigned int wxChoice::GetCount() const
 
 void wxChoice::SetSelection( int n )
 {
-    wxCHECK_RET( m_widget != NULL, wxT("invalid control") );
+    //wxCHECK_RET( m_widget != NULL, wxT("invalid control") );
 
     GTKDisableEvents();
 

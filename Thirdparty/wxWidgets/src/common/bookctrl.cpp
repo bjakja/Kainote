@@ -378,9 +378,9 @@ wxBookCtrlBase::InsertPage(size_t nPage,
                            bool WXUNUSED(bSelect),
                            int WXUNUSED(imageId))
 {
-    wxCHECK_MSG( page || AllowNullPage(), false,
+    //wxCHECK_MSG( page || AllowNullPage(), false,
                  wxT("NULL page in wxBookCtrlBase::InsertPage()") );
-    wxCHECK_MSG( nPage <= m_pages.size(), false,
+    //wxCHECK_MSG( nPage <= m_pages.size(), false,
                  wxT("invalid page index in wxBookCtrlBase::InsertPage()") );
 
     m_pages.Insert(page, nPage);
@@ -406,7 +406,7 @@ bool wxBookCtrlBase::DeletePage(size_t nPage)
 
 wxWindow *wxBookCtrlBase::DoRemovePage(size_t nPage)
 {
-    wxCHECK_MSG( nPage < m_pages.size(), NULL,
+    //wxCHECK_MSG( nPage < m_pages.size(), NULL,
                  wxT("invalid page index in wxBookCtrlBase::DoRemovePage()") );
 
     wxWindow *pageRemoved = m_pages[nPage];
@@ -454,7 +454,7 @@ bool wxBookCtrlBase::DoSetSelectionAfterInsertion(size_t n, bool bSelect)
 
 int wxBookCtrlBase::DoSetSelection(size_t n, int flags)
 {
-    wxCHECK_MSG( n < GetPageCount(), wxNOT_FOUND,
+    //wxCHECK_MSG( n < GetPageCount(), wxNOT_FOUND,
                  wxT("invalid page index in wxBookCtrlBase::DoSetSelection()") );
 
     const int oldSel = GetSelection();

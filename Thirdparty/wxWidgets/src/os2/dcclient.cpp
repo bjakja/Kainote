@@ -182,7 +182,7 @@ void wxWindowDCImpl::DoGetSize(
 , int*                              pnHeight
 ) const
 {
-    wxCHECK_RET( m_pCanvas, wxT("wxWindowDC without a window?") );
+    //wxCHECK_RET( m_pCanvas, wxT("wxWindowDC without a window?") );
     m_pCanvas->GetSize( pnWidth
                        ,pnHeight
                       );
@@ -282,7 +282,7 @@ void wxClientDCImpl::DoGetSize(
 , int*                              pnHeight
 ) const
 {
-    wxCHECK_RET( m_pCanvas, wxT("wxWindowDC without a window?") );
+    //wxCHECK_RET( m_pCanvas, wxT("wxWindowDC without a window?") );
     m_pCanvas->GetClientSize( pnWidth
                              ,pnHeight
                             );
@@ -306,7 +306,7 @@ wxPaintDCImpl::wxPaintDCImpl( wxDC *owner ) :
 wxPaintDCImpl::wxPaintDCImpl( wxDC *owner, wxWindow *pCanvas) :
    wxClientDCImpl( owner )
 {
-    wxCHECK_RET(pCanvas, wxT("NULL canvas in wxPaintDC ctor"));
+    //wxCHECK_RET(pCanvas, wxT("NULL canvas in wxPaintDC ctor"));
 
 #ifdef wxHAS_PAINT_DEBUG
     if (g_isPainting <= 0)
@@ -378,7 +378,7 @@ wxPaintDCImpl::~wxPaintDCImpl()
         size_t                      nIndex;
         wxPaintDCInfo*              pInfo = FindInCache(&nIndex);
 
-        wxCHECK_RET( pInfo, wxT("existing DC should have a cache entry") );
+        //wxCHECK_RET( pInfo, wxT("existing DC should have a cache entry") );
 
         if ( !--pInfo->m_nCount )
         {

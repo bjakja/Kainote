@@ -355,7 +355,7 @@ int wxChoice::DoInsertItems(const wxArrayStringsAdapter& items,
 
 void wxChoice::DoDeleteOneItem(unsigned int n)
 {
-    wxCHECK_RET( IsValid(n), wxT("invalid item index in wxChoice::Delete") );
+    //wxCHECK_RET( IsValid(n), wxT("invalid item index in wxChoice::Delete") );
 
     ::SendMessage(GetBuddyHwnd(), LB_DELETESTRING, n, 0);
 }
@@ -402,7 +402,7 @@ int wxChoice::FindString(const wxString& s, bool bCase) const
 
 void wxChoice::SetString(unsigned int n, const wxString& s)
 {
-    wxCHECK_RET( IsValid(n),
+    //wxCHECK_RET( IsValid(n),
                  wxT("invalid item index in wxChoice::SetString") );
 
     // we have to delete and add back the string as there is no way to change a

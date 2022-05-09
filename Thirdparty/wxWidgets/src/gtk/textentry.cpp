@@ -59,7 +59,7 @@ wx_gtk_insert_text_callback(GtkEditable *editable,
 #else
     const int text_max_length = entry->text_max_length;
 #endif
-    wxCHECK_RET(text_max_length, "shouldn't be called");
+    //wxCHECK_RET(text_max_length, "shouldn't be called");
 
     // check that we don't overflow the max length limit
     //
@@ -273,7 +273,7 @@ void wxTextEntry::GetSelection(long *from, long *to) const
 bool wxTextEntry::DoAutoCompleteStrings(const wxArrayString& choices)
 {
     GtkEntry * const entry = GTK_ENTRY(GetEditable());
-    wxCHECK_MSG(entry, false, "auto completion doesn't work with this control");
+    //wxCHECK_MSG(entry, false, "auto completion doesn't work with this control");
 
     GtkListStore * const store = gtk_list_store_new(1, G_TYPE_STRING);
     GtkTreeIter iter;

@@ -427,7 +427,7 @@ bool wxDebugReportDialog::TransferDataFromWindow()
 void wxDebugReportDialog::OnView(wxCommandEvent& )
 {
     const int sel = m_checklst->GetSelection();
-    wxCHECK_RET( sel != wxNOT_FOUND, wxT("invalid selection in OnView()") );
+    //wxCHECK_RET( sel != wxNOT_FOUND, wxT("invalid selection in OnView()") );
 
     wxFileName fn(m_dbgrpt.GetDirectory(), m_files[sel]);
     wxString str;
@@ -443,7 +443,7 @@ void wxDebugReportDialog::OnView(wxCommandEvent& )
 void wxDebugReportDialog::OnOpen(wxCommandEvent& )
 {
     const int sel = m_checklst->GetSelection();
-    wxCHECK_RET( sel != wxNOT_FOUND, wxT("invalid selection in OnOpen()") );
+    //wxCHECK_RET( sel != wxNOT_FOUND, wxT("invalid selection in OnOpen()") );
 
     wxFileName fn(m_dbgrpt.GetDirectory(), m_files[sel]);
 

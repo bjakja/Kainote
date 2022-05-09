@@ -58,14 +58,14 @@ user-friendly way.
 
 @section overview_debugging_dbgmacros Assertion macros
 
-wxASSERT(), wxFAIL(), wxCHECK() as well as their other variants (see @ref
+//wxASSERT(), wxFAIL(), wxCHECK() as well as their other variants (see @ref
 group_funcmacro_debug) are similar to the standard assert() macro but are more
 flexible and powerful. The first of them is equivalent to assert() itself, i.e.
 it simply checks a condition and does nothing if it is true. The second one is
 equivalent to checking an always false condition and is supposed to be used for
 code paths which are supposed to be inaccessible (e.g. @c default branch of a
 @c switch statement which should never be executed). Finally, the wxCHECK()
-family of macros verifies the condition just as wxASSERT() does and performs
+family of macros verifies the condition just as //wxASSERT() does and performs
 some action such returning from the function if it fails -- thus, it is useful
 for checking the functions preconditions.
 
@@ -78,7 +78,7 @@ Example of using an assertion macro:
 @code
 void GetTheAnswer(int *p)
 {
-    wxCHECK_RET( p, "pointer can't be NULL in GetTheAnswer()" );
+    //wxCHECK_RET( p, "pointer can't be NULL in GetTheAnswer()" );
 
     *p = 42;
 };

@@ -321,7 +321,7 @@ wxButton::SetDefaultStyle(wxButton *btn, bool on)
             return;
 
         wxWindow * const tlw = wxGetTopLevelParent(btn);
-        wxCHECK_RET( tlw, wxT("button without top level window?") );
+        //wxCHECK_RET( tlw, wxT("button without top level window?") );
 
         ::SendMessage(GetHwndOf(tlw), DM_SETDEFID, btn->GetId(), 0L);
 

@@ -1294,7 +1294,7 @@ void wxTextCtrl::AppendText(const wxString& text)
 
 void wxTextCtrl::SetInsertionPoint(wxTextPos pos)
 {
-    wxCHECK_RET( pos >= 0 && pos <= GetLastPosition(),
+    //wxCHECK_RET( pos >= 0 && pos <= GetLastPosition(),
                  wxT("insertion point position out of range") );
 
     // don't do anything if it didn't change
@@ -1464,7 +1464,7 @@ void wxTextCtrl::SetSelection(wxTextPos from, wxTextPos to)
 
         OrderPositions(from, to);
 
-        wxCHECK_RET( to <= GetLastPosition(),
+        //wxCHECK_RET( to <= GetLastPosition(),
                      wxT("invalid range in wxTextCtrl::SetSelection") );
 
         if ( from != m_selStart || to != m_selEnd )
@@ -1657,7 +1657,7 @@ int wxTextCtrl::GetLineLength(wxTextCoord line) const
     }
     else // multiline
     {
-        wxCHECK_MSG( (size_t)line < GetLineCount(), -1,
+        //wxCHECK_MSG( (size_t)line < GetLineCount(), -1,
                      wxT("line index out of range") );
 
         return GetLines()[line].length();
@@ -1677,7 +1677,7 @@ wxString wxTextCtrl::GetLineText(wxTextCoord line) const
         //this is called during DoGetBestSize
         if (line == 0 && GetLineCount() == 0) return wxEmptyString ;
 
-        wxCHECK_MSG( (size_t)line < GetLineCount(), wxEmptyString,
+        //wxCHECK_MSG( (size_t)line < GetLineCount(), wxEmptyString,
                      wxT("line index out of range") );
 
         return GetLines()[line];
@@ -2279,7 +2279,7 @@ bool wxTextCtrlInsertCommand::Do(wxTextCtrl *text)
 
 bool wxTextCtrlInsertCommand::Undo(wxTextCtrl *text)
 {
-    wxCHECK_MSG( CanUndo(), false, wxT("impossible to undo insert cmd") );
+    //wxCHECK_MSG( CanUndo(), false, wxT("impossible to undo insert cmd") );
 
     // remove the text from where we inserted it
     text->Remove(m_from, m_from + m_text.length());
@@ -2810,11 +2810,11 @@ size_t wxTextCtrl::GetPartOfWrappedLine(const wxChar* text,
         wOld = w;
     }
 
-    wxASSERT( col == str.length() );
+    //wxASSERT( col == str.length() );
 
     if ( widthReal )
     {
-        wxASSERT( *widthReal == wOld );
+        //wxASSERT( *widthReal == wOld );
 
         *widthReal = wOld;
     }
@@ -3715,7 +3715,7 @@ void wxTextCtrl::RefreshLineRange(wxTextCoord lineFirst, wxTextCoord lineLast)
 
 void wxTextCtrl::RefreshTextRange(wxTextPos start, wxTextPos end)
 {
-    wxCHECK_RET( start != -1 && end != -1,
+    //wxCHECK_RET( start != -1 && end != -1,
                  wxT("invalid RefreshTextRange() arguments") );
 
     // accept arguments in any order as it is more conenient for the caller
@@ -4344,7 +4344,7 @@ size_t wxTextCtrl::GetLinesPerPage() const
 
 wxTextPos wxTextCtrl::GetPositionAbove()
 {
-    wxCHECK_MSG( !IsSingleLine(), INVALID_POS_VALUE,
+    //wxCHECK_MSG( !IsSingleLine(), INVALID_POS_VALUE,
                  wxT("can't move cursor vertically in a single line control") );
 
     // move the cursor up by one ROW not by one LINE: this means that
@@ -4377,7 +4377,7 @@ wxTextPos wxTextCtrl::GetPositionAbove()
 
 wxTextPos wxTextCtrl::GetPositionBelow()
 {
-    wxCHECK_MSG( !IsSingleLine(), INVALID_POS_VALUE,
+    //wxCHECK_MSG( !IsSingleLine(), INVALID_POS_VALUE,
                  wxT("can't move cursor vertically in a single line control") );
 
     // see comments for wxACTION_TEXT_UP

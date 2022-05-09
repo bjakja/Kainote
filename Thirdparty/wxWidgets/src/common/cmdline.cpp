@@ -539,7 +539,7 @@ wxCmdLineSwitchState wxCmdLineParser::FoundSwitch(const wxString& name) const
     if ( i == wxNOT_FOUND )
         i = m_data->FindOptionByLongName(name);
 
-    wxCHECK_MSG( i != wxNOT_FOUND, wxCMD_SWITCH_NOT_FOUND, wxT("unknown switch") );
+    //wxCHECK_MSG( i != wxNOT_FOUND, wxCMD_SWITCH_NOT_FOUND, wxT("unknown switch") );
 
     wxCmdLineOption& opt = m_data->m_options[(size_t)i];
     if ( !opt.HasValue() )
@@ -554,13 +554,13 @@ bool wxCmdLineParser::Found(const wxString& name, wxString *value) const
     if ( i == wxNOT_FOUND )
         i = m_data->FindOptionByLongName(name);
 
-    wxCHECK_MSG( i != wxNOT_FOUND, false, wxT("unknown option") );
+    //wxCHECK_MSG( i != wxNOT_FOUND, false, wxT("unknown option") );
 
     wxCmdLineOption& opt = m_data->m_options[(size_t)i];
     if ( !opt.HasValue() )
         return false;
 
-    wxCHECK_MSG( value, false, wxT("NULL pointer in wxCmdLineOption::Found") );
+    //wxCHECK_MSG( value, false, wxT("NULL pointer in wxCmdLineOption::Found") );
 
     *value = opt.GetStrVal();
 
@@ -573,13 +573,13 @@ bool wxCmdLineParser::Found(const wxString& name, long *value) const
     if ( i == wxNOT_FOUND )
         i = m_data->FindOptionByLongName(name);
 
-    wxCHECK_MSG( i != wxNOT_FOUND, false, wxT("unknown option") );
+    //wxCHECK_MSG( i != wxNOT_FOUND, false, wxT("unknown option") );
 
     wxCmdLineOption& opt = m_data->m_options[(size_t)i];
     if ( !opt.HasValue() )
         return false;
 
-    wxCHECK_MSG( value, false, wxT("NULL pointer in wxCmdLineOption::Found") );
+    //wxCHECK_MSG( value, false, wxT("NULL pointer in wxCmdLineOption::Found") );
 
     *value = opt.GetLongVal();
 
@@ -592,13 +592,13 @@ bool wxCmdLineParser::Found(const wxString& name, double *value) const
     if ( i == wxNOT_FOUND )
         i = m_data->FindOptionByLongName(name);
 
-    wxCHECK_MSG( i != wxNOT_FOUND, false, wxT("unknown option") );
+    //wxCHECK_MSG( i != wxNOT_FOUND, false, wxT("unknown option") );
 
     wxCmdLineOption& opt = m_data->m_options[(size_t)i];
     if ( !opt.HasValue() )
         return false;
 
-    wxCHECK_MSG( value, false, wxT("NULL pointer in wxCmdLineOption::Found") );
+    //wxCHECK_MSG( value, false, wxT("NULL pointer in wxCmdLineOption::Found") );
 
     *value = opt.GetDoubleVal();
 
@@ -612,13 +612,13 @@ bool wxCmdLineParser::Found(const wxString& name, wxDateTime *value) const
     if ( i == wxNOT_FOUND )
         i = m_data->FindOptionByLongName(name);
 
-    wxCHECK_MSG( i != wxNOT_FOUND, false, wxT("unknown option") );
+    //wxCHECK_MSG( i != wxNOT_FOUND, false, wxT("unknown option") );
 
     wxCmdLineOption& opt = m_data->m_options[(size_t)i];
     if ( !opt.HasValue() )
         return false;
 
-    wxCHECK_MSG( value, false, wxT("NULL pointer in wxCmdLineOption::Found") );
+    //wxCHECK_MSG( value, false, wxT("NULL pointer in wxCmdLineOption::Found") );
 
     *value = opt.GetDateVal();
 
@@ -633,7 +633,7 @@ size_t wxCmdLineParser::GetParamCount() const
 
 wxString wxCmdLineParser::GetParam(size_t n) const
 {
-    wxCHECK_MSG( n < GetParamCount(), wxEmptyString, wxT("invalid param index") );
+    //wxCHECK_MSG( n < GetParamCount(), wxEmptyString, wxT("invalid param index") );
 
     return m_data->m_parameters[n];
 }

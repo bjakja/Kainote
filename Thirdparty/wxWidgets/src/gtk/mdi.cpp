@@ -337,7 +337,7 @@ GtkNotebook *wxMDIChildFrame::GTKGetNotebook() const
 void wxMDIChildFrame::Activate()
 {
     GtkNotebook * const notebook = GTKGetNotebook();
-    wxCHECK_RET( notebook, "no parent notebook?" );
+    //wxCHECK_RET( notebook, "no parent notebook?" );
 
     gint pageno = gtk_notebook_page_num( notebook, m_widget );
     gtk_notebook_set_current_page( notebook, pageno );
@@ -368,7 +368,7 @@ void wxMDIChildFrame::SetTitle( const wxString &title )
     m_title = title;
 
     GtkNotebook * const notebook = GTKGetNotebook();
-    wxCHECK_RET( notebook, "no parent notebook?" );
+    //wxCHECK_RET( notebook, "no parent notebook?" );
     gtk_notebook_set_tab_label_text(notebook, m_widget, wxGTK_CONV( title ) );
 }
 

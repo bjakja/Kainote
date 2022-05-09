@@ -110,7 +110,7 @@ static bool CanonicalizeParams(wxString& command)
 void wxFileTypeImpl::Init(const wxString& strFileType, const wxString& ext)
 {
     // VZ: does it? (FIXME)
-    wxCHECK_RET( !ext.empty(), wxT("needs an extension") );
+    //wxCHECK_RET( !ext.empty(), wxT("needs an extension") );
 
     if ( ext[0u] != wxT('.') ) {
         m_ext = wxT('.');
@@ -134,7 +134,7 @@ size_t wxFileTypeImpl::GetAllCommands(wxArrayString *verbs,
                                       wxArrayString *commands,
                                       const wxFileType::MessageParameters& params) const
 {
-    wxCHECK_MSG( !m_ext.empty(), 0, wxT("GetAllCommands() needs an extension") );
+    //wxCHECK_MSG( !m_ext.empty(), 0, wxT("GetAllCommands() needs an extension") );
 
     if ( m_strFileType.empty() )
     {
@@ -546,7 +546,7 @@ size_t wxMimeTypesManagerImpl::EnumAllFileTypes(wxArrayString& mimetypes)
 
 wxFileType *wxMimeTypesManagerImpl::Associate(const wxFileTypeInfo& ftInfo)
 {
-    wxCHECK_MSG( !ftInfo.GetExtensions().empty(), NULL,
+    //wxCHECK_MSG( !ftInfo.GetExtensions().empty(), NULL,
                  wxT("Associate() needs extension") );
 
     bool ok;
@@ -556,7 +556,7 @@ wxFileType *wxMimeTypesManagerImpl::Associate(const wxFileTypeInfo& ftInfo)
 
     wxString ext = ftInfo.GetExtensions()[iExtCount];
 
-    wxCHECK_MSG( !ext.empty(), NULL,
+    //wxCHECK_MSG( !ext.empty(), NULL,
                  wxT("Associate() needs non empty extension") );
 
     if ( ext[0u] != wxT('.') )
@@ -689,7 +689,7 @@ bool wxFileTypeImpl::SetCommand(const wxString& cmd,
                                 const wxString& verb,
                                 bool WXUNUSED(overwriteprompt))
 {
-    wxCHECK_MSG( !m_ext.empty() && !verb.empty(), false,
+    //wxCHECK_MSG( !m_ext.empty() && !verb.empty(), false,
                  wxT("SetCommand() needs an extension and a verb") );
 
     if ( !EnsureExtKeyExists() )
@@ -731,7 +731,7 @@ bool wxFileTypeImpl::SetCommand(const wxString& cmd,
 /* // no longer used
 bool wxFileTypeImpl::SetMimeType(const wxString& mimeTypeOrig)
 {
-    wxCHECK_MSG( !m_ext.empty(), false, wxT("SetMimeType() needs extension") );
+    //wxCHECK_MSG( !m_ext.empty(), false, wxT("SetMimeType() needs extension") );
 
     if ( !EnsureExtKeyExists() )
         return false;
@@ -757,10 +757,10 @@ bool wxFileTypeImpl::SetMimeType(const wxString& mimeTypeOrig)
 
 bool wxFileTypeImpl::SetDefaultIcon(const wxString& cmd, int index)
 {
-    wxCHECK_MSG( !m_ext.empty(), false, wxT("SetDefaultIcon() needs extension") );
-    wxCHECK_MSG( !m_strFileType.empty(), false, wxT("File key not found") );
+    //wxCHECK_MSG( !m_ext.empty(), false, wxT("SetDefaultIcon() needs extension") );
+    //wxCHECK_MSG( !m_strFileType.empty(), false, wxT("File key not found") );
 //    the next line fails on a SMBshare, I think because it is case mangled
-//    wxCHECK_MSG( !wxFileExists(cmd), false, wxT("Icon file not found.") );
+//    //wxCHECK_MSG( !wxFileExists(cmd), false, wxT("Icon file not found.") );
 
     if ( !EnsureExtKeyExists() )
         return false;
@@ -774,8 +774,8 @@ bool wxFileTypeImpl::SetDefaultIcon(const wxString& cmd, int index)
 
 bool wxFileTypeImpl::SetDescription (const wxString& desc)
 {
-    wxCHECK_MSG( !m_strFileType.empty(), false, wxT("File key not found") );
-    wxCHECK_MSG( !desc.empty(), false, wxT("No file description supplied") );
+    //wxCHECK_MSG( !m_strFileType.empty(), false, wxT("File key not found") );
+    //wxCHECK_MSG( !desc.empty(), false, wxT("No file description supplied") );
 
     if ( !EnsureExtKeyExists() )
         return false;
@@ -822,7 +822,7 @@ bool wxFileTypeImpl::RemoveOpenCommand()
 
 bool wxFileTypeImpl::RemoveCommand(const wxString& verb)
 {
-    wxCHECK_MSG( !m_ext.empty() && !verb.empty(), false,
+    //wxCHECK_MSG( !m_ext.empty() && !verb.empty(), false,
                  wxT("RemoveCommand() needs an extension and a verb") );
 
     wxRegKey rkey(wxRegKey::HKCR, GetVerbPath(verb));
@@ -833,7 +833,7 @@ bool wxFileTypeImpl::RemoveCommand(const wxString& verb)
 
 bool wxFileTypeImpl::RemoveMimeType()
 {
-    wxCHECK_MSG( !m_ext.empty(), false, wxT("RemoveMimeType() needs extension") );
+    //wxCHECK_MSG( !m_ext.empty(), false, wxT("RemoveMimeType() needs extension") );
 
     wxRegKey rkey(wxRegKey::HKCR, m_ext);
     return !rkey.Exists() || rkey.DeleteSelf();
@@ -841,7 +841,7 @@ bool wxFileTypeImpl::RemoveMimeType()
 
 bool wxFileTypeImpl::RemoveDefaultIcon()
 {
-    wxCHECK_MSG( !m_ext.empty(), false,
+    //wxCHECK_MSG( !m_ext.empty(), false,
                  wxT("RemoveDefaultIcon() needs extension") );
 
     wxRegKey rkey (wxRegKey::HKCR, m_strFileType  + wxT("\\DefaultIcon"));
@@ -850,7 +850,7 @@ bool wxFileTypeImpl::RemoveDefaultIcon()
 
 bool wxFileTypeImpl::RemoveDescription()
 {
-    wxCHECK_MSG( !m_ext.empty(), false,
+    //wxCHECK_MSG( !m_ext.empty(), false,
                  wxT("RemoveDescription() needs extension") );
 
     wxRegKey rkey (wxRegKey::HKCR, m_strFileType );

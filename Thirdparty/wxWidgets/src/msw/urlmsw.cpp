@@ -193,7 +193,7 @@ wxWinINetInputStream::wxWinINetInputStream(HINTERNET hFile)
 
 void wxWinINetInputStream::Attach(HINTERNET newHFile)
 {
-    wxCHECK_RET(m_hFile==NULL,
+    //wxCHECK_RET(m_hFile==NULL,
         wxT("cannot attach new stream when stream already exists"));
     m_hFile=newHFile;
     SetError(m_hFile!=NULL ? wxSTREAM_NO_ERROR : wxSTREAM_READ_ERROR);

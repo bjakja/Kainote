@@ -80,7 +80,7 @@ bool wxControlBase::CreateControl(wxWindowBase *parent,
     // even if it's possible to create controls without parents in some port,
     // it should surely be discouraged because it doesn't work at all under
     // Windows
-    wxCHECK_MSG( parent, false, wxT("all controls must have parents") );
+    //wxCHECK_MSG( parent, false, wxT("all controls must have parents") );
 
     if ( !CreateBase(parent, id, pos, size, style, validator, name) )
         return false;
@@ -280,7 +280,7 @@ struct EllipsizeCalculator
           m_replacementWidthPx(replacementWidthPx)
     {
         m_isOk = dc.GetPartialTextExtents(s, m_charOffsetsPx);
-        wxASSERT( m_charOffsetsPx.GetCount() == s.length() );
+        //wxASSERT( m_charOffsetsPx.GetCount() == s.length() );
     }
 
     bool IsOk() const { return m_isOk; }
@@ -316,8 +316,8 @@ struct EllipsizeCalculator
     {
         if ( m_outputNeedsUpdate )
         {
-            wxASSERT(m_initialCharToRemove <= m_str.length() - 1);  // see valid range for initialCharToRemove above
-            wxASSERT(m_nCharsToRemove >= 1 && m_nCharsToRemove <= m_str.length() - m_initialCharToRemove);  // see valid range for nCharsToRemove above
+            //wxASSERT(m_initialCharToRemove <= m_str.length() - 1);  // see valid range for initialCharToRemove above
+            //wxASSERT(m_nCharsToRemove >= 1 && m_nCharsToRemove <= m_str.length() - m_initialCharToRemove);  // see valid range for nCharsToRemove above
 
             // erase m_nCharsToRemove characters after m_initialCharToRemove (included);
             // e.g. if we have the string "foobar" (len = 6)

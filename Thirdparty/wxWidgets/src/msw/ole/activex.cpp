@@ -508,7 +508,7 @@ public:
             return E_INVALIDARG;
         HRESULT hr = QueryInterface(
             IID_IOleContainer, (void**)(ppContainer));
-        wxASSERT(SUCCEEDED(hr));
+        //wxASSERT(SUCCEEDED(hr));
         return hr;
     }
     HRESULT STDMETHODCALLTYPE ShowObject()
@@ -738,7 +738,7 @@ public:
         if (wFlags & (DISPATCH_PROPERTYGET | DISPATCH_PROPERTYPUT | DISPATCH_PROPERTYPUTREF))
             return E_NOTIMPL;
 
-        wxASSERT(m_activeX);
+        //wxASSERT(m_activeX);
 
         // ActiveX Event
 
@@ -807,7 +807,7 @@ size_t wxActiveXEvent::ParamCount() const
 
 wxVariant &wxActiveXEvent::operator [](size_t idx)
 {
-    wxASSERT(idx < ParamCount());
+    //wxASSERT(idx < ParamCount());
     wxActiveXEventNativeMSW *native=GetNativeParameters();
     // 'native' will always be != if the event has been created
     // for an actual active X event.
@@ -939,7 +939,7 @@ void wxActiveXContainer::CreateActiveX(REFIID iid, IUnknown* pUnk)
     CHECK_HR(hret);
     // adviseSink
     wxAutoIAdviseSink adviseSink(IID_IAdviseSink, (IDispatch *) m_frameSite);
-    wxASSERT(adviseSink.IsOk());
+    //wxASSERT(adviseSink.IsOk());
 
     // Get Dispatch interface
     hret = m_Dispatch.QueryInterface(IID_IDispatch, m_ActiveX);
@@ -951,13 +951,13 @@ void wxActiveXContainer::CreateActiveX(REFIID iid, IUnknown* pUnk)
 
     // get type info via class info
     wxAutoIProvideClassInfo classInfo(IID_IProvideClassInfo, m_ActiveX);
-    wxASSERT(classInfo.IsOk());
+    //wxASSERT(classInfo.IsOk());
 
     // type info
     wxAutoITypeInfo typeInfo;
     hret = classInfo->GetClassInfo(typeInfo.GetRef());
     CHECK_HR(hret);
-    wxASSERT(typeInfo.IsOk());
+    //wxASSERT(typeInfo.IsOk());
 
     // TYPEATTR
     TYPEATTR *ta = NULL;
@@ -965,7 +965,7 @@ void wxActiveXContainer::CreateActiveX(REFIID iid, IUnknown* pUnk)
     CHECK_HR(hret);
 
     // this should be a TKIND_COCLASS
-    wxASSERT(ta->typekind == TKIND_COCLASS);
+    //wxASSERT(ta->typekind == TKIND_COCLASS);
 
     // iterate contained interfaces
     for (int i = 0; i < ta->cImplTypes; i++)
@@ -1021,7 +1021,7 @@ void wxActiveXContainer::CreateActiveX(REFIID iid, IUnknown* pUnk)
                 DWORD                    adviseCookie = 0;
 
                 wxAutoIConnectionPointContainer cpContainer(IID_IConnectionPointContainer, m_ActiveX);
-                wxASSERT( cpContainer.IsOk());
+                //wxASSERT( cpContainer.IsOk());
 
                 HRESULT hret =
                     cpContainer->FindConnectionPoint(ta->guid, cp.GetRef());

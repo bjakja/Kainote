@@ -56,7 +56,7 @@ public:
     // been created until then
     bool CreateDefault()
     {
-        wxCHECK_MSG( wxTheApp, false, "must have application instance" );
+        //wxCHECK_MSG( wxTheApp, false, "must have application instance" );
         return Create(wxTheApp->GetAppName() + '-' + wxGetUserId());
     }
 

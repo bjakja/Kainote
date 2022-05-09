@@ -643,7 +643,7 @@ void AllTagsItem::OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt
 
 void AllTagsItem::OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt)
 {
-	/*if (!tagList || !edition) {
+	if (!tagList || !edition) {
 		ShowContols(vt);
 	}
 	else if (maxWidth != vt->GetEndDrawPos()) {
@@ -654,7 +654,7 @@ void AllTagsItem::OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt)
 		pos.y = 1;
 		pos.x -= tlbs.x + 4;
 		tagList->SetPosition(pos);
-	}*/
+	}
 }
 
 void AllTagsItem::Synchronize(VisualItem* item)

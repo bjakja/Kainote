@@ -398,7 +398,7 @@ protected:
         }
 
         m_pCurrentIn = DoCreateInStream();
-        wxASSERT(m_pCurrentIn != NULL);
+        //wxASSERT(m_pCurrentIn != NULL);
         return *m_pCurrentIn;
     }
     TStreamOut &CreateOutStream()
@@ -409,7 +409,7 @@ protected:
         }
 
         m_pCurrentOut = DoCreateOutStream();
-        wxASSERT(m_pCurrentOut != NULL);
+        //wxASSERT(m_pCurrentOut != NULL);
         return *m_pCurrentOut;
     }
 

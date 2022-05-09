@@ -245,7 +245,7 @@ public:
 
         int IndexOf() const
         {
-            wxCHECK_MSG( m_list, wxNOT_FOUND,
+            //wxCHECK_MSG( m_list, wxNOT_FOUND,
                          "node doesn't belong to a list in IndexOf" );
 
             int i;
@@ -385,7 +385,7 @@ public:
 
     nodetype *Insert( nodetype *position, T* object )
     {
-        wxCHECK_MSG( !position || position->m_list == this, NULL,
+        //wxCHECK_MSG( !position || position->m_list == this, NULL,
                      "can't insert before a node from another list" );
 
         // previous and next node for the node being inserted
@@ -437,8 +437,8 @@ public:
 
     nodetype *DetachNode( nodetype *node )
     {
-        wxCHECK_MSG( node, NULL, "detaching NULL wxNodeBase" );
-        wxCHECK_MSG( node->m_list == this, NULL,
+        //wxCHECK_MSG( node, NULL, "detaching NULL wxNodeBase" );
+        //wxCHECK_MSG( node->m_list == this, NULL,
                      "detaching node which is not from this list" );
         // update the list
         nodetype **prevNext = node->GetPrevious() ? &node->GetPrevious()->m_next

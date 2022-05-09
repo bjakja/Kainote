@@ -479,7 +479,7 @@ public:
     */
     unsigned int GetVirtualHeight() const
     {
-        wxASSERT( !m_vhCalcPending );
+        //wxASSERT( !m_vhCalcPending );
         return m_virtualHeight;
     }
 

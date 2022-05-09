@@ -293,7 +293,7 @@ bool wxRichTextFormattingDialogFactory::CreatePages(long pages, wxRichTextFormat
         {
             wxString title;
             wxPanel* panel = CreatePage(pageId, title, dialog);
-            wxASSERT( panel != NULL );
+            //wxASSERT( panel != NULL );
             if (panel)
             {
                 int imageIndex = GetPageImage(pageId);

@@ -310,7 +310,7 @@ wxDockTaskBarIcon::wxDockTaskBarIcon(wxTaskBarIcon* parent)
     };
 
     m_eventupp = NewEventHandlerUPP(wxDockEventHandler);
-    wxASSERT(m_eventupp != NULL);
+    //wxASSERT(m_eventupp != NULL);
 
     OSStatus err = InstallApplicationEventHandler(
             m_eventupp,
@@ -381,12 +381,12 @@ bool wxDockTaskBarIcon::SetIcon(const wxIcon& icon, const wxString& WXUNUSED(too
     // convert the wxIcon into a wxBitmap so we can perform some
     // wxBitmap operations with it
     wxBitmap bmp( icon );
-    wxASSERT( bmp.IsOk() );
+    //wxASSERT( bmp.IsOk() );
 
     // get the CGImageRef for the wxBitmap:
     // OSX builds only, but then the dock only exists in OSX
     CGImageRef pImage = (CGImageRef) bmp.CreateCGImage();
-    wxASSERT( pImage != NULL );
+    //wxASSERT( pImage != NULL );
 
     // actually set the dock image
     OSStatus err = SetApplicationDockTileImage( pImage );
@@ -435,7 +435,7 @@ bool wxDockTaskBarIcon::RemoveIcon()
 //-----------------------------------------------------------------------------
 bool wxDockTaskBarIcon::PopupMenu(wxMenu *menu)
 {
-    wxASSERT(menu != NULL);
+    //wxASSERT(menu != NULL);
 
     delete m_pMenu;
 

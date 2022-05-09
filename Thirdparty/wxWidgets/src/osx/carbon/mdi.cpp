@@ -361,7 +361,7 @@ void wxMDIChildFrame::MacActivate(long timestamp, bool activating)
     wxLogTrace(TRACE_MDI, wxT("MDI child=%p  MacActivate(0x%08lx,%s)"),this, timestamp, activating ? wxT("ACTIV") : wxT("deact"));
 
     wxMDIParentFrame *mdiparent = m_mdiParent;
-    wxASSERT(mdiparent);
+    //wxASSERT(mdiparent);
 
     if (activating)
     {

@@ -129,7 +129,7 @@ int wxDataViewColumn::GetWidth() const
             return wxDVC_DEFAULT_WIDTH;
 
         case wxCOL_WIDTH_AUTOSIZE:
-            wxCHECK_MSG( m_owner, wxDVC_DEFAULT_WIDTH, "no owner control" );
+            //wxCHECK_MSG( m_owner, wxDVC_DEFAULT_WIDTH, "no owner control" );
             return m_owner->GetBestColumnWidth(m_owner->GetColumnIndex(this));
 
         default:
@@ -356,7 +356,7 @@ public:
 
     const wxDataViewTreeNodes& GetChildNodes() const
     {
-        wxASSERT( m_branchData != NULL );
+        //wxASSERT( m_branchData != NULL );
         return m_branchData->children;
     }
 
@@ -374,7 +374,7 @@ public:
 
     void RemoveChild(wxDataViewTreeNode *node)
     {
-        wxCHECK_RET( m_branchData != NULL, "leaf node doesn't have children" );
+        //wxCHECK_RET( m_branchData != NULL, "leaf node doesn't have children" );
         m_branchData->children.Remove(node);
     }
 
@@ -416,7 +416,7 @@ public:
 
     void ToggleOpen()
     {
-        wxCHECK_RET( m_branchData != NULL, "can't open leaf node" );
+        //wxCHECK_RET( m_branchData != NULL, "can't open leaf node" );
 
         int sum = 0;
 
@@ -463,13 +463,13 @@ public:
 
     void ChangeSubTreeCount( int num )
     {
-        wxASSERT( m_branchData != NULL );
+        //wxASSERT( m_branchData != NULL );
 
         if( !m_branchData->open )
             return;
 
         m_branchData->subTreeCount += num;
-        wxASSERT( m_branchData->subTreeCount >= 0 );
+        //wxASSERT( m_branchData->subTreeCount >= 0 );
 
         if( m_parent )
             m_parent->ChangeSubTreeCount(num);
@@ -2144,7 +2144,7 @@ public:
 
 bool Walker( wxDataViewTreeNode * node, DoJob & func )
 {
-    wxCHECK_MSG( node, false, "can't walk NULL node" );
+    //wxCHECK_MSG( node, false, "can't walk NULL node" );
 
     switch( func( node ) )
     {
@@ -2194,7 +2194,7 @@ bool wxDataViewMainWindow::ItemAdded(const wxDataViewItem & parent, const wxData
         const int modelSiblingsSize = modelSiblings.size();
 
         int posInModel = modelSiblings.Index(item, /*fromEnd=*/true);
-        wxCHECK_MSG( posInModel != wxNOT_FOUND, false, "adding non-existent item?" );
+        //wxCHECK_MSG( posInModel != wxNOT_FOUND, false, "adding non-existent item?" );
 
         wxDataViewTreeNode *itemNode = new wxDataViewTreeNode(parentNode, item);
         itemNode->SetHasChildren(GetModel()->IsContainer(item));
@@ -2292,7 +2292,7 @@ bool wxDataViewMainWindow::ItemDeleted(const wxDataViewItem& parent,
         if ( !parentNode )
             return true;
 
-        wxCHECK_MSG( parentNode->HasChildren(), false, "parent node doesn't have children?" );
+        //wxCHECK_MSG( parentNode->HasChildren(), false, "parent node doesn't have children?" );
         const wxDataViewTreeNodes& parentsChildren = parentNode->GetChildNodes();
 
         // We can't use FindNode() to find 'item', because it was already
@@ -2878,10 +2878,10 @@ int wxDataViewMainWindow::GetLineHeight( unsigned int row ) const
 
     if (GetOwner()->GetWindowStyle() & wxDV_VARIABLE_LINE_HEIGHT)
     {
-        wxASSERT( !IsVirtualList() );
+        //wxASSERT( !IsVirtualList() );
 
         const wxDataViewTreeNode* node = GetTreeNodeByRow(row);
-        // wxASSERT( node );
+        // //wxASSERT( node );
         if (!node) return m_lineHeight;
 
         wxDataViewItem item = node->GetItem();
@@ -2973,7 +2973,7 @@ private:
 
 wxDataViewTreeNode * wxDataViewMainWindow::GetTreeNodeByRow(unsigned int row) const
 {
-    wxASSERT( !IsVirtualList() );
+    //wxASSERT( !IsVirtualList() );
 
     RowToTreeNodeJob job( row , -2, m_root );
     Walker( m_root , job );
@@ -3428,7 +3428,7 @@ static void BuildTreeHelper( const wxDataViewModel * model,  const wxDataViewIte
         node->InsertChild(n, index);
     }
 
-    wxASSERT( node->IsOpen() );
+    //wxASSERT( node->IsOpen() );
     node->ChangeSubTreeCount(+num);
 }
 
@@ -3579,7 +3579,7 @@ void wxDataViewMainWindow::OnChar( wxKeyEvent &event )
 
     // don't use m_linesPerPage directly as it might not be computed yet
     const int pageSize = GetCountPerPage();
-    wxCHECK_RET( pageSize, wxT("should have non zero page size") );
+    //wxCHECK_RET( pageSize, wxT("should have non zero page size") );
 
     switch ( event.GetKeyCode() )
     {
@@ -3735,7 +3735,7 @@ void wxDataViewMainWindow::OnChar( wxKeyEvent &event )
 
 void wxDataViewMainWindow::OnVerticalNavigation(unsigned int newCurrent, const wxKeyEvent& event)
 {
-    wxCHECK_RET( newCurrent < GetRowCount(),
+    //wxCHECK_RET( newCurrent < GetRowCount(),
                 wxT("invalid item index in OnVerticalNavigation()") );
 
     // if there is no selection, we cannot move it anywhere
@@ -5120,8 +5120,8 @@ bool wxDataViewCtrl::IsExpanded( const wxDataViewItem & item ) const
 
 void wxDataViewCtrl::EditItem(const wxDataViewItem& item, const wxDataViewColumn *column)
 {
-    wxCHECK_RET( item.IsOk(), "invalid item" );
-    wxCHECK_RET( column, "no column provided" );
+    //wxCHECK_RET( item.IsOk(), "invalid item" );
+    //wxCHECK_RET( column, "no column provided" );
 
     m_clientArea->StartEditing(item, column);
 }

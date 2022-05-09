@@ -112,7 +112,7 @@ static inline wxEventType GtkScrollTypeToWx(int scrollType)
 //   difference due to possible inexactness in floating point arithmetic
 static inline bool IsScrollIncrement(double increment, double x)
 {
-    wxASSERT(increment > 0);
+    //wxASSERT(increment > 0);
     const double tolerance = 1.0 / 1024;
     return fabs(increment - fabs(x)) < tolerance;
 }

@@ -388,10 +388,10 @@ void zlibStream::doTestStreamData(int input_flag, int output_flag, int compress_
 void zlibStream::doDecompress_ExternalData(const unsigned char *data, const char *value, size_t data_size, size_t value_size, int flag)
 {
     // See that the input is ok.
-    wxASSERT(data != NULL);
-    wxASSERT(value != NULL);
-    wxASSERT(data_size > 0);
-    wxASSERT(value_size > 0);
+    //wxASSERT(data != NULL);
+    //wxASSERT(value != NULL);
+    //wxASSERT(data_size > 0);
+    //wxASSERT(value_size > 0);
 
     // Quickly try to see if the data is valid.
     switch (flag)

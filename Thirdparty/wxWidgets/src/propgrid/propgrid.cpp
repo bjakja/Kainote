@@ -236,8 +236,8 @@ wxPGGlobalVarsClass::~wxPGGlobalVarsClass()
     }
 
     // Make sure the global pointers have been reset
-    wxASSERT(wxPG_EDITOR(TextCtrl) == NULL);
-    wxASSERT(wxPG_EDITOR(ChoiceAndButton) == NULL);
+    //wxASSERT(wxPG_EDITOR(TextCtrl) == NULL);
+    //wxASSERT(wxPG_EDITOR(ChoiceAndButton) == NULL);
 
     delete wxPGProperty::sm_wxPG_LABEL;
 }
@@ -409,7 +409,7 @@ void wxPropertyGrid::Init1()
 //
 void wxPropertyGrid::Init2()
 {
-    wxASSERT( !(m_iFlags & wxPG_FL_INITIALIZED ) );
+    //wxASSERT( !(m_iFlags & wxPG_FL_INITIALIZED ) );
 
 #ifdef __WXMAC__
    // Smaller controls on Mac
@@ -591,7 +591,7 @@ void wxPropertyGrid::SetWindowStyleFlag( long style )
 
     if ( m_iFlags & wxPG_FL_INITIALIZED )
     {
-        wxASSERT( m_pState );
+        //wxASSERT( m_pState );
 
         if ( !(style & wxPG_HIDE_CATEGORIES) && (old_style & wxPG_HIDE_CATEGORIES) )
         {
@@ -924,7 +924,7 @@ void wxPropertyGrid::DoSetSelection( const wxArrayPGProperty& newSelection,
 void wxPropertyGrid::MakeColumnEditable( unsigned int column,
                                          bool editable )
 {
-    wxASSERT( column != 1 );
+    //wxASSERT( column != 1 );
 
     wxArrayInt& cols = m_pState->m_editableColumns;
 
@@ -948,8 +948,8 @@ void wxPropertyGrid::DoBeginLabelEdit( unsigned int colIndex,
                                        int selFlags )
 {
     wxPGProperty* selected = GetSelection();
-    wxCHECK_RET(selected, wxT("No property selected"));
-    wxCHECK_RET(colIndex != 1, wxT("Do not use this for column 1"));
+    //wxCHECK_RET(selected, wxT("No property selected"));
+    //wxCHECK_RET(colIndex != 1, wxT("Do not use this for column 1"));
 
     if ( !(selFlags & wxPG_SEL_DONT_SEND_EVENT) )
     {
@@ -1039,7 +1039,7 @@ void wxPropertyGrid::DoEndLabelEdit( bool commit, int selFlags )
         return;
 
     wxPGProperty* prop = m_labelEditorProperty;
-    wxASSERT(prop);
+    //wxASSERT(prop);
 
     if ( commit )
     {
@@ -1316,7 +1316,7 @@ static wxColour wxPGAdjustColour(const wxColour& src, int ra,
     // Recursion guard (allow 2 max)
     static int isinside = 0;
     isinside++;
-    wxCHECK_MSG( isinside < 3,
+    //wxCHECK_MSG( isinside < 3,
                  *wxBLACK,
                  wxT("wxPGAdjustColour should not be recursively called more than once") );
 
@@ -1648,7 +1648,7 @@ wxPoint wxPropertyGrid::GetGoodEditorDialogPosition( wxPGProperty* p,
     int x = splitterX;
     int y = p->GetY();
 
-    wxCHECK_MSG( y >= 0, wxPoint(-1,-1), wxT("invalid y?") );
+    //wxCHECK_MSG( y >= 0, wxPoint(-1,-1), wxT("invalid y?") );
 
     ImprovedClientToScreen( &x, &y );
 
@@ -2030,9 +2030,9 @@ int wxPropertyGrid::DoDrawItems( wxDC& dc,
     if ( m_frozen || m_height < 1 || firstItem == NULL )
         return itemsRect->y;
 
-    wxCHECK_MSG( !m_pState->m_itemsAdded, itemsRect->y,
+    //wxCHECK_MSG( !m_pState->m_itemsAdded, itemsRect->y,
                  "no items added" );
-    wxASSERT( m_pState->m_properties->GetChildCount() );
+    //wxASSERT( m_pState->m_properties->GetChildCount() );
 
     int lh = m_lineHeight;
 
@@ -2052,7 +2052,7 @@ int wxPropertyGrid::DoDrawItems( wxDC& dc,
          lastItemBottomY <= 0 )
         return itemsRect->y;
 
-    wxCHECK_MSG( firstItemTopY < lastItemBottomY,
+    //wxCHECK_MSG( firstItemTopY < lastItemBottomY,
                  itemsRect->y,
                  "invalid y values" );
 
@@ -2610,7 +2610,7 @@ void wxPropertyGrid::DrawItemAndValueRelated( wxPGProperty* p )
 
 void wxPropertyGrid::DrawItemAndChildren( wxPGProperty* p )
 {
-    wxCHECK_RET( p, wxT("invalid property id") );
+    //wxCHECK_RET( p, wxT("invalid property id") );
 
     // Do not draw if in non-visible page
     if ( p->GetParentState() != m_pState )
@@ -2713,8 +2713,8 @@ bool wxPropertyGrid::EnableCategories( bool enable )
 
 void wxPropertyGrid::SwitchState( wxPropertyGridPageState* pNewState )
 {
-    wxASSERT( pNewState );
-    wxASSERT( pNewState->GetGrid() );
+    //wxASSERT( pNewState );
+    //wxASSERT( pNewState->GetGrid() );
 
     if ( pNewState == m_pState )
         return;
@@ -3058,7 +3058,7 @@ bool wxPropertyGrid::PerformValidation( wxPGProperty* p, wxVariant& pendingValue
             if ( changedProperty == GetSelection() )
             {
                 wxWindow* editor = GetEditorControl();
-                wxASSERT( wxDynamicCast(editor, wxTextCtrl) );
+                //wxASSERT( wxDynamicCast(editor, wxTextCtrl) );
                 evtChangingValue = wxStaticCast(editor, wxTextCtrl)->GetValue();
             }
             else
@@ -3068,7 +3068,7 @@ bool wxPropertyGrid::PerformValidation( wxPGProperty* p, wxVariant& pendingValue
         }
     }
 
-    wxASSERT( m_chgInfo_changedProperty == NULL );
+    //wxASSERT( m_chgInfo_changedProperty == NULL );
     m_chgInfo_changedProperty = changedProperty;
     m_chgInfo_baseChangedProperty = baseChangedProperty;
     m_chgInfo_pendingValue = value;
@@ -3343,7 +3343,7 @@ bool wxPropertyGrid::DoPropertyChanged( wxPGProperty* p, unsigned int selFlags )
     OnValidationFailureReset(selected);
 
     // Maybe need to update control
-    wxASSERT( m_chgInfo_changedProperty != NULL );
+    //wxASSERT( m_chgInfo_changedProperty != NULL );
 
     // These values were calculated in PerformValidation()
     wxPGProperty* changedProperty = m_chgInfo_changedProperty;
@@ -3413,7 +3413,7 @@ bool wxPropertyGrid::DoPropertyChanged( wxPGProperty* p, unsigned int selFlags )
     }
 
     // Sanity check
-    wxASSERT( !changedProperty->GetParent()->HasFlag(wxPG_PROP_AGGREGATE) );
+    //wxASSERT( !changedProperty->GetParent()->HasFlag(wxPG_PROP_AGGREGATE) );
 
     // If top parent has composite string value, then send to child parents,
     // starting from baseChangedProperty.
@@ -4115,7 +4115,7 @@ bool wxPropertyGrid::DoSelectProperty( wxPGProperty* p, unsigned int flags )
             m_editorFocused = 0;
             m_iFlags |= wxPG_FL_PRIMARY_FILLS_ENTIRE;
 
-            wxASSERT( m_wndEditor == NULL );
+            //wxASSERT( m_wndEditor == NULL );
 
             //
             // Only create editor for non-disabled non-caption
@@ -4139,7 +4139,7 @@ bool wxPropertyGrid::DoSelectProperty( wxPGProperty* p, unsigned int flags )
                 m_editorAppearance.SetEmptyData();
 
                 const wxPGEditor* editor = p->GetEditorClass();
-                wxCHECK_MSG(editor, false,
+                //wxCHECK_MSG(editor, false,
                     wxT("NULL editor class not allowed"));
 
                 m_iFlags &= ~wxPG_FL_FIXED_WIDTH_EDITOR;
@@ -4434,7 +4434,7 @@ bool wxPropertyGrid::DoCollapse( wxPGProperty* p, bool sendEvents )
 
 bool wxPropertyGrid::DoExpand( wxPGProperty* p, bool sendEvents )
 {
-    wxCHECK_MSG( p, false, wxT("invalid property id") );
+    //wxCHECK_MSG( p, false, wxT("invalid property id") );
 
     wxPGProperty* pwc = (wxPGProperty*)p;
 
@@ -4689,7 +4689,7 @@ bool wxPropertyGrid::SendEvent( int eventType, wxPGProperty* p,
     evt.SetColumn(column);
     if ( eventType == wxEVT_PG_CHANGING )
     {
-        wxASSERT( pValue );
+        //wxASSERT( pValue );
         evt.SetCanVeto(true);
         m_validationInfo.m_pValue = pValue;
         evt.SetupValidationInfo();
@@ -5354,7 +5354,7 @@ void wxPropertyGrid::OnMouseEntry( wxMouseEvent &event )
         {
             // TODO: Fix this (detect parent and only do
             //   cursor trick if it is a manager).
-            wxASSERT( GetParent() );
+            //wxASSERT( GetParent() );
             GetParent()->SetCursor(wxNullCursor);
 
             m_iFlags |= wxPG_FL_MOUSE_INSIDE;
@@ -5393,7 +5393,7 @@ void wxPropertyGrid::OnMouseEntry( wxMouseEvent &event )
 bool wxPropertyGrid::OnMouseChildCommon( wxMouseEvent &event, int* px, int *py )
 {
     wxWindow* topCtrlWnd = (wxWindow*)event.GetEventObject();
-    wxASSERT( topCtrlWnd );
+    //wxASSERT( topCtrlWnd );
     int x, y;
     event.GetPosition(&x,&y);
 
@@ -5430,7 +5430,7 @@ void wxPropertyGrid::OnMouseClickChild( wxMouseEvent &event )
 void wxPropertyGrid::OnMouseRightClickChild( wxMouseEvent &event )
 {
     int x,y;
-    wxASSERT( m_wndEditor );
+    //wxASSERT( m_wndEditor );
     // These coords may not be exact (about +-2),
     // but that should not matter (right click is about item, not position).
     wxPoint pt = m_wndEditor->GetPosition();
@@ -5474,7 +5474,7 @@ int wxPropertyGrid::KeyEventToActions(wxKeyEvent &event, int* pSecond) const
     int keycode = event.GetKeyCode();
     int modifiers = event.GetModifiers();
 
-    wxASSERT( !(modifiers&~(0xFFFF)) );
+    //wxASSERT( !(modifiers&~(0xFFFF)) );
 
     int hashMapKey = (keycode & 0xFFFF) | ((modifiers & 0xFFFF) << 16);
 
@@ -5494,7 +5494,7 @@ int wxPropertyGrid::KeyEventToActions(wxKeyEvent &event, int* pSecond) const
 
 void wxPropertyGrid::AddActionTrigger( int action, int keycode, int modifiers )
 {
-    wxASSERT( !(modifiers&~(0xFFFF)) );
+    //wxASSERT( !(modifiers&~(0xFFFF)) );
 
     int hashMapKey = (keycode & 0xFFFF) | ((modifiers & 0xFFFF) << 16);
 
@@ -5988,7 +5988,7 @@ wxPGEditor* wxPropertyGrid::DoRegisterEditorClass( wxPGEditor* editorClass,
                                                    const wxString& editorName,
                                                    bool noDefCheck )
 {
-    wxASSERT( editorClass );
+    //wxASSERT( editorClass );
 
     if ( !noDefCheck && wxPGGlobalVars->m_mapEditorClasses.empty() )
         RegisterDefaultEditors();
@@ -6007,7 +6007,7 @@ wxPGEditor* wxPropertyGrid::DoRegisterEditorClass( wxPGEditor* editorClass,
         vt_it = wxPGGlobalVars->m_mapEditorClasses.find(name);
     }
 
-    wxCHECK_MSG( vt_it == wxPGGlobalVars->m_mapEditorClasses.end(),
+    //wxCHECK_MSG( vt_it == wxPGGlobalVars->m_mapEditorClasses.end(),
                  (wxPGEditor*) vt_it->second,
                  "Editor with given name was already registered" );
 
@@ -6146,7 +6146,7 @@ void wxPGChoicesData::Clear()
 
 void wxPGChoicesData::CopyDataFrom( wxPGChoicesData* data )
 {
-    wxASSERT( m_items.size() == 0 );
+    //wxASSERT( m_items.size() == 0 );
 
     m_items = data->m_items;
 }

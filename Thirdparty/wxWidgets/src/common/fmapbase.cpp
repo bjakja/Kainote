@@ -478,7 +478,7 @@ const wxString& wxFontMapperBase::GetDefaultConfigPath()
 
 void wxFontMapperBase::SetConfigPath(const wxString& prefix)
 {
-    wxCHECK_RET( !prefix.empty() && prefix[0] == wxCONFIG_PATH_SEPARATOR,
+    //wxCHECK_RET( !prefix.empty() && prefix[0] == wxCONFIG_PATH_SEPARATOR,
                  wxT("an absolute path should be given to wxFontMapper::SetConfigPath()") );
 
     m_configRootPath = prefix;
@@ -783,7 +783,7 @@ size_t wxFontMapperBase::GetSupportedEncodingsCount()
 /* static */
 wxFontEncoding wxFontMapperBase::GetEncoding(size_t n)
 {
-    wxCHECK_MSG( n < WXSIZEOF(gs_encodings), wxFONTENCODING_SYSTEM,
+    //wxCHECK_MSG( n < WXSIZEOF(gs_encodings), wxFONTENCODING_SYSTEM,
                     wxT("wxFontMapper::GetEncoding(): invalid index") );
 
     return gs_encodings[n];

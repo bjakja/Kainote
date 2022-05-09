@@ -200,7 +200,7 @@ double wxLongLongWx::ToDouble() const
     d += m_lo;
 
 #ifdef wxLONGLONG_TEST_MODE
-    wxASSERT( d == m_ll );
+    //wxASSERT( d == m_ll );
 #endif // wxLONGLONG_TEST_MODE
 
     return d;
@@ -213,7 +213,7 @@ double wxULongLongWx::ToDouble() const
     d += m_lo;
 
 #ifdef wxLONGLONG_TEST_MODE
-    wxASSERT( d == m_ll );
+    //wxASSERT( d == m_ll );
 #endif // wxLONGLONG_TEST_MODE
 
     return d;
@@ -533,8 +533,8 @@ wxLongLongWx wxLongLongWx::operator-(const wxLongLongWx& ll) const
 
 wxLongLongWx wxULongLongWx::operator-(const wxULongLongWx& ll) const
 {
-    wxASSERT(m_hi <= LONG_MAX );
-    wxASSERT(ll.m_hi <= LONG_MAX );
+    //wxASSERT(m_hi <= LONG_MAX );
+    //wxASSERT(ll.m_hi <= LONG_MAX );
 
     wxLongLongWx res( (long)m_hi , m_lo );
     wxLongLongWx op( (long)ll.m_hi , ll.m_lo );

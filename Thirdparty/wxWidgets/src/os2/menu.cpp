@@ -384,7 +384,7 @@ void wxMenu::EndRadioGroup()
 
 wxMenuItem* wxMenu::DoAppend( wxMenuItem* pItem )
 {
-    wxCHECK_MSG( pItem, NULL, wxT("NULL item in wxMenu::DoAppend") );
+    //wxCHECK_MSG( pItem, NULL, wxT("NULL item in wxMenu::DoAppend") );
 
     bool bCheck = false;
 
@@ -483,7 +483,7 @@ wxMenuItem* wxMenu::DoRemove(
     //
     // DoRemove() (unlike Remove) can only be called for existing item!
     //
-    wxCHECK_MSG(node, NULL, wxT("bug in wxMenu::Remove logic"));
+    //wxCHECK_MSG(node, NULL, wxT("bug in wxMenu::Remove logic"));
 
 #if wxUSE_ACCEL
     //
@@ -727,7 +727,7 @@ wxMenuBar::~wxMenuBar()
 
 void wxMenuBar::Refresh()
 {
-    wxCHECK_RET( IsAttached(), wxT("can't refresh unatteched menubar") );
+    //wxCHECK_RET( IsAttached(), wxT("can't refresh unatteched menubar") );
 
     WinSendMsg(GetWinHwnd(m_menuBarFrame), WM_UPDATEFRAME, (MPARAM)FCF_MENU, (MPARAM)0);
 } // end of wxMenuBar::Refresh
@@ -739,7 +739,7 @@ WXHMENU wxMenuBar::Create()
     if (m_hMenu != 0 )
         return m_hMenu;
 
-    wxCHECK_MSG(!m_hMenu, TRUE, wxT("menubar already created"));
+    //wxCHECK_MSG(!m_hMenu, TRUE, wxT("menubar already created"));
 
     //
     // Menubars should be associated with a frame otherwise they are popups
@@ -827,7 +827,7 @@ void wxMenuBar::EnableTop(
 , bool                              bEnable
 )
 {
-    wxCHECK_RET(IsAttached(), wxT("doesn't work with unattached menubars"));
+    //wxCHECK_RET(IsAttached(), wxT("doesn't work with unattached menubars"));
     USHORT                          uFlag = 0;
     SHORT                           nId;
 
@@ -852,7 +852,7 @@ void wxMenuBar::SetMenuLabel(
     SHORT                           nId;
     MENUITEM                        vItem;
 
-    wxCHECK_RET(nPos < GetMenuCount(), wxT("invalid menu index"));
+    //wxCHECK_RET(nPos < GetMenuCount(), wxT("invalid menu index"));
     m_titles[nPos] = rLabel;
 
     if (!IsAttached())
@@ -887,7 +887,7 @@ wxString wxMenuBar::GetMenuLabel(
   size_t                            nPos
 ) const
 {
-    wxCHECK_MSG( nPos < GetMenuCount(), wxEmptyString,
+    //wxCHECK_MSG( nPos < GetMenuCount(), wxEmptyString,
                  wxT("invalid menu index in wxMenuBar::GetMenuLabel") );
     return m_titles[nPos];
 } // end of wxMenuBar::GetMenuLabel
@@ -975,7 +975,7 @@ bool wxMenuBar::Append( wxMenu* pMenu,
 {
     WXHMENU hSubmenu = pMenu ? pMenu->GetHMenu() : 0;
 
-    wxCHECK_MSG(hSubmenu, false, wxT("can't append invalid menu to menubar"));
+    //wxCHECK_MSG(hSubmenu, false, wxT("can't append invalid menu to menubar"));
 
     wxString sTitle = wxPMTextToLabel(rsTitle);
 

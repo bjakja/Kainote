@@ -680,7 +680,7 @@ void wxRichTextHeaderFooterData::Copy(const wxRichTextHeaderFooterData& data)
 void wxRichTextHeaderFooterData::SetText(const wxString& text, int headerFooter, wxRichTextOddEvenPage page, wxRichTextPageLocation location)
 {
     int idx = headerFooter + (2 * (int) page) + (4 * (int) location);
-    wxASSERT( idx >= 0 && idx < 12 );
+    //wxASSERT( idx >= 0 && idx < 12 );
 
     if (idx >= 0 && idx < 12)
         m_text[idx] = text;
@@ -689,7 +689,7 @@ void wxRichTextHeaderFooterData::SetText(const wxString& text, int headerFooter,
 wxString wxRichTextHeaderFooterData::GetText(int headerFooter, wxRichTextOddEvenPage page, wxRichTextPageLocation location) const
 {
     int idx = headerFooter + (2 * (int) page) + (4 * (int) location);
-    wxASSERT( idx >= 0 && idx < 12 );
+    //wxASSERT( idx >= 0 && idx < 12 );
 
     if (idx >= 0 && idx < 12)
         return m_text[idx];

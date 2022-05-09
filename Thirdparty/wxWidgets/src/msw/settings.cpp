@@ -215,7 +215,7 @@ wxColour wxSystemSettingsNative::GetColour(wxSystemColour index)
     }
 
     wxColour ret = wxRGBToColour(colSys);
-    wxASSERT(ret.IsOk());
+    //wxASSERT(ret.IsOk());
     return ret;
 }
 
@@ -268,7 +268,7 @@ wxFont wxSystemSettingsNative::GetFont(wxSystemFont index)
         gs_fontDefault = new wxFont(wxCreateFontFromStockObject(SYSTEM_FONT));
     }
 
-    wxASSERT(gs_fontDefault->IsOk() &&
+    //wxASSERT(gs_fontDefault->IsOk() &&
              wxFontEnumerator::IsValidFacename(gs_fontDefault->GetFaceName()));
     return *gs_fontDefault;
 #else // !__WXWINCE__
@@ -296,10 +296,10 @@ wxFont wxSystemSettingsNative::GetFont(wxSystemFont index)
 
     wxFont font = wxCreateFontFromStockObject(index);
 
-    wxASSERT(font.IsOk());
+    //wxASSERT(font.IsOk());
 
 #if wxUSE_FONTENUM
-    wxASSERT(wxFontEnumerator::IsValidFacename(font.GetFaceName()));
+    //wxASSERT(wxFontEnumerator::IsValidFacename(font.GetFaceName()));
 #endif // wxUSE_FONTENUM
 
     return font;
@@ -415,7 +415,7 @@ int wxSystemSettingsNative::GetMetric(wxSystemMetric index, wxWindow* WXUNUSED(w
     // TODO: probably use wxUniv themes functionality
     return 0;
 #else // !__WXMICROWIN__
-    wxCHECK_MSG( index > 0 && (size_t)index < WXSIZEOF(gs_metricsMap), 0,
+    //wxCHECK_MSG( index > 0 && (size_t)index < WXSIZEOF(gs_metricsMap), 0,
                  wxT("invalid metric") );
 
     if ( index == wxSYS_DCLICK_MSEC )

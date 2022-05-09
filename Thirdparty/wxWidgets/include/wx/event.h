@@ -389,7 +389,7 @@ public:
             realHandler = this->ConvertFromEvtHandler(handler);
 
             // this is not supposed to happen but check for it nevertheless
-            wxCHECK_RET( realHandler, "invalid event handler" );
+            //wxCHECK_RET( realHandler, "invalid event handler" );
         }
 
         // the real (run-time) type of event is EventClass and we checked in
@@ -1079,8 +1079,8 @@ class WXDLLIMPEXP_BASE wxPropagateOnce
 public:
     wxPropagateOnce(wxEvent& event) : m_event(event)
     {
-        wxASSERT_MSG( m_event.m_propagationLevel > 0,
-                        wxT("shouldn't be used unless ShouldPropagate()!") );
+        //wxASSERT_MSG( m_event.m_propagationLevel > 0,
+                        //wxT("shouldn't be used unless ShouldPropagate()!") );
 
         m_event.m_propagationLevel--;
     }
@@ -2104,8 +2104,8 @@ public:
     {
         // m_loggingOff flag is only used by wxEVT_[QUERY_]END_SESSION, it
         // doesn't make sense for wxEVT_CLOSE_WINDOW
-        wxASSERT_MSG( m_eventType != wxEVT_CLOSE_WINDOW,
-                      wxT("this flag is for end session events only") );
+        //wxASSERT_MSG( m_eventType != wxEVT_CLOSE_WINDOW,
+                      //wxT("this flag is for end session events only") );
 
         return m_loggingOff;
     }
@@ -2113,8 +2113,8 @@ public:
     void Veto(bool veto = true)
     {
         // GetVeto() will return false anyhow...
-        wxCHECK_RET( m_canVeto,
-                     wxT("call to Veto() ignored (can't veto this event)") );
+        //wxCHECK_RET( m_canVeto,
+                     //wxT("call to Veto() ignored (can't veto this event)") );
 
         m_veto = veto;
     }
@@ -2867,8 +2867,8 @@ struct WXDLLIMPEXP_BASE wxEventTableEntryBase
           m_fn(fn),
           m_callbackUserData(data)
     {
-        wxASSERT_MSG( idLast == wxID_ANY || winid <= idLast,
-                      "invalid IDs range: lower bound > upper bound" );
+        //wxASSERT_MSG( idLast == wxID_ANY || winid <= idLast,
+                      //"invalid IDs range: lower bound > upper bound" );
     }
 
     wxEventTableEntryBase( const wxEventTableEntryBase &entry )
@@ -3480,7 +3480,7 @@ private:
 // Notice that this one is not thread-safe, use wxQueueEvent()
 inline void wxPostEvent(wxEvtHandler *dest, const wxEvent& event)
 {
-    wxCHECK_RET( dest, "need an object to post event to" );
+    //wxCHECK_RET( dest, "need an object to post event to" );
 
     dest->AddPendingEvent(event);
 }
@@ -3490,7 +3490,7 @@ inline void wxPostEvent(wxEvtHandler *dest, const wxEvent& event)
 // for events with wxString members
 inline void wxQueueEvent(wxEvtHandler *dest, wxEvent *event)
 {
-    wxCHECK_RET( dest, "need an object to queue event for" );
+    //wxCHECK_RET( dest, "need an object to queue event for" );
 
     dest->QueueEvent(event);
 }

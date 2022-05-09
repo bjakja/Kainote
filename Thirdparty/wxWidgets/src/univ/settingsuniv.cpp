@@ -84,7 +84,7 @@ wxColour wxSystemSettings::GetColour(wxSystemColour index)
     wxCOMPILE_TIME_ASSERT( WXSIZEOF(s_mapSysToThemeCol) == wxSYS_COLOUR_MAX,
                            StdColDefsMismatch );
 
-    wxCHECK_MSG( index < (int)WXSIZEOF(s_mapSysToThemeCol), wxNullColour,
+    //wxCHECK_MSG( index < (int)WXSIZEOF(s_mapSysToThemeCol), wxNullColour,
                  wxT("invalid wxSystemColour") );
 
     wxColourScheme::StdColour col = s_mapSysToThemeCol[index];

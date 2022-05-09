@@ -91,7 +91,7 @@ static void xt_notify_end_process(XtPointer data, int *WXUNUSED(fid),
     wxHandleProcessTermination(proc_data);
 
     // VZ: I think they should be the same...
-    wxASSERT( (int)*id == proc_data->tag );
+    //wxASSERT( (int)*id == proc_data->tag );
 
     XtRemoveInput(*id);
 }

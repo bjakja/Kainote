@@ -116,12 +116,12 @@ void wxRadioButton::SetValue(bool value)
     wxWindow * const focus = FindFocus();
     wxTopLevelWindow * const
         tlw = wxDynamicCast(wxGetTopLevelParent(this), wxTopLevelWindow);
-    wxCHECK_RET( tlw, wxT("radio button outside of TLW?") );
+    //wxCHECK_RET( tlw, wxT("radio button outside of TLW?") );
     wxWindow * const focusInTLW = tlw->GetLastFocus();
 
     const wxWindowList& siblings = GetParent()->GetChildren();
     wxWindowList::compatibility_iterator nodeThis = siblings.Find(this);
-    wxCHECK_RET( nodeThis, wxT("radio button not a child of its parent?") );
+    //wxCHECK_RET( nodeThis, wxT("radio button not a child of its parent?") );
 
     // this will be set to true in the code below if the focus is in our TLW
     // and belongs to one of the other buttons in the same group

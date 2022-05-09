@@ -207,7 +207,7 @@ extern WXDLLIMPEXP_BASE void wxOnAssert(const wxChar *file,
 
 // these overloads work when msg passed to debug macro is a string and we
 // also have to provide wxCStrData overload to resolve ambiguity which would
-// otherwise arise from wxASSERT( s.c_str() )
+// otherwise arise from //wxASSERT( s.c_str() )
 extern WXDLLIMPEXP_BASE void wxOnAssert(const wxString& file,
                                         int line,
                                         const wxString& func,
@@ -262,15 +262,15 @@ extern WXDLLIMPEXP_BASE void wxOnAssert(const char *file,
     //     statements containing it are compiled in the same way whether it is
     //     defined as empty or not; also notice that we can't use ";" instead
     //     of "{}" as some compilers warn about "possible unwanted ;" then
-    #define wxASSERT_MSG(cond, msg)                                           \
+    /*#define wxASSERT_MSG(cond, msg)                                           \
         if ( !wxTheAssertHandler || (cond) )                                  \
         {}                                                                    \
         else                                                                  \
-            wxOnAssert(__FILE__, __LINE__, __WXFUNCTION__, #cond, msg)
+            wxOnAssert(__FILE__, __LINE__, __WXFUNCTION__, #cond, msg)*/
 
     // a version without any additional message, don't use unless condition
     // itself is fully self-explanatory
-    #define wxASSERT(cond) wxASSERT_MSG(cond, (const char*)NULL)
+    //#define wxASSERT(cond) wxASSERT_MSG(cond, (const char*)NULL)
 
     // wxFAIL is a special form of assert: it always triggers (and so is
     // usually used in normally unreachable code)
@@ -279,12 +279,12 @@ extern WXDLLIMPEXP_BASE void wxOnAssert(const char *file,
         {}                                                                    \
         else                                                                  \
             wxOnAssert(__FILE__, __LINE__,  __WXFUNCTION__, cond, msg)
-    #define wxFAIL_MSG(msg) wxFAIL_COND_MSG("Assert failure", msg)
-    #define wxFAIL wxFAIL_MSG((const char*)NULL)
+    //#define wxFAIL_MSG(msg) wxFAIL_COND_MSG("Assert failure", msg)
+    //#define wxFAIL wxFAIL_MSG((const char*)NULL)
 #else // !wxDEBUG_LEVEL
     #define wxTrap()
 
-    #define wxASSERT(cond)
+    #define //wxASSERT(cond)
     #define wxASSERT_MSG(cond, msg)
     #define wxFAIL
     #define wxFAIL_MSG(msg)
@@ -293,7 +293,7 @@ extern WXDLLIMPEXP_BASE void wxOnAssert(const char *file,
 
 #if wxDEBUG_LEVEL >= 2
     #define wxASSERT_LEVEL_2_MSG(cond, msg) wxASSERT_MSG(cond, msg)
-    #define wxASSERT_LEVEL_2(cond) wxASSERT(cond)
+    #define wxASSERT_LEVEL_2(cond) //wxASSERT(cond)
 #else // wxDEBUG_LEVEL < 2
     #define wxASSERT_LEVEL_2_MSG(cond, msg)
     #define wxASSERT_LEVEL_2(cond)
@@ -316,7 +316,7 @@ extern void WXDLLIMPEXP_BASE wxAbort();
     invalid parameter (e.g. a NULL pointer) is passed to a function. Instead of
     dereferencing it and causing core dump the function might use
 
-        wxCHECK_RET( p != NULL, "pointer can't be NULL" )
+        //wxCHECK_RET( p != NULL, "pointer can't be NULL" )
 */
 
 // the generic macro: takes the condition to check, the statement to be executed
@@ -332,10 +332,10 @@ extern void WXDLLIMPEXP_BASE wxAbort();
     struct wxDummyCheckStruct /* just to force a semicolon */
 
 // check which returns with the specified return code if the condition fails
-#define wxCHECK_MSG(cond, rc, msg)   wxCHECK2_MSG(cond, return rc, msg)
+//#define wxCHECK_MSG(cond, rc, msg)   wxCHECK2_MSG(cond, return rc, msg)
 
 // check that expression is true, "return" if not (also FAILs in debug mode)
-#define wxCHECK(cond, rc)            wxCHECK_MSG(cond, rc, (const char*)NULL)
+#define wxCHECK(cond, rc)            //wxCHECK_MSG(cond, rc, (const char*)NULL)
 
 // check that expression is true, perform op if not
 #define wxCHECK2(cond, op)           wxCHECK2_MSG(cond, op, (const char*)NULL)
@@ -346,7 +346,7 @@ extern void WXDLLIMPEXP_BASE wxAbort();
 //     there is no other way to tell the caller what exactly went wrong
 //     from the void function (of course, the function shouldn't be void
 //     to begin with...)
-#define wxCHECK_RET(cond, msg)       wxCHECK2_MSG(cond, return, msg)
+//#define //wxCHECK_RET(cond, msg)       wxCHECK2_MSG(cond, return, msg)
 
 
 // ----------------------------------------------------------------------------
@@ -446,9 +446,9 @@ template<int x> struct static_assert_test{};
 #endif // Mac/!Mac
 
 // An assert helper used to avoid warning when testing constant expressions,
-// i.e. wxASSERT( sizeof(int) == 4 ) can generate a compiler warning about
+// i.e. //wxASSERT( sizeof(int) == 4 ) can generate a compiler warning about
 // expression being always true, but not using
-// wxASSERT( wxAssertIsEqual(sizeof(int), 4) )
+// //wxASSERT( wxAssertIsEqual(sizeof(int), 4) )
 //
 // NB: this is made obsolete by wxCOMPILE_TIME_ASSERT() and should no
 //     longer be used.

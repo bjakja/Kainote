@@ -293,7 +293,7 @@ bool wxImageList::Draw(int index,
        return false;
 
     HDC hDC = GetHdcOf(*msw_impl);
-    wxCHECK_MSG( hDC, false, wxT("invalid wxDC in wxImageList::Draw") );
+    //wxCHECK_MSG( hDC, false, wxT("invalid wxDC in wxImageList::Draw") );
 
     COLORREF clr = CLR_NONE;    // transparent by default
     if ( solidBackground )

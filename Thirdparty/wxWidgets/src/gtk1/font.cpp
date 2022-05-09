@@ -521,14 +521,14 @@ wxGDIRefData *wxFont::CloneGDIRefData(const wxGDIRefData *data) const
 
 int wxFont::GetPointSize() const
 {
-    wxCHECK_MSG( IsOk(), 0, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), 0, wxT("invalid font") );
 
     return M_FONTDATA->m_pointSize;
 }
 
 wxString wxFont::GetFaceName() const
 {
-    wxCHECK_MSG( IsOk(), wxEmptyString, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), wxEmptyString, wxT("invalid font") );
 
     return M_FONTDATA->m_faceName;
 }
@@ -540,28 +540,28 @@ wxFontFamily wxFont::DoGetFamily() const
 
 wxFontStyle wxFont::GetStyle() const
 {
-    wxCHECK_MSG( IsOk(), wxFONTSTYLE_MAX, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), wxFONTSTYLE_MAX, wxT("invalid font") );
 
     return M_FONTDATA->m_style;
 }
 
 wxFontWeight wxFont::GetWeight() const
 {
-    wxCHECK_MSG( IsOk(), wxFONTWEIGHT_MAX, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), wxFONTWEIGHT_MAX, wxT("invalid font") );
 
     return M_FONTDATA->m_weight;
 }
 
 bool wxFont::GetUnderlined() const
 {
-    wxCHECK_MSG( IsOk(), false, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), false, wxT("invalid font") );
 
     return M_FONTDATA->m_underlined;
 }
 
 wxFontEncoding wxFont::GetEncoding() const
 {
-    wxCHECK_MSG( IsOk(), wxFONTENCODING_DEFAULT, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), wxFONTENCODING_DEFAULT, wxT("invalid font") );
 
     // m_encoding is unused in wxGTK2, return encoding that the user set.
     return M_FONTDATA->m_encoding;
@@ -569,7 +569,7 @@ wxFontEncoding wxFont::GetEncoding() const
 
 const wxNativeFontInfo *wxFont::GetNativeFontInfo() const
 {
-    wxCHECK_MSG( IsOk(), NULL, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), NULL, wxT("invalid font") );
 
     if ( !M_FONTDATA->HasNativeFont() )
     {
@@ -584,7 +584,7 @@ const wxNativeFontInfo *wxFont::GetNativeFontInfo() const
 
 bool wxFont::IsFixedWidth() const
 {
-    wxCHECK_MSG( IsOk(), false, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), false, wxT("invalid font") );
 
     if ( M_FONTDATA->HasNativeFont() )
     {
@@ -697,7 +697,7 @@ GdkFont *wxFont::GetInternalFont( float scale ) const
 {
     GdkFont *font = NULL;
 
-    wxCHECK_MSG( IsOk(), font, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), font, wxT("invalid font") );
 
     long int_scale = long(scale * 100.0 + 0.5); // key for fontlist
     int point_scale = (int)((M_FONTDATA->m_pointSize * 10 * int_scale) / 100);

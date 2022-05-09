@@ -316,7 +316,7 @@ wxRendererGTK::DrawDropArrow(wxWindow *WXUNUSED(win),
     // is wxWindowDC (wxClientDC, wxMemoryDC and wxPaintDC
     // are derived from it) and use its m_window.
     wxWindowDCImpl * const impl = wxDynamicCast(dc.GetImpl(), wxWindowDCImpl);
-    wxCHECK_RET( impl, "must have a window DC" );
+    //wxCHECK_RET( impl, "must have a window DC" );
 
     GdkWindow* gdk_window = impl->GetGDKWindow();
 
@@ -370,7 +370,7 @@ wxRendererGTK::DrawComboBoxDropButton(wxWindow *win,
 
     // for reason why we do this, see DrawDropArrow
     wxWindowDCImpl * const impl = wxDynamicCast(dc.GetImpl(), wxWindowDCImpl);
-    wxCHECK_RET( impl, "must have a window DC" );
+    //wxCHECK_RET( impl, "must have a window DC" );
 
     GdkWindow* gdk_window = impl->GetGDKWindow();
 

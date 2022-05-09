@@ -45,7 +45,7 @@ void SendButtonEvent(int button, bool isDown)
     }
 
     wxX11Display display;
-    wxCHECK_RET(display, "No display available!");
+    //wxCHECK_RET(display, "No display available!");
 
     XEvent event;
     memset(&event, 0x00, sizeof(event));
@@ -100,7 +100,7 @@ bool wxUIActionSimulator::MouseUp(int button)
 bool wxUIActionSimulator::DoKey(int keycode, int modifiers, bool isDown)
 {
     wxX11Display display;
-    wxCHECK_MSG(display, false, "No display available!");
+    //wxCHECK_MSG(display, false, "No display available!");
 
     int mask, type;
 

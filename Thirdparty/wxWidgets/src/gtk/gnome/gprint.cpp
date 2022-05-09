@@ -1511,7 +1511,7 @@ wxGnomePrinterDCImpl::DoBlit(wxCoord xdest, wxCoord ydest,
                       bool WXUNUSED(useMask),
                       wxCoord WXUNUSED(xsrcMask), wxCoord WXUNUSED(ysrcMask))
 {
-    wxCHECK_MSG( source, false, wxT("invalid source dc") );
+    //wxCHECK_MSG( source, false, wxT("invalid source dc") );
 
     // blit into a bitmap
     wxBitmap bitmap( width, height );

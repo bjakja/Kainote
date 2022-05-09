@@ -295,7 +295,7 @@ wxMetafileDCImpl::~wxMetafileDCImpl()
 
 void wxMetafileDCImpl::DoGetSize(int *width, int *height) const
 {
-    wxCHECK_RET( m_metaFile, wxT("GetSize() doesn't work without a metafile") );
+    //wxCHECK_RET( m_metaFile, wxT("GetSize() doesn't work without a metafile") );
 
     wxSize sz = m_metaFile->GetSize();
     if (width)

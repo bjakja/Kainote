@@ -305,7 +305,7 @@ void wxInfoBarGeneric::Dismiss()
 void wxInfoBarGeneric::AddButton(wxWindowID btnid, const wxString& label)
 {
     wxSizer * const sizer = GetSizer();
-    wxCHECK_RET( sizer, "must be created first" );
+    //wxCHECK_RET( sizer, "must be created first" );
 
     // user-added buttons replace the standard close button so remove it if we
     // hadn't done it yet
@@ -327,7 +327,7 @@ void wxInfoBarGeneric::AddButton(wxWindowID btnid, const wxString& label)
 void wxInfoBarGeneric::RemoveButton(wxWindowID btnid)
 {
     wxSizer * const sizer = GetSizer();
-    wxCHECK_RET( sizer, "must be created first" );
+    //wxCHECK_RET( sizer, "must be created first" );
 
     // iterate over the sizer items in reverse order to find the last added
     // button with this id (ids of all buttons should be unique anyhow but if

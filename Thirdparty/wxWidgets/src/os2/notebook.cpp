@@ -189,7 +189,7 @@ size_t wxNotebook::GetPageCount() const
     //
     // Consistency check
     //
-    wxASSERT((int)m_pages.Count() == (int)::WinSendMsg(GetHWND(), BKM_QUERYPAGECOUNT, (MPARAM)0, (MPARAM)BKA_END));
+    //wxASSERT((int)m_pages.Count() == (int)::WinSendMsg(GetHWND(), BKM_QUERYPAGECOUNT, (MPARAM)0, (MPARAM)BKA_END));
     return m_pages.Count();
 } // end of wxNotebook::GetPageCount
 
@@ -204,7 +204,7 @@ int wxNotebook::GetRowCount() const
 
 int wxNotebook::SetSelection( size_t nPage )
 {
-    wxCHECK_MSG( IS_VALID_PAGE(nPage), wxNOT_FOUND, wxT("notebook page out of range") );
+    //wxCHECK_MSG( IS_VALID_PAGE(nPage), wxNOT_FOUND, wxT("notebook page out of range") );
 
     if (nPage != (size_t)m_selection)
     {
@@ -237,7 +237,7 @@ int wxNotebook::SetSelection( size_t nPage )
 
 int wxNotebook::ChangeSelection( size_t nPage )
 {
-    wxCHECK_MSG( IS_VALID_PAGE(nPage), wxNOT_FOUND, wxT("notebook page out of range") );
+    //wxCHECK_MSG( IS_VALID_PAGE(nPage), wxNOT_FOUND, wxT("notebook page out of range") );
 
     if (nPage != (size_t)m_selection)
     {
@@ -254,7 +254,7 @@ int wxNotebook::ChangeSelection( size_t nPage )
 bool wxNotebook::SetPageText( size_t nPage,
                               const wxString& rsStrText )
 {
-    wxCHECK_MSG( IS_VALID_PAGE(nPage), false, wxT("notebook page out of range") );
+    //wxCHECK_MSG( IS_VALID_PAGE(nPage), false, wxT("notebook page out of range") );
     return (bool)::WinSendMsg( m_hWnd
                               ,BKM_SETTABTEXT
                               ,MPFROMLONG((ULONG)m_alPageId[nPage])
@@ -269,7 +269,7 @@ wxString wxNotebook::GetPageText ( size_t nPage ) const
     wxString                        sStr;
     ULONG                           ulRc;
 
-    wxCHECK_MSG( IS_VALID_PAGE(nPage), wxEmptyString, wxT("notebook page out of range") );
+    //wxCHECK_MSG( IS_VALID_PAGE(nPage), wxEmptyString, wxT("notebook page out of range") );
 
     memset(&vBookText, '\0', sizeof(BOOKTEXT));
     vBookText.textLen = 0; // This will get the length
@@ -311,7 +311,7 @@ wxString wxNotebook::GetPageText ( size_t nPage ) const
 
 int wxNotebook::GetPageImage ( size_t nPage ) const
 {
-    wxCHECK_MSG( IS_VALID_PAGE(nPage), wxNOT_FOUND, wxT("notebook page out of range") );
+    //wxCHECK_MSG( IS_VALID_PAGE(nPage), wxNOT_FOUND, wxT("notebook page out of range") );
 
     //
     // For OS/2 just return the page
@@ -499,7 +499,7 @@ bool wxNotebook::InsertPage ( size_t          nPage,
 {
     ULONG                           ulApiPage;
 
-    wxASSERT( pPage != NULL );
+    //wxASSERT( pPage != NULL );
     wxCHECK( IS_VALID_PAGE(nPage) || nPage == GetPageCount(), false );
 
     //

@@ -334,7 +334,7 @@ public:
         wxASSERT_MSG( this->m_data->m_owned, "cannot shrink non-owned buffer" );
         wxASSERT_MSG( this->m_data->m_ref == 1, "can't shrink shared buffer" );
 
-        wxASSERT( len <= this->length() );
+        //wxASSERT( len <= this->length() );
 
         this->m_data->m_length = len;
         this->data()[len] = 0;
@@ -475,7 +475,7 @@ private:
         if ( m_data == NULL )
             return NULL;
 
-        wxASSERT_MSG( m_ref == 1, "can't release shared buffer" );
+        //wxASSERT_MSG( m_ref == 1, "can't release shared buffer" );
 
         void *p = m_data;
         m_data = NULL;
@@ -544,7 +544,7 @@ public:
     void   SetBufSize(size_t size) { m_bufdata->ResizeIfNeeded(size); }
     void   SetDataLen(size_t len)
     {
-        wxASSERT(len <= m_bufdata->m_size);
+        //wxASSERT(len <= m_bufdata->m_size);
         m_bufdata->m_len = len;
     }
 
@@ -576,7 +576,7 @@ public:
     // Other ways to append to the buffer
     void  AppendByte(char data)
     {
-        wxCHECK_RET( m_bufdata->m_data, wxT("invalid wxMemoryBuffer") );
+        //wxCHECK_RET( m_bufdata->m_data, wxT("invalid wxMemoryBuffer") );
 
         m_bufdata->ResizeIfNeeded(m_bufdata->m_len + 1);
         *(((char*)m_bufdata->m_data) + m_bufdata->m_len) = data;

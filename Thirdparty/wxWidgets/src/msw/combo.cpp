@@ -615,7 +615,7 @@ void wxComboCtrl::OnPaintEvent( wxPaintEvent& WXUNUSED(event) )
     // Paint required portion of the custom image on the control
     if ( (!m_text || m_widthCustomPaint) )
     {
-        wxASSERT( m_widthCustomPaint >= 0 );
+        //wxASSERT( m_widthCustomPaint >= 0 );
 
         // this is intentionally here to allow drawed rectangle's
         // right edge to be hidden

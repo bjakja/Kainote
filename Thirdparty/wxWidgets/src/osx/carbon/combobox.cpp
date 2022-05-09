@@ -382,7 +382,7 @@ void wxComboBox::EnableTextChangedEvents(bool enable)
 
 wxString wxComboBox::DoGetValue() const
 {
-    wxCHECK_MSG( m_text, wxString(), "can't be called for read-only combobox" );
+    //wxCHECK_MSG( m_text, wxString(), "can't be called for read-only combobox" );
 
     return m_text->GetValue();
 }

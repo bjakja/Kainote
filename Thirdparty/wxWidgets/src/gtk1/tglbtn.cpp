@@ -101,7 +101,7 @@ bool wxToggleBitmapButton::Create(wxWindow *parent, wxWindowID id,
 // Set the value of the toggle button.
 void wxToggleBitmapButton::SetValue(bool state)
 {
-    wxCHECK_RET(m_widget != NULL, wxT("invalid toggle button"));
+    //wxCHECK_RET(m_widget != NULL, wxT("invalid toggle button"));
 
     if (state == GetValue())
         return;
@@ -117,14 +117,14 @@ void wxToggleBitmapButton::SetValue(bool state)
 // Get the value of the toggle button.
 bool wxToggleBitmapButton::GetValue() const
 {
-    wxCHECK_MSG(m_widget != NULL, false, wxT("invalid toggle button"));
+    //wxCHECK_MSG(m_widget != NULL, false, wxT("invalid toggle button"));
 
     return GTK_TOGGLE_BUTTON(m_widget)->active;
 }
 
 void wxToggleBitmapButton::SetLabel(const wxBitmap& label)
 {
-    wxCHECK_RET(m_widget != NULL, wxT("invalid toggle button"));
+    //wxCHECK_RET(m_widget != NULL, wxT("invalid toggle button"));
 
     m_bitmap = label;
     InvalidateBestSize();
@@ -265,7 +265,7 @@ bool wxToggleButton::Create(wxWindow *parent, wxWindowID id,
 // Set the value of the toggle button.
 void wxToggleButton::SetValue(bool state)
 {
-    wxCHECK_RET(m_widget != NULL, wxT("invalid toggle button"));
+    //wxCHECK_RET(m_widget != NULL, wxT("invalid toggle button"));
 
     if (state == GetValue())
         return;
@@ -281,14 +281,14 @@ void wxToggleButton::SetValue(bool state)
 // Get the value of the toggle button.
 bool wxToggleButton::GetValue() const
 {
-    wxCHECK_MSG(m_widget != NULL, false, wxT("invalid toggle button"));
+    //wxCHECK_MSG(m_widget != NULL, false, wxT("invalid toggle button"));
 
     return GTK_TOGGLE_BUTTON(m_widget)->active;
 }
 
 void wxToggleButton::SetLabel(const wxString& label)
 {
-    wxCHECK_RET(m_widget != NULL, wxT("invalid toggle button"));
+    //wxCHECK_RET(m_widget != NULL, wxT("invalid toggle button"));
 
     wxControl::SetLabel(label);
 

@@ -255,7 +255,7 @@ wxControl::GetDefaultAttributesFromGTKWidget(GtkWidget* widget,
     GtkStateFlags stateFlag = GTK_STATE_FLAG_NORMAL;
     if (state)
     {
-        wxASSERT(state == GTK_STATE_ACTIVE);
+        //wxASSERT(state == GTK_STATE_ACTIVE);
         stateFlag = GTK_STATE_FLAG_ACTIVE;
     }
     GtkStyleContext* sc = gtk_widget_get_style_context(widget);

@@ -264,7 +264,7 @@ wxConsoleEventLoop::AddSourceForFD(int fd,
                                    wxEventLoopSourceHandler *handler,
                                    int flags)
 {
-    wxCHECK_MSG( fd != -1, NULL, "can't monitor invalid fd" );
+    //wxCHECK_MSG( fd != -1, NULL, "can't monitor invalid fd" );
 
     wxLogTrace(wxTRACE_EVT_SOURCE,
                 "Adding event loop source for fd=%d", fd);

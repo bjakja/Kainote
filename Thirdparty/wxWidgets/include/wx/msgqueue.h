@@ -115,7 +115,7 @@ public:
                 return wxMSGQUEUE_TIMEOUT;
 
             timeout = (waitUntil - now).ToLong();
-            wxASSERT(timeout > 0);
+            //wxASSERT(timeout > 0);
         }
 
         msg = m_messages.front();

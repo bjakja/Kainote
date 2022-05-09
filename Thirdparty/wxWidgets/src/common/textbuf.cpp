@@ -164,7 +164,7 @@ bool wxTextBuffer::Create(const wxString& strBufferName)
 bool wxTextBuffer::Create()
 {
     // buffer name must be either given in ctor or in Create(const wxString&)
-    wxASSERT( !m_strBufferName.empty() );
+    //wxASSERT( !m_strBufferName.empty() );
 
     // if the buffer already exists do nothing
     if ( Exists() ) return false;
@@ -186,7 +186,7 @@ bool wxTextBuffer::Open(const wxString& strBufferName, const wxMBConv& conv)
 bool wxTextBuffer::Open(const wxMBConv& conv)
 {
     // buffer name must be either given in ctor or in Open(const wxString&)
-    wxASSERT( !m_strBufferName.empty() );
+    //wxASSERT( !m_strBufferName.empty() );
 
     // open buffer in read-only mode
     if ( !OnOpen(m_strBufferName, ReadAccess) )
@@ -204,7 +204,7 @@ bool wxTextBuffer::Open(const wxMBConv& conv)
 // if it fails, it assumes the native type for our platform.
 wxTextFileType wxTextBuffer::GuessType() const
 {
-    wxASSERT( IsOpened() );
+    //wxASSERT( IsOpened() );
 
     // scan the buffer lines
     size_t nUnix = 0,     // number of '\n's alone

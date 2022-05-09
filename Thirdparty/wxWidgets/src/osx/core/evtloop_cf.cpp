@@ -88,7 +88,7 @@ wxCFEventLoop::AddSourceForFD(int fd,
                               wxEventLoopSourceHandler *handler,
                               int flags)
 {
-    wxCHECK_MSG( fd != -1, NULL, "can't monitor invalid fd" );
+    //wxCHECK_MSG( fd != -1, NULL, "can't monitor invalid fd" );
 
     wxScopedPtr<wxCFEventLoopSource>
         source(new wxCFEventLoopSource(handler, flags));
@@ -381,7 +381,7 @@ void wxCFEventLoop::DoStop()
 int wxCFEventLoop::Run()
 {
     // event loops are not recursive, you need to create another loop!
-    wxCHECK_MSG( !IsRunning(), -1, wxT("can't reenter a message loop") );
+    //wxCHECK_MSG( !IsRunning(), -1, wxT("can't reenter a message loop") );
 
     // ProcessIdle() and ProcessEvents() below may throw so the code here should
     // be exception-safe, hence we must use local objects for all actions we

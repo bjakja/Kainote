@@ -102,7 +102,7 @@ size_t wxDir::Traverse(wxDirTraverser& sink,
                        const wxString& filespec,
                        int flags) const
 {
-    wxCHECK_MSG( IsOpened(), (size_t)-1,
+    //wxCHECK_MSG( IsOpened(), (size_t)-1,
                  wxT("dir must be opened before traversing it") );
 
     // the total number of files found
@@ -244,7 +244,7 @@ size_t wxDir::GetAllFiles(const wxString& dirname,
                           const wxString& filespec,
                           int flags)
 {
-    wxCHECK_MSG( files, (size_t)-1, wxT("NULL pointer in wxDir::GetAllFiles") );
+    //wxCHECK_MSG( files, (size_t)-1, wxT("NULL pointer in wxDir::GetAllFiles") );
 
     size_t nFiles = 0;
 

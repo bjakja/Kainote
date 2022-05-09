@@ -183,7 +183,7 @@ void wxColour::InitRGBA(unsigned char red, unsigned char green, unsigned char bl
 
 unsigned char wxColour::Red() const
 {
-    wxCHECK_MSG( IsOk(), 0, wxT("invalid colour") );
+    //wxCHECK_MSG( IsOk(), 0, wxT("invalid colour") );
 
 #ifdef __WXGTK3__
     return wxByte(M_COLDATA->m_gdkColor.red >> 8);
@@ -194,7 +194,7 @@ unsigned char wxColour::Red() const
 
 unsigned char wxColour::Green() const
 {
-    wxCHECK_MSG( IsOk(), 0, wxT("invalid colour") );
+    //wxCHECK_MSG( IsOk(), 0, wxT("invalid colour") );
 
 #ifdef __WXGTK3__
     return wxByte(M_COLDATA->m_gdkColor.green >> 8);
@@ -205,7 +205,7 @@ unsigned char wxColour::Green() const
 
 unsigned char wxColour::Blue() const
 {
-    wxCHECK_MSG( IsOk(), 0, wxT("invalid colour") );
+    //wxCHECK_MSG( IsOk(), 0, wxT("invalid colour") );
 
 #ifdef __WXGTK3__
     return wxByte(M_COLDATA->m_gdkColor.blue >> 8);
@@ -216,7 +216,7 @@ unsigned char wxColour::Blue() const
 
 unsigned char wxColour::Alpha() const
 {
-    wxCHECK_MSG( IsOk(), 0, wxT("invalid colour") );
+    //wxCHECK_MSG( IsOk(), 0, wxT("invalid colour") );
 
     return M_COLDATA->m_alpha;
 }
@@ -231,7 +231,7 @@ void wxColour::CalcPixel( GdkColormap *cmap )
 
 int wxColour::GetPixel() const
 {
-    wxCHECK_MSG( IsOk(), 0, wxT("invalid colour") );
+    //wxCHECK_MSG( IsOk(), 0, wxT("invalid colour") );
 
     return M_COLDATA->m_color.pixel;
 }
@@ -239,7 +239,7 @@ int wxColour::GetPixel() const
 
 const GdkColor *wxColour::GetColor() const
 {
-    wxCHECK_MSG( IsOk(), NULL, wxT("invalid colour") );
+    //wxCHECK_MSG( IsOk(), NULL, wxT("invalid colour") );
 
 #ifdef __WXGTK3__
     return &M_COLDATA->m_gdkColor;

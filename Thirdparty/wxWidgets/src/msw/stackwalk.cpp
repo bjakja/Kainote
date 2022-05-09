@@ -326,7 +326,7 @@ void wxStackWalker::WalkFromException(size_t maxDepth)
 {
     extern EXCEPTION_POINTERS *wxGlobalSEInformation;
 
-    wxCHECK_RET( wxGlobalSEInformation,
+    //wxCHECK_RET( wxGlobalSEInformation,
                  wxT("wxStackWalker::WalkFromException() can only be called from wxApp::OnFatalException()") );
 
     // don't skip any frames, the first one is where we crashed

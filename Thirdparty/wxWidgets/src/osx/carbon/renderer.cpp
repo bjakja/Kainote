@@ -500,7 +500,7 @@ wxRendererMac::DrawFocusRect(wxWindow* win, wxDC& dc, const wxRect& rect, int fl
     info.isFocused = true ;
 
     CGContextRef cgContext = (CGContextRef) win->MacGetCGContextRef() ;
-    wxASSERT( cgContext ) ;
+    //wxASSERT( cgContext ) ;
 
     HIThemeDrawFocusRect( &cgrect , true , cgContext , kHIThemeOrientationNormal ) ;
 }

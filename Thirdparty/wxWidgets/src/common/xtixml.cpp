@@ -464,7 +464,7 @@ int wxObjectXmlReader::ReadComponent(wxXmlNode *node, wxObjectReaderCallback *ca
                         }
                         else
                         {
-                            wxASSERT( pi->GetTypeInfo()->HasStringConverters() );
+                            //wxASSERT( pi->GetTypeInfo()->HasStringConverters() );
                             wxAny nodeval = ReadValue( prop, pi->GetTypeInfo() );
                             callbacks->SetProperty( objectID, classInfo,pi, nodeval );
                         }

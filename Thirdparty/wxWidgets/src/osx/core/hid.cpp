@@ -332,7 +332,7 @@ void wxHIDDevice::InitCookies(size_t dwSize, bool bQueue)
     m_pCookies = new IOHIDElementCookie[dwSize];
     if (bQueue)
     {
-        wxASSERT( m_ppQueue == NULL);
+        //wxASSERT( m_ppQueue == NULL);
         m_ppQueue = (*m_ppDevice)->allocQueue(m_ppDevice);
         if ( !m_ppQueue )
         {

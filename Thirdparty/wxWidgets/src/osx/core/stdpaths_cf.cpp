@@ -80,7 +80,7 @@ void wxStandardPathsCF::SetBundle(wxCFBundleRef bundle)
 static wxString BundleRelativeURLToPath(CFURLRef relativeURL)
 {
     CFURLRef absoluteURL = CFURLCopyAbsoluteURL(relativeURL);
-    wxCHECK_MSG(absoluteURL, wxEmptyString, wxT("Failed to resolve relative URL to absolute URL"));
+    //wxCHECK_MSG(absoluteURL, wxEmptyString, wxT("Failed to resolve relative URL to absolute URL"));
     CFStringRef cfStrPath = CFURLCopyFileSystemPath(absoluteURL,kDefaultPathStyle);
     CFRelease(absoluteURL);
     return wxCFStringRef(cfStrPath).AsString(wxLocale::GetSystemEncoding());
@@ -88,10 +88,10 @@ static wxString BundleRelativeURLToPath(CFURLRef relativeURL)
 
 wxString wxStandardPathsCF::GetFromFunc(wxCFURLRef (*func)(wxCFBundleRef)) const
 {
-    wxCHECK_MSG(m_bundle, wxEmptyString,
+    //wxCHECK_MSG(m_bundle, wxEmptyString,
                 wxT("wxStandardPaths for CoreFoundation only works with bundled apps"));
     CFURLRef relativeURL = (*func)(m_bundle);
-    wxCHECK_MSG(relativeURL, wxEmptyString, wxT("Couldn't get URL"));
+    //wxCHECK_MSG(relativeURL, wxEmptyString, wxT("Couldn't get URL"));
     wxString ret(BundleRelativeURLToPath(relativeURL));
     CFRelease(relativeURL);
     return ret;

@@ -116,7 +116,7 @@ public:
     HRESULT QueryInterface(REFIID riid, IUnknown *pUnk)
     {
         Free();
-        wxASSERT(pUnk != NULL);
+        //wxASSERT(pUnk != NULL);
         return pUnk->QueryInterface(riid, (void **)&m_interface);
     }
 
@@ -230,13 +230,13 @@ public:
 
     wxString ParamType(size_t idx) const
     {
-        wxASSERT(idx < ParamCount());
+        //wxASSERT(idx < ParamCount());
         return m_params[idx].GetType();
     }
 
     wxString ParamName(size_t idx) const
     {
-        wxASSERT(idx < ParamCount());
+        //wxASSERT(idx < ParamCount());
         return m_params[idx].GetName();
     }
 

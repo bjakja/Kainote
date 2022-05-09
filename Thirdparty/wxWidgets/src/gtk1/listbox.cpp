@@ -577,10 +577,10 @@ int wxListBox::DoInsertItems(const wxArrayStringsAdapter& items,
                              void **clientData,
                              wxClientDataType type)
 {
-    wxCHECK_MSG( m_list != NULL, wxNOT_FOUND, wxT("invalid listbox") );
+    //wxCHECK_MSG( m_list != NULL, wxNOT_FOUND, wxT("invalid listbox") );
 
     const unsigned count = GetCount();
-    wxCHECK_MSG( pos <= count, wxNOT_FOUND,
+    //wxCHECK_MSG( pos <= count, wxNOT_FOUND,
                     wxT("invalid index in wxListBox::InsertItems") );
 
     // code elsewhere supposes we have as many items in m_clientList as items
@@ -614,7 +614,7 @@ int wxListBox::DoInsertItems(const wxArrayStringsAdapter& items,
 
 void wxListBox::GtkAddItem( const wxString &item, int pos )
 {
-    wxCHECK_RET( m_list != NULL, wxT("invalid listbox") );
+    //wxCHECK_RET( m_list != NULL, wxT("invalid listbox") );
 
     GtkWidget *list_item;
 
@@ -696,7 +696,7 @@ void wxListBox::GtkAddItem( const wxString &item, int pos )
 
 void wxListBox::DoClear()
 {
-    wxCHECK_RET( m_list != NULL, wxT("invalid listbox") );
+    //wxCHECK_RET( m_list != NULL, wxT("invalid listbox") );
 
     gtk_list_clear_items( m_list, 0, (int)GetCount() );
 
@@ -714,11 +714,11 @@ void wxListBox::DoClear()
 
 void wxListBox::DoDeleteOneItem(unsigned int n)
 {
-    wxCHECK_RET( m_list != NULL, wxT("invalid listbox") );
+    //wxCHECK_RET( m_list != NULL, wxT("invalid listbox") );
 
     GList *child = g_list_nth( m_list->children, n );
 
-    wxCHECK_RET( child, wxT("wrong listbox index") );
+    //wxCHECK_RET( child, wxT("wrong listbox index") );
 
     GList *list = g_list_append( NULL, child->data );
     gtk_list_remove_items( m_list, list );
@@ -740,20 +740,20 @@ void wxListBox::DoDeleteOneItem(unsigned int n)
 
 void wxListBox::DoSetItemClientData(unsigned int n, void* clientData)
 {
-    wxCHECK_RET( m_widget != NULL, wxT("invalid listbox control") );
+    //wxCHECK_RET( m_widget != NULL, wxT("invalid listbox control") );
 
     wxList::compatibility_iterator node = m_clientList.Item( n );
-    wxCHECK_RET( node, wxT("invalid index in wxListBox::DoSetItemClientData") );
+    //wxCHECK_RET( node, wxT("invalid index in wxListBox::DoSetItemClientData") );
 
     node->SetData( (wxObject*) clientData );
 }
 
 void* wxListBox::DoGetItemClientData(unsigned int n) const
 {
-    wxCHECK_MSG( m_widget != NULL, NULL, wxT("invalid listbox control") );
+    //wxCHECK_MSG( m_widget != NULL, NULL, wxT("invalid listbox control") );
 
     wxList::compatibility_iterator node = m_clientList.Item( n );
-    wxCHECK_MSG( node, NULL, wxT("invalid index in wxListBox::DoGetItemClientData") );
+    //wxCHECK_MSG( node, NULL, wxT("invalid index in wxListBox::DoGetItemClientData") );
 
     return node->GetData();
 }
@@ -784,7 +784,7 @@ wxString wxListBox::GetRealLabel(GList *item) const
 
 void wxListBox::SetString(unsigned int n, const wxString &string)
 {
-    wxCHECK_RET( m_list != NULL, wxT("invalid listbox") );
+    //wxCHECK_RET( m_list != NULL, wxT("invalid listbox") );
 
     GList *child = g_list_nth( m_list->children, n );
     if (child)
@@ -809,7 +809,7 @@ void wxListBox::SetString(unsigned int n, const wxString &string)
 
 wxString wxListBox::GetString(unsigned int n) const
 {
-    wxCHECK_MSG( m_list != NULL, wxEmptyString, wxT("invalid listbox") );
+    //wxCHECK_MSG( m_list != NULL, wxEmptyString, wxT("invalid listbox") );
 
     GList *child = g_list_nth( m_list->children, n );
     if (child)
@@ -824,7 +824,7 @@ wxString wxListBox::GetString(unsigned int n) const
 
 unsigned int wxListBox::GetCount() const
 {
-    wxCHECK_MSG( m_list != NULL, 0, wxT("invalid listbox") );
+    //wxCHECK_MSG( m_list != NULL, 0, wxT("invalid listbox") );
 
     GList *children = m_list->children;
     return g_list_length(children);
@@ -832,7 +832,7 @@ unsigned int wxListBox::GetCount() const
 
 int wxListBox::FindString( const wxString &item, bool bCase ) const
 {
-    wxCHECK_MSG( m_list != NULL, wxNOT_FOUND, wxT("invalid listbox") );
+    //wxCHECK_MSG( m_list != NULL, wxNOT_FOUND, wxT("invalid listbox") );
 
     GList *child = m_list->children;
     int count = 0;
@@ -856,7 +856,7 @@ int wxListBox::FindString( const wxString &item, bool bCase ) const
 
 int wxListBox::GetSelection() const
 {
-    wxCHECK_MSG( m_list != NULL, wxNOT_FOUND, wxT("invalid listbox") );
+    //wxCHECK_MSG( m_list != NULL, wxNOT_FOUND, wxT("invalid listbox") );
 
     GList *child = m_list->children;
     int count = 0;
@@ -871,7 +871,7 @@ int wxListBox::GetSelection() const
 
 int wxListBox::GetSelections( wxArrayInt& aSelections ) const
 {
-    wxCHECK_MSG( m_list != NULL, wxNOT_FOUND, wxT("invalid listbox") );
+    //wxCHECK_MSG( m_list != NULL, wxNOT_FOUND, wxT("invalid listbox") );
 
     // get the number of selected items first
     GList *child = m_list->children;
@@ -901,18 +901,18 @@ int wxListBox::GetSelections( wxArrayInt& aSelections ) const
 
 bool wxListBox::IsSelected( int n ) const
 {
-    wxCHECK_MSG( m_list != NULL, false, wxT("invalid listbox") );
+    //wxCHECK_MSG( m_list != NULL, false, wxT("invalid listbox") );
 
     GList *target = g_list_nth( m_list->children, n );
 
-    wxCHECK_MSG( target, false, wxT("invalid listbox index") );
+    //wxCHECK_MSG( target, false, wxT("invalid listbox index") );
 
     return (GTK_WIDGET(target->data)->state == GTK_STATE_SELECTED) ;
 }
 
 void wxListBox::DoSetSelection( int n, bool select )
 {
-    wxCHECK_RET( m_list != NULL, wxT("invalid listbox") );
+    //wxCHECK_RET( m_list != NULL, wxT("invalid listbox") );
 
     m_blockEvent = true;
 
@@ -931,7 +931,7 @@ void wxListBox::DoSetSelection( int n, bool select )
 
 void wxListBox::DoSetFirstItem( int n )
 {
-    wxCHECK_RET( m_list, wxT("invalid listbox") );
+    //wxCHECK_RET( m_list, wxT("invalid listbox") );
 
     if (gdk_pointer_is_grabbed () && GTK_WIDGET_HAS_GRAB (m_list))
         return;
@@ -942,13 +942,13 @@ void wxListBox::DoSetFirstItem( int n )
 
     GtkAdjustment *adjustment =
        (GtkAdjustment*) gtk_object_get_data_by_id (GTK_OBJECT (m_list), vadjustment_key_id);
-    wxCHECK_RET( adjustment, wxT("invalid listbox code") );
+    //wxCHECK_RET( adjustment, wxT("invalid listbox code") );
 
     GList *target = g_list_nth( m_list->children, n );
-    wxCHECK_RET( target, wxT("invalid listbox index") );
+    //wxCHECK_RET( target, wxT("invalid listbox index") );
 
     GtkWidget *item = GTK_WIDGET(target->data);
-    wxCHECK_RET( item, wxT("invalid listbox code") );
+    //wxCHECK_RET( item, wxT("invalid listbox code") );
 
     if (item->allocation.y == -1)
     {

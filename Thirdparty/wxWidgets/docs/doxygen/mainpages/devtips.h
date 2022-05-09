@@ -345,7 +345,7 @@ These can be compiled out of a non-debugging version of wxWidgets and your
 application. Using ASSERT is an example of `defensive programming': it can
 alert you to problems later on.
 
-See wxASSERT() for more info.
+See //wxASSERT() for more info.
 
 @subsection page_multiplatform_reducingerr_usewxstring Use wxString in Preference to Character Arrays
 
@@ -424,7 +424,7 @@ operating system and compiler, more or less specific information about the
 problem will be logged.
 
 You should also use @ref group_funcmacro_debug as part of a "defensive
-programming" strategy, scattering wxASSERT()s liberally to test for problems in
+programming" strategy, scattering //wxASSERT()s liberally to test for problems in
 your code as early as possible. Forward thinking will save a surprising amount
 of time in the long run.
 

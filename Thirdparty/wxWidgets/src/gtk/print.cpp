@@ -1681,7 +1681,7 @@ bool wxGtkPrinterDCImpl::DoBlit(wxCoord xdest, wxCoord ydest,
     wxASSERT_MSG( xsrcMask == wxDefaultCoord && ysrcMask == wxDefaultCoord,
                   wxT("mask coordinates are not supported") );
 
-    wxCHECK_MSG( source, false, wxT("invalid source dc") );
+    //wxCHECK_MSG( source, false, wxT("invalid source dc") );
 
     // Blit into a bitmap.
     wxBitmap bitmap( width, height );
@@ -1703,7 +1703,7 @@ void wxGtkPrinterDCImpl::DoDrawIcon( const wxIcon& icon, wxCoord x, wxCoord y )
 
 void wxGtkPrinterDCImpl::DoDrawBitmap( const wxBitmap& bitmap, wxCoord x, wxCoord y, bool useMask )
 {
-    wxCHECK_RET( bitmap.IsOk(), wxT("Invalid bitmap in wxGtkPrinterDCImpl::DoDrawBitmap"));
+    //wxCHECK_RET( bitmap.IsOk(), wxT("Invalid bitmap in wxGtkPrinterDCImpl::DoDrawBitmap"));
 
     x = wxCoord(XLOG2DEV(x));
     y = wxCoord(YLOG2DEV(y));

@@ -36,7 +36,7 @@ static void gtk_clrbutton_setcolor_callback(GtkColorButton *widget,
                                             wxColourButton *p)
 {
     // update the m_colour member of the wxColourButton
-    wxASSERT(p);
+    //wxASSERT(p);
 #ifdef __WXGTK3__
     GdkRGBA gdkColor;
     gtk_color_button_get_rgba(widget, &gdkColor);

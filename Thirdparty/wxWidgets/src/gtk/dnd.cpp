@@ -325,7 +325,7 @@ static gboolean target_drag_drop( GtkWidget *widget,
         GdkAtom format = drop_target->GTKGetMatchingPair();
 
         // this does happen somehow, see bug 555111
-        wxCHECK_MSG( format, FALSE, wxT("no matching GdkAtom for format?") );
+        //wxCHECK_MSG( format, FALSE, wxT("no matching GdkAtom for format?") );
 
         /* this should trigger an "drag_data_received" event */
         gtk_drag_get_data( widget,
@@ -549,7 +549,7 @@ bool wxDropTarget::GetData()
 
 void wxDropTarget::GtkUnregisterWidget( GtkWidget *widget )
 {
-    wxCHECK_RET( widget != NULL, wxT("unregister widget is NULL") );
+    //wxCHECK_RET( widget != NULL, wxT("unregister widget is NULL") );
 
     gtk_drag_dest_unset( widget );
 
@@ -565,7 +565,7 @@ void wxDropTarget::GtkUnregisterWidget( GtkWidget *widget )
 
 void wxDropTarget::GtkRegisterWidget( GtkWidget *widget )
 {
-    wxCHECK_RET( widget != NULL, wxT("register widget is NULL") );
+    //wxCHECK_RET( widget != NULL, wxT("register widget is NULL") );
 
     /* gtk_drag_dest_set() determines what default behaviour we'd like
        GTK to supply. we don't want to specify out targets (=formats)
@@ -815,7 +815,7 @@ void wxDropSource::PrepareIcon( int action, GdkDragContext *context )
 
 wxDragResult wxDropSource::DoDragDrop(int flags)
 {
-    wxCHECK_MSG( m_data && m_data->GetFormatCount(), wxDragNone,
+    //wxCHECK_MSG( m_data && m_data->GetFormatCount(), wxDragNone,
                  wxT("Drop source: no data") );
 
     // still in drag

@@ -113,7 +113,7 @@ void wxFileDirPickerCtrlBase::SetPath(const wxString &path)
 
 void wxFileDirPickerCtrlBase::UpdatePickerFromTextCtrl()
 {
-    wxASSERT(m_text);
+    //wxASSERT(m_text);
 
     if (m_bIgnoreNextTextCtrlUpdate)
     {

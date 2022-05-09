@@ -549,7 +549,7 @@ bool wxDDEConnection::Disconnect()
 bool
 wxDDEConnection::DoExecute(const void *data, size_t size, wxIPCFormat format)
 {
-    wxCHECK_MSG( format == wxIPC_TEXT ||
+    //wxCHECK_MSG( format == wxIPC_TEXT ||
                  format == wxIPC_UTF8TEXT ||
                  format == wxIPC_UNICODETEXT,
                  false,

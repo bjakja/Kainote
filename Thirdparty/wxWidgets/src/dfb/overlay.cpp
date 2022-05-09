@@ -58,11 +58,11 @@ bool wxOverlayImpl::IsOk()
 
 void wxOverlayImpl::Init(wxDC *dc, int x, int y, int width, int height)
 {
-    wxCHECK_RET( dc, "NULL dc pointer" );
+    //wxCHECK_RET( dc, "NULL dc pointer" );
     wxASSERT_MSG( !IsOk() , _("You cannot Init an overlay twice") );
 
     wxDFBDCImpl * const dcimpl = wxDynamicCast(dc->GetImpl(), wxDFBDCImpl);
-    wxCHECK_RET( dcimpl, "must have a DFB wxDC" );
+    //wxCHECK_RET( dcimpl, "must have a DFB wxDC" );
 
     m_window = dc->GetWindow();
 
@@ -82,7 +82,7 @@ void wxOverlayImpl::Init(wxDC *dc, int x, int y, int width, int height)
 
 void wxOverlayImpl::BeginDrawing(wxDC *dc)
 {
-    wxCHECK_RET( dc, "NULL dc pointer" );
+    //wxCHECK_RET( dc, "NULL dc pointer" );
 
     wxWindowDCImpl * const
         dcimpl = static_cast<wxWindowDCImpl *>(dc->GetImpl());

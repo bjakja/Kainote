@@ -122,7 +122,7 @@ bool wxWindowX11::Create(wxWindow *parent, wxWindowID id,
                          long style,
                          const wxString& name)
 {
-    wxCHECK_MSG( parent, false, wxT("can't create wxWindow without parent") );
+    //wxCHECK_MSG( parent, false, wxT("can't create wxWindow without parent") );
 
     // Get default border
     wxBorder border = GetBorder(style);
@@ -381,7 +381,7 @@ void wxWindowX11::SetFocus()
 {
     Window xwindow = (Window) m_clientWindow;
 
-    wxCHECK_RET( xwindow, wxT("invalid window") );
+    //wxCHECK_RET( xwindow, wxT("invalid window") );
 
     // Don't assert; we might be trying to set the focus for a panel
     // with only static controls, so the panel returns false from AcceptsFocus.
@@ -506,7 +506,7 @@ void wxWindowX11::DoCaptureMouse()
 
     Window xwindow = (Window) m_clientWindow;
 
-    wxCHECK_RET( xwindow, wxT("invalid window") );
+    //wxCHECK_RET( xwindow, wxT("invalid window") );
 
     g_captureWindow = (wxWindow*) this;
 
@@ -579,7 +579,7 @@ bool wxWindowX11::SetCursor(const wxCursor& cursor)
 
     Window xwindow = (Window) m_clientWindow;
 
-    wxCHECK_MSG( xwindow, false, wxT("invalid window") );
+    //wxCHECK_MSG( xwindow, false, wxT("invalid window") );
 
     wxCursor cursorToUse;
     if (m_cursor.IsOk())
@@ -599,7 +599,7 @@ void wxWindowX11::WarpPointer (int x, int y)
 {
     Window xwindow = (Window) m_clientWindow;
 
-    wxCHECK_RET( xwindow, wxT("invalid window") );
+    //wxCHECK_RET( xwindow, wxT("invalid window") );
 
     XWarpPointer( wxGlobalDisplay(), None, xwindow, 0, 0, 0, 0, x, y);
 }
@@ -632,7 +632,7 @@ void wxWindowX11::ScrollWindow(int dx, int dy, const wxRect *rect)
 
     Window xwindow = (Window) GetClientAreaWindow();
 
-    wxCHECK_RET( xwindow, wxT("invalid window") );
+    //wxCHECK_RET( xwindow, wxT("invalid window") );
 
     Display *xdisplay = wxGlobalDisplay();
 
@@ -768,13 +768,13 @@ void wxWindowX11::DoGetSize(int *x, int *y) const
 {
     Window xwindow = (Window) m_mainWindow;
 
-    wxCHECK_RET( xwindow, wxT("invalid window") );
+    //wxCHECK_RET( xwindow, wxT("invalid window") );
 
     //XSync(wxGlobalDisplay(), False);
 
     XWindowAttributes attr;
     Status status = XGetWindowAttributes( wxGlobalDisplay(), xwindow, &attr );
-    wxASSERT(status);
+    //wxASSERT(status);
 
     if (status)
     {
@@ -791,7 +791,7 @@ void wxWindowX11::DoGetPosition(int *x, int *y) const
         //XSync(wxGlobalDisplay(), False);
         XWindowAttributes attr;
         Status status = XGetWindowAttributes(wxGlobalDisplay(), window, & attr);
-        wxASSERT(status);
+        //wxASSERT(status);
 
         if (status)
         {
@@ -848,7 +848,7 @@ void wxWindowX11::DoGetClientSize(int *x, int *y) const
     {
         XWindowAttributes attr;
         Status status = XGetWindowAttributes( wxGlobalDisplay(), window, &attr );
-        wxASSERT(status);
+        //wxASSERT(status);
 
         if (status)
         {
@@ -864,11 +864,11 @@ void wxWindowX11::DoSetSize(int x, int y, int width, int height, int sizeFlags)
 
     Window xwindow = (Window) m_mainWindow;
 
-    wxCHECK_RET( xwindow, wxT("invalid window") );
+    //wxCHECK_RET( xwindow, wxT("invalid window") );
 
     XWindowAttributes attr;
     Status status = XGetWindowAttributes( wxGlobalDisplay(), xwindow, &attr );
-    wxCHECK_RET( status, wxT("invalid window attributes") );
+    //wxCHECK_RET( status, wxT("invalid window attributes") );
 
     int new_x = attr.x;
     int new_y = attr.y;
@@ -909,7 +909,7 @@ void wxWindowX11::DoSetClientSize(int width, int height)
 
     Window xwindow = (Window) m_mainWindow;
 
-    wxCHECK_RET( xwindow, wxT("invalid window") );
+    //wxCHECK_RET( xwindow, wxT("invalid window") );
 
     XResizeWindow( wxGlobalDisplay(), xwindow, width, height );
 
@@ -934,7 +934,7 @@ void wxWindowX11::DoMoveWindow(int x, int y, int width, int height)
 {
     Window xwindow = (Window) m_mainWindow;
 
-    wxCHECK_RET( xwindow, wxT("invalid window") );
+    //wxCHECK_RET( xwindow, wxT("invalid window") );
 
 #if !wxUSE_NANOX
 
@@ -1031,7 +1031,7 @@ void wxWindowX11::DoSetSizeHints(int minW, int minH, int maxW, int maxH, int inc
 int wxWindowX11::GetCharHeight() const
 {
     wxFont font(GetFont());
-    wxCHECK_MSG( font.IsOk(), 0, wxT("valid window font needed") );
+    //wxCHECK_MSG( font.IsOk(), 0, wxT("valid window font needed") );
 
 #if wxUSE_UNICODE
     // There should be an easier way.
@@ -1059,7 +1059,7 @@ int wxWindowX11::GetCharHeight() const
 int wxWindowX11::GetCharWidth() const
 {
     wxFont font(GetFont());
-    wxCHECK_MSG( font.IsOk(), 0, wxT("valid window font needed") );
+    //wxCHECK_MSG( font.IsOk(), 0, wxT("valid window font needed") );
 
 #if wxUSE_UNICODE
     // There should be an easier way.
@@ -1092,7 +1092,7 @@ void wxWindowX11::DoGetTextExtent(const wxString& string,
     wxFont fontToUse = GetFont();
     if (theFont) fontToUse = *theFont;
 
-    wxCHECK_RET( fontToUse.IsOk(), wxT("invalid font") );
+    //wxCHECK_RET( fontToUse.IsOk(), wxT("invalid font") );
 
     if (string.empty())
     {

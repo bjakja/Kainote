@@ -608,8 +608,8 @@ void wxString::UngetWriteBuf(size_t nLen)
 wxString operator+(const wxString& str1, const wxString& str2)
 {
 #if !wxUSE_STL_BASED_WXSTRING
-    wxASSERT( str1.IsValid() );
-    wxASSERT( str2.IsValid() );
+    //wxASSERT( str1.IsValid() );
+    //wxASSERT( str2.IsValid() );
 #endif
 
     wxString s = str1;
@@ -621,7 +621,7 @@ wxString operator+(const wxString& str1, const wxString& str2)
 wxString operator+(const wxString& str, wxUniChar ch)
 {
 #if !wxUSE_STL_BASED_WXSTRING
-    wxASSERT( str.IsValid() );
+    //wxASSERT( str.IsValid() );
 #endif
 
     wxString s = str;
@@ -633,7 +633,7 @@ wxString operator+(const wxString& str, wxUniChar ch)
 wxString operator+(wxUniChar ch, const wxString& str)
 {
 #if !wxUSE_STL_BASED_WXSTRING
-    wxASSERT( str.IsValid() );
+    //wxASSERT( str.IsValid() );
 #endif
 
     wxString s = ch;
@@ -645,7 +645,7 @@ wxString operator+(wxUniChar ch, const wxString& str)
 wxString operator+(const wxString& str, const char *psz)
 {
 #if !wxUSE_STL_BASED_WXSTRING
-    wxASSERT( str.IsValid() );
+    //wxASSERT( str.IsValid() );
 #endif
 
     wxString s;
@@ -661,7 +661,7 @@ wxString operator+(const wxString& str, const char *psz)
 wxString operator+(const wxString& str, const wchar_t *pwz)
 {
 #if !wxUSE_STL_BASED_WXSTRING
-    wxASSERT( str.IsValid() );
+    //wxASSERT( str.IsValid() );
 #endif
 
     wxString s;
@@ -677,7 +677,7 @@ wxString operator+(const wxString& str, const wchar_t *pwz)
 wxString operator+(const char *psz, const wxString& str)
 {
 #if !wxUSE_STL_BASED_WXSTRING
-    wxASSERT( str.IsValid() );
+    //wxASSERT( str.IsValid() );
 #endif
 
     wxString s;
@@ -693,7 +693,7 @@ wxString operator+(const char *psz, const wxString& str)
 wxString operator+(const wchar_t *pwz, const wxString& str)
 {
 #if !wxUSE_STL_BASED_WXSTRING
-    wxASSERT( str.IsValid() );
+    //wxASSERT( str.IsValid() );
 #endif
 
     wxString s;
@@ -809,7 +809,7 @@ int wxString::compare(const wxString& str) const
 int wxString::compare(size_t nStart, size_t nLen,
                       const wxString& str) const
 {
-    wxASSERT(nStart <= length());
+    //wxASSERT(nStart <= length());
     size_type strLen = length() - nStart;
     nLen = strLen < nLen ? strLen : nLen;
 
@@ -824,8 +824,8 @@ int wxString::compare(size_t nStart, size_t nLen,
                       const wxString& str,
                       size_t nStart2, size_t nLen2) const
 {
-    wxASSERT(nStart <= length());
-    wxASSERT(nStart2 <= str.length());
+    //wxASSERT(nStart <= length());
+    //wxASSERT(nStart2 <= str.length());
     size_type strLen  =     length() - nStart,
               strLen2 = str.length() - nStart2;
     nLen  = strLen  < nLen  ? strLen  : nLen;
@@ -859,7 +859,7 @@ int wxString::compare(const wchar_t* sz) const
 int wxString::compare(size_t nStart, size_t nLen,
                       const char* sz, size_t nCount) const
 {
-    wxASSERT(nStart <= length());
+    //wxASSERT(nStart <= length());
     size_type strLen = length() - nStart;
     nLen = strLen < nLen ? strLen : nLen;
 
@@ -876,7 +876,7 @@ int wxString::compare(size_t nStart, size_t nLen,
 int wxString::compare(size_t nStart, size_t nLen,
                       const wchar_t* sz, size_t nCount) const
 {
-    wxASSERT(nStart <= length());
+    //wxASSERT(nStart <= length());
     size_type strLen = length() - nStart;
     nLen = strLen < nLen ? strLen : nLen;
 
@@ -1401,7 +1401,7 @@ size_t wxString::Replace(const wxString& strOld,
                          const wxString& strNew, bool bReplaceAll)
 {
     // if we tried to replace an empty string we'd enter an infinite loop below
-    wxCHECK_MSG( !strOld.empty(), 0,
+    //wxCHECK_MSG( !strOld.empty(), 0,
                  wxT("wxString::Replace(): invalid parameter") );
 
     wxSTRING_INVALIDATE_CACHE();
@@ -1681,7 +1681,7 @@ int wxString::Find(wxUniChar ch, bool bFromEnd) const
 #endif
 
 #define WX_STRING_TO_X_TYPE_START                                           \
-    wxCHECK_MSG( pVal, false, wxT("NULL output pointer") );                  \
+    //wxCHECK_MSG( pVal, false, wxT("NULL output pointer") );                  \
     DO_IF_NOT_WINCE( errno = 0; )                                           \
     const wxStringCharType *start = wx_str();                               \
     wxStringCharType *end;
@@ -1835,7 +1835,7 @@ bool wxString::ToCDouble(double *pVal) const
 /* static */
 wxString wxString::FromDouble(double val, int precision)
 {
-    wxCHECK_MSG( precision >= -1, wxString(), "Invalid negative precision" );
+    //wxCHECK_MSG( precision >= -1, wxString(), "Invalid negative precision" );
 
     wxString format;
     if ( precision == -1 )
@@ -1853,7 +1853,7 @@ wxString wxString::FromDouble(double val, int precision)
 /* static */
 wxString wxString::FromCDouble(double val, int precision)
 {
-    wxCHECK_MSG( precision >= -1, wxString(), "Invalid negative precision" );
+    //wxCHECK_MSG( precision >= -1, wxString(), "Invalid negative precision" );
 
 #if wxUSE_STD_IOSTREAM && wxUSE_STD_STRING
     // We assume that we can use the ostream and not wstream for numbers.

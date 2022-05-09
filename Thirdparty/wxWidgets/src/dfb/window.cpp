@@ -144,10 +144,10 @@ bool wxWindowDFB::Create(wxWindow *parent,
 
 wxIDirectFBSurfacePtr wxWindowDFB::ObtainDfbSurface() const
 {
-    wxCHECK_MSG( m_parent, NULL, "parentless window?" );
+    //wxCHECK_MSG( m_parent, NULL, "parentless window?" );
 
     wxIDirectFBSurfacePtr parentSurface(m_parent->GetDfbSurface());
-    wxCHECK_MSG( parentSurface, NULL, "invalid parent surface" );
+    //wxCHECK_MSG( parentSurface, NULL, "invalid parent surface" );
 
     wxRect r(GetRect());
     AdjustForParentClientOrigin(r.x, r.y, 0);
@@ -229,7 +229,7 @@ void wxWindowDFB::SetFocus()
 
 void wxWindowDFB::DFBKillFocus()
 {
-    wxCHECK_RET( gs_focusedWindow == this,
+    //wxCHECK_RET( gs_focusedWindow == this,
                  "killing focus on window that doesn't have it" );
 
     gs_focusedWindow = NULL;
@@ -344,7 +344,7 @@ void wxWindowDFB::WarpPointer(int x, int y)
     if ( y >= h ) y = h-1;
 
     wxIDirectFBDisplayLayerPtr layer(wxIDirectFB::Get()->GetDisplayLayer());
-    wxCHECK_RET( layer, "no display layer" );
+    //wxCHECK_RET( layer, "no display layer" );
 
     layer->WarpCursor(x, y);
 }
@@ -380,7 +380,7 @@ void wxWindowDFB::DoGetPosition(int *x, int *y) const
 
 static wxPoint GetScreenPosOfClientOrigin(const wxWindowDFB *win)
 {
-    wxCHECK_MSG( win, wxPoint(0, 0), "no window provided" );
+    //wxCHECK_MSG( win, wxPoint(0, 0), "no window provided" );
 
     wxPoint pt(win->GetPosition() + win->GetClientAreaOrigin());
 
@@ -611,7 +611,7 @@ void wxWindowDFB::DoRefreshWindow()
 void wxWindowDFB::DoRefreshRect(const wxRect& rect)
 {
     wxWindow *parent = GetParent();
-    wxCHECK_RET( parent, "no parent" );
+    //wxCHECK_RET( parent, "no parent" );
 
     // don't overlap outside of the window (NB: 'rect' is in window coords):
     wxRect r(rect);
@@ -653,7 +653,7 @@ void wxWindowDFB::DoThaw()
 
 void wxWindowDFB::PaintWindow(const wxRect& rect)
 {
-    wxCHECK_RET( !IsFrozen() && IsShown(), "shouldn't be called" );
+    //wxCHECK_RET( !IsFrozen() && IsShown(), "shouldn't be called" );
 
     wxLogTrace(TRACE_PAINT,
                "%p ('%s'): painting region [%i,%i,%i,%i]",
@@ -780,7 +780,7 @@ void wxWindowDFB::AddOverlay(wxOverlayImpl *overlay)
 
 void wxWindowDFB::RemoveOverlay(wxOverlayImpl *overlay)
 {
-    wxCHECK_RET( m_overlays, "no overlays to remove" );
+    //wxCHECK_RET( m_overlays, "no overlays to remove" );
 
     m_overlays->Remove(overlay);
 

@@ -207,7 +207,7 @@ void wxFontRefData::SetPointSize(int pointSize)
 
 bool wxFontRefData::SetPixelSize(const wxSize& pixelSize)
 {
-    wxCHECK_MSG( pixelSize.GetWidth() >= 0 && pixelSize.GetHeight() > 0, false,
+    //wxCHECK_MSG( pixelSize.GetWidth() >= 0 && pixelSize.GetHeight() > 0, false,
                  "Negative values for the pixel size or zero pixel height are not allowed" );
 
     if (wx_pango_version_check(1,8,0) != NULL ||
@@ -343,14 +343,14 @@ wxFont::~wxFont()
 
 int wxFont::GetPointSize() const
 {
-    wxCHECK_MSG( IsOk(), 0, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), 0, wxT("invalid font") );
 
     return M_FONTDATA->m_nativeFontInfo.GetPointSize();
 }
 
 wxString wxFont::GetFaceName() const
 {
-    wxCHECK_MSG( IsOk(), wxEmptyString, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), wxEmptyString, wxT("invalid font") );
 
     return M_FONTDATA->m_nativeFontInfo.GetFaceName();
 }
@@ -362,35 +362,35 @@ wxFontFamily wxFont::DoGetFamily() const
 
 wxFontStyle wxFont::GetStyle() const
 {
-    wxCHECK_MSG( IsOk(), wxFONTSTYLE_MAX, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), wxFONTSTYLE_MAX, wxT("invalid font") );
 
     return M_FONTDATA->m_nativeFontInfo.GetStyle();
 }
 
 wxFontWeight wxFont::GetWeight() const
 {
-    wxCHECK_MSG( IsOk(), wxFONTWEIGHT_MAX, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), wxFONTWEIGHT_MAX, wxT("invalid font") );
 
     return M_FONTDATA->m_nativeFontInfo.GetWeight();
 }
 
 bool wxFont::GetUnderlined() const
 {
-    wxCHECK_MSG( IsOk(), false, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), false, wxT("invalid font") );
 
     return M_FONTDATA->m_underlined;
 }
 
 bool wxFont::GetStrikethrough() const
 {
-    wxCHECK_MSG( IsOk(), false, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), false, wxT("invalid font") );
 
     return M_FONTDATA->m_strikethrough;
 }
 
 wxFontEncoding wxFont::GetEncoding() const
 {
-    wxCHECK_MSG( IsOk(), wxFONTENCODING_SYSTEM, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), wxFONTENCODING_SYSTEM, wxT("invalid font") );
 
     return wxFONTENCODING_UTF8;
         // Pango always uses UTF8... see also SetEncoding()
@@ -398,14 +398,14 @@ wxFontEncoding wxFont::GetEncoding() const
 
 const wxNativeFontInfo *wxFont::GetNativeFontInfo() const
 {
-    wxCHECK_MSG( IsOk(), NULL, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), NULL, wxT("invalid font") );
 
     return &(M_FONTDATA->m_nativeFontInfo);
 }
 
 bool wxFont::IsFixedWidth() const
 {
-    wxCHECK_MSG( IsOk(), false, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), false, wxT("invalid font") );
 
     return wxFontBase::IsFixedWidth();
 }

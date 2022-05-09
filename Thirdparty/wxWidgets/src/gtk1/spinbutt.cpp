@@ -152,28 +152,28 @@ bool wxSpinButton::Create(wxWindow *parent,
 
 int wxSpinButton::GetMin() const
 {
-    wxCHECK_MSG( (m_widget != NULL), 0, wxT("invalid spin button") );
+    //wxCHECK_MSG( (m_widget != NULL), 0, wxT("invalid spin button") );
 
     return (int)ceil(m_adjust->lower);
 }
 
 int wxSpinButton::GetMax() const
 {
-    wxCHECK_MSG( (m_widget != NULL), 0, wxT("invalid spin button") );
+    //wxCHECK_MSG( (m_widget != NULL), 0, wxT("invalid spin button") );
 
     return (int)ceil(m_adjust->upper);
 }
 
 int wxSpinButton::GetValue() const
 {
-    wxCHECK_MSG( (m_widget != NULL), 0, wxT("invalid spin button") );
+    //wxCHECK_MSG( (m_widget != NULL), 0, wxT("invalid spin button") );
 
     return (int)ceil(m_adjust->value);
 }
 
 void wxSpinButton::SetValue( int value )
 {
-    wxCHECK_RET( (m_widget != NULL), wxT("invalid spin button") );
+    //wxCHECK_RET( (m_widget != NULL), wxT("invalid spin button") );
 
     float fpos = (float)value;
     m_oldPos = fpos;
@@ -186,7 +186,7 @@ void wxSpinButton::SetValue( int value )
 
 void wxSpinButton::SetRange(int minVal, int maxVal)
 {
-    wxCHECK_RET( (m_widget != NULL), wxT("invalid spin button") );
+    //wxCHECK_RET( (m_widget != NULL), wxT("invalid spin button") );
 
     float fmin = (float)minVal;
     float fmax = (float)maxVal;
@@ -209,7 +209,7 @@ void wxSpinButton::SetRange(int minVal, int maxVal)
 
 void wxSpinButton::OnSize( wxSizeEvent &WXUNUSED(event) )
 {
-    wxCHECK_RET( (m_widget != NULL), wxT("invalid spin button") );
+    //wxCHECK_RET( (m_widget != NULL), wxT("invalid spin button") );
 
     m_width = DoGetBestSize().x;
     gtk_widget_set_usize( m_widget, m_width, m_height );

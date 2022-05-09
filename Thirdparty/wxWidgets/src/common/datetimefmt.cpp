@@ -315,7 +315,7 @@ ParseFormatAt(wxString::const_iterator& p,
 
 wxString wxDateTime::Format(const wxString& formatp, const TimeZone& tz) const
 {
-    wxCHECK_MSG( !formatp.empty(), wxEmptyString,
+    //wxCHECK_MSG( !formatp.empty(), wxEmptyString,
                  wxT("NULL format in wxDateTime::Format") );
 
     wxString format = formatp;
@@ -346,7 +346,7 @@ wxString wxDateTime::Format(const wxString& formatp, const TimeZone& tz) const
             tm = wxLocaltime_r(&time, &tmstruct);
 
             // should never happen
-            wxCHECK_MSG( tm, wxEmptyString, wxT("wxLocaltime_r() failed") );
+            //wxCHECK_MSG( tm, wxEmptyString, wxT("wxLocaltime_r() failed") );
         }
         else
         {
@@ -362,7 +362,7 @@ wxString wxDateTime::Format(const wxString& formatp, const TimeZone& tz) const
                 tm = wxGmtime_r(&time, &tmstruct);
 
                 // should never happen
-                wxCHECK_MSG( tm, wxEmptyString, wxT("wxGmtime_r() failed") );
+                //wxCHECK_MSG( tm, wxEmptyString, wxT("wxGmtime_r() failed") );
             }
             else
             {
@@ -961,8 +961,8 @@ wxDateTime::ParseFormat(const wxString& date,
                         const wxDateTime& dateDef,
                         wxString::const_iterator *endParse)
 {
-    wxCHECK_MSG( !format.empty(), false, "format can't be empty" );
-    wxCHECK_MSG( endParse, false, "end iterator pointer must be specified" );
+    //wxCHECK_MSG( !format.empty(), false, "format can't be empty" );
+    //wxCHECK_MSG( endParse, false, "end iterator pointer must be specified" );
 
     wxString str;
     unsigned long num;
@@ -1618,7 +1618,7 @@ wxDateTime::ParseFormat(const wchar_t* date,
 bool
 wxDateTime::ParseDateTime(const wxString& date, wxString::const_iterator *end)
 {
-    wxCHECK_MSG( end, false, "end iterator pointer must be specified" );
+    //wxCHECK_MSG( end, false, "end iterator pointer must be specified" );
 
     wxDateTime
         dtDate,
@@ -1691,7 +1691,7 @@ const wchar_t* wxDateTime::ParseDateTime(const wchar_t* date)
 bool
 wxDateTime::ParseDate(const wxString& date, wxString::const_iterator *end)
 {
-    wxCHECK_MSG( end, false, "end iterator pointer must be specified" );
+    //wxCHECK_MSG( end, false, "end iterator pointer must be specified" );
 
     // this is a simplified version of ParseDateTime() which understands only
     // "today" (for wxDate compatibility) and digits only otherwise (and not
@@ -2068,7 +2068,7 @@ const wchar_t* wxDateTime::ParseDate(const wchar_t* date)
 bool
 wxDateTime::ParseTime(const wxString& time, wxString::const_iterator *end)
 {
-    wxCHECK_MSG( end, false, "end iterator pointer must be specified" );
+    //wxCHECK_MSG( end, false, "end iterator pointer must be specified" );
 
     // first try some extra things
     static const struct
@@ -2207,7 +2207,7 @@ wxString wxTimeSpan::Format(const wxString& format) const
         return "-" + str;
     }
 
-    wxCHECK_MSG( !format.empty(), wxEmptyString,
+    //wxCHECK_MSG( !format.empty(), wxEmptyString,
                  wxT("NULL format in wxTimeSpan::Format") );
 
     wxString str;

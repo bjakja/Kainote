@@ -261,7 +261,7 @@ public:
 
     /**
         This function is called when an assert failure occurs, i.e. the condition
-        specified in wxASSERT() macro evaluated to @false.
+        specified in //wxASSERT() macro evaluated to @false.
 
         It is only called in debug mode (when @c __WXDEBUG__ is defined) as
         asserts are not left in the release code at all.

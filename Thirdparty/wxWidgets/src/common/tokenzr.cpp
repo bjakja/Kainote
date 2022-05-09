@@ -162,7 +162,7 @@ bool wxStringTokenizer::HasMoreTokens() const
 
 bool wxStringTokenizer::DoHasMoreTokens() const
 {
-    wxCHECK_MSG( IsOk(), false, wxT("you should call SetString() first") );
+    //wxCHECK_MSG( IsOk(), false, wxT("you should call SetString() first") );
 
     if ( find_first_not_of(m_delims, m_delimsLen, m_pos, m_stringEnd)
          != m_stringEnd )
@@ -204,7 +204,7 @@ bool wxStringTokenizer::DoHasMoreTokens() const
 // count the number of (remaining) tokens in the string
 size_t wxStringTokenizer::CountTokens() const
 {
-    wxCHECK_MSG( IsOk(), 0, wxT("you should call SetString() first") );
+    //wxCHECK_MSG( IsOk(), 0, wxT("you should call SetString() first") );
 
     // VZ: this function is IMHO not very useful, so it's probably not very
     //     important if its implementation here is not as efficient as it

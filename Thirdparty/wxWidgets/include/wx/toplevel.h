@@ -205,7 +205,7 @@ public:
     // shows the window, but doesn't activate it. If the base code is being run,
     // it means the port doesn't implement this method yet and so alert the user.
     virtual void ShowWithoutActivating() {
-        wxFAIL_MSG("ShowWithoutActivating not implemented on this platform.");
+        //wxFAIL_MSG("ShowWithoutActivating not implemented on this platform.");
     }
 
     // return true if the frame is in fullscreen mode

@@ -139,7 +139,7 @@ bool wxSpinCtrlGTKBase::Create(wxWindow *parent, wxWindowID id,
 
 double wxSpinCtrlGTKBase::DoGetValue() const
 {
-    wxCHECK_MSG( (m_widget != NULL), 0, wxT("invalid spin button") );
+    //wxCHECK_MSG( (m_widget != NULL), 0, wxT("invalid spin button") );
 
     // Get value directly from current control text, just as
     // gtk_spin_button_update() would do. Calling gtk_spin_button_update() causes
@@ -168,7 +168,7 @@ double wxSpinCtrlGTKBase::DoGetValue() const
 
 double wxSpinCtrlGTKBase::DoGetMin() const
 {
-    wxCHECK_MSG( (m_widget != NULL), 0, wxT("invalid spin button") );
+    //wxCHECK_MSG( (m_widget != NULL), 0, wxT("invalid spin button") );
 
     double min = 0;
     gtk_spin_button_get_range( GTK_SPIN_BUTTON(m_widget), &min, NULL);
@@ -177,7 +177,7 @@ double wxSpinCtrlGTKBase::DoGetMin() const
 
 double wxSpinCtrlGTKBase::DoGetMax() const
 {
-    wxCHECK_MSG( (m_widget != NULL), 0, wxT("invalid spin button") );
+    //wxCHECK_MSG( (m_widget != NULL), 0, wxT("invalid spin button") );
 
     double max = 0;
     gtk_spin_button_get_range( GTK_SPIN_BUTTON(m_widget), NULL, &max);
@@ -186,7 +186,7 @@ double wxSpinCtrlGTKBase::DoGetMax() const
 
 double wxSpinCtrlGTKBase::DoGetIncrement() const
 {
-    wxCHECK_MSG( (m_widget != NULL), 0, wxT("invalid spin button") );
+    //wxCHECK_MSG( (m_widget != NULL), 0, wxT("invalid spin button") );
 
     double inc = 0;
     gtk_spin_button_get_increments( GTK_SPIN_BUTTON(m_widget), &inc, NULL);
@@ -195,14 +195,14 @@ double wxSpinCtrlGTKBase::DoGetIncrement() const
 
 bool wxSpinCtrlGTKBase::GetSnapToTicks() const
 {
-    wxCHECK_MSG(m_widget, false, "invalid spin button");
+    //wxCHECK_MSG(m_widget, false, "invalid spin button");
 
     return gtk_spin_button_get_snap_to_ticks( GTK_SPIN_BUTTON(m_widget) ) != 0;
 }
 
 void wxSpinCtrlGTKBase::SetValue( const wxString& value )
 {
-    wxCHECK_RET( (m_widget != NULL), wxT("invalid spin button") );
+    //wxCHECK_RET( (m_widget != NULL), wxT("invalid spin button") );
 
     double n;
     if ( wxSscanf(value, "%lg", &n) == 1 )
@@ -220,7 +220,7 @@ void wxSpinCtrlGTKBase::SetValue( const wxString& value )
 
 void wxSpinCtrlGTKBase::DoSetValue( double value )
 {
-    wxCHECK_RET( (m_widget != NULL), wxT("invalid spin button") );
+    //wxCHECK_RET( (m_widget != NULL), wxT("invalid spin button") );
 
     GtkDisableEvents();
     gtk_spin_button_set_value( GTK_SPIN_BUTTON(m_widget), value);
@@ -229,7 +229,7 @@ void wxSpinCtrlGTKBase::DoSetValue( double value )
 
 void wxSpinCtrlGTKBase::SetSnapToTicks(bool snap_to_ticks)
 {
-    wxCHECK_RET( (m_widget != NULL), "invalid spin button" );
+    //wxCHECK_RET( (m_widget != NULL), "invalid spin button" );
 
     gtk_spin_button_set_snap_to_ticks( GTK_SPIN_BUTTON(m_widget), snap_to_ticks);
 }
@@ -249,7 +249,7 @@ void wxSpinCtrlGTKBase::SetSelection(long from, long to)
 
 void wxSpinCtrlGTKBase::DoSetRange(double minVal, double maxVal)
 {
-    wxCHECK_RET( (m_widget != NULL), wxT("invalid spin button") );
+    //wxCHECK_RET( (m_widget != NULL), wxT("invalid spin button") );
 
     GtkDisableEvents();
     gtk_spin_button_set_range( GTK_SPIN_BUTTON(m_widget), minVal, maxVal);
@@ -258,7 +258,7 @@ void wxSpinCtrlGTKBase::DoSetRange(double minVal, double maxVal)
 
 void wxSpinCtrlGTKBase::DoSetIncrement(double inc)
 {
-    wxCHECK_RET( m_widget, "invalid spin button" );
+    //wxCHECK_RET( m_widget, "invalid spin button" );
 
     GtkDisableEvents();
 
@@ -290,7 +290,7 @@ void wxSpinCtrlGTKBase::GtkEnableEvents() const
 
 void wxSpinCtrlGTKBase::OnChar( wxKeyEvent &event )
 {
-    wxCHECK_RET( m_widget != NULL, wxT("invalid spin ctrl") );
+    //wxCHECK_RET( m_widget != NULL, wxT("invalid spin ctrl") );
 
     if (event.GetKeyCode() == WXK_RETURN)
     {
@@ -369,14 +369,14 @@ IMPLEMENT_DYNAMIC_CLASS(wxSpinCtrlDouble, wxSpinCtrlGTKBase)
 
 unsigned wxSpinCtrlDouble::GetDigits() const
 {
-    wxCHECK_MSG( m_widget, 0, "invalid spin button" );
+    //wxCHECK_MSG( m_widget, 0, "invalid spin button" );
 
     return gtk_spin_button_get_digits( GTK_SPIN_BUTTON(m_widget) );
 }
 
 void wxSpinCtrlDouble::SetDigits(unsigned digits)
 {
-    wxCHECK_RET( m_widget, "invalid spin button" );
+    //wxCHECK_RET( m_widget, "invalid spin button" );
 
     gtk_spin_button_set_digits( GTK_SPIN_BUTTON(m_widget), digits);
 }

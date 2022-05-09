@@ -81,7 +81,7 @@ bool wxCheckListBox::Create(
 
 bool wxCheckListBox::IsChecked(unsigned int n) const
 {
-    wxCHECK_MSG( IsValid(n), false,
+    //wxCHECK_MSG( IsValid(n), false,
                  wxT("invalid index in wxCheckListBox::IsChecked") );
 
     return m_checks[n] != 0;
@@ -89,7 +89,7 @@ bool wxCheckListBox::IsChecked(unsigned int n) const
 
 void wxCheckListBox::Check(unsigned int n, bool check)
 {
-    wxCHECK_RET( IsValid(n),
+    //wxCHECK_RET( IsValid(n),
                  wxT("invalid index in wxCheckListBox::Check") );
 
     // intermediate var is needed to avoid compiler warning with VC++

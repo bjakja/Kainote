@@ -523,7 +523,7 @@ bool wxWindowMSW::Create(wxWindow *parent,
                          long style,
                          const wxString& name)
 {
-    wxCHECK_MSG( parent, false, wxT("can't create wxWindow without parent") );
+    //wxCHECK_MSG( parent, false, wxT("can't create wxWindow without parent") );
 
     if ( !CreateBase(parent, id, pos, size, style, wxDefaultValidator, name) )
         return false;
@@ -563,7 +563,7 @@ bool wxWindowMSW::Create(wxWindow *parent,
 void wxWindowMSW::SetFocus()
 {
     HWND hWnd = GetHwnd();
-    wxCHECK_RET( hWnd, wxT("can't set focus to invalid window") );
+    //wxCHECK_RET( hWnd, wxT("can't set focus to invalid window") );
 
 #if !defined(__WXWINCE__)
     ::SetLastError(0);
@@ -946,7 +946,7 @@ inline UINT WXOrientToSB(int orient)
 int wxWindowMSW::GetScrollPos(int orient) const
 {
     HWND hWnd = GetHwnd();
-    wxCHECK_MSG( hWnd, 0, wxT("no HWND in GetScrollPos") );
+    //wxCHECK_MSG( hWnd, 0, wxT("no HWND in GetScrollPos") );
 
     return GetScrollPosition(hWnd, WXOrientToSB(orient));
 }
@@ -981,7 +981,7 @@ int wxWindowMSW::GetScrollThumb(int orient) const
 void wxWindowMSW::SetScrollPos(int orient, int pos, bool refresh)
 {
     HWND hWnd = GetHwnd();
-    wxCHECK_RET( hWnd, wxT("SetScrollPos: no HWND") );
+    //wxCHECK_RET( hWnd, wxT("SetScrollPos: no HWND") );
 
     WinStruct<SCROLLINFO> info;
     info.nPage = 0;
@@ -1113,7 +1113,7 @@ void wxWindowMSW::SetLayoutDirection(wxLayoutDirection dir)
 #ifdef __WXWINCE__
     wxUnusedVar(dir);
 #else
-    wxCHECK_RET( GetHwnd(),
+    //wxCHECK_RET( GetHwnd(),
                  wxT("layout direction must be set after window creation") );
 
     LONG styleOld = wxGetWindowExStyle(this);
@@ -1146,7 +1146,7 @@ wxLayoutDirection wxWindowMSW::GetLayoutDirection() const
 #ifdef __WXWINCE__
     return wxLayout_Default;
 #else
-    wxCHECK_MSG( GetHwnd(), wxLayout_Default, wxT("invalid window") );
+    //wxCHECK_MSG( GetHwnd(), wxLayout_Default, wxT("invalid window") );
 
     return wxHasWindowExStyle(this, WS_EX_LAYOUTRTL) ? wxLayout_RightToLeft
                                                      : wxLayout_LeftToRight;
@@ -1172,7 +1172,7 @@ void wxWindowMSW::SubclassWin(WXHWND hWnd)
     wxASSERT_MSG( !m_oldWndProc, wxT("subclassing window twice?") );
 
     HWND hwnd = (HWND)hWnd;
-    wxCHECK_RET( ::IsWindow(hwnd), wxT("invalid HWND in SubclassWin") );
+    //wxCHECK_RET( ::IsWindow(hwnd), wxT("invalid HWND in SubclassWin") );
 
     SetHWND(hWnd);
 
@@ -1210,7 +1210,7 @@ void wxWindowMSW::UnsubclassWin()
     {
         SetHWND(0);
 
-        wxCHECK_RET( ::IsWindow(hwnd), wxT("invalid HWND in UnsubclassWin") );
+        //wxCHECK_RET( ::IsWindow(hwnd), wxT("invalid HWND in UnsubclassWin") );
 
         if ( m_oldWndProc )
         {
@@ -2962,7 +2962,7 @@ wxWindowMSW::MSWHandleMessage(WXLRESULT *result,
                     win = FindWindowForMouseEvent(this, &x, &y);
 
                     // this should never happen
-                    wxCHECK_MSG( win, 0,
+                    //wxCHECK_MSG( win, 0,
                                  wxT("FindWindowForMouseEvent() returned NULL") );
                 }
 #ifdef __POCKETPC__
@@ -3640,7 +3640,7 @@ void wxAssociateWinWithHandle(HWND hwnd, wxWindowMSW *win)
 {
     // adding NULL hwnd is (first) surely a result of an error and
     // (secondly) breaks menu command processing
-    wxCHECK_RET( hwnd != (HWND)NULL,
+    //wxCHECK_RET( hwnd != (HWND)NULL,
                  wxT("attempt to add a NULL hwnd to window list ignored") );
 
 #if wxDEBUG_LEVEL
@@ -3731,11 +3731,11 @@ bool wxWindowMSW::MSWCreate(const wxChar *wclass,
     // non-default ctor and Create() is called too, we'd create 2 HWND for a
     // single wxWindow object and this results in all sorts of trouble,
     // especially for wxTLWs
-    wxCHECK_MSG( !m_hWnd, true, "window can't be recreated" );
+    //wxCHECK_MSG( !m_hWnd, true, "window can't be recreated" );
 
     // this can happen if this function is called using the return value of
     // wxApp::GetRegisteredClassName() which failed
-    wxCHECK_MSG( wclass, false, "failed to register window class?" );
+    //wxCHECK_MSG( wclass, false, "failed to register window class?" );
 
 
     // choose the position/size for the new window
@@ -4367,7 +4367,7 @@ wxWindowMSW::MSWOnDrawItem(int WXUNUSED_UNLESS_ODRAWN(id),
         if ( !pMenuItem )
             return false;
 
-        wxCHECK_MSG( wxDynamicCast(pMenuItem, wxMenuItem),
+        //wxCHECK_MSG( wxDynamicCast(pMenuItem, wxMenuItem),
                          false, wxT("MSWOnDrawItem: bad wxMenuItem pointer") );
 
         // prepare to call OnDrawItem(): notice using of wxDCTemp to prevent
@@ -4433,7 +4433,7 @@ wxWindowMSW::MSWOnMeasureItem(int id, WXMEASUREITEMSTRUCT *itemStruct)
         if ( !pMenuItem )
             return false;
 
-        wxCHECK_MSG( wxDynamicCast(pMenuItem, wxMenuItem),
+        //wxCHECK_MSG( wxDynamicCast(pMenuItem, wxMenuItem),
                         false, wxT("MSWOnMeasureItem: bad wxMenuItem pointer") );
 
         size_t w, h;
@@ -5376,7 +5376,7 @@ void wxWindowMSW::InitMouseEvent(wxMouseEvent& event,
 // still don't get move, enter nor leave events.
 static wxWindowMSW *FindWindowForMouseEvent(wxWindowMSW *win, int *x, int *y)
 {
-    wxCHECK_MSG( x && y, win, wxT("NULL pointer in FindWindowForMouseEvent") );
+    //wxCHECK_MSG( x && y, win, wxT("NULL pointer in FindWindowForMouseEvent") );
 
     // first try to find a non transparent child: this allows us to send events
     // to a static text which is inside a static box, for example
@@ -6067,7 +6067,7 @@ bool wxWindowMSW::MSWOnScroll(int orientation, WXWORD wParam,
 /* static */ bool
 wxWindowMSW::MSWRegisterMessageHandler(int msg, MSWMessageHandler handler)
 {
-    wxCHECK_MSG( gs_messageHandlers.find(msg) == gs_messageHandlers.end(),
+    //wxCHECK_MSG( gs_messageHandlers.find(msg) == gs_messageHandlers.end(),
                  false, wxT("registering handler for the same message twice") );
 
     gs_messageHandlers[msg] = handler;
@@ -6078,7 +6078,7 @@ wxWindowMSW::MSWRegisterMessageHandler(int msg, MSWMessageHandler handler)
 wxWindowMSW::MSWUnregisterMessageHandler(int msg, MSWMessageHandler handler)
 {
     const MSWMessageHandlers::iterator i = gs_messageHandlers.find(msg);
-    wxCHECK_RET( i != gs_messageHandlers.end() && i->second == handler,
+    //wxCHECK_RET( i != gs_messageHandlers.end() && i->second == handler,
                  wxT("unregistering non-registered handler?") );
 
     gs_messageHandlers.erase(i);

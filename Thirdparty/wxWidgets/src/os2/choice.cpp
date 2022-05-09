@@ -161,7 +161,7 @@ int wxChoice::DoInsertItems(const wxArrayStringsAdapter& items
 
 void wxChoice::DoDeleteOneItem(unsigned int n)
 {
-    wxCHECK_RET( IsValid(n), wxT("invalid item index in wxChoice::Delete") );
+    //wxCHECK_RET( IsValid(n), wxT("invalid item index in wxChoice::Delete") );
 
     ::WinSendMsg(GetHwnd(), LM_DELETEITEM, (MPARAM)n, (MPARAM)0);
 } // end of wxChoice::Delete

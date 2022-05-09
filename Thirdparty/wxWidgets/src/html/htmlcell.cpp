@@ -150,7 +150,7 @@ bool wxHtmlCell::ProcessMouseClick(wxHtmlWindowInterface *window,
                                    const wxPoint& pos,
                                    const wxMouseEvent& event)
 {
-    wxCHECK_MSG( window, false, wxT("window interface must be provided") );
+    //wxCHECK_MSG( window, false, wxT("window interface must be provided") );
 
 #if WXWIN_COMPATIBILITY_2_6
     // NB: this hack puts the body of ProcessMouseClick() into OnMouseClick()
@@ -164,7 +164,7 @@ bool wxHtmlCell::ProcessMouseClick(wxHtmlWindowInterface *window,
 
 void wxHtmlCell::OnMouseClick(wxWindow *, int, int, const wxMouseEvent& event)
 {
-    wxCHECK_RET( gs_helperOnMouseClick, wxT("unexpected call to OnMouseClick") );
+    //wxCHECK_RET( gs_helperOnMouseClick, wxT("unexpected call to OnMouseClick") );
     wxHtmlWindowInterface *window = gs_helperOnMouseClick->window;
     const wxPoint& pos = gs_helperOnMouseClick->pos;
 #endif // WXWIN_COMPATIBILITY_2_6
@@ -469,7 +469,7 @@ void wxHtmlWordCell::Split(const wxDC& dc,
     pos1 = i;
     pos2 = j;
 
-    wxASSERT( pos2 >= pos1 );
+    //wxASSERT( pos2 >= pos1 );
 }
 
 void wxHtmlWordCell::SetSelectionPrivPos(const wxDC& dc, wxHtmlSelection *s) const
@@ -664,7 +664,7 @@ wxString wxHtmlWordWithTabsCell::GetPartAsText(int begin, int end) const
     //     may be in the middle of TAB character expansion into ' 's. In this
     //     case, we copy the TAB character to clipboard once.
 
-    wxASSERT( begin < end );
+    //wxASSERT( begin < end );
 
     const unsigned SPACES_PER_TAB = 8;
 
@@ -1383,7 +1383,7 @@ bool wxHtmlContainerCell::ProcessMouseClick(wxHtmlWindowInterface *window,
 void wxHtmlContainerCell::OnMouseClick(wxWindow*,
                                        int, int, const wxMouseEvent& event)
 {
-    wxCHECK_RET( gs_helperOnMouseClick, wxT("unexpected call to OnMouseClick") );
+    //wxCHECK_RET( gs_helperOnMouseClick, wxT("unexpected call to OnMouseClick") );
     wxHtmlWindowInterface *window = gs_helperOnMouseClick->window;
     const wxPoint& pos = gs_helperOnMouseClick->pos;
 #endif // WXWIN_COMPATIBILITY_2_6
@@ -1629,7 +1629,7 @@ void wxHtmlWidgetCell::Draw(wxDC& WXUNUSED(dc),
 
     wxScrolledWindow *scrolwin =
         wxDynamicCast(m_Wnd->GetParent(), wxScrolledWindow);
-    wxCHECK_RET( scrolwin,
+    //wxCHECK_RET( scrolwin,
                  wxT("widget cells can only be placed in wxHtmlWindow") );
 
     scrolwin->GetViewStart(&stx, &sty);

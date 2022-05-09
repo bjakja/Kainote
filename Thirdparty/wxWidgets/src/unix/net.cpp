@@ -231,7 +231,7 @@ wxDialUpManagerImpl::HangUp(void)
 bool
 wxDialUpManagerImpl::EnableAutoCheckOnlineStatus(size_t nSeconds)
 {
-   wxASSERT(m_timer == NULL);
+   //wxASSERT(m_timer == NULL);
    m_timer = new AutoCheckTimer(this);
    bool rc = m_timer->Start(nSeconds*1000);
    if(! rc)
@@ -244,7 +244,7 @@ wxDialUpManagerImpl::EnableAutoCheckOnlineStatus(size_t nSeconds)
 void
 wxDialUpManagerImpl::DisableAutoCheckOnlineStatus()
 {
-   wxASSERT(m_timer != NULL);
+   //wxASSERT(m_timer != NULL);
    m_timer->Stop();
    wxDELETE(m_timer);
 }
@@ -319,7 +319,7 @@ wxDialUpManagerImpl::CheckStatusInternal(void)
    // Let's try the ifconfig method first, should be fastest:
    if(m_CanUseIfconfig != 0) // unknown or yes
    {
-      wxASSERT( !m_IfconfigPath.empty() );
+      //wxASSERT( !m_IfconfigPath.empty() );
 
       wxString tmpfile = wxFileName::CreateTempFileName("_wxdialuptest");
       wxString cmd = "/bin/sh -c \'";
@@ -342,14 +342,14 @@ wxDialUpManagerImpl::CheckStatusInternal(void)
          // new stderr:
          null_fd = open("/dev/null", O_CREAT, S_IRUSR|S_IWUSR);
       // verify well behaved unix behaviour:
-      wxASSERT(output_fd == STDOUT_FILENO);
-      wxASSERT(null_fd == STDERR_FILENO);
+      //wxASSERT(output_fd == STDOUT_FILENO);
+      //wxASSERT(null_fd == STDERR_FILENO);
       int rc = wxExecute(m_IfconfigPath,TRUE /* sync */,NULL ,wxEXECUTE_DONT_CLOSE_FDS);
       close(null_fd); close(output_fd);
       // restore old stdout, stderr:
       int test;
-      test = dup(new_stdout); close(new_stdout); wxASSERT(test == STDOUT_FILENO);
-      test = dup(new_stderr); close(new_stderr); wxASSERT(test == STDERR_FILENO);
+      test = dup(new_stdout); close(new_stdout); //wxASSERT(test == STDOUT_FILENO);
+      test = dup(new_stderr); close(new_stderr); //wxASSERT(test == STDERR_FILENO);
       if(rc == 0)
 #endif
       if(wxExecute(cmd,TRUE /* sync */) == 0)

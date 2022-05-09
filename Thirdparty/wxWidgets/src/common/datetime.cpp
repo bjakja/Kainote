@@ -386,7 +386,7 @@ bool wxDateTime::Tm::IsValid() const
 
     // We need to check this here to avoid crashing in GetNumOfDaysInMonth() if
     // somebody passed us "(wxDateTime::Month)1000".
-    wxCHECK_MSG( mon >= wxDateTime::Jan && mon < wxDateTime::Inv_Month, false,
+    //wxCHECK_MSG( mon >= wxDateTime::Jan && mon < wxDateTime::Inv_Month, false,
                  wxS("Invalid month value") );
 
     // we allow for the leap seconds, although we don't use them (yet)
@@ -625,7 +625,7 @@ wxDateTime::wxDateTime_t wxDateTime::GetNumberOfDays(wxDateTime::Month month,
                                                      int year,
                                                      wxDateTime::Calendar cal)
 {
-    wxCHECK_MSG( month < MONTHS_IN_YEAR, 0, wxT("invalid month") );
+    //wxCHECK_MSG( month < MONTHS_IN_YEAR, 0, wxT("invalid month") );
 
     if ( cal == Gregorian || cal == Julian )
     {
@@ -676,7 +676,7 @@ int NameArrayIndexFromFlag(wxDateTime::NameFlags flags)
 /* static */
 wxString wxDateTime::GetEnglishMonthName(Month month, NameFlags flags)
 {
-    wxCHECK_MSG( month != Inv_Month, wxEmptyString, "invalid month" );
+    //wxCHECK_MSG( month != Inv_Month, wxEmptyString, "invalid month" );
 
     static const char *const monthNames[2][MONTHS_IN_YEAR] =
     {
@@ -698,7 +698,7 @@ wxString wxDateTime::GetMonthName(wxDateTime::Month month,
                                   wxDateTime::NameFlags flags)
 {
 #ifdef wxHAS_STRFTIME
-    wxCHECK_MSG( month != Inv_Month, wxEmptyString, wxT("invalid month") );
+    //wxCHECK_MSG( month != Inv_Month, wxEmptyString, wxT("invalid month") );
 
     // notice that we must set all the fields to avoid confusing libc (GNU one
     // gets confused to a crash if we don't do this)
@@ -715,7 +715,7 @@ wxString wxDateTime::GetMonthName(wxDateTime::Month month,
 /* static */
 wxString wxDateTime::GetEnglishWeekDayName(WeekDay wday, NameFlags flags)
 {
-    wxCHECK_MSG( wday != Inv_WeekDay, wxEmptyString, wxT("invalid weekday") );
+    //wxCHECK_MSG( wday != Inv_WeekDay, wxEmptyString, wxT("invalid weekday") );
 
     static const char *const weekdayNames[2][DAYS_PER_WEEK] =
     {
@@ -736,7 +736,7 @@ wxString wxDateTime::GetWeekDayName(wxDateTime::WeekDay wday,
                                     wxDateTime::NameFlags flags)
 {
 #ifdef wxHAS_STRFTIME
-    wxCHECK_MSG( wday != Inv_WeekDay, wxEmptyString, wxT("invalid weekday") );
+    //wxCHECK_MSG( wday != Inv_WeekDay, wxEmptyString, wxT("invalid weekday") );
 
     // take some arbitrary Sunday (but notice that the day should be such that
     // after adding wday to it below we still have a valid date, e.g. don't
@@ -1331,7 +1331,7 @@ unsigned long wxDateTime::GetAsDOS() const
     time_t ticks = GetTicks();
     struct tm tmstruct;
     struct tm *tm = wxLocaltime_r(&ticks, &tmstruct);
-    wxCHECK_MSG( tm, ULONG_MAX, wxT("time can't be represented in DOS format") );
+    //wxCHECK_MSG( tm, ULONG_MAX, wxT("time can't be represented in DOS format") );
 
     long year = tm->tm_year;
     year -= 80;
@@ -1377,7 +1377,7 @@ wxDateTime::Tm wxDateTime::GetTm(const TimeZone& tz) const
             tm = wxLocaltime_r(&time, &tmstruct);
 
             // should never happen
-            wxCHECK_MSG( tm, Tm(), wxT("wxLocaltime_r() failed") );
+            //wxCHECK_MSG( tm, Tm(), wxT("wxLocaltime_r() failed") );
         }
         else
         {
@@ -1392,7 +1392,7 @@ wxDateTime::Tm wxDateTime::GetTm(const TimeZone& tz) const
                 tm = wxGmtime_r(&time, &tmstruct);
 
                 // should never happen
-                wxCHECK_MSG( tm, Tm(), wxT("wxGmtime_r() failed") );
+                //wxCHECK_MSG( tm, Tm(), wxT("wxGmtime_r() failed") );
             }
             else
             {
@@ -1772,7 +1772,7 @@ bool wxDateTime::SetToWeekDay(WeekDay weekday,
                               Month month,
                               int year)
 {
-    wxCHECK_MSG( weekday != Inv_WeekDay, false, wxT("invalid weekday") );
+    //wxCHECK_MSG( weekday != Inv_WeekDay, false, wxT("invalid weekday") );
 
     // we don't check explicitly that -5 <= n <= 5 because we will return false
     // anyhow in such case - but may be should still give an assert for it?
@@ -1975,7 +1975,7 @@ double wxDateTime::GetRataDie() const
 
 int wxDateTime::IsDST(wxDateTime::Country country) const
 {
-    wxCHECK_MSG( country == Country_Default, -1,
+    //wxCHECK_MSG( country == Country_Default, -1,
                  wxT("country support not implemented") );
 
     // use the C RTL for the dates in the standard range
@@ -1985,7 +1985,7 @@ int wxDateTime::IsDST(wxDateTime::Country country) const
         struct tm tmstruct;
         tm *tm = wxLocaltime_r(&timet, &tmstruct);
 
-        wxCHECK_MSG( tm, -1, wxT("wxLocaltime_r() failed") );
+        //wxCHECK_MSG( tm, -1, wxT("wxLocaltime_r() failed") );
 
         return tm->tm_isdst;
     }

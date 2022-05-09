@@ -266,7 +266,7 @@ bool wxGetUserId(wxChar *WXUNUSED_IN_WINCE(buf),
 // Get user name e.g. Julian Smart
 bool wxGetUserName(wxChar *buf, int maxSize)
 {
-    wxCHECK_MSG( buf && ( maxSize > 0 ), false,
+    //wxCHECK_MSG( buf && ( maxSize > 0 ), false,
                     wxT("empty buffer in wxGetUserName") );
 #if defined(__WXWINCE__) && wxUSE_REGKEY
     wxLogNull noLog;
@@ -1106,7 +1106,7 @@ wxLoadUserResource(const void **outData,
                    const wxString& resourceType,
                    WXHINSTANCE instance)
 {
-    wxCHECK_MSG( outData && outLen, false, "output pointers can't be NULL" );
+    //wxCHECK_MSG( outData && outLen, false, "output pointers can't be NULL" );
 
     HRSRC hResource = ::FindResource(instance,
                                      resourceName.t_str(),
@@ -1720,7 +1720,7 @@ extern long wxCharsetToCodepage(const char *name)
 extern "C" WXDLLIMPEXP_BASE HWND
 wxCreateHiddenWindow(LPCTSTR *pclassname, LPCTSTR classname, WNDPROC wndproc)
 {
-    wxCHECK_MSG( classname && pclassname && wndproc, NULL,
+    //wxCHECK_MSG( classname && pclassname && wndproc, NULL,
                     wxT("NULL parameter in wxCreateHiddenWindow") );
 
     // register the class fi we need to first

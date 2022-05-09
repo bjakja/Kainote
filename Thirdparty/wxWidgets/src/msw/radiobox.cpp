@@ -395,7 +395,7 @@ unsigned int wxRadioBox::GetCount() const
 
 void wxRadioBox::SetString(unsigned int item, const wxString& label)
 {
-    wxCHECK_RET( IsValid(item), wxT("invalid radiobox index") );
+    //wxCHECK_RET( IsValid(item), wxT("invalid radiobox index") );
 
     m_radioWidth[item] =
     m_radioHeight[item] = wxDefaultCoord;
@@ -407,7 +407,7 @@ void wxRadioBox::SetString(unsigned int item, const wxString& label)
 
 void wxRadioBox::SetSelection(int N)
 {
-    wxCHECK_RET( IsValid(N), wxT("invalid radiobox index") );
+    //wxCHECK_RET( IsValid(N), wxT("invalid radiobox index") );
 
     // unselect the old button
     if ( m_selectedButton != wxNOT_FOUND )
@@ -422,7 +422,7 @@ void wxRadioBox::SetSelection(int N)
 // Find string for position
 wxString wxRadioBox::GetString(unsigned int item) const
 {
-    wxCHECK_MSG( IsValid(item), wxEmptyString,
+    //wxCHECK_MSG( IsValid(item), wxEmptyString,
                  wxT("invalid radiobox index") );
 
     return wxGetWindowText((*m_radioButtons)[item]);
@@ -441,7 +441,7 @@ void wxRadioBox::SetFocus()
 // Enable a specific button
 bool wxRadioBox::Enable(unsigned int item, bool enable)
 {
-    wxCHECK_MSG( IsValid(item), false,
+    //wxCHECK_MSG( IsValid(item), false,
                  wxT("invalid item in wxRadioBox::Enable()") );
 
     BOOL ret = MSWEnableHWND((*m_radioButtons)[item], enable);
@@ -451,7 +451,7 @@ bool wxRadioBox::Enable(unsigned int item, bool enable)
 
 bool wxRadioBox::IsItemEnabled(unsigned int item) const
 {
-    wxCHECK_MSG( IsValid(item), false,
+    //wxCHECK_MSG( IsValid(item), false,
                  wxT("invalid item in wxRadioBox::IsItemEnabled()") );
 
     return ::IsWindowEnabled((*m_radioButtons)[item]) != 0;
@@ -460,7 +460,7 @@ bool wxRadioBox::IsItemEnabled(unsigned int item) const
 // Show a specific button
 bool wxRadioBox::Show(unsigned int item, bool show)
 {
-    wxCHECK_MSG( IsValid(item), false,
+    //wxCHECK_MSG( IsValid(item), false,
                  wxT("invalid item in wxRadioBox::Show()") );
 
     BOOL ret = ::ShowWindow((*m_radioButtons)[item], show ? SW_SHOW : SW_HIDE);
@@ -476,7 +476,7 @@ bool wxRadioBox::Show(unsigned int item, bool show)
 
 bool wxRadioBox::IsItemShown(unsigned int item) const
 {
-    wxCHECK_MSG( IsValid(item), false,
+    //wxCHECK_MSG( IsValid(item), false,
                  wxT("invalid item in wxRadioBox::IsItemShown()") );
 
     // don't use IsWindowVisible() here because it would return false if the
@@ -794,7 +794,7 @@ LRESULT APIENTRY _EXPORT wxRadioBtnWndProc(HWND hwnd,
 {
 
     wxRadioBox * const radiobox = wxRadioBox::GetFromRadioButtonHWND(hwnd);
-    wxCHECK_MSG( radiobox, 0, wxT("Should have the associated radio box") );
+    //wxCHECK_MSG( radiobox, 0, wxT("Should have the associated radio box") );
 
     switch ( message )
     {

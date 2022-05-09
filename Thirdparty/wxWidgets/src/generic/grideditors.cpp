@@ -506,7 +506,7 @@ bool wxGridCellTextEditor::EndEdit(int WXUNUSED(row),
                                    const wxString& WXUNUSED(oldval),
                                    wxString *newval)
 {
-    wxCHECK_MSG( m_control, false,
+    //wxCHECK_MSG( m_control, false,
                  "wxGridCellTextEditor must be created first!" );
 
     const wxString value = Text()->GetValue();

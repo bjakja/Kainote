@@ -129,7 +129,7 @@
 
     int MyCar::GetPrice() const
     {
-        wxCHECK_MSG( IsOk(), -1, "invalid car" );
+        //wxCHECK_MSG( IsOk(), -1, "invalid car" );
 
         return M_CARDATA->m_price;
     }

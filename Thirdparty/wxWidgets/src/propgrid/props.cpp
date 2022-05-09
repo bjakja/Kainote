@@ -991,7 +991,7 @@ wxEnumProperty::wxEnumProperty( const wxString& label, const wxString& name, con
 {
     SetIndex(0);
 
-    wxASSERT( choicesCache );
+    //wxASSERT( choicesCache );
 
     if ( choicesCache->IsOk() )
     {
@@ -1292,7 +1292,7 @@ void wxFlagsProperty::Init()
         wxPropertyGridPageState* state = GetParentState();
 
         // State safety check (it may be NULL in immediate parent)
-        wxASSERT( state );
+        //wxASSERT( state );
 
         if ( state )
         {
@@ -1369,7 +1369,7 @@ wxFlagsProperty::wxFlagsProperty( const wxString& label, const wxString& name,
     {
         m_choices.Set(labels,values);
 
-        wxASSERT( GetItemCount() );
+        //wxASSERT( GetItemCount() );
 
         SetValue( value );
     }
@@ -1389,7 +1389,7 @@ wxFlagsProperty::wxFlagsProperty( const wxString& label, const wxString& name,
     {
         m_choices.Set(labels,values);
 
-        wxASSERT( GetItemCount() );
+        //wxASSERT( GetItemCount() );
 
         SetValue( (long)value );
     }
@@ -1409,7 +1409,7 @@ wxFlagsProperty::wxFlagsProperty( const wxString& label, const wxString& name,
     {
         m_choices.Assign(choices);
 
-        wxASSERT( GetItemCount() );
+        //wxASSERT( GetItemCount() );
 
         SetValue( value );
     }
@@ -2375,7 +2375,7 @@ void wxPGArrayEditorDialog::OnEndLabelEdit(wxListEvent& event)
     {
         // Change an existing item
         int index = GetSelection();
-        wxASSERT( index != wxNOT_FOUND );
+        //wxASSERT( index != wxNOT_FOUND );
         if ( ArraySet(index, str) )
             m_modified = true;
         else

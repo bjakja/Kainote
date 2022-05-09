@@ -239,7 +239,7 @@ int wxScrollBar::GetRange() const
 
 void wxScrollBar::SetThumbPosition(int pos)
 {
-    wxCHECK_RET( pos >= 0 && pos <= m_range, wxT("thumb position out of range") );
+    //wxCHECK_RET( pos >= 0 && pos <= m_range, wxT("thumb position out of range") );
 
     DoSetThumb(pos);
 }

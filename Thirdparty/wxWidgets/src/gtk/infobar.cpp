@@ -128,7 +128,7 @@ bool wxInfoBar::Create(wxWindow *parent, wxWindowID winid)
 
     // create the info bar widget itself
     m_widget = gtk_info_bar_new();
-    wxCHECK_MSG( m_widget, false, "failed to create GtkInfoBar" );
+    //wxCHECK_MSG( m_widget, false, "failed to create GtkInfoBar" );
     g_object_ref(m_widget);
 
     // also create a label which will be used to show our message
@@ -137,7 +137,7 @@ bool wxInfoBar::Create(wxWindow *parent, wxWindowID winid)
 
     GtkWidget * const
         contentArea = gtk_info_bar_get_content_area(GTK_INFO_BAR(m_widget));
-    wxCHECK_MSG( contentArea, false, "failed to get GtkInfoBar content area" );
+    //wxCHECK_MSG( contentArea, false, "failed to get GtkInfoBar content area" );
     gtk_container_add(GTK_CONTAINER(contentArea), m_impl->m_label);
 
     // finish creation and connect to all the signals we're interested in

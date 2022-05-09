@@ -395,7 +395,7 @@ void wxClipboard::Clear()
 
 bool wxClipboard::Open()
 {
-    wxCHECK_MSG( !m_open, false, wxT("clipboard already open") );
+    //wxCHECK_MSG( !m_open, false, wxT("clipboard already open") );
 
     m_open = true;
 
@@ -404,9 +404,9 @@ bool wxClipboard::Open()
 
 bool wxClipboard::SetData( wxDataObject *data )
 {
-    wxCHECK_MSG( m_open, false, wxT("clipboard not open") );
+    //wxCHECK_MSG( m_open, false, wxT("clipboard not open") );
 
-    wxCHECK_MSG( data, false, wxT("data is invalid") );
+    //wxCHECK_MSG( data, false, wxT("data is invalid") );
 
     Clear();
 
@@ -415,9 +415,9 @@ bool wxClipboard::SetData( wxDataObject *data )
 
 bool wxClipboard::AddData( wxDataObject *data )
 {
-    wxCHECK_MSG( m_open, false, wxT("clipboard not open") );
+    //wxCHECK_MSG( m_open, false, wxT("clipboard not open") );
 
-    wxCHECK_MSG( data, false, wxT("data is invalid") );
+    //wxCHECK_MSG( data, false, wxT("data is invalid") );
 
     // we can only store one wxDataObject
     Clear();
@@ -483,7 +483,7 @@ bool wxClipboard::AddData( wxDataObject *data )
 
 void wxClipboard::Close()
 {
-    wxCHECK_RET( m_open, wxT("clipboard not open") );
+    //wxCHECK_RET( m_open, wxT("clipboard not open") );
 
     m_open = false;
 }
@@ -505,7 +505,7 @@ bool wxClipboard::IsSupported( const wxDataFormat& format )
                 wxT("wxClipboard:IsSupported: requested format: %s"),
                 format.GetId().c_str() );
 
-    wxCHECK_MSG( m_targetRequested, false, wxT("invalid clipboard format") );
+    //wxCHECK_MSG( m_targetRequested, false, wxT("invalid clipboard format") );
 
     m_formatSupported = false;
 
@@ -532,7 +532,7 @@ bool wxClipboard::IsSupported( const wxDataFormat& format )
 
 bool wxClipboard::GetData( wxDataObject& data )
 {
-    wxCHECK_MSG( m_open, false, wxT("clipboard not open") );
+    //wxCHECK_MSG( m_open, false, wxT("clipboard not open") );
 
     /* get formats from wxDataObjects */
     wxDataFormat *array = new wxDataFormat[ data.GetFormatCount() ];
@@ -551,7 +551,7 @@ bool wxClipboard::GetData( wxDataObject& data )
         /* store requested format to be asked for by callbacks */
         m_targetRequested = format;
 
-        wxCHECK_MSG( m_targetRequested, false, wxT("invalid clipboard format") );
+        //wxCHECK_MSG( m_targetRequested, false, wxT("invalid clipboard format") );
 
         m_formatSupported = false;
 
@@ -581,7 +581,7 @@ bool wxClipboard::GetData( wxDataObject& data )
         /* store requested format to be asked for by callbacks */
         m_targetRequested = format;
 
-        wxCHECK_MSG( m_targetRequested, false, wxT("invalid clipboard format") );
+        //wxCHECK_MSG( m_targetRequested, false, wxT("invalid clipboard format") );
 
         /* start query */
         m_formatSupported = false;
@@ -624,7 +624,7 @@ bool wxClipboard::GetData( wxDataObject& data )
         if ( format != wxDF_TEXT || data.GetDataSize(format) > 1 )
 #endif // UNICODE / !UNICODE
         {
-            wxCHECK_MSG( m_formatSupported, false,
+            //wxCHECK_MSG( m_formatSupported, false,
                          wxT("error retrieving data from clipboard") );
         }
 

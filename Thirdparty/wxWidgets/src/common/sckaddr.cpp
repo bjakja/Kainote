@@ -614,7 +614,7 @@ bool wxSockAddressImpl::SetHostName6(const wxString& hostname)
         return false;
     }
 
-    wxCHECK_MSG( info, false, "should have info on success" );
+    //wxCHECK_MSG( info, false, "should have info on success" );
 
     wxASSERT_MSG( int(info->ai_addrlen) == m_len, "unexpected address length" );
 
@@ -802,7 +802,7 @@ wxSockAddressImpl& wxIPaddress::GetImpl()
 
 bool wxIPaddress::Hostname(const wxString& name)
 {
-    wxCHECK_MSG( !name.empty(), false, "empty host name is invalid" );
+    //wxCHECK_MSG( !name.empty(), false, "empty host name is invalid" );
 
     m_origHostname = name;
 

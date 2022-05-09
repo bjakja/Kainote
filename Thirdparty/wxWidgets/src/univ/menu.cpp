@@ -356,7 +356,7 @@ void wxPopupMenuWindow::ChangeCurrent(wxMenuItemIter node)
         if ( nodeOldCurrent )
         {
             wxMenuItem *item = nodeOldCurrent->GetData();
-            wxCHECK_RET( item, wxT("no current item?") );
+            //wxCHECK_RET( item, wxT("no current item?") );
 
             // if it was the currently opened menu, close it
             if ( item->IsSubMenu() && item->GetSubMenu()->IsShown() )
@@ -447,7 +447,7 @@ void wxPopupMenuWindow::Popup(wxWindow *focus)
         wxPopupMenuWindow *win = menuParent->m_popupMenu;
 
         // if we're shown, the parent menu must be also shown
-        wxCHECK_RET( win, wxT("parent menu is not shown?") );
+        //wxCHECK_RET( win, wxT("parent menu is not shown?") );
 
         if ( !::SetWindowPos(GetHwndOf(win), GetHwnd(),
                              0, 0, 0, 0,
@@ -466,10 +466,10 @@ void wxPopupMenuWindow::Dismiss()
     if ( HasOpenSubmenu() )
     {
         wxMenuItem *item = GetCurrentItem();
-        wxCHECK_RET( item && item->IsSubMenu(), wxT("where is our open submenu?") );
+        //wxCHECK_RET( item && item->IsSubMenu(), wxT("where is our open submenu?") );
 
         wxPopupMenuWindow *win = item->GetSubMenu()->m_popupMenu;
-        wxCHECK_RET( win, wxT("opened submenu is not opened?") );
+        //wxCHECK_RET( win, wxT("opened submenu is not opened?") );
 
         win->Dismiss();
         OnSubmenuDismiss( false );
@@ -538,7 +538,7 @@ wxPopupMenuWindow::GetMenuItemFromPoint(const wxPoint& pt) const
 
 void wxPopupMenuWindow::RefreshItem(wxMenuItem *item)
 {
-    wxCHECK_RET( item, wxT("can't refresh NULL item") );
+    //wxCHECK_RET( item, wxT("can't refresh NULL item") );
 
     wxASSERT_MSG( IsShown(), wxT("can't refresh menu which is not shown") );
 
@@ -633,7 +633,7 @@ void wxPopupMenuWindow::DoDraw(wxControlRenderer *renderer)
 
 void wxPopupMenuWindow::ClickItem(wxMenuItem *item)
 {
-    wxCHECK_RET( item, wxT("can't click NULL item") );
+    //wxCHECK_RET( item, wxT("can't click NULL item") );
 
     wxASSERT_MSG( !item->IsSeparator() && !item->IsSubMenu(),
                   wxT("can't click this item") );
@@ -648,10 +648,10 @@ void wxPopupMenuWindow::ClickItem(wxMenuItem *item)
 
 void wxPopupMenuWindow::OpenSubmenu(wxMenuItem *item, InputMethod how)
 {
-    wxCHECK_RET( item, wxT("can't open NULL submenu") );
+    //wxCHECK_RET( item, wxT("can't open NULL submenu") );
 
     wxMenu *submenu = item->GetSubMenu();
-    wxCHECK_RET( submenu, wxT("can only open submenus!") );
+    //wxCHECK_RET( submenu, wxT("can only open submenus!") );
 
     // FIXME: should take into account the border width
     submenu->Popup(ClientToScreen(wxPoint(0, item->GetPosition())),
@@ -706,7 +706,7 @@ bool wxPopupMenuWindow::ProcessLeftDown(wxMouseEvent& event)
         {
             wxPopupMenuWindow *win = menu->m_popupMenu;
 
-            wxCHECK_MSG( win, false, wxT("parent menu not shown?") );
+            //wxCHECK_MSG( win, false, wxT("parent menu not shown?") );
 
             pos = ClientToScreen(pos);
             if ( win->GetMenuItemFromPoint(win->ScreenToClient(pos)) )
@@ -795,7 +795,7 @@ void wxPopupMenuWindow::ProcessMouseMove(const wxPoint& pt)
             wxPopupMenuWindow *win = menuParent->m_popupMenu;
 
             // if we're shown, the parent menu must be also shown
-            wxCHECK_RET( win, wxT("parent menu is not shown?") );
+            //wxCHECK_RET( win, wxT("parent menu is not shown?") );
 
             win->ProcessMouseMove(win->ScreenToClient(ptScreen));
         }
@@ -830,10 +830,10 @@ void wxPopupMenuWindow::OnMouseLeave(wxMouseEvent& event)
         if ( HasOpenSubmenu() )
         {
             wxMenuItem *item = GetCurrentItem();
-            wxCHECK_RET( CanOpen(item), wxT("where is our open submenu?") );
+            //wxCHECK_RET( CanOpen(item), wxT("where is our open submenu?") );
 
             wxPopupMenuWindow *win = item->GetSubMenu()->m_popupMenu;
-            wxCHECK_RET( win, wxT("submenu is opened but not shown?") );
+            //wxCHECK_RET( win, wxT("submenu is opened but not shown?") );
 
             // only handle this event if the mouse is not inside the submenu
             wxPoint pt = ClientToScreen(event.GetPosition());
@@ -878,7 +878,7 @@ bool wxPopupMenuWindow::ProcessKeyDown(int key)
     // to open it inspit of this)
     if ( HasOpenSubmenu() )
     {
-        wxCHECK_MSG( CanOpen(item), false,
+        //wxCHECK_MSG( CanOpen(item), false,
                      wxT("has open submenu but another item selected?") );
 
         if ( item->GetSubMenu()->ProcessKeyDown(key) )
@@ -1192,7 +1192,7 @@ void wxMenu::Attach(wxMenuBarBase *menubar)
 {
     wxMenuBase::Attach(menubar);
 
-    wxCHECK_RET( m_menuBar, wxT("menubar can't be NULL after attaching") );
+    //wxCHECK_RET( m_menuBar, wxT("menubar can't be NULL after attaching") );
 
     // unfortunately, we can't use m_menuBar->GetEventHandler() here because,
     // if the menubar is currently showing a menu, its event handler is a
@@ -1226,7 +1226,7 @@ wxWindow *wxMenu::GetRootWindow() const
 wxRenderer *wxMenu::GetRenderer() const
 {
     // we're going to crash without renderer!
-    wxCHECK_MSG( m_popupMenu, NULL, wxT("neither popup nor menubar menu?") );
+    //wxCHECK_MSG( m_popupMenu, NULL, wxT("neither popup nor menubar menu?") );
 
     return m_popupMenu->GetRenderer();
 }
@@ -1239,7 +1239,7 @@ void wxMenu::RefreshItem(wxMenuItem *item)
     if ( IsShown() )
     {
         // this would be a bug in IsShown()
-        wxCHECK_RET( m_popupMenu, wxT("must have popup window if shown!") );
+        //wxCHECK_RET( m_popupMenu, wxT("must have popup window if shown!") );
 
         // recalc geometry to update the item height and such
         (void)GetGeometryInfo();
@@ -1290,7 +1290,7 @@ void wxMenu::OnDismiss(bool dismissParent)
         else // popup menu
         {
             wxWindow * const win = GetInvokingWindow();
-            wxCHECK_RET( win, wxT("what kind of menu is this?") );
+            //wxCHECK_RET( win, wxT("what kind of menu is this?") );
 
             win->DismissPopupMenu();
         }
@@ -1330,7 +1330,7 @@ void wxMenu::Popup(const wxPoint& pos, const wxSize& size, bool selectFirst)
 
 void wxMenu::Dismiss()
 {
-    wxCHECK_RET( IsShown(), wxT("can't dismiss hidden menu") );
+    //wxCHECK_RET( IsShown(), wxT("can't dismiss hidden menu") );
 
     m_popupMenu->Dismiss();
 }
@@ -1341,7 +1341,7 @@ void wxMenu::Dismiss()
 
 bool wxMenu::ProcessKeyDown(int key)
 {
-    wxCHECK_MSG( m_popupMenu, false,
+    //wxCHECK_MSG( m_popupMenu, false,
                  wxT("can't process key events if not shown") );
 
     return m_popupMenu->ProcessKeyDown(key);
@@ -1530,7 +1530,7 @@ void wxMenuItem::Enable(bool enable)
 
 void wxMenuItem::Check(bool check)
 {
-    wxCHECK_RET( IsCheckable(), wxT("only checkable items may be checked") );
+    //wxCHECK_RET( IsCheckable(), wxT("only checkable items may be checked") );
 
     if ( m_isChecked == check )
         return;
@@ -1544,7 +1544,7 @@ void wxMenuItem::Check(bool check)
         // get the index of this item in the menu
         const wxMenuItemList& items = m_parentMenu->GetMenuItems();
         int pos = items.IndexOf(this);
-        wxCHECK_RET( pos != wxNOT_FOUND,
+        //wxCHECK_RET( pos != wxNOT_FOUND,
                      wxT("menuitem not found in the menu items list?") );
 
         // get the radio group range
@@ -1631,7 +1631,7 @@ wxMenuBar::wxMenuBar(size_t n, wxMenu *menus[], const wxString titles[], long WX
 void wxMenuBar::Attach(wxFrame *frame)
 {
     // maybe you really wanted to call Detach()?
-    wxCHECK_RET( frame, wxT("wxMenuBar::Attach(NULL) called") );
+    //wxCHECK_RET( frame, wxT("wxMenuBar::Attach(NULL) called") );
 
     wxMenuBarBase::Attach(frame);
 
@@ -1749,7 +1749,7 @@ wxCoord wxMenuBar::GetItemWidth(size_t pos) const
 
 void wxMenuBar::EnableTop(size_t pos, bool enable)
 {
-    wxCHECK_RET( pos < GetCount(), wxT("invalid index in EnableTop") );
+    //wxCHECK_RET( pos < GetCount(), wxT("invalid index in EnableTop") );
 
     if ( enable != m_menuInfos[pos].IsEnabled() )
     {
@@ -1762,14 +1762,14 @@ void wxMenuBar::EnableTop(size_t pos, bool enable)
 
 bool wxMenuBar::IsEnabledTop(size_t pos) const
 {
-    wxCHECK_MSG( pos < GetCount(), false, wxT("invalid index in IsEnabledTop") );
+    //wxCHECK_MSG( pos < GetCount(), false, wxT("invalid index in IsEnabledTop") );
 
     return m_menuInfos[pos].IsEnabled();
 }
 
 void wxMenuBar::SetMenuLabel(size_t pos, const wxString& label)
 {
-    wxCHECK_RET( pos < GetCount(), wxT("invalid index in SetMenuLabel") );
+    //wxCHECK_RET( pos < GetCount(), wxT("invalid index in SetMenuLabel") );
 
     if ( label != m_menuInfos[pos].GetOriginalLabel() )
     {
@@ -1782,7 +1782,7 @@ void wxMenuBar::SetMenuLabel(size_t pos, const wxString& label)
 
 wxString wxMenuBar::GetMenuLabel(size_t pos) const
 {
-    wxCHECK_MSG( pos < GetCount(), wxEmptyString, wxT("invalid index in GetMenuLabel") );
+    //wxCHECK_MSG( pos < GetCount(), wxEmptyString, wxT("invalid index in GetMenuLabel") );
 
     return m_menuInfos[pos].GetOriginalLabel();
 }
@@ -1806,7 +1806,7 @@ void wxMenuBar::RefreshAllItemsAfter(size_t pos)
 
 void wxMenuBar::RefreshItem(size_t pos)
 {
-    wxCHECK_RET( pos != (size_t)-1,
+    //wxCHECK_RET( pos != (size_t)-1,
                  wxT("invalid item in wxMenuBar::RefreshItem") );
 
     if ( !IsCreated() )
@@ -1961,7 +1961,7 @@ void wxMenuBar::SelectMenu(size_t pos)
 
 void wxMenuBar::DoSelectMenu(size_t pos)
 {
-    wxCHECK_RET( pos < GetCount(), wxT("invalid menu index in DoSelectMenu") );
+    //wxCHECK_RET( pos < GetCount(), wxT("invalid menu index in DoSelectMenu") );
 
     int posOld = m_current;
 
@@ -1989,7 +1989,7 @@ void wxMenuBar::DoSelectMenu(size_t pos)
 
 void wxMenuBar::PopupMenu(size_t pos)
 {
-    wxCHECK_RET( pos < GetCount(), wxT("invalid menu index in PopupCurrentMenu") );
+    //wxCHECK_RET( pos < GetCount(), wxT("invalid menu index in PopupCurrentMenu") );
 
     SetFocus();
     DoSelectMenu(pos);
@@ -2348,7 +2348,7 @@ bool wxMenuBar::ProcessAccelEvent(const wxKeyEvent& event)
 
 void wxMenuBar::PopupCurrentMenu(bool selectFirst)
 {
-    wxCHECK_RET( m_current != -1, wxT("no menu to popup") );
+    //wxCHECK_RET( m_current != -1, wxT("no menu to popup") );
 
     // forgot to call DismissMenu()?
     wxASSERT_MSG( !m_menuShown, wxT("shouldn't show two menus at once!") );
@@ -2384,7 +2384,7 @@ void wxMenuBar::PopupCurrentMenu(bool selectFirst)
 
 void wxMenuBar::DismissMenu()
 {
-    wxCHECK_RET( m_menuShown, wxT("can't dismiss menu if none is shown") );
+    //wxCHECK_RET( m_menuShown, wxT("can't dismiss menu if none is shown") );
 
     m_menuShown->Dismiss();
     OnDismissMenu();
@@ -2467,7 +2467,7 @@ wxEventLoop *wxWindow::ms_evtLoopPopup = NULL;
 
 bool wxWindow::DoPopupMenu(wxMenu *menu, int x, int y)
 {
-    wxCHECK_MSG( !ms_evtLoopPopup, false,
+    //wxCHECK_MSG( !ms_evtLoopPopup, false,
                  wxT("can't show more than one popup menu at a time") );
 
 #ifdef __WXMSW__
@@ -2523,7 +2523,7 @@ bool wxWindow::DoPopupMenu(wxMenu *menu, int x, int y)
 
 void wxWindow::DismissPopupMenu()
 {
-    wxCHECK_RET( ms_evtLoopPopup, wxT("no popup menu shown") );
+    //wxCHECK_RET( ms_evtLoopPopup, wxT("no popup menu shown") );
 
     ms_evtLoopPopup->Exit();
 }

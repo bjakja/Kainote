@@ -137,10 +137,10 @@ bool wxVListBox::IsSelected(size_t line) const
 
 bool wxVListBox::Select(size_t item, bool select)
 {
-    wxCHECK_MSG( m_selStore, false,
+    //wxCHECK_MSG( m_selStore, false,
                  wxT("Select() may only be used with multiselection listbox") );
 
-    wxCHECK_MSG( item < GetItemCount(), false,
+    //wxCHECK_MSG( item < GetItemCount(), false,
                  wxT("Select(): invalid item index") );
 
     bool changed = m_selStore->SelectItem(item, select);
@@ -157,7 +157,7 @@ bool wxVListBox::Select(size_t item, bool select)
 
 bool wxVListBox::SelectRange(size_t from, size_t to)
 {
-    wxCHECK_MSG( m_selStore, false,
+    //wxCHECK_MSG( m_selStore, false,
                  wxT("SelectRange() may only be used with multiselection listbox") );
 
     // make sure items are in correct order
@@ -168,7 +168,7 @@ bool wxVListBox::SelectRange(size_t from, size_t to)
         to = tmp;
     }
 
-    wxCHECK_MSG( to < GetItemCount(), false,
+    //wxCHECK_MSG( to < GetItemCount(), false,
                     wxT("SelectRange(): invalid item index") );
 
     wxArrayInt changed;
@@ -200,7 +200,7 @@ bool wxVListBox::SelectRange(size_t from, size_t to)
 
 bool wxVListBox::DoSelectAll(bool select)
 {
-    wxCHECK_MSG( m_selStore, false,
+    //wxCHECK_MSG( m_selStore, false,
                  wxT("SelectAll may only be used with multiselection listbox") );
 
     size_t count = GetItemCount();
@@ -282,7 +282,7 @@ void wxVListBox::SendSelectedEvent()
 
 void wxVListBox::SetSelection(int selection)
 {
-    wxCHECK_RET( selection == wxNOT_FOUND ||
+    //wxCHECK_RET( selection == wxNOT_FOUND ||
                   (selection >= 0 && (size_t)selection < GetItemCount()),
                   wxT("wxVListBox::SetSelection(): invalid item index") );
 
@@ -313,7 +313,7 @@ int wxVListBox::GetFirstSelected(unsigned long& cookie) const
 
 int wxVListBox::GetNextSelected(unsigned long& cookie) const
 {
-    wxCHECK_MSG( m_selStore, wxNOT_FOUND,
+    //wxCHECK_MSG( m_selStore, wxNOT_FOUND,
                   wxT("GetFirst/NextSelected() may only be used with multiselection listboxes") );
 
     while ( cookie < GetItemCount() )

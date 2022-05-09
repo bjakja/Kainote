@@ -47,7 +47,7 @@ wxMemoryDCImpl::wxMemoryDCImpl( wxMemoryDC *owner, wxBitmap& bitmap )
 wxMemoryDCImpl::wxMemoryDCImpl( wxMemoryDC *owner, wxDC *pOldDC)
         : wxPMDCImpl( owner )
 {
-    wxCHECK_RET( pOldDC, wxT("NULL dc in wxMemoryDC ctor") );
+    //wxCHECK_RET( pOldDC, wxT("NULL dc in wxMemoryDC ctor") );
 
     CreateCompatible(pOldDC);
     Init();
@@ -149,7 +149,7 @@ void wxMemoryDCImpl::DoSelect(
     //
     // Check for whether the bitmap is already selected into a device context
     //
-    wxCHECK_RET( !rBitmap.GetSelectedInto() ||
+    //wxCHECK_RET( !rBitmap.GetSelectedInto() ||
                  (rBitmap.GetSelectedInto() == GetOwner()),
                  wxT("Bitmap is selected in another wxMemoryDC, delete the first wxMemoryDC or use SelectObject(NULL)") );
 

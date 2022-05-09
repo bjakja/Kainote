@@ -48,7 +48,7 @@ wxGLContext::wxGLContext(wxGLCanvas *gc, const wxGLContext *other)
     if ( wxGLCanvas::GetGLXVersion() >= 13 )
     {
         GLXFBConfig *fbc = gc->GetGLXFBConfig();
-        wxCHECK_RET( fbc, wxT("invalid GLXFBConfig for OpenGL") );
+        //wxCHECK_RET( fbc, wxT("invalid GLXFBConfig for OpenGL") );
 
         m_glContext = glXCreateNewContext( wxGetX11Display(), fbc[0], GLX_RGBA_TYPE,
                                            other ? other->m_glContext : None,
@@ -57,7 +57,7 @@ wxGLContext::wxGLContext(wxGLCanvas *gc, const wxGLContext *other)
     else // GLX <= 1.2
     {
         XVisualInfo *vi = gc->GetXVisualInfo();
-        wxCHECK_RET( vi, wxT("invalid visual for OpenGL") );
+        //wxCHECK_RET( vi, wxT("invalid visual for OpenGL") );
 
         m_glContext = glXCreateContext( wxGetX11Display(), vi,
                                         other ? other->m_glContext : None,
@@ -155,7 +155,7 @@ bool wxGLCanvasX11::IsGLXMultiSampleAvailable()
 bool
 wxGLCanvasX11::ConvertWXAttrsToGL(const int *wxattrs, int *glattrs, size_t n)
 {
-    wxCHECK_MSG( n >= 16, false, wxT("GL attributes buffer too small") );
+    //wxCHECK_MSG( n >= 16, false, wxT("GL attributes buffer too small") );
 
     /*
        Different versions of GLX API use rather different attributes lists, see

@@ -441,14 +441,14 @@ void wxFont::DoSetNativeFontInfo(const wxNativeFontInfo& info)
 
 int wxFont::GetPointSize() const
 {
-    wxCHECK_MSG( IsOk(), 0, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), 0, wxT("invalid font") );
 
     return M_FONTDATA->m_pointSize;
 }
 
 wxString wxFont::GetFaceName() const
 {
-    wxCHECK_MSG( IsOk(), wxEmptyString, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), wxEmptyString, wxT("invalid font") );
 
     return M_FONTDATA->m_faceName ;
 }
@@ -460,35 +460,35 @@ wxFontFamily wxFont::DoGetFamily() const
 
 wxFontStyle wxFont::GetStyle() const
 {
-    wxCHECK_MSG( IsOk(), wxFONTSTYLE_MAX, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), wxFONTSTYLE_MAX, wxT("invalid font") );
 
     return M_FONTDATA->m_style;
 }
 
 wxFontWeight wxFont::GetWeight() const
 {
-    wxCHECK_MSG( IsOk(), wxFONTWEIGHT_MAX, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), wxFONTWEIGHT_MAX, wxT("invalid font") );
 
     return M_FONTDATA->m_weight;
 }
 
 bool wxFont::GetUnderlined() const
 {
-    wxCHECK_MSG( IsOk(), false, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), false, wxT("invalid font") );
 
     return M_FONTDATA->m_underlined;
 }
 
 wxFontEncoding wxFont::GetEncoding() const
 {
-    wxCHECK_MSG( IsOk(), wxFONTENCODING_DEFAULT, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), wxFONTENCODING_DEFAULT, wxT("invalid font") );
 
     return M_FONTDATA->m_encoding;
 }
 
 const wxNativeFontInfo *wxFont::GetNativeFontInfo() const
 {
-    wxCHECK_MSG( IsOk(), NULL, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), NULL, wxT("invalid font") );
 
     if(M_FONTDATA->m_nativeFontInfo.GetXFontName().empty())
         GetInternalFont();
@@ -572,10 +572,10 @@ wxXFont* wxFont::GetInternalFont(double scale, WXDisplay* display) const
 
     f->m_renderTable = (WXRenderTable)renderTable;
     f->m_rendition = (WXRendition)rendition;
-    wxASSERT( f->m_renderTable != NULL );
+    //wxASSERT( f->m_renderTable != NULL );
 #else // if !wxMOTIF_USE_RENDER_TABLE
     f->m_fontList = XmFontListCreate ((XFontStruct*) font, XmSTRING_DEFAULT_CHARSET);
-    wxASSERT( f->m_fontList != NULL );
+    //wxASSERT( f->m_fontList != NULL );
 #endif
 
     M_FONTDATA->m_fonts.Append(f);

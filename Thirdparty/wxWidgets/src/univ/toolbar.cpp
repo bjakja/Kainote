@@ -260,7 +260,7 @@ void wxToolBar::SetToolShortHelp(int id, const wxString& help)
 {
     wxToolBarToolBase *tool = FindById(id);
 
-    wxCHECK_RET( tool, wxT("SetToolShortHelp: no such tool") );
+    //wxCHECK_RET( tool, wxT("SetToolShortHelp: no such tool") );
 
     tool->SetShortHelp(help);
 }
@@ -344,7 +344,7 @@ wxRect wxToolBar::GetToolRect(wxToolBarToolBase *toolBase) const
 
     wxRect rect;
 
-    wxCHECK_MSG( tool, rect, wxT("GetToolRect: NULL tool") );
+    //wxCHECK_MSG( tool, rect, wxT("GetToolRect: NULL tool") );
 
     // ensure that we always have the valid tool position
     if ( m_needsLayout )
@@ -604,7 +604,7 @@ void wxToolBar::GetRectLimits(const wxRect& rect,
                               wxCoord *start,
                               wxCoord *end) const
 {
-    wxCHECK_RET( start && end, wxT("NULL pointer in GetRectLimits") );
+    //wxCHECK_RET( start && end, wxT("NULL pointer in GetRectLimits") );
 
     if ( IsVertical() )
     {
@@ -790,7 +790,7 @@ bool wxToolBar::PerformAction(const wxControlAction& action,
     }
     else if ( action == wxACTION_TOOLBAR_ENTER )
     {
-        wxCHECK_MSG( tool, false, wxT("no tool to enter?") );
+        //wxCHECK_MSG( tool, false, wxT("no tool to enter?") );
 
         if ( HasFlag(wxTB_FLAT) && tool->IsEnabled() )
         {
@@ -802,7 +802,7 @@ bool wxToolBar::PerformAction(const wxControlAction& action,
     }
     else if ( action == wxACTION_TOOLBAR_LEAVE )
     {
-        wxCHECK_MSG( tool, false, wxT("no tool to leave?") );
+        //wxCHECK_MSG( tool, false, wxT("no tool to leave?") );
 
         if ( HasFlag(wxTB_FLAT) && tool->IsEnabled() )
         {

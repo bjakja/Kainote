@@ -372,7 +372,7 @@ bool wxWindowOS2::Create( wxWindow*       pParent,
     ULONG ulCreateFlags = 0;
     WXDWORD dwExStyle = 0;
 
-    wxCHECK_MSG(pParent, false, wxT("can't create wxWindow without parent"));
+    //wxCHECK_MSG(pParent, false, wxT("can't create wxWindow without parent"));
 
 #if wxUSE_STATBOX
     //
@@ -454,7 +454,7 @@ bool wxWindowOS2::Create( wxWindow*       pParent,
 void wxWindowOS2::SetFocus()
 {
     HWND                            hWnd = GetHwnd();
-    wxCHECK_RET( hWnd, wxT("can't set focus to invalid window") );
+    //wxCHECK_RET( hWnd, wxT("can't set focus to invalid window") );
 
     if (hWnd)
         ::WinSetFocus(HWND_DESKTOP, hWnd);
@@ -895,7 +895,7 @@ void wxWindowOS2::SubclassWin(
 {
     HWND                            hwnd = (HWND)hWnd;
 
-    wxCHECK_RET(::WinIsWindow(vHabmain, hwnd), wxT("invalid HWND in SubclassWin") );
+    //wxCHECK_RET(::WinIsWindow(vHabmain, hwnd), wxT("invalid HWND in SubclassWin") );
     wxAssociateWinWithHandle( hWnd
                              ,(wxWindow*)this
                             );
@@ -920,7 +920,7 @@ void wxWindowOS2::UnsubclassWin()
 
     if (m_hWnd)
     {
-        wxCHECK_RET( ::WinIsWindow(vHabmain, hwnd), wxT("invalid HWND in UnsubclassWin") );
+        //wxCHECK_RET( ::WinIsWindow(vHabmain, hwnd), wxT("invalid HWND in UnsubclassWin") );
 
         PFNWP                       fnProc = (PFNWP)::WinQueryWindowPtr(hwnd, QWP_PFNWP);
 
@@ -2840,7 +2840,7 @@ void wxAssociateWinWithHandle(
     // Adding NULL hWnd is (first) surely a result of an error and
     // (secondly) breaks menu command processing
     //
-    wxCHECK_RET( hWnd != (HWND)NULL,
+    //wxCHECK_RET( hWnd != (HWND)NULL,
                  wxT("attempt to add a NULL hWnd to window list ignored") );
 
     wxWindow*                       pOldWin = wxFindWinFromHandle((WXHWND) hWnd);

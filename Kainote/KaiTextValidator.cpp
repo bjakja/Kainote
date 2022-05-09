@@ -69,19 +69,19 @@ void KaiTextValidator::SetStyle(long style)
     int check;
     check = (int)HasFlag(wxFILTER_ALPHA) + (int)HasFlag(wxFILTER_ALPHANUMERIC) +
             (int)HasFlag(wxFILTER_DIGITS) + (int)HasFlag(wxFILTER_NUMERIC);
-    wxASSERT_MSG(check <= 1,
+    /*wxASSERT_MSG(check <= 1,
         "It makes sense to use only one of the wxFILTER_ALPHA/wxFILTER_ALPHANUMERIC/"
-        "wxFILTER_SIMPLE_NUMBER/wxFILTER_NUMERIC styles");
+        "wxFILTER_SIMPLE_NUMBER/wxFILTER_NUMERIC styles");*/
 
-    wxASSERT_MSG(((int)HasFlag(wxFILTER_INCLUDE_LIST) + (int)HasFlag(wxFILTER_INCLUDE_CHAR_LIST) <= 1) &&
+    /*wxASSERT_MSG(((int)HasFlag(wxFILTER_INCLUDE_LIST) + (int)HasFlag(wxFILTER_INCLUDE_CHAR_LIST) <= 1) &&
                  ((int)HasFlag(wxFILTER_EXCLUDE_LIST) + (int)HasFlag(wxFILTER_EXCLUDE_CHAR_LIST) <= 1),
         "Using both wxFILTER_[IN|EX]CLUDE_LIST _and_ wxFILTER_[IN|EX]CLUDE_CHAR_LIST "
-        "doesn't work since KaiTextValidator internally uses the same array for both");
+        "doesn't work since KaiTextValidator internally uses the same array for both");*/
 
     check = (int)HasFlag(wxFILTER_INCLUDE_LIST) + (int)HasFlag(wxFILTER_INCLUDE_CHAR_LIST) +
             (int)HasFlag(wxFILTER_EXCLUDE_LIST) + (int)HasFlag(wxFILTER_EXCLUDE_CHAR_LIST);
-    wxASSERT_MSG(check <= 1,
-        "Using both an include/exclude list may lead to unexpected results");
+    /*wxASSERT_MSG(check <= 1,
+        "Using both an include/exclude list may lead to unexpected results");*/
 #endif // wxDEBUG_LEVEL
 }
 

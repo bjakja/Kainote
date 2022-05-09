@@ -118,7 +118,7 @@ bool wxStaticBitmap::Create( wxWindow*         pParent,
         sError = wxPMErrorToStr(vError);
         return false;
     }
-    wxCHECK_MSG( m_hWnd, false, wxT("Failed to create static bitmap") );
+    //wxCHECK_MSG( m_hWnd, false, wxT("Failed to create static bitmap") );
     m_pImage = ConvertImage(rBitmap);
     ::WinSendMsg(   m_hWnd,
                     SM_SETHANDLE,

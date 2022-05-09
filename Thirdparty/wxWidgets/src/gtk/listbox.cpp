@@ -204,10 +204,10 @@ static gint gtk_listbox_sort_callback(GtkTreeModel * WXUNUSED(model),
                                       wxListBox    *listbox)
 {
     wxGtkObject<GtkTreeEntry> entry1(GetEntry(listbox->m_liststore, a, listbox));
-    wxCHECK_MSG(entry1, 0, wxT("Could not get first entry"));
+    //wxCHECK_MSG(entry1, 0, wxT("Could not get first entry"));
 
     wxGtkObject<GtkTreeEntry> entry2(GetEntry(listbox->m_liststore, b, listbox));
-    wxCHECK_MSG(entry2, 0, wxT("Could not get second entry"));
+    //wxCHECK_MSG(entry2, 0, wxT("Could not get second entry"));
 
     //We compare collate keys here instead of calling g_utf8_collate
     //as it is rather slow (and even the docs recommend this)
@@ -229,7 +229,7 @@ static gboolean gtk_listbox_searchequal_callback(GtkTreeModel * WXUNUSED(model),
 {
     wxGtkObject<GtkTreeEntry>
         entry(GetEntry(listbox->m_liststore, iter, listbox));
-    wxCHECK_MSG(entry, 0, wxT("Could not get entry"));
+    //wxCHECK_MSG(entry, 0, wxT("Could not get entry"));
 
     wxGtkString keycollatekey(g_utf8_collate_key(key, -1));
 
@@ -445,7 +445,7 @@ int wxListBox::DoInsertItems(const wxArrayStringsAdapter& items,
                              void **clientData,
                              wxClientDataType type)
 {
-    wxCHECK_MSG( m_treeview != NULL, wxNOT_FOUND, wxT("invalid listbox") );
+    //wxCHECK_MSG( m_treeview != NULL, wxNOT_FOUND, wxT("invalid listbox") );
 
     InvalidateBestSize();
 
@@ -453,7 +453,7 @@ int wxListBox::DoInsertItems(const wxArrayStringsAdapter& items,
     GtkTreeIter iter;
     if ( pos != GetCount() )
     {
-        wxCHECK_MSG( GTKGetIteratorFor(pos, &iter), wxNOT_FOUND,
+        //wxCHECK_MSG( GTKGetIteratorFor(pos, &iter), wxNOT_FOUND,
                      wxT("internal wxListBox error in insertion") );
 
         pIter = &iter;
@@ -488,7 +488,7 @@ int wxListBox::DoInsertItems(const wxArrayStringsAdapter& items,
 
 void wxListBox::DoClear()
 {
-    wxCHECK_RET( m_treeview != NULL, wxT("invalid listbox") );
+    //wxCHECK_RET( m_treeview != NULL, wxT("invalid listbox") );
 
     GTKDisableEvents(); // just in case
 
@@ -503,14 +503,14 @@ void wxListBox::DoClear()
 
 void wxListBox::DoDeleteOneItem(unsigned int n)
 {
-    wxCHECK_RET( m_treeview != NULL, wxT("invalid listbox") );
+    //wxCHECK_RET( m_treeview != NULL, wxT("invalid listbox") );
 
     InvalidateBestSize();
 
     GTKDisableEvents(); // just in case
 
     GtkTreeIter iter;
-    wxCHECK_RET( GTKGetIteratorFor(n, &iter), wxT("wrong listbox index") );
+    //wxCHECK_RET( GTKGetIteratorFor(n, &iter), wxT("wrong listbox index") );
 
     // this returns false if iter is invalid (e.g. deleting item at end) but
     // since we don't use iter, we ignore the return value
@@ -542,7 +542,7 @@ int wxListBox::GTKGetIndexFor(GtkTreeIter& iter) const
 
     gint* pIntPath = gtk_tree_path_get_indices(path);
 
-    wxCHECK_MSG( pIntPath, wxNOT_FOUND, wxT("failed to get iterator path") );
+    //wxCHECK_MSG( pIntPath, wxNOT_FOUND, wxT("failed to get iterator path") );
 
     int idx = pIntPath[0];
 
@@ -585,7 +585,7 @@ void wxListBox::GTKSetItem(GtkTreeIter& iter, const GtkTreeEntry *entry)
 void* wxListBox::DoGetItemClientData(unsigned int n) const
 {
     wxGtkObject<GtkTreeEntry> entry(GTKGetEntry(n));
-    wxCHECK_MSG(entry, NULL, wxT("could not get entry"));
+    //wxCHECK_MSG(entry, NULL, wxT("could not get entry"));
 
     return gtk_tree_entry_get_userdata( entry );
 }
@@ -593,7 +593,7 @@ void* wxListBox::DoGetItemClientData(unsigned int n) const
 void wxListBox::DoSetItemClientData(unsigned int n, void* clientData)
 {
     wxGtkObject<GtkTreeEntry> entry(GTKGetEntry(n));
-    wxCHECK_RET(entry, wxT("could not get entry"));
+    //wxCHECK_RET(entry, wxT("could not get entry"));
 
     gtk_tree_entry_set_userdata( entry, clientData );
 }
@@ -604,18 +604,18 @@ void wxListBox::DoSetItemClientData(unsigned int n, void* clientData)
 
 void wxListBox::SetString(unsigned int n, const wxString& label)
 {
-    wxCHECK_RET( IsValid(n), wxT("invalid index in wxListBox::SetString") );
-    wxCHECK_RET( m_treeview != NULL, wxT("invalid listbox") );
+    //wxCHECK_RET( IsValid(n), wxT("invalid index in wxListBox::SetString") );
+    //wxCHECK_RET( m_treeview != NULL, wxT("invalid listbox") );
 
     GtkTreeEntry* entry = GTKGetEntry(n);
-    wxCHECK_RET( entry, wxT("wrong listbox index") );
+    //wxCHECK_RET( entry, wxT("wrong listbox index") );
 
     // update the item itself
     gtk_tree_entry_set_label(entry, wxGTK_CONV(label));
 
     // and update the model which will refresh the tree too
     GtkTreeIter iter;
-    wxCHECK_RET( GTKGetIteratorFor(n, &iter), wxT("failed to get iterator") );
+    //wxCHECK_RET( GTKGetIteratorFor(n, &iter), wxT("failed to get iterator") );
 
     // FIXME: this resets the checked status of a wxCheckListBox item
 
@@ -624,24 +624,24 @@ void wxListBox::SetString(unsigned int n, const wxString& label)
 
 wxString wxListBox::GetString(unsigned int n) const
 {
-    wxCHECK_MSG( m_treeview != NULL, wxEmptyString, wxT("invalid listbox") );
+    //wxCHECK_MSG( m_treeview != NULL, wxEmptyString, wxT("invalid listbox") );
 
     wxGtkObject<GtkTreeEntry> entry(GTKGetEntry(n));
-    wxCHECK_MSG( entry, wxEmptyString, wxT("wrong listbox index") );
+    //wxCHECK_MSG( entry, wxEmptyString, wxT("wrong listbox index") );
 
     return wxGTK_CONV_BACK( gtk_tree_entry_get_label(entry) );
 }
 
 unsigned int wxListBox::GetCount() const
 {
-    wxCHECK_MSG( m_treeview != NULL, 0, wxT("invalid listbox") );
+    //wxCHECK_MSG( m_treeview != NULL, 0, wxT("invalid listbox") );
 
     return (unsigned int)gtk_tree_model_iter_n_children(GTK_TREE_MODEL(m_liststore), NULL);
 }
 
 int wxListBox::FindString( const wxString &item, bool bCase ) const
 {
-    wxCHECK_MSG( m_treeview != NULL, wxNOT_FOUND, wxT("invalid listbox") );
+    //wxCHECK_MSG( m_treeview != NULL, wxNOT_FOUND, wxT("invalid listbox") );
 
     //Sort of hackish - maybe there is a faster way
     unsigned int nCount = wxListBox::GetCount();
@@ -682,8 +682,8 @@ void wxListBox::GTKOnSelectionChanged()
 
 int wxListBox::GetSelection() const
 {
-    wxCHECK_MSG( m_treeview != NULL, wxNOT_FOUND, wxT("invalid listbox"));
-    wxCHECK_MSG( HasFlag(wxLB_SINGLE), wxNOT_FOUND,
+    //wxCHECK_MSG( m_treeview != NULL, wxNOT_FOUND, wxT("invalid listbox"));
+    //wxCHECK_MSG( HasFlag(wxLB_SINGLE), wxNOT_FOUND,
                     wxT("must be single selection listbox"));
 
     GtkTreeIter iter;
@@ -698,7 +698,7 @@ int wxListBox::GetSelection() const
 
 int wxListBox::GetSelections( wxArrayInt& aSelections ) const
 {
-    wxCHECK_MSG( m_treeview != NULL, wxNOT_FOUND, wxT("invalid listbox") );
+    //wxCHECK_MSG( m_treeview != NULL, wxNOT_FOUND, wxT("invalid listbox") );
 
     aSelections.Empty();
 
@@ -722,19 +722,19 @@ int wxListBox::GetSelections( wxArrayInt& aSelections ) const
 
 bool wxListBox::IsSelected( int n ) const
 {
-    wxCHECK_MSG( m_treeview != NULL, false, wxT("invalid listbox") );
+    //wxCHECK_MSG( m_treeview != NULL, false, wxT("invalid listbox") );
 
     GtkTreeSelection* selection = gtk_tree_view_get_selection(m_treeview);
 
     GtkTreeIter iter;
-    wxCHECK_MSG( GTKGetIteratorFor(n, &iter), false, wxT("Invalid index") );
+    //wxCHECK_MSG( GTKGetIteratorFor(n, &iter), false, wxT("Invalid index") );
 
     return gtk_tree_selection_iter_is_selected(selection, &iter) != 0;
 }
 
 void wxListBox::DoSetSelection( int n, bool select )
 {
-    wxCHECK_RET( m_treeview != NULL, wxT("invalid listbox") );
+    //wxCHECK_RET( m_treeview != NULL, wxT("invalid listbox") );
 
     GTKDisableEvents();
 
@@ -748,11 +748,11 @@ void wxListBox::DoSetSelection( int n, bool select )
         return;
     }
 
-    wxCHECK_RET( IsValid(n), wxT("invalid index in wxListBox::SetSelection") );
+    //wxCHECK_RET( IsValid(n), wxT("invalid index in wxListBox::SetSelection") );
 
 
     GtkTreeIter iter;
-    wxCHECK_RET( GTKGetIteratorFor(n, &iter), wxT("Invalid index") );
+    //wxCHECK_RET( GTKGetIteratorFor(n, &iter), wxT("Invalid index") );
 
     if (select)
         gtk_tree_selection_select_iter(selection, &iter);
@@ -771,8 +771,8 @@ void wxListBox::DoSetSelection( int n, bool select )
 
 void wxListBox::DoScrollToCell(int n, float alignY, float alignX)
 {
-    wxCHECK_RET( m_treeview, wxT("invalid listbox") );
-    wxCHECK_RET( IsValid(n), wxT("invalid index"));
+    //wxCHECK_RET( m_treeview, wxT("invalid listbox") );
+    //wxCHECK_RET( IsValid(n), wxT("invalid index"));
 
     //RN: I have no idea why this line is needed...
     if (gdk_pointer_is_grabbed () && gtk_widget_has_grab(GTK_WIDGET(m_treeview)))
@@ -877,7 +877,7 @@ void wxListBox::DoApplyWidgetStyle(GtkRcStyle *style)
 
 wxSize wxListBox::DoGetBestSize() const
 {
-    wxCHECK_MSG(m_treeview, wxDefaultSize, wxT("invalid tree view"));
+    //wxCHECK_MSG(m_treeview, wxDefaultSize, wxT("invalid tree view"));
 
     // Start with a minimum size that's not too small
     int cx, cy;

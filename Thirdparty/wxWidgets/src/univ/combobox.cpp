@@ -365,7 +365,7 @@ void wxComboBox::DoClear()
 
 void wxComboBox::DoDeleteOneItem(unsigned int n)
 {
-    wxCHECK_RET( IsValid(n), wxT("invalid index in wxComboBox::Delete") );
+    //wxCHECK_RET( IsValid(n), wxT("invalid index in wxComboBox::Delete") );
 
     if (GetSelection() == (int)n)
         SetValue(wxEmptyString);
@@ -380,14 +380,14 @@ unsigned int wxComboBox::GetCount() const
 
 wxString wxComboBox::GetString(unsigned int n) const
 {
-    wxCHECK_MSG( IsValid(n), wxEmptyString, wxT("invalid index in wxComboBox::GetString") );
+    //wxCHECK_MSG( IsValid(n), wxEmptyString, wxT("invalid index in wxComboBox::GetString") );
 
     return GetLBox()->GetString(n);
 }
 
 void wxComboBox::SetString(unsigned int n, const wxString& s)
 {
-    wxCHECK_RET( IsValid(n), wxT("invalid index in wxComboBox::SetString") );
+    //wxCHECK_RET( IsValid(n), wxT("invalid index in wxComboBox::SetString") );
 
     GetLBox()->SetString(n, s);
 }
@@ -399,7 +399,7 @@ int wxComboBox::FindString(const wxString& s, bool bCase) const
 
 void wxComboBox::SetSelection(int n)
 {
-    wxCHECK_RET( (n == wxNOT_FOUND || IsValid(n)), wxT("invalid index in wxComboBox::Select") );
+    //wxCHECK_RET( (n == wxNOT_FOUND || IsValid(n)), wxT("invalid index in wxComboBox::Select") );
 
     GetLBox()->SetSelection(n);
 

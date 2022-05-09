@@ -333,7 +333,7 @@ static gint gtk_window_realize_callback(GtkWidget* widget,
     gdk_flush();
 
     GdkWindow* window = gtk_widget_get_window(widget);
-    wxASSERT(window);
+    //wxASSERT(window);
 
     gst_x_overlay_set_xwindow_id( GST_X_OVERLAY(be->m_xoverlay),
                                 GDK_WINDOW_XID(window)
@@ -649,7 +649,7 @@ bool wxGStreamerMediaBackend::QueryVideoSizeFromElement(GstElement* element)
             // should be pushed on pads regardless of whether they
             // are currently linked
             pad = (GstPad *) GST_PAD_REALIZE (pad);
-            wxASSERT(pad);
+            //wxASSERT(pad);
 #endif
 
             if(!QueryVideoSizeFromPad(pad))
@@ -686,7 +686,7 @@ bool wxGStreamerMediaBackend::QueryVideoSizeFromPad(GstPad* pad)
     if ( caps )
     {
         const GstStructure *s = gst_caps_get_structure (caps, 0);
-        wxASSERT(s);
+        //wxASSERT(s);
 
         gst_structure_get_int (s, "width", &m_videoSize.x);
         gst_structure_get_int (s, "height", &m_videoSize.y);
@@ -739,7 +739,7 @@ void wxGStreamerMediaBackend::SetupXOverlay()
         gdk_flush();
 
         GdkWindow* window = gtk_widget_get_window(m_ctrl->m_wxwindow);
-        wxASSERT(window);
+        //wxASSERT(window);
 #endif
         gst_x_overlay_set_xwindow_id(GST_X_OVERLAY(m_xoverlay),
 #ifdef __WXGTK__
@@ -979,7 +979,7 @@ wxGStreamerMediaBackend::~wxGStreamerMediaBackend()
     // Dispose of the main player and related objects
     if(m_playbin)
     {
-        wxASSERT( GST_IS_OBJECT(m_playbin) );
+        //wxASSERT( GST_IS_OBJECT(m_playbin) );
         gst_element_set_state (m_playbin, GST_STATE_NULL);
         gst_object_unref (GST_OBJECT (m_playbin));
         delete m_eventHandler;
@@ -1275,8 +1275,8 @@ bool wxGStreamerMediaBackend::DoLoad(const wxString& locstring)
 
     // Make sure the passed URI is valid and tell playbin to load it
     // non-file uris are encoded
-    wxASSERT(gst_uri_protocol_is_valid("file"));
-    wxASSERT(gst_uri_is_valid(locstring.mb_str()));
+    //wxASSERT(gst_uri_protocol_is_valid("file"));
+    //wxASSERT(gst_uri_is_valid(locstring.mb_str()));
 
     g_object_set (G_OBJECT (m_playbin), "uri",
                   (const char*)locstring.mb_str(), NULL);

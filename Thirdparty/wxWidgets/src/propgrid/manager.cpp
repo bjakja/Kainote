@@ -730,9 +730,9 @@ bool wxPropertyGridManager::Reparent( wxWindowBase *newParent )
 bool wxPropertyGridManager::DoSelectPage( int index )
 {
     // -1 means no page was selected
-    //wxASSERT( m_selPage >= 0 );
+    ////wxASSERT( m_selPage >= 0 );
 
-    wxCHECK_MSG( index >= -1 && index < (int)GetPageCount(),
+    //wxCHECK_MSG( index >= -1 && index < (int)GetPageCount(),
                  false,
                  wxT("invalid page index") );
 
@@ -822,7 +822,7 @@ int wxPropertyGridManager::GetPageByName( const wxString& name ) const
 
 int wxPropertyGridManager::GetPageByState( const wxPropertyGridPageState* pState ) const
 {
-    wxASSERT( pState );
+    //wxASSERT( pState );
 
     size_t i;
     for ( i=0; i<GetPageCount(); i++ )
@@ -838,7 +838,7 @@ int wxPropertyGridManager::GetPageByState( const wxPropertyGridPageState* pState
 
 const wxString& wxPropertyGridManager::GetPageName( int index ) const
 {
-    wxASSERT( index >= 0 && index < (int)GetPageCount() );
+    //wxASSERT( index >= 0 && index < (int)GetPageCount() );
     return m_arrPages[index]->m_label;
 }
 
@@ -875,8 +875,8 @@ void wxPropertyGridManager::Clear()
 
 void wxPropertyGridManager::ClearPage( int page )
 {
-    wxASSERT( page >= 0 );
-    wxASSERT( page < (int)GetPageCount() );
+    //wxASSERT( page >= 0 );
+    //wxASSERT( page < (int)GetPageCount() );
 
     if ( page >= 0 && page < (int)GetPageCount() )
     {
@@ -893,8 +893,8 @@ void wxPropertyGridManager::ClearPage( int page )
 
 int wxPropertyGridManager::GetColumnCount( int page ) const
 {
-    wxASSERT( page >= -1 );
-    wxASSERT( page < (int)GetPageCount() );
+    //wxASSERT( page >= -1 );
+    //wxASSERT( page < (int)GetPageCount() );
 
     return GetPageState(page)->GetColumnCount();
 }
@@ -903,8 +903,8 @@ int wxPropertyGridManager::GetColumnCount( int page ) const
 
 void wxPropertyGridManager::SetColumnCount( int colCount, int page )
 {
-    wxASSERT( page >= -1 );
-    wxASSERT( page < (int)GetPageCount() );
+    //wxASSERT( page >= -1 );
+    //wxASSERT( page < (int)GetPageCount() );
 
     GetPageState(page)->SetColumnCount( colCount );
     GetGrid()->Refresh();
@@ -934,13 +934,13 @@ wxPropertyGridPage* wxPropertyGridManager::InsertPage( int index,
     if ( index < 0 )
         index = GetPageCount();
 
-    wxCHECK_MSG( (size_t)index == GetPageCount(), NULL,
+    //wxCHECK_MSG( (size_t)index == GetPageCount(), NULL,
         wxT("wxPropertyGridManager currently only supports appending pages (due to wxToolBar limitation)."));
 
     bool needInit = true;
     bool isPageInserted = m_iFlags & wxPG_MAN_FL_PAGE_INSERTED ? true : false;
 
-    wxASSERT( index == 0 || isPageInserted );
+    //wxASSERT( index == 0 || isPageInserted );
 
     if ( !pageObj )
     {
@@ -1009,7 +1009,7 @@ wxPropertyGridPage* wxPropertyGridManager::InsertPage( int index,
 
         if ( !(GetExtraStyle()&wxPG_EX_HIDE_PAGE_BUTTONS) )
         {
-            wxASSERT( m_pToolbar );
+            //wxASSERT( m_pToolbar );
 
             // Add separator before first page.
             if ( GetPageCount() < 2 && (GetExtraStyle()&wxPG_EX_MODE_BUTTONS) &&
@@ -1059,7 +1059,7 @@ wxPropertyGridPage* wxPropertyGridManager::InsertPage( int index,
 
     m_iFlags |= wxPG_MAN_FL_PAGE_INSERTED;
 
-    wxASSERT( pageObj->GetGrid() );
+    //wxASSERT( pageObj->GetGrid() );
 
     return pageObj;
 }
@@ -1128,8 +1128,8 @@ bool wxPropertyGridManager::IsPropertySelected( wxPGPropArg id ) const
 
 wxPGProperty* wxPropertyGridManager::GetPageRoot( int index ) const
 {
-    wxASSERT( index >= 0 );
-    wxASSERT( index < (int)m_arrPages.size() );
+    //wxASSERT( index >= 0 );
+    //wxASSERT( index < (int)m_arrPages.size() );
 
     return m_arrPages[index]->GetStatePtr()->m_properties;
 }
@@ -1138,7 +1138,7 @@ wxPGProperty* wxPropertyGridManager::GetPageRoot( int index ) const
 
 bool wxPropertyGridManager::RemovePage( int page )
 {
-    wxCHECK_MSG( (page >= 0) && (page < (int)GetPageCount()),
+    //wxCHECK_MSG( (page >= 0) && (page < (int)GetPageCount()),
                  false,
                  wxT("invalid page index") );
 
@@ -1171,7 +1171,7 @@ bool wxPropertyGridManager::RemovePage( int page )
 #if wxUSE_TOOLBAR
     if ( HasFlag(wxPG_TOOLBAR) )
     {
-        wxASSERT( m_pToolbar );
+        //wxASSERT( m_pToolbar );
 
         int toolPos = GetExtraStyle() & wxPG_EX_MODE_BUTTONS ? 3 : 0;
         toolPos += page;
@@ -1722,7 +1722,7 @@ void wxPropertyGridManager::OnToolbarClick( wxCommandEvent &event )
             }
         }
 
-        wxASSERT( index >= 0 );
+        //wxASSERT( index >= 0 );
 
         if ( DoSelectPage( index ) )
         {

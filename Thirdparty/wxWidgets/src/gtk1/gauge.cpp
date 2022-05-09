@@ -86,7 +86,7 @@ void wxGauge::SetRange( int range )
 
 void wxGauge::SetValue( int pos )
 {
-    wxCHECK_RET( pos <= m_rangeMax, wxT("invalid value in wxGauge::SetValue()") );
+    //wxCHECK_RET( pos <= m_rangeMax, wxT("invalid value in wxGauge::SetValue()") );
 
     m_gaugePos = pos;
 

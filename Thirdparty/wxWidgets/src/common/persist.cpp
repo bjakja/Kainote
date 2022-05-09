@@ -102,7 +102,7 @@ wxPersistenceManager::Register(void *obj, wxPersistentObject *po)
 void wxPersistenceManager::Unregister(void *obj)
 {
     wxPersistentObjectsMap::iterator it = m_persistentObjects.find(obj);
-    wxCHECK_RET( it != m_persistentObjects.end(), "not registered" );
+    //wxCHECK_RET( it != m_persistentObjects.end(), "not registered" );
 
     wxPersistentObject * const po = it->second;
     m_persistentObjects.erase(it);
@@ -115,7 +115,7 @@ void wxPersistenceManager::Save(void *obj)
         return;
 
     wxPersistentObjectsMap::iterator it = m_persistentObjects.find(obj);
-    wxCHECK_RET( it != m_persistentObjects.end(), "not registered" );
+    //wxCHECK_RET( it != m_persistentObjects.end(), "not registered" );
 
     it->second->Save();
 }
@@ -126,7 +126,7 @@ bool wxPersistenceManager::Restore(void *obj)
         return false;
 
     wxPersistentObjectsMap::iterator it = m_persistentObjects.find(obj);
-    wxCHECK_MSG( it != m_persistentObjects.end(), false, "not registered" );
+    //wxCHECK_MSG( it != m_persistentObjects.end(), false, "not registered" );
 
     return it->second->Restore();
 }

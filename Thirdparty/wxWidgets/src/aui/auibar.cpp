@@ -852,7 +852,7 @@ wxAuiToolBar::~wxAuiToolBar()
 void wxAuiToolBar::SetWindowStyleFlag(long style)
 {
     GetOrientation(style);      // assert if style is invalid
-    wxCHECK_RET(IsPaneValid(style),
+    //wxCHECK_RET(IsPaneValid(style),
                 "window settings and pane settings are incompatible");
 
     wxControl::SetWindowStyleFlag(style);
@@ -1337,7 +1337,7 @@ int wxAuiToolBar::GetToolPacking() const
 
 void wxAuiToolBar::SetOrientation(int orientation)
 {
-    wxCHECK_RET(orientation == wxHORIZONTAL ||
+    //wxCHECK_RET(orientation == wxHORIZONTAL ||
                 orientation == wxVERTICAL,
                 "invalid orientation value");
     if (orientation != m_orientation)

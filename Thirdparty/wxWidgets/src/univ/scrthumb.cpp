@@ -283,7 +283,7 @@ wxCoord wxScrollThumb::GetMouseCoord(const wxMouseEvent& event) const
 
 int wxScrollThumb::GetThumbPos(const wxMouseEvent& event) const
 {
-    wxCHECK_MSG( m_captureData && m_captureData->m_shaftPart == Shaft_Thumb, 0,
+    //wxCHECK_MSG( m_captureData && m_captureData->m_shaftPart == Shaft_Thumb, 0,
                  wxT("can't be called when thumb is not dragged") );
 
     int x = GetMouseCoord(event) - m_captureData->m_ofsMouse;

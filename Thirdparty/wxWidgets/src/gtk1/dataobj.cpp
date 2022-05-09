@@ -340,7 +340,7 @@ bool wxBitmapDataObject::SetData(size_t size, const void *buf)
 {
     Clear();
 
-    wxCHECK_MSG( wxImage::FindHandler(wxBITMAP_TYPE_PNG) != NULL,
+    //wxCHECK_MSG( wxImage::FindHandler(wxBITMAP_TYPE_PNG) != NULL,
                  false, wxT("You must call wxImage::AddHandler(new wxPNGHandler); to be able to use clipboard with bitmaps!") );
 
     m_pngSize = size;
@@ -365,7 +365,7 @@ void wxBitmapDataObject::DoConvertToPng()
     if ( !m_bitmap.IsOk() )
         return;
 
-    wxCHECK_RET( wxImage::FindHandler(wxBITMAP_TYPE_PNG) != NULL,
+    //wxCHECK_RET( wxImage::FindHandler(wxBITMAP_TYPE_PNG) != NULL,
                  wxT("You must call wxImage::AddHandler(new wxPNGHandler); to be able to use clipboard with bitmaps!") );
 
     wxImage image = m_bitmap.ConvertToImage();

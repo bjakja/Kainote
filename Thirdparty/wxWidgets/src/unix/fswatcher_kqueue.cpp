@@ -85,11 +85,11 @@ public:
 
     bool Init()
     {
-        wxCHECK_MSG( !IsOk(), false,
+        //wxCHECK_MSG( !IsOk(), false,
                      "Kqueue appears to be already initialized" );
 
         wxEventLoopBase *loop = wxEventLoopBase::GetActive();
-        wxCHECK_MSG( loop, false, "File system watcher needs an active loop" );
+        //wxCHECK_MSG( loop, false, "File system watcher needs an active loop" );
 
         // create kqueue
         m_kfd = kqueue();
@@ -107,7 +107,7 @@ public:
 
     void Close()
     {
-        wxCHECK_RET( IsOk(),
+        //wxCHECK_RET( IsOk(),
                     "Kqueue not initialized or invalid kqueue descriptor" );
 
         if ( close(m_kfd) != 0 )
@@ -120,7 +120,7 @@ public:
 
     virtual bool DoAdd(wxSharedPtr<wxFSWatchEntryKq> watch)
     {
-        wxCHECK_MSG( IsOk(), false,
+        //wxCHECK_MSG( IsOk(), false,
                     "Kqueue not initialized or invalid kqueue descriptor" );
 
         struct kevent event;
@@ -143,7 +143,7 @@ public:
 
     virtual bool DoRemove(wxSharedPtr<wxFSWatchEntryKq> watch)
     {
-        wxCHECK_MSG( IsOk(), false,
+        //wxCHECK_MSG( IsOk(), false,
                     "Kqueue not initialized or invalid kqueue descriptor" );
 
         // TODO more error conditions according to man
@@ -173,7 +173,7 @@ public:
     // return true if there was no error, false on error
     bool ReadEvents()
     {
-        wxCHECK_MSG( IsOk(), false,
+        //wxCHECK_MSG( IsOk(), false,
                     "Kqueue not initialized or invalid kqueue descriptor" );
 
         // read events
@@ -261,7 +261,7 @@ protected:
             }
         }
 
-        wxASSERT( changedFiles.size() == changedFlags.size() );
+        //wxASSERT( changedFiles.size() == changedFlags.size() );
 
 #if 0
         wxLogTrace(wxTRACE_FSWATCHER, "Changed files:");

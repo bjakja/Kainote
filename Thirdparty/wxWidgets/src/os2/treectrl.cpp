@@ -1129,7 +1129,7 @@ wxTreeItemId wxTreeCtrl::GetRootItem () const
 
 wxTreeItemId wxTreeCtrl::GetSelection () const
 {
-    wxCHECK_MSG( !(m_windowStyle & wxTR_MULTIPLE), (long)(WXHTREEITEM)0,
+    //wxCHECK_MSG( !(m_windowStyle & wxTR_MULTIPLE), (long)(WXHTREEITEM)0,
                  wxT("this only works with single selection controls") );
 
     PMYRECORD                       pRecord = NULL;
@@ -1908,7 +1908,7 @@ SHORT EXPENTRY InternalDataCompareTreeFunc (
 , PVOID                             pStorage
 )
 {
-    wxCHECK_MSG( p1 && p2, 0,
+    //wxCHECK_MSG( p1 && p2, 0,
                  wxT("sorting tree without data doesn't make sense") );
 
     wxTreeCtrl*                     pTree = (wxTreeCtrl*)pStorage;

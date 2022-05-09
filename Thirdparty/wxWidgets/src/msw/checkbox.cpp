@@ -201,7 +201,7 @@ bool wxCheckBox::GetValue() const
 void wxCheckBox::Command(wxCommandEvent& event)
 {
     int state = event.GetInt();
-    wxCHECK_RET( (state == wxCHK_UNCHECKED) || (state == wxCHK_CHECKED)
+    //wxCHECK_RET( (state == wxCHK_UNCHECKED) || (state == wxCHK_CHECKED)
         || (state == wxCHK_UNDETERMINED),
         wxT("event.GetInt() returned an invalid checkbox state") );
 

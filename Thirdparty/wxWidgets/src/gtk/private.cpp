@@ -145,7 +145,7 @@ static void CreateHeaderButtons()
 #else
         s_first_button = column->button;
 #endif
-        wxASSERT(s_first_button);
+        //wxASSERT(s_first_button);
 
         column = gtk_tree_view_column_new();
         gtk_tree_view_append_column(GTK_TREE_VIEW(treewidget), column);

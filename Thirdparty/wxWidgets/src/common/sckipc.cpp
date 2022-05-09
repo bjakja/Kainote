@@ -237,13 +237,13 @@ public:
     {
         Flush();
 
-        wxCHECK_MSG( conn, NULL, "NULL connection parameter" );
-        wxCHECK_MSG( size, NULL, "NULL size parameter" );
+        //wxCHECK_MSG( conn, NULL, "NULL connection parameter" );
+        //wxCHECK_MSG( size, NULL, "NULL size parameter" );
 
         *size = Read32();
 
         void * const data = conn->GetBufferAtLeast(*size);
-        wxCHECK_MSG( data, NULL, "IPC buffer allocation failed" );
+        //wxCHECK_MSG( data, NULL, "IPC buffer allocation failed" );
 
         m_socketStream.Read(data, *size);
 
@@ -254,7 +254,7 @@ public:
     void *
     ReadFormatData(wxConnectionBase *conn, wxIPCFormat *format, size_t *size)
     {
-        wxCHECK_MSG( format, NULL, "NULL format parameter" );
+        //wxCHECK_MSG( format, NULL, "NULL format parameter" );
 
         *format = static_cast<wxIPCFormat>(Read8());
 

@@ -357,7 +357,7 @@ bool FortyAboutDialog::AddControls(wxWindow* parent)
     wxSizer *item0 = new wxBoxSizer( wxVERTICAL );
 
     wxWindow *item1 = parent->FindWindow( ID_ABOUT_HTML_WINDOW );
-    wxASSERT( item1 );
+    //wxASSERT( item1 );
     item0->Add( item1, 0, wxALIGN_CENTRE|wxALL, 5 );
 
     wxButton *item2 = new wxButton( parent, wxID_CLOSE );

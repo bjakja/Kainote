@@ -113,7 +113,7 @@ bool wxFillXVisualInfo( wxXVisualInfo* vi, Display* dpy )
     vinfo = XGetVisualInfo( dpy, VisualIDMask|VisualDepthMask,
                             &vinfo_template, &nitem );
 
-    wxCHECK_MSG( vinfo, false, wxT("no visual") );
+    //wxCHECK_MSG( vinfo, false, wxT("no visual") );
 
     vi->Init( dpy, vinfo );
 

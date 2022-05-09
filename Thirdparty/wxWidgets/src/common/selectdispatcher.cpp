@@ -88,7 +88,7 @@ bool wxSelectSets::HasFD(int fd) const
 
 bool wxSelectSets::SetFD(int fd, int flags)
 {
-    wxCHECK_MSG( fd >= 0, false, wxT("invalid descriptor") );
+    //wxCHECK_MSG( fd >= 0, false, wxT("invalid descriptor") );
 
     for ( int n = 0; n < Max; n++ )
     {

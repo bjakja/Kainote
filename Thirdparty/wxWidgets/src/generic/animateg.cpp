@@ -46,21 +46,21 @@ IMPLEMENT_DYNAMIC_CLASS(wxAnimation, wxAnimationBase)
 
 wxSize wxAnimation::GetSize() const
 {
-    wxCHECK_MSG( IsOk(), wxDefaultSize, wxT("invalid animation") );
+    //wxCHECK_MSG( IsOk(), wxDefaultSize, wxT("invalid animation") );
 
     return M_ANIMDATA->GetAnimationSize();
 }
 
 unsigned int wxAnimation::GetFrameCount() const
 {
-    wxCHECK_MSG( IsOk(), 0, wxT("invalid animation") );
+    //wxCHECK_MSG( IsOk(), 0, wxT("invalid animation") );
 
     return M_ANIMDATA->GetFrameCount();
 }
 
 wxImage wxAnimation::GetFrame(unsigned int i) const
 {
-    wxCHECK_MSG( IsOk(), wxNullImage, wxT("invalid animation") );
+    //wxCHECK_MSG( IsOk(), wxNullImage, wxT("invalid animation") );
 
     wxImage ret;
     if (!M_ANIMDATA->ConvertToImage(i, &ret))
@@ -70,42 +70,42 @@ wxImage wxAnimation::GetFrame(unsigned int i) const
 
 int wxAnimation::GetDelay(unsigned int i) const
 {
-    wxCHECK_MSG( IsOk(), 0, wxT("invalid animation") );
+    //wxCHECK_MSG( IsOk(), 0, wxT("invalid animation") );
 
     return M_ANIMDATA->GetDelay(i);
 }
 
 wxPoint wxAnimation::GetFramePosition(unsigned int frame) const
 {
-    wxCHECK_MSG( IsOk(), wxDefaultPosition, wxT("invalid animation") );
+    //wxCHECK_MSG( IsOk(), wxDefaultPosition, wxT("invalid animation") );
 
     return M_ANIMDATA->GetFramePosition(frame);
 }
 
 wxSize wxAnimation::GetFrameSize(unsigned int frame) const
 {
-    wxCHECK_MSG( IsOk(), wxDefaultSize, wxT("invalid animation") );
+    //wxCHECK_MSG( IsOk(), wxDefaultSize, wxT("invalid animation") );
 
     return M_ANIMDATA->GetFrameSize(frame);
 }
 
 wxAnimationDisposal wxAnimation::GetDisposalMethod(unsigned int frame) const
 {
-    wxCHECK_MSG( IsOk(), wxANIM_UNSPECIFIED, wxT("invalid animation") );
+    //wxCHECK_MSG( IsOk(), wxANIM_UNSPECIFIED, wxT("invalid animation") );
 
     return M_ANIMDATA->GetDisposalMethod(frame);
 }
 
 wxColour wxAnimation::GetTransparentColour(unsigned int frame) const
 {
-    wxCHECK_MSG( IsOk(), wxNullColour, wxT("invalid animation") );
+    //wxCHECK_MSG( IsOk(), wxNullColour, wxT("invalid animation") );
 
     return M_ANIMDATA->GetTransparentColour(frame);
 }
 
 wxColour wxAnimation::GetBackgroundColour() const
 {
-    wxCHECK_MSG( IsOk(), wxNullColour, wxT("invalid animation") );
+    //wxCHECK_MSG( IsOk(), wxNullColour, wxT("invalid animation") );
 
     return M_ANIMDATA->GetBackgroundColour();
 }
@@ -531,7 +531,7 @@ void wxAnimationCtrl::IncrementalUpdateBackingStore()
 
 void wxAnimationCtrl::DisplayStaticImage()
 {
-    wxASSERT(!IsPlaying());
+    //wxASSERT(!IsPlaying());
 
     // m_bmpStaticReal will be updated only if necessary...
     UpdateStaticImage();
@@ -579,7 +579,7 @@ void wxAnimationCtrl::DrawFrame(wxDC &dc, unsigned int frame)
 
 void wxAnimationCtrl::DrawCurrentFrame(wxDC& dc)
 {
-    wxASSERT( m_backingStore.IsOk() );
+    //wxASSERT( m_backingStore.IsOk() );
 
     // m_backingStore always contains the current frame
     dc.DrawBitmap(m_backingStore, 0, 0, true /* use mask in case it's present */);

@@ -1172,7 +1172,7 @@ void wxIdRange::NoteItem(const wxXmlNode* node, const wxString& item)
 
 void wxIdRange::Finalise(const wxXmlNode* node)
 {
-    wxCHECK_RET( !IsFinalised(),
+    //wxCHECK_RET( !IsFinalised(),
                  "Trying to finalise an already-finalised range" );
 
     // Now we know about all the items, we can get an accurate range size
@@ -1204,7 +1204,7 @@ void wxIdRange::Finalise(const wxXmlNode* node)
         // NB: negative numbers, but NewControlId already returns the most
         //     negative
         m_start = wxWindow::NewControlId(m_size);
-        wxCHECK_RET( m_start != wxID_NONE,
+        //wxCHECK_RET( m_start != wxID_NONE,
                      "insufficient IDs available to create range" );
         m_end = m_start + m_size - 1;
     }
@@ -1309,7 +1309,7 @@ wxIdRangeManager::FindRangeForItem(const wxXmlNode* node,
                                    wxString& value) const
 {
     wxString basename = item.BeforeFirst('[');
-    wxCHECK_MSG( !basename.empty(), NULL,
+    //wxCHECK_MSG( !basename.empty(), NULL,
                  "an id-range item without a range name" );
 
     int index = Find(basename);
@@ -1811,7 +1811,7 @@ wxBitmap wxXmlResourceHandler::GetBitmap(const wxXmlNode* node,
                                          const wxArtClient& defaultArtClient,
                                          wxSize size)
 {
-    wxCHECK_MSG( node, wxNullBitmap, "bitmap node can't be NULL" );
+    //wxCHECK_MSG( node, wxNullBitmap, "bitmap node can't be NULL" );
 
     /* If the bitmap is specified as stock item, query wxArtProvider for it: */
     wxString art_id, art_client;
@@ -1983,7 +1983,7 @@ wxImageList *wxXmlResourceHandler::GetImageList(const wxString& param)
 
 wxXmlNode *wxXmlResourceHandler::GetParamNode(const wxString& param)
 {
-    wxCHECK_MSG(m_node, NULL, wxT("You can't access handler data before it was initialized!"));
+    //wxCHECK_MSG(m_node, NULL, wxT("You can't access handler data before it was initialized!"));
 
     wxXmlNode *n = m_node->GetChildren();
 

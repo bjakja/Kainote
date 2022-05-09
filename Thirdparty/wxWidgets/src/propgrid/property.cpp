@@ -790,7 +790,7 @@ void wxPGProperty::GetDisplayInfo( unsigned int column,
     }
     else
     {
-        wxASSERT( column == 1 );
+        //wxASSERT( column == 1 );
 
         if ( choiceIndex != wxNOT_FOUND )
         {
@@ -966,7 +966,7 @@ void wxPGProperty::DoGenerateComposedValue( wxString& text,
 wxString wxPGProperty::ValueToString( wxVariant& WXUNUSED(value),
                                       int argFlags ) const
 {
-    wxCHECK_MSG( GetChildCount() > 0,
+    //wxCHECK_MSG( GetChildCount() > 0,
                  wxString(),
                  "If user property does not have any children, it must "
                  "override GetValueAsString" );
@@ -1298,9 +1298,9 @@ void wxPGProperty::OnCustomPaint( wxDC& dc,
 {
     wxBitmap* bmp = m_valueBitmap;
 
-    wxCHECK_RET( bmp && bmp->IsOk(), wxT("invalid bitmap") );
+    //wxCHECK_RET( bmp && bmp->IsOk(), wxT("invalid bitmap") );
 
-    wxCHECK_RET( rect.x >= 0, wxT("unexpected measure call") );
+    //wxCHECK_RET( rect.x >= 0, wxT("unexpected measure call") );
 
     dc.DrawBitmap(*bmp,rect.x,rect.y);
 }
@@ -1356,9 +1356,9 @@ void wxPGProperty::SetValue( wxVariant value, wxVariant* pList, int flags )
 
         if ( pList && !pList->IsNull() )
         {
-            wxASSERT( pList->GetType() == wxPG_VARIANT_TYPE_LIST );
-            wxASSERT( GetChildCount() );
-            wxASSERT( !IsCategory() );
+            //wxASSERT( pList->GetType() == wxPG_VARIANT_TYPE_LIST );
+            //wxASSERT( GetChildCount() );
+            //wxASSERT( !IsCategory() );
 
             wxVariantList& list = pList->GetList();
             wxVariantList::iterator node;
@@ -1850,7 +1850,7 @@ wxString wxPGProperty::GetFlagsAsString( FlagType flagsMask ) const
         if ( relevantFlags & a )
         {
             const wxChar* fs = gs_propFlagToString[i];
-            wxASSERT(fs);
+            //wxASSERT(fs);
             if ( !s.empty() )
                 s << wxS("|");
             s << fs;
@@ -1969,7 +1969,7 @@ void wxPGProperty::SetChoiceSelection( int newValue )
     // works if the value type is long or string.
     wxString valueType = GetValue().GetType();
 
-    wxCHECK_RET( m_choices.IsOk(), wxT("invalid choiceinfo") );
+    //wxCHECK_RET( m_choices.IsOk(), wxT("invalid choiceinfo") );
 
     if ( valueType == wxPG_VARIANT_TYPE_STRING )
     {
@@ -2076,7 +2076,7 @@ bool wxPGProperty::HasVisibleChildren() const
 bool wxPGProperty::RecreateEditor()
 {
     wxPropertyGrid* pg = GetGrid();
-    wxASSERT(pg);
+    //wxASSERT(pg);
 
     wxPGProperty* selected = pg->GetSelection();
     if ( this == selected )
@@ -2314,15 +2314,15 @@ void wxPGProperty::RemoveChild( wxPGProperty* p )
 
 void wxPGProperty::AdaptListToValue( wxVariant& list, wxVariant* value ) const
 {
-    wxASSERT( GetChildCount() );
-    wxASSERT( !IsCategory() );
+    //wxASSERT( GetChildCount() );
+    //wxASSERT( !IsCategory() );
 
     *value = GetValue();
 
     if ( !list.GetCount() )
         return;
 
-    wxASSERT( GetChildCount() >= (unsigned int)list.GetCount() );
+    //wxASSERT( GetChildCount() >= (unsigned int)list.GetCount() );
 
     bool allChildrenSpecified;
 
@@ -2445,7 +2445,7 @@ int wxPGProperty::GetChildrenHeight( int lh, int iMax_ ) const
 
     unsigned int iMax = iMax_;
 
-    wxASSERT( iMax <= GetChildCount() );
+    //wxASSERT( iMax <= GetChildCount() );
 
     if ( !IsExpanded() && GetParent() )
         return 0;
@@ -2473,7 +2473,7 @@ wxPGProperty* wxPGProperty::GetItemAtY( unsigned int y,
                                         unsigned int lh,
                                         unsigned int* nextItemY ) const
 {
-    wxASSERT( nextItemY );
+    //wxASSERT( nextItemY );
 
     // Linear search at the moment
     //
@@ -2925,7 +2925,7 @@ void wxPGChoices::RemoveAt(size_t nIndex, size_t count)
 {
     AllocExclusive();
 
-    wxASSERT( m_data->GetRefCount() != -1 );
+    //wxASSERT( m_data->GetRefCount() != -1 );
     m_data->m_items.erase(m_data->m_items.begin()+nIndex,
                           m_data->m_items.begin()+nIndex+count);
 }

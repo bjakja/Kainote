@@ -842,7 +842,7 @@ template<> struct wxStrtoxCharType<int>
     typedef const char* Type; /* this one is never used */
     static char** AsPointer(int WXUNUSED_UNLESS_DEBUG(p))
     {
-        wxASSERT_MSG( p == 0, "passing non-NULL int is invalid" );
+        //wxASSERT_MSG( p == 0, "passing non-NULL int is invalid" );
         return NULL;
     }
 };

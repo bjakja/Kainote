@@ -584,7 +584,7 @@ void wxMimeTypesManagerImpl::Initialize(int WXUNUSED(mailcapStyles), const wxStr
 
     //obtain the number of entries in the map
     status = ICCountMapEntries( (ICInstance) m_hIC, (Handle) m_hDatabase, &m_lCount );
-    wxASSERT( status == noErr );
+    //wxASSERT( status == noErr );
 
 #if 0
     //debug stuff
@@ -835,40 +835,40 @@ public:
 
     CFTypeRef operator [] (CFTypeRef cftEntry) const
     {
-        wxASSERT(IsValid());
+        //wxASSERT(IsValid());
         return (CFTypeRef) CFDictionaryGetValue((CFDictionaryRef)m_cfmdRef, cftEntry);
     }
 
     CFIndex GetCount() const
     {
-        wxASSERT(IsValid());
+        //wxASSERT(IsValid());
         return CFDictionaryGetCount((CFDictionaryRef)m_cfmdRef);
     }
 
     void Add(CFTypeRef cftKey, CFTypeRef cftValue)
     {
-        wxASSERT(IsValid());
-        wxASSERT(Exists(cftKey) == false);
+        //wxASSERT(IsValid());
+        //wxASSERT(Exists(cftKey) == false);
         CFDictionaryAddValue(m_cfmdRef, cftKey, cftValue);
     }
 
     void Remove(CFTypeRef cftKey)
     {
-        wxASSERT(IsValid());
-        wxASSERT(Exists(cftKey));
+        //wxASSERT(IsValid());
+        //wxASSERT(Exists(cftKey));
         CFDictionaryRemoveValue(m_cfmdRef, cftKey);
     }
 
     void Set(CFTypeRef cftKey, CFTypeRef cftValue)
     {
-        wxASSERT(IsValid());
-        wxASSERT(Exists(cftKey));
+        //wxASSERT(IsValid());
+        //wxASSERT(Exists(cftKey));
         CFDictionarySetValue(m_cfmdRef, cftKey, cftValue);
     }
 
     bool Exists(CFTypeRef cftKey) const
     {
-        wxASSERT(IsValid());
+        //wxASSERT(IsValid());
         return CFDictionaryContainsKey((CFDictionaryRef)m_cfmdRef, cftKey);
     }
 
@@ -1022,7 +1022,7 @@ public:
 
     void MakeMutable(CFIndex cfiSize = 0)
     {
-        wxASSERT(IsValid());
+        //wxASSERT(IsValid());
 
         CFMutableArrayRef oldref = m_cfmaRef;
         m_cfmaRef = CFArrayCreateMutableCopy(
@@ -1070,33 +1070,33 @@ public:
 
     CFTypeRef operator [] (CFIndex cfiIndex) const
     {
-        wxASSERT(IsValid());
+        //wxASSERT(IsValid());
         return (CFTypeRef) CFArrayGetValueAtIndex((CFArrayRef)m_cfmaRef, cfiIndex);
     }
 
     CFIndex GetCount()
     {
-        wxASSERT(IsValid());
+        //wxASSERT(IsValid());
         return CFArrayGetCount((CFArrayRef)m_cfmaRef);
     }
 
     void Add(CFTypeRef cftValue)
     {
-        wxASSERT(IsValid());
+        //wxASSERT(IsValid());
         CFArrayAppendValue(m_cfmaRef, cftValue);
     }
 
     void Remove(CFIndex cfiIndex)
     {
-        wxASSERT(IsValid());
-        wxASSERT(cfiIndex < GetCount());
+        //wxASSERT(IsValid());
+        //wxASSERT(cfiIndex < GetCount());
         CFArrayRemoveValueAtIndex(m_cfmaRef, cfiIndex);
     }
 
     void Set(CFIndex cfiIndex, CFTypeRef cftValue)
     {
-        wxASSERT(IsValid());
-        wxASSERT(cfiIndex < GetCount());
+        //wxASSERT(IsValid());
+        //wxASSERT(cfiIndex < GetCount());
         CFArraySetValueAtIndex(m_cfmaRef, cfiIndex, cftValue);
     }
 
@@ -1707,7 +1707,7 @@ wxFileType* wxMimeTypesManagerImpl::Associate(const wxFileTypeInfo& ftInfo)
 bool
 wxMimeTypesManagerImpl::Unassociate(wxFileType *pFileType)
 {
-    wxASSERT(pFileType);
+    //wxASSERT(pFileType);
     bool bInfoSuccess = false;
 
     wxArrayString asExtensions;

@@ -306,7 +306,7 @@ wxDebugReport::AddText(const wxString& filename,
 void wxDebugReport::RemoveFile(const wxString& name)
 {
     const int n = m_files.Index(name);
-    wxCHECK_RET( n != wxNOT_FOUND, wxT("No such file in wxDebugReport") );
+    //wxCHECK_RET( n != wxNOT_FOUND, wxT("No such file in wxDebugReport") );
 
     m_files.RemoveAt(n);
     m_descriptions.RemoveAt(n);
@@ -441,7 +441,7 @@ bool wxDebugReport::DoAddExceptionInfo(wxXmlNode *nodeContext)
 
 bool wxDebugReport::AddContext(wxDebugReport::Context ctx)
 {
-    wxCHECK_MSG( IsOk(), false, wxT("use IsOk() first") );
+    //wxCHECK_MSG( IsOk(), false, wxT("use IsOk() first") );
 
     // create XML dump of current context
     wxXmlDocument xmldoc;
@@ -522,7 +522,7 @@ bool wxDebugReport::AddContext(wxDebugReport::Context ctx)
 
 bool wxDebugReport::AddDump(Context ctx)
 {
-    wxCHECK_MSG( IsOk(), false, wxT("use IsOk() first") );
+    //wxCHECK_MSG( IsOk(), false, wxT("use IsOk() first") );
 
     wxFileName fn(m_dir, GetReportName(), wxT("dmp"));
     wxCrashReport::SetFileName(fn.GetFullPath());

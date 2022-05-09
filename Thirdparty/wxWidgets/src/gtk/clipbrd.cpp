@@ -338,7 +338,7 @@ selection_handler( GtkWidget *WXUNUSED(widget),
 
 void wxClipboard::GTKOnSelectionReceived(const GtkSelectionData& sel)
 {
-    wxCHECK_RET( m_receivedData, wxT("should be inside GetData()") );
+    //wxCHECK_RET( m_receivedData, wxT("should be inside GetData()") );
 
     const wxDataFormat format(gtk_selection_data_get_target(const_cast<GtkSelectionData*>(&sel)));
     wxLogTrace(TRACE_CLIPBOARD, wxT("Received selection %s"),
@@ -534,7 +534,7 @@ bool wxClipboard::IsSupportedAsync(wxEvtHandler *sink)
     if (m_sink.get())
         return false;  // currently busy, come back later
 
-    wxCHECK_MSG( sink, false, wxT("no sink given") );
+    //wxCHECK_MSG( sink, false, wxT("no sink given") );
 
     m_sink = sink;
     gtk_selection_convert( m_targetsWidgetAsync,
@@ -547,7 +547,7 @@ bool wxClipboard::IsSupportedAsync(wxEvtHandler *sink)
 
 bool wxClipboard::DoIsSupported(const wxDataFormat& format)
 {
-    wxCHECK_MSG( format, false, wxT("invalid clipboard format") );
+    //wxCHECK_MSG( format, false, wxT("invalid clipboard format") );
 
     wxLogTrace(TRACE_CLIPBOARD, wxT("Checking if format %s is available"),
                format.GetId().c_str());
@@ -594,7 +594,7 @@ void wxClipboard::Clear()
 
 bool wxClipboard::Open()
 {
-    wxCHECK_MSG( !m_open, false, wxT("clipboard already open") );
+    //wxCHECK_MSG( !m_open, false, wxT("clipboard already open") );
 
     m_open = true;
 
@@ -603,9 +603,9 @@ bool wxClipboard::Open()
 
 bool wxClipboard::SetData( wxDataObject *data )
 {
-    wxCHECK_MSG( m_open, false, wxT("clipboard not open") );
+    //wxCHECK_MSG( m_open, false, wxT("clipboard not open") );
 
-    wxCHECK_MSG( data, false, wxT("data is invalid") );
+    //wxCHECK_MSG( data, false, wxT("data is invalid") );
 
     Clear();
 
@@ -614,9 +614,9 @@ bool wxClipboard::SetData( wxDataObject *data )
 
 bool wxClipboard::AddData( wxDataObject *data )
 {
-    wxCHECK_MSG( m_open, false, wxT("clipboard not open") );
+    //wxCHECK_MSG( m_open, false, wxT("clipboard not open") );
 
-    wxCHECK_MSG( data, false, wxT("data is invalid") );
+    //wxCHECK_MSG( data, false, wxT("data is invalid") );
 
     // we can only store one wxDataObject so clear the old one
     Clear();
@@ -652,7 +652,7 @@ bool wxClipboard::AddData( wxDataObject *data )
 
 void wxClipboard::Close()
 {
-    wxCHECK_RET( m_open, wxT("clipboard not open") );
+    //wxCHECK_RET( m_open, wxT("clipboard not open") );
 
     m_open = false;
 }
@@ -680,7 +680,7 @@ bool wxClipboard::IsSupported( const wxDataFormat& format )
 
 bool wxClipboard::GetData( wxDataObject& data )
 {
-    wxCHECK_MSG( m_open, false, wxT("clipboard not open") );
+    //wxCHECK_MSG( m_open, false, wxT("clipboard not open") );
 
     // get all supported formats from wxDataObjects: notice that we are setting
     // the object data, so we need them in "Set" direction
@@ -728,7 +728,7 @@ bool wxClipboard::GetData( wxDataObject& data )
         if ( format != wxDF_TEXT || data.GetDataSize(format) > 1 )
 #endif // UNICODE / !UNICODE
         {
-            wxCHECK_MSG( m_formatSupported, false,
+            //wxCHECK_MSG( m_formatSupported, false,
                          wxT("error retrieving data from clipboard") );
         }
 

@@ -1267,7 +1267,7 @@ void* wxVariant::GetVoidPtr() const
     if ( IsNull() )
         return NULL;
 
-    wxASSERT( GetType() == wxT("void*") );
+    //wxASSERT( GetType() == wxT("void*") );
 
     return (void*) ((wxVariantDataVoidPtr*) m_refData)->GetValue();
 }
@@ -2140,7 +2140,7 @@ void wxVariant::operator= (const wxVariantList& value)
 
 wxVariantList& wxVariant::GetList() const
 {
-    wxASSERT( (GetType() == wxT("list")) );
+    //wxASSERT( (GetType() == wxT("list")) );
 
     return (wxVariantList&) ((wxVariantDataList*) m_refData)->GetValue();
 }

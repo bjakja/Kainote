@@ -97,14 +97,14 @@ static wxString ParseWildCard( const wxString& wild )
     const size_t count = wxParseCommonDialogsFilter(wild,
                                                     wildDescriptions,
                                                     wildFilters);
-    wxCHECK_MSG( count, wxT("*.*"), wxT("wxFileDialog: bad wildcard string") );
-    wxCHECK_MSG( count == 1, wxT("*.*"), msg );
+    //wxCHECK_MSG( count, wxT("*.*"), wxT("wxFileDialog: bad wildcard string") );
+    //wxCHECK_MSG( count == 1, wxT("*.*"), msg );
 
     // check for *.txt;*.rtf
     wxStringTokenizer tok2( wildFilters[0], wxT(";") );
     wxString wildcard = tok2.GetNextToken();
 
-    wxCHECK_MSG( tok2.CountTokens() <= 1, wildcard, msg );
+    //wxCHECK_MSG( tok2.CountTokens() <= 1, wildcard, msg );
     return wildcard;
 }
 

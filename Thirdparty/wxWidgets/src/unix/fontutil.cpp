@@ -597,7 +597,7 @@ bool wxNativeFontInfo::HasElements() const
 
 wxString wxNativeFontInfo::GetXFontComponent(wxXLFDField field) const
 {
-    wxCHECK_MSG( field < wxXLFD_MAX, wxEmptyString, wxT("invalid XLFD field") );
+    //wxCHECK_MSG( field < wxXLFD_MAX, wxEmptyString, wxT("invalid XLFD field") );
 
     if ( !HasElements() )
     {
@@ -668,7 +668,7 @@ wxString wxNativeFontInfo::GetXFontName() const
 void
 wxNativeFontInfo::SetXFontComponent(wxXLFDField field, const wxString& value)
 {
-    wxCHECK_RET( field < wxXLFD_MAX, wxT("invalid XLFD field") );
+    //wxCHECK_RET( field < wxXLFD_MAX, wxT("invalid XLFD field") );
 
     // this class should be initialized with a valid font spec first and only
     // then the fields may be modified!
@@ -871,7 +871,7 @@ void wxNativeFontInfo::SetEncoding(wxFontEncoding encoding)
 bool wxGetNativeFontEncoding(wxFontEncoding encoding,
                              wxNativeEncodingInfo *info)
 {
-    wxCHECK_MSG( info, false, wxT("bad pointer in wxGetNativeFontEncoding") );
+    //wxCHECK_MSG( info, false, wxT("bad pointer in wxGetNativeFontEncoding") );
 
     if ( encoding == wxFONTENCODING_DEFAULT )
     {

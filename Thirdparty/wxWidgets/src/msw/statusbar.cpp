@@ -92,7 +92,7 @@ WXDWORD wxStatusBar::MSWGetStyle(long style, WXDWORD *exstyle) const
     // show size grip if this is the status bar of a non-resizable TLW so turn
     // it off in such case
     wxWindow * const parent = GetParent();
-    wxCHECK_MSG( parent, msStyle, wxS("Status bar must have a parent") );
+    //wxCHECK_MSG( parent, msStyle, wxS("Status bar must have a parent") );
     if ( parent->IsTopLevel() && !parent->HasFlag(wxRESIZE_BORDER) )
         style &= ~wxSTB_SIZEGRIP;
 
@@ -325,7 +325,7 @@ void wxStatusBar::DoUpdateStatusText(int nField)
 #if wxUSE_TOOLTIPS
     if (HasFlag(wxSTB_SHOW_TIPS))
     {
-        wxASSERT(m_tooltips.size() == m_panes.GetCount());
+        //wxASSERT(m_tooltips.size() == m_panes.GetCount());
 
         if (m_tooltips[nField])
         {
@@ -432,7 +432,7 @@ void wxStatusBar::SetMinHeight(int height)
 
 bool wxStatusBar::GetFieldRect(int i, wxRect& rect) const
 {
-    wxCHECK_MSG( (i >= 0) && ((size_t)i < m_panes.GetCount()), false,
+    //wxCHECK_MSG( (i >= 0) && ((size_t)i < m_panes.GetCount()), false,
                  "invalid statusbar field index" );
 
     RECT r;

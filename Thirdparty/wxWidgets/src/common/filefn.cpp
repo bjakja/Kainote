@@ -1352,7 +1352,7 @@ wxString wxFindFirstFile(const wxString& spec, int flags)
 
 wxString wxFindNextFile()
 {
-    wxCHECK_MSG( gs_dir, "", "You must call wxFindFirstFile before!" );
+    //wxCHECK_MSG( gs_dir, "", "You must call wxFindFirstFile before!" );
 
     wxString result;
     gs_dir->GetNext(&result);
@@ -1593,7 +1593,7 @@ bool wxEndsWithPathSeparator(const wxString& filename)
 bool wxFindFileInPath(wxString *pStr, const wxString& szPath, const wxString& szFile)
 {
     // we assume that it's not empty
-    wxCHECK_MSG( !szFile.empty(), false,
+    //wxCHECK_MSG( !szFile.empty(), false,
                  wxT("empty file name in wxFindFileInPath"));
 
     // skip path separator in the beginning of the file name if present

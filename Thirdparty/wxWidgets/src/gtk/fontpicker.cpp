@@ -37,7 +37,7 @@ static void gtk_fontbutton_setfont_callback(GtkFontButton *widget,
                                             wxFontButton *p)
 {
     // update the m_selectedFont member of the wxFontButton
-    wxASSERT(p);
+    //wxASSERT(p);
     p->SetNativeFontInfo(gtk_font_button_get_font_name(widget));
 
     // fire the colour-changed event

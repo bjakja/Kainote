@@ -63,7 +63,7 @@ void wxClipboard::Clear()
 {
     wxDELETE(m_data);
 
-    wxCHECK_RET( m_pasteboard, "Clipboard creation failed." );
+    //wxCHECK_RET( m_pasteboard, "Clipboard creation failed." );
 
     OSStatus err = PasteboardClear( m_pasteboard );
     if (err != noErr)
@@ -79,7 +79,7 @@ bool wxClipboard::Flush()
 
 bool wxClipboard::Open()
 {
-    wxCHECK_MSG( !m_open, false, wxT("clipboard already open") );
+    //wxCHECK_MSG( !m_open, false, wxT("clipboard already open") );
 
     m_open = true;
 
@@ -96,8 +96,8 @@ bool wxClipboard::SetData( wxDataObject *data )
     if ( IsUsingPrimarySelection() )
         return false;
 
-    wxCHECK_MSG( m_open, false, wxT("clipboard not open") );
-    wxCHECK_MSG( data, false, wxT("data is invalid") );
+    //wxCHECK_MSG( m_open, false, wxT("clipboard not open") );
+    //wxCHECK_MSG( data, false, wxT("data is invalid") );
 
     Clear();
 
@@ -111,15 +111,15 @@ bool wxClipboard::AddData( wxDataObject *data )
     if ( IsUsingPrimarySelection() )
         return false;
 
-    wxCHECK_MSG( m_open, false, wxT("clipboard not open") );
-    wxCHECK_MSG( data, false, wxT("data is invalid") );
+    //wxCHECK_MSG( m_open, false, wxT("clipboard not open") );
+    //wxCHECK_MSG( data, false, wxT("data is invalid") );
 
     // we can only store one wxDataObject
     Clear();
 
     PasteboardSyncFlags syncFlags = PasteboardSynchronize( m_pasteboard );
-    wxCHECK_MSG( !(syncFlags&kPasteboardModified), false, wxT("clipboard modified after clear") );
-    wxCHECK_MSG( (syncFlags&kPasteboardClientIsOwner), false, wxT("client couldn't own clipboard") );
+    //wxCHECK_MSG( !(syncFlags&kPasteboardModified), false, wxT("clipboard modified after clear") );
+    //wxCHECK_MSG( (syncFlags&kPasteboardClientIsOwner), false, wxT("client couldn't own clipboard") );
 
     m_data = data;
 
@@ -130,7 +130,7 @@ bool wxClipboard::AddData( wxDataObject *data )
 
 void wxClipboard::Close()
 {
-    wxCHECK_RET( m_open, wxT("clipboard not open") );
+    //wxCHECK_RET( m_open, wxT("clipboard not open") );
 
     m_open = false;
 
@@ -155,7 +155,7 @@ bool wxClipboard::GetData( wxDataObject& data )
     if ( IsUsingPrimarySelection() )
         return false;
 
-    wxCHECK_MSG( m_open, false, wxT("clipboard not open") );
+    //wxCHECK_MSG( m_open, false, wxT("clipboard not open") );
 
     size_t formatcount = data.GetFormatCount(wxDataObject::Set) + 1;
     wxDataFormat *array = new wxDataFormat[ formatcount ];

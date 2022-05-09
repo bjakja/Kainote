@@ -158,21 +158,21 @@ void wxSpinCtrl::GtkEnableEvents()
 
 int wxSpinCtrl::GetMin() const
 {
-    wxCHECK_MSG( (m_widget != NULL), 0, wxT("invalid spin button") );
+    //wxCHECK_MSG( (m_widget != NULL), 0, wxT("invalid spin button") );
 
     return (int)ceil(m_adjust->lower);
 }
 
 int wxSpinCtrl::GetMax() const
 {
-    wxCHECK_MSG( (m_widget != NULL), 0, wxT("invalid spin button") );
+    //wxCHECK_MSG( (m_widget != NULL), 0, wxT("invalid spin button") );
 
     return (int)ceil(m_adjust->upper);
 }
 
 int wxSpinCtrl::GetValue() const
 {
-    wxCHECK_MSG( (m_widget != NULL), 0, wxT("invalid spin button") );
+    //wxCHECK_MSG( (m_widget != NULL), 0, wxT("invalid spin button") );
 
     gtk_spin_button_update( GTK_SPIN_BUTTON(m_widget) );
 
@@ -181,7 +181,7 @@ int wxSpinCtrl::GetValue() const
 
 void wxSpinCtrl::SetValue( const wxString& value )
 {
-    wxCHECK_RET( (m_widget != NULL), wxT("invalid spin button") );
+    //wxCHECK_RET( (m_widget != NULL), wxT("invalid spin button") );
 
     int n;
     if ( (wxSscanf(value, wxT("%d"), &n) == 1) )
@@ -200,7 +200,7 @@ void wxSpinCtrl::SetValue( const wxString& value )
 
 void wxSpinCtrl::SetValue( int value )
 {
-    wxCHECK_RET( (m_widget != NULL), wxT("invalid spin button") );
+    //wxCHECK_RET( (m_widget != NULL), wxT("invalid spin button") );
 
     float fpos = (float)value;
     m_oldPos = fpos;
@@ -228,7 +228,7 @@ void wxSpinCtrl::SetSelection(long from, long to)
 
 void wxSpinCtrl::SetRange(int minVal, int maxVal)
 {
-    wxCHECK_RET( (m_widget != NULL), wxT("invalid spin button") );
+    //wxCHECK_RET( (m_widget != NULL), wxT("invalid spin button") );
 
     float fmin = (float)minVal;
     float fmax = (float)maxVal;
@@ -251,7 +251,7 @@ void wxSpinCtrl::SetRange(int minVal, int maxVal)
 
 void wxSpinCtrl::OnChar( wxKeyEvent &event )
 {
-    wxCHECK_RET( m_widget != NULL, wxT("invalid spin ctrl") );
+    //wxCHECK_RET( m_widget != NULL, wxT("invalid spin ctrl") );
 
     if (event.GetKeyCode() == WXK_RETURN)
     {

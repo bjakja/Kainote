@@ -89,7 +89,7 @@ bool wxBMPHandler::SaveDib(wxImage *image,
                            bool IsMask)
 
 {
-    wxCHECK_MSG( image, false, wxT("invalid pointer in wxBMPHandler::SaveFile") );
+    //wxCHECK_MSG( image, false, wxT("invalid pointer in wxBMPHandler::SaveFile") );
 
     if ( !image->IsOk() )
     {

@@ -259,7 +259,7 @@ void wxToolBar::AddChildGTK(wxWindowGTK* child)
 void wxToolBarTool::SetImage()
 {
     const wxBitmap& bitmap = GetNormalBitmap();
-    wxCHECK_RET(bitmap.IsOk(), "invalid bitmap for wxToolBar icon");
+    //wxCHECK_RET(bitmap.IsOk(), "invalid bitmap for wxToolBar icon");
 
     GtkWidget* image = gtk_tool_button_get_icon_widget(GTK_TOOL_BUTTON(m_item));
     // always use pixbuf, because pixmap mask does not
@@ -739,7 +739,7 @@ void wxToolBar::SetToolNormalBitmap( int id, const wxBitmap& bitmap )
     wxToolBarTool* tool = static_cast<wxToolBarTool*>(FindById(id));
     if ( tool )
     {
-        wxCHECK_RET( tool->IsButton(), wxT("Can only set bitmap on button tools."));
+        //wxCHECK_RET( tool->IsButton(), wxT("Can only set bitmap on button tools."));
 
         tool->SetNormalBitmap(bitmap);
         tool->SetImage();
@@ -751,7 +751,7 @@ void wxToolBar::SetToolDisabledBitmap( int id, const wxBitmap& bitmap )
     wxToolBarTool* tool = static_cast<wxToolBarTool*>(FindById(id));
     if ( tool )
     {
-        wxCHECK_RET( tool->IsButton(), wxT("Can only set bitmap on button tools."));
+        //wxCHECK_RET( tool->IsButton(), wxT("Can only set bitmap on button tools."));
 
         tool->SetDisabledBitmap(bitmap);
     }

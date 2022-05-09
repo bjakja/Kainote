@@ -174,7 +174,7 @@ int wxNotebook::GetRowCount() const
 
 int wxNotebook::SetSelection(size_t nPage)
 {
-    wxASSERT( IS_VALID_PAGE(nPage) );
+    //wxASSERT( IS_VALID_PAGE(nPage) );
 
     wxNotebookPage* pPage = GetPage(nPage);
 
@@ -204,7 +204,7 @@ void wxNotebook::AdvanceSelection(bool bForward)
 
 bool wxNotebook::SetPageText(size_t nPage, const wxString& strText)
 {
-    wxASSERT( IS_VALID_PAGE(nPage) );
+    //wxASSERT( IS_VALID_PAGE(nPage) );
 
     wxNotebookPage* page = GetPage(nPage);
     if (page)
@@ -219,7 +219,7 @@ bool wxNotebook::SetPageText(size_t nPage, const wxString& strText)
 
 wxString wxNotebook::GetPageText(size_t nPage) const
 {
-    wxASSERT( IS_VALID_PAGE(nPage) );
+    //wxASSERT( IS_VALID_PAGE(nPage) );
 
     wxNotebookPage* page = ((wxNotebook*)this)->GetPage(nPage);
     if (page)
@@ -230,7 +230,7 @@ wxString wxNotebook::GetPageText(size_t nPage) const
 
 int wxNotebook::GetPageImage(size_t WXUNUSED_UNLESS_DEBUG(nPage)) const
 {
-    wxASSERT( IS_VALID_PAGE(nPage) );
+    //wxASSERT( IS_VALID_PAGE(nPage) );
 
     // TODO
     return 0;
@@ -239,7 +239,7 @@ int wxNotebook::GetPageImage(size_t WXUNUSED_UNLESS_DEBUG(nPage)) const
 bool wxNotebook::SetPageImage(size_t WXUNUSED_UNLESS_DEBUG(nPage),
                               int WXUNUSED(nImage))
 {
-    wxASSERT( IS_VALID_PAGE(nPage) );
+    //wxASSERT( IS_VALID_PAGE(nPage) );
 
     // TODO
     return false;
@@ -405,7 +405,7 @@ bool wxNotebook::InsertPage(size_t nPage,
                             bool bSelect,
                             int WXUNUSED(imageId))
 {
-    wxASSERT( pPage != NULL );
+    //wxASSERT( pPage != NULL );
     wxCHECK( IS_VALID_PAGE(nPage) || nPage == GetPageCount(), false );
 
     m_tabView->AddTab(GetPageId(m_tabView, pPage), strText);
@@ -608,7 +608,7 @@ void wxNotebook::Command(wxCommandEvent& WXUNUSED(event))
 void wxNotebook::ChangePage(int nOldSel, int nSel)
 {
   //  cout << "ChangePage: " << nOldSel << ", " << nSel << "\n";
-    wxASSERT( nOldSel != nSel ); // impossible
+    //wxASSERT( nOldSel != nSel ); // impossible
 
     if ( nOldSel != -1 ) {
         m_pages[nOldSel]->Show(false);

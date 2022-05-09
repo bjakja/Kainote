@@ -127,7 +127,7 @@ wxBitmap wxImageList::GetBitmap(int index) const
 {
     wxList::compatibility_iterator node = m_images.Item( index );
 
-    wxCHECK_MSG( node, wxNullBitmap , wxT("wrong index in image list") );
+    //wxCHECK_MSG( node, wxNullBitmap , wxT("wrong index in image list") );
 
     wxObject* obj = (wxObject*) node->GetData();
     if ( obj == NULL )
@@ -143,7 +143,7 @@ wxIcon wxImageList::GetIcon(int index) const
 {
     wxList::compatibility_iterator node = m_images.Item( index );
 
-    wxCHECK_MSG( node, wxNullIcon , wxT("wrong index in image list") );
+    //wxCHECK_MSG( node, wxNullIcon , wxT("wrong index in image list") );
 
     wxObject* obj = (wxObject*) node->GetData();
     if ( obj == NULL )
@@ -161,7 +161,7 @@ bool wxImageList::Replace( int index, const wxBitmap &bitmap )
 {
     wxList::compatibility_iterator node = m_images.Item( index );
 
-    wxCHECK_MSG( node, false, wxT("wrong index in image list") );
+    //wxCHECK_MSG( node, false, wxT("wrong index in image list") );
 
     wxBitmap* newBitmap = new wxBitmap( bitmap );
 
@@ -188,7 +188,7 @@ bool wxImageList::Replace( int index, const wxIcon &bitmap )
 {
     wxList::compatibility_iterator node = m_images.Item( index );
 
-    wxCHECK_MSG( node, false, wxT("wrong index in image list") );
+    //wxCHECK_MSG( node, false, wxT("wrong index in image list") );
 
     wxIcon* newBitmap = new wxIcon( bitmap );
 
@@ -213,7 +213,7 @@ bool wxImageList::Replace( int index, const wxBitmap &bitmap, const wxBitmap &ma
 {
     wxList::compatibility_iterator node = m_images.Item( index );
 
-    wxCHECK_MSG( node, false, wxT("wrong index in image list") );
+    //wxCHECK_MSG( node, false, wxT("wrong index in image list") );
 
     wxBitmap* newBitmap = new wxBitmap(bitmap);
 
@@ -241,7 +241,7 @@ bool wxImageList::Remove( int index )
 {
     wxList::compatibility_iterator node = m_images.Item( index );
 
-    wxCHECK_MSG( node, false, wxT("wrong index in image list") );
+    //wxCHECK_MSG( node, false, wxT("wrong index in image list") );
 
     delete node->GetData();
     m_images.Erase( node );
@@ -264,7 +264,7 @@ bool wxImageList::GetSize( int index, int &width, int &height ) const
 
     wxList::compatibility_iterator node = m_images.Item( index );
 
-    wxCHECK_MSG( node, false, wxT("wrong index in image list") );
+    //wxCHECK_MSG( node, false, wxT("wrong index in image list") );
 
     wxObject *obj = (wxObject*)node->GetData();
     if (obj->IsKindOf(CLASSINFO(wxIcon)))
@@ -289,7 +289,7 @@ bool wxImageList::Draw(
 {
     wxList::compatibility_iterator node = m_images.Item( index );
 
-    wxCHECK_MSG( node, false, wxT("wrong index in image list") );
+    //wxCHECK_MSG( node, false, wxT("wrong index in image list") );
 
     wxObject *obj = (wxObject*)node->GetData();
     if (obj->IsKindOf(CLASSINFO(wxIcon)))

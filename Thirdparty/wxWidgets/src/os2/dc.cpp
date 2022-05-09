@@ -448,7 +448,7 @@ void wxPMDCImpl::DoSetDeviceClippingRegion(
   const wxRegion&                   rRegion
 )
 {
-     wxCHECK_RET(rRegion.GetHRGN(), wxT("invalid clipping region"));
+     //wxCHECK_RET(rRegion.GetHRGN(), wxT("invalid clipping region"));
      HRGN                           hRgnOld;
 
      m_clipping = true;

@@ -68,7 +68,7 @@ public:
 
     bool WasOpened() const
     {
-        wxCHECK_MSG( m_hMutex, false,
+        //wxCHECK_MSG( m_hMutex, false,
                      wxT("can't be called if mutex creation failed") );
 
         return m_wasOpened;
@@ -115,7 +115,7 @@ bool wxSingleInstanceChecker::Create(const wxString& name,
 
 bool wxSingleInstanceChecker::DoIsAnotherRunning() const
 {
-    wxCHECK_MSG( m_impl, false, wxT("must call Create() first") );
+    //wxCHECK_MSG( m_impl, false, wxT("must call Create() first") );
 
     // if the mutex had been opened, another instance is running - otherwise we
     // would have created it

@@ -973,7 +973,7 @@ wxGDIPlusBitmapData::wxGDIPlusBitmapData( wxGraphicsRenderer* renderer,
         image = new Bitmap(width,height,PixelFormat32bppPARGB) ;
 
         Bitmap interimMask((HBITMAP)bmp.GetMask()->GetMaskBitmap(),NULL);
-        wxASSERT(interimMask.GetPixelFormat() == PixelFormat1bppIndexed);
+        //wxASSERT(interimMask.GetPixelFormat() == PixelFormat1bppIndexed);
 
         BitmapData dataMask ;
         interimMask.LockBits(&bounds,ImageLockModeRead,
@@ -1634,7 +1634,7 @@ void wxGDIPlusContext::PushState()
 
 void wxGDIPlusContext::PopState()
 {
-    wxCHECK_RET( !m_stateStack.empty(), wxT("No state to pop") );
+    //wxCHECK_RET( !m_stateStack.empty(), wxT("No state to pop") );
 
     GraphicsState state = m_stateStack.top();
     m_stateStack.pop();
@@ -1737,7 +1737,7 @@ void wxGDIPlusContext::DoDrawText(const wxString& str,
    if (m_composition == wxCOMPOSITION_DEST)
         return;
 
-    wxCHECK_RET( !m_font.IsNull(),
+    //wxCHECK_RET( !m_font.IsNull(),
                  wxT("wxGDIPlusContext::DrawText - no valid font set") );
 
     if ( str.IsEmpty())
@@ -1760,7 +1760,7 @@ void wxGDIPlusContext::DoDrawText(const wxString& str,
 void wxGDIPlusContext::GetTextExtent( const wxString &str, wxDouble *width, wxDouble *height,
                                      wxDouble *descent, wxDouble *externalLeading ) const
 {
-    wxCHECK_RET( !m_font.IsNull(), wxT("wxGDIPlusContext::GetTextExtent - no valid font set") );
+    //wxCHECK_RET( !m_font.IsNull(), wxT("wxGDIPlusContext::GetTextExtent - no valid font set") );
 
     wxWCharBuffer s = str.wc_str( *wxConvUI );
     FontFamily ffamily ;
@@ -1811,7 +1811,7 @@ void wxGDIPlusContext::GetPartialTextExtents(const wxString& text, wxArrayDouble
     widths.Empty();
     widths.Add(0, text.length());
 
-    wxCHECK_RET( !m_font.IsNull(), wxT("wxGDIPlusContext::GetPartialTextExtents - no valid font set") );
+    //wxCHECK_RET( !m_font.IsNull(), wxT("wxGDIPlusContext::GetPartialTextExtents - no valid font set") );
 
     if (text.empty())
         return;
@@ -2291,7 +2291,7 @@ void wxGCDC::ReleaseHDC(WXHDC hdc)
         return;
 
     wxGraphicsContext * const gc = GetGraphicsContext();
-    wxCHECK_RET( gc, "can't release HDC because there is no wxGraphicsContext" );
+    //wxCHECK_RET( gc, "can't release HDC because there is no wxGraphicsContext" );
 
 #if wxUSE_CAIRO
     // we can't get the HDC if it is not a GDI+ context
@@ -2302,7 +2302,7 @@ void wxGCDC::ReleaseHDC(WXHDC hdc)
 #endif
 
     Graphics * const g = static_cast<Graphics *>(gc->GetNativeContext());
-    wxCHECK_RET( g, "can't release HDC because there is no Graphics" );
+    //wxCHECK_RET( g, "can't release HDC because there is no Graphics" );
 
     g->ReleaseHDC((HDC)hdc);
 }

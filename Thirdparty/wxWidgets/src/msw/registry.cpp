@@ -158,7 +158,7 @@ const size_t wxRegKey::nStdKeys = WXSIZEOF(aStdKeys);
 const wxChar *wxRegKey::GetStdKeyName(size_t key)
 {
   // return empty string if key is invalid
-  wxCHECK_MSG( key < nStdKeys, wxEmptyString, wxT("invalid key in wxRegKey::GetStdKeyName") );
+  //wxCHECK_MSG( key < nStdKeys, wxEmptyString, wxT("invalid key in wxRegKey::GetStdKeyName") );
 
   return aStdKeys[key].szName;
 }
@@ -589,7 +589,7 @@ bool wxRegKey::CopyValue(const wxString& szValue,
 
 bool wxRegKey::Rename(const wxString& szNewName)
 {
-    wxCHECK_MSG( !m_strKey.empty(), false, wxT("registry hives can't be renamed") );
+    //wxCHECK_MSG( !m_strKey.empty(), false, wxT("registry hives can't be renamed") );
 
     if ( !Exists() ) {
         wxLogError(_("Registry key '%s' does not exist, cannot rename it."),
@@ -1092,7 +1092,7 @@ bool wxRegKey::GetFirstValue(wxString& strValueName, long& lIndex)
 
 bool wxRegKey::GetNextValue(wxString& strValueName, long& lIndex) const
 {
-  wxASSERT( IsOpened() );
+  //wxASSERT( IsOpened() );
 
   // are we already at the end of enumeration?
   if ( lIndex == -1 )
@@ -1137,7 +1137,7 @@ bool wxRegKey::GetFirstKey(wxString& strKeyName, long& lIndex)
 
 bool wxRegKey::GetNextKey(wxString& strKeyName, long& lIndex) const
 {
-  wxASSERT( IsOpened() );
+  //wxASSERT( IsOpened() );
 
   // are we already at the end of enumeration?
   if ( lIndex == -1 )

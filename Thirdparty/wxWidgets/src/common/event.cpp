@@ -1134,7 +1134,7 @@ wxEventFilter* wxEvtHandler::ms_filterList = NULL;
 
 /* static */ void wxEvtHandler::AddFilter(wxEventFilter* filter)
 {
-    wxCHECK_RET( filter, "NULL filter" );
+    //wxCHECK_RET( filter, "NULL filter" );
 
     filter->m_next = ms_filterList;
     ms_filterList = filter;
@@ -1186,7 +1186,7 @@ bool wxEvtHandler::ProcessThreadEvent(const wxEvent& event)
 
 void wxEvtHandler::QueueEvent(wxEvent *event)
 {
-    wxCHECK_RET( event, "NULL event can't be posted" );
+    //wxCHECK_RET( event, "NULL event can't be posted" );
 
     if (!wxTheApp)
     {
@@ -1251,7 +1251,7 @@ void wxEvtHandler::ProcessPendingEvents()
 
     // this method is only called by wxApp if this handler does have
     // pending events
-    wxCHECK_RET( m_pendingEvents && !m_pendingEvents->IsEmpty(),
+    //wxCHECK_RET( m_pendingEvents && !m_pendingEvents->IsEmpty(),
                  "should have pending events if called" );
 
     wxList::compatibility_iterator node = m_pendingEvents->GetFirst();
@@ -1655,7 +1655,7 @@ wxEvtHandler::DoUnbind(int id,
 
 bool wxEvtHandler::SearchDynamicEventTable( wxEvent& event )
 {
-    wxCHECK_MSG( m_dynamicEvents, false,
+    //wxCHECK_MSG( m_dynamicEvents, false,
                  wxT("caller should check that we have dynamic events") );
 
     wxList::compatibility_iterator node = m_dynamicEvents->GetFirst();
@@ -1731,7 +1731,7 @@ wxEvtHandler::FindRefInTrackerList(wxEvtHandler *eventSink)
         wxEventConnectionRef *evtConnRef = node->ToEventConnection();
         if ( evtConnRef && evtConnRef->m_src == this )
         {
-            wxASSERT( evtConnRef->m_sink==eventSink );
+            //wxASSERT( evtConnRef->m_sink==eventSink );
             return evtConnRef;
         }
     }
@@ -1741,7 +1741,7 @@ wxEvtHandler::FindRefInTrackerList(wxEvtHandler *eventSink)
 
 void wxEvtHandler::OnSinkDestroyed( wxEvtHandler *sink )
 {
-    wxASSERT(m_dynamicEvents);
+    //wxASSERT(m_dynamicEvents);
 
     // remove all connections with this sink
     wxList::compatibility_iterator node = m_dynamicEvents->GetFirst(), node_nxt;
@@ -1793,7 +1793,7 @@ wxWindow* wxFindFocusDescendant(wxWindow* ancestor)
 
 wxEventBlocker::wxEventBlocker(wxWindow *win, wxEventType type)
 {
-    wxCHECK_RET(win, wxT("Null window given to wxEventBlocker"));
+    //wxCHECK_RET(win, wxT("Null window given to wxEventBlocker"));
 
     m_window = win;
 
@@ -1804,7 +1804,7 @@ wxEventBlocker::wxEventBlocker(wxWindow *win, wxEventType type)
 wxEventBlocker::~wxEventBlocker()
 {
     wxEvtHandler *popped = m_window->PopEventHandler(false);
-    wxCHECK_RET(popped == this,
+    //wxCHECK_RET(popped == this,
         wxT("Don't push other event handlers into a window managed by wxEventBlocker!"));
 }
 

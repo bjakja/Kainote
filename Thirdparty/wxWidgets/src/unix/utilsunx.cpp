@@ -386,7 +386,7 @@ bool wxShell(const wxString& command)
 
 bool wxShell(const wxString& command, wxArrayString& output)
 {
-    wxCHECK_MSG( !command.empty(), false, wxT("can't exec shell non interactively") );
+    //wxCHECK_MSG( !command.empty(), false, wxT("can't exec shell non interactively") );
 
     return wxExecute(wxMakeShellCommand(command), output);
 }
@@ -493,7 +493,7 @@ long wxExecute(char **argv, int flags, wxProcess *process,
     // about "ERROR_RETURN_CODE value may be clobbered by fork()"
     #define ERROR_RETURN_CODE ((flags & wxEXEC_SYNC) ? -1 : 0)
 
-    wxCHECK_MSG( *argv, ERROR_RETURN_CODE, wxT("can't exec empty command") );
+    //wxCHECK_MSG( *argv, ERROR_RETURN_CODE, wxT("can't exec empty command") );
 
 #if wxUSE_THREADS
     // fork() doesn't mix well with POSIX threads: on many systems the program
@@ -848,7 +848,7 @@ static wxString wxGetCommandOutput(const wxString &cmd)
 // private use only)
 static bool wxGetHostNameInternal(wxChar *buf, int sz)
 {
-    wxCHECK_MSG( buf, false, wxT("NULL pointer in wxGetHostNameInternal") );
+    //wxCHECK_MSG( buf, false, wxT("NULL pointer in wxGetHostNameInternal") );
 
     *buf = wxT('\0');
 

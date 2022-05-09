@@ -242,7 +242,7 @@ wxRibbonToolBarToolBase* wxRibbonToolBar::InsertTool(
             wxRibbonButtonKind kind,
             wxObject* client_data)
 {
-    wxASSERT(bitmap.IsOk());
+    //wxASSERT(bitmap.IsOk());
 
     // Create the wxRibbonToolBarToolBase with parameters
     wxRibbonToolBarToolBase* tool = new wxRibbonToolBarToolBase;
@@ -250,7 +250,7 @@ wxRibbonToolBarToolBase* wxRibbonToolBar::InsertTool(
     tool->bitmap = bitmap;
     if(bitmap_disabled.IsOk())
     {
-        wxASSERT(bitmap.GetSize() == bitmap_disabled.GetSize());
+        //wxASSERT(bitmap.GetSize() == bitmap_disabled.GetSize());
         tool->bitmap_disabled = bitmap_disabled;
     }
     else
@@ -451,35 +451,35 @@ size_t wxRibbonToolBar::GetToolCount() const
 
 int wxRibbonToolBar::GetToolId(const wxRibbonToolBarToolBase* tool)const
 {
-    wxCHECK_MSG(tool != NULL , wxNOT_FOUND, "The tool pointer must not be NULL");
+    //wxCHECK_MSG(tool != NULL , wxNOT_FOUND, "The tool pointer must not be NULL");
     return tool->id;
 }
 
 wxObject* wxRibbonToolBar::GetToolClientData(int tool_id)const
 {
     wxRibbonToolBarToolBase* tool = FindById(tool_id);
-    wxCHECK_MSG(tool != NULL , NULL, "Invalid tool id");
+    //wxCHECK_MSG(tool != NULL , NULL, "Invalid tool id");
     return tool->client_data;
 }
 
 bool wxRibbonToolBar::GetToolEnabled(int tool_id)const
 {
     wxRibbonToolBarToolBase* tool = FindById(tool_id);
-    wxCHECK_MSG(tool != NULL , false, "Invalid tool id");
+    //wxCHECK_MSG(tool != NULL , false, "Invalid tool id");
     return (tool->state & wxRIBBON_TOOLBAR_TOOL_DISABLED) == 0;
 }
 
 wxString wxRibbonToolBar::GetToolHelpString(int tool_id)const
 {
     wxRibbonToolBarToolBase* tool = FindById(tool_id);
-    wxCHECK_MSG(tool != NULL , wxEmptyString, "Invalid tool id");
+    //wxCHECK_MSG(tool != NULL , wxEmptyString, "Invalid tool id");
     return tool->help_string;
 }
 
 wxRibbonButtonKind wxRibbonToolBar::GetToolKind(int tool_id)const
 {
     wxRibbonToolBarToolBase* tool = FindById(tool_id);
-    wxCHECK_MSG(tool != NULL , wxRIBBON_BUTTON_NORMAL, "Invalid tool id");
+    //wxCHECK_MSG(tool != NULL , wxRIBBON_BUTTON_NORMAL, "Invalid tool id");
     return tool->kind;
 }
 
@@ -509,7 +509,7 @@ int wxRibbonToolBar::GetToolPos(int tool_id)const
 bool wxRibbonToolBar::GetToolState(int tool_id)const
 {
     wxRibbonToolBarToolBase* tool = FindById(tool_id);
-    wxCHECK_MSG(tool != NULL , false, "Invalid tool id");
+    //wxCHECK_MSG(tool != NULL , false, "Invalid tool id");
     return (tool->state & wxRIBBON_TOOLBAR_TOOL_TOGGLED) != 0;
 }
 
@@ -535,35 +535,35 @@ bool wxRibbonToolBar::IsSizingContinuous() const
 void wxRibbonToolBar::SetToolClientData(int tool_id, wxObject* clientData)
 {
     wxRibbonToolBarToolBase* tool = FindById(tool_id);
-    wxCHECK_RET(tool != NULL , "Invalid tool id");
+    //wxCHECK_RET(tool != NULL , "Invalid tool id");
     tool->client_data = clientData;
 }
 
 void wxRibbonToolBar::SetToolDisabledBitmap(int tool_id, const wxBitmap &bitmap)
 {
     wxRibbonToolBarToolBase* tool = FindById(tool_id);
-    wxCHECK_RET(tool != NULL , "Invalid tool id");
+    //wxCHECK_RET(tool != NULL , "Invalid tool id");
     tool->bitmap_disabled = bitmap;
 }
 
 void wxRibbonToolBar::SetToolHelpString(int tool_id, const wxString& helpString)
 {
     wxRibbonToolBarToolBase* tool = FindById(tool_id);
-    wxCHECK_RET(tool != NULL , "Invalid tool id");
+    //wxCHECK_RET(tool != NULL , "Invalid tool id");
     tool->help_string = helpString;
 }
 
 void wxRibbonToolBar::SetToolNormalBitmap(int tool_id, const wxBitmap &bitmap)
 {
     wxRibbonToolBarToolBase* tool = FindById(tool_id);
-    wxCHECK_RET(tool != NULL , "Invalid tool id");
+    //wxCHECK_RET(tool != NULL , "Invalid tool id");
     tool->bitmap = bitmap;
 }
 
 void wxRibbonToolBar::EnableTool(int tool_id, bool enable)
 {
     wxRibbonToolBarToolBase* tool = FindById(tool_id);
-    wxCHECK_RET(tool != NULL , "Invalid tool id");
+    //wxCHECK_RET(tool != NULL , "Invalid tool id");
     if(enable)
     {
         if(tool->state & wxRIBBON_TOOLBAR_TOOL_DISABLED)
@@ -585,7 +585,7 @@ void wxRibbonToolBar::EnableTool(int tool_id, bool enable)
 void wxRibbonToolBar::ToggleTool(int tool_id, bool checked)
 {
     wxRibbonToolBarToolBase* tool = FindById(tool_id);
-    wxCHECK_RET(tool != NULL , "Invalid tool id");
+    //wxCHECK_RET(tool != NULL , "Invalid tool id");
     if(checked)
     {
         if((tool->state & wxRIBBON_TOOLBAR_TOOL_TOGGLED) == 0)
@@ -712,8 +712,8 @@ void wxRibbonToolBar::SetRows(int nMin, int nMax)
     if(nMax == -1)
         nMax = nMin;
 
-    wxASSERT(1 <= nMin);
-    wxASSERT(nMin <= nMax);
+    //wxASSERT(1 <= nMin);
+    //wxASSERT(nMin <= nMax);
 
     m_nrows_min = nMin;
     m_nrows_max = nMax;

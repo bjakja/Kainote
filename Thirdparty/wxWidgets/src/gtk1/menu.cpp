@@ -508,7 +508,7 @@ void wxMenuBar::EnableTop( size_t pos, bool flag )
 {
     wxMenuList::compatibility_iterator node = m_menus.Item( pos );
 
-    wxCHECK_RET( node, wxT("menu not found") );
+    //wxCHECK_RET( node, wxT("menu not found") );
 
     wxMenu* menu = node->GetData();
 
@@ -520,7 +520,7 @@ wxString wxMenuBar::GetMenuLabel( size_t pos ) const
 {
     wxMenuList::compatibility_iterator node = m_menus.Item( pos );
 
-    wxCHECK_MSG( node, wxT("invalid"), wxT("menu not found") );
+    //wxCHECK_MSG( node, wxT("invalid"), wxT("menu not found") );
 
     wxMenu* menu = node->GetData();
 
@@ -531,7 +531,7 @@ void wxMenuBar::SetMenuLabel( size_t pos, const wxString& label )
 {
     wxMenuList::compatibility_iterator node = m_menus.Item( pos );
 
-    wxCHECK_RET( node, wxT("menu not found") );
+    //wxCHECK_RET( node, wxT("menu not found") );
 
     wxMenu* menu = node->GetData();
 
@@ -573,7 +573,7 @@ static void gtk_menu_clicked_callback( GtkWidget *widget, wxMenu *menu )
         return;
 
     wxMenuItem* item = menu->FindChildItem( id );
-    wxCHECK_RET( item, wxT("error in menu item callback") );
+    //wxCHECK_RET( item, wxT("error in menu item callback") );
 
     if ( item->GetId() == wxGTK_TITLE_ID )
     {
@@ -641,7 +641,7 @@ static void gtk_menu_hilight_callback( GtkWidget *widget, wxMenu *menu )
 
     int id = menu->FindMenuIdByMenuItem(widget);
 
-    wxASSERT( id != -1 ); // should find it!
+    //wxASSERT( id != -1 ); // should find it!
 
     if (!menu->IsEnabled(id))
         return;
@@ -669,7 +669,7 @@ static void gtk_menu_nolight_callback( GtkWidget *widget, wxMenu *menu )
 
     int id = menu->FindMenuIdByMenuItem(widget);
 
-    wxASSERT( id != -1 ); // should find it!
+    //wxASSERT( id != -1 ); // should find it!
 
     if (!menu->IsEnabled(id))
         return;
@@ -873,7 +873,7 @@ wxAcceleratorEntry *wxMenuItem::GetAccel() const
 
 void wxMenuItem::Check( bool check )
 {
-    wxCHECK_RET( m_menuItem, wxT("invalid menu item") );
+    //wxCHECK_RET( m_menuItem, wxT("invalid menu item") );
 
     if (check == m_isChecked)
         return;
@@ -894,7 +894,7 @@ void wxMenuItem::Check( bool check )
 
 void wxMenuItem::Enable( bool enable )
 {
-    wxCHECK_RET( m_menuItem, wxT("invalid menu item") );
+    //wxCHECK_RET( m_menuItem, wxT("invalid menu item") );
 
     gtk_widget_set_sensitive( m_menuItem, enable );
     wxMenuItemBase::Enable( enable );
@@ -902,9 +902,9 @@ void wxMenuItem::Enable( bool enable )
 
 bool wxMenuItem::IsChecked() const
 {
-    wxCHECK_MSG( m_menuItem, false, wxT("invalid menu item") );
+    //wxCHECK_MSG( m_menuItem, false, wxT("invalid menu item") );
 
-    wxCHECK_MSG( IsCheckable(), false,
+    //wxCHECK_MSG( IsCheckable(), false,
                  wxT("can't get state of uncheckable item!") );
 
     return ((GtkCheckMenuItem*)m_menuItem)->active != 0;
@@ -1461,9 +1461,9 @@ void wxPopupMenuPositionCallback( GtkMenu *menu,
 
 bool wxWindowGTK::DoPopupMenu( wxMenu *menu, int x, int y )
 {
-    wxCHECK_MSG( m_widget != NULL, false, wxT("invalid window") );
+    //wxCHECK_MSG( m_widget != NULL, false, wxT("invalid window") );
 
-    wxCHECK_MSG( menu != NULL, false, wxT("invalid popup-menu") );
+    //wxCHECK_MSG( menu != NULL, false, wxT("invalid popup-menu") );
 
     // NOTE: if you change this code, you need to update
     //       the same code in taskbar.cpp as well. This

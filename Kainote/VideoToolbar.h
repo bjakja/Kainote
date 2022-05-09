@@ -323,7 +323,7 @@ public:
 	}
 	static std::vector<AllTagsSetting>* GetTagsSettings() {
 		if (!tags.size()) {
-			//LoadSettings(&tags);
+			LoadSettings(&tags);
 		}
 		return &tags;
 	}

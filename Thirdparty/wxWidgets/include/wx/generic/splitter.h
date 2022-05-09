@@ -334,7 +334,7 @@ public:
     // all
     void SetSashPosition(int pos)
     {
-        wxASSERT( GetEventType() == wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED
+        //wxASSERT( GetEventType() == wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED
                 || GetEventType() == wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGING);
 
         m_data.pos = pos;
@@ -342,7 +342,7 @@ public:
 
     int GetSashPosition() const
     {
-        wxASSERT( GetEventType() == wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED
+        //wxASSERT( GetEventType() == wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED
                 || GetEventType() == wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGING);
 
         return m_data.pos;
@@ -351,7 +351,7 @@ public:
     // UNSPLIT event methods
     wxWindow *GetWindowBeingRemoved() const
     {
-        wxASSERT( GetEventType() == wxEVT_COMMAND_SPLITTER_UNSPLIT );
+        //wxASSERT( GetEventType() == wxEVT_COMMAND_SPLITTER_UNSPLIT );
 
         return m_data.win;
     }
@@ -359,14 +359,14 @@ public:
     // DCLICK event methods
     int GetX() const
     {
-        wxASSERT( GetEventType() == wxEVT_COMMAND_SPLITTER_DOUBLECLICKED );
+        //wxASSERT( GetEventType() == wxEVT_COMMAND_SPLITTER_DOUBLECLICKED );
 
         return m_data.pt.x;
     }
 
     int GetY() const
     {
-        wxASSERT( GetEventType() == wxEVT_COMMAND_SPLITTER_DOUBLECLICKED );
+        //wxASSERT( GetEventType() == wxEVT_COMMAND_SPLITTER_DOUBLECLICKED );
 
         return m_data.pt.y;
     }

@@ -229,7 +229,7 @@ static inline void wx_cmyk_to_rgb(unsigned char* rgb, const unsigned char* cmyk)
 
 bool wxJPEGHandler::LoadFile( wxImage *image, wxInputStream& stream, bool verbose, int WXUNUSED(index) )
 {
-    wxCHECK_MSG( image, false, "NULL image pointer" );
+    //wxCHECK_MSG( image, false, "NULL image pointer" );
 
     struct jpeg_decompress_struct cinfo;
     wx_error_mgr jerr;

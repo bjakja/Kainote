@@ -560,7 +560,7 @@ int wxVListBoxComboPopup::Append(const wxString& item)
 
 void wxVListBoxComboPopup::Clear()
 {
-    wxASSERT(m_combo);
+    //wxASSERT(m_combo);
 
     m_strings.Empty();
     m_widths.Empty();
@@ -675,7 +675,7 @@ wxString wxVListBoxComboPopup::GetStringValue() const
 
 void wxVListBoxComboPopup::SetSelection( int item )
 {
-    wxCHECK_RET( item == wxNOT_FOUND || ((unsigned int)item < GetCount()),
+    //wxCHECK_RET( item == wxNOT_FOUND || ((unsigned int)item < GetCount()),
                  wxT("invalid index in wxVListBoxComboPopup::SetSelection") );
 
     m_value = item;
@@ -967,7 +967,7 @@ void wxOwnerDrawnComboBox::DoSetPopupControl(wxComboPopup* popup)
 
     wxComboCtrl::DoSetPopupControl(popup);
 
-    wxASSERT(popup);
+    //wxASSERT(popup);
 
     // Add initial choices to the wxVListBox
     if ( !GetVListBoxComboPopup()->GetCount() )
@@ -999,7 +999,7 @@ void wxOwnerDrawnComboBox::Clear()
 
 void wxOwnerDrawnComboBox::DoDeleteOneItem(unsigned int n)
 {
-    wxCHECK_RET( IsValid(n), wxT("invalid index in wxOwnerDrawnComboBox::Delete") );
+    //wxCHECK_RET( IsValid(n), wxT("invalid index in wxOwnerDrawnComboBox::Delete") );
 
     if ( GetSelection() == (int) n )
         ChangeValue(wxEmptyString);
@@ -1017,7 +1017,7 @@ unsigned int wxOwnerDrawnComboBox::GetCount() const
 
 wxString wxOwnerDrawnComboBox::GetString(unsigned int n) const
 {
-    wxCHECK_MSG( IsValid(n), wxEmptyString, wxT("invalid index in wxOwnerDrawnComboBox::GetString") );
+    //wxCHECK_MSG( IsValid(n), wxEmptyString, wxT("invalid index in wxOwnerDrawnComboBox::GetString") );
 
     if ( !m_popupInterface )
         return m_initChs.Item(n);
@@ -1029,7 +1029,7 @@ void wxOwnerDrawnComboBox::SetString(unsigned int n, const wxString& s)
 {
     EnsurePopupControl();
 
-    wxCHECK_RET( IsValid(n), wxT("invalid index in wxOwnerDrawnComboBox::SetString") );
+    //wxCHECK_RET( IsValid(n), wxT("invalid index in wxOwnerDrawnComboBox::SetString") );
 
     GetVListBoxComboPopup()->SetString(n,s);
 }
@@ -1046,7 +1046,7 @@ void wxOwnerDrawnComboBox::Select(int n)
 {
     EnsurePopupControl();
 
-    wxCHECK_RET( (n == wxNOT_FOUND) || IsValid(n), wxT("invalid index in wxOwnerDrawnComboBox::Select") );
+    //wxCHECK_RET( (n == wxNOT_FOUND) || IsValid(n), wxT("invalid index in wxOwnerDrawnComboBox::Select") );
 
     GetVListBoxComboPopup()->SetSelection(n);
 

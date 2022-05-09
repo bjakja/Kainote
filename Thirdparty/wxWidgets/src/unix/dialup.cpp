@@ -790,7 +790,7 @@ wxDialUpManagerImpl::NetConnection wxDialUpManagerImpl::CheckPing()
     }
 
     wxLogNull ln; // suppress all error messages
-    wxASSERT(m_PingPath.length());
+    //wxASSERT(m_PingPath.length());
     wxString cmd;
     cmd << m_PingPath << wxT(' ');
 #if defined(__SOLARIS__) || defined (__SUNOS__)

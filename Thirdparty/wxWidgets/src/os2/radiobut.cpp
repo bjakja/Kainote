@@ -200,7 +200,7 @@ void wxRadioButton::SetValue( bool bValue )
         const wxWindowList&         rSiblings = GetParent()->GetChildren();
         wxWindowList::compatibility_iterator nodeThis = rSiblings.Find(this);
 
-        wxCHECK_RET(nodeThis, wxT("radio button not a child of its parent?"));
+        //wxCHECK_RET(nodeThis, wxT("radio button not a child of its parent?"));
 
         //
         // If it's not the first item of the group ...

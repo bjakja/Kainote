@@ -224,7 +224,7 @@ public:
         source.window = window;
         source.frame = frame;
         source.buttons = buttons;
-        wxCHECK_RET(source.IsValid(),
+        //wxCHECK_RET(source.IsValid(),
                     "window settings and pane settings are incompatible");
         // now assign
         *this = source;
@@ -266,7 +266,7 @@ public:
     {
         wxAuiPaneInfo test(*this);
         test.window = w;
-        wxCHECK_MSG(test.IsValid(), *this,
+        //wxCHECK_MSG(test.IsValid(), *this,
                     "window settings and pane settings are incompatible");
         *this = test;
         return *this;
@@ -331,7 +331,7 @@ public:
                  optionLeftDockable | optionRightDockable |
                  optionFloatable | optionMovable | optionResizable |
                  optionCaption | optionPaneBorder | buttonClose;
-        wxCHECK_MSG(test.IsValid(), *this,
+        //wxCHECK_MSG(test.IsValid(), *this,
                     "window settings and pane settings are incompatible");
         *this = test;
         return *this;
@@ -361,7 +361,7 @@ public:
             test.state |= flag;
         else
             test.state &= ~flag;
-        wxCHECK_MSG(test.IsValid(), *this,
+        //wxCHECK_MSG(test.IsValid(), *this,
                     "window settings and pane settings are incompatible");
         *this = test;
         return *this;

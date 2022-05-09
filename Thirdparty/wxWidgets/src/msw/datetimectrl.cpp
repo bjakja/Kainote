@@ -80,7 +80,7 @@ wxDateTimePickerCtrl::MSWCreateDateTimePicker(wxWindow *parent,
 
 void wxDateTimePickerCtrl::SetValue(const wxDateTime& dt)
 {
-    wxCHECK_RET( dt.IsValid() || MSWAllowsNone(),
+    //wxCHECK_RET( dt.IsValid() || MSWAllowsNone(),
                     wxT("this control requires a valid date") );
 
     SYSTEMTIME st;

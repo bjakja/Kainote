@@ -1672,7 +1672,7 @@ void wxGenericCalendarCtrl::OnChar(wxKeyEvent& event)
 
 void wxGenericCalendarCtrl::SetHoliday(size_t day)
 {
-    wxCHECK_RET( day > 0 && day < 32, wxT("invalid day in SetHoliday") );
+    //wxCHECK_RET( day > 0 && day < 32, wxT("invalid day in SetHoliday") );
 
     wxCalendarDateAttr *attr = GetAttr(day);
     if ( !attr )
@@ -1699,7 +1699,7 @@ void wxGenericCalendarCtrl::ResetHolidayAttrs()
 
 void wxGenericCalendarCtrl::Mark(size_t day, bool mark)
 {
-    wxCHECK_RET( day > 0 && day < 32, wxT("invalid day in Mark") );
+    //wxCHECK_RET( day > 0 && day < 32, wxT("invalid day in Mark") );
 
     const wxCalendarDateAttr& m = wxCalendarDateAttr::GetMark();
     if (mark) {

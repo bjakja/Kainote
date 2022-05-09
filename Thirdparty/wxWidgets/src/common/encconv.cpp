@@ -213,7 +213,7 @@ bool wxEncodingConverter::Convert(const char* input, char* output) const
         return true;
     }
 
-    wxCHECK_MSG(m_Table != NULL, false,
+    //wxCHECK_MSG(m_Table != NULL, false,
                 wxT("You must call wxEncodingConverter::Init() before actually converting!"));
 
     bool replaced = false;
@@ -242,7 +242,7 @@ bool wxEncodingConverter::Convert(const char* input, wchar_t* output) const
         return true;
     }
 
-    wxCHECK_MSG(m_Table != NULL, false,
+    //wxCHECK_MSG(m_Table != NULL, false,
                 wxT("You must call wxEncodingConverter::Init() before actually converting!"));
 
     bool replaced = false;
@@ -272,7 +272,7 @@ bool wxEncodingConverter::Convert(const wchar_t* input, char* output) const
         return true;
     }
 
-    wxCHECK_MSG(m_Table != NULL, false,
+    //wxCHECK_MSG(m_Table != NULL, false,
                 wxT("You must call wxEncodingConverter::Init() before actually converting!"));
 
     bool replaced = false;
@@ -303,7 +303,7 @@ bool wxEncodingConverter::Convert(const wchar_t* input, wchar_t* output) const
         return true;
     }
 
-    wxCHECK_MSG(m_Table != NULL, false,
+    //wxCHECK_MSG(m_Table != NULL, false,
                 wxT("You must call wxEncodingConverter::Init() before actually converting!"));
 
     bool replaced = false;
@@ -323,7 +323,7 @@ wxString wxEncodingConverter::Convert(const wxString& input) const
     wxString s;
     const wxChar *i;
 
-    wxCHECK_MSG(m_Table != NULL, s,
+    //wxCHECK_MSG(m_Table != NULL, s,
                 wxT("You must call wxEncodingConverter::Init() before actually converting!"));
 
     if (m_UnicodeInput)

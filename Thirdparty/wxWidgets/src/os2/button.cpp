@@ -246,7 +246,7 @@ void wxButton::SetTmpDefault()
 {
     wxTopLevelWindow *tlw = wxDynamicCast(wxGetTopLevelParent(this), wxTopLevelWindow);
 
-    wxCHECK_RET( tlw, wxT("button without top level window?") );
+    //wxCHECK_RET( tlw, wxT("button without top level window?") );
 
     wxWindow*                       pWinOldDefault = tlw->GetDefaultItem();
 
@@ -259,7 +259,7 @@ void wxButton::UnsetTmpDefault()
 {
     wxTopLevelWindow *tlw = wxDynamicCast(wxGetTopLevelParent(this), wxTopLevelWindow);
 
-    wxCHECK_RET( tlw, wxT("button without top level window?") );
+    //wxCHECK_RET( tlw, wxT("button without top level window?") );
 
     tlw->SetTmpDefaultItem(NULL);
 

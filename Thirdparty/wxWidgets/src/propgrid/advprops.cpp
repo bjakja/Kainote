@@ -215,7 +215,7 @@ private:
                                            GetId() );
                     evtscroll.SetEventObject(this);
 
-                    wxASSERT( m_spins == 1 );
+                    //wxASSERT( m_spins == 1 );
 
                     m_spins = abs(dy);
                     GetEventHandler()->ProcessEvent(evtscroll);
@@ -457,7 +457,7 @@ wxPGWindowList wxPGDatePickerCtrlEditor::CreateControls( wxPropertyGrid* propgri
                                                          const wxPoint& pos,
                                                          const wxSize& sz ) const
 {
-    wxCHECK_MSG( wxDynamicCast(property, wxDateProperty),
+    //wxCHECK_MSG( wxDynamicCast(property, wxDateProperty),
                  NULL,
                  wxT("DatePickerCtrl editor can only be used with wxDateProperty or derivative.") );
 
@@ -498,7 +498,7 @@ void wxPGDatePickerCtrlEditor::UpdateControl( wxPGProperty* property,
                                               wxWindow* wnd ) const
 {
     wxDatePickerCtrl* ctrl = (wxDatePickerCtrl*) wnd;
-    wxASSERT( wxDynamicCast(ctrl, wxDatePickerCtrl) );
+    //wxASSERT( wxDynamicCast(ctrl, wxDatePickerCtrl) );
 
     wxDateTime dateValue(wxInvalidDateTime);
     wxVariant v(property->GetValue());
@@ -523,7 +523,7 @@ bool wxPGDatePickerCtrlEditor::OnEvent( wxPropertyGrid* WXUNUSED(propgrid),
 bool wxPGDatePickerCtrlEditor::GetValueFromControl( wxVariant& variant, wxPGProperty* WXUNUSED(property), wxWindow* wnd ) const
 {
     wxDatePickerCtrl* ctrl = (wxDatePickerCtrl*) wnd;
-    wxASSERT( wxDynamicCast(ctrl, wxDatePickerCtrl) );
+    //wxASSERT( wxDynamicCast(ctrl, wxDatePickerCtrl) );
 
     variant = ctrl->GetValue();
 
@@ -534,7 +534,7 @@ void wxPGDatePickerCtrlEditor::SetValueToUnspecified( wxPGProperty* property,
                                                       wxWindow* wnd ) const
 {
     wxDatePickerCtrl* ctrl = (wxDatePickerCtrl*) wnd;
-    wxASSERT( wxDynamicCast(ctrl, wxDatePickerCtrl) );
+    //wxASSERT( wxDynamicCast(ctrl, wxDatePickerCtrl) );
 
     wxDateProperty* prop = wxDynamicCast(property, wxDateProperty);
 
@@ -1216,11 +1216,11 @@ int wxSystemColourProperty::GetCustomColourIndex() const
 
 bool wxSystemColourProperty::QueryColourFromUser( wxVariant& variant ) const
 {
-    wxASSERT( m_value.GetType() != wxPG_VARIANT_TYPE_STRING );
+    //wxASSERT( m_value.GetType() != wxPG_VARIANT_TYPE_STRING );
     bool res = false;
 
     wxPropertyGrid* propgrid = GetGrid();
-    wxASSERT( propgrid );
+    //wxASSERT( propgrid );
 
     // Must only occur when user triggers event
     if ( !(propgrid->GetInternalFlags() & wxPG_FL_IN_HANDLECUSTOMEDITOREVENT) )
@@ -1320,7 +1320,7 @@ public:
                          const wxPropertyGrid* propertyGrid, wxPGProperty* property,
                          int WXUNUSED(column), int item, int WXUNUSED(flags) ) const
     {
-        wxASSERT( wxDynamicCast(property, wxSystemColourProperty) );
+        //wxASSERT( wxDynamicCast(property, wxSystemColourProperty) );
         wxSystemColourProperty* prop = wxStaticCast(property, wxSystemColourProperty);
 
         dc.SetPen(*wxBLACK_PEN);
@@ -1438,7 +1438,7 @@ bool wxSystemColourProperty::StringToValue( wxVariant& value, const wxString& te
         if ( !(argFlags & wxPG_EDITABLE_VALUE ))
         {
             // This really should not occurr...
-            // wxASSERT(false);
+            // //wxASSERT(false);
             ResetNextIndex();
             return false;
         }

@@ -313,7 +313,7 @@ void wxGenericComboCtrl::OnPaintEvent( wxPaintEvent& WXUNUSED(event) )
     // paint required portion on the control
     if ( !m_text || m_widthCustomPaint )
     {
-        wxASSERT( m_widthCustomPaint >= 0 );
+        //wxASSERT( m_widthCustomPaint >= 0 );
 
         // Clear the text-control area background
         wxColour tcCol = GetBackgroundColour();

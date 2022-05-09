@@ -723,12 +723,12 @@ void* wxJoystickThread::Entry()
         return NULL;
     }
 
-    wxASSERT(pRLSource != NULL);
+    //wxASSERT(pRLSource != NULL);
 
     //attach runloop source to main run loop in thread
     CFRunLoopRef pRL = CFRunLoopGetCurrent();
     CFRunLoopAddSource(pRL, pRLSource, kCFRunLoopDefaultMode);
-    wxASSERT( CFRunLoopContainsSource(pRL, pRLSource, kCFRunLoopDefaultMode) );
+    //wxASSERT( CFRunLoopContainsSource(pRL, pRLSource, kCFRunLoopDefaultMode) );
 
 
     if( (*m_hid->GetQueue())->setEventCallout(m_hid->GetQueue(),
@@ -767,7 +767,7 @@ void* wxJoystickThread::Entry()
 #endif
     }
 
-    wxASSERT( CFRunLoopContainsSource(pRL, pRLSource, kCFRunLoopDefaultMode) );
+    //wxASSERT( CFRunLoopContainsSource(pRL, pRLSource, kCFRunLoopDefaultMode) );
 
     CFRunLoopRemoveSource(pRL, pRLSource, kCFRunLoopDefaultMode);
     CFRelease(pRLSource);

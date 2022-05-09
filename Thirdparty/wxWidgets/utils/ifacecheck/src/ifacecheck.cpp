@@ -288,7 +288,7 @@ int IfaceCheckApp::CompareClasses(const wxClass* iface, const wxClass* api)
     const wxMethod *real;
     int count = 0;
 
-    wxASSERT(iface && api);
+    //wxASSERT(iface && api);
 
     // shorten the name of the header so the log file is more readable
     wxString header = wxFileName(iface->GetHeader()).GetFullName();
@@ -411,7 +411,7 @@ int IfaceCheckApp::CompareClasses(const wxClass* iface, const wxClass* api)
                     }
                     else
                     {
-                        wxASSERT(overloads.GetCount() == 1);
+                        //wxASSERT(overloads.GetCount() == 1);
 
                         if (m_modify || m.IsCtor())
                         {
@@ -440,7 +440,7 @@ bool IfaceCheckApp::StringContainsMethodName(const wxString& str, const wxMethod
 bool IfaceCheckApp::FixMethod(const wxString& header, const wxMethod* iface, const wxMethod* api)
 {
     unsigned int i,j;
-    wxASSERT(iface && api);
+    //wxASSERT(iface && api);
 
     wxTextFile file;
     if (!file.Open(header)) {
@@ -546,7 +546,7 @@ bool IfaceCheckApp::FixMethod(const wxString& header, const wxMethod* iface, con
     toinsert.Add(INDENTATION_STR + tmp.GetAsString() + ";");
 
     int nStartColumn = toinsert[0].Find('(');
-    wxASSERT(nStartColumn != wxNOT_FOUND);
+    //wxASSERT(nStartColumn != wxNOT_FOUND);
 
     // wrap lines too long at comma boundaries
     for (i=0; i<toinsert.GetCount(); i++)
@@ -554,7 +554,7 @@ bool IfaceCheckApp::FixMethod(const wxString& header, const wxMethod* iface, con
         size_t len = toinsert[i].Len();
         if (len > WRAP_COLUMN)
         {
-            wxASSERT(i == toinsert.GetCount()-1);
+            //wxASSERT(i == toinsert.GetCount()-1);
 
             // break this line
             wxString tmpleft = toinsert[i].Left(WRAP_COLUMN);

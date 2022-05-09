@@ -109,7 +109,7 @@ void wxItemContainer::Clear()
 
 void wxItemContainer::Delete(unsigned int pos)
 {
-    wxCHECK_RET( pos < GetCount(), wxT("invalid index") );
+    //wxCHECK_RET( pos < GetCount(), wxT("invalid index") );
 
     if ( HasClientObjectData() )
         ResetItemClientObject(pos);
@@ -165,7 +165,7 @@ void wxItemContainer::SetClientObject(unsigned int n, wxClientData *data)
     wxASSERT_MSG( !HasClientUntypedData(),
                   wxT("can't have both object and void client data") );
 
-    wxCHECK_RET( IsValid(n), "Invalid index passed to SetClientObject()" );
+    //wxCHECK_RET( IsValid(n), "Invalid index passed to SetClientObject()" );
 
     if ( HasClientObjectData() )
     {
@@ -187,10 +187,10 @@ void wxItemContainer::SetClientObject(unsigned int n, wxClientData *data)
 
 wxClientData *wxItemContainer::GetClientObject(unsigned int n) const
 {
-    wxCHECK_MSG( HasClientObjectData(), NULL,
+    //wxCHECK_MSG( HasClientObjectData(), NULL,
                   wxT("this window doesn't have object client data") );
 
-    wxCHECK_MSG( IsValid(n), NULL,
+    //wxCHECK_MSG( IsValid(n), NULL,
                  "Invalid index passed to GetClientObject()" );
 
     return static_cast<wxClientData *>(DoGetItemClientData(n));
@@ -219,17 +219,17 @@ void wxItemContainer::SetClientData(unsigned int n, void *data)
     wxASSERT_MSG( HasClientUntypedData(),
                   wxT("can't have both object and void client data") );
 
-    wxCHECK_RET( IsValid(n), "Invalid index passed to SetClientData()" );
+    //wxCHECK_RET( IsValid(n), "Invalid index passed to SetClientData()" );
 
     DoSetItemClientData(n, data);
 }
 
 void *wxItemContainer::GetClientData(unsigned int n) const
 {
-    wxCHECK_MSG( HasClientUntypedData(), NULL,
+    //wxCHECK_MSG( HasClientUntypedData(), NULL,
                   wxT("this window doesn't have void client data") );
 
-    wxCHECK_MSG( IsValid(n), NULL,
+    //wxCHECK_MSG( IsValid(n), NULL,
                  "Invalid index passed to GetClientData()" );
 
     return DoGetItemClientData(n);

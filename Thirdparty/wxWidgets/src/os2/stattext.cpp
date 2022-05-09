@@ -76,7 +76,7 @@ bool wxStaticText::Create( wxWindow*        pParent,
                                        ,NULL                     // no Presentation parameters
                                       );
 
-    wxCHECK_MSG(m_hWnd, false, wxT("Failed to create static ctrl"));
+    //wxCHECK_MSG(m_hWnd, false, wxT("Failed to create static ctrl"));
 
     LONG lColor = (LONG)wxBLACK->GetPixel();
 

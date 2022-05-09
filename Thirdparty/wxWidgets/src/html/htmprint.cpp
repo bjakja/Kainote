@@ -98,8 +98,8 @@ void wxHtmlDCRenderer::SetDC(wxDC *dc, double pixel_scale, double font_scale)
 
 void wxHtmlDCRenderer::SetSize(int width, int height)
 {
-    wxCHECK_RET( width, "width must be non-zero" );
-    wxCHECK_RET( height, "height must be non-zero" );
+    //wxCHECK_RET( width, "width must be non-zero" );
+    //wxCHECK_RET( height, "height must be non-zero" );
 
     m_Width = width;
     m_Height = height;
@@ -108,8 +108,8 @@ void wxHtmlDCRenderer::SetSize(int width, int height)
 
 void wxHtmlDCRenderer::SetHtmlText(const wxString& html, const wxString& basepath, bool isdir)
 {
-    wxCHECK_RET( m_DC, "SetDC() must be called before SetHtmlText()" );
-    wxCHECK_RET( m_Width, "SetSize() must be called before SetHtmlText()" );
+    //wxCHECK_RET( m_DC, "SetDC() must be called before SetHtmlText()" );
+    //wxCHECK_RET( m_Width, "SetSize() must be called before SetHtmlText()" );
 
     wxDELETE(m_Cells);
 
@@ -145,8 +145,8 @@ int wxHtmlDCRenderer::Render(int x, int y,
                              wxArrayInt& known_pagebreaks,
                              int from, int dont_render, int to)
 {
-    wxCHECK_MSG( m_Cells, 0, "SetHtmlText() must be called before Render()" );
-    wxCHECK_MSG( m_DC, 0, "SetDC() must be called before Render()" );
+    //wxCHECK_MSG( m_Cells, 0, "SetHtmlText() must be called before Render()" );
+    //wxCHECK_MSG( m_DC, 0, "SetDC() must be called before Render()" );
 
     int pbreak, hght;
 
@@ -239,10 +239,10 @@ wxHtmlPrintout::CheckFit(const wxSize& pageArea, const wxSize& docArea) const
         // instead of a dialog box.
 #if wxUSE_INFOBAR
         wxFrame * const parent = preview->GetFrame();
-        wxCHECK_MSG( parent, false, "No parent preview frame?" );
+        //wxCHECK_MSG( parent, false, "No parent preview frame?" );
 
         wxSizer * const sizer = parent->GetSizer();
-        wxCHECK_MSG( sizer, false, "Preview frame should be using sizers" );
+        //wxCHECK_MSG( sizer, false, "Preview frame should be using sizers" );
 
         wxInfoBar * const bar = new wxInfoBar(parent);
         sizer->Add(bar, wxSizerFlags().Expand());

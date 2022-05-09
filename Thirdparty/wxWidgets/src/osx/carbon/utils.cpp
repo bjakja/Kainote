@@ -88,7 +88,7 @@ void wxBeginBusyCursor(const wxCursor *cursor)
 // Restore cursor to normal
 void wxEndBusyCursor()
 {
-    wxCHECK_RET( gs_wxBusyCursorCount > 0,
+    //wxCHECK_RET( gs_wxBusyCursorCount > 0,
         wxT("no matching wxBeginBusyCursor() for wxEndBusyCursor()") );
 
     if (--gs_wxBusyCursorCount == 0)

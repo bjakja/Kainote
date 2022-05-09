@@ -823,7 +823,7 @@ bool wxGetKeyState(wxKeyCode key)
     if ( IsModifierKey(iKey) )  // If iKey is a modifier key, use a different method
     {
         XModifierKeymap *map = XGetModifierMapping(pDisplay);
-        wxCHECK_MSG( map, false, wxT("failed to get X11 modifiers map") );
+        //wxCHECK_MSG( map, false, wxT("failed to get X11 modifiers map") );
 
         for (int i = 0; i < 8; ++i)
         {

@@ -166,7 +166,7 @@ static void gtk_dirbutton_currentfolderchanged_callback(GtkFileChooserButton *wi
         p->m_bIgnoreNextChange=false;
         return;
     }
-    wxASSERT(p);
+    //wxASSERT(p);
 
     // NB: it's important to use gtk_file_chooser_get_filename instead of
     //     gtk_file_chooser_get_current_folder (see GTK docs) !

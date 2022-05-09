@@ -164,7 +164,7 @@ ULONG wxTimerProc(
 {
     wxTimerMap::iterator node = TimerMap().find((ULONG)nIdTimer);
 
-    wxCHECK_MSG(node != TimerMap().end(), 0,
+    //wxCHECK_MSG(node != TimerMap().end(), 0,
                 wxT("bogus timer id in wxTimerProc") );
     wxProcessTimer(*(node->second));
     return 0;

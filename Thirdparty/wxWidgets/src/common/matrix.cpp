@@ -491,7 +491,7 @@ wxTransformMatrix  wxTransformMatrix::operator*(const double& t) const
 wxTransformMatrix  wxTransformMatrix::operator/(const double& t) const
 {
     wxTransformMatrix result = *this;
-//    wxASSERT(t!=0);
+//    //wxASSERT(t!=0);
     result /= t;
     result.m_isIdentity = result.IsIdentity1();
     return result;

@@ -191,7 +191,7 @@ static int wxDoVsnprintf(CharType *buf, size_t lenMax,
     }
 
     // Don't do:
-    //      wxASSERT(lenCur == wxStrlen(buf));
+    //      //wxASSERT(lenCur == wxStrlen(buf));
     // in fact if we embedded NULLs in the output buffer (using %c with a '\0')
     // such check would fail
 

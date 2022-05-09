@@ -562,7 +562,7 @@ bool wxMacPrinter::Print(wxWindow *parent, wxPrintout *printout, bool prompt)
         if (dialog.ShowModal() == wxID_OK)
         {
             dc = wxDynamicCast(dialog.GetPrintDC(), wxPrinterDC);
-            wxASSERT(dc);
+            //wxASSERT(dc);
             m_printDialogData = dialog.GetPrintDialogData();
         }
     }

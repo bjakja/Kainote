@@ -532,7 +532,7 @@ public:
                 if ( m_parent->SendStopEvent() )
                 {
                     m_parent->Stop();
-                    wxASSERT(m_pLib->GetMoviesError() == noErr);
+                    //wxASSERT(m_pLib->GetMoviesError() == noErr);
 
                     m_parent->QueueFinishEvent();
                 }
@@ -744,9 +744,9 @@ void wxQTMediaBackend::PPRMProc (Movie theMovie,
                                  OSErr WXUNUSED_UNLESS_DEBUG(theErr),
                                  void* theRefCon)
 {
-    wxASSERT( theMovie );
-    wxASSERT( theRefCon );
-    wxASSERT( theErr == noErr );
+    //wxASSERT( theMovie );
+    //wxASSERT( theRefCon );
+    //wxASSERT( theErr == noErr );
 
     wxQTMediaBackend* pBE = (wxQTMediaBackend*) theRefCon;
 
@@ -776,7 +776,7 @@ bool wxQTMediaBackend::Load(const wxURI& location)
     wxString theURI = location.BuildURI();
 
     Handle theHandle = m_lib.NewHandleClear(theURI.length() + 1);
-    wxASSERT(theHandle);
+    //wxASSERT(theHandle);
 
     m_lib.BlockMove(theURI.mb_str(), *theHandle, theURI.length() + 1);
 
@@ -795,10 +795,10 @@ bool wxQTMediaBackend::Load(const wxURI& location)
         Fixed playRate;
 
         timeNow = m_lib.GetMovieTime(m_movie, NULL);
-        wxASSERT(m_lib.GetMoviesError() == noErr);
+        //wxASSERT(m_lib.GetMoviesError() == noErr);
 
         playRate = m_lib.GetMoviePreferredRate(m_movie);
-        wxASSERT(m_lib.GetMoviesError() == noErr);
+        //wxASSERT(m_lib.GetMoviesError() == noErr);
 
         // Note that the callback here is optional,
         // but without it PrePrerollMovie can be buggy
@@ -833,7 +833,7 @@ void wxQTMediaBackend::FinishLoad()
 {
     // Create the playing/streaming timer
     m_timer = new wxQTPlayTimer(m_movie, (wxQTMediaBackend*) this, &m_lib);
-    wxASSERT(m_timer);
+    //wxASSERT(m_timer);
 
     m_timer->Start(MOVIE_DELAY, wxTIMER_CONTINUOUS);
 
@@ -841,7 +841,7 @@ void wxQTMediaBackend::FinishLoad()
     Rect outRect;
     memset(&outRect, 0, sizeof(Rect)); // suppress annoying VC6 warning
     m_lib.GetMovieNaturalBoundsRect (m_movie, &outRect);
-    wxASSERT(m_lib.GetMoviesError() == noErr);
+    //wxASSERT(m_lib.GetMoviesError() == noErr);
 
     m_bestSize.x = outRect.right - outRect.left;
     m_bestSize.y = outRect.bottom - outRect.top;
@@ -866,7 +866,7 @@ void wxQTMediaBackend::FinishLoad()
 
     // Set the movie to millisecond precision
     m_lib.SetMovieTimeScale(m_movie, 1000);
-    wxASSERT(m_lib.GetMoviesError() == noErr);
+    //wxASSERT(m_lib.GetMoviesError() == noErr);
 
     NotifyMovieLoaded();
 }
@@ -1002,7 +1002,7 @@ wxLongLong wxQTMediaBackend::GetPosition()
 double wxQTMediaBackend::GetVolume()
 {
     short sVolume = m_lib.GetMovieVolume(m_movie);
-    wxASSERT(m_lib.GetMoviesError() == noErr);
+    //wxASSERT(m_lib.GetMoviesError() == noErr);
 
     if (sVolume & (128 << 8)) //negative - no sound
         return 0.0;
@@ -1235,7 +1235,7 @@ void wxQTMediaBackend::Move(int WXUNUSED(x), int WXUNUSED(y), int w, int h)
             m_lib.SetMovieBox(m_movie, &theRect);
         }
 
-        wxASSERT(m_lib.GetMoviesError() == noErr);
+        //wxASSERT(m_lib.GetMoviesError() == noErr);
     }
 }
 
@@ -1266,7 +1266,7 @@ void wxQTMediaEvtHandler::OnEraseBackground(wxEraseEvent& evt)
 
         m_pLib.BeginUpdate(port);
         m_pLib.UpdateMovie(m_qtb->m_movie);
-        wxASSERT(m_pLib.GetMoviesError() == noErr);
+        //wxASSERT(m_pLib.GetMoviesError() == noErr);
         m_pLib.EndUpdate(port);
     }
     else

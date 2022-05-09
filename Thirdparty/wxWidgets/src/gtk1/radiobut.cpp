@@ -121,14 +121,14 @@ bool wxRadioButton::Create( wxWindow *parent,
 
 void wxRadioButton::SetLabel( const wxString& label )
 {
-    wxCHECK_RET( m_widget != NULL, wxT("invalid radiobutton") );
+    //wxCHECK_RET( m_widget != NULL, wxT("invalid radiobutton") );
 
     GTKSetLabelForLabel(GTK_LABEL(BUTTON_CHILD(m_widget)), label);
 }
 
 void wxRadioButton::SetValue( bool val )
 {
-    wxCHECK_RET( m_widget != NULL, wxT("invalid radiobutton") );
+    //wxCHECK_RET( m_widget != NULL, wxT("invalid radiobutton") );
 
     if (val == GetValue())
         return;
@@ -151,7 +151,7 @@ void wxRadioButton::SetValue( bool val )
 
 bool wxRadioButton::GetValue() const
 {
-    wxCHECK_MSG( m_widget != NULL, FALSE, wxT("invalid radiobutton") );
+    //wxCHECK_MSG( m_widget != NULL, FALSE, wxT("invalid radiobutton") );
 
     return GTK_TOGGLE_BUTTON(m_widget)->active;
 }

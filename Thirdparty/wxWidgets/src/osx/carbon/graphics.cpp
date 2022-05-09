@@ -151,7 +151,7 @@ CGColorRef wxMacCreateCGColor( const wxColour& col )
 
     retval = col.CreateCGColor();
 
-    wxASSERT(retval != NULL);
+    //wxASSERT(retval != NULL);
     return retval;
 }
 
@@ -212,7 +212,7 @@ class ImagePattern : public wxMacCoreGraphicsPattern
 public :
     ImagePattern( const wxBitmap* bmp , const CGAffineTransform& transform )
     {
-        wxASSERT( bmp && bmp->IsOk() );
+        //wxASSERT( bmp && bmp->IsOk() );
 #ifdef __WXMAC__
         Init( (CGImageRef) bmp->CreateCGImage() , transform );
 #endif
@@ -2152,7 +2152,7 @@ void wxMacCoreGraphicsContext::FillPath( const wxGraphicsPath &path , wxPolygonF
 void wxMacCoreGraphicsContext::SetNativeContext( CGContextRef cg )
 {
     // we allow either setting or clearing but not replacing
-    wxASSERT( m_cgContext == NULL || cg == NULL );
+    //wxASSERT( m_cgContext == NULL || cg == NULL );
 
     if ( m_cgContext )
     {
@@ -2304,7 +2304,7 @@ void wxMacCoreGraphicsContext::PopState()
 
 void wxMacCoreGraphicsContext::DoDrawText( const wxString &str, wxDouble x, wxDouble y )
 {
-    wxCHECK_RET( !m_font.IsNull(), wxT("wxMacCoreGraphicsContext::DrawText - no valid font set") );
+    //wxCHECK_RET( !m_font.IsNull(), wxT("wxMacCoreGraphicsContext::DrawText - no valid font set") );
 
     if (!EnsureIsValid())
         return;
@@ -2392,7 +2392,7 @@ void wxMacCoreGraphicsContext::DoDrawRotatedText(const wxString &str,
                                                  wxDouble x, wxDouble y,
                                                  wxDouble angle)
 {
-    wxCHECK_RET( !m_font.IsNull(), wxT("wxMacCoreGraphicsContext::DrawText - no valid font set") );
+    //wxCHECK_RET( !m_font.IsNull(), wxT("wxMacCoreGraphicsContext::DrawText - no valid font set") );
 
     if (!EnsureIsValid())
         return;
@@ -2503,7 +2503,7 @@ void wxMacCoreGraphicsContext::DoDrawRotatedText(const wxString &str,
 void wxMacCoreGraphicsContext::GetTextExtent( const wxString &str, wxDouble *width, wxDouble *height,
                             wxDouble *descent, wxDouble *externalLeading ) const
 {
-    wxCHECK_RET( !m_font.IsNull(), wxT("wxMacCoreGraphicsContext::GetTextExtent - no valid font set") );
+    //wxCHECK_RET( !m_font.IsNull(), wxT("wxMacCoreGraphicsContext::GetTextExtent - no valid font set") );
 
     if ( width )
         *width = 0;
@@ -2607,7 +2607,7 @@ void wxMacCoreGraphicsContext::GetPartialTextExtents(const wxString& text, wxArr
     widths.Empty();
     widths.Add(0, text.length());
 
-    wxCHECK_RET( !m_font.IsNull(), wxT("wxMacCoreGraphicsContext::DrawText - no valid font set") );
+    //wxCHECK_RET( !m_font.IsNull(), wxT("wxMacCoreGraphicsContext::DrawText - no valid font set") );
 
     if (text.empty())
         return;
@@ -2678,7 +2678,7 @@ void wxMacCoreGraphicsContext::GetPartialTextExtents(const wxString& text, wxArr
                                                                        (void **)
                                                                        &layoutRecords,
                                                                        &glyphCount);
-        wxASSERT(glyphCount == (text.length()+1));
+        //wxASSERT(glyphCount == (text.length()+1));
 
         if ( err == noErr && glyphCount == (text.length()+1))
         {
@@ -3224,7 +3224,7 @@ wxMacReleaseMemoryBufferProviderCallback(void *info,
 {
     wxMemoryBuffer* membuf = (wxMemoryBuffer*) info ;
 
-    wxASSERT( data == membuf->GetData() ) ;
+    //wxASSERT( data == membuf->GetData() ) ;
 
     delete membuf ;
 }

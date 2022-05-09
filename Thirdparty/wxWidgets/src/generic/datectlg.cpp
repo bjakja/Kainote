@@ -126,7 +126,7 @@ public:
 
     bool ParseDateTime(const wxString& s, wxDateTime* pDt)
     {
-        wxASSERT(pDt);
+        //wxASSERT(pDt);
 
         if ( !s.empty() )
         {

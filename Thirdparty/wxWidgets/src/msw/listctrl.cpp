@@ -631,7 +631,7 @@ bool wxListCtrl::SetColumnWidth(int col, int width)
 int wxListCtrl::GetColumnIndexFromOrder(int order) const
 {
     const int numCols = GetColumnCount();
-    wxCHECK_MSG( order >= 0 && order < numCols, -1,
+    //wxCHECK_MSG( order >= 0 && order < numCols, -1,
                 wxT("Column position out of bounds") );
 
     wxArrayInt indexArray(numCols);
@@ -678,7 +678,7 @@ bool wxListCtrl::SetColumnsOrder(const wxArrayInt& orders)
 {
     const int numCols = GetColumnCount();
 
-    wxCHECK_MSG( orders.size() == (size_t)numCols, false,
+    //wxCHECK_MSG( orders.size() == (size_t)numCols, false,
                     wxT("wrong number of elements in column orders array") );
 
     return ListView_SetColumnOrderArray(GetHwnd(), numCols, &orders[0]) != 0;
@@ -773,7 +773,7 @@ bool wxListCtrl::GetItem(wxListItem& info) const
 bool wxListCtrl::SetItem(wxListItem& info)
 {
     const long id = info.GetId();
-    wxCHECK_MSG( id >= 0 && id < GetItemCount(), false,
+    //wxCHECK_MSG( id >= 0 && id < GetItemCount(), false,
                  wxT("invalid item index in SetItem") );
 
     LV_ITEM item;
@@ -1074,12 +1074,12 @@ bool wxListCtrl::GetSubItemRect(long item, long subItem, wxRect& rect, int code)
     // ListView_GetSubItemRect() doesn't do subItem error checking and returns
     // true even for the out of range values of it (even if the results are
     // completely bogus in this case), so we check item validity ourselves
-    wxCHECK_MSG( subItem == wxLIST_GETSUBITEMRECT_WHOLEITEM ||
+    //wxCHECK_MSG( subItem == wxLIST_GETSUBITEMRECT_WHOLEITEM ||
                     (subItem >= 0 && subItem < GetColumnCount()),
                  false, wxT("invalid sub item index") );
 
     // use wxCHECK_MSG against "item" too, for coherency with the generic implementation:
-    wxCHECK_MSG( item >= 0 && item < GetItemCount(), false,
+    //wxCHECK_MSG( item >= 0 && item < GetItemCount(), false,
                  wxT("invalid item in GetSubItemRect") );
 
     int codeWin;
@@ -1475,7 +1475,7 @@ void wxListCtrl::InitEditControl(WXHWND hWnd)
 
 wxTextCtrl* wxListCtrl::EditLabel(long item, wxClassInfo* textControlClass)
 {
-    wxCHECK_MSG( textControlClass->IsKindOf(wxCLASSINFO(wxTextCtrl)), NULL,
+    //wxCHECK_MSG( textControlClass->IsKindOf(wxCLASSINFO(wxTextCtrl)), NULL,
                   "control used for label editing must be a wxTextCtrl" );
 
     // ListView_EditLabel requires that the list has focus.
@@ -1717,7 +1717,7 @@ long wxListCtrl::InsertItem(const wxListItem& info)
     const long rv = ListView_InsertItem(GetHwnd(), & item);
 
     // failing to insert the item is really unexpected
-    wxCHECK_MSG( rv != -1, rv, "failed to insert an item in wxListCtrl" );
+    //wxCHECK_MSG( rv != -1, rv, "failed to insert an item in wxListCtrl" );
 
     m_count++;
     wxASSERT_MSG( m_count == ListView_GetItemCount(GetHwnd()),
@@ -3064,7 +3064,7 @@ wxString wxListCtrl::OnGetItemText(long WXUNUSED(item), long WXUNUSED(col)) cons
 
 int wxListCtrl::OnGetItemImage(long WXUNUSED(item)) const
 {
-    wxCHECK_MSG(!GetImageList(wxIMAGE_LIST_SMALL),
+    //wxCHECK_MSG(!GetImageList(wxIMAGE_LIST_SMALL),
                 -1,
                 wxT("List control has an image list, OnGetItemImage or OnGetItemColumnImage should be overridden."));
     return -1;

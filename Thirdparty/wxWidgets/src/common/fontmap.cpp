@@ -308,7 +308,7 @@ bool wxFontMapper::GetAltForEncoding(wxFontEncoding encoding,
     ReentrancyBlocker blocker(s_inGetAltForEncoding);
 #endif // wxUSE_GUI
 
-    wxCHECK_MSG( info, false, wxT("bad pointer in GetAltForEncoding") );
+    //wxCHECK_MSG( info, false, wxT("bad pointer in GetAltForEncoding") );
 
     info->facename = facename;
 
@@ -496,7 +496,7 @@ bool wxFontMapper::GetAltForEncoding(wxFontEncoding encoding,
                                      const wxString& facename,
                                      bool interactive)
 {
-    wxCHECK_MSG( encodingAlt, false,
+    //wxCHECK_MSG( encodingAlt, false,
                     wxT("wxFontEncoding::GetAltForEncoding(): NULL pointer") );
 
     wxNativeEncodingInfo info;

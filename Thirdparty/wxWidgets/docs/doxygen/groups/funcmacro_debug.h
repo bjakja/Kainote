@@ -21,9 +21,9 @@ NDEBUG symbol being defined. You may explicitly activate the debugging checks
 in the release build by calling wxSetAssertHandler() with a custom function if
 needed.
 
-When debugging support is active, failure of both wxASSERT() and wxCHECK()
+When debugging support is active, failure of both //wxASSERT() and wxCHECK()
 macros conditions result in a debug alert. When debugging support is inactive
-or turned off entirely at compilation time, wxASSERT() and wxFAIL() macros
+or turned off entirely at compilation time, //wxASSERT() and wxFAIL() macros
 don't do anything while wxCHECK() still checks its condition and returns if it
 fails, even if no alerts are shown to the user.
 

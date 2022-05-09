@@ -525,10 +525,10 @@ public:
 		}
 
 		// Check that all resources were released
-		for (it = m_resources.begin(); it != m_resources.end(); ++it)
+		/*for (it = m_resources.begin(); it != m_resources.end(); ++it)
 		{
 			wxCHECK_RET(!(*it)->IsResourceAcquired(), "One or more device-dependent resources failed to release");
-		}
+		}*/
 	}
 
 	virtual ~wxD2DResourceManager()
@@ -682,7 +682,7 @@ D2D1_CAP_STYLE wxD2DConvertPenCap(wxPenCap cap)
 		return D2D1_CAP_STYLE_FLAT;
 	}
 
-	wxFAIL_MSG("unknown pen cap");
+	//wxFAIL_MSG("unknown pen cap");
 	return D2D1_CAP_STYLE_FLAT;
 }
 
@@ -700,7 +700,7 @@ D2D1_LINE_JOIN wxD2DConvertPenJoin(wxPenJoin join)
 		return D2D1_LINE_JOIN_MITER;
 	}
 
-	wxFAIL_MSG("unknown pen join");
+	//wxFAIL_MSG("unknown pen join");
 	return D2D1_LINE_JOIN_MITER;
 }
 
@@ -747,7 +747,7 @@ D2D1_DASH_STYLE wxD2DConvertPenStyle(wxPenStyle dashStyle)
 		return D2D1_DASH_STYLE_SOLID;
 	}
 
-	wxFAIL_MSG("unknown pen style");
+	//wxFAIL_MSG("unknown pen style");
 	return D2D1_DASH_STYLE_SOLID;
 }
 
@@ -1328,7 +1328,7 @@ void wxD2DPathData::Flush()
 		if( m_geometryWritable )
 		{
 			HRESULT hr = m_geometrySink->Close();
-			wxCHECK_HRESULT_RET(hr);
+			//wxCHECK_HRESULT_RET(hr);
 			m_geometryWritable = false;
 		}
 	}
@@ -1341,16 +1341,16 @@ void wxD2DPathData::EnsureGeometryOpen()
 		wxCOMPtr<ID2D1PathGeometry> newPathGeometry;
 		HRESULT hr;
 		hr = m_direct2dfactory->CreatePathGeometry(&newPathGeometry);
-		wxCHECK_HRESULT_RET(hr);
+		//wxCHECK_HRESULT_RET(hr);
 
 		m_geometrySink.reset();
 		hr = newPathGeometry->Open(&m_geometrySink);
-		wxCHECK_HRESULT_RET(hr);
+		//wxCHECK_HRESULT_RET(hr);
 
 		if (m_pathGeometry != NULL)
 		{
 			hr = m_pathGeometry->Stream(m_geometrySink);
-			wxCHECK_HRESULT_RET(hr);
+			//wxCHECK_HRESULT_RET(hr);
 		}
 
 		m_pathGeometry = newPathGeometry;
@@ -1365,7 +1365,7 @@ void wxD2DPathData::EnsureSinkOpen()
 	if (m_geometrySink == NULL)
 	{
 		HRESULT hr = m_pathGeometry->Open(&m_geometrySink);
-		wxCHECK_HRESULT_RET(hr);
+		//wxCHECK_HRESULT_RET(hr);
 	}
 }
 
@@ -2107,7 +2107,7 @@ public:
 
 	ULONG STDMETHODCALLTYPE Release(void) override
 	{
-		wxCHECK_MSG(m_refCount > 0, 0, "Unbalanced number of calls to Release");
+		//wxCHECK_MSG(m_refCount > 0, 0, "Unbalanced number of calls to Release");
 
 		ULONG refCount = InterlockedDecrement(&m_refCount);
 		if (m_refCount == 0)
@@ -2897,8 +2897,8 @@ public:
 	// contains backwards compatibility hacks, but we don't need it here).
 	static wxFontWeight GetWeightClosestToNumericValue(int numWeight)
 	{
-		wxASSERT(numWeight > 0);
-		wxASSERT(numWeight <= 1000);
+		/*wxASSERT(numWeight > 0);
+		wxASSERT(numWeight <= 1000);*/
 
 		// round to nearest hundredth = wxFONTWEIGHT_ constant
 		int weight = ((numWeight + 50) / 100) * 100;
@@ -3552,9 +3552,9 @@ private:
 			wxFAILED_HRESULT_MSG(hr);
 			return;
 		}
-		wxASSERT_MSG( pixelFormat == GUID_WICPixelFormat32bppPBGRA ||
+		/*wxASSERT_MSG( pixelFormat == GUID_WICPixelFormat32bppPBGRA ||
 				  pixelFormat == GUID_WICPixelFormat32bppBGR,
-				  wxS("Unsupported pixel format") );
+				  wxS("Unsupported pixel format") );*/
 
 		// Only premultiplied ARGB bitmaps are supported.
 		const bool hasAlpha = pixelFormat == GUID_WICPixelFormat32bppPBGRA;

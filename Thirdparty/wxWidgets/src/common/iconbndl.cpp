@@ -195,7 +195,7 @@ void wxIconBundle::AddIcon(wxInputStream& stream, wxBitmapType type)
 
 wxIcon wxIconBundle::GetIcon(const wxSize& size, int flags) const
 {
-    wxASSERT( size == wxDefaultSize || (size.x >= 0 && size.y > 0) );
+    //wxASSERT( size == wxDefaultSize || (size.x >= 0 && size.y > 0) );
 
     // We need the standard system icon size when using FALLBACK_SYSTEM.
     wxCoord sysX = 0,
@@ -291,7 +291,7 @@ wxIcon wxIconBundle::GetIconOfExactSize(const wxSize& size) const
 
 void wxIconBundle::AddIcon(const wxIcon& icon)
 {
-    wxCHECK_RET( icon.IsOk(), wxT("invalid icon") );
+    //wxCHECK_RET( icon.IsOk(), wxT("invalid icon") );
 
     AllocExclusive();
 
@@ -322,7 +322,7 @@ size_t wxIconBundle::GetIconCount() const
 
 wxIcon wxIconBundle::GetIconByIndex(size_t n) const
 {
-    wxCHECK_MSG( n < GetIconCount(), wxNullIcon, wxT("invalid index") );
+    //wxCHECK_MSG( n < GetIconCount(), wxNullIcon, wxT("invalid index") );
 
     return M_ICONBUNDLEDATA->m_icons[n];
 }

@@ -386,7 +386,7 @@ wxRedirectableFd::~wxRedirectableFd()
 
 bool wxRedirectableFd::Reopen(const wxString& name, int flags)
 {
-    wxASSERT(m_dup == -1);
+    //wxASSERT(m_dup == -1);
     bool result = false;
 
     // save a duplicate so that the descriptor can be closed now and

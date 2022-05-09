@@ -463,7 +463,7 @@ void wxScrollHelperBase::DeleteEvtHandler()
 
 void wxScrollHelperBase::ResetDrawnFlag()
 {
-    wxCHECK_RET( m_handler, "invalid use of ResetDrawnFlag - no handler?" );
+    //wxCHECK_RET( m_handler, "invalid use of ResetDrawnFlag - no handler?" );
     m_handler->ResetDrawnFlag();
 }
 
@@ -489,7 +489,7 @@ void wxScrollHelperBase::DoSetTargetWindow(wxWindow *target)
 
 void wxScrollHelperBase::SetTargetWindow(wxWindow *target)
 {
-    wxCHECK_RET( target, wxT("target window must not be NULL") );
+    //wxCHECK_RET( target, wxT("target window must not be NULL") );
 
     if ( target == m_targetWindow )
         return;

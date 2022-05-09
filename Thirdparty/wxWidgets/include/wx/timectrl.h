@@ -76,7 +76,7 @@ public:
     // Get the current time components. All pointers must be non-NULL.
     bool GetTime(int* hour, int* min, int* sec) const
     {
-        wxCHECK_MSG( hour && min && sec, false,
+        //wxCHECK_MSG( hour && min && sec, false,
                      wxS("Time component pointers must be non-NULL") );
 
         const wxDateTime::Tm tm = GetValue().GetTm();

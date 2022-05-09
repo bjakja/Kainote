@@ -725,7 +725,7 @@ wxMacWindowCommandEventHandler(EventHandlerCallRef WXUNUSED(handler),
 
     if ( item )
     {
-        wxASSERT( itemMenu != NULL ) ;
+        //wxASSERT( itemMenu != NULL ) ;
 
         switch ( cEvent.GetKind() )
         {

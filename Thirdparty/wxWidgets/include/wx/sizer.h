@@ -750,13 +750,13 @@ public:
 
     void SetCols( int cols )
     {
-        wxASSERT_MSG( cols >= 0, "Number of columns must be non-negative");
+        //wxASSERT_MSG( cols >= 0, "Number of columns must be non-negative");
         m_cols = cols;
     }
 
     void SetRows( int rows )
     {
-        wxASSERT_MSG( rows >= 0, "Number of rows must be non-negative");
+        //wxASSERT_MSG( rows >= 0, "Number of rows must be non-negative");
         m_rows = rows;
     }
 
@@ -792,22 +792,22 @@ protected:
     // of children (and the fixed number of rows/columns)
     int CalcCols() const
     {
-        wxCHECK_MSG
+        /*wxCHECK_MSG
         (
             m_rows, 0,
             "Can't calculate number of cols if number of rows is not specified"
-        );
+        );*/
 
         return (m_children.GetCount() + m_rows - 1) / m_rows;
     }
 
     int CalcRows() const
     {
-        wxCHECK_MSG
+        /*wxCHECK_MSG
         (
             m_cols, 0,
             "Can't calculate number of cols if number of rows is not specified"
-        );
+        );*/
 
         return (m_children.GetCount() + m_cols - 1) / m_cols;
     }
@@ -921,8 +921,8 @@ public:
         m_orient = orient;
         m_totalProportion = 0;
 
-        wxASSERT_MSG( m_orient == wxHORIZONTAL || m_orient == wxVERTICAL,
-                      wxT("invalid value for wxBoxSizer orientation") );
+        /*wxASSERT_MSG( m_orient == wxHORIZONTAL || m_orient == wxVERTICAL,
+                      wxT("invalid value for wxBoxSizer orientation") );*/
     }
 
     virtual wxSizerItem *AddSpacer(int size);

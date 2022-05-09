@@ -64,10 +64,10 @@ public:
 
     bool Init()
     {
-        wxCHECK_MSG( !IsOk(), false, "Inotify already initialized" );
+        //wxCHECK_MSG( !IsOk(), false, "Inotify already initialized" );
 
         wxEventLoopBase *loop = wxEventLoopBase::GetActive();
-        wxCHECK_MSG( loop, false, "File system watcher needs an event loop" );
+        //wxCHECK_MSG( loop, false, "File system watcher needs an event loop" );
 
         m_ifd = inotify_init();
         if ( m_ifd == -1 )
@@ -88,7 +88,7 @@ public:
 
     void Close()
     {
-        wxCHECK_RET( IsOk(),
+        //wxCHECK_RET( IsOk(),
                     "Inotify not initialized or invalid inotify descriptor" );
 
         wxDELETE(m_source);
@@ -101,7 +101,7 @@ public:
 
     virtual bool DoAdd(wxSharedPtr<wxFSWatchEntryUnix> watch)
     {
-        wxCHECK_MSG( IsOk(), false,
+        //wxCHECK_MSG( IsOk(), false,
                     "Inotify not initialized or invalid inotify descriptor" );
 
         int wd = DoAddInotify(watch.get());
@@ -124,7 +124,7 @@ public:
 
     virtual bool DoRemove(wxSharedPtr<wxFSWatchEntryUnix> watch)
     {
-        wxCHECK_MSG( IsOk(), false,
+        //wxCHECK_MSG( IsOk(), false,
                     "Inotify not initialized or invalid inotify descriptor" );
 
         int ret = DoRemoveInotify(watch.get());
@@ -156,7 +156,7 @@ public:
 
     int ReadEvents()
     {
-        wxCHECK_MSG( IsOk(), -1,
+        //wxCHECK_MSG( IsOk(), -1,
                     "Inotify not initialized or invalid inotify descriptor" );
 
         // read events
@@ -222,7 +222,7 @@ protected:
 
         // get watch entry for this event
         wxFSWatchEntryDescriptors::iterator it = m_watchMap.find(inevt.wd);
-        wxCHECK_RET(it != m_watchMap.end(),
+        //wxCHECK_RET(it != m_watchMap.end(),
                              "Watch descriptor not present in the watch map!");
 
         wxFSWatchEntry& watch = *(it->second);
@@ -297,7 +297,7 @@ protected:
 
             // get watch entry for this event
             wxFSWatchEntryDescriptors::iterator wit = m_watchMap.find(inevt.wd);
-            wxCHECK_RET(wit != m_watchMap.end(),
+            //wxCHECK_RET(wit != m_watchMap.end(),
                              "Watch descriptor not present in the watch map!");
 
             wxFSWatchEntry& watch = *(wit->second);
@@ -320,7 +320,7 @@ protected:
 
     int ReadEventsToBuf(char* buf, int size)
     {
-        wxCHECK_MSG( IsOk(), false,
+        //wxCHECK_MSG( IsOk(), false,
                     "Inotify not initialized or invalid inotify descriptor" );
 
         memset(buf, 0, size);

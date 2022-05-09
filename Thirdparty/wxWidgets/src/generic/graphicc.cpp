@@ -614,7 +614,7 @@ void wxCairoPenBrushBaseData::InitHatchPattern(cairo_t* ctext)
 
 void wxCairoPenBrushBaseData::InitStipple(wxBitmap* bmp)
 {
-    wxCHECK_RET( bmp && bmp->IsOk(), wxS("Invalid stippled bitmap") );
+    //wxCHECK_RET( bmp && bmp->IsOk(), wxS("Invalid stippled bitmap") );
 
     m_bmpdata = new wxCairoBitmapData(GetRenderer(), *bmp);
     m_pattern = m_bmpdata->GetCairoPattern();
@@ -1317,7 +1317,7 @@ wxCairoBitmapData::wxCairoBitmapData( wxGraphicsRenderer* renderer, cairo_surfac
 
 wxCairoBitmapData::wxCairoBitmapData( wxGraphicsRenderer* renderer, const wxBitmap& bmp ) : wxGraphicsBitmapData( renderer )
 {
-    wxCHECK_RET( bmp.IsOk(), wxT("Invalid bitmap in wxCairoContext::DrawBitmap"));
+    //wxCHECK_RET( bmp.IsOk(), wxT("Invalid bitmap in wxCairoContext::DrawBitmap"));
 
 #ifdef wxHAS_RAW_BITMAP
     // Create a surface object and copy the bitmap pixel data to it.  if the
@@ -1340,7 +1340,7 @@ wxCairoBitmapData::wxCairoBitmapData( wxGraphicsRenderer* renderer, const wxBitm
         // use the bitmap's alpha
         wxAlphaPixelData
             pixData(bmpSource, wxPoint(0, 0), wxSize(m_width, m_height));
-        wxCHECK_RET( pixData, wxT("Failed to gain raw access to bitmap data."));
+        //wxCHECK_RET( pixData, wxT("Failed to gain raw access to bitmap data."));
 
         wxAlphaPixelData::Iterator p(pixData);
         for (int y=0; y<m_height; y++)
@@ -1374,7 +1374,7 @@ wxCairoBitmapData::wxCairoBitmapData( wxGraphicsRenderer* renderer, const wxBitm
     {
         wxNativePixelData
             pixData(bmpSource, wxPoint(0, 0), wxSize(m_width, m_height));
-        wxCHECK_RET( pixData, wxT("Failed to gain raw access to bitmap data."));
+        //wxCHECK_RET( pixData, wxT("Failed to gain raw access to bitmap data."));
 
         wxNativePixelData::Iterator p(pixData);
         for (int y=0; y<m_height; y++)
@@ -1407,7 +1407,7 @@ wxCairoBitmapData::wxCairoBitmapData( wxGraphicsRenderer* renderer, const wxBitm
         data = (wxUint32*)m_buffer;
         wxNativePixelData
             pixData(bmpMask, wxPoint(0, 0), wxSize(m_width, m_height));
-        wxCHECK_RET( pixData, wxT("Failed to gain raw access to mask data."));
+        //wxCHECK_RET( pixData, wxT("Failed to gain raw access to mask data."));
 
         wxNativePixelData::Iterator p(pixData);
         for (int y=0; y<m_height; y++)
@@ -1517,7 +1517,7 @@ wxImage wxCairoBitmapData::ConvertToImage() const
     wxImage image(m_width, m_height, false /* don't clear */);
 
     // Get the surface type and format.
-    wxCHECK_MSG( cairo_surface_get_type(m_surface) == CAIRO_SURFACE_TYPE_IMAGE,
+    //wxCHECK_MSG( cairo_surface_get_type(m_surface) == CAIRO_SURFACE_TYPE_IMAGE,
                  wxNullImage,
                  wxS("Can't convert non-image surface to image.") );
 
@@ -1543,10 +1543,10 @@ wxImage wxCairoBitmapData::ConvertToImage() const
 
     // Prepare for copying data.
     const wxUint32* src = (wxUint32*)cairo_image_surface_get_data(m_surface);
-    wxCHECK_MSG( src, wxNullImage, wxS("Failed to get Cairo surface data.") );
+    //wxCHECK_MSG( src, wxNullImage, wxS("Failed to get Cairo surface data.") );
 
     int stride = cairo_image_surface_get_stride(m_surface);
-    wxCHECK_MSG( stride > 0, wxNullImage,
+    //wxCHECK_MSG( stride > 0, wxNullImage,
                  wxS("Failed to get Cairo surface stride.") );
 
     // As we work with wxUint32 pointers and not char ones, we need to adjust
@@ -2063,7 +2063,7 @@ void wxCairoContext::DrawIcon( const wxIcon &icon, wxDouble x, wxDouble y, wxDou
 
 void wxCairoContext::DoDrawText(const wxString& str, wxDouble x, wxDouble y)
 {
-    wxCHECK_RET( !m_font.IsNull(),
+    //wxCHECK_RET( !m_font.IsNull(),
                  wxT("wxCairoContext::DrawText - no valid font set") );
 
     if ( str.empty())
@@ -2104,7 +2104,7 @@ void wxCairoContext::DoDrawText(const wxString& str, wxDouble x, wxDouble y)
 void wxCairoContext::GetTextExtent( const wxString &str, wxDouble *width, wxDouble *height,
                                     wxDouble *descent, wxDouble *externalLeading ) const
 {
-    wxCHECK_RET( !m_font.IsNull(), wxT("wxCairoContext::GetTextExtent - no valid font set") );
+    //wxCHECK_RET( !m_font.IsNull(), wxT("wxCairoContext::GetTextExtent - no valid font set") );
 
     if ( width )
         *width = 0;
@@ -2185,7 +2185,7 @@ void wxCairoContext::GetTextExtent( const wxString &str, wxDouble *width, wxDoub
 void wxCairoContext::GetPartialTextExtents(const wxString& text, wxArrayDouble& widths) const
 {
     widths.Empty();
-    wxCHECK_RET( !m_font.IsNull(), wxT("wxCairoContext::GetPartialTextExtents - no valid font set") );
+    //wxCHECK_RET( !m_font.IsNull(), wxT("wxCairoContext::GetPartialTextExtents - no valid font set") );
 #if __WXGTK__
     const wxCharBuffer data = text.utf8_str();
     int w = 0;

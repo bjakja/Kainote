@@ -175,8 +175,8 @@ public:
     // get item at position uiIndex
   wxString& Item(size_t nIndex)
     {
-        wxASSERT_MSG( nIndex < m_nCount,
-                      wxT("wxArrayString: index out of bounds") );
+        //wxASSERT_MSG( nIndex < m_nCount,
+                      //wxT("wxArrayString: index out of bounds") );
 
         return m_pItems[nIndex];
     }
@@ -188,8 +188,8 @@ public:
     // get last item
   wxString& Last()
   {
-      wxASSERT_MSG( !IsEmpty(),
-                    wxT("wxArrayString: index out of bounds") );
+      //wxASSERT_MSG( !IsEmpty(),
+                    //wxT("wxArrayString: index out of bounds") );
       return Item(GetCount() - 1);
   }
   const wxString& Last() const { return const_cast<wxArrayString*>(this)->Last(); }
@@ -482,7 +482,7 @@ public:
     bool IsEmpty() const { return GetCount() == 0; }
     const wxString& operator[] (unsigned int i) const
     {
-        wxASSERT_MSG( i < GetCount(), wxT("index out of bounds") );
+        //wxASSERT_MSG( i < GetCount(), wxT("index out of bounds") );
         if(m_type == wxSTRING_POINTER)
             return m_data.ptr[i];
         return m_data.array->Item(i);

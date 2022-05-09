@@ -409,7 +409,7 @@ int wx28HtmlTag::ScanParam(const wxString& par,
 
 bool wx28HtmlTag::GetParamAsColour(const wxString& par, wxColour *clr) const
 {
-    wxCHECK_MSG( clr, false, wxT("invalid colour argument") );
+    //wxCHECK_MSG( clr, false, wxT("invalid colour argument") );
 
     wxString str = GetParam(par);
 

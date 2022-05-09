@@ -290,7 +290,7 @@ int wxMessageDialog::ShowModal()
     if ( !m_widget )
     {
         GTKCreateMsgDialog();
-        wxCHECK_MSG( m_widget, wxID_CANCEL,
+        //wxCHECK_MSG( m_widget, wxID_CANCEL,
                      wxT("failed to create GtkMessageDialog") );
     }
 

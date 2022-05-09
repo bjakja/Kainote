@@ -105,7 +105,7 @@ IMPLEMENT_DYNAMIC_CLASS(wxSharedDCBufferManager, wxModule)
 
 void wxBufferedDC::UseBuffer(wxCoord w, wxCoord h)
 {
-    wxCHECK_RET( w >= -1 && h >= -1, "Invalid buffer size" );
+    //wxCHECK_RET( w >= -1 && h >= -1, "Invalid buffer size" );
 
     if ( !m_buffer || !m_buffer->IsOk() )
     {
@@ -129,7 +129,7 @@ void wxBufferedDC::UseBuffer(wxCoord w, wxCoord h)
 
 void wxBufferedDC::UnMask()
 {
-    wxCHECK_RET( m_dc, wxT("no underlying wxDC?") );
+    //wxCHECK_RET( m_dc, wxT("no underlying wxDC?") );
     wxASSERT_MSG( m_buffer && m_buffer->IsOk(), wxT("invalid backing store") );
 
     wxCoord x = 0,

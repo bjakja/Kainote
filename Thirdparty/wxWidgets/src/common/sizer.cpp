@@ -138,7 +138,7 @@ wxSizerItem::wxSizerItem()
 // window item
 void wxSizerItem::DoSetWindow(wxWindow *window)
 {
-    wxCHECK_RET( window, wxT("NULL window in wxSizerItem::SetWindow()") );
+    //wxCHECK_RET( window, wxT("NULL window in wxSizerItem::SetWindow()") );
 
     m_kind = Item_Window;
     m_window = window;
@@ -351,7 +351,7 @@ bool wxSizerItem::InformFirstDirection(int direction, int size, int availableOth
         {
             if( !wxIsNullDouble(m_ratio) )
             {
-                wxCHECK_MSG( (m_proportion==0), false, wxT("Shaped item, non-zero proportion in wxSizerItem::InformFirstDirection()") );
+                //wxCHECK_MSG( (m_proportion==0), false, wxT("Shaped item, non-zero proportion in wxSizerItem::InformFirstDirection()") );
                 if( direction==wxHORIZONTAL && !wxIsNullDouble(m_ratio) )
                 {
                     // Clip size so that we don't take too much
@@ -697,13 +697,13 @@ bool wxSizer::Remove( wxSizer *sizer )
 
 bool wxSizer::Remove( int index )
 {
-    wxCHECK_MSG( index >= 0 && (size_t)index < m_children.GetCount(),
+    //wxCHECK_MSG( index >= 0 && (size_t)index < m_children.GetCount(),
                  false,
                  wxT("Remove index is out of range") );
 
     wxSizerItemList::compatibility_iterator node = m_children.Item( index );
 
-    wxCHECK_MSG( node, false, wxT("Failed to find child node") );
+    //wxCHECK_MSG( node, false, wxT("Failed to find child node") );
 
     delete node->GetData();
     m_children.Erase( node );
@@ -756,13 +756,13 @@ bool wxSizer::Detach( wxWindow *window )
 
 bool wxSizer::Detach( int index )
 {
-    wxCHECK_MSG( index >= 0 && (size_t)index < m_children.GetCount(),
+    //wxCHECK_MSG( index >= 0 && (size_t)index < m_children.GetCount(),
                  false,
                  wxT("Detach index is out of range") );
 
     wxSizerItemList::compatibility_iterator node = m_children.Item( index );
 
-    wxCHECK_MSG( node, false, wxT("Failed to find child node") );
+    //wxCHECK_MSG( node, false, wxT("Failed to find child node") );
 
     wxSizerItem *item = node->GetData();
 
@@ -831,12 +831,12 @@ bool wxSizer::Replace( wxSizer *oldsz, wxSizer *newsz, bool recursive )
 
 bool wxSizer::Replace( size_t old, wxSizerItem *newitem )
 {
-    wxCHECK_MSG( old < m_children.GetCount(), false, wxT("Replace index is out of range") );
+    //wxCHECK_MSG( old < m_children.GetCount(), false, wxT("Replace index is out of range") );
     wxASSERT_MSG( newitem, wxT("Replacing with NULL item") );
 
     wxSizerItemList::compatibility_iterator node = m_children.Item( old );
 
-    wxCHECK_MSG( node, false, wxT("Failed to find child node") );
+    //wxCHECK_MSG( node, false, wxT("Failed to find child node") );
 
     wxSizerItem *item = node->GetData();
     node->SetData(newitem);
@@ -884,7 +884,7 @@ void wxSizer::DeleteWindows()
 
 wxSize wxSizer::ComputeFittingClientSize(wxWindow *window)
 {
-    wxCHECK_MSG( window, wxDefaultSize, "window can't be NULL" );
+    //wxCHECK_MSG( window, wxDefaultSize, "window can't be NULL" );
 
     // take the min size by default and limit it by max size
     wxSize size = GetMinClientSize(window);
@@ -932,14 +932,14 @@ wxSize wxSizer::ComputeFittingClientSize(wxWindow *window)
 
 wxSize wxSizer::ComputeFittingWindowSize(wxWindow *window)
 {
-    wxCHECK_MSG( window, wxDefaultSize, "window can't be NULL" );
+    //wxCHECK_MSG( window, wxDefaultSize, "window can't be NULL" );
 
     return window->ClientToWindowSize(ComputeFittingClientSize(window));
 }
 
 wxSize wxSizer::Fit( wxWindow *window )
 {
-    wxCHECK_MSG( window, wxDefaultSize, "window can't be NULL" );
+    //wxCHECK_MSG( window, wxDefaultSize, "window can't be NULL" );
 
     // set client size
     window->SetClientSize(ComputeFittingClientSize(window));
@@ -1115,7 +1115,7 @@ bool wxSizer::DoSetItemMinSize( size_t index, int width, int height )
 {
     wxSizerItemList::compatibility_iterator node = m_children.Item( index );
 
-    wxCHECK_MSG( node, false, wxT("Failed to find child node") );
+    //wxCHECK_MSG( node, false, wxT("Failed to find child node") );
 
     wxSizerItem     *item = node->GetData();
 
@@ -1187,7 +1187,7 @@ wxSizerItem* wxSizer::GetItem( wxSizer *sizer, bool recursive )
 
 wxSizerItem* wxSizer::GetItem( size_t index )
 {
-    wxCHECK_MSG( index < m_children.GetCount(),
+    //wxCHECK_MSG( index < m_children.GetCount(),
                  NULL,
                  wxT("GetItem index is out of range") );
 
@@ -1310,7 +1310,7 @@ bool wxSizer::IsShown( wxSizer *sizer ) const
 
 bool wxSizer::IsShown( size_t index ) const
 {
-    wxCHECK_MSG( index < m_children.GetCount(),
+    //wxCHECK_MSG( index < m_children.GetCount(),
                  false,
                  wxT("IsShown index is out of range") );
 
@@ -1328,7 +1328,7 @@ wxGridSizer::wxGridSizer( int cols, int vgap, int hgap )
       m_vgap( vgap ),
       m_hgap( hgap )
 {
-    wxASSERT(cols >= 0);
+    //wxASSERT(cols >= 0);
 }
 
 wxGridSizer::wxGridSizer( int cols, const wxSize& gap )
@@ -1337,7 +1337,7 @@ wxGridSizer::wxGridSizer( int cols, const wxSize& gap )
       m_vgap( gap.GetHeight() ),
       m_hgap( gap.GetWidth() )
 {
-    wxASSERT(cols >= 0);
+    //wxASSERT(cols >= 0);
 }
 
 wxGridSizer::wxGridSizer( int rows, int cols, int vgap, int hgap )
@@ -1346,7 +1346,7 @@ wxGridSizer::wxGridSizer( int rows, int cols, int vgap, int hgap )
       m_vgap( vgap ),
       m_hgap( hgap )
 {
-    wxASSERT(rows >= 0 && cols >= 0);
+    //wxASSERT(rows >= 0 && cols >= 0);
 }
 
 wxGridSizer::wxGridSizer( int rows, int cols, const wxSize& gap )
@@ -1355,7 +1355,7 @@ wxGridSizer::wxGridSizer( int rows, int cols, const wxSize& gap )
       m_vgap( gap.GetHeight() ),
       m_hgap( gap.GetWidth() )
 {
-    wxASSERT(rows >= 0 && cols >= 0);
+    //wxASSERT(rows >= 0 && cols >= 0);
 }
 
 wxSizerItem *wxGridSizer::DoInsert(size_t index, wxSizerItem *item)
@@ -1940,7 +1940,7 @@ void wxFlexGridSizer::AddGrowableRow( size_t idx, int proportion )
     // common) case when the number of rows was not specified in the ctor -- in
     // this case it will be computed only later, when all items are added to
     // the sizer, and the check will be done in AdjustForGrowables()
-    wxCHECK_RET( !m_rows || idx < (size_t)m_rows, "invalid row index" );
+    //wxCHECK_RET( !m_rows || idx < (size_t)m_rows, "invalid row index" );
 
     m_growableRows.Add( idx );
     m_growableRowsProportions.Add( proportion );
@@ -1953,7 +1953,7 @@ void wxFlexGridSizer::AddGrowableCol( size_t idx, int proportion )
 
     // see comment in AddGrowableRow(): although it's less common to omit the
     // specification of the number of columns, it still can also happen
-    wxCHECK_RET( !m_cols || idx < (size_t)m_cols, "invalid column index" );
+    //wxCHECK_RET( !m_cols || idx < (size_t)m_cols, "invalid column index" );
 
     m_growableCols.Add( idx );
     m_growableColsProportions.Add( proportion );

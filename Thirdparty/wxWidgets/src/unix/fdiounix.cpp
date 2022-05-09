@@ -37,7 +37,7 @@
 int wxFDIOManagerUnix::AddInput(wxFDIOHandler *handler, int fd, Direction d)
 {
     wxFDIODispatcher * const dispatcher = wxFDIODispatcher::Get();
-    wxCHECK_MSG( dispatcher, -1, "can't monitor FDs without FD IO dispatcher" );
+    //wxCHECK_MSG( dispatcher, -1, "can't monitor FDs without FD IO dispatcher" );
 
     // translate our direction to dispatcher flags
     const int flag = d == INPUT ? wxFDIO_INPUT : wxFDIO_OUTPUT;

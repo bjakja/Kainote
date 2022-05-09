@@ -667,7 +667,7 @@ void wxGenericDirCtrl::OnEndEditItem(wxTreeEvent &event)
 
     wxTreeItemId treeid = event.GetItem();
     wxDirItemData *data = (wxDirItemData*)m_treeCtrl->GetItemData( treeid );
-    wxASSERT( data );
+    //wxASSERT( data );
 
     wxString new_name( wxPathOnly( data->m_path ) );
     new_name += wxString(wxFILE_SEP_PATH);
@@ -744,7 +744,7 @@ void wxGenericDirCtrl::PopulateNode(wxTreeItemId parentId)
         return;
     }
 
-    wxASSERT(data);
+    //wxASSERT(data);
 
     wxString search,path,filename;
 
@@ -1164,7 +1164,7 @@ void wxGenericDirCtrl::FindChildFiles(wxTreeItemId treeid, int dirFlags, wxArray
     // This may take a longish time. Go to busy cursor
     wxBusyCursor busy;
 
-    wxASSERT(data);
+    //wxASSERT(data);
 
     wxString search,path,filename;
 
@@ -1508,7 +1508,7 @@ wxFileIconsTable::~wxFileIconsTable()
 // delayed initialization - wait until first use (wxArtProv not created yet)
 void wxFileIconsTable::Create()
 {
-    wxCHECK_RET(!m_smallImageList && !m_HashTable, wxT("creating icons twice"));
+    //wxCHECK_RET(!m_smallImageList && !m_HashTable, wxT("creating icons twice"));
     m_HashTable = new wxHashTable(wxKEY_STRING);
     m_smallImageList = new wxImageList(16, 16);
 

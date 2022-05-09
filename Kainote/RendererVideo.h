@@ -27,7 +27,6 @@
 #include <dxva2api.h>
 
 class SubtitlesProviderManager;
-struct D3DXCOLOR;
 
 enum PlaybackState
 {
@@ -44,11 +43,11 @@ public:
 	int time;
 };
 
-struct vertex
+struct VERTEX
 {
-	float floatX;
-	float floatY;
-	float floatZ;
+	float fX;
+	float fY;
+	float fZ;
 	D3DCOLOR Color;
 };
 
@@ -65,7 +64,7 @@ public:
 	float height;
 };
 
-void CreateVERTEX(vertex *v, float X, float Y, D3DCOLOR Color, float Z = 0.0f);
+void CreateVERTEX(VERTEX * v, float X, float Y, D3DCOLOR Color, float Z = 0.0f);
 
 
 class AudioDisplay;
@@ -125,22 +124,22 @@ public:
 	IDirect3DDevice9 *m_D3DDevice = nullptr;
 	D3DFORMAT m_D3DFormat;
 	bool m_DirectShowSeeking;
-	volatile bool m_BlockResize;
-	bool m_HasVisualEdition;
+	volatile bool m_BlockResize = false;
+	bool m_HasVisualEdition = false;
 	bool m_HasDummySubs = true;
-	bool m_VideoResized;
-	bool m_HasZoom;
+	bool m_VideoResized = false;
+	bool m_HasZoom = false;
 	bool m_SwapFrame = false;
-	int m_Width;
-	int m_Height;
-	int m_Pitch;
-	int m_Time;
-	int m_Frame;
-	unsigned char *m_FrameBuffer;
+	int m_Width = 0;
+	int m_Height = 0;
+	int m_Pitch = 0;
+	int m_Time = 0;
+	int m_Frame = 0;
+	unsigned char *m_FrameBuffer = nullptr;
 	RECT m_BackBufferRect;
 	unsigned char m_Format;
-	float m_FrameDuration;
-	float m_ZoomParcent;
+	float m_FrameDuration = 0.f;
+	float m_ZoomParcent = 1.f;
 	wxString m_ProgressBarTime;
 	ID3DXLine *m_D3DLine = nullptr;
 	ID3DXFont *m_D3DFont = nullptr;
@@ -149,9 +148,9 @@ public:
 	wxMutex m_MutexProgressBar;
 	wxMutex m_MutexOpen;
 	wxMutex m_MutexVisualChange;
-	PlaybackState m_State;
-	int m_PlayEndTime;
-	size_t m_LastTime;
+	PlaybackState m_State = None;
+	int m_PlayEndTime = 0;
+	size_t m_LastTime = 0;
 	FloatRect m_ZoomRect;
 	std::vector<chapter> m_Chapters;
 	IDirectXVideoProcessorService *m_DXVAService = nullptr;
@@ -200,9 +199,9 @@ private:
 	virtual void DestroyFFMS2() {};
 
 	HWND m_HWND;
-	bool m_DeviceLost;
+	bool m_DeviceLost = false;
 
-	int diff;
+	int diff = 0;
 	char m_Grabbed = -1;
 
 	RECT m_ProgressBarRect;
@@ -210,7 +209,7 @@ private:
 	RECT m_MainStreamRect;
 	wxPoint m_ZoomDiff;
 
-	int m_AverangeFrameTime;
+	int m_AverangeFrameTime = 42;
 	D3DXVECTOR2 vectors[12];
 	int m_ProgressBarLineWidth = 1;
 	AudioDisplay *m_AudioPlayer = nullptr;

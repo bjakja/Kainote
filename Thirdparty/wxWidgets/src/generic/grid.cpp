@@ -1289,7 +1289,7 @@ wxGridStringTable::wxGridStringTable( int numRows, int numCols )
 
 wxString wxGridStringTable::GetValue( int row, int col )
 {
-    wxCHECK_MSG( (row >= 0 && row < GetNumberRows()) &&
+    //wxCHECK_MSG( (row >= 0 && row < GetNumberRows()) &&
                  (col >= 0 && col < GetNumberCols()),
                  wxEmptyString,
                  wxT("invalid row or column index in wxGridStringTable") );
@@ -1299,7 +1299,7 @@ wxString wxGridStringTable::GetValue( int row, int col )
 
 void wxGridStringTable::SetValue( int row, int col, const wxString& value )
 {
-    wxCHECK_RET( (row >= 0 && row < GetNumberRows()) &&
+    //wxCHECK_RET( (row >= 0 && row < GetNumberRows()) &&
                  (col >= 0 && col < GetNumberCols()),
                  wxT("invalid row or column index in wxGridStringTable") );
 
@@ -1783,9 +1783,9 @@ void wxGrid::Render( wxDC& dc,
                      const wxGridCellCoords& bottomRight,
                      int style )
 {
-    wxCHECK_RET( bottomRight.GetCol() < GetNumberCols(),
+    //wxCHECK_RET( bottomRight.GetCol() < GetNumberCols(),
                  "Invalid right column" );
-    wxCHECK_RET( bottomRight.GetRow() < GetNumberRows(),
+    //wxCHECK_RET( bottomRight.GetRow() < GetNumberRows(),
                  "Invalid bottom row" );
 
     // store user settings and reset later
@@ -2318,7 +2318,7 @@ void wxGrid::CreateColumnWindow()
 bool wxGrid::CreateGrid( int numRows, int numCols,
                          wxGridSelectionModes selmode )
 {
-    wxCHECK_MSG( !m_created,
+    //wxCHECK_MSG( !m_created,
                  false,
                  wxT("wxGrid::CreateGrid or wxGrid::SetTable called more than once") );
 
@@ -2327,7 +2327,7 @@ bool wxGrid::CreateGrid( int numRows, int numCols,
 
 void wxGrid::SetSelectionMode(wxGridSelectionModes selmode)
 {
-    wxCHECK_RET( m_created,
+    //wxCHECK_RET( m_created,
                  wxT("Called wxGrid::SetSelectionMode() before calling CreateGrid()") );
 
     m_selection->SetSelectionMode( selmode );
@@ -2335,7 +2335,7 @@ void wxGrid::SetSelectionMode(wxGridSelectionModes selmode)
 
 wxGrid::wxGridSelectionModes wxGrid::GetSelectionMode() const
 {
-    wxCHECK_MSG( m_created, wxGridSelectCells,
+    //wxCHECK_MSG( m_created, wxGridSelectCells,
                  wxT("Called wxGrid::GetSelectionMode() before calling CreateGrid()") );
 
     return m_selection->GetSelectionMode();
@@ -3431,7 +3431,7 @@ void wxGrid::ProcessRowLabelMouseEvent( wxMouseEvent& event )
 
 void wxGrid::UpdateColumnSortingIndicator(int col)
 {
-    wxCHECK_RET( col != wxNOT_FOUND, "invalid column index" );
+    //wxCHECK_RET( col != wxNOT_FOUND, "invalid column index" );
 
     if ( m_useNativeHeader )
         GetGridColHeader()->UpdateColumn(col);
@@ -4594,7 +4594,7 @@ bool
 wxGrid::DoModifyLines(bool (wxGridTableBase::*funcModify)(size_t, size_t),
                       int pos, int num, bool WXUNUSED(updateLabels) )
 {
-    wxCHECK_MSG( m_created, false, "must finish creating the grid first" );
+    //wxCHECK_MSG( m_created, false, "must finish creating the grid first" );
 
     if ( !m_table )
         return false;
@@ -4612,7 +4612,7 @@ bool
 wxGrid::DoAppendLines(bool (wxGridTableBase::*funcAppend)(size_t),
                       int num, bool WXUNUSED(updateLabels))
 {
-    wxCHECK_MSG( m_created, false, "must finish creating the grid first" );
+    //wxCHECK_MSG( m_created, false, "must finish creating the grid first" );
 
     if ( !m_table )
         return false;
@@ -6512,7 +6512,7 @@ int wxGrid::PosToLinePos(int coord,
         return clipToMinMax && numLines > 0 ? 0 : wxNOT_FOUND;
 
     const int defaultLineSize = oper.GetDefaultLineSize(this);
-    wxCHECK_MSG( defaultLineSize, -1, "can't have 0 default line size" );
+    //wxCHECK_MSG( defaultLineSize, -1, "can't have 0 default line size" );
 
     int maxPos = coord / defaultLineSize,
         minPos = 0;
@@ -6564,7 +6564,7 @@ int wxGrid::PosToLinePos(int coord,
     // finally do perform the binary search
     while ( minPos < maxPos )
     {
-        wxCHECK_MSG( lineEnds[oper.GetLineAt(this, minPos)] <= coord &&
+        //wxCHECK_MSG( lineEnds[oper.GetLineAt(this, minPos)] <= coord &&
                         coord < lineEnds[oper.GetLineAt(this, maxPos)],
                      -1,
                      "wxGrid: internal error in PosToLinePos()" );
@@ -7045,7 +7045,7 @@ wxString wxGrid::GetColLabelValue( int col ) const
 
 void wxGrid::SetRowLabelSize( int width )
 {
-    wxASSERT( width >= 0 || width == wxGRID_AUTOSIZE );
+    //wxASSERT( width >= 0 || width == wxGRID_AUTOSIZE );
 
     if ( width == wxGRID_AUTOSIZE )
     {
@@ -7074,7 +7074,7 @@ void wxGrid::SetRowLabelSize( int width )
 
 void wxGrid::SetColLabelSize( int height )
 {
-    wxASSERT( height >=0 || height == wxGRID_AUTOSIZE );
+    //wxASSERT( height >=0 || height == wxGRID_AUTOSIZE );
 
     if ( height == wxGRID_AUTOSIZE )
     {
@@ -7377,7 +7377,7 @@ int wxGrid::GetDefaultRowSize() const
 
 int wxGrid::GetRowSize( int row ) const
 {
-    wxCHECK_MSG( row >= 0 && row < m_numRows, 0, wxT("invalid row index") );
+    //wxCHECK_MSG( row >= 0 && row < m_numRows, 0, wxT("invalid row index") );
 
     return GetRowHeight(row);
 }
@@ -7389,7 +7389,7 @@ int wxGrid::GetDefaultColSize() const
 
 int wxGrid::GetColSize( int col ) const
 {
-    wxCHECK_MSG( col >= 0 && col < m_numCols, 0, wxT("invalid column index") );
+    //wxCHECK_MSG( col >= 0 && col < m_numCols, 0, wxT("invalid column index") );
 
     return GetColWidth(col);
 }
@@ -7686,8 +7686,8 @@ wxGridCellAttr *wxGrid::GetOrCreateCellAttr(int row, int col) const
     wxGridCellAttr *attr = NULL;
     bool canHave = ((wxGrid*)this)->CanHaveAttributes();
 
-    wxCHECK_MSG( canHave, attr, wxT("Cell attributes not allowed"));
-    wxCHECK_MSG( m_table, attr, wxT("must have a table") );
+    //wxCHECK_MSG( canHave, attr, wxT("Cell attributes not allowed"));
+    //wxCHECK_MSG( m_table, attr, wxT("must have a table") );
 
     attr = m_table->GetAttr(row, col, wxGridCellAttr::Cell);
     if ( !attr )
@@ -8032,7 +8032,7 @@ void wxGrid::SetDefaultRowSize( int height, bool resizeExistingRows )
 
 void wxGrid::SetRowSize( int row, int height )
 {
-    wxCHECK_RET( row >= 0 && row < m_numRows, wxT("invalid row index") );
+    //wxCHECK_RET( row >= 0 && row < m_numRows, wxT("invalid row index") );
 
     // if < 0 then calculate new height from label
     if ( height < 0 )
@@ -8093,7 +8093,7 @@ void wxGrid::SetDefaultColSize( int width, bool resizeExistingCols )
 
 void wxGrid::SetColSize( int col, int width )
 {
-    wxCHECK_RET( col >= 0 && col < m_numCols, wxT("invalid column index") );
+    //wxCHECK_RET( col >= 0 && col < m_numCols, wxT("invalid column index") );
 
     // if < 0 then calculate new width from label
     if ( width < 0 )

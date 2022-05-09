@@ -252,7 +252,7 @@ void wxGenericMDIParentFrame::WXRemoveChild(wxGenericMDIChildFrame *child)
     }
 
     wxGenericMDIClientWindow * const client = GetGenericClientWindow();
-    wxCHECK_RET( client, "should have client window" );
+    //wxCHECK_RET( client, "should have client window" );
 
     wxBookCtrlBase * const book = client->GetBookCtrl();
 
@@ -295,7 +295,7 @@ void wxGenericMDIParentFrame::RemoveWindowMenu(wxMenuBar *pMenuBar)
         int pos = pMenuBar->FindMenu(_("&Window"));
         if (pos != wxNOT_FOUND)
         {
-            wxASSERT(m_windowMenu == pMenuBar->GetMenu(pos)); // DBG:: We're going to delete the wrong menu!!!
+            //wxASSERT(m_windowMenu == pMenuBar->GetMenu(pos)); // DBG:: We're going to delete the wrong menu!!!
             pMenuBar->Remove(pos);
         }
     }
@@ -490,7 +490,7 @@ void wxGenericMDIChildFrame::Activate()
 {
     wxGenericMDIParentFrame * const parent = GetGenericMDIParent();
 
-    wxCHECK_RET( parent, "can't activate MDI child without parent" );
+    //wxCHECK_RET( parent, "can't activate MDI child without parent" );
     parent->WXActivateChild(this);
 }
 

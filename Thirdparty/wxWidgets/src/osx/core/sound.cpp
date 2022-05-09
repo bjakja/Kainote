@@ -138,7 +138,7 @@ bool wxSound::Create(size_t WXUNUSED(size), const void* WXUNUSED(data))
 
 bool wxSound::Create(const wxString& fileName, bool isResource)
 {
-    wxCHECK_MSG( !isResource, false, "not implemented" );
+    //wxCHECK_MSG( !isResource, false, "not implemented" );
 
     m_data = new wxOSXAudioToolboxSoundData(fileName);
     return true;

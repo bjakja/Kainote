@@ -304,7 +304,7 @@ void wxAuiMDIParentFrame::RemoveWindowMenu(wxMenuBar* pMenuBar)
         if (pos != wxNOT_FOUND)
         {
             // DBG:: We're going to delete the wrong menu!!!
-            wxASSERT(m_pWindowMenu == pMenuBar->GetMenu(pos));
+            //wxASSERT(m_pWindowMenu == pMenuBar->GetMenu(pos));
             pMenuBar->Remove(pos);
         }
     }
@@ -358,7 +358,7 @@ void wxAuiMDIParentFrame::DoHandleUpdateUI(wxUpdateUIEvent& event)
         case wxWINDOWCLOSEALL:
         {
             wxAuiMDIClientWindow* client_window = GetClientWindow();
-            wxCHECK_RET(client_window, wxS("Missing MDI Client Window"));
+            //wxCHECK_RET(client_window, wxS("Missing MDI Client Window"));
             size_t pages = client_window->GetPageCount();
             event.Enable(pages >= 1);
             break;
@@ -368,7 +368,7 @@ void wxAuiMDIParentFrame::DoHandleUpdateUI(wxUpdateUIEvent& event)
         case wxWINDOWPREV:
         {
             wxAuiMDIClientWindow* client_window = GetClientWindow();
-            wxCHECK_RET(client_window, wxS("Missing MDI Client Window"));
+            //wxCHECK_RET(client_window, wxS("Missing MDI Client Window"));
             size_t pages = client_window->GetPageCount();
             event.Enable(pages >= 2);
             break;
@@ -456,7 +456,7 @@ wxAuiMDIChildFrame::~wxAuiMDIChildFrame()
             pParentFrame->SetChildMenuBar(NULL);
         }
         wxAuiMDIClientWindow* pClientWindow = pParentFrame->GetClientWindow();
-        wxASSERT(pClientWindow);
+        //wxASSERT(pClientWindow);
         int idx = pClientWindow->GetPageIndex(this);
         if (idx != wxNOT_FOUND)
         {

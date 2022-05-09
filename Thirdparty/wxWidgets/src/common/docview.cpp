@@ -1244,7 +1244,7 @@ void wxDocManager::OnPreview(wxCommandEvent& WXUNUSED(event))
         wxPreviewFrame* frame = CreatePreviewFrame(preview,
                                                    wxTheApp->GetTopWindow(),
                                                    _("Print Preview"));
-        wxCHECK_RET( frame, "should create a print preview frame" );
+        //wxCHECK_RET( frame, "should create a print preview frame" );
 
         frame->Centre(wxBOTH);
         frame->Initialize();

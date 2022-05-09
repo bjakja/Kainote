@@ -172,7 +172,7 @@ bool wxBitmapButton::Create( wxWindow *parent,
 
 void wxBitmapButton::SetLabel( const wxString &label )
 {
-    wxCHECK_RET( m_widget != NULL, wxT("invalid button") );
+    //wxCHECK_RET( m_widget != NULL, wxT("invalid button") );
 
     wxControl::SetLabel( label );
 }
@@ -187,7 +187,7 @@ void wxBitmapButton::DoApplyWidgetStyle(GtkRcStyle *style)
 
 void wxBitmapButton::OnSetBitmap()
 {
-    wxCHECK_RET( m_widget != NULL, wxT("invalid bitmap button") );
+    //wxCHECK_RET( m_widget != NULL, wxT("invalid bitmap button") );
 
     InvalidateBestSize();
 

@@ -150,7 +150,7 @@ typedef cairo_t wxGTKDrawable;
 static cairo_t* wxGetGTKDrawable(wxWindow*, const wxDC& dc)
 {
     wxGraphicsContext* gc = dc.GetGraphicsContext();
-    wxCHECK_MSG(gc, NULL, "cannot use wxRendererNative on wxDC of this type");
+    //wxCHECK_MSG(gc, NULL, "cannot use wxRendererNative on wxDC of this type");
     return static_cast<cairo_t*>(gc->GetNativeContext());
 }
 

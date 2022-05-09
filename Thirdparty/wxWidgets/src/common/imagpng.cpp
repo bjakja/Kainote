@@ -855,7 +855,7 @@ bool wxPNGHandler::SaveFile( wxImage *image, wxOutputStream& stream, bool verbos
 
             if (bHasMask && !pAlpha)
             {
-                wxASSERT(PaletteFind(palette, mask) == 0);
+                //wxASSERT(PaletteFind(palette, mask) == 0);
                 png_trans[0] = 0;
                 png_set_tRNS(png_ptr, info_ptr, png_trans, 1, NULL);
             }

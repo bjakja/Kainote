@@ -3516,7 +3516,7 @@ bool wxWin32StatusBarInputHandler::IsOnGrip(wxWindow *statbar,
         wxTopLevelWindow *
             parentTLW = wxDynamicCast(statbar->GetParent(), wxTopLevelWindow);
 
-        wxCHECK_MSG( parentTLW, false,
+        //wxCHECK_MSG( parentTLW, false,
                      wxT("the status bar should be a child of a TLW") );
 
         // a maximized window can't be resized anyhow

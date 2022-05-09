@@ -418,7 +418,7 @@ static void gtk_window_draw_callback( GtkWidget *widget, GdkRectangle *rect, wxW
 
 static void wxInsertChildInTopLevelWindow( wxTopLevelWindowGTK* parent, wxWindow* child )
 {
-    wxASSERT( GTK_IS_WIDGET(child->m_widget) );
+    //wxASSERT( GTK_IS_WIDGET(child->m_widget) );
 
     if (!parent->m_insertInClientArea)
     {
@@ -1142,7 +1142,7 @@ void wxTopLevelWindowGTK::Iconize( bool iconize )
        GdkWindow *window = m_widget->window;
 
        // you should do it later, for example from OnCreate() handler
-       wxCHECK_RET( window, wxT("frame not created yet - can't iconize") );
+       //wxCHECK_RET( window, wxT("frame not created yet - can't iconize") );
 
        XIconifyWindow( GDK_WINDOW_XDISPLAY( window ),
                        GDK_WINDOW_XWINDOW( window ),
@@ -1209,7 +1209,7 @@ static bool do_shape_combine_region(GdkWindow* window, const wxRegion& region)
 
 bool wxTopLevelWindowGTK::SetShape(const wxRegion& region)
 {
-    wxCHECK_MSG( HasFlag(wxFRAME_SHAPED), false,
+    //wxCHECK_MSG( HasFlag(wxFRAME_SHAPED), false,
                  wxT("Shaped windows must be created with the wxFRAME_SHAPED style."));
 
     GdkWindow *window = NULL;

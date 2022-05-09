@@ -68,15 +68,15 @@ public:
 
     T& operator*() const
     {
-        wxASSERT(m_ref != NULL);
-        wxASSERT(m_ref->m_ptr != NULL);
+        //wxASSERT(m_ref != NULL);
+        //wxASSERT(m_ref->m_ptr != NULL);
         return *(m_ref->m_ptr);
     }
 
     T* operator->() const
     {
-        wxASSERT(m_ref != NULL);
-        wxASSERT(m_ref->m_ptr != NULL);
+        //wxASSERT(m_ref != NULL);
+        //wxASSERT(m_ref->m_ptr != NULL);
         return m_ref->m_ptr;
     }
 

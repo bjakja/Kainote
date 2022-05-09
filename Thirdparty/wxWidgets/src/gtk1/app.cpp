@@ -505,7 +505,7 @@ GdkVisual *wxApp::GetGdkVisual()
     else
         visual = gdk_window_get_visual( wxGetRootWindow()->window );
 
-    wxASSERT( visual );
+    //wxASSERT( visual );
 
     return visual;
 }

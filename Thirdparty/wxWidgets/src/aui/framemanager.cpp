@@ -1043,7 +1043,7 @@ bool wxAuiManager::AddPane(wxWindow* window, const wxAuiPaneInfo& paneInfo)
         {
             // see whether non-default docking flags are valid
             test.window = window;
-            wxCHECK_MSG(test.IsValid(), false,
+            //wxCHECK_MSG(test.IsValid(), false,
                         "toolbar style and pane docking flags are incompatible");
         }
     }

@@ -531,7 +531,7 @@ int wxHtmlTag::ScanParam(const wxString& par,
 /* static */
 bool wxHtmlTag::ParseAsColour(const wxString& str, wxColour *clr)
 {
-    wxCHECK_MSG( clr, false, wxT("invalid colour argument") );
+    //wxCHECK_MSG( clr, false, wxT("invalid colour argument") );
 
     // handle colours defined in HTML 4.0 first:
     if (str.length() > 1 && str[0] != wxT('#'))

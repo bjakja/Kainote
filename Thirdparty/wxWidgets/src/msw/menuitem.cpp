@@ -580,7 +580,7 @@ void wxMenuItem::Enable(bool enable)
 
 void wxMenuItem::Check(bool check)
 {
-    wxCHECK_RET( IsCheckable(), wxT("only checkable items may be checked") );
+    //wxCHECK_RET( IsCheckable(), wxT("only checkable items may be checked") );
 
     if ( m_isChecked == check )
         return;
@@ -600,7 +600,7 @@ void wxMenuItem::Check(bool check)
             // get the index of this item in the menu
             const wxMenuItemList& items = m_parentMenu->GetMenuItems();
             int pos = items.IndexOf(this);
-            wxCHECK_RET( pos != wxNOT_FOUND,
+            //wxCHECK_RET( pos != wxNOT_FOUND,
                          wxT("menuitem not found in the menu items list?") );
 
             // get the radio group range
@@ -617,7 +617,7 @@ void wxMenuItem::Check(bool check)
             // calling CheckMenuRadioItem() with such parameters hangs my system
             // (NT4 SP6) and I suspect this could happen to the others as well,
             // so don't do it!
-            wxCHECK_RET( start != -1 && end != -1,
+            //wxCHECK_RET( start != -1 && end != -1,
                          wxT("invalid ::CheckMenuRadioItem() parameter(s)") );
 
             if ( !::CheckMenuRadioItem(hmenu,

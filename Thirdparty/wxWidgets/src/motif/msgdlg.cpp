@@ -180,7 +180,7 @@ int wxMessageDialog::ShowModal()
 
     Widget wMsgBox = (*dialogCreateFunction)(wParent, wxMOTIF_STR(""), args, ac);
 
-    wxCHECK_MSG( wMsgBox, wxID_CANCEL, "msg box creation failed" );
+    //wxCHECK_MSG( wMsgBox, wxID_CANCEL, "msg box creation failed" );
 
     // get the buttons which we might either remove or rename
     // depending on the requested style

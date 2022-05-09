@@ -912,7 +912,7 @@ public:
     // given key (while by default 0 value will be used)
     wxLogger& MaybeStore(const wxString& key, wxUIntPtr value = 0)
     {
-        wxASSERT_MSG( m_optKey.empty(), "can only have one optional value" );
+        //wxASSERT_MSG( m_optKey.empty(), "can only have one optional value" );
         m_optKey = key;
 
         m_info.StoreValue(key, value);

@@ -971,7 +971,7 @@ void wxMacMLTEControl::TXNSetAttribute( const wxTextAttr& style , long from , lo
 
     if ( style.HasFont() )
     {
-        wxASSERT( typeAttrCount < WXSIZEOF(typeAttr) );
+        //wxASSERT( typeAttrCount < WXSIZEOF(typeAttr) );
         font = style.GetFont() ;
         typeAttr[typeAttrCount].tag = kTXNATSUIStyle ;
         typeAttr[typeAttrCount].size = kTXNATSUIStyleSize ;
@@ -981,7 +981,7 @@ void wxMacMLTEControl::TXNSetAttribute( const wxTextAttr& style , long from , lo
 
     if ( style.HasTextColour() )
     {
-        wxASSERT( typeAttrCount < WXSIZEOF(typeAttr) );
+        //wxASSERT( typeAttrCount < WXSIZEOF(typeAttr) );
         style.GetTextColour().GetRGBColor( &color );
         typeAttr[typeAttrCount].tag = kTXNQDFontColorAttribute ;
         typeAttr[typeAttrCount].size = kTXNQDFontColorAttributeSize ;
@@ -991,7 +991,7 @@ void wxMacMLTEControl::TXNSetAttribute( const wxTextAttr& style , long from , lo
 
     if ( style.HasAlignment() )
     {
-        wxASSERT( controlAttrCount < WXSIZEOF(controlTags) );
+        //wxASSERT( controlAttrCount < WXSIZEOF(controlTags) );
         SInt32 align;
 
         switch ( style.GetAlignment() )
@@ -1021,7 +1021,7 @@ void wxMacMLTEControl::TXNSetAttribute( const wxTextAttr& style , long from , lo
 
     if ( style.HasLeftIndent() || style.HasRightIndent() )
     {
-        wxASSERT( controlAttrCount < WXSIZEOF(controlTags) );
+        //wxASSERT( controlAttrCount < WXSIZEOF(controlTags) );
         controlTags[controlAttrCount] = kTXNMarginsTag;
         controlData[controlAttrCount].marginsPtr = &margins;
         verify_noerr( TXNGetTXNObjectControls (m_txn, 1 ,

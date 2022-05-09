@@ -493,7 +493,7 @@ void wxAnyButton::SetLabel(const wxString& label)
 
 void wxAnyButton::AdjustForBitmapSize(wxSize &size) const
 {
-    wxCHECK_RET( m_imageData, wxT("shouldn't be called if no image") );
+    //wxCHECK_RET( m_imageData, wxT("shouldn't be called if no image") );
 
     // account for the bitmap size
     const wxSize sizeBmp = m_imageData->GetBitmap(State_Normal).GetSize();
@@ -726,7 +726,7 @@ wxSize wxAnyButton::DoGetBitmapMargins() const
 
 void wxAnyButton::DoSetBitmapMargins(wxCoord x, wxCoord y)
 {
-    wxCHECK_RET( m_imageData, "SetBitmap() must be called first" );
+    //wxCHECK_RET( m_imageData, "SetBitmap() must be called first" );
 
     m_imageData->SetBitmapMargins(x, y);
     InvalidateBestSize();
@@ -734,7 +734,7 @@ void wxAnyButton::DoSetBitmapMargins(wxCoord x, wxCoord y)
 
 void wxAnyButton::DoSetBitmapPosition(wxDirection dir)
 {
-    wxCHECK_RET( m_imageData, "SetBitmap() must be called first" );
+    //wxCHECK_RET( m_imageData, "SetBitmap() must be called first" );
 
     m_imageData->SetBitmapPosition(dir);
     InvalidateBestSize();

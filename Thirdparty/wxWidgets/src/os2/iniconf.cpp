@@ -126,7 +126,7 @@ void wxIniConfig::SetPath(const wxString& strPath)
 
     // other functions assume that all this is true, i.e. there are no trailing
     // underscores at the end except if the group is the root one
-    wxASSERT( (m_strPath.empty() || m_strPath.Last() != PATH_SEP_REPLACE) &&
+    //wxASSERT( (m_strPath.empty() || m_strPath.Last() != PATH_SEP_REPLACE) &&
               (m_strGroup == wxString((wxChar)PATH_SEP_REPLACE) ||
                m_strGroup.Last() != PATH_SEP_REPLACE) );
 }

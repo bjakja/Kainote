@@ -53,7 +53,7 @@ wxGUIEventLoop::wxGUIEventLoop()
 int wxGUIEventLoop::Run()
 {
     // event loops are not recursive, you need to create another loop!
-    wxCHECK_MSG( !IsRunning(), -1, "can't reenter a message loop" );
+    //wxCHECK_MSG( !IsRunning(), -1, "can't reenter a message loop" );
 
     wxEventLoopActivator activate(this);
 
@@ -66,7 +66,7 @@ int wxGUIEventLoop::Run()
 
 void wxGUIEventLoop::Exit(int rc)
 {
-    wxCHECK_RET( IsRunning(), "can't call Exit() if not running" );
+    //wxCHECK_RET( IsRunning(), "can't call Exit() if not running" );
 
     m_exitcode = rc;
 
@@ -121,7 +121,7 @@ wxGUIEventLoop::AddSourceForFD(int fd,
                                wxEventLoopSourceHandler *handler,
                                int flags)
 {
-    wxCHECK_MSG( fd != -1, NULL, "can't monitor invalid fd" );
+    //wxCHECK_MSG( fd != -1, NULL, "can't monitor invalid fd" );
 
     int condition = 0;
     if (flags & wxEVENT_SOURCE_INPUT)
@@ -180,7 +180,7 @@ bool wxGUIEventLoop::Pending() const
 
 bool wxGUIEventLoop::Dispatch()
 {
-    wxCHECK_MSG( IsRunning(), false, wxT("can't call Dispatch() if not running") );
+    //wxCHECK_MSG( IsRunning(), false, wxT("can't call Dispatch() if not running") );
 
     // gtk_main_iteration() returns TRUE only if gtk_main_quit() was called
     return !gtk_main_iteration();

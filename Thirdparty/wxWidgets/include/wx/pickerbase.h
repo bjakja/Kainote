@@ -146,7 +146,7 @@ protected:
 
     wxSizerItem *GetTextCtrlItem() const
     {
-        wxASSERT(this->HasTextCtrl());
+        //wxASSERT(this->HasTextCtrl());
         return m_sizer->GetItem((size_t)0);
     }
 

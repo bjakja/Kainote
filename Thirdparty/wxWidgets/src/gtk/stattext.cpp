@@ -107,7 +107,7 @@ bool wxStaticText::Create(wxWindow *parent,
 
 void wxStaticText::GTKDoSetLabel(GTKLabelSetter setter, const wxString& label)
 {
-    wxCHECK_RET( m_widget != NULL, wxT("invalid static text") );
+    //wxCHECK_RET( m_widget != NULL, wxT("invalid static text") );
 
     InvalidateBestSize();
 

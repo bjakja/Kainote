@@ -237,7 +237,7 @@ public:
     void RenameProperty( const wxString& WXUNUSED_UNLESS_DEBUG(oldName),
         const wxString& newName )
     {
-        wxASSERT( oldName == m_propertyName ); m_propertyName = newName;
+        //wxASSERT( oldName == m_propertyName ); m_propertyName = newName;
     }
 
     virtual bool HasSetter() const { return true; }

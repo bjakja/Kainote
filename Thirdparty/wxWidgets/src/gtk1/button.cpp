@@ -174,7 +174,7 @@ wxSize wxButtonBase::GetDefaultSize()
 
 void wxButton::SetLabel( const wxString &lbl )
 {
-    wxCHECK_RET( m_widget != NULL, wxT("invalid button") );
+    //wxCHECK_RET( m_widget != NULL, wxT("invalid button") );
 
     wxString label(lbl);
 

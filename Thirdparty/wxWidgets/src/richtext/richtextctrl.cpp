@@ -3025,7 +3025,7 @@ wxRichTextField* wxRichTextCtrl::WriteField(const wxString& fieldType, const wxR
 // Write a table at the current insertion point, returning the table.
 wxRichTextTable* wxRichTextCtrl::WriteTable(int rows, int cols, const wxRichTextAttr& tableAttr, const wxRichTextAttr& cellAttr)
 {
-    wxASSERT(rows > 0 && cols > 0);
+    //wxASSERT(rows > 0 && cols > 0);
 
     if (rows <= 0 || cols <= 0)
         return NULL;
@@ -4564,7 +4564,7 @@ void wxRichTextCtrl::OnDrop(wxCoord WXUNUSED(x), wxCoord WXUNUSED(y), wxDragResu
 #if wxUSE_DRAG_AND_DROP
 bool wxRichTextDropSource::GiveFeedback(wxDragResult WXUNUSED(effect))
 {
-    wxCHECK_MSG(m_rtc, false, wxT("NULL m_rtc"));
+    //wxCHECK_MSG(m_rtc, false, wxT("NULL m_rtc"));
 
     long position = 0;
     int hit = 0;

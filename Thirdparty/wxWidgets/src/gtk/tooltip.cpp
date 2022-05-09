@@ -49,7 +49,7 @@ void wxToolTip::SetTip( const wxString &tip )
 
 void wxToolTip::GTKSetWindow(wxWindow* win)
 {
-    wxASSERT(win);
+    //wxASSERT(win);
     m_window = win;
     m_window->GTKApplyToolTip(wxGTK_CONV_SYS(m_text));
 }

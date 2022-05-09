@@ -194,7 +194,7 @@ wxFileOffset wxMemoryOutputStream::OnSysTell() const
 
 size_t wxMemoryOutputStream::CopyTo(void *buffer, size_t len) const
 {
-    wxCHECK_MSG( buffer, 0, wxT("must have buffer to CopyTo") );
+    //wxCHECK_MSG( buffer, 0, wxT("must have buffer to CopyTo") );
 
     if ( len > GetSize() )
         len = GetSize();

@@ -154,7 +154,7 @@ wxMessageDialog::HookFunction(int code, WXWPARAM wParam, WXLPARAM lParam)
     // Find the thread-local instance of wxMessageDialog
     const DWORD tid = ::GetCurrentThreadId();
     wxMessageDialogMap::iterator node = HookMap().find(tid);
-    wxCHECK_MSG( node != HookMap().end(), false,
+    //wxCHECK_MSG( node != HookMap().end(), false,
                     wxT("bogus thread id in wxMessageDialog::Hook") );
 
     wxMessageDialog *  const wnd = node->second;
@@ -595,7 +595,7 @@ int wxMessageDialog::ShowModal()
     if ( HasNativeTaskDialog() )
     {
         TaskDialogIndirect_t taskDialogIndirect = GetTaskDialogIndirectFunc();
-        wxCHECK_MSG( taskDialogIndirect, wxID_CANCEL, wxS("no task dialog?") );
+        //wxCHECK_MSG( taskDialogIndirect, wxID_CANCEL, wxS("no task dialog?") );
 
         WinStruct<TASKDIALOGCONFIG> tdc;
         wxMSWTaskDialogConfig wxTdc( *this );

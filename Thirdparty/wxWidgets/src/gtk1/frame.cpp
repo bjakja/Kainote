@@ -154,7 +154,7 @@ static void gtk_toolbar_detached_callback( GtkWidget *WXUNUSED(widget), GtkWidge
 
 static void wxInsertChildInFrame( wxFrame* parent, wxWindow* child )
 {
-    wxASSERT( GTK_IS_WIDGET(child->m_widget) );
+    //wxASSERT( GTK_IS_WIDGET(child->m_widget) );
 
     if (!parent->m_insertInClientArea)
     {

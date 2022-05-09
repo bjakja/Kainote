@@ -1291,7 +1291,7 @@ void MBConvTestCase::UTF8(const char *charSequence,
                           int option)
 {
     const size_t BUFSIZE = 128;
-    wxASSERT(strlen(charSequence) * 3 + 10 < BUFSIZE);
+    //wxASSERT(strlen(charSequence) * 3 + 10 < BUFSIZE);
     char bytes[BUFSIZE];
 
     // include the option in the error messages so it's possible to see
@@ -1316,7 +1316,7 @@ void MBConvTestCase::UTF8(const char *charSequence,
     // check we got the expected result
     if (wideSequence) {
         UTF8ASSERT(result != (size_t)-1);
-        wxASSERT(result < BUFSIZE);
+        //wxASSERT(result < BUFSIZE);
 
         wchar_t expected[BUFSIZE];
         wx_wcscpy(expected, wideSequence);
@@ -1348,7 +1348,7 @@ void MBConvTestCase::UTF8(const char *charSequence,
     size_t resultAgain = utf8.WC2MB(bytesAgain, widechars, BUFSIZE);
     UTF8ASSERT(resultAgain == lenResultAgain);
     UTF8ASSERT(resultAgain != (size_t)-1);
-    wxASSERT(resultAgain < BUFSIZE);
+    //wxASSERT(resultAgain < BUFSIZE);
 
     UTF8ASSERT(strcmp(bytes, bytesAgain) == 0);
     UTF8ASSERT(strlen(bytesAgain) == resultAgain);

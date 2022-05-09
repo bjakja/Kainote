@@ -104,7 +104,7 @@ static const wxChar* const wxEndiannessNames[] =
 // corresponding indexes of the string arrays above
 static unsigned wxGetIndexFromEnumValue(int value)
 {
-    wxCHECK_MSG( value, (unsigned)-1, wxT("invalid enum value") );
+    //wxCHECK_MSG( value, (unsigned)-1, wxT("invalid enum value") );
 
     int n = 0;
     while ( !(value & 1) )
@@ -240,7 +240,7 @@ wxString wxPlatformInfo::GetOperatingSystemIdName(wxOperatingSystemId os)
 {
     const unsigned idx = wxGetIndexFromEnumValue(os);
 
-    wxCHECK_MSG( idx < WXSIZEOF(wxOperatingSystemIdNames), wxEmptyString,
+    //wxCHECK_MSG( idx < WXSIZEOF(wxOperatingSystemIdNames), wxEmptyString,
                  wxT("invalid OS id") );
 
     return wxOperatingSystemIdNames[idx];
@@ -250,7 +250,7 @@ wxString wxPlatformInfo::GetPortIdName(wxPortId port, bool usingUniversal)
 {
     const unsigned idx = wxGetIndexFromEnumValue(port);
 
-    wxCHECK_MSG( idx < WXSIZEOF(wxPortIdNames), wxEmptyString,
+    //wxCHECK_MSG( idx < WXSIZEOF(wxPortIdNames), wxEmptyString,
                  wxT("invalid port id") );
 
     wxString ret = wxPortIdNames[idx];
@@ -265,7 +265,7 @@ wxString wxPlatformInfo::GetPortIdShortName(wxPortId port, bool usingUniversal)
 {
     const unsigned idx = wxGetIndexFromEnumValue(port);
 
-    wxCHECK_MSG( idx < WXSIZEOF(wxPortIdNames), wxEmptyString,
+    //wxCHECK_MSG( idx < WXSIZEOF(wxPortIdNames), wxEmptyString,
                  wxT("invalid port id") );
 
     wxString ret = wxPortIdNames[idx];

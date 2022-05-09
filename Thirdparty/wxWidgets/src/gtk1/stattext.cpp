@@ -93,7 +93,7 @@ wxString wxStaticText::GetLabel() const
 
 void wxStaticText::SetLabel( const wxString &label )
 {
-    wxCHECK_RET( m_widget != NULL, wxT("invalid static text") );
+    //wxCHECK_RET( m_widget != NULL, wxT("invalid static text") );
 
     GTKSetLabelForLabel(GTK_LABEL(m_widget), label);
 

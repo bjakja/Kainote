@@ -71,14 +71,14 @@ public:
     int GetColspan() const { return m_colspan; }
     void SetRowspan(int rowspan)
     {
-        wxCHECK_RET( rowspan > 0, "Row span should be strictly positive" );
+        //wxCHECK_RET( rowspan > 0, "Row span should be strictly positive" );
 
         m_rowspan = rowspan;
     }
 
     void SetColspan(int colspan)
     {
-        wxCHECK_RET( colspan > 0, "Column span should be strictly positive" );
+        //wxCHECK_RET( colspan > 0, "Column span should be strictly positive" );
 
         m_colspan = colspan;
     }

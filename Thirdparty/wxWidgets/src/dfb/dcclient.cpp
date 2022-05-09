@@ -105,7 +105,7 @@ wxWindowDCImpl::wxWindowDCImpl(wxDC *owner, wxWindow *win)
 
 void wxWindowDCImpl::InitForWin(wxWindow *win, const wxRect *rect)
 {
-    wxCHECK_RET( win, "invalid window" );
+    //wxCHECK_RET( win, "invalid window" );
 
     m_window = win;
 
@@ -131,7 +131,7 @@ void wxWindowDCImpl::InitForWin(wxWindow *win, const wxRect *rect)
         if ( win->GetTLW()->IsPainting() && !updateRegion.IsEmpty() )
         {
             r.Intersect(updateRegion.AsRect());
-            wxCHECK_RET( !r.IsEmpty(), "invalid painting rectangle" );
+            //wxCHECK_RET( !r.IsEmpty(), "invalid painting rectangle" );
 
             // parent TLW will flip the entire surface when painting is done
             m_shouldFlip = false;
@@ -235,7 +235,7 @@ IMPLEMENT_ABSTRACT_CLASS(wxClientDCImpl, wxWindowDCImpl)
 wxClientDCImpl::wxClientDCImpl(wxDC *owner, wxWindow *win)
               : wxWindowDCImpl(owner, win)
 {
-    wxCHECK_RET( win, "invalid window" );
+    //wxCHECK_RET( win, "invalid window" );
 
     wxRect rect = win->GetClientRect();
     InitForWin(win, &rect);

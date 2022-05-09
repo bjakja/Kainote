@@ -140,7 +140,7 @@ void wxToggleButton::GTKEnableEvents()
 // Set the value of the toggle button.
 void wxToggleButton::SetValue(bool state)
 {
-    wxCHECK_RET(m_widget != NULL, wxT("invalid toggle button"));
+    //wxCHECK_RET(m_widget != NULL, wxT("invalid toggle button"));
 
     if (state == GetValue())
         return;
@@ -156,14 +156,14 @@ void wxToggleButton::SetValue(bool state)
 // Get the value of the toggle button.
 bool wxToggleButton::GetValue() const
 {
-    wxCHECK_MSG(m_widget != NULL, false, wxT("invalid toggle button"));
+    //wxCHECK_MSG(m_widget != NULL, false, wxT("invalid toggle button"));
 
     return gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(m_widget)) != 0;
 }
 
 void wxToggleButton::SetLabel(const wxString& label)
 {
-    wxCHECK_RET(m_widget != NULL, wxT("invalid toggle button"));
+    //wxCHECK_RET(m_widget != NULL, wxT("invalid toggle button"));
 
     wxAnyButton::SetLabel(label);
 
@@ -185,7 +185,7 @@ void wxToggleButton::SetLabel(const wxString& label)
 #if wxUSE_MARKUP
 bool wxToggleButton::DoSetLabelMarkup(const wxString& markup)
 {
-    wxCHECK_MSG( m_widget != NULL, false, "invalid toggle button" );
+    //wxCHECK_MSG( m_widget != NULL, false, "invalid toggle button" );
 
     const wxString stripped = RemoveMarkup(markup);
     if ( stripped.empty() && !markup.empty() )
@@ -196,7 +196,7 @@ bool wxToggleButton::DoSetLabelMarkup(const wxString& markup)
     if ( !HasFlag(wxBU_NOTEXT) )
     {
         GtkLabel * const label = GTKGetLabel();
-        wxCHECK_MSG( label, false, "no label in this toggle button?" );
+        //wxCHECK_MSG( label, false, "no label in this toggle button?" );
 
         GTKSetLabelWithMarkupForLabel(label, markup);
     }

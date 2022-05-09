@@ -38,8 +38,8 @@ wxClientDataContainer::~wxClientDataContainer()
 
 void wxClientDataContainer::DoSetClientObject( wxClientData *data )
 {
-    wxASSERT_MSG( m_clientDataType != wxClientData_Void,
-                  wxT("can't have both object and void client data") );
+    /*wxASSERT_MSG( m_clientDataType != wxClientData_Void,
+                  wxT("can't have both object and void client data") );*/
 
     if ( m_clientObject )
         delete m_clientObject;
@@ -52,16 +52,16 @@ wxClientData *wxClientDataContainer::DoGetClientObject() const
 {
     // it's not an error to call GetClientObject() on a window which doesn't
     // have client data at all - NULL will be returned
-    wxASSERT_MSG( m_clientDataType != wxClientData_Void,
-                  wxT("this window doesn't have object client data") );
+    /*wxASSERT_MSG( m_clientDataType != wxClientData_Void,
+                  wxT("this window doesn't have object client data") );*/
 
     return m_clientObject;
 }
 
 void wxClientDataContainer::DoSetClientData( void *data )
 {
-    wxASSERT_MSG( m_clientDataType != wxClientData_Object,
-                  wxT("can't have both object and void client data") );
+    /*wxASSERT_MSG( m_clientDataType != wxClientData_Object,
+                  wxT("can't have both object and void client data") );*/
 
     m_clientData = data;
     m_clientDataType = wxClientData_Void;
@@ -71,8 +71,8 @@ void *wxClientDataContainer::DoGetClientData() const
 {
     // it's not an error to call GetClientData() on a window which doesn't have
     // client data at all - NULL will be returned
-    wxASSERT_MSG( m_clientDataType != wxClientData_Object,
-                  wxT("this window doesn't have void client data") );
+   /* wxASSERT_MSG( m_clientDataType != wxClientData_Object,
+                  wxT("this window doesn't have void client data") );*/
 
     return m_clientData;
 }

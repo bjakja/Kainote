@@ -78,7 +78,7 @@ bool wxStaticBox::Create( wxWindow *parent,
 
 void wxStaticBox::SetLabel( const wxString& label )
 {
-    wxCHECK_RET( m_widget != NULL, wxT("invalid staticbox") );
+    //wxCHECK_RET( m_widget != NULL, wxT("invalid staticbox") );
 
     GTKSetLabelForFrame(GTK_FRAME(m_widget), label);
 }

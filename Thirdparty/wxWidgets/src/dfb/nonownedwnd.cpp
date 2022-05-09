@@ -101,14 +101,14 @@ bool wxNonOwnedWindow::Create(wxWindow *parent,
                                  long style,
                                  const wxString &name)
 {
-    wxCHECK_MSG( pos.x >= 0 && pos.y >= 0, false, "invalid position" );
-    wxCHECK_MSG( size.x > 0 && size.y > 0, false, "invalid size" );
+    //wxCHECK_MSG( pos.x >= 0 && pos.y >= 0, false, "invalid position" );
+    //wxCHECK_MSG( size.x > 0 && size.y > 0, false, "invalid size" );
 
     m_tlw = this;
 
     // create DirectFB window:
     wxIDirectFBDisplayLayerPtr layer(wxIDirectFB::Get()->GetDisplayLayer());
-    wxCHECK_MSG( layer, false, "no display layer" );
+    //wxCHECK_MSG( layer, false, "no display layer" );
 
     DFBWindowDescription desc;
     desc.flags = (DFBWindowDescriptionFlags)
@@ -394,7 +394,7 @@ struct InsideDFBFocusHandlerSetter
 {
     InsideDFBFocusHandlerSetter(wxNonOwnedWindow *win)
     {
-        wxASSERT( gs_insideDFBFocusHandlerOf == NULL );
+        //wxASSERT( gs_insideDFBFocusHandlerOf == NULL );
         gs_insideDFBFocusHandlerOf = win;
     }
     ~InsideDFBFocusHandlerSetter()
@@ -408,7 +408,7 @@ struct InsideDFBFocusHandlerSetter
 
 void wxNonOwnedWindow::SetDfbFocus()
 {
-    wxCHECK_RET( IsShown(), "cannot set focus to hidden window" );
+    //wxCHECK_RET( IsShown(), "cannot set focus to hidden window" );
     wxASSERT_MSG( FindFocus() && FindFocus()->GetTLW() == this,
                   "setting DirectFB focus to unexpected window" );
 
@@ -475,7 +475,7 @@ void wxNonOwnedWindow::HandleDFBWindowEvent(const wxDFBWindowEvent& event_)
                 return;
             }
 
-            wxCHECK_RET( recipient && recipient->GetTLW() == tlw,
+            //wxCHECK_RET( recipient && recipient->GetTLW() == tlw,
                          "event recipient not in TLW which received the event" );
 
             recipient->HandleKeyEvent(event_);

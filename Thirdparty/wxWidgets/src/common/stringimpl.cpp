@@ -211,7 +211,7 @@ bool wxStringImpl::AllocBuffer(size_t nLen)
 {
   // allocating 0 sized buffer doesn't make sense, all empty strings should
   // reuse g_strEmpty
-  wxASSERT( nLen >  0 );
+  //wxASSERT( nLen >  0 );
 
   // make sure that we don't overflow
   wxCHECK( nLen < (INT_MAX / sizeof(wxStringCharType)) -
@@ -253,7 +253,7 @@ bool wxStringImpl::CopyBeforeWrite()
     wxStringMemcpy(m_pchData, pData->data(), nLen);
   }
 
-  wxASSERT( !GetStringData()->IsShared() );  // we must be the only owner
+  //wxASSERT( !GetStringData()->IsShared() );  // we must be the only owner
 
   return true;
 }
@@ -261,7 +261,7 @@ bool wxStringImpl::CopyBeforeWrite()
 // must be called before replacing contents of this string
 bool wxStringImpl::AllocBeforeWrite(size_t nLen)
 {
-  wxASSERT( nLen != 0 );  // doesn't make any sense
+  //wxASSERT( nLen != 0 );  // doesn't make any sense
 
   // must not share string and must have enough space
   wxStringData* pData = GetStringData();
@@ -296,7 +296,7 @@ bool wxStringImpl::AllocBeforeWrite(size_t nLen)
     }
   }
 
-  wxASSERT( !GetStringData()->IsShared() );  // we must be the only owner
+  //wxASSERT( !GetStringData()->IsShared() );  // we must be the only owner
 
   // it doesn't really matter what the string length is as it's going to be
   // overwritten later but, for extra safety, set it to 0 for now as we may
@@ -416,7 +416,7 @@ wxStringImpl::iterator wxStringImpl::erase(iterator it)
 
 wxStringImpl& wxStringImpl::erase(size_t nStart, size_t nLen)
 {
-    wxASSERT(nStart <= length());
+    //wxASSERT(nStart <= length());
     size_t strLen = length() - nStart;
     // delete nLen or up to the end of the string characters
     nLen = strLen < nLen ? strLen : nLen;
@@ -430,7 +430,7 @@ wxStringImpl& wxStringImpl::erase(size_t nStart, size_t nLen)
 wxStringImpl& wxStringImpl::insert(size_t nPos,
                                    const wxStringCharType *sz, size_t n)
 {
-    wxASSERT( nPos <= length() );
+    //wxASSERT( nPos <= length() );
 
     if ( n == npos ) n = wxStrlen(sz);
     if ( n == 0 ) return *this;
@@ -474,8 +474,8 @@ size_t wxStringImpl::find(const wxStringImpl& str, size_t nStart) const
         return npos;
     }
 
-    wxASSERT( str.GetStringData()->IsValid() );
-    wxASSERT( nStart <= nLen );
+    //wxASSERT( str.GetStringData()->IsValid() );
+    //wxASSERT( nStart <= nLen );
 
     const wxStringCharType * const other = str.c_str();
 
@@ -512,7 +512,7 @@ size_t wxStringImpl::find(const wxStringCharType* sz,
 
 size_t wxStringImpl::find(wxStringCharType ch, size_t nStart) const
 {
-    wxASSERT( nStart <= length() );
+    //wxASSERT( nStart <= length() );
 
     const wxStringCharType *p = (const wxStringCharType*)
         wxStringMemchr(c_str() + nStart, ch, length() - nStart);
@@ -522,8 +522,8 @@ size_t wxStringImpl::find(wxStringCharType ch, size_t nStart) const
 
 size_t wxStringImpl::rfind(const wxStringImpl& str, size_t nStart) const
 {
-    wxASSERT( str.GetStringData()->IsValid() );
-    wxASSERT( nStart == npos || nStart <= length() );
+    //wxASSERT( str.GetStringData()->IsValid() );
+    //wxASSERT( nStart == npos || nStart <= length() );
 
     if ( length() >= str.length() )
     {
@@ -566,7 +566,7 @@ size_t wxStringImpl::rfind(wxStringCharType ch, size_t nStart) const
     }
     else
     {
-        wxASSERT( nStart <= length() );
+        //wxASSERT( nStart <= length() );
     }
 
     const wxStringCharType *actual;
@@ -632,7 +632,7 @@ wxStringImpl wxStringImpl::substr(size_t nStart, size_t nLen) const
 // assigns one string to another
 wxStringImpl& wxStringImpl::operator=(const wxStringImpl& stringSrc)
 {
-  wxASSERT( stringSrc.GetStringData()->IsValid() );
+  //wxASSERT( stringSrc.GetStringData()->IsValid() );
 
   // don't copy string over itself
   if ( m_pchData != stringSrc.m_pchData ) {
@@ -752,7 +752,7 @@ bool wxStringImpl::ConcatSelf(size_t nSrcLen,
     }
 
     // should be enough space
-    wxASSERT( nNewLen <= GetStringData()->nAllocLength );
+    //wxASSERT( nNewLen <= GetStringData()->nAllocLength );
 
     // fast concatenation - all is done in our buffer
     memcpy(m_pchData + nLen, pszSrcData, nSrcLen*sizeof(wxStringCharType));
@@ -772,7 +772,7 @@ wxStringCharType *wxStringImpl::DoGetWriteBuf(size_t nLen)
     return NULL;
   }
 
-  wxASSERT( GetStringData()->nRefs == 1 );
+  //wxASSERT( GetStringData()->nRefs == 1 );
   GetStringData()->Validate(false);
 
   return m_pchData;

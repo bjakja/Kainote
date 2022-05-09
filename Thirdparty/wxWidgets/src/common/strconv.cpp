@@ -1331,7 +1331,7 @@ size_t wxMBConvUTF8::ToWChar(wchar_t *buf, size_t n,
 #ifdef WC_UTF16
                         // cast is ok because wchar_t == wxUuint16 if WC_UTF16
                         size_t pa = encode_utf16((unsigned char)*opsz + wxUnicodePUA, (wxUint16 *)buf);
-                        wxASSERT(pa != wxCONV_FAILED);
+                        //wxASSERT(pa != wxCONV_FAILED);
                         if (buf)
                             buf += pa;
                         opsz++;

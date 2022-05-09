@@ -1822,7 +1822,7 @@ wxTextCtrl* wxListCtrl::EditLabel(long item, wxClassInfo* textControlClass)
 
     if (m_dbImpl)
     {
-        wxCHECK_MSG( (item >= 0) && ((long)item < GetItemCount()), NULL,
+        //wxCHECK_MSG( (item >= 0) && ((long)item < GetItemCount()), NULL,
                      wxT("wrong index in wxListCtrl::EditLabel()") );
 
         wxASSERT_MSG( textControlClass->IsKindOf(CLASSINFO(wxTextCtrl)),
@@ -1991,7 +1991,7 @@ wxListCtrl::HitTest(const wxPoint& point, int& flags, long *ptrSubItem) const
                wxMacListCtrlItem* lcItem;
 
                WXUNUSED_UNLESS_DEBUG( OSStatus status = ) m_dbImpl->GetItemPartBounds( id, kMinColumnId + column, kDataBrowserPropertyEnclosingPart, &enclosingRect );
-               wxASSERT( status == noErr );
+               //wxASSERT( status == noErr );
 
                enclosingCGRect = CGRectMake(enclosingRect.left,
                                             enclosingRect.top,
@@ -2248,7 +2248,7 @@ bool wxListCtrl::SortItems(wxListCtrlCompare fn, wxIntPtr data)
 
 void wxListCtrl::OnRenameTimer()
 {
-    wxCHECK_RET( HasCurrent(), wxT("unexpected rename timer") );
+    //wxCHECK_RET( HasCurrent(), wxT("unexpected rename timer") );
 
     EditLabel( m_current );
 }
@@ -2294,7 +2294,7 @@ wxString wxListCtrl::OnGetItemText(long WXUNUSED(item), long WXUNUSED(col)) cons
 
 int wxListCtrl::OnGetItemImage(long WXUNUSED(item)) const
 {
-    wxCHECK_MSG(!GetImageList(wxIMAGE_LIST_SMALL),
+    //wxCHECK_MSG(!GetImageList(wxIMAGE_LIST_SMALL),
                 -1,
                 wxT("List control has an image list, OnGetItemImage or OnGetItemColumnImage should be overridden."));
     return -1;

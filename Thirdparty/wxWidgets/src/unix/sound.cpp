@@ -485,7 +485,7 @@ bool wxSound::Create(const wxString& fileName,
 
 bool wxSound::Create(size_t size, const void* data)
 {
-    wxASSERT( data != NULL );
+    //wxASSERT( data != NULL );
 
     Free();
     if (!LoadWAV(data, size, true))
@@ -579,7 +579,7 @@ bool wxSound::Create(size_t size, const void* data)
 
 bool wxSound::DoPlay(unsigned flags) const
 {
-    wxCHECK_MSG( IsOk(), false, wxT("Attempt to play invalid wave data") );
+    //wxCHECK_MSG( IsOk(), false, wxT("Attempt to play invalid wave data") );
 
     EnsureBackend();
     wxSoundPlaybackStatus status;

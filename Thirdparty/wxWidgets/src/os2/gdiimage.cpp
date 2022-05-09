@@ -139,7 +139,7 @@ public:
                      )
     {
         wxIcon*                     pIcon = wxDynamicCast(pImage, wxIcon);
-        wxCHECK_MSG(pIcon, false, wxT("wxIconHandler only works with icons"));
+        //wxCHECK_MSG(pIcon, false, wxT("wxIconHandler only works with icons"));
 
         return LoadIcon( pIcon
                         ,rName

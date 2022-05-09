@@ -1391,7 +1391,7 @@ bool wxToolBar::MSWOnNotify(int WXUNUSED(idCtrl),
         }
 
         const wxToolBarToolBase * const tool = FindById(tbhdr->iItem);
-        wxCHECK_MSG( tool, false, wxT("drop down message for unknown tool") );
+        //wxCHECK_MSG( tool, false, wxT("drop down message for unknown tool") );
 
         wxMenu * const menu = tool->GetDropdownMenu();
         if ( !menu )
@@ -1612,7 +1612,7 @@ void wxToolBar::SetToolNormalBitmap( int id, const wxBitmap& bitmap )
     wxToolBarTool* tool = static_cast<wxToolBarTool*>(FindById(id));
     if ( tool )
     {
-        wxCHECK_RET( tool->IsButton(), wxT("Can only set bitmap on button tools."));
+        //wxCHECK_RET( tool->IsButton(), wxT("Can only set bitmap on button tools."));
 
         tool->SetNormalBitmap(bitmap);
         Realize();
@@ -1624,7 +1624,7 @@ void wxToolBar::SetToolDisabledBitmap( int id, const wxBitmap& bitmap )
     wxToolBarTool* tool = static_cast<wxToolBarTool*>(FindById(id));
     if ( tool )
     {
-        wxCHECK_RET( tool->IsButton(), wxT("Can only set bitmap on button tools."));
+        //wxCHECK_RET( tool->IsButton(), wxT("Can only set bitmap on button tools."));
 
         tool->SetDisabledBitmap(bitmap);
         Realize();

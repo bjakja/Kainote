@@ -204,7 +204,7 @@ x11_draw_layout( Drawable     drawable,
                  PangoLayout *layout,
                  wxColour    &colour)
 {
-    wxCHECK_RET( layout, wxT("No layout") );
+    //wxCHECK_RET( layout, wxT("No layout") );
 
     x11_draw_layout_with_colors (drawable, gc, x, y, layout, colour );
 }

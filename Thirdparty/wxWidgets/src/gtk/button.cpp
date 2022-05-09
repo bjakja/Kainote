@@ -199,7 +199,7 @@ wxSize wxButtonBase::GetDefaultSize()
 
 void wxButton::SetLabel( const wxString &lbl )
 {
-    wxCHECK_RET( m_widget != NULL, wxT("invalid button") );
+    //wxCHECK_RET( m_widget != NULL, wxT("invalid button") );
 
     wxString label(lbl);
 
@@ -237,7 +237,7 @@ void wxButton::SetLabel( const wxString &lbl )
 #if wxUSE_MARKUP
 bool wxButton::DoSetLabelMarkup(const wxString& markup)
 {
-    wxCHECK_MSG( m_widget != NULL, false, "invalid button" );
+    //wxCHECK_MSG( m_widget != NULL, false, "invalid button" );
 
     const wxString stripped = RemoveMarkup(markup);
     if ( stripped.empty() && !markup.empty() )
@@ -246,7 +246,7 @@ bool wxButton::DoSetLabelMarkup(const wxString& markup)
     wxControl::SetLabel(stripped);
 
     GtkLabel * const label = GTKGetLabel();
-    wxCHECK_MSG( label, false, "no label in this button?" );
+    //wxCHECK_MSG( label, false, "no label in this button?" );
 
     GTKSetLabelWithMarkupForLabel(label, markup);
 

@@ -548,7 +548,7 @@ wxString wxGetCurrentDir()
 
 bool wxGetEnvMap(wxEnvVariableHashMap *map)
 {
-    wxCHECK_MSG( map, false, wxS("output pointer can't be NULL") );
+    //wxCHECK_MSG( map, false, wxS("output pointer can't be NULL") );
 
 #if defined(__VISUALC__)
     // This variable only exists to force the CRT to fill the wide char array,
@@ -626,7 +626,7 @@ bool wxGetEnvMap(wxEnvVariableHashMap *map)
 #if wxUSE_STREAMS
 static bool ReadAll(wxInputStream *is, wxArrayString& output)
 {
-    wxCHECK_MSG( is, false, wxT("NULL stream in wxExecute()?") );
+    //wxCHECK_MSG( is, false, wxT("NULL stream in wxExecute()?") );
 
     // the stream could be already at EOF or in wxSTREAM_BROKEN_PIPE state
     is->Reset();

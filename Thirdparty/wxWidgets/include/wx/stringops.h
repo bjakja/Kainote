@@ -73,14 +73,14 @@ struct WXDLLIMPEXP_BASE wxStringOperationsUtf8
     template<typename Iterator>
     static void IncIter(Iterator& i)
     {
-        wxASSERT( IsValidUtf8LeadByte(*i) );
+        //wxASSERT( IsValidUtf8LeadByte(*i) );
         i += ms_utf8IterTable[(unsigned char)*i];
     }
 
     template<typename Iterator>
     static void DecIter(Iterator& i)
     {
-        wxASSERT( IsValidUtf8LeadByte(*i) );
+        //wxASSERT( IsValidUtf8LeadByte(*i) );
 
         // Non-lead bytes are all in the 0x80..0xBF range (i.e. 10xxxxxx in
         // binary), so we just have to go back until we hit a byte that is
@@ -148,7 +148,7 @@ struct WXDLLIMPEXP_BASE wxStringOperationsUtf8
     // returns the length of UTF-8 encoding of the character with lead byte 'c'
     static size_t GetUtf8CharLength(char c)
     {
-        wxASSERT( IsValidUtf8LeadByte(c) );
+        //wxASSERT( IsValidUtf8LeadByte(c) );
         return ms_utf8IterTable[(unsigned char)c];
     }
 

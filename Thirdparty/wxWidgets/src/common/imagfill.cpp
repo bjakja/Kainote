@@ -283,7 +283,7 @@ bool wxDoFloodFill(wxDC *dc, wxCoord x, wxCoord y,
     dc->GetSize(&width, &height);
 
     //it would be nice to fail if we don't get a sensible size...
-    wxCHECK_MSG(width >= 1 && height >= 1, false,
+    //wxCHECK_MSG(width >= 1 && height >= 1, false,
                 wxT("In FloodFill, dc.GetSize routine failed, method not supported by this DC"));
 
     const int x_dev = dc->LogicalToDeviceX(x);

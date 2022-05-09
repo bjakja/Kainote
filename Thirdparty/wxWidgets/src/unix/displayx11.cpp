@@ -422,7 +422,7 @@ private:
 void wxClientDisplayRect(int *x, int *y, int *width, int *height)
 {
     Display * const dpy = wxGetX11Display();
-    wxCHECK_RET( dpy, wxT("can't be called before initializing the GUI") );
+    //wxCHECK_RET( dpy, wxT("can't be called before initializing the GUI") );
 
     const Atom atomWorkArea = XInternAtom(dpy, "_NET_WORKAREA", True);
     if ( atomWorkArea )

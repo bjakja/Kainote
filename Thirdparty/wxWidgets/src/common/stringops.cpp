@@ -252,7 +252,7 @@ wxUniChar::Utf8CharBuffer wxUniChar::AsUTF8() const
 wxUniChar
 wxStringOperationsUtf8::DecodeNonAsciiChar(wxStringImpl::const_iterator i)
 {
-    wxASSERT( IsValidUtf8LeadByte(*i) );
+    //wxASSERT( IsValidUtf8LeadByte(*i) );
 
     wxUniChar::value_type code = 0;
     size_t len = GetUtf8CharLength(*i);

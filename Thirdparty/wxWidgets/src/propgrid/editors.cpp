@@ -473,7 +473,7 @@ void wxPGTextCtrlEditor::SetControlStringValue( wxPGProperty* property, wxWindow
     wxTextCtrl* tc = wxStaticCast(ctrl, wxTextCtrl);
 
     wxPropertyGrid* pg = property->GetGrid();
-    wxASSERT(pg);  // Really, property grid should exist if editor does
+    //wxASSERT(pg);  // Really, property grid should exist if editor does
     if ( pg )
     {
         pg->SetupTextCtrlValue(txt);
@@ -692,7 +692,7 @@ public:
     {
         wxPropertyGrid* pg = wxDynamicCast(GetParent(),
                                            wxPropertyGrid);
-        wxASSERT(pg);
+        //wxASSERT(pg);
         return pg;
     }
 
@@ -949,7 +949,7 @@ void wxPropertyGrid::OnComboItemPaint( const wxPGComboBox* pCb,
 bool wxPGChoiceEditor_SetCustomPaintWidth( wxPropertyGrid* propGrid, wxPGComboBox* cb, int cmnVal )
 {
     wxPGProperty* property = propGrid->GetSelectedProperty();
-    wxASSERT( property );
+    //wxASSERT( property );
 
     wxSize imageSize;
     bool res;
@@ -1090,9 +1090,9 @@ wxWindow* wxPGChoiceEditor::CreateControlsBase( wxPropertyGrid* propGrid,
 
 void wxPGChoiceEditor::UpdateControl( wxPGProperty* property, wxWindow* ctrl ) const
 {
-    wxASSERT( ctrl );
+    //wxASSERT( ctrl );
     wxOwnerDrawnComboBox* cb = (wxOwnerDrawnComboBox*)ctrl;
-    wxASSERT( wxDynamicCast(cb, wxOwnerDrawnComboBox));
+    //wxASSERT( wxDynamicCast(cb, wxOwnerDrawnComboBox));
     int ind = property->GetChoiceSelection();
     cb->SetSelection(ind);
 }
@@ -1106,9 +1106,9 @@ wxPGWindowList wxPGChoiceEditor::CreateControls( wxPropertyGrid* propGrid, wxPGP
 
 int wxPGChoiceEditor::InsertItem( wxWindow* ctrl, const wxString& label, int index ) const
 {
-    wxASSERT( ctrl );
+    //wxASSERT( ctrl );
     wxOwnerDrawnComboBox* cb = (wxOwnerDrawnComboBox*)ctrl;
-    wxASSERT( wxDynamicCast(cb, wxOwnerDrawnComboBox));
+    //wxASSERT( wxDynamicCast(cb, wxOwnerDrawnComboBox));
 
     if (index < 0)
         index = cb->GetCount();
@@ -1119,9 +1119,9 @@ int wxPGChoiceEditor::InsertItem( wxWindow* ctrl, const wxString& label, int ind
 
 void wxPGChoiceEditor::DeleteItem( wxWindow* ctrl, int index ) const
 {
-    wxASSERT( ctrl );
+    //wxASSERT( ctrl );
     wxOwnerDrawnComboBox* cb = (wxOwnerDrawnComboBox*)ctrl;
-    wxASSERT( wxDynamicCast(cb, wxOwnerDrawnComboBox));
+    //wxASSERT( wxDynamicCast(cb, wxOwnerDrawnComboBox));
 
     cb->Delete(index);
 }
@@ -1188,7 +1188,7 @@ void wxPGChoiceEditor::SetControlStringValue( wxPGProperty* property,
                                               const wxString& txt ) const
 {
     wxOwnerDrawnComboBox* cb = (wxOwnerDrawnComboBox*)ctrl;
-    wxASSERT( cb );
+    //wxASSERT( cb );
     property->GetGrid()->SetupTextCtrlValue(txt);
     cb->SetValue(txt);
 }
@@ -1197,7 +1197,7 @@ void wxPGChoiceEditor::SetControlStringValue( wxPGProperty* property,
 void wxPGChoiceEditor::SetControlIntValue( wxPGProperty* WXUNUSED(property), wxWindow* ctrl, int value ) const
 {
     wxOwnerDrawnComboBox* cb = (wxOwnerDrawnComboBox*)ctrl;
-    wxASSERT( cb );
+    //wxASSERT( cb );
     cb->SetSelection(value);
 }
 
@@ -1590,7 +1590,7 @@ void wxSimpleCheckBox::SetValue( int value )
     wxCommandEvent evt(wxEVT_COMMAND_CHECKBOX_CLICKED,GetParent()->GetId());
 
     wxPropertyGrid* propGrid = (wxPropertyGrid*) GetParent();
-    wxASSERT( wxDynamicCast(propGrid, wxPropertyGrid) );
+    //wxASSERT( wxDynamicCast(propGrid, wxPropertyGrid) );
     propGrid->HandleCustomEditorEvent(evt);
 }
 
@@ -1664,7 +1664,7 @@ void wxPGCheckBoxEditor::UpdateControl( wxPGProperty* property,
                                         wxWindow* ctrl ) const
 {
     wxSimpleCheckBox* cb = (wxSimpleCheckBox*) ctrl;
-    wxASSERT( cb );
+    //wxASSERT( cb );
 
     if ( !property->IsValueUnspecified() )
         cb->m_state = property->GetChoiceSelection();
@@ -1876,7 +1876,7 @@ wxWindow* wxPropertyGrid::GenerateEditorTextCtrl( const wxPoint& pos,
 {
     wxWindowID id = wxPG_SUBID1;
     wxPGProperty* prop = GetSelection();
-    wxASSERT(prop);
+    //wxASSERT(prop);
 
     int tcFlags = wxTE_PROCESS_ENTER | extraStyle;
 
@@ -1963,7 +1963,7 @@ wxWindow* wxPropertyGrid::GenerateEditorTextCtrl( const wxPoint& pos,
     wxVariant attrVal = prop->GetAttribute(wxPG_ATTR_AUTOCOMPLETE);
     if ( !attrVal.IsNull() )
     {
-        wxASSERT(attrVal.GetType() == wxS("arrstring"));
+        //wxASSERT(attrVal.GetType() == wxS("arrstring"));
         tc->AutoComplete(attrVal.GetArrayString());
     }
 
@@ -1979,7 +1979,7 @@ wxWindow* wxPropertyGrid::GenerateEditorButton( const wxPoint& pos, const wxSize
 {
     wxWindowID id = wxPG_SUBID2;
     wxPGProperty* selected = GetSelection();
-    wxASSERT(selected);
+    //wxASSERT(selected);
 
 #ifdef __WXMAC__
    // Decorations are chunky on Mac, and we can't make the button square, so

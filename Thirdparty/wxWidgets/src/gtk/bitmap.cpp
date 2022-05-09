@@ -94,7 +94,7 @@ wxMask::wxMask(const wxMask& mask)
         const guchar* src = cairo_image_surface_get_data(mask.m_bitmap);
         guchar* dst = cairo_image_surface_get_data(m_bitmap);
         const int stride = cairo_image_surface_get_stride(m_bitmap);
-        wxASSERT(stride == cairo_image_surface_get_stride(mask.m_bitmap));
+        //wxASSERT(stride == cairo_image_surface_get_stride(mask.m_bitmap));
         memcpy(dst, src, stride * h);
         cairo_surface_mark_dirty(m_bitmap);
     }
@@ -256,7 +256,7 @@ bool wxMask::InitFromMonoBitmap(const wxBitmap& bitmap)
 {
     if (!bitmap.IsOk()) return false;
 
-    wxCHECK_MSG( bitmap.GetDepth() == 1, false, wxT("Cannot create mask from colour bitmap") );
+    //wxCHECK_MSG( bitmap.GetDepth() == 1, false, wxT("Cannot create mask from colour bitmap") );
 
 #ifdef __WXGTK3__
     InitFromColour(bitmap, *wxBLACK);
@@ -379,7 +379,7 @@ wxBitmap::wxBitmap(const wxString &filename, wxBitmapType type)
 
 wxBitmap::wxBitmap(const char bits[], int width, int height, int depth)
 {
-    wxASSERT(depth == 1);
+    //wxASSERT(depth == 1);
     if (width > 0 && height > 0 && depth == 1)
     {
         m_refData = new wxBitmapRefData(width, height, 1);
@@ -423,7 +423,7 @@ wxBitmap::wxBitmap(const char* const* bits)
             gdk_pixbuf_get_width(pixbuf), gdk_pixbuf_get_height(pixbuf),
             gdk_pixbuf_get_n_channels(pixbuf) * 8);
         M_BMPDATA->m_pixbufNoMask = pixbuf;
-        wxASSERT(M_BMPDATA->m_bpp == 32 || !gdk_pixbuf_get_has_alpha(M_BMPDATA->m_pixbufNoMask));
+        //wxASSERT(M_BMPDATA->m_bpp == 32 || !gdk_pixbuf_get_has_alpha(M_BMPDATA->m_pixbufNoMask));
     }
 #else
     GdkBitmap* mask = NULL;
@@ -465,7 +465,7 @@ wxBitmap::~wxBitmap()
 bool wxBitmap::Create( int width, int height, int depth )
 {
     UnRef();
-    wxCHECK_MSG(width >= 0 && height >= 0, false, "invalid bitmap size");
+    //wxCHECK_MSG(width >= 0 && height >= 0, false, "invalid bitmap size");
     m_refData = new wxBitmapRefData(width, height, depth);
     return true;
 }
@@ -521,7 +521,7 @@ static void CopyImageData(
 #ifdef __WXGTK3__
 wxBitmap::wxBitmap(const wxImage& image, int depth)
 {
-    wxCHECK_RET(image.IsOk(), "invalid image");
+    //wxCHECK_RET(image.IsOk(), "invalid image");
 
     const int w = image.GetWidth();
     const int h = image.GetHeight();
@@ -534,7 +534,7 @@ wxBitmap::wxBitmap(const wxImage& image, int depth)
     m_refData = bmpData;
     GdkPixbuf* pixbuf_dst = gdk_pixbuf_new(GDK_COLORSPACE_RGB, depth == 32, 8, w, h);
     bmpData->m_pixbufNoMask = pixbuf_dst;
-    wxASSERT(bmpData->m_bpp == 32 || !gdk_pixbuf_get_has_alpha(bmpData->m_pixbufNoMask));
+    //wxASSERT(bmpData->m_bpp == 32 || !gdk_pixbuf_get_has_alpha(bmpData->m_pixbufNoMask));
     const guchar* src = image.GetData();
 
     guchar* dst = gdk_pixbuf_get_pixels(pixbuf_dst);
@@ -567,7 +567,7 @@ wxBitmap::wxBitmap(const wxImage& image, int depth)
 #else
 wxBitmap::wxBitmap(const wxImage& image, int depth)
 {
-    wxCHECK_RET(image.IsOk(), "invalid image");
+    //wxCHECK_RET(image.IsOk(), "invalid image");
 
     if (depth == 32 || (depth == -1 && image.HasAlpha()))
         CreateFromImageAsPixbuf(image);
@@ -694,7 +694,7 @@ wxImage wxBitmap::ConvertToImage() const
 {
 #ifdef __WXGTK3__
     wxImage image;
-    wxCHECK_MSG(IsOk(), image, "invalid bitmap");
+    //wxCHECK_MSG(IsOk(), image, "invalid bitmap");
     wxBitmapRefData* bmpData = M_BMPDATA;
     const int w = bmpData->m_width;
     const int h = bmpData->m_height;
@@ -707,7 +707,7 @@ wxImage wxBitmap::ConvertToImage() const
     {
         pixbuf_src = gdk_pixbuf_get_from_surface(bmpData->m_surface, 0, 0, w, h);
         bmpData->m_pixbufNoMask = pixbuf_src;
-        wxASSERT(bmpData->m_bpp == 32 || !gdk_pixbuf_get_has_alpha(bmpData->m_pixbufNoMask));
+        //wxASSERT(bmpData->m_bpp == 32 || !gdk_pixbuf_get_has_alpha(bmpData->m_pixbufNoMask));
     }
     if (pixbuf_src)
     {
@@ -737,7 +737,7 @@ wxImage wxBitmap::ConvertToImage() const
         const guchar g = 2;
         const guchar b = 3;
         image.SetMaskColour(r, g, b);
-        wxASSERT(cairo_image_surface_get_format(maskSurf) == CAIRO_FORMAT_A8);
+        //wxASSERT(cairo_image_surface_get_format(maskSurf) == CAIRO_FORMAT_A8);
         const int stride = cairo_image_surface_get_stride(maskSurf);
         const guchar* src = cairo_image_surface_get_data(maskSurf);
         for (int j = 0; j < h; j++, src += stride)
@@ -754,14 +754,14 @@ wxImage wxBitmap::ConvertToImage() const
         }
     }
 #else
-    wxCHECK_MSG( IsOk(), wxNullImage, wxT("invalid bitmap") );
+    //wxCHECK_MSG( IsOk(), wxNullImage, wxT("invalid bitmap") );
 
     const int w = GetWidth();
     const int h = GetHeight();
     wxImage image(w, h, false);
     unsigned char *data = image.GetData();
 
-    wxCHECK_MSG(data != NULL, wxNullImage, wxT("couldn't create image") );
+    //wxCHECK_MSG(data != NULL, wxNullImage, wxT("couldn't create image") );
 
     // prefer pixbuf if available, it will preserve alpha and should be quicker
     if (HasPixbuf())
@@ -857,35 +857,35 @@ wxImage wxBitmap::ConvertToImage() const
 
 int wxBitmap::GetHeight() const
 {
-    wxCHECK_MSG( IsOk(), -1, wxT("invalid bitmap") );
+    //wxCHECK_MSG( IsOk(), -1, wxT("invalid bitmap") );
 
     return M_BMPDATA->m_height;
 }
 
 int wxBitmap::GetWidth() const
 {
-    wxCHECK_MSG( IsOk(), -1, wxT("invalid bitmap") );
+    //wxCHECK_MSG( IsOk(), -1, wxT("invalid bitmap") );
 
     return M_BMPDATA->m_width;
 }
 
 int wxBitmap::GetDepth() const
 {
-    wxCHECK_MSG( IsOk(), -1, wxT("invalid bitmap") );
+    //wxCHECK_MSG( IsOk(), -1, wxT("invalid bitmap") );
 
     return M_BMPDATA->m_bpp;
 }
 
 wxMask *wxBitmap::GetMask() const
 {
-    wxCHECK_MSG( IsOk(), NULL, wxT("invalid bitmap") );
+    //wxCHECK_MSG( IsOk(), NULL, wxT("invalid bitmap") );
 
     return M_BMPDATA->m_mask;
 }
 
 void wxBitmap::SetMask( wxMask *mask )
 {
-    wxCHECK_RET( IsOk(), wxT("invalid bitmap") );
+    //wxCHECK_RET( IsOk(), wxT("invalid bitmap") );
 
     AllocExclusive();
     delete M_BMPDATA->m_mask;
@@ -967,13 +967,13 @@ wxBitmap wxBitmap::GetSubBitmap( const wxRect& rect) const
 {
     wxBitmap ret;
 
-    wxCHECK_MSG(IsOk(), ret, wxT("invalid bitmap"));
+    //wxCHECK_MSG(IsOk(), ret, wxT("invalid bitmap"));
 
     const int w = rect.width;
     const int h = rect.height;
     const wxBitmapRefData* bmpData = M_BMPDATA;
 
-    wxCHECK_MSG(rect.x >= 0 && rect.y >= 0 &&
+    //wxCHECK_MSG(rect.x >= 0 && rect.y >= 0 &&
                 rect.x + w <= bmpData->m_width &&
                 rect.y + h <= bmpData->m_height,
                 ret, wxT("invalid bitmap region"));
@@ -986,7 +986,7 @@ wxBitmap wxBitmap::GetSubBitmap( const wxRect& rect) const
     {
         GdkPixbuf* pixbuf = gdk_pixbuf_new_subpixbuf(bmpData->m_pixbufNoMask, rect.x, rect.y, w, h);
         newRef->m_pixbufNoMask = gdk_pixbuf_copy(pixbuf);
-        wxASSERT(newRef->m_bpp == 32 || !gdk_pixbuf_get_has_alpha(newRef->m_pixbufNoMask));
+        //wxASSERT(newRef->m_bpp == 32 || !gdk_pixbuf_get_has_alpha(newRef->m_pixbufNoMask));
         g_object_unref(pixbuf);
     }
     else if (bmpData->m_surface)
@@ -1034,7 +1034,7 @@ wxBitmap wxBitmap::GetSubBitmap( const wxRect& rect) const
 
 bool wxBitmap::SaveFile( const wxString &name, wxBitmapType type, const wxPalette *WXUNUSED(palette) ) const
 {
-    wxCHECK_MSG( IsOk(), false, wxT("invalid bitmap") );
+    //wxCHECK_MSG( IsOk(), false, wxT("invalid bitmap") );
 
 #if wxUSE_IMAGE
     wxImage image = ConvertToImage();
@@ -1119,7 +1119,7 @@ void wxBitmap::SetPixmap( GdkPixmap *pixmap )
 
 GdkPixmap *wxBitmap::GetPixmap() const
 {
-    wxCHECK_MSG( IsOk(), NULL, wxT("invalid bitmap") );
+    //wxCHECK_MSG( IsOk(), NULL, wxT("invalid bitmap") );
 
     wxBitmapRefData* bmpData = M_BMPDATA;
     if (bmpData->m_pixmap)
@@ -1152,7 +1152,7 @@ GdkPixmap *wxBitmap::GetPixmap() const
 
 bool wxBitmap::HasPixmap() const
 {
-    wxCHECK_MSG( IsOk(), false, wxT("invalid bitmap") );
+    //wxCHECK_MSG( IsOk(), false, wxT("invalid bitmap") );
 
     return M_BMPDATA->m_pixmap != NULL;
 }
@@ -1161,7 +1161,7 @@ bool wxBitmap::HasPixmap() const
 #ifdef __WXGTK3__
 GdkPixbuf* wxBitmap::GetPixbufNoMask() const
 {
-    wxCHECK_MSG(IsOk(), NULL, "invalid bitmap");
+    //wxCHECK_MSG(IsOk(), NULL, "invalid bitmap");
 
     wxBitmapRefData* bmpData = M_BMPDATA;
     GdkPixbuf* pixbuf = bmpData->m_pixbufNoMask;
@@ -1175,7 +1175,7 @@ GdkPixbuf* wxBitmap::GetPixbufNoMask() const
     else
         pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, bmpData->m_bpp == 32, 8, w, h);
     bmpData->m_pixbufNoMask = pixbuf;
-    wxASSERT(bmpData->m_bpp == 32 || !gdk_pixbuf_get_has_alpha(bmpData->m_pixbufNoMask));
+    //wxASSERT(bmpData->m_bpp == 32 || !gdk_pixbuf_get_has_alpha(bmpData->m_pixbufNoMask));
 
     return pixbuf;
 }
@@ -1232,7 +1232,7 @@ void wxBitmap::SetSourceSurface(cairo_t* cr, int x, int y, const wxColour* fg, c
         cairo_set_source_surface(cr, bmpData->m_surface, x, y);
         return;
     }
-    wxCHECK_RET(bmpData->m_pixbufNoMask, "no bitmap data");
+    //wxCHECK_RET(bmpData->m_pixbufNoMask, "no bitmap data");
     if (bmpData->m_bpp == 1)
         SetSourceSurface1(bmpData, cr, x, y, fg, bg);
     else
@@ -1245,7 +1245,7 @@ void wxBitmap::SetSourceSurface(cairo_t* cr, int x, int y, const wxColour* fg, c
 
 cairo_t* wxBitmap::CairoCreate() const
 {
-    wxCHECK_MSG(IsOk(), NULL, "invalid bitmap");
+    //wxCHECK_MSG(IsOk(), NULL, "invalid bitmap");
 
     wxBitmapRefData* bmpData = M_BMPDATA;
     cairo_t* cr;
@@ -1276,13 +1276,13 @@ cairo_t* wxBitmap::CairoCreate() const
         g_object_unref(bmpData->m_pixbufMask);
         bmpData->m_pixbufMask = NULL;
     }
-    wxASSERT(cr && cairo_status(cr) == 0);
+    //wxASSERT(cr && cairo_status(cr) == 0);
     return cr;
 }
 
 void wxBitmap::Draw(cairo_t* cr, int x, int y, bool useMask, const wxColour* fg, const wxColour* bg) const
 {
-    wxCHECK_RET(IsOk(), "invalid bitmap");
+    //wxCHECK_RET(IsOk(), "invalid bitmap");
 
     wxBitmapRefData* bmpData = M_BMPDATA;
     SetSourceSurface(cr, x, y, fg, bg);
@@ -1299,7 +1299,7 @@ void wxBitmap::Draw(cairo_t* cr, int x, int y, bool useMask, const wxColour* fg,
 
 GdkPixbuf *wxBitmap::GetPixbuf() const
 {
-    wxCHECK_MSG( IsOk(), NULL, wxT("invalid bitmap") );
+    //wxCHECK_MSG( IsOk(), NULL, wxT("invalid bitmap") );
 
     wxBitmapRefData* bmpData = M_BMPDATA;
 #ifdef __WXGTK3__
@@ -1356,7 +1356,7 @@ GdkPixbuf *wxBitmap::GetPixbuf() const
 #ifndef __WXGTK3__
 bool wxBitmap::HasPixbuf() const
 {
-    wxCHECK_MSG( IsOk(), false, wxT("invalid bitmap") );
+    //wxCHECK_MSG( IsOk(), false, wxT("invalid bitmap") );
 
     return M_BMPDATA->m_pixbuf != NULL;
 }
@@ -1457,7 +1457,7 @@ wxGDIRefData* wxBitmap::CloneGDIRefData(const wxGDIRefData* data) const
         const guchar* src = cairo_image_surface_get_data(oldRef->m_surface);
         guchar* dst = cairo_image_surface_get_data(surface);
         const int stride = cairo_image_surface_get_stride(surface);
-        wxASSERT(stride == cairo_image_surface_get_stride(oldRef->m_surface));
+        //wxASSERT(stride == cairo_image_surface_get_stride(oldRef->m_surface));
         memcpy(dst, src, stride * h);
         cairo_surface_mark_dirty(surface);
     }

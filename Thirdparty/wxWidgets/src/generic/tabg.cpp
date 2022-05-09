@@ -1258,7 +1258,7 @@ void wxPanelTabView::OnTabActivate(int activateId, int deactivateId)
 
 void wxPanelTabView::AddTabWindow(int id, wxWindow *window)
 {
-  wxASSERT(m_tabWindows.find(id) == m_tabWindows.end());
+  //wxASSERT(m_tabWindows.find(id) == m_tabWindows.end());
   m_tabWindows[id] = window;
   window->Show(false);
 }

@@ -252,9 +252,9 @@ void wxNumberFormatter::AddThousandsSeparators(wxString& s)
 void wxNumberFormatter::RemoveTrailingZeroes(wxString& s)
 {
     const size_t posDecSep = s.find(GetDecimalSeparator());
-    wxCHECK_RET( posDecSep != wxString::npos,
+    //wxCHECK_RET( posDecSep != wxString::npos,
                  wxString::Format("No decimal separator in \"%s\"", s) );
-    wxCHECK_RET( posDecSep, "Can't start with decimal separator" );
+    //wxCHECK_RET( posDecSep, "Can't start with decimal separator" );
 
     // Find the last character to keep.
     size_t posLastNonZero = s.find_last_not_of("0");

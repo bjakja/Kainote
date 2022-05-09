@@ -384,7 +384,7 @@ wxGLCanvas::~wxGLCanvas()
 bool wxGLCanvas::SwapBuffers()
 {
     WXGLContext context = WXGLGetCurrentContext();
-    wxCHECK_MSG(context, false, wxT("should have current context"));
+    //wxCHECK_MSG(context, false, wxT("should have current context"));
 
     aglSwapBuffers(context);
     return true;

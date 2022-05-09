@@ -126,7 +126,7 @@ wxPluginLibrary::~wxPluginLibrary()
 
 wxPluginLibrary *wxPluginLibrary::RefLib()
 {
-    wxCHECK_MSG( m_linkcount > 0, NULL,
+    //wxCHECK_MSG( m_linkcount > 0, NULL,
                  wxT("Library had been already deleted!") );
 
     ++m_linkcount;
@@ -381,7 +381,7 @@ bool wxPluginManager::Load(const wxString &libname, int flags)
 
 void wxPluginManager::Unload()
 {
-    wxCHECK_RET( m_entry, wxT("unloading an invalid wxPluginManager?") );
+    //wxCHECK_RET( m_entry, wxT("unloading an invalid wxPluginManager?") );
 
     for ( wxDLManifest::iterator i = ms_manifest->begin();
           i != ms_manifest->end();

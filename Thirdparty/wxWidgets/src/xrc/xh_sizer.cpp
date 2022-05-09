@@ -520,7 +520,7 @@ wxObject *wxStdDialogButtonSizerXmlHandler::DoCreateResource()
 {
     if (m_class == wxT("wxStdDialogButtonSizer"))
     {
-        wxASSERT( !m_parentSizer );
+        //wxASSERT( !m_parentSizer );
 
         wxSizer *s = m_parentSizer = new wxStdDialogButtonSizer;
         m_isInside = true;
@@ -536,7 +536,7 @@ wxObject *wxStdDialogButtonSizerXmlHandler::DoCreateResource()
     }
     else // m_class == "button"
     {
-        wxASSERT( m_parentSizer );
+        //wxASSERT( m_parentSizer );
 
         // find the item to be managed by this sizeritem
         wxXmlNode *n = GetParamNode(wxT("object"));

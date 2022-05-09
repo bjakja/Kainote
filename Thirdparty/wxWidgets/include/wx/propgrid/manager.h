@@ -328,13 +328,13 @@ public:
     */
     wxPropertyGrid* GetGrid()
     {
-        wxASSERT(m_pPropGrid);
+        //wxASSERT(m_pPropGrid);
         return m_pPropGrid;
     };
 
     const wxPropertyGrid* GetGrid() const
     {
-        wxASSERT(m_pPropGrid);
+        //wxASSERT(m_pPropGrid);
         return (const wxPropertyGrid*)m_pPropGrid;
     };
 
@@ -522,7 +522,7 @@ public:
     void SelectPage( const wxString& label )
     {
         int index = GetPageByName(label);
-        wxCHECK_RET( index >= 0, wxT("No page with such name") );
+        //wxCHECK_RET( index >= 0, wxT("No page with such name") );
         SelectPage( index );
     }
 

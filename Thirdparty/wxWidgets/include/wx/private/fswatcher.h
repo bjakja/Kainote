@@ -49,7 +49,7 @@ public:
 
     virtual bool Add(const wxFSWatchInfo& winfo)
     {
-        wxCHECK_MSG( m_watches.find(winfo.GetPath()) == m_watches.end(), false,
+        //wxCHECK_MSG( m_watches.find(winfo.GetPath()) == m_watches.end(), false,
                      "Path '%s' is already watched");
 
         // construct watch entry
@@ -66,7 +66,7 @@ public:
     virtual bool Remove(const wxFSWatchInfo& winfo)
     {
         wxFSWatchEntries::iterator it = m_watches.find(winfo.GetPath());
-        wxCHECK_MSG( it != m_watches.end(), false, "Path '%s' is not watched");
+        //wxCHECK_MSG( it != m_watches.end(), false, "Path '%s' is not watched");
 
         wxSharedPtr<wxFSWatchEntry> watch = it->second;
         m_watches.erase(it);

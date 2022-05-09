@@ -168,15 +168,15 @@ void wxHeaderCtrlBase::OnRClick(wxHeaderCtrlEvent& event)
 void wxHeaderCtrlBase::SetColumnsOrder(const wxArrayInt& order)
 {
     const unsigned count = GetColumnCount();
-    wxCHECK_RET( order.size() == count, "wrong number of columns" );
+    //wxCHECK_RET( order.size() == count, "wrong number of columns" );
 
     // check the array validity
     wxArrayInt seen(count, 0);
     for ( unsigned n = 0; n < count; n++ )
     {
         const unsigned idx = order[n];
-        wxCHECK_RET( idx < count, "invalid column index" );
-        wxCHECK_RET( !seen[idx], "duplicate column index" );
+        //wxCHECK_RET( idx < count, "invalid column index" );
+        //wxCHECK_RET( !seen[idx], "duplicate column index" );
 
         seen[idx] = 1;
     }
@@ -207,7 +207,7 @@ wxArrayInt wxHeaderCtrlBase::GetColumnsOrder() const
 
 unsigned int wxHeaderCtrlBase::GetColumnAt(unsigned int pos) const
 {
-    wxCHECK_MSG( pos < GetColumnCount(), wxNO_COLUMN, "invalid position" );
+    //wxCHECK_MSG( pos < GetColumnCount(), wxNO_COLUMN, "invalid position" );
 
     return GetColumnsOrder()[pos];
 }
@@ -216,7 +216,7 @@ unsigned int wxHeaderCtrlBase::GetColumnPos(unsigned int idx) const
 {
     const unsigned count = GetColumnCount();
 
-    wxCHECK_MSG( idx < count, wxNO_COLUMN, "invalid index" );
+    //wxCHECK_MSG( idx < count, wxNO_COLUMN, "invalid index" );
 
     const wxArrayInt order = GetColumnsOrder();
     for ( unsigned n = 0; n < count; n++ )

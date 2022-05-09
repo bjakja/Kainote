@@ -544,7 +544,7 @@ void VsnprintfTestCase::DoMisc(
     size_t i;
     static int count = 0;
 
-    wxASSERT(max <= BUFSIZE);
+    //wxASSERT(max <= BUFSIZE);
 
     for (i = 0; i < BUFSIZE; i++)
         buf[i] = '*';

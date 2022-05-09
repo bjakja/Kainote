@@ -117,7 +117,7 @@ wxNodeBase::~wxNodeBase()
 
 int wxNodeBase::IndexOf() const
 {
-    wxCHECK_MSG( m_list, wxNOT_FOUND, wxT("node doesn't belong to a list in IndexOf"));
+    //wxCHECK_MSG( m_list, wxNOT_FOUND, wxT("node doesn't belong to a list in IndexOf"));
 
     // It would be more efficient to implement IndexOf() completely inside
     // wxListBase (only traverse the list once), but this is probably a more
@@ -232,7 +232,7 @@ wxNodeBase *wxListBase::AppendCommon(wxNodeBase *node)
 wxNodeBase *wxListBase::Append(void *object)
 {
     // all objects in a keyed list should have a key
-    wxCHECK_MSG( m_keyType == wxKEY_NONE, NULL,
+    //wxCHECK_MSG( m_keyType == wxKEY_NONE, NULL,
                  wxT("need a key for the object to append") );
 
     // we use wxDefaultListKey even though it is the default parameter value
@@ -245,7 +245,7 @@ wxNodeBase *wxListBase::Append(void *object)
 
 wxNodeBase *wxListBase::Append(long key, void *object)
 {
-    wxCHECK_MSG( (m_keyType == wxKEY_INTEGER) ||
+    //wxCHECK_MSG( (m_keyType == wxKEY_INTEGER) ||
                  (m_keyType == wxKEY_NONE && m_count == 0),
                  NULL,
                  wxT("can't append object with numeric key to this list") );
@@ -256,7 +256,7 @@ wxNodeBase *wxListBase::Append(long key, void *object)
 
 wxNodeBase *wxListBase::Append (const wxString& key, void *object)
 {
-    wxCHECK_MSG( (m_keyType == wxKEY_STRING) ||
+    //wxCHECK_MSG( (m_keyType == wxKEY_STRING) ||
                  (m_keyType == wxKEY_NONE && m_count == 0),
                  NULL,
                  wxT("can't append object with string key to this list") );
@@ -268,10 +268,10 @@ wxNodeBase *wxListBase::Append (const wxString& key, void *object)
 wxNodeBase *wxListBase::Insert(wxNodeBase *position, void *object)
 {
     // all objects in a keyed list should have a key
-    wxCHECK_MSG( m_keyType == wxKEY_NONE, NULL,
+    //wxCHECK_MSG( m_keyType == wxKEY_NONE, NULL,
                  wxT("need a key for the object to insert") );
 
-    wxCHECK_MSG( !position || position->m_list == this, NULL,
+    //wxCHECK_MSG( !position || position->m_list == this, NULL,
                  wxT("can't insert before a node from another list") );
 
     // previous and next node for the node being inserted
@@ -376,8 +376,8 @@ void wxListBase::DoDeleteNode(wxNodeBase *node)
 
 wxNodeBase *wxListBase::DetachNode(wxNodeBase *node)
 {
-    wxCHECK_MSG( node, NULL, wxT("detaching NULL wxNodeBase") );
-    wxCHECK_MSG( node->m_list == this, NULL,
+    //wxCHECK_MSG( node, NULL, wxT("detaching NULL wxNodeBase") );
+    //wxCHECK_MSG( node->m_list == this, NULL,
                  wxT("detaching node which is not from this list") );
 
     // update the list
@@ -616,7 +616,7 @@ bool wxStringList::Delete(const wxChar *s)
 
 void wxStringList::DoCopy(const wxStringList& other)
 {
-    wxASSERT( GetCount() == 0 );    // this list must be empty before copying!
+    //wxASSERT( GetCount() == 0 );    // this list must be empty before copying!
 
     size_t count = other.GetCount();
     for ( size_t n = 0; n < count; n++ )

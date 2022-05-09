@@ -106,7 +106,7 @@ bool wxCheckBox::GetValue() const
 void wxCheckBox::Command (wxCommandEvent & event)
 {
     int state = event.GetInt();
-    wxCHECK_RET( (state == wxCHK_UNCHECKED) || (state == wxCHK_CHECKED)
+    //wxCHECK_RET( (state == wxCHK_UNCHECKED) || (state == wxCHK_CHECKED)
         || (state == wxCHK_UNDETERMINED),
         wxT("event.GetInt() returned an invalid checkbox state") );
 
@@ -173,7 +173,7 @@ void wxCheckBox::DoSet3StateValue(wxCheckBoxState state)
     case wxCHK_UNCHECKED: value = XmUNSET; break;
     case wxCHK_CHECKED: value = XmSET; break;
     case wxCHK_UNDETERMINED: value = XmINDETERMINATE; break;
-    default: wxASSERT(0); return;
+    default: //wxASSERT(0); return;
     }
 
     XtVaSetValues( (Widget) m_mainWidget,

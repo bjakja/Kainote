@@ -176,13 +176,13 @@ wxPGProperty* wxPropertyGridInterface::ReplaceProperty( wxPGPropArg id, wxPGProp
     wxPG_PROP_ARG_CALL_PROLOG_RETVAL(wxNullProperty)
 
     wxPGProperty* replaced = p;
-    wxCHECK_MSG( replaced && property,
+    //wxCHECK_MSG( replaced && property,
                  wxNullProperty,
                  wxT("NULL property") );
-    wxCHECK_MSG( !replaced->IsCategory(),
+    //wxCHECK_MSG( !replaced->IsCategory(),
                  wxNullProperty,
                  wxT("cannot replace this type of property") );
-    wxCHECK_MSG( !m_pState->IsInNonCatMode(),
+    //wxCHECK_MSG( !m_pState->IsInNonCatMode(),
                  wxNullProperty,
                  wxT("cannot replace properties in alphabetic mode") );
 
@@ -379,7 +379,7 @@ void wxPGTypeOperationFailed( const wxPGProperty* p,
                               const wxString& typestr,
                               const wxString& op )
 {
-    wxASSERT( p != NULL );
+    //wxASSERT( p != NULL );
     wxLogError( _("Type operation \"%s\" failed: Property labeled \"%s\" is of type \"%s\", NOT \"%s\"."),
         op.c_str(), p->GetLabel().c_str(), p->GetValue().GetType().c_str(), typestr.c_str() );
 }
@@ -477,7 +477,7 @@ void wxPropertyGridInterface::GetPropertiesWithFlag( wxArrayPGProperty* targetAr
                                                      bool inverse,
                                                      int iterFlags ) const
 {
-    wxASSERT( targetArr );
+    //wxASSERT( targetArr );
     wxPGVIterator it = GetVIterator( iterFlags );
 
     for ( ;
@@ -771,7 +771,7 @@ bool wxPropertyGridInterface::ChangePropertyValue( wxPGPropArg id, wxVariant new
 void wxPropertyGridInterface::BeginAddChildren( wxPGPropArg id )
 {
     wxPG_PROP_ARG_CALL_PROLOG()
-    wxCHECK_RET( p->HasFlag(wxPG_PROP_AGGREGATE), wxT("only call on properties with fixed children") );
+    //wxCHECK_RET( p->HasFlag(wxPG_PROP_AGGREGATE), wxT("only call on properties with fixed children") );
     p->ClearFlag(wxPG_PROP_AGGREGATE);
     p->SetFlag(wxPG_PROP_MISC_PARENT);
 }
@@ -788,7 +788,7 @@ bool wxPropertyGridInterface::EditorValidate()
 void wxPropertyGridInterface::EndAddChildren( wxPGPropArg id )
 {
     wxPG_PROP_ARG_CALL_PROLOG()
-    wxCHECK_RET( p->HasFlag(wxPG_PROP_MISC_PARENT), wxT("only call on properties for which BeginAddChildren was called prior") );
+    //wxCHECK_RET( p->HasFlag(wxPG_PROP_MISC_PARENT), wxT("only call on properties for which BeginAddChildren was called prior") );
     p->ClearFlag(wxPG_PROP_MISC_PARENT);
     p->SetFlag(wxPG_PROP_AGGREGATE);
 }

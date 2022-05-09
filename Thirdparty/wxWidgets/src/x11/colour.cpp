@@ -189,7 +189,7 @@ void wxColour::InitRGBA(unsigned char red, unsigned char green, unsigned char bl
 
 unsigned char wxColour::Red() const
 {
-    wxCHECK_MSG( IsOk(), 0, wxT("invalid colour") );
+    //wxCHECK_MSG( IsOk(), 0, wxT("invalid colour") );
 
 #if wxUSE_NANOX
     return (unsigned char) M_COLDATA->m_color.red ;
@@ -200,7 +200,7 @@ unsigned char wxColour::Red() const
 
 unsigned char wxColour::Green() const
 {
-    wxCHECK_MSG( IsOk(), 0, wxT("invalid colour") );
+    //wxCHECK_MSG( IsOk(), 0, wxT("invalid colour") );
 
 #if wxUSE_NANOX
     return (unsigned char) M_COLDATA->m_color.green ;
@@ -211,7 +211,7 @@ unsigned char wxColour::Green() const
 
 unsigned char wxColour::Blue() const
 {
-    wxCHECK_MSG( IsOk(), 0, wxT("invalid colour") );
+    //wxCHECK_MSG( IsOk(), 0, wxT("invalid colour") );
 
 #if wxUSE_NANOX
     return (unsigned char) M_COLDATA->m_color.blue ;
@@ -222,23 +222,23 @@ unsigned char wxColour::Blue() const
 
 void wxColour::CalcPixel( WXColormap cmap )
 {
-    wxCHECK_RET( IsOk(), wxT("invalid colour") );
+    //wxCHECK_RET( IsOk(), wxT("invalid colour") );
 
-    wxCHECK_RET( cmap, wxT("invalid colormap") );
+    //wxCHECK_RET( cmap, wxT("invalid colormap") );
 
     M_COLDATA->AllocColour( cmap );
 }
 
 unsigned long wxColour::GetPixel() const
 {
-    wxCHECK_MSG( IsOk(), 0, wxT("invalid colour") );
+    //wxCHECK_MSG( IsOk(), 0, wxT("invalid colour") );
 
     return M_COLDATA->m_color.pixel;
 }
 
 WXColor *wxColour::GetColor() const
 {
-    wxCHECK_MSG( IsOk(), NULL, wxT("invalid colour") );
+    //wxCHECK_MSG( IsOk(), NULL, wxT("invalid colour") );
 
     return (WXColor*) &M_COLDATA->m_color;
 }

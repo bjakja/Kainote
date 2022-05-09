@@ -281,7 +281,7 @@ int wxListBox::DoInsertItems(const wxArrayStringsAdapter& items,
 
 void wxListBox::SetString(unsigned int n, const wxString& s)
 {
-    wxCHECK_RET( !IsSorted(), wxT("can't set string in sorted listbox") );
+    //wxCHECK_RET( !IsSorted(), wxT("can't set string in sorted listbox") );
 
     if ( IsSorted() )
         (*m_strings.sorted)[n] = s;
@@ -338,7 +338,7 @@ void wxListBox::DoClear()
 
 void wxListBox::DoDeleteOneItem(unsigned int n)
 {
-    wxCHECK_RET( IsValid(n),
+    //wxCHECK_RET( IsValid(n),
                  wxT("invalid index in wxListBox::Delete") );
 
     // do it before removing the index as otherwise the last item will not be
@@ -469,7 +469,7 @@ void wxListBox::DoSetSelection(int n, bool select)
 
 int wxListBox::GetSelection() const
 {
-    wxCHECK_MSG( !HasMultipleSelection(), wxNOT_FOUND,
+    //wxCHECK_MSG( !HasMultipleSelection(), wxNOT_FOUND,
                  wxT("use wxListBox::GetSelections for ths listbox") );
 
     return m_selections.IsEmpty() ? wxNOT_FOUND : m_selections[0];

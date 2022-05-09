@@ -345,7 +345,7 @@ void wxWindowDCImpl::SetUpDC()
 
 void wxWindowDCImpl::DoGetSize( int* width, int* height ) const
 {
-    wxCHECK_RET( m_window, wxT("GetSize() doesn't work without window") );
+    //wxCHECK_RET( m_window, wxT("GetSize() doesn't work without window") );
 
     m_window->GetSize(width, height);
 }
@@ -375,7 +375,7 @@ bool wxWindowDCImpl::DoGetPixel( wxCoord x1, wxCoord y1, wxColour *col ) const
 
 void wxWindowDCImpl::DoDrawLine( wxCoord x1, wxCoord y1, wxCoord x2, wxCoord y2 )
 {
-    wxCHECK_RET( IsOk(), wxT("invalid window dc") );
+    //wxCHECK_RET( IsOk(), wxT("invalid window dc") );
 
     if (m_pen.GetStyle() != wxTRANSPARENT)
     {
@@ -401,7 +401,7 @@ void wxWindowDCImpl::DoDrawLine( wxCoord x1, wxCoord y1, wxCoord x2, wxCoord y2 
 
 void wxWindowDCImpl::DoCrossHair( wxCoord x, wxCoord y )
 {
-    wxCHECK_RET( IsOk(), wxT("invalid window dc") );
+    //wxCHECK_RET( IsOk(), wxT("invalid window dc") );
 
     if (m_pen.GetStyle() != wxTRANSPARENT)
     {
@@ -422,7 +422,7 @@ void wxWindowDCImpl::DoCrossHair( wxCoord x, wxCoord y )
 
 void wxWindowDCImpl::DoDrawArc( wxCoord x1, wxCoord y1, wxCoord x2, wxCoord y2, wxCoord xc, wxCoord yc )
 {
-    wxCHECK_RET( IsOk(), wxT("invalid window dc") );
+    //wxCHECK_RET( IsOk(), wxT("invalid window dc") );
 
     wxCoord xx1 = XLOG2DEV(x1);
     wxCoord yy1 = YLOG2DEV(y1);
@@ -532,7 +532,7 @@ void wxWindowDCImpl::DoDrawArc( wxCoord x1, wxCoord y1, wxCoord x2, wxCoord y2, 
 
 void wxWindowDCImpl::DoDrawEllipticArc( wxCoord x, wxCoord y, wxCoord width, wxCoord height, double sa, double ea )
 {
-    wxCHECK_RET( IsOk(), wxT("invalid window dc") );
+    //wxCHECK_RET( IsOk(), wxT("invalid window dc") );
 
     wxCoord xx = XLOG2DEV(x);
     wxCoord yy = YLOG2DEV(y);
@@ -612,7 +612,7 @@ void wxWindowDCImpl::DoDrawEllipticArc( wxCoord x, wxCoord y, wxCoord width, wxC
 
 void wxWindowDCImpl::DoDrawPoint( wxCoord x, wxCoord y )
 {
-    wxCHECK_RET( IsOk(), wxT("invalid window dc") );
+    //wxCHECK_RET( IsOk(), wxT("invalid window dc") );
 
     if ((m_pen.GetStyle() != wxTRANSPARENT) && m_x11window)
         XDrawPoint( (Display*) m_display, (Window) m_x11window,
@@ -623,7 +623,7 @@ void wxWindowDCImpl::DoDrawPoint( wxCoord x, wxCoord y )
 
 void wxWindowDCImpl::DoDrawLines( int n, wxPoint points[], wxCoord xoffset, wxCoord yoffset )
 {
-    wxCHECK_RET( IsOk(), wxT("invalid window dc") );
+    //wxCHECK_RET( IsOk(), wxT("invalid window dc") );
 
     if (m_pen.GetStyle() == wxTRANSPARENT) return;
     if (n <= 0) return;
@@ -645,7 +645,7 @@ void wxWindowDCImpl::DoDrawPolygon( int n, wxPoint points[],
                                 wxCoord xoffset, wxCoord yoffset,
                                 wxPolygonFillMode WXUNUSED(fillStyle) )
 {
-    wxCHECK_RET( IsOk(), wxT("invalid window dc") );
+    //wxCHECK_RET( IsOk(), wxT("invalid window dc") );
 
     if (n <= 0) return;
 
@@ -728,7 +728,7 @@ void wxWindowDCImpl::DoDrawPolygon( int n, wxPoint points[],
 
 void wxWindowDCImpl::DoDrawRectangle( wxCoord x, wxCoord y, wxCoord width, wxCoord height )
 {
-    wxCHECK_RET( IsOk(), wxT("invalid window dc") );
+    //wxCHECK_RET( IsOk(), wxT("invalid window dc") );
 
     wxCoord xx = XLOG2DEV(x);
     wxCoord yy = YLOG2DEV(y);
@@ -808,7 +808,7 @@ void wxWindowDCImpl::DoDrawRectangle( wxCoord x, wxCoord y, wxCoord width, wxCoo
 
 void wxWindowDCImpl::DoDrawRoundedRectangle( wxCoord x, wxCoord y, wxCoord width, wxCoord height, double radius )
 {
-    wxCHECK_RET( IsOk(), wxT("invalid window dc") );
+    //wxCHECK_RET( IsOk(), wxT("invalid window dc") );
 
     if (radius < 0.0) radius = - radius * ((width < height) ? width : height);
 
@@ -931,7 +931,7 @@ void wxWindowDCImpl::DoDrawRoundedRectangle( wxCoord x, wxCoord y, wxCoord width
 
 void wxWindowDCImpl::DoDrawEllipse( wxCoord x, wxCoord y, wxCoord width, wxCoord height )
 {
-    wxCHECK_RET( IsOk(), wxT("invalid window dc") );
+    //wxCHECK_RET( IsOk(), wxT("invalid window dc") );
 
     wxCoord xx = XLOG2DEV(x);
     wxCoord yy = YLOG2DEV(y);
@@ -1016,9 +1016,9 @@ void wxWindowDCImpl::DoDrawBitmap( const wxBitmap &bitmap,
                                wxCoord x, wxCoord y,
                                bool useMask )
 {
-    wxCHECK_RET( IsOk(), wxT("invalid window dc") );
+    //wxCHECK_RET( IsOk(), wxT("invalid window dc") );
 
-    wxCHECK_RET( bitmap.IsOk(), wxT("invalid bitmap") );
+    //wxCHECK_RET( bitmap.IsOk(), wxT("invalid bitmap") );
 
     bool is_mono = (bitmap.GetBitmap() != NULL);
 
@@ -1135,9 +1135,9 @@ void wxWindowDCImpl::DoDrawBitmap( const wxBitmap &bitmap,
                                wxCoord x, wxCoord y,
                                bool useMask )
 {
-    wxCHECK_RET( IsOk(), wxT("invalid window dc") );
+    //wxCHECK_RET( IsOk(), wxT("invalid window dc") );
 
-    wxCHECK_RET( bitmap.IsOk(), wxT("invalid bitmap") );
+    //wxCHECK_RET( bitmap.IsOk(), wxT("invalid bitmap") );
 
     bool is_mono = (bitmap.GetBitmap() != NULL);
 
@@ -1300,9 +1300,9 @@ bool wxWindowDCImpl::DoBlit( wxCoord xdest, wxCoord ydest, wxCoord width, wxCoor
       of the source dc, but scales correctly on the target dc and
       knows about possible mask information in a memory dc. */
 
-    wxCHECK_MSG( IsOk(), false, wxT("invalid window dc") );
+    //wxCHECK_MSG( IsOk(), false, wxT("invalid window dc") );
 
-    wxCHECK_MSG( source, false, wxT("invalid source dc") );
+    //wxCHECK_MSG( source, false, wxT("invalid source dc") );
 
     if (!m_x11window) return false;
 
@@ -1559,7 +1559,7 @@ bool wxWindowDCImpl::DoBlit( wxCoord xdest, wxCoord ydest, wxCoord width, wxCoor
 
 void wxWindowDCImpl::DoDrawText( const wxString &text, wxCoord x, wxCoord y )
 {
-    wxCHECK_RET( IsOk(), wxT("invalid window dc") );
+    //wxCHECK_RET( IsOk(), wxT("invalid window dc") );
 
     if (!m_x11window) return;
 
@@ -1589,7 +1589,7 @@ void wxWindowDCImpl::DoDrawText( const wxString &text, wxCoord x, wxCoord y )
 #else
     XFontStruct *xfont = (XFontStruct*) m_font.GetFontStruct( m_scaleY, m_display );
 
-    wxCHECK_RET( xfont, wxT("invalid font") );
+    //wxCHECK_RET( xfont, wxT("invalid font") );
 
     // First draw a rectangle representing the text background, if a text
     // background is specified
@@ -1698,11 +1698,11 @@ void wxWindowDCImpl::DoGetTextExtent( const wxString &string, wxCoord *width, wx
     wxFont fontToUse = m_font;
     if (font) fontToUse = *font;
 
-    wxCHECK_RET( fontToUse.IsOk(), wxT("invalid font") );
+    //wxCHECK_RET( fontToUse.IsOk(), wxT("invalid font") );
 
     XFontStruct *xfont = (XFontStruct*) fontToUse.GetFontStruct( m_scaleY, m_display );
 
-    wxCHECK_RET( xfont, wxT("invalid font") );
+    //wxCHECK_RET( xfont, wxT("invalid font") );
 
     int direction, ascent, descent2;
     XCharStruct overall;
@@ -1741,11 +1741,11 @@ wxCoord wxWindowDCImpl::GetCharWidth() const
 
     return w;
 #else
-    wxCHECK_MSG( m_font.IsOk(), 0, wxT("invalid font") );
+    //wxCHECK_MSG( m_font.IsOk(), 0, wxT("invalid font") );
 
     XFontStruct *xfont = (XFontStruct*) m_font.GetFontStruct( m_scaleY, m_display );
 
-    wxCHECK_MSG( xfont, 0, wxT("invalid font") );
+    //wxCHECK_MSG( xfont, 0, wxT("invalid font") );
 
     int direction, ascent, descent;
     XCharStruct overall;
@@ -1776,11 +1776,11 @@ wxCoord wxWindowDCImpl::GetCharHeight() const
 
     return h;
 #else
-    wxCHECK_MSG( m_font.IsOk(), 0, wxT("invalid font") );
+    //wxCHECK_MSG( m_font.IsOk(), 0, wxT("invalid font") );
 
     XFontStruct *xfont = (XFontStruct*) m_font.GetFontStruct( m_scaleY, m_display );
 
-    wxCHECK_MSG( xfont, 0, wxT("invalid font") );
+    //wxCHECK_MSG( xfont, 0, wxT("invalid font") );
 
     int direction, ascent, descent;
     XCharStruct overall;
@@ -1793,7 +1793,7 @@ wxCoord wxWindowDCImpl::GetCharHeight() const
 
 void wxWindowDCImpl::Clear()
 {
-    wxCHECK_RET( IsOk(), wxT("invalid window dc") );
+    //wxCHECK_RET( IsOk(), wxT("invalid window dc") );
 
     if (!m_x11window) return;
 
@@ -1823,7 +1823,7 @@ void wxWindowDCImpl::Clear()
 
 void wxWindowDCImpl::SetFont( const wxFont &font )
 {
-    wxCHECK_RET( IsOk(), wxT("invalid dc") );
+    //wxCHECK_RET( IsOk(), wxT("invalid dc") );
 
     m_font = font;
 
@@ -1834,7 +1834,7 @@ void wxWindowDCImpl::SetFont( const wxFont &font )
 
 void wxWindowDCImpl::SetPen( const wxPen &pen )
 {
-    wxCHECK_RET( IsOk(), wxT("invalid window dc") );
+    //wxCHECK_RET( IsOk(), wxT("invalid window dc") );
 
     if (m_pen == pen) return;
 
@@ -1961,7 +1961,7 @@ void wxWindowDCImpl::SetPen( const wxPen &pen )
 
 void wxWindowDCImpl::SetBrush( const wxBrush &brush )
 {
-    wxCHECK_RET( IsOk(), wxT("invalid window dc") );
+    //wxCHECK_RET( IsOk(), wxT("invalid window dc") );
 
     if (m_brush == brush) return;
 
@@ -2009,7 +2009,7 @@ void wxWindowDCImpl::SetBackground( const wxBrush &brush )
    /* CMB 21/7/98: Added SetBackground. Sets background brush
     * for Clear() and bg colour for shapes filled with cross-hatch brush */
 
-    wxCHECK_RET( IsOk(), wxT("invalid window dc") );
+    //wxCHECK_RET( IsOk(), wxT("invalid window dc") );
 
     if (m_backgroundBrush == brush) return;
 
@@ -2051,7 +2051,7 @@ void wxWindowDCImpl::SetBackground( const wxBrush &brush )
 
 void wxWindowDCImpl::SetLogicalFunction( wxRasterOperationMode function )
 {
-    wxCHECK_RET( IsOk(), wxT("invalid dc") );
+    //wxCHECK_RET( IsOk(), wxT("invalid dc") );
 
     int x_function;
 
@@ -2128,7 +2128,7 @@ void wxWindowDCImpl::SetLogicalFunction( wxRasterOperationMode function )
 
 void wxWindowDCImpl::SetTextForeground( const wxColour &col )
 {
-    wxCHECK_RET( IsOk(), wxT("invalid window dc") );
+    //wxCHECK_RET( IsOk(), wxT("invalid window dc") );
 
     // don't set m_textForegroundColour to an invalid colour as we'd crash
     // later then (we use m_textForegroundColour.GetColor() without checking
@@ -2147,7 +2147,7 @@ void wxWindowDCImpl::SetTextForeground( const wxColour &col )
 
 void wxWindowDCImpl::SetTextBackground( const wxColour &col )
 {
-    wxCHECK_RET( IsOk(), wxT("invalid window dc") );
+    //wxCHECK_RET( IsOk(), wxT("invalid window dc") );
 
     // same as above
     if ( !col.IsOk() || (m_textBackgroundColour == col) )
@@ -2164,7 +2164,7 @@ void wxWindowDCImpl::SetTextBackground( const wxColour &col )
 
 void wxWindowDCImpl::SetBackgroundMode( int mode )
 {
-    wxCHECK_RET( IsOk(), wxT("invalid window dc") );
+    //wxCHECK_RET( IsOk(), wxT("invalid window dc") );
 
     m_backgroundMode = mode;
 
@@ -2203,7 +2203,7 @@ void wxWindowDCImpl::SetPalette( const wxPalette& WXUNUSED(palette) )
 
 void wxWindowDCImpl::DoSetClippingRegion( wxCoord x, wxCoord y, wxCoord width, wxCoord height )
 {
-    wxCHECK_RET( IsOk(), wxT("invalid window dc") );
+    //wxCHECK_RET( IsOk(), wxT("invalid window dc") );
 
     if (!m_x11window) return;
 
@@ -2241,7 +2241,7 @@ void wxWindowDCImpl::DoSetClippingRegion( wxCoord x, wxCoord y, wxCoord width, w
 
 void wxWindowDCImpl::DoSetDeviceClippingRegion( const wxRegion& region )
 {
-    wxCHECK_RET( IsOk(), wxT("invalid window dc") );
+    //wxCHECK_RET( IsOk(), wxT("invalid window dc") );
 
     if (region.Empty())
     {
@@ -2273,7 +2273,7 @@ void wxWindowDCImpl::DoSetDeviceClippingRegion( const wxRegion& region )
 
 void wxWindowDCImpl::DestroyClippingRegion()
 {
-    wxCHECK_RET( IsOk(), wxT("invalid window dc") );
+    //wxCHECK_RET( IsOk(), wxT("invalid window dc") );
 
     wxDCImpl::DestroyClippingRegion();
 
@@ -2355,7 +2355,7 @@ IMPLEMENT_ABSTRACT_CLASS(wxClientDCImpl, wxWindowDCImpl)
 wxClientDCImpl::wxClientDCImpl( wxDC *owner, wxWindow *window )
           : wxWindowDCImpl( owner, window )
 {
-    wxCHECK_RET( window, wxT("NULL window in wxClientDC::wxClientDC") );
+    //wxCHECK_RET( window, wxT("NULL window in wxClientDC::wxClientDC") );
 
     m_x11window = (WXWindow*) window->GetClientAreaWindow();
 
@@ -2371,7 +2371,7 @@ wxClientDCImpl::wxClientDCImpl( wxDC *owner, wxWindow *window )
 
 void wxClientDCImpl::DoGetSize(int *width, int *height) const
 {
-    wxCHECK_RET( m_window, wxT("GetSize() doesn't work without window") );
+    //wxCHECK_RET( m_window, wxT("GetSize() doesn't work without window") );
 
     m_window->GetClientSize( width, height );
 }

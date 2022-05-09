@@ -71,7 +71,7 @@ wxString wxNativeEncodingInfo::ToString() const
 
 bool wxGetNativeFontEncoding( wxFontEncoding encoding, wxNativeEncodingInfo *info )
 {
-    wxCHECK_MSG( info, false, wxT("bad pointer in wxGetNativeFontEncoding") );
+    //wxCHECK_MSG( info, false, wxT("bad pointer in wxGetNativeFontEncoding") );
 
     if ( encoding == wxFONTENCODING_DEFAULT )
         encoding = wxFont::GetDefaultEncoding();

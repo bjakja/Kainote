@@ -357,13 +357,13 @@ bool wxToolBar::DoInsertTool(size_t pos, wxToolBarToolBase *toolBase)
         {
             wxBitmap bitmap = tool->GetNormalBitmap();
 
-            wxCHECK_MSG( bitmap.IsOk(), false,
+            //wxCHECK_MSG( bitmap.IsOk(), false,
                          wxT("invalid bitmap for wxToolBar icon") );
 
-            wxCHECK_MSG( bitmap.GetBitmap() == NULL, false,
+            //wxCHECK_MSG( bitmap.GetBitmap() == NULL, false,
                          wxT("wxToolBar doesn't support GdkBitmap") );
 
-            wxCHECK_MSG( bitmap.GetPixmap() != NULL, false,
+            //wxCHECK_MSG( bitmap.GetPixmap() != NULL, false,
                          wxT("wxToolBar::Add needs a wxBitmap") );
 
             GtkWidget *tool_pixmap = NULL;
@@ -561,7 +561,7 @@ wxToolBarToolBase *wxToolBar::FindToolForPosition(wxCoord WXUNUSED(x),
 
 void wxToolBar::SetMargins( int x, int y )
 {
-    wxCHECK_RET( GetToolsCount() == 0,
+    //wxCHECK_RET( GetToolsCount() == 0,
                  wxT("wxToolBar::SetMargins must be called before adding tools.") );
 
     if (x > 1)

@@ -144,11 +144,11 @@ wxColour wxSystemSettingsNative::GetColour(wxSystemColour index)
         // case wxSYS_COLOUR_MAX:
         default:
             resultColor = *wxWHITE;
-            // wxCHECK_MSG( index >= wxSYS_COLOUR_MAX, false, wxT("unknown system colour index") );
+            // //wxCHECK_MSG( index >= wxSYS_COLOUR_MAX, false, wxT("unknown system colour index") );
             break ;
     }
 
-    //wxASSERT(resultColor.IsOk());
+    ////wxASSERT(resultColor.IsOk());
 
     return resultColor;
 }
@@ -175,7 +175,7 @@ wxFont wxSystemSettingsNative::GetFont(wxSystemFont index)
             break ;
     }
 
-    //wxASSERT(font.IsOk() && wxFontEnumerator::IsValidFacename(font.GetFaceName()));
+    ////wxASSERT(font.IsOk() && wxFontEnumerator::IsValidFacename(font.GetFaceName()));
 
     return font;
 }

@@ -282,7 +282,7 @@ wxCheckListBox::wxCheckListBox ( wxWindow* pParent,
 
 void wxCheckListBox::Delete(unsigned int n)
 {
-    wxCHECK_RET( IsValid(n),
+    //wxCHECK_RET( IsValid(n),
                  wxT("invalid index in wxCheckListBox::Delete") );
     wxListBox::Delete(n);
 

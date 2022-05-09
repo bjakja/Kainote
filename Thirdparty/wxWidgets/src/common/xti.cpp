@@ -638,7 +638,7 @@ void wxClassInfo::SetProperty(wxObject *object, const wxChar *propertyName,
     const wxPropertyAccessor *accessor;
 
     accessor = FindAccessor(propertyName);
-    wxASSERT(accessor->HasSetter());
+    //wxASSERT(accessor->HasSetter());
     accessor->SetProperty( object, value );
 }
 
@@ -647,7 +647,7 @@ wxAny wxClassInfo::GetProperty(wxObject *object, const wxChar *propertyName) con
     const wxPropertyAccessor *accessor;
 
     accessor = FindAccessor(propertyName);
-    wxASSERT(accessor->HasGetter());
+    //wxASSERT(accessor->HasGetter());
     wxAny result;
     accessor->GetProperty(object,result);
     return result;
@@ -659,7 +659,7 @@ wxAnyList wxClassInfo::GetPropertyCollection(wxObject *object,
     const wxPropertyAccessor *accessor;
 
     accessor = FindAccessor(propertyName);
-    wxASSERT(accessor->HasGetter());
+    //wxASSERT(accessor->HasGetter());
     wxAnyList result;
     accessor->GetPropertyCollection(object,result);
     return result;
@@ -671,7 +671,7 @@ void wxClassInfo::AddToPropertyCollection(wxObject *object, const wxChar *proper
     const wxPropertyAccessor *accessor;
 
     accessor = FindAccessor(propertyName);
-    wxASSERT(accessor->HasAdder());
+    //wxASSERT(accessor->HasAdder());
     accessor->AddToPropertyCollection( object, value );
 }
 

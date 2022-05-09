@@ -300,9 +300,9 @@ static int vswscanf(const wchar_t *ws, const wchar_t *format, va_list argptr)
     // of the function. This doesn't work with %c and %s because of difference
     // in size of char and wchar_t, though.
 
-    wxCHECK_MSG( wxStrstr(format, wxT("%s")) == NULL, -1,
+    //wxCHECK_MSG( wxStrstr(format, wxT("%s")) == NULL, -1,
                  wxT("incomplete vswscanf implementation doesn't allow %s") );
-    wxCHECK_MSG( wxStrstr(format, wxT("%c")) == NULL, -1,
+    //wxCHECK_MSG( wxStrstr(format, wxT("%c")) == NULL, -1,
                  wxT("incomplete vswscanf implementation doesn't allow %c") );
 
     return vsscanf(static_cast<const char*>(wxConvLibc.cWX2MB(ws)),
@@ -1293,7 +1293,7 @@ void wxPerror(const wxString& s)
 
 wchar_t *wxFgets(wchar_t *s, int size, FILE *stream)
 {
-    wxCHECK_MSG( s, NULL, "empty buffer passed to wxFgets()" );
+    //wxCHECK_MSG( s, NULL, "empty buffer passed to wxFgets()" );
 
     wxCharBuffer buf(size - 1);
     // FIXME: this reads too little data if wxConvLibc uses UTF-8 ('size' wide

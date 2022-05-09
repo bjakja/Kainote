@@ -359,7 +359,7 @@ private:
         if ( field == m_currentField )
             return;
 
-        wxCHECK_RET( field <= GetLastField(), "Invalid field" );
+        //wxCHECK_RET( field <= GetLastField(), "Invalid field" );
 
         m_currentField = static_cast<Field>(field);
         m_isFirstDigit = true;
@@ -633,14 +633,14 @@ wxWindowList wxTimePickerCtrlGeneric::GetCompositeWindowParts() const
 
 void wxTimePickerCtrlGeneric::SetValue(const wxDateTime& date)
 {
-    wxCHECK_RET( m_impl, "Must create first" );
+    //wxCHECK_RET( m_impl, "Must create first" );
 
     m_impl->SetValue(date);
 }
 
 wxDateTime wxTimePickerCtrlGeneric::GetValue() const
 {
-    wxCHECK_MSG( m_impl, wxDateTime(), "Must create first" );
+    //wxCHECK_MSG( m_impl, wxDateTime(), "Must create first" );
 
     return m_impl->m_time;
 }

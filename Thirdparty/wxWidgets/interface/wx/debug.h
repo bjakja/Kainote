@@ -28,7 +28,7 @@ void wxAbort();
     This symbol is defined to 1 by default meaning that asserts are compiled in
     (although they may be disabled by a call to wxDisableAsserts()). You may
     predefine it as 0 prior to including any wxWidgets headers to omit the
-    calls to wxASSERT() and related macros entirely in your own code and you
+    calls to //wxASSERT() and related macros entirely in your own code and you
     may also predefine it as 0 when building wxWidgets to also avoid including
     any asserts in wxWidgets itself.
 
@@ -69,7 +69,7 @@ typedef void (*wxAssertHandler_t)(const wxString& file,
     Assert macro. An error message will be generated if the condition is @false in
     debug mode, but nothing will be done in the release build.
 
-    Please note that the condition in wxASSERT() should have no side effects
+    Please note that the condition in //wxASSERT() should have no side effects
     because it will not be executed in release mode at all.
 
     This macro should be used to catch (in debug builds) logical errors done
@@ -79,7 +79,7 @@ typedef void (*wxAssertHandler_t)(const wxString& file,
 
     @header{wx/debug.h}
 */
-#define wxASSERT( condition )
+#define //wxASSERT( condition )
 
 /**
     Assert macro for expensive run-time checks.
@@ -88,7 +88,7 @@ typedef void (*wxAssertHandler_t)(const wxString& file,
     be used for the assertions with noticeable performance impact and which,
     hence, should be disabled during run-time.
 
-    If wxDEBUG_LEVEL is 2 or more, it becomes the same as wxASSERT().
+    If wxDEBUG_LEVEL is 2 or more, it becomes the same as //wxASSERT().
 
     @header{wx/debug.h}
  */
@@ -135,7 +135,7 @@ typedef void (*wxAssertHandler_t)(const wxString& file,
     This macro should be used to catch (in debug builds) logical errors done
     by the programmer.
 
-    @see wxASSERT(), wxCOMPILE_TIME_ASSERT()
+    @see //wxASSERT(), wxCOMPILE_TIME_ASSERT()
 
     @header{wx/debug.h}
 */
@@ -156,28 +156,28 @@ typedef void (*wxAssertHandler_t)(const wxString& file,
     Checks that the condition is @true, returns with the given return value if
     not (stops execution in debug mode). This check is done even in release mode.
 
-    This macro may be only used in non-void functions, see also wxCHECK_RET().
+    This macro may be only used in non-void functions, see also //wxCHECK_RET().
 
     This macro should be used to catch (both in debug and release builds) logical
     errors done by the programmer.
 
     @header{wx/debug.h}
 */
-#define wxCHECK_MSG( condition, retValue, message )
+#define //wxCHECK_MSG( condition, retValue, message )
 
 /**
     Checks that the condition is @true, and returns if not (stops execution
     with the given error message in debug mode). This check is done even in
     release mode.
 
-    This macro should be used in void functions instead of wxCHECK_MSG().
+    This macro should be used in void functions instead of //wxCHECK_MSG().
 
     This macro should be used to catch (both in debug and release builds) logical
     errors done by the programmer.
 
     @header{wx/debug.h}
 */
-#define wxCHECK_RET( condition, message )
+#define //wxCHECK_RET( condition, message )
 
 /**
     Checks that the condition is @true, and if not, it will wxFAIL() and

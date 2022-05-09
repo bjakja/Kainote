@@ -35,15 +35,15 @@ wxMotifDCImpl::wxMotifDCImpl(wxDC *owner)
 
 void wxMotifDCImpl::DoDrawIcon( const wxIcon &icon, wxCoord x, wxCoord y)
 {
-    wxCHECK_RET( IsOk(), "invalid dc" );
-    wxCHECK_RET( icon.IsOk(), "invalid icon" );
+    //wxCHECK_RET( IsOk(), "invalid dc" );
+    //wxCHECK_RET( icon.IsOk(), "invalid icon" );
 
     DoDrawBitmap(icon, x, y, true);
 }
 
 void wxMotifDCImpl::DoDrawBitmap( const wxBitmap& bitmap, wxCoord x, wxCoord y, bool useMask )
 {
-    wxCHECK_RET( bitmap.IsOk(), "invalid bitmap" );
+    //wxCHECK_RET( bitmap.IsOk(), "invalid bitmap" );
 
     wxMemoryDC memDC;
     memDC.SelectObjectAsSource(bitmap);

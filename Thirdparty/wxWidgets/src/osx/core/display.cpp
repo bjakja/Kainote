@@ -133,7 +133,7 @@ unsigned wxDisplayFactoryMacOSX::GetCount()
     CGDisplayCount count;
     CGDisplayErr err = wxOSXGetDisplayList(0, NULL, &count);
 
-    wxCHECK_MSG( err == CGDisplayNoErr, 0, "wxOSXGetDisplayList() failed" );
+    //wxCHECK_MSG( err == CGDisplayNoErr, 0, "wxOSXGetDisplayList() failed" );
 
     return count;
 }
@@ -144,7 +144,7 @@ int wxDisplayFactoryMacOSX::GetFromPoint(const wxPoint& p)
     CGDirectDisplayID theID;
     CGDisplayCount theCount;
     CGDisplayErr err = CGGetDisplaysWithPoint(thePoint, 1, &theID, &theCount);
-    wxASSERT(err == CGDisplayNoErr);
+    //wxASSERT(err == CGDisplayNoErr);
 
     int nWhich = wxNOT_FOUND;
 
@@ -153,7 +153,7 @@ int wxDisplayFactoryMacOSX::GetFromPoint(const wxPoint& p)
         theCount = GetCount();
         CGDirectDisplayID* theIDs = new CGDirectDisplayID[theCount];
         err = wxOSXGetDisplayList(theCount, theIDs, &theCount);
-        wxASSERT(err == CGDisplayNoErr);
+        //wxASSERT(err == CGDisplayNoErr);
 
         for (nWhich = 0; nWhich < (int) theCount; ++nWhich)
         {
@@ -179,9 +179,9 @@ wxDisplayImpl *wxDisplayFactoryMacOSX::CreateDisplay(unsigned n)
     CGDirectDisplayID* theIDs = new CGDirectDisplayID[theCount];
 
     CGDisplayErr err = wxOSXGetDisplayList(theCount, theIDs, &theCount);
-    wxCHECK_MSG( err == CGDisplayNoErr, NULL, "wxOSXGetDisplayList() failed" );
+    //wxCHECK_MSG( err == CGDisplayNoErr, NULL, "wxOSXGetDisplayList() failed" );
 
-    wxASSERT( n < theCount );
+    //wxASSERT( n < theCount );
 
     wxDisplayImplMacOSX *display = new wxDisplayImplMacOSX(n, theIDs[n]);
 

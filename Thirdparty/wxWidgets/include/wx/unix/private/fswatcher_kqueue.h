@@ -34,7 +34,7 @@ public:
                 return;
 
             wxDir dir(winfo.GetPath());
-            wxCHECK_RET( dir.IsOpened(),
+            //wxCHECK_RET( dir.IsOpened(),
                   wxString::Format("Unable to open dir '%s'", winfo.GetPath()));
 
             wxString filename;

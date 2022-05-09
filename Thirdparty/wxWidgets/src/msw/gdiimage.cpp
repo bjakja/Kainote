@@ -126,7 +126,7 @@ public:
                       int desiredWidth, int desiredHeight)
     {
         wxIcon *icon = wxDynamicCast(image, wxIcon);
-        wxCHECK_MSG( icon, false, wxT("wxIconHandler only works with icons") );
+        //wxCHECK_MSG( icon, false, wxT("wxIconHandler only works with icons") );
 
         return LoadIcon(icon, name, flags, desiredWidth, desiredHeight);
     }
@@ -356,7 +356,7 @@ bool wxBMPFileHandler::LoadFile(wxBitmap *bitmap,
                                 int WXUNUSED(desiredHeight))
 {
 #if wxUSE_WXDIB
-    wxCHECK_MSG( bitmap, false, wxT("NULL bitmap in LoadFile") );
+    //wxCHECK_MSG( bitmap, false, wxT("NULL bitmap in LoadFile") );
 
     wxDIB dib(name);
 
@@ -372,7 +372,7 @@ bool wxBMPFileHandler::SaveFile(const wxBitmap *bitmap,
                                 const wxPalette * WXUNUSED(pal)) const
 {
 #if wxUSE_WXDIB
-    wxCHECK_MSG( bitmap, false, wxT("NULL bitmap in SaveFile") );
+    //wxCHECK_MSG( bitmap, false, wxT("NULL bitmap in SaveFile") );
 
     wxDIB dib(*bitmap);
 

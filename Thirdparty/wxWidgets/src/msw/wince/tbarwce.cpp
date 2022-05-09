@@ -202,7 +202,7 @@ bool wxToolMenuBar::MSWCreateToolbar(const wxPoint& WXUNUSED(pos),
         m_menuBar->SetToolBar(this);
 
     HWND hwndParent = GetHwndOf(GetParent());
-    wxCHECK_MSG( hwndParent, false, wxT("should have valid parent HWND") );
+    //wxCHECK_MSG( hwndParent, false, wxT("should have valid parent HWND") );
 
 #if defined(WINCE_WITHOUT_COMMANDBAR)
     // create the menubar.

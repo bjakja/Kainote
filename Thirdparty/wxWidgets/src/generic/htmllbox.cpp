@@ -317,7 +317,7 @@ void wxHtmlListBox::CacheItem(size_t n) const
 
         wxHtmlContainerCell *cell = (wxHtmlContainerCell *)m_htmlParser->
                 Parse(OnGetItemMarkup(n));
-        wxCHECK_RET( cell, wxT("wxHtmlParser::Parse() returned NULL?") );
+        //wxCHECK_RET( cell, wxT("wxHtmlParser::Parse() returned NULL?") );
 
         // set the cell's ID to item's index so that CellCoordsToPhysical()
         // can quickly find the item:
@@ -396,7 +396,7 @@ void wxHtmlListBox::OnDrawItem(wxDC& dc, const wxRect& rect, size_t n) const
     CacheItem(n);
 
     wxHtmlCell *cell = m_cache->Get(n);
-    wxCHECK_RET( cell, wxT("this cell should be cached!") );
+    //wxCHECK_RET( cell, wxT("this cell should be cached!") );
 
     wxHtmlRenderingInfo htmlRendInfo;
 
@@ -429,7 +429,7 @@ wxCoord wxHtmlListBox::OnMeasureItem(size_t n) const
     CacheItem(n);
 
     wxHtmlCell *cell = m_cache->Get(n);
-    wxCHECK_MSG( cell, 0, wxT("this cell should be cached!") );
+    //wxCHECK_MSG( cell, 0, wxT("this cell should be cached!") );
 
     return cell->GetHeight() + cell->GetDescent() + 4;
 }
@@ -530,11 +530,11 @@ bool wxHtmlListBox::PhysicalCoordsToCell(wxPoint& pos, wxHtmlCell*& cell) const
 
 size_t wxHtmlListBox::GetItemForCell(const wxHtmlCell *cell) const
 {
-    wxCHECK_MSG( cell, 0, wxT("no cell") );
+    //wxCHECK_MSG( cell, 0, wxT("no cell") );
 
     cell = cell->GetRootCell();
 
-    wxCHECK_MSG( cell, 0, wxT("no root cell") );
+    //wxCHECK_MSG( cell, 0, wxT("no root cell") );
 
     // the cell's ID contains item index, see CacheItem():
     unsigned long n;
@@ -649,7 +649,7 @@ wxSimpleHtmlListBox::~wxSimpleHtmlListBox()
 
 void wxSimpleHtmlListBox::DoClear()
 {
-    wxASSERT(m_items.GetCount() == m_HTMLclientData.GetCount());
+    //wxASSERT(m_items.GetCount() == m_HTMLclientData.GetCount());
 
     m_items.Clear();
     m_HTMLclientData.Clear();
@@ -694,7 +694,7 @@ int wxSimpleHtmlListBox::DoInsertItems(const wxArrayStringsAdapter& items,
 
 void wxSimpleHtmlListBox::SetString(unsigned int n, const wxString& s)
 {
-    wxCHECK_RET( IsValid(n),
+    //wxCHECK_RET( IsValid(n),
                  wxT("invalid index in wxSimpleHtmlListBox::SetString") );
 
     m_items[n]=s;
@@ -703,7 +703,7 @@ void wxSimpleHtmlListBox::SetString(unsigned int n, const wxString& s)
 
 wxString wxSimpleHtmlListBox::GetString(unsigned int n) const
 {
-    wxCHECK_MSG( IsValid(n), wxEmptyString,
+    //wxCHECK_MSG( IsValid(n), wxEmptyString,
                  wxT("invalid index in wxSimpleHtmlListBox::GetString") );
 
     return m_items[n];
@@ -711,7 +711,7 @@ wxString wxSimpleHtmlListBox::GetString(unsigned int n) const
 
 void wxSimpleHtmlListBox::UpdateCount()
 {
-    wxASSERT(m_items.GetCount() == m_HTMLclientData.GetCount());
+    //wxASSERT(m_items.GetCount() == m_HTMLclientData.GetCount());
     wxHtmlListBox::SetItemCount(m_items.GetCount());
 
     // very small optimization: if you need to add lot of items to

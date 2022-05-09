@@ -111,7 +111,7 @@ public:
 
     wxControl *GetControl() const
     {
-        wxASSERT_MSG( IsControl(), wxT("this toolbar tool is not a control") );
+        //wxASSERT_MSG( IsControl(), wxT("this toolbar tool is not a control") );
 
         return m_control;
     }
@@ -127,14 +127,14 @@ public:
     int GetStyle() const { return m_toolStyle; }
     wxItemKind GetKind() const
     {
-        wxASSERT_MSG( IsButton(), wxT("only makes sense for buttons") );
+        //wxASSERT_MSG( IsButton(), wxT("only makes sense for buttons") );
 
         return m_kind;
     }
 
     void MakeStretchable()
     {
-        wxASSERT_MSG( IsSeparator(), "only separators can be stretchable" );
+        //wxASSERT_MSG( IsSeparator(), "only separators can be stretchable" );
 
         m_stretchable = true;
     }

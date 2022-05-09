@@ -248,7 +248,7 @@ void wxWebViewIE::SetIETextZoom(wxWebViewZoom level)
             m_webBrowser->ExecWB(OLECMDID_ZOOM,
                                  OLECMDEXECOPT_DONTPROMPTUSER,
                                  &zoomVariant, NULL);
-    wxASSERT(result == S_OK);
+    //wxASSERT(result == S_OK);
 }
 
 wxWebViewZoom wxWebViewIE::GetIETextZoom() const
@@ -263,7 +263,7 @@ wxWebViewZoom wxWebViewIE::GetIETextZoom() const
             m_webBrowser->ExecWB(OLECMDID_ZOOM,
                                  OLECMDEXECOPT_DONTPROMPTUSER,
                                  NULL, &zoomVariant);
-    wxASSERT(result == S_OK);
+    //wxASSERT(result == S_OK);
 
     //We can safely cast here as we know that the range matches our enum
     return static_cast<wxWebViewZoom>(V_I4(&zoomVariant));
@@ -306,7 +306,7 @@ void wxWebViewIE::SetIEOpticalZoom(wxWebViewZoom level)
                                  OLECMDEXECOPT_DODEFAULT,
                                  &zoomVariant,
                                  NULL);
-    wxASSERT(result == S_OK);
+    //wxASSERT(result == S_OK);
 }
 
 wxWebViewZoom wxWebViewIE::GetIEOpticalZoom() const
@@ -321,7 +321,7 @@ wxWebViewZoom wxWebViewIE::GetIEOpticalZoom() const
             m_webBrowser->ExecWB((OLECMDID)63 /*OLECMDID_OPTICAL_ZOOM*/,
                                  OLECMDEXECOPT_DODEFAULT, NULL,
                                  &zoomVariant);
-    wxASSERT(result == S_OK);
+    //wxASSERT(result == S_OK);
 
     const int zoom = V_I4(&zoomVariant);
 
@@ -488,7 +488,7 @@ bool wxWebViewIE::IsOfflineMode()
 {
     wxVariant out = m_ie.GetProperty("Offline");
 
-    wxASSERT(out.GetType() == "bool");
+    //wxASSERT(out.GetType() == "bool");
 
     return out.GetBool();
 }
@@ -503,7 +503,7 @@ void wxWebViewIE::SetOfflineMode(bool offline)
             m_ie.PutProperty("Offline", (offline ?
                                          VARIANT_TRUE :
                                          VARIANT_FALSE));
-    wxASSERT(success);
+    //wxASSERT(success);
 }
 
 bool wxWebViewIE::IsBusy() const
@@ -512,7 +512,7 @@ bool wxWebViewIE::IsBusy() const
 
     wxVariant out = m_ie.GetProperty("Busy");
 
-    wxASSERT(out.GetType() == "bool");
+    //wxASSERT(out.GetType() == "bool");
 
     return out.GetBool();
 }
@@ -521,7 +521,7 @@ wxString wxWebViewIE::GetCurrentURL() const
 {
     wxVariant out = m_ie.GetProperty("LocationURL");
 
-    wxASSERT(out.GetType() == "string");
+    //wxASSERT(out.GetType() == "string");
     return out.GetString();
 }
 

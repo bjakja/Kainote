@@ -539,7 +539,7 @@ void wxRibbonGallery::OnSize(wxSizeEvent& WXUNUSED(evt))
 
 wxRibbonGalleryItem* wxRibbonGallery::Append(const wxBitmap& bitmap, int id)
 {
-    wxASSERT(bitmap.IsOk());
+    //wxASSERT(bitmap.IsOk());
     if(m_items.IsEmpty())
     {
         m_bitmap_size = bitmap.GetSize();
@@ -547,7 +547,7 @@ wxRibbonGalleryItem* wxRibbonGallery::Append(const wxBitmap& bitmap, int id)
     }
     else
     {
-        wxASSERT(bitmap.GetSize() == m_bitmap_size);
+        //wxASSERT(bitmap.GetSize() == m_bitmap_size);
     }
 
     wxRibbonGalleryItem *item = new wxRibbonGalleryItem;

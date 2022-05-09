@@ -107,7 +107,7 @@ void wxMenuItem::UncheckRadio()
 
 void wxMenuItem::Check(bool bDoCheck)
 {
-    wxCHECK_RET( IsCheckable() && !IsSeparator(), wxT("only checkable items may be checked") );
+    //wxCHECK_RET( IsCheckable() && !IsSeparator(), wxT("only checkable items may be checked") );
 
     if ( m_isChecked != bDoCheck )
     {
@@ -121,7 +121,7 @@ void wxMenuItem::Check(bool bDoCheck)
                 // get the index of this item in the menu
                 const wxMenuItemList& items = m_parentMenu->GetMenuItems();
                 int pos = items.IndexOf(this);
-                wxCHECK_RET( pos != wxNOT_FOUND,
+                //wxCHECK_RET( pos != wxNOT_FOUND,
                              wxT("menuitem not found in the menu items list?") );
 
                 // get the radio group range

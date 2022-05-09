@@ -116,8 +116,8 @@
 
     inline int wxRound(double x)
     {
-        wxASSERT_MSG( x > INT_MIN - 0.5 && x < INT_MAX + 0.5,
-                      wxT("argument out of supported range") );
+        /*xASSERT_MSG( x > INT_MIN - 0.5 && x < INT_MAX + 0.5,
+                      wxT("argument out of supported range") );*/
 
         #if defined(HAVE_ROUND)
             return int(round(x));

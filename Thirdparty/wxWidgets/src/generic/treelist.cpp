@@ -201,7 +201,7 @@ public:
     // of the pointer and will delete it later.
     void InsertChild(wxTreeListModelNode* child)
     {
-        wxASSERT( child->m_parent == this );
+        //wxASSERT( child->m_parent == this );
 
         // Our previous first child becomes the next sibling of the new child.
         child->m_next = m_child;
@@ -212,7 +212,7 @@ public:
     // the correct parent pointer and we take ownership of it.
     void InsertNext(wxTreeListModelNode* next)
     {
-        wxASSERT( next->m_parent == m_parent );
+        //wxASSERT( next->m_parent == m_parent );
 
         next->m_next = m_next;
         m_next = next;
@@ -618,7 +618,7 @@ void wxTreeListModel::InsertColumn(unsigned col)
 
 void wxTreeListModel::DeleteColumn(unsigned col)
 {
-    wxCHECK_RET( col < m_numColumns, "Invalid column index" );
+    //wxCHECK_RET( col < m_numColumns, "Invalid column index" );
 
     // Update all the items to remove the text for the non first columns.
     if ( col > 0 )
@@ -650,10 +650,10 @@ wxTreeListModel::InsertItem(Node* parent,
                             int imageOpened,
                             wxClientData* data)
 {
-    wxCHECK_MSG( parent, NULL,
+    //wxCHECK_MSG( parent, NULL,
                  "Must have a valid parent (maybe GetRootItem()?)" );
 
-    wxCHECK_MSG( previous, NULL,
+    //wxCHECK_MSG( previous, NULL,
                  "Must have a valid previous item (maybe wxTLI_FIRST/LAST?)" );
 
     if ( m_isFlat && parent != m_root )
@@ -695,7 +695,7 @@ wxTreeListModel::InsertItem(Node* parent,
         else // We already have the previous item.
         {
             // Just check it's under the correct parent.
-            wxCHECK_MSG( previous->GetParent() == parent, NULL,
+            //wxCHECK_MSG( previous->GetParent() == parent, NULL,
                          "Previous item is not under the right parent" );
         }
 
@@ -711,9 +711,9 @@ wxTreeListModel::InsertItem(Node* parent,
 
 void wxTreeListModel::DeleteItem(Node* item)
 {
-    wxCHECK_RET( item, "Invalid item" );
+    //wxCHECK_RET( item, "Invalid item" );
 
-    wxCHECK_RET( item != m_root, "Can't delete the root item" );
+    //wxCHECK_RET( item != m_root, "Can't delete the root item" );
 
     Node* const parent = item->GetParent();
 
@@ -733,7 +733,7 @@ void wxTreeListModel::DeleteItem(Node* item)
             if ( next == item )
                 break;
 
-            wxCHECK_RET( next, "Item not a child of its parent?" );
+            //wxCHECK_RET( next, "Item not a child of its parent?" );
 
             previous = next;
         }
@@ -756,7 +756,7 @@ const wxString& wxTreeListModel::GetItemText(Node* item, unsigned col) const
 {
     // Returning root item text here is bogus, it just happens to be an always
     // empty string we can return reference to.
-    wxCHECK_MSG( item, m_root->m_text, "Invalid item" );
+    //wxCHECK_MSG( item, m_root->m_text, "Invalid item" );
 
     // Notice that asking for the text of a column of an item that doesn't have
     // any column texts is not an error so we simply return an empty string in
@@ -768,7 +768,7 @@ const wxString& wxTreeListModel::GetItemText(Node* item, unsigned col) const
 
 void wxTreeListModel::SetItemText(Node* item, unsigned col, const wxString& text)
 {
-    wxCHECK_RET( item, "Invalid item" );
+    //wxCHECK_RET( item, "Invalid item" );
 
     if ( col == 0 )
         item->m_text = text;
@@ -780,7 +780,7 @@ void wxTreeListModel::SetItemText(Node* item, unsigned col, const wxString& text
 
 void wxTreeListModel::SetItemImage(Node* item, int closed, int opened)
 {
-    wxCHECK_RET( item, "Invalid item" );
+    //wxCHECK_RET( item, "Invalid item" );
 
     item->m_imageClosed = closed;
     item->m_imageOpened = opened;
@@ -790,21 +790,21 @@ void wxTreeListModel::SetItemImage(Node* item, int closed, int opened)
 
 wxClientData* wxTreeListModel::GetItemData(Node* item) const
 {
-    wxCHECK_MSG( item, NULL, "Invalid item" );
+    //wxCHECK_MSG( item, NULL, "Invalid item" );
 
     return item->GetClientData();
 }
 
 void wxTreeListModel::SetItemData(Node* item, wxClientData* data)
 {
-    wxCHECK_RET( item, "Invalid item" );
+    //wxCHECK_RET( item, "Invalid item" );
 
     item->SetClientData(data);
 }
 
 void wxTreeListModel::CheckItem(Node* item, wxCheckBoxState checkedState)
 {
-    wxCHECK_RET( item, "Invalid item" );
+    //wxCHECK_RET( item, "Invalid item" );
 
     item->m_checkedState = checkedState;
 
@@ -815,7 +815,7 @@ void wxTreeListModel::ToggleItem(wxDataViewItem dvi)
 {
     Node* const item = FromDVI(dvi);
 
-    wxCHECK_RET( item, "Invalid item" );
+    //wxCHECK_RET( item, "Invalid item" );
 
     const wxCheckBoxState stateOld = item->m_checkedState;
 
@@ -1072,7 +1072,7 @@ wxTreeListCtrl::DoInsertColumn(const wxString& title,
                                wxAlignment align,
                                int flags)
 {
-    wxCHECK_MSG( m_view, wxNOT_FOUND, "Must Create() first" );
+    //wxCHECK_MSG( m_view, wxNOT_FOUND, "Must Create() first" );
 
     const unsigned oldNumColumns = m_view->GetColumnCount();
 
@@ -1086,7 +1086,7 @@ wxTreeListCtrl::DoInsertColumn(const wxString& title,
         // renderer.
 
         // Also, currently it can be done only once.
-        wxCHECK_MSG( !oldNumColumns, wxNOT_FOUND,
+        //wxCHECK_MSG( !oldNumColumns, wxNOT_FOUND,
                      "Inserting column at position 0 currently not supported" );
 
         if ( HasFlag(wxTL_CHECKBOX) )
@@ -1122,7 +1122,7 @@ unsigned wxTreeListCtrl::GetColumnCount() const
 
 bool wxTreeListCtrl::DeleteColumn(unsigned col)
 {
-    wxCHECK_MSG( col < GetColumnCount(), false, "Invalid column index" );
+    //wxCHECK_MSG( col < GetColumnCount(), false, "Invalid column index" );
 
     if ( !m_view->DeleteColumn(m_view->GetColumn(col)) )
         return false;
@@ -1146,20 +1146,20 @@ void wxTreeListCtrl::ClearColumns()
 
 void wxTreeListCtrl::SetColumnWidth(unsigned col, int width)
 {
-    wxCHECK_RET( col < GetColumnCount(), "Invalid column index" );
+    //wxCHECK_RET( col < GetColumnCount(), "Invalid column index" );
 
     wxDataViewColumn* const column = m_view->GetColumn(col);
-    wxCHECK_RET( column, "No such column?" );
+    //wxCHECK_RET( column, "No such column?" );
 
     column->SetWidth(width);
 }
 
 int wxTreeListCtrl::GetColumnWidth(unsigned col) const
 {
-    wxCHECK_MSG( col < GetColumnCount(), -1, "Invalid column index" );
+    //wxCHECK_MSG( col < GetColumnCount(), -1, "Invalid column index" );
 
     wxDataViewColumn* column = m_view->GetColumn(col);
-    wxCHECK_MSG( column, -1, "No such column?" );
+    //wxCHECK_MSG( column, -1, "No such column?" );
 
     return column->GetWidth();
 }
@@ -1181,7 +1181,7 @@ wxTreeListCtrl::DoInsertItem(wxTreeListItem parent,
                              int imageOpened,
                              wxClientData* data)
 {
-    wxCHECK_MSG( m_model, wxTreeListItem(), "Must create first" );
+    //wxCHECK_MSG( m_model, wxTreeListItem(), "Must create first" );
 
     return wxTreeListItem(m_model->InsertItem(parent, previous, text,
                                               imageClosed, imageOpened, data));
@@ -1189,7 +1189,7 @@ wxTreeListCtrl::DoInsertItem(wxTreeListItem parent,
 
 void wxTreeListCtrl::DeleteItem(wxTreeListItem item)
 {
-    wxCHECK_RET( m_model, "Must create first" );
+    //wxCHECK_RET( m_model, "Must create first" );
 
     m_model->DeleteItem(item);
 }
@@ -1211,21 +1211,21 @@ void wxTreeListCtrl::DeleteAllItems()
 
 wxTreeListItem wxTreeListCtrl::GetRootItem() const
 {
-    wxCHECK_MSG( m_model, wxTreeListItem(), "Must create first" );
+    //wxCHECK_MSG( m_model, wxTreeListItem(), "Must create first" );
 
     return m_model->GetRootItem();
 }
 
 wxTreeListItem wxTreeListCtrl::GetItemParent(wxTreeListItem item) const
 {
-    wxCHECK_MSG( item.IsOk(), wxTreeListItem(), "Invalid item" );
+    //wxCHECK_MSG( item.IsOk(), wxTreeListItem(), "Invalid item" );
 
     return item->GetParent();
 }
 
 wxTreeListItem wxTreeListCtrl::GetFirstChild(wxTreeListItem item) const
 {
-    wxCHECK_MSG( item.IsOk(), wxTreeListItem(), "Invalid item" );
+    //wxCHECK_MSG( item.IsOk(), wxTreeListItem(), "Invalid item" );
 
     return item->GetChild();
 }
@@ -1233,14 +1233,14 @@ wxTreeListItem wxTreeListCtrl::GetFirstChild(wxTreeListItem item) const
 wxTreeListItem
 wxTreeListCtrl::GetNextSibling(wxTreeListItem item) const
 {
-    wxCHECK_MSG( item.IsOk(), wxTreeListItem(), "Invalid item" );
+    //wxCHECK_MSG( item.IsOk(), wxTreeListItem(), "Invalid item" );
 
     return item->GetNext();
 }
 
 wxTreeListItem wxTreeListCtrl::GetNextItem(wxTreeListItem item) const
 {
-    wxCHECK_MSG( item.IsOk(), wxTreeListItem(), "Invalid item" );
+    //wxCHECK_MSG( item.IsOk(), wxTreeListItem(), "Invalid item" );
 
     return item->NextInTree();
 }
@@ -1252,7 +1252,7 @@ wxTreeListItem wxTreeListCtrl::GetNextItem(wxTreeListItem item) const
 const wxString&
 wxTreeListCtrl::GetItemText(wxTreeListItem item, unsigned col) const
 {
-    // We can't use wxCHECK_MSG() here because we don't have any empty string
+    // We can't use //wxCHECK_MSG() here because we don't have any empty string
     // reference to return so we use a static variable that exists just for the
     // purpose of this check -- and so we put it in its own scope so that it's
     // never even created during normal program execution.
@@ -1280,25 +1280,25 @@ wxTreeListCtrl::SetItemText(wxTreeListItem item,
                             unsigned col,
                             const wxString& text)
 {
-    wxCHECK_RET( m_model, "Must create first" );
-    wxCHECK_RET( col < m_model->GetColumnCount(), "Invalid column index" );
+    //wxCHECK_RET( m_model, "Must create first" );
+    //wxCHECK_RET( col < m_model->GetColumnCount(), "Invalid column index" );
 
     m_model->SetItemText(item, col, text);
 }
 
 void wxTreeListCtrl::SetItemImage(wxTreeListItem item, int closed, int opened)
 {
-    wxCHECK_RET( m_model, "Must create first" );
+    //wxCHECK_RET( m_model, "Must create first" );
 
     if ( closed != NO_IMAGE || opened != NO_IMAGE )
     {
         wxImageList* const imageList = GetImageList();
-        wxCHECK_RET( imageList, "Can't set images without image list" );
+        //wxCHECK_RET( imageList, "Can't set images without image list" );
 
         const int imageCount = imageList->GetImageCount();
 
-        wxCHECK_RET( closed < imageCount, "Invalid image index" );
-        wxCHECK_RET( opened < imageCount, "Invalid opened image index" );
+        //wxCHECK_RET( closed < imageCount, "Invalid image index" );
+        //wxCHECK_RET( opened < imageCount, "Invalid opened image index" );
     }
 
     m_model->SetItemImage(item, closed, opened);
@@ -1306,14 +1306,14 @@ void wxTreeListCtrl::SetItemImage(wxTreeListItem item, int closed, int opened)
 
 wxClientData* wxTreeListCtrl::GetItemData(wxTreeListItem item) const
 {
-    wxCHECK_MSG( m_model, NULL, "Must create first" );
+    //wxCHECK_MSG( m_model, NULL, "Must create first" );
 
     return m_model->GetItemData(item);
 }
 
 void wxTreeListCtrl::SetItemData(wxTreeListItem item, wxClientData* data)
 {
-    wxCHECK_RET( m_model, "Must create first" );
+    //wxCHECK_RET( m_model, "Must create first" );
 
     m_model->SetItemData(item, data);
 }
@@ -1324,21 +1324,21 @@ void wxTreeListCtrl::SetItemData(wxTreeListItem item, wxClientData* data)
 
 void wxTreeListCtrl::Expand(wxTreeListItem item)
 {
-    wxCHECK_RET( m_view, "Must create first" );
+    //wxCHECK_RET( m_view, "Must create first" );
 
     m_view->Expand(m_model->ToDVI(item));
 }
 
 void wxTreeListCtrl::Collapse(wxTreeListItem item)
 {
-    wxCHECK_RET( m_view, "Must create first" );
+    //wxCHECK_RET( m_view, "Must create first" );
 
     m_view->Collapse(m_model->ToDVI(item));
 }
 
 bool wxTreeListCtrl::IsExpanded(wxTreeListItem item) const
 {
-    wxCHECK_MSG( m_view, false, "Must create first" );
+    //wxCHECK_MSG( m_view, false, "Must create first" );
 
     return m_view->IsExpanded(m_model->ToDVI(item));
 }
@@ -1349,9 +1349,9 @@ bool wxTreeListCtrl::IsExpanded(wxTreeListItem item) const
 
 wxTreeListItem wxTreeListCtrl::GetSelection() const
 {
-    wxCHECK_MSG( m_view, wxTreeListItem(), "Must create first" );
+    //wxCHECK_MSG( m_view, wxTreeListItem(), "Must create first" );
 
-    wxCHECK_MSG( !HasFlag(wxTL_MULTIPLE), wxTreeListItem(),
+    //wxCHECK_MSG( !HasFlag(wxTL_MULTIPLE), wxTreeListItem(),
                  "Must use GetSelections() with multi-selection controls!" );
 
     const wxDataViewItem dvi = m_view->GetSelection();
@@ -1361,7 +1361,7 @@ wxTreeListItem wxTreeListCtrl::GetSelection() const
 
 unsigned wxTreeListCtrl::GetSelections(wxTreeListItems& selections) const
 {
-    wxCHECK_MSG( m_view, 0, "Must create first" );
+    //wxCHECK_MSG( m_view, 0, "Must create first" );
 
     wxDataViewItemArray selectionsDV;
     const unsigned numSelected = m_view->GetSelections(selectionsDV);
@@ -1374,35 +1374,35 @@ unsigned wxTreeListCtrl::GetSelections(wxTreeListItems& selections) const
 
 void wxTreeListCtrl::Select(wxTreeListItem item)
 {
-    wxCHECK_RET( m_view, "Must create first" );
+    //wxCHECK_RET( m_view, "Must create first" );
 
     m_view->Select(m_model->ToNonRootDVI(item));
 }
 
 void wxTreeListCtrl::Unselect(wxTreeListItem item)
 {
-    wxCHECK_RET( m_view, "Must create first" );
+    //wxCHECK_RET( m_view, "Must create first" );
 
     m_view->Unselect(m_model->ToNonRootDVI(item));
 }
 
 bool wxTreeListCtrl::IsSelected(wxTreeListItem item) const
 {
-    wxCHECK_MSG( m_view, false, "Must create first" );
+    //wxCHECK_MSG( m_view, false, "Must create first" );
 
     return m_view->IsSelected(m_model->ToNonRootDVI(item));
 }
 
 void wxTreeListCtrl::SelectAll()
 {
-    wxCHECK_RET( m_view, "Must create first" );
+    //wxCHECK_RET( m_view, "Must create first" );
 
     m_view->SelectAll();
 }
 
 void wxTreeListCtrl::UnselectAll()
 {
-    wxCHECK_RET( m_view, "Must create first" );
+    //wxCHECK_RET( m_view, "Must create first" );
 
     m_view->UnselectAll();
 }
@@ -1413,7 +1413,7 @@ void wxTreeListCtrl::UnselectAll()
 
 void wxTreeListCtrl::CheckItem(wxTreeListItem item, wxCheckBoxState state)
 {
-    wxCHECK_RET( m_model, "Must create first" );
+    //wxCHECK_RET( m_model, "Must create first" );
 
     m_model->CheckItem(item, state);
 }
@@ -1421,7 +1421,7 @@ void wxTreeListCtrl::CheckItem(wxTreeListItem item, wxCheckBoxState state)
 void
 wxTreeListCtrl::CheckItemRecursively(wxTreeListItem item, wxCheckBoxState state)
 {
-    wxCHECK_RET( m_model, "Must create first" );
+    //wxCHECK_RET( m_model, "Must create first" );
 
     m_model->CheckItem(item, state);
 
@@ -1435,7 +1435,7 @@ wxTreeListCtrl::CheckItemRecursively(wxTreeListItem item, wxCheckBoxState state)
 
 void wxTreeListCtrl::UpdateItemParentStateRecursively(wxTreeListItem item)
 {
-    wxCHECK_RET( item.IsOk(), "Invalid item" );
+    //wxCHECK_RET( item.IsOk(), "Invalid item" );
 
     wxASSERT_MSG( HasFlag(wxTL_3STATE), "Can only be used with wxTL_3STATE" );
 
@@ -1462,7 +1462,7 @@ void wxTreeListCtrl::UpdateItemParentStateRecursively(wxTreeListItem item)
 
 wxCheckBoxState wxTreeListCtrl::GetCheckedState(wxTreeListItem item) const
 {
-    wxCHECK_MSG( item.IsOk(), wxCHK_UNDETERMINED, "Invalid item" );
+    //wxCHECK_MSG( item.IsOk(), wxCHK_UNDETERMINED, "Invalid item" );
 
     return item->m_checkedState;
 }
@@ -1471,7 +1471,7 @@ bool
 wxTreeListCtrl::AreAllChildrenInState(wxTreeListItem item,
                                       wxCheckBoxState state) const
 {
-    wxCHECK_MSG( item.IsOk(), false, "Invalid item" );
+    //wxCHECK_MSG( item.IsOk(), false, "Invalid item" );
 
     for ( wxTreeListItem child = GetFirstChild(item);
           child.IsOk();
@@ -1490,7 +1490,7 @@ wxTreeListCtrl::AreAllChildrenInState(wxTreeListItem item,
 
 void wxTreeListCtrl::SetSortColumn(unsigned col, bool ascendingOrder)
 {
-    wxCHECK_RET( col < m_view->GetColumnCount(), "Invalid column index" );
+    //wxCHECK_RET( col < m_view->GetColumnCount(), "Invalid column index" );
 
     m_view->GetColumn(col)->SetSortOrder(ascendingOrder);
 }

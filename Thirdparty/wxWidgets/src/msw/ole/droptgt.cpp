@@ -300,7 +300,7 @@ STDMETHODIMP wxIDropTarget::Drop(IDataObject *pIDataSource,
 
     // TODO I don't know why there is this parameter, but so far I assume
     //      that it's the same we've already got in DragEnter
-    wxASSERT( m_pIDataObject == pIDataSource );
+    //wxASSERT( m_pIDataObject == pIDataSource );
 
     // we need client coordinates to pass to wxWin functions
     if ( !ScreenToClient(m_hwnd, (POINT *)&pt) )

@@ -416,7 +416,7 @@ bool wxNotificationMessage::Show(int timeout)
 
 bool wxNotificationMessage::Close()
 {
-    wxCHECK_MSG( m_impl, false, "must show the notification first" );
+    //wxCHECK_MSG( m_impl, false, "must show the notification first" );
 
     return m_impl->DoClose();
 }

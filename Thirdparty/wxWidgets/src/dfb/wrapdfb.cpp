@@ -146,7 +146,7 @@ wxIDirectFBSurface::CreateCompatible(const wxSize& sz, int flags)
             return NULL;
     }
 
-    wxCHECK_MSG( size.x > 0 && size.y > 0, NULL, "invalid size" );
+    //wxCHECK_MSG( size.x > 0 && size.y > 0, NULL, "invalid size" );
 
     DFBSurfaceDescription desc;
     desc.flags = (DFBSurfaceDescriptionFlags)(

@@ -187,8 +187,8 @@ public:
 
     void SetPixelSize(const wxSize& pixelSize)
     {
-        wxCHECK_RET( pixelSize.GetWidth() >= 0, "negative font width" );
-        wxCHECK_RET( pixelSize.GetHeight() != 0, "zero font height" );
+        //wxCHECK_RET( pixelSize.GetWidth() >= 0, "negative font width" );
+        //wxCHECK_RET( pixelSize.GetHeight() != 0, "zero font height" );
 
         Free();
 
@@ -648,7 +648,7 @@ void wxNativeFontInfo::SetFamily(wxFontFamily family)
             return;
     }
 
-    wxCHECK_RET( ff_family != FF_DONTCARE, "unknown wxFontFamily" );
+    //wxCHECK_RET( ff_family != FF_DONTCARE, "unknown wxFontFamily" );
 
     lf.lfPitchAndFamily = (BYTE)(DEFAULT_PITCH) | ff_family;
 
@@ -997,21 +997,21 @@ void wxFont::DoSetNativeFontInfo(const wxNativeFontInfo& info)
 
 int wxFont::GetPointSize() const
 {
-    wxCHECK_MSG( IsOk(), 0, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), 0, wxT("invalid font") );
 
     return M_FONTDATA->GetPointSize();
 }
 
 wxSize wxFont::GetPixelSize() const
 {
-    wxCHECK_MSG( IsOk(), wxDefaultSize, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), wxDefaultSize, wxT("invalid font") );
 
     return M_FONTDATA->GetPixelSize();
 }
 
 bool wxFont::IsUsingSizeInPixels() const
 {
-    wxCHECK_MSG( IsOk(), 0, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), 0, wxT("invalid font") );
 
     return M_FONTDATA->IsUsingSizeInPixels();
 }
@@ -1023,42 +1023,42 @@ wxFontFamily wxFont::DoGetFamily() const
 
 wxFontStyle wxFont::GetStyle() const
 {
-    wxCHECK_MSG( IsOk(), wxFONTSTYLE_MAX, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), wxFONTSTYLE_MAX, wxT("invalid font") );
 
     return M_FONTDATA->GetStyle();
 }
 
 wxFontWeight wxFont::GetWeight() const
 {
-    wxCHECK_MSG( IsOk(), wxFONTWEIGHT_MAX, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), wxFONTWEIGHT_MAX, wxT("invalid font") );
 
     return M_FONTDATA->GetWeight();
 }
 
 bool wxFont::GetUnderlined() const
 {
-    wxCHECK_MSG( IsOk(), false, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), false, wxT("invalid font") );
 
     return M_FONTDATA->GetUnderlined();
 }
 
 bool wxFont::GetStrikethrough() const
 {
-    wxCHECK_MSG( IsOk(), false, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), false, wxT("invalid font") );
 
     return M_FONTDATA->GetStrikethrough();
 }
 
 wxString wxFont::GetFaceName() const
 {
-    wxCHECK_MSG( IsOk(), wxEmptyString, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), wxEmptyString, wxT("invalid font") );
 
     return M_FONTDATA->GetFaceName();
 }
 
 wxFontEncoding wxFont::GetEncoding() const
 {
-    wxCHECK_MSG( IsOk(), wxFONTENCODING_DEFAULT, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), wxFONTENCODING_DEFAULT, wxT("invalid font") );
 
     return M_FONTDATA->GetEncoding();
 }
@@ -1070,7 +1070,7 @@ const wxNativeFontInfo *wxFont::GetNativeFontInfo() const
 
 bool wxFont::IsFixedWidth() const
 {
-    wxCHECK_MSG( IsOk(), false, wxT("invalid font") );
+    //wxCHECK_MSG( IsOk(), false, wxT("invalid font") );
 
     // LOGFONT doesn't contain the correct pitch information so we need to call
     // GetTextMetrics() to get it

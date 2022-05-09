@@ -156,7 +156,7 @@ void wxRegion::Clear()
 // Move the region
 bool wxRegion::DoOffset(wxCoord x, wxCoord y)
 {
-    wxCHECK_MSG( m_refData, false, wxT("invalid wxRegion") );
+    //wxCHECK_MSG( m_refData, false, wxT("invalid wxRegion") );
 
     if ( !x && !y )
         // nothing to do
@@ -173,7 +173,7 @@ bool wxRegion::DoOffset(wxCoord x, wxCoord y)
 //! Union /e region with this.
 bool wxRegion::DoCombine(const wxRegion& region, wxRegionOp op)
 {
-    wxCHECK_MSG( region.IsOk(), false, wxT("invalid wxRegion") );
+    //wxCHECK_MSG( region.IsOk(), false, wxT("invalid wxRegion") );
 
     // Handle the special case of not initialized (e.g. default constructed)
     // region as we can't use HIShape functions if we don't have any shape.

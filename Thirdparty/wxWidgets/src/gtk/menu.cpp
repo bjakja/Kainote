@@ -52,7 +52,7 @@ static void DoCommonMenuCallbackCode(wxMenu *menu, wxMenuEvent& event)
         return;
 
     wxWindow *win = menu->GetWindow();
-    wxCHECK_RET( win, "event for a menu without associated window?" );
+    //wxCHECK_RET( win, "event for a menu without associated window?" );
 
     win->HandleWindowEvent( event );
 }
@@ -423,7 +423,7 @@ void wxMenuBar::EnableTop( size_t pos, bool flag )
 {
     wxMenuList::compatibility_iterator node = m_menus.Item( pos );
 
-    wxCHECK_RET( node, wxT("menu not found") );
+    //wxCHECK_RET( node, wxT("menu not found") );
 
     wxMenu* menu = node->GetData();
 
@@ -434,9 +434,9 @@ void wxMenuBar::EnableTop( size_t pos, bool flag )
 bool wxMenuBar::IsEnabledTop(size_t pos) const
 {
     wxMenuList::compatibility_iterator node = m_menus.Item( pos );
-    wxCHECK_MSG( node, false, wxS("invalid index in IsEnabledTop") );
+    //wxCHECK_MSG( node, false, wxS("invalid index in IsEnabledTop") );
     wxMenu* const menu = node->GetData();
-    wxCHECK_MSG( menu->m_owner, true, wxS("no menu owner?") );
+    //wxCHECK_MSG( menu->m_owner, true, wxS("no menu owner?") );
     return gtk_widget_get_sensitive( menu->m_owner ) != 0;
 }
 
@@ -444,7 +444,7 @@ wxString wxMenuBar::GetMenuLabel( size_t pos ) const
 {
     wxMenuList::compatibility_iterator node = m_menus.Item( pos );
 
-    wxCHECK_MSG( node, wxT("invalid"), wxT("menu not found") );
+    //wxCHECK_MSG( node, wxT("invalid"), wxT("menu not found") );
 
     wxMenu* menu = node->GetData();
 
@@ -455,7 +455,7 @@ void wxMenuBar::SetMenuLabel( size_t pos, const wxString& label )
 {
     wxMenuList::compatibility_iterator node = m_menus.Item( pos );
 
-    wxCHECK_RET( node, wxT("menu not found") );
+    //wxCHECK_RET( node, wxT("menu not found") );
 
     wxMenu* menu = node->GetData();
 
@@ -632,7 +632,7 @@ void wxMenuItem::SetBitmap(const wxBitmap& bitmap)
 
 void wxMenuItem::Check( bool check )
 {
-    wxCHECK_RET( m_menuItem, wxT("invalid menu item") );
+    //wxCHECK_RET( m_menuItem, wxT("invalid menu item") );
 
     if (check == m_isChecked)
         return;
@@ -653,7 +653,7 @@ void wxMenuItem::Check( bool check )
 
 void wxMenuItem::Enable( bool enable )
 {
-    wxCHECK_RET( m_menuItem, wxT("invalid menu item") );
+    //wxCHECK_RET( m_menuItem, wxT("invalid menu item") );
 
     gtk_widget_set_sensitive( m_menuItem, enable );
     wxMenuItemBase::Enable( enable );
@@ -661,9 +661,9 @@ void wxMenuItem::Enable( bool enable )
 
 bool wxMenuItem::IsChecked() const
 {
-    wxCHECK_MSG( m_menuItem, false, wxT("invalid menu item") );
+    //wxCHECK_MSG( m_menuItem, false, wxT("invalid menu item") );
 
-    wxCHECK_MSG( IsCheckable(), false,
+    //wxCHECK_MSG( IsCheckable(), false,
                  wxT("can't get state of uncheckable item!") );
 
     return gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(m_menuItem)) != 0;

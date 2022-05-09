@@ -253,7 +253,7 @@ int wxGenericCollapsiblePane::GetBorder() const
 #if defined( __WXMAC__ )
     return 6;
 #elif defined(__WXMSW__)
-    wxASSERT(m_pButton);
+    //wxASSERT(m_pButton);
     return m_pButton->ConvertDialogToPixels(wxSize(2, 0)).x;
 #else
     return 5;

@@ -2527,9 +2527,9 @@ wxDC *wxDataViewCustomRenderer::GetDC()
     if (m_dc == NULL)
     {
 #ifdef __WXGTK3__
-        wxASSERT(m_renderParams);
+        //wxASSERT(m_renderParams);
         cairo_t* cr = m_renderParams->cr;
-        wxASSERT(cr && cairo_status(cr) == 0);
+        //wxASSERT(cr && cairo_status(cr) == 0);
         m_dc = new wxGTKCairoDC(cr);
 #else
         if (GetOwner() == NULL)
@@ -3703,7 +3703,7 @@ bool wxDataViewCtrlInternal::ItemAdded( const wxDataViewItem &parent, const wxDa
     if (!m_wx_model->IsVirtualListModel())
     {
         wxGtkTreeModelNode *parent_node = FindNode( parent );
-        wxCHECK_MSG(parent_node, false,
+        //wxCHECK_MSG(parent_node, false,
             "Did you forget a call to ItemAdded()? The parent node is unknown to the wxGtkTreeModel");
 
         wxDataViewItemArray modelSiblings;
@@ -3711,7 +3711,7 @@ bool wxDataViewCtrlInternal::ItemAdded( const wxDataViewItem &parent, const wxDa
         const int modelSiblingsSize = modelSiblings.size();
 
         int posInModel = modelSiblings.Index(item, /*fromEnd=*/true);
-        wxCHECK_MSG( posInModel != wxNOT_FOUND, false, "adding non-existent item?" );
+        //wxCHECK_MSG( posInModel != wxNOT_FOUND, false, "adding non-existent item?" );
 
         const wxGtkTreeModelChildren& nodeSiblings = parent_node->GetChildren();
         const int nodeSiblingsSize = nodeSiblings.size();
@@ -4901,7 +4901,7 @@ wxDataViewItem wxDataViewCtrl::DoGetCurrentItem() const
 
 void wxDataViewCtrl::DoSetCurrentItem(const wxDataViewItem& item)
 {
-    wxCHECK_RET( m_treeview,
+    //wxCHECK_RET( m_treeview,
                  "Current item can't be set before creating the control." );
 
     // We need to make sure the model knows about this item or the path would
@@ -4937,10 +4937,10 @@ wxDataViewColumn *wxDataViewCtrl::GetCurrentColumn() const
 
 void wxDataViewCtrl::EditItem(const wxDataViewItem& item, const wxDataViewColumn *column)
 {
-    wxCHECK_RET( m_treeview,
+    //wxCHECK_RET( m_treeview,
                  "Current item can't be set before creating the control." );
-    wxCHECK_RET( item.IsOk(), "invalid item" );
-    wxCHECK_RET( column, "no column provided" );
+    //wxCHECK_RET( item.IsOk(), "invalid item" );
+    //wxCHECK_RET( column, "no column provided" );
 
     // We need to make sure the model knows about this item or the path would
     // be invalid and gtk_tree_view_set_cursor() would silently do nothing.

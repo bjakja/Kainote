@@ -1042,7 +1042,7 @@ void wxMonoRenderer::DrawArrow(wxDC& dc,
                                int WXUNUSED(flags))
 {
     ArrowDirection arrowDir = GetArrowDirection(dir);
-    wxCHECK_RET( arrowDir != Arrow_Max, wxT("invalid arrow direction") );
+    //wxCHECK_RET( arrowDir != Arrow_Max, wxT("invalid arrow direction") );
 
     wxBitmap& bmp = m_bmpArrows[arrowDir];
     if ( !bmp.IsOk() )

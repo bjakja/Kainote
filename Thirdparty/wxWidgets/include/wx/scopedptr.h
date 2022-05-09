@@ -77,13 +77,13 @@ public:
 
     T & operator*() const
     {
-        wxASSERT(m_ptr != NULL);
+        //wxASSERT(m_ptr != NULL);
         return *m_ptr;
     }
 
     T * operator->() const
     {
-        wxASSERT(m_ptr != NULL);
+        //wxASSERT(m_ptr != NULL);
         return m_ptr;
     }
 
@@ -140,13 +140,13 @@ public:                             \
                                     \
     T & operator*() const           \
     {                               \
-        wxASSERT(m_ptr != NULL);    \
+        /*wxASSERT(m_ptr != NULL);*/    \
         return *m_ptr;              \
     }                               \
                                     \
     T * operator->() const          \
     {                               \
-        wxASSERT(m_ptr != NULL);    \
+        /*wxASSERT(m_ptr != NULL);*/    \
         return m_ptr;               \
     }                               \
                                     \

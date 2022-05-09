@@ -98,8 +98,8 @@ wxHtmlHelpIndexCompareFunc(wxHtmlHelpDataItem **a, wxHtmlHelpDataItem **b)
             ib2 = ib2->parent;
         }
 
-        wxASSERT(ia2);
-        wxASSERT(ib2);
+        //wxASSERT(ia2);
+        //wxASSERT(ib2);
         int res = wxHtmlHelpIndexCompareFunc(&ia2, &ib2);
         if (res != 0)
             return res;
@@ -461,7 +461,7 @@ bool wxHtmlHelpData::SaveCachedBook(wxHtmlBookRecord *book, wxOutputStream *f)
                 if (&m_index[j] == parent)
                     break;
             }
-            wxASSERT(cnt2 > 0);
+            //wxASSERT(cnt2 > 0);
             CacheWriteInt32(f, cnt2);
         }
     }
@@ -801,7 +801,7 @@ wxHtmlSearchStatus::wxHtmlSearchStatus(wxHtmlHelpData* data, const wxString& key
                 break;
             }
         // check; we won't crash if the book doesn't exist, but it's Bad Anyway.
-        wxASSERT(bookr);
+        //wxASSERT(bookr);
     }
     if (! bookr)
     {
@@ -823,7 +823,7 @@ bool wxHtmlSearchStatus::Search()
     if (!m_Active)
     {
         // sanity check. Illegal use, but we'll try to prevent a crash anyway
-        wxASSERT(m_Active);
+        //wxASSERT(m_Active);
         return false;
     }
 

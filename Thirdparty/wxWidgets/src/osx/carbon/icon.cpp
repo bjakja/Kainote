@@ -137,21 +137,21 @@ wxIcon::CloneGDIRefData(const wxGDIRefData * WXUNUSED(data)) const
 
 WXHICON wxIcon::GetHICON() const
 {
-    wxASSERT( IsOk() ) ;
+    //wxASSERT( IsOk() ) ;
 
     return (WXHICON) ((wxIconRefData*)m_refData)->GetHICON() ;
 }
 
 int wxIcon::GetWidth() const
 {
-   wxCHECK_MSG( IsOk(), -1, wxT("invalid icon") );
+   //wxCHECK_MSG( IsOk(), -1, wxT("invalid icon") );
 
    return M_ICONDATA->GetWidth();
 }
 
 int wxIcon::GetHeight() const
 {
-   wxCHECK_MSG( IsOk(), -1, wxT("invalid icon") );
+   //wxCHECK_MSG( IsOk(), -1, wxT("invalid icon") );
 
    return M_ICONDATA->GetHeight();
 }

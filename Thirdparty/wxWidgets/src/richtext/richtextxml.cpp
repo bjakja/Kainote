@@ -361,7 +361,7 @@ bool wxRichTextXMLHandler::HasParam(wxXmlNode* node, const wxString& param)
 
 wxXmlNode *wxRichTextXMLHandler::GetParamNode(wxXmlNode* node, const wxString& param)
 {
-    wxCHECK_MSG(node, NULL, wxT("You can't access node data before it was initialized!"));
+    //wxCHECK_MSG(node, NULL, wxT("You can't access node data before it was initialized!"));
 
     wxXmlNode *n = node->GetChildren();
 
@@ -2499,7 +2499,7 @@ bool wxRichTextImage::ExportXML(wxXmlNode* parent, wxRichTextXMLHandler* handler
                 int size = stream.GetSize();
 #ifdef __WXDEBUG__
                 int size2 = stream.GetOutputStreamBuffer()->GetIntPosition();
-                wxASSERT(size == size2);
+                //wxASSERT(size == size2);
 #endif
                 unsigned char* data = new unsigned char[size];
                 stream.CopyTo(data, size);

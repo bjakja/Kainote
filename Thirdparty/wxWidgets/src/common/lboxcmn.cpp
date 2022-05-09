@@ -324,7 +324,7 @@ void wxListBoxBase::SetFirstItem(const wxString& s)
 {
     int n = FindString(s);
 
-    wxCHECK_RET( n != wxNOT_FOUND, wxT("invalid string in wxListBox::SetFirstItem") );
+    //wxCHECK_RET( n != wxNOT_FOUND, wxT("invalid string in wxListBox::SetFirstItem") );
 
     DoSetFirstItem(n);
 }

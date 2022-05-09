@@ -185,7 +185,7 @@ int wxChoice::DoInsertItems(const wxArrayStringsAdapter& items,
                             void **clientData, wxClientDataType type)
 {
 #ifndef XmNpositionIndex
-    wxCHECK_MSG( pos == GetCount(), -1, wxT("insert not implemented"));
+    //wxCHECK_MSG( pos == GetCount(), -1, wxT("insert not implemented"));
 #endif
 
     const unsigned int numItems = items.GetCount();

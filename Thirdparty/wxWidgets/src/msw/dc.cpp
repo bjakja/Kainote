@@ -531,7 +531,7 @@ wxMSWDCImpl::DoGetClippingBox(wxCoord *x, wxCoord *y, wxCoord *w, wxCoord *h) co
 // common part of DoSetClippingRegion() and DoSetDeviceClippingRegion()
 void wxMSWDCImpl::SetClippingHrgn(WXHRGN hrgn)
 {
-    wxCHECK_RET( hrgn, wxT("invalid clipping region") );
+    //wxCHECK_RET( hrgn, wxT("invalid clipping region") );
 
     WXMICROWIN_CHECK_HDC
 
@@ -674,7 +674,7 @@ void wxMSWDCImpl::Clear()
     {
         // No, I think we should simply ignore this if printing on e.g.
         // a printer DC.
-        // wxCHECK_RET( m_selectedBitmap.IsOk(), wxT("this DC can't be cleared") );
+        // //wxCHECK_RET( m_selectedBitmap.IsOk(), wxT("this DC can't be cleared") );
         if (!m_selectedBitmap.IsOk())
             return;
 
@@ -736,7 +736,7 @@ bool wxMSWDCImpl::DoGetPixel(wxCoord x, wxCoord y, wxColour *col) const
 {
     WXMICROWIN_CHECK_HDC_RET(false)
 
-    wxCHECK_MSG( col, false, wxT("NULL colour parameter in wxMSWDCImpl::GetPixel") );
+    //wxCHECK_MSG( col, false, wxT("NULL colour parameter in wxMSWDCImpl::GetPixel") );
 
     // get the color of the pixel
     COLORREF pixelcolor = ::GetPixel(GetHdc(), XLOG2DEV(x), YLOG2DEV(y));
@@ -1253,7 +1253,7 @@ void wxMSWDCImpl::DoDrawIcon(const wxIcon& icon, wxCoord x, wxCoord y)
 {
     WXMICROWIN_CHECK_HDC
 
-    wxCHECK_RET( icon.IsOk(), wxT("invalid icon in DrawIcon") );
+    //wxCHECK_RET( icon.IsOk(), wxT("invalid icon in DrawIcon") );
 
 #ifdef __WIN32__
     ::DrawIconEx(GetHdc(), XLOG2DEV(x), YLOG2DEV(y), GetHiconOf(icon), icon.GetWidth(), icon.GetHeight(), 0, NULL, DI_NORMAL);
@@ -1269,7 +1269,7 @@ void wxMSWDCImpl::DoDrawBitmap( const wxBitmap &bmp, wxCoord x, wxCoord y, bool 
 {
     WXMICROWIN_CHECK_HDC
 
-    wxCHECK_RET( bmp.IsOk(), wxT("invalid bitmap in wxMSWDCImpl::DrawBitmap") );
+    //wxCHECK_RET( bmp.IsOk(), wxT("invalid bitmap in wxMSWDCImpl::DrawBitmap") );
 
     int width = bmp.GetWidth(),
         height = bmp.GetHeight();
@@ -2235,7 +2235,7 @@ bool wxMSWDCImpl::DoStretchBlit(wxCoord xdest, wxCoord ydest,
                          wxRasterOperationMode rop, bool useMask,
                          wxCoord xsrcMask, wxCoord ysrcMask)
 {
-    wxCHECK_MSG( source, false, wxT("wxMSWDCImpl::Blit(): NULL wxDC pointer") );
+    //wxCHECK_MSG( source, false, wxT("wxMSWDCImpl::Blit(): NULL wxDC pointer") );
 
     WXMICROWIN_CHECK_HDC_RET(false)
 
@@ -2551,7 +2551,7 @@ void wxMSWDCImpl::DoGetSizeMM(int *w, int *h) const
     {
         int wTotal = ::GetDeviceCaps(GetHdc(), HORZRES);
 
-        wxCHECK_RET( wTotal, wxT("0 width device?") );
+        //wxCHECK_RET( wTotal, wxT("0 width device?") );
 
         *w = (wPixels * ::GetDeviceCaps(GetHdc(), HORZSIZE)) / wTotal;
     }
@@ -2560,7 +2560,7 @@ void wxMSWDCImpl::DoGetSizeMM(int *w, int *h) const
     {
         int hTotal = ::GetDeviceCaps(GetHdc(), VERTRES);
 
-        wxCHECK_RET( hTotal, wxT("0 height device?") );
+        //wxCHECK_RET( hTotal, wxT("0 height device?") );
 
         *h = (hPixels * ::GetDeviceCaps(GetHdc(), VERTSIZE)) / hTotal;
     }
@@ -2797,7 +2797,7 @@ wxAlphaBlend(HDC hdcDst, int xDst, int yDst,
     wxAlphaPixelData dataDst(bmpDst),
                      dataSrc((wxBitmap &)bmpSrc);
 
-    wxCHECK_RET( dataDst && dataSrc,
+    //wxCHECK_RET( dataDst && dataSrc,
                     wxT("failed to get raw data in wxAlphaBlend") );
 
     wxAlphaPixelData::Iterator pDst(dataDst),

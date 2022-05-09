@@ -115,7 +115,7 @@ void wxMenuItem::Enable(bool bDoEnable)
 
 void wxMenuItem::Check(bool bDoCheck)
 {
-    wxCHECK_RET( IsCheckable(), "only checkable items may be checked" );
+    //wxCHECK_RET( IsCheckable(), "only checkable items may be checked" );
 
     if ( m_isChecked != bDoCheck )
     {

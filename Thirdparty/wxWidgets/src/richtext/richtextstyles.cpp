@@ -163,14 +163,14 @@ bool wxRichTextListStyleDefinition::operator ==(const wxRichTextListStyleDefinit
 /// Sets/gets the attributes for the given level
 void wxRichTextListStyleDefinition::SetLevelAttributes(int i, const wxRichTextAttr& attr)
 {
-    wxASSERT( (i >= 0 && i < 10) );
+    //wxASSERT( (i >= 0 && i < 10) );
     if (i >= 0 && i < 10)
         m_levelStyles[i] = attr;
 }
 
 const wxRichTextAttr* wxRichTextListStyleDefinition::GetLevelAttributes(int i) const
 {
-    wxASSERT( (i >= 0 && i < 10) );
+    //wxASSERT( (i >= 0 && i < 10) );
     if (i >= 0 && i < 10)
         return & m_levelStyles[i];
     else
@@ -179,7 +179,7 @@ const wxRichTextAttr* wxRichTextListStyleDefinition::GetLevelAttributes(int i) c
 
 wxRichTextAttr* wxRichTextListStyleDefinition::GetLevelAttributes(int i)
 {
-    wxASSERT( (i >= 0 && i < 10) );
+    //wxASSERT( (i >= 0 && i < 10) );
     if (i >= 0 && i < 10)
         return & m_levelStyles[i];
     else
@@ -189,7 +189,7 @@ wxRichTextAttr* wxRichTextListStyleDefinition::GetLevelAttributes(int i)
 /// Convenience function for setting the major attributes for a list level specification
 void wxRichTextListStyleDefinition::SetAttributes(int i, int leftIndent, int leftSubIndent, int bulletStyle, const wxString& bulletSymbol)
 {
-    wxASSERT( (i >= 0 && i < 10) );
+    //wxASSERT( (i >= 0 && i < 10) );
     if (i >= 0 && i < 10)
     {
         wxRichTextAttr attr;

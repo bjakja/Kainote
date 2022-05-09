@@ -264,7 +264,7 @@ private:
     template <class T>
     T *Get(T *) const
     {
-        wxCHECK_MSG( static_cast<int>(m_family) == AddressFamily<T>::value,
+        //wxCHECK_MSG( static_cast<int>(m_family) == AddressFamily<T>::value,
                      NULL,
                      "socket address family mismatch" );
 

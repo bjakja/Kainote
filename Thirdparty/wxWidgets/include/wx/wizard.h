@@ -150,7 +150,7 @@ public:
     // a convenience function to make the pages follow each other
     static void Chain(wxWizardPageSimple *first, wxWizardPageSimple *second)
     {
-        wxCHECK_RET( first && second,
+        //wxCHECK_RET( first && second,
                      wxT("NULL passed to wxWizardPageSimple::Chain") );
 
         first->SetNext(second);

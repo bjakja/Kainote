@@ -131,7 +131,7 @@ WXDLLIMPEXP_BASE wxMBConv* new_wxMBConv_cf(wxFontEncoding encoding)
             /* usedBufLen is the number of bytes written, so we divide by
              * sizeof(wchar_t) to get the number of elements written.
              */
-            wxASSERT( (usedBufLen % sizeof(wchar_t)) == 0 );
+            //wxASSERT( (usedBufLen % sizeof(wchar_t)) == 0 );
 
             // CFStringGetBytes does exactly the right thing when buffer
             // pointer is NULL and returns the number of bytes required
@@ -193,13 +193,13 @@ WXDLLIMPEXP_BASE wxMBConv* new_wxMBConv_cf(wxFontEncoding encoding)
         {
             wxMBConvUTF16 converter;
             size_t cbUniBuffer = converter.FromWChar( NULL, 0, src, srcSize );
-            wxASSERT(cbUniBuffer % sizeof(UniChar));
+            //wxASSERT(cbUniBuffer % sizeof(UniChar));
 
             // Will be free'd by kCFAllocatorMalloc when CFString is released
             UniChar *tmpUniBuffer = (UniChar*)malloc(cbUniBuffer);
 
             cbUniBuffer = converter.FromWChar( (char*) tmpUniBuffer, cbUniBuffer, src, srcSize );
-            wxASSERT(cbUniBuffer % sizeof(UniChar));
+            //wxASSERT(cbUniBuffer % sizeof(UniChar));
 
             theString = wxCFRef<CFStringRef>(CFStringCreateWithCharactersNoCopy(
                         kCFAllocatorDefault,

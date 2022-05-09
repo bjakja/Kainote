@@ -173,7 +173,7 @@ void wxGUIEventLoop::InitBuffer()
     }
 
     wxFDIODispatcher *dispatcher = wxFDIODispatcher::Get();
-    wxCHECK_RET( dispatcher, "wxDFB requires wxFDIODispatcher" );
+    //wxCHECK_RET( dispatcher, "wxDFB requires wxFDIODispatcher" );
 
     gs_DFBEventsHandler.SetFD(ms_bufferFd);
     dispatcher->RegisterFD(ms_bufferFd, &gs_DFBEventsHandler, wxFDIO_INPUT);
@@ -183,7 +183,7 @@ void wxGUIEventLoop::InitBuffer()
 void wxGUIEventLoop::CleanUp()
 {
     wxFDIODispatcher *dispatcher = wxFDIODispatcher::Get();
-    wxCHECK_RET( dispatcher, "wxDFB requires wxFDIODispatcher" );
+    //wxCHECK_RET( dispatcher, "wxDFB requires wxFDIODispatcher" );
     dispatcher->UnregisterFD(ms_bufferFd);
 
     ms_buffer.Reset();

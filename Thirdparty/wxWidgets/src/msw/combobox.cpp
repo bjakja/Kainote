@@ -156,7 +156,7 @@ LRESULT APIENTRY _EXPORT wxComboEditWndProc(HWND hWnd,
     }
     else if ( message == WM_GETDLGCODE )
     {
-        wxCHECK_MSG( win, 0, wxT("should have a parent") );
+        //wxCHECK_MSG( win, 0, wxT("should have a parent") );
 
         if ( win->GetWindowStyle() & wxTE_PROCESS_ENTER )
         {

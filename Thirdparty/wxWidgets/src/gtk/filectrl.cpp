@@ -36,8 +36,8 @@
 void wxGtkFileChooser::SetWidget(GtkFileChooser *w)
 {
     // check arguments
-    wxASSERT( w );
-    wxASSERT( GTK_FILE_CHOOSER( w ) );
+    //wxASSERT( w );
+    //wxASSERT( GTK_FILE_CHOOSER( w ) );
 
     this->m_widget = w;
 }

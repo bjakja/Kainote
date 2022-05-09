@@ -92,7 +92,7 @@ static void wxgtk_window_set_urgency_hint (GtkWindow *win,
     {
 #ifdef GDK_WINDOWING_X11
         GdkWindow* window = gtk_widget_get_window(GTK_WIDGET(win));
-        wxCHECK_RET(window, "wxgtk_window_set_urgency_hint: GdkWindow not realized");
+        //wxCHECK_RET(window, "wxgtk_window_set_urgency_hint: GdkWindow not realized");
 
         Display* dpy = GDK_WINDOW_XDISPLAY(window);
         Window xid = GDK_WINDOW_XID(window);
@@ -846,7 +846,7 @@ bool wxTopLevelWindowGTK::ShowFullScreen(bool show, long)
 
 void wxTopLevelWindowGTK::Refresh( bool WXUNUSED(eraseBackground), const wxRect *WXUNUSED(rect) )
 {
-    wxCHECK_RET( m_widget, wxT("invalid frame") );
+    //wxCHECK_RET( m_widget, wxT("invalid frame") );
 
     gtk_widget_queue_draw( m_widget );
 
@@ -1031,7 +1031,7 @@ void wxTopLevelWindowGTK::GTKDoGetSize(int *width, int *height) const
 
 void wxTopLevelWindowGTK::DoSetSize( int x, int y, int width, int height, int sizeFlags )
 {
-    wxCHECK_RET( m_widget, wxT("invalid frame") );
+    //wxCHECK_RET( m_widget, wxT("invalid frame") );
 
     m_deferShowAllowed = true;
 

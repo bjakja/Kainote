@@ -78,7 +78,7 @@ wxString DumpFont(const wxFont *font)
     // dumps the internal properties of a wxFont in the same order they
     // are checked by wxFontBase::operator==()
 
-    wxASSERT(font->IsOk());
+    //wxASSERT(font->IsOk());
 
     wxString s;
     s.Printf(wxS("%d-%d;%d-%d-%d-%d-%d-%s-%d"),

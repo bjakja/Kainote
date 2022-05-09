@@ -1701,7 +1701,7 @@ void wxGTKRenderer::DoDrawMenuItem(wxDC& dc,
     if ( !accel.empty() )
     {
         // menubar items shouldn't have them
-        wxCHECK_RET( geometryInfo, wxT("accel strings only valid for menus") );
+        //wxCHECK_RET( geometryInfo, wxT("accel strings only valid for menus") );
 
         rect.x = geometryInfo->GetAccelOffset();
         rect.SetRight(geometryInfo->GetSize().x);
@@ -1713,7 +1713,7 @@ void wxGTKRenderer::DoDrawMenuItem(wxDC& dc,
     // draw the submenu indicator
     if ( flags & wxCONTROL_ISSUBMENU )
     {
-        wxCHECK_RET( geometryInfo, wxT("wxCONTROL_ISSUBMENU only valid for menus") );
+        //wxCHECK_RET( geometryInfo, wxT("wxCONTROL_ISSUBMENU only valid for menus") );
 
         rect.x = geometryInfo->GetSize().x - MENU_RIGHT_MARGIN;
         rect.width = MENU_RIGHT_MARGIN;

@@ -400,7 +400,7 @@ wxColour wxSystemSettingsNative::GetColour( wxSystemColour index )
             break;
     }
 
-    wxASSERT(color.IsOk());
+    //wxASSERT(color.IsOk());
     return color;
 }
 #endif
@@ -449,7 +449,7 @@ wxFont wxSystemSettingsNative::GetFont( wxSystemFont index )
             break;
     }
 
-    wxASSERT( font.IsOk() );
+    //wxASSERT( font.IsOk() );
 
     return font;
 }

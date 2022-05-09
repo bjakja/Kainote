@@ -89,7 +89,7 @@ static void gtk_notebook_page_change_callback(GtkNotebook *WXUNUSED(widget),
 {
     // are you trying to call SetSelection() from a notebook event handler?
     // you shouldn't!
-    wxCHECK_RET( !notebook->m_inSwitchPage,
+    //wxCHECK_RET( !notebook->m_inSwitchPage,
                  wxT("gtk_notebook_page_change_callback reentered") );
 
     notebook->m_inSwitchPage = true;
@@ -230,7 +230,7 @@ static gint gtk_notebook_key_press_callback( GtkWidget *widget, GdkEventKey *gdk
         if (sel == wxNOT_FOUND)
             return TRUE;
         wxGtkNotebookPage *nb_page = notebook->GetNotebookPage(sel);
-        wxCHECK_MSG( nb_page, FALSE, wxT("invalid selection in wxNotebook") );
+        //wxCHECK_MSG( nb_page, FALSE, wxT("invalid selection in wxNotebook") );
 
         wxNavigationKeyEvent event;
         event.SetEventObject( notebook );
@@ -358,7 +358,7 @@ bool wxNotebook::Create(wxWindow *parent, wxWindowID id,
 
 int wxNotebook::GetSelection() const
 {
-    wxCHECK_MSG( m_widget != NULL, wxNOT_FOUND, wxT("invalid notebook") );
+    //wxCHECK_MSG( m_widget != NULL, wxNOT_FOUND, wxT("invalid notebook") );
 
     if ( m_selection == wxNOT_FOUND )
     {
@@ -382,7 +382,7 @@ int wxNotebook::GetSelection() const
 
 wxString wxNotebook::GetPageText( size_t page ) const
 {
-    wxCHECK_MSG( m_widget != NULL, wxEmptyString, wxT("invalid notebook") );
+    //wxCHECK_MSG( m_widget != NULL, wxEmptyString, wxT("invalid notebook") );
 
     wxGtkNotebookPage* nb_page = GetNotebookPage(page);
     if (nb_page)
@@ -393,7 +393,7 @@ wxString wxNotebook::GetPageText( size_t page ) const
 
 int wxNotebook::GetPageImage( size_t page ) const
 {
-    wxCHECK_MSG( m_widget != NULL, -1, wxT("invalid notebook") );
+    //wxCHECK_MSG( m_widget != NULL, -1, wxT("invalid notebook") );
 
     wxGtkNotebookPage* nb_page = GetNotebookPage(page);
     if (nb_page)
@@ -404,18 +404,18 @@ int wxNotebook::GetPageImage( size_t page ) const
 
 wxGtkNotebookPage* wxNotebook::GetNotebookPage( int page ) const
 {
-    wxCHECK_MSG( m_widget != NULL, NULL, wxT("invalid notebook") );
+    //wxCHECK_MSG( m_widget != NULL, NULL, wxT("invalid notebook") );
 
-    wxCHECK_MSG( page < (int)m_pagesData.GetCount(), NULL, wxT("invalid notebook index") );
+    //wxCHECK_MSG( page < (int)m_pagesData.GetCount(), NULL, wxT("invalid notebook index") );
 
     return m_pagesData.Item(page)->GetData();
 }
 
 int wxNotebook::DoSetSelection( size_t page, int flags )
 {
-    wxCHECK_MSG( m_widget != NULL, wxNOT_FOUND, wxT("invalid notebook") );
+    //wxCHECK_MSG( m_widget != NULL, wxNOT_FOUND, wxT("invalid notebook") );
 
-    wxCHECK_MSG( page < m_pagesData.GetCount(), -1, wxT("invalid notebook index") );
+    //wxCHECK_MSG( page < m_pagesData.GetCount(), -1, wxT("invalid notebook index") );
 
     int selOld = GetSelection();
 
@@ -443,11 +443,11 @@ int wxNotebook::DoSetSelection( size_t page, int flags )
 
 bool wxNotebook::SetPageText( size_t page, const wxString &text )
 {
-    wxCHECK_MSG( m_widget != NULL, FALSE, wxT("invalid notebook") );
+    //wxCHECK_MSG( m_widget != NULL, FALSE, wxT("invalid notebook") );
 
     wxGtkNotebookPage* nb_page = GetNotebookPage(page);
 
-    wxCHECK_MSG( nb_page, FALSE, wxT("SetPageText: invalid page index") );
+    //wxCHECK_MSG( nb_page, FALSE, wxT("SetPageText: invalid page index") );
 
     nb_page->m_text = text;
 
@@ -497,7 +497,7 @@ bool wxNotebook::SetPageImage( size_t page, int image )
         }
 
         /* We should have the pixmap widget now */
-        wxASSERT(pixmapwid != NULL);
+        //wxASSERT(pixmapwid != NULL);
 
         if (image == -1)
         {
@@ -510,7 +510,7 @@ bool wxNotebook::SetPageImage( size_t page, int image )
     }
 
     /* Only cases 3) and 4) left */
-    wxASSERT( HasImageList() ); /* Just in case */
+    //wxASSERT( HasImageList() ); /* Just in case */
 
     /* Construct the new pixmap */
     const wxBitmap *bmp = GetImageList()->GetBitmapPtr(image);
@@ -548,7 +548,7 @@ void wxNotebook::SetPageSize( const wxSize &WXUNUSED(size) )
 
 void wxNotebook::SetPadding( const wxSize &padding )
 {
-    wxCHECK_RET( m_widget != NULL, wxT("invalid notebook") );
+    //wxCHECK_RET( m_widget != NULL, wxT("invalid notebook") );
 
     m_padding = padding.GetWidth();
 
@@ -556,7 +556,7 @@ void wxNotebook::SetPadding( const wxSize &padding )
     for (i=0; i<int(GetPageCount()); i++)
     {
         wxGtkNotebookPage* nb_page = GetNotebookPage(i);
-        wxASSERT(nb_page != NULL);
+        //wxASSERT(nb_page != NULL);
 
         if (nb_page->m_image != -1)
         {
@@ -566,7 +566,7 @@ void wxNotebook::SetPadding( const wxSize &padding )
             SetPageImage(i,-1);
             SetPageImage(i,image);
         }
-        wxASSERT(nb_page->m_label);
+        //wxASSERT(nb_page->m_label);
         gtk_box_set_child_packing(GTK_BOX(nb_page->m_box),
                                   GTK_WIDGET(nb_page->m_label),
                                   FALSE, FALSE, m_padding, GTK_PACK_END);
@@ -580,7 +580,7 @@ void wxNotebook::SetTabSize(const wxSize& WXUNUSED(sz))
 
 bool wxNotebook::DeleteAllPages()
 {
-    wxCHECK_MSG( m_widget != NULL, FALSE, wxT("invalid notebook") );
+    //wxCHECK_MSG( m_widget != NULL, FALSE, wxT("invalid notebook") );
 
     while (m_pagesData.GetCount() > 0)
         DeletePage( m_pagesData.GetCount()-1 );
@@ -631,12 +631,12 @@ bool wxNotebook::InsertPage( size_t position,
                              bool select,
                              int imageId )
 {
-    wxCHECK_MSG( m_widget != NULL, FALSE, wxT("invalid notebook") );
+    //wxCHECK_MSG( m_widget != NULL, FALSE, wxT("invalid notebook") );
 
-    wxCHECK_MSG( win->GetParent() == this, FALSE,
+    //wxCHECK_MSG( win->GetParent() == this, FALSE,
                wxT("Can't add a page whose parent is not the notebook!") );
 
-    wxCHECK_MSG( position <= GetPageCount(), FALSE,
+    //wxCHECK_MSG( position <= GetPageCount(), FALSE,
                  wxT("invalid page index in wxNotebookPage::InsertPage()") );
 
     // Hack Alert! (Part II): See above in wxInsertChildInNotebook callback
@@ -679,7 +679,7 @@ bool wxNotebook::InsertPage( size_t position,
 
     if (imageId != -1)
     {
-        wxASSERT( HasImageList() );
+        //wxASSERT( HasImageList() );
 
         const wxBitmap *bmp = GetImageList()->GetBitmapPtr(imageId);
         GdkPixmap *pixmap = bmp->GetPixmap();
