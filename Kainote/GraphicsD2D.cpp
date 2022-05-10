@@ -583,11 +583,11 @@ public:
 
 	void AcquireResource() override
 	{
-		wxCHECK_RESOURCE_HOLDER_PRE();
+		//wxCHECK_RESOURCE_HOLDER_PRE();
 
 		DoAcquireResource();
 
-		wxCHECK_RESOURCE_HOLDER_POST();
+		//wxCHECK_RESOURCE_HOLDER_POST();
 	}
 
 	void ReleaseResource() override
@@ -770,7 +770,7 @@ D2D1_ANTIALIAS_MODE wxD2DConvertAntialiasMode(wxAntialiasMode antialiasMode)
 		return D2D1_ANTIALIAS_MODE_PER_PRIMITIVE;
 	}
 
-	wxFAIL_MSG("unknown antialias mode");
+	//wxFAIL_MSG("unknown antialias mode");
 	return D2D1_ANTIALIAS_MODE_ALIASED;
 }
 
@@ -821,7 +821,7 @@ D2D1_COMPOSITE_MODE wxD2DConvertCompositionMode(wxCompositionMode compositionMod
 		return D2D1_COMPOSITE_MODE_SOURCE_COPY;
 	}
 
-	wxFAIL_MSG("unknown composition mode");
+	//wxFAIL_MSG("unknown composition mode");
 	return D2D1_COMPOSITE_MODE_SOURCE_COPY;
 }
 #endif // wxD2D_DEVICE_CONTEXT_SUPPORTED
@@ -845,7 +845,7 @@ D2D1_INTERPOLATION_MODE wxD2DConvertInterpolationMode(wxInterpolationQuality int
 		return D2D1_INTERPOLATION_MODE_CUBIC;
 	}
 
-	wxFAIL_MSG("unknown interpolation quality");
+	//wxFAIL_MSG("unknown interpolation quality");
 	return D2D1_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
 }
 #endif // wxD2D_DEVICE_CONTEXT_SUPPORTED
@@ -866,7 +866,7 @@ D2D1_BITMAP_INTERPOLATION_MODE wxD2DConvertBitmapInterpolationMode(wxInterpolati
 		return D2D1_BITMAP_INTERPOLATION_MODE_LINEAR;
 	}
 
-	wxFAIL_MSG("unknown interpolation quality");
+	//wxFAIL_MSG("unknown interpolation quality");
 	return D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
 }
 
@@ -1770,7 +1770,7 @@ void wxD2DPathData::AddPath(const GraphicsPathData* path)
 	// Add current geometry to the collection transformed geometries.
 	hr = m_direct2dfactory->CreateTransformedGeometry(m_pathGeometry,
 						D2D1::Matrix3x2F::Identity(), &pTransformedGeometry);
-	wxCHECK_HRESULT_RET(hr);
+	//wxCHECK_HRESULT_RET(hr);
 	m_pTransformedGeometries.push_back(pTransformedGeometry);
 
 	// Add to the collection transformed geometries from the appended path.
@@ -1780,7 +1780,7 @@ void wxD2DPathData::AddPath(const GraphicsPathData* path)
 		hr = m_direct2dfactory->CreateTransformedGeometry(
 					pathSrc->m_pTransformedGeometries[i],
 					D2D1::Matrix3x2F::Identity(), &pTransformedGeometry);
-		wxCHECK_HRESULT_RET(hr);
+		//wxCHECK_HRESULT_RET(hr);
 		m_pTransformedGeometries.push_back(pTransformedGeometry);
 	}
 
@@ -1790,7 +1790,7 @@ void wxD2DPathData::AddPath(const GraphicsPathData* path)
 
 	// Transfer appended geometry to the current geometry sink.
 	hr = pathSrc->m_pathGeometry->Stream(m_geometrySink);
-	wxCHECK_HRESULT_RET(hr);
+	//wxCHECK_HRESULT_RET(hr);
 
 	// Apply to the current path positional data from the appended path.
 	// This operation fully sets geometry to the required state
@@ -1888,7 +1888,7 @@ void wxD2DPathData::Transform(const GraphicsMatrixData* matrix)
 	{
 		pTransformedGeometry = NULL;
 		hr = m_direct2dfactory->CreateTransformedGeometry(m_pTransformedGeometries[i], m, &pTransformedGeometry);
-		wxCHECK_HRESULT_RET(hr);
+		//wxCHECK_HRESULT_RET(hr);
 
 		m_pTransformedGeometries[i]->Release();
 		m_pTransformedGeometries[i] = pTransformedGeometry;
@@ -1898,7 +1898,7 @@ void wxD2DPathData::Transform(const GraphicsMatrixData* matrix)
 	// to the collection of transformed geometries.
 	pTransformedGeometry = NULL;
 	hr = m_direct2dfactory->CreateTransformedGeometry(m_pathGeometry, m, &pTransformedGeometry);
-	wxCHECK_HRESULT_RET(hr);
+	//wxCHECK_HRESULT_RET(hr);
 	m_pTransformedGeometries.push_back(pTransformedGeometry);
 
 	// Clear and reopen current geometry.
@@ -1918,7 +1918,7 @@ void wxD2DPathData::GetBox(wxDouble* x, wxDouble* y, wxDouble* w, wxDouble *h) c
 	D2D1_RECT_F bounds;
 	ID2D1Geometry *curGeometry = GetFullGeometry(GetFillMode());
 	HRESULT hr = curGeometry->GetBounds(D2D1::Matrix3x2F::Identity(), &bounds);
-	wxCHECK_HRESULT_RET(hr);
+	//wxCHECK_HRESULT_RET(hr);
 	// Check if bounds are empty
 	if ( bounds.left > bounds.right )
 	{
@@ -2236,7 +2236,7 @@ protected:
 			}
 
 			hr = renderTarget->CreateBitmapFromWicBitmap(resultBitmap, 0, &m_nativeResource);
-			wxCHECK_HRESULT_RET(hr);
+			//wxCHECK_HRESULT_RET(hr);
 
 			delete[] colorBuffer;
 			delete[] maskBuffer;
@@ -2350,7 +2350,7 @@ protected:
 	{
 		wxColour colour = m_sourceBrush.GetColour();
 		HRESULT hr = GetContext()->CreateSolidColorBrush(wxD2DConvertColour(colour), &m_nativeResource);
-		wxCHECK_HRESULT_RET(hr);
+		//wxCHECK_HRESULT_RET(hr);
 	}
 };
 
@@ -2374,7 +2374,7 @@ protected:
 			D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR),
 			&m_nativeResource);
 
-		wxCHECK_HRESULT_RET(result);
+		//wxCHECK_HRESULT_RET(result);
 	}
 };
 
@@ -2391,7 +2391,7 @@ protected:
 		wxCOMPtr<ID2D1Bitmap> bitmap;
 
 		HRESULT hr = GetContext()->CreateBitmapFromWicBitmap(hatchBitmapSource, &bitmap);
-		wxCHECK_HRESULT_RET(hr);
+		//wxCHECK_HRESULT_RET(hr);
 
 		hr = GetContext()->CreateBitmapBrush(
 			bitmap,
@@ -2400,7 +2400,7 @@ protected:
 			D2D1_EXTEND_MODE_WRAP,
 			D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR),
 			&m_nativeResource);
-		wxCHECK_HRESULT_RET(hr);
+		//wxCHECK_HRESULT_RET(hr);
 	}
 };
 
@@ -2439,7 +2439,7 @@ protected:
 				D2D1::Point2F(m_linearGradientInfo.x2, m_linearGradientInfo.y2)),
 			helper.GetGradientStopCollection(),
 			&linearGradientBrush);
-		wxCHECK_HRESULT_RET(hr);
+		//wxCHECK_HRESULT_RET(hr);
 
 		if (! m_linearGradientInfo.matrix)
 		{
@@ -2496,7 +2496,7 @@ protected:
 				m_radialGradientInfo.radius, m_radialGradientInfo.radius),
 			helper.GetGradientStopCollection(),
 			&radialGradientBrush);
-		wxCHECK_HRESULT_RET(hr);
+		//wxCHECK_HRESULT_RET(hr);
 
 		if (! m_radialGradientInfo.matrix)
 		{
@@ -2876,16 +2876,16 @@ public:
 	static int ToIntPointSize(float pointSize) { return wxRound(pointSize); }
 	static float ToFloatPointSize(int pointSize)
 	{
-		wxCHECK_MSG(pointSize == -1 || pointSize >= 0,
-			-1, "Invalid font point size");
+		//wxCHECK_MSG(pointSize == -1 || pointSize >= 0,
+			//-1, "Invalid font point size");
 
 		// Huge values are not exactly representable as floats, so don't accept
 		// those neither as they can only be due to a mistake anyhow: nobody
 		// could possibly need a font of size 16777217pt (which is the first
 		// value for which this fails).
 		const float f = static_cast<float>(pointSize);
-		wxCHECK_MSG(static_cast<int>(f) == pointSize,
-			-1, "Font point size out of range");
+		//wxCHECK_MSG(static_cast<int>(f) == pointSize,
+			//-1, "Font point size out of range");
 
 		return f;
 	}
@@ -3254,11 +3254,11 @@ wxD2DFontData::wxD2DFontData(wxD2DRenderer* renderer, const wxFont& font, const 
 
 	wxCOMPtr<IDWriteGdiInterop> gdiInterop;
 	hr = wxDWriteFactory()->GetGdiInterop(&gdiInterop);
-	wxCHECK_HRESULT_RET(hr);
+	//wxCHECK_HRESULT_RET(hr);
 
 	LOGFONTW logfont;
 	int n = GetObjectW(font.GetHFONT(), sizeof(logfont), &logfont);
-	wxCHECK_RET( n > 0, wxS("Failed to obtain font info") );
+	//wxCHECK_RET( n > 0, wxS("Failed to obtain font info") );
 
 	// Ensure the LOGFONT object contains the correct font face name
 	if (logfont.lfFaceName[0] == L'\0')
@@ -3280,24 +3280,24 @@ wxD2DFontData::wxD2DFontData(wxD2DRenderer* renderer, const wxFont& font, const 
 		return;
 	}
 
-	wxCHECK_RET( SUCCEEDED(hr),
-				 wxString::Format("Failed to create font '%s' (HRESULT = %x)", logfont.lfFaceName, hr) );
+	//wxCHECK_RET( SUCCEEDED(hr),
+				 //wxString::Format("Failed to create font '%s' (HRESULT = %x)", logfont.lfFaceName, hr) );
 
 	wxCOMPtr<IDWriteFontFamily> fontFamily;
 	hr = m_font->GetFontFamily(&fontFamily);
-	wxCHECK_HRESULT_RET(hr);
+	//wxCHECK_HRESULT_RET(hr);
 
 	wxCOMPtr<IDWriteLocalizedStrings> familyNames;
 	hr = fontFamily->GetFamilyNames(&familyNames);
-	wxCHECK_HRESULT_RET(hr);
+	//wxCHECK_HRESULT_RET(hr);
 
 	UINT32 length;
 	hr = familyNames->GetStringLength(0, &length);
-	wxCHECK_HRESULT_RET(hr);
+	//wxCHECK_HRESULT_RET(hr);
 
 	wchar_t* name = new wchar_t[length+1];
 	hr = familyNames->GetString(0, name, length+1);
-	wxCHECK_HRESULT_RET(hr);
+	//wxCHECK_HRESULT_RET(hr);
 
 	FLOAT fontSize = (FLOAT)(!dpi.y
 		? font.GetPixelSize().GetHeight()
@@ -3315,7 +3315,7 @@ wxD2DFontData::wxD2DFontData(wxD2DRenderer* renderer, const wxFont& font, const 
 
 	delete[] name;
 
-	wxCHECK_HRESULT_RET(hr);
+	//wxCHECK_HRESULT_RET(hr);
 }
 
 wxCOMPtr<IDWriteTextLayout> wxD2DFontData::CreateTextLayout(const wxString& text) const
@@ -3452,7 +3452,7 @@ protected:
 			GUID_WICPixelFormat32bppPBGRA,
 			WICBitmapCacheOnDemand,
 			&m_wicBitmap);
-		wxCHECK_HRESULT_RET(hr);
+		//wxCHECK_HRESULT_RET(hr);
 
 		// Copy contents of source image to the WIC bitmap.
 		const int width = m_resultImage->GetWidth();
@@ -3460,7 +3460,7 @@ protected:
 		WICRect rcLock = { 0, 0, width, height };
 		IWICBitmapLock *pLock = NULL;
 		hr = m_wicBitmap->Lock(&rcLock, WICBitmapLockWrite, &pLock);
-		wxCHECK_HRESULT_RET(hr);
+		//wxCHECK_HRESULT_RET(hr);
 
 		UINT rowStride = 0;
 		hr = pLock->GetStride(&rowStride);
@@ -3511,7 +3511,7 @@ protected:
 				D2D1_RENDER_TARGET_TYPE_SOFTWARE,
 				D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)),
 			&m_nativeResource);
-		wxCHECK_HRESULT_RET(hr);
+		//wxCHECK_HRESULT_RET(hr);
 	}
 
 private:
@@ -3523,7 +3523,7 @@ private:
 		WICRect rcLock = { 0, 0, width, height };
 		IWICBitmapLock *pLock = NULL;
 		HRESULT hr = m_wicBitmap->Lock(&rcLock, WICBitmapLockRead, &pLock);
-		wxCHECK_HRESULT_RET(hr);
+		//wxCHECK_HRESULT_RET(hr);
 
 		UINT rowStride = 0;
 		hr = pLock->GetStride(&rowStride);
@@ -3640,7 +3640,7 @@ protected:
 
 		if (FAILED(result))
 		{
-			wxFAIL_MSG("Could not create Direct2D render target");
+			//wxFAIL_MSG("Could not create Direct2D render target");
 		}
 
 		renderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
@@ -3867,17 +3867,17 @@ protected:
 		HRESULT hr = m_factory->CreateDCRenderTarget(
 			&renderTargetProperties,
 			&renderTarget);
-		wxCHECK_HRESULT_RET(hr);
+		//wxCHECK_HRESULT_RET(hr);
 
 		// We want draw on the entire device area.
 		// GetClipBox() retrieves logical size of DC
 		// what is what we need to pass to BindDC.
 		RECT r;
 		int status = ::GetClipBox(m_hdc, &r);
-		wxCHECK_RET( status != ERROR, wxS("Error retrieving DC dimensions") );
+		//wxCHECK_RET( status != ERROR, wxS("Error retrieving DC dimensions") );
 
 		hr = renderTarget->BindDC(m_hdc, &r);
-		wxCHECK_HRESULT_RET(hr);
+		//wxCHECK_HRESULT_RET(hr);
 		renderTarget->SetTransform(
 					   D2D1::Matrix3x2F::Translation(-r.left, -r.top));
 
@@ -4302,7 +4302,7 @@ wxD2DContext::~wxD2DContext()
 	}
 
 	HRESULT result = GetRenderTarget()->EndDraw();
-	wxCHECK_HRESULT_RET(result);
+	//wxCHECK_HRESULT_RET(result);
 
 	ReleaseResources();
 
@@ -4333,7 +4333,7 @@ void wxD2DContext::Clip(wxDouble x, wxDouble y, wxDouble w, wxDouble h)
 	wxCOMPtr<ID2D1RectangleGeometry> clipGeometry;
 	HRESULT hr = m_direct2dFactory->CreateRectangleGeometry(
 						D2D1::RectF(x, y, x + w, y + h), &clipGeometry);
-	wxCHECK_HRESULT_RET(hr);
+	//wxCHECK_HRESULT_RET(hr);
 
 	SetClipLayer(clipGeometry);
 }
@@ -4344,7 +4344,7 @@ void wxD2DContext::SetClipLayer(ID2D1Geometry* clipGeometry)
 
 	wxCOMPtr<ID2D1Layer> clipLayer;
 	HRESULT hr = GetRenderTarget()->CreateLayer(&clipLayer);
-	wxCHECK_HRESULT_RET(hr);
+	//wxCHECK_HRESULT_RET(hr);
 
 	LayerData ld;
 	ld.type = CLIP_LAYER;
@@ -4386,7 +4386,7 @@ void wxD2DContext::ResetClip()
 	}
 
 	HRESULT hr = GetRenderTarget()->Flush();
-	wxCHECK_HRESULT_RET(hr);
+	//wxCHECK_HRESULT_RET(hr);
 
 	// Re-apply all remaining non-clipping layers.
 	// First, save current transformation matrix.
@@ -4423,7 +4423,7 @@ void wxD2DContext::GetClipBox(wxDouble* x, wxDouble* y, wxDouble* w, wxDouble* h
 		hr = m_direct2dFactory->CreateRectangleGeometry(
 					D2D1::RectF(0.0F, 0.0F, (FLOAT)m_width, (FLOAT)m_height),
 					&rectGeometry);
-		wxCHECK_HRESULT_RET(hr);
+		//wxCHECK_HRESULT_RET(hr);
 
 		wxCOMPtr<ID2D1Geometry> clipGeometry(rectGeometry);
 
@@ -4440,16 +4440,16 @@ void wxD2DContext::GetClipBox(wxDouble* x, wxDouble* y, wxDouble* w, wxDouble* h
 				// then final result is "null" rectangle geometry.
 				FLOAT area;
 				hr = ld.geometry->ComputeArea(ld.transformMatrix, &area);
-				wxCHECK_HRESULT_RET(hr);
+				//wxCHECK_HRESULT_RET(hr);
 				D2D1_GEOMETRY_RELATION geomRel;
 				hr = clipGeometry->CompareWithGeometry(ld.geometry, ld.transformMatrix, &geomRel);
-				wxCHECK_HRESULT_RET(hr);
+				//wxCHECK_HRESULT_RET(hr);
 				if ( area <= FLT_MIN || geomRel == D2D1_GEOMETRY_RELATION_DISJOINT )
 				{
 					wxCOMPtr<ID2D1RectangleGeometry> nullGeometry;
 					hr = m_direct2dFactory->CreateRectangleGeometry(
 								D2D1::RectF(0.0F, 0.0F, 0.0F, 0.0F), &nullGeometry);
-					wxCHECK_HRESULT_RET(hr);
+					//wxCHECK_HRESULT_RET(hr);
 
 					clipGeometry.reset();
 					clipGeometry = nullGeometry;
@@ -4458,16 +4458,16 @@ void wxD2DContext::GetClipBox(wxDouble* x, wxDouble* y, wxDouble* w, wxDouble* h
 
 				wxCOMPtr<ID2D1PathGeometry> pathGeometryClip;
 				hr = m_direct2dFactory->CreatePathGeometry(&pathGeometryClip);
-				wxCHECK_HRESULT_RET(hr);
+				//wxCHECK_HRESULT_RET(hr);
 				wxCOMPtr<ID2D1GeometrySink> pGeometrySink;
 				hr = pathGeometryClip->Open(&pGeometrySink);
-				wxCHECK_HRESULT_RET(hr);
+				//wxCHECK_HRESULT_RET(hr);
 
 				hr = clipGeometry->CombineWithGeometry(ld.geometry, D2D1_COMBINE_MODE_INTERSECT,
 													   ld.transformMatrix, pGeometrySink);
-				wxCHECK_HRESULT_RET(hr);
+				//wxCHECK_HRESULT_RET(hr);
 				hr = pGeometrySink->Close();
-				wxCHECK_HRESULT_RET(hr);
+				//wxCHECK_HRESULT_RET(hr);
 				pGeometrySink.reset();
 
 				clipGeometry = pathGeometryClip;
@@ -4485,7 +4485,7 @@ void wxD2DContext::GetClipBox(wxDouble* x, wxDouble* y, wxDouble* w, wxDouble* h
 		// First check if clip region is empty.
 		FLOAT clipArea;
 		hr = clipGeometry->ComputeArea(currTransform, &clipArea);
-		wxCHECK_HRESULT_RET(hr);
+		//wxCHECK_HRESULT_RET(hr);
 		if ( clipArea <= FLT_MIN )
 		{
 			bounds.left = bounds.top = bounds.right = bounds.bottom = 0.0F;
@@ -4494,7 +4494,7 @@ void wxD2DContext::GetClipBox(wxDouble* x, wxDouble* y, wxDouble* w, wxDouble* h
 		{
 			// If it is not empty then get it bounds.
 			hr = clipGeometry->GetBounds(currTransform, &bounds);
-			wxCHECK_HRESULT_RET(hr);
+			//wxCHECK_HRESULT_RET(hr);
 		}
 
 		m_clipX1 = bounds.left;
@@ -4607,7 +4607,7 @@ void wxD2DContext::BeginLayer(wxDouble opacity)
 
 	wxCOMPtr<ID2D1Layer> layer;
 	HRESULT hr = GetRenderTarget()->CreateLayer(&layer);
-	wxCHECK_HRESULT_RET(hr);
+	//wxCHECK_HRESULT_RET(hr);
 
 	LayerData ld;
 	ld.type = OTHER_LAYER;
@@ -4653,7 +4653,7 @@ void wxD2DContext::EndLayer()
 	if ( m_layers.empty() )
 	{
 		HRESULT hr = GetRenderTarget()->Flush();
-		wxCHECK_HRESULT_RET(hr);
+		//wxCHECK_HRESULT_RET(hr);
 	}
 
 	// Re-apply all stored clipping layers.
@@ -4673,7 +4673,7 @@ void wxD2DContext::EndLayer()
 		}
 		else
 		{
-			wxFAIL_MSG( wxS("Invalid layer type") );
+			//wxFAIL_MSG( wxS("Invalid layer type") );
 		}
 		// Store layer parameters.
 		m_layers.push(ld);
@@ -4805,7 +4805,7 @@ void wxD2DContext::PushState()
 
 void wxD2DContext::PopState()
 {
-	wxCHECK_RET(!m_stateStack.empty(), wxS("No state to pop"));
+	//wxCHECK_RET(!m_stateStack.empty(), wxS("No state to pop"));
 
 	// Remove all layers from the stack of layers.
 	while ( !m_layers.empty() )
@@ -4872,8 +4872,8 @@ void wxD2DContext::GetTextExtent(
 
 void wxD2DContext::GetPartialTextExtents(const wxString& text, wxArrayDouble& widths) const
 {
-	wxCHECK_RET(m_font,
-		wxS("wxD2DContext::GetPartialTextExtents - no valid font set"));
+	//wxCHECK_RET(m_font,
+		//wxS("wxD2DContext::GetPartialTextExtents - no valid font set"));
 
 	wxD2DMeasuringContext::GetPartialTextExtents(
 		m_font, text, widths);
@@ -5080,7 +5080,7 @@ void wxD2DContext::Flush()
 	}
 	else
 	{
-		wxCHECK_HRESULT_RET(hr);
+		//wxCHECK_HRESULT_RET(hr);
 	}
 
 	// Re-apply all layers.
@@ -5275,7 +5275,7 @@ wxD2DRenderer::wxD2DRenderer()
 {
 	if ( m_direct2dFactory.get() == NULL )
 	{
-		wxFAIL_MSG("Could not create Direct2D Factory.");
+		//wxFAIL_MSG("Could not create Direct2D Factory.");
 	}
 }
 
@@ -5292,7 +5292,7 @@ GraphicsContext* wxD2DRenderer::CreateContext(const wxWindowDC& dc)
 GraphicsContext* wxD2DRenderer::CreateContext(const wxMemoryDC& dc)
 {
 	wxBitmap bmp = dc.GetSelectedBitmap();
-	wxASSERT_MSG( bmp.IsOk(), wxS("Should select a bitmap before creating wxGraphicsContext") );
+	//wxASSERT_MSG( bmp.IsOk(), wxS("Should select a bitmap before creating wxGraphicsContext") );
 
 	return new wxD2DContext(this, m_direct2dFactory, dc.GetHDC(), &dc,
 							bmp.HasAlpha() ? D2D1_ALPHA_MODE_PREMULTIPLIED : D2D1_ALPHA_MODE_IGNORE);

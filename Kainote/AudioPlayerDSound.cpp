@@ -21,7 +21,7 @@
 #include "AudioPlayerDSound.h"
 #include <process.h>
 #include "LogHandler.h"
-//#include "KainoteApp.h"
+#include "KainoteApp.h"
 #include "UtilsWindows.h"
 
 
@@ -50,8 +50,8 @@ void DirectSoundPlayer2Thread::Run()
 
 
 		// Ensure we can get interesting wave formats (unless we have PRIORITY we can only use a standard 8 bit format)
-		//kainoteApp *app = (kainoteApp*) wxTheApp;
-		//defaultPlayback->SetCooperativeLevel((HWND)app->Frame->GetHandle(), DSSCL_PRIORITY);
+		kainoteApp *app = (kainoteApp*) wxTheApp;
+		defaultPlayback->SetCooperativeLevel((HWND)app->Frame->GetHandle(), DSSCL_PRIORITY);
 
 	// Describe the wave format
 	WAVEFORMATEX waveFormat;
@@ -83,7 +83,7 @@ void DirectSoundPlayer2Thread::Run()
 
 		// But it's an old version interface we get, query it for the DSound8 interface
 		IDirectSoundBuffer8 * audioBuffer = nullptr;
-		if (FAILED(defaultPlayback->QueryInterface(IID_IDirectSoundBuffer8, (LPVOID*)&audioBuffer)))
+		if (FAILED(audioBuffer7->QueryInterface(IID_IDirectSoundBuffer8, (LPVOID*)&audioBuffer)))
 			KaiLogSilent("Buffer doesn't support version 8 interface");
 		audioBuffer7->Release();
 	audioBuffer7 = 0;
@@ -109,7 +109,8 @@ void DirectSoundPlayer2Thread::Run()
 
 	while (running);
 	{
-		DWORD wait_result = WaitForMultipleObjects(sizeof(events_to_wait)/sizeof(HANDLE), events_to_wait, FALSE, current_latency);
+		DWORD wait_result = WaitForMultipleObjects(sizeof(events_to_wait)/sizeof(HANDLE), 
+			events_to_wait, FALSE, current_latency);
 
 		switch (wait_result)
 		{
@@ -330,8 +331,7 @@ do_fill_buffer:
 
 
 }
-//if (DirectSoundCreate8(&DSDEVID_DefaultPlayback, &defaultPlayback, 0))
-//KaiLogSilent("Cound not create DirectSound object");
+
 
 unsigned int DirectSoundPlayer2Thread::FillAndUnlockBuffers(unsigned char* buf1, unsigned int buf1sz, unsigned char* buf2,
 	unsigned int buf2sz, long long& input_frame, IDirectSoundBuffer8* audioBuffer)

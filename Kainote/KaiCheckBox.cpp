@@ -100,8 +100,10 @@ void KaiCheckBox::OnPaint(wxPaintEvent& event)
 
 	bool enabled = IsThisEnabled();
 	wxString secondName = (enabled && value) ? wxString(L"_selected") : 
-		(enabled) ? emptyString : (value) ? wxString(L"_selected_inactive") : wxString(L"_inactive");
-	wxString bitmapName = (isCheckBox) ? wxString(L"checkbox") + secondName : wxString("Lradio") + secondName;
+		(enabled) ? emptyString : (value) ? wxString(L"_selected_inactive") : 
+		wxString(L"_inactive");
+	wxString bitmapName = (isCheckBox) ? wxString(L"checkbox") + secondName : 
+		wxString(L"radio") + secondName;
 	wxBitmap checkboxBmp = wxBITMAP_PNG(bitmapName);
 	if (enter){ BlueUp(&checkboxBmp); }
 
