@@ -151,7 +151,7 @@ bool wxFile::Access(const wxString& name, OpenMode mode)
     switch ( mode )
     {
         default:
-            wxFAIL_MSG(wxT("bad wxFile::Access mode parameter."));
+            break; //wxFAIL_MSG(wxT("bad wxFile::Access mode parameter."));
             // fall through
 
         case read:
@@ -364,15 +364,15 @@ bool wxFile::Flush()
 // seek
 wxFileOffset wxFile::Seek(wxFileOffset ofs, wxSeekMode mode)
 {
-    wxASSERT_MSG( IsOpened(), wxT("can't seek on closed file") );
+    //wxASSERT_MSG( IsOpened(), wxT("can't seek on closed file") );
     //wxCHECK_MSG( ofs != wxInvalidOffset || mode != wxFromStart,
-                 wxInvalidOffset,
-                 wxT("invalid absolute file offset") );
+                // wxInvalidOffset,
+                 //wxT("invalid absolute file offset") );
 
     int origin;
     switch ( mode ) {
         default:
-            wxFAIL_MSG(wxT("unknown seek origin"));
+            break; ////wxFAIL_MSG(wxT("unknown seek origin"));
 
         case wxFromStart:
             origin = SEEK_SET;
@@ -481,7 +481,7 @@ bool wxFile::Eof() const
     }
     else if ( iRc != 1 )
     {
-        wxFAIL_MSG(wxT("invalid eof() return value."));
+        //wxFAIL_MSG(wxT("invalid eof() return value."));
     }
 
     return true;

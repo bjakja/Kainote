@@ -100,8 +100,8 @@ wxStreamBuffer::wxStreamBuffer(const wxStreamBuffer& buffer)
 {
     // doing this has big chances to lead to a crash when the source buffer is
     // destroyed (otherwise assume the caller knows what he does)
-    wxASSERT_MSG( !buffer.m_destroybuf,
-                  wxT("it's a bad idea to copy this buffer") );
+    //wxASSERT_MSG( !buffer.m_destroybuf,
+                  //wxT("it's a bad idea to copy this buffer") );
 
     m_buffer_start = buffer.m_buffer_start;
     m_buffer_end = buffer.m_buffer_end;

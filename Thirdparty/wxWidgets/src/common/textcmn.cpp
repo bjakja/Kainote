@@ -1186,7 +1186,7 @@ wxTextAreaBase::HitTest(const wxPoint& WXUNUSED(pt), long * WXUNUSED(pos)) const
 wxPoint wxTextAreaBase::PositionToCoords(long pos) const
 {
     //wxCHECK_MSG( IsValidPosition(pos), wxDefaultPosition,
-                 wxS("Position argument out of range.") );
+                 //wxS("Position argument out of range.") );
 
     return DoPositionToCoords(pos);
 }

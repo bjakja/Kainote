@@ -506,8 +506,8 @@ void wxMDIParentFrame::Cascade()
 
 void wxMDIParentFrame::Tile(wxOrientation orient)
 {
-    wxASSERT_MSG( orient == wxHORIZONTAL || orient == wxVERTICAL,
-                  wxT("invalid orientation value") );
+    //wxASSERT_MSG( orient == wxHORIZONTAL || orient == wxVERTICAL,
+                  //wxT("invalid orientation value") );
 
     ::SendMessage(GetWinHwnd(GetClientWindow()), WM_MDITILE,
                   orient == wxHORIZONTAL ? MDITILE_HORIZONTAL
@@ -638,7 +638,7 @@ void wxMDIParentFrame::OnMDIChild(wxCommandEvent& event)
         node = node->GetNext();
     }
 
-    wxFAIL_MSG( "unknown MDI child selected?" );
+    //wxFAIL_MSG( "unknown MDI child selected?" );
 }
 
 void wxMDIParentFrame::OnMDICommand(wxCommandEvent& event)
@@ -1113,8 +1113,8 @@ bool wxMDIChildFrame::HandleMDIActivate(long WXUNUSED(activate),
     }
     else if ( m_hWnd == hwndDeact )
     {
-        wxASSERT_MSG( parent->GetActiveChild() == this,
-                      wxT("can't deactivate MDI child which wasn't active!") );
+        //wxASSERT_MSG( parent->GetActiveChild() == this,
+                      //wxT("can't deactivate MDI child which wasn't active!") );
 
         activated = false;
         parent->SetActiveChild(NULL);

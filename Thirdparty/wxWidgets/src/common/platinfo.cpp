@@ -113,7 +113,7 @@ static unsigned wxGetIndexFromEnumValue(int value)
         n++;
     }
 
-    wxASSERT_MSG( value == 1, wxT("more than one bit set in enum value") );
+    //wxASSERT_MSG( value == 1, wxT("more than one bit set in enum value") );
 
     return n;
 }
@@ -169,7 +169,7 @@ void wxPlatformInfo::InitForCurrentPlatform()
     const wxAppTraits * const traits = wxTheApp ? wxTheApp->GetTraits() : NULL;
     if ( !traits )
     {
-        wxFAIL_MSG( wxT("failed to initialize wxPlatformInfo") );
+        //wxFAIL_MSG( wxT("failed to initialize wxPlatformInfo") );
 
         m_port = wxPORT_UNKNOWN;
         m_usingUniversal = false;

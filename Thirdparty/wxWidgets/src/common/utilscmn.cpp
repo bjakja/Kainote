@@ -1373,7 +1373,7 @@ int wxMessageBox(const wxString& message, const wxString& caption, long style,
             return wxHELP;
     }
 
-    wxFAIL_MSG( wxT("unexpected return code from wxMessageDialog") );
+    //wxFAIL_MSG( wxT("unexpected return code from wxMessageDialog") );
 
     return wxCANCEL;
 }
@@ -1505,7 +1505,7 @@ wxColour wxGetColourFromUser(wxWindow *parent,
         {
             if ( !data.FromString(s_strColourData) )
             {
-                wxFAIL_MSG( "bug in wxColourData::FromString()?" );
+                //wxFAIL_MSG( "bug in wxColourData::FromString()?" );
             }
 
 #ifdef __WXMSW__

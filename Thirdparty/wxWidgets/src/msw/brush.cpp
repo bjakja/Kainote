@@ -192,7 +192,7 @@ HBRUSH wxBrushRefData::GetHBRUSH()
                     break;
 
                 default:
-                    wxFAIL_MSG( wxT("unknown brush style") );
+                    break;//wxFAIL_MSG( wxT("unknown brush style") );
                     // fall through
 
                 case wxBRUSHSTYLE_SOLID:

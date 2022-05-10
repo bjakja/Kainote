@@ -210,7 +210,7 @@ wxFindReplaceDialogImpl::FindMessageHandler(wxWindow * WXUNUSED(win),
     static bool s_blockMsg = false;
 #endif // wxUSE_UNICODE_MSLU
 
-    wxASSERT_MSG( nMsg == ms_msgFindDialog, wxT("unexpected message received") );
+    //wxASSERT_MSG( nMsg == ms_msgFindDialog, wxT("unexpected message received") );
 
     FINDREPLACE *pFR = (FINDREPLACE *)lParam;
 
@@ -260,7 +260,7 @@ wxFindReplaceDialogImpl::FindMessageHandler(wxWindow * WXUNUSED(win),
     }
     else
     {
-        wxFAIL_MSG( wxT("unknown find dialog event") );
+        //wxFAIL_MSG( wxT("unknown find dialog event") );
 
         return 0;
     }
@@ -418,7 +418,7 @@ bool wxFindReplaceDialog::Show(bool show)
 
     //wxCHECK_MSG( m_FindReplaceData, false, wxT("call Create() first!") );
 
-    wxASSERT_MSG( !m_impl, wxT("why don't we have the window then?") );
+    //wxASSERT_MSG( !m_impl, wxT("why don't we have the window then?") );
 
     m_impl = new wxFindReplaceDialogImpl(this, m_FindReplaceData->GetFlags());
 

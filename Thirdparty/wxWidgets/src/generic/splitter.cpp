@@ -736,8 +736,8 @@ void wxSplitterWindow::SizeWindows()
 // Set pane for unsplit window
 void wxSplitterWindow::Initialize(wxWindow *window)
 {
-    wxASSERT_MSG( (!window || window->GetParent() == this),
-                  wxT("windows in the splitter should have it as parent!") );
+    //wxASSERT_MSG( (!window || window->GetParent() == this),
+                  //wxT("windows in the splitter should have it as parent!") );
 
     if (window && !window->IsShown())
         window->Show();
@@ -844,7 +844,7 @@ bool wxSplitterWindow::ReplaceWindow(wxWindow *winOld, wxWindow *winNew)
     }
     else
     {
-        wxFAIL_MSG(wxT("splitter: attempt to replace a non-existent window"));
+        //wxFAIL_MSG(wxT("splitter: attempt to replace a non-existent window"));
 
         return false;
     }

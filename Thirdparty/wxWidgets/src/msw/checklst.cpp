@@ -349,7 +349,7 @@ void wxCheckListBox::OnKeyDown(wxKeyEvent& event)
                     break;
 
                 default:
-                    wxFAIL_MSG( wxT("what should this key do?") );
+                    break;//wxFAIL_MSG( wxT("what should this key do?") );
             }
 
             // we should send an event as this has been done by the user and

@@ -248,7 +248,7 @@ wxString wxPathList::FindValidPath (const wxString& file) const
     if (!fn.Normalize(wxPATH_NORM_TILDE|wxPATH_NORM_LONG|wxPATH_NORM_ENV_VARS))
         return wxEmptyString;
 
-    wxASSERT_MSG(!fn.IsDir(), wxT("Cannot search for directories; only for files"));
+    //wxASSERT_MSG(!fn.IsDir(), wxT("Cannot search for directories; only for files"));
     if (fn.IsAbsolute())
         strend = fn.GetFullName();      // search for the file name and ignore the path part
     else
@@ -1675,7 +1675,7 @@ int WXDLLIMPEXP_BASE wxParseCommonDialogsFilter(const wxString& filterStr,
             }
             else
             {
-                wxFAIL_MSG( wxT("missing '|' in the wildcard string!") );
+                //wxFAIL_MSG( wxT("missing '|' in the wildcard string!") );
             }
 
             break;

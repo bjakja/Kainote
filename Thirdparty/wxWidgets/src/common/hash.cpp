@@ -342,7 +342,7 @@ void wxHashTable::DoCopy( const wxHashTable& WXUNUSED(table) )
 {
     Create( m_keyType, m_size );
 
-    wxFAIL;
+    //wxFAIL;
 }
 
 void wxHashTable::DoDeleteContents( wxHashTableBase_Node* node )

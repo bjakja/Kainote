@@ -507,7 +507,7 @@ void wxGraphicsGradientStops::Add(const wxGraphicsGradientStop& stop)
             }
             else // we shouldn't be inserting it at the beginning
             {
-                wxFAIL_MSG( "invalid gradient stop position < 0" );
+                //wxFAIL_MSG( "invalid gradient stop position < 0" );
             }
 
             return;
@@ -520,7 +520,7 @@ void wxGraphicsGradientStops::Add(const wxGraphicsGradientStop& stop)
     }
     else
     {
-        wxFAIL_MSG( "invalid gradient stop position > 1" );
+        //wxFAIL_MSG( "invalid gradient stop position > 1" );
     }
 }
 

@@ -72,7 +72,7 @@ bool wxEventLoopBase::Yield(bool onlyIfNeeded)
     {
         if ( !onlyIfNeeded )
         {
-            wxFAIL_MSG( wxT("wxYield called recursively" ) );
+            //wxFAIL_MSG( wxT("wxYield called recursively" ) );
         }
 
         return false;

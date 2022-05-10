@@ -910,7 +910,7 @@ bool wxMsgCatalogFile::LoadFile(const wxString& filename,
         return false;
 
     size_t nSize = wx_truncate_cast(size_t, lenFile);
-    wxASSERT_MSG( nSize == lenFile + size_t(0), wxS("message catalog bigger than 4GB?") );
+    //wxASSERT_MSG( nSize == lenFile + size_t(0), wxS("message catalog bigger than 4GB?") );
 
     wxMemoryBuffer filedata;
 

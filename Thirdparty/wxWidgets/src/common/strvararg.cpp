@@ -635,7 +635,7 @@ wxString wxFormatString::InputAsString() const
     if ( m_char )
         return wxString(m_char);
 
-    wxFAIL_MSG( "invalid wxFormatString - not initialized?" );
+    //wxFAIL_MSG( "invalid wxFormatString - not initialized?" );
     return wxString();
 }
 

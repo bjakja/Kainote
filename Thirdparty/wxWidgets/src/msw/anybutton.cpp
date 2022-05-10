@@ -276,7 +276,7 @@ public:
         switch ( m_data.uAlign )
         {
             default:
-                wxFAIL_MSG( "invalid image alignment" );
+                break;////wxFAIL_MSG( "invalid image alignment" );
                 // fall through
 
             case BUTTON_IMAGELIST_ALIGN_LEFT:
@@ -299,7 +299,7 @@ public:
         switch ( dir )
         {
             default:
-                wxFAIL_MSG( "invalid direction" );
+                break;//wxFAIL_MSG( "invalid direction" );
                 // fall through
 
             case wxLEFT:
@@ -1171,7 +1171,7 @@ bool wxAnyButton::MSWOnDraw(WXDRAWITEMSTRUCT *wxdis)
             switch ( m_imageData->GetBitmapPosition() )
             {
                 default:
-                    wxFAIL_MSG( "invalid direction" );
+                    break;//wxFAIL_MSG( "invalid direction" );
                     // fall through
 
                 case wxLEFT:

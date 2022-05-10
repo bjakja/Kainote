@@ -155,7 +155,7 @@ wxMessageDialog::HookFunction(int code, WXWPARAM wParam, WXLPARAM lParam)
     const DWORD tid = ::GetCurrentThreadId();
     wxMessageDialogMap::iterator node = HookMap().find(tid);
     //wxCHECK_MSG( node != HookMap().end(), false,
-                    wxT("bogus thread id in wxMessageDialog::Hook") );
+                    //wxT("bogus thread id in wxMessageDialog::Hook") );
 
     wxMessageDialog *  const wnd = node->second;
 

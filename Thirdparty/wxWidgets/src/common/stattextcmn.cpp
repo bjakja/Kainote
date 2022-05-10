@@ -252,7 +252,7 @@ wxString wxStaticTextBase::Ellipsize(const wxString& label) const
         mode = wxELLIPSIZE_END;
     else
     {
-        wxFAIL_MSG( "should only be called if have one of wxST_ELLIPSIZE_XXX" );
+        //wxFAIL_MSG( "should only be called if have one of wxST_ELLIPSIZE_XXX" );
 
         return label;
     }

@@ -219,7 +219,7 @@ wxPaintDCImpl::wxPaintDCImpl( wxDC *owner, wxWindow *window ) :
 #ifdef wxHAS_PAINT_DEBUG
     if ( g_isPainting <= 0 )
     {
-        wxFAIL_MSG( wxT("wxPaintDCImpl may be created only in EVT_PAINT handler!") );
+        //wxFAIL_MSG( wxT("wxPaintDCImpl may be created only in EVT_PAINT handler!") );
 
         return;
     }

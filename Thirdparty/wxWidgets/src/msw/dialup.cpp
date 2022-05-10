@@ -745,7 +745,7 @@ bool wxDialUpManagerMSW::Dial(const wxString& nameOfISP,
 
     if ( ms_hRasConnection )
     {
-        wxFAIL_MSG(wxT("there is already an active connection"));
+        //wxFAIL_MSG(wxT("there is already an active connection"));
 
         return true;
     }
@@ -918,7 +918,7 @@ bool wxDialUpManagerMSW::CancelDialing()
         return false;
     }
 
-    wxASSERT_MSG( ms_hRasConnection, wxT("dialing but no connection?") );
+    //wxASSERT_MSG( ms_hRasConnection, wxT("dialing but no connection?") );
 
     ms_dialer = NULL;
 
@@ -1260,7 +1260,7 @@ static DWORD wxRasMonitorThread(wxRasThreadData *data)
                 break;
 
             default:
-                wxFAIL_MSG( wxT("unexpected return of WaitForMultipleObjects()") );
+                break;// wxFAIL_MSG(wxT("unexpected return of WaitForMultipleObjects()"));
                 // fall through
 
             case WAIT_FAILED:

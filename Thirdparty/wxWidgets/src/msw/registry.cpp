@@ -184,7 +184,7 @@ wxRegKey::StdKey wxRegKey::ExtractKeyName(wxString& strKey)
   }
 
   if ( ui == nStdKeys ) {
-    wxFAIL_MSG(wxT("invalid key prefix in wxRegKey::ExtractKeyName."));
+    //wxFAIL_MSG(wxT("invalid key prefix in wxRegKey::ExtractKeyName."));
 
     ui = HKCR;
   }
@@ -204,7 +204,7 @@ wxRegKey::StdKey wxRegKey::GetStdKeyFromHkey(WXHKEY hkey)
       return (StdKey)ui;
   }
 
-  wxFAIL_MSG(wxT("non root hkey passed to wxRegKey::GetStdKeyFromHkey."));
+  //wxFAIL_MSG(wxT("non root hkey passed to wxRegKey::GetStdKeyFromHkey."));
 
   return HKCR;
 }
@@ -1518,7 +1518,7 @@ long GetMSWViewFlags(wxRegKey::WOW64ViewMode viewMode)
             break;
 
         default:
-            wxFAIL_MSG("Unknown registry view.");
+            break; //wxFAIL_MSG("Unknown registry view.");
             // fall through
 
         case wxRegKey::WOW64ViewMode_Default:

@@ -507,8 +507,8 @@ bool wxICOResourceHandler::LoadIcon(wxIcon *icon,
     // do we need the icon of the specific size or would any icon do?
     bool hasSize = desiredWidth != -1 || desiredHeight != -1;
 
-    wxASSERT_MSG( !hasSize || (desiredWidth != -1 && desiredHeight != -1),
-                  wxT("width and height should be either both -1 or not") );
+    //wxASSERT_MSG( !hasSize || (desiredWidth != -1 && desiredHeight != -1),
+                  //wxT("width and height should be either both -1 or not") );
 
     // try to load the icon from this program first to allow overriding the
     // standard icons (although why one would want to do it considering that

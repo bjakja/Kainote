@@ -821,7 +821,7 @@ bool wxWindowMSW::SetFont(const wxFont& font)
         // GetFont() returns
         WXHANDLE hFont = GetFont().GetResourceHandle();
 
-        wxASSERT_MSG( hFont, wxT("should have valid font") );
+        //wxASSERT_MSG( hFont, wxT("should have valid font") );
 
         ::SendMessage(hWnd, WM_SETFONT, (WPARAM)hFont, MAKELPARAM(TRUE, 0));
     }
@@ -1169,7 +1169,7 @@ wxWindowMSW::AdjustForLayoutDirection(wxCoord x,
 
 void wxWindowMSW::SubclassWin(WXHWND hWnd)
 {
-    wxASSERT_MSG( !m_oldWndProc, wxT("subclassing window twice?") );
+    //wxASSERT_MSG( !m_oldWndProc, wxT("subclassing window twice?") );
 
     HWND hwnd = (HWND)hWnd;
     //wxCHECK_RET( ::IsWindow(hwnd), wxT("invalid HWND in SubclassWin") );
@@ -2160,8 +2160,8 @@ void wxWindowMSW::DoGetTextExtent(const wxString& string,
                                   int *externalLeading,
                                   const wxFont *fontToUse) const
 {
-    wxASSERT_MSG( !fontToUse || fontToUse->IsOk(),
-                    wxT("invalid font in GetTextExtent()") );
+    //wxASSERT_MSG( !fontToUse || fontToUse->IsOk(),
+                    //wxT("invalid font in GetTextExtent()") );
 
     HFONT hfontToUse;
     if ( fontToUse )
@@ -5712,8 +5712,8 @@ wxWindowMSW::CreateKeyEvent(wxEventType evType,
 {
     // Catch any attempts to use this with WM_CHAR, it wouldn't work because
     // wParam is supposed to be a virtual key and not a character here.
-    wxASSERT_MSG( evType != wxEVT_CHAR && evType != wxEVT_CHAR_HOOK,
-                    "CreateKeyEvent() can't be used for char events" );
+    //wxASSERT_MSG( evType != wxEVT_CHAR && evType != wxEVT_CHAR_HOOK,
+                    //"CreateKeyEvent() can't be used for char events" );
 
     wxKeyEvent event(evType);
     InitAnyKeyEvent(event, wParam, lParam);

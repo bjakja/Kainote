@@ -2128,7 +2128,7 @@ size_t wxDateTimeWorkDays::DoGetHolidaysInRange(const wxDateTime& dtStart,
 {
     if ( dtStart > dtEnd )
     {
-        wxFAIL_MSG( wxT("invalid date range in GetHolidaysInRange") );
+        //wxFAIL_MSG( wxT("invalid date range in GetHolidaysInRange") );
 
         return 0u;
     }
@@ -2168,7 +2168,7 @@ size_t wxDateTimeWorkDays::DoGetHolidaysInRange(const wxDateTime& dtStart,
 
 WXDLLIMPEXP_BASE void wxNextMonth(wxDateTime::Month& m)
 {
-    wxASSERT_MSG( m < wxDateTime::Inv_Month, wxT("invalid month") );
+    //wxASSERT_MSG( m < wxDateTime::Inv_Month, wxT("invalid month") );
 
     // no wrapping or the for loop above would never end!
     m = (wxDateTime::Month)(m + 1);
@@ -2176,7 +2176,7 @@ WXDLLIMPEXP_BASE void wxNextMonth(wxDateTime::Month& m)
 
 WXDLLIMPEXP_BASE void wxPrevMonth(wxDateTime::Month& m)
 {
-    wxASSERT_MSG( m < wxDateTime::Inv_Month, wxT("invalid month") );
+    //wxASSERT_MSG( m < wxDateTime::Inv_Month, wxT("invalid month") );
 
     m = m == wxDateTime::Jan ? wxDateTime::Inv_Month
                              : (wxDateTime::Month)(m - 1);
@@ -2184,7 +2184,7 @@ WXDLLIMPEXP_BASE void wxPrevMonth(wxDateTime::Month& m)
 
 WXDLLIMPEXP_BASE void wxNextWDay(wxDateTime::WeekDay& wd)
 {
-    wxASSERT_MSG( wd < wxDateTime::Inv_WeekDay, wxT("invalid week day") );
+    //wxASSERT_MSG( wd < wxDateTime::Inv_WeekDay, wxT("invalid week day") );
 
     // no wrapping or the for loop above would never end!
     wd = (wxDateTime::WeekDay)(wd + 1);
@@ -2192,7 +2192,7 @@ WXDLLIMPEXP_BASE void wxNextWDay(wxDateTime::WeekDay& wd)
 
 WXDLLIMPEXP_BASE void wxPrevWDay(wxDateTime::WeekDay& wd)
 {
-    wxASSERT_MSG( wd < wxDateTime::Inv_WeekDay, wxT("invalid week day") );
+    //wxASSERT_MSG( wd < wxDateTime::Inv_WeekDay, wxT("invalid week day") );
 
     wd = wd == wxDateTime::Sun ? wxDateTime::Inv_WeekDay
                                : (wxDateTime::WeekDay)(wd - 1);

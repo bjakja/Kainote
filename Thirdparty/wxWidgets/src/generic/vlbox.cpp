@@ -222,9 +222,9 @@ bool wxVListBox::DoSelectAll(bool select)
 
 bool wxVListBox::DoSetCurrent(int current)
 {
-    wxASSERT_MSG( current == wxNOT_FOUND ||
-                    (current >= 0 && (size_t)current < GetItemCount()),
-                  wxT("wxVListBox::DoSetCurrent(): invalid item index") );
+    //wxASSERT_MSG( current == wxNOT_FOUND ||
+                    //(current >= 0 && (size_t)current < GetItemCount()),
+                  //wxT("wxVListBox::DoSetCurrent(): invalid item index") );
 
     if ( current == m_current )
     {
@@ -272,8 +272,8 @@ void wxVListBox::InitEvent(wxCommandEvent& event, int n)
 
 void wxVListBox::SendSelectedEvent()
 {
-    wxASSERT_MSG( m_current != wxNOT_FOUND,
-                    wxT("SendSelectedEvent() shouldn't be called") );
+    //wxASSERT_MSG( m_current != wxNOT_FOUND,
+                    //wxT("SendSelectedEvent() shouldn't be called") );
 
     wxCommandEvent event(wxEVT_COMMAND_LISTBOX_SELECTED, GetId());
     InitEvent(event, m_current);
@@ -283,8 +283,8 @@ void wxVListBox::SendSelectedEvent()
 void wxVListBox::SetSelection(int selection)
 {
     //wxCHECK_RET( selection == wxNOT_FOUND ||
-                  (selection >= 0 && (size_t)selection < GetItemCount()),
-                  wxT("wxVListBox::SetSelection(): invalid item index") );
+                  //(selection >= 0 && (size_t)selection < GetItemCount()),
+                  //wxT("wxVListBox::SetSelection(): invalid item index") );
 
     if ( HasMultipleSelection() )
     {

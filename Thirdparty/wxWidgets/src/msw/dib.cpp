@@ -89,7 +89,7 @@ bool wxDIB::Create(int width, int height, int depth)
 {
     // we don't support formats using palettes right now so we only create
     // either 24bpp (RGB) or 32bpp (RGBA) bitmaps
-    wxASSERT_MSG( depth, wxT("invalid image depth in wxDIB::Create()") );
+    //wxASSERT_MSG( depth, wxT("invalid image depth in wxDIB::Create()") );
     if ( depth < 24 )
         depth = 24;
 
@@ -230,7 +230,7 @@ bool wxDIB::CopyFromDDB(HBITMAP hbmp)
     if ( !GetDIBSection(m_handle, &ds) )
     {
         // we're sure that our handle is a DIB section, so this should work
-        wxFAIL_MSG( wxT("GetObject(DIBSECTION) unexpectedly failed") );
+        //wxFAIL_MSG( wxT("GetObject(DIBSECTION) unexpectedly failed") );
 
         return false;
     }
@@ -474,7 +474,7 @@ HBITMAP wxDIB::ConvertToBitmap(const BITMAPINFO *pbmi, HDC hdc, void *bits)
 /* static */
 size_t wxDIB::ConvertFromBitmap(BITMAPINFO *pbi, HBITMAP hbmp)
 {
-    wxASSERT_MSG( hbmp, wxT("invalid bmp can't be converted to DIB") );
+    //wxASSERT_MSG( hbmp, wxT("invalid bmp can't be converted to DIB") );
 
     // prepare all the info we need
     BITMAP bm;
@@ -556,7 +556,7 @@ HGLOBAL wxDIB::ConvertFromBitmap(HBITMAP hbmp)
     {
         // this really shouldn't happen... it worked the first time, why not
         // now?
-        wxFAIL_MSG( wxT("wxDIB::ConvertFromBitmap() unexpectedly failed") );
+        //wxFAIL_MSG( wxT("wxDIB::ConvertFromBitmap() unexpectedly failed") );
 
         return NULL;
     }
@@ -745,7 +745,7 @@ bool wxDIB::Create(const wxImage& image, PixelFormat pf)
 wxImage wxDIB::ConvertToImage() const
 {
     //wxCHECK_MSG( IsOk(), wxNullImage,
-                    wxT("can't convert invalid DIB to wxImage") );
+                    //wxT("can't convert invalid DIB to wxImage") );
 
     // create the wxImage object
     const int w = GetWidth();
@@ -753,7 +753,7 @@ wxImage wxDIB::ConvertToImage() const
     wxImage image(w, h, false /* don't bother clearing memory */);
     if ( !image.IsOk() )
     {
-        wxFAIL_MSG( wxT("could not allocate data for image") );
+        //wxFAIL_MSG( wxT("could not allocate data for image") );
         return wxNullImage;
     }
 

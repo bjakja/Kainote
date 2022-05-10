@@ -49,7 +49,7 @@ bool wxListKey::operator==(wxListKeyValue value) const
     switch ( m_keyType )
     {
         default:
-            wxFAIL_MSG(wxT("bad key type."));
+            break; //wxFAIL_MSG(wxT("bad key type."));
             // let compiler optimize the line above away in release build
             // by not putting return here...
 
@@ -89,7 +89,7 @@ wxNodeBase::wxNodeBase(wxListBase *list,
             break;
 
         default:
-            wxFAIL_MSG(wxT("invalid key type"));
+            break; //wxFAIL_MSG(wxT("invalid key type"));
     }
 
     if ( previous )
@@ -159,8 +159,8 @@ wxListBase::wxListBase(size_t count, void *elements[])
 
 void wxListBase::DoCopy(const wxListBase& list)
 {
-    wxASSERT_MSG( !list.m_destroy,
-                  wxT("copying list which owns it's elements is a bad idea") );
+    //wxASSERT_MSG( !list.m_destroy,
+                  //wxT("copying list which owns it's elements is a bad idea") );
 
     m_destroy = list.m_destroy;
     m_keyType = list.m_keyType;
@@ -197,7 +197,7 @@ void wxListBase::DoCopy(const wxListBase& list)
             }
     }
 
-    wxASSERT_MSG( m_count == list.m_count, wxT("logic error in wxList::DoCopy") );
+    //wxASSERT_MSG( m_count == list.m_count, wxT("logic error in wxList::DoCopy") );
 }
 
 wxListBase::~wxListBase()
@@ -315,15 +315,15 @@ wxNodeBase *wxListBase::Item(size_t n) const
         }
     }
 
-    wxFAIL_MSG( wxT("invalid index in wxListBase::Item") );
+    //wxFAIL_MSG( wxT("invalid index in wxListBase::Item") );
 
     return NULL;
 }
 
 wxNodeBase *wxListBase::Find(const wxListKey& key) const
 {
-    wxASSERT_MSG( m_keyType == key.GetKeyType(),
-                  wxT("this list is not keyed on the type of this key") );
+    //wxASSERT_MSG( m_keyType == key.GetKeyType(),
+                  //wxT("this list is not keyed on the type of this key") );
 
     for ( wxNodeBase *current = GetFirst(); current; current = current->GetNext() )
     {

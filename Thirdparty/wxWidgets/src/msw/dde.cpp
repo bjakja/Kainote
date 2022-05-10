@@ -172,9 +172,9 @@ extern void wxDDEInitialize()
 void wxDDECleanUp()
 {
     // deleting them later won't work as DDE won't be initialized any more
-    wxASSERT_MSG( wxDDEServerObjects.empty() &&
-                    wxDDEClientObjects.empty(),
-                    wxT("all DDE objects should be deleted by now") );
+    //wxASSERT_MSG( wxDDEServerObjects.empty() &&
+                    //wxDDEClientObjects.empty(),
+                    //wxT("all DDE objects should be deleted by now") );
 
     wxAtomTable.clear();
 
@@ -680,8 +680,8 @@ const void *wxDDEConnection::Request(const wxString& item, size_t *size, wxIPCFo
     DWORD len = DdeGetData(returned_data, NULL, 0, 0);
 
     void *data = GetBufferAtLeast(len);
-    wxASSERT_MSG(data != NULL,
-                 wxT("Buffer too small in wxDDEConnection::Request") );
+    //wxASSERT_MSG(data != NULL,
+                 //wxT("Buffer too small in wxDDEConnection::Request") );
     (void) DdeGetData(returned_data, (LPBYTE)data, len, 0);
 
     (void) DdeFreeDataHandle(returned_data);
@@ -847,8 +847,8 @@ _DDECallback(WORD wType,
                     DWORD len = DdeGetData(hData, NULL, 0, 0);
 
                     void *data = connection->GetBufferAtLeast(len);
-                    wxASSERT_MSG(data != NULL,
-                                 wxT("Buffer too small in _DDECallback (XTYP_EXECUTE)") );
+                    //wxASSERT_MSG(data != NULL,
+                                 //wxT("Buffer too small in _DDECallback (XTYP_EXECUTE)") );
 
                     DdeGetData(hData, (LPBYTE)data, len, 0);
 

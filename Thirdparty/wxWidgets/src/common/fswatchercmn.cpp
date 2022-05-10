@@ -43,7 +43,7 @@ static wxString GetFSWEventChangeTypeName(int type)
     }
 
     // should never be reached!
-    wxFAIL_MSG("Unknown change type");
+    //wxFAIL_MSG("Unknown change type");
     return "INVALID_TYPE";
 }
 

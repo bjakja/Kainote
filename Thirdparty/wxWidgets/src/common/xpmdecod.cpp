@@ -129,7 +129,7 @@ wxImage wxXPMDecoder::ReadFile(wxInputStream& stream)
 {
     size_t length = stream.GetSize();
     //wxCHECK_MSG( length != 0, wxNullImage,
-                 wxT("Cannot read XPM from stream of unknown size") );
+                 //wxT("Cannot read XPM from stream of unknown size") );
 
     // use a smart buffer to be sure to free memory even when we return on
     // error

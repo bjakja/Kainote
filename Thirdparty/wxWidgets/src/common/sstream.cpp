@@ -82,7 +82,7 @@ wxFileOffset wxStringInputStream::OnSysSeek(wxFileOffset ofs, wxSeekMode mode)
             break;
 
         default:
-            wxFAIL_MSG( wxT("invalid seek mode") );
+            //wxFAIL_MSG( wxT("invalid seek mode") );
             return wxInvalidOffset;
     }
 

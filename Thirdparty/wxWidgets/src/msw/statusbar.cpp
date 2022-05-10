@@ -176,7 +176,7 @@ bool wxStatusBar::SetFont(const wxFont& font)
 void wxStatusBar::SetFieldsCount(int nFields, const int *widths)
 {
     // this is a Windows limitation
-    wxASSERT_MSG( (nFields > 0) && (nFields < 255), "too many fields" );
+    //wxASSERT_MSG( (nFields > 0) && (nFields < 255), "too many fields" );
 
     // keep in synch also our m_tooltips array
 
@@ -433,7 +433,7 @@ void wxStatusBar::SetMinHeight(int height)
 bool wxStatusBar::GetFieldRect(int i, wxRect& rect) const
 {
     //wxCHECK_MSG( (i >= 0) && ((size_t)i < m_panes.GetCount()), false,
-                 "invalid statusbar field index" );
+                 //"invalid statusbar field index" );
 
     RECT r;
     if ( !::SendMessage(GetHwnd(), SB_GETRECT, i, (LPARAM)&r) )

@@ -200,8 +200,8 @@ public:
 
     wxStaticText* GetStaticText()
     {
-        wxASSERT_MSG( IsControl(),
-                      wxT("only makes sense for embedded control tools") );
+        //wxASSERT_MSG( IsControl(),
+                      //wxT("only makes sense for embedded control tools") );
 
         return m_staticText;
     }
@@ -383,7 +383,7 @@ void wxToolBar::Recreate()
     if ( !MSWCreateToolbar(pos, size) )
     {
         // what can we do?
-        wxFAIL_MSG( wxT("recreating the toolbar failed") );
+        //wxFAIL_MSG( wxT("recreating the toolbar failed") );
 
         return;
     }
@@ -793,7 +793,7 @@ bool wxToolBar::Realize()
                 }
                 else
                 {
-                    wxFAIL_MSG( wxT("invalid tool button bitmap") );
+                    //wxFAIL_MSG( wxT("invalid tool button bitmap") );
                 }
 
                 // also deal with disabled bitmap if we want to use them
@@ -878,7 +878,7 @@ bool wxToolBar::Realize()
                 if ( !::SendMessage(GetHwnd(), TB_REPLACEBITMAP,
                                     0, (LPARAM) &replaceBitmap) )
                 {
-                    wxFAIL_MSG(wxT("Could not replace the old bitmap"));
+                    //wxFAIL_MSG(wxT("Could not replace the old bitmap"));
                 }
 
                 ::DeleteObject(oldToolBarBitmap);
@@ -906,7 +906,7 @@ bool wxToolBar::Realize()
             if ( ::SendMessage(GetHwnd(), TB_ADDBITMAP,
                                (WPARAM) nButtons, (LPARAM)&addBitmap) == -1 )
             {
-                wxFAIL_MSG(wxT("Could not add bitmap to toolbar"));
+                //wxFAIL_MSG(wxT("Could not add bitmap to toolbar"));
             }
         }
 
@@ -1048,7 +1048,7 @@ bool wxToolBar::Realize()
                         break;
 
                     default:
-                        wxFAIL_MSG( wxT("unexpected toolbar button kind") );
+                        //wxFAIL_MSG( wxT("unexpected toolbar button kind") );
                         button.fsStyle = TBSTYLE_BUTTON;
                         break;
                 }
@@ -1604,7 +1604,7 @@ void wxToolBar::DoSetToggle(wxToolBarToolBase *WXUNUSED(tool), bool WXUNUSED(tog
 {
     // VZ: AFAIK, the button has to be created either with TBSTYLE_CHECK or
     //     without, so we really need to delete the button and recreate it here
-    wxFAIL_MSG( wxT("not implemented") );
+    //wxFAIL_MSG( wxT("not implemented") );
 }
 
 void wxToolBar::SetToolNormalBitmap( int id, const wxBitmap& bitmap )

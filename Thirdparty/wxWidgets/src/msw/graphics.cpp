@@ -1738,7 +1738,7 @@ void wxGDIPlusContext::DoDrawText(const wxString& str,
         return;
 
     //wxCHECK_RET( !m_font.IsNull(),
-                 wxT("wxGDIPlusContext::DrawText - no valid font set") );
+                 //wxT("wxGDIPlusContext::DrawText - no valid font set") );
 
     if ( str.IsEmpty())
         return ;
@@ -1819,7 +1819,7 @@ void wxGDIPlusContext::GetPartialTextExtents(const wxString& text, wxArrayDouble
     Font* f = ((wxGDIPlusFontData*)m_font.GetRefData())->GetGDIPlusFont();
     wxWCharBuffer ws = text.wc_str( *wxConvUI );
     size_t len = wcslen( ws ) ;
-    wxASSERT_MSG(text.length() == len , wxT("GetPartialTextExtents not yet implemented for multichar situations"));
+    //wxASSERT_MSG(text.length() == len , wxT("GetPartialTextExtents not yet implemented for multichar situations"));
 
     RectF layoutRect(0,0, 100000.0f, 100000.0f);
     StringFormat strFormat( StringFormat::GenericTypographic() );

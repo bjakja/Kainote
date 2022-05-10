@@ -363,7 +363,7 @@ wxStatusBar* wxFrameBase::CreateStatusBar(int number,
     // the main status bar can only be created once (or else it should be
     // deleted before calling CreateStatusBar() again)
     //wxCHECK_MSG( !m_frameStatusBar, NULL,
-                 wxT("recreating status bar in wxFrame") );
+                 //wxT("recreating status bar in wxFrame") );
 
     SetStatusBar(OnCreateStatusBar(number, style, id, name));
 
@@ -535,7 +535,7 @@ wxToolBar* wxFrameBase::CreateToolBar(long style,
     // the main toolbar can't be recreated (unless it was explicitly deleted
     // before)
     //wxCHECK_MSG( !m_frameToolBar, NULL,
-                 wxT("recreating toolbar in wxFrame") );
+                 //wxT("recreating toolbar in wxFrame") );
 
     if ( style == -1 )
     {

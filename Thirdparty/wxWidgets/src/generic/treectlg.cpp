@@ -204,14 +204,14 @@ public:
 
     int GetTextHeight() const
     {
-        wxASSERT_MSG( m_heightText != -1, "must call CalculateSize() first" );
+        //wxASSERT_MSG( m_heightText != -1, "must call CalculateSize() first" );
 
         return m_heightText;
     }
 
     int GetTextWidth() const
     {
-        wxASSERT_MSG( m_widthText != -1, "must call CalculateSize() first" );
+        //wxASSERT_MSG( m_widthText != -1, "must call CalculateSize() first" );
 
         return m_widthText;
     }
@@ -609,8 +609,8 @@ wxGenericTreeItem::~wxGenericTreeItem()
 
     if (m_ownsAttr) delete m_attr;
 
-    wxASSERT_MSG( m_children.IsEmpty(),
-                  "must call DeleteChildren() before deleting the item" );
+    //wxASSERT_MSG( m_children.IsEmpty(),
+                 // "must call DeleteChildren() before deleting the item" );
 }
 
 void wxGenericTreeItem::DeleteChildren(wxGenericTreeCtrl *tree)
@@ -1501,7 +1501,7 @@ wxTreeItemId wxGenericTreeCtrl::GetFirstVisibleItem() const
 wxTreeItemId wxGenericTreeCtrl::GetNextVisible(const wxTreeItemId& item) const
 {
     //wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
-    wxASSERT_MSG( IsVisible(item), wxT("this item itself should be visible") );
+    //wxASSERT_MSG( IsVisible(item), wxT("this item itself should be visible") );
 
     wxTreeItemId id = item;
     if (id.IsOk())
@@ -1518,7 +1518,7 @@ wxTreeItemId wxGenericTreeCtrl::GetNextVisible(const wxTreeItemId& item) const
 wxTreeItemId wxGenericTreeCtrl::GetPrevVisible(const wxTreeItemId& item) const
 {
     //wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
-    wxASSERT_MSG( IsVisible(item), wxT("this item itself should be visible") );
+    //wxASSERT_MSG( IsVisible(item), wxT("this item itself should be visible") );
 
     // find out the starting point
     wxTreeItemId prevItem = GetPrevSibling(item);
@@ -1694,9 +1694,9 @@ wxTreeItemId wxGenericTreeCtrl::DoInsertAfter(const wxTreeItemId& parentId,
     {
         index = parent->GetChildren().Index(
                     (wxGenericTreeItem*) idPrevious.m_pItem);
-        wxASSERT_MSG( index != wxNOT_FOUND,
-                      "previous item in wxGenericTreeCtrl::InsertItem() "
-                      "is not a sibling" );
+        //wxASSERT_MSG( index != wxNOT_FOUND,
+                      //"previous item in wxGenericTreeCtrl::InsertItem() "
+                      //"is not a sibling" );
     }
 
     return DoInsertItem(parentId, (size_t)++index, text, image, selImage, data);

@@ -910,11 +910,11 @@ bool wxGenericFileCtrl::Create( wxWindow *parent,
     m_check = NULL;
 
     // check that the styles are not contradictory
-    wxASSERT_MSG( !( ( m_style & wxFC_SAVE ) && ( m_style & wxFC_OPEN ) ),
-                  wxT( "can't specify both wxFC_SAVE and wxFC_OPEN at once" ) );
+    //wxASSERT_MSG( !( ( m_style & wxFC_SAVE ) && ( m_style & wxFC_OPEN ) ),
+                 // wxT( "can't specify both wxFC_SAVE and wxFC_OPEN at once" ) );
 
-    wxASSERT_MSG( !( ( m_style & wxFC_SAVE ) && ( m_style & wxFC_MULTIPLE ) ),
-                  wxT( "wxFC_MULTIPLE can't be used with wxFC_SAVE" ) );
+    //wxASSERT_MSG( !( ( m_style & wxFC_SAVE ) && ( m_style & wxFC_MULTIPLE ) ),
+                  //wxT( "wxFC_MULTIPLE can't be used with wxFC_SAVE" ) );
 
     wxNavigationEnabled<wxControl>::Create( parent, id,
                                             pos, size,
@@ -1028,14 +1028,14 @@ bool wxGenericFileCtrl::Create( wxWindow *parent,
 //     GetPath() while our GetPath() is wxFileName::GetFullPath()
 wxString wxGenericFileCtrl::GetPath() const
 {
-    wxASSERT_MSG ( !(m_style & wxFC_MULTIPLE), "use GetPaths() instead" );
+    //wxASSERT_MSG ( !(m_style & wxFC_MULTIPLE), "use GetPaths() instead" );
 
     return DoGetFileName().GetFullPath();
 }
 
 wxString wxGenericFileCtrl::GetFilename() const
 {
-    wxASSERT_MSG ( !(m_style & wxFC_MULTIPLE), "use GetFilenames() instead" );
+    //wxASSERT_MSG ( !(m_style & wxFC_MULTIPLE), "use GetFilenames() instead" );
 
     return DoGetFileName().GetFullName();
 }

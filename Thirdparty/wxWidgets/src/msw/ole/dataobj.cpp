@@ -168,7 +168,7 @@ wxString wxDataFormat::GetId() const
     wxString s;
 
     //wxCHECK_MSG( !IsStandard(), s,
-                 wxT("name of predefined format cannot be retrieved") );
+                 //wxT("name of predefined format cannot be retrieved") );
 
     int len = ::GetClipboardFormatName(m_format, wxStringBuffer(s, max), max);
 
@@ -876,7 +876,7 @@ bool wxBitmapDataObject2::SetData(size_t WXUNUSED(len), const void *pBuf)
     bitmap.SetHBITMAP((WXHBITMAP)hbmp);
 
     if ( !bitmap.IsOk() ) {
-        wxFAIL_MSG(wxT("pasting/dropping invalid bitmap"));
+        //wxFAIL_MSG(wxT("pasting/dropping invalid bitmap"));
 
         return false;
     }
@@ -1028,7 +1028,7 @@ bool wxFileDataObject::SetData(size_t WXUNUSED(size),
     // get number of files (magic value -1)
     UINT nFiles = ::DragQueryFile(hdrop, (unsigned)-1, NULL, 0u);
 
-    wxCHECK_MSG ( nFiles != (UINT)-1, FALSE, wxT("wrong HDROP handle") );
+    //wxCHECK_MSG ( nFiles != (UINT)-1, FALSE, wxT("wrong HDROP handle") );
 
     // for each file get the length, allocate memory and then get the name
     wxString str;

@@ -72,7 +72,7 @@ wxDllType wxDynamicLibrary::GetProgramHandle()
 
 bool wxDynamicLibrary::Load(const wxString& libnameOrig, int flags)
 {
-    wxASSERT_MSG(m_handle == 0, wxT("Library already loaded."));
+    //wxASSERT_MSG(m_handle == 0, wxT("Library already loaded."));
 
     // add the proper extension for the DLL ourselves unless told not to
     wxString libname = libnameOrig;

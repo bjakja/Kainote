@@ -1000,7 +1000,7 @@ void wxActiveXContainer::CreateActiveX(REFIID iid, IUnknown* pUnk)
                 {
                     // WXOLE_TRACEOUT("*ERROR* - Default Event Sink is via vTable");
                     defEventSink = false;
-                    wxFAIL_MSG(wxT("Default event sink is in vtable!"));
+                    //wxFAIL_MSG(wxT("Default event sink is in vtable!"));
                 }
             }
         }

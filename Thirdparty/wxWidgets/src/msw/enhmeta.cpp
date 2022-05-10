@@ -71,7 +71,7 @@ static inline const wxChar *GetMetaFileName(const wxString& fn)
 
 wxGDIRefData *wxEnhMetaFile::CreateGDIRefData() const
 {
-    wxFAIL_MSG( wxT("must be implemented if used") );
+    //wxFAIL_MSG( wxT("must be implemented if used") );
 
     return NULL;
 }
@@ -79,7 +79,7 @@ wxGDIRefData *wxEnhMetaFile::CreateGDIRefData() const
 wxGDIRefData *
 wxEnhMetaFile::CloneGDIRefData(const wxGDIRefData *WXUNUSED(data)) const
 {
-    wxFAIL_MSG( wxT("must be implemented if used") );
+    //wxFAIL_MSG( wxT("must be implemented if used") );
 
     return NULL;
 }
@@ -400,7 +400,7 @@ size_t wxEnhMetaFileDataObject::GetDataSize(const wxDataFormat& format) const
     }
     else
     {
-        wxASSERT_MSG( format == wxDF_METAFILE, wxT("unsupported format") );
+        //wxASSERT_MSG( format == wxDF_METAFILE, wxT("unsupported format") );
 
         return sizeof(METAFILEPICT);
     }
@@ -426,7 +426,7 @@ bool wxEnhMetaFileDataObject::GetDataHere(const wxDataFormat& format, void *buf)
     }
     else
     {
-        wxASSERT_MSG( format == wxDF_METAFILE, wxT("unsupported format") );
+        //wxASSERT_MSG( format == wxDF_METAFILE, wxT("unsupported format") );
 
         // convert to WMF
 
@@ -486,7 +486,7 @@ bool wxEnhMetaFileDataObject::SetData(const wxDataFormat& format,
     }
     else
     {
-        wxASSERT_MSG( format == wxDF_METAFILE, wxT("unsupported format") );
+        //wxASSERT_MSG( format == wxDF_METAFILE, wxT("unsupported format") );
 
         // convert from WMF
         const METAFILEPICT *mfpict = (const METAFILEPICT *)buf;

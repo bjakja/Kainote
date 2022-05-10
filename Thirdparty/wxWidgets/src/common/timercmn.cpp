@@ -60,7 +60,7 @@ void wxTimer::Init()
     m_impl = traits ? traits->CreateTimerImpl(this) : NULL;
     if ( !m_impl )
     {
-        wxFAIL_MSG( wxT("No timer implementation for this platform") );
+        //wxFAIL_MSG( wxT("No timer implementation for this platform") );
 
     }
 }

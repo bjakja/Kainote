@@ -204,9 +204,9 @@ void wxRadioButton::SetValue(bool value)
 
 bool wxRadioButton::GetValue() const
 {
-    wxASSERT_MSG( m_isChecked ==
+    /*wxASSERT_MSG( m_isChecked ==
                     (::SendMessage(GetHwnd(), BM_GETCHECK, 0, 0L) != 0),
-                  wxT("wxRadioButton::m_isChecked is out of sync?") );
+                  wxT("wxRadioButton::m_isChecked is out of sync?") );*/
 
     return m_isChecked;
 }

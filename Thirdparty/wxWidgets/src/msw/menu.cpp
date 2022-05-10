@@ -489,7 +489,7 @@ bool wxMenu::DoInsertOrAppend(wxMenuItem *pItem, size_t pos)
     UINT_PTR id;
     wxMenu *submenu = pItem->GetSubMenu();
     if ( submenu != NULL ) {
-        wxASSERT_MSG( submenu->GetHMenu(), wxT("invalid submenu") );
+        //wxASSERT_MSG( submenu->GetHMenu(), wxT("invalid submenu") );
 
         submenu->SetParent(this);
 
@@ -849,7 +849,7 @@ wxAcceleratorTable *wxMenu::CreateAccelTable() const
 
 void wxMenu::CalculateMaxAccelWidth()
 {
-    wxASSERT_MSG( m_maxAccelWidth == -1, wxT("it's really needed?") );
+    //wxASSERT_MSG( m_maxAccelWidth == -1, wxT("it's really needed?") );
 
     wxMenuItemList::compatibility_iterator node = GetMenuItems().GetFirst();
     while (node)
@@ -1190,7 +1190,7 @@ int wxMenuBar::MSWPositionForWxMenu(wxMenu *menu, int wxpos)
         if(GetSubMenu((HMENU)m_hMenu,i)==(HMENU)menu->GetHMenu())
             return i;
     }
-    wxFAIL;
+    //wxFAIL;
     return -1;
 }
 
@@ -1285,7 +1285,7 @@ void wxMenuBar::SetMenuLabel(size_t pos, const wxString& label)
 wxString wxMenuBar::GetMenuLabel(size_t pos) const
 {
     //wxCHECK_MSG( pos < GetMenuCount(), wxEmptyString,
-                 wxT("invalid menu index in wxMenuBar::GetMenuLabel") );
+                 //wxT("invalid menu index in wxMenuBar::GetMenuLabel") );
 
     return m_menus[pos]->GetTitle();
 }
@@ -1594,7 +1594,7 @@ void wxMenuBar::Detach()
 wxMenu* wxMenuBar::MSWGetMenu(WXHMENU hMenu)
 {
     //wxCHECK_MSG( GetHMenu() != hMenu, NULL,
-                 wxT("wxMenuBar::MSWGetMenu(): menu handle is wxMenuBar, not wxMenu") );
+                 //wxT("wxMenuBar::MSWGetMenu(): menu handle is wxMenuBar, not wxMenu") );
 
 #if wxUSE_OWNER_DRAWN
     // query all menus

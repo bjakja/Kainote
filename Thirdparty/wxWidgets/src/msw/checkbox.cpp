@@ -202,8 +202,8 @@ void wxCheckBox::Command(wxCommandEvent& event)
 {
     int state = event.GetInt();
     //wxCHECK_RET( (state == wxCHK_UNCHECKED) || (state == wxCHK_CHECKED)
-        || (state == wxCHK_UNDETERMINED),
-        wxT("event.GetInt() returned an invalid checkbox state") );
+        //|| (state == wxCHK_UNDETERMINED),
+        //wxT("event.GetInt() returned an invalid checkbox state") );
 
     Set3StateValue((wxCheckBoxState) state);
     ProcessCommand(event);
@@ -415,7 +415,7 @@ bool wxCheckBox::MSWOnDraw(WXDRAWITEMSTRUCT *item)
             break;
 
         default:
-            wxFAIL_MSG( wxT("unexpected Get3StateValue() return value") );
+            break;//wxFAIL_MSG( wxT("unexpected Get3StateValue() return value") );
             // fall through
 
         case wxCHK_UNCHECKED:

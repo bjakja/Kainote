@@ -699,7 +699,7 @@ wxString wxDateTime::Format(const wxString& formatp, const TimeZone& tz) const
                     }
 
                     // no, it wasn't the width
-                    wxFAIL_MSG(wxT("unknown format specifier"));
+                    //wxFAIL_MSG(wxT("unknown format specifier"));
 
                     // fall through and just copy it nevertheless
 
@@ -708,7 +708,7 @@ wxString wxDateTime::Format(const wxString& formatp, const TimeZone& tz) const
                     break;
 
                 case 0:             // the end of string
-                    wxFAIL_MSG(wxT("missing format at the end of string"));
+                    //wxFAIL_MSG(wxT("missing format at the end of string"));
 
                     // just put the '%' which was the last char in format
                     res += wxT('%');
@@ -1482,9 +1482,9 @@ wxDateTime::ParseFormat(const wxString& date,
                 break;
 
             case 0:             // the end of string
-                wxFAIL_MSG(wxT("unexpected format end"));
+                //wxFAIL_MSG(wxT("unexpected format end"));
 
-                // fall through
+                break; //// fall through
 
             default:            // not a known format spec
                 return false;
@@ -2248,7 +2248,7 @@ wxString wxTimeSpan::Format(const wxString& format) const
             switch ( ch )
             {
                 default:
-                    wxFAIL_MSG( wxT("invalid format character") );
+                    break; //wxFAIL_MSG( wxT("invalid format character") );
                     // fall through
 
                 case wxT('%'):

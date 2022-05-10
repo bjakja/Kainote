@@ -571,7 +571,7 @@ const wxBrush* wxStockGDI::GetBrush(Item item)
             brush = new wxBrush(*GetColour(COLOUR_WHITE), wxBRUSHSTYLE_SOLID);
             break;
         default:
-            wxFAIL;
+            break;// wxFAIL;
         }
         ms_stockObject[item] = brush;
     }
@@ -610,7 +610,7 @@ const wxColour* wxStockGDI::GetColour(Item item)
             colour = new wxColour(255, 255, 255);
             break;
         default:
-            wxFAIL;
+            break;//wxFAIL;
         }
         ms_stockObject[item] = colour;
     }
@@ -634,7 +634,7 @@ const wxCursor* wxStockGDI::GetCursor(Item item)
             cursor = new wxCursor(wxCURSOR_ARROW);
             break;
         default:
-            wxFAIL;
+            break;//wxFAIL;
         }
         ms_stockObject[item] = cursor;
     }
@@ -673,7 +673,7 @@ const wxFont* wxStockGDI::GetFont(Item item)
             font = new wxFont(GetFont(FONT_NORMAL)->GetPointSize(), wxSWISS, wxNORMAL, wxNORMAL);
             break;
         default:
-            wxFAIL;
+            break;//wxFAIL;
         }
         ms_stockObject[item] = font;
     }
@@ -724,7 +724,7 @@ const wxPen* wxStockGDI::GetPen(Item item)
             pen = new wxPen(*GetColour(COLOUR_WHITE), 1, wxPENSTYLE_SOLID);
             break;
         default:
-            wxFAIL;
+            break;//wxFAIL;
         }
         ms_stockObject[item] = pen;
     }

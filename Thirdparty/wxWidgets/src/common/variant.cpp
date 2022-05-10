@@ -99,7 +99,7 @@ wxVariant::~wxVariant()
 wxObjectRefData *wxVariant::CreateRefData() const
 {
     // We cannot create any particular wxVariantData.
-    wxFAIL_MSG("wxVariant::CreateRefData() cannot be implemented");
+    //wxFAIL_MSG("wxVariant::CreateRefData() cannot be implemented");
     return NULL;
 }
 
@@ -211,7 +211,7 @@ wxVariant::wxVariant(const wxAny& any)
     wxVariant variant;
     if ( !any.GetAs(&variant) )
     {
-        wxFAIL_MSG("wxAny of this type cannot be converted to wxVariant");
+        //wxFAIL_MSG("wxAny of this type cannot be converted to wxVariant");
         return;
     }
 
@@ -399,7 +399,7 @@ long wxVariant::GetLong() const
         return value;
     else
     {
-        wxFAIL_MSG(wxT("Could not convert to a long"));
+        //wxFAIL_MSG(wxT("Could not convert to a long"));
         return 0;
     }
 }
@@ -539,7 +539,7 @@ double wxVariant::GetDouble() const
         return value;
     else
     {
-        wxFAIL_MSG(wxT("Could not convert to a double number"));
+        //wxFAIL_MSG(wxT("Could not convert to a double number"));
         return 0.0;
     }
 }
@@ -609,7 +609,7 @@ bool wxVariantDataBool::Write(wxString& str) const
 #if wxUSE_STD_IOSTREAM
 bool wxVariantDataBool::Read(wxSTD istream& WXUNUSED(str))
 {
-    wxFAIL_MSG(wxT("Unimplemented"));
+    //wxFAIL_MSG(wxT("Unimplemented"));
 //    str >> (long) m_value;
     return false;
 }
@@ -682,7 +682,7 @@ bool wxVariant::GetBool() const
         return value;
     else
     {
-        wxFAIL_MSG(wxT("Could not convert to a bool"));
+        //wxFAIL_MSG(wxT("Could not convert to a bool"));
         return 0;
     }
 }
@@ -747,7 +747,7 @@ bool wxVariantDataChar::Write(wxString& str) const
 #if wxUSE_STD_IOSTREAM
 bool wxVariantDataChar::Read(wxSTD istream& WXUNUSED(str))
 {
-    wxFAIL_MSG(wxT("Unimplemented"));
+    //wxFAIL_MSG(wxT("Unimplemented"));
 
     return false;
 }
@@ -835,7 +835,7 @@ wxUniChar wxVariant::GetChar() const
         return value;
     else
     {
-        wxFAIL_MSG(wxT("Could not convert to a char"));
+        //wxFAIL_MSG(wxT("Could not convert to a char"));
         return wxUniChar(0);
     }
 }
@@ -1029,7 +1029,7 @@ wxString wxVariant::GetString() const
     wxString value;
     if (!Convert(& value))
     {
-        wxFAIL_MSG(wxT("Could not convert to a string"));
+        //wxFAIL_MSG(wxT("Could not convert to a string"));
     }
 
     return value;
@@ -1399,7 +1399,7 @@ wxDateTime wxVariant::GetDateTime() const
     wxDateTime value;
     if (!Convert(& value))
     {
-        wxFAIL_MSG(wxT("Could not convert to a datetime"));
+        //wxFAIL_MSG(wxT("Could not convert to a datetime"));
     }
 
     return value;
@@ -1501,7 +1501,7 @@ wxVariant::wxVariant(const wxArrayString& val, const wxString& name) // Strings
 
 bool wxVariant::operator==(const wxArrayString& WXUNUSED(value)) const
 {
-    wxFAIL_MSG( wxT("TODO") );
+    //wxFAIL_MSG( wxT("TODO") );
 
     return false;
 }
@@ -1643,7 +1643,7 @@ bool wxVariantDataLongLong::Write(wxString& str) const
 #if wxUSE_STD_IOSTREAM
 bool wxVariantDataLongLong::Read(wxSTD istream& WXUNUSED(str))
 {
-    wxFAIL_MSG(wxS("Unimplemented"));
+    //wxFAIL_MSG(wxS("Unimplemented"));
     return false;
 }
 #endif
@@ -1725,7 +1725,7 @@ wxLongLong wxVariant::GetLongLong() const
     }
     else
     {
-        wxFAIL_MSG(wxT("Could not convert to a long long"));
+        //wxFAIL_MSG(wxT("Could not convert to a long long"));
         return 0;
     }
 }
@@ -1843,7 +1843,7 @@ bool wxVariantDataULongLong::Write(wxString& str) const
 #if wxUSE_STD_IOSTREAM
 bool wxVariantDataULongLong::Read(wxSTD istream& WXUNUSED(str))
 {
-    wxFAIL_MSG(wxS("Unimplemented"));
+    //wxFAIL_MSG(wxS("Unimplemented"));
     return false;
 }
 #endif
@@ -1925,7 +1925,7 @@ wxULongLong wxVariant::GetULongLong() const
     }
     else
     {
-        wxFAIL_MSG(wxT("Could not convert to a long long"));
+        //wxFAIL_MSG(wxT("Could not convert to a long long"));
         return 0;
     }
 }
@@ -2090,7 +2090,7 @@ bool wxVariantDataList::Write(wxString& str) const
 #if wxUSE_STD_IOSTREAM
 bool wxVariantDataList::Read(wxSTD istream& WXUNUSED(str))
 {
-    wxFAIL_MSG(wxT("Unimplemented"));
+    //wxFAIL_MSG(wxT("Unimplemented"));
     // TODO
     return false;
 }
@@ -2098,7 +2098,7 @@ bool wxVariantDataList::Read(wxSTD istream& WXUNUSED(str))
 
 bool wxVariantDataList::Read(wxString& WXUNUSED(str))
 {
-    wxFAIL_MSG(wxT("Unimplemented"));
+    //wxFAIL_MSG(wxT("Unimplemented"));
     // TODO
     return false;
 }

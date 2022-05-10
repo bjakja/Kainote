@@ -291,7 +291,7 @@ WXHWND wxTopLevelWindowMSW::MSWGetParent() const
         if ( !parent )
         {
             // this flag doesn't make sense then and will be ignored
-            wxFAIL_MSG( wxT("wxFRAME_FLOAT_ON_PARENT but no parent?") );
+            //wxFAIL_MSG( wxT("wxFRAME_FLOAT_ON_PARENT but no parent?") );
         }
         else
         {
@@ -445,7 +445,7 @@ bool wxTopLevelWindowMSW::CreateDialog(const void *dlgTemplate,
 
     if ( !m_hWnd )
     {
-        wxFAIL_MSG(wxT("Failed to create dialog. Incorrect DLGTEMPLATE?"));
+        //wxFAIL_MSG(wxT("Failed to create dialog. Incorrect DLGTEMPLATE?"));
 
         wxLogSysError(wxT("Can't create dialog using memory template"));
 
@@ -1148,7 +1148,7 @@ void wxTopLevelWindowMSW::SetIcons(const wxIconBundle& icons)
     {
         // FIXME: SetIcons(wxNullIconBundle) should unset existing icons,
         //        but we currently don't do that
-        wxASSERT_MSG( m_icons.IsEmpty(), "unsetting icons doesn't work" );
+        //wxASSERT_MSG( m_icons.IsEmpty(), "unsetting icons doesn't work" );
         return;
     }
 

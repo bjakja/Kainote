@@ -145,7 +145,7 @@ LRESULT APIENTRY _EXPORT wxComboEditWndProc(HWND hWnd,
             // longer, check for it to avoid bogus assert failures
             if ( !win->IsBeingDeleted() )
             {
-                wxFAIL_MSG( wxT("should have combo as parent") );
+                //wxFAIL_MSG( wxT("should have combo as parent") );
             }
         }
         else if ( combo->MSWProcessEditMsg(message, wParam, lParam) )

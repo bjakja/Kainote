@@ -168,8 +168,8 @@ STDMETHODIMP wxIDropTarget::DragEnter(IDataObject *pIDataSource,
 {
     wxLogTrace(wxTRACE_OleCalls, wxT("IDropTarget::DragEnter"));
 
-    wxASSERT_MSG( m_pIDataObject == NULL,
-                  wxT("drop target must have data object") );
+    /*wxASSERT_MSG( m_pIDataObject == NULL,
+                  wxT("drop target must have data object") );*/
 
     // show the list of formats supported by the source data object for the
     // debugging purposes, this is quite useful sometimes - please don't remove
@@ -438,7 +438,7 @@ bool wxDropTarget::GetData()
     wxDataFormat format = MSWGetSupportedFormat(m_pIDataSource);
     if ( format == wxDF_INVALID ) {
         // this is strange because IsAcceptedData() succeeded previously!
-        wxFAIL_MSG(wxT("strange - did supported formats list change?"));
+        //wxFAIL_MSG(wxT("strange - did supported formats list change?"));
 
         return false;
     }
@@ -556,7 +556,7 @@ static wxDragResult ConvertDragEffectToResult(DWORD dwEffect)
             return wxDragMove;
 
         default:
-            wxFAIL_MSG(wxT("invalid value in ConvertDragEffectToResult"));
+            break;// wxFAIL_MSG(wxT("invalid value in ConvertDragEffectToResult"));
             // fall through
 
         case DROPEFFECT_NONE:
@@ -577,7 +577,7 @@ static DWORD ConvertDragResultToEffect(wxDragResult result)
             return DROPEFFECT_MOVE;
 
         default:
-            wxFAIL_MSG(wxT("invalid value in ConvertDragResultToEffect"));
+            break;// wxFAIL_MSG(wxT("invalid value in ConvertDragResultToEffect"));
             // fall through
 
         case wxDragNone:

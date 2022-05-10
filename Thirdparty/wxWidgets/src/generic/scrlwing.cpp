@@ -329,7 +329,7 @@ bool wxScrollHelperEvtHandler::ProcessEvent(wxEvent& event)
 
 wxScrollHelperBase::wxScrollHelperBase(wxWindow *win)
 {
-    wxASSERT_MSG( win, wxT("associated window can't be NULL in wxScrollHelper") );
+    //wxASSERT_MSG( win, wxT("associated window can't be NULL in wxScrollHelper") );
 
     m_xScrollPixelsPerLine =
     m_yScrollPixelsPerLine =

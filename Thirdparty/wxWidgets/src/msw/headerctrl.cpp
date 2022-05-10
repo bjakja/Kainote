@@ -180,8 +180,8 @@ int wxHeaderCtrl::GetShownColumnsCount() const
 {
     const int numItems = Header_GetItemCount(GetHwnd());
 
-    wxASSERT_MSG( numItems >= 0 && (unsigned)numItems <= m_numColumns,
-                  "unexpected number of items in the native control" );
+    //wxASSERT_MSG( numItems >= 0 && (unsigned)numItems <= m_numColumns,
+                  //"unexpected number of items in the native control" );
 
     return numItems;
 }
@@ -261,7 +261,7 @@ void wxHeaderCtrl::DoUpdate(unsigned int idx)
 
 void wxHeaderCtrl::DoInsertItem(const wxHeaderColumn& col, unsigned int idx)
 {
-    wxASSERT_MSG( !col.IsHidden(), "should only be called for shown columns" );
+    //wxASSERT_MSG( !col.IsHidden(), "should only be called for shown columns" );
 
     wxHDITEM hdi;
 
@@ -295,8 +295,8 @@ void wxHeaderCtrl::DoInsertItem(const wxHeaderColumn& col, unsigned int idx)
                     imageHeight;
                 m_imageList->GetSize(0, imageWidth, imageHeight);
 
-                wxASSERT_MSG( imageWidth == bmpWidth && imageHeight == bmpHeight,
-                              "all column bitmaps must have the same size" );
+                //wxASSERT_MSG( imageWidth == bmpWidth && imageHeight == bmpHeight,
+                              //"all column bitmaps must have the same size" );
             }
 
             m_imageList->Add(bmp);
@@ -327,7 +327,7 @@ void wxHeaderCtrl::DoInsertItem(const wxHeaderColumn& col, unsigned int idx)
                 break;
 
             default:
-                wxFAIL_MSG( "invalid column header alignment" );
+                break;// wxFAIL_MSG("invalid column header alignment");
         }
     }
 
@@ -389,9 +389,9 @@ int wxHeaderCtrl::MSWToNativeIdx(int idx)
 {
     // don't check for GetColumn(idx).IsShown() as it could have just became
     // false and we may be called from DoUpdate() to delete the old column
-    wxASSERT_MSG( !m_isHidden[idx],
+    /*wxASSERT_MSG( !m_isHidden[idx],
                   "column must be visible to have an "
-                  "index in the native control" );
+                  "index in the native control" );*/
 
     int item = idx;
     for ( int i = 0; i < idx; i++ )
@@ -400,15 +400,15 @@ int wxHeaderCtrl::MSWToNativeIdx(int idx)
             item--; // one less column the native control knows about
     }
 
-    wxASSERT_MSG( item >= 0 && item <= GetShownColumnsCount(), "logic error" );
+    //wxASSERT_MSG( item >= 0 && item <= GetShownColumnsCount(), "logic error" );
 
     return item;
 }
 
 int wxHeaderCtrl::MSWFromNativeIdx(int item)
 {
-    wxASSERT_MSG( item >= 0 && item < GetShownColumnsCount(),
-                  "column index out of range" );
+    /*wxASSERT_MSG( item >= 0 && item < GetShownColumnsCount(),
+                  "column index out of range" );*/
 
     // reverse the above function
 
@@ -422,15 +422,15 @@ int wxHeaderCtrl::MSWFromNativeIdx(int item)
             idx++;
     }
 
-    wxASSERT_MSG( MSWToNativeIdx(idx) == item, "logic error" );
+    //wxASSERT_MSG( MSWToNativeIdx(idx) == item, "logic error" );
 
     return idx;
 }
 
 int wxHeaderCtrl::MSWToNativeOrder(int pos)
 {
-    wxASSERT_MSG( pos >= 0 && static_cast<unsigned>(pos) < m_numColumns,
-                  "column position out of range" );
+    //wxASSERT_MSG( pos >= 0 && static_cast<unsigned>(pos) < m_numColumns,
+                  //"column position out of range" );
 
     int order = pos;
     for ( int n = 0; n < pos; n++ )
@@ -439,15 +439,15 @@ int wxHeaderCtrl::MSWToNativeOrder(int pos)
             order--;
     }
 
-    wxASSERT_MSG( order >= 0 && order <= GetShownColumnsCount(), "logic error" );
+    //wxASSERT_MSG( order >= 0 && order <= GetShownColumnsCount(), "logic error" );
 
     return order;
 }
 
 int wxHeaderCtrl::MSWFromNativeOrder(int order)
 {
-    wxASSERT_MSG( order >= 0 && order < GetShownColumnsCount(),
-                  "native column position out of range" );
+    //wxASSERT_MSG( order >= 0 && order < GetShownColumnsCount(),
+                  //"native column position out of range" );
 
     unsigned pos = order;
     for ( unsigned n = 0; n < m_numColumns; n++ )
@@ -459,7 +459,7 @@ int wxHeaderCtrl::MSWFromNativeOrder(int order)
             pos++;
     }
 
-    wxASSERT_MSG( MSWToNativeOrder(pos) == order, "logic error" );
+    //wxASSERT_MSG( MSWToNativeOrder(pos) == order, "logic error" );
 
     return pos;
 }
@@ -489,8 +489,9 @@ wxEventType wxHeaderCtrl::GetClickEventType(bool dblclk, int button)
             break;
 
         default:
-            wxFAIL_MSG( wxS("unexpected event type") );
+            //wxFAIL_MSG( wxS("unexpected event type") );
             evtType = wxEVT_NULL;
+            break;
     }
 
     return evtType;
@@ -628,7 +629,7 @@ bool wxHeaderCtrl::MSWOnNotify(int idCtrl, WXLPARAM lParam, WXLPARAM *result)
             break;
 
         case HDN_ENDDRAG:
-            wxASSERT_MSG( nmhdr->pitem->mask & HDI_ORDER, "should have order" );
+            //wxASSERT_MSG( nmhdr->pitem->mask & HDI_ORDER, "should have order" );
             order = nmhdr->pitem->iOrder;
 
             // we also get messages with invalid order when column reordering

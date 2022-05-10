@@ -589,7 +589,7 @@ bool wxMouseEvent::ButtonDClick(int but) const
     switch (but)
     {
         default:
-            wxFAIL_MSG(wxT("invalid parameter in wxMouseEvent::ButtonDClick"));
+            break;//wxFAIL_MSG(wxT("invalid parameter in wxMouseEvent::ButtonDClick"));
             // fall through
 
         case wxMOUSE_BTN_ANY:
@@ -649,7 +649,7 @@ bool wxMouseEvent::ButtonUp(int but) const
     switch (but)
     {
         default:
-            wxFAIL_MSG(wxT("invalid parameter in wxMouseEvent::ButtonUp"));
+            break;//wxFAIL_MSG(wxT("invalid parameter in wxMouseEvent::ButtonUp"));
             // fall through
 
         case wxMOUSE_BTN_ANY:
@@ -679,7 +679,7 @@ bool wxMouseEvent::Button(int but) const
     switch (but)
     {
         default:
-            wxFAIL_MSG(wxT("invalid parameter in wxMouseEvent::Button"));
+            break;//wxFAIL_MSG(wxT("invalid parameter in wxMouseEvent::Button"));
             // fall through
 
         case wxMOUSE_BTN_ANY:

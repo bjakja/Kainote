@@ -144,7 +144,7 @@ public:
     // init without conversion
     void Init(LV_ITEM_NATIVE& item)
     {
-        wxASSERT_MSG( !m_pItem, wxT("Init() called twice?") );
+        //wxASSERT_MSG( !m_pItem, wxT("Init() called twice?") );
 
         m_pItem = &item;
     }
@@ -328,8 +328,8 @@ WXDWORD wxListCtrl::MSWGetStyle(long style, WXDWORD *exstyle) const
     MAP_MODE_STYLE(wxLC_LIST, LVS_LIST)
     MAP_MODE_STYLE(wxLC_REPORT, LVS_REPORT)
 
-    wxASSERT_MSG( nModes == 1,
-                  wxT("wxListCtrl style should have exactly one mode bit set") );
+    //wxASSERT_MSG( nModes == 1,
+                  //wxT("wxListCtrl style should have exactly one mode bit set") );
 
 #undef MAP_MODE_STYLE
 
@@ -358,8 +358,8 @@ WXDWORD wxListCtrl::MSWGetStyle(long style, WXDWORD *exstyle) const
     {
         wstyle |= LVS_SORTASCENDING;
 
-        wxASSERT_MSG( !(style & wxLC_SORT_DESCENDING),
-                      wxT("can't sort in ascending and descending orders at once") );
+        /*wxASSERT_MSG( !(style & wxLC_SORT_DESCENDING),
+                      wxT("can't sort in ascending and descending orders at once") );*/
     }
     else if ( style & wxLC_SORT_DESCENDING )
         wstyle |= LVS_SORTDESCENDING;
@@ -632,7 +632,7 @@ int wxListCtrl::GetColumnIndexFromOrder(int order) const
 {
     const int numCols = GetColumnCount();
     //wxCHECK_MSG( order >= 0 && order < numCols, -1,
-                wxT("Column position out of bounds") );
+                //wxT("Column position out of bounds") );
 
     wxArrayInt indexArray(numCols);
     if ( !ListView_GetColumnOrderArray(GetHwnd(), numCols, &indexArray[0]) )
@@ -644,7 +644,7 @@ int wxListCtrl::GetColumnIndexFromOrder(int order) const
 int wxListCtrl::GetColumnOrder(int col) const
 {
     const int numCols = GetColumnCount();
-    wxASSERT_MSG( col >= 0 && col < numCols, wxT("Column index out of bounds") );
+    //wxASSERT_MSG( col >= 0 && col < numCols, wxT("Column index out of bounds") );
 
     wxArrayInt indexArray(numCols);
     if ( !ListView_GetColumnOrderArray(GetHwnd(), numCols, &indexArray[0]) )
@@ -656,7 +656,7 @@ int wxListCtrl::GetColumnOrder(int col) const
             return pos;
     }
 
-    wxFAIL_MSG( wxT("no column with with given order?") );
+    //wxFAIL_MSG( wxT("no column with with given order?") );
 
     return -1;
 }
@@ -679,7 +679,7 @@ bool wxListCtrl::SetColumnsOrder(const wxArrayInt& orders)
     const int numCols = GetColumnCount();
 
     //wxCHECK_MSG( orders.size() == (size_t)numCols, false,
-                    wxT("wrong number of elements in column orders array") );
+                    //wxT("wrong number of elements in column orders array") );
 
     return ListView_SetColumnOrderArray(GetHwnd(), numCols, &orders[0]) != 0;
 }
@@ -774,7 +774,7 @@ bool wxListCtrl::SetItem(wxListItem& info)
 {
     const long id = info.GetId();
     //wxCHECK_MSG( id >= 0 && id < GetItemCount(), false,
-                 wxT("invalid item index in SetItem") );
+                 //wxT("invalid item index in SetItem") );
 
     LV_ITEM item;
     wxConvertToMSWListItem(this, info, item);
@@ -1057,7 +1057,7 @@ wxRect wxListCtrl::GetViewRect() const
     }
     else
     {
-        wxFAIL_MSG( wxT("not implemented in this mode") );
+        //wxFAIL_MSG( wxT("not implemented in this mode") );
     }
 
     return rect;
@@ -1075,12 +1075,12 @@ bool wxListCtrl::GetSubItemRect(long item, long subItem, wxRect& rect, int code)
     // true even for the out of range values of it (even if the results are
     // completely bogus in this case), so we check item validity ourselves
     //wxCHECK_MSG( subItem == wxLIST_GETSUBITEMRECT_WHOLEITEM ||
-                    (subItem >= 0 && subItem < GetColumnCount()),
-                 false, wxT("invalid sub item index") );
+                    //(subItem >= 0 && subItem < GetColumnCount()),
+                 //false, wxT("invalid sub item index") );
 
     // use wxCHECK_MSG against "item" too, for coherency with the generic implementation:
     //wxCHECK_MSG( item >= 0 && item < GetItemCount(), false,
-                 wxT("invalid item in GetSubItemRect") );
+                 //wxT("invalid item in GetSubItemRect") );
 
     int codeWin;
     if ( code == wxLIST_RECT_BOUNDS )
@@ -1091,7 +1091,7 @@ bool wxListCtrl::GetSubItemRect(long item, long subItem, wxRect& rect, int code)
         codeWin = LVIR_LABEL;
     else
     {
-        wxFAIL_MSG( wxT("incorrect code in GetItemRect() / GetSubItemRect()") );
+        //wxFAIL_MSG( wxT("incorrect code in GetItemRect() / GetSubItemRect()") );
         codeWin = LVIR_BOUNDS;
     }
 
@@ -1386,8 +1386,8 @@ bool wxListCtrl::DeleteItem(long item)
     }
 
     m_count--;
-    wxASSERT_MSG( m_count == ListView_GetItemCount(GetHwnd()),
-                  wxT("m_count should match ListView_GetItemCount"));
+    //wxASSERT_MSG( m_count == ListView_GetItemCount(GetHwnd()),
+                  //wxT("m_count should match ListView_GetItemCount"));
 
     // the virtual list control doesn't refresh itself correctly, help it
     if ( IsVirtual() )
@@ -1437,7 +1437,7 @@ bool wxListCtrl::DeleteAllColumns()
         m_colCount--;
     }
 
-    wxASSERT_MSG( m_colCount == 0, wxT("no columns should be left") );
+    //wxASSERT_MSG( m_colCount == 0, wxT("no columns should be left") );
 
     return true;
 }
@@ -1476,7 +1476,7 @@ void wxListCtrl::InitEditControl(WXHWND hWnd)
 wxTextCtrl* wxListCtrl::EditLabel(long item, wxClassInfo* textControlClass)
 {
     //wxCHECK_MSG( textControlClass->IsKindOf(wxCLASSINFO(wxTextCtrl)), NULL,
-                  "control used for label editing must be a wxTextCtrl" );
+                  //"control used for label editing must be a wxTextCtrl" );
 
     // ListView_EditLabel requires that the list has focus.
     SetFocus();
@@ -1677,13 +1677,13 @@ wxListCtrl::HitTest(const wxPoint& point, int& flags, long *ptrSubItem) const
 // -1 otherwise.
 long wxListCtrl::InsertItem(const wxListItem& info)
 {
-    wxASSERT_MSG( !IsVirtual(), wxT("can't be used with virtual controls") );
+    //wxASSERT_MSG( !IsVirtual(), wxT("can't be used with virtual controls") );
 
     // In 2.8 it was possible to succeed inserting an item without initializing
     // its ID as it defaulted to 0. This was however never supported and in 2.9
     // the ID is -1 by default and inserting it simply fails, but it might be
     // not obvious why does it happen, so check it proactively.
-    wxASSERT_MSG( info.m_itemId != -1, wxS("Item ID must be set.") );
+    //wxASSERT_MSG( info.m_itemId != -1, wxS("Item ID must be set.") );
 
     LV_ITEM item;
     wxConvertToMSWListItem(this, info, item);
@@ -1720,8 +1720,8 @@ long wxListCtrl::InsertItem(const wxListItem& info)
     //wxCHECK_MSG( rv != -1, rv, "failed to insert an item in wxListCtrl" );
 
     m_count++;
-    wxASSERT_MSG( m_count == ListView_GetItemCount(GetHwnd()),
-                  wxT("m_count should match ListView_GetItemCount"));
+    //wxASSERT_MSG( m_count == ListView_GetItemCount(GetHwnd()),
+                  //wxT("m_count should match ListView_GetItemCount"));
 
     return rv;
 }
@@ -2603,7 +2603,7 @@ bool wxListCtrl::MSWOnNotify(int idCtrl, WXLPARAM lParam, WXLPARAM *result)
                     }
                 }
 
-                wxASSERT_MSG( !data, "invalid internal data pointer?" );
+                //wxASSERT_MSG( !data, "invalid internal data pointer?" );
             }
             break;
 
@@ -2986,7 +2986,7 @@ void wxListCtrl::OnPaint(wxPaintEvent& event)
                                                numCols,
                                                &indexArray[0]) )
             {
-                wxFAIL_MSG( wxT("invalid column index array in OnPaint()") );
+                //wxFAIL_MSG( wxT("invalid column index array in OnPaint()") );
                 return;
             }
 
@@ -3057,7 +3057,7 @@ wxString wxListCtrl::OnGetItemText(long WXUNUSED(item), long WXUNUSED(col)) cons
 {
     // this is a pure virtual function, in fact - which is not really pure
     // because the controls which are not virtual don't need to implement it
-    wxFAIL_MSG( wxT("wxListCtrl::OnGetItemText not supposed to be called") );
+    //wxFAIL_MSG( wxT("wxListCtrl::OnGetItemText not supposed to be called") );
 
     return wxEmptyString;
 }
@@ -3065,8 +3065,8 @@ wxString wxListCtrl::OnGetItemText(long WXUNUSED(item), long WXUNUSED(col)) cons
 int wxListCtrl::OnGetItemImage(long WXUNUSED(item)) const
 {
     //wxCHECK_MSG(!GetImageList(wxIMAGE_LIST_SMALL),
-                -1,
-                wxT("List control has an image list, OnGetItemImage or OnGetItemColumnImage should be overridden."));
+                //-1,
+                //wxT("List control has an image list, OnGetItemImage or OnGetItemColumnImage should be overridden."));
     return -1;
 }
 
@@ -3080,8 +3080,8 @@ int wxListCtrl::OnGetItemColumnImage(long item, long column) const
 
 wxListItemAttr *wxListCtrl::OnGetItemAttr(long WXUNUSED_UNLESS_DEBUG(item)) const
 {
-    wxASSERT_MSG( item >= 0 && item < GetItemCount(),
-                  wxT("invalid item index in OnGetItemAttr()") );
+    //wxASSERT_MSG( item >= 0 && item < GetItemCount(),
+                  //wxT("invalid item index in OnGetItemAttr()") );
 
     // no attributes by default
     return NULL;
@@ -3098,7 +3098,7 @@ wxListItemAttr *wxListCtrl::DoGetItemColumnAttr(long item, long column) const
 
 void wxListCtrl::SetItemCount(long count)
 {
-    wxASSERT_MSG( IsVirtual(), wxT("this is for virtual controls only") );
+    //wxASSERT_MSG( IsVirtual(), wxT("this is for virtual controls only") );
 
     if ( !::SendMessage(GetHwnd(), LVM_SETITEMCOUNT, (WPARAM)count,
                         LVSICF_NOSCROLL | LVSICF_NOINVALIDATEALL) )
@@ -3106,8 +3106,8 @@ void wxListCtrl::SetItemCount(long count)
         wxLogLastError(wxT("ListView_SetItemCount"));
     }
     m_count = count;
-    wxASSERT_MSG( m_count == ListView_GetItemCount(GetHwnd()),
-                  wxT("m_count should match ListView_GetItemCount"));
+    //wxASSERT_MSG( m_count == ListView_GetItemCount(GetHwnd()),
+                  //wxT("m_count should match ListView_GetItemCount"));
 }
 
 void wxListCtrl::RefreshItem(long item)
@@ -3246,12 +3246,12 @@ static void wxConvertToMSWListItem(const wxListCtrl *ctrl,
 {
     if ( ctrl->InReportView() )
     {
-        wxASSERT_MSG( 0 <= info.m_col && info.m_col < ctrl->GetColumnCount(),
-                      "wxListCtrl column index out of bounds" );
+        //wxASSERT_MSG( 0 <= info.m_col && info.m_col < ctrl->GetColumnCount(),
+                      //"wxListCtrl column index out of bounds" );
     }
     else // not in report view
     {
-        wxASSERT_MSG( info.m_col == 0, "columns only exist in report view" );
+        //wxASSERT_MSG( info.m_col == 0, "columns only exist in report view" );
     }
 
     lvItem.iItem = (int) info.m_itemId;

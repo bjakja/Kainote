@@ -590,7 +590,7 @@ int wxFileDialog::ShowModal()
 
     size_t items = wxParseCommonDialogsFilter(m_wildCard, wildDescriptions, wildFilters);
 
-    wxASSERT_MSG( items > 0 , wxT("empty wildcard list") );
+    //wxASSERT_MSG( items > 0 , wxT("empty wildcard list") );
 
     wxString filterBuffer;
 

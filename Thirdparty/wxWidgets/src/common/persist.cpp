@@ -88,7 +88,7 @@ wxPersistenceManager::Register(void *obj, wxPersistentObject *po)
 {
     if ( wxPersistentObject *old = Find(obj) )
     {
-        wxFAIL_MSG( "object is already registered" );
+        //wxFAIL_MSG( "object is already registered" );
 
         delete po; // still avoid the memory leaks
         return old;

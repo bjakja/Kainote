@@ -168,8 +168,8 @@ wxSpinCtrl *wxSpinCtrl::GetSpinForTextCtrl(WXHWND hwndBuddy)
     wxSpinCtrl * const spin = it->second;
 
     // sanity check
-    wxASSERT_MSG( spin->m_hwndBuddy == hwndBuddy,
-                  wxT("wxSpinCtrl has incorrect buddy HWND!") );
+    //wxASSERT_MSG( spin->m_hwndBuddy == hwndBuddy,
+                  //wxT("wxSpinCtrl has incorrect buddy HWND!") );
 
     return spin;
 }

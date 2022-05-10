@@ -105,7 +105,7 @@ void wxWrapSizer::ClearRows()
         wxSizer * const row = item->GetSizer();
         if ( !row )
         {
-            wxFAIL_MSG( "all elements of m_rows must be sizers" );
+            //wxFAIL_MSG( "all elements of m_rows must be sizers" );
             continue;
         }
 

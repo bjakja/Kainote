@@ -373,7 +373,7 @@ bool wxDisplayMSW::ChangeMode(const wxVideoMode& mode)
     else // change to the given mode
     {
         //wxCHECK_MSG( mode.GetWidth() && mode.GetHeight(), false,
-                        wxT("at least the width and height must be specified") );
+                        //wxT("at least the width and height must be specified") );
 
         wxZeroMemory(dm);
         dm.dmSize = sizeof(dm);
@@ -459,7 +459,7 @@ bool wxDisplayMSW::ChangeMode(const wxVideoMode& mode)
             break;
 
         default:
-            wxFAIL_MSG( wxT("unexpected ChangeDisplaySettingsEx() return value") );
+            break;// wxFAIL_MSG(wxT("unexpected ChangeDisplaySettingsEx() return value"));
     }
 
     return false;
@@ -487,7 +487,7 @@ wxDisplayFactoryMSW::wxDisplayFactoryMSW()
 {
     // This is not supposed to happen with the current code, the factory is
     // implicitly a singleton.
-    wxASSERT_MSG( !ms_factory, wxS("Using more than one factory?") );
+    //wxASSERT_MSG( !ms_factory, wxS("Using more than one factory?") );
 
     ms_factory = this;
 

@@ -123,7 +123,7 @@ class TempSetter
 public:
     TempSetter(bool& var) : m_var(var)
     {
-        wxASSERT_MSG( !m_var, "variable shouldn't be already set" );
+        //wxASSERT_MSG( !m_var, "variable shouldn't be already set" );
         m_var = true;
     }
 
@@ -1418,7 +1418,7 @@ wxTreeItemId wxTreeCtrl::GetFirstVisibleItem() const
 wxTreeItemId wxTreeCtrl::GetNextVisible(const wxTreeItemId& item) const
 {
     //wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
-    wxASSERT_MSG( IsVisible(item), wxT("The item you call GetNextVisible() for must be visible itself!"));
+    //wxASSERT_MSG( IsVisible(item), wxT("The item you call GetNextVisible() for must be visible itself!"));
 
     wxTreeItemId next(TreeView_GetNextVisible(GetHwnd(), HITEM(item)));
     if ( next.IsOk() && !IsVisible(next) )
@@ -1434,7 +1434,7 @@ wxTreeItemId wxTreeCtrl::GetNextVisible(const wxTreeItemId& item) const
 wxTreeItemId wxTreeCtrl::GetPrevVisible(const wxTreeItemId& item) const
 {
     //wxCHECK_MSG( item.IsOk(), wxTreeItemId(), wxT("invalid tree item") );
-    wxASSERT_MSG( IsVisible(item), wxT("The item you call GetPrevVisible() for must be visible itself!"));
+    //wxASSERT_MSG( IsVisible(item), wxT("The item you call GetPrevVisible() for must be visible itself!"));
 
     wxTreeItemId prev(TreeView_GetPrevVisible(GetHwnd(), HITEM(item)));
     if ( prev.IsOk() && !IsVisible(prev) )
@@ -1552,7 +1552,7 @@ wxTreeItemId wxTreeCtrl::AddRoot(const wxString& text,
 {
     if ( HasFlag(wxTR_HIDE_ROOT) )
     {
-        wxASSERT_MSG( !m_pVirtualRoot, wxT("tree can have only a single root") );
+        //wxASSERT_MSG( !m_pVirtualRoot, wxT("tree can have only a single root") );
 
         // create a virtual root item, the parent for all the others
         wxTreeItemParam *param = new wxTreeItemParam;
@@ -1593,7 +1593,7 @@ wxTreeItemId wxTreeCtrl::DoInsertItem(const wxTreeItemId& parent,
 
         // assert, not check: if the index is invalid, we will append the item
         // to the end
-        wxASSERT_MSG( index == 0, wxT("bad index in wxTreeCtrl::InsertItem") );
+        //wxASSERT_MSG( index == 0, wxT("bad index in wxTreeCtrl::InsertItem") );
     }
 
     return DoInsertAfter(parent, idPrev, text, image, selectedImage, data);
@@ -1715,11 +1715,11 @@ void wxTreeCtrl::DeleteAllItems()
 
 void wxTreeCtrl::DoExpand(const wxTreeItemId& item, int flag)
 {
-    wxASSERT_MSG( flag == TVE_COLLAPSE ||
-                  flag == (TVE_COLLAPSE | TVE_COLLAPSERESET) ||
+    //wxASSERT_MSG( flag == TVE_COLLAPSE ||
+                  /*flag == (TVE_COLLAPSE | TVE_COLLAPSERESET) ||
                   flag == TVE_EXPAND   ||
                   flag == TVE_TOGGLE,
-                  wxT("Unknown flag in wxTreeCtrl::DoExpand") );
+                  wxT("Unknown flag in wxTreeCtrl::DoExpand") );*/
 
     // A hidden root can be neither expanded nor collapsed.
     //wxCHECK_RET( !IsHiddenRoot(item),
@@ -1779,8 +1779,8 @@ void wxTreeCtrl::Toggle(const wxTreeItemId& item)
 
 void wxTreeCtrl::Unselect()
 {
-    wxASSERT_MSG( !HasFlag(wxTR_MULTIPLE),
-                  wxT("doesn't make sense, may be you want UnselectAll()?") );
+    //wxASSERT_MSG( !HasFlag(wxTR_MULTIPLE),
+                  //wxT("doesn't make sense, may be you want UnselectAll()?") );
 
     // the current focus
     HTREEITEM htFocus = (HTREEITEM)TreeView_GetSelection(GetHwnd());
@@ -3713,7 +3713,7 @@ bool wxTreeCtrl::MSWOnNotify(int idCtrl, WXLPARAM lParam, WXLPARAM *result)
             {
                 // normally this is impossible because the m_dragImage is
                 // deleted once the drag operation is over
-                wxASSERT_MSG( !m_dragImage, wxT("starting to drag once again?") );
+                //wxASSERT_MSG( !m_dragImage, wxT("starting to drag once again?") );
 
                 m_dragImage = new wxDragImage(*this, event.m_item);
                 m_dragImage->BeginDrag(wxPoint(0,0), this);

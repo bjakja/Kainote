@@ -118,7 +118,7 @@ wxImageList::~wxImageList()
 // Returns the number of images in the image list.
 int wxImageList::GetImageCount() const
 {
-    wxASSERT_MSG( m_hImageList, wxT("invalid image list") );
+    //wxASSERT_MSG( m_hImageList, wxT("invalid image list") );
 
     return ImageList_GetImageCount(GetHImageList());
 }
@@ -126,7 +126,7 @@ int wxImageList::GetImageCount() const
 // Returns the size (same for all images) of the images in the list
 bool wxImageList::GetSize(int WXUNUSED(index), int &width, int &height) const
 {
-    wxASSERT_MSG( m_hImageList, wxT("invalid image list") );
+    //wxASSERT_MSG( m_hImageList, wxT("invalid image list") );
 
     return ImageList_GetIconSize(GetHImageList(), &width, &height) != 0;
 }

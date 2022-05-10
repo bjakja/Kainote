@@ -55,7 +55,7 @@ wxConnectionBase::wxConnectionBase(const wxConnectionBase& copy)
 
 {
   // copy constructor would require ref-counted pointer to buffer
-  wxFAIL_MSG( wxT("Copy constructor of wxConnectionBase not implemented") );
+  //wxFAIL_MSG( wxT("Copy constructor of wxConnectionBase not implemented") );
 }
 
 
@@ -87,7 +87,7 @@ wxString wxConnectionBase::GetTextFromData(const void* data,
         // TODO: we should handle both wxIPC_UTF16TEXT and wxIPC_UTF32TEXT here
         //       for inter-platform IPC
         case wxIPC_UNICODETEXT:
-            wxASSERT_MSG( !(size % sizeof(wchar_t)), "invalid buffer size" );
+            //wxASSERT_MSG( !(size % sizeof(wchar_t)), "invalid buffer size" );
             if ( size )
             {
                 size /= sizeof(wchar_t);
@@ -106,7 +106,7 @@ wxString wxConnectionBase::GetTextFromData(const void* data,
 #endif // wxUSE_UNICODE
 
         default:
-            wxFAIL_MSG( "non-string IPC format in GetTextFromData()" );
+            break; //wxFAIL_MSG( "non-string IPC format in GetTextFromData()" );
     }
 
     return s;

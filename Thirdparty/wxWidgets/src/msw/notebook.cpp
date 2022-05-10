@@ -629,7 +629,7 @@ wxNotebookPage *wxNotebook::DoRemovePage(size_t nPage)
         }
         else
         {
-            wxFAIL; // Windows did not behave ok.
+            //wxFAIL; // Windows did not behave ok.
         }
     }
 
@@ -663,10 +663,10 @@ bool wxNotebook::InsertPage(size_t nPage,
 {
     //wxCHECK_MSG( pPage != NULL, false, wxT("NULL page in wxNotebook::InsertPage") );
     //wxCHECK_MSG( IS_VALID_PAGE(nPage) || nPage == GetPageCount(), false,
-                 wxT("invalid index in wxNotebook::InsertPage") );
+                 //wxT("invalid index in wxNotebook::InsertPage") );
 
-    wxASSERT_MSG( pPage->GetParent() == this,
-                    wxT("notebook pages must have notebook as parent") );
+    //wxASSERT_MSG( pPage->GetParent() == this,
+                    //wxT("notebook pages must have notebook as parent") );
 
     // add a new tab to the control
     // ----------------------------

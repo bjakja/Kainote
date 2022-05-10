@@ -149,16 +149,16 @@ WXDWORD wxListBox::MSWGetStyle(long style, WXDWORD *exstyle) const
     // layout doesn't work properly
     msStyle |= LBS_NOINTEGRALHEIGHT;
 
-    wxASSERT_MSG( !(style & wxLB_MULTIPLE) || !(style & wxLB_EXTENDED),
-                  wxT("only one of listbox selection modes can be specified") );
+    /*wxASSERT_MSG( !(style & wxLB_MULTIPLE) || !(style & wxLB_EXTENDED),
+                  wxT("only one of listbox selection modes can be specified") );*/
 
     if ( style & wxLB_MULTIPLE )
         msStyle |= LBS_MULTIPLESEL;
     else if ( style & wxLB_EXTENDED )
         msStyle |= LBS_EXTENDEDSEL;
 
-    wxASSERT_MSG( !(style & wxLB_ALWAYS_SB) || !(style & wxLB_NO_SB),
-                  wxT( "Conflicting styles wxLB_ALWAYS_SB and wxLB_NO_SB." ) );
+    /*wxASSERT_MSG( !(style & wxLB_ALWAYS_SB) || !(style & wxLB_NO_SB),
+                  wxT( "Conflicting styles wxLB_ALWAYS_SB and wxLB_NO_SB." ) );*/
 
     if ( !(style & wxLB_NO_SB) )
     {
@@ -219,7 +219,7 @@ void wxListBox::MSWOnItemsChanged()
 void wxListBox::DoSetFirstItem(int N)
 {
     //wxCHECK_RET( IsValid(N),
-                 wxT("invalid index in wxListBox::SetFirstItem") );
+                 //wxT("invalid index in wxListBox::SetFirstItem") );
 
     SendMessage(GetHwnd(), LB_SETTOPINDEX, (WPARAM)N, (LPARAM)0);
 }
@@ -227,7 +227,7 @@ void wxListBox::DoSetFirstItem(int N)
 void wxListBox::DoDeleteOneItem(unsigned int n)
 {
     //wxCHECK_RET( IsValid(n),
-                 wxT("invalid index in wxListBox::Delete") );
+                 //wxT("invalid index in wxListBox::Delete") );
 
 #if wxUSE_OWNER_DRAWN
     if ( HasFlag(wxLB_OWNERDRAW) )
@@ -278,7 +278,7 @@ void wxListBox::DoClear()
 void wxListBox::DoSetSelection(int N, bool select)
 {
     //wxCHECK_RET( N == wxNOT_FOUND || IsValid(N),
-                 wxT("invalid index in wxListBox::SetSelection") );
+                 //wxT("invalid index in wxListBox::SetSelection") );
 
     if ( HasMultipleSelection() )
     {
@@ -299,7 +299,7 @@ void wxListBox::DoSetSelection(int N, bool select)
 bool wxListBox::IsSelected(int N) const
 {
     //wxCHECK_MSG( IsValid(N), false,
-                 wxT("invalid index in wxListBox::Selected") );
+                 //wxT("invalid index in wxListBox::Selected") );
 
     return SendMessage(GetHwnd(), LB_GETSEL, N, 0) == 0 ? false : true;
 }
@@ -372,8 +372,8 @@ int wxListBox::GetSelections(wxArrayInt& aSelections) const
 int wxListBox::GetSelection() const
 {
     //wxCHECK_MSG( !HasMultipleSelection(),
-                 -1,
-                 wxT("GetSelection() can't be used with multiple-selection listboxes, use GetSelections() instead.") );
+                 //-1,
+                 //wxT("GetSelection() can't be used with multiple-selection listboxes, use GetSelections() instead.") );
 
     return ListBox_GetCurSel(GetHwnd());
 }
@@ -382,7 +382,7 @@ int wxListBox::GetSelection() const
 wxString wxListBox::GetString(unsigned int n) const
 {
     //wxCHECK_MSG( IsValid(n), wxEmptyString,
-                 wxT("invalid index in wxListBox::GetString") );
+                 //wxT("invalid index in wxListBox::GetString") );
 
     int len = ListBox_GetTextLen(GetHwnd(), n);
 
@@ -454,7 +454,7 @@ int wxListBox::DoHitTestList(const wxPoint& point) const
 void wxListBox::SetString(unsigned int n, const wxString& s)
 {
     //wxCHECK_RET( IsValid(n),
-                 wxT("invalid index in wxListBox::SetString") );
+                 //wxT("invalid index in wxListBox::SetString") );
 
     // remember the state of the item
     bool wasSelected = IsSelected(n);
@@ -676,7 +676,7 @@ bool wxListBox::SetFont(const wxFont &font)
 bool wxListBox::GetItemRect(size_t n, wxRect& rect) const
 {
     //wxCHECK_MSG( IsValid(n), false,
-                 wxT("invalid index in wxListBox::GetItemRect") );
+                 //wxT("invalid index in wxListBox::GetItemRect") );
 
     RECT rc;
 

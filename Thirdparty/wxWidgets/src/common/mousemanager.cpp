@@ -73,7 +73,7 @@ void wxMouseEventsManager::OnCaptureLost(wxMouseCaptureLostEvent& WXUNUSED(event
     switch ( m_state )
     {
         case State_Normal:
-            wxFAIL_MSG( "mouse shouldn't be captured in normal state" );
+            //wxFAIL_MSG( "mouse shouldn't be captured in normal state" );
             break;
 
         case State_Pressed:
