@@ -312,8 +312,8 @@ protected:
         wxFileName path_copy = wxFileName(path);
         if ( !path_copy.Normalize() )
         {
-            wxFAIL_MSG(wxString::Format("Unable to normalize path '%s'",
-                                         path.GetFullPath()));
+            //wxFAIL_MSG(wxString::Format("Unable to normalize path '%s'",
+                                         //path.GetFullPath()));
             return wxEmptyString;
         }
 

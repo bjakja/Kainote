@@ -108,7 +108,7 @@ wxFileSystemWatcherBase::DoAdd(const wxFileName& path,
         return false;
 
     //wxCHECK_MSG(m_watches.find(canonical) == m_watches.end(), false,
-                wxString::Format("Path '%s' is already watched", canonical));
+                //wxString::Format("Path '%s' is already watched", canonical));
 
     // adding a path in a platform specific way
     wxFSWatchInfo watch(canonical, events, type);
@@ -129,7 +129,7 @@ bool wxFileSystemWatcherBase::Remove(const wxFileName& path)
 
     wxFSWatchInfoMap::iterator it = m_watches.find(canonical);
     //wxCHECK_MSG(it != m_watches.end(), false,
-                wxString::Format("Path '%s' is not watched", canonical));
+                //wxString::Format("Path '%s' is not watched", canonical));
 
     // remove from watch-list
     wxFSWatchInfo watch = it->second;

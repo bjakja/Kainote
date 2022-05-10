@@ -64,7 +64,7 @@ wxTextEntry *wxNumValidatorBase::GetTextEntry() const
         return combo;
 #endif // wxUSE_COMBOBOX
 
-    wxFAIL_MSG("Can only be used with wxTextCtrl or wxComboBox");
+    //wxFAIL_MSG("Can only be used with wxTextCtrl or wxComboBox");
 
     return NULL;
 }

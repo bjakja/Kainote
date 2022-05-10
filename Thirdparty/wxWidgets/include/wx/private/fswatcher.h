@@ -50,7 +50,7 @@ public:
     virtual bool Add(const wxFSWatchInfo& winfo)
     {
         //wxCHECK_MSG( m_watches.find(winfo.GetPath()) == m_watches.end(), false,
-                     "Path '%s' is already watched");
+                     //"Path '%s' is already watched");
 
         // construct watch entry
         wxSharedPtr<wxFSWatchEntry> watch(new wxFSWatchEntry(winfo));

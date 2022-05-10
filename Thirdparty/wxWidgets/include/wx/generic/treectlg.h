@@ -114,8 +114,8 @@ public:
     virtual wxTreeItemId GetRootItem() const { return m_anchor; }
     virtual wxTreeItemId GetSelection() const
     {
-        wxASSERT_MSG( !HasFlag(wxTR_MULTIPLE),
-                       wxT("must use GetSelections() with this control") );
+        /*wxASSERT_MSG( !HasFlag(wxTR_MULTIPLE),
+                       wxT("must use GetSelections() with this control") );*/
 
         return m_current;
     }

@@ -261,8 +261,8 @@ protected:
     wxIntegerValidatorBase(int style)
         : wxNumValidatorBase(style)
     {
-        wxASSERT_MSG( !(style & wxNUM_VAL_NO_TRAILING_ZEROES),
-                      "This style doesn't make sense for integers." );
+        /*wxASSERT_MSG( !(style & wxNUM_VAL_NO_TRAILING_ZEROES),
+                      "This style doesn't make sense for integers." );*/
     }
 
     wxIntegerValidatorBase(const wxIntegerValidatorBase& other)

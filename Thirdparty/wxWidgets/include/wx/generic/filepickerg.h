@@ -125,8 +125,8 @@ public:     // overridable
     {
         // the derived class must initialize it if it doesn't use the
         // non-default wxGenericFileDirButton ctor
-        wxASSERT_MSG( m_pickerStyle != -1,
-                      "forgot to initialize m_pickerStyle?" );
+        //wxASSERT_MSG( m_pickerStyle != -1,
+                      //"forgot to initialize m_pickerStyle?" );
 
 
         long filedlgstyle = 0;

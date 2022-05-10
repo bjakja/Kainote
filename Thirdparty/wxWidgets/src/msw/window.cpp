@@ -750,11 +750,11 @@ wxWindowMSW::MSWShowWithEffect(bool show,
 
 
         case wxSHOW_EFFECT_MAX:
-            wxFAIL_MSG( wxT("invalid window show effect") );
+            //wxFAIL_MSG( wxT("invalid window show effect") );
             return false;
 
         default:
-            wxFAIL_MSG( wxT("unknown window show effect") );
+            //wxFAIL_MSG( wxT("unknown window show effect") );
             return false;
     }
 
@@ -1114,7 +1114,7 @@ void wxWindowMSW::SetLayoutDirection(wxLayoutDirection dir)
     wxUnusedVar(dir);
 #else
     //wxCHECK_RET( GetHwnd(),
-                 wxT("layout direction must be set after window creation") );
+                 //wxT("layout direction must be set after window creation") );
 
     LONG styleOld = wxGetWindowExStyle(this);
 
@@ -1130,7 +1130,7 @@ void wxWindowMSW::SetLayoutDirection(wxLayoutDirection dir)
             break;
 
         default:
-            wxFAIL_MSG(wxT("unsupported layout direction"));
+            //wxFAIL_MSG(wxT("unsupported layout direction"));
             break;
     }
 
@@ -1457,7 +1457,7 @@ WXDWORD wxWindowMSW::MSWGetStyle(long flags, WXDWORD *exstyle) const
         {
             default:
             case wxBORDER_DEFAULT:
-                wxFAIL_MSG( wxT("unknown border style") );
+                //wxFAIL_MSG( wxT("unknown border style") );
                 // fall through
 
             case wxBORDER_NONE:
@@ -2124,7 +2124,7 @@ wxSize wxWindowMSW::DoGetBorderSize() const
             break;
 
         default:
-            wxFAIL_MSG( wxT("unknown border style") );
+            //wxFAIL_MSG( wxT("unknown border style") );
             // fall through
 
         case wxBORDER_NONE:
@@ -3641,7 +3641,7 @@ void wxAssociateWinWithHandle(HWND hwnd, wxWindowMSW *win)
     // adding NULL hwnd is (first) surely a result of an error and
     // (secondly) breaks menu command processing
     //wxCHECK_RET( hwnd != (HWND)NULL,
-                 wxT("attempt to add a NULL hwnd to window list ignored") );
+                 //wxT("attempt to add a NULL hwnd to window list ignored") );
 
 #if wxDEBUG_LEVEL
     WindowHandles::const_iterator i = gs_windowHandles.find(hwnd);
@@ -3649,12 +3649,12 @@ void wxAssociateWinWithHandle(HWND hwnd, wxWindowMSW *win)
     {
         if ( i->second != win )
         {
-            wxFAIL_MSG(
+            /*wxFAIL_MSG(
                 wxString::Format(
                     wxT("HWND %p already associated with another window (%s)"),
                     hwnd, win->GetClassInfo()->GetClassName()
                 )
-            );
+            );*/
         }
         //else: this actually happens currently because we associate the window
         //      with its HWND during creation (if we create it) and also when
@@ -4368,7 +4368,7 @@ wxWindowMSW::MSWOnDrawItem(int WXUNUSED_UNLESS_ODRAWN(id),
             return false;
 
         //wxCHECK_MSG( wxDynamicCast(pMenuItem, wxMenuItem),
-                         false, wxT("MSWOnDrawItem: bad wxMenuItem pointer") );
+                         //false, wxT("MSWOnDrawItem: bad wxMenuItem pointer") );
 
         // prepare to call OnDrawItem(): notice using of wxDCTemp to prevent
         // the DC from being released
@@ -4434,7 +4434,7 @@ wxWindowMSW::MSWOnMeasureItem(int id, WXMEASUREITEMSTRUCT *itemStruct)
             return false;
 
         //wxCHECK_MSG( wxDynamicCast(pMenuItem, wxMenuItem),
-                        false, wxT("MSWOnMeasureItem: bad wxMenuItem pointer") );
+                        //false, wxT("MSWOnMeasureItem: bad wxMenuItem pointer") );
 
         size_t w, h;
         bool rc = pMenuItem->OnMeasureItem(&w, &h);
@@ -4665,8 +4665,8 @@ extern wxCOLORMAP *wxGetStdColourMap()
             if ( stdColourBitmap.IsOk() )
             {
                 // the pixels in the bitmap must correspond to wxSTD_COL_XXX!
-                wxASSERT_MSG( stdColourBitmap.GetWidth() == wxSTD_COL_MAX,
-                              wxT("forgot to update wxBITMAP_STD_COLOURS!") );
+                /*wxASSERT_MSG( stdColourBitmap.GetWidth() == wxSTD_COL_MAX,
+                              wxT("forgot to update wxBITMAP_STD_COLOURS!") );*/
 
                 wxMemoryDC memDC;
                 memDC.SelectObject(stdColourBitmap);
@@ -4740,7 +4740,7 @@ wxColour wxWindowMSW::MSWGetThemeColour(const wchar_t *themeName,
                 themeProperty = TMT_BORDERCOLOR;
                 break;
             default:
-                wxFAIL_MSG(wxT("unsupported theme colour"));
+                break;//wxFAIL_MSG(wxT("unsupported theme colour"));
         };
 
         wxUxThemeHandle hTheme((const wxWindow *)this, themeName);
@@ -4897,7 +4897,7 @@ bool wxWindowMSW::HandleEraseBkgnd(WXHDC hdc)
             break;
 
         default:
-            wxFAIL_MSG( "unknown background style" );
+            break;//wxFAIL_MSG( "unknown background style" );
     }
 
     return true;
@@ -4918,14 +4918,14 @@ void wxWindowMSW::MSWSetEraseBgHook(wxWindow *child)
         if ( !gs_eraseBgHooks.insert(
                 EraseBgHooks::value_type(this, child)).second )
         {
-            wxFAIL_MSG( wxT("Setting erase background hook twice?") );
+            //wxFAIL_MSG( wxT("Setting erase background hook twice?") );
         }
     }
     else // reset the hook
     {
         if ( gs_eraseBgHooks.erase(this) != 1 )
         {
-            wxFAIL_MSG( wxT("Resetting erase background which was not set?") );
+            //wxFAIL_MSG( wxT("Resetting erase background which was not set?") );
         }
     }
 }
@@ -5141,7 +5141,7 @@ bool wxWindowMSW::HandleSize(int WXUNUSED(w), int WXUNUSED(h), WXUINT wParam)
     switch ( wParam )
     {
         default:
-            wxFAIL_MSG( wxT("unexpected WM_SIZE parameter") );
+            //wxFAIL_MSG( wxT("unexpected WM_SIZE parameter") );
             // fall through nevertheless
 
         case SIZE_MAXHIDE:
@@ -5959,7 +5959,7 @@ bool wxWindowMSW::HandleJoystickEvent(WXUINT msg, int x, int y, WXUINT flags)
             break;
 
         default:
-            wxFAIL_MSG(wxT("no such joystick event"));
+            //wxFAIL_MSG(wxT("no such joystick event"));
 
             return false;
     }
@@ -6068,7 +6068,7 @@ bool wxWindowMSW::MSWOnScroll(int orientation, WXWORD wParam,
 wxWindowMSW::MSWRegisterMessageHandler(int msg, MSWMessageHandler handler)
 {
     //wxCHECK_MSG( gs_messageHandlers.find(msg) == gs_messageHandlers.end(),
-                 false, wxT("registering handler for the same message twice") );
+                 //false, wxT("registering handler for the same message twice") );
 
     gs_messageHandlers[msg] = handler;
     return true;
@@ -6079,7 +6079,7 @@ wxWindowMSW::MSWUnregisterMessageHandler(int msg, MSWMessageHandler handler)
 {
     const MSWMessageHandlers::iterator i = gs_messageHandlers.find(msg);
     //wxCHECK_RET( i != gs_messageHandlers.end() && i->second == handler,
-                 wxT("unregistering non-registered handler?") );
+                 //wxT("unregistering non-registered handler?") );
 
     gs_messageHandlers.erase(i);
 }
@@ -6490,10 +6490,10 @@ bool wxGetKeyState(wxKeyCode key)
 {
     // although this does work under Windows, it is not supported under other
     // platforms so don't allow it, you must use wxGetMouseState() instead
-    wxASSERT_MSG( key != VK_LBUTTON &&
+    /*wxASSERT_MSG( key != VK_LBUTTON &&
                     key != VK_RBUTTON &&
                         key != VK_MBUTTON,
-                    wxT("can't use wxGetKeyState() for mouse buttons") );
+                    wxT("can't use wxGetKeyState() for mouse buttons") );*/
 
     const WXWORD vk = wxMSWKeyboard::WXToVK(key);
 

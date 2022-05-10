@@ -189,9 +189,9 @@ bool wxConfigBase::Read(const wxString& key, float* val) const
         return false;
 
     //wxCHECK_MSG( fabs(temp) <= FLT_MAX, false,
-                     wxT("float overflow in wxConfig::Read") );
+                     //wxT("float overflow in wxConfig::Read") );
     //wxCHECK_MSG( (temp == 0.0) || (fabs(temp) >= FLT_MIN), false,
-                     wxT("float underflow in wxConfig::Read") );
+                     //wxT("float underflow in wxConfig::Read") );
 
     *val = static_cast<float>(temp);
 

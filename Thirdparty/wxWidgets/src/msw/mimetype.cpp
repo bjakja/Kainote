@@ -547,7 +547,7 @@ size_t wxMimeTypesManagerImpl::EnumAllFileTypes(wxArrayString& mimetypes)
 wxFileType *wxMimeTypesManagerImpl::Associate(const wxFileTypeInfo& ftInfo)
 {
     //wxCHECK_MSG( !ftInfo.GetExtensions().empty(), NULL,
-                 wxT("Associate() needs extension") );
+                 //wxT("Associate() needs extension") );
 
     bool ok;
     size_t iExtCount = 0;
@@ -557,7 +557,7 @@ wxFileType *wxMimeTypesManagerImpl::Associate(const wxFileTypeInfo& ftInfo)
     wxString ext = ftInfo.GetExtensions()[iExtCount];
 
     //wxCHECK_MSG( !ext.empty(), NULL,
-                 wxT("Associate() needs non empty extension") );
+                 //wxT("Associate() needs non empty extension") );
 
     if ( ext[0u] != wxT('.') )
         extWithDot = wxT('.');
@@ -690,7 +690,7 @@ bool wxFileTypeImpl::SetCommand(const wxString& cmd,
                                 bool WXUNUSED(overwriteprompt))
 {
     //wxCHECK_MSG( !m_ext.empty() && !verb.empty(), false,
-                 wxT("SetCommand() needs an extension and a verb") );
+                 //wxT("SetCommand() needs an extension and a verb") );
 
     if ( !EnsureExtKeyExists() )
         return false;
@@ -823,7 +823,7 @@ bool wxFileTypeImpl::RemoveOpenCommand()
 bool wxFileTypeImpl::RemoveCommand(const wxString& verb)
 {
     //wxCHECK_MSG( !m_ext.empty() && !verb.empty(), false,
-                 wxT("RemoveCommand() needs an extension and a verb") );
+                 //wxT("RemoveCommand() needs an extension and a verb") );
 
     wxRegKey rkey(wxRegKey::HKCR, GetVerbPath(verb));
 
@@ -842,7 +842,7 @@ bool wxFileTypeImpl::RemoveMimeType()
 bool wxFileTypeImpl::RemoveDefaultIcon()
 {
     //wxCHECK_MSG( !m_ext.empty(), false,
-                 wxT("RemoveDefaultIcon() needs extension") );
+                 //wxT("RemoveDefaultIcon() needs extension") );
 
     wxRegKey rkey (wxRegKey::HKCR, m_strFileType  + wxT("\\DefaultIcon"));
     return !rkey.Exists() || rkey.DeleteSelf();
@@ -851,7 +851,7 @@ bool wxFileTypeImpl::RemoveDefaultIcon()
 bool wxFileTypeImpl::RemoveDescription()
 {
     //wxCHECK_MSG( !m_ext.empty(), false,
-                 wxT("RemoveDescription() needs extension") );
+                 //wxT("RemoveDescription() needs extension") );
 
     wxRegKey rkey (wxRegKey::HKCR, m_strFileType );
     return !rkey.Exists() || rkey.DeleteSelf();

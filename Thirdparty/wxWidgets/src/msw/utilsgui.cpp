@@ -77,7 +77,7 @@ void wxBeginBusyCursor(const wxCursor *cursor)
 void wxEndBusyCursor()
 {
     //wxCHECK_RET( gs_wxBusyCursorCount > 0,
-                 wxT("no matching wxBeginBusyCursor() for wxEndBusyCursor()") );
+                 //wxT("no matching wxBeginBusyCursor() for wxEndBusyCursor()") );
 
     if ( --gs_wxBusyCursorCount == 0 )
     {

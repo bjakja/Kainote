@@ -1836,7 +1836,7 @@ void wxGenericTreeCtrl::Expand(const wxTreeItemId& itemId)
 
     //wxCHECK_RET( item, wxT("invalid item in wxGenericTreeCtrl::Expand") );
     //wxCHECK_RET( !HasFlag(wxTR_HIDE_ROOT) || itemId != GetRootItem(),
-                 wxT("can't expand hidden root") );
+                 //wxT("can't expand hidden root") );
 
     if ( !item->HasPlus() )
         return;
@@ -1871,7 +1871,7 @@ void wxGenericTreeCtrl::Expand(const wxTreeItemId& itemId)
 void wxGenericTreeCtrl::Collapse(const wxTreeItemId& itemId)
 {
     //wxCHECK_RET( !HasFlag(wxTR_HIDE_ROOT) || itemId != GetRootItem(),
-                 wxT("can't collapse hidden root") );
+                 //wxT("can't collapse hidden root") );
 
     wxGenericTreeItem *item = (wxGenericTreeItem*) itemId.m_pItem;
 
@@ -1980,7 +1980,7 @@ void wxGenericTreeCtrl::UnselectAll()
 void wxGenericTreeCtrl::SelectChildren(const wxTreeItemId& parent)
 {
     //wxCHECK_RET( HasFlag(wxTR_MULTIPLE),
-                 "this only works with multiple selection controls" );
+                 //"this only works with multiple selection controls" );
 
     UnselectAll();
 
@@ -2307,7 +2307,7 @@ static int LINKAGEMODE tree_ctrl_compare_func(wxGenericTreeItem **item1,
                                   wxGenericTreeItem **item2)
 {
     //wxCHECK_MSG( s_treeBeingSorted, 0,
-                 "bug in wxGenericTreeCtrl::SortChildren()" );
+                 //"bug in wxGenericTreeCtrl::SortChildren()" );
 
     return s_treeBeingSorted->OnCompareItems(*item1, *item2);
 }
@@ -2319,7 +2319,7 @@ void wxGenericTreeCtrl::SortChildren(const wxTreeItemId& itemId)
     wxGenericTreeItem *item = (wxGenericTreeItem*) itemId.m_pItem;
 
     //wxCHECK_RET( !s_treeBeingSorted,
-                 wxT("wxGenericTreeCtrl::SortChildren is not reentrant") );
+                 //wxT("wxGenericTreeCtrl::SortChildren is not reentrant") );
 
     wxArrayGenericTreeItems& children = item->GetChildren();
     if ( children.GetCount() > 1 )
@@ -3361,7 +3361,7 @@ bool wxGenericTreeCtrl::GetBoundingRect(const wxTreeItemId& item,
                                         bool textOnly) const
 {
     //wxCHECK_MSG( item.IsOk(), false,
-                 "invalid item in wxGenericTreeCtrl::GetBoundingRect" );
+                 //"invalid item in wxGenericTreeCtrl::GetBoundingRect" );
 
     wxGenericTreeItem *i = (wxGenericTreeItem*) item.m_pItem;
 

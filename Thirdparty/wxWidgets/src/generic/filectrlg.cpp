@@ -351,7 +351,7 @@ wxString wxFileData::GetEntry( fileListFieldType num ) const
 #endif // defined(__UNIX__) || defined(__WIN32__)
 
         default:
-            wxFAIL_MSG( wxT("unexpected field in wxFileData::GetEntry()") );
+            break;//wxFAIL_MSG( wxT("unexpected field in wxFileData::GetEntry()") );
     }
 
     return s;

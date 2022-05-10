@@ -537,7 +537,7 @@ wxRendererMSW::DrawTitleBarBitmap(wxWindow *win,
             break;
 
         default:
-            wxFAIL_MSG( "unsupported title bar button" );
+            //wxFAIL_MSG( "unsupported title bar button" );
             return;
     }
 
@@ -846,7 +846,7 @@ wxRendererXP::DrawTitleBarBitmap(wxWindow *win,
             break;
 
         default:
-            wxFAIL_MSG( "unsupported title bar button" );
+            //wxFAIL_MSG( "unsupported title bar button" );
             return;
     }
 

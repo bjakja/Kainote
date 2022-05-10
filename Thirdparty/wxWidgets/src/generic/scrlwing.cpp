@@ -1289,7 +1289,7 @@ wxScrollHelper::DoAdjustScrollbar(int orient,
             break;
 
         default:
-            wxFAIL_MSG( wxS("unknown scrollbar visibility") );
+            //wxFAIL_MSG( wxS("unknown scrollbar visibility") );
             // fall through
 
         case wxSHOW_SB_DEFAULT:

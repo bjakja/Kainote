@@ -543,7 +543,7 @@ bool wxFileSystem::FindFileInPath(wxString *pStr,
 {
     // we assume that it's not empty
     //wxCHECK_MSG( !basename.empty(), false,
-                wxT("empty file name in wxFileSystem::FindFileInPath"));
+                //wxT("empty file name in wxFileSystem::FindFileInPath"));
 
     wxString name;
     // skip path separator in the beginning of the file name if present

@@ -421,7 +421,7 @@ void wxSplitterWindow::OnSize(wxSizeEvent& event)
     }
     else
     {
-        wxFAIL_MSG(wxT("should have a top level parent!"));
+        //wxFAIL_MSG(wxT("should have a top level parent!"));
 
         iconized = false;
     }
@@ -479,7 +479,7 @@ void wxSplitterWindow::OnSize(wxSizeEvent& event)
 void wxSplitterWindow::SetSashGravity(double gravity)
 {
     //wxCHECK_RET( gravity >= 0. && gravity <= 1.,
-                    wxT("invalid gravity value") );
+                    //wxT("invalid gravity value") );
 
     m_sashGravity = gravity;
 }
@@ -758,10 +758,10 @@ bool wxSplitterWindow::DoSplit(wxSplitMode mode,
         return false;
 
     //wxCHECK_MSG( window1 && window2, false,
-                 wxT("cannot split with NULL window(s)") );
+                 //wxT("cannot split with NULL window(s)") );
 
     //wxCHECK_MSG( window1->GetParent() == this && window2->GetParent() == this, false,
-                  wxT("windows in the splitter should have it as parent!") );
+                  //wxT("windows in the splitter should have it as parent!") );
 
     if (! window1->IsShown())
         window1->Show();
@@ -816,7 +816,7 @@ bool wxSplitterWindow::Unsplit(wxWindow *toRemove)
     }
     else
     {
-        wxFAIL_MSG(wxT("splitter: attempt to remove a non-existent window"));
+        //wxFAIL_MSG(wxT("splitter: attempt to remove a non-existent window"));
 
         return false;
     }

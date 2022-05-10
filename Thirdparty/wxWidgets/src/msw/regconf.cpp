@@ -285,8 +285,8 @@ void wxRegConfig::SetPath(const wxString& strPath)
                         }
 
                         // we must have found a slash one way or another!
-                        wxASSERT_MSG( *dst == wxCONFIG_PATH_SEPARATOR,
-                                      wxT("error in wxRegConfig::SetPath") );
+                        //wxASSERT_MSG( *dst == wxCONFIG_PATH_SEPARATOR,
+                                      //wxT("error in wxRegConfig::SetPath") );
 
                         // stay at the same position
                         dst--;

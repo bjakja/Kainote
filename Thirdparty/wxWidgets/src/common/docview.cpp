@@ -184,8 +184,8 @@ bool wxDocument::Close()
         // be saved by the call to OnSaveModified() that returned true above.
         if ( !childDoc->Close() )
         {
-            wxFAIL_MSG( "Closing the child document unexpectedly failed "
-                        "after its OnSaveModified() returned true" );
+            //wxFAIL_MSG( "Closing the child document unexpectedly failed "
+                        //"after its OnSaveModified() returned true" );
         }
 
         // Delete the child document by deleting all its views.
@@ -1439,8 +1439,8 @@ wxDocument *wxDocManager::CreateDocument(const wxString& pathOrig, long flags)
     wxDocTemplate *temp;
     if ( flags & wxDOC_SILENT )
     {
-        wxASSERT_MSG( !path.empty(),
-                      "using empty path with wxDOC_SILENT doesn't make sense" );
+        /*wxASSERT_MSG( !path.empty(),
+                      "using empty path with wxDOC_SILENT doesn't make sense" );*/
 
         temp = FindTemplateForPath(path);
         if ( !temp )

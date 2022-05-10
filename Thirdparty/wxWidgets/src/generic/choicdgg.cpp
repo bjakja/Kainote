@@ -509,7 +509,7 @@ bool wxSingleChoiceDialog::Create( wxWindow *parent,
 void wxSingleChoiceDialog::SetSelection(int sel)
 {
     //wxCHECK_RET( sel >= 0 && (unsigned)sel < m_listbox->GetCount(),
-                 "Invalid initial selection" );
+                 //"Invalid initial selection" );
 
     m_listbox->SetSelection(sel);
     m_selection = sel;

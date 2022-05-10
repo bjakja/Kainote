@@ -241,7 +241,7 @@ wxString wxPlatformInfo::GetOperatingSystemIdName(wxOperatingSystemId os)
     const unsigned idx = wxGetIndexFromEnumValue(os);
 
     //wxCHECK_MSG( idx < WXSIZEOF(wxOperatingSystemIdNames), wxEmptyString,
-                 wxT("invalid OS id") );
+                 //wxT("invalid OS id") );
 
     return wxOperatingSystemIdNames[idx];
 }
@@ -251,7 +251,7 @@ wxString wxPlatformInfo::GetPortIdName(wxPortId port, bool usingUniversal)
     const unsigned idx = wxGetIndexFromEnumValue(port);
 
     //wxCHECK_MSG( idx < WXSIZEOF(wxPortIdNames), wxEmptyString,
-                 wxT("invalid port id") );
+                 //wxT("invalid port id") );
 
     wxString ret = wxPortIdNames[idx];
 
@@ -266,7 +266,7 @@ wxString wxPlatformInfo::GetPortIdShortName(wxPortId port, bool usingUniversal)
     const unsigned idx = wxGetIndexFromEnumValue(port);
 
     //wxCHECK_MSG( idx < WXSIZEOF(wxPortIdNames), wxEmptyString,
-                 wxT("invalid port id") );
+                 //wxT("invalid port id") );
 
     wxString ret = wxPortIdNames[idx];
     ret = ret.Mid(2).Lower();       // remove 'wx' prefix

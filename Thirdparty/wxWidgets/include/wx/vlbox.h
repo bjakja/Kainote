@@ -84,8 +84,8 @@ public:
     // this method is only valid for the single selection listboxes
     int GetSelection() const
     {
-        wxASSERT_MSG( !HasMultipleSelection(),
-                        wxT("GetSelection() can't be used with wxLB_MULTIPLE") );
+        /*wxASSERT_MSG( !HasMultipleSelection(),
+                        wxT("GetSelection() can't be used with wxLB_MULTIPLE") );*/
 
         return m_current;
     }

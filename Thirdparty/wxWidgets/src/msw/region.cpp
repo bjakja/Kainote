@@ -203,7 +203,7 @@ bool wxRegion::DoCombine(const wxRegion& rgn, wxRegionOp op)
                 break;
 
             default:
-                wxFAIL_MSG( wxT("unknown region operation") );
+                break;//wxFAIL_MSG( wxT("unknown region operation") );
                 // fall through
 
             case wxRGN_AND:
@@ -236,7 +236,7 @@ bool wxRegion::DoCombine(const wxRegion& rgn, wxRegionOp op)
                 break;
 
             default:
-                wxFAIL_MSG( wxT("unknown region operation") );
+                break;//wxFAIL_MSG( wxT("unknown region operation") );
                 // fall through
 
             case wxRGN_COPY:

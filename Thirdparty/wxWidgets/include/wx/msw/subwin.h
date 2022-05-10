@@ -28,7 +28,7 @@ public:
     // allocate enough space for the given number of windows
     void Create(size_t n)
     {
-        wxASSERT_MSG( !m_hwnds, wxT("Create() called twice?") );
+        //wxASSERT_MSG( !m_hwnds, wxT("Create() called twice?") );
 
         m_count = n;
         m_hwnds = (HWND *)calloc(n, sizeof(HWND));
@@ -54,7 +54,7 @@ public:
     // access a given window
     HWND& Get(size_t n)
     {
-        wxASSERT_MSG( n < m_count, wxT("subwindow index out of range") );
+        //wxASSERT_MSG( n < m_count, wxT("subwindow index out of range") );
 
         return m_hwnds[n];
     }
@@ -68,7 +68,7 @@ public:
     // that it is not reused while this object exists
     void Set(size_t n, HWND hwnd, wxWindowID id)
     {
-        wxASSERT_MSG( n < m_count, wxT("subwindow index out of range") );
+        //wxASSERT_MSG( n < m_count, wxT("subwindow index out of range") );
 
         m_hwnds[n] = hwnd;
         m_ids[n] = id;

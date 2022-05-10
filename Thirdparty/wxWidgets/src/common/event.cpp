@@ -619,7 +619,7 @@ bool wxMouseEvent::ButtonDown(int but) const
     switch (but)
     {
         default:
-            wxFAIL_MSG(wxT("invalid parameter in wxMouseEvent::ButtonDown"));
+            break;// wxFAIL_MSG(wxT("invalid parameter in wxMouseEvent::ButtonDown"));
             // fall through
 
         case wxMOUSE_BTN_ANY:
@@ -1805,7 +1805,7 @@ wxEventBlocker::~wxEventBlocker()
 {
     wxEvtHandler *popped = m_window->PopEventHandler(false);
     //wxCHECK_RET(popped == this,
-        wxT("Don't push other event handlers into a window managed by wxEventBlocker!"));
+        //wxT("Don't push other event handlers into a window managed by wxEventBlocker!"));
 }
 
 bool wxEventBlocker::ProcessEvent(wxEvent& event)

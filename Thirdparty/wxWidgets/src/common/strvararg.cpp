@@ -651,15 +651,15 @@ wxFormatString::ArgumentType DoGetArgumentType(const CharType *format,
                                                unsigned n)
 {
     //wxCHECK_MSG( format, wxFormatString::Arg_Unknown,
-                 "empty format string not allowed here" );
+                 //"empty format string not allowed here" );
 
     wxPrintfConvSpecParser<CharType> parser(format);
 
     //wxCHECK_MSG( n <= parser.nargs, wxFormatString::Arg_Unknown,
-                 "more arguments than format string specifiers?" );
+                 //"more arguments than format string specifiers?" );
 
     //wxCHECK_MSG( parser.pspec[n-1] != NULL, wxFormatString::Arg_Unknown,
-                 "requested argument not found - invalid format string?" );
+                 //"requested argument not found - invalid format string?" );
 
     switch ( parser.pspec[n-1]->m_type )
     {
@@ -724,6 +724,6 @@ wxFormatString::ArgumentType wxFormatString::GetArgumentType(unsigned n) const
     else if ( m_cstr )
         return DoGetArgumentType(m_cstr->AsInternal(), n);
 
-    wxFAIL_MSG( "unreachable code" );
+    //wxFAIL_MSG( "unreachable code" );
     return Arg_Unknown;
 }

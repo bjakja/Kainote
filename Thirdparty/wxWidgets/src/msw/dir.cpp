@@ -387,12 +387,12 @@ wxGetDirectoryTimes(const wxString& dirname,
 {
 #ifdef __WXWINCE__
     // FindFirst() is going to fail
-    wxASSERT_MSG( !dirname.empty(),
-                  wxT("incorrect directory name format in wxGetDirectoryTimes") );
+    //wxASSERT_MSG( !dirname.empty(),
+                  //wxT("incorrect directory name format in wxGetDirectoryTimes") );
 #else
     // FindFirst() is going to fail
-    wxASSERT_MSG( !dirname.empty() && dirname.Last() != wxT('\\'),
-                  wxT("incorrect directory name format in wxGetDirectoryTimes") );
+    //wxASSERT_MSG( !dirname.empty() && dirname.Last() != wxT('\\'),
+                  //wxT("incorrect directory name format in wxGetDirectoryTimes") );
 #endif
 
     FIND_STRUCT fs;

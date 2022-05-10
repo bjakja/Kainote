@@ -69,7 +69,7 @@ public:
     bool WasOpened() const
     {
         //wxCHECK_MSG( m_hMutex, false,
-                     wxT("can't be called if mutex creation failed") );
+                     //wxT("can't be called if mutex creation failed") );
 
         return m_wasOpened;
     }
@@ -102,11 +102,11 @@ private:
 bool wxSingleInstanceChecker::Create(const wxString& name,
                                      const wxString& WXUNUSED(path))
 {
-    wxASSERT_MSG( !m_impl,
-                  wxT("calling wxSingleInstanceChecker::Create() twice?") );
+    //wxASSERT_MSG( !m_impl,
+                  //wxT("calling wxSingleInstanceChecker::Create() twice?") );
 
     // creating unnamed mutex doesn't have the same semantics!
-    wxASSERT_MSG( !name.empty(), wxT("mutex name can't be empty") );
+    //wxASSERT_MSG( !name.empty(), wxT("mutex name can't be empty") );
 
     m_impl = new wxSingleInstanceCheckerImpl;
 

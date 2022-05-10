@@ -267,7 +267,7 @@ bool wxGetUserId(wxChar *WXUNUSED_IN_WINCE(buf),
 bool wxGetUserName(wxChar *buf, int maxSize)
 {
     //wxCHECK_MSG( buf && ( maxSize > 0 ), false,
-                    wxT("empty buffer in wxGetUserName") );
+                    //wxT("empty buffer in wxGetUserName") );
 #if defined(__WXWINCE__) && wxUSE_REGKEY
     wxLogNull noLog;
     wxRegKey key(wxRegKey::HKCU, wxT("ControlPanel\\Owner"));
@@ -828,7 +828,7 @@ int wxKill(long pid, wxSignal sig, wxKillError *krc, int flags)
                 break;
 
             default:
-                wxFAIL_MSG( wxT("unexpected WaitForSingleObject() return") );
+                //wxFAIL_MSG( wxT("unexpected WaitForSingleObject() return") );
                 // fall through
 
             case WAIT_FAILED:
@@ -1040,7 +1040,7 @@ bool wxShutdown(int WXUNUSED_IN_WINCE(flags))
                 break;
 
             default:
-                wxFAIL_MSG( wxT("unknown wxShutdown() flag") );
+                //wxFAIL_MSG( wxT("unknown wxShutdown() flag") );
                 return false;
         }
 
@@ -1327,7 +1327,7 @@ wxString wxGetOsDescription()
     }
     else
     {
-        wxFAIL_MSG( wxT("GetVersionEx() failed") ); // should never happen
+        //wxFAIL_MSG( wxT("GetVersionEx() failed") ); // should never happen
     }
 
     return str;
@@ -1721,7 +1721,7 @@ extern "C" WXDLLIMPEXP_BASE HWND
 wxCreateHiddenWindow(LPCTSTR *pclassname, LPCTSTR classname, WNDPROC wndproc)
 {
     //wxCHECK_MSG( classname && pclassname && wndproc, NULL,
-                    wxT("NULL parameter in wxCreateHiddenWindow") );
+                    //wxT("NULL parameter in wxCreateHiddenWindow") );
 
     // register the class fi we need to first
     if ( *pclassname == NULL )

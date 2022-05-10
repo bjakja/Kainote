@@ -1594,7 +1594,7 @@ bool wxFindFileInPath(wxString *pStr, const wxString& szPath, const wxString& sz
 {
     // we assume that it's not empty
     //wxCHECK_MSG( !szFile.empty(), false,
-                 wxT("empty file name in wxFindFileInPath"));
+                 //wxT("empty file name in wxFindFileInPath"));
 
     // skip path separator in the beginning of the file name if present
     wxString szFile2;

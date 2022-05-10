@@ -304,8 +304,8 @@ public:
 
     bool extend(size_t len)
     {
-        wxASSERT_MSG( this->m_data->m_owned, "cannot extend non-owned buffer" );
-        wxASSERT_MSG( this->m_data->m_ref == 1, "can't extend shared buffer" );
+        /*wxASSERT_MSG( this->m_data->m_owned, "cannot extend non-owned buffer" );
+        wxASSERT_MSG( this->m_data->m_ref == 1, "can't extend shared buffer" );*/
 
         CharType *str =
             (CharType *)realloc(this->data(), (len + 1) * sizeof(CharType));
@@ -331,8 +331,8 @@ public:
 
     void shrink(size_t len)
     {
-        wxASSERT_MSG( this->m_data->m_owned, "cannot shrink non-owned buffer" );
-        wxASSERT_MSG( this->m_data->m_ref == 1, "can't shrink shared buffer" );
+        /*wxASSERT_MSG( this->m_data->m_owned, "cannot shrink non-owned buffer" );
+        wxASSERT_MSG( this->m_data->m_ref == 1, "can't shrink shared buffer" );*/
 
         //wxASSERT( len <= this->length() );
 

@@ -316,7 +316,7 @@ ParseFormatAt(wxString::const_iterator& p,
 wxString wxDateTime::Format(const wxString& formatp, const TimeZone& tz) const
 {
     //wxCHECK_MSG( !formatp.empty(), wxEmptyString,
-                 wxT("NULL format in wxDateTime::Format") );
+                 //wxT("NULL format in wxDateTime::Format") );
 
     wxString format = formatp;
 #ifdef __WXOSX__
@@ -523,8 +523,8 @@ wxString wxDateTime::Format(const wxString& formatp, const TimeZone& tz) const
                         if ( year >= 2000 )
                             year -= 28;
 
-                        wxASSERT_MSG( year >= 1970 && year < 2000,
-                                      wxT("logic error in wxDateTime::Format") );
+                        /*wxASSERT_MSG( year >= 1970 && year < 2000,
+                                      wxT("logic error in wxDateTime::Format") );*/
 
 
                         // use strftime() to format the same date but in supported
@@ -2208,7 +2208,7 @@ wxString wxTimeSpan::Format(const wxString& format) const
     }
 
     //wxCHECK_MSG( !format.empty(), wxEmptyString,
-                 wxT("NULL format in wxTimeSpan::Format") );
+                 //wxT("NULL format in wxTimeSpan::Format") );
 
     wxString str;
     str.Alloc(format.length());

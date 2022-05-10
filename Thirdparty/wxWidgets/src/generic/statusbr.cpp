@@ -336,7 +336,7 @@ void wxStatusBarGeneric::DrawField(wxDC& dc, int i, int textHeight)
 bool wxStatusBarGeneric::GetFieldRect(int n, wxRect& rect) const
 {
     //wxCHECK_MSG( (n >= 0) && ((size_t)n < m_panes.GetCount()), false,
-                 wxT("invalid status bar field index") );
+                 //wxT("invalid status bar field index") );
 
     // We can be called from the user-defined EVT_SIZE handler in which case
     // the widths haven't been updated yet and we need to do it now. This is

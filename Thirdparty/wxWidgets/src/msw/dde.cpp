@@ -550,10 +550,10 @@ bool
 wxDDEConnection::DoExecute(const void *data, size_t size, wxIPCFormat format)
 {
     //wxCHECK_MSG( format == wxIPC_TEXT ||
-                 format == wxIPC_UTF8TEXT ||
+                 /*format == wxIPC_UTF8TEXT ||
                  format == wxIPC_UNICODETEXT,
                  false,
-                 wxT("wxDDEServer::Execute() supports only text data") );
+                 wxT("wxDDEServer::Execute() supports only text data") );*/
 
     wxMemoryBuffer buffer;
     LPBYTE realData = NULL;
@@ -928,8 +928,8 @@ _DDECallback(WORD wType,
                     DWORD len = DdeGetData(hData, NULL, 0, 0);
 
                     void *data = connection->GetBufferAtLeast(len);
-                    wxASSERT_MSG(data != NULL,
-                                 wxT("Buffer too small in _DDECallback (XTYP_POKE)") );
+                    /*wxASSERT_MSG(data != NULL,
+                                 wxT("Buffer too small in _DDECallback (XTYP_POKE)") );*/
 
                     DdeGetData(hData, (LPBYTE)data, len, 0);
 
@@ -1015,8 +1015,8 @@ _DDECallback(WORD wType,
                     DWORD len = DdeGetData(hData, NULL, 0, 0);
 
                     void *data = connection->GetBufferAtLeast(len);
-                    wxASSERT_MSG(data != NULL,
-                                 wxT("Buffer too small in _DDECallback (XTYP_ADVDATA)") );
+                    //wxASSERT_MSG(data != NULL,
+                                 //wxT("Buffer too small in _DDECallback (XTYP_ADVDATA)") );
 
                     DdeGetData(hData, (LPBYTE)data, len, 0);
 
@@ -1066,7 +1066,7 @@ The returned handle has to be freed by the caller (using
 */
 static HSZ DDEAtomFromString(const wxString& s)
 {
-    wxASSERT_MSG( DDEIdInst, wxT("DDE not initialized") );
+    //wxASSERT_MSG( DDEIdInst, wxT("DDE not initialized") );
 
     HSZ hsz = DdeCreateStringHandle(DDEIdInst, wxMSW_CONV_LPTSTR(s), DDE_CP);
     if ( !hsz )
@@ -1093,7 +1093,7 @@ static void DDEFreeString(HSZ hsz)
     // DS: Failure to free a string handle might indicate there's
     // some other severe error.
     bool ok = (::DdeFreeStringHandle(DDEIdInst, hsz) != 0);
-    wxASSERT_MSG( ok, wxT("Failed to free DDE string handle") );
+    //wxASSERT_MSG( ok, wxT("Failed to free DDE string handle") );
     wxUnusedVar(ok);
 }
 

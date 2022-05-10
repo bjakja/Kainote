@@ -197,7 +197,7 @@ wxShowEffect wxInfoBarGeneric::GetShowEffect() const
             return wxSHOW_EFFECT_SLIDE_TO_TOP;
 
         default:
-            wxFAIL_MSG( "unknown info bar placement" );
+            //wxFAIL_MSG( "unknown info bar placement" );
             // fall through
 
         case BarPlacement_Unknown:
@@ -219,7 +219,7 @@ wxShowEffect wxInfoBarGeneric::GetHideEffect() const
             return wxSHOW_EFFECT_SLIDE_TO_BOTTOM;
 
         default:
-            wxFAIL_MSG( "unknown info bar placement" );
+            //wxFAIL_MSG( "unknown info bar placement" );
             // fall through
 
         case BarPlacement_Unknown:
@@ -344,7 +344,7 @@ void wxInfoBarGeneric::RemoveButton(wxWindowID btnid)
         // there at all
         if ( item->IsSpacer() )
         {
-            wxFAIL_MSG( wxString::Format("button with id %d not found", btnid) );
+            //wxFAIL_MSG( wxString::Format("button with id %d not found", btnid) );
             return;
         }
 

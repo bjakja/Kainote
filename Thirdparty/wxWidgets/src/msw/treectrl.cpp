@@ -469,7 +469,7 @@ public:
                     break;
 
                 default:
-                    wxFAIL_MSG( wxT("unsupported wxTreeItemIcon value") );
+                    break;//wxFAIL_MSG( wxT("unsupported wxTreeItemIcon value") );
             }
         }
 
@@ -841,7 +841,7 @@ wxTreeCtrl::GetClassDefaultAttributes(wxWindowVariant variant)
 bool wxTreeCtrl::DoGetItem(wxTreeViewItem *tvItem) const
 {
     //wxCHECK_MSG( tvItem->hItem != TVI_ROOT, false,
-                 wxT("can't retrieve virtual root item") );
+                 //wxT("can't retrieve virtual root item") );
 
     if ( !TreeView_GetItem(GetHwnd(), tvItem) )
     {
@@ -1009,8 +1009,8 @@ void wxTreeCtrl::SetItemImage(const wxTreeItemId& item, int image,
 {
     //wxCHECK_RET( item.IsOk(), wxT("invalid tree item") );
     //wxCHECK_RET( which >= 0 &&
-                 which < wxTreeItemIcon_Max,
-                 wxT("invalid image index"));
+                 //which < wxTreeItemIcon_Max,
+                 //wxT("invalid image index"));
 
 
     if ( IsHiddenRoot(item) )
@@ -1319,7 +1319,7 @@ wxTreeItemId wxTreeCtrl::GetRootItem() const
 wxTreeItemId wxTreeCtrl::GetSelection() const
 {
     //wxCHECK_MSG( !HasFlag(wxTR_MULTIPLE), wxTreeItemId(),
-                 wxT("this only works with single selection controls") );
+                // wxT("this only works with single selection controls") );
 
     return GetFocusedItem();
 }
@@ -1469,8 +1469,8 @@ wxTreeItemId wxTreeCtrl::DoInsertAfter(const wxTreeItemId& parent,
                                        wxTreeItemData *data)
 {
     //wxCHECK_MSG( parent.IsOk() || !TreeView_GetRoot(GetHwnd()),
-                 wxTreeItemId(),
-                 wxT("can't have more than one root in the tree") );
+                 //wxTreeItemId(),
+                 //wxT("can't have more than one root in the tree") );
 
     TV_INSERTSTRUCT tvIns;
     tvIns.hParent = HITEM(parent);
@@ -1723,7 +1723,7 @@ void wxTreeCtrl::DoExpand(const wxTreeItemId& item, int flag)
 
     // A hidden root can be neither expanded nor collapsed.
     //wxCHECK_RET( !IsHiddenRoot(item),
-                 wxT("Can't expand/collapse hidden root node!") );
+                 //wxT("Can't expand/collapse hidden root node!") );
 
     // TreeView_Expand doesn't send TVN_ITEMEXPAND(ING) messages, so we must
     // emulate them. This behaviour has changed slightly with comctl32.dll
@@ -1866,7 +1866,7 @@ void wxTreeCtrl::DoSelectChildren(const wxTreeItemId& parent)
 void wxTreeCtrl::SelectChildren(const wxTreeItemId& parent)
 {
     //wxCHECK_RET( HasFlag(wxTR_MULTIPLE),
-                 "this only works with multiple selection controls" );
+                 //"this only works with multiple selection controls" );
 
     HTREEITEM htFocus = (HTREEITEM)TreeView_GetSelection(GetHwnd());
 
@@ -2148,7 +2148,7 @@ int CALLBACK wxTreeSortHelper::Compare(LPARAM pItem1,
                                        LPARAM htree)
 {
     //wxCHECK_MSG( pItem1 && pItem2, 0,
-                 wxT("sorting tree without data doesn't make sense") );
+                 //wxT("sorting tree without data doesn't make sense") );
 
     wxTreeCtrl *tree = (wxTreeCtrl *)htree;
 
@@ -3522,7 +3522,7 @@ bool wxTreeCtrl::MSWOnNotify(int idCtrl, WXLPARAM lParam, WXLPARAM *result)
                                 // but I don't care enough about Win95 support
                                 // to write it now -- if anybody does, please
                                 // do it
-                                wxFAIL_MSG("TODO: implement this for Win95");
+                                //wxFAIL_MSG("TODO: implement this for Win95");
                                 break;
                             }
 

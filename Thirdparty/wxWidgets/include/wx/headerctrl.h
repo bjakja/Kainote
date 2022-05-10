@@ -188,7 +188,7 @@ protected:
     virtual void UpdateColumnVisibility(unsigned int WXUNUSED(idx),
                                         bool WXUNUSED(show))
     {
-        wxFAIL_MSG( "must be overridden if called" );
+        //wxFAIL_MSG( "must be overridden if called" );
     }
 
     // this method is called from ShowCustomizeDialog() to reorder all columns
@@ -197,7 +197,7 @@ protected:
     // done by the control itself)
     virtual void UpdateColumnsOrder(const wxArrayInt& WXUNUSED(order))
     {
-        wxFAIL_MSG( "must be overridden if called" );
+        //wxFAIL_MSG( "must be overridden if called" );
     }
 
     // this method can be overridden in the derived classes to do something

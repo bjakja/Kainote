@@ -807,7 +807,7 @@ void wxMSWTaskDialogConfig::AddTaskDialogButton(TASKDIALOGCONFIG &tdc,
 
         // We should never have more than 4 buttons currently as this is the
         // maximal number of buttons supported by the message dialog.
-        wxASSERT_MSG( tdc.cButtons <= MAX_BUTTONS, wxT("Too many buttons") );
+        //wxASSERT_MSG( tdc.cButtons <= MAX_BUTTONS, wxT("Too many buttons") );
     }
     else
     {
@@ -862,7 +862,7 @@ int wxMSWMessageDialog::MSWTranslateReturnCode(int msAns)
     switch (msAns)
     {
         default:
-            wxFAIL_MSG(wxT("unexpected return code"));
+            //wxFAIL_MSG(wxT("unexpected return code"));
             // fall through
 
         case IDCANCEL:

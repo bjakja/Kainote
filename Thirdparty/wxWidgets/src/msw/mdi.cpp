@@ -679,7 +679,7 @@ void wxMDIParentFrame::OnMDICommand(wxCommandEvent& event)
             break;
 
         default:
-            wxFAIL_MSG( "unknown MDI command" );
+            //wxFAIL_MSG( "unknown MDI command" );
             return;
     }
 

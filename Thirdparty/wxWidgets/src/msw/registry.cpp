@@ -361,7 +361,7 @@ bool wxRegKey::GetKeyInfo(size_t *pnSubKeys,
                           size_t *pnMaxValueLen) const
 {
   // it might be unexpected to some that this function doesn't open the key
-  wxASSERT_MSG( IsOpened(), wxT("key should be opened in GetKeyInfo") );
+  //wxASSERT_MSG( IsOpened(), wxT("key should be opened in GetKeyInfo") );
 
   // We need to use intermediate variables in 64 bit build as the function
   // parameters must be 32 bit DWORDs and not 64 bit size_t values.
@@ -913,8 +913,8 @@ bool wxRegKey::QueryValue(const wxString& szValue, long *plValue) const
     }
     else {
       // check that we read the value of right type
-      wxASSERT_MSG( IsNumericValue(szValue),
-                    wxT("Type mismatch in wxRegKey::QueryValue().")  );
+      //wxASSERT_MSG( IsNumericValue(szValue),
+                    //wxT("Type mismatch in wxRegKey::QueryValue().")  );
 
       return true;
     }
@@ -1038,8 +1038,8 @@ bool wxRegKey::QueryValue(const wxString& szValue,
             if ( m_dwLastError == ERROR_SUCCESS )
             {
                 // check that it was the right type
-                wxASSERT_MSG( !IsNumericValue(szValue),
-                              wxT("Type mismatch in wxRegKey::QueryValue().") );
+                //wxASSERT_MSG( !IsNumericValue(szValue),
+                              //wxT("Type mismatch in wxRegKey::QueryValue().") );
 
               return true;
             }

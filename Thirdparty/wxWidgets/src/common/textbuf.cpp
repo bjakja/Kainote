@@ -52,7 +52,7 @@ const wxChar *wxTextBuffer::GetEOL(wxTextFileType type)
 {
     switch ( type ) {
         default:
-            wxFAIL_MSG(wxT("bad buffer type in wxTextBuffer::GetEOL."));
+            //wxFAIL_MSG(wxT("bad buffer type in wxTextBuffer::GetEOL."));
             // fall through nevertheless - we must return something...
 
         case wxTextFileType_None: return wxEmptyString;
@@ -221,7 +221,7 @@ wxTextFileType wxTextBuffer::GuessType() const
             case wxTextFileType_Unix: nUnix++; break;   \
             case wxTextFileType_Dos:  nDos++;  break;   \
             case wxTextFileType_Mac:  nMac++;  break;   \
-            default: wxFAIL_MSG(wxT("unknown line terminator")); \
+            default: break;//wxFAIL_MSG(wxT("unknown line terminator")); \
         }
 
     size_t n;

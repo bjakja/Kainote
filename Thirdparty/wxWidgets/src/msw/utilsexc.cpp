@@ -346,8 +346,8 @@ static DWORD __stdcall wxExecuteThread(void *arg)
                 wxLogLastError(wxT("GetExitCodeProcess"));
             }
 
-            wxASSERT_MSG( data->dwExitCode != STILL_ACTIVE,
-                          wxT("process should have terminated") );
+            //wxASSERT_MSG( data->dwExitCode != STILL_ACTIVE,
+                          //wxT("process should have terminated") );
 
             // send a message indicating process termination to the window
             ::SendMessage(data->hWnd, wxWM_PROC_TERMINATED, 0, (LPARAM)data);
@@ -615,8 +615,8 @@ long wxExecute(const wxString& cmd, int flags, wxProcess *handler,
     // for many reasons, the code below breaks down if it's called from another
     // thread -- this could be fixed, but as Unix versions don't support this
     // neither I don't want to waste time on this now
-    wxASSERT_MSG( wxThread::IsMain(),
-                    wxT("wxExecute() can be called only from the main thread") );
+    //wxASSERT_MSG( wxThread::IsMain(),
+                    //wxT("wxExecute() can be called only from the main thread") );
 #endif // wxUSE_THREADS
 
     wxString command;
@@ -652,7 +652,7 @@ long wxExecute(const wxString& cmd, int flags, wxProcess *handler,
         }
         else
         {
-            wxFAIL_MSG(wxT("invalid WX_DDE command in wxExecute"));
+            //wxFAIL_MSG(wxT("invalid WX_DDE command in wxExecute"));
         }
 
         while ( *p && *p != wxT('#') )
@@ -667,7 +667,7 @@ long wxExecute(const wxString& cmd, int flags, wxProcess *handler,
         }
         else
         {
-            wxFAIL_MSG(wxT("invalid WX_DDE command in wxExecute"));
+            //wxFAIL_MSG(wxT("invalid WX_DDE command in wxExecute"));
         }
 
         while ( *p && *p != wxT('#') )
@@ -682,7 +682,7 @@ long wxExecute(const wxString& cmd, int flags, wxProcess *handler,
         }
         else
         {
-            wxFAIL_MSG(wxT("invalid WX_DDE command in wxExecute"));
+            //wxFAIL_MSG(wxT("invalid WX_DDE command in wxExecute"));
         }
 
         while ( *p )
@@ -933,7 +933,7 @@ long wxExecute(const wxString& cmd, int flags, wxProcess *handler,
                     (WNDPROC)wxExecuteWindowCbk
                 );
 
-    wxASSERT_MSG( hwnd, wxT("can't create a hidden window for wxExecute") );
+    //wxASSERT_MSG( hwnd, wxT("can't create a hidden window for wxExecute") );
 
     // Alloc data
     wxExecuteData *data = new wxExecuteData;
@@ -1006,7 +1006,7 @@ long wxExecute(const wxString& cmd, int flags, wxProcess *handler,
         switch ( ::WaitForInputIdle(pi.hProcess, 10000 /* 10 seconds */) )
         {
             default:
-                wxFAIL_MSG( wxT("unexpected WaitForInputIdle() return code") );
+                //wxFAIL_MSG( wxT("unexpected WaitForInputIdle() return code") );
                 // fall through
 
             case WAIT_FAILED:
