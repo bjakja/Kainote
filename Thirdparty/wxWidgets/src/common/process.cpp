@@ -62,7 +62,7 @@ void wxProcess::Init(wxEvtHandler *parent, int id, int flags)
 /* static */
 wxProcess *wxProcess::Open(const wxString& cmd, int flags)
 {
-    wxASSERT_MSG( !(flags & wxEXEC_SYNC), wxT("wxEXEC_SYNC should not be used." ));
+    //wxASSERT_MSG( !(flags & wxEXEC_SYNC), wxT("wxEXEC_SYNC should not be used." ));
     wxProcess *process = new wxProcess(wxPROCESS_REDIRECT);
     long pid = wxExecute(cmd, flags, process);
     if( !pid )
@@ -168,7 +168,7 @@ bool wxProcess::Exists(int pid)
         default:
         case wxKILL_ERROR:
         case wxKILL_BAD_SIGNAL:
-            wxFAIL_MSG( wxT("unexpected wxProcess::Kill() return code") );
+            break;// wxFAIL_MSG(wxT("unexpected wxProcess::Kill() return code"));
             // fall through
 
         case wxKILL_NO_PROCESS:

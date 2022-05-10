@@ -116,8 +116,8 @@ IMPLEMENT_DYNAMIC_CLASS(wxDisplayModule, wxModule)
 
 wxDisplay::wxDisplay(unsigned n)
 {
-    wxASSERT_MSG( n < GetCount(),
-                    wxT("An invalid index was passed to wxDisplay") );
+    //wxASSERT_MSG( n < GetCount(),
+                    //wxT("An invalid index was passed to wxDisplay") );
 
     m_impl = Factory().CreateDisplay(n);
 }

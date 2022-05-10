@@ -266,10 +266,10 @@ static wxTopLevelWindow *GetTLWParentIfNotBeingDeleted(wxWindow *win)
         win = parent;
     }
 
-    wxASSERT_MSG( win, wxT("button without top level parent?") );
+    //wxASSERT_MSG( win, wxT("button without top level parent?") );
 
     wxTopLevelWindow * const tlw = wxDynamicCast(win, wxTopLevelWindow);
-    wxASSERT_MSG( tlw, wxT("logic error in GetTLWParentIfNotBeingDeleted()") );
+    //wxASSERT_MSG( tlw, wxT("logic error in GetTLWParentIfNotBeingDeleted()") );
 
     return tlw;
 }

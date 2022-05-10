@@ -183,7 +183,7 @@ bool wxMaskBase::Create(const wxBitmap& bitmap, int paletteIndex)
     wxPalette *pal = bitmap.GetPalette();
 
     //wxCHECK_MSG( pal, false,
-                 wxT("Cannot create mask from palette index of a bitmap without palette") );
+                 //wxT("Cannot create mask from palette index of a bitmap without palette") );
 
     unsigned char r,g,b;
     pal->GetRGB(paletteIndex, &r, &g, &b);

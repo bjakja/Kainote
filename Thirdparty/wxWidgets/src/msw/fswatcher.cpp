@@ -78,7 +78,7 @@ wxFSWatcherImplMSW::~wxFSWatcherImplMSW()
 bool wxFSWatcherImplMSW::Init()
 {
     //wxCHECK_MSG( !m_workerThread.IsAlive(), false,
-                 "Watcher service is already initialized" );
+                 //"Watcher service is already initialized" );
 
     if (m_workerThread.Create() != wxTHREAD_NO_ERROR)
     {
@@ -153,7 +153,7 @@ bool wxFSWatcherImplMSW::DoSetUpWatch(wxFSWatchEntryMSW& watch)
             break;
 
         case wxFSWPath_None:
-            wxFAIL_MSG( "Invalid watch type." );
+            //wxFAIL_MSG( "Invalid watch type." );
             return false;
     }
 
@@ -348,7 +348,7 @@ int wxIOCPThread::Native2WatcherFlags(int flags)
     }
 
     // never reached
-    wxFAIL_MSG(wxString::Format("Unknown file notify change %u", flags));
+    //wxFAIL_MSG(wxString::Format("Unknown file notify change %u", flags));
     return -1;
 }
 

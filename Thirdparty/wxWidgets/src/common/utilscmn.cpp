@@ -1182,7 +1182,7 @@ wxChar *wxStripMenuCodes(const wxChar *in, wxChar *out)
 
 wxString wxStripMenuCodes(const wxString& in, int flags)
 {
-    wxASSERT_MSG( flags, wxT("this is useless to call without any flags") );
+    //wxASSERT_MSG( flags, wxT("this is useless to call without any flags") );
 
     wxString out;
 

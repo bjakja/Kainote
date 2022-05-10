@@ -1291,7 +1291,7 @@ wxTreeItemId wxGenericDirCtrl::AppendItem (const wxTreeItemId & parent,
 {
   wxTreeCtrl *treeCtrl = GetTreeCtrl ();
 
-  wxASSERT (treeCtrl);
+  //wxASSERT (treeCtrl);
 
   if (treeCtrl)
   {

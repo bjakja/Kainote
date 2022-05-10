@@ -404,7 +404,7 @@ size_t wxTeeInputStream::GetData(char *buffer, size_t size)
         len = len > m_wbacksize ? len - m_wbacksize : 0;
         m_buf.SetDataLen(len);
         if (m_end > len) {
-            wxFAIL; // we've already returned data that's now being ungot
+            //wxFAIL; // we've already returned data that's now being ungot
             m_end = len;
         }
         m_parent_i_stream->Reset();

@@ -361,7 +361,7 @@ public:
     float GetPosition() const { return m_pos; }
     void SetPosition(float pos)
     {
-        wxASSERT_MSG( pos >= 0 && pos <= 1, "invalid gradient stop position" );
+        //wxASSERT_MSG( pos >= 0 && pos <= 1, "invalid gradient stop position" );
 
         m_pos = pos;
     }

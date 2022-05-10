@@ -562,8 +562,8 @@ void wxMimeTypesManager::EnsureImpl()
 bool wxMimeTypesManager::IsOfType(const wxString& mimeType,
                                   const wxString& wildcard)
 {
-    wxASSERT_MSG( mimeType.Find(wxT('*')) == wxNOT_FOUND,
-                  wxT("first MIME type can't contain wildcards") );
+    //wxASSERT_MSG( mimeType.Find(wxT('*')) == wxNOT_FOUND,
+                  //wxT("first MIME type can't contain wildcards") );
 
     // all comparaisons are case insensitive (2nd arg of IsSameAs() is false)
     if ( wildcard.BeforeFirst(wxT('/')).

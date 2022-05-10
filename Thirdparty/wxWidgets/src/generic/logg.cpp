@@ -91,7 +91,7 @@ static wxString TimeStamp(const wxString& format, time_t t)
     if ( !wxStrftime(buf, WXSIZEOF(buf), format, wxLocaltime_r(&t, &tm)) )
     {
         // buffer is too small?
-        wxFAIL_MSG(wxT("strftime() failed"));
+        //wxFAIL_MSG(wxT("strftime() failed"));
     }
     return wxString(buf);
 }
@@ -236,7 +236,7 @@ wxString wxLogGui::GetTitle() const
             break;
 
         default:
-            wxFAIL_MSG( "unexpected icon severity" );
+            break;// wxFAIL_MSG("unexpected icon severity");
             // fall through
 
         case wxICON_INFORMATION:
@@ -419,7 +419,7 @@ void wxLogGui::DoLogRecord(wxLogLevel level,
         case wxLOG_Max:
             // fatal errors are shown immediately and terminate the program so
             // we should never see them here
-            wxFAIL_MSG("unexpected log level");
+            //wxFAIL_MSG("unexpected log level");
             break;
 
         case wxLOG_Progress:
@@ -1051,7 +1051,7 @@ static int OpenLogFile(wxFile& file, wxString *pFilename, wxWindow *parent)
                 return -1;
 
             default:
-                wxFAIL_MSG(_("invalid message box return value"));
+                break;// wxFAIL_MSG(_("invalid message box return value"));
         }
 
         if ( bAppend ) {

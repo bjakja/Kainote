@@ -246,12 +246,12 @@ static long GetTruncatedJDN(wxDateTime::wxDateTime_t day,
     // CREDIT: code below is by Scott E. Lee (but bugs are mine)
 
     // check the date validity
-    wxASSERT_MSG(
+    /*wxASSERT_MSG(
       (year > JDN_0_YEAR) ||
       ((year == JDN_0_YEAR) && (mon > JDN_0_MONTH)) ||
       ((year == JDN_0_YEAR) && (mon == JDN_0_MONTH) && (day >= JDN_0_DAY)),
       wxT("date out of range - can't convert to JDN")
-                );
+                );*/
 
     // make the year positive to avoid problems with negative numbers division
     year += 4800;
@@ -296,7 +296,7 @@ wxString CallStrftime(const wxString& format, const tm* tm)
         if ( format != wxS("%p") )
         {
             // if the format is valid, buffer must be too small?
-            wxFAIL_MSG(wxT("strftime() failed"));
+            //wxFAIL_MSG(wxT("strftime() failed"));
         }
 
         buf[0] = '\0';
@@ -387,7 +387,7 @@ bool wxDateTime::Tm::IsValid() const
     // We need to check this here to avoid crashing in GetNumOfDaysInMonth() if
     // somebody passed us "(wxDateTime::Month)1000".
     //wxCHECK_MSG( mon >= wxDateTime::Jan && mon < wxDateTime::Inv_Month, false,
-                 wxS("Invalid month value") );
+                 //wxS("Invalid month value") );
 
     // we allow for the leap seconds, although we don't use them (yet)
     return (year != wxDateTime::Inv_Year) && (mon != wxDateTime::Inv_Month) &&
@@ -422,7 +422,7 @@ void wxDateTime::Tm::AddMonths(int monDiff)
 
     mon = (wxDateTime::Month)(mon + monDiff);
 
-    wxASSERT_MSG( mon >= 0 && mon < MONTHS_IN_YEAR, wxT("logic error") );
+    //wxASSERT_MSG( mon >= 0 && mon < MONTHS_IN_YEAR, wxT("logic error") );
 
     // NB: we don't check here that the resulting date is valid, this function
     //     is private and the caller must check it if needed
@@ -446,8 +446,8 @@ void wxDateTime::Tm::AddDays(int dayDiff)
         AddMonths(1);
     }
 
-    wxASSERT_MSG( mday > 0 && mday <= GetNumOfDaysInMonth(year, mon),
-                  wxT("logic error") );
+    /*wxASSERT_MSG( mday > 0 && mday <= GetNumOfDaysInMonth(year, mon),
+                  wxT("logic error") );*/
 }
 
 // ----------------------------------------------------------------------------
@@ -502,7 +502,7 @@ wxDateTime::TimeZone::TimeZone(wxDateTime::TZ tz)
             break;
 
         default:
-            wxFAIL_MSG( wxT("unknown time zone") );
+            break;// wxFAIL_MSG(wxT("unknown time zone"));
     }
 }
 
@@ -538,7 +538,7 @@ bool wxDateTime::IsLeapYear(int year, wxDateTime::Calendar cal)
     }
     else
     {
-        wxFAIL_MSG(wxT("unknown calendar"));
+        //wxFAIL_MSG(wxT("unknown calendar"));
 
         return false;
     }
@@ -566,11 +566,11 @@ int wxDateTime::GetCurrentYear(wxDateTime::Calendar cal)
             return Now().GetYear();
 
         case Julian:
-            wxFAIL_MSG(wxT("TODO"));
+            //wxFAIL_MSG(wxT("TODO"));
             break;
 
         default:
-            wxFAIL_MSG(wxT("unsupported calendar"));
+            //wxFAIL_MSG(wxT("unsupported calendar"));
             break;
     }
 
@@ -586,11 +586,11 @@ wxDateTime::Month wxDateTime::GetCurrentMonth(wxDateTime::Calendar cal)
             return Now().GetMonth();
 
         case Julian:
-            wxFAIL_MSG(wxT("TODO"));
+            //wxFAIL_MSG(wxT("TODO"));
             break;
 
         default:
-            wxFAIL_MSG(wxT("unsupported calendar"));
+            //wxFAIL_MSG(wxT("unsupported calendar"));
             break;
     }
 
@@ -613,7 +613,7 @@ wxDateTime::wxDateTime_t wxDateTime::GetNumberOfDays(int year, Calendar cal)
             return IsLeapYear(year) ? 366 : 365;
 
         default:
-            wxFAIL_MSG(wxT("unsupported calendar"));
+            //wxFAIL_MSG(wxT("unsupported calendar"));
             break;
     }
 
@@ -639,7 +639,7 @@ wxDateTime::wxDateTime_t wxDateTime::GetNumberOfDays(wxDateTime::Month month,
     }
     else
     {
-        wxFAIL_MSG(wxT("unsupported calendar"));
+        //wxFAIL_MSG(wxT("unsupported calendar"));
 
         return 0;
     }
@@ -665,7 +665,7 @@ int NameArrayIndexFromFlag(wxDateTime::NameFlags flags)
             return 1;
 
         default:
-            wxFAIL_MSG( "unknown wxDateTime::NameFlags value" );
+            break;//wxFAIL_MSG( "unknown wxDateTime::NameFlags value" );
     }
 
     return -1;
@@ -925,7 +925,7 @@ wxDateTime wxDateTime::GetBeginDST(int year, Country country)
         if ( !dt.SetToLastWeekDay(Sun, Mar, year) )
         {
             // weird...
-            wxFAIL_MSG( wxT("no last Sunday in March?") );
+            //wxFAIL_MSG( wxT("no last Sunday in March?") );
         }
 
         dt += wxTimeSpan::Hours(1);
@@ -968,7 +968,7 @@ wxDateTime wxDateTime::GetBeginDST(int year, Country country)
                         if ( !dt.SetToLastWeekDay(Sun, Apr, year) )
                         {
                             // weird...
-                            wxFAIL_MSG( wxT("no first Sunday in April?") );
+                            //wxFAIL_MSG( wxT("no first Sunday in April?") );
                         }
                     }
                     else if ( year > 2006 )
@@ -979,7 +979,7 @@ wxDateTime wxDateTime::GetBeginDST(int year, Country country)
                         if ( !dt.SetToWeekDay(Sun, 2, Mar, year) )
                         {
                             // weird...
-                            wxFAIL_MSG( wxT("no second Sunday in March?") );
+                            //wxFAIL_MSG( wxT("no second Sunday in March?") );
                         }
                     }
                     else
@@ -987,7 +987,7 @@ wxDateTime wxDateTime::GetBeginDST(int year, Country country)
                         if ( !dt.SetToWeekDay(Sun, 1, Apr, year) )
                         {
                             // weird...
-                            wxFAIL_MSG( wxT("no first Sunday in April?") );
+                            //wxFAIL_MSG( wxT("no first Sunday in April?") );
                         }
                     }
 
@@ -1034,7 +1034,7 @@ wxDateTime wxDateTime::GetEndDST(int year, Country country)
         if ( !dt.SetToLastWeekDay(Sun, Oct, year) )
         {
             // weirder and weirder...
-            wxFAIL_MSG( wxT("no last Sunday in October?") );
+            //wxFAIL_MSG( wxT("no last Sunday in October?") );
         }
 
         dt += wxTimeSpan::Hours(1);
@@ -1067,7 +1067,7 @@ wxDateTime wxDateTime::GetEndDST(int year, Country country)
                         if ( !dt.SetToWeekDay(Sun, 1, Nov, year) )
                         {
                             // weird...
-                            wxFAIL_MSG( wxT("no first Sunday in November?") );
+                            //wxFAIL_MSG( wxT("no first Sunday in November?") );
                         }
                     }
                     else
@@ -1077,7 +1077,7 @@ wxDateTime wxDateTime::GetEndDST(int year, Country country)
                         if ( !dt.SetToLastWeekDay(Sun, Oct, year) )
                         {
                             // weirder and weirder...
-                            wxFAIL_MSG( wxT("no last Sunday in October?") );
+                            //wxFAIL_MSG( wxT("no last Sunday in October?") );
                         }
                     }
 
@@ -1124,7 +1124,7 @@ wxDateTime& wxDateTime::Set(const struct tm& tm)
                        tm2.tm_sec));
         }
 
-        wxFAIL_MSG( wxT("mktime() failed") );
+        //wxFAIL_MSG( wxT("mktime() failed") );
 
         *this = wxInvalidDateTime;
 
@@ -1363,7 +1363,7 @@ unsigned long wxDateTime::GetAsDOS() const
 
 wxDateTime::Tm wxDateTime::GetTm(const TimeZone& tz) const
 {
-    wxASSERT_MSG( IsValid(), wxT("invalid wxDateTime") );
+    //wxASSERT_MSG( IsValid(), wxT("invalid wxDateTime") );
 
     time_t time = GetTicks();
     if ( time != (time_t)-1 )
@@ -1435,7 +1435,7 @@ wxDateTime::Tm wxDateTime::GetTm(const TimeZone& tz) const
 
     // CREDIT: code below is by Scott E. Lee (but bugs are mine)
 
-    wxASSERT_MSG( jdn > -2, wxT("JDN out of range") );
+    //wxASSERT_MSG( jdn > -2, wxT("JDN out of range") );
 
     // calculate the century
     long temp = (jdn + JDN_OFFSET) * 4 - 1;
@@ -1466,8 +1466,8 @@ wxDateTime::Tm wxDateTime::GetTm(const TimeZone& tz) const
     year -= 4800;
 
     // check that the algorithm gave us something reasonable
-    wxASSERT_MSG( (0 < month) && (month <= 12), wxT("invalid month") );
-    wxASSERT_MSG( (1 <= day) && (day < 32), wxT("invalid day") );
+    /*wxASSERT_MSG( (0 < month) && (month <= 12), wxT("invalid month") );
+    wxASSERT_MSG( (1 <= day) && (day < 32), wxT("invalid day") );*/
 
     // construct Tm from these values
     Tm tm;
@@ -1493,7 +1493,7 @@ wxDateTime::Tm wxDateTime::GetTm(const TimeZone& tz) const
 
 wxDateTime& wxDateTime::SetYear(int year)
 {
-    wxASSERT_MSG( IsValid(), wxT("invalid wxDateTime") );
+    //wxASSERT_MSG( IsValid(), wxT("invalid wxDateTime") );
 
     Tm tm(GetTm());
     tm.year = year;
@@ -1504,7 +1504,7 @@ wxDateTime& wxDateTime::SetYear(int year)
 
 wxDateTime& wxDateTime::SetMonth(Month month)
 {
-    wxASSERT_MSG( IsValid(), wxT("invalid wxDateTime") );
+    //wxASSERT_MSG( IsValid(), wxT("invalid wxDateTime") );
 
     Tm tm(GetTm());
     tm.mon = month;
@@ -1515,7 +1515,7 @@ wxDateTime& wxDateTime::SetMonth(Month month)
 
 wxDateTime& wxDateTime::SetDay(wxDateTime_t mday)
 {
-    wxASSERT_MSG( IsValid(), wxT("invalid wxDateTime") );
+    //wxASSERT_MSG( IsValid(), wxT("invalid wxDateTime") );
 
     Tm tm(GetTm());
     tm.mday = mday;
@@ -1526,7 +1526,7 @@ wxDateTime& wxDateTime::SetDay(wxDateTime_t mday)
 
 wxDateTime& wxDateTime::SetHour(wxDateTime_t hour)
 {
-    wxASSERT_MSG( IsValid(), wxT("invalid wxDateTime") );
+    //wxASSERT_MSG( IsValid(), wxT("invalid wxDateTime") );
 
     Tm tm(GetTm());
     tm.hour = hour;
@@ -1537,7 +1537,7 @@ wxDateTime& wxDateTime::SetHour(wxDateTime_t hour)
 
 wxDateTime& wxDateTime::SetMinute(wxDateTime_t min)
 {
-    wxASSERT_MSG( IsValid(), wxT("invalid wxDateTime") );
+    //wxASSERT_MSG( IsValid(), wxT("invalid wxDateTime") );
 
     Tm tm(GetTm());
     tm.min = min;
@@ -1548,7 +1548,7 @@ wxDateTime& wxDateTime::SetMinute(wxDateTime_t min)
 
 wxDateTime& wxDateTime::SetSecond(wxDateTime_t sec)
 {
-    wxASSERT_MSG( IsValid(), wxT("invalid wxDateTime") );
+    //wxASSERT_MSG( IsValid(), wxT("invalid wxDateTime") );
 
     Tm tm(GetTm());
     tm.sec = sec;
@@ -1559,7 +1559,7 @@ wxDateTime& wxDateTime::SetSecond(wxDateTime_t sec)
 
 wxDateTime& wxDateTime::SetMillisecond(wxDateTime_t millisecond)
 {
-    wxASSERT_MSG( IsValid(), wxT("invalid wxDateTime") );
+    //wxASSERT_MSG( IsValid(), wxT("invalid wxDateTime") );
 
     // we don't need to use GetTm() for this one
     m_time -= m_time % 1000l;
@@ -1596,8 +1596,8 @@ wxDateTime& wxDateTime::Add(const wxDateSpan& diff)
 
     Set(tm);
 
-    wxASSERT_MSG( IsSameTime(tm),
-                  wxT("Add(wxDateSpan) shouldn't modify time") );
+    //wxASSERT_MSG( IsSameTime(tm),
+                  //wxT("Add(wxDateSpan) shouldn't modify time") );
 
     return *this;
 }
@@ -1616,8 +1616,8 @@ static inline int ConvertWeekDayToMondayBase(int wd)
 wxDateTime
 wxDateTime::SetToWeekOfYear(int year, wxDateTime_t numWeek, WeekDay wd)
 {
-    wxASSERT_MSG( numWeek > 0,
-                  wxT("invalid week number: weeks are counted from 1") );
+    /*wxASSERT_MSG( numWeek > 0,
+                  wxT("invalid week number: weeks are counted from 1") );*/
 
     // Jan 4 always lies in the 1st week of the year
     wxDateTime dt(4, Jan, year);
@@ -1976,7 +1976,7 @@ double wxDateTime::GetRataDie() const
 int wxDateTime::IsDST(wxDateTime::Country country) const
 {
     //wxCHECK_MSG( country == Country_Default, -1,
-                 wxT("country support not implemented") );
+                 //wxT("country support not implemented") );
 
     // use the C RTL for the dates in the standard range
     time_t timet = GetTicks();

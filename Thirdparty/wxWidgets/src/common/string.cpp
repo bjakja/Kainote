@@ -650,7 +650,7 @@ wxString operator+(const wxString& str, const char *psz)
 
     wxString s;
     if ( !s.Alloc(strlen(psz) + str.length()) ) {
-        wxFAIL_MSG( wxT("out of memory in wxString::operator+") );
+        //wxFAIL_MSG( wxT("out of memory in wxString::operator+") );
     }
     s += str;
     s += psz;
@@ -666,7 +666,7 @@ wxString operator+(const wxString& str, const wchar_t *pwz)
 
     wxString s;
     if ( !s.Alloc(wxWcslen(pwz) + str.length()) ) {
-        wxFAIL_MSG( wxT("out of memory in wxString::operator+") );
+        //wxFAIL_MSG( wxT("out of memory in wxString::operator+") );
     }
     s += str;
     s += pwz;
@@ -682,7 +682,7 @@ wxString operator+(const char *psz, const wxString& str)
 
     wxString s;
     if ( !s.Alloc(strlen(psz) + str.length()) ) {
-        wxFAIL_MSG( wxT("out of memory in wxString::operator+") );
+        //wxFAIL_MSG( wxT("out of memory in wxString::operator+") );
     }
     s = psz;
     s += str;
@@ -698,7 +698,7 @@ wxString operator+(const wchar_t *pwz, const wxString& str)
 
     wxString s;
     if ( !s.Alloc(wxWcslen(pwz) + str.length()) ) {
-        wxFAIL_MSG( wxT("out of memory in wxString::operator+") );
+        //wxFAIL_MSG( wxT("out of memory in wxString::operator+") );
     }
     s = pwz;
     s += str;
@@ -1183,8 +1183,8 @@ wxString wxString::FromAscii(const char *ascii, size_t len)
         for ( ; len > 0; --len )
         {
             unsigned char c = (unsigned char)*ascii++;
-            wxASSERT_MSG( c < 0x80,
-                          wxT("Non-ASCII value passed to FromAscii().") );
+            //wxASSERT_MSG( c < 0x80,
+                          //wxT("Non-ASCII value passed to FromAscii().") );
 
             *dest++ = (wchar_t)c;
         }
@@ -1204,7 +1204,7 @@ wxString wxString::FromAscii(char ascii)
 
     unsigned char c = (unsigned char)ascii;
 
-    wxASSERT_MSG( c < 0x80, wxT("Non-ASCII value passed to FromAscii().") );
+    //wxASSERT_MSG( c < 0x80, wxT("Non-ASCII value passed to FromAscii().") );
 
     // NB: the cast to wchar_t causes interpretation of 'ascii' as Latin1 value
     return wxString(wxUniChar((wchar_t)c));
@@ -1259,7 +1259,7 @@ wxString wxString::Mid(size_t nFirst, size_t nCount) const
     wxString dest(*this, nFirst, nCount);
     if ( dest.length() != nCount )
     {
-        wxFAIL_MSG( wxT("out of memory in wxString::Mid") );
+        //wxFAIL_MSG( wxT("out of memory in wxString::Mid") );
     }
 
     return dest;
@@ -1309,7 +1309,7 @@ wxString wxString::Right(size_t nCount) const
 
   wxString dest(*this, length() - nCount, nCount);
   if ( dest.length() != nCount ) {
-    wxFAIL_MSG( wxT("out of memory in wxString::Right") );
+    //wxFAIL_MSG( wxT("out of memory in wxString::Right") );
   }
   return dest;
 }
@@ -1336,7 +1336,7 @@ wxString wxString::Left(size_t nCount) const
 
   wxString dest(*this, 0, nCount);
   if ( dest.length() != nCount ) {
-    wxFAIL_MSG( wxT("out of memory in wxString::Left") );
+    //wxFAIL_MSG( wxT("out of memory in wxString::Left") );
   }
   return dest;
 }
@@ -1402,7 +1402,7 @@ size_t wxString::Replace(const wxString& strOld,
 {
     // if we tried to replace an empty string we'd enter an infinite loop below
     //wxCHECK_MSG( !strOld.empty(), 0,
-                 wxT("wxString::Replace(): invalid parameter") );
+                 //wxT("wxString::Replace(): invalid parameter") );
 
     wxSTRING_INVALIDATE_CACHE();
 
@@ -1681,7 +1681,7 @@ int wxString::Find(wxUniChar ch, bool bFromEnd) const
 #endif
 
 #define WX_STRING_TO_X_TYPE_START                                           \
-    //wxCHECK_MSG( pVal, false, wxT("NULL output pointer") );                  \
+    /*/wxCHECK_MSG( pVal, false, wxT("NULL output pointer") ); */                 \
     DO_IF_NOT_WINCE( errno = 0; )                                           \
     const wxStringCharType *start = wx_str();                               \
     wxStringCharType *end;
@@ -1697,7 +1697,7 @@ int wxString::Find(wxUniChar ch, bool bFromEnd) const
 
 bool wxString::ToLong(long *pVal, int base) const
 {
-    wxASSERT_MSG( !base || (base > 1 && base <= 36), wxT("invalid base") );
+    //wxASSERT_MSG( !base || (base > 1 && base <= 36), wxT("invalid base") );
 
     WX_STRING_TO_X_TYPE_START
     long val = wxStrtol(start, &end, base);
@@ -1706,7 +1706,7 @@ bool wxString::ToLong(long *pVal, int base) const
 
 bool wxString::ToULong(unsigned long *pVal, int base) const
 {
-    wxASSERT_MSG( !base || (base > 1 && base <= 36), wxT("invalid base") );
+    //wxASSERT_MSG( !base || (base > 1 && base <= 36), wxT("invalid base") );
 
     WX_STRING_TO_X_TYPE_START
     unsigned long val = wxStrtoul(start, &end, base);
@@ -1715,7 +1715,7 @@ bool wxString::ToULong(unsigned long *pVal, int base) const
 
 bool wxString::ToLongLong(wxLongLong_t *pVal, int base) const
 {
-    wxASSERT_MSG( !base || (base > 1 && base <= 36), wxT("invalid base") );
+    //wxASSERT_MSG( !base || (base > 1 && base <= 36), wxT("invalid base") );
 
     WX_STRING_TO_X_TYPE_START
     wxLongLong_t val = wxStrtoll(start, &end, base);
@@ -1724,7 +1724,7 @@ bool wxString::ToLongLong(wxLongLong_t *pVal, int base) const
 
 bool wxString::ToULongLong(wxULongLong_t *pVal, int base) const
 {
-    wxASSERT_MSG( !base || (base > 1 && base <= 36), wxT("invalid base") );
+    //wxASSERT_MSG( !base || (base > 1 && base <= 36), wxT("invalid base") );
 
     WX_STRING_TO_X_TYPE_START
     wxULongLong_t val = wxStrtoull(start, &end, base);
@@ -1742,7 +1742,7 @@ bool wxString::ToDouble(double *pVal) const
 
 bool wxString::ToCLong(long *pVal, int base) const
 {
-    wxASSERT_MSG( !base || (base > 1 && base <= 36), wxT("invalid base") );
+    //wxASSERT_MSG( !base || (base > 1 && base <= 36), wxT("invalid base") );
 
     WX_STRING_TO_X_TYPE_START
 #if (wxUSE_UNICODE_UTF8 || !wxUSE_UNICODE) && defined(wxHAS_XLOCALE_SUPPORT)
@@ -1755,7 +1755,7 @@ bool wxString::ToCLong(long *pVal, int base) const
 
 bool wxString::ToCULong(unsigned long *pVal, int base) const
 {
-    wxASSERT_MSG( !base || (base > 1 && base <= 36), wxT("invalid base") );
+    //wxASSERT_MSG( !base || (base > 1 && base <= 36), wxT("invalid base") );
 
     WX_STRING_TO_X_TYPE_START
 #if (wxUSE_UNICODE_UTF8 || !wxUSE_UNICODE) && defined(wxHAS_XLOCALE_SUPPORT)

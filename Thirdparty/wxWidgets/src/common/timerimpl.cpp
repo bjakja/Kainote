@@ -57,8 +57,8 @@ bool wxTimerImpl::Start(int milliseconds, bool oneShot)
     // under MSW timers only work when they're started from the main thread so
     // let the caller know about it
 #if wxUSE_THREADS
-    wxASSERT_MSG( wxThread::IsMain(),
-                  wxT("timer can only be started from the main thread") );
+    //wxASSERT_MSG( wxThread::IsMain(),
+                  //wxT("timer can only be started from the main thread") );
 #endif // wxUSE_THREADS
 
     if ( IsRunning() )

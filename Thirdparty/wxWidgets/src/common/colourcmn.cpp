@@ -226,7 +226,7 @@ wxString wxColourBase::GetAsString(long flags) const
         }
         else if ( flags & wxC2S_HTML_SYNTAX )
         {
-            wxASSERT_MSG( isOpaque, "alpha is lost in HTML syntax" );
+            //wxASSERT_MSG( isOpaque, "alpha is lost in HTML syntax" );
 
             // no name for this colour; return it in HTML syntax
             colName.Printf(wxT("#%02X%02X%02X"), red, green, blue);
@@ -234,8 +234,8 @@ wxString wxColourBase::GetAsString(long flags) const
     }
 
     // this function should alway returns a non-empty string
-    wxASSERT_MSG(!colName.empty(),
-                 wxT("Invalid wxColour -> wxString conversion flags"));
+    //wxASSERT_MSG(!colName.empty(),
+                 //wxT("Invalid wxColour -> wxString conversion flags"));
 
     return colName;
 }

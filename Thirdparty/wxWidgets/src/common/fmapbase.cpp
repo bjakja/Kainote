@@ -350,8 +350,8 @@ static const wxChar* const gs_encodingNames[][9] =
     { wxT( "MacKeyboardGlyphs" ), NULL }
 };
 
-wxCOMPILE_TIME_ASSERT( WXSIZEOF(gs_encodingDescs) == WXSIZEOF(gs_encodings), EncodingsArraysNotInSync );
-wxCOMPILE_TIME_ASSERT( WXSIZEOF(gs_encodingNames) == WXSIZEOF(gs_encodings), EncodingsArraysNotInSync );
+//wxCOMPILE_TIME_ASSERT( WXSIZEOF(gs_encodingDescs) == WXSIZEOF(gs_encodings), EncodingsArraysNotInSync );
+//wxCOMPILE_TIME_ASSERT( WXSIZEOF(gs_encodingNames) == WXSIZEOF(gs_encodings), EncodingsArraysNotInSync );
 
 // ----------------------------------------------------------------------------
 // private classes
@@ -423,8 +423,8 @@ wxFontMapperBase *wxFontMapperBase::Get()
         {
             sm_instance = traits->CreateFontMapper();
 
-            wxASSERT_MSG( sm_instance,
-                            wxT("wxAppTraits::CreateFontMapper() failed") );
+            //wxASSERT_MSG( sm_instance,
+                            //wxT("wxAppTraits::CreateFontMapper() failed") );
         }
 
         if ( !sm_instance )
@@ -479,7 +479,7 @@ const wxString& wxFontMapperBase::GetDefaultConfigPath()
 void wxFontMapperBase::SetConfigPath(const wxString& prefix)
 {
     //wxCHECK_RET( !prefix.empty() && prefix[0] == wxCONFIG_PATH_SEPARATOR,
-                 wxT("an absolute path should be given to wxFontMapper::SetConfigPath()") );
+                 //wxT("an absolute path should be given to wxFontMapper::SetConfigPath()") );
 
     m_configRootPath = prefix;
 }
@@ -538,8 +538,8 @@ bool wxFontMapperBase::ChangePath(const wxString& pathNew, wxString *pathOld)
         path += wxCONFIG_PATH_SEPARATOR;
     }
 
-    wxASSERT_MSG( !pathNew || (pathNew[0] != wxCONFIG_PATH_SEPARATOR),
-                  wxT("should be a relative path") );
+    //wxASSERT_MSG( !pathNew || (pathNew[0] != wxCONFIG_PATH_SEPARATOR),
+                  //wxT("should be a relative path") );
 
     path += pathNew;
 
@@ -784,7 +784,7 @@ size_t wxFontMapperBase::GetSupportedEncodingsCount()
 wxFontEncoding wxFontMapperBase::GetEncoding(size_t n)
 {
     //wxCHECK_MSG( n < WXSIZEOF(gs_encodings), wxFONTENCODING_SYSTEM,
-                    wxT("wxFontMapper::GetEncoding(): invalid index") );
+                    //wxT("wxFontMapper::GetEncoding(): invalid index") );
 
     return gs_encodings[n];
 }

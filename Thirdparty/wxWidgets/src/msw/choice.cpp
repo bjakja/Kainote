@@ -57,11 +57,11 @@ bool wxChoice::Create(wxWindow *parent,
 {
     // Experience shows that wxChoice vs. wxComboBox distinction confuses
     // quite a few people - try to help them
-    wxASSERT_MSG( !(style & wxCB_DROPDOWN) &&
+    /*wxASSERT_MSG( !(style & wxCB_DROPDOWN) &&
                   !(style & wxCB_READONLY) &&
                   !(style & wxCB_SIMPLE),
                   wxT("this style flag is ignored by wxChoice, you ")
-                  wxT("probably want to use a wxComboBox") );
+                  wxT("probably want to use a wxComboBox") );*/
 
     return CreateAndInit(parent, id, pos, size, n, choices, style,
                          validator, name);
@@ -632,8 +632,8 @@ int wxChoice::SetHeightSimpleComboBox(int nItems) const
 
 void wxChoice::MSWDoPopupOrDismiss(bool show)
 {
-    wxASSERT_MSG( !HasFlag(wxCB_SIMPLE),
-                  wxT("can't popup/dismiss the list for simple combo box") );
+   /* wxASSERT_MSG( !HasFlag(wxCB_SIMPLE),
+                  wxT("can't popup/dismiss the list for simple combo box") );*/
 
     // we *must* set focus to the combobox before showing or hiding the drop
     // down as without this we get WM_LBUTTONDOWN messages with invalid HWND

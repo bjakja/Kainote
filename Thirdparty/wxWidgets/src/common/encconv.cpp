@@ -201,8 +201,8 @@ inline wchar_t GetTableValue(const wchar_t *table, wchar_t value, bool& repl)
 
 bool wxEncodingConverter::Convert(const char* input, char* output) const
 {
-    wxASSERT_MSG(!m_UnicodeOutput, wxT("You cannot convert to unicode if output is const char*!"));
-    wxASSERT_MSG(!m_UnicodeInput, wxT("You cannot convert from unicode if input is const char*!"));
+    /*wxASSERT_MSG(!m_UnicodeOutput, wxT("You cannot convert to unicode if output is const char*!"));
+    wxASSERT_MSG(!m_UnicodeInput, wxT("You cannot convert from unicode if input is const char*!"));*/
 
     const char *i;
     char *o;
@@ -214,7 +214,7 @@ bool wxEncodingConverter::Convert(const char* input, char* output) const
     }
 
     //wxCHECK_MSG(m_Table != NULL, false,
-                wxT("You must call wxEncodingConverter::Init() before actually converting!"));
+                //wxT("You must call wxEncodingConverter::Init() before actually converting!"));
 
     bool replaced = false;
 
@@ -228,8 +228,8 @@ bool wxEncodingConverter::Convert(const char* input, char* output) const
 
 bool wxEncodingConverter::Convert(const char* input, wchar_t* output) const
 {
-    wxASSERT_MSG(m_UnicodeOutput, wxT("You cannot convert to 8-bit if output is const wchar_t*!"));
-    wxASSERT_MSG(!m_UnicodeInput, wxT("You cannot convert from unicode if input is const char*!"));
+    /*wxASSERT_MSG(m_UnicodeOutput, wxT("You cannot convert to 8-bit if output is const wchar_t*!"));
+    wxASSERT_MSG(!m_UnicodeInput, wxT("You cannot convert from unicode if input is const char*!"));*/
 
     const char *i;
     wchar_t *o;
@@ -243,7 +243,7 @@ bool wxEncodingConverter::Convert(const char* input, wchar_t* output) const
     }
 
     //wxCHECK_MSG(m_Table != NULL, false,
-                wxT("You must call wxEncodingConverter::Init() before actually converting!"));
+                //wxT("You must call wxEncodingConverter::Init() before actually converting!"));
 
     bool replaced = false;
 
@@ -258,8 +258,8 @@ bool wxEncodingConverter::Convert(const char* input, wchar_t* output) const
 
 bool wxEncodingConverter::Convert(const wchar_t* input, char* output) const
 {
-    wxASSERT_MSG(!m_UnicodeOutput, wxT("You cannot convert to unicode if output is const char*!"));
-    wxASSERT_MSG(m_UnicodeInput, wxT("You cannot convert from 8-bit if input is const wchar_t*!"));
+    /*wxASSERT_MSG(!m_UnicodeOutput, wxT("You cannot convert to unicode if output is const char*!"));
+    wxASSERT_MSG(m_UnicodeInput, wxT("You cannot convert from 8-bit if input is const wchar_t*!"));*/
 
     const wchar_t *i;
     char *o;
@@ -273,7 +273,7 @@ bool wxEncodingConverter::Convert(const wchar_t* input, char* output) const
     }
 
     //wxCHECK_MSG(m_Table != NULL, false,
-                wxT("You must call wxEncodingConverter::Init() before actually converting!"));
+                //wxT("You must call wxEncodingConverter::Init() before actually converting!"));
 
     bool replaced = false;
 
@@ -288,8 +288,8 @@ bool wxEncodingConverter::Convert(const wchar_t* input, char* output) const
 
 bool wxEncodingConverter::Convert(const wchar_t* input, wchar_t* output) const
 {
-    wxASSERT_MSG(m_UnicodeOutput, wxT("You cannot convert to 8-bit if output is const wchar_t*!"));
-    wxASSERT_MSG(m_UnicodeInput, wxT("You cannot convert from 8-bit if input is const wchar_t*!"));
+    /*wxASSERT_MSG(m_UnicodeOutput, wxT("You cannot convert to 8-bit if output is const wchar_t*!"));
+    wxASSERT_MSG(m_UnicodeInput, wxT("You cannot convert from 8-bit if input is const wchar_t*!"));*/
 
     const wchar_t *i;
     wchar_t *o;
@@ -304,7 +304,7 @@ bool wxEncodingConverter::Convert(const wchar_t* input, wchar_t* output) const
     }
 
     //wxCHECK_MSG(m_Table != NULL, false,
-                wxT("You must call wxEncodingConverter::Init() before actually converting!"));
+                //wxT("You must call wxEncodingConverter::Init() before actually converting!"));
 
     bool replaced = false;
 
@@ -324,7 +324,7 @@ wxString wxEncodingConverter::Convert(const wxString& input) const
     const wxChar *i;
 
     //wxCHECK_MSG(m_Table != NULL, s,
-                wxT("You must call wxEncodingConverter::Init() before actually converting!"));
+                //wxT("You must call wxEncodingConverter::Init() before actually converting!"));
 
     if (m_UnicodeInput)
     {

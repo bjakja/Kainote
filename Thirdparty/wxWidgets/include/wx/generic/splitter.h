@@ -90,8 +90,8 @@ public:
     // Sets the split mode
     void SetSplitMode(int mode)
     {
-        wxASSERT_MSG( mode == wxSPLIT_VERTICAL || mode == wxSPLIT_HORIZONTAL,
-                      wxT("invalid split mode") );
+        //wxASSERT_MSG( mode == wxSPLIT_VERTICAL || mode == wxSPLIT_HORIZONTAL,
+                      //wxT("invalid split mode") );
 
         m_splitMode = (wxSplitMode)mode;
     }
@@ -335,7 +335,7 @@ public:
     void SetSashPosition(int pos)
     {
         //wxASSERT( GetEventType() == wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED
-                || GetEventType() == wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGING);
+                //|| GetEventType() == wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGING);
 
         m_data.pos = pos;
     }
@@ -343,7 +343,7 @@ public:
     int GetSashPosition() const
     {
         //wxASSERT( GetEventType() == wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED
-                || GetEventType() == wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGING);
+                //|| GetEventType() == wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGING);
 
         return m_data.pos;
     }

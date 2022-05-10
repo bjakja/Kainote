@@ -660,7 +660,7 @@ wxDCImpl::DoStretchBlit(wxCoord xdest, wxCoord ydest,
                         wxCoord ysrcMask)
 {
     //wxCHECK_MSG( srcWidth && srcHeight && dstWidth && dstHeight, false,
-                 wxT("invalid blit size") );
+                 //wxT("invalid blit size") );
 
     // emulate the stretching by modifying the DC scale
     double xscale = (double)srcWidth/dstWidth,

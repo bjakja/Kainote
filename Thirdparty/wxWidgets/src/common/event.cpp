@@ -1166,7 +1166,7 @@ wxEventFilter* wxEvtHandler::ms_filterList = NULL;
         prev = f;
     }
 
-    wxFAIL_MSG( "Filter not found" );
+    //wxFAIL_MSG( "Filter not found" );
 }
 
 #if wxUSE_THREADS
@@ -1174,8 +1174,8 @@ wxEventFilter* wxEvtHandler::ms_filterList = NULL;
 bool wxEvtHandler::ProcessThreadEvent(const wxEvent& event)
 {
     // check that we are really in a child thread
-    wxASSERT_MSG( !wxThread::IsMain(),
-                  wxT("use ProcessEvent() in main thread") );
+    //wxASSERT_MSG( !wxThread::IsMain(),
+                  //wxT("use ProcessEvent() in main thread") );
 
     AddPendingEvent(event);
 
@@ -1252,7 +1252,7 @@ void wxEvtHandler::ProcessPendingEvents()
     // this method is only called by wxApp if this handler does have
     // pending events
     //wxCHECK_RET( m_pendingEvents && !m_pendingEvents->IsEmpty(),
-                 "should have pending events if called" );
+                 //"should have pending events if called" );
 
     wxList::compatibility_iterator node = m_pendingEvents->GetFirst();
     wxEvent* pEvent = static_cast<wxEvent *>(node->GetData());
@@ -1410,9 +1410,9 @@ bool wxEvtHandler::ProcessEvent(wxEvent& event)
             int rc = f->FilterEvent(event);
             if ( rc != wxEventFilter::Event_Skip )
             {
-                wxASSERT_MSG( rc == wxEventFilter::Event_Ignore ||
+                /*wxASSERT_MSG( rc == wxEventFilter::Event_Ignore ||
                                 rc == wxEventFilter::Event_Processed,
-                              "unexpected FilterEvent() return value" );
+                              "unexpected FilterEvent() return value" );*/
 
                 return rc != wxEventFilter::Event_Ignore;
             }
@@ -1656,7 +1656,7 @@ wxEvtHandler::DoUnbind(int id,
 bool wxEvtHandler::SearchDynamicEventTable( wxEvent& event )
 {
     //wxCHECK_MSG( m_dynamicEvents, false,
-                 wxT("caller should check that we have dynamic events") );
+                 //wxT("caller should check that we have dynamic events") );
 
     wxList::compatibility_iterator node = m_dynamicEvents->GetFirst();
     while (node)
@@ -1682,8 +1682,8 @@ bool wxEvtHandler::SearchDynamicEventTable( wxEvent& event )
 
 void wxEvtHandler::DoSetClientObject( wxClientData *data )
 {
-    wxASSERT_MSG( m_clientDataType != wxClientData_Void,
-                  wxT("can't have both object and void client data") );
+    /*wxASSERT_MSG( m_clientDataType != wxClientData_Void,
+                  wxT("can't have both object and void client data") );*/
 
     if ( m_clientObject )
         delete m_clientObject;
@@ -1696,16 +1696,16 @@ wxClientData *wxEvtHandler::DoGetClientObject() const
 {
     // it's not an error to call GetClientObject() on a window which doesn't
     // have client data at all - NULL will be returned
-    wxASSERT_MSG( m_clientDataType != wxClientData_Void,
-                  wxT("this window doesn't have object client data") );
+    /*wxASSERT_MSG( m_clientDataType != wxClientData_Void,
+                  wxT("this window doesn't have object client data") );*/
 
     return m_clientObject;
 }
 
 void wxEvtHandler::DoSetClientData( void *data )
 {
-    wxASSERT_MSG( m_clientDataType != wxClientData_Object,
-                  wxT("can't have both object and void client data") );
+    /*wxASSERT_MSG( m_clientDataType != wxClientData_Object,
+                  wxT("can't have both object and void client data") );*/
 
     m_clientData = data;
     m_clientDataType = wxClientData_Void;
@@ -1715,8 +1715,8 @@ void *wxEvtHandler::DoGetClientData() const
 {
     // it's not an error to call GetClientData() on a window which doesn't have
     // client data at all - NULL will be returned
-    wxASSERT_MSG( m_clientDataType != wxClientData_Object,
-                  wxT("this window doesn't have void client data") );
+    /*wxASSERT_MSG( m_clientDataType != wxClientData_Object,
+                  wxT("this window doesn't have void client data") );*/
 
     return m_clientData;
 }

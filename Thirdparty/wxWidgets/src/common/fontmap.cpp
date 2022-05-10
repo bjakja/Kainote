@@ -167,8 +167,8 @@ wxFontMapper::~wxFontMapper()
 wxFontMapper *wxFontMapper::Get()
 {
     wxFontMapperBase *fontmapper = wxFontMapperBase::Get();
-    wxASSERT_MSG( !fontmapper->IsDummy(),
-                 wxT("GUI code requested a wxFontMapper but we only have a wxFontMapperBase.") );
+    /*wxASSERT_MSG( !fontmapper->IsDummy(),
+                 wxT("GUI code requested a wxFontMapper but we only have a wxFontMapperBase.") );*/
 
     // Now return it anyway because there's a chance the GUI code might just
     // only want to call wxFontMapperBase functions and it's better than
@@ -497,7 +497,7 @@ bool wxFontMapper::GetAltForEncoding(wxFontEncoding encoding,
                                      bool interactive)
 {
     //wxCHECK_MSG( encodingAlt, false,
-                    wxT("wxFontEncoding::GetAltForEncoding(): NULL pointer") );
+                    //wxT("wxFontEncoding::GetAltForEncoding(): NULL pointer") );
 
     wxNativeEncodingInfo info;
     if ( !GetAltForEncoding(encoding, &info, facename, interactive) )

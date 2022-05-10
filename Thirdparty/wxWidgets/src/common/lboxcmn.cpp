@@ -298,8 +298,8 @@ bool wxListBoxBase::CalcAndSendEvent()
         }
     }
 
-    wxASSERT_MSG( item != wxNOT_FOUND,
-                  "Logic error in wxListBox selection event generation code" );
+    //wxASSERT_MSG( item != wxNOT_FOUND,
+                  //"Logic error in wxListBox selection event generation code" );
 
     m_oldSelections = selections;
 

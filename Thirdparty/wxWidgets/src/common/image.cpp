@@ -269,15 +269,15 @@ wxImage wxImage::MakeEmptyClone(int flags) const
 
     if ( !image.Create( width, height, false ) )
     {
-        wxFAIL_MSG( wxS("unable to create image") );
+        //wxFAIL_MSG( wxS("unable to create image") );
         return image;
     }
 
     if ( M_IMGDATA->m_alpha )
     {
         image.SetAlpha();
-        wxCHECK2_MSG( image.GetAlpha(), return wxImage(),
-                      wxS("unable to create alpha channel") );
+        /*wxCHECK2_MSG( image.GetAlpha(), return wxImage(),
+                      wxS("unable to create alpha channel") );*/
     }
 
     if ( M_IMGDATA->m_hasMask )
@@ -312,13 +312,13 @@ wxImage wxImage::ShrinkBy( int xFactor , int yFactor ) const
 
     // can't scale to/from 0 size
     //wxCHECK_MSG( (xFactor > 0) && (yFactor > 0), image,
-                 wxT("invalid new image size") );
+                 //wxT("invalid new image size") );
 
     long old_height = M_IMGDATA->m_height,
          old_width  = M_IMGDATA->m_width;
 
     //wxCHECK_MSG( (old_height > 0) && (old_width > 0), image,
-                 wxT("invalid old image size") );
+                 //wxT("invalid old image size") );
 
     long width = old_width / xFactor ;
     long height = old_height / yFactor ;
@@ -431,12 +431,12 @@ wxImage::Scale( int width, int height, wxImageResizeQuality quality ) const
 
     // can't scale to/from 0 size
     //wxCHECK_MSG( (width > 0) && (height > 0), image,
-                 wxT("invalid new image size") );
+                 //wxT("invalid new image size") );
 
     long old_height = M_IMGDATA->m_height,
          old_width  = M_IMGDATA->m_width;
     //wxCHECK_MSG( (old_height > 0) && (old_width > 0), image,
-                 wxT("invalid old image size") );
+                 //wxT("invalid old image size") );
 
     // If the image's new width and height are the same as the original, no
     // need to waste time or CPU cycles
@@ -1302,8 +1302,8 @@ wxImage wxImage::GetSubImage( const wxRect &rect ) const
     //wxCHECK_MSG( IsOk(), image, wxT("invalid image") );
 
     //wxCHECK_MSG( (rect.GetLeft()>=0) && (rect.GetTop()>=0) &&
-                 (rect.GetRight()<=GetWidth()) && (rect.GetBottom()<=GetHeight()),
-                 image, wxT("invalid subimage size") );
+                 //(rect.GetRight()<=GetWidth()) && (rect.GetBottom()<=GetHeight()),
+                 //image, wxT("invalid subimage size") );
 
     const int subwidth = rect.GetWidth();
     const int subheight = rect.GetHeight();
@@ -1656,7 +1656,7 @@ void wxImage::SetType(wxBitmapType type)
     //wxCHECK_RET( IsOk(), "must create the image before setting its type");
 
     // type can be wxBITMAP_TYPE_INVALID to reset the image type to default
-    wxASSERT_MSG( type != wxBITMAP_TYPE_MAX, "invalid bitmap type" );
+    //wxASSERT_MSG( type != wxBITMAP_TYPE_MAX, "invalid bitmap type" );
 
     M_IMGDATA->m_type = type;
 }
@@ -1702,8 +1702,8 @@ void wxImage::SetRGB( const wxRect& rect_, unsigned char r, unsigned char g, uns
     else
     {
         //wxCHECK_RET( imageRect.Contains(rect.GetTopLeft()) &&
-                     imageRect.Contains(rect.GetBottomRight()),
-                     wxT("invalid bounding rectangle") );
+                     //imageRect.Contains(rect.GetBottomRight()),
+                     //wxT("invalid bounding rectangle") );
     }
 
     int x1 = rect.GetLeft(),
@@ -2288,7 +2288,7 @@ static wxImage LoadImageFromResource(const wxString &name, wxBitmapType type)
     }
     else
     {
-        wxFAIL_MSG(wxS("Invalid bitmap resource type."));
+        //wxFAIL_MSG(wxS("Invalid bitmap resource type."));
     }
 
     if ( !hBitmap )
@@ -2878,7 +2878,7 @@ wxImage::HSVValue wxImage::RGBtoHSV(const RGBValue& rgb)
                 break;
 
             default:
-                wxFAIL_MSG(wxT("hue not specified"));
+                //wxFAIL_MSG(wxT("hue not specified"));
                 break;
         }
 
@@ -2970,7 +2970,7 @@ void wxImage::RotateHue(double angle)
     wxImage::HSVValue hsv;
     wxImage::RGBValue rgb;
 
-    wxASSERT (angle >= -1.0 && angle <= 1.0);
+    //wxASSERT (angle >= -1.0 && angle <= 1.0);
     count = M_IMGDATA->m_width * M_IMGDATA->m_height;
     if ( count > 0 && !wxIsNullDouble(angle) )
     {

@@ -1207,7 +1207,7 @@ wxMBConvStrictUTF8::FromWChar(char *dst, size_t dstLen,
         }
         else
         {
-            wxFAIL_MSG( wxT("trying to encode undefined Unicode character") );
+            //wxFAIL_MSG( wxT("trying to encode undefined Unicode character") );
             break;
         }
 
@@ -2806,7 +2806,7 @@ private:
                     break;
             }
 
-            wxASSERT_MSG( s_isWin98Or2k != -1, wxT("should be set above") );
+            //wxASSERT_MSG( s_isWin98Or2k != -1, wxT("should be set above") );
         }
 
         return s_isWin98Or2k == 1;
@@ -3026,7 +3026,7 @@ wxCSConv::wxCSConv(wxFontEncoding encoding)
 {
     if ( encoding == wxFONTENCODING_MAX || encoding == wxFONTENCODING_DEFAULT )
     {
-        wxFAIL_MSG( wxT("invalid encoding value in wxCSConv ctor") );
+        //wxFAIL_MSG( wxT("invalid encoding value in wxCSConv ctor") );
 
         encoding = wxFONTENCODING_SYSTEM;
     }

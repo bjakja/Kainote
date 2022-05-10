@@ -78,7 +78,7 @@ struct wxCmdLineOption
         // wxCMD_LINE_USAGE_TEXT uses only description, shortName and longName is empty
         if ( k != wxCMD_LINE_USAGE_TEXT )
         {
-            wxASSERT_MSG
+            /*wxASSERT_MSG
             (
                 !shrt.empty() || !lng.empty(),
                  wxT("option should have at least one name")
@@ -94,7 +94,7 @@ struct wxCmdLineOption
             (
                 GetLongOptionName(lng.begin(), lng.end()).Len() == lng.Len(),
                 wxT("Long option contains invalid characters")
-            );
+            );*/
         }
 
         kind = k;
@@ -116,7 +116,7 @@ struct wxCmdLineOption
 
     void Check(wxCmdLineParamType WXUNUSED_UNLESS_DEBUG(typ)) const
     {
-        wxASSERT_MSG( type == typ, wxT("type mismatch in wxCmdLineOption") );
+        //wxASSERT_MSG( type == typ, wxT("type mismatch in wxCmdLineOption") );
     }
 
     double GetDoubleVal() const
@@ -446,7 +446,7 @@ void wxCmdLineParser::SetDesc(const wxCmdLineEntryDesc *desc)
                 break;
 
             default:
-                wxFAIL_MSG( wxT("unknown command line entry type") );
+                break;// wxFAIL_MSG(wxT("unknown command line entry type"));
                 // still fall through
 
             case wxCMD_LINE_NONE:
@@ -460,8 +460,8 @@ void wxCmdLineParser::AddSwitch(const wxString& shortName,
                                 const wxString& desc,
                                 int flags)
 {
-    wxASSERT_MSG( m_data->FindOption(shortName) == wxNOT_FOUND,
-                  wxT("duplicate switch") );
+    //wxASSERT_MSG( m_data->FindOption(shortName) == wxNOT_FOUND,
+                  //wxT("duplicate switch") );
 
     wxCmdLineOption *option = new wxCmdLineOption(wxCMD_LINE_SWITCH,
                                                   shortName, longName, desc,
@@ -476,8 +476,8 @@ void wxCmdLineParser::AddOption(const wxString& shortName,
                                 wxCmdLineParamType type,
                                 int flags)
 {
-    wxASSERT_MSG( m_data->FindOption(shortName) == wxNOT_FOUND,
-                  wxT("duplicate option") );
+    /*wxASSERT_MSG( m_data->FindOption(shortName) == wxNOT_FOUND,
+                  wxT("duplicate option") );*/
 
     wxCmdLineOption *option = new wxCmdLineOption(wxCMD_LINE_OPTION,
                                                   shortName, longName, desc,
@@ -497,13 +497,13 @@ void wxCmdLineParser::AddParam(const wxString& desc,
     {
         wxCmdLineParam& param = m_data->m_paramDesc.Last();
 
-        wxASSERT_MSG( !(param.flags & wxCMD_LINE_PARAM_MULTIPLE),
-                      wxT("all parameters after the one with wxCMD_LINE_PARAM_MULTIPLE style will be ignored") );
+        /*wxASSERT_MSG( !(param.flags & wxCMD_LINE_PARAM_MULTIPLE),
+                      wxT("all parameters after the one with wxCMD_LINE_PARAM_MULTIPLE style will be ignored") );*/
 
         if ( !(flags & wxCMD_LINE_PARAM_OPTIONAL) )
         {
-            wxASSERT_MSG( !(param.flags & wxCMD_LINE_PARAM_OPTIONAL),
-                          wxT("a required parameter can't follow an optional one") );
+            /*wxASSERT_MSG( !(param.flags & wxCMD_LINE_PARAM_OPTIONAL),
+                          wxT("a required parameter can't follow an optional one") );*/
         }
     }
 #endif // wxDEBUG_LEVEL
@@ -515,7 +515,7 @@ void wxCmdLineParser::AddParam(const wxString& desc,
 
 void wxCmdLineParser::AddUsageText(const wxString& text)
 {
-    wxASSERT_MSG( !text.empty(), wxT("text can't be empty") );
+    //wxASSERT_MSG( !text.empty(), wxT("text can't be empty") );
 
     wxCmdLineOption *option = new wxCmdLineOption(wxCMD_LINE_USAGE_TEXT,
                                                   wxEmptyString, wxEmptyString,
@@ -922,7 +922,7 @@ int wxCmdLineParser::Parse(bool showUsage)
                     switch ( opt.type )
                     {
                         default:
-                            wxFAIL_MSG( wxT("unknown option type") );
+                            break;//wxFAIL_MSG( wxT("unknown option type") );
                             // still fall through
 
                         case wxCMD_LINE_VAL_STRING:
@@ -1005,8 +1005,8 @@ int wxCmdLineParser::Parse(bool showUsage)
                 }
                 else
                 {
-                    wxASSERT_MSG( currentParam == countParam - 1,
-                                  wxT("all parameters after the one with wxCMD_LINE_PARAM_MULTIPLE style are ignored") );
+                    /*wxASSERT_MSG( currentParam == countParam - 1,
+                                  wxT("all parameters after the one with wxCMD_LINE_PARAM_MULTIPLE style are ignored") );*/
 
                     // remember that we did have this last repeatable parameter
                     hadRepeatableParam = true;
@@ -1097,7 +1097,7 @@ int wxCmdLineParser::Parse(bool showUsage)
         }
         else
         {
-            wxFAIL_MSG( wxT("no wxMessageOutput object?") );
+            //wxFAIL_MSG( wxT("no wxMessageOutput object?") );
         }
     }
 
@@ -1117,7 +1117,7 @@ void wxCmdLineParser::Usage() const
     }
     else
     {
-        wxFAIL_MSG( wxT("no wxMessageOutput object?") );
+        //wxFAIL_MSG( wxT("no wxMessageOutput object?") );
     }
 }
 
@@ -1182,12 +1182,12 @@ wxString wxCmdLineParser::GetUsageString() const
             {
                 if (!opt.longName.empty())
                 {
-                    wxFAIL_MSG( wxT("option with only a long name while long ")
-                                wxT("options are disabled") );
+                    //wxFAIL_MSG( wxT("option with only a long name while long ")
+                                //wxT("options are disabled") );
                 }
                 else
                 {
-                    wxFAIL_MSG( wxT("option without neither short nor long name") );
+                    //wxFAIL_MSG( wxT("option without neither short nor long name") );
                 }
             }
 
@@ -1297,7 +1297,7 @@ static wxString GetTypeName(wxCmdLineParamType type)
     switch ( type )
     {
         default:
-            wxFAIL_MSG( wxT("unknown option type") );
+            break;//wxFAIL_MSG( wxT("unknown option type") );
             // still fall through
 
         case wxCMD_LINE_VAL_STRING:

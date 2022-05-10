@@ -243,8 +243,8 @@ bool wxLocale::Init(const wxString& name,
                     )
 {
 #if WXWIN_COMPATIBILITY_2_8
-    wxASSERT_MSG( bConvertEncoding,
-                  wxS("wxLocale::Init with bConvertEncoding=false is no longer supported, add charset to your catalogs") );
+    //wxASSERT_MSG( bConvertEncoding,
+                  //wxS("wxLocale::Init with bConvertEncoding=false is no longer supported, add charset to your catalogs") );
 #endif
 
     bool ret = DoInit(name, shortName, locale);
@@ -266,8 +266,8 @@ bool wxLocale::DoInit(const wxString& name,
                       const wxString& shortName,
                       const wxString& locale)
 {
-    wxASSERT_MSG( !m_initialized,
-                    wxS("you can't call wxLocale::Init more than once") );
+    //wxASSERT_MSG( !m_initialized,
+                    //wxS("you can't call wxLocale::Init more than once") );
 
     m_initialized = true;
     m_strLocale = name;
@@ -282,7 +282,7 @@ bool wxLocale::DoInit(const wxString& name,
         szLocale = shortName;
 
         //wxCHECK_MSG( !szLocale.empty(), false,
-                    wxS("no locale to set in wxLocale::Init()") );
+                    //wxS("no locale to set in wxLocale::Init()") );
     }
 
     const char *oldLocale = wxSetlocale(LC_ALL, szLocale);
@@ -357,8 +357,8 @@ static const char *wxSetlocaleTryUTF8(int c, const wxString& lc)
 bool wxLocale::Init(int language, int flags)
 {
 #if WXWIN_COMPATIBILITY_2_8
-    wxASSERT_MSG( !(flags & wxLOCALE_CONV_ENCODING),
-                  wxS("wxLOCALE_CONV_ENCODING is no longer supported, add charset to your catalogs") );
+    /*wxASSERT_MSG( !(flags & wxLOCALE_CONV_ENCODING),
+                  wxS("wxLOCALE_CONV_ENCODING is no longer supported, add charset to your catalogs") );*/
 #endif
 
     bool ret = true;
@@ -1037,8 +1037,8 @@ bool wxLocale::IsAvailable(int lang)
     {
         // The language is unknown (this normally only happens when we're
         // passed wxLANGUAGE_DEFAULT), so we can't support it.
-        wxASSERT_MSG( lang == wxLANGUAGE_DEFAULT,
-                      wxS("No info for a valid language?") );
+        /*wxASSERT_MSG( lang == wxLANGUAGE_DEFAULT,
+                      wxS("No info for a valid language?") );*/
         return false;
     }
 
@@ -1198,7 +1198,7 @@ static wxString TranslateFromUnicodeFormat(const wxString& fmt)
                             break;
 #endif
                         default:
-                            wxFAIL_MSG( "too many 'd's" );
+                            break;// wxFAIL_MSG("too many 'd's");
                     }
                     break;
 #ifndef __WINDOWS__
@@ -1265,7 +1265,7 @@ static wxString TranslateFromUnicodeFormat(const wxString& fmt)
                             break;
 
                         default:
-                            wxFAIL_MSG( "too many 'M's" );
+                            break;// wxFAIL_MSG("too many 'M's");
                     }
                     break;
 
@@ -1282,7 +1282,7 @@ static wxString TranslateFromUnicodeFormat(const wxString& fmt)
                             break;
 
                         default:
-                            wxFAIL_MSG( "wrong number of 'y's" );
+                            break;// wxFAIL_MSG("wrong number of 'y's");
                     }
                     break;
 
@@ -1295,7 +1295,7 @@ static wxString TranslateFromUnicodeFormat(const wxString& fmt)
                             break;
 
                         default:
-                            wxFAIL_MSG( "wrong number of 'H's" );
+                            break;// wxFAIL_MSG("wrong number of 'H's");
                     }
                     break;
 
@@ -1308,7 +1308,7 @@ static wxString TranslateFromUnicodeFormat(const wxString& fmt)
                             break;
 
                         default:
-                            wxFAIL_MSG( "wrong number of 'h's" );
+                            break;// wxFAIL_MSG("wrong number of 'h's");
                     }
                     break;
 
@@ -1321,7 +1321,7 @@ static wxString TranslateFromUnicodeFormat(const wxString& fmt)
                             break;
 
                         default:
-                            wxFAIL_MSG( "wrong number of 'm's" );
+                            break;// wxFAIL_MSG("wrong number of 'm's");
                     }
                     break;
 
@@ -1334,14 +1334,14 @@ static wxString TranslateFromUnicodeFormat(const wxString& fmt)
                             break;
 
                         default:
-                            wxFAIL_MSG( "wrong number of 's's" );
+                            break;// wxFAIL_MSG("wrong number of 's's");
                     }
                     break;
 
                 case 'g':
                     // strftime() doesn't have era string,
                     // ignore this format
-                    wxASSERT_MSG( lastCount <= 2, "too many 'g's" );
+                    break;// wxASSERT_MSG(lastCount <= 2, "too many 'g's");
 
                     break;
 #ifndef __WINDOWS__
@@ -1359,12 +1359,12 @@ static wxString TranslateFromUnicodeFormat(const wxString& fmt)
                             break;
 
                         default:
-                            wxFAIL_MSG( "too many 't's" );
+                            break;// wxFAIL_MSG("too many 't's");
                     }
                     break;
 #endif
                 default:
-                    wxFAIL_MSG( "unreachable" );
+                    break;// wxFAIL_MSG("unreachable");
             }
 
             chLast = '\0';
@@ -1410,7 +1410,7 @@ LCTYPE GetLCTYPEFormatFromLocalInfo(wxLocaleInfo index)
             return LOCALE_STIMEFORMAT;
 
         default:
-            wxFAIL_MSG( "no matching LCTYPE" );
+            break;// wxFAIL_MSG("no matching LCTYPE");
     }
 
     return 0;
@@ -1459,12 +1459,12 @@ wxString wxLocale::GetInfo(wxLocaleInfo index, wxLocaleCategory cat)
                 // result in very strange bugs elsewhere in the code as the
                 // assumptions that formatted strings do use the decimal
                 // separator actually fail, so check for it here.
-                wxASSERT_MSG
+                /*wxASSERT_MSG
                 (
                     wxString::Format("%.3f", 1.23).find(str) != wxString::npos,
                     "Decimal separator mismatch -- did you use setlocale()?"
                     "If so, use wxLocale to change the locale instead."
-                );
+                );*/
             }
             break;
 
@@ -1499,7 +1499,7 @@ wxString wxLocale::GetInfo(wxLocaleInfo index, wxLocaleCategory cat)
             break;
 
         default:
-            wxFAIL_MSG( "unknown wxLocaleInfo" );
+            break;// wxFAIL_MSG("unknown wxLocaleInfo");
     }
 
     return str;

@@ -514,7 +514,7 @@ wxClassInfo* classname##VariantData::GetValueClassInfo()\
 \
 expdecl classname& operator << ( classname &value, const wxVariant &variant )\
 {\
-    //wxASSERT( variant.GetType() == #classname );\
+    /*wxASSERT( variant.GetType() == #classname );*/\
     \
     classname##VariantData *data = (classname##VariantData*) variant.GetData();\
     value = data->GetValue();\
@@ -536,7 +536,7 @@ IMPLEMENT_VARIANT_OBJECT_EXPORTED_NO_EQ(classname,wxEMPTY_PARAMETER_VALUE expdec
 \
 bool classname##VariantData::Eq(wxVariantData& data) const \
 {\
-    //wxASSERT( GetType() == data.GetType() );\
+    /*wxASSERT( GetType() == data.GetType() );*/\
 \
     classname##VariantData & otherData = (classname##VariantData &) data;\
 \

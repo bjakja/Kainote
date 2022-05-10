@@ -89,11 +89,11 @@ void wxHeaderCtrlBase::ScrollWindow(int dx,
 
 {
     // this doesn't make sense at all
-    wxASSERT_MSG( !dy, "header window can't be scrolled vertically" );
+    //wxASSERT_MSG( !dy, "header window can't be scrolled vertically" );
 
     // this would actually be nice to support for "frozen" headers but it isn't
     // supported currently
-    wxASSERT_MSG( !rect, "header window can't be scrolled partially" );
+    //wxASSERT_MSG( !rect, "header window can't be scrolled partially" );
 
     DoScrollHorz(dx);
 }
@@ -200,7 +200,7 @@ wxArrayInt wxHeaderCtrlBase::GetColumnsOrder() const
 {
     const wxArrayInt order = DoGetColumnsOrder();
 
-    wxASSERT_MSG( order.size() == GetColumnCount(), "invalid order array" );
+    //wxASSERT_MSG( order.size() == GetColumnCount(), "invalid order array" );
 
     return order;
 }
@@ -225,7 +225,7 @@ unsigned int wxHeaderCtrlBase::GetColumnPos(unsigned int idx) const
             return n;
     }
 
-    wxFAIL_MSG( "column unexpectedly not displayed at all" );
+    //wxFAIL_MSG( "column unexpectedly not displayed at all" );
 
     return wxNO_COLUMN;
 }
@@ -290,7 +290,7 @@ wxHeaderCtrlBase::DoResizeColumnIndices(wxArrayInt& colIndices, unsigned int cou
     }
     //else: count didn't really change, nothing to do
 
-    wxASSERT_MSG( colIndices.size() == count, "logic error" );
+    //wxASSERT_MSG( colIndices.size() == count, "logic error" );
 }
 
 // ----------------------------------------------------------------------------

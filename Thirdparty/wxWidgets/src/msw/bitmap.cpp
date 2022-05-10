@@ -214,8 +214,8 @@ wxBitmapRefData::wxBitmapRefData(const wxBitmapRefData& data)
     // FIXME: we don't copy m_hBitmap currently but we should, see wxBitmap::
     //        CloneGDIRefData()
 
-    wxASSERT_MSG( !data.m_isDIB,
-                    wxT("can't copy bitmap locked for raw access!") );
+    //wxASSERT_MSG( !data.m_isDIB,
+                    //wxT("can't copy bitmap locked for raw access!") );
     m_isDIB = false;
 
     m_hasAlpha = data.m_hasAlpha;
@@ -223,11 +223,11 @@ wxBitmapRefData::wxBitmapRefData(const wxBitmapRefData& data)
 
 void wxBitmapRefData::Free()
 {
-    wxASSERT_MSG( !m_selectedInto,
-                  wxT("deleting bitmap still selected into wxMemoryDC") );
+    //wxASSERT_MSG( !m_selectedInto,
+                  //wxT("deleting bitmap still selected into wxMemoryDC") );
 
 #if wxUSE_WXDIB
-    wxASSERT_MSG( !m_dib, wxT("forgot to call wxBitmap::UngetRawData()!") );
+    //wxASSERT_MSG( !m_dib, wxT("forgot to call wxBitmap::UngetRawData()!") );
 #endif
 
     if ( m_hBitmap)
@@ -322,7 +322,7 @@ bool wxBitmap::CopyFromIconOrCursor(const wxGDIImage& icon,
     switch ( transp )
     {
         default:
-            wxFAIL_MSG( wxT("unknown wxBitmapTransparency value") );
+            break;// wxFAIL_MSG(wxT("unknown wxBitmapTransparency value"));
 
         case wxBitmapTransparency_None:
             // nothing to do, refData->m_hasAlpha is false by default
@@ -829,7 +829,7 @@ bool wxBitmap::CreateFromImage(const wxImage& image, int depth)
 bool wxBitmap::CreateFromImage(const wxImage& image, const wxDC& dc)
 {
     //wxCHECK_MSG( dc.IsOk(), false,
-                    wxT("invalid HDC in wxBitmap::CreateFromImage()") );
+                    //wxT("invalid HDC in wxBitmap::CreateFromImage()") );
 
     const wxMSWDCImpl *impl = wxDynamicCast( dc.GetImpl(), wxMSWDCImpl );
 
@@ -1127,13 +1127,13 @@ wxBitmap wxBitmap::GetSubBitmap( const wxRect& rect ) const
 wxBitmap wxBitmap::GetSubBitmapOfHDC( const wxRect& rect, WXHDC hdc ) const
 {
     //wxCHECK_MSG( IsOk() &&
-                 (rect.x >= 0) && (rect.y >= 0) &&
+                 /*(rect.x >= 0) && (rect.y >= 0) &&
                  (rect.x+rect.width <= GetWidth()) &&
                  (rect.y+rect.height <= GetHeight()),
-                 wxNullBitmap, wxT("Invalid bitmap or bitmap region") );
+                 wxNullBitmap, wxT("Invalid bitmap or bitmap region") );*/
 
     wxBitmap ret( rect.width, rect.height, GetDepth() );
-    wxASSERT_MSG( ret.IsOk(), wxT("GetSubBitmap error") );
+    //wxASSERT_MSG( ret.IsOk(), wxT("GetSubBitmap error") );
 
 #ifndef __WXMICROWIN__
     // handle alpha channel, if any
@@ -1281,7 +1281,7 @@ void *wxBitmap::GetRawData(wxPixelDataBase& data, int bpp)
     if ( !GetBitmapData()->m_isDIB )
     {
         //wxCHECK_MSG( !GetBitmapData()->m_dib, NULL,
-                        wxT("GetRawData() may be called only once") );
+                        //wxT("GetRawData() may be called only once") );
 
         wxDIB *dib = new wxDIB(*this);
         if ( !dib->IsOk() )
@@ -1304,7 +1304,7 @@ void *wxBitmap::GetRawData(wxPixelDataBase& data, int bpp)
     DIBSECTION ds;
     if ( ::GetObject(hDIB, sizeof(ds), &ds) != sizeof(DIBSECTION) )
     {
-        wxFAIL_MSG( wxT("failed to get DIBSECTION from a DIB?") );
+        //wxFAIL_MSG( wxT("failed to get DIBSECTION from a DIB?") );
 
         return NULL;
     }
@@ -1312,7 +1312,7 @@ void *wxBitmap::GetRawData(wxPixelDataBase& data, int bpp)
     // check that the bitmap is in correct format
     if ( ds.dsBm.bmBitsPixel != bpp )
     {
-        wxFAIL_MSG( wxT("incorrect bitmap type in wxBitmap::GetRawData()") );
+        //wxFAIL_MSG( wxT("incorrect bitmap type in wxBitmap::GetRawData()") );
 
         return NULL;
     }
@@ -1394,7 +1394,7 @@ wxMask::wxMask(const wxMask &mask)
     // so we'll use GetObject() API here:
     if (::GetObject((HGDIOBJ)mask.m_maskBitmap, sizeof(bmp), &bmp) == 0)
     {
-        wxFAIL_MSG(wxT("Cannot retrieve the dimensions of the wxMask to copy"));
+        //wxFAIL_MSG(wxT("Cannot retrieve the dimensions of the wxMask to copy"));
         return;
     }
 
@@ -1448,7 +1448,7 @@ bool wxMask::Create(const wxBitmap& bitmap)
 {
 #ifndef __WXMICROWIN__
     //wxCHECK_MSG( bitmap.IsOk() && bitmap.GetDepth() == 1, false,
-                 wxT("can't create mask from invalid or not monochrome bitmap") );
+                 //wxT("can't create mask from invalid or not monochrome bitmap") );
 
     if ( m_maskBitmap )
     {
@@ -1533,8 +1533,8 @@ bool wxMask::Create(const wxBitmap& bitmap, const wxColour& colour)
     bool ok = true;
 
     // SelectObject() will fail
-    wxASSERT_MSG( !bitmap.GetSelectedInto(),
-                  wxT("bitmap can't be selected in another DC") );
+    //wxASSERT_MSG( !bitmap.GetSelectedInto(),
+                  //wxT("bitmap can't be selected in another DC") );
 
     HGDIOBJ hbmpSrcOld = ::SelectObject(srcDC, GetHbitmapOf(bitmap));
     if ( !hbmpSrcOld )

@@ -1112,10 +1112,10 @@ void wxMSWDCImpl::DoDrawSpline(const wxPointList *points)
 
     WXMICROWIN_CHECK_HDC
 
-    wxASSERT_MSG( points, wxT("NULL pointer to spline points?") );
+    //wxASSERT_MSG( points, wxT("NULL pointer to spline points?") );
 
     const size_t n_points = points->GetCount();
-    wxASSERT_MSG( n_points > 2 , wxT("incomplete list of spline points?") );
+    //wxASSERT_MSG( n_points > 2 , wxT("incomplete list of spline points?") );
 
     const size_t n_bezier_points = n_points * 3 + 1;
     POINT *lppt = (POINT *)malloc(n_bezier_points*sizeof(POINT));
@@ -1370,7 +1370,7 @@ void wxMSWDCImpl::DoDrawBitmap( const wxBitmap &bmp, wxCoord x, wxCoord y, bool 
         HDC memdc = ::CreateCompatibleDC( cdc );
         HBITMAP hbitmap = (HBITMAP) bmp.GetHBITMAP( );
 
-        wxASSERT_MSG( hbitmap, wxT("bitmap is ok but HBITMAP is NULL?") );
+        //wxASSERT_MSG( hbitmap, wxT("bitmap is ok but HBITMAP is NULL?") );
 
         wxTextColoursChanger textCol(GetHdc(), *this);
 
@@ -1766,7 +1766,7 @@ void wxMSWDCImpl::SetRop(WXHDC dc)
         case wxOR:           rop = R2_MERGEPEN;      break;
         case wxSET:          rop = R2_WHITE;         break;
         default:
-            wxFAIL_MSG( wxS("unknown logical function") );
+            //wxFAIL_MSG( wxS("unknown logical function") );
             return;
     }
 
@@ -1860,7 +1860,7 @@ void wxMSWDCImpl::DoGetTextExtent(const wxString& string, wxCoord *x, wxCoord *y
     HFONT hfontOld;
     if ( font )
     {
-        wxASSERT_MSG( font->IsOk(), wxT("invalid font in wxMSWDCImpl::GetTextExtent") );
+        //wxASSERT_MSG( font->IsOk(), wxT("invalid font in wxMSWDCImpl::GetTextExtent") );
 
         hfontOld = (HFONT)::SelectObject(GetHdc(), GetHfontOf(*font));
     }
@@ -2063,7 +2063,7 @@ void wxMSWDCImpl::SetMapMode(wxMappingMode mode)
                 break;
 
             default:
-                wxFAIL_MSG( wxT("unknown mapping mode in SetMapMode") );
+                break;// wxFAIL_MSG(wxT("unknown mapping mode in SetMapMode"));
         }
     }
 
@@ -2299,7 +2299,7 @@ bool wxMSWDCImpl::DoStretchBlit(wxCoord xdest, wxCoord ydest,
         case wxSRC_INVERT:   dwRop = NOTSRCCOPY;       break;
         case wxNOR:          dwRop = NOTSRCCOPY;       break;
         default:
-           wxFAIL_MSG( wxT("unsupported logical function") );
+           //wxFAIL_MSG( wxT("unsupported logical function") );
            return false;
     }
 
@@ -2724,8 +2724,8 @@ static bool AlphaBlt(HDC hdcDst,
                      HDC hdcSrc,
                      const wxBitmap& bmp)
 {
-    wxASSERT_MSG( bmp.IsOk() && bmp.HasAlpha(), wxT("AlphaBlt(): invalid bitmap") );
-    wxASSERT_MSG( hdcDst && hdcSrc, wxT("AlphaBlt(): invalid HDC") );
+    /*wxASSERT_MSG( bmp.IsOk() && bmp.HasAlpha(), wxT("AlphaBlt(): invalid bitmap") );
+    wxASSERT_MSG( hdcDst && hdcSrc, wxT("AlphaBlt(): invalid HDC") );*/
 
     // do we have AlphaBlend() and company in the headers?
 #if defined(AC_SRC_OVER) && wxUSE_DYNLIB_CLASS
@@ -2798,7 +2798,7 @@ wxAlphaBlend(HDC hdcDst, int xDst, int yDst,
                      dataSrc((wxBitmap &)bmpSrc);
 
     //wxCHECK_RET( dataDst && dataSrc,
-                    wxT("failed to get raw data in wxAlphaBlend") );
+                    //wxT("failed to get raw data in wxAlphaBlend") );
 
     wxAlphaPixelData::Iterator pDst(dataDst),
                                pSrc(dataSrc);

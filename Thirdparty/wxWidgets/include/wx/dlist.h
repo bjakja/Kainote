@@ -246,7 +246,7 @@ public:
         int IndexOf() const
         {
             //wxCHECK_MSG( m_list, wxNOT_FOUND,
-                         "node doesn't belong to a list in IndexOf" );
+                         //"node doesn't belong to a list in IndexOf" );
 
             int i;
             Node *prev = m_previous;
@@ -340,8 +340,8 @@ public:
 
     void Assign(const wxDList<T> &list)
     {
-        wxASSERT_MSG( !list.m_destroy,
-                      "copying list which owns it's elements is a bad idea" );
+        //wxASSERT_MSG( !list.m_destroy,
+                      //"copying list which owns it's elements is a bad idea" );
         Clear();
         m_destroy = list.m_destroy;
         m_nodeFirst = NULL;
@@ -386,7 +386,7 @@ public:
     nodetype *Insert( nodetype *position, T* object )
     {
         //wxCHECK_MSG( !position || position->m_list == this, NULL,
-                     "can't insert before a node from another list" );
+                     //"can't insert before a node from another list" );
 
         // previous and next node for the node being inserted
         nodetype *prev, *next;

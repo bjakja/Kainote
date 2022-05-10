@@ -192,7 +192,7 @@ int wxRadioBoxBase::GetNextItem(int item, wxDirection dir, long style) const
                 break;
 
             default:
-                wxFAIL_MSG( wxT("unexpected wxDirection value") );
+                //wxFAIL_MSG( wxT("unexpected wxDirection value") );
                 return wxNOT_FOUND;
         }
 
@@ -224,8 +224,8 @@ int wxRadioBoxBase::GetNextItem(int item, wxDirection dir, long style) const
                 item = 0;
         }
 
-        wxASSERT_MSG( item < count && item >= 0,
-                      wxT("logic error in wxRadioBox::GetNextItem()") );
+        //wxASSERT_MSG( item < count && item >= 0,
+                      //wxT("logic error in wxRadioBox::GetNextItem()") );
     }
     // we shouldn't select the non-active items, continue looking for a
     // visible and shown one unless we came back to the item we started from in
@@ -239,7 +239,7 @@ int wxRadioBoxBase::GetNextItem(int item, wxDirection dir, long style) const
 
 void wxRadioBoxBase::SetItemToolTip(unsigned int item, const wxString& text)
 {
-    wxASSERT_MSG( item < GetCount(), wxT("Invalid item index") );
+    //wxASSERT_MSG( item < GetCount(), wxT("Invalid item index") );
 
     // extend the array to have entries for all our items on first use
     if ( !m_itemsTooltips )
@@ -349,7 +349,7 @@ wxString wxRadioBoxBase::DoGetHelpTextAtPoint(const wxWindow *derived,
             break;
 
         default:
-            wxFAIL_MSG( "unknown help even origin" );
+            break;// wxFAIL_MSG("unknown help even origin");
             // fall through
 
         case wxHelpEvent::Origin_Unknown:

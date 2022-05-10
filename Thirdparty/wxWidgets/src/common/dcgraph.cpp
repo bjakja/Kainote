@@ -856,7 +856,7 @@ bool wxGCDCImpl::DoStretchBlit(
     wxCompositionMode mode = TranslateRasterOp(logical_func);
     if ( mode == wxCOMPOSITION_INVALID )
     {
-        wxFAIL_MSG( wxT("Blitting is not supported with this logical operation.") );
+        //wxFAIL_MSG( wxT("Blitting is not supported with this logical operation.") );
         return false;
     }
 
@@ -912,7 +912,7 @@ bool wxGCDCImpl::DoStretchBlit(
         }
         else
         {
-            wxFAIL_MSG( wxT("Cannot Blit. Unable to get contents of DC as bitmap.") );
+            //wxFAIL_MSG( wxT("Cannot Blit. Unable to get contents of DC as bitmap.") );
             retval = false;
         }
 

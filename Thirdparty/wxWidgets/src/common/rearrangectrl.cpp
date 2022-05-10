@@ -173,8 +173,8 @@ void wxRearrangeList::OnCheck(wxCommandEvent& event)
 
     m_order[n] = ~m_order[n];
 
-    wxASSERT_MSG( (m_order[n] >= 0) == IsChecked(n),
-                  "discrepancy between internal state and GUI" );
+    //wxASSERT_MSG( (m_order[n] >= 0) == IsChecked(n),
+                  //"discrepancy between internal state and GUI" );
 }
 
 // ============================================================================
@@ -312,8 +312,8 @@ void wxRearrangeDialog::AddExtraControls(wxWindow *win)
     wxSizer * const sizer = GetSizer();
     //wxCHECK_RET( sizer, "the dialog must be created first" );
 
-    wxASSERT_MSG( sizer->GetChildren().GetCount() == Pos_Max,
-                  "calling AddExtraControls() twice?" );
+    //wxASSERT_MSG( sizer->GetChildren().GetCount() == Pos_Max,
+                  //"calling AddExtraControls() twice?" );
 
     sizer->Insert(Pos_Buttons, win, wxSizerFlags().Expand().Border());
 

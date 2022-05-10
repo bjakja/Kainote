@@ -55,7 +55,7 @@ wxFFile::wxFFile(const wxString& filename, const wxString& mode)
 
 bool wxFFile::Open(const wxString& filename, const wxString& mode)
 {
-    wxASSERT_MSG( !m_fp, wxT("should close or detach the old file first") );
+    //wxASSERT_MSG( !m_fp, wxT("should close or detach the old file first") );
 
     m_fp = wxFopen(filename, mode);
 
@@ -187,7 +187,7 @@ bool wxFFile::Seek(wxFileOffset ofs, wxSeekMode mode)
     switch ( mode )
     {
         default:
-            wxFAIL_MSG(wxT("unknown seek mode"));
+            break;//wxFAIL_MSG(wxT("unknown seek mode"));
             // still fall through
 
         case wxFromStart:
@@ -227,7 +227,7 @@ bool wxFFile::Seek(wxFileOffset ofs, wxSeekMode mode)
 wxFileOffset wxFFile::Tell() const
 {
     //wxCHECK_MSG( IsOpened(), wxInvalidOffset,
-                 wxT("wxFFile::Tell(): file is closed!") );
+                 //wxT("wxFFile::Tell(): file is closed!") );
 
     wxFileOffset rc = wxFtell(m_fp);
     if ( rc == wxInvalidOffset )
@@ -242,7 +242,7 @@ wxFileOffset wxFFile::Tell() const
 wxFileOffset wxFFile::Length() const
 {
     //wxCHECK_MSG( IsOpened(), wxInvalidOffset,
-                 wxT("wxFFile::Length(): file is closed!") );
+                 //wxT("wxFFile::Length(): file is closed!") );
 
     wxFFile& self = *const_cast<wxFFile *>(this);
 

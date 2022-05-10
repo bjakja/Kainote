@@ -202,7 +202,7 @@ int wxControlBase::FindAccelIndex(const wxString& label, wxString *labelOnly)
                 }
                 else
                 {
-                    wxFAIL_MSG(wxT("duplicate accel char in control label"));
+                    //wxFAIL_MSG(wxT("duplicate accel char in control label"));
                 }
             }
         }
@@ -397,11 +397,11 @@ wxString wxControlBase::DoEllipsizeSingleLine(const wxString& curLine, const wxD
                                               wxEllipsizeMode mode, int maxFinalWidthPx,
                                               int replacementWidthPx)
 {
-    wxASSERT_MSG(replacementWidthPx > 0, "Invalid parameters");
+    /*wxASSERT_MSG(replacementWidthPx > 0, "Invalid parameters");
     wxASSERT_LEVEL_2_MSG(!curLine.Contains('\n'),
                          "Use Ellipsize() instead!");
 
-    wxASSERT_MSG( mode != wxELLIPSIZE_NONE, "shouldn't be called at all then" );
+    wxASSERT_MSG( mode != wxELLIPSIZE_NONE, "shouldn't be called at all then" );*/
 
     // NOTE: this function assumes that any mnemonic/tab character has already
     //       been handled if it was necessary to handle them (see Ellipsize())
@@ -503,7 +503,7 @@ wxString wxControlBase::DoEllipsizeSingleLine(const wxString& curLine, const wxD
 
         case wxELLIPSIZE_NONE:
         default:
-            wxFAIL_MSG("invalid ellipsize mode");
+            //wxFAIL_MSG("invalid ellipsize mode");
             return curLine;
     }
 

@@ -143,7 +143,7 @@ void wxFontBase::SetDefaultEncoding(wxFontEncoding encoding)
     // GetDefaultEncoding() should return something != wxFONTENCODING_DEFAULT
     // and, besides, using this value here doesn't make any sense
     //wxCHECK_RET( encoding != wxFONTENCODING_DEFAULT,
-                 wxT("can't set default encoding to wxFONTENCODING_DEFAULT") );
+                 //wxT("can't set default encoding to wxFONTENCODING_DEFAULT") );
 
     ms_encodingDefault = encoding;
 }
@@ -242,7 +242,7 @@ bool wxFontBase::IsUsingSizeInPixels() const
 void wxFontBase::SetPixelSize( const wxSize& pixelSize )
 {
     //wxCHECK_RET( pixelSize.GetWidth() >= 0 && pixelSize.GetHeight() > 0,
-                 "Negative values for the pixel size or zero pixel height are not allowed" );
+                 //"Negative values for the pixel size or zero pixel height are not allowed" );
 
     wxScreenDC dc;
 
@@ -327,11 +327,11 @@ wxString wxFontBase::GetNativeFontInfoDesc() const
     if ( fontInfo )
     {
         fontDesc = fontInfo->ToString();
-        wxASSERT_MSG(!fontDesc.empty(), wxT("This should be a non-empty string!"));
+        //wxASSERT_MSG(!fontDesc.empty(), wxT("This should be a non-empty string!"));
     }
     else
     {
-        wxFAIL_MSG(wxT("Derived class should have created the wxNativeFontInfo!"));
+        //wxFAIL_MSG(wxT("Derived class should have created the wxNativeFontInfo!"));
     }
 
     return fontDesc;
@@ -346,11 +346,11 @@ wxString wxFontBase::GetNativeFontInfoUserDesc() const
     if ( fontInfo )
     {
         fontDesc = fontInfo->ToUserString();
-        wxASSERT_MSG(!fontDesc.empty(), wxT("This should be a non-empty string!"));
+        //wxASSERT_MSG(!fontDesc.empty(), wxT("This should be a non-empty string!"));
     }
     else
     {
-        wxFAIL_MSG(wxT("Derived class should have created the wxNativeFontInfo!"));
+        //wxFAIL_MSG(wxT("Derived class should have created the wxNativeFontInfo!"));
     }
 
     return fontDesc;
@@ -799,7 +799,7 @@ wxString wxNativeFontInfo::ToUserString() const
     switch ( GetWeight() )
     {
         default:
-            wxFAIL_MSG( wxT("unknown font weight") );
+            break;// wxFAIL_MSG(wxT("unknown font weight"));
             // fall through
 
         case wxFONTWEIGHT_NORMAL:
@@ -817,7 +817,7 @@ wxString wxNativeFontInfo::ToUserString() const
     switch ( GetStyle() )
     {
         default:
-            wxFAIL_MSG( wxT("unknown font style") );
+            break;// wxFAIL_MSG(wxT("unknown font style"));
             // fall through
 
         case wxFONTSTYLE_NORMAL:
@@ -883,7 +883,7 @@ wxString wxNativeFontInfo::ToUserString() const
                 break;
 
             default:
-                wxFAIL_MSG( "unknown font family" );
+                break;// wxFAIL_MSG("unknown font family");
         }
 
         if ( !familyStr.empty() )

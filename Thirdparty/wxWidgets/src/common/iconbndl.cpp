@@ -211,8 +211,8 @@ wxIcon wxIconBundle::GetIcon(const wxSize& size, int flags) const
     wxCoord sizeY = size.y;
     if ( size == wxDefaultSize )
     {
-        wxASSERT_MSG( flags == FALLBACK_SYSTEM,
-                      wxS("Must have valid size if not using FALLBACK_SYSTEM") );
+        //wxASSERT_MSG( flags == FALLBACK_SYSTEM,
+                      //wxS("Must have valid size if not using FALLBACK_SYSTEM") );
 
         sizeX = sysX;
         sizeY = sysY;

@@ -273,11 +273,11 @@ bool wxRegExImpl::Compile(const wxString& expr, int flags)
 #   define FLAVORS wxRE_BASIC
 #else
 #   define FLAVORS (wxRE_ADVANCED | wxRE_BASIC)
-    wxASSERT_MSG( (flags & FLAVORS) != FLAVORS,
-                  wxT("incompatible flags in wxRegEx::Compile") );
+    /*wxASSERT_MSG( (flags & FLAVORS) != FLAVORS,
+                  wxT("incompatible flags in wxRegEx::Compile") );*/
 #endif
-    wxASSERT_MSG( !(flags & ~(FLAVORS | wxRE_ICASE | wxRE_NOSUB | wxRE_NEWLINE)),
-                  wxT("unrecognized flags in wxRegEx::Compile") );
+    /*wxASSERT_MSG( !(flags & ~(FLAVORS | wxRE_ICASE | wxRE_NOSUB | wxRE_NEWLINE)),
+                  wxT("unrecognized flags in wxRegEx::Compile") );*/
 
     // translate our flags to regcomp() ones
     int flagsRE = 0;
@@ -397,8 +397,8 @@ bool wxRegExImpl::Matches(const wxRegChar *str,
     //wxCHECK_MSG( IsValid(), false, wxT("must successfully Compile() first") );
 
     // translate our flags to regexec() ones
-    wxASSERT_MSG( !(flags & ~(wxRE_NOTBOL | wxRE_NOTEOL)),
-                  wxT("unrecognized flags in wxRegEx::Matches") );
+    /*wxASSERT_MSG( !(flags & ~(wxRE_NOTBOL | wxRE_NOTEOL)),
+                  wxT("unrecognized flags in wxRegEx::Matches") );*/
 
     int flagsRE = 0;
     if ( flags & wxRE_NOTBOL )
@@ -560,7 +560,7 @@ int wxRegExImpl::Replace(wxString *text,
                     size_t start, len;
                     if ( !GetMatch(&start, &len, index) )
                     {
-                        wxFAIL_MSG( wxT("invalid back reference") );
+                        /*wxFAIL_MSG( wxT("invalid back reference") );*/
 
                         // just eat it...
                     }
@@ -589,7 +589,7 @@ int wxRegExImpl::Replace(wxString *text,
         if ( !GetMatch(&start, &len) )
         {
             // we did have match as Matches() returned true above!
-            wxFAIL_MSG( wxT("internal logic error in wxRegEx::Replace") );
+            //wxFAIL_MSG( wxT("internal logic error in wxRegEx::Replace") );
 
             return wxNOT_FOUND;
         }

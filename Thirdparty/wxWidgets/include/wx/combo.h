@@ -378,8 +378,8 @@ public:
     // frame will appear as if the focus has been lost from it.
     void UseAltPopupWindow( bool enable = true )
     {
-        wxASSERT_MSG( !m_winPopup,
-                      wxT("call this only before SetPopupControl") );
+        //wxASSERT_MSG( !m_winPopup,
+                      //wxT("call this only before SetPopupControl") );
 
         if ( enable )
             m_iFlags |= wxCC_IFLAG_USE_ALT_POPUP;

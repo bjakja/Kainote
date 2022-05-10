@@ -419,19 +419,19 @@ WXHWND wxComboBox::GetEditHWND() const
 {
     // this function should not be called for wxCB_READONLY controls, it is
     // the callers responsibility to check this
-    wxASSERT_MSG( !HasFlag(wxCB_READONLY),
-                  wxT("read-only combobox doesn't have any edit control") );
+    /*wxASSERT_MSG( !HasFlag(wxCB_READONLY),
+                  wxT("read-only combobox doesn't have any edit control") );*/
 
     WXHWND hWndEdit = GetEditHWNDIfAvailable();
-    wxASSERT_MSG( hWndEdit, wxT("combobox without edit control?") );
+    //wxASSERT_MSG( hWndEdit, wxT("combobox without edit control?") );
 
     return hWndEdit;
 }
 
 wxWindow *wxComboBox::GetEditableWindow()
 {
-    wxASSERT_MSG( !HasFlag(wxCB_READONLY),
-                  wxT("read-only combobox doesn't have any edit control") );
+    /*wxASSERT_MSG( !HasFlag(wxCB_READONLY),
+                  wxT("read-only combobox doesn't have any edit control") );*/
 
     return this;
 }

@@ -190,7 +190,7 @@ public:                                                             \
   void Remove(T lItem)                                              \
   {                                                                 \
     int n = Index(lItem);                                           \
-    //wxCHECK_RET( n != wxNOT_FOUND, _WX_ERROR_REMOVE );              \
+    /*wxCHECK_RET( n != wxNOT_FOUND, _WX_ERROR_REMOVE );  */            \
     RemoveAt((size_t)n);                                            \
   }                                                                 \
   void RemoveAt(size_t uiIndex, size_t nRemove = 1)                 \
@@ -553,7 +553,7 @@ public:                                                               \
     { base::erase(begin() + uiIndex, begin() + uiIndex + nRemove); }  \
   void Remove(T lItem)                                                \
     { int iIndex = Index(lItem);                                      \
-      //wxCHECK_RET( iIndex != wxNOT_FOUND, _WX_ERROR_REMOVE );         \
+      /*wxCHECK_RET( iIndex != wxNOT_FOUND, _WX_ERROR_REMOVE ); */        \
       base::erase(begin() + iIndex); }                                \
                                                                       \
 private:                                                              \

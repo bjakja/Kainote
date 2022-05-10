@@ -506,7 +506,7 @@ int wxConsoleStderr::GetCommandHistory(wxWxCharBuffer& buf) const
 
         if ( len2 != len )
         {
-            wxFAIL_MSG( wxT("failed getting history?") );
+            //wxFAIL_MSG( wxT("failed getting history?") );
         }
     }
 
@@ -515,7 +515,7 @@ int wxConsoleStderr::GetCommandHistory(wxWxCharBuffer& buf) const
 
 bool wxConsoleStderr::IsHistoryUnchanged() const
 {
-    wxASSERT_MSG( m_ok == 1, wxT("shouldn't be called if not initialized") );
+    //wxASSERT_MSG( m_ok == 1, wxT("shouldn't be called if not initialized") );
 
     // get (possibly changed) command history
     wxWxCharBuffer history;
@@ -528,8 +528,8 @@ bool wxConsoleStderr::IsHistoryUnchanged() const
 
 bool wxConsoleStderr::Write(const wxString& text)
 {
-    wxASSERT_MSG( m_hStderr != INVALID_HANDLE_VALUE,
-                    wxT("should only be called if Init() returned true") );
+    //wxASSERT_MSG( m_hStderr != INVALID_HANDLE_VALUE,
+                    //wxT("should only be called if Init() returned true") );
 
     // get current position
     CONSOLE_SCREEN_BUFFER_INFO csbi;
@@ -1052,7 +1052,7 @@ terminate the program,\r\n\
             throw;
 
         default:
-            wxFAIL_MSG( wxT("unexpected MessageBox() return code") );
+            break;// wxFAIL_MSG(wxT("unexpected MessageBox() return code"));
             // fall through
 
         case IDRETRY:

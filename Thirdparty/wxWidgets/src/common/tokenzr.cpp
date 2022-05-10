@@ -47,7 +47,7 @@ find_first_of(const wxChar *delims, size_t len,
               const wxString::const_iterator& from,
               const wxString::const_iterator& end)
 {
-    wxASSERT_MSG( from <= end,  wxT("invalid index") );
+    //wxASSERT_MSG( from <= end,  wxT("invalid index") );
 
     for ( wxString::const_iterator i = from; i != end; ++i )
     {
@@ -63,7 +63,7 @@ find_first_not_of(const wxChar *delims, size_t len,
                   const wxString::const_iterator& from,
                   const wxString::const_iterator& end)
 {
-    wxASSERT_MSG( from <= end,  wxT("invalid index") );
+    //wxASSERT_MSG( from <= end,  wxT("invalid index") );
 
     for ( wxString::const_iterator i = from; i != end; ++i )
     {
@@ -128,7 +128,7 @@ void wxStringTokenizer::SetString(const wxString& str,
 
 void wxStringTokenizer::Reinit(const wxString& str)
 {
-    wxASSERT_MSG( IsOk(), wxT("you should call SetString() first") );
+    //wxASSERT_MSG( IsOk(), wxT("you should call SetString() first") );
 
     m_string = str;
     m_stringEnd = m_string.end();
@@ -190,7 +190,7 @@ bool wxStringTokenizer::DoHasMoreTokens() const
 
         case wxTOKEN_INVALID:
         case wxTOKEN_DEFAULT:
-            wxFAIL_MSG( wxT("unexpected tokenizer mode") );
+            break;// wxFAIL_MSG(wxT("unexpected tokenizer mode"));
             // fall through
 
         case wxTOKEN_STRTOK:

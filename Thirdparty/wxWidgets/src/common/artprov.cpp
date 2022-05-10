@@ -218,7 +218,7 @@ wxArtProvider::~wxArtProvider()
                                              const wxSize& size)
 {
     // safety-check against writing client,id,size instead of id,client,size:
-    wxASSERT_MSG( client.Last() == wxT('C'), wxT("invalid 'client' parameter") );
+    //wxASSERT_MSG( client.Last() == wxT('C'), wxT("invalid 'client' parameter") );
 
     //wxCHECK_MSG( sm_providers, wxNullBitmap, wxT("no wxArtProvider exists") );
 
@@ -295,7 +295,7 @@ wxIconBundle wxArtProvider::GetIconBundle(const wxArtID& id, const wxArtClient& 
 wxIconBundle wxArtProvider::DoGetIconBundle(const wxArtID& id, const wxArtClient& client)
 {
     // safety-check against writing client,id,size instead of id,client,size:
-    wxASSERT_MSG( client.Last() == wxT('C'), wxT("invalid 'client' parameter") );
+    //wxASSERT_MSG( client.Last() == wxT('C'), wxT("invalid 'client' parameter") );
 
     //wxCHECK_MSG( sm_providers, wxNullIconBundle, wxT("no wxArtProvider exists") );
 
@@ -338,7 +338,7 @@ wxArtID wxArtProvider::GetMessageBoxIconId(int flags)
     switch ( flags & wxICON_MASK )
     {
         default:
-            wxFAIL_MSG(wxT("incorrect message box icon flags"));
+            break;// wxFAIL_MSG(wxT("incorrect message box icon flags"));
             // fall through
 
         case wxICON_ERROR:

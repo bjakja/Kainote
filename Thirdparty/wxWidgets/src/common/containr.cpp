@@ -156,8 +156,8 @@ void wxControlContainer::SetLastFocus(wxWindow *win)
                 // which has pushed itself as an event handler for the menubar.
                 // (under wxGTK)
 
-                wxASSERT_MSG( winParent,
-                              wxT("Setting last focus for a window that is not our child?") );
+                //wxASSERT_MSG( winParent,
+                              //wxT("Setting last focus for a window that is not our child?") );
             }
         }
 

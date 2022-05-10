@@ -112,7 +112,7 @@ private:
     // common part of Init()s
     void InitCommon(wxDC *dc, int style)
     {
-        wxASSERT_MSG( !m_dc, wxT("wxBufferedDC already initialised") );
+        //wxASSERT_MSG( !m_dc, wxT("wxBufferedDC already initialised") );
 
         m_dc = dc;
         m_style = style;
@@ -221,10 +221,10 @@ public:
     wxAutoBufferedPaintDC(wxWindow* win)
         : wxAutoBufferedPaintDCBase(win)
     {
-        wxASSERT_MSG( win->GetBackgroundStyle() == wxBG_STYLE_PAINT,
+        /*wxASSERT_MSG( win->GetBackgroundStyle() == wxBG_STYLE_PAINT,
             "You need to call SetBackgroundStyle(wxBG_STYLE_PAINT) in ctor, "
             "and also, if needed, paint the background in wxEVT_PAINT handler."
-        );
+        );*/
     }
 
     virtual ~wxAutoBufferedPaintDC() { }
