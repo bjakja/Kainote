@@ -1,4 +1,4 @@
-#include <stdafx.h>
+//#include <stdafx.h>
 #include <vd2/system/process.h>
 #include <vd2/system/VDString.h>
 #include <vd2/system/w32assist.h>
@@ -42,6 +42,6 @@ void VDLaunchProgram(const wchar_t *path) {
 			success = CreateProcessA(pathA.c_str(), (LPSTR)cmdLineA.c_str(), NULL, NULL, FALSE, createFlags, NULL, winDir, &startupInfoA, &processInfo);
 	}
 
-	if (!success)
-		throw MyWin32Error("Unable to launch process: %%s", GetLastError());
+	//if (!success)
+		//throw MyWin32Error("Unable to launch process: %%s", GetLastError());
 }

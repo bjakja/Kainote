@@ -23,7 +23,7 @@
 //	3.	This notice may not be removed or altered from any source
 //		distribution.
 
-#include <stdafx.h>
+//#include <stdafx.h>
 #include <vd2/system/hash.h>
 #include <vd2/system/VDString.h>
 #include <vd2/system/vdstl_hash.h>

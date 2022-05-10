@@ -23,10 +23,10 @@
 //	3.	This notice may not be removed or altered from any source
 //		distribution.
 
-#include <stdafx.h>
+//#include <stdafx.h>
 #include <vd2/system/vdstl_hashtable.h>
 
-vdhashtable_base_node *const vdhashtable_base::sEmptyBucket = {NULL};
+vdhashtable_base_node *const vdhashtable_base::sEmptyBucket = {nullptr};
 
 vdhashtable_base::vdhashtable_base()
 	: mBucketCount(0)
@@ -45,7 +45,7 @@ vdhashtable_base::size_type vdhashtable_base::max_bucket_count() const {
 }
 
 vdhashtable_base::size_type vdhashtable_base::bucket_size(size_type n) const {
-	VDASSERT(n < (size_type)(mpBucketEnd - mpBucketStart));
+	//VDASSERT(n < (size_type)(mpBucketEnd - mpBucketStart));
 
 	size_type len = 0;
 	for(vdhashtable_base_node *p = mpBucketStart[n]; p; p = p->mpHashNext)

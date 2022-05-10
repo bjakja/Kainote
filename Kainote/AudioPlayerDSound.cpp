@@ -107,7 +107,7 @@ void DirectSoundPlayer2Thread::Run()
 	int current_latency = wanted_latency;
 	const DWORD wanted_latency_bytes = wanted_latency * waveFormat.nSamplesPerSec * provider->GetBytesPerSample() / 1000;
 
-	while (running);
+	while (running)
 	{
 		DWORD wait_result = WaitForMultipleObjects(sizeof(events_to_wait)/sizeof(HANDLE), 
 			events_to_wait, FALSE, current_latency);
@@ -129,14 +129,14 @@ void DirectSoundPlayer2Thread::Run()
 				if (FAILED(audioBuffer->SetCurrentPosition(0)))
 					KaiLogSilent("Could not reset playback buffer cursor before filling first buffer.");
 
-					HRESULT res = audioBuffer->Lock(buffer_offset, 0, (void **) buf, &buf_size, 0, 0, DSBLOCK_ENTIREBUFFER);
+				HRESULT res = audioBuffer->Lock(buffer_offset, 0, (void **) &buf, &buf_size, 0, 0, DSBLOCK_ENTIREBUFFER);
 				while (FAILED(res)) // yes, while, so I can break out of it without a goto!
 				{
 					if (res == DSERR_BUFFERLOST)
 					{
 						// Try to regain the buffer
 						if (SUCCEEDED(audioBuffer->Restore()) &&
-							SUCCEEDED(audioBuffer->Lock(buffer_offset, 0, ((void**) buf), &buf_size, 0, 0, DSBLOCK_ENTIREBUFFER)))
+							SUCCEEDED(audioBuffer->Lock(buffer_offset, 0, ((void**) &buf), &buf_size, 0, 0, DSBLOCK_ENTIREBUFFER)))
 						{
 							break;
 						}
@@ -268,14 +268,14 @@ do_fill_buffer:
 					//assert(buffer_offset < bufSize);
 					//assert((unsigned long)bytes_needed <= bufSize);
 
-					HRESULT res = audioBuffer->Lock(buffer_offset, bytes_needed, (void** )buf1, &buf1sz, (void** )buf2, &buf2sz, 0);
+					HRESULT res = audioBuffer->Lock(buffer_offset, bytes_needed, (void** )&buf1, &buf1sz, (void** )&buf2, &buf2sz, 0);
 					switch (res)
 					{
 					case DSERR_BUFFERLOST:
 						// Try to regain the buffer
 						// When the buffer was lost the entire contents was lost too, so we have to start over
 						if (SUCCEEDED(audioBuffer->Restore()) &&
-							SUCCEEDED(audioBuffer->Lock(0, bufSize, (void**)buf1, &buf1sz, (void**)buf2, &buf2sz, 0)) &&
+							SUCCEEDED(audioBuffer->Lock(0, bufSize, (void**)&buf1, &buf1sz, (void**)&buf2, &buf2sz, 0)) &&
 							SUCCEEDED(audioBuffer->Play(0, 0, DSBPLAY_LOOPING)))
 						{
 							KaiLogDebug("DirectSoundPlayer2: Lost and restored buffer");
