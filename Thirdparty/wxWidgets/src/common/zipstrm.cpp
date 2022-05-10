@@ -659,7 +659,7 @@ public:
     bool IsEmpty() const { return m_entries.empty(); }
 
 private:
-    ~wxZipWeakLinks() { //wxASSERT(IsEmpty()); }
+    ~wxZipWeakLinks() { /*wxASSERT(IsEmpty());*/ }
 
     typedef wxOffsetZipEntryMap_::key_type key_type;
 
@@ -1700,7 +1700,7 @@ bool wxZipInputStream::DoOpen(wxZipEntry *entry, bool raw)
         if (AfterHeader() && entry->GetKey() == m_entry.GetOffset())
             return true;
         // can only open the current entry on a non-seekable stream
-        wxCHECK(m_parentSeekable, false);
+        //wxCHECK(m_parentSeekable, false);
     }
 
     m_lasterror = wxSTREAM_READ_ERROR;

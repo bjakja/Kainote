@@ -147,8 +147,8 @@ public:
     UpdatesCountFilter(int& count)
         : m_count(count)
     {
-        wxASSERT_MSG( m_count == -1 || m_count == -2,
-                      wxT("wrong initial m_updatesCount value") );
+        //wxASSERT_MSG( m_count == -1 || m_count == -2,
+                      //wxT("wrong initial m_updatesCount value") );
 
         if (m_count != -2)
             m_count = 0;

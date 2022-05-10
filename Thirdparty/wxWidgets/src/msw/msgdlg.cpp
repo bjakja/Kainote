@@ -365,8 +365,8 @@ void wxMessageDialog::AdjustButtonLabels()
         }
         else
         {
-            wxASSERT_MSG( wBtnOld == rc.right - rc.left,
-                          "all buttons are supposed to be of same width" );
+            //wxASSERT_MSG( wBtnOld == rc.right - rc.left,
+                          //"all buttons are supposed to be of same width" );
         }
 
         const int widthNeeded = wxMSWButton::GetFittingSize(this, sizeLabel).x;

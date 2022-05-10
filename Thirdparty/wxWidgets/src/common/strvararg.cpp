@@ -344,7 +344,7 @@ private:
 
     void CopyAllBefore()
     {
-        wxASSERT_MSG( m_fmtOrig && m_fmt.data() == NULL, "logic error" );
+        //wxASSERT_MSG( m_fmtOrig && m_fmt.data() == NULL, "logic error" );
 
         // the modified format string is guaranteed to be no longer than
         // 3/2 of the original (worst case: the entire format string consists

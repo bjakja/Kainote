@@ -563,7 +563,7 @@ wxLog *wxLog::SetActiveTarget(wxLog *pLogger)
 /* static */
 wxLog *wxLog::SetThreadActiveTarget(wxLog *logger)
 {
-    wxASSERT_MSG( !wxThread::IsMain(), "use SetActiveTarget() for main thread" );
+    //wxASSERT_MSG( !wxThread::IsMain(), "use SetActiveTarget() for main thread" );
 
     wxLog * const oldLogger = wxThreadInfo.logger;
     if ( oldLogger )

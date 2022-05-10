@@ -944,7 +944,7 @@ bool wxFileConfig::DoWriteString(const wxString& key, const wxString& szValue)
     {
             // setting the value of a group is an error
 
-        wxASSERT_MSG( szValue.empty(), wxT("can't set value of a group!") );
+        //wxASSERT_MSG( szValue.empty(), wxT("can't set value of a group!") );
 
             // ... except if it's empty in which case it's a way to force it's creation
 
@@ -1082,8 +1082,8 @@ bool wxFileConfig::Save(wxOutputStream& os, const wxMBConv& conv)
 bool wxFileConfig::RenameEntry(const wxString& oldName,
                                const wxString& newName)
 {
-    wxASSERT_MSG( oldName.find(wxCONFIG_PATH_SEPARATOR) == wxString::npos,
-                   wxT("RenameEntry(): paths are not supported") );
+    //wxASSERT_MSG( oldName.find(wxCONFIG_PATH_SEPARATOR) == wxString::npos,
+                   //wxT("RenameEntry(): paths are not supported") );
 
     // check that the entry exists
     wxFileConfigEntry *oldEntry = m_pCurrentGroup->FindEntry(oldName);
@@ -1378,8 +1378,8 @@ void wxFileConfigGroup::SetLine(wxFileConfigLineList *pLine)
 {
     // for a normal (i.e. not root) group this method shouldn't be called twice
     // unless we are resetting the line
-    wxASSERT_MSG( !m_pParent || !m_pLine || !pLine,
-                   wxT("changing line for a non-root group?") );
+    //wxASSERT_MSG( !m_pParent || !m_pLine || !pLine,
+                   //wxT("changing line for a non-root group?") );
 
     m_pLine = pLine;
 }
@@ -1466,7 +1466,7 @@ wxFileConfigLineList *wxFileConfigGroup::GetLastGroupLine()
     {
         wxFileConfigLineList *pLine = m_pLastGroup->GetLastGroupLine();
 
-        wxASSERT_MSG( pLine, wxT("last group must have !NULL associated line") );
+        //wxASSERT_MSG( pLine, wxT("last group must have !NULL associated line") );
 
         return pLine;
     }
@@ -1488,7 +1488,7 @@ wxFileConfigLineList *wxFileConfigGroup::GetLastEntryLine()
     {
         wxFileConfigLineList    *pLine = m_pLastEntry->GetLine();
 
-        wxASSERT_MSG( pLine, wxT("last entry must have !NULL associated line") );
+        //wxASSERT_MSG( pLine, wxT("last entry must have !NULL associated line") );
 
         return pLine;
     }
@@ -1506,7 +1506,7 @@ void wxFileConfigGroup::SetLastEntry(wxFileConfigEntry *pEntry)
         // the only situation in which a group without its own line can have
         // an entry is when the first entry is added to the initially empty
         // root pseudo-group
-        wxASSERT_MSG( !m_pParent, wxT("unexpected for non root group") );
+        //wxASSERT_MSG( !m_pParent, wxT("unexpected for non root group") );
 
         // let the group know that it does have a line in the file now
         m_pLine = pEntry->GetLine();
