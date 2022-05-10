@@ -600,7 +600,7 @@ wxFileOffset wxStreamBuffer::Seek(wxFileOffset pos, wxSeekMode mode)
                 break;
 
             default:
-                wxFAIL_MSG( wxT("invalid seek mode") );
+                break;// wxFAIL_MSG(wxT("invalid seek mode"));
 
                 return wxInvalidOffset;
         }
@@ -1092,7 +1092,7 @@ wxFileOffset wxCountingOutputStream::OnSysSeek(wxFileOffset pos, wxSeekMode mode
             break;
 
         default:
-            wxFAIL_MSG( wxT("invalid seek mode") );
+            // wxFAIL_MSG(wxT("invalid seek mode"));
             return wxInvalidOffset;
     }
 

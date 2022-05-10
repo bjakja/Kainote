@@ -850,7 +850,7 @@ struct wxPrintfConvSpecParser
                     // separate entries)
                     if ( posarg_present )
                     {
-                        wxFAIL_MSG
+                        /*wxFAIL_MSG
                         (
                             wxString::Format
                             (
@@ -859,7 +859,7 @@ struct wxPrintfConvSpecParser
                                 "supported by this implementation, sorry.",
                                 fmt
                             )
-                        );
+                        );*/
                     }
 
                     specs[nargs] = *spec;
@@ -900,7 +900,7 @@ struct wxPrintfConvSpecParser
         // anyhow because of stack corruption...)
         if ( nargs == wxMAX_SVNPRINTF_ARGUMENTS )
         {
-            wxFAIL_MSG
+            /*wxFAIL_MSG
             (
                 wxString::Format
                 (
@@ -910,7 +910,7 @@ struct wxPrintfConvSpecParser
                     "recompile if more are really needed.",
                     fmt, wxMAX_SVNPRINTF_ARGUMENTS
                 )
-            );
+            );*/
         }
     }
 

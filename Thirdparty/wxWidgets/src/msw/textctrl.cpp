@@ -1777,7 +1777,7 @@ bool wxTextCtrl::MSWShouldPreProcessMessage(WXMSG* msg)
             switch ( ctrl + shift )
             {
                 default:
-                    wxFAIL_MSG( wxT("how many modifiers have we got?") );
+                    //wxFAIL_MSG( wxT("how many modifiers have we got?") );
                     // fall through
 
                 case 0:
@@ -2006,7 +2006,7 @@ bool wxTextCtrl::SendUpdateEvent()
             return false;
 
         default:
-            wxFAIL_MSG( wxT("unexpected wxTextCtrl::m_updatesCount value") );
+            //wxFAIL_MSG( wxT("unexpected wxTextCtrl::m_updatesCount value") );
             // fall through
 
         case -1:

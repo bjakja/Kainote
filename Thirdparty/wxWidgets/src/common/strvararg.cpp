@@ -707,7 +707,7 @@ wxFormatString::ArgumentType DoGetArgumentType(const CharType *format,
     }
 
     // silence warning
-    wxFAIL_MSG( "unexpected argument type" );
+    //wxFAIL_MSG( "unexpected argument type" );
     return wxFormatString::Arg_Unknown;
 }
 

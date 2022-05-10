@@ -64,7 +64,7 @@ bool wxTextFile::OnOpen(const wxString &strBufferName, wxTextBufferOpenMode Open
     switch ( OpenMode )
     {
         default:
-            wxFAIL_MSG( wxT("unknown open mode in wxTextFile::Open") );
+            //wxFAIL_MSG( wxT("unknown open mode in wxTextFile::Open") );
             // fall through
 
         case ReadAccess :

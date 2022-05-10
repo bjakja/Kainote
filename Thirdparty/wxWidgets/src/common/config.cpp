@@ -120,7 +120,7 @@ wxConfigBase *wxConfigBase::Create()
 #define IMPLEMENT_READ_FOR_TYPE(name, type, deftype, extra)                 \
     bool wxConfigBase::Read(const wxString& key, type *val) const           \
     {                                                                       \
-        //wxCHECK_MSG( val, false, wxT("wxConfig::Read(): NULL parameter") );  \
+        /*wxCHECK_MSG( val, false, wxT("wxConfig::Read(): NULL parameter") );*/  \
                                                                             \
         if ( !DoRead##name(key, val) )                                      \
             return false;                                                   \
@@ -134,7 +134,7 @@ wxConfigBase *wxConfigBase::Create()
                             type *val,                                      \
                             deftype defVal) const                           \
     {                                                                       \
-        //wxCHECK_MSG( val, false, wxT("wxConfig::Read(): NULL parameter") );  \
+        /*wxCHECK_MSG( val, false, wxT("wxConfig::Read(): NULL parameter") );*/  \
                                                                             \
         bool read = DoRead##name(key, val);                                 \
         if ( !read )                                                        \
@@ -165,7 +165,7 @@ bool wxConfigBase::Read(const wxString& key, int *pi) const
 {
     long l = *pi;
     bool r = Read(key, &l);
-    wxASSERT_MSG( l < INT_MAX, wxT("int overflow in wxConfig::Read") );
+    //wxASSERT_MSG( l < INT_MAX, wxT("int overflow in wxConfig::Read") );
     *pi = (int)l;
     return r;
 }
@@ -174,7 +174,7 @@ bool wxConfigBase::Read(const wxString& key, int *pi, int defVal) const
 {
     long l = *pi;
     bool r = Read(key, &l, defVal);
-    wxASSERT_MSG( l < INT_MAX, wxT("int overflow in wxConfig::Read") );
+    //wxASSERT_MSG( l < INT_MAX, wxT("int overflow in wxConfig::Read") );
     *pi = (int)l;
     return r;
 }
