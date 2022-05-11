@@ -19,6 +19,9 @@
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
 
+#include <windows.h>
+#include <wx/msw/winundef.h>
+
 KaiStaticBox::KaiStaticBox(wxWindow *parent, const wxString& _label)
 	: wxStaticBox(parent, -1, _label)
 {
@@ -57,13 +60,13 @@ KaiStaticBox::KaiStaticBox(wxWindow *parent, int numLabels, wxString * _labels)
 //{
 //	Refresh(false);
 //}
-//	
-void KaiStaticBox::PaintForeground(wxDC& tdc, const wxRect &rc)
+	
+void KaiStaticBox::PaintForeground(wxDC& tdc, const tagRECT& rc)
 {
 	int w = 0;
 	int h = 0;
-	w = rc.GetWidth();
-	h = rc.GetHeight();
+	w = rc.right - rc.left;
+	h = rc.bottom - rc.top;
 	if (w == 0 || h == 0 || !IsShown() || !IsShownOnScreen()){ return; }
 
 	wxColour background = GetParent()->GetBackgroundColour();
@@ -79,7 +82,7 @@ void KaiStaticBox::PaintForeground(wxDC& tdc, const wxRect &rc)
 	int posx = 8;
 	int cellWidth = (w - 16) / labels.size();
 	for (int i = 0; i < labels.GetCount(); i++){
-		wxString text = L" " + labels[i] + L" ";
+		wxString text = wxString(L" ") + labels[i] + wxString(L" ");
 		int fw, fh;
 		tdc.GetTextExtent(text, &fw, &fh);
 		int wdiff = MAX(fw - cellWidth, 0);

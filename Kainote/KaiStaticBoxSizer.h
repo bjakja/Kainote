@@ -20,6 +20,8 @@
 #include <wx/sizer.h>
 #include <wx/dc.h>
 
+struct tagRECT;
+
 
 class KaiStaticBox : public wxStaticBox
 {
@@ -30,7 +32,7 @@ public:
 	wxSize CalcBorders();
 	bool Enable(bool enable = true);
 private:
-	void PaintForeground(wxDC& dc, const wxRect& rc);
+	void PaintForeground(wxDC& dc, const tagRECT& rc);
 	wxArrayString labels;
 	int heightText;
 };
