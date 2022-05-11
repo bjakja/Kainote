@@ -26,6 +26,8 @@
 #ifndef f_VD2_SYSTEM_VDSTL_HASHTABLE_H
 #define f_VD2_SYSTEM_VDSTL_HASHTABLE_H
 
+#include <xutility>
+
 ///////////////////////////////////////////////////////////////////////////////
 //	vdhashtable_base_node
 //
@@ -39,7 +41,7 @@ struct vdhashtable_base_node {
 class vdhashtable_base {
 public:
 	typedef	size_t		size_type;
-	typedef	ptrdiff_t	difference_type;
+	typedef	long long	difference_type;
 
 	vdhashtable_base();
 
@@ -90,7 +92,7 @@ public:
 	typedef T* pointer;
 	typedef T& reference;
 	typedef size_t size_type;
-	typedef ptrdiff_t difference_type;
+	typedef long long difference_type;
 
 	vdhashtable_local_iterator(vdhashtable_base_node *node);
 
@@ -189,7 +191,7 @@ public:
 	typedef T* pointer;
 	typedef T& reference;
 	typedef size_t size_type;
-	typedef ptrdiff_t difference_type;
+	typedef long long difference_type;
 
 	vdhashtable_iterator();
 	vdhashtable_iterator(vdhashtable_base_node *node, vdhashtable_base_node **bucket, vdhashtable_base_node **bucketEnd);

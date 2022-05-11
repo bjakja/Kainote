@@ -213,9 +213,6 @@
     <ClCompile Include="FontEnumerator.cpp">
       <Filter>F</Filter>
     </ClCompile>
-    <ClCompile Include="GFFT\GFFT.cpp">
-      <Filter>G</Filter>
-    </ClCompile>
     <ClCompile Include="GraphicsD2D.cpp">
       <Filter>G</Filter>
     </ClCompile>
@@ -527,9 +524,6 @@
     </ClInclude>
     <ClInclude Include="D2DInit.h">
       <Filter>D</Filter>
-    </ClInclude>
-    <ClInclude Include="GFFT\GFFT.h">
-      <Filter>G</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsD2D.h">
       <Filter>G</Filter>

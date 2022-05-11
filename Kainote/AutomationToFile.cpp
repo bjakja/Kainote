@@ -607,8 +607,10 @@
 				}
 				else
 				{
-					wxString fclass = (e->lclass == L"info") ? L"info" : (e->lclass == L"style") ? _("stylów") : _("dialogów");
-					wxString sclass = (i < sinfo) ? L"info" : (i < styles) ? _("stylów") : _("dialogów");
+					wxString fclass = (e->lclass == L"info") ? wxString(L"info") : 
+						(e->lclass == L"style") ? wxString(_("stylów")) : wxString(_("dialogów"));
+					wxString sclass = (i < sinfo) ? wxString(L"info") :
+						(i < styles) ? wxString(_("stylów")) : wxString(_("dialogów"));
 					wxString all = wxString::Format(_("Nie można dodać linii klasy: %s w pole klasy: %s"), fclass, sclass);
 					SAFE_DELETE(e);
 					lua_pushstring(L, all.mb_str(wxConvUTF8).data());

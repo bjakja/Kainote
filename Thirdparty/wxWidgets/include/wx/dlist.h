@@ -425,7 +425,7 @@ public:
             if ( index-- == 0 )
                return current;
         }
-        wxFAIL_MSG( "invalid index in Item()" );
+        //wxFAIL_MSG( "invalid index in Item()" );
         return NULL;
     }
 

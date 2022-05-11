@@ -1,6 +1,4 @@
 ﻿Kainote:
-Warning! Ne version will be much faster ant have a less weight
- 
 Subtitles editor that can play video using FFMS2 (for typesetting, 
 timing and more advanced edition) or DirectShow (for playback 
 or minor subtitles edition).
@@ -112,6 +110,8 @@ Kainote:
 Edytor napisów, który odtwrza wideo zarówno przez FFMS2 (dobre
 do typesettingu, timingu i inych zaawansowanych edycji) a także 
 DirectShow (przeznaczone do odtwarzania i prostej edycji napisów).
+
+Zapraszam na discorda Kainote https://discord.gg/9WacFTtK6q
 
 Funkcje:
 

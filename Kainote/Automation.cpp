@@ -213,14 +213,14 @@
 		path.Replace(L'/', L'\\');
 		wxString firstAutomation = Options.pathfull + "\\Automation";
 		if (path[0] == L'?'){
-			if (path[1] == L'a' && path[4] == L'i') path.replace(0, 6, (tab) ? tab->VideoPath.BeforeLast(L'\\') : L"");
+			if (path[1] == L'a' && path[4] == L'i') path.replace(0, 6, (tab) ? tab->VideoPath.BeforeLast(L'\\') : wxString(L""));
 			else if (path[1] == L'd' && path[4] == L'a') path.replace(0, 5, firstAutomation);
 			else if (path[1] == L'd' && path[4] == L't') path.replace(0, 11, Options.pathfull + L"\\Dictionary");
 			else if (path[1] == L'l' && path[4] == L'a') path.replace(0, 6, firstAutomation);
-			else if (path[1] == L's' && path[4] == L'i') path.replace(0, 7, (tab) ? tab->SubsPath.BeforeLast(L'\\') : L"");
+			else if (path[1] == L's' && path[4] == L'i') path.replace(0, 7, (tab) ? tab->SubsPath.BeforeLast(L'\\') : wxString(L""));
 			else if (path[1] == L't' && path[4] == L'p') path.replace(0, 5, firstAutomation + L"\\temp");
 			else if (path[1] == L'u' && path[4] == L'r') path.replace(0, 5, firstAutomation);
-			else if (path[1] == L'v' && path[4] == L'e') path.replace(0, 6, (tab) ? tab->VideoPath.BeforeLast(L'\\') : L"");
+			else if (path[1] == L'v' && path[4] == L'e') path.replace(0, 6, (tab) ? tab->VideoPath.BeforeLast(L'\\') : wxString(L""));
 		}
 		push_value(L, path);
 		return 1;
@@ -1107,7 +1107,7 @@
 		return true;
 	}
 
-	void Automation::OnEdit(wxString &Filename)
+	void Automation::OnEdit(const wxString &Filename)
 	{
 		wxString editor = Options.GetString(AUTOMATION_SCRIPT_EDITOR);
 		if (editor == L"" || wxGetKeyState(WXK_SHIFT)){

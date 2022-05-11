@@ -160,7 +160,7 @@ protected:
         }
         else
         {
-            wxFAIL_MSG( "Tracked class should inherit from wxTrackable" );
+            //wxFAIL_MSG( "Tracked class should inherit from wxTrackable" );
 
             Release();
         }
@@ -330,7 +330,7 @@ protected:
             {
                 // If the object we want to track does not support wxTackable, then
                 // log a message and keep the NULL object pointer.
-                wxFAIL_MSG( "Tracked class should inherit from wxTrackable" );
+                //wxFAIL_MSG( "Tracked class should inherit from wxTrackable" );
             }
         }
     }
