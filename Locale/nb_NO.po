@@ -8,17 +8,20 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-11 18:05+0700\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2022-05-12 17:56+0000\n"
+"Last-Translator: altinat <poiiiii4yy@gmail.com>\n"
+"Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/kainote/"
+"kainote/nb_NO/>\n"
 "Language: nb_NO\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.13-dev\n"
 
 #: AudioBox.cpp:64
 msgid "Pasek szukania"
-msgstr ""
+msgstr "Søkefelt"
 
 #: AudioBox.cpp:77
 msgid "Rozciągnięcie w poziomie"
@@ -38,23 +41,23 @@ msgstr ""
 
 #: AudioBox.cpp:123
 msgid "Odtwórz poprzednią linijkę"
-msgstr ""
+msgstr "Spill forrige linje"
 
 #: AudioBox.cpp:127
 msgid "Odtwórz następną linijkę"
-msgstr ""
+msgstr "Spill neste linje"
 
 #: AudioBox.cpp:131
 msgid "Odtwórz aktualną sylabę / linijkę"
-msgstr ""
+msgstr "Spill neste stavelse/linje"
 
 #: AudioBox.cpp:135
 msgid "Odtwórz aktualną linijkę"
-msgstr ""
+msgstr "Spill nåværende linje"
 
 #: AudioBox.cpp:137
 msgid "Zatrzymaj odtwarzanie"
-msgstr ""
+msgstr "Stopp avspilling"
 
 #: AudioBox.cpp:140
 msgid "Odtwórz przed znacznikiem"
@@ -82,7 +85,7 @@ msgstr ""
 
 #: AudioBox.cpp:153
 msgid "Odtwórz do końca"
-msgstr ""
+msgstr "Spill til slutten"
 
 #: AudioBox.cpp:156
 msgid "Dodaj wstęp do aktywnej linijki"
@@ -98,7 +101,7 @@ msgstr ""
 
 #: AudioBox.cpp:165 Hotkeys.cpp:204 HotkeysNaming.cpp:62
 msgid "Przejdź do zaznaczenia"
-msgstr ""
+msgstr "Gå til utvalg"
 
 #: AudioBox.cpp:168
 msgid "Włącz / Wyłącz tworzenie karaoke"
@@ -110,7 +113,7 @@ msgstr ""
 
 #: AudioBox.cpp:177
 msgid "Automatycznie zatwierdza zmiany"
-msgstr ""
+msgstr "Godkjenn endringer automatisk"
 
 #: AudioBox.cpp:181
 msgid "Przechodzenie do następnej linijki po zatwierdzeniu zmian"
@@ -264,7 +267,7 @@ msgstr ""
 
 #: Automation.cpp:1110
 msgid "Programy (*.exe)|*.exe|Wszystkie pliki (*.*)|*.*"
-msgstr ""
+msgstr "Programmer (* .exe) | * .exe | All Files (*. *) | *. *"
 
 #: Automation.cpp:1126
 msgid "Nie można uruchomić edytora."
@@ -272,7 +275,7 @@ msgstr ""
 
 #: Automation.cpp:1126
 msgid "Błąd automatyzacji"
-msgstr ""
+msgstr "Automasjonsfeil"
 
 #: Automation.cpp:1199 Automation.cpp:1246
 msgid "Pełny opis błędu Lua"
@@ -282,19 +285,19 @@ msgstr ""
 #: FontCatalogList.cpp:109 stylestore.cpp:82 stylestore.cpp:135
 #: VideoToolbar.cpp:505 VideoToolbar.cpp:521 VideoToolbar.cpp:757
 msgid "Edytuj"
-msgstr ""
+msgstr "Rediger"
 
 #: Automation.cpp:1209 Automation.cpp:1256
 msgid "Odśwież"
-msgstr ""
+msgstr "Gjenoppfrisk"
 
 #: AutomationHotkeysDialog.cpp:66
 msgid "Lista skrótów klawiszowych skryptów automatyzacji"
-msgstr ""
+msgstr "Liste over automasjonssnarveier"
 
 #: AutomationHotkeysDialog.cpp:71
 msgid "Ścieżka i nazwa skryptu"
-msgstr ""
+msgstr "Sti og skriptnavn"
 
 #: AutomationHotkeysDialog.cpp:72
 msgid "Makro"
@@ -430,7 +433,7 @@ msgstr ""
 
 #: AutoSaveOpen.cpp:28
 msgid "Wyszukaj pliki"
-msgstr ""
+msgstr "Finn filer"
 
 #: AutoSaveOpen.cpp:31
 msgid "Filtruj listę"
@@ -470,75 +473,75 @@ msgstr ""
 
 #: AutoSavesRemoving.cpp:27 kainoteMain.cpp:158
 msgid "Usuń pliki tymczasowe"
-msgstr ""
+msgstr "Fjern midlertidige filer"
 
 #: AutoSavesRemoving.cpp:34
 msgid "Usuń pliki starsze niż"
-msgstr ""
+msgstr "Fjern filer eldre enn"
 
 #: AutoSavesRemoving.cpp:42
 msgid "Styczeń"
-msgstr ""
+msgstr "Januar"
 
 #: AutoSavesRemoving.cpp:42
 msgid "Luty"
-msgstr ""
+msgstr "Februar"
 
 #: AutoSavesRemoving.cpp:42
 msgid "Marzec"
-msgstr ""
+msgstr "Mars"
 
 #: AutoSavesRemoving.cpp:42
 msgid "Kwiecień"
-msgstr ""
+msgstr "April"
 
 #: AutoSavesRemoving.cpp:43
 msgid "Maj"
-msgstr ""
+msgstr "Mai"
 
 #: AutoSavesRemoving.cpp:43
 msgid "Czerwiec"
-msgstr ""
+msgstr "Juni"
 
 #: AutoSavesRemoving.cpp:43
 msgid "Lipiec"
-msgstr ""
+msgstr "Juli"
 
 #: AutoSavesRemoving.cpp:43
 msgid "Sierpień"
-msgstr ""
+msgstr "August"
 
 #: AutoSavesRemoving.cpp:43
 msgid "Wrzesień"
-msgstr ""
+msgstr "September"
 
 #: AutoSavesRemoving.cpp:44
 msgid "Październik"
-msgstr ""
+msgstr "Oktober"
 
 #: AutoSavesRemoving.cpp:44
 msgid "Listopad"
-msgstr ""
+msgstr "November"
 
 #: AutoSavesRemoving.cpp:44
 msgid "Grudzień"
-msgstr ""
+msgstr "Desember"
 
 #: AutoSavesRemoving.cpp:86
 msgid "Usuń z wszystkich folderów"
-msgstr ""
+msgstr "Fjern fra alle mapper"
 
 #: AutoSavesRemoving.cpp:88
 msgid "Usuń wszystkie pliki"
-msgstr ""
+msgstr "Fjern alle filer"
 
 #: AutoSavesRemoving.cpp:90
 msgid "Usuń wszystkie starsze pliki"
-msgstr ""
+msgstr "Fjern alle eldre filer"
 
 #: AutoSavesRemoving.cpp:99
 msgid "Auto zapis"
-msgstr ""
+msgstr "Lagre automatisk"
 
 #: AutoSavesRemoving.cpp:101
 msgid "Usuń wybrane pliki auto zapisu"
@@ -562,27 +565,27 @@ msgstr ""
 
 #: AutoSavesRemoving.cpp:116
 msgid "Usuń wszystkie indeksy"
-msgstr ""
+msgstr "Fjern alle indeksfiler"
 
 #: AutoSavesRemoving.cpp:118
 msgid "Usuń starsze indeksy"
-msgstr ""
+msgstr "Fjern eldre indeksfiler"
 
 #: AutoSavesRemoving.cpp:125
 msgid "Audio cache"
-msgstr ""
+msgstr "Lydhurtiglager"
 
 #: AutoSavesRemoving.cpp:127
 msgid "Usuń wybrane pliki audio cache"
-msgstr ""
+msgstr "Fjern valgte lydhutiglagerfiler"
 
 #: AutoSavesRemoving.cpp:129
 msgid "Usuń wszystkie pliki audio cache"
-msgstr ""
+msgstr "Fjern alle lydhurtiglagerfiler"
 
 #: AutoSavesRemoving.cpp:131
 msgid "Usuń starsze pliki audio cache"
-msgstr ""
+msgstr "Fjern eldre lydhurtiglagerfiler"
 
 #: AutoSavesRemoving.cpp:176
 msgid ""
@@ -592,19 +595,19 @@ msgstr ""
 
 #: AutoSavesRemoving.cpp:177
 msgid "Pliki indeksów (*.ffindex)|*.ffindex"
-msgstr ""
+msgstr "Indeksfiler (*.ffindex)|*.ffindex"
 
 #: AutoSavesRemoving.cpp:178
 msgid "Pliki audio cache (*.w64)|*.w64"
-msgstr ""
+msgstr "Lydhurtiglagerfiler (*.w64)|*.w64"
 
 #: AutoSavesRemoving.cpp:180
 msgid "Wybierz plik i do usunięcia"
-msgstr ""
+msgstr "Velg fil å fjerne"
 
 #: AutoSavesRemoving.cpp:209 AutoSavesRemoving.cpp:237
 msgid "Nie można otworzyć folderu plików tymczasowych"
-msgstr ""
+msgstr "Kan ikke åpne mappe med midlertidige filer"
 
 #: BitmapButton.cpp:117 MappedButton.cpp:254
 msgid "Skrót można ustawić Shift + Klik"
@@ -612,7 +615,7 @@ msgstr ""
 
 #: ColorPicker.cpp:459
 msgid "Wybierz kolor"
-msgstr ""
+msgstr "Velg farge"
 
 #: ColorPicker.cpp:491
 msgid "Kolor spektrum"
@@ -633,11 +636,11 @@ msgstr ""
 #: ColorPicker.cpp:531 ColorPicker.cpp:1364 EditBox.cpp:181
 #: HotkeysNaming.cpp:90 StyleChange.cpp:694 TextEditorTagList.cpp:343
 msgid "Kolor podstawowy"
-msgstr ""
+msgstr "Primærfarge"
 
 #: ColorPicker.cpp:531 ColorPicker.cpp:1364
 msgid "Kolor zastępczy"
-msgstr ""
+msgstr "Sekundærfarge"
 
 #: ColorPicker.cpp:531 ColorPicker.cpp:1364 EditBox.cpp:189
 #: HotkeysNaming.cpp:89 StyleChange.cpp:696 TextEditorTagList.cpp:345
@@ -647,7 +650,7 @@ msgstr ""
 #: ColorPicker.cpp:531 ColorPicker.cpp:1364 EditBox.cpp:193
 #: HotkeysNaming.cpp:92 StyleChange.cpp:697 TextEditorTagList.cpp:346
 msgid "Kolor cienia"
-msgstr ""
+msgstr "Skyggefarge"
 
 #: ColorPicker.cpp:547
 msgid "Zamień ze sobą skróty próbnika i okna wyboru kolorów"
@@ -665,15 +668,15 @@ msgstr ""
 
 #: ColorPicker.cpp:571
 msgid "Czerwony:"
-msgstr ""
+msgstr "Rød:"
 
 #: ColorPicker.cpp:573
 msgid "Zielony:"
-msgstr ""
+msgstr "Grønn:"
 
 #: ColorPicker.cpp:575
 msgid "Niebieski:"
-msgstr ""
+msgstr "Blå:"
 
 #: ColorPicker.cpp:592 ColorPicker.cpp:602
 msgid "Odcień:"
@@ -689,11 +692,11 @@ msgstr ""
 
 #: ColorPicker.cpp:606 VisualAllTagsEdition.cpp:65
 msgid "Wartość:"
-msgstr ""
+msgstr "Verdi:"
 
 #: ColorPicker.cpp:1360
 msgid "Próbnik koloru"
-msgstr ""
+msgstr "Fargevelger"
 
 #: ColorPicker.cpp:1393
 msgid ""
@@ -709,11 +712,6 @@ msgstr ""
 
 #: config.cpp:611
 msgid "Nie można zaczytać motywu, zostanie przywrócony domyśny"
-msgstr ""
-
-#: CsriMod.cpp:94
-#, c-format
-msgid "ignoring library(\"%s, %s\")"
 msgstr ""
 
 #: CsriMod.cpp:163
@@ -3570,18 +3568,9 @@ msgstr ""
 msgid "&Usuń"
 msgstr ""
 
-#: KaiTextValidator.cpp:129
-msgid "Text check Error"
-msgstr ""
-
 #: KaiTextValidator.cpp:208
 #, c-format
 msgid "'%s' should only contain alphabetic characters."
-msgstr ""
-
-#: KaiTextValidator.cpp:212
-#, c-format
-msgid "'%s' should only contain digits."
 msgstr ""
 
 #: KaiTextValidator.cpp:216 KaiTextValidator.cpp:218 KaiTextValidator.cpp:220
@@ -7107,16 +7096,8 @@ msgstr ""
 msgid "Pozycja paska narzędzi"
 msgstr ""
 
-#: UpdateChecker.cpp:120
-msgid "Aktualizacja"
-msgstr ""
-
 #: UpdateChecker.cpp:122
 msgid "Zakutalizuj po zamknięciu"
-msgstr ""
-
-#: UpdateChecker.cpp:238
-msgid "Nie można znaleźć updatera Kainote"
 msgstr ""
 
 #: UtilsWindows.cpp:32
