@@ -135,17 +135,16 @@ msgstr ""
 msgid "Nieprawidłowy format klatek kluczowych"
 msgstr ""
 
-#: AudioBox.cpp:266 Automation.cpp:1197 Automation.cpp:1244
-#: kainoteMain.cpp:831 kainoteMain.cpp:835 kainoteMain.cpp:2027
-#: kainoteMain.cpp:2028 kainoteMain.cpp:2467 kainoteMain.cpp:2493
-#: kainoteMain.cpp:2497 OptionsDialog.cpp:279 OptionsDialog.cpp:600
-#: Provider.cpp:175 ProviderFFMS2.cpp:28 VideoFfmpeg.cpp:52
-#: VideoFfmpeg.cpp:991 VisualAllTagsEdition.cpp:162
-#: VisualAllTagsEdition.cpp:166 VisualAllTagsEdition.cpp:184
-#: VisualAllTagsEdition.cpp:291 VisualAllTagsEdition.cpp:299
-#: VisualAllTagsEdition.cpp:303 VisualDrawingShapes.cpp:136
-#: VisualDrawingShapes.cpp:140 VisualDrawingShapes.cpp:158
-#: VisualDrawingShapes.cpp:262
+#: AudioBox.cpp:266 Automation.cpp:1197 Automation.cpp:1244 kainoteMain.cpp:831
+#: kainoteMain.cpp:835 kainoteMain.cpp:2027 kainoteMain.cpp:2028
+#: kainoteMain.cpp:2467 kainoteMain.cpp:2493 kainoteMain.cpp:2497
+#: OptionsDialog.cpp:279 OptionsDialog.cpp:600 Provider.cpp:175
+#: ProviderFFMS2.cpp:28 VideoFfmpeg.cpp:52 VideoFfmpeg.cpp:991
+#: VisualAllTagsEdition.cpp:162 VisualAllTagsEdition.cpp:166
+#: VisualAllTagsEdition.cpp:184 VisualAllTagsEdition.cpp:291
+#: VisualAllTagsEdition.cpp:299 VisualAllTagsEdition.cpp:303
+#: VisualDrawingShapes.cpp:136 VisualDrawingShapes.cpp:140
+#: VisualDrawingShapes.cpp:158 VisualDrawingShapes.cpp:262
 msgid "Błąd"
 msgstr ""
 
@@ -330,10 +329,10 @@ msgstr ""
 #: DummyVideo.cpp:102 EditBox.cpp:87 EditBox.cpp:1689 FontCatalogList.cpp:71
 #: FontDialog.cpp:408 KaiMessageBox.cpp:78 MappedButton.cpp:39
 #: NewCatalog.cpp:42 OptionsDialog.cpp:960 ProgressDialog.cpp:39
-#: ScriptInfo.cpp:114 ShiftTimes.cpp:62 StyleChange.cpp:272
-#: Stylelistbox.cpp:29 Stylelistbox.cpp:53 Stylelistbox.cpp:107
-#: Stylelistbox.cpp:142 SubsFile.cpp:47 SubsGrid.cpp:1389
-#: SubsGridDialogs.cpp:54 SubsGridDialogs.cpp:85 SubsResampleDialog.cpp:146
+#: ScriptInfo.cpp:114 ShiftTimes.cpp:62 StyleChange.cpp:272 Stylelistbox.cpp:29
+#: Stylelistbox.cpp:53 Stylelistbox.cpp:107 Stylelistbox.cpp:142
+#: SubsFile.cpp:47 SubsGrid.cpp:1389 SubsGridDialogs.cpp:54
+#: SubsGridDialogs.cpp:85 SubsResampleDialog.cpp:146
 #: VisualAllTagsEdition.cpp:122 VisualDrawingShapes.cpp:95
 msgid "Anuluj"
 msgstr ""
@@ -714,13 +713,28 @@ msgstr ""
 msgid "Nie można zaczytać motywu, zostanie przywrócony domyśny"
 msgstr ""
 
+#: CsriMod.cpp:88
+#, c-format
+msgid "LoadLibraryEx(\"%s, %s\") failed: "
+msgstr ""
+
+#: CsriMod.cpp:94
+#, c-format
+msgid "ignoring library(\"%s, %s\")"
+msgstr ""
+
+#: CsriMod.cpp:135
+#, c-format
+msgid "%s symbol %s not found %s"
+msgstr ""
+
 #: CsriMod.cpp:163
 #, c-format
 msgid "ignoring directory %s : %s"
 msgstr ""
 
-#: Demux.cpp:41 ProviderFFMS2.cpp:163 ProviderFFMS2.cpp:300
-#: VideoFfmpeg.cpp:185 VideoFfmpeg.cpp:319
+#: Demux.cpp:41 ProviderFFMS2.cpp:163 ProviderFFMS2.cpp:300 VideoFfmpeg.cpp:185
+#: VideoFfmpeg.cpp:319
 #, c-format
 msgid "Wystąpił błąd indeksowania: %s"
 msgstr ""
@@ -1804,13 +1818,11 @@ msgstr ""
 msgid "Kursywa"
 msgstr ""
 
-#: FontDialog.cpp:421 FontDialog.cpp:460 StyleChange.cpp:81
-#: StyleChange.cpp:102
+#: FontDialog.cpp:421 FontDialog.cpp:460 StyleChange.cpp:81 StyleChange.cpp:102
 msgid "Wszystkie czcionki"
 msgstr ""
 
-#: FontDialog.cpp:422 FontDialog.cpp:461 StyleChange.cpp:82
-#: StyleChange.cpp:103
+#: FontDialog.cpp:422 FontDialog.cpp:461 StyleChange.cpp:82 StyleChange.cpp:103
 msgid "Bez katalogu"
 msgstr ""
 
@@ -1826,8 +1838,7 @@ msgstr ""
 msgid "Umorzliwia zarządzanie katalogami stylów"
 msgstr ""
 
-#: FontDialog.cpp:429 HotkeysNaming.cpp:151 StyleChange.cpp:88
-#: SubsGrid.cpp:173
+#: FontDialog.cpp:429 HotkeysNaming.cpp:151 StyleChange.cpp:88 SubsGrid.cpp:173
 msgid "Filtruj"
 msgstr ""
 
@@ -3568,9 +3579,37 @@ msgstr ""
 msgid "&Usuń"
 msgstr ""
 
+#: KaiTextValidator.cpp:116
+msgid "Required information entry is empty."
+msgstr ""
+
+#: KaiTextValidator.cpp:129
+msgid "Text check Error"
+msgstr ""
+
+#: KaiTextValidator.cpp:206
+#, c-format
+msgid "'%s' should only contain ASCII characters."
+msgstr ""
+
 #: KaiTextValidator.cpp:208
 #, c-format
 msgid "'%s' should only contain alphabetic characters."
+msgstr ""
+
+#: KaiTextValidator.cpp:210
+#, c-format
+msgid "'%s' should only contain alphabetic or numeric characters."
+msgstr ""
+
+#: KaiTextValidator.cpp:212
+#, c-format
+msgid "'%s' should only contain digits."
+msgstr ""
+
+#: KaiTextValidator.cpp:214
+#, c-format
+msgid "'%s' should be numeric."
 msgstr ""
 
 #: KaiTextValidator.cpp:216 KaiTextValidator.cpp:218 KaiTextValidator.cpp:220
@@ -7096,8 +7135,33 @@ msgstr ""
 msgid "Pozycja paska narzędzi"
 msgstr ""
 
+#: UpdateChecker.cpp:120
+#, c-format
+msgid "Dostępna jest nowa wersja programu %s zaktualizować?"
+msgstr ""
+
+#: UpdateChecker.cpp:120
+msgid "Aktualizacja"
+msgstr ""
+
+#: UpdateChecker.cpp:121
+msgid "Wyłącz aktualizacje"
+msgstr ""
+
 #: UpdateChecker.cpp:122
 msgid "Zakutalizuj po zamknięciu"
+msgstr ""
+
+#: UpdateChecker.cpp:233
+msgid "Nie można pobrać nowej wersji Kainote"
+msgstr ""
+
+#: UpdateChecker.cpp:238
+msgid "Nie można znaleźć updatera Kainote"
+msgstr ""
+
+#: UpdateChecker.cpp:246 UpdateChecker.cpp:251
+msgid "Nie można zamknąć Kainote"
 msgstr ""
 
 #: UtilsWindows.cpp:32
