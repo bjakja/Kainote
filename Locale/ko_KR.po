@@ -288,9 +288,6 @@ msgstr "마우스 오버시 소리 활성화"
 msgid "Animacja tekstu"
 msgstr "애니메이션 글자"
 
-msgid "Anulowano."
-msgstr "취소됨."
-
 msgid "Anuluj"
 msgstr "취소"
 
@@ -433,9 +430,6 @@ msgstr "자막 지점 누락"
 msgid "Błąd"
 msgstr "오류"
 
-msgid "Błąd MatroskaParsera: "
-msgstr "마트료시카 점검 오류: "
-
 msgid "Błąd automatyzacji"
 msgstr "자동화 스크립트에 오류가 있음"
 
@@ -457,9 +451,6 @@ msgid ""
 msgstr ""
 "Lua 스크립트: %s를 불러오는 동안 오류 발생\n"
 "%s"
-
-msgid "Błąd zlib: %s"
-msgstr "Zlib 오류: %s"
 
 msgid "Błąd, słowo \"%s\" nie zostało dodane."
 msgstr "\"%s\" 단어가 추가되지 않아 오류 발생."
@@ -616,9 +607,6 @@ msgstr "태그 버튼 4"
 
 msgid "Czy na pewno chcesz przenieść wczytany plik wideo do kosza?"
 msgstr "불러 온 영상을 휴지통으로 이동 할까요?"
-
-msgid "Czy na pewno chcesz usunąć ten katalog"
-msgstr "카탈로그를 삭제하시겠습니까"
 
 msgid ""
 "Czy na pewno chcesz wyłączyć tryb tłumacza?\n"
@@ -1723,9 +1711,6 @@ msgstr "없음"
 msgid "Nie"
 msgstr "아니오"
 
-msgid "Nie mona stworzy czcionki D3DX"
-msgstr "D3DX 글꼴을 만들 수 없음"
-
 msgid "Nie można dodać czcionki %s"
 msgstr "\"%s\" 글꼴을 추가 할 수 없음"
 
@@ -1776,9 +1761,6 @@ msgstr "Libass로 자막을 열 수 없습니다"
 
 msgid "Nie można otworzyć pliku \"%s\"."
 msgstr "\"%s\" 파일을 열 수 없습니다."
-
-msgid "Nie można otworzyć pliku Matroska."
-msgstr "Matroska(MKV) 파일을 열 수 없음."
 
 msgid "Nie można otworzyć pliku."
 msgstr "파일을 열 수 없음."
@@ -2696,13 +2678,6 @@ msgstr ""
 "자막 파일 (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*."
 "txt"
 
-msgid ""
-"Pliki napisów (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*."
-"sub;*.txt|Pliki wideo z wbudowanymi napisami (*.mkv)|*.mkv"
-msgstr ""
-"자막 파일 (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*."
-"txt|자막 포함 영상 (*.mkv)|*.mkv"
-
 msgid "Pliki napisów (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"
 msgstr "자막 파일 (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"
 
@@ -3188,9 +3163,6 @@ msgstr "시간 이동 / 포스트 프로세서"
 
 msgid "Przesuń punkty"
 msgstr "제어점 이동"
-
-msgid "Przesuń według następujących stylów (oddzielone średnikiem)"
-msgstr "다음 스타일(세미콜론으로 구분)로 이동"
 
 msgid "Przesuń zaznaczone style na sam koniec"
 msgstr "선택한 스타일을 마지막으로 이동"
@@ -4727,13 +4699,6 @@ msgstr ""
 
 msgid "Wybrany kolor:"
 msgstr "선택 색상:"
-
-msgid ""
-"Wybrany plik jest tylko do odczytu,\n"
-"proszę zapisać pod inną nazwą lub zmienić atrybuty pliku"
-msgstr ""
-"선택한 파일은 읽기 전용입니다.\n"
-"다른 이름으로 저장하거나 파일 속성을 변경하십시오"
 
 msgid "Wybór czasów do przesunięcia"
 msgstr "이동할 시간 선택"
