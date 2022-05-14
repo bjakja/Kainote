@@ -35,6 +35,7 @@ Subtitles editor that can play video using FFMS2 (for typesetting, timing and mo
 ## Beta Build
 
 You can download Kainote bata version [here.](https://drive.google.com/uc?id=1ECqsrLo5d1jPoz-FKvJrS0279YeTKrmS&export=download)
+
 Plsease Note: Bata is a unstable versions, and if you have any question you can reach out to us on [Discord](https://discord.gg/8kNAxDFgwj).
 
 ## FAQ
