@@ -46,12 +46,12 @@ You can reach out to us on [Discord](https://discord.gg/8kNAxDFgwj).
 
 To build You need install:
 * Visual Studio 2019 (it builds Icu with x64 compiler but uses of 16gb of RAM).
-* DirectX SDK https://www.microsoft.com/en-us/download/details.aspx?id=6812
+* [DirectX SDK](https://www.microsoft.com/en-us/download/details.aspx?id=6812)
 * Windows SDK 10 install it with Visual studio 2019 installer
 
 You need to put following into Thirdparty folder that source not have main one folder:
-* Boost https://boostorg.jfrog.io/artifactory/main/release/1.73.0/source/boost_1_73_0.7z
-* Icu https://github.com/unicode-org/icu/releases/download/release-60-3/icu4c-60_3-src.zip
+* [Boost](https://boostorg.jfrog.io/artifactory/main/release/1.73.0/source/boost_1_73_0.7z)
+* [Icu](https://github.com/unicode-org/icu/releases/download/release-60-3/icu4c-60_3-src.zip)
 * (For libass install nasm C:/Nasm)
 
 Next:
