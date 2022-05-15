@@ -51,7 +51,7 @@
     #endif // wxUSE_THREADS
 #endif //wxUSE_GUI
 
-#if wxUSE_BASE
+//#if wxUSE_BASE
 
 // ============================================================================
 // wxMSWEventLoopBase implementation
@@ -145,9 +145,9 @@ int wxMSWEventLoopBase::GetNextMessageTimeout(WXMSG *msg, unsigned long timeout)
 }
 
 
-#endif // wxUSE_BASE
+//#endif // wxUSE_BASE
 
-#if wxUSE_GUI
+//#if wxUSE_GUI
 
 // ============================================================================
 // GUI wxEventLoop implementation
@@ -555,7 +555,7 @@ bool wxGUIEventLoop::YieldFor(long eventsToProcess)
 }
 
 
-#else // !wxUSE_GUI
+//#else // !wxUSE_GUI
 
 
 // ============================================================================
@@ -601,4 +601,4 @@ int wxConsoleEventLoop::DispatchTimeout(unsigned long timeout)
 
 #endif // wxUSE_CONSOLE_EVENTLOOP
 
-#endif //wxUSE_GUI
+//#endif //wxUSE_GUI

@@ -412,7 +412,7 @@
 // Default is 1.
 //
 // Recommended setting: 1 (but can be safely disabled if you don't use it)
-#define wxUSE_CONSOLE_EVENTLOOP 1
+#define wxUSE_CONSOLE_EVENTLOOP 0
 
 // Set wxUSE_(F)FILE to 1 to compile wx(F)File classes. wxFile uses low level
 // POSIX functions for file access, wxFFile uses ANSI C stdio.h functions.

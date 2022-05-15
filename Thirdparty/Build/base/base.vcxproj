@@ -274,7 +274,7 @@
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\wxWidgets\lib\vc_lib\mswu;$(solutionDir)Thirdparty\wxWidgets\include;$(solutionDir)Thirdparty\wxWidgets\src\tiff\libtiff;$(solutionDir)Thirdparty\wxWidgets\src\jpeg;$(solutionDir)Thirdparty\wxWidgets\src\png;$(solutionDir)Thirdparty\wxWidgets\src\zlib;$(solutionDir)Thirdparty\wxWidgets\src\regex;$(solutionDir)Thirdparty\wxWidgets\src\expat\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\wxWidgets\lib\vc_lib\mswu;$(solutionDir)Thirdparty\wxWidgets\include;$(solutionDir)Thirdparty\wxWidgets\src\png;$(solutionDir)Thirdparty\zlib;$(solutionDir)Thirdparty\wxWidgets\src\regex;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_LIB;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;WXBUILDING;wxUSE_GUI=1;wxUSE_BASE=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -289,7 +289,7 @@
       <ProgramDataBaseFileName>$(Platform)\$(Configuration)\$(ProjectName).pdb</ProgramDataBaseFileName>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions512</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;WXBUILDING;wxUSE_GUI=0;wxUSE_BASE=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -306,6 +306,9 @@
       <OutputFile>$(solutionDir)Thirdparty\wxWidgets\lib\vc_lib\wx_vc9_base.bsc</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Bscmake>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">
     <Midl>
@@ -375,8 +378,6 @@
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\common\dynlib.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\common\dynload.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\common\encconv.cpp" />
-    <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\common\event.cpp" />
-    <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\common\evtloopcmn.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\common\extended.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
@@ -448,7 +449,6 @@
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\common\unichar.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\common\uri.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\common\ustring.cpp" />
-    <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\common\utilscmn.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\common\variant.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\common\wfstream.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\common\wxcrt.cpp" />
@@ -464,9 +464,7 @@
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\msw\debughlp.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\msw\dir.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\msw\dlmsw.cpp" />
-    <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\msw\evtloop.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\msw\fswatcher.cpp" />
-    <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\msw\main.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\msw\mimetype.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\msw\mslu.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\msw\power.cpp" />
@@ -600,9 +598,7 @@
     <ClInclude Include="$(solutionDir)Thirdparty\wxWidgets\include\wx\dynlib.h" />
     <ClInclude Include="$(solutionDir)Thirdparty\wxWidgets\include\wx\dynload.h" />
     <ClInclude Include="$(solutionDir)Thirdparty\wxWidgets\include\wx\encconv.h" />
-    <ClInclude Include="$(solutionDir)Thirdparty\wxWidgets\include\wx\event.h" />
     <ClInclude Include="$(solutionDir)Thirdparty\wxWidgets\include\wx\eventfilter.h" />
-    <ClInclude Include="$(solutionDir)Thirdparty\wxWidgets\include\wx\evtloop.h" />
     <ClInclude Include="$(solutionDir)Thirdparty\wxWidgets\include\wx\except.h" />
     <ClInclude Include="$(solutionDir)Thirdparty\wxWidgets\include\wx\features.h" />
     <ClInclude Include="$(solutionDir)Thirdparty\wxWidgets\include\wx\ffile.h" />

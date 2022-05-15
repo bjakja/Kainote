@@ -1,0 +1,201 @@
+{
+	"dependencyControlFeedFormatVersion": "0.2.0",
+	"name": "FFI Experiments",
+	"description": "Experiments combining C++ with luajit FFI",
+	"baseUrl": "https://github.com/TypesettingTools/ffi-experiments",
+	"url": "@{baseUrl}",
+	"maintainer": "torque",
+	"knownFeeds": {
+		"this": "https://raw.githubusercontent.com/TypesettingTools/ffi-experiments/master/DependencyControl.json"
+	},
+	"modules": {
+		"BM.BadMutex": {
+			"url": "@{baseUrl}",
+			"author": "torque",
+			"name": "BadMutex",
+			"description": "A bad, global mutex.",
+			"channels": {
+				"release": {
+					"version": "0.1.3",
+					"released": "2015-05-01",
+					"default": true,
+					"platforms": ["Windows-x86", "Windows-x64", "OSX-x64"],
+					"fileBaseUrl": "https://github.com/TypesettingTools/ffi-experiments/releases/download/r3/",
+					"files": [
+						{
+							"name": ".lua",
+							"url": "@{fileBaseUrl}@{scriptName}.lua",
+							"sha1": "##__BADMUTEX_LUA_HASH__##"
+						},
+						{
+							"name": ".dll",
+							"delete": true
+						},
+						{
+							"name": "/BadMutex.dll",
+							"url": "@{fileBaseUrl}@{scriptName}-win32.dll",
+							"platform": "Windows-x86",
+							"sha1": "##__BADMUTEX_DLL_32_HASH__##"
+						},
+						{
+							"name": "/BadMutex.dll",
+							"url": "@{fileBaseUrl}@{scriptName}-win64.dll",
+							"platform": "Windows-x64",
+							"sha1": "##__BADMUTEX_DLL_64_HASH__##"
+						},
+						{
+							"name": "/libBadMutex.dylib",
+							"url": "@{fileBaseUrl}@{scriptName}-osx64.dylib",
+							"platform": "OSX-x64",
+							"sha1": "##__BADMUTEX_DYLIB_64_HASH__##"
+						}
+					],
+					"requiredModules": [
+						{
+							"moduleName": "ffi"
+						},
+						{
+							"moduleName": "requireffi.requireffi",
+							"version": "0.1.2",
+							"feed": "@{feed:this}"
+						}
+					]
+				}
+			}
+		},
+		"PT.PreciseTimer": {
+			"url": "@{baseUrl}",
+			"author": "torque",
+			"name": "PreciseTimer",
+			"description": "A precise timer.",
+			"channels": {
+				"release": {
+					"version": "0.1.6",
+					"released": "2018-04-05",
+					"default": true,
+					"platforms": ["Windows-x86", "Windows-x64", "OSX-x64"],
+					"fileBaseUrl": "https://github.com/TypesettingTools/ffi-experiments/releases/download/r3/",
+					"files": [
+						{
+							"name": ".lua",
+							"url": "@{fileBaseUrl}@{scriptName}.lua",
+							"sha1": "##__PRECISETIMER_LUA_HASH__##"
+						},
+						{
+							"name": ".dll",
+							"delete": true
+						},
+						{
+							"name": "/PreciseTimer.dll",
+							"url": "@{fileBaseUrl}@{scriptName}-win32.dll",
+							"platform": "Windows-x86",
+							"sha1": "##__PRECISETIMER_DLL_32_HASH__##"
+						},
+						{
+							"name": "/PreciseTimer.dll",
+							"url": "@{fileBaseUrl}@{scriptName}-win64.dll",
+							"platform": "Windows-x64",
+							"sha1": "##__PRECISETIMER_DLL_64_HASH__##"
+						},
+						{
+							"name": "/libPreciseTimer.dylib",
+							"url": "@{fileBaseUrl}@{scriptName}-osx64.dylib",
+							"platform": "OSX-x64",
+							"sha1": "##__PRECISETIMER_DYLIB_64_HASH__##"
+						}
+					],
+					"requiredModules": [
+						{
+							"moduleName": "ffi"
+						},
+						{
+							"moduleName": "requireffi.requireffi",
+							"version": "0.1.2",
+							"feed": "@{feed:this}"
+						}
+					]
+				}
+			}
+		},
+		"DM.DownloadManager": {
+			"url": "@{baseUrl}",
+			"author": "torque",
+			"name": "DownloadManager",
+			"description": "Nonblocking downloads with libcurl.",
+			"channels": {
+				"release": {
+					"version": "0.5.0",
+					"released": "2018-04-05",
+					"default": true,
+					"platforms": ["Windows-x86", "Windows-x64", "OSX-x64"],
+					"fileBaseUrl": "https://github.com/TypesettingTools/ffi-experiments/releases/download/r3/",
+					"files": [
+						{
+							"name": ".lua",
+							"url": "@{fileBaseUrl}@{scriptName}.lua",
+							"sha1": "##__DOWNLOADMANAGER_LUA_HASH__##"
+						},
+						{
+							"name": ".dll",
+							"delete": true
+						},
+						{
+							"name": "/DownloadManager.dll",
+							"url": "@{fileBaseUrl}@{scriptName}-win32.dll",
+							"platform": "Windows-x86",
+							"sha1": "##__DOWNLOADMANAGER_DLL_32_HASH__##"
+						},
+						{
+							"name": "/DownloadManager.dll",
+							"url": "@{fileBaseUrl}@{scriptName}-win64.dll",
+							"platform": "Windows-x64",
+							"sha1": "##__DOWNLOADMANAGER_DLL_64_HASH__##"
+						},
+						{
+							"name": "/libDownloadManager.dylib",
+							"url": "@{fileBaseUrl}@{scriptName}-osx64.dylib",
+							"platform": "OSX-x64",
+							"sha1": "##__DOWNLOADMANAGER_DYLIB_64_HASH__##"
+						}
+					],
+					"requiredModules": [
+						{
+							"moduleName": "ffi"
+						},
+						{
+							"moduleName": "requireffi.requireffi",
+							"version": "0.1.2",
+							"feed": "@{feed:this}"
+						}
+					]
+				}
+			}
+		},
+		"requireffi.requireffi": {
+			"url": "@{baseUrl}",
+			"author": "torque",
+			"name": "requireffi",
+			"description": "Load C libraries with ease.",
+			"channels": {
+				"release": {
+					"version": "0.1.2",
+					"released": "2016-01-22",
+					"default": true,
+					"fileBaseUrl": "https://github.com/TypesettingTools/ffi-experiments/releases/download/r3/",
+					"files": [
+						{
+							"name": ".lua",
+							"url": "@{fileBaseUrl}@{scriptName}.lua",
+							"sha1": "##__REQUIREFFI_LUA_HASH__##"
+						}
+					],
+					"requiredModules": [
+						{
+							"moduleName": "ffi"
+						}
+					]
+				}
+			}
+		}
+	}
+}

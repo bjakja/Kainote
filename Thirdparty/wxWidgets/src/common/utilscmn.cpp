@@ -100,7 +100,7 @@
     #include <gtk/gtk.h>    // for GTK_XXX_VERSION constants
 #endif
 
-#if wxUSE_BASE
+//#if wxUSE_BASE
 
 // ============================================================================
 // implementation
@@ -979,7 +979,7 @@ void wxQsort(void* pbase, size_t total_elems,
   }
 }
 
-#endif // wxUSE_BASE
+//#endif // wxUSE_BASE
 
 
 

@@ -130,7 +130,7 @@
       <AdditionalLibraryDirectories>c:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(SolutionDir)bin\$(Platform)\$(Configuration)\;$(SolutionDir)$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <IgnoreSpecificDefaultLibraries>msvcrtd.lib;libboost_locale-vc143-mt-sgd-x64-1_79.lib;libboost_regex-vc143-mt-sgd-x64-1_79.lib;libboost_system-vc143-mt-sgd-x64-1_79.lib;libboost_filesystem-vc143-mt-sgd-x64-1_79.lib</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>msvcrtd.lib;</IgnoreSpecificDefaultLibraries>
       <LargeAddressAware>true</LargeAddressAware>
       <SubSystem>Windows</SubSystem>
       <EntryPointSymbol>
@@ -164,21 +164,21 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <MinimalRebuild>false</MinimalRebuild>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions512</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>__WXMSW__;__WXDEBUG__;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;core.lib;base.lib;wxpng.lib;zlib.lib;wxregex.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;strmbase.lib;Boost.lib;libhunspell.lib;libass.lib;dsound.lib;dxva2.lib;Dwmapi.lib</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;core.lib;base.lib;wxpng.lib;zlib.lib;wxregex.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;strmbase.lib;Boost.lib;libhunspell.lib;libass.lib;dsound.lib;dxva2.lib;Dwmapi.lib;dxguid.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Platform)\$(Configuration);C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;libboost_locale-vc143-mt-s-x64-1_79.lib;libboost_regex-vc143-mt-s-x64-1_79.lib;libboost_filesystem-vc143-mt-s-x64-1_79.lib;libboost_system-vc143-mt-s-x64-1_79.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>msvcrtd.lib;</IgnoreSpecificDefaultLibraries>
       <LargeAddressAware>true</LargeAddressAware>
       <SubSystem>Windows</SubSystem>
       <EntryPointSymbol>

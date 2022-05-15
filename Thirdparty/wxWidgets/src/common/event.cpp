@@ -48,23 +48,23 @@
 
 #include "wx/thread.h"
 
-#if wxUSE_BASE
+//#if wxUSE_BASE
     #include "wx/scopedptr.h"
 
     wxDECLARE_SCOPED_PTR(wxEvent, wxEventPtr)
     wxDEFINE_SCOPED_PTR(wxEvent, wxEventPtr)
-#endif // wxUSE_BASE
+//#endif // wxUSE_BASE
 
 // ----------------------------------------------------------------------------
 // wxWin macros
 // ----------------------------------------------------------------------------
 
-#if wxUSE_BASE
+//#if wxUSE_BASE
     IMPLEMENT_DYNAMIC_CLASS(wxEvtHandler, wxObject)
     IMPLEMENT_ABSTRACT_CLASS(wxEvent, wxObject)
     IMPLEMENT_DYNAMIC_CLASS(wxIdleEvent, wxEvent)
     IMPLEMENT_DYNAMIC_CLASS(wxThreadEvent, wxEvent)
-#endif // wxUSE_BASE
+//#endif // wxUSE_BASE
 
 #if wxUSE_GUI
     IMPLEMENT_DYNAMIC_CLASS(wxCommandEvent, wxEvent)
@@ -105,7 +105,7 @@
     IMPLEMENT_DYNAMIC_CLASS(wxClipboardTextEvent, wxCommandEvent)
 #endif // wxUSE_GUI
 
-#if wxUSE_BASE
+//#if wxUSE_BASE
 
 const wxEventTable *wxEvtHandler::GetEventTable() const
     { return &wxEvtHandler::sm_eventTable; }
@@ -159,7 +159,7 @@ wxDEFINE_EVENT( wxEVT_IDLE, wxIdleEvent );
 // Thread event
 wxDEFINE_EVENT( wxEVT_THREAD, wxThreadEvent );
 
-#endif // wxUSE_BASE
+//#endif // wxUSE_BASE
 
 #if wxUSE_GUI
 
@@ -318,7 +318,7 @@ wxDEFINE_EVENT( wxEVT_DETAILED_HELP, wxHelpEvent );
 
 #endif // wxUSE_GUI
 
-#if wxUSE_BASE
+//#if wxUSE_BASE
 
 wxIdleMode wxIdleEvent::sm_idleMode = wxIDLE_PROCESS_ALL;
 
@@ -405,7 +405,7 @@ wxEvent& wxEvent::operator=(const wxEvent& src)
     return *this;
 }
 
-#endif // wxUSE_BASE
+//#endif // wxUSE_BASE
 
 #if wxUSE_GUI
 
@@ -849,7 +849,7 @@ wxHelpEvent::Origin wxHelpEvent::GuessOrigin(Origin origin)
 #endif // wxUSE_GUI
 
 
-#if wxUSE_BASE
+//#if wxUSE_BASE
 
 // ----------------------------------------------------------------------------
 // wxEventHashTable
@@ -1760,7 +1760,7 @@ void wxEvtHandler::OnSinkDestroyed( wxEvtHandler *sink )
     }
 }
 
-#endif // wxUSE_BASE
+//#endif // wxUSE_BASE
 
 #if wxUSE_GUI
 

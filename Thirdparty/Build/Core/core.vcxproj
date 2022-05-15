@@ -277,8 +277,8 @@
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\wxWidgets\lib\vc_lib\mswu;$(solutionDir)Thirdparty\wxWidgets\include;$(solutionDir)Thirdparty\wxWidgets\src\tiff\libtiff;$(solutionDir)Thirdparty\wxWidgets\src\jpeg;$(solutionDir)Thirdparty\wxWidgets\src\png;$(solutionDir)Thirdparty\wxWidgets\src\zlib;$(solutionDir)Thirdparty\wxWidgets\src\regex;$(solutionDir)Thirdparty\wxWidgets\src\expat\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_LIB;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;WXBUILDING;wxUSE_BASE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\wxWidgets\lib\vc_lib\mswu;$(solutionDir)Thirdparty\wxWidgets\include;$(solutionDir)Thirdparty\wxWidgets\src\png;$(solutionDir)Thirdparty\zlib;$(solutionDir)Thirdparty\wxWidgets\src\regex;$(solutionDir)Thirdparty\wxWidgets\src\jpeg;$(solutionDir)Thirdparty\wxWidgets\src\tiff\libtiff;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_LIB;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;WXBUILDING;wxUSE_BASE=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -292,7 +292,7 @@
       <ProgramDataBaseFileName>$(Platform)\$(Configuration)\$(ProjectName).pdb</ProgramDataBaseFileName>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions512</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;WXBUILDING;wxUSE_BASE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -399,7 +399,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\common\effects.cpp" />
-    <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\common\event.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\common\fddlgcmn.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\common\filectrlcmn.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\common\filehistorycmn.cpp" />
@@ -478,7 +477,6 @@
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\common\toplvcmn.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\common\treebase.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\common\uiactioncmn.cpp" />
-    <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\common\utilscmn.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\common\valgen.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\common\validate.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\common\valnum.cpp" />
@@ -525,7 +523,6 @@
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\msw\ole\dropsrc.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\msw\ole\droptgt.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\msw\enhmeta.cpp" />
-    <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\msw\evtloop.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\msw\fdrepdlg.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\msw\filedlg.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\msw\font.cpp" />
@@ -546,7 +543,6 @@
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\msw\iniconf.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\msw\listbox.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\msw\listctrl.cpp" />
-    <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\msw\main.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\msw\mdi.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\msw\menu.cpp" />
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\msw\menuitem.cpp" />
@@ -1020,6 +1016,11 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\wxWidgets\src\common\event.cpp" />
+    <ClCompile Include="..\..\wxWidgets\src\common\evtloopcmn.cpp" />
+    <ClCompile Include="..\..\wxWidgets\src\common\utilscmn.cpp" />
+    <ClCompile Include="..\..\wxWidgets\src\msw\evtloop.cpp" />
+    <ClCompile Include="..\..\wxWidgets\src\msw\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\msw\version.rc">
@@ -1096,7 +1097,6 @@
     <ClInclude Include="$(solutionDir)Thirdparty\wxWidgets\include\wx\msw\ole\dropsrc.h" />
     <ClInclude Include="$(solutionDir)Thirdparty\wxWidgets\include\wx\msw\ole\droptgt.h" />
     <ClInclude Include="$(solutionDir)Thirdparty\wxWidgets\include\wx\msw\enhmeta.h" />
-    <ClInclude Include="$(solutionDir)Thirdparty\wxWidgets\include\wx\msw\evtloop.h" />
     <ClInclude Include="$(solutionDir)Thirdparty\wxWidgets\include\wx\msw\fdrepdlg.h" />
     <ClInclude Include="$(solutionDir)Thirdparty\wxWidgets\include\wx\msw\filedlg.h" />
     <ClInclude Include="$(solutionDir)Thirdparty\wxWidgets\include\wx\msw\font.h" />

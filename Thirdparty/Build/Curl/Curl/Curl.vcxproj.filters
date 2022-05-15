@@ -594,6 +594,9 @@
     <ClCompile Include="..\..\..\curl\lib\wildcard.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\curl\lib\easy.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\curl\src\slist_wc.h">

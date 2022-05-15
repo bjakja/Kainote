@@ -68,7 +68,7 @@ extern int wxEntryCleanupReal(int& argc, wxChar **argv);
 // implementation: various entry points
 // ============================================================================
 
-#if wxUSE_BASE
+//#if wxUSE_BASE
 
 // ----------------------------------------------------------------------------
 // wrapper wxEntry catching all Win32 exceptions occurring in a wx program
@@ -200,7 +200,7 @@ int wxEntry(int& argc, wxChar **argv)
 
 #endif // wxUSE_ON_FATAL_EXCEPTION/!wxUSE_ON_FATAL_EXCEPTION
 
-#endif // wxUSE_BASE
+//#endif // wxUSE_BASE
 
 #if wxUSE_GUI
 
@@ -422,7 +422,7 @@ WXDLLEXPORT int wxEntry(HINSTANCE hInstance,
 // global HINSTANCE
 // ----------------------------------------------------------------------------
 
-#if wxUSE_BASE
+//#if wxUSE_BASE
 
 HINSTANCE wxhInstance = 0;
 
@@ -436,4 +436,4 @@ void wxSetInstance(HINSTANCE hInst)
     wxhInstance = hInst;
 }
 
-#endif // wxUSE_BASE
+//#endif // wxUSE_BASE
