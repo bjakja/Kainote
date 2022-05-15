@@ -172,10 +172,12 @@ VideoBox::VideoBox(wxWindow *parent, const wxSize &size)
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
 		RefreshTime();
 	}, ID_REFRESH_TIME);
-	//Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KainoteFrame::OnMenuSelected1, 
-		//Notebook::GetTabs()->GetParent(), GLOBAL_PLAY_ACTUAL_LINE);
-	Connect(VIDEO_PREVIOUS_FILE, VIDEO_NEXT_FILE, wxEVT_COMMAND_BUTTON_CLICKED, 
-		(wxObjectEventFunction)&VideoBox::OnAccelerator);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent& evt) {
+		KainoteFrame* Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
+		Kai->OnMenuSelected1(evt);
+		}, GLOBAL_PLAY_ACTUAL_LINE);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, 
+		&VideoBox::OnAccelerator, this, VIDEO_PREVIOUS_FILE, VIDEO_NEXT_FILE);
 	Connect(VIDEO_PLAY_PAUSE, VIDEO_STOP, wxEVT_COMMAND_BUTTON_CLICKED,
 		(wxObjectEventFunction)&VideoBox::OnAccelerator);
 	Connect(ID_VOL, wxEVT_SCROLL_CHANGED, (wxObjectEventFunction)&VideoBox::OnVolume);

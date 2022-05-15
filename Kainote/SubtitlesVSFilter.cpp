@@ -81,14 +81,12 @@ bool SubtitlesVSFilter::Open(TabPanel *tab, int flag, wxString *text)
 	m_CsriInstance = nullptr;
 
 	wxString *textsubs = text;
-	bool fromFile = false;
 	switch (flag){
 	case OPEN_DUMMY:
 		textsubs = tab->grid->GetVisible();
 		break;
 	case OPEN_WHOLE_SUBTITLES:
-		textsubs = tab->grid->SaveText();
-		fromFile = true;
+		textsubs = tab->grid->GetVisible(nullptr, nullptr, nullptr, true);
 		break;
 	case CLOSE_SUBTITLES:
 	case OPEN_HAS_OWN_TEXT:
@@ -113,18 +111,12 @@ bool SubtitlesVSFilter::Open(TabPanel *tab, int flag, wxString *text)
 		wxString toAppend;
 		renderer->m_Visual->AppendClipMask(&toAppend);
 		if (!toAppend.empty()) {
-			if (fromFile) {
-				OpenWrite ow(*textsubs, false);
-				ow.PartFileWrite(toAppend);
-				ow.CloseFile();
-			}
-			else {
+			
 				(*textsubs) << toAppend;
-			}
 		}
 	}
 
-	renderer->m_HasDummySubs = !fromFile;
+	renderer->m_HasDummySubs = true;
 
 	wxScopedCharBuffer buffer = textsubs->mb_str(wxConvUTF8);
 	int size = strlen(buffer);
@@ -134,8 +126,7 @@ bool SubtitlesVSFilter::Open(TabPanel *tab, int flag, wxString *text)
 	csri_rend *vobsub = GetVSFilter();
 	if (!vobsub){ KaiLog(_("Nie można zinicjalizować CSRI.")); delete textsubs; return false; }
 
-	m_CsriInstance = (fromFile) ? 
-		csri_open_file(vobsub, buffer, nullptr) : 
+	m_CsriInstance = 
 		csri_open_mem(vobsub, buffer, size, nullptr);
 	if (!m_CsriInstance){ KaiLog(_("Nie można utworzyć instancji CSRI.")); delete textsubs; return false; }
 

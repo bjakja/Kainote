@@ -3318,13 +3318,13 @@ bool CSimpleTextSubtitle::Open(BYTE* data, int len, int CharSet, CString name)
 
     CStringW decoded(unicode);
     //MessageBoxW(NULL, decoded, L"Open", MB_OK);
-    
-    while (true)
+    int posstart = 0;
+    while (posstart < minSize)
     {
-        //MessageBoxW(NULL, decoded, L"Open", MB_OK);
-        if (decoded.IsEmpty())
-            break;
-        CStringW buff = GetStrWW(decoded, '\n');
+        
+        //CStringW buff = GetStrWW(decoded, '\n');
+        CStringW buff = decoded.Tokenize(L"\n", posstart);
+        //if (buff.IsEmpty()) break;
         FastTrim(buff);
         
         if (buff.IsEmpty() || buff.GetAt(0) == ';') continue;

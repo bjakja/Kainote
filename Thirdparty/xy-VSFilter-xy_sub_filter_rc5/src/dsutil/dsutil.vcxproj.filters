@@ -57,6 +57,9 @@
     <ClCompile Include="vd_asm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\filters\transform\basevideofilter\BaseVideoFilter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DSMPropertyBag.h">
@@ -106,6 +109,9 @@
     </ClInclude>
     <ClInclude Include="vd_asm.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\filters\transform\basevideofilter\BaseVideoFilter.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

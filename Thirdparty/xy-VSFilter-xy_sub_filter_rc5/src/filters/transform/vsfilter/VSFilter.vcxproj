@@ -70,7 +70,7 @@
     <Import Project="VSFilter.props" />
   </ImportGroup>
   <PropertyGroup>
-    <TargetName>VSFilter</TargetName>
+    <TargetName>xy-Vsfilter_kainote</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\csri</OutDir>
@@ -87,14 +87,15 @@
   <ItemDefinitionGroup>
     <Link>
       <ModuleDefinitionFile>VSFilter.def</ModuleDefinitionFile>
-      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Release|x64'">delayimp.lib;strmbase.lib;subtitlesR.lib;boost.lib;subpicR.lib;KasumiR.lib;systemR.lib;dsutilR.lib;libssf.lib;basevideofilterR.lib;winmm.lib;dwmapi.lib;Mfuuid.lib</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Release|x64'">atls.lib;delayimp.lib;strmbase.lib;dsutil.lib;subtitles.lib;boost.lib;subpic.lib;Kasumi.lib;system.lib;libssf.lib;winmm.lib;dwmapi.lib;Mfuuid.lib</AdditionalDependencies>
       <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">atls.lib;delayimp.lib;strmbase.lib;libssf.lib;subtitles.lib;boost.lib;subpic.lib;Kasumi.lib;system.lib;dsutil.lib;basevideofilter.lib;winmm.lib;dwmapi.lib;Mfuuid.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)bin\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">$(SolutionDir)bin\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">
       </IgnoreSpecificDefaultLibraries>
-      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">delayimp.lib;strmbase.lib;subtitles.lib;boost.lib;subpic.lib;Kasumi.lib;system.lib;dsutil.lib;libssf.lib;basevideofilter.lib;winmm.lib;dwmapi.lib;Mfuuid.lib</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">delayimp.lib;subtitles.lib;boost.lib;subpic.lib;Kasumi.lib;system.lib;dsutil.lib;libssf.lib;winmm.lib;dwmapi.lib;Mfuuid.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)bin\$(Platform)\$(Configuration);$(OutDir)..</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries Condition="'$(Configuration)|$(Platform)'=='Release|x64'">nafxcw.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <ResourceCompile>
       <PreprocessorDefinitions>_AFXDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -110,6 +111,7 @@
       <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">Default</LanguageStandard_C>
       <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\include;$(SolutionDir)Thirdparty\baseclasses;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\filters\transform\vsfilter;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\thirdparty\log4cplus\include;$(SolutionDir)Thirdparty\boost\;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\subpic;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\thirdparty\VirtualDub\h</AdditionalIncludeDirectories>
