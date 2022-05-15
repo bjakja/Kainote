@@ -64,7 +64,7 @@ using namespace DirectVobSubXyOptions;
 
 CDirectVobSubFilter::CDirectVobSubFilter(LPUNKNOWN punk, HRESULT* phr, const GUID& clsid)
     : CDirectVobSub(DirectVobFilterOptions, &m_csSubLock)
-    , CBaseVideoFilter(NAME("CDirectVobSubFilter"), punk, phr, clsid)
+    , CBaseVideoFilter(L"CDirectVobSubFilter", punk, phr, clsid)
     , m_nSubtitleId(-1)
     , m_fMSMpeg4Fix(false)
     , m_fps(25)
