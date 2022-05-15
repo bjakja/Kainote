@@ -209,9 +209,6 @@ int _tmain(int argc, TCHAR* argv[])
 	filenames.push_back(L"\\..\\..\\Locale\\ko_KR.mo\0");
 	filenames.push_back(L"\\Locale\\zh_CN.mo\0");
 	filenames.push_back(L"\\..\\..\\Locale\\th_TH.mo\0");
-	filenames.push_back(L"\\msvcp140.dll\0");
-	filenames.push_back(L"\\vcruntime140.dll\0");
-	filenames.push_back(L"\\vcruntime140_1.dll\0");
 	filenames.push_back(L"\\Themes\\AegiMode.txt\0");
 	filenames.push_back(L"\\Themes\\DeepDark.txt\0");
 	filenames.push_back(L"\\Themes\\DeepLight.txt\0");

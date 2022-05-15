@@ -88,7 +88,7 @@
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeaderFile />
-      <AdditionalIncludeDirectories>$(SolutionDir)..\Thirdparty\zlib-1.2.8;$(SolutionDir)..\Thirdparty\wxWidgets\include;C:\Program Files (x86)\Visual Leak Detector\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\Thirdparty\zlib;$(SolutionDir)..\Thirdparty\wxWidgets\include;C:\Program Files (x86)\Visual Leak Detector\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -107,12 +107,12 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\Thirdparty\zlib-1.2.8;$(SolutionDir)..\Thirdparty\wxWidgets\include;C:\Program Files (x86)\Visual Leak Detector\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\Thirdparty\zlib;$(SolutionDir)..\Thirdparty\wxWidgets\include;C:\Program Files (x86)\Visual Leak Detector\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>H:\Kainote\Thirdparty\zlib-1.2.8\contrib\vstudio\vc11\x64\ZlibStatDebug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>H:\Kainote\Thirdparty\zlib\contrib\vstudio\vc11\x64\ZlibStatDebug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>zlibstat.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -126,7 +126,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\Thirdparty\zlib-1.2.8;$(SolutionDir)..\Thirdparty\wxWidgets\include;C:\Program Files (x86)\Visual Leak Detector\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\Thirdparty\zlib;$(SolutionDir)..\Thirdparty\wxWidgets\include;C:\Program Files (x86)\Visual Leak Detector\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,35 +147,35 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\Thirdparty\zlib-1.2.12;$(SolutionDir)..\Thirdparty\wxWidgets\include;C:\Program Files (x86)\Visual Leak Detector\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\Thirdparty\zlib;$(SolutionDir)..\Thirdparty\wxWidgets\include;C:\Program Files (x86)\Visual Leak Detector\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>zlibstat.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\Windows Kits\10\Lib\10.0.17134.0\um\x64;H:\Kainote\Thirdparty\zlib-1.2.8\contrib\vstudio\vc11\x64\ZlibStatRelease;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\bin\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\ioapi.c" />
-    <ClCompile Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\iowin32.c" />
-    <ClCompile Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\mztools.c" />
-    <ClCompile Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\unzip.c" />
-    <ClCompile Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\zip.c" />
+    <ClCompile Include="..\..\Thirdparty\zlib\contrib\minizip\ioapi.c" />
+    <ClCompile Include="..\..\Thirdparty\zlib\contrib\minizip\iowin32.c" />
+    <ClCompile Include="..\..\Thirdparty\zlib\contrib\minizip\mztools.c" />
+    <ClCompile Include="..\..\Thirdparty\zlib\contrib\minizip\unzip.c" />
+    <ClCompile Include="..\..\Thirdparty\zlib\contrib\minizip\zip.c" />
     <ClCompile Include="AutoSending.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\crypt.h" />
-    <ClInclude Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\ioapi.h" />
-    <ClInclude Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\iowin32.h" />
-    <ClInclude Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\mztools.h" />
-    <ClInclude Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\unzip.h" />
-    <ClInclude Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\zip.h" />
+    <ClInclude Include="..\..\Thirdparty\zlib\contrib\minizip\crypt.h" />
+    <ClInclude Include="..\..\Thirdparty\zlib\contrib\minizip\ioapi.h" />
+    <ClInclude Include="..\..\Thirdparty\zlib\contrib\minizip\iowin32.h" />
+    <ClInclude Include="..\..\Thirdparty\zlib\contrib\minizip\mztools.h" />
+    <ClInclude Include="..\..\Thirdparty\zlib\contrib\minizip\unzip.h" />
+    <ClInclude Include="..\..\Thirdparty\zlib\contrib\minizip\zip.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

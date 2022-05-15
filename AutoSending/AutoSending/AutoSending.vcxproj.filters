@@ -21,39 +21,39 @@
     <ClCompile Include="AutoSending.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\ioapi.c">
+    <ClCompile Include="..\..\Thirdparty\zlib\contrib\minizip\ioapi.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\iowin32.c">
+    <ClCompile Include="..\..\Thirdparty\zlib\contrib\minizip\iowin32.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\mztools.c">
+    <ClCompile Include="..\..\Thirdparty\zlib\contrib\minizip\mztools.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\unzip.c">
+    <ClCompile Include="..\..\Thirdparty\zlib\contrib\minizip\unzip.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\zip.c">
+    <ClCompile Include="..\..\Thirdparty\zlib\contrib\minizip\zip.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\crypt.h">
+    <ClInclude Include="..\..\Thirdparty\zlib\contrib\minizip\crypt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\ioapi.h">
+    <ClInclude Include="..\..\Thirdparty\zlib\contrib\minizip\ioapi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\iowin32.h">
+    <ClInclude Include="..\..\Thirdparty\zlib\contrib\minizip\iowin32.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\mztools.h">
+    <ClInclude Include="..\..\Thirdparty\zlib\contrib\minizip\mztools.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\unzip.h">
+    <ClInclude Include="..\..\Thirdparty\zlib\contrib\minizip\unzip.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Thirdparty\zlib-1.2.8\contrib\minizip\zip.h">
+    <ClInclude Include="..\..\Thirdparty\zlib\contrib\minizip\zip.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

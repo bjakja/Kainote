@@ -349,6 +349,9 @@
       <OutputFile>$(solutionDir)Thirdparty\wxWidgets\lib\vc_lib\wx_vc9_base.bsc</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Bscmake>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="$(solutionDir)Thirdparty\wxWidgets\src\common\any.cpp" />
