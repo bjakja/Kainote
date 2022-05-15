@@ -40,6 +40,7 @@ Plsease Note: Bata is a unstable versions, and if you have any question you can 
 
 ## Contributing a translations
 Want to help translate Kainote to your language? You can easily help by utilizing a service we use called **Weblate**.
+
 Visit our translation project [here](https://hosted.weblate.org/engage/kainote/?utm_source=widget).
 
 ## FAQ
