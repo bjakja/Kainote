@@ -38,6 +38,10 @@ You can download Kainote bata version [here.](https://drive.google.com/uc?id=1EC
 
 Plsease Note: Bata is a unstable versions, and if you have any question you can reach out to us on [Discord](https://discord.gg/8kNAxDFgwj).
 
+## Contributing a translations
+Want to help translate Kainote to your language? You can easily help by utilizing a service we use called **Weblate**.
+Visit our translation project [here](https://hosted.weblate.org/engage/kainote/?utm_source=widget).
+
 ## FAQ
 
 You can reach out to us on [Discord](https://discord.gg/8kNAxDFgwj).
