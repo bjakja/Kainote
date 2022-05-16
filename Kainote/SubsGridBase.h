@@ -74,7 +74,6 @@ public:
 	bool IsModified();
 
 	void SaveFile(const wxString &filename, bool cstat = true, bool loadFromEditbox = false);
-	wxString *SaveText();
 
 	size_t StylesSize();
 	void DelStyle(int i);

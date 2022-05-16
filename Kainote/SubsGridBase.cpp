@@ -1553,18 +1553,6 @@ size_t SubsGridBase::SInfoSize()
 	return file->SInfoSize();
 }
 
-wxString *SubsGridBase::SaveText()
-{
-	wxString *path = new wxString();
-
-	wxString ext = (subsFormat < SRT) ? L"ass" : (subsFormat == SRT) ? L"srt" : L"txt";
-
-	(*path) << Options.pathfull << L"\\Subs\\DummySubs_" << Notebook::GetTabs()->FindPanel(tab) << L"." << ext;
-
-	SaveFile(*path, false, true);
-
-	return path;
-}
 
 //this function is called from another thread
 //need to guard every change in dialogues, styles, sinfos, and editbox->line
