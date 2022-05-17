@@ -39,7 +39,7 @@ extern "C" {
 }
 
 
-
+namespace Auto{
 
 	class LuaDialogControl {
 	public:
@@ -110,5 +110,5 @@ extern "C" {
 		void Unserialise(const wxString &serialised);
 	};
 
-//};
+};
 

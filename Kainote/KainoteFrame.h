@@ -25,6 +25,7 @@
 #include "KaiFrame.h"
 #include "FontCollector.h"
 #include "KaiStatusBar.h"
+#include "Automation.h"
 #include <wx/timer.h>
 #include <wx/window.h>
 
@@ -99,7 +100,7 @@ public:
 	void DestroyDialogs();
 	FindReplaceDialog *FR = nullptr;
 	SelectLines *SL = nullptr;
-	Automation *Auto = nullptr;
+	Auto::Automation *Auto = nullptr;
 	FontCollector *FC = nullptr;
 	MisspellReplacer *MR = nullptr;
 	wxRect borders;

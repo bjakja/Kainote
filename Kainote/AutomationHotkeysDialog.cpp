@@ -17,7 +17,7 @@
 #include "MappedButton.h"
 #include "KaiMessageBox.h"
 #include "KainoteFrame.h"
-#include "Menu.h"
+#include "Toolbar.h"
 #include <map>
 
 class AutomationHotkeyItem : public Item{
@@ -63,7 +63,7 @@ public:
 
 std::map<idAndType, hdata> AutomationHotkeysDialog::allHotkeys;
 
-AutomationHotkeysDialog::AutomationHotkeysDialog(wxWindow *parent, Automation *Auto)
+AutomationHotkeysDialog::AutomationHotkeysDialog(wxWindow *parent, Auto::Automation *Auto)
 	: KaiDialog(parent, -1, _("Lista skrótów klawiszowych skryptów automatyzacji"))
 	, automation(Auto)
 {
@@ -100,7 +100,7 @@ AutomationHotkeysDialog::AutomationHotkeysDialog(wxWindow *parent, Automation *A
 
 	hotkeysList->AppendItem(new ItemText(_("Folder automatycznego wczytywania")));
 	for (int i = 0; i < automation->Scripts.size(); i++){
-		LuaScript * script = automation->Scripts[i];
+		Auto::LuaScript * script = automation->Scripts[i];
 		auto macros = script->GetMacros();
 
 		for (int k = 0; k < macros.size(); k++){
@@ -117,7 +117,7 @@ AutomationHotkeysDialog::AutomationHotkeysDialog(wxWindow *parent, Automation *A
 	}
 	hotkeysList->AppendItem(new ItemText(_("Z napisów")));
 	for (int i = 0; i < automation->ASSScripts.size(); i++){
-		LuaScript * script = automation->ASSScripts[i];
+		Auto::LuaScript * script = automation->ASSScripts[i];
 		auto macros = script->GetMacros();
 
 		for (int k = 0; k < macros.size(); k++){

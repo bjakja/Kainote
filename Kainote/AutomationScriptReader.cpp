@@ -25,7 +25,7 @@
 
 #include <lauxlib.h>
 
-
+namespace Auto {
 
 
 
@@ -131,8 +131,7 @@
 
 
 			if (!LoadFile(L, filename))
-				return error(L, "Error loading Lua module \"%s\":\n%s", 
-					filename.utf8_str().data(), check_string(L, 1).utf8_str().data());
+				return error(L, "Error loading Lua module \"%s\":\n%s", filename.utf8_str().data(), check_string(L, 1).utf8_str().data());
 			break;
 
 		}
@@ -171,4 +170,4 @@
 		lua_setfield(L, LUA_REGISTRYINDEX, "moonscript");
 		return true;
 	}
-
+}

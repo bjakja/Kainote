@@ -44,10 +44,9 @@
 #include "AutomationScriptReader.h"
 #include "KaiMessageBox.h"
 #include "AutomationHotkeysDialog.h"
-
 #include "Notebook.h"
-#include "TabPanel.h"
 #include "VideoBox.h"
+#include "SubsGrid.h"
 #include "stylestore.h"
 
 #include <algorithm>
@@ -62,7 +61,7 @@
 //#include <tuple>
 
 
-
+namespace Auto{
 
 
 	int get_file_name(lua_State *L)
@@ -215,10 +214,10 @@
 		if (path[0] == L'?'){
 			if (path[1] == L'a' && path[4] == L'i') path.replace(0, 6, (tab) ? tab->VideoPath.BeforeLast(L'\\') : wxString(L""));
 			else if (path[1] == L'd' && path[4] == L'a') path.replace(0, 5, firstAutomation);
-			else if (path[1] == L'd' && path[4] == L't') path.replace(0, 11, Options.pathfull + L"\\Dictionary");
+			else if (path[1] == L'd' && path[4] == L't') path.replace(0, 11, Options.pathfull + wxString(L"\\Dictionary"));
 			else if (path[1] == L'l' && path[4] == L'a') path.replace(0, 6, firstAutomation);
 			else if (path[1] == L's' && path[4] == L'i') path.replace(0, 7, (tab) ? tab->SubsPath.BeforeLast(L'\\') : wxString(L""));
-			else if (path[1] == L't' && path[4] == L'p') path.replace(0, 5, firstAutomation + L"\\temp");
+			else if (path[1] == L't' && path[4] == L'p') path.replace(0, 5, firstAutomation + wxString(L"\\temp"));
 			else if (path[1] == L'u' && path[4] == L'r') path.replace(0, 5, firstAutomation);
 			else if (path[1] == L'v' && path[4] == L'e') path.replace(0, 6, (tab) ? tab->VideoPath.BeforeLast(L'\\') : wxString(L""));
 		}
@@ -635,7 +634,7 @@
 				// if the call failed, log the error here
 				wxString errmsg(get_string_or_default(L, -1));
 				errmsg.Prepend(_("Wystąpił błąd podczas wykonywania skryptu Lua:\n"));
-				ps->SafeQueue(EVT_MESSAGE, errmsg);
+				ps->SafeQueue(Auto::EVT_MESSAGE, errmsg);
 				hasMessage = true;
 			}
 			lua_pop(L, 2);
@@ -962,8 +961,8 @@
 
 	bool Automation::Add(wxString filename, bool addToSinfo, bool autoload)
 	{
-		std::vector<LuaScript*> &scripts = (autoload) ? Scripts : ASSScripts;
-		LuaScript *ls = new LuaScript(filename);
+		std::vector<Auto::LuaScript*> &scripts = (autoload) ? Scripts : ASSScripts;
+		Auto::LuaScript *ls = new Auto::LuaScript(filename);
 		for (size_t i = 0; i < scripts.size(); i++) {
 			if (ls->GetFilename() == scripts[i]->GetFilename()){ delete ls; ls = NULL; return false; }
 		}
@@ -983,7 +982,7 @@
 	void Automation::Remove(int script)
 	{
 		HasChanges = true;
-		std::vector<LuaScript*>::iterator i = ASSScripts.begin() + script;
+		std::vector<Auto::LuaScript*>::iterator i = ASSScripts.begin() + script;
 		delete *i;
 		ASSScripts.erase(i);
 	}
@@ -1289,4 +1288,4 @@
 	}
 
 
-//}
+}

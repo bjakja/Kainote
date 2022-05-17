@@ -44,7 +44,7 @@
 #include "Toolbar.h"
 #include "KaiStatusBar.h"
 #include "StyleStore.h"
-#include "Automation.h"
+
 #include "SubsGrid.h"
 #include "FindReplaceDialog.h"
 #include "SelectLines.h"
@@ -396,7 +396,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	if (!Options.GetBool(EDITOR_ON)){ HideEditor(false); }
 	
 	SetSubsResolution(false);
-	Auto = new Automation();
+	Auto = new Auto::Automation();
 	m_SendFocus.SetOwner(this, 6789);
 
 	Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
@@ -2387,7 +2387,7 @@ void KainoteFrame::OnRunScript(wxCommandEvent& event)
 		Hkeys.SaveHkeys(false);
 		return;
 	}
-	LuaScript *script = Auto->FindScript(path);
+	Auto::LuaScript *script = Auto->FindScript(path);
 	if (!script){
 		Auto->Add(path);
 		script = Auto->ASSScripts[Auto->ASSScripts.size() - 1];

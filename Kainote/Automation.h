@@ -47,7 +47,7 @@ class Menu;
 typedef void* HANDLE;
 #endif
 
-
+namespace Auto {
 
 	enum CommandFlags {
 		/// Default command type
@@ -199,8 +199,8 @@ typedef void* HANDLE;
 		void ShowScriptHotkeysWindow(wxWindow *parent);
 		LuaScript *FindScript(const wxString &path);
 
-		std::vector<LuaScript*> Scripts;
-		std::vector<LuaScript*> ASSScripts;
+		std::vector<Auto::LuaScript*> Scripts;
+		std::vector<Auto::LuaScript*> ASSScripts;
 		HANDLE handle;
 		HANDLE eventEndAutoload = NULL;
 	private:
@@ -221,5 +221,5 @@ typedef void* HANDLE;
 		LuaThreadedCall(lua_State *_L);
 		virtual ExitCode Entry();
 	};
-
+}
 

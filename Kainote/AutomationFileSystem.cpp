@@ -27,7 +27,7 @@ namespace bfs = boost::filesystem;
 typedef boost::filesystem::path path;
 
 
-
+namespace Auto{
 
 	template<class T, class Del = void(*)(T)>
 	class scoped_holder {
@@ -326,3 +326,4 @@ typedef boost::filesystem::path path;
 		return 1;
 	}
 
+}

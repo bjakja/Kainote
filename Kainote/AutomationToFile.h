@@ -39,7 +39,7 @@ extern "C" {
 
 class AudioSpectrum;
 
-
+namespace Auto{
 
 	class SubsEntry{
 	public:
@@ -95,5 +95,5 @@ class AudioSpectrum;
 
 	};
 
-
+};
 

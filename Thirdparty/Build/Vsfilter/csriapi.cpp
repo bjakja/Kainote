@@ -78,7 +78,6 @@ CSRIAPI csri_inst *csri_open_file(csri_rend *renderer, const char *filename, str
 
 CSRIAPI csri_inst *csri_open_mem(csri_rend *renderer, const void *data, size_t length, struct csri_openflag *flags)
 {
-	//AMTRACE((TEXT(__FUNCTION__),0));
 	// This is actually less effecient than opening a file, since this first writes the memory data to a temp file,
 	// then opens that file and parses from that.
 	csri_inst *inst = new csri_inst();

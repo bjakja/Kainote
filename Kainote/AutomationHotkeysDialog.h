@@ -22,7 +22,7 @@
 class AutomationHotkeysDialog : public KaiDialog
 {
 public:
-	AutomationHotkeysDialog(wxWindow *parent, Automation *Auto);
+	AutomationHotkeysDialog(wxWindow *parent, Auto::Automation *Auto);
 	~AutomationHotkeysDialog();
 	static std::map<idAndType, hdata> allHotkeys;
 private:
@@ -30,7 +30,7 @@ private:
 	void OnMapHkey(wxCommandEvent &evt);
 	void OnDeleteHkey(wxCommandEvent &evt);
 	void ChangeHotkey(int row, int id, const wxString &hotkey);
-	Automation *automation;
+	Auto::Automation *automation;
 	KaiListCtrl *hotkeysList;
 	int lastScriptId = 30100;
 };

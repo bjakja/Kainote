@@ -28,13 +28,13 @@ extern "C" {
 struct tm;
 
 
-
+namespace Auto{
 
 	/// Clamp `b` to the range [`a`,`c`]
-	/*template<typename T>
+	template<typename T>
 	static inline T mid(T a, T b, T c) {
 		return std::max(a, std::min(b, c));
-	}*/
+	}
 
 	bool try_parse(wxString const& str, double *out);
 	bool try_parse(wxString const& str, int *out);
@@ -266,4 +266,4 @@ struct tm;
 	/// moonscript line rewriting support
 	int add_stack_trace(lua_State *L);
 
-
+}

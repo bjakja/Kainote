@@ -46,7 +46,7 @@
 #include <cfloat>
 #include <map>
 
-
+namespace Auto{
 
 	wxString inline_string_encode(const wxString &input) {
 		wxString output;
@@ -172,12 +172,12 @@
 	public:
 		Edit(lua_State *L)
 			: LuaDialogControl(L)
-			, text(get_field(L, "value"))
+			, text(Auto::get_field(L, "value"))
 		{
 			// Undocumented behaviour, 'value' is also accepted as key for text,
 			// mostly so a text control can stand in for other things.
 			// This shouldn't be exploited and might change later.
-			text = get_field(L, "text", text);
+			text = Auto::get_field(L, "text", text);
 		}
 
 		bool CanSerialiseValue() const { return true; }
@@ -434,7 +434,7 @@
 		if (include_buttons && lua_istable(L, 2)) {
 			lua_pushvalue(L, 2);
 			lua_for_each(L, [&]{
-				wxString butt = check_string(L, -1);
+				wxString butt = Auto::check_string(L, -1);
 				static int buttonId = 7999;
 				buttons.emplace_back(buttonId++, butt);
 			});
@@ -443,10 +443,10 @@
 		if (include_buttons && lua_istable(L, 3)) {
 			lua_pushvalue(L, 3);
 			lua_for_each(L, [&]{
-				wxString butt = check_string(L, -2);
+				wxString butt = Auto::check_string(L, -2);
 				int id = string_wxString_id(butt);
 				//if (id<0){id = idstart; idstart++;}
-				wxString label = check_string(L, -1);
+				wxString label = Auto::check_string(L, -1);
 				auto btn = find_if(buttons.begin(), buttons.end(),
 					[&](std::pair<int, wxString>& btn) { return btn.second == label; });
 				if (btn == buttons.end())
@@ -564,5 +564,5 @@
 			}
 		}
 	}
-//};
+};
 

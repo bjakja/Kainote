@@ -39,7 +39,7 @@
 #include "KaiStaticText.h"
 #include "KaiGauge.h"
 
-
+namespace Auto{
 	wxDECLARE_EVENT(EVT_MESSAGE, wxThreadEvent);
 	class LuaProgressDialog :public wxDialog
 	{
@@ -114,5 +114,5 @@ class LuaProgressSink : public wxEvtHandler{
 
 	
 
-
+};
 

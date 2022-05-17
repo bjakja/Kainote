@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <lua.h>
+#include "lua.h"
 
 
 #define KEYNEWPATT	"lpeg.newpf"
@@ -15,7 +15,7 @@
 
 /*
 ** type of extension functions that define new "patterns" for LPEG
-** It should return the new current position or nullptr if match fails
+** It should return the new current position or NULL if match fails
 */
 typedef const char *(*PattFunc) (const char *s,  /* current position */
                                  const char *e,  /* string end */

@@ -33,9 +33,8 @@
 #include "AutomationUtils.h"
 #include "KainoteApp.h"
 #include "AudioSpectrum.h"
-#include "TabPanel.h"
-#include "AudioBox.h"
 #include "Notebook.h"
+#include "AudioBox.h"
 #include <wx/regex.h>
 
 //template<int (AutoToFile::*closure)(lua_State *)>
@@ -44,7 +43,7 @@
 //		return (AutoToFile::GetObjPointer(L, lua_upvalueindex(1), false)->*closure)(L);
 //	}
 
-
+namespace Auto{
 
 	SubsEntry::SubsEntry()
 	{
@@ -238,7 +237,7 @@
 			lua_setfield(L, -2, "effect");
 
 			bool isTl = false;
-			const char *text = (isTl = adial->TextTl != L"") ? 
+			const char * text = (isTl = adial->TextTl != L"") ? 
 				adial->TextTl->mb_str(wxConvUTF8).data() : 
 				adial->Text->mb_str(wxConvUTF8).data();
 			lua_pushstring(L, text);
@@ -607,11 +606,12 @@
 				}
 				else
 				{
-					wxString fclass = (e->lclass == L"info") ? wxString(L"info") : 
-						(e->lclass == L"style") ? wxString(_("stylów")) : wxString(_("dialogów"));
-					wxString sclass = (i < sinfo) ? wxString(L"info") :
-						(i < styles) ? wxString(_("stylów")) : wxString(_("dialogów"));
-					wxString all = wxString::Format(_("Nie można dodać linii klasy: %s w pole klasy: %s"), fclass, sclass);
+					wxString fclass = (e->lclass == L"info") ? wxString(L"info") : (e->lclass == L"style") ?
+						wxString(_("stylów")) : wxString(_("dialogów"));
+					wxString sclass = (i < sinfo) ? wxString(L"info") : (i < styles) ?
+						wxString(_("stylów")) : wxString(_("dialogów"));
+					wxString all = wxString::Format(_("Nie można dodać linii klasy: %s w pole klasy: %s"), 
+						fclass, sclass);
 					SAFE_DELETE(e);
 					lua_pushstring(L, all.mb_str(wxConvUTF8).data());
 					lua_error(L);
@@ -1115,5 +1115,5 @@
 		//delete laf;
 		return 0;
 	};
-
+}
 
