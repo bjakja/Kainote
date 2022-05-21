@@ -23,7 +23,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup>
-    <MiniLuaCommand>$(SolutionDir)thirdparty\build\minilua\$(Platform)\$(Configuration)\minilua</MiniLuaCommand>
+    <MiniLuaCommand>$(SolutionDir)bin\$(Platform)\$(Configuration)\minilua</MiniLuaCommand>
     <PackCommand>$(MSBuildThisFileDirectory)pack-dt.lua</PackCommand>
     <IcuDt>icudt60l</IcuDt>
     <CharacterSet>MultiByte</CharacterSet>
