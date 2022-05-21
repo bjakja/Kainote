@@ -29,7 +29,7 @@
 // Aegisub Project http://www.aegisub.org/
 
 #include "AutomationProgress.h"
-#include "AutomationDialog.h"
+//#include "AutomationDialog.h"
 #include "AutomationUtils.h"
 #include "Config.h"
 #include "KaiTextCtrl.h"

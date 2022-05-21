@@ -18,12 +18,11 @@
 #include "AutomationUtils.h"
 #include "AutomationLPeg.h"
 #include "LogHandler.h"
-
+#include <wx/regex.h>
 
 #include <cstdlib>
 #include <iterator>
-//#include <wx/wx.h>
-#include <wx/regex.h>
+
 
 #include <boost/regex/icu.hpp>
 #include <boost/locale/conversion.hpp>

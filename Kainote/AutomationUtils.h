@@ -17,13 +17,14 @@
 extern "C" {
 #include <lua.hpp>
 }
+#include <wx/string.h>
 #include <algorithm>
 #include <boost/range/irange.hpp>
 //#include <string>
 #include <vector>
 #include <memory>
 //#include <type_traits>
-#include <wx/string.h>
+
 
 struct tm;
 

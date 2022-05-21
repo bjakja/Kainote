@@ -31,13 +31,14 @@
 #pragma once
 
 #include <wx/dialog.h>
-
 #include "AutomationDialog.h"
 #include "MappedButton.h"
 #include "KaiTextCtrl.h"
 #include <utility>
 #include "KaiStaticText.h"
 #include "KaiGauge.h"
+
+
 
 namespace Auto{
 	wxDECLARE_EVENT(EVT_MESSAGE, wxThreadEvent);
@@ -77,7 +78,7 @@ namespace Auto{
 		lua_State *L;
 	};
 
-class LuaProgressSink : public wxEvtHandler{
+	class LuaProgressSink : public wxEvtHandler{
 	private:
 		lua_State *L;
 

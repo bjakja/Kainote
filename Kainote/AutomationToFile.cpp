@@ -28,8 +28,9 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 // Aegisub Project http://www.aegisub.org/
-#include "Config.h"
+
 #include "AutomationToFile.h"
+#include "Config.h"
 #include "AutomationUtils.h"
 #include "KainoteApp.h"
 #include "AudioSpectrum.h"

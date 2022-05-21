@@ -1362,7 +1362,7 @@ void Notebook::LoadLastSession(bool loadCrashSession, const wxString &externalPa
 		while (true)
 		{
 			wxString token = tokenizer.GetNextToken();
-			if (token.StartsWith(L"video: ", &rest))
+			if (token.StartsWith(L"Video: ", &rest))
 				video = rest;
 			else if (token.StartsWith(L"Position: ", &rest))
 				videoPosition = wxAtoi(rest);
