@@ -1,7 +1,7 @@
 // AutoSending.cpp : Defines the entry point for the console application.
 //
 
-//#include "stdafx.h"
+#include <string.h>
 #include <stdio.h>
 #include <tchar.h>
 #include <windows.h>
@@ -11,7 +11,7 @@
 
 #include "L:\Kainote\Thirdparty\zlib\contrib\minizip/zip.h"
 #if _DEBUG
-	#include <vld.h>
+	//#include <vld.h>
 #endif
 
 int check_exist_file(const wchar_t* filename)
@@ -52,21 +52,19 @@ bool ConvertAndPrepend(wchar_t *source, char *prepend, char **dest){
 
 int _tmain(int argc, TCHAR* argv[])
 {
-	if (argc<4){ 
+	/*if (argc<4){ 
 		std::cerr << "Too few arguments"; 
 		for (int i = 0; i < argc; i++){
 			std::wcout << argv[i] << "\r\n";
 		}
 		return 1; 
-	}
-	bool isX86 = wcscmp(argv[3], L"x86") == 0;
-	char * prependFolder = (isX86) ? "Kainote" : "Kainote_x64";
-	wchar_t * path = argv[1];
-	if (!check_exist_file(path)){ std::wcerr << L"Kainote zip path don't exist " << path; return 1; }
-
-	//bool isX86 = false;
-	//char * prependFolder = (isX86) ? "Kainote" : "Kainote_x64";
-	//wchar_t * path = (isX86) ? L"H:\\Kainote\\Win32\\Release\\Kainote x86.zip" : L"H:\\Kainote\\x64\\Release\\Kainote x64.zip";
+	}*/
+	
+	char * prependFolder = "Kainote_x64";
+	//wchar_t * path = argv[1];
+	//if (!check_exist_file(path)){ std::wcerr << L"Kainote zip path don't exist " << path; return 1; }
+	wchar_t* path = L"L:\\Kainote\\x64\\Release\\Kainotex6412.zip";
+	
 
 	std::vector<wchar_t *> filenames;
 	//used vector cause i always forget to add sizes;
@@ -75,16 +73,6 @@ int _tmain(int argc, TCHAR* argv[])
 	filenames.push_back(L"\\Automation\\automation\\Autoload\\gradient-factory.lua\0");
 	filenames.push_back(L"\\Automation\\automation\\Autoload\\kara-templater.lua\0");
 	filenames.push_back(L"\\Automation\\automation\\Autoload\\l0.DependencyControl.Toolbox.moon\0");
-	filenames.push_back(L"\\Automation\\automation\\Autoload\\lyger.CircleText.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Autoload\\lyger.ClipGrad.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Autoload\\lyger.GradientByChar.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Autoload\\lyger.GradientEverything.moon\0");
-	filenames.push_back(L"\\Automation\\automation\\Autoload\\lyger.ModifyMocha.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Autoload\\qc.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Autoload\\strip-tags.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Autoload\\ua.Colorize.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Autoload\\ua.HYDRA.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Autoload\\ua.Recalculator.lua\0");
 	filenames.push_back(L"\\Automation\\automation\\Autoload\\skew gradient.lua\0");
 	filenames.push_back(L"\\Automation\\automation\\Autoload\\BezierToText.lua\0");
 	filenames.push_back(L"\\Automation\\automation\\Include\\a-mo\\ConfigHandler.moon\0");
@@ -207,6 +195,7 @@ int _tmain(int argc, TCHAR* argv[])
 	filenames.push_back(L"\\LICENSE.txt\0");
 	filenames.push_back(L"\\..\\..\\Locale\\en.mo\0");
 	filenames.push_back(L"\\..\\..\\Locale\\ko_KR.mo\0");
+	filenames.push_back(L"\\..\\..\\Locale\\nb_NO.mo\0");
 	filenames.push_back(L"\\Locale\\zh_CN.mo\0");
 	filenames.push_back(L"\\..\\..\\Locale\\th_TH.mo\0");
 	filenames.push_back(L"\\Themes\\AegiMode.txt\0");
@@ -218,12 +207,11 @@ int _tmain(int argc, TCHAR* argv[])
 	filenames.push_back(L"\\KaiNote_AVX.pdb\0");
 	filenames.push_back(L"\\Csri\\VSFiltermod.dll\0");
 
-	int platformdiff = isX86 ? 3 : 0;
-
 	zipFile zf = zipOpen64(path, APPEND_STATUS_CREATE);
+	std::wcout << L"path" << path << (size_t)zf << L"\n";
 	if (zf == NULL)
 		return 1;
-	wchar_t * pch = wcsrchr(path, '\\');
+	wchar_t * pch = wcsrchr(path, L'\\');
 	wchar_t zipdir[4000];
 	size_t newstart = pch - path;
 	wcsncpy(zipdir, path, newstart);
@@ -231,18 +219,21 @@ int _tmain(int argc, TCHAR* argv[])
 	bool _return = true;
 	char buffer[CHUNK];
 
-	for (int i = 0; i < filenames.size() - platformdiff; i++){
+	for (int i = 0; i < filenames.size(); i++){
 		wchar_t * fn = filenames[i];
+		std::wcout << fn << L"\n";
 		//wchar_t * pch1 = wcschr(fn, '\\');
 		//size_t newnewstart = pch1 - fn + 1;
 		wcscpy(&zipdir[newstart], fn);
 		char * charfn = NULL;
 		if (!ConvertAndPrepend(fn, prependFolder, &charfn)){
 			_return = false;
+			std::wcout << fn << " " << prependFolder << L"\n";
 			continue;
 		}
 		
 		size_t size = 0;
+		std::wcout << L"zipdir" << zipdir << L"\n";
 		FILE *file = _wfopen(zipdir, L"rb");
 		zip_fileinfo zfi = { 0 };
 		HANDLE ffile = CreateFile(zipdir, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
@@ -254,36 +245,55 @@ int _tmain(int argc, TCHAR* argv[])
 			uLong *dt = &zfi.dosDate;
 			FileTimeToLocalFileTime(&writeTime, &ftLocal);
 			FileTimeToDosDateTime(&ftLocal, ((LPWORD)dt) + 1, ((LPWORD)dt) + 0);
+			std::wcout << L"\nvalid handle\n\n";
+		}
+		else {
+			std::wcout << L"\ninvalid handle\n\n";
 		}
 		if (!file){
-			if (S_OK == zipOpenNewFileInZip(zf, charfn, &zfi, NULL, 0, NULL, 0, NULL, Z_DEFLATED, Z_DEFAULT_COMPRESSION)){
-				if (zipCloseFileInZip(zf))
+			if (S_OK == zipOpenNewFileInZip(zf, charfn, &zfi, NULL, 0, NULL, 0, 
+				"Kainote subtitles editor", Z_DEFLATED, Z_DEFAULT_COMPRESSION)){
+				if (zipCloseFileInZip(zf)) {
+					std::cout << "no zipOpenNewFileInZip\n";
 					_return = false;
+				}
+				std::cout << charfn << "\n";
 				delete[] charfn;
+				
 				continue;
 			}
+			else 
+				std::wcout << L"\nno zipOpenNewFileInZip\n\n";
 		}
 		else
 		{
-			if (S_OK == zipOpenNewFileInZip(zf, charfn, &zfi, NULL, 0, NULL, 0, NULL, Z_DEFLATED, Z_DEFAULT_COMPRESSION))
+			if (S_OK == zipOpenNewFileInZip(zf, charfn, &zfi, NULL, 0, NULL, 0, 
+				"Kainote subtitles editor", Z_DEFLATED, Z_DEFAULT_COMPRESSION))
 			{
 				while (size = fread(buffer, 1, CHUNK, file))
 				{
 					
-					if (zipWriteInFileInZip(zf, buffer, size))
+					if (zipWriteInFileInZip(zf, buffer, size)) {
+						std::cout << "no zipWriteInFileInZip\n";
 						_return = false;
+					}
 
 				}
-				if (zipCloseFileInZip(zf))
+				if (zipCloseFileInZip(zf)) {
+					std::cout << "no zipWriteInFileInZip\n";
 					_return = false;
+				}
+					
 				delete[] charfn;
 				fclose(file);
 				continue;
 			}
+			std::cout << "close\n";
 			_return = false;
 			fclose(file);
 		}
 		delete[] charfn;
+		std::cout << "no del charfn\n";
 		_return = false;
 	}
 	if (zipClose(zf, NULL))
@@ -292,9 +302,9 @@ int _tmain(int argc, TCHAR* argv[])
 	if (!_return)
 		return 4;
 	
-	//wchar_t *dbx = (isX86) ? L"C:\\Users\\Bakura\\Dropbox\\Kainote x86.zip\0" : L"C:\\Users\\Bakura\\Dropbox\\Kainote x64.zip\0";
+	wchar_t *dbx = L"H:\\Google Drive\\Kainote x64.zip\0";
 
-	wchar_t * dbx = argv[2];
+	//wchar_t * dbx = argv[2];
 
 	std::ifstream src(path, std::ios::binary);
 	std::ofstream dst(dbx, std::ios::binary);
