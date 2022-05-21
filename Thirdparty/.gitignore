@@ -24,4 +24,5 @@ zlib-1.2.11/
 ffms2000/
 VSFilterMod-r5.2/
 xy-VSFilter-master/src/filters/transform/vsfilter/csri2.h
+curl/
 *.gz
