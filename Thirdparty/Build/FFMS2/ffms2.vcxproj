@@ -94,7 +94,7 @@
     <IncludePath>$(SolutionDir)Thirdparty\ffms2\include;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\core;$(SolutionDir)Thirdparty\zlib;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>false</LinkIncremental>
+    <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)</OutDir>
     <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\$(ProjectName)</IntDir>
     <IncludePath>$(SolutionDir)Thirdparty\ffms2\include;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\core;$(SolutionDir)Thirdparty\zlib-1.2.12;$(IncludePath)</IncludePath>
@@ -219,8 +219,6 @@
       <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\ffmpeg\libavutil;$(SolutionDir)Thirdparty\ffmpeg\libswscale;$(SolutionDir)Thirdparty\ffmpeg\libswresample;$(SolutionDir)Thirdparty\ffmpeg\libavformat;$(SolutionDir)Thirdparty\ffmpeg\libavcodec;$(SolutionDir)ffms2\build-msvc\x64\Release;$(SolutionDir)Thirdparty\Build\AvisynthPlus\Output;$(SolutionDir)bin\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>ImageSeq.dll</IgnoreSpecificDefaultLibraries>
       <ImportLibrary>$(SolutionDir)bin\$(Platform)\$(Configuration).lib</ImportLibrary>
-
-
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

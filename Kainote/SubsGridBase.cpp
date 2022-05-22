@@ -656,6 +656,11 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 		bool isEndGreater = false;
 		bool previousIsKeyFrame = true;
 		bool isPreviousEndEdited = false;
+		if (!FFMS2) {
+			KaiLog(_("Wideo nie zostało wczytane przez FFMS2")); 
+			return;
+		}
+
 		const wxArrayInt& keyFrames = FFMS2->GetKeyframes();
 		wxArrayInt keyFramesStart;
 		for (size_t g = 0; g < keyFrames.Count(); g++) {

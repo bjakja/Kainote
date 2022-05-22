@@ -996,12 +996,12 @@ namespace Auto{
 			}
 			Scripts.clear();
 		}
-		//if(!autoload){
+		
 		for (auto i = ASSScripts.begin(); i != ASSScripts.end(); i++) {
 			delete *i;
 		}
 		ASSScripts.clear();
-		//}
+		
 	}
 
 	void Automation::ReloadMacro(int script, bool autoload)
