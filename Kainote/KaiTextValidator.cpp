@@ -113,7 +113,7 @@ bool KaiTextValidator::Validate(wxWindow *parent)
     wxString errormsg;
     if ( HasFlag(wxFILTER_EMPTY) && val.empty() )
     {
-        errormsg = _("Required information entry is empty.");
+        errormsg = L"Required information entry is empty.";
     }
     else if ( !(errormsg = IsValid(val)).empty() )
     {
@@ -126,7 +126,7 @@ bool KaiTextValidator::Validate(wxWindow *parent)
     if ( !errormsg.empty() )
     {
         m_validatorWindow->SetFocus();
-        KaiMessageBox(errormsg, _("Text check Error"),
+        KaiMessageBox(errormsg, L"Text check Error",
                      wxOK | wxICON_EXCLAMATION, parent);
 
         return false;
@@ -203,23 +203,23 @@ wxString KaiTextValidator::IsValid(const wxString& val) const
     // wxFILTER_EMPTY is checked for in KaiTextValidator::Validate
 
     if ( HasFlag(wxFILTER_ASCII) && !val.IsAscii() )
-        return _("'%s' should only contain ASCII characters.");
+        return L"'%s' should only contain ASCII characters.";
     if ( HasFlag(wxFILTER_ALPHA) && !CheckString(wxIsalpha, val) )
-        return _("'%s' should only contain alphabetic characters.");
+        return L"'%s' should only contain alphabetic characters.";
     if ( HasFlag(wxFILTER_ALPHANUMERIC) && !CheckString(wxIsalnum, val) )
-        return _("'%s' should only contain alphabetic or numeric characters.");
+        return L"'%s' should only contain alphabetic or numeric characters.";
     if ( HasFlag(wxFILTER_DIGITS) && !CheckString(wxIsdigit, val) )
-        return _("'%s' should only contain digits.");
+        return L"'%s' should only contain digits.";
     if ( HasFlag(wxFILTER_NUMERIC) && !wxIsNumeric(val) )
-        return _("'%s' should be numeric.");
+        return L"'%s' should be numeric.";
     if ( HasFlag(wxFILTER_INCLUDE_LIST) && m_includes.Index(val) == wxNOT_FOUND )
-        return _("'%s' is invalid");
+        return L"'%s' is invalid";
     if ( HasFlag(wxFILTER_INCLUDE_CHAR_LIST) && !ContainsOnlyIncludedCharacters(val) )
-        return _("'%s' is invalid");
+        return L"'%s' is invalid";
     if ( HasFlag(wxFILTER_EXCLUDE_LIST) && m_excludes.Index(val) != wxNOT_FOUND )
-        return _("'%s' is invalid");
+        return L"'%s' is invalid";
     if ( HasFlag(wxFILTER_EXCLUDE_CHAR_LIST) && ContainsExcludedCharacters(val) )
-        return _("'%s' is invalid");
+        return L"'%s' is invalid";
 
     return wxEmptyString;
 }
