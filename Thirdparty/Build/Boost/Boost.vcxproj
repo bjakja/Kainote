@@ -38,15 +38,15 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -59,8 +59,8 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -151,9 +151,10 @@
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
       <DebugInformationFormat>None</DebugInformationFormat>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -166,6 +167,7 @@
     <Lib>
       <AdditionalDependencies>icu.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <LinkTimeCodeGeneration>false</LinkTimeCodeGeneration>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">
@@ -181,7 +183,10 @@
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
       <DebugInformationFormat>None</DebugInformationFormat>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -192,8 +197,10 @@
       <IgnoreSpecificDefaultLibraries>boost_system-vc120-mt-1_61.lib;boost_date_time-vc120-mt-1_61.lib;boost_chrono-vc120-mt-1_61.lib;boost_regex-vc120-mt-1_61.lib;boost_locale-vc120-mt-1_61.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <Lib>
-      <AdditionalDependencies>icu.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\build\Icu\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>icu.lib;</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <LinkTimeCodeGeneration>false</LinkTimeCodeGeneration>
+      <IgnoreSpecificDefaultLibraries>icu.dll</IgnoreSpecificDefaultLibraries>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">
@@ -230,7 +237,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\icu\source\common\unicode;$(SolutionDir)\Thirdparty\icu\source\common;$(SolutionDir)\Thirdparty\icu\source\i18n\unicode;$(SolutionDir)\Thirdparty\icu\source\i18n;$(SolutionDir)\Thirdparty\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>BOOST_LOCALE_WITH_ICU=1;BOOST_LOCALE_NO_STD_BACKEND=1;BOOST_LOCALE_NO_WINAPI_BACKEND=1;BOOST_LOCALE_NO_POSIX_BACKEND=1;BOOST_HAS_ICU	;BOOST_SYSTEM_NO_DEPRECATED;BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;U_ENABLE_DYLOAD=0;U_CHECK_DYLOAD=0;UCONFIG_NO_FILE_IO=1;UCONFIG_NO_LEGACY_CONVERSION=1;U_CHARSET_IS_UTF8=1;UCONFIG_NO_IDNA=1;UCONFIG_NO_FORMATTING=1;UCONFIG_NO_TRANSLITERATION=1;U_ATTRIBUTE_DEPRECATED=;_CRT_SECURE_NO_DEPRECATE;U_COMMON_IMPLEMENTATION;U_I18N_IMPLEMENTATION;U_STATIC_IMPLEMENTATION</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BOOST_LOCALE_WITH_ICU=1;BOOST_LOCALE_NO_STD_BACKEND=1;BOOST_LOCALE_NO_WINAPI_BACKEND=1;BOOST_LOCALE_NO_POSIX_BACKEND=1;BOOST_THREAD_BUILD_LIB;BOOST_ALL_NO_LIB		;BOOST_HAS_ICU				;BOOST_SYSTEM_NO_DEPRECATED;BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;U_ENABLE_DYLOAD=0;U_CHECK_DYLOAD=0;UCONFIG_NO_FILE_IO=1;UCONFIG_NO_LEGACY_CONVERSION=1;U_CHARSET_IS_UTF8=1;UCONFIG_NO_IDNA=1;UCONFIG_NO_FORMATTING=1;UCONFIG_NO_TRANSLITERATION=1;U_ATTRIBUTE_DEPRECATED=;_CRT_SECURE_NO_DEPRECATE;U_COMMON_IMPLEMENTATION;U_I18N_IMPLEMENTATION;U_STATIC_IMPLEMENTATION</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
@@ -251,11 +258,12 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <Lib>
-      <AdditionalDependencies>icu.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)bin\$(platform)\$(configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>icu.lib;</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)bin\$(platform)\$(configuration);</AdditionalLibraryDirectories>
+      <LinkTimeCodeGeneration>false</LinkTimeCodeGeneration>
     </Lib>
     <ProjectReference>
-      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
