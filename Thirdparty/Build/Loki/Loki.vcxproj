@@ -199,7 +199,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>L:\Kainote\Thirdparty\wxWidgets\include;L:\Kainote\Thirdparty\DirectX9;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\wxWidgets\include;$(SolutionDir)Thirdparty\DirectX9</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -217,7 +217,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>L:\Kainote\Thirdparty\wxWidgets\include;L:\Kainote\Thirdparty\DirectX9;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\wxWidgets\include;$(SolutionDir)Thirdparty\DirectX9;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>

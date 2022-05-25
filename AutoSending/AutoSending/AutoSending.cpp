@@ -9,7 +9,7 @@
 #include <iostream>
 #include <vector>
 
-#include "L:\Kainote\Thirdparty\zlib\contrib\minizip/zip.h"
+#include <contrib\minizip/zip.h>
 #if _DEBUG
 	//#include <vld.h>
 #endif
@@ -63,7 +63,7 @@ int _tmain(int argc, TCHAR* argv[])
 	char * prependFolder = "Kainote_x64";
 	//wchar_t * path = argv[1];
 	//if (!check_exist_file(path)){ std::wcerr << L"Kainote zip path don't exist " << path; return 1; }
-	wchar_t* path = L"L:\\Kainote\\x64\\Release\\Kainotex6412.zip";
+	const wchar_t* path = L"G:/Kainote/x64/Release/Kainotex6412.zip";
 	
 
 	std::vector<wchar_t *> filenames;
@@ -211,7 +211,7 @@ int _tmain(int argc, TCHAR* argv[])
 	std::wcout << L"path" << path << (size_t)zf << L"\n";
 	if (zf == NULL)
 		return 1;
-	wchar_t * pch = wcsrchr(path, L'\\');
+	const wchar_t * pch = wcsrchr(path, L'/');
 	wchar_t zipdir[4000];
 	size_t newstart = pch - path;
 	wcsncpy(zipdir, path, newstart);
@@ -236,7 +236,8 @@ int _tmain(int argc, TCHAR* argv[])
 		std::wcout << L"zipdir" << zipdir << L"\n";
 		FILE *file = _wfopen(zipdir, L"rb");
 		zip_fileinfo zfi = { 0 };
-		HANDLE ffile = CreateFile(zipdir, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+		HANDLE ffile = CreateFile(zipdir, GENERIC_READ, FILE_SHARE_READ, 0, 
+			OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 		if (ffile!=INVALID_HANDLE_VALUE){
 			FILETIME writeTime;
 			GetFileTime(ffile, 0, 0, &writeTime);
@@ -302,7 +303,7 @@ int _tmain(int argc, TCHAR* argv[])
 	if (!_return)
 		return 4;
 	
-	wchar_t *dbx = L"H:\\Google Drive\\Kainote x64.zip\0";
+	const wchar_t *dbx = L"H:\\Google Drive\\Kainote x64.zip\0";
 
 	//wchar_t * dbx = argv[2];
 
