@@ -52,18 +52,18 @@ bool ConvertAndPrepend(wchar_t *source, char *prepend, char **dest){
 
 int _tmain(int argc, TCHAR* argv[])
 {
-	/*if (argc<4){ 
+	if (argc<4){ 
 		std::cerr << "Too few arguments"; 
 		for (int i = 0; i < argc; i++){
 			std::wcout << argv[i] << "\r\n";
 		}
 		return 1; 
-	}*/
+	}
 	
 	char * prependFolder = "Kainote_x64";
-	//wchar_t * path = argv[1];
-	//if (!check_exist_file(path)){ std::wcerr << L"Kainote zip path don't exist " << path; return 1; }
-	const wchar_t* path = L"G:/Kainote/x64/Release/Kainotex6412.zip";
+	wchar_t * path = argv[1];
+	if (!check_exist_file(path)){ std::wcerr << L"Kainote zip path don't exist " << path; return 1; }
+	//const wchar_t* path = L"G:/Kainote/x64/Release/Kainotex6412.zip";
 	
 
 	std::vector<wchar_t *> filenames;
@@ -303,9 +303,9 @@ int _tmain(int argc, TCHAR* argv[])
 	if (!_return)
 		return 4;
 	
-	const wchar_t *dbx = L"H:\\Google Drive\\Kainote x64.zip\0";
+	//const wchar_t *dbx = L"H:\\Google Drive\\Kainote x64.zip\0";
 
-	//wchar_t * dbx = argv[2];
+	wchar_t * dbx = argv[2];
 
 	std::ifstream src(path, std::ios::binary);
 	std::ofstream dst(dbx, std::ios::binary);

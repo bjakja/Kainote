@@ -21,19 +21,19 @@
     <ClCompile Include="AutoSending.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Thirdparty\zlib\contrib\minizip\ioapi.c">
+    <ClCompile Include="ioapi.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Thirdparty\zlib\contrib\minizip\iowin32.c">
+    <ClCompile Include="iowin32.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Thirdparty\zlib\contrib\minizip\mztools.c">
+    <ClCompile Include="mztools.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Thirdparty\zlib\contrib\minizip\unzip.c">
+    <ClCompile Include="unzip.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Thirdparty\zlib\contrib\minizip\zip.c">
+    <ClCompile Include="zip.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -55,6 +55,24 @@
     </ClInclude>
     <ClInclude Include="..\..\Thirdparty\zlib\contrib\minizip\zip.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="crypt.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ioapi.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="iowin32.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mztools.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="unzip.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="zip.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

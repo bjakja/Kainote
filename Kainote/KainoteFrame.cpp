@@ -915,7 +915,7 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 		KaiMessageBox(wxString::Format(_("Edytor napisów by Marcin Drob aka Bakura lub Bjakja (bjakja7@gmail.com),\nwersja %s z dnia %s"),
 			Options.progname.AfterFirst(L'v'), Options.GetReleaseDate()) + " \n\n" +
 			_("Ten program powstał w celu zastąpienia dwóch programów: Bestplayera i Aegisuba.\n\n") +
-			_("Jeśli zauważyłeś(aś) jakieś błędy bądź masz jakieś propozycje zmian lub nowych funkcji,\nmożesz napisać o tym na: forum ANSI, Githubie, bądź mailowo.\n\n") +
+			_("Jeśli zauważyłeś(aś) jakieś błędy bądź masz jakieś propozycje zmian lub nowych funkcji,\nmożesz napisać o tym na: Discordzie https://discord.gg/9WacFTtK6q, Githubie, bądź mailowo.\n\n") +
 			_("Kainote zawiera w sobie części następujących projektów:\n") +
 			L"wxWidgets - Copyright © Julian Smart, Robert Roebling et al.\n" +
 			_("Color picker, wymuxowywanie napisów z mkv, audiobox, odwarzacz audio, automatyzacja\ni kilka innych pojedynczych funkcji wzięte z Aegisuba -\n") +
@@ -926,10 +926,10 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			L"Vsfilter - Copyright © Gabest.\n"\
 			L"FFMPEGSource2 - Copyright © Fredrik Mellbin.\n"\
 			L"ICU - Copyright © 1995-2016 International Business Machines Corporation and others.\n"\
-			L"Boost - Copyright © Joe Coder 2004 - 2006."\
-			L"FreeType2 - Copyright © 2006-2019 David Turner, Robert Wilhelm, and Werner Lemberg."\
-			L"Fribidi - Copyright © 1991, 1999 Free Software Foundation, Inc."\
-			L"Libass - Copyright © 2006-2016 libass contributors.",
+			L"Boost - Copyright © Joe Coder 2004 - 2006.\n"\
+			L"FreeType2 - Copyright © 2006-2019 David Turner, Robert Wilhelm, and Werner Lemberg.\n"\
+			L"Fribidi - Copyright © 1991, 1999 Free Software Foundation, Inc.\n"\
+			L"Libass - Copyright © 2006-2016 libass contributors.\n",
 			_("O Kainote"));
 			//L"Interfejs Avisynth - Copyright © Ben Rudiak-Gould et al.\n"
 	}
