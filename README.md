@@ -57,18 +57,18 @@ To build You need install:
 You need to put following into Thirdparty folder that source not have main one folder:
 * [Boost](https://boostorg.jfrog.io/artifactory/main/release/1.73.0/source/boost_1_73_0.7z)
 * [Icu](https://github.com/unicode-org/icu/releases/download/release-60-3/icu4c-60_3-src.zip)
-* (For libass install nasm C:/Nasm)
+* (For libass install nasm on C:/Nasm)
 
 Next:
 * Change in project properties paths of installed Windows SDK's 10 and Direct X if are not installed on C disk. (Sometimes Visual Studio 2017 will not find paths to Windows SDK's 10.)
 * Then you have to add it manually to projects c/c++ -> general -> additional include directories and Linker -> general -> additional include directories (It's one of bug of Visual Studio 2019.)
 
 * Build FFMS2:
-    - Download MSYS2, msys2-x86_64-{date}.exe from https://www.msys2.org/
-    - Install into c:/msys64
-    - Edit c:/msys64/msys2_shell.cmd and remove rem from the line with rem set MSYS2_PATH_TYPE=inherit
-    - Open a x64 Native Tools Command Prompt for VS 2019
-    - Run c:/msys64/msys2_shell.cmd
+    - Download **MSYS2**, msys2-x86_64-{date}.exe from https://www.msys2.org/
+    - Install into `c:/msys64`
+    - Edit `c:/msys64/msys2_shell.cmd` and replace `rem` from the line with `rem set MSYS2_PATH_TYPE=inherit`
+    - Open a **x64 Native Tools Command Prompt for VS 2019**
+    - Run `c:/msys64/msys2_shell.cmd`
     - Use the MSYS2 shell for the next steps and enter:
     ```pacman -Syu
     pacman -S make
@@ -79,12 +79,12 @@ Next:
     mv /usr/bin/link.exe /usr/bin/link.exe.bak
     ```
     - Get code of ffmpeg from https://github.com/FFmpeg/FFmpeg/archive/refs/heads/master.zip
-    - Onpack it somewhere on c disc with short path for example c:/ffmpeg
-    - Set path to ffmpeg cd /c/path_to_ffmpeg/
-    - Type in msys console *(for x64 remove --arch=x86 --arch=x86_64)*:
+    - Unpack it somewhere on c disc with short path for example `c:/ffmpeg`
+    - Set path to ffmpeg `cd c:/path_to_ffmpeg/`
+    - Type in **msys** console *(for x64 remove `--arch=x86 --arch=x86_64`)*:
         ```
         ./configure --toolchain=msvc --enable-gpl --enable-version3 --disable-encoders --disable-programs --disable-filters \ --disable-network --disable-doc --disable-avdevice --disable-postproc --disable-avfilter
         ```
-    - When shows list of codecs type **make**
-    - After build type **make install**
+    - When shows list of codecs type `make`
+    - After build type `make install`
 - Done, You just build FFMS2 in Visual Studio 19.
