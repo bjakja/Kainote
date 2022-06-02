@@ -1451,6 +1451,7 @@ void AudioDisplay::Play(int start, int end, bool pause) {
 	// Set defaults
 	playingToEnd = end < 0;
 	long long num_samples = provider->GetNumSamples();
+	audioLastEndPosition = end;
 	start = GetSampleAtMS(start);
 	if (end != -1) end = GetSampleAtMS(end);
 	else end = num_samples - 1;
@@ -1467,7 +1468,7 @@ void AudioDisplay::Play(int start, int end, bool pause) {
 	//UpdateImage(false, true);
 	// Call play
 	player->Play(start, end - start);
-
+	
 	if (stopPlayThread)
 		SetEvent(PlayEvent);
 	
@@ -1479,10 +1480,16 @@ void AudioDisplay::Play(int start, int end, bool pause) {
 void AudioDisplay::Stop(bool stopVideo) {
 	if (stopVideo && tab->video->GetState() == Playing){ tab->video->Pause(); }
 	else if (player) {
-		player->Stop();
-		stopPlayThread = true;	
-		cursorPaint = false;
-		Refresh(false);
+		if (player->IsPlaying() || !stopVideo) {
+			audioLastPosition = GetMSAtSample(player->GetCurrentPosition());
+			player->Stop();
+			stopPlayThread = true;
+			cursorPaint = false;
+			Refresh(false);
+		}
+		else {
+			Play(audioLastPosition, audioLastEndPosition);
+		}
 	}
 
 }

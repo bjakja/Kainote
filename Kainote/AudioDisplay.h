@@ -114,6 +114,8 @@ private:
 	int selWidth = 0;
 	int shadeType = 0;
 	int timelineHeight = 0;
+	int audioLastPosition = 0;
+	int audioLastEndPosition = 5000;
 	bool drawVideoPos = false;
 	bool spectrumOn = false;
 	bool drawSelectionBackground = false;

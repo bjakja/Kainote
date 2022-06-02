@@ -164,7 +164,9 @@ namespace Auto {
 		wxString GetDescription() const { return description; }
 		wxString GetAuthor() const { return author; }
 		wxString GetVersion() const { return version; }
-		bool GetLoadedState() const { return L != nullptr; }
+		bool GetLoadedState() const { 
+			return L != nullptr; 
+		}
 
 		LuaCommand* GetMacro(int macro) const{
 			if (macro < (int)macros.size()){

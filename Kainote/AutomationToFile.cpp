@@ -847,6 +847,7 @@ namespace Auto{
 			else if (e->lclass == L"dialogue")
 			{
 				int newStart = start - styles;
+				if (newStart < 0) { newStart = 0; }
 				Dialogue *dial = e->adial->Copy(false, newStart >= dialsize);
 				if (newStart >= dialsize){ Subs->dialogues.push_back(dial); }
 				else{ Subs->dialogues.insert(Subs->dialogues.begin() + newStart, dial); }

@@ -1014,16 +1014,13 @@ namespace Auto{
 	void Automation::ReloadScripts(bool first)
 	{
 		initialized = true;
-		//wxStopWatch sw;
-		//sw.Start();
-		//initialized =false;
+		
 		if (!first){ RemoveAll(true); }
 		int error_count = 0;
 
-		//wxStringTokenizer tok(path, "|", wxTOKEN_STRTOK);
-		//while (tok.HasMoreTokens()) {
+		
 		wxDir dir;
-		//wxString dirname = StandardPaths::DecodePath(tok.GetNextToken());
+		
 		if (!dir.Open(AutoloadPath)) {
 			//wxLogWarning("Failed to open a directory in the Automation autoload path: %s", dirname.c_str());
 			return;
@@ -1043,9 +1040,15 @@ namespace Auto{
 				wxString fullpath = script_path.GetFullPath();
 				wxString ext = fullpath.AfterLast(L'.').Lower();
 
-				if ((ext != L"lua" && ext != L"moon") || !Add(fullpath, false, true)){ more = dir.GetNext(&fn); continue; }
+				if ((ext != L"lua" && ext != L"moon") || 
+					!Add(fullpath, false, true)){ 
+					more = dir.GetNext(&fn); 
+					continue; 
+				}
 
-				if (!Scripts[Scripts.size() - 1]->GetLoadedState()) { error_count++; }
+				if (!Scripts[Scripts.size() - 1]->GetLoadedState()) { 
+					error_count++; 
+				}
 
 
 			}
@@ -1162,15 +1165,6 @@ namespace Auto{
 		}
 		bool changes = AddFromSubs();
 
-		/*if(!changes){
-			for(int j=0; j < (*bar)->GetMenuItemCount(); j++){
-			(*bar)->FindItemByPosition(j)->Enable();
-			}
-
-			}
-
-			int (all)? 2 : Scripts.size()+2;*/
-
 		int start = 34000, i = 0;
 		//if(all){
 		for (size_t g = 0; g < Scripts.size(); g++){
@@ -1194,7 +1188,9 @@ namespace Auto{
 				}, start);
 				start++;
 			}
-			if (macros.size() < 1){
+			
+			if (macros.size() < 1 || script->GetName().EndsWith(L".lua") ||
+				script->GetName().EndsWith(L".moon")){
 				wxString strippedbug = script->GetDescription();
 				strippedbug.Replace(L"\n", L"");
 				if (strippedbug.Len() > 100){ strippedbug = strippedbug.SubString(0, 100) + L"..."; }

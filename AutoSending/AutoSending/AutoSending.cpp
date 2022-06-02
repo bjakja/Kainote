@@ -52,18 +52,21 @@ bool ConvertAndPrepend(wchar_t *source, char *prepend, char **dest){
 
 int _tmain(int argc, TCHAR* argv[])
 {
-	if (argc<4){ 
-		std::cerr << "Too few arguments"; 
+	/*if (argc<3){ 
+		std::wcout << L"Too few arguments";
 		for (int i = 0; i < argc; i++){
 			std::wcout << argv[i] << "\r\n";
 		}
 		return 1; 
-	}
+	}*/
 	
 	char * prependFolder = "Kainote_x64";
-	wchar_t * path = argv[1];
-	if (!check_exist_file(path)){ std::wcerr << L"Kainote zip path don't exist " << path; return 1; }
-	//const wchar_t* path = L"G:/Kainote/x64/Release/Kainotex6412.zip";
+	/*wchar_t * path = argv[1];
+	if (!check_exist_file(path)){ 
+		std::wcout << L"Kainote zip path don't exist " << path;
+		return 1; 
+	}*/
+	const wchar_t* path = L"G:/Kainote/x64/Release/Kainote x64.zip";
 	
 
 	std::vector<wchar_t *> filenames;
@@ -125,39 +128,39 @@ int _tmain(int argc, TCHAR* argv[])
 	filenames.push_back(L"\\Automation\\automation\\Include\\karaskel-auto4.lua\0");
 	filenames.push_back(L"\\Automation\\automation\\Include\\karaskel.lua\0");
 	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation.moon\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Base.lua\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Base.moon\0");
 	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\ClassFactory.lua\0");
 	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Common.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Draw\\Bezier.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Draw\\Close.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Draw\\CommandBase.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Draw\\Contour.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Draw\\DrawingBase.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Draw\\Line.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\FoundationMethods.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\LineBounds.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\LineContents.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Primitive\\Number.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Primitive\\Point.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Primitive\\String.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Primitive\\Time.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Section\\Comment.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Section\\Drawing.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Section\\Tag.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Section\\Text.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Tag\\Align.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Tag\\Base.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Tag\\ClipRect.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Tag\\ClipVect.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Tag\\Color.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Tag\\Fade.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Tag\\Indexed.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Tag\\Move.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Tag\\String.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Tag\\Toggle.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Tag\\Transform.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Tag\\Weight.lua\0");
-	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\TagList.lua\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Draw\\Bezier.moon\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Draw\\Close.moon\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Draw\\CommandBase.moon\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Draw\\Contour.moon\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Draw\\DrawingBase.moon\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Draw\\Line.moon\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\FoundationMethods.moon\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\LineBounds.moon\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\LineContents.moon\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Primitive\\Number.moon\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Primitive\\Point.moon\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Primitive\\String.moon\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Primitive\\Time.moon\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Section\\Comment.moon\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Section\\Drawing.moon\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Section\\Tag.moon\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Section\\Text.moon\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Tag\\Align.moon\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Tag\\Base.moon\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Tag\\ClipRect.moon\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Tag\\ClipVect.moon\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Tag\\Color.moon\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Tag\\Fade.moon\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Tag\\Indexed.moon\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Tag\\Move.moon\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Tag\\String.moon\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Tag\\Toggle.moon\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Tag\\Transform.moon\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\Tag\\Weight.moon\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\ASSFoundation\\TagList.moon\0");
 	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\DependencyControl.moon\0");
 	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\DependencyControl\\ConfigHandler.moon\0");
 	filenames.push_back(L"\\Automation\\automation\\Include\\l0\\DependencyControl\\FileOps.moon\0");
@@ -246,7 +249,7 @@ int _tmain(int argc, TCHAR* argv[])
 			uLong *dt = &zfi.dosDate;
 			FileTimeToLocalFileTime(&writeTime, &ftLocal);
 			FileTimeToDosDateTime(&ftLocal, ((LPWORD)dt) + 1, ((LPWORD)dt) + 0);
-			std::wcout << L"\nvalid handle\n\n";
+			//std::wcout << L"\nvalid handle\n\n";
 		}
 		else {
 			std::wcout << L"\ninvalid handle\n\n";
@@ -303,9 +306,9 @@ int _tmain(int argc, TCHAR* argv[])
 	if (!_return)
 		return 4;
 	
-	//const wchar_t *dbx = L"H:\\Google Drive\\Kainote x64.zip\0";
+	const wchar_t *dbx = L"D:\\Google Drive\\Kainote x64.zip\0";
 
-	wchar_t * dbx = argv[2];
+	//wchar_t * dbx = argv[2];
 
 	std::ifstream src(path, std::ios::binary);
 	std::ofstream dst(dbx, std::ios::binary);

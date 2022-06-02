@@ -77,6 +77,7 @@ private:
 	ToggleButton *SpectrumNonLinear;
 	ToggleButton *KaraSwitch;
 	ToggleButton *KaraMode;
+	
 
 	void OnScrollbar(wxScrollEvent &event);
 	void OnHorizontalZoom(wxScrollEvent &event);
