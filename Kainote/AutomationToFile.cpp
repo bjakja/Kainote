@@ -840,8 +840,10 @@ namespace Auto{
 			else if (e->lclass == L"style")
 			{
 				Styles *styl = e->astyle->Copy();
-				if (start - sinfo >= stylsize){ Subs->styles.push_back(styl); }
-				else{ Subs->styles.insert(Subs->styles.begin() + (start - sinfo), styl); }
+				int newStart = start - sinfo;
+				if (newStart < 0) { newStart = 0; }
+				if (newStart >= stylsize){ Subs->styles.push_back(styl); }
+				else{ Subs->styles.insert(Subs->styles.begin() + newStart, styl); }
 				Subs->deleteStyles.push_back(styl);
 			}
 			else if (e->lclass == L"dialogue")
