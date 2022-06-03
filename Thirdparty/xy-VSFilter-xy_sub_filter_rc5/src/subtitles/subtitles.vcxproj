@@ -87,11 +87,12 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <AssemblerOutput>NoListing</AssemblerOutput>
-      <MultiProcessorCompilation>false</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\include;$(SolutionDir)Thirdparty\baseclasses;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\filters\transform\vsfilter;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\thirdparty\log4cplus\include;L:\Kainote\Thirdparty\boost\</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\include;$(SolutionDir)Thirdparty\baseclasses;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\filters\transform\vsfilter;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\thirdparty\log4cplus\include;$(SolutionDir)Thirdparty\boost\</AdditionalIncludeDirectories>
     </ClCompile>
     <Lib>
-      <AdditionalDependencies>$(SolutionDir)lib\libacof32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>boost.lib;libssf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)bin\$(platform)\$(configuration)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|Win32'">
@@ -117,6 +118,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\include;$(SolutionDir)Thirdparty\baseclasses;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\filters\transform\vsfilter;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\thirdparty\log4cplus\include;L:\Kainote\Thirdparty\boost\</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp14</LanguageStandard>
       <LanguageStandard_C>Default</LanguageStandard_C>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>

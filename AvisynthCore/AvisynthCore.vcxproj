@@ -223,10 +223,11 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;RELEASE_TARBALL;NDEBUG;_CRT_SECURE_NO_WARNINGS;_SECURE_SCL=0;_CRTDBG_MAP_ALLOC;__SSE2__;INTEL_INTRINSICS;BUILDING_AVSCORE;CMAKE_INTDIR="Release";AvsCore_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(SolutionDir)Thirdparty\Build\AvisynthPlus\avs_core;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\filters;$(SolutionDir)Thirdparty\AviSynthPlus\plugins\ImageSeq\lib\DevIL_x64;$(SolutionDir)Thirdparty\Build\AvisynthPlus\avs_core;$(SolutionDir)Thirdparty\baseclasses;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -321,7 +322,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\filters;$(SolutionDir)Thirdparty\AviSynthPlus\plugins\ImageSeq\lib\DevIL_x64;$(SolutionDir)Thirdparty\Build\AvisynthPlus\avs_core;$(SolutionDir)Thirdparty\baseclasses;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>

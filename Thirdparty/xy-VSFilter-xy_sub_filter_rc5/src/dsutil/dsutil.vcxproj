@@ -98,9 +98,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">NotUsing</PrecompiledHeader>
       <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">stdcpp14</LanguageStandard>
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</MultiProcessorCompilation>
     </ClCompile>
     <Lib>
-      <AdditionalDependencies>atls.lib;vfw32.lib;Version.lib;strmbasd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>atls.lib;vfw32.lib;Version.lib;strmbase.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)bin\$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
     </Lib>
     <ProjectReference>

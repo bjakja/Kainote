@@ -221,6 +221,10 @@
     <MiniLuaPlat>-D P64</MiniLuaPlat>
     <MiniLuaVM>vm_x64.dasc</MiniLuaVM>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)'=='Win32'">
+    <MiniLuaCommand>$(SolutionDir)bin\$(Platform)\$(Configuration)\minilua</MiniLuaCommand>
+    <MiniLuaVM>vm_x86.dasc</MiniLuaVM>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64|Win32'">
     <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>

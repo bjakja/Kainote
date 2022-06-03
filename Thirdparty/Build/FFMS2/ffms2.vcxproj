@@ -268,7 +268,7 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\core;$(SolutionDir)Thirdparty\ffmpeg;$(SolutionDir)Thirdparty\zlib;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>

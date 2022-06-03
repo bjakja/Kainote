@@ -96,6 +96,8 @@
       <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdc17</LanguageStandard_C>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">NotUsing</PrecompiledHeader>
       <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</MultiProcessorCompilation>
     </ClCompile>
     <ProjectReference>
       <LinkLibraryDependencies Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</LinkLibraryDependencies>
