@@ -9,6 +9,8 @@ Video rendering/
 objs/
 freetype-2.6/
 FFmpeg/
+FFmpeg1/
+FFmpeg2/
 ffms2000/
 xy-VSFilter-master-old/
 xy-VSFilter-master2/
