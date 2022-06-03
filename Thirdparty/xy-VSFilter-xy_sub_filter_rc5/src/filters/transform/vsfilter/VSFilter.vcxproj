@@ -124,6 +124,7 @@
     <ClCompile>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\include;$(SolutionDir)Thirdparty\baseclasses;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\filters\transform\vsfilter;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\thirdparty\log4cplus\include;$(SolutionDir)Thirdparty\boost\;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\subpic;L:\Kainote\Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\thirdparty\VirtualDub\h</AdditionalIncludeDirectories>
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</MultiProcessorCompilation>
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>

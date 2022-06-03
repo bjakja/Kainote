@@ -89,6 +89,7 @@
       <AssemblerOutput>NoListing</AssemblerOutput>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\include;$(SolutionDir)Thirdparty\baseclasses;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\filters\transform\vsfilter;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\thirdparty\log4cplus\include;$(SolutionDir)Thirdparty\boost\</AdditionalIncludeDirectories>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Lib>
       <AdditionalDependencies>boost.lib;libssf.lib;%(AdditionalDependencies)</AdditionalDependencies>

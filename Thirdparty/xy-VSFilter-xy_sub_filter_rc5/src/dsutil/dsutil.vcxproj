@@ -100,6 +100,7 @@
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">stdcpp14</LanguageStandard>
       <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</MultiProcessorCompilation>
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Lib>
       <AdditionalDependencies>atls.lib;vfw32.lib;Version.lib;strmbase.lib;%(AdditionalDependencies)</AdditionalDependencies>

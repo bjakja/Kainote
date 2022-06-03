@@ -1756,6 +1756,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 
 			int value = box->HorizontalZoom->GetValue() - step;
 			box->HorizontalZoom->SetValue(value);
+			Options.SetInt(AUDIO_HORIZONTAL_ZOOM, value);
 			SetSamplesPercent(value, true, float(x) / float(w));
 		}
 

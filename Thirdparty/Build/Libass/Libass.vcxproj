@@ -169,7 +169,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\harfbuzz\src;$(SolutionDir)Thirdparty\FreeType2\include;$(SolutionDir)Thirdparty\build\Fribidi;$(SolutionDir)Thirdparty\fribidi\lib;$(SolutionDir)Thirdparty\libass\libass;$(SolutionDir)Thirdparty\Build\libass</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
@@ -201,7 +201,7 @@
       <PreprocessorDefinitions>inline=__inline;FRIBIDI_ENTRY=;HB_USE_ATEXIT;_MBCS;CONFIG_SOURCEVERSION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\harfbuzz\src;$(SolutionDir)Thirdparty\FreeType2\include;$(SolutionDir)Thirdparty\build\Fribidi;$(SolutionDir)Thirdparty\fribidi\lib;$(SolutionDir)Thirdparty\libass\libass;$(SolutionDir)Thirdparty\Build\libass</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

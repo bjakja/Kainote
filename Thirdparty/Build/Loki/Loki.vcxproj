@@ -166,6 +166,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\wxWidgets\include;$(SolutionDir)Thirdparty\DirectX9;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <SubSystem>
