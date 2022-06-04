@@ -83,7 +83,7 @@ Next:
     - Set path to ffmpeg `cd c:/path_to_ffmpeg/`
     - Type in **msys** console *(for x64 remove `--arch=x86 --arch=x86_64`)*:
         ```
-        ./configure --toolchain=msvc --enable-gpl --enable-version3 --disable-encoders --disable-programs --disable-filters \ --disable-network --disable-doc --disable-avdevice --disable-postproc --disable-avfilter
+        ./configure --toolchain=msvc --enable-gpl --enable-version3 --disable-encoders --disable-programs --disable-filters --disable-network --disable-doc --disable-avdevice --disable-postproc --disable-avfilter --enable-dxva2 --enable-d3d11va
         ```
     - When shows list of codecs type `make`
     - After build type `make install`
