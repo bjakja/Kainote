@@ -1,18 +1,16 @@
-# altinat <poiiiii4yy@gmail.com>, 2022.
 msgid ""
 msgstr ""
 "Project-Id-Version: Kainote\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-06 20:08+0700\n"
-"PO-Revision-Date: 2022-06-06 20:09+0700\n"
-"Last-Translator: altinat <poiiiii4yy@gmail.com>\n"
-"Language-Team: English <https://hosted.weblate.org/projects/kainote/kainote/"
-"en/>\n"
+"POT-Creation-Date: 2022-06-06 20:33+0700\n"
+"PO-Revision-Date: 2022-06-06 20:33+0700\n"
+"Last-Translator: Marcin Drob <bjajka7@gmail.com>\n"
+"Language-Team: \n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.0.1\n"
 "X-Poedit-Basepath: ../Kainote\n"
 "X-Poedit-SourceCharset: UTF-8\n"
@@ -1873,7 +1871,7 @@ msgstr "Save"
 
 #: Hotkeys.cpp:153 HotkeysNaming.cpp:218
 msgid "Zapisz jako..."
-msgstr "Save as…"
+msgstr "Save as..."
 
 #: Hotkeys.cpp:154 HotkeysNaming.cpp:215 SubsGrid.cpp:228
 msgid "Usuń tekst"
@@ -2781,7 +2779,7 @@ msgstr "Save all"
 
 #: KainoteFrame.cpp:156
 msgid "Zapisz &jako..."
-msgstr "Save &as…"
+msgstr "Save &as..."
 
 #: KainoteFrame.cpp:157
 msgid "Zapisz jako"
@@ -3128,7 +3126,7 @@ msgstr "Converts from one format to another"
 
 #: KainoteFrame.cpp:307
 msgid "Okno zmiany &czasów\tCtrl-I"
-msgstr "Shift &times…\tCtrl-I"
+msgstr "Shift &times...\tCtrl-I"
 
 #: KainoteFrame.cpp:308
 msgid "Przesuwanie czasów napisów"
@@ -3254,7 +3252,6 @@ msgstr ""
 "\n"
 
 #: KainoteFrame.cpp:918
-#, fuzzy
 msgid ""
 "Jeśli zauważyłeś(aś) jakieś błędy bądź masz jakieś propozycje zmian lub "
 "nowych funkcji,\n"
@@ -3264,7 +3261,8 @@ msgid ""
 msgstr ""
 "If you have noticed any bugs or have any suggestions for changes or new "
 "features,\n"
-"you can write about it in: Github, or by email.\n"
+"you can write about it in: Discord https://discord.gg/9WacFTtK6q, Github, or "
+"by email.\n"
 "\n"
 
 #: KainoteFrame.cpp:919
@@ -3289,9 +3287,8 @@ msgid "Pomoc graficzna: (przyciski, obrazki do pomocy itd.)\n"
 msgstr "Graphical help: (buttons, help pictures etc.)\n"
 
 #: KainoteFrame.cpp:939
-#, fuzzy
 msgid "- Xandros (przyciski do wideo).\n"
-msgstr "- Xandros (new video buttons)\n"
+msgstr "- Xandros (new video buttons).\n"
 
 #: KainoteFrame.cpp:940
 msgid "- Devilkan (ikony do menu i paska narzędzi, obrazki do pomocy).\n"
@@ -3345,17 +3342,16 @@ msgid "- Senami (stworzył nowe motywy, a także wyłapał parę błędów).\n"
 msgstr "- Senami (made new themes and found some bugs).\n"
 
 #: KainoteFrame.cpp:949
-#, fuzzy
 msgid "- altinat (tajskie tłumaczenie).\n"
-msgstr ""
+msgstr "- altinat (Thai translation).\n"
 
 #: KainoteFrame.cpp:950
 msgid "- labrie75 (koreańskie tłumaczenie).\n"
-msgstr ""
+msgstr "- labrie75 (Korean translation).\n"
 
 #: KainoteFrame.cpp:951
 msgid "- Niskala5570 (malajskie tłumaczenie).\n"
-msgstr ""
+msgstr "- Niskala5570 (Malay translation).\n"
 
 #: KainoteFrame.cpp:952
 msgid ""
@@ -7974,6 +7970,33 @@ msgstr "Copy style from storage to ASS"
 msgid "Oczyść napisy z nieużywanych stylów"
 msgstr "Delete unused ASS styles"
 
+#~ msgid "Kainote się scrashował i próbuje pozyskać istotne dane.\n"
+#~ msgstr "Kainote crashed and want to get needed data.\n"
+
+#~ msgid "Napisy zostały zapisane do folderu \"Recovery\".\n"
+#~ msgstr "Subtitles was saved in folder \"Recovery\".\n"
+
+#~ msgid "Ostatnia sesja zostanie wznowiona po następnym uruchomieniu.\n"
+#~ msgstr "Last session should open after next program launch.\n"
+
+#~ msgid ""
+#~ "W przypadku, gdyby zostały uszkodzone, autozapisy są w folderze \"Subs"
+#~ "\".\n"
+#~ msgstr ""
+#~ "In case of corrupted recovery subtitles, autosaves are in \"Subs\" "
+#~ "folder.\n"
+
+#~ msgid ""
+#~ "Info o crashu zostało zapisane do pliku \"CrashInfo.txt\" w folderze "
+#~ "Kainote.\n"
+#~ msgstr ""
+#~ "Info about crash was saved to file \"CrashInfo.txt\" in Kainote folder.\n"
+
+#~ msgid ""
+#~ "Podesłanie go na adres mailowy (bjakja7@gmail.com) może pomóc rozwiązać "
+#~ "ten problem."
+#~ msgstr "Sending it to mail (bjakja7@gmail.com) can help to resolve issue."
+
 #~ msgid "- Kostek00 (przyciski do audio i narzędzi wizualnych).\n"
 #~ msgstr "- Kostek00 (audio buttons and visual tools)\n"
 
@@ -8011,33 +8034,6 @@ msgstr "Delete unused ASS styles"
 #~ msgstr ""
 #~ "- Atalos (debugged many crashes).\n"
 #~ "\n"
-
-#~ msgid "Kainote się scrashował i próbuje pozyskać istotne dane.\n"
-#~ msgstr "Kainote crashed and want to get needed data.\n"
-
-#~ msgid "Napisy zostały zapisane do folderu \"Recovery\".\n"
-#~ msgstr "Subtitles was saved in folder \"Recovery\".\n"
-
-#~ msgid "Ostatnia sesja zostanie wznowiona po następnym uruchomieniu.\n"
-#~ msgstr "Last session should open after next program launch.\n"
-
-#~ msgid ""
-#~ "W przypadku, gdyby zostały uszkodzone, autozapisy są w folderze \"Subs"
-#~ "\".\n"
-#~ msgstr ""
-#~ "In case of corrupted recovery subtitles, autosaves are in \"Subs\" "
-#~ "folder.\n"
-
-#~ msgid ""
-#~ "Info o crashu zostało zapisane do pliku \"CrashInfo.txt\" w folderze "
-#~ "Kainote.\n"
-#~ msgstr ""
-#~ "Info about crash was saved to file \"CrashInfo.txt\" in Kainote folder.\n"
-
-#~ msgid ""
-#~ "Podesłanie go na adres mailowy (bjakja7@gmail.com) może pomóc rozwiązać "
-#~ "ten problem."
-#~ msgstr "Sending it to mail (bjakja7@gmail.com) can help to resolve issue."
 
 #~ msgid "Nie można zablokować bufora tekstury napisów"
 #~ msgstr "Cannot lock subtitles texture buffer"
