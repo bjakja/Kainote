@@ -1,18 +1,20 @@
+# altinat <poiiiii4yy@gmail.com>, 2022.
 msgid ""
 msgstr ""
 "Project-Id-Version: Kainote\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-21 15:23+0700\n"
-"PO-Revision-Date: 2021-04-30 09:54+0900\n"
-"Last-Translator: labrie <labrie75@naver.com>\n"
-"Language-Team: labrie75@naver.com\n"
+"POT-Creation-Date: 2022-06-06 19:33+0700\n"
+"PO-Revision-Date: 2022-06-02 07:17+0000\n"
+"Last-Translator: altinat <poiiiii4yy@gmail.com>\n"
+"Language-Team: Korean <https://hosted.weblate.org/projects/kainote/kainote/"
+"ko/>\n"
 "Language: ko_KR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.2\n"
-"X-Poedit-Basepath: ../Kainote\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 4.13-dev\n"
+"X-Poedit-Basepath: ../Kainote\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: _\n"
 "X-Poedit-SearchPath-0: .\n"
@@ -150,10 +152,10 @@ msgstr "스펙트럼 음성 주파수 향상"
 msgid "Nieprawidłowy format klatek kluczowych"
 msgstr "잘못된 키 프레임 형식"
 
-#: AudioBox.cpp:268 Automation.cpp:1201 Automation.cpp:1248
-#: KainoteFrame.cpp:735 KainoteFrame.cpp:739 KainoteFrame.cpp:1939
-#: KainoteFrame.cpp:1940 KainoteFrame.cpp:2379 KainoteFrame.cpp:2405
-#: KainoteFrame.cpp:2409 OptionsDialog.cpp:287 OptionsDialog.cpp:608
+#: AudioBox.cpp:268 Automation.cpp:1197 Automation.cpp:1244
+#: KainoteFrame.cpp:735 KainoteFrame.cpp:739 KainoteFrame.cpp:1935
+#: KainoteFrame.cpp:1936 KainoteFrame.cpp:2375 KainoteFrame.cpp:2401
+#: KainoteFrame.cpp:2405 OptionsDialog.cpp:287 OptionsDialog.cpp:608
 #: Provider.cpp:179 VideoFfmpeg.cpp:52 VideoFfmpeg.cpp:991
 #: VisualAllTagsEdition.cpp:166 VisualAllTagsEdition.cpp:170
 #: VisualAllTagsEdition.cpp:188 VisualAllTagsEdition.cpp:295
@@ -251,7 +253,7 @@ msgstr "파일"
 msgid "Wersje"
 msgstr "자동 저장 파일"
 
-#: AutoSaveOpen.cpp:57 KainoteFrame.cpp:1350
+#: AutoSaveOpen.cpp:57 KainoteFrame.cpp:1346
 msgid "Otwórz"
 msgstr "열기"
 
@@ -262,7 +264,7 @@ msgstr "열기"
 #: NewCatalog.cpp:42 OptionsDialog.cpp:968 ProgressDialog.cpp:44
 #: ScriptInfo.cpp:114 ShiftTimes.cpp:67 StyleChange.cpp:272 Stylelistbox.cpp:34
 #: Stylelistbox.cpp:58 Stylelistbox.cpp:112 Stylelistbox.cpp:147
-#: SubsFile.cpp:44 SubsGrid.cpp:1406 SubsGridDialogs.cpp:54
+#: SubsFile.cpp:44 SubsGrid.cpp:1408 SubsGridDialogs.cpp:54
 #: SubsGridDialogs.cpp:85 SubsResampleDialog.cpp:152
 #: VisualAllTagsEdition.cpp:126 VisualDrawingShapes.cpp:103
 msgid "Anuluj"
@@ -452,8 +454,8 @@ msgstr "'%s'인 매크로가 이미 스크립트 '%s'에 정의되어 있습니�
 msgid "Wystąpił błąd podczas wykonywania skryptu Lua:\n"
 msgstr "Lua 스크립트를 불러오는 동안 오류가 발생했습니다:\n"
 
-#: Automation.cpp:1054 Automation.cpp:1095 KainoteFrame.cpp:739
-#: KainoteFrame.cpp:2409
+#: Automation.cpp:1057 Automation.cpp:1098 KainoteFrame.cpp:739
+#: KainoteFrame.cpp:2405
 #, c-format
 msgid ""
 "Błąd wczytywania skryptu Lua: %s\n"
@@ -462,12 +464,12 @@ msgstr ""
 "Lua 스크립트: %s를 불러오는 동안 오류 발생\n"
 "%s"
 
-#: Automation.cpp:1058 Automation.cpp:1099
+#: Automation.cpp:1061 Automation.cpp:1102
 #, c-format
 msgid "Nieznany błąd wczytywania skryptu Lua: %s."
 msgstr "Lua를 불러오는 동안 알 수 없는 오류: %s."
 
-#: Automation.cpp:1065
+#: Automation.cpp:1068
 msgid ""
 "Jeden bądź więcej skryptów autoload zawiera błędy.\n"
 "Obejrzyj opisy skryptów, by uzyskać więcej informacji."
@@ -475,7 +477,7 @@ msgstr ""
 "하나 이상의 자동로드 스크립트에 오류가 있습니다.\n"
 "자세한 정보는 스크립트 설명을 참조하십시오."
 
-#: Automation.cpp:1103
+#: Automation.cpp:1106
 msgid ""
 "Co najmniej jeden skrypt z pliku napisów zawiera błędy.\n"
 "Zobacz opisy skryptów, by uzyskać więcej informacji."
@@ -483,33 +485,33 @@ msgstr ""
 "자막 파일에서 하나 이상의 스크립트에 오류가 있습니다.\n"
 "자세한 정보는 스크립트 설명을 참조하십시오."
 
-#: Automation.cpp:1113
+#: Automation.cpp:1116
 msgid "Wybierz edytor skryptów"
 msgstr "스크립트 편집기 선택"
 
-#: Automation.cpp:1114
+#: Automation.cpp:1117
 msgid "Programy (*.exe)|*.exe|Wszystkie pliki (*.*)|*.*"
 msgstr "프로그램 (* .exe) | * .exe | All Files (*. *) | *. *"
 
-#: Automation.cpp:1130
+#: Automation.cpp:1133
 msgid "Nie można uruchomić edytora."
 msgstr "편집기를 시작할 수 없습니다."
 
-#: Automation.cpp:1130
+#: Automation.cpp:1133
 msgid "Błąd automatyzacji"
 msgstr "자동화 스크립트에 오류가 있음"
 
-#: Automation.cpp:1203 Automation.cpp:1250
+#: Automation.cpp:1199 Automation.cpp:1246
 msgid "Pełny opis błędu Lua"
 msgstr "Lua 오류에 대한 세부 정보"
 
-#: Automation.cpp:1208 Automation.cpp:1255 EditBox.cpp:289
+#: Automation.cpp:1204 Automation.cpp:1251 EditBox.cpp:289
 #: FontCatalogList.cpp:107 VideoToolbar.cpp:510 VideoToolbar.cpp:526
 #: VideoToolbar.cpp:762 stylestore.cpp:88 stylestore.cpp:141
 msgid "Edytuj"
 msgstr "편집"
 
-#: Automation.cpp:1213 Automation.cpp:1260
+#: Automation.cpp:1209 Automation.cpp:1256
 msgid "Odśwież"
 msgstr "새로 고침"
 
@@ -581,10 +583,10 @@ msgstr ""
 "어떻게 할까요?"
 
 #: AutomationHotkeysDialog.cpp:238 AutomationHotkeysDialog.cpp:247
-#: Hotkeys.cpp:477 Hotkeys.cpp:487 KainoteFrame.cpp:1081 KainoteFrame.cpp:1097
-#: KainoteFrame.cpp:1211 KainoteFrame.cpp:2276 OptionsDialog.cpp:114
+#: Hotkeys.cpp:477 Hotkeys.cpp:487 KainoteFrame.cpp:1077 KainoteFrame.cpp:1093
+#: KainoteFrame.cpp:1207 KainoteFrame.cpp:2272 OptionsDialog.cpp:114
 #: OptionsDialog.cpp:123 OptionsDialog.cpp:473 SpellCheckerDialog.cpp:145
-#: SubsGrid.cpp:1096 SubsGridBase.cpp:532 SubsGridBase.cpp:561 VideoBox.cpp:300
+#: SubsGrid.cpp:1098 SubsGridBase.cpp:532 SubsGridBase.cpp:561 VideoBox.cpp:300
 #: VisualClips.cpp:1064 kainoteApp.cpp:114 kainoteApp.cpp:158
 msgid "Uwaga"
 msgstr "경고"
@@ -634,7 +636,7 @@ msgstr "대화"
 msgid "Nie można dodać linii klasy: %s w pole klasy: %s"
 msgstr "Cannot add line of class: %s in field of class: %s"
 
-#: AutomationToFile.cpp:1067
+#: AutomationToFile.cpp:1070
 msgid "Brakujący wskaźnik napisów"
 msgstr "자막 지점 누락"
 
@@ -945,13 +947,13 @@ msgid "Komentarz"
 msgstr "주석처리"
 
 #: EditBox.cpp:293 FindReplaceDialog.cpp:135 KainoteFrame.cpp:204
-#: SelectLines.cpp:75 SubsGrid.cpp:449 SubsGrid.cpp:599 SubsGridWindow.cpp:256
+#: SelectLines.cpp:75 SubsGrid.cpp:451 SubsGrid.cpp:601 SubsGridWindow.cpp:256
 #: SubsGridWindow.cpp:644 SubsGridWindow.cpp:1098 SubsGridWindow.cpp:1264
 msgid "Aktor"
 msgstr "배우"
 
 #: EditBox.cpp:299 FindReplaceDialog.cpp:138 KainoteFrame.cpp:205
-#: SelectLines.cpp:76 SubsGrid.cpp:454 SubsGrid.cpp:604 SubsGridWindow.cpp:260
+#: SelectLines.cpp:76 SubsGrid.cpp:456 SubsGrid.cpp:606 SubsGridWindow.cpp:260
 #: SubsGridWindow.cpp:648 SubsGridWindow.cpp:1111 SubsGridWindow.cpp:1277
 msgid "Efekt"
 msgstr "효과"
@@ -1138,14 +1140,14 @@ msgstr "글자 제외"
 msgid "W polu"
 msgstr "찾을 부분"
 
-#: FindReplaceDialog.cpp:124 SelectLines.cpp:73 SubsGrid.cpp:460
-#: SubsGrid.cpp:479 SubsGrid.cpp:486 SubsGrid.cpp:605 SubsGrid.cpp:621
-#: SubsGrid.cpp:630 SubsGridWindow.cpp:264 SubsGridWindow.cpp:654
+#: FindReplaceDialog.cpp:124 SelectLines.cpp:73 SubsGrid.cpp:462
+#: SubsGrid.cpp:481 SubsGrid.cpp:488 SubsGrid.cpp:607 SubsGrid.cpp:623
+#: SubsGrid.cpp:632 SubsGridWindow.cpp:264 SubsGridWindow.cpp:654
 msgid "Tekst"
 msgstr "글자"
 
-#: FindReplaceDialog.cpp:129 SelectLines.cpp:74 SubsGrid.cpp:450
-#: SubsGrid.cpp:600 SubsGridWindow.cpp:255 SubsGridWindow.cpp:643
+#: FindReplaceDialog.cpp:129 SelectLines.cpp:74 SubsGrid.cpp:452
+#: SubsGrid.cpp:602 SubsGridWindow.cpp:255 SubsGridWindow.cpp:643
 #: SubsGridWindow.cpp:1092 SubsGridWindow.cpp:1258
 msgid "Styl"
 msgstr "스타일"
@@ -1283,7 +1285,7 @@ msgid "Dodaj"
 msgstr "추가"
 
 #: FontCatalogList.cpp:108 FontCatalogList.cpp:734 SelectLines.cpp:127
-#: SubsGrid.cpp:229 SubsGrid.cpp:260 stylestore.cpp:72 stylestore.cpp:90
+#: SubsGrid.cpp:229 SubsGrid.cpp:262 stylestore.cpp:72 stylestore.cpp:90
 #: stylestore.cpp:143
 msgid "Usuń"
 msgstr "삭제"
@@ -1321,7 +1323,7 @@ msgstr "목록 선택:"
 msgid "Szukaj:"
 msgstr "찾기:"
 
-#: FontCatalogList.cpp:199 SubsGridBase.cpp:1651
+#: FontCatalogList.cpp:199 SubsGridBase.cpp:1656
 msgid "Autozapis"
 msgstr "자동 저장"
 
@@ -1460,9 +1462,9 @@ msgstr "저장 경로가 잘못되었습니다."
 msgid "Plik zip już istnieje, usunąć go?"
 msgstr "Zip 파일이 이미 있습니다. 삭제 하시겠습니까?"
 
-#: FontCollector.cpp:510 KainoteFrame.cpp:1148 KainoteFrame.cpp:1902
-#: Notebook.cpp:1168 SubsGrid.cpp:1063 SubsGrid.cpp:1392 SubsGridBase.cpp:551
-#: SubsGridBase.cpp:1403 VideoBox.cpp:803 VideoBox.cpp:815
+#: FontCollector.cpp:510 KainoteFrame.cpp:1144 KainoteFrame.cpp:1898
+#: Notebook.cpp:1168 SubsGrid.cpp:1065 SubsGrid.cpp:1394 SubsGridBase.cpp:551
+#: SubsGridBase.cpp:1408 VideoBox.cpp:803 VideoBox.cpp:815
 #: VisualAllTagsEdition.cpp:150 VisualAllTagsEdition.cpp:214
 #: VisualDrawingShapes.cpp:128 VisualDrawingShapes.cpp:192 findreplace.cpp:399
 #: findreplace.cpp:406 findreplace.cpp:1326 findreplace.cpp:1330
@@ -1851,7 +1853,7 @@ msgstr "저장"
 
 #: Hotkeys.cpp:153 HotkeysNaming.cpp:218
 msgid "Zapisz jako..."
-msgstr "다른 이름으로 저장."
+msgstr "다른 이름으로 저장…"
 
 #: Hotkeys.cpp:154 HotkeysNaming.cpp:215 SubsGrid.cpp:228
 msgid "Usuń tekst"
@@ -2442,7 +2444,7 @@ msgstr "스타일"
 msgid "Stwórz drzewko"
 msgstr "트리구조 만듦"
 
-#: HotkeysNaming.cpp:168 KainoteFrame.cpp:957 OptionsDialog.cpp:595
+#: HotkeysNaming.cpp:168 KainoteFrame.cpp:953 OptionsDialog.cpp:595
 msgid "Lista osób pomocnych przy tworzeniu programu"
 msgstr "만든사람들"
 
@@ -2751,7 +2753,7 @@ msgstr "모두 저장"
 
 #: KainoteFrame.cpp:156
 msgid "Zapisz &jako..."
-msgstr "다른 이름으로[&A]"
+msgstr "다른 이름으로[&A]…"
 
 #: KainoteFrame.cpp:157
 msgid "Zapisz jako"
@@ -2813,11 +2815,11 @@ msgstr "프로그램 종료"
 msgid "&Plik"
 msgstr "파일[&F]"
 
-#: KainoteFrame.cpp:181 KainoteFrame.cpp:2106
+#: KainoteFrame.cpp:181 KainoteFrame.cpp:2102
 msgid "&Cofnij"
 msgstr "실행 취소[&U]"
 
-#: KainoteFrame.cpp:186 KainoteFrame.cpp:2122
+#: KainoteFrame.cpp:186 KainoteFrame.cpp:2118
 msgid "&Ponów"
 msgstr "되돌리기[&R]"
 
@@ -2841,9 +2843,9 @@ msgstr "찾기[&F]"
 msgid "Szuka dane frazy tekstu"
 msgstr "글자를 검색합니다"
 
-#: KainoteFrame.cpp:199 ShiftTimes.cpp:345 SubsGrid.cpp:447 SubsGrid.cpp:478
-#: SubsGrid.cpp:484 SubsGrid.cpp:485 SubsGrid.cpp:597 SubsGrid.cpp:620
-#: SubsGrid.cpp:628 SubsGrid.cpp:629
+#: KainoteFrame.cpp:199 ShiftTimes.cpp:345 SubsGrid.cpp:449 SubsGrid.cpp:480
+#: SubsGrid.cpp:486 SubsGrid.cpp:487 SubsGrid.cpp:599 SubsGrid.cpp:622
+#: SubsGrid.cpp:630 SubsGrid.cpp:631
 msgid "Czas początkowy"
 msgstr "시작 시간"
 
@@ -2851,7 +2853,7 @@ msgstr "시작 시간"
 msgid "Sortuj według czasu początkowego"
 msgstr "정렬 / 시작 시간"
 
-#: KainoteFrame.cpp:201 ShiftTimes.cpp:346 SubsGrid.cpp:448 SubsGrid.cpp:598
+#: KainoteFrame.cpp:201 ShiftTimes.cpp:346 SubsGrid.cpp:450 SubsGrid.cpp:600
 msgid "Czas końcowy"
 msgstr "종료 시간"
 
@@ -2875,7 +2877,7 @@ msgstr "정렬 / 배우"
 msgid "Sortuj według efektu"
 msgstr "정렬 / 효과"
 
-#: KainoteFrame.cpp:206 SubsGrid.cpp:446 SubsGrid.cpp:596
+#: KainoteFrame.cpp:206 SubsGrid.cpp:448 SubsGrid.cpp:598
 msgid "Warstwa"
 msgstr "레이어"
 
@@ -3156,12 +3158,12 @@ msgstr "스크립트 파일 (*.lua),(*.moon)|*.lua;*.moon;"
 msgid "Ten plik napisów nie ma dodanych żadnych skryptów"
 msgstr "이 자막에는 스크립트가 추가되지 않았습니다"
 
-#: KainoteFrame.cpp:735 KainoteFrame.cpp:2405
+#: KainoteFrame.cpp:735 KainoteFrame.cpp:2401
 #, c-format
 msgid "Warunki skryptu Lua '%s' nie zostały spełnione"
 msgstr "'%s' Lua 스크립트 유효성 검사 실패"
 
-#: KainoteFrame.cpp:814 SubsGrid.cpp:869 VideoBox.cpp:1003
+#: KainoteFrame.cpp:814 SubsGrid.cpp:871 VideoBox.cpp:1003
 msgid "Wybierz plik napisów"
 msgstr "자막 파일 선택"
 
@@ -3213,10 +3215,12 @@ msgstr ""
 "\n"
 
 #: KainoteFrame.cpp:918
+#, fuzzy
 msgid ""
 "Jeśli zauważyłeś(aś) jakieś błędy bądź masz jakieś propozycje zmian lub "
 "nowych funkcji,\n"
-"możesz napisać o tym na: forum ANSI, Githubie, bądź mailowo.\n"
+"możesz napisać o tym na: Discordzie https://discord.gg/9WacFTtK6q, Githubie, "
+"bądź mailowo.\n"
 "\n"
 msgstr ""
 "버그를 발견했거나 변경 사항이나 새로운 기능에 대한 제안 사항이 있는 경우\n"
@@ -3245,43 +3249,23 @@ msgid "Pomoc graficzna: (przyciski, obrazki do pomocy itd.)\n"
 msgstr "그래픽 지원: (버튼, 이미지 기타 등등..)\n"
 
 #: KainoteFrame.cpp:939
-msgid "- Kostek00 (przyciski do audio i narzędzi wizualnych).\n"
-msgstr "- Kostek00 (소리 버튼 및 시각적 도구)\n"
-
-#: KainoteFrame.cpp:940
-msgid "- Xandros (nowe przyciski do wideo).\n"
+#, fuzzy
+msgid "- Xandros (przyciski do wideo).\n"
 msgstr "- Xandros (새로운 영상 버튼).\n"
 
-#: KainoteFrame.cpp:941
+#: KainoteFrame.cpp:940
 msgid "- Devilkan (ikony do menu i paska narzędzi, obrazki do pomocy).\n"
 msgstr "- Devilkan (메뉴 및 도구 모음 버튼)\n"
 
-#: KainoteFrame.cpp:942
+#: KainoteFrame.cpp:941
 msgid "- Zły Los (ikony do skojarzonych plików i do menu).\n"
 msgstr "- Zły Los (파일 연결 및 메뉴 아이콘).\n"
 
-#: KainoteFrame.cpp:943
-msgid ""
-"- Areki, duplex (tłumaczenie anglojęzyczne).\n"
-" \n"
-msgstr ""
-"- Areki, duplex (영어 현지화)\n"
-" \n"
-
-#: KainoteFrame.cpp:944
+#: KainoteFrame.cpp:942
 msgid "Testerzy: (mniej i bardziej wprawieni użytkownicy programu)\n"
 msgstr "테스터:\n"
 
-#: KainoteFrame.cpp:945
-msgid ""
-"- Funki27 (pierwszy tester mający spory wpływ na obecne działanie programu\n"
-msgstr "- Funki27 (첫 번째 테스터, 덕분에 많이 향상되었습니다,\n"
-
-#: KainoteFrame.cpp:946
-msgid "i najbardziej narzekający na wszystko).\n"
-msgstr "불평이 많았다).\n"
-
-#: KainoteFrame.cpp:947
+#: KainoteFrame.cpp:943
 msgid ""
 "- Sacredus (chyba pierwszy tłumacz używający trybu tłumacza,\n"
 " nieoceniona pomoc przy testowaniu wydajności na słabym komputerze).\n"
@@ -3289,27 +3273,13 @@ msgstr ""
 "- Sacredus (번역 모드를 사용하는 첫 번째 사용자입니다,\n"
 "느린 컴퓨터에서 Kainote를 테스트하는데 많은 도움이 되었습니다).\n"
 
-#: KainoteFrame.cpp:948
-msgid ""
-"- Kostek00 (prawdziwy wynajdywacz błędów, miał duży wpływ na rozwój spektrum "
-"audio \n"
-msgstr ""
-"- Kostek00 (많은 버그를 발견하고 소리 스펙트럼 개발에 큰 영향을 미쳤습니다.\n"
-
-#: KainoteFrame.cpp:949
-msgid ""
-"i głównego pola tekstowego, stworzył ciemny i jasny motyw, a także część "
-"ikon).\n"
-msgstr ""
-"그리고 기본 자막보기, 어둡고 밝은 테마 및 아이콘의 일부를 만들었습니다).\n"
-
-#: KainoteFrame.cpp:950
+#: KainoteFrame.cpp:944
 msgid ""
 "- Devilkan (crashhunter, ze względu na swój system i przyzwyczajenia "
 "wytropił już wiele crashy,\n"
 msgstr "- Devilkan (문자 설정 도구를 설정하는데 도움을 주고,\n"
 
-#: KainoteFrame.cpp:951
+#: KainoteFrame.cpp:945
 msgid ""
 "pomógł w poprawie działania narzędzi do typesettingu, wymyślił wiele innych "
 "usprawnień).\n"
@@ -3317,7 +3287,7 @@ msgstr ""
 "그의 시스템과 습관으로 인해 많은 버그를 추적하고 오류를 수정할 수 있었습니"
 "다).\n"
 
-#: KainoteFrame.cpp:952
+#: KainoteFrame.cpp:946
 msgid ""
 "- MatiasMovie (wyłapał parę crashy i zaproponował różne usprawnienia, pomaga "
 "w debugowaniu crashy).\n"
@@ -3325,111 +3295,118 @@ msgstr ""
 "- MatiasMovie (일부 충돌을 발견하고 몇 가지 개선 사항을 제안했으며 버그 수정"
 "에 도움이 되었습니다).\n"
 
-#: KainoteFrame.cpp:953
+#: KainoteFrame.cpp:947
 msgid "- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy).\n"
 msgstr "- mas1904 (오류를 발견하고 충돌 디버깅에 도움을 주었습니다).\n"
 
-#: KainoteFrame.cpp:954
+#: KainoteFrame.cpp:948
 msgid "- Senami (stworzył nowe motywy, a także wyłapał parę błędów).\n"
 msgstr "- Senami (새로운 테마를 만들고 몇 가지 버그를 발견했습니다).\n"
 
-#: KainoteFrame.cpp:955
-msgid ""
-"- Atalos (zdebugował wiele crashy).\n"
-" \n"
-msgstr ""
-"- Atalos (많은 오류를 찾아내고 수정하였습니다).\n"
-"\n"
+#: KainoteFrame.cpp:949
+#, fuzzy
+msgid "- altinat (tajskie tłumaczenie).\n"
+msgstr "번역 저장"
 
-#: KainoteFrame.cpp:956
+#: KainoteFrame.cpp:950
+#, fuzzy
+msgid "- labrie75 (koreańskie tłumaczenie).\n"
+msgstr "번역 저장"
+
+#: KainoteFrame.cpp:951
+#, fuzzy
+msgid "- Niskala5570 (malajskie tłumaczenie).\n"
+msgstr "번역 저장"
+
+#: KainoteFrame.cpp:952
 msgid ""
 "Podziękowania także dla osób, które używają programu i zgłaszali błędy.\n"
 msgstr "프로그램을 사용하고 버그를 제보 해 주신 분들께 감사드립니다.\n"
 
-#: KainoteFrame.cpp:1064
+#: KainoteFrame.cpp:1060
 msgid "Plik napisów "
 msgstr "자막 파일 "
 
-#: KainoteFrame.cpp:1074
+#: KainoteFrame.cpp:1070
 msgid "Zapisz plik napisów"
 msgstr "자막 파일 저장"
 
-#: KainoteFrame.cpp:1147
+#: KainoteFrame.cpp:1143
 #, c-format
 msgid "Wczytać napisy o nazwie \"%s\"?"
 msgstr "%s 파일도 같이 불러 오겠습니까?"
 
-#: KainoteFrame.cpp:1211 Visuals.cpp:275
+#: KainoteFrame.cpp:1207 Visuals.cpp:275
 msgid "Nie można otworzyć napisów"
 msgstr "자막 파일을 열 수 없음"
 
-#: KainoteFrame.cpp:1356 OptionsDialog.cpp:672 ProviderFFMS2.cpp:825
+#: KainoteFrame.cpp:1352 OptionsDialog.cpp:672 ProviderFFMS2.cpp:825
 #: ProviderFFMS2.cpp:836 ScriptInfo.cpp:75 VideoFfmpeg.cpp:946
 #: VideoFfmpeg.cpp:957 stylestore.cpp:760 stylestore.cpp:761
 msgid "Brak"
 msgstr "없음"
 
-#: KainoteFrame.cpp:1897
+#: KainoteFrame.cpp:1893
 #, c-format
 msgid "Zapisać napisy o nazwie \"%s\" przed %s?"
 msgstr "\"%s\"로 저장 후에 %s?"
 
-#: KainoteFrame.cpp:1898
+#: KainoteFrame.cpp:1894
 msgid "zamknięciem programu"
 msgstr "프로그램 종료"
 
-#: KainoteFrame.cpp:1899
+#: KainoteFrame.cpp:1895
 msgid "zamknięciem zakładki"
 msgstr "탭 닫기"
 
-#: KainoteFrame.cpp:1900
+#: KainoteFrame.cpp:1896
 msgid "wczytaniem nowych napisów"
 msgstr "자막을 불러올까요"
 
-#: KainoteFrame.cpp:1901
+#: KainoteFrame.cpp:1897
 msgid "usunięciem napisów"
 msgstr "내용 삭제"
 
-#: KainoteFrame.cpp:1939 OptionsDialog.cpp:608
+#: KainoteFrame.cpp:1935 OptionsDialog.cpp:608
 msgid "Nie można wczytać skrótów klawiszowych audio"
 msgstr "소리 단축키를 불러올 수 없음"
 
-#: KainoteFrame.cpp:1940 OptionsDialog.cpp:287 ProviderFFMS2.cpp:37
+#: KainoteFrame.cpp:1936 OptionsDialog.cpp:287 ProviderFFMS2.cpp:37
 #: VideoFfmpeg.cpp:52
 msgid "Nie można wczytać opcji audio"
 msgstr "소리 설정을 불러올 수 없음"
 
-#: KainoteFrame.cpp:1944
+#: KainoteFrame.cpp:1940
 msgid "Wybierz plik audio"
 msgstr "소리 파일 선택"
 
-#: KainoteFrame.cpp:1947
+#: KainoteFrame.cpp:1943
 msgid "Pliki audio i wideo"
 msgstr "영상 및 소리 파일"
 
-#: KainoteFrame.cpp:1949
+#: KainoteFrame.cpp:1945
 msgid "Wszystkie pliki"
 msgstr "모든 파이"
 
-#: KainoteFrame.cpp:2103
+#: KainoteFrame.cpp:2099
 msgid "&Cofnij do "
 msgstr "실행 취소 - "
 
-#: KainoteFrame.cpp:2119
+#: KainoteFrame.cpp:2115
 msgid "&Ponów do "
 msgstr "되돌리기 - "
 
-#: KainoteFrame.cpp:2259
+#: KainoteFrame.cpp:2255
 #, fuzzy
 msgid "Wybierz plik sesji"
 msgstr "소리 파일 선택"
 
-#: KainoteFrame.cpp:2269
+#: KainoteFrame.cpp:2265
 #, fuzzy
 msgid "Zapisz plik sesji"
 msgstr "자막 파일 저장"
 
-#: KainoteFrame.cpp:2379
+#: KainoteFrame.cpp:2375
 #, c-format
 msgid "Skrót o nazwie '%s' nie należy do skrypru."
 msgstr "단축키는 '% s'는 스크립트의 내용이 아닙니다."
@@ -4868,27 +4845,27 @@ msgstr "기본값으로 설정"
 msgid "Informacje o napisach"
 msgstr "자막 정보"
 
-#: OptionsPanels.cpp:32 ScriptInfo.cpp:42 SubsGrid.cpp:1396
+#: OptionsPanels.cpp:32 ScriptInfo.cpp:42 SubsGrid.cpp:1398
 msgid "Tytuł"
 msgstr "제목"
 
-#: OptionsPanels.cpp:32 ScriptInfo.cpp:44 SubsGrid.cpp:1396
+#: OptionsPanels.cpp:32 ScriptInfo.cpp:44 SubsGrid.cpp:1398
 msgid "Autor"
 msgstr "제작자"
 
-#: OptionsPanels.cpp:32 ScriptInfo.cpp:46 SubsGrid.cpp:1396
+#: OptionsPanels.cpp:32 ScriptInfo.cpp:46 SubsGrid.cpp:1398
 msgid "Tłumaczenie"
 msgstr "번역자"
 
-#: OptionsPanels.cpp:32 ScriptInfo.cpp:48 SubsGrid.cpp:1396
+#: OptionsPanels.cpp:32 ScriptInfo.cpp:48 SubsGrid.cpp:1398
 msgid "Korekta"
 msgstr "편집"
 
-#: OptionsPanels.cpp:32 ScriptInfo.cpp:50 SubsGrid.cpp:1396
+#: OptionsPanels.cpp:32 ScriptInfo.cpp:50 SubsGrid.cpp:1398
 msgid "Timing"
 msgstr "시간"
 
-#: OptionsPanels.cpp:32 ScriptInfo.cpp:52 SubsGrid.cpp:1396
+#: OptionsPanels.cpp:32 ScriptInfo.cpp:52 SubsGrid.cpp:1398
 #: VisualDrawingShapes.cpp:68
 msgid "Edycja"
 msgstr "갱신 정보"
@@ -5751,11 +5728,11 @@ msgstr "픽셀 단위의 글자 간격 (음수 허용)"
 msgid "Prostokątna obwódka"
 msgstr "직사각형 테두리"
 
-#: StyleChange.cpp:709 SubsGrid.cpp:452 SubsGrid.cpp:602
+#: StyleChange.cpp:709 SubsGrid.cpp:454 SubsGrid.cpp:604
 msgid "Margines prawy"
 msgstr "오른쪽 여백"
 
-#: StyleChange.cpp:710 SubsGrid.cpp:451 SubsGrid.cpp:601
+#: StyleChange.cpp:710 SubsGrid.cpp:453 SubsGrid.cpp:603
 msgid "Margines lewy"
 msgstr "왼쪽 여백"
 
@@ -6118,58 +6095,58 @@ msgstr "필터"
 msgid "Wczytaj napisy z pliku MKV / OGM"
 msgstr "MKV 파일의 자막 불러오기"
 
-#: SubsGrid.cpp:256
+#: SubsGrid.cpp:258
 msgid "Dodaj linie"
 msgstr "선택 줄 하위 항목으로 추가"
 
-#: SubsGrid.cpp:257
+#: SubsGrid.cpp:259
 msgid "Kopiuj drzewko"
 msgstr "트리 복사"
 
-#: SubsGrid.cpp:258
+#: SubsGrid.cpp:260
 msgid "Zmień opis"
 msgstr "이름 지정"
 
-#: SubsGrid.cpp:259
+#: SubsGrid.cpp:261
 msgid "Zaznacz linie drzewka"
 msgstr "하위 항목 선택"
 
-#: SubsGrid.cpp:453 SubsGrid.cpp:603
+#: SubsGrid.cpp:455 SubsGrid.cpp:605
 msgid "Margines pionowy"
 msgstr "세로 여백"
 
-#: SubsGrid.cpp:456
+#: SubsGrid.cpp:458
 msgid "Tekst do oryginału"
 msgstr "원본"
 
-#: SubsGrid.cpp:457
+#: SubsGrid.cpp:459
 msgid "Tekst do tłumaczenia"
 msgstr "번역본"
 
-#: SubsGrid.cpp:606
+#: SubsGrid.cpp:608
 msgid "Tekst bez tagów"
 msgstr "태그가 없는 글자"
 
-#: SubsGrid.cpp:871
+#: SubsGrid.cpp:873
 msgid "Pliki napisów (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"
 msgstr "자막 파일 (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"
 
-#: SubsGrid.cpp:1062
+#: SubsGrid.cpp:1064
 msgid "Zapisać plik przed wczytaniem napisów z MKV?"
 msgstr "MKV의 자막을 불러오기 전에 파일을 저장 하시겠습니까?"
 
-#: SubsGrid.cpp:1096
+#: SubsGrid.cpp:1098
 msgid "Otwieranie napisów nie powiodło się"
 msgstr "자막을 열지 못했습니다"
 
-#: SubsGrid.cpp:1231 SubsGrid.cpp:1261 SubsGrid.cpp:1281
+#: SubsGrid.cpp:1233 SubsGrid.cpp:1263 SubsGrid.cpp:1283
 #, c-format
 msgid ""
 "W linii %i nie można przeskalować wartości '%s'\n"
 "w tagu '%s'"
 msgstr "%i 줄에서 '%s'를 조정할 수 없음, 태그:'%s'"
 
-#: SubsGrid.cpp:1407
+#: SubsGrid.cpp:1409
 msgid "Wyłącz potwierdzenie"
 msgstr "설정 해제"
 
@@ -6177,7 +6154,7 @@ msgstr "설정 해제"
 msgid "Nieprawidłowy FPS. Popraw opcje i spróbuj ponownie."
 msgstr "잘못된 프레임입니다. 설정에서 수정하고 다시 시도하십시오."
 
-#: SubsGridBase.cpp:503
+#: SubsGridBase.cpp:503 SubsGridBase.cpp:660
 msgid "Wideo nie zostało wczytane przez FFMS2"
 msgstr "FFMS2를 사용하여 영상을 불러오지 않았습니다"
 
@@ -6202,7 +6179,7 @@ msgstr "종료 시간"
 msgid "Nie zaznaczono linii do przesunięcia"
 msgstr "이동할 줄이 없습니다"
 
-#: SubsGridBase.cpp:1402
+#: SubsGridBase.cpp:1407
 msgid ""
 "Czy na pewno chcesz wyłączyć tryb tłumacza?\n"
 "Obcojęzyczny tekst przetłumaczonych linijek zostanie usunięty."
@@ -7283,6 +7260,11 @@ msgstr "도입부 추가"
 msgid "Wpisz nazwę nowego ksztatłu."
 msgstr "새 폴더의 이름을 입력하십시오"
 
+#: VisualDrawingShapes.cpp:166
+#, fuzzy
+msgid "Nie można usunąć wszystkich kształtów z listy"
+msgstr "전체 탭에서 선택"
+
 #: VisualRotationZ.cpp:486 VisualScale.cpp:772
 #, fuzzy
 msgid "Nie można pobrać wartości clipa prostokątnego."
@@ -7684,6 +7666,44 @@ msgstr "목록에서 ASS 파일로 스타일을 복사합니다"
 #: stylestore.cpp:786
 msgid "Oczyść napisy z nieużywanych stylów"
 msgstr "사용하지 않는 ASS 스타일 삭제"
+
+#~ msgid "- Kostek00 (przyciski do audio i narzędzi wizualnych).\n"
+#~ msgstr "- Kostek00 (소리 버튼 및 시각적 도구)\n"
+
+#~ msgid ""
+#~ "- Areki, duplex (tłumaczenie anglojęzyczne).\n"
+#~ " \n"
+#~ msgstr ""
+#~ "- Areki, duplex (영어 현지화)\n"
+#~ " \n"
+
+#~ msgid ""
+#~ "- Funki27 (pierwszy tester mający spory wpływ na obecne działanie "
+#~ "programu\n"
+#~ msgstr "- Funki27 (첫 번째 테스터, 덕분에 많이 향상되었습니다,\n"
+
+#~ msgid "i najbardziej narzekający na wszystko).\n"
+#~ msgstr "불평이 많았다).\n"
+
+#~ msgid ""
+#~ "- Kostek00 (prawdziwy wynajdywacz błędów, miał duży wpływ na rozwój "
+#~ "spektrum audio \n"
+#~ msgstr ""
+#~ "- Kostek00 (많은 버그를 발견하고 소리 스펙트럼 개발에 큰 영향을 미쳤습니"
+#~ "다.\n"
+
+#~ msgid ""
+#~ "i głównego pola tekstowego, stworzył ciemny i jasny motyw, a także część "
+#~ "ikon).\n"
+#~ msgstr ""
+#~ "그리고 기본 자막보기, 어둡고 밝은 테마 및 아이콘의 일부를 만들었습니다).\n"
+
+#~ msgid ""
+#~ "- Atalos (zdebugował wiele crashy).\n"
+#~ " \n"
+#~ msgstr ""
+#~ "- Atalos (많은 오류를 찾아내고 수정하였습니다).\n"
+#~ "\n"
 
 #~ msgid "Kainote się scrashował i próbuje pozyskać istotne dane.\n"
 #~ msgstr "Kainote가 충돌하여 필요한 데이터를 얻으려고합니다.\n"
