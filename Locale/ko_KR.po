@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kainote\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-06 19:33+0700\n"
+"POT-Creation-Date: 2022-06-06 19:44+0700\n"
 "PO-Revision-Date: 2022-06-02 07:17+0000\n"
 "Last-Translator: altinat <poiiiii4yy@gmail.com>\n"
 "Language-Team: Korean <https://hosted.weblate.org/projects/kainote/kainote/"
@@ -829,6 +829,10 @@ msgstr "영상 가로 세로 비율"
 msgid "Rozdzielczość wideo:"
 msgstr "영상 해상도"
 
+#: DummyVideo.cpp:56
+msgid "Siatka"
+msgstr ""
+
 #: DummyVideo.cpp:59
 #, fuzzy
 msgid "Kolor:"
@@ -839,10 +843,19 @@ msgstr "색상"
 msgid "Klatki na sekundę:"
 msgstr "초당 프레임"
 
+#: DummyVideo.cpp:95
+#, c-format
+msgid "Co daje %i klatek"
+msgstr ""
+
 #: DummyVideo.cpp:98
 #, fuzzy
 msgid "Czas trwania:"
 msgstr "영상의 길이"
+
+#: DummyVideo.cpp:120 DummyVideo.cpp:124
+msgid "Nieprawidłowa wartość fps."
+msgstr ""
 
 #: EditBox.cpp:79
 msgid "Wpisz tag ASS"
@@ -2705,6 +2718,10 @@ msgstr "마지막으로 불러온 파일 열기"
 msgid "Wczytaj sesję z pliku"
 msgstr "MKV 파일의 자막 불러오기"
 
+#: KainoteFrame.cpp:136
+msgid "Wczytuje sesję z wcześniej zapisanego pliku sesji"
+msgstr ""
+
 #: KainoteFrame.cpp:138
 #, fuzzy
 msgid "Zapisz sesję do pliku"
@@ -2842,6 +2859,10 @@ msgstr "찾기[&F]"
 #: KainoteFrame.cpp:193
 msgid "Szuka dane frazy tekstu"
 msgstr "글자를 검색합니다"
+
+#: KainoteFrame.cpp:195
+msgid "Znajduje kolejne wystąpięnie frazy w tekście"
+msgstr ""
 
 #: KainoteFrame.cpp:199 ShiftTimes.cpp:345 SubsGrid.cpp:449 SubsGrid.cpp:480
 #: SubsGrid.cpp:486 SubsGrid.cpp:487 SubsGrid.cpp:599 SubsGrid.cpp:622
@@ -2989,6 +3010,14 @@ msgstr "열었던 소리"
 #: KainoteFrame.cpp:271
 msgid "Otwiera audio z wideo"
 msgstr "영상/소리 열기"
+
+#: KainoteFrame.cpp:272
+msgid "Otwórz puste audio na 2:30 godziny"
+msgstr ""
+
+#: KainoteFrame.cpp:273
+msgid "Otwiera puste audio na 2:30 godziny"
+msgstr ""
 
 #: KainoteFrame.cpp:275
 msgid "Zamyka audio"
@@ -3331,6 +3360,12 @@ msgstr "자막 파일 "
 msgid "Zapisz plik napisów"
 msgstr "자막 파일 저장"
 
+#: KainoteFrame.cpp:1077 KainoteFrame.cpp:1093 KainoteFrame.cpp:2272
+msgid ""
+"Wybrany plik jest tylko do odczytu,\n"
+"proszę zapisać pod inną nazwą lub zmienić atrybuty pliku."
+msgstr ""
+
 #: KainoteFrame.cpp:1143
 #, c-format
 msgid "Wczytać napisy o nazwie \"%s\"?"
@@ -3400,6 +3435,10 @@ msgstr "되돌리기 - "
 #, fuzzy
 msgid "Wybierz plik sesji"
 msgstr "소리 파일 선택"
+
+#: KainoteFrame.cpp:2257 KainoteFrame.cpp:2266
+msgid "Plik sesji (*.kls),|*.kls"
+msgstr ""
 
 #: KainoteFrame.cpp:2265
 #, fuzzy
@@ -4298,6 +4337,10 @@ msgstr "편집박스 중괄호 { }"
 #: OptionsDialog.cpp:728
 msgid "Edytor operatory tagów"
 msgstr "편집박스 태그 구분자"
+
+#: OptionsDialog.cpp:728
+msgid "Edytor dzielenie linii i rysunki ASS"
+msgstr ""
 
 #: OptionsDialog.cpp:728
 msgid "Edytor zmienne template"
@@ -5318,6 +5361,10 @@ msgstr "이동할 줄 선택"
 #: ShiftTimes.cpp:527
 msgid "Wybierz style z listy"
 msgstr "목록에서 스타일을 선택하십시오"
+
+#: ShiftTimes.cpp:528
+msgid "Przesuń według następujących stylów (oddzielone przecinkiem)"
+msgstr ""
 
 #: ShiftTimes.cpp:530
 msgid "Czas przesunięcia"
@@ -6932,6 +6979,10 @@ msgstr "도형 그리기"
 msgid "Zmieniacz pozycji"
 msgstr "위치 이동"
 
+#: VideoToolbar.cpp:53
+msgid "Hydra"
+msgstr ""
+
 #: VideoToolbar.cpp:56
 msgid "Zmieniacz skali i obrotów"
 msgstr "크기 및 회전"
@@ -6991,25 +7042,70 @@ msgstr ""
 msgid "Przenieś punkty org"
 msgstr "지점 이동 \\org"
 
+#: VideoToolbar.cpp:77
+msgid ""
+"Ustaw kąt z 2 punktów.\n"
+"Po ustawieniu 2 punktów pod tekstem\n"
+"na wideo oblicza z nich kąt."
+msgstr ""
+
 #: VideoToolbar.cpp:78
 #, fuzzy
 msgid "Zmiana wszystkich tagów obrotu wokół osi Z"
 msgstr "전체 탭에서 선택"
+
+#: VideoToolbar.cpp:79
+msgid ""
+"Utrzymanie proporcji, by po obrocie rysunki wektorowe i tekst\n"
+"nie poprzestawiały się względem siebie."
+msgstr ""
+
+#: VideoToolbar.cpp:82
+msgid ""
+"Ustaw skalę według prostokąta.\n"
+"Po narysowaniu prostokąta tekst zostanie\n"
+"zeskalowany wg jednej osi badź dwóch."
+msgstr ""
 
 #: VideoToolbar.cpp:83
 #, fuzzy
 msgid "Skaluj szerokość"
 msgstr "가로"
 
+#: VideoToolbar.cpp:84
+msgid "Utrzymuj proporcje"
+msgstr ""
+
 #: VideoToolbar.cpp:85
 #, fuzzy
 msgid "Skaluj wysokość"
 msgstr "세로"
 
+#: VideoToolbar.cpp:86
+msgid ""
+"Ustaw własny prostokąt dla obecnej skali.\n"
+"W przypadku niepożądanych różnic można ustawić\n"
+"własny prostokąt dla pierwotnej skali."
+msgstr ""
+
 #: VideoToolbar.cpp:87
 #, fuzzy
 msgid "Zmiana wszystkich tagów skali"
 msgstr "전체 탭에서 선택"
+
+#: VideoToolbar.cpp:88
+msgid ""
+"Utrzymanie proporcji, by po skalowaniu rysunki wektorowe i tekst\n"
+"nie poprzestawiały się względem siebie."
+msgstr ""
+
+#: VideoToolbar.cpp:91
+msgid ""
+"Ustaw pozycję według prostokąta.\n"
+"Po narysowaniu prostokąta tekst zostanie\n"
+"spozycjonowany wg jednej osi badź dwóch\n"
+"dla wybranego położenia."
+msgstr ""
 
 #: VideoToolbar.cpp:92
 #, fuzzy
@@ -7020,6 +7116,16 @@ msgstr "X 축 기울기"
 #, fuzzy
 msgid "Pozycjonuj w osi Y"
 msgstr "Y 축 기울기"
+
+#: VideoToolbar.cpp:96
+msgid ""
+"Ustaw ruch 2 punktów i pozycji wideo.\n"
+"Po ustawieniu pierwszego punktu przed tekstem który się porusza.\n"
+"Przesunięciu wideo o tyle klatek,\n"
+"by na wideo wciąż był widoczny ten sam element,\n"
+"do którego był ustawiony punkt początkowy.\n"
+"Ruch generuje postawienie drugiego punktu."
+msgstr ""
 
 #: VideoToolbar.cpp:99
 #, fuzzy
@@ -7079,10 +7185,30 @@ msgstr "줄 변경 시 재생 방법:"
 msgid "Wybierz"
 msgstr "프레임 선택"
 
+#: VideoToolbar.cpp:512
+msgid ""
+"Lista gotowych rysunków ASS z możliwością edycji.\n"
+"Po wybraniu rysunku z listy należy ustawić kursor\n"
+"w miejcu początku przytrzymać lewy przycisk myszy i przeciągnąć."
+msgstr ""
+
+#: VideoToolbar.cpp:735
+msgid "Lista z tagami obsługiwanymi przez narzędzie"
+msgstr ""
+
 #: VideoToolbar.cpp:737 VisualAllTagsEdition.cpp:86
 #, fuzzy
 msgid "Wstaw"
 msgstr "선택까지 되돌리기"
+
+#: VideoToolbar.cpp:737 VisualAllTagsEdition.cpp:86
+msgid "Pomnóż"
+msgstr ""
+
+#: VideoToolbar.cpp:737 VideoToolbar.cpp:738 VideoToolbar.cpp:789
+#: VisualAllTagsEdition.cpp:86
+msgid "Pomnóż+"
+msgstr ""
 
 #: VideoToolbar.cpp:737 VisualAllTagsEdition.cpp:86
 #, fuzzy
@@ -7093,6 +7219,108 @@ msgstr "굵게"
 #, fuzzy
 msgid "Gradient linia"
 msgstr "그라데이션 그림자"
+
+#: VideoToolbar.cpp:740
+msgid ""
+"Opcje zmiany tagów:\n"
+"Dodaj - zmienia wszystkie tagi dodając ruch z suwaka.\n"
+"Wstaw - wstawia w miejsce kursora w przypadku jednej linii\n"
+"albo na początku w przypadku wielu linii.\n"
+"Pomnóż - mnoży ruch suwaka przez numer zaznaczonej linijki\n"
+"pierwsza linia nie jest zmieniana."
+msgstr ""
+
+#: VideoToolbar.cpp:762
+msgid "Edycja tagów z listy oraz tworzenie nowych"
+msgstr ""
+
+#: VideoToolbar.cpp:1077
+msgid "Lewo-dół"
+msgstr ""
+
+#: VideoToolbar.cpp:1077
+msgid "Środek-dół"
+msgstr ""
+
+#: VideoToolbar.cpp:1077
+msgid "Prawo-dół"
+msgstr ""
+
+#: VideoToolbar.cpp:1078
+msgid "Lewo-środek"
+msgstr ""
+
+#: VideoToolbar.cpp:1078
+msgid "Środek"
+msgstr ""
+
+#: VideoToolbar.cpp:1078
+msgid "Prawo-środek"
+msgstr ""
+
+#: VideoToolbar.cpp:1079
+msgid "Lewo-góra"
+msgstr ""
+
+#: VideoToolbar.cpp:1079
+msgid "Środek-góra"
+msgstr ""
+
+#: VideoToolbar.cpp:1079
+msgid "Prawo-góra"
+msgstr ""
+
+#: VideoToolbar.cpp:1081
+msgid "Lewo-poniżej"
+msgstr ""
+
+#: VideoToolbar.cpp:1081
+msgid "Środek-poniżej"
+msgstr ""
+
+#: VideoToolbar.cpp:1081
+msgid "Prawo-poniżej"
+msgstr ""
+
+#: VideoToolbar.cpp:1082
+msgid "Lewo-ponad"
+msgstr ""
+
+#: VideoToolbar.cpp:1082
+msgid "Środek-ponad"
+msgstr ""
+
+#: VideoToolbar.cpp:1082
+msgid "Prawo-ponad"
+msgstr ""
+
+#: VideoToolbar.cpp:1083
+msgid "Przed-góra"
+msgstr ""
+
+#: VideoToolbar.cpp:1083
+msgid "Przed-środek"
+msgstr ""
+
+#: VideoToolbar.cpp:1083
+msgid "Przed-dół"
+msgstr ""
+
+#: VideoToolbar.cpp:1084
+msgid "Za-góra"
+msgstr ""
+
+#: VideoToolbar.cpp:1084
+msgid "Za-środek"
+msgstr ""
+
+#: VideoToolbar.cpp:1084
+msgid "Za-dół"
+msgstr ""
+
+#: VideoToolbar.cpp:1093
+msgid "Położenie tekstu, działa podobnie jak w stylach"
+msgstr ""
 
 #: VisualAllTagsEdition.cpp:27
 #, fuzzy
@@ -7124,6 +7352,10 @@ msgstr "스타일 편집"
 msgid "Nazwa:"
 msgstr "이름"
 
+#: VisualAllTagsEdition.cpp:57
+msgid "Tag:"
+msgstr ""
+
 #: VisualAllTagsEdition.cpp:62
 #, fuzzy
 msgid "Minimalna wartość:"
@@ -7134,6 +7366,10 @@ msgstr "명도:"
 msgid "Maksymalna wartość:"
 msgstr "명도:"
 
+#: VisualAllTagsEdition.cpp:71
+msgid "Przeskok:"
+msgstr ""
+
 #: VisualAllTagsEdition.cpp:74
 #, fuzzy
 msgid "Wstawiany w miejscu kursora"
@@ -7143,6 +7379,14 @@ msgstr "커서 위치에 추가"
 #, fuzzy
 msgid "Wstawiany tylko na początku"
 msgstr "맨 앞으로 추가"
+
+#: VisualAllTagsEdition.cpp:75
+msgid "Wycinek prostokątny z obsługą animacji"
+msgstr ""
+
+#: VisualAllTagsEdition.cpp:81
+msgid "Liczby po przecinku:"
+msgstr ""
 
 #: VisualAllTagsEdition.cpp:87
 #, fuzzy
@@ -7163,6 +7407,10 @@ msgstr "편집박스 태그 값 글자"
 #, fuzzy
 msgid "trzy dodatkowe wartości"
 msgstr "편집박스 태그 값 글자"
+
+#: VisualAllTagsEdition.cpp:92
+msgid "Używane tylko w przypadku gdy tag ma 2 wartości bądź więcej"
+msgstr ""
 
 #: VisualAllTagsEdition.cpp:95
 #, fuzzy
@@ -7194,10 +7442,33 @@ msgstr "불러 온 영상을 휴지통으로 이동 할까요?"
 msgid "Wpisz nazwę nowego tagu."
 msgstr "새 폴더의 이름을 입력하십시오"
 
+#: VisualAllTagsEdition.cpp:170
+msgid "Nowy tag już istnieje na liście, wpisz inną nazwę."
+msgstr ""
+
 #: VisualAllTagsEdition.cpp:188
 #, fuzzy
 msgid "Nie można usunąć wszystkich tagów z listy"
 msgstr "전체 탭에서 선택"
+
+#: VisualAllTagsEdition.cpp:213
+#, c-format
+msgid "Zapisać zmiany tagu \"%s\"?"
+msgstr ""
+
+#: VisualAllTagsEdition.cpp:295
+msgid "Pole \"Tag\" nie może być puste."
+msgstr ""
+
+#: VisualAllTagsEdition.cpp:303
+msgid ""
+"Pole \"Maksymalna wartość\" musi zawierać wartość\n"
+"większą od pola \"Minimalna wartość\"."
+msgstr ""
+
+#: VisualAllTagsEdition.cpp:307
+msgid "Pole \"Przeskok\" zawiera liczbę zbyt wysoką dla danego przedziału."
+msgstr ""
 
 #: VisualClips.cpp:1063
 msgid ""
@@ -7231,14 +7502,26 @@ msgid "Zmienna szerokość i wysokość"
 msgstr "글자만 변경"
 
 #: VisualDrawingShapes.cpp:75
+msgid "Zachowaj proporcje boków"
+msgstr ""
+
+#: VisualDrawingShapes.cpp:75
 #, fuzzy
 msgid "Zmienna tylko szerokość"
 msgstr "글자만 변경"
 
 #: VisualDrawingShapes.cpp:78
+msgid "Zmiana koordynatów rysunku"
+msgstr ""
+
+#: VisualDrawingShapes.cpp:78
 #, fuzzy
 msgid "Zmiana skali"
 msgstr "줄 바꾸기"
+
+#: VisualDrawingShapes.cpp:84
+msgid "Skalowanie względem kursora:"
+msgstr ""
 
 #: VisualDrawingShapes.cpp:86
 #, fuzzy
@@ -7260,10 +7543,28 @@ msgstr "도입부 추가"
 msgid "Wpisz nazwę nowego ksztatłu."
 msgstr "새 폴더의 이름을 입력하십시오"
 
+#: VisualDrawingShapes.cpp:148
+msgid "Nowy ksztatł już istnieje na liście, wpisz inną nazwę."
+msgstr ""
+
 #: VisualDrawingShapes.cpp:166
 #, fuzzy
 msgid "Nie można usunąć wszystkich kształtów z listy"
 msgstr "전체 탭에서 선택"
+
+#: VisualDrawingShapes.cpp:191
+#, c-format
+msgid "Zapisać zmiany kształtu \"%s\"?"
+msgstr ""
+
+#: VisualDrawingShapes.cpp:270
+msgid "Pole \"kształt\" nie może być puste."
+msgstr ""
+
+#: VisualMove.cpp:393
+msgid ""
+"Wideo musi być ustawione minimum jedną klatkę po czasie początkowym linijki"
+msgstr ""
 
 #: VisualRotationZ.cpp:486 VisualScale.cpp:772
 #, fuzzy
