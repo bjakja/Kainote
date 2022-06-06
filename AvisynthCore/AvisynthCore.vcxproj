@@ -324,7 +324,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\filters;$(SolutionDir)Thirdparty\AviSynthPlus\plugins\ImageSeq\lib\DevIL_x64;$(SolutionDir)Thirdparty\Build\AvisynthPlus\avs_core;$(SolutionDir)Thirdparty\baseclasses;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>

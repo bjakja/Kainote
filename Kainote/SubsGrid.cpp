@@ -234,18 +234,20 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	int Modifiers = 0;
 	int id = menu->GetPopupMenuSelection(pos, this, &Modifiers);
 
-	if (id < 0){ delete menu; }
+	if (id < 0) { delete menu; return; }
 
 	if (Modifiers == wxMOD_SHIFT){
-		if (id < 4000){ delete menu; }
+		if (id < 4000){ 
+			delete menu; return;
+		}
 		Hkeys.OnMapHkey(id, emptyString, this, GRID_HOTKEY);
 		delete menu;
+		return;
 	}
 	wxCommandEvent commandEvent(wxEVT_COMMAND_MENU_SELECTED, id);
 	OnAccelerator(commandEvent);
 
 	delete menu;
-	//VB->m_blockRender = false;
 }
 
 

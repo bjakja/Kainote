@@ -934,25 +934,21 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			//L"Interfejs Avisynth - Copyright © Ben Rudiak-Gould et al.\n"
 	}
 	else if (id == GLOBAL_HELPERS){
-		wxString Testers = L"SoheiMajin, KamiTet, Wtas, BadRequest, Ognisty321, Nyah2211, dark, Ksenoform, Zły Los.";
+		wxString Testers = L"SoheiMajin, BadRequest, Ognisty321, ZlyLos, Thomas Leigh.";
 		wxString Credits = _("Pomoc graficzna: (przyciski, obrazki do pomocy itd.)\n") +
-			_("- Kostek00 (przyciski do audio i narzędzi wizualnych).\n") +
-			_("- Xandros (nowe przyciski do wideo).\n") +
+			_("- Xandros (przyciski do wideo).\n") +
 			_("- Devilkan (ikony do menu i paska narzędzi, obrazki do pomocy).\n") +
 			_("- Zły Los (ikony do skojarzonych plików i do menu).\n") +
-			_("- Areki, duplex (tłumaczenie anglojęzyczne).\n \n") +
 			_("Testerzy: (mniej i bardziej wprawieni użytkownicy programu)\n") +
-			_("- Funki27 (pierwszy tester mający spory wpływ na obecne działanie programu\n") +
-			_("i najbardziej narzekający na wszystko).\n") +
 			_("- Sacredus (chyba pierwszy tłumacz używający trybu tłumacza,\n nieoceniona pomoc przy testowaniu wydajności na słabym komputerze).\n") +
-			_("- Kostek00 (prawdziwy wynajdywacz błędów, miał duży wpływ na rozwój spektrum audio \n") +
-			_("i głównego pola tekstowego, stworzył ciemny i jasny motyw, a także część ikon).\n") +
 			_("- Devilkan (crashhunter, ze względu na swój system i przyzwyczajenia wytropił już wiele crashy,\n") +
 			_("pomógł w poprawie działania narzędzi do typesettingu, wymyślił wiele innych usprawnień).\n") +
 			_("- MatiasMovie (wyłapał parę crashy i zaproponował różne usprawnienia, pomaga w debugowaniu crashy).\n") +
 			_("- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy).\n") +/* i jar do Language Tool*/
 			_("- Senami (stworzył nowe motywy, a także wyłapał parę błędów).\n") +
-			_("- Atalos (zdebugował wiele crashy).\n \n") +
+			_("- altinat (tajskie tłumaczenie).\n") +
+			_("- labrie75 (koreańskie tłumaczenie).\n") +
+			_("- Niskala5570 (malajskie tłumaczenie).\n") +
 			_("Podziękowania także dla osób, które używają programu i zgłaszali błędy.\n");
 		KaiMessageBox(Credits + Testers, _("Lista osób pomocnych przy tworzeniu programu"));
 
