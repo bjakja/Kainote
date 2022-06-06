@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kainote\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-06 19:33+0700\n"
+"POT-Creation-Date: 2022-06-06 19:44+0700\n"
 "PO-Revision-Date: 2022-05-12 17:56+0000\n"
 "Last-Translator: altinat <poiiiii4yy@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/kainote/"
@@ -38,6 +38,22 @@ msgstr ""
 #: AudioBox.cpp:72
 msgid "Pasek szukania"
 msgstr "Søkefelt"
+
+#: AudioBox.cpp:86
+msgid "Rozciągnięcie w poziomie"
+msgstr ""
+
+#: AudioBox.cpp:92
+msgid "Rozciągnięcie w pionie"
+msgstr ""
+
+#: AudioBox.cpp:94
+msgid "Głośność"
+msgstr ""
+
+#: AudioBox.cpp:103
+msgid "Połącz suwak głośności i rozciągnięcia"
+msgstr ""
 
 #: AudioBox.cpp:130
 msgid "Odtwórz poprzednią linijkę"
@@ -112,9 +128,21 @@ msgstr "Sekundærfarge"
 msgid "Przejdź do zaznaczenia"
 msgstr "Gå til utvalg"
 
+#: AudioBox.cpp:175
+msgid "Włącz / Wyłącz tworzenie karaoke"
+msgstr ""
+
+#: AudioBox.cpp:179
+msgid "Włącz / Wyłącz automatyczne dzielenie sylab"
+msgstr ""
+
 #: AudioBox.cpp:184
 msgid "Automatycznie zatwierdza zmiany"
 msgstr "Godkjenn endringer automatisk"
+
+#: AudioBox.cpp:188
+msgid "Przechodzenie do następnej linijki po zatwierdzeniu zmian"
+msgstr ""
 
 #: AudioBox.cpp:192
 #, fuzzy
@@ -126,10 +154,27 @@ msgstr "Gå til utvalg"
 msgid "Tryb spektrum"
 msgstr "Lydhurtiglager"
 
+#: AudioBox.cpp:200
+msgid "Uwydatnienie częstotliwości głosu na spektrum"
+msgstr ""
+
 #: AudioBox.cpp:267 Provider.cpp:179 VideoFfmpeg.cpp:991
 #, fuzzy
 msgid "Nieprawidłowy format klatek kluczowych"
 msgstr "Gå til utvalg"
+
+#: AudioBox.cpp:268 Automation.cpp:1197 Automation.cpp:1244
+#: KainoteFrame.cpp:735 KainoteFrame.cpp:739 KainoteFrame.cpp:1935
+#: KainoteFrame.cpp:1936 KainoteFrame.cpp:2375 KainoteFrame.cpp:2401
+#: KainoteFrame.cpp:2405 OptionsDialog.cpp:287 OptionsDialog.cpp:608
+#: Provider.cpp:179 VideoFfmpeg.cpp:52 VideoFfmpeg.cpp:991
+#: VisualAllTagsEdition.cpp:166 VisualAllTagsEdition.cpp:170
+#: VisualAllTagsEdition.cpp:188 VisualAllTagsEdition.cpp:295
+#: VisualAllTagsEdition.cpp:303 VisualAllTagsEdition.cpp:307
+#: VisualDrawingShapes.cpp:144 VisualDrawingShapes.cpp:148
+#: VisualDrawingShapes.cpp:166 VisualDrawingShapes.cpp:270
+msgid "Błąd"
+msgstr ""
 
 #: AudioDisplay.cpp:230 RendererVideo.cpp:178
 #, fuzzy
@@ -140,6 +185,10 @@ msgstr "Kan ikke åpne mappe med midlertidige filer"
 #, fuzzy
 msgid "Nie można utworzyć urządzenia D3D9"
 msgstr "Kan ikke åpne mappe med midlertidige filer"
+
+#: AudioDisplay.cpp:286 RendererVideo.cpp:238
+msgid "Zawiodło któreś z ustawień DirectX"
+msgstr ""
 
 #: AudioDisplay.cpp:294
 #, fuzzy
@@ -184,6 +233,14 @@ msgstr "Kan ikke åpne mappe med midlertidige filer"
 msgid "Nie można zresetować Direct3D"
 msgstr "Kan ikke åpne mappe med midlertidige filer"
 
+#: AudioDisplay.cpp:580
+msgid "Zmodyfikowano"
+msgstr ""
+
+#: AudioDisplay.cpp:584
+msgid "Czas ujemny"
+msgstr ""
+
 #: AudioDisplay.cpp:990 RendererDirectShow.cpp:204 RendererDirectShow.cpp:206
 #: RendererDirectShow.cpp:871 RendererFFMS2.cpp:80 RendererFFMS2.cpp:82
 #, fuzzy
@@ -204,25 +261,58 @@ msgstr "Fjern eldre lydhurtiglagerfiler"
 msgid "Wyszukaj pliki"
 msgstr "Finn filer"
 
+#: AutoSaveOpen.cpp:32
+msgid "Filtruj listę"
+msgstr ""
+
 #: AutoSaveOpen.cpp:33
 #, fuzzy
 msgid "Wszystkie słowa"
 msgstr "Fjern alle filer"
+
+#: AutoSaveOpen.cpp:42
+msgid "Pliki"
+msgstr ""
+
+#: AutoSaveOpen.cpp:47
+msgid "Wersje"
+msgstr ""
 
 #: AutoSaveOpen.cpp:57 KainoteFrame.cpp:1346
 #, fuzzy
 msgid "Otwórz"
 msgstr "Spill til slutten"
 
+#: AutoSaveOpen.cpp:58 AutomationHotkeysDialog.cpp:146
+#: AutomationProgress.cpp:295 ColorPicker.cpp:630 ColorPicker.cpp:1398
+#: DummyVideo.cpp:102 EditBox.cpp:96 EditBox.cpp:1700 FontCatalogList.cpp:69
+#: FontDialog.cpp:408 KaiMessageBox.cpp:77 MappedButton.cpp:39
+#: NewCatalog.cpp:42 OptionsDialog.cpp:968 ProgressDialog.cpp:44
+#: ScriptInfo.cpp:114 ShiftTimes.cpp:67 StyleChange.cpp:272 Stylelistbox.cpp:34
+#: Stylelistbox.cpp:58 Stylelistbox.cpp:112 Stylelistbox.cpp:147
+#: SubsFile.cpp:44 SubsGrid.cpp:1408 SubsGridDialogs.cpp:54
+#: SubsGridDialogs.cpp:85 SubsResampleDialog.cpp:152
+#: VisualAllTagsEdition.cpp:126 VisualDrawingShapes.cpp:103
+msgid "Anuluj"
+msgstr ""
+
 #: AutoSaveOpen.cpp:133
 #, fuzzy
 msgid "Nie można otworzyć folderu autozapisu"
 msgstr "Kan ikke åpne mappe med midlertidige filer"
 
+#: AutoSaveOpen.cpp:153
+msgid "Bez Nazwy"
+msgstr ""
+
 #: AutoSaveOpen.cpp:183
 #, fuzzy
 msgid "Folder autozapisu jest pusty"
 msgstr "Lagre automatisk"
+
+#: AutoSaveOpen.cpp:247
+msgid "Wczytywanie autozapisu nie powiodło się"
+msgstr ""
 
 #: AutoSavesRemoving.cpp:28 KainoteFrame.cpp:169
 msgid "Usuń pliki tymczasowe"
@@ -311,6 +401,10 @@ msgstr "Fjern alle lydhurtiglagerfiler"
 msgid "Usuń starsze pliki auto zapisu"
 msgstr "Fjern eldre lydhurtiglagerfiler"
 
+#: AutoSavesRemoving.cpp:113
+msgid "Indeks"
+msgstr ""
+
 #: AutoSavesRemoving.cpp:115
 #, fuzzy
 msgid "Usuń wybrane indeksy"
@@ -340,6 +434,13 @@ msgstr "Fjern alle lydhurtiglagerfiler"
 msgid "Usuń starsze pliki audio cache"
 msgstr "Fjern eldre lydhurtiglagerfiler"
 
+#: AutoSavesRemoving.cpp:177
+#, fuzzy
+msgid ""
+"Pliki napisów (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*."
+"sub;*.txt"
+msgstr "Velg fil å fjerne"
+
 #: AutoSavesRemoving.cpp:178
 msgid "Pliki indeksów (*.ffindex)|*.ffindex"
 msgstr "Indeksfiler (*.ffindex)|*.ffindex"
@@ -355,6 +456,54 @@ msgstr "Velg fil å fjerne"
 #: AutoSavesRemoving.cpp:210 AutoSavesRemoving.cpp:238
 msgid "Nie można otworzyć folderu plików tymczasowych"
 msgstr "Kan ikke åpne mappe med midlertidige filer"
+
+#: Automation.cpp:472
+#, c-format
+msgid ""
+"Błąd inicjalizacji skryptu Lua \"%s\":\n"
+"\n"
+"%s."
+msgstr ""
+
+#: Automation.cpp:484
+msgid ""
+"Próbujesz wczytać skrypt Automatyzacji 3 jako skrypt Automatyzacji 4. "
+"Automatyzacja 3 nie jest już wspierana."
+msgstr ""
+
+#: Automation.cpp:525
+#, c-format
+msgid "Makro o nazwie '%s' jest już zdefiniowane w skrypcie '%s'"
+msgstr ""
+
+#: Automation.cpp:636
+msgid "Wystąpił błąd podczas wykonywania skryptu Lua:\n"
+msgstr ""
+
+#: Automation.cpp:1057 Automation.cpp:1098 KainoteFrame.cpp:739
+#: KainoteFrame.cpp:2405
+#, c-format
+msgid ""
+"Błąd wczytywania skryptu Lua: %s\n"
+"%s"
+msgstr ""
+
+#: Automation.cpp:1061 Automation.cpp:1102
+#, c-format
+msgid "Nieznany błąd wczytywania skryptu Lua: %s."
+msgstr ""
+
+#: Automation.cpp:1068
+msgid ""
+"Jeden bądź więcej skryptów autoload zawiera błędy.\n"
+"Obejrzyj opisy skryptów, by uzyskać więcej informacji."
+msgstr ""
+
+#: Automation.cpp:1106
+msgid ""
+"Co najmniej jeden skrypt z pliku napisów zawiera błędy.\n"
+"Zobacz opisy skryptów, by uzyskać więcej informacji."
+msgstr ""
 
 #: Automation.cpp:1116
 #, fuzzy
@@ -374,6 +523,10 @@ msgstr "Kan ikke åpne mappe med midlertidige filer"
 msgid "Błąd automatyzacji"
 msgstr "Automasjonsfeil"
 
+#: Automation.cpp:1199 Automation.cpp:1246
+msgid "Pełny opis błędu Lua"
+msgstr ""
+
 #: Automation.cpp:1204 Automation.cpp:1251 EditBox.cpp:289
 #: FontCatalogList.cpp:107 VideoToolbar.cpp:510 VideoToolbar.cpp:526
 #: VideoToolbar.cpp:762 stylestore.cpp:88 stylestore.cpp:141
@@ -392,10 +545,18 @@ msgstr "Liste over automasjonssnarveier"
 msgid "Ścieżka i nazwa skryptu"
 msgstr "Sti og skriptnavn"
 
+#: AutomationHotkeysDialog.cpp:73
+msgid "Makro"
+msgstr ""
+
 #: AutomationHotkeysDialog.cpp:74 OptionsDialog.cpp:603
 #, fuzzy
 msgid "Skrót"
 msgstr "Spill til slutten"
+
+#: AutomationHotkeysDialog.cpp:101
+msgid "Folder automatycznego wczytywania"
+msgstr ""
 
 #: AutomationHotkeysDialog.cpp:118
 #, fuzzy
@@ -443,26 +604,72 @@ msgstr "Spill til slutten"
 msgid "Audio"
 msgstr "Lydhurtiglager"
 
+#: AutomationHotkeysDialog.cpp:237 Hotkeys.cpp:476 OptionsDialog.cpp:113
+#, c-format
+msgid ""
+"Ten skrót już istnieje jako skrót do \"%s\".\n"
+"Co zrobić?"
+msgstr ""
+
+#: AutomationHotkeysDialog.cpp:238 AutomationHotkeysDialog.cpp:247
+#: Hotkeys.cpp:477 Hotkeys.cpp:487 KainoteFrame.cpp:1077 KainoteFrame.cpp:1093
+#: KainoteFrame.cpp:1207 KainoteFrame.cpp:2272 OptionsDialog.cpp:114
+#: OptionsDialog.cpp:123 OptionsDialog.cpp:473 SpellCheckerDialog.cpp:145
+#: SubsGrid.cpp:1098 SubsGridBase.cpp:532 SubsGridBase.cpp:561 VideoBox.cpp:300
+#: VisualClips.cpp:1064 kainoteApp.cpp:114 kainoteApp.cpp:158
+msgid "Uwaga"
+msgstr ""
+
 #: AutomationHotkeysDialog.cpp:239 AutomationHotkeysDialog.cpp:249
 #: Hotkeys.cpp:478 Hotkeys.cpp:489 OptionsDialog.cpp:115 OptionsDialog.cpp:125
 #, fuzzy
 msgid "Zamień skróty"
 msgstr "Fjern eldre indeksfiler"
 
+#: AutomationHotkeysDialog.cpp:246 Hotkeys.cpp:485 OptionsDialog.cpp:122
+#, c-format
+msgid ""
+"Ten skrót już istnieje w %s jako skrót do \"%s\".\n"
+"Co zrobić?"
+msgstr ""
+
+#: AutomationHotkeysDialog.cpp:247 Hotkeys.cpp:486 OptionsDialog.cpp:123
+msgid "innych oknach"
+msgstr ""
+
+#: AutomationHotkeysDialog.cpp:247 Hotkeys.cpp:486 OptionsDialog.cpp:123
+msgid "innym oknie"
+msgstr ""
+
 #: AutomationHotkeysDialog.cpp:251 Hotkeys.cpp:491 OptionsDialog.cpp:127
 #, fuzzy
 msgid "Ustaw mimo to"
 msgstr "Fjern eldre indeksfiler"
+
+#: AutomationProgress.cpp:448 FindReplaceDialog.cpp:220 FontCollector.cpp:191
+#: LogHandler.cpp:50 Notebook.cpp:590 SelectLines.cpp:141 SelectLines.cpp:236
+#: SelectLines.cpp:278 SpellCheckerDialog.cpp:63 stylestore.cpp:171
+msgid "Zamknij"
+msgstr ""
 
 #: AutomationToFile.cpp:611 AutomationToFile.cpp:613
 #, fuzzy
 msgid "stylów"
 msgstr "Velg farge"
 
+#: AutomationToFile.cpp:611 AutomationToFile.cpp:613
+#, fuzzy
+msgid "dialogów"
+msgstr "Fjern eldre indeksfiler"
+
 #: AutomationToFile.cpp:614
 #, fuzzy, c-format
 msgid "Nie można dodać linii klasy: %s w pole klasy: %s"
 msgstr "Kan ikke åpne mappe med midlertidige filer"
+
+#: AutomationToFile.cpp:1070
+msgid "Brakujący wskaźnik napisów"
+msgstr ""
 
 #: BitmapButton.cpp:117 MappedButton.cpp:254
 #, fuzzy
@@ -477,6 +684,18 @@ msgstr "Velg farge"
 #, fuzzy
 msgid "Kolor spektrum"
 msgstr "Lydhurtiglager"
+
+#: ColorPicker.cpp:502
+msgid "Kolor RGB"
+msgstr ""
+
+#: ColorPicker.cpp:507
+msgid "Kolor HSL"
+msgstr ""
+
+#: ColorPicker.cpp:512
+msgid "Kolor HSV"
+msgstr ""
 
 #: ColorPicker.cpp:532 ColorPicker.cpp:1365 EditBox.cpp:190
 #: HotkeysNaming.cpp:90 StyleChange.cpp:694 TextEditorTagList.cpp:343
@@ -498,6 +717,16 @@ msgstr "Skyggefarge"
 msgid "Kolor cienia"
 msgstr "Skyggefarge"
 
+#: ColorPicker.cpp:548
+msgid "Zamień ze sobą skróty próbnika i okna wyboru kolorów"
+msgstr ""
+
+#: ColorPicker.cpp:550
+msgid ""
+"Zahaczenie tej opcji uruchamia próbnik po kliknięciu lewym przyciskiem,\n"
+"a okno wyboru koloru po kliknięciu prawym przyciskiem."
+msgstr ""
+
 #: ColorPicker.cpp:560
 #, fuzzy
 msgid "Wybrany kolor:"
@@ -515,6 +744,14 @@ msgstr "Grønn:"
 msgid "Niebieski:"
 msgstr "Blå:"
 
+#: ColorPicker.cpp:593 ColorPicker.cpp:603
+msgid "Odcień:"
+msgstr ""
+
+#: ColorPicker.cpp:595 ColorPicker.cpp:605
+msgid "Nasycenie:"
+msgstr ""
+
 #: ColorPicker.cpp:597
 #, fuzzy
 msgid "Jaskrawość:"
@@ -528,20 +765,75 @@ msgstr "Verdi:"
 msgid "Próbnik koloru"
 msgstr "Fargevelger"
 
+#: ColorPicker.cpp:1394
+msgid ""
+"Przenoś okno\n"
+"w miejsce wyboru koloru"
+msgstr ""
+
+#: Demux.cpp:44 ProviderFFMS2.cpp:174 ProviderFFMS2.cpp:311 VideoFfmpeg.cpp:185
+#: VideoFfmpeg.cpp:319
+#, c-format
+msgid "Wystąpił błąd indeksowania: %s"
+msgstr ""
+
+#: Demux.cpp:85
+msgid "Plik nie ma żadnej ścieżki z napisami."
+msgstr ""
+
 #: Demux.cpp:96
 #, fuzzy
 msgid "Wybierz ścieżkę napisów"
 msgstr "Velg fil å fjerne"
+
+#: Demux.cpp:117
+#, fuzzy
+msgid "Odczyt napisów z pliku Matroska."
+msgstr "Gå til utvalg"
+
+#: DialogueTextEditor.cpp:861
+#, fuzzy
+msgid "Sugestie poprawy"
+msgstr "Fjern alle filer"
 
 #: DialogueTextEditor.cpp:2262 KaiListCtrl.cpp:113 KaiTextCtrl.cpp:1461
 #, fuzzy
 msgid "&Kopiuj"
 msgstr "Velg farge"
 
+#: DialogueTextEditor.cpp:2263 KaiTextCtrl.cpp:1462
+msgid "Wy&tnij"
+msgstr ""
+
+#: DialogueTextEditor.cpp:2264 KaiListCtrl.cpp:114 KaiTextCtrl.cpp:1463
+msgid "&Wklej"
+msgstr ""
+
+#: DialogueTextEditor.cpp:2267
+msgid "Szukaj tłumaczenia słowa na ling.pl"
+msgstr ""
+
+#: DialogueTextEditor.cpp:2268
+msgid "Szukaj tłumaczenia słowa na pl.ba.bla"
+msgstr ""
+
+#: DialogueTextEditor.cpp:2269 KaiTextCtrl.cpp:1468
+#, fuzzy
+msgid "Szukaj zaznaczonej frazy w Google"
+msgstr "Fjern eldre indeksfiler"
+
+#: DialogueTextEditor.cpp:2270
+msgid "Szukaj synonimu na synonimy.net"
+msgstr ""
+
 #: DialogueTextEditor.cpp:2280 SpellCheckerDialog.cpp:32
 #, fuzzy
 msgid "Sprawdzanie pisowni"
 msgstr "Velg fil å fjerne"
+
+#: DialogueTextEditor.cpp:2286
+msgid "Zainstalowane języki"
+msgstr ""
 
 #: DialogueTextEditor.cpp:2290
 #, fuzzy, c-format
@@ -563,6 +855,11 @@ msgstr "Fjern alle filer"
 msgid "Automatycznie zamieniaj cudzysłów"
 msgstr "Godkjenn endringer automatisk"
 
+#: DialogueTextEditor.cpp:2351
+#, c-format
+msgid "Błąd, słowo \"%s\" nie zostało dodane."
+msgstr ""
+
 #: DummyVideo.cpp:22
 #, fuzzy
 msgid "Opcje dummy wideo"
@@ -573,15 +870,45 @@ msgstr "Spill til slutten"
 msgid "Rozdzielczość wideo:"
 msgstr "Velg fil å fjerne"
 
+#: DummyVideo.cpp:56
+msgid "Siatka"
+msgstr ""
+
+#: DummyVideo.cpp:59
+msgid "Kolor:"
+msgstr ""
+
+#: DummyVideo.cpp:87
+msgid "Klatki na sekundę:"
+msgstr ""
+
+#: DummyVideo.cpp:95
+#, c-format
+msgid "Co daje %i klatek"
+msgstr ""
+
 #: DummyVideo.cpp:98
 #, fuzzy
 msgid "Czas trwania:"
 msgstr "Fjern alle filer"
 
+#: DummyVideo.cpp:120 DummyVideo.cpp:124
+msgid "Nieprawidłowa wartość fps."
+msgstr ""
+
 #: EditBox.cpp:79
 #, fuzzy
 msgid "Wpisz tag ASS"
 msgstr "Fjern alle indeksfiler"
+
+#: EditBox.cpp:83
+msgid "Tag wstawiany w miejsce kursora"
+msgstr ""
+
+#: EditBox.cpp:83
+#, fuzzy
+msgid "Tag wstawiany na początku tekstu"
+msgstr "Gå til utvalg"
 
 #: EditBox.cpp:83
 #, fuzzy
@@ -613,6 +940,22 @@ msgstr "Velg farge"
 msgid "Pogrubienie"
 msgstr "Fjern eldre indeksfiler"
 
+#: EditBox.cpp:181 StyleChange.cpp:691
+msgid "Pochylenie"
+msgstr ""
+
+#: EditBox.cpp:184 FontDialog.cpp:401 HotkeysNaming.cpp:95 StyleChange.cpp:123
+#: StyleChange.cpp:692
+#, fuzzy
+msgid "Podkreślenie"
+msgstr "Fjern eldre indeksfiler"
+
+#: EditBox.cpp:187 FontDialog.cpp:403 HotkeysNaming.cpp:94 StyleChange.cpp:124
+#: StyleChange.cpp:693
+#, fuzzy
+msgid "Przekreślenie"
+msgstr "Fjern eldre indeksfiler"
+
 #: EditBox.cpp:194 HotkeysNaming.cpp:91 StyleChange.cpp:695
 #, fuzzy
 msgid "Kolor zastępczy do karaoke"
@@ -622,6 +965,27 @@ msgstr "Sekundærfarge"
 #, fuzzy
 msgid "Tryb tłumacza"
 msgstr "Gå til utvalg"
+
+#: EditBox.cpp:227
+#, fuzzy
+msgid "Linia: 0"
+msgstr "Fjern alle filer"
+
+#: EditBox.cpp:228
+msgid "Łamania: 0/86"
+msgstr ""
+
+#: EditBox.cpp:229
+msgid "Znaki na sekundę: 0<=15"
+msgstr ""
+
+#: EditBox.cpp:231 ShiftTimes.cpp:297
+msgid "Czas"
+msgstr ""
+
+#: EditBox.cpp:234 ShiftTimes.cpp:303
+msgid "Klatki"
+msgstr ""
 
 #: EditBox.cpp:251 HotkeysNaming.cpp:99
 #, fuzzy
@@ -653,15 +1017,58 @@ msgstr "Godkjenn endringer automatisk"
 msgid "Komentarz"
 msgstr "Velg farge"
 
+#: EditBox.cpp:293 FindReplaceDialog.cpp:135 KainoteFrame.cpp:204
+#: SelectLines.cpp:75 SubsGrid.cpp:451 SubsGrid.cpp:601 SubsGridWindow.cpp:256
+#: SubsGridWindow.cpp:644 SubsGridWindow.cpp:1098 SubsGridWindow.cpp:1264
+msgid "Aktor"
+msgstr ""
+
+#: EditBox.cpp:299 FindReplaceDialog.cpp:138 KainoteFrame.cpp:205
+#: SelectLines.cpp:76 SubsGrid.cpp:456 SubsGrid.cpp:606 SubsGridWindow.cpp:260
+#: SubsGridWindow.cpp:648 SubsGridWindow.cpp:1111 SubsGridWindow.cpp:1277
+msgid "Efekt"
+msgstr ""
+
 #: EditBox.cpp:414
 #, fuzzy, c-format
 msgid "Linia: %i"
 msgstr "Fjern alle filer"
 
+#: EditBox.cpp:512
+msgid "Łamania: "
+msgstr ""
+
+#: EditBox.cpp:515
+#, c-format
+msgid "Znaki na sekundę: %i<=15"
+msgstr ""
+
 #: EditBox.cpp:1181 TextEditorTagList.cpp:361
 #, fuzzy
 msgid "Położenie tekstu"
 msgstr "Fjern eldre indeksfiler"
+
+#: EditBox.cpp:1182
+msgid ""
+"Tryb tłumacza wyświetla i zapisuje zarówno tekst obcojęzyczny, jak i tekst "
+"tłumaczenia"
+msgstr ""
+
+#: EditBox.cpp:1183
+msgid "Kopiuje cały tekst obcojęzyczny do pola z tłumaczeniem"
+msgstr ""
+
+#: EditBox.cpp:1184
+msgid "Kopiuje zaznaczony tekst obcojęzyczny do pola z tłumaczeniem"
+msgstr ""
+
+#: EditBox.cpp:1185
+msgid "Ustawia linijkę jako komentarz. Komentarze nie są wyświetlane"
+msgstr ""
+
+#: EditBox.cpp:1186
+msgid "Warstwa linijki, wyższe warstwy są na wierzchu"
+msgstr ""
 
 #: EditBox.cpp:1187
 #, fuzzy
@@ -683,6 +1090,14 @@ msgstr "Fjern alle filer"
 msgid "Styl linijki"
 msgstr "Fjern alle filer"
 
+#: EditBox.cpp:1191
+msgid "Umożliwia szybką edycję stylu linijki"
+msgstr ""
+
+#: EditBox.cpp:1192
+msgid "Oznaczenie aktora linijki. Nie wpływa na wygląd napisów"
+msgstr ""
+
 #: EditBox.cpp:1193
 #, fuzzy
 msgid "Margines lewy linijki"
@@ -697,6 +1112,24 @@ msgstr "Fjern alle filer"
 #, fuzzy
 msgid "Margines górny i dolny linijki"
 msgstr "Gå til utvalg"
+
+#: EditBox.cpp:1196
+msgid ""
+"Efekt linijki. Służy do oznaczania linijek, na których zastosowane ma być "
+"karaoke bądź efekty VSFiltra"
+msgstr ""
+
+#: EditBox.cpp:1197
+msgid ""
+"Ilość znaków w każdej linijce.\n"
+"Nie więcej niż 43 znaki na linijkę (maksymalnie 2 linijki)"
+msgstr ""
+
+#: EditBox.cpp:1198
+msgid ""
+"Znaki na sekundę.\n"
+"Nie powinny przekraczać 15 znaków na sekundę"
+msgstr ""
 
 #: EditBox.cpp:1694 EditBox.cpp:1993
 #, fuzzy
@@ -713,6 +1146,11 @@ msgstr "Kan ikke åpne mappe med midlertidige filer"
 msgid "Nie znaleziono nieprzetłumaczonych"
 msgstr "Spill neste linje"
 
+#: EditBox.cpp:1995
+#, fuzzy
+msgid "Zarządzaj przyciskami tagów"
+msgstr "Fjern alle filer"
+
 #: FindReplaceDialog.cpp:44 FindReplaceDialog.cpp:47 SelectLines.cpp:54
 #, fuzzy
 msgid "Szukany tekst:"
@@ -722,6 +1160,17 @@ msgstr "Fjern eldre indeksfiler"
 #, fuzzy
 msgid "Zamień na:"
 msgstr "Spill neste linje"
+
+#: FindReplaceDialog.cpp:68
+msgid ""
+"Filtry wyszukiwania Windowsa pooddzielane średnikami np \"*.ass;*.srt\".\n"
+"Ze względu na dużą wagę plików wideo\n"
+"szukanie wszystkiego \"*.*\" zostaje zmieniane na *.ass"
+msgstr ""
+
+#: FindReplaceDialog.cpp:71
+msgid "Filtry:"
+msgstr ""
 
 #: FindReplaceDialog.cpp:79
 #, fuzzy
@@ -737,6 +1186,15 @@ msgstr "Velg farge"
 #, fuzzy
 msgid "Katalog:"
 msgstr "Velg farge"
+
+#: FindReplaceDialog.cpp:98 SelectLines.cpp:60
+#, fuzzy
+msgid "Uwzględniaj wielkość liter"
+msgstr "Velg farge"
+
+#: FindReplaceDialog.cpp:100 SelectLines.cpp:62
+msgid "Wyrażenia regularne"
+msgstr ""
 
 #: FindReplaceDialog.cpp:102
 #, fuzzy
@@ -763,11 +1221,40 @@ msgstr "Fjern eldre indeksfiler"
 msgid "Pomiń tekst"
 msgstr "Fjern eldre indeksfiler"
 
+#: FindReplaceDialog.cpp:121 SelectLines.cpp:70
+msgid "W polu"
+msgstr ""
+
+#: FindReplaceDialog.cpp:124 SelectLines.cpp:73 SubsGrid.cpp:462
+#: SubsGrid.cpp:481 SubsGrid.cpp:488 SubsGrid.cpp:607 SubsGrid.cpp:623
+#: SubsGrid.cpp:632 SubsGridWindow.cpp:264 SubsGridWindow.cpp:654
+msgid "Tekst"
+msgstr ""
+
+#: FindReplaceDialog.cpp:129 SelectLines.cpp:74 SubsGrid.cpp:452
+#: SubsGrid.cpp:602 SubsGridWindow.cpp:255 SubsGridWindow.cpp:643
+#: SubsGridWindow.cpp:1092 SubsGridWindow.cpp:1258
+msgid "Styl"
+msgstr ""
+
+#: FindReplaceDialog.cpp:160 FindReplaceDialog.cpp:412
+#: FindReplaceDialog.cpp:427 Hotkeys.cpp:146 HotkeysNaming.cpp:221
+#: SelectLines.cpp:51
+msgid "Znajdź"
+msgstr ""
+
 #: FindReplaceDialog.cpp:168
 #, fuzzy
 msgid ""
 "Znajdź we wszystkich\n"
 "otwartych napisach"
+msgstr "Fjern alle indeksfiler"
+
+#: FindReplaceDialog.cpp:170
+#, fuzzy
+msgid ""
+"Znajdź wszystko\n"
+"w bieżących napisach"
 msgstr "Fjern alle indeksfiler"
 
 #: FindReplaceDialog.cpp:184
@@ -780,6 +1267,13 @@ msgstr "Sekundærfarge"
 msgid "Zamień wszystko"
 msgstr "Fjern alle indeksfiler"
 
+#: FindReplaceDialog.cpp:187
+#, fuzzy
+msgid ""
+"Zamień we wszystkich\n"
+"otwartych napisach"
+msgstr "Fjern alle indeksfiler"
+
 #: FindReplaceDialog.cpp:205 FindReplaceDialog.cpp:413
 #: FindReplaceDialog.cpp:429
 #, fuzzy
@@ -790,6 +1284,16 @@ msgstr "Sekundærfarge"
 #, fuzzy
 msgid "Zamień w napisach"
 msgstr "Spill neste linje"
+
+#: FindReplaceDialog.cpp:225
+msgid "Szukaj w podfolderach"
+msgstr ""
+
+#: FindReplaceDialog.cpp:227
+msgid ""
+"Szukaj\n"
+"w ukrytych folderach"
+msgstr ""
 
 #: FindReplaceDialog.cpp:243
 #, fuzzy
@@ -810,6 +1314,11 @@ msgstr "Spill neste linje"
 #, fuzzy
 msgid "Od zaznaczonej"
 msgstr "Gå til utvalg"
+
+#: FindReplaceDialog.cpp:413 FindReplaceDialog.cpp:428
+#, fuzzy
+msgid "Znajdź i zamień"
+msgstr "Sekundærfarge"
 
 #: FindReplaceResultsDialog.cpp:29 MispellReplacerDialog.cpp:192
 #, fuzzy
@@ -832,6 +1341,16 @@ msgstr "Fjern alle indeksfiler"
 msgid "Zamień"
 msgstr "Spill neste linje"
 
+#: FindReplaceResultsDialog.cpp:254 FindReplaceResultsDialog.cpp:303
+#: MispellReplacerDialog.cpp:139 MispellReplacerDialog.cpp:182
+#, fuzzy, c-format
+msgid "Linia %i: "
+msgstr "Fjern alle filer"
+
+#: FontCatalogList.cpp:56 ShiftTimes.cpp:50
+msgid "Wybierz nazwę profilu"
+msgstr ""
+
 #: FontCatalogList.cpp:60
 #, fuzzy
 msgid "Wprowadź nową nazwę katalogu"
@@ -842,6 +1361,15 @@ msgstr "Velg farge"
 msgid "Proszę wprowadzić nazwę nowego katalogu"
 msgstr "Velg farge"
 
+#: FontCatalogList.cpp:83 KainoteFrame.cpp:726 ShiftTimes.cpp:85
+#: ShiftTimes.cpp:949 ShiftTimes.cpp:954 findreplace.cpp:1179
+msgid "Informacja"
+msgstr ""
+
+#: FontCatalogList.cpp:93
+msgid "Zarządzanie katalogami czcionek"
+msgstr ""
+
 #: FontCatalogList.cpp:99 TextEditorTagList.cpp:373
 #, fuzzy
 msgid "Nazwa czcionki"
@@ -851,6 +1379,10 @@ msgstr "Fjern alle filer"
 #, fuzzy
 msgid "Katalog"
 msgstr "Velg farge"
+
+#: FontCatalogList.cpp:101
+msgid "Przykład"
+msgstr ""
 
 #: FontCatalogList.cpp:106 FontDialog.cpp:424 StyleChange.cpp:84
 #: VideoToolbar.cpp:737 VisualAllTagsEdition.cpp:86
@@ -865,15 +1397,39 @@ msgstr "Gå til utvalg"
 msgid "Usuń"
 msgstr "Fjern eldre indeksfiler"
 
+#: FontCatalogList.cpp:109 stylestore.cpp:89 stylestore.cpp:142
+#, fuzzy
+msgid "Wczytaj"
+msgstr "Velg farge"
+
 #: FontCatalogList.cpp:116
 #, fuzzy
 msgid "Zapisz Filtr"
 msgstr "Fjern alle indeksfiler"
 
+#: FontCatalogList.cpp:142
+msgid "Czy na pewno chcesz usunąć ten katalog?"
+msgstr ""
+
+#: FontCatalogList.cpp:142 FontCatalogList.cpp:732 Notebook.cpp:942
+#: StyleChange.cpp:463 kainoteApp.cpp:249 kainoteApp.cpp:255 stylestore.cpp:556
+msgid "Pytanie"
+msgstr ""
+
+#: FontCatalogList.cpp:166
+msgid ""
+"Lista katalogów ma opcję autozapisu, pliki znajdują się w folderze \"Config"
+"\"."
+msgstr ""
+
 #: FontCatalogList.cpp:168
 #, fuzzy
 msgid "Katalogi:"
 msgstr "Velg farge"
+
+#: FontCatalogList.cpp:176
+msgid "Szukaj:"
+msgstr ""
 
 #: FontCatalogList.cpp:199 SubsGridBase.cpp:1656
 #, fuzzy
@@ -901,10 +1457,77 @@ msgstr "Kan ikke åpne mappe med midlertidige filer"
 msgid "Nie można dodać czcionki %s."
 msgstr "Kan ikke åpne mappe med midlertidige filer"
 
+#: FontCatalogList.cpp:675
+msgid ""
+"Aby móc dodawać czcionki do katalogu,\n"
+"należy najpierw kliknąć przycisk \"Zarządzaj\",\n"
+"by utworzyć nowy katalog."
+msgstr ""
+
+#: FontCatalogList.cpp:732
+#, c-format
+msgid "Katalog o nazwie \"%s\" istnieje, co zrobić?"
+msgstr ""
+
+#: FontCatalogList.cpp:733
+msgid "Scal"
+msgstr ""
+
+#: FontCollector.cpp:97
+msgid "W stylach:\n"
+msgstr ""
+
+#: FontCollector.cpp:102 FontCollector.cpp:323 FontCollector.cpp:370
+msgid " zakładki: "
+msgstr ""
+
+#: FontCollector.cpp:111
+msgid "W linijkach: "
+msgstr ""
+
+#: FontCollector.cpp:132 HotkeysNaming.cpp:132 KainoteFrame.cpp:309
+#: KainoteFrame.cpp:310 SubsGrid.cpp:231
+msgid "Kolekcjoner czcionek"
+msgstr ""
+
 #: FontCollector.cpp:156
 #, fuzzy
 msgid "Wybierz folder"
 msgstr "Velg farge"
+
+#: FontCollector.cpp:164
+msgid "Sprawdź dostępność czcionek"
+msgstr ""
+
+#: FontCollector.cpp:165
+msgid "Skopiuj do wybranego folderu"
+msgstr ""
+
+#: FontCollector.cpp:166
+msgid "Spakuj zipem"
+msgstr ""
+
+#: FontCollector.cpp:168 OptionsDialog.cpp:263 ScriptInfo.cpp:89
+msgid "Opcje"
+msgstr ""
+
+#: FontCollector.cpp:172
+msgid "Zapisuj do folderu z napisami / wideo."
+msgstr ""
+
+#: FontCollector.cpp:173
+msgid ""
+"Zapisuje do folderu z wideo\n"
+"przy wyciąganiu czcionek z pliku MKV."
+msgstr ""
+
+#: FontCollector.cpp:178
+msgid "Wyciągnij czcionki z wczytanego pliku MKV"
+msgstr ""
+
+#: FontCollector.cpp:186
+msgid "Rozpocznij"
+msgstr ""
 
 #: FontCollector.cpp:188
 #, fuzzy
@@ -916,10 +1539,50 @@ msgstr "Fjern alle indeksfiler"
 msgid "Folder zapisu"
 msgstr "Lagre automatisk"
 
+#: FontCollector.cpp:420
+msgid "Wybierz nazwę archiwum"
+msgstr ""
+
+#: FontCollector.cpp:423
+msgid "Pliki archiwum (*.zip)|*.zip"
+msgstr ""
+
 #: FontCollector.cpp:452
 #, fuzzy
 msgid "Brak wczytanego wideo lub napisów"
 msgstr "Velg fil å fjerne"
+
+#: FontCollector.cpp:457
+msgid "Wybierz folder, gdzie mają zostać skopiowane czcionki"
+msgstr ""
+
+#: FontCollector.cpp:463
+msgid "Brak wczytanych napisów, wczytaj napisy albo odznacz tę opcję."
+msgstr ""
+
+#: FontCollector.cpp:468
+msgid "Wybierz nazwę dla archiwum"
+msgstr ""
+
+#: FontCollector.cpp:483
+msgid "Wybrana ścieżka zapisu jest niepoprawna."
+msgstr ""
+
+#: FontCollector.cpp:510
+msgid "Plik zip już istnieje, usunąć go?"
+msgstr ""
+
+#: FontCollector.cpp:510 KainoteFrame.cpp:1144 KainoteFrame.cpp:1898
+#: Notebook.cpp:1168 SubsGrid.cpp:1065 SubsGrid.cpp:1394 SubsGridBase.cpp:551
+#: SubsGridBase.cpp:1408 VideoBox.cpp:803 VideoBox.cpp:815
+#: VisualAllTagsEdition.cpp:150 VisualAllTagsEdition.cpp:214
+#: VisualDrawingShapes.cpp:128 VisualDrawingShapes.cpp:192 findreplace.cpp:399
+#: findreplace.cpp:406 findreplace.cpp:1326 findreplace.cpp:1330
+#: stylestore.cpp:278 stylestore.cpp:310 stylestore.cpp:349 stylestore.cpp:497
+#: stylestore.cpp:642
+#, fuzzy
+msgid "Potwierdzenie"
+msgstr "Spill forrige linje"
 
 #: FontCollector.cpp:583 FontCollector.cpp:640
 #, fuzzy
@@ -930,6 +1593,48 @@ msgstr "Kan ikke åpne mappe med midlertidige filer"
 #, fuzzy, c-format
 msgid "Znaleziono czcionkę \"%s\"\n"
 msgstr "Kan ikke åpne mappe med midlertidige filer"
+
+#: FontCollector.cpp:707
+msgid ""
+"Nie można pobrać rozmiarów i nazw plików czcionek\n"
+"kopiowanie zostaje przerwane.\n"
+msgstr ""
+
+#: FontCollector.cpp:739
+#, c-format
+msgid ""
+"Pobrano rozmiary i nazwy %i czcionek, upłynęło %sms.\n"
+"\n"
+msgstr ""
+
+#: FontCollector.cpp:772
+msgid "Ścieżka jest niedostępna"
+msgstr ""
+
+#: FontCollector.cpp:785
+#, c-format
+msgid ""
+"Czcionka \"%s\" należy do stylu,\n"
+"który nie jest wykorzystywany."
+msgstr ""
+
+#: FontCollector.cpp:794
+msgid "Niektóre czcionki nie mają wszystkich znaków użytych w tekście.\n"
+msgstr ""
+
+#: FontCollector.cpp:801
+#, c-format
+msgid "Zakończono, %s %s.\n"
+msgstr ""
+
+#: FontCollector.cpp:801 FontCollector.cpp:817
+#, fuzzy
+msgid "znaleziono"
+msgstr "Kan ikke åpne mappe med midlertidige filer"
+
+#: FontCollector.cpp:801 FontCollector.cpp:817
+msgid "skopiowano"
+msgstr ""
 
 #: FontCollector.cpp:802 FontCollector.cpp:818
 #, fuzzy
@@ -952,6 +1657,16 @@ msgstr "Fjern alle filer"
 #, fuzzy, c-format
 msgid "Nie znaleziono %s.\n"
 msgstr "Kan ikke åpne mappe med midlertidige filer"
+
+#: FontCollector.cpp:808
+#, c-format
+msgid "Nie udało się skopiować %s.\n"
+msgstr ""
+
+#: FontCollector.cpp:816
+#, c-format
+msgid "Zakończono powodzeniem, %s %s.\n"
+msgstr ""
 
 #: FontCollector.cpp:833
 #, fuzzy, c-format
@@ -980,10 +1695,18 @@ msgid ""
 "\n"
 msgstr "Spill til slutten"
 
+#: FontCollector.cpp:884
+msgid "To wideo nie jest plikiem MKV."
+msgstr ""
+
 #: FontCollector.cpp:889
 #, fuzzy
 msgid "Nie można otworzyć pliku MKV"
 msgstr "Kan ikke åpne mappe med midlertidige filer"
+
+#: FontCollector.cpp:895
+msgid "Wczytany plik MKV nie ma żadnych czcionek."
+msgstr ""
 
 #: FontCollector.cpp:910
 #, fuzzy
@@ -995,6 +1718,18 @@ msgstr "Kan ikke åpne mappe med midlertidige filer"
 msgid "Nie można zapisać czcionki o nazwie \""
 msgstr "Kan ikke åpne mappe med midlertidige filer"
 
+#: FontCollector.cpp:920
+#, c-format
+msgid ""
+"Zakończono, skopiowano %i czcionek.\n"
+"Nie udało się skopiować %i czcionek."
+msgstr ""
+
+#: FontCollector.cpp:924
+#, c-format
+msgid "Zakończono powodzeniem, skopiowano %i czcionek."
+msgstr ""
+
 #: FontCollector.cpp:951
 #, fuzzy
 msgid "Nie można utworzyć folderu."
@@ -1005,10 +1740,48 @@ msgstr "Kan ikke åpne mappe med midlertidige filer"
 msgid "Znaleziono czcionkę \"%s\"."
 msgstr "Kan ikke åpne mappe med midlertidige filer"
 
+#: FontCollector.cpp:1041
+#, c-format
+msgid ""
+"Czcionka \"%s\" należy do stylu,\n"
+"który nie jest wykorzystywany.%s"
+msgstr ""
+
+#: FontCollector.cpp:1041
+msgid ""
+"\n"
+"Nie zostanie skopiowana."
+msgstr ""
+
+#: FontCollector.cpp:1049
+#, c-format
+msgid "Czcionka \"%s\" nie ma stylu normalnego."
+msgstr ""
+
+#: FontCollector.cpp:1052
+#, c-format
+msgid "Czcionka \"%s\" nie ma pogrubienia z kursywą."
+msgstr ""
+
+#: FontCollector.cpp:1055
+#, c-format
+msgid "Czcionka \"%s\" nie ma pogrubienia."
+msgstr ""
+
+#: FontCollector.cpp:1058
+#, c-format
+msgid "Czcionka \"%s\" nie ma kursywy."
+msgstr ""
+
 #: FontCollector.cpp:1072
 #, fuzzy, c-format
 msgid "Nie można sprawdzić znaków czcionki \"%s\"."
 msgstr "Kan ikke åpne mappe med midlertidige filer"
+
+#: FontCollector.cpp:1076
+#, c-format
+msgid "Czcionka \"%s\" nie zawiera znaków: \"%s\"."
+msgstr ""
 
 #: FontCollector.cpp:1088
 #, fuzzy, c-format
@@ -1045,6 +1818,13 @@ msgstr "Kan ikke åpne mappe med midlertidige filer"
 msgid "Nie można stworzyć procesu, muxowanie przerwane"
 msgstr "Kan ikke åpne mappe med midlertidige filer"
 
+#: FontCollector.cpp:1271
+#, c-format
+msgid ""
+"\n"
+"Zakończono w %sms"
+msgstr ""
+
 #: FontDialog.cpp:372
 #, fuzzy
 msgid "Wybierz czcionkę"
@@ -1055,6 +1835,14 @@ msgstr "Velg farge"
 msgid "Czcionka"
 msgstr "Fjern alle filer"
 
+#: FontDialog.cpp:389
+msgid "Podgląd"
+msgstr ""
+
+#: FontDialog.cpp:399 StyleChange.cpp:122
+msgid "Kursywa"
+msgstr ""
+
 #: FontDialog.cpp:421 FontDialog.cpp:460 StyleChange.cpp:81 StyleChange.cpp:102
 #, fuzzy
 msgid "Wszystkie czcionki"
@@ -1064,6 +1852,30 @@ msgstr "Fjern alle filer"
 #, fuzzy
 msgid "Bez katalogu"
 msgstr "Velg farge"
+
+#: FontDialog.cpp:425 StyleChange.cpp:85
+msgid "Dodaje czcionki do wcześniej utworzonego katalogu"
+msgstr ""
+
+#: FontDialog.cpp:426 StyleChange.cpp:86
+msgid "Zarządzaj"
+msgstr ""
+
+#: FontDialog.cpp:427
+msgid "Umorzliwia zarządzanie katalogami stylów"
+msgstr ""
+
+#: FontDialog.cpp:429 HotkeysNaming.cpp:151 StyleChange.cpp:88 SubsGrid.cpp:183
+msgid "Filtruj"
+msgstr ""
+
+#: FontDialog.cpp:430 StyleChange.cpp:89
+msgid "Filtruje czcionki, by zawierały wpisane znaki"
+msgstr ""
+
+#: FontDialog.cpp:445
+msgid "Filtrowanie i katalogi czcionek"
+msgstr ""
 
 #: FontEnumerator.cpp:210
 #, fuzzy
@@ -1076,6 +1888,10 @@ msgid ""
 "Nie można stworzyć następnego uchwytu notyfikacji zmian folderu czcionek."
 msgstr "Kan ikke åpne mappe med midlertidige filer"
 
+#: Hotkeys.cpp:134
+msgid "Wyjście"
+msgstr ""
+
 #: Hotkeys.cpp:135 HotkeysNaming.cpp:257 Notebook.cpp:564
 #, fuzzy
 msgid "Otwórz nową zakładkę"
@@ -1086,15 +1902,60 @@ msgstr "Spill til slutten"
 msgid "Zamknij bieżącą zakładkę"
 msgstr "Fjern alle indeksfiler"
 
+#: Hotkeys.cpp:137 HotkeysNaming.cpp:77
+msgid "Okno zmiany czasów"
+msgstr ""
+
 #: Hotkeys.cpp:138 HotkeysNaming.cpp:81 KainoteFrame.cpp:294
 #, fuzzy
 msgid "Konwertuj do ASS"
 msgstr "Gå til utvalg"
 
+#: Hotkeys.cpp:139 HotkeysNaming.cpp:82 KainoteFrame.cpp:296
+#, fuzzy
+msgid "Konwertuj do SRT"
+msgstr "Gå til utvalg"
+
+#: Hotkeys.cpp:140 HotkeysNaming.cpp:83 KainoteFrame.cpp:298
+#, fuzzy
+msgid "Konwertuj do MDVD"
+msgstr "Gå til utvalg"
+
+#: Hotkeys.cpp:141 HotkeysNaming.cpp:84 KainoteFrame.cpp:300
+#, fuzzy
+msgid "Konwertuj do MPL2"
+msgstr "Gå til utvalg"
+
+#: Hotkeys.cpp:142 HotkeysNaming.cpp:85 KainoteFrame.cpp:302
+#, fuzzy
+msgid "Konwertuj do TMP"
+msgstr "Gå til utvalg"
+
+#: Hotkeys.cpp:143 HotkeysNaming.cpp:239 stylestore.cpp:41
+msgid "Menedżer stylów"
+msgstr ""
+
+#: Hotkeys.cpp:144 HotkeysNaming.cpp:121 KainoteFrame.cpp:287
+msgid "Włącz / Wyłącz edytor"
+msgstr ""
+
 #: Hotkeys.cpp:145 HotkeysNaming.cpp:197 KainoteFrame.cpp:219 VideoBox.cpp:874
 #, fuzzy
 msgid "Otwórz wideo"
 msgstr "Spill til slutten"
+
+#: Hotkeys.cpp:147 HotkeysNaming.cpp:131
+#, fuzzy
+msgid "Znajdź i zmień"
+msgstr "Spill neste linje"
+
+#: Hotkeys.cpp:148 HotkeysNaming.cpp:246 KainoteFrame.cpp:181
+msgid "Cofnij"
+msgstr ""
+
+#: Hotkeys.cpp:149 HotkeysNaming.cpp:212 KainoteFrame.cpp:187
+msgid "Ponów"
+msgstr ""
 
 #: Hotkeys.cpp:150 HotkeysNaming.cpp:172 KainoteFrame.cpp:189 SubsFile.cpp:24
 #: SubsFile.cpp:54
@@ -1142,6 +2003,15 @@ msgstr "Spill til slutten"
 #, fuzzy
 msgid "Odtwórz / Pauza"
 msgstr "Spill til slutten"
+
+#: Hotkeys.cpp:159 HotkeysNaming.cpp:206 KainoteFrame.cpp:235
+msgid "Klatka w tył"
+msgstr ""
+
+#: Hotkeys.cpp:160 HotkeysNaming.cpp:191 KainoteFrame.cpp:237
+#, fuzzy
+msgid "Klatka w przód"
+msgstr "Fjern alle filer"
 
 #: Hotkeys.cpp:161 Hotkeys.cpp:201 HotkeysNaming.cpp:53 HotkeysNaming.cpp:207
 #, fuzzy
@@ -1193,6 +2063,10 @@ msgstr "Spill forrige linje"
 msgid "Zaznacz linię z czasem wideo"
 msgstr "Spill til slutten"
 
+#: Hotkeys.cpp:171 HotkeysNaming.cpp:167
+msgid "Pomoc (niekompletna, ale jednak)"
+msgstr ""
+
 #: Hotkeys.cpp:172 HotkeysNaming.cpp:88
 #, fuzzy
 msgid "Duplikuj linie"
@@ -1213,6 +2087,22 @@ msgstr "Velg farge"
 msgid "Pokaż podgląd napisów"
 msgstr "Velg fil å fjerne"
 
+#: Hotkeys.cpp:177 HotkeysNaming.cpp:203
+msgid "5 sekund do przodu"
+msgstr ""
+
+#: Hotkeys.cpp:178 HotkeysNaming.cpp:187
+msgid "5 sekund do tyłu"
+msgstr ""
+
+#: Hotkeys.cpp:179 HotkeysNaming.cpp:204
+msgid "Minuta do przodu"
+msgstr ""
+
+#: Hotkeys.cpp:180 HotkeysNaming.cpp:188
+msgid "Minuta do tyłu"
+msgstr ""
+
 #: Hotkeys.cpp:181 HotkeysNaming.cpp:194 VideoBox.cpp:155
 #: VideoFullscreen.cpp:62
 #, fuzzy
@@ -1223,6 +2113,14 @@ msgstr "Spill neste linje"
 #, fuzzy
 msgid "Poprzedni plik"
 msgstr "Spill forrige linje"
+
+#: Hotkeys.cpp:183 HotkeysNaming.cpp:255
+msgid "Dźwięk głośniej"
+msgstr ""
+
+#: Hotkeys.cpp:184 HotkeysNaming.cpp:256
+msgid "Dźwięk ciszej"
+msgstr ""
 
 #: Hotkeys.cpp:185 HotkeysNaming.cpp:190
 #, fuzzy
@@ -1238,6 +2136,14 @@ msgstr "Spill forrige linje"
 #, fuzzy
 msgid "Wstaw pogrubienie"
 msgstr "Fjern alle filer"
+
+#: Hotkeys.cpp:188 HotkeysNaming.cpp:211
+msgid "Wstaw kursywę"
+msgstr ""
+
+#: Hotkeys.cpp:189 HotkeysNaming.cpp:236
+msgid "Wstaw znak podziału"
+msgstr ""
 
 #: Hotkeys.cpp:190 HotkeysNaming.cpp:237
 #, fuzzy
@@ -1258,6 +2164,10 @@ msgstr "Spill neste linje"
 #, fuzzy
 msgid "Następne nieprzetłumaczone"
 msgstr "Spill neste linje"
+
+#: Hotkeys.cpp:194 HotkeysNaming.cpp:226
+msgid "Ustaw jako niepewne i przejdź dalej"
+msgstr ""
 
 #: Hotkeys.cpp:196 HotkeysNaming.cpp:97
 #, fuzzy
@@ -1310,6 +2220,14 @@ msgstr "Sekundærfarge"
 msgid "Zatrzymaj"
 msgstr "Stopp avspilling"
 
+#: Hotkeys.cpp:211 HotkeysNaming.cpp:63
+msgid "Przewiń w lewo"
+msgstr ""
+
+#: Hotkeys.cpp:212 HotkeysNaming.cpp:64
+msgid "Przewiń w prawo"
+msgstr ""
+
 #: Hotkeys.cpp:213 HotkeysNaming.cpp:65
 #, fuzzy
 msgid "Odtwarzaj przed znacznikem"
@@ -1355,6 +2273,20 @@ msgstr "Spill nåværende linje"
 msgid "Dodaj zakończenie"
 msgstr "Gå til utvalg"
 
+#: Hotkeys.cpp:270
+msgid "Plik skrótów jest przestarzały zostanie zamieniony domyślnym"
+msgstr ""
+
+#: Hotkeys.cpp:373
+#, c-format
+msgid "Skrót \"%s\" nie jest prawidłowy"
+msgstr ""
+
+#: Hotkeys.cpp:404
+#, c-format
+msgid "Nie można przywrócić skrótu, bo nie ma domyślnego ustawienia o id %i"
+msgstr ""
+
 #: Hotkeys.cpp:594
 #, fuzzy
 msgid "Mapowanie przycisków"
@@ -1385,6 +2317,16 @@ msgstr "Spill til slutten"
 msgid "Skrót audio"
 msgstr "Spill til slutten"
 
+#: Hotkeys.cpp:608
+#, c-format
+msgid "Proszę wcisnąć klawisze skrótu dla \"%s\"."
+msgstr ""
+
+#: Hotkeys.cpp:641
+msgid ""
+"Skróty globalne i edytora muszą zawierać modyfikatory (Shift, Ctrl lub Alt)."
+msgstr ""
+
 #: Hotkeys.cpp:644
 #, fuzzy
 msgid "Nie można używać skrótów do kopiowania, wycinania i wklejania."
@@ -1394,6 +2336,14 @@ msgstr "Liste over automasjonssnarveier"
 #, fuzzy
 msgid "Nie można używać skrótu zamykania programu."
 msgstr "Liste over automasjonssnarveier"
+
+#: HotkeysNaming.cpp:46
+msgid "O programie"
+msgstr ""
+
+#: HotkeysNaming.cpp:47
+msgid "Wątek programu na forum AnimeSub.info"
+msgstr ""
 
 #: HotkeysNaming.cpp:48 VideoBox.cpp:879
 #, fuzzy
@@ -1420,14 +2370,127 @@ msgstr "Velg farge"
 msgid "Otwórz okno mapowania skrótów"
 msgstr "Velg fil å fjerne"
 
+#: HotkeysNaming.cpp:76 KainoteFrame.cpp:322 KainoteFrame.cpp:323
+msgid "Odśwież skrypty autoload"
+msgstr ""
+
+#: HotkeysNaming.cpp:78 KainoteFrame.cpp:274
+msgid "Zamknij audio"
+msgstr ""
+
+#: HotkeysNaming.cpp:79 SubsGrid.cpp:208
+#, fuzzy
+msgid "Ustaw czasy jako ciągłe (następna linijka)"
+msgstr "Gå til utvalg"
+
+#: HotkeysNaming.cpp:80 SubsGrid.cpp:207
+#, fuzzy
+msgid "Ustaw czasy jako ciągłe (poprzednia linijka)"
+msgstr "Gå til utvalg"
+
 #: HotkeysNaming.cpp:87 VideoBox.cpp:886
 #, fuzzy
 msgid "Usuń plik wideo"
 msgstr "Fjern midlertidige filer"
 
+#: HotkeysNaming.cpp:101
+#, fuzzy
+msgid "Pierwszy przycisk tagów"
+msgstr "Fjern alle filer"
+
+#: HotkeysNaming.cpp:102
+#, fuzzy
+msgid "Drugi przycisk tagów"
+msgstr "Fjern alle filer"
+
+#: HotkeysNaming.cpp:103
+#, fuzzy
+msgid "Trzeci przycisk tagów"
+msgstr "Fjern alle filer"
+
 #: HotkeysNaming.cpp:104
 #, fuzzy
 msgid "Czwarty przycisk tagów"
+msgstr "Fjern alle filer"
+
+#: HotkeysNaming.cpp:105
+#, fuzzy
+msgid "Piąty przycisk tagów"
+msgstr "Fjern alle filer"
+
+#: HotkeysNaming.cpp:106
+#, fuzzy
+msgid "Szósty przycisk tagów"
+msgstr "Fjern alle filer"
+
+#: HotkeysNaming.cpp:107
+#, fuzzy
+msgid "Siódmy przycisk tagów"
+msgstr "Fjern alle filer"
+
+#: HotkeysNaming.cpp:108
+#, fuzzy
+msgid "Ósmy przycisk tagów"
+msgstr "Fjern alle filer"
+
+#: HotkeysNaming.cpp:109
+#, fuzzy
+msgid "Dziewiąty przycisk tagów"
+msgstr "Fjern alle filer"
+
+#: HotkeysNaming.cpp:110
+#, fuzzy
+msgid "Dziesiąty przycisk tagów"
+msgstr "Fjern alle filer"
+
+#: HotkeysNaming.cpp:111
+#, fuzzy
+msgid "Jedenasty przycisk tagów"
+msgstr "Fjern alle filer"
+
+#: HotkeysNaming.cpp:112
+#, fuzzy
+msgid "Dwunasty przycisk tagów"
+msgstr "Fjern alle filer"
+
+#: HotkeysNaming.cpp:113
+#, fuzzy
+msgid "Trzynasty przycisk tagów"
+msgstr "Fjern alle filer"
+
+#: HotkeysNaming.cpp:114
+#, fuzzy
+msgid "Czternasty przycisk tagów"
+msgstr "Fjern alle filer"
+
+#: HotkeysNaming.cpp:115
+#, fuzzy
+msgid "Piętnast przycisk tagów"
+msgstr "Fjern alle filer"
+
+#: HotkeysNaming.cpp:116
+#, fuzzy
+msgid "Szesnasty przycisk tagów"
+msgstr "Fjern alle filer"
+
+#: HotkeysNaming.cpp:117
+#, fuzzy
+msgid "Siedemnasty przycisk tagów"
+msgstr "Fjern alle filer"
+
+#: HotkeysNaming.cpp:118
+#, fuzzy
+msgid "Osiemnasty przycisk tagów"
+msgstr "Fjern alle filer"
+
+#: HotkeysNaming.cpp:119
+#, fuzzy
+msgid "Dziewiętnasty przycisk tagów"
+msgstr "Fjern alle filer"
+
+#: HotkeysNaming.cpp:120
+#, fuzzy
+msgid "Dwudziesty przycisk tagów"
 msgstr "Fjern alle filer"
 
 #: HotkeysNaming.cpp:123 SubsGrid.cpp:180
@@ -1464,6 +2527,10 @@ msgstr "Spill neste linje"
 #, fuzzy
 msgid "Ustaw FPS z wideo"
 msgstr "Spill til slutten"
+
+#: HotkeysNaming.cpp:134 VideoBox.cpp:883
+msgid "Kopiuj klatkę do schowka"
+msgstr ""
 
 #: HotkeysNaming.cpp:135 VideoBox.cpp:882
 #, fuzzy
@@ -1530,6 +2597,10 @@ msgstr "Fjern alle filer"
 msgid "Sortuj zaznaczenie według warstwy"
 msgstr "Gå til utvalg"
 
+#: HotkeysNaming.cpp:148
+msgid "Przesuń czasy / uruchom post processor"
+msgstr ""
+
 #: HotkeysNaming.cpp:149 KainoteFrame.cpp:248
 #, fuzzy
 msgid "Przejdź do poprzedniej klatki kluczowej"
@@ -1545,10 +2616,26 @@ msgstr "Spill til slutten"
 msgid "Filtruj po wczytaniu napisów"
 msgstr "Velg fil å fjerne"
 
+#: HotkeysNaming.cpp:153 SubsGrid.cpp:176
+msgid "Nie resetuj wcześniejszego filtrowania"
+msgstr ""
+
+#: HotkeysNaming.cpp:154 SubsGrid.cpp:217
+msgid "Ignoruj filtrowanie przy akcjach"
+msgstr ""
+
+#: HotkeysNaming.cpp:155 SubsGrid.cpp:175
+msgid "Filtrowanie odwrócone"
+msgstr ""
+
 #: HotkeysNaming.cpp:156 SubsGrid.cpp:152
 #, fuzzy
 msgid "Ukryj aktora"
 msgstr "Velg farge"
+
+#: HotkeysNaming.cpp:157 SubsGrid.cpp:158
+msgid "Ukryj znaki na sekundę"
+msgstr ""
 
 #: HotkeysNaming.cpp:158 SubsGrid.cpp:151
 #, fuzzy
@@ -1565,6 +2652,20 @@ msgstr "Velg farge"
 msgid "Ukryj warstwę"
 msgstr "Velg farge"
 
+#: HotkeysNaming.cpp:161 SubsGrid.cpp:154
+#, fuzzy
+msgid "Ukryj lewy margines"
+msgstr "Velg farge"
+
+#: HotkeysNaming.cpp:162 SubsGrid.cpp:155
+#, fuzzy
+msgid "Ukryj prawy margines"
+msgstr "Velg farge"
+
+#: HotkeysNaming.cpp:163 SubsGrid.cpp:156
+msgid "Ukryj pionowy margines"
+msgstr ""
+
 #: HotkeysNaming.cpp:164 SubsGrid.cpp:150
 #, fuzzy
 msgid "Ukryj czas początkowy"
@@ -1580,6 +2681,10 @@ msgstr "Velg farge"
 msgid "Stwórz drzewko"
 msgstr "Spill til slutten"
 
+#: HotkeysNaming.cpp:168 KainoteFrame.cpp:953 OptionsDialog.cpp:595
+msgid "Lista osób pomocnych przy tworzeniu programu"
+msgstr ""
+
 #: HotkeysNaming.cpp:169 VideoBox.cpp:878
 #, fuzzy
 msgid "Ukryj / pokaż pasek postępu"
@@ -1589,6 +2694,11 @@ msgstr "Fjern alle filer"
 #, fuzzy
 msgid "Ukryj zaznaczone linijki"
 msgstr "Gå til utvalg"
+
+#: HotkeysNaming.cpp:171 KainoteFrame.cpp:315
+#, fuzzy
+msgid "Ukryj tagi w nawiasach"
+msgstr "Velg fil å fjerne"
 
 #: HotkeysNaming.cpp:173
 #, fuzzy
@@ -1645,6 +2755,10 @@ msgstr "Spill til slutten"
 msgid "Otwórz autozapis"
 msgstr "Spill til slutten"
 
+#: HotkeysNaming.cpp:186 KainoteFrame.cpp:324 KainoteFrame.cpp:325
+msgid "Uruchom ostatnio zaczytany skrypt"
+msgstr ""
+
 #: HotkeysNaming.cpp:189 SubsGrid.cpp:221
 #, fuzzy
 msgid "Ustaw nowy FPS"
@@ -1665,6 +2779,10 @@ msgstr "Gå til utvalg"
 msgid "Odtwórz aktywną linijkę"
 msgstr "Spill nåværende linje"
 
+#: HotkeysNaming.cpp:214 KainoteFrame.cpp:163
+msgid "Usuń napisy z edytora"
+msgstr ""
+
 #: HotkeysNaming.cpp:216 KainoteFrame.cpp:155
 #, fuzzy
 msgid "Zapisz wszystkie napisy"
@@ -1674,6 +2792,10 @@ msgstr "Fjern alle indeksfiler"
 #, fuzzy
 msgid "Zapisz tłumaczenie"
 msgstr "Gå til utvalg"
+
+#: HotkeysNaming.cpp:220 KainoteFrame.cpp:164 KainoteFrame.cpp:165
+msgid "Zapisuj napisy z nazwą wideo"
+msgstr ""
 
 #: HotkeysNaming.cpp:223
 #, fuzzy
@@ -1705,6 +2827,20 @@ msgstr "Gå til utvalg"
 msgid "Przejdź do czasu końcowego linii"
 msgstr "Gå til utvalg"
 
+#: HotkeysNaming.cpp:235 KainoteFrame.cpp:313 KainoteFrame.cpp:314
+#, fuzzy
+msgid "Sprawdź poprawność pisowni"
+msgstr "Velg fil å fjerne"
+
+#: HotkeysNaming.cpp:240 VideoBox.cpp:881
+msgid "Kopiuj klatkę z napisami do schowka"
+msgstr ""
+
+#: HotkeysNaming.cpp:241 VideoBox.cpp:880
+#, fuzzy
+msgid "Zapisz klatkę z napisami jako PNG"
+msgstr "Fjern alle indeksfiler"
+
 #: HotkeysNaming.cpp:242 KainoteFrame.cpp:311 KainoteFrame.cpp:312
 #, fuzzy
 msgid "Zmień rozdzielczość napisów"
@@ -1724,6 +2860,14 @@ msgstr "Spill neste linje"
 #, fuzzy
 msgid "Okno przesuwania dialogów"
 msgstr "Godkjenn endringer automatisk"
+
+#: HotkeysNaming.cpp:247 KainoteFrame.cpp:184
+msgid "Cofnij do ostatniego zapisu"
+msgstr ""
+
+#: HotkeysNaming.cpp:248 KainoteFrame.cpp:257
+msgid "Otwieraj wideo przez FFMS2"
+msgstr ""
 
 #: HotkeysNaming.cpp:249 KainoteFrame.cpp:255
 #, fuzzy
@@ -1760,15 +2904,44 @@ msgstr "Velg fil å fjerne"
 msgid "Oczyść style pliku ASS"
 msgstr "Velg farge"
 
+#: HotkeysNaming.cpp:260 KainoteFrame.cpp:213
+msgid "Popraw drobne błędy (eksperymentalne)"
+msgstr ""
+
+#: HotkeysNaming.cpp:261
+msgid "Pełny ekran"
+msgstr ""
+
 #: HotkeysNaming.cpp:263 KainoteFrame.cpp:133
 #, fuzzy
 msgid "Wczytaj ostatnią sesję"
 msgstr "Spill forrige linje"
 
+#: KaiMessageBox.cpp:36
+#, fuzzy
+msgid "Zastosuj dla wszystkich"
+msgstr "Fjern alle filer"
+
 #: KaiMessageBox.cpp:51
 #, fuzzy
 msgid "Tak dla wszystkich"
 msgstr "Fjern alle filer"
+
+#: KaiMessageBox.cpp:60 MappedButton.cpp:41 Notebook.cpp:1173
+msgid "Tak"
+msgstr ""
+
+#: KaiMessageBox.cpp:69 MappedButton.cpp:42
+msgid "Nie"
+msgstr ""
+
+#: KaiMessageBox.cpp:85
+msgid "Pomoc"
+msgstr ""
+
+#: KainoteFrame.cpp:87
+msgid "Bez nazwy - "
+msgstr ""
 
 #: KainoteFrame.cpp:125
 #, fuzzy
@@ -1784,6 +2957,10 @@ msgstr "Velg fil å fjerne"
 #, fuzzy
 msgid "Czas trwania wideo"
 msgstr "Fjern alle filer"
+
+#: KainoteFrame.cpp:126
+msgid "Klatki na Sekundę"
+msgstr ""
 
 #: KainoteFrame.cpp:126
 #, fuzzy
@@ -1805,10 +2982,18 @@ msgstr "Velg fil å fjerne"
 msgid "Nazwa pliku wideo"
 msgstr "Velg fil å fjerne"
 
+#: KainoteFrame.cpp:134
+msgid "Wczytuje poprzednio zaczytane pliki"
+msgstr ""
+
 #: KainoteFrame.cpp:135
 #, fuzzy
 msgid "Wczytaj sesję z pliku"
 msgstr "Velg farge"
+
+#: KainoteFrame.cpp:136
+msgid "Wczytuje sesję z wcześniej zapisanego pliku sesji"
+msgstr ""
 
 #: KainoteFrame.cpp:138
 #, fuzzy
@@ -1820,9 +3005,24 @@ msgstr "Velg fil å fjerne"
 msgid "Zapisuje sesję do pliku"
 msgstr "Velg fil å fjerne"
 
+#: KainoteFrame.cpp:141
+#, fuzzy
+msgid "Pytaj o wczytanie ostatniej sesji przy starcie programu"
+msgstr "Spill forrige linje"
+
+#: KainoteFrame.cpp:142
+#, fuzzy
+msgid "Pyta, czy wczytać ostatnio zaczytane pliki przy starcie programu"
+msgstr "Spill forrige linje"
+
 #: KainoteFrame.cpp:145
 #, fuzzy
 msgid "Wczytaj ostatnią sesję przy starcie programu"
+msgstr "Spill forrige linje"
+
+#: KainoteFrame.cpp:146
+#, fuzzy
+msgid "Wczytuje poprzednio zaczytane pliki przy starcie programu"
 msgstr "Spill forrige linje"
 
 #: KainoteFrame.cpp:150
@@ -1875,10 +3075,27 @@ msgstr "Spill til slutten"
 msgid "Ostatnio otwarte napisy"
 msgstr "Spill til slutten"
 
+#: KainoteFrame.cpp:162
+msgid "Usuń napisy z e&dytora"
+msgstr ""
+
+#: KainoteFrame.cpp:168
+msgid "Otwiera autozapis wybrany z listy"
+msgstr ""
+
 #: KainoteFrame.cpp:170
 #, fuzzy
 msgid "Otwiera okno usuwania plików tymczasowych"
 msgstr "Kan ikke åpne mappe med midlertidige filer"
+
+#: KainoteFrame.cpp:171
+msgid "Pokaż / Ukryj okno logów"
+msgstr ""
+
+#: KainoteFrame.cpp:172
+#, fuzzy
+msgid "Ostatnia sesja"
+msgstr "Spill forrige linje"
 
 #: KainoteFrame.cpp:172
 #, fuzzy
@@ -1895,15 +3112,53 @@ msgstr "Fjern alle filer"
 msgid "Ustawienia programu"
 msgstr "Fjern alle filer"
 
+#: KainoteFrame.cpp:176
+msgid "Wyjści&e\tAlt-F4"
+msgstr ""
+
+#: KainoteFrame.cpp:177
+msgid "Zakończ działanie programu"
+msgstr ""
+
+#: KainoteFrame.cpp:178
+msgid "&Plik"
+msgstr ""
+
+#: KainoteFrame.cpp:181 KainoteFrame.cpp:2102
+msgid "&Cofnij"
+msgstr ""
+
+#: KainoteFrame.cpp:186 KainoteFrame.cpp:2118
+msgid "&Ponów"
+msgstr ""
+
 #: KainoteFrame.cpp:188
 #, fuzzy
 msgid "&Historia"
 msgstr "November"
 
+#: KainoteFrame.cpp:190
+#, fuzzy
+msgid "Znajdź i za&mień"
+msgstr "Spill neste linje"
+
+#: KainoteFrame.cpp:191
+#, fuzzy
+msgid "Szuka i podmienia dane frazy tekstu"
+msgstr "Fjern eldre indeksfiler"
+
+#: KainoteFrame.cpp:192
+msgid "Z&najdź"
+msgstr ""
+
 #: KainoteFrame.cpp:193
 #, fuzzy
 msgid "Szuka dane frazy tekstu"
 msgstr "Fjern eldre indeksfiler"
+
+#: KainoteFrame.cpp:195
+msgid "Znajduje kolejne wystąpięnie frazy w tekście"
+msgstr ""
 
 #: KainoteFrame.cpp:199 ShiftTimes.cpp:345 SubsGrid.cpp:449 SubsGrid.cpp:480
 #: SubsGrid.cpp:486 SubsGrid.cpp:487 SubsGrid.cpp:599 SubsGrid.cpp:622
@@ -1928,6 +3183,10 @@ msgid "Sortuj według czasu końcowego"
 msgstr "Gå til utvalg"
 
 #: KainoteFrame.cpp:203
+msgid "Style"
+msgstr ""
+
+#: KainoteFrame.cpp:203
 #, fuzzy
 msgid "Sortuj według stylów"
 msgstr "Fjern alle filer"
@@ -1941,6 +3200,10 @@ msgstr "Fjern alle filer"
 #, fuzzy
 msgid "Sortuj według efektu"
 msgstr "Fjern alle filer"
+
+#: KainoteFrame.cpp:206 SubsGrid.cpp:448 SubsGrid.cpp:598
+msgid "Warstwa"
+msgstr ""
 
 #: KainoteFrame.cpp:206
 #, fuzzy
@@ -1967,6 +3230,10 @@ msgstr "Gå til utvalg"
 msgid "Sortuje zaznaczone linie napisów ASS"
 msgstr "Fjern alle filer"
 
+#: KainoteFrame.cpp:214
+msgid "Włącza okno poprawiania błędów"
+msgstr ""
+
 #: KainoteFrame.cpp:215
 #, fuzzy
 msgid "Zaznacz &linijki"
@@ -1976,6 +3243,11 @@ msgstr "Spill neste linje"
 #, fuzzy
 msgid "Zaznacza linijki wg danej frazy tekstu"
 msgstr "Spill neste linje"
+
+#: KainoteFrame.cpp:216
+#, fuzzy
+msgid "&Edycja"
+msgstr "Velg farge"
 
 #: KainoteFrame.cpp:220
 #, fuzzy
@@ -2012,6 +3284,14 @@ msgstr "Gå til utvalg"
 msgid "Wstawia czas końcowy z wideo"
 msgstr "Spill til slutten"
 
+#: KainoteFrame.cpp:236
+msgid "Przechodzi o jedną klatkę w tył"
+msgstr ""
+
+#: KainoteFrame.cpp:238
+msgid "Przechodzi o jedną klatkę w przód"
+msgstr ""
+
 #: KainoteFrame.cpp:240
 #, fuzzy
 msgid "Przechodzi wideo do czasu początkowego linii"
@@ -2032,6 +3312,10 @@ msgstr "Spill til slutten"
 msgid "Odtwarza lub pauzuje wideo"
 msgstr "Spill til slutten"
 
+#: KainoteFrame.cpp:258
+msgid "Otwiera wideo przez FFMS2, co daje dokładność klatkową"
+msgstr ""
+
 #: KainoteFrame.cpp:261
 #, fuzzy
 msgid "&Wideo"
@@ -2051,6 +3335,18 @@ msgstr "Spill til slutten"
 #, fuzzy
 msgid "Otwiera audio z wideo"
 msgstr "Spill til slutten"
+
+#: KainoteFrame.cpp:272
+msgid "Otwórz puste audio na 2:30 godziny"
+msgstr ""
+
+#: KainoteFrame.cpp:273
+msgid "Otwiera puste audio na 2:30 godziny"
+msgstr ""
+
+#: KainoteFrame.cpp:275
+msgid "Zamyka audio"
+msgstr ""
 
 #: KainoteFrame.cpp:276
 #, fuzzy
@@ -2107,20 +3403,71 @@ msgstr "Lagre automatisk"
 msgid "Widoczne tylko okno napisów"
 msgstr "Velg fil å fjerne"
 
+#: KainoteFrame.cpp:284
+msgid "Wido&k"
+msgstr ""
+
+#: KainoteFrame.cpp:288
+msgid "Włączanie bądź wyłączanie edytora"
+msgstr ""
+
 #: KainoteFrame.cpp:290 ScriptInfo.cpp:24
 #, fuzzy
 msgid "Właściwości napisów ASS"
 msgstr "Velg fil å fjerne"
+
+#: KainoteFrame.cpp:291
+msgid "&Menedżer stylów"
+msgstr ""
+
+#: KainoteFrame.cpp:292
+msgid "Służy do zarządzania stylami ASS"
+msgstr ""
+
+#: KainoteFrame.cpp:295
+#, fuzzy
+msgid "Konwertuje do formatu ASS"
+msgstr "Gå til utvalg"
+
+#: KainoteFrame.cpp:297
+#, fuzzy
+msgid "Konwertuje do formatu SRT"
+msgstr "Gå til utvalg"
+
+#: KainoteFrame.cpp:299
+msgid "Konwertuje do formatu microDVD"
+msgstr ""
+
+#: KainoteFrame.cpp:301
+#, fuzzy
+msgid "Konwertuje do formatu MPL2"
+msgstr "Gå til utvalg"
+
+#: KainoteFrame.cpp:303
+msgid "Konwertuje do formatu TMPlayer (niezalecane)"
+msgstr ""
 
 #: KainoteFrame.cpp:305 OptionsDialog.cpp:952
 #, fuzzy
 msgid "Konwersja"
 msgstr "Velg fil å fjerne"
 
+#: KainoteFrame.cpp:305
+msgid "Konwersja z jednego formatu napisów na inny"
+msgstr ""
+
+#: KainoteFrame.cpp:307
+msgid "Okno zmiany &czasów\tCtrl-I"
+msgstr ""
+
 #: KainoteFrame.cpp:308
 #, fuzzy
 msgid "Przesuwanie czasów napisów"
 msgstr "Velg fil å fjerne"
+
+#: KainoteFrame.cpp:316
+msgid "Ukrywa tagi w nawiasach ASS i MDVD"
+msgstr ""
 
 #: KainoteFrame.cpp:317
 #, fuzzy
@@ -2132,20 +3479,197 @@ msgstr "Lagre automatisk"
 msgid "Au&tomatyzacja"
 msgstr "Automasjonsfeil"
 
+#: KainoteFrame.cpp:331
+msgid "&Pomoc (niekompletna, ale jednak)"
+msgstr ""
+
+#: KainoteFrame.cpp:332
+msgid "Otwiera pomoc w domyślnej przeglądarce"
+msgstr ""
+
+#: KainoteFrame.cpp:333
+msgid "&Wątek programu na forum AnimeSub.info"
+msgstr ""
+
+#: KainoteFrame.cpp:334
+msgid "Otwiera wątek programu na forum AnimeSub.info"
+msgstr ""
+
+#: KainoteFrame.cpp:335
+msgid "&O programie"
+msgstr ""
+
+#: KainoteFrame.cpp:336
+msgid "Wyświetla informacje o programie"
+msgstr ""
+
+#: KainoteFrame.cpp:338
+msgid "&Lista osób pomocnych przy tworzeniu programu"
+msgstr ""
+
+#: KainoteFrame.cpp:339
+msgid "Wyświetla listę osób pomocnych przy tworzeniu programu"
+msgstr ""
+
+#: KainoteFrame.cpp:340
+msgid "Pomo&c"
+msgstr ""
+
+#: KainoteFrame.cpp:528 TabPanel.cpp:80
+msgid "Bez tytułu"
+msgstr ""
+
 #: KainoteFrame.cpp:707
 #, fuzzy
 msgid "Wybierz sktypt"
 msgstr "Velg farge"
+
+#: KainoteFrame.cpp:709
+msgid "Pliki skryptów (*.lua),(*.moon)|*.lua;*.moon;"
+msgstr ""
+
+#: KainoteFrame.cpp:726
+msgid "Ten plik napisów nie ma dodanych żadnych skryptów"
+msgstr ""
+
+#: KainoteFrame.cpp:735 KainoteFrame.cpp:2401
+#, c-format
+msgid "Warunki skryptu Lua '%s' nie zostały spełnione"
+msgstr ""
 
 #: KainoteFrame.cpp:814 SubsGrid.cpp:871 VideoBox.cpp:1003
 #, fuzzy
 msgid "Wybierz plik napisów"
 msgstr "Velg fil å fjerne"
 
+#: KainoteFrame.cpp:817
+msgid ""
+"Pliki napisów (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*."
+"sub;*.txt|Pliki wideo z wbudowanymi napisami (*.mkv),(*.ogm)|*.mkv;*.ogm"
+msgstr ""
+
+#: KainoteFrame.cpp:847
+msgid ""
+"Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
+"(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;"
+"*.rm;*.mpg;*.mpeg;*.3gp;*.avs|Wszystkie pliki (*.*)|*.*"
+msgstr ""
+
+#: KainoteFrame.cpp:863
+msgid ""
+"Pliki klatek kluczowych (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*."
+"stats;*.log|Wszystkie pliki (*.*)|*.*"
+msgstr ""
+
+#: KainoteFrame.cpp:915
+#, c-format
+msgid ""
+"Edytor napisów by Marcin Drob aka Bakura lub Bjakja (bjakja7@gmail.com),\n"
+"wersja %s z dnia %s"
+msgstr ""
+
+#: KainoteFrame.cpp:917
+msgid ""
+"Ten program powstał w celu zastąpienia dwóch programów: Bestplayera i "
+"Aegisuba.\n"
+"\n"
+msgstr ""
+
+#: KainoteFrame.cpp:918
+msgid ""
+"Jeśli zauważyłeś(aś) jakieś błędy bądź masz jakieś propozycje zmian lub "
+"nowych funkcji,\n"
+"możesz napisać o tym na: Discordzie https://discord.gg/9WacFTtK6q, Githubie, "
+"bądź mailowo.\n"
+"\n"
+msgstr ""
+
+#: KainoteFrame.cpp:919
+msgid "Kainote zawiera w sobie części następujących projektów:\n"
+msgstr ""
+
+#: KainoteFrame.cpp:921
+msgid ""
+"Color picker, wymuxowywanie napisów z mkv, audiobox, odwarzacz audio, "
+"automatyzacja\n"
+"i kilka innych pojedynczych funkcji wzięte z Aegisuba -\n"
+msgstr ""
+
+#: KainoteFrame.cpp:933
+msgid "O Kainote"
+msgstr ""
+
+#: KainoteFrame.cpp:938
+msgid "Pomoc graficzna: (przyciski, obrazki do pomocy itd.)\n"
+msgstr ""
+
+#: KainoteFrame.cpp:939
+msgid "- Xandros (przyciski do wideo).\n"
+msgstr ""
+
+#: KainoteFrame.cpp:940
+msgid "- Devilkan (ikony do menu i paska narzędzi, obrazki do pomocy).\n"
+msgstr ""
+
+#: KainoteFrame.cpp:941
+msgid "- Zły Los (ikony do skojarzonych plików i do menu).\n"
+msgstr ""
+
+#: KainoteFrame.cpp:942
+msgid "Testerzy: (mniej i bardziej wprawieni użytkownicy programu)\n"
+msgstr ""
+
+#: KainoteFrame.cpp:943
+msgid ""
+"- Sacredus (chyba pierwszy tłumacz używający trybu tłumacza,\n"
+" nieoceniona pomoc przy testowaniu wydajności na słabym komputerze).\n"
+msgstr ""
+
+#: KainoteFrame.cpp:944
+msgid ""
+"- Devilkan (crashhunter, ze względu na swój system i przyzwyczajenia "
+"wytropił już wiele crashy,\n"
+msgstr ""
+
+#: KainoteFrame.cpp:945
+msgid ""
+"pomógł w poprawie działania narzędzi do typesettingu, wymyślił wiele innych "
+"usprawnień).\n"
+msgstr ""
+
+#: KainoteFrame.cpp:946
+msgid ""
+"- MatiasMovie (wyłapał parę crashy i zaproponował różne usprawnienia, pomaga "
+"w debugowaniu crashy).\n"
+msgstr ""
+
+#: KainoteFrame.cpp:947
+msgid "- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy).\n"
+msgstr ""
+
+#: KainoteFrame.cpp:948
+msgid "- Senami (stworzył nowe motywy, a także wyłapał parę błędów).\n"
+msgstr ""
+
 #: KainoteFrame.cpp:949
 #, fuzzy
 msgid "- altinat (tajskie tłumaczenie).\n"
 msgstr "Gå til utvalg"
+
+#: KainoteFrame.cpp:950
+#, fuzzy
+msgid "- labrie75 (koreańskie tłumaczenie).\n"
+msgstr "Gå til utvalg"
+
+#: KainoteFrame.cpp:951
+#, fuzzy
+msgid "- Niskala5570 (malajskie tłumaczenie).\n"
+msgstr "Gå til utvalg"
+
+#: KainoteFrame.cpp:952
+msgid ""
+"Podziękowania także dla osób, które używają programu i zgłaszali błędy.\n"
+msgstr ""
 
 #: KainoteFrame.cpp:1060
 #, fuzzy
@@ -2157,10 +3681,32 @@ msgstr "Velg fil å fjerne"
 msgid "Zapisz plik napisów"
 msgstr "Velg fil å fjerne"
 
+#: KainoteFrame.cpp:1077 KainoteFrame.cpp:1093 KainoteFrame.cpp:2272
+msgid ""
+"Wybrany plik jest tylko do odczytu,\n"
+"proszę zapisać pod inną nazwą lub zmienić atrybuty pliku."
+msgstr ""
+
+#: KainoteFrame.cpp:1143
+#, fuzzy, c-format
+msgid "Wczytać napisy o nazwie \"%s\"?"
+msgstr "Velg farge"
+
 #: KainoteFrame.cpp:1207 Visuals.cpp:275
 #, fuzzy
 msgid "Nie można otworzyć napisów"
 msgstr "Kan ikke åpne mappe med midlertidige filer"
+
+#: KainoteFrame.cpp:1352 OptionsDialog.cpp:672 ProviderFFMS2.cpp:825
+#: ProviderFFMS2.cpp:836 ScriptInfo.cpp:75 VideoFfmpeg.cpp:946
+#: VideoFfmpeg.cpp:957 stylestore.cpp:760 stylestore.cpp:761
+msgid "Brak"
+msgstr ""
+
+#: KainoteFrame.cpp:1893
+#, c-format
+msgid "Zapisać napisy o nazwie \"%s\" przed %s?"
+msgstr ""
 
 #: KainoteFrame.cpp:1894
 #, fuzzy
@@ -2208,25 +3754,55 @@ msgstr "Spill til slutten"
 msgid "Wszystkie pliki"
 msgstr "Fjern alle filer"
 
+#: KainoteFrame.cpp:2099
+msgid "&Cofnij do "
+msgstr ""
+
+#: KainoteFrame.cpp:2115
+msgid "&Ponów do "
+msgstr ""
+
 #: KainoteFrame.cpp:2255
 #, fuzzy
 msgid "Wybierz plik sesji"
 msgstr "Velg fil å fjerne"
+
+#: KainoteFrame.cpp:2257 KainoteFrame.cpp:2266
+msgid "Plik sesji (*.kls),|*.kls"
+msgstr ""
 
 #: KainoteFrame.cpp:2265
 #, fuzzy
 msgid "Zapisz plik sesji"
 msgstr "Velg fil å fjerne"
 
+#: KainoteFrame.cpp:2375
+#, c-format
+msgid "Skrót o nazwie '%s' nie należy do skrypru."
+msgstr ""
+
 #: LogHandler.cpp:42
 #, fuzzy
 msgid "Okno Logów"
 msgstr "Gå til utvalg"
 
+#: MappedButton.cpp:40 OptionsDialog.cpp:967 StyleChange.cpp:271
+#: VisualAllTagsEdition.cpp:124 VisualDrawingShapes.cpp:101
+msgid "Zastosuj"
+msgstr ""
+
+#: MappedButton.cpp:245
+msgid " lub "
+msgstr ""
+
 #: MappedButton.cpp:257
 #, fuzzy
 msgid "Drugi skrót można ustawić Control + Klik"
 msgstr "Kan ikke åpne mappe med midlertidige filer"
+
+#: MisspellReplacer.cpp:30
+msgid "Korekcja drobnych błędów"
+msgstr ""
 
 #: MisspellReplacer.cpp:38
 #, fuzzy
@@ -2238,10 +3814,50 @@ msgstr "Spill nåværende linje"
 msgid "Rozróżniaj wielkość znaków"
 msgstr "Velg fil å fjerne"
 
+#: MisspellReplacer.cpp:50
+msgid "Zmieniaj na tekst pisany małą literą"
+msgstr ""
+
+#: MisspellReplacer.cpp:51
+msgid "Zmieniaj na tekst pisany wielką literą"
+msgstr ""
+
+#: MisspellReplacer.cpp:52
+msgid "Nie zmieniaj wielkości liter"
+msgstr ""
+
+#: MisspellReplacer.cpp:53
+msgid "Zmieniaj tylko w tagach"
+msgstr ""
+
+#: MisspellReplacer.cpp:54
+msgid "Zmieniaj tylko w tekście"
+msgstr ""
+
+#: MisspellReplacer.cpp:56
+msgid "Szukana fraza (wyrażenia regularne)"
+msgstr ""
+
+#: MisspellReplacer.cpp:57
+msgid "Zmieniana fraza"
+msgstr ""
+
 #: MisspellReplacer.cpp:66
 #, fuzzy
 msgid "Opis reguły"
 msgstr "Fjern midlertidige filer"
+
+#: MisspellReplacer.cpp:75
+msgid "Opis"
+msgstr ""
+
+#: MisspellReplacer.cpp:76
+msgid "Reguła znajdź"
+msgstr ""
+
+#: MisspellReplacer.cpp:77
+msgid "Reguła zamień"
+msgstr ""
 
 #: MisspellReplacer.cpp:102 ShiftTimes.cpp:262
 #, fuzzy
@@ -2273,6 +3889,10 @@ msgstr "Spill nåværende linje"
 msgid "Usuń regułę"
 msgstr "Fjern midlertidige filer"
 
+#: MisspellReplacer.cpp:120
+msgid "Znajdź błąd"
+msgstr ""
+
 #: MisspellReplacer.cpp:122
 #, fuzzy
 msgid ""
@@ -2287,12 +3907,92 @@ msgid ""
 "we wszystkich zakładkach"
 msgstr "Fjern alle indeksfiler"
 
+#: MisspellReplacer.cpp:124
+#, fuzzy
+msgid "Zmień błąd"
+msgstr "Spill neste linje"
+
+#: MisspellReplacer.cpp:126
+#, fuzzy
+msgid ""
+"Zamień wszystkie błędy\n"
+"w bieżącej zakładce"
+msgstr "Fjern alle indeksfiler"
+
 #: MisspellReplacer.cpp:127
 #, fuzzy
 msgid ""
 "Zamień wszystkie błędy\n"
 "we wszystkich zakładkach"
 msgstr "Fjern alle indeksfiler"
+
+#: MisspellReplacer.cpp:293 MisspellReplacer.cpp:318 MisspellReplacer.cpp:337
+msgid ""
+"Nie można zmieniać reguł,\n"
+"gdy okno wyników szukania jest otwarte"
+msgstr ""
+
+#: MisspellReplacer.cpp:608 findreplace.cpp:201 findreplace.cpp:1583
+#, c-format
+msgid ""
+"Linia %i nie może być zamieniona,\n"
+"bo została zedytowana."
+msgstr ""
+
+#: MisspellReplacer.cpp:629
+#, c-format
+msgid ""
+"Nie można zamienić \"%s\" na \"%s\", wykorzystując regułę \"%s\" w linii %i."
+msgstr ""
+
+#: MisspellReplacer.cpp:713
+msgid "Usuwanie spacji przed przecinkiem bądź kropką"
+msgstr ""
+
+#: MisspellReplacer.cpp:714
+msgid "Usuwanie podwójnych spacji"
+msgstr ""
+
+#: MisspellReplacer.cpp:715
+msgid "Zmiana \"....\" i więcej na wielokropek"
+msgstr ""
+
+#: MisspellReplacer.cpp:716
+msgid "Zmiana \"..\" na wielokropek"
+msgstr ""
+
+#: MisspellReplacer.cpp:717
+msgid "Zmiana braku spacji po przecinku czy kropce"
+msgstr ""
+
+#: MisspellReplacer.cpp:718
+msgid "Usuwanie japońskich zwrotów grzecznościowych"
+msgstr ""
+
+#: MisspellReplacer.cpp:719
+msgid "Zamiana \"sie\" na \"się\""
+msgstr ""
+
+#: MisspellReplacer.cpp:720
+msgid "Zamiana \"nie możliwe\" na \"niemożliwe\""
+msgstr ""
+
+#: MisspellReplacer.cpp:721
+msgid "Zamiana \"nie ważne\" na \"nieważne\""
+msgstr ""
+
+#: MisspellReplacer.cpp:722 MisspellReplacer.cpp:723
+msgid "Zamiana błędów wyrażenia \"w ogóle\""
+msgstr ""
+
+#: MisspellReplacer.cpp:724 MisspellReplacer.cpp:725
+msgid "Zamiana błędów wyrazu \"będę\""
+msgstr ""
+
+#: MisspellReplacer.cpp:774
+#, c-format
+msgid "Reguła \"%s\" jest nieprawidłowa."
+msgstr ""
 
 #: NewCatalog.cpp:22
 #, fuzzy
@@ -2374,6 +4074,10 @@ msgstr "Fjern alle filer"
 msgid "Porównaj według wybranych stylów"
 msgstr "Fjern alle filer"
 
+#: Notebook.cpp:899
+msgid "Porównaj"
+msgstr ""
+
 #: Notebook.cpp:900
 #, fuzzy
 msgid "Wyłącz porównanie"
@@ -2403,6 +4107,10 @@ msgstr "Lydhurtiglager"
 #, fuzzy
 msgid "Klatki kluczowe: "
 msgstr "Spill til slutten"
+
+#: Notebook.cpp:1157
+msgid "Skojarzone pliki:\n"
+msgstr ""
 
 #: Notebook.cpp:1162
 #, fuzzy
@@ -2439,6 +4147,10 @@ msgstr "Kan ikke åpne mappe med midlertidige filer"
 msgid "Nie można odczytać pliku."
 msgstr "Kan ikke åpne mappe med midlertidige filer"
 
+#: OpennWrite.cpp:117
+msgid "Plik nie został otwarty."
+msgstr ""
+
 #: OpennWrite.cpp:120 OpennWrite.cpp:124
 #, fuzzy
 msgid "Nie można zapisać do pliku."
@@ -2448,6 +4160,113 @@ msgstr "Kan ikke åpne mappe med midlertidige filer"
 #, fuzzy
 msgid "Wczytywanie posortowanych napisów"
 msgstr "Velg fil å fjerne"
+
+#: OptionsDialog.cpp:293
+#, fuzzy
+msgid "Włącz sprawdzanie pisowni"
+msgstr "Velg fil å fjerne"
+
+#: OptionsDialog.cpp:294
+msgid ""
+"Zaznaczaj linijkę z czasem aktywnej\n"
+"linijki poprzedniej zakładki"
+msgstr ""
+
+#: OptionsDialog.cpp:295
+msgid "Pokaż sugestie po dwukrotnym kliknięciu błędu"
+msgstr ""
+
+#: OptionsDialog.cpp:295
+msgid "Otwieraj napisy zawsze w nowej karcie"
+msgstr ""
+
+#: OptionsDialog.cpp:296
+msgid "Nie przechodź do następnej linii przy edycji czasów"
+msgstr ""
+
+#: OptionsDialog.cpp:297
+msgid ""
+"Wyłącz pokazywanie edycji na wideo\n"
+"(wymaga ponownego otwarcia zakładek)"
+msgstr ""
+
+#: OptionsDialog.cpp:298
+msgid ""
+"Włącz szukanie widocznej linii\n"
+"po wyjściu z pełnego ekranu"
+msgstr ""
+
+#: OptionsDialog.cpp:299
+msgid "Włącz przenoszenie wartości pola przesuwania czasów"
+msgstr ""
+
+#: OptionsDialog.cpp:299
+msgid "Zmieniaj aktywną linię przy zaznaczaniu"
+msgstr ""
+
+#: OptionsDialog.cpp:300
+msgid "Pokazuj oryginał w trybie tłumacza"
+msgstr ""
+
+#: OptionsDialog.cpp:300
+msgid "Ukryj oryginał na wideo w trybie tłumacza"
+msgstr ""
+
+#: OptionsDialog.cpp:301
+msgid "Nie zmieniaj zaznaczeń przy duplikacji linii dialogowych"
+msgstr ""
+
+#: OptionsDialog.cpp:302
+msgid "Nie wypośrodkowuj aktywnej linii w polu napisów"
+msgstr ""
+
+#: OptionsDialog.cpp:302
+msgid "Używaj skróty klawiszowe numpada w polach tekstowych"
+msgstr ""
+
+#: OptionsDialog.cpp:303
+msgid "Wyłącz ostrzeżenia w narzędziach edycji wizualnej"
+msgstr ""
+
+#: OptionsDialog.cpp:303
+msgid "Nie ostrzegaj o niezgodności rozdzielczości"
+msgstr ""
+
+#: OptionsDialog.cpp:304
+msgid "Kompatybilność ze starymi skryptami Kainote"
+msgstr ""
+
+#: OptionsDialog.cpp:326
+msgid "Język (wymaga restartu programu)"
+msgstr ""
+
+#: OptionsDialog.cpp:338
+msgid "Umieść pliki .dic i .aff do folderu \"Dictionary\""
+msgstr ""
+
+#: OptionsDialog.cpp:339
+msgid "Język sprawdzania pisowni (folder \"Dictionary\")"
+msgstr ""
+
+#: OptionsDialog.cpp:361
+msgid "Zero całkowicie wyłącza zapis przy edycji"
+msgstr ""
+
+#: OptionsDialog.cpp:363
+msgid "Liczbę plików autozapisu można ustawić od 2 do 1000000"
+msgstr ""
+
+#: OptionsDialog.cpp:368
+msgid "Liczbę znaków widocznych na zakładce można ustawić od 20 do 150"
+msgstr ""
+
+#: OptionsDialog.cpp:382
+msgid "Ilość edycji do zapisu"
+msgstr ""
+
+#: OptionsDialog.cpp:385
+msgid "Maksymalna ilość plików autozapisu"
+msgstr ""
 
 #: OptionsDialog.cpp:388
 #, fuzzy
@@ -2459,6 +4278,18 @@ msgstr "Spill til slutten"
 msgid "Przyspieszenie klatki końcowej w ms:"
 msgstr "Spill til slutten"
 
+#: OptionsDialog.cpp:394
+msgid "Znak podmiany tagów ASS:"
+msgstr ""
+
+#: OptionsDialog.cpp:397
+msgid "Ilość znaków widocznych na zakładce"
+msgstr ""
+
+#: OptionsDialog.cpp:400
+msgid "Poziom śledzenia logów skryptów LUA"
+msgstr ""
+
 #: OptionsDialog.cpp:409
 #, fuzzy
 msgid "Czcionka pola napisów:"
@@ -2468,6 +4299,27 @@ msgstr "Velg fil å fjerne"
 #, fuzzy
 msgid "Czcionka programu:"
 msgstr "Velg fil å fjerne"
+
+#: OptionsDialog.cpp:419
+msgid "Sposób wczytywania skryptów autoload"
+msgstr ""
+
+#: OptionsDialog.cpp:420
+msgid "Przy starcie programu asynchronicznie"
+msgstr ""
+
+#: OptionsDialog.cpp:420
+#, fuzzy
+msgid "Przy starcie programu"
+msgstr "Fjern alle filer"
+
+#: OptionsDialog.cpp:420
+msgid "Przy otwarciu menu asynchronicznie"
+msgstr ""
+
+#: OptionsDialog.cpp:420
+msgid "Przy otwarciu menu"
+msgstr ""
 
 #: OptionsDialog.cpp:444
 #, fuzzy
@@ -2484,6 +4336,19 @@ msgstr "Velg farge"
 msgid "Wybierz FPS"
 msgstr "Velg farge"
 
+#: OptionsDialog.cpp:447
+msgid "Czas w ms na jedną literę"
+msgstr ""
+
+#: OptionsDialog.cpp:448
+msgid "Tagi wstawiane na początku każdej linijki ass"
+msgstr ""
+
+#: OptionsDialog.cpp:449
+#, fuzzy
+msgid "Rozdzielczość przy konwersji na ASS"
+msgstr "Velg fil å fjerne"
+
 #: OptionsDialog.cpp:472
 #, fuzzy
 msgid "katalog dla stylu"
@@ -2493,6 +4358,13 @@ msgstr "Fjern alle indeksfiler"
 #, fuzzy
 msgid "styl"
 msgstr "Velg farge"
+
+#: OptionsDialog.cpp:473
+#, c-format
+msgid ""
+"Wybrany %s konwersji nie istnieje,\n"
+"zostanie zmieniony na domyślny"
+msgstr ""
 
 #: OptionsDialog.cpp:502
 #, fuzzy
@@ -2504,6 +4376,14 @@ msgstr "Spill til slutten"
 msgid "Nowe czasy końcowe"
 msgstr "Gå til utvalg"
 
+#: OptionsDialog.cpp:503
+msgid "Pokaż okno przed konwersją"
+msgstr ""
+
+#: OptionsDialog.cpp:538
+msgid "Otwórz wideo z menu kontekstowego na pełnym ekranie"
+msgstr ""
+
 #: OptionsDialog.cpp:538
 #, fuzzy
 msgid "Lewy przycisk myszy pauzuje wideo"
@@ -2513,6 +4393,40 @@ msgstr "Spill til slutten"
 #, fuzzy
 msgid "Otwieraj wideo z czasem aktywnej linii"
 msgstr "Spill forrige linje"
+
+#: OptionsDialog.cpp:539
+msgid "Preferowane ścieżki audio (oddzielone średnikiem)"
+msgstr ""
+
+#: OptionsDialog.cpp:540
+msgid "Sposób szukania wideo w FFMS2 (wymaga ponownego wczytania)"
+msgstr ""
+
+#: OptionsDialog.cpp:540
+#, fuzzy
+msgid "Filtr wyświetlania napisów"
+msgstr "Velg fil å fjerne"
+
+#: OptionsDialog.cpp:559
+msgid "Liniowe"
+msgstr ""
+
+#: OptionsDialog.cpp:559 ScriptInfo.cpp:98
+msgid "Normalne"
+msgstr ""
+
+#: OptionsDialog.cpp:560
+msgid "Niebezpieczne (szybkie w każdym przypadku)"
+msgstr ""
+
+#: OptionsDialog.cpp:560
+msgid "Agresywne (szybkie przy cofaniu)"
+msgstr ""
+
+#: OptionsDialog.cpp:586
+#, fuzzy
+msgid "Wybierz rodzaj filtrowania"
+msgstr "Fjern alle filer"
 
 #: OptionsDialog.cpp:587
 #, fuzzy
@@ -2549,6 +4463,14 @@ msgstr "Spill til slutten"
 msgid "Rodzaj filtrowania:"
 msgstr "Fjern alle filer"
 
+#: OptionsDialog.cpp:602
+msgid "Funkcja"
+msgstr ""
+
+#: OptionsDialog.cpp:617
+msgid "Przywróć skrót domyślny"
+msgstr ""
+
 #: OptionsDialog.cpp:640
 #, fuzzy
 msgid "Wyświetlaj czas przy kursorze"
@@ -2573,6 +4495,10 @@ msgstr "Gå til utvalg"
 #, fuzzy
 msgid "Wyświetlaj klatki kluczowe"
 msgstr "Gå til utvalg"
+
+#: OptionsDialog.cpp:641
+msgid "Przewijaj wykres audio przy odtwarzaniu"
+msgstr ""
 
 #: OptionsDialog.cpp:642
 #, fuzzy
@@ -2599,6 +4525,25 @@ msgstr "Spill forrige linje"
 msgid "Scalaj wszystkie \"n\" z poprzednią sylabą"
 msgstr "Spill forrige linje"
 
+#: OptionsDialog.cpp:644
+msgid "Przenoś linie sylab po kliknięciu"
+msgstr ""
+
+#: OptionsDialog.cpp:644
+msgid "Wczytuj audio do pamięci RAM"
+msgstr ""
+
+#: OptionsDialog.cpp:671
+msgid ""
+"Przedział od 0 do 10000, gdzie 0 wyłącza\n"
+"całkowicie usuwanie plików audio cache."
+msgstr ""
+
+#: OptionsDialog.cpp:672
+#, fuzzy
+msgid "Przed i po aktywnej"
+msgstr "Gå til utvalg"
+
 #: OptionsDialog.cpp:672
 #, fuzzy
 msgid "Wszystkie widoczne"
@@ -2614,15 +4559,28 @@ msgstr "Spill til slutten"
 msgid "Czas odtwarzania audio przed i po znaczniku w ms"
 msgstr "Spill forrige linje"
 
+#: OptionsDialog.cpp:684 ShiftTimes.cpp:383
+msgid "Wstęp"
+msgstr ""
+
 #: OptionsDialog.cpp:684 ShiftTimes.cpp:386
 #, fuzzy
 msgid "Zakończenie"
 msgstr "Gå til utvalg"
 
+#: OptionsDialog.cpp:686
+msgid "Grubość linii znaczników"
+msgstr ""
+
 #: OptionsDialog.cpp:687
 #, fuzzy
 msgid "Limit plików audio cache"
 msgstr "Fjern eldre lydhurtiglagerfiler"
+
+#: OptionsDialog.cpp:688
+#, fuzzy
+msgid "Sposób wyświetlania nieaktywnych linijek"
+msgstr "Gå til utvalg"
 
 #: OptionsDialog.cpp:712
 #, fuzzy
@@ -2674,6 +4632,28 @@ msgstr "Fjern eldre indeksfiler"
 msgid "Okno tekst nagłówka nieaktywny"
 msgstr "Fjern eldre indeksfiler"
 
+#: OptionsDialog.cpp:715
+#, fuzzy
+msgid "Okno najechany element nagłówka"
+msgstr "Fjern eldre indeksfiler"
+
+#: OptionsDialog.cpp:715
+#, fuzzy
+msgid "Okno wciśnięty element nagłówka"
+msgstr "Fjern eldre indeksfiler"
+
+#: OptionsDialog.cpp:716
+msgid "Okno najechane zamykanie"
+msgstr ""
+
+#: OptionsDialog.cpp:716
+msgid "Okno wciśnięte zamykanie"
+msgstr ""
+
+#: OptionsDialog.cpp:716
+msgid "Okno elementy ostrzegające"
+msgstr ""
+
 #: OptionsDialog.cpp:718
 #, fuzzy
 msgid "Napisy tekst"
@@ -2693,6 +4673,14 @@ msgstr "Fjern eldre indeksfiler"
 #, fuzzy
 msgid "Napisy tło komentarzy"
 msgstr "Fjern eldre indeksfiler"
+
+#: OptionsDialog.cpp:719
+msgid "Napisy zaznaczenia (przezroczystość)"
+msgstr ""
+
+#: OptionsDialog.cpp:719
+msgid "Napisy linijki widoczne na wideo"
+msgstr ""
 
 #: OptionsDialog.cpp:720
 #, fuzzy
@@ -2751,7 +4739,22 @@ msgstr "Gå til utvalg"
 
 #: OptionsDialog.cpp:724
 #, fuzzy
+msgid "Napisy tło porównania brak zgodności"
+msgstr "Gå til utvalg"
+
+#: OptionsDialog.cpp:724
+#, fuzzy
 msgid "Napisy tło porównania zgodność"
+msgstr "Gå til utvalg"
+
+#: OptionsDialog.cpp:725
+#, fuzzy
+msgid "Napisy tło komentarza por. brak zgodności"
+msgstr "Gå til utvalg"
+
+#: OptionsDialog.cpp:725
+#, fuzzy
+msgid "Napisy tło komentarza por. zgodność"
 msgstr "Gå til utvalg"
 
 #: OptionsDialog.cpp:727
@@ -2778,6 +4781,10 @@ msgstr "Velg farge"
 #, fuzzy
 msgid "Edytor operatory tagów"
 msgstr "Velg farge"
+
+#: OptionsDialog.cpp:728
+msgid "Edytor dzielenie linii i rysunki ASS"
+msgstr ""
 
 #: OptionsDialog.cpp:728
 #, fuzzy
@@ -3014,6 +5021,15 @@ msgstr "Gå til utvalg"
 msgid "Przycisk i lista obramowanie nieaktywne"
 msgstr "Gå til utvalg"
 
+#: OptionsDialog.cpp:748
+msgid "Przełącznik tło włączonego"
+msgstr ""
+
+#: OptionsDialog.cpp:749
+#, fuzzy
+msgid "Przełącznik obramowanie włączonego"
+msgstr "Gå til utvalg"
+
 #: OptionsDialog.cpp:749
 #, fuzzy
 msgid "Pasek przewijania tło"
@@ -3043,6 +5059,21 @@ msgstr "Gå til utvalg"
 #, fuzzy
 msgid "Lista statyczna obramowanie"
 msgstr "Gå til utvalg"
+
+#: OptionsDialog.cpp:751
+#, fuzzy
+msgid "Lista statyczna tło"
+msgstr "Fjern eldre indeksfiler"
+
+#: OptionsDialog.cpp:752
+#, fuzzy
+msgid "Lista statyczna zaznaczenie"
+msgstr "Gå til utvalg"
+
+#: OptionsDialog.cpp:752
+#, fuzzy
+msgid "Lista statyczna tło nagłówka"
+msgstr "Fjern eldre indeksfiler"
 
 #: OptionsDialog.cpp:752
 #, fuzzy
@@ -3114,10 +5145,35 @@ msgstr "Gå til utvalg"
 msgid "Zakładki obramowanie nieaktywnej"
 msgstr "Gå til utvalg"
 
+#: OptionsDialog.cpp:760
+#, fuzzy
+msgid "Zakładki tło aktywnej"
+msgstr "Gå til utvalg"
+
+#: OptionsDialog.cpp:760
+#, fuzzy
+msgid "Zakładki tło nieaktywnej"
+msgstr "Søkefelt"
+
 #: OptionsDialog.cpp:761
 #, fuzzy
 msgid "Zakładki tło nieaktywnej po najechaniu"
 msgstr "Søkefelt"
+
+#: OptionsDialog.cpp:761
+#, fuzzy
+msgid "Zakładki tło drugiej widocznej zakładki"
+msgstr "Søkefelt"
+
+#: OptionsDialog.cpp:762
+#, fuzzy
+msgid "Zakładki tekst aktywnej"
+msgstr "Gå til utvalg"
+
+#: OptionsDialog.cpp:762
+#, fuzzy
+msgid "Zakładki tekst nieaktywnej"
+msgstr "Gå til utvalg"
 
 #: OptionsDialog.cpp:762
 #, fuzzy
@@ -3181,6 +5237,11 @@ msgstr "Søkefelt"
 
 #: OptionsDialog.cpp:770
 #, fuzzy
+msgid "Linia zmiany rozdzielczości kropki"
+msgstr "Velg fil å fjerne"
+
+#: OptionsDialog.cpp:770
+#, fuzzy
 msgid "Wynik szukania czcionka nazwy pliku"
 msgstr "Søkefelt"
 
@@ -3199,11 +5260,46 @@ msgstr "Gå til utvalg"
 msgid "Wynik szukania tło znalezionej frazy"
 msgstr "Søkefelt"
 
+#: OptionsDialog.cpp:773
+msgid "Pierwszy kolor podglądu stylów"
+msgstr ""
+
+#: OptionsDialog.cpp:773
+msgid "Drugi kolor podglądu stylów"
+msgstr ""
+
+#: OptionsDialog.cpp:798
+#, fuzzy
+msgid "Nazwa motywu:"
+msgstr "Fjern alle filer"
+
+#: OptionsDialog.cpp:800
+msgid ""
+"Nazwa kopiowanego motywu.\n"
+"Motywów domyślnych: DarkSentro i LightSentro\n"
+"nie można edytować, należy je skopiować."
+msgstr ""
+
 #: OptionsDialog.cpp:801 SelectLines.cpp:122 stylestore.cpp:87
 #: stylestore.cpp:140
 #, fuzzy
 msgid "Kopiuj"
 msgstr "Velg farge"
+
+#: OptionsDialog.cpp:810
+msgid ""
+"UWAGA! Przezroczystość działa tylko na wykresie audio,\n"
+"polu tekstowym i polu napisów."
+msgstr ""
+
+#: OptionsDialog.cpp:820
+#, fuzzy
+msgid "Nazwa"
+msgstr "Fjern alle filer"
+
+#: OptionsDialog.cpp:821
+msgid "Kolor"
+msgstr ""
 
 #: OptionsDialog.cpp:905 OptionsDialog.cpp:1164
 #, fuzzy
@@ -3295,6 +5391,13 @@ msgstr "Spill til slutten"
 msgid "Wideo M2TS"
 msgstr "Spill til slutten"
 
+#: OptionsDialog.cpp:915
+msgid ""
+"UWAGA! Działanie na każdym Windowsie jest inne.\n"
+"Przykładowo na Windows7 WMP zablokował\n"
+"możliwość zmiany skojarzeń wideo."
+msgstr ""
+
 #: OptionsDialog.cpp:933
 #, fuzzy
 msgid "Zaznacz wszystko"
@@ -3315,20 +5418,57 @@ msgstr "Gå til utvalg"
 msgid "Odznacz wszystko"
 msgstr "Fjern alle indeksfiler"
 
+#: OptionsDialog.cpp:953 OptionsDialog.cpp:956
+msgid "Zaawansowane"
+msgstr ""
+
+#: OptionsDialog.cpp:957
+msgid "Motywy"
+msgstr ""
+
 #: OptionsDialog.cpp:958
 #, fuzzy
 msgid "Skróty klawiszowe"
 msgstr "Spill til slutten"
+
+#: OptionsDialog.cpp:959
+msgid "Skojarzenia"
+msgstr ""
 
 #: OptionsDialog.cpp:960
 #, fuzzy
 msgid "Właściwości napisów"
 msgstr "Velg fil å fjerne"
 
+#: OptionsDialog.cpp:969
+msgid "Ustaw domyślne"
+msgstr ""
+
+#: OptionsPanels.cpp:29 ScriptInfo.cpp:33
+#, fuzzy
+msgid "Informacje o napisach"
+msgstr "Sekundærfarge"
+
+#: OptionsPanels.cpp:32 ScriptInfo.cpp:42 SubsGrid.cpp:1398
+msgid "Tytuł"
+msgstr ""
+
+#: OptionsPanels.cpp:32 ScriptInfo.cpp:44 SubsGrid.cpp:1398
+msgid "Autor"
+msgstr ""
+
 #: OptionsPanels.cpp:32 ScriptInfo.cpp:46 SubsGrid.cpp:1398
 #, fuzzy
 msgid "Tłumaczenie"
 msgstr "Gå til utvalg"
+
+#: OptionsPanels.cpp:32 ScriptInfo.cpp:48 SubsGrid.cpp:1398
+msgid "Korekta"
+msgstr ""
+
+#: OptionsPanels.cpp:32 ScriptInfo.cpp:50 SubsGrid.cpp:1398
+msgid "Timing"
+msgstr ""
 
 #: OptionsPanels.cpp:32 ScriptInfo.cpp:52 SubsGrid.cpp:1398
 #: VisualDrawingShapes.cpp:68
@@ -3336,10 +5476,28 @@ msgstr "Gå til utvalg"
 msgid "Edycja"
 msgstr "Velg farge"
 
+#: OptionsPanels.cpp:55
+msgid "Zawsze pytaj o zmianę informacji o napisach"
+msgstr ""
+
+#: ProgressDialog.cpp:43
+msgid "Upłynęło 00:00:00.00 sekund"
+msgstr ""
+
+#: ProgressDialog.cpp:111
+#, c-format
+msgid "Upłynęło %s sekund"
+msgstr ""
+
 #: ProviderFFMS2.cpp:43 VideoFfmpeg.cpp:57
 #, fuzzy
 msgid "Indeksowanie pliku wideo"
 msgstr "Velg fil å fjerne"
+
+#: ProviderFFMS2.cpp:247 VisualDrawingShapes.cpp:210
+#: VisualDrawingShapes.cpp:274
+msgid "Bez nazwy"
+msgstr ""
 
 #: ProviderFFMS2.cpp:264 VideoFfmpeg.cpp:272
 #, fuzzy
@@ -3377,6 +5535,24 @@ msgstr "Kan ikke åpne mappe med midlertidige filer"
 msgid "Nie można pobrać informacji o wideo"
 msgstr "Kan ikke åpne mappe med midlertidige filer"
 
+#: ProviderFFMS2.cpp:453 VideoFfmpeg.cpp:461
+#, c-format
+msgid "Wystąpił błąd tworzenia źródła audio: %s"
+msgstr ""
+
+#: ProviderFFMS2.cpp:462 VideoFfmpeg.cpp:470
+#, c-format
+msgid "Wystąpił błąd konwertowania audio: %s"
+msgstr ""
+
+#: ProviderFFMS2.cpp:475 VideoFfmpeg.cpp:483
+msgid "Nie można ustawić opóźnienia, przekracza czas trwania audio"
+msgstr ""
+
+#: ProviderFFMS2.cpp:654 VideoFfmpeg.cpp:723
+msgid "Za mało pamięci RAM"
+msgstr ""
+
 #: RendererDirectShow.cpp:59
 #, fuzzy
 msgid "Nie można stworzyć DXVA processor service"
@@ -3392,6 +5568,14 @@ msgstr "Kan ikke åpne mappe med midlertidige filer"
 msgid "Nie można uzyskać formatów DXVA"
 msgstr "Kan ikke åpne mappe med midlertidige filer"
 
+#: RendererDirectShow.cpp:98
+msgid "Ten format nie jest obsługiwany przez DXVA"
+msgstr ""
+
+#: RendererDirectShow.cpp:102
+msgid "GetVideoProcessorCaps zawiodło"
+msgstr ""
+
 #: RendererDirectShow.cpp:110
 #, fuzzy, c-format
 msgid "Nie można stworzyć powierzchni DXVA %i"
@@ -3402,10 +5586,18 @@ msgstr "Kan ikke åpne mappe med midlertidige filer"
 msgid "Nie można stworzyć processora DXVA"
 msgstr "Kan ikke åpne mappe med midlertidige filer"
 
+#: RendererDirectShow.cpp:122
+msgid "Zawiodło któreś z ustawień DirectX vertices"
+msgstr ""
+
 #: RendererDirectShow.cpp:146 RendererDirectShow.cpp:150
 #, fuzzy
 msgid "Nie można storzyć tekstury napisów"
 msgstr "Kan ikke åpne mappe med midlertidige filer"
+
+#: RendererDirectShow.cpp:175
+msgid "Brak bufora klatki"
+msgstr ""
 
 #: RendererDirectShow.cpp:198
 #, fuzzy
@@ -3437,10 +5629,39 @@ msgstr "Velg fil å fjerne"
 msgid "Z wideo"
 msgstr "Spill til slutten"
 
+#: ScriptInfo.cpp:65
+#, fuzzy
+msgid "Szerokość"
+msgstr "Velg fil å fjerne"
+
 #: ScriptInfo.cpp:67
 #, fuzzy
 msgid "Wysokość"
 msgstr "Velg fil å fjerne"
+
+#: ScriptInfo.cpp:85
+msgid "Macierz YCbCr"
+msgstr ""
+
+#: ScriptInfo.cpp:93
+msgid "0: Autopodział, górna linijka jest szersza"
+msgstr ""
+
+#: ScriptInfo.cpp:94
+msgid "1: Podział co koniec linijki, dzieli tylko \\N"
+msgstr ""
+
+#: ScriptInfo.cpp:95
+msgid "2: Brak podziału, dzieli \\n i \\N"
+msgstr ""
+
+#: ScriptInfo.cpp:96
+msgid "3: Autopodział, dolna linijka jest szersza"
+msgstr ""
+
+#: ScriptInfo.cpp:99
+msgid "Odwrócone"
+msgstr ""
 
 #: ScriptInfo.cpp:101
 #, fuzzy
@@ -3451,6 +5672,10 @@ msgstr "Spill forrige linje"
 #, fuzzy
 msgid "Kolidowanie linijek"
 msgstr "Spill forrige linje"
+
+#: ScriptInfo.cpp:106
+msgid "Skaluj obwódkę i cień"
+msgstr ""
 
 #: ScriptInfo.cpp:148
 #, fuzzy
@@ -3467,6 +5692,10 @@ msgstr "Velg fil å fjerne"
 msgid "Sposób dzielenia napisów"
 msgstr "Velg fil å fjerne"
 
+#: ScriptInfo.cpp:152
+msgid "Skalowana obwódka i cień"
+msgstr ""
+
 #: SelectLines.cpp:32 SelectLines.cpp:112 SelectLines.cpp:139
 #: SelectLines.cpp:235 SelectLines.cpp:277
 #, fuzzy
@@ -3476,6 +5705,11 @@ msgstr "Gå til utvalg"
 #: SelectLines.cpp:41
 #, fuzzy
 msgid "Zawiera"
+msgstr "Sekundærfarge"
+
+#: SelectLines.cpp:42
+#, fuzzy
+msgid "Nie zawiera"
 msgstr "Sekundærfarge"
 
 #: SelectLines.cpp:77
@@ -3491,6 +5725,11 @@ msgstr "Gå til utvalg"
 #: SelectLines.cpp:101
 #, fuzzy
 msgid "Dialogi / komentarze"
+msgstr "Velg farge"
+
+#: SelectLines.cpp:103
+#, fuzzy
+msgid "Dialogi"
 msgstr "Velg farge"
 
 #: SelectLines.cpp:105
@@ -3513,6 +5752,14 @@ msgstr "Gå til utvalg"
 msgid "Zaznaczenie"
 msgstr "Gå til utvalg"
 
+#: SelectLines.cpp:121
+msgid "Nie rób nic"
+msgstr ""
+
+#: SelectLines.cpp:123
+msgid "Wytnij"
+msgstr ""
+
 #: SelectLines.cpp:124
 #, fuzzy
 msgid "Przenieś na początek"
@@ -3527,6 +5774,10 @@ msgstr "Gå til utvalg"
 #, fuzzy
 msgid "Ustaw jako komentarz"
 msgstr "Velg farge"
+
+#: SelectLines.cpp:129
+msgid "Akcja"
+msgstr ""
 
 #: SelectLines.cpp:140
 #, fuzzy
@@ -3548,19 +5799,47 @@ msgstr "Gå til utvalg"
 msgid "Odznaczono %i linijek."
 msgstr "Gå til utvalg"
 
+#: ShiftTimes.cpp:54
+msgid ""
+"Wprowadź nazwę profilu,\n"
+"bądź wybierz istniejący, by nadpisać"
+msgstr ""
+
 #: ShiftTimes.cpp:84
 #, fuzzy, c-format
 msgid "Na pewno chcesz nadpisać profil o nazwie %s"
 msgstr "Kan ikke åpne mappe med midlertidige filer"
 
 #: ShiftTimes.cpp:257
+msgid "Post processor"
+msgstr ""
+
+#: ShiftTimes.cpp:257
 #, fuzzy
 msgid "Przesuwanie czasów"
 msgstr "Godkjenn endringer automatisk"
 
+#: ShiftTimes.cpp:266
+msgid "Czasy wyższe i równe"
+msgstr ""
+
+#: ShiftTimes.cpp:267
+msgid "Czasy niższe i równe"
+msgstr ""
+
 #: ShiftTimes.cpp:282
 #, fuzzy
 msgid "Edycja profilów"
+msgstr "Velg farge"
+
+#: ShiftTimes.cpp:283
+#, fuzzy
+msgid "Dodawanie i edycja profilów"
+msgstr "Velg farge"
+
+#: ShiftTimes.cpp:286
+#, fuzzy
+msgid "Usuwanie profilów"
 msgstr "Velg farge"
 
 #: ShiftTimes.cpp:299
@@ -3572,6 +5851,20 @@ msgstr "September"
 #, fuzzy
 msgid "Przesuń czas napisów"
 msgstr "Velg fil å fjerne"
+
+#: ShiftTimes.cpp:301
+#, fuzzy
+msgid "W przód"
+msgstr "Fjern alle filer"
+
+#: ShiftTimes.cpp:302
+msgid "W tył"
+msgstr ""
+
+#: ShiftTimes.cpp:304
+#, fuzzy
+msgid "Czasy tagów"
+msgstr "Velg farge"
 
 #: ShiftTimes.cpp:318
 #, fuzzy
@@ -3619,6 +5912,14 @@ msgstr "Lagre automatisk"
 msgid "Korekcja czasów końcowych"
 msgstr "Gå til utvalg"
 
+#: ShiftTimes.cpp:355
+msgid "Pozostaw bez zmian"
+msgstr ""
+
+#: ShiftTimes.cpp:356
+msgid "Skoryguj nachodzące czasy"
+msgstr ""
+
 #: ShiftTimes.cpp:357
 #, fuzzy
 msgid "Nowe czasy"
@@ -3628,6 +5929,10 @@ msgstr "Lagre automatisk"
 #, fuzzy
 msgid "Wstęp i zakończenie"
 msgstr "Gå til utvalg"
+
+#: ShiftTimes.cpp:379
+msgid "Uruchom postprocessor"
+msgstr ""
 
 #: ShiftTimes.cpp:398
 #, fuzzy
@@ -3684,6 +5989,10 @@ msgstr "Velg fil å fjerne"
 msgid "Wybierz style z listy"
 msgstr "Velg farge"
 
+#: ShiftTimes.cpp:528
+msgid "Przesuń według następujących stylów (oddzielone przecinkiem)"
+msgstr ""
+
 #: ShiftTimes.cpp:530
 #, fuzzy
 msgid "Czas przesunięcia"
@@ -3723,15 +6032,43 @@ msgstr "Spill til slutten"
 msgid "Przyspiesza napisy"
 msgstr "Velg fil å fjerne"
 
+#: ShiftTimes.cpp:537
+msgid "Przesuwa napisy o ustawiony czas / klatki"
+msgstr ""
+
+#: ShiftTimes.cpp:538
+msgid ""
+"Przesuwa czasy tagów \\move, \\t, \\fad tak,\n"
+"by ich pozycja na wideo się nie zmieniła\n"
+"(spowalnia przesuwanie czasów)"
+msgstr ""
+
 #: ShiftTimes.cpp:539
 #, fuzzy
 msgid "Wybór czasów do przesunięcia"
 msgstr "Velg fil å fjerne"
 
+#: ShiftTimes.cpp:540
+msgid "Korekcja czasów końcowych, gdy są niewłaściwe albo nachodzą na siebie"
+msgstr ""
+
 #: ShiftTimes.cpp:543
 #, fuzzy
 msgid "Wstawia wstęp do czasu początkowego, dobre przy stosowaniu fad"
 msgstr "Gå til utvalg"
+
+#: ShiftTimes.cpp:544
+msgid "Czas wstępu w milisekundach"
+msgstr ""
+
+#: ShiftTimes.cpp:545
+#, fuzzy
+msgid "Wstawia zakończenie do czasu końcowego, dobre przy stosowaniu fad"
+msgstr "Gå til utvalg"
+
+#: ShiftTimes.cpp:546
+msgid "Czas zakończenia w milisekundach"
+msgstr ""
 
 #: ShiftTimes.cpp:547
 #, fuzzy
@@ -3743,10 +6080,46 @@ msgstr "Gå til utvalg"
 msgid "Próg wydłużania czasu końcowego"
 msgstr "Gå til utvalg"
 
+#: ShiftTimes.cpp:549
+msgid ""
+"Maksymalne przesunięcie do klatki kluczowej\n"
+"przed czasem początkowym w milisekundach"
+msgstr ""
+
+#: ShiftTimes.cpp:550
+msgid ""
+"Maksymalne przesunięcie do klatki kluczowej\n"
+"po czasie początkowym w milisekundach"
+msgstr ""
+
+#: ShiftTimes.cpp:551
+msgid ""
+"Maksymalne przesunięcie do klatki kluczowej\n"
+"przed czasem końcowym w milisekundach"
+msgstr ""
+
+#: ShiftTimes.cpp:552
+msgid ""
+"Maksymalne przesunięcie do klatki kluczowej\n"
+"po czasie końcowym w milisekundach"
+msgstr ""
+
 #: ShiftTimes.cpp:948
 #, fuzzy
 msgid "Na liście nie wybrano profilu do usunięcia"
 msgstr "Velg fil å fjerne"
+
+#: ShiftTimes.cpp:953
+#, fuzzy, c-format
+msgid "Na pewno chcesz usunąć profil o nazwie \"%s\""
+msgstr "Kan ikke åpne mappe med midlertidige filer"
+
+#: SpellChecker.cpp:118
+#, c-format
+msgid ""
+"Brak plików słownika w folderze \"%s\\Dictionary\".\n"
+"Sprawdzanie pisowni zostanie wyłączone"
+msgstr ""
 
 #: SpellChecker.cpp:126
 #, fuzzy
@@ -3762,6 +6135,16 @@ msgstr "Kan ikke åpne mappe med midlertidige filer"
 #, fuzzy
 msgid "Ignoruj komentarze"
 msgstr "Velg farge"
+
+#: SpellCheckerDialog.cpp:44
+msgid ""
+"Ignoruj słowa całe pisane\n"
+"wielką literą"
+msgstr ""
+
+#: SpellCheckerDialog.cpp:49
+msgid "Błędne słowo:"
+msgstr ""
 
 #: SpellCheckerDialog.cpp:51
 #, fuzzy
@@ -3788,6 +6171,10 @@ msgstr "Gå til utvalg"
 msgid "Usuń ze słownika"
 msgstr "Gå til utvalg"
 
+#: SpellCheckerDialog.cpp:61
+msgid "Usuwa ze słownika słowa dodane przez użytkownika."
+msgstr ""
+
 #: SpellCheckerDialog.cpp:145
 #, fuzzy
 msgid "Nie znaleziono więcej błędów pisowni"
@@ -3803,25 +6190,180 @@ msgstr "Gå til utvalg"
 msgid "Edycja Stylu"
 msgstr "Velg farge"
 
+#: StyleChange.cpp:64
+#, fuzzy
+msgid "Nazwa stylu:"
+msgstr "Fjern alle filer"
+
+#: StyleChange.cpp:71
+#, fuzzy
+msgid "Czcionka i rozmiar:"
+msgstr "Velg fil å fjerne"
+
+#: StyleChange.cpp:87
+msgid "Umorzliwia zarządzanie katalogami czcionek"
+msgstr ""
+
+#: StyleChange.cpp:142
+msgid "Kolory i przezroczystość:"
+msgstr ""
+
+#: StyleChange.cpp:146
+msgid "Pierwszy"
+msgstr ""
+
+#: StyleChange.cpp:148
+msgid "Drugi"
+msgstr ""
+
+#: StyleChange.cpp:150
+msgid "Obwódka"
+msgstr ""
+
+#: StyleChange.cpp:152
+msgid "Cień"
+msgstr ""
+
+#: StyleChange.cpp:172
+#, fuzzy
+msgid "Obwódka:"
+msgstr "Skyggefarge"
+
+#: StyleChange.cpp:172
+msgid "Cień:"
+msgstr ""
+
+#: StyleChange.cpp:172
+msgid "Skala X:"
+msgstr ""
+
+#: StyleChange.cpp:172
+msgid "Skala Y:"
+msgstr ""
+
+#: StyleChange.cpp:187
+msgid "Kąt:"
+msgstr ""
+
+#: StyleChange.cpp:187
+msgid "Odstępy:"
+msgstr ""
+
 #: StyleChange.cpp:187
 #, fuzzy
 msgid "Typ obwódki:"
 msgstr "Skyggefarge"
+
+#: StyleChange.cpp:192
+msgid "Prost. obw."
+msgstr ""
 
 #: StyleChange.cpp:197
 #, fuzzy
 msgid "Margines lewy:"
 msgstr "Gå til utvalg"
 
+#: StyleChange.cpp:197
+msgid "Prawy:"
+msgstr ""
+
+#: StyleChange.cpp:197
+msgid "Pionowy:"
+msgstr ""
+
 #: StyleChange.cpp:211
 #, fuzzy
 msgid "Położenie tekstu:"
 msgstr "Fjern eldre indeksfiler"
 
+#: StyleChange.cpp:241
+msgid "0 - ANSI"
+msgstr ""
+
+#: StyleChange.cpp:242
+msgid "1 - Domyślny"
+msgstr ""
+
+#: StyleChange.cpp:243
+msgid "2 - Symbol"
+msgstr ""
+
+#: StyleChange.cpp:244
+msgid "77 - Mac"
+msgstr ""
+
+#: StyleChange.cpp:245
+msgid "128 - Japoński"
+msgstr ""
+
+#: StyleChange.cpp:246
+msgid "129 - Koreański"
+msgstr ""
+
+#: StyleChange.cpp:247
+msgid "130 - Johab"
+msgstr ""
+
+#: StyleChange.cpp:248
+msgid "134 - Chiński GB2312"
+msgstr ""
+
+#: StyleChange.cpp:249
+msgid "135 - Chiński BIG5"
+msgstr ""
+
+#: StyleChange.cpp:250
+msgid "161 - Grecki"
+msgstr ""
+
+#: StyleChange.cpp:251
+msgid "162 - Turecki"
+msgstr ""
+
+#: StyleChange.cpp:252
+msgid "163 - Wietnamski"
+msgstr ""
+
+#: StyleChange.cpp:253
+msgid "177 - Hebrajski"
+msgstr ""
+
+#: StyleChange.cpp:254
+msgid "178 - Arabski"
+msgstr ""
+
+#: StyleChange.cpp:255
+msgid "186 - Języki Bałtyckie"
+msgstr ""
+
+#: StyleChange.cpp:256
+msgid "204 - Rosyjski"
+msgstr ""
+
+#: StyleChange.cpp:257
+msgid "222 - Tajski"
+msgstr ""
+
+#: StyleChange.cpp:258
+msgid "238 - Europa Środkowa (Polski)"
+msgstr ""
+
+#: StyleChange.cpp:259
+msgid "255 - OEM"
+msgstr ""
+
 #: StyleChange.cpp:261
 #, fuzzy
 msgid "Kodowanie tekstu:"
 msgstr "Fjern eldre indeksfiler"
+
+#: StyleChange.cpp:265
+msgid "Podgląd stylu:"
+msgstr ""
+
+#: StyleChange.cpp:463
+msgid "Zmienić wszystkie zaznaczone style?"
+msgstr ""
 
 #: StyleChange.cpp:687
 #, fuzzy
@@ -3853,6 +6395,35 @@ msgstr "Skyggefarge"
 msgid "Przezroczystość koloru cienia, 0 - brak, 255 - przezroczystość"
 msgstr "Skyggefarge"
 
+#: StyleChange.cpp:702
+msgid "Obwódka w pikselach"
+msgstr ""
+
+#: StyleChange.cpp:703
+#, fuzzy
+msgid "Cień w pikselach"
+msgstr "Spill neste linje"
+
+#: StyleChange.cpp:704
+msgid "Skala X w procentach"
+msgstr ""
+
+#: StyleChange.cpp:705
+msgid "Skala Y w procentach"
+msgstr ""
+
+#: StyleChange.cpp:706
+msgid "Kąt w stopniach"
+msgstr ""
+
+#: StyleChange.cpp:707
+msgid "Odstępy między literami w pikselach (wartości ujemne dozwolone)"
+msgstr ""
+
+#: StyleChange.cpp:708
+msgid "Prostokątna obwódka"
+msgstr ""
+
 #: StyleChange.cpp:709 SubsGrid.cpp:454 SubsGrid.cpp:604
 #, fuzzy
 msgid "Margines prawy"
@@ -3867,6 +6438,42 @@ msgstr "Gå til utvalg"
 #, fuzzy
 msgid "Margines górny i dolny"
 msgstr "Fjern alle filer"
+
+#: StyleChange.cpp:712
+msgid "Lewy dolny róg"
+msgstr ""
+
+#: StyleChange.cpp:713
+msgid "Wyśrodkowane na dole"
+msgstr ""
+
+#: StyleChange.cpp:714
+msgid "Prawy dolny róg"
+msgstr ""
+
+#: StyleChange.cpp:715
+msgid "Wyśrodkowane po lewej"
+msgstr ""
+
+#: StyleChange.cpp:716
+msgid "Wyśrodkowane"
+msgstr ""
+
+#: StyleChange.cpp:717
+msgid "Wyśrodkowane po prawej"
+msgstr ""
+
+#: StyleChange.cpp:718
+msgid "Lewy górny róg"
+msgstr ""
+
+#: StyleChange.cpp:719
+msgid "Wyśrodkowane u góry"
+msgstr ""
+
+#: StyleChange.cpp:720
+msgid "Prawy górny róg"
+msgstr ""
 
 #: StyleChange.cpp:721
 #, fuzzy
@@ -3927,6 +6534,16 @@ msgstr "Lagre automatisk"
 #, fuzzy
 msgid "Edycja linii"
 msgstr "Velg farge"
+
+#: SubsFile.cpp:117
+#, fuzzy
+msgid "Edycja wielu linii"
+msgstr "Velg farge"
+
+#: SubsFile.cpp:118
+#, fuzzy
+msgid "Poprawa błędu pisowni w polu tekstowym"
+msgstr "Rediger"
 
 #: SubsFile.cpp:119
 #, fuzzy
@@ -4048,10 +6665,18 @@ msgstr "Spill nåværende linje"
 msgid "Wstawienie linii"
 msgstr "Fjern alle filer"
 
+#: SubsFile.cpp:143
+msgid "Zmiana czasu na wykresie audio"
+msgstr ""
+
 #: SubsFile.cpp:144
 #, fuzzy
 msgid "Przyklejenie do klatki kluczowej"
 msgstr "Spill til slutten"
+
+#: SubsFile.cpp:145
+msgid "Zmiana nagłówku napisów"
+msgstr ""
 
 #: SubsFile.cpp:146
 #, fuzzy
@@ -4078,6 +6703,56 @@ msgstr "Velg farge"
 msgid "Zmiana rozdzielczości napisów"
 msgstr "Velg fil å fjerne"
 
+#: SubsFile.cpp:151
+#, fuzzy
+msgid "Narzędzie pozycjonowania"
+msgstr "September"
+
+#: SubsFile.cpp:152
+msgid "Narzędzie ruchu"
+msgstr ""
+
+#: SubsFile.cpp:153
+msgid "Narzędzie skalowania"
+msgstr ""
+
+#: SubsFile.cpp:154
+msgid "Narzędzie obrotów w osi Z"
+msgstr ""
+
+#: SubsFile.cpp:155
+msgid "Narzędzie obrotów w osiach X i Y"
+msgstr ""
+
+#: SubsFile.cpp:156
+msgid "Narzędzie wycinków prostokątnych"
+msgstr ""
+
+#: SubsFile.cpp:157
+msgid "Narzędzie wycinków wektorowych"
+msgstr ""
+
+#: SubsFile.cpp:158
+msgid "Narzędzie rysunków wektorowych"
+msgstr ""
+
+#: SubsFile.cpp:159
+msgid "Narzędzie zmieniacz pozycji"
+msgstr ""
+
+#: SubsFile.cpp:160
+msgid "Narzędzie zmieniacz skali i obrotów"
+msgstr ""
+
+#: SubsFile.cpp:161
+msgid "Narzędzie hydra"
+msgstr ""
+
+#: SubsFile.cpp:164
+#, fuzzy
+msgid "Poprawa drobnych błędów"
+msgstr "Rediger"
+
 #: SubsFile.cpp:165
 #, fuzzy
 msgid "Wstawienie drzewka"
@@ -4102,6 +6777,11 @@ msgstr "Fjern eldre indeksfiler"
 #, fuzzy
 msgid "Skrypt automatyzacji"
 msgstr "Automasjonsfeil"
+
+#: SubsFile.cpp:682
+#, c-format
+msgid ", aktywna linia %i"
+msgstr ""
 
 #: SubsGrid.cpp:159
 #, fuzzy
@@ -4153,10 +6833,24 @@ msgstr "Spill neste linje"
 msgid "Kopiuj\tCtrl-C"
 msgstr "Velg farge"
 
+#: SubsGrid.cpp:210
+#, fuzzy
+msgid "Wytnij\tCtrl-X"
+msgstr "Velg farge"
+
+#: SubsGrid.cpp:211
+msgid "Wklej\tCtrl-V"
+msgstr ""
+
 #: SubsGrid.cpp:214
 #, fuzzy
 msgid "Ukryj kolumny"
 msgstr "Velg farge"
+
+#: SubsGrid.cpp:216
+#, fuzzy
+msgid "Filtrowanie"
+msgstr "Gå til utvalg"
 
 #: SubsGrid.cpp:232
 #, fuzzy
@@ -4198,15 +6892,52 @@ msgstr "Gå til utvalg"
 msgid "Tekst do tłumaczenia"
 msgstr "Gå til utvalg"
 
+#: SubsGrid.cpp:608
+msgid "Tekst bez tagów"
+msgstr ""
+
+#: SubsGrid.cpp:873
+#, fuzzy
+msgid "Pliki napisów (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"
+msgstr "Velg fil å fjerne"
+
+#: SubsGrid.cpp:1064
+msgid "Zapisać plik przed wczytaniem napisów z MKV?"
+msgstr ""
+
+#: SubsGrid.cpp:1098
+msgid "Otwieranie napisów nie powiodło się"
+msgstr ""
+
+#: SubsGrid.cpp:1233 SubsGrid.cpp:1263 SubsGrid.cpp:1283
+#, c-format
+msgid ""
+"W linii %i nie można przeskalować wartości '%s'\n"
+"w tagu '%s'"
+msgstr ""
+
 #: SubsGrid.cpp:1409
 #, fuzzy
 msgid "Wyłącz potwierdzenie"
 msgstr "Spill forrige linje"
 
+#: SubsGridBase.cpp:222
+msgid "Nieprawidłowy FPS. Popraw opcje i spróbuj ponownie."
+msgstr ""
+
+#: SubsGridBase.cpp:503 SubsGridBase.cpp:660
+msgid "Wideo nie zostało wczytane przez FFMS2"
+msgstr ""
+
 #: SubsGridBase.cpp:532
 #, fuzzy
 msgid "Nie wybrano stylów do przesunięcia"
 msgstr "Velg fil å fjerne"
+
+#: SubsGridBase.cpp:550
+#, c-format
+msgid "Czy naprawdę chcesz przesuwać tylko czasy %s?"
+msgstr ""
 
 #: SubsGridBase.cpp:551
 #, fuzzy
@@ -4222,6 +6953,12 @@ msgstr "Gå til utvalg"
 #, fuzzy
 msgid "Nie zaznaczono linii do przesunięcia"
 msgstr "Velg fil å fjerne"
+
+#: SubsGridBase.cpp:1407
+msgid ""
+"Czy na pewno chcesz wyłączyć tryb tłumacza?\n"
+"Obcojęzyczny tekst przetłumaczonych linijek zostanie usunięty."
+msgstr ""
 
 #: SubsGridDialogs.cpp:23
 #, fuzzy
@@ -4243,6 +6980,10 @@ msgstr "Velg fil å fjerne"
 msgid "Zmień FPS"
 msgstr "Spill neste linje"
 
+#: SubsGridDialogs.cpp:69
+msgid "Niewłaściwy fps"
+msgstr ""
+
 #: SubsGridDialogs.cpp:73 SubsGridDialogs.cpp:77
 #, fuzzy
 msgid "Opis drzewka"
@@ -4258,10 +6999,61 @@ msgstr "Fjern alle filer"
 msgid "Zmień nazwę drzewka"
 msgstr "Sekundærfarge"
 
+#: SubsGridWindow.cpp:248 SubsGridWindow.cpp:636 SubsGridWindow.cpp:1072
+#: SubsGridWindow.cpp:1238
+msgid "W."
+msgstr ""
+
+#: SubsGridWindow.cpp:250 SubsGridWindow.cpp:638 SubsGridWindow.cpp:1072
+#: SubsGridWindow.cpp:1079 SubsGridWindow.cpp:1238 SubsGridWindow.cpp:1245
+msgid "Start"
+msgstr ""
+
+#: SubsGridWindow.cpp:257 SubsGridWindow.cpp:645
+msgid "M.L."
+msgstr ""
+
+#: SubsGridWindow.cpp:258 SubsGridWindow.cpp:646
+msgid "M.P."
+msgstr ""
+
+#: SubsGridWindow.cpp:259 SubsGridWindow.cpp:647 SubsGridWindow.cpp:1104
+#: SubsGridWindow.cpp:1270
+msgid "M.Pi."
+msgstr ""
+
+#: SubsGridWindow.cpp:262 SubsGridWindow.cpp:651 SubsGridWindow.cpp:1118
+#: SubsGridWindow.cpp:1284
+msgid "ZNS"
+msgstr ""
+
+#: SubsGridWindow.cpp:263 SubsGridWindow.cpp:653 SubsGridWindow.cpp:1123
+#: SubsGridWindow.cpp:1289
+msgid "Łamania"
+msgstr ""
+
+#: SubsGridWindow.cpp:264 SubsGridWindow.cpp:654
+#, fuzzy
+msgid "Tekst oryginalny"
+msgstr "Gå til utvalg"
+
 #: SubsGridWindow.cpp:265 SubsGridWindow.cpp:655 TLDialog.cpp:44
 #, fuzzy
 msgid "Tekst tłumaczenia"
 msgstr "Gå til utvalg"
+
+#: SubsGridWindow.cpp:2015
+msgid ""
+"Nie można wyświetlić podglądu, ponieważ wielkość okna napisów jest zbyt mała"
+msgstr ""
+
+#: SubsLoader.cpp:76
+msgid "Ten plik napisów jest zwykłym tekstem, zostaje otwarty jako napisy ASS"
+msgstr ""
+
+#: SubsLoader.cpp:85
+msgid "Niepoprawny format (plik uszkodzony lub zawiera błędy)"
+msgstr ""
 
 #: SubsResampleDialog.cpp:26
 #, fuzzy
@@ -4283,15 +7075,70 @@ msgstr "Velg fil å fjerne"
 msgid "Pobierz z wideo"
 msgstr "Velg fil å fjerne"
 
+#: SubsResampleDialog.cpp:70
+msgid "Nie rozciągaj"
+msgstr ""
+
+#: SubsResampleDialog.cpp:71
+msgid "Rozciągaj"
+msgstr ""
+
+#: SubsResampleDialog.cpp:72 SubsResampleDialog.cpp:177
+#, fuzzy
+msgid "Opcje skalowania"
+msgstr "Gå til utvalg"
+
+#: SubsResampleDialog.cpp:163
+#, fuzzy
+msgid "Niezgodna rozdzielczość"
+msgstr "Velg fil å fjerne"
+
+#: SubsResampleDialog.cpp:167
+#, c-format
+msgid ""
+"Rozdzielczości wideo i napisów się różnią.\n"
+"Możesz zmienić je teraz lub skorzystać ze 'zmień rozdzielczość napisów'.\n"
+"\n"
+"Rozdzielczość wideo: %i x %i\n"
+"Rozdzielczość napisów: %i x %i\n"
+"\n"
+"Dopasować rozdzielczość do wideo?\n"
+msgstr ""
+
 #: SubsResampleDialog.cpp:172
 #, fuzzy
 msgid "Zmień wyłącznie rozdzielczość napisów"
 msgstr "Velg fil å fjerne"
 
+#: SubsResampleDialog.cpp:173
+msgid "Dopasuj skrypt napisów do rozdzielczości wideo (Nie rozciągaj)"
+msgstr ""
+
+#: SubsResampleDialog.cpp:175
+msgid "Dopasuj skrypt napisów do rozdzielczości wideo (Rozciągnij)"
+msgstr ""
+
 #: SubsResampleDialog.cpp:179
 #, fuzzy
 msgid "Zmień"
 msgstr "Spill neste linje"
+
+#: SubsResampleDialog.cpp:184
+msgid "Nie zmieniaj"
+msgstr ""
+
+#: SubsResampleDialog.cpp:185
+#, fuzzy
+msgid "Wyłącz ostrzeżenie"
+msgstr "Spill forrige linje"
+
+#: SubtitlesLibass.cpp:154
+msgid "Libass działa tylko z FFMS2"
+msgstr ""
+
+#: SubtitlesLibass.cpp:211
+msgid "Libass otwiera tylko napisy ASS i SSA"
+msgstr ""
 
 #: SubtitlesLibass.cpp:237
 #, fuzzy
@@ -4308,6 +7155,11 @@ msgstr "Kan ikke åpne mappe med midlertidige filer"
 msgid "Nie można utworzyć instancji CSRI."
 msgstr "Kan ikke åpne mappe med midlertidige filer"
 
+#: SubtitlesVSFilter.cpp:142 SubtitlesVSFilter.cpp:188
+#: SubtitlesVSFilter.cpp:272
+msgid "CSRI nie obsługuje tego formatu."
+msgstr ""
+
 #: TLDialog.cpp:23
 #, fuzzy
 msgid "Opcje dopasowywania tłumaczenia"
@@ -4318,15 +7170,65 @@ msgstr "Gå til utvalg"
 msgid "Usuń linię"
 msgstr "Fjern midlertidige filer"
 
+#: TLDialog.cpp:31
+msgid ""
+"Usuwa zaznaczoną linijkę.\n"
+"Tłumaczenie idzie do góry."
+msgstr ""
+
 #: TLDialog.cpp:32 TLDialog.cpp:40 VideoToolbar.cpp:61
 #, fuzzy
 msgid "Dodaj linię"
 msgstr "Spill nåværende linje"
 
+#: TLDialog.cpp:33
+msgid ""
+"Dodaje pustą linijkę przed zaznaczoną.\n"
+"Tłumaczenie idzie w dół."
+msgstr ""
+
 #: TLDialog.cpp:34 TLDialog.cpp:36
 #, fuzzy
 msgid "Złącz linie"
 msgstr "Spill forrige linje"
+
+#: TLDialog.cpp:35
+msgid ""
+"Złącza następną linijkę z zaznaczoną.\n"
+"Tłumaczenie idzie do góry."
+msgstr ""
+
+#: TLDialog.cpp:37
+msgid ""
+"Złącza następną linijkę z zaznaczoną.\n"
+"Oryginał idzie w górę."
+msgstr ""
+
+#: TLDialog.cpp:39
+msgid ""
+"Usuwa zaznaczoną linijkę.\n"
+"Oryginał idzie do góry."
+msgstr ""
+
+#: TLDialog.cpp:41
+msgid ""
+"Dodaje pustą linijkę przed zaznaczoną.\n"
+"Oryginał idzie w dół.\n"
+"Dodanej linii należy ustawić czasy."
+msgstr ""
+
+#: TLDialog.cpp:43
+#, fuzzy
+msgid "Tekst oryginału"
+msgstr "Gå til utvalg"
+
+#: TLDialog.cpp:55
+msgid ""
+"Objaśnienie:\n"
+"Oryginał - tekst napisów z właściwym timingiem służy\n"
+"do porównania wklejanych dialogów, później zostaje usunięty.\n"
+"Tłumaczenie - tekst wklejony do napisów z poprawnym timingiem."
+msgstr ""
 
 #: TextEditorTagList.cpp:132
 #, fuzzy
@@ -4337,6 +7239,10 @@ msgstr "Fjern alle filer"
 #, fuzzy
 msgid "Pokaż wszystkie tagi"
 msgstr "Fjern alle filer"
+
+#: TextEditorTagList.cpp:134
+msgid "Pokaż tagi VSFiltermoda"
+msgstr ""
 
 #: TextEditorTagList.cpp:339
 #, fuzzy
@@ -4438,10 +7344,22 @@ msgstr "Skyggefarge"
 msgid "Pogrubienie tekstu"
 msgstr "Fjern eldre indeksfiler"
 
+#: TextEditorTagList.cpp:363
+msgid "Rozmycie krawędzi"
+msgstr ""
+
+#: TextEditorTagList.cpp:364
+msgid "Rozmycie"
+msgstr ""
+
 #: TextEditorTagList.cpp:365
 #, fuzzy
 msgid "Grubość obwódki"
 msgstr "Skyggefarge"
+
+#: TextEditorTagList.cpp:366
+msgid "Wycinki wektorowe / prostokątne"
+msgstr ""
 
 #: TextEditorTagList.cpp:367
 #, fuzzy
@@ -4453,6 +7371,19 @@ msgstr "Fjern alle filer"
 msgid "Pojawianie / znikanie tekstu"
 msgstr "Fjern eldre indeksfiler"
 
+#: TextEditorTagList.cpp:369
+#, fuzzy
+msgid "Pojawianie / znikanie tekstu (zaawansowana wersja)"
+msgstr "Fjern eldre indeksfiler"
+
+#: TextEditorTagList.cpp:370
+msgid "Pochylenie w osi X"
+msgstr ""
+
+#: TextEditorTagList.cpp:371
+msgid "Pochylenie w osi Y"
+msgstr ""
+
 #: TextEditorTagList.cpp:372
 #, fuzzy
 msgid "Kodowanie znaków tekstu"
@@ -4463,25 +7394,105 @@ msgstr "Fjern eldre indeksfiler"
 msgid "Zaokrąglenie tekstu"
 msgstr "Fjern eldre indeksfiler"
 
+#: TextEditorTagList.cpp:375
+msgid "Obrót w osi X"
+msgstr ""
+
+#: TextEditorTagList.cpp:376
+msgid "Obrót w osi Y"
+msgstr ""
+
+#: TextEditorTagList.cpp:377
+msgid "Obrót w osi Z"
+msgstr ""
+
 #: TextEditorTagList.cpp:378
 #, fuzzy
 msgid "Wielkość czcionki"
 msgstr "Fjern alle filer"
+
+#: TextEditorTagList.cpp:379
+msgid "Skala w osi X i Y"
+msgstr ""
+
+#: TextEditorTagList.cpp:380
+msgid "Skala w osi X"
+msgstr ""
+
+#: TextEditorTagList.cpp:381
+msgid "Skala w osi Y"
+msgstr ""
+
+#: TextEditorTagList.cpp:382
+msgid "Odstępy między znakami"
+msgstr ""
+
+#: TextEditorTagList.cpp:383
+msgid "Odstęp między znakami w pionie"
+msgstr ""
 
 #: TextEditorTagList.cpp:384
 #, fuzzy
 msgid "Kursywa / pochylenie tekstu"
 msgstr "Fjern eldre indeksfiler"
 
+#: TextEditorTagList.cpp:385
+msgid "Odwrócone wycinki wektorowe / prostokątne"
+msgstr ""
+
 #: TextEditorTagList.cpp:386
 #, fuzzy
 msgid "Trzęsienie tekstu"
 msgstr "Fjern eldre indeksfiler"
 
+#: TextEditorTagList.cpp:387
+msgid "Timing karaoke"
+msgstr ""
+
+#: TextEditorTagList.cpp:388
+msgid "Timing karaoke płynne przejście"
+msgstr ""
+
+#: TextEditorTagList.cpp:389
+msgid "Timing karaoke obwódka"
+msgstr ""
+
+#: TextEditorTagList.cpp:390
+msgid "Timing karaoke (nieobsługiwane)"
+msgstr ""
+
 #: TextEditorTagList.cpp:391
 #, fuzzy
 msgid "Ruch tekstu"
 msgstr "Fjern eldre indeksfiler"
+
+#: TextEditorTagList.cpp:392
+msgid "Ruch po okręgu"
+msgstr ""
+
+#: TextEditorTagList.cpp:393
+msgid "Ruch po krzywej (3 punkty)"
+msgstr ""
+
+#: TextEditorTagList.cpp:394
+msgid "Ruch po krzywej (4 punkty)"
+msgstr ""
+
+#: TextEditorTagList.cpp:395
+msgid "Ruch rysunku wektorowego"
+msgstr ""
+
+#: TextEditorTagList.cpp:396
+msgid "Kotwica dla obrotów"
+msgstr ""
+
+#: TextEditorTagList.cpp:397
+msgid "Rysunek wektorowy i skala"
+msgstr ""
+
+#: TextEditorTagList.cpp:398
+msgid "Przesunięcie punktów wektora w osi Y"
+msgstr ""
 
 #: TextEditorTagList.cpp:399
 #, fuzzy
@@ -4492,6 +7503,31 @@ msgstr "Fjern eldre indeksfiler"
 #, fuzzy
 msgid "Sposób łamania linii"
 msgstr "Gå til utvalg"
+
+#: TextEditorTagList.cpp:401
+#, fuzzy
+msgid "Reset tagów"
+msgstr "Godkjenn endringer automatisk"
+
+#: TextEditorTagList.cpp:402
+msgid "Losowość punktów czcionki"
+msgstr ""
+
+#: TextEditorTagList.cpp:403
+msgid "Losowość punktów czcionki seed"
+msgstr ""
+
+#: TextEditorTagList.cpp:404
+msgid "Losowość punktów czcionki oś X"
+msgstr ""
+
+#: TextEditorTagList.cpp:405
+msgid "Losowość punktów czcionki oś Y"
+msgstr ""
+
+#: TextEditorTagList.cpp:406
+msgid "Losowość punktów czcionki oś Z"
+msgstr ""
 
 #: TextEditorTagList.cpp:407
 #, fuzzy
@@ -4513,6 +7549,26 @@ msgstr "Fjern eldre indeksfiler"
 msgid "Podkreślenie tekstu"
 msgstr "Fjern eldre indeksfiler"
 
+#: TextEditorTagList.cpp:411
+msgid "Obwódka w osi X"
+msgstr ""
+
+#: TextEditorTagList.cpp:412
+msgid "Obwódka w osi Y"
+msgstr ""
+
+#: TextEditorTagList.cpp:413
+msgid "Cień w osi X"
+msgstr ""
+
+#: TextEditorTagList.cpp:414
+msgid "Cień w osi Y"
+msgstr ""
+
+#: TextEditorTagList.cpp:415
+msgid "Koordynata Z dla tagów \\frx i \\fry"
+msgstr ""
+
 #: Toolbar.cpp:84
 #, fuzzy, c-format
 msgid "Nie można znaleźć elementu o id %i"
@@ -4522,6 +7578,22 @@ msgstr "Kan ikke åpne mappe med midlertidige filer"
 #, fuzzy
 msgid "Wybierz ikony paska narzędzi"
 msgstr "Velg farge"
+
+#: Toolbar.cpp:461
+msgid "Po lewej"
+msgstr ""
+
+#: Toolbar.cpp:461
+msgid "U góry"
+msgstr ""
+
+#: Toolbar.cpp:461
+msgid "Po prawej"
+msgstr ""
+
+#: Toolbar.cpp:461
+msgid "Na dole"
+msgstr ""
 
 #: Toolbar.cpp:466
 #, fuzzy
@@ -4533,20 +7605,90 @@ msgstr "Velg farge"
 msgid "Nie można pobrać informacji o monitorze"
 msgstr "Kan ikke åpne mappe med midlertidige filer"
 
+#: VideoBox.cpp:103 VideoBox.cpp:117
+#, c-format
+msgid "Proporcje ekranu: %5.3f"
+msgstr ""
+
 #: VideoBox.cpp:151 VideoFullscreen.cpp:58
 #, fuzzy
 msgid "Odtwórz aktywną linię"
 msgstr "Spill nåværende linje"
+
+#: VideoBox.cpp:300
+msgid ""
+"Plik nie jest poprawnym plikiem wideo albo jest uszkodzony,\n"
+"bądź brakuje kodeków czy też splittera"
+msgstr ""
+
+#: VideoBox.cpp:803
+#, fuzzy
+msgid "Czy na pewno chcesz zindeksować poprzednie wideo?"
+msgstr "Kan ikke åpne mappe med midlertidige filer"
+
+#: VideoBox.cpp:815
+msgid "Czy na pewno chcesz zindeksować następne wideo?"
+msgstr ""
 
 #: VideoBox.cpp:834
 #, fuzzy
 msgid "Odtwórz"
 msgstr "Spill til slutten"
 
+#: VideoBox.cpp:835
+msgid "Pauza"
+msgstr ""
+
+#: VideoBox.cpp:838
+#, fuzzy
+msgid "Kopiuj pozycję na wideo"
+msgstr "Gå til utvalg"
+
+#: VideoBox.cpp:843
+msgid "Pełny ekran\tF"
+msgstr ""
+
+#: VideoBox.cpp:844
+msgid "Wyłącz pełny ekran\tEscape"
+msgstr ""
+
+#: VideoBox.cpp:852
+#, c-format
+msgid "Przełącz pełny ekran na %i monitor"
+msgstr ""
+
+#: VideoBox.cpp:853
+#, c-format
+msgid "Włącz pełny ekran na %i monitorze"
+msgstr ""
+
 #: VideoBox.cpp:857
 #, fuzzy
 msgid "Otwórz edytor"
 msgstr "Spill til slutten"
+
+#: VideoBox.cpp:894
+msgid "Filtry"
+msgstr ""
+
+#: VideoBox.cpp:894
+msgid "Wyświetla użyte filtry"
+msgstr ""
+
+#: VideoBox.cpp:978
+msgid "Czy na pewno chcesz przenieść wczytany plik wideo do kosza?"
+msgstr ""
+
+#: VideoBox.cpp:978
+msgid "Usuwanie"
+msgstr ""
+
+#: VideoBox.cpp:991
+msgid ""
+"Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
+"(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|"
+"Wszystkie pliki (*.*)|*.*"
+msgstr ""
 
 #: VideoBox.cpp:1006
 #, fuzzy
@@ -4563,25 +7705,81 @@ msgstr "Velg fil å fjerne"
 msgid "Pokaż pasek narzędzi"
 msgstr "Fjern alle filer"
 
+#: VideoToolbar.cpp:43
+msgid "Wskaźnik pozycji"
+msgstr ""
+
 #: VideoToolbar.cpp:44
 #, fuzzy
 msgid "Przesuwanie tekstu"
 msgstr "Fjern eldre indeksfiler"
+
+#: VideoToolbar.cpp:45
+msgid "Ruch"
+msgstr ""
 
 #: VideoToolbar.cpp:46
 #, fuzzy
 msgid "Skalowanie"
 msgstr "Gå til utvalg"
 
+#: VideoToolbar.cpp:47
+msgid "Obrót wokół osi Z"
+msgstr ""
+
+#: VideoToolbar.cpp:48
+msgid "Obrót wokół osi X / Y"
+msgstr ""
+
+#: VideoToolbar.cpp:49
+msgid "Wycinki prostokątne"
+msgstr ""
+
+#: VideoToolbar.cpp:50
+msgid "Wycinki wektorowe"
+msgstr ""
+
+#: VideoToolbar.cpp:51
+msgid "Rysunki wektorowe"
+msgstr ""
+
+#: VideoToolbar.cpp:52
+msgid "Zmieniacz pozycji"
+msgstr ""
+
+#: VideoToolbar.cpp:53
+msgid "Hydra"
+msgstr ""
+
+#: VideoToolbar.cpp:56
+msgid "Zmieniacz skali i obrotów"
+msgstr ""
+
 #: VideoToolbar.cpp:60
 #, fuzzy
 msgid "Przesuń punkty"
 msgstr "September"
 
+#: VideoToolbar.cpp:62
+msgid "Dodaj krzywą Beziera"
+msgstr ""
+
+#: VideoToolbar.cpp:63
+msgid "Dodaj krzywą B-sklejaną"
+msgstr ""
+
+#: VideoToolbar.cpp:64
+msgid "Dodaj nowy oddzielny punkt"
+msgstr ""
+
 #: VideoToolbar.cpp:65
 #, fuzzy
 msgid "Usuń element"
 msgstr "Fjern eldre indeksfiler"
+
+#: VideoToolbar.cpp:66
+msgid "Odwróć wycinek"
+msgstr ""
 
 #: VideoToolbar.cpp:69
 #, fuzzy
@@ -4603,20 +7801,137 @@ msgstr "September"
 msgid "Przenieś wycinki"
 msgstr "September"
 
+#: VideoToolbar.cpp:73
+msgid ""
+"Przenieś rysunki,\n"
+"używać tylko w przypadku,\n"
+"gdy chcemy przesunąć punkty rysunku,\n"
+"nie łączyć z trzema pierwszymi opcjami"
+msgstr ""
+
 #: VideoToolbar.cpp:74
 #, fuzzy
 msgid "Przenieś punkty org"
 msgstr "September"
+
+#: VideoToolbar.cpp:77
+msgid ""
+"Ustaw kąt z 2 punktów.\n"
+"Po ustawieniu 2 punktów pod tekstem\n"
+"na wideo oblicza z nich kąt."
+msgstr ""
+
+#: VideoToolbar.cpp:78
+#, fuzzy
+msgid "Zmiana wszystkich tagów obrotu wokół osi Z"
+msgstr "Fjern alle indeksfiler"
+
+#: VideoToolbar.cpp:79
+msgid ""
+"Utrzymanie proporcji, by po obrocie rysunki wektorowe i tekst\n"
+"nie poprzestawiały się względem siebie."
+msgstr ""
+
+#: VideoToolbar.cpp:82
+msgid ""
+"Ustaw skalę według prostokąta.\n"
+"Po narysowaniu prostokąta tekst zostanie\n"
+"zeskalowany wg jednej osi badź dwóch."
+msgstr ""
+
+#: VideoToolbar.cpp:83
+#, fuzzy
+msgid "Skaluj szerokość"
+msgstr "Velg fil å fjerne"
+
+#: VideoToolbar.cpp:84
+msgid "Utrzymuj proporcje"
+msgstr ""
+
+#: VideoToolbar.cpp:85
+#, fuzzy
+msgid "Skaluj wysokość"
+msgstr "Velg fil å fjerne"
+
+#: VideoToolbar.cpp:86
+msgid ""
+"Ustaw własny prostokąt dla obecnej skali.\n"
+"W przypadku niepożądanych różnic można ustawić\n"
+"własny prostokąt dla pierwotnej skali."
+msgstr ""
 
 #: VideoToolbar.cpp:87
 #, fuzzy
 msgid "Zmiana wszystkich tagów skali"
 msgstr "Fjern alle indeksfiler"
 
+#: VideoToolbar.cpp:88
+msgid ""
+"Utrzymanie proporcji, by po skalowaniu rysunki wektorowe i tekst\n"
+"nie poprzestawiały się względem siebie."
+msgstr ""
+
+#: VideoToolbar.cpp:91
+msgid ""
+"Ustaw pozycję według prostokąta.\n"
+"Po narysowaniu prostokąta tekst zostanie\n"
+"spozycjonowany wg jednej osi badź dwóch\n"
+"dla wybranego położenia."
+msgstr ""
+
+#: VideoToolbar.cpp:92
+msgid "Pozycjonuj w osi X"
+msgstr ""
+
+#: VideoToolbar.cpp:93
+msgid "Pozycjonuj w osi Y"
+msgstr ""
+
+#: VideoToolbar.cpp:96
+msgid ""
+"Ustaw ruch 2 punktów i pozycji wideo.\n"
+"Po ustawieniu pierwszego punktu przed tekstem który się porusza.\n"
+"Przesunięciu wideo o tyle klatek,\n"
+"by na wideo wciąż był widoczny ten sam element,\n"
+"do którego był ustawiony punkt początkowy.\n"
+"Ruch generuje postawienie drugiego punktu."
+msgstr ""
+
+#: VideoToolbar.cpp:99
+#, fuzzy
+msgid "Zmiana wszystkich tagów obrotu wokół osi X / Y"
+msgstr "Fjern alle indeksfiler"
+
+#: VideoToolbar.cpp:129
+msgid "Dwukrotnym kliknięciu linii (zawsze włączone)"
+msgstr ""
+
 #: VideoToolbar.cpp:129
 #, fuzzy
 msgid "Każdej zmianie linii"
 msgstr "Spill forrige linje"
+
+#: VideoToolbar.cpp:130
+msgid "Kliknięciu linii lub edycji na pauzie"
+msgstr ""
+
+#: VideoToolbar.cpp:130
+msgid "Kliknięciu linii lub edycji"
+msgstr ""
+
+#: VideoToolbar.cpp:131
+#, fuzzy
+msgid "Edycji na pauzie"
+msgstr "Velg farge"
+
+#: VideoToolbar.cpp:131
+#, fuzzy
+msgid "Edycji"
+msgstr "Velg farge"
+
+#: VideoToolbar.cpp:132
+msgid "Nic"
+msgstr ""
 
 #: VideoToolbar.cpp:132
 #, fuzzy
@@ -4648,6 +7963,31 @@ msgstr "Spill forrige linje"
 msgid "Wybierz"
 msgstr "Velg farge"
 
+#: VideoToolbar.cpp:512
+msgid ""
+"Lista gotowych rysunków ASS z możliwością edycji.\n"
+"Po wybraniu rysunku z listy należy ustawić kursor\n"
+"w miejcu początku przytrzymać lewy przycisk myszy i przeciągnąć."
+msgstr ""
+
+#: VideoToolbar.cpp:735
+msgid "Lista z tagami obsługiwanymi przez narzędzie"
+msgstr ""
+
+#: VideoToolbar.cpp:737 VisualAllTagsEdition.cpp:86
+#, fuzzy
+msgid "Wstaw"
+msgstr "Fjern alle filer"
+
+#: VideoToolbar.cpp:737 VisualAllTagsEdition.cpp:86
+msgid "Pomnóż"
+msgstr ""
+
+#: VideoToolbar.cpp:737 VideoToolbar.cpp:738 VideoToolbar.cpp:789
+#: VisualAllTagsEdition.cpp:86
+msgid "Pomnóż+"
+msgstr ""
+
 #: VideoToolbar.cpp:737 VisualAllTagsEdition.cpp:86
 #, fuzzy
 msgid "Gradient tekst"
@@ -4657,6 +7997,108 @@ msgstr "Skyggefarge"
 #, fuzzy
 msgid "Gradient linia"
 msgstr "Skyggefarge"
+
+#: VideoToolbar.cpp:740
+msgid ""
+"Opcje zmiany tagów:\n"
+"Dodaj - zmienia wszystkie tagi dodając ruch z suwaka.\n"
+"Wstaw - wstawia w miejsce kursora w przypadku jednej linii\n"
+"albo na początku w przypadku wielu linii.\n"
+"Pomnóż - mnoży ruch suwaka przez numer zaznaczonej linijki\n"
+"pierwsza linia nie jest zmieniana."
+msgstr ""
+
+#: VideoToolbar.cpp:762
+msgid "Edycja tagów z listy oraz tworzenie nowych"
+msgstr ""
+
+#: VideoToolbar.cpp:1077
+msgid "Lewo-dół"
+msgstr ""
+
+#: VideoToolbar.cpp:1077
+msgid "Środek-dół"
+msgstr ""
+
+#: VideoToolbar.cpp:1077
+msgid "Prawo-dół"
+msgstr ""
+
+#: VideoToolbar.cpp:1078
+msgid "Lewo-środek"
+msgstr ""
+
+#: VideoToolbar.cpp:1078
+msgid "Środek"
+msgstr ""
+
+#: VideoToolbar.cpp:1078
+msgid "Prawo-środek"
+msgstr ""
+
+#: VideoToolbar.cpp:1079
+msgid "Lewo-góra"
+msgstr ""
+
+#: VideoToolbar.cpp:1079
+msgid "Środek-góra"
+msgstr ""
+
+#: VideoToolbar.cpp:1079
+msgid "Prawo-góra"
+msgstr ""
+
+#: VideoToolbar.cpp:1081
+msgid "Lewo-poniżej"
+msgstr ""
+
+#: VideoToolbar.cpp:1081
+msgid "Środek-poniżej"
+msgstr ""
+
+#: VideoToolbar.cpp:1081
+msgid "Prawo-poniżej"
+msgstr ""
+
+#: VideoToolbar.cpp:1082
+msgid "Lewo-ponad"
+msgstr ""
+
+#: VideoToolbar.cpp:1082
+msgid "Środek-ponad"
+msgstr ""
+
+#: VideoToolbar.cpp:1082
+msgid "Prawo-ponad"
+msgstr ""
+
+#: VideoToolbar.cpp:1083
+msgid "Przed-góra"
+msgstr ""
+
+#: VideoToolbar.cpp:1083
+msgid "Przed-środek"
+msgstr ""
+
+#: VideoToolbar.cpp:1083
+msgid "Przed-dół"
+msgstr ""
+
+#: VideoToolbar.cpp:1084
+msgid "Za-góra"
+msgstr ""
+
+#: VideoToolbar.cpp:1084
+msgid "Za-środek"
+msgstr ""
+
+#: VideoToolbar.cpp:1084
+msgid "Za-dół"
+msgstr ""
+
+#: VideoToolbar.cpp:1093
+msgid "Położenie tekstu, działa podobnie jak w stylach"
+msgstr ""
 
 #: VisualAllTagsEdition.cpp:27
 #, fuzzy
@@ -4683,6 +8125,14 @@ msgstr "Fjern eldre indeksfiler"
 msgid "Edycja tagu"
 msgstr "Velg farge"
 
+#: VisualAllTagsEdition.cpp:55 VisualDrawingShapes.cpp:82
+msgid "Nazwa:"
+msgstr ""
+
+#: VisualAllTagsEdition.cpp:57
+msgid "Tag:"
+msgstr ""
+
 #: VisualAllTagsEdition.cpp:62
 #, fuzzy
 msgid "Minimalna wartość:"
@@ -4693,15 +8143,112 @@ msgstr "Verdi:"
 msgid "Maksymalna wartość:"
 msgstr "Verdi:"
 
+#: VisualAllTagsEdition.cpp:71
+msgid "Przeskok:"
+msgstr ""
+
+#: VisualAllTagsEdition.cpp:74
+msgid "Wstawiany w miejscu kursora"
+msgstr ""
+
 #: VisualAllTagsEdition.cpp:74
 #, fuzzy
 msgid "Wstawiany tylko na początku"
 msgstr "Gå til utvalg"
 
+#: VisualAllTagsEdition.cpp:75
+msgid "Wycinek prostokątny z obsługą animacji"
+msgstr ""
+
+#: VisualAllTagsEdition.cpp:81
+msgid "Liczby po przecinku:"
+msgstr ""
+
+#: VisualAllTagsEdition.cpp:87
+msgid "Brak dodatkowych wartości"
+msgstr ""
+
+#: VisualAllTagsEdition.cpp:88
+msgid "jedna dodatkowa wartość"
+msgstr ""
+
+#: VisualAllTagsEdition.cpp:89
+msgid "dwie dodatkowe wartości"
+msgstr ""
+
+#: VisualAllTagsEdition.cpp:90
+msgid "trzy dodatkowe wartości"
+msgstr ""
+
+#: VisualAllTagsEdition.cpp:92
+msgid "Używane tylko w przypadku gdy tag ma 2 wartości bądź więcej"
+msgstr ""
+
+#: VisualAllTagsEdition.cpp:95
+#, fuzzy
+msgid "Opcje zmiany tagów"
+msgstr "Velg farge"
+
 #: VisualAllTagsEdition.cpp:101
 #, fuzzy, c-format
 msgid "Wartość %i"
 msgstr "Verdi:"
+
+#: VisualAllTagsEdition.cpp:111
+#, fuzzy
+msgid "Dodatkowe wartości:"
+msgstr "Velg farge"
+
+#: VisualAllTagsEdition.cpp:127 VisualDrawingShapes.cpp:104
+msgid "Przywróć domyślne"
+msgstr ""
+
+#: VisualAllTagsEdition.cpp:149 VisualDrawingShapes.cpp:127
+msgid "Czy na pewno chcesz przywrócić ustawienia domyślne?"
+msgstr ""
+
+#: VisualAllTagsEdition.cpp:166
+#, fuzzy
+msgid "Wpisz nazwę nowego tagu."
+msgstr "Velg farge"
+
+#: VisualAllTagsEdition.cpp:170
+msgid "Nowy tag już istnieje na liście, wpisz inną nazwę."
+msgstr ""
+
+#: VisualAllTagsEdition.cpp:188
+#, fuzzy
+msgid "Nie można usunąć wszystkich tagów z listy"
+msgstr "Fjern alle indeksfiler"
+
+#: VisualAllTagsEdition.cpp:213
+#, c-format
+msgid "Zapisać zmiany tagu \"%s\"?"
+msgstr ""
+
+#: VisualAllTagsEdition.cpp:295
+msgid "Pole \"Tag\" nie może być puste."
+msgstr ""
+
+#: VisualAllTagsEdition.cpp:303
+msgid ""
+"Pole \"Maksymalna wartość\" musi zawierać wartość\n"
+"większą od pola \"Minimalna wartość\"."
+msgstr ""
+
+#: VisualAllTagsEdition.cpp:307
+msgid "Pole \"Przeskok\" zawiera liczbę zbyt wysoką dla danego przedziału."
+msgstr ""
+
+#: VisualClips.cpp:1063
+msgid ""
+"Ze względu na błędy Vsfiltra możliwość wstawiania dwóch \"m\" po sobie "
+"została zablokowana"
+msgstr ""
+
+#: VisualDrawingShapes.cpp:43
+msgid "Edycja kształtów wektorowych"
+msgstr ""
 
 #: VisualDrawingShapes.cpp:55
 #, fuzzy
@@ -4718,10 +8265,35 @@ msgstr "Fjern eldre indeksfiler"
 msgid "Usuń kształt"
 msgstr "Fjern eldre indeksfiler"
 
+#: VisualDrawingShapes.cpp:75
+msgid "Zmienna szerokość i wysokość"
+msgstr ""
+
+#: VisualDrawingShapes.cpp:75
+msgid "Zachowaj proporcje boków"
+msgstr ""
+
+#: VisualDrawingShapes.cpp:75
+msgid "Zmienna tylko szerokość"
+msgstr ""
+
+#: VisualDrawingShapes.cpp:78
+msgid "Zmiana koordynatów rysunku"
+msgstr ""
+
 #: VisualDrawingShapes.cpp:78
 #, fuzzy
 msgid "Zmiana skali"
 msgstr "Spill neste linje"
+
+#: VisualDrawingShapes.cpp:84
+msgid "Skalowanie względem kursora:"
+msgstr ""
+
+#: VisualDrawingShapes.cpp:86
+#, fuzzy
+msgid "Rodzaj skalowania:"
+msgstr "Fjern alle filer"
 
 #: VisualDrawingShapes.cpp:90
 #, fuzzy
@@ -4733,15 +8305,72 @@ msgstr "Spill forrige linje"
 msgid "Kształt:"
 msgstr "Fjern eldre indeksfiler"
 
+#: VisualDrawingShapes.cpp:144
+#, fuzzy
+msgid "Wpisz nazwę nowego ksztatłu."
+msgstr "Velg farge"
+
+#: VisualDrawingShapes.cpp:148
+msgid "Nowy ksztatł już istnieje na liście, wpisz inną nazwę."
+msgstr ""
+
+#: VisualDrawingShapes.cpp:166
+msgid "Nie można usunąć wszystkich kształtów z listy"
+msgstr ""
+
+#: VisualDrawingShapes.cpp:191
+#, c-format
+msgid "Zapisać zmiany kształtu \"%s\"?"
+msgstr ""
+
+#: VisualDrawingShapes.cpp:270
+msgid "Pole \"kształt\" nie może być puste."
+msgstr ""
+
+#: VisualMove.cpp:393
+msgid ""
+"Wideo musi być ustawione minimum jedną klatkę po czasie początkowym linijki"
+msgstr ""
+
 #: VisualRotationZ.cpp:486 VisualScale.cpp:772
 #, fuzzy
 msgid "Nie można pobrać wartości clipa prostokątnego."
 msgstr "Kan ikke åpne mappe med midlertidige filer"
 
+#: Visuals.cpp:460
+msgid ""
+"Narzędzia edycji wizualnej\n"
+"nie działają na komentarzach"
+msgstr ""
+
+#: Visuals.cpp:461
+msgid ""
+"Linia nie jest widoczna na wideo\n"
+"albo ma zerowy czas trwania"
+msgstr ""
+
+#: config.cpp:601
+#, c-format
+msgid ""
+"W motywie \"%s\" brakowało część kolorów, zostały doczytane z domyślnego."
+msgstr ""
+
+#: config.cpp:611
+msgid "Nie można zaczytać motywu, zostanie przywrócony domyśny"
+msgstr ""
+
 #: dshowplayer.cpp:67
 #, fuzzy
 msgid "Nie można zainicjalizować COM"
 msgstr "Kan ikke åpne mappe med midlertidige filer"
+
+#: dshowplayer.cpp:82
+msgid "Błąd inicjalizacji Direct Show"
+msgstr ""
+
+#: dshowplayer.cpp:92
+msgid "Filtr źródła nie został dodany"
+msgstr ""
 
 #: dshowplayer.cpp:102
 #, fuzzy
@@ -4783,6 +8412,14 @@ msgstr "Kan ikke åpne mappe med midlertidige filer"
 #, fuzzy
 msgid "Nie można pobrać pinu dsound"
 msgstr "Kan ikke åpne mappe med midlertidige filer"
+
+#: dshowplayer.cpp:199 dshowplayer.cpp:224
+msgid "Brak IMediaTypes"
+msgstr ""
+
+#: dshowplayer.cpp:200 dshowplayer.cpp:225
+msgid "Brak informacji o rodzaju ścieżki"
+msgstr ""
 
 #: dshowplayer.cpp:204
 #, fuzzy
@@ -4859,20 +8496,89 @@ msgstr "Kan ikke åpne mappe med midlertidige filer"
 msgid "Nie można pobrać konfiguracji filtra"
 msgstr "Kan ikke åpne mappe med midlertidige filer"
 
+#: findreplace.cpp:399
+msgid "Wyszukiwanie zakończone, rozpocząć od początku?"
+msgstr ""
+
 #: findreplace.cpp:406
 #, fuzzy
 msgid "Nie znaleziono podanej frazy \""
 msgstr "Gå til utvalg"
+
+#: findreplace.cpp:816 findreplace.cpp:1131 findreplace.cpp:1172
+#, c-format
+msgid "Zmieniono %i razy."
+msgstr ""
+
+#: findreplace.cpp:816 findreplace.cpp:1131 findreplace.cpp:1172
+#, fuzzy
+msgid "Szukaj Zamień"
+msgstr "Spill neste linje"
+
+#: findreplace.cpp:1179
+msgid ""
+"Czy na pewno dokonać zmian we wszystkich napisach?\n"
+"W razie pomyłki kopie zapasowe są w folderze 'ReplaceBackup'"
+msgstr ""
+
+#: findreplace.cpp:1297
+msgid "Ścieżka szukania jest nieprawidłowa"
+msgstr ""
+
+#: findreplace.cpp:1326
+msgid ""
+"Wszystkich wybranych stylów nie ma w przeszukiwanych napisach,\n"
+"przez co nic nie zostanie znalezione.\n"
+"Co zrobić?"
+msgstr ""
 
 #: findreplace.cpp:1327 findreplace.cpp:1332
 #, fuzzy
 msgid "Wyczyść style"
 msgstr "Velg farge"
 
+#: findreplace.cpp:1330
+#, c-format
+msgid ""
+"Stylów o nazwach \"%s\" nie ma w przeszukiwanych napisach,\n"
+"co może znacząco zmniejszyć ilość wyników szukania.\n"
+"Co zrobić?"
+msgstr ""
+
+#: findreplace.cpp:1331
+msgid "Usuń nieistniejące style"
+msgstr ""
+
+#: kainoteApp.cpp:73 kainoteApp.cpp:82
+msgid "Zabrakło pamięci RAM, usunięto część historii"
+msgstr ""
+
+#: kainoteApp.cpp:114
+msgid ""
+"Nie udało się wczytać opcji.\n"
+"Działanie programu zostanie zakończone."
+msgstr ""
+
+#: kainoteApp.cpp:158
+msgid ""
+"Nie udało się wczytać skrótów.\n"
+"Działanie programu zostanie zakończone."
+msgstr ""
+
 #: kainoteApp.cpp:249
 #, fuzzy
 msgid "Wczytać poprzednią sesję?"
 msgstr "Spill forrige linje"
+
+#: kainoteApp.cpp:255
+msgid ""
+"Program się skraszował albo został zamknięty w niewłaściwy sposób,\n"
+"wczytać poprzednią sesję wraz z najnowszymi napisami z autozapisu?"
+msgstr ""
+
+#: stylestore.cpp:71 stylestore.cpp:86 stylestore.cpp:139
+msgid "Nowy"
+msgstr ""
 
 #: stylestore.cpp:73
 #, fuzzy
@@ -4884,9 +8590,28 @@ msgstr "Fjern alle indeksfiler"
 msgid "Style katalogu:"
 msgstr "Velg farge"
 
+#: stylestore.cpp:91 stylestore.cpp:144
+msgid "Sortuj"
+msgstr ""
+
+#: stylestore.cpp:106 stylestore.cpp:155
+#, fuzzy
+msgid "Przesuń zaznaczone style na sam początek"
+msgstr "Spill til slutten"
+
+#: stylestore.cpp:107 stylestore.cpp:156
+#, fuzzy
+msgid "Przesuń zaznaczone style w górę"
+msgstr "Spill til slutten"
+
 #: stylestore.cpp:108 stylestore.cpp:157
 #, fuzzy
 msgid "Przesuń zaznaczone style w dół"
+msgstr "Spill til slutten"
+
+#: stylestore.cpp:109 stylestore.cpp:158
+#, fuzzy
+msgid "Przesuń zaznaczone style na sam koniec"
 msgstr "Spill til slutten"
 
 #: stylestore.cpp:124
@@ -4899,6 +8624,11 @@ msgstr "Gå til utvalg"
 msgid "Dodaj do ASS"
 msgstr "Gå til utvalg"
 
+#: stylestore.cpp:126
+#, fuzzy
+msgid "Dodaj do wszystkich otwartych ASS"
+msgstr "Fjern alle indeksfiler"
+
 #: stylestore.cpp:131
 #, fuzzy
 msgid "Style pliku ASS:"
@@ -4908,6 +8638,24 @@ msgstr "Velg farge"
 #, fuzzy
 msgid "Oczyść"
 msgstr "Velg farge"
+
+#: stylestore.cpp:172
+msgid "Odepnij okno edycji"
+msgstr ""
+
+#: stylestore.cpp:277 stylestore.cpp:309 stylestore.cpp:348 stylestore.cpp:641
+#, c-format
+msgid "Styl o nazwie \"%s\" istnieje, podmienić go?"
+msgstr ""
+
+#: stylestore.cpp:435
+#, c-format
+msgid "Styl o nazwie \"%s\" jest już na liście."
+msgstr ""
+
+#: stylestore.cpp:497
+msgid "Nazwa stylu została zmieniona, czy chcesz zmienić ją także w napisach?"
+msgstr ""
 
 #: stylestore.cpp:601
 #, fuzzy
@@ -4923,6 +8671,23 @@ msgstr "Velg fil å fjerne"
 #, fuzzy
 msgid "Kopia "
 msgstr "Velg farge"
+
+#: stylestore.cpp:702 stylestore.cpp:720
+msgid "Nowy Styl"
+msgstr ""
+
+#: stylestore.cpp:763
+#, c-format
+msgid ""
+"Używane style:\n"
+"%s\n"
+"Usunięte style:\n"
+"%s"
+msgstr ""
+
+#: stylestore.cpp:764
+msgid "Status usuniętych stylów"
+msgstr ""
 
 #: stylestore.cpp:770
 #, fuzzy
@@ -5003,3 +8768,7 @@ msgstr "Gå til utvalg"
 #, fuzzy
 msgid "Dodaj do napisów styl z magazynu"
 msgstr "Gå til utvalg"
+
+#: stylestore.cpp:786
+msgid "Oczyść napisy z nieużywanych stylów"
+msgstr ""
