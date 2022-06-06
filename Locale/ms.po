@@ -1105,8 +1105,8 @@ msgid ""
 "Ze względu na dużą wagę plików wideo\n"
 "szukanie wszystkiego \"*.*\" zostaje zmieniane na *.ass"
 msgstr ""
-"Tapisan Windows diasingkan mengikut koma bertindih, cthnya \"*.ass; *.srt"
-"\".\n"
+"Tapisan Windows diasingkan mengikut koma bertindih, cthnya \"*.ass; *.srt\"."
+"\n"
 "Disebabkan fail video yang terlalu besar\n"
 "untuk mencari kesemuanya \"*.*\" ditukar menjadi *.ass"
 
@@ -3231,17 +3231,17 @@ msgid ""
 "(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;"
 "*.rm;*.mpg;*.mpeg;*.3gp;*.avs|Wszystkie pliki (*.*)|*.*"
 msgstr ""
-"Fail video (*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
-"(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;"
-"*.rm;*.mpg;*.mpeg;*.3gp;*.avs|Semua fail (*.*)|*.*"
+"Fail video (*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*"
+".3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*."
+"rm;*.mpg;*.mpeg;*.3gp;*.avs|Semua fail (*.*)|*.*"
 
 #: KainoteFrame.cpp:863
 msgid ""
 "Pliki klatek kluczowych (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*."
 "stats;*.log|Wszystkie pliki (*.*)|*.*"
 msgstr ""
-"Fail bidang kekunci (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;"
-"*.log|Semua fail (*.*)|*.*"
+"Fail bidang kekunci (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*"
+".log|Semua fail (*.*)|*.*"
 
 #: KainoteFrame.cpp:915
 #, c-format
@@ -3264,7 +3264,6 @@ msgstr ""
 "\n"
 
 #: KainoteFrame.cpp:918
-#, fuzzy
 msgid ""
 "Jeśli zauważyłeś(aś) jakieś błędy bądź masz jakieś propozycje zmian lub "
 "nowych funkcji,\n"
@@ -3350,8 +3349,8 @@ msgstr ""
 #: KainoteFrame.cpp:947
 msgid "- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy).\n"
 msgstr ""
-"- mas1904 (menjumpai banyak ralat dan menolong dalam menyahpepijatan "
-"ranap).\n"
+"- mas1904 (menjumpai banyak ralat dan menolong dalam menyahpepijatan ranap)."
+"\n"
 
 #: KainoteFrame.cpp:948
 msgid "- Senami (stworzył nowe motywy, a także wyłapał parę błędów).\n"
@@ -9059,3 +9058,39 @@ msgstr "Padam gaya ASS yang tidak digunakan"
 #~ msgstr ""
 #~ "Menghantar e-mel ke (bjakja7@gmail.com) boleh membantu bagi menyelesaikan "
 #~ "masalah."
+
+#: VisualAllTagsEdition.cpp:87
+msgid "Brak dodatkowych wartości"
+msgstr "Tiada nilai tambahan"
+
+#: KainoteFrame.cpp:136
+msgid "Wczytuje sesję z wcześniej zapisanego pliku sesji"
+msgstr "Muatkan sesi dari fail sesi yang disimpan"
+
+#: KainoteFrame.cpp:138
+msgid "Zapisz sesję do pliku"
+msgstr "Simpan sesi kepada fail"
+
+#: KainoteFrame.cpp:138
+msgid "Zapisuje sesję do pliku"
+msgstr "Simpan sesi kepada fail"
+
+#: KainoteFrame.cpp:195
+msgid "Znajduje kolejne wystąpięnie frazy w tekście"
+msgstr "Cari frasa gantian seterusnya dalam teks"
+
+#: KainoteFrame.cpp:2261 KainoteFrame.cpp:2270
+msgid "Plik sesji (*.kls),|*.kls"
+msgstr "Fail sesi (*.kls),|*.kls"
+
+#: VisualAllTagsEdition.cpp:89
+msgid "dwie dodatkowe wartości"
+msgstr "dua nilai tambahan"
+
+#: VisualAllTagsEdition.cpp:88
+msgid "jedna dodatkowa wartość"
+msgstr "Satu nilai tambahan"
+
+#: VisualAllTagsEdition.cpp:90
+msgid "trzy dodatkowe wartości"
+msgstr "tiga nilai tambahan"
