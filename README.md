@@ -1,6 +1,6 @@
 | Download | Help Us Translate! | Join Discord Server |
 |-------|----------|---------|
-| [![release](https://img.shields.io/github/v/release/bjakja/Kainote.svg?maxAge=3600&label=download)](https://github.com/bjakja/Kainote/releases) | [![Translation status](https://hosted.weblate.org/widgets/kainote/-/svg-badge.svg)](https://hosted.weblate.org/engage/kainote/?utm_source=widget) | [Discord](https://discord.gg/8kNAxDFgwj) |
+| [![release](https://img.shields.io/github/v/release/bjakja/Kainote.svg?maxAge=3600&label=download)](https://github.com/bjakja/Kainote/releases) | [![Translation status](https://hosted.weblate.org/widgets/kainote/-/svg-badge.svg)](https://hosted.weblate.org/engage/kainote/?utm_source=widget) | [![Discord](https://img.shields.io/discord/961361569269293077.svg?label=discord&labelColor=7289da&color=2c2f33&style=flat)](https://discord.gg/9WacFTtK6q) |
 
 
 # Kainote
@@ -83,7 +83,7 @@ Next:
     - Set path to ffmpeg `cd c:/path_to_ffmpeg/`
     - Type in **msys** console *(for x64 remove `--arch=x86 --arch=x86_64`)*:
         ```
-        ./configure --toolchain=msvc --enable-gpl --enable-version3 --disable-encoders --disable-programs --disable-filters \ --disable-network --disable-doc --disable-avdevice --disable-postproc --disable-avfilter
+        ./configure --toolchain=msvc --enable-gpl --enable-version3 --disable-encoders --disable-programs --disable-filters --disable-network --disable-doc --disable-avdevice --disable-postproc --disable-avfilter --enable-dxva2 --enable-d3d11va
         ```
     - When shows list of codecs type `make`
     - After build type `make install`
