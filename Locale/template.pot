@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kainote\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-21 15:23+0700\n"
+"POT-Creation-Date: 2022-06-06 20:10+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Marcin Drob <bjajka7@gmail.com>\n"
 "Language-Team: https://github.com/bjakja/Kainote\n"
@@ -155,10 +155,10 @@ msgstr ""
 msgid "Nieprawidłowy format klatek kluczowych"
 msgstr ""
 
-#: AudioBox.cpp:268 Automation.cpp:1201 Automation.cpp:1248
-#: KainoteFrame.cpp:735 KainoteFrame.cpp:739 KainoteFrame.cpp:1939
-#: KainoteFrame.cpp:1940 KainoteFrame.cpp:2379 KainoteFrame.cpp:2405
-#: KainoteFrame.cpp:2409 OptionsDialog.cpp:287 OptionsDialog.cpp:608
+#: AudioBox.cpp:268 Automation.cpp:1197 Automation.cpp:1244
+#: KainoteFrame.cpp:735 KainoteFrame.cpp:739 KainoteFrame.cpp:1935
+#: KainoteFrame.cpp:1936 KainoteFrame.cpp:2375 KainoteFrame.cpp:2401
+#: KainoteFrame.cpp:2405 OptionsDialog.cpp:287 OptionsDialog.cpp:608
 #: Provider.cpp:179 VideoFfmpeg.cpp:52 VideoFfmpeg.cpp:991
 #: VisualAllTagsEdition.cpp:166 VisualAllTagsEdition.cpp:170
 #: VisualAllTagsEdition.cpp:188 VisualAllTagsEdition.cpp:295
@@ -256,7 +256,7 @@ msgstr ""
 msgid "Wersje"
 msgstr ""
 
-#: AutoSaveOpen.cpp:57 KainoteFrame.cpp:1350
+#: AutoSaveOpen.cpp:57 KainoteFrame.cpp:1346
 msgid "Otwórz"
 msgstr ""
 
@@ -267,7 +267,7 @@ msgstr ""
 #: NewCatalog.cpp:42 OptionsDialog.cpp:968 ProgressDialog.cpp:44
 #: ScriptInfo.cpp:114 ShiftTimes.cpp:67 StyleChange.cpp:272 Stylelistbox.cpp:34
 #: Stylelistbox.cpp:58 Stylelistbox.cpp:112 Stylelistbox.cpp:147
-#: SubsFile.cpp:44 SubsGrid.cpp:1406 SubsGridDialogs.cpp:54
+#: SubsFile.cpp:44 SubsGrid.cpp:1408 SubsGridDialogs.cpp:54
 #: SubsGridDialogs.cpp:85 SubsResampleDialog.cpp:152
 #: VisualAllTagsEdition.cpp:126 VisualDrawingShapes.cpp:103
 msgid "Anuluj"
@@ -450,58 +450,58 @@ msgstr ""
 msgid "Wystąpił błąd podczas wykonywania skryptu Lua:\n"
 msgstr ""
 
-#: Automation.cpp:1054 Automation.cpp:1095 KainoteFrame.cpp:739
-#: KainoteFrame.cpp:2409
+#: Automation.cpp:1057 Automation.cpp:1098 KainoteFrame.cpp:739
+#: KainoteFrame.cpp:2405
 #, c-format
 msgid ""
 "Błąd wczytywania skryptu Lua: %s\n"
 "%s"
 msgstr ""
 
-#: Automation.cpp:1058 Automation.cpp:1099
+#: Automation.cpp:1061 Automation.cpp:1102
 #, c-format
 msgid "Nieznany błąd wczytywania skryptu Lua: %s."
 msgstr ""
 
-#: Automation.cpp:1065
+#: Automation.cpp:1068
 msgid ""
 "Jeden bądź więcej skryptów autoload zawiera błędy.\n"
 "Obejrzyj opisy skryptów, by uzyskać więcej informacji."
 msgstr ""
 
-#: Automation.cpp:1103
+#: Automation.cpp:1106
 msgid ""
 "Co najmniej jeden skrypt z pliku napisów zawiera błędy.\n"
 "Zobacz opisy skryptów, by uzyskać więcej informacji."
 msgstr ""
 
-#: Automation.cpp:1113
+#: Automation.cpp:1116
 msgid "Wybierz edytor skryptów"
 msgstr ""
 
-#: Automation.cpp:1114
+#: Automation.cpp:1117
 msgid "Programy (*.exe)|*.exe|Wszystkie pliki (*.*)|*.*"
 msgstr ""
 
-#: Automation.cpp:1130
+#: Automation.cpp:1133
 msgid "Nie można uruchomić edytora."
 msgstr ""
 
-#: Automation.cpp:1130
+#: Automation.cpp:1133
 msgid "Błąd automatyzacji"
 msgstr ""
 
-#: Automation.cpp:1203 Automation.cpp:1250
+#: Automation.cpp:1199 Automation.cpp:1246
 msgid "Pełny opis błędu Lua"
 msgstr ""
 
-#: Automation.cpp:1208 Automation.cpp:1255 EditBox.cpp:289
+#: Automation.cpp:1204 Automation.cpp:1251 EditBox.cpp:289
 #: FontCatalogList.cpp:107 VideoToolbar.cpp:510 VideoToolbar.cpp:526
 #: VideoToolbar.cpp:762 stylestore.cpp:88 stylestore.cpp:141
 msgid "Edytuj"
 msgstr ""
 
-#: Automation.cpp:1213 Automation.cpp:1260
+#: Automation.cpp:1209 Automation.cpp:1256
 msgid "Odśwież"
 msgstr ""
 
@@ -571,10 +571,10 @@ msgid ""
 msgstr ""
 
 #: AutomationHotkeysDialog.cpp:238 AutomationHotkeysDialog.cpp:247
-#: Hotkeys.cpp:477 Hotkeys.cpp:487 KainoteFrame.cpp:1081 KainoteFrame.cpp:1097
-#: KainoteFrame.cpp:1211 KainoteFrame.cpp:2276 OptionsDialog.cpp:114
+#: Hotkeys.cpp:477 Hotkeys.cpp:487 KainoteFrame.cpp:1077 KainoteFrame.cpp:1093
+#: KainoteFrame.cpp:1207 KainoteFrame.cpp:2272 OptionsDialog.cpp:114
 #: OptionsDialog.cpp:123 OptionsDialog.cpp:473 SpellCheckerDialog.cpp:145
-#: SubsGrid.cpp:1096 SubsGridBase.cpp:532 SubsGridBase.cpp:561 VideoBox.cpp:300
+#: SubsGrid.cpp:1098 SubsGridBase.cpp:532 SubsGridBase.cpp:561 VideoBox.cpp:300
 #: VisualClips.cpp:1064 kainoteApp.cpp:114 kainoteApp.cpp:158
 msgid "Uwaga"
 msgstr ""
@@ -622,7 +622,7 @@ msgstr ""
 msgid "Nie można dodać linii klasy: %s w pole klasy: %s"
 msgstr ""
 
-#: AutomationToFile.cpp:1067
+#: AutomationToFile.cpp:1070
 msgid "Brakujący wskaźnik napisów"
 msgstr ""
 
@@ -937,13 +937,13 @@ msgid "Komentarz"
 msgstr ""
 
 #: EditBox.cpp:293 FindReplaceDialog.cpp:135 KainoteFrame.cpp:204
-#: SelectLines.cpp:75 SubsGrid.cpp:449 SubsGrid.cpp:599 SubsGridWindow.cpp:256
+#: SelectLines.cpp:75 SubsGrid.cpp:451 SubsGrid.cpp:601 SubsGridWindow.cpp:256
 #: SubsGridWindow.cpp:644 SubsGridWindow.cpp:1098 SubsGridWindow.cpp:1264
 msgid "Aktor"
 msgstr ""
 
 #: EditBox.cpp:299 FindReplaceDialog.cpp:138 KainoteFrame.cpp:205
-#: SelectLines.cpp:76 SubsGrid.cpp:454 SubsGrid.cpp:604 SubsGridWindow.cpp:260
+#: SelectLines.cpp:76 SubsGrid.cpp:456 SubsGrid.cpp:606 SubsGridWindow.cpp:260
 #: SubsGridWindow.cpp:648 SubsGridWindow.cpp:1111 SubsGridWindow.cpp:1277
 msgid "Efekt"
 msgstr ""
@@ -1121,14 +1121,14 @@ msgstr ""
 msgid "W polu"
 msgstr ""
 
-#: FindReplaceDialog.cpp:124 SelectLines.cpp:73 SubsGrid.cpp:460
-#: SubsGrid.cpp:479 SubsGrid.cpp:486 SubsGrid.cpp:605 SubsGrid.cpp:621
-#: SubsGrid.cpp:630 SubsGridWindow.cpp:264 SubsGridWindow.cpp:654
+#: FindReplaceDialog.cpp:124 SelectLines.cpp:73 SubsGrid.cpp:462
+#: SubsGrid.cpp:481 SubsGrid.cpp:488 SubsGrid.cpp:607 SubsGrid.cpp:623
+#: SubsGrid.cpp:632 SubsGridWindow.cpp:264 SubsGridWindow.cpp:654
 msgid "Tekst"
 msgstr ""
 
-#: FindReplaceDialog.cpp:129 SelectLines.cpp:74 SubsGrid.cpp:450
-#: SubsGrid.cpp:600 SubsGridWindow.cpp:255 SubsGridWindow.cpp:643
+#: FindReplaceDialog.cpp:129 SelectLines.cpp:74 SubsGrid.cpp:452
+#: SubsGrid.cpp:602 SubsGridWindow.cpp:255 SubsGridWindow.cpp:643
 #: SubsGridWindow.cpp:1092 SubsGridWindow.cpp:1258
 msgid "Styl"
 msgstr ""
@@ -1266,7 +1266,7 @@ msgid "Dodaj"
 msgstr ""
 
 #: FontCatalogList.cpp:108 FontCatalogList.cpp:734 SelectLines.cpp:127
-#: SubsGrid.cpp:229 SubsGrid.cpp:260 stylestore.cpp:72 stylestore.cpp:90
+#: SubsGrid.cpp:229 SubsGrid.cpp:262 stylestore.cpp:72 stylestore.cpp:90
 #: stylestore.cpp:143
 msgid "Usuń"
 msgstr ""
@@ -1302,7 +1302,7 @@ msgstr ""
 msgid "Szukaj:"
 msgstr ""
 
-#: FontCatalogList.cpp:199 SubsGridBase.cpp:1651
+#: FontCatalogList.cpp:199 SubsGridBase.cpp:1656
 msgid "Autozapis"
 msgstr ""
 
@@ -1436,9 +1436,9 @@ msgstr ""
 msgid "Plik zip już istnieje, usunąć go?"
 msgstr ""
 
-#: FontCollector.cpp:510 KainoteFrame.cpp:1148 KainoteFrame.cpp:1902
-#: Notebook.cpp:1168 SubsGrid.cpp:1063 SubsGrid.cpp:1392 SubsGridBase.cpp:551
-#: SubsGridBase.cpp:1403 VideoBox.cpp:803 VideoBox.cpp:815
+#: FontCollector.cpp:510 KainoteFrame.cpp:1144 KainoteFrame.cpp:1898
+#: Notebook.cpp:1168 SubsGrid.cpp:1065 SubsGrid.cpp:1394 SubsGridBase.cpp:551
+#: SubsGridBase.cpp:1408 VideoBox.cpp:803 VideoBox.cpp:815
 #: VisualAllTagsEdition.cpp:150 VisualAllTagsEdition.cpp:214
 #: VisualDrawingShapes.cpp:128 VisualDrawingShapes.cpp:192 findreplace.cpp:399
 #: findreplace.cpp:406 findreplace.cpp:1326 findreplace.cpp:1330
@@ -2399,7 +2399,7 @@ msgstr ""
 msgid "Stwórz drzewko"
 msgstr ""
 
-#: HotkeysNaming.cpp:168 KainoteFrame.cpp:957 OptionsDialog.cpp:595
+#: HotkeysNaming.cpp:168 KainoteFrame.cpp:953 OptionsDialog.cpp:595
 msgid "Lista osób pomocnych przy tworzeniu programu"
 msgstr ""
 
@@ -2771,11 +2771,11 @@ msgstr ""
 msgid "&Plik"
 msgstr ""
 
-#: KainoteFrame.cpp:181 KainoteFrame.cpp:2106
+#: KainoteFrame.cpp:181 KainoteFrame.cpp:2102
 msgid "&Cofnij"
 msgstr ""
 
-#: KainoteFrame.cpp:186 KainoteFrame.cpp:2122
+#: KainoteFrame.cpp:186 KainoteFrame.cpp:2118
 msgid "&Ponów"
 msgstr ""
 
@@ -2803,9 +2803,9 @@ msgstr ""
 msgid "Znajduje kolejne wystąpięnie frazy w tekście"
 msgstr ""
 
-#: KainoteFrame.cpp:199 ShiftTimes.cpp:345 SubsGrid.cpp:447 SubsGrid.cpp:478
-#: SubsGrid.cpp:484 SubsGrid.cpp:485 SubsGrid.cpp:597 SubsGrid.cpp:620
-#: SubsGrid.cpp:628 SubsGrid.cpp:629
+#: KainoteFrame.cpp:199 ShiftTimes.cpp:345 SubsGrid.cpp:449 SubsGrid.cpp:480
+#: SubsGrid.cpp:486 SubsGrid.cpp:487 SubsGrid.cpp:599 SubsGrid.cpp:622
+#: SubsGrid.cpp:630 SubsGrid.cpp:631
 msgid "Czas początkowy"
 msgstr ""
 
@@ -2813,7 +2813,7 @@ msgstr ""
 msgid "Sortuj według czasu początkowego"
 msgstr ""
 
-#: KainoteFrame.cpp:201 ShiftTimes.cpp:346 SubsGrid.cpp:448 SubsGrid.cpp:598
+#: KainoteFrame.cpp:201 ShiftTimes.cpp:346 SubsGrid.cpp:450 SubsGrid.cpp:600
 msgid "Czas końcowy"
 msgstr ""
 
@@ -2837,7 +2837,7 @@ msgstr ""
 msgid "Sortuj według efektu"
 msgstr ""
 
-#: KainoteFrame.cpp:206 SubsGrid.cpp:446 SubsGrid.cpp:596
+#: KainoteFrame.cpp:206 SubsGrid.cpp:448 SubsGrid.cpp:598
 msgid "Warstwa"
 msgstr ""
 
@@ -3125,12 +3125,12 @@ msgstr ""
 msgid "Ten plik napisów nie ma dodanych żadnych skryptów"
 msgstr ""
 
-#: KainoteFrame.cpp:735 KainoteFrame.cpp:2405
+#: KainoteFrame.cpp:735 KainoteFrame.cpp:2401
 #, c-format
 msgid "Warunki skryptu Lua '%s' nie zostały spełnione"
 msgstr ""
 
-#: KainoteFrame.cpp:814 SubsGrid.cpp:869 VideoBox.cpp:1003
+#: KainoteFrame.cpp:814 SubsGrid.cpp:871 VideoBox.cpp:1003
 msgid "Wybierz plik napisów"
 msgstr ""
 
@@ -3171,7 +3171,8 @@ msgstr ""
 msgid ""
 "Jeśli zauważyłeś(aś) jakieś błędy bądź masz jakieś propozycje zmian lub "
 "nowych funkcji,\n"
-"możesz napisać o tym na: forum ANSI, Githubie, bądź mailowo.\n"
+"możesz napisać o tym na: Discordzie https://discord.gg/9WacFTtK6q, Githubie, "
+"bądź mailowo.\n"
 "\n"
 msgstr ""
 
@@ -3195,187 +3196,162 @@ msgid "Pomoc graficzna: (przyciski, obrazki do pomocy itd.)\n"
 msgstr ""
 
 #: KainoteFrame.cpp:939
-msgid "- Kostek00 (przyciski do audio i narzędzi wizualnych).\n"
+msgid "- Xandros (przyciski do wideo).\n"
 msgstr ""
 
 #: KainoteFrame.cpp:940
-msgid "- Xandros (nowe przyciski do wideo).\n"
-msgstr ""
-
-#: KainoteFrame.cpp:941
 msgid "- Devilkan (ikony do menu i paska narzędzi, obrazki do pomocy).\n"
 msgstr ""
 
-#: KainoteFrame.cpp:942
+#: KainoteFrame.cpp:941
 msgid "- Zły Los (ikony do skojarzonych plików i do menu).\n"
 msgstr ""
 
-#: KainoteFrame.cpp:943
-msgid ""
-"- Areki, duplex (tłumaczenie anglojęzyczne).\n"
-" \n"
-msgstr ""
-
-#: KainoteFrame.cpp:944
+#: KainoteFrame.cpp:942
 msgid "Testerzy: (mniej i bardziej wprawieni użytkownicy programu)\n"
 msgstr ""
 
-#: KainoteFrame.cpp:945
-msgid ""
-"- Funki27 (pierwszy tester mający spory wpływ na obecne działanie programu\n"
-msgstr ""
-
-#: KainoteFrame.cpp:946
-msgid "i najbardziej narzekający na wszystko).\n"
-msgstr ""
-
-#: KainoteFrame.cpp:947
+#: KainoteFrame.cpp:943
 msgid ""
 "- Sacredus (chyba pierwszy tłumacz używający trybu tłumacza,\n"
 " nieoceniona pomoc przy testowaniu wydajności na słabym komputerze).\n"
 msgstr ""
 
-#: KainoteFrame.cpp:948
-msgid ""
-"- Kostek00 (prawdziwy wynajdywacz błędów, miał duży wpływ na rozwój spektrum "
-"audio \n"
-msgstr ""
-
-#: KainoteFrame.cpp:949
-msgid ""
-"i głównego pola tekstowego, stworzył ciemny i jasny motyw, a także część "
-"ikon).\n"
-msgstr ""
-
-#: KainoteFrame.cpp:950
+#: KainoteFrame.cpp:944
 msgid ""
 "- Devilkan (crashhunter, ze względu na swój system i przyzwyczajenia "
 "wytropił już wiele crashy,\n"
 msgstr ""
 
-#: KainoteFrame.cpp:951
+#: KainoteFrame.cpp:945
 msgid ""
 "pomógł w poprawie działania narzędzi do typesettingu, wymyślił wiele innych "
 "usprawnień).\n"
 msgstr ""
 
-#: KainoteFrame.cpp:952
+#: KainoteFrame.cpp:946
 msgid ""
 "- MatiasMovie (wyłapał parę crashy i zaproponował różne usprawnienia, pomaga "
 "w debugowaniu crashy).\n"
 msgstr ""
 
-#: KainoteFrame.cpp:953
+#: KainoteFrame.cpp:947
 msgid "- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy).\n"
 msgstr ""
 
-#: KainoteFrame.cpp:954
+#: KainoteFrame.cpp:948
 msgid "- Senami (stworzył nowe motywy, a także wyłapał parę błędów).\n"
 msgstr ""
 
-#: KainoteFrame.cpp:955
-msgid ""
-"- Atalos (zdebugował wiele crashy).\n"
-" \n"
+#: KainoteFrame.cpp:949
+msgid "- altinat (tajskie tłumaczenie).\n"
 msgstr ""
 
-#: KainoteFrame.cpp:956
+#: KainoteFrame.cpp:950
+msgid "- labrie75 (koreańskie tłumaczenie).\n"
+msgstr ""
+
+#: KainoteFrame.cpp:951
+msgid "- Niskala5570 (malajskie tłumaczenie).\n"
+msgstr ""
+
+#: KainoteFrame.cpp:952
 msgid ""
 "Podziękowania także dla osób, które używają programu i zgłaszali błędy.\n"
 msgstr ""
 
-#: KainoteFrame.cpp:1064
+#: KainoteFrame.cpp:1060
 msgid "Plik napisów "
 msgstr ""
 
-#: KainoteFrame.cpp:1074
+#: KainoteFrame.cpp:1070
 msgid "Zapisz plik napisów"
 msgstr ""
 
-#: KainoteFrame.cpp:1081 KainoteFrame.cpp:1097 KainoteFrame.cpp:2276
+#: KainoteFrame.cpp:1077 KainoteFrame.cpp:1093 KainoteFrame.cpp:2272
 msgid ""
 "Wybrany plik jest tylko do odczytu,\n"
 "proszę zapisać pod inną nazwą lub zmienić atrybuty pliku."
 msgstr ""
 
-#: KainoteFrame.cpp:1147
+#: KainoteFrame.cpp:1143
 #, c-format
 msgid "Wczytać napisy o nazwie \"%s\"?"
 msgstr ""
 
-#: KainoteFrame.cpp:1211 Visuals.cpp:275
+#: KainoteFrame.cpp:1207 Visuals.cpp:275
 msgid "Nie można otworzyć napisów"
 msgstr ""
 
-#: KainoteFrame.cpp:1356 OptionsDialog.cpp:672 ProviderFFMS2.cpp:825
+#: KainoteFrame.cpp:1352 OptionsDialog.cpp:672 ProviderFFMS2.cpp:825
 #: ProviderFFMS2.cpp:836 ScriptInfo.cpp:75 VideoFfmpeg.cpp:946
 #: VideoFfmpeg.cpp:957 stylestore.cpp:760 stylestore.cpp:761
 msgid "Brak"
 msgstr ""
 
-#: KainoteFrame.cpp:1897
+#: KainoteFrame.cpp:1893
 #, c-format
 msgid "Zapisać napisy o nazwie \"%s\" przed %s?"
 msgstr ""
 
-#: KainoteFrame.cpp:1898
+#: KainoteFrame.cpp:1894
 msgid "zamknięciem programu"
 msgstr ""
 
-#: KainoteFrame.cpp:1899
+#: KainoteFrame.cpp:1895
 msgid "zamknięciem zakładki"
 msgstr ""
 
-#: KainoteFrame.cpp:1900
+#: KainoteFrame.cpp:1896
 msgid "wczytaniem nowych napisów"
 msgstr ""
 
-#: KainoteFrame.cpp:1901
+#: KainoteFrame.cpp:1897
 msgid "usunięciem napisów"
 msgstr ""
 
-#: KainoteFrame.cpp:1939 OptionsDialog.cpp:608
+#: KainoteFrame.cpp:1935 OptionsDialog.cpp:608
 msgid "Nie można wczytać skrótów klawiszowych audio"
 msgstr ""
 
-#: KainoteFrame.cpp:1940 OptionsDialog.cpp:287 ProviderFFMS2.cpp:37
+#: KainoteFrame.cpp:1936 OptionsDialog.cpp:287 ProviderFFMS2.cpp:37
 #: VideoFfmpeg.cpp:52
 msgid "Nie można wczytać opcji audio"
 msgstr ""
 
-#: KainoteFrame.cpp:1944
+#: KainoteFrame.cpp:1940
 msgid "Wybierz plik audio"
 msgstr ""
 
-#: KainoteFrame.cpp:1947
+#: KainoteFrame.cpp:1943
 msgid "Pliki audio i wideo"
 msgstr ""
 
-#: KainoteFrame.cpp:1949
+#: KainoteFrame.cpp:1945
 msgid "Wszystkie pliki"
 msgstr ""
 
-#: KainoteFrame.cpp:2103
+#: KainoteFrame.cpp:2099
 msgid "&Cofnij do "
 msgstr ""
 
-#: KainoteFrame.cpp:2119
+#: KainoteFrame.cpp:2115
 msgid "&Ponów do "
 msgstr ""
 
-#: KainoteFrame.cpp:2259
+#: KainoteFrame.cpp:2255
 msgid "Wybierz plik sesji"
 msgstr ""
 
-#: KainoteFrame.cpp:2261 KainoteFrame.cpp:2270
+#: KainoteFrame.cpp:2257 KainoteFrame.cpp:2266
 msgid "Plik sesji (*.kls),|*.kls"
 msgstr ""
 
-#: KainoteFrame.cpp:2269
+#: KainoteFrame.cpp:2265
 msgid "Zapisz plik sesji"
 msgstr ""
 
-#: KainoteFrame.cpp:2379
+#: KainoteFrame.cpp:2375
 #, c-format
 msgid "Skrót o nazwie '%s' nie należy do skrypru."
 msgstr ""
@@ -4801,27 +4777,27 @@ msgstr ""
 msgid "Informacje o napisach"
 msgstr ""
 
-#: OptionsPanels.cpp:32 ScriptInfo.cpp:42 SubsGrid.cpp:1396
+#: OptionsPanels.cpp:32 ScriptInfo.cpp:42 SubsGrid.cpp:1398
 msgid "Tytuł"
 msgstr ""
 
-#: OptionsPanels.cpp:32 ScriptInfo.cpp:44 SubsGrid.cpp:1396
+#: OptionsPanels.cpp:32 ScriptInfo.cpp:44 SubsGrid.cpp:1398
 msgid "Autor"
 msgstr ""
 
-#: OptionsPanels.cpp:32 ScriptInfo.cpp:46 SubsGrid.cpp:1396
+#: OptionsPanels.cpp:32 ScriptInfo.cpp:46 SubsGrid.cpp:1398
 msgid "Tłumaczenie"
 msgstr ""
 
-#: OptionsPanels.cpp:32 ScriptInfo.cpp:48 SubsGrid.cpp:1396
+#: OptionsPanels.cpp:32 ScriptInfo.cpp:48 SubsGrid.cpp:1398
 msgid "Korekta"
 msgstr ""
 
-#: OptionsPanels.cpp:32 ScriptInfo.cpp:50 SubsGrid.cpp:1396
+#: OptionsPanels.cpp:32 ScriptInfo.cpp:50 SubsGrid.cpp:1398
 msgid "Timing"
 msgstr ""
 
-#: OptionsPanels.cpp:32 ScriptInfo.cpp:52 SubsGrid.cpp:1396
+#: OptionsPanels.cpp:32 ScriptInfo.cpp:52 SubsGrid.cpp:1398
 #: VisualDrawingShapes.cpp:68
 msgid "Edycja"
 msgstr ""
@@ -5667,11 +5643,11 @@ msgstr ""
 msgid "Prostokątna obwódka"
 msgstr ""
 
-#: StyleChange.cpp:709 SubsGrid.cpp:452 SubsGrid.cpp:602
+#: StyleChange.cpp:709 SubsGrid.cpp:454 SubsGrid.cpp:604
 msgid "Margines prawy"
 msgstr ""
 
-#: StyleChange.cpp:710 SubsGrid.cpp:451 SubsGrid.cpp:601
+#: StyleChange.cpp:710 SubsGrid.cpp:453 SubsGrid.cpp:603
 msgid "Margines lewy"
 msgstr ""
 
@@ -6032,58 +6008,58 @@ msgstr ""
 msgid "Wczytaj napisy z pliku MKV / OGM"
 msgstr ""
 
-#: SubsGrid.cpp:256
+#: SubsGrid.cpp:258
 msgid "Dodaj linie"
 msgstr ""
 
-#: SubsGrid.cpp:257
+#: SubsGrid.cpp:259
 msgid "Kopiuj drzewko"
 msgstr ""
 
-#: SubsGrid.cpp:258
+#: SubsGrid.cpp:260
 msgid "Zmień opis"
 msgstr ""
 
-#: SubsGrid.cpp:259
+#: SubsGrid.cpp:261
 msgid "Zaznacz linie drzewka"
 msgstr ""
 
-#: SubsGrid.cpp:453 SubsGrid.cpp:603
+#: SubsGrid.cpp:455 SubsGrid.cpp:605
 msgid "Margines pionowy"
 msgstr ""
 
-#: SubsGrid.cpp:456
+#: SubsGrid.cpp:458
 msgid "Tekst do oryginału"
 msgstr ""
 
-#: SubsGrid.cpp:457
+#: SubsGrid.cpp:459
 msgid "Tekst do tłumaczenia"
 msgstr ""
 
-#: SubsGrid.cpp:606
+#: SubsGrid.cpp:608
 msgid "Tekst bez tagów"
 msgstr ""
 
-#: SubsGrid.cpp:871
+#: SubsGrid.cpp:873
 msgid "Pliki napisów (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"
 msgstr ""
 
-#: SubsGrid.cpp:1062
+#: SubsGrid.cpp:1064
 msgid "Zapisać plik przed wczytaniem napisów z MKV?"
 msgstr ""
 
-#: SubsGrid.cpp:1096
+#: SubsGrid.cpp:1098
 msgid "Otwieranie napisów nie powiodło się"
 msgstr ""
 
-#: SubsGrid.cpp:1231 SubsGrid.cpp:1261 SubsGrid.cpp:1281
+#: SubsGrid.cpp:1233 SubsGrid.cpp:1263 SubsGrid.cpp:1283
 #, c-format
 msgid ""
 "W linii %i nie można przeskalować wartości '%s'\n"
 "w tagu '%s'"
 msgstr ""
 
-#: SubsGrid.cpp:1407
+#: SubsGrid.cpp:1409
 msgid "Wyłącz potwierdzenie"
 msgstr ""
 
@@ -6091,7 +6067,7 @@ msgstr ""
 msgid "Nieprawidłowy FPS. Popraw opcje i spróbuj ponownie."
 msgstr ""
 
-#: SubsGridBase.cpp:503
+#: SubsGridBase.cpp:503 SubsGridBase.cpp:660
 msgid "Wideo nie zostało wczytane przez FFMS2"
 msgstr ""
 
@@ -6116,7 +6092,7 @@ msgstr ""
 msgid "Nie zaznaczono linii do przesunięcia"
 msgstr ""
 
-#: SubsGridBase.cpp:1402
+#: SubsGridBase.cpp:1407
 msgid ""
 "Czy na pewno chcesz wyłączyć tryb tłumacza?\n"
 "Obcojęzyczny tekst przetłumaczonych linijek zostanie usunięty."

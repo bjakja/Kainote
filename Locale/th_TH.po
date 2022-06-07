@@ -1,18 +1,18 @@
+# altinat <poiiiii4yy@gmail.com>, 2022.
 msgid ""
 msgstr ""
 "Project-Id-Version: Kainote\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-21 15:23+0700\n"
-"PO-Revision-Date: 2022-05-12 17:59+0000\n"
+"POT-Creation-Date: 2022-06-06 20:10+0700\n"
+"PO-Revision-Date: 2022-06-06 20:10+0700\n"
 "Last-Translator: altinat <poiiiii4yy@gmail.com>\n"
-"Language-Team: Thai <https://hosted.weblate.org/projects/kainote/kainote/th/"
-">\n"
+"Language-Team: Thai <https://hosted.weblate.org/projects/kainote/kainote/th/>\n"
 "Language: th_TH\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.13-dev\n"
+"X-Generator: Poedit 3.0.1\n"
 "X-Poedit-Basepath: ../Kainote\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: _\n"
@@ -53,7 +53,7 @@ msgstr "ระดับเสียง"
 
 #: AudioBox.cpp:103
 msgid "Połącz suwak głośności i rozciągnięcia"
-msgstr "เชื่อมต่อแถบระดับเสียงกับแถบยืดระยะ"
+msgstr "เชื่อมต่อแถบระดับเสียงเข้ากับแถบยืดระยะ"
 
 #: AudioBox.cpp:130
 msgid "Odtwórz poprzednią linijkę"
@@ -151,16 +151,13 @@ msgstr "เพิ่มประสิทธิภาพความถี่ข
 msgid "Nieprawidłowy format klatek kluczowych"
 msgstr "รูปแบบคีย์เฟรมไม่ถูกต้อง"
 
-#: AudioBox.cpp:268 Automation.cpp:1201 Automation.cpp:1248
-#: KainoteFrame.cpp:735 KainoteFrame.cpp:739 KainoteFrame.cpp:1939
-#: KainoteFrame.cpp:1940 KainoteFrame.cpp:2379 KainoteFrame.cpp:2405
-#: KainoteFrame.cpp:2409 OptionsDialog.cpp:287 OptionsDialog.cpp:608
-#: Provider.cpp:179 VideoFfmpeg.cpp:52 VideoFfmpeg.cpp:991
-#: VisualAllTagsEdition.cpp:166 VisualAllTagsEdition.cpp:170
-#: VisualAllTagsEdition.cpp:188 VisualAllTagsEdition.cpp:295
-#: VisualAllTagsEdition.cpp:303 VisualAllTagsEdition.cpp:307
-#: VisualDrawingShapes.cpp:144 VisualDrawingShapes.cpp:148
-#: VisualDrawingShapes.cpp:166 VisualDrawingShapes.cpp:270
+#: AudioBox.cpp:268 Automation.cpp:1197 Automation.cpp:1244 KainoteFrame.cpp:735
+#: KainoteFrame.cpp:739 KainoteFrame.cpp:1935 KainoteFrame.cpp:1936 KainoteFrame.cpp:2375
+#: KainoteFrame.cpp:2401 KainoteFrame.cpp:2405 OptionsDialog.cpp:287 OptionsDialog.cpp:608
+#: Provider.cpp:179 VideoFfmpeg.cpp:52 VideoFfmpeg.cpp:991 VisualAllTagsEdition.cpp:166
+#: VisualAllTagsEdition.cpp:170 VisualAllTagsEdition.cpp:188 VisualAllTagsEdition.cpp:295
+#: VisualAllTagsEdition.cpp:303 VisualAllTagsEdition.cpp:307 VisualDrawingShapes.cpp:144
+#: VisualDrawingShapes.cpp:148 VisualDrawingShapes.cpp:166 VisualDrawingShapes.cpp:270
 msgid "Błąd"
 msgstr "ผิดพลาด"
 
@@ -197,9 +194,8 @@ msgstr "ไม่สามารถสร้างพื้นผิว"
 msgid "Nie można stworzyć linii D3DX"
 msgstr "ไม่สามารถสร้างเส้น D3DX"
 
-#: AudioDisplay.cpp:304 AudioDisplay.cpp:305 AudioDisplay.cpp:306
-#: ContextDX9.cpp:196 RendererVideo.cpp:258 RendererVideo.cpp:260
-#: VisualCross.cpp:262 Visuals.cpp:458
+#: AudioDisplay.cpp:304 AudioDisplay.cpp:305 AudioDisplay.cpp:306 ContextDX9.cpp:196
+#: RendererVideo.cpp:258 RendererVideo.cpp:260 VisualCross.cpp:262 Visuals.cpp:458
 msgid "Nie można stworzyć czcionki D3DX"
 msgstr "ไม่สามารถสร้างแบบอักษร D3DX"
 
@@ -252,20 +248,18 @@ msgstr "แฟ้ม"
 msgid "Wersje"
 msgstr "เวอร์ชัน"
 
-#: AutoSaveOpen.cpp:57 KainoteFrame.cpp:1350
+#: AutoSaveOpen.cpp:57 KainoteFrame.cpp:1346
 msgid "Otwórz"
 msgstr "เปิด"
 
-#: AutoSaveOpen.cpp:58 AutomationHotkeysDialog.cpp:146
-#: AutomationProgress.cpp:295 ColorPicker.cpp:630 ColorPicker.cpp:1398
-#: DummyVideo.cpp:102 EditBox.cpp:96 EditBox.cpp:1700 FontCatalogList.cpp:69
-#: FontDialog.cpp:408 KaiMessageBox.cpp:77 MappedButton.cpp:39
-#: NewCatalog.cpp:42 OptionsDialog.cpp:968 ProgressDialog.cpp:44
+#: AutoSaveOpen.cpp:58 AutomationHotkeysDialog.cpp:146 AutomationProgress.cpp:295
+#: ColorPicker.cpp:630 ColorPicker.cpp:1398 DummyVideo.cpp:102 EditBox.cpp:96
+#: EditBox.cpp:1700 FontCatalogList.cpp:69 FontDialog.cpp:408 KaiMessageBox.cpp:77
+#: MappedButton.cpp:39 NewCatalog.cpp:42 OptionsDialog.cpp:968 ProgressDialog.cpp:44
 #: ScriptInfo.cpp:114 ShiftTimes.cpp:67 StyleChange.cpp:272 Stylelistbox.cpp:34
-#: Stylelistbox.cpp:58 Stylelistbox.cpp:112 Stylelistbox.cpp:147
-#: SubsFile.cpp:44 SubsGrid.cpp:1406 SubsGridDialogs.cpp:54
-#: SubsGridDialogs.cpp:85 SubsResampleDialog.cpp:152
-#: VisualAllTagsEdition.cpp:126 VisualDrawingShapes.cpp:103
+#: Stylelistbox.cpp:58 Stylelistbox.cpp:112 Stylelistbox.cpp:147 SubsFile.cpp:44
+#: SubsGrid.cpp:1408 SubsGridDialogs.cpp:54 SubsGridDialogs.cpp:85
+#: SubsResampleDialog.cpp:152 VisualAllTagsEdition.cpp:126 VisualDrawingShapes.cpp:103
 msgid "Anuluj"
 msgstr "ยกเลิก"
 
@@ -403,11 +397,8 @@ msgstr "ลบแฟ้มแคชเสียงที่เก่ากว่
 
 #: AutoSavesRemoving.cpp:177
 msgid ""
-"Pliki napisów (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*."
-"sub;*.txt"
-msgstr ""
-"แฟ้มคำบรรยาย (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;"
-"*.txt"
+"Pliki napisów (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt"
+msgstr "แฟ้มคำบรรยาย (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt"
 
 #: AutoSavesRemoving.cpp:178
 msgid "Pliki indeksów (*.ffindex)|*.ffindex"
@@ -438,11 +429,10 @@ msgstr ""
 
 #: Automation.cpp:484
 msgid ""
-"Próbujesz wczytać skrypt Automatyzacji 3 jako skrypt Automatyzacji 4. "
-"Automatyzacja 3 nie jest już wspierana."
+"Próbujesz wczytać skrypt Automatyzacji 3 jako skrypt Automatyzacji 4. Automatyzacja 3 "
+"nie jest już wspierana."
 msgstr ""
-"คุณกำลังพยายามโหลดสคริปต์อัตโนมัติเวอร์ชัน 3 ซึ่งสคริปต์อัตโนมัติเวอร์ชัน 4 "
-"ไม่รองรับการโหลดจากสคริปต์อัตโนมัติ 3"
+"คุณกำลังพยายามโหลดสคริปต์อัตโนมัติเวอร์ชัน 3 ซึ่งสคริปต์อัตโนมัติเวอร์ชัน 4 ไม่รองรับการโหลดจากสคริปต์อัตโนมัติ 3"
 
 #: Automation.cpp:525
 #, c-format
@@ -453,8 +443,7 @@ msgstr "มาโครชื่อ '%s' ได้ถูกกำหนดไว
 msgid "Wystąpił błąd podczas wykonywania skryptu Lua:\n"
 msgstr "เกิดข้อผิดพลาดขณะโหลดสคริปต์ Lua:\n"
 
-#: Automation.cpp:1054 Automation.cpp:1095 KainoteFrame.cpp:739
-#: KainoteFrame.cpp:2409
+#: Automation.cpp:1057 Automation.cpp:1098 KainoteFrame.cpp:739 KainoteFrame.cpp:2405
 #, c-format
 msgid ""
 "Błąd wczytywania skryptu Lua: %s\n"
@@ -463,12 +452,12 @@ msgstr ""
 "เกิดข้อผิดพลาดในการโหลดสคริปต์ Lua: %s\n"
 "%s"
 
-#: Automation.cpp:1058 Automation.cpp:1099
+#: Automation.cpp:1061 Automation.cpp:1102
 #, c-format
 msgid "Nieznany błąd wczytywania skryptu Lua: %s."
 msgstr "เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุขณะโหลดสคริปต์ Lua: %s"
 
-#: Automation.cpp:1065
+#: Automation.cpp:1068
 msgid ""
 "Jeden bądź więcej skryptów autoload zawiera błędy.\n"
 "Obejrzyj opisy skryptów, by uzyskać więcej informacji."
@@ -476,7 +465,7 @@ msgstr ""
 "สคริปต์อัตโนมัติอย่างน้อยหนึ่งรายการมีข้อผิดพลาด\n"
 "ดูคำอธิบายของสคริปต์สำหรับข้อมูลเพิ่มเติม"
 
-#: Automation.cpp:1103
+#: Automation.cpp:1106
 msgid ""
 "Co najmniej jeden skrypt z pliku napisów zawiera błędy.\n"
 "Zobacz opisy skryptów, by uzyskać więcej informacji."
@@ -484,33 +473,33 @@ msgstr ""
 "สคริปต์อัตโนมัติอย่างน้อยหนึ่งรายการจากแฟ้มคำบรรยายเกิดข้อผิดพลาด\n"
 "ดูคำอธิบายของสคริปต์สำหรับข้อมูลเพิ่มเติม"
 
-#: Automation.cpp:1113
+#: Automation.cpp:1116
 msgid "Wybierz edytor skryptów"
 msgstr "เลือกโปรแกรมแก้ไขสคริปต์"
 
-#: Automation.cpp:1114
+#: Automation.cpp:1117
 msgid "Programy (*.exe)|*.exe|Wszystkie pliki (*.*)|*.*"
 msgstr "โปรแกรม (*.exe)|*.exe |แฟ้มทั้งหมด (*.*) |*.*"
 
-#: Automation.cpp:1130
+#: Automation.cpp:1133
 msgid "Nie można uruchomić edytora."
 msgstr "ไม่สามารถเปิดตัวแก้ไข"
 
-#: Automation.cpp:1130
+#: Automation.cpp:1133
 msgid "Błąd automatyzacji"
 msgstr "สคริปต์อัตโนมัติเกิดข้อผิดพลาด"
 
-#: Automation.cpp:1203 Automation.cpp:1250
+#: Automation.cpp:1199 Automation.cpp:1246
 msgid "Pełny opis błędu Lua"
 msgstr "รายละเอียดข้อผิดพลาดของ Lua"
 
-#: Automation.cpp:1208 Automation.cpp:1255 EditBox.cpp:289
-#: FontCatalogList.cpp:107 VideoToolbar.cpp:510 VideoToolbar.cpp:526
-#: VideoToolbar.cpp:762 stylestore.cpp:88 stylestore.cpp:141
+#: Automation.cpp:1204 Automation.cpp:1251 EditBox.cpp:289 FontCatalogList.cpp:107
+#: VideoToolbar.cpp:510 VideoToolbar.cpp:526 VideoToolbar.cpp:762 stylestore.cpp:88
+#: stylestore.cpp:141
 msgid "Edytuj"
 msgstr "แก้ไข"
 
-#: Automation.cpp:1213 Automation.cpp:1260
+#: Automation.cpp:1209 Automation.cpp:1256
 msgid "Odśwież"
 msgstr "โหลดใหม่"
 
@@ -543,8 +532,8 @@ msgid "Mapuj skrót"
 msgstr "แผนผังปุ่มลัด"
 
 #: AutomationHotkeysDialog.cpp:144 AutomationHotkeysDialog.cpp:240
-#: AutomationHotkeysDialog.cpp:250 Hotkeys.cpp:479 Hotkeys.cpp:490
-#: OptionsDialog.cpp:116 OptionsDialog.cpp:126 OptionsDialog.cpp:619
+#: AutomationHotkeysDialog.cpp:250 Hotkeys.cpp:479 Hotkeys.cpp:490 OptionsDialog.cpp:116
+#: OptionsDialog.cpp:126 OptionsDialog.cpp:619
 msgid "Usuń skrót"
 msgstr "ลบปุ่มลัด"
 
@@ -581,17 +570,16 @@ msgstr ""
 "มีปุ่มลัดสำหรับ \"%s\" อยู่แล้ว\n"
 "ต้องการทำอย่างไร?"
 
-#: AutomationHotkeysDialog.cpp:238 AutomationHotkeysDialog.cpp:247
-#: Hotkeys.cpp:477 Hotkeys.cpp:487 KainoteFrame.cpp:1081 KainoteFrame.cpp:1097
-#: KainoteFrame.cpp:1211 KainoteFrame.cpp:2276 OptionsDialog.cpp:114
-#: OptionsDialog.cpp:123 OptionsDialog.cpp:473 SpellCheckerDialog.cpp:145
-#: SubsGrid.cpp:1096 SubsGridBase.cpp:532 SubsGridBase.cpp:561 VideoBox.cpp:300
-#: VisualClips.cpp:1064 kainoteApp.cpp:114 kainoteApp.cpp:158
+#: AutomationHotkeysDialog.cpp:238 AutomationHotkeysDialog.cpp:247 Hotkeys.cpp:477
+#: Hotkeys.cpp:487 KainoteFrame.cpp:1077 KainoteFrame.cpp:1093 KainoteFrame.cpp:1207
+#: KainoteFrame.cpp:2272 OptionsDialog.cpp:114 OptionsDialog.cpp:123 OptionsDialog.cpp:473
+#: SpellCheckerDialog.cpp:145 SubsGrid.cpp:1098 SubsGridBase.cpp:532 SubsGridBase.cpp:561
+#: VideoBox.cpp:300 VisualClips.cpp:1064 kainoteApp.cpp:114 kainoteApp.cpp:158
 msgid "Uwaga"
 msgstr "คำเตือน"
 
-#: AutomationHotkeysDialog.cpp:239 AutomationHotkeysDialog.cpp:249
-#: Hotkeys.cpp:478 Hotkeys.cpp:489 OptionsDialog.cpp:115 OptionsDialog.cpp:125
+#: AutomationHotkeysDialog.cpp:239 AutomationHotkeysDialog.cpp:249 Hotkeys.cpp:478
+#: Hotkeys.cpp:489 OptionsDialog.cpp:115 OptionsDialog.cpp:125
 msgid "Zamień skróty"
 msgstr "สลับปุ่มลัด"
 
@@ -635,7 +623,7 @@ msgstr "บทบรรยาย"
 msgid "Nie można dodać linii klasy: %s w pole klasy: %s"
 msgstr "ไม่สามารถเพิ่มบรรทัดของคลาส: %s ในฟิลด์ของคลาส: %s"
 
-#: AutomationToFile.cpp:1067
+#: AutomationToFile.cpp:1070
 msgid "Brakujący wskaźnik napisów"
 msgstr "ไม่มีตัวชี้คำบรรยาย"
 
@@ -663,8 +651,8 @@ msgstr "สี HSL"
 msgid "Kolor HSV"
 msgstr "สี HSV"
 
-#: ColorPicker.cpp:532 ColorPicker.cpp:1365 EditBox.cpp:190
-#: HotkeysNaming.cpp:90 StyleChange.cpp:694 TextEditorTagList.cpp:343
+#: ColorPicker.cpp:532 ColorPicker.cpp:1365 EditBox.cpp:190 HotkeysNaming.cpp:90
+#: StyleChange.cpp:694 TextEditorTagList.cpp:343
 msgid "Kolor podstawowy"
 msgstr "สีหลัก"
 
@@ -672,13 +660,13 @@ msgstr "สีหลัก"
 msgid "Kolor zastępczy"
 msgstr "สีรอง"
 
-#: ColorPicker.cpp:532 ColorPicker.cpp:1365 EditBox.cpp:198
-#: HotkeysNaming.cpp:89 StyleChange.cpp:696 TextEditorTagList.cpp:345
+#: ColorPicker.cpp:532 ColorPicker.cpp:1365 EditBox.cpp:198 HotkeysNaming.cpp:89
+#: StyleChange.cpp:696 TextEditorTagList.cpp:345
 msgid "Kolor obwódki"
 msgstr "สีเส้นขอบ"
 
-#: ColorPicker.cpp:532 ColorPicker.cpp:1365 EditBox.cpp:202
-#: HotkeysNaming.cpp:92 StyleChange.cpp:697 TextEditorTagList.cpp:346
+#: ColorPicker.cpp:532 ColorPicker.cpp:1365 EditBox.cpp:202 HotkeysNaming.cpp:92
+#: StyleChange.cpp:697 TextEditorTagList.cpp:346
 msgid "Kolor cienia"
 msgstr "สีเงา"
 
@@ -849,7 +837,7 @@ msgstr "ระยะเวลา:"
 
 #: DummyVideo.cpp:120 DummyVideo.cpp:124
 msgid "Nieprawidłowa wartość fps."
-msgstr "ค่า fps ไม่ถูกต้อง"
+msgstr "ค่า FPS ไม่ถูกต้อง"
 
 #: EditBox.cpp:79
 msgid "Wpisz tag ASS"
@@ -953,15 +941,15 @@ msgstr "ย้ายแท็ก"
 msgid "Komentarz"
 msgstr "ความคิดเห็น"
 
-#: EditBox.cpp:293 FindReplaceDialog.cpp:135 KainoteFrame.cpp:204
-#: SelectLines.cpp:75 SubsGrid.cpp:449 SubsGrid.cpp:599 SubsGridWindow.cpp:256
-#: SubsGridWindow.cpp:644 SubsGridWindow.cpp:1098 SubsGridWindow.cpp:1264
+#: EditBox.cpp:293 FindReplaceDialog.cpp:135 KainoteFrame.cpp:204 SelectLines.cpp:75
+#: SubsGrid.cpp:451 SubsGrid.cpp:601 SubsGridWindow.cpp:256 SubsGridWindow.cpp:644
+#: SubsGridWindow.cpp:1098 SubsGridWindow.cpp:1264
 msgid "Aktor"
 msgstr "แอคเตอร์"
 
-#: EditBox.cpp:299 FindReplaceDialog.cpp:138 KainoteFrame.cpp:205
-#: SelectLines.cpp:76 SubsGrid.cpp:454 SubsGrid.cpp:604 SubsGridWindow.cpp:260
-#: SubsGridWindow.cpp:648 SubsGridWindow.cpp:1111 SubsGridWindow.cpp:1277
+#: EditBox.cpp:299 FindReplaceDialog.cpp:138 KainoteFrame.cpp:205 SelectLines.cpp:76
+#: SubsGrid.cpp:456 SubsGrid.cpp:606 SubsGridWindow.cpp:260 SubsGridWindow.cpp:648
+#: SubsGridWindow.cpp:1111 SubsGridWindow.cpp:1277
 msgid "Efekt"
 msgstr "เอฟเฟกต์"
 
@@ -985,8 +973,7 @@ msgstr "ตำแหน่งข้อความ"
 
 #: EditBox.cpp:1182
 msgid ""
-"Tryb tłumacza wyświetla i zapisuje zarówno tekst obcojęzyczny, jak i tekst "
-"tłumaczenia"
+"Tryb tłumacza wyświetla i zapisuje zarówno tekst obcojęzyczny, jak i tekst tłumaczenia"
 msgstr "โหมดผู้แปลจะแสดงและบันทึกทั้งข้อความภาษาต่างประเทศและข้อความการแปล"
 
 #: EditBox.cpp:1183
@@ -1043,8 +1030,8 @@ msgstr "ระยะขอบบนและขอบล่างของบร
 
 #: EditBox.cpp:1196
 msgid ""
-"Efekt linijki. Służy do oznaczania linijek, na których zastosowane ma być "
-"karaoke bądź efekty VSFiltra"
+"Efekt linijki. Służy do oznaczania linijek, na których zastosowane ma być karaoke bądź "
+"efekty VSFiltra"
 msgstr "บรรทัดเอฟเฟกต์ ใช้เพื่อทำคาราโอเกะหรือเอฟเฟกต์ VSFilter"
 
 #: EditBox.cpp:1197
@@ -1095,8 +1082,7 @@ msgid ""
 msgstr ""
 "สามารถกรองการค้นหาของ Windows ด้วยการคั่นเครื่องหมายอัฒภาค (;) เช่น \"*.ass;*.srt\"\n"
 "หากต้องการค้นหาแฟ้มวิดีโอนั้นจะต้องระบุสกุลของแฟ้มวิดีโอ\n"
-"โดยทั่วไปแล้วค่าเริ่มต้นของการค้นหาคือ \"*.ass\" แต่หากกระบุ \"*.*\" "
-"จะเป็นการการค้นหาทั้งหมด"
+"โดยทั่วไปแล้วค่าเริ่มต้นของการค้นหาคือ \"*.ass\" แต่หากกระบุ \"*.*\" จะเป็นการการค้นหาทั้งหมด"
 
 #: FindReplaceDialog.cpp:71
 msgid "Filtry:"
@@ -1146,21 +1132,20 @@ msgstr "ข้ามข้อความ"
 msgid "W polu"
 msgstr "ประเภท"
 
-#: FindReplaceDialog.cpp:124 SelectLines.cpp:73 SubsGrid.cpp:460
-#: SubsGrid.cpp:479 SubsGrid.cpp:486 SubsGrid.cpp:605 SubsGrid.cpp:621
-#: SubsGrid.cpp:630 SubsGridWindow.cpp:264 SubsGridWindow.cpp:654
+#: FindReplaceDialog.cpp:124 SelectLines.cpp:73 SubsGrid.cpp:462 SubsGrid.cpp:481
+#: SubsGrid.cpp:488 SubsGrid.cpp:607 SubsGrid.cpp:623 SubsGrid.cpp:632
+#: SubsGridWindow.cpp:264 SubsGridWindow.cpp:654
 msgid "Tekst"
 msgstr "ข้อความ"
 
-#: FindReplaceDialog.cpp:129 SelectLines.cpp:74 SubsGrid.cpp:450
-#: SubsGrid.cpp:600 SubsGridWindow.cpp:255 SubsGridWindow.cpp:643
-#: SubsGridWindow.cpp:1092 SubsGridWindow.cpp:1258
+#: FindReplaceDialog.cpp:129 SelectLines.cpp:74 SubsGrid.cpp:452 SubsGrid.cpp:602
+#: SubsGridWindow.cpp:255 SubsGridWindow.cpp:643 SubsGridWindow.cpp:1092
+#: SubsGridWindow.cpp:1258
 msgid "Styl"
 msgstr "สไตล์"
 
-#: FindReplaceDialog.cpp:160 FindReplaceDialog.cpp:412
-#: FindReplaceDialog.cpp:427 Hotkeys.cpp:146 HotkeysNaming.cpp:221
-#: SelectLines.cpp:51
+#: FindReplaceDialog.cpp:160 FindReplaceDialog.cpp:412 FindReplaceDialog.cpp:427
+#: Hotkeys.cpp:146 HotkeysNaming.cpp:221 SelectLines.cpp:51
 msgid "Znajdź"
 msgstr "ค้นหา"
 
@@ -1196,8 +1181,7 @@ msgstr ""
 "ค้นหาในคำบรรยาย\n"
 "ที่เปิดอยู่ทั้งหมด"
 
-#: FindReplaceDialog.cpp:205 FindReplaceDialog.cpp:413
-#: FindReplaceDialog.cpp:429
+#: FindReplaceDialog.cpp:205 FindReplaceDialog.cpp:413 FindReplaceDialog.cpp:429
 msgid "Znajdź w napisach"
 msgstr "ค้นหาในคำบรรยาย"
 
@@ -1249,8 +1233,8 @@ msgstr "เลือกทั้งหมด"
 msgid "Odhacz wszystko"
 msgstr "ยกเลิกการเลือกทั้งหมด"
 
-#: FindReplaceResultsDialog.cpp:49 MispellReplacerDialog.cpp:215
-#: SpellCheckerDialog.cpp:55 SubsFile.cpp:162
+#: FindReplaceResultsDialog.cpp:49 MispellReplacerDialog.cpp:215 SpellCheckerDialog.cpp:55
+#: SubsFile.cpp:162
 msgid "Zamień"
 msgstr "แทนที่"
 
@@ -1272,8 +1256,8 @@ msgstr "ป้อนชื่อแคตตาล็อกใหม่"
 msgid "Proszę wprowadzić nazwę nowego katalogu"
 msgstr "โปรดป้อนชื่อของแคตตาล็อกใหม่"
 
-#: FontCatalogList.cpp:83 KainoteFrame.cpp:726 ShiftTimes.cpp:85
-#: ShiftTimes.cpp:949 ShiftTimes.cpp:954 findreplace.cpp:1179
+#: FontCatalogList.cpp:83 KainoteFrame.cpp:726 ShiftTimes.cpp:85 ShiftTimes.cpp:949
+#: ShiftTimes.cpp:954 findreplace.cpp:1179
 msgid "Informacja"
 msgstr "ข้อมูล"
 
@@ -1293,14 +1277,13 @@ msgstr "แคตตาล็อก"
 msgid "Przykład"
 msgstr "ตัวอย่าง"
 
-#: FontCatalogList.cpp:106 FontDialog.cpp:424 StyleChange.cpp:84
-#: VideoToolbar.cpp:737 VisualAllTagsEdition.cpp:86
+#: FontCatalogList.cpp:106 FontDialog.cpp:424 StyleChange.cpp:84 VideoToolbar.cpp:737
+#: VisualAllTagsEdition.cpp:86
 msgid "Dodaj"
 msgstr "เพิ่ม"
 
-#: FontCatalogList.cpp:108 FontCatalogList.cpp:734 SelectLines.cpp:127
-#: SubsGrid.cpp:229 SubsGrid.cpp:260 stylestore.cpp:72 stylestore.cpp:90
-#: stylestore.cpp:143
+#: FontCatalogList.cpp:108 FontCatalogList.cpp:734 SelectLines.cpp:127 SubsGrid.cpp:229
+#: SubsGrid.cpp:262 stylestore.cpp:72 stylestore.cpp:90 stylestore.cpp:143
 msgid "Usuń"
 msgstr "ลบ"
 
@@ -1316,15 +1299,13 @@ msgstr "บันทึกตัวกรอง"
 msgid "Czy na pewno chcesz usunąć ten katalog?"
 msgstr "แน่ใจหรือไม่ว่าต้องการลบแคตตาล็อกนี้?"
 
-#: FontCatalogList.cpp:142 FontCatalogList.cpp:732 Notebook.cpp:942
-#: StyleChange.cpp:463 kainoteApp.cpp:249 kainoteApp.cpp:255 stylestore.cpp:556
+#: FontCatalogList.cpp:142 FontCatalogList.cpp:732 Notebook.cpp:942 StyleChange.cpp:463
+#: kainoteApp.cpp:249 kainoteApp.cpp:255 stylestore.cpp:556
 msgid "Pytanie"
 msgstr "พร้อมท์"
 
 #: FontCatalogList.cpp:166
-msgid ""
-"Lista katalogów ma opcję autozapisu, pliki znajdują się w folderze \"Config"
-"\"."
+msgid "Lista katalogów ma opcję autozapisu, pliki znajdują się w folderze \"Config\"."
 msgstr "รายการของแคตตาล็อกจะถูกบันทึกอัตโนมัติไว้ในโฟลเดอร์ \"Config\""
 
 #: FontCatalogList.cpp:168
@@ -1335,12 +1316,11 @@ msgstr "แคตตาล็อก:"
 msgid "Szukaj:"
 msgstr "ค้นหา:"
 
-#: FontCatalogList.cpp:199 SubsGridBase.cpp:1651
+#: FontCatalogList.cpp:199 SubsGridBase.cpp:1656
 msgid "Autozapis"
 msgstr "บันทึกอัตโนมัติ"
 
-#: FontCatalogList.cpp:312 KainoteFrame.cpp:844 KainoteFrame.cpp:860
-#: VideoBox.cpp:988
+#: FontCatalogList.cpp:312 KainoteFrame.cpp:844 KainoteFrame.cpp:860 VideoBox.cpp:988
 msgid "Wybierz plik wideo"
 msgstr "เลือกแฟ้มวิดีโอ"
 
@@ -1389,8 +1369,8 @@ msgstr " แท็บ: "
 msgid "W linijkach: "
 msgstr "ในบรรทัด: "
 
-#: FontCollector.cpp:132 HotkeysNaming.cpp:132 KainoteFrame.cpp:309
-#: KainoteFrame.cpp:310 SubsGrid.cpp:231
+#: FontCollector.cpp:132 HotkeysNaming.cpp:132 KainoteFrame.cpp:309 KainoteFrame.cpp:310
+#: SubsGrid.cpp:231
 msgid "Kolekcjoner czcionek"
 msgstr "ตัวรวบรวมแบบอักษร"
 
@@ -1475,12 +1455,11 @@ msgstr "ตำแหน่งที่บันทึกไม่ถูกต้
 msgid "Plik zip już istnieje, usunąć go?"
 msgstr "มีแฟ้มบีบอัดอยู่แล้วต้องการลบออกไหม?"
 
-#: FontCollector.cpp:510 KainoteFrame.cpp:1148 KainoteFrame.cpp:1902
-#: Notebook.cpp:1168 SubsGrid.cpp:1063 SubsGrid.cpp:1392 SubsGridBase.cpp:551
-#: SubsGridBase.cpp:1403 VideoBox.cpp:803 VideoBox.cpp:815
-#: VisualAllTagsEdition.cpp:150 VisualAllTagsEdition.cpp:214
-#: VisualDrawingShapes.cpp:128 VisualDrawingShapes.cpp:192 findreplace.cpp:399
-#: findreplace.cpp:406 findreplace.cpp:1326 findreplace.cpp:1330
+#: FontCollector.cpp:510 KainoteFrame.cpp:1144 KainoteFrame.cpp:1898 Notebook.cpp:1168
+#: SubsGrid.cpp:1065 SubsGrid.cpp:1394 SubsGridBase.cpp:551 SubsGridBase.cpp:1408
+#: VideoBox.cpp:803 VideoBox.cpp:815 VisualAllTagsEdition.cpp:150
+#: VisualAllTagsEdition.cpp:214 VisualDrawingShapes.cpp:128 VisualDrawingShapes.cpp:192
+#: findreplace.cpp:399 findreplace.cpp:406 findreplace.cpp:1326 findreplace.cpp:1330
 #: stylestore.cpp:278 stylestore.cpp:310 stylestore.cpp:349 stylestore.cpp:497
 #: stylestore.cpp:642
 msgid "Potwierdzenie"
@@ -1546,13 +1525,11 @@ msgstr "คัดลอกแล้ว"
 msgid "czcionkę"
 msgstr "แบบอักษร"
 
-#: FontCollector.cpp:802 FontCollector.cpp:805 FontCollector.cpp:809
-#: FontCollector.cpp:818
+#: FontCollector.cpp:802 FontCollector.cpp:805 FontCollector.cpp:809 FontCollector.cpp:818
 msgid "czcionki"
 msgstr "แบบอักษร"
 
-#: FontCollector.cpp:802 FontCollector.cpp:805 FontCollector.cpp:809
-#: FontCollector.cpp:818
+#: FontCollector.cpp:802 FontCollector.cpp:805 FontCollector.cpp:809 FontCollector.cpp:818
 msgid "czcionek"
 msgstr "แบบอักษร"
 
@@ -1786,8 +1763,7 @@ msgid "Nie można stworzyć uchwytu notyfikacji zmian folderu czcionek."
 msgstr "ไม่สามารถสร้างตัวจัดการการแจ้งเตือนการเปลี่ยนแปลงของโฟลเดอร์แบบอักษร"
 
 #: FontEnumerator.cpp:231
-msgid ""
-"Nie można stworzyć następnego uchwytu notyfikacji zmian folderu czcionek."
+msgid "Nie można stworzyć następnego uchwytu notyfikacji zmian folderu czcionek."
 msgstr "ไม่สามารถสร้างตัวจัดการการแจ้งเตือนการเปลี่ยนแปลงของโฟลเดอร์แบบอักษรตัวถัดไปได้"
 
 #: Hotkeys.cpp:134
@@ -1972,8 +1948,7 @@ msgstr "ไปข้างหน้า 1 นาที"
 msgid "Minuta do tyłu"
 msgstr "ย้อนหลังไป 1 นาที"
 
-#: Hotkeys.cpp:181 HotkeysNaming.cpp:194 VideoBox.cpp:155
-#: VideoFullscreen.cpp:62
+#: Hotkeys.cpp:181 HotkeysNaming.cpp:194 VideoBox.cpp:155 VideoFullscreen.cpp:62
 msgid "Następny plik"
 msgstr "แฟ้มถัดไป"
 
@@ -2158,8 +2133,7 @@ msgid "Proszę wcisnąć klawisze skrótu dla \"%s\"."
 msgstr "ป้อนปุ่มลัดสำหรับ \"%s\""
 
 #: Hotkeys.cpp:641
-msgid ""
-"Skróty globalne i edytora muszą zawierać modyfikatory (Shift, Ctrl lub Alt)."
+msgid "Skróty globalne i edytora muszą zawierać modyfikatory (Shift, Ctrl lub Alt)."
 msgstr "ปุ่มลัดตัวแก้ไขและส่วนกลางจะต้องประกอบไปด้วยคีย์พิเศษ (เช่น Shift, Ctrl, Alt)"
 
 #: Hotkeys.cpp:644
@@ -2454,7 +2428,7 @@ msgstr "ซ่อนสไตล์"
 msgid "Stwórz drzewko"
 msgstr "สร้างไดเรกทอรีทรี"
 
-#: HotkeysNaming.cpp:168 KainoteFrame.cpp:957 OptionsDialog.cpp:595
+#: HotkeysNaming.cpp:168 KainoteFrame.cpp:953 OptionsDialog.cpp:595
 msgid "Lista osób pomocnych przy tworzeniu programu"
 msgstr "เครดิต"
 
@@ -2826,11 +2800,11 @@ msgstr "ออกจากโปรแกรม"
 msgid "&Plik"
 msgstr "&แฟ้ม"
 
-#: KainoteFrame.cpp:181 KainoteFrame.cpp:2106
+#: KainoteFrame.cpp:181 KainoteFrame.cpp:2102
 msgid "&Cofnij"
 msgstr "&เลิกทำ"
 
-#: KainoteFrame.cpp:186 KainoteFrame.cpp:2122
+#: KainoteFrame.cpp:186 KainoteFrame.cpp:2118
 msgid "&Ponów"
 msgstr "&ทำซ้ำ"
 
@@ -2858,9 +2832,9 @@ msgstr "กำลังมองหานิพจน์"
 msgid "Znajduje kolejne wystąpięnie frazy w tekście"
 msgstr "ค้นหาสิ่งที่จะเกิดขึ้นต่อไปของนิพจน์ในข้อความ"
 
-#: KainoteFrame.cpp:199 ShiftTimes.cpp:345 SubsGrid.cpp:447 SubsGrid.cpp:478
-#: SubsGrid.cpp:484 SubsGrid.cpp:485 SubsGrid.cpp:597 SubsGrid.cpp:620
-#: SubsGrid.cpp:628 SubsGrid.cpp:629
+#: KainoteFrame.cpp:199 ShiftTimes.cpp:345 SubsGrid.cpp:449 SubsGrid.cpp:480
+#: SubsGrid.cpp:486 SubsGrid.cpp:487 SubsGrid.cpp:599 SubsGrid.cpp:622 SubsGrid.cpp:630
+#: SubsGrid.cpp:631
 msgid "Czas początkowy"
 msgstr "เวลาเริ่มต้น"
 
@@ -2868,7 +2842,7 @@ msgstr "เวลาเริ่มต้น"
 msgid "Sortuj według czasu początkowego"
 msgstr "เรียงตามเวลาเริ่มต้น"
 
-#: KainoteFrame.cpp:201 ShiftTimes.cpp:346 SubsGrid.cpp:448 SubsGrid.cpp:598
+#: KainoteFrame.cpp:201 ShiftTimes.cpp:346 SubsGrid.cpp:450 SubsGrid.cpp:600
 msgid "Czas końcowy"
 msgstr "เวลาสิ้นสุด"
 
@@ -2892,7 +2866,7 @@ msgstr "จัดเรียงตามแอคเตอร์"
 msgid "Sortuj według efektu"
 msgstr "จัดเรียงตามเอฟเฟกต์"
 
-#: KainoteFrame.cpp:206 SubsGrid.cpp:446 SubsGrid.cpp:596
+#: KainoteFrame.cpp:206 SubsGrid.cpp:448 SubsGrid.cpp:598
 msgid "Warstwa"
 msgstr "ชั้น"
 
@@ -3180,40 +3154,40 @@ msgstr "แฟ้มสคริปต์ (*.lua),(*.moon)|*.lua;*.moon;"
 msgid "Ten plik napisów nie ma dodanych żadnych skryptów"
 msgstr "คำบรรยายนี้ไม่ได้เพิ่มสคริปต์ใด ๆ"
 
-#: KainoteFrame.cpp:735 KainoteFrame.cpp:2405
+#: KainoteFrame.cpp:735 KainoteFrame.cpp:2401
 #, c-format
 msgid "Warunki skryptu Lua '%s' nie zostały spełnione"
 msgstr "ไม่พบเงื่อนไขของสคริปต์ Lua ในสคริปต์ '%s'"
 
-#: KainoteFrame.cpp:814 SubsGrid.cpp:869 VideoBox.cpp:1003
+#: KainoteFrame.cpp:814 SubsGrid.cpp:871 VideoBox.cpp:1003
 msgid "Wybierz plik napisów"
 msgstr "เลือกแฟ้มคำบรรยาย"
 
 #: KainoteFrame.cpp:817
 msgid ""
-"Pliki napisów (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*."
-"sub;*.txt|Pliki wideo z wbudowanymi napisami (*.mkv),(*.ogm)|*.mkv;*.ogm"
+"Pliki napisów (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt|"
+"Pliki wideo z wbudowanymi napisami (*.mkv),(*.ogm)|*.mkv;*.ogm"
 msgstr ""
-"แฟ้มคำบรรยาย (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;"
-"*.txt|วิดีโอที่มีคำบรรยาย (*.mkv),(*.ogm)|*.mkv;*.ogm"
+"แฟ้มคำบรรยาย (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt|"
+"วิดีโอที่มีคำบรรยาย (*.mkv),(*.ogm)|*.mkv;*.ogm"
 
 #: KainoteFrame.cpp:847
 msgid ""
-"Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
-"(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;"
-"*.rm;*.mpg;*.mpeg;*.3gp;*.avs|Wszystkie pliki (*.*)|*.*"
+"Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*."
+"mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.mpg;*.mpeg;"
+"*.3gp;*.avs|Wszystkie pliki (*.*)|*.*"
 msgstr ""
-"แฟ้มวิดีโอ (*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
-"(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;"
-"*.rm;*.mpg;*.mpeg;*.3gp;*.avs|แฟ้มทั้งหมด (*.*)|*.*"
+"แฟ้มวิดีโอ (*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.mpg),"
+"(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.mpg;*.mpeg;*.3gp;*."
+"avs|แฟ้มทั้งหมด (*.*)|*.*"
 
 #: KainoteFrame.cpp:863
 msgid ""
-"Pliki klatek kluczowych (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*."
-"stats;*.log|Wszystkie pliki (*.*)|*.*"
+"Pliki klatek kluczowych (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|"
+"Wszystkie pliki (*.*)|*.*"
 msgstr ""
-"แฟ้มคีย์เฟรม (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|"
-"แฟ้มทั้งหมด (*.*)|*.*"
+"แฟ้มคีย์เฟรม (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|แฟ้มทั้งหมด (*.*)|"
+"*.*"
 
 #: KainoteFrame.cpp:915
 #, c-format
@@ -3221,24 +3195,24 @@ msgid ""
 "Edytor napisów by Marcin Drob aka Bakura lub Bjakja (bjakja7@gmail.com),\n"
 "wersja %s z dnia %s"
 msgstr ""
-"ตัวแก้ไขคำบรรยายโดย Marcin Drob หรือที่รู้จักในชื่อ Bakura หรือ Bjakja (bjakja7@gmail."
-"com)\n"
+"ตัวแก้ไขคำบรรยายโดย Marcin Drob หรือที่รู้จักในชื่อ Bakura หรือ Bjakja (bjakja7@gmail.com)\n"
 "เวอร์ชั่น %s อัพเดทวันที่ %s"
 
 #: KainoteFrame.cpp:917
 msgid ""
-"Ten program powstał w celu zastąpienia dwóch programów: Bestplayera i "
-"Aegisuba.\n"
+"Ten program powstał w celu zastąpienia dwóch programów: Bestplayera i Aegisuba.\n"
 "\n"
 msgstr ""
 "ผมเขียนโปรแกรมนี้เพื่อมาทดแทน Bestplayer และ Aegisub\n"
 "\n"
 
 #: KainoteFrame.cpp:918
+#, fuzzy
 msgid ""
-"Jeśli zauważyłeś(aś) jakieś błędy bądź masz jakieś propozycje zmian lub "
-"nowych funkcji,\n"
-"możesz napisać o tym na: forum ANSI, Githubie, bądź mailowo.\n"
+"Jeśli zauważyłeś(aś) jakieś błędy bądź masz jakieś propozycje zmian lub nowych "
+"funkcji,\n"
+"możesz napisać o tym na: Discordzie https://discord.gg/9WacFTtK6q, Githubie, bądź "
+"mailowo.\n"
 "\n"
 msgstr ""
 "หากพบข้อบกพร่องหรือมีข้อเสนอแนะเปลี่ยนแปลงหรือฟีเจอร์ใหม่\n"
@@ -3251,8 +3225,7 @@ msgstr "Kainote มีบางส่วนของโครงการดั�
 
 #: KainoteFrame.cpp:921
 msgid ""
-"Color picker, wymuxowywanie napisów z mkv, audiobox, odwarzacz audio, "
-"automatyzacja\n"
+"Color picker, wymuxowywanie napisów z mkv, audiobox, odwarzacz audio, automatyzacja\n"
 "i kilka innych pojedynczych funkcji wzięte z Aegisuba -\n"
 msgstr ""
 "ตัวหยิบสี, ถอดซับออกจากแฟ้ม MKV, ออดิโอบอกซ์, ตัวเสียง, สคริปต์อัตโนมัติ\n"
@@ -3267,43 +3240,23 @@ msgid "Pomoc graficzna: (przyciski, obrazki do pomocy itd.)\n"
 msgstr "ความช่วยเหลือด้านกราฟิก: (ปุ่ม, รูปภาพช่วยเหลือ ฯลฯ )\n"
 
 #: KainoteFrame.cpp:939
-msgid "- Kostek00 (przyciski do audio i narzędzi wizualnych).\n"
-msgstr "- Kostek00 (ปุ่มเครื่องมือภาพและเสียง)\n"
-
-#: KainoteFrame.cpp:940
-msgid "- Xandros (nowe przyciski do wideo).\n"
+#, fuzzy
+msgid "- Xandros (przyciski do wideo).\n"
 msgstr "- Xandros (ปุ่มวิดีโอใหม่)\n"
 
-#: KainoteFrame.cpp:941
+#: KainoteFrame.cpp:940
 msgid "- Devilkan (ikony do menu i paska narzędzi, obrazki do pomocy).\n"
 msgstr "- Devilkan (ไอคอนเมนูและแถบเครื่องมือ)\n"
 
-#: KainoteFrame.cpp:942
+#: KainoteFrame.cpp:941
 msgid "- Zły Los (ikony do skojarzonych plików i do menu).\n"
 msgstr "- Zły Los (ไอคอนเชื่อมโยงแฟ้มและเมนู)\n"
 
-#: KainoteFrame.cpp:943
-msgid ""
-"- Areki, duplex (tłumaczenie anglojęzyczne).\n"
-" \n"
-msgstr ""
-"- Areki, duplex (แปลเป็นภาษาอังกฤษ)\n"
-" \n"
-
-#: KainoteFrame.cpp:944
+#: KainoteFrame.cpp:942
 msgid "Testerzy: (mniej i bardziej wprawieni użytkownicy programu)\n"
 msgstr "ผู้ทดสอบ:\n"
 
-#: KainoteFrame.cpp:945
-msgid ""
-"- Funki27 (pierwszy tester mający spory wpływ na obecne działanie programu\n"
-msgstr "- Funki27 (ผู้ทดสอบ Kainote คนแรกที่มาช่วยปรับปรุง ต้องขอบคุณเขาจริงๆ\n"
-
-#: KainoteFrame.cpp:946
-msgid "i najbardziej narzekający na wszystko).\n"
-msgstr "แต่ชอบบ่นไปหน่อย)\n"
-
-#: KainoteFrame.cpp:947
+#: KainoteFrame.cpp:943
 msgid ""
 "- Sacredus (chyba pierwszy tłumacz używający trybu tłumacza,\n"
 " nieoceniona pomoc przy testowaniu wydajności na słabym komputerze).\n"
@@ -3311,69 +3264,60 @@ msgstr ""
 "- Sacredus (นักแปลคนแรกที่ใช้โหมดการแปล\n"
 "ช่วยได้มากในการทดสอบ Kainote บนคอมพิวเตอร์ช้า)\n"
 
-#: KainoteFrame.cpp:948
+#: KainoteFrame.cpp:944
 msgid ""
-"- Kostek00 (prawdziwy wynajdywacz błędów, miał duży wpływ na rozwój spektrum "
-"audio \n"
-msgstr "- Kostek00 (ผู้พบข้อบกพร่องมากมาย มีอิทธิพลอย่างมากต่อการพัฒนาสเปกตรัมเสียง\n"
+"- Devilkan (crashhunter, ze względu na swój system i przyzwyczajenia wytropił już wiele "
+"crashy,\n"
+msgstr "- Devilkan (นักล่มโปรแกรม เนื่องจากระบบและนิสัยของเขา เขาทำ Kainote crash บ่อยมาก\n"
 
-#: KainoteFrame.cpp:949
-msgid ""
-"i głównego pola tekstowego, stworzył ciemny i jasny motyw, a także część "
-"ikon).\n"
-msgstr "และฟิลด์ข้อความหลักสร้างชุดรูปแบบมืดและสว่างและส่วนหนึ่งของไอคอน)\n"
-
-#: KainoteFrame.cpp:950
-msgid ""
-"- Devilkan (crashhunter, ze względu na swój system i przyzwyczajenia "
-"wytropił już wiele crashy,\n"
-msgstr ""
-"- Devilkan (นักล่มโปรแกรม เนื่องจากระบบและนิสัยของเขา เขาทำ Kainote crash บ่อยมาก\n"
-
-#: KainoteFrame.cpp:951
+#: KainoteFrame.cpp:945
 msgid ""
 "pomógł w poprawie działania narzędzi do typesettingu, wymyślił wiele innych "
 "usprawnień).\n"
-msgstr ""
-"และเขามาช่วยปรับปรุงการทำงานและพัฒนาเครื่องมือเรียงพิมพ์การปรับปรุงอื่น ๆ อีกมากมาย)\n"
+msgstr "และเขามาช่วยปรับปรุงการทำงานและพัฒนาเครื่องมือเรียงพิมพ์การปรับปรุงอื่น ๆ อีกมากมาย)\n"
 
-#: KainoteFrame.cpp:952
+#: KainoteFrame.cpp:946
 msgid ""
-"- MatiasMovie (wyłapał parę crashy i zaproponował różne usprawnienia, pomaga "
-"w debugowaniu crashy).\n"
-msgstr ""
-"- MatiasMovie (พบข้อขัดข้องบางส่วนและเสนอแนะการปรับปรุงบางอย่างช่วยแก้ไขข้อบกพร่อง)\n"
+"- MatiasMovie (wyłapał parę crashy i zaproponował różne usprawnienia, pomaga w "
+"debugowaniu crashy).\n"
+msgstr "- MatiasMovie (พบข้อขัดข้องบางส่วนและเสนอแนะการปรับปรุงบางอย่างช่วยแก้ไขข้อบกพร่อง)\n"
 
-#: KainoteFrame.cpp:953
+#: KainoteFrame.cpp:947
 msgid "- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy).\n"
 msgstr "- mas1904 (ผู้พบข้อผิดพลาดบางอย่างและช่วยแก้ไขข้อผิดพลาด)\n"
 
-#: KainoteFrame.cpp:954
+#: KainoteFrame.cpp:948
 msgid "- Senami (stworzył nowe motywy, a także wyłapał parę błędów).\n"
 msgstr "- Senami (สร้างธีมใหม่และเป็นผู้พบข้อบกพร่องหลายอย่าง)\n"
 
-#: KainoteFrame.cpp:955
-msgid ""
-"- Atalos (zdebugował wiele crashy).\n"
-" \n"
-msgstr ""
-"- Athalos (ผู้ช่วยแก้ไขข้อขัดข้องหลายอย่าง)\n"
-"\n"
+#: KainoteFrame.cpp:949
+#, fuzzy
+msgid "- altinat (tajskie tłumaczenie).\n"
+msgstr "บันทึกการแปล"
 
-#: KainoteFrame.cpp:956
-msgid ""
-"Podziękowania także dla osób, które używają programu i zgłaszali błędy.\n"
+#: KainoteFrame.cpp:950
+#, fuzzy
+msgid "- labrie75 (koreańskie tłumaczenie).\n"
+msgstr "บันทึกการแปล"
+
+#: KainoteFrame.cpp:951
+#, fuzzy
+msgid "- Niskala5570 (malajskie tłumaczenie).\n"
+msgstr "บันทึกการแปล"
+
+#: KainoteFrame.cpp:952
+msgid "Podziękowania także dla osób, które używają programu i zgłaszali błędy.\n"
 msgstr "ขอขอบคุณคนที่ใช้โปรแกรมนี้และรายงานข้อผิดพลาด\n"
 
-#: KainoteFrame.cpp:1064
+#: KainoteFrame.cpp:1060
 msgid "Plik napisów "
 msgstr "แฟ้มคำบรรยาย "
 
-#: KainoteFrame.cpp:1074
+#: KainoteFrame.cpp:1070
 msgid "Zapisz plik napisów"
 msgstr "บันทึกแฟ้มคำบรรยาย"
 
-#: KainoteFrame.cpp:1081 KainoteFrame.cpp:1097 KainoteFrame.cpp:2276
+#: KainoteFrame.cpp:1077 KainoteFrame.cpp:1093 KainoteFrame.cpp:2272
 msgid ""
 "Wybrany plik jest tylko do odczytu,\n"
 "proszę zapisać pod inną nazwą lub zmienić atrybuty pliku."
@@ -3381,84 +3325,83 @@ msgstr ""
 "แฟ้มที่เลือกเป็นแฟ้มที่อ่านได้อย่างเดียว\n"
 "โปรดบันทึกด้วยชื่ออื่นหรือเปลี่ยนค่ากำหนดแฟ้ม"
 
-#: KainoteFrame.cpp:1147
+#: KainoteFrame.cpp:1143
 #, c-format
 msgid "Wczytać napisy o nazwie \"%s\"?"
 msgstr "คุณต้องการโหลดคำบรรยาย %s หรือไม่?"
 
-#: KainoteFrame.cpp:1211 Visuals.cpp:275
+#: KainoteFrame.cpp:1207 Visuals.cpp:275
 msgid "Nie można otworzyć napisów"
 msgstr "ไม่สามารถเปิดแฟ้มคำบรรยาย"
 
-#: KainoteFrame.cpp:1356 OptionsDialog.cpp:672 ProviderFFMS2.cpp:825
-#: ProviderFFMS2.cpp:836 ScriptInfo.cpp:75 VideoFfmpeg.cpp:946
-#: VideoFfmpeg.cpp:957 stylestore.cpp:760 stylestore.cpp:761
+#: KainoteFrame.cpp:1352 OptionsDialog.cpp:672 ProviderFFMS2.cpp:825 ProviderFFMS2.cpp:836
+#: ScriptInfo.cpp:75 VideoFfmpeg.cpp:946 VideoFfmpeg.cpp:957 stylestore.cpp:760
+#: stylestore.cpp:761
 msgid "Brak"
 msgstr "ไม่มี"
 
-#: KainoteFrame.cpp:1897
+#: KainoteFrame.cpp:1893
 #, c-format
 msgid "Zapisać napisy o nazwie \"%s\" przed %s?"
 msgstr "ต้องการบันทึกคำบรรยาย \"%s\" ก่อน %s หรือไม่?"
 
-#: KainoteFrame.cpp:1898
+#: KainoteFrame.cpp:1894
 msgid "zamknięciem programu"
 msgstr "กำลังออกจากโปรแกรม"
 
-#: KainoteFrame.cpp:1899
+#: KainoteFrame.cpp:1895
 msgid "zamknięciem zakładki"
 msgstr "กำลังปิดแท็บ"
 
-#: KainoteFrame.cpp:1900
+#: KainoteFrame.cpp:1896
 msgid "wczytaniem nowych napisów"
 msgstr "กำลังโหลดคำบรรยายใหม่"
 
-#: KainoteFrame.cpp:1901
+#: KainoteFrame.cpp:1897
 msgid "usunięciem napisów"
 msgstr "กำลังลบคำบรรยาย"
 
-#: KainoteFrame.cpp:1939 OptionsDialog.cpp:608
+#: KainoteFrame.cpp:1935 OptionsDialog.cpp:608
 msgid "Nie można wczytać skrótów klawiszowych audio"
 msgstr "ไม่สามารถโหลดปุ่มลัดเสียง"
 
-#: KainoteFrame.cpp:1940 OptionsDialog.cpp:287 ProviderFFMS2.cpp:37
-#: VideoFfmpeg.cpp:52
+#: KainoteFrame.cpp:1936 OptionsDialog.cpp:287 ProviderFFMS2.cpp:37 VideoFfmpeg.cpp:52
 msgid "Nie można wczytać opcji audio"
 msgstr "ไม่สามารถโหลดค่ากำหนดเสียง"
 
-#: KainoteFrame.cpp:1944
+#: KainoteFrame.cpp:1940
 msgid "Wybierz plik audio"
 msgstr "เลือกแฟ้มเสียง"
 
-#: KainoteFrame.cpp:1947
+#: KainoteFrame.cpp:1943
 msgid "Pliki audio i wideo"
 msgstr "แฟ้มเสียงและวิดีโอ"
 
-#: KainoteFrame.cpp:1949
+#: KainoteFrame.cpp:1945
 msgid "Wszystkie pliki"
 msgstr "แฟ้มทั้งหมด"
 
-#: KainoteFrame.cpp:2103
+#: KainoteFrame.cpp:2099
 msgid "&Cofnij do "
 msgstr "&เลิกทำไปยัง "
 
-#: KainoteFrame.cpp:2119
+#: KainoteFrame.cpp:2115
 msgid "&Ponów do "
 msgstr "&ทำซ้ำไปยัง "
 
-#: KainoteFrame.cpp:2259
+#: KainoteFrame.cpp:2255
 msgid "Wybierz plik sesji"
 msgstr "เลือกแฟ้มเซสชัน"
 
-#: KainoteFrame.cpp:2261 KainoteFrame.cpp:2270
+#: KainoteFrame.cpp:2257 KainoteFrame.cpp:2266
 msgid "Plik sesji (*.kls),|*.kls"
 msgstr "แฟ้มเซสซัน (*.kls),|*.kls"
 
-#: KainoteFrame.cpp:2269
+#: KainoteFrame.cpp:2265
 msgid "Zapisz plik sesji"
 msgstr "บันทึกแฟ้มเซสซัน"
 
-#: KainoteFrame.cpp:2379
+#: KainoteFrame.cpp:2375
 #, c-format
 msgid "Skrót o nazwie '%s' nie należy do skrypru."
 msgstr "ปุ่มลัด '%s' ไม่ใช่ปุ่มลัดสคริปต์"
@@ -3611,8 +3554,7 @@ msgstr ""
 
 #: MisspellReplacer.cpp:629
 #, c-format
-msgid ""
-"Nie można zamienić \"%s\" na \"%s\", wykorzystując regułę \"%s\" w linii %i."
+msgid "Nie można zamienić \"%s\" na \"%s\", wykorzystując regułę \"%s\" w linii %i."
 msgstr "ไม่สามารถแทนที่ \"%s\" ด้วย \"%s\" โดยใช้กฎ \"%s\" ในบรรทัด %i"
 
 #: MisspellReplacer.cpp:713
@@ -4760,8 +4702,7 @@ msgstr ""
 "ชุดรูปแบบเริ่มต้น: DarkSentro และ LightSentro\n"
 "ไม่สามารถแก้ไขได้โปรดคัดลอก"
 
-#: OptionsDialog.cpp:801 SelectLines.cpp:122 stylestore.cpp:87
-#: stylestore.cpp:140
+#: OptionsDialog.cpp:801 SelectLines.cpp:122 stylestore.cpp:87 stylestore.cpp:140
 msgid "Kopiuj"
 msgstr "คัดลอก"
 
@@ -4906,28 +4847,27 @@ msgstr "คืนค่าเริ่มต้น"
 msgid "Informacje o napisach"
 msgstr "ข้อมูลคำบรรยาย"
 
-#: OptionsPanels.cpp:32 ScriptInfo.cpp:42 SubsGrid.cpp:1396
+#: OptionsPanels.cpp:32 ScriptInfo.cpp:42 SubsGrid.cpp:1398
 msgid "Tytuł"
 msgstr "ชื่อเรื่อง"
 
-#: OptionsPanels.cpp:32 ScriptInfo.cpp:44 SubsGrid.cpp:1396
+#: OptionsPanels.cpp:32 ScriptInfo.cpp:44 SubsGrid.cpp:1398
 msgid "Autor"
 msgstr "ผู้แต่ง"
 
-#: OptionsPanels.cpp:32 ScriptInfo.cpp:46 SubsGrid.cpp:1396
+#: OptionsPanels.cpp:32 ScriptInfo.cpp:46 SubsGrid.cpp:1398
 msgid "Tłumaczenie"
 msgstr "ผู้แปล"
 
-#: OptionsPanels.cpp:32 ScriptInfo.cpp:48 SubsGrid.cpp:1396
+#: OptionsPanels.cpp:32 ScriptInfo.cpp:48 SubsGrid.cpp:1398
 msgid "Korekta"
 msgstr "ผู้แก้ไข"
 
-#: OptionsPanels.cpp:32 ScriptInfo.cpp:50 SubsGrid.cpp:1396
+#: OptionsPanels.cpp:32 ScriptInfo.cpp:50 SubsGrid.cpp:1398
 msgid "Timing"
 msgstr "ผู้จัดเวลา"
 
-#: OptionsPanels.cpp:32 ScriptInfo.cpp:52 SubsGrid.cpp:1396
-#: VisualDrawingShapes.cpp:68
+#: OptionsPanels.cpp:32 ScriptInfo.cpp:52 SubsGrid.cpp:1398 VisualDrawingShapes.cpp:68
 msgid "Edycja"
 msgstr "อัปเดตโดย"
 
@@ -4948,8 +4888,7 @@ msgstr "ใช้เวลาไปแล้ว: %s"
 msgid "Indeksowanie pliku wideo"
 msgstr "กำลังนำเข้าแฟ้มวิดีโอ"
 
-#: ProviderFFMS2.cpp:247 VisualDrawingShapes.cpp:210
-#: VisualDrawingShapes.cpp:274
+#: ProviderFFMS2.cpp:247 VisualDrawingShapes.cpp:210 VisualDrawingShapes.cpp:274
 msgid "Bez nazwy"
 msgstr "ไม่มีชื่อ"
 
@@ -4970,8 +4909,7 @@ msgstr "ไม่สามารถสร้าง VideoSource"
 msgid "Nie można przekonwertować wideo na RGBA"
 msgstr "ไม่สามารถแปลงวิดีโอเป็น RGBA"
 
-#: ProviderFFMS2.cpp:402 ProviderFFMS2.cpp:408 VideoFfmpeg.cpp:410
-#: VideoFfmpeg.cpp:416
+#: ProviderFFMS2.cpp:402 ProviderFFMS2.cpp:408 VideoFfmpeg.cpp:410 VideoFfmpeg.cpp:416
 msgid "Nie można zmienić macierzy YCbCr"
 msgstr "เมทริกซ์ YCbCr ไม่สามารถเปลี่ยนแปลงได้"
 
@@ -5126,8 +5064,8 @@ msgstr "วิธีแบ่งบรรทัด"
 msgid "Skalowana obwódka i cień"
 msgstr "ปรับขนาดของขอบและเงา"
 
-#: SelectLines.cpp:32 SelectLines.cpp:112 SelectLines.cpp:139
-#: SelectLines.cpp:235 SelectLines.cpp:277
+#: SelectLines.cpp:32 SelectLines.cpp:112 SelectLines.cpp:139 SelectLines.cpp:235
+#: SelectLines.cpp:277
 msgid "Zaznacz"
 msgstr "เลือก"
 
@@ -5681,7 +5619,7 @@ msgstr "129 - เกาหลี"
 
 #: StyleChange.cpp:247
 msgid "130 - Johab"
-msgstr "130 - Johab"
+msgstr "130 - โยฮาบ"
 
 #: StyleChange.cpp:248
 msgid "134 - Chiński GB2312"
@@ -5741,7 +5679,7 @@ msgstr "ตัวอย่างสไตล์:"
 
 #: StyleChange.cpp:463
 msgid "Zmienić wszystkie zaznaczone style?"
-msgstr "จะเปลี่ยนแปลงสไตล์ที่เลือกทั้งหมดไหม?"
+msgstr "ต้องการเปลี่ยนแปลงสไตล์ที่เลือกไว้ทั้งหมดไหม?"
 
 #: StyleChange.cpp:687
 msgid "Nazwa stylu"
@@ -5777,11 +5715,11 @@ msgstr "เงาเป็นพิกเซล"
 
 #: StyleChange.cpp:704
 msgid "Skala X w procentach"
-msgstr "ขนาดของแกน X เป็นเปอร์เซ็นต์"
+msgstr "ขนาดของแกน X เป็น %"
 
 #: StyleChange.cpp:705
 msgid "Skala Y w procentach"
-msgstr "ขนาดของแกน Y เป็นเปอร์เซ็นต์"
+msgstr "ขนาดของแกน Y เป็น %"
 
 #: StyleChange.cpp:706
 msgid "Kąt w stopniach"
@@ -5795,11 +5733,11 @@ msgstr "ระยะห่างระหว่างตัวอักษรเ
 msgid "Prostokątna obwódka"
 msgstr "ตั้งฉากเส้นขอบ"
 
-#: StyleChange.cpp:709 SubsGrid.cpp:452 SubsGrid.cpp:602
+#: StyleChange.cpp:709 SubsGrid.cpp:454 SubsGrid.cpp:604
 msgid "Margines prawy"
 msgstr "ระยะขอบขวา"
 
-#: StyleChange.cpp:710 SubsGrid.cpp:451 SubsGrid.cpp:601
+#: StyleChange.cpp:710 SubsGrid.cpp:453 SubsGrid.cpp:603
 msgid "Margines lewy"
 msgstr "ขอบซ้าย"
 
@@ -6160,58 +6098,58 @@ msgstr "ตัวกรอง"
 msgid "Wczytaj napisy z pliku MKV / OGM"
 msgstr "โหลดคำบรรยายจากแฟ้ม MKV / OGM"
 
-#: SubsGrid.cpp:256
+#: SubsGrid.cpp:258
 msgid "Dodaj linie"
 msgstr "เพิ่มบรรทัด"
 
-#: SubsGrid.cpp:257
+#: SubsGrid.cpp:259
 msgid "Kopiuj drzewko"
 msgstr "คัดลอกไดเรกทอรีทรี"
 
-#: SubsGrid.cpp:258
+#: SubsGrid.cpp:260
 msgid "Zmień opis"
 msgstr "เปลี่ยนคำอธิบาย"
 
-#: SubsGrid.cpp:259
+#: SubsGrid.cpp:261
 msgid "Zaznacz linie drzewka"
 msgstr "เลือกบรรทัดไดเรกทอรีทรี"
 
-#: SubsGrid.cpp:453 SubsGrid.cpp:603
+#: SubsGrid.cpp:455 SubsGrid.cpp:605
 msgid "Margines pionowy"
 msgstr "ระยะขอบแนวตั้ง"
 
-#: SubsGrid.cpp:456
+#: SubsGrid.cpp:458
 msgid "Tekst do oryginału"
 msgstr "เปลี่ยนเป็นข้อความต้นฉบับ"
 
-#: SubsGrid.cpp:457
+#: SubsGrid.cpp:459
 msgid "Tekst do tłumaczenia"
 msgstr "เปลี่ยนเป็นข้อความแปล"
 
-#: SubsGrid.cpp:606
+#: SubsGrid.cpp:608
 msgid "Tekst bez tagów"
 msgstr "เปลี่ยนเป็นข้อความที่ไม่มีแท็ก"
 
-#: SubsGrid.cpp:871
+#: SubsGrid.cpp:873
 msgid "Pliki napisów (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"
 msgstr "แฟ้มคำบรรยาย (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"
 
-#: SubsGrid.cpp:1062
+#: SubsGrid.cpp:1064
 msgid "Zapisać plik przed wczytaniem napisów z MKV?"
 msgstr "ต้องการบันทึกแฟ้มก่อนจะโหลดคำบรรยายจาก MKV หรือไม่?"
 
-#: SubsGrid.cpp:1096
+#: SubsGrid.cpp:1098
 msgid "Otwieranie napisów nie powiodło się"
 msgstr "ไม่สามารถเปิดคำบรรยาย"
 
-#: SubsGrid.cpp:1231 SubsGrid.cpp:1261 SubsGrid.cpp:1281
+#: SubsGrid.cpp:1233 SubsGrid.cpp:1263 SubsGrid.cpp:1283
 #, c-format
 msgid ""
 "W linii %i nie można przeskalować wartości '%s'\n"
 "w tagu '%s'"
 msgstr "ไม่สามารถปรับขนาดบรรทัด %i ด้วยขนาด '%s' ในแท็ก '%s'"
 
-#: SubsGrid.cpp:1407
+#: SubsGrid.cpp:1409
 msgid "Wyłącz potwierdzenie"
 msgstr "ปิดคำเตือน"
 
@@ -6219,7 +6157,7 @@ msgstr "ปิดคำเตือน"
 msgid "Nieprawidłowy FPS. Popraw opcje i spróbuj ponownie."
 msgstr "ค่า FPS ไม่ถูกต้อง แก้ไขตัวเลือกแล้วลองอีกครั้ง"
 
-#: SubsGridBase.cpp:503
+#: SubsGridBase.cpp:503 SubsGridBase.cpp:660
 msgid "Wideo nie zostało wczytane przez FFMS2"
 msgstr "ไม่สามารถโหลดวิดีโอโดยใช้ FFMS2 ได้"
 
@@ -6244,7 +6182,7 @@ msgstr "สิ้นสุด"
 msgid "Nie zaznaczono linii do przesunięcia"
 msgstr "ไม่มีบรรทัดเลือกไว้ให้เลื่อน"
 
-#: SubsGridBase.cpp:1402
+#: SubsGridBase.cpp:1407
 msgid ""
 "Czy na pewno chcesz wyłączyć tryb tłumacza?\n"
 "Obcojęzyczny tekst przetłumaczonych linijek zostanie usunięty."
@@ -6326,8 +6264,7 @@ msgid "Tekst tłumaczenia"
 msgstr "ข้อความแปล"
 
 #: SubsGridWindow.cpp:2015
-msgid ""
-"Nie można wyświetlić podglądu, ponieważ wielkość okna napisów jest zbyt mała"
+msgid "Nie można wyświetlić podglądu, ponieważ wielkość okna napisów jest zbyt mała"
 msgstr "ไม่สามารถแสดงตัวอย่างได้เนื่องจากหน้าต่างคำบรรยายเล็กเกินไป"
 
 #: SubsLoader.cpp:76
@@ -6433,8 +6370,7 @@ msgstr "ไม่สามารถเริ่มต้น CSRI"
 msgid "Nie można utworzyć instancji CSRI."
 msgstr "ไม่สามารถสร้างอินสแตนซ์ CSRI"
 
-#: SubtitlesVSFilter.cpp:142 SubtitlesVSFilter.cpp:188
-#: SubtitlesVSFilter.cpp:272
+#: SubtitlesVSFilter.cpp:142 SubtitlesVSFilter.cpp:188 SubtitlesVSFilter.cpp:272
 msgid "CSRI nie obsługuje tego formatu."
 msgstr "CSRI ไม่สนับสนุนรูปแบบนี้"
 
@@ -6929,13 +6865,12 @@ msgstr "กำลังลบ"
 
 #: VideoBox.cpp:991
 msgid ""
-"Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
-"(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|"
-"Wszystkie pliki (*.*)|*.*"
+"Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*."
+"avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|Wszystkie pliki (*.*)|"
+"*.*"
 msgstr ""
-"แฟ้มวิดีโอ (*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
-"(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|"
-"แฟ้มทั้งหมด (*.*)|*.*"
+"แฟ้มวิดีโอ (*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.avs)|"
+"*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|แฟ้มทั้งหมด (*.*)|*.*"
 
 #: VideoBox.cpp:1006
 msgid "Pliki napisów (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"
@@ -7483,8 +7418,8 @@ msgstr "ช่อง \"ลำดับ\" มีตัวเลขที่สู
 
 #: VisualClips.cpp:1063
 msgid ""
-"Ze względu na błędy Vsfiltra możliwość wstawiania dwóch \"m\" po sobie "
-"została zablokowana"
+"Ze względu na błędy Vsfiltra możliwość wstawiania dwóch \"m\" po sobie została "
+"zablokowana"
 msgstr "การแทรกดับเบิล \"m\" ถูกบล็อกเนื่องจากเป็นข้อผิดพลาดของ Vsfilter"
 
 #: VisualDrawingShapes.cpp:43
@@ -7561,8 +7496,7 @@ msgid "Pole \"kształt\" nie może być puste."
 msgstr "ช่อง \"รูปร่าง\" ต้องไม่ว่างเปล่า"
 
 #: VisualMove.cpp:393
-msgid ""
-"Wideo musi być ustawione minimum jedną klatkę po czasie początkowym linijki"
+msgid "Wideo musi być ustawione minimum jedną klatkę po czasie początkowym linijki"
 msgstr "วิดีโอต้องกำหนดอย่างน้อยหนึ่งเฟรมหลังจากเวลาเริ่มต้นที่กำหนดไว้"
 
 #: VisualRotationZ.cpp:486 VisualScale.cpp:772
@@ -7585,8 +7519,7 @@ msgstr ""
 
 #: config.cpp:601
 #, c-format
-msgid ""
-"W motywie \"%s\" brakowało część kolorów, zostały doczytane z domyślnego."
+msgid "W motywie \"%s\" brakowało część kolorów, zostały doczytane z domyślnego."
 msgstr "สีบางสีหายไปจากชุดรูปแบบ \"%s\" และจะถูกอ่านจากค่าเริ่มต้น"
 
 #: config.cpp:611
@@ -7617,8 +7550,7 @@ msgstr "ไม่สามารถสร้างอินสแตนซ์ต
 msgid "Nie można dodać renderera Direct Sound"
 msgstr "ไม่สามารถเพิ่มตัวเรนเดอร์ Direct Sound"
 
-#: dshowplayer.cpp:133 dshowplayer.cpp:154 dshowplayer.cpp:174
-#: dshowplayer.cpp:256
+#: dshowplayer.cpp:133 dshowplayer.cpp:154 dshowplayer.cpp:174 dshowplayer.cpp:256
 msgid "Nie można wyliczyć pinów źródła"
 msgstr "ไม่สามารถแจกแจงพินของแหล่งที่มา"
 
@@ -7962,6 +7894,37 @@ msgstr "คัดลอกสไตล์จากที่เก็บข้อ
 msgid "Oczyść napisy z nieużywanych stylów"
 msgstr "ลบสไตล์ในแฟ้ม ASS ที่ไม่ได้ใช้"
 
+#~ msgid "- Kostek00 (przyciski do audio i narzędzi wizualnych).\n"
+#~ msgstr "- Kostek00 (ปุ่มเครื่องมือภาพและเสียง)\n"
+
+#~ msgid ""
+#~ "- Areki, duplex (tłumaczenie anglojęzyczne).\n"
+#~ " \n"
+#~ msgstr ""
+#~ "- Areki, duplex (แปลเป็นภาษาอังกฤษ)\n"
+#~ " \n"
+
+#~ msgid "- Funki27 (pierwszy tester mający spory wpływ na obecne działanie programu\n"
+#~ msgstr "- Funki27 (ผู้ทดสอบ Kainote คนแรกที่มาช่วยปรับปรุง ต้องขอบคุณเขาจริงๆ\n"
+
+#~ msgid "i najbardziej narzekający na wszystko).\n"
+#~ msgstr "แต่ชอบบ่นไปหน่อย)\n"
+
+#~ msgid ""
+#~ "- Kostek00 (prawdziwy wynajdywacz błędów, miał duży wpływ na rozwój spektrum audio \n"
+#~ msgstr "- Kostek00 (ผู้พบข้อบกพร่องมากมาย มีอิทธิพลอย่างมากต่อการพัฒนาสเปกตรัมเสียง\n"
+
+#~ msgid ""
+#~ "i głównego pola tekstowego, stworzył ciemny i jasny motyw, a także część ikon).\n"
+#~ msgstr "และฟิลด์ข้อความหลักสร้างชุดรูปแบบมืดและสว่างและส่วนหนึ่งของไอคอน)\n"
+
+#~ msgid ""
+#~ "- Atalos (zdebugował wiele crashy).\n"
+#~ " \n"
+#~ msgstr ""
+#~ "- Athalos (ผู้ช่วยแก้ไขข้อขัดข้องหลายอย่าง)\n"
+#~ "\n"
+
 #~ msgid "Kainote się scrashował i próbuje pozyskać istotne dane.\n"
 #~ msgstr "Kainote ได้เกิดข้อผิดพลาด กำลังพยายามบันทึกข้อมูล\n"
 
@@ -7971,19 +7934,14 @@ msgstr "ลบสไตล์ในแฟ้ม ASS ที่ไม่ได้�
 #~ msgid "Ostatnia sesja zostanie wznowiona po następnym uruchomieniu.\n"
 #~ msgstr "เซสชั่นสุดท้ายจะกลับมาทำงานต่อในครั้งต่อไปที่คุณใช้โปรแกรม\n"
 
-#~ msgid ""
-#~ "W przypadku, gdyby zostały uszkodzone, autozapisy są w folderze \"Subs"
-#~ "\".\n"
+#~ msgid "W przypadku, gdyby zostały uszkodzone, autozapisy są w folderze \"Subs\".\n"
 #~ msgstr "ในกรณีที่เกิดข้อผิดพลาดจะมีการบันทึกอัตโนมัติไว้ในโฟลเดอร์ \"Subs\"\n"
 
-#~ msgid ""
-#~ "Info o crashu zostało zapisane do pliku \"CrashInfo.txt\" w folderze "
-#~ "Kainote.\n"
+#~ msgid "Info o crashu zostało zapisane do pliku \"CrashInfo.txt\" w folderze Kainote.\n"
 #~ msgstr "ข้อผิดพลาดจะถูกบันทึกลงในแฟ้ม \"CrashInfo.txt\" ในโฟลเดอร์ของ Kainote\n"
 
 #~ msgid ""
-#~ "Podesłanie go na adres mailowy (bjakja7@gmail.com) może pomóc rozwiązać "
-#~ "ten problem."
+#~ "Podesłanie go na adres mailowy (bjakja7@gmail.com) może pomóc rozwiązać ten problem."
 #~ msgstr "โปรดส่งปัญหาไปยังอีเมล (bjakja7@gmail.com) อาจสามารถช่วยแก้ปัญหานี้ได้"
 
 #~ msgid "Nie można zablokować bufora tekstury napisów"
@@ -8086,8 +8044,7 @@ msgstr "ลบสไตล์ในแฟ้ม ASS ที่ไม่ได้�
 #~ msgstr "อักษรในบรรทัด"
 
 #~ msgid ""
-#~ "- Wincenty271 (wyłapał trochę błędów, a także pomaga w debugowaniu "
-#~ "cruszy).\n"
+#~ "- Wincenty271 (wyłapał trochę błędów, a także pomaga w debugowaniu cruszy).\n"
 #~ " \n"
 #~ msgstr ""
 #~ "- Wincenty271 (เป็นผู้ช่วยแก้บั๊กและดีบั๊ก)\n"
@@ -8114,8 +8071,8 @@ msgstr "ลบสไตล์ในแฟ้ม ASS ที่ไม่ได้�
 #~ msgstr "โหมดการแปล"
 
 #~ msgid ""
-#~ "Tryb tłumaczenia wyświetla i zapisuje zarówno tekst obcojęzyczny, jak i "
-#~ "tekst tłumaczenia"
+#~ "Tryb tłumaczenia wyświetla i zapisuje zarówno tekst obcojęzyczny, jak i tekst "
+#~ "tłumaczenia"
 #~ msgstr "โหมดการแปลจะแสดงและบันทึกทั้งข้อความภาษาต่างประเทศและการแปลข้อความปกติ"
 
 #~ msgid "Filtry wyszukiwania windows:"
@@ -8154,11 +8111,8 @@ msgstr "ลบสไตล์ในแฟ้ม ASS ที่ไม่ได้�
 #~ msgid "Wideo plus 5 sekund"
 #~ msgstr "เล่นวิดีโอไปข้างหน้า 5 วินาที"
 
-#~ msgid ""
-#~ "Skróty globalne i edytora muszą zawierać modyfikatory (np. Shift, Ctrl, "
-#~ "Alt)."
-#~ msgstr ""
-#~ "ทางลัดและเครื่องมือแก้ไขส่วนกลางจะต้องประกอบไปด้วยตัวดัดแปลง (เช่น Shift, Ctrl, Alt)"
+#~ msgid "Skróty globalne i edytora muszą zawierać modyfikatory (np. Shift, Ctrl, Alt)."
+#~ msgstr "ทางลัดและเครื่องมือแก้ไขส่วนกลางจะต้องประกอบไปด้วยตัวดัดแปลง (เช่น Shift, Ctrl, Alt)"
 
 #~ msgid "Właściwości ASS"
 #~ msgstr "คุณสมบัติ ASS"
@@ -8291,8 +8245,7 @@ msgstr "ลบสไตล์ในแฟ้ม ASS ที่ไม่ได้�
 #~ msgstr "Kainote มีบางส่วนของ:\n"
 
 #~ msgid ""
-#~ "Color picker, wymuxowywanie napsów z mkv, audiobox, audio player, "
-#~ "automation\n"
+#~ "Color picker, wymuxowywanie napsów z mkv, audiobox, audio player, automation\n"
 #~ "i kilka innych pojedynczych funkcji wzięte z Aegisuba -\n"
 #~ msgstr ""
 #~ "ตัวหยิบสี, ถอดซับออกจากแฟ้ม MKV, ออดิโอบอกซ์, เครื่องเล่นเสียง, สคริปต์อัตโนมัติ\n"
@@ -8302,15 +8255,13 @@ msgstr "ลบสไตล์ในแฟ้ม ASS ที่ไม่ได้�
 #~ "- Sacredus (chyba pierwszy tłumacz używający trybu tłumaczenia,\n"
 #~ " nieoceniona pomoc przy testowaniu wydajności na słabym komputerze).\n"
 #~ msgstr ""
-#~ "- Sacredus (นักแปลคนแรกที่ใช้โหมดการแปล ช่วยได้มากในการทดสอบ Kainote "
-#~ "บนคอมพิวเตอร์ที่ช้า)\n"
+#~ "- Sacredus (นักแปลคนแรกที่ใช้โหมดการแปล ช่วยได้มากในการทดสอบ Kainote บนคอมพิวเตอร์ที่ช้า)\n"
 
 #~ msgid "- Senami (stworzył nowe motywy a także wyłapał parę błędów).\n"
 #~ msgstr "- Senami (สร้างชุดรูปแบบใหม่และเป็นผู้พบข้อบกพร่องบางอย่าง)\n"
 
 #~ msgid ""
-#~ "- Wincenty271 (wyłapał trochę błędów, a także pomaga w debugowaniu "
-#~ "kraszy).\n"
+#~ "- Wincenty271 (wyłapał trochę błędów, a także pomaga w debugowaniu kraszy).\n"
 #~ " \n"
 #~ msgstr "- Wincenty271 (พบข้อผิดพลาดบางอย่างและช่วยแก้ไขข้อผิดพลาด)\n"
 
@@ -8327,11 +8278,10 @@ msgstr "ลบสไตล์ในแฟ้ม ASS ที่ไม่ได้�
 #~ msgstr "ปฐมบท                                                 ปัจฉิมบท"
 
 #~ msgid ""
-#~ "Obwódka:               Cień:                      Skala "
-#~ "X:                 Skala Y:"
+#~ "Obwódka:               Cień:                      Skala X:                 Skala Y:"
 #~ msgstr ""
-#~ "เส้นขอบ:                    เงา:                    ขนาดตามแกน "
-#~ "X:                    ขนาดตามแกน Y:"
+#~ "เส้นขอบ:                    เงา:                    ขนาดตามแกน X:                    "
+#~ "ขนาดตามแกน Y:"
 
 #~ msgid "Kąt:                     Odstępy:              Typ obwódki:"
 #~ msgstr "มุม:                 ระยะห่าง:                 ชนิดขอบ:"
@@ -8392,8 +8342,7 @@ msgstr "ลบสไตล์ในแฟ้ม ASS ที่ไม่ได้�
 
 #, fuzzy
 #~ msgid ""
-#~ "Ten program powstał w celu zastąpienia dwóch programów Bestplayera i "
-#~ "Aegisuba.\n"
+#~ "Ten program powstał w celu zastąpienia dwóch programów Bestplayera i Aegisuba.\n"
 #~ "\n"
 #~ msgstr ""
 #~ "ผมเขียนโปรแกรมนี้เพื่อมาทดแทน Bestplayer และ Aegisub\n"
@@ -8401,8 +8350,7 @@ msgstr "ลบสไตล์ในแฟ้ม ASS ที่ไม่ได้�
 
 #, fuzzy
 #~ msgid ""
-#~ "- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy, zrobił "
-#~ "drzewko AVL).\n"
+#~ "- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy, zrobił drzewko AVL).\n"
 #~ msgstr "- mas1904 (ผู้พบข้อผิดพลาดบางอย่างและช่วยการแก้ไขข้อผิดพลาด)\n"
 
 #, fuzzy
@@ -8566,11 +8514,11 @@ msgstr "ลบสไตล์ในแฟ้ม ASS ที่ไม่ได้�
 
 #, fuzzy
 #~ msgid ""
-#~ "Pliki klatek kluczowych(*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*."
-#~ "stats;*.log|Wszystkie pliki (*.*)|*.*"
+#~ "Pliki klatek kluczowych(*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|"
+#~ "Wszystkie pliki (*.*)|*.*"
 #~ msgstr ""
-#~ "แฟ้มคีย์เฟรม (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|"
-#~ "แฟ้มทั้งหมด (*.*)|*.*"
+#~ "แฟ้มคีย์เฟรม (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|แฟ้มทั้งหมด (*."
+#~ "*)|*.*"
 
 #, fuzzy
 #~ msgid "Otwórz "
@@ -8616,8 +8564,7 @@ msgstr "ลบสไตล์ในแฟ้ม ASS ที่ไม่ได้�
 
 #, fuzzy
 #~ msgid ""
-#~ "Ten program powstał w celu zastąpiienia dwóch programów Bestplayera i "
-#~ "Aegisuba.\n"
+#~ "Ten program powstał w celu zastąpiienia dwóch programów Bestplayera i Aegisuba.\n"
 #~ "\n"
 #~ msgstr ""
 #~ "ผมเขียนโปรแกรมนี้เพื่อมาทดแทน Bestplayer และ Aegisub\n"
@@ -8632,17 +8579,14 @@ msgstr "ลบสไตล์ในแฟ้ม ASS ที่ไม่ได้�
 #~ "Edytor napisów by Bjakja aka Bakura (bjakja7@gmail.com),\n"
 #~ "wersja %s z dnia %s"
 #~ msgstr ""
-#~ "เครื่องมือแก้ไขคำบรรยายโดย Marcin Drob ฉายยา Bakura หรือ Bjakja (bjakja7@gmail."
-#~ "com)\n"
+#~ "เครื่องมือแก้ไขคำบรรยายโดย Marcin Drob ฉายยา Bakura หรือ Bjakja (bjakja7@gmail.com)\n"
 #~ "เวอร์ชั่น %s อัพเดทวันที่ %s\n"
 #~ "\n"
-#~ "แปลเป็นภาษาไทยโดย Alphabet-Works | Facebook: Alorks (facebook.com/"
-#~ "Alorksword)\n"
+#~ "แปลเป็นภาษาไทยโดย Alphabet-Works | Facebook: Alorks (facebook.com/Alorksword)\n"
 #~ "ภาษาไทยเวอร์ชั่น 1.Final"
 
 #~ msgid ""
-#~ "Ten program to jakby moje zaplecze do nauki C++, więc mogą zdarzyć się "
-#~ "różne błędy.\n"
+#~ "Ten program to jakby moje zaplecze do nauki C++, więc mogą zdarzyć się różne błędy.\n"
 #~ "\n"
 #~ msgstr ""
 #~ "โปรแกรมนี้เขียนขึ้นเพื่อเรียนรู้ภาษา C++ ดังนั้นจึงอาจมีข้อบกพร่อง\n"
@@ -8650,8 +8594,7 @@ msgstr "ลบสไตล์ในแฟ้ม ASS ที่ไม่ได้�
 
 #, fuzzy
 #~ msgid ""
-#~ "- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy, zrobił "
-#~ "drzewko AVL).\n"
+#~ "- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy, zrobił drzewko AVL).\n"
 #~ " \n"
 #~ msgstr "- mas1904 (ผู้พบข้อผิดพลาดบางอย่างและช่วยการแก้ไขข้อผิดพลาด)\n"
 
@@ -8796,8 +8739,8 @@ msgstr "ลบสไตล์ในแฟ้ม ASS ที่ไม่ได้�
 #~ msgstr "เปลี่ยนความละเอียดของคำบรรยาย"
 
 #~ msgid ""
-#~ "Zmiana rozdzielczości tylko w nagłówku napisów, odznaczenie powoduje "
-#~ "przeskalowanie całych napisów"
+#~ "Zmiana rozdzielczości tylko w nagłówku napisów, odznaczenie powoduje przeskalowanie "
+#~ "całych napisów"
 #~ msgstr ""
 #~ "เปลี่ยนความละเอียดเฉพาะในส่วนหัวของคำบรรยาย "
 #~ "หากไม่ทำเครื่องหมายจะปรับเปลี่ยนความละเอียดของคำบรรยายทั้งหมด"
@@ -8807,12 +8750,11 @@ msgstr "ลบสไตล์ในแฟ้ม ASS ที่ไม่ได้�
 
 #, fuzzy
 #~ msgid ""
-#~ "Pliki audio i wideo (*.wav),(*.w64),(*.aac),(*.mp3),(*.mp4),(*.mkv),(*."
-#~ "avi)|*.wav;*.w64;*.aac;*.mp3;*.mp4;*.mkv;*.avi|Wszystkie Pliki |*.*"
+#~ "Pliki audio i wideo (*.wav),(*.w64),(*.aac),(*.mp3),(*.mp4),(*.mkv),(*.avi)|*.wav;*."
+#~ "w64;*.aac;*.mp3;*.mp4;*.mkv;*.avi|Wszystkie Pliki |*.*"
 #~ msgstr ""
-#~ "แฟ้มวิดีโอ (*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
-#~ "(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*."
-#~ "avs|แฟ้มทั้งหมด (*.*)|*.*"
+#~ "แฟ้มวิดีโอ (*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*."
+#~ "avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|แฟ้มทั้งหมด (*.*)|*.*"
 
 #, fuzzy
 #~ msgid "Plus 5 sekund"
@@ -8853,8 +8795,7 @@ msgstr "ลบสไตล์ในแฟ้ม ASS ที่ไม่ได้�
 #~ msgid "Błędny błąd"
 #~ msgstr "คำที่สะกดผิด:"
 
-#~ msgid ""
-#~ "Dupa blada, skróty klawiszowe nie wczytały się, na audio nie podziałasz"
+#~ msgid "Dupa blada, skróty klawiszowe nie wczytały się, na audio nie podziałasz"
 #~ msgstr "ไม่สามารถโหลดปุ่มลัด คุณไม่สามารถเปลี่ยนแปลงตัวเลือกเสียงได้"
 
 #~ msgid "Actor"
@@ -8874,8 +8815,7 @@ msgstr "ลบสไตล์ในแฟ้ม ASS ที่ไม่ได้�
 #~ msgid "Dupa bada, nie można pobrać informacji o wideo"
 #~ msgstr "ไม่สามารถโหลดข้อมูลวิดีโอ"
 
-#~ msgid ""
-#~ "Dupa blada, skróty klawiszowe się nie wczytały, na audio nie podziałasz"
+#~ msgid "Dupa blada, skróty klawiszowe się nie wczytały, na audio nie podziałasz"
 #~ msgstr "ไม่สามารถโหลดปุ่มลัด คุณไม่สามารถเปลี่ยนแปลงตัวเลือกเสียงได้"
 
 #, fuzzy
@@ -8901,9 +8841,7 @@ msgstr "ลบสไตล์ในแฟ้ม ASS ที่ไม่ได้�
 #~ msgid "Nie można stworzyć grafa filtrów"
 #~ msgstr "ไม่สามารถสร้างส่วนต่อประสานตัวกรอง"
 
-#~ msgid ""
-#~ "Windows nie chce zwrócić właściwości o czcionkach z kopiowania czcionek "
-#~ "nici.\n"
+#~ msgid "Windows nie chce zwrócić właściwości o czcionkach z kopiowania czcionek nici.\n"
 #~ msgstr "Windows ไม่ต้องการให้คุณสมบัติแบบอักษร\n"
 
 #, fuzzy
@@ -8989,8 +8927,7 @@ msgstr "ลบสไตล์ในแฟ้ม ASS ที่ไม่ได้�
 #~ msgid "Przesuwanie tekstu tłumaczenia"
 #~ msgstr "ย้ายข้อความแปล"
 
-#~ msgid ""
-#~ "miał duży wpływ na rozwój spektrum audio i głównego pola tekstowego).\r\n"
+#~ msgid "miał duży wpływ na rozwój spektrum audio i głównego pola tekstowego).\r\n"
 #~ msgstr "ต้องขอบคุณเขา ที่ปรับปรุงกราฟเสียงและฟิลด์ข้อความให้มากเลย)\r\n"
 
 #~ msgid "Kolorystyka2"
@@ -9344,8 +9281,7 @@ msgstr "ลบสไตล์ในแฟ้ม ASS ที่ไม่ได้�
 #~ msgstr "ซ่อนเวลาเริ่มต้น"
 
 #, fuzzy
-#~ msgid ""
-#~ "Nie udało się wczytać hotkeyów działanie programu zostanie zakończone"
+#~ msgid "Nie udało się wczytać hotkeyów działanie programu zostanie zakończone"
 #~ msgstr ""
 #~ "ไม่สามารถโหลดทางลัดได้\n"
 #~ "โปรแกรมจะหยุดทำงาน"
