@@ -112,11 +112,11 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Lib>
-      <AdditionalDependencies>boost.lib;libssf.lib%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>boost.lib;libssf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)bin\$(platform)\$(configuration)</AdditionalLibraryDirectories>
     </Lib>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\include;$(SolutionDir)Thirdparty\baseclasses;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\filters\transform\vsfilter;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\thirdparty\log4cplus\include;L:\Kainote\Thirdparty\boost\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\include;$(SolutionDir)Thirdparty\baseclasses;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\filters\transform\vsfilter;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\thirdparty\log4cplus\include;$(SolutionDir)Thirdparty\boost\</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp14</LanguageStandard>
       <LanguageStandard_C>Default</LanguageStandard_C>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
@@ -141,7 +141,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Lib>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>boost.lib;libssf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)bin\$(platform)\$(configuration)</AdditionalLibraryDirectories>
     </Lib>
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\include;$(SolutionDir)Thirdparty\baseclasses;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\filters\transform\vsfilter;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\thirdparty\log4cplus\include;$(SolutionDir)\Thirdparty\boost\</AdditionalIncludeDirectories>
@@ -230,6 +231,9 @@
     <ClInclude Include="xy_widen_regoin.h" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Build\Boost\Boost.vcxproj">
+      <Project>{c91e1d87-614c-47e8-9587-393568d41738}</Project>
+    </ProjectReference>
     <ProjectReference Include="libssf\libssf.vcxproj">
       <Project>{dd9d2d92-2241-408a-859e-b85d444b7e3c}</Project>
     </ProjectReference>

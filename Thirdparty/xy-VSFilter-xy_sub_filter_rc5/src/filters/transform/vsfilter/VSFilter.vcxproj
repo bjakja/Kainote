@@ -70,14 +70,14 @@
     <Import Project="VSFilter.props" />
   </ImportGroup>
   <PropertyGroup>
-    <TargetName>xy-Vsfilter_kainote</TargetName>
+    <TargetName>xy-Vsfilter_kainote_AVX</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\csri</OutDir>
     <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\$(ProjectName)</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\csri</OutDir>
+    <OutDir>$(SolutionDir)$(Platform)\Release\csri</OutDir>
     <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\$(ProjectName)</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -88,14 +88,15 @@
     <Link>
       <ModuleDefinitionFile>VSFilter.def</ModuleDefinitionFile>
       <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Release|x64'">atls.lib;delayimp.lib;strmbase.lib;dsutil.lib;subtitles.lib;boost.lib;subpic.lib;Kasumi.lib;system.lib;libssf.lib;winmm.lib;dwmapi.lib;Mfuuid.lib</AdditionalDependencies>
-      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">atls.lib;delayimp.lib;strmbase.lib;libssf.lib;subtitles.lib;boost.lib;subpic.lib;Kasumi.lib;system.lib;dsutil.lib;basevideofilter.lib;winmm.lib;dwmapi.lib;Mfuuid.lib</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">atls.lib;delayimp.lib;strmbase.lib;libssf.lib;subtitles.lib;boost.lib;subpic.lib;Kasumi.lib;system.lib;dsutil.lib;winmm.lib;dwmapi.lib;Mfuuid.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)bin\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">$(SolutionDir)bin\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">
       </IgnoreSpecificDefaultLibraries>
-      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">delayimp.lib;subtitles.lib;boost.lib;subpic.lib;Kasumi.lib;system.lib;dsutil.lib;libssf.lib;winmm.lib;dwmapi.lib;Mfuuid.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)bin\$(Platform)\$(Configuration);$(OutDir)..</AdditionalLibraryDirectories>
+      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">atls.lib;delayimp.lib;strmbasd.lib;dsutil.lib;subtitles.lib;boost.lib;subpic.lib;Kasumi.lib;system.lib;libssf.lib;winmm.lib;dwmapi.lib;Mfuuid.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)bin\$(Platform)\$(Configuration);</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries Condition="'$(Configuration)|$(Platform)'=='Release|x64'">nafxcw.lib</IgnoreSpecificDefaultLibraries>
+      <IgnoreAllDefaultLibraries Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IgnoreAllDefaultLibraries>
     </Link>
     <ResourceCompile>
       <PreprocessorDefinitions>_AFXDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>

@@ -934,7 +934,7 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			//L"Interfejs Avisynth - Copyright © Ben Rudiak-Gould et al.\n"
 	}
 	else if (id == GLOBAL_HELPERS){
-		wxString Testers = L"SoheiMajin, BadRequest, Ognisty321, ZlyLos, Thomas Leigh.";
+		wxString Testers = L"SoheiMajin, BadRequest, Ognisty321, ZlyLos, Thomas Leigh, TomBit.";
 		wxString Credits = _("Pomoc graficzna: (przyciski, obrazki do pomocy itd.)\n") +
 			_("- Xandros (przyciski do wideo).\n") +
 			_("- Devilkan (ikony do menu i paska narzędzi, obrazki do pomocy).\n") +
