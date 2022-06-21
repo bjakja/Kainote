@@ -15,7 +15,7 @@ jobs:
 #      shell: powershell
 #      run: Install-Module 7Zip4PowerShell -Force -Verbose
 
-    - name: Checkout repo
+    - name: Checkout repository
       uses: actions/checkout@v3
 
     - uses: suisei-cn/actions-download-file@v1
@@ -47,27 +47,33 @@ jobs:
           make
           diffutils
           yasm
-          nasm   
+          nasm
+          pkg-config
 
     - shell: msys2 {0}
       name: Config msys2
       run: set MSYSTEM=MINGW64
 
     - name: Run msys2_shell.cmd
+      shell: powershell
       run: C:\Windows\system32\cmd.exe /D /S /C C:\msys64\msys2_shell.cmd
+
+    - run: rem set MSYS2_PATH_TYPE=inherit
+      name: Set MSYS2_PATH_TYPE
+      shell: msys2 {0}
 
     - shell: msys2 {0}
       name: Rename link.exe
       run: mv /usr/bin/link.exe /usr/bin/link.exe.bak
 
-    - name: Clone ffmpeg repo
+    - name: Clone FFmpeg repository
       uses: actions/checkout@v2
       with:
         repository: FFmpeg/FFmpeg
         path: ffmpeg
         ref: master
 
-    - name: Config ffmpeg
+    - name: Make FFmpeg
       shell: msys2 {0}
       run: |
           cd ./ffmpeg
