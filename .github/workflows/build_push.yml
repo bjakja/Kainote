@@ -1,0 +1,49 @@
+name: MSBuild
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Cache Thirdparty files
+      id: cache-thirdparty
+      uses: actions/cache@v3
+      with:
+        path: Thirdparty
+        key: ${{ runner.os }}-thirdparty
+
+    - name: Download Boost files
+      uses: engineerd/configurator@v0.0.1
+        with:
+          name: "Boost"
+          url: "https://boostorg.jfrog.io/artifactory/main/release/1.73.0/source/boost_1_73_0.7z"
+          pathInArchive: "Thirdparty/Boost"
+    - name: Download ICU files
+      uses: engineerd/configurator@v0.0.1
+        with:
+          name: "ICU"
+          url: "https://github.com/unicode-org/icu/releases/download/release-60-3/icu4c-60_3-src.zip"
+          pathInArchive: "Thirdparty/Icu"
+    - uses: GuillaumeFalourd/setup-windows10-sdk-action@v1.6
+    - uses: msys2/setup-msys2@v2
+    - shell: msys2 {0}
+      run: |
+        pacman -S make
+        pacman -S diffutils
+        pacman -S yasm
+        pacman -S nasm
+        mv ~/usr/bin/link.exe ~/usr/bin/link.exe.bak
+    - uses: FedericoCarboni/setup-ffmpeg@v1
+      id: setup-ffmpeg
+      run: ./configure --toolchain=msvc --enable-gpl --enable-version3 --disable-encoders --disable-programs --disable-filters --disable-network --disable-doc --disable-avdevice --disable-postproc --disable-avfilter --enable-dxva2 --enable-d3d11va
+    - shell: msys2 {0}
+      run: make
+    - shell: msys2 {0}
+      run: make install
