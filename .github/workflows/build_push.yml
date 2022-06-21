@@ -7,15 +7,6 @@ on:
     branches: [ "master" ]
 
 jobs:
-  strategy:
-    matrix:
-      sys:
-        - mingw64
-        - mingw32
-        - make
-        - diffutils
-        - yasm
-        - nasm
   build:
     runs-on: windows-latest
 
@@ -43,8 +34,14 @@ jobs:
 
     - uses: msys2/setup-msys2@v2
       with:
-        msystem: ${{matrix.sys}}
-        pacboy: openssl:p
+      update: true
+      install: >-
+        base-devel
+        mingw64
+        make
+        diffutils
+        yasm
+        nasm   
 
     - shell: msys2 {0}
       run: mv ~/usr/bin/link.exe ~/usr/bin/link.exe.bak
