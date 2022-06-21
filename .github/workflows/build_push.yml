@@ -51,7 +51,7 @@ jobs:
       run: set MSYSTEM=MINGW64
 
     - name: Run msys2_shell.cmd
-      run: C:\Windows\system32\cmd.exe /D /S /C C:\tools\msys64\msys2_shell.cmd
+      run: C:\Windows\system32\cmd.exe /D /S /C C:\msys64\msys2_shell.cmd
 
     - shell: msys2 {0}
       run: mv /usr/bin/link.exe /usr/bin/link.exe.bak
