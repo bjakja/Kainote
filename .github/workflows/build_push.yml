@@ -55,10 +55,10 @@ jobs:
       run: set MSYSTEM=MINGW64
 
     - name: Run msys2_shell.cmd
-      shell: powershell
+      shell: cmd
       run: C:\Windows\system32\cmd.exe /D /S /C C:\msys64\msys2_shell.cmd
 
-    - run: rem set MSYS2_PATH_TYPE=inherit
+    - run: set MSYS2_PATH_TYPE=inherit
       name: Set MSYS2_PATH_TYPE
       shell: msys2 {0}
 
