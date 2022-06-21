@@ -34,14 +34,14 @@ jobs:
 
     - uses: msys2/setup-msys2@v2
       with:
-      update: true
-      install: >-
-        base-devel
-        mingw64
-        make
-        diffutils
-        yasm
-        nasm   
+        update: true
+        install: >-
+          base-devel
+          mingw64
+          make
+          diffutils
+          yasm
+          nasm   
 
     - shell: msys2 {0}
       run: mv ~/usr/bin/link.exe ~/usr/bin/link.exe.bak
