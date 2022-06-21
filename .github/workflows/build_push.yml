@@ -58,7 +58,6 @@ jobs:
 
     - uses: FedericoCarboni/setup-ffmpeg@v1
       id: setup-ffmpeg
-      path: c:\ffmpeg
 
     - name: Config ffmpeg
       shell: msys2 {0}
