@@ -70,7 +70,7 @@ jobs:
     - name: Config ffmpeg
       shell: msys2 {0}
       run: |
-          cd D:\a\Kainote\Kainote\ffmpeg
+          cd ./ffmpeg
           ./configure --toolchain=msvc --enable-gpl --enable-version3 --disable-encoders --disable-programs --disable-filters --disable-network --disable-doc --disable-avdevice --disable-postproc --disable-avfilter --enable-dxva2 --enable-d3d11va
           make
           make install
