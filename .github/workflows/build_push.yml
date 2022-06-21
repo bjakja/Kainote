@@ -27,10 +27,14 @@ jobs:
         url: "https://github.com/unicode-org/icu/releases/download/release-60-3/icu4c-60_3-src.zip"
         target: Thirdparty/
 
-#    - name: Extract Zip files
-#      run: |
-#        7z e ./Thirdparty/boost_1_73_0.7z -oThirdparty/Boost
-#        7z e ./Thirdparty/icu4c-60_3-src.zip -oThirdparty/Icu
+    - name: Extract Boost files
+      uses: montudor/action-zip@v1
+        with:
+          args: unzip -qq ./Thirdparty/boost_1_73_0.7z -d ./Thirdparty/Boost
+    - name: Extract Icu files
+      uses: montudor/action-zip@v1
+        with:
+          args: unzip -qq ./Thirdparty/icu4c-60_3-src.zip -d ./Thirdparty/Icu
 
     - uses: msys2/setup-msys2@v2
       with:
@@ -53,5 +57,5 @@ jobs:
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.1
 
-    - name: Build app for release
+    - name: Build app
       run: msbuild Kainote/Kainote.vcxproj -t:rebuild -verbosity:diag -property:Configuration=Release
