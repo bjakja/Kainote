@@ -38,10 +38,10 @@ jobs:
 
     - shell: msys2 {0}
       run: |
-        pacman -S make
-        pacman -S diffutils
-        pacman -S yasm
-        pacman -S nasm
+        pacman -S make -y
+        pacman -S diffutils -y
+        pacman -S yasm -y
+        pacman -S nasm -y
         mv ~/usr/bin/link.exe ~/usr/bin/link.exe.bak
 
     - uses: FedericoCarboni/setup-ffmpeg@v1
