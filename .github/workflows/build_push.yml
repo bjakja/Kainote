@@ -12,30 +12,37 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
     - name: Cache Thirdparty files
       id: cache-thirdparty
       uses: actions/cache@v3
       with:
         path: Thirdparty
         key: ${{ runner.os }}-thirdparty
+
     - uses: suisei-cn/actions-download-file@v1
       id: downloadboost
       name: Download Boost
       with:
         url: "https://boostorg.jfrog.io/artifactory/main/release/1.73.0/source/boost_1_73_0.7z"
         target: Thirdparty/
+
     - uses: suisei-cn/actions-download-file@v1
       id: downloadicu
       name: Download Icu
       with:
         url: "https://github.com/unicode-org/icu/releases/download/release-60-3/icu4c-60_3-src.zip"
         target: Thirdparty/
+
     - name: Extract Zip files
       run: |
         7z x ./Thirdparty/boost_1_73_0.7z -o./Thirdparty
         7z x ./Thirdparty/icu4c-60_3-src.zip -o./Thirdparty
+
     - uses: GuillaumeFalourd/setup-windows10-sdk-action@v1.6
+
     - uses: msys2/setup-msys2@v2
+
     - shell: msys2 {0}
       run: |
         pacman -S make
@@ -43,9 +50,11 @@ jobs:
         pacman -S yasm
         pacman -S nasm
         mv ~/usr/bin/link.exe ~/usr/bin/link.exe.bak
+
     - uses: FedericoCarboni/setup-ffmpeg@v1
       id: setup-ffmpeg
       run: ./configure --toolchain=msvc --enable-gpl --enable-version3 --disable-encoders --disable-programs --disable-filters --disable-network --disable-doc --disable-avdevice --disable-postproc --disable-avfilter --enable-dxva2 --enable-d3d11va
+
     - shell: msys2 {0}
       run: |
         make
