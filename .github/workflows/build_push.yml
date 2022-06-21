@@ -27,11 +27,11 @@ jobs:
         url: "https://github.com/unicode-org/icu/releases/download/release-60-3/icu4c-60_3-src.zip"
         target: Thirdparty/
 
-    - name: Extract Boost files
-      run: Expand-Archive -LiteralPath './Thirdparty/boost_1_73_0.7z' -DestinationPath ./Thirdparty/Boost
+#    - name: Extract Boost files
+#      run: Expand-Archive -LiteralPath './Thirdparty/boost_1_73_0.7z' -DestinationPath ./Thirdparty/Boost
     
-    - name: Extract Icu files
-      run: Expand-Archive -LiteralPath './Thirdparty/icu4c-60_3-src.zip' -DestinationPath ./Thirdparty/Icu
+#    - name: Extract Icu files
+#      run: Expand-Archive -LiteralPath './Thirdparty/icu4c-60_3-src.zip' -DestinationPath ./Thirdparty/Icu
 
     - uses: msys2/setup-msys2@v2
       with:
@@ -44,7 +44,9 @@ jobs:
           nasm   
 
     - shell: msys2 {0}
-      run: mv /usr/bin/link.exe /usr/bin/link.exe.bak
+      run: |
+        set MSYSTEM=MINGW64
+        mv /usr/bin/link.exe /usr/bin/link.exe.bak
 
     - uses: FedericoCarboni/setup-ffmpeg@v1
       id: setup-ffmpeg
