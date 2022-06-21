@@ -56,8 +56,12 @@ jobs:
     - shell: msys2 {0}
       run: mv /usr/bin/link.exe /usr/bin/link.exe.bak
 
-    - uses: FedericoCarboni/setup-ffmpeg@v1
-      id: setup-ffmpeg
+    - name: Clone ffmpeg repo
+      uses: actions/checkout@v2
+      with:
+        repository: FFmpeg/FFmpeg
+        path: C:\ffmpeg
+        ref: master
 
     - name: Config ffmpeg
       shell: msys2 {0}
