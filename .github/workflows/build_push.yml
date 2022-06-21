@@ -1,4 +1,4 @@
-name: MSBuild
+name: build_push
 
 on:
   push:
