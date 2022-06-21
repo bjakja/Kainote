@@ -47,12 +47,11 @@ jobs:
 
     - uses: FedericoCarboni/setup-ffmpeg@v1
       id: setup-ffmpeg
-    
-    - run: c:/ffmpeg/configure --toolchain=msvc --enable-gpl --enable-version3 --disable-encoders --disable-programs --disable-filters --disable-network --disable-doc --disable-avdevice --disable-postproc --disable-avfilter --enable-dxva2 --enable-d3d11va
 
     - uses: GuillaumeFalourd/setup-windows10-sdk-action@v1.6
 
-    - shell: msys2 {0}
-      run: |
-        make
-        make install
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.1
+
+    - name: Build app for release
+      run: msbuild Kainote/Kainote.vcxproj -t:rebuild -verbosity:diag -property:Configuration=Release
