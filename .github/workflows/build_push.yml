@@ -11,11 +11,12 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Install 7Zip PowerShell Module
-      shell: powershell
-      run: Install-Module 7Zip4PowerShell -Force -Verbose
+#    - name: Install 7Zip PowerShell Module
+#      shell: powershell
+#      run: Install-Module 7Zip4PowerShell -Force -Verbose
 
-    - uses: actions/checkout@v3
+    - name: Checkout repo
+      uses: actions/checkout@v3
 
     - uses: suisei-cn/actions-download-file@v1
       id: downloadboost
@@ -38,6 +39,7 @@ jobs:
 #      run: Expand-Archive -LiteralPath './Thirdparty/icu4c-60_3-src.zip' -DestinationPath ./Thirdparty/Icu
 
     - uses: msys2/setup-msys2@v2
+      name: Setup msys2
       with:
         update: true
         install: >-
@@ -48,30 +50,33 @@ jobs:
           nasm   
 
     - shell: msys2 {0}
+      name: Config msys2
       run: set MSYSTEM=MINGW64
 
     - name: Run msys2_shell.cmd
       run: C:\Windows\system32\cmd.exe /D /S /C C:\msys64\msys2_shell.cmd
 
     - shell: msys2 {0}
+      name: Rename link.exe
       run: mv /usr/bin/link.exe /usr/bin/link.exe.bak
 
     - name: Clone ffmpeg repo
       uses: actions/checkout@v2
       with:
         repository: FFmpeg/FFmpeg
-        path: C:\ffmpeg
+        path: ffmpeg
         ref: master
 
     - name: Config ffmpeg
       shell: msys2 {0}
       run: |
-          cd c:\ffmpeg
+          cd D:\a\Kainote\Kainote\ffmpeg
           ./configure --toolchain=msvc --enable-gpl --enable-version3 --disable-encoders --disable-programs --disable-filters --disable-network --disable-doc --disable-avdevice --disable-postproc --disable-avfilter --enable-dxva2 --enable-d3d11va
           make
           make install
 
     - uses: GuillaumeFalourd/setup-windows10-sdk-action@v1.6
+      name: Setup Windows 10 SDK
 
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.1
