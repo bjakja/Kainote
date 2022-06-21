@@ -13,13 +13,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Cache Thirdparty files
-      id: cache-thirdparty
-      uses: actions/cache@v3
-      with:
-        path: Thirdparty
-        key: ${{ runner.os }}-thirdparty
-
     - uses: suisei-cn/actions-download-file@v1
       id: downloadboost
       name: Download Boost
@@ -36,8 +29,8 @@ jobs:
 
     - name: Extract Zip files
       run: |
-        7z x ./Thirdparty/boost_1_73_0.7z -o./Thirdparty
-        7z x ./Thirdparty/icu4c-60_3-src.zip -o./Thirdparty
+        7z e ./Thirdparty/boost_1_73_0.7z -oThirdparty/
+        7z e ./Thirdparty/icu4c-60_3-src.zip -oThirdparty/
 
     - uses: GuillaumeFalourd/setup-windows10-sdk-action@v1.6
 
@@ -54,7 +47,7 @@ jobs:
     - uses: FedericoCarboni/setup-ffmpeg@v1
       id: setup-ffmpeg
     
-    - run: ~/ffmpeg/configure --toolchain=msvc --enable-gpl --enable-version3 --disable-encoders --disable-programs --disable-filters --disable-network --disable-doc --disable-avdevice --disable-postproc --disable-avfilter --enable-dxva2 --enable-d3d11va
+    - run: c:/ffmpeg/configure --toolchain=msvc --enable-gpl --enable-version3 --disable-encoders --disable-programs --disable-filters --disable-network --disable-doc --disable-avdevice --disable-postproc --disable-avfilter --enable-dxva2 --enable-d3d11va
 
     - shell: msys2 {0}
       run: |
