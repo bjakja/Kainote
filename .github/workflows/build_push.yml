@@ -29,12 +29,12 @@ jobs:
 
     - name: Extract Boost files
       uses: montudor/action-zip@v1
-        with:
-          args: unzip -qq ./Thirdparty/boost_1_73_0.7z -d ./Thirdparty/Boost
+      with:
+        args: unzip -qq ./Thirdparty/boost_1_73_0.7z -d ./Thirdparty/Boost
     - name: Extract Icu files
       uses: montudor/action-zip@v1
-        with:
-          args: unzip -qq ./Thirdparty/icu4c-60_3-src.zip -d ./Thirdparty/Icu
+      with:
+        args: unzip -qq ./Thirdparty/icu4c-60_3-src.zip -d ./Thirdparty/Icu
 
     - uses: msys2/setup-msys2@v2
       with:
