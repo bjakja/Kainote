@@ -43,7 +43,7 @@ jobs:
           nasm   
 
     - shell: msys2 {0}
-      run: mv ~/usr/bin/link.exe ~/usr/bin/link.exe.bak
+      run: mv /usr/bin/link.exe /usr/bin/link.exe.bak
 
     - uses: FedericoCarboni/setup-ffmpeg@v1
       id: setup-ffmpeg
