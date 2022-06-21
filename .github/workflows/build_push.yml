@@ -37,7 +37,6 @@ jobs:
         update: true
         install: >-
           base-devel
-          mingw64
           make
           diffutils
           yasm
