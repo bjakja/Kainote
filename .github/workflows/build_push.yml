@@ -29,8 +29,8 @@ jobs:
 
     - name: Extract Zip files
       run: |
-        7z e ./Thirdparty/boost_1_73_0.7z -oThirdparty/
-        7z e ./Thirdparty/icu4c-60_3-src.zip -oThirdparty/
+        7z e ./Thirdparty/boost_1_73_0.7z -oThirdparty/Boost
+        7z e ./Thirdparty/icu4c-60_3-src.zip -oThirdparty/Icu
 
     - uses: GuillaumeFalourd/setup-windows10-sdk-action@v1.6
 
