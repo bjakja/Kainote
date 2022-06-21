@@ -44,9 +44,10 @@ jobs:
           nasm   
 
     - shell: msys2 {0}
-      run: |
-        set MSYSTEM=MINGW64
-        mv /usr/bin/link.exe /usr/bin/link.exe.bak
+      run: set MSYSTEM=MINGW64
+
+    - shell: msys2 {0}
+      run: mv /usr/bin/link.exe /usr/bin/link.exe.bak
 
     - uses: FedericoCarboni/setup-ffmpeg@v1
       id: setup-ffmpeg
@@ -57,4 +58,5 @@ jobs:
       uses: microsoft/setup-msbuild@v1.1
 
     - name: Build app
+      shell: msys2 {0}
       run: msbuild Kainote/Kainote.vcxproj -t:rebuild -verbosity:diag -property:Configuration=Release
