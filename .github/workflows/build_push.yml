@@ -10,6 +10,16 @@ jobs:
   build:
     runs-on: windows-latest
 
+  strategy:
+    matrix:
+      sys:
+        - mingw64
+        - mingw32
+        - make
+        - diffutils
+        - yasm
+        - nasm
+
     steps:
     - uses: actions/checkout@v3
 
@@ -32,22 +42,20 @@ jobs:
 #        7z e ./Thirdparty/boost_1_73_0.7z -oThirdparty/Boost
 #        7z e ./Thirdparty/icu4c-60_3-src.zip -oThirdparty/Icu
 
-    - uses: GuillaumeFalourd/setup-windows10-sdk-action@v1.6
-
     - uses: msys2/setup-msys2@v2
+      with:
+        msystem: ${{matrix.sys}}
+        pacboy: openssl:p
 
     - shell: msys2 {0}
-      run: |
-        pacman -S make -y
-        pacman -S diffutils -y
-        pacman -S yasm -y
-        pacman -S nasm -y
-        mv ~/usr/bin/link.exe ~/usr/bin/link.exe.bak
+      run: mv ~/usr/bin/link.exe ~/usr/bin/link.exe.bak
 
     - uses: FedericoCarboni/setup-ffmpeg@v1
       id: setup-ffmpeg
     
     - run: c:/ffmpeg/configure --toolchain=msvc --enable-gpl --enable-version3 --disable-encoders --disable-programs --disable-filters --disable-network --disable-doc --disable-avdevice --disable-postproc --disable-avfilter --enable-dxva2 --enable-d3d11va
+
+    - uses: GuillaumeFalourd/setup-windows10-sdk-action@v1.6
 
     - shell: msys2 {0}
       run: |
