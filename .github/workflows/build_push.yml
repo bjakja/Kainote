@@ -27,10 +27,10 @@ jobs:
         url: "https://github.com/unicode-org/icu/releases/download/release-60-3/icu4c-60_3-src.zip"
         target: Thirdparty/
 
-    - name: Extract Zip files
-      run: |
-        7z e ./Thirdparty/boost_1_73_0.7z -oThirdparty/Boost
-        7z e ./Thirdparty/icu4c-60_3-src.zip -oThirdparty/Icu
+#    - name: Extract Zip files
+#      run: |
+#        7z e ./Thirdparty/boost_1_73_0.7z -oThirdparty/Boost
+#        7z e ./Thirdparty/icu4c-60_3-src.zip -oThirdparty/Icu
 
     - uses: GuillaumeFalourd/setup-windows10-sdk-action@v1.6
 
