@@ -820,9 +820,11 @@ void VideoBox::OnNext()
 
 void VideoBox::OnVolume(wxScrollEvent& event)
 {
-	int pos = event.GetPosition();
-	Options.SetInt(VIDEO_VOLUME, pos);
-	renderer->SetVolume(-(pos * pos));
+	if (renderer) {
+		int pos = event.GetPosition();
+		Options.SetInt(VIDEO_VOLUME, pos);
+		renderer->SetVolume(-(pos * pos));
+	}
 }
 
 void VideoBox::ContextMenu(const wxPoint &pos)
