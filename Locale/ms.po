@@ -6,41 +6,7 @@
 # Niskala Airaha <niskala5570@gmail.com>, 2022.
 # altinat <poiiiii4yy@gmail.com>, 2022.
 msgid ""
-msgstr ""
-"Project-Id-Version: Kainote\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-06 20:09+0700\n"
-"PO-Revision-Date: 2022-06-06 20:09+0700\n"
-"Last-Translator: Niskala Airaha <niskala5570@gmail.com>\n"
-"Language-Team: Malay <https://hosted.weblate.org/projects/kainote/kainote/ms/"
-">\n"
-"Language: ms\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.0.1\n"
-"X-Poedit-Basepath: ../Kainote\n"
-"X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: _\n"
-"X-Poedit-SearchPath-0: .\n"
-"X-Poedit-SearchPathExcluded-0: Bitmaps\n"
-"X-Poedit-SearchPathExcluded-1: GFFT\n"
-"X-Poedit-SearchPathExcluded-2: include\n"
-"X-Poedit-SearchPathExcluded-3: Win32\n"
-"X-Poedit-SearchPathExcluded-4: x64\n"
-"X-Poedit-SearchPathExcluded-5: ffms2.lib\n"
-"X-Poedit-SearchPathExcluded-6: ffms2_x64.lib\n"
-"X-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\n"
-"X-Poedit-SearchPathExcluded-8: Kainote.vcxproj\n"
-"X-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\n"
-"X-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\n"
-"X-Poedit-SearchPathExcluded-11: RCa00888\n"
-"X-Poedit-SearchPathExcluded-12: resource.aps\n"
-"X-Poedit-SearchPathExcluded-13: resource.rc\n"
-"X-Poedit-SearchPathExcluded-14: CsriMod.cpp\n"
-"X-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\n"
-"X-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
+msgstr "Project-Id-Version: Kainote\nReport-Msgid-Bugs-To: poiiiii4yy@gmail.com\nPOT-Creation-Date: 2022-06-06 20:10+0700\nPO-Revision-Date: 2022-06-17 19:18+0000\nLast-Translator: Niskala Airaha <niskala5570@gmail.com>\nLanguage-Team: Malay <https://hosted.weblate.org/projects/kainote/kainote/ms/>\nLanguage: ms\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=1; plural=0;\nX-Generator: Weblate 4.13-dev\nX-Poedit-Basepath: ../Kainote\nX-Poedit-SourceCharset: UTF-8\nX-Poedit-KeywordsList: _\nX-Poedit-SearchPath-0: .\nX-Poedit-SearchPathExcluded-0: Bitmaps\nX-Poedit-SearchPathExcluded-1: GFFT\nX-Poedit-SearchPathExcluded-2: include\nX-Poedit-SearchPathExcluded-3: Win32\nX-Poedit-SearchPathExcluded-4: x64\nX-Poedit-SearchPathExcluded-5: ffms2.lib\nX-Poedit-SearchPathExcluded-6: ffms2_x64.lib\nX-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\nX-Poedit-SearchPathExcluded-8: Kainote.vcxproj\nX-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\nX-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\nX-Poedit-SearchPathExcluded-11: RCa00888\nX-Poedit-SearchPathExcluded-12: resource.aps\nX-Poedit-SearchPathExcluded-13: resource.rc\nX-Poedit-SearchPathExcluded-14: CsriMod.cpp\nX-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\nX-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
 
 #: AudioBox.cpp:72
 msgid "Pasek szukania"
@@ -1880,7 +1846,7 @@ msgstr "Simpan"
 
 #: Hotkeys.cpp:153 HotkeysNaming.cpp:218
 msgid "Zapisz jako..."
-msgstr "Simpan sebagai…"
+msgstr "Simpan sebagai..."
 
 #: Hotkeys.cpp:154 HotkeysNaming.cpp:215 SubsGrid.cpp:228
 msgid "Usuń tekst"
@@ -2053,19 +2019,16 @@ msgid "Zatwierdź"
 msgstr "Terap"
 
 #: Hotkeys.cpp:200 HotkeysNaming.cpp:51
-#, fuzzy
 msgid "Zatwierdź zastępcze"
-msgstr "Commit alt"
+msgstr "Terap alt"
 
 #: Hotkeys.cpp:202 HotkeysNaming.cpp:54
-#, fuzzy
 msgid "Poprzednia linijka zastępcze"
-msgstr "Previous line alt"
+msgstr "Baris alt sebelumnya"
 
 #: Hotkeys.cpp:204 HotkeysNaming.cpp:56
-#, fuzzy
 msgid "Następna linijka zastępcze"
-msgstr "Next line alt"
+msgstr "Baris alt seterusnya"
 
 #: Hotkeys.cpp:205 HotkeysNaming.cpp:57
 msgid "Odtwarzaj"
@@ -2074,7 +2037,7 @@ msgstr "Main"
 #: Hotkeys.cpp:206 HotkeysNaming.cpp:58
 #, fuzzy
 msgid "Odtwarzaj zastępcze"
-msgstr "Play alt"
+msgstr "Mainkan alt"
 
 #: Hotkeys.cpp:207 HotkeysNaming.cpp:59
 msgid "Odtwarzaj linię"
@@ -2083,7 +2046,7 @@ msgstr "Main baris"
 #: Hotkeys.cpp:208 HotkeysNaming.cpp:60
 #, fuzzy
 msgid "Odtwarzaj linię zastępcze"
-msgstr "Play line alt"
+msgstr "Mainkan baris alt"
 
 #: Hotkeys.cpp:209 HotkeysNaming.cpp:61 HotkeysNaming.cpp:238 VideoBox.cpp:153
 #: VideoBox.cpp:841 VideoFullscreen.cpp:60
@@ -2372,7 +2335,6 @@ msgid "Sortuj wszystko według stylów"
 msgstr "Susun semua baris mengikut gaya"
 
 #: HotkeysNaming.cpp:139
-#, fuzzy
 msgid "Sortuj wszystko według aktora"
 msgstr "Susun semua baris mengikut pelakon"
 
@@ -3298,9 +3260,8 @@ msgid "Pomoc graficzna: (przyciski, obrazki do pomocy itd.)\n"
 msgstr "Penolong grafikal: (butang, gambar bantuan .dll)\n"
 
 #: KainoteFrame.cpp:939
-#, fuzzy
 msgid "- Xandros (przyciski do wideo).\n"
-msgstr "- Xandros (butang video baharu)\n"
+msgstr "- Xandros (butang video baharu).\n"
 
 #: KainoteFrame.cpp:940
 msgid "- Devilkan (ikony do menu i paska narzędzi, obrazki do pomocy).\n"
@@ -3357,19 +3318,16 @@ msgid "- Senami (stworzył nowe motywy, a także wyłapał parę błędów).\n"
 msgstr "- Senami (membuat tema baharu dan menjumpai beberapa pepijat).\n"
 
 #: KainoteFrame.cpp:949
-#, fuzzy
 msgid "- altinat (tajskie tłumaczenie).\n"
-msgstr "Simpan terjemahan"
+msgstr "- altinat (Terjemahan Thailand).\n"
 
 #: KainoteFrame.cpp:950
-#, fuzzy
 msgid "- labrie75 (koreańskie tłumaczenie).\n"
-msgstr "Simpan terjemahan"
+msgstr "-labrie75 (Terjemahan Korea).\n"
 
 #: KainoteFrame.cpp:951
-#, fuzzy
 msgid "- Niskala5570 (malajskie tłumaczenie).\n"
-msgstr "Simpan terjemahan"
+msgstr "- Niskala5570 (Terjemahan B.Melayu).\n"
 
 #: KainoteFrame.cpp:952
 msgid ""
@@ -3537,9 +3495,8 @@ msgid "Opis reguły"
 msgstr "Perihalan peraturan"
 
 #: MisspellReplacer.cpp:75
-#, fuzzy
 msgid "Opis"
-msgstr "Keterangan"
+msgstr "Perihalan"
 
 #: MisspellReplacer.cpp:76
 #, fuzzy
@@ -3554,17 +3511,17 @@ msgstr "Aturan ganti"
 #: MisspellReplacer.cpp:102 ShiftTimes.cpp:262
 #, fuzzy
 msgid "Które linijki"
-msgstr "Baris mana"
+msgstr "Baris yang mana"
 
 #: MisspellReplacer.cpp:103 ShiftTimes.cpp:265
 #, fuzzy
 msgid "Od zaznaczonej linijki"
-msgstr "Dari baris terpilih"
+msgstr "Dari baris yang dipilih"
 
 #: MisspellReplacer.cpp:103 ShiftTimes.cpp:268
 #, fuzzy
 msgid "Według wybranych stylów"
-msgstr "Mengikut gaya terpilih"
+msgstr "Mengikut gaya yang dipilih"
 
 #: MisspellReplacer.cpp:117
 #, fuzzy
@@ -3579,7 +3536,7 @@ msgstr "Sunting aturan"
 #: MisspellReplacer.cpp:119
 #, fuzzy
 msgid "Usuń regułę"
-msgstr "Padam peraturan"
+msgstr "Padam aturan"
 
 #: MisspellReplacer.cpp:120
 #, fuzzy
@@ -3610,39 +3567,34 @@ msgstr "Ganti"
 msgid ""
 "Zamień wszystkie błędy\n"
 "w bieżącej zakładce"
-msgstr "Ganti semua dalam tab semasa"
+msgstr "Gantikan semua dalam tab semasa"
 
 #: MisspellReplacer.cpp:127
 #, fuzzy
 msgid ""
 "Zamień wszystkie błędy\n"
 "we wszystkich zakładkach"
-msgstr "Ganti di semua tab"
+msgstr "Ganti dalam semua tab"
 
 #: MisspellReplacer.cpp:293 MisspellReplacer.cpp:318 MisspellReplacer.cpp:337
 #, fuzzy
 msgid ""
 "Nie można zmieniać reguł,\n"
 "gdy okno wyników szukania jest otwarte"
-msgstr ""
-"Gagal menukar aturan\n"
-"apabila tetingkap hasil carian terbuka"
+msgstr "Gagal menukar aturan\nketika tetingkap hasil carian terbuka"
 
 #: MisspellReplacer.cpp:608 findreplace.cpp:201 findreplace.cpp:1583
-#, fuzzy, c-format
+#, c-format, fuzzy
 msgid ""
 "Linia %i nie może być zamieniona,\n"
 "bo została zedytowana."
-msgstr ""
-"Baris %i tidak boleh digantikan,\n"
-"kerana ianya telah pun disunting."
+msgstr "Baris %i tidak boleh digantikan,\nkerana ianya telah pun disunting."
 
 #: MisspellReplacer.cpp:629
-#, fuzzy, c-format
+#, c-format, fuzzy
 msgid ""
 "Nie można zamienić \"%s\" na \"%s\", wykorzystując regułę \"%s\" w linii %i."
-msgstr ""
-"Tidak dapat mengganti \"%s\" ke \"%s\", dengan aturan \"%s\" pada baris %i."
+msgstr "Tidak dapat mengganti \"%s\" ke \"%s\", dengan aturan \"%s\" pada baris %i."
 
 #: MisspellReplacer.cpp:713
 #, fuzzy
@@ -3657,17 +3609,17 @@ msgstr "Buang jarak yang berganda"
 #: MisspellReplacer.cpp:715
 #, fuzzy
 msgid "Zmiana \"....\" i więcej na wielokropek"
-msgstr "Ganti tiga titik \"…\" dan selebihnya ke elipsis"
+msgstr "Ganti tiga titik \"…\" dan selebihnya kepada elipsis"
 
 #: MisspellReplacer.cpp:716
 #, fuzzy
 msgid "Zmiana \"..\" na wielokropek"
-msgstr "Ganti dua titik \"..\" ke elipsis"
+msgstr "Ganti dua titik \"..\" kepada elipsis"
 
 #: MisspellReplacer.cpp:717
 #, fuzzy
 msgid "Zmiana braku spacji po przecinku czy kropce"
-msgstr "Ganti ketiadaan jarak selepass titik dan koma"
+msgstr "Gantikan ruang yang hilang selepas titik atau koma"
 
 #: MisspellReplacer.cpp:718
 #, fuzzy
@@ -3677,30 +3629,30 @@ msgstr "Buang akhiran bahasa Jepun"
 #: MisspellReplacer.cpp:719
 #, fuzzy
 msgid "Zamiana \"sie\" na \"się\""
-msgstr "Baiki Poland \"sie\""
+msgstr "Baiki \"sie\" Poland"
 
 #: MisspellReplacer.cpp:720
 #, fuzzy
 msgid "Zamiana \"nie możliwe\" na \"niemożliwe\""
-msgstr "Baiki Poland \"nie mozliwe\""
+msgstr "Baiki \"nie mozliwe\" Poland"
 
 #: MisspellReplacer.cpp:721
 #, fuzzy
 msgid "Zamiana \"nie ważne\" na \"nieważne\""
-msgstr "Baiki Poland \"nie wazne\""
+msgstr "Baiki \"nie wazne\" Poland"
 
 #: MisspellReplacer.cpp:722 MisspellReplacer.cpp:723
 #, fuzzy
 msgid "Zamiana błędów wyrażenia \"w ogóle\""
-msgstr "Baiki Poland \"w ogole\""
+msgstr "Baiki \"w ogole\" Poland"
 
 #: MisspellReplacer.cpp:724 MisspellReplacer.cpp:725
 #, fuzzy
 msgid "Zamiana błędów wyrazu \"będę\""
-msgstr "Baiki Poland \"bede\""
+msgstr "Baiki \"bede\" Poland"
 
 #: MisspellReplacer.cpp:774
-#, fuzzy, c-format
+#, c-format, fuzzy
 msgid "Reguła \"%s\" jest nieprawidłowa."
 msgstr "Aturan \"%s\" tidak sah."
 
@@ -3722,87 +3674,87 @@ msgstr "Cipta"
 #: Notebook.cpp:854
 #, fuzzy
 msgid "Zapisz wszystko"
-msgstr "Save all"
+msgstr "Simpan semua"
 
 #: Notebook.cpp:855
 #, fuzzy
 msgid "Zamknij wszystkie zakładki"
-msgstr "Close all tabs"
+msgstr "Tutup semua tab"
 
 #: Notebook.cpp:861
 #, fuzzy
 msgid "Otwórz folder zawierający napisy"
-msgstr "Open subtitles containing folder"
+msgstr "Buka folder yang mengandungi sari kata"
 
 #: Notebook.cpp:864
 #, fuzzy
 msgid "Otwórz folder zawierający wideo"
-msgstr "Buka video yang mengandungi folder"
+msgstr "Buka folder yang mengandungi video"
 
 #: Notebook.cpp:867
 #, fuzzy
 msgid "Otwórz folder zawierający audio"
-msgstr "Buka audio yang mengandungi folder"
+msgstr "Buka folder yang mengandungi audio"
 
 #: Notebook.cpp:870
 #, fuzzy
 msgid "Otwórz folder zawierający klatki kluczowe"
-msgstr "Buka bidang kekunci yang mengandungi folder"
+msgstr "Buka folder yang mengandungi bidang kekunci"
 
 #: Notebook.cpp:874
 #, fuzzy
 msgid "Wyświetl jedną zakładkę"
-msgstr "Show one tab"
+msgstr "Tunjuk satu tab"
 
 #: Notebook.cpp:874
 #, fuzzy
 msgid "Wyświetl dwie zakładki"
-msgstr "Show two tabs"
+msgstr "Tunjuk dua tab"
 
 #: Notebook.cpp:894
 #, fuzzy
 msgid "Porównaj według czasów"
-msgstr "Compare by times"
+msgstr "Bandingkan mengikut masa"
 
 #: Notebook.cpp:895
 #, fuzzy
 msgid "Porównaj według widocznych linijek"
-msgstr "Compare by visible lines"
+msgstr "Bandingkan mengikut baris yang terlihat"
 
 #: Notebook.cpp:896
 #, fuzzy
 msgid "Porównaj według zaznaczeń"
-msgstr "Compare by selections"
+msgstr "Bandingkan mengikut pilihan"
 
 #: Notebook.cpp:897
 #, fuzzy
 msgid "Porównaj według stylów"
-msgstr "Compare by styles"
+msgstr "Bandingkan mengikut gaya"
 
 #: Notebook.cpp:898
 #, fuzzy
 msgid "Porównaj według wybranych stylów"
-msgstr "Compare by chosen styles"
+msgstr "Bandingkan mengikut gaya yang dipilih"
 
 #: Notebook.cpp:899
 #, fuzzy
 msgid "Porównaj"
-msgstr "Compare"
+msgstr "Banding"
 
 #: Notebook.cpp:900
 #, fuzzy
 msgid "Wyłącz porównanie"
-msgstr "Turn off comparison"
+msgstr "Matikan perbandingan"
 
 #: Notebook.cpp:901
 #, fuzzy
 msgid "Porównanie napisów"
-msgstr "Subtitles comparison"
+msgstr "Perbandingan sari kata"
 
 #: Notebook.cpp:942
 #, fuzzy
 msgid "Zostaną zamknięte wszystkie zakładki, kontynuować?"
-msgstr "All tabs will be closed, continue?"
+msgstr "Semua tab akan ditutup, teruskan?"
 
 #: Notebook.cpp:1151
 #, fuzzy
@@ -3817,12 +3769,12 @@ msgstr "Audio: "
 #: Notebook.cpp:1155
 #, fuzzy
 msgid "Klatki kluczowe: "
-msgstr "Keyframes: "
+msgstr "Bidang kekunci: "
 
 #: Notebook.cpp:1157
 #, fuzzy
 msgid "Skojarzone pliki:\n"
-msgstr "Fail yang berkaitan:\n"
+msgstr "Fail yang dikaitkan:\n"
 
 #: Notebook.cpp:1162
 #, fuzzy
@@ -3842,22 +3794,22 @@ msgstr "Muat dari direktori"
 #: Notebook.cpp:1330
 #, fuzzy
 msgid "Nieprawidłowy plik sesji"
-msgstr "Session file is corrupt"
+msgstr "Fail sesi rosak"
 
 #: OpennWrite.cpp:36
 #, fuzzy
 msgid "Nie można utworzyć pliku."
-msgstr "Gagal mencipta fail."
+msgstr "Tidak dapat mencipta fail."
 
 #: OpennWrite.cpp:39
 #, fuzzy
 msgid "Nie można otworzyć pliku."
-msgstr "Gagal membuka fail."
+msgstr "Tidak dapat membuka fail."
 
 #: OpennWrite.cpp:94
 #, fuzzy
 msgid "Nie można odczytać pliku."
-msgstr "Gagal membaca fail."
+msgstr "Tidak dapat membaca fail."
 
 #: OpennWrite.cpp:117
 #, fuzzy
@@ -3867,12 +3819,12 @@ msgstr "Fail tidak dibuka."
 #: OpennWrite.cpp:120 OpennWrite.cpp:124
 #, fuzzy
 msgid "Nie można zapisać do pliku."
-msgstr "Gagal menyimpan fail."
+msgstr "Tidak boleh menyimpan ke fail."
 
 #: OptionsDialog.cpp:293
 #, fuzzy
 msgid "Wczytywanie posortowanych napisów"
-msgstr "Buka sari kata tersusun"
+msgstr "Buka sari kata yang diisih"
 
 #: OptionsDialog.cpp:293
 #, fuzzy
@@ -3884,14 +3836,12 @@ msgstr "Dayakan pemeriksa ejaan"
 msgid ""
 "Zaznaczaj linijkę z czasem aktywnej\n"
 "linijki poprzedniej zakładki"
-msgstr ""
-"Select the line with the time line\n"
-"of the previous active tab"
+msgstr "Pilih baris dengan garis masa\npada tab yang aktif sebelumnya"
 
 #: OptionsDialog.cpp:295
 #, fuzzy
 msgid "Pokaż sugestie po dwukrotnym kliknięciu błędu"
-msgstr "Tunjukkan saranan dengan mengetik dua kali pada ejaan yang salah"
+msgstr "Tunjukkan saranan dengan mengetik dua kali pada ejaan yang tersasul"
 
 #: OptionsDialog.cpp:295
 #, fuzzy
@@ -3901,35 +3851,31 @@ msgstr "Sentiasa buka sari kata dalam tab baharu"
 #: OptionsDialog.cpp:296
 #, fuzzy
 msgid "Nie przechodź do następnej linii przy edycji czasów"
-msgstr "Kekal di baris dipilih semasa menyunting masa"
+msgstr "Kekal di baris yang dipilih semasa menyunting masa"
 
 #: OptionsDialog.cpp:297
 #, fuzzy
 msgid ""
 "Wyłącz pokazywanie edycji na wideo\n"
 "(wymaga ponownego otwarcia zakładek)"
-msgstr ""
-"Nyahdayakan pratonton suntingan pada video\n"
-"(tab perlu dibuka semula)"
+msgstr "Nyahdayakan pratonton suntingan pada video\n(tab perlu dibuka semula)"
 
 #: OptionsDialog.cpp:298
 #, fuzzy
 msgid ""
 "Włącz szukanie widocznej linii\n"
 "po wyjściu z pełnego ekranu"
-msgstr ""
-"Turn searching of visible line\n"
-"after switching from full screen"
+msgstr "Dayakan carian baris yang nampak\nselepas keluar dari layar penuh"
 
 #: OptionsDialog.cpp:299
 #, fuzzy
 msgid "Włącz przenoszenie wartości pola przesuwania czasów"
-msgstr "Synchronize time shifting window in all tabs"
+msgstr "Selaras tetingkap penyelaras masa pada semua tab"
 
 #: OptionsDialog.cpp:299
 #, fuzzy
 msgid "Zmieniaj aktywną linię przy zaznaczaniu"
-msgstr "Change active line after add to selection"
+msgstr "Ubah baris aktif selepas ia ditambah pada pilihan"
 
 #: OptionsDialog.cpp:300
 #, fuzzy
@@ -3944,17 +3890,17 @@ msgstr "Sorok teks asal pada video dalam mod terjemah"
 #: OptionsDialog.cpp:301
 #, fuzzy
 msgid "Nie zmieniaj zaznaczeń przy duplikacji linii dialogowych"
-msgstr "Don't change selection on dialogue lines duplication"
+msgstr "Jangan ubah pilihan pada penduaan baris dialog"
 
 #: OptionsDialog.cpp:302
 #, fuzzy
 msgid "Nie wypośrodkowuj aktywnej linii w polu napisów"
-msgstr "Don't center vertically active line in subtitles grid"
+msgstr "Jangan tengahkan baris aktif menegak dalam grid sari kata"
 
 #: OptionsDialog.cpp:302
 #, fuzzy
 msgid "Używaj skróty klawiszowe numpada w polach tekstowych"
-msgstr "Use numpad shortcuts in text fields"
+msgstr "Gunakan pintasan numpad dalam medan teks"
 
 #: OptionsDialog.cpp:303
 #, fuzzy
@@ -3964,12 +3910,12 @@ msgstr "Tutup amaran alatan visual"
 #: OptionsDialog.cpp:303
 #, fuzzy
 msgid "Nie ostrzegaj o niezgodności rozdzielczości"
-msgstr "Jangan maklumkan tentang ketakserasian resolusi"
+msgstr "Jangan maklumkan tentang ketidakserasian peleraian"
 
 #: OptionsDialog.cpp:304
 #, fuzzy
 msgid "Kompatybilność ze starymi skryptami Kainote"
-msgstr "Membolehkan keserasian dengan skrip Kainote lama"
+msgstr "Keserasian dengan skrip Kainote yang lebih lama"
 
 #: OptionsDialog.cpp:326
 #, fuzzy
@@ -3989,7 +3935,7 @@ msgstr "Bahasa penyemak ejaan (folder \"Dictionary\")"
 #: OptionsDialog.cpp:361
 #, fuzzy
 msgid "Zero całkowicie wyłącza zapis przy edycji"
-msgstr "0 menyahdayakan semuanya ketika menyunting"
+msgstr "0 menyahdayakan simpanan ketika menyunting"
 
 #: OptionsDialog.cpp:363
 #, fuzzy
@@ -3999,37 +3945,37 @@ msgstr "Jumlah simpanan auto boleh ditetapkan dari 2 hingga 1000000"
 #: OptionsDialog.cpp:368
 #, fuzzy
 msgid "Liczbę znaków widocznych na zakładce można ustawić od 20 do 150"
-msgstr "Number of tab name characters. Range from 20 to 150"
+msgstr "Jumlah aksara pada nama tab. Bermula dari 20 sehingga 150"
 
 #: OptionsDialog.cpp:382
 #, fuzzy
 msgid "Ilość edycji do zapisu"
-msgstr "Jumlah suntingan untuk disimpan"
+msgstr "Bilangan suntingan untuk disimpan"
 
 #: OptionsDialog.cpp:385
 #, fuzzy
 msgid "Maksymalna ilość plików autozapisu"
-msgstr "Jumlah maksimum fail simpanan auto"
+msgstr "Bilangan maksimum fail autosimpan"
 
 #: OptionsDialog.cpp:388
 #, fuzzy
 msgid "Przyspieszenie klatki początkowej w ms:"
-msgstr "Start frame offset in ms:"
+msgstr "Mulakan frame offset dalam ms:"
 
 #: OptionsDialog.cpp:391
 #, fuzzy
 msgid "Przyspieszenie klatki końcowej w ms:"
-msgstr "End frame offset in ms:"
+msgstr "Tamat bingkai mengimbangi dalam ms:"
 
 #: OptionsDialog.cpp:394
 #, fuzzy
 msgid "Znak podmiany tagów ASS:"
-msgstr "Gantian tanda ASS:"
+msgstr "Penggantian tag ASS:"
 
 #: OptionsDialog.cpp:397
 #, fuzzy
 msgid "Ilość znaków widocznych na zakładce"
-msgstr "Number of tab name characters"
+msgstr "Bilangan aksara nama tab"
 
 #: OptionsDialog.cpp:400
 #, fuzzy
@@ -4054,27 +4000,27 @@ msgstr "Kaedah memuatkan pemuat auto"
 #: OptionsDialog.cpp:420
 #, fuzzy
 msgid "Przy starcie programu asynchronicznie"
-msgstr "After program start asynchronously"
+msgstr "Setelah perisian dimulakan secara tak segerak"
 
 #: OptionsDialog.cpp:420
 #, fuzzy
 msgid "Przy starcie programu"
-msgstr "After program start"
+msgstr "Setelah perisian dimulakan"
 
 #: OptionsDialog.cpp:420
 #, fuzzy
 msgid "Przy otwarciu menu asynchronicznie"
-msgstr "Selepas menu dibuka secara tidak segerak"
+msgstr "Setelah menu dibuka secara tak segerak"
 
 #: OptionsDialog.cpp:420
 #, fuzzy
 msgid "Przy otwarciu menu"
-msgstr "Selepas menu dibuka"
+msgstr "Setelah menu dibuka"
 
 #: OptionsDialog.cpp:444
 #, fuzzy
 msgid "Wybierz katalog"
-msgstr "Pilih senarai"
+msgstr "Pilih katalog"
 
 #: OptionsDialog.cpp:445
 #, fuzzy
@@ -4099,12 +4045,12 @@ msgstr "Tanda untuk ditampal di semua awalan baris ASS"
 #: OptionsDialog.cpp:449
 #, fuzzy
 msgid "Rozdzielczość przy konwersji na ASS"
-msgstr "Resolution when converting to ASS"
+msgstr "Peleraian ketika menukar kepada ASS"
 
 #: OptionsDialog.cpp:472
 #, fuzzy
 msgid "katalog dla stylu"
-msgstr "senarai untuk gaya"
+msgstr "katalog untuk gaya"
 
 #: OptionsDialog.cpp:472
 #, fuzzy
@@ -4112,13 +4058,11 @@ msgid "styl"
 msgstr "gaya"
 
 #: OptionsDialog.cpp:473
-#, fuzzy, c-format
+#, c-format, fuzzy
 msgid ""
 "Wybrany %s konwersji nie istnieje,\n"
 "zostanie zmieniony na domyślny"
-msgstr ""
-"%s yang dipilih untuk tukaran tidak wujud,\n"
-"dan akan ditukarkan ke lalai"
+msgstr "%s yang dipilih untuk tukaran tidak wujud,\ndan akan ditukarkan ke lalai"
 
 #: OptionsDialog.cpp:502
 #, fuzzy
@@ -4128,12 +4072,12 @@ msgstr "FPS dari video"
 #: OptionsDialog.cpp:503
 #, fuzzy
 msgid "Nowe czasy końcowe"
-msgstr "New end times"
+msgstr "Zaman akhir baharu"
 
 #: OptionsDialog.cpp:503
 #, fuzzy
 msgid "Pokaż okno przed konwersją"
-msgstr "Show window before conversion"
+msgstr "Tunjukkan tetingkap sebelum penukaran"
 
 #: OptionsDialog.cpp:538
 #, fuzzy
@@ -4143,7 +4087,7 @@ msgstr "Buka video dari menu konteks pada layar penuh"
 #: OptionsDialog.cpp:538
 #, fuzzy
 msgid "Lewy przycisk myszy pauzuje wideo"
-msgstr "Left mouse button pauses video"
+msgstr "Butang kiri tetikus menjedakan video"
 
 #: OptionsDialog.cpp:539
 #, fuzzy
@@ -4153,17 +4097,17 @@ msgstr "Buka video beserta masa baris yang aktif"
 #: OptionsDialog.cpp:539
 #, fuzzy
 msgid "Preferowane ścieżki audio (oddzielone średnikiem)"
-msgstr "Preferred audio (separated by semicolons)"
+msgstr "Audio yang diutamakan (dipisahkan dengan koma bertitik)"
 
 #: OptionsDialog.cpp:540
 #, fuzzy
 msgid "Sposób szukania wideo w FFMS2 (wymaga ponownego wczytania)"
-msgstr "FFMS2 video seeking (require reload)"
+msgstr "Penjangkau video FFMS2 (perlu dimulakan semula)"
 
 #: OptionsDialog.cpp:540
 #, fuzzy
 msgid "Filtr wyświetlania napisów"
-msgstr "Subtitles filter"
+msgstr "Penapis sari kata"
 
 #: OptionsDialog.cpp:559
 #, fuzzy
@@ -4178,47 +4122,47 @@ msgstr "Biasa"
 #: OptionsDialog.cpp:560
 #, fuzzy
 msgid "Niebezpieczne (szybkie w każdym przypadku)"
-msgstr "Unsafe (always fast)"
+msgstr "Tidak selamat (sentiasa laju)"
 
 #: OptionsDialog.cpp:560
 #, fuzzy
 msgid "Agresywne (szybkie przy cofaniu)"
-msgstr "Aggressive (fast in rewind)"
+msgstr "Ganas (laju ketika mengundur)"
 
 #: OptionsDialog.cpp:586
 #, fuzzy
 msgid "Wybierz rodzaj filtrowania"
-msgstr "Choose filtering"
+msgstr "Pilih penapisan"
 
 #: OptionsDialog.cpp:587
 #, fuzzy
 msgid "Ustawione skróty"
-msgstr "Set shortcuts"
+msgstr "Tetapkan pintasan"
 
 #: OptionsDialog.cpp:587
 #, fuzzy
 msgid "Skróty Globalne"
-msgstr "Global shortcuts"
+msgstr "Pintasan sejagat"
 
 #: OptionsDialog.cpp:588
 #, fuzzy
 msgid "Skróty napisów"
-msgstr "Subtitles shortcuts"
+msgstr "Pintasan sari kata"
 
 #: OptionsDialog.cpp:588
 #, fuzzy
 msgid "Skróty edytora"
-msgstr "Editor shortcuts"
+msgstr "Pintasan editor"
 
 #: OptionsDialog.cpp:588
 #, fuzzy
 msgid "Skróty wideo"
-msgstr "Kekunci Pintas Video"
+msgstr "Pintasan video"
 
 #: OptionsDialog.cpp:588
 #, fuzzy
 msgid "Skróty audio"
-msgstr "Kekunci Pintas Audio"
+msgstr "Piintasan audio"
 
 #: OptionsDialog.cpp:591
 #, fuzzy
@@ -4233,81 +4177,79 @@ msgstr "Fungsi"
 #: OptionsDialog.cpp:617
 #, fuzzy
 msgid "Przywróć skrót domyślny"
-msgstr "Pulih semula kekunci pintas lalai"
+msgstr "Tetap semula ke kekunci pintas lalai"
 
 #: OptionsDialog.cpp:640
 #, fuzzy
 msgid "Wyświetlaj czas przy kursorze"
-msgstr "Show time next to cursor"
+msgstr "Tunjukkan masa di sebelah kursor"
 
 #: OptionsDialog.cpp:640
 #, fuzzy
 msgid "Wyświetlaj znaczniki sekund"
-msgstr "Show seconds markers"
+msgstr "Tunjukkan penanda saat"
 
 #: OptionsDialog.cpp:640
 #, fuzzy
 msgid "Wyświetlaj tło zaznaczenia"
-msgstr "Show background selection"
+msgstr "Tunjuk pilihan latar belakang"
 
 #: OptionsDialog.cpp:641
 #, fuzzy
 msgid "Wyświetlaj pozycję wideo"
-msgstr "Show video position"
+msgstr "Tunjuk kedudukan video"
 
 #: OptionsDialog.cpp:641
 #, fuzzy
 msgid "Wyświetlaj klatki kluczowe"
-msgstr "Show keyframes"
+msgstr "Tunjuk bidang kekunci"
 
 #: OptionsDialog.cpp:641
 #, fuzzy
 msgid "Przewijaj wykres audio przy odtwarzaniu"
-msgstr "Follow audio during playback"
+msgstr "Ikuti audio semasa main semula"
 
 #: OptionsDialog.cpp:642
 #, fuzzy
 msgid "Aktywuj okno audio po najechaniu"
-msgstr "Activate the audio when hover"
+msgstr "Aktifkan audio apabila tuding"
 
 #: OptionsDialog.cpp:642
 #, fuzzy
 msgid "Przyklejaj do klatek kluczowych"
-msgstr "Snap to keyframe"
+msgstr "Tangkap ke bingkai utama"
 
 #: OptionsDialog.cpp:642
 #, fuzzy
 msgid "Przyklejaj do pozostałych linii"
-msgstr "Snap to other lines"
+msgstr "Snap ke baris lain"
 
 #: OptionsDialog.cpp:643
 #, fuzzy
 msgid "Nie odtwarzaj audio po zmianie linijki"
-msgstr "Jangan main audio selepas baris berubah"
+msgstr "Jangan mainkan audio selepas menukar talian"
 
 #: OptionsDialog.cpp:643
 #, fuzzy
 msgid "Scalaj wszystkie \"n\" z poprzednią sylabą"
-msgstr "Gabung semua \"n\" dengan suku kata sebelumnya"
+msgstr "Gabungkan semua \"n\" dengan suku kata sebelumnya"
 
 #: OptionsDialog.cpp:644
 #, fuzzy
 msgid "Przenoś linie sylab po kliknięciu"
-msgstr "Pindah baris suku kata selepas klik"
+msgstr "Gerakkan baris suku kata selepas klik"
 
 #: OptionsDialog.cpp:644
 #, fuzzy
 msgid "Wczytuj audio do pamięci RAM"
-msgstr "Muat audio dalam RAM"
+msgstr "Muatkan audio ke dalam RAM"
 
 #: OptionsDialog.cpp:671
 #, fuzzy
 msgid ""
 "Przedział od 0 do 10000, gdzie 0 wyłącza\n"
 "całkowicie usuwanie plików audio cache."
-msgstr ""
-"Julat di antara 0 ke 10000, yang mana 0 adalah tutup\n"
-"membuang fail cache audio."
+msgstr "Julat dari 0 hingga 10000, di mana 0 dimatikan\nmengalih keluar fail cache audio."
 
 #: OptionsDialog.cpp:672
 #, fuzzy
@@ -4317,47 +4259,47 @@ msgstr "Sebelum dan selepas aktif"
 #: OptionsDialog.cpp:672
 #, fuzzy
 msgid "Wszystkie widoczne"
-msgstr "Semua yang terlihat"
+msgstr "Semua nampak"
 
 #: OptionsDialog.cpp:682
 #, fuzzy
 msgid "Opóźnienie audio w ms"
-msgstr "Kelambatan audio dalam milisaat"
+msgstr "Kelewatan audio dalam milisaat"
 
 #: OptionsDialog.cpp:683
 #, fuzzy
 msgid "Czas odtwarzania audio przed i po znaczniku w ms"
-msgstr "Audio untuk dimainkan sebelum dan selepas tanda dalam millisaat"
+msgstr "Audio untuk dimainkan sebelum dan selepas penanda dalam milisaat"
 
 #: OptionsDialog.cpp:684 ShiftTimes.cpp:383
 #, fuzzy
 msgid "Wstęp"
-msgstr "Lead-in"
+msgstr "Menerajui"
 
 #: OptionsDialog.cpp:684 ShiftTimes.cpp:386
 #, fuzzy
 msgid "Zakończenie"
-msgstr "Lead-out"
+msgstr "Pimpin keluar"
 
 #: OptionsDialog.cpp:686
 #, fuzzy
 msgid "Grubość linii znaczników"
-msgstr "Ketebalan garis pembatasan"
+msgstr "Ketebalan sempadan garisan"
 
 #: OptionsDialog.cpp:687
 #, fuzzy
 msgid "Limit plików audio cache"
-msgstr "Batas fail cache audio"
+msgstr "Had fail cache audio"
 
 #: OptionsDialog.cpp:688
 #, fuzzy
 msgid "Sposób wyświetlania nieaktywnych linijek"
-msgstr "The way to display inactive lines"
+msgstr "Cara untuk memaparkan baris tidak aktif"
 
 #: OptionsDialog.cpp:712
 #, fuzzy
 msgid "Okno tło"
-msgstr "Latar belakang tetingkap"
+msgstr "Latar belakang tingkap"
 
 #: OptionsDialog.cpp:712
 #, fuzzy
@@ -4377,7 +4319,7 @@ msgstr "Teks tetingkap tidak aktif"
 #: OptionsDialog.cpp:713
 #, fuzzy
 msgid "Okno obramowanie"
-msgstr "Sempadan tetingkap"
+msgstr "Sempadan tingkap"
 
 #: OptionsDialog.cpp:713
 #, fuzzy
@@ -4387,7 +4329,7 @@ msgstr "Sempadan tetingkap tidak aktif"
 #: OptionsDialog.cpp:713
 #, fuzzy
 msgid "Okno tło obramowania"
-msgstr "Latar belakang sempadan tetingkap"
+msgstr "Latar belakang sempadan tingkap"
 
 #: OptionsDialog.cpp:714
 #, fuzzy
@@ -4407,37 +4349,37 @@ msgstr "Teks pengepala tetingkap tidak aktif"
 #: OptionsDialog.cpp:715
 #, fuzzy
 msgid "Okno najechany element nagłówka"
-msgstr "Window invaded element header"
+msgstr "Pengepala elemen yang diceroboh tetingkap"
 
 #: OptionsDialog.cpp:715
 #, fuzzy
 msgid "Okno wciśnięty element nagłówka"
-msgstr "Window pressed element header"
+msgstr "Pengepala elemen ditekan tetingkap"
 
 #: OptionsDialog.cpp:716
 #, fuzzy
 msgid "Okno najechane zamykanie"
-msgstr "Window closing upon hover"
+msgstr "Tetingkap ditutup apabila tuding"
 
 #: OptionsDialog.cpp:716
 #, fuzzy
 msgid "Okno wciśnięte zamykanie"
-msgstr "Window pressed closing"
+msgstr "Tetingkap ditekan menutup"
 
 #: OptionsDialog.cpp:716
 #, fuzzy
 msgid "Okno elementy ostrzegające"
-msgstr "Window elements warning"
+msgstr "Amaran elemen tetingkap"
 
 #: OptionsDialog.cpp:718
 #, fuzzy
 msgid "Napisy tekst"
-msgstr "Subtitles text"
+msgstr "Teks sari kata"
 
 #: OptionsDialog.cpp:718
 #, fuzzy
 msgid "Napisy tło"
-msgstr "Subtitles background"
+msgstr "Latar belakang sari kata"
 
 #: OptionsDialog.cpp:718
 #, fuzzy
@@ -4447,612 +4389,612 @@ msgstr "Latar belakang dialog sari kata"
 #: OptionsDialog.cpp:718
 #, fuzzy
 msgid "Napisy tło komentarzy"
-msgstr "Ulasan sari kata latar belakang"
+msgstr "Latar belakang ulasan sari kata"
 
 #: OptionsDialog.cpp:719
 #, fuzzy
 msgid "Napisy zaznaczenia (przezroczystość)"
-msgstr "Subtitles selections (transparency)"
+msgstr "Pilihan sari kata (ketelusan)"
 
 #: OptionsDialog.cpp:719
 #, fuzzy
 msgid "Napisy linijki widoczne na wideo"
-msgstr "Subtitles lines visible on video"
+msgstr "Baris sari kata kelihatan pada video"
 
 #: OptionsDialog.cpp:720
 #, fuzzy
 msgid "Napisy kolidujące linie"
-msgstr "Subtitles colliding lines"
+msgstr "Sari kata bertembung baris"
 
 #: OptionsDialog.cpp:720
 #, fuzzy
 msgid "Napisy obramowanie linijki"
-msgstr "Subtitles line boarder"
+msgstr "Penduduk baris sari kata"
 
 #: OptionsDialog.cpp:720
 #, fuzzy
 msgid "Napisy obramowanie aktywnej linijki"
-msgstr "Subtitles active line border"
+msgstr "Sari kata sempadan baris aktif"
 
 #: OptionsDialog.cpp:721
 #, fuzzy
 msgid "Napisy nagłówek"
-msgstr "Subtitles header background"
+msgstr "Latar belakang tajuk sari kata"
 
 #: OptionsDialog.cpp:721
 #, fuzzy
 msgid "Napisy tekst nagłówka"
-msgstr "Subtitles header text"
+msgstr "Teks pengepala sari kata"
 
 #: OptionsDialog.cpp:722
 #, fuzzy
 msgid "Napisy etykieta"
-msgstr "Subtitles line label"
+msgstr "Label baris sari kata"
 
 #: OptionsDialog.cpp:722
 #, fuzzy
 msgid "Napisy etykieta zmodyfikowanej linii"
-msgstr "Subtitles tag the modified line"
+msgstr "Sari kata menandakan baris yang diubah suai"
 
 #: OptionsDialog.cpp:722
 #, fuzzy
 msgid "Napisy etykieta zapisanej linii"
-msgstr "Subtitles tag the saved line"
+msgstr "Sari kata menandakan baris yang disimpan"
 
 #: OptionsDialog.cpp:723
 #, fuzzy
 msgid "Napisy etykieta niepewnej linii"
-msgstr "Subtitles tag the not confirmed line"
+msgstr "Sari kata menandakan baris yang tidak disahkan"
 
 #: OptionsDialog.cpp:723
 #, fuzzy
 msgid "Napisy tło błędów pisowni"
-msgstr "Subtitles spelling error background"
+msgstr "Latar belakang ralat ejaan sari kata"
 
 #: OptionsDialog.cpp:723
 #, fuzzy
 msgid "Napisy obramowanie porównania"
-msgstr "Subtitles comparison border"
+msgstr "Sempadan perbandingan sari kata"
 
 #: OptionsDialog.cpp:724
 #, fuzzy
 msgid "Napisy tło porównania brak zgodności"
-msgstr "Subtitles comparison background no match"
+msgstr "Latar belakang perbandingan sari kata tiada padanan"
 
 #: OptionsDialog.cpp:724
 #, fuzzy
 msgid "Napisy tło porównania zgodność"
-msgstr "Subtitles comparison background match"
+msgstr "Perbandingan sari kata padanan latar belakang"
 
 #: OptionsDialog.cpp:725
 #, fuzzy
 msgid "Napisy tło komentarza por. brak zgodności"
-msgstr "Subtitles comp. comment background no match"
+msgstr "sari kata comp. latar belakang komen tiada padanan"
 
 #: OptionsDialog.cpp:725
 #, fuzzy
 msgid "Napisy tło komentarza por. zgodność"
-msgstr "Subtitles comp. comment background match"
+msgstr "sari kata comp. komen padanan latar belakang"
 
 #: OptionsDialog.cpp:727
 #, fuzzy
 msgid "Edytor tekst"
-msgstr "Penyunting teks"
+msgstr "Teks editor"
 
 #: OptionsDialog.cpp:727
 #, fuzzy
 msgid "Edytor nazwy tagów"
-msgstr "Penyunting nama tanda"
+msgstr "Nama tag editor"
 
 #: OptionsDialog.cpp:727
 #, fuzzy
 msgid "Edytor wartości tagów"
-msgstr "Penyunting nilai tanda"
+msgstr "Nilai tag editor"
 
 #: OptionsDialog.cpp:728
 #, fuzzy
 msgid "Edytor nawiasy klamrowe"
-msgstr "Editor curly braces"
+msgstr "Editor kurung kerinting"
 
 #: OptionsDialog.cpp:728
 #, fuzzy
 msgid "Edytor operatory tagów"
-msgstr "Editor tags operators"
+msgstr "Operator tag editor"
 
 #: OptionsDialog.cpp:728
 #, fuzzy
 msgid "Edytor dzielenie linii i rysunki ASS"
-msgstr "Editor line splitting and ASS drawings"
+msgstr "Pemisahan baris editor dan lukisan ASS"
 
 #: OptionsDialog.cpp:728
 #, fuzzy
 msgid "Edytor zmienne template"
-msgstr "Editor template variables"
+msgstr "Pembolehubah templat editor"
 
 #: OptionsDialog.cpp:729
 #, fuzzy
 msgid "Edytor znaczniki kodu template"
-msgstr "Editor template code marks"
+msgstr "Tanda kod templat editor"
 
 #: OptionsDialog.cpp:729
 #, fuzzy
 msgid "Edytor funkcje template"
-msgstr "Editor template functions"
+msgstr "Fungsi templat editor"
 
 #: OptionsDialog.cpp:729
 #, fuzzy
 msgid "Edytor słowa kluczowe template"
-msgstr "Editor template keywords"
+msgstr "Kata kunci templat editor"
 
 #: OptionsDialog.cpp:730
 #, fuzzy
 msgid "Edytor ciągi znaków template"
-msgstr "Editor template strings"
+msgstr "Rentetan templat editor"
 
 #: OptionsDialog.cpp:730
 #, fuzzy
 msgid "Edytor zaznaczenie znalezionej frazy"
-msgstr "Editor found words selection"
+msgstr "Editor menemui pemilihan perkataan"
 
 #: OptionsDialog.cpp:730
 #, fuzzy
 msgid "Edytor tło nawiasów"
-msgstr "Editor brackets background"
+msgstr "Latar belakang kurungan editor"
 
 #: OptionsDialog.cpp:731
 #, fuzzy
 msgid "Edytor tło"
-msgstr "Editor background"
+msgstr "Latar belakang editor"
 
 #: OptionsDialog.cpp:731
 #, fuzzy
 msgid "Edytor zaznaczenie"
-msgstr "Editor selection"
+msgstr "Pemilihan editor"
 
 #: OptionsDialog.cpp:731
 #, fuzzy
 msgid "Edytor zaznaczenie w nieaktywnym oknie"
-msgstr "Editor inactive window selection"
+msgstr "Pemilihan tetingkap tidak aktif editor"
 
 #: OptionsDialog.cpp:732
 #, fuzzy
 msgid "Edytor obramowanie"
-msgstr "Editor border"
+msgstr "Sempadan editor"
 
 #: OptionsDialog.cpp:732
 #, fuzzy
 msgid "Edytor obramowanie aktywnego okna"
-msgstr "Editor border on focus"
+msgstr "Sempadan editor pada fokus"
 
 #: OptionsDialog.cpp:732
 #, fuzzy
 msgid "Edytor błędy pisowni"
-msgstr "Editor spelling error background"
+msgstr "Latar belakang ralat ejaan editor"
 
 #: OptionsDialog.cpp:734
 #, fuzzy
 msgid "Audio tło"
-msgstr "Audio background"
+msgstr "Latar belakang audio"
 
 #: OptionsDialog.cpp:734
 #, fuzzy
 msgid "Audio znacznik start"
-msgstr "Audio start marker"
+msgstr "Penanda mula audio"
 
 #: OptionsDialog.cpp:734
 #, fuzzy
 msgid "Audio znacznik koniec"
-msgstr "Audio end marker"
+msgstr "Penanda penamat audio"
 
 #: OptionsDialog.cpp:734
 #, fuzzy
 msgid "Audio znacznik przesuwania czasów"
-msgstr "Audio time shift marker"
+msgstr "Penanda peralihan masa audio"
 
 #: OptionsDialog.cpp:735
 #, fuzzy
 msgid "Audio znaczniki nieaktywnej linijki"
-msgstr "Audio inactive line marker"
+msgstr "Penanda baris audio tidak aktif"
 
 #: OptionsDialog.cpp:735
 #, fuzzy
 msgid "Audio kursor"
-msgstr "Audio cursor"
+msgstr "Kursor audio"
 
 #: OptionsDialog.cpp:735
 #, fuzzy
 msgid "Audio znaczniki sekund"
-msgstr "Audio seconds boundaries"
+msgstr "Sempadan saat audio"
 
 #: OptionsDialog.cpp:735
 #, fuzzy
 msgid "Audio klatki kluczowe"
-msgstr "Audio keyframes"
+msgstr "Bingkai kekunci audio"
 
 #: OptionsDialog.cpp:736
 #, fuzzy
 msgid "Audio znaczniki sylab"
-msgstr "Audio syllable marker"
+msgstr "Penanda suku kata audio"
 
 #: OptionsDialog.cpp:736
 #, fuzzy
 msgid "Audio tekst sylab"
-msgstr "Audio syllable text"
+msgstr "Teks suku kata audio"
 
 #: OptionsDialog.cpp:736
 #, fuzzy
 msgid "Audio zaznaczenie"
-msgstr "Audio selection"
+msgstr "Pemilihan audio"
 
 #: OptionsDialog.cpp:737
 #, fuzzy
 msgid "Audio zaznaczenie po modyfikacji"
-msgstr "Audio the selection after modification"
+msgstr "Audio pilihan selepas pengubahsuaian"
 
 #: OptionsDialog.cpp:737
 #, fuzzy
 msgid "Audio tło nieaktywnych linijek"
-msgstr "Audio inactive line background"
+msgstr "Latar belakang talian tidak aktif audio"
 
 #: OptionsDialog.cpp:737
 #, fuzzy
 msgid "Audio wykres falowy"
-msgstr "Audio waveform"
+msgstr "Bentuk gelombang audio"
 
 #: OptionsDialog.cpp:738
 #, fuzzy
 msgid "Audio nieaktywny wykres falowy"
-msgstr "Audio Inactive waveform"
+msgstr "Bentuk gelombang Audio Tidak aktif"
 
 #: OptionsDialog.cpp:738
 #, fuzzy
 msgid "Audio zmodyfikowany wykres falowy"
-msgstr "Audio modified waveform"
+msgstr "Bentuk gelombang diubah suai audio"
 
 #: OptionsDialog.cpp:738
 #, fuzzy
 msgid "Audio zaznaczony wykres falowy"
-msgstr "Audio selected waveform"
+msgstr "Bentuk gelombang terpilih audio"
 
 #: OptionsDialog.cpp:739
 #, fuzzy
 msgid "Audio tło spektrum"
-msgstr "Audio spectrum background"
+msgstr "Latar belakang spektrum audio"
 
 #: OptionsDialog.cpp:739
 #, fuzzy
 msgid "Audio echo spektrum"
-msgstr "Audio spectrum echo"
+msgstr "Gema spektrum audio"
 
 #: OptionsDialog.cpp:739
 #, fuzzy
 msgid "Audio spektrum"
-msgstr "Audio spectrum"
+msgstr "Spektrum audio"
 
 #: OptionsDialog.cpp:741
 #, fuzzy
 msgid "Pole tekstowe tło"
-msgstr "Text field background"
+msgstr "Latar belakang medan teks"
 
 #: OptionsDialog.cpp:741
 #, fuzzy
 msgid "Pole tekstowe obramowanie"
-msgstr "Text field border"
+msgstr "Sempadan medan teks"
 
 #: OptionsDialog.cpp:742
 #, fuzzy
 msgid "Pole tekstowe obramowanie aktywnego okna"
-msgstr "Text field border on focus"
+msgstr "Sempadan medan teks pada fokus"
 
 #: OptionsDialog.cpp:742
 #, fuzzy
 msgid "Pole tekstowe zaznaczenie"
-msgstr "Text field selection"
+msgstr "Pemilihan medan teks"
 
 #: OptionsDialog.cpp:743 OptionsDialog.cpp:813
 #, fuzzy
 msgid "Pole tekstowe zaznaczenie w nieaktywnym oknie"
-msgstr "Text field inactive window selection"
+msgstr "Pemilihan tetingkap tidak aktif medan teks"
 
 #: OptionsDialog.cpp:744
 #, fuzzy
 msgid "Przycisk i lista tło"
-msgstr "Button and list background"
+msgstr "Butang dan latar belakang senarai"
 
 #: OptionsDialog.cpp:744
 #, fuzzy
 msgid "Przycisk i lista tło po najechaniu"
-msgstr "Button and list background upon hover"
+msgstr "Butang dan latar belakang senarai semasa tuding"
 
 #: OptionsDialog.cpp:745
 #, fuzzy
 msgid "Przycisk i lista tło po wciśnięciu"
-msgstr "Button and list pushed background"
+msgstr "Butang dan senarai ditolak latar belakang"
 
 #: OptionsDialog.cpp:745
 #, fuzzy
 msgid "Przycisk i lista tło aktywnego"
-msgstr "Button and list background on focus"
+msgstr "Butang dan senarai latar belakang pada fokus"
 
 #: OptionsDialog.cpp:746
 #, fuzzy
 msgid "Przycisk i lista obramowanie"
-msgstr "Button and list border"
+msgstr "Butang dan senarai sempadan"
 
 #: OptionsDialog.cpp:746
 #, fuzzy
 msgid "Przycisk i lista obramowanie po najechaniu"
-msgstr "Button and list border upon hover"
+msgstr "Butang dan senarai sempadan semasa tuding"
 
 #: OptionsDialog.cpp:747
 #, fuzzy
 msgid "Przycisk i lista obramowanie po wciśnięciu"
-msgstr "Button and list border of pushed"
+msgstr "Butang dan senarai sempadan ditolak"
 
 #: OptionsDialog.cpp:747
 #, fuzzy
 msgid "Przycisk i lista obramowanie aktywnego"
-msgstr "Button and list border on focus"
+msgstr "Butang dan senaraikan sempadan pada fokus"
 
 #: OptionsDialog.cpp:748
 #, fuzzy
 msgid "Przycisk i lista obramowanie nieaktywne"
-msgstr "Button and list inactive border"
+msgstr "Butang dan senaraikan sempadan tidak aktif"
 
 #: OptionsDialog.cpp:748
 #, fuzzy
 msgid "Przełącznik tło włączonego"
-msgstr "Togglebutton toggled background"
+msgstr "Togol butang latar belakang togol"
 
 #: OptionsDialog.cpp:749
 #, fuzzy
 msgid "Przełącznik obramowanie włączonego"
-msgstr "Togglebutton toggled border"
+msgstr "Butang togol jidar togol"
 
 #: OptionsDialog.cpp:749
 #, fuzzy
 msgid "Pasek przewijania tło"
-msgstr "Scroll bar background"
+msgstr "Latar belakang bar skrol"
 
 #: OptionsDialog.cpp:749
 #, fuzzy
 msgid "Pasek przewijania suwak"
-msgstr "Scroll bar slider"
+msgstr "Peluncur bar tatal"
 
 #: OptionsDialog.cpp:750
 #, fuzzy
 msgid "Pasek przewijania suwak po najechaniu"
-msgstr "Scroll bar slider upon hover"
+msgstr "Peluncur bar tatal semasa tuding"
 
 #: OptionsDialog.cpp:750
 #, fuzzy
 msgid "Pasek przewijania suwak po wciśnięciu"
-msgstr "Scroll bar pushed slider"
+msgstr "Peluncur bar tatal ditolak"
 
 #: OptionsDialog.cpp:751
 #, fuzzy
 msgid "Ramka z opisem obramowanie"
-msgstr "Staticbox border"
+msgstr "sempadan kotak statik"
 
 #: OptionsDialog.cpp:751
 #, fuzzy
 msgid "Lista statyczna obramowanie"
-msgstr "Static list border"
+msgstr "Sempadan senarai statik"
 
 #: OptionsDialog.cpp:751
 #, fuzzy
 msgid "Lista statyczna tło"
-msgstr "Static list background"
+msgstr "Latar belakang senarai statik"
 
 #: OptionsDialog.cpp:752
 #, fuzzy
 msgid "Lista statyczna zaznaczenie"
-msgstr "Static list selection"
+msgstr "Pemilihan senarai statik"
 
 #: OptionsDialog.cpp:752
 #, fuzzy
 msgid "Lista statyczna tło nagłówka"
-msgstr "Static list header background"
+msgstr "Latar belakang pengepala senarai statik"
 
 #: OptionsDialog.cpp:752
 #, fuzzy
 msgid "Lista statyczna tekst nagłówka"
-msgstr "Static list header text"
+msgstr "Teks pengepala senarai statik"
 
 #: OptionsDialog.cpp:753
 #, fuzzy
 msgid "Pasek statusu obramowanie"
-msgstr "Status bar border"
+msgstr "Sempadan bar status"
 
 #: OptionsDialog.cpp:755
 #, fuzzy
 msgid "Pasek menu tło 1"
-msgstr "Menu bar background 1"
+msgstr "Latar belakang bar menu 1"
 
 #: OptionsDialog.cpp:755
 #, fuzzy
 msgid "Pasek menu tło 2"
-msgstr "Menu bar background 2"
+msgstr "Latar belakang bar menu 2"
 
 #: OptionsDialog.cpp:755
 #, fuzzy
 msgid "Pasek menu obramowanie zaznaczenia"
-msgstr "Menu bar selection border"
+msgstr "Sempadan pilihan bar menu"
 
 #: OptionsDialog.cpp:756
 #, fuzzy
 msgid "Pasek menu najechane tło zaznaczenia"
-msgstr "Menu bar selection hover bacground"
+msgstr "Pilihan bar menu tuding latar belakang"
 
 #: OptionsDialog.cpp:756
 #, fuzzy
 msgid "Pasek menu kliknięte tło zaznaczenia"
-msgstr "Menu bar selection clicked bacground"
+msgstr "Pemilihan bar menu diklik latar belakang"
 
 #: OptionsDialog.cpp:757
 #, fuzzy
 msgid "Menu tło"
-msgstr "Menu background"
+msgstr "Latar belakang menu"
 
 #: OptionsDialog.cpp:757
 #, fuzzy
 msgid "Menu obramowanie zaznaczenia"
-msgstr "Menu selection border"
+msgstr "Sempadan pilihan menu"
 
 #: OptionsDialog.cpp:757
 #, fuzzy
 msgid "Menu tło zaznaczenia"
-msgstr "Menu selection background"
+msgstr "Latar belakang pemilihan menu"
 
 #: OptionsDialog.cpp:759
 #, fuzzy
 msgid "Pasek zakładek tło 1"
-msgstr "Tab bar background 1"
+msgstr "Latar belakang bar tab 1"
 
 #: OptionsDialog.cpp:759
 #, fuzzy
 msgid "Pasek zakładek tło 2"
-msgstr "Tab bar background 2"
+msgstr "Latar belakang bar tab 2"
 
 #: OptionsDialog.cpp:759
 #, fuzzy
 msgid "Zakładki obramowanie aktywnej"
-msgstr "Tab active border"
+msgstr "Tab sempadan aktif"
 
 #: OptionsDialog.cpp:760
 #, fuzzy
 msgid "Zakładki obramowanie nieaktywnej"
-msgstr "Tab inactive border"
+msgstr "Tab sempadan tidak aktif"
 
 #: OptionsDialog.cpp:760
 #, fuzzy
 msgid "Zakładki tło aktywnej"
-msgstr "Tab active background"
+msgstr "Latar belakang aktif tab"
 
 #: OptionsDialog.cpp:760
 #, fuzzy
 msgid "Zakładki tło nieaktywnej"
-msgstr "Tab inactive background"
+msgstr "Latar belakang tab tidak aktif"
 
 #: OptionsDialog.cpp:761
 #, fuzzy
 msgid "Zakładki tło nieaktywnej po najechaniu"
-msgstr "Tab inactive background upon hover"
+msgstr "Tab latar belakang tidak aktif semasa tuding"
 
 #: OptionsDialog.cpp:761
 #, fuzzy
 msgid "Zakładki tło drugiej widocznej zakładki"
-msgstr "Tab background of second visible tab"
+msgstr "Latar belakang tab tab kedua yang kelihatan"
 
 #: OptionsDialog.cpp:762
 #, fuzzy
 msgid "Zakładki tekst aktywnej"
-msgstr "Tab active text"
+msgstr "Teks aktif tab"
 
 #: OptionsDialog.cpp:762
 #, fuzzy
 msgid "Zakładki tekst nieaktywnej"
-msgstr "Tab inactive background"
+msgstr "Latar belakang tab tidak aktif"
 
 #: OptionsDialog.cpp:762
 #, fuzzy
 msgid "Zakładki zamknięcie po najechaniu"
-msgstr "Tab close upon hover"
+msgstr "Tab tutup semasa tuding"
 
 #: OptionsDialog.cpp:763
 #, fuzzy
 msgid "Pasek zakładek strzałka"
-msgstr "Tab bar arrow"
+msgstr "Anak panah bar tab"
 
 #: OptionsDialog.cpp:763
 #, fuzzy
 msgid "Pasek zakładek strzałka tło"
-msgstr "Tab bar arrow background"
+msgstr "Latar belakang anak panah bar tab"
 
 #: OptionsDialog.cpp:764
 #, fuzzy
 msgid "Pasek zakładek strzałka tło po najechaniu"
-msgstr "Tab bar arrow background upon hover"
+msgstr "Latar belakang anak panah bar tab semasa tuding"
 
 #: OptionsDialog.cpp:766
 #, fuzzy
 msgid "Suwak ścieżka tło"
-msgstr "Slider path background"
+msgstr "Latar belakang laluan peluncur"
 
 #: OptionsDialog.cpp:766
 #, fuzzy
 msgid "Suwak ścieżka obramowanie"
-msgstr "Slider path border"
+msgstr "Sempadan laluan peluncur"
 
 #: OptionsDialog.cpp:766
 #, fuzzy
 msgid "Suwak obramowanie"
-msgstr "Slider border"
+msgstr "Sempadan peluncur"
 
 #: OptionsDialog.cpp:767
 #, fuzzy
 msgid "Suwak obramowanie po najechaniu"
-msgstr "Slider border upon hover"
+msgstr "Sempadan peluncur semasa tuding"
 
 #: OptionsDialog.cpp:767
 #, fuzzy
 msgid "Suwak obramowanie po wciśnięciu"
-msgstr "Slider border of pushed"
+msgstr "Sempadan peluncur ditolak"
 
 #: OptionsDialog.cpp:767
 #, fuzzy
 msgid "Suwak tło"
-msgstr "Slider background"
+msgstr "Latar belakang peluncur"
 
 #: OptionsDialog.cpp:768
 #, fuzzy
 msgid "Suwak tło po najechaniu"
-msgstr "Slider background upon hover"
+msgstr "Latar belakang peluncur semasa tuding"
 
 #: OptionsDialog.cpp:768
 #, fuzzy
 msgid "Suwak tło po wciśnięciu"
-msgstr "Slider background of pushed"
+msgstr "Latar belakang peluncur ditolak"
 
 #: OptionsDialog.cpp:770
 #, fuzzy
 msgid "Linia zmiany rozdzielczości kropki"
-msgstr "Resize line dots"
+msgstr "Ubah saiz titik garis"
 
 #: OptionsDialog.cpp:770
 #, fuzzy
 msgid "Wynik szukania czcionka nazwy pliku"
-msgstr "Finding result file name foreground"
+msgstr "Mencari latar depan nama fail hasil"
 
 #: OptionsDialog.cpp:770
 #, fuzzy
 msgid "Wynik szukania tło nazwy pliku"
-msgstr "Finding result file name background"
+msgstr "Mencari latar belakang nama fail hasil"
 
 #: OptionsDialog.cpp:771
 #, fuzzy
 msgid "Wynik szukania czcionka znalezionej frazy"
-msgstr "Finding result found phrase foreground"
+msgstr "Hasil carian ditemui frasa latar depan"
 
 #: OptionsDialog.cpp:771
 #, fuzzy
 msgid "Wynik szukania tło znalezionej frazy"
-msgstr "Finding result found phrase background"
+msgstr "Hasil carian ditemui latar belakang frasa"
 
 #: OptionsDialog.cpp:773
 #, fuzzy
 msgid "Pierwszy kolor podglądu stylów"
-msgstr "First color of style preview background"
+msgstr "Warna pertama latar belakang pratonton gaya"
 
 #: OptionsDialog.cpp:773
 #, fuzzy
 msgid "Drugi kolor podglądu stylów"
-msgstr "Second color of style preview background"
+msgstr "Warna kedua latar belakang pratonton gaya"
 
 #: OptionsDialog.cpp:798
 #, fuzzy
 msgid "Nazwa motywu:"
-msgstr "Theme name:"
+msgstr "Nama tema:"
 
 #: OptionsDialog.cpp:800
 #, fuzzy
@@ -5060,35 +5002,30 @@ msgid ""
 "Nazwa kopiowanego motywu.\n"
 "Motywów domyślnych: DarkSentro i LightSentro\n"
 "nie można edytować, należy je skopiować."
-msgstr ""
-"Name of coping theme.\n"
-"Default themes: DarkSentro & LightSentro\n"
-"cannot be edited. It have to be copied."
+msgstr "Nama tema mengatasi.\nTema lalai: DarkSentro & LightSentro\ntidak boleh diedit. Ia perlu disalin."
 
 #: OptionsDialog.cpp:801 SelectLines.cpp:122 stylestore.cpp:87
 #: stylestore.cpp:140
 #, fuzzy
 msgid "Kopiuj"
-msgstr "Copy"
+msgstr "Salin"
 
 #: OptionsDialog.cpp:810
 #, fuzzy
 msgid ""
 "UWAGA! Przezroczystość działa tylko na wykresie audio,\n"
 "polu tekstowym i polu napisów."
-msgstr ""
-"Warning! Transparency works only on audio spectrun,\n"
-"text file and subtitles grid."
+msgstr "Amaran! Ketelusan berfungsi hanya pada spektrum audio,\nfail teks dan grid sari kata."
 
 #: OptionsDialog.cpp:820
 #, fuzzy
 msgid "Nazwa"
-msgstr "Name"
+msgstr "Nama"
 
 #: OptionsDialog.cpp:821
 #, fuzzy
 msgid "Kolor"
-msgstr "Color"
+msgstr "Warna"
 
 #: OptionsDialog.cpp:905 OptionsDialog.cpp:1164
 #, fuzzy
@@ -5103,7 +5040,7 @@ msgstr "Sari kata SSA"
 #: OptionsDialog.cpp:905 OptionsDialog.cpp:1164
 #, fuzzy
 msgid "Napisy SRT"
-msgstr "Sari kata SRT"
+msgstr "Sarikata SRT"
 
 #: OptionsDialog.cpp:905 OptionsDialog.cpp:1164
 #, fuzzy
@@ -5220,12 +5157,12 @@ msgstr "Tema"
 #: OptionsDialog.cpp:958
 #, fuzzy
 msgid "Skróty klawiszowe"
-msgstr "Kekunci pintasan"
+msgstr "Kekunci panas"
 
 #: OptionsDialog.cpp:959
 #, fuzzy
 msgid "Skojarzenia"
-msgstr "Associations"
+msgstr "Persatuan"
 
 #: OptionsDialog.cpp:960
 #, fuzzy
@@ -5235,7 +5172,7 @@ msgstr "Sifat sari kata ASS"
 #: OptionsDialog.cpp:969
 #, fuzzy
 msgid "Ustaw domyślne"
-msgstr "Set default"
+msgstr "Tetapkan lalai"
 
 #: OptionsPanels.cpp:29 ScriptInfo.cpp:33
 #, fuzzy
@@ -5250,7 +5187,7 @@ msgstr "Tajuk"
 #: OptionsPanels.cpp:32 ScriptInfo.cpp:44 SubsGrid.cpp:1398
 #, fuzzy
 msgid "Autor"
-msgstr "Pengarang"
+msgstr "Pencipta"
 
 #: OptionsPanels.cpp:32 ScriptInfo.cpp:46 SubsGrid.cpp:1398
 #, fuzzy
@@ -5260,7 +5197,7 @@ msgstr "Penterjemah"
 #: OptionsPanels.cpp:32 ScriptInfo.cpp:48 SubsGrid.cpp:1398
 #, fuzzy
 msgid "Korekta"
-msgstr "Editor"
+msgstr "Penyunting"
 
 #: OptionsPanels.cpp:32 ScriptInfo.cpp:50 SubsGrid.cpp:1398
 #, fuzzy
@@ -5271,33 +5208,33 @@ msgstr "Pemasa"
 #: VisualDrawingShapes.cpp:68
 #, fuzzy
 msgid "Edycja"
-msgstr "Dikemas kini oleh"
+msgstr "Dikemaskini oleh"
 
 #: OptionsPanels.cpp:55
 #, fuzzy
 msgid "Zawsze pytaj o zmianę informacji o napisach"
-msgstr "Sentiasa tanya bagi mengubah maklumat sari kata"
+msgstr "Sentiasa minta untuk menukar maklumat sari kata"
 
 #: ProgressDialog.cpp:43
 #, fuzzy
 msgid "Upłynęło 00:00:00.00 sekund"
-msgstr "Masa berjalan: 00:00:00.00"
+msgstr "Masa berlalu: 00:00:00.00"
 
 #: ProgressDialog.cpp:111
 #, fuzzy, c-format
 msgid "Upłynęło %s sekund"
-msgstr "Masa berjalan: %s"
+msgstr "Masa berlalu: %s"
 
 #: ProviderFFMS2.cpp:43 VideoFfmpeg.cpp:57
 #, fuzzy
 msgid "Indeksowanie pliku wideo"
-msgstr "Mengindeks video"
+msgstr "Video mengindeks"
 
 #: ProviderFFMS2.cpp:247 VisualDrawingShapes.cpp:210
 #: VisualDrawingShapes.cpp:274
 #, fuzzy
 msgid "Bez nazwy"
-msgstr "Nirtajuk"
+msgstr "Tiada tajuk"
 
 #: ProviderFFMS2.cpp:264 VideoFfmpeg.cpp:272
 #, fuzzy
@@ -5307,23 +5244,23 @@ msgstr "Pilih trek"
 #: ProviderFFMS2.cpp:322 VideoFfmpeg.cpp:330
 #, fuzzy, c-format
 msgid "Nie można zapisać indeksu, wystąpił błąd %s"
-msgstr "Gagal menyimpan indeks, ralat %s"
+msgstr "Tidak dapat menyimpan indeks, ralat %s berlaku"
 
 #: ProviderFFMS2.cpp:349 VideoFfmpeg.cpp:357
 #, fuzzy
 msgid "Nie można utworzyć VideoSource."
-msgstr "Gagal mencipta VideoSource."
+msgstr "Tidak boleh membuat VideoSource."
 
 #: ProviderFFMS2.cpp:388 VideoFfmpeg.cpp:396
 #, fuzzy
 msgid "Nie można przekonwertować wideo na RGBA"
-msgstr "Gagal menukarkan video ke RGBA"
+msgstr "Tidak boleh menukar video kepada RGBA"
 
 #: ProviderFFMS2.cpp:402 ProviderFFMS2.cpp:408 VideoFfmpeg.cpp:410
 #: VideoFfmpeg.cpp:416
 #, fuzzy
 msgid "Nie można zmienić macierzy YCbCr"
-msgstr "Tidak dapat menukar matriks YCbCr"
+msgstr "Tidak boleh menukar matriks YCbCr"
 
 #: ProviderFFMS2.cpp:418 VideoFfmpeg.cpp:426
 #, fuzzy
@@ -5333,22 +5270,22 @@ msgstr "Anda tidak boleh memuatkan trek video"
 #: ProviderFFMS2.cpp:423 VideoFfmpeg.cpp:431
 #, fuzzy
 msgid "Nie można pobrać informacji o wideo"
-msgstr "Anda tidak boleh mendapatkan maklumat tentang video"
+msgstr "Anda tidak boleh mendapatkan maklumat tentang video tersebut"
 
 #: ProviderFFMS2.cpp:453 VideoFfmpeg.cpp:461
 #, fuzzy, c-format
 msgid "Wystąpił błąd tworzenia źródła audio: %s"
-msgstr "Keralatan telah berlaku semasa mencipta sumber audio: %s"
+msgstr "Ralat berlaku semasa mencipta sumber audio: %s"
 
 #: ProviderFFMS2.cpp:462 VideoFfmpeg.cpp:470
 #, fuzzy, c-format
 msgid "Wystąpił błąd konwertowania audio: %s"
-msgstr "Keralatan telah berlaku semasa menukar audio: %s"
+msgstr "Ralat berlaku semasa menukar audio: %s"
 
 #: ProviderFFMS2.cpp:475 VideoFfmpeg.cpp:483
 #, fuzzy
 msgid "Nie można ustawić opóźnienia, przekracza czas trwania audio"
-msgstr "Delay failed, it's longer than audio duration time"
+msgstr "Kelewatan gagal, ia lebih lama daripada masa tempoh audio"
 
 #: ProviderFFMS2.cpp:654 VideoFfmpeg.cpp:723
 #, fuzzy
@@ -5358,17 +5295,17 @@ msgstr "RAM tidak mencukupi"
 #: RendererDirectShow.cpp:59
 #, fuzzy
 msgid "Nie można stworzyć DXVA processor service"
-msgstr "Gagal mencipta servis prosessor DXVA"
+msgstr "Tidak boleh membuat perkhidmatan pemproses DXVA"
 
 #: RendererDirectShow.cpp:79
 #, fuzzy
 msgid "Nie można pobrać GUIDów DXVA"
-msgstr "Gagal mendapatkan GUID DXVA"
+msgstr "Tidak boleh mendapatkan GUID DXVA"
 
 #: RendererDirectShow.cpp:87
 #, fuzzy
 msgid "Nie można uzyskać formatów DXVA"
-msgstr "Tidak boleh menghitung format DXVA"
+msgstr "Tidak dapat menghitung format DXVA"
 
 #: RendererDirectShow.cpp:98
 #, fuzzy
@@ -5378,47 +5315,47 @@ msgstr "Format ini tidak disokong oleh DXVA"
 #: RendererDirectShow.cpp:102
 #, fuzzy
 msgid "GetVideoProcessorCaps zawiodło"
-msgstr "GetVideoProcessorCaps failed"
+msgstr "GetVideoProcessorCaps gagal"
 
 #: RendererDirectShow.cpp:110
 #, fuzzy, c-format
 msgid "Nie można stworzyć powierzchni DXVA %i"
-msgstr "Tidak dapat membuat permukaan DXVA %i"
+msgstr "Tidak boleh mencipta permukaan DXVA %i"
 
 #: RendererDirectShow.cpp:113
 #, fuzzy
 msgid "Nie można stworzyć processora DXVA"
-msgstr "Tidak dapat membuat pemprosesan DXVA"
+msgstr "Tidak boleh mencipta pemproses DXVA"
 
 #: RendererDirectShow.cpp:122
 #, fuzzy
 msgid "Zawiodło któreś z ustawień DirectX vertices"
-msgstr "One of the DirectX vertices settings failed"
+msgstr "Salah satu tetapan bucu DirectX gagal"
 
 #: RendererDirectShow.cpp:146 RendererDirectShow.cpp:150
 #, fuzzy
 msgid "Nie można storzyć tekstury napisów"
-msgstr "Tidak dapat membuat permukaan sari kata"
+msgstr "Tidak boleh mencipta tekstur sari kata"
 
 #: RendererDirectShow.cpp:175
 #, fuzzy
 msgid "Brak bufora klatki"
-msgstr "No frame buffer"
+msgstr "Tiada penimbal bingkai"
 
 #: RendererDirectShow.cpp:198
 #, fuzzy
 msgid "Nie można odblokować bufora tekstury napisów"
-msgstr "Cannot unlock subtitles texture buffer"
+msgstr "Tidak boleh membuka kunci penimbal tekstur sari kata"
 
 #: RendererDirectShow.cpp:263 RendererFFMS2.cpp:113
 #, fuzzy
 msgid "Nie można odblokować bufora tekstury"
-msgstr "Cannot unlock texture buffer"
+msgstr "Tidak dapat mengunci penimbal tekstur"
 
 #: RendererDirectShow.cpp:860 RendererFFMS2.cpp:165
 #, fuzzy
 msgid "Nie można nałożyć powierzchni na siebie"
-msgstr "Cannot overlay surfaces"
+msgstr "Tidak boleh menindih permukaan"
 
 #: RendererVideo.cpp:246 VisualRotationXY.cpp:162
 #, fuzzy
@@ -5428,12 +5365,12 @@ msgstr "Tidak dapat menetapkan tayangan matriks"
 #: ScriptInfo.cpp:57
 #, fuzzy
 msgid "Rozdzielczość"
-msgstr "Peleraian"
+msgstr "Resolusi"
 
 #: ScriptInfo.cpp:62
 #, fuzzy
 msgid "Z wideo"
-msgstr "Dari video"
+msgstr "Daripada video"
 
 #: ScriptInfo.cpp:65
 #, fuzzy
@@ -5453,47 +5390,47 @@ msgstr "Matriks YCbCr"
 #: ScriptInfo.cpp:93
 #, fuzzy
 msgid "0: Autopodział, górna linijka jest szersza"
-msgstr "0: Automatik, baris atas lebih lebar"
+msgstr "0: Auto, baris atas lebih luas"
 
 #: ScriptInfo.cpp:94
 #, fuzzy
 msgid "1: Podział co koniec linijki, dzieli tylko \\N"
-msgstr "1: Balutan baris akhir, hanya pemisah \\N"
+msgstr "1: Balutan hujung baris, hanya \\N pecah"
 
 #: ScriptInfo.cpp:95
 #, fuzzy
 msgid "2: Brak podziału, dzieli \\n i \\N"
-msgstr "2: Tiada balutan, kedua-duanya pemisah \\n dan \\N"
+msgstr "2: Tiada pembalut, kedua-dua \\n dan \\N pecah"
 
 #: ScriptInfo.cpp:96
 #, fuzzy
 msgid "3: Autopodział, dolna linijka jest szersza"
-msgstr "3: Automatik, baris bawah lebih lebar"
+msgstr "3: Auto, garis bawah lebih luas"
 
 #: ScriptInfo.cpp:99
 #, fuzzy
 msgid "Odwrócone"
-msgstr "Dibalikkan"
+msgstr "terbalik"
 
 #: ScriptInfo.cpp:101
 #, fuzzy
 msgid "Styl dzielenia linijek"
-msgstr "Gaya balutan"
+msgstr "Gaya balut"
 
 #: ScriptInfo.cpp:103 ScriptInfo.cpp:151
 #, fuzzy
 msgid "Kolidowanie linijek"
-msgstr "Baris berlanggar"
+msgstr "Garisan berlanggar"
 
 #: ScriptInfo.cpp:106
 #, fuzzy
 msgid "Skaluj obwódkę i cień"
-msgstr "Scale border and shadow"
+msgstr "Skala sempadan dan bayang-bayang"
 
 #: ScriptInfo.cpp:148
 #, fuzzy
 msgid "Wysokość wideo"
-msgstr "Tinggi video"
+msgstr "Ketinggian video"
 
 #: ScriptInfo.cpp:149
 #, fuzzy
@@ -5503,12 +5440,12 @@ msgstr "Lebar video"
 #: ScriptInfo.cpp:150
 #, fuzzy
 msgid "Sposób dzielenia napisów"
-msgstr "Cara membalut baris"
+msgstr "Cara membalut garisan"
 
 #: ScriptInfo.cpp:152
 #, fuzzy
 msgid "Skalowana obwódka i cień"
-msgstr "Scale border and shadow"
+msgstr "Skala sempadan dan bayang-bayang"
 
 #: SelectLines.cpp:32 SelectLines.cpp:112 SelectLines.cpp:139
 #: SelectLines.cpp:235 SelectLines.cpp:277
@@ -5524,7 +5461,7 @@ msgstr "Dengan"
 #: SelectLines.cpp:42
 #, fuzzy
 msgid "Nie zawiera"
-msgstr "Tanpa"
+msgstr "tanpa"
 
 #: SelectLines.cpp:77
 #, fuzzy
@@ -5539,7 +5476,7 @@ msgstr "Masa tamat"
 #: SelectLines.cpp:101
 #, fuzzy
 msgid "Dialogi / komentarze"
-msgstr "Dialog / ulasan"
+msgstr "Dialog / komen"
 
 #: SelectLines.cpp:103
 #, fuzzy
@@ -5549,12 +5486,12 @@ msgstr "Dialog"
 #: SelectLines.cpp:105
 #, fuzzy
 msgid "Komentarze"
-msgstr "Ulasan"
+msgstr "Komen"
 
 #: SelectLines.cpp:113
 #, fuzzy
 msgid "Dodaj do zaznaczenia"
-msgstr "Tambah ke pilihan"
+msgstr "Tambahkan pada pilihan"
 
 #: SelectLines.cpp:114
 #, fuzzy
@@ -5564,37 +5501,37 @@ msgstr "Nyahpilih"
 #: SelectLines.cpp:116
 #, fuzzy
 msgid "Zaznaczenie"
-msgstr "Pilihan"
+msgstr "Pemilihan"
 
 #: SelectLines.cpp:121
 #, fuzzy
 msgid "Nie rób nic"
-msgstr "Diam sahaja"
+msgstr "Tidak buat apa-apa"
 
 #: SelectLines.cpp:123
 #, fuzzy
 msgid "Wytnij"
-msgstr "Potong"
+msgstr "Cut"
 
 #: SelectLines.cpp:124
 #, fuzzy
 msgid "Przenieś na początek"
-msgstr "Pindah ke permulaan"
+msgstr "Bergerak ke permulaan"
 
 #: SelectLines.cpp:125
 #, fuzzy
 msgid "Przenieś na koniec"
-msgstr "Pindah ke pengakhiran"
+msgstr "Bergerak ke penghujung"
 
 #: SelectLines.cpp:126
 #, fuzzy
 msgid "Ustaw jako komentarz"
-msgstr "Tetapkan sebagai ulasan"
+msgstr "Ulasan"
 
 #: SelectLines.cpp:129
 #, fuzzy
 msgid "Akcja"
-msgstr "Tindakan"
+msgstr "Aksi"
 
 #: SelectLines.cpp:140
 #, fuzzy
@@ -5604,36 +5541,34 @@ msgstr "Pilih dalam semua tab"
 #: SelectLines.cpp:232 SelectLines.cpp:274
 #, fuzzy, c-format
 msgid "Zaznaczono %i linijek."
-msgstr "%i lines selected."
+msgstr "%i baris dipilih."
 
 #: SelectLines.cpp:233 SelectLines.cpp:275
 #, fuzzy, c-format
 msgid "Dodano do zaznaczenia %i linijek."
-msgstr "%i lines added to selection."
+msgstr "%i baris ditambahkan pada pilihan."
 
 #: SelectLines.cpp:234 SelectLines.cpp:276
 #, fuzzy, c-format
 msgid "Odznaczono %i linijek."
-msgstr "%i lines deselected."
+msgstr "%i baris dinyahpilih."
 
 #: ShiftTimes.cpp:54
 #, fuzzy
 msgid ""
 "Wprowadź nazwę profilu,\n"
 "bądź wybierz istniejący, by nadpisać"
-msgstr ""
-"Write the name of the profile\n"
-"or select existing profile to overwrite"
+msgstr "Tulis nama profil\natau pilih profil sedia ada untuk ditulis ganti"
 
 #: ShiftTimes.cpp:84
 #, fuzzy, c-format
 msgid "Na pewno chcesz nadpisać profil o nazwie %s"
-msgstr "Do you want to overwrite profile of name %s"
+msgstr "Adakah anda mahu menulis ganti profil nama %s"
 
 #: ShiftTimes.cpp:257
 #, fuzzy
 msgid "Post processor"
-msgstr "Pascapemproses"
+msgstr "Pemproses pos"
 
 #: ShiftTimes.cpp:257
 #, fuzzy
@@ -5643,12 +5578,12 @@ msgstr "Selaras masa"
 #: ShiftTimes.cpp:266
 #, fuzzy
 msgid "Czasy wyższe i równe"
-msgstr "All times higher and equal"
+msgstr "Semua kali lebih tinggi dan sama"
 
 #: ShiftTimes.cpp:267
 #, fuzzy
 msgid "Czasy niższe i równe"
-msgstr "All times lower and equal"
+msgstr "Semua masa lebih rendah dan sama"
 
 #: ShiftTimes.cpp:282
 #, fuzzy
@@ -5658,17 +5593,17 @@ msgstr "Edisi profil"
 #: ShiftTimes.cpp:283
 #, fuzzy
 msgid "Dodawanie i edycja profilów"
-msgstr "Menambah dan menyunting profil"
+msgstr "Menambah dan mengedit profil"
 
 #: ShiftTimes.cpp:286
 #, fuzzy
 msgid "Usuwanie profilów"
-msgstr "Membuang profil"
+msgstr "Mengalih keluar profil"
 
 #: ShiftTimes.cpp:299
 #, fuzzy
 msgid "Przesuń"
-msgstr "Selaras"
+msgstr "Shift"
 
 #: ShiftTimes.cpp:299
 #, fuzzy
@@ -5678,22 +5613,22 @@ msgstr "Selaras masa sari kata"
 #: ShiftTimes.cpp:301
 #, fuzzy
 msgid "W przód"
-msgstr "Kehadapan"
+msgstr "Maju"
 
 #: ShiftTimes.cpp:302
 #, fuzzy
 msgid "W tył"
-msgstr "Kebelakang"
+msgstr "Ke Belakang"
 
 #: ShiftTimes.cpp:304
 #, fuzzy
 msgid "Czasy tagów"
-msgstr "Tanda masa"
+msgstr "Tag masa"
 
 #: ShiftTimes.cpp:318
 #, fuzzy
 msgid "Przesuwanie wg wideo / audio"
-msgstr "Selaras mengikut video / audio"
+msgstr "Beralih mengikut video / audio"
 
 #: ShiftTimes.cpp:321
 #, fuzzy
@@ -5705,55 +5640,51 @@ msgstr "Mula"
 #: SubsGridWindow.cpp:1252
 #, fuzzy
 msgid "Koniec"
-msgstr "Tamat"
+msgstr "Akhir"
 
 #: ShiftTimes.cpp:327
 #, fuzzy
 msgid ""
 "Przesuń znacznik\n"
 "do czasu wideo"
-msgstr ""
-"Pindah penanda\n"
-"ke masa video"
+msgstr "Gerakkan penanda\nkepada masa video"
 
 #: ShiftTimes.cpp:331
 #, fuzzy
 msgid ""
 "Przesuń znacznik\n"
 "do czasu audio"
-msgstr ""
-"Pindah penanda\n"
-"ke masa audio"
+msgstr "Gerakkan penanda\nkepada masa audio"
 
 #: ShiftTimes.cpp:342
 #, fuzzy
 msgid "Sposób przesuwania czasów"
-msgstr "Kaedah penyelarasan masa"
+msgstr "Kaedah peralihan masa"
 
 #: ShiftTimes.cpp:344
 #, fuzzy
 msgid "Obydwa czasy"
-msgstr "Kedua-duanya"
+msgstr "Kedua-dua kali"
 
 #: ShiftTimes.cpp:353
 #, fuzzy
 msgid "Korekcja czasów końcowych"
-msgstr "Pembetulan masa tamat"
+msgstr "Masa tamat pembetulan"
 
 #: ShiftTimes.cpp:355
 #, fuzzy
 msgid "Pozostaw bez zmian"
-msgstr "Biarkan tanpa diusik"
+msgstr "Biarkan tidak berubah"
 
 #: ShiftTimes.cpp:356
 #, fuzzy
 msgid "Skoryguj nachodzące czasy"
-msgstr "Adjust overlapping times"
+msgstr "Laraskan masa bertindih"
 
 #: ShiftTimes.cpp:357
 #, fuzzy
 msgid "Nowe czasy"
-msgstr "Masa baharu"
+msgstr "zaman baru"
 
 #: ShiftTimes.cpp:378
 #, fuzzy
@@ -5763,12 +5694,12 @@ msgstr "Lead-in/lead-out"
 #: ShiftTimes.cpp:379
 #, fuzzy
 msgid "Uruchom postprocessor"
-msgstr "Jalankan pascapemprosesan"
+msgstr "Jalankan pemproses pos"
 
 #: ShiftTimes.cpp:398
 #, fuzzy
 msgid "Ustaw czasy jako ciągłe"
-msgstr "Set times as continuous"
+msgstr "Tetapkan masa sebagai berterusan"
 
 #: ShiftTimes.cpp:399 ShiftTimes.cpp:418
 #, fuzzy
@@ -5778,100 +5709,96 @@ msgstr "Dayakan"
 #: ShiftTimes.cpp:409
 #, fuzzy
 msgid "Próg czasu początku"
-msgstr "Start time threshold"
+msgstr "Ambang masa mula"
 
 #: ShiftTimes.cpp:411
 #, fuzzy
 msgid "Próg czasu końca"
-msgstr "End time threshold"
+msgstr "Ambang masa tamat"
 
 #: ShiftTimes.cpp:417
 #, fuzzy
 msgid "Wyrównaj do klatek kluczowych"
-msgstr "Snap to keyframes"
+msgstr "Snap ke bingkai utama"
 
 #: ShiftTimes.cpp:432
 #, fuzzy
 msgid "Przed czasem początku"
-msgstr "Before the start of time"
+msgstr "Sebelum waktu bermula"
 
 #: ShiftTimes.cpp:434
 #, fuzzy
 msgid "Po czasie początku"
-msgstr "After the start time"
+msgstr "Selepas masa mula"
 
 #: ShiftTimes.cpp:436
 #, fuzzy
 msgid "Przed czasem końca"
-msgstr "Before the end time"
+msgstr "Sebelum kiamat"
 
 #: ShiftTimes.cpp:438
 #, fuzzy
 msgid "Po czasie końca"
-msgstr "After the end time"
+msgstr "Selepas masa akhir"
 
 #: ShiftTimes.cpp:526
 #, fuzzy
 msgid "Wybór linijek do przesunięcia"
-msgstr "The choice of lines to move"
+msgstr "Pilihan garisan untuk bergerak"
 
 #: ShiftTimes.cpp:527
 #, fuzzy
 msgid "Wybierz style z listy"
-msgstr "Select a style from the list"
+msgstr "Pilih gaya daripada senarai"
 
 #: ShiftTimes.cpp:528
 #, fuzzy
 msgid "Przesuń według następujących stylów (oddzielone przecinkiem)"
-msgstr "Move according to the following styles (separated by a coma)"
+msgstr "Bergerak mengikut gaya berikut (dipisahkan dengan koma)"
 
 #: ShiftTimes.cpp:530
 #, fuzzy
 msgid "Czas przesunięcia"
-msgstr "Time shifts"
+msgstr "Pergeseran masa"
 
 #: ShiftTimes.cpp:531
 #, fuzzy
 msgid ""
 "Przesuwanie zaznaczonej linijki\n"
 "do czasu wideo ± czas przesunięcia"
-msgstr ""
-"Move the selected line \n"
-"to the time video ± time shift"
+msgstr "Gerakkan baris yang dipilih\nkepada video masa ± peralihan masa"
 
 #: ShiftTimes.cpp:532
 #, fuzzy
 msgid ""
 "Przesuwanie zaznaczonej linijki do czasu\n"
 "znacznika audio ± czas przesunięcia"
-msgstr ""
-"Move the selected lines to\n"
-"mark time audio ± time shift"
+msgstr "Alihkan baris yang dipilih ke\ntanda masa audio ± anjakan masa"
 
 #: ShiftTimes.cpp:533
 #, fuzzy
 msgid "Przesuwa czas początkowy do czasu wideo / audio"
-msgstr "Move the start time to the time video / audio"
+msgstr "Alihkan masa mula ke masa video / audio"
 
 #: ShiftTimes.cpp:534
 #, fuzzy
 msgid "Przesuwa czas końcowy do czasu wideo / audio"
-msgstr "Moves the end time to the time video / audio"
+msgstr "Memindahkan masa tamat kepada video / audio masa"
 
 #: ShiftTimes.cpp:535
 #, fuzzy
 msgid "Opóźnia napisy"
-msgstr "Delays subtitles"
+msgstr "Menangguhkan sari kata"
 
 #: ShiftTimes.cpp:536
 #, fuzzy
 msgid "Przyspiesza napisy"
-msgstr "Accelerates subtitles"
+msgstr "Mempercepatkan sari kata"
 
 #: ShiftTimes.cpp:537
 #, fuzzy
 msgid "Przesuwa napisy o ustawiony czas / klatki"
-msgstr "Shift times by time / frames"
+msgstr "Anjakan masa mengikut masa / bingkai"
 
 #: ShiftTimes.cpp:538
 #, fuzzy
@@ -5879,137 +5806,124 @@ msgid ""
 "Przesuwa czasy tagów \\move, \\t, \\fad tak,\n"
 "by ich pozycja na wideo się nie zmieniła\n"
 "(spowalnia przesuwanie czasów)"
-msgstr ""
-"Shift tag  \\move, \\t, \\fad times\n"
-"that its video position don't change.\n"
-"(slow downs shifting times)"
+msgstr "Shift tag \\move, \\t, \\fad times\nbahawa kedudukan videonya tidak berubah.\n(masa peralihan perlahan)"
 
 #: ShiftTimes.cpp:539
 #, fuzzy
 msgid "Wybór czasów do przesunięcia"
-msgstr "The choice of times to move"
+msgstr "Pilihan masa untuk bergerak"
 
 #: ShiftTimes.cpp:540
 #, fuzzy
 msgid "Korekcja czasów końcowych, gdy są niewłaściwe albo nachodzą na siebie"
-msgstr "Correction end times, when they are improper or overlap each other"
+msgstr "Masa tamat pembetulan, apabila ia tidak betul atau bertindih antara satu sama lain"
 
 #: ShiftTimes.cpp:543
 #, fuzzy
 msgid "Wstawia wstęp do czasu początkowego, dobre przy stosowaniu fad"
-msgstr "Inserts introduction to the start time (good when using fad)"
+msgstr "Memasukkan pengenalan kepada masa mula (baik apabila menggunakan fad)"
 
 #: ShiftTimes.cpp:544
 #, fuzzy
 msgid "Czas wstępu w milisekundach"
-msgstr "Introduction time in milliseconds"
+msgstr "Masa pengenalan dalam milisaat"
 
 #: ShiftTimes.cpp:545
 #, fuzzy
 msgid "Wstawia zakończenie do czasu końcowego, dobre przy stosowaniu fad"
-msgstr "Inserts introduction to the end time (good when using fad)"
+msgstr "Sisipan pengenalan kepada zaman akhir (baik apabila menggunakan fad)"
 
 #: ShiftTimes.cpp:546
 #, fuzzy
 msgid "Czas zakończenia w milisekundach"
-msgstr "End time in milliseconds"
+msgstr "Masa tamat dalam milisaat"
 
 #: ShiftTimes.cpp:547
 #, fuzzy
 msgid "Próg wydłużania czasu początkowego"
-msgstr "Start time threshold"
+msgstr "Ambang masa mula"
 
 #: ShiftTimes.cpp:548
 #, fuzzy
 msgid "Próg wydłużania czasu końcowego"
-msgstr "End time threshold"
+msgstr "Ambang masa tamat"
 
 #: ShiftTimes.cpp:549
 #, fuzzy
 msgid ""
 "Maksymalne przesunięcie do klatki kluczowej\n"
 "przed czasem początkowym w milisekundach"
-msgstr ""
-"The maximum shift to a keyframe \n"
-"before the start time in milliseconds"
+msgstr "Peralihan maksimum kepada bingkai utama\nsebelum masa mula dalam milisaat"
 
 #: ShiftTimes.cpp:550
 #, fuzzy
 msgid ""
 "Maksymalne przesunięcie do klatki kluczowej\n"
 "po czasie początkowym w milisekundach"
-msgstr ""
-"The maximum shift to a keyframe \n"
-"after the start time in milliseconds"
+msgstr "Peralihan maksimum kepada bingkai utama\nselepas masa mula dalam milisaat"
 
 #: ShiftTimes.cpp:551
 #, fuzzy
 msgid ""
 "Maksymalne przesunięcie do klatki kluczowej\n"
 "przed czasem końcowym w milisekundach"
-msgstr ""
-"The maximum shift to a keyframe \n"
-"before the end time in milliseconds"
+msgstr "Anjakan maksimum kepada bingkai utama\nsebelum masa tamat dalam milisaat"
 
 #: ShiftTimes.cpp:552
 #, fuzzy
 msgid ""
 "Maksymalne przesunięcie do klatki kluczowej\n"
 "po czasie końcowym w milisekundach"
-msgstr ""
-"The maximum shift to a keyframe \n"
-"after the end time in milliseconds"
+msgstr "Peralihan maksimum kepada bingkai utama\nselepas masa tamat dalam milisaat"
 
 #: ShiftTimes.cpp:948
 #, fuzzy
 msgid "Na liście nie wybrano profilu do usunięcia"
-msgstr "Tiada profil dipilih untuk dipadamkan"
+msgstr "Tiada profil yang dipilih untuk dialih keluar"
 
 #: ShiftTimes.cpp:953
 #, fuzzy, c-format
 msgid "Na pewno chcesz usunąć profil o nazwie \"%s\""
-msgstr "Adakah anda ingin memadam profil bernama \"%s\""
+msgstr "Adakah anda mahu mengalih keluar profil nama \"%s\""
 
 #: SpellChecker.cpp:118
 #, fuzzy, c-format
 msgid ""
 "Brak plików słownika w folderze \"%s\\Dictionary\".\n"
 "Sprawdzanie pisowni zostanie wyłączone"
-msgstr ""
-"Cannot find dictionary files in \"%s\\Dictionary\" folder.\n"
-"Spell checker will be disabled"
+msgstr "Tidak dapat mencari fail kamus dalam folder \"%s\\Dictionary\".\nPenyemak ejaan akan dilumpuhkan"
 
 #: SpellChecker.cpp:126
 #, fuzzy
 msgid "Nie można odczytać formatu konwersji słownika."
-msgstr "Unable to read the dictionary conversion format."
+msgstr "Tidak dapat membaca format penukaran kamus."
 
 #: SpellChecker.cpp:147
 #, fuzzy
 msgid "Nie można zainicjalizować sprawdzania pisowni."
-msgstr "Failed to initialize spell checker."
+msgstr "Gagal memulakan penyemak ejaan."
 
 #: SpellCheckerDialog.cpp:43
 #, fuzzy
 msgid "Ignoruj komentarze"
-msgstr "Abaikan ulasan"
+msgstr "Abaikan komen"
 
 #: SpellCheckerDialog.cpp:44
 #, fuzzy
 msgid ""
 "Ignoruj słowa całe pisane\n"
 "wielką literą"
-msgstr "Ignore upper case words"
+msgstr "Abaikan perkataan huruf besar"
 
 #: SpellCheckerDialog.cpp:49
 #, fuzzy
 msgid "Błędne słowo:"
-msgstr "Perkataan tersasul:"
+msgstr "Salah eja perkataan:"
 
 #: SpellCheckerDialog.cpp:51
 #, fuzzy
 msgid "Zmień na:"
-msgstr "Ganti ke:"
+msgstr "Gantikan kepada:"
 
 #: SpellCheckerDialog.cpp:57 findreplace.cpp:1333
 #, fuzzy
@@ -6019,7 +5933,7 @@ msgstr "Abai"
 #: SpellCheckerDialog.cpp:58
 #, fuzzy
 msgid "Ignoruj wszystko"
-msgstr "Abai semua"
+msgstr "Abaikan semua"
 
 #: SpellCheckerDialog.cpp:59
 #, fuzzy
@@ -6029,27 +5943,27 @@ msgstr "Tambah ke kamus"
 #: SpellCheckerDialog.cpp:60
 #, fuzzy
 msgid "Usuń ze słownika"
-msgstr "Padam dari kamus"
+msgstr "Alih keluar daripada kamus"
 
 #: SpellCheckerDialog.cpp:61
 #, fuzzy
 msgid "Usuwa ze słownika słowa dodane przez użytkownika."
-msgstr "Padam dari perkataan kamus yang ditambah oleh pengguna."
+msgstr "Alih keluar daripada kamus perkataan yang ditambahkan oleh pengguna."
 
 #: SpellCheckerDialog.cpp:145
 #, fuzzy
 msgid "Nie znaleziono więcej błędów pisowni"
-msgstr "Tiada kesalahan ejaan dijumpai"
+msgstr "Tiada ralat ejaan ditemui"
 
 #: SpellCheckerDialog.cpp:261
 #, fuzzy
 msgid "Słowa dodane do słownika"
-msgstr "Perkataan ditambah ke kamus"
+msgstr "Perkataan ditambahkan pada kamus"
 
 #: StyleChange.cpp:47
 #, fuzzy
 msgid "Edycja Stylu"
-msgstr "Penyunting Gaya"
+msgstr "Edisi gaya"
 
 #: StyleChange.cpp:64
 #, fuzzy
@@ -6069,7 +5983,7 @@ msgstr "Urus senarai fon"
 #: StyleChange.cpp:142
 #, fuzzy
 msgid "Kolory i przezroczystość:"
-msgstr "Warna dan kelutsinaran:"
+msgstr "Warna dan ketelusan:"
 
 #: StyleChange.cpp:146
 #, fuzzy
@@ -6084,12 +5998,12 @@ msgstr "Kedua"
 #: StyleChange.cpp:150
 #, fuzzy
 msgid "Obwódka"
-msgstr "Sempadan"
+msgstr "sempadan"
 
 #: StyleChange.cpp:152
 #, fuzzy
 msgid "Cień"
-msgstr "Bayang"
+msgstr "Bayang-bayang"
 
 #: StyleChange.cpp:172
 #, fuzzy
@@ -6099,17 +6013,17 @@ msgstr "Sempadan:"
 #: StyleChange.cpp:172
 #, fuzzy
 msgid "Cień:"
-msgstr "Bayang:"
+msgstr "bayang:"
 
 #: StyleChange.cpp:172
 #, fuzzy
 msgid "Skala X:"
-msgstr "Scale X:"
+msgstr "Skala X:"
 
 #: StyleChange.cpp:172
 #, fuzzy
 msgid "Skala Y:"
-msgstr "Scale Y:"
+msgstr "Skala Y:"
 
 #: StyleChange.cpp:187
 #, fuzzy
@@ -6164,7 +6078,7 @@ msgstr "1 - Lalai"
 #: StyleChange.cpp:243
 #, fuzzy
 msgid "2 - Symbol"
-msgstr "2- Simbol"
+msgstr "2 - Simbol"
 
 #: StyleChange.cpp:244
 #, fuzzy
@@ -6179,17 +6093,17 @@ msgstr "128 - Jepun"
 #: StyleChange.cpp:246
 #, fuzzy
 msgid "129 - Koreański"
-msgstr "129 - Korea"
+msgstr "129 - Hangul"
 
 #: StyleChange.cpp:247
 #, fuzzy
 msgid "130 - Johab"
-msgstr "130 - Johab"
+msgstr "130 - Yohab"
 
 #: StyleChange.cpp:248
 #, fuzzy
 msgid "134 - Chiński GB2312"
-msgstr "134 - Cina GB2312"
+msgstr "134 - GB2312 Cina"
 
 #: StyleChange.cpp:249
 #, fuzzy
@@ -6204,12 +6118,12 @@ msgstr "161 - Yunani"
 #: StyleChange.cpp:251
 #, fuzzy
 msgid "162 - Turecki"
-msgstr "162 - Turki"
+msgstr "162 - Bahasa Turki"
 
 #: StyleChange.cpp:252
 #, fuzzy
 msgid "163 - Wietnamski"
-msgstr "163 - Vietnam"
+msgstr "163 - Bahasa Vietnam"
 
 #: StyleChange.cpp:253
 #, fuzzy
@@ -6219,7 +6133,7 @@ msgstr "177 - Ibrani"
 #: StyleChange.cpp:254
 #, fuzzy
 msgid "178 - Arabski"
-msgstr "178 - Arab"
+msgstr "178 - Bahasa Arab"
 
 #: StyleChange.cpp:255
 #, fuzzy
@@ -6234,7 +6148,7 @@ msgstr "204 - Rusia"
 #: StyleChange.cpp:257
 #, fuzzy
 msgid "222 - Tajski"
-msgstr "222 - Thailand"
+msgstr "222 - Thai"
 
 #: StyleChange.cpp:258
 #, fuzzy
@@ -6259,7 +6173,7 @@ msgstr "Pratonton gaya:"
 #: StyleChange.cpp:463
 #, fuzzy
 msgid "Zmienić wszystkie zaznaczone style?"
-msgstr "Ubah semua gaya terpilih?"
+msgstr "Tukar semua gaya yang dipilih?"
 
 #: StyleChange.cpp:687
 #, fuzzy
@@ -6269,27 +6183,27 @@ msgstr "Nama gaya"
 #: StyleChange.cpp:689
 #, fuzzy
 msgid "Rozmiar czcionki"
-msgstr "Saiz fon"
+msgstr "Tingkatkan saiz fon"
 
 #: StyleChange.cpp:698
 #, fuzzy
 msgid "Przezroczystość koloru podstawowego, 0 - brak, 255 - przezroczystość"
-msgstr "Kelutsinaran warna pertama, 0 - legap, 255 - lutsinar"
+msgstr "Ketelusan warna pertama, 0 - tiada, 255 - lutsinar"
 
 #: StyleChange.cpp:699
 #, fuzzy
 msgid "Przezroczystość koloru zastępczego, 0 - brak, 255 - przezroczystość"
-msgstr "Kelutsinaran warna kedua, 0 - legap, 255 - lutsinar"
+msgstr "Ketelusan warna kedua, 0 - tiada, 255 - lutsinar"
 
 #: StyleChange.cpp:700
 #, fuzzy
 msgid "Przezroczystość koloru obwódki, 0 - brak, 255 - przezroczystość"
-msgstr "Kelutsinaran sempadan, 0 - legap, 255 - lutsinar"
+msgstr "Ketelusan sempadan, 0 - tiada, 255 - telus"
 
 #: StyleChange.cpp:701
 #, fuzzy
 msgid "Przezroczystość koloru cienia, 0 - brak, 255 - przezroczystość"
-msgstr "Kelutsinaran bayang, 0 - legap, 255 - lutsinar"
+msgstr "Ketelusan bayang-bayang, 0 - tiada, 255 - lutsinar"
 
 #: StyleChange.cpp:702
 #, fuzzy
@@ -6299,7 +6213,7 @@ msgstr "Saiz sempadan dalam piksel"
 #: StyleChange.cpp:703
 #, fuzzy
 msgid "Cień w pikselach"
-msgstr "Saiz bayang dalam piksel"
+msgstr "Saiz bayang-bayang dalam piksel"
 
 #: StyleChange.cpp:704
 #, fuzzy
@@ -6314,7 +6228,7 @@ msgstr "Skala Y dalam %"
 #: StyleChange.cpp:706
 #, fuzzy
 msgid "Kąt w stopniach"
-msgstr "Putaran dalam sudut"
+msgstr "Putaran dalam darjah"
 
 #: StyleChange.cpp:707
 #, fuzzy
@@ -6324,12 +6238,12 @@ msgstr "Jarak dalam piksel (nilai negatif dibenarkan)"
 #: StyleChange.cpp:708
 #, fuzzy
 msgid "Prostokątna obwódka"
-msgstr "Sempadan petak"
+msgstr "Sempadan segi empat tepat"
 
 #: StyleChange.cpp:709 SubsGrid.cpp:454 SubsGrid.cpp:604
 #, fuzzy
 msgid "Margines prawy"
-msgstr "Jidar kanan"
+msgstr "Margin kanan"
 
 #: StyleChange.cpp:710 SubsGrid.cpp:453 SubsGrid.cpp:603
 #, fuzzy
@@ -6349,7 +6263,7 @@ msgstr "Bawah kiri"
 #: StyleChange.cpp:713
 #, fuzzy
 msgid "Wyśrodkowane na dole"
-msgstr "Bawah tengah"
+msgstr "Tengah bawah"
 
 #: StyleChange.cpp:714
 #, fuzzy
@@ -6359,7 +6273,7 @@ msgstr "Bawah kanan"
 #: StyleChange.cpp:715
 #, fuzzy
 msgid "Wyśrodkowane po lewej"
-msgstr "Tengah kiri"
+msgstr "Tengah Kiri"
 
 #: StyleChange.cpp:716
 #, fuzzy
@@ -6369,7 +6283,7 @@ msgstr "Tengah"
 #: StyleChange.cpp:717
 #, fuzzy
 msgid "Wyśrodkowane po prawej"
-msgstr "Tengah kanan"
+msgstr "Tengah Kanan"
 
 #: StyleChange.cpp:718
 #, fuzzy
@@ -6379,7 +6293,7 @@ msgstr "Atas kiri"
 #: StyleChange.cpp:719
 #, fuzzy
 msgid "Wyśrodkowane u góry"
-msgstr "Atas tengah"
+msgstr "Tengah atas"
 
 #: StyleChange.cpp:720
 #, fuzzy
@@ -6389,17 +6303,17 @@ msgstr "Atas kanan"
 #: StyleChange.cpp:721
 #, fuzzy
 msgid "Kodowanie tekstu"
-msgstr "Pengekod teks"
+msgstr "Pengekodan teks"
 
 #: Stylelistbox.cpp:27 Stylelistbox.cpp:45
 #, fuzzy
 msgid "Wybór stylów"
-msgstr "Pilih ruang"
+msgstr "Pilih lajur"
 
 #: Stylelistbox.cpp:27 Stylelistbox.cpp:45
 #, fuzzy
 msgid "Wybór kolumn"
-msgstr "Pilih ruang"
+msgstr "Pilih lajur"
 
 #: Stylelistbox.cpp:30 Stylelistbox.cpp:48
 #, fuzzy
@@ -6409,12 +6323,12 @@ msgstr "Pilih gaya"
 #: Stylelistbox.cpp:30 Stylelistbox.cpp:48
 #, fuzzy
 msgid "Wybierz kolumny"
-msgstr "Pilih ruang"
+msgstr "Pilih lajur"
 
 #: SubsFile.cpp:35
 #, fuzzy
 msgid "Ustaw"
-msgstr "Tetap"
+msgstr "Tetapkan"
 
 #: SubsFile.cpp:55
 #, fuzzy
@@ -6424,17 +6338,17 @@ msgstr "unsur"
 #: SubsFile.cpp:55
 #, fuzzy
 msgid "elementy"
-msgstr "unsur"
+msgstr "elemen"
 
 #: SubsFile.cpp:55
 #, fuzzy
 msgid "elementów"
-msgstr "unsur"
+msgstr "elemen"
 
 #: SubsFile.cpp:114
 #, fuzzy
 msgid "Otwarcie napisów"
-msgstr "Membuka sari kata"
+msgstr "Sari kata pembukaan"
 
 #: SubsFile.cpp:115
 #, fuzzy
@@ -6444,87 +6358,87 @@ msgstr "Sari kata baharu"
 #: SubsFile.cpp:116
 #, fuzzy
 msgid "Edycja linii"
-msgstr "Line edition"
+msgstr "Edisi baris"
 
 #: SubsFile.cpp:117
 #, fuzzy
 msgid "Edycja wielu linii"
-msgstr "Multiline edition"
+msgstr "Edisi berbilang talian"
 
 #: SubsFile.cpp:118
 #, fuzzy
 msgid "Poprawa błędu pisowni w polu tekstowym"
-msgstr "Correcting spell errors in text field"
+msgstr "Membetulkan ralat ejaan dalam medan teks"
 
 #: SubsFile.cpp:119
 #, fuzzy
 msgid "Powielenie linijek"
-msgstr "Duplicating lines"
+msgstr "Garisan pendua"
 
 #: SubsFile.cpp:120
 #, fuzzy
 msgid "Połączenie linijek"
-msgstr "Joining lines"
+msgstr "Menyertai barisan"
 
 #: SubsFile.cpp:121
 #, fuzzy
 msgid "Połączenie linijki z poprzednią"
-msgstr "Joining line with previous"
+msgstr "Bercantum baris dengan sebelumnya"
 
 #: SubsFile.cpp:122
 #, fuzzy
 msgid "Połączenie linijki z następną"
-msgstr "Joining line with next"
+msgstr "Menyertai baris dengan seterusnya"
 
 #: SubsFile.cpp:123
 #, fuzzy
 msgid "Połączenie linijek pozostawienie pierwszej"
-msgstr "Joining lines and keep first"
+msgstr "Menyertai barisan dan kekalkan dahulu"
 
 #: SubsFile.cpp:124
 #, fuzzy
 msgid "Połączenie linijek pozostawienie ostatniej"
-msgstr "Joining lines and keep last"
+msgstr "Menyertai barisan dan kekal terakhir"
 
 #: SubsFile.cpp:125
 #, fuzzy
 msgid "Wklejenie linijek"
-msgstr "Pasting lines"
+msgstr "Menampal garisan"
 
 #: SubsFile.cpp:126
 #, fuzzy
 msgid "Wklejenie kolumn"
-msgstr "Tampal ruang"
+msgstr "Menampal lajur"
 
 #: SubsFile.cpp:127
 #, fuzzy
 msgid "Wklejenie tłumaczenia"
-msgstr "Pasting translation"
+msgstr "Menampal terjemahan"
 
 #: SubsFile.cpp:128
 #, fuzzy
 msgid "Przesunięcie tekstu tłumaczenia"
-msgstr "Moving translation text"
+msgstr "Teks terjemahan bergerak"
 
 #: SubsFile.cpp:129
 #, fuzzy
 msgid "Ustawienie czasów linii jako ciągłych"
-msgstr "Setting times as continues"
+msgstr "Menetapkan masa seperti yang berterusan"
 
 #: SubsFile.cpp:130
 #, fuzzy
 msgid "Ustawienie FPSu obliczonego z wideo"
-msgstr "Tetapkan FPS daripada video"
+msgstr "Menetapkan FPS daripada video"
 
 #: SubsFile.cpp:131
 #, fuzzy
 msgid "Ustawienie własnego FPSu"
-msgstr "Tetapkan FPS tersuai"
+msgstr "Menetapkan FPS tersuai"
 
 #: SubsFile.cpp:132
 #, fuzzy
 msgid "Zamiana linijek"
-msgstr "Swapping lines"
+msgstr "Bertukar baris"
 
 #: SubsFile.cpp:133
 #, fuzzy
@@ -6534,7 +6448,7 @@ msgstr "Penukaran sari kata"
 #: SubsFile.cpp:134
 #, fuzzy
 msgid "Sortowanie napisów"
-msgstr "Menyusun sari kata"
+msgstr "Mengisih sari kata"
 
 #: SubsFile.cpp:135
 #, fuzzy
@@ -6544,132 +6458,132 @@ msgstr "Memadam baris"
 #: SubsFile.cpp:136
 #, fuzzy
 msgid "Usunięcie tekstu"
-msgstr "Menghapus teks"
+msgstr "Memadam teks"
 
 #: SubsFile.cpp:137
 #, fuzzy
 msgid "Ustawienie czasu początkowego"
-msgstr "Setting start time"
+msgstr "Menetapkan masa mula"
 
 #: SubsFile.cpp:138
 #, fuzzy
 msgid "Ustawienie czasu końcowego"
-msgstr "Setting end time"
+msgstr "Menetapkan masa tamat"
 
 #: SubsFile.cpp:139
 #, fuzzy
 msgid "Włączenie trybu tłumacza"
-msgstr "Turn on translator mode"
+msgstr "Hidupkan mod penterjemah"
 
 #: SubsFile.cpp:140
 #, fuzzy
 msgid "Wyłączenie trybu tłumacza"
-msgstr "Turn off translator mode"
+msgstr "Matikan mod penterjemah"
 
 #: SubsFile.cpp:141
 #, fuzzy
 msgid "Dodanie nowej linii"
-msgstr "Adding new line"
+msgstr "Menambah baris baharu"
 
 #: SubsFile.cpp:142
 #, fuzzy
 msgid "Wstawienie linii"
-msgstr "Inserting line"
+msgstr "Memasukkan baris"
 
 #: SubsFile.cpp:143
 #, fuzzy
 msgid "Zmiana czasu na wykresie audio"
-msgstr "Changing time on audio spectrum"
+msgstr "Menukar masa pada spektrum audio"
 
 #: SubsFile.cpp:144
 #, fuzzy
 msgid "Przyklejenie do klatki kluczowej"
-msgstr "Snapping to keyframe"
+msgstr "Menggertak ke bingkai utama"
 
 #: SubsFile.cpp:145
 #, fuzzy
 msgid "Zmiana nagłówku napisów"
-msgstr "Mengubah sifat sari kata"
+msgstr "Menukar sifat sari kata"
 
 #: SubsFile.cpp:146
 #, fuzzy
 msgid "Akcja zaznacz linijki"
-msgstr "Select lines action"
+msgstr "Pilih tindakan baris"
 
 #: SubsFile.cpp:147
 #, fuzzy
 msgid "Przesunięcie czasów"
-msgstr "Shifting times"
+msgstr "Masa peralihan"
 
 #: SubsFile.cpp:148
 #, fuzzy
 msgid "Poprawa błędu pisowni"
-msgstr "Correcting spell errors"
+msgstr "Membetulkan kesalahan ejaan"
 
 #: SubsFile.cpp:149
 #, fuzzy
 msgid "Edycja stylów"
-msgstr "Style edition"
+msgstr "Edisi gaya"
 
 #: SubsFile.cpp:150
 #, fuzzy
 msgid "Zmiana rozdzielczości napisów"
-msgstr "Changing subtitles resolution"
+msgstr "Menukar resolusi sari kata"
 
 #: SubsFile.cpp:151
 #, fuzzy
 msgid "Narzędzie pozycjonowania"
-msgstr "Visual tool positioning"
+msgstr "Kedudukan alat visual"
 
 #: SubsFile.cpp:152
 #, fuzzy
 msgid "Narzędzie ruchu"
-msgstr "Visual tool moving"
+msgstr "Alat visual bergerak"
 
 #: SubsFile.cpp:153
 #, fuzzy
 msgid "Narzędzie skalowania"
-msgstr "Visual tool scaling"
+msgstr "Penskalaan alat visual"
 
 #: SubsFile.cpp:154
 #, fuzzy
 msgid "Narzędzie obrotów w osi Z"
-msgstr "Visual tool axis Z rotation"
+msgstr "Putaran Z paksi alat visual"
 
 #: SubsFile.cpp:155
 #, fuzzy
 msgid "Narzędzie obrotów w osiach X i Y"
-msgstr "Visual tool axis X and Y rotation"
+msgstr "Putaran paksi alat visual X dan Y"
 
 #: SubsFile.cpp:156
 #, fuzzy
 msgid "Narzędzie wycinków prostokątnych"
-msgstr "Visual tool rectangle clipping"
+msgstr "Keratan segi empat tepat alat visual"
 
 #: SubsFile.cpp:157
 #, fuzzy
 msgid "Narzędzie wycinków wektorowych"
-msgstr "Visual tool vector clipping"
+msgstr "Keratan vektor alat visual"
 
 #: SubsFile.cpp:158
 #, fuzzy
 msgid "Narzędzie rysunków wektorowych"
-msgstr "Visual tool vector drawing"
+msgstr "Lukisan vektor alat visual"
 
 #: SubsFile.cpp:159
 #, fuzzy
 msgid "Narzędzie zmieniacz pozycji"
-msgstr "Visual tool position shifting"
+msgstr "Peralihan kedudukan alat visual"
 
 #: SubsFile.cpp:160
 #, fuzzy
 msgid "Narzędzie zmieniacz skali i obrotów"
-msgstr "Visual tool scale and rotation shift"
+msgstr "Skala alat visual dan anjakan putaran"
 
 #: SubsFile.cpp:161
 #, fuzzy
 msgid "Narzędzie hydra"
-msgstr "Visual tool hydra"
+msgstr "Hidra alat visual"
 
 #: SubsFile.cpp:164
 #, fuzzy
@@ -6679,22 +6593,22 @@ msgstr "Pengganti Serba Guna"
 #: SubsFile.cpp:165
 #, fuzzy
 msgid "Wstawienie drzewka"
-msgstr "Adding tree"
+msgstr "Menambah pokok"
 
 #: SubsFile.cpp:166
 #, fuzzy
 msgid "Ustawienie opisu"
-msgstr "Adding tree description"
+msgstr "Menambah penerangan pokok"
 
 #: SubsFile.cpp:167
 #, fuzzy
 msgid "Dodanie linii do drzewka"
-msgstr "Adding line to tree"
+msgstr "Menambah garisan pada pokok"
 
 #: SubsFile.cpp:168
 #, fuzzy
 msgid "Usunięcie drzewka"
-msgstr "Buang pokok"
+msgstr "Keluarkan pokok"
 
 #: SubsFile.cpp:169
 #, fuzzy
@@ -6704,122 +6618,122 @@ msgstr "Skrip automasi"
 #: SubsFile.cpp:682
 #, fuzzy, c-format
 msgid ", aktywna linia %i"
-msgstr ", active line %i"
+msgstr ", talian aktif %i"
 
 #: SubsGrid.cpp:159
 #, fuzzy
 msgid "Ukryj łamania linii"
-msgstr "Sorok balutan baris"
+msgstr "Sembunyikan balut baris"
 
 #: SubsGrid.cpp:174
 #, fuzzy
 msgid "Nie obejmuje zaznaczonych linii"
-msgstr "Don't take into account selected lines"
+msgstr "Jangan ambil kira baris yang dipilih"
 
 #: SubsGrid.cpp:188
 #, fuzzy
 msgid "Wstaw &przed"
-msgstr "Insert before"
+msgstr "Sisip sebelumnya"
 
 #: SubsGrid.cpp:189
 #, fuzzy
 msgid "Wstaw p&o"
-msgstr "Insert after"
+msgstr "Sisip selepasnya"
 
 #: SubsGrid.cpp:191
 #, fuzzy
 msgid "Wstaw przed z &czasem wideo"
-msgstr "Insert before with &video time"
+msgstr "Sisip sebelumnya dengan masa video"
 
 #: SubsGrid.cpp:192
 #, fuzzy
 msgid "Wstaw po z c&zasem wideo"
-msgstr "Insert &after with video time"
+msgstr "Sisip selepasnya beserta masa video"
 
 #: SubsGrid.cpp:196
 #, fuzzy
 msgid "&Duplikuj linie"
-msgstr "&Duplicate lines"
+msgstr "Gandakan baris"
 
 #: SubsGrid.cpp:198
 #, fuzzy
 msgid "Za&mień"
-msgstr "Swap"
+msgstr "Tukar"
 
 #: SubsGrid.cpp:200
 #, fuzzy
 msgid "Złącz &linijki"
-msgstr "Join lines"
+msgstr "Gabungkan baris"
 
 #: SubsGrid.cpp:209
 #, fuzzy
 msgid "Kopiuj\tCtrl-C"
-msgstr "Copy\tCtrl-C"
+msgstr "Salin Ctrl-C"
 
 #: SubsGrid.cpp:210
 #, fuzzy
 msgid "Wytnij\tCtrl-X"
-msgstr "Cut\tCtrl-X"
+msgstr "Potong Ctrl-X"
 
 #: SubsGrid.cpp:211
 #, fuzzy
 msgid "Wklej\tCtrl-V"
-msgstr "Paste\tCtrl-V"
+msgstr "Tampal Ctrl-V"
 
 #: SubsGrid.cpp:214
 #, fuzzy
 msgid "Ukryj kolumny"
-msgstr "Sorok ruang"
+msgstr "Sembunyikan lajur"
 
 #: SubsGrid.cpp:216
 #, fuzzy
 msgid "Filtrowanie"
-msgstr "Filter"
+msgstr "Penapis"
 
 #: SubsGrid.cpp:232
 #, fuzzy
 msgid "Wczytaj napisy z pliku MKV / OGM"
-msgstr "Muatkan sari kata dari fail MKV"
+msgstr "Muatkan sari kata fail MKV / OGM"
 
 #: SubsGrid.cpp:258
 #, fuzzy
 msgid "Dodaj linie"
-msgstr "Add lines"
+msgstr "Tambah baris"
 
 #: SubsGrid.cpp:259
 #, fuzzy
 msgid "Kopiuj drzewko"
-msgstr "Copy tree"
+msgstr "Pokok salin"
 
 #: SubsGrid.cpp:260
 #, fuzzy
 msgid "Zmień opis"
-msgstr "Change description"
+msgstr "Tukar huraian"
 
 #: SubsGrid.cpp:261
 #, fuzzy
 msgid "Zaznacz linie drzewka"
-msgstr "Select tree lines"
+msgstr "Pilih garisan pokok"
 
 #: SubsGrid.cpp:455 SubsGrid.cpp:605
 #, fuzzy
 msgid "Margines pionowy"
-msgstr "Vertical margin"
+msgstr "Jidar menegak"
 
 #: SubsGrid.cpp:458
 #, fuzzy
 msgid "Tekst do oryginału"
-msgstr "Text into original"
+msgstr "Teks ke asal"
 
 #: SubsGrid.cpp:459
 #, fuzzy
 msgid "Tekst do tłumaczenia"
-msgstr "Text into translation"
+msgstr "Teks ke dalam terjemahan"
 
 #: SubsGrid.cpp:608
 #, fuzzy
 msgid "Tekst bez tagów"
-msgstr "Text without tags"
+msgstr "Teks tanpa tag"
 
 #: SubsGrid.cpp:873
 #, fuzzy
@@ -6829,45 +6743,44 @@ msgstr "Fail sari kata (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"
 #: SubsGrid.cpp:1064
 #, fuzzy
 msgid "Zapisać plik przed wczytaniem napisów z MKV?"
-msgstr ""
-"Adakah anda ingin menyimpan fail dahulu sebelum memuatkan sari kata dari MKV?"
+msgstr "Simpan fail sebelum memuatkan sari kata MKV?"
 
 #: SubsGrid.cpp:1098
 #, fuzzy
 msgid "Otwieranie napisów nie powiodło się"
-msgstr "Gagal membuka sari kata"
+msgstr "Tidak boleh membuka sari kata"
 
 #: SubsGrid.cpp:1233 SubsGrid.cpp:1263 SubsGrid.cpp:1283
 #, fuzzy, c-format
 msgid ""
 "W linii %i nie można przeskalować wartości '%s'\n"
 "w tagu '%s'"
-msgstr "In line %i can't scale '%s' in tag '%s'"
+msgstr "Dalam baris %i tidak boleh skala '%s' dalam teg '%s'"
 
 #: SubsGrid.cpp:1409
 #, fuzzy
 msgid "Wyłącz potwierdzenie"
-msgstr "Tutup amaran"
+msgstr "Amaran matikan"
 
 #: SubsGridBase.cpp:222
 #, fuzzy
 msgid "Nieprawidłowy FPS. Popraw opcje i spróbuj ponownie."
-msgstr "FPS tidak sah. Betulkannya di pilihan dan cuba lagi sekali."
+msgstr "FPS tidak sah. Betulkannya dalam pilihan dan cuba lagi."
 
 #: SubsGridBase.cpp:503 SubsGridBase.cpp:660
 #, fuzzy
 msgid "Wideo nie zostało wczytane przez FFMS2"
-msgstr "Video wasn't loaded using FFMS2"
+msgstr "Video tidak dimuatkan menggunakan FFMS2"
 
 #: SubsGridBase.cpp:532
 #, fuzzy
 msgid "Nie wybrano stylów do przesunięcia"
-msgstr "Do not choose styles to shift time with"
+msgstr "Jangan pilih gaya untuk beralih masa"
 
 #: SubsGridBase.cpp:550
 #, fuzzy, c-format
 msgid "Czy naprawdę chcesz przesuwać tylko czasy %s?"
-msgstr "Do you really want to shift only %s times?"
+msgstr "Adakah anda benar-benar mahu beralih hanya %s kali?"
 
 #: SubsGridBase.cpp:551
 #, fuzzy
@@ -6882,16 +6795,14 @@ msgstr "tamat"
 #: SubsGridBase.cpp:561
 #, fuzzy
 msgid "Nie zaznaczono linii do przesunięcia"
-msgstr "Tiada baris yang dipilih untuk penyelarasan"
+msgstr "Tiada baris dipilih untuk beralih"
 
 #: SubsGridBase.cpp:1407
 #, fuzzy
 msgid ""
 "Czy na pewno chcesz wyłączyć tryb tłumacza?\n"
 "Obcojęzyczny tekst przetłumaczonych linijek zostanie usunięty."
-msgstr ""
-"Adakah anda pasti ingin menutup mod terjemahan?\n"
-"Teks bahasa asing akan dipadam."
+msgstr "Adakah anda pasti mahu mematikan mod terjemahan?\nTeks bahasa asing akan dipadamkan."
 
 #: SubsGridDialogs.cpp:23
 #, fuzzy
@@ -6901,7 +6812,7 @@ msgstr "Pilih FPS baharu"
 #: SubsGridDialogs.cpp:48
 #, fuzzy
 msgid "FPS napisów"
-msgstr "FPS sari kata"
+msgstr "Sarikata FPS"
 
 #: SubsGridDialogs.cpp:50
 #, fuzzy
@@ -6916,12 +6827,12 @@ msgstr "Tukar FPS"
 #: SubsGridDialogs.cpp:69
 #, fuzzy
 msgid "Niewłaściwy fps"
-msgstr "FPS tidak betul"
+msgstr "FPS salah"
 
 #: SubsGridDialogs.cpp:73 SubsGridDialogs.cpp:77
 #, fuzzy
 msgid "Opis drzewka"
-msgstr "Perihalan pokok"
+msgstr "Penerangan pokok"
 
 #: SubsGridDialogs.cpp:83
 #, fuzzy
@@ -6965,18 +6876,18 @@ msgstr "Vert."
 #: SubsGridWindow.cpp:1284
 #, fuzzy
 msgid "ZNS"
-msgstr "APS"
+msgstr "CPS"
 
 #: SubsGridWindow.cpp:263 SubsGridWindow.cpp:653 SubsGridWindow.cpp:1123
 #: SubsGridWindow.cpp:1289
 #, fuzzy
 msgid "Łamania"
-msgstr "Balutan"
+msgstr "Bungkus"
 
 #: SubsGridWindow.cpp:264 SubsGridWindow.cpp:654
 #, fuzzy
 msgid "Tekst oryginalny"
-msgstr "Text asal"
+msgstr "Teks asal"
 
 #: SubsGridWindow.cpp:265 SubsGridWindow.cpp:655 TLDialog.cpp:44
 #, fuzzy
@@ -6987,58 +6898,57 @@ msgstr "Terjemahan"
 #, fuzzy
 msgid ""
 "Nie można wyświetlić podglądu, ponieważ wielkość okna napisów jest zbyt mała"
-msgstr "Cannot show preview cause grid height is too low"
+msgstr "Tidak dapat menunjukkan pratonton kerana ketinggian grid terlalu rendah"
 
 #: SubsLoader.cpp:76
 #, fuzzy
 msgid "Ten plik napisów jest zwykłym tekstem, zostaje otwarty jako napisy ASS"
-msgstr ""
-"Sari kata ini adalah teks biasa, dan telah dibuka sebagai sari kata ASS"
+msgstr "Fail sari kata ini adalah teks biasa, dibuka sebagai sari kata ASS"
 
 #: SubsLoader.cpp:85
 #, fuzzy
 msgid "Niepoprawny format (plik uszkodzony lub zawiera błędy)"
-msgstr "Invalid format (file may be corrupted or contain errors)"
+msgstr "Format tidak sah (fail mungkin rosak atau mengandungi ralat)"
 
 #: SubsResampleDialog.cpp:26
 #, fuzzy
 msgid "Zmień rozdzielczość"
-msgstr "Change resolution"
+msgstr "Tukar resolusi"
 
 #: SubsResampleDialog.cpp:32
 #, fuzzy
 msgid "Rozdzielczość docelowa"
-msgstr "Target  resolution"
+msgstr "Resolusi sasaran"
 
 #: SubsResampleDialog.cpp:36
 #, fuzzy
 msgid "Pobierz z napisów"
-msgstr "From subtitles"
+msgstr "Daripada sari kata"
 
 #: SubsResampleDialog.cpp:54
 #, fuzzy
 msgid "Pobierz z wideo"
-msgstr "From video"
+msgstr "Daripada video"
 
 #: SubsResampleDialog.cpp:70
 #, fuzzy
 msgid "Nie rozciągaj"
-msgstr "No stretch"
+msgstr "Tiada regangan"
 
 #: SubsResampleDialog.cpp:71
 #, fuzzy
 msgid "Rozciągaj"
-msgstr "Stretch"
+msgstr "Regang"
 
 #: SubsResampleDialog.cpp:72 SubsResampleDialog.cpp:177
 #, fuzzy
 msgid "Opcje skalowania"
-msgstr "Resample options"
+msgstr "Pilihan sampel semula"
 
 #: SubsResampleDialog.cpp:163
 #, fuzzy
 msgid "Niezgodna rozdzielczość"
-msgstr "Incompatible resolution"
+msgstr "Resolusi tidak serasi"
 
 #: SubsResampleDialog.cpp:167
 #, fuzzy, c-format
@@ -7050,44 +6960,37 @@ msgid ""
 "Rozdzielczość napisów: %i x %i\n"
 "\n"
 "Dopasować rozdzielczość do wideo?\n"
-msgstr ""
-"Subtitles and video resolution is different.\n"
-"You can change them now or use subtitles resample.\n"
-"\n"
-"Video resolution: %i x %i\n"
-"Subtitles resolution: %i x %i\n"
-"\n"
-"Match resolution to video?\n"
+msgstr "Sari kata dan resolusi video adalah berbeza.\nAnda boleh menukarnya sekarang atau menggunakan sari kata resample.\n\nPeleraian video: %i x %i\nResolusi sari kata: %i x %i\n\nPadankan resolusi dengan video?\n"
 
 #: SubsResampleDialog.cpp:172
 #, fuzzy
 msgid "Zmień wyłącznie rozdzielczość napisów"
-msgstr "Change only subtitles resolution"
+msgstr "Tukar resolusi sari kata sahaja"
 
 #: SubsResampleDialog.cpp:173
 #, fuzzy
 msgid "Dopasuj skrypt napisów do rozdzielczości wideo (Nie rozciągaj)"
-msgstr "Resample subtitles (no stretch)"
+msgstr "Contoh semula sari kata (tiada regangan)"
 
 #: SubsResampleDialog.cpp:175
 #, fuzzy
 msgid "Dopasuj skrypt napisów do rozdzielczości wideo (Rozciągnij)"
-msgstr "Resample subtitles (stretch)"
+msgstr "Contoh semula sari kata (panjang)"
 
 #: SubsResampleDialog.cpp:179
 #, fuzzy
 msgid "Zmień"
-msgstr "Change"
+msgstr "Ubah"
 
 #: SubsResampleDialog.cpp:184
 #, fuzzy
 msgid "Nie zmieniaj"
-msgstr "Don't change"
+msgstr "jangan berubah"
 
 #: SubsResampleDialog.cpp:185
 #, fuzzy
 msgid "Wyłącz ostrzeżenie"
-msgstr "Turn-off warning"
+msgstr "Amaran matikan"
 
 #: SubtitlesLibass.cpp:154
 #, fuzzy
@@ -7102,28 +7005,28 @@ msgstr "Libass hanya membuka sari kata ASS dan SSA"
 #: SubtitlesLibass.cpp:237
 #, fuzzy
 msgid "Nie można otworzyć napisów w Libass"
-msgstr "Gagal membuka sari kata dalam Libass"
+msgstr "Tidak boleh membuka sari kata dalam Libass"
 
 #: SubtitlesVSFilter.cpp:127 SubtitlesVSFilter.cpp:169
 #, fuzzy
 msgid "Nie można zinicjalizować CSRI."
-msgstr "Cannot initialize CSRI."
+msgstr "Tidak boleh memulakan CSRI."
 
 #: SubtitlesVSFilter.cpp:131 SubtitlesVSFilter.cpp:176
 #, fuzzy
 msgid "Nie można utworzyć instancji CSRI."
-msgstr "Cannot create CSRI instance."
+msgstr "Tidak boleh membuat contoh CSRI."
 
 #: SubtitlesVSFilter.cpp:142 SubtitlesVSFilter.cpp:188
 #: SubtitlesVSFilter.cpp:272
 #, fuzzy
 msgid "CSRI nie obsługuje tego formatu."
-msgstr "CSRI doesn't support this format."
+msgstr "CSRI tidak menyokong format ini."
 
 #: TLDialog.cpp:23
 #, fuzzy
 msgid "Opcje dopasowywania tłumaczenia"
-msgstr "Matching lines options"
+msgstr "Pilihan baris yang sepadan"
 
 #: TLDialog.cpp:30 TLDialog.cpp:38
 #, fuzzy
@@ -7135,9 +7038,7 @@ msgstr "Padam baris"
 msgid ""
 "Usuwa zaznaczoną linijkę.\n"
 "Tłumaczenie idzie do góry."
-msgstr ""
-"Deletes selected line.\n"
-"Moves translation one line up."
+msgstr "Memadamkan baris yang dipilih.\nMenggerakkan terjemahan satu baris ke atas."
 
 #: TLDialog.cpp:32 TLDialog.cpp:40 VideoToolbar.cpp:61
 #, fuzzy
@@ -7149,41 +7050,33 @@ msgstr "Tambah baris"
 msgid ""
 "Dodaje pustą linijkę przed zaznaczoną.\n"
 "Tłumaczenie idzie w dół."
-msgstr ""
-"Adds a blank line.\n"
-"Moves translation one line down."
+msgstr "Menambah baris kosong.\nMenggerakkan terjemahan satu baris ke bawah."
 
 #: TLDialog.cpp:34 TLDialog.cpp:36
 #, fuzzy
 msgid "Złącz linie"
-msgstr "Join lines"
+msgstr "Gabungkan baris"
 
 #: TLDialog.cpp:35
 #, fuzzy
 msgid ""
 "Złącza następną linijkę z zaznaczoną.\n"
 "Tłumaczenie idzie do góry."
-msgstr ""
-"Join selected line with next line.\n"
-"Moves translation one line up."
+msgstr "Sertai baris yang dipilih dengan baris seterusnya.\nMenggerakkan terjemahan satu baris ke atas."
 
 #: TLDialog.cpp:37
 #, fuzzy
 msgid ""
 "Złącza następną linijkę z zaznaczoną.\n"
 "Oryginał idzie w górę."
-msgstr ""
-"Join selected line with next line.\n"
-"Moves original one line up."
+msgstr "Sertai baris yang dipilih dengan baris seterusnya.\nMenggerakkan satu baris asal ke atas."
 
 #: TLDialog.cpp:39
 #, fuzzy
 msgid ""
 "Usuwa zaznaczoną linijkę.\n"
 "Oryginał idzie do góry."
-msgstr ""
-"Deletes selected line.\n"
-"Moves original one line up."
+msgstr "Memadamkan baris yang dipilih.\nMenggerakkan satu baris asal ke atas."
 
 #: TLDialog.cpp:41
 #, fuzzy
@@ -7191,15 +7084,12 @@ msgid ""
 "Dodaje pustą linijkę przed zaznaczoną.\n"
 "Oryginał idzie w dół.\n"
 "Dodanej linii należy ustawić czasy."
-msgstr ""
-"Adds a blank line.\n"
-"Moves original one line down.\n"
-"Added line should be timed."
+msgstr "Menambah baris kosong.\nMengalihkan satu baris asal ke bawah.\nBaris yang ditambah hendaklah ditetapkan masanya."
 
 #: TLDialog.cpp:43
 #, fuzzy
 msgid "Tekst oryginału"
-msgstr "Original"
+msgstr "Asal"
 
 #: TLDialog.cpp:55
 #, fuzzy
@@ -7208,426 +7098,422 @@ msgid ""
 "Oryginał - tekst napisów z właściwym timingiem służy\n"
 "do porównania wklejanych dialogów, później zostaje usunięty.\n"
 "Tłumaczenie - tekst wklejony do napisów z poprawnym timingiem."
-msgstr ""
-"Perihalan:\n"
-"Asli - sari kata dengan masa yang sama, anda boleh melihatnya untuk "
-"membandingkan baris dan ia akan dipadam\n"
-"Terjemahan - sari kata yang anda tampal pada masa yang betul."
+msgstr "Penerangan:\nasal - sari kata dengan masa yang tepat, anda boleh melihatnya untuk membandingkan baris, ia akan dipadamkan\nterjemahan - sari kata yang anda tampal pada masa yang betul."
 
 #: TextEditorTagList.cpp:132
 #, fuzzy
 msgid "Pokaż opis"
-msgstr "Show description"
+msgstr "Tunjuk deskripsi"
 
 #: TextEditorTagList.cpp:133
 #, fuzzy
 msgid "Pokaż wszystkie tagi"
-msgstr "Tunjuk semua tanda"
+msgstr "Tunjukkan semua tag"
 
 #: TextEditorTagList.cpp:134
 #, fuzzy
 msgid "Pokaż tagi VSFiltermoda"
-msgstr "Tunjuk tanda VSFiltermod"
+msgstr "Tunjukkan teg VSFiltermod"
 
 #: TextEditorTagList.cpp:339
 #, fuzzy
 msgid "Przezroczystość koloru podstawowego"
-msgstr "Transparency of primary color"
+msgstr "Ketelusan warna primer"
 
 #: TextEditorTagList.cpp:340
 #, fuzzy
 msgid "Przezroczystość koloru pomocniczego"
-msgstr "Transparency of secondary color"
+msgstr "Ketelusan warna sekunder"
 
 #: TextEditorTagList.cpp:341
 #, fuzzy
 msgid "Przezroczystość koloru obwódki"
-msgstr "Transparency of border color"
+msgstr "Ketelusan warna sempadan"
 
 #: TextEditorTagList.cpp:342
 #, fuzzy
 msgid "Przezroczystość koloru cienia"
-msgstr "Transparency of shadow color"
+msgstr "Ketelusan warna bayang-bayang"
 
 #: TextEditorTagList.cpp:344
 #, fuzzy
 msgid "Kolor pomocniczy"
-msgstr "Secondary color"
+msgstr "Warna kedua"
 
 #: TextEditorTagList.cpp:347
 #, fuzzy
 msgid "Maska PNG koloru podstawowego"
-msgstr "PNG mask of primary color"
+msgstr "Topeng PNG warna utama"
 
 #: TextEditorTagList.cpp:348
 #, fuzzy
 msgid "Maska PNG koloru pomocniczego"
-msgstr "PNG mask of secondary color"
+msgstr "Topeng PNG warna sekunder"
 
 #: TextEditorTagList.cpp:349
 #, fuzzy
 msgid "Maska PNG koloru obwódki"
-msgstr "PNG mask of border color"
+msgstr "topeng PNG warna sempadan"
 
 #: TextEditorTagList.cpp:350
 #, fuzzy
 msgid "Maska PNG koloru cienia"
-msgstr "‪PNG mask of shadow color"
+msgstr "topeng PNG warna bayang"
 
 #: TextEditorTagList.cpp:351
 #, fuzzy
 msgid "Gradient przezroczystości koloru podstawowego"
-msgstr "Gradient transparency of primary color"
+msgstr "Ketelusan kecerunan warna primer"
 
 #: TextEditorTagList.cpp:352
 #, fuzzy
 msgid "Gradient przezroczystości koloru pomocniczego"
-msgstr "Gradient transparency of secondary color"
+msgstr "Ketelusan kecerunan warna sekunder"
 
 #: TextEditorTagList.cpp:353
 #, fuzzy
 msgid "Gradient przezroczystości koloru obwódki"
-msgstr "Gradient transparency of border color"
+msgstr "Ketelusan kecerunan warna sempadan"
 
 #: TextEditorTagList.cpp:354
 #, fuzzy
 msgid "Gradient przezroczystości koloru cienia"
-msgstr "Gradient transparency of shadow color"
+msgstr "Ketelusan kecerunan warna bayang-bayang"
 
 #: TextEditorTagList.cpp:355
 #, fuzzy
 msgid "Gradient koloru podstawowego"
-msgstr "Gradient of primary color"
+msgstr "Kecerunan warna primer"
 
 #: TextEditorTagList.cpp:356
 #, fuzzy
 msgid "Gradient koloru pomocniczego"
-msgstr "Gradient of secondary color"
+msgstr "Kecerunan warna sekunder"
 
 #: TextEditorTagList.cpp:357
 #, fuzzy
 msgid "Gradient koloru obwódki"
-msgstr "Gradient of border color"
+msgstr "Kecerunan warna sempadan"
 
 #: TextEditorTagList.cpp:358
 #, fuzzy
 msgid "Gradient koloru cienia"
-msgstr "Gradient of shadow color"
+msgstr "Kecerunan warna bayang-bayang"
 
 #: TextEditorTagList.cpp:359
 #, fuzzy
 msgid "Położenie tekstu (układ SSA)"
-msgstr "Text alignment (SSA)"
+msgstr "Penjajaran teks (SSA)"
 
 #: TextEditorTagList.cpp:360
 #, fuzzy
 msgid "Przezroczystość całego tekstu"
-msgstr "Transparency"
+msgstr "lut sinar"
 
 #: TextEditorTagList.cpp:362
 #, fuzzy
 msgid "Pogrubienie tekstu"
-msgstr "Text bold"
+msgstr "Teks tebal"
 
 #: TextEditorTagList.cpp:363
 #, fuzzy
 msgid "Rozmycie krawędzi"
-msgstr "Blur edge"
+msgstr "Kabur tepi"
 
 #: TextEditorTagList.cpp:364
 #, fuzzy
 msgid "Rozmycie"
-msgstr "Blur of border, shadow or font"
+msgstr "Kabur sempadan, bayang-bayang atau fon"
 
 #: TextEditorTagList.cpp:365
 #, fuzzy
 msgid "Grubość obwódki"
-msgstr "Thickness of border"
+msgstr "Ketebalan sempadan"
 
 #: TextEditorTagList.cpp:366
 #, fuzzy
 msgid "Wycinki wektorowe / prostokątne"
-msgstr "Vector clip / rectangle clip"
+msgstr "Klip vektor / klip segi empat tepat"
 
 #: TextEditorTagList.cpp:367
 #, fuzzy
 msgid "Deformacja czcionki"
-msgstr "Distort of font"
+msgstr "Herotan fon"
 
 #: TextEditorTagList.cpp:368
 #, fuzzy
 msgid "Pojawianie / znikanie tekstu"
-msgstr "Fading in / fading out of text"
+msgstr "Pudar masuk / pudar daripada teks"
 
 #: TextEditorTagList.cpp:369
 #, fuzzy
 msgid "Pojawianie / znikanie tekstu (zaawansowana wersja)"
-msgstr "Fading in / fading out of text (advanced version)"
+msgstr "Pudar masuk / pudar daripada teks (versi lanjutan)"
 
 #: TextEditorTagList.cpp:370
 #, fuzzy
 msgid "Pochylenie w osi X"
-msgstr "Skew in X axis"
+msgstr "Lencong dalam paksi X"
 
 #: TextEditorTagList.cpp:371
 #, fuzzy
 msgid "Pochylenie w osi Y"
-msgstr "Skew in Y axis"
+msgstr "Lencong dalam paksi Y"
 
 #: TextEditorTagList.cpp:372
 #, fuzzy
 msgid "Kodowanie znaków tekstu"
-msgstr "Text encoding"
+msgstr "Pengekodan teks"
 
 #: TextEditorTagList.cpp:374
 #, fuzzy
 msgid "Zaokrąglenie tekstu"
-msgstr "Round of text"
+msgstr "Pusingan teks"
 
 #: TextEditorTagList.cpp:375
 #, fuzzy
 msgid "Obrót w osi X"
-msgstr "Rotation in X axis"
+msgstr "Putaran dalam paksi X"
 
 #: TextEditorTagList.cpp:376
 #, fuzzy
 msgid "Obrót w osi Y"
-msgstr "Rotation in Y axis"
+msgstr "Putaran dalam paksi Y"
 
 #: TextEditorTagList.cpp:377
 #, fuzzy
 msgid "Obrót w osi Z"
-msgstr "Rotation in Z axis"
+msgstr "Putaran dalam paksi Z"
 
 #: TextEditorTagList.cpp:378
 #, fuzzy
 msgid "Wielkość czcionki"
-msgstr "Font size"
+msgstr "Tingkatkan saiz fon"
 
 #: TextEditorTagList.cpp:379
 #, fuzzy
 msgid "Skala w osi X i Y"
-msgstr "Scale in X and Y axis"
+msgstr "Skala dalam paksi X dan Y"
 
 #: TextEditorTagList.cpp:380
 #, fuzzy
 msgid "Skala w osi X"
-msgstr "Scale in X axis"
+msgstr "Skala dalam paksi X"
 
 #: TextEditorTagList.cpp:381
 #, fuzzy
 msgid "Skala w osi Y"
-msgstr "Scale in Y axis"
+msgstr "Skala dalam paksi Y"
 
 #: TextEditorTagList.cpp:382
 #, fuzzy
 msgid "Odstępy między znakami"
-msgstr "Font spacing"
+msgstr "Jarak fon"
 
 #: TextEditorTagList.cpp:383
 #, fuzzy
 msgid "Odstęp między znakami w pionie"
-msgstr "Vertical font spacing"
+msgstr "Jarak fon menegak"
 
 #: TextEditorTagList.cpp:384
 #, fuzzy
 msgid "Kursywa / pochylenie tekstu"
-msgstr "Text italic"
+msgstr "Teks condong"
 
 #: TextEditorTagList.cpp:385
 #, fuzzy
 msgid "Odwrócone wycinki wektorowe / prostokątne"
-msgstr "Reverse vector clip or rectangle clip"
+msgstr "Klip vektor terbalik atau klip segi empat tepat"
 
 #: TextEditorTagList.cpp:386
 #, fuzzy
 msgid "Trzęsienie tekstu"
-msgstr "Text jitter"
+msgstr "Kegelisahan teks"
 
 #: TextEditorTagList.cpp:387
 #, fuzzy
 msgid "Timing karaoke"
-msgstr "Karaoke timing"
+msgstr "Masa karaoke"
 
 #: TextEditorTagList.cpp:388
 #, fuzzy
 msgid "Timing karaoke płynne przejście"
-msgstr "Karaoke timing smooth transition"
+msgstr "Masa karaoke peralihan lancar"
 
 #: TextEditorTagList.cpp:389
 #, fuzzy
 msgid "Timing karaoke obwódka"
-msgstr "Karaoke timing border"
+msgstr "Sempadan masa karaoke"
 
 #: TextEditorTagList.cpp:390
 #, fuzzy
 msgid "Timing karaoke (nieobsługiwane)"
-msgstr "Karaoke timing (not supported)"
+msgstr "Masa karaoke (tidak disokong)"
 
 #: TextEditorTagList.cpp:391
 #, fuzzy
 msgid "Ruch tekstu"
-msgstr "Text movement"
+msgstr "Pergerakan teks"
 
 #: TextEditorTagList.cpp:392
 #, fuzzy
 msgid "Ruch po okręgu"
-msgstr "Circle text movement"
+msgstr "Pergerakan teks bulatan"
 
 #: TextEditorTagList.cpp:393
 #, fuzzy
 msgid "Ruch po krzywej (3 punkty)"
-msgstr "Curve text movement (3 points)"
+msgstr "Pergerakan teks lengkung (3 mata)"
 
 #: TextEditorTagList.cpp:394
 #, fuzzy
 msgid "Ruch po krzywej (4 punkty)"
-msgstr "Curve text movement (4 points)"
+msgstr "Pergerakan teks lengkung (4 mata)"
 
 #: TextEditorTagList.cpp:395
 #, fuzzy
 msgid "Ruch rysunku wektorowego"
-msgstr "Move of vector clip"
+msgstr "Pergerakan klip vektor"
 
 #: TextEditorTagList.cpp:396
 #, fuzzy
 msgid "Kotwica dla obrotów"
-msgstr "Anchor for rotation"
+msgstr "Sauh untuk putaran"
 
 #: TextEditorTagList.cpp:397
 #, fuzzy
 msgid "Rysunek wektorowy i skala"
-msgstr "Drawing and its scale"
+msgstr "Lukisan dan skalanya"
 
 #: TextEditorTagList.cpp:398
 #, fuzzy
 msgid "Przesunięcie punktów wektora w osi Y"
-msgstr "Offset of Y vector points"
+msgstr "Mengimbangi titik vektor Y"
 
 #: TextEditorTagList.cpp:399
 #, fuzzy
 msgid "Pozycja tekstu"
-msgstr "Text position"
+msgstr "Kedudukan teks"
 
 #: TextEditorTagList.cpp:400
 #, fuzzy
 msgid "Sposób łamania linii"
-msgstr "Kaedah balutan teks"
+msgstr "Kaedah pembalut teks"
 
 #: TextEditorTagList.cpp:401
 #, fuzzy
 msgid "Reset tagów"
-msgstr "Set semula tanda"
+msgstr "Teg ditetapkan semula"
 
 #: TextEditorTagList.cpp:402
 #, fuzzy
 msgid "Losowość punktów czcionki"
-msgstr "Random font points"
+msgstr "Titik fon rawak"
 
 #: TextEditorTagList.cpp:403
 #, fuzzy
 msgid "Losowość punktów czcionki seed"
-msgstr "Random font points seed"
+msgstr "Benih mata fon rawak"
 
 #: TextEditorTagList.cpp:404
 #, fuzzy
 msgid "Losowość punktów czcionki oś X"
-msgstr "Random font points X axis"
+msgstr "Titik fon rawak paksi X"
 
 #: TextEditorTagList.cpp:405
 #, fuzzy
 msgid "Losowość punktów czcionki oś Y"
-msgstr "Random font points Y axis"
+msgstr "Titik fon rawak paksi Y"
 
 #: TextEditorTagList.cpp:406
 #, fuzzy
 msgid "Losowość punktów czcionki oś Z"
-msgstr "Random font points Z axis"
+msgstr "Titik fon rawak paksi Z"
 
 #: TextEditorTagList.cpp:407
 #, fuzzy
 msgid "Przekreślenie tekstu"
-msgstr "Text strike out"
+msgstr "Teks dibatalkan"
 
 #: TextEditorTagList.cpp:408
 #, fuzzy
 msgid "Cień tekstu"
-msgstr "Text shadow"
+msgstr "Bayangan teks"
 
 #: TextEditorTagList.cpp:409
 #, fuzzy
 msgid "Animacja tekstu"
-msgstr "Text animation"
+msgstr "Animasi teks"
 
 #: TextEditorTagList.cpp:410
 #, fuzzy
 msgid "Podkreślenie tekstu"
-msgstr "Text underline"
+msgstr "Garis bawah teks"
 
 #: TextEditorTagList.cpp:411
 #, fuzzy
 msgid "Obwódka w osi X"
-msgstr "Border in X axis"
+msgstr "Sempadan dalam paksi X"
 
 #: TextEditorTagList.cpp:412
 #, fuzzy
 msgid "Obwódka w osi Y"
-msgstr "Border in Y axis"
+msgstr "Sempadan dalam paksi Y"
 
 #: TextEditorTagList.cpp:413
 #, fuzzy
 msgid "Cień w osi X"
-msgstr "Shadow in X axis"
+msgstr "Bayang-bayang dalam paksi X"
 
 #: TextEditorTagList.cpp:414
 #, fuzzy
 msgid "Cień w osi Y"
-msgstr "Shadow in Y axis"
+msgstr "Bayangan dalam paksi Y"
 
 #: TextEditorTagList.cpp:415
 #, fuzzy
 msgid "Koordynata Z dla tagów \\frx i \\fry"
-msgstr "Koordinat Z untuk tanda \\frx dan \\fry"
+msgstr "Z menyelaras untuk tag \\frx dan \\fry"
 
 #: Toolbar.cpp:84
 #, fuzzy, c-format
 msgid "Nie można znaleźć elementu o id %i"
-msgstr "Cannot find element with id %i"
+msgstr "Tidak dapat mencari elemen dengan id %i"
 
 #: Toolbar.cpp:167
 #, fuzzy
 msgid "Wybierz ikony paska narzędzi"
-msgstr "Choose toolbar icons"
+msgstr "Pilih ikon bar alat"
 
 #: Toolbar.cpp:461
 #, fuzzy
 msgid "Po lewej"
-msgstr "On left"
+msgstr "Di sebelah kiri"
 
 #: Toolbar.cpp:461
 #, fuzzy
 msgid "U góry"
-msgstr "On top"
+msgstr "Di atas"
 
 #: Toolbar.cpp:461
 #, fuzzy
 msgid "Po prawej"
-msgstr "On right"
+msgstr "Di sebelah kanan"
 
 #: Toolbar.cpp:461
 #, fuzzy
 msgid "Na dole"
-msgstr "On bottom"
+msgstr "Di bahagian bawah"
 
 #: Toolbar.cpp:466
 #, fuzzy
 msgid "Pozycja paska narzędzi"
-msgstr "Toolbar alignment"
+msgstr "Penjajaran bar alat"
 
 #: UtilsWindows.cpp:34
 #, fuzzy
 msgid "Nie można pobrać informacji o monitorze"
-msgstr "Gagal mendapatkan maklumat tentang monitor"
+msgstr "Tidak dapat mendapatkan maklumat tentang monitor"
 
 #: VideoBox.cpp:103 VideoBox.cpp:117
 #, fuzzy, c-format
@@ -7637,26 +7523,24 @@ msgstr "Nisbah bidang: %5.3f"
 #: VideoBox.cpp:151 VideoFullscreen.cpp:58
 #, fuzzy
 msgid "Odtwórz aktywną linię"
-msgstr "Play the current line"
+msgstr "Mainkan baris semasa"
 
 #: VideoBox.cpp:300
 #, fuzzy
 msgid ""
 "Plik nie jest poprawnym plikiem wideo albo jest uszkodzony,\n"
 "bądź brakuje kodeków czy też splittera"
-msgstr ""
-"Fail bukan fail video atau rosak\n"
-"atau kemungkinan codecs atau pemisah hilang"
+msgstr "Fail bukan fail video yang betul atau rosak\natau codec atau splitter mungkin tiada"
 
 #: VideoBox.cpp:803
 #, fuzzy
 msgid "Czy na pewno chcesz zindeksować poprzednie wideo?"
-msgstr "Anda pasti ingin mengindeks video sebelumnya?"
+msgstr "Adakah anda pasti mahu mengindeks video sebelumnya?"
 
 #: VideoBox.cpp:815
 #, fuzzy
 msgid "Czy na pewno chcesz zindeksować następne wideo?"
-msgstr "Anda pasti ingin mengindeks video seterusnya?"
+msgstr "Adakah anda pasti mahu mengindeks video seterusnya?"
 
 #: VideoBox.cpp:834
 #, fuzzy
@@ -7676,47 +7560,47 @@ msgstr "Salin kedudukan video"
 #: VideoBox.cpp:843
 #, fuzzy
 msgid "Pełny ekran\tF"
-msgstr "Skrin penuh\tF"
+msgstr "Skrin penuh F"
 
 #: VideoBox.cpp:844
 #, fuzzy
 msgid "Wyłącz pełny ekran\tEscape"
-msgstr "Keluar skrin penuh\tEscape"
+msgstr "Keluar dari skrin penuh Escape"
 
 #: VideoBox.cpp:852
 #, fuzzy, c-format
 msgid "Przełącz pełny ekran na %i monitor"
-msgstr "Switch full screen to monitor %i"
+msgstr "Tukar skrin penuh untuk memantau %i"
 
 #: VideoBox.cpp:853
 #, fuzzy, c-format
 msgid "Włącz pełny ekran na %i monitorze"
-msgstr "Buka dalam layar penuh pada monitor %i"
+msgstr "Buka dalam skrin penuh pada monitor %i"
 
 #: VideoBox.cpp:857
 #, fuzzy
 msgid "Otwórz edytor"
-msgstr "Buka penyunting"
+msgstr "Buka Editor"
 
 #: VideoBox.cpp:894
 #, fuzzy
 msgid "Filtry"
-msgstr "Penapis"
+msgstr "Penyaring"
 
 #: VideoBox.cpp:894
 #, fuzzy
 msgid "Wyświetla użyte filtry"
-msgstr "Tunjuk penapis yang digunakan"
+msgstr "Menunjukkan penapis terpakai"
 
 #: VideoBox.cpp:978
 #, fuzzy
 msgid "Czy na pewno chcesz przenieść wczytany plik wideo do kosza?"
-msgstr "Anda pasti ingin memindahkan video termuat ke dalam tong sampah?"
+msgstr "Adakah anda pasti mahu mengalihkan video yang dimuatkan ke tong kitar semula?"
 
 #: VideoBox.cpp:978
 #, fuzzy
 msgid "Usuwanie"
-msgstr "Memadam"
+msgstr "Memadamkan"
 
 #: VideoBox.cpp:991
 #, fuzzy
@@ -7724,10 +7608,7 @@ msgid ""
 "Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
 "(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|"
 "Wszystkie pliki (*.*)|*.*"
-msgstr ""
-"Fail video(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
-"(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|"
-"Semua fail (*.*)|*.*"
+msgstr "Fail video(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm), (*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*. avs|Semua fail (*.*)|*.*"
 
 #: VideoBox.cpp:1006
 #, fuzzy
@@ -7737,12 +7618,12 @@ msgstr "Fail sari kata (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"
 #: VideoFullscreen.cpp:54
 #, fuzzy
 msgid "Poprzedni plik wideo"
-msgstr "Previous video file"
+msgstr "Fail video sebelumnya"
 
 #: VideoFullscreen.cpp:64
 #, fuzzy
 msgid "Pokaż pasek narzędzi"
-msgstr "Show toolbar icons"
+msgstr "Tunjukkan ikon bar alat"
 
 #: VideoToolbar.cpp:43
 #, fuzzy
@@ -7752,37 +7633,37 @@ msgstr "Penunjuk kedudukan"
 #: VideoToolbar.cpp:44
 #, fuzzy
 msgid "Przesuwanie tekstu"
-msgstr "Pengatur huruf"
+msgstr "Kedudukan teks"
 
 #: VideoToolbar.cpp:45
 #, fuzzy
 msgid "Ruch"
-msgstr "Penggerak teks"
+msgstr "Teks bergerak"
 
 #: VideoToolbar.cpp:46
 #, fuzzy
 msgid "Skalowanie"
-msgstr "Penskala"
+msgstr "Penskalaan teks"
 
 #: VideoToolbar.cpp:47
 #, fuzzy
 msgid "Obrót wokół osi Z"
-msgstr "Putaran Z teks"
+msgstr "Putaran teks Z"
 
 #: VideoToolbar.cpp:48
 #, fuzzy
 msgid "Obrót wokół osi X / Y"
-msgstr "Putaran X / Y teks"
+msgstr "Putaran teks X / Y"
 
 #: VideoToolbar.cpp:49
 #, fuzzy
 msgid "Wycinki prostokątne"
-msgstr "Pemangkas segi empat"
+msgstr "Keratan segi empat tepat"
 
 #: VideoToolbar.cpp:50
 #, fuzzy
 msgid "Wycinki wektorowe"
-msgstr "Pemangkas vektor"
+msgstr "Keratan vektor"
 
 #: VideoToolbar.cpp:51
 #, fuzzy
@@ -7792,32 +7673,32 @@ msgstr "Lukisan vektor"
 #: VideoToolbar.cpp:52
 #, fuzzy
 msgid "Zmieniacz pozycji"
-msgstr "Pengalih kedudukan"
+msgstr "Penukar kedudukan"
 
 #: VideoToolbar.cpp:53
 #, fuzzy
 msgid "Hydra"
-msgstr "Hidra"
+msgstr "Hydra"
 
 #: VideoToolbar.cpp:56
 #, fuzzy
 msgid "Zmieniacz skali i obrotów"
-msgstr "Scale and rotation shifter"
+msgstr "Pemindah skala dan putaran"
 
 #: VideoToolbar.cpp:60
 #, fuzzy
 msgid "Przesuń punkty"
-msgstr "Alih titik"
+msgstr "Gerakkan mata"
 
 #: VideoToolbar.cpp:62
 #, fuzzy
 msgid "Dodaj krzywą Beziera"
-msgstr "Tambah lengkungan Bézier"
+msgstr "Tambah lengkung Bézier"
 
 #: VideoToolbar.cpp:63
 #, fuzzy
 msgid "Dodaj krzywą B-sklejaną"
-msgstr "Tambah Lengkungan-B"
+msgstr "Tambah B-spline"
 
 #: VideoToolbar.cpp:64
 #, fuzzy
@@ -7827,32 +7708,32 @@ msgstr "Tambah titik berasingan"
 #: VideoToolbar.cpp:65
 #, fuzzy
 msgid "Usuń element"
-msgstr "Padam titik"
+msgstr "Padamkan titik"
 
 #: VideoToolbar.cpp:66
 #, fuzzy
 msgid "Odwróć wycinek"
-msgstr "Terbalikkan pangkasan"
+msgstr "Terbalikkan klip"
 
 #: VideoToolbar.cpp:69
 #, fuzzy
 msgid "Przenieś punkty pozycjonowania"
-msgstr "Alih kedudukan titik"
+msgstr "Gerakkan mata kedudukan"
 
 #: VideoToolbar.cpp:70
 #, fuzzy
 msgid "Przenieś startowe punkty ruchu"
-msgstr "Ubah titik permulaan /move"
+msgstr "Tukar \\gerakkan titik permulaan"
 
 #: VideoToolbar.cpp:71
 #, fuzzy
 msgid "Przenieś końcowe punkty ruchu"
-msgstr "Ubah titik perakhiran /move"
+msgstr "Tukar \\pindah titik penamat"
 
 #: VideoToolbar.cpp:72
 #, fuzzy
 msgid "Przenieś wycinki"
-msgstr "Alih pangkasan"
+msgstr "Gerakkan klip"
 
 #: VideoToolbar.cpp:73
 #, fuzzy
@@ -7861,15 +7742,12 @@ msgid ""
 "używać tylko w przypadku,\n"
 "gdy chcemy przesunąć punkty rysunku,\n"
 "nie łączyć z trzema pierwszymi opcjami"
-msgstr ""
-"Alih lukisan.\n"
-"Guna bila anda hanya ingin mengalihkan titik lukisan.\n"
-"Jangan gunakannya bersama tiga pilihan pertama"
+msgstr "Gerakkan lukisan.\nGunakan hanya jika anda ingin mengalihkan mata lukisan.\nJangan gunakan dengan tiga pilihan pertama"
 
 #: VideoToolbar.cpp:74
 #, fuzzy
 msgid "Przenieś punkty org"
-msgstr "Alih titik /org"
+msgstr "Alihkan mata \\org"
 
 #: VideoToolbar.cpp:77
 #, fuzzy
@@ -7877,24 +7755,19 @@ msgid ""
 "Ustaw kąt z 2 punktów.\n"
 "Po ustawieniu 2 punktów pod tekstem\n"
 "na wideo oblicza z nich kąt."
-msgstr ""
-"Set angle from 2 points.\n"
-"After setting 2 points below text on video\n"
-"it calculates angle from it."
+msgstr "Tetapkan sudut dari 2 mata.\nSelepas menetapkan 2 mata di bawah teks pada video\nia mengira sudut daripadanya."
 
 #: VideoToolbar.cpp:78
 #, fuzzy
 msgid "Zmiana wszystkich tagów obrotu wokół osi Z"
-msgstr "Changing all tags rotation Z"
+msgstr "Menukar semua teg putaran Z"
 
 #: VideoToolbar.cpp:79
 #, fuzzy
 msgid ""
 "Utrzymanie proporcji, by po obrocie rysunki wektorowe i tekst\n"
 "nie poprzestawiały się względem siebie."
-msgstr ""
-"Preserve proportions, that vector drawings\n"
-"and text don't change its original positions."
+msgstr "Kekalkan perkadaran, bahawa lukisan vektor\ndan teks tidak menukar kedudukan asalnya."
 
 #: VideoToolbar.cpp:82
 #, fuzzy
@@ -7902,25 +7775,22 @@ msgid ""
 "Ustaw skalę według prostokąta.\n"
 "Po narysowaniu prostokąta tekst zostanie\n"
 "zeskalowany wg jednej osi badź dwóch."
-msgstr ""
-"Set scale by rectangle.\n"
-"After drawing rectangle text is scaled\n"
-"in two or one axis."
+msgstr "Tetapkan skala mengikut segi empat tepat.\nSelepas melukis teks segi empat tepat berskala\ndalam dua atau satu paksi."
 
 #: VideoToolbar.cpp:83
 #, fuzzy
 msgid "Skaluj szerokość"
-msgstr "Scale width"
+msgstr "Lebar skala"
 
 #: VideoToolbar.cpp:84
 #, fuzzy
 msgid "Utrzymuj proporcje"
-msgstr "Preserve aspect ratio"
+msgstr "Kekalkan nisbah aspek"
 
 #: VideoToolbar.cpp:85
 #, fuzzy
 msgid "Skaluj wysokość"
-msgstr "Scale height"
+msgstr "Ketinggian skala"
 
 #: VideoToolbar.cpp:86
 #, fuzzy
@@ -7928,24 +7798,19 @@ msgid ""
 "Ustaw własny prostokąt dla obecnej skali.\n"
 "W przypadku niepożądanych różnic można ustawić\n"
 "własny prostokąt dla pierwotnej skali."
-msgstr ""
-"Set custom rectangle for current scale.\n"
-"When automatic size calculation not work properly\n"
-"it's possible to set rectangle for origin scale."
+msgstr "Tetapkan segi empat tepat tersuai untuk skala semasa.\nApabila pengiraan saiz automatik tidak berfungsi dengan betul\nadalah mungkin untuk menetapkan segi empat tepat untuk skala asal."
 
 #: VideoToolbar.cpp:87
 #, fuzzy
 msgid "Zmiana wszystkich tagów skali"
-msgstr "Change all scale tags"
+msgstr "Tukar semua tag skala"
 
 #: VideoToolbar.cpp:88
 #, fuzzy
 msgid ""
 "Utrzymanie proporcji, by po skalowaniu rysunki wektorowe i tekst\n"
 "nie poprzestawiały się względem siebie."
-msgstr ""
-"Preserve proportions that vector drawings\n"
-"and text don't change its original positions."
+msgstr "Kekalkan perkadaran bahawa lukisan vektor\ndan teks tidak menukar kedudukan asalnya."
 
 #: VideoToolbar.cpp:91
 #, fuzzy
@@ -7954,20 +7819,17 @@ msgid ""
 "Po narysowaniu prostokąta tekst zostanie\n"
 "spozycjonowany wg jednej osi badź dwóch\n"
 "dla wybranego położenia."
-msgstr ""
-"Set position by rectangle.\n"
-"After draw a rectangle line will be positioned\n"
-"by one or two axis for chosen alignment."
+msgstr "Tetapkan kedudukan mengikut segi empat tepat.\nSelepas melukis garisan segi empat tepat akan diletakkan\noleh satu atau dua paksi untuk penjajaran yang dipilih."
 
 #: VideoToolbar.cpp:92
 #, fuzzy
 msgid "Pozycjonuj w osi X"
-msgstr "Kedudukan pada paksi X"
+msgstr "Kedudukan dalam paksi X"
 
 #: VideoToolbar.cpp:93
 #, fuzzy
 msgid "Pozycjonuj w osi Y"
-msgstr "Kedudukan pada paksi Y"
+msgstr "Kedudukan dalam paksi Y"
 
 #: VideoToolbar.cpp:96
 #, fuzzy
@@ -7978,65 +7840,57 @@ msgid ""
 "by na wideo wciąż był widoczny ten sam element,\n"
 "do którego był ustawiony punkt początkowy.\n"
 "Ruch generuje postawienie drugiego punktu."
-msgstr ""
-"Tetap alihan dari 2 titik dan kedudukan video.\n"
-"Setelah titik pertama ditetapkan pada video sebelum teks yang dimahukan "
-"bergerak,\n"
-"tetapkan video ke masa akhir pada beberapa bidang set video to end that many "
-"frames,\n"
-"titik pertama masih kekal kelihatan that element of first set point will "
-"still visible.\n"
-"\\vMove akan dijana selepas titik kedua ditetapkan."
+msgstr "Tetapkan pergerakan dari 2 mata dan kedudukan video.\nSelepas menetapkan titik pertama pada video sebelum teks yang bergerak,\ntetapkan video untuk menamatkan banyak bingkai itu,\nelemen titik set pertama itu masih akan kelihatan.\n\\vMove dijana selepas titik kedua ditetapkan."
 
 #: VideoToolbar.cpp:99
 #, fuzzy
 msgid "Zmiana wszystkich tagów obrotu wokół osi X / Y"
-msgstr "Mengubah semua tanda putaran X / Y"
+msgstr "Menukar semua tag putaran X / Y"
 
 #: VideoToolbar.cpp:129
 #, fuzzy
 msgid "Dwukrotnym kliknięciu linii (zawsze włączone)"
-msgstr "Klik baris dua kali (sentiasa dihidupkan)"
+msgstr "Klik dua kali baris (sentiasa Hidup)"
 
 #: VideoToolbar.cpp:129
 #, fuzzy
 msgid "Każdej zmianie linii"
-msgstr "Setiap kali baris berubah"
+msgstr "Setiap baris berubah"
 
 #: VideoToolbar.cpp:130
 #, fuzzy
 msgid "Kliknięciu linii lub edycji na pauzie"
-msgstr "Mengklik baris atau suntingan bila dijeda"
+msgstr "Mengklik baris atau edisi apabila dijeda"
 
 #: VideoToolbar.cpp:130
 #, fuzzy
 msgid "Kliknięciu linii lub edycji"
-msgstr "Mengklik baris atau suntingan"
+msgstr "Mengklik baris atau edisi"
 
 #: VideoToolbar.cpp:131
 #, fuzzy
 msgid "Edycji na pauzie"
-msgstr "Menyunting baris ketika jeda"
+msgstr "Mengedit baris apabila dijeda"
 
 #: VideoToolbar.cpp:131
 #, fuzzy
 msgid "Edycji"
-msgstr "Bila menyunting"
+msgstr "Mengedit baris bila-bila masa"
 
 #: VideoToolbar.cpp:132
 #, fuzzy
 msgid "Nic"
-msgstr "Tiada apa"
+msgstr "Tiada"
 
 #: VideoToolbar.cpp:132
 #, fuzzy
 msgid "Audio do końca linii"
-msgstr "Audio ke masa tamat baris"
+msgstr "Audio ke masa tamat talian"
 
 #: VideoToolbar.cpp:132
 #, fuzzy
 msgid "Wideo do końca linii"
-msgstr "Video dan audio ke masa mula baris"
+msgstr "Video dan audio ke masa tamat talian"
 
 #: VideoToolbar.cpp:133
 #, fuzzy
@@ -8046,12 +7900,12 @@ msgstr "Video dan audio ke masa mula baris seterusnya"
 #: VideoToolbar.cpp:136
 #, fuzzy
 msgid "Przesuwaj wideo do aktualnej linii po:"
-msgstr "Alih video ke baris terpilih pada:"
+msgstr "Alihkan video ke baris yang dipilih pada:"
 
 #: VideoToolbar.cpp:140
 #, fuzzy
 msgid "Odtwarzaj po zmianie linii:"
-msgstr "On moving to another line play:"
+msgstr "Apabila beralih ke permainan baris lain:"
 
 #: VideoToolbar.cpp:509 VideoToolbar.cpp:525
 #, fuzzy
@@ -8064,15 +7918,12 @@ msgid ""
 "Lista gotowych rysunków ASS z możliwością edycji.\n"
 "Po wybraniu rysunku z listy należy ustawić kursor\n"
 "w miejcu początku przytrzymać lewy przycisk myszy i przeciągnąć."
-msgstr ""
-"Senarai lukisan ASS dengan kebolehan menyunting.\n"
-"After choose drawing from list just set cursor i n place\n"
-"of start of drawing and click left mouse button and drag."
+msgstr "Senarai lukisan ASS dengan pilihan edit.\nSelepas memilih lukisan dari senarai hanya tetapkan kursor ke tempat\ndaripada permulaan lukisan dan klik butang kiri tetikus dan seret."
 
 #: VideoToolbar.cpp:735
 #, fuzzy
 msgid "Lista z tagami obsługiwanymi przez narzędzie"
-msgstr "Senarai tag yang boleh menyunting alatan visual"
+msgstr "Senarai teg yang boleh mengedit alat visual"
 
 #: VideoToolbar.cpp:737 VisualAllTagsEdition.cpp:86
 #, fuzzy
@@ -8082,23 +7933,23 @@ msgstr "Sisip"
 #: VideoToolbar.cpp:737 VisualAllTagsEdition.cpp:86
 #, fuzzy
 msgid "Pomnóż"
-msgstr "Ganda"
+msgstr "Berganda"
 
 #: VideoToolbar.cpp:737 VideoToolbar.cpp:738 VideoToolbar.cpp:789
 #: VisualAllTagsEdition.cpp:86
 #, fuzzy
 msgid "Pomnóż+"
-msgstr "Ganda"
+msgstr "Darab+"
 
 #: VideoToolbar.cpp:737 VisualAllTagsEdition.cpp:86
 #, fuzzy
 msgid "Gradient tekst"
-msgstr "Text bold"
+msgstr "Teks kecerunan"
 
 #: VideoToolbar.cpp:737 VisualAllTagsEdition.cpp:86
 #, fuzzy
 msgid "Gradient linia"
-msgstr "Gradient of shadow color"
+msgstr "Garis kecerunan"
 
 #: VideoToolbar.cpp:740
 #, fuzzy
@@ -8109,18 +7960,12 @@ msgid ""
 "albo na początku w przypadku wielu linii.\n"
 "Pomnóż - mnoży ruch suwaka przez numer zaznaczonej linijki\n"
 "pierwsza linia nie jest zmieniana."
-msgstr ""
-"Options of tag changing:\n"
-"Add - changes all tags adding move on slider.\n"
-"Insert - inserts tag in cursor position when one line \n"
-"or on start of line when multiline.\n"
-"Multiply - multiply move of slider by number od selected line\n"
-"first line is not changes. Made for cascade placing."
+msgstr "Pilihan untuk menukar teg:\nTambah - menukar semua teg menambah bergerak pada gelangsar.\nSisip - memasukkan tag dalam kedudukan kursor apabila satu baris\natau pada permulaan baris apabila berbilang baris.\nDarab - darabkan pergerakan peluncur dengan nombor od baris yang dipilih\nbaris pertama bukan perubahan. Dibuat untuk meletakkan lata."
 
 #: VideoToolbar.cpp:762
 #, fuzzy
 msgid "Edycja tagów z listy oraz tworzenie nowych"
-msgstr "Senarai tanda edisi atau menambah tanda baharu"
+msgstr "Teg senarai edisi atau menambah teg baharu"
 
 #: VideoToolbar.cpp:1077
 #, fuzzy
@@ -8155,17 +8000,17 @@ msgstr "Kanan-tengah"
 #: VideoToolbar.cpp:1079
 #, fuzzy
 msgid "Lewo-góra"
-msgstr "Kiri-atas"
+msgstr "Kiri atas"
 
 #: VideoToolbar.cpp:1079
 #, fuzzy
 msgid "Środek-góra"
-msgstr "Tengah-atas"
+msgstr "Atas tengah"
 
 #: VideoToolbar.cpp:1079
 #, fuzzy
 msgid "Prawo-góra"
-msgstr "Kanan-atas"
+msgstr "Atas kanan"
 
 #: VideoToolbar.cpp:1081
 #, fuzzy
@@ -8195,12 +8040,12 @@ msgstr "Tengah-atas"
 #: VideoToolbar.cpp:1082
 #, fuzzy
 msgid "Prawo-ponad"
-msgstr "Kanan-atas"
+msgstr "Kanan di atas"
 
 #: VideoToolbar.cpp:1083
 #, fuzzy
 msgid "Przed-góra"
-msgstr "Sebelum-atas"
+msgstr "Sebelum atas"
 
 #: VideoToolbar.cpp:1083
 #, fuzzy
@@ -8215,47 +8060,47 @@ msgstr "Sebelum-bawah"
 #: VideoToolbar.cpp:1084
 #, fuzzy
 msgid "Za-góra"
-msgstr "Selepas-atas"
+msgstr "Selepas atas"
 
 #: VideoToolbar.cpp:1084
 #, fuzzy
 msgid "Za-środek"
-msgstr "Selepas-tengah"
+msgstr "Pusat selepas"
 
 #: VideoToolbar.cpp:1084
 #, fuzzy
 msgid "Za-dół"
-msgstr "Selepas-bawah"
+msgstr "Bahagian bawah"
 
 #: VideoToolbar.cpp:1093
 #, fuzzy
 msgid "Położenie tekstu, działa podobnie jak w stylach"
-msgstr "Kedudukan teks sama seperti di dalam gaya"
+msgstr "Peletakan teks berfungsi sama seperti dalam gaya"
 
 #: VisualAllTagsEdition.cpp:27
 #, fuzzy
 msgid "Edycja tagów"
-msgstr "Sunting tanda"
+msgstr "Edisi teg"
 
 #: VisualAllTagsEdition.cpp:38
 #, fuzzy
 msgid "Edytowany tag"
-msgstr "Tanda disunting"
+msgstr "Teg yang diedit"
 
 #: VisualAllTagsEdition.cpp:43
 #, fuzzy
 msgid "Dodaj tag"
-msgstr "Tambah tag"
+msgstr "Tambah penanda"
 
 #: VisualAllTagsEdition.cpp:44
 #, fuzzy
 msgid "Usuń tag"
-msgstr "Buang tag"
+msgstr "Padamkan teg"
 
 #: VisualAllTagsEdition.cpp:51
 #, fuzzy
 msgid "Edycja tagu"
-msgstr "Sunting tanda"
+msgstr "Edisi teg"
 
 #: VisualAllTagsEdition.cpp:55 VisualDrawingShapes.cpp:82
 #, fuzzy
@@ -8285,17 +8130,17 @@ msgstr "Langkah:"
 #: VisualAllTagsEdition.cpp:74
 #, fuzzy
 msgid "Wstawiany w miejscu kursora"
-msgstr "Tag inserted in place of cursor"
+msgstr "Tanda disisipkan di tempat kursor"
 
 #: VisualAllTagsEdition.cpp:74
 #, fuzzy
 msgid "Wstawiany tylko na początku"
-msgstr "Sisip tag di permulaan teks"
+msgstr "Sisipkan Tag pada permulaan teks teks"
 
 #: VisualAllTagsEdition.cpp:75
 #, fuzzy
 msgid "Wycinek prostokątny z obsługą animacji"
-msgstr "Klip segi empat dengan animasi \\t"
+msgstr "Klip segi empat tepat dengan animasi \\t"
 
 #: VisualAllTagsEdition.cpp:81
 #, fuzzy
@@ -8321,12 +8166,12 @@ msgstr "tiga nilai tambahan"
 #: VisualAllTagsEdition.cpp:92
 #, fuzzy
 msgid "Używane tylko w przypadku gdy tag ma 2 wartości bądź więcej"
-msgstr "Hanya digunakan apabila tanda mempunyai 2 nilai atau lebih"
+msgstr "Digunakan hanya apabila teg mempunyai 2 nilai atau lebih"
 
 #: VisualAllTagsEdition.cpp:95
 #, fuzzy
 msgid "Opcje zmiany tagów"
-msgstr "Selaras masa"
+msgstr "Tukar pilihan teg"
 
 #: VisualAllTagsEdition.cpp:101
 #, c-format
@@ -8336,70 +8181,66 @@ msgstr "Nilai %i"
 #: VisualAllTagsEdition.cpp:111
 #, fuzzy
 msgid "Dodatkowe wartości:"
-msgstr "Penyunting nilai tanda"
+msgstr "Nilai tambahan:"
 
 #: VisualAllTagsEdition.cpp:127 VisualDrawingShapes.cpp:104
 #, fuzzy
 msgid "Przywróć domyślne"
-msgstr "Set semula kepada lalai"
+msgstr "Pulihkan Tetapan Asal"
 
 #: VisualAllTagsEdition.cpp:149 VisualDrawingShapes.cpp:127
 #, fuzzy
 msgid "Czy na pewno chcesz przywrócić ustawienia domyślne?"
-msgstr "Adakah anda pasti ingin set semula kepada lalai?"
+msgstr "Adakah anda pasti mahu menetapkan semula kepada lalai?"
 
 #: VisualAllTagsEdition.cpp:166
 #, fuzzy
 msgid "Wpisz nazwę nowego tagu."
-msgstr "Masukkan nama bagi tanda baharu."
+msgstr "Masukkan nama untuk teg baharu."
 
 #: VisualAllTagsEdition.cpp:170
 #, fuzzy
 msgid "Nowy tag już istnieje na liście, wpisz inną nazwę."
-msgstr "Tanda baharu telah pun wujud, sila masukkan nama lain."
+msgstr "Teg baharu sudah wujud, masukkan nama lain."
 
 #: VisualAllTagsEdition.cpp:188
 #, fuzzy
 msgid "Nie można usunąć wszystkich tagów z listy"
-msgstr "Tidak dapat memadam semua tanda dari senarai"
+msgstr "Tidak boleh mengalih keluar semua tag daripada senarai"
 
 #: VisualAllTagsEdition.cpp:213
 #, fuzzy, c-format
 msgid "Zapisać zmiany tagu \"%s\"?"
-msgstr "Simpan perubahan tanda \"%s\"?"
+msgstr "Simpan perubahan teg \"%s\"?"
 
 #: VisualAllTagsEdition.cpp:295
 #, fuzzy
 msgid "Pole \"Tag\" nie może być puste."
-msgstr "Laman \"Tanda\" tidak boleh kosong."
+msgstr "Medan \"Teg\" tidak boleh kosong."
 
 #: VisualAllTagsEdition.cpp:303
 #, fuzzy
 msgid ""
 "Pole \"Maksymalna wartość\" musi zawierać wartość\n"
 "większą od pola \"Minimalna wartość\"."
-msgstr ""
-"Laman \"Nilai maksimum\" perlualah mempunyai nilai\n"
-"yang lebih besar dari laman \"Nilai minimum\"."
+msgstr "Medan \"Nilai maksimum\" mesti mengandungi nilai\nlebih besar daripada medan \"Nilai minimum\"."
 
 #: VisualAllTagsEdition.cpp:307
 #, fuzzy
 msgid "Pole \"Przeskok\" zawiera liczbę zbyt wysoką dla danego przedziału."
-msgstr ""
-"Laman \"Step\" mempunyai nombor yang terlalu besar dari julat minimum - "
-"maksimum."
+msgstr "Medan \"Langkah\" mengandungi nombor yang terlalu bagus untuk julat min - maks semasa."
 
 #: VisualClips.cpp:1063
 #, fuzzy
 msgid ""
 "Ze względu na błędy Vsfiltra możliwość wstawiania dwóch \"m\" po sobie "
 "została zablokowana"
-msgstr "Gandaan \"m\" telah disekat disebabkan pepijat Vsfilter"
+msgstr "Double \"m\" telah disekat kerana pepijat Vsfilter"
 
 #: VisualDrawingShapes.cpp:43
 #, fuzzy
 msgid "Edycja kształtów wektorowych"
-msgstr "Penyunting bentuk vektor"
+msgstr "Edisi bentuk vektor"
 
 #: VisualDrawingShapes.cpp:55
 #, fuzzy
@@ -8414,27 +8255,27 @@ msgstr "Tambah bentuk"
 #: VisualDrawingShapes.cpp:61
 #, fuzzy
 msgid "Usuń kształt"
-msgstr "Padam bentuk"
+msgstr "Padamkan bentuk"
 
 #: VisualDrawingShapes.cpp:75
 #, fuzzy
 msgid "Zmienna szerokość i wysokość"
-msgstr "Lebar dan tinggi telah diubah"
+msgstr "Berubah lebar dan tinggi"
 
 #: VisualDrawingShapes.cpp:75
 #, fuzzy
 msgid "Zachowaj proporcje boków"
-msgstr "Kekalkan nisbah bidang"
+msgstr "Kekalkan nisbah aspek"
 
 #: VisualDrawingShapes.cpp:75
 #, fuzzy
 msgid "Zmienna tylko szerokość"
-msgstr "Hanya lebar diubah"
+msgstr "Yang diubah hanyalah lebar"
 
 #: VisualDrawingShapes.cpp:78
 #, fuzzy
 msgid "Zmiana koordynatów rysunku"
-msgstr "Hanya koordinat lukisan sahaja diubah"
+msgstr "Menukar koordinat lukisan sahaja"
 
 #: VisualDrawingShapes.cpp:78
 #, fuzzy
@@ -8444,22 +8285,22 @@ msgstr "Perubahan skala"
 #: VisualDrawingShapes.cpp:84
 #, fuzzy
 msgid "Skalowanie względem kursora:"
-msgstr "Skala dengan kursor:"
+msgstr "Penskalaan melalui kursor:"
 
 #: VisualDrawingShapes.cpp:86
 #, fuzzy
 msgid "Rodzaj skalowania:"
-msgstr "Mod skala:"
+msgstr "Mod penskalaan:"
 
 #: VisualDrawingShapes.cpp:90
 #, fuzzy
 msgid "Pobierz kształt z aktywnej linii"
-msgstr "Dapatkan bentuk dari baris aktif"
+msgstr "Dapatkan bentuk daripada garisan aktif"
 
 #: VisualDrawingShapes.cpp:95
 #, fuzzy
 msgid "Kształt:"
-msgstr "Bentuk:"
+msgstr "bentuk:"
 
 #: VisualDrawingShapes.cpp:144
 #, fuzzy
@@ -8469,59 +8310,53 @@ msgstr "Masukkan nama untuk bentuk baharu."
 #: VisualDrawingShapes.cpp:148
 #, fuzzy
 msgid "Nowy ksztatł już istnieje na liście, wpisz inną nazwę."
-msgstr "Nama bentuk baharu sudah pun wujud, sila masukkan nama lain."
+msgstr "Nama bentuk baharu sudah wujud, masukkan nama lain."
 
 #: VisualDrawingShapes.cpp:166
 #, fuzzy
 msgid "Nie można usunąć wszystkich kształtów z listy"
-msgstr "Tidak dapat memadam semua bentuk dari senarai"
+msgstr "Tidak boleh mengalih keluar semua bentuk daripada senarai"
 
 #: VisualDrawingShapes.cpp:191
 #, fuzzy, c-format
 msgid "Zapisać zmiany kształtu \"%s\"?"
-msgstr "Simpan perubahan bentuk \"%s\"?"
+msgstr "Simpan edisi bentuk \"%s\"?"
 
 #: VisualDrawingShapes.cpp:270
 #, fuzzy
 msgid "Pole \"kształt\" nie może być puste."
-msgstr "Laman \"bentuk\" tidak boleh kosong."
+msgstr "Medan \"bentuk\" tidak boleh kosong."
 
 #: VisualMove.cpp:393
 #, fuzzy
 msgid ""
 "Wideo musi być ustawione minimum jedną klatkę po czasie początkowym linijki"
-msgstr ""
-"Video mestilah sekurang-kurangnya di tetapkan satu bidang selepas masa mula "
-"baris"
+msgstr "Video mesti ditetapkan sekurang-kurangnya satu bingkai selepas masa mula baris"
 
 #: VisualRotationZ.cpp:486 VisualScale.cpp:772
 #, fuzzy
 msgid "Nie można pobrać wartości clipa prostokątnego."
-msgstr "Gagal membaca nilai klip segi empat."
+msgstr "Tidak dapat membaca nilai segi empat tepat klip."
 
 #: Visuals.cpp:460
 #, fuzzy
 msgid ""
 "Narzędzia edycji wizualnej\n"
 "nie działają na komentarzach"
-msgstr "Alatan visual tidak berguna pada ulasan"
+msgstr "Alat visual tidak berfungsi pada ulasan"
 
 #: Visuals.cpp:461
 #, fuzzy
 msgid ""
 "Linia nie jest widoczna na wideo\n"
 "albo ma zerowy czas trwania"
-msgstr ""
-"Baris tidak kelihatan pada video\n"
-"atau bertempoh sifar"
+msgstr "Talian tidak kelihatan pada video\natau mempunyai tempoh sifar"
 
 #: config.cpp:601
 #, fuzzy, c-format
 msgid ""
 "W motywie \"%s\" brakowało część kolorów, zostały doczytane z domyślnego."
-msgstr ""
-"Beberapa warna di dalam tema \"%s\" telah hilang, dan telah dimuat dari tema "
-"lalai."
+msgstr "Dalam tema \"%s\" beberapa warna telah tiada dan telah dimuatkan daripada lalai."
 
 #: config.cpp:611
 msgid "Nie można zaczytać motywu, zostanie przywrócony domyśny"
@@ -8530,58 +8365,58 @@ msgstr "Gagal memuatkan tema, tema ditetap semula kepada tema lalai"
 #: dshowplayer.cpp:67
 #, fuzzy
 msgid "Nie można zainicjalizować COM"
-msgstr "Gagal mengasal COM"
+msgstr "Tidak boleh memulakan COM"
 
 #: dshowplayer.cpp:82
 #, fuzzy
 msgid "Błąd inicjalizacji Direct Show"
-msgstr "Gagal untuk mengasal Direct Show"
+msgstr "Gagal memulakan Direct Show"
 
 #: dshowplayer.cpp:92
 #, fuzzy
 msgid "Filtr źródła nie został dodany"
-msgstr "Sumber penapis tidak ditambah"
+msgstr "Penapis sumber tidak ditambah"
 
 #: dshowplayer.cpp:102
 #, fuzzy
 msgid "Nie można dodać renderera wideo"
-msgstr "Gagal menambah pemapar video"
+msgstr "Tidak boleh menambah pemapar video"
 
 #: dshowplayer.cpp:118
 #, fuzzy
 msgid "Nie można utworzyć instancji renderera dźwięku"
-msgstr "Tidak dapat membuat tika pemapar audio"
+msgstr "Tidak boleh membuat contoh pemapar audio"
 
 #: dshowplayer.cpp:120
 #, fuzzy
 msgid "Nie można dodać renderera Direct Sound"
-msgstr "Gagal menambah pemapar Direct Sound"
+msgstr "Tidak boleh menambah pemapar Bunyi Langsung"
 
 #: dshowplayer.cpp:133 dshowplayer.cpp:154 dshowplayer.cpp:174
 #: dshowplayer.cpp:256
 #, fuzzy
 msgid "Nie można wyliczyć pinów źródła"
-msgstr "Gagal membutirkan sumber pin"
+msgstr "Tidak dapat menghitung pin sumber"
 
 #: dshowplayer.cpp:175
 #, fuzzy
 msgid "Nie można wyliczyć pinów renderera"
-msgstr "Gagal membutirkan pemapar pin"
+msgstr "Tidak dapat menghitung pin pemapar"
 
 #: dshowplayer.cpp:176
 #, fuzzy
 msgid "Nie można wyliczyć pinów dsound"
-msgstr "Gagal membutirkan pin Direct Sound"
+msgstr "Tidak dapat menghitung pin Bunyi Langsung"
 
 #: dshowplayer.cpp:185
 #, fuzzy
 msgid "Nie można pobrać pinu renderera"
-msgstr "Gagal mendapatkan pemapar pin"
+msgstr "Tidak boleh mendapatkan pin pemapar"
 
 #: dshowplayer.cpp:186
 #, fuzzy
 msgid "Nie można pobrać pinu dsound"
-msgstr "Gagal mendapatkan dsound pin"
+msgstr "Tidak boleh mendapatkan pin dsound"
 
 #: dshowplayer.cpp:199 dshowplayer.cpp:224
 #, fuzzy
@@ -8596,92 +8431,92 @@ msgstr "Tiada maklumat jenis trek"
 #: dshowplayer.cpp:204
 #, fuzzy
 msgid "Nie można połączyć pinu źródła z rendererem wideo"
-msgstr "Gagal menghubungkan sumber pin ke pemapar video"
+msgstr "Tidak dapat menyambungkan pin sumber kepada pemapar video"
 
 #: dshowplayer.cpp:208
 #, fuzzy
 msgid "Nie można połączyć pinu źródła z rendererem audio"
-msgstr "Gagal menghubungkan sumber pin ke pemapar audio"
+msgstr "Tidak dapat menyambungkan pin sumber kepada pemapar audio"
 
 #: dshowplayer.cpp:212
 #, fuzzy
 msgid "Nie można połączyć pinu źródła z rendererem audio1"
-msgstr "Gagal menghubungkan sumber pin ke pemapar audio1"
+msgstr "Tidak dapat menyambungkan pin sumber kepada pemapar audio1"
 
 #: dshowplayer.cpp:214
 #, fuzzy
 msgid "Nie można znaleźć połączonego pinu źródła"
-msgstr "Gagal menjumpai sumber pin yang bersambung"
+msgstr "Tidak dapat mencari pin sumber yang disambungkan"
 
 #: dshowplayer.cpp:216 dshowplayer.cpp:260
 #, fuzzy
 msgid "Nie można pobrać informacji o pinie splittera"
-msgstr "Gagal mendapatkan maklumat pemisah pin"
+msgstr "Tidak boleh mendapatkan maklumat pin pembahagi"
 
 #: dshowplayer.cpp:219
 #, fuzzy
 msgid "Nie można wyliczyć pinów splittera"
-msgstr "Gagal membutirkan pemisah pin"
+msgstr "Tidak dapat menghitung pin pembahagi"
 
 #: dshowplayer.cpp:227
 #, fuzzy
 msgid "Nie można połączyć pinu źródła z rendererem wideo2"
-msgstr "Gagal menghubungkan sumber pin ke pemapar video2"
+msgstr "Tidak dapat menyambungkan pin sumber kepada pemapar video2"
 
 #: dshowplayer.cpp:257
 #, fuzzy
 msgid "Nie można pobrać pinu źródła"
-msgstr "Gagal mendapatkan sumber pin"
+msgstr "Tidak boleh mendapatkan pin sumber"
 
 #: dshowplayer.cpp:404
 #, fuzzy
 msgid "Nie można stworzyć interfejsu filtrów"
-msgstr "Tidak dapat membuat antara muka penapis"
+msgstr "Tidak boleh membuat antara muka penapis"
 
 #: dshowplayer.cpp:408
 #, fuzzy
 msgid "Nie można stworzyć kontrolera"
-msgstr "Tidak dapat membuat pengawal"
+msgstr "Tidak boleh mencipta pengawal"
 
 #: dshowplayer.cpp:409
 #, fuzzy
 msgid "Nie można stworzyć interfejsu szukania"
-msgstr "Tidak dapat membuat antara muka carian"
+msgstr "Tidak boleh membuat antara muka carian"
 
 #: dshowplayer.cpp:410
 #, fuzzy
 msgid "Nie można stworzyć interfejsu audio"
-msgstr "Tidak dapat membuat antara muka audio"
+msgstr "Tidak boleh mencipta antara muka audio"
 
 #: dshowplayer.cpp:538 dshowplayer.cpp:562
 #, fuzzy
 msgid "Nie można wyliczyć filtrów"
-msgstr "Tidak dapat membutirkan penapis"
+msgstr "Tidak dapat menghitung penapis"
 
 #: dshowplayer.cpp:542
 #, fuzzy
 msgid "Nie można pobrać nazwy filtra"
-msgstr "Gagal mendapatkan nama penapis"
+msgstr "Tidak boleh mendapatkan nama penapis"
 
 #: dshowplayer.cpp:565
 #, fuzzy
 msgid "Nie można pobrać konfiguracji filtra"
-msgstr "Gagal mendapatkan tatarajah penapis"
+msgstr "Tidak boleh mendapatkan konfigurasi penapis"
 
 #: findreplace.cpp:399
 #, fuzzy
 msgid "Wyszukiwanie zakończone, rozpocząć od początku?"
-msgstr "Sudah ke penghujung. Cari dari mula?"
+msgstr "Mencapai hujung. Cari dari awal?"
 
 #: findreplace.cpp:406
 #, fuzzy
 msgid "Nie znaleziono podanej frazy \""
-msgstr "Gagal menjumpai ungkapan \""
+msgstr "Tidak dapat mencari ungkapan \""
 
 #: findreplace.cpp:816 findreplace.cpp:1131 findreplace.cpp:1172
 #, fuzzy, c-format
 msgid "Zmieniono %i razy."
-msgstr "Di ganti %i kali."
+msgstr "Diganti %i kali."
 
 #: findreplace.cpp:816 findreplace.cpp:1131 findreplace.cpp:1172
 #, fuzzy
@@ -8693,14 +8528,12 @@ msgstr "Cari Ganti"
 msgid ""
 "Czy na pewno dokonać zmian we wszystkich napisach?\n"
 "W razie pomyłki kopie zapasowe są w folderze 'ReplaceBackup'"
-msgstr ""
-"Adakah anda pasti mahu membuat perubahan pada semua sari kata?\n"
-" Sekiranya berlaku kesilapan, sandaran ada di folder 'ReplaceBackup'"
+msgstr "Adakah anda mahu menggantikan dalam semua fail sari kata?\nSelepas penggantian buruk fail sandaran berada dalam folder 'ReplaceBackup'"
 
 #: findreplace.cpp:1297
 #, fuzzy
 msgid "Ścieżka szukania jest nieprawidłowa"
-msgstr "Laluan mencari tidak sah"
+msgstr "Mencari laluan tidak sah"
 
 #: findreplace.cpp:1326
 #, fuzzy
@@ -8708,15 +8541,12 @@ msgid ""
 "Wszystkich wybranych stylów nie ma w przeszukiwanych napisach,\n"
 "przez co nic nie zostanie znalezione.\n"
 "Co zrobić?"
-msgstr ""
-"Semua gaya yang dipilih tidak wujud,\n"
-"maka tiada apa yang akan dijumpai.\n"
-"Nak buat apa?"
+msgstr "Semua gaya yang dipilih tidak wujud, dan tiada apa yang tidak akan ditemui.\nApa nak buat?"
 
 #: findreplace.cpp:1327 findreplace.cpp:1332
 #, fuzzy
 msgid "Wyczyść style"
-msgstr "Buang gaya"
+msgstr "Alih keluar gaya"
 
 #: findreplace.cpp:1330
 #, fuzzy, c-format
@@ -8724,59 +8554,53 @@ msgid ""
 "Stylów o nazwach \"%s\" nie ma w przeszukiwanych napisach,\n"
 "co może znacząco zmniejszyć ilość wyników szukania.\n"
 "Co zrobić?"
-msgstr ""
-"Gaya bernama \"%s\" tidak wujud di dalam sari kata semasa,\n"
-"dan ia akan mengurangkan hasil carian.\n"
-"Nak buat apa?"
+msgstr "Gaya bernama \"%s\" tidak wujud dalam sari kata semasa,\ndan ia boleh mengurangkan mencari hasil.\nApa nak buat?"
 
 #: findreplace.cpp:1331
 #, fuzzy
 msgid "Usuń nieistniejące style"
-msgstr "Buang gaya yang tidak wujud"
+msgstr "Alih keluar gaya yang tidak wujud"
 
 #: kainoteApp.cpp:73 kainoteApp.cpp:82
 #, fuzzy
 msgid "Zabrakło pamięci RAM, usunięto część historii"
-msgstr "RAM tidak mencukupi. Sebahagian sejarah telah dipadamkan"
+msgstr "RAM tidak mencukupi. Sejarah dipadamkan sebahagiannya"
 
 #: kainoteApp.cpp:114
 #, fuzzy
 msgid ""
 "Nie udało się wczytać opcji.\n"
 "Działanie programu zostanie zakończone."
-msgstr "Tidak dapat membaca tetapan. Perisian akan ditamatkan."
+msgstr "Tidak boleh membaca tetapan. Program akan ditamatkan."
 
 #: kainoteApp.cpp:158
 #, fuzzy
 msgid ""
 "Nie udało się wczytać skrótów.\n"
 "Działanie programu zostanie zakończone."
-msgstr "Tidak dapat membaca kekunci pintas. Perisian akan ditamatkan."
+msgstr "Tidak boleh membaca hotkey. Program akan ditamatkan."
 
 #: kainoteApp.cpp:249
 #, fuzzy
 msgid "Wczytać poprzednią sesję?"
-msgstr "Muat sesi terakhir?"
+msgstr "Muat sesi terakhir"
 
 #: kainoteApp.cpp:255
 #, fuzzy
 msgid ""
 "Program się skraszował albo został zamknięty w niewłaściwy sposób,\n"
 "wczytać poprzednią sesję wraz z najnowszymi napisami z autozapisu?"
-msgstr ""
-"Perisian telah ranap atau tidak ditutup dengan sempurna,\n"
-"adakah anda ingin memuatkan sesi terakhir dengan sari kata dari simpanan "
-"auto?"
+msgstr "Program ranap atau ditutup dengan tidak betul,\nmuatkan sesi lepas dengan sari kata daripada auto save?"
 
 #: stylestore.cpp:71 stylestore.cpp:86 stylestore.cpp:139
 #, fuzzy
 msgid "Nowy"
-msgstr "Baharu"
+msgstr "Baru"
 
 #: stylestore.cpp:73
 #, fuzzy
 msgid "Usuń wybrany katalog stylów"
-msgstr "Padam senarai gaya yang dipilih"
+msgstr "Padam katalog gaya yang dipilih"
 
 #: stylestore.cpp:79
 #, fuzzy
@@ -8786,74 +8610,72 @@ msgstr "Gaya disimpan:"
 #: stylestore.cpp:91 stylestore.cpp:144
 #, fuzzy
 msgid "Sortuj"
-msgstr "Susun"
+msgstr "Susun mengikut"
 
 #: stylestore.cpp:106 stylestore.cpp:155
 #, fuzzy
 msgid "Przesuń zaznaczone style na sam początek"
-msgstr "Pindah gaya yang dipilih ke tempat awal"
+msgstr "Alihkan gaya yang dipilih ke permulaan"
 
 #: stylestore.cpp:107 stylestore.cpp:156
 #, fuzzy
 msgid "Przesuń zaznaczone style w górę"
-msgstr "Pindah gaya yang dipilih ke atas"
+msgstr "Alihkan gaya yang dipilih ke atas"
 
 #: stylestore.cpp:108 stylestore.cpp:157
 #, fuzzy
 msgid "Przesuń zaznaczone style w dół"
-msgstr "Pindah gaya yang dipilih ke bawah"
+msgstr "Alihkan gaya yang dipilih ke bawah"
 
 #: stylestore.cpp:109 stylestore.cpp:158
 #, fuzzy
 msgid "Przesuń zaznaczone style na sam koniec"
-msgstr "Pindah gaya yang dipilih ke tempat terakhir"
+msgstr "Alihkan gaya yang dipilih ke tamat"
 
 #: stylestore.cpp:124
 #, fuzzy
 msgid "Dodaj do magazynu"
-msgstr "Tambah ke storan"
+msgstr "Tambahkan pada storan"
 
 #: stylestore.cpp:125
 #, fuzzy
 msgid "Dodaj do ASS"
-msgstr "Tambah ke ASS"
+msgstr "Tambahkan pada ASS"
 
 #: stylestore.cpp:126
 #, fuzzy
 msgid "Dodaj do wszystkich otwartych ASS"
-msgstr "Tambah ke semua fail ASS yang dibuka"
+msgstr "Tambahkan pada semua fail ASS yang dibuka"
 
 #: stylestore.cpp:131
 #, fuzzy
 msgid "Style pliku ASS:"
-msgstr "Gaya di dalam fail ASS:"
+msgstr "Gaya dalam fail ASS:"
 
 #: stylestore.cpp:145
 #, fuzzy
 msgid "Oczyść"
-msgstr "Bersih"
+msgstr "Kosongkan"
 
 #: stylestore.cpp:172
 #, fuzzy
 msgid "Odepnij okno edycji"
-msgstr "Lepas tetingkap penyunting"
+msgstr "Tanggalkan tetingkap edisi"
 
 #: stylestore.cpp:277 stylestore.cpp:309 stylestore.cpp:348 stylestore.cpp:641
 #, fuzzy, c-format
 msgid "Styl o nazwie \"%s\" istnieje, podmienić go?"
-msgstr "Gaya bernama \"%s\" telahpun wujud. Ganti?"
+msgstr "Gaya bernama \"%s\" sudah wujud. Gantikan?"
 
 #: stylestore.cpp:435
 #, fuzzy, c-format
 msgid "Styl o nazwie \"%s\" jest już na liście."
-msgstr "Gaya bernama \"%s\" telahpun wujud."
+msgstr "Gaya bernama \"%s\" sudah wujud."
 
 #: stylestore.cpp:497
 #, fuzzy
 msgid "Nazwa stylu została zmieniona, czy chcesz zmienić ją także w napisach?"
-msgstr ""
-"Nama gaya telah diubah suai. Adakah kamu mahu menukar semua tika kepada nama "
-"baharu?"
+msgstr "Nama gaya diubah suai. Adakah anda mahu menukar semua kejadian kepada nama baharu?"
 
 #: stylestore.cpp:601
 #, fuzzy
@@ -8868,12 +8690,12 @@ msgstr "Fail sari kata ASS(*.ass)|*.ass"
 #: stylestore.cpp:680 stylestore.cpp:691
 #, fuzzy
 msgid "Kopia "
-msgstr "Salinan "
+msgstr "Salinan daripada "
 
 #: stylestore.cpp:702 stylestore.cpp:720
 #, fuzzy
 msgid "Nowy Styl"
-msgstr "Gaya baharu"
+msgstr "Gaya baru"
 
 #: stylestore.cpp:763
 #, fuzzy, c-format
@@ -8882,56 +8704,52 @@ msgid ""
 "%s\n"
 "Usunięte style:\n"
 "%s"
-msgstr ""
-"Gaya digunakan:\n"
-"%s\n"
-"Gaya dipadam:\n"
-"%s"
+msgstr "Gaya yang digunakan:\n%s\nGaya dipadamkan:\n%s"
 
 #: stylestore.cpp:764
 #, fuzzy
 msgid "Status usuniętych stylów"
-msgstr "Status gaya yang telah dipadam"
+msgstr "Status gaya yang dipadamkan"
 
 #: stylestore.cpp:770
 #, fuzzy
 msgid "Katalog stylów"
-msgstr "Senarai gaya"
+msgstr "Katalog gaya"
 
 #: stylestore.cpp:771
 #, fuzzy
 msgid "Nowy katalog stylów"
-msgstr "Senarai gaya baharu"
+msgstr "Katalog gaya baharu"
 
 #: stylestore.cpp:772
 #, fuzzy
 msgid "Utwórz nowy styl magazynu"
-msgstr "Cipta gaya baharu di dalam storan"
+msgstr "Cipta gaya baharu dalam storan"
 
 #: stylestore.cpp:773
 #, fuzzy
 msgid "Edytuj zaznaczony styl magazynu"
-msgstr "Sunting gaya storan yang dipilih"
+msgstr "Edit gaya storan yang dipilih"
 
 #: stylestore.cpp:774
 #, fuzzy
 msgid "Kopiuj styl magazynu"
-msgstr "Salin gaya dari dalam storan"
+msgstr "Salin gaya dalam storan"
 
 #: stylestore.cpp:775
 #, fuzzy
 msgid "Wczytaj do magazynu styl z pliku ass"
-msgstr "Muat gaya dari fail ASS luar ke storan"
+msgstr "Muatkan gaya daripada fail ASS luaran ke storan"
 
 #: stylestore.cpp:776
 #, fuzzy
 msgid "Usuń styl z magazynu"
-msgstr "Padam gaya dari storan"
+msgstr "Padamkan gaya daripada storan"
 
 #: stylestore.cpp:777
 #, fuzzy
 msgid "Sortuj style w magazynie"
-msgstr "Susun gaya di dalam storan"
+msgstr "Isih gaya dalam storan"
 
 #: stylestore.cpp:778
 #, fuzzy
@@ -8941,27 +8759,27 @@ msgstr "Cipta gaya ASS baharu"
 #: stylestore.cpp:779
 #, fuzzy
 msgid "Edytuj zaznaczony styl napisów"
-msgstr "Sunting gaya ASS yang dipilih"
+msgstr "Edit gaya ASS yang dipilih"
 
 #: stylestore.cpp:780
 #, fuzzy
 msgid "Kopiuj styl napisów"
-msgstr "Salin gaya dari ASS"
+msgstr "Salin gaya ASS"
 
 #: stylestore.cpp:781
 #, fuzzy
 msgid "Wczytaj do napisów styl z pliku ass"
-msgstr "Muat gaya dari fail ASS luar"
+msgstr "Muatkan gaya daripada fail ASS luaran"
 
 #: stylestore.cpp:782
 #, fuzzy
 msgid "Usuń styl z napisów"
-msgstr "Padam gaya dalam ASS"
+msgstr "Padamkan gaya daripada ASS"
 
 #: stylestore.cpp:783
 #, fuzzy
 msgid "Sortuj style w napisach"
-msgstr "Susun gaya dalam ASS"
+msgstr "Isih gaya dalam ASS"
 
 #: stylestore.cpp:784
 #, fuzzy
@@ -8976,7 +8794,7 @@ msgstr "Salin gaya dari storan ke ASS"
 #: stylestore.cpp:786
 #, fuzzy
 msgid "Oczyść napisy z nieużywanych stylów"
-msgstr "Padam gaya ASS yang tidak digunakan"
+msgstr "Padamkan gaya ASS yang tidak digunakan"
 
 #~ msgid "- Kostek00 (przyciski do audio i narzędzi wizualnych).\n"
 #~ msgstr "- Kostek00 (butang audio and alatan visual)\n"

@@ -1,37 +1,6 @@
+# altinat <poiiiii4yy@gmail.com>, 2022.
 msgid ""
-msgstr ""
-"Project-Id-Version: \n"
-"POT-Creation-Date: 2022-06-06 20:40+0700\n"
-"PO-Revision-Date: 2022-06-06 20:41+0700\n"
-"Last-Translator: Marcin Drob <bjajka7@gmail.com>\n"
-"Language-Team: \n"
-"Language: en\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=(n != 1);\n"
-"X-Generator: Poedit 3.0.1\n"
-"X-Poedit-Basepath: ../Kainote\n"
-"X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: _\n"
-"X-Poedit-SearchPath-0: .\n"
-"X-Poedit-SearchPathExcluded-0: Bitmaps\n"
-"X-Poedit-SearchPathExcluded-1: GFFT\n"
-"X-Poedit-SearchPathExcluded-2: include\n"
-"X-Poedit-SearchPathExcluded-3: Win32\n"
-"X-Poedit-SearchPathExcluded-4: x64\n"
-"X-Poedit-SearchPathExcluded-5: ffms2.lib\n"
-"X-Poedit-SearchPathExcluded-6: ffms2_x64.lib\n"
-"X-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\n"
-"X-Poedit-SearchPathExcluded-8: Kainote.vcxproj\n"
-"X-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\n"
-"X-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\n"
-"X-Poedit-SearchPathExcluded-11: RCa00888\n"
-"X-Poedit-SearchPathExcluded-12: resource.aps\n"
-"X-Poedit-SearchPathExcluded-13: resource.rc\n"
-"X-Poedit-SearchPathExcluded-14: CsriMod.cpp\n"
-"X-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\n"
-"X-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
+msgstr "Project-Id-Version: \nReport-Msgid-Bugs-To: poiiiii4yy@gmail.com\nPOT-Creation-Date: 2022-06-06 20:40+0700\nPO-Revision-Date: 2022-06-06 13:48+0000\nLast-Translator: altinat <poiiiii4yy@gmail.com>\nLanguage-Team: English <https://hosted.weblate.org/projects/kainote/kainote/en/>\nLanguage: en\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=n != 1;\nX-Generator: Weblate 4.13-dev\nX-Poedit-Basepath: ../Kainote\nX-Poedit-SourceCharset: UTF-8\nX-Poedit-KeywordsList: _\nX-Poedit-SearchPath-0: .\nX-Poedit-SearchPathExcluded-0: Bitmaps\nX-Poedit-SearchPathExcluded-1: GFFT\nX-Poedit-SearchPathExcluded-2: include\nX-Poedit-SearchPathExcluded-3: Win32\nX-Poedit-SearchPathExcluded-4: x64\nX-Poedit-SearchPathExcluded-5: ffms2.lib\nX-Poedit-SearchPathExcluded-6: ffms2_x64.lib\nX-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\nX-Poedit-SearchPathExcluded-8: Kainote.vcxproj\nX-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\nX-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\nX-Poedit-SearchPathExcluded-11: RCa00888\nX-Poedit-SearchPathExcluded-12: resource.aps\nX-Poedit-SearchPathExcluded-13: resource.rc\nX-Poedit-SearchPathExcluded-14: CsriMod.cpp\nX-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\nX-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
 
 #: AudioBox.cpp:72
 msgid "Pasek szukania"
@@ -39,11 +8,11 @@ msgstr "Search bar"
 
 #: AudioBox.cpp:86
 msgid "Rozciągnięcie w poziomie"
-msgstr "Stretching horizontally"
+msgstr "Horizontal stretching"
 
 #: AudioBox.cpp:92
 msgid "Rozciągnięcie w pionie"
-msgstr "Stretching vertically"
+msgstr "Vertical stretching"
 
 #: AudioBox.cpp:94
 msgid "Głośność"
@@ -8067,17 +8036,14 @@ msgstr "Delete unused ASS styles"
 #~ msgstr "Preserve aspect ratio"
 
 #, fuzzy
-#~| msgid "Narzędzie zmieniacz skali i obrotów"
 #~ msgid "Narzędzie zmieniacz wszystkich tagów"
 #~ msgstr "Visual tool scale and rotation shift"
 
 #, fuzzy
-#~| msgid "Linie: "
 #~ msgid "Linie"
 #~ msgstr "Lines: "
 
 #, fuzzy
-#~| msgid "Nie można zablokować bufora tekstury"
 #~ msgid "Nie można oblokować bufora tekstury"
 #~ msgstr "Cannot lock texture buffer"
 
@@ -9204,3 +9170,24 @@ msgstr "Delete unused ASS styles"
 
 #~ msgid "Katalog Stylów"
 #~ msgstr "Catalog"
+
+#, fuzzy
+#~ msgid "Aktualizacja"
+#~ msgstr "Au&tomation"
+
+#, fuzzy
+#~ msgid "Wyłącz aktualizacje"
+#~ msgstr "Turn of filtering"
+
+#, fuzzy
+#~ msgid "Nie można pobrać nowej wersji Kainote"
+#~ msgstr "You cannot get information about the video"
+
+#, fuzzy
+#~ msgid "Nie można znaleźć updatera Kainote"
+#~ msgstr "Cannot find element with id %i"
+
+# Zły: nie rozumiem
+#, fuzzy
+#~ msgid "Nie można zamknąć Kainote"
+#~ msgstr "Cannot change YCbCr matrix"
