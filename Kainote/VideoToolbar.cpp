@@ -336,8 +336,7 @@ void VideoToolbar::Synchronize(VideoToolbar *vtoolbar){
 
 bool VideoToolbar::SetFont(const wxFont &font)
 {
-	wxFont vFont = font;
-	vFont.SetPointSize(font.GetPointSize() - 1);
+	wxFont vFont = *Options.GetFont(-1);
 	videoSeekAfter->SetFont(vFont);
 	videoPlayAfter->SetFont(vFont);
 

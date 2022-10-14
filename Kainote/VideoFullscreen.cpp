@@ -114,33 +114,37 @@ void Fullscreen::OnSize()
 	vc->SetVideoWindowLastSize(asize);
 	int fw;
 	int oldPanelSize = panelsize;
-	bool toolbarShown = panelsize > buttonSection;
+	//bool toolbarShown = panelsize > buttonSection;
 	
 	GetTextExtent(L"#TWFfGH", &fw, &toolBarHeight);
 	toolBarHeight += 8;
-	buttonSection = 30 + toolBarHeight - 8;
-	panelsize = buttonSection;
-	if (toolbarShown)
-		panelsize += toolBarHeight;
-
+	//buttonSection = toolBarHeight - 8;
+	//panelsize = buttonSection;
+	//if (toolbarShown)
+		//panelsize += toolBarHeight;
+	buttonSection = (toolBarHeight * 2) - 8;
+	if (vToolbar->IsShown())
+		panelsize = buttonSection + toolBarHeight;
+	//KaiLog(wxString::Format(L"panelsize %i", panelsize));
 	panel->SetSize(0, asize.y - panelsize, asize.x, panelsize);
 
 	wxSize toolbarSize = showToolbar->GetMinSize();
-	if (oldPanelSize == panelsize) {
-		bprev->SetPosition(wxPoint(5, toolBarHeight - 6));
-		bpause->SetPosition(wxPoint(40, toolBarHeight - 6));
-		bpline->SetPosition(wxPoint(75, toolBarHeight - 6));
-		bstop->SetPosition(wxPoint(110, toolBarHeight - 6));
-		bnext->SetPosition(wxPoint(145, toolBarHeight - 6));
+	int buttonHeight = (toolBarHeight - 30) / 2;
+	//if (oldPanelSize == panelsize) {
+		bprev->SetPosition(wxPoint(5, toolBarHeight - 6 + buttonHeight));
+		bpause->SetPosition(wxPoint(40, toolBarHeight - 6 + buttonHeight));
+		bpline->SetPosition(wxPoint(75, toolBarHeight - 6 + buttonHeight));
+		bstop->SetPosition(wxPoint(110, toolBarHeight - 6 + buttonHeight));
+		bnext->SetPosition(wxPoint(145, toolBarHeight - 6 + buttonHeight));
 		
-		showToolbar->SetSize(180, toolBarHeight - 6 + ((26 - toolbarSize.y) / 2), toolbarSize.x, toolbarSize.y);
-	}
-		mstimes->SetSize(180 + toolbarSize.x + 10, toolBarHeight - 6, 13 * toolBarHeight, toolBarHeight - 6);
+		showToolbar->SetSize(180, toolBarHeight - 6 + ((toolBarHeight - toolbarSize.y) / 2), toolbarSize.x, toolbarSize.y);
+	//}
+		mstimes->SetSize(180 + toolbarSize.x + 10, toolBarHeight - 4, 13 * toolBarHeight, toolBarHeight - 6);
 		if (vToolbar->IsShown()){
 			vToolbar->SetSize(0, buttonSection, asize.x, toolBarHeight);
 		}
 		int posx = 180 + toolbarSize.x + 25 + (13 * toolBarHeight);
-		Videolabel->SetSize(posx, toolBarHeight - 6, asize.x - posx - 115, toolBarHeight - 6);
+		Videolabel->SetSize(posx, toolBarHeight - 4, asize.x - posx - 115, toolBarHeight - 6);
 	//}
 	//else{
 	//	//mstimes->SetSize(asize.x - difSize, -1);

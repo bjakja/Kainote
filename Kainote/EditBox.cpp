@@ -2132,8 +2132,7 @@ TextEditor * EditBox::GetEditor(const wxString &text)
 
 bool EditBox::SetFont(const wxFont &font)
 {
-	wxFont ebFont = font;
-	ebFont.SetPointSize(font.GetPointSize() - 1);
+	wxFont ebFont = *Options.GetFont(-1);
 	const wxWindowList& siblings = GetChildren();
 
 	for (wxWindowList::compatibility_iterator nodeAfter = siblings.GetFirst();

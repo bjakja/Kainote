@@ -992,6 +992,11 @@ void AudioDisplay::DrawSpectrum(bool weak) {
 		catch (...){}
 		byte *img = static_cast<byte *>(d3dlr.pBits);
 		int dxw = d3dlr.Pitch / 4;
+		if (dxw < w) {
+			//KaiLogSilent(L"DX surface has to small size");
+			return;
+		}
+
 
 		// Use a slightly slower, but simple way
 		// Always draw the spectrum for the entire width
@@ -1003,7 +1008,7 @@ void AudioDisplay::DrawSpectrum(bool weak) {
 	
 	RECT rc = { screenRect.x, screenRect.y, screenRect.width - screenRect.x, screenRect.height - screenRect.y };
 	if (FAILED(d3dDevice->StretchRect(spectrumSurface, &rc, backBuffer, &rc, D3DTEXF_LINEAR))){
-		KaiLog(_("Nie można nałożyć powierzchni spectrum na siebie"));
+		KaiLogSilent(_("Nie można nałożyć powierzchni spectrum na siebie"));
 	}
 
 }
@@ -2515,7 +2520,7 @@ void AudioDisplay::DrawKeyframes() {
 		{
 			cur = ((cur - 20) / 10) * 10;
 			//if(provider->Timecodes.size()<1){
-			//	//cóż wiele zrobić nie możemy gdy nie mamy wideo;
+			//	
 			//	cur -= 21;
 			//}else{
 			//	int frame = provider->GetFramefromMS(cur);
@@ -2542,8 +2547,10 @@ bool AudioDisplay::SetFont(const wxFont &font)
 	int fh;
 	GetTextExtent(L"#TWFfGH", nullptr, &fh, nullptr, nullptr, &tahoma8);
 	timelineHeight = fh + 8;
+	//LastSize.y = h;
 	GetClientSize(&w, &h);
 	h -= timelineHeight;
+	
 	UpdateImage(true);
 	
 	return true;

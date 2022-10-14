@@ -106,8 +106,10 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	if (fontSize > 6 && fontSize <= 70 && fontSize != font.GetPointSize()) {
 		font.SetPointSize(fontSize);
 	}
-	else
+	else {
 		fontSize = 10;
+		Options.SetInt(TEXT_EDITOR_FONT_SIZE, 10);
+	}
 
 	int fw, fh;
 	GetTextExtent(L"#TWFfGH", &fw, &fh, nullptr, nullptr, &font);
@@ -2886,6 +2888,7 @@ bool TextEditor::SetFont(const wxFont &_font)
 	int fontSize = Options.GetInt(TEXT_EDITOR_FONT_SIZE);
 	font = wxFont(*Options.GetFont(fontSize - 10));
 	wxWindow::SetFont(font);
+	KaiLog(wxString::Format(L"FontSize %i", fontSize));
 	
 	int fw, fh;
 	GetTextExtent(L"#TWFfGH", &fw, &fh, nullptr, nullptr, &font);

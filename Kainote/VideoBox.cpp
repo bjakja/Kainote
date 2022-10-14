@@ -413,26 +413,20 @@ void VideoBox::OnSize(wxSizeEvent& event)
 	int fw;
 	GetTextExtent(L"#TWFfGH", &fw, &m_ToolBarHeight);
 	m_ToolBarHeight += 8;
-	m_PanelHeight = 30 + (m_ToolBarHeight * 2) - 8;
+	m_PanelHeight = (m_ToolBarHeight * 3) - 8;
 	if (!m_VideoToolbar->IsShown())
 		m_PanelHeight -= m_ToolBarHeight;
 
 	m_VideoPanel->SetSize(0, asize.y - m_PanelHeight, asize.x, m_PanelHeight);
 	int difSize = (m_VolumeSlider->IsShown()) ? 290 : 185;
-	if (oldToolbarHeight == m_ToolBarHeight){
-		m_ButtonPreviousFile->SetPosition(wxPoint(5, m_ToolBarHeight - 6));
-		m_ButtonPause->SetPosition(wxPoint(40, m_ToolBarHeight - 6));
-		m_ButtonPlayLine->SetPosition(wxPoint(75, m_ToolBarHeight - 6));
-		m_ButtonStop->SetPosition(wxPoint(110, m_ToolBarHeight - 6));
-		m_ButtonNextFile->SetPosition(wxPoint(145, m_ToolBarHeight - 6));
-
-		m_TimesTextField->SetSize(180, m_ToolBarHeight - 6, asize.x - difSize, -1);
-		m_VideoToolbar->SetSize(0, m_PanelHeight - m_ToolBarHeight, asize.x, m_ToolBarHeight);
-	}
-	else{
-		m_TimesTextField->SetSize(asize.x - difSize, -1);
-		m_VideoToolbar->SetSize(asize.x, m_ToolBarHeight);
-	}
+	int buttonHeight = (m_ToolBarHeight - 30) / 2;
+	m_ButtonPreviousFile->SetPosition(wxPoint(5, m_ToolBarHeight - 6 + buttonHeight));
+	m_ButtonPause->SetPosition(wxPoint(40, m_ToolBarHeight - 6 + buttonHeight));
+	m_ButtonPlayLine->SetPosition(wxPoint(75, m_ToolBarHeight - 6 + buttonHeight));
+	m_ButtonStop->SetPosition(wxPoint(110, m_ToolBarHeight - 6 + buttonHeight));
+	m_ButtonNextFile->SetPosition(wxPoint(145, m_ToolBarHeight - 6 + buttonHeight));
+	m_TimesTextField->SetSize(180, m_ToolBarHeight - 8, asize.x - difSize, m_ToolBarHeight + 2);
+	m_VideoToolbar->SetSize(0, m_PanelHeight - m_ToolBarHeight, asize.x, m_ToolBarHeight);
 	m_VolumeSlider->SetPosition(wxPoint(asize.x - 110, m_ToolBarHeight - 5));
 	m_SeekingSlider->SetSize(wxSize(asize.x, m_ToolBarHeight - 8));
 	if (renderer){

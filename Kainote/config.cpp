@@ -86,10 +86,11 @@ int config::GetDPI()
 
 void config::FontsRescale(int dpi)
 {
-	for (std::map<int, wxFont*>::iterator it = programFonts.begin(); it != programFonts.end(); it++) {
+	/*for (std::map<int, wxFont*>::iterator it = programFonts.begin(); it != programFonts.end(); it++) {
 		int newPixelSize = -(int)((it->first * ((double)dpi) / 72.0) + 0.5);
 		it->second->SetPixelSize(wxSize(0, newPixelSize));
-	}
+	}*/
+	FontsClear();
 	fontDPI = dpi;
 }
 
@@ -887,12 +888,12 @@ wxFont *config::GetFont(int offset)
 	int fontSize = GetInt(PROGRAM_FONT_SIZE);
 	if (!fontSize)
 		fontSize = 10;
-	fontSize += offset;//*= ((10.f + (float)offset + 0.5f) / 10.f);
+	fontSize += offset;
 	wxString fontName = GetString(PROGRAM_FONT);
 	if (fontName.empty())
 		fontName = L"Tahoma";
 
-	int newPixelSize = -(int)((fontSize * ((double)fontDPI) / 72.0) + 0.5);
+	int newPixelSize = -(int)(((double)fontSize * ((double)fontDPI) / 72.0) + 0.5);
 
 	wxFont *newFont = new wxFont(wxSize(0, newPixelSize), wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, fontName);
 	programFonts.insert(std::pair<int, wxFont*>(10 + offset, newFont));
