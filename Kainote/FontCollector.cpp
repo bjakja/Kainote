@@ -964,7 +964,7 @@ bool FontCollector::CreateZip()
 {
 	wxFFileOutputStream *out = new wxFFileOutputStream(fcd->copypath);
 	if (out->IsOk()) {
-		zip = new wxZipOutputStream(out, 9);
+		zip = new wxZipOutputStream(out, 9, wxConvUTF8);
 		return true;
 	}
 	else {

@@ -87,4 +87,4 @@ Next:
         ```
     - When shows list of codecs type `make`
     - After build type `make install`
-- Done, You just build FFMS2 in Visual Studio 19.
+- Done, You you can build FFMS2 in Kainote solution.

@@ -2547,11 +2547,12 @@ bool AudioDisplay::SetFont(const wxFont &font)
 	int fh;
 	GetTextExtent(L"#TWFfGH", nullptr, &fh, nullptr, nullptr, &tahoma8);
 	timelineHeight = fh + 8;
-	//LastSize.y = h;
+	LastSize.y = h;
 	GetClientSize(&w, &h);
 	h -= timelineHeight;
-	
-	UpdateImage(true);
+	//update image instant to avoid crash when sliding
+	//window from one monitor to another
+	UpdateImage(true, true);
 	
 	return true;
 }

@@ -192,7 +192,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     </Link>
     <PostBuildEvent>
       <Command>$(SolutionDir)AutoVersioning "$(ProjectDir)VersionKainote.h"
-$(SolutionDir)AutoSending/x64/Release/AutoSending "$(SolutionDir)x64\Release\Kainote x64.zip" "D:\Google Drive\Kainote x64.zip" "x64"
+$(SolutionDir)AutoSending/x64/Release/AutoSending "$(SolutionDir)x64\Release\Kainote x64.zip" "F:\Google Drive\Kainote x64.zip" "x64"
 </Command>
     </PostBuildEvent>
     <PreBuildEvent>

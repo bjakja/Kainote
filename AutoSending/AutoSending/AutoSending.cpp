@@ -66,7 +66,7 @@ int _tmain(int argc, TCHAR* argv[])
 		std::wcout << L"Kainote zip path don't exist " << path;
 		return 1; 
 	}*/
-	const wchar_t* path = L"G:/Kainote/x64/Release/Kainote x64.zip";
+	const wchar_t* path = L"E:/Kainote/x64/Release/Kainote x64.zip";
 	
 
 	std::vector<wchar_t *> filenames;
@@ -306,7 +306,7 @@ int _tmain(int argc, TCHAR* argv[])
 	if (!_return)
 		return 4;
 	
-	const wchar_t *dbx = L"D:\\Google Drive\\Kainote x64.zip\0";
+	const wchar_t *dbx = L"F:\\Google Drive\\Kainote x64.zip\0";
 
 	//wchar_t * dbx = argv[2];
 

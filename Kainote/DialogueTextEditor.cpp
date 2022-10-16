@@ -2888,7 +2888,6 @@ bool TextEditor::SetFont(const wxFont &_font)
 	int fontSize = Options.GetInt(TEXT_EDITOR_FONT_SIZE);
 	font = wxFont(*Options.GetFont(fontSize - 10));
 	wxWindow::SetFont(font);
-	KaiLog(wxString::Format(L"FontSize %i", fontSize));
 	
 	int fw, fh;
 	GetTextExtent(L"#TWFfGH", &fw, &fh, nullptr, nullptr, &font);
