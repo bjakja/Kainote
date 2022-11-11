@@ -927,7 +927,7 @@ wxBitmap *DialogColorPicker::MakeSVSpectrum()
 	if (hsv_spectrum) delete hsv_spectrum;
 
 	wxImage spectrum_image(256, 256, false);
-	unsigned char *ospec, *spec;
+	unsigned char *ospec = nullptr, *spec = nullptr;
 
 	ospec = spec = (unsigned char *)malloc(256 * 256 * 3);
 

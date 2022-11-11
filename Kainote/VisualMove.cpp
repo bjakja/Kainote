@@ -382,7 +382,41 @@ wxPoint Move::ChangeVisual(wxString* txt)
 
 void Move::OnKeyPress(wxKeyEvent &evt)
 {
+	int key = evt.GetKeyCode();
+	bool left = key == L'A';
+	bool right = key == L'D';
+	bool up = key == L'W';
+	bool down = key == L'S';
+	bool sleft = key == L'J';
+	bool sright = key == L'L';
+	bool sup = key == L'I';
+	bool sdown = key == L'K';
+	bool secondShortcut = sleft || sright || sup || sdown;
 
+	if ((left || right || up || down || secondShortcut) && 
+		evt.GetModifiers() != wxMOD_ALT) {
+		float directionX = (left || sleft) ? -1 : (right || sright) ? 1 : 0;
+		float directionY = (up || sup) ? -1 : (down || sdown) ? 1 : 0;
+		if (evt.ShiftDown()) {
+			directionX /= 10.f;
+			directionY /= 10.f;
+		}
+		
+		directionX = (directionX / coeffW);
+		directionY = (directionY / coeffH);
+		if(secondShortcut){
+			to.x += directionX;
+			to.y += directionY;
+		}
+		else {
+			from.x += directionX;
+			from.y += directionY;
+		}
+		SetVisual(true);
+		SetVisual(false);
+		return;
+	}
+	evt.Skip();
 }
 
 bool Move::SetMove()

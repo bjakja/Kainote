@@ -96,6 +96,7 @@
     <ClCompile Include="..\..\..\curl\lib\mime.c" />
     <ClCompile Include="..\..\..\curl\lib\mprintf.c" />
     <ClCompile Include="..\..\..\curl\lib\mqtt.c" />
+    <ClCompile Include="..\..\..\curl\lib\multi.c" />
     <ClCompile Include="..\..\..\curl\lib\netrc.c" />
     <ClCompile Include="..\..\..\curl\lib\nonblock.c" />
     <ClCompile Include="..\..\..\curl\lib\openldap.c" />
@@ -111,6 +112,7 @@
     <ClCompile Include="..\..\..\curl\lib\sendf.c" />
     <ClCompile Include="..\..\..\curl\lib\setopt.c" />
     <ClCompile Include="..\..\..\curl\lib\sha256.c" />
+    <ClCompile Include="..\..\..\curl\lib\share.c" />
     <ClCompile Include="..\..\..\curl\lib\slist.c" />
     <ClCompile Include="..\..\..\curl\lib\smb.c" />
     <ClCompile Include="..\..\..\curl\lib\smtp.c" />
@@ -215,6 +217,17 @@
     <ClCompile Include="..\..\..\curl\src\tool_xattr.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\curl\include\curl\curl.h" />
+    <ClInclude Include="..\..\..\curl\include\curl\curlver.h" />
+    <ClInclude Include="..\..\..\curl\include\curl\easy.h" />
+    <ClInclude Include="..\..\..\curl\include\curl\header.h" />
+    <ClInclude Include="..\..\..\curl\include\curl\mprintf.h" />
+    <ClInclude Include="..\..\..\curl\include\curl\multi.h" />
+    <ClInclude Include="..\..\..\curl\include\curl\options.h" />
+    <ClInclude Include="..\..\..\curl\include\curl\stdcheaders.h" />
+    <ClInclude Include="..\..\..\curl\include\curl\system.h" />
+    <ClInclude Include="..\..\..\curl\include\curl\typecheck-gcc.h" />
+    <ClInclude Include="..\..\..\curl\include\curl\urlapi.h" />
     <ClInclude Include="..\..\..\curl\lib\altsvc.h" />
     <ClInclude Include="..\..\..\curl\lib\amigaos.h" />
     <ClInclude Include="..\..\..\curl\lib\arpa_telnet.h" />
@@ -550,12 +563,12 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_LIB;CURL_STATICLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\curl\include;$(SolutionDir)Thirdparty\curl\lib</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp14</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
