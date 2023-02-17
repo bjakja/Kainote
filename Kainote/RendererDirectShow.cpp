@@ -872,7 +872,19 @@ byte *RendererDirectShow::GetFrameWithSubs(bool subs, bool *del)
 		return nullptr;
 	}
 	byte* texbuf = static_cast<byte*>(d3dlr.pBits);
-	memcpy(cpy, texbuf, buffsize);
+	int fwidth = m_Width * 4;
+	if (d3dlr.Pitch == fwidth) {
+		memcpy(cpy, texbuf, buffsize);
+	}
+	else {
+		int widthdiff = d3dlr.Pitch - fwidth;
+		byte* cpy1 = cpy;
+		for (int i = 0; i < m_Height; i++) {
+			memcpy(cpy1, texbuf, fwidth);
+			texbuf += (fwidth + widthdiff);
+			cpy1 += fwidth;
+		}
+	}
 	tmp->UnlockRect();
 	SAFE_RELEASE(tmp);
 	if (dssubs){

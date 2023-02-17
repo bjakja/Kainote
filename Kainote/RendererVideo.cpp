@@ -26,8 +26,11 @@
 
 #include <wx/dir.h>
 #include <wx/clipbrd.h>
+#include <wx/regex.h>
+
 
 #include <vector>
+#include <algorithm>
 #include <dxva2api.h>
 
 
@@ -739,11 +742,25 @@ void RendererVideo::SaveFrame(int id)
 		if (kat.IsOpened()) {
 			kat.GetAllFiles(dirpath, &paths, filespec.BeforeLast(L'.') << L"_*_*.png", wxDIR_FILES);
 		}
+		wxRegEx findNum("_([0-9]+)_", wxRE_ADVANCED);
+		std::vector<int> nums;
 		for (wxString& file : paths) {
-			if (file.find(L"_" + std::to_string(num) + L"_") == wxNOT_FOUND) {
-				break;
+			//if (file.find(L"_" + std::to_string(num) + L"_") == wxNOT_FOUND) {
+				//break;
+			//}
+			//num++;
+			if (findNum.Matches(file)) {
+				wxString stringnum = findNum.GetMatch(file, 1);
+				int filenum = wxAtoi(stringnum);
+				nums.push_back(filenum);
 			}
-			num++;
+		}
+		std::sort(nums.begin(), nums.end());
+		for (size_t j = 0; j < nums.size(); j++) {
+			if (num == nums[j])
+				num++; 
+			else if (num < nums[j])
+				break;
 		}
 		path = tab->VideoPath.BeforeLast(L'.');
 		SubsTime currentTime;

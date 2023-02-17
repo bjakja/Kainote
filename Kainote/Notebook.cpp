@@ -1126,7 +1126,7 @@ int Notebook::LoadVideo(TabPanel *tab, const wxString & path,
 		keyframespath = tab->grid->GetSInfo(L"Keyframes File");
 
 		if (loadPrompt) {
-			videopath = tab->grid->GetSInfo(L"video File");
+			videopath = tab->grid->GetSInfo(L"Video File");
 			hasVideoPath = (!videopath.empty() && ((wxFileExists(videopath) && videopath.find(L':') == 1) ||
 				videopath.StartsWith(L"?dummy") || wxFileExists(videopath.Prepend(subsPath))));
 

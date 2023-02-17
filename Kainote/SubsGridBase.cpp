@@ -350,7 +350,7 @@ void SubsGridBase::SaveFile(const wxString &filename, bool normalSave, bool load
 			if (!tab->VideoPath.empty()){
 				wxString path = (tab->VideoPath.StartsWith(subsPath) && normalSave) ?
 					tab->VideoPath.AfterLast(L'\\') : tab->VideoPath;
-				AddSInfo(L"video File", path, false);
+				AddSInfo(L"Video File", path, false);
 			}
 			if (!tab->KeyframesPath.empty()){
 				wxString path = (tab->KeyframesPath.StartsWith(subsPath) && normalSave) ?
