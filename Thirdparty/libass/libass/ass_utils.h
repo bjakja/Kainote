@@ -182,20 +182,10 @@ static inline int double_to_d22(double x)
     return lrint(x * 0x400000);
 }
 
-static inline int mystrtoi(char **p, int *res)
+static inline int32_t lshiftwrapi(int32_t i, int32_t shift)
 {
-    char *start = *p;
-    double temp_res = ass_strtod(*p, p);
-    *res = (int) (temp_res + (temp_res > 0 ? 0.5 : -0.5));
-    return *p != start;
-}
-
-static inline int mystrtoll(char **p, long long *res)
-{
-    char *start = *p;
-    double temp_res = ass_strtod(*p, p);
-    *res = (long long) (temp_res + (temp_res > 0 ? 0.5 : -0.5));
-    return *p != start;
+    // '0u +' to avoid automatic integer promotion causing UB
+    return (0u + (uint32_t)i) << (shift & 31);
 }
 
 static inline int mystrtod(char **p, double *res)
@@ -209,7 +199,7 @@ static inline int mystrtoi32(char **p, int base, int32_t *res)
 {
     char *start = *p;
     long long temp_res = strtoll(*p, p, base);
-    *res = FFMINMAX(temp_res, INT64_MIN, INT64_MAX);
+    *res = FFMINMAX(temp_res, INT32_MIN, INT32_MAX);
     return *p != start;
 }
 

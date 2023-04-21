@@ -206,6 +206,8 @@ int _tmain(int argc, TCHAR* argv[])
 	filenames.push_back(L"\\Themes\\DeepLight.txt\0");
 	filenames.push_back(L"\\Themes\\MyDeepDark.txt\0");
 	filenames.push_back(L"\\Csri\\xy-VSFilter_kainote.dll\0");
+	filenames.push_back(L"\\msvcp140.dll\0");
+	filenames.push_back(L"\\vcruntime140_1.dll\0");
 	filenames.push_back(L"\\KaiNote_AVX.exe\0");
 	filenames.push_back(L"\\KaiNote_AVX.pdb\0");
 	filenames.push_back(L"\\Csri\\VSFiltermod.dll\0");

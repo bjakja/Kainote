@@ -662,7 +662,8 @@ static void blend_vector_clip(ASS_Renderer *render_priv, ASS_Image *head)
     ol_key.u.drawing.text = render_priv->state.clip_drawing_text;
 
     double m[3][3] = {{0}};
-    double w = render_priv->font_scale / (1 << (render_priv->state.clip_drawing_scale - 1));
+    int32_t scale_base = lshiftwrapi(1, render_priv->state.clip_drawing_scale - 1);
+    double w = scale_base > 0 ? (render_priv->font_scale / scale_base) : 0;
     m[0][0] = render_priv->font_scale_x * w;
     m[1][1] = w;
     m[2][2] = 1;
@@ -1105,7 +1106,8 @@ get_outline_glyph(ASS_Renderer *priv, GlyphInfo *info)
             return;
         }
 
-        double w = priv->font_scale / (1 << (info->drawing_scale - 1));
+        int32_t scale_base = lshiftwrapi(1, info->drawing_scale - 1);
+        double w = scale_base > 0 ? (priv->font_scale / scale_base) : 0;
         scale.x = info->scale_x * w;
         scale.y = info->scale_y * w;
         desc = 64 * info->drawing_pbo;
@@ -1989,7 +1991,7 @@ static bool parse_events(ASS_Renderer *render_priv, ASS_Event *event)
         info->effect_timing = render_priv->state.effect_timing;
         info->effect_skip_timing = render_priv->state.effect_skip_timing;
         info->font_size =
-            render_priv->state.font_size * render_priv->font_scale;
+            fabs(render_priv->state.font_size * render_priv->font_scale);
         info->be = render_priv->state.be;
         info->blur = render_priv->state.blur;
         info->shadow_x = render_priv->state.shadow_x;

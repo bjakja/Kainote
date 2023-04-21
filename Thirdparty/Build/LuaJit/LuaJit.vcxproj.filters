@@ -61,12 +61,12 @@
     <ClInclude Include="..\..\LuaJIT\src\lj_udata.h" />
     <ClInclude Include="..\..\LuaJIT\src\lj_vm.h" />
     <ClInclude Include="..\..\LuaJIT\src\lj_vmevent.h" />
+    <ClInclude Include="..\LuaJitBuild\x64\Release\lj_bcdef.h" />
+    <ClInclude Include="..\LuaJitBuild\x64\Release\lj_libdef.h" />
+    <ClInclude Include="..\LuaJitBuild\x64\Release\lj_recdef.h" />
+    <ClInclude Include="..\LuaJitBuild\x64\Release\lj_ffdef.h" />
+    <ClInclude Include="..\LuaJitBuild\x64\Release\lj_folddef.h" />
     <ClInclude Include="..\..\LuaJIT\src\lj_buf.h" />
-    <ClInclude Include="$(SolutionDir)bin\$(Platform)\$(configuration)\lj_bcdef.h" />
-    <ClInclude Include="$(SolutionDir)bin\$(Platform)\$(configuration)\lj_ffdef.h" />
-    <ClInclude Include="$(SolutionDir)bin\$(Platform)\$(configuration)\lj_folddef.h" />
-    <ClInclude Include="$(SolutionDir)bin\$(Platform)\$(configuration)\lj_libdef.h" />
-    <ClInclude Include="$(SolutionDir)bin\$(Platform)\$(configuration)\lj_recdef.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\LuaJIT\src\jit\bc.lua" />

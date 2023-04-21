@@ -57,6 +57,7 @@ static void init(int frame_w, int frame_h)
         exit(1);
     }
 
+    ass_set_storage_size(ass_renderer, frame_w, frame_h);
     ass_set_frame_size(ass_renderer, frame_w, frame_h);
     ass_set_fonts(ass_renderer, NULL, "Sans", 1, NULL, 1);
 }
@@ -67,7 +68,8 @@ int main(int argc, char *argv[])
     const int frame_h = 720;
 
     if (argc < 5) {
-        printf("usage: %s <subtitle file> <start time> <fps> <end time>\n", argv[0]);
+        printf("usage: %s <subtitle file> <start time> <fps> <end time>\n",
+               argv[0] ? argv[0] : "profile");
         exit(1);
     }
     char *subfile = argv[1];

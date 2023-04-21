@@ -17,14 +17,14 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-# pragma once
-
+#ifndef LIBASS_ASS_H
+#define LIBASS_ASS_H
 
 #include <stdio.h>
 #include <stdarg.h>
 #include "ass_types.h"
 
-#define LIBASS_VERSION 0x01502002
+#define LIBASS_VERSION 0x01600000
 
 #ifdef __cplusplus
 extern "C" {
@@ -66,6 +66,9 @@ typedef struct ass_image {
                                 // Note: the last row may not be padded to
                                 // bitmap stride!
     uint32_t color;             // Bitmap color and alpha, RGBA
+                                // For full VSFilter compatibility, the value
+                                // must be transformed as described in
+                                // ass_types.h for ASS_YCbCrMatrix
     int dst_x, dst_y;           // Bitmap placement inside the video frame
 
     struct ass_image *next;   // Next image, or NULL
@@ -606,6 +609,7 @@ ASS_Track *ass_new_track(ASS_Library *);
  * headers. (ass_process_chunk() will not change any of the flags.)
  * Additions to ASS_Feature are backward compatible to old libass releases (ABI
  * compatibility).
+ * After calling ass_render_frame, changing features is no longer allowed.
  * \param track track
  * \param feature the specific feature to enable or disable
  * \param enable 0 for disable, any non-0 value for enable
@@ -623,6 +627,7 @@ void ass_free_track(ASS_Track *track);
  * \brief Allocate new style.
  * \param track track
  * \return newly allocated style id >= 0, or a value < 0 on failure
+ * See GENERAL NOTE in ass_types.h.
  */
 int ass_alloc_style(ASS_Track *track);
 
@@ -630,6 +635,7 @@ int ass_alloc_style(ASS_Track *track);
  * \brief Allocate new event.
  * \param track track
  * \return newly allocated event id >= 0, or a value < 0 on failure
+ * See GENERAL NOTE in ass_types.h.
  */
 int ass_alloc_event(ASS_Track *track);
 
@@ -638,6 +644,12 @@ int ass_alloc_event(ASS_Track *track);
  * \param track track
  * \param sid style id
  * Deallocates style data. Does not modify track->n_styles.
+ * Freeing a style without subsequently setting track->n_styles
+ * to a value less than or equal to the freed style id before calling
+ * any other libass API function on the track is undefined behaviour.
+ * Additionally a freed style style still being referenced by an event
+ * in track->events will also result in undefined behaviour.
+ * See GENERAL NOTE in ass_types.h.
  */
 void ass_free_style(ASS_Track *track, int sid);
 
@@ -646,6 +658,10 @@ void ass_free_style(ASS_Track *track, int sid);
  * \param track track
  * \param eid event id
  * Deallocates event data. Does not modify track->n_events.
+ * Freeing an event without subsequently setting track->n_events
+ * to a value less than or equal to the freed event id before calling
+ * any other libass API function on the track is undefined behaviour.
+ * See GENERAL NOTE in ass_types.h
  */
 void ass_free_event(ASS_Track *track, int eid);
 
@@ -774,4 +790,4 @@ long long ass_step_sub(ASS_Track *track, long long now, int movement);
 }
 #endif
 
-
+#endif /* LIBASS_ASS_H */
