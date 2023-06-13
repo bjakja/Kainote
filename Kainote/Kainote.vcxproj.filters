@@ -50,6 +50,18 @@
     <Filter Include="N">
       <UniqueIdentifier>{c3ca781e-b31b-488d-b3a1-917354efddb0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="S">
+      <UniqueIdentifier>{a4b70e06-de2d-4c6b-8d02-05b6d8bce9e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="T">
+      <UniqueIdentifier>{052041be-2e56-4440-996b-1184e25bdf99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="U">
+      <UniqueIdentifier>{4e65dd7e-a713-441a-9f26-f791c51a4ff9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="V">
+      <UniqueIdentifier>{bb0bdda7-0448-4ac7-97cd-5db8121667e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ContextDX9.cpp">
@@ -61,56 +73,6 @@
     <ClCompile Include="Context.cpp">
       <Filter>C</Filter>
     </ClCompile>
-    <ClCompile Include="TextEditorTagList.cpp" />
-    <ClCompile Include="TimeCtrl.cpp" />
-    <ClCompile Include="Toolbar.cpp" />
-    <ClCompile Include="StyleChange.cpp" />
-    <ClCompile Include="StyleList.cpp" />
-    <ClCompile Include="Stylelistbox.cpp" />
-    <ClCompile Include="StylePreview.cpp" />
-    <ClCompile Include="Styles.cpp" />
-    <ClCompile Include="StyleStore.cpp" />
-    <ClCompile Include="SubsDialogue.cpp" />
-    <ClCompile Include="SubsFile.cpp" />
-    <ClCompile Include="SubsGrid.cpp" />
-    <ClCompile Include="SubsGridBase.cpp" />
-    <ClCompile Include="SubsGridDialogs.cpp" />
-    <ClCompile Include="SubsGridFiltering.cpp" />
-    <ClCompile Include="SubsGridPreview.cpp" />
-    <ClCompile Include="SubsGridWindow.cpp" />
-    <ClCompile Include="SubsLoader.cpp" />
-    <ClCompile Include="SubsResampleDialog.cpp" />
-    <ClCompile Include="SubsTime.cpp" />
-    <ClCompile Include="SubtitlesLibass.cpp" />
-    <ClCompile Include="SubtitlesProviderManager.cpp" />
-    <ClCompile Include="VisualAllTags.cpp" />
-    <ClCompile Include="VisualAllTagsControls.cpp" />
-    <ClCompile Include="VisualAllTagsEdition.cpp" />
-    <ClCompile Include="VisualClipRect.cpp" />
-    <ClCompile Include="VisualClips.cpp" />
-    <ClCompile Include="VisualCross.cpp" />
-    <ClCompile Include="VisualDrawingShapes.cpp" />
-    <ClCompile Include="VisualMove.cpp" />
-    <ClCompile Include="VisualMoveAll.cpp" />
-    <ClCompile Include="VisualPosition.cpp" />
-    <ClCompile Include="VisualRotationXY.cpp" />
-    <ClCompile Include="VisualRotationZ.cpp" />
-    <ClCompile Include="Visuals.cpp" />
-    <ClCompile Include="VisualScale.cpp" />
-    <ClCompile Include="SpellChecker.cpp" />
-    <ClCompile Include="SubtitlesVSFilter.cpp" />
-    <ClCompile Include="TagFindReplace.cpp" />
-    <ClCompile Include="UtilsWindows.cpp" />
-    <ClCompile Include="VideoBox.cpp" />
-    <ClCompile Include="VideoFullscreen.cpp" />
-    <ClCompile Include="VideoSlider.cpp" />
-    <ClCompile Include="VideoToolbar.cpp" />
-    <ClCompile Include="ScriptInfo.cpp" />
-    <ClCompile Include="SelectLines.cpp" />
-    <ClCompile Include="ShiftTimes.cpp" />
-    <ClCompile Include="SpellCheckerDialog.cpp" />
-    <ClCompile Include="TabPanel.cpp" />
-    <ClCompile Include="TLDialog.cpp" />
     <ClCompile Include="ColorPicker.cpp">
       <Filter>C</Filter>
     </ClCompile>
@@ -366,6 +328,156 @@
     <ClCompile Include="KainoteFrame.cpp">
       <Filter>K</Filter>
     </ClCompile>
+    <ClCompile Include="ScriptInfo.cpp">
+      <Filter>S</Filter>
+    </ClCompile>
+    <ClCompile Include="SelectLines.cpp">
+      <Filter>S</Filter>
+    </ClCompile>
+    <ClCompile Include="ShiftTimes.cpp">
+      <Filter>S</Filter>
+    </ClCompile>
+    <ClCompile Include="SpellChecker.cpp">
+      <Filter>S</Filter>
+    </ClCompile>
+    <ClCompile Include="SpellCheckerDialog.cpp">
+      <Filter>S</Filter>
+    </ClCompile>
+    <ClCompile Include="StyleChange.cpp">
+      <Filter>S</Filter>
+    </ClCompile>
+    <ClCompile Include="StyleList.cpp">
+      <Filter>S</Filter>
+    </ClCompile>
+    <ClCompile Include="Stylelistbox.cpp">
+      <Filter>S</Filter>
+    </ClCompile>
+    <ClCompile Include="StylePreview.cpp">
+      <Filter>S</Filter>
+    </ClCompile>
+    <ClCompile Include="Styles.cpp">
+      <Filter>S</Filter>
+    </ClCompile>
+    <ClCompile Include="StyleStore.cpp">
+      <Filter>S</Filter>
+    </ClCompile>
+    <ClCompile Include="SubsDialogue.cpp">
+      <Filter>S</Filter>
+    </ClCompile>
+    <ClCompile Include="SubsFile.cpp">
+      <Filter>S</Filter>
+    </ClCompile>
+    <ClCompile Include="SubsGrid.cpp">
+      <Filter>S</Filter>
+    </ClCompile>
+    <ClCompile Include="SubsGridBase.cpp">
+      <Filter>S</Filter>
+    </ClCompile>
+    <ClCompile Include="SubsGridDialogs.cpp">
+      <Filter>S</Filter>
+    </ClCompile>
+    <ClCompile Include="SubsGridFiltering.cpp">
+      <Filter>S</Filter>
+    </ClCompile>
+    <ClCompile Include="SubsGridPreview.cpp">
+      <Filter>S</Filter>
+    </ClCompile>
+    <ClCompile Include="SubsGridWindow.cpp">
+      <Filter>S</Filter>
+    </ClCompile>
+    <ClCompile Include="SubsLoader.cpp">
+      <Filter>S</Filter>
+    </ClCompile>
+    <ClCompile Include="SubsResampleDialog.cpp">
+      <Filter>S</Filter>
+    </ClCompile>
+    <ClCompile Include="SubsTime.cpp">
+      <Filter>S</Filter>
+    </ClCompile>
+    <ClCompile Include="SubtitlesLibass.cpp">
+      <Filter>S</Filter>
+    </ClCompile>
+    <ClCompile Include="SubtitlesProviderManager.cpp">
+      <Filter>S</Filter>
+    </ClCompile>
+    <ClCompile Include="SubtitlesVSFilter.cpp">
+      <Filter>S</Filter>
+    </ClCompile>
+    <ClCompile Include="TabPanel.cpp">
+      <Filter>T</Filter>
+    </ClCompile>
+    <ClCompile Include="TagFindReplace.cpp">
+      <Filter>T</Filter>
+    </ClCompile>
+    <ClCompile Include="TextEditorTagList.cpp">
+      <Filter>T</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeCtrl.cpp">
+      <Filter>T</Filter>
+    </ClCompile>
+    <ClCompile Include="TLDialog.cpp">
+      <Filter>T</Filter>
+    </ClCompile>
+    <ClCompile Include="Toolbar.cpp">
+      <Filter>T</Filter>
+    </ClCompile>
+    <ClCompile Include="UtilsWindows.cpp">
+      <Filter>U</Filter>
+    </ClCompile>
+    <ClCompile Include="Videobox.cpp">
+      <Filter>V</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoFullscreen.cpp">
+      <Filter>V</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoSlider.cpp">
+      <Filter>V</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoToolbar.cpp">
+      <Filter>V</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualAllTags.cpp">
+      <Filter>V</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualAllTagsControls.cpp">
+      <Filter>V</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualAllTagsEdition.cpp">
+      <Filter>V</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualClipRect.cpp">
+      <Filter>V</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualClips.cpp">
+      <Filter>V</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualCross.cpp">
+      <Filter>V</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualDrawingShapes.cpp">
+      <Filter>V</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualMove.cpp">
+      <Filter>V</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualMoveAll.cpp">
+      <Filter>V</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualPosition.cpp">
+      <Filter>V</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualRotationXY.cpp">
+      <Filter>V</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualRotationZ.cpp">
+      <Filter>V</Filter>
+    </ClCompile>
+    <ClCompile Include="Visuals.cpp">
+      <Filter>V</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualScale.cpp">
+      <Filter>V</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ContextDX9.h">
@@ -377,46 +489,6 @@
     <ClInclude Include="Context.h">
       <Filter>C</Filter>
     </ClInclude>
-    <ClInclude Include="TextEditorTagList.h" />
-    <ClInclude Include="TimeCtrl.h" />
-    <ClInclude Include="Toolbar.h" />
-    <ClInclude Include="StyleChange.h" />
-    <ClInclude Include="StyleList.h" />
-    <ClInclude Include="Stylelistbox.h" />
-    <ClInclude Include="StylePreview.h" />
-    <ClInclude Include="Styles.h" />
-    <ClInclude Include="StyleStore.h" />
-    <ClInclude Include="SubsDialogue.h" />
-    <ClInclude Include="SubsFile.h" />
-    <ClInclude Include="SubsGrid.h" />
-    <ClInclude Include="SubsGridBase.h" />
-    <ClInclude Include="SubsGridDialogs.h" />
-    <ClInclude Include="SubsGridFiltering.h" />
-    <ClInclude Include="SubsGridPreview.h" />
-    <ClInclude Include="SubsGridWindow.h" />
-    <ClInclude Include="SubsLoader.h" />
-    <ClInclude Include="SubsResampleDialog.h" />
-    <ClInclude Include="SubsTime.h" />
-    <ClInclude Include="SubtitlesProvider.h" />
-    <ClInclude Include="SubtitlesProviderManager.h" />
-    <ClInclude Include="VisualAllTagsControls.h" />
-    <ClInclude Include="VisualAllTagsEdition.h" />
-    <ClInclude Include="VisualDrawingShapes.h" />
-    <ClInclude Include="Visuals.h" />
-    <ClInclude Include="SpellChecker.h" />
-    <ClInclude Include="TagFindReplace.h" />
-    <ClInclude Include="UtilsWindows.h" />
-    <ClInclude Include="VersionKainote.h" />
-    <ClInclude Include="VideoBox.h" />
-    <ClInclude Include="VideoFullscreen.h" />
-    <ClInclude Include="VideoSlider.h" />
-    <ClInclude Include="VideoToolbar.h" />
-    <ClInclude Include="ScriptInfo.h" />
-    <ClInclude Include="SelectLines.h" />
-    <ClInclude Include="ShiftTimes.h" />
-    <ClInclude Include="SpellCheckerDialog.h" />
-    <ClInclude Include="TabPanel.h" />
-    <ClInclude Include="TLDialog.h" />
     <ClInclude Include="CsriMod.h">
       <Filter>C</Filter>
     </ClInclude>
@@ -675,8 +747,132 @@
     <ClInclude Include="KainoteFrame.h">
       <Filter>K</Filter>
     </ClInclude>
-    <ClInclude Include="VisualClipPoint.h" />
-    <ClInclude Include="VisualClips.h" />
+    <ClInclude Include="ScriptInfo.h">
+      <Filter>S</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectLines.h">
+      <Filter>S</Filter>
+    </ClInclude>
+    <ClInclude Include="ShiftTimes.h">
+      <Filter>S</Filter>
+    </ClInclude>
+    <ClInclude Include="SpellChecker.h">
+      <Filter>S</Filter>
+    </ClInclude>
+    <ClInclude Include="SpellCheckerDialog.h">
+      <Filter>S</Filter>
+    </ClInclude>
+    <ClInclude Include="StyleChange.h">
+      <Filter>S</Filter>
+    </ClInclude>
+    <ClInclude Include="StyleList.h">
+      <Filter>S</Filter>
+    </ClInclude>
+    <ClInclude Include="Stylelistbox.h">
+      <Filter>S</Filter>
+    </ClInclude>
+    <ClInclude Include="StylePreview.h">
+      <Filter>S</Filter>
+    </ClInclude>
+    <ClInclude Include="Styles.h">
+      <Filter>S</Filter>
+    </ClInclude>
+    <ClInclude Include="StyleStore.h">
+      <Filter>S</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsDialogue.h">
+      <Filter>S</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsFile.h">
+      <Filter>S</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsGrid.h">
+      <Filter>S</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsGridBase.h">
+      <Filter>S</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsGridDialogs.h">
+      <Filter>S</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsGridFiltering.h">
+      <Filter>S</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsGridPreview.h">
+      <Filter>S</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsGridWindow.h">
+      <Filter>S</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsLoader.h">
+      <Filter>S</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsResampleDialog.h">
+      <Filter>S</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsTime.h">
+      <Filter>S</Filter>
+    </ClInclude>
+    <ClInclude Include="SubtitlesProvider.h">
+      <Filter>S</Filter>
+    </ClInclude>
+    <ClInclude Include="SubtitlesProviderManager.h">
+      <Filter>S</Filter>
+    </ClInclude>
+    <ClInclude Include="TabPanel.h">
+      <Filter>T</Filter>
+    </ClInclude>
+    <ClInclude Include="TagFindReplace.h">
+      <Filter>T</Filter>
+    </ClInclude>
+    <ClInclude Include="TextEditorTagList.h">
+      <Filter>T</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeCtrl.h">
+      <Filter>T</Filter>
+    </ClInclude>
+    <ClInclude Include="TLDialog.h">
+      <Filter>T</Filter>
+    </ClInclude>
+    <ClInclude Include="Toolbar.h">
+      <Filter>T</Filter>
+    </ClInclude>
+    <ClInclude Include="UtilsWindows.h">
+      <Filter>U</Filter>
+    </ClInclude>
+    <ClInclude Include="VersionKainote.h">
+      <Filter>V</Filter>
+    </ClInclude>
+    <ClInclude Include="Videobox.h">
+      <Filter>V</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoFullscreen.h">
+      <Filter>V</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoSlider.h">
+      <Filter>V</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoToolbar.h">
+      <Filter>V</Filter>
+    </ClInclude>
+    <ClInclude Include="VisualAllTagsControls.h">
+      <Filter>V</Filter>
+    </ClInclude>
+    <ClInclude Include="VisualAllTagsEdition.h">
+      <Filter>V</Filter>
+    </ClInclude>
+    <ClInclude Include="VisualClipPoint.h">
+      <Filter>V</Filter>
+    </ClInclude>
+    <ClInclude Include="VisualClips.h">
+      <Filter>V</Filter>
+    </ClInclude>
+    <ClInclude Include="VisualDrawingShapes.h">
+      <Filter>V</Filter>
+    </ClInclude>
+    <ClInclude Include="Visuals.h">
+      <Filter>V</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc">

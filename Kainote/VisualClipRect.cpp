@@ -230,7 +230,7 @@ void ClipRect::SetCurVisual()
 	const FindData& data = GetResult();
 	if (found && data.finding.Freq(L',') == 3){
 		int match = 1;
-		wxRegEx re(L"\\(([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)", wxRE_ADVANCED);
+		wxRegEx re(L"\\(([0-9.-]+)[, ]*([0-9.-]+)[, ]*([0-9.-]+)[, ]*([0-9.-]+)", wxRE_ADVANCED);
 
 		if (re.Matches(data.finding)){
 			x1 = wxAtoi(re.GetMatch(data.finding, match));

@@ -913,6 +913,7 @@ void PopupList::OnPaint(wxPaintEvent &event)
 	tdc.SetBrush(wxBrush(Options.GetColour(MENUBAR_BACKGROUND)));
 	tdc.SetPen(wxPen(Options.GetColour(WINDOW_BORDER)));
 	tdc.DrawRectangle(0, 0, ow, h);
+	int newWidth = -1;
 	for (int i = 0; i < maxsize; i++)
 	{
 		int scrollPos = i + scPos;
@@ -947,14 +948,9 @@ void PopupList::OnPaint(wxPaintEvent &event)
 			GetTextExtent(desc, &descw, &desch, nullptr, nullptr, &font);
 			//the font name cannot have 1000+ chars that's why not check it 
 			if (descw + textw + 12 > w) {
-				SetSize(wxSize(descw + textw + 40, h));
-				wxPoint newPosition = Parent->ClientToScreen(originalPosition);
-				SetPosition(newPosition);
-				if (scroll) {
-					int thickness = scroll->GetThickness();
-					scroll->SetSize(descw + textw + 40 - thickness - 1, 1, thickness, h - 2);
-				}
-				return;
+				if(newWidth < descw + textw + 40)
+					newWidth = descw + textw + 40;
+
 			}
 
 			tdc.SetFont(copyFont);
@@ -964,6 +960,17 @@ void PopupList::OnPaint(wxPaintEvent &event)
 		if (desc.length() > 1000)
 			desc = desc.Mid(0, 1000);
 		tdc.DrawText(desc, 4, (height*i) + 3);
+	}
+	if (newWidth > 0) {
+		SetSize(wxSize(newWidth, h));
+		wxPoint newPosition = Parent->ClientToScreen(originalPosition);
+		SetPosition(newPosition);
+		
+		if (scroll) {
+			int thickness = scroll->GetThickness();
+			scroll->SetSize(newWidth - thickness - 1, 1, thickness, h - 2);
+		}
+		return;
 	}
 
 	wxPaintDC dc(this);
