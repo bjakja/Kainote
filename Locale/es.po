@@ -6,7 +6,7 @@
 # NekoFX <mundosaiyajinhd@gmail.com>, 2022.
 # CiferrC <rc.uchiha@gmail.com>, 2022.
 msgid ""
-msgstr "Project-Id-Version: Kainote\nReport-Msgid-Bugs-To: poiiiii4yy@gmail.com\nPOT-Creation-Date: 2022-06-06 20:10+0700\nPO-Revision-Date: 2022-06-27 12:19+0000\nLast-Translator: CiferrC <rc.uchiha@gmail.com>\nLanguage-Team: Spanish <https://hosted.weblate.org/projects/kainote/kainote/es/>\nLanguage: es\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=n != 1;\nX-Generator: Weblate 4.13.1-dev\nX-Poedit-Basepath: ../Kainote\nX-Poedit-SourceCharset: UTF-8\nX-Poedit-KeywordsList: _\nX-Poedit-SearchPath-0: .\nX-Poedit-SearchPathExcluded-0: Bitmaps\nX-Poedit-SearchPathExcluded-1: GFFT\nX-Poedit-SearchPathExcluded-2: include\nX-Poedit-SearchPathExcluded-3: Win32\nX-Poedit-SearchPathExcluded-4: x64\nX-Poedit-SearchPathExcluded-5: ffms2.lib\nX-Poedit-SearchPathExcluded-6: ffms2_x64.lib\nX-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\nX-Poedit-SearchPathExcluded-8: Kainote.vcxproj\nX-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\nX-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\nX-Poedit-SearchPathExcluded-11: RCa00888\nX-Poedit-SearchPathExcluded-12: resource.aps\nX-Poedit-SearchPathExcluded-13: resource.rc\nX-Poedit-SearchPathExcluded-14: CsriMod.cpp\nX-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\nX-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
+msgstr "Project-Id-Version: Kainote\nReport-Msgid-Bugs-To: poiiiii4yy@gmail.com\nPOT-Creation-Date: 2022-06-06 20:10+0700\nPO-Revision-Date: 2022-07-12 05:19+0000\nLast-Translator: NekoFX <mundosaiyajinhd@gmail.com>\nLanguage-Team: Spanish <https://hosted.weblate.org/projects/kainote/kainote/es/>\nLanguage: es\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=n != 1;\nX-Generator: Weblate 4.14-dev\nX-Poedit-Basepath: ../Kainote\nX-Poedit-SourceCharset: UTF-8\nX-Poedit-KeywordsList: _\nX-Poedit-SearchPath-0: .\nX-Poedit-SearchPathExcluded-0: Bitmaps\nX-Poedit-SearchPathExcluded-1: GFFT\nX-Poedit-SearchPathExcluded-2: include\nX-Poedit-SearchPathExcluded-3: Win32\nX-Poedit-SearchPathExcluded-4: x64\nX-Poedit-SearchPathExcluded-5: ffms2.lib\nX-Poedit-SearchPathExcluded-6: ffms2_x64.lib\nX-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\nX-Poedit-SearchPathExcluded-8: Kainote.vcxproj\nX-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\nX-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\nX-Poedit-SearchPathExcluded-11: RCa00888\nX-Poedit-SearchPathExcluded-12: resource.aps\nX-Poedit-SearchPathExcluded-13: resource.rc\nX-Poedit-SearchPathExcluded-14: CsriMod.cpp\nX-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\nX-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
 
 #: AudioBox.cpp:72
 msgid "Pasek szukania"
@@ -894,22 +894,18 @@ msgid "Wklej wszystko"
 msgstr "Pegar todo"
 
 #: EditBox.cpp:253 HotkeysNaming.cpp:100
-#, fuzzy
 msgid "Wklej zaznaczone"
 msgstr "Pegar el archivo seleccionado"
 
 #: EditBox.cpp:255 HotkeysNaming.cpp:98
-#, fuzzy
 msgid "Ukryj oryginał"
 msgstr "Ocultar el original"
 
 #: EditBox.cpp:257
-#, fuzzy
 msgid "Niepewne"
 msgstr "No confirmado"
 
 #: EditBox.cpp:259
-#, fuzzy
 msgid "Przenoszenie tagów"
 msgstr "Etiquetas en movimiento"
 
@@ -964,7 +960,6 @@ msgid "Zmień ilość przycisków"
 msgstr "Cambiar la cantidad de botones"
 
 #: EditBox.cpp:1930
-#, fuzzy
 msgid "Nie znaleziono niepewnych"
 msgstr "No confirmado no encontrado"
 
@@ -973,7 +968,6 @@ msgid "Nie znaleziono nieprzetłumaczonych"
 msgstr "No se encontró la traducción"
 
 #: EditBox.cpp:1995
-#, fuzzy
 msgid "Zarządzaj przyciskami tagów"
 msgstr "Gestionar los botones de las etiquetas"
 
@@ -990,7 +984,6 @@ msgid "Filtry:"
 msgstr "Filtros:"
 
 #: FindReplaceDialog.cpp:79
-#, fuzzy
 msgid "Katalog szukania napisów:"
 msgstr "Carpeta de búsqueda de subtítulos:"
 
@@ -1003,17 +996,14 @@ msgid "Katalog:"
 msgstr "Catálogo:"
 
 #: FindReplaceDialog.cpp:98 SelectLines.cpp:60
-#, fuzzy
 msgid "Uwzględniaj wielkość liter"
 msgstr "Diferenciar may./min."
 
 #: FindReplaceDialog.cpp:102
-#, fuzzy
 msgid "Początek tekstu"
 msgstr "Inicio del texto"
 
 #: FindReplaceDialog.cpp:104
-#, fuzzy
 msgid "Koniec tekstu"
 msgstr "Fin del texto"
 
@@ -1022,12 +1012,10 @@ msgid "Uwzględnij komentarze"
 msgstr "Usar comentarios"
 
 #: FindReplaceDialog.cpp:112
-#, fuzzy
 msgid "Pomiń tagi"
 msgstr "Saltar etiquetas"
 
 #: FindReplaceDialog.cpp:114
-#, fuzzy
 msgid "Pomiń tekst"
 msgstr "Saltar texto"
 
@@ -1038,21 +1026,18 @@ msgid "Znajdź"
 msgstr "Buscar"
 
 #: FindReplaceDialog.cpp:168
-#, fuzzy
 msgid ""
 "Znajdź we wszystkich\n"
 "otwartych napisach"
 msgstr "Encuentra en todos los subtítulos\nabiertos"
 
 #: FindReplaceDialog.cpp:170
-#, fuzzy
 msgid ""
 "Znajdź wszystko\n"
 "w bieżących napisach"
 msgstr "Encuentre todos\nen los subtítulos actuales"
 
 #: FindReplaceDialog.cpp:184
-#, fuzzy
 msgid "Zamień następne"
 msgstr "Intercambio siguiente"
 
@@ -1061,7 +1046,6 @@ msgid "Zamień wszystko"
 msgstr "Sustituir todo"
 
 #: FindReplaceDialog.cpp:187
-#, fuzzy
 msgid ""
 "Zamień we wszystkich\n"
 "otwartych napisach"
@@ -1069,12 +1053,10 @@ msgstr "Encuentra en todos los subtítulos\nabiertos"
 
 #: FindReplaceDialog.cpp:205 FindReplaceDialog.cpp:413
 #: FindReplaceDialog.cpp:429
-#, fuzzy
 msgid "Znajdź w napisach"
 msgstr "Buscar en los subtítulos"
 
 #: FindReplaceDialog.cpp:207
-#, fuzzy
 msgid "Zamień w napisach"
 msgstr "Sustituir en los subtítulos"
 
@@ -1091,27 +1073,22 @@ msgid "Zaznaczone linijki"
 msgstr "Líneas seleccionadas"
 
 #: FindReplaceDialog.cpp:251
-#, fuzzy
 msgid "Od zaznaczonej"
 msgstr "De la selección"
 
 #: FindReplaceDialog.cpp:413 FindReplaceDialog.cpp:428
-#, fuzzy
 msgid "Znajdź i zamień"
 msgstr "Buscar y reemplazar"
 
 #: FindReplaceResultsDialog.cpp:29 MispellReplacerDialog.cpp:192
-#, fuzzy
 msgid "Wyniki szukania"
 msgstr "Búsqueda de resultados"
 
 #: FindReplaceResultsDialog.cpp:47 MispellReplacerDialog.cpp:213
-#, fuzzy
 msgid "Zahacz wszystko"
 msgstr "Seleccionar todo"
 
 #: FindReplaceResultsDialog.cpp:48 MispellReplacerDialog.cpp:214
-#, fuzzy
 msgid "Odhacz wszystko"
 msgstr "Desmarcar todos"
 
@@ -1127,12 +1104,10 @@ msgid "Linia %i: "
 msgstr "Línea %i: "
 
 #: FontCatalogList.cpp:60
-#, fuzzy
 msgid "Wprowadź nową nazwę katalogu"
 msgstr "Elija el nuevo nombre del catálogo"
 
 #: FontCatalogList.cpp:83
-#, fuzzy
 msgid "Proszę wprowadzić nazwę nowego katalogu"
 msgstr "Introduzca un nombre para el nuevo catálogo"
 
@@ -1142,17 +1117,14 @@ msgid "Informacja"
 msgstr "Información"
 
 #: FontCatalogList.cpp:93
-#, fuzzy
 msgid "Zarządzanie katalogami czcionek"
 msgstr "Gestionar los catálogos de fuentes"
 
 #: FontCatalogList.cpp:99 TextEditorTagList.cpp:373
-#, fuzzy
 msgid "Nazwa czcionki"
 msgstr "Nombre de fuente"
 
 #: FontCatalogList.cpp:100
-#, fuzzy
 msgid "Katalog"
 msgstr "Catálogo"
 
@@ -1168,7 +1140,6 @@ msgid "Usuń"
 msgstr "Eliminar"
 
 #: FontCatalogList.cpp:109 stylestore.cpp:89 stylestore.cpp:142
-#, fuzzy
 msgid "Wczytaj"
 msgstr "Cargar"
 
@@ -1177,63 +1148,53 @@ msgid "Zapisz Filtr"
 msgstr "Guardar filtro"
 
 #: FontCatalogList.cpp:142
-#, fuzzy
 msgid "Czy na pewno chcesz usunąć ten katalog?"
 msgstr "¿Está seguro de que quiere eliminar este catálogo?"
 
 #: FontCatalogList.cpp:168
-#, fuzzy
 msgid "Katalogi:"
 msgstr "Catálogos:"
 
 #: FontCatalogList.cpp:199 SubsGridBase.cpp:1656
-#, fuzzy
 msgid "Autozapis"
 msgstr "Autoguardado"
 
 #: FontCatalogList.cpp:312 KainoteFrame.cpp:844 KainoteFrame.cpp:860
 #: VideoBox.cpp:988
-#, fuzzy
 msgid "Wybierz plik wideo"
 msgstr "Elija el archivo de vídeo"
 
 #: FontCatalogList.cpp:313
-#, fuzzy
 msgid "Pliki tekstowe (*.txt)|*.txt"
 msgstr "Archivos de texto (*.txt)|*.txt"
 
 #: FontCatalogList.cpp:334
-#, fuzzy, c-format
+#, c-format
 msgid "Nie można odnaleźć elementów linii %i"
 msgstr "No se pueden encontrar elementos de la línea %i"
 
 #: FontCatalogList.cpp:601
-#, fuzzy, c-format
+#, c-format
 msgid "Nie można dodać czcionki %s."
 msgstr "No se puede añadir la fuente \"%s\"."
 
 #: FontCollector.cpp:156
-#, fuzzy
 msgid "Wybierz folder"
 msgstr "Seleccionar una carpeta"
 
 #: FontCollector.cpp:164
-#, fuzzy
 msgid "Sprawdź dostępność czcionek"
 msgstr "Comprobar la disponibilidad de las fuentes"
 
 #: FontCollector.cpp:188
-#, fuzzy
 msgid "Rozpocznij na zakładkach"
 msgstr "Inicio en las pestañas"
 
 #: FontCollector.cpp:189
-#, fuzzy
 msgid "Folder zapisu"
 msgstr "Guardar carpeta"
 
 #: FontCollector.cpp:452
-#, fuzzy
 msgid "Brak wczytanego wideo lub napisów"
 msgstr "No hay vídeo ni subtítulos cargados"
 
@@ -1245,415 +1206,349 @@ msgstr "No hay vídeo ni subtítulos cargados"
 #: findreplace.cpp:406 findreplace.cpp:1326 findreplace.cpp:1330
 #: stylestore.cpp:278 stylestore.cpp:310 stylestore.cpp:349 stylestore.cpp:497
 #: stylestore.cpp:642
-#, fuzzy
 msgid "Potwierdzenie"
 msgstr "Confirmación"
 
 #: FontCollector.cpp:583 FontCollector.cpp:640
-#, fuzzy
 msgid "Nie znaleziono czcionki \""
 msgstr "Fuente no encontrada \""
 
 #: FontCollector.cpp:596 FontCollector.cpp:655
-#, fuzzy, c-format
+#, c-format
 msgid "Znaleziono czcionkę \"%s\"\n"
 msgstr "Se ha encontrado la fuente \"%s\"\n"
 
 #: FontCollector.cpp:801 FontCollector.cpp:817
-#, fuzzy
 msgid "znaleziono"
 msgstr "encontrado"
 
 #: FontCollector.cpp:801 FontCollector.cpp:817
-#, fuzzy
 msgid "skopiowano"
 msgstr "copiado"
 
 #: FontCollector.cpp:802 FontCollector.cpp:818
-#, fuzzy
 msgid "czcionkę"
-msgstr "tipo de letra"
+msgstr "fuentes"
 
 #: FontCollector.cpp:802 FontCollector.cpp:805 FontCollector.cpp:809
 #: FontCollector.cpp:818
-#, fuzzy
 msgid "czcionki"
 msgstr "fuentes"
 
 #: FontCollector.cpp:802 FontCollector.cpp:805 FontCollector.cpp:809
 #: FontCollector.cpp:818
-#, fuzzy
 msgid "czcionek"
 msgstr "fuentes"
 
 #: FontCollector.cpp:804
-#, fuzzy, c-format
+#, c-format
 msgid "Nie znaleziono %s.\n"
 msgstr "No se ha encontrado %s.\n"
 
 #: FontCollector.cpp:833
-#, fuzzy, c-format
+#, c-format
 msgid "Dodano do archiwum czcionkę \"%s\"."
 msgstr "Añadido a la fuente de archivo \"%s\"."
 
 #: FontCollector.cpp:842
-#, fuzzy, c-format
+#, c-format
 msgid "Nie można spakować czcionki \"%s\"."
 msgstr "No se puede comprimir la fuente \"%s\"."
 
 #: FontCollector.cpp:848
-#, fuzzy, c-format
+#, c-format
 msgid "Skopiowano czcionkę \"%s\"."
 msgstr "Fuente copiada \"%s\"."
 
 #: FontCollector.cpp:853
-#, fuzzy, c-format
+#, c-format
 msgid "Nie można skopiować czcionki \"%s\"."
 msgstr "No se puede copiar la fuente \"%s\"."
 
 #: FontCollector.cpp:867
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Wideo: %s\n"
 "\n"
 msgstr "Vídeo: %s\n\n"
 
 #: FontCollector.cpp:889
-#, fuzzy
 msgid "Nie można otworzyć pliku MKV"
 msgstr "No se puede abrir el archivo MKV."
 
 #: FontCollector.cpp:910
-#, fuzzy
 msgid "Zapisano czcionkę o nazwie \""
 msgstr "Guardó una fuente llamada \""
 
 #: FontCollector.cpp:914
-#, fuzzy
 msgid "Nie można zapisać czcionki o nazwie \""
 msgstr "No se puede guardar la fuente llamada \""
 
 #: FontCollector.cpp:951
-#, fuzzy
 msgid "Nie można utworzyć folderu."
 msgstr "No se puede crear la carpeta."
 
 #: FontCollector.cpp:1033
-#, fuzzy, c-format
+#, c-format
 msgid "Znaleziono czcionkę \"%s\"."
 msgstr "Encontrada la fuente \"%s\"."
 
 #: FontCollector.cpp:1072
-#, fuzzy, c-format
+#, c-format
 msgid "Nie można sprawdzić znaków czcionki \"%s\"."
 msgstr "No se puede comprobar la fuente \"%s\" caracteres."
 
 #: FontCollector.cpp:1088
-#, fuzzy, c-format
+#, c-format
 msgid "Nie można pobrać zawartości czcionki \"%s\"."
 msgstr "No se puede obtener el contenido de la fuente \"%s\"."
 
 #: FontCollector.cpp:1109
-#, fuzzy, c-format
+#, c-format
 msgid "Nie można otworzyć pliku \"%s\"."
 msgstr "No se puede abrir el archivo \"%s\"."
 
 #: FontCollector.cpp:1117
-#, fuzzy, c-format
+#, c-format
 msgid "Rozmiar czcionki \"%s\" się różni."
 msgstr "El tamaño de la fuente \"%s\" es diferente."
 
 #: FontCollector.cpp:1124
-#, fuzzy, c-format
+#, c-format
 msgid "Nie można odczytać czcionki \"%s\" z folderu Fonts."
 msgstr "No se ha podido leer \"%s\" la fuente de la carpeta Fonts."
 
 #: FontCollector.cpp:1130 FontCollector.cpp:1150
-#, fuzzy, c-format
+#, c-format
 msgid "Znaleziono plik czcionki \"%s\"."
 msgstr "Encontrado \"%s\" archivo de fuentes."
 
 #: FontCollector.cpp:1167
-#, fuzzy, c-format
+#, c-format
 msgid "Nie można znaleźć czcionki \"%s\" w folderze Fonts."
 msgstr "No se encuentra la fuente \"%s\" en la carpeta Fonts."
 
 #: FontCollector.cpp:1214
-#, fuzzy
 msgid "Nie można stworzyć procesu, muxowanie przerwane"
 msgstr "No se ha podido crear el proceso. Muxing cancelado"
 
 #: FontDialog.cpp:372
-#, fuzzy
 msgid "Wybierz czcionkę"
 msgstr "Seleccione un tipo de letra"
 
 #: FontDialog.cpp:388 StyleChange.cpp:688
-#, fuzzy
 msgid "Czcionka"
 msgstr "Fuente"
 
 #: FontDialog.cpp:421 FontDialog.cpp:460 StyleChange.cpp:81 StyleChange.cpp:102
-#, fuzzy
 msgid "Wszystkie czcionki"
 msgstr "Todas las fuentes"
 
 #: FontDialog.cpp:422 FontDialog.cpp:461 StyleChange.cpp:82 StyleChange.cpp:103
-#, fuzzy
 msgid "Bez katalogu"
 msgstr "Sin catálogo"
 
 #: FontDialog.cpp:429 HotkeysNaming.cpp:151 StyleChange.cpp:88 SubsGrid.cpp:183
-#, fuzzy
 msgid "Filtruj"
 msgstr "Filtro"
 
 #: FontDialog.cpp:445
-#, fuzzy
 msgid "Filtrowanie i katalogi czcionek"
 msgstr "Filtros y catálogos de fuentes"
 
 #: FontEnumerator.cpp:210
-#, fuzzy
 msgid "Nie można stworzyć uchwytu notyfikacji zmian folderu czcionek."
 msgstr "No se puede crear un gestor de notificaciones para la carpeta de fuentes."
 
 #: FontEnumerator.cpp:231
-#, fuzzy
 msgid ""
 "Nie można stworzyć następnego uchwytu notyfikacji zmian folderu czcionek."
 msgstr "No se puede crear el siguiente gestor de notificaciones para la carpeta de fuentes."
 
 #: Hotkeys.cpp:135 HotkeysNaming.cpp:257 Notebook.cpp:564
-#, fuzzy
 msgid "Otwórz nową zakładkę"
 msgstr "Abrir nueva pestaña"
 
 #: Hotkeys.cpp:136 HotkeysNaming.cpp:258
-#, fuzzy
 msgid "Zamknij bieżącą zakładkę"
 msgstr "Cerrar la pestaña actual"
 
 #: Hotkeys.cpp:137 HotkeysNaming.cpp:77
-#, fuzzy
 msgid "Okno zmiany czasów"
-msgstr "Horarios de los turnos"
+msgstr "Shift times"
 
 #: Hotkeys.cpp:138 HotkeysNaming.cpp:81 KainoteFrame.cpp:294
-#, fuzzy
 msgid "Konwertuj do ASS"
 msgstr "Convertir a ASS"
 
 #: Hotkeys.cpp:139 HotkeysNaming.cpp:82 KainoteFrame.cpp:296
-#, fuzzy
 msgid "Konwertuj do SRT"
 msgstr "Convertir a SRT"
 
 #: Hotkeys.cpp:140 HotkeysNaming.cpp:83 KainoteFrame.cpp:298
-#, fuzzy
 msgid "Konwertuj do MDVD"
 msgstr "Convertir a MDVD"
 
 #: Hotkeys.cpp:141 HotkeysNaming.cpp:84 KainoteFrame.cpp:300
-#, fuzzy
 msgid "Konwertuj do MPL2"
 msgstr "Convertir a MPL2"
 
 #: Hotkeys.cpp:142 HotkeysNaming.cpp:85 KainoteFrame.cpp:302
-#, fuzzy
 msgid "Konwertuj do TMP"
 msgstr "Convertir a TMP"
 
 #: Hotkeys.cpp:144 HotkeysNaming.cpp:121 KainoteFrame.cpp:287
-#, fuzzy
 msgid "Włącz / Wyłącz edytor"
 msgstr "Activar / Desactivar el editor"
 
 #: Hotkeys.cpp:145 HotkeysNaming.cpp:197 KainoteFrame.cpp:219 VideoBox.cpp:874
-#, fuzzy
 msgid "Otwórz wideo"
 msgstr "Abrir el vídeo"
 
 #: Hotkeys.cpp:147 HotkeysNaming.cpp:131
-#, fuzzy
 msgid "Znajdź i zmień"
 msgstr "Buscar y reemplazar"
 
 #: Hotkeys.cpp:150 HotkeysNaming.cpp:172 KainoteFrame.cpp:189 SubsFile.cpp:24
 #: SubsFile.cpp:54
-#, fuzzy
 msgid "Historia"
 msgstr "Historia"
 
 #: Hotkeys.cpp:151 HotkeysNaming.cpp:196 VideoBox.cpp:876
-#, fuzzy
 msgid "Otwórz napisy"
 msgstr "Abrir subtítulos"
 
 #: Hotkeys.cpp:152 HotkeysNaming.cpp:217 Notebook.cpp:853 ScriptInfo.cpp:113
-#, fuzzy
 msgid "Zapisz"
 msgstr "Guardar"
 
 #: Hotkeys.cpp:153 HotkeysNaming.cpp:218
-#, fuzzy
 msgid "Zapisz jako..."
 msgstr "Guardar como..."
 
 #: Hotkeys.cpp:154 HotkeysNaming.cpp:215 SubsGrid.cpp:228
-#, fuzzy
 msgid "Usuń tekst"
 msgstr "Eliminar texto"
 
 #: Hotkeys.cpp:155 HotkeysNaming.cpp:213
-#, fuzzy
 msgid "Usuń linijkę"
 msgstr "Borrar línea"
 
 #: Hotkeys.cpp:156 HotkeysNaming.cpp:228 KainoteFrame.cpp:231
-#, fuzzy
 msgid "Wstaw czas początkowy z wideo"
 msgstr "Insertar la hora de inicio del vídeo"
 
 #: Hotkeys.cpp:157 HotkeysNaming.cpp:227 KainoteFrame.cpp:233
-#, fuzzy
 msgid "Wstaw czas końcowy z wideo"
 msgstr "Insertar la hora de finalización del vídeo"
 
 #: Hotkeys.cpp:158 Hotkeys.cpp:176 HotkeysNaming.cpp:201 HotkeysNaming.cpp:202
 #: VideoBox.cpp:149 VideoFullscreen.cpp:56
-#, fuzzy
 msgid "Odtwórz / Pauza"
 msgstr "Reproducir / Pausa"
 
 #: Hotkeys.cpp:159 HotkeysNaming.cpp:206 KainoteFrame.cpp:235
-#, fuzzy
 msgid "Klatka w tył"
 msgstr "Fotograma anterior"
 
 #: Hotkeys.cpp:160 HotkeysNaming.cpp:191 KainoteFrame.cpp:237
-#, fuzzy
 msgid "Klatka w przód"
-msgstr "Siguiente marco"
+msgstr "Siguiente fotograma"
 
 #: Hotkeys.cpp:161 Hotkeys.cpp:201 HotkeysNaming.cpp:53 HotkeysNaming.cpp:207
-#, fuzzy
 msgid "Poprzednia linijka"
-msgstr "Enlace anterior"
+msgstr "Línea previa"
 
 #: Hotkeys.cpp:162 Hotkeys.cpp:203 HotkeysNaming.cpp:55 HotkeysNaming.cpp:192
-#, fuzzy
 msgid "Następna linijka"
 msgstr "Siguiente línea"
 
 #: Hotkeys.cpp:163 HotkeysNaming.cpp:262 KainoteFrame.cpp:194
-#, fuzzy
 msgid "Znajdź następny"
 msgstr "Buscar siguiente"
 
 #: Hotkeys.cpp:164 HotkeysNaming.cpp:182
-#, fuzzy
 msgid "Scal z poprzednią linijką"
 msgstr "Combinar con la línea anterior"
 
 #: Hotkeys.cpp:165 HotkeysNaming.cpp:183
-#, fuzzy
 msgid "Scal z następną linijką"
 msgstr "Combinar con la línea siguiente"
 
 #: Hotkeys.cpp:166 HotkeysNaming.cpp:234
-#, fuzzy
 msgid "Przyklej start do klatki kluczowej"
 msgstr "Cambiar la hora de inicio al fotograma clave más cercano"
 
 #: Hotkeys.cpp:167 HotkeysNaming.cpp:233
-#, fuzzy
 msgid "Przyklej koniec do klatki kluczowej"
 msgstr "Cambiar la hora de finalización al fotograma clave más cercano"
 
 #: Hotkeys.cpp:168 HotkeysNaming.cpp:193
-#, fuzzy
 msgid "Następna karta"
 msgstr "Siguiente pestaña"
 
 #: Hotkeys.cpp:169 HotkeysNaming.cpp:208
-#, fuzzy
 msgid "Poprzednia karta"
 msgstr "Anterior pestaña"
 
 #: Hotkeys.cpp:170 HotkeysNaming.cpp:222
-#, fuzzy
 msgid "Zaznacz linię z czasem wideo"
 msgstr "Seleccionar la línea en la posición de vídeo actual"
 
 #: Hotkeys.cpp:172 HotkeysNaming.cpp:88
-#, fuzzy
 msgid "Duplikuj linie"
 msgstr "Líneas duplicadas"
 
 #: Hotkeys.cpp:173 HotkeysNaming.cpp:86 SubsGrid.cpp:212
-#, fuzzy
 msgid "Kopiuj kolumny"
 msgstr "Copiar columnas"
 
 #: Hotkeys.cpp:174 HotkeysNaming.cpp:198 SubsGrid.cpp:213
-#, fuzzy
 msgid "Wklej kolumny"
 msgstr "Pegar columnas"
 
 #: Hotkeys.cpp:175 HotkeysNaming.cpp:232 SubsGrid.cpp:220
-#, fuzzy
 msgid "Pokaż podgląd napisów"
 msgstr "Mostrar vista previa de los subtítulos"
 
 #: Hotkeys.cpp:181 HotkeysNaming.cpp:194 VideoBox.cpp:155
 #: VideoFullscreen.cpp:62
-#, fuzzy
 msgid "Następny plik"
-msgstr "Archivo siguiente"
+msgstr "Siguiente archivo"
 
 #: Hotkeys.cpp:182 HotkeysNaming.cpp:209 VideoBox.cpp:147
-#, fuzzy
 msgid "Poprzedni plik"
-msgstr "Archivo anterior"
+msgstr "Anterior archivo"
 
 #: Hotkeys.cpp:185 HotkeysNaming.cpp:190
-#, fuzzy
 msgid "Następny rozdział"
-msgstr "Capítulo siguiente"
+msgstr "Siguiente capítulo"
 
 #: Hotkeys.cpp:186 HotkeysNaming.cpp:205
-#, fuzzy
 msgid "Poprzedni rozdział"
-msgstr "Capítulo anterior"
+msgstr "Anterior capitulo"
 
 #: Hotkeys.cpp:187 HotkeysNaming.cpp:210
-#, fuzzy
 msgid "Wstaw pogrubienie"
 msgstr "Añadir negrita"
 
 #: Hotkeys.cpp:190 HotkeysNaming.cpp:237
-#, fuzzy
 msgid "Wstaw różnicę początkową"
 msgstr "Insertar la diferencia desde el principio"
 
 #: Hotkeys.cpp:191 HotkeysNaming.cpp:122
-#, fuzzy
 msgid "Wstaw różnicę końcową"
 msgstr "Inserte la diferencia hasta el final"
 
 #: Hotkeys.cpp:192 HotkeysNaming.cpp:129
-#, fuzzy
 msgid "Następne niepewne"
 msgstr "Siguiente línea no confirmada"
 
 #: Hotkeys.cpp:193 HotkeysNaming.cpp:130
-#, fuzzy
 msgid "Następne nieprzetłumaczone"
 msgstr "Siguiente no traducido"
 
 #: Hotkeys.cpp:196 HotkeysNaming.cpp:97
-#, fuzzy
 msgid "Zatwierdź zmiany idź do następnej linii"
 msgstr "Aplique los cambios y pase a la siguiente línea"
 
@@ -6431,7 +6326,6 @@ msgid "Aktor"
 msgstr "Actor"
 
 #: EditBox.cpp:512
-#, fuzzy
 msgid "Łamania: "
 msgstr "Envolturas: "
 
@@ -6458,70 +6352,60 @@ msgid ""
 msgstr "Caracteres por segundo.\nNo debe superar los 15 caracteres por segundo"
 
 #: FontCatalogList.cpp:101
-#, fuzzy
 msgid "Przykład"
 msgstr "Muestra"
 
 #: FontCatalogList.cpp:732
-#, c-format, fuzzy
+#, c-format
 msgid "Katalog o nazwie \"%s\" istnieje, co zrobić?"
 msgstr "El catálogo llamado \"%s\" ya existe. ¿Qué hacer?"
 
 #: FontCatalogList.cpp:733
-#, fuzzy
 msgid "Scal"
 msgstr "Unir"
 
 # Zły: nie mam pojęcia jak to przetłumaczyć, zostawiam jak było
 #: FontCollector.cpp:166
-#, fuzzy
 msgid "Spakuj zipem"
-msgstr "Código Postal"
+msgstr "Zip"
 
 #: FontCollector.cpp:173
-#, fuzzy
 msgid ""
 "Zapisuje do folderu z wideo\n"
 "przy wyciąganiu czcionek z pliku MKV."
 msgstr "Guardar en la carpeta de vídeo\ncuando las fuentes demux de MKV."
 
 #: FontCollector.cpp:463
-#, fuzzy
 msgid "Brak wczytanych napisów, wczytaj napisy albo odznacz tę opcję."
 msgstr "No hay subtítulos cargados. Cargue los subtítulos o anule la selección de esta opción."
 
 #: FontCollector.cpp:808
-#, c-format, fuzzy
+#, c-format
 msgid "Nie udało się skopiować %s.\n"
 msgstr "No se puede copiar %s.\n"
 
 #: FontCollector.cpp:1076
-#, c-format, fuzzy
+#, c-format
 msgid "Czcionka \"%s\" nie zawiera znaków: \"%s\"."
 msgstr "Fuente \"%s\" no contiene caracteres: \"%s\"."
 
 #: FontDialog.cpp:425 StyleChange.cpp:85
-#, fuzzy
 msgid "Dodaje czcionki do wcześniej utworzonego katalogu"
 msgstr "Añadir fuentes al catálogo"
 
 #: FontDialog.cpp:426 StyleChange.cpp:86
-#, fuzzy
 msgid "Zarządzaj"
 msgstr "Administrar"
 
 #: FontDialog.cpp:427
-#, fuzzy
 msgid "Umorzliwia zarządzanie katalogami stylów"
 msgstr "Gestiona los catálogos de fuentes"
 
 #: Hotkeys.cpp:178 HotkeysNaming.cpp:187
-#, fuzzy
 msgid "5 sekund do tyłu"
 msgstr "5 segundos hacia atrás"
 
 #: Hotkeys.cpp:184 HotkeysNaming.cpp:256
-#, fuzzy
 msgid "Dźwięk ciszej"
 msgstr "Bajar el volumen"
 
@@ -7085,12 +6969,10 @@ msgid "Nazwa stylu została zmieniona, czy chcesz zmienić ją także w napisach
 msgstr "El nombre del estilo fue modificado. ¿Desea cambiar todas las instancias al nuevo nombre?"
 
 #: FontCatalogList.cpp:176
-#, fuzzy
 msgid "Szukaj:"
 msgstr "Buscar:"
 
 #: FontCatalogList.cpp:675
-#, fuzzy
 msgid ""
 "Aby móc dodawać czcionki do katalogu,\n"
 "należy najpierw kliknąć przycisk \"Zarządzaj\",\n"
@@ -7098,17 +6980,14 @@ msgid ""
 msgstr "Para añadir fuentes al catálogo,\nhaga clic en el botón \"Gestionar\" primero,\npara crear un nuevo catálogo."
 
 #: FontCollector.cpp:97
-#, fuzzy
 msgid "W stylach:\n"
 msgstr "En los estilos:\n"
 
 #: FontCollector.cpp:186
-#, fuzzy
 msgid "Rozpocznij"
 msgstr "Iniciar"
 
 #: Hotkeys.cpp:179 HotkeysNaming.cpp:204
-#, fuzzy
 msgid "Minuta do przodu"
 msgstr "1 minuto hacia adelante"
 
@@ -7342,17 +7221,14 @@ msgid "Pole \"Przeskok\" zawiera liczbę zbyt wysoką dla danego przedziału."
 msgstr "El campo \"Paso\" contiene un número demasiado grande para el rango actual min - max."
 
 #: EditBox.cpp:1183
-#, fuzzy
 msgid "Kopiuje cały tekst obcojęzyczny do pola z tłumaczeniem"
 msgstr "Copia el texto completo de la lengua extranjera en el campo de la traducción"
 
 #: EditBox.cpp:1184
-#, fuzzy
 msgid "Kopiuje zaznaczony tekst obcojęzyczny do pola z tłumaczeniem"
 msgstr "Copia el texto seleccionado en el idioma extranjero al campo de traducción"
 
 #: EditBox.cpp:228
-#, fuzzy
 msgid "Łamania: 0/86"
 msgstr "Envolturas: 0/86"
 
@@ -7375,7 +7251,6 @@ msgid ""
 msgstr "Número de caracteres en cada línea.\nNo más de 43 caracteres por línea (máximo 2 líneas)."
 
 #: FindReplaceDialog.cpp:68
-#, fuzzy
 msgid ""
 "Filtry wyszukiwania Windowsa pooddzielane średnikami np \"*.ass;*.srt\".\n"
 "Ze względu na dużą wagę plików wideo\n"
@@ -7383,17 +7258,14 @@ msgid ""
 msgstr "Filtros de búsqueda de Windows separados por punto y coma, por ejemplo \"*.ass; *.srt\".\nDebido al gran archivo de vídeo\nla búsqueda de todo \"*. *\" se cambia por *.ass"
 
 #: FindReplaceDialog.cpp:100 SelectLines.cpp:62
-#, fuzzy
 msgid "Wyrażenia regularne"
 msgstr "Expresiones regulares"
 
 #: FindReplaceDialog.cpp:121 SelectLines.cpp:70
-#, fuzzy
 msgid "W polu"
 msgstr "En el campo"
 
 #: FindReplaceDialog.cpp:225
-#, fuzzy
 msgid "Szukaj w podfolderach"
 msgstr "Buscar en subcarpetas"
 
@@ -7404,184 +7276,154 @@ msgid ""
 msgstr "Buscar en carpetas\nocultas"
 
 #: FontCatalogList.cpp:56 ShiftTimes.cpp:50
-#, fuzzy
 msgid "Wybierz nazwę profilu"
 msgstr "Seleccione el nombre del perfil"
 
 #: FontCatalogList.cpp:142 FontCatalogList.cpp:732 Notebook.cpp:942
 #: StyleChange.cpp:463 kainoteApp.cpp:249 kainoteApp.cpp:255 stylestore.cpp:556
-#, fuzzy
 msgid "Pytanie"
 msgstr "Indicador"
 
 #: FontCatalogList.cpp:166
-#, fuzzy
 msgid ""
 "Lista katalogów ma opcję autozapisu, pliki znajdują się w folderze \"Config"
 "\"."
-msgstr "La lista del catálogo tiene autoguardado, los archivos se pueden encontrar en la carpeta \"Config\"."
+msgstr "La lista del catálogo tiene autoguardado, los archivos se pueden encontrar en la carpeta \"Configuraciones\"."
 
 #: FontCollector.cpp:102 FontCollector.cpp:323 FontCollector.cpp:370
-#, fuzzy
 msgid " zakładki: "
 msgstr " pestañas: "
 
 #: FontCollector.cpp:111
-#, fuzzy
 msgid "W linijkach: "
 msgstr "En líneas: "
 
 #: FontCollector.cpp:172
-#, fuzzy
 msgid "Zapisuj do folderu z napisami / wideo."
 msgstr "Guardar en la carpeta de vídeo / subtítulos."
 
 #: FontCollector.cpp:178
-#, fuzzy
 msgid "Wyciągnij czcionki z wczytanego pliku MKV"
 msgstr "Desmultiplicar las fuentes del archivo MKV cargado"
 
 #: FontCollector.cpp:457
-#, fuzzy
 msgid "Wybierz folder, gdzie mają zostać skopiowane czcionki"
 msgstr "Seleccione la carpeta en la que desea copiar las fuentes"
 
 #: FontCollector.cpp:468
-#, fuzzy
 msgid "Wybierz nazwę dla archiwum"
 msgstr "Elija un nombre para el archivo"
 
 #: FontCollector.cpp:483
-#, fuzzy
 msgid "Wybrana ścieżka zapisu jest niepoprawna."
 msgstr "Guardar parche no es válido."
 
 #: FontCollector.cpp:510
-#, fuzzy
 msgid "Plik zip już istnieje, usunąć go?"
 msgstr "El archivo zip ya existe, ¿lo eliminas?"
 
 #: FontCollector.cpp:707
-#, fuzzy
 msgid ""
 "Nie można pobrać rozmiarów i nazw plików czcionek\n"
 "kopiowanie zostaje przerwane.\n"
 msgstr "No se pueden obtener los tamaños y nombres de los archivos de las fuentes,\nla copia se cancela.\n"
 
 #: FontCollector.cpp:772
-#, fuzzy
 msgid "Ścieżka jest niedostępna"
 msgstr "La ruta no está disponible"
 
 #: FontCollector.cpp:785
-#, c-format, fuzzy
+#, c-format
 msgid ""
 "Czcionka \"%s\" należy do stylu,\n"
 "który nie jest wykorzystywany."
 msgstr "Fuente \"%s\" es de estilo,\nque no se utiliza."
 
 #: FontCollector.cpp:739
-#, c-format, fuzzy
+#, c-format
 msgid ""
 "Pobrano rozmiary i nazwy %i czcionek, upłynęło %sms.\n"
 "\n"
 msgstr "Tomados los tamaños y nombres de las fuentes %i, transcurridos %sms.\n\n"
 
 #: FontCollector.cpp:794
-#, fuzzy
 msgid "Niektóre czcionki nie mają wszystkich znaków użytych w tekście.\n"
 msgstr "Algunas fuentes no contienen todos los glifos utilizados en el texto.\n"
 
 #: FontCollector.cpp:801
-#, c-format, fuzzy
+#, c-format
 msgid "Zakończono, %s %s.\n"
 msgstr "Terminado, %s %s.\n"
 
 #: FontCollector.cpp:884
-#, fuzzy
 msgid "To wideo nie jest plikiem MKV."
 msgstr "Este vídeo no es un archivo MKV."
 
 #: FontCollector.cpp:895
-#, fuzzy
 msgid "Wczytany plik MKV nie ma żadnych czcionek."
 msgstr "El archivo MKV cargado no tiene ninguna fuente."
 
 #: FontCollector.cpp:920
-#, c-format, fuzzy
+#, c-format
 msgid ""
 "Zakończono, skopiowano %i czcionek.\n"
 "Nie udało się skopiować %i czcionek."
 msgstr "Completado, copiado %i fuentes.\nError al copiar %i fuentes."
 
 #: FontDialog.cpp:389
-#, fuzzy
 msgid "Podgląd"
-msgstr "Ejemplo"
+msgstr "Avance"
 
 #: FontDialog.cpp:399 StyleChange.cpp:122
-#, fuzzy
 msgid "Kursywa"
-msgstr "Itálica"
+msgstr "Italic"
 
 #: FontDialog.cpp:430 StyleChange.cpp:89
-#, fuzzy
 msgid "Filtruje czcionki, by zawierały wpisane znaki"
 msgstr "Filtrar las fuentes de los caracteres escritos"
 
 # Nie zapomnij o wstawianiu \t bo to jest konieczne, by u skróty wyświetlały się po prawej stronie, poza tym & to litera podkreślona gdy wciśniesz alt więc jeśli znasz się na tyle to możesz własne pododawać, ale tam gdzie nie ma & lepiej tego nie rób, bo tam zapewne jest opis, który wyświetla się na statusie.
 #: Hotkeys.cpp:134
-#, fuzzy
 msgid "Wyjście"
-msgstr "Salida"
+msgstr "Salir"
 
 #: Hotkeys.cpp:171 HotkeysNaming.cpp:167
-#, fuzzy
 msgid "Pomoc (niekompletna, ale jednak)"
-msgstr "Ayuda (no disponible en español)"
+msgstr "Ayuda (no disponible en Español)"
 
 #: Hotkeys.cpp:143 HotkeysNaming.cpp:239 stylestore.cpp:41
-#, fuzzy
 msgid "Menedżer stylów"
 msgstr "Gestor de estilo"
 
 #: Hotkeys.cpp:148 HotkeysNaming.cpp:246 KainoteFrame.cpp:181
-#, fuzzy
 msgid "Cofnij"
 msgstr "Deshacer"
 
 #: Hotkeys.cpp:149 HotkeysNaming.cpp:212 KainoteFrame.cpp:187
-#, fuzzy
 msgid "Ponów"
 msgstr "Rehacer"
 
 #: Hotkeys.cpp:183 HotkeysNaming.cpp:255
-#, fuzzy
 msgid "Dźwięk głośniej"
 msgstr "Subir volumen"
 
 #: Hotkeys.cpp:188 HotkeysNaming.cpp:211
-#, fuzzy
 msgid "Wstaw kursywę"
-msgstr "Añadir cursiva"
+msgstr "Añadir italic"
 
 #: Hotkeys.cpp:189 HotkeysNaming.cpp:236
-#, fuzzy
 msgid "Wstaw znak podziału"
 msgstr "Añadir ajuste de líneas"
 
 #: Hotkeys.cpp:177 HotkeysNaming.cpp:203
-#, fuzzy
 msgid "5 sekund do przodu"
 msgstr "5 segundos hacia adelante"
 
 #: Hotkeys.cpp:180 HotkeysNaming.cpp:188
-#, fuzzy
 msgid "Minuta do tyłu"
 msgstr "1 minuto hacia atrás"
 
 #: Hotkeys.cpp:194 HotkeysNaming.cpp:226
-#, fuzzy
 msgid "Ustaw jako niepewne i przejdź dalej"
 msgstr "Establecer como no confirmado y pasar a la siguiente línea"
 
@@ -7948,12 +7790,10 @@ msgstr "Ver"
 
 #: FontCollector.cpp:132 HotkeysNaming.cpp:132 KainoteFrame.cpp:309
 #: KainoteFrame.cpp:310 SubsGrid.cpp:231
-#, fuzzy
 msgid "Kolekcjoner czcionek"
 msgstr "Colector de fuentes"
 
 #: FontCollector.cpp:165
-#, fuzzy
 msgid "Skopiuj do wybranego folderu"
 msgstr "Copiar en la carpeta seleccionada"
 
@@ -8791,66 +8631,62 @@ msgid ""
 msgstr "Establezca un rectángulo personalizado para la escala actual.\nCuando el cálculo automático del tamaño no funciona correctamente\nes posible establecer un rectángulo para la escala de origen."
 
 #: FontCollector.cpp:168 OptionsDialog.cpp:263 ScriptInfo.cpp:89
-#, fuzzy
 msgid "Opcje"
 msgstr "Opciones"
 
 #: FontCollector.cpp:420
-#, fuzzy
 msgid "Wybierz nazwę archiwum"
 msgstr "Seleccione el nombre del archivo"
 
 #: FontCollector.cpp:423
-#, fuzzy
 msgid "Pliki archiwum (*.zip)|*.zip"
 msgstr "Archivos comprimidos (*.zip)|*.zip"
 
 #: FontCollector.cpp:816
-#, c-format, fuzzy
+#, c-format
 msgid "Zakończono powodzeniem, %s %s.\n"
 msgstr "Completado con éxito, %s %s.\n"
 
 #: FontCollector.cpp:924
-#, c-format, fuzzy
+#, c-format
 msgid "Zakończono powodzeniem, skopiowano %i czcionek."
 msgstr "Completado con éxito y copiado %i fuentes."
 
 #: FontCollector.cpp:1041
-#, c-format, fuzzy
+#, c-format
 msgid ""
 "Czcionka \"%s\" należy do stylu,\n"
 "który nie jest wykorzystywany.%s"
 msgstr "Fuente \"%s\" es de estilo,\nque no se utiliza.%s"
 
 #: FontCollector.cpp:1041
-#, fuzzy
 msgid ""
 "\n"
 "Nie zostanie skopiowana."
 msgstr "\nNo se copiará."
 
 #: FontCollector.cpp:1049
-#, c-format, fuzzy
+#, c-format
 msgid "Czcionka \"%s\" nie ma stylu normalnego."
 msgstr "La fuente \"%s\" no tiene estilo normal."
 
 #: FontCollector.cpp:1052
-#, c-format, fuzzy
+#, c-format
 msgid "Czcionka \"%s\" nie ma pogrubienia z kursywą."
 msgstr "La fuente \"%s\" carece de negrita y cursiva."
 
 #: FontCollector.cpp:1055
-#, c-format, fuzzy
+#, c-format
 msgid "Czcionka \"%s\" nie ma pogrubienia."
 msgstr "La fuente \"%s\" no está en negrita."
 
 #: FontCollector.cpp:1058
-#, c-format, fuzzy
+#, c-format
 msgid "Czcionka \"%s\" nie ma kursywy."
 msgstr "La fuente \"%s\" no tiene cursiva."
 
 #: FontCollector.cpp:1271
-#, c-format, fuzzy
+#, c-format
 msgid ""
 "\n"
 "Zakończono w %sms"
