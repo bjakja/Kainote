@@ -940,7 +940,12 @@ void StyleStore::ShowStore()
 	int chc = SS->catalogList->FindString(Options.actualStyleDir);
 	SS->catalogList->SetSelection(chc);
 	SS->LoadAssStyles();
-	SS->Show();
+	if (SS->IsShown()) {
+		SS->SetFocus();
+	}
+	else {
+		SS->Show();
+	}
 }
 
 void StyleStore::ShowStyleEdit(const wxString &styleName /*= ""*/)

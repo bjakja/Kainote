@@ -331,6 +331,7 @@
     <ClInclude Include="..\..\libass\libass\ass_bitmap.h" />
     <ClInclude Include="..\..\libass\libass\ass_cache.h" />
     <ClInclude Include="..\..\libass\libass\ass_cache_template.h" />
+    <ClInclude Include="..\..\libass\libass\ass_directwrite.h" />
     <ClInclude Include="..\..\libass\libass\ass_drawing.h" />
     <ClInclude Include="..\..\libass\libass\ass_font.h" />
     <ClInclude Include="..\..\libass\libass\ass_fontselect.h" />
@@ -352,6 +353,7 @@
     <ClCompile Include="..\..\libass\libass\ass_bitmap.c" />
     <ClCompile Include="..\..\libass\libass\ass_blur.c" />
     <ClCompile Include="..\..\libass\libass\ass_cache.c" />
+    <ClCompile Include="..\..\libass\libass\ass_directwrite.c" />
     <ClCompile Include="..\..\libass\libass\ass_drawing.c" />
     <ClCompile Include="..\..\libass\libass\ass_filesystem.c" />
     <ClCompile Include="..\..\libass\libass\ass_font.c" />
@@ -367,7 +369,14 @@
     <ClCompile Include="..\..\libass\libass\ass_string.c" />
     <ClCompile Include="..\..\libass\libass\ass_strtod.c" />
     <ClCompile Include="..\..\libass\libass\ass_utils.c" />
-    <ClCompile Include="libass_gdi_fontselect.cpp" />
+    <ClCompile Include="libass_gdi_fontselect.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FreeType2\FreeType2.vcxproj">

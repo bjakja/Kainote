@@ -560,7 +560,13 @@ OptionsDialog::OptionsDialog(wxWindow *parent)
 			_("Niebezpieczne (szybkie w każdym przypadku)"), _("Agresywne (szybkie przy cofaniu)") };
 		KaiChoice *sopts = new KaiChoice(video, ID_KAI_CHOICE, 
 			wxDefaultPosition, wxSize(200, -1), 4, seekingOpts, wxTE_PROCESS_ENTER);
-		sopts->SetSelection(Options.GetInt(vopts[4]));
+		int selection = Options.GetInt(vopts[4]);
+		if (selection < 0 || selection > 3) {
+			selection = 2;
+			Options.SetInt(vopts[4], selection);
+			Options.SaveOptions(true, false);
+		}
+		sopts->SetSelection(selection);
 		seekingsizer->Add(sopts, 1, wxALL /*| wxALIGN_CENTER*/ | wxEXPAND, 2);
 		MainSizer->Add(seekingsizer, 0, wxRIGHT | wxEXPAND, 5);
 		ConOpt(sopts, vopts[4]);

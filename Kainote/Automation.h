@@ -223,5 +223,21 @@ namespace Auto {
 		LuaThreadedCall(lua_State *_L);
 		virtual ExitCode Entry();
 	};
+
+
+	class VideoFrame {
+	public:
+		void deleteData() {
+			if (data) {
+				delete[] data;
+				data = nullptr;
+			}
+		}
+		int width = 0;
+		int height = 0;
+		int pitch = 0;
+		bool flipped = false;
+		unsigned char* data = nullptr;
+	};
 }
 

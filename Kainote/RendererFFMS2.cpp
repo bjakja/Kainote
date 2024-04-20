@@ -557,6 +557,17 @@ byte *RendererFFMS2::GetFrameWithSubs(bool subs, bool *del)
 	return (!subs) ? cpy1 : m_FrameBuffer;
 }
 
+unsigned char* RendererFFMS2::GetFrame(int frame, bool subs)
+{
+	int all = m_Height * m_Pitch;
+	byte* newFrame = new byte[all];
+	m_FFMS2->GetFrame(frame, newFrame);
+	if (subs) {
+		m_SubsProvider->Draw(newFrame, frame);
+	}
+	return newFrame;
+}
+
 void RendererFFMS2::GoToNextKeyframe()
 {
 	for (size_t i = 0; i < m_FFMS2->m_keyFrames.size(); i++){

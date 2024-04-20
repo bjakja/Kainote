@@ -33,7 +33,7 @@ public:
 		lineRangeStart = _lineRangeStart;
 		lineRangeLen = _lineRangeEnd;
 	};
-	bool operator ==(const MultiPreviewData &data){ return data.grid == grid && data.lineRangeStart == lineRangeStart; }
+	bool operator == (const MultiPreviewData data){ return data.grid == grid && data.lineRangeStart == lineRangeStart; }
 	TabPanel *tab = nullptr;
 	SubsGrid *grid = nullptr;
 	int lineRangeStart = 0;

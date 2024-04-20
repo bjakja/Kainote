@@ -68,6 +68,9 @@
     <ClInclude Include="unistd.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libass\libass\ass_directwrite.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libass\libass\ass.c">
@@ -121,13 +124,16 @@
     <ClCompile Include="..\..\libass\libass\ass_utils.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="libass_gdi_fontselect.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\libass\libass\ass_outline.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\libass\libass\ass_filesystem.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="libass_gdi_fontselect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libass\libass\ass_directwrite.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

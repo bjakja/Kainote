@@ -37,6 +37,13 @@ class AssColor
 	AssColor();
 	AssColor(const wxString &col);
 	AssColor(const wxColour &col, int alpha = -1);
+	AssColor(int red, int green, int blue, int alpha = -1) {
+		r = red;
+		g = green;
+		b = blue;
+		if (alpha > -1)
+			a = alpha;
+	}
 	~AssColor();
 	bool operator == (const AssColor &col){ return (a == col.a && r == col.r && g == col.g && b == col.b); }
 	bool operator != (const AssColor &col){ return (a != col.a || r != col.r || g != col.g || b != col.b); }

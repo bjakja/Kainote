@@ -58,6 +58,7 @@ public:
 	//returns true if removed
 	//bool RemoveVisual(bool noRefresh = false);
 	unsigned char * GetFrameWithSubs(bool subs, bool *del) override;
+	unsigned char* GetFrame(int frame, bool subs) override;
 	void DeleteAudioCache(){ if (m_FFMS2){ m_FFMS2->DeleteOldAudioCache(); } }
 	void SetColorSpace(const wxString& matrix, bool render = true){
 		if (m_FFMS2){

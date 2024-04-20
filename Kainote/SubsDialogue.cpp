@@ -699,7 +699,7 @@ ParseData* Dialogue::ParseTags(wxString *tags, size_t ntags, bool plainText)
 			for (size_t i = 0; i < ntags; i++){
 				wxString tagName = tags[i];
 				int tagLen = tagName.length();
-				if (tag.StartsWith(tagName)){
+				if (tag.StartsWith(tagName) && tag.length() > tagLen){
 					wxUniChar firstValueChar = tag[tagLen];
 					if (firstValueChar == L'(' || wxIsdigit(firstValueChar) || tagName == L"fn" ||
 						firstValueChar == L'.' || firstValueChar == L'-' || firstValueChar == L'+'){

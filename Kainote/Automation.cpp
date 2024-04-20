@@ -331,6 +331,203 @@ namespace Auto{
 		return 4;
 	}
 
+	VideoFrame * check_VideoFrame(lua_State* L) {
+		VideoFrame* framePtr = *static_cast<VideoFrame**>(luaL_checkudata(L, 1, "VideoFrame"));
+		return framePtr;
+	}
+
+	int FrameWidth(lua_State* L) {
+		VideoFrame * frame = check_VideoFrame(L);
+		push_value(L, frame->width);
+		return 1;
+	}
+
+	int FrameHeight(lua_State* L) {
+		VideoFrame * frame = check_VideoFrame(L);
+		push_value(L, frame->height);
+		return 1;
+	}
+
+	int FramePixel(lua_State* L) {
+		VideoFrame * frame = check_VideoFrame(L);
+		size_t x = lua_tointeger(L, -2);
+		size_t y = lua_tointeger(L, -1);
+		lua_pop(L, 2);
+
+		if (x < frame->width && y < frame->height) {
+			if (frame->flipped)
+				y = frame->height - y;
+
+			size_t pos = y * frame->pitch + x * 4;
+			// VideoFrame is stored as BGRA, but we want to return RGB
+			int pixelValue = frame->data[pos + 2] * 65536 + frame->data[pos + 1] * 256 + frame->data[pos];
+			push_value(L, pixelValue);
+		}
+		else {
+			lua_pushnil(L);
+		}
+		return 1;
+	}
+
+	int FramePixelFormatted(lua_State* L) {
+		VideoFrame * frame = check_VideoFrame(L);
+		size_t x = lua_tointeger(L, -2);
+		size_t y = lua_tointeger(L, -1);
+		lua_pop(L, 2);
+
+		if (x < frame->width && y < frame->height) {
+			if (frame->flipped)
+				y = frame->height - y;
+
+			size_t pos = y * frame->pitch + x * 4;
+			// VideoFrame is stored as BGRA, Color expects RGBA
+			AssColor* color = new AssColor(frame->data[pos + 2], 
+				frame->data[pos + 1], frame->data[pos], frame->data[pos + 3]);
+			push_value(L, color->GetAss(true));
+		}
+		else {
+			lua_pushnil(L);
+		}
+		return 1;
+	}
+
+	int FrameDestory(lua_State* L) {
+		VideoFrame *frame = check_VideoFrame(L);
+		frame->deleteData();
+		delete frame;
+		return 0;
+	}
+
+	int get_frame(lua_State* L)
+	{
+		// get frame number from stack
+		TabPanel* tab = Notebook::GetTab();
+		int frameNumber = lua_tointeger(L, 1);
+
+		bool withSubtitles = false;
+		if (lua_gettop(L) >= 2) {
+			withSubtitles = lua_toboolean(L, 2);
+			lua_pop(L, 1);
+		}
+		lua_pop(L, 1);
+
+		static const struct luaL_Reg FrameTableDefinition[] = {
+			{"width", FrameWidth},
+			{"height", FrameHeight},
+			{"getPixel", FramePixel},
+			{"getPixelFormatted", FramePixelFormatted},
+			{"__gc", FrameDestory},
+			{NULL, NULL}
+		};
+
+		// create and register metatable if not already done
+		if (luaL_newmetatable(L, "VideoFrame")) {
+			// metatable.__index = metatable
+			lua_pushstring(L, "__index");
+			lua_pushvalue(L, -2);
+			lua_settable(L, -3);
+
+			luaL_register(L, NULL, FrameTableDefinition);
+		}
+
+		if (tab && tab->video->HasFFMS2()) {
+
+			RendererVideo* renderer = tab->video->GetRenderer();
+			byte* frameBuff = renderer->GetFrame(frameNumber, withSubtitles);
+
+			VideoFrame *frame = new VideoFrame();
+			frame->data = frameBuff;
+			tab->video->GetVideoSize(&frame->width, &frame->height);
+			frame->pitch = frame->width * 4;
+			frame->flipped = false;
+
+			*static_cast<VideoFrame**>(lua_newuserdata(L, sizeof(VideoFrame*))) = frame;
+
+
+			luaL_getmetatable(L, "VideoFrame");
+			lua_setmetatable(L, -2);
+		}
+		else {
+			lua_pushnil(L);
+		}
+		return 1;
+	}
+
+
+	/*int lua_get_audio_selection(lua_State* L)
+	{
+		
+		const agi::Context* c = get_context(L);
+		if (!c || !c->audioController || !c->audioController->GetTimingController()) {
+			lua_pushnil(L);
+			return 1;
+		}
+		const TimeRange range = c->audioController->GetTimingController()->GetActiveLineRange();
+		push_value(L, range.begin());
+		push_value(L, range.end());
+		return 2;
+	}*/
+
+	int lua_set_status_text(lua_State* L)
+	{
+		KainoteFrame* frame = (KainoteFrame*)Notebook::GetTabs()->GetParent();
+		if (!frame) {
+			lua_pushnil(L);
+			return 1;
+		}
+		wxString text = check_string(L, 1);
+		lua_pop(L, 1);
+		frame->SetStatusText(text, 0);
+		return 0;
+	}
+
+	int lua_get_text_cursor(lua_State* L)
+	{
+		TabPanel* tab = Notebook::GetTab();
+		long s = 0, e = 0;
+		tab->edit->GetEditor()->GetSelection(&s, &e);
+		push_value(L, s + 1);
+		return 1;
+	}
+
+	int lua_set_text_cursor(lua_State* L)
+	{
+		int point = lua_tointeger(L, -1) - 1;
+		lua_pop(L, 1);
+		TabPanel* tab = Notebook::GetTab();
+		tab->edit->GetEditor()->SetSelection(point, point);
+		return 0;
+	}
+
+	int lua_get_text_selection(lua_State* L)
+	{
+		TabPanel* tab = Notebook::GetTab();
+		long start = 0, end = 0;
+		tab->edit->GetEditor()->GetSelection(&start, &end);
+		start++; end++;
+		push_value(L, start <= end ? start : end);
+		push_value(L, start <= end ? end : start);
+		return 2;
+	}
+
+	int lua_set_text_selection(lua_State* L)
+	{
+		int start = lua_tointeger(L, -2) - 1;
+		int end = lua_tointeger(L, -1) - 1;
+		lua_pop(L, 2);
+		TabPanel* tab = Notebook::GetTab();
+		tab->edit->GetEditor()->SetSelection(start, end);
+		return 0;
+	}
+
+	int lua_is_modified(lua_State* L)
+	{
+		TabPanel* tab = Notebook::GetTab();
+		push_value(L, tab->edit->GetEditor()->IsModified());
+		return 1;
+	}
+
+
 	int project_properties(lua_State *L)
 	{
 		const TabPanel *c = Notebook::GetTab();
@@ -447,6 +644,15 @@ namespace Auto{
 		set_field<get_file_name>(L, "file_name");
 		set_field<get_translation>(L, "gettext");
 		set_field<project_properties>(L, "project_properties");
+		set_field<lua_set_status_text>(L, "set_status_text");
+		set_field<get_frame>(L, "get_frame");
+		lua_createtable(L, 0, 5);
+		set_field<lua_get_text_cursor>(L, "get_cursor");
+		set_field<lua_set_text_cursor>(L, "set_cursor");
+		set_field<lua_get_text_selection>(L, "get_selection");
+		set_field<lua_set_text_selection>(L, "set_selection");
+		set_field<lua_is_modified>(L, "is_modified");
+		lua_setfield(L, -2, "gui");
 
 		// store aegisub table to globals
 		lua_settable(L, LUA_GLOBALSINDEX);

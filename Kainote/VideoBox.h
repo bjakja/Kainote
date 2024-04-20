@@ -118,6 +118,12 @@ public:
 	void ResetVisual();
 	bool HasFFMS2();
 	//can return null
+	bool HasVideo() {
+		if (renderer)
+			return true;
+
+		return false;
+	}
 	Provider *GetFFMS2();
 	void SetVisualEdition(bool value);
 	//can return null

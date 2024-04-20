@@ -115,6 +115,8 @@ public:
 	virtual void ChangeVobsub(bool vobsub = false){};
 	virtual wxArrayString GetStreams(){ wxArrayString empty; return empty; };
 	virtual unsigned char *GetFrameWithSubs(bool subs, bool *del){ return nullptr; };
+	// buffer must be released via delete
+	virtual unsigned char* GetFrame(int frame, bool subs) { return nullptr; };
 	//int GetPreciseTime(bool start = true){};
 	virtual void DeleteAudioCache(){}
 	virtual void SetColorSpace(const wxString& matrix, bool render = true){}
