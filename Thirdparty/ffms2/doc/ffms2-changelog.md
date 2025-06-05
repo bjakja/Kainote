@@ -1,4 +1,22 @@
 # FFmpegSource2 Changelog
+- 5.1
+  - FFmpeg 7.1 is now the minimum requirement.
+  - Added layered decoding support, for e.g. spatial MV-HEVC.
+
+- 5.0
+  - Fixed all issues with FFmpeg 6.1 which is now the minimum requirement
+  - Fixed av1 decoding
+  - Fixed TFF material when rffmode is used
+  - Added HDR10+ and DolbyVision metadata
+  - Fixed audio decoding that could otherwise get stuck in an infinite loop on certain files
+  - Fixed framerate in Avisynth when using VFR=>CFR mode
+  - Dropped VapourSynth API3 support
+  - Indexer now has a configurable progress update interval
+  - Alpha planes are now correctly marked as being full range
+  - The full set of demuxer options can now be passed using the FFMS2 API
+  - Now sets channel layout in Avisynth+
+  - Removed the unfixable and always broken rffmode from Avisynth source
+  
 - 2.3000
   - Added support for VapourSynth API4 (Myrsloik)
   - Added basic Avisynth+ frame property support (Myrsloik)

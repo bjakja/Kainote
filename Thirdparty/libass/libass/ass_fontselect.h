@@ -24,7 +24,6 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-typedef struct ass_shaper_font_data ASS_ShaperFontData;
 typedef struct font_selector ASS_FontSelector;
 typedef struct font_info ASS_FontInfo;
 typedef struct ass_font_stream ASS_FontStream;
@@ -158,9 +157,9 @@ typedef char   *(*GetFallbackFunc)(void *priv,
 
 typedef struct font_provider_funcs {
     GetDataFunc         get_data;               /* optional/mandatory */
-    CheckPostscriptFunc check_postscript;       /* mandatory */
+    CheckPostscriptFunc check_postscript;       /* optional */
     CheckGlyphFunc      check_glyph;            /* mandatory */
-    DestroyFontFunc     destroy_font;           /* optional */
+    DestroyFontFunc     destroy_font;           /* mandatory */
     DestroyProviderFunc destroy_provider;       /* optional */
     MatchFontsFunc      match_fonts;            /* optional */
     SubstituteFontFunc  get_substitutions;      /* optional */
@@ -206,11 +205,15 @@ struct ass_font_provider_meta_data {
     int n_family;       // Number of localized family names
     int n_fullname;     // Number of localized full names
 
-    int slant;          // Font slant value from FONT_SLANT_*
+    FT_Long style_flags; // Computed from OS/2 table, or equivalent
     int weight;         // Font weight in TrueType scale, 100-900
                         // See FONT_WEIGHT_*
-    int width;          // Font weight in percent, normally 100
-                        // See FONT_WIDTH_*
+
+    /**
+     * Whether the font contains PostScript outlines.
+     * Unused if the font provider has a check_postscript function.
+     */
+    bool is_postscript;
 };
 
 struct ass_font_stream {
@@ -246,7 +249,7 @@ ass_fontselect_init(ASS_Library *library, FT_Library ftlibrary, size_t *num_emfo
                     const char *family, const char *path, const char *config,
                     ASS_DefaultFontProvider dfp);
 char *ass_font_select(ASS_FontSelector *priv,
-                      ASS_Font *font, int *index, char **postscript_name,
+                      const ASS_Font *font, int *index, char **postscript_name,
                       int *uid, ASS_FontStream *data, uint32_t code);
 void ass_fontselect_free(ASS_FontSelector *priv);
 

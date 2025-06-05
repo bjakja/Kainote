@@ -25,6 +25,32 @@
 #include <thread>
 
 
+void DecoderDelay::Reset() {
+    ThreadDelayCounter = 0;
+    ReorderDelayCounter = 0;
+}
+
+void DecoderDelay::Increment(bool MarkedHidden, bool SecondField) {
+    if (ThreadDelayCounter < ThreadDelay && (!MarkedHidden || SecondField)) {
+        ThreadDelayCounter++;
+    } else if (!SecondField && !MarkedHidden) {
+        ReorderDelayCounter++;
+    }
+}
+
+void DecoderDelay::Decrement() {
+    if (ReorderDelayCounter) {
+        ReorderDelayCounter--;
+    } else {
+        ThreadDelayCounter--;
+    }
+}
+
+bool DecoderDelay::IsExceeded() {
+    return ThreadDelayCounter >= ThreadDelay && ReorderDelayCounter > ReorderDelay;
+}
+
+
 void FFMS_VideoSource::SanityCheckFrameForData(AVFrame *Frame) {
     for (int i = 0; i < 4; i++) {
         if (Frame->data[i] != nullptr && Frame->linesize[i] != 0)
@@ -71,17 +97,43 @@ FFMS_Frame *FFMS_VideoSource::OutputFrame(AVFrame *Frame) {
         }
     }
 
+    if (IsLayered) {
+        if ((PrimaryEyeIsLeft && !EyesInverted) || (!PrimaryEyeIsLeft && EyesInverted)) {
+            for (int i = 0; i < 4; i++) {
+                LocalFrame.Data[i] = LeftEyeFrameData[i];
+                LocalFrame.Linesize[i] = LeftEyeLinesize[i];
+            }
+        } else {
+            for (int i = 0; i < 4; i++) {
+                LocalFrame.Data[i] = RightEyeFrameData[i];
+                LocalFrame.Linesize[i] = RightEyeLinesize[i];
+            }
+        }
+        for (int i = 0; i < 4; i++) {
+            LocalFrame.LeftEyeData[i] = LeftEyeFrameData[i];
+            LocalFrame.LeftEyeLinesize[i] = LeftEyeLinesize[i];
+            LocalFrame.RightEyeData[i] = RightEyeFrameData[i];
+            LocalFrame.RightEyeLinesize[i] = RightEyeLinesize[i];
+        }
+        if (EyesInverted) {
+            for (int i = 0; i < 4; i++) {
+                std::swap(LocalFrame.RightEyeData[i], LocalFrame.LeftEyeData[i]);
+                std::swap(LocalFrame.RightEyeLinesize[i], LocalFrame.LeftEyeLinesize[i]);
+            }
+        }
+    }
+
     LocalFrame.EncodedWidth = Frame->width;
     LocalFrame.EncodedHeight = Frame->height;
     LocalFrame.EncodedPixelFormat = Frame->format;
     LocalFrame.ScaledWidth = TargetWidth;
     LocalFrame.ScaledHeight = TargetHeight;
     LocalFrame.ConvertedPixelFormat = OutputFormat;
-    LocalFrame.KeyFrame = Frame->key_frame;
+    LocalFrame.KeyFrame = !!(Frame->flags & AV_FRAME_FLAG_KEY);
     LocalFrame.PictType = av_get_picture_type_char(Frame->pict_type);
     LocalFrame.RepeatPict = Frame->repeat_pict;
-    LocalFrame.InterlacedFrame = Frame->interlaced_frame;
-    LocalFrame.TopFieldFirst = Frame->top_field_first;   
+    LocalFrame.InterlacedFrame = !!(Frame->flags & AV_FRAME_FLAG_INTERLACED);
+    LocalFrame.TopFieldFirst = !!(Frame->flags & AV_FRAME_FLAG_TOP_FIELD_FIRST);
     LocalFrame.ColorSpace = OutputColorSpaceSet ? OutputColorSpace : Frame->colorspace;
     LocalFrame.ColorRange = OutputColorRangeSet ? OutputColorRange : Frame->color_range;
     LocalFrame.ColorPrimaries = (OutputColorPrimaries >= 0) ? OutputColorPrimaries : Frame->color_primaries;
@@ -113,7 +165,6 @@ FFMS_Frame *FFMS_VideoSource::OutputFrame(AVFrame *Frame) {
     /* MasteringDisplayMinLuminance can be 0 */
     LocalFrame.HasMasteringDisplayLuminance = !!LocalFrame.MasteringDisplayMaxLuminance;
 
-#if VERSION_CHECK(LIBAVUTIL_VERSION_INT, >=, 57, 9, 100)
     const AVFrameSideData *DolbyVisionRPUSideData = av_frame_get_side_data(Frame, AV_FRAME_DATA_DOVI_RPU_BUFFER);
     if (DolbyVisionRPUSideData) {
         if (DolbyVisionRPUSideData->size > RPUBufferSize) {
@@ -130,7 +181,30 @@ FFMS_Frame *FFMS_VideoSource::OutputFrame(AVFrame *Frame) {
         LocalFrame.DolbyVisionRPU = RPUBuffer;
         LocalFrame.DolbyVisionRPUSize = DolbyVisionRPUSideData->size;
     }
-#endif
+
+    AVFrameSideData *HDR10PlusSideData = av_frame_get_side_data(Frame, AV_FRAME_DATA_DYNAMIC_HDR_PLUS);
+    if (HDR10PlusSideData) {
+        uint8_t *T35Buffer = nullptr;
+        size_t T35Size;
+        int ret = av_dynamic_hdr_plus_to_t35(reinterpret_cast<const AVDynamicHDRPlus *>(HDR10PlusSideData->data), &T35Buffer, &T35Size);
+        if (ret < 0)
+            throw FFMS_Exception(FFMS_ERROR_DECODING, FFMS_ERROR_INVALID_ARGUMENT,
+                                     "HDR10+ dynamic metadata could not be serialized.");
+        if (T35Size > HDR10PlusBufferSize) {
+            void *tmp = av_realloc(HDR10PlusBuffer, T35Size);
+            if (!tmp)
+                throw FFMS_Exception(FFMS_ERROR_DECODING, FFMS_ERROR_ALLOCATION_FAILED,
+                                     "Could not allocate HDR10+ buffer.");
+            HDR10PlusBuffer = reinterpret_cast<uint8_t *>(tmp);
+            HDR10PlusBufferSize = T35Size;
+        }
+
+        memcpy(HDR10PlusBuffer, T35Buffer, T35Size);
+        av_free(T35Buffer);
+
+        LocalFrame.HDR10Plus = HDR10PlusBuffer;
+        LocalFrame.HDR10PlusSize = T35Size;
+    }
 
     const AVFrameSideData *ContentLightSideData = av_frame_get_side_data(Frame, AV_FRAME_DATA_CONTENT_LIGHT_LEVEL);
     if (ContentLightSideData) {
@@ -178,10 +252,11 @@ FFMS_VideoSource::FFMS_VideoSource(const char *SourceFile, FFMS_Index &Index, in
 
         DecodeFrame = av_frame_alloc();
         LastDecodedFrame = av_frame_alloc();
+        StashedPacket = av_packet_alloc();
 
-        if (!DecodeFrame || !LastDecodedFrame)
+        if (!DecodeFrame || !LastDecodedFrame || !StashedPacket)
             throw FFMS_Exception(FFMS_ERROR_DECODING, FFMS_ERROR_ALLOCATION_FAILED,
-                "Could not allocate dummy frame.");
+                "Could not allocate dummy frame / stashed packet.");
 
         // Dummy allocations so the unallocated case doesn't have to be handled later
         if (av_image_alloc(SWSFrameData, SWSFrameLinesize, 16, 16, AV_PIX_FMT_GRAY8, 4) < 0)
@@ -209,18 +284,49 @@ FFMS_VideoSource::FFMS_VideoSource(const char *SourceFile, FFMS_Index &Index, in
         if (CodecContext->codec_id == AV_CODEC_ID_H264 && CodecContext->has_b_frames)
             CodecContext->has_b_frames = 15; // the maximum possible value for h264
 
-        if (avcodec_open2(CodecContext, Codec, nullptr) < 0)
+        // Are we layered?
+        if (FormatContext->streams[VideoTrack]->disposition & AV_DISPOSITION_MULTILAYER) {
+            IsLayered = true;
+            // See if we can figure out the primary (base) eye based on side data
+            for (int i = 0; i < FormatContext->streams[VideoTrack]->codecpar->nb_coded_side_data; i++) {
+                if (FormatContext->streams[VideoTrack]->codecpar->coded_side_data[i].type == AV_PKT_DATA_STEREO3D) {
+                    const AVStereo3D *StereoSideData = (const AVStereo3D *)FormatContext->streams[VideoTrack]->codecpar->coded_side_data[i].data;
+                    // If 'right', set it as such, otherwise it is left.
+                    PrimaryEyeIsLeft = !(StereoSideData->primary_eye == AV_PRIMARY_EYE_RIGHT);
+                    EyesInverted = !!(StereoSideData->flags & AV_STEREO3D_FLAG_INVERT);
+                }
+            }
+        }
+
+        // Just ask for all views possible if we're layered
+        AVDictionary *CodecDict = nullptr;
+        if (IsLayered)
+            av_dict_set(&CodecDict, "view_ids", "-1", 0);
+
+        if (avcodec_open2(CodecContext, Codec, &CodecDict) < 0)
             throw FFMS_Exception(FFMS_ERROR_DECODING, FFMS_ERROR_CODEC,
                 "Could not open video codec");
+
+        av_dict_free(&CodecDict);
 
         // Similar yet different to h264 workaround above
         // vc1 simply sets has_b_frames to 1 no matter how many there are so instead we set it to the max value
         // in order to not confuse our own delay guesses later
         // Doesn't affect actual vc1 reordering unlike h264
-        if (CodecContext->codec_id == AV_CODEC_ID_VC1 && CodecContext->has_b_frames)
-            Delay = 7 + (CodecContext->thread_count - 1); // the maximum possible value for vc1
-        else
-            Delay = CodecContext->has_b_frames + (CodecContext->thread_count - 1); // Normal decoder delay
+        if (CodecContext->codec_id == AV_CODEC_ID_VC1 && CodecContext->has_b_frames) {
+            Delay.ReorderDelay = 7;     // the maximum possible value for vc1
+            Delay.ThreadDelay = CodecContext->thread_count - 1;
+        } else if (CodecContext->codec_id == AV_CODEC_ID_AV1) {
+            // libdav1d.c exports delay like this.
+            Delay.ReorderDelay = CodecContext->delay;
+        } else {
+            // In theory we can move this to CodecContext->delay, sort of, one day, maybe. Not now.
+            Delay.ReorderDelay = CodecContext->has_b_frames; // Normal decoder delay
+            if (CodecContext->active_thread_type & FF_THREAD_FRAME) // Adjust for frame based threading
+                Delay.ThreadDelay = CodecContext->thread_count - 1;
+        }
+
+        SeekByPos = !strcmp(FormatContext->iformat->name, "mpeg") || !strcmp(FormatContext->iformat->name, "mpegts") || !strcmp(FormatContext->iformat->name, "mpegtsraw");
 
         // Always try to decode a frame to make sure all required parameters are known
         int64_t DummyPTS = 0, DummyPos = 0;
@@ -239,7 +345,7 @@ FFMS_VideoSource::FFMS_VideoSource(const char *SourceFile, FFMS_Index &Index, in
         // Calculate the average framerate
         size_t TotalFrames = 0;
         for (size_t i = 0; i < Frames.size(); i++)
-            if (!Frames[i].Hidden)
+            if (!Frames[i].Skipped())
                 TotalFrames++;
 
         if (TotalFrames >= 2) {
@@ -248,6 +354,8 @@ FFMS_VideoSource::FFMS_VideoSource(const char *SourceFile, FFMS_Index &Index, in
             double TN = (double)(Frames.TB.Num);
             VP.FPSDenominator = (unsigned int)(PTSDiff * TN / TD * 1000.0 / (TotalFrames - 1));
             VP.FPSNumerator = 1000000;
+        } else if (TotalFrames == 1 && Frames.LastDuration > 0) {
+            VP.FPSDenominator *= Frames.LastDuration;
         }
 
         // Set the video properties from the codec context
@@ -263,13 +371,13 @@ FFMS_VideoSource::FFMS_VideoSource(const char *SourceFile, FFMS_Index &Index, in
         VP.Stereo3DType = FFMS_S3D_TYPE_2D;
         VP.Stereo3DFlags = 0;
 
-        for (int i = 0; i < FormatContext->streams[VideoTrack]->nb_side_data; i++) {
-            if (FormatContext->streams[VideoTrack]->side_data[i].type == AV_PKT_DATA_STEREO3D) {
-                const AVStereo3D *StereoSideData = (const AVStereo3D *)FormatContext->streams[VideoTrack]->side_data[i].data;
+        for (int i = 0; i < FormatContext->streams[VideoTrack]->codecpar->nb_coded_side_data; i++) {
+            if (FormatContext->streams[VideoTrack]->codecpar->coded_side_data[i].type == AV_PKT_DATA_STEREO3D) {
+                const AVStereo3D *StereoSideData = (const AVStereo3D *)FormatContext->streams[VideoTrack]->codecpar->coded_side_data[i].data;
                 VP.Stereo3DType = StereoSideData->type;
                 VP.Stereo3DFlags = StereoSideData->flags;
-            } else if (FormatContext->streams[VideoTrack]->side_data[i].type == AV_PKT_DATA_MASTERING_DISPLAY_METADATA) {
-                const AVMasteringDisplayMetadata *MasteringDisplay = (const AVMasteringDisplayMetadata *)FormatContext->streams[VideoTrack]->side_data[i].data;
+            } else if (FormatContext->streams[VideoTrack]->codecpar->coded_side_data[i].type == AV_PKT_DATA_MASTERING_DISPLAY_METADATA) {
+                const AVMasteringDisplayMetadata *MasteringDisplay = (const AVMasteringDisplayMetadata *)FormatContext->streams[VideoTrack]->codecpar->coded_side_data[i].data;
                 if (MasteringDisplay->has_primaries) {
                     VP.HasMasteringDisplayPrimaries = MasteringDisplay->has_primaries;
                     for (int i = 0; i < 3; i++) {
@@ -291,8 +399,8 @@ FFMS_VideoSource::FFMS_VideoSource(const char *SourceFile, FFMS_Index &Index, in
                                                   !!VP.MasteringDisplayWhitePointX   && !!VP.MasteringDisplayWhitePointY;
                 /* MasteringDisplayMinLuminance can be 0 */
                 VP.HasMasteringDisplayLuminance = !!VP.MasteringDisplayMaxLuminance;
-            } else if (FormatContext->streams[VideoTrack]->side_data[i].type == AV_PKT_DATA_CONTENT_LIGHT_LEVEL) {
-                const AVContentLightMetadata *ContentLightLevel = (const AVContentLightMetadata *)FormatContext->streams[VideoTrack]->side_data[i].data;
+            } else if (FormatContext->streams[VideoTrack]->codecpar->coded_side_data[i].type == AV_PKT_DATA_CONTENT_LIGHT_LEVEL) {
+                const AVContentLightMetadata *ContentLightLevel = (const AVContentLightMetadata *)FormatContext->streams[VideoTrack]->codecpar->coded_side_data[i].data;
 
                 VP.ContentLightLevelMax = ContentLightLevel->MaxCLL;
                 VP.ContentLightLevelAverage = ContentLightLevel->MaxFALL;
@@ -305,8 +413,11 @@ FFMS_VideoSource::FFMS_VideoSource(const char *SourceFile, FFMS_Index &Index, in
         // Set rotation
         VP.Rotation = 0;
         VP.Flip = 0;
-        int32_t *RotationMatrix = reinterpret_cast<int32_t *>(av_stream_get_side_data(FormatContext->streams[VideoTrack], AV_PKT_DATA_DISPLAYMATRIX, nullptr));
-        if (RotationMatrix) {
+        const AVPacketSideData *SideData = av_packet_side_data_get(FormatContext->streams[VideoTrack]->codecpar->coded_side_data, FormatContext->streams[VideoTrack]->codecpar->nb_coded_side_data, AV_PKT_DATA_DISPLAYMATRIX);
+        const int32_t *RotationMatrixSrc = reinterpret_cast<const int32_t *>(SideData ? SideData->data : nullptr);
+        if (RotationMatrixSrc) {
+            int32_t RotationMatrix[9];
+            memcpy(RotationMatrix, RotationMatrixSrc, sizeof(RotationMatrix));
             int64_t det = (int64_t)RotationMatrix[0] * RotationMatrix[4] - (int64_t)RotationMatrix[1] * RotationMatrix[3];
             if (det < 0) {
                 /* Always assume an horizontal flip for simplicity, it can be changed later if rotation is 180. */
@@ -341,12 +452,13 @@ FFMS_VideoSource::FFMS_VideoSource(const char *SourceFile, FFMS_Index &Index, in
             if (Seek(0) < 0) {
                 throw FFMS_Exception(FFMS_ERROR_DECODING, FFMS_ERROR_CODEC,
                     "Video track is unseekable");
-            } else {
-                avcodec_flush_buffers(CodecContext);
-                // Since we seeked to frame 0 we need to specify that frame 0 is once again the next frame that wil be decoded
-                CurrentFrame = 0;
             }
         }
+
+        // If we are in linear no-rewind mode, don't attempt to seek during init.
+        // Bypass the INITIALIZE_SOURCE stage.
+        if (SeekMode < 0)
+            Stage = DecodeStage::INITIALIZE;
 
         // Cannot "output" without doing all other initialization
         // This is the additional mess required for seekmode=-1 to work in a reasonable way
@@ -384,7 +496,9 @@ FFMS_VideoSource::~FFMS_VideoSource() {
 }
 
 FFMS_Frame *FFMS_VideoSource::GetFrameByTime(double Time) {
-    int Frame = Frames.ClosestFrameFromPTS(static_cast<int64_t>((Time * 1000 * Frames.TB.Den) / Frames.TB.Num));
+    // The final 1/1000th of a PTS is added to avoid frame duplication due to floating point math inexactness
+    // Basically only a problem when the fps is externally set to the same or a multiple of the input clip fps
+    int Frame = Frames.ClosestFrameFromPTS(static_cast<int64_t>(((Time * 1000 * Frames.TB.Den) / Frames.TB.Num) + .001));
     return GetFrame(Frame);
 }
 
@@ -551,8 +665,8 @@ void FFMS_VideoSource::ResetInputFormat() {
 }
 
 void FFMS_VideoSource::SetVideoProperties() {
-    VP.RFFDenominator = CodecContext->time_base.num;
-    VP.RFFNumerator = CodecContext->time_base.den;
+    VP.RFFDenominator = FormatContext->streams[VideoTrack]->time_base.num;
+    VP.RFFNumerator = FormatContext->streams[VideoTrack]->time_base.den;
     if (CodecContext->codec_id == AV_CODEC_ID_H264) {
         if (VP.RFFNumerator & 1)
             VP.RFFDenominator *= 2;
@@ -560,7 +674,7 @@ void FFMS_VideoSource::SetVideoProperties() {
             VP.RFFNumerator /= 2;
     }
     VP.NumFrames = Frames.VisibleFrameCount();
-    VP.TopFieldFirst = DecodeFrame->top_field_first;
+    VP.TopFieldFirst = !!(DecodeFrame->flags & AV_FRAME_FLAG_TOP_FIELD_FIRST);
     VP.ColorSpace = CodecContext->colorspace;
     VP.ColorRange = CodecContext->color_range;
     // these pixfmt's are deprecated but still used
@@ -597,94 +711,132 @@ void FFMS_VideoSource::SetVideoProperties() {
 }
 
 bool FFMS_VideoSource::HasPendingDelayedFrames() {
-    if (InitialDecode == -1) {
-        if (DelayCounter > Delay) {
-            --DelayCounter;
+    if (Stage == DecodeStage::APPLY_DELAY) {
+        if (Delay.IsExceeded()) {
+            Delay.Decrement();
             return true;
         }
-        InitialDecode = 0;
+        Stage = DecodeStage::DECODE_LOOP;
     }
     return false;
 }
 
+void FFMS_VideoSource::CopyEye(AVStereo3DView view) {
+    if (view == AV_STEREO3D_VIEW_LEFT) {
+        av_freep(&LeftEyeFrameData[0]);
+        if (av_image_alloc(LeftEyeFrameData, LeftEyeLinesize, DecodeFrame->width, DecodeFrame->height, (enum AVPixelFormat) DecodeFrame->format, 16) < 0)
+                throw FFMS_Exception(FFMS_ERROR_DECODING, FFMS_ERROR_ALLOCATION_FAILED,
+                    "Could not allocate left eye buffer");
+        av_image_copy(LeftEyeFrameData, LeftEyeLinesize, DecodeFrame->data, DecodeFrame->linesize, (enum AVPixelFormat) DecodeFrame->format, DecodeFrame->width, DecodeFrame->height);
+    } else if (view == AV_STEREO3D_VIEW_RIGHT) {
+        av_freep(&RightEyeFrameData[0]);
+        if (av_image_alloc(RightEyeFrameData, RightEyeLinesize, DecodeFrame->width, DecodeFrame->height, (enum AVPixelFormat) DecodeFrame->format, 16) < 0)
+                throw FFMS_Exception(FFMS_ERROR_DECODING, FFMS_ERROR_ALLOCATION_FAILED,
+                    "Could not allocate right eye buffer");
+        av_image_copy(RightEyeFrameData, RightEyeLinesize, DecodeFrame->data, DecodeFrame->linesize, (enum AVPixelFormat) DecodeFrame->format, DecodeFrame->width, DecodeFrame->height);
+    } else {
+        throw FFMS_Exception(FFMS_ERROR_DECODING, FFMS_ERROR_CODEC, "Layered decode with invalid view.");
+    }
+}
+
 bool FFMS_VideoSource::DecodePacket(AVPacket *Packet) {
     std::swap(DecodeFrame, LastDecodedFrame);
-    avcodec_send_packet(CodecContext, Packet);
+    ResendPacket = false;
 
-    int Ret = avcodec_receive_frame(CodecContext, DecodeFrame);
-    if (Ret != 0) {
-        std::swap(DecodeFrame, LastDecodedFrame);
-        if (!(Packet->flags & AV_PKT_FLAG_DISCARD))
-            DelayCounter++;
-    } else if (!!(Packet->flags & AV_PKT_FLAG_DISCARD)) {
-        // If sending discarded frame when the decode buffer is not empty, caller
-        // may still obtained bufferred decoded frames and the number of frames
-        // in the buffer decreases.
-        DelayCounter--;
+    int PacketNum = Frames.FrameFromPTS(Frames.UseDTS ? Packet->dts : Packet->pts, true);
+    bool PacketHidden = !!(Packet->flags & AV_PKT_FLAG_DISCARD) || (PacketNum != -1 && Frames[PacketNum].MarkedHidden);
+    bool SecondField = PacketNum != -1 && Frames[PacketNum].SecondField;
+
+    int Ret = avcodec_send_packet(CodecContext, Packet);
+    if (Ret == AVERROR(EAGAIN)) {
+        // Send queue is full, so stash packet to resend on the next call.
+        ResendPacket = true;
+    } else if (Ret == 0) {
+        Delay.Increment(PacketHidden, SecondField);
     }
 
-    if (Ret == 0 && InitialDecode == 1)
-        InitialDecode = -1;
+    Ret = avcodec_receive_frame(CodecContext, DecodeFrame);
+    if (Ret == 0) {
+        if (IsLayered) {
+            const AVFrameSideData *sd = av_frame_get_side_data(DecodeFrame, AV_FRAME_DATA_STEREO3D);
+            if (!sd)
+                throw FFMS_Exception(FFMS_ERROR_DECODING, FFMS_ERROR_CODEC,
+                    "Missing Stereo3D for layered decode.");
 
-    // H.264 (PAFF) and HEVC can have one field per packet, and decoding delay needs
-    // to be adjusted accordingly.
-    if (CodecContext->codec_id == AV_CODEC_ID_H264 || CodecContext->codec_id == AV_CODEC_ID_HEVC) {
-        if (!PAFFAdjusted && DelayCounter > Delay && LastDecodedFrame->repeat_pict == 0 && Ret != 0) {
-            int OldBFrameDelay = Delay - (CodecContext->thread_count - 1);
-            Delay = 1 + OldBFrameDelay * 2 + (CodecContext->thread_count - 1);
-            PAFFAdjusted = true;
+            const AVStereo3D *stereo3d = (const AVStereo3D *)sd->data;
+            AVStereo3DView first_view = stereo3d->view;
+            CopyEye(stereo3d->view);
+
+            Ret = avcodec_receive_frame(CodecContext, DecodeFrame);
+            if (Ret != 0)
+                throw FFMS_Exception(FFMS_ERROR_DECODING, FFMS_ERROR_CODEC,
+                    "Missing second view for layered decode.");
+
+            sd = av_frame_get_side_data(DecodeFrame, AV_FRAME_DATA_STEREO3D);
+            if (!sd)
+                throw FFMS_Exception(FFMS_ERROR_DECODING, FFMS_ERROR_CODEC,
+                    "Missing Stereo3D for layered decode second layer.");
+
+            stereo3d = (const AVStereo3D *)sd->data;
+            if ((first_view == AV_STEREO3D_VIEW_LEFT && stereo3d->view != AV_STEREO3D_VIEW_RIGHT) ||
+                (first_view == AV_STEREO3D_VIEW_RIGHT && stereo3d->view != AV_STEREO3D_VIEW_LEFT)) {
+                throw FFMS_Exception(FFMS_ERROR_DECODING, FFMS_ERROR_CODEC, "Unmatched left/right views in layered decode.");
+            }
+            CopyEye(stereo3d->view);
         }
+        Delay.Decrement();
+    } else {
+        std::swap(DecodeFrame, LastDecodedFrame);
     }
 
-    return (Ret == 0) || (DelayCounter > Delay && !InitialDecode);;
+    if (Ret == 0 && Stage == DecodeStage::INITIALIZE)
+        Stage = DecodeStage::APPLY_DELAY;
+
+    return Ret == 0;
 }
 
 int FFMS_VideoSource::Seek(int n) {
     int ret = -1;
 
-    DelayCounter = 0;
-    InitialDecode = 1;
+    Delay.Reset();
+    if (Stage != DecodeStage::INITIALIZE_SOURCE)
+        Stage = DecodeStage::INITIALIZE;
 
     if (!SeekByPos || Frames[n].FilePos < 0) {
         ret = av_seek_frame(FormatContext, VideoTrack, Frames[n].PTS, AVSEEK_FLAG_BACKWARD);
-        if (ret >= 0)
-            return ret;
     }
 
-    if (Frames[n].FilePos >= 0) {
-        ret = av_seek_frame(FormatContext, VideoTrack, Frames[n].FilePos + PosOffset, AVSEEK_FLAG_BYTE);
+    if (ret < 0 && Frames[n].FilePos >= 0) {
+        ret = av_seek_frame(FormatContext, VideoTrack, Frames[n].FilePos, AVSEEK_FLAG_BYTE);
         if (ret >= 0)
             SeekByPos = true;
     }
-    return ret;
-}
 
-int FFMS_VideoSource::ReadFrame(AVPacket *pkt) {
-    int ret = av_read_frame(FormatContext, pkt);
-    if (ret >= 0 || ret == AVERROR(EOF)) return ret;
+    // We always assume seeking is possible if the first seek succeeds
+    avcodec_flush_buffers(CodecContext);
+    ResendPacket = false;
+    av_packet_unref(StashedPacket);
 
-    // Lavf reports the beginning of the actual video data as the packet's
-    // position, but the reader requires the header, so we end up seeking
-    // to the wrong position. Wait until a read actual fails to adjust the
-    // seek targets, so that if this ever gets fixed upstream our workaround
-    // doesn't re-break it.
-    if (strcmp(FormatContext->iformat->name, "yuv4mpegpipe") == 0) {
-        PosOffset = -6;
-        Seek(CurrentFrame);
-        return av_read_frame(FormatContext, pkt);
-    }
+    // When it's 0 we always know what the next frame is (or more exactly should be)
+    if (n == 0)
+        CurrentFrame = 0;
+
     return ret;
 }
 
 void FFMS_VideoSource::Free() {
     av_freep(&RPUBuffer);
+    av_freep(&HDR10PlusBuffer);
     avcodec_free_context(&CodecContext);
     avformat_close_input(&FormatContext);
     if (SWS)
         sws_freeContext(SWS);
     av_freep(&SWSFrameData[0]);
+    av_freep(&LeftEyeFrameData[0]);
+    av_freep(&RightEyeFrameData[0]);
     av_frame_free(&DecodeFrame);
     av_frame_free(&LastDecodedFrame);
+    av_packet_free(&StashedPacket);
 }
 
 void FFMS_VideoSource::DecodeNextFrame(int64_t &AStartTime, int64_t &Pos) {
@@ -698,9 +850,20 @@ void FFMS_VideoSource::DecodeNextFrame(int64_t &AStartTime, int64_t &Pos) {
         throw FFMS_Exception(FFMS_ERROR_DECODING, FFMS_ERROR_ALLOCATION_FAILED,
             "Could not allocate packet.");
 
-    while (ReadFrame(Packet) >= 0) {
+    int ret;
+    if (ResendPacket) {
+        // If we have a packet previously stashed due to a full input queue,
+        // send it again.
+        ret = 0;
+        av_packet_ref(Packet, StashedPacket);
+        av_packet_unref(StashedPacket);
+    } else {
+        ret = av_read_frame(FormatContext, Packet);
+    }
+    while (ret >= 0) {
         if (Packet->stream_index != VideoTrack) {
             av_packet_unref(Packet);
+            ret = av_read_frame(FormatContext, Packet);
             continue;
         }
 
@@ -711,12 +874,25 @@ void FFMS_VideoSource::DecodeNextFrame(int64_t &AStartTime, int64_t &Pos) {
             Pos = Packet->pos;
 
         bool FrameFinished = DecodePacket(Packet);
+        if (ResendPacket)
+            av_packet_ref(StashedPacket, Packet);
         av_packet_unref(Packet);
         if (FrameFinished) {
             av_packet_free(&Packet);
             return;
         }
+
+        if (ResendPacket) {
+            ret = 0;
+            av_packet_ref(Packet, StashedPacket);
+            av_packet_unref(StashedPacket);
+        } else {
+            ret = av_read_frame(FormatContext, Packet);
+        }
     }
+    if (IsIOError(ret))
+        throw FFMS_Exception(FFMS_ERROR_DECODING, FFMS_ERROR_FILE_READ,
+            "Failed to read packet: " + AVErrorToString(ret));
 
     // Flush final frames
     DecodePacket(Packet);
@@ -724,26 +900,42 @@ void FFMS_VideoSource::DecodeNextFrame(int64_t &AStartTime, int64_t &Pos) {
 }
 
 bool FFMS_VideoSource::SeekTo(int n, int SeekOffset) {
+    bool ForceSeek = false;
+    if (Stage == DecodeStage::INITIALIZE_SOURCE) {
+        ForceSeek = true;
+        Stage = DecodeStage::INITIALIZE;
+    }
+
+    // The semantics here are basically "return true if we don't know exactly where our seek ended up (destination isn't frame 0)"
     if (SeekMode >= 0) {
         int TargetFrame = n + SeekOffset;
         if (TargetFrame < 0)
             throw FFMS_Exception(FFMS_ERROR_SEEKING, FFMS_ERROR_UNKNOWN,
                 "Frame accurate seeking is not possible in this file");
 
+        // Seeking too close to the end of the stream can result in a different decoder delay since
+        // frames are returned as soon as draining starts, so avoid this to keep the delay predictable.
+        // Is the +1 necessary here? Not sure, but let's keep it to be safe.
+        int EndOfStreamDist = CodecContext->has_b_frames + 1;
+
+        if (CodecContext->codec_id == AV_CODEC_ID_H264)
+            // Work around a bug in ffmpeg's h264 decoder where frames are skipped when seeking too
+            // close to the end in open-gop files: https://trac.ffmpeg.org/ticket/10936
+            EndOfStreamDist *= 2;
+
+        TargetFrame = std::min(TargetFrame, Frames.RealFrameNumber(std::max(0, VP.NumFrames - 1 - EndOfStreamDist)));
+
         if (SeekMode < 3)
             TargetFrame = Frames.FindClosestVideoKeyFrame(TargetFrame);
 
         if (SeekMode == 0) {
             if (n < CurrentFrame) {
-                Seek(0);
-                avcodec_flush_buffers(CodecContext);
-                CurrentFrame = 0;
+                Seek(Frames[0].OriginalPos);
             }
         } else {
             // 10 frames is used as a margin to prevent excessive seeking since the predicted best keyframe isn't always selected by avformat
-            if (n < CurrentFrame || TargetFrame > CurrentFrame + 10 || (SeekMode == 3 && n > CurrentFrame + 10)) {
+            if (ForceSeek || n < CurrentFrame || TargetFrame > CurrentFrame + 10 || (SeekMode == 3 && n > CurrentFrame + 10)) {
                 Seek(TargetFrame);
-                avcodec_flush_buffers(CodecContext);
                 return true;
             }
         }
@@ -758,23 +950,29 @@ FFMS_Frame *FFMS_VideoSource::GetFrame(int n) {
     GetFrameCheck(n);
     n = Frames.RealFrameNumber(n);
 
-    if (LastFrameNum == n)
+    if (Stage != DecodeStage::INITIALIZE_SOURCE && LastFrameNum == n)
         return &LocalFrame;
 
     int SeekOffset = 0;
     bool Seek = true;
+    bool WasSkipped = false;
 
     do {
         bool HasSeeked = false;
         if (Seek) {
             HasSeeked = SeekTo(n, SeekOffset);
             Seek = false;
+            WasSkipped = false;
         }
 
         int64_t StartTime = AV_NOPTS_VALUE, FilePos = -1;
-        bool Hidden = (((unsigned) CurrentFrame < Frames.size()) && Frames[CurrentFrame].Hidden);
-        if (HasSeeked || !Hidden || PAFFAdjusted)
-            DecodeNextFrame(StartTime, FilePos);
+        bool Skipped = (((unsigned) CurrentFrame < Frames.size()) && Frames[CurrentFrame].Skipped());
+        if (HasSeeked || !Skipped) {
+            if (WasSkipped)
+                WasSkipped = false;
+            else
+                DecodeNextFrame(StartTime, FilePos);
+        }
 
         if (!HasSeeked)
             continue;
@@ -813,10 +1011,31 @@ FFMS_Frame *FFMS_VideoSource::GetFrame(int n) {
         // aggressive (non-keyframe) seeking.
         int64_t Pos = Frames[CurrentFrame].FilePos;
         if (CurrentFrame > 0 && Pos != -1) {
-            int Prev = CurrentFrame - 1;
-            while (Prev >= 0 && Frames[Prev].FilePos != -1 && Frames[Prev].FilePos > Pos)
-                --Prev;
-            CurrentFrame = Prev + 1;
+            while (true) {
+                int Prev = CurrentFrame - 1;
+                if (Prev >= 0 && Frames[Prev].SecondField)
+                    --Prev;
+
+                if (Prev >= 0 && (Frames[Prev].FilePos != -1 && Frames[Prev].FilePos > Pos))
+                    CurrentFrame = Prev;
+                else
+                    break;
+            }
+        }
+
+        if (Frames[CurrentFrame].Skipped()) {
+            // The frame number we seeked to was hidden.
+            // (This is not the same as the first packet we got being marked as hidden,
+            // it happens in cases like when the timestamps in decoding order are
+            //      0   -2   -1   1   2  ...
+            // and the frames with negative timestamps are hidden. Then, the first packet
+            // we get is the packet with timestamp 0, but Frames[CurrentFrame] corresponds
+            // to the frame with PTS -2. This can happen for open-gop files that have
+            // been cut at a non-IDR recovery point.)
+            // We should have skipped this frame at the start of this loop iteration, but
+            // we didn't know CurrentFrame at that point we and had to decode a frame to know
+            // the current frame. So now we need to remember to skip an extra frame.
+            WasSkipped = true;
         }
     } while (++CurrentFrame <= n);
 

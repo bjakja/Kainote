@@ -231,6 +231,7 @@ class TagData
 public:
 	TagData(const wxString &name, unsigned int startTextPos);
 	void PutValue(const wxString &name, bool multiValue = false);
+	void AppendValue(const wxString& name);
 	wxString tagName;
 	wxString value;
 	bool multiValue;

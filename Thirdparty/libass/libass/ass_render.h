@@ -22,6 +22,7 @@
 
 #include <inttypes.h>
 #include <stdbool.h>
+#include <fribidi.h>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
@@ -103,7 +104,7 @@ typedef struct {
     // during render_and_combine_glyphs: distance in subpixels from the karaoke origin.
     // after render_and_combine_glyphs: screen coordinate in pixels.
     // part of the glyph to the left of it is displayed in a different color.
-    int effect_timing;
+    int32_t effect_timing;
 
     // karaoke origin: screen coordinate of leftmost post-transform control point x in subpixels
     int32_t leftmost_x;
@@ -146,10 +147,11 @@ typedef struct glyph_info {
     ASS_Vector advance;         // 26.6
     ASS_Vector cluster_advance;
     Effect effect_type;
-    int effect_timing;          // time duration of current karaoke word
-    // after process_karaoke_effects: distance in subpixels from the karaoke origin.
+    int32_t effect_timing;          // time duration of current karaoke word
+    // after ass_process_karaoke_effects: distance in subpixels from the karaoke origin.
     // part of the glyph to the left of it is displayed in a different color.
-    int effect_skip_timing;     // delay after the end of last karaoke word
+    int32_t effect_skip_timing;     // delay after the end of last karaoke word
+    bool reset_effect;
     int asc, desc;              // font max ascender and descender
     int be;                     // blur edges
     double blur;                // gaussian blur
@@ -186,6 +188,8 @@ typedef struct {
 
 typedef struct {
     GlyphInfo *glyphs;
+    FriBidiChar *event_text;
+    char *breaks;
     int length;
     LineInfo *lines;
     int n_lines;
@@ -200,9 +204,16 @@ typedef struct {
     unsigned max_bitmaps;
 } TextInfo;
 
+#include "ass_shaper.h"
+
 // Renderer state.
 // Values like current font face, color, screen position, clipping and so on are stored here.
-typedef struct {
+struct render_context {
+    ASS_Renderer *renderer;
+    TextInfo text_info;
+    ASS_Shaper *shaper;
+    RasterizerData rasterizer;
+
     ASS_Event *event;
     ASS_Style *style;
 
@@ -249,8 +260,9 @@ typedef struct {
     int clip_drawing_mode;      // 0 = regular clip, 1 = inverse clip
 
     Effect effect_type;
-    int effect_timing;
-    int effect_skip_timing;
+    int32_t effect_timing;
+    int32_t effect_skip_timing;
+    bool reset_effect;
 
     enum {
         SCROLL_LR,              // left-to-right
@@ -258,7 +270,7 @@ typedef struct {
         SCROLL_TB,              // top-to-bottom
         SCROLL_BT
     } scroll_direction;         // for EVENT_HSCROLL, EVENT_VSCROLL
-    int scroll_shift;
+    double scroll_shift;
     int scroll_y0, scroll_y1;
 
     // face properties
@@ -275,19 +287,28 @@ typedef struct {
     int apply_font_scale;
     // whether this is assumed to be explicitly positioned
     int explicit;
-} RenderContext;
+
+    double screen_scale_x;
+    double screen_scale_y;
+    double border_scale_x;
+    double border_scale_y;
+    double blur_scale_x;
+    double blur_scale_y;
+};
+
+typedef struct render_context RenderContext;
 
 typedef struct {
     Cache *font_cache;
     Cache *outline_cache;
     Cache *bitmap_cache;
     Cache *composite_cache;
+    Cache *face_size_metrics_cache;
+    Cache *metrics_cache;
     size_t glyph_max;
     size_t bitmap_max_size;
     size_t composite_max_size;
 } CacheStore;
-
-#include "ass_shaper.h"
 
 struct ass_renderer {
     ASS_Library *library;
@@ -296,7 +317,6 @@ struct ass_renderer {
     size_t num_emfonts;
     ASS_Settings settings;
     int render_id;
-    ASS_Shaper *shaper;
 
     ASS_Image *images_root;     // rendering result is stored here
     ASS_Image *prev_images_root;
@@ -305,24 +325,19 @@ struct ass_renderer {
     int eimg_size;              // allocated buffer size
 
     // frame-global data
-    int width, height;          // screen dimensions
-    int orig_height;            // frame height ( = screen height - margins )
-    int orig_width;             // frame width ( = screen width - margins )
-    double fit_height;          // frame height without zoom & pan (fit to screen & letterboxed)
-    double fit_width;           // frame width without zoom & pan (fit to screen & letterboxed)
+    int width, height;          // screen dimensions (the whole frame from ass_set_frame_size)
+    int frame_content_height;   // content frame height ( = screen height - API margins )
+    int frame_content_width;    // content frame width ( = screen width - API margins )
+    double fit_height;          // content frame height without zoom & pan (fit to screen & letterboxed)
+    double fit_width;           // content frame width without zoom & pan (fit to screen & letterboxed)
     ASS_Track *track;
     long long time;             // frame's timestamp, ms
-    double font_scale;
-    double font_scale_x;        // x scale applied to all glyphs to preserve text aspect ratio
-    double border_scale;
-    double blur_scale;
+    double par_scale_x;        // x scale applied to all glyphs to preserve text aspect ratio
 
     RenderContext state;
-    TextInfo text_info;
     CacheStore cache;
 
-    const BitmapEngine *engine;
-    RasterizerData rasterizer;
+    BitmapEngine engine;
 
     ASS_Style user_override_style;
 };
@@ -339,9 +354,10 @@ typedef struct {
     int y1;
 } Rect;
 
-void reset_render_context(ASS_Renderer *render_priv, ASS_Style *style);
+void ass_reset_render_context(RenderContext *state, ASS_Style *style);
 void ass_frame_ref(ASS_Image *img);
 void ass_frame_unref(ASS_Image *img);
+ASS_Vector ass_layout_res(ASS_Renderer *render_priv);
 
 // XXX: this is actually in ass.c, includes should be fixed later on
 void ass_lazy_track_init(ASS_Library *lib, ASS_Track *track);

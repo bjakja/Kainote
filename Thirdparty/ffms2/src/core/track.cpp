@@ -41,14 +41,16 @@ FrameInfo ReadFrame(ZipFile &stream, FrameInfo const& prev, const FFMS_TrackType
     f.OriginalPTS = stream.Read<int64_t>() + prev.OriginalPTS;
     f.KeyFrame = !!stream.Read<int8_t>();
     f.FilePos = stream.Read<int64_t>() + prev.FilePos;
-    f.Hidden = !!stream.Read<int8_t>();
+    f.MarkedHidden = !!stream.Read<int8_t>();
 
     if (TT == FFMS_TYPE_AUDIO) {
         f.SampleStart = prev.SampleStart + prev.SampleCount;
         f.SampleCount = stream.Read<uint32_t>() + prev.SampleCount;
     } else if (TT == FFMS_TYPE_VIDEO) {
         f.OriginalPos = static_cast<size_t>(stream.Read<uint64_t>() + prev.OriginalPos + 1);
+        f.PosInDecodingOrder = static_cast<size_t>(stream.Read<uint64_t>() + prev.PosInDecodingOrder + 1);
         f.RepeatPict = stream.Read<int32_t>();
+        f.SecondField = !!stream.Read<int8_t>();
     }
     return f;
 }
@@ -58,13 +60,15 @@ static void WriteFrame(ZipFile &stream, FrameInfo const& f, FrameInfo const& pre
     stream.Write(f.OriginalPTS - prev.OriginalPTS);
     stream.Write<int8_t>(f.KeyFrame);
     stream.Write(f.FilePos - prev.FilePos);
-    stream.Write<uint8_t>(f.Hidden);
+    stream.Write<uint8_t>(f.MarkedHidden);
 
     if (TT == FFMS_TYPE_AUDIO)
         stream.Write(f.SampleCount - prev.SampleCount);
     else if (TT == FFMS_TYPE_VIDEO) {
         stream.Write(static_cast<uint64_t>(f.OriginalPos) - prev.OriginalPos - 1);
+        stream.Write(static_cast<uint64_t>(f.PosInDecodingOrder) - prev.PosInDecodingOrder - 1);
         stream.Write<int32_t>(f.RepeatPict);
+        stream.Write<uint8_t>(f.SecondField);
     }
 }
 }
@@ -127,14 +131,14 @@ void FFMS_Track::Write(ZipFile &stream) const {
         WriteFrame(stream, Frames[i], i == 0 ? temp : Frames[i - 1], TT);
 }
 
-void FFMS_Track::AddVideoFrame(int64_t PTS, int RepeatPict, bool KeyFrame, int FrameType, int64_t FilePos, bool Hidden) {
-    Data->Frames.push_back({ PTS, 0, FilePos, 0, 0, 0, FrameType, RepeatPict, KeyFrame, Hidden });
+void FFMS_Track::AddVideoFrame(int64_t PTS, int64_t DTS, int RepeatPict, bool KeyFrame, int FrameType, int64_t FilePos, bool MarkedHidden, bool SecondField) {
+    Data->Frames.push_back({ PTS, 0, FilePos, 0, 0, 0, 0, FrameType, RepeatPict, KeyFrame, MarkedHidden, SecondField, DTS });
 }
 
-void FFMS_Track::AddAudioFrame(int64_t PTS, int64_t SampleStart, uint32_t SampleCount, bool KeyFrame, int64_t FilePos, bool Hidden) {
+void FFMS_Track::AddAudioFrame(int64_t PTS, int64_t DTS, int64_t SampleStart, uint32_t SampleCount, bool KeyFrame, int64_t FilePos, bool MarkedHidden) {
     if (SampleCount > 0) {
         Data->Frames.push_back({ PTS, 0, FilePos, SampleStart, SampleCount,
-            0, 0, 0, KeyFrame, Hidden });
+            0, 0, 0, 0, KeyFrame, MarkedHidden, false, DTS });
     }
 }
 
@@ -144,7 +148,7 @@ void FFMS_Track::WriteTimecodes(const char *TimecodeFile) const {
 
     file.Printf("# timecode format v2\n");
     for (size_t i = 0; i < size(); ++i) {
-        if (!Frames[i].Hidden)
+        if (!Frames[i].Skipped())
             file.Printf("%.02f\n", (Frames[i].PTS * TB.Num) / (double)TB.Den);
     }
 }
@@ -153,12 +157,12 @@ static bool PTSComparison(FrameInfo FI1, FrameInfo FI2) {
     return FI1.PTS < FI2.PTS;
 }
 
-int FFMS_Track::FrameFromPTS(int64_t PTS) const {
+int FFMS_Track::FrameFromPTS(int64_t PTS, bool AllowHidden) const {
     FrameInfo F;
     F.PTS = PTS;
 
     auto Pos = std::lower_bound(begin(), end(), F, PTSComparison);
-    while (Pos != end() && Pos->Hidden && Pos->PTS == PTS)
+    while (Pos != end() && (!AllowHidden && Pos->Skipped()) && Pos->PTS == PTS)
         Pos++;
 
     if (Pos == end() || Pos->PTS != PTS)
@@ -166,9 +170,9 @@ int FFMS_Track::FrameFromPTS(int64_t PTS) const {
     return std::distance(begin(), Pos);
 }
 
-int FFMS_Track::FrameFromPos(int64_t Pos) const {
+int FFMS_Track::FrameFromPos(int64_t Pos, bool AllowHidden) const {
     for (size_t i = 0; i < size(); i++)
-        if (Data->Frames[i].FilePos == Pos && !Data->Frames[i].Hidden)
+        if (Data->Frames[i].FilePos == Pos && (AllowHidden || !Data->Frames[i].Skipped()))
             return static_cast<int>(i);
     return -1;
 }
@@ -178,7 +182,7 @@ int FFMS_Track::ClosestFrameFromPTS(int64_t PTS) const {
     F.PTS = PTS;
 
     auto Pos = std::lower_bound(begin(), end(), F, PTSComparison);
-    while (Pos != end() && Pos->Hidden && Pos->PTS == PTS)
+    while (Pos != end() && Pos->Skipped() && Pos->PTS == PTS)
         Pos++;
 
     if (Pos == end())
@@ -192,9 +196,10 @@ int FFMS_Track::ClosestFrameFromPTS(int64_t PTS) const {
 int FFMS_Track::FindClosestVideoKeyFrame(int Frame) const {
     frame_vec &Frames = Data->Frames;
     Frame = std::min(std::max(Frame, 0), static_cast<int>(size()) - 1);
-    for (; Frame > 0 && !Frames[Frame].KeyFrame; Frame--);
-    for (; Frame > 0 && !Frames[Frames[Frame].OriginalPos].KeyFrame; Frame--);
-    return Frame;
+    size_t PosInDecodingOrder = Frames[Frame].PosInDecodingOrder;
+    for (; PosInDecodingOrder > 0 && !(Frames[Frames[PosInDecodingOrder].OriginalPos].KeyFrame && Frames[Frames[PosInDecodingOrder].OriginalPos].PTS <= Frames[Frame].PTS); PosInDecodingOrder--);
+
+    return Frames[PosInDecodingOrder].OriginalPos;
 }
 
 int FFMS_Track::RealFrameNumber(int Frame) const {
@@ -243,6 +248,14 @@ void FFMS_Track::MaybeReorderFrames() {
     }
 }
 
+void FFMS_Track::RevertToDTS() {
+    frame_vec &Frames = Data->Frames;
+    for (size_t i = 0; i < size(); ++i)
+        Frames[i].PTS = Frames[i].DTS;
+
+    UseDTS = true;
+}
+
 void FFMS_Track::MaybeHideFrames() {
     frame_vec &Frames = Data->Frames;
     // Awful handling for interlaced H.264: each frame is output twice, so hide
@@ -252,8 +265,8 @@ void FFMS_Track::MaybeHideFrames() {
         FrameInfo const& prev = Frames[i - 1];
         FrameInfo& cur = Frames[i];
 
-        if (prev.FilePos >= 0 && (cur.FilePos == -1 || cur.FilePos == prev.FilePos) && !prev.Hidden)
-            cur.Hidden = true;
+        if (prev.FilePos >= 0 && (cur.FilePos == -1 || cur.FilePos == prev.FilePos) && !prev.Skipped())
+            cur.MarkedHidden = true;
     }
 }
 
@@ -337,7 +350,7 @@ void FFMS_Track::FinalizeTrack() {
         return;
 
     for (size_t i = 0; i < size(); i++) {
-        Frames[i].OriginalPos = i;
+        Frames[i].PosInDecodingOrder = i;
         Frames[i].OriginalPTS = Frames[i].PTS;
     }
 
@@ -381,12 +394,26 @@ void FFMS_Track::FinalizeTrack() {
     ReorderTemp.reserve(size());
 
     for (size_t i = 0; i < size(); i++)
-        ReorderTemp.push_back(Frames[i].OriginalPos);
+        ReorderTemp.push_back(Frames[i].PosInDecodingOrder);
 
     for (size_t i = 0; i < size(); i++)
         Frames[ReorderTemp[i]].OriginalPos = i;
 
+    for (size_t i = 0; i < size(); i++) {
+        if (Frames[Frames[i].OriginalPos].PosInDecodingOrder != i ||
+            Frames[Frames[i].PosInDecodingOrder].OriginalPos != i)
+            throw FFMS_Exception(FFMS_ERROR_INDEXING, FFMS_ERROR_CODEC, "Insanity detected when tracking frame reordering");
+    }
+
     GeneratePublicInfo();
+
+    // If the last packet in the file did not have a duration set,
+    // fudge one based on the previous frame's duration.
+    if (LastDuration == 0) {
+        size_t InfoSize = Data->PublicFrameInfo.size();
+        if (InfoSize >= 2)
+            LastDuration = Data->PublicFrameInfo[InfoSize - 1].PTS - Data->PublicFrameInfo[InfoSize - 2].PTS;
+    }
 }
 
 void FFMS_Track::GeneratePublicInfo() {
@@ -396,7 +423,7 @@ void FFMS_Track::GeneratePublicInfo() {
     RealFrameNumbers.reserve(size());
     PublicFrameInfo.reserve(size());
     for (size_t i = 0; i < size(); ++i) {
-        if (Frames[i].Hidden)
+        if (Frames[i].Skipped())
             continue;
         RealFrameNumbers.push_back(static_cast<int>(i));
 

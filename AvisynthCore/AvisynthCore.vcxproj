@@ -386,7 +386,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\baseclasses;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(SolutionDir)Thirdparty\Build\AvisynthPlus\avs_core;$(SolutionDir)\Thirdparty\AviSynthPlus\plugins\ImageSeq\lib\DevIL_x64;$(SolutionDir)Thirdparty\AviSynthPlus\imageseq\lib\devil_x64;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\filters;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard_C>stdc17</LanguageStandard_C>

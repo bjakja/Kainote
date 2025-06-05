@@ -118,7 +118,6 @@ void ass_close_dir(ASS_Dir *dir)
 #else  // Windows
 
 #include <windows.h>
-#include "ass_directwrite.h"  // for ASS_WINAPI_DESKTOP
 
 
 static const uint8_t wtf8_len_table[256] = {
@@ -303,13 +302,16 @@ static bool open_dir_wtf8(ASS_Dir *dir, ASS_StringView path)
     if (!wpath)
         return false;
 
-    bool add_separator;
     WIN32_FIND_DATAW data;
     WCHAR *end = convert_wtf8to16(wpath, path);
-    if (end) {
-        add_separator = append_tail(wpath, end - wpath);
-        dir->handle = FindFirstFileExW(wpath, FindExInfoBasic, &data, FindExSearchNameMatch, NULL, 0);
+    if (!end) {
+        free(wpath);
+        return false;
     }
+
+    bool add_separator = append_tail(wpath, end - wpath);
+    dir->handle = FindFirstFileExW(wpath, FindExInfoBasic, &data, FindExSearchNameMatch, NULL, 0);
+
     free(wpath);
     if (dir->handle == INVALID_HANDLE_VALUE)
         return false;

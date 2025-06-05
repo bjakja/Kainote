@@ -23,55 +23,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
-#include <limits.h>
 #include <inttypes.h>
 
 #include "ass_library.h"
 #include "ass.h"
 #include "ass_utils.h"
 #include "ass_string.h"
-
-#if CONFIG_ASM && ARCH_X86
-
-#include "x86/cpuid.h"
-
-void ass_cpu_capabilities(bool *sse2, bool *avx2)
-{
-    *sse2 = false;
-    *avx2 = false;
-
-    if (!ass_has_cpuid())
-        return;
-
-    uint32_t eax = 0, ebx, ecx, edx;
-    ass_get_cpuid(&eax, &ebx, &ecx, &edx);
-    uint32_t max_leaf = eax;
-    bool avx = false;
-
-    if (max_leaf >= 1) {
-        eax = 1;
-        ass_get_cpuid(&eax, &ebx, &ecx, &edx);
-        if (edx & (1 << 26))  // SSE2
-            *sse2 = true;
-
-        if (ecx & (1 << 27) &&  // OSXSAVE
-            ecx & (1 << 28)) {  // AVX
-            uint32_t xcr0l, xcr0h;
-            ass_get_xgetbv(0, &xcr0l, &xcr0h);
-            if (xcr0l & (1 << 1) &&  // XSAVE for XMM
-                xcr0l & (1 << 2))    // XSAVE for YMM
-                    avx = true;
-        }
-    }
-
-    if (max_leaf >= 7) {
-        eax = 7;
-        ass_get_cpuid(&eax, &ebx, &ecx, &edx);
-        if (avx && ebx & (1 << 5))  // AVX2
-            *avx2 = true;
-    }
-}
-#endif // ASM
 
 // Fallbacks
 #ifndef HAVE_STRDUP
@@ -104,7 +61,7 @@ void *ass_aligned_alloc(size_t alignment, size_t size, bool zero)
     assert(!(alignment & (alignment - 1))); // alignment must be power of 2
     if (size >= SIZE_MAX - alignment - sizeof(void *))
         return NULL;
-    char *allocation = zero ? calloc(size + sizeof(void *) + alignment - 1, 1)
+    char *allocation = zero ? calloc(1, size + sizeof(void *) + alignment - 1)
                             : malloc(size + sizeof(void *) + alignment - 1);
     if (!allocation)
         return NULL;
@@ -155,187 +112,6 @@ void *ass_try_realloc_array(void *ptr, size_t nmemb, size_t size)
         errno = ENOMEM;
         return ptr;
     }
-}
-
-void skip_spaces(char **str)
-{
-    char *p = *str;
-    while ((*p == ' ') || (*p == '\t'))
-        ++p;
-    *str = p;
-}
-
-void rskip_spaces(char **str, char *limit)
-{
-    char *p = *str;
-    while ((p > limit) && ((p[-1] == ' ') || (p[-1] == '\t')))
-        --p;
-    *str = p;
-}
-
-static int read_digits(char **str, unsigned base, uint32_t *res)
-{
-    char *p = *str;
-    char *start = p;
-    uint32_t val = 0;
-
-    while (1) {
-        unsigned digit;
-        if (*p >= '0' && *p < FFMIN(base, 10) + '0')
-            digit = *p - '0';
-        else if (*p >= 'a' && *p < base - 10 + 'a')
-            digit = *p - 'a' + 10;
-        else if (*p >= 'A' && *p < base - 10 + 'A')
-            digit = *p - 'A' + 10;
-        else
-            break;
-        val = val * base + digit;
-        ++p;
-    }
-
-    *res = val;
-    *str = p;
-    return p != start;
-}
-
-/**
- * \brief Convert a string to an integer reduced modulo 2**32
- * Follows the rules for strtoul but reduces the number modulo 2**32
- * instead of saturating it to 2**32 - 1.
- */
-static int mystrtou32_modulo(char **p, unsigned base, uint32_t *res)
-{
-    // This emulates scanf with %d or %x format as it works on
-    // Windows, because that's what is used by VSFilter. In practice,
-    // scanf works the same way on other platforms too, but
-    // the standard leaves its behavior on overflow undefined.
-
-    // Unlike scanf and like strtoul, produce 0 for invalid inputs.
-
-    char *start = *p;
-    int sign = 1;
-
-    skip_spaces(p);
-
-    if (**p == '+')
-        ++*p;
-    else if (**p == '-')
-        sign = -1, ++*p;
-
-    if (base == 16 && !ass_strncasecmp(*p, "0x", 2))
-        *p += 2;
-
-    if (read_digits(p, base, res)) {
-        *res *= sign;
-        return 1;
-    } else {
-        *p = start;
-        return 0;
-    }
-}
-
-int32_t parse_alpha_tag(char *str)
-{
-    int32_t alpha = 0;
-
-    while (*str == '&' || *str == 'H')
-        ++str;
-
-    mystrtoi32(&str, 16, &alpha);
-    return alpha;
-}
-
-uint32_t parse_color_tag(char *str)
-{
-    int32_t color = 0;
-
-    while (*str == '&' || *str == 'H')
-        ++str;
-
-    mystrtoi32(&str, 16, &color);
-    return ass_bswap32((uint32_t) color);
-}
-
-uint32_t parse_color_header(char *str)
-{
-    uint32_t color = 0;
-    unsigned base;
-
-    if (!ass_strncasecmp(str, "&h", 2) || !ass_strncasecmp(str, "0x", 2)) {
-        str += 2;
-        base = 16;
-    } else
-        base = 10;
-
-    mystrtou32_modulo(&str, base, &color);
-    return ass_bswap32(color);
-}
-
-// Return a boolean value for a string
-char parse_bool(char *str)
-{
-    skip_spaces(&str);
-    return !ass_strncasecmp(str, "yes", 3) || strtol(str, NULL, 10) > 0;
-}
-
-int parse_ycbcr_matrix(char *str)
-{
-    skip_spaces(&str);
-    if (*str == '\0')
-        return YCBCR_DEFAULT;
-
-    char *end = str + strlen(str);
-    rskip_spaces(&end, str);
-
-    // Trim a local copy of the input that we know is safe to
-    // modify. The buffer is larger than any valid string + NUL,
-    // so we can simply chop off the rest of the input.
-    char buffer[16];
-    size_t n = FFMIN(end - str, sizeof buffer - 1);
-    memcpy(buffer, str, n);
-    buffer[n] = '\0';
-
-    if (!ass_strcasecmp(buffer, "none"))
-        return YCBCR_NONE;
-    if (!ass_strcasecmp(buffer, "tv.601"))
-        return YCBCR_BT601_TV;
-    if (!ass_strcasecmp(buffer, "pc.601"))
-        return YCBCR_BT601_PC;
-    if (!ass_strcasecmp(buffer, "tv.709"))
-        return YCBCR_BT709_TV;
-    if (!ass_strcasecmp(buffer, "pc.709"))
-        return YCBCR_BT709_PC;
-    if (!ass_strcasecmp(buffer, "tv.240m"))
-        return YCBCR_SMPTE240M_TV;
-    if (!ass_strcasecmp(buffer, "pc.240m"))
-        return YCBCR_SMPTE240M_PC;
-    if (!ass_strcasecmp(buffer, "tv.fcc"))
-        return YCBCR_FCC_TV;
-    if (!ass_strcasecmp(buffer, "pc.fcc"))
-        return YCBCR_FCC_PC;
-    return YCBCR_UNKNOWN;
-}
-
-/**
- * \brief converts numpad-style align to align.
- */
-int numpad2align(int val)
-{
-    if (val < -INT_MAX)
-        // Pick an alignment somewhat arbitrarily. VSFilter handles
-        // INT32_MIN as a mix of 1, 2 and 3, so prefer one of those values.
-        val = 2;
-    else if (val < 0)
-        val = -val;
-
-    int res = ((val - 1) % 3) + 1;  // horizontal alignment
-    if (val <= 3)
-        res |= VALIGN_SUB;
-    else if (val <= 6)
-        res |= VALIGN_CENTER;
-    else
-        res |= VALIGN_TOP;
-    return res;
 }
 
 void ass_msg(ASS_Library *priv, int lvl, const char *fmt, ...)
@@ -467,14 +243,14 @@ void ass_utf16be_to_utf8(char *dst, size_t dst_size, uint8_t *src, size_t src_si
 }
 
 /**
- * \brief find style by name
+ * \brief find style by name the common way (\r matches differently)
  * \param track track
  * \param name style name
  * \return index in track->styles
  * Returns 0 if no styles found => expects at least 1 style.
  * Parsing code always adds "Default" style in the beginning.
  */
-int lookup_style(ASS_Track *track, char *name)
+int ass_lookup_style(ASS_Track *track, char *name)
 {
     int i;
     // '*' seem to mean literally nothing;
@@ -495,26 +271,3 @@ int lookup_style(ASS_Track *track, char *name)
             track, name, track->styles[i].Name);
     return i;
 }
-
-/**
- * \brief find style by name as in \r
- * \param track track
- * \param name style name
- * \param len style name length
- * \return style in track->styles
- * Returns NULL if no style has the given name.
- */
-ASS_Style *lookup_style_strict(ASS_Track *track, char *name, size_t len)
-{
-    int i;
-    for (i = track->n_styles - 1; i >= 0; --i) {
-        if (strncmp(track->styles[i].Name, name, len) == 0 &&
-            track->styles[i].Name[len] == '\0')
-            return track->styles + i;
-    }
-    ass_msg(track->library, MSGL_WARN,
-            "[%p]: Warning: no style named '%.*s' found",
-            track, (int) len, name);
-    return NULL;
-}
-

@@ -20,6 +20,11 @@
 #include <png.h>
 
 
+static inline bool is_little_endian(void)
+{
+    return *(char *) &(uint16_t) {1};
+}
+
 bool read_png(const char *path, Image16 *img)
 {
     FILE *fp = fopen(path, "rb");
@@ -55,14 +60,22 @@ bool read_png(const char *path, Image16 *img)
 
     uint32_t w = png_get_image_width(png, info);
     uint32_t h = png_get_image_height(png, info);
+    uint32_t a = png_get_valid(png, info, PNG_INFO_tRNS);
     int type   = png_get_color_type(png, info);
     int depth  = png_get_bit_depth(png, info);
 
-    if (w > 0xFFFF || h > 0xFFFF || type != PNG_COLOR_TYPE_RGBA) {
+    if (w > 0xFFFF || h > 0xFFFF) {
         png_destroy_read_struct(&png, &info, NULL);
         fclose(fp);
         return false;
     }
+
+    if (!(type & PNG_COLOR_MASK_COLOR))
+        png_set_gray_to_rgb(png);
+    if ((type & PNG_COLOR_MASK_PALETTE) || a)
+        png_set_expand(png);
+    if (!a && !(type & PNG_COLOR_MASK_ALPHA))
+        png_set_filler(png, -1, PNG_FILLER_AFTER);
 
     ptrdiff_t stride = 8 * w;
     buf = malloc(stride * h);
@@ -77,9 +90,9 @@ bool read_png(const char *path, Image16 *img)
 
     png_byte *ptr = buf;
     ptrdiff_t half = 4 * w;
-    if (depth == 8)
+    if (depth < 16)
         ptr += half;
-    else
+    else if (is_little_endian())
         png_set_swap(png);
 
     for (uint32_t i = 0; i < h; i++) {
@@ -95,7 +108,7 @@ bool read_png(const char *path, Image16 *img)
     fclose(fp);
 
     // convert to premultiplied with inverted alpha
-    if (depth == 8) {
+    if (depth < 16) {
         uint8_t *ptr = (uint8_t *) buf;
         for (uint32_t y = 0; y < h; y++) {
             for (uint32_t x = 0; x < w; x++) {
@@ -186,7 +199,7 @@ static bool write_png(const char *path, uint32_t width, uint32_t height,
                  PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
     png_write_info(png, info);
 
-    if (depth > 8)
+    if (depth > 8 && is_little_endian())
         png_set_swap(png);
     png_write_image(png, rows);
     png_write_end(png, NULL);

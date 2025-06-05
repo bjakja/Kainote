@@ -385,7 +385,7 @@
       <PreprocessorDefinitions>FFMS_EXPORTS;_CRT_SECURE_NO_WARNINGS;__STDC_CONSTANT_MACROS;NDEBUG;_WINDOWS;_USRDLL;FFMS2_EXPORTS;AVS_STATIC_LIB;BUILDING_AVSCORE;CONFIG_DXVA2;CONFIG_D3D11VA;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\core;$(SolutionDir)Thirdparty\ffmpeg;$(SolutionDir)Thirdparty\zlib;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
@@ -429,16 +429,14 @@
     <ClCompile Include="..\..\ffms2\src\core\ffms.cpp" />
     <ClCompile Include="..\..\ffms2\src\core\filehandle.cpp" />
     <ClCompile Include="..\..\ffms2\src\core\indexing.cpp" />
-    <ClCompile Include="..\..\ffms2\src\core\indexing_additional.cpp" />
     <ClCompile Include="..\..\ffms2\src\core\track.cpp" />
     <ClCompile Include="..\..\ffms2\src\core\utils.cpp" />
     <ClCompile Include="..\..\ffms2\src\core\videosource.cpp" />
     <ClCompile Include="..\..\ffms2\src\core\videoutils.cpp" />
     <ClCompile Include="..\..\ffms2\src\core\zipfile.cpp" />
-    <ClCompile Include="..\..\ffms2\src\vapoursynth\vapoursource.cpp" />
     <ClCompile Include="..\..\ffms2\src\vapoursynth\vapoursource4.cpp" />
-    <ClCompile Include="..\..\ffms2\src\vapoursynth\vapoursynth.cpp" />
     <ClCompile Include="..\..\ffms2\src\vapoursynth\vapoursynth4.cpp" />
+    <ClCompile Include="indexing_additional.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ffms2\include\ffms.h" />
@@ -451,9 +449,7 @@
     <ClInclude Include="..\..\ffms2\src\core\videosource.h" />
     <ClInclude Include="..\..\ffms2\src\core\videoutils.h" />
     <ClInclude Include="..\..\ffms2\src\core\zipfile.h" />
-    <ClInclude Include="..\..\ffms2\src\vapoursynth\vapoursource.h" />
     <ClInclude Include="..\..\ffms2\src\vapoursynth\vapoursource4.h" />
-    <ClInclude Include="..\..\ffms2\src\vapoursynth\VapourSynth.h" />
     <ClInclude Include="..\..\ffms2\src\vapoursynth\VapourSynth4.h" />
     <ClInclude Include="..\..\ffms2\src\vapoursynth\VSHelper.h" />
     <ClInclude Include="..\..\ffms2\src\vapoursynth\VSHelper4.h" />

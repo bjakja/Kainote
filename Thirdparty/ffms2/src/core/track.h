@@ -35,11 +35,18 @@ struct FrameInfo {
     int64_t FilePos;
     int64_t SampleStart;
     uint32_t SampleCount;
-    size_t OriginalPos;
+    size_t OriginalPos;         // Frames[Frames[n].OriginalPos] will be the n-th frame in decoding order
+    size_t PosInDecodingOrder;
     int FrameType;
     int RepeatPict;
     bool KeyFrame;
-    bool Hidden;
+    bool MarkedHidden;
+    bool SecondField;
+
+    int64_t DTS;        // Only used during indexing and not stored in the index file. (If UseDTS is true, the PTS values will be DTS)
+
+    // If true, no frame corresponding to this packet will be output
+    constexpr bool Skipped() const { return MarkedHidden || SecondField; }
 };
 
 struct FFMS_Track {
@@ -66,16 +73,17 @@ public:
     int64_t LastDuration = 0;
     int SampleRate = 0; // not persisted
 
-    void AddVideoFrame(int64_t PTS, int RepeatPict, bool KeyFrame, int FrameType, int64_t FilePos = 0, bool Invisible = false);
-    void AddAudioFrame(int64_t PTS, int64_t SampleStart, uint32_t SampleCount, bool KeyFrame, int64_t FilePos = 0, bool Invisible = false);
+    void AddVideoFrame(int64_t PTS, int64_t DTS, int RepeatPict, bool KeyFrame, int FrameType, int64_t FilePos = 0, bool Invisible = false, bool SecondField = false);
+    void AddAudioFrame(int64_t PTS, int64_t DTS, int64_t SampleStart, uint32_t SampleCount, bool KeyFrame, int64_t FilePos = 0, bool Invisible = false);
 
+    void RevertToDTS();
     void MaybeHideFrames();
     void FinalizeTrack();
     void FillAudioGaps();
 
     int FindClosestVideoKeyFrame(int Frame) const;
-    int FrameFromPTS(int64_t PTS) const;
-    int FrameFromPos(int64_t Pos) const;
+    int FrameFromPTS(int64_t PTS, bool AllowHidden = false) const;
+    int FrameFromPos(int64_t Pos, bool AllowHidden = false) const;
     int ClosestFrameFromPTS(int64_t PTS) const;
     int RealFrameNumber(int Frame) const;
     int VisibleFrameCount() const;

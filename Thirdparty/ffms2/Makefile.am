@@ -39,10 +39,11 @@ src_core_libffms2_la_SOURCES = \
 	src/core/videoutils.h \
 	src/core/zipfile.cpp \
 	src/core/zipfile.h \
-	src/vapoursynth/VapourSynth.h \
-	src/vapoursynth/vapoursource.cpp \
-	src/vapoursynth/vapoursource.h \
-	src/vapoursynth/vapoursynth.cpp
+	src/vapoursynth/VapourSynth4.h \
+	src/vapoursynth/VSHelper4.h \
+	src/vapoursynth/vapoursource4.cpp \
+	src/vapoursynth/vapoursource4.h \
+	src/vapoursynth/vapoursynth4.cpp
 
 if AVISYNTH
 src_core_libffms2_la_SOURCES += \
@@ -55,7 +56,7 @@ include_HEADERS = $(top_srcdir)/include/ffms.h $(top_srcdir)/include/ffmscompat.
 
 bin_PROGRAMS = src/index/ffmsindex
 src_index_ffmsindex_SOURCES = src/index/ffmsindex.cpp
-src_index_ffmsindex_LDADD = src/core/libffms2.la
+src_index_ffmsindex_LDADD = -lavutil src/core/libffms2.la
 
 .PHONY: test test-build test-clean test-sync test-run
 clean-local: test-clean

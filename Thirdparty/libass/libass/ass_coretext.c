@@ -19,6 +19,7 @@
 #include "config.h"
 #include "ass_compat.h"
 
+#include <Availability.h>
 #include <CoreFoundation/CoreFoundation.h>
 #include <TargetConditionals.h>
 #if TARGET_OS_IPHONE
@@ -28,6 +29,18 @@
 #endif
 
 #include "ass_coretext.h"
+
+#ifndef __has_builtin
+#define __has_builtin 0
+#endif
+
+#if __has_builtin(__builtin_available)
+#define CHECK_AVAILABLE(sym, ...) __builtin_available(__VA_ARGS__)
+#else
+// Cast to suppress "comparison never succeeds" warnings in some compilers
+// when the build target is new enough that sym isn't a weak symbol
+#define CHECK_AVAILABLE(sym, ...) (!!(intptr_t) &sym)
+#endif
 
 #define SAFE_CFRelease(x) do { if (x) CFRelease(x); } while (0)
 
@@ -57,31 +70,8 @@ static char *cfstr2buf(CFStringRef string)
 
 static void destroy_font(void *priv)
 {
-    CTFontDescriptorRef fontd = priv;
-    CFRelease(fontd);
-}
-
-static bool is_postscript_font_format(CFNumberRef cfformat)
-{
-    bool ret = false;
-    int format;
-    if (CFNumberGetValue(cfformat, kCFNumberIntType, &format)) {
-        ret = format == kCTFontFormatOpenTypePostScript ||
-              format == kCTFontFormatPostScript;
-    }
-    return ret;
-}
-
-static bool check_postscript(void *priv)
-{
-    CTFontDescriptorRef fontd = priv;
-    CFNumberRef cfformat =
-        CTFontDescriptorCopyAttribute(fontd, kCTFontFormatAttribute);
-    if (!cfformat)
-        return false;
-    bool ret = is_postscript_font_format(cfformat);
-    CFRelease(cfformat);
-    return ret;
+    CFCharacterSetRef set = priv;
+    SAFE_CFRelease(set);
 }
 
 static bool check_glyph(void *priv, uint32_t code)
@@ -89,21 +79,38 @@ static bool check_glyph(void *priv, uint32_t code)
     if (code == 0)
         return true;
 
-    CTFontDescriptorRef fontd = priv;
-    CFCharacterSetRef set =
-        CTFontDescriptorCopyAttribute(fontd, kCTFontCharacterSetAttribute);
+    CFCharacterSetRef set = priv;
 
     if (!set)
         return true;
 
-    bool result = CFCharacterSetIsLongCharacterMember(set, code);
-    CFRelease(set);
-    return result;
+    return CFCharacterSetIsLongCharacterMember(set, code);
 }
 
 static char *get_font_file(CTFontDescriptorRef fontd)
 {
-    CFURLRef url = CTFontDescriptorCopyAttribute(fontd, kCTFontURLAttribute);
+    CFURLRef url = NULL;
+    if (false) {}
+#ifdef __MAC_10_6
+    // Declared in SDKs since 10.6, including iOS SDKs
+    else if (CHECK_AVAILABLE(kCTFontURLAttribute, macOS 10.6, *)) {
+        url = CTFontDescriptorCopyAttribute(fontd, kCTFontURLAttribute);
+    }
+#endif
+#if !TARGET_OS_IPHONE && (!defined(__MAC_10_6) || __MAC_OS_X_VERSION_MIN_REQUIRED < __MAC_10_6)
+    // ATS is declared deprecated in newer macOS SDKs
+    // and not declared at all in iOS SDKs
+    else {
+        CTFontRef font = CTFontCreateWithFontDescriptor(fontd, 0, NULL);
+        if (!font)
+            return NULL;
+        ATSFontRef ats_font = CTFontGetPlatformFont(font, NULL);
+        FSRef fs_ref;
+        if (ATSFontGetFileReference(ats_font, &fs_ref) == noErr)
+            url = CFURLCreateFromFSRef(NULL, &fs_ref);
+        CFRelease(font);
+    }
+#endif
     if (!url)
         return NULL;
     CFStringRef path = CFURLCopyFileSystemPath(url, kCFURLPOSIXPathStyle);
@@ -162,8 +169,9 @@ static void process_descriptors(ASS_FontProvider *provider, CFArrayRef fontsd)
 
         char *path = NULL;
         if (get_font_info_ct(fontd, &path, &meta)) {
-            CFRetain(fontd);
-            ass_font_provider_add_font(provider, &meta, path, index, (void*)fontd);
+            CFCharacterSetRef set =
+                CTFontDescriptorCopyAttribute(fontd, kCTFontCharacterSetAttribute);
+            ass_font_provider_add_font(provider, &meta, path, index, (void*)set);
         }
 
         free(meta.postscript_name);
@@ -295,7 +303,6 @@ static void get_substitutions(void *priv, const char *name,
 }
 
 static ASS_FontProviderFuncs coretext_callbacks = {
-    .check_postscript   = check_postscript,
     .check_glyph        = check_glyph,
     .destroy_font       = destroy_font,
     .match_fonts        = match_fonts,

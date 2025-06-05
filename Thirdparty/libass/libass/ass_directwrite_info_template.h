@@ -11,14 +11,8 @@ static bool NAME(FONT_TYPE)(FONT_TYPE *font,
     HRESULT hr;
     BOOL exists;
 
-    meta->weight = font->lpVtbl->GetWeight(font);
-    meta->width = map_width(font->lpVtbl->GetStretch(font));
-
-    DWRITE_FONT_STYLE style = font->lpVtbl->GetStyle(font);
-    meta->slant = (style == DWRITE_FONT_STYLE_NORMAL) ? FONT_SLANT_NONE :
-                 (style == DWRITE_FONT_STYLE_OBLIQUE)? FONT_SLANT_OBLIQUE :
-                 (style == DWRITE_FONT_STYLE_ITALIC) ? FONT_SLANT_ITALIC : FONT_SLANT_NONE;
-
+    // This PostScript name will merely be logged by
+    // ass_face_stream in case it encounters an error
     IDWriteLocalizedStrings *psNames;
     hr = font->lpVtbl->GetInformationalStrings(font,
             DWRITE_INFORMATIONAL_STRING_POSTSCRIPT_NAME, &psNames, &exists);
@@ -32,35 +26,19 @@ static bool NAME(FONT_TYPE)(FONT_TYPE *font,
             return false;
     }
 
-    IDWriteLocalizedStrings *fontNames;
-    hr = font->lpVtbl->GetInformationalStrings(font,
-            DWRITE_INFORMATIONAL_STRING_FULL_NAME, &fontNames, &exists);
-    if (FAILED(hr))
-        return false;
-
-    if (exists) {
-        meta->n_fullname = IDWriteLocalizedStrings_GetCount(fontNames);
-        meta->fullnames = calloc(meta->n_fullname, sizeof(char *));
-        if (!meta->fullnames) {
-            IDWriteLocalizedStrings_Release(fontNames);
-            return false;
-        }
-        for (int k = 0; k < meta->n_fullname; k++) {
-            meta->fullnames[k] = get_utf8_name(fontNames, k);
-            if (!meta->fullnames[k]) {
-                IDWriteLocalizedStrings_Release(fontNames);
-                return false;
-            }
-        }
-        IDWriteLocalizedStrings_Release(fontNames);
-    }
-
     IDWriteLocalizedStrings *familyNames;
     hr = font->lpVtbl->GetInformationalStrings(font,
             DWRITE_INFORMATIONAL_STRING_WIN32_FAMILY_NAMES, &familyNames, &exists);
-    if (!FAILED(hr) && !exists) {
+    if (SUCCEEDED(hr) && !exists) {
 #ifdef FAMILY_AS_ARG
-        hr = IDWriteFontFamily_GetFamilyNames(fontFamily, &familyNames);
+        if (fontFamily)
+            hr = IDWriteFontFamily_GetFamilyNames(fontFamily, &familyNames);
+        else {
+            hr = font->lpVtbl->GetFontFamily(font, &fontFamily);
+            if (SUCCEEDED(hr))
+                hr = IDWriteFontFamily_GetFamilyNames(fontFamily, &familyNames);
+            IDWriteFontFamily_Release(fontFamily);
+        }
 #else
         hr = font->lpVtbl->GetFamilyNames(font, &familyNames);
 #endif
@@ -68,20 +46,10 @@ static bool NAME(FONT_TYPE)(FONT_TYPE *font,
     if (FAILED(hr))
         return false;
 
-    meta->n_family = IDWriteLocalizedStrings_GetCount(familyNames);
-    meta->families = calloc(meta->n_family, sizeof(char *));
-    if (!meta->families) {
-        IDWriteLocalizedStrings_Release(familyNames);
-        return false;
-    }
-    for (int k = 0; k < meta->n_family; k++) {
-        meta->families[k] = get_utf8_name(familyNames, k);
-        if (!meta->families[k]) {
-            IDWriteLocalizedStrings_Release(familyNames);
-            return false;
-        }
-    }
+    meta->extended_family = get_utf8_name(familyNames, 0);
     IDWriteLocalizedStrings_Release(familyNames);
+    if (!meta->extended_family)
+        return false;
 
     return true;
 }

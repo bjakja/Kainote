@@ -38,7 +38,7 @@ extern "C" {
 
 #define U_IS_SURROGATE(c) (((c)&0xfffff800)==0xd800)
 
-ASS_Library *g_lib = NULL;
+//ASS_Library *g_lib = NULL;
 
 namespace {
 class GdiFont {
@@ -54,35 +54,35 @@ public:
 
 	size_t GetData(unsigned char *data, size_t offset, size_t len);
 	bool CheckPostscript() { return false; }
-	bool CheckGlyph(uint32_t codepoint);// { return true; }
+	bool CheckGlyph(uint32_t codepoint) { return true; }
 	void Destroy() { delete this; }
 };
 
-bool GdiFont::CheckGlyph(uint32_t codepoint) 
-{ 
-	/*if (!codepoint)
-		return true;
-
-	std::wstring glyph; 
-	glyph.insert(glyph.begin(), ((wchar_t)codepoint));
-	WORD *indices = new WORD[glyph.size()];
-
-	bool succeeded = (GetGlyphIndicesW(dc.get(), glyph.data(), glyph.size(),
-		indices, GGI_MARK_NONEXISTING_GLYPHS) != GDI_ERROR);
-	
-	
-	for (size_t i = 0; i < glyph.size(); ++i) {
-		
-		if (U_IS_SURROGATE(glyph[i]))
-			continue;
-		if (indices[i] == 0xFFFF) {
-			succeeded = false;
-		}
-	}
-	delete[] indices;
-	return succeeded;*/
-	return true;
-}
+//bool GdiFont::CheckGlyph(uint32_t codepoint) 
+//{ 
+//	if (!codepoint)
+//		return true;
+//
+//	std::wstring glyph; 
+//	glyph.insert(glyph.begin(), ((wchar_t)codepoint));
+//	WORD *indices = new WORD[glyph.size()];
+//
+//	bool succeeded = (GetGlyphIndicesW(dc.get(), glyph.data(), glyph.size(),
+//		indices, GGI_MARK_NONEXISTING_GLYPHS) != GDI_ERROR);
+//	
+//	
+//	for (size_t i = 0; i < glyph.size(); ++i) {
+//		
+//		if (U_IS_SURROGATE(glyph[i]))
+//			continue;
+//		if (indices[i] == 0xFFFF) {
+//			succeeded = false;
+//		}
+//	}
+//	delete[] indices;
+//	return succeeded;
+//	//return true;
+//}
 
 size_t GdiFont::GetData(unsigned char *data, size_t offset, size_t len) {
 	if (!font_data) {
@@ -141,8 +141,8 @@ char *get_fallback(void* priv, ASS_Library* lib, const char *search_family, uint
 
 void match_fonts(void* priv, ASS_Library *lib, ASS_FontProvider *provider, char *name) {
 	std::shared_ptr<HDC__> dc(CreateCompatibleDC(nullptr), [](HDC dc) { DeleteDC(dc); });
-	if (!g_lib)
-		g_lib = lib;
+	//if (!g_lib)
+		//g_lib = lib;
 
 	
 	LOGFONTW lf{};
@@ -205,7 +205,7 @@ extern "C"
 ASS_FontProvider *ass_directwrite_add_provider(ASS_Library *lib,
 											   ASS_FontSelector *selector,
 											   const char *) {
-	g_lib = lib;
+	//g_lib = lib;
 
 #define WRAP(method) &wrapper<decltype(&method), &method>::call
 	static ASS_FontProviderFuncs callbacks = {
@@ -216,7 +216,7 @@ ASS_FontProvider *ass_directwrite_add_provider(ASS_Library *lib,
 		nullptr, // destroy_provider
 		&match_fonts,
 		nullptr, // get_substitution
-		&get_fallback,
+		nullptr,//&get_fallback,
 		nullptr
 	};
 	return ass_font_provider_new(selector, &callbacks, nullptr);

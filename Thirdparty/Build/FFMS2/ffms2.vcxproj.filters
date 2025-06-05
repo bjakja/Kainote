@@ -33,16 +33,7 @@
     <ClCompile Include="..\..\ffms2\src\core\indexing.cpp">
       <Filter>Indexing</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\ffms2\src\core\indexing_additional.cpp">
-      <Filter>Indexing</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ffms2\src\vapoursynth\vapoursource.cpp">
-      <Filter>Vapoursynth</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\ffms2\src\vapoursynth\vapoursource4.cpp">
-      <Filter>Vapoursynth</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ffms2\src\vapoursynth\vapoursynth.cpp">
       <Filter>Vapoursynth</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ffms2\src\vapoursynth\vapoursynth4.cpp">
@@ -63,6 +54,9 @@
     <ClCompile Include="..\..\ffms2\src\core\zipfile.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="indexing_additional.cpp">
+      <Filter>Indexing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\ffms2\include\ffms.h">
@@ -80,13 +74,7 @@
     <ClInclude Include="..\..\ffms2\src\core\indexing.h">
       <Filter>Indexing</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\ffms2\src\vapoursynth\vapoursource.h">
-      <Filter>Vapoursynth</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\ffms2\src\vapoursynth\vapoursource4.h">
-      <Filter>Vapoursynth</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ffms2\src\vapoursynth\VapourSynth.h">
       <Filter>Vapoursynth</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ffms2\src\vapoursynth\VapourSynth4.h">

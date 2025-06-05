@@ -49,8 +49,8 @@ struct ass_shaper {
     ASS_ShapingLevel shaping_level;
 
     // FriBidi log2vis
-    int n_glyphs, n_pars;
-    FriBidiChar *event_text;
+    int n_codepoints, n_pars;
+    FriBidiChar *event_text; // just a reference, owned by text_info
     FriBidiCharType *ctypes;
     FriBidiLevel *emblevels;
     FriBidiStrIndex *cmap;
@@ -62,8 +62,12 @@ struct ass_shaper {
     hb_feature_t *features;
     hb_language_t language;
 
-    // Glyph metrics cache, to speed up shaping
+    // Glyph and face-size metrics caches, to speed up shaping
+    Cache *face_size_metrics_cache;
     Cache *metrics_cache;
+
+    hb_font_funcs_t *font_funcs;
+    hb_buffer_t *buf;
 
 #ifdef USE_FRIBIDI_EX_API
     FriBidiBracketType *btypes;
@@ -75,14 +79,7 @@ struct ass_shaper {
 
 struct ass_shaper_metrics_data {
     Cache *metrics_cache;
-    GlyphMetricsHashKey hash_key;
-    int vertical;
-};
-
-struct ass_shaper_font_data {
-    hb_font_t *fonts[ASS_FONT_MAX_FACES];
-    hb_font_funcs_t *font_funcs[ASS_FONT_MAX_FACES];
-    struct ass_shaper_metrics_data *metrics_data[ASS_FONT_MAX_FACES];
+    FaceSizeMetricsHashKey hash_key;
 };
 
 /**
@@ -97,22 +94,30 @@ void ass_shaper_info(ASS_Library *lib)
 }
 
 /**
- * \brief grow arrays, if needed
+ * \brief grow per-codepoint arrays, if needed
  * \param new_size requested size
  */
-static bool check_allocations(ASS_Shaper *shaper, size_t new_size, size_t n_pars)
+static bool check_codepoint_allocations(ASS_Shaper *shaper, size_t new_size)
 {
-    if (new_size > shaper->n_glyphs) {
-        if (!ASS_REALLOC_ARRAY(shaper->event_text, new_size) ||
-            !ASS_REALLOC_ARRAY(shaper->ctypes, new_size) ||
+    if (new_size > shaper->n_codepoints) {
+        if (!ASS_REALLOC_ARRAY(shaper->ctypes, new_size) ||
 #ifdef USE_FRIBIDI_EX_API
             (shaper->bidi_brackets && !ASS_REALLOC_ARRAY(shaper->btypes, new_size)) ||
 #endif
             !ASS_REALLOC_ARRAY(shaper->emblevels, new_size) ||
             !ASS_REALLOC_ARRAY(shaper->cmap, new_size))
             return false;
-        shaper->n_glyphs = new_size;
+        shaper->n_codepoints = new_size;
     }
+    return true;
+}
+
+/**
+ * \brief grow per-bidi-paragraph arrays, if needed
+ * \param n_pars requested size
+ */
+static bool check_par_allocations(ASS_Shaper *shaper, size_t n_pars)
+{
     if (shaper->whole_text_layout && n_pars > shaper->n_pars) {
         if (!ASS_REALLOC_ARRAY(shaper->pbase_dir, n_pars))
             return false;
@@ -126,9 +131,7 @@ static bool check_allocations(ASS_Shaper *shaper, size_t new_size, size_t n_pars
  */
 void ass_shaper_free(ASS_Shaper *shaper)
 {
-    ass_cache_done(shaper->metrics_cache);
     free(shaper->features);
-    free(shaper->event_text);
     free(shaper->ctypes);
 #ifdef USE_FRIBIDI_EX_API
     free(shaper->btypes);
@@ -136,24 +139,9 @@ void ass_shaper_free(ASS_Shaper *shaper)
     free(shaper->emblevels);
     free(shaper->cmap);
     free(shaper->pbase_dir);
+    hb_font_funcs_destroy(shaper->font_funcs);
+    hb_buffer_destroy(shaper->buf);
     free(shaper);
-}
-
-void ass_shaper_empty_cache(ASS_Shaper *shaper)
-{
-    ass_cache_empty(shaper->metrics_cache);
-}
-
-void ass_shaper_font_data_free(ASS_ShaperFontData *priv)
-{
-    int i;
-    for (i = 0; i < ASS_FONT_MAX_FACES; i++)
-        if (priv->fonts[i]) {
-            free(priv->metrics_data[i]);
-            hb_font_destroy(priv->fonts[i]);
-            hb_font_funcs_destroy(priv->font_funcs[i]);
-        }
-    free(priv);
 }
 
 /**
@@ -162,7 +150,7 @@ void ass_shaper_font_data_free(ASS_ShaperFontData *priv)
  */
 static bool init_features(ASS_Shaper *shaper)
 {
-    shaper->features = calloc(sizeof(hb_feature_t), NUM_FEATURES);
+    shaper->features = calloc(NUM_FEATURES, sizeof(hb_feature_t));
     if (!shaper->features)
         return false;
 
@@ -204,13 +192,12 @@ static void set_run_features(ASS_Shaper *shaper, GlyphInfo *info)
  * \param hb_font HarfBuzz font
  * \param face associated FreeType font face
  */
-static void update_hb_size(hb_font_t *hb_font, FT_Face face)
+static void update_hb_size(hb_font_t *hb_font, FT_Face face, FT_Size_Metrics *m)
 {
     hb_font_set_scale (hb_font,
-            ((uint64_t) face->size->metrics.x_scale * (uint64_t) face->units_per_EM) >> 16,
-            ((uint64_t) face->size->metrics.y_scale * (uint64_t) face->units_per_EM) >> 16);
-    hb_font_set_ppem (hb_font, face->size->metrics.x_ppem,
-            face->size->metrics.y_ppem);
+            ((uint64_t) m->x_scale * (uint64_t) face->units_per_EM) >> 16,
+            ((uint64_t) m->y_scale * (uint64_t) face->units_per_EM) >> 16);
+    hb_font_set_ppem (hb_font, m->x_ppem, m->y_ppem);
 }
 
 
@@ -223,25 +210,42 @@ static void update_hb_size(hb_font_t *hb_font, FT_Face face)
  *
  */
 
-FT_Glyph_Metrics *
+static FT_Glyph_Metrics *
 get_cached_metrics(struct ass_shaper_metrics_data *metrics,
                    hb_codepoint_t unicode, hb_codepoint_t glyph)
 {
     bool rotate = false;
     // if @font rendering is enabled and the glyph should be rotated,
     // make cached_h_advance pick up the right advance later
-    if (metrics->vertical && unicode >= VERTICAL_LOWER_BOUND)
+    if (metrics->hash_key.font->desc.vertical && unicode >= VERTICAL_LOWER_BOUND)
         rotate = true;
 
-    metrics->hash_key.glyph_index = glyph;
-    FT_Glyph_Metrics *val = ass_cache_get(metrics->metrics_cache, &metrics->hash_key,
+    GlyphMetricsHashKey key = {
+        .font = metrics->hash_key.font,
+        .face_index = metrics->hash_key.face_index,
+        .size = metrics->hash_key.size,
+        .glyph_index = glyph,
+    };
+    FT_Glyph_Metrics *val = ass_cache_get(metrics->metrics_cache, &key,
                                           rotate ? metrics : NULL);
-    if (!val)
+    if (!val || val->width < 0)
         return NULL;
-    if (val->width >= 0)
-        return val;
-    ass_cache_dec_ref(val);
-    return NULL;
+
+    return val;
+}
+
+size_t ass_face_size_metrics_construct(void *key, void *value, void *priv)
+{
+    FaceSizeMetricsHashKey *k = key;
+    FT_Size_Metrics *v = value;
+
+    FT_Face face = k->font->faces[k->face_index];
+
+    ass_face_set_size(face, k->size);
+
+    memcpy(v, &face->size->metrics, sizeof(FT_Size_Metrics));
+
+    return 1;
 }
 
 size_t ass_glyph_metrics_construct(void *key, void *value, void *priv)
@@ -253,6 +257,9 @@ size_t ass_glyph_metrics_construct(void *key, void *value, void *priv)
         | FT_LOAD_IGNORE_TRANSFORM;
 
     FT_Face face = k->font->faces[k->face_index];
+
+    ass_face_set_size(face, k->size);
+
     if (FT_Load_Glyph(face, k->glyph_index, load_flags)) {
         v->width = -1;
         return 1;
@@ -285,7 +292,7 @@ get_reference_table(hb_face_t *hbface, hb_tag_t tag, void *font_data)
   }
 
   hb_blob_t *blob = hb_blob_create(buf, len, HB_MEMORY_MODE_WRITABLE, buf, free);
-  if (!blob)
+  if (len > 0 && hb_blob_is_immutable(blob))
       free(buf);
 
   return blob;
@@ -295,8 +302,8 @@ static hb_bool_t
 get_glyph_nominal(hb_font_t *font, void *font_data, hb_codepoint_t unicode,
                   hb_codepoint_t *glyph, void *user_data)
 {
-    FT_Face face = font_data;
-    struct ass_shaper_metrics_data *metrics_priv = user_data;
+    struct ass_shaper_metrics_data *metrics_priv = font_data;
+    FT_Face face = metrics_priv->hash_key.font->faces[metrics_priv->hash_key.face_index];
 
     *glyph = ass_font_index_magic(face, unicode);
     if (*glyph)
@@ -305,8 +312,7 @@ get_glyph_nominal(hb_font_t *font, void *font_data, hb_codepoint_t unicode,
         return false;
 
     // rotate glyph advances for @fonts while we still know the Unicode codepoints
-    FT_Glyph_Metrics *metrics = get_cached_metrics(metrics_priv, unicode, *glyph);
-    ass_cache_dec_ref(metrics);
+    get_cached_metrics(metrics_priv, unicode, *glyph);
     return true;
 }
 
@@ -314,8 +320,8 @@ static hb_bool_t
 get_glyph_variation(hb_font_t *font, void *font_data, hb_codepoint_t unicode,
                     hb_codepoint_t variation, hb_codepoint_t *glyph, void *user_data)
 {
-    FT_Face face = font_data;
-    struct ass_shaper_metrics_data *metrics_priv = user_data;
+    struct ass_shaper_metrics_data *metrics_priv = font_data;
+    FT_Face face = metrics_priv->hash_key.font->faces[metrics_priv->hash_key.face_index];
 
     *glyph = ass_font_index_magic(face, unicode);
     if (*glyph)
@@ -324,8 +330,7 @@ get_glyph_variation(hb_font_t *font, void *font_data, hb_codepoint_t unicode,
         return false;
 
     // rotate glyph advances for @fonts while we still know the Unicode codepoints
-    FT_Glyph_Metrics *metrics = get_cached_metrics(metrics_priv, unicode, *glyph);
-    ass_cache_dec_ref(metrics);
+    get_cached_metrics(metrics_priv, unicode, *glyph);
     return true;
 }
 
@@ -333,28 +338,24 @@ static hb_position_t
 cached_h_advance(hb_font_t *font, void *font_data, hb_codepoint_t glyph,
                  void *user_data)
 {
-    struct ass_shaper_metrics_data *metrics_priv = user_data;
+    struct ass_shaper_metrics_data *metrics_priv = font_data;
     FT_Glyph_Metrics *metrics = get_cached_metrics(metrics_priv, 0, glyph);
     if (!metrics)
         return 0;
 
-    hb_position_t advance = metrics->horiAdvance;
-    ass_cache_dec_ref(metrics);
-    return advance;
+    return metrics->horiAdvance;
 }
 
 static hb_position_t
 cached_v_advance(hb_font_t *font, void *font_data, hb_codepoint_t glyph,
                  void *user_data)
 {
-    struct ass_shaper_metrics_data *metrics_priv = user_data;
+    struct ass_shaper_metrics_data *metrics_priv = font_data;
     FT_Glyph_Metrics *metrics = get_cached_metrics(metrics_priv, 0, glyph);
     if (!metrics)
         return 0;
 
-    hb_position_t advance = metrics->vertAdvance;
-    ass_cache_dec_ref(metrics);
-    return advance;
+    return metrics->vertAdvance;
 }
 
 static hb_bool_t
@@ -368,14 +369,13 @@ static hb_bool_t
 cached_v_origin(hb_font_t *font, void *font_data, hb_codepoint_t glyph,
                 hb_position_t *x, hb_position_t *y, void *user_data)
 {
-    struct ass_shaper_metrics_data *metrics_priv = user_data;
+    struct ass_shaper_metrics_data *metrics_priv = font_data;
     FT_Glyph_Metrics *metrics = get_cached_metrics(metrics_priv, 0, glyph);
     if (!metrics)
         return false;
 
     *x = metrics->horiBearingX - metrics->vertBearingX;
     *y = metrics->horiBearingY + metrics->vertBearingY;
-    ass_cache_dec_ref(metrics);
     return true;
 }
 
@@ -383,7 +383,8 @@ static hb_position_t
 get_h_kerning(hb_font_t *font, void *font_data, hb_codepoint_t first,
                  hb_codepoint_t second, void *user_data)
 {
-    FT_Face face = font_data;
+    struct ass_shaper_metrics_data *metrics_priv = font_data;
+    FT_Face face = metrics_priv->hash_key.font->faces[metrics_priv->hash_key.face_index];
     FT_Vector kern;
 
     if (FT_Get_Kerning(face, first, second, FT_KERNING_DEFAULT, &kern))
@@ -403,7 +404,7 @@ static hb_bool_t
 cached_extents(hb_font_t *font, void *font_data, hb_codepoint_t glyph,
                hb_glyph_extents_t *extents, void *user_data)
 {
-    struct ass_shaper_metrics_data *metrics_priv = user_data;
+    struct ass_shaper_metrics_data *metrics_priv = font_data;
     FT_Glyph_Metrics *metrics = get_cached_metrics(metrics_priv, 0, glyph);
     if (!metrics)
         return false;
@@ -412,7 +413,6 @@ cached_extents(hb_font_t *font, void *font_data, hb_codepoint_t glyph,
     extents->y_bearing =  metrics->horiBearingY;
     extents->width     =  metrics->width;
     extents->height    = -metrics->height;
-    ass_cache_dec_ref(metrics);
     return true;
 }
 
@@ -421,7 +421,8 @@ get_contour_point(hb_font_t *font, void *font_data, hb_codepoint_t glyph,
                      unsigned int point_index, hb_position_t *x,
                      hb_position_t *y, void *user_data)
 {
-    FT_Face face = font_data;
+    struct ass_shaper_metrics_data *metrics_priv = font_data;
+    FT_Face face = metrics_priv->hash_key.font->faces[metrics_priv->hash_key.face_index];
     int load_flags = FT_LOAD_DEFAULT | FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH
         | FT_LOAD_IGNORE_TRANSFORM;
 
@@ -436,87 +437,62 @@ get_contour_point(hb_font_t *font, void *font_data, hb_codepoint_t glyph,
     return true;
 }
 
+bool ass_create_hb_font(ASS_Font *font, int index)
+{
+    FT_Face face = font->faces[index];
+    hb_face_t *hb_face = hb_face_create_for_tables(get_reference_table, face, NULL);
+    if (hb_face_is_immutable(hb_face))
+        return false;
+
+    hb_face_set_index(hb_face, face->face_index);
+    hb_face_set_upem(hb_face, face->units_per_EM);
+
+    hb_font_t *hb_font = hb_font_create(hb_face);
+    hb_face_destroy(hb_face);
+    if (hb_font_is_immutable(hb_font))
+        return false;
+
+    font->hb_fonts[index] = hb_font;
+
+    return true;
+}
+
 /**
- * \brief Retrieve HarfBuzz font from cache.
- * Create it from FreeType font, if needed.
+ * \brief Create HarfBuzz sub-font for current face and size.
  * \param info glyph cluster
  * \return HarfBuzz font
  */
 static hb_font_t *get_hb_font(ASS_Shaper *shaper, GlyphInfo *info)
 {
     ASS_Font *font = info->font;
-    hb_font_t **hb_fonts;
 
-    if (!font->shaper_priv)
-        font->shaper_priv = calloc(sizeof(ASS_ShaperFontData), 1);
-    if (!font->shaper_priv)
+    FaceSizeMetricsHashKey key = {
+        .font = info->font,
+        .face_index = info->face_index,
+        .size = info->font_size,
+    };
+    FT_Size_Metrics *m = ass_cache_get(shaper->face_size_metrics_cache, &key, NULL);
+    if (!m)
         return NULL;
 
-    hb_fonts = font->shaper_priv->fonts;
-    if (!hb_fonts[info->face_index]) {
-        FT_Face face = font->faces[info->face_index];
-        hb_face_t *hb_face = hb_face_create_for_tables(get_reference_table, face, NULL);
-        if (!hb_face)
-            return NULL;
-        hb_face_set_index(hb_face, face->face_index);
-        hb_face_set_upem(hb_face, face->units_per_EM);
+    hb_font_t *hb_font = hb_font_create_sub_font(font->hb_fonts[info->face_index]);
+    if (hb_font_is_immutable(hb_font))
+        return NULL;
 
-        hb_font_t *hb_font = hb_fonts[info->face_index] = hb_font_create(hb_face);
-        hb_face_destroy(hb_face);
-        if (!hb_font)
-            return NULL;
-
-        hb_font_set_scale(hb_font,
-            (int)(((uint64_t)face->size->metrics.x_scale * face->units_per_EM + (1<<15)) >> 16),
-            (int)(((uint64_t)face->size->metrics.y_scale * face->units_per_EM + (1<<15)) >> 16));
-
-        // set up cached metrics access
-        struct ass_shaper_metrics_data *metrics =
-            font->shaper_priv->metrics_data[info->face_index] =
-                calloc(sizeof(struct ass_shaper_metrics_data), 1);
-        if (!metrics)
-            return NULL;
-        metrics->metrics_cache = shaper->metrics_cache;
-        metrics->vertical = info->font->desc.vertical;
-
-        hb_font_funcs_t *funcs = hb_font_funcs_create();
-        if (!funcs)
-            return NULL;
-        font->shaper_priv->font_funcs[info->face_index] = funcs;
-        hb_font_funcs_set_nominal_glyph_func(funcs, get_glyph_nominal,
-                metrics, NULL);
-        hb_font_funcs_set_variation_glyph_func(funcs, get_glyph_variation,
-                metrics, NULL);
-        hb_font_funcs_set_glyph_h_advance_func(funcs, cached_h_advance,
-                metrics, NULL);
-        hb_font_funcs_set_glyph_v_advance_func(funcs, cached_v_advance,
-                metrics, NULL);
-        hb_font_funcs_set_glyph_h_origin_func(funcs, cached_h_origin,
-                metrics, NULL);
-        hb_font_funcs_set_glyph_v_origin_func(funcs, cached_v_origin,
-                metrics, NULL);
-        hb_font_funcs_set_glyph_h_kerning_func(funcs, get_h_kerning,
-                metrics, NULL);
-        hb_font_funcs_set_glyph_v_kerning_func(funcs, get_v_kerning,
-                metrics, NULL);
-        hb_font_funcs_set_glyph_extents_func(funcs, cached_extents,
-                metrics, NULL);
-        hb_font_funcs_set_glyph_contour_point_func(funcs, get_contour_point,
-                metrics, NULL);
-        hb_font_set_funcs(hb_font, funcs, face, NULL);
+    // set up cached metrics access
+    struct ass_shaper_metrics_data *metrics = calloc(1, sizeof(struct ass_shaper_metrics_data));
+    if (!metrics) {
+        hb_font_destroy(hb_font);
+        return NULL;
     }
+    metrics->metrics_cache = shaper->metrics_cache;
+    metrics->hash_key = key;
 
-    ass_face_set_size(font->faces[info->face_index], info->font_size);
-    update_hb_size(hb_fonts[info->face_index], font->faces[info->face_index]);
+    hb_font_set_funcs(hb_font, shaper->font_funcs, metrics, free);
 
-    // update hash key for cached metrics
-    struct ass_shaper_metrics_data *metrics =
-        font->shaper_priv->metrics_data[info->face_index];
-    metrics->hash_key.font = info->font;
-    metrics->hash_key.face_index = info->face_index;
-    metrics->hash_key.size = info->font_size;
+    update_hb_size(hb_font, font->faces[info->face_index], m);
 
-    return hb_fonts[info->face_index];
+    return hb_font;
 }
 
 /**
@@ -657,7 +633,6 @@ shape_harfbuzz_process_run(GlyphInfo *glyphs, hb_buffer_t *buf, int offset)
             info->next = malloc(sizeof(GlyphInfo));
             if (info->next) {
                 memcpy(info->next, info, sizeof(GlyphInfo));
-                ass_cache_inc_ref(info->font);
                 info = info->next;
                 info->next = NULL;
             }
@@ -685,7 +660,7 @@ shape_harfbuzz_process_run(GlyphInfo *glyphs, hb_buffer_t *buf, int offset)
 static bool shape_harfbuzz(ASS_Shaper *shaper, GlyphInfo *glyphs, size_t len)
 {
     int i;
-    hb_buffer_t *buf = hb_buffer_create();
+    hb_buffer_t *buf = shaper->buf;
     hb_segment_properties_t props = HB_SEGMENT_PROPERTIES_DEFAULT;
 
     // Initialize: skip all glyphs, this is undone later as needed
@@ -742,9 +717,9 @@ static bool shape_harfbuzz(ASS_Shaper *shaper, GlyphInfo *glyphs, size_t len)
         shape_harfbuzz_process_run(glyphs, buf,
                 shaper->whole_text_layout ? 0 : offset - lead_context);
         hb_buffer_reset(buf);
-    }
 
-    hb_buffer_destroy(buf);
+        hb_font_destroy(font);
+    }
 
     return true;
 }
@@ -807,7 +782,7 @@ void ass_shaper_determine_script(ASS_Shaper *shaper, GlyphInfo *glyphs,
 static void shape_fribidi(ASS_Shaper *shaper, GlyphInfo *glyphs, size_t len)
 {
     int i;
-    FriBidiJoiningType *joins = calloc(sizeof(*joins), len);
+    FriBidiJoiningType *joins = calloc(len, sizeof(*joins));
 
     // shape on codepoint level
     fribidi_get_joining_types(shaper->event_text, len, joins);
@@ -974,13 +949,9 @@ bool ass_shaper_shape(ASS_Shaper *shaper, TextInfo *text_info)
     int i, ret, last_break;
     FriBidiParType dir, *pdir;
     GlyphInfo *glyphs = text_info->glyphs;
+    shaper->event_text = text_info->event_text;
 
-    int n_pars = 1;
-    for (i = 0; i < text_info->length - 1; i++)
-        if (glyphs[i].symbol == '\n')
-            n_pars++;
-
-    if (!check_allocations(shaper, text_info->length, n_pars))
+    if (!check_codepoint_allocations(shaper, text_info->length))
         return false;
 
     for (i = 0; i < text_info->length; i++)
@@ -988,6 +959,14 @@ bool ass_shaper_shape(ASS_Shaper *shaper, TextInfo *text_info)
 
     fribidi_get_bidi_types(shaper->event_text,
             text_info->length, shaper->ctypes);
+
+    int n_pars = 1;
+    for (i = 0; i < text_info->length - 1; i++)
+        if (shaper->ctypes[i] == FRIBIDI_TYPE_BS)
+            n_pars++;
+
+    if (!check_par_allocations(shaper, n_pars))
+        return false;
 
 #ifdef USE_FRIBIDI_EX_API
     if (shaper->bidi_brackets) {
@@ -1000,8 +979,9 @@ bool ass_shaper_shape(ASS_Shaper *shaper, TextInfo *text_info)
     last_break = 0;
     pdir = shaper->pbase_dir;
     for (i = 0; i < text_info->length; i++) {
-        // embedding levels should be calculated paragraph by paragraph
-        if (glyphs[i].symbol == '\n' || i == text_info->length - 1 ||
+        // Embedding levels must be calculated one bidi "paragraph" at a time
+        if (i == text_info->length - 1 ||
+                shaper->ctypes[i] == FRIBIDI_TYPE_BS ||
                 (!shaper->whole_text_layout &&
                     (glyphs[i + 1].starts_new_run || glyphs[i].hspacing))) {
             dir = shaper->base_direction;
@@ -1037,9 +1017,11 @@ bool ass_shaper_shape(ASS_Shaper *shaper, TextInfo *text_info)
 /**
  * \brief Create a new shaper instance
  */
-ASS_Shaper *ass_shaper_new(void)
+ASS_Shaper *ass_shaper_new(Cache *metrics_cache, Cache *face_size_metrics_cache)
 {
-    ASS_Shaper *shaper = calloc(sizeof(*shaper), 1);
+    assert(metrics_cache);
+
+    ASS_Shaper *shaper = calloc(1, sizeof(*shaper));
     if (!shaper)
         return NULL;
 
@@ -1047,8 +1029,27 @@ ASS_Shaper *ass_shaper_new(void)
 
     if (!init_features(shaper))
         goto error;
-    shaper->metrics_cache = ass_glyph_metrics_cache_create();
-    if (!shaper->metrics_cache)
+    shaper->face_size_metrics_cache = face_size_metrics_cache;
+    shaper->metrics_cache = metrics_cache;
+
+    hb_font_funcs_t *funcs = shaper->font_funcs = hb_font_funcs_create();
+    if (hb_font_funcs_is_immutable(funcs))
+        goto error;
+    hb_font_funcs_set_nominal_glyph_func(funcs, get_glyph_nominal, NULL, NULL);
+    hb_font_funcs_set_variation_glyph_func(funcs, get_glyph_variation, NULL, NULL);
+    hb_font_funcs_set_glyph_h_advance_func(funcs, cached_h_advance, NULL, NULL);
+    hb_font_funcs_set_glyph_v_advance_func(funcs, cached_v_advance, NULL, NULL);
+    hb_font_funcs_set_glyph_h_origin_func(funcs, cached_h_origin, NULL, NULL);
+    hb_font_funcs_set_glyph_v_origin_func(funcs, cached_v_origin, NULL, NULL);
+    hb_font_funcs_set_glyph_h_kerning_func(funcs, get_h_kerning, NULL, NULL);
+    hb_font_funcs_set_glyph_v_kerning_func(funcs, get_v_kerning, NULL, NULL);
+    hb_font_funcs_set_glyph_extents_func(funcs, cached_extents, NULL, NULL);
+    hb_font_funcs_set_glyph_contour_point_func(funcs, get_contour_point, NULL, NULL);
+
+    hb_font_funcs_make_immutable(funcs);
+
+    shaper->buf = hb_buffer_create();
+    if (!hb_buffer_allocation_successful(shaper->buf))
         goto error;
 
     return shaper;
@@ -1098,7 +1099,11 @@ FriBidiStrIndex *ass_shaper_reorder(ASS_Shaper *shaper, TextInfo *text_info)
         shaper->pbase_dir : &shaper->base_direction;
     GlyphInfo *glyphs = text_info->glyphs;
     for (i = 0; i < text_info->length; i++) {
+        // Bidi "paragraph separators" may occur between line breaks:
+        // U+001C..1E even with ASS_FEATURE_WRAP_UNICODE,
+        // or U+000D, U+0085, U+2029 only without it
         if (i == text_info->length - 1 || glyphs[i + 1].linebreak ||
+                shaper->ctypes[i] == FRIBIDI_TYPE_BS ||
                 (!shaper->whole_text_layout &&
                     (glyphs[i + 1].starts_new_run || glyphs[i].hspacing))) {
             ret = fribidi_reorder_line(0,
@@ -1109,7 +1114,7 @@ FriBidiStrIndex *ass_shaper_reorder(ASS_Shaper *shaper, TextInfo *text_info)
                 return NULL;
 
             last_break = i + 1;
-            if (shaper->whole_text_layout)
+            if (shaper->whole_text_layout && shaper->ctypes[i] == FRIBIDI_TYPE_BS)
                 pdir++;
         }
     }
@@ -1129,7 +1134,7 @@ FriBidiStrIndex *ass_shaper_get_reorder_map(ASS_Shaper *shaper)
  * can be used for autodetection.
  * \param enc Windows font encoding
  */
-FriBidiParType resolve_base_direction(int enc)
+FriBidiParType ass_resolve_base_direction(int enc)
 {
     switch (enc) {
         case -1:

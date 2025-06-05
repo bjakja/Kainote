@@ -1,15 +1,16 @@
-AC_INIT(libass, 0.16.0)
-AM_INIT_AUTOMAKE([foreign])
+AC_INIT(libass, m4_normalize(m4_include([RELEASEVERSION])))
+AM_INIT_AUTOMAKE([foreign subdir-objects])
 AC_CONFIG_MACRO_DIR([m4])
-# Disable Fortran checks
-define([AC_LIBTOOL_LANG_F77_CONFIG], [:])
-LT_INIT
 AC_CONFIG_SRCDIR([libass/ass.c])
 AC_CONFIG_HEADERS([config.h])
+AC_CANONICAL_HOST
+
+LT_INIT
 
 # Checks for programs.
 AC_PROG_CC
 AM_PROG_CC_C_O
+AM_PROG_AS
 
 # Checks for header files.
 AC_CHECK_HEADERS_ONCE([iconv.h])
@@ -24,18 +25,40 @@ AC_ARG_ENABLE([compare], AS_HELP_STRING([--enable-compare],
     [enable compare program (requires libpng) @<:@default=no@:>@]))
 AC_ARG_ENABLE([profile], AS_HELP_STRING([--enable-profile],
     [enable profiling program @<:@default=no@:>@]))
+AC_ARG_ENABLE([fuzz], AS_HELP_STRING([--enable-fuzz],
+    [enable fuzzing consumer @<:@default=no@:>@]))
 AC_ARG_ENABLE([fontconfig], AS_HELP_STRING([--disable-fontconfig],
     [disable fontconfig support @<:@default=check@:>@]))
 AC_ARG_ENABLE([directwrite], AS_HELP_STRING([--disable-directwrite],
     [disable DirectWrite support (Windows only) @<:@default=check@:>@]))
 AC_ARG_ENABLE([coretext], AS_HELP_STRING([--disable-coretext],
     [disable CoreText support (OSX only) @<:@default=check@:>@]))
+AC_ARG_ENABLE([libunibreak], AS_HELP_STRING([--disable-libunibreak],
+    [disable libunibreak support @<:@default=check@:>@]))
 AC_ARG_ENABLE([require-system-font-provider], AS_HELP_STRING([--disable-require-system-font-provider],
     [allow compilation even if no system font provider was found @<:@default=enabled:>@]))
 AC_ARG_ENABLE([asm], AS_HELP_STRING([--disable-asm],
     [disable compiling with ASM @<:@default=check@:>@]))
 AC_ARG_ENABLE([large-tiles], AS_HELP_STRING([--enable-large-tiles],
     [use larger tiles in the rasterizer (better performance, slightly worse quality) @<:@default=disabled@:>@]))
+
+AC_ARG_VAR([ART_SAMPLES],
+    [Path to the root of libass' regression testing sample repository. If set, it is used in make check.])
+AC_ARG_VAR([FUZZ_LDFLAGS],
+    [Optional special linking flags only used for the fuzzer binary.])
+AC_ARG_VAR([FUZZ_CPPFLAGS],
+    [If fuzzing program is enabled, set this to select alternative modes; see fuzzer source for options.])
+FUZZ_CPPFLAGS="${FUZZ_CPPFLAGS:--DASS_FUZZMODE=0}"
+
+# Checks for flags support
+AX_APPEND_COMPILE_FLAGS([-fno-math-errno])
+
+# Enable some warnings
+AX_APPEND_COMPILE_FLAGS([ \
+    -Wall -Wextra -Wno-sign-compare -Wno-unused-parameter -Wstrict-prototypes \
+    -Wpointer-arith -Werror-implicit-function-declaration -Wredundant-decls \
+    -Wno-missing-field-initializers \
+])
 
 # Checks for available libraries and define corresponding C Macros
 # Start with system libs, then check everything else via pkg-config
@@ -69,21 +92,18 @@ PKG_CHECK_MODULES([FREETYPE], [freetype2 >= 9.17.3], [
     pkg_requires="freetype2 >= 9.17.3"
     CFLAGS="$CFLAGS $FREETYPE_CFLAGS"
     LIBS="$LIBS $FREETYPE_LIBS"
-    AC_DEFINE(CONFIG_FREETYPE, 1, [found freetype2 via pkg-config])
 ])
 
 PKG_CHECK_MODULES([FRIBIDI], [fribidi >= 0.19.1], [
     pkg_requires="fribidi >= 0.19.1, ${pkg_requires}"
     CFLAGS="$CFLAGS $FRIBIDI_CFLAGS"
     LIBS="$LIBS $FRIBIDI_LIBS"
-    AC_DEFINE(CONFIG_FRIBIDI, 1, [found fribidi via pkg-config])
 ])
 
 PKG_CHECK_MODULES([HARFBUZZ], [harfbuzz >= 1.2.3], [
     pkg_requires="harfbuzz >= 1.2.3, ${pkg_requires}"
     CFLAGS="$CFLAGS $HARFBUZZ_CFLAGS"
     LIBS="$LIBS $HARFBUZZ_LIBS"
-    AC_DEFINE(CONFIG_HARFBUZZ, 1, [found harfbuzz via pkg-config])
 ])
 
 libpng=false
@@ -93,6 +113,19 @@ AS_IF([test "x$enable_test" = xyes || test "x$enable_compare" = xyes], [
         CFLAGS="$CFLAGS $LIBPNG_CFLAGS"
         AC_DEFINE(CONFIG_LIBPNG, 1, [found libpng via pkg-config])
         libpng=true
+    ])
+])
+
+AS_IF([test "x$enable_libunibreak" != xno], [
+    PKG_CHECK_MODULES([LIBUNIBREAK], [libunibreak >= 1.1], [
+        pkg_requires="libunibreak >= 1.1, ${pkg_requires}"
+        CFLAGS="$CFLAGS $LIBUNIBREAK_CFLAGS"
+        LIBS="$LIBS $LIBUNIBREAK_LIBS"
+        AC_DEFINE(CONFIG_UNIBREAK, 1, [found libunibreak via pkg-config])
+    ], [
+        AS_IF([test "x$enable_libunibreak" = xyes], [
+            AC_MSG_ERROR([libunibreak support was requested, but it was not found.])
+        ])
     ])
 ])
 
@@ -122,7 +155,7 @@ AS_IF([test "x$enable_coretext" != xno], [
     AC_COMPILE_IFELSE([
         AC_LANG_PROGRAM( dnl# First test for legacy include
             [[#include <ApplicationServices/ApplicationServices.h>]],
-            [[CTFontDescriptorCopyAttribute(NULL, kCTFontURLAttribute);]]
+            [[CTFontDescriptorCopyAttribute(NULL, kCTFontNameAttribute);]]
         )
     ], [
         pkg_libs="$pkg_libs -framework ApplicationServices -framework CoreFoundation"
@@ -134,7 +167,7 @@ AS_IF([test "x$enable_coretext" != xno], [
         AC_COMPILE_IFELSE([
             AC_LANG_PROGRAM( dnl# Otherwise check newer include style
                 [[#include <CoreText/CoreText.h>]],
-                [[CTFontDescriptorCopyAttribute(NULL, kCTFontURLAttribute);]]
+                [[CTFontDescriptorCopyAttribute(NULL, kCTFontNameAttribute);]]
             )
         ], [
             pkg_libs="$pkg_libs -framework CoreText -framework CoreFoundation"
@@ -211,83 +244,102 @@ AS_IF([test "x$enable_require_system_font_provider" != xno  dnl
 
 # Locate and configure Assembler appropriately
 can_asm=false
+cpu_family="other"
 AS_IF([test "x$enable_asm" != xno], [
+    # For the library itself, libtool already adds this automatically
+    # but checkasm can also needs this, thus set explicitly
+    AS_IF([test "x$with_pic" = xyes], [
+        ASFLAGS="$ASFLAGS -DPIC=1"
+    ])
+
     AS_CASE([$host],
         [i?86-*], [
             AS=nasm
-            X86=true
+            cpu_family="x86"
             BITS=32
             BITTYPE=32
             ASFLAGS="$ASFLAGS -DARCH_X86_64=0"
         ],
         [x86_64-*-gnux32|amd64-*-gnux32], [
             AS=nasm
-            X86=true
-            X86_64=true
+            cpu_family="x86"
             BITS=64
             BITTYPE=x32
             ASFLAGS="$ASFLAGS -DARCH_X86_64=1"
         ],
         [x86_64-*|amd64-*], [
             AS=nasm
-            X86=true
-            X86_64=true
+            cpu_family="x86"
             BITS=64
             BITTYPE=64
             ASFLAGS="$ASFLAGS -DARCH_X86_64=1"
         ],
+        [aarch64-*|aarch64_be-*], [
+            cpu_family="aarch64"
+            BITS=64
+            BITTYPE=64
+        ],
         [ # default
-            X86=false
             AC_MSG_NOTICE([Assembly optimizations are not yet supported on this architecture; disabling.])
         ]
     )
-    AS_IF([test "x$X86" = xtrue], [
-        AC_CHECK_PROG([nasm_check], [$AS], [yes])
-        AS_IF([test "x$nasm_check" != xyes], [
-            AC_MSG_WARN(nasm was not found; ASM functions are disabled.)
-            AC_MSG_WARN(Install nasm for a significantly faster libass build.)
-        ], [
+    AS_CASE([$cpu_family],
+        [x86], [
+            AC_CHECK_PROG([nasm_check], [$AS], [yes])
+            AS_IF([test "x$nasm_check" != xyes], [
+                AC_MSG_WARN(nasm was not found; ASM functions are disabled.)
+                AC_MSG_WARN(Install nasm for a significantly faster libass build.)
+            ], [
+                AS_CASE([$host_os],
+                    [darwin*], [
+                        ASFLAGS="$ASFLAGS -f macho$BITTYPE -DPREFIX -DSTACK_ALIGNMENT=16"
+                    ],
+                    [cygwin*|mingw*], [
+                        ASFLAGS="$ASFLAGS -f win$BITTYPE"
+                        AS_IF([test "x$BITS" = x32], [
+                            ASFLAGS="$ASFLAGS -DPREFIX"
+                        ])
+                    ],
+                    [linux*|solaris*|haiku*|gnu*], [
+                        ASFLAGS="$ASFLAGS -f elf$BITTYPE -DSTACK_ALIGNMENT=16"
+                    ],
+                    [dragonfly*|*bsd*], [
+                        ASFLAGS="$ASFLAGS -f elf$BITTYPE"
+                    ],
+                    [ # default
+                        AC_MSG_ERROR(m4_text_wrap(m4_normalize([
+                                Please contact libass upstream to figure out if ASM
+                                support for your platform can be added.
+                                In the meantime you will need to use --disable-asm.]),
+                            [                  ],
+                            [could not identify NASM format for $host_os !],
+                            [78]
+                        ))
+                    ]
+                )
+                AC_MSG_CHECKING([if $AS supports vpmovzxwd])
+                echo "vpmovzxwd ymm0, xmm0" > conftest.asm
+                AS_IF([$AS conftest.asm $ASFLAGS -o conftest.o >conftest.log 2>&1], [
+                    AC_MSG_RESULT([yes])
+                    can_asm=true
+                ], [
+                    AC_MSG_RESULT([no])
+                    VER=`($AS --version || echo no assembler) 2>/dev/null | head -n 1`
+                    AC_MSG_WARN([nasm is too old (found $VER); ASM functions are disabled.])
+                    AC_MSG_WARN([Install nasm-2.10 or later for a significantly faster libass build.])
+                ])
+                rm conftest.asm conftest.o > /dev/null 2>&1
+            ])
+        ],
+        [aarch64], [
             AS_CASE([$host],
                 [*darwin*], [
-                    ASFLAGS="$ASFLAGS -f macho$BITTYPE -DPREFIX -DSTACK_ALIGNMENT=16"
-                ],
-                [*linux*|*solaris*|*haiku*], [
-                    ASFLAGS="$ASFLAGS -f elf$BITTYPE -DSTACK_ALIGNMENT=16"
-                ],
-                [*dragonfly*|*bsd*], [
-                    ASFLAGS="$ASFLAGS -f elf$BITTYPE"
-                ],
-                [*cygwin*|*mingw*], [
-                    ASFLAGS="$ASFLAGS -f win$BITTYPE"
-                    AS_IF([test "x$BITS" = x32], [
-                        ASFLAGS="$ASFLAGS -DPREFIX"
-                    ])
-                ],
-                [ # default
-                    AC_MSG_ERROR(m4_text_wrap(m4_normalize([
-                            Please contact libass upstream to figure out if ASM
-                            support for your platform can be added.
-                            In the meantime you will need to use --disable-asm.]),
-                        [                  ],
-                        [could not identify NASM format for $host !],
-                        [78]
-                    ))
+                    CCASFLAGS="$CCASFLAGS -DPREFIX"
                 ]
             )
-            AC_MSG_CHECKING([if $AS supports vpmovzxwd])
-            echo "vpmovzxwd ymm0, xmm0" > conftest.asm
-            AS_IF([$AS conftest.asm $ASFLAGS -o conftest.o >conftest.log 2>&1], [
-                AC_MSG_RESULT([yes])
-                can_asm=true
-            ], [
-                AC_MSG_RESULT([no])
-                VER=`($AS --version || echo no assembler) 2>/dev/null | head -n 1`
-                AC_MSG_WARN([nasm is too old (found $VER); ASM functions are disabled.])
-                AC_MSG_WARN([Install nasm-2.10 or later for a significantly faster libass build.])
-            ])
-            rm conftest.asm conftest.o > /dev/null 2>&1
-        ])
-    ])
+            can_asm=true
+        ]
+    )
 ])
 
 AS_IF([test x"$enable_asm" = xyes && test x"$can_asm" != xtrue], [
@@ -317,14 +369,18 @@ AS_IF([test "x$enable_shared" != xno], [
 
 ## Setup conditionals for use in Makefiles
 AM_CONDITIONAL([ASM], [test "x$can_asm" = xtrue])
-AM_CONDITIONAL([X86], [test "x$X86" = xtrue])
-AM_CONDITIONAL([X86_64], [test "x$X86_64" = xtrue])
+AM_CONDITIONAL([X86], [test "x$cpu_family" = xx86])
+AM_CONDITIONAL([X86_64], [test "x$cpu_family" = xx86 && test "x$BITS" = x64])
+AM_CONDITIONAL([AARCH64], [test "x$cpu_family" = xaarch64])
 
 AM_CONDITIONAL([ENABLE_LARGE_TILES], [test "x$enable_large_tiles" = xyes])
 
 AM_CONDITIONAL([ENABLE_COMPARE], [test "x$enable_compare" = xyes && test "x$libpng" = xtrue])
 AM_CONDITIONAL([ENABLE_TEST], [test "x$enable_test" = xyes && test "x$libpng" = xtrue])
 AM_CONDITIONAL([ENABLE_PROFILE], [test "x$enable_profile" = xyes])
+AM_CONDITIONAL([ENABLE_FUZZ], [test "x$enable_fuzz" = xyes])
+# tcc doesn't have the full support of __attribute__((aligned(32)))
+AM_CONDITIONAL([ENABLE_CHECKASM], [test "x$can_asm" = xtrue && test "x$GCC" = xyes])
 
 AM_CONDITIONAL([FONTCONFIG], [test "x$fontconfig" = xtrue])
 AM_CONDITIONAL([CORETEXT], [test "x$coretext" = xtrue])
@@ -335,6 +391,12 @@ AM_COND_IF([ASM], [
     AC_DEFINE(CONFIG_ASM, 1, [ASM enabled])
     AM_COND_IF([X86], [
         AC_DEFINE(ARCH_X86, 1, [targeting a 32- or 64-bit x86 host architecture])
+    ])
+    AM_COND_IF([X86_64], [
+        AC_DEFINE(ARCH_X86_64, 1, [targeting a 64-bit x86 host architecture])
+    ])
+    AM_COND_IF([AARCH64], [
+        AC_DEFINE(ARCH_AARCH64, 1, [targeting a 64-bit arm host architecture])
     ])
 ], [
     AC_DEFINE(CONFIG_ASM, 0, [ASM enabled])
@@ -367,5 +429,5 @@ AC_DEFINE_UNQUOTED([CONFIG_SOURCEVERSION], ["$srcversion_string"],
 ## Setup output beautifier.
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
-AC_CONFIG_FILES([Makefile libass/Makefile test/Makefile compare/Makefile profile/Makefile libass.pc])
+AC_CONFIG_FILES([Makefile libass.pc])
 AC_OUTPUT

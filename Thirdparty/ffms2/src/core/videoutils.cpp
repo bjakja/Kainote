@@ -153,7 +153,7 @@ static LossAttributes CalculateLoss(AVPixelFormat Dst, AVPixelFormat Src) {
 
     LossAttributes Loss;
     Loss.Format = Dst;
-    Loss.DepthDifference = GetPseudoDepth(DstDesc) - GetPseudoDepth(SrcDesc);;
+    Loss.DepthDifference = GetPseudoDepth(DstDesc) - GetPseudoDepth(SrcDesc);
     Loss.ChromaOversampling = FFMAX(0, SrcDesc.log2_chroma_h - DstDesc.log2_chroma_h) + FFMAX(0, SrcDesc.log2_chroma_w - DstDesc.log2_chroma_w);
     Loss.ChromaUndersampling = FFMAX(0, DstDesc.log2_chroma_h - SrcDesc.log2_chroma_h) + FFMAX(0, DstDesc.log2_chroma_w - SrcDesc.log2_chroma_w);
     Loss.CSGain = 0;
@@ -248,7 +248,7 @@ void ParseVP8(const uint8_t Buf, bool *Invisible, int *PictType) {
     *Invisible = (*Invisible || !(Buf & 0x10));
 }
 
-void ParseVP9(const uint8_t Buf, bool *Invisible, int *PictType)
+void ParseVP9(const uint8_t Buf, int *PictType)
 {
     int profile = ((Buf & 0x20) >> 5) | ((Buf & 0x10) >> 3);
     int shift = (profile == 3);

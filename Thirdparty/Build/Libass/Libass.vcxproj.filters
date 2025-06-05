@@ -103,9 +103,6 @@
     <ClCompile Include="..\..\libass\libass\ass_rasterizer.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\libass\libass\ass_rasterizer_c.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\libass\libass\ass_render.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -134,6 +131,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\libass\libass\ass_directwrite.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libass\libass\ass_bitmap_engine.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libass\libass\c\c_be_blur.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libass\libass\c\c_blend_bitmaps.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libass\libass\c\c_blur.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libass\libass\c\c_rasterizer.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

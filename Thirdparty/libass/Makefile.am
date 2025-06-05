@@ -1,20 +1,51 @@
 ACLOCAL_AMFLAGS = -I m4
-EXTRA_DIST = libass.pc.in Changelog MAINTAINERS ltnasm.sh
+AM_CPPFLAGS = -I$(top_srcdir)/libass
+AM_CFLAGS = -std=gnu99 -D_GNU_SOURCE
+
+EXTRA_DIST = libass.pc.in Changelog MAINTAINERS RELEASEVERSION ltnasm.sh
+
+# Meson build setup
+EXTRA_DIST += gen_defs.py meson_options.txt meson.build \
+              libass/meson.build libass/ass/meson.build \
+              profile/meson.build test/meson.build
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libass.pc
 
-if ENABLE_TEST
-    test = test
+nasm_verbose = $(nasm_verbose_$(V))
+nasm_verbose_ = $(nasm_verbose_$(AM_DEFAULT_VERBOSITY))
+nasm_verbose_0 = @echo "  NASM    " $@;
+
+lib_LTLIBRARIES =
+noinst_LTLIBRARIES =
+noinst_PROGRAMS =
+check_PROGRAMS =
+TESTS =
+
+include libass/Makefile_library.am
+include Makefile_util.am
+
+# Tests
+if ENABLE_FUZZ
+check: check-art-fuzz
+.PHONY: check-art-fuzz
+check-art-fuzz: fuzz/fuzz
+	@if [ -z '$(ART_SAMPLES)' ] ; then \
+		echo "ART_SAMPLES location not set; cannot run regression tests!"; \
+	else \
+		cd '$(ART_SAMPLES)'/crash/ ; \
+		./run-all.sh '$(abs_top_builddir)'/fuzz/fuzz ; \
+	fi
 endif
 
 if ENABLE_COMPARE
-    compare = compare
+check: check-art-compare
+.PHONY: check-art-compare
+check-art-compare: compare/compare
+	@if [ -z '$(ART_SAMPLES)' ] ; then \
+		echo "ART_SAMPLES location not set; cannot run regression tests!"; \
+	else \
+		cd '$(ART_SAMPLES)'/regression/ ; \
+		./run-all.sh '$(abs_top_builddir)'/compare/compare ; \
+	fi
 endif
-
-if ENABLE_PROFILE
-    profile = profile
-endif
-
-SUBDIRS = libass $(test) $(compare) $(profile)
-

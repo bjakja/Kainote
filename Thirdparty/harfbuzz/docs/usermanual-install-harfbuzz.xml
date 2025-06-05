@@ -23,9 +23,8 @@
       Release notes are posted with each new release to provide an
       overview of the changes. The project <ulink url="https://github.com/harfbuzz/harfbuzz/issues">tracks bug
       reports and other issues</ulink> on GitHub. Discussion and
-      questions are welcome on the <ulink
-      url="http://freedesktop.org/mailman/listinfo/harfbuzz/">HarfBuzz
-      mailing list</ulink>.
+      questions are welcome on <ulink
+      url="https://github.com/harfbuzz/harfbuzz/discussions">GitHub</ulink> as well.
     </para>
     <para>
       The API included in the <filename
@@ -50,13 +49,9 @@
     </para>
     <para>
       For example, on an Ubuntu or Debian system, you would run:
-      <programlisting>
-	<command>sudo apt install</command> <package>gcc g++ libfreetype6-dev libglib2.0-dev libcairo2-dev</package>
-      </programlisting>
+      <programlisting><command>sudo apt install</command> <package>gcc g++ libfreetype6-dev libglib2.0-dev libcairo2-dev</package></programlisting>
       On Fedora, RHEL, CentOS, or other Red-Hat&ndash;based systems, you would run:
-      <programlisting>
-	<command>sudo yum install</command> <package>gcc gcc-c++ freetype-devel glib2-devel cairo-devel</package>
-      </programlisting>
+      <programlisting><command>sudo yum install</command> <package>gcc gcc-c++ freetype-devel glib2-devel cairo-devel</package></programlisting>
 
     </para>
     
@@ -89,13 +84,9 @@
     </para>
     <para>
       On Ubuntu or Debian, run:
-      <programlisting>
-	<command>sudo apt-get install</command> <package>meson pkg-config gtk-doc-tools</package>
-      </programlisting>
+      <programlisting><command>sudo apt-get install</command> <package>meson pkg-config gtk-doc-tools</package></programlisting>
       On Fedora, RHEL, CentOS, run:
-      <programlisting>
-	<command>sudo yum install</command> <package>meson pkgconfig gtk-doc</package>
-      </programlisting>
+      <programlisting><command>sudo yum install</command> <package>meson pkgconfig gtk-doc</package></programlisting>
       
     </para>
     <para>
@@ -110,8 +101,11 @@
       <title>Building on Windows</title>
 
       <para>
-	Install meson and use it like `meson build --wrap-mode=default`
-	or use vcpkg.
+        <ulink url="https://mesonbuild.com/Getting-meson.html">Install meson</ulink>
+        and run (from the console) <command>meson build</command> (by default
+        bundled dependencies are not built, <command>--wrap-mode=default</command>
+        overrides this), then <command>meson compile -C build</command> to
+	build HarfBuzz.
       </para>
     </section>
 
@@ -128,15 +122,11 @@
 	<emphasis>(1)</emphasis> You must first install the
 	development packages for FreeType, Cairo, and GLib. If you are
 	using MacPorts, you should run:
-      <programlisting>
-	<command>sudo port install</command> <package>freetype glib2 cairo</package>
-      </programlisting>
+      <programlisting><command>sudo port install</command> <package>freetype glib2 cairo</package></programlisting>
       </para>
       <para>
 	If you are using Homebrew, you should run:
-	<programlisting>	
-	  <command>brew install</command> <package>freetype glib cairo</package>
-	</programlisting>
+	<programlisting><command>brew install</command> <package>freetype glib cairo</package></programlisting>
       </para>
       <para>
 	<emphasis>(2)</emphasis> The next step depends on whether you are building from the
@@ -147,13 +137,9 @@
 	<emphasis>(2)(a)</emphasis> If you are installing HarfBuzz
 	from a downloaded tarball release, extract the tarball and
 	open a Terminal in the extracted source-code directory. Run:
-	<programlisting>
-	  <command>meson build</command>
-	</programlisting>
+	<programlisting><command>meson build</command></programlisting>
 	followed by:
-	<programlisting>	
-	  <command>meson compile -C build</command>
-	</programlisting>
+	<programlisting><command>meson compile -C build</command></programlisting>
 	to build HarfBuzz.
       </para>
       <para>
@@ -164,30 +150,20 @@
       </para>
       <para>If you are
 	using MacPorts, you should run:
-      <programlisting>
-	<command>sudo port install</command> <package>meson pkgconfig gtk-doc</package> 
-      </programlisting>
+      <programlisting><command>sudo port install</command> <package>meson pkgconfig gtk-doc</package></programlisting>
       to install the build dependencies.
       </para>
       <para>If you are using Homebrew, you should run:
-	<programlisting>	
-	  <command>brew install</command> <package>meson pkgconfig gtk-doc</package>
-	</programlisting>
+	<programlisting><command>brew install</command> <package>meson pkgconfig gtk-doc</package></programlisting>
       	Finally, you can run:
-	<programlisting>
-	  <command>meson build</command>
-	</programlisting>
+	<programlisting><command>meson build</command></programlisting>
       </para>
       <para>
 	<emphasis>(3)</emphasis> You can now build HarfBuzz (on either
 	a MacPorts or a Homebrew system) by running:
-	<programlisting>
-	  <command>meson build</command>
-	</programlisting>
+	<programlisting><command>meson build</command></programlisting>
 	followed by:
-	<programlisting>
-	  <command>meson compile -C build</command>
-	</programlisting>
+	<programlisting><command>meson compile -C build</command></programlisting>
       </para>
       <para>
 	This should leave you with a shared
@@ -256,26 +232,6 @@
 	    </para>
 	    <para>
 	      Note: Cairo is used only by the HarfBuzz
-	      command-line utilities, and not by the HarfBuzz library.
-	    </para>
-	  </listitem>
-	</varlistentry>
-	
-	<varlistentry>
-	  <term><command>-Dfontconfig=enabled</command></term>
-	  <listitem>
-	    <para>
-	      Use <ulink url="https://www.freedesktop.org/wiki/Software/fontconfig/">Fontconfig</ulink>. <emphasis>(Default = auto)</emphasis>
-	    </para>
-	    <para>
-	      This option enables or disables usage of the Fontconfig
-	      library, which provides font-matching functions and
-	      provides access to font properties. The default setting
-	      is to check for the presence of Fontconfig and, if it is
-	      found, build with Fontconfig support.
-	    </para>
-	    <para>
-	      Note: Fontconfig is used only by the HarfBuzz
 	      command-line utilities, and not by the HarfBuzz library.
 	    </para>
 	  </listitem>
@@ -379,7 +335,7 @@
 	  <term><command>-Ddocs=enabled</command></term>
 	  <listitem>
 	    <para>
-	      Use <ulink url="https://www.gtk.org/gtk-doc/">GTK-Doc</ulink>. <emphasis>(Default = no)</emphasis>
+	      Use <ulink url="https://github.com/GNOME/gtk-doc">GTK-Doc</ulink>. <emphasis>(Default = no)</emphasis>
 	    </para>
 	    <para>
 	      This option enables the building of the documentation.

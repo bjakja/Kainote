@@ -141,7 +141,7 @@ const VSFrame *VS_CC VSVideoSource4::GetVSFrame(int n, VSCore *core, const VSAPI
             num = 1;
         int64_t DurNum = TB->Num * num;
         int64_t DurDen = TB->Den * 1000;
-        vsh::muldivRational(&DurNum, &DurDen, 1, 1);
+        vsh::reduceRational(&DurNum, &DurDen);
         vsapi->mapSetInt(Props, "_DurationNum", DurNum, maReplace);
         vsapi->mapSetInt(Props, "_DurationDen", DurDen, maReplace);
         vsapi->mapSetFloat(Props, "_AbsoluteTime", ((static_cast<double>(TB->Num) / 1000) * FFMS_GetFrameInfo(T, n)->PTS) / TB->Den, maReplace);
@@ -191,8 +191,12 @@ const VSFrame *VS_CC VSVideoSource4::GetVSFrame(int n, VSCore *core, const VSAPI
         vsapi->mapSetFloat(Props, "ContentLightLevelAverage", Frame->ContentLightLevelAverage, maReplace);
     }
 
-    if (Frame->DolbyVisionRPU && Frame->DolbyVisionRPUSize) {
-        vsapi->mapSetData(Props, "DolbyVisionRPU", (const char *) Frame->DolbyVisionRPU, Frame->DolbyVisionRPUSize, dtBinary, maReplace);
+    if (Frame->DolbyVisionRPU && Frame->DolbyVisionRPUSize > 0) {
+        vsapi->mapSetData(Props, "DolbyVisionRPU", reinterpret_cast<const char *>(Frame->DolbyVisionRPU), Frame->DolbyVisionRPUSize, dtBinary, maReplace);
+    }
+
+    if (Frame->HDR10Plus && Frame->HDR10PlusSize > 0) {
+        vsapi->mapSetData(Props, "HDR10Plus", reinterpret_cast<const char *>(Frame->HDR10Plus), Frame->HDR10PlusSize, dtBinary, maReplace);
     }
 
     OutputFrame(Frame, Dst, vsapi);
@@ -239,12 +243,11 @@ const VSFrame *VS_CC VSVideoSource4::GetFrame(int n, int activationReason, void 
 }
 
 void VS_CC VSVideoSource4::Free(void *instanceData, VSCore *, const VSAPI *) {
-    FFMS_Deinit();
     delete static_cast<VSVideoSource4 *>(instanceData);
 }
 
 VSVideoSource4::VSVideoSource4(const char *SourceFile, int Track, FFMS_Index *Index,
-    int AFPSNum, int AFPSDen, int Threads, int SeekMode, int /*RFFMode*/,
+    int AFPSNum, int AFPSDen, int Threads, int SeekMode,
     int ResizeToWidth, int ResizeToHeight, const char *ResizerName,
     int Format, bool OutputAlpha, const VSAPI *vsapi, VSCore *core)
     : FPSNum(AFPSNum), FPSDen(AFPSDen), OutputAlpha(OutputAlpha) {
@@ -270,8 +273,13 @@ VSVideoSource4::VSVideoSource4(const char *SourceFile, int Track, FFMS_Index *In
 
     const FFMS_VideoProperties *VP = FFMS_GetVideoProperties(V);
 
+    VI[0].fpsDen = VP->FPSDenominator;
+    VI[0].fpsNum = VP->FPSNumerator;
+    VI[0].numFrames = VP->NumFrames;
+    vsh::reduceRational(&VI[0].fpsNum, &VI[0].fpsDen);
+
     if (FPSNum > 0 && FPSDen > 0) {
-        vsh::muldivRational(&FPSNum, &FPSDen, 1, 1);
+        vsh::reduceRational(&FPSNum, &FPSDen);
         VI[0].fpsDen = FPSDen;
         VI[0].fpsNum = FPSNum;
         if (VP->NumFrames > 1) {
@@ -281,11 +289,6 @@ VSVideoSource4::VSVideoSource4(const char *SourceFile, int Track, FFMS_Index *In
         } else {
             VI[0].numFrames = 1;
         }
-    } else {
-        VI[0].fpsDen = VP->FPSDenominator;
-        VI[0].fpsNum = VP->FPSNumerator;
-        VI[0].numFrames = VP->NumFrames;
-        vsh::muldivRational(&VI[0].fpsNum, &VI[0].fpsDen, 1, 1);
     }
 
     if (OutputAlpha) {

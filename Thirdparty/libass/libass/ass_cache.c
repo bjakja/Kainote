@@ -83,10 +83,10 @@ const CacheDesc font_cache_desc = {
 static bool bitmap_key_move(void *dst, void *src)
 {
     BitmapHashKey *d = dst, *s = src;
-    if (d)
+    if (d) {
         *d = *s;
-    else
-        ass_cache_dec_ref(s->outline);
+        ass_cache_inc_ref(d->outline);
+    }
     return true;
 }
 
@@ -139,13 +139,13 @@ static bool composite_key_move(void *dst, void *src)
     CompositeHashKey *d = dst, *s = src;
     if (d) {
         *d = *s;
+        for (size_t i = 0; i < d->bitmap_count; i++) {
+            ass_cache_inc_ref(d->bitmaps[i].bm);
+            ass_cache_inc_ref(d->bitmaps[i].bm_o);
+        }
         return true;
     }
 
-    for (size_t i = 0; i < s->bitmap_count; i++) {
-        ass_cache_dec_ref(s->bitmaps[i].bm);
-        ass_cache_dec_ref(s->bitmaps[i].bm_o);
-    }
     free(s->bitmaps);
     return true;
 }
@@ -214,11 +214,8 @@ static bool outline_compare(void *a, void *b)
 static bool outline_key_move(void *dst, void *src)
 {
     OutlineHashKey *d = dst, *s = src;
-    if (!d) {
-        if (s->type == OUTLINE_GLYPH)
-            ass_cache_dec_ref(s->u.glyph.font);
+    if (!d)
         return true;
-    }
 
     *d = *s;
     if (s->type == OUTLINE_DRAWING) {
@@ -227,6 +224,8 @@ static bool outline_key_move(void *dst, void *src)
     }
     if (s->type == OUTLINE_BORDER)
         ass_cache_inc_ref(s->u.border.outline);
+    else if (s->type == OUTLINE_GLYPH)
+        ass_cache_inc_ref(s->u.glyph.font);
     return true;
 }
 
@@ -234,8 +233,8 @@ static void outline_destruct(void *key, void *value)
 {
     OutlineHashValue *v = value;
     OutlineHashKey *k = key;
-    outline_free(&v->outline[0]);
-    outline_free(&v->outline[1]);
+    ass_outline_free(&v->outline[0]);
+    ass_outline_free(&v->outline[1]);
     switch (k->type) {
     case OUTLINE_GLYPH:
         ass_cache_dec_ref(k->u.glyph.font);
@@ -261,6 +260,37 @@ const CacheDesc outline_cache_desc = {
     .destruct_func = outline_destruct,
     .key_size = sizeof(OutlineHashKey),
     .value_size = sizeof(OutlineHashValue)
+};
+
+
+// font-face size metric cache
+static bool face_size_metrics_key_move(void *dst, void *src)
+{
+    FaceSizeMetricsHashKey *d = dst, *s = src;
+    if (!d)
+        return true;
+
+    *d = *s;
+    ass_cache_inc_ref(s->font);
+    return true;
+}
+
+static void face_size_metrics_destruct(void *key, void *value)
+{
+    FaceSizeMetricsHashKey *k = key;
+    ass_cache_dec_ref(k->font);
+}
+
+size_t ass_face_size_metrics_construct(void *key, void *value, void *priv);
+
+const CacheDesc face_size_metrics_cache_desc = {
+    .hash_func = face_size_metrics_hash,
+    .compare_func = face_size_metrics_compare,
+    .key_move_func = face_size_metrics_key_move,
+    .construct_func = ass_face_size_metrics_construct,
+    .destruct_func = face_size_metrics_destruct,
+    .key_size = sizeof(FaceSizeMetricsHashKey),
+    .value_size = sizeof(FT_Size_Metrics)
 };
 
 
@@ -313,9 +343,6 @@ struct cache {
     const CacheDesc *desc;
 
     size_t cache_size;
-    unsigned hits;
-    unsigned misses;
-    unsigned items;
 };
 
 #define CACHE_ALIGN 8
@@ -350,6 +377,10 @@ Cache *ass_cache_create(const CacheDesc *desc)
     return cache;
 }
 
+// Retrieve a value corresponding to a particular cache key,
+// creating one if it does not already exist.
+// The returned item is guaranteed to be valid until the next ass_cache_cut call;
+// to extend its lifetime further, call ass_cache_inc_ref().
 void *ass_cache_get(Cache *cache, void *key, void *priv)
 {
     const CacheDesc *desc = cache->desc;
@@ -370,14 +401,12 @@ void *ass_cache_get(Cache *cache, void *key, void *priv)
                 cache->queue_last = &item->queue_next;
                 item->queue_next = NULL;
             }
-            cache->hits++;
             desc->key_move_func(NULL, key);
-            item->ref_count++;
+
             return (char *) item + CACHE_ITEM_SIZE;
         }
         item = item->next;
     }
-    cache->misses++;
 
     item = malloc(key_offs + desc->key_size);
     if (!item) {
@@ -406,10 +435,9 @@ void *ass_cache_get(Cache *cache, void *key, void *priv)
     item->queue_prev = cache->queue_last;
     cache->queue_last = &item->queue_next;
     item->queue_next = NULL;
-    item->ref_count = 2;
+    item->ref_count = 1;
 
-    cache->cache_size += item->size;
-    cache->items++;
+    cache->cache_size += item->size + (item->size == 1 ? 0 : CACHE_ITEM_SIZE);
     return value;
 }
 
@@ -451,8 +479,7 @@ void ass_cache_dec_ref(void *value)
             item->next->prev = item->prev;
         *item->prev = item->next;
 
-        cache->items--;
-        cache->cache_size -= item->size;
+        cache->cache_size -= item->size + (item->size == 1 ? 0 : CACHE_ITEM_SIZE);
     }
     destroy_item(item->desc, item);
 }
@@ -478,27 +505,13 @@ void ass_cache_cut(Cache *cache, size_t max_size)
             item->next->prev = item->prev;
         *item->prev = item->next;
 
-        cache->items--;
-        cache->cache_size -= item->size;
+        cache->cache_size -= item->size + (item->size == 1 ? 0 : CACHE_ITEM_SIZE);
         destroy_item(cache->desc, item);
     } while (cache->cache_size > max_size);
     if (cache->queue_first)
         cache->queue_first->queue_prev = &cache->queue_first;
     else
         cache->queue_last = &cache->queue_first;
-}
-
-void ass_cache_stats(Cache *cache, size_t *size, unsigned *hits,
-                     unsigned *misses, unsigned *count)
-{
-    if (size)
-        *size = cache->cache_size;
-    if (hits)
-        *hits = cache->hits;
-    if (misses)
-        *misses = cache->misses;
-    if (count)
-        *count = cache->items;
 }
 
 void ass_cache_empty(Cache *cache)
@@ -521,7 +534,7 @@ void ass_cache_empty(Cache *cache)
 
     cache->queue_first = NULL;
     cache->queue_last = &cache->queue_first;
-    cache->items = cache->hits = cache->misses = cache->cache_size = 0;
+    cache->cache_size = 0;
 }
 
 void ass_cache_done(Cache *cache)
@@ -545,6 +558,11 @@ Cache *ass_outline_cache_create(void)
 Cache *ass_glyph_metrics_cache_create(void)
 {
     return ass_cache_create(&glyph_metrics_cache_desc);
+}
+
+Cache *ass_face_size_metrics_cache_create(void)
+{
+    return ass_cache_create(&face_size_metrics_cache_desc);
 }
 
 Cache *ass_bitmap_cache_create(void)

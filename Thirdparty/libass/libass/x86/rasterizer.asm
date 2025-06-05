@@ -18,7 +18,7 @@
 ;* OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 ;******************************************************************************
 
-%include "utils.asm"
+%include "E:\Kainote\Thirdparty\libass\libass\x86\utils.asm"
 
 SECTION_RODATA 32
 
@@ -842,6 +842,9 @@ cglobal fill_generic_tile%2, 0,7,8, -alloc_size
 %endmacro
 
 INIT_XMM sse2
+FILL_GENERIC_TILE 4,16
+FILL_GENERIC_TILE 5,32
+INIT_XMM ssse3
 FILL_GENERIC_TILE 4,16
 FILL_GENERIC_TILE 5,32
 INIT_YMM avx2

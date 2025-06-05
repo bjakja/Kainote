@@ -29,6 +29,9 @@ extern "C" {
 #include <libavutil/stereo3d.h>
 #include <libavutil/display.h>
 #include <libavutil/mastering_display_metadata.h>
+
+#include "ffmscompat.h"
+#include <libavutil/hdr_dynamic_metadata.h>
 }
 
 #include <vector>
@@ -36,14 +39,32 @@ extern "C" {
 #include "track.h"
 #include "utils.h"
 
+enum class DecodeStage {
+    INITIALIZE_SOURCE,
+    INITIALIZE,
+    APPLY_DELAY,
+    DECODE_LOOP,
+};
+
+struct DecoderDelay {
+    int ThreadDelay = 0;
+    int ReorderDelay = 0;
+
+    int ThreadDelayCounter = 0;
+    int ReorderDelayCounter = 0;
+
+    void Reset();
+    void Increment(bool Hidden, bool SecondField);
+    void Decrement();
+    bool IsExceeded();
+};
+
 struct FFMS_VideoSource {
 private:
     SwsContext *SWS = nullptr;
 
-    int Delay = 0;
-    int DelayCounter = 0;
-    int InitialDecode = 1;
-    bool PAFFAdjusted = false;
+    DecoderDelay Delay;
+    DecodeStage Stage = DecodeStage::INITIALIZE_SOURCE;
 
     int LastFrameHeight = -1;
     int LastFrameWidth = -1;
@@ -71,6 +92,15 @@ private:
 
     uint8_t *SWSFrameData[4] = {};
     int SWSFrameLinesize[4] = {};
+    bool EyesInverted = false;
+    bool PrimaryEyeIsLeft = true;
+    uint8_t *LeftEyeFrameData[4] = {};
+    int LeftEyeLinesize[4] = {};
+    uint8_t *RightEyeFrameData[4] = {};
+    int RightEyeLinesize[4] = {};
+
+    AVPacket *StashedPacket = nullptr;
+    bool ResendPacket = false;
 
     void DetectInputFormat();
     bool HasPendingDelayedFrames();
@@ -79,6 +109,8 @@ private:
     FFMS_Frame LocalFrame = {};
     uint8_t *RPUBuffer = nullptr;
     size_t RPUBufferSize = 0;
+    uint8_t *HDR10PlusBuffer = nullptr;
+    size_t HDR10PlusBufferSize = 0;
     AVFrame *DecodeFrame = nullptr;
     AVFrame *LastDecodedFrame = nullptr;
     int LastFrameNum = 0;
@@ -91,7 +123,8 @@ private:
     AVFormatContext *FormatContext = nullptr;
     int SeekMode;
     bool SeekByPos = false;
-    int PosOffset = 0;
+    bool HaveSeenInterlacedFrame = false;
+    bool IsLayered = false;
 
     void ReAdjustOutputFormat(AVFrame *Frame);
     FFMS_Frame *OutputFrame(AVFrame *Frame);
@@ -100,7 +133,6 @@ private:
     void DecodeNextFrame(int64_t &PTS, int64_t &Pos);
     bool SeekTo(int n, int SeekOffset);
     int Seek(int n);
-    int ReadFrame(AVPacket *pkt);
     void Free();
     static void SanityCheckFrameForData(AVFrame *Frame);
 public:
@@ -110,6 +142,7 @@ public:
     FFMS_Track *GetTrack() { return &Frames; }
     FFMS_Frame *GetFrame(int n);
     void GetFrameCheck(int n);
+    void CopyEye(AVStereo3DView view);
     FFMS_Frame *GetFrameByTime(double Time);
     void SetOutputFormat(const AVPixelFormat *TargetFormats, int Width, int Height, int Resizer);
     void ResetOutputFormat();

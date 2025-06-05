@@ -22,7 +22,7 @@
 #define FFMS_H
 
 // Version format: major - minor - micro - bump
-#define FFMS_VERSION ((3 << 24) | (0 << 16) | (1 << 8) | 0)
+#define FFMS_VERSION ((5 << 24) | (1 << 16) | (0 << 8) | 0)
 
 #include <stdint.h>
 #include <stddef.h>
@@ -341,6 +341,21 @@ typedef struct FFMS_Frame {
     /* Introduced in FFMS_VERSION ((3 << 24) | (0 << 16) | (1 << 8) | 0) */
     uint8_t *DolbyVisionRPU;
     int DolbyVisionRPUSize;
+    /* Introduced in FFMS_VERSION ((3 << 24) | (1 << 16) | (1 << 8) | 0) */
+    uint8_t *HDR10Plus;
+    int HDR10PlusSize;
+
+    /*
+     * If these buffers are not NULL, left and right eye data is present.
+     * In such a case, the main buffer points to the primary eye's buffer,
+     * for use in monoscopic encoding.
+     *
+     * Introduced in FFMS_VERSION ((5 << 24) | (1 << 16) | (0 << 8) | 0)
+     */
+    const uint8_t *LeftEyeData[4];
+    int LeftEyeLinesize[4];
+    const uint8_t *RightEyeData[4];
+    int RightEyeLinesize[4];
 } FFMS_Frame;
 
 typedef struct FFMS_TrackTimeBase {
@@ -416,7 +431,6 @@ typedef int (FFMS_CC *TIndexCallback)(int64_t Current, int64_t Total, void *ICPr
 /* Most functions return 0 on success */
 /* Functions without error message output can be assumed to never fail in a graceful way */
 FFMS_API(void) FFMS_Init(int, int); /* Pass 0 to both arguments, kept to partially preserve abi */
-FFMS_API(void) FFMS_Deinit();
 FFMS_API(int) FFMS_GetVersion();
 FFMS_API(int) FFMS_GetLogLevel();
 FFMS_API(void) FFMS_SetLogLevel(int Level);

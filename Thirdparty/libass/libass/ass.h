@@ -24,7 +24,7 @@
 #include <stdarg.h>
 #include "ass_types.h"
 
-#define LIBASS_VERSION 0x01600000
+#define LIBASS_VERSION 0x01703000
 
 #ifdef __cplusplus
 extern "C" {
@@ -266,6 +266,19 @@ typedef enum {
      */
     ASS_FEATURE_WHOLE_TEXT_LAYOUT,
 
+    /**
+     * Break lines according to the Unicode Line Breaking Algorithm.
+     * If the track language is set, some additional language-specific tweaks
+     * may be applied. Setting this enables more breaking opportunities
+     * compared to classic ASS. However, it is still possible for long words
+     * without breaking opportunities to cause overfull lines.
+     * This is incompatible with VSFilter and disabled by default.
+     *
+     * This feature may be unavailable at runtime if
+     * libass was compiled without libunibreak support.
+     */
+    ASS_FEATURE_WRAP_UNICODE,
+
     // New enum values can be added here in new ABI-compatible library releases.
 } ASS_Feature;
 
@@ -311,9 +324,14 @@ void ass_set_extract_fonts(ASS_Library *priv, int extract);
  *   ScaledBorderAndShadow=yes
  *
  * \param priv library handle
- * \param list NULL-terminated list of strings
+ * \param list NULL-terminated list of strings,
+ *             copied and never modified by libass
  */
+#ifdef __cplusplus
+void ass_set_style_overrides(ASS_Library *priv, const char *const *list);
+#else
 void ass_set_style_overrides(ASS_Library *priv, char **list);
+#endif
 
 /**
  * \brief Explicitly process style overrides for a track.
@@ -363,7 +381,7 @@ void ass_renderer_done(ASS_Renderer *priv);
  * The value set with this function can influence the pixel aspect ratio used
  * for rendering.
  * If after compensating for configured margins the frame size
- * is not an isotropicly scaled version of the video display size,
+ * is not an isotropically scaled version of the video display size,
  * you may have to use ass_set_pixel_aspect().
  * @see ass_set_pixel_aspect()
  * @see ass_set_margins()
@@ -379,6 +397,7 @@ void ass_set_frame_size(ASS_Renderer *priv, int w, int h);
  * \brief Set the source image size in pixels.
  * This affects some ASS tags like e.g. 3D transforms and
  * is used to calculate the source aspect ratio and blur scale.
+ * If subtitles specify valid LayoutRes* headers, those will take precedence.
  * The source image size can be reset to default by setting w and h to 0.
  * The value set with this function can influence the pixel aspect ratio used
  * for rendering.
@@ -446,8 +465,13 @@ void ass_set_use_margins(ASS_Renderer *priv, int use);
  * by calling this function, libass will calculate a default pixel aspect ratio
  * out of values set with ass_set_frame_size() and ass_set_storage_size(). Note
  * that this default assumes the frame size after compensating for margins
- * corresponds to an isotropicly scaled version of the video display size.
+ * corresponds to an isotropically scaled version of the video display size.
  * If the storage size has not been set, a pixel aspect ratio of 1 is assumed.
+ *
+ * If subtitles specify valid LayoutRes* headers, the API-configured
+ * pixel aspect value is discarded in favour of one calculated out of the
+ * headers and values set with ass_set_frame_size().
+ *
  * \param priv renderer handle
  * \param par pixel aspect ratio (1.0 means square pixels, 0 means default)
  */
@@ -671,7 +695,7 @@ void ass_free_event(ASS_Track *track, int eid);
  * \param data string to parse
  * \param size length of data
  */
-void ass_process_data(ASS_Track *track, char *data, int size);
+void ass_process_data(ASS_Track *track, const char *data, int size);
 
 /**
  * \brief Parse Codec Private section of the subtitle stream, in Matroska
@@ -680,7 +704,7 @@ void ass_process_data(ASS_Track *track, char *data, int size);
  * \param data string to parse
  * \param size length of data
  */
-void ass_process_codec_private(ASS_Track *track, char *data, int size);
+void ass_process_codec_private(ASS_Track *track, const char *data, int size);
 
 /**
  * \brief Parse a chunk of subtitle stream data. A chunk contains exactly one
@@ -696,7 +720,7 @@ void ass_process_codec_private(ASS_Track *track, char *data, int size);
  * \param timecode starting time of the event (milliseconds)
  * \param duration duration of the event (milliseconds)
  */
-void ass_process_chunk(ASS_Track *track, char *data, int size,
+void ass_process_chunk(ASS_Track *track, const char *data, int size,
                        long long timecode, long long duration);
 
 /**
@@ -728,8 +752,8 @@ void ass_flush_events(ASS_Track *track);
  * if both versions are valid and exist.
  * On all other systems there is no need for special considerations like that.
 */
-ASS_Track *ass_read_file(ASS_Library *library, char *fname,
-                         char *codepage);
+ASS_Track *ass_read_file(ASS_Library *library, const char *fname,
+                         const char *codepage);
 
 /**
  * \brief Read subtitles from memory.
@@ -740,7 +764,7 @@ ASS_Track *ass_read_file(ASS_Library *library, char *fname,
  * \return newly allocated track or NULL on failure
 */
 ASS_Track *ass_read_memory(ASS_Library *library, char *buf,
-                           size_t bufsize, char *codepage);
+                           size_t bufsize, const char *codepage);
 /**
  * \brief Read styles from file into already initialized track.
  * \param fname file name
@@ -752,7 +776,7 @@ ASS_Track *ass_read_memory(ASS_Library *library, char *buf,
  * if both versions are valid and exist.
  * On all other systems there is no need for special considerations like that.
  */
-int ass_read_styles(ASS_Track *track, char *fname, char *codepage);
+int ass_read_styles(ASS_Track *track, const char *fname, const char *codepage);
 
 /**
  * \brief Add a memory font.
@@ -782,6 +806,22 @@ void ass_clear_fonts(ASS_Library *library);
  * \return timeshift in milliseconds
  */
 long long ass_step_sub(ASS_Track *track, long long now, int movement);
+
+/**
+ * \brief Allocates memory that can be safely freed by libass later.
+ * Use this to allocate buffers you'll use to manually modify ASS_Track events
+ * or related structures.
+ * \param size number of bytes to allocate
+ * \return pointer to the allocated buffer, or NULL on failure
+ */
+void *ass_malloc(size_t size);
+
+/**
+ * \brief Releases memory previously allocated within libass.
+ * Use this to free memory allocated using ass_malloc.
+ * \param ptr pointer to the buffer to release; passing NULL is a no-op
+ */
+void ass_free(void *ptr);
 
 #undef ASS_DEPRECATED
 #undef ASS_DEPRECATED_ENUM

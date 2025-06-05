@@ -24,6 +24,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#ifdef CONFIG_UNIBREAK
+#include <linebreak.h>
+#endif
 
 #include "ass.h"
 #include "ass_library.h"
@@ -44,6 +47,10 @@ ASS_Library *ass_library_init(void)
     ASS_Library* lib = calloc(1, sizeof(*lib));
     if (lib)
         lib->msg_callback = ass_msg_handler;
+    #ifdef CONFIG_UNIBREAK
+    // libunibreak works without, but its docs suggest this improves performance
+    init_linebreak();
+    #endif
     return lib;
 }
 
@@ -71,6 +78,7 @@ void ass_set_extract_fonts(ASS_Library *priv, int extract)
 
 void ass_set_style_overrides(ASS_Library *priv, char **list)
 {
+    // Documentation promises input lists gets copied without modifications
     char **p;
     char **q;
     int cnt;
@@ -149,4 +157,14 @@ void ass_set_message_cb(ASS_Library *priv,
         priv->msg_callback = msg_cb;
         priv->msg_callback_data = data;
     }
+}
+
+void *ass_malloc(size_t size)
+{
+    return malloc(size);
+}
+
+void ass_free(void *ptr)
+{
+    free(ptr);
 }

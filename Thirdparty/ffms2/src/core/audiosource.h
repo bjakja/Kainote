@@ -18,10 +18,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#pragma once
-#ifdef SetOutputFormat
-#undef SetOutputFormat
-#endif
+#ifndef FFAUDIOSOURCE_H
+#define FFAUDIOSOURCE_H
 
 #include "utils.h"
 #include "track.h"
@@ -122,9 +120,7 @@ struct FFMS_AudioSource {
     // Number of packets which the demuxer requires to know where it is
     // If -1, seeking is assumed to be impossible
     int SeekOffset = 0;
-    
-    // Fix for audio infinite loop
-    std::list<AudioBlock>::iterator OldIt;
+
     // Buffer which audio is decoded into
     AVFrame *DecodeFrame = nullptr;
     FFMS_Track Frames;
@@ -151,4 +147,4 @@ public:
     static size_t GetSeekablePacketNumber(FFMS_Track const& Frames, size_t PacketNumber);
 };
 
-
+#endif

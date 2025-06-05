@@ -6,7 +6,7 @@ AM_INIT_AUTOMAKE([1.11 subdir-objects])
 AM_SILENT_RULES([yes])
 AM_MAINTAINER_MODE([disable])
 
-VERSION_INFO="5:0:0"
+VERSION_INFO="5:1:0"
 
 AC_MSG_CHECKING([if debug build is enabled])
 
@@ -88,7 +88,7 @@ PKG_PROG_PKG_CONFIG([0.22])
 pkgconfigdir="\$(libdir)/pkgconfig"
 AC_SUBST(pkgconfigdir)
 
-PKG_CHECK_MODULES(FFMPEG, [libavformat >= 53.20.0 libavcodec >= 53.24.0 libswscale >= 0.7.0 libavutil >= 51.21.0 libswresample >= 1.0.0])
+PKG_CHECK_MODULES(FFMPEG, [libavformat >= 61.7.0 libavcodec >= 61.19.0 libswscale >= 8.3.0 libavutil >= 59.39.0 libswresample >= 5.3.0])
 
 dnl As of 0eec06ed8747923faa6a98e474f224d922dc487d ffmpeg only adds -lrt to lavc's
 dnl LIBS, but lavu needs it, so move it to the end if it's present

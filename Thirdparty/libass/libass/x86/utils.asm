@@ -18,7 +18,7 @@
 ;* OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 ;******************************************************************************
 
-%include "x86inc.asm"
+%include "E:\Kainote\Thirdparty\libass\libass\x86\x86inc.asm"
 
 ;------------------------------------------------------------------------------
 ; MUL 1:reg, 2:num

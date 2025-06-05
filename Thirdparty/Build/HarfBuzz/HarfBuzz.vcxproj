@@ -135,6 +135,7 @@
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -240,8 +241,11 @@
     <ClCompile Include="..\..\harfbuzz\src\hb-aat-map.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-blob.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-buffer-serialize.cc" />
+    <ClCompile Include="..\..\harfbuzz\src\hb-buffer-verify.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-buffer.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-common.cc" />
+    <ClCompile Include="..\..\harfbuzz\src\hb-draw.cc" />
+    <ClCompile Include="..\..\harfbuzz\src\hb-face-builder.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-face.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-fallback-shape.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-font.cc" />
@@ -258,23 +262,27 @@
     <ClCompile Include="..\..\harfbuzz\src\hb-ot-meta.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-ot-metrics.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-ot-name.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-complex-arabic.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-complex-default.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-complex-hangul.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-complex-hebrew.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-complex-indic-table.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-complex-indic.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-complex-khmer.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-complex-myanmar.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-complex-thai.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-complex-use-table.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-complex-use.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-complex-vowel-constraints.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-fallback.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-normalize.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape.cc" />
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-arabic.cc" />
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-default.cc" />
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-hangul.cc" />
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-hebrew.cc" />
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-indic-table.cc" />
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-indic.cc" />
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-khmer.cc" />
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-myanmar.cc" />
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-syllabic.cc" />
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-thai.cc" />
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-use.cc" />
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-vowel-constraints.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-ot-tag.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-ot-var.cc" />
+    <ClCompile Include="..\..\harfbuzz\src\hb-outline.cc" />
+    <ClCompile Include="..\..\harfbuzz\src\hb-paint-bounded.cc" />
+    <ClCompile Include="..\..\harfbuzz\src\hb-paint-extents.cc" />
+    <ClCompile Include="..\..\harfbuzz\src\hb-paint.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-set.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-shape-plan.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-shape.cc" />
@@ -310,7 +318,6 @@
     <ClInclude Include="..\..\harfbuzz\src\hb-blob.h" />
     <ClInclude Include="..\..\harfbuzz\src\hb-blob.hh" />
     <ClInclude Include="..\..\harfbuzz\src\hb-buffer-deserialize-json.hh" />
-    <ClInclude Include="..\..\harfbuzz\src\hb-buffer-deserialize-text.hh" />
     <ClInclude Include="..\..\harfbuzz\src\hb-buffer.h" />
     <ClInclude Include="..\..\harfbuzz\src\hb-buffer.hh" />
     <ClInclude Include="..\..\harfbuzz\src\hb-cache.hh" />
@@ -347,11 +354,6 @@
     <ClInclude Include="..\..\harfbuzz\src\hb-ot-cff1-table.hh" />
     <ClInclude Include="..\..\harfbuzz\src\hb-ot-cff2-table.hh" />
     <ClInclude Include="..\..\harfbuzz\src\hb-ot-cmap-table.hh" />
-    <ClInclude Include="..\..\harfbuzz\src\hb-ot-color-cbdt-table.hh" />
-    <ClInclude Include="..\..\harfbuzz\src\hb-ot-color-colr-table.hh" />
-    <ClInclude Include="..\..\harfbuzz\src\hb-ot-color-cpal-table.hh" />
-    <ClInclude Include="..\..\harfbuzz\src\hb-ot-color-sbix-table.hh" />
-    <ClInclude Include="..\..\harfbuzz\src\hb-ot-color-svg-table.hh" />
     <ClInclude Include="..\..\harfbuzz\src\hb-ot-color.h" />
     <ClInclude Include="..\..\harfbuzz\src\hb-ot-deprecated.h" />
     <ClInclude Include="..\..\harfbuzz\src\hb-ot-face-table-list.hh" />
@@ -389,21 +391,6 @@
     <ClInclude Include="..\..\harfbuzz\src\hb-ot-os2-unicode-ranges.hh" />
     <ClInclude Include="..\..\harfbuzz\src\hb-ot-post-macroman.hh" />
     <ClInclude Include="..\..\harfbuzz\src\hb-ot-post-table.hh" />
-    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex-arabic-fallback.hh" />
-    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex-arabic-joining-list.hh" />
-    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex-arabic-table.hh" />
-    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex-arabic-win1256.hh" />
-    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex-arabic.hh" />
-    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex-indic-machine.hh" />
-    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex-indic.hh" />
-    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex-khmer-machine.hh" />
-    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex-khmer.hh" />
-    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex-myanmar-machine.hh" />
-    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex-myanmar.hh" />
-    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex-use-machine.hh" />
-    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex-use.hh" />
-    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex-vowel-constraints.hh" />
-    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex.hh" />
     <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-fallback.hh" />
     <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-normalize.hh" />
     <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape.h" />
@@ -432,8 +419,6 @@
     <ClInclude Include="..\..\harfbuzz\src\hb-shaper.hh" />
     <ClInclude Include="..\..\harfbuzz\src\hb-string-array.hh" />
     <ClInclude Include="..\..\harfbuzz\src\hb-subset-cff-common.hh" />
-    <ClInclude Include="..\..\harfbuzz\src\hb-subset-cff1.hh" />
-    <ClInclude Include="..\..\harfbuzz\src\hb-subset-cff2.hh" />
     <ClInclude Include="..\..\harfbuzz\src\hb-subset-input.hh" />
     <ClInclude Include="..\..\harfbuzz\src\hb-subset-plan.hh" />
     <ClInclude Include="..\..\harfbuzz\src\hb-subset.h" />

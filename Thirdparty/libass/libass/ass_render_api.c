@@ -20,7 +20,11 @@
 #include "config.h"
 #include "ass_compat.h"
 
+#include <limits.h>
+#include <stdint.h>
+
 #include "ass_render.h"
+#include "ass_utils.h"
 
 static void ass_reconfigure(ASS_Renderer *priv)
 {
@@ -33,24 +37,26 @@ static void ass_reconfigure(ASS_Renderer *priv)
 
     priv->width = settings->frame_width;
     priv->height = settings->frame_height;
-    priv->orig_width = settings->frame_width - settings->left_margin -
+    priv->frame_content_width = settings->frame_width - settings->left_margin -
         settings->right_margin;
-    priv->orig_height = settings->frame_height - settings->top_margin -
+    priv->frame_content_height = settings->frame_height - settings->top_margin -
         settings->bottom_margin;
     priv->fit_width =
-        (long long) priv->orig_width * priv->height >=
-        (long long) priv->orig_height * priv->width ?
+        (long long) priv->frame_content_width * priv->height >=
+        (long long) priv->frame_content_height * priv->width ?
             priv->width :
-            (double) priv->orig_width * priv->height / priv->orig_height;
+            (double) priv->frame_content_width * priv->height / priv->frame_content_height;
     priv->fit_height =
-        (long long) priv->orig_width * priv->height <=
-        (long long) priv->orig_height * priv->width ?
+        (long long) priv->frame_content_width * priv->height <=
+        (long long) priv->frame_content_height * priv->width ?
             priv->height :
-            (double) priv->orig_height * priv->width / priv->orig_width;
+            (double) priv->frame_content_height * priv->width / priv->frame_content_width;
 }
 
 void ass_set_frame_size(ASS_Renderer *priv, int w, int h)
 {
+    if (w <= 0 || h <= 0 || w > FFMIN(INT_MAX, SIZE_MAX) / h)
+        w = h = 0;
     if (priv->settings.frame_width != w || priv->settings.frame_height != h) {
         priv->settings.frame_width = w;
         priv->settings.frame_height = h;
@@ -60,6 +66,8 @@ void ass_set_frame_size(ASS_Renderer *priv, int w, int h)
 
 void ass_set_storage_size(ASS_Renderer *priv, int w, int h)
 {
+    if (w <= 0 || h <= 0 || w > FFMIN(INT_MAX, SIZE_MAX) / h)
+        w = h = 0;
     if (priv->settings.storage_width != w ||
         priv->settings.storage_height != h) {
         priv->settings.storage_width = w;
@@ -101,6 +109,7 @@ void ass_set_aspect_ratio(ASS_Renderer *priv, double dar, double sar)
 
 void ass_set_pixel_aspect(ASS_Renderer *priv, double par)
 {
+    if (par < 0) par = 0;
     if (priv->settings.par != par) {
         priv->settings.par = par;
         ass_reconfigure(priv);
@@ -149,8 +158,7 @@ void ass_set_fonts(ASS_Renderer *priv, const char *default_font,
     ass_reconfigure(priv);
 
     ass_cache_empty(priv->cache.font_cache);
-    if (priv->shaper)
-        ass_shaper_empty_cache(priv->shaper);
+    ass_cache_empty(priv->cache.metrics_cache);
 
     if (priv->fontselect)
         ass_fontselect_free(priv->fontselect);
@@ -172,6 +180,7 @@ void ass_set_selective_style_override(ASS_Renderer *priv, ASS_Style *style)
     free(user_style->FontName);
     *user_style = *style;
     user_style->FontName = strdup(user_style->FontName);
+    ass_reconfigure(priv);
 }
 
 int ass_fonts_update(ASS_Renderer *render_priv)

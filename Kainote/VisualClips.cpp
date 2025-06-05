@@ -218,9 +218,6 @@ void DrawingAndClip::SetCurVisual()
 	}
 	else{
 		isDrawing = true;
-		bool isOriginal = (tab->grid->hasTLMode && tab->edit->TextEdit->GetValue() == emptyString);
-		//editor
-		//TextEditor *editor = (isOriginal) ? tab->edit->TextEditOrig : tab->edit->TextEdit;
 		wxString tags[] = { L"p" };
 		ParseData* pdata = tab->edit->line->ParseTags(tags, 1);
 		if (pdata->tags.size() >= 2){
@@ -234,6 +231,7 @@ void DrawingAndClip::SetCurVisual()
 					}
 				}
 				else if (tdata->tagName == L"pvector"){
+					//this table has every part of drawing if splited by tags before "m"
 					clip = tdata->value;
 					break;
 				}

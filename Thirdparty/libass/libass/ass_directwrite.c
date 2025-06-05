@@ -568,7 +568,15 @@ static char *get_fallback(void *priv, ASS_Library *lib,
     hr = IDWriteFont_GetInformationalStrings(font,
             DWRITE_INFORMATIONAL_STRING_WIN32_FAMILY_NAMES,
             &familyNames, &exists);
-    if (FAILED(hr) || !exists) {
+    if (SUCCEEDED(hr) && !exists) {
+        IDWriteFontFamily *fontFamily = NULL;
+        hr = IDWriteFont_GetFontFamily(font, &fontFamily);
+        if (SUCCEEDED(hr)) {
+            hr = IDWriteFontFamily_GetFamilyNames(fontFamily, &familyNames);
+            IDWriteFontFamily_Release(fontFamily);
+        }
+    }
+    if (FAILED(hr)) {
         IDWriteFont_Release(font);
         return NULL;
     }
@@ -580,29 +588,19 @@ static char *get_fallback(void *priv, ASS_Library *lib,
     return family;
 }
 
-static int map_width(enum DWRITE_FONT_STRETCH stretch)
-{
-    switch (stretch) {
-    case DWRITE_FONT_STRETCH_ULTRA_CONDENSED: return 50;
-    case DWRITE_FONT_STRETCH_EXTRA_CONDENSED: return 63;
-    case DWRITE_FONT_STRETCH_CONDENSED:       return FONT_WIDTH_CONDENSED;
-    case DWRITE_FONT_STRETCH_SEMI_CONDENSED:  return 88;
-    case DWRITE_FONT_STRETCH_MEDIUM:          return FONT_WIDTH_NORMAL;
-    case DWRITE_FONT_STRETCH_SEMI_EXPANDED:   return 113;
-    case DWRITE_FONT_STRETCH_EXPANDED:        return FONT_WIDTH_EXPANDED;
-    case DWRITE_FONT_STRETCH_EXTRA_EXPANDED:  return 150;
-    case DWRITE_FONT_STRETCH_ULTRA_EXPANDED:  return 200;
-    default:
-        return FONT_WIDTH_NORMAL;
-    }
-}
-
 #define FONT_TYPE IDWriteFontFace3
 #include "ass_directwrite_info_template.h"
 #undef FONT_TYPE
 
+#define FONT_TYPE IDWriteFont
+#define FAMILY_AS_ARG
+#include "ass_directwrite_info_template.h"
+#undef FONT_TYPE
+#undef FAMILY_AS_ARG
+
 static void add_font_face(IDWriteFontFace *face, ASS_FontProvider *provider,
-                          ASS_SharedHDC *shared_hdc)
+                          ASS_SharedHDC *shared_hdc,
+                          IDWriteFontCollection *system_font_coll)
 {
     ASS_FontProviderMetaData meta = {0};
 
@@ -614,6 +612,16 @@ static void add_font_face(IDWriteFontFace *face, ASS_FontProvider *provider,
         IDWriteFontFace3_Release(face3);
         if (!success)
             goto cleanup;
+    } else if (system_font_coll) {
+        IDWriteFont *font;
+        hr = IDWriteFontCollection_GetFontFromFontFace(system_font_coll,
+                                                       face, &font);
+        if (SUCCEEDED(hr) && font) {
+            bool success = get_font_info_IDWriteFont(font, NULL, &meta);
+            IDWriteFont_Release(font);
+            if (!success)
+                goto cleanup;
+        }
     }
 
     FontPrivate *font_priv = calloc(1, sizeof(*font_priv));
@@ -630,19 +638,8 @@ static void add_font_face(IDWriteFontFace *face, ASS_FontProvider *provider,
     ass_font_provider_add_font(provider, &meta, NULL, 0, font_priv);
 
 cleanup:
-    if (meta.families) {
-        for (int k = 0; k < meta.n_family; k++)
-            free(meta.families[k]);
-        free(meta.families);
-    }
-
-    if (meta.fullnames) {
-        for (int k = 0; k < meta.n_fullname; k++)
-            free(meta.fullnames[k]);
-        free(meta.fullnames);
-    }
-
     free(meta.postscript_name);
+    free(meta.extended_family);
 
     if (face)
         IDWriteFontFace_Release(face);
@@ -654,6 +651,7 @@ struct font_enum_priv {
     ASS_FontProvider *provider;
     IDWriteGdiInterop *gdi_interop;
     ASS_SharedHDC *shared_hdc;
+    IDWriteFontCollection *system_font_coll;
 };
 
 /*
@@ -728,7 +726,21 @@ static int CALLBACK font_enum_proc(const ENUMLOGFONTW *lpelf,
     if (FontType & RASTER_FONTTYPE)
         goto cleanup;
 
-    hFont = CreateFontIndirectW(&lpelf->elfLogFont);
+    LOGFONTW lf = lpelf->elfLogFont;
+    // lf.lfFaceName currently holds the font family name.
+    // The family may contain several fonts with equal numerical parameters
+    // but distinct full names. If we pass lf to CreateFontIndirect as is,
+    // we will miss this variety and merely get the same one font multiple
+    // times. Try to increase our chances of seeing all the right fonts
+    // by replacing the family name by the full name. There's some chance
+    // that this in turn selects some *other* family's fonts and misses
+    // the requested family, but we would rather take this chance than
+    // add every font twice (via the family name and via the full name).
+    // lfFaceName can hold up to LF_FACESIZE wchars; truncate longer names.
+    wcsncpy(lf.lfFaceName, lpelf->elfFullName, LF_FACESIZE - 1);
+    lf.lfFaceName[LF_FACESIZE - 1] = L'\0';
+
+    hFont = CreateFontIndirectW(&lf);
     if (!hFont)
         goto cleanup;
 
@@ -739,7 +751,7 @@ static int CALLBACK font_enum_proc(const ENUMLOGFONTW *lpelf,
     wchar_t selected_name[LF_FACESIZE];
     if (!GetTextFaceW(hdc, LF_FACESIZE, selected_name))
         goto cleanup;
-    if (wcsncmp(selected_name, lpelf->elfLogFont.lfFaceName, LF_FACESIZE)) {
+    if (_wcsnicmp(selected_name, lf.lfFaceName, LF_FACESIZE)) {
         // A different font was selected. This can happen if the requested
         // name is subject to charset-specific font substitution while
         // EnumFont... enumerates additional charsets contained in the font.
@@ -760,7 +772,8 @@ static int CALLBACK font_enum_proc(const ENUMLOGFONTW *lpelf,
     if (FAILED(hr) || !face)
         goto cleanup;
 
-    add_font_face(face, priv->provider, priv->shared_hdc);
+    add_font_face(face, priv->provider, priv->shared_hdc,
+                  priv->system_font_coll);
 
 cleanup:
     if (hFont)
@@ -795,18 +808,12 @@ static void add_font_set(IDWriteFontSet *fontSet, ASS_FontProvider *provider)
         if (FAILED(hr) || !face)
             goto cleanup;
 
-        add_font_face((IDWriteFontFace *) face, provider, NULL);
+        add_font_face((IDWriteFontFace *) face, provider, NULL, NULL);
 
 cleanup:
         IDWriteFontFaceReference_Release(faceRef);
     }
 }
-
-#define FONT_TYPE IDWriteFont
-#define FAMILY_AS_ARG
-#include "ass_directwrite_info_template.h"
-#undef FONT_TYPE
-#undef FAMILY_AS_ARG
 
 static void add_font(IDWriteFont *font, IDWriteFontFamily *fontFamily,
                      ASS_FontProvider *provider)
@@ -824,19 +831,8 @@ static void add_font(IDWriteFont *font, IDWriteFontFamily *fontFamily,
     ass_font_provider_add_font(provider, &meta, NULL, 0, font_priv);
 
 cleanup:
-    if (meta.families) {
-        for (int k = 0; k < meta.n_family; k++)
-            free(meta.families[k]);
-        free(meta.families);
-    }
-
-    if (meta.fullnames) {
-        for (int k = 0; k < meta.n_fullname; k++)
-            free(meta.fullnames[k]);
-        free(meta.fullnames);
-    }
-
     free(meta.postscript_name);
+    free(meta.extended_family);
 
     if (font)
         IDWriteFont_Release(font);
@@ -895,6 +891,11 @@ static void match_fonts(void *priv, ASS_Library *lib,
     enum_priv.shared_hdc->hdc = hdc;
     enum_priv.shared_hdc->ref_count = 1;
 
+    enum_priv.system_font_coll = NULL;
+    IDWriteFactory_GetSystemFontCollection(provider_priv->factory,
+                                           &enum_priv.system_font_coll,
+                                           FALSE);
+
     // EnumFontFamilies gives each font once, plus repeats for charset-specific
     // aliases. EnumFontFamiliesEx gives each charset of each font separately,
     // so it repeats each font as many times as it has charsets, regardless
@@ -912,6 +913,9 @@ static void match_fonts(void *priv, ASS_Library *lib,
     // EnumFontFamiliesEx would give us a list of all installed font families.
     EnumFontFamiliesW(hdc, lf.lfFaceName,
                       (FONTENUMPROCW) font_enum_proc, (LPARAM) &enum_priv);
+
+    if (enum_priv.system_font_coll)
+        IDWriteFontCollection_Release(enum_priv.system_font_coll);
 
     hdc_release(enum_priv.shared_hdc);
 #else
@@ -1086,7 +1090,7 @@ ASS_FontProvider *ass_directwrite_add_provider(ASS_Library *lib,
         goto cleanup;
     }
 
-    priv = calloc(sizeof(*priv), 1);
+    priv = calloc(1, sizeof(*priv));
     if (!priv)
         goto cleanup;
 

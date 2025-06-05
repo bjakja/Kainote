@@ -24,7 +24,6 @@
 #include "ffms.h"
 
 extern "C" {
-
 #include <libavutil/mem.h>
 #include <libavutil/opt.h>
 #include <libavformat/avformat.h>
@@ -135,5 +134,7 @@ void SetOptions(T const& src, void *opt, OptionMapper<T>(&options)[N]) {
 
 int ResizerNameToSWSResizer(const char *ResizerName);
 bool IsSamePath(const char *p1, const char *p2);
+bool IsIOError(int error);
+std::string AVErrorToString(int ret);
 
 #endif

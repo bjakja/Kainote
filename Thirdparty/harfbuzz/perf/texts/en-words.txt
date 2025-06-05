@@ -2841,7 +2841,6 @@ Deseret
 DESERET
 deserialize
 DESERIALIZE
-desgined
 design
 Design
 DESIGN
@@ -4783,7 +4782,7 @@ hb
 HB
 HBASELINE
 HBFixed
-HBGlyphID
+HBGlyphID16
 HBINT
 hbot
 hbotABCD

@@ -21,6 +21,8 @@ Makefile.in
 /test/test
 /compare/compare
 /profile/profile
+/fuzz/fuzz
+/checkasm/checkasm
 
 # pkgconfig
 /libass.pc
@@ -36,4 +38,7 @@ Makefile.in
 /libtool
 /ltmain.sh
 /missing
-/m4
+/test-driver
+
+# Meson
+/subprojects

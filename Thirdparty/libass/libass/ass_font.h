@@ -44,16 +44,16 @@ struct ass_font {
     FT_Library ftlibrary;
     int faces_uid[ASS_FONT_MAX_FACES];
     FT_Face faces[ASS_FONT_MAX_FACES];
-    ASS_ShaperFontData *shaper_priv;
+    struct hb_font_t *hb_fonts[ASS_FONT_MAX_FACES];
     int n_faces;
-    double size;
 };
 
-void charmap_magic(ASS_Library *library, FT_Face face);
+void ass_charmap_magic(ASS_Library *library, FT_Face face);
 ASS_Font *ass_font_new(ASS_Renderer *render_priv, ASS_FontDesc *desc);
 void ass_face_set_size(FT_Face face, double size);
-void ass_font_set_size(ASS_Font *font, double size);
 int ass_face_get_weight(FT_Face face);
+FT_Long ass_face_get_style_flags(FT_Face face);
+bool ass_face_is_postscript(FT_Face face);
 void ass_font_get_asc_desc(ASS_Font *font, int face_index,
                            int *asc, int *desc);
 int ass_font_get_index(ASS_FontSelector *fontsel, ASS_Font *font,

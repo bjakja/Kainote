@@ -36,38 +36,44 @@
 #include "ass_render.h"
 
 
-#define ALIGN           C_ALIGN_ORDER
-#define DECORATE(func)  ass_##func##_c
-#include "ass_func_template.h"
-#undef ALIGN
-#undef DECORATE
+static void be_blur_pre(uint8_t *buf, intptr_t stride, intptr_t width, intptr_t height)
+{
+    for (int y = 0; y < height; ++y)
+    {
+        for (int x = 0; x < width; ++x)
+        {
+            // This is equivalent to (value * 64 + 127) / 255 for all
+            // values from 0 to 256 inclusive. Assist vectorizing
+            // compilers by noting that all temporaries fit in 8 bits.
+            buf[y * stride + x] =
+                (uint8_t) ((buf[y * stride + x] >> 1) + 1) >> 1;
+        }
+    }
+}
 
-#if CONFIG_ASM && ARCH_X86
-
-#define ALIGN           4
-#define DECORATE(func)  ass_##func##_sse2
-#include "ass_func_template.h"
-#undef ALIGN
-#undef DECORATE
-
-#define ALIGN           5
-#define DECORATE(func)  ass_##func##_avx2
-#include "ass_func_template.h"
-#undef ALIGN
-#undef DECORATE
-
-#endif
-
+static void be_blur_post(uint8_t *buf, intptr_t stride, intptr_t width, intptr_t height)
+{
+    for (int y = 0; y < height; ++y)
+    {
+        for (int x = 0; x < width; ++x)
+        {
+            // This is equivalent to (value * 255 + 32) / 64 for all values
+            // from 0 to 96 inclusive, and we only care about 0 to 64.
+            uint8_t value = buf[y * stride + x];
+            buf[y * stride + x] = (value << 2) - (value > 32);
+        }
+    }
+}
 
 void ass_synth_blur(const BitmapEngine *engine, Bitmap *bm,
-                    int be, double blur_r2)
+                    int be, double blur_r2x, double blur_r2y)
 {
     if (!bm->buffer)
         return;
 
     // Apply gaussian blur
-    if (blur_r2 > 0.001)
-        ass_gaussian_blur(engine, bm, blur_r2);
+    if (blur_r2x > 0.001 || blur_r2y > 0.001)
+        ass_gaussian_blur(engine, bm, blur_r2x, blur_r2y);
 
     if (!be)
         return;
@@ -94,8 +100,8 @@ void ass_synth_blur(const BitmapEngine *engine, Bitmap *bm,
     ass_aligned_free(tmp);
 }
 
-bool alloc_bitmap(const BitmapEngine *engine, Bitmap *bm,
-                  int32_t w, int32_t h, bool zero)
+bool ass_alloc_bitmap(const BitmapEngine *engine, Bitmap *bm,
+                      int32_t w, int32_t h, bool zero)
 {
     unsigned align = 1 << engine->align_order;
     size_t s = ass_align(align, w);
@@ -112,10 +118,10 @@ bool alloc_bitmap(const BitmapEngine *engine, Bitmap *bm,
     return true;
 }
 
-bool realloc_bitmap(const BitmapEngine *engine, Bitmap *bm, int32_t w, int32_t h)
+bool ass_realloc_bitmap(const BitmapEngine *engine, Bitmap *bm, int32_t w, int32_t h)
 {
     uint8_t *old = bm->buffer;
-    if (!alloc_bitmap(engine, bm, w, h, false))
+    if (!ass_alloc_bitmap(engine, bm, w, h, false))
         return false;
     ass_aligned_free(old);
     return true;
@@ -126,13 +132,13 @@ void ass_free_bitmap(Bitmap *bm)
     ass_aligned_free(bm->buffer);
 }
 
-bool copy_bitmap(const BitmapEngine *engine, Bitmap *dst, const Bitmap *src)
+bool ass_copy_bitmap(const BitmapEngine *engine, Bitmap *dst, const Bitmap *src)
 {
     if (!src->buffer) {
         memset(dst, 0, sizeof(*dst));
         return true;
     }
-    if (!alloc_bitmap(engine, dst, src->w, src->h, false))
+    if (!ass_alloc_bitmap(engine, dst, src->w, src->h, false))
         return false;
     dst->left = src->left;
     dst->top  = src->top;
@@ -140,15 +146,16 @@ bool copy_bitmap(const BitmapEngine *engine, Bitmap *dst, const Bitmap *src)
     return true;
 }
 
-bool outline_to_bitmap(ASS_Renderer *render_priv, Bitmap *bm,
-                       ASS_Outline *outline1, ASS_Outline *outline2)
+bool ass_outline_to_bitmap(RenderContext *state, Bitmap *bm,
+                           ASS_Outline *outline1, ASS_Outline *outline2)
 {
-    RasterizerData *rst = &render_priv->rasterizer;
-    if (outline1 && !rasterizer_set_outline(rst, outline1, false)) {
+    ASS_Renderer *render_priv = state->renderer;
+    RasterizerData *rst = &state->rasterizer;
+    if (outline1 && !ass_rasterizer_set_outline(rst, outline1, false)) {
         ass_msg(render_priv->library, MSGL_WARN, "Failed to process glyph outline!\n");
         return false;
     }
-    if (outline2 && !rasterizer_set_outline(rst, outline2, !!outline1)) {
+    if (outline2 && !ass_rasterizer_set_outline(rst, outline2, !!outline1)) {
         ass_msg(render_priv->library, MSGL_WARN, "Failed to process glyph outline!\n");
         return false;
     }
@@ -163,7 +170,7 @@ bool outline_to_bitmap(ASS_Renderer *render_priv, Bitmap *bm,
     int32_t w = x_max - x_min;
     int32_t h = y_max - y_min;
 
-    int mask = (1 << render_priv->engine->tile_order) - 1;
+    int mask = (1 << render_priv->engine.tile_order) - 1;
 
     // XXX: is that possible to trigger at all?
     if (w < 0 || h < 0 || w > INT_MAX - mask || h > INT_MAX - mask) {
@@ -174,13 +181,13 @@ bool outline_to_bitmap(ASS_Renderer *render_priv, Bitmap *bm,
 
     int32_t tile_w = (w + mask) & ~mask;
     int32_t tile_h = (h + mask) & ~mask;
-    if (!alloc_bitmap(render_priv->engine, bm, tile_w, tile_h, false))
+    if (!ass_alloc_bitmap(&render_priv->engine, bm, tile_w, tile_h, false))
         return false;
     bm->left = x_min;
     bm->top  = y_min;
 
-    if (!rasterizer_fill(render_priv->engine, rst, bm->buffer,
-                         x_min, y_min, bm->stride, tile_h, bm->stride)) {
+    if (!ass_rasterizer_fill(&render_priv->engine, rst, bm->buffer,
+                             x_min, y_min, bm->stride, tile_h, bm->stride)) {
         ass_msg(render_priv->library, MSGL_WARN, "Failed to rasterize glyph!\n");
         ass_free_bitmap(bm);
         return false;
@@ -195,7 +202,7 @@ bool outline_to_bitmap(ASS_Renderer *render_priv, Bitmap *bm,
  * The glyph bitmap is subtracted from outline bitmap. This way looks much
  * better in some cases.
  */
-void fix_outline(Bitmap *bm_g, Bitmap *bm_o)
+void ass_fix_outline(Bitmap *bm_g, Bitmap *bm_o)
 {
     if (!bm_g->buffer || !bm_o->buffer)
         return;
@@ -220,7 +227,7 @@ void fix_outline(Bitmap *bm_g, Bitmap *bm_o)
  * \brief Shift a bitmap by the fraction of a pixel in x and y direction
  * expressed in 26.6 fixed point
  */
-void shift_bitmap(Bitmap *bm, int shift_x, int shift_y)
+void ass_shift_bitmap(Bitmap *bm, int shift_x, int shift_y)
 {
     assert((shift_x & ~63) == 0 && (shift_y & ~63) == 0);
 
@@ -250,177 +257,4 @@ void shift_bitmap(Bitmap *bm, int shift_x, int shift_y)
                 buf[x + y * s] += b;
             }
         }
-}
-
-/**
- * \brief Blur with [[1,2,1], [2,4,2], [1,2,1]] kernel
- * This blur is the same as the one employed by vsfilter.
- * Pure C implementation.
- */
-void ass_be_blur_c(uint8_t *buf, intptr_t stride,
-                   intptr_t width, intptr_t height, uint16_t *tmp)
-{
-    uint16_t *col_pix_buf = tmp;
-    uint16_t *col_sum_buf = tmp + width;
-    unsigned x, y, old_pix, old_sum, temp1, temp2;
-    uint8_t *src, *dst;
-    y = 0;
-
-    {
-        src=buf+y*stride;
-
-        x = 1;
-        old_pix = src[x-1];
-        old_sum = old_pix;
-        for ( ; x < width; x++) {
-            temp1 = src[x];
-            temp2 = old_pix + temp1;
-            old_pix = temp1;
-            temp1 = old_sum + temp2;
-            old_sum = temp2;
-            col_pix_buf[x-1] = temp1;
-            col_sum_buf[x-1] = temp1;
-        }
-        temp1 = old_sum + old_pix;
-        col_pix_buf[x-1] = temp1;
-        col_sum_buf[x-1] = temp1;
-    }
-
-    for (y++; y < height; y++) {
-        src=buf+y*stride;
-        dst=buf+(y-1)*stride;
-
-        x = 1;
-        old_pix = src[x-1];
-        old_sum = old_pix;
-        for ( ; x < width; x++) {
-            temp1 = src[x];
-            temp2 = old_pix + temp1;
-            old_pix = temp1;
-            temp1 = old_sum + temp2;
-            old_sum = temp2;
-
-            temp2 = col_pix_buf[x-1] + temp1;
-            col_pix_buf[x-1] = temp1;
-            dst[x-1] = (col_sum_buf[x-1] + temp2) >> 4;
-            col_sum_buf[x-1] = temp2;
-        }
-        temp1 = old_sum + old_pix;
-        temp2 = col_pix_buf[x-1] + temp1;
-        col_pix_buf[x-1] = temp1;
-        dst[x-1] = (col_sum_buf[x-1] + temp2) >> 4;
-        col_sum_buf[x-1] = temp2;
-    }
-
-    {
-        dst=buf+(y-1)*stride;
-        for (x = 0; x < width; x++)
-            dst[x] = (col_sum_buf[x] + col_pix_buf[x]) >> 4;
-    }
-}
-
-void be_blur_pre(uint8_t *buf, intptr_t stride, intptr_t width, intptr_t height)
-{
-    for (int y = 0; y < height; ++y)
-    {
-        for (int x = 0; x < width; ++x)
-        {
-            // This is equivalent to (value * 64 + 127) / 255 for all
-            // values from 0 to 256 inclusive. Assist vectorizing
-            // compilers by noting that all temporaries fit in 8 bits.
-            buf[y * stride + x] =
-                (uint8_t) ((buf[y * stride + x] >> 1) + 1) >> 1;
-        }
-    }
-}
-
-void be_blur_post(uint8_t *buf, intptr_t stride, intptr_t width, intptr_t height)
-{
-    for (int y = 0; y < height; ++y)
-    {
-        for (int x = 0; x < width; ++x)
-        {
-            // This is equivalent to (value * 255 + 32) / 64 for all values
-            // from 0 to 96 inclusive, and we only care about 0 to 64.
-            uint8_t value = buf[y * stride + x];
-            buf[y * stride + x] = (value << 2) - (value > 32);
-        }
-    }
-}
-
-/*
- * To find these values, simulate blur on the border between two
- * half-planes, one zero-filled (background) and the other filled
- * with the maximum supported value (foreground). Keep incrementing
- * the \be argument. The necessary padding is the distance by which
- * the blurred foreground image extends beyond the original border
- * and into the background. Initially it increases along with \be,
- * but very soon it grinds to a halt. At some point, the blurred
- * image actually reaches a stationary point and stays unchanged
- * forever after, simply _shifting_ by one pixel for each \be
- * step--moving in the direction of the non-zero half-plane and
- * thus decreasing the necessary padding (although the large
- * padding is still needed for intermediate results). In practice,
- * images are finite rather than infinite like half-planes, but
- * this can only decrease the required padding. Half-planes filled
- * with extreme values are the theoretical limit of the worst case.
- * Make sure to use the right pixel value range in the simulation!
- */
-int be_padding(int be)
-{
-    if (be <= 3)
-        return be;
-    if (be <= 7)
-        return 4;
-    return 5;
-}
-
-/**
- * \brief Add two bitmaps together at a given position
- * Uses additive blending, clipped to [0,255]. Pure C implementation.
- */
-void ass_add_bitmaps_c(uint8_t *dst, intptr_t dst_stride,
-                       uint8_t *src, intptr_t src_stride,
-                       intptr_t width, intptr_t height)
-{
-    unsigned out;
-    uint8_t* end = dst + dst_stride * height;
-    while (dst < end) {
-        for (unsigned j = 0; j < width; ++j) {
-            out = dst[j] + src[j];
-            dst[j] = FFMIN(out, 255);
-        }
-        dst += dst_stride;
-        src += src_stride;
-    }
-}
-
-void ass_imul_bitmaps_c(uint8_t *dst, intptr_t dst_stride,
-                        uint8_t *src, intptr_t src_stride,
-                        intptr_t width, intptr_t height)
-{
-    uint8_t* end = dst + dst_stride * height;
-    while (dst < end) {
-        for (unsigned j = 0; j < width; ++j) {
-            dst[j] = (dst[j] * (255 - src[j]) + 255) >> 8;
-        }
-        dst += dst_stride;
-        src += src_stride;
-    }
-}
-
-void ass_mul_bitmaps_c(uint8_t *dst, intptr_t dst_stride,
-                       uint8_t *src1, intptr_t src1_stride,
-                       uint8_t *src2, intptr_t src2_stride,
-                       intptr_t width, intptr_t height)
-{
-    uint8_t* end = src1 + src1_stride * height;
-    while (src1 < end) {
-        for (unsigned x = 0; x < width; ++x) {
-            dst[x] = (src1[x] * src2[x] + 255) >> 8;
-        }
-        dst  += dst_stride;
-        src1 += src1_stride;
-        src2 += src2_stride;
-    }
 }

@@ -24,15 +24,16 @@ typedef struct ass_shaper ASS_Shaper;
 #include <fribidi.h>
 #include <stdbool.h>
 #include "ass_render.h"
+#include "ass_cache.h"
 
 #if FRIBIDI_MAJOR_VERSION >= 1
 #define USE_FRIBIDI_EX_API
 #endif
 
 void ass_shaper_info(ASS_Library *lib);
-ASS_Shaper *ass_shaper_new(void);
+ASS_Shaper *ass_shaper_new(Cache *metrics_cache, Cache *face_size_metrics_cache);
 void ass_shaper_free(ASS_Shaper *shaper);
-void ass_shaper_empty_cache(ASS_Shaper *shaper);
+bool ass_create_hb_font(ASS_Font *font, int index);
 void ass_shaper_set_kerning(ASS_Shaper *shaper, bool kern);
 void ass_shaper_find_runs(ASS_Shaper *shaper, ASS_Renderer *render_priv,
                           GlyphInfo *glyphs, size_t len);
@@ -47,8 +48,6 @@ bool ass_shaper_shape(ASS_Shaper *shaper, TextInfo *text_info);
 void ass_shaper_cleanup(ASS_Shaper *shaper, TextInfo *text_info);
 FriBidiStrIndex *ass_shaper_reorder(ASS_Shaper *shaper, TextInfo *text_info);
 FriBidiStrIndex *ass_shaper_get_reorder_map(ASS_Shaper *shaper);
-FriBidiParType resolve_base_direction(int font_encoding);
-
-void ass_shaper_font_data_free(ASS_ShaperFontData *priv);
+FriBidiParType ass_resolve_base_direction(int font_encoding);
 
 #endif

@@ -13,12 +13,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-10.15]
-        cc: [gcc, clang]
-        docker_image: ['']
-        exclude:
-          - os: macos-10.15
-            cc: gcc
         include:
           # Enable distcheck for one build
           - os: ubuntu-latest
@@ -36,20 +30,29 @@ jobs:
           - os: ubuntu-latest
             cc: gcc
             docker_image: alpine:latest
-            shell: '/usr/bin/docker exec dockerciimage sh -e {0}'
+            shell: '/tmp/docker_shell {0}'
+            art_reg_skip: 'font_nonunicode'
           # Add docker-build with minimum version of dependencies
           - os: ubuntu-latest
             cc: gcc
             docker_image: oldlibs
             docker_pullprefix: 'ghcr.io/theoneric/libass-containers/'
-            shell: '/usr/bin/docker exec dockerciimage sh -e {0}'
+            shell: '/tmp/docker_shell {0}'
+            # Crash Tests detect (false?) leaks in Fontconfig, and
+            # various regression test fail, assumed due to older deps
+            skip_tests: yes
+          # MacOS Intel
+          - os: macos-13
+            cc: clang
+          # MacOS arm64
+          - os: macos-14
+            cc: clang
           # Add a Windows build (MinGW-gcc via MSYS2) with no extras
           - os: windows-2019
             msystem: MINGW32
             cc: gcc
             api: desktop
             shell: 'msys2 {0}'
-            package_prefix: mingw-w64-i686
           # Add a best-effort build for UWP apps for Microsoft Store
           - os: windows-2019
             msystem: UCRT64
@@ -57,15 +60,43 @@ jobs:
             api: app
             extra_cflags: -DWINAPI_FAMILY=WINAPI_FAMILY_APP -specs=/tmp/windowsapp.specs
             shell: 'msys2 {0}'
-            package_prefix: mingw-w64-ucrt-x86_64
 
     defaults:
       run:
         shell: ${{ matrix.shell || 'bash' }}
 
+    env:
+      ART_SAMPLES: ext_art-samples
+
     steps:
+      # Available core count changes on runner type and over time, but GHA
+      # doesn’t easily expose this, so we’ll have to query this ourselves. Based on:
+      # https://github.com/orgs/community/discussions/25057#discussioncomment-5957241
+      - name: determine logical cpu core count
+        id: cpus
+        shell: python
+        run: |
+          import os
+          import multiprocessing
+
+          try:
+            num_cpus = len(os.sched_getaffinity(0))
+          except AttributeError:
+            num_cpus = multiprocessing.cpu_count()
+          print(f"num_cpus={num_cpus}")
+
+          output_file = os.environ["GITHUB_OUTPUT"]
+          with open(output_file, "a", encoding="utf-8") as output_stream:
+            output_stream.write(f"count={num_cpus}\n")
+
       - name: checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
+      - name: download test samples
+        uses: actions/checkout@v4
+        with:
+          repository: libass/libass-tests
+          path: ${{ env.ART_SAMPLES }}
 
       - name: Start Docker
         if: matrix.docker_image
@@ -80,6 +111,21 @@ jobs:
             "-f" "/dev/null"
           docker start dockerciimage
 
+          # Create a proxy-shell for Docker containers
+          # Scripts for each step and the output file are inside the mounted
+          # directories, but some environment variable must be forwarded.
+          echo '#!/bin/sh
+          set -eu
+          if [ "$#" -ne 1 ] ; then
+            echo "Usage: $0 <script file>"
+            exit 1
+          fi
+          exec /usr/bin/docker exec \
+            --env GITHUB_OUTPUT --env GITHUB_ENV --env GITHUB_PATH --env GITHUB_STATE \
+            dockerciimage sh -e "$1"
+          ' > /tmp/docker_shell
+          chmod a+x /tmp/docker_shell
+
       - name: Setup MSys2
         uses: msys2/setup-msys2@v2
         if: matrix.msystem
@@ -92,34 +138,71 @@ jobs:
           case "${{ matrix.docker_image || matrix.os }}" in
             macos-*)
               #brew update
-              # fontconfig, freetype, autoconf and libtool are preinstalled
-              # and `brew install` fails if a non-uptodate version is already installed
-              #brew upgrade fontconfig freetype autoconf libtool
-              brew install automake fribidi harfbuzz nasm
+              brew install autoconf automake libtool nasm pkg-config \
+                           harfbuzz freetype fribidi fontconfig
               ;;
             windows-*)
-              pre="${{ matrix.package_prefix }}"
+              pre="$MINGW_PACKAGE_PREFIX"
               pacman --noconfirm -S \
                       automake autoconf libtool nasm make \
                       $pre-pkg-config $pre-gcc \
-                      $pre-fribidi $pre-freetype $pre-harfbuzz $pre-fontconfig
+                      $pre-fribidi $pre-freetype $pre-harfbuzz $pre-fontconfig \
+                      $pre-libpng
               ;;
             alpine:*)
               apk add nasm ${{ matrix.cc }} musl-dev \
                       make automake autoconf libtool pkgconf \
-                      fontconfig-dev freetype-dev fribidi-dev harfbuzz-dev
+                      fontconfig-dev freetype-dev fribidi-dev harfbuzz-dev \
+                      libpng-dev
               ;;
             oldlibs)
               : # Everything is preinstalled
               ;;
             *)
               sudo apt-get update #&& sudo apt-get upgrade
+              ubver="$(apt-cache search libubsan | awk '/^libubsan[0-9]* / {print substr($1, 9)}' | sort -rn | head -n1)"
+              asver="$(apt-cache search libasan | awk '/^libasan[0-9]* / {print substr($1, 8)}' | sort -rn | head -n1)"
               sudo apt-get install -y --no-install-recommends \
                    autoconf automake make libtool \
                    libfontconfig1-dev libfreetype6-dev libfribidi-dev \
-                   libharfbuzz-dev nasm ${{ matrix.cc }}
+                   libharfbuzz-dev nasm ${{ matrix.cc }} \
+                   libpng-dev libubsan"$ubver" libasan"$asver"
               ;;
           esac
+
+      - name: Determine Sanitizer Flags
+        id: sanitizer
+        run: |
+          aflags="-fsanitize=address"
+          uflags="-fsanitize=undefined -fsanitize=float-cast-overflow"
+          if [ "${{ startsWith(matrix.cc, 'clang') }}" = "true" ] ; then
+            # Clang's UBSAN exits with code zero even if issues were found
+            # This options will instead force an SIGILL, but remove a report being printed
+            # see https://reviews.llvm.org/D35085
+            uflags="$uflags -fsanitize-undefined-trap-on-error"
+          fi
+
+          # UBSAN: Alpine and MSys2 doesn't ship the UBSAN library,
+          #        but when SIGILL'ing the lib is not needed
+          # ASAN:  Not supported with musl and in Windows
+          case "${{ matrix.docker_image || matrix.os }}" in
+            alpine*|windows-*)
+              flags="$uflags -fsanitize-undefined-trap-on-error" ;;
+            *)
+              flags="$aflags $uflags" ;;
+          esac
+
+          if [ -n "$flags" ] ; then
+            flags="$flags -fno-sanitize-recover=all"
+          fi
+
+          if [ "${{ matrix.cc }}" = "tcc" ] || [ "${{ matrix.skip_tests }}" = "yes" ] ; then
+            flags=""
+          fi
+
+
+          echo "SANFLAGS=$flags"
+          echo "flags=${flags}" >> $GITHUB_OUTPUT
 
       - name: Customize compiler
         if: matrix.api == 'app' && matrix.cc == 'gcc'
@@ -130,19 +213,51 @@ jobs:
           > /tmp/windowsapp.specs
 
       - name: configure
-        env:
-          CC: "${{ matrix.cc }}\
-            ${{ matrix.extra_cflags && ' ' }}${{ matrix.extra_cflags }}"
-          LD: "${{ matrix.ld }}"
-        run: ./autogen.sh && ./configure
+        run: |
+          export CC="${{ matrix.cc }}\
+            ${{ matrix.extra_cflags && ' ' }}${{ matrix.extra_cflags }}\
+            ${{ steps.sanitizer.outputs.flags && ' ' }}${{ steps.sanitizer.outputs.flags }}"
+          export LD="${{ matrix.ld }}"
+          export ART_SAMPLES="${{ env.ART_SAMPLES }}"
 
-      - name: compile
-        if: matrix.do_distc != 'yes'
-        run: make -j 2
+          ./autogen.sh
+          ./configure --enable-compare --enable-fuzz
 
       - name: distcheck
         if: matrix.do_distc == 'yes'
-        run: make -j 2 distcheck
+        run: make -j '${{ steps.cpus.outputs.count }}' distcheck
+
+      - name: compile
+        run: make -j '${{ steps.cpus.outputs.count }}'
+
+      - name: ensure internal functions are namespaced
+        if: startsWith(matrix.os, 'ubuntu-')
+        run: |
+          test -f libass/.libs/libass.a || (echo "Static lib is missing!"; exit 1)
+          set +e
+          list="$(nm libass/.libs/libass.a | grep ' T ' | grep -v ' ass_')"
+          case "$?" in
+            1)
+              : # All good
+              ;;
+            0)
+              echo "There are non-namespaced functions! Prefix them with 'ass_'."
+              echo "$list"
+              exit 1
+              ;;
+            *)
+              echo "Internal grep error occured!"
+              echo "$list"
+              exit 2
+              ;;
+          esac
+
+      - name: run tests
+        if: matrix.skip_tests != 'yes'
+        run: |
+          ART_REG_SKIP="${{ matrix.art_reg_skip }}" make -j 1 check \
+          || (cat test-suite.log; exit 1;)
+
 
       - name: Coverity scan
         if: >
@@ -201,7 +316,7 @@ jobs:
           # Coverity Build
           echo "Starting Coverity build..."
           #mkdir "$RES_DIR" # already done by cov-build
-          COVERITY_UNSUPPORTED=1 cov-build --dir "$RES_DIR" make -j 2
+          COVERITY_UNSUPPORTED=1 cov-build --dir "$RES_DIR" make -j '${{ steps.cpus.outputs.count }}'
           cov-import-scm --dir "$RES_DIR" --scm git --log "$RES_DIR/scm_log.txt" 2>&1
 
           # Submit results to Coverity's server

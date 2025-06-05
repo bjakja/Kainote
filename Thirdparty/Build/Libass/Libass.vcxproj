@@ -78,7 +78,9 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\nasm.props" />
+  </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -132,7 +134,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <PreprocessorDefinitions>inline=__inline;FRIBIDI_ENTRY=;HB_USE_ATEXIT;_MBCS;CONFIG_SOURCEVERSION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>inline=__inline;FRIBIDI_ENTRY=;HB_USE_ATEXIT;_MBCS;CONFIG_SOURCEVERSION;ARCH_X86_64=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\harfbuzz\src;$(SolutionDir)Thirdparty\FreeType2\include;$(SolutionDir)Thirdparty\build\Fribidi;$(SolutionDir)Thirdparty\fribidi\lib;$(SolutionDir)Thirdparty\libass\libass;$(SolutionDir)Thirdparty\Build\libass</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -351,6 +353,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\libass\libass\ass.c" />
     <ClCompile Include="..\..\libass\libass\ass_bitmap.c" />
+    <ClCompile Include="..\..\libass\libass\ass_bitmap_engine.c" />
     <ClCompile Include="..\..\libass\libass\ass_blur.c" />
     <ClCompile Include="..\..\libass\libass\ass_cache.c" />
     <ClCompile Include="..\..\libass\libass\ass_directwrite.c" />
@@ -362,13 +365,16 @@
     <ClCompile Include="..\..\libass\libass\ass_outline.c" />
     <ClCompile Include="..\..\libass\libass\ass_parse.c" />
     <ClCompile Include="..\..\libass\libass\ass_rasterizer.c" />
-    <ClCompile Include="..\..\libass\libass\ass_rasterizer_c.c" />
     <ClCompile Include="..\..\libass\libass\ass_render.c" />
     <ClCompile Include="..\..\libass\libass\ass_render_api.c" />
     <ClCompile Include="..\..\libass\libass\ass_shaper.c" />
     <ClCompile Include="..\..\libass\libass\ass_string.c" />
     <ClCompile Include="..\..\libass\libass\ass_strtod.c" />
     <ClCompile Include="..\..\libass\libass\ass_utils.c" />
+    <ClCompile Include="..\..\libass\libass\c\c_be_blur.c" />
+    <ClCompile Include="..\..\libass\libass\c\c_blend_bitmaps.c" />
+    <ClCompile Include="..\..\libass\libass\c\c_blur.c" />
+    <ClCompile Include="..\..\libass\libass\c\c_rasterizer.c" />
     <ClCompile Include="libass_gdi_fontselect.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -390,5 +396,7 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\nasm.targets" />
+  </ImportGroup>
 </Project>
