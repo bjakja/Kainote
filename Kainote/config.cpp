@@ -34,6 +34,7 @@
 #include <wx/dc.h>
 #include "Config.h"
 #include "UtilsWindows.h"
+#include <locale>;
 
 #define ADD_QUOTES_HELPER(s) #s
 #define ADD_QUOTES(s) ADD_QUOTES_HELPER(s)
@@ -741,9 +742,12 @@ void config::GetTableFromString(CONFIG opt, wxArrayString &tbl, wxString split, 
 }
 
 bool sortfunc(Styles *style1, Styles *style2){
-	wxString str1 = style1->Name;
-	wxString str2 = style2->Name;
-	return (str1.CmpNoCase(str2) < 0);
+	const std::collate<wchar_t>& f = std::use_facet<std::collate<wchar_t>>(KainoteFrame::GetLocale());
+	const wchar_t* s1 = style1->Name.wc_str();
+	const wchar_t* s2 = style2->Name.wc_str();
+	return (f.compare(&s1[0], &s1[0] + wcslen(s1),
+		&s2[0], &s2[0] + wcslen(s2)) < 0);
+	
 }
 
 void config::Sortstyles()

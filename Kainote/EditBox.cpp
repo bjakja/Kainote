@@ -1165,6 +1165,7 @@ void EditBox::RefreshStyle(bool resetline)
 		StyleChoice->Append(grid->GetStyle(i)->Name);
 	}
 	int selection = grid->FindStyle(line->Style);
+	StyleChoice->Sort();
 	StyleChoice->SetSelection(selection);
 
 	if (resetline){

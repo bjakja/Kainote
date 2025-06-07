@@ -26,6 +26,7 @@
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
 #include "KainoteApp.h"
+#include <locale>
 
 //cannot use font outside class cause it create before it can get font scale from system
 static int height = 22;
@@ -36,6 +37,15 @@ static int selectOnStart = -1;
 static int minWidth = 0;
 
 wxDEFINE_EVENT(EVT_MENU_OPENED, MenuEvent);
+
+bool MenuSort(MenuItem* i, MenuItem* j) {
+	
+	const std::collate<wchar_t>& f = std::use_facet<std::collate<wchar_t>>(KainoteFrame::GetLocale());
+	const wchar_t* s1 = i->label.wc_str();
+	const wchar_t* s2 = j->label.wc_str();
+	return (f.compare(&s1[0], &s1[0] + wcslen(s1),
+		&s2[0], &s2[0] + wcslen(s2)) < 0);
+}
 
 void Mnemonics::findMnemonics(const wxString &label, int pos){
 	int result = label.Find(L'&');
@@ -133,6 +143,12 @@ void Menu::PopupMenu(const wxPoint &pos, wxWindow *parent, bool clientPos, bool 
 
 	dialog = new MenuDialog(this, parent, npos, size, showIcons);
 	dialog->Show();
+}
+
+void Menu::Sort(int offset)
+{
+	
+	std::sort(items.begin() + offset, items.end(), MenuSort);
 }
 
 void Menu::CalcPosAndSize(wxWindow *parent, wxPoint *pos, wxSize *size, bool clientPos)

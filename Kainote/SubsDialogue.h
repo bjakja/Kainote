@@ -154,6 +154,10 @@ public:
 	operator const wxString&(){
 		return *stored;
 	}
+	const wxString& operator &() {
+		return *stored;
+	}
+
 	bool operator !=(const wxString &comptext) const{ return comptext != (*stored); };
 	//bool operator !=(const char *comptext) const{ return comptext != (*stored); };
 	bool operator !=(const wchar_t *comptext) const{ return comptext != (*stored); };
@@ -205,18 +209,14 @@ public:
 	size_t Len() const{
 		return stored->length();
 	}
-	int CmpNoCase(const StoreTextHelper &TextTl) const{
-		return stored->CmpNoCase(*TextTl.stored);
-	}
+	
 	bool empty() const{
 		return stored->empty();
 	}
 	wxString & Trim(bool fromRight = true){
 		return stored->Trim(fromRight);
 	}
-	/*const wxScopedCharBuffer mb_str(const wxMBConv& conv = wxConvLibc) const{
-		return stored->mb_str(conv);
-	}*/
+	
 	wxString *Copy(){
 		if ((*deleteReference) > 0){ StoreText(*stored); }
 		return stored;

@@ -39,6 +39,7 @@
 #include <wx/regex.h>
 #include <wx/ffile.h>
 #include <wx/window.h>
+#include <locale>
 
 SubsGridBase* SubsGridBase::CG1 = NULL;
 SubsGridBase* SubsGridBase::CG2 = NULL;
@@ -65,7 +66,12 @@ bool sortend(Dialogue *i, Dialogue *j)
 bool sortstyle(Dialogue *i, Dialogue *j)
 {
 	if (i->Style != j->Style){
-		return (i->Style.CmpNoCase(j->Style) < 0);
+		const std::collate<wchar_t>& f = std::use_facet<std::collate<wchar_t>>(KainoteFrame::GetLocale());
+		const wchar_t* s1 = (&i->Style).wc_str();
+		const wchar_t* s2 = (&j->Style).wc_str();
+		return (f.compare(&s1[0], &s1[0] + wcslen(s1),
+			&s2[0], &s2[0] + wcslen(s2)) < 0);
+
 	}
 	return i->Start.mstime < j->Start.mstime;
 }
@@ -73,7 +79,12 @@ bool sortstyle(Dialogue *i, Dialogue *j)
 bool sortactor(Dialogue *i, Dialogue *j)
 {
 	if (i->Actor != j->Actor){
-		return (i->Actor.CmpNoCase(j->Actor) < 0);
+		const std::collate<wchar_t>& f = std::use_facet<std::collate<wchar_t>>(KainoteFrame::GetLocale());
+		const wchar_t* s1 = (&i->Actor).wc_str();
+		const wchar_t* s2 = (&j->Actor).wc_str();
+		return (f.compare(&s1[0], &s1[0] + wcslen(s1),
+			&s2[0], &s2[0] + wcslen(s2)) < 0);
+
 	}
 	return i->Start.mstime < j->Start.mstime;
 }
@@ -81,7 +92,12 @@ bool sortactor(Dialogue *i, Dialogue *j)
 bool sorteffect(Dialogue *i, Dialogue *j)
 {
 	if (i->Effect != j->Effect){
-		return (i->Effect.CmpNoCase(j->Effect) < 0);
+		const std::collate<wchar_t>& f = std::use_facet<std::collate<wchar_t>>(KainoteFrame::GetLocale());
+		const wchar_t* s1 = (&i->Actor).wc_str();
+		const wchar_t* s2 = (&j->Actor).wc_str();
+		return (f.compare(&s1[0], &s1[0] + wcslen(s1),
+			&s2[0], &s2[0] + wcslen(s2)) < 0);
+
 	}
 	return i->Start.mstime < j->Start.mstime;
 }
@@ -287,7 +303,11 @@ void SubsGridBase::Convert(char type)
 			if (i->End.mstime != j->End.mstime){
 				return (i->End.mstime < j->End.mstime);
 			}
-			return (i->Text.CmpNoCase(j->Text) < 0);
+			const std::collate<wchar_t>& f = std::use_facet<std::collate<wchar_t>>(KainoteFrame::GetLocale());
+			const wchar_t* s1 = (&i->Text).wc_str();
+			const wchar_t* s2 = (&j->Text).wc_str();
+			return (f.compare(&s1[0], &s1[0] + wcslen(s1),
+				&s2[0], &s2[0] + wcslen(s2)) < 0);
 		});
 		Dialogue *lastDialogue = file->GetDialogue(0);
 		size_t i = 1;

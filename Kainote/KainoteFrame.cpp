@@ -83,6 +83,8 @@
 #endif
 
 
+std::locale KainoteFrame::locale = std::locale();
+
 KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	: KaiFrame(0, -1, _("Bez nazwy - ") + Options.progname + L" " + wxString(INSTRUCTIONS), 
 	pos, size, wxDEFAULT_FRAME_STYLE, L"Kainote_main_window")
@@ -429,6 +431,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	// Make system default locale global
 	std::locale loc = gen("");
 	std::locale::global(loc);
+	locale = std::locale("");
 }
 
 KainoteFrame::~KainoteFrame()
@@ -482,7 +485,12 @@ void KainoteFrame::DestroyDialogs(){
 	if (FC){ delete FC; FC = nullptr; }
 	if (MR){ MR->Destroy(); MR = nullptr; }
 	StyleStore::DestroyStore();
-};
+}
+const std::locale & KainoteFrame::GetLocale()
+{
+	return locale;
+}
+;
 
 
 //elements of menu that can be disabled

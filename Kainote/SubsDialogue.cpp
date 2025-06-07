@@ -22,7 +22,6 @@
 #include <map>
 #include <iostream>
 
-
 TagData::TagData(const wxString &name, unsigned int _startTextPos)
 {
 	tagName = name;

@@ -1467,7 +1467,7 @@ namespace Auto{
 			(*bar)->Append(-1, script->GetName(), submenu, script->GetDescription());
 			i++;
 		}
-
+		(*bar)->Sort(4);
 
 		HasChanges = false;
 	}

@@ -98,6 +98,7 @@ public:
 	void OnSize(wxSizeEvent& event);
 	bool Layout();
 	void DestroyDialogs();
+	const static std::locale &GetLocale();
 	FindReplaceDialog *FR = nullptr;
 	SelectLines *SL = nullptr;
 	Auto::Automation *Auto = nullptr;
@@ -136,6 +137,7 @@ private:
 
 	wxMutex m_BlockOpen;
 	wxTimer m_SendFocus;
+	static std::locale locale;
 };
 
 

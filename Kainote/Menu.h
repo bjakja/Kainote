@@ -225,6 +225,7 @@ public:
 	void SetWindow(char window) {
 		wnd = window;
 	}
+	void Sort(int offset = 0);
 private:
 	void CalcPosAndSize(wxWindow *parent, wxPoint *pos, wxSize *size, bool clientPos);
 	void DestroyDialog();

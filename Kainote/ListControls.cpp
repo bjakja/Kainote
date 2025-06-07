@@ -16,12 +16,14 @@
 #include "ListControls.h"
 #include "Config.h"
 #include "KaiTextCtrl.h"
+#include "KainoteFrame.h"
 #include <wx/msw/private.h>
 #include "config.h"
 #include "UtilsWindows.h"
 #include <wx/dc.h>
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
+#include <locale>
 
 //wxBitmap toDisable(const wxBitmap &bmp)
 //{
@@ -679,7 +681,15 @@ void KaiChoice::Insert(const wxString &what, int position){
 
 void KaiChoice::Sort()
 {
-	list->Sort([](const wxString &first, const wxString &second){return first.CmpNoCase(second); });
+	list->Sort([](const wxString &first, const wxString &second){
+		const std::collate<wchar_t>& f = std::use_facet<std::collate<wchar_t>>(KainoteFrame::GetLocale());
+		const wchar_t* s1 = first.wc_str();
+		const wchar_t* s2 = second.wc_str();
+		return f.compare(&s1[0], &s1[0] + wcslen(s1),
+			&s2[0], &s2[0] + wcslen(s2));
+		//return first.CmpNoCase(second); 
+		}
+	);
 }
 
 void KaiChoice::OnActivate(wxFocusEvent &evt)
