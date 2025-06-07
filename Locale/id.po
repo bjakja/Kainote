@@ -3,9 +3,9 @@
 # This file is distributed under the GNU General Public License v3.0.
 # Marcin Drob <bjajka7@gmail.com>, 2022.
 # Lumi <luminiatus@gmail.com>, 2023.
-# Reza Almanda <rezaalmanda27@gmail.com>, 2023.
+# Reza Almanda <rezaalmanda27@gmail.com>, 2023, 2024.
 msgid ""
-msgstr "Project-Id-Version: Kainote\nReport-Msgid-Bugs-To: poiiiii4yy@gmail.com\nPOT-Creation-Date: 2022-06-06 20:10+0700\nPO-Revision-Date: 2023-03-05 05:37+0000\nLast-Translator: Reza Almanda <rezaalmanda27@gmail.com>\nLanguage-Team: Indonesian <https://hosted.weblate.org/projects/kainote/kainote/id/>\nLanguage: id\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=1; plural=0;\nX-Generator: Weblate 4.16.2-dev\nX-Poedit-Basepath: ../Kainote\nX-Poedit-SourceCharset: UTF-8\nX-Poedit-KeywordsList: _\nX-Poedit-SearchPath-0: .\nX-Poedit-SearchPathExcluded-0: Bitmaps\nX-Poedit-SearchPathExcluded-1: GFFT\nX-Poedit-SearchPathExcluded-2: include\nX-Poedit-SearchPathExcluded-3: Win32\nX-Poedit-SearchPathExcluded-4: x64\nX-Poedit-SearchPathExcluded-5: ffms2.lib\nX-Poedit-SearchPathExcluded-6: ffms2_x64.lib\nX-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\nX-Poedit-SearchPathExcluded-8: Kainote.vcxproj\nX-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\nX-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\nX-Poedit-SearchPathExcluded-11: RCa00888\nX-Poedit-SearchPathExcluded-12: resource.aps\nX-Poedit-SearchPathExcluded-13: resource.rc\nX-Poedit-SearchPathExcluded-14: CsriMod.cpp\nX-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\nX-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
+msgstr "Project-Id-Version: Kainote\nReport-Msgid-Bugs-To: poiiiii4yy@gmail.com\nPOT-Creation-Date: 2022-06-06 20:10+0700\nPO-Revision-Date: 2024-10-11 01:16+0000\nLast-Translator: Reza Almanda <rezaalmanda27@gmail.com>\nLanguage-Team: Indonesian <https://hosted.weblate.org/projects/kainote/kainote/id/>\nLanguage: id\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=1; plural=0;\nX-Generator: Weblate 5.8-dev\nX-Poedit-Basepath: ../Kainote\nX-Poedit-SourceCharset: UTF-8\nX-Poedit-KeywordsList: _\nX-Poedit-SearchPath-0: .\nX-Poedit-SearchPathExcluded-0: Bitmaps\nX-Poedit-SearchPathExcluded-1: GFFT\nX-Poedit-SearchPathExcluded-2: include\nX-Poedit-SearchPathExcluded-3: Win32\nX-Poedit-SearchPathExcluded-4: x64\nX-Poedit-SearchPathExcluded-5: ffms2.lib\nX-Poedit-SearchPathExcluded-6: ffms2_x64.lib\nX-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\nX-Poedit-SearchPathExcluded-8: Kainote.vcxproj\nX-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\nX-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\nX-Poedit-SearchPathExcluded-11: RCa00888\nX-Poedit-SearchPathExcluded-12: resource.aps\nX-Poedit-SearchPathExcluded-13: resource.rc\nX-Poedit-SearchPathExcluded-14: CsriMod.cpp\nX-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\nX-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
 
 #: AudioBox.cpp:134
 msgid "Odtwórz następną linijkę"
@@ -113,9 +113,8 @@ msgstr "Aktifkan / Nonaktifkan pemisahan suku kata secara otomatis"
 #: VisualAllTagsEdition.cpp:303 VisualAllTagsEdition.cpp:307
 #: VisualDrawingShapes.cpp:144 VisualDrawingShapes.cpp:148
 #: VisualDrawingShapes.cpp:166 VisualDrawingShapes.cpp:270
-#, fuzzy
 msgid "Błąd"
-msgstr "Galat"
+msgstr "Eror"
 
 #: AudioBox.cpp:188
 msgid "Przechodzenie do następnej linijki po zatwierdzeniu zmian"
@@ -242,13 +241,11 @@ msgid "Zawiodło któreś z ustawień DirectX"
 msgstr "Salah satu pengaturan DirectX gagal dilakukan"
 
 #: AudioDisplay.cpp:294
-#, fuzzy
 msgid "Nie można ustawić macierzy porojekcji"
 msgstr "Tidak dapat mengatur proyeksi matriks"
 
 # Zły: nie rozumiem
 #: AudioDisplay.cpp:295 RendererVideo.cpp:247 VisualRotationXY.cpp:163
-#, fuzzy
 msgid "Nie można ustawić macierzy świata"
 msgstr "Tidak dapat mengatur tampilan matriks"
 
@@ -263,40 +260,33 @@ msgid "Nie można stworzyć powierzchni"
 msgstr "Tidak dapat membuat permukaan"
 
 #: AudioDisplay.cpp:300 RendererVideo.cpp:261
-#, fuzzy
 msgid "Nie można stworzyć linii D3DX"
-msgstr "Tidak dapat membuka D3DX line"
+msgstr "Tidak dapat membuka garis D3DX"
 
 #: AudioDisplay.cpp:304 AudioDisplay.cpp:305 AudioDisplay.cpp:306
 #: ContextDX9.cpp:196 RendererVideo.cpp:258 RendererVideo.cpp:260
 #: VisualCross.cpp:262 Visuals.cpp:458
-#, fuzzy
 msgid "Nie można stworzyć czcionki D3DX"
 msgstr "Tidak dapat membuat font D3DX"
 
 #: AudioDisplay.cpp:308 RendererDirectShow.cpp:801 RendererFFMS2.cpp:598
-#, fuzzy
 msgid "Nie można stworzyć plain surface"
-msgstr "Tidak dapat membuat permukaan yang datar"
+msgstr "Tidak dapat membuat permukaan polos"
 
 #: AudioDisplay.cpp:329 RendererVideo.cpp:203
-#, fuzzy
 msgid "Nie można zresetować Direct3D"
-msgstr "Tidak bisa mengatur ulang Direct3D"
+msgstr "Tidak dapat mengatur ulang Direct3D"
 
 #: AudioDisplay.cpp:580
-#, fuzzy
 msgid "Zmodyfikowano"
-msgstr "Modifikasi"
+msgstr "Dimodifikasi"
 
 #: AudioDisplay.cpp:584
-#, fuzzy
 msgid "Czas ujemny"
-msgstr "Negative time"
+msgstr "Waktu negatif"
 
 #: AudioDisplay.cpp:990 RendererDirectShow.cpp:204 RendererDirectShow.cpp:206
 #: RendererDirectShow.cpp:871 RendererFFMS2.cpp:80 RendererFFMS2.cpp:82
-#, fuzzy
 msgid "Nie można zablokować bufora tekstury"
 msgstr "Tidak dapat mengunci buffer tekstur"
 
