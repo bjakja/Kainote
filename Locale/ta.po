@@ -7,7 +7,7 @@
 # தமிழ்நேரம் <tamilneram247@gmail.com>, 2025, 2026.
 # Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>, 2026.
 msgid ""
-msgstr "Project-Id-Version: Kainote\nReport-Msgid-Bugs-To: poiiiii4yy@gmail.com\nPOT-Creation-Date: 2022-06-06 20:10+0700\nPO-Revision-Date: 2026-03-10 10:09+0000\nLast-Translator: Weblate <noreply-mt-weblate@weblate.org>\nLanguage-Team: Tamil <https://hosted.weblate.org/projects/kainote/kainote/ta/>\nLanguage: ta\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=n != 1;\nX-Generator: Weblate 5.17-dev\nX-Poedit-Basepath: ../Kainote\nX-Poedit-SourceCharset: UTF-8\nX-Poedit-KeywordsList: _\nX-Poedit-SearchPath-0: .\nX-Poedit-SearchPathExcluded-0: Bitmaps\nX-Poedit-SearchPathExcluded-1: GFFT\nX-Poedit-SearchPathExcluded-2: include\nX-Poedit-SearchPathExcluded-3: Win32\nX-Poedit-SearchPathExcluded-4: x64\nX-Poedit-SearchPathExcluded-5: ffms2.lib\nX-Poedit-SearchPathExcluded-6: ffms2_x64.lib\nX-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\nX-Poedit-SearchPathExcluded-8: Kainote.vcxproj\nX-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\nX-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\nX-Poedit-SearchPathExcluded-11: RCa00888\nX-Poedit-SearchPathExcluded-12: resource.aps\nX-Poedit-SearchPathExcluded-13: resource.rc\nX-Poedit-SearchPathExcluded-14: CsriMod.cpp\nX-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\nX-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
+msgstr "Project-Id-Version: Kainote\nReport-Msgid-Bugs-To: poiiiii4yy@gmail.com\nPOT-Creation-Date: 2022-06-06 20:10+0700\nPO-Revision-Date: 2026-06-17 07:01+0000\nLast-Translator: தமிழ்நேரம் <tamilneram247@gmail.com>\nLanguage-Team: Tamil <https://hosted.weblate.org/projects/kainote/kainote/ta/>\nLanguage: ta\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=n != 1;\nX-Generator: Weblate 2026.7.dev0\nX-Poedit-Basepath: ../Kainote\nX-Poedit-SourceCharset: UTF-8\nX-Poedit-KeywordsList: _\nX-Poedit-SearchPath-0: .\nX-Poedit-SearchPathExcluded-0: Bitmaps\nX-Poedit-SearchPathExcluded-1: GFFT\nX-Poedit-SearchPathExcluded-2: include\nX-Poedit-SearchPathExcluded-3: Win32\nX-Poedit-SearchPathExcluded-4: x64\nX-Poedit-SearchPathExcluded-5: ffms2.lib\nX-Poedit-SearchPathExcluded-6: ffms2_x64.lib\nX-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\nX-Poedit-SearchPathExcluded-8: Kainote.vcxproj\nX-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\nX-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\nX-Poedit-SearchPathExcluded-11: RCa00888\nX-Poedit-SearchPathExcluded-12: resource.aps\nX-Poedit-SearchPathExcluded-13: resource.rc\nX-Poedit-SearchPathExcluded-14: CsriMod.cpp\nX-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\nX-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
 
 #: FontCollector.cpp:510 KainoteFrame.cpp:1144 KainoteFrame.cpp:1898
 #: Notebook.cpp:1168 SubsGrid.cpp:1065 SubsGrid.cpp:1394 SubsGridBase.cpp:551
@@ -25,6 +25,7 @@ msgid "Pasek szukania"
 msgstr "தேடல் பட்டி"
 
 #: AudioBox.cpp:188
+#, fuzzy
 msgid "Przechodzenie do następnej linijki po zatwierdzeniu zmian"
 msgstr "மாற்றங்களின் ஒப்புதலுக்குப் பிறகு அடுத்த வரிக்குச் செல்வது"
 
@@ -37,6 +38,7 @@ msgid "Tryb spektrum"
 msgstr "ச்பெக்ட்ரம் பயன்முறை"
 
 #: AudioBox.cpp:200
+#, fuzzy
 msgid "Uwydatnienie częstotliwości głosu na spektrum"
 msgstr "ச்பெக்ட்ரம் பேச்சு அதிர்வெண் மேம்பாடு"
 
@@ -45,18 +47,20 @@ msgid "Usuń starsze pliki audio cache"
 msgstr "பழைய ஆடியோ கேச் கோப்புகளை அகற்று"
 
 #: Automation.cpp:636
+#, fuzzy
 msgid "Wystąpił błąd podczas wykonywania skryptu Lua:\n"
 msgstr "ச்கிரிப்ட் லுவா ஏற்றும்போது பிழை ஏற்பட்டது:\n"
 
 #: Automation.cpp:1057 Automation.cpp:1098 KainoteFrame.cpp:739
 #: KainoteFrame.cpp:2405
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "Błąd wczytywania skryptu Lua: %s\n"
 "%s"
 msgstr "ச்கிரிப்டை ஏற்றுவதில் பிழை லுவா: %s \n%s"
 
 #: Automation.cpp:1068
+#, fuzzy
 msgid ""
 "Jeden bądź więcej skryptów autoload zawiera błędy.\n"
 "Obejrzyj opisy skryptów, by uzyskać więcej informacji."
@@ -225,6 +229,7 @@ msgid "Zapisz sesję do pliku"
 msgstr "அமர்வை தாக்கல் செய்ய சேமிக்கவும்"
 
 #: KainoteFrame.cpp:154
+#, fuzzy
 msgid "Zapisz &wszystko"
 msgstr "அனைத்தையும் சேமி"
 
@@ -237,11 +242,12 @@ msgid "Zapisz jako"
 msgstr "என சேமி"
 
 #: DialogueTextEditor.cpp:2290
-#, c-format
+#, c-format, fuzzy
 msgid "&Dodaj słowo \"%s\" do słownika"
 msgstr "அகராதியில் \"%s\" என்ற வார்த்தையைச் சேர்க்கவும்"
 
 #: DialogueTextEditor.cpp:2293 KaiTextCtrl.cpp:1470
+#, fuzzy
 msgid "&Usuń"
 msgstr "நீக்கு"
 
@@ -262,22 +268,27 @@ msgid "Czas początkowy linijki"
 msgstr "வரி தொடக்க நேரம்"
 
 #: EditBox.cpp:1192
+#, fuzzy
 msgid "Oznaczenie aktora linijki. Nie wpływa na wygląd napisów"
 msgstr "குறிக்கும் நடிகர். இது வசன வரிகள் தோற்றத்தை பாதிக்காது"
 
 #: EditBox.cpp:1193
+#, fuzzy
 msgid "Margines lewy linijki"
 msgstr "இடது விளிம்பு வரி"
 
 #: EditBox.cpp:1194
+#, fuzzy
 msgid "Margines prawy linijki"
 msgstr "வலது விளிம்பு வரி"
 
 #: EditBox.cpp:1195
+#, fuzzy
 msgid "Margines górny i dolny linijki"
 msgstr "மேல் மற்றும் கீழ் விளிம்பு வரி"
 
 #: EditBox.cpp:1196
+#, fuzzy
 msgid ""
 "Efekt linijki. Służy do oznaczania linijek, na których zastosowane ma być "
 "karaoke bądź efekty VSFiltra"
@@ -404,15 +415,17 @@ msgid ""
 msgstr "தட்டச்சு செய்யும் கருவிகளுக்கு உதவியது மற்றும் இன்னும் பல மேம்பாடுகளைக் கொண்டு வந்தது).\n"
 
 #: KainoteFrame.cpp:1060
+#, fuzzy
 msgid "Plik napisów "
 msgstr "வசன வரிகள் கோப்பு "
 
 #: KainoteFrame.cpp:1070
+#, fuzzy
 msgid "Zapisz plik napisów"
 msgstr "வசன வரிகளைச் சேமிக்கவும்"
 
 #: KainoteFrame.cpp:1143
-#, c-format
+#, c-format, fuzzy
 msgid "Wczytać napisy o nazwie \"%s\"?"
 msgstr "%s என்ற வசன வரிகள் ஏற்ற விரும்புகிறீர்களா?"
 
@@ -427,7 +440,7 @@ msgid "Brak"
 msgstr "எதுவுமில்லை"
 
 #: KainoteFrame.cpp:1893
-#, c-format
+#, c-format, fuzzy
 msgid "Zapisać napisy o nazwie \"%s\" przed %s?"
 msgstr "%s க்கு முன் \" %s\" என்ற வசன வரிகள் சேமிக்க விரும்புகிறீர்களா?"
 
@@ -468,7 +481,7 @@ msgid "Zamiana błędów wyrazu \"będę\""
 msgstr "போலிச் \"பேட்\" ஐ சரிசெய்தல்"
 
 #: MisspellReplacer.cpp:774
-#, c-format
+#, c-format, fuzzy
 msgid "Reguła \"%s\" jest nieprawidłowa."
 msgstr "விதி \"%s\" செல்லுபடியாகாது."
 
@@ -481,6 +494,7 @@ msgid "Zamknij wszystkie zakładki"
 msgstr "எல்லா தாவல்களையும் மூடு"
 
 #: Notebook.cpp:861
+#, fuzzy
 msgid "Otwórz folder zawierający napisy"
 msgstr "கோப்புறை கொண்ட திறந்த வசன வரிகள்"
 
@@ -599,6 +613,7 @@ msgid "Preferowane ścieżki audio (oddzielone średnikiem)"
 msgstr "விருப்பமான ஆடியோ (அரைக்காற்புள்ளிகளால் பிரிக்கப்படுகிறது)"
 
 #: OptionsDialog.cpp:540
+#, fuzzy
 msgid "Sposób szukania wideo w FFMS2 (wymaga ponownego wczytania)"
 msgstr "FFMS2 வீடியோ தேடல் (மறுஏற்றம் தேவை)"
 
@@ -611,6 +626,7 @@ msgid "Skróty Globalne"
 msgstr "உலகளாவிய குறுக்குவழிகள்"
 
 #: OptionsDialog.cpp:588
+#, fuzzy
 msgid "Skróty napisów"
 msgstr "வசன வரிகள் குறுக்குவழிகள்"
 
@@ -651,10 +667,12 @@ msgid "Okno tekst"
 msgstr "சாளர உரை"
 
 #: OptionsDialog.cpp:719
+#, fuzzy
 msgid "Napisy zaznaczenia (przezroczystość)"
 msgstr "வசனத் தேர்வுகள் (வெளிப்படைத்தன்மை)"
 
 #: OptionsDialog.cpp:719
+#, fuzzy
 msgid "Napisy linijki widoczne na wideo"
 msgstr "வீடியோவில் காணக்கூடிய வசன வரிகள்"
 
@@ -719,6 +737,7 @@ msgid "Wynik szukania tło znalezionej frazy"
 msgstr "முடிவைக் கண்டறிந்த சொற்றொடர் பின்னணியைக் கண்டறிதல்"
 
 #: OptionsDialog.cpp:800
+#, fuzzy
 msgid ""
 "Nazwa kopiowanego motywu.\n"
 "Motywów domyślnych: DarkSentro i LightSentro\n"
@@ -779,6 +798,7 @@ msgid "Motywy"
 msgstr "கருப்பொருள்கள்"
 
 #: OptionsPanels.cpp:29 ScriptInfo.cpp:33
+#, fuzzy
 msgid "Informacje o napisach"
 msgstr "வசன வரிகள் செய்தி"
 
@@ -814,6 +834,7 @@ msgid "Nie można stworzyć powierzchni DXVA %i"
 msgstr "Dxva மேற்பரப்பை உருவாக்க முடியாது %i"
 
 #: RendererDirectShow.cpp:198
+#, fuzzy
 msgid "Nie można odblokować bufora tekstury napisów"
 msgstr "வசன வரிகள் அமைப்பு இடையகத்தைத் திறக்க முடியாது"
 
@@ -897,6 +918,7 @@ msgid "Opóźnia napisy"
 msgstr "வசன வரிகள் தாமதப்படுத்துகின்றன"
 
 #: ShiftTimes.cpp:536
+#, fuzzy
 msgid "Przyspiesza napisy"
 msgstr "வசன வரிகள் துரிதப்படுத்துகின்றன"
 
@@ -906,7 +928,7 @@ msgid ""
 "Przesuwa czasy tagów \\move, \\t, \\fad tak,\n"
 "by ich pozycja na wideo się nie zmieniła\n"
 "(spowalnia przesuwanie czasów)"
-msgstr "சிப்ட் டேக் \\ நகர்வு, \\ டி, \\ ஃபேட் டைம்ச்\n அதன் வீடியோ நிலை மாறாது.\n (மெதுவாக மாற்றும் நேரங்கள்)"
+msgstr "உயர்த்து tag \\move, \\t, \\fad பெருக்கல் \nஅதன் வீடியோ நிலை மாறாது. \n(மாறும் நேரங்களை மெதுவாக்குகிறது)"
 
 #: ShiftTimes.cpp:539
 msgid "Wybór czasów do przesunięcia"
@@ -914,7 +936,7 @@ msgstr "நகர்த்துவதற்கான நேரங்களி�
 
 #: ShiftTimes.cpp:543
 msgid "Wstawia wstęp do czasu początkowego, dobre przy stosowaniu fad"
-msgstr "தொடக்க நேரத்திற்கு அறிமுகத்தை செருகும் (FAD ஐப் பயன்படுத்தும் போது நல்லது)"
+msgstr "தொடக்க நேரத்திற்கு அறிமுகத்தைச் செருகும் (fad ஐப் பயன்படுத்தும்போது நல்லது)"
 
 #: SpellCheckerDialog.cpp:57 findreplace.cpp:1333
 msgid "Ignoruj"
@@ -941,6 +963,7 @@ msgid "Prawy:"
 msgstr "வலது:"
 
 #: SubsFile.cpp:116
+#, fuzzy
 msgid "Edycja linii"
 msgstr "வரி பதிப்பு"
 
@@ -953,6 +976,7 @@ msgid "Przesunięcie tekstu tłumaczenia"
 msgstr "நகரும் மொழிபெயர்ப்பு உரை"
 
 #: SubsFile.cpp:129
+#, fuzzy
 msgid "Ustawienie czasów linii jako ciągłych"
 msgstr "தொடர்ச்சியான நேரங்களை அமைத்தல்"
 
@@ -977,10 +1001,12 @@ msgid "Ustawienie czasu końcowego"
 msgstr "இறுதி நேரத்தை அமைத்தல்"
 
 #: SubsFile.cpp:139
+#, fuzzy
 msgid "Włączenie trybu tłumacza"
 msgstr "மொழிபெயர்ப்பாளர் பயன்முறையை இயக்கவும்"
 
 #: SubsFile.cpp:155
+#, fuzzy
 msgid "Narzędzie obrotów w osiach X i Y"
 msgstr "காட்சி கருவி அச்சு ஃச் மற்றும் ஒய் சுழற்சி"
 
@@ -993,10 +1019,12 @@ msgid "&Duplikuj linie"
 msgstr "& நகல் கோடுகள்"
 
 #: SubsGrid.cpp:198
+#, fuzzy
 msgid "Za&mień"
 msgstr "இடமாற்றம்"
 
 #: SubsGrid.cpp:1098
+#, fuzzy
 msgid "Otwieranie napisów nie powiodło się"
 msgstr "வசன வரிகள் திறக்க முடியாது"
 
@@ -1014,6 +1042,7 @@ msgid "Złącz linie"
 msgstr "வரிகளில் சேரவும்"
 
 #: TLDialog.cpp:37
+#, fuzzy
 msgid ""
 "Złącza następną linijkę z zaznaczoną.\n"
 "Oryginał idzie w górę."
@@ -1040,10 +1069,12 @@ msgid "Przezroczystość koloru pomocniczego"
 msgstr "இரண்டாம் நிலை நிறத்தின் வெளிப்படைத்தன்மை"
 
 #: TextEditorTagList.cpp:370
+#, fuzzy
 msgid "Pochylenie w osi X"
 msgstr "ஃச் அச்சில் வளைவு"
 
 #: Toolbar.cpp:461
+#, fuzzy
 msgid "Na dole"
 msgstr "கீழே"
 
@@ -1056,6 +1087,7 @@ msgid "Poprzedni plik wideo"
 msgstr "முந்தைய வீடியோ கோப்பு"
 
 #: VideoFullscreen.cpp:64
+#, fuzzy
 msgid "Pokaż pasek narzędzi"
 msgstr "கருவிப்பட்டி சின்னங்களைக் காட்டு"
 
@@ -1113,10 +1145,12 @@ msgid "Nie można pobrać nazwy filtra"
 msgstr "வடிகட்டி பெயரைப் பெற முடியாது"
 
 #: findreplace.cpp:1331
+#, fuzzy
 msgid "Usuń nieistniejące style"
 msgstr "இல்லாத பாணிகளை அகற்று"
 
 #: stylestore.cpp:771
+#, fuzzy
 msgid "Nowy katalog stylów"
 msgstr "புதிய பாணிகள் பட்டியல்"
 
@@ -1183,12 +1217,8 @@ msgstr "எல்லை நிறம்"
 msgid "Kolor cienia"
 msgstr "நிழல் நிறம்"
 
-#: ColorPicker.cpp:548
-msgid "Zamień ze sobą skróty próbnika i okna wyboru kolorów"
-msgstr "கலர் பிக்கர் மற்றும் வண்ணத்தின் குறுக்குவழிகளை மாற்றவும் சாளரத்தைத் தேர்வுசெய்க"
-
 #: DummyVideo.cpp:95
-#, c-format
+#, c-format, fuzzy
 msgid "Co daje %i klatek"
 msgstr "இது %i பிரேம்கள்"
 
@@ -1197,6 +1227,7 @@ msgid "Czas trwania:"
 msgstr "காலம்:"
 
 #: DummyVideo.cpp:120 DummyVideo.cpp:124
+#, fuzzy
 msgid "Nieprawidłowa wartość fps."
 msgstr "மோசமான எஃப்.பி.எச்."
 
@@ -1221,6 +1252,7 @@ msgid "Nazwa przycisku"
 msgstr "பொத்தான் பெயர்"
 
 #: EditBox.cpp:93
+#, fuzzy
 msgid "Tag przycisku"
 msgstr "பொத்தானின் குறிச்சொல்"
 
@@ -1353,6 +1385,7 @@ msgid "Znajdź"
 msgstr "கண்டுபிடி"
 
 #: FindReplaceDialog.cpp:168
+#, fuzzy
 msgid ""
 "Znajdź we wszystkich\n"
 "otwartych napisach"
@@ -1365,6 +1398,7 @@ msgid ""
 msgstr "அனைத்தையும் கண்டுபிடி\n தற்போதைய வசன வரிகள்"
 
 #: FindReplaceDialog.cpp:184
+#, fuzzy
 msgid "Zamień następne"
 msgstr "அடுத்து இடமாற்றம் செய்யுங்கள்"
 
@@ -1373,6 +1407,7 @@ msgid "Zamień wszystko"
 msgstr "அனைத்தையும் மாற்றவும்"
 
 #: FindReplaceDialog.cpp:187
+#, fuzzy
 msgid ""
 "Zamień we wszystkich\n"
 "otwartych napisach"
@@ -1384,10 +1419,12 @@ msgid "Znajdź w napisach"
 msgstr "வசன வரிகள் காண்க"
 
 #: FindReplaceDialog.cpp:225
+#, fuzzy
 msgid "Szukaj w podfolderach"
 msgstr "துணை கோப்புறைகளில் தேடுங்கள்"
 
 #: FindReplaceDialog.cpp:227
+#, fuzzy
 msgid ""
 "Szukaj\n"
 "w ukrytych folderach"
@@ -1414,6 +1451,7 @@ msgid "Znajdź i zamień"
 msgstr "கண்டுபிடித்து மாற்றவும்"
 
 #: FindReplaceResultsDialog.cpp:29 MispellReplacerDialog.cpp:192
+#, fuzzy
 msgid "Wyniki szukania"
 msgstr "முடிவுகளைத் தேடுகிறது"
 
@@ -1490,13 +1528,14 @@ msgid "Pytanie"
 msgstr "உடனடி"
 
 #: AutomationHotkeysDialog.cpp:246 Hotkeys.cpp:485 OptionsDialog.cpp:122
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "Ten skrót już istnieje w %s jako skrót do \"%s\".\n"
 "Co zrobić?"
 msgstr "இந்த குறுக்குவழி %s இல் \" %s\" க்கு குறுக்குவழியாக உள்ளது. \nஎன்ன செய்வது?"
 
 #: AutomationHotkeysDialog.cpp:247 Hotkeys.cpp:486 OptionsDialog.cpp:123
+#, fuzzy
 msgid "innych oknach"
 msgstr "மற்றொரு சாளரங்கள்"
 
@@ -1505,6 +1544,7 @@ msgid "innym oknie"
 msgstr "மற்றொரு சாளரம்"
 
 #: AutomationHotkeysDialog.cpp:251 Hotkeys.cpp:491 OptionsDialog.cpp:127
+#, fuzzy
 msgid "Ustaw mimo to"
 msgstr "இன்னும் அமைக்கவும்"
 
@@ -1519,11 +1559,12 @@ msgid "stylów"
 msgstr "பாணிகள்"
 
 #: AutomationToFile.cpp:611 AutomationToFile.cpp:613
+#, fuzzy
 msgid "dialogów"
 msgstr "உரையாடல்கள்"
 
 #: AutomationToFile.cpp:614
-#, c-format
+#, c-format, fuzzy
 msgid "Nie można dodać linii klasy: %s w pole klasy: %s"
 msgstr "வகுப்பின் வரியைச் சேர்க்க முடியாது: வர்க்கத் துறையில் %s: %s"
 
@@ -1544,6 +1585,7 @@ msgid "Folder autozapisu jest pusty"
 msgstr "ஆட்டோ சேமி கோப்புறை காலியாக உள்ளது"
 
 #: AutoSaveOpen.cpp:247
+#, fuzzy
 msgid "Wczytywanie autozapisu nie powiodło się"
 msgstr "ஆட்டோ சேமிப்பு கோப்புறையைத் திறக்க முடியவில்லை"
 
@@ -1568,6 +1610,7 @@ msgid "Marzec"
 msgstr "மா-பங்குனி"
 
 #: AutoSavesRemoving.cpp:128
+#, fuzzy
 msgid "Usuń wybrane pliki audio cache"
 msgstr "தேர்ந்தெடுக்கப்பட்ட ஆடியோ கேச் கோப்புகளை அகற்று"
 
@@ -1583,7 +1626,7 @@ msgstr "வசன வரிகள் (*.ஆச்), (*. எச்.எச்.ஏ)
 
 #: AutoSavesRemoving.cpp:178
 msgid "Pliki indeksów (*.ffindex)|*.ffindex"
-msgstr "குறியீட்டு கோப்புகள் (*.FFINDEX) |*.fffindex"
+msgstr "குறியீட்டு கோப்புகள் (*.ffindex) |*.fffindex"
 
 #: AutoSavesRemoving.cpp:179
 msgid "Pliki audio cache (*.w64)|*.w64"
@@ -1598,7 +1641,7 @@ msgid "Nie można otworzyć folderu plików tymczasowych"
 msgstr "தற்காலிக கோப்புகள் கோப்புறையைத் திறக்க முடியாது"
 
 #: Automation.cpp:472
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "Błąd inicjalizacji skryptu Lua \"%s\":\n"
 "\n"
@@ -1711,10 +1754,12 @@ msgid "Wstaw różnicę końcową"
 msgstr "வித்தியாசத்தை இறுதியில் செருகவும்"
 
 #: Hotkeys.cpp:192 HotkeysNaming.cpp:129
+#, fuzzy
 msgid "Następne niepewne"
 msgstr "அடுத்து உறுதிப்படுத்தப்படவில்லை வரி"
 
 #: Hotkeys.cpp:193 HotkeysNaming.cpp:130
+#, fuzzy
 msgid "Następne nieprzetłumaczone"
 msgstr "அடுத்து மொழிபெயர்க்கப்படாதது"
 
@@ -1727,6 +1772,7 @@ msgid "Zatwierdź zastępcze"
 msgstr "எல்லாவற்றையும் செய்யுங்கள்"
 
 #: Hotkeys.cpp:194 HotkeysNaming.cpp:226
+#, fuzzy
 msgid "Ustaw jako niepewne i przejdź dalej"
 msgstr "உறுதிப்படுத்தப்படாதபடி அமைக்கப்பட்டு அடுத்த வரிக்குச் செல்லுங்கள்"
 
@@ -1808,11 +1854,12 @@ msgid "Dodaj zakończenie"
 msgstr "லீட்-அவுட் சேர்க்கவும்"
 
 #: Hotkeys.cpp:270
+#, fuzzy
 msgid "Plik skrótów jest przestarzały zostanie zamieniony domyślnym"
 msgstr "குறுக்குவழிகள் கோப்பு காலாவதியானது, அது இயல்பாக மாற்றப்படும்"
 
 #: Hotkeys.cpp:373
-#, c-format
+#, c-format, fuzzy
 msgid "Skrót \"%s\" nie jest prawidłowy"
 msgstr "விசை \"%s\" செல்லுபடியாகாது"
 
@@ -1826,6 +1873,7 @@ msgid "Mapowanie przycisków"
 msgstr "ஆட்கி மேப்பிங்"
 
 #: Hotkeys.cpp:600
+#, fuzzy
 msgid "Skrót pola napisów"
 msgstr "வசன வரிகள் கட்டம் ஆட்ச்கி"
 
@@ -1855,14 +1903,17 @@ msgid "Dwudziesty przycisk tagów"
 msgstr "20 வது குறிச்சொல் பொத்தான்"
 
 #: HotkeysNaming.cpp:124 SubsGrid.cpp:181
+#, fuzzy
 msgid "Pokaż niepewne"
 msgstr "காட்சி உறுதிப்படுத்தப்படவில்லை"
 
 #: HotkeysNaming.cpp:125 SubsGrid.cpp:184
+#, fuzzy
 msgid "Wyłącz filtrowanie"
 msgstr "வடிகட்டுதல் முறை"
 
 #: HotkeysNaming.cpp:126 SubsGrid.cpp:179
+#, fuzzy
 msgid "Ukryj zaznaczone linie"
 msgstr "தேர்வை மறைக்க"
 
@@ -1871,6 +1922,7 @@ msgid "Ukryj linie ze stylami"
 msgstr "பாணிகளுடன் வரிகளை மறைக்கவும்"
 
 #: HotkeysNaming.cpp:128 SubsGrid.cpp:182
+#, fuzzy
 msgid "Pokaż nieprzetłumaczone"
 msgstr "மொழிபெயர்க்கப்படவில்லை"
 
@@ -1967,6 +2019,7 @@ msgid "Filtruj po wczytaniu napisów"
 msgstr "வசன வரிகள் ஏற்றிய பின் வடிகட்டவும்"
 
 #: HotkeysNaming.cpp:153 SubsGrid.cpp:176
+#, fuzzy
 msgid "Nie resetuj wcześniejszego filtrowania"
 msgstr "முந்தைய வடிகட்டலை மீட்டமைக்க வேண்டாம்"
 
@@ -2043,6 +2096,7 @@ msgid "Otwórz autozapis"
 msgstr "திறந்த ஆட்டோ சேமிப்பு"
 
 #: HotkeysNaming.cpp:186 KainoteFrame.cpp:324 KainoteFrame.cpp:325
+#, fuzzy
 msgid "Uruchom ostatnio zaczytany skrypt"
 msgstr "அண்மைக் கால ச்கிரிப்டை இயக்கவும்"
 
@@ -2055,6 +2109,7 @@ msgid "Ustaw nowy FPS"
 msgstr "புதிய FPS ஐ அமைக்கவும்"
 
 #: HotkeysNaming.cpp:199 SubsGrid.cpp:223
+#, fuzzy
 msgid "Wklej tekst tłumaczenia"
 msgstr "உரை மொழிபெயர்ப்புகளை ஒட்டவும்"
 
@@ -2075,6 +2130,7 @@ msgid "Zapisz tłumaczenie"
 msgstr "மொழிபெயர்ப்பைச் சேமிக்கவும்"
 
 #: HotkeysNaming.cpp:220 KainoteFrame.cpp:164 KainoteFrame.cpp:165
+#, fuzzy
 msgid "Zapisuj napisy z nazwą wideo"
 msgstr "வீடியோவின் பெயருடன் வசன வரிகள் சேமிக்கவும்"
 
@@ -2083,10 +2139,12 @@ msgid "Zaznacz linijki"
 msgstr "வரிகளைத் தேர்ந்தெடுக்கவும்"
 
 #: HotkeysNaming.cpp:224 KainoteFrame.cpp:252
+#, fuzzy
 msgid "Ustaw audio z czasem wideo"
 msgstr "வீடியோ நேரத்துடன் ஆடியோவை அமைக்கவும்"
 
 #: HotkeysNaming.cpp:225 KainoteFrame.cpp:254
+#, fuzzy
 msgid "Ustaw znacznik audio z czasem wideo"
 msgstr "வீடியோ நேரத்துடன் ஆடியோ மார்க்கரை அமைக்கவும்"
 
@@ -2099,6 +2157,7 @@ msgid "Przejdź do czasu końcowego linii"
 msgstr "வரியின் இறுதி நேரத்திற்குச் செல்லுங்கள்"
 
 #: HotkeysNaming.cpp:235 KainoteFrame.cpp:313 KainoteFrame.cpp:314
+#, fuzzy
 msgid "Sprawdź poprawność pisowni"
 msgstr "எழுத்துப்பிழை சரிபார்ப்பு"
 
@@ -2111,10 +2170,12 @@ msgid "Zmień rozdzielczość napisów"
 msgstr "மறுவிற்பனை வசன வரிகள்"
 
 #: HotkeysNaming.cpp:243
+#, fuzzy
 msgid "Wczytaj napisy z pliku MKV"
 msgstr "MKV கோப்பின் வசன வரிகள் ஏற்றவும்"
 
 #: HotkeysNaming.cpp:245 SubsGrid.cpp:225
+#, fuzzy
 msgid "Okno przesuwania dialogów"
 msgstr "தற்போதுள்ள துணைக்கு மொழிபெயர்ப்புடன் பொருந்தவும்"
 
@@ -2127,9 +2188,8 @@ msgid "Otwieraj wideo przez FFMS2"
 msgstr "FFMS2 உடன் வீடியோவைத் திறக்கவும்"
 
 #: HotkeysNaming.cpp:249 KainoteFrame.cpp:255
-#, fuzzy
 msgid "Powiększ wideo"
-msgstr "சூம் வீடியோ"
+msgstr "வீடியோவை பெரிதாக்கவும்"
 
 #: HotkeysNaming.cpp:250
 msgid "Widok wszystko"
@@ -2148,6 +2208,7 @@ msgid "Oczyść style pliku ASS"
 msgstr "கழுதை கோப்பின் தூய்மையான பாணிகள்"
 
 #: HotkeysNaming.cpp:260 KainoteFrame.cpp:213
+#, fuzzy
 msgid "Popraw drobne błędy (eksperymentalne)"
 msgstr "மல்டிர்பிளாசர் (சோதனை)"
 
@@ -2228,6 +2289,7 @@ msgid "Wczytaj sesję z pliku"
 msgstr "கோப்பிலிருந்து அமர்வை ஏற்றவும்"
 
 #: KainoteFrame.cpp:134
+#, fuzzy
 msgid "Wczytuje poprzednio zaczytane pliki"
 msgstr "திறந்த கோப்புகளை கடந்த முறை ஏற்றியது"
 
@@ -2240,6 +2302,7 @@ msgid "Zapisuje sesję do pliku"
 msgstr "தாக்கல் செய்ய அமர்வை சேமிக்கிறது"
 
 #: KainoteFrame.cpp:142
+#, fuzzy
 msgid "Pyta, czy wczytać ostatnio zaczytane pliki przy starcie programu"
 msgstr "நிரல் தொடக்கத்தில் அண்மைக் காலத்தில் படித்த கோப்புகளை ஏற்றலாமா என்று கேட்கிறது"
 
@@ -2248,6 +2311,7 @@ msgid "Wczytaj ostatnią sesję przy starcie programu"
 msgstr "நிரல் தொடக்கத்திற்குப் பிறகு கடைசி அமர்வை ஏற்றவும்"
 
 #: KainoteFrame.cpp:146
+#, fuzzy
 msgid "Wczytuje poprzednio zaczytane pliki przy starcie programu"
 msgstr "நிரல் தொடக்கத்திற்குப் பிறகு கடைசி அமர்வை ஏற்றுகிறது"
 
@@ -2264,6 +2328,7 @@ msgid "&Zapisz"
 msgstr "சேமி (&s)"
 
 #: KainoteFrame.cpp:141
+#, fuzzy
 msgid "Pytaj o wczytanie ostatniej sesji przy starcie programu"
 msgstr "நிரல் தொடங்கிய பிறகு கடைசி அமர்வைக் கேளுங்கள்"
 
@@ -2272,10 +2337,12 @@ msgid "Zapisz aktualny plik"
 msgstr "தற்போதைய கோப்பை சேமிக்கவும்"
 
 #: KainoteFrame.cpp:158
+#, fuzzy
 msgid "Zapisz &tłumaczenie"
 msgstr "மொழிபெயர்ப்பைச் சேமிக்கவும்"
 
 #: KainoteFrame.cpp:160
+#, fuzzy
 msgid "Ostatnio otwa&rte napisy"
 msgstr "அண்மைக் காலத்தில் திறக்கப்பட்ட வசன வரிகள்"
 
@@ -2284,6 +2351,7 @@ msgid "Ostatnio otwarte napisy"
 msgstr "அண்மைக் காலத்தில் திறக்கப்பட்ட வசன வரிகள்"
 
 #: KainoteFrame.cpp:162
+#, fuzzy
 msgid "Usuń napisy z e&dytora"
 msgstr "எடிட்டரிடமிருந்து வசன வரிகள் அகற்றவும்"
 
@@ -2292,10 +2360,12 @@ msgid "Ostatnia sesja"
 msgstr "கடைசி அமர்வு"
 
 #: KainoteFrame.cpp:168
+#, fuzzy
 msgid "Otwiera autozapis wybrany z listy"
 msgstr "பட்டியலிலிருந்து ஆட்டோசேவைத் திறக்கவும்"
 
 #: KainoteFrame.cpp:170
+#, fuzzy
 msgid "Otwiera okno usuwania plików tymczasowych"
 msgstr "சாளரத்தை அகற்றும் தற்காலிக கோப்புகளைத் திறக்கவும்"
 
@@ -2316,6 +2386,7 @@ msgid "Ustawienia programu"
 msgstr "நிரல் அமைப்புகள்"
 
 #: FontCatalogList.cpp:166
+#, fuzzy
 msgid ""
 "Lista katalogów ma opcję autozapisu, pliki znajdują się w folderze \"Config"
 "\"."
@@ -2385,6 +2456,7 @@ msgid "Zapisuj do folderu z napisami / wideo."
 msgstr "வீடியோ / வசன வரிகள் கோப்புறையில் சேமிக்கவும்."
 
 #: FontCollector.cpp:173
+#, fuzzy
 msgid ""
 "Zapisuje do folderu z wideo\n"
 "przy wyciąganiu czcionek z pliku MKV."
@@ -2396,6 +2468,7 @@ msgstr "வரிகளில்: "
 
 #: FontCollector.cpp:132 HotkeysNaming.cpp:132 KainoteFrame.cpp:309
 #: KainoteFrame.cpp:310 SubsGrid.cpp:231
+#, fuzzy
 msgid "Kolekcjoner czcionek"
 msgstr "எழுத்துருக்கள் சேகரிப்பான்"
 
@@ -2432,6 +2505,7 @@ msgid "Brak wczytanego wideo lub napisów"
 msgstr "வீடியோ அல்லது வசன வரிகள் ஏற்றப்படவில்லை"
 
 #: FontCollector.cpp:483
+#, fuzzy
 msgid "Wybrana ścieżka zapisu jest niepoprawna."
 msgstr "சேமி ஒட்டு செல்லுபடியாகாது."
 
@@ -2440,6 +2514,7 @@ msgid "Plik zip już istnieje, usunąć go?"
 msgstr "சிப் கோப்பு ஏற்கனவே உள்ளது, அதை நீக்கவா?"
 
 #: FontCollector.cpp:583 FontCollector.cpp:640
+#, fuzzy
 msgid "Nie znaleziono czcionki \""
 msgstr "எழுத்துரு கிடைக்கவில்லை \""
 
@@ -2449,30 +2524,32 @@ msgid "Znaleziono czcionkę \"%s\"\n"
 msgstr "\"%s\" எழுத்துரு கண்டறியப்பட்டது\n"
 
 #: FontCollector.cpp:707
+#, fuzzy
 msgid ""
 "Nie można pobrać rozmiarów i nazw plików czcionek\n"
 "kopiowanie zostaje przerwane.\n"
 msgstr "நீங்கள் எழுத்துருக்கள் கோப்பு அளவுகள் மற்றும் பெயர்களைப் பெற முடியாது,\n நகலெடுப்பது ரத்து செய்யப்பட்டது.\n"
 
 #: FontCollector.cpp:739
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "Pobrano rozmiary i nazwy %i czcionek, upłynęło %sms.\n"
 "\n"
-msgstr "எடுக்கப்பட்ட அளவுகள் மற்றும் %i எழுத்துருக்களின் பெயர்கள், கடந்த %sMS.\n\n"
+msgstr "எடுக்கப்பட்ட அளவுகள் மற்றும் %i எழுத்துருக்களின் பெயர்கள், கடந்த %sமிநொ.\n\n"
 
 #: FontCollector.cpp:772
 msgid "Ścieżka jest niedostępna"
 msgstr "பாதை கிடைக்கவில்லை"
 
 #: FontCollector.cpp:785
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "Czcionka \"%s\" należy do stylu,\n"
 "który nie jest wykorzystywany."
 msgstr "எழுத்துரு \"%s\" பாணியிலிருந்து வந்தது, \nஅது பயன்படுத்தப்படவில்லை."
 
 #: FontCollector.cpp:794
+#, fuzzy
 msgid "Niektóre czcionki nie mają wszystkich znaków użytych w tekście.\n"
 msgstr "சில எழுத்துருக்களில் உரையில் பயன்படுத்தப்படும் அனைத்து கிளைப்களும் இல்லை.\n"
 
@@ -2505,7 +2582,7 @@ msgid "Nie udało się skopiować %s.\n"
 msgstr "%s ஐ நகலெடுக்க முடியாது.\n"
 
 #: FontCollector.cpp:833
-#, c-format
+#, c-format, fuzzy
 msgid "Dodano do archiwum czcionkę \"%s\"."
 msgstr "காப்பக எழுத்துரு \"%s\" இல் சேர்க்கப்பட்டது."
 
@@ -2527,13 +2604,13 @@ msgid "Zakończono powodzeniem, %s %s.\n"
 msgstr "வெற்றிகரமாக முடிக்கப்பட்டது, %s %s.\n"
 
 #: FontCollector.cpp:884
+#, fuzzy
 msgid "To wideo nie jest plikiem MKV."
 msgstr "இந்த வீடியோ எம்.கே.வி கோப்பு அல்ல."
 
 #: FontCollector.cpp:889
-#, fuzzy
 msgid "Nie można otworzyć pliku MKV"
-msgstr "எம்.கே.வி கோப்பைத் திறக்க முடியாது."
+msgstr "MKV கோப்பை திறக்க முடியவில்லை"
 
 #: FontCollector.cpp:895
 msgid "Wczytany plik MKV nie ma żadnych czcionek."
@@ -2544,6 +2621,7 @@ msgid "Zapisano czcionkę o nazwie \""
 msgstr "பெயரிடப்பட்ட ஒரு எழுத்துருவை சேமித்தது \""
 
 #: FontCollector.cpp:914
+#, fuzzy
 msgid "Nie można zapisać czcionki o nazwie \""
 msgstr "பெயரிடப்பட்ட எழுத்துருவை நீங்கள் சேமிக்க முடியாது \""
 
@@ -2560,7 +2638,7 @@ msgid "Znaleziono czcionkę \"%s\"."
 msgstr "\"%s\" எழுத்துருக்களைக் கண்டறியவும் \"."
 
 #: FontCollector.cpp:1041
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "Czcionka \"%s\" należy do stylu,\n"
 "który nie jest wykorzystywany.%s"
@@ -2602,17 +2680,17 @@ msgid "Czcionka \"%s\" nie ma kursywy."
 msgstr "எழுத்துரு \"%s\" சாய்வைக் காணவில்லை."
 
 #: FontCollector.cpp:1072
-#, c-format
+#, c-format, fuzzy
 msgid "Nie można sprawdzić znaków czcionki \"%s\"."
 msgstr "எழுத்துரு \"%s\" எழுத்துக்களை சரிபார்க்க முடியாது."
 
 #: FontCollector.cpp:1076
-#, c-format
+#, c-format, fuzzy
 msgid "Czcionka \"%s\" nie zawiera znaków: \"%s\"."
 msgstr "\"%s\" எழுத்துருக்களில் \"%s\"எழுத்துக்கள் இல்லை\"."
 
 #: FontCollector.cpp:1088
-#, c-format
+#, c-format, fuzzy
 msgid "Nie można pobrać zawartości czcionki \"%s\"."
 msgstr "\"%s\" எழுத்துருக்களின் உள்ளடக்கத்தைப் பெற முடியாது \"."
 
@@ -2627,6 +2705,7 @@ msgid "Nie można znaleźć czcionki \"%s\" w folderze Fonts."
 msgstr "எழுத்துருக்கள் கோப்புறையில் \"%s\" எழுத்துருவைக் கண்டுபிடிக்க முடியவில்லை."
 
 #: FontCollector.cpp:1214
+#, fuzzy
 msgid "Nie można stworzyć procesu, muxowanie przerwane"
 msgstr "செயல்முறையை உருவாக்க முடியவில்லை. மக்சிங் ரத்து செய்யப்பட்டது"
 
@@ -2640,7 +2719,7 @@ msgstr "எழுத்துரு \"%s\" இன் அளவு வேறு�
 msgid ""
 "\n"
 "Zakończono w %sms"
-msgstr "\n%sMS இல் முடிந்தது"
+msgstr "\n%sமிநொ இல் முடிந்தது"
 
 #: FontDialog.cpp:372
 msgid "Wybierz czcionkę"
@@ -2677,6 +2756,7 @@ msgid "Wszystkie czcionki"
 msgstr "அனைத்து எழுத்துருக்களும்"
 
 #: FontDialog.cpp:425 StyleChange.cpp:85
+#, fuzzy
 msgid "Dodaje czcionki do wcześniej utworzonego katalogu"
 msgstr "பட்டியலில் எழுத்துருக்களைச் சேர்ப்பது"
 
@@ -2693,6 +2773,7 @@ msgid "Filtruj"
 msgstr "வடிப்பி"
 
 #: FontDialog.cpp:430 StyleChange.cpp:89
+#, fuzzy
 msgid "Filtruje czcionki, by zawierały wpisane znaki"
 msgstr "எழுதப்பட்ட எழுத்துக்களுக்கான எழுத்துருக்களை வடிகட்டவும்"
 
@@ -2805,10 +2886,12 @@ msgid "Ukryj oryginał na wideo w trybie tłumacza"
 msgstr "மொழிபெயர்ப்பாளர் பயன்முறையில் வீடியோவில் அசலை மறைக்கவும்"
 
 #: OptionsDialog.cpp:301
+#, fuzzy
 msgid "Nie zmieniaj zaznaczeń przy duplikacji linii dialogowych"
 msgstr "உரையாடல் கோடுகள் நகலெடுப்பில் தேர்வை மாற்ற வேண்டாம்"
 
 #: OptionsDialog.cpp:302
+#, fuzzy
 msgid "Nie wypośrodkowuj aktywnej linii w polu napisów"
 msgstr "வசன வரிகள் கட்டத்தில் செங்குத்தாக செயலில் உள்ள வரியை மையப்படுத்த வேண்டாம்"
 
@@ -2837,6 +2920,7 @@ msgid "Język sprawdzania pisowni (folder \"Dictionary\")"
 msgstr "எழுத்துப்பிழை செக்கர் மொழி (\"அகராதி\" கோப்புறை)"
 
 #: OptionsDialog.cpp:303
+#, fuzzy
 msgid "Nie ostrzegaj o niezgodności rozdzielczości"
 msgstr "தீர்மானம் பொருந்தாத தன்மை பற்றி தெரிவிக்க வேண்டாம்"
 
@@ -2877,6 +2961,7 @@ msgid "Poziom śledzenia logów skryptów LUA"
 msgstr "லுவா ச்கிரிப்ட்ச் கண்காணிப்பு நிலை"
 
 #: OptionsDialog.cpp:409
+#, fuzzy
 msgid "Czcionka pola napisów:"
 msgstr "வசன வரிகள் கட்டம் எழுத்துரு:"
 
@@ -2937,14 +3022,17 @@ msgid "Znajdź i za&mień"
 msgstr "கண்டுபிடித்து மாற்று"
 
 #: KainoteFrame.cpp:191
+#, fuzzy
 msgid "Szuka i podmienia dane frazy tekstu"
 msgstr "வெளிப்பாடுகளைத் தேடி அவற்றை மாற்றுகிறது"
 
 #: KainoteFrame.cpp:193
+#, fuzzy
 msgid "Szuka dane frazy tekstu"
 msgstr "வெளிப்பாடுகளைத் தேடுகிறது"
 
 #: KainoteFrame.cpp:195
+#, fuzzy
 msgid "Znajduje kolejne wystąpięnie frazy w tekście"
 msgstr "உரையில் அடுத்த சொற்றொடர் வேலைவாய்ப்பைக் காண்கிறது"
 
@@ -3123,6 +3211,7 @@ msgid "Tylko napisy"
 msgstr "வசன வரிகள் மட்டுமே"
 
 #: KainoteFrame.cpp:283
+#, fuzzy
 msgid "Widoczne tylko okno napisów"
 msgstr "வசன வரிகள் சாளரத்தை மட்டுமே காட்டுகிறது"
 
@@ -3135,6 +3224,7 @@ msgid "Włączanie bądź wyłączanie edytora"
 msgstr "எடிட்டரை இயக்குகிறது / முடக்குகிறது"
 
 #: KainoteFrame.cpp:290 ScriptInfo.cpp:24
+#, fuzzy
 msgid "Właściwości napisów ASS"
 msgstr "ASS வசன வரிகள் பண்புகள்"
 
@@ -3195,6 +3285,7 @@ msgid "&Lista osób pomocnych przy tworzeniu programu"
 msgstr "& வரவு"
 
 #: KainoteFrame.cpp:308
+#, fuzzy
 msgid "Przesuwanie czasów napisów"
 msgstr "வசன வரிகளை மாற்றுகிறது"
 
@@ -3223,6 +3314,7 @@ msgid "Pliki skryptów (*.lua),(*.moon)|*.lua;*.moon;"
 msgstr "ச்கிரிப்ட் கோப்புகள் (*.லுவா), (*. மூன்) |*.லுவா;*. சந்திரன்;"
 
 #: KainoteFrame.cpp:726
+#, fuzzy
 msgid "Ten plik napisów nie ma dodanych żadnych skryptów"
 msgstr "இந்த வசன வரிகள் எந்த ச்கிரிப்டுகளும் சேர்க்கப்படவில்லை"
 
@@ -3232,14 +3324,16 @@ msgid "Warunki skryptu Lua '%s' nie zostały spełnione"
 msgstr "சரிபார்ப்பு லுவா ச்கிரிப்ட் '%s' தோல்வியடைந்தது"
 
 #: KainoteFrame.cpp:814 SubsGrid.cpp:871 VideoBox.cpp:1003
+#, fuzzy
 msgid "Wybierz plik napisów"
 msgstr "வசன வரிகளைத் தேர்வுசெய்க"
 
 #: KainoteFrame.cpp:817
+#, fuzzy
 msgid ""
 "Pliki napisów (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*."
 "sub;*.txt|Pliki wideo z wbudowanymi napisami (*.mkv),(*.ogm)|*.mkv;*.ogm"
-msgstr "வசன வரிகள் (*.ஆச்), (*. எச்.எச்.ஏ), (*. எச்.ஆர்.டி), (*. துணை), (*. TXT | வசனங்களுடன் வீடியோ (*.MKV), (*. OGM) |*.MKV;*. OGM"
+msgstr "வசன வரிகள் (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt|வசனங்களுடன் காணொளி (*.mkv),(*.ogm)|*.mkv;*.ogm"
 
 #: KainoteFrame.cpp:847
 msgid ""
@@ -3255,7 +3349,7 @@ msgid ""
 msgstr "கீஃப்ரேம்கள் கோப்பு (*.txt), (*. பாச்), (*. புள்ளிவிவரங்கள்), (*. பதிவு) |*.txt;* *.*"
 
 #: KainoteFrame.cpp:915
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "Edytor napisów by Marcin Drob aka Bakura lub Bjakja (bjakja7@gmail.com),\n"
 "wersja %s z dnia %s"
@@ -3289,12 +3383,14 @@ msgid "Usuń regułę"
 msgstr "விதியை நீக்கு"
 
 #: MisspellReplacer.cpp:122
+#, fuzzy
 msgid ""
 "Znajdź błędy\n"
 "w bieżącej zakładce"
 msgstr "தற்போதைய தாவலில் காணலாம்"
 
 #: MisspellReplacer.cpp:123
+#, fuzzy
 msgid ""
 "Znajdź błędy\n"
 "we wszystkich zakładkach"
@@ -3305,6 +3401,7 @@ msgid "Zmień błąd"
 msgstr "மாற்று"
 
 #: MisspellReplacer.cpp:126
+#, fuzzy
 msgid ""
 "Zamień wszystkie błędy\n"
 "w bieżącej zakładce"
@@ -3315,6 +3412,7 @@ msgid "Znajdź błąd"
 msgstr "கண்டுபிடி"
 
 #: MisspellReplacer.cpp:127
+#, fuzzy
 msgid ""
 "Zamień wszystkie błędy\n"
 "we wszystkich zakładkach"
@@ -3404,10 +3502,12 @@ msgid "Porównaj według stylów"
 msgstr "ச்டைல்களால் ஒப்பிடுக"
 
 #: Notebook.cpp:898
+#, fuzzy
 msgid "Porównaj według wybranych stylów"
 msgstr "தேர்ந்தெடுக்கப்பட்ட பாணிகளால் ஒப்பிடுக"
 
 #: Notebook.cpp:901
+#, fuzzy
 msgid "Porównanie napisów"
 msgstr "வசன வரிகள் ஒப்பீடு"
 
@@ -3485,7 +3585,6 @@ msgid "Nie można ustawić opóźnienia, przekracza czas trwania audio"
 msgstr "நேரந்தவறுகை தோல்வியுற்றது, இது ஆடியோ கால நேரத்தை விட நீண்டது"
 
 #: RendererDirectShow.cpp:59
-#, fuzzy
 msgid "Nie można stworzyć DXVA processor service"
 msgstr "DXVA செயலி சேவையை உருவாக்க முடியாது"
 
@@ -3506,7 +3605,7 @@ msgid "Nie można stworzyć processora DXVA"
 msgstr "DXVA செயலியை உருவாக்க முடியாது"
 
 #: OptionsDialog.cpp:473
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "Wybrany %s konwersji nie istnieje,\n"
 "zostanie zmieniony na domyślny"
@@ -3525,6 +3624,7 @@ msgid "Pokaż okno przed konwersją"
 msgstr "மாற்றுவதற்கு முன் சாளரத்தைக் காட்டு"
 
 #: OptionsDialog.cpp:540
+#, fuzzy
 msgid "Filtr wyświetlania napisów"
 msgstr "வசன வரிகள் வடிகட்டி"
 
@@ -3597,6 +3697,7 @@ msgid "Wyświetlaj klatki kluczowe"
 msgstr "கீஃப்ரேம்களைக் காட்டு"
 
 #: OptionsDialog.cpp:643
+#, fuzzy
 msgid "Nie odtwarzaj audio po zmianie linijki"
 msgstr "மாற்ற வரிக்குப் பிறகு ஆடியோவை இயக்க வேண்டாம்"
 
@@ -3691,78 +3792,97 @@ msgid "Okno elementy ostrzegające"
 msgstr "சாளர கூறுகள் முன்னறிவிப்பு"
 
 #: OptionsDialog.cpp:718
+#, fuzzy
 msgid "Napisy tekst"
 msgstr "வசன வரிகள் உரை"
 
 #: OptionsDialog.cpp:718
+#, fuzzy
 msgid "Napisy tło"
 msgstr "வசன வரிகள் பின்னணி"
 
 #: OptionsDialog.cpp:718
+#, fuzzy
 msgid "Napisy tło dialogów"
 msgstr "வசன வரிகள் உரையாடல் பின்னணி"
 
 #: OptionsDialog.cpp:718
+#, fuzzy
 msgid "Napisy tło komentarzy"
 msgstr "வசன வரிகள் கருத்து பின்னணி"
 
 #: OptionsDialog.cpp:720
+#, fuzzy
 msgid "Napisy kolidujące linie"
 msgstr "வசன வரிகளை மோதுகிறது"
 
 #: OptionsDialog.cpp:720
+#, fuzzy
 msgid "Napisy obramowanie linijki"
 msgstr "வசன வரிகள் வரி எல்லை"
 
 #: OptionsDialog.cpp:720
+#, fuzzy
 msgid "Napisy obramowanie aktywnej linijki"
 msgstr "வசன வரிகள் செயலில் வரி எல்லை"
 
 #: OptionsDialog.cpp:721
+#, fuzzy
 msgid "Napisy nagłówek"
 msgstr "வசன வரிகள் தலைப்பு பின்னணி"
 
 #: OptionsDialog.cpp:721
+#, fuzzy
 msgid "Napisy tekst nagłówka"
 msgstr "வசன வரிகள் தலைப்பு உரை"
 
 #: OptionsDialog.cpp:722
+#, fuzzy
 msgid "Napisy etykieta"
 msgstr "வசன வரிகள் வரி சிட்டை"
 
 #: OptionsDialog.cpp:722
+#, fuzzy
 msgid "Napisy etykieta zmodyfikowanej linii"
 msgstr "வசன வரிகள் மாற்றியமைக்கப்பட்ட வரியைக் குறிக்கின்றன"
 
 #: OptionsDialog.cpp:722
+#, fuzzy
 msgid "Napisy etykieta zapisanej linii"
 msgstr "வசன வரிகள் சேமிக்கப்பட்ட வரியைக் குறிக்கின்றன"
 
 #: OptionsDialog.cpp:723
+#, fuzzy
 msgid "Napisy etykieta niepewnej linii"
 msgstr "வசன வரிகள் உறுதிப்படுத்தப்படாத வரியைக் குறிக்கின்றன"
 
 #: OptionsDialog.cpp:723
+#, fuzzy
 msgid "Napisy tło błędów pisowni"
 msgstr "வசன வரிகள் எழுத்துப்பிழை பிழை பின்னணி"
 
 #: OptionsDialog.cpp:723
+#, fuzzy
 msgid "Napisy obramowanie porównania"
 msgstr "வசன வரிகள் ஒப்பீட்டு எல்லை"
 
 #: OptionsDialog.cpp:724
+#, fuzzy
 msgid "Napisy tło porównania brak zgodności"
 msgstr "வசன வரிகள் ஒப்பீட்டு பின்னணி பொருந்தவில்லை"
 
 #: OptionsDialog.cpp:724
+#, fuzzy
 msgid "Napisy tło porównania zgodność"
 msgstr "வசன வரிகள் ஒப்பீட்டு பின்னணி போட்டி"
 
 #: OptionsDialog.cpp:725
+#, fuzzy
 msgid "Napisy tło komentarza por. brak zgodności"
 msgstr "வசன வரிகள். கருத்து பின்னணி பொருந்தாது"
 
 #: OptionsDialog.cpp:725
+#, fuzzy
 msgid "Napisy tło komentarza por. zgodność"
 msgstr "வசன வரிகள். கருத்து பின்னணி போட்டி"
 
@@ -4119,6 +4239,7 @@ msgid "Zawiodło któreś z ustawień DirectX vertices"
 msgstr "டைரக்ட்எக்ச் செங்குத்துகள் அமைப்புகளில் ஒன்று தோல்வியடைந்தது"
 
 #: RendererDirectShow.cpp:146 RendererDirectShow.cpp:150
+#, fuzzy
 msgid "Nie można storzyć tekstury napisów"
 msgstr "வசன வரிகள் அமைப்பை உருவாக்க முடியாது"
 
@@ -4277,6 +4398,7 @@ msgid "Czasy niższe i równe"
 msgstr "எல்லா நேரங்களும் கீழ் மற்றும் சமமானவை"
 
 #: ShiftTimes.cpp:282
+#, fuzzy
 msgid "Edycja profilów"
 msgstr "சுயவிவர பதிப்பு"
 
@@ -4297,6 +4419,7 @@ msgid "Usuwanie profilów"
 msgstr "சுயவிவரங்களை நீக்குதல்"
 
 #: ShiftTimes.cpp:299
+#, fuzzy
 msgid "Przesuń czas napisów"
 msgstr "வசன வரிகளை மாற்றுகிறது"
 
@@ -4397,6 +4520,7 @@ msgid "Przesuwa czas początkowy do czasu wideo / audio"
 msgstr "தொடக்க நேரத்தை நேர வீடியோ / ஆடியோவுக்கு நகர்த்தவும்"
 
 #: ShiftTimes.cpp:534
+#, fuzzy
 msgid "Przesuwa czas końcowy do czasu wideo / audio"
 msgstr "இறுதி நேரத்தை நேர வீடியோ / ஆடியோவுக்கு நகர்த்துகிறது"
 
@@ -4414,7 +4538,7 @@ msgstr "மில்லி விநாடிகளில் அறிமுக 
 
 #: ShiftTimes.cpp:545
 msgid "Wstawia zakończenie do czasu końcowego, dobre przy stosowaniu fad"
-msgstr "இறுதி நேரத்திற்கு அறிமுகத்தை செருகும் (FAD ஐப் பயன்படுத்தும் போது நல்லது)"
+msgstr "இறுதி நேரத்திற்கு அறிமுகத்தைச் செருகும் (fad ஐப் பயன்படுத்தும்போது நல்லது)"
 
 #: ShiftTimes.cpp:546
 msgid "Czas zakończenia w milisekundach"
@@ -4462,7 +4586,7 @@ msgid "Na pewno chcesz usunąć profil o nazwie \"%s\""
 msgstr "\"%s\" என்ற பெயரின் தன்விவரத்தை அகற்ற விரும்புகிறீர்களா"
 
 #: SpellChecker.cpp:118
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "Brak plików słownika w folderze \"%s\\Dictionary\".\n"
 "Sprawdzanie pisowni zostanie wyłączone"
@@ -4481,6 +4605,7 @@ msgid "Ignoruj komentarze"
 msgstr "கருத்துகளை புறக்கணிக்கவும்"
 
 #: SpellCheckerDialog.cpp:44
+#, fuzzy
 msgid ""
 "Ignoruj słowa całe pisane\n"
 "wielką literą"
@@ -4519,6 +4644,7 @@ msgid "Słowa dodane do słownika"
 msgstr "அகராதியில் சேர்க்கப்பட்ட வார்த்தைகள்"
 
 #: StyleChange.cpp:47
+#, fuzzy
 msgid "Edycja Stylu"
 msgstr "பதிப்பு நடை"
 
@@ -4807,6 +4933,7 @@ msgid "elementów"
 msgstr "கூறுகள்"
 
 #: SubsFile.cpp:114
+#, fuzzy
 msgid "Otwarcie napisów"
 msgstr "வசன வரிகள் திறப்பு"
 
@@ -4815,10 +4942,12 @@ msgid "Nowe napisy"
 msgstr "புதிய வசன வரிகள்"
 
 #: SubsFile.cpp:117
+#, fuzzy
 msgid "Edycja wielu linii"
 msgstr "மல்டிலைன் பதிப்பு"
 
 #: SubsFile.cpp:118
+#, fuzzy
 msgid "Poprawa błędu pisowni w polu tekstowym"
 msgstr "உரை புலத்தில் எழுத்துப்பிழை பிழைகளை சரிசெய்தல்"
 
@@ -4831,18 +4960,22 @@ msgid "Połączenie linijek"
 msgstr "கோடுகள் சேரும்"
 
 #: SubsFile.cpp:121
+#, fuzzy
 msgid "Połączenie linijki z poprzednią"
 msgstr "முந்தையவற்றுடன் இணைகிறது"
 
 #: SubsFile.cpp:122
+#, fuzzy
 msgid "Połączenie linijki z następną"
 msgstr "அடுத்ததாக வரிசையில் சேருதல்"
 
 #: SubsFile.cpp:123
+#, fuzzy
 msgid "Połączenie linijek pozostawienie pierwszej"
 msgstr "வரிகளில் சேரவும் முதலில் வைத்திருங்கள்"
 
 #: SubsFile.cpp:124
+#, fuzzy
 msgid "Połączenie linijek pozostawienie ostatniej"
 msgstr "கோடுகளில் சேரவும், கடைசியாக வைத்திருங்கள்"
 
@@ -4871,10 +5004,12 @@ msgid "Usunięcie linijek"
 msgstr "கோடுகளை நீக்குதல்"
 
 #: SubsFile.cpp:140
+#, fuzzy
 msgid "Wyłączenie trybu tłumacza"
 msgstr "மொழிபெயர்ப்பாளர் பயன்முறையை அணைக்கவும்"
 
 #: SubsFile.cpp:141
+#, fuzzy
 msgid "Dodanie nowej linii"
 msgstr "புதிய வரியைச் சேர்ப்பது"
 
@@ -4891,10 +5026,12 @@ msgid "Przyklejenie do klatki kluczowej"
 msgstr "கீஃப்ரேமுக்கு ச்னாப்பிங்"
 
 #: SubsFile.cpp:145
+#, fuzzy
 msgid "Zmiana nagłówku napisów"
 msgstr "வசன வரிகள் பண்புகளை மாற்றுதல்"
 
 #: SubsFile.cpp:146
+#, fuzzy
 msgid "Akcja zaznacz linijki"
 msgstr "கோடுகள் செயல் என்பதைத் தேர்ந்தெடுக்கவும்"
 
@@ -4903,10 +5040,12 @@ msgid "Przesunięcie czasów"
 msgstr "மாற்றும் நேரங்கள்"
 
 #: SubsFile.cpp:148
+#, fuzzy
 msgid "Poprawa błędu pisowni"
 msgstr "எழுத்துப்பிழை பிழைகளை சரிசெய்தல்"
 
 #: SubsFile.cpp:149
+#, fuzzy
 msgid "Edycja stylów"
 msgstr "பதிப்பு நடை"
 
@@ -4915,46 +5054,57 @@ msgid "Zmiana rozdzielczości napisów"
 msgstr "வசனத் தீர்மானத்தை மாற்றுதல்"
 
 #: SubsFile.cpp:151
+#, fuzzy
 msgid "Narzędzie pozycjonowania"
 msgstr "காட்சி கருவி பொருத்துதல்"
 
 #: SubsFile.cpp:152
+#, fuzzy
 msgid "Narzędzie ruchu"
 msgstr "காட்சி கருவி நகரும்"
 
 #: SubsFile.cpp:153
+#, fuzzy
 msgid "Narzędzie skalowania"
 msgstr "காட்சி கருவி அளவிடுதல்"
 
 #: SubsFile.cpp:154
+#, fuzzy
 msgid "Narzędzie obrotów w osi Z"
 msgstr "காட்சி கருவி அச்சு சட் சுழற்சி"
 
 #: SubsFile.cpp:156
+#, fuzzy
 msgid "Narzędzie wycinków prostokątnych"
 msgstr "காட்சி கருவி செவ்வகம் கிளிப்பிங்"
 
 #: SubsFile.cpp:157
+#, fuzzy
 msgid "Narzędzie wycinków wektorowych"
 msgstr "காட்சி கருவி திசையன் கிளிப்பிங்"
 
 #: SubsFile.cpp:158
+#, fuzzy
 msgid "Narzędzie rysunków wektorowych"
 msgstr "காட்சி கருவி திசையன் வரைதல்"
 
 #: SubsFile.cpp:159
+#, fuzzy
 msgid "Narzędzie zmieniacz pozycji"
 msgstr "காட்சி கருவி நிலை மாற்றும்"
 
 #: SubsFile.cpp:160
+#, fuzzy
 msgid "Narzędzie zmieniacz skali i obrotów"
 msgstr "காட்சி கருவி அளவு மற்றும் சுழற்சி மாற்றம்"
 
 #: SubsFile.cpp:161
+#, fuzzy
 msgid "Narzędzie hydra"
 msgstr "காட்சி கருவி ஐட்ரா"
 
 #: SubsFile.cpp:164
+#, fuzzy
 msgid "Poprawa drobnych błędów"
 msgstr "மல்டிர்ப்ளேசர்"
 
@@ -4963,6 +5113,7 @@ msgid "Wstawienie drzewka"
 msgstr "மரத்தைச் சேர்ப்பது"
 
 #: SubsFile.cpp:166
+#, fuzzy
 msgid "Ustawienie opisu"
 msgstr "மர விளக்கத்தை சேர்க்கிறது"
 
@@ -4971,6 +5122,7 @@ msgid "Dodanie linii do drzewka"
 msgstr "மரத்திற்கு வரி சேர்க்கிறது"
 
 #: SubsFile.cpp:168
+#, fuzzy
 msgid "Usunięcie drzewka"
 msgstr "மரத்தை அகற்றவும்"
 
@@ -4988,14 +5140,17 @@ msgid "Ukryj łamania linii"
 msgstr "வரி மறைப்புகளை மறைக்கவும்"
 
 #: SubsGrid.cpp:174
+#, fuzzy
 msgid "Nie obejmuje zaznaczonych linii"
 msgstr "தேர்ந்தெடுக்கப்பட்ட வரிகளை கணக்கில் எடுத்துக்கொள்ள வேண்டாம்"
 
 #: SubsGrid.cpp:188
+#, fuzzy
 msgid "Wstaw &przed"
 msgstr "முன் செருகவும்"
 
 #: SubsGrid.cpp:189
+#, fuzzy
 msgid "Wstaw p&o"
 msgstr "பின்னர் செருகவும்"
 
@@ -5004,6 +5159,7 @@ msgid "Wstaw przed z &czasem wideo"
 msgstr "& வீடியோ நேரத்துடன் முன் செருகவும்"
 
 #: SubsGrid.cpp:200
+#, fuzzy
 msgid "Złącz &linijki"
 msgstr "வரிகளில் சேரவும்"
 
@@ -5024,10 +5180,12 @@ msgid "Ukryj kolumny"
 msgstr "நெடுவரிசைகளை மறைக்கவும்"
 
 #: SubsGrid.cpp:216
+#, fuzzy
 msgid "Filtrowanie"
 msgstr "வடிப்பி"
 
 #: SubsGrid.cpp:232
+#, fuzzy
 msgid "Wczytaj napisy z pliku MKV / OGM"
 msgstr "MKV / OGM கோப்பின் வசன வரிகள் ஏற்றவும்"
 
@@ -5068,17 +5226,19 @@ msgid "Pliki napisów (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"
 msgstr "வசன கோப்புகள் (*.ஆச்), (*. எச்.ஆர்.டி), (*. துணை), (*"
 
 #: SubsGrid.cpp:1064
+#, fuzzy
 msgid "Zapisać plik przed wczytaniem napisów z MKV?"
 msgstr "MKV இன் வசன வரிகள் ஏற்றுவதற்கு முன் கோப்பைச் சேமிக்கவா?"
 
 #: SubsGrid.cpp:1233 SubsGrid.cpp:1263 SubsGrid.cpp:1283
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "W linii %i nie można przeskalować wartości '%s'\n"
 "w tagu '%s'"
 msgstr "%i வரியில் '%s' என்ற குறிச்சொல்லில் '%s' அளவிட முடியாது"
 
 #: SubsGrid.cpp:1409
+#, fuzzy
 msgid "Wyłącz potwierdzenie"
 msgstr "எச்சரிக்கை முடக்கு"
 
@@ -5087,10 +5247,12 @@ msgid "Nieprawidłowy FPS. Popraw opcje i spróbuj ponownie."
 msgstr "தவறான எஃப்.பி.எச். அதை விருப்பங்களில் சரிசெய்து மீண்டும் முயற்சிக்கவும்."
 
 #: SubsGridBase.cpp:503 SubsGridBase.cpp:660
+#, fuzzy
 msgid "Wideo nie zostało wczytane przez FFMS2"
 msgstr "FFMS2 ஐப் பயன்படுத்தி வீடியோ ஏற்றப்படவில்லை"
 
 #: SubsGridBase.cpp:532
+#, fuzzy
 msgid "Nie wybrano stylów do przesunięcia"
 msgstr "நேரத்தை மாற்ற பாணிகளைத் தேர்வு செய்ய வேண்டாம்"
 
@@ -5191,6 +5353,7 @@ msgid ""
 msgstr "முன்னோட்டக் காரணம் கட்டம் உயரம் மிகக் குறைவாக இருப்பதைக் காட்ட முடியாது"
 
 #: SubsLoader.cpp:76
+#, fuzzy
 msgid "Ten plik napisów jest zwykłym tekstem, zostaje otwarty jako napisy ASS"
 msgstr "இந்த வசன வரிகள் எளிய உரை, கழுதை வசனங்களாக திறக்கப்பட்டது"
 
@@ -5203,7 +5366,6 @@ msgid "Zmień rozdzielczość"
 msgstr "தீர்மானத்தை மாற்றவும்"
 
 #: SubsResampleDialog.cpp:32
-#, fuzzy
 msgid "Rozdzielczość docelowa"
 msgstr "இலக்கு தீர்மானம்"
 
@@ -5232,7 +5394,7 @@ msgid "Niezgodna rozdzielczość"
 msgstr "பொருந்தாத தீர்மானம்"
 
 #: SubsResampleDialog.cpp:167
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "Rozdzielczości wideo i napisów się różnią.\n"
 "Możesz zmienić je teraz lub skorzystać ze 'zmień rozdzielczość napisów'.\n"
@@ -5244,6 +5406,7 @@ msgid ""
 msgstr "வசன வரிகள் மற்றும் வீடியோ தெளிவுத்திறன் வேறுபட்டது.\n நீங்கள் இப்போது அவற்றை மாற்றலாம் அல்லது வசன வரிகள் மறுசீரமைப்பைப் பயன்படுத்தலாம்.\n\n வீடியோ தீர்மானம்: %i ஃச் %i\n வசனத் தீர்மானம்: %i ஃச் %i\n\n வீடியோவுடன் தெளிவுத்திறனை பொருத்தவா?\n"
 
 #: SubsResampleDialog.cpp:172
+#, fuzzy
 msgid "Zmień wyłącznie rozdzielczość napisów"
 msgstr "வசனத் தீர்மானத்தை மட்டுமே மாற்றவும்"
 
@@ -5256,10 +5419,12 @@ msgid "Zmień"
 msgstr "மாற்று"
 
 #: SubsResampleDialog.cpp:184
+#, fuzzy
 msgid "Nie zmieniaj"
 msgstr "மாற்ற வேண்டாம்"
 
 #: SubsResampleDialog.cpp:185
+#, fuzzy
 msgid "Wyłącz ostrzeżenie"
 msgstr "எச்சரிக்கை முடக்கு"
 
@@ -5268,6 +5433,7 @@ msgid "Libass działa tylko z FFMS2"
 msgstr "லிபாச் FFMS2 உடன் மட்டுமே வேலை செய்கிறது"
 
 #: SubtitlesLibass.cpp:211
+#, fuzzy
 msgid "Libass otwiera tylko napisy ASS i SSA"
 msgstr "லிபாச் ஆச் மற்றும் எச்எச்ஏ வசன வரிகள் மட்டுமே திறக்கிறது"
 
@@ -5285,10 +5451,12 @@ msgstr "சி.எச்.ஆர்.ஐ உதாரணத்தை உருவ�
 
 #: SubtitlesVSFilter.cpp:142 SubtitlesVSFilter.cpp:188
 #: SubtitlesVSFilter.cpp:272
+#, fuzzy
 msgid "CSRI nie obsługuje tego formatu."
 msgstr "சி.எச்.ஆர்.ஐ இந்த வடிவமைப்பை ஆதரிக்கவில்லை."
 
 #: TLDialog.cpp:23
+#, fuzzy
 msgid "Opcje dopasowywania tłumaczenia"
 msgstr "பொருந்தும் கோடுகள் விருப்பங்கள்"
 
@@ -5297,6 +5465,7 @@ msgid "Usuń linię"
 msgstr "வரியை நீக்கு"
 
 #: TLDialog.cpp:31
+#, fuzzy
 msgid ""
 "Usuwa zaznaczoną linijkę.\n"
 "Tłumaczenie idzie do góry."
@@ -5307,24 +5476,28 @@ msgid "Dodaj linię"
 msgstr "வரி சேர்க்கவும்"
 
 #: TLDialog.cpp:33
+#, fuzzy
 msgid ""
 "Dodaje pustą linijkę przed zaznaczoną.\n"
 "Tłumaczenie idzie w dół."
 msgstr "ஒரு வெற்று வரியை சேர்க்கிறது.\n மொழிபெயர்ப்பை ஒரு வரி கீழே நகர்த்துகிறது."
 
 #: TLDialog.cpp:35
+#, fuzzy
 msgid ""
 "Złącza następną linijkę z zaznaczoną.\n"
 "Tłumaczenie idzie do góry."
 msgstr "அடுத்த வரியுடன் தேர்ந்தெடுக்கப்பட்ட வரியில் சேரவும்.\n மொழிபெயர்ப்பு ஒரு வரிசையை நகர்த்துகிறது."
 
 #: TLDialog.cpp:39
+#, fuzzy
 msgid ""
 "Usuwa zaznaczoną linijkę.\n"
 "Oryginał idzie do góry."
 msgstr "தேர்ந்தெடுக்கப்பட்ட வரியை நீக்குகிறது. \nஅசல் ஒரு வரியை நகர்த்துகிறது."
 
 #: TLDialog.cpp:41
+#, fuzzy
 msgid ""
 "Dodaje pustą linijkę przed zaznaczoną.\n"
 "Oryginał idzie w dół.\n"
@@ -5332,6 +5505,7 @@ msgid ""
 msgstr "ஒரு வெற்று வரியை சேர்க்கிறது.\n அசல் ஒரு வரியை கீழே நகர்த்துகிறது.\n சேர்க்கப்பட்ட வரி நேரம் ஒதுக்கப்பட வேண்டும்."
 
 #: TLDialog.cpp:55
+#, fuzzy
 msgid ""
 "Objaśnienie:\n"
 "Oryginał - tekst napisów z właściwym timingiem służy\n"
@@ -5368,22 +5542,27 @@ msgid "Maska PNG koloru obwódki"
 msgstr "எல்லை நிறத்தின் பி.என்.சி முகமூடி"
 
 #: TextEditorTagList.cpp:350
+#, fuzzy
 msgid "Maska PNG koloru cienia"
 msgstr "நிழல் நிறத்தின் பி.என்.சி மாச்க்"
 
 #: TextEditorTagList.cpp:351
+#, fuzzy
 msgid "Gradient przezroczystości koloru podstawowego"
 msgstr "முதன்மை வண்ணத்தின் சாய்வு வெளிப்படைத்தன்மை"
 
 #: TextEditorTagList.cpp:352
+#, fuzzy
 msgid "Gradient przezroczystości koloru pomocniczego"
 msgstr "இரண்டாம் நிலை நிறத்தின் சாய்வு வெளிப்படைத்தன்மை"
 
 #: TextEditorTagList.cpp:353
+#, fuzzy
 msgid "Gradient przezroczystości koloru obwódki"
 msgstr "எல்லை நிறத்தின் சாய்வு வெளிப்படைத்தன்மை"
 
 #: TextEditorTagList.cpp:354
+#, fuzzy
 msgid "Gradient przezroczystości koloru cienia"
 msgstr "நிழல் நிறத்தின் சாய்வு வெளிப்படைத்தன்மை"
 
@@ -5412,10 +5591,12 @@ msgid "Przezroczystość całego tekstu"
 msgstr "வெளிப்படைத்தன்மை"
 
 #: TextEditorTagList.cpp:362
+#, fuzzy
 msgid "Pogrubienie tekstu"
 msgstr "தைரியமான உரை"
 
 #: TextEditorTagList.cpp:363
+#, fuzzy
 msgid "Rozmycie krawędzi"
 msgstr "மங்கலான விளிம்பு"
 
@@ -5432,6 +5613,7 @@ msgid "Wycinki wektorowe / prostokątne"
 msgstr "திசையன் கிளிப் / செவ்வக கிளிப்"
 
 #: TextEditorTagList.cpp:367
+#, fuzzy
 msgid "Deformacja czcionki"
 msgstr "எழுத்துருவின் சிதைவு"
 
@@ -5444,6 +5626,7 @@ msgid "Pojawianie / znikanie tekstu (zaawansowana wersja)"
 msgstr "உரையிலிருந்து உள்மங்குவது / வெளிமங்குவது (மேம்பட்ட பதிப்பு)"
 
 #: TextEditorTagList.cpp:371
+#, fuzzy
 msgid "Pochylenie w osi Y"
 msgstr "ஒய் அச்சில் வளைவு"
 
@@ -5452,14 +5635,17 @@ msgid "Kodowanie znaków tekstu"
 msgstr "உரை குறியாக்கம்"
 
 #: TextEditorTagList.cpp:374
+#, fuzzy
 msgid "Zaokrąglenie tekstu"
 msgstr "உரையின் சுற்று"
 
 #: TextEditorTagList.cpp:375
+#, fuzzy
 msgid "Obrót w osi X"
 msgstr "ஃச் அச்சில் சுழற்சி"
 
 #: TextEditorTagList.cpp:376
+#, fuzzy
 msgid "Obrót w osi Y"
 msgstr "ஒய் அச்சில் சுழற்சி"
 
@@ -5468,18 +5654,22 @@ msgid "Wielkość czcionki"
 msgstr "எழுத்துரு அளவு"
 
 #: TextEditorTagList.cpp:377
+#, fuzzy
 msgid "Obrót w osi Z"
 msgstr "சட் அச்சில் சுழற்சி"
 
 #: TextEditorTagList.cpp:379
+#, fuzzy
 msgid "Skala w osi X i Y"
 msgstr "ஃச் மற்றும் ஒய் அச்சில் அளவு"
 
 #: TextEditorTagList.cpp:380
+#, fuzzy
 msgid "Skala w osi X"
 msgstr "ஃச் அச்சில் அளவு"
 
 #: TextEditorTagList.cpp:381
+#, fuzzy
 msgid "Skala w osi Y"
 msgstr "ஒய் அச்சில் அளவு"
 
@@ -5492,6 +5682,7 @@ msgid "Odstęp między znakami w pionie"
 msgstr "செங்குத்து எழுத்துரு இடைவெளி"
 
 #: TextEditorTagList.cpp:384
+#, fuzzy
 msgid "Kursywa / pochylenie tekstu"
 msgstr "உரை சாய்வு"
 
@@ -5524,18 +5715,22 @@ msgid "Ruch tekstu"
 msgstr "உரை இயக்கம்"
 
 #: TextEditorTagList.cpp:392
+#, fuzzy
 msgid "Ruch po okręgu"
 msgstr "வட்ட உரை இயக்கம்"
 
 #: TextEditorTagList.cpp:393
+#, fuzzy
 msgid "Ruch po krzywej (3 punkty)"
 msgstr "வளைவு உரை இயக்கம் (3 புள்ளிகள்)"
 
 #: TextEditorTagList.cpp:394
+#, fuzzy
 msgid "Ruch po krzywej (4 punkty)"
 msgstr "வளைவு உரை இயக்கம் (4 புள்ளிகள்)"
 
 #: TextEditorTagList.cpp:395
+#, fuzzy
 msgid "Ruch rysunku wektorowego"
 msgstr "திசையன் கிளிப்பின் நகர்வு"
 
@@ -5556,6 +5751,7 @@ msgid "Pozycja tekstu"
 msgstr "உரை நிலை"
 
 #: TextEditorTagList.cpp:401
+#, fuzzy
 msgid "Reset tagów"
 msgstr "குறிச்சொற்கள் மீட்டமைக்கின்றன"
 
@@ -5564,18 +5760,22 @@ msgid "Sposób łamania linii"
 msgstr "உரை மடக்கு முறை"
 
 #: TextEditorTagList.cpp:402
+#, fuzzy
 msgid "Losowość punktów czcionki"
 msgstr "சீரற்ற எழுத்துரு புள்ளிகள்"
 
 #: TextEditorTagList.cpp:403
+#, fuzzy
 msgid "Losowość punktów czcionki seed"
 msgstr "சீரற்ற எழுத்துரு புள்ளிகள் விதை"
 
 #: TextEditorTagList.cpp:406
+#, fuzzy
 msgid "Losowość punktów czcionki oś Z"
 msgstr "சீரற்ற எழுத்துரு புள்ளிகள் சட் அச்சு"
 
 #: TextEditorTagList.cpp:407
+#, fuzzy
 msgid "Przekreślenie tekstu"
 msgstr "உரை வேலைநிறுத்தம்"
 
@@ -5584,10 +5784,12 @@ msgid "Cień tekstu"
 msgstr "உரை நிழல்"
 
 #: TextEditorTagList.cpp:404
+#, fuzzy
 msgid "Losowość punktów czcionki oś X"
 msgstr "சீரற்ற எழுத்துரு புள்ளிகள் ஃச் அச்சு"
 
 #: TextEditorTagList.cpp:405
+#, fuzzy
 msgid "Losowość punktów czcionki oś Y"
 msgstr "சீரற்ற எழுத்துரு புள்ளிகள் ஒய் அச்சு"
 
@@ -5600,18 +5802,22 @@ msgid "Podkreślenie tekstu"
 msgstr "உரை அடிக்கோடிட்டு"
 
 #: TextEditorTagList.cpp:411
+#, fuzzy
 msgid "Obwódka w osi X"
 msgstr "ஃச் அச்சில் எல்லை"
 
 #: TextEditorTagList.cpp:412
+#, fuzzy
 msgid "Obwódka w osi Y"
 msgstr "ஒய் அச்சில் எல்லை"
 
 #: TextEditorTagList.cpp:413
+#, fuzzy
 msgid "Cień w osi X"
 msgstr "ஃச் அச்சில் நிழல்"
 
 #: TextEditorTagList.cpp:414
+#, fuzzy
 msgid "Cień w osi Y"
 msgstr "ஒய் அச்சில் நிழல்"
 
@@ -5629,6 +5835,7 @@ msgid "Wybierz ikony paska narzędzi"
 msgstr "கருவிப்பட்டி சின்னங்களைத் தேர்வுசெய்க"
 
 #: Toolbar.cpp:461
+#, fuzzy
 msgid "Po lewej"
 msgstr "இடது புறத்தில்"
 
@@ -5682,6 +5889,7 @@ msgid "Przenieś wycinki"
 msgstr "கிளிப்களை நகர்த்தவும்"
 
 #: VideoToolbar.cpp:129
+#, fuzzy
 msgid "Dwukrotnym kliknięciu linii (zawsze włączone)"
 msgstr "இரட்டை சொடுக்கு வரி (எப்போதும் இருக்கும்)"
 
@@ -5690,14 +5898,17 @@ msgid "Każdej zmianie linii"
 msgstr "ஒவ்வொரு வரி மாற்றமும்"
 
 #: VideoToolbar.cpp:130
+#, fuzzy
 msgid "Kliknięciu linii lub edycji na pauzie"
 msgstr "இடைநிறுத்தப்படும்போது வரி அல்லது பதிப்பைக் சொடுக்கு செய்க"
 
 #: VideoToolbar.cpp:130
+#, fuzzy
 msgid "Kliknięciu linii lub edycji"
 msgstr "வரி அல்லது பதிப்பைக் சொடுக்கு செய்க"
 
 #: VideoToolbar.cpp:131
+#, fuzzy
 msgid "Edycji"
 msgstr "எப்போது வேண்டுமானாலும் திருத்துதல்"
 
@@ -5750,6 +5961,7 @@ msgid "Usuń tag"
 msgstr "குறிச்சொல்லை நீக்கு"
 
 #: VisualAllTagsEdition.cpp:51
+#, fuzzy
 msgid "Edycja tagu"
 msgstr "குறிச்சொல் பதிப்பு"
 
@@ -5774,6 +5986,7 @@ msgid "Wycinek prostokątny z obsługą animacji"
 msgstr "\\ T அனிமேசனுடன் கிளிப் செவ்வகம்"
 
 #: VisualAllTagsEdition.cpp:81
+#, fuzzy
 msgid "Liczby po przecinku:"
 msgstr "புள்ளிக்குப் பிறகு எண்:"
 
@@ -5782,6 +5995,7 @@ msgid "Brak dodatkowych wartości"
 msgstr "கூடுதல் மதிப்புகள் இல்லை"
 
 #: VisualAllTagsEdition.cpp:95
+#, fuzzy
 msgid "Opcje zmiany tagów"
 msgstr "குறிச்சொற்களின் விருப்பங்களை மாற்றவும்"
 
@@ -5806,7 +6020,7 @@ msgid "Nie można usunąć wszystkich tagów z listy"
 msgstr "எல்லா குறிச்சொற்களையும் பட்டியலிலிருந்து அகற்ற முடியாது"
 
 #: VisualAllTagsEdition.cpp:213
-#, c-format
+#, c-format, fuzzy
 msgid "Zapisać zmiany tagu \"%s\"?"
 msgstr "குறிச்சொல்லின் மாற்றங்களை \"%s\" சேமிக்கவா?"
 
@@ -5823,6 +6037,7 @@ msgid "Nie można zainicjalizować COM"
 msgstr "COM ஐ துவக்க முடியாது"
 
 #: dshowplayer.cpp:82
+#, fuzzy
 msgid "Błąd inicjalizacji Direct Show"
 msgstr "நேரடி நிகழ்ச்சியைத் தொடங்கத் தவறிவிட்டது"
 
@@ -5932,6 +6147,7 @@ msgid "Wyszukiwanie zakończone, rozpocząć od początku?"
 msgstr "முடிவடைந்தது. ஆரம்பத்தில் இருந்தே தேடவா?"
 
 #: findreplace.cpp:406
+#, fuzzy
 msgid "Nie znaleziono podanej frazy \""
 msgstr "வெளிப்பாட்டைக் கண்டுபிடிக்க முடியவில்லை \""
 
@@ -5941,10 +6157,12 @@ msgid "Zmieniono %i razy."
 msgstr "%i முறை மாற்றப்பட்டது."
 
 #: findreplace.cpp:816 findreplace.cpp:1131 findreplace.cpp:1172
+#, fuzzy
 msgid "Szukaj Zamień"
 msgstr "மாற்றவும்"
 
 #: stylestore.cpp:172
+#, fuzzy
 msgid "Odepnij okno edycji"
 msgstr "பதிப்பு சாளரத்தைப் பிரிக்கவும்"
 
@@ -5992,6 +6210,7 @@ msgid "Status usuniętych stylów"
 msgstr "நீக்கப்பட்ட பாணிகளின் நிலை"
 
 #: stylestore.cpp:770
+#, fuzzy
 msgid "Katalog stylów"
 msgstr "ச்டைல்ச் பட்டியல்"
 
@@ -6012,6 +6231,7 @@ msgid "Edytuj zaznaczony styl napisów"
 msgstr "தேர்ந்தெடுக்கப்பட்ட கழுதை பாணியைத் திருத்தவும்"
 
 #: stylestore.cpp:780
+#, fuzzy
 msgid "Kopiuj styl napisów"
 msgstr "கழுதையின் நகல் பாணி"
 
@@ -6092,6 +6312,7 @@ msgid "Za-dół"
 msgstr "பிறகு"
 
 #: AutoSavesRemoving.cpp:102
+#, fuzzy
 msgid "Usuń wybrane pliki auto zapisu"
 msgstr "தேர்ந்தெடுக்கப்பட்ட ஆட்டோ சேமி கோப்புகளை அகற்று"
 
@@ -6108,6 +6329,7 @@ msgid "Indeks"
 msgstr "FFMS2 குறியெண்"
 
 #: AutoSavesRemoving.cpp:115
+#, fuzzy
 msgid "Usuń wybrane indeksy"
 msgstr "தேர்ந்தெடுக்கப்பட்ட குறியீட்டு கோப்புகளை அகற்று"
 
@@ -6168,6 +6390,7 @@ msgid "Głośność"
 msgstr "தொகுதி"
 
 #: AudioBox.cpp:103
+#, fuzzy
 msgid "Połącz suwak głośności i rozciągnięcia"
 msgstr "தொகுதி மற்றும் நீட்டிப்பின் ச்லைடரை இணைக்கவும்"
 
@@ -6180,6 +6403,7 @@ msgid "Odtwórz następną linijkę"
 msgstr "அடுத்த வரியை விளையாடுங்கள்"
 
 #: AudioBox.cpp:138
+#, fuzzy
 msgid "Odtwórz aktualną sylabę / linijkę"
 msgstr "அடுத்த எழுத்துக்கள் / வரியை விளையாடுங்கள்"
 
@@ -6212,6 +6436,7 @@ msgid "Przejdź do zaznaczenia"
 msgstr "தேர்வுக்குச் செல்லுங்கள்"
 
 #: AudioBox.cpp:175
+#, fuzzy
 msgid "Włącz / Wyłącz tworzenie karaoke"
 msgstr "கரோக்கி உருவாக்கத்தை இயக்கவும் / முடக்கவும்"
 
@@ -6220,6 +6445,7 @@ msgid "Włącz / Wyłącz automatyczne dzielenie sylab"
 msgstr "எழுத்துக்களின் தானியங்கி பிளவுகளை இயக்கவும் / முடக்கவும்"
 
 #: AudioBox.cpp:184
+#, fuzzy
 msgid "Automatycznie zatwierdza zmiany"
 msgstr "மாற்றங்களை தானாக ஒப்புதல் அளிக்கவும்"
 
@@ -6265,6 +6491,7 @@ msgid "Błąd"
 msgstr "பிழை"
 
 #: AudioDisplay.cpp:230 RendererVideo.cpp:178
+#, fuzzy
 msgid "Nie można utworzyć obiektu Direct3D"
 msgstr "நேரடி 3D பொருளை உருவாக்க முடியாது"
 
@@ -6277,14 +6504,17 @@ msgid "Zawiodło któreś z ustawień DirectX"
 msgstr "டைரக்ட்எக்ச் அமைப்புகளில் ஒன்று தோல்வியடைந்தது"
 
 #: AudioDisplay.cpp:294
+#, fuzzy
 msgid "Nie można ustawić macierzy porojekcji"
 msgstr "மேட்ரிக்ச் திட்டத்தை அமைக்க முடியாது"
 
 #: AudioDisplay.cpp:295 RendererVideo.cpp:247 VisualRotationXY.cpp:163
+#, fuzzy
 msgid "Nie można ustawić macierzy świata"
 msgstr "மேட்ரிக்ச் பார்வையை அமைக்க முடியாது"
 
 #: AudioDisplay.cpp:296 RendererVideo.cpp:248 VisualRotationXY.cpp:164
+#, fuzzy
 msgid "Nie można ustawić macierzy widoku"
 msgstr "மேட்ரிக்ச் உலகத்தை அமைக்க முடியாது"
 
@@ -6294,6 +6524,7 @@ msgid "Nie można stworzyć powierzchni"
 msgstr "மேற்பரப்பை உருவாக்க முடியாது"
 
 #: AudioDisplay.cpp:300 RendererVideo.cpp:261
+#, fuzzy
 msgid "Nie można stworzyć linii D3DX"
 msgstr "D3DX வரியைத் திறக்க முடியாது"
 
@@ -6341,6 +6572,7 @@ msgid "Filtruj listę"
 msgstr "வடிகட்டி பட்டியல்"
 
 #: AutoSaveOpen.cpp:33
+#, fuzzy
 msgid "Wszystkie słowa"
 msgstr "எல்லா வார்த்தைகளையும் தேடுங்கள்"
 
@@ -6370,6 +6602,7 @@ msgid "Anuluj"
 msgstr "ரத்துசெய்"
 
 #: Automation.cpp:484
+#, fuzzy
 msgid ""
 "Próbujesz wczytać skrypt Automatyzacji 3 jako skrypt Automatyzacji 4. "
 "Automatyzacja 3 nie jest już wspierana."
@@ -6381,17 +6614,19 @@ msgid "Makro o nazwie '%s' jest już zdefiniowane w skrypcie '%s'"
 msgstr "'%s' என்று பெயரிடப்பட்ட மேக்ரோ '%s' ச்கிரிப்டில் ஏற்கனவே வரையறுக்கப்பட்டுள்ளது"
 
 #: Automation.cpp:1061 Automation.cpp:1102
-#, c-format
+#, c-format, fuzzy
 msgid "Nieznany błąd wczytywania skryptu Lua: %s."
-msgstr "அறியப்படாத பிழை ச்கிரிப்டை ஏற்றுவதில் LUA: %s."
+msgstr "அறியப்படாத பிழை கைஉரையை ஏற்றுவதில் Lua: %s."
 
 #: Automation.cpp:1106
+#, fuzzy
 msgid ""
 "Co najmniej jeden skrypt z pliku napisów zawiera błędy.\n"
 "Zobacz opisy skryptów, by uzyskać więcej informacji."
 msgstr "வசன வரிகளிலிருந்து குறைந்தது ஒரு ச்கிரிப்டில் பிழைகள் உள்ளன. \nமேலும் தகவலுக்கு ச்கிரிப்டின் விளக்கத்தைப் பார்க்கவும்."
 
 #: Automation.cpp:1117
+#, fuzzy
 msgid "Programy (*.exe)|*.exe|Wszystkie pliki (*.*)|*.*"
 msgstr "நிரல்கள் (* .exe) | * .exe | எல்லா கோப்புகளும் ( *. *) | *. *"
 
@@ -6404,6 +6639,7 @@ msgid "Błąd automatyzacji"
 msgstr "ஆட்டோமேசன் பிழை"
 
 #: Automation.cpp:1199 Automation.cpp:1246
+#, fuzzy
 msgid "Pełny opis błędu Lua"
 msgstr "பிழையின் முழு விளக்கம் லுவா"
 
@@ -6487,6 +6723,7 @@ msgid "Kolor:"
 msgstr "வண்ணம்:"
 
 #: ColorPicker.cpp:550
+#, fuzzy
 msgid ""
 "Zahaczenie tej opcji uruchamia próbnik po kliknięciu lewym przyciskiem,\n"
 "a okno wyboru koloru po kliknięciu prawym przyciskiem."
@@ -6529,6 +6766,7 @@ msgid "Próbnik koloru"
 msgstr "வண்ண தேர்வாளர்"
 
 #: ColorPicker.cpp:1394
+#, fuzzy
 msgid ""
 "Przenoś okno\n"
 "w miejsce wyboru koloru"
@@ -6541,10 +6779,12 @@ msgid "Wystąpił błąd indeksowania: %s"
 msgstr "குறியீட்டு பிழை ஏற்பட்டது: %s"
 
 #: Demux.cpp:85
+#, fuzzy
 msgid "Plik nie ma żadnej ścieżki z napisami."
 msgstr "கோப்பில் எந்த வசனங்களும் இல்லை."
 
 #: Demux.cpp:96
+#, fuzzy
 msgid "Wybierz ścieżkę napisów"
 msgstr "வசன வரிகளைத் தேர்வுசெய்க"
 
@@ -6557,14 +6797,17 @@ msgid "Sugestie poprawy"
 msgstr "பரிந்துரைகளை சரிசெய்யவும்"
 
 #: DialogueTextEditor.cpp:2262 KaiListCtrl.cpp:113 KaiTextCtrl.cpp:1461
+#, fuzzy
 msgid "&Kopiuj"
 msgstr "நகலெடு"
 
 #: DialogueTextEditor.cpp:2263 KaiTextCtrl.cpp:1462
+#, fuzzy
 msgid "Wy&tnij"
 msgstr "வெட்டு"
 
 #: DialogueTextEditor.cpp:2264 KaiListCtrl.cpp:114 KaiTextCtrl.cpp:1463
+#, fuzzy
 msgid "&Wklej"
 msgstr "ஒட்டு"
 
@@ -6577,6 +6820,7 @@ msgid "Szukaj tłumaczenia słowa na pl.ba.bla"
 msgstr "Pl.ba.bla இல் சொல் மொழிபெயர்ப்பைத் தேடுங்கள்"
 
 #: DialogueTextEditor.cpp:2269 KaiTextCtrl.cpp:1468
+#, fuzzy
 msgid "Szukaj zaznaczonej frazy w Google"
 msgstr "Google இல் தேர்ந்தெடுக்கப்பட்ட சொற்றொடரைத் தேடுங்கள்"
 
@@ -6620,10 +6864,12 @@ msgid ""
 msgstr "மொழிபெயர்ப்பாளர் பயன்முறை வெளிநாட்டு உரை மற்றும் மொழிபெயர்ப்பு உரை இரண்டையும் காண்பிக்கும் மற்றும் சேமிக்கிறது"
 
 #: EditBox.cpp:1183
+#, fuzzy
 msgid "Kopiuje cały tekst obcojęzyczny do pola z tłumaczeniem"
 msgstr "வெளிநாட்டு மொழியின் முழு உரையையும் மொழிபெயர்ப்பு துறையில் நகலெடுக்கிறது"
 
 #: EditBox.cpp:1184
+#, fuzzy
 msgid "Kopiuje zaznaczony tekst obcojęzyczny do pola z tłumaczeniem"
 msgstr "மொழிபெயர்ப்பு துறையில் தேர்ந்தெடுக்கப்பட்ட உரை வெளிநாட்டு மொழியை நகல்கள்"
 
@@ -6632,6 +6878,7 @@ msgid "Ustawia linijkę jako komentarz. Komentarze nie są wyświetlane"
 msgstr "ஒரு கருத்தாக வரியை அமைக்கிறது. கருத்துகள் காட்டப்படவில்லை"
 
 #: EditBox.cpp:1186
+#, fuzzy
 msgid "Warstwa linijki, wyższe warstwy są na wierzchu"
 msgstr "அடுக்கு வரி. அதிக அடுக்குகள் மேலே உள்ளன"
 
@@ -6648,6 +6895,7 @@ msgid "Styl linijki"
 msgstr "வரி நடை"
 
 #: EditBox.cpp:1191
+#, fuzzy
 msgid "Umożliwia szybką edycję stylu linijki"
 msgstr "தற்போதைய வரிக்கான பாணியை விரைவாக திருத்தலாம்"
 
@@ -6664,14 +6912,17 @@ msgid ""
 msgstr "ஒரு நொடிக்கு எழுத்துக்கள்.\n நொடிக்கு 15 எழுத்துகளுக்கு மிகாமல் இருக்கக்கூடாது"
 
 #: EditBox.cpp:1694 EditBox.cpp:1993
+#, fuzzy
 msgid "Zmień ilość przycisków"
 msgstr "பொத்தான்களின் அளவை மாற்றவும்"
 
 #: EditBox.cpp:1930
+#, fuzzy
 msgid "Nie znaleziono niepewnych"
 msgstr "காணப்படவில்லை என்பதை உறுதிப்படுத்தவில்லை"
 
 #: EditBox.cpp:1952
+#, fuzzy
 msgid "Nie znaleziono nieprzetłumaczonych"
 msgstr "மொழிபெயர்க்கப்படாதது கிடைக்கவில்லை"
 
@@ -6695,6 +6946,7 @@ msgid "Filtry:"
 msgstr "வடிப்பான்கள்:"
 
 #: FindReplaceDialog.cpp:79
+#, fuzzy
 msgid "Katalog szukania napisów:"
 msgstr "கோப்புறை தேடும் வசன வரிகள்:"
 
@@ -6711,6 +6963,7 @@ msgid "Koniec tekstu"
 msgstr "உரையின் முடிவு"
 
 #: FindReplaceDialog.cpp:110
+#, fuzzy
 msgid "Uwzględnij komentarze"
 msgstr "கருத்துகளைப் பயன்படுத்துங்கள்"
 
@@ -6720,10 +6973,12 @@ msgid ""
 msgstr "உலகளாவிய மற்றும் எடிட்டர் குறுக்குவழிகளில் மாற்றியமைப்பாளர்கள் இருக்க வேண்டும் (எ.கா. சிப்ட், சி.டி.ஆர்.எல், ஆல்ட்)."
 
 #: Hotkeys.cpp:644
+#, fuzzy
 msgid "Nie można używać skrótów do kopiowania, wycinania i wklejania."
 msgstr "நகலெடுப்பது, வெட்டுதல் மற்றும் ஒட்டுவதற்கு நீங்கள் குறுக்குவழிகளைப் பயன்படுத்த முடியாது."
 
 #: Hotkeys.cpp:647
+#, fuzzy
 msgid "Nie można używać skrótu zamykania programu."
 msgstr "நிரல் நெருக்கமான குறுக்குவழியைப் பயன்படுத்த முடியாது."
 
@@ -6833,6 +7088,7 @@ msgid ""
 msgstr "நீங்கள் ஏதேனும் பிழைகள் கவனித்திருந்தால் அல்லது மாற்றங்கள் அல்லது புதிய அம்சங்களுக்கான பரிந்துரைகள் ஏதேனும் இருந்தால், \nநீங்கள் இதைப் பற்றி எழுதலாம்: டிச்கார்ட் https://discord.gg/9wacfttk6q, github அல்லது மின்னஞ்சல் மூலம்.\n\n"
 
 #: KainoteFrame.cpp:921
+#, fuzzy
 msgid ""
 "Color picker, wymuxowywanie napisów z mkv, audiobox, odwarzacz audio, "
 "automatyzacja\n"
@@ -6883,7 +7139,7 @@ msgstr "- மத்தியாச்மோவி (சில விபத்த�
 
 #: KainoteFrame.cpp:947
 msgid "- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy).\n"
-msgstr "- MAS 1904 (சில பிழைகள் மற்றும் செயலிழப்பு பிழைத்திருத்தத்திற்கு உதவுதல்).\n"
+msgstr "- mas1904 (சில பிழைகள் மற்றும் செயலிழப்பு பிழைத்திருத்தத்திற்கு உதவுதல்).\n"
 
 #: KainoteFrame.cpp:948
 msgid "- Senami (stworzył nowe motywy, a także wyłapał parę błędów).\n"
@@ -6984,6 +7240,7 @@ msgid "Korekcja drobnych błędów"
 msgstr "மல்டிர்ப்ளேசர்"
 
 #: MisspellReplacer.cpp:38
+#, fuzzy
 msgid "Edycja reguły"
 msgstr "விதி திருத்து"
 
@@ -7032,28 +7289,34 @@ msgid "Reguła znajdź"
 msgstr "விதி கண்டுபிடி"
 
 #: OptionsDialog.cpp:810
+#, fuzzy
 msgid ""
 "UWAGA! Przezroczystość działa tylko na wykresie audio,\n"
 "polu tekstowym i polu napisów."
 msgstr "எச்சரிக்கை! ஆடியோ ச்பெக்ட்ரனில் மட்டுமே வெளிப்படைத்தன்மை செயல்படுகிறது, \nஉரை கோப்பு மற்றும் வசன வரிகள் கட்டம்."
 
 #: OptionsDialog.cpp:905 OptionsDialog.cpp:1164
+#, fuzzy
 msgid "Napisy ASS"
 msgstr "வசன வரிகள் கழுதை"
 
 #: OptionsDialog.cpp:905 OptionsDialog.cpp:1164
+#, fuzzy
 msgid "Napisy SSA"
 msgstr "வசன வரிகள் எச்.எச்.ஏ"
 
 #: OptionsDialog.cpp:905 OptionsDialog.cpp:1164
+#, fuzzy
 msgid "Napisy SRT"
 msgstr "வசன வரிகள் எச்.ஆர்.டி"
 
 #: OptionsDialog.cpp:905 OptionsDialog.cpp:1164
+#, fuzzy
 msgid "Napisy SUB"
 msgstr "வசன வரிகள் துணை"
 
 #: OptionsDialog.cpp:906 OptionsDialog.cpp:1165
+#, fuzzy
 msgid "Napisy TXT"
 msgstr "வசன வரிகள் txt"
 
@@ -7086,6 +7349,7 @@ msgid "Wideo M2TS"
 msgstr "வீடியோ M2TS"
 
 #: OptionsDialog.cpp:915
+#, fuzzy
 msgid ""
 "UWAGA! Działanie na każdym Windowsie jest inne.\n"
 "Przykładowo na Windows7 WMP zablokował\n"
@@ -7109,6 +7373,7 @@ msgid "Skojarzenia"
 msgstr "சங்கங்கள்"
 
 #: OptionsDialog.cpp:960
+#, fuzzy
 msgid "Właściwości napisów"
 msgstr "ASS வசன வரிகள் பண்புகள்"
 
@@ -7138,10 +7403,12 @@ msgstr "நேரங்குறிகருவி"
 
 #: OptionsPanels.cpp:32 ScriptInfo.cpp:52 SubsGrid.cpp:1398
 #: VisualDrawingShapes.cpp:68
+#, fuzzy
 msgid "Edycja"
 msgstr "புதுப்பித்தார்"
 
 #: OptionsPanels.cpp:55
+#, fuzzy
 msgid "Zawsze pytaj o zmianę informacji o napisach"
 msgstr "மாற்ற வசன வரிகளை எப்போதும் கேளுங்கள்"
 
@@ -7163,6 +7430,7 @@ msgid "Dodaj nowy oddzielny punkt"
 msgstr "தனி புள்ளியைச் சேர்க்கவும்"
 
 #: VideoBox.cpp:300
+#, fuzzy
 msgid ""
 "Plik nie jest poprawnym plikiem wideo albo jest uszkodzony,\n"
 "bądź brakuje kodeków czy też splittera"
@@ -7227,11 +7495,11 @@ msgid ""
 "Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
 "(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|"
 "Wszystkie pliki (*.*)|*.*"
-msgstr "வீடியோ கோப்புகள் (*. அவி), (*. எம்.கே.வி), (*. MP4), (*. OGM), (*. WMV), (*. ASF), (*. RMVB), (* p), (*. avs) |*.avi;*. mkv;*. Mp4;* கோப்புகள் (*.*) |*.*"
+msgstr "காணொளி கோப்புகள்(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|அனைத்து கோப்புகள் (*.*)|*.*"
 
 #: VideoBox.cpp:1006
 msgid "Pliki napisów (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"
-msgstr "வசன கோப்புகள் (*.ஆச்), (*. துணை), (*. TXT) |*.ASS;*. துணை;*"
+msgstr "வசன கோப்புகள் (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"
 
 #: VideoToolbar.cpp:44
 msgid "Przesuwanie tekstu"
@@ -7254,10 +7522,12 @@ msgid "Wycinki prostokątne"
 msgstr "செவ்வகம் கிளிப்பிங்"
 
 #: VideoToolbar.cpp:50
+#, fuzzy
 msgid "Wycinki wektorowe"
 msgstr "திசையன் கிளிப்பிங்"
 
 #: VideoToolbar.cpp:51
+#, fuzzy
 msgid "Rysunki wektorowe"
 msgstr "திசையன் வரைதல்"
 
@@ -7286,6 +7556,7 @@ msgid "Dodaj krzywą B-sklejaną"
 msgstr "பி-ச்பைனைச் சேர்க்கவும்"
 
 #: VideoToolbar.cpp:73
+#, fuzzy
 msgid ""
 "Przenieś rysunki,\n"
 "używać tylko w przypadku,\n"
@@ -7305,10 +7576,12 @@ msgid ""
 msgstr "2 புள்ளிகளிலிருந்து கோணத்தை அமைக்கவும். \nவீடியோவில் உரைக்குக் கீழே 2 புள்ளிகளை அமைத்த பிறகு \nஅதிலிருந்து கோணத்தை கணக்கிடுகிறது."
 
 #: VideoToolbar.cpp:78
+#, fuzzy
 msgid "Zmiana wszystkich tagów obrotu wokół osi Z"
 msgstr "எல்லா குறிச்சொற்களையும் மாற்றுதல் சுழற்சி சட்"
 
 #: VideoToolbar.cpp:79
+#, fuzzy
 msgid ""
 "Utrzymanie proporcji, by po obrocie rysunki wektorowe i tekst\n"
 "nie poprzestawiały się względem siebie."
@@ -7322,6 +7595,7 @@ msgid ""
 msgstr "செவ்வகம் மூலம் அளவை அமைக்கவும். \nசெவ்வக உரை வரைதல் அளவிடப்பட்ட பிறகு \nஇரண்டு அல்லது ஒரு அச்சில்."
 
 #: VideoToolbar.cpp:86
+#, fuzzy
 msgid ""
 "Ustaw własny prostokąt dla obecnej skali.\n"
 "W przypadku niepożądanych różnic można ustawić\n"
@@ -7333,12 +7607,14 @@ msgid "Zmiana wszystkich tagów skali"
 msgstr "அனைத்து அளவிலான குறிச்சொற்களையும் மாற்றவும்"
 
 #: VideoToolbar.cpp:88
+#, fuzzy
 msgid ""
 "Utrzymanie proporcji, by po skalowaniu rysunki wektorowe i tekst\n"
 "nie poprzestawiały się względem siebie."
 msgstr "திசையன் வரைபடங்களை அந்த விகிதாச்சாரங்களைப் பாதுகாக்கவும் \nஉரை அதன் அசல் நிலைகளை மாற்றாது."
 
 #: VideoToolbar.cpp:91
+#, fuzzy
 msgid ""
 "Ustaw pozycję według prostokąta.\n"
 "Po narysowaniu prostokąta tekst zostanie\n"
@@ -7355,6 +7631,7 @@ msgid "Pozycjonuj w osi Y"
 msgstr "ஒய் அச்சில் பொருத்துதல்"
 
 #: VideoToolbar.cpp:96
+#, fuzzy
 msgid ""
 "Ustaw ruch 2 punktów i pozycji wideo.\n"
 "Po ustawieniu pierwszego punktu przed tekstem który się porusza.\n"
@@ -7365,6 +7642,7 @@ msgid ""
 msgstr "2 புள்ளிகள் மற்றும் வீடியோ நிலையில் இருந்து நகர்த்தவும்.\n நகரும் உரைக்கு முன் வீடியோவில் முதல் புள்ளியை அமைத்த பிறகு,\n பல பிரேம்களை முடிக்க வீடியோவை அமைக்கவும்,\n முதல் செட் புள்ளியின் அந்த உறுப்பு இன்னும் தெரியும்.\n இரண்டாவது புள்ளியை நிர்ணயித்த பிறகு vmove உருவாக்கப்படுகிறது."
 
 #: VideoToolbar.cpp:99
+#, fuzzy
 msgid "Zmiana wszystkich tagów obrotu wokół osi X / Y"
 msgstr "சுழற்சியின் அனைத்து குறிச்சொற்களையும் மாற்றுதல் ஃச் / ஒய்"
 
@@ -7393,22 +7671,27 @@ msgid "Pomnóż+"
 msgstr "பெருக்கல்+"
 
 #: VideoToolbar.cpp:762
+#, fuzzy
 msgid "Edycja tagów z listy oraz tworzenie nowych"
 msgstr "பதிப்பு பட்டியல் குறிச்சொற்கள் அல்லது புதிய குறிச்சொற்களைச் சேர்ப்பது"
 
 #: VideoToolbar.cpp:1077
+#, fuzzy
 msgid "Lewo-dół"
 msgstr "இடது கீழ்"
 
 #: VideoToolbar.cpp:1077
+#, fuzzy
 msgid "Środek-dół"
 msgstr "சென்டர்-கீழ்"
 
 #: VideoToolbar.cpp:1077
+#, fuzzy
 msgid "Prawo-dół"
 msgstr "வலது கீழ்"
 
 #: VideoToolbar.cpp:1078
+#, fuzzy
 msgid "Lewo-środek"
 msgstr "இடது-மையம்"
 
@@ -7417,18 +7700,22 @@ msgid "Środek"
 msgstr "நடுவண்"
 
 #: VideoToolbar.cpp:1078
+#, fuzzy
 msgid "Prawo-środek"
 msgstr "வலது மையமானது"
 
 #: VideoToolbar.cpp:1079
+#, fuzzy
 msgid "Lewo-góra"
 msgstr "இடது-மேல்"
 
 #: VideoToolbar.cpp:1079
+#, fuzzy
 msgid "Środek-góra"
 msgstr "மையம்-மேல்"
 
 #: VideoToolbar.cpp:1079
+#, fuzzy
 msgid "Prawo-góra"
 msgstr "வலது மேல்"
 
@@ -7449,6 +7736,7 @@ msgid "Położenie tekstu, działa podobnie jak w stylach"
 msgstr "உரை வைப்பது பாணிகளைப் போலவே செயல்படுகிறது"
 
 #: VisualAllTagsEdition.cpp:27
+#, fuzzy
 msgid "Edycja tagów"
 msgstr "குறிச்சொல் பதிப்பு"
 
@@ -7461,12 +7749,14 @@ msgid "Dodaj tag"
 msgstr "குறிச்சொல்லைச் சேர்க்கவும்"
 
 #: VisualAllTagsEdition.cpp:303
+#, fuzzy
 msgid ""
 "Pole \"Maksymalna wartość\" musi zawierać wartość\n"
 "większą od pola \"Minimalna wartość\"."
 msgstr "புலம் \"அதிகபட்ச மதிப்பு\" மதிப்பைக் கொண்டிருக்க வேண்டும் \nபுலம் \"குறைந்தபட்ச மதிப்பு\" இலிருந்து அதிகமாகும்."
 
 #: VisualAllTagsEdition.cpp:307
+#, fuzzy
 msgid "Pole \"Przeskok\" zawiera liczbę zbyt wysoką dla danego przedziału."
 msgstr "புலம் \"படி\" தற்போதைய மணித்துளி - அதிகபட்ச வரம்பிற்கு மிகச்சிறந்த எண்ணைக் கொண்டுள்ளது."
 
@@ -7474,9 +7764,10 @@ msgstr "புலம் \"படி\" தற்போதைய மணித்�
 msgid ""
 "Ze względu na błędy Vsfiltra możliwość wstawiania dwóch \"m\" po sobie "
 "została zablokowana"
-msgstr "VSFILTER பிழை காரணமாக இரட்டை \"M\" தடுக்கப்பட்டது"
+msgstr "Vsfilter பிழை காரணமாக இரட்டை \"m\" தடுக்கப்பட்டது"
 
 #: VisualDrawingShapes.cpp:43
+#, fuzzy
 msgid "Edycja kształtów wektorowych"
 msgstr "திசையன் வடிவங்களின் பதிப்பு"
 
@@ -7497,10 +7788,12 @@ msgid "Zmiana koordynatów rysunku"
 msgstr "வரைதல் ஆயங்களை மட்டுமே மாற்றுகிறது"
 
 #: VisualDrawingShapes.cpp:78
+#, fuzzy
 msgid "Zmiana skali"
 msgstr "அளவிலான மாறும்"
 
 #: VisualDrawingShapes.cpp:84
+#, fuzzy
 msgid "Skalowanie względem kursora:"
 msgstr "கர்சர் வழியாக அளவிடுதல்:"
 
@@ -7525,7 +7818,7 @@ msgid "Nie można usunąć wszystkich kształtów z listy"
 msgstr "பட்டியலிலிருந்து அனைத்து வடிவங்களையும் அகற்ற முடியாது"
 
 #: VisualDrawingShapes.cpp:191
-#, c-format
+#, c-format, fuzzy
 msgid "Zapisać zmiany kształtu \"%s\"?"
 msgstr "\"%s\" வடிவ பதிப்பை சேமிக்கவா?"
 
@@ -7534,6 +7827,7 @@ msgid "Pole \"kształt\" nie może być puste."
 msgstr "புலம் \"வடிவம்\" காலியாக இருக்க முடியாது."
 
 #: VisualMove.cpp:393
+#, fuzzy
 msgid ""
 "Wideo musi być ustawione minimum jedną klatkę po czasie początkowym linijki"
 msgstr "வரியின் தொடக்க நேரத்திற்குப் பிறகு குறைந்தபட்சம் ஒரு சட்டத்தையாவது வீடியோ அமைக்கப்பட வேண்டும்"
@@ -7543,6 +7837,7 @@ msgid "Nie można pobrać wartości clipa prostokątnego."
 msgstr "கிளிப் செவ்வக மதிப்புகளைப் படிக்க முடியாது."
 
 #: Visuals.cpp:460
+#, fuzzy
 msgid ""
 "Narzędzia edycji wizualnej\n"
 "nie działają na komentarzach"
@@ -7555,7 +7850,7 @@ msgid ""
 msgstr "வீடியோவில் வரி தெரியவில்லை \nஅல்லது சுழிய காலம் உள்ளது"
 
 #: config.cpp:601
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "W motywie \"%s\" brakowało część kolorów, zostały doczytane z domyślnego."
 msgstr "கருப்பொருள் \"%s\" இல் சில வண்ணங்கள் காணவில்லை, இயல்புநிலையிலிருந்து ஏற்றப்பட்டன."
@@ -7565,16 +7860,19 @@ msgid "Oczyść"
 msgstr "தெளிவான"
 
 #: findreplace.cpp:1179
+#, fuzzy
 msgid ""
 "Czy na pewno dokonać zmian we wszystkich napisach?\n"
 "W razie pomyłki kopie zapasowe są w folderze 'ReplaceBackup'"
 msgstr "அனைத்து வசனக் கோப்புகளிலும் மாற்ற விரும்புகிறீர்களா?\n மோசமான மாற்றிய பின் காப்புப்பிரதி கோப்புகள் 'மாற்றப்பட்ட பேக்அப்' கோப்புறையில் உள்ளன"
 
 #: findreplace.cpp:1297
+#, fuzzy
 msgid "Ścieżka szukania jest nieprawidłowa"
 msgstr "பாதை தேடுவது தவறானது"
 
 #: findreplace.cpp:1326
+#, fuzzy
 msgid ""
 "Wszystkich wybranych stylów nie ma w przeszukiwanych napisach,\n"
 "przez co nic nie zostanie znalezione.\n"
@@ -7586,7 +7884,7 @@ msgid "Wyczyść style"
 msgstr "பாணிகளை அகற்று"
 
 #: findreplace.cpp:1330
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "Stylów o nazwach \"%s\" nie ma w przeszukiwanych napisach,\n"
 "co może znacząco zmniejszyć ilość wyników szukania.\n"
@@ -7598,12 +7896,14 @@ msgid "Zabrakło pamięci RAM, usunięto część historii"
 msgstr "போதுமான ரேம் இல்லை. வரலாறு ஓரளவு நீக்கப்பட்டது"
 
 #: kainoteApp.cpp:114
+#, fuzzy
 msgid ""
 "Nie udało się wczytać opcji.\n"
 "Działanie programu zostanie zakończone."
 msgstr "அமைப்புகளைப் படிக்க முடியாது. நிரல் நிறுத்தப்படும்."
 
 #: kainoteApp.cpp:158
+#, fuzzy
 msgid ""
 "Nie udało się wczytać skrótów.\n"
 "Działanie programu zostanie zakończone."
@@ -7614,6 +7914,7 @@ msgid "Wczytać poprzednią sesję?"
 msgstr "கடைசி அமர்வை ஏற்றவா?"
 
 #: kainoteApp.cpp:255
+#, fuzzy
 msgid ""
 "Program się skraszował albo został zamknięty w niewłaściwy sposób,\n"
 "wczytać poprzednią sesję wraz z najnowszymi napisami z autozapisu?"
@@ -7624,6 +7925,7 @@ msgid "Nowy"
 msgstr "புதிய"
 
 #: stylestore.cpp:73
+#, fuzzy
 msgid "Usuń wybrany katalog stylów"
 msgstr "தேர்ந்தெடுக்கப்பட்ட ச்டைல்கள் பட்டியலை நீக்கு"
 
@@ -7660,6 +7962,7 @@ msgid "Dodaj do ASS"
 msgstr "கழுதையில் சேர்க்கவும்"
 
 #: stylestore.cpp:126
+#, fuzzy
 msgid "Dodaj do wszystkich otwartych ASS"
 msgstr "திறந்த அனைத்து கழுதை கோப்புகளிலும் சேர்க்கவும்"
 
@@ -7668,26 +7971,118 @@ msgid "Style pliku ASS:"
 msgstr "கழுதை கோப்பில் பாணிகள்:"
 
 #: ScriptInfo.cpp:105
-#, fuzzy
 msgid "Układ"
 msgstr "மனையமைவு"
 
 #: VisualAllTagsEdition.cpp:88
-#, fuzzy
 msgid "Jedna dodatkowa wartość"
 msgstr "ஒரு கூடுதல் மதிப்பு"
 
 #: VisualAllTagsEdition.cpp:89
-#, fuzzy
 msgid "Dwie dodatkowe wartości"
 msgstr "இரண்டு கூடுதல் மதிப்புகள்"
 
 #: VisualAllTagsEdition.cpp:90
-#, fuzzy
 msgid "Trzy dodatkowe wartości"
 msgstr "மூன்று கூடுதல் மதிப்புகள்"
 
 #: TabPanel.cpp:297
-#, fuzzy
 msgid "Przeładowywanie"
-msgstr "மீண்டும் ஏற்றுதல்…"
+msgstr "மீண்டும் ஏற்றுகிறது"
+
+#: FontCatalogList.cpp:681 FontCatalogList.cpp:843
+msgid "Dodaj czcionki z napisów"
+msgstr "வசன வரிகளிலிருந்து எழுத்துருக்களைச் சேர்க்கவும்"
+
+#: FontCatalogList.cpp:863
+msgid "Usuń całą zawartość katalogu"
+msgstr "பட்டியலின் அனைத்து உள்ளடக்கங்களையும் அகற்று"
+
+#: FontCatalogList.cpp:864
+#, fuzzy
+msgid "Dodaj czcionki z wszystkich otwartych napisów"
+msgstr "திறக்கப்பட்ட அனைத்து ASS கோப்புகளிலிருந்தும் எழுத்துருக்களைச் சேர்க்கவும்"
+
+#: FontEnumerator.cpp:231 FontEnumerator.cpp:409
+msgid "Ładowanie czcionek zewnętrznych"
+msgstr "வெளிப்புற எழுத்துருக்களை ஏற்றுகிறது"
+
+#: FontEnumerator.cpp:340
+msgid "Usuwanie czcionek z zewnętrznego folderu"
+msgstr "வெளிப்புற கோப்புறையிலிருந்து எழுத்துருக்களை நீக்குகிறது"
+
+#: FontEnumerator.cpp:348
+msgid "Wczytywanie czcionek z zewnętrznego folderu"
+msgstr "வெளிப்புற கோப்புறையிலிருந்து எழுத்துருக்களை ஏற்றுகிறது"
+
+#: FontEnumerator.cpp:370
+msgid "Nie można wczytać zewnętrznego katalogu czcionek"
+msgstr "வெளிப்புற எழுத்துரு கோப்புறையை ஏற்ற முடியவில்லை"
+
+#: HotkeysNaming.cpp:136 SubsGrid.cpp:201
+msgid "Zaznacz wszystkie linie widoczne na wideo"
+msgstr "வீடியோவில் தெரியும் அனைத்து வரிகளையும் தேர்ந்தெடுக்கவும்"
+
+#: HotkeysNaming.cpp:200 KainoteFrame.cpp:268
+msgid "Wyłącz powiększenie wideo"
+msgstr "வீடியோ சூமை முடக்கு"
+
+#: OptionsDialog.cpp:430
+msgid "Folder z zewnętrznymi czcionkami"
+msgstr "வெளிப்புற எழுத்துருக்கள் கொண்ட கோப்புறை"
+
+#: OptionsDialog.cpp:435
+msgid "Wybierz zewnętrzny folder czcionek"
+msgstr "வெளிப்புற எழுத்துருக் கோப்புறையைத் தேர்வுசெய்க"
+
+#: OptionsDialog.cpp:566
+msgid "Początkowy zoom wideo w procentach"
+msgstr "சதவீதத்தில் வீடியோ சூம் தொடங்கவும்."
+
+#: TabPanel.cpp:297
+#, fuzzy
+msgid "Napisy zostały zmodyfikowane przez inny program, przeładować?"
+msgstr "சப்டைல்ட்ச் வேறொரு நிரல் மூலம் மாற்றியமைக்கப்பட்டது, மீண்டும் ஏற்றவா?"
+
+#: VideoToolbar.cpp:747 VisualAllTagsEdition.cpp:86
+msgid "Gradient tekst rosnąco"
+msgstr "சாய்வு உரை அதிகரிக்கிறது"
+
+#: VideoToolbar.cpp:748 VisualAllTagsEdition.cpp:87
+msgid "Gradient tekst malejąco"
+msgstr "சாய்வு உரை குறைகிறது"
+
+#: VideoToolbar.cpp:748 VisualAllTagsEdition.cpp:87
+msgid "Gradient linia rosnąco"
+msgstr "சாய்வு கோடு அதிகரிக்கிறது"
+
+#: VideoToolbar.cpp:748 VisualAllTagsEdition.cpp:87
+msgid "Gradient linia malejąco"
+msgstr "சாய்வு கோடு குறைகிறது"
+
+#: VideoToolbar.cpp:751
+#, fuzzy
+msgid ""
+"Opcje zmiany tagów:\n"
+"Dodaj - zmienia wszystkie tagi dodając ruch z suwaka.\n"
+"Wstaw - wstawia w miejsce kursora w przypadku jednej linii\n"
+"albo na początku w przypadku wielu linii.\n"
+"Pomnóż - mnoży ruch suwaka przez numer zaznaczonej linijki\n"
+"pierwsza linia nie jest zmieniana.\n"
+"Gradnient tekst rosnąco - wstawia tag co znak rosnąco\n"
+"Gradnient tekst malejąco - wstawia tag co znak malejąco\n"
+"Gradient linia rosnąco - wstawia tag w zaznaczone linie rosnąco\n"
+"Gradient linia malejąco - wstawia tag w zaznaczone linie malejąco"
+msgstr "குறியை மாற்றுவதற்கான விருப்பங்கள்: \nசேர் - ச்லைடரில் நகர்வைச் சேர்க்கும் அனைத்து குறிச்சொற்களையும் மாற்றுகிறது. \nசெருகு - ஒரு வரியில் குறிச்சொல்லை கர்சர் நிலையில் செருகுகிறது \nஅல்லது மல்டிலைன் போது வரியின் தொடக்கத்தில். \nபெருக்கு - ச்லைடரின் நகர்வை எண் மற்றும் தேர்ந்தெடுக்கப்பட்ட வரியால் பெருக்கவும் \nமுதல் வரி மாற்றங்கள் அல்ல. அடுக்கை வைப்பதற்காக உருவாக்கப்பட்டது. \nகிரேடியன்ட் டெக்ச்ட் அதிகரிக்கிறது - ஒவ்வொரு எழுத்திலும் டேக் போடவும் \nச்லைடரில் உள்ள எண்ணிக்கைக்கு அதை அதிகரிக்கிறது \nசாய்வு உரை குறைகிறது - ஒவ்வொரு எழுத்திலும் குறிச்சொல்லை வைக்கவும் \nச்லைடரில் உள்ள எண்ணிலிருந்து அதைக் குறைக்கிறது \nசாய்வு வரி அதிகரிக்கிறது - ஒவ்வொரு வரியிலும் குறிச்சொல்லை வைக்கவும் \nச்லைடரில் உள்ள எண்ணிக்கைக்கு அதை அதிகரிக்கிறது \nசாய்வு கோடு குறைகிறது - ஒவ்வொரு வரியிலும் குறிச்சொல்லை வைக்கவும் \nச்லைடரில் உள்ள எண்ணிலிருந்து அதைக் குறைக்கிறது"
+
+#: ColorPicker.cpp:572
+#, fuzzy
+msgid ""
+"Zamień ze sobą skróty próbnika\n"
+"i okna wyboru kolorów"
+msgstr "கலர் பிக்கர் மற்றும் வண்ணத்தின் குறுக்குவழிகளை மாற்றவும் சாளரத்தைத் தேர்வுசெய்க"
+
+#: SubsGrid.cpp:203
+#, fuzzy
+msgid "Wstaw linie"
+msgstr "வரி செருகவும்"

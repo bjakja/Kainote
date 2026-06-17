@@ -2,13 +2,14 @@
 # Copyright (C) 2022
 # This file is distributed under the GNU General Public License v3.0.
 # Marcin Drob <bjajka7@gmail.com>, 2022.
-# StarFang208 <polaritymanx@yahoo.it>, 2023.
+# StarFang208 <polaritymanx@yahoo.it>, 2023, 2026.
 # Weblate <noreply-mt-weblate@weblate.org>, 2026.
 # LibreTranslate <noreply-mt-libretranslate@weblate.org>, 2026.
 msgid ""
-msgstr "Project-Id-Version: Kainote\nReport-Msgid-Bugs-To: poiiiii4yy@gmail.com\nPOT-Creation-Date: 2022-06-06 20:10+0700\nPO-Revision-Date: 2026-03-10 10:10+0000\nLast-Translator: Weblate <noreply-mt-weblate@weblate.org>\nLanguage-Team: Italian <https://hosted.weblate.org/projects/kainote/kainote/it/>\nLanguage: it\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=n != 1;\nX-Generator: Weblate 5.17-dev\nX-Poedit-Basepath: ../Kainote\nX-Poedit-SourceCharset: UTF-8\nX-Poedit-KeywordsList: _\nX-Poedit-SearchPath-0: .\nX-Poedit-SearchPathExcluded-0: Bitmaps\nX-Poedit-SearchPathExcluded-1: GFFT\nX-Poedit-SearchPathExcluded-2: include\nX-Poedit-SearchPathExcluded-3: Win32\nX-Poedit-SearchPathExcluded-4: x64\nX-Poedit-SearchPathExcluded-5: ffms2.lib\nX-Poedit-SearchPathExcluded-6: ffms2_x64.lib\nX-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\nX-Poedit-SearchPathExcluded-8: Kainote.vcxproj\nX-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\nX-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\nX-Poedit-SearchPathExcluded-11: RCa00888\nX-Poedit-SearchPathExcluded-12: resource.aps\nX-Poedit-SearchPathExcluded-13: resource.rc\nX-Poedit-SearchPathExcluded-14: CsriMod.cpp\nX-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\nX-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
+msgstr "Project-Id-Version: Kainote\nReport-Msgid-Bugs-To: poiiiii4yy@gmail.com\nPOT-Creation-Date: 2022-06-06 20:10+0700\nPO-Revision-Date: 2026-06-17 07:01+0000\nLast-Translator: LibreTranslate <noreply-mt-libretranslate@weblate.org>\nLanguage-Team: Italian <https://hosted.weblate.org/projects/kainote/kainote/it/>\nLanguage: it\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=n != 1;\nX-Generator: Weblate 2026.7.dev0\nX-Poedit-Basepath: ../Kainote\nX-Poedit-SourceCharset: UTF-8\nX-Poedit-KeywordsList: _\nX-Poedit-SearchPath-0: .\nX-Poedit-SearchPathExcluded-0: Bitmaps\nX-Poedit-SearchPathExcluded-1: GFFT\nX-Poedit-SearchPathExcluded-2: include\nX-Poedit-SearchPathExcluded-3: Win32\nX-Poedit-SearchPathExcluded-4: x64\nX-Poedit-SearchPathExcluded-5: ffms2.lib\nX-Poedit-SearchPathExcluded-6: ffms2_x64.lib\nX-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\nX-Poedit-SearchPathExcluded-8: Kainote.vcxproj\nX-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\nX-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\nX-Poedit-SearchPathExcluded-11: RCa00888\nX-Poedit-SearchPathExcluded-12: resource.aps\nX-Poedit-SearchPathExcluded-13: resource.rc\nX-Poedit-SearchPathExcluded-14: CsriMod.cpp\nX-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\nX-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
 
 #: AudioBox.cpp:103
+#, fuzzy
 msgid "Połącz suwak głośności i rozciągnięcia"
 msgstr "Collegare il cursore del volume e l'allungamento"
 
@@ -57,6 +58,7 @@ msgid "Dodaj zakończenie do aktywnej linijki"
 msgstr "Aggiungere lead-in alla riga attiva"
 
 #: AudioBox.cpp:188
+#, fuzzy
 msgid "Przechodzenie do następnej linijki po zatwierdzeniu zmian"
 msgstr "Passare alla riga successiva dopo l'approvazione delle modifiche"
 
@@ -74,6 +76,7 @@ msgid "Błąd"
 msgstr "Errore"
 
 #: AudioDisplay.cpp:230 RendererVideo.cpp:178
+#, fuzzy
 msgid "Nie można utworzyć obiektu Direct3D"
 msgstr "Impossibile creare un oggetto Direct 3D"
 
@@ -82,6 +85,7 @@ msgid "Odtwórz następną linijkę"
 msgstr "Riproduci la riga successiva"
 
 #: AudioBox.cpp:138
+#, fuzzy
 msgid "Odtwórz aktualną sylabę / linijkę"
 msgstr "Riproduci la sillaba / riga successiva"
 
@@ -98,6 +102,7 @@ msgid "Przejdź do zaznaczenia"
 msgstr "Vai alla selezione"
 
 #: AudioBox.cpp:175
+#, fuzzy
 msgid "Włącz / Wyłącz tworzenie karaoke"
 msgstr "Abilita / Disabilita la creazione di karaoke"
 
@@ -106,6 +111,7 @@ msgid "Włącz / Wyłącz automatyczne dzielenie sylab"
 msgstr "Attiva / Disattiva la divisione automatica delle sillabe"
 
 #: AudioBox.cpp:184
+#, fuzzy
 msgid "Automatycznie zatwierdza zmiany"
 msgstr "Approva automaticamente le modifiche"
 
@@ -118,6 +124,7 @@ msgid "Tryb spektrum"
 msgstr "Modalità spettro"
 
 #: AudioBox.cpp:200
+#, fuzzy
 msgid "Uwydatnienie częstotliwości głosu na spektrum"
 msgstr "Miglioramento della frequenza vocale dello spettro"
 
@@ -151,15 +158,18 @@ msgstr "Una delle impostazioni DirectX non è riuscita"
 
 # Zły: nie rozumiem
 #: AudioDisplay.cpp:296 RendererVideo.cpp:248 VisualRotationXY.cpp:164
+#, fuzzy
 msgid "Nie można ustawić macierzy widoku"
 msgstr "Impossibile impostare il mondo della matrice"
 
 #: AudioDisplay.cpp:294
+#, fuzzy
 msgid "Nie można ustawić macierzy porojekcji"
 msgstr "Impossibile impostare la proiezione della matrice"
 
 # Zły: nie rozumiem
 #: AudioDisplay.cpp:295 RendererVideo.cpp:247 VisualRotationXY.cpp:163
+#, fuzzy
 msgid "Nie można ustawić macierzy świata"
 msgstr "Non è possibile impostare la visuale matrice"
 
@@ -169,6 +179,7 @@ msgid "Nie można stworzyć powierzchni"
 msgstr "Impossibile creare una superficie"
 
 #: AudioDisplay.cpp:300 RendererVideo.cpp:261
+#, fuzzy
 msgid "Nie można stworzyć linii D3DX"
 msgstr "Impossibile aprire la linea D3DX"
 
@@ -1107,11 +1118,6 @@ msgstr "Colore del bordo"
 #, fuzzy
 msgid "Kolor cienia"
 msgstr "Colore dell'ombra"
-
-#: ColorPicker.cpp:548
-#, fuzzy
-msgid "Zamień ze sobą skróty próbnika i okna wyboru kolorów"
-msgstr "Scambio di scorciatoie per il colorpicker e la finestra di scelta del colore"
 
 #: ColorPicker.cpp:550
 #, fuzzy
@@ -9499,3 +9505,75 @@ msgstr "Opzioni di modifica del tag:\nAggiungi - cambia tutti i tag aggiungendo 
 #, fuzzy
 msgid "Przeładowywanie"
 msgstr "Ricaricamento"
+
+#: ColorPicker.cpp:572
+#, fuzzy
+msgid ""
+"Zamień ze sobą skróty próbnika\n"
+"i okna wyboru kolorów"
+msgstr "Scorciatoie Swap di colorpicker\ne colore scegliere finestra"
+
+#: HotkeysNaming.cpp:154 SubsGrid.cpp:158
+#, fuzzy
+msgid "Podziel linię do czasu wideo"
+msgstr "Spalato linea per il tempo video"
+
+#: HotkeysNaming.cpp:155 SubsGrid.cpp:160
+#, fuzzy
+msgid "Podziel linie na klatki"
+msgstr "Linee divise su telai"
+
+#: HotkeysNaming.cpp:156 SubsGrid.cpp:162
+#, fuzzy
+msgid "Podziel linie na znaki"
+msgstr "Linee divise su personaggi"
+
+#: HotkeysNaming.cpp:157 SubsGrid.cpp:163
+#, fuzzy
+msgid "Podziel linie na słowa"
+msgstr "Linee divise per parole"
+
+#: HotkeysNaming.cpp:158 SubsGrid.cpp:164
+#, fuzzy
+msgid "Podziel linie według łamań"
+msgstr "Linee divise per involucri"
+
+#: OptionsDialog.cpp:423
+#, fuzzy
+msgid "Zliczaj spacje i znaki interpunkcyjne dla łamań"
+msgstr "Calcola spazi e caratteri di punteggiatura per avvolgere"
+
+#: OptionsDialog.cpp:426
+#, fuzzy
+msgid "Zliczaj spacje i znaki interpunkcyjne dla ZNS"
+msgstr "Calcola spazi e caratteri di punteggiatura per CPS"
+
+#: SubsFile.cpp:172
+#, fuzzy
+msgid "Usunięcie filtrowania"
+msgstr "Rimuovere il filtro"
+
+#: SubsFile.cpp:173
+#, fuzzy
+msgid "Dzielenie linii"
+msgstr "Linee di divisione"
+
+#: SubsGrid.cpp:218
+#, fuzzy
+msgid "Podziel linie"
+msgstr "Linee di divisione"
+
+#: SubsGrid.cpp:203
+#, fuzzy
+msgid "Wstaw linie"
+msgstr "Inserisci riga"
+
+#: ProviderFFMS2.cpp:118
+#, fuzzy
+msgid "Rozmiar klatki wideo jest zbyt duży"
+msgstr "La dimensione della cornice video è troppo grande"
+
+#: VisualAllTagsEdition.cpp:308
+#, fuzzy
+msgid "Pole \"Przeskok\" musi zawierać wartość większą od zera."
+msgstr "Il campo \"Step\" deve contenere un valore superiore a zero."

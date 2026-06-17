@@ -2,14 +2,14 @@
 # Copyright (C) 2022
 # This file is distributed under the GNU General Public License v3.0.
 # Marcin Drob <bjajka7@gmail.com>, 2022.
-# Yurt Page <yurtpage@gmail.com>, 2025.
+# Yurt Page <yurtpage@gmail.com>, 2025, 2026.
 # LibreTranslate <noreply-mt-libretranslate@weblate.org>, 2025, 2026.
 # Weblate <noreply-mt-weblate@weblate.org>, 2025, 2026.
-# Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>, 2025.
-# Yurt Page <yurtpage+weblate@gmail.com>, 2025.
-# Sisitenr <sisiton2019@gmail.com>, 2025.
+# Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>, 2025, 2026.
+# Yurt Page <yurtpage+weblate@gmail.com>, 2025, 2026.
+# Sisitenr <sisiton2019@gmail.com>, 2025, 2026.
 msgid ""
-msgstr "Project-Id-Version: Kainote\nReport-Msgid-Bugs-To: poiiiii4yy@gmail.com\nPOT-Creation-Date: 2022-06-06 20:10+0700\nPO-Revision-Date: 2026-03-10 10:09+0000\nLast-Translator: Weblate <noreply-mt-weblate@weblate.org>\nLanguage-Team: Russian <https://hosted.weblate.org/projects/kainote/kainote/ru/>\nLanguage: ru\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\nX-Generator: Weblate 5.17-dev\nX-Poedit-Basepath: ../Kainote\nX-Poedit-SourceCharset: UTF-8\nX-Poedit-KeywordsList: _\nX-Poedit-SearchPath-0: .\nX-Poedit-SearchPathExcluded-0: Bitmaps\nX-Poedit-SearchPathExcluded-1: GFFT\nX-Poedit-SearchPathExcluded-2: include\nX-Poedit-SearchPathExcluded-3: Win32\nX-Poedit-SearchPathExcluded-4: x64\nX-Poedit-SearchPathExcluded-5: ffms2.lib\nX-Poedit-SearchPathExcluded-6: ffms2_x64.lib\nX-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\nX-Poedit-SearchPathExcluded-8: Kainote.vcxproj\nX-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\nX-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\nX-Poedit-SearchPathExcluded-11: RCa00888\nX-Poedit-SearchPathExcluded-12: resource.aps\nX-Poedit-SearchPathExcluded-13: resource.rc\nX-Poedit-SearchPathExcluded-14: CsriMod.cpp\nX-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\nX-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
+msgstr "Project-Id-Version: Kainote\nReport-Msgid-Bugs-To: poiiiii4yy@gmail.com\nPOT-Creation-Date: 2022-06-06 20:10+0700\nPO-Revision-Date: 2026-06-17 07:02+0000\nLast-Translator: LibreTranslate <noreply-mt-libretranslate@weblate.org>\nLanguage-Team: Russian <https://hosted.weblate.org/projects/kainote/kainote/ru/>\nLanguage: ru\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\nX-Generator: Weblate 2026.7.dev0\nX-Poedit-Basepath: ../Kainote\nX-Poedit-SourceCharset: UTF-8\nX-Poedit-KeywordsList: _\nX-Poedit-SearchPath-0: .\nX-Poedit-SearchPathExcluded-0: Bitmaps\nX-Poedit-SearchPathExcluded-1: GFFT\nX-Poedit-SearchPathExcluded-2: include\nX-Poedit-SearchPathExcluded-3: Win32\nX-Poedit-SearchPathExcluded-4: x64\nX-Poedit-SearchPathExcluded-5: ffms2.lib\nX-Poedit-SearchPathExcluded-6: ffms2_x64.lib\nX-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\nX-Poedit-SearchPathExcluded-8: Kainote.vcxproj\nX-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\nX-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\nX-Poedit-SearchPathExcluded-11: RCa00888\nX-Poedit-SearchPathExcluded-12: resource.aps\nX-Poedit-SearchPathExcluded-13: resource.rc\nX-Poedit-SearchPathExcluded-14: CsriMod.cpp\nX-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\nX-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
 
 #: AudioBox.cpp:72
 msgid "Pasek szukania"
@@ -153,6 +153,7 @@ msgid "Okno tekst nagłówka nieaktywny"
 msgstr "Неактивный текст заголовка окна"
 
 #: AutoSavesRemoving.cpp:102
+#, fuzzy
 msgid "Usuń wybrane pliki auto zapisu"
 msgstr "Удалить выбранные файлы автосохранения"
 
@@ -251,6 +252,7 @@ msgid "Tryb tłumacza"
 msgstr "Режим переводчика"
 
 #: FontCollector.cpp:173
+#, fuzzy
 msgid ""
 "Zapisuje do folderu z wideo\n"
 "przy wyciąganiu czcionek z pliku MKV."
@@ -415,6 +417,7 @@ msgid "Odwrócone wycinki wektorowe / prostokątne"
 msgstr "Обратный векторный клип или прямоугольник"
 
 #: FontCollector.cpp:483
+#, fuzzy
 msgid "Wybrana ścieżka zapisu jest niepoprawna."
 msgstr "Патч сохранения не действительный."
 
@@ -470,7 +473,7 @@ msgid "Odtwórz aktywną linijkę"
 msgstr "Играть активную линию"
 
 #: SubsResampleDialog.cpp:167
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "Rozdzielczości wideo i napisów się różnią.\n"
 "Możesz zmienić je teraz lub skorzystać ze 'zmień rozdzielczość napisów'.\n"
@@ -517,10 +520,12 @@ msgid "Pasek przewijania suwak po najechaniu"
 msgstr "Свиток-бар слайдер"
 
 #: EditBox.cpp:1194
+#, fuzzy
 msgid "Margines prawy linijki"
 msgstr "Отступ правой строки"
 
 #: Automation.cpp:484
+#, fuzzy
 msgid ""
 "Próbujesz wczytać skrypt Automatyzacji 3 jako skrypt Automatyzacji 4. "
 "Automatyzacja 3 nie jest już wspierana."
@@ -565,6 +570,7 @@ msgid "Zmiana \"....\" i więcej na wielokropek"
 msgstr "Заменить более трёх точек на точку подвески"
 
 #: AudioBox.cpp:138
+#, fuzzy
 msgid "Odtwórz aktualną sylabę / linijkę"
 msgstr "Играть следующий слог / линию"
 
@@ -602,6 +608,7 @@ msgid "Przycisk i lista tło po wciśnięciu"
 msgstr "Баттон и список толкнули фон"
 
 #: EditBox.cpp:1184
+#, fuzzy
 msgid "Kopiuje zaznaczony tekst obcojęzyczny do pola z tłumaczeniem"
 msgstr "Копирует выбранный текст иностранного языка в области перевода"
 
@@ -872,6 +879,7 @@ msgid "Kainote zawiera w sobie części następujących projektów:\n"
 msgstr "Kainote включает в себя части следующих проектов:\n"
 
 #: KainoteFrame.cpp:1060
+#, fuzzy
 msgid "Plik napisów "
 msgstr "Файл субтитров "
 
@@ -1251,6 +1259,7 @@ msgid "Nie można dodać linii klasy: %s w pole klasy: %s"
 msgstr "Невозможно добавить линию класса: %s в поле класса: %s"
 
 #: FindReplaceDialog.cpp:184
+#, fuzzy
 msgid "Zamień następne"
 msgstr "Заменить текст"
 
@@ -1504,6 +1513,7 @@ msgid "Za-środek"
 msgstr "После-центр"
 
 #: FontCollector.cpp:583 FontCollector.cpp:640
+#, fuzzy
 msgid "Nie znaleziono czcionki \""
 msgstr "Не найденный шрифт \""
 
@@ -1518,6 +1528,7 @@ msgid "Środek-ponad"
 msgstr "Центр-над"
 
 #: FontCollector.cpp:707
+#, fuzzy
 msgid ""
 "Nie można pobrać rozmiarów i nazw plików czcionek\n"
 "kopiowanie zostaje przerwane.\n"
@@ -1608,7 +1619,7 @@ msgid "Sortuj style w magazynie"
 msgstr "Сортировать стили в хранилище"
 
 #: FontCollector.cpp:1088
-#, c-format
+#, c-format, fuzzy
 msgid "Nie można pobrać zawartości czcionki \"%s\"."
 msgstr "Невозможно получить содержание шрифта \"%s\"."
 
@@ -1713,6 +1724,7 @@ msgid "Ustawienie czasów linii jako ciągłych"
 msgstr "Время ожидания"
 
 #: AutoSaveOpen.cpp:33
+#, fuzzy
 msgid "Wszystkie słowa"
 msgstr "Искать все слова"
 
@@ -1727,6 +1739,7 @@ msgid "Nowe czasy"
 msgstr "Новые времена"
 
 #: ColorPicker.cpp:550
+#, fuzzy
 msgid ""
 "Zahaczenie tej opcji uruchamia próbnik po kliknięciu lewym przyciskiem,\n"
 "a okno wyboru koloru po kliknięciu prawym przyciskiem."
@@ -1850,6 +1863,7 @@ msgid "Liczby po przecinku:"
 msgstr "Число после точки:"
 
 #: EditBox.cpp:1191
+#, fuzzy
 msgid "Umożliwia szybką edycję stylu linijki"
 msgstr "Вы можете быстро редактировать стиль для текущей строки"
 
@@ -2025,6 +2039,7 @@ msgid "Zapisuj do folderu z napisami / wideo."
 msgstr "Сохранить в папку видео / субтитры."
 
 #: AutomationHotkeysDialog.cpp:251 Hotkeys.cpp:491 OptionsDialog.cpp:127
+#, fuzzy
 msgid "Ustaw mimo to"
 msgstr "Закрепить"
 
@@ -2059,6 +2074,7 @@ msgid "Widok tylko wideo"
 msgstr "Только видео"
 
 #: OptionsDialog.cpp:719
+#, fuzzy
 msgid "Napisy linijki widoczne na wideo"
 msgstr "Строки субтитров видимые на видео"
 
@@ -2157,6 +2173,7 @@ msgid "Nie można odczytać czcionki \"%s\" z folderu Fonts."
 msgstr "Невозможно получить шрифт \"%s\" из папки Fonts."
 
 #: AudioDisplay.cpp:300 RendererVideo.cpp:261
+#, fuzzy
 msgid "Nie można stworzyć linii D3DX"
 msgstr "Не возможно создать линию D3DX"
 
@@ -2271,6 +2288,7 @@ msgid "Wyłączenie trybu tłumacza"
 msgstr "Отключить режим перевода"
 
 #: OptionsDialog.cpp:722
+#, fuzzy
 msgid "Napisy etykieta zapisanej linii"
 msgstr "Субтитры помечают сохранённую строку"
 
@@ -2314,6 +2332,7 @@ msgid "Suwak ścieżka tło"
 msgstr "Слайд"
 
 #: AudioBox.cpp:103
+#, fuzzy
 msgid "Połącz suwak głośności i rozciągnięcia"
 msgstr "Связать слайдер громкости и растяжения"
 
@@ -2340,6 +2359,7 @@ msgid "Od zaznaczonej linijki"
 msgstr "Из выбранной линии"
 
 #: FindReplaceDialog.cpp:227
+#, fuzzy
 msgid ""
 "Szukaj\n"
 "w ukrytych folderach"
@@ -2448,6 +2468,7 @@ msgid "Wklej kolumny"
 msgstr "Вставить столбцы"
 
 #: EditBox.cpp:1196
+#, fuzzy
 msgid ""
 "Efekt linijki. Służy do oznaczania linijek, na których zastosowane ma być "
 "karaoke bądź efekty VSFiltra"
@@ -2552,6 +2573,7 @@ msgstr "Задержка аудио в миллисекундах"
 
 #: FontCollector.cpp:132 HotkeysNaming.cpp:132 KainoteFrame.cpp:309
 #: KainoteFrame.cpp:310 SubsGrid.cpp:231
+#, fuzzy
 msgid "Kolekcjoner czcionek"
 msgstr "Коллекционер шрифтов"
 
@@ -2636,6 +2658,7 @@ msgid "Pliki napisów ASS(*.ass)|*.ass"
 msgstr "ASS файлы субтитров (*.ass)|*.ass"
 
 #: FindReplaceDialog.cpp:168
+#, fuzzy
 msgid ""
 "Znajdź we wszystkich\n"
 "otwartych napisach"
@@ -2733,6 +2756,7 @@ msgid "Kliknięciu linii lub edycji na pauzie"
 msgstr "Щёлкните линию или издание при паузе"
 
 #: EditBox.cpp:1930
+#, fuzzy
 msgid "Nie znaleziono niepewnych"
 msgstr "Не подтверждено, не найдено"
 
@@ -2967,7 +2991,7 @@ msgid "Wstaw przed z &czasem wideo"
 msgstr "Вставить перед &видео время"
 
 #: FontCollector.cpp:833
-#, c-format
+#, c-format, fuzzy
 msgid "Dodano do archiwum czcionkę \"%s\"."
 msgstr "Шрифт \"%s добавлен в архив."
 
@@ -3042,6 +3066,7 @@ msgid "Poprawa błędu pisowni"
 msgstr "Исправление ошибок заклинания"
 
 #: Hotkeys.cpp:194 HotkeysNaming.cpp:226
+#, fuzzy
 msgid "Ustaw jako niepewne i przejdź dalej"
 msgstr "Установить как неподтверждённую и перейти к следующей строке"
 
@@ -3126,7 +3151,7 @@ msgid "Nie można odczytać formatu konwersji słownika."
 msgstr "Невозможно прочитать формат преобразования словаря."
 
 #: FontCollector.cpp:1076
-#, c-format
+#, c-format, fuzzy
 msgid "Czcionka \"%s\" nie zawiera znaków: \"%s\"."
 msgstr "Шрифт \"%s\" не содержит символов: \"%s\"."
 
@@ -3187,6 +3212,7 @@ msgid "Zapisz &tłumaczenie"
 msgstr "Сохранить перевод"
 
 #: FontCollector.cpp:794
+#, fuzzy
 msgid "Niektóre czcionki nie mają wszystkich znaków użytych w tekście.\n"
 msgstr "Некоторые шрифты не содержат все символы используемые в тексте.\n"
 
@@ -3236,6 +3262,7 @@ msgid "Losowość punktów czcionki seed"
 msgstr "Семена шрифта"
 
 #: EditBox.cpp:1192
+#, fuzzy
 msgid "Oznaczenie aktora linijki. Nie wpływa na wygląd napisów"
 msgstr "Маркирующий актер. Это не влияет на появление субтитров"
 
@@ -3308,6 +3335,7 @@ msgid "Otwiera wybrane audio"
 msgstr "Открывает аудиофайл"
 
 #: OptionsDialog.cpp:722
+#, fuzzy
 msgid "Napisy etykieta zmodyfikowanej linii"
 msgstr "Субтитры помечают изменённую строку"
 
@@ -3357,7 +3385,7 @@ msgid "Otwiera pomoc w domyślnej przeglądarce"
 msgstr "Открыть помощь в браузере по умолчанию"
 
 #: Automation.cpp:472
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "Błąd inicjalizacji skryptu Lua \"%s\":\n"
 "\n"
@@ -3415,6 +3443,7 @@ msgid ""
 msgstr "В линии %i не может масштабировать '%s' в метке '%s \""
 
 #: EditBox.cpp:1193
+#, fuzzy
 msgid "Margines lewy linijki"
 msgstr "Отступ левой строки"
 
@@ -3500,10 +3529,6 @@ msgstr "Невозможно перечислить форматы DXVA"
 #, c-format, fuzzy
 msgid "Dodano do zaznaczenia %i linijek."
 msgstr "%i линий добавлены к выбору."
-
-#: ColorPicker.cpp:548
-msgid "Zamień ze sobą skróty próbnika i okna wyboru kolorów"
-msgstr "Изменить ярлык выбора цветов и окно выбора цветов"
 
 #: ScriptInfo.cpp:101
 #, fuzzy
@@ -3672,6 +3697,7 @@ msgid "Pobierz z napisów"
 msgstr "Из субтитров"
 
 #: Hotkeys.cpp:192 HotkeysNaming.cpp:129
+#, fuzzy
 msgid "Następne niepewne"
 msgstr "Следующая не подтверждённая строка"
 
@@ -3794,6 +3820,7 @@ msgid "Przesuwa czas końcowy do czasu wideo / audio"
 msgstr "Перемещение конечного времени к времени видео / аудио"
 
 #: Automation.cpp:1068
+#, fuzzy
 msgid ""
 "Jeden bądź więcej skryptów autoload zawiera błędy.\n"
 "Obejrzyj opisy skryptów, by uzyskać więcej informacji."
@@ -3853,6 +3880,7 @@ msgid "Grubość obwódki"
 msgstr "Толщина границы"
 
 #: AudioBox.cpp:175
+#, fuzzy
 msgid "Włącz / Wyłącz tworzenie karaoke"
 msgstr "Включить / Отключить создание караоке"
 
@@ -4124,6 +4152,7 @@ msgid "Sortowanie napisów"
 msgstr "Сортировка субтитров"
 
 #: OptionsDialog.cpp:588
+#, fuzzy
 msgid "Skróty napisów"
 msgstr "Сочетания клавиш для субтитров"
 
@@ -4203,10 +4232,12 @@ msgid "Ustawienie FPSu obliczonego z wideo"
 msgstr "Установка FPS с видео"
 
 #: Hotkeys.cpp:600
+#, fuzzy
 msgid "Skrót pola napisów"
 msgstr "Горячая клавиша сетки субтитров"
 
 #: FontDialog.cpp:430 StyleChange.cpp:89
+#, fuzzy
 msgid "Filtruje czcionki, by zawierały wpisane znaki"
 msgstr "Фильтрует шрифты для письменных символов"
 
@@ -4536,6 +4567,7 @@ msgid "Zero całkowicie wyłącza zapis przy edycji"
 msgstr "0 выключает экономию при редактировании"
 
 #: Automation.cpp:1106
+#, fuzzy
 msgid ""
 "Co najmniej jeden skrypt z pliku napisów zawiera błędy.\n"
 "Zobacz opisy skryptów, by uzyskać więcej informacji."
@@ -4641,7 +4673,7 @@ msgid "Skrót pola edycji"
 msgstr "Редактировать горячую клавишу"
 
 #: AutomationHotkeysDialog.cpp:246 Hotkeys.cpp:485 OptionsDialog.cpp:122
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "Ten skrót już istnieje w %s jako skrót do \"%s\".\n"
 "Co zrobić?"
@@ -4850,6 +4882,7 @@ msgid "Skala obrazu wideo"
 msgstr "Видео масштаб"
 
 #: AutoSavesRemoving.cpp:115
+#, fuzzy
 msgid "Usuń wybrane indeksy"
 msgstr "Удалить выбранные файлы индекса"
 
@@ -5048,6 +5081,7 @@ msgid "Piętnast przycisk tagów"
 msgstr "15-я кнопка тега"
 
 #: EditBox.cpp:1195
+#, fuzzy
 msgid "Margines górny i dolny linijki"
 msgstr "Верхний и нижний отступ строки"
 
@@ -5152,7 +5186,7 @@ msgstr "Нет буфера рамы"
 
 #: Automation.cpp:1057 Automation.cpp:1098 KainoteFrame.cpp:739
 #: KainoteFrame.cpp:2405
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "Błąd wczytywania skryptu Lua: %s\n"
 "%s"
@@ -5454,6 +5488,7 @@ msgid ""
 msgstr "Установить масштаб за прямоугольником.\nПосле рисования прямоугольника текст масштабируется\nв двух или одной оси."
 
 #: Hotkeys.cpp:193 HotkeysNaming.cpp:130
+#, fuzzy
 msgid "Następne nieprzetłumaczone"
 msgstr "Следующая не переведённая"
 
@@ -5731,6 +5766,7 @@ msgid "Skalowanie"
 msgstr "Масштабирование текста"
 
 #: AudioDisplay.cpp:295 RendererVideo.cpp:247 VisualRotationXY.cpp:163
+#, fuzzy
 msgid "Nie można ustawić macierzy świata"
 msgstr "Невозможно установить матричный вид"
 
@@ -5740,6 +5776,7 @@ msgid "Okno zmiany &czasów\tCtrl-I"
 msgstr "Shift ×... Ctrl- I"
 
 #: Automation.cpp:636
+#, fuzzy
 msgid "Wystąpił błąd podczas wykonywania skryptu Lua:\n"
 msgstr "Во время загрузки скрипта Lua произошла ошибка:\n"
 
@@ -5756,6 +5793,7 @@ msgid ""
 msgstr "Стили под названием «%s» не существуют в текущих субтитрах,\nи это может уменьшить поиск результатов.\nЧто делать?"
 
 #: FindReplaceDialog.cpp:225
+#, fuzzy
 msgid "Szukaj w podfolderach"
 msgstr "Искать в подпапках"
 
@@ -6117,6 +6155,7 @@ msgid "Czasy tagów"
 msgstr "Время"
 
 #: FindReplaceDialog.cpp:187
+#, fuzzy
 msgid ""
 "Zamień we wszystkich\n"
 "otwartych napisach"
@@ -6128,7 +6167,7 @@ msgid "Pozycjonuj w osi X"
 msgstr "Расположение в оси X"
 
 #: FontCollector.cpp:1041
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "Czcionka \"%s\" należy do stylu,\n"
 "który nie jest wykorzystywany.%s"
@@ -6210,7 +6249,7 @@ msgid "Nie można stworzyć interfejsu audio"
 msgstr "Невозможно создать аудио-интерфейс"
 
 #: FontCollector.cpp:785
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "Czcionka \"%s\" należy do stylu,\n"
 "który nie jest wykorzystywany."
@@ -6572,6 +6611,7 @@ msgid "Napisy tło błędów pisowni"
 msgstr "Субтитры написание ошибки фон"
 
 #: Demux.cpp:96
+#, fuzzy
 msgid "Wybierz ścieżkę napisów"
 msgstr "Выберите дорожку субтитров"
 
@@ -6585,6 +6625,7 @@ msgid "Dodaj zakończenie"
 msgstr "Добавить концовку"
 
 #: AutoSavesRemoving.cpp:128
+#, fuzzy
 msgid "Usuń wybrane pliki audio cache"
 msgstr "Удалить выбранные файлы аудио кэша"
 
@@ -6635,7 +6676,7 @@ msgid "Pasek menu najechane tło zaznaczenia"
 msgstr "Меню бар выбор навес"
 
 #: FontCollector.cpp:739
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "Pobrano rozmiary i nazwy %i czcionek, upłynęło %sms.\n"
 "\n"
@@ -6756,6 +6797,7 @@ msgid "Timing karaoke (nieobsługiwane)"
 msgstr "Время Караоке (не поддерживается)"
 
 #: ColorPicker.cpp:1394
+#, fuzzy
 msgid ""
 "Przenoś okno\n"
 "w miejsce wyboru koloru"
@@ -6831,6 +6873,7 @@ msgid "M.Pi."
 msgstr "Верт."
 
 #: FontCollector.cpp:1214
+#, fuzzy
 msgid "Nie można stworzyć procesu, muxowanie przerwane"
 msgstr "Не удалось создать процесс. Мультиплексирование отменено"
 
@@ -6849,6 +6892,7 @@ msgid "Usuń styl z napisów"
 msgstr "Удалить стиль из ASS"
 
 #: AudioDisplay.cpp:296 RendererVideo.cpp:248 VisualRotationXY.cpp:164
+#, fuzzy
 msgid "Nie można ustawić macierzy widoku"
 msgstr "Невозможно установить матрицу просмотра"
 
@@ -6964,7 +7008,7 @@ msgid "Okno nieaktywny tekst"
 msgstr "Текст неактивного окна"
 
 #: FontCollector.cpp:1072
-#, c-format
+#, c-format, fuzzy
 msgid "Nie można sprawdzić znaków czcionki \"%s\"."
 msgstr "Невозможно проверить символы шрифта \"%s\"."
 
@@ -7480,6 +7524,7 @@ msgid "Margines lewy"
 msgstr "Поле слева"
 
 #: SpellCheckerDialog.cpp:44
+#, fuzzy
 msgid ""
 "Ignoruj słowa całe pisane\n"
 "wielką literą"
@@ -8902,6 +8947,7 @@ msgid "Pomo&c"
 msgstr "&Справка"
 
 #: FindReplaceDialog.cpp:110
+#, fuzzy
 msgid "Uwzględnij komentarze"
 msgstr "Учитывать комментарии"
 
@@ -9252,3 +9298,75 @@ msgstr "Варианты изменения тега:\nДобавить - мен
 #, fuzzy
 msgid "Przeładowywanie"
 msgstr "Обновление…"
+
+#: ColorPicker.cpp:572
+#, fuzzy
+msgid ""
+"Zamień ze sobą skróty próbnika\n"
+"i okna wyboru kolorów"
+msgstr "Изменить ярлык выбора цветов и окно выбора цветов"
+
+#: HotkeysNaming.cpp:154 SubsGrid.cpp:158
+#, fuzzy
+msgid "Podziel linię do czasu wideo"
+msgstr "Линия для видео-времени"
+
+#: HotkeysNaming.cpp:155 SubsGrid.cpp:160
+#, fuzzy
+msgid "Podziel linie na klatki"
+msgstr "Разделенные линии на рамах"
+
+#: HotkeysNaming.cpp:156 SubsGrid.cpp:162
+#, fuzzy
+msgid "Podziel linie na znaki"
+msgstr "Разделить линии на персонажей"
+
+#: HotkeysNaming.cpp:157 SubsGrid.cpp:163
+#, fuzzy
+msgid "Podziel linie na słowa"
+msgstr "Разделить линии на слова"
+
+#: HotkeysNaming.cpp:158 SubsGrid.cpp:164
+#, fuzzy
+msgid "Podziel linie według łamań"
+msgstr "Разделить линии за обертками"
+
+#: OptionsDialog.cpp:423
+#, fuzzy
+msgid "Zliczaj spacje i znaki interpunkcyjne dla łamań"
+msgstr "Рассчитать пространства и проколы для обертывания"
+
+#: OptionsDialog.cpp:426
+#, fuzzy
+msgid "Zliczaj spacje i znaki interpunkcyjne dla ZNS"
+msgstr "Рассчитать пробелы и пунктуационные символы для CPS"
+
+#: SubsFile.cpp:172
+#, fuzzy
+msgid "Usunięcie filtrowania"
+msgstr "Удалить фильтр"
+
+#: SubsFile.cpp:173
+#, fuzzy
+msgid "Dzielenie linii"
+msgstr "Разделение линий"
+
+#: SubsGrid.cpp:218
+#, fuzzy
+msgid "Podziel linie"
+msgstr "Линии"
+
+#: SubsGrid.cpp:203
+#, fuzzy
+msgid "Wstaw linie"
+msgstr "Вставить строку"
+
+#: ProviderFFMS2.cpp:118
+#, fuzzy
+msgid "Rozmiar klatki wideo jest zbyt duży"
+msgstr "Размер видеокадра слишком большой"
+
+#: VisualAllTagsEdition.cpp:308
+#, fuzzy
+msgid "Pole \"Przeskok\" musi zawierać wartość większą od zera."
+msgstr "Поле «Step» должно содержать значение больше нуля."

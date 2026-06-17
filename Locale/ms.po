@@ -7,8 +7,9 @@
 # altinat <poiiiii4yy@gmail.com>, 2022.
 # Weblate <noreply-mt-weblate@weblate.org>, 2026.
 # Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>, 2026.
+# "4kŸ\"]ãcJ1Ž{æÓC–â^K^;‰-)åÄ7†”ùüÑIù =z–(:FE½«î!ùñ|ßd›”ïÊ±?" <sooleehin7@gmail.com>, 2026.
 msgid ""
-msgstr "Project-Id-Version: Kainote\nReport-Msgid-Bugs-To: poiiiii4yy@gmail.com\nPOT-Creation-Date: 2022-06-06 20:10+0700\nPO-Revision-Date: 2026-01-26 13:02+0000\nLast-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\nLanguage-Team: Malay <https://hosted.weblate.org/projects/kainote/kainote/ms/>\nLanguage: ms\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=1; plural=0;\nX-Generator: Weblate 5.16-dev\nX-Poedit-Basepath: ../Kainote\nX-Poedit-SourceCharset: UTF-8\nX-Poedit-KeywordsList: _\nX-Poedit-SearchPath-0: .\nX-Poedit-SearchPathExcluded-0: Bitmaps\nX-Poedit-SearchPathExcluded-1: GFFT\nX-Poedit-SearchPathExcluded-2: include\nX-Poedit-SearchPathExcluded-3: Win32\nX-Poedit-SearchPathExcluded-4: x64\nX-Poedit-SearchPathExcluded-5: ffms2.lib\nX-Poedit-SearchPathExcluded-6: ffms2_x64.lib\nX-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\nX-Poedit-SearchPathExcluded-8: Kainote.vcxproj\nX-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\nX-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\nX-Poedit-SearchPathExcluded-11: RCa00888\nX-Poedit-SearchPathExcluded-12: resource.aps\nX-Poedit-SearchPathExcluded-13: resource.rc\nX-Poedit-SearchPathExcluded-14: CsriMod.cpp\nX-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\nX-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
+msgstr "Project-Id-Version: Kainote\nReport-Msgid-Bugs-To: poiiiii4yy@gmail.com\nPOT-Creation-Date: 2022-06-06 20:10+0700\nPO-Revision-Date: 2026-06-17 07:01+0000\nLast-Translator: Niskala Airaha <niskala5570@gmail.com>\nLanguage-Team: Malay <https://hosted.weblate.org/projects/kainote/kainote/ms/>\nLanguage: ms\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=1; plural=0;\nX-Generator: Weblate 2026.7.dev0\nX-Poedit-Basepath: ../Kainote\nX-Poedit-SourceCharset: UTF-8\nX-Poedit-KeywordsList: _\nX-Poedit-SearchPath-0: .\nX-Poedit-SearchPathExcluded-0: Bitmaps\nX-Poedit-SearchPathExcluded-1: GFFT\nX-Poedit-SearchPathExcluded-2: include\nX-Poedit-SearchPathExcluded-3: Win32\nX-Poedit-SearchPathExcluded-4: x64\nX-Poedit-SearchPathExcluded-5: ffms2.lib\nX-Poedit-SearchPathExcluded-6: ffms2_x64.lib\nX-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\nX-Poedit-SearchPathExcluded-8: Kainote.vcxproj\nX-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\nX-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\nX-Poedit-SearchPathExcluded-11: RCa00888\nX-Poedit-SearchPathExcluded-12: resource.aps\nX-Poedit-SearchPathExcluded-13: resource.rc\nX-Poedit-SearchPathExcluded-14: CsriMod.cpp\nX-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\nX-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
 
 #: AudioBox.cpp:72
 msgid "Pasek szukania"
@@ -19,6 +20,7 @@ msgid "Rozciągnięcie w poziomie"
 msgstr "Pembesar Butiran Audio Secara Mendatar"
 
 #: AudioBox.cpp:92
+#, fuzzy
 msgid "Rozciągnięcie w pionie"
 msgstr "Pembesar Butiran Audio Secara Menegak"
 
@@ -27,6 +29,7 @@ msgid "Głośność"
 msgstr "Kelantangan"
 
 #: AudioBox.cpp:103
+#, fuzzy
 msgid "Połącz suwak głośności i rozciągnięcia"
 msgstr "Pautkan penggeser kelantangan dan peregang"
 
@@ -39,6 +42,7 @@ msgid "Odtwórz następną linijkę"
 msgstr "Mainkan baris seterusnya"
 
 #: AudioBox.cpp:138
+#, fuzzy
 msgid "Odtwórz aktualną sylabę / linijkę"
 msgstr "Mainkan suku kata / baris seterusnya"
 
@@ -95,6 +99,7 @@ msgid "Przejdź do zaznaczenia"
 msgstr "Pergi ke pilihan"
 
 #: AudioBox.cpp:175
+#, fuzzy
 msgid "Włącz / Wyłącz tworzenie karaoke"
 msgstr "Daya / Nyahdaya pembuatan karaoke"
 
@@ -103,10 +108,12 @@ msgid "Włącz / Wyłącz automatyczne dzielenie sylab"
 msgstr "Daya / Nyahdaya pemisahan suku kata automatik"
 
 #: AudioBox.cpp:184
+#, fuzzy
 msgid "Automatycznie zatwierdza zmiany"
 msgstr "Meluluskan perubahan secara automatik"
 
 #: AudioBox.cpp:188
+#, fuzzy
 msgid "Przechodzenie do następnej linijki po zatwierdzeniu zmian"
 msgstr "Pergi ke baris seterusnya setelah kelulusan perubahan"
 
@@ -119,6 +126,7 @@ msgid "Tryb spektrum"
 msgstr "Mod spektrum"
 
 #: AudioBox.cpp:200
+#, fuzzy
 msgid "Uwydatnienie częstotliwości głosu na spektrum"
 msgstr "Peningkatan spektrum frekuensi pertuturan"
 
@@ -136,10 +144,12 @@ msgstr "Format bingkai kekunci tidak sah"
 #: VisualAllTagsEdition.cpp:303 VisualAllTagsEdition.cpp:307
 #: VisualDrawingShapes.cpp:144 VisualDrawingShapes.cpp:148
 #: VisualDrawingShapes.cpp:166 VisualDrawingShapes.cpp:270
+#, fuzzy
 msgid "Błąd"
 msgstr "Ralat"
 
 #: AudioDisplay.cpp:230 RendererVideo.cpp:178
+#, fuzzy
 msgid "Nie można utworzyć obiektu Direct3D"
 msgstr "Tidak dapat membuat objek Direct3D"
 
@@ -152,14 +162,17 @@ msgid "Zawiodło któreś z ustawień DirectX"
 msgstr "Salah satu tetapan DirectX gagal"
 
 #: AudioDisplay.cpp:294
+#, fuzzy
 msgid "Nie można ustawić macierzy porojekcji"
 msgstr "Tidak dapat menetapkan tayangan matriks"
 
 #: AudioDisplay.cpp:295 RendererVideo.cpp:247 VisualRotationXY.cpp:163
+#, fuzzy
 msgid "Nie można ustawić macierzy świata"
 msgstr "Tidak dapat menetapkan paparan matriks"
 
 #: AudioDisplay.cpp:296 RendererVideo.cpp:248 VisualRotationXY.cpp:164
+#, fuzzy
 msgid "Nie można ustawić macierzy widoku"
 msgstr "Tidak dapat menetapkan dunia matriks"
 
@@ -169,6 +182,7 @@ msgid "Nie można stworzyć powierzchni"
 msgstr "Tidak dapat membuat permukaan"
 
 #: AudioDisplay.cpp:300 RendererVideo.cpp:261
+#, fuzzy
 msgid "Nie można stworzyć linii D3DX"
 msgstr "Tidak dapat membuka garis D3DX"
 
@@ -216,6 +230,7 @@ msgid "Filtruj listę"
 msgstr "Tapis senarai"
 
 #: AutoSaveOpen.cpp:33
+#, fuzzy
 msgid "Wszystkie słowa"
 msgstr "Cari semua perkataan"
 
@@ -257,6 +272,7 @@ msgid "Folder autozapisu jest pusty"
 msgstr "Folder simpanan automatik kosong"
 
 #: AutoSaveOpen.cpp:247
+#, fuzzy
 msgid "Wczytywanie autozapisu nie powiodło się"
 msgstr "Tidak dapat membuka folder simpanan automatik"
 
@@ -333,6 +349,7 @@ msgid "Auto zapis"
 msgstr "Simpan automatik"
 
 #: AutoSavesRemoving.cpp:102
+#, fuzzy
 msgid "Usuń wybrane pliki auto zapisu"
 msgstr "Hapus fail simpanan automatik yang terpilih"
 
@@ -349,6 +366,7 @@ msgid "Indeks"
 msgstr "Indeks FFMS2"
 
 #: AutoSavesRemoving.cpp:115
+#, fuzzy
 msgid "Usuń wybrane indeksy"
 msgstr "Hapus fail indeks terpilih"
 
@@ -365,6 +383,7 @@ msgid "Audio cache"
 msgstr "Audio simpanan sementara"
 
 #: AutoSavesRemoving.cpp:128
+#, fuzzy
 msgid "Usuń wybrane pliki audio cache"
 msgstr "Hapus fail simpanan sementara audio terpilih"
 
@@ -401,23 +420,19 @@ msgid "Nie można otworzyć folderu plików tymczasowych"
 msgstr "Folder fail sementara tidak boleh dibuka"
 
 #: Automation.cpp:472
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "Błąd inicjalizacji skryptu Lua \"%s\":\n"
 "\n"
 "%s."
-msgstr ""
-"Gagal mengasal skrip Lua \"%s\":\n"
-"\n"
-"%s."
+msgstr "Gagal mengasal skrip Lua \"%s\":\n\n%s."
 
 #: Automation.cpp:484
+#, fuzzy
 msgid ""
 "Próbujesz wczytać skrypt Automatyzacji 3 jako skrypt Automatyzacji 4. "
 "Automatyzacja 3 nie jest już wspierana."
-msgstr ""
-"Anda cuba untuk memuatkan skrip Automasi 3 sebagai skrip Automasi 4. "
-"Automasi 3 sudah tidak lagi disokong."
+msgstr "Anda cuba untuk memuatkan skrip Automasi 3 sebagai skrip Automasi 4. Automasi 3 sudah tidak lagi disokong."
 
 #: Automation.cpp:525
 #, c-format
@@ -425,46 +440,43 @@ msgid "Makro o nazwie '%s' jest już zdefiniowane w skrypcie '%s'"
 msgstr "Makro bernama '%s' telah pun ditakrif dalam skrip '%s'"
 
 #: Automation.cpp:636
+#, fuzzy
 msgid "Wystąpił błąd podczas wykonywania skryptu Lua:\n"
 msgstr "Keralatan telah berlaku semasa memuatkan skrip Lua:\n"
 
 #: Automation.cpp:1057 Automation.cpp:1098 KainoteFrame.cpp:739
 #: KainoteFrame.cpp:2405
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "Błąd wczytywania skryptu Lua: %s\n"
 "%s"
-msgstr ""
-"Ralat memuatkan skrip Lua: %s\n"
-"%s"
+msgstr "Ralat memuatkan skrip Lua: %s\n%s"
 
 #: Automation.cpp:1061 Automation.cpp:1102
-#, c-format
+#, c-format, fuzzy
 msgid "Nieznany błąd wczytywania skryptu Lua: %s."
 msgstr "Berlaku ralat yang tidak diketahui semasa memuatkan skrip Lua: %s."
 
 #: Automation.cpp:1068
+#, fuzzy
 msgid ""
 "Jeden bądź więcej skryptów autoload zawiera błędy.\n"
 "Obejrzyj opisy skryptów, by uzyskać więcej informacji."
-msgstr ""
-"Terdapat satu atau lebih ralat pada skrip automuat.\n"
-"Lihat perihalan skrip untuk maklumat lanjut."
+msgstr "Terdapat satu atau lebih ralat pada skrip automuat.\nLihat perihalan skrip untuk maklumat lanjut."
 
 #: Automation.cpp:1106
+#, fuzzy
 msgid ""
 "Co najmniej jeden skrypt z pliku napisów zawiera błędy.\n"
 "Zobacz opisy skryptów, by uzyskać więcej informacji."
-msgstr ""
-"Terdapat sekurang-kurangnya satu skrip dari fail sari kata yang mengandungi "
-"ralat.\n"
-"Lihat perihal skrip untuk maklumat lanjut."
+msgstr "Terdapat sekurang-kurangnya satu skrip dari fail sari kata yang mengandungi ralat.\nLihat perihal skrip untuk maklumat lanjut."
 
 #: Automation.cpp:1116
 msgid "Wybierz edytor skryptów"
 msgstr "Pilih penyunting skrip"
 
 #: Automation.cpp:1117
+#, fuzzy
 msgid "Programy (*.exe)|*.exe|Wszystkie pliki (*.*)|*.*"
 msgstr "Perisian (*.exe) | *.exe | Semua fail (*. *) | *. *"
 
@@ -477,6 +489,7 @@ msgid "Błąd automatyzacji"
 msgstr "Ralat automasi"
 
 #: Automation.cpp:1199 Automation.cpp:1246
+#, fuzzy
 msgid "Pełny opis błędu Lua"
 msgstr "Perihal penuh ralat Lua"
 
@@ -572,15 +585,14 @@ msgid "Zamień skróty"
 msgstr "Tukar kekunci pintas"
 
 #: AutomationHotkeysDialog.cpp:246 Hotkeys.cpp:485 OptionsDialog.cpp:122
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "Ten skrót już istnieje w %s jako skrót do \"%s\".\n"
 "Co zrobić?"
-msgstr ""
-"Pintasan ini telah pun wujud dalam %s sebagai pintasan \"%s\".\n"
-"Nak buat apa?"
+msgstr "Pintasan ini telah pun wujud dalam %s sebagai pintasan \"%s\".\nNak buat apa?"
 
 #: AutomationHotkeysDialog.cpp:247 Hotkeys.cpp:486 OptionsDialog.cpp:123
+#, fuzzy
 msgid "innych oknach"
 msgstr "tetingkap-tetingkap lain"
 
@@ -589,6 +601,7 @@ msgid "innym oknie"
 msgstr "tetingkap lain"
 
 #: AutomationHotkeysDialog.cpp:251 Hotkeys.cpp:491 OptionsDialog.cpp:127
+#, fuzzy
 msgid "Ustaw mimo to"
 msgstr "Tetapkan"
 
@@ -603,11 +616,12 @@ msgid "stylów"
 msgstr "gaya"
 
 #: AutomationToFile.cpp:611 AutomationToFile.cpp:613
+#, fuzzy
 msgid "dialogów"
 msgstr "dialog"
 
 #: AutomationToFile.cpp:614
-#, c-format
+#, c-format, fuzzy
 msgid "Nie można dodać linii klasy: %s w pole klasy: %s"
 msgstr "Tidak dapat menambahkan baris kelas: %s di medan kelas: %s"
 
@@ -658,17 +672,12 @@ msgstr "Warna sempadan"
 msgid "Kolor cienia"
 msgstr "Warna bayang"
 
-#: ColorPicker.cpp:548
-msgid "Zamień ze sobą skróty próbnika i okna wyboru kolorów"
-msgstr "Tukar pintasan pemilih warna dan tetingkap pilihan warna"
-
 #: ColorPicker.cpp:550
+#, fuzzy
 msgid ""
 "Zahaczenie tej opcji uruchamia próbnik po kliknięciu lewym przyciskiem,\n"
 "a okno wyboru koloru po kliknięciu prawym przyciskiem."
-msgstr ""
-"Mencentang pilihan ini akan membuka pengambil warna pada klik kiri tetikus,\n"
-"dan tetingkap pemilih warna apabila klik kanan."
+msgstr "Mencentang pilihan ini akan membuka pengambil warna pada klik kiri tetikus,\ndan tetingkap pemilih warna apabila klik kanan."
 
 #: ColorPicker.cpp:560
 msgid "Wybrany kolor:"
@@ -707,12 +716,11 @@ msgid "Próbnik koloru"
 msgstr "Pengambil warna"
 
 #: ColorPicker.cpp:1394
+#, fuzzy
 msgid ""
 "Przenoś okno\n"
 "w miejsce wyboru koloru"
-msgstr ""
-"Pindahkan tetingkap\n"
-"di tempat pilihan warna"
+msgstr "Pindahkan tetingkap\ndi tempat pilihan warna"
 
 #: Demux.cpp:44 ProviderFFMS2.cpp:174 ProviderFFMS2.cpp:311 VideoFfmpeg.cpp:185
 #: VideoFfmpeg.cpp:319
@@ -721,10 +729,12 @@ msgid "Wystąpił błąd indeksowania: %s"
 msgstr "Keralatan berlaku ketika mengindeks: %s"
 
 #: Demux.cpp:85
+#, fuzzy
 msgid "Plik nie ma żadnej ścieżki z napisami."
 msgstr "Fail tidak mempunyai sebarang sari kata."
 
 #: Demux.cpp:96
+#, fuzzy
 msgid "Wybierz ścieżkę napisów"
 msgstr "Pilih trek sari kata"
 
@@ -737,14 +747,17 @@ msgid "Sugestie poprawy"
 msgstr "Baiki cadangan"
 
 #: DialogueTextEditor.cpp:2262 KaiListCtrl.cpp:113 KaiTextCtrl.cpp:1461
+#, fuzzy
 msgid "&Kopiuj"
 msgstr "Salin"
 
 #: DialogueTextEditor.cpp:2263 KaiTextCtrl.cpp:1462
+#, fuzzy
 msgid "Wy&tnij"
 msgstr "Potong"
 
 #: DialogueTextEditor.cpp:2264 KaiListCtrl.cpp:114 KaiTextCtrl.cpp:1463
+#, fuzzy
 msgid "&Wklej"
 msgstr "Tampal"
 
@@ -757,6 +770,7 @@ msgid "Szukaj tłumaczenia słowa na pl.ba.bla"
 msgstr "Cari terjemahan perkataan di pl.ba.bla"
 
 #: DialogueTextEditor.cpp:2269 KaiTextCtrl.cpp:1468
+#, fuzzy
 msgid "Szukaj zaznaczonej frazy w Google"
 msgstr "Gelintar frasa terpilih di Google"
 
@@ -773,11 +787,12 @@ msgid "Zainstalowane języki"
 msgstr "Bahasa terpasang"
 
 #: DialogueTextEditor.cpp:2290
-#, c-format
+#, c-format, fuzzy
 msgid "&Dodaj słowo \"%s\" do słownika"
 msgstr "Tambah perkataan \"%s\" ke kamus"
 
 #: DialogueTextEditor.cpp:2293 KaiTextCtrl.cpp:1470
+#, fuzzy
 msgid "&Usuń"
 msgstr "Padam"
 
@@ -815,7 +830,7 @@ msgid "Klatki na sekundę:"
 msgstr "Bidang per saat:"
 
 #: DummyVideo.cpp:95
-#, c-format
+#, c-format, fuzzy
 msgid "Co daje %i klatek"
 msgstr "Kesemuanya %i bidang"
 
@@ -824,6 +839,7 @@ msgid "Czas trwania:"
 msgstr "Durasi:"
 
 #: DummyVideo.cpp:120 DummyVideo.cpp:124
+#, fuzzy
 msgid "Nieprawidłowa wartość fps."
 msgstr "Nilai FPS tidak sah."
 
@@ -848,6 +864,7 @@ msgid "Nazwa przycisku"
 msgstr "Nama butang"
 
 #: EditBox.cpp:93
+#, fuzzy
 msgid "Tag przycisku"
 msgstr "Tanda butang"
 
@@ -968,10 +985,12 @@ msgstr ""
 "teks terjemahan"
 
 #: EditBox.cpp:1183
+#, fuzzy
 msgid "Kopiuje cały tekst obcojęzyczny do pola z tłumaczeniem"
 msgstr "Salin seluruh teks bahasa asing ke ruang terjemahan"
 
 #: EditBox.cpp:1184
+#, fuzzy
 msgid "Kopiuje zaznaczony tekst obcojęzyczny do pola z tłumaczeniem"
 msgstr "Salin teks bahasa asing yang dipilih ke ruang terjemahan"
 
@@ -980,6 +999,7 @@ msgid "Ustawia linijkę jako komentarz. Komentarze nie są wyświetlane"
 msgstr "Tetapkan baris sebagai ulasan. Ulasan tidak akan ditunjukkan"
 
 #: EditBox.cpp:1186
+#, fuzzy
 msgid "Warstwa linijki, wyższe warstwy są na wierzchu"
 msgstr "Lapisan baris. Lapisan yang lebih tinggi berada di atas"
 
@@ -1000,32 +1020,36 @@ msgid "Styl linijki"
 msgstr "Gaya baris"
 
 #: EditBox.cpp:1191
+#, fuzzy
 msgid "Umożliwia szybką edycję stylu linijki"
 msgstr "Anda boleh mengubah gaya baris semasa dengan pantas"
 
 #: EditBox.cpp:1192
+#, fuzzy
 msgid "Oznaczenie aktora linijki. Nie wpływa na wygląd napisów"
 msgstr "Penanda pelakon. Ia tak memberi kesan pada rupa sari kata"
 
 #: EditBox.cpp:1193
+#, fuzzy
 msgid "Margines lewy linijki"
 msgstr "Jidar kiri baris"
 
 #: EditBox.cpp:1194
+#, fuzzy
 msgid "Margines prawy linijki"
 msgstr "Jidar kanan baris"
 
 #: EditBox.cpp:1195
+#, fuzzy
 msgid "Margines górny i dolny linijki"
 msgstr "Jidar atas dan bawah baris"
 
 #: EditBox.cpp:1196
+#, fuzzy
 msgid ""
 "Efekt linijki. Służy do oznaczania linijek, na których zastosowane ma być "
 "karaoke bądź efekty VSFiltra"
-msgstr ""
-"Baris kesan. Ia digunakan untuk menandakan baris, yang mana digunakan untuk "
-"karaoke ataupun kesan VSFilter"
+msgstr "Baris kesan. Ia digunakan untuk menandakan baris, yang mana digunakan untuk karaoke ataupun kesan VSFilter"
 
 #: EditBox.cpp:1197
 msgid ""
@@ -1044,14 +1068,17 @@ msgstr ""
 "Tidak sepatutnya melebihi 15 aksara per saat"
 
 #: EditBox.cpp:1694 EditBox.cpp:1993
+#, fuzzy
 msgid "Zmień ilość przycisków"
 msgstr "Ubah bilangan butang"
 
 #: EditBox.cpp:1930
+#, fuzzy
 msgid "Nie znaleziono niepewnych"
 msgstr "Tidak menjumpai yang belum disahkan"
 
 #: EditBox.cpp:1952
+#, fuzzy
 msgid "Nie znaleziono nieprzetłumaczonych"
 msgstr "Tidak menjumpai yang belum diterjemahkan"
 
@@ -1083,6 +1110,7 @@ msgid "Filtry:"
 msgstr "Penapis:"
 
 #: FindReplaceDialog.cpp:79
+#, fuzzy
 msgid "Katalog szukania napisów:"
 msgstr "Folder mencari sari kata:"
 
@@ -1111,6 +1139,7 @@ msgid "Koniec tekstu"
 msgstr "Akhiran teks"
 
 #: FindReplaceDialog.cpp:110
+#, fuzzy
 msgid "Uwzględnij komentarze"
 msgstr "Guna komen"
 
@@ -1145,12 +1174,11 @@ msgid "Znajdź"
 msgstr "Cari"
 
 #: FindReplaceDialog.cpp:168
+#, fuzzy
 msgid ""
 "Znajdź we wszystkich\n"
 "otwartych napisach"
-msgstr ""
-"Cari di dalam semua sari kata\n"
-"yang dibuka"
+msgstr "Cari di dalam semua sari kata\nyang dibuka"
 
 #: FindReplaceDialog.cpp:170
 msgid ""
@@ -1161,6 +1189,7 @@ msgstr ""
 "sari kata semasa"
 
 #: FindReplaceDialog.cpp:184
+#, fuzzy
 msgid "Zamień następne"
 msgstr "Ganti seterusnya"
 
@@ -1169,12 +1198,11 @@ msgid "Zamień wszystko"
 msgstr "Ganti semua"
 
 #: FindReplaceDialog.cpp:187
+#, fuzzy
 msgid ""
 "Zamień we wszystkich\n"
 "otwartych napisach"
-msgstr ""
-"Cari di dalam semua sari kata\n"
-"yang dibuka"
+msgstr "Cari di dalam semua sari kata\nyang dibuka"
 
 #: FindReplaceDialog.cpp:205 FindReplaceDialog.cpp:413
 #: FindReplaceDialog.cpp:429
@@ -1186,16 +1214,16 @@ msgid "Zamień w napisach"
 msgstr "Ganti dalam sari kata"
 
 #: FindReplaceDialog.cpp:225
+#, fuzzy
 msgid "Szukaj w podfolderach"
 msgstr "Cari dalam subfolder"
 
 #: FindReplaceDialog.cpp:227
+#, fuzzy
 msgid ""
 "Szukaj\n"
 "w ukrytych folderach"
-msgstr ""
-"Cari dalam folder\n"
-"tersorok"
+msgstr "Cari dalam folder\ntersorok"
 
 #: FindReplaceDialog.cpp:243
 msgid "Linijki"
@@ -1218,6 +1246,7 @@ msgid "Znajdź i zamień"
 msgstr "Cari dan ganti"
 
 #: FindReplaceResultsDialog.cpp:29 MispellReplacerDialog.cpp:192
+#, fuzzy
 msgid "Wyniki szukania"
 msgstr "Hasil carian"
 
@@ -1302,12 +1331,11 @@ msgid "Pytanie"
 msgstr "Prom"
 
 #: FontCatalogList.cpp:166
+#, fuzzy
 msgid ""
 "Lista katalogów ma opcję autozapisu, pliki znajdują się w folderze \"Config"
 "\"."
-msgstr ""
-"Senarai mempunyai simpanan auto, fail boleh dijumpai di dalam folder \"Config"
-"\"."
+msgstr "Senarai mempunyai simpanan auto, fail boleh dijumpai di dalam folder \"Config\"."
 
 #: FontCatalogList.cpp:168
 msgid "Katalogi:"
@@ -1373,6 +1401,7 @@ msgstr "Dalam baris: "
 
 #: FontCollector.cpp:132 HotkeysNaming.cpp:132 KainoteFrame.cpp:309
 #: KainoteFrame.cpp:310 SubsGrid.cpp:231
+#, fuzzy
 msgid "Kolekcjoner czcionek"
 msgstr "Pengumpul fon"
 
@@ -1401,12 +1430,11 @@ msgid "Zapisuj do folderu z napisami / wideo."
 msgstr "Simpan ke folder video / sari kata."
 
 #: FontCollector.cpp:173
+#, fuzzy
 msgid ""
 "Zapisuje do folderu z wideo\n"
 "przy wyciąganiu czcionek z pliku MKV."
-msgstr ""
-"Simpan ke folder video\n"
-"ketika menyahmultipleks fon dari MKV."
+msgstr "Simpan ke folder video\nketika menyahmultipleks fon dari MKV."
 
 #: FontCollector.cpp:178
 msgid "Wyciągnij czcionki z wczytanego pliku MKV"
@@ -1450,6 +1478,7 @@ msgid "Wybierz nazwę dla archiwum"
 msgstr "Berikan nama untuk arkib"
 
 #: FontCollector.cpp:483
+#, fuzzy
 msgid "Wybrana ścieżka zapisu jest niepoprawna."
 msgstr "Laluan simpanan yang dipilih tidak sah."
 
@@ -1469,6 +1498,7 @@ msgid "Potwierdzenie"
 msgstr "Pengesahan"
 
 #: FontCollector.cpp:583 FontCollector.cpp:640
+#, fuzzy
 msgid "Nie znaleziono czcionki \""
 msgstr "Tidak menjumpai fon \""
 
@@ -1478,39 +1508,34 @@ msgid "Znaleziono czcionkę \"%s\"\n"
 msgstr "Jumpa fon \"%s\"\n"
 
 #: FontCollector.cpp:707
+#, fuzzy
 msgid ""
 "Nie można pobrać rozmiarów i nazw plików czcionek\n"
 "kopiowanie zostaje przerwane.\n"
-msgstr ""
-"Gagal mendapatkan saiz fon dan nama fail,\n"
-"penyalinan dibatalkan.\n"
+msgstr "Gagal mendapatkan saiz fon dan nama fail,\npenyalinan dibatalkan.\n"
 
 #: FontCollector.cpp:739
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "Pobrano rozmiary i nazwy %i czcionek, upłynęło %sms.\n"
 "\n"
-msgstr ""
-"Saiz diambil dan nama fon %i, %sms telah berlalu.\n"
-"\n"
+msgstr "Saiz diambil dan nama fon %i, %sms telah berlalu.\n\n"
 
 #: FontCollector.cpp:772
 msgid "Ścieżka jest niedostępna"
 msgstr "Laluan tidak tersedia"
 
 #: FontCollector.cpp:785
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "Czcionka \"%s\" należy do stylu,\n"
 "który nie jest wykorzystywany."
-msgstr ""
-"\"%s\" adalah fon dari gaya,\n"
-"yang tidak digunakan."
+msgstr "\"%s\" adalah fon dari gaya,\nyang tidak digunakan."
 
 #: FontCollector.cpp:794
+#, fuzzy
 msgid "Niektóre czcionki nie mają wszystkich znaków użytych w tekście.\n"
-msgstr ""
-"Beberapa fon tidak mengandungi kesemua glif yang digunakan di dalam teks.\n"
+msgstr "Beberapa fon tidak mengandungi kesemua glif yang digunakan di dalam teks.\n"
 
 #: FontCollector.cpp:801
 #, c-format
@@ -1555,7 +1580,7 @@ msgid "Zakończono powodzeniem, %s %s.\n"
 msgstr "Selesai dengan jayanya, %s %s.\n"
 
 #: FontCollector.cpp:833
-#, c-format
+#, c-format, fuzzy
 msgid "Dodano do archiwum czcionkę \"%s\"."
 msgstr "Ditamabh ke arkib fon \"%s\"."
 
@@ -1584,6 +1609,7 @@ msgstr ""
 "\n"
 
 #: FontCollector.cpp:884
+#, fuzzy
 msgid "To wideo nie jest plikiem MKV."
 msgstr "Video ini bukan fail MKV."
 
@@ -1601,6 +1627,7 @@ msgid "Zapisano czcionkę o nazwie \""
 msgstr "Telah menyimpan fon bernama \""
 
 #: FontCollector.cpp:914
+#, fuzzy
 msgid "Nie można zapisać czcionki o nazwie \""
 msgstr "Anda tidak boleh menyimpan fon bernama \""
 
@@ -1628,13 +1655,11 @@ msgid "Znaleziono czcionkę \"%s\"."
 msgstr "Jumpa fon \"%s\"."
 
 #: FontCollector.cpp:1041
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "Czcionka \"%s\" należy do stylu,\n"
 "który nie jest wykorzystywany.%s"
-msgstr ""
-"\"%s\" adalah fon daripada gaya\n"
-"yang tidak digunakan.%s"
+msgstr "\"%s\" adalah fon daripada gaya\nyang tidak digunakan.%s"
 
 #: FontCollector.cpp:1041
 msgid ""
@@ -1665,17 +1690,17 @@ msgid "Czcionka \"%s\" nie ma kursywy."
 msgstr "Font \"%s\" kehilangan gaya condong."
 
 #: FontCollector.cpp:1072
-#, c-format
+#, c-format, fuzzy
 msgid "Nie można sprawdzić znaków czcionki \"%s\"."
 msgstr "Gagal memeriksa aksara \"%s\" fon."
 
 #: FontCollector.cpp:1076
-#, c-format
+#, c-format, fuzzy
 msgid "Czcionka \"%s\" nie zawiera znaków: \"%s\"."
 msgstr "Fon \"%s\" tidak mempunyai aksara: \"%s\"."
 
 #: FontCollector.cpp:1088
-#, c-format
+#, c-format, fuzzy
 msgid "Nie można pobrać zawartości czcionki \"%s\"."
 msgstr "Gagal mendapatkan isi fon \"%s\"."
 
@@ -1705,6 +1730,7 @@ msgid "Nie można znaleźć czcionki \"%s\" w folderze Fonts."
 msgstr "Gagal menjumpai \"%s\" fon di dalam folder Fonts."
 
 #: FontCollector.cpp:1214
+#, fuzzy
 msgid "Nie można stworzyć procesu, muxowanie przerwane"
 msgstr "Tidak dapat membuat proses. Permultipleksan dibatalkan"
 
@@ -1742,6 +1768,7 @@ msgid "Bez katalogu"
 msgstr "Tanpa senarai"
 
 #: FontDialog.cpp:425 StyleChange.cpp:85
+#, fuzzy
 msgid "Dodaje czcionki do wcześniej utworzonego katalogu"
 msgstr "Menambah fon ke dalam senarai"
 
@@ -1758,6 +1785,7 @@ msgid "Filtruj"
 msgstr "Penapis"
 
 #: FontDialog.cpp:430 StyleChange.cpp:89
+#, fuzzy
 msgid "Filtruje czcionki, by zawierały wpisane znaki"
 msgstr "Tapis fon untuk aksara yang tertulis"
 
@@ -2002,14 +2030,17 @@ msgid "Wstaw różnicę końcową"
 msgstr "Sisipkan perbezaan sehingga akhir"
 
 #: Hotkeys.cpp:192 HotkeysNaming.cpp:129
+#, fuzzy
 msgid "Następne niepewne"
 msgstr "Seterusnya yang belum disahkan"
 
 #: Hotkeys.cpp:193 HotkeysNaming.cpp:130
+#, fuzzy
 msgid "Następne nieprzetłumaczone"
 msgstr "Seterusnya yang belum diterjemah"
 
 #: Hotkeys.cpp:194 HotkeysNaming.cpp:226
+#, fuzzy
 msgid "Ustaw jako niepewne i przejdź dalej"
 msgstr "Tetap sebagai tidak disahkan dan pergi ke baris seterusnya"
 
@@ -2101,11 +2132,12 @@ msgid "Dodaj zakończenie"
 msgstr "Tambah penutup"
 
 #: Hotkeys.cpp:270
+#, fuzzy
 msgid "Plik skrótów jest przestarzały zostanie zamieniony domyślnym"
 msgstr "Fail pintasan sudah usang, ia akan digantikan secara lalai"
 
 #: Hotkeys.cpp:373
-#, c-format
+#, c-format, fuzzy
 msgid "Skrót \"%s\" nie jest prawidłowy"
 msgstr "Kekunci \"%s\" tidak sah"
 
@@ -2125,6 +2157,7 @@ msgid "Skrót globalny"
 msgstr "Kekunci pintas global"
 
 #: Hotkeys.cpp:600
+#, fuzzy
 msgid "Skrót pola napisów"
 msgstr "Kekunci pintas kekisi sari kata"
 
@@ -2153,11 +2186,12 @@ msgstr ""
 "Alt)."
 
 #: Hotkeys.cpp:644
+#, fuzzy
 msgid "Nie można używać skrótów do kopiowania, wycinania i wklejania."
-msgstr ""
-"Anda tidak boleh menggunakan pintasan untuk menyalin, memotong dan menampal."
+msgstr "Anda tidak boleh menggunakan pintasan untuk menyalin, memotong dan menampal."
 
 #: Hotkeys.cpp:647
+#, fuzzy
 msgid "Nie można używać skrótu zamykania programu."
 msgstr "Anda tidak boleh menggunakan pintasan untuk menutup perisian."
 
@@ -2294,14 +2328,17 @@ msgid "Ukryj komentarze"
 msgstr "Sorok ulasan"
 
 #: HotkeysNaming.cpp:124 SubsGrid.cpp:181
+#, fuzzy
 msgid "Pokaż niepewne"
 msgstr "Tunjuk yang belum disahkan"
 
 #: HotkeysNaming.cpp:125 SubsGrid.cpp:184
+#, fuzzy
 msgid "Wyłącz filtrowanie"
 msgstr "Matikan penapisan"
 
 #: HotkeysNaming.cpp:126 SubsGrid.cpp:179
+#, fuzzy
 msgid "Ukryj zaznaczone linie"
 msgstr "Sorok pilihan"
 
@@ -2310,6 +2347,7 @@ msgid "Ukryj linie ze stylami"
 msgstr "Sorok baris dengan gaya"
 
 #: HotkeysNaming.cpp:128 SubsGrid.cpp:182
+#, fuzzy
 msgid "Pokaż nieprzetłumaczone"
 msgstr "Tunjuk yang tidak diterjemahkan"
 
@@ -2390,6 +2428,7 @@ msgid "Filtruj po wczytaniu napisów"
 msgstr "Tapis selepas sari kata dimuatkan"
 
 #: HotkeysNaming.cpp:153 SubsGrid.cpp:176
+#, fuzzy
 msgid "Nie resetuj wcześniejszego filtrowania"
 msgstr "Jangan tetapkan semula tapisan sebelumnya"
 
@@ -2506,6 +2545,7 @@ msgid "Otwórz autozapis"
 msgstr "Buka simpanan auto"
 
 #: HotkeysNaming.cpp:186 KainoteFrame.cpp:324 KainoteFrame.cpp:325
+#, fuzzy
 msgid "Uruchom ostatnio zaczytany skrypt"
 msgstr "Jalankan skrip yang baru dijalankan"
 
@@ -2518,6 +2558,7 @@ msgid "Otwórz audio"
 msgstr "Buka audio"
 
 #: HotkeysNaming.cpp:199 SubsGrid.cpp:223
+#, fuzzy
 msgid "Wklej tekst tłumaczenia"
 msgstr "Tampal teks terjemahan"
 
@@ -2538,6 +2579,7 @@ msgid "Zapisz tłumaczenie"
 msgstr "Simpan terjemahan"
 
 #: HotkeysNaming.cpp:220 KainoteFrame.cpp:164 KainoteFrame.cpp:165
+#, fuzzy
 msgid "Zapisuj napisy z nazwą wideo"
 msgstr "Simpan sari kata dengan nama dari video"
 
@@ -2546,10 +2588,12 @@ msgid "Zaznacz linijki"
 msgstr "Pilih baris"
 
 #: HotkeysNaming.cpp:224 KainoteFrame.cpp:252
+#, fuzzy
 msgid "Ustaw audio z czasem wideo"
 msgstr "Tetapkan audio dengan masa video"
 
 #: HotkeysNaming.cpp:225 KainoteFrame.cpp:254
+#, fuzzy
 msgid "Ustaw znacznik audio z czasem wideo"
 msgstr "Tetapkan penanda audio dengan masa video"
 
@@ -2566,6 +2610,7 @@ msgid "Przejdź do czasu końcowego linii"
 msgstr "Pergi ke masa tamat"
 
 #: HotkeysNaming.cpp:235 KainoteFrame.cpp:313 KainoteFrame.cpp:314
+#, fuzzy
 msgid "Sprawdź poprawność pisowni"
 msgstr "Penyemak ejaan"
 
@@ -2582,6 +2627,7 @@ msgid "Zmień rozdzielczość napisów"
 msgstr "Sampel semula sari kata"
 
 #: HotkeysNaming.cpp:243
+#, fuzzy
 msgid "Wczytaj napisy z pliku MKV"
 msgstr "Muatkan sari kata dari fail MKV"
 
@@ -2590,6 +2636,7 @@ msgid "Zamień linie"
 msgstr "Silih baris"
 
 #: HotkeysNaming.cpp:245 SubsGrid.cpp:225
+#, fuzzy
 msgid "Okno przesuwania dialogów"
 msgstr "Samakan terjemahan dengan sari kata yang telah ada"
 
@@ -2631,6 +2678,7 @@ msgid "Oczyść style pliku ASS"
 msgstr "Bersihkan gaya fail ASS"
 
 #: HotkeysNaming.cpp:260 KainoteFrame.cpp:213
+#, fuzzy
 msgid "Popraw drobne błędy (eksperymentalne)"
 msgstr "Pengganti Serba Guna (Dalam ujikaji)"
 
@@ -2699,6 +2747,7 @@ msgid "Nazwa pliku wideo"
 msgstr "Nama fail video"
 
 #: KainoteFrame.cpp:134
+#, fuzzy
 msgid "Wczytuje poprzednio zaczytane pliki"
 msgstr "Buka fail yang kali terakhir dimuatkan"
 
@@ -2719,20 +2768,21 @@ msgid "Zapisuje sesję do pliku"
 msgstr "Simpan sesi kepada fail"
 
 #: KainoteFrame.cpp:141
+#, fuzzy
 msgid "Pytaj o wczytanie ostatniej sesji przy starcie programu"
 msgstr "Tanya jika anda mahu memuatkan sesi terakhir semasa memulakan perisian"
 
 #: KainoteFrame.cpp:142
+#, fuzzy
 msgid "Pyta, czy wczytać ostatnio zaczytane pliki przy starcie programu"
-msgstr ""
-"Tanya sama ada anda mahu memuatkan fail yang baru dibaca semasa memulakan "
-"perisian"
+msgstr "Tanya sama ada anda mahu memuatkan fail yang baru dibaca semasa memulakan perisian"
 
 #: KainoteFrame.cpp:145
 msgid "Wczytaj ostatnią sesję przy starcie programu"
 msgstr "Muat sesi terakhir setelah perisian dimulakan"
 
 #: KainoteFrame.cpp:146
+#, fuzzy
 msgid "Wczytuje poprzednio zaczytane pliki przy starcie programu"
 msgstr "Memuatkan sesi terakhir setelah perisian dimulakan"
 
@@ -2753,6 +2803,7 @@ msgid "Zapisz aktualny plik"
 msgstr "Simpan fail semasa"
 
 #: KainoteFrame.cpp:154
+#, fuzzy
 msgid "Zapisz &wszystko"
 msgstr "Simpan semua"
 
@@ -2765,10 +2816,12 @@ msgid "Zapisz jako"
 msgstr "Simpan sebagai"
 
 #: KainoteFrame.cpp:158
+#, fuzzy
 msgid "Zapisz &tłumaczenie"
 msgstr "Simpan terjemahan"
 
 #: KainoteFrame.cpp:160
+#, fuzzy
 msgid "Ostatnio otwa&rte napisy"
 msgstr "Sari kata yang baru dibuka"
 
@@ -2777,14 +2830,17 @@ msgid "Ostatnio otwarte napisy"
 msgstr "Sari kata yang baru dibuka"
 
 #: KainoteFrame.cpp:162
+#, fuzzy
 msgid "Usuń napisy z e&dytora"
 msgstr "Alih keluar sari kata dari penyunting"
 
 #: KainoteFrame.cpp:168
+#, fuzzy
 msgid "Otwiera autozapis wybrany z listy"
 msgstr "Buka simpanan auto dari senarai"
 
 #: KainoteFrame.cpp:170
+#, fuzzy
 msgid "Otwiera okno usuwania plików tymczasowych"
 msgstr "Buka tetingkap pembuang fail sementara"
 
@@ -2837,6 +2893,7 @@ msgid "Znajdź i za&mień"
 msgstr "Cari dan gan&ti"
 
 #: KainoteFrame.cpp:191
+#, fuzzy
 msgid "Szuka i podmienia dane frazy tekstu"
 msgstr "Cari ungkapan dan gantikan ia"
 
@@ -2845,10 +2902,12 @@ msgid "Z&najdź"
 msgstr "&Cari"
 
 #: KainoteFrame.cpp:193
+#, fuzzy
 msgid "Szuka dane frazy tekstu"
 msgstr "Cari ungkapan"
 
 #: KainoteFrame.cpp:195
+#, fuzzy
 msgid "Znajduje kolejne wystąpięnie frazy w tekście"
 msgstr "Cari frasa gantian seterusnya dalam teks"
 
@@ -3051,6 +3110,7 @@ msgid "Tylko napisy"
 msgstr "Hanya sari kata"
 
 #: KainoteFrame.cpp:283
+#, fuzzy
 msgid "Widoczne tylko okno napisów"
 msgstr "Hanya tunjuk tetingkap sari kata"
 
@@ -3063,6 +3123,7 @@ msgid "Włączanie bądź wyłączanie edytora"
 msgstr "Daya / nyahdaya editor"
 
 #: KainoteFrame.cpp:290 ScriptInfo.cpp:24
+#, fuzzy
 msgid "Właściwości napisów ASS"
 msgstr "Sifat sari kata ASS"
 
@@ -3107,6 +3168,7 @@ msgid "Okno zmiany &czasów\tCtrl-I"
 msgstr "Penyelaras &masa…\tCtrl-I"
 
 #: KainoteFrame.cpp:308
+#, fuzzy
 msgid "Przesuwanie czasów napisów"
 msgstr "Selaras masa sari kata"
 
@@ -3171,6 +3233,7 @@ msgid "Pliki skryptów (*.lua),(*.moon)|*.lua;*.moon;"
 msgstr "Fail skrip (*.lua),(*.moon)|*.lua;*.moon;"
 
 #: KainoteFrame.cpp:726
+#, fuzzy
 msgid "Ten plik napisów nie ma dodanych żadnych skryptów"
 msgstr "Sari kata ini tidak mempunyai sebarang skrip yang ditambah"
 
@@ -3180,16 +3243,16 @@ msgid "Warunki skryptu Lua '%s' nie zostały spełnione"
 msgstr "Pengesahan skrip Lua '%s' gagal"
 
 #: KainoteFrame.cpp:814 SubsGrid.cpp:871 VideoBox.cpp:1003
+#, fuzzy
 msgid "Wybierz plik napisów"
 msgstr "Pilih fail sari kata"
 
 #: KainoteFrame.cpp:817
+#, fuzzy
 msgid ""
 "Pliki napisów (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*."
 "sub;*.txt|Pliki wideo z wbudowanymi napisami (*.mkv),(*.ogm)|*.mkv;*.ogm"
-msgstr ""
-"Fail sari kata (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*."
-"sub;*.txt|Video dengan sari kata (*.mkv),(*.ogm)|*.mkv;*.ogm"
+msgstr "Fail sari kata (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt|Video dengan sari kata (*.mkv),(*.ogm)|*.mkv;*.ogm"
 
 #: KainoteFrame.cpp:847
 msgid ""
@@ -3210,14 +3273,11 @@ msgstr ""
 "*.log|Semua fail (*.*)|*.*"
 
 #: KainoteFrame.cpp:915
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "Edytor napisów by Marcin Drob aka Bakura lub Bjakja (bjakja7@gmail.com),\n"
 "wersja %s z dnia %s"
-msgstr ""
-"Penyunting sari kata oleh Marcin Drob atau lebih dikenali sebagai Bakura "
-"atau Bjakja (bjakja7@gmail.com),\n"
-"versi %s dari hari %s"
+msgstr "Penyunting sari kata oleh Marcin Drob atau lebih dikenali sebagai Bakura atau Bjakja (bjakja7@gmail.com),\nversi %s dari hari %s"
 
 #: KainoteFrame.cpp:917
 msgid ""
@@ -3247,13 +3307,12 @@ msgid "Kainote zawiera w sobie części następujących projektów:\n"
 msgstr "Kainote terbina dengan beberapa bahagian projek berikut:\n"
 
 #: KainoteFrame.cpp:921
+#, fuzzy
 msgid ""
 "Color picker, wymuxowywanie napisów z mkv, audiobox, odwarzacz audio, "
 "automatyzacja\n"
 "i kilka innych pojedynczych funkcji wzięte z Aegisuba -\n"
-msgstr ""
-"Pemilih warna, sari kata mkv, kotak audio, pemain audio, automasi\n"
-"dan beberapa fungsi yang diambil dari Aegisub -\n"
+msgstr "Pemilih warna, sari kata mkv, kotak audio, pemain audio, automasi\ndan beberapa fungsi yang diambil dari Aegisub -\n"
 
 #: KainoteFrame.cpp:933
 msgid "O Kainote"
@@ -3340,10 +3399,12 @@ msgstr ""
 "Terima kasih kepada pengguna Kainote yang lain yang melaporkan pepijat.\n"
 
 #: KainoteFrame.cpp:1060
+#, fuzzy
 msgid "Plik napisów "
 msgstr "Fail sari kata "
 
 #: KainoteFrame.cpp:1070
+#, fuzzy
 msgid "Zapisz plik napisów"
 msgstr "Simpan fail sari kata"
 
@@ -3356,7 +3417,7 @@ msgstr ""
 "sila simpan dengan nama lain atau menukar atribut fail."
 
 #: KainoteFrame.cpp:1143
-#, c-format
+#, c-format, fuzzy
 msgid "Wczytać napisy o nazwie \"%s\"?"
 msgstr "Adakah anda ingin memuatkan sari kata bernama \"%s\"?"
 
@@ -3371,7 +3432,7 @@ msgid "Brak"
 msgstr "Tiada"
 
 #: KainoteFrame.cpp:1893
-#, c-format
+#, c-format, fuzzy
 msgid "Zapisać napisy o nazwie \"%s\" przed %s?"
 msgstr "Adakah anda mahu menyimpan sari kata bernama \"%s\" sebelum %s?"
 
@@ -3459,6 +3520,7 @@ msgid "Korekcja drobnych błędów"
 msgstr "Pengganti Serba Guna"
 
 #: MisspellReplacer.cpp:38
+#, fuzzy
 msgid "Edycja reguły"
 msgstr "Sunting peraturan"
 
@@ -5122,6 +5184,7 @@ msgid "Wideo M2TS"
 msgstr "Video M2TS"
 
 #: OptionsDialog.cpp:915
+#, fuzzy
 msgid ""
 "UWAGA! Działanie na każdym Windowsie jest inne.\n"
 "Przykładowo na Windows7 WMP zablokował\n"
@@ -7309,6 +7372,7 @@ msgid "Odstęp między znakami w pionie"
 msgstr "Jarak fon menegak"
 
 #: TextEditorTagList.cpp:384
+#, fuzzy
 msgid "Kursywa / pochylenie tekstu"
 msgstr "Teks condong"
 
@@ -7341,14 +7405,17 @@ msgid "Ruch tekstu"
 msgstr "Pergerakan teks"
 
 #: TextEditorTagList.cpp:392
+#, fuzzy
 msgid "Ruch po okręgu"
 msgstr "Pergerakan teks bulatan"
 
 #: TextEditorTagList.cpp:393
+#, fuzzy
 msgid "Ruch po krzywej (3 punkty)"
 msgstr "Pergerakan teks lengkung (3 poin)"
 
 #: TextEditorTagList.cpp:394
+#, fuzzy
 msgid "Ruch po krzywej (4 punkty)"
 msgstr "Pergerakan teks lengkung (4 poin)"
 
@@ -7379,14 +7446,17 @@ msgid "Sposób łamania linii"
 msgstr "Kaedah pembalut teks"
 
 #: TextEditorTagList.cpp:401
+#, fuzzy
 msgid "Reset tagów"
 msgstr "Tanda diset semula"
 
 #: TextEditorTagList.cpp:402
+#, fuzzy
 msgid "Losowość punktów czcionki"
 msgstr "Saiz (poin) fon rawak"
 
 #: TextEditorTagList.cpp:403
+#, fuzzy
 msgid "Losowość punktów czcionki seed"
 msgstr "Benih saiz (poin) fon rawak"
 
@@ -7406,6 +7476,7 @@ msgid "Losowość punktów czcionki oś Z"
 msgstr "Titik fon rawak paksi Z"
 
 #: TextEditorTagList.cpp:407
+#, fuzzy
 msgid "Przekreślenie tekstu"
 msgstr "Centangan teks"
 
@@ -7422,18 +7493,22 @@ msgid "Podkreślenie tekstu"
 msgstr "Garis bawah teks"
 
 #: TextEditorTagList.cpp:411
+#, fuzzy
 msgid "Obwódka w osi X"
 msgstr "Sempadan dalam paksi X"
 
 #: TextEditorTagList.cpp:412
+#, fuzzy
 msgid "Obwódka w osi Y"
 msgstr "Sempadan dalam paksi Y"
 
 #: TextEditorTagList.cpp:413
+#, fuzzy
 msgid "Cień w osi X"
 msgstr "Bayangan dalam paksi X"
 
 #: TextEditorTagList.cpp:414
+#, fuzzy
 msgid "Cień w osi Y"
 msgstr "Bayangan dalam paksi Y"
 
@@ -7451,6 +7526,7 @@ msgid "Wybierz ikony paska narzędzi"
 msgstr "Pilih ikon bar alatan"
 
 #: Toolbar.cpp:461
+#, fuzzy
 msgid "Po lewej"
 msgstr "Di kiri"
 
@@ -7463,6 +7539,7 @@ msgid "Po prawej"
 msgstr "Di kanan"
 
 #: Toolbar.cpp:461
+#, fuzzy
 msgid "Na dole"
 msgstr "Di bawah"
 
@@ -7485,6 +7562,7 @@ msgid "Odtwórz aktywną linię"
 msgstr "Mainkan baris semasa"
 
 #: VideoBox.cpp:300
+#, fuzzy
 msgid ""
 "Plik nie jest poprawnym plikiem wideo albo jest uszkodzony,\n"
 "bądź brakuje kodeków czy też splittera"
@@ -7564,6 +7642,7 @@ msgid "Poprzedni plik wideo"
 msgstr "Fail video sebelumnya"
 
 #: VideoFullscreen.cpp:64
+#, fuzzy
 msgid "Pokaż pasek narzędzi"
 msgstr "Tunjukkan ikon bar alatan"
 
@@ -7682,6 +7761,7 @@ msgid ""
 msgstr "Tetapkan sudut dari 2 mata.\nSelepas menetapkan 2 mata di bawah teks pada video\nia mengira sudut daripadanya."
 
 #: VideoToolbar.cpp:78
+#, fuzzy
 msgid "Zmiana wszystkich tagów obrotu wokół osi Z"
 msgstr "Menukar semua tanda putaran Z"
 
