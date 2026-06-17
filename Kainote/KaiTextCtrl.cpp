@@ -195,7 +195,6 @@ void KaiTextCtrl::AppendText(const wxString &text)
 	CalcWrap(false, (len < 1) ? 0 : (KText[len - 1] == L'\n') ? len : len - 1);
 	Cursor.x = Selend.x = KText.length();
 	Cursor.y = Selend.y = wraps.size() - 2;
-	KaiLogSilent(wxString::Format(L"cursor x %d, y %d , x1 %d, y1 %d", Cursor.x, Cursor.y, Selend.x, Selend.y));
 	MakeCursorVisible();
 }
 

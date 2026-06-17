@@ -77,6 +77,8 @@ void DirectSoundPlayer2Thread::Run()
 		linuxState->cv.notify_all();
 	};
 
+	if (!provider) { fail(L"Audio player: no provider"); return; }
+
 	const int rate = std::max(1, provider->GetSampleRate());
 	const int channels = std::max(1, provider->GetChannels());
 	const int bytesPerFrame = channels * provider->GetBytesPerSample();
@@ -122,8 +124,19 @@ void DirectSoundPlayer2Thread::Run()
 	gst_caps_unref(caps);
 
 	if (gst_element_set_state(pipeline, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE) {
+		wxString detail = L"Cannot start GStreamer audio pipeline";
+		if (GstBus *errBus = gst_element_get_bus(pipeline)) {
+			if (GstMessage *em = gst_bus_pop_filtered(errBus, GST_MESSAGE_ERROR)) {
+				GError *e = nullptr; gchar *dbg = nullptr;
+				gst_message_parse_error(em, &e, &dbg);
+				if (e) { detail += L": "; detail += wxString::FromUTF8(e->message); g_error_free(e); }
+				g_free(dbg);
+				gst_message_unref(em);
+			}
+			gst_object_unref(errBus);
+		}
 		gst_object_unref(pipeline);
-		fail(L"Cannot start GStreamer audio pipeline");
+		fail(detail);
 		return;
 	}
 
@@ -383,18 +396,18 @@ void DirectSoundPlayer2Thread::Run()
 	// Create DirectSound object
 	IDirectSound8 * defaultPlayback = nullptr;
 	HRESULT hr = DS_OK;
-	
+
 	hr = DirectSoundCreate8(&DSDEVID_DefaultPlayback, &defaultPlayback, 0);
 	if (!defaultPlayback) {
-		KaiLog("Cannot create DirectSound object"); 
+		KaiLog("Cannot create DirectSound object");
 		SetEvent(error_happened);
 		return;
 	}
-	
+
 	// Ensure we can get interesting wave formats (unless we have PRIORITY we can only use a standard 8 bit format)
 	hr = defaultPlayback->SetCooperativeLevel(KainoteFrame::Get()->GetHWND(), DSSCL_PRIORITY);
 	if (hr != DS_OK) {
-		KaiLog("Cannot create set cooperativeLevel"); 
+		KaiLog("Cannot create set cooperativeLevel");
 		defaultPlayback->Release();
 		SetEvent(error_happened);
 		return;
@@ -426,7 +439,7 @@ void DirectSoundPlayer2Thread::Run()
 	// And then create the buffer
 	IDirectSoundBuffer *audioBuffer7 = 0;
 	if FAILED(defaultPlayback->CreateSoundBuffer(&desc, &audioBuffer7, 0)) {
-		KaiLog("Could not create buffer"); 
+		KaiLog("Could not create buffer");
 		defaultPlayback->Release();
 		SetEvent(error_happened);
 		return;
@@ -464,7 +477,7 @@ void DirectSoundPlayer2Thread::Run()
 
 	while (running)
 	{
-		DWORD wait_result = WaitForMultipleObjects(sizeof(events_to_wait)/sizeof(HANDLE), 
+		DWORD wait_result = WaitForMultipleObjects(sizeof(events_to_wait)/sizeof(HANDLE),
 			events_to_wait, FALSE, current_latency);
 
 		switch (wait_result)
@@ -787,7 +800,7 @@ DirectSoundPlayer2Thread::DirectSoundPlayer2Thread(Provider *provider, int _Want
 	, is_playing            (CreateEvent(0,  TRUE, FALSE, 0))
 	, error_happened        (CreateEvent(0, FALSE, FALSE, 0))
 {
-	
+
 
 	wanted_latency	= _WantedLatency;
 	buffer_length	= _BufferLength;
@@ -1046,6 +1059,8 @@ void DirectSoundPlayer2::Play(long long start, long long count)
 	try
 	{
 		OpenStream();
+		if (!IsThreadAlive())
+			return;
 		thread->Play(start, count);
 
 		//if (displayTimer && !displayTimer->IsRunning()) displayTimer->Start(30);
@@ -1200,7 +1215,3 @@ double DirectSoundPlayer2::GetVolume()
 		return 0;
 	}
 }
-
-
-
-
