@@ -21,6 +21,9 @@
 #include <wx/dc.h>
 #ifndef _WIN32
 #include <wx/display.h>
+#include <wx/font.h>
+#include <wx/bitmap.h>
+#include <wx/dcmemory.h>
 #endif
 #include <vector>
 
@@ -225,6 +228,7 @@ bool GetLineTextExtents(const wxString& text, Styles* style, float* width, float
 	const wchar_t* thetext = text.wc_str();
 
 
+#ifdef _WIN32
 	SIZE sz;
 	HDC thedc = CreateCompatibleDC(0);
 	if (!thedc) return false;
@@ -270,6 +274,37 @@ bool GetLineTextExtents(const wxString& text, Styles* style, float* width, float
 
 	DeleteObject(thedc);
 	DeleteObject(thefont);
+#else
+	// Real text measurement via wxWidgets (the Win32 GDI shim only fakes fixed
+	// metrics). fontsize == ASS font size * 64, so the font pixel height is
+	// fontsize/64; results are scaled back up by 64 to match the /64 below.
+	int pixelHeight = (int)((fontsize / 64.f) + 0.5f);
+	if (pixelHeight < 1) pixelHeight = 1;
+	wxFont measureFont(wxSize(0, pixelHeight), wxFONTFAMILY_DEFAULT,
+		style->Italic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL,
+		style->Bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL,
+		style->Underline != 0, style->Fontname);
+	if (style->StrikeOut) measureFont.SetStrikethrough(true);
+	wxBitmap measureBmp(1, 1);
+	wxMemoryDC measureDc(measureBmp);
+	measureDc.SetFont(measureFont);
+	if (spacing != 0) {
+		fwidth = 0;
+		for (size_t i = 0; i < thetextlen; i++) {
+			wxSize ext = measureDc.GetTextExtent(wxString(thetext + i, 1));
+			fwidth += (ext.x * 64.f) + spacing;
+			fheight = ext.y * 64.f;
+		}
+	}
+	else {
+		wxSize ext = measureDc.GetTextExtent(text);
+		fwidth = ext.x * 64.f;
+		fheight = ext.y * 64.f;
+	}
+	wxFontMetrics fm = measureDc.GetFontMetrics();
+	fdescent = fm.descent * 64.f;
+	fextlead = fm.externalLeading * 64.f;
+#endif
 	float scalex = wxAtof(style->ScaleX) / 100.f;
 	float scaley = wxAtof(style->ScaleY) / 100.f;
 

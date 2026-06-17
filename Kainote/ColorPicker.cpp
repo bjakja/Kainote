@@ -425,6 +425,12 @@ void ColorPickerScreenDropper::OnPaint(wxPaintEvent &evt)
 
 void ColorPickerScreenDropper::DropFromScreenXY(int x, int y)
 {
+#ifndef _WIN32
+	// Wayland clients cannot read pixels outside their own surface via wxScreenDC,
+	// so the screen eyedropper is unsupported there (would capture black/garbage).
+	if (KainoteIsWayland())
+		return;
+#endif
 	wxMemoryDC capdc(capture);
 	wxScreenDC screen;
 

@@ -1009,7 +1009,9 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 	OptionsTree->AddSubPage(AudioSecond, _("Zaawansowane"));
 	OptionsTree->AddPage(Themes, _("Motywy"));
 	OptionsTree->AddPage(Hotkeyss, _("Skróty klawiszowe"));
+#ifdef _WIN32
 	OptionsTree->AddPage(Assocs, _("Skojarzenia"));
+#endif
 	OptionsTree->AddPage(SubsProps, _("Właściwości napisów"));
 	OptionsTree->Fit();
 
@@ -1226,7 +1228,8 @@ void OptionsDialog::SetOptions(bool saveall)
 					}
 				}
 				else{
-					wxString extensions[] = { L".ass", L".ssa", L".srt", L".sub", L".txt", L".mkv", L".mp4", L".avi", 
+#ifdef _WIN32
+					wxString extensions[] = { L".ass", L".ssa", L".srt", L".sub", L".txt", L".mkv", L".mp4", L".avi",
 						L".ogm", L".wmv", L".asf", L".rmvb", L".rm", L".3gp", L".mpg", L".mpeg", L".ts", L".m2ts" };
 					wxString extensionsDesc[] = { _("Napisy ASS"), _("Napisy SSA"), _("Napisy SRT"), _("Napisy SUB"),
 						_("Napisy TXT"), _("Wideo MKV"), _("Wideo MP4"), _("Wideo AVI"), _("Wideo OGM"),
@@ -1242,6 +1245,7 @@ void OptionsDialog::SetOptions(bool saveall)
 						}
 					}
 					//Registry::RefreshRegistry();
+#endif
 				}
 			}
 		}

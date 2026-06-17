@@ -35,6 +35,7 @@
 #include <wx/ipc.h>
 #include <wx/utils.h>
 #include <wx/intl.h>
+#include <wx/dcscreen.h>
 #include <wx/stdpaths.h>
 #include <wx/filename.h>
 #include <wx/filefn.h>
@@ -278,6 +279,14 @@ bool kainoteApp::OnInit()
 		// process is left in the default "C" locale after wxLocale::Init() fails
 		// for an ungenerated language such as th_TH.UTF-8, non-ASCII Polish
 		// source strings can convert to empty wxStrings and option labels vanish.
+		// Seed program-font DPI from the real display: the GetDeviceCaps shim only
+		// reports 96 and the DPI-rescale paths are #ifdef _WIN32, so HiDPI Linux UI
+		// fonts would otherwise never scale. Safe here (wx GUI is initialised).
+		{
+			int ydpi = wxScreenDC().GetPPI().y;
+			if (ydpi > 0)
+				Options.FontsRescale(ydpi);
+		}
 		setlocale(LC_CTYPE, "");
 		const char* ctypeLocale = setlocale(LC_CTYPE, nullptr);
 		if (!ctypeLocale || (!std::strstr(ctypeLocale, "UTF-8") && !std::strstr(ctypeLocale, "utf8"))) {
@@ -681,6 +690,7 @@ int kainoteApp::FilterEvent(wxEvent& event)
 	if (type == wxEVT_KEY_DOWN || type == wxEVT_CHAR_HOOK) {
 		wxKeyEvent* keyEvent = dynamic_cast<wxKeyEvent*>(&event);
 		if (keyEvent) {
+			if (MenuBar::HandleNavKeyIfOpen(*keyEvent, type == wxEVT_CHAR_HOOK)) { return 1; }
 			int key = keyEvent->GetKeyCode();
 			if (key == WXK_ESCAPE || key == L'B' || key == L'b') {
 				TabPanel* tab = Notebook::GetTab();

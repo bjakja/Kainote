@@ -619,7 +619,11 @@ void VideoBox::OnKeyPress(wxKeyEvent& event)
 		if (key == L'B'){
 			if (GetState() == Playing){ Pause(); }
 			KainoteFrame* Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
+#ifndef _WIN32
+			Kai->Iconize(true);
+#else
 			ShowWindow(Kai->GetHWND(), SW_SHOWMINNOACTIVE);
+#endif
 		}
 	}
 	if (!renderer)
@@ -1038,7 +1042,8 @@ void VideoBox::OnHidePB()
 void VideoBox::OnDeleteVideo()
 {
 	wxString path = tab->VideoPath;
-	if (path == emptyString && KaiMessageBox(_("Czy na pewno chcesz przenieść wczytany plik wideo do kosza?"), _("Usuwanie"), wxYES_NO) == wxNO){ return; }
+	if (path == emptyString){ return; }
+	if (KaiMessageBox(_("Czy na pewno chcesz przenieść wczytany plik wideo do kosza?"), _("Usuwanie"), wxYES_NO) == wxNO){ return; }
 	NextFile();
 	CRecycleFile x;
 	x.Recycle(path.data());

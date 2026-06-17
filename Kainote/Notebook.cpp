@@ -60,7 +60,18 @@ Notebook::Notebook(wxWindow *parent, int id)
 
 	CalcSizes();
 	Hook = nullptr;
+#ifdef _WIN32
 	Hook = SetWindowsHookEx(WH_CBT, &PauseOnMinimalize, nullptr, GetCurrentThreadId());//WH_MOUSE
+#else
+	if (wxWindow* topFrame = GetParent()) {
+		topFrame->Bind(wxEVT_ICONIZE, [](wxIconizeEvent& evt){
+			if (evt.IsIconized() && Notebook::GetTab() && Notebook::GetTab()->video &&
+				Notebook::GetTab()->video->GetState() == Playing)
+				Notebook::GetTab()->video->Pause();
+			evt.Skip();
+		});
+	}
+#endif
 
 	tabsScroll.SetOwner(this, 6779);
 	Bind(wxEVT_TIMER, &Notebook::OnScrollTabs, this, 6779);
@@ -390,16 +401,19 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		bool isInSplitLine = abs(splitline - x) < 4;
 		if (click && isInSplitLine){
 			CaptureMouse();
+#ifdef _WIN32
 			int px = x, py = 2;
 			ClientToScreen(&px, &py);
 			sline = new wxDialog(this, -1, emptyString, wxPoint(px, py), wxSize(3, h - 27), wxSTAY_ON_TOP | wxBORDER_NONE);
 			sline->SetBackgroundColour(L"#000000");
 			sline->Show();
+#endif
 			splitLineHolding = true;
 		}
 		else if (event.LeftUp() && splitLineHolding)
 		{
 			int npos = x;
+#ifdef _WIN32
 			if (sline){
 				int yy;
 				sline->GetPosition(&npos, &yy);
@@ -407,6 +421,9 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 				sline->Destroy();
 				sline = nullptr;
 			}
+#else
+			npos = MID(200, x, w - 200);
+#endif
 			if (HasCapture()){ ReleaseMouse(); }
 			splitline = npos;
 			bool leftTab = (Pages[iter]->GetPosition().x == 1);
@@ -421,9 +438,19 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		else if (event.LeftIsDown() && splitLineHolding)
 		{
 			if (x != splitline){
+#ifdef _WIN32
 				int px = MID(200, x, w - 200), py = 2;
 				ClientToScreen(&px, &py);
 				if (sline){ sline->SetPosition(wxPoint(px, py)); }
+#else
+				splitline = MID(200, x, w - 200);
+				bool leftTab = (Pages[iter]->GetPosition().x == 1);
+				int tmpiter = (leftTab) ? iter : splititer;
+				int tmpsplititer = (!leftTab) ? iter : splititer;
+				Pages[tmpiter]->SetSize(wxMax(0, splitline - 3), wxMax(0, hh - 2));
+				Pages[tmpsplititer]->SetSize(splitline + 2, 1, wxMax(0, w - (splitline + 3)), wxMax(0, hh - 2));
+				Refresh(false);
+#endif
 			}
 
 		}
