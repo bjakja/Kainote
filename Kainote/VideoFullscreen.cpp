@@ -269,8 +269,8 @@ void Fullscreen::OnPaint(wxPaintEvent& evt)
 	wxPaintDC dc(this);
 	VideoBox* vc = (VideoBox*)vb;
 #ifndef _WIN32
-	if (vc->renderer && vc->renderer->HasFFMS2()) {
-		static_cast<RendererFFMS2*>(vc->renderer)->RenderToDc(dc);
+	if (vc->renderer && vc->renderer->m_State != None) {
+		vc->renderer->RenderToDc(dc);
 		return;
 	}
 #endif

@@ -15,8 +15,12 @@ pkg_check_modules(LIBCURL REQUIRED IMPORTED_TARGET libcurl)
 pkg_check_modules(ICU_UC REQUIRED IMPORTED_TARGET icu-uc)
 pkg_check_modules(ICU_I18N REQUIRED IMPORTED_TARGET icu-i18n)
 pkg_check_modules(FFMPEG REQUIRED IMPORTED_TARGET libavformat libavcodec libavutil)
-pkg_check_modules(SDL2 REQUIRED IMPORTED_TARGET sdl2)
 pkg_check_modules(FONTCONFIG REQUIRED IMPORTED_TARGET fontconfig)
+# GStreamer backs the Linux general-playback renderer (RendererGStreamer): playbin
+# decodes/plays the file (video + audio in one pipeline), an appsink delivers BGRA
+# frames the app composites (libass subtitles + progress bar) and presents through
+# the shared wx paint path, and gstreamer-audio provides linear volume.
+pkg_check_modules(GSTREAMER REQUIRED IMPORTED_TARGET gstreamer-1.0 gstreamer-video-1.0 gstreamer-audio-1.0 gstreamer-app-1.0)
 
 find_library(LUA_RUNTIME_LIBRARY
     NAMES liblua5.1.so.0 lua5.1
@@ -80,6 +84,7 @@ add_executable(kainote
     Kainote/ProviderDummy.cpp
     Kainote/ProviderFFMS2.cpp
     Kainote/RendererFFMS2.cpp
+    Kainote/RendererGStreamer.cpp
     Kainote/Registry.cpp
     Kainote/RendererDirectShow.cpp
     Kainote/RendererVideo.cpp
@@ -188,7 +193,18 @@ target_include_directories(kainote PRIVATE
     ${CMAKE_SOURCE_DIR}/Thirdparty/DependencyControl/include
     ${CMAKE_SOURCE_DIR}/Thirdparty/ffms2/src
 )
-target_link_libraries(kainote PRIVATE ${wxWidgets_LIBRARIES} PkgConfig::LIBASS PkgConfig::FFMS2 PkgConfig::LUA PkgConfig::HUNSPELL PkgConfig::UCHARDET PkgConfig::LIBCURL PkgConfig::ICU_UC PkgConfig::ICU_I18N PkgConfig::FFMPEG PkgConfig::SDL2 PkgConfig::FONTCONFIG Boost::filesystem Boost::locale Boost::regex $<$<BOOL:${Boost_SYSTEM_FOUND}>:Boost::system> $<$<BOOL:${Boost_THREAD_FOUND}>:Boost::thread> GL ${CMAKE_DL_LIBS})
+
+# Generate Kainote/gitparams.h from the current git HEAD before building.  Runs
+# every build but only rewrites the header when the commit/branch changes, so
+# config.cpp recompiles only when the version actually moves.
+add_custom_target(kainote_gitparams ALL
+    COMMAND ${CMAKE_COMMAND} -DSRC=${CMAKE_SOURCE_DIR} -P ${CMAKE_SOURCE_DIR}/cmake/GenGitParams.cmake
+    BYPRODUCTS ${CMAKE_SOURCE_DIR}/Kainote/gitparams.h
+    COMMENT "Generating gitparams.h from git HEAD"
+    VERBATIM
+)
+add_dependencies(kainote kainote_gitparams)
+target_link_libraries(kainote PRIVATE ${wxWidgets_LIBRARIES} PkgConfig::LIBASS PkgConfig::FFMS2 PkgConfig::LUA PkgConfig::HUNSPELL PkgConfig::UCHARDET PkgConfig::LIBCURL PkgConfig::ICU_UC PkgConfig::ICU_I18N PkgConfig::FFMPEG PkgConfig::FONTCONFIG PkgConfig::GSTREAMER Boost::filesystem Boost::locale Boost::regex $<$<BOOL:${Boost_SYSTEM_FOUND}>:Boost::system> $<$<BOOL:${Boost_THREAD_FOUND}>:Boost::thread> GL ${CMAKE_DL_LIBS})
 set_target_properties(kainote PROPERTIES
     BUILD_RPATH "$ORIGIN"
     INSTALL_RPATH "$ORIGIN"

@@ -89,60 +89,75 @@ SubtitlesLibass::~SubtitlesLibass()
 #define _b(c) (((c)>>8)&0xFF)
 #define _a(c) ((c)&0xFF)
 
+void SubtitlesLibass::BlendImages(ASS_Image* img, unsigned char* buffer)
+{
+	int videoPitch = m_VideoSize.GetWidth() * m_BytesPerColor;
+	// libass actually returns several alpha-masked monochrome images.
+	// Here, we loop through their linked list, get the colour of the current, and blend into the frame.
+	// This is repeated for all of them.
+	//if there real a swap frame that i have to change it
+
+	for (; img; img = img->next) {
+		if (img->h == 0 || img->w == 0)
+			continue;
+
+		unsigned int a1 = ((unsigned int)_a(img->color));
+		unsigned int a = 255 - a1;
+		unsigned int r = (unsigned int)_r(img->color);
+		unsigned int g = (unsigned int)_g(img->color);
+		unsigned int b = (unsigned int)_b(img->color);
+
+		byte * src = img->bitmap;
+		byte *dst = buffer + (img->dst_y * videoPitch) + (img->dst_x * 4);
+
+		for (int y = 0; y < img->h; y++, dst += videoPitch, src += img->stride) {
+			uint32_t *dstrow = (uint32_t *)dst;
+			for (int x = 0; x < img->w; x++) {
+				const unsigned int v = src[x];
+				int rr = (r * a * v);
+				int gg = (g * a * v);
+				int bb = (b * a * v);
+				int aa = a * v;
+				uint32_t dstpix = dstrow[x];
+				unsigned int dstb = dstpix & 0xFF;
+				unsigned int dstg = (dstpix >> 8) & 0xFF;
+				unsigned int dstr = (dstpix >> 16) & 0xFF;
+				unsigned int dsta = (dstpix >> 24) & 0xFF;
+				dstb = (bb + dstb * (255 * 255 - aa)) / (255 * 255);
+				dstg = (gg + dstg * (255 * 255 - aa)) / (255 * 255);
+				dstr = (rr + dstr * (255 * 255 - aa)) / (255 * 255);
+				dsta = (aa * 255 + dsta * (255 * 255 - aa)) / (255 * 255);
+				dstrow[x] = dstb | (dstg << 8) | (dstr << 16) | (dsta << 24);
+			}
+		}
+	}
+}
+
 void SubtitlesLibass::Draw(unsigned char* buffer, int time)
 {
 	wxMutexLocker lock(openMutex);
 	if (m_IsReady.load() && m_AssTrack){
 		ass_set_frame_size(m_Libass, m_VideoSize.GetWidth(), m_VideoSize.GetHeight());
-
 		ASS_Image* img = ass_render_frame(m_Libass, m_AssTrack, time, nullptr);
-		int videoPitch = m_VideoSize.GetWidth() * m_BytesPerColor;
-		// libass actually returns several alpha-masked monochrome images.
-		// Here, we loop through their linked list, get the colour of the current, and blend into the frame.
-		// This is repeated for all of them.
-		//if there real a swap frame that i have to change it
-
-		for (; img; img = img->next) {
-			if (img->h == 0 || img->w == 0)
-				continue;
-
-			unsigned int a1 = ((unsigned int)_a(img->color));
-			unsigned int a = 255 - a1;
-			unsigned int r = (unsigned int)_r(img->color);
-			unsigned int g = (unsigned int)_g(img->color);
-			unsigned int b = (unsigned int)_b(img->color);
-
-			byte * src = img->bitmap;
-			byte *dst = buffer + (img->dst_y * videoPitch) + (img->dst_x * 4);
-			
-			for (int y = 0; y < img->h; y++, dst += videoPitch, src += img->stride) {
-				uint32_t *dstrow = (uint32_t *)dst;
-				for (int x = 0; x < img->w; x++) {
-					const unsigned int v = src[x];
-					int rr = (r * a * v);
-					int gg = (g * a * v);
-					int bb = (b * a * v);
-					int aa = a * v;
-					uint32_t dstpix = dstrow[x];
-					unsigned int dstb = dstpix & 0xFF;
-					unsigned int dstg = (dstpix >> 8) & 0xFF;
-					unsigned int dstr = (dstpix >> 16) & 0xFF;
-					unsigned int dsta = (dstpix >> 24) & 0xFF;
-					dstb = (bb + dstb * (255 * 255 - aa)) / (255 * 255);
-					dstg = (gg + dstg * (255 * 255 - aa)) / (255 * 255);
-					dstr = (rr + dstr * (255 * 255 - aa)) / (255 * 255);
-					dsta = (aa * 255 + dsta * (255 * 255 - aa)) / (255 * 255);
-					dstrow[x] = dstb | (dstg << 8) | (dstr << 16) | (dsta << 24);
-				}
-			}
-		}
+		BlendImages(img, buffer);
 	}
-	else{
-		//make an info of loading fonts to Libass
-		//best to draw it on video 
-		//make function for it in renderer and use it here;
-		//KaiLog("Libass not ready to render");
-	}
+}
+
+bool SubtitlesLibass::DrawChanged(unsigned char* buffer, int time)
+{
+	wxMutexLocker lock(openMutex);
+	if (!(m_IsReady.load() && m_AssTrack))
+		return true; // not ready: caller treats it as a (blank) change
+	ass_set_frame_size(m_Libass, m_VideoSize.GetWidth(), m_VideoSize.GetHeight());
+	int detectChange = 0;
+	ASS_Image* img = ass_render_frame(m_Libass, m_AssTrack, time, &detectChange);
+	// detect_change == 0 means libass produced a bit-identical frame to the
+	// previous render, so the caller can reuse its cached overlay unchanged.
+	if (detectChange == 0 && m_HasRendered)
+		return false;
+	m_HasRendered = true;
+	BlendImages(img, buffer);
+	return true;
 }
 
 bool SubtitlesLibass::Open(TabPanel *tab, int flag, wxString *text)
@@ -205,6 +220,7 @@ bool SubtitlesLibass::Open(TabPanel *tab, int flag, wxString *text)
 	wxScopedCharBuffer buffer = textsubs->mb_str(wxConvUTF8);
 	int size = strlen(buffer);
 	m_AssTrack = ass_read_memory(m_Library, buffer.data(), size, nullptr);
+	m_HasRendered = false;
 	delete textsubs;
 
 	if (!m_AssTrack){
@@ -230,6 +246,7 @@ bool SubtitlesLibass::OpenString(wxString *text)
 	wxScopedCharBuffer buffer = text->mb_str(wxConvUTF8);
 	int size = strlen(buffer);
 	m_AssTrack = ass_read_memory(m_Library, buffer.data(), size, nullptr);
+	m_HasRendered = false;
 
 	delete text;
 
@@ -246,6 +263,7 @@ void SubtitlesLibass::SetVideoParameters(const wxSize & size, unsigned char form
 	m_IsSwapped = isSwapped;
 	m_Format = format;
 	m_HasParameters = format == RGB32 || format == ARGB32;
+	m_HasRendered = false; // frame size may have changed; force a re-render
 }
 
 void SubtitlesLibass::ReloadLibraries(bool destroyExisted)

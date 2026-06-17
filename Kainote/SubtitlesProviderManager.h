@@ -39,6 +39,8 @@ public:
 	void Release();
 	//set parameters first
 	void Draw(unsigned char* buffer, int time);
+	//set parameters first; skips work + returns false when unchanged since last call
+	bool DrawChanged(unsigned char* buffer, int time);
 	//set parameters first
 	bool Open(TabPanel *tab, int flag, wxString *text);
 	//set parameters first

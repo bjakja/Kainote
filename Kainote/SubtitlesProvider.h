@@ -33,6 +33,10 @@ public:
 	virtual ~SubtitlesProvider(){};
 	SubtitlesProvider(){};
 	virtual void Draw(unsigned char* buffer, int time){};
+	// Like Draw, but skips the blend and returns false when the rendered output
+	// is identical to the previous call (lets callers reuse a cached overlay).
+	// Default is conservative: always draws and reports "changed".
+	virtual bool DrawChanged(unsigned char* buffer, int time){ Draw(buffer, time); return true; }
 	virtual bool Open(TabPanel *tab, int flag, wxString *text){ return false; };
 	//for styles preview
 	virtual bool OpenString(wxString *text){ return false; };
@@ -78,6 +82,7 @@ public:
 	SubtitlesLibass();
 	virtual ~SubtitlesLibass();
 	void Draw(unsigned char* buffer, int time);
+	bool DrawChanged(unsigned char* buffer, int time) override;
 	bool Open(TabPanel *tab, int flag, wxString *text);
 	bool OpenString(wxString *text);
 	void SetVideoParameters(const wxSize& size, unsigned char format, bool isSwapped);
@@ -89,5 +94,9 @@ public:
 	wxSize m_VideoSize;
 	volatile bool m_SubsSkipped = false;
 	static wxMutex openMutex;
+private:
+	// Blends a libass image list onto an ARGB (premultiplied) overlay buffer.
+	void BlendImages(ASS_Image* img, unsigned char* buffer);
+	bool m_HasRendered = false; // for DrawChanged's first-call / change tracking
 };
 

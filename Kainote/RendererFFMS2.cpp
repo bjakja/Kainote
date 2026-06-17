@@ -37,58 +37,6 @@
 #include <cstdlib>
 #endif
 
-#ifndef _WIN32
-namespace
-{
-	void DrawBgraFrameWithWxDc(wxDC& dc, const unsigned char* frame, int width, int height,
-		int pitch, const RECT& targetRect)
-	{
-		if (!frame || width <= 0 || height <= 0 || pitch < width * 4)
-			return;
-
-		const size_t rgbSize = static_cast<size_t>(width) * static_cast<size_t>(height) * 3;
-		unsigned char* rgb = static_cast<unsigned char*>(std::malloc(rgbSize));
-		if (!rgb)
-			return;
-		for (int y = 0; y < height; ++y) {
-			const unsigned char* src = frame + (y * pitch);
-			unsigned char* dst = rgb + (y * width * 3);
-			for (int x = 0; x < width; ++x) {
-				// FFMS2 output is requested as BGRA. wxImage expects RGB.
-				dst[(x * 3) + 0] = src[(x * 4) + 2];
-				dst[(x * 3) + 1] = src[(x * 4) + 1];
-				dst[(x * 3) + 2] = src[(x * 4) + 0];
-			}
-		}
-
-		wxImage image(width, height, rgb, false);
-		int targetWidth = targetRect.right - targetRect.left;
-		int targetHeight = targetRect.bottom - targetRect.top;
-		if (targetWidth <= 0 || targetHeight <= 0)
-			return;
-
-		if (targetWidth != width || targetHeight != height)
-			image.Rescale(targetWidth, targetHeight, wxIMAGE_QUALITY_BILINEAR);
-		if (!image.IsOk())
-			return;
-		wxBitmap bitmap(image);
-		if (!bitmap.IsOk())
-			return;
-
-		dc.DrawBitmap(bitmap, targetRect.left, targetRect.top, false);
-	}
-
-	void DrawBgraFrameWithWx(wxWindow* window, const unsigned char* frame, int width, int height,
-		int pitch, const RECT& targetRect)
-	{
-		if (!window)
-			return;
-		wxClientDC dc(window);
-		DrawBgraFrameWithWxDc(dc, frame, width, height, pitch, targetRect);
-	}
-}
-#endif
-
 RendererFFMS2::RendererFFMS2(VideoBox *control, bool visualDisabled)
 	: RendererVideo(control, visualDisabled)
 	, m_FFMS2(nullptr)
@@ -97,64 +45,6 @@ RendererFFMS2::RendererFFMS2(VideoBox *control, bool visualDisabled)
 }
 
 #ifndef _WIN32
-void RendererFFMS2::QueueLinuxRender()
-{
-	if (!videoControl)
-		return;
-
-	bool expected = false;
-	if (!m_LinuxRenderQueued.compare_exchange_strong(expected, true))
-		return;
-
-	wxTheApp->CallAfter([this]() {
-		m_LinuxRenderQueued.store(false);
-		{
-			std::lock_guard<std::mutex> lock(m_LinuxPendingFrameMutex);
-			m_LinuxPresentFrame.swap(m_LinuxPendingFrame);
-		}
-		if (m_State != None && !m_LinuxPresentFrame.empty()) {
-			wxWindow* renderWindow = (videoControl->m_IsFullscreen && videoControl->m_FullScreenWindow) ?
-				static_cast<wxWindow*>(videoControl->m_FullScreenWindow) : static_cast<wxWindow*>(videoControl);
-			if (renderWindow)
-				renderWindow->Refresh(false);
-		}
-	});
-	wxWakeUpIdle();
-}
-
-void RendererFFMS2::PresentLinuxFrame(const unsigned char* frame)
-{
-	if (!frame || m_Height <= 0 || m_Pitch <= 0)
-		return;
-	{
-		std::lock_guard<std::mutex> pendingLock(m_LinuxPendingFrameMutex);
-		const size_t frameBytes = static_cast<size_t>(m_Height) * static_cast<size_t>(m_Pitch);
-		if (m_LinuxPresentFrame.size() != frameBytes)
-			m_LinuxPresentFrame.resize(frameBytes);
-		if (m_LinuxPresentFrame.data() != frame)
-			memcpy(m_LinuxPresentFrame.data(), frame, frameBytes);
-	}
-	wxWindow* renderWindow = (videoControl->m_IsFullscreen && videoControl->m_FullScreenWindow) ?
-		static_cast<wxWindow*>(videoControl->m_FullScreenWindow) : static_cast<wxWindow*>(videoControl);
-	if (renderWindow)
-		renderWindow->Refresh(false);
-}
-
-void RendererFFMS2::RenderToDc(wxDC& dc)
-{
-	wxCriticalSectionLocker lock(m_MutexRendering);
-	if (m_Width <= 0 || m_Height <= 0 || m_Pitch <= 0)
-		return;
-	std::lock_guard<std::mutex> pendingLock(m_LinuxPendingFrameMutex);
-	const unsigned char* frame = !m_LinuxPresentFrame.empty() ? m_LinuxPresentFrame.data() : m_FrameBuffer;
-	if (!frame)
-		return;
-	DrawBgraFrameWithWxDc(dc, frame, m_Width, m_Height, m_Pitch, m_BackBufferRect);
-	++m_LinuxPresentedFrames;
-	if (m_Visual && !m_HasZoom)
-		m_Visual->DrawWx(dc, m_Time);
-}
-
 void RendererFFMS2::StartLinuxPlaybackThread()
 {
 	StopLinuxPlaybackThread();
@@ -217,6 +107,9 @@ void RendererFFMS2::LinuxPlaybackLoop()
 
 RendererFFMS2::~RendererFFMS2()
 {
+#ifndef _WIN32
+	if (m_LinuxAlive) m_LinuxAlive->store(false); // stop any queued present touching us
+#endif
 	Stop();
 #ifndef _WIN32
 	StopLinuxPlaybackThread();

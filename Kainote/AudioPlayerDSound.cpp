@@ -25,7 +25,9 @@
 #include "UtilsWindows.h"
 
 #ifndef _WIN32
-#include <SDL.h>
+#include <gst/gst.h>
+#include <gst/app/gstappsrc.h>
+#include <gst/audio/audio.h>
 #include <algorithm>
 #include <chrono>
 #include <condition_variable>
@@ -34,6 +36,20 @@
 #include <thread>
 #include <vector>
 
+namespace {
+	void EnsureAudioGstInit()
+	{
+		static std::once_flag once;
+		std::call_once(once, [] { gst_init_check(nullptr, nullptr, nullptr); });
+	}
+}
+
+// PCM is pushed into a GStreamer appsrc -> audioconvert -> audioresample ->
+// autoaudiosink pipeline (PulseAudio/PipeWire).  appsrc with block=TRUE paces
+// the producer thread to the sink clock, the same role SDL_QueueAudio +
+// SDL_GetQueuedAudioSize played before.  Volume is still applied by the
+// provider when filling the PCM buffer, and the playback position stays on the
+// backend-independent wall-clock model below.
 struct DirectSoundPlayer2Thread::LinuxAudioState {
 	std::thread thread;
 	std::mutex mutex;
@@ -45,68 +61,85 @@ struct DirectSoundPlayer2Thread::LinuxAudioState {
 	bool restart = false;
 	long long currentFrame = 0;
 	std::chrono::steady_clock::time_point playbackStart;
-	SDL_AudioDeviceID device = 0;
-	SDL_AudioSpec obtained{};
+	GstElement *pipeline = nullptr;
+	GstElement *appsrc = nullptr;
 };
 
 void DirectSoundPlayer2Thread::Run()
 {
-	if (SDL_InitSubSystem(SDL_INIT_AUDIO) != 0) {
-		KaiLog(wxString::Format(L"Cannot initialize SDL audio: %s", wxString::FromUTF8(SDL_GetError())));
+	EnsureAudioGstInit();
+
+	auto fail = [this](const wxString &msg) {
+		KaiLog(msg);
 		std::lock_guard<std::mutex> lock(linuxState->mutex);
 		linuxState->failed = true;
 		linuxState->initialized = true;
 		linuxState->cv.notify_all();
-		SDL_QuitSubSystem(SDL_INIT_AUDIO);
+	};
+
+	const int rate = std::max(1, provider->GetSampleRate());
+	const int channels = std::max(1, provider->GetChannels());
+	const int bytesPerFrame = channels * provider->GetBytesPerSample();
+	const long long maxQueuedFrames = std::max(1024, rate * wanted_latency * buffer_length / 1000);
+	const int chunkFrames = std::max(256, std::min(4096, rate * wanted_latency / 1000));
+
+	GstElement *pipeline = gst_pipeline_new("kainote-audio");
+	GstElement *src = gst_element_factory_make("appsrc", "kainote-audio-src");
+	GstElement *convert = gst_element_factory_make("audioconvert", nullptr);
+	GstElement *resample = gst_element_factory_make("audioresample", nullptr);
+	GstElement *sink = gst_element_factory_make("autoaudiosink", nullptr);
+	if (!pipeline || !src || !convert || !resample || !sink) {
+		if (sink) gst_object_unref(sink);
+		if (resample) gst_object_unref(resample);
+		if (convert) gst_object_unref(convert);
+		if (src) gst_object_unref(src);
+		if (pipeline) gst_object_unref(pipeline);
+		fail(L"Cannot create GStreamer audio pipeline");
+		return;
+	}
+	gst_bin_add_many(GST_BIN(pipeline), src, convert, resample, sink, nullptr);
+	if (!gst_element_link_many(src, convert, resample, sink, nullptr)) {
+		gst_object_unref(pipeline);
+		fail(L"Cannot link GStreamer audio pipeline");
 		return;
 	}
 
-	SDL_AudioSpec want{};
-	want.freq = provider->GetSampleRate();
-	want.format = AUDIO_S16SYS;
-	want.channels = static_cast<Uint8>(std::max(1, provider->GetChannels()));
-	want.samples = static_cast<Uint16>(std::clamp((want.freq * wanted_latency) / 1000, 256, 4096));
-	want.callback = nullptr;
+	GstCaps *caps = gst_caps_new_simple("audio/x-raw",
+		"format", G_TYPE_STRING, GST_AUDIO_NE(S16),
+		"layout", G_TYPE_STRING, "interleaved",
+		"rate", G_TYPE_INT, rate,
+		"channels", G_TYPE_INT, channels,
+		nullptr);
+	g_object_set(src,
+		"caps", caps,
+		"format", GST_FORMAT_TIME,
+		"stream-type", GST_APP_STREAM_TYPE_STREAM,
+		"is-live", TRUE,
+		"do-timestamp", TRUE,
+		"block", TRUE,
+		"max-bytes", (guint64)std::max<long long>(bytesPerFrame, maxQueuedFrames * bytesPerFrame),
+		nullptr);
+	gst_caps_unref(caps);
 
-	linuxState->device = SDL_OpenAudioDevice(nullptr, 0, &want, &linuxState->obtained, 0);
-	if (!linuxState->device) {
-		KaiLog(wxString::Format(L"Cannot open SDL audio device: %s", wxString::FromUTF8(SDL_GetError())));
-		std::lock_guard<std::mutex> lock(linuxState->mutex);
-		linuxState->failed = true;
-		linuxState->initialized = true;
-		linuxState->cv.notify_all();
-		SDL_QuitSubSystem(SDL_INIT_AUDIO);
+	if (gst_element_set_state(pipeline, GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE) {
+		gst_object_unref(pipeline);
+		fail(L"Cannot start GStreamer audio pipeline");
 		return;
 	}
 
-	if (linuxState->obtained.freq != want.freq || linuxState->obtained.format != want.format || linuxState->obtained.channels != want.channels) {
-		KaiLog(L"SDL audio device does not support Kainote PCM format");
-		SDL_CloseAudioDevice(linuxState->device);
-		linuxState->device = 0;
-		std::lock_guard<std::mutex> lock(linuxState->mutex);
-		linuxState->failed = true;
-		linuxState->initialized = true;
-		linuxState->cv.notify_all();
-		SDL_QuitSubSystem(SDL_INIT_AUDIO);
-		return;
-	}
-
-	SDL_PauseAudioDevice(linuxState->device, 0);
+	linuxState->pipeline = pipeline;
+	linuxState->appsrc = src;
 	{
 		std::lock_guard<std::mutex> lock(linuxState->mutex);
 		linuxState->initialized = true;
 		linuxState->cv.notify_all();
 	}
 
-	const int bytesPerFrame = provider->GetChannels() * provider->GetBytesPerSample();
-	const int maxQueuedFrames = std::max(1024, provider->GetSampleRate() * wanted_latency * buffer_length / 1000);
-	const int chunkFrames = std::max(256, std::min(4096, provider->GetSampleRate() * wanted_latency / 1000));
-	std::vector<unsigned char> chunk(static_cast<size_t>(chunkFrames) * bytesPerFrame);
-
+	bool active = false;
 	while (true) {
-		long long requestStart = 0;
 		long long requestEnd = 0;
 		bool restartPlayback = false;
+		bool goIdle = false;
 		{
 			std::unique_lock<std::mutex> lock(linuxState->mutex);
 			linuxState->cv.wait_for(lock, std::chrono::milliseconds(10), [&] {
@@ -115,54 +148,74 @@ void DirectSoundPlayer2Thread::Run()
 			if (!linuxState->running)
 				break;
 			if (!linuxState->playing) {
-				SDL_ClearQueuedAudio(linuxState->device);
-				continue;
+				goIdle = true;
 			}
-			restartPlayback = linuxState->restart;
-			linuxState->restart = false;
-			requestStart = start_frame;
-			requestEnd = end_frame;
-			if (restartPlayback) {
-				linuxState->currentFrame = requestStart;
-				linuxState->playbackStart = std::chrono::steady_clock::now();
+			else {
+				restartPlayback = linuxState->restart;
+				linuxState->restart = false;
+				requestEnd = end_frame;
+				if (restartPlayback) {
+					linuxState->currentFrame = start_frame;
+					linuxState->playbackStart = std::chrono::steady_clock::now();
+				}
 			}
 		}
 
-		if (restartPlayback)
-			SDL_ClearQueuedAudio(linuxState->device);
-
-		const Uint32 queuedBytes = SDL_GetQueuedAudioSize(linuxState->device);
-		const int queuedFrames = bytesPerFrame ? static_cast<int>(queuedBytes / bytesPerFrame) : 0;
-		if (queuedFrames < maxQueuedFrames) {
-			long long frame = 0;
-			long long framesToWrite = 0;
-			{
-				std::lock_guard<std::mutex> lock(linuxState->mutex);
-				frame = linuxState->currentFrame;
-				framesToWrite = std::min<long long>(chunkFrames, std::max<long long>(0, requestEnd - frame));
+		if (goIdle) {
+			// Playback just stopped: drop queued audio so it goes silent at once
+			// (the role SDL_ClearQueuedAudio played).  Edge-triggered so we don't
+			// spam flush events while idle.
+			if (active) {
+				gst_element_send_event(pipeline, gst_event_new_flush_start());
+				gst_element_send_event(pipeline, gst_event_new_flush_stop(TRUE));
+				active = false;
 			}
+			continue;
+		}
+		active = true;
 
-			if (framesToWrite > 0) {
-				provider->GetBuffer(chunk.data(), frame, framesToWrite, volume);
-				if (SDL_QueueAudio(linuxState->device, chunk.data(), static_cast<Uint32>(framesToWrite * bytesPerFrame)) != 0) {
-					KaiLogSilent(wxString::Format(L"SDL audio queue failed: %s", wxString::FromUTF8(SDL_GetError())));
-				}
-				std::lock_guard<std::mutex> lock(linuxState->mutex);
-				linuxState->currentFrame += framesToWrite;
+		if (restartPlayback) {
+			// Drop already-queued audio so a new selection starts crisply.
+			gst_element_send_event(pipeline, gst_event_new_flush_start());
+			gst_element_send_event(pipeline, gst_event_new_flush_stop(TRUE));
+		}
+
+		long long frame = 0;
+		long long framesToWrite = 0;
+		{
+			std::lock_guard<std::mutex> lock(linuxState->mutex);
+			frame = linuxState->currentFrame;
+			framesToWrite = std::min<long long>(chunkFrames, std::max<long long>(0, requestEnd - frame));
+		}
+
+		if (framesToWrite > 0) {
+			const gsize bytes = static_cast<gsize>(framesToWrite * bytesPerFrame);
+			GstBuffer *buf = gst_buffer_new_allocate(nullptr, bytes, nullptr);
+			// Let the provider decode straight into the GstBuffer memory (no
+			// intermediate copy), then hand it off; block=TRUE paces to the clock.
+			GstMapInfo map;
+			if (gst_buffer_map(buf, &map, GST_MAP_WRITE)) {
+				provider->GetBuffer(map.data, frame, framesToWrite, volume);
+				gst_buffer_unmap(buf, &map);
 			}
-			else if (queuedBytes == 0) {
+			gst_app_src_push_buffer(GST_APP_SRC(src), buf);
+			std::lock_guard<std::mutex> lock(linuxState->mutex);
+			linuxState->currentFrame += framesToWrite;
+		}
+		else {
+			guint64 level = 0;
+			g_object_get(src, "current-level-bytes", &level, nullptr);
+			if (level == 0) {
 				std::lock_guard<std::mutex> lock(linuxState->mutex);
 				linuxState->playing = false;
 			}
 		}
 	}
 
-	if (linuxState->device) {
-		SDL_ClearQueuedAudio(linuxState->device);
-		SDL_CloseAudioDevice(linuxState->device);
-		linuxState->device = 0;
-	}
-	SDL_QuitSubSystem(SDL_INIT_AUDIO);
+	gst_element_set_state(pipeline, GST_STATE_NULL);
+	gst_object_unref(pipeline);
+	linuxState->pipeline = nullptr;
+	linuxState->appsrc = nullptr;
 }
 
 unsigned int DirectSoundPlayer2Thread::FillAndUnlockBuffers(unsigned char*, unsigned int, unsigned char*, unsigned int,
@@ -181,7 +234,7 @@ void DirectSoundPlayer2Thread::CheckError()
 	if (!failed)
 		return;
 
-	throw _T("SDL audio player failed.");
+	throw _T("Audio player failed.");
 }
 
 DirectSoundPlayer2Thread::DirectSoundPlayer2Thread(Provider *provider, int _WantedLatency, int _BufferLength)
@@ -205,7 +258,7 @@ DirectSoundPlayer2Thread::DirectSoundPlayer2Thread(Provider *provider, int _Want
 			linuxState->thread.join();
 		delete linuxState;
 		linuxState = nullptr;
-		throw _T("Failed creating SDL audio playback device.");
+		throw _T("Failed creating audio playback device.");
 	}
 }
 

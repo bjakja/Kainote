@@ -25,6 +25,13 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <dxva2api.h>
+#ifndef _WIN32
+#include <atomic>
+#include <memory>
+#include <mutex>
+#include <vector>
+class wxDC;
+#endif
 
 class SubtitlesProviderManager;
 
@@ -78,6 +85,7 @@ class RendererVideo
 {
 	friend class RendererDirectShow;
 	friend class RendererFFMS2;
+	friend class RendererGStreamer;
 	friend class VideoBox;
 public:
 	RendererVideo(VideoBox *control, bool visualDisabled);
@@ -161,6 +169,25 @@ public:
 	IDirect3DSurface9 *m_BlackBarsSurface = nullptr;
 	VideoBox *videoControl = nullptr;
 	Visuals *m_Visual = nullptr;
+#ifndef _WIN32
+	// Shared Linux software present: subclasses composite into m_FrameBuffer
+	// (BGRA), double-buffer it here, and RenderToDc blits it to the wx video
+	// window (and draws the visual-editing overlay on top).  Used by both the
+	// FFMS2 (frame-accurate) and GStreamer (app-sink) renderers.
+	std::atomic_bool m_LinuxRenderQueued{ false };
+	std::mutex m_LinuxPendingFrameMutex;
+	std::vector<unsigned char> m_LinuxPendingFrame;
+	std::vector<unsigned char> m_LinuxPresentFrame;
+	std::atomic_uint m_LinuxPresentedFrames{ 0 };
+	// Outlives the renderer (copied into the QueueLinuxRender CallAfter lambda),
+	// so a queued present can't touch a renderer that was deleted meanwhile
+	// (e.g. switching renderer type via the FFMS2/GStreamer toggle).  Cleared at
+	// the top of each derived destructor.
+	std::shared_ptr<std::atomic_bool> m_LinuxAlive = std::make_shared<std::atomic_bool>(true);
+	void RenderToDc(wxDC& dc);
+	void QueueLinuxRender();
+	void PresentLinuxFrame(const unsigned char* frame);
+#endif
 #
 
 	virtual bool EnumFilters(Menu *menu){ return false; };
@@ -169,7 +196,7 @@ public:
 	virtual Provider * GetFFMS2(){ return nullptr; };
 	virtual void ZoomChanged() {};
 	// Non virtual functions
-	void DrawProgressBar(const wxString &timesString);
+	virtual void DrawProgressBar(const wxString &timesString);
 	void Zoom(const wxSize &size);
 	void DrawZoom();
 	void ZoomMouseHandle(wxMouseEvent &evt);

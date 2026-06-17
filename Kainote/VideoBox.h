@@ -42,6 +42,7 @@ class VideoBox : public wxWindow
 	friend class RendererDirectShow;
 	friend class RendererDummyVideo;
 	friend class RendererFFMS2;
+	friend class RendererGStreamer;
 	friend class Fullscreen;
 public:
 
