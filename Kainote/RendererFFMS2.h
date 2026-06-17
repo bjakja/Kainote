@@ -60,9 +60,6 @@ public:
 	void GetFpsnRatio(float *fps, long *arx, long *ary);
 	void SetVolume(int vol);
 	bool DrawTexture(unsigned char * nframe = nullptr, bool copy = false);
-#ifndef _WIN32
-	void RenderToDc(wxDC& dc);
-#endif
 	void Render(bool RecreateFrame = true, bool wait = true);
 	void ChangePositionByFrame(int cpos);
 	//it's safe to not exist visual
@@ -84,19 +81,14 @@ public:
 	Provider* GetFFMS2();
 	Provider *m_FFMS2 = nullptr;
 #ifndef _WIN32
-	std::atomic_bool m_LinuxRenderQueued{ false };
-	std::mutex m_LinuxPendingFrameMutex;
-	std::vector<unsigned char> m_LinuxPendingFrame;
-	std::vector<unsigned char> m_LinuxPresentFrame;
+	// Frame-accurate playback driver; the shared software present (buffers,
+	// QueueLinuxRender/PresentLinuxFrame/RenderToDc) lives in RendererVideo.
 	std::thread m_LinuxPlaybackThread;
 	std::atomic_bool m_LinuxPlaybackStop{ false };
-	std::atomic_uint m_LinuxPresentedFrames{ 0 };
 #endif
 protected:
 	void DestroyFFMS2();
 #ifndef _WIN32
-	void QueueLinuxRender();
-	void PresentLinuxFrame(const unsigned char* frame);
 	void StartLinuxPlaybackThread();
 	void StopLinuxPlaybackThread();
 	void LinuxPlaybackLoop();

@@ -21,6 +21,8 @@
 #include "KaiStaticText.h"
 #ifdef _WIN32
 #include "RendererDirectShow.h"
+#else
+#include "RendererGStreamer.h"
 #endif
 #include "RendererFFMS2.h"
 #include "Notebook.h"
@@ -281,9 +283,12 @@ bool VideoBox::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*= 
 		MenuItem *index = Kai->Menubar->FindItem(GLOBAL_VIDEO_INDEXING);
 		byFFMS2 = index->IsChecked() && index->IsEnabled() && !fulls/* && !isFullscreen*/;
 #else
-		// DirectShow is Windows-only.  On Linux use the FFMS2/FFmpeg path for
-		// video decoding/playback instead of trying to instantiate DirectShow.
-		byFFMS2 = true;
+		// On Linux the general-playback path is GStreamer (RendererGStreamer),
+		// the analogue of the Windows DirectShow path.  Honour the same indexing
+		// toggle: checked => FFMS2 (frame-accurate, for typesetting), unchecked
+		// (or fullscreen) => GStreamer playback.
+		MenuItem *index = Kai->Menubar->FindItem(GLOBAL_VIDEO_INDEXING);
+		byFFMS2 = !index || (index->IsChecked() && index->IsEnabled() && !fulls);
 #endif
 	}
 	else
@@ -303,7 +308,7 @@ bool VideoBox::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*= 
 			renderer = new RendererDirectShow(this, m_VideoToolbar->IsVisualsDisabled());
 #else
 		else
-			renderer = new RendererFFMS2(this, m_VideoToolbar->IsVisualsDisabled());
+			renderer = new RendererGStreamer(this, m_VideoToolbar->IsVisualsDisabled());
 #endif
 	}
 
@@ -447,6 +452,11 @@ void VideoBox::OnSize(wxSizeEvent& event)
 	m_SeekingSlider->SetSize(wxSize(asize.x, m_ToolBarHeight - 8));
 	if (renderer){
 		renderer->UpdateVideoWindow();
+#ifndef _WIN32
+		// The GStreamer overlay reapplies its render rectangle on the next
+		// paint (FFMS2 re-blits its current frame); force that paint here.
+		Refresh(false);
+#endif
 	}
 	else{
 		Refresh(false);
@@ -958,7 +968,13 @@ void VideoBox::ContextMenu(const wxPoint &pos)
 		menu3 = new Menu();
 		renderer->EnumFilters(menu3);
 		numfilters = menu3->GetMenuItemCount();
-		menu->Append(23456, _("Filtry"), menu3, _("Wyświetla użyte filtry"));
+		// GStreamer has no DirectShow-style filter list, so don't show an empty submenu.
+		if (numfilters > 0)
+			menu->Append(23456, _("Filtry"), menu3, _("Wyświetla użyte filtry"));
+		else {
+			delete menu3;
+			menu3 = nullptr;
+		}
 	}
 
 
@@ -1205,12 +1221,9 @@ void VideoBox::OnPaint(wxPaintEvent& event)
 #ifndef _WIN32
 	wxPaintDC paintDc(this);
 	if (renderer && !renderer->m_BlockResize && renderer->m_State != None){
-		if (RendererFFMS2* ffmsRenderer = dynamic_cast<RendererFFMS2*>(renderer)) {
-			ffmsRenderer->RenderToDc(paintDc);
-		}
-		else {
-			renderer->Render(renderer->m_State != Playing, false);
-		}
+		// Both Linux renderers (FFMS2 + GStreamer appsink) composite into a BGRA
+		// frame buffer and present through the shared base RenderToDc.
+		renderer->RenderToDc(paintDc);
 		return;
 	}
 	else if (GetState() == None){

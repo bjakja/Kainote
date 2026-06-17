@@ -93,6 +93,11 @@ void SubtitlesProviderManager::Draw(unsigned char* buffer, int time)
 	GetProvider()->Draw(buffer, time);
 }
 
+bool SubtitlesProviderManager::DrawChanged(unsigned char* buffer, int time)
+{
+	return GetProvider()->DrawChanged(buffer, time);
+}
+
 bool SubtitlesProviderManager::Open(TabPanel *tab, int flag, wxString *text)
 {
 	return GetProvider()->Open(tab, flag, text);

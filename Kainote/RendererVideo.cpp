@@ -33,6 +33,57 @@
 #include <algorithm>
 #include <dxva2api.h>
 
+#ifndef _WIN32
+#include <wx/bitmap.h>
+#include <wx/image.h>
+#include <wx/dc.h>
+#include <wx/app.h>
+#include <cstdlib>
+#include <cstring>
+
+namespace
+{
+	void DrawBgraFrameWithWxDc(wxDC& dc, const unsigned char* frame, int width, int height,
+		int pitch, const RECT& targetRect)
+	{
+		if (!frame || width <= 0 || height <= 0 || pitch < width * 4)
+			return;
+
+		const size_t rgbSize = static_cast<size_t>(width) * static_cast<size_t>(height) * 3;
+		unsigned char* rgb = static_cast<unsigned char*>(std::malloc(rgbSize));
+		if (!rgb)
+			return;
+		for (int y = 0; y < height; ++y) {
+			const unsigned char* src = frame + (y * pitch);
+			unsigned char* dst = rgb + (y * width * 3);
+			for (int x = 0; x < width; ++x) {
+				// Frames are BGRA (FFMS2 + the GStreamer appsink both request BGRA);
+				// wxImage expects RGB.
+				dst[(x * 3) + 0] = src[(x * 4) + 2];
+				dst[(x * 3) + 1] = src[(x * 4) + 1];
+				dst[(x * 3) + 2] = src[(x * 4) + 0];
+			}
+		}
+
+		wxImage image(width, height, rgb, false);
+		int targetWidth = targetRect.right - targetRect.left;
+		int targetHeight = targetRect.bottom - targetRect.top;
+		if (targetWidth <= 0 || targetHeight <= 0)
+			return;
+
+		if (targetWidth != width || targetHeight != height)
+			image.Rescale(targetWidth, targetHeight, wxIMAGE_QUALITY_BILINEAR);
+		if (!image.IsOk())
+			return;
+		wxBitmap bitmap(image);
+		if (!bitmap.IsOk())
+			return;
+
+		dc.DrawBitmap(bitmap, targetRect.left, targetRect.top, false);
+	}
+}
+#endif
+
 
 void CreateVERTEX(VERTEX * v, float X, float Y, D3DCOLOR colour, float Z)
 {
@@ -73,6 +124,75 @@ RendererVideo::~RendererVideo()
 	if (m_FrameBuffer){ delete[] m_FrameBuffer; m_FrameBuffer = nullptr; }
 
 }
+
+#ifndef _WIN32
+void RendererVideo::QueueLinuxRender()
+{
+	if (!videoControl)
+		return;
+
+	bool expected = false;
+	if (!m_LinuxRenderQueued.compare_exchange_strong(expected, true))
+		return;
+
+	auto alive = m_LinuxAlive; // keep the flag alive even if the renderer is deleted
+	wxTheApp->CallAfter([this, alive]() {
+		if (!alive->load())
+			return; // renderer was destroyed before this ran
+		m_LinuxRenderQueued.store(false);
+		{
+			std::lock_guard<std::mutex> lock(m_LinuxPendingFrameMutex);
+			m_LinuxPresentFrame.swap(m_LinuxPendingFrame);
+		}
+		if (m_State != None && !m_LinuxPresentFrame.empty()) {
+			wxWindow* renderWindow = (videoControl->m_IsFullscreen && videoControl->m_FullScreenWindow) ?
+				static_cast<wxWindow*>(videoControl->m_FullScreenWindow) : static_cast<wxWindow*>(videoControl);
+			if (renderWindow)
+				renderWindow->Refresh(false);
+		}
+	});
+	wxWakeUpIdle();
+}
+
+void RendererVideo::PresentLinuxFrame(const unsigned char* frame)
+{
+	if (!frame || m_Height <= 0 || m_Pitch <= 0)
+		return;
+	{
+		std::lock_guard<std::mutex> pendingLock(m_LinuxPendingFrameMutex);
+		const size_t frameBytes = static_cast<size_t>(m_Height) * static_cast<size_t>(m_Pitch);
+		if (m_LinuxPresentFrame.size() != frameBytes)
+			m_LinuxPresentFrame.resize(frameBytes);
+		if (m_LinuxPresentFrame.data() != frame)
+			memcpy(m_LinuxPresentFrame.data(), frame, frameBytes);
+	}
+	wxWindow* renderWindow = (videoControl->m_IsFullscreen && videoControl->m_FullScreenWindow) ?
+		static_cast<wxWindow*>(videoControl->m_FullScreenWindow) : static_cast<wxWindow*>(videoControl);
+	if (renderWindow)
+		renderWindow->Refresh(false);
+}
+
+void RendererVideo::RenderToDc(wxDC& dc)
+{
+	wxCriticalSectionLocker lock(m_MutexRendering);
+	if (m_Width <= 0 || m_Height <= 0 || m_Pitch <= 0)
+		return;
+	std::lock_guard<std::mutex> pendingLock(m_LinuxPendingFrameMutex);
+	// Guard against a present buffer that doesn't (yet) match the current
+	// dimensions (e.g. a mid-stream resolution change) so the blit never reads
+	// past the buffer.
+	const size_t needed = (size_t)m_Height * (size_t)m_Pitch;
+	if (!m_LinuxPresentFrame.empty() && m_LinuxPresentFrame.size() < needed)
+		return;
+	const unsigned char* frame = !m_LinuxPresentFrame.empty() ? m_LinuxPresentFrame.data() : m_FrameBuffer;
+	if (!frame)
+		return;
+	DrawBgraFrameWithWxDc(dc, frame, m_Width, m_Height, m_Pitch, m_BackBufferRect);
+	++m_LinuxPresentedFrames;
+	if (m_Visual && !m_HasZoom)
+		m_Visual->DrawWx(dc, m_Time);
+}
+#endif
 
 //sets new rects after change video resolution
 bool RendererVideo::UpdateRects(bool changeZoom)
@@ -646,7 +766,7 @@ void RendererVideo::DrawProgressBar(const wxString &timesString)
 	m_ProgressBarTime = timesString;
 	int fw, fh;
 	RECT rcRect = { 0, 0, 0, 0 };
-	if (m_D3DCalcFont->DrawTextW(nullptr, m_ProgressBarTime.wchar_str(), -1, &rcRect, DT_CALCRECT, 0xFF000000)) {
+	if (m_D3DCalcFont && m_D3DCalcFont->DrawTextW(nullptr, m_ProgressBarTime.wchar_str(), -1, &rcRect, DT_CALCRECT, 0xFF000000)) {
 		fw = rcRect.right - rcRect.left;
 		fh = rcRect.bottom - rcRect.top;
 	}
