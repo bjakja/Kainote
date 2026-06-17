@@ -518,13 +518,21 @@ cmake --build build-linux -j$(nproc)
 
 #### 7. Current Linux runtime notes
 
-The Linux build is compile/link-capable and can start under wxGTK. Current smoke coverage includes launching the GUI under Xvfb and verifying that the main window, subtitle grid, options controls, and time-shifting side panel render without wxSizer consistency asserts or GTK runtime warnings.
+On Linux the build behaves the same as the Windows build except for the following.
 
-Some Windows-only subsystems are still compatibility layers or partial ports:
+Media backends (Windows uses DirectShow / DirectSound / Direct3D):
 
-- DirectShow-specific playback paths are not native Linux backends; prefer FFMS2-backed media paths while porting and testing.
-- DirectSound-specific audio paths are not a native Linux audio backend.
-- Direct3D 9/D3DX compatibility headers are present so the project can compile, but Linux rendering should continue moving toward wxGraphics/OpenGL/Vulkan/native backends.
-- Windows taskbar/COM/Shell features are mapped only where a practical Linux equivalent exists.
+- Video decodes with FFMS2 and is presented through the wxWidgets software paint path; the DirectShow general-playback path is not available on Linux.
+- Audio plays through SDL2 (PulseAudio/PipeWire); there is no DirectSound path.
 
-For development, run both a headless Xvfb smoke test and a real desktop-session check, especially after changing wxGTK layout code or custom controls.
+Other Linux differences:
+
+- Move-to-trash uses freedesktop `gio trash, so the `gio tool (glib2) must be present at runtime; if it is missing, deleting a loaded video is a no-op instead of an unrecoverable hard delete.
+- The file-association ("Skojarzenia") options tab is not shown there is no `xdg-mime backend yet.
+
+Under Wayland specifically (these work normally on X11):
+
+- Cursor-anchored dialogs (colour picker, font/style/hotkey dialogs, etc.) open centred instead of at the pointer a Wayland client cannot position its own windows.
+- "Fullscreen on a specific monitor" falls back to fullscreen on the current output.
+- Auto-pause-on-minimize and the B-key minimize do nothing a Wayland client cannot minimize itself.
+- The screen-pixel colour eyedropper is unavailable Wayland forbids reading pixels outside the app's own surface.
