@@ -40,8 +40,8 @@ TLDialog::TLDialog(wxWindow *parent, SubsGrid *subsgrid)
 	UpExt = new MappedButton(this, 29993, _("Dodaj linię"));
 	UpExt->SetToolTip(_("Dodaje pustą linijkę przed zaznaczoną.\nOryginał idzie w dół.\nDodanej linii należy ustawić czasy."));
 
-	sizer2->Add(new KaiStaticText(this, -1, _("Tekst oryginału")), 1, wxLEFT | wxRIGHT | wxEXPAND | wxALIGN_CENTER_VERTICAL, 5);
-	sizer2->Add(new KaiStaticText(this, -1, _("Tekst tłumaczenia")), 1, wxLEFT | wxRIGHT | wxEXPAND | wxALIGN_CENTER_VERTICAL, 5);
+	sizer2->Add(new KaiStaticText(this, -1, _("Tekst oryginału")), 1, wxLEFT | wxRIGHT | wxEXPAND, 5);
+	sizer2->Add(new KaiStaticText(this, -1, _("Tekst tłumaczenia")), 1, wxLEFT | wxRIGHT | wxEXPAND, 5);
 
 	sizer1->Add(UpExt, 0, wxALL | wxEXPAND, 5);
 	sizer1->Add(Down, 0, wxALL | wxEXPAND, 5);

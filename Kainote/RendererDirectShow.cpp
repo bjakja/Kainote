@@ -17,9 +17,56 @@
 #include "config.h"
 #include "RendererVideo.h"
 #include "RendererDirectShow.h"
+#ifndef _WIN32
+
+RendererDirectShow::RendererDirectShow(VideoBox *control, bool visualDisabled)
+	: RendererVideo(control, visualDisabled)
+	, m_DirectShowPlayer(nullptr)
+{
+}
+
+RendererDirectShow::~RendererDirectShow()
+{
+	if (m_SubtitlesBuffer)
+		delete[] m_SubtitlesBuffer;
+}
+
+bool RendererDirectShow::OpenFile(const wxString&, int, bool, bool) { return false; }
+bool RendererDirectShow::OpenSubs(int, bool, wxString*, bool) { return false; }
+bool RendererDirectShow::Play(int) { return false; }
+bool RendererDirectShow::Pause() { return false; }
+bool RendererDirectShow::Stop() { return false; }
+void RendererDirectShow::SetPosition(int, bool, bool, bool, bool) {}
+int RendererDirectShow::GetFrameTime(bool) { return 0; }
+void RendererDirectShow::GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd) { if (retStart) *retStart = startTime; if (retEnd) *retEnd = endTime; }
+int RendererDirectShow::GetFrameTimeFromTime(int time, bool) { return time; }
+int RendererDirectShow::GetFrameTimeFromFrame(int frame, bool) { return frame; }
+int RendererDirectShow::GetPlayEndTime(int time) { return time; }
+int RendererDirectShow::GetDuration() { return 0; }
+int RendererDirectShow::GetVolume() { return 0; }
+void RendererDirectShow::GetVideoSize(int *width, int *height) { if (width) *width = 0; if (height) *height = 0; }
+void RendererDirectShow::GetFpsnRatio(float *fps, long *arx, long *ary) { if (fps) *fps = 0; if (arx) *arx = 0; if (ary) *ary = 0; }
+void RendererDirectShow::SetVolume(int) {}
+bool RendererDirectShow::DrawTexture(byte*, bool) { return false; }
+void RendererDirectShow::Render(bool, bool) {}
+void RendererDirectShow::RecreateSurface() {}
+void RendererDirectShow::EnableStream(long) {}
+void RendererDirectShow::ChangePositionByFrame(int) {}
+void RendererDirectShow::ChangeVobsub(bool) {}
+wxArrayString RendererDirectShow::GetStreams() { return {}; }
+byte *RendererDirectShow::GetFrameWithSubs(bool, bool *del) { if (del) *del = false; return nullptr; }
+bool RendererDirectShow::EnumFilters(Menu*) { return false; }
+bool RendererDirectShow::FilterConfig(wxString, int, wxPoint) { return false; }
+bool RendererDirectShow::InitRendererDX() { return false; }
+void RendererDirectShow::OpenKeyframes(const wxString&) {}
+void RendererDirectShow::ClearObject() {}
+void RendererDirectShow::SetupVertices() {}
+void RendererDirectShow::ZoomChanged() {}
+
+#else
 #include "VisualDrawingShapes.h"
 #include "SubtitlesProviderManager.h"
-#include "DShowPlayer.h"
+#include "dshowplayer.h"
 #include "Visuals.h"
 #include "DshowRenderer.h"
 #include "kainoteApp.h"
@@ -904,4 +951,5 @@ byte *RendererDirectShow::GetFrameWithSubs(bool subs, bool *del)
 	*del = true;
 	return cpy;
 }
+#endif // _WIN32
 

@@ -86,15 +86,15 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 	Filter = new ToggleButton(this, ID_FILTER, _("Filtruj"));
 	Filter->SetToolTip(_("Filtruje czcionki, by zawierały wpisane znaki"));
 	Filter->SetValue(fontFilterOn);
-	Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 		ChangeCatalog(true);
 	}, ID_FILTER);
 	ChangeCatalog();
 
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent& evt) {
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent& evt) {
 		if (!FCL) {
 			FCL = new FontCatalogList(this, styleFont->GetValue());
-			Bind(CATALOG_CHANGED, [=](wxCommandEvent& evt) {
+			Bind(CATALOG_CHANGED, [=, this](wxCommandEvent& evt) {
 				int sel = fontCatalog->GetSelection();
 				fontCatalog->PutArray(FCManagement.GetCatalogNames());
 				fontCatalog->Insert(_("Wszystkie czcionki"), 0);
@@ -112,7 +112,7 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 		FCL->CenterOnParent();
 	}, ID_CATALOG_MANAGE);
 
-	Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent& evt) {
+	Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=, this](wxCommandEvent& evt) {
 		ChangeCatalog();
 	}, ID_FONT_CATALOG_LIST);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &StyleChange::OnCatalogAdd, this, ID_CATALOG_ADD);
@@ -317,7 +317,7 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 		SCD->SetSizerAndFit(ds);
 		SCD->SetEnterId(ID_BOK);
 		//SCD->SetEscapeId(ID_BCANCEL);
-		SCD->Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+		SCD->Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 			OnOKClick(evt);
 		}, ID_BOK);
 	}
@@ -347,14 +347,14 @@ void StyleChange::OnAllCols(int numColor, bool leftClick /*= true*/)
 		DialogColorPicker *ColourDialog = DialogColorPicker::Get(this, lastColor, numColor);
 		int colorDialogId = ColourDialog->GetId();
 		MoveToMousePosition(ColourDialog);
-		ColourDialog->Bind(COLOR_TYPE_CHANGED, [=](wxCommandEvent &evt){
+		ColourDialog->Bind(COLOR_TYPE_CHANGED, [=, this](wxCommandEvent &evt){
 			MappedButton *colorButton = nullptr;
 			NumCtrl *alphaButton = nullptr;
 			GetColorControls(&colorButton, &alphaButton, evt.GetInt());
 			lastColor = AssColor(colorButton->GetBackgroundColour(), alphaButton->GetInt());
 			ColourDialog->SetColor(lastColor, 0, false);
 		}, colorDialogId);
-		ColourDialog->Bind(COLOR_CHANGED, [=](ColorEvent &evt){
+		ColourDialog->Bind(COLOR_CHANGED, [=, this](ColorEvent &evt){
 			UpdateColor(evt.GetColor(), evt.GetColorType());
 		}, colorDialogId);
 
@@ -373,10 +373,10 @@ void StyleChange::OnAllCols(int numColor, bool leftClick /*= true*/)
 		SimpleColorPicker scp(this, actualColor, numColor);
 		SimpleColorPickerDialog *scpd = scp.GetDialog();
 		int spcdId = scpd->GetId();
-		scpd->Bind(COLOR_CHANGED, [=](ColorEvent &evt){
+		scpd->Bind(COLOR_CHANGED, [=, this](ColorEvent &evt){
 			UpdateColor(evt.GetColor(), evt.GetColorType());
 		}, spcdId);
-		scpd->Bind(COLOR_TYPE_CHANGED, [=](wxCommandEvent &evt){
+		scpd->Bind(COLOR_TYPE_CHANGED, [=, this](wxCommandEvent &evt){
 			MappedButton *colorButton = nullptr;
 			NumCtrl *alphaButton = nullptr;
 			GetColorControls(&colorButton, &alphaButton, evt.GetInt());
@@ -661,12 +661,12 @@ wxArrayString* StyleChange::GetFontsTable(bool save)
 	bool filterOn = Filter->GetValue();
 	wxArrayString* fonts;
 	if (fontFilterText.IsEmpty() || !filterOn) {
-		fonts = FontEnum.GetFonts(this, [=]() {
+		fonts = FontEnum.GetFonts(this, [=, this]() {
 			SS->ReloadFonts();
 			});
 	}
 	else {
-		fonts = FontEnum.GetFilteredFonts(this, [=]() {
+		fonts = FontEnum.GetFilteredFonts(this, [=, this]() {
 			SS->ReloadFonts();
 			}, fontFilterText);
 	}

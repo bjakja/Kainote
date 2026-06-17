@@ -19,7 +19,7 @@
 #include "Notebook.h"
 #include "KaiMessageBox.h"
 #include "KainoteFrame.h"
-#include "Config.h"
+#include "config.h"
 #include "Hotkeys.h"
 #include "ShiftTimes.h"
 #include "AudioBox.h"
@@ -52,8 +52,8 @@ TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, cons
 	shiftTimes->Show(Options.GetBool(SHIFT_TIMES_ON));
 	GridShiftTimesSizer->Add(grid, 1, wxEXPAND, 0);
 	GridShiftTimesSizer->Add(shiftTimes, 0, wxEXPAND, 0);
-	VideoEditboxSizer->Add(video, 0, wxEXPAND | wxALIGN_TOP, 0);
-	VideoEditboxSizer->Add(edit, 1, wxEXPAND | wxALIGN_TOP, 0);
+	VideoEditboxSizer->Add(video, 0, wxEXPAND, 0);
+	VideoEditboxSizer->Add(edit, 1, wxEXPAND, 0);
 
 	//check if there is nothing in constructor that crash or get something wrong when construct
 	edit->StartEdit->SetVideoBox(video);
@@ -62,19 +62,24 @@ TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, cons
 	edit->SetMinSize(wxSize(-1, 200));
 	edit->SetLine(0);
 
-	windowResizer = new KaiWindowResizer(this, [=](int newpos){
+	windowResizer = new KaiWindowResizer(this, [=, this](int newpos){
 		int mw, mh;
 		GetClientSize(&mw, &mh);
 		int limit = (video->GetState() != None && video->IsShown()) ? 350 : 150;
-		return newpos > limit && newpos < mh - 5;
-	}, [=](int newpos, bool shiftDown){
+#ifndef _WIN32
+		int bottomLimit = 180;
+#else
+		int bottomLimit = 5;
+#endif
+		return newpos > limit && newpos < mh - bottomLimit;
+	}, [=, this](int newpos, bool shiftDown){
 		int w, h;
 		edit->GetClientSize(&w, &h);
 		SetVideoWindowSizes(w, newpos, shiftDown);
 	});
 
 	MainSizer = new wxBoxSizer(wxVERTICAL);
-	MainSizer->Add(VideoEditboxSizer, 0, wxEXPAND | wxALIGN_TOP, 0);
+	MainSizer->Add(VideoEditboxSizer, 0, wxEXPAND, 0);
 	MainSizer->Add(windowResizer, 0, wxEXPAND, 0);//AddSpacer(3);
 	MainSizer->Add(GridShiftTimesSizer, 1, wxEXPAND, 0);
 	SetSizerAndFit(MainSizer);
@@ -220,10 +225,20 @@ void TabPanel::SetVideoWindowSizes(int w, int h, bool allTabs)
 		if (ww < 450)
 			ww = 450;
 		video->SetMinSize(wxSize(ww, hh + panelHeight));
+		video->InvalidateBestSize();
 		Options.SetCoords(VIDEO_WINDOW_SIZE, ww, hh + panelHeight);
 	}
 	edit->SetMinSize(wxSize(-1, h));
+	edit->InvalidateBestSize();
+	if (wxSizerItem *item = MainSizer->GetItem(VideoEditboxSizer)){
+		item->SetMinSize(wxSize(-1, h));
+	}
+	VideoEditboxSizer->Layout();
+	GridShiftTimesSizer->Layout();
 	MainSizer->Layout();
+	Layout();
+	SendSizeEvent(wxSEND_EVENT_POST);
+	Refresh(false);
 	if (!allTabs)
 		return;
 
@@ -236,9 +251,19 @@ void TabPanel::SetVideoWindowSizes(int w, int h, bool allTabs)
 			if (ww < 450)
 				ww = 450;
 			tab->video->SetMinSize(wxSize(ww, hh + tab->video->GetPanelHeight()));
+			tab->video->InvalidateBestSize();
 		}
 		tab->edit->SetMinSize(wxSize(-1, h));
+		tab->edit->InvalidateBestSize();
+		if (wxSizerItem *item = tab->MainSizer->GetItem(tab->VideoEditboxSizer)){
+			item->SetMinSize(wxSize(-1, h));
+		}
+		tab->VideoEditboxSizer->Layout();
+		tab->GridShiftTimesSizer->Layout();
 		tab->MainSizer->Layout();
+		tab->Layout();
+		tab->SendSizeEvent(wxSEND_EVENT_POST);
+		tab->Refresh(false);
 	}
 }
 
@@ -300,6 +325,7 @@ void TabPanel::ReloadSubsIfModified()
 			OpenWrite ow;
 			wxString s;
 			if (ow.FileOpen(SubsPath, &s)) {
+				grid->ClosePreviewWindows();
 				grid->LoadSubtitles(s, ext);
 				if (video->GetState() != None) {
 					//OPEN_DUMMY

@@ -19,7 +19,7 @@
 #include "KaiListCtrl.h"
 #include "ListControls.h"
 #include "MappedButton.h"
-#include "Styles.h"
+#include "styles.h"
 #include "KaiStatusBar.h"
 #include <wx/msw/winundef.h>
 #include <wx/timer.h>

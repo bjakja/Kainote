@@ -126,7 +126,7 @@ void ShapesEdition::OnResetDefault(wxCommandEvent& evt)
 {
 	if (KaiMessageBox(_("Czy na pewno chcesz przywrócić ustawienia domyślne?"),
 		_("Potwierdzenie"), wxYES_NO, this) == wxYES) {
-		wxString path = Options.pathfull + L"\\Config\\ShapesSettings.txt";
+		wxString path = Options.pathfull + L"/Config/ShapesSettings.txt";
 		_wremove(path.wc_str());
 		shapes.clear();
 		LoadSettings(&shapes);
@@ -289,7 +289,7 @@ void ShapesEdition::Save(int id)
 
 void LoadSettings(std::vector<ShapesSetting>* shapes)
 {
-	wxString path = Options.pathfull + L"\\Config\\ShapesSettings.txt";
+	wxString path = Options.pathfull + L"/Config/ShapesSettings.txt";
 	OpenWrite ow;
 	wxString txtSettings;
 	if (!ow.FileOpen(path, &txtSettings, false)) {
@@ -339,7 +339,7 @@ void GetNames(std::vector<ShapesSetting>* shapes, wxArrayString* nameList)
 
 void SaveSettings(std::vector<ShapesSetting>* shapes)
 {
-	wxString path = Options.pathfull + L"\\Config\\ShapesSettings.txt";
+	wxString path = Options.pathfull + L"/Config/ShapesSettings.txt";
 	OpenWrite ow(path);
 	for (size_t i = 0; i < shapes->size(); i++) {
 		ShapesSetting shapeSetting = (*shapes)[i];

@@ -42,11 +42,11 @@ DummyVideo::DummyVideo(wxWindow* parent)
 	videoResolutionWidth = new NumCtrl(this, -1, L"1920", 300, 8000, true);
 	videoResolutionHeight = new NumCtrl(this, -1, L"1080", 200, 4500, true);
 	resolutionSizer2->Add(videoResolutionWidth, 1, wxRIGHT | wxEXPAND, 4);
-	resolutionSizer2->Add(new KaiStaticText(this, -1, L"x"), 0, wxRIGHT | wxALIGN_BOTTOM | wxALIGN_CENTER_HORIZONTAL, 4);
+	resolutionSizer2->Add(new KaiStaticText(this, -1, L"x"), 0, wxRIGHT | wxALIGN_BOTTOM, 4);
 	resolutionSizer2->Add(videoResolutionHeight, 1, wxEXPAND, 0);
 	resolutionSizer1->Add(videoResolution, 0, wxBOTTOM | wxEXPAND, 8);
 	resolutionSizer1->Add(resolutionSizer2, 0, wxEXPAND, 0);
-	resolutionSizer->Add(new KaiStaticText(this, -1, _("Rozdzielczość wideo:")), 1, wxALL | wxALIGN_BOTTOM | wxEXPAND, 4);
+	resolutionSizer->Add(new KaiStaticText(this, -1, _("Rozdzielczość wideo:")), 1, wxALL | wxEXPAND, 4);
 	resolutionSizer->Add(resolutionSizer1, 2, wxALL | wxEXPAND, 4);
 
 	wxBoxSizer* colorSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -55,8 +55,8 @@ DummyVideo::DummyVideo(wxWindow* parent)
 	color = new ButtonColorPicker(this, AssColor(wxString(L"&HFEA32F&")), wxSize(100, -1));
 	pattern = new KaiCheckBox(this, -1, _("Siatka"));
 	colorSizer1->Add(color, 1, wxRIGHT | wxEXPAND, 4);
-	colorSizer1->Add(pattern, 1, wxEXPAND | wxALIGN_CENTER_VERTICAL, 0);
-	colorSizer->Add(new KaiStaticText(this, -1, _("Kolor:")), 1, wxALL | wxALIGN_TOP | wxEXPAND, 4);
+	colorSizer1->Add(pattern, 1, wxEXPAND, 0);
+	colorSizer->Add(new KaiStaticText(this, -1, _("Kolor:")), 1, wxALL | wxEXPAND, 4);
 	colorSizer->Add(colorSizer1, 2, wxALL | wxEXPAND, 4);
 
 	wxBoxSizer* FPSSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -84,7 +84,7 @@ DummyVideo::DummyVideo(wxWindow* parent)
 	FPSes.Add(L"30"); 
 	FPSes.Add(L"60");
 	frameRate = new KaiChoice(this, -1, L"23.976", wxDefaultPosition, wxDefaultSize, FPSes, 0, valid);
-	FPSSizer->Add(new KaiStaticText(this, -1, _("Klatki na sekundę:")), 1, wxALL | wxALIGN_TOP | wxEXPAND, 4);
+	FPSSizer->Add(new KaiStaticText(this, -1, _("Klatki na sekundę:")), 1, wxALL | wxEXPAND, 4);
 	FPSSizer->Add(frameRate, 2, wxALL | wxEXPAND, 4);
 	wxBoxSizer* durationSizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer* durationSizer2 = new wxBoxSizer(wxVERTICAL);
@@ -95,7 +95,7 @@ DummyVideo::DummyVideo(wxWindow* parent)
 	frameDuration = new KaiStaticText(this, -1, wxString::Format(_("Co daje %i klatek"), frames));
 	durationSizer2->Add(duration, 1, wxEXPAND, 0);
 	durationSizer2->Add(frameDuration, 1, wxEXPAND, 0);
-	durationSizer->Add(new KaiStaticText(this, -1, _("Czas trwania:")), 1, wxALL | wxALIGN_TOP | wxEXPAND, 4);
+	durationSizer->Add(new KaiStaticText(this, -1, _("Czas trwania:")), 1, wxALL | wxEXPAND, 4);
 	durationSizer->Add(durationSizer2, 2, wxALL | wxEXPAND, 4);
 	wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
 	MappedButton* OK = new MappedButton(this, wxID_OK, L"OK", -1, wxDefaultPosition, wxSize(100, -1));

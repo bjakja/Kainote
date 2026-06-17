@@ -15,7 +15,7 @@
 
 
 #include "MappedButton.h"
-#include "Config.h"
+#include "config.h"
 //#include "Utils.h"
 #include <wx/dc.h>
 #include <wx/dcclient.h>
@@ -64,7 +64,11 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, cons
 	int fw;
 	CalculateSize(&fw, &textHeight);
 	bool makeSquare = (style & MAKE_SQUARE_BUTTON) != 0;
+#ifdef _WIN32
 	int controlHeight = textHeight + 10;
+#else
+	int controlHeight = wxMax(18, textHeight + 6);
+#endif
 	if (makeSquare){
 		newSize.x = controlHeight;
 	}
@@ -91,8 +95,8 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, cons
 		}
 	});*/
 	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent &evt){});
-	Bind(wxEVT_KILL_FOCUS, [=](wxFocusEvent &evt){Refresh(false); });
-	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &evt){Refresh(false); });
+	Bind(wxEVT_KILL_FOCUS, [=, this](wxFocusEvent &evt){Refresh(false); });
+	Bind(wxEVT_SET_FOCUS, [=, this](wxFocusEvent &evt){Refresh(false); });
 	wxAcceleratorEntry centries[1];
 	centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, GetId());
 	wxAcceleratorTable caccel(1, centries);
@@ -121,7 +125,11 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int 
 	int fw;
 	CalculateSize(&fw, &textHeight);
 	bool makeSquare = (style & MAKE_SQUARE_BUTTON) != 0;
+#ifdef _WIN32
 	int controlHeight = textHeight + 10;
+#else
+	int controlHeight = wxMax(18, textHeight + 6);
+#endif
 	if (makeSquare){
 		newSize.x = controlHeight;
 	}
@@ -151,14 +159,14 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int 
 		}
 		});*/
 	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent &evt){});
-	Bind(wxEVT_KILL_FOCUS, [=](wxFocusEvent &evt){Refresh(false); });
-	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &evt){Refresh(false); });
+	Bind(wxEVT_KILL_FOCUS, [=, this](wxFocusEvent &evt){Refresh(false); });
+	Bind(wxEVT_SET_FOCUS, [=, this](wxFocusEvent &evt){Refresh(false); });
 	wxAcceleratorEntry centries[1];
 	centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, GetId());
 	wxAcceleratorTable caccel(1, centries);
 	SetAcceleratorTable(caccel);
 	if (Window < 0){
-		Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+		Bind(wxEVT_COMMAND_MENU_SELECTED, [=, this](wxCommandEvent &evt){
 			SendEvent();
 		}, GetId());
 	}
@@ -181,8 +189,13 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, co
 	int fw = 0;
 	if (style & MAKE_SQUARE_BUTTON){
 		GetTextExtent(L"TEXT", &fw, &textHeight);
-		newSize.x = textHeight + 10;
-		newSize.y = textHeight + 10;
+#ifdef _WIN32
+		const int iconPadding = 10;
+#else
+		const int iconPadding = 2;
+#endif
+		newSize.x = textHeight + iconPadding;
+		newSize.y = textHeight + iconPadding;
 	}
 	else{
 		if (text != emptyString){
@@ -196,7 +209,11 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, co
 		}
 		if (size.y < 1){
 			textHeight = (textHeight > icon.GetHeight()) ? textHeight : icon.GetHeight();
+#ifdef _WIN32
 			newSize.y = textHeight + 10;
+#else
+			newSize.y = wxMax(18, textHeight + 6);
+#endif
 		}
 	}
 	SetMinSize(newSize);
@@ -214,8 +231,8 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, co
 		}
 	});*/
 	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent &evt){});
-	Bind(wxEVT_KILL_FOCUS, [=](wxFocusEvent &evt){Refresh(false); });
-	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &evt){Refresh(false); });
+	Bind(wxEVT_KILL_FOCUS, [=, this](wxFocusEvent &evt){Refresh(false); });
+	Bind(wxEVT_SET_FOCUS, [=, this](wxFocusEvent &evt){Refresh(false); });
 	wxAcceleratorEntry centries[1];
 	centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, GetId());
 	wxAcceleratorTable caccel(1, centries);
@@ -274,7 +291,7 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 	int w = 0;
 	int h = 0;
 	GetClientSize(&w, &h);
-	if (w == 0 || h == 0){ return; }
+	if (w < 1 || h < 1){ return; }
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < w || bmp->GetHeight() < h)) {
 		delete bmp;
@@ -387,15 +404,15 @@ void MappedButton::PaintGDI(wxDC &tdc, int w, int h){
 			(enabled) ? Options.GetColour(WINDOW_TEXT) :
 			Options.GetColour(WINDOW_TEXT_INACTIVE));
 		if (name != emptyString){
+			wxRect cur(3, 0, w - 6, h);
+			tdc.SetClippingRegion(cur);
 			if (iw){
-				tdc.DrawText(name, ((w - fw) / 2) + iw + 5, ((h - textHeight) / 2));
+				tdc.DrawLabel(name, cur, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
 			}
 			else{
-				wxRect cur(5, ((h - textHeight) / 2), w - 10, textHeight);
-				tdc.SetClippingRegion(cur);
-				tdc.DrawLabel(name, cur, iw ? wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL : wxALIGN_CENTER);
-				tdc.DestroyClippingRegion();
+				tdc.DrawLabel(name, cur, wxALIGN_CENTER);
 			}
+			tdc.DestroyClippingRegion();
 		}
 
 	}
@@ -526,8 +543,13 @@ ToggleButton::ToggleButton(wxWindow *parent, int id, const wxString& label, cons
 	int fw;
 	CalculateSize(&fw, &textHeight);
 	if (style & MAKE_SQUARE_BUTTON){
-		newSize.x = textHeight + 10;
-		newSize.y = textHeight + 10;
+#ifdef _WIN32
+		const int togglePadding = 10;
+#else
+		const int togglePadding = 2;
+#endif
+		newSize.x = textHeight + togglePadding;
+		newSize.y = textHeight + togglePadding;
 	}
 	else{
 		if (size.x < 1){
@@ -535,7 +557,11 @@ ToggleButton::ToggleButton(wxWindow *parent, int id, const wxString& label, cons
 			if (newSize.x < 60){ newSize.x = 60; }
 		}
 		if (size.y < 1){
+#ifdef _WIN32
 			newSize.y = textHeight + 10;
+#else
+			newSize.y = textHeight + 2;
+#endif
 		}
 	}
 	SetMinSize(newSize);
@@ -546,14 +572,14 @@ ToggleButton::ToggleButton(wxWindow *parent, int id, const wxString& label, cons
 	Bind(wxEVT_LEAVE_WINDOW, &ToggleButton::OnMouseEvent, this);
 	Bind(wxEVT_SIZE, &ToggleButton::OnSize, this);
 	Bind(wxEVT_PAINT, &ToggleButton::OnPaint, this);
-	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=, this](wxCommandEvent &evt){
 		toggled = !toggled;
 		Refresh(false);
 		SendEvent();
 	});
 	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent &evt){});
-	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent& evt) {Refresh(false); });
-	Bind(wxEVT_KILL_FOCUS, [=](wxFocusEvent& evt) {Refresh(false); });
+	Bind(wxEVT_SET_FOCUS, [=, this](wxFocusEvent& evt) {Refresh(false); });
+	Bind(wxEVT_KILL_FOCUS, [=, this](wxFocusEvent& evt) {Refresh(false); });
 	wxAcceleratorEntry centries[1];
 	centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, GetId());
 	wxAcceleratorTable caccel(1, centries);
@@ -573,7 +599,7 @@ void ToggleButton::OnPaint(wxPaintEvent& event)
 	int w = 0;
 	int h = 0;
 	GetClientSize(&w, &h);
-	if (w == 0 || h == 0){ return; }
+	if (w < 1 || h < 1){ return; }
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < w || bmp->GetHeight() < h)) {
 		delete bmp;

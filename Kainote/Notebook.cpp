@@ -23,11 +23,11 @@
 #include "OpennWrite.h"
 #include "VideoBox.h"
 
-#include "Editbox.h"
+#include "EditBox.h"
 #include "SubsGrid.h"
 #include "Toolbar.h"
 #include "TabPanel.h"
-#include "shiftTimes.h"
+#include "ShiftTimes.h"
 #include "KainoteFrame.h"
 #include "ModificationChecker.h"
 
@@ -60,7 +60,18 @@ Notebook::Notebook(wxWindow *parent, int id)
 
 	CalcSizes();
 	Hook = nullptr;
+#ifdef _WIN32
 	Hook = SetWindowsHookEx(WH_CBT, &PauseOnMinimalize, nullptr, GetCurrentThreadId());//WH_MOUSE
+#else
+	if (wxWindow* topFrame = GetParent()) {
+		topFrame->Bind(wxEVT_ICONIZE, [](wxIconizeEvent& evt){
+			if (evt.IsIconized() && Notebook::GetTab() && Notebook::GetTab()->video &&
+				Notebook::GetTab()->video->GetState() == Playing)
+				Notebook::GetTab()->video->Pause();
+			evt.Skip();
+		});
+	}
+#endif
 
 	tabsScroll.SetOwner(this, 6779);
 	Bind(wxEVT_TIMER, &Notebook::OnScrollTabs, this, 6779);
@@ -390,16 +401,19 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		bool isInSplitLine = abs(splitline - x) < 4;
 		if (click && isInSplitLine){
 			CaptureMouse();
+#ifdef _WIN32
 			int px = x, py = 2;
 			ClientToScreen(&px, &py);
 			sline = new wxDialog(this, -1, emptyString, wxPoint(px, py), wxSize(3, h - 27), wxSTAY_ON_TOP | wxBORDER_NONE);
 			sline->SetBackgroundColour(L"#000000");
 			sline->Show();
+#endif
 			splitLineHolding = true;
 		}
 		else if (event.LeftUp() && splitLineHolding)
 		{
 			int npos = x;
+#ifdef _WIN32
 			if (sline){
 				int yy;
 				sline->GetPosition(&npos, &yy);
@@ -407,13 +421,16 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 				sline->Destroy();
 				sline = nullptr;
 			}
+#else
+			npos = MID(200, x, w - 200);
+#endif
 			if (HasCapture()){ ReleaseMouse(); }
 			splitline = npos;
 			bool leftTab = (Pages[iter]->GetPosition().x == 1);
 			int tmpiter = (leftTab) ? iter : splititer;
 			int tmpsplititer = (!leftTab) ? iter : splititer;
-			Pages[tmpiter]->SetSize(splitline - 3, hh - 2);
-			Pages[tmpsplititer]->SetSize(splitline + 2, 1, w - (splitline + 3), hh - 2);
+			Pages[tmpiter]->SetSize(wxMax(0, splitline - 3), wxMax(0, hh - 2));
+			Pages[tmpsplititer]->SetSize(splitline + 2, 1, wxMax(0, w - (splitline + 3)), wxMax(0, hh - 2));
 			Refresh(false);
 			SetTimer(GetHWND(), 9876, 500, (TIMERPROC)OnResized);
 			splitLineHolding = false;
@@ -421,9 +438,19 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		else if (event.LeftIsDown() && splitLineHolding)
 		{
 			if (x != splitline){
+#ifdef _WIN32
 				int px = MID(200, x, w - 200), py = 2;
 				ClientToScreen(&px, &py);
 				if (sline){ sline->SetPosition(wxPoint(px, py)); }
+#else
+				splitline = MID(200, x, w - 200);
+				bool leftTab = (Pages[iter]->GetPosition().x == 1);
+				int tmpiter = (leftTab) ? iter : splititer;
+				int tmpsplititer = (!leftTab) ? iter : splititer;
+				Pages[tmpiter]->SetSize(wxMax(0, splitline - 3), wxMax(0, hh - 2));
+				Pages[tmpsplititer]->SetSize(splitline + 2, 1, wxMax(0, w - (splitline + 3)), wxMax(0, hh - 2));
+				Refresh(false);
+#endif
 			}
 
 		}
@@ -543,7 +570,11 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 	//can make other bugs
 	if (event.Moving() || click){
 
+#ifdef _WIN32
 		if (x > start + TabHeight - 4 && HasToolTips()){ UnsetToolTip(); }
+#else
+		if (x > start + TabHeight - 4){ UnsetToolTip(); }
+#endif
 
 
 		if (!allTabsVisible && x < 20){
@@ -614,18 +645,18 @@ void Notebook::OnSize(wxSizeEvent& event)
 	//sizetimer.Start(500,true);
 	int w, h;
 	GetClientSize(&w, &h);
-	h -= TabHeight;
+	h = wxMax(0, h - TabHeight);
 	bool alvistmp = allTabsVisible;
 	CalcSizes();
 	if (split){
 		bool aciter = (Pages[iter]->GetPosition().x == 1);
 		int tmpsplititer = (!aciter) ? iter : splititer;
 		int tmpiter = (aciter) ? iter : splititer;
-		Pages[tmpsplititer]->SetSize(w - (splitline + 3), h - 2);
-		Pages[tmpiter]->SetSize((splitline - 3), h - 2);
+		Pages[tmpsplititer]->SetSize(wxMax(0, w - (splitline + 3)), wxMax(0, h - 2));
+		Pages[tmpiter]->SetSize(wxMax(0, splitline - 3), wxMax(0, h - 2));
 	}
 	else{
-		Pages[iter]->SetSize(w, h);
+		Pages[iter]->SetSize(wxMax(0, w), wxMax(0, h));
 	}
 	if (alvistmp != allTabsVisible){ RefreshRect(wxRect(0, h - TabHeight, w, TabHeight), false); }
 	SetTimer(GetHWND(), 9876, 500, (TIMERPROC)OnResized);
@@ -636,6 +667,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	if (block){ return; }
 	int w, h;
 	GetClientSize(&w, &h);
+	if (w < 1 || TabHeight < 1){ return; }
 	//h-=TabHeight;
 	wxClientDC cdc(this);
 	wxMemoryDC dc;
@@ -1097,12 +1129,13 @@ bool Notebook::LoadSubtitles(TabPanel *tab, const wxString & path, int active /*
 		return false;
 	}
 	else{
+		tab->grid->ClosePreviewWindows();
 		tab->grid->LoadSubtitles(s, ext);
 	}
 
 	tab->SubsPath = path;
 	if (ext == L"ssa"){ ext = L"ass"; }
-	tab->SubsName = tab->SubsPath.AfterLast(L'\\');
+	tab->SubsName = KaiPathName(tab->SubsPath);
 	tab->video->DisableVisuals(ext != L"ass");
 	if (active != -1 && active != tab->grid->currentLine && active < tab->grid->GetCount()){
 		tab->grid->SetActive(active);
@@ -1126,7 +1159,7 @@ int Notebook::LoadVideo(TabPanel *tab, const wxString & path,
 
 	if (hasEditor) {
 		wxString subsPath = (path.empty()) ?
-			tab->SubsPath.BeforeLast(L'\\') + L"\\" : path.BeforeLast(L'\\') + L"\\";
+			KaiPathDir(tab->SubsPath, wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR) : KaiPathDir(path, wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR);
 		audiopath = tab->grid->GetSInfo(L"Audio File");
 		keyframespath = tab->grid->GetSInfo(L"Keyframes File");
 
@@ -1164,7 +1197,7 @@ int Notebook::LoadVideo(TabPanel *tab, const wxString & path,
 				if (!path.empty()) {
 					if (tab->VideoPath != path) {
 						if (!prompt.empty()) { prompt += L"\n"; }
-						prompt += _("Wideo z folderu:\n") + path.AfterLast(L'\\'); flags |= wxYES;
+						prompt += _("Wideo z folderu:\n") + KaiPathName(path); flags |= wxYES;
 					}
 					else
 						return -1;
@@ -1189,7 +1222,7 @@ int Notebook::LoadVideo(TabPanel *tab, const wxString & path,
 			else if (result & wxOK) {
 				if (!audiopath.empty()) {
 					if (hasAudioPath && !sameAudioPath) {
-						audiopath.Replace(L"/", L"\\");
+						audiopath = KaiNormalizePath(audiopath);
 					}
 					if (hasVideoPath) {
 						MenuItem *item = Kai->Menubar->FindItem(GLOBAL_VIDEO_INDEXING);
@@ -1207,7 +1240,7 @@ int Notebook::LoadVideo(TabPanel *tab, const wxString & path,
 					}
 				}
 				if (hasVideoPath) {
-					videopath.Replace(L"/", L"\\");
+					videopath = KaiNormalizePath(videopath);
 					found = true;
 				}
 			}
@@ -1230,7 +1263,7 @@ int Notebook::LoadVideo(TabPanel *tab, const wxString & path,
 	}
 	if (hasEditor) {
 		if (hasAudioPath) {
-			audiopath.Replace(L"/", L"\\");
+			audiopath = KaiNormalizePath(audiopath);
 			Kai->OpenAudioInTab(tab, 30040, audiopath);
 		}
 
@@ -1287,7 +1320,7 @@ void Notebook::SaveLastSession(bool beforeClose, bool recovery, const wxString &
 	if (beforeClose)
 		result << L"[Close session]\r\n";
 	int numtab = 0;
-	wxString recoveryPath = Options.pathfull + L"\\Recovery\\";
+	wxString recoveryPath = Options.pathfull + L"/Recovery/";
 	
 	for (std::vector<TabPanel*>::iterator it = sthis->Pages.begin(); it != sthis->Pages.end(); it++){
 		TabPanel *tab = *it;
@@ -1319,7 +1352,7 @@ void Notebook::SaveLastSession(bool beforeClose, bool recovery, const wxString &
 		numtab++;
 	}
 	OpenWrite op;
-	wxString sessionPath = externalPath.empty() ? Options.configPath + L"\\LastSession.txt" : externalPath;
+	wxString sessionPath = externalPath.empty() ? Options.configPath + L"/LastSession.txt" : externalPath;
 	op.FileWrite(sessionPath, result);
 
 }
@@ -1327,7 +1360,7 @@ void Notebook::SaveLastSession(bool beforeClose, bool recovery, const wxString &
 void Notebook::LoadLastSession(bool loadCrashSession, const wxString &externalPath)
 {
 	wxString riddenSession;
-	wxString sessionPath = externalPath.empty() ? Options.configPath + L"\\LastSession.txt" : externalPath;
+	wxString sessionPath = externalPath.empty() ? Options.configPath + L"/LastSession.txt" : externalPath;
 	OpenWrite op;
 	if (op.FileOpen(sessionPath, &riddenSession, false) && !riddenSession.empty()){
 		wxStringTokenizer tokenizer(riddenSession, L"\n", wxTOKEN_STRTOK);
@@ -1402,7 +1435,7 @@ void Notebook::LoadLastSession(bool loadCrashSession, const wxString &externalPa
 							sthis->LoadSubtitles(tab, subtitles);
 							if (orgSubtitles != subtitles) {
 								tab->SubsPath = orgSubtitles;
-								tab->SubsName = tab->SubsPath.AfterLast(L'\\');
+								tab->SubsName = KaiPathName(tab->SubsPath);
 								tab->grid->RemoveLastIterSave();
 								tab->grid->UpdateUR(true);
 							}
@@ -1456,12 +1489,12 @@ void Notebook::LoadLastSession(bool loadCrashSession, const wxString &externalPa
 
 void Notebook::FindAutoSaveSubstitute(wxString* path, int tab)
 {
-	wxString seekpath = path->AfterLast(L'\\');
+	wxString seekpath = KaiPathName(*path);
 	wxString seekPathWithoutExt = seekpath. BeforeLast(L'.');
 	if (seekPathWithoutExt.empty())
 		seekPathWithoutExt = seekpath;
 
-	wxString autosavePath = Options.pathfull + L"\\Subs\\" + 
+	wxString autosavePath = Options.pathfull + L"/Subs/" +
 		seekPathWithoutExt + L"_" + std::to_wstring(tab) + L"*";
 
 	WIN32_FIND_DATAW data;
@@ -1494,7 +1527,7 @@ void Notebook::FindAutoSaveSubstitute(wxString* path, int tab)
 		SYSTEMTIME accessSystemTime;
 		FileTimeToSystemTime(&ft, &accessSystemTime);
 		if (ModifChecker.CheckDate(&accessSystemTime, &highiestTime)) {
-			*path = Options.pathfull + L"\\Subs\\" + latestFile;
+			*path = Options.pathfull + L"/Subs/" + latestFile;
 			sthis->loadedRecoverySubs = true;
 		}
 		else {
@@ -1508,7 +1541,9 @@ int Notebook::CheckLastSession()
 {
 	wxString riddenSession;
 	OpenWrite op;
-	if (op.FileOpen(Options.configPath + L"\\LastSession.txt", &riddenSession, false)){
+	if (op.FileOpen(Options.configPath + L"/LastSession.txt", &riddenSession, false)){
+		riddenSession.Replace(L"\r\n", L"\n");
+		riddenSession.Replace(L"\r", L"\n");
 		size_t CloseSession = riddenSession.find(L"]\n[Close session]\n");
 		if (CloseSession != -1)
 			return 1;

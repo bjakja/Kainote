@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "SubtitlesProvider.h"
-#include "Config.h"
+#include "config.h"
 
 
 std::vector< SubtitlesProviderManager*> SubtitlesProviderManager::gs_Base;
@@ -28,6 +28,11 @@ SubtitlesProvider *SubtitlesProviderManager::GetProvider()
 {
 	if (!SP){
 		wxString provider = Options.GetString(VSFILTER_INSTANCE);
+#ifndef _WIN32
+		// Default to libass on wxGTK when no provider is configured.
+		if (provider.empty())
+			provider = L"libass";
+#endif
 		if (provider == L"libass")
 			SP = new SubtitlesLibass();
 		else

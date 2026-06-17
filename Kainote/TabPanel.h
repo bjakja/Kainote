@@ -23,7 +23,7 @@
 #include "TabPanel.h"
 #include "KaiWindowResizer.h"
 #include "SubsGrid.h"
-#include "Editbox.h"
+#include "EditBox.h"
 #include <wx/msw/winundef.h>
 #include <wx/sizer.h>
 

@@ -16,7 +16,7 @@
 
 #include "SubsGridWindow.h"
 #include "config.h"
-#include "kaiMessageBox.h"
+#include "KaiMessageBox.h"
 #include "SubsGridFiltering.h"
 #include "SubsGridPreview.h"
 #include "VisualDrawingShapes.h"
@@ -54,8 +54,8 @@ SubsGridWindow::SubsGridWindow(wxWindow *parent, const long int id, const wxPoin
 	Bind(wxEVT_MIDDLE_DOWN, &SubsGridWindow::OnMouseEvent, this);
 	Bind(wxEVT_RIGHT_DOWN, &SubsGridWindow::OnMouseEvent, this);
 	Bind(wxEVT_RIGHT_UP, &SubsGridWindow::OnMouseEvent, this);
-	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent& evt) {Refresh(false); });
-	Bind(wxEVT_KILL_FOCUS, [=](wxFocusEvent& evt) {Refresh(false); });
+	Bind(wxEVT_SET_FOCUS, [=, this](wxFocusEvent& evt) {Refresh(false); });
+	Bind(wxEVT_KILL_FOCUS, [=, this](wxFocusEvent& evt) {Refresh(false); });
 }
 
 SubsGridWindow::~SubsGridWindow()
@@ -86,6 +86,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 	int w = 0;
 	int h = 0;
 	GetClientSize(&w, &h);
+	if (w < 1 || h < 1){ return; }
 	int firstCol = GridWidth[0] + 1;
 	wxRegionIterator upd(GetUpdateRegion());
 	while (upd) {
@@ -141,12 +142,14 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 	
 	if (SetScrollBar(wxVERTICAL, scrollPositionId, panelrows, size + 3, panelrows - 3)){
 		GetClientSize(&w, &h);
+		if (w < 1 || h < 1){ return; }
 	}
 
 	lastWidth = w;
 	lastHeight = h;
 
 	// Prepare bitmap
+	if (w + scHor < 1 || h < 1){ return; }
 	if (bmp) {
 		if (bmp->GetWidth() < w + scHor || bmp->GetHeight() < h) {
 			delete bmp;
@@ -2015,6 +2018,18 @@ void SubsGridWindow::RefreshPreview()
 {
 	if (preview)
 		preview->Refresh(false);
+}
+
+void SubsGridWindow::ClosePreviewWindows(bool refresh)
+{
+	if (preview){
+		preview->DestroyPreview(refresh);
+		preview = nullptr;
+	}
+	if (thisPreview){
+		thisPreview->DestroyPreview(refresh);
+		thisPreview = nullptr;
+	}
 }
 
 bool SubsGridWindow::ShowPreviewWindow(SubsGridWindow *previewGrid, 

@@ -25,7 +25,9 @@
 #include <wx/timer.h>
 #include <wx/snglinst.h>
 
-
+#ifndef _WIN32
+class wxServerBase;
+#endif
 
 #if _DEBUG
 //#define _CRTDBG_MAP_ALLOC
@@ -45,15 +47,22 @@ class kainoteApp : public wxApp
 public:
 	bool OnInit();
 	int OnExit();
+	int FilterEvent(wxEvent& event);
 	void OnFatalException();
 	void OnOpen(wxTimerEvent &evt);
 	bool IsBusy();
 	KainoteFrame* Frame;
 	wxTimer openTimer;
 	wxTimer debugtimer;
+#ifndef _WIN32
+	wxTimer automationExitTimer;
+#endif
 	wxArrayString paths;
 private:
 	wxSingleInstanceChecker* m_checker;
+#ifndef _WIN32
+	wxServerBase* m_ipcServer;
+#endif
 	wxLocale *locale;
 	static void OnOutofMemory();
 };

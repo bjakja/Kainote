@@ -22,6 +22,7 @@
 #include <wx/dir.h>
 #include <wx/string.h>
 #include <wx/log.h>
+#include <wx/filename.h>
 #include "CsriMod.h"
 #include "Notebook.h"
 #include "gitparams.h"
@@ -32,9 +33,18 @@
 #include <wx/msw/private.h>
 #include <wx/mstream.h>
 #include <wx/dc.h>
-#include "Config.h"
+#include "config.h"
 #include "UtilsWindows.h"
 #include <locale>
+#include <algorithm>
+#ifndef _WIN32
+#include <cctype>
+#include <fstream>
+#include <unordered_map>
+#include <filesystem>
+#include <unistd.h>
+#include <wx/display.h>
+#endif
 
 #define ADD_QUOTES_HELPER(s) #s
 #define ADD_QUOTES(s) ADD_QUOTES_HELPER(s)
@@ -317,7 +327,7 @@ void config::SaveOptions(bool cfg, bool style, bool crashed)
 			textfile << L"___Program Crashed___";
 
 		wxString path;
-		path << configPath << L"\\Config.txt";
+		path << configPath << wxFileName::GetPathSeparator() << L"Config.txt";
 		ow.FileWrite(path, textfile);
 	}
 
@@ -327,7 +337,7 @@ void config::SaveOptions(bool cfg, bool style, bool crashed)
 			stylefile << GetStyle(j)->GetRaw();
 		}
 		wxString path;
-		path << pathfull << L"\\Catalog\\" << actualStyleDir << L".sty";
+		path << pathfull << wxFileName::GetPathSeparator() << L"Catalog" << wxFileName::GetPathSeparator() << actualStyleDir << L".sty";
 		ow.FileWrite(path, stylefile);
 	}
 }
@@ -525,10 +535,11 @@ void config::LoadDefaultColors(bool dark, wxColour *table)
 int config::LoadOptions()
 {
 	wxStandardPathsBase &paths = wxStandardPaths::Get();
-	pathfull = paths.GetExecutablePath().BeforeLast(L'\\');
-	configPath = pathfull + L"\\Config";
+	pathfull = paths.GetExecutablePath().BeforeLast(wxFileName::GetPathSeparator());
+	configPath = pathfull + wxFileName::GetPathSeparator() + L"Config";
+	wxFileName::Mkdir(configPath, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 	wxString path;
-	path << configPath << L"\\Config.txt";
+	path << configPath << wxFileName::GetPathSeparator() << L"Config.txt";
 	OpenWrite ow;
 	wxString txt;
 	int isgood = 0;
@@ -549,23 +560,35 @@ int config::LoadOptions()
 			ow.FileWrite(path, txt);
 		}
 		isgood = SetRawOptions(txt);
+		if (!isgood) {
+#ifndef _WIN32
+			// Linux: fall back to defaults in-memory so a partially unparseable
+			// config does not abort startup. Do NOT overwrite the user's
+			// Config.txt, keep it recoverable.
+			LoadDefaultConfig();
+			isgood = 2;
+#endif
+			// Windows keeps isgood == 0: caller warns and exits without
+			// destroying the existing config file (pre-PR behavior).
+		}
 	}
 
 	actualStyleDir = L"Default";
 	path = emptyString;
-	path << pathfull << L"\\Catalog\\";
+	path << pathfull << wxFileName::GetPathSeparator() << L"Catalog" << wxFileName::GetPathSeparator();
+	wxFileName::Mkdir(path, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 	wxDir kat(path);
-	if (!kat.IsOpened()){
+	if (kat.IsOpened()){
+		wxArrayString tmp; kat.GetAllFiles(path, &tmp, emptyString, wxDIR_FILES);
+		for (size_t i = 0; i < tmp.GetCount(); i++){
+			wxString fullpath = tmp[i].AfterLast(wxFileName::GetPathSeparator());
+			if (fullpath.EndsWith(L".sty")){ dirs.Add(fullpath.BeforeLast(L'.')); }
+		}
+	}
+	if (dirs.IsEmpty()){
 		ow.FileWrite(path << actualStyleDir << L".sty",
 			L"Style: Default,Garamond,30,&H00FFFFFF,&H000000FF,&H00FF0000,&H00000000,0,0,0,0,100,100,0,0,0,2,2,2,10,10,10,1");
 		AddStyle(new Styles()); dirs.Add(actualStyleDir);
-	}
-	else{
-		wxArrayString tmp; kat.GetAllFiles(path, &tmp, emptyString, wxDIR_FILES);
-		for (size_t i = 0; i < tmp.GetCount(); i++){
-			wxString fullpath = tmp[i].AfterLast(L'\\');
-			if (fullpath.EndsWith(L".sty")){ dirs.Add(fullpath.BeforeLast(L'.')); }
-		}
 	}
 	LoadStyles(actualStyleDir);
 	LoadColors();
@@ -583,7 +606,7 @@ void config::LoadColors(const wxString &_themeName){
 	}
 	bool failed = false;
 	if (themeName != L"DarkSentro" && themeName != L"LightSentro"){
-		wxString path = pathfull + L"\\Themes\\" + themeName + L".txt";
+		wxString path = pathfull + wxFileName::GetPathSeparator() + L"Themes" + wxFileName::GetPathSeparator() + themeName + L".txt";
 		OpenWrite ow;
 		wxString txtColors;
 		if (ow.FileOpen(path, &txtColors, false)){
@@ -633,7 +656,7 @@ void config::LoadStyles(const wxString &katalog)
 {
 	actualStyleDir = katalog;
 	wxString path;
-	path << pathfull << L"\\Catalog\\" << katalog << L".sty";
+	path << pathfull << wxFileName::GetPathSeparator() << L"Catalog" << wxFileName::GetPathSeparator() << katalog << L".sty";
 	OpenWrite ow;
 	for (std::vector<Styles*>::iterator it = assstore.begin(); it != assstore.end(); it++){
 		delete (*it);
@@ -849,7 +872,7 @@ bool config::LoadAudioOpts()
 {
 	OpenWrite ow;
 	wxString txt;
-	if (!ow.FileOpen(configPath + L"\\AudioConfig.txt", &txt, false)){
+	if (!ow.FileOpen(configPath + wxFileName::GetPathSeparator() + L"AudioConfig.txt", &txt, false)){
 		LoadDefaultAudioConfig();
 		return true;
 	}
@@ -860,7 +883,7 @@ bool config::LoadAudioOpts()
 		
 		if (ConfigNeedToConvert(ver)){
 			ConfigConverter::Get()->ConvertConfig(&txt);
-			ow.FileWrite(configPath + L"\\AudioConfig.txt", txt);
+			ow.FileWrite(configPath + wxFileName::GetPathSeparator() + L"AudioConfig.txt", txt);
 		}
 	}
 	return (AudioOpts = SetRawOptions(txt));
@@ -871,7 +894,7 @@ void config::SaveAudioOpts()
 	OpenWrite ow;
 	wxString audioOpts;
 	GetRawOptions(audioOpts, true);
-	ow.FileWrite(configPath + L"\\AudioConfig.txt", audioOpts);
+	ow.FileWrite(configPath + wxFileName::GetPathSeparator() + L"AudioConfig.txt", audioOpts);
 }
 
 void config::SetHexColor(const wxString &nameAndColor)
@@ -905,7 +928,7 @@ wxString config::GetStringColor(size_t optionName)
 void config::SaveColors(const wxString &path){
 	wxString finalpath = path;
 	if (path.IsEmpty()){
-		finalpath = pathfull + L"\\Themes\\" + GetString(PROGRAM_THEME) + L".txt";
+		finalpath = pathfull + wxFileName::GetPathSeparator() + L"Themes" + wxFileName::GetPathSeparator() + GetString(PROGRAM_THEME) + L".txt";
 	}
 	OpenWrite ow(finalpath, true);
 	//ow.PartFileWrite(L"[" + progname + L"]\n");
@@ -921,7 +944,7 @@ wxFont *config::GetFont(int offset, const wxString& name, bool bold)
 		bool nameMatch = true;
 		if(!name.empty())
 			nameMatch = name == it->second->GetFaceName();
-		bool fontBold = wxFONTWEIGHT_BOLD == it->second->GetFaceName();
+		bool fontBold = wxFONTWEIGHT_BOLD == it->second->GetWeight();
 		bool boldMatch = bold == fontBold;
 		if(nameMatch && boldMatch)
 			return it->second;
@@ -937,9 +960,21 @@ wxFont *config::GetFont(int offset, const wxString& name, bool bold)
 	else if (fontName.empty())
 		fontName = L"Tahoma";
 
+#ifdef _WIN32
 	int newPixelSize = -(int)(((double)fontSize * ((double)fontDPI) / 72.0) + 0.5);
+#else
+	int newPixelSize = std::max(1, (int)(((double)fontSize * ((double)fontDPI) / 72.0) + 0.5));
+#endif
 
 	wxFont *newFont = new wxFont(wxSize(0, newPixelSize), wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, bold? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, false, fontName);
+#ifndef _WIN32
+	if (!newFont->IsOk()) {
+		delete newFont;
+		newFont = new wxFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+		newFont->SetPixelSize(wxSize(0, newPixelSize));
+		newFont->SetWeight(bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL);
+	}
+#endif
 	programFonts.insert(std::pair<int, wxFont*>(10 + offset, newFont));
 	return newFont;
 }
@@ -969,6 +1004,11 @@ bool config::CheckLastKeyEvent(int id, int timeInterval)
 
 void SelectInFolder(const wxString& filename)
 {
+#ifndef _WIN32
+	wxString target = wxFileName(filename).GetPath();
+	if (target.empty()) target = filename;
+	OpenInBrowser(target);
+#else
 	CoInitialize(0);
 	ITEMIDLIST* pidl = ILCreateFromPathW(filename.wc_str());
 	if (pidl) {
@@ -976,6 +1016,7 @@ void SelectInFolder(const wxString& filename)
 		ILFree(pidl);
 	}
 	CoUninitialize();
+#endif
 }
 
 void OpenInBrowser(const wxString& adress)
@@ -1044,8 +1085,170 @@ bool LoadDataFromResource(char*& t_data, DWORD& t_dataSize, const wxString& t_na
 wxBitmap GetBitmapFromMemory(const char* t_data, const DWORD t_size)
 {
 	wxMemoryInputStream a_is(t_data, t_size);
-	return wxBitmap(wxImage(a_is, wxBITMAP_TYPE_PNG, -1), -1);
+	wxImage image(a_is, wxBITMAP_TYPE_PNG, -1);
+	return image.IsOk() ? wxBitmap(image, -1) : wxBitmap();
 }
+
+#ifndef _WIN32
+namespace
+{
+	std::string UpperAscii(wxString value)
+	{
+		std::string text = value.ToStdString();
+		for (char& ch : text)
+			ch = (char)std::toupper((unsigned char)ch);
+		return text;
+	}
+
+	std::filesystem::path ReadExePath()
+	{
+		char buffer[4096] = {};
+		ssize_t len = readlink("/proc/self/exe", buffer, sizeof(buffer) - 1);
+		if (len > 0)
+			return std::filesystem::path(std::string(buffer, (size_t)len));
+		return {};
+	}
+
+	bool TryResourceRoot(const std::filesystem::path& candidate, std::filesystem::path* root)
+	{
+		if (candidate.empty())
+			return false;
+		std::error_code ec;
+		if (std::filesystem::exists(candidate / "resource.rc", ec) && std::filesystem::exists(candidate / "Bitmaps", ec))
+		{
+			*root = candidate;
+			return true;
+		}
+		if (std::filesystem::exists(candidate / "Kainote" / "resource.rc", ec) && std::filesystem::exists(candidate / "Kainote" / "Bitmaps", ec))
+		{
+			*root = candidate / "Kainote";
+			return true;
+		}
+		return false;
+	}
+
+	std::filesystem::path FindResourceRoot()
+	{
+		std::filesystem::path root;
+		std::error_code ec;
+		std::filesystem::path cwd = std::filesystem::current_path(ec);
+		for (std::filesystem::path probe = cwd; !probe.empty(); probe = probe.parent_path())
+		{
+			if (TryResourceRoot(probe, &root))
+				return root;
+			if (probe == probe.parent_path())
+				break;
+		}
+		std::filesystem::path exe = ReadExePath().parent_path();
+		for (std::filesystem::path probe = exe; !probe.empty(); probe = probe.parent_path())
+		{
+			if (TryResourceRoot(probe, &root))
+				return root;
+			if (probe == probe.parent_path())
+				break;
+		}
+		return {};
+	}
+
+	std::filesystem::path ResolveExistingPathCaseInsensitive(const std::filesystem::path& path)
+	{
+		std::error_code ec;
+		if (std::filesystem::exists(path, ec))
+			return path;
+
+		std::filesystem::path resolved;
+		std::filesystem::path remaining = path;
+		if (path.is_absolute())
+		{
+			resolved = path.root_path();
+			remaining = path.relative_path();
+		}
+
+		for (const auto& part : remaining)
+		{
+			if (part.empty() || part == ".")
+				continue;
+			std::filesystem::path direct = resolved / part;
+			if (std::filesystem::exists(direct, ec))
+			{
+				resolved = direct;
+				continue;
+			}
+
+			std::string wanted = part.string();
+			for (char& ch : wanted)
+				ch = (char)std::tolower((unsigned char)ch);
+
+			bool found = false;
+			if (std::filesystem::is_directory(resolved, ec))
+			{
+				for (const auto& entry : std::filesystem::directory_iterator(resolved, ec))
+				{
+					std::string current = entry.path().filename().string();
+					for (char& ch : current)
+						ch = (char)std::tolower((unsigned char)ch);
+					if (current == wanted)
+					{
+						resolved = entry.path();
+						found = true;
+						break;
+					}
+				}
+			}
+			if (!found)
+				return path;
+		}
+		return resolved;
+	}
+
+	const std::unordered_map<std::string, std::filesystem::path>& LinuxResourceMap()
+	{
+		static std::unordered_map<std::string, std::filesystem::path> resources = [] {
+			std::unordered_map<std::string, std::filesystem::path> result;
+			std::filesystem::path root = FindResourceRoot();
+			if (root.empty())
+				return result;
+			std::ifstream rc(root / "resource.rc");
+			std::string line;
+			while (std::getline(rc, line))
+			{
+				size_t rdata = line.find("RCDATA");
+				if (rdata == std::string::npos)
+					continue;
+				size_t nameStart = line.find_first_not_of(" \t");
+				if (nameStart == std::string::npos || nameStart >= rdata)
+					continue;
+				size_t nameEnd = line.find_first_of(" \t", nameStart);
+				std::string name = line.substr(nameStart, nameEnd - nameStart);
+				for (char& ch : name)
+					ch = (char)std::toupper((unsigned char)ch);
+				size_t quoteStart = line.find('"', rdata);
+				size_t quoteEnd = quoteStart == std::string::npos ? std::string::npos : line.find('"', quoteStart + 1);
+				if (quoteStart == std::string::npos || quoteEnd == std::string::npos)
+					continue;
+				std::string relative = line.substr(quoteStart + 1, quoteEnd - quoteStart - 1);
+				for (char& ch : relative)
+					if (ch == '\\') ch = '/';
+				result[name] = root / std::filesystem::path(relative);
+			}
+			return result;
+		}();
+		return resources;
+	}
+
+	wxImage LoadLinuxPngResourceImage(const wxString& name)
+	{
+		auto it = LinuxResourceMap().find(UpperAscii(name));
+		if (it == LinuxResourceMap().end())
+			return wxImage();
+		std::filesystem::path pngPath = ResolveExistingPathCaseInsensitive(it->second);
+		// Suppress harmless libpng ancillary-chunk warnings during bundled PNG loads.
+		wxLogNull suppressPngChunkWarnings;
+		wxImage image(wxString::FromUTF8(pngPath.string()), wxBITMAP_TYPE_PNG);
+		return image.IsOk() ? image : wxImage();
+	}
+}
+#endif
 
 wxBitmap CreateBitmapFromPngResource(const wxString& t_name)
 {
@@ -1058,6 +1261,14 @@ wxBitmap CreateBitmapFromPngResource(const wxString& t_name)
 	{
 		r_bitmapPtr = GetBitmapFromMemory(a_data, a_dataSize);
 	}
+#ifndef _WIN32
+	if (!r_bitmapPtr.IsOk())
+	{
+		wxImage image = LoadLinuxPngResourceImage(t_name);
+		if (image.IsOk())
+			r_bitmapPtr = wxBitmap(image, -1);
+	}
+#endif
 
 	return r_bitmapPtr;
 }
@@ -1074,6 +1285,14 @@ wxBitmap* CreateBitmapPointerFromPngResource(const wxString& t_name)
 		wxMemoryInputStream a_is(a_data, a_dataSize);
 		r_bitmapPtr = new wxBitmap(wxImage(a_is, wxBITMAP_TYPE_PNG, -1), -1);
 	}
+#ifndef _WIN32
+	if (!r_bitmapPtr)
+	{
+		wxImage image = LoadLinuxPngResourceImage(t_name);
+		if (image.IsOk())
+			r_bitmapPtr = new wxBitmap(image, -1);
+	}
+#endif
 
 	return r_bitmapPtr;
 }
@@ -1090,16 +1309,42 @@ wxImage CreateImageFromPngResource(const wxString& t_name)
 		wxMemoryInputStream a_is(a_data, a_dataSize);
 		image = wxImage(a_is, wxBITMAP_TYPE_PNG, -1);
 	}
+#ifndef _WIN32
+	if (!image.IsOk())
+		image = LoadLinuxPngResourceImage(t_name);
+#endif
 
 	return image;
+}
+
+bool KainoteIsWayland()
+{
+#ifdef _WIN32
+	return false;
+#else
+	wxString backend;
+	if (wxGetEnv(L"GDK_BACKEND", &backend)){
+		backend.MakeLower();
+		if (backend.Contains(L"x11")) return false;
+		if (backend.Contains(L"wayland")) return true;
+	}
+	wxString wl;
+	return wxGetEnv(L"WAYLAND_DISPLAY", &wl) && !wl.empty();
+#endif
 }
 
 void MoveToMousePosition(wxWindow* win)
 {
 	wxPoint mst = wxGetMousePosition();
 	wxSize siz = win->GetSize();
-	siz.x;
+#ifndef _WIN32
+	int displayIndex = wxDisplay::GetFromPoint(mst);
+	if (displayIndex == wxNOT_FOUND && win)
+		displayIndex = wxDisplay::GetFromWindow(win);
+	wxRect rc = (displayIndex != wxNOT_FOUND) ? wxDisplay(displayIndex).GetClientArea() : wxGetClientDisplayRect();
+#else
 	wxRect rc = GetMonitorWorkArea(0, nullptr, mst, true);
+#endif
 	mst.x -= (siz.x / 2);
 	mst.x = MID(rc.x, mst.x, (rc.width + rc.x) - siz.x);
 	mst.y += 15;

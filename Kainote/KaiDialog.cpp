@@ -18,14 +18,16 @@
 #include "KaiTextCtrl.h"
 #include "KaiRadioButton.h"
 #include "KaiTabBar.h"
-#include "KaiTreeBook.h"
+#include "KaiTreebook.h"
 #include "config.h"
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
+#ifdef __WXMSW__
 #include <wx/msw/private.h>
-#include <wx/wx.h>
 #include <Dwmapi.h>
 #include <Windowsx.h>
+#endif
+#include <wx/wx.h>
 
 
 //#define GET_X_LPARAM(lp)                        ((int)(short)LOWORD(lp))
@@ -40,12 +42,34 @@ DialogSizer::DialogSizer(int orient)
 }
 
 
+void DialogSizer::RepositionChildren(const wxSize& minSize)
+{
+	wxSize old_size(m_size);
+	m_size.x -= 2 * border;
+	m_size.y -= border + topBorder;
+	if (m_size.x < 0){ m_size.x = 0; }
+	if (m_size.y < 0){ m_size.y = 0; }
+	wxPoint old_pos(m_position);
+	m_position.x += border;
+	m_position.y += topBorder;
+
+	wxSize childMin(minSize.x - (2 * border), minSize.y - border - topBorder);
+	if (childMin.x < 0){ childMin.x = 0; }
+	if (childMin.y < 0){ childMin.y = 0; }
+	wxBoxSizer::RepositionChildren(childMin);
+
+	m_position = old_pos;
+	m_size = old_size;
+}
+
 //void DialogSizer::RepositionChildren(const wxSize& minSize)
 void DialogSizer::RecalcSizes()
 {
 	wxSize old_size(m_size);
 	m_size.x -= 2 * border;
 	m_size.y -= border + topBorder;
+	if (m_size.x < 0){ m_size.x = 0; }
+	if (m_size.y < 0){ m_size.y = 0; }
 	wxPoint old_pos(m_position);
 	m_position.x += border;
 	m_position.y += topBorder;
@@ -81,7 +105,7 @@ KaiDialog::KaiDialog(wxWindow *parent, wxWindowID id,
 	, style(_style)
 {
 	SetExtraStyle(GetExtraStyle() | wxTOPLEVEL_EX_DIALOG | wxWS_EX_BLOCK_EVENTS);// | wxCLIP_CHILDREN
-	Create(parent, id, title, pos, size, wxBORDER_NONE | wxTAB_TRAVERSAL);
+	Create(parent, id, title, pos, size, wxBORDER_NONE | wxTAB_TRAVERSAL | wxSYSTEM_MENU | wxCLOSE_BOX);
 	if ( !m_hasFont )
 		SetFont(*Options.GetFont());
 	
@@ -98,6 +122,7 @@ KaiDialog::KaiDialog(wxWindow *parent, wxWindowID id,
 	Bind(wxEVT_LEFT_DCLICK, &KaiDialog::OnMouseEvent, this);
 	Bind(wxEVT_MOTION, &KaiDialog::OnMouseEvent, this);
 	Bind(wxEVT_LEAVE_WINDOW, &KaiDialog::OnMouseEvent, this);
+	Bind(wxEVT_CLOSE_WINDOW, &KaiDialog::OnCloseWindow, this);
 	//Bind(wxEVT_ACTIVATE, &KaiDialog::OnActivate, this);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEscape, this, escapeId);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEnter, this, enterId);
@@ -112,6 +137,7 @@ KaiDialog::~KaiDialog()
 int KaiDialog::ShowModal()
 {
 	int result = wxID_CANCEL;
+	wxWindowDisabler disableOtherTopWindows(this);
 	Show();
 	if (IsShown()){
 		loop = new wxModalEventLoop(this);
@@ -357,6 +383,19 @@ void KaiDialog::SetNextControl(bool next)
 	}
 }
 
+void KaiDialog::OnCloseWindow(wxCloseEvent &evt)
+{
+	// KaiDialog is borderless and has its own close button.  On wxGTK a
+	// window-manager close request can otherwise destroy the native GdkWindow
+	// behind wxWidgets' back, leaving stale frame clocks/handlers and broken
+	// subsequent popup paints.  Route it through the same modal/hide path as
+	// Escape and the custom X button instead.
+	if (evt.CanVeto()){
+		evt.Veto();
+	}
+	Hide();
+}
+
 void KaiDialog::OnNavigation(wxNavigationKeyEvent& evt)
 {
 	SetNextControl(evt.GetDirection());
@@ -504,6 +543,27 @@ void KaiDialog::OnMouseEvent(wxMouseEvent &evt)
 }
 
 
+void KaiDialog::SetSizerAndFit(wxSizer *sizer, bool deleteOld)
+{
+	if (!sizer){
+		wxTopLevelWindow::SetSizerAndFit(sizer, deleteOld);
+		return;
+	}
+
+	// KaiDialog draws its own border and title bar.  Plain wxBoxSizers place
+	// children at (0,0), which lets dialog contents overwrite the custom title
+	// bar on wxGTK.  Wrap plain sizers in DialogSizer so every KaiDialog caller
+	// gets the same top-border/content offset as the older hand-wrapped dialogs.
+	if (dynamic_cast<DialogSizer*>(sizer)){
+		wxTopLevelWindow::SetSizerAndFit(sizer, deleteOld);
+		return;
+	}
+
+	DialogSizer *dialogSizer = new DialogSizer(wxVERTICAL);
+	dialogSizer->Add(sizer, 1, wxEXPAND);
+	wxTopLevelWindow::SetSizerAndFit(dialogSizer, deleteOld);
+}
+
 void KaiDialog::SetSizerAndFit1(wxSizer *sizer, bool deleteOld)
 {
 	SetSizer(sizer, deleteOld);
@@ -564,6 +624,7 @@ void KaiDialog::SetLabel(const wxString &text)
 	wxRect rc(0, 0, w, topBorder);
 	Refresh(false, &rc);
 }
+#ifdef __WXMSW__
 WXLRESULT KaiDialog::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 {
 	//if(uMsg == WM_SIZING){
@@ -628,6 +689,7 @@ WXLRESULT KaiDialog::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam
 
 	return wxTopLevelWindow::MSWWindowProc(uMsg, wParam, lParam);
 }
+#endif
 
 bool KaiDialog::SetFont(const wxFont &font)
 {

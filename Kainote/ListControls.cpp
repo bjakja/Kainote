@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ListControls.h"
-#include "Config.h"
+#include "config.h"
 #include "KaiTextCtrl.h"
 #include "KainoteFrame.h"
 #include <wx/msw/private.h>
@@ -38,7 +38,7 @@
 //	return wxBitmap(img);
 //}
 
-inline void KaiChoice::CalcMaxWidth(wxSize *result, bool changex, bool changey){
+void KaiChoice::CalcMaxWidth(wxSize *result, bool changex, bool changey){
 	int tx = 0, ty = 0;
 	size_t isize = list->size();
 	for (size_t i = 0; i < isize; i++){
@@ -54,7 +54,12 @@ inline void KaiChoice::CalcMaxWidth(wxSize *result, bool changex, bool changey){
 	}
 	if (changey){
 		GetTextExtent(L"TEX{}", &tx, &ty);
+#ifdef _WIN32
 		result->y = ty + 10;
+#else
+		// wxGTK needs modest padding for readable text and arrow alignment.
+		result->y = wxMax(18, ty + 6);
+#endif
 	}
 }
 
@@ -159,10 +164,10 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, con
 	choiceText->Bind(wxEVT_ENTER_WINDOW, &KaiChoice::OnMouseEvent, this, 27789);
 	choiceText->Bind(wxEVT_LEAVE_WINDOW, &KaiChoice::OnMouseEvent, this, 27789);
 	choiceText->Bind(wxEVT_MOUSEWHEEL, &KaiChoice::OnMouseEvent, this, 27789);
-	choiceText->Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &evt){
+	choiceText->Bind(wxEVT_SET_FOCUS, [this](wxFocusEvent &evt){
 		Refresh(false); evt.Skip();
 	}, 27789);
-	choiceText->Bind(wxEVT_KILL_FOCUS, [=](wxFocusEvent &evt){
+	choiceText->Bind(wxEVT_KILL_FOCUS, [this](wxFocusEvent &evt){
 		Refresh(false); evt.Skip();
 	}, 27789);
 	//choiceText->Bind(wxEVT_LEFT_DOWN, [=](wxMouseEvent &evt){
@@ -176,23 +181,23 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, con
 	//	}
 	//	evt.Skip();
 	//}, 27789);
-	Bind(wxEVT_COMMAND_TEXT_UPDATED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_TEXT_UPDATED, [this](wxCommandEvent &evt){
 		SetSelectionByPartialName(choiceText->GetValue());
 	}, 27789);
 	//Connect(ID_TDEL,ID_TRETURN,wxEVT_COMMAND_MENU_SELECTED,(wxObjectEventFunction)&KaiTextCtrl::OnAccelerator);
-	choiceText->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+	choiceText->Bind(wxEVT_COMMAND_MENU_SELECTED, [this](wxCommandEvent &evt){
 		wxKeyEvent kevt;
 		kevt.m_keyCode = WXK_UP;
 		if (itemList&&itemList->IsShown()){ itemList->OnKeyPress(kevt); }
 		else{ evt.SetId(7865); OnArrow(evt); }
 	}, ID_TUP);
-	choiceText->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+	choiceText->Bind(wxEVT_COMMAND_MENU_SELECTED, [this](wxCommandEvent &evt){
 		wxKeyEvent kevt;
 		kevt.m_keyCode = WXK_DOWN;
 		if (itemList&&itemList->IsShown()){ itemList->OnKeyPress(kevt); }
 		else{ evt.SetId(7866); OnArrow(evt); }
 	}, ID_TDOWN);
-	choiceText->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+	choiceText->Bind(wxEVT_COMMAND_MENU_SELECTED, [this](wxCommandEvent &evt){
 		long start, end;
 		choiceText->GetSelection(&start, &end);
 		size_t len = choiceText->GetLength();
@@ -246,7 +251,11 @@ void KaiChoice::OnSize(wxSizeEvent& event)
 {
 	wxSize newSize = GetClientSize();
 	if (choiceText){
-		choiceText->SetSize(wxSize(newSize.x - 22, newSize.y - 2));
+		// wxGTK may send an initial size event before the sizer has assigned the
+		// control its final width.  The old subtraction produced sizes such as
+		// -22x-2, which GTK rejects and which can leave the embedded text control
+		// invisible after language/layout changes.
+		choiceText->SetSize(wxSize(wxMax(0, newSize.x - 22), wxMax(0, newSize.y - 2)));
 	}
 	Refresh(false);
 }
@@ -257,7 +266,7 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 	int w = 0;
 	int h = 0;
 	GetClientSize(&w, &h);
-	if (w == 0 || h == 0){ return; }
+	if (w < 1 || h < 1){ return; }
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < w || bmp->GetHeight() < h)) {
 		delete bmp;
@@ -757,17 +766,19 @@ EVT_MENU_RANGE(7865, 7866, KaiChoice::OnArrow)
 END_EVENT_TABLE()
 
 static int maxVisible = 20;
+PopupList *PopupList::activePopup = nullptr;
 
 PopupList::PopupList(wxWindow *DialogParent, wxArrayString *list, std::map<int, bool> *disabled)
 : wxPopupWindow(DialogParent/*, wxBORDER_NONE | wxWANTS_CHARS*/)
 , sel(0)
 , scPos(0)
-, scroll(nullptr)
-, orgY(0)
 , bmp(nullptr)
-, Parent(DialogParent)
 , itemsList(list)
 , disabledItems(disabled)
+, Parent(DialogParent)
+, orgY(0)
+, scroll(nullptr)
+, dismissTimer(this, 27798)
 {
 	int fw = 0;
 	bool isFontList = (Parent->GetWindowStyle() & KAI_FONT_LIST) != 0;
@@ -780,27 +791,62 @@ PopupList::PopupList(wxWindow *DialogParent, wxArrayString *list, std::map<int, 
 		SetFont(DialogParent->GetFont());
 	GetTextExtent(L"#TWFfGH", &fw, &height);
 	height += 6;
+	Bind(wxEVT_TIMER, &PopupList::OnDismissTimer, this, 27798);
 }
 
 PopupList::~PopupList()
 {
+	dismissTimer.Stop();
+	if (activePopup == this){ activePopup = nullptr; }
 	wxDELETE(bmp);
+}
+
+bool PopupList::IsPopupListWindow(wxWindow *win)
+{
+	while (win){
+		if (dynamic_cast<PopupList*>(win)){ return true; }
+		win = win->GetParent();
+	}
+	return false;
+}
+
+bool PopupList::DismissOnExternalClick(wxWindow *eventWindow)
+{
+	PopupList *popup = activePopup;
+	if (!popup || !popup->IsShown()){ return false; }
+	wxPoint mousePos = wxGetMousePosition();
+	if (IsPopupListWindow(eventWindow) && popup->GetScreenRect().Contains(mousePos)){ return false; }
+	for (wxWindow *win = eventWindow; win; win = win->GetParent()){
+		if (win == popup->Parent && popup->Parent->GetScreenRect().Contains(mousePos)){ return false; }
+	}
+	popup->EndPartialModal(-3);
+	return true;
 }
 
 void PopupList::Popup(const wxPoint &pos, const wxSize &controlSize, int selectedItem)
 {
 	SetSelection(selectedItem);
-	originalPosition = pos;//Parent->ClientToScreen(pos);
+	originalPosition = pos;
 	wxSize size;
 	CalcPosAndSize(&originalPosition, &size, controlSize);
-	SetPosition(originalPosition);
+	SetPosition(Parent->ClientToScreen(originalPosition));
 	SetSize(size);
 	orgY = size.y;
+	if (activePopup && activePopup != this && activePopup->IsShown()){
+		activePopup->EndPartialModal(-3);
+	}
+	activePopup = this;
 	Show();
+	Refresh(false);
+	Update();
+#ifdef _WIN32
 	Bind(wxEVT_IDLE, &PopupList::OnIdle, this);
+#else
+	dismissTimer.Start(50);
+#endif
 	if (scroll){
 		int thickness = scroll->GetThickness();
-		scroll->SetSize(size.x - thickness -1, 1, thickness, size.y - 2);
+		scroll->SetSize(wxMax(0, size.x - thickness - 1), 1, thickness, wxMax(0, size.y - 2));
 	}
 }
 
@@ -837,17 +883,12 @@ void PopupList::OnMouseEvent(wxMouseEvent &evt)
 	int x = evt.GetX();
 	int y = evt.GetY();
 	wxSize sz = GetClientSize();
-	if (leftdown){
-		wxPoint posOnScreen = wxGetMousePosition();
-		bool contains = false;
-		int x, y;
-		wxPopupWindowBase::DoGetPosition(&x, &y);
-		wxRect rc = GetRect();
-		rc.x = x; rc.y = y;
-		if (!rc.Contains(posOnScreen)){
+	if (leftdown || evt.LeftUp()){
+		if (!GetScreenRect().Contains(wxGetMousePosition())){
 			EndPartialModal(-3);
+			return;
 		}
-		return;
+		if (leftdown){ return; }
 	}
 
 	if (evt.GetWheelRotation() != 0) {
@@ -885,7 +926,7 @@ void PopupList::OnPaint(wxPaintEvent &event)
 	int w = 0;
 	int h = 0;
 	GetClientSize(&w, &h);
-	if (w == 0 || h == 0){ return; }
+	if (w < 1 || h < 1){ return; }
 	int itemsize = itemsList->size();
 	if (scPos >= itemsize - maxVisible){ scPos = itemsize - maxVisible; }
 	if (scPos < 0){ scPos = 0; }
@@ -895,7 +936,7 @@ void PopupList::OnPaint(wxPaintEvent &event)
 		maxsize = maxVisible;
 		if (!scroll){
 			int thickness = KaiScrollbar::CalculateThickness(this);
-			scroll = new KaiScrollbar(this, -1, wxPoint(w - thickness - 1, 1), wxSize(thickness, h - 2), wxVERTICAL);
+			scroll = new KaiScrollbar(this, -1, wxPoint(wxMax(0, w - thickness - 1), 1), wxSize(thickness, wxMax(0, h - 2)), wxVERTICAL);
 			scroll->SetScrollRate(3);
 		}
 		scroll->SetScrollbar(scPos, maxVisible, itemsize, maxVisible - 1);
@@ -970,7 +1011,12 @@ void PopupList::OnPaint(wxPaintEvent &event)
 		}
 		if (desc.length() > 1000)
 			desc = desc.Mid(0, 1000);
-		tdc.DrawText(desc, 4, (height*i) + 3);
+		int descw = 0, desch = 0;
+		tdc.GetTextExtent(desc, &descw, &desch);
+		wxRect rowRect(4, height * i, wxMax(0, w - 8), height);
+		tdc.SetClippingRegion(rowRect);
+		tdc.DrawText(desc, rowRect.x, rowRect.y + wxMax(0, (rowRect.height - desch) / 2));
+		tdc.DestroyClippingRegion();
 	}
 	if (newWidth > 0) {
 		SetSize(wxSize(newWidth, h));
@@ -979,7 +1025,7 @@ void PopupList::OnPaint(wxPaintEvent &event)
 		
 		if (scroll) {
 			int thickness = scroll->GetThickness();
-			scroll->SetSize(newWidth - thickness - 1, 1, thickness, h - 2);
+			scroll->SetSize(wxMax(0, newWidth - thickness - 1), 1, thickness, wxMax(0, h - 2));
 		}
 		return;
 	}
@@ -1011,11 +1057,27 @@ void PopupList::OnScroll(wxScrollEvent& event)
 //end of wait loop
 void PopupList::EndPartialModal(int ReturnId)
 {
+	dismissTimer.Stop();
 	Unbind(wxEVT_IDLE, &PopupList::OnIdle, this);
 	if (HasCapture()){ ReleaseMouse(); }
+	if (activePopup == this){ activePopup = nullptr; }
 	Hide();
 	((KaiChoice*)Parent)->SetFocus();
 	((KaiChoice*)Parent)->SendEvent(ReturnId);
+}
+
+void PopupList::OnDismissTimer(wxTimerEvent& event)
+{
+#ifndef _WIN32
+	if (!IsShown()){
+		dismissTimer.Stop();
+		return;
+	}
+	wxPoint mousePos = wxGetMousePosition();
+	if (GetScreenRect().Contains(mousePos)){ return; }
+	if (Parent && Parent->GetScreenRect().Contains(mousePos)){ return; }
+	EndPartialModal(-3);
+#endif
 }
 
 void PopupList::OnKeyPress(wxKeyEvent &event)
@@ -1062,6 +1124,7 @@ void PopupList::OnIdle(wxIdleEvent& event)
 
 	if (IsShown())
 	{
+#ifdef _WIN32
 		wxPoint pos = ScreenToClient(wxGetMousePosition());
 		wxRect rect(GetSize());
 
@@ -1079,6 +1142,7 @@ void PopupList::OnIdle(wxIdleEvent& event)
 				CaptureMouse();
 			}
 		}
+#endif
 	}
 }
 
@@ -1087,6 +1151,7 @@ BEGIN_EVENT_TABLE(PopupList, wxPopupWindow)
 EVT_MOUSE_EVENTS(PopupList::OnMouseEvent)
 EVT_PAINT(PopupList::OnPaint)
 EVT_SCROLL(PopupList::OnScroll)
+EVT_TIMER(27798, PopupList::OnDismissTimer)
 EVT_MOUSE_CAPTURE_LOST(PopupList::OnLostCapture)
 END_EVENT_TABLE()
 

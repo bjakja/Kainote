@@ -19,7 +19,7 @@
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
 #include <wx/event.h>
-#include <wx/Window.h>
+#include <wx/window.h>
 #include <wx/event.h>
 #include "config.h"
 
@@ -49,8 +49,8 @@ KaiTreebook::KaiTreebook(wxWindow *parent, int id,
 	, selection(0)
 	, bmp(nullptr)
 {
-	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent& evt) {RefreshTree(); });
-	Bind(wxEVT_KILL_FOCUS, [=](wxFocusEvent& evt) {RefreshTree(); });
+	Bind(wxEVT_SET_FOCUS, [=, this](wxFocusEvent& evt) {RefreshTree(); });
+	Bind(wxEVT_KILL_FOCUS, [=, this](wxFocusEvent& evt) {RefreshTree(); });
 }
 
 KaiTreebook::~KaiTreebook()
@@ -234,7 +234,7 @@ void KaiTreebook::OnPaint(wxPaintEvent& event)
 	int w = 0;
 	int h = 0;
 	GetClientSize(&w, &h);
-	if (w == 0 || h == 0){ return; }
+	if (w < 1 || h < 1){ return; }
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < w || bmp->GetHeight() < h)) {
 		delete bmp;

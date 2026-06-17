@@ -24,7 +24,7 @@ struct VERTEX
 	D3DCOLOR Color;
 };
 
-void CreateVERTEX(VERTEX *v, float X, float Y, D3DCOLOR Color, float Z = 1.f)
+static void CreateVERTEX(VERTEX *v, float X, float Y, D3DCOLOR Color, float Z = 1.f)
 {
 	v->fX = X;
 	v->fY = Y;

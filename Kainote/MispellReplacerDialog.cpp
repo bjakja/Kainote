@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "Config.h"
+#include "config.h"
 #include "MispellReplacerDialog.h"
 #include "MisspellReplacer.h"
 #include "KainoteFrame.h"
@@ -198,7 +198,7 @@ FindResultDialog::FindResultDialog(wxWindow *parent, MisspellReplacer *_MR)
 	ResultsList->SetHeaderHeight(0);
 	main->Add(ResultsList, 1, wxEXPAND | wxALL, 2);
 
-	Bind(CHOOSE_RESULT, [=](wxCommandEvent &evt){
+	Bind(CHOOSE_RESULT, [=, this](wxCommandEvent &evt){
 		ReplacerSeekResults *results = (ReplacerSeekResults*)evt.GetClientData();
 		if (!results){
 			KaiLogDebug("Ups, seek results disappeared");
@@ -213,13 +213,13 @@ FindResultDialog::FindResultDialog(wxWindow *parent, MisspellReplacer *_MR)
 	MappedButton *checkAll = new MappedButton(this, ID_CHECK_ALL, _("Zahacz wszystko"));
 	MappedButton *unCheckAll = new MappedButton(this, ID_UNCHECK_ALL, _("Odhacz wszystko"));
 	replaceChecked = new MappedButton(this, ID_REPLACE_CHECKED, _("Zamień"));
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 		CheckUncheckAll(true);
 	}, ID_CHECK_ALL);
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 		CheckUncheckAll(false);
 	}, ID_UNCHECK_ALL);
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 		MR->ReplaceChecked();
 		replaceChecked->Enable(false);
 	}, ID_REPLACE_CHECKED);

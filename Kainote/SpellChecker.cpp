@@ -28,9 +28,10 @@
 //
 // Aegisub Project http://www.aegisub.org/
 
-#include "Config.h"
+#include "config.h"
 #include "SpellChecker.h"
 #include <wx/dir.h>
+#include <wx/filename.h>
 #include <wx/log.h>
 #include "OpennWrite.h"
 #include "KaiMessageBox.h"
@@ -47,7 +48,7 @@ SpellChecker::SpellChecker()
 	hunspell = nullptr;
 	conv = nullptr;
 	SC = nullptr;
-	dictionaryPath = Options.pathfull + L"\\Dictionary\\";
+	dictionaryPath = Options.pathfull + L"/Dictionary/";
 	userDictionaryPath = dictionaryPath + L"UserDic.udic";
 
 }
@@ -56,8 +57,10 @@ SpellChecker *SpellChecker::Get()
 {
 	if (!SC){
 		SC = new SpellChecker();
-		bool isgood = SC->Initialize();
-		if (!isgood) { Options.SetBool(SPELLCHECKER_ON, false); }
+		if (Options.GetBool(SPELLCHECKER_ON)){
+			bool isgood = SC->Initialize();
+			if (!isgood) { Options.SetBool(SPELLCHECKER_ON, false); }
+		}
 	}
 	return SC;
 }
@@ -82,7 +85,7 @@ void SpellChecker::AvailableDics(wxArrayString &dics, wxArrayString &symbols)
 {
 	wxArrayString dic;
 	wxArrayString aff;
-	wxString dictionaryPath = Options.pathfull + L"\\Dictionary";
+	wxString dictionaryPath = Options.pathfull + L"/Dictionary";
 	wxDir kat(dictionaryPath);
 	if (kat.IsOpened()){
 
@@ -92,7 +95,7 @@ void SpellChecker::AvailableDics(wxArrayString &dics, wxArrayString &symbols)
 
 	for (size_t i = 0; i < dic.size(); i++){
 		if (dic[i].BeforeLast(L'.') == aff[i].BeforeLast(L'.')){
-			wxString symbolName = dic[i].AfterLast(L'\\').BeforeFirst(L'.');
+			wxString symbolName = wxFileName(dic[i]).GetName();
 			symbols.Add(symbolName);
 			const wxString &fullName = Options.FindLanguage(symbolName);
 			dics.Add(fullName);
@@ -104,7 +107,7 @@ bool SpellChecker::Initialize()
 {
 	Cleaning();
 
-	//wxString pathhh = Options.pathfull + L"\\Dictionary\\";
+	//wxString pathhh = Options.pathfull + L"/Dictionary/";
 	wxString name = Options.GetString(DICTIONARY_LANGUAGE);
 	if (name == emptyString){ name = L"pl"; }
 	wxString dic = dictionaryPath + name + L".dic";
@@ -137,7 +140,8 @@ bool SpellChecker::Initialize()
 				curLine.Trim();
 				if (curLine.IsEmpty() || curLine.IsNumber()) continue;
 
-				hunspell->add(curLine.mb_str(*conv));
+				wxCharBuffer curLineBuf = curLine.mb_str(*conv);
+				hunspell->add(std::string(curLineBuf.data()));
 			}
 
 		}
@@ -187,8 +191,10 @@ void SpellChecker::Suggestions(wxString word, wxArrayString &results)
 bool SpellChecker::AddWord(const wxString& word)
 {
 	if (word.IsEmpty() || word.IsNumber()) return false;
+	if (!hunspell || !conv) return false;
 
-	hunspell->add(word.mb_str(*conv));//.mb_str(*conv))
+	wxCharBuffer wordBuf = word.mb_str(*conv);
+	hunspell->add(std::string(wordBuf.data()));//.mb_str(*conv))
 	//wxString pathhh = Options.pathfull + L"\\Dictionary\\UserDic.udic";
 	OpenWrite ow;
 	wxString txt;
@@ -202,6 +208,8 @@ bool SpellChecker::AddWord(const wxString& word)
 bool SpellChecker::RemoveWords(const wxArrayString &words)
 {
 	if (!words.size())
+		return false;
+	if (!hunspell || !conv)
 		return false;
 
 	int succeded = 0;
@@ -221,7 +229,8 @@ bool SpellChecker::RemoveWords(const wxArrayString &words)
 			int foundWord = words.Index(curLine);
 			if (foundWord != -1){
 				found = true;
-				succeded = hunspell->remove(words[foundWord].mb_str(*conv));
+				wxCharBuffer foundWordBuf = words[foundWord].mb_str(*conv);
+				succeded = hunspell->remove(std::string(foundWordBuf.data()));
 				continue;
 			}
 			newTxt << curLine << L"\r\n";

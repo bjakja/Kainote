@@ -16,7 +16,7 @@
 
 #include "EditBox.h"
 #include "SubsGrid.h"
-#include "KainoteApp.h"
+#include "kainoteApp.h"
 #include <wx/regex.h>
 #include "TabPanel.h"
 #include "FontDialog.h"
@@ -25,7 +25,7 @@
 #include "Visuals.h"
 #include "KaiMessageBox.h"
 #include "TabPanel.h"
-#include "StyleStore.h"
+#include "stylestore.h"
 #include "Notebook.h"
 #include "kainoteApp.h"
 #include "Toolbar.h"
@@ -873,7 +873,7 @@ void EditBox::AllColorClick(int numColor, bool leftClick /*= true*/)
 		DialogColorPicker *ColourDialog = DialogColorPicker::Get(this, actualColor.GetWX(), numColor);
 		MoveToMousePosition(ColourDialog);
 		ColourDialog->Connect(ID_COLOR_PICKER_DIALOG, COLOR_CHANGED, (wxObjectEventFunction)&EditBox::OnColorChange, 0, this);
-		ColourDialog->Bind(COLOR_TYPE_CHANGED, [=](wxCommandEvent &evt){
+		ColourDialog->Bind(COLOR_TYPE_CHANGED, [=, this](wxCommandEvent &evt){
 			GetColor(&actualColor, evt.GetInt());
 			actualColorstr = actualColor.GetAss(false, true);
 			ColourDialog->SetColor(actualColor, 0, false);
@@ -898,7 +898,7 @@ void EditBox::AllColorClick(int numColor, bool leftClick /*= true*/)
 		SimpleColorPickerDialog *scpd = scp.GetDialog();
 		int spcdId = scpd->GetId();
 		scpd->Bind(COLOR_CHANGED, &EditBox::OnColorChange, this, spcdId);
-		scpd->Bind(COLOR_TYPE_CHANGED, [=](wxCommandEvent &evt){
+		scpd->Bind(COLOR_TYPE_CHANGED, [=, this](wxCommandEvent &evt){
 			AssColor col;
 			GetColor(&col, evt.GetInt());
 			scpd->SetColor(col);

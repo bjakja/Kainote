@@ -16,7 +16,7 @@
 
 #include "TagFindReplace.h"
 #include "DialogueTextEditor.h"
-#include "Config.h"
+#include "config.h"
 #include "EditBox.h"
 #include "TabPanel.h"
 

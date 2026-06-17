@@ -25,6 +25,7 @@
 #include "EditBox.h"
 #include "UtilsWindows.h"
 #include <wx/regex.h>
+#include <wx/dc.h>
 
 enum {
 	LEFT = 1,
@@ -61,6 +62,9 @@ Position::Position()
 void Position::Draw(int time)
 {
 	wxMutexLocker lock(clipmutex);
+	if (!line) {
+		return;
+	}
 	line->SetAntialias(TRUE);
 	line->SetWidth(2.0);
 
@@ -125,6 +129,58 @@ void Position::Draw(int time)
 			DrawRect(D3DXVECTOR2(helperLinePos.x, helperLinePos.y), false, 4.f);
 		}
 
+	}
+}
+
+void Position::DrawWx(wxDC& dc, int time)
+{
+	wxMutexLocker lock(clipmutex);
+
+	bool nothintoshow = true;
+	for (size_t i = 0; i < data.size(); i++) {
+		auto pos = data[i];
+		Dialogue* dial = tab->grid->GetDialogue(pos->numpos);
+		if (!dial)
+			continue;
+		if (time >= dial->Start.mstime && time < dial->End.mstime) {
+			D3DXVECTOR2 convPos = pos->pos;
+			if (pos->moveTable) {
+				CalcMovePosition(&convPos, pos->moveTable, time);
+			}
+			DrawCrossWx(dc, convPos);
+			DrawRectWx(dc, convPos);
+			nothintoshow = false;
+		}
+	}
+
+	if (hasPositionToRenctangle && !nothintoshow && rectangleVisible) {
+		D3DXVECTOR2 point1 = PositionToVideo(PositionRectangle[0]);
+		D3DXVECTOR2 point2 = PositionToVideo(PositionRectangle[1]);
+		dc.SetPen(wxPen(wxColour(187, 0, 0), 1));
+		dc.SetBrush(*wxTRANSPARENT_BRUSH);
+		dc.DrawRectangle(wxRect(wxPoint((int)point1.x, (int)point1.y),
+			wxPoint((int)point2.x, (int)point2.y)));
+	}
+
+	oldtime = time;
+	if (nothintoshow) {
+		DrawWarningWx(dc, notDialogue);
+		blockevents = true;
+		if (tab->video->HasCapture()) { tab->video->ReleaseMouse(); }
+		if (!tab->video->HasArrow()) { tab->video->SetCursor(wxCURSOR_ARROW); }
+		movingHelperLine = false;
+	}
+	else {
+		if (blockevents)
+			blockevents = false;
+
+		if (hasHelperLine) {
+			D3DXVECTOR2 v2[2] = { D3DXVECTOR2(helperLinePos.x, 0), D3DXVECTOR2(helperLinePos.x, this->VideoSize.GetHeight()) };
+			D3DXVECTOR2 v21[2] = { D3DXVECTOR2(0, helperLinePos.y), D3DXVECTOR2(this->VideoSize.GetWidth(), helperLinePos.y) };
+			DrawDashedLineWx(dc, v2, 2, 4, wxColour(255, 0, 255));
+			DrawDashedLineWx(dc, v21, 2, 4, wxColour(255, 0, 255));
+			DrawRectWx(dc, D3DXVECTOR2(helperLinePos.x, helperLinePos.y), false, 4.f);
+		}
 	}
 }
 

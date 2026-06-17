@@ -18,8 +18,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#include "../../ffms2/src/core/indexing.h"
 #include "../../ffms2/include/ffms.h"
+#include "../../ffms2/src/core/indexing.h"
 
 
 const char* FFMS_Indexer::GetTrackName(int Track)

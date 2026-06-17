@@ -29,7 +29,7 @@
 // Aegisub Project http://www.aegisub.org/
 
 
-#include "Styles.h"
+#include "styles.h"
 #include "NumCtrl.h"
 #include "ColorPicker.h"
 #include "AutomationDialog.h"
@@ -487,7 +487,7 @@ namespace Auto{
 			auto button = new MappedButton(window, id, buttons[i].second);
 			bs->Add(button, 0, wxLEFT | wxRIGHT, 2);
 
-			button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt) {
+			button->Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt) {
 				this->button_pushed = i;
 				window->EndModal(0);
 			});

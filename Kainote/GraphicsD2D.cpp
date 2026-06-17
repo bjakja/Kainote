@@ -9,6 +9,60 @@
 
 
 
+#ifndef _WIN32
+#include "GraphicsD2D.h"
+#include <memory>
+#include <wx/graphics.h>
+
+namespace {
+class WxGraphicsContextAdapter final : public GraphicsContext {
+public:
+    explicit WxGraphicsContextAdapter(wxGraphicsContext* ctx) : m_ctx(ctx) {}
+    void Clip(const wxRegion& region) override { if (m_ctx) m_ctx->Clip(region); }
+    void Clip(wxDouble x, wxDouble y, wxDouble w, wxDouble h) override { if (m_ctx) m_ctx->Clip(x, y, w, h); }
+    void ResetClip() override { if (m_ctx) m_ctx->ResetClip(); }
+    bool SetAntialiasMode(wxAntialiasMode antialias) override { return m_ctx ? m_ctx->SetAntialiasMode(antialias) : false; }
+    bool SetInterpolationQuality(wxInterpolationQuality interpolation) override { return m_ctx ? m_ctx->SetInterpolationQuality(interpolation) : false; }
+    void Translate(wxDouble dx, wxDouble dy) override { if (m_ctx) m_ctx->Translate(dx, dy); }
+    void Scale(wxDouble xScale, wxDouble yScale) override { if (m_ctx) m_ctx->Scale(xScale, yScale); }
+    void Rotate(wxDouble angle) override { if (m_ctx) m_ctx->Rotate(angle); }
+    void DrawRectangle(wxDouble x, wxDouble y, wxDouble w, wxDouble h) override { if (m_ctx) m_ctx->DrawRectangle(x, y, w, h); }
+    void DrawRoundedRectangle(wxDouble x, wxDouble y, wxDouble w, wxDouble h, wxDouble radius) override { if (m_ctx) m_ctx->DrawRoundedRectangle(x, y, w, h, radius); }
+    void DrawEllipse(wxDouble x, wxDouble y, wxDouble w, wxDouble h) override { if (m_ctx) m_ctx->DrawEllipse(x, y, w, h); }
+    void DrawBitmap(const wxBitmap& bmp, wxDouble x, wxDouble y, wxDouble w, wxDouble h) override { if (m_ctx) m_ctx->DrawBitmap(bmp, x, y, w, h); }
+    void DrawIcon(const wxIcon& icon, wxDouble x, wxDouble y, wxDouble w, wxDouble h) override { if (m_ctx) m_ctx->DrawIcon(icon, x, y, w, h); }
+    void SetPen(const wxPen& pen, double width = 1.0) override { if (m_ctx) { wxPen p(pen); p.SetWidth(std::max(1, static_cast<int>(width))); m_ctx->SetPen(p); } }
+    void SetBrush(const wxBrush& brush) override { if (m_ctx) m_ctx->SetBrush(brush); }
+    void SetFont(const wxFont& font, const wxColour& col) override { if (m_ctx) m_ctx->SetFont(font, col); }
+    void PushState() override { if (m_ctx) m_ctx->PushState(); }
+    void PopState() override { if (m_ctx) m_ctx->PopState(); }
+    void GetTextExtent(const wxString& str, wxDouble* width, wxDouble* height = NULL, wxDouble* descent = NULL, wxDouble* externalLeading = NULL) const override { if (m_ctx) m_ctx->GetTextExtent(str, width, height, descent, externalLeading); }
+    void GetPartialTextExtents(const wxString& text, wxArrayDouble& widths) const override { if (m_ctx) m_ctx->GetPartialTextExtents(text, widths); }
+    void Flush() override { if (m_ctx) m_ctx->Flush(); }
+    void GetDPI(wxDouble* dpiX, wxDouble* dpiY) const override { if (dpiX) *dpiX = 96.0; if (dpiY) *dpiY = 96.0; }
+    void StrokeLine(wxDouble x1, wxDouble y1, wxDouble x2, wxDouble y2) override { if (m_ctx) m_ctx->StrokeLine(x1, y1, x2, y2); }
+private:
+    void DoDrawText(const wxString& str, wxDouble x, wxDouble y) override { if (m_ctx) m_ctx->DrawText(str, x, y); }
+    std::unique_ptr<wxGraphicsContext> m_ctx;
+};
+
+class WxGraphicsRendererAdapter final : public GraphicsRenderer {
+public:
+    GraphicsContext* CreateContext(const wxWindowDC& dc) override { auto* ctx = wxGraphicsContext::Create(dc); return ctx ? new WxGraphicsContextAdapter(ctx) : nullptr; }
+    GraphicsContext* CreateContext(const wxMemoryDC& dc) override { auto* ctx = wxGraphicsContext::Create(dc); return ctx ? new WxGraphicsContextAdapter(ctx) : nullptr; }
+    GraphicsContext* CreateContext(wxWindow* window) override { auto* ctx = wxGraphicsContext::Create(window); return ctx ? new WxGraphicsContextAdapter(ctx) : nullptr; }
+    GraphicsContext* CreateMeasuringContext() override { auto* ctx = wxGraphicsContext::Create(); return ctx ? new WxGraphicsContextAdapter(ctx) : nullptr; }
+};
+}
+
+wxGraphicsContext * GraphicsContext::Create(const wxWindowDC& dc) { return wxGraphicsContext::Create(dc); }
+wxGraphicsContext * GraphicsContext::Create(const wxMemoryDC& dc) { return wxGraphicsContext::Create(dc); }
+wxGraphicsContext * GraphicsContext::Create(wxWindow* window) { return wxGraphicsContext::Create(window); }
+void GraphicsContext::StrokeLine(wxDouble, wxDouble, wxDouble, wxDouble) {}
+void GraphicsContext::DrawTextU(const wxString& str, wxDouble x, wxDouble y) { DoDrawText(str, x, y); }
+GraphicsRenderer* GraphicsRenderer::GetDirect2DRenderer() { static WxGraphicsRendererAdapter renderer; return &renderer; }
+
+#else
 #ifndef wxFALLTHROUGH
 #define wxFALLTHROUGH ((void)0)
 #endif
@@ -5611,4 +5665,4 @@ GraphicsRenderer* GraphicsRenderer::GetDirect2DRenderer()
 	return wxD2DRenderer::GetDirect2DRenderer();
 }
 #endif // wxUSE_GRAPHICS_DIRECT2D
-
+#endif // _WIN32

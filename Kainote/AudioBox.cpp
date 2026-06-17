@@ -37,7 +37,7 @@
 
 
 
-#include "Editbox.h"
+#include "EditBox.h"
 #include "AudioBox.h"
 //#include "KainoteFrame.h"
 #include "Notebook.h"
@@ -45,7 +45,7 @@
 #include "KeyframesLoader.h"
 #include "KaiMessageBox.h"
 #include "KaiSlider.h"
-#include "editbox.h"
+#include "EditBox.h"
 //#include "Visuals.h"
 //#include "VisualDrawingShapes.h"
 //#include "TabPanel.h"

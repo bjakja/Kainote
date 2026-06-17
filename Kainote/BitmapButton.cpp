@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BitmapButton.h"
-#include "Config.h"
+#include "config.h"
 #include "Hotkeys.h"
 
 BitmapButton::BitmapButton(wxWindow* parent, wxBitmap bitmap, wxBitmap bitmap1, int hkeyId, const wxString &tooltip, const wxPoint& pos, const wxSize& size, int _window)
@@ -41,10 +41,18 @@ BitmapButton::~BitmapButton()
 void BitmapButton::ChangeBitmap(bool play)
 {
 	wxString fbmp = (play) ? L"play" : L"pause";
-	bmp = CreateBitmapFromPngResource(fbmp);
-	bmp1 = CreateBitmapFromPngResource(fbmp + L"1");
-	if (enter){
+	wxBitmap newBmp = CreateBitmapFromPngResource(fbmp);
+	wxBitmap newBmp1 = CreateBitmapFromPngResource(fbmp + L"1");
+	if (newBmp.IsOk())
+		bmp = newBmp;
+	if (newBmp1.IsOk())
+		bmp1 = newBmp1;
+	if (enter && bmp.IsOk()){
 		img = bmp.ConvertToImage();
+		if (!img.IsOk()) {
+			SetBitmap(bmp);
+			return;
+		}
 		int size = bmp.GetWidth()*bmp.GetHeight() * 3;
 		byte *data = img.GetData();
 		for (int i = 0; i < size; i++)
@@ -53,7 +61,7 @@ void BitmapButton::ChangeBitmap(bool play)
 		}
 		SetBitmap(wxBitmap(img));
 	}
-	else{
+	else if (bmp.IsOk()){
 		SetBitmap(bmp);
 	}
 }
@@ -63,7 +71,11 @@ void BitmapButton::OnLeftDown(wxMouseEvent& event)
 {
 	if (event.Entering()){
 		enter = true;
+		if (!bmp.IsOk())
+			return;
 		img = bmp.ConvertToImage();
+		if (!img.IsOk())
+			return;
 		int size = bmp.GetWidth()*bmp.GetHeight() * 3;
 		byte *data = img.GetData();
 
@@ -92,11 +104,15 @@ void BitmapButton::OnLeftDown(wxMouseEvent& event)
 			return;
 
 		}
-		SetBitmap(bmp1);
+		if (bmp1.IsOk())
+			SetBitmap(bmp1);
 	}
 	if (event.LeftUp()){
 
-		SetBitmap(wxBitmap(img));
+		if (img.IsOk())
+			SetBitmap(wxBitmap(img));
+		else if (bmp.IsOk())
+			SetBitmap(bmp);
 		wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, hotkeyId); this->ProcessEvent(evt);
 	}
 }

@@ -15,6 +15,7 @@
 
 
 #include "OpennWrite.h"
+#include "config.h"
 #include <wx/filename.h>
 #include <wx/ffile.h>
 #include <wx/filefn.h>
@@ -32,7 +33,7 @@ OpenWrite::OpenWrite(const wxString &fileName, bool clear)
 {
 	wxFileName fname;
 	fname.Assign(fileName);
-	if (!fname.DirExists()){ wxMkdir(fileName.BeforeLast(L'\\')); }
+	if (!fname.DirExists()){ wxFileName::Mkdir(KaiPathDir(fileName), 511, wxPATH_MKDIR_FULL); }
 	if (fname.FileExists() && !fname.IsFileReadable()){ return; }
 	if (!file.Exists(fileName)){
 		if (!file.Create(fileName, false, wxS_DEFAULT)){ KaiLog(_("Nie można utworzyć pliku.")); }
@@ -105,7 +106,7 @@ void OpenWrite::FileWrite(const wxString &fileName, const wxString &textfile, bo
 
 	wxFileName fname;
 	fname.Assign(fileName);
-	if (!fname.DirExists()){ wxMkdir(fileName.BeforeLast(L'\\')); }
+	if (!fname.DirExists()){ wxFileName::Mkdir(KaiPathDir(fileName), 511, wxPATH_MKDIR_FULL); }
 	if (fname.FileExists() && !fname.IsFileReadable()){
 		KaiLog(_("Nie można odczytać pliku."));
 		return;
@@ -207,9 +208,8 @@ bool OpenWrite::CheckCharSet(char* buf, size_t size, wxString* result)
 
 	int intresult = uchardet_handle_data(detector, buf, size);
 	uchardet_data_end(detector);
-	size_t ncandidates = uchardet_get_n_candidates(detector);
-	const char* encoding = uchardet_get_encoding(detector, 0);
-	if (ncandidates && encoding)
+	const char* encoding = uchardet_get_charset(detector);
+	if (encoding && *encoding)
 		*result = wxString(encoding);
 	else
 		return false;

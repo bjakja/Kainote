@@ -15,6 +15,7 @@
 
 
 #include "FindReplace.h"
+#include "config.h"
 #include "KainoteFrame.h"
 #include "KaiMessageBox.h"
 #include "FindReplaceDialog.h"
@@ -62,7 +63,7 @@ FindReplace::FindReplace(KainoteFrame* kfparent, FindReplaceDialog *_FRD)
 	SYSTEM_INFO sysinfo;
 	GetSystemInfo(&sysinfo);
 	numOfProcessors = (sysinfo.dwNumberOfProcessors > 0) ? sysinfo.dwNumberOfProcessors : 4;
-	CopyPath = Options.pathfull + L"\\ReplaceBackup\\";
+	CopyPath = Options.pathfull + L"/ReplaceBackup/";
 }
 
 void FindReplace::ShowResult(TabPanel *tab, const wxString &path, int keyLine, const wxPoint &pos, const wxString & text)
@@ -134,10 +135,10 @@ void FindReplace::ReplaceChecked()
 	if (FRRD->findInFiles){
 		wxString path;
 		wxString oldPath;
-		wxString copyPath = Options.pathfull + L"\\ReplaceBackup\\";
+		wxString copyPath = Options.pathfull + L"/ReplaceBackup/";
 		DWORD ftyp = GetFileAttributesW(copyPath.wc_str());
 		if (ftyp == INVALID_FILE_ATTRIBUTES){
-			wxMkDir(copyPath);
+			wxMkDir(copyPath, 0777);
 		}
 		int numChanges = 0;
 		std::vector<SeekResults*> results;
@@ -568,7 +569,7 @@ void FindReplace::FindInSubs(TabWindow *window)
 	FindReplaceInSubs(window);
 }
 
-DWORD FindReplace::FindReplaceInFiles(void *data)
+unsigned long FindReplace::FindReplaceInFiles(void *data)
 {
 	std::tuple<FindReplace*, wxArrayString*, int> *actualData = (std::tuple<FindReplace*, wxArrayString*, int>*)data;
 	FindReplace* fr = std::get<0>(*actualData);
@@ -724,7 +725,7 @@ DWORD FindReplace::FindReplaceInFiles(void *data)
 			token.clear();
 		}//while
 		if (SubsAllReplacements){
-			wxCopyFile(subsPath, fr->CopyPath + subsPath.AfterLast(L'\\'));
+			wxCopyFile(subsPath, KaiPathJoin(fr->CopyPath, KaiPathName(subsPath)));
 			ow.FileWrite(subsPath, replacedText);
 			fr->AllReplacements.fetch_add(SubsAllReplacements);
 		}
@@ -767,7 +768,7 @@ void FindReplace::FindReplaceInSubs(TabWindow *window)
 	if (!find){
 		DWORD ftyp = GetFileAttributesW(CopyPath.wc_str());
 		if (ftyp == INVALID_FILE_ATTRIBUTES){
-			wxMkDir(CopyPath);
+			wxMkDir(CopyPath, 0777);
 		}
 	}
 	//bool plainText = false;//(window->CollumnTextOriginal->GetValue());
@@ -1607,7 +1608,7 @@ int FindReplace::ReplaceCheckedInSubs(std::vector<SeekResults *> &results, const
 	}
 
 	if (numOfChanges){
-		wxCopyFile(path, copyPath + path.AfterLast(L'\\'));
+		wxCopyFile(path, KaiPathJoin(copyPath, KaiPathName(path)));
 		ow.FileWrite(path, replacedText);
 	}
 

@@ -22,10 +22,11 @@
 
 #include "SubsGrid.h"
 #include "VideoBox.h"
-#include "Editbox.h"
+#include "EditBox.h"
 #include "RendererVideo.h"
 #include "SubtitlesProviderManager.h"
 #include <wx/regex.h>
+#include <wx/dc.h>
 #include "config.h"
 #include "UtilsWindows.h"
 
@@ -258,8 +259,15 @@ void Visuals::SetVisual(Dialogue* dial, int tool, bool noRefresh)
 	end = dial->End.mstime;
 	notDialogue = dial->IsComment;
 
-	coeffW = ((float)SubsSize.x / (float)(VideoSize.width - VideoSize.x));
-	coeffH = ((float)SubsSize.y / (float)(VideoSize.height - VideoSize.y));
+	int videoWidth = VideoSize.width - VideoSize.x;
+	int videoHeight = VideoSize.height - VideoSize.y;
+	if (videoWidth <= 0 || videoHeight <= 0 || SubsSize.x <= 0 || SubsSize.y <= 0) {
+		coeffW = 1.f;
+		coeffH = 1.f;
+		return;
+	}
+	coeffW = ((float)SubsSize.x / (float)videoWidth);
+	coeffH = ((float)SubsSize.y / (float)videoHeight);
 	tab->video->SetVisualEdition(true);
 
 	//set copy of editbox text that every dummy edition have the same text
@@ -277,10 +285,19 @@ void Visuals::SizeChanged(wxRect wsize, LPD3DXLINE _line, LPD3DXFONT _font, LPDI
 	font = _font;
 	device = _device;
 	VideoSize = wsize;
-	coeffW = ((float)SubsSize.x / (float)(wsize.width - wsize.x));
-	coeffH = ((float)SubsSize.y / (float)(wsize.height - wsize.y));
+	int videoWidth = wsize.width - wsize.x;
+	int videoHeight = wsize.height - wsize.y;
+	if (videoWidth <= 0 || videoHeight <= 0 || SubsSize.x <= 0 || SubsSize.y <= 0) {
+		coeffW = 1.f;
+		coeffH = 1.f;
+		return;
+	}
+	coeffW = ((float)SubsSize.x / (float)videoWidth);
+	coeffH = ((float)SubsSize.y / (float)videoHeight);
 
-	HRN(device->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE), L"FVF failed");
+	if (device) {
+		HRN(device->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE), L"FVF failed");
+	}
 }
 //DrawArrow moves point "to" to end before arrow
 //from and to are line coordinates
@@ -402,6 +419,84 @@ void Visuals::DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen
 	}
 }
 
+#ifndef _WIN32
+void Visuals::DrawRectWx(wxDC& dc, D3DXVECTOR2 pos, bool sel, float rcsize)
+{
+	const wxColour fill = sel ? wxColour(252, 230, 177, 170) : wxColour(18, 17, 80, 170);
+	const wxColour border(187, 0, 0);
+	dc.SetBrush(wxBrush(fill));
+	dc.SetPen(wxPen(border, 1));
+	dc.DrawRectangle(wxRect(wxPoint((int)(pos.x - rcsize), (int)(pos.y - rcsize)),
+		wxSize((int)(rcsize * 2), (int)(rcsize * 2))));
+}
+
+void Visuals::DrawCircleWx(wxDC& dc, D3DXVECTOR2 pos, bool sel, float crsize)
+{
+	const wxColour fill = sel ? wxColour(252, 230, 177, 170) : wxColour(18, 17, 80, 170);
+	const wxColour border(187, 0, 0);
+	dc.SetBrush(wxBrush(fill));
+	dc.SetPen(wxPen(border, 1));
+	dc.DrawCircle(wxPoint((int)pos.x, (int)pos.y), (int)crsize);
+}
+
+void Visuals::DrawCrossWx(wxDC& dc, D3DXVECTOR2 position, const wxColour& color)
+{
+	dc.SetPen(wxPen(color, 1));
+	dc.DrawLine((int)(position.x - 15.f), (int)position.y, (int)(position.x + 15.f), (int)position.y);
+	dc.DrawLine((int)position.x, (int)(position.y - 15.f), (int)position.x, (int)(position.y + 15.f));
+}
+
+void Visuals::DrawArrowWx(wxDC& dc, D3DXVECTOR2 from, D3DXVECTOR2* to, int diff)
+{
+	D3DXVECTOR2 pdiff = from - (*to);
+	float len = sqrt((pdiff.x * pdiff.x) + (pdiff.y * pdiff.y));
+	D3DXVECTOR2 diffUnits = (len == 0) ? D3DXVECTOR2(0, 0) : pdiff / len;
+	D3DXVECTOR2 pend = (*to) + (diffUnits * (12 + diff));
+	D3DXVECTOR2 halfbase = D3DXVECTOR2(-diffUnits.y, diffUnits.x) * 5.f;
+	D3DXVECTOR2 tip = pend - diffUnits * 12;
+	dc.SetPen(wxPen(wxColour(187, 0, 0), 1));
+	dc.SetBrush(wxBrush(wxColour(18, 17, 80, 170)));
+	wxPoint arrow[3] = {
+		wxPoint((int)tip.x, (int)tip.y),
+		wxPoint((int)(pend + halfbase).x, (int)(pend + halfbase).y),
+		wxPoint((int)(pend - halfbase).x, (int)(pend - halfbase).y)
+	};
+	dc.DrawPolygon(3, arrow);
+	*to = pend;
+}
+
+void Visuals::DrawDashedLineWx(wxDC& dc, D3DXVECTOR2* vector, size_t vectorSize, int dashLen, const wxColour& color)
+{
+	dc.SetPen(wxPen(color, 1, wxPENSTYLE_SHORT_DASH));
+	for (size_t i = 0; i + 1 < vectorSize; i++) {
+		dc.DrawLine((int)vector[i].x, (int)vector[i].y, (int)vector[i + 1].x, (int)vector[i + 1].y);
+	}
+}
+
+void Visuals::DrawWarningWx(wxDC& dc, bool comment)
+{
+	if (Options.GetBool(VIDEO_VISUAL_WARNINGS_OFF))
+		return;
+	wxString text = comment ? _("Narzędzia edycji wizualnej\nnie działają na komentarzach") :
+		_("Linia nie jest widoczna na wideo\nalbo ma zerowy czas trwania");
+	wxFont* font4 = Options.GetFont(4);
+	if (font4)
+		dc.SetFont(*font4);
+	dc.SetTextForeground(*wxRED);
+	int tw = 0, th = 0;
+	dc.GetMultiLineTextExtent(text, &tw, &th);
+	dc.DrawText(text, VideoSize.x + ((VideoSize.width - VideoSize.x) - tw) / 2,
+		VideoSize.y + ((VideoSize.height - VideoSize.y) - th) / 2);
+}
+#else
+void Visuals::DrawRectWx(wxDC&, D3DXVECTOR2, bool, float) {}
+void Visuals::DrawCircleWx(wxDC&, D3DXVECTOR2, bool, float) {}
+void Visuals::DrawCrossWx(wxDC&, D3DXVECTOR2, const wxColour&) {}
+void Visuals::DrawArrowWx(wxDC&, D3DXVECTOR2, D3DXVECTOR2*, int) {}
+void Visuals::DrawDashedLineWx(wxDC&, D3DXVECTOR2*, size_t, int, const wxColour&) {}
+void Visuals::DrawWarningWx(wxDC&, bool) {}
+#endif
+
 
 void Visuals::Draw(int time)
 {
@@ -419,6 +514,9 @@ void Visuals::Draw(int time)
 	}
 	else if (blockevents){ blockevents = false; }
 	wxMutexLocker lock(clipmutex);
+	if (!line || !device) {
+		return;
+	}
 	line->SetAntialias(TRUE);
 	line->SetWidth(2.0);
 
@@ -430,6 +528,8 @@ void Visuals::Draw(int time)
 void Visuals::DrawWarning(bool comment)
 {
 	if (Options.GetBool(VIDEO_VISUAL_WARNINGS_OFF))
+		return;
+	if (!device)
 		return;
 
 	LPD3DXFONT warningFont;

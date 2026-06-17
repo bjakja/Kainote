@@ -35,7 +35,7 @@ public:
 	};
 
 	ProgressSink* progress = nullptr;
-	static int __stdcall UpdateProgress(long long Current, long long Total, void* ICPrivate);
+	static int __stdcall UpdateProgress(int64_t Current, int64_t Total, void* ICPrivate);
 	static void AudioLoad(ProviderFFMS2* parent, bool newIndex, int audiotrack);
 	void ClearRAMCache();
 	bool DiskCache(bool newIndex);

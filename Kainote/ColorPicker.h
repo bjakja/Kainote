@@ -37,7 +37,7 @@
 #include <wx/timer.h>
 #include <vector>
 #include "NumCtrl.h"
-#include "Styles.h"
+#include "styles.h"
 #include "MappedButton.h"
 #include "KaiCheckBox.h"
 

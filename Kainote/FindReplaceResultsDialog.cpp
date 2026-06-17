@@ -15,7 +15,7 @@
 
 
 
-#include "Config.h"
+#include "config.h"
 #include "FindReplaceResultsDialog.h"
 #include "FindReplace.h"
 #include "MappedButton.h"
@@ -48,13 +48,13 @@ FindReplaceResultsDialog::FindReplaceResultsDialog(wxWindow *parent, FindReplace
 	MappedButton *unCheckAll = new MappedButton(this, ID_UNCHECK_ALL, _("Odhacz wszystko"));
 	replaceChecked = new MappedButton(this, ID_REPLACE_CHECKED, _("Zamień"), -1);
 	ReplaceText = new KaiChoice(this, -1, FR->actualReplace, wxDefaultPosition, wxDefaultSize, FR->replaceRecent);
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 		CheckUncheckAll(true);
 	}, ID_CHECK_ALL);
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 		CheckUncheckAll(false);
 	}, ID_UNCHECK_ALL);
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 		replaceChecked->Enable(false);
 		FR->ReplaceChecked();
 	}, ID_REPLACE_CHECKED);

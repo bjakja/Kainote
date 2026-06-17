@@ -16,7 +16,7 @@
 
 
 #include "VideoToolbar.h"
-#include "Config.h"
+#include "config.h"
 #include "Notebook.h"
 #include "Provider.h"
 #include "RendererVideo.h"
@@ -141,11 +141,11 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &s
 	//wxSize playMinSize = videoPlayAfter->GetMinSize();
 	//SetMinSize(wxSize(100, seekMinSize.GetHeight() + 2));
 
-	Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=, this](wxCommandEvent &evt){
 		Options.SetInt(MOVE_VIDEO_TO_ACTIVE_LINE, videoSeekAfter->GetSelection());
 		Options.SaveOptions(true, false);
 	}, ID_SEEK_AFTER);
-	Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=, this](wxCommandEvent &evt){
 		Options.SetInt(VIDEO_PLAY_AFTER_SELECTION, videoPlayAfter->GetSelection());
 		Options.SaveOptions(true, false);
 	}, ID_PLAY_AFTER);
@@ -239,7 +239,7 @@ void VideoToolbar::OnPaint(wxPaintEvent &evt)
 	int w = 0;
 	int h = 0;
 	GetClientSize(&w, &h);
-	if (w == 0 || h == 0){ return; }
+	if (w < 1 || h < 1){ return; }
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < w || bmp->GetHeight() < h)) {
 		delete bmp;
@@ -291,7 +291,7 @@ void VideoToolbar::OnSize(wxSizeEvent &evt)
 	wxSize playMinSize = videoPlayAfter->GetBestSize();
 	int seekMinWidth = seekMinSize.GetWidth();
 	int playMinWidth = playMinSize.GetWidth();
-	int height = size.y - 2;
+	int height = wxMax(0, size.y - 2);
 	int allToolsSize = 20 * size.y;
 	//one square for spacing
 	int spaceForLists = (size.x - allToolsSize - 6);
@@ -308,8 +308,8 @@ void VideoToolbar::OnSize(wxSizeEvent &evt)
 	}
 	/*videoSeekAfter->SetSize(seekMinWidth, height);
 	videoPlayAfter->SetSize(seekMinWidth + 2, 1, playMinWidth, height);*/
-	videoSeekAfter->SetSize(size.x - 1 - seekMinWidth, 1, seekMinWidth, height);
-	videoPlayAfter->SetSize(size.x - (seekMinWidth + playMinWidth + 3), 1, playMinWidth, height);
+	videoSeekAfter->SetSize(wxMax(0, size.x - 1 - seekMinWidth), 1, seekMinWidth, height);
+	videoPlayAfter->SetSize(wxMax(0, size.x - (seekMinWidth + playMinWidth + 3)), 1, playMinWidth, height);
 	startDrawPos = 2;//playMinWidth + seekMinWidth + 6;
 	endDrawPos = insufficentPlace? size.x : size.x - (seekMinWidth + playMinWidth + 3);
 	if (visualItems[Toggled])
@@ -512,7 +512,7 @@ void VectorItem::ShowContols(VideoToolbar* vt)
 		shapeList->SetToolTip(_("Lista gotowych rysunków ASS z możliwością edycji.\nPo wybraniu rysunku z listy należy ustawić kursor\nw miejcu początku przytrzymać lewy przycisk myszy i przeciągnąć."));
 		shapeList->SetSelection(shapeListSelection);
 
-		auto sendItemToggled = [=](wxCommandEvent& evt) {
+		auto sendItemToggled = [=, this](wxCommandEvent& evt) {
 			int listSelection = shapeList->GetSelection();
 			if (listSelection > shapes->size()) {
 				ShapesEdition se(Notebook::GetTab(), wxPoint(), shapes, shapeListSelection);
@@ -756,7 +756,7 @@ void AllTagsItem::ShowContols(VideoToolbar* vtoolbar)
 		"Gradient linia malejąco - wstawia tag w zaznaczone linie malejąco"));
 	options->SetSelection(mode);
 
-	auto sendItemToggled = [=](wxCommandEvent& evt) {
+	auto sendItemToggled = [=, this](wxCommandEvent& evt) {
 		if (evt.GetId() == ID_TAG_LIST) {
 			int sel = tagList->GetSelection();
 			if (sel < tags->size() && sel >= 0) {
@@ -776,7 +776,7 @@ void AllTagsItem::ShowContols(VideoToolbar* vtoolbar)
 	vtoolbar->Bind(wxEVT_COMMAND_CHOICE_SELECTED, sendItemToggled, ID_OPTIONS);
 
 	edition = new MappedButton(vtoolbar, ID_EDITION, _("Edytuj"), _("Edycja tagów z listy oraz tworzenie nowych"), wxDefaultPosition, wxDefaultSize, -1);
-	vtoolbar->Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent& evt) {
+	vtoolbar->Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent& evt) {
 		AllTagsEdition edit(vtoolbar, wxPoint(), tags, tagList->GetSelection());
 		if (edit.ShowModal() == wxID_OK) {
 			auto tags = edit.GetTags();
@@ -1099,7 +1099,7 @@ void PositionItem::ShowContols(VideoToolbar* vt)
 		_("Przed-góra"), _("Przed-środek"), _("Przed-dół"), 
 		_("Za-góra"), _("Za-środek"), _("Za-dół") };
 	alignment = new KaiChoice(vt, ID_ALIGNMENT, wxDefaultPosition, wxDefaultSize, 21, alignments);
-	vt->Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent& evt) {
+	vt->Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=, this](wxCommandEvent& evt) {
 		wxCommandEvent* evt1 = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, ID_MOVE_TOOLBAR_EVENT);
 		an = alignment->GetSelection();
 		evt1->SetInt(GetItemToggled());

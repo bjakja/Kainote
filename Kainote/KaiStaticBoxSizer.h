@@ -23,7 +23,12 @@
 struct tagRECT;
 
 
-class KaiStaticBox : public wxStaticBox
+class KaiStaticBox : public
+#ifdef _WIN32
+	wxStaticBox
+#else
+	wxWindow
+#endif
 {
 public:
 	KaiStaticBox(wxWindow *parent, const wxString& label);

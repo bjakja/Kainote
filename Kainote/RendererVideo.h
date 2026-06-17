@@ -28,7 +28,7 @@
 
 class SubtitlesProviderManager;
 
-enum PlaybackState
+enum PlaybackState : int
 {
 	Playing,
 	Paused,

@@ -57,15 +57,15 @@ AllTagsEdition::AllTagsEdition(wxWindow* parent, const wxPoint& pos,
 	nameTagSizer->Add(new KaiStaticText(this, -1, _("Tag:")), 1, wxALL | wxEXPAND, 4);
 	nameTagSizer->Add(tagWithoutSlash, 1, wxALL | wxEXPAND, 4);
 	wxBoxSizer* minMaxSizer = new wxBoxSizer(wxHORIZONTAL);
-	minValue = new NumCtrl(this, -1, currentTag.rangeMin, -10000, 10000, false);
-	maxValue = new NumCtrl(this, -1, currentTag.rangeMax, -10000, 10000, false);
+	minValue = new NumCtrl(this, -1, currentTag.rangeMin, -10000.0, 10000.0, false);
+	maxValue = new NumCtrl(this, -1, currentTag.rangeMax, -10000.0, 10000.0, false);
 	minMaxSizer->Add(new KaiStaticText(this, -1, _("Minimalna wartość:")), 1, wxALL | wxEXPAND, 4);
 	minMaxSizer->Add(minValue, 1, wxALL | wxEXPAND, 4);
 	minMaxSizer->Add(new KaiStaticText(this, -1, _("Maksymalna wartość:")), 1, wxALL | wxEXPAND, 4);
 	minMaxSizer->Add(maxValue, 1, wxALL | wxEXPAND, 4);
 	wxBoxSizer* valStepSizer = new wxBoxSizer(wxHORIZONTAL);
-	values[0] = new NumCtrl(this, -1, currentTag.values[0], -10000, 10000, false);
-	step = new NumCtrl(this, -1, currentTag.step, -10000, 10000, false);
+	values[0] = new NumCtrl(this, -1, currentTag.values[0], -10000.0, 10000.0, false);
+	step = new NumCtrl(this, -1, currentTag.step, -10000.0, 10000.0, false);
 	valStepSizer->Add(new KaiStaticText(this, -1, _("Wartość:")), 1, wxALL | wxEXPAND, 4);
 	valStepSizer->Add(values[0], 1, wxALL | wxEXPAND, 4);
 	valStepSizer->Add(new KaiStaticText(this, -1, _("Przeskok:")), 1, wxALL | wxEXPAND, 4);
@@ -98,13 +98,13 @@ AllTagsEdition::AllTagsEdition(wxWindow* parent, const wxPoint& pos,
 	valuesAndInsertModeSizer->Add(numOfValues, 1, wxEXPAND | wxALL, 4);
 	valuesAndInsertModeSizer->Add(tagInsertMode, 1, wxEXPAND | wxALL, 4);
 	for (int i = 1; i < 4; i++) {
-		values[i] = new NumCtrl(this, -1, currentTag.values[i], -10000, 10000, false);
+		values[i] = new NumCtrl(this, -1, currentTag.values[i], -10000.0, 10000.0, false);
 		values[i]->SetToolTip(wxString::Format(_("Wartość %i"), i + 2));
 		values[i]->Enable(currentTag.numOfValues > i);
 	}
 
-	Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, [=](wxCommandEvent& evt) {
-		int numAdditionalValues = numOfValues->GetSelection();
+	Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=, this](wxCommandEvent& evt) {
+		int numAdditionalValues = numOfValues->GetSelection() + 1;
 		for (int i = 1; i < 4; i++) {
 			values[i]->Enable(numAdditionalValues > i);
 		}
@@ -149,7 +149,7 @@ void AllTagsEdition::OnResetDefault(wxCommandEvent& evt)
 {
 	if (KaiMessageBox(_("Czy na pewno chcesz przywrócić ustawienia domyślne?"), 
 		_("Potwierdzenie"), wxYES_NO, this) == wxYES){
-		wxString path = Options.pathfull + L"\\Config\\AllTagsSettings.txt";
+		wxString path = Options.pathfull + L"/Config/AllTagsSettings.txt";
 		_wremove(path.wc_str());
 		tags.clear();
 		LoadSettings(&tags);
@@ -304,6 +304,10 @@ void AllTagsEdition::Save(int id)
 		KaiMessageBox(_("Pole \"Maksymalna wartość\" musi zawierać wartość\nwiększą od pola \"Minimalna wartość\"."), _("Błąd"), wxOK, this);
 		return;
 	}
+	if (currentTag.step <= 0) {
+		KaiMessageBox(_("Pole \"Przeskok\" musi zawierać wartość większą od zera."), _("Błąd"), wxOK, this);
+		return;
+	}
 	if (((currentTag.rangeMax - currentTag.rangeMin) / currentTag.step) < 2) {
 		KaiMessageBox(_("Pole \"Przeskok\" zawiera liczbę zbyt wysoką dla danego przedziału."), _("Błąd"), wxOK, this);
 		return;
@@ -322,7 +326,7 @@ void AllTagsEdition::Save(int id)
 
 void LoadSettings(std::vector<AllTagsSetting>* tags)
 {
-	wxString path = Options.pathfull + L"\\Config\\AllTagsSettings.txt";
+	wxString path = Options.pathfull + L"/Config/AllTagsSettings.txt";
 	OpenWrite ow;
 	wxString txtSettings;
 	//go inside when used pravious version of hydra
@@ -422,7 +426,7 @@ void GetNames(std::vector<AllTagsSetting>* tags, wxArrayString* nameList)
 
 void SaveSettings(std::vector<AllTagsSetting>* tags)
 {
-	wxString path = Options.pathfull + L"\\Config\\AllTagsSettings.txt";
+	wxString path = Options.pathfull + L"/Config/AllTagsSettings.txt";
 	OpenWrite ow(path);
 	for (size_t i = 0; i < tags->size(); i++) {
 		AllTagsSetting tag = (*tags)[i];

@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "Config.h"
+#include "config.h"
 #include "FindReplaceDialog.h"
 #include "FindReplace.h"
 #include "KainoteFrame.h"
@@ -80,7 +80,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 		FindInSubsPath->SetMaxLength(MAXINT);
 		FindInSubsPath->SetSelection(0);
 		MappedButton *selectFolder = new MappedButton(this, 21345, L" ... ");
-		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 			wxString destdir = wxDirSelector(_("Wybierz folder zapisu"), FindInSubsPath->GetValue(), 0, wxDefaultPosition, this);
 			if (!destdir.empty())
 				FindInSubsPath->SetValue(destdir);
@@ -160,7 +160,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 		MappedButton *ButtonFind = new MappedButton(this, ID_BUTTON_FIND, _("Znajdź"), -1, wxDefaultPosition, wxSize(150, -1));
 		frbsizer->Add(ButtonFind, 0, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, (tabNum == WINDOW_REPLACE) ? 2 : 4);
 
-		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){ FR->OnFind(this); }, ID_BUTTON_FIND);
+		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){ FR->OnFind(this); }, ID_BUTTON_FIND);
 	}
 	if (tabNum == WINDOW_FIND){
 		//find in all opened subs or in active subs buttons
@@ -172,10 +172,10 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 		frbsizer->Add(ButtonFindInAllOpenedSubs, 0, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 4);
 		frbsizer->Add(ButtonFindAllInCurrentSubs, 0, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 4);
 
-		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){ 
+		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){ 
 			FR->FindInAllOpenedSubs(this); 
 		}, ID_BUTTON_FIND_IN_ALL_OPENED_SUBS);
-		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){ 
+		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){ 
 			FR->FindAllInCurrentSubs(this); 
 		}, ID_BUTTON_FIND_ALL_IN_CURRENT_SUBS);
 	}
@@ -190,13 +190,13 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 		frbsizer->Add(ButtonReplaceAll, 1, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 2);
 		frbsizer->Add(ButtonReplaceOnAllTabs, 0, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 2);
 
-		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){ 
+		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){ 
 			FR->Replace(this); 
 		}, ID_BUTTON_REPLACE);
-		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){ 
+		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){ 
 			FR->ReplaceAll(this); 
 		}, ID_BUTTON_REPLACE_ALL);
-		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){ 
+		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){ 
 			FR->ReplaceInAllOpenedSubs(this); 
 		}, ID_BUTTON_REPLACE_IN_ALL_OPENED_SUBS);
 	}
@@ -209,17 +209,17 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 		frbsizer->Add(ButtonFindInSubs, 1, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 4);
 		frbsizer->Add(ButtonReplaceInSubs, 1, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 4);
 
-		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){ 
+		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){ 
 			FR->FindInSubs(this); 
 		}, ID_BUTTON_FIND_IN_SUBS);
-		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){ 
+		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){ 
 			FR->ReplaceInSubs(this); 
 		}, ID_BUTTON_REPLACE_IN_SUBS);
 	}
 
 	MappedButton *ButtonClose = new MappedButton(this, ID_BUTTON_CLOSE, _("Zamknij"));
 	frbsizer->Add(ButtonClose, 1, wxEXPAND | wxTOP | wxRIGHT, (tabNum == WINDOW_REPLACE) ? 2 : 4);
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){ FR->OnClose(); }, ID_BUTTON_CLOSE);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){ FR->OnClose(); }, ID_BUTTON_CLOSE);
 
 	if (tabNum == WINDOW_FIND_IN_SUBS){
 		SeekInSubFolders = new KaiCheckBox(this, -1, _("Szukaj w podfolderach"));
@@ -427,7 +427,7 @@ FindReplaceDialog::FindReplaceDialog(KainoteFrame *_Kai, int whichWindow)
 	findReplaceTabs->AddTab(new TabWindow(findReplaceTabs, -1, WINDOW_REPLACE, FR), _("Znajdź i zamień"));
 	findReplaceTabs->AddTab(new TabWindow(findReplaceTabs, -1, WINDOW_FIND_IN_SUBS, FR), _("Znajdź w napisach"));
 	findReplaceTabs->Fit();
-	findReplaceTabs->Bind(BEFORE_CHANGING_TAB, [=](wxCommandEvent &evt){
+	findReplaceTabs->Bind(BEFORE_CHANGING_TAB, [=, this](wxCommandEvent &evt){
 		wxWindow *win = FindFocus();
 		if (win)
 			lastFocusedId = win->GetId();
@@ -435,7 +435,7 @@ FindReplaceDialog::FindReplaceDialog(KainoteFrame *_Kai, int whichWindow)
 		TabWindow *currentTab = GetTab();
 		currentTab->SaveValues();
 	});
-	findReplaceTabs->Bind(TAB_CHANGED, [=](wxCommandEvent &evt){
+	findReplaceTabs->Bind(TAB_CHANGED, [=, this](wxCommandEvent &evt){
 		TabWindow *currentTab = GetTab();
 		currentTab->SetValues();
 		SetLabel(findReplaceTabs->GetTabName());
@@ -456,12 +456,12 @@ FindReplaceDialog::FindReplaceDialog(KainoteFrame *_Kai, int whichWindow)
 	entries[1] = Hkeys.GetHKey(idAndType(GLOBAL_FIND_REPLACE));
 	wxAcceleratorTable accel(2, entries);
 	SetAcceleratorTable(accel);
-	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=, this](wxCommandEvent &evt){
 		TabWindow *currentTab = GetTab();
 		if (currentTab->windowType != WINDOW_FIND){ findReplaceTabs->SetTab(0); }
 		else{ Hide(); }
 	}, GLOBAL_SEARCH);
-	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=, this](wxCommandEvent &evt){
 		TabWindow *currentTab = GetTab();
 		if (currentTab->windowType != WINDOW_REPLACE){ findReplaceTabs->SetTab(1); }
 		else{ Hide(); }

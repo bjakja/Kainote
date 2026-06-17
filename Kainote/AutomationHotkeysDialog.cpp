@@ -41,7 +41,7 @@ public:
 		if (enter){
 			if (needTooltip)
 				theList->SetToolTip(accelerator);
-			else if (theList->HasToolTips())
+			else
 				theList->UnsetToolTip();
 		}
 	}

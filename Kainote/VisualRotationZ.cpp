@@ -347,7 +347,7 @@ void RotationZ::ChangeVisual(wxString *txt, Dialogue *dial, size_t numOfSelectio
 			txt->replace(textPos.x, textPos.y, posstr);
 			ChangeClipRotationZ(txt, orgpivot, s, c);
 		}
-		auto replfunc = [=](const FindData& data, wxString* result) {
+		auto replfunc = [=, this](const FindData& data, wxString* result) {
 			float newangle = angle;
 			float oldangle = data.finding.empty()? 0 : wxAtof(data.finding);
 			newangle = oldangle - (lastAngle - angle);
@@ -393,7 +393,7 @@ wxPoint RotationZ::ChangeVisual(wxString* txt)
 		angle = lastmove.x - atan2((org.y - to.y), (org.x - to.x)) * (180.f / 3.1415926536f);
 	angle = fmodf(angle + 360.f, 360.f);
 	if (changeAllTags) {
-		auto replfunc = [=](const FindData& data, wxString* result) {
+		auto replfunc = [=, this](const FindData& data, wxString* result) {
 			float newangle = angle;
 			if (!data.finding.empty()) {
 				float oldangle = wxAtof(data.finding);

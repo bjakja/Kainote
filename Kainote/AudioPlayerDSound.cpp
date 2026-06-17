@@ -21,13 +21,302 @@
 #include "AudioPlayerDSound.h"
 #include <process.h>
 #include "LogHandler.h"
-#include "KainoteApp.h"
+#include "kainoteApp.h"
 #include "UtilsWindows.h"
 
+#ifndef _WIN32
+#include <SDL.h>
+#include <algorithm>
+#include <chrono>
+#include <condition_variable>
+#include <cstring>
+#include <mutex>
+#include <thread>
+#include <vector>
 
+struct DirectSoundPlayer2Thread::LinuxAudioState {
+	std::thread thread;
+	std::mutex mutex;
+	std::condition_variable cv;
+	bool running = true;
+	bool initialized = false;
+	bool failed = false;
+	bool playing = false;
+	bool restart = false;
+	long long currentFrame = 0;
+	std::chrono::steady_clock::time_point playbackStart;
+	SDL_AudioDeviceID device = 0;
+	SDL_AudioSpec obtained{};
+};
 
+void DirectSoundPlayer2Thread::Run()
+{
+	if (SDL_InitSubSystem(SDL_INIT_AUDIO) != 0) {
+		KaiLog(wxString::Format(L"Cannot initialize SDL audio: %s", wxString::FromUTF8(SDL_GetError())));
+		std::lock_guard<std::mutex> lock(linuxState->mutex);
+		linuxState->failed = true;
+		linuxState->initialized = true;
+		linuxState->cv.notify_all();
+		SDL_QuitSubSystem(SDL_INIT_AUDIO);
+		return;
+	}
 
+	SDL_AudioSpec want{};
+	want.freq = provider->GetSampleRate();
+	want.format = AUDIO_S16SYS;
+	want.channels = static_cast<Uint8>(std::max(1, provider->GetChannels()));
+	want.samples = static_cast<Uint16>(std::clamp((want.freq * wanted_latency) / 1000, 256, 4096));
+	want.callback = nullptr;
 
+	linuxState->device = SDL_OpenAudioDevice(nullptr, 0, &want, &linuxState->obtained, 0);
+	if (!linuxState->device) {
+		KaiLog(wxString::Format(L"Cannot open SDL audio device: %s", wxString::FromUTF8(SDL_GetError())));
+		std::lock_guard<std::mutex> lock(linuxState->mutex);
+		linuxState->failed = true;
+		linuxState->initialized = true;
+		linuxState->cv.notify_all();
+		SDL_QuitSubSystem(SDL_INIT_AUDIO);
+		return;
+	}
+
+	if (linuxState->obtained.freq != want.freq || linuxState->obtained.format != want.format || linuxState->obtained.channels != want.channels) {
+		KaiLog(L"SDL audio device does not support Kainote PCM format");
+		SDL_CloseAudioDevice(linuxState->device);
+		linuxState->device = 0;
+		std::lock_guard<std::mutex> lock(linuxState->mutex);
+		linuxState->failed = true;
+		linuxState->initialized = true;
+		linuxState->cv.notify_all();
+		SDL_QuitSubSystem(SDL_INIT_AUDIO);
+		return;
+	}
+
+	SDL_PauseAudioDevice(linuxState->device, 0);
+	{
+		std::lock_guard<std::mutex> lock(linuxState->mutex);
+		linuxState->initialized = true;
+		linuxState->cv.notify_all();
+	}
+
+	const int bytesPerFrame = provider->GetChannels() * provider->GetBytesPerSample();
+	const int maxQueuedFrames = std::max(1024, provider->GetSampleRate() * wanted_latency * buffer_length / 1000);
+	const int chunkFrames = std::max(256, std::min(4096, provider->GetSampleRate() * wanted_latency / 1000));
+	std::vector<unsigned char> chunk(static_cast<size_t>(chunkFrames) * bytesPerFrame);
+
+	while (true) {
+		long long requestStart = 0;
+		long long requestEnd = 0;
+		bool restartPlayback = false;
+		{
+			std::unique_lock<std::mutex> lock(linuxState->mutex);
+			linuxState->cv.wait_for(lock, std::chrono::milliseconds(10), [&] {
+				return !linuxState->running || linuxState->playing || linuxState->restart;
+			});
+			if (!linuxState->running)
+				break;
+			if (!linuxState->playing) {
+				SDL_ClearQueuedAudio(linuxState->device);
+				continue;
+			}
+			restartPlayback = linuxState->restart;
+			linuxState->restart = false;
+			requestStart = start_frame;
+			requestEnd = end_frame;
+			if (restartPlayback) {
+				linuxState->currentFrame = requestStart;
+				linuxState->playbackStart = std::chrono::steady_clock::now();
+			}
+		}
+
+		if (restartPlayback)
+			SDL_ClearQueuedAudio(linuxState->device);
+
+		const Uint32 queuedBytes = SDL_GetQueuedAudioSize(linuxState->device);
+		const int queuedFrames = bytesPerFrame ? static_cast<int>(queuedBytes / bytesPerFrame) : 0;
+		if (queuedFrames < maxQueuedFrames) {
+			long long frame = 0;
+			long long framesToWrite = 0;
+			{
+				std::lock_guard<std::mutex> lock(linuxState->mutex);
+				frame = linuxState->currentFrame;
+				framesToWrite = std::min<long long>(chunkFrames, std::max<long long>(0, requestEnd - frame));
+			}
+
+			if (framesToWrite > 0) {
+				provider->GetBuffer(chunk.data(), frame, framesToWrite, volume);
+				if (SDL_QueueAudio(linuxState->device, chunk.data(), static_cast<Uint32>(framesToWrite * bytesPerFrame)) != 0) {
+					KaiLogSilent(wxString::Format(L"SDL audio queue failed: %s", wxString::FromUTF8(SDL_GetError())));
+				}
+				std::lock_guard<std::mutex> lock(linuxState->mutex);
+				linuxState->currentFrame += framesToWrite;
+			}
+			else if (queuedBytes == 0) {
+				std::lock_guard<std::mutex> lock(linuxState->mutex);
+				linuxState->playing = false;
+			}
+		}
+	}
+
+	if (linuxState->device) {
+		SDL_ClearQueuedAudio(linuxState->device);
+		SDL_CloseAudioDevice(linuxState->device);
+		linuxState->device = 0;
+	}
+	SDL_QuitSubSystem(SDL_INIT_AUDIO);
+}
+
+unsigned int DirectSoundPlayer2Thread::FillAndUnlockBuffers(unsigned char*, unsigned int, unsigned char*, unsigned int,
+	long long&, IDirectSoundBuffer8*)
+{
+	return 0;
+}
+
+void DirectSoundPlayer2Thread::CheckError()
+{
+	if (!linuxState)
+		return;
+
+	std::lock_guard<std::mutex> lock(linuxState->mutex);
+	const bool failed = linuxState->failed;
+	if (!failed)
+		return;
+
+	throw _T("SDL audio player failed.");
+}
+
+DirectSoundPlayer2Thread::DirectSoundPlayer2Thread(Provider *provider, int _WantedLatency, int _BufferLength)
+{
+	wanted_latency = _WantedLatency;
+	buffer_length = _BufferLength;
+	last_playback_restart = 0;
+	volume = 1.0;
+	start_frame = 0;
+	end_frame = 0;
+	this->provider = provider;
+	linuxState = new LinuxAudioState();
+	linuxState->thread = std::thread([this] { Run(); });
+
+	std::unique_lock<std::mutex> lock(linuxState->mutex);
+	linuxState->cv.wait(lock, [this] { return linuxState->initialized; });
+	const bool failed = linuxState->failed;
+	lock.unlock();
+	if (failed) {
+		if (linuxState->thread.joinable())
+			linuxState->thread.join();
+		delete linuxState;
+		linuxState = nullptr;
+		throw _T("Failed creating SDL audio playback device.");
+	}
+}
+
+DirectSoundPlayer2Thread::~DirectSoundPlayer2Thread()
+{
+	if (linuxState) {
+		{
+			std::lock_guard<std::mutex> lock(linuxState->mutex);
+			linuxState->running = false;
+			linuxState->playing = false;
+			linuxState->cv.notify_all();
+		}
+		if (linuxState->thread.joinable())
+			linuxState->thread.join();
+		delete linuxState;
+		linuxState = nullptr;
+	}
+}
+
+void DirectSoundPlayer2Thread::Play(long long start, long long count)
+{
+	CheckError();
+	std::lock_guard<std::mutex> lock(linuxState->mutex);
+	start_frame = start;
+	end_frame = start + count;
+	linuxState->currentFrame = start;
+	linuxState->playbackStart = std::chrono::steady_clock::now();
+	linuxState->playing = true;
+	linuxState->restart = true;
+	last_playback_restart = static_cast<int>(timeGetTime());
+	linuxState->cv.notify_all();
+}
+
+void DirectSoundPlayer2Thread::Stop()
+{
+	CheckError();
+	std::lock_guard<std::mutex> lock(linuxState->mutex);
+	linuxState->playing = false;
+	linuxState->restart = false;
+	linuxState->cv.notify_all();
+}
+
+void DirectSoundPlayer2Thread::SetEndFrame(long long new_end_frame)
+{
+	CheckError();
+	std::lock_guard<std::mutex> lock(linuxState->mutex);
+	end_frame = new_end_frame;
+	if (linuxState->currentFrame >= end_frame)
+		linuxState->playing = false;
+	linuxState->cv.notify_all();
+}
+
+void DirectSoundPlayer2Thread::SetVolume(double new_volume)
+{
+	CheckError();
+	std::lock_guard<std::mutex> lock(linuxState->mutex);
+	volume = new_volume;
+}
+
+bool DirectSoundPlayer2Thread::IsPlaying()
+{
+	CheckError();
+	std::lock_guard<std::mutex> lock(linuxState->mutex);
+	return linuxState->playing;
+}
+
+long long DirectSoundPlayer2Thread::GetStartFrame()
+{
+	CheckError();
+	return start_frame;
+}
+
+int DirectSoundPlayer2Thread::GetCurrentMS()
+{
+	CheckError();
+	if (!IsPlaying()) return 0;
+	return static_cast<int>(timeGetTime() - last_playback_restart);
+}
+
+long long DirectSoundPlayer2Thread::GetCurrentFrame()
+{
+	CheckError();
+	std::lock_guard<std::mutex> lock(linuxState->mutex);
+	if (!linuxState->playing) return 0;
+	const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
+		std::chrono::steady_clock::now() - linuxState->playbackStart).count();
+	long long audibleFrame = start_frame + elapsed * provider->GetSampleRate() / 1000;
+	return std::min(audibleFrame, end_frame);
+}
+
+long long DirectSoundPlayer2Thread::GetEndFrame()
+{
+	CheckError();
+	return end_frame;
+}
+
+double DirectSoundPlayer2Thread::GetVolume()
+{
+	CheckError();
+	std::lock_guard<std::mutex> lock(linuxState->mutex);
+	return volume;
+}
+
+bool DirectSoundPlayer2Thread::IsDead()
+{
+	if (!linuxState) return true;
+	std::lock_guard<std::mutex> lock(linuxState->mutex);
+	return linuxState->failed;
+}
+
+#else
 
 unsigned int __stdcall DirectSoundPlayer2Thread::ThreadProc(void *parameter)
 {
@@ -608,6 +897,8 @@ bool DirectSoundPlayer2Thread::IsDead()
 
 
 
+
+#endif
 
 DirectSoundPlayer2::DirectSoundPlayer2()
 {

@@ -25,7 +25,7 @@
 
 
 
-enum COLOR;
+enum COLOR : int;
 
 class TextStyle{
 public:

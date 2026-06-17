@@ -59,7 +59,10 @@ class DirectSoundPlayer2Thread {
 	int last_playback_restart;
 
 	Provider* provider;
-
+#ifndef _WIN32
+	struct LinuxAudioState;
+	LinuxAudioState* linuxState = nullptr;
+#endif
 public:
 	DirectSoundPlayer2Thread(Provider* provider, int WantedLatency, int BufferLength);
 	~DirectSoundPlayer2Thread();

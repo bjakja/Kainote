@@ -15,7 +15,7 @@
 
 
 #include "ShiftTimes.h"
-#include "Config.h"
+#include "config.h"
 #include "Stylelistbox.h"
 #include "KainoteFrame.h"
 #include "EditBox.h"
@@ -110,6 +110,7 @@ ShiftTimes::ShiftTimes(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, 
 	scroll->Hide();
 	scroll->SetScrollRate(30);
 	isscrollbar = false;
+	resizing = false;
 	//SetScrollRate(0,5);
 	scPos = 0;
 
@@ -255,6 +256,9 @@ void ShiftTimes::CreateControls(bool normal /*= true*/)
 	Main = new wxBoxSizer(wxVERTICAL);
 
 	coll = new MappedButton(panel, 22999, (normal) ? _("Post processor") : _("Przesuwanie czasów"));
+	// Bind the synthetic MappedButton event on the button itself; wxGTK does not
+	// reliably bubble this nested header button up to the ShiftTimes panel.
+	coll->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ShiftTimes::CollapsePane, this);
 	Main->AddSpacer(2);
 	Main->Add(coll, 0, wxEXPAND | wxLEFT | wxRIGHT, 6);
 
@@ -288,11 +292,19 @@ void ShiftTimes::CreateControls(bool normal /*= true*/)
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ShiftTimes::OnRemoveProfile, this, 31230);
 		wxArrayString profileList;
 		GetProfilesNames(profileList);
+#ifdef _WIN32
 		ProfilesList = new KaiChoice(panel, 31231, wxDefaultPosition, wxDefaultSize, profileList);
+#else
+		// wxGTK can mis-size an empty KaiChoice from wxDefaultSize in this compact
+		// horizontal sizer.  Match the adjacent profile buttons so the empty profile
+		// choice stays Windows-compact instead of using GTK's taller text extent.
+		ProfilesList = new KaiChoice(panel, 31231, wxDefaultPosition,
+			wxSize(100, NewProfile->GetMinSize().GetHeight()), profileList);
+#endif
 		Bind(wxEVT_COMMAND_CHOICE_SELECTED, &ShiftTimes::OnChangeProfile, this, 31231);
-		profileSizer->Add(NewProfile, 0, wxALL, 2);
-		profileSizer->Add(RemoveProfile, 0, wxBOTTOM | wxTOP | wxRIGHT, 2);
-		profileSizer->Add(ProfilesList, 1, wxEXPAND | wxBOTTOM | wxTOP | wxRIGHT, 2);
+		profileSizer->Add(NewProfile, 0, wxALIGN_CENTER_VERTICAL | wxALL, 2);
+		profileSizer->Add(RemoveProfile, 0, wxALIGN_CENTER_VERTICAL | wxBOTTOM | wxTOP | wxRIGHT, 2);
+		profileSizer->Add(ProfilesList, 1, wxALIGN_CENTER_VERTICAL | wxBOTTOM | wxTOP | wxRIGHT, 2);
 		//time frame
 		KaiStaticBoxSizer *timesizer = new KaiStaticBoxSizer(wxVERTICAL, panel, _("Czas"));
 		wxGridSizer *timegrid = new wxGridSizer(2, 0, 0);
@@ -452,7 +464,6 @@ void ShiftTimes::CreateControls(bool normal /*= true*/)
 	DoTooltips(normal);
 	Connect(GLOBAL_SHIFT_TIMES, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&ShiftTimes::OnOKClick);
 	Connect(ID_BSTYLE, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&ShiftTimes::OnAddStyles);
-	Connect(22999, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&ShiftTimes::CollapsePane);
 }
 
 void ShiftTimes::OnOKClick(wxCommandEvent& event)
@@ -472,20 +483,32 @@ void ShiftTimes::OnOKClick(wxCommandEvent& event)
 
 void ShiftTimes::OnSize(wxSizeEvent& event)
 {
+	if (resizing){
+		return;
+	}
+	resizing = true;
 	int h, gw, gh;
 	tab->grid->GetClientSize(&gw, &gh);
 	int w;
 	panel->GetBestSize(&w, &h);
 	int ctw, cth;
 	GetSize(&ctw, &cth);
+	if (w < 1 || h < 1){
+		resizing = false;
+		return;
+	}
+	const int safeGh = wxMax(0, gh);
+	const int scrollRange = wxMax(h, safeGh);
+	const int scrollPage = wxMax(0, safeGh);
+	const int scrollThumb = wxMax(0, safeGh - 10);
 	if (!isscrollbar && gh < h)//showing scrollbar
 	{
 		isscrollbar = true;
 		int thickness = scroll->GetThickness();
-		SetMinSize(wxSize(w + thickness, h));
+		SetMinSize(wxSize(wxMax(1, w + thickness), h));
 		tab->GridShiftTimesSizer->Layout();
-		scroll->SetSize(w - 1, 0, thickness, gh);
-		scroll->SetScrollbar(scPos, gh, h, gh - 10);
+		scroll->SetSize(wxMax(0, w - 1), 0, wxMax(0, thickness), safeGh);
+		scroll->SetScrollbar(scPos, scrollPage, scrollRange, scrollThumb);
 		scroll->Show();
 
 	}
@@ -494,7 +517,7 @@ void ShiftTimes::OnSize(wxSizeEvent& event)
 		isscrollbar = false;
 		scPos = 0;
 		scroll->Hide();
-		scroll->SetScrollbar(scPos, gh, h, gh - 10);
+		scroll->SetScrollbar(scPos, scrollPage, scrollRange, scrollThumb);
 		SetMinSize(wxSize(w, h));
 		panel->SetPosition(wxPoint(0, scPos));
 		tab->GridShiftTimesSizer->Layout();
@@ -502,12 +525,12 @@ void ShiftTimes::OnSize(wxSizeEvent& event)
 	else if (scroll->IsShown()){
 		int thickness = scroll->GetThickness();
 		if (ctw != w + thickness) {
-			SetMinSize(wxSize(w + thickness, h));
+			SetMinSize(wxSize(wxMax(1, w + thickness), h));
 			tab->GridShiftTimesSizer->Layout();
 			scPos = 0;
 		}
-		scroll->SetSize(ctw - thickness - 1, 0, thickness, gh);
-		scroll->SetScrollbar(scPos, gh, h, gh - 10);
+		scroll->SetSize(wxMax(0, ctw - thickness - 1), 0, wxMax(0, thickness), safeGh);
+		scroll->SetScrollbar(scPos, scrollPage, scrollRange, scrollThumb);
 		if (scPos != scroll->GetScrollPos()){
 			scPos = scroll->GetScrollPos();
 			panel->SetPosition(wxPoint(0, -scPos));
@@ -518,6 +541,7 @@ void ShiftTimes::OnSize(wxSizeEvent& event)
 		SetMinSize(wxSize(w, h));
 		tab->GridShiftTimesSizer->Layout();
 	}
+	resizing = false;
 
 }
 

@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include "Styles.h"
+#include "styles.h"
 #include "EnumFactory.h"
 #include "LogHandler.h"
 #include <wx/msw/winundef.h>
@@ -27,11 +27,40 @@
 #include <wx/string.h>
 #include <wx/window.h>
 #include <wx/bitmap.h>
+#include <wx/filename.h>
 #include <map>
 #include <vector>
 #include <algorithm>
 
 const wxString emptyString;
+
+inline wxString KaiNormalizePath(const wxString& path)
+{
+	wxString normalized(path);
+#ifndef _WIN32
+	normalized.Replace(L"\\", L"/");
+#endif
+	return normalized;
+}
+
+inline wxString KaiPathDir(const wxString& path, int flags = wxPATH_GET_VOLUME)
+{
+	wxFileName filename(KaiNormalizePath(path));
+	return filename.GetPath(flags);
+}
+
+inline wxString KaiPathName(const wxString& path)
+{
+	wxFileName filename(KaiNormalizePath(path));
+	wxString name = filename.GetFullName();
+	return name.empty() ? KaiNormalizePath(path) : name;
+}
+
+inline wxString KaiPathJoin(const wxString& dir, const wxString& name)
+{
+	wxFileName filename(KaiNormalizePath(dir), name);
+	return filename.GetFullPath();
+}
 
 //Dont change enumeration config and colors from 1 to last, zero for non exist trash
 #define CFG(CG) \
@@ -551,7 +580,7 @@ inline wxString GetTruncateText(const wxString& textToTruncate, int width, wxWin
 			window->GetTextExtent(textToTruncate.SubString(0, len), &w, &h);
 			len--;
 		}
-		return textToTruncate.SubString(0, len - 2i64) + L"...";
+		return textToTruncate.SubString(0, len - 2LL) + L"...";
 	}
 	return textToTruncate;
 }
@@ -572,6 +601,7 @@ wxImage CreateImageFromPngResource(const wxString& t_name);
 #define wxBITMAP_PNG(x) CreateBitmapFromPngResource(x)
 #define PTR_BITMAP_PNG(x) CreateBitmapPointerFromPngResource(x)
 void MoveToMousePosition(wxWindow* win);
+bool KainoteIsWayland();
 wxString MakePolishPlural(int num, const wxString& normal, const wxString& plural24, const wxString& pluralRest);
 
 bool IsNumber(const wxString& txt);

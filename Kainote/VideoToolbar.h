@@ -48,6 +48,7 @@ class VisualItem
 {
 public:
 	VisualItem(){};
+	virtual ~VisualItem() = default;
 	virtual void OnMouseEvent(wxMouseEvent &evt, int w, int h, VideoToolbar *vt){};
 	virtual void OnPaint(wxDC &dc, int w, int h, VideoToolbar *vt){};
 	virtual void Synchronize(VisualItem * item){};
@@ -353,6 +354,7 @@ public:
 	bool SetFont(const wxFont &font);
 	void SetHeight(int height);
 	int GetEndDrawPos() { return endDrawPos; };
+	bool HasToolTips() const { return GetToolTip() != nullptr; }
 	KaiChoice *videoSeekAfter;
 	KaiChoice *videoPlayAfter;
 	static std::vector<itemdata*> icons;

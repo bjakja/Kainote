@@ -33,7 +33,8 @@ class VideoSlider;
 class VolSlider;
 
 
-enum PlaybackState;
+class RendererVideo;
+enum PlaybackState : int;
 
 class VideoBox : public wxWindow
 {

@@ -16,10 +16,10 @@
 
 #include "ProviderDummy.h"
 #include "Provider.h"
-#include "ColorSpace.h"
+#include "colorspace.h"
 #include <wx/tokenzr.h>
 #include "UtilsWindows.h"
-#include "Videobox.h"
+#include "VideoBox.h"
 #include "VideoToolbar.h"
 
 ProviderDummy::~ProviderDummy()
@@ -28,8 +28,7 @@ ProviderDummy::~ProviderDummy()
 		SetEvent(m_eventKillSelf);
 		WaitForSingleObject(m_thread, 20000);
 		CloseHandle(m_thread);
-		CloseHandle(m_eventStartPlayback);
-		CloseHandle(m_eventKillSelf);
+		m_thread = nullptr;
 	}
 
 	delete[] m_FrameBuffer;

@@ -16,11 +16,11 @@
 
 #include "SubtitlesProvider.h"
 
-#include "Config.h"
+#include "config.h"
 
 #include "RendererVideo.h"
 #include "OpennWrite.h"
-#include "kainoteframe.h"
+#include "KainoteFrame.h"
 #include "DshowRenderer.h"
 #include "CsriMod.h"
 
@@ -200,14 +200,19 @@ csri_rend *SubtitlesVSFilter::GetVSFilter()
 {
 	if (!m_CsriRenderer){
 		m_CsriRenderer = csri_renderer_default();
+		if (!m_CsriRenderer){
+			return nullptr;
+		}
 		csri_info *info = csri_renderer_info(m_CsriRenderer);
 		wxString name = Options.GetString(VSFILTER_INSTANCE);
-		if (!name.empty()){
+		if (!name.empty() && info){
 			while (info->name != name){
 				m_CsriRenderer = csri_renderer_next(m_CsriRenderer);
 				if (!m_CsriRenderer)
 					break;
 				info = csri_renderer_info(m_CsriRenderer);
+				if (!info)
+					break;
 			}
 			if (!m_CsriRenderer)
 				m_CsriRenderer = csri_renderer_default();
@@ -222,13 +227,18 @@ void SubtitlesVSFilter::GetProviders(wxArrayString *providerList)
 	if (!filter)
 		return;
 	csri_info *info = csri_renderer_info(filter);
+	if (!info){
+		csri_close_renderer(filter);
+		return;
+	}
 	providerList->Add(info->name);
 	while (1){
 		filter = csri_renderer_next(filter);
 		if (!filter)
 			break;
 		info = csri_renderer_info(filter);
-		providerList->Add(info->name);
+		if (info)
+			providerList->Add(info->name);
 	}
 	csri_close_renderer(filter);
 	//test if current renderer is removed

@@ -16,14 +16,14 @@
 
 
 #include "FontCollector.h"
-#include "KainoteApp.h"
-#include "Config.h"
+#include "kainoteApp.h"
+#include "config.h"
 #include "Demux.h"
 #include "FontEnumerator.h"
 #include "Notebook.h"
 #include "TabPanel.h"
 #include "SubsGrid.h"
-#include "StyleStore.h"
+#include "stylestore.h"
 #include "ShiftTimes.h"
 #include "KaiMessageBox.h"
 //#include "UtilsWindows.h"
@@ -189,7 +189,7 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 	bOpenFontFolder = new MappedButton(this, 9877, _("Folder zapisu"));
 	bOpenFontFolder->Enable(false);
 	bClose = new MappedButton(this, 9881, _("Zamknij"));
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [this](wxCommandEvent &evt){
 		fc->fcd = nullptr;
 		Destroy();
 	}, 9881);
@@ -206,16 +206,16 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 	Main->Add(console, 1, wxLEFT | wxRIGHT | wxEXPAND, 4);
 	Main->Add(Buttons, 0, wxALIGN_CENTER);
 
-	Bind(EVT_APPEND_MESSAGE, [=](wxThreadEvent evt){
+	Bind(EVT_APPEND_MESSAGE, [this](wxThreadEvent evt){
 		std::pair<wxString, wxColour> *data = evt.GetPayload<std::pair<wxString, wxColour>*>();
 		//console->SetDefaultStyle(wxTextAttr(data->second));
 		console->AppendTextWithStyle(data->first, data->second);
 		delete data;
 	});
-	Bind(EVT_ENABLE_BUTTONS, [=](wxThreadEvent evt){
+	Bind(EVT_ENABLE_BUTTONS, [this](wxThreadEvent evt){
 		EnableControls();
 	});
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent evt){
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [this](wxCommandEvent evt){
 		
 		/*CoInitialize(0);
 		ITEMIDLIST *pidl = ILCreateFromPathW(copypath.wc_str());
@@ -226,7 +226,7 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 		CoUninitialize();*/
 		SelectInFolder(copypath);
 	}, 9877);
-	Bind(EVT_ENABLE_OPEN_FOLDER, [=](wxThreadEvent evt){
+	Bind(EVT_ENABLE_OPEN_FOLDER, [this](wxThreadEvent evt){
 		bOpenFontFolder->Enable();
 	});
 	SetSizerAndFit(Main);
@@ -420,8 +420,8 @@ void FontCollectorDialog::OnButtonPath(wxCommandEvent &event)
 	}
 	else{
 		destdir = wxFileSelector(_("Wybierz nazwę archiwum"), (path->GetValue().EndsWith(L"zip")) ? 
-			path->GetValue().BeforeLast(L'\\') : path->GetValue(),
-			(path->GetValue().EndsWith(L"zip")) ? path->GetValue().AfterLast(L'\\') : emptyString,
+			KaiPathDir(path->GetValue()) : path->GetValue(),
+			(path->GetValue().EndsWith(L"zip")) ? KaiPathName(path->GetValue()) : emptyString,
 			L"zip", _("Pliki archiwum (*.zip)|*.zip"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this);
 	}
 	Options.SetString(FONT_COLLECTOR_DIRECTORY, destdir);
@@ -466,32 +466,38 @@ void FontCollectorDialog::OnButtonStart(wxCommandEvent &event)
 			EnableControls();
 			return;
 		}
-		if (opts->GetSelection() == 2 && path->GetValue().EndsWith(L"\\") && !subsdir->GetValue()){
+		wxString pathValue = KaiNormalizePath(path->GetValue());
+		if (opts->GetSelection() == 2 && wxDirExists(pathValue) && !subsdir->GetValue()){
 			KaiMessageBox(_("Wybierz nazwę dla archiwum"), emptyString, 4L, this);
 			EnableControls();
 			path->SetFocus();
 			return;
 		}
 		if (subsDirectory){
-			wxString rest;
-			copypath = (subsfromMkv) ? Notebook::GetTab()->VideoPath.BeforeLast(L'\\', &rest) : Notebook::GetTab()->SubsPath.BeforeLast(L'\\', &rest);
-			copypath << L"\\Czcionki\\";
-			if (opts->GetSelection() == 2){ copypath << rest.BeforeLast(L'.') << L".zip"; }
+			wxString sourcePath = (subsfromMkv) ? Notebook::GetTab()->VideoPath : Notebook::GetTab()->SubsPath;
+			wxString rest = KaiPathName(sourcePath);
+			wxString fontDir = KaiPathJoin(KaiPathDir(sourcePath), L"Czcionki");
+			copypath = (opts->GetSelection() == 2) ? KaiPathJoin(fontDir, rest.BeforeLast(L'.') + L".zip") : fontDir + wxFileName::GetPathSeparator();
 		}
 		else{
-			copypath = path->GetValue();
+			copypath = pathValue;
 			wxFileName fname(copypath);
-			if (!fname.IsOk() || fname.GetVolume().length() != 1){
+			if (!fname.IsOk()
+#ifdef _WIN32
+				|| fname.GetVolume().length() != 1
+#endif
+				){
 				KaiMessageBox(_("Wybrana ścieżka zapisu jest niepoprawna."), emptyString, 4L, this);
 				EnableControls();
 				return;
 			}
-			if (opts->GetSelection() != 2 && !copypath.EndsWith("\\L")){ copypath << L"\\"; }
+			wxString separator(wxFileName::GetPathSeparator());
+			if (opts->GetSelection() != 2 && !copypath.EndsWith(separator)){ copypath << separator; }
 			else if (opts->GetSelection() == 2 && !copypath.EndsWith(L".zip")){ copypath << L".zip"; }
 		}
 		if (opts->GetSelection() != 2){
 			wxString extt = copypath.Right(4).Lower();
-			if (extt == L".zip"){ copypath = copypath.BeforeLast(L'\\') + L"\\"; }
+			if (extt == L".zip"){ copypath = KaiPathDir(copypath, wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR); }
 			/*if (!wxDir::Exists(copypath)){
 				if (!wxDir::Make(copypath, 511, wxPATH_MKDIR_FULL)){
 					KaiMessageBox(_("Nie można utworzyć folderu."), emptyString, 4L, this);
@@ -501,14 +507,7 @@ void FontCollectorDialog::OnButtonStart(wxCommandEvent &event)
 			}*/
 		}
 		else{
-			/*if (!wxDir::Exists(copypath.BeforeLast(L'\\'))){
-				if (!wxDir::Make(copypath.BeforeLast(L'\\'), 511, wxPATH_MKDIR_FULL)){
-					KaiMessageBox(_("Nie można utworzyć folderu."), emptyString, 4L, this);
-					EnableControls();
-					return;
-				}
-			}
-			else */if (wxFileExists(copypath)){
+			if (wxFileExists(copypath)){
 				if (KaiMessageBox(_("Plik zip już istnieje, usunąć go?"), _("Potwierdzenie"), wxYES_NO, this) == wxYES){
 					if (!wxRemoveFile(copypath)){
 						EnableControls();
@@ -555,7 +554,7 @@ FontCollector::FontCollector(wxWindow *parent)
 	, fcd(nullptr)
 	, reloadFonts(false)
 {
-	FontEnum.AddClient(parent, [=](){reloadFonts = true; });
+	FontEnum.AddClient(parent, [this](){reloadFonts = true; });
 }
 
 FontCollector::~FontCollector()
@@ -692,16 +691,43 @@ void FontCollector::GetAssFonts(SubsFile *subs, int tab)
 
 bool FontCollector::AddFont(const wxString &string)
 {
+#ifndef _WIN32
+	return AddFontResourceExW(string.wc_str(), FR_PRIVATE, nullptr) > 0;
+#else
 	return true;
+#endif
 }
 
 void FontCollector::CheckOrCopyFonts()
 {
 	if (!(operation & CHECK_FONTS) && (fontSizes.size() < 1 || reloadFonts)){
+		fontSizes.clear();
+		hasExternalFolder = false;
+#ifndef _WIN32
+		// Linux does not have a single Windows-style Fonts directory.  Use
+		// fontconfig as the source of truth and store absolute paths directly in
+		// fontSizes; the later lookup code prepends fontfolder, which is kept empty
+		// on this platform.
+		fontfolder.clear();
+		fontFolderLocal.clear();
+		fontFolderExternal.clear();
+		for (const auto& fontPath : kainote_linux_collect_font_files()){
+			std::error_code ec;
+			auto size = std::filesystem::file_size(fontPath, ec);
+			if (ec || size == 0 || size > static_cast<std::uintmax_t>(std::numeric_limits<long>::max()))
+				continue;
+			fontSizes.insert(std::pair<long, wxString>(static_cast<long>(size), wxString::FromUTF8(fontPath.c_str())));
+		}
+		if (fontSizes.empty()){
+			SendMessageD(_("Nie można pobrać rozmiarów i nazw plików czcionek\nkopiowanie zostaje przerwane.\n"), fcd->warning);
+			return;
+		}
+		SubsTime processTime(sw.Time());
+		SendMessageD(wxString::Format(_("Pobrano rozmiary i nazwy %i czcionek, upłynęło %sms.\n\n"), (int)fontSizes.size(), processTime.GetFormatted(SRT)), fcd->normal);
+#else
 		fontfolder = wxGetOSDirectory() + L"\\fonts\\";
 		wxString seekpath = fontfolder + L"*";
 
-		fontSizes.clear();
 		WIN32_FIND_DATAW data;
 		HANDLE h = FindFirstFileW(seekpath.wc_str(), &data);
 		if (h == INVALID_HANDLE_VALUE){
@@ -755,6 +781,7 @@ void FontCollector::CheckOrCopyFonts()
 		}
 		SubsTime processTime(sw.Time());
 		SendMessageD(wxString::Format(_("Pobrano rozmiary i nazwy %i czcionek, upłynęło %sms.\n\n"), (int)fontSizes.size() - 2, processTime.GetFormatted(SRT)), fcd->normal);
+#endif
 	}
 	
 	zip = nullptr;
@@ -840,7 +867,7 @@ void FontCollector::CheckOrCopyFonts()
 
 bool FontCollector::SaveFont(const wxString &fontPath, FontLogContent *flc)
 {
-	wxString fn = fontPath.AfterLast(L'\\');
+	wxString fn = KaiPathName(fontPath);
 	if (zip){
 		wxFFileInputStream in(fontPath);
 		bool isgood = in.IsOk();
@@ -862,7 +889,7 @@ bool FontCollector::SaveFont(const wxString &fontPath, FontLogContent *flc)
 		return isgood;
 	}
 	else{
-		if (wxCopyFile(fontPath, fcd->copypath + L"\\" + fn)){
+		if (wxCopyFile(fontPath, KaiPathJoin(fcd->copypath, fn))){
 			flc->AppendInfo(wxString::Format(_("Skopiowano czcionkę \"%s\"."), fn));
 			return true;
 		}
@@ -923,7 +950,7 @@ void FontCollector::CopyMKVFontsFromTab(const wxString &mkvpath)
 
 	for (size_t k = 0; k < list.size(); k++) {
 		wxString name = list[k];
-		if (dmx.SaveFont(k, fcd->copypath.BeforeLast(L'\\') + L"\\" + name, zip))
+		if (dmx.SaveFont(k, KaiPathJoin(KaiPathDir(fcd->copypath), name), zip))
 		{
 			SendMessageD(_("Zapisano czcionkę o nazwie \"") + name + L"\".\n \n", fcd->normal);
 		}
@@ -963,7 +990,7 @@ void FontCollector::ClearTables()
 
 bool FontCollector::MakeDirectory(bool isZip)
 {
-	wxString path = isZip ? fcd->copypath.BeforeLast(L'\\') : fcd->copypath;
+	wxString path = isZip ? KaiPathDir(fcd->copypath) : fcd->copypath;
 	if (!wxDir::Exists(path)) {
 		if (!wxDir::Make(path, 511, wxPATH_MKDIR_FULL)) {
 			SendMessageD(wxString::Format(_("Nie można utworzyć folderu.")), fcd->warning);
@@ -1016,11 +1043,10 @@ void FontCollector::EnumerateFonts()
 {
 	facenames.clear();
 	logFonts.clear();
-	LOGFONTW lf;
+	LOGFONTW lf = {};
 	lf.lfCharSet = DEFAULT_CHARSET;
 	lf.lfPitchAndFamily = 0;
 	HDC dc = ::CreateCompatibleDC(nullptr);
-	memcpy(lf.lfFaceName, L"\0", LF_FACESIZE);
 	EnumFontFamiliesEx(dc, &lf, (FONTENUMPROCW)[](const LOGFONT *lf, const TEXTMETRIC *mt, DWORD style, LPARAM lParam) -> int {
 		FontCollector * fc = reinterpret_cast<FontCollector*>(lParam);
 		fc->facenames.push_back(lf->lfFaceName);
@@ -1216,7 +1242,7 @@ void FontCollector::MuxVideoWithSubs()
 		wxString ext = fontnames[i].AfterLast(L'.').Lower();
 		
 		command << L"\"--attachment-name\" \"";
-		wxString name = fontnames[i].AfterLast(L'\\');
+		wxString name = KaiPathName(fontnames[i]);
 		command << name << L"\" ";
 		command << L"\"--attachment-mime-type\" ";
 		//if(ext=="ttf" || ext=="ttc"){
@@ -1224,7 +1250,7 @@ void FontCollector::MuxVideoWithSubs()
 		//else if(ext=="otf"){command << L"\"application/font-woff\" ";}
 		//else otf itp
 		command << L"\"--attach-file\" \"";
-		command << fcd->copypath << L"\\" << name << L"\" ";
+		command << KaiPathJoin(fcd->copypath, name) << L"\" ";
 	}
 	command.Replace("\\", "/");
 	command << L"\"--track-order\" \"0:0,0:1,1:0\"";

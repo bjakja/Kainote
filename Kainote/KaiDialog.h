@@ -28,9 +28,10 @@ class DialogSizer : public wxBoxSizer
 public:
 	DialogSizer(int orient);
 	virtual ~DialogSizer(){};
-	void RecalcSizes();
+	void RepositionChildren(const wxSize& minSize) override;
+	void RecalcSizes() override;
 	//void RepositionChildren(const wxSize& minSize);
-	wxSize CalcMin();
+	wxSize CalcMin() override;
 };
 
 #define wxDEFAULT_DIALOG_STYLE  (wxCAPTION | wxSYSTEM_MENU | wxCLOSE_BOX)
@@ -53,6 +54,7 @@ public:
 	void SetEscapeId(int _escapeId, bool setFocus = false);
 	int GetEnterId() const { return enterId; }
 	int GetEscapeId() const { return escapeId; }
+	void SetSizerAndFit(wxSizer *sizer, bool deleteOld = true);
 	void SetSizerAndFit1(wxSizer *sizer, bool deleteOld = true);
 	void SetLabel(const wxString &text);
 	bool SetFont(const wxFont &font);
@@ -70,10 +72,13 @@ private:
 	void OnPaint(wxPaintEvent &evt);
 	void OnSize(wxSizeEvent &evt);
 	void OnMouseEvent(wxMouseEvent &evt);
+	void OnCloseWindow(wxCloseEvent &evt);
 	void OnNavigation(wxNavigationKeyEvent &evt);
 	void OnEnter(wxCommandEvent &evt);
 	void OnEscape(wxCommandEvent &evt);
+#ifdef __WXMSW__
 	WXLRESULT MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);
+#endif
 
 	int escapeId;
 	int enterId;

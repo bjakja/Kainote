@@ -16,7 +16,7 @@
 
 #include "RendererVideo.h"
 #include "VideoToolbar.h"
-#include "kainoteFrame.h"
+#include "KainoteFrame.h"
 #include "CsriMod.h"
 #include "DshowRenderer.h"
 #include "RendererFFMS2.h"
@@ -51,7 +51,7 @@ RendererVideo::RendererVideo(VideoBox *control, bool visualDisabled)
 	m_HWND = videoControl->GetHWND();
 
 	//---------------------------- format
-	m_D3DFormat = D3DFORMAT('2YUY');//D3DFORMAT('21VN');
+	m_D3DFormat = D3DFMT_YUY2;//D3DFORMAT('21VN');
 	m_Format = NV12;
 	//-----------------------------------
 	m_Visual = (tab->editor && !visualDisabled)? 
@@ -149,6 +149,19 @@ void RendererVideo::UpdateVideoWindow()
 
 	wxCriticalSectionLocker lock(m_MutexRendering);
 	if (!UpdateRects()){ return; }
+
+#ifndef _WIN32
+	m_VideoResized = true;
+	if (m_Visual){
+		m_Visual->SizeChanged(wxRect(m_BackBufferRect.left, m_BackBufferRect.top, m_BackBufferRect.right,
+			m_BackBufferRect.bottom), nullptr, nullptr, nullptr);
+		SAFE_DELETE(m_Visual->dummytext);
+		m_Visual->SetCurVisual();
+		m_HasVisualEdition = true;
+	}
+	videoControl->SetScaleAndZoom();
+	return;
+#endif
 
 	if (!InitDX()){
 		//need tests, if lost device return any error when reseting or not
@@ -793,8 +806,8 @@ void RendererVideo::SaveFrame(int id)
 		wxString path;
 		int num = 1;
 		wxArrayString paths;
-		wxString filespec;
-		wxString dirpath = tab->VideoPath.BeforeLast(L'\\', &filespec);
+		wxString filespec = KaiPathName(tab->VideoPath);
+		wxString dirpath = KaiPathDir(tab->VideoPath);
 		wxDir kat(dirpath);
 		path = tab->VideoPath;
 		if (kat.IsOpened()) {

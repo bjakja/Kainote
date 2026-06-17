@@ -23,22 +23,24 @@
 #include "AudioDisplay.h"
 #include "EditBox.h"
 
-#include "Config.h"
+#include "config.h"
 #include "AudioBox.h"
 
-#include "ColorSpace.h"
+#include "colorspace.h"
 #include "Hotkeys.h"
 #include "SubsGrid.h"
 #include "kainoteApp.h"
 #include "RendererVideo.h"
-#include "shiftTimes.h"
+#include "ShiftTimes.h"
 #include "VideoBox.h"
 #include <process.h>
 #include <wx/filename.h>
 #include <vector>
 #include "UtilsWindows.h"
 
-
+#ifndef _WIN32
+#include <wx/dcbuffer.h>
+#endif
 
 wxDEFINE_EVENT(EVENT_UPDATE_SCROLLBAR, wxThreadEvent);
 
@@ -46,6 +48,13 @@ wxDEFINE_EVENT(EVENT_UPDATE_SCROLLBAR, wxThreadEvent);
 inline D3DCOLOR D3DCOLOR_FROM_WX(const wxColour &col){
 	return (D3DCOLOR)((((col.Alpha()) & 0xff) << 24) | (((col.Red()) & 0xff) << 16) | (((col.Green()) & 0xff) << 8) | ((col.Blue()) & 0xff));
 }
+
+#ifndef _WIN32
+static wxColour WX_FROM_D3DCOLOR(D3DCOLOR col)
+{
+	return wxColour((col >> 16) & 0xff, (col >> 8) & 0xff, col & 0xff, (col >> 24) & 0xff);
+}
+#endif
 
 
 long long abs64(long long input) {
@@ -105,7 +114,7 @@ AudioDisplay::AudioDisplay(wxWindow *parent)
 	GetClientSize(&w, &h);
 	h -= timelineHeight;
 	ProgressTimer.SetOwner(this, 7654);
-	Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
+	Bind(wxEVT_TIMER, [=, this](wxTimerEvent &evt){
 		if (!provider->AudioNotInitialized()){
 			UpdateImage(); ProgressTimer.Stop();
 		}
@@ -114,31 +123,52 @@ AudioDisplay::AudioDisplay(wxWindow *parent)
 		}
 	}, 7654);
 	ChangeOptions();
-	Bind(EVENT_UPDATE_SCROLLBAR, [=](wxThreadEvent &evt) {
+#ifndef _WIN32
+	SetBackgroundStyle(wxBG_STYLE_PAINT);
+#endif
+	Bind(EVENT_UPDATE_SCROLLBAR, [=, this](wxThreadEvent &evt) {
 		UpdateScrollbar();
 	});
+#ifndef _WIN32
+	LinuxPlaybackTimer.SetOwner(this, Audio_Update_Timer);
+	Bind(wxEVT_TIMER, [=, this](wxTimerEvent&) {
+		if (!stopPlayThread)
+			UpdateTimer();
+	}, Audio_Update_Timer);
+#endif
 	// Set cursor
 	//wxCursor cursor(wxCURSOR_BLANK);
 	//SetCursor(cursor);
+#ifdef _WIN32
 	unsigned int threadid = 0;
 	UpdateTimerHandle = (HANDLE)_beginthreadex(0, 0, OnUpdateTimer, this, 0, &threadid);
 	SetThreadName(threadid, "AudioUpdate");
+#endif
 }
 
 
 //////////////
 // Destructor
 AudioDisplay::~AudioDisplay() {
+#ifndef _WIN32
+	LinuxPlaybackTimer.Stop();
+#endif
 	if (UpdateTimerHandle) {
 		
 		stopPlayThread = true;
 		SetEvent(DestroyEvent);
 		WaitForSingleObject(UpdateTimerHandle, 10000);
 		CloseHandle(UpdateTimerHandle);
-		CloseHandle(PlayEvent);
-		CloseHandle(DestroyEvent);
 		UpdateTimerHandle = nullptr;
 		
+	}
+	if (PlayEvent) {
+		CloseHandle(PlayEvent);
+		PlayEvent = nullptr;
+	}
+	if (DestroyEvent) {
+		CloseHandle(DestroyEvent);
+		DestroyEvent = nullptr;
 	}
 	if (player) { player->CloseStream(); delete player; }
 	if (ownProvider && provider) { delete provider; provider = nullptr; }
@@ -851,7 +881,7 @@ void AudioDisplay::DrawTimescale() {
 		}
 		
 	}
-	auto drawTime = [=](int x, long long pos/*, int *lastTextPos*/, bool drawMS){
+	auto drawTime = [=, this](int x, long long pos/*, int *lastTextPos*/, bool drawMS){
 		//wxCoord textW;
 		int s = pos / rate;
 		int hr = s / 3600;
@@ -1195,7 +1225,7 @@ void AudioDisplay::SetSamplesPercent(int percent, bool update, float pivot) {
 		// Center scroll
 		int oldSamples = samples;
 		UpdateSamples();
-		PositionSample += long long((oldSamples - samples)*w1*pivot);
+		PositionSample += static_cast<long long>((oldSamples - samples)*w1*pivot);
 		if (PositionSample < 0) PositionSample = 0;
 
 		// Update
@@ -1435,6 +1465,19 @@ void AudioDisplay::ChangeOptions()
 	waveform = D3DCOLOR_FROM_WX(Options.GetColour(AUDIO_WAVEFORM));
 	waveformModified = D3DCOLOR_FROM_WX(Options.GetColour(AUDIO_WAVEFORM_MODIFIED));
 	waveformSelected = D3DCOLOR_FROM_WX(Options.GetColour(AUDIO_WAVEFORM_SELECTED));
+#ifndef _WIN32
+	spectrumBgraBuffer.clear();
+	spectrumRgbBuffer.clear();
+	spectrumWxCacheSize = wxSize();
+	spectrumWxCachePosition = -1;
+	spectrumWxCacheSamples = -1;
+	spectrumWxCachePercent = -1;
+	spectrumWxCacheScale = -1.f;
+	if (spectrumRenderer) {
+		spectrumRenderer->ChangeColours();
+		spectrumRenderer->SetNonLinear(Options.GetBool(AUDIO_SPECTRUM_NON_LINEAR_ON));
+	}
+#endif
 }
 
 ////////
@@ -1469,9 +1512,15 @@ void AudioDisplay::Play(int start, int end, bool pause) {
 	// Call play
 	player->Play(start, end - start);
 	
+#ifndef _WIN32
+	stopPlayThread = false;
+	if (!LinuxPlaybackTimer.IsRunning())
+		LinuxPlaybackTimer.Start(17);
+#else
 	if (stopPlayThread)
 		SetEvent(PlayEvent);
-	
+#endif
+
 }
 
 
@@ -1484,6 +1533,9 @@ void AudioDisplay::Stop(bool stopVideo) {
 			audioLastPosition = GetMSAtSample(player->GetCurrentPosition());
 			player->Stop();
 			stopPlayThread = true;
+#ifndef _WIN32
+			LinuxPlaybackTimer.Stop();
+#endif
 			cursorPaint = false;
 			Refresh(false);
 		}
@@ -1636,14 +1688,231 @@ void AudioDisplay::AddLead(bool in, bool out) {
 	Update();
 }
 
+#ifndef _WIN32
+void AudioDisplay::DrawWithWx(wxDC& dc, bool weak)
+{
+	int displayH = h + timelineHeight;
+	if (w < 1 || displayH < 1 || isHidden)
+		return;
+
+	bool spectrum = (provider && spectrumOn);
+
+	dc.SetPen(*wxTRANSPARENT_PEN);
+	if (spectrum)
+		dc.SetBrush(wxBrush(Options.GetColour(AUDIO_SPECTRUM_BACKGROUND)));
+	else
+		dc.SetBrush(wxBrush(WX_FROM_D3DCOLOR(background)));
+	dc.DrawRectangle(0, 0, w, displayH);
+
+	if (!loaded || !provider)
+		return;
+
+	if (provider->AudioNotInitialized()) {
+		int halfY = (h + 20) / 2;
+		int left = 20;
+		int right = w - 20;
+		dc.SetPen(wxPen(*wxWHITE, 1));
+		dc.SetBrush(*wxTRANSPARENT_BRUSH);
+		dc.DrawRectangle(left, halfY - 20, right - left, 40);
+		dc.SetPen(wxPen(*wxWHITE, 37));
+		int progressRight = left + int(provider->GetAudioProgress() * (right - left));
+		dc.DrawLine(left + 2, halfY, progressRight, halfY);
+		dc.SetFont(tahoma13);
+		dc.SetTextForeground(*wxWHITE);
+		dc.DrawLabel(std::to_string((int)(provider->GetAudioProgress() * 100.f)) + L"%",
+			wxRect(left, halfY - 20, right - left, 40), wxALIGN_CENTER);
+		return;
+	}
+
+	selStart = selEnd = lineStart = lineEnd = selStartCap = selEndCap = 0;
+	long long drawSelStart = 0;
+	long long drawSelEnd = 0;
+	GetDialoguePos(lineStart, lineEnd, false);
+	hasSel = true;
+	GetDialoguePos(selStartCap, selEndCap, true);
+	selStart = lineStart;
+	selEnd = lineEnd;
+	drawSelStart = lineStart;
+	drawSelEnd = lineEnd;
+
+	if (spectrum) {
+		if (!spectrumRenderer)
+			spectrumRenderer = new AudioSpectrum(provider);
+		spectrumRenderer->SetScaling(scale);
+
+		bool rebuildSpectrum = !weak || spectrumWxCacheSize != wxSize(w, h) ||
+			spectrumWxCachePosition != Position || spectrumWxCacheSamples != samples ||
+			spectrumWxCachePercent != samplesPercent || spectrumWxCacheScale != scale ||
+			spectrumBgraBuffer.size() != (size_t)w * h * 4;
+		if (rebuildSpectrum) {
+			spectrumBgraBuffer.assign((size_t)w * h * 4, 0);
+			spectrumRgbBuffer.resize((size_t)w * h * 3);
+			spectrumRenderer->RenderRange(Position * samples, (Position + w) * samples,
+				spectrumBgraBuffer.data(), w, w, h, samplesPercent);
+			for (int y = 0; y < h; ++y) {
+				for (int x = 0; x < w; ++x) {
+					size_t bgra = ((size_t)y * w + x) * 4;
+					size_t rgb = ((size_t)y * w + x) * 3;
+					spectrumRgbBuffer[rgb + 0] = spectrumBgraBuffer[bgra + 2];
+					spectrumRgbBuffer[rgb + 1] = spectrumBgraBuffer[bgra + 1];
+					spectrumRgbBuffer[rgb + 2] = spectrumBgraBuffer[bgra + 0];
+				}
+			}
+			spectrumWxCacheSize = wxSize(w, h);
+			spectrumWxCachePosition = Position;
+			spectrumWxCacheSamples = samples;
+			spectrumWxCachePercent = samplesPercent;
+			spectrumWxCacheScale = scale;
+		}
+		if (spectrumRgbBuffer.size() == (size_t)w * h * 3) {
+			wxImage image(w, h, spectrumRgbBuffer.data(), true);
+			dc.DrawBitmap(wxBitmap(image), 0, 0, false);
+		}
+	}
+
+	if (hasSel && drawSelStart < drawSelEnd && drawSelectionBackground) {
+		dc.SetPen(*wxTRANSPARENT_PEN);
+		dc.SetBrush(wxBrush(WX_FROM_D3DCOLOR(NeedCommit ? selectionBackgroundModified : selectionBackground)));
+		dc.DrawRectangle((int)drawSelStart, 0, (int)(drawSelEnd - drawSelStart + 1), h);
+	}
+
+	if (!spectrum) {
+		if (!weak || peak == nullptr || min == nullptr) {
+			delete[] peak;
+			delete[] min;
+			peak = new int[w];
+			min = new int[w];
+			provider->GetWaveForm(min, peak, Position * samples, w, h, samples, scale);
+		}
+
+		if (peak && min) {
+			if (!hasSel)
+				selStartCap = w;
+			auto drawRange = [&](int x1, int x2, D3DCOLOR color) {
+				x1 = std::max(0, x1);
+				x2 = std::min(w, x2);
+				dc.SetPen(wxPen(WX_FROM_D3DCOLOR(color), 1));
+				for (int x = x1; x < x2; ++x)
+					dc.DrawLine(x, peak[x], x, min[x] - 1);
+			};
+
+			drawRange(0, (int)selStartCap, waveform);
+			if (hasSel) {
+				D3DCOLOR waveformSel = waveform;
+				if (drawSelectionBackground)
+					waveformSel = NeedCommit ? waveformModified : waveformSelected;
+				drawRange((int)selStartCap, (int)selEndCap, waveformSel);
+				drawRange((int)selEndCap, w, waveform);
+			}
+		}
+	}
+
+	if (drawBoundaryLines && samples > 0) {
+		long long start = Position * samples;
+		int rate = provider->GetSampleRate();
+		int pixBounds = rate / samples;
+		if (pixBounds >= 8) {
+			dc.SetPen(wxPen(WX_FROM_D3DCOLOR(secondBondariesColor), 1, wxPENSTYLE_SHORT_DASH));
+			for (int x = 0; x < w; ++x) {
+				if (((x * samples) + start) % rate < samples)
+					dc.DrawLine(x, 0, x, h);
+			}
+		}
+	}
+
+	if (hasSel) {
+		dc.SetPen(wxPen(WX_FROM_D3DCOLOR(lineStartBondaryColor), selWidth));
+		dc.DrawLine((int)lineStart, 0, (int)lineStart, h);
+		dc.SetPen(wxPen(WX_FROM_D3DCOLOR(lineEndBondaryColor), selWidth));
+		dc.DrawLine((int)lineEnd, 0, (int)lineEnd, h);
+	}
+
+	if (drawVideoPos && tab && tab->video &&
+		(tab->video->GetState() == Paused || tab->video->GetState() == Playing)) {
+		dc.SetPen(wxPen(WX_FROM_D3DCOLOR(AudioCursor), 2, wxPENSTYLE_SHORT_DASH));
+		float x = GetXAtMS(tab->video->Tell());
+		dc.DrawLine((int)x, 0, (int)x, h);
+	}
+
+	if (cursorPaint) {
+		int x = static_cast<int>(curpos);
+		if (x >= 0 && x < w) {
+			dc.SetPen(wxPen(WX_FROM_D3DCOLOR(AudioCursor), 2));
+			dc.DrawLine(x, 0, x, h);
+			if (!player->IsPlaying()) {
+				SubsTime time;
+				time.NewTime(GetMSAtX(curpos));
+				wxString text = time.GetFormatted(ASS);
+				dc.SetFont(tahoma13);
+				dc.SetTextForeground(*wxWHITE);
+				dc.DrawLabel(text, wxRect(x - 150, (hasKara) ? 20 : 5, 300, 32), wxALIGN_CENTER);
+			}
+		}
+	}
+
+	dc.SetPen(*wxTRANSPARENT_PEN);
+	dc.SetBrush(wxBrush(WX_FROM_D3DCOLOR(timescaleBackground)));
+	dc.DrawRectangle(0, h, w, timelineHeight);
+	dc.SetTextForeground(WX_FROM_D3DCOLOR(timescaleText));
+	dc.SetFont(tahoma8);
+	if (samples > 0) {
+		int rate = provider->GetSampleRate();
+		long long start = Position * samples;
+		int lastTextRight = -1000;
+		for (int x = 0; x < w; ++x) {
+			long long sample = (x * samples) + start;
+			if (rate > 0 && sample % rate < samples) {
+				dc.SetPen(wxPen(WX_FROM_D3DCOLOR(timescaleText), 1));
+				dc.DrawLine(x, h, x, h + 5);
+
+				int totalSeconds = sample / rate;
+				int hours = totalSeconds / 3600;
+				int minutes = (totalSeconds / 60) % 60;
+				int seconds = totalSeconds % 60;
+				wxString text;
+				if (hours)
+					text = wxString::Format(_T("%i:%02i:%02i"), hours, minutes, seconds);
+				else if (minutes)
+					text = wxString::Format(_T("%i:%02i"), minutes, seconds);
+				else
+					text = wxString::Format(_T("%i"), seconds);
+
+				wxCoord textW = 0;
+				wxCoord textH = 0;
+				dc.GetTextExtent(text, &textW, &textH);
+				int textX = x - (textW / 2);
+				if (textX > lastTextRight + 6) {
+					dc.SetClippingRegion(0, h, w, timelineHeight);
+					dc.DrawText(text, textX, h + 6);
+					dc.DestroyClippingRegion();
+					lastTextRight = textX + textW;
+				}
+			}
+		}
+	}
+
+	if (hasFocus) {
+		dc.SetPen(wxPen(WX_FROM_D3DCOLOR(waveform), 1));
+		dc.SetBrush(*wxTRANSPARENT_BRUSH);
+		dc.DrawRectangle(0, 0, w - 1, h - 1);
+	}
+
+	if (!weak)
+		needImageUpdateWeak = true;
+}
+#endif
 
 
-
-/////////
+//////////
 // Paint
 void AudioDisplay::OnPaint(wxPaintEvent& event) {
 	//if (w == 0 || h == 0) return;
 	wxCriticalSectionLocker lock(mutex);
+#ifndef _WIN32
+	wxAutoBufferedPaintDC dc(this);
+	DrawWithWx(dc, needImageUpdateWeak);
+	return;
+#endif
 	DoUpdateImage(needImageUpdateWeak);
 }
 
@@ -2305,7 +2574,22 @@ void AudioDisplay::UpdateTimer()
 {
 
 	wxCriticalSectionLocker lock(mutex);
-	
+	auto repaintPlaybackCursor = [this](bool weak) {
+#ifndef _WIN32
+		if (weak && curpos >= 0.f) {
+			const int newCurPos = static_cast<int>(curpos);
+			const int left = wxMax(0, wxMin(oldCurPos, newCurPos) - 4);
+			const int right = wxMin(w, wxMax(oldCurPos, newCurPos) + 5);
+			if (right > left) {
+				RefreshRect(wxRect(left, 0, right - left, h + timelineHeight), false);
+				return;
+			}
+		}
+		Refresh(false);
+#else
+		DoUpdateImage(weak);
+#endif
+	};
 
 	// Draw cursor
 	curpos = -1;
@@ -2331,7 +2615,7 @@ void AudioDisplay::UpdateTimer()
 						int goTo = MAX(0, curPos - 50 * samples);
 						if (goTo >= 0) {
 							UpdatePosition(goTo, true);
-							DoUpdateImage(false);
+							repaintPlaybackCursor(false);
 							//Sleep(10);
 							return;
 						}
@@ -2343,21 +2627,24 @@ void AudioDisplay::UpdateTimer()
 			curpos = GetXAtSample(curPos);
 			if (curpos >= 0.f && curpos < w) {
 
-				DoUpdateImage(true);
+				repaintPlaybackCursor(true);
 			}
 			else if (cursorPaint){
 				cursorPaint = false;
-				DoUpdateImage(true);
+				repaintPlaybackCursor(true);
 			}
 		}
 		else {
 
 			cursorPaint = false;
-			DoUpdateImage(true);
+			repaintPlaybackCursor(true);
 			if (curPos > player->GetEndPosition() + 8192) {
 				player->Stop();
 				
 				stopPlayThread = true;
+#ifndef _WIN32
+				LinuxPlaybackTimer.Stop();
+#endif
 			}
 		}
 		

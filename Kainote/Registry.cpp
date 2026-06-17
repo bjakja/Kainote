@@ -85,7 +85,7 @@ bool Registry::AddFileAssociation(const wxString &extension, const wxString &ext
 {
 	wxStandardPathsBase &paths = wxStandardPaths::Get();
 	wxString pathfull = paths.GetExecutablePath();
-	wxString progName = pathfull.AfterLast(L'\\').BeforeFirst(L'.');
+	wxString progName = KaiPathName(pathfull).BeforeFirst(L'.');
 	wxString mainPath = L"Software\\Classes\\";
 	bool success = false;//HKEY_CURRENT_USER//HKEY_LOCAL_MACHINE
 	Registry reg(HKEY_CURRENT_USER, mainPath + extension, success, true);
@@ -102,7 +102,7 @@ bool Registry::AddFileAssociation(const wxString &extension, const wxString &ext
 		KaiLog(L"Can not open extension class"); return false;
 	}
 	if (reg.OpenNewRegistry(HKEY_CURRENT_USER, mainPath + progName + extension + L"\\DefaultIcon", true)){
-		reg.SetStringValue(emptyString, pathfull.BeforeLast(L'\\') + L"\\Icons.dll," + std::to_wstring(icon));
+		reg.SetStringValue(emptyString, KaiPathJoin(KaiPathDir(pathfull), L"Icons.dll") + L"," + std::to_wstring(icon));
 		reg.CloseRegistry();
 	}
 	else{
@@ -137,7 +137,7 @@ void Registry::CheckFileAssociation(const wxString *extensions, int numExt, std:
 {
 	wxStandardPathsBase &paths = wxStandardPaths::Get();
 	wxString pathfull = paths.GetExecutablePath();
-	wxString progName = pathfull.AfterLast(L'\\').BeforeFirst(L'.');
+	wxString progName = KaiPathName(pathfull).BeforeFirst(L'.');
 	wxString mainPath = L"Software\\Classes\\";
 	for (int i = 0; i < numExt; i++){
 		bool success = false;

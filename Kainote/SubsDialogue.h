@@ -21,7 +21,7 @@
 
 #include "config.h"
 #include "SubsTime.h"
-#include "Styles.h"
+#include "styles.h"
 #include <wx/colour.h>
 #include <vector>
 

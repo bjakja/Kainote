@@ -17,7 +17,7 @@
 #include "Registry.h"
 #include "OptionsDialog.h"
 #include "config.h"
-#include "kainoteFrame.h"
+#include "KainoteFrame.h"
 #include "Hotkeys.h"
 #include "NumCtrl.h"
 #include "ColorPicker.h"
@@ -39,6 +39,7 @@
 #include "FontEnumerator.h"
 #include <wx/dir.h>
 #include <wx/dirdlg.h>
+#include <wx/filename.h>
 //config have Windows trash
 #include "config.h"
 
@@ -312,7 +313,7 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 			GRID_DUPLICATION_DONT_CHANGE_SELECTION, GRID_DONT_CENTER_ACTIVE_LINE,
 			TEXT_FIELD_ALLOW_NUMPAD_HOTKEYS, VIDEO_VISUAL_WARNINGS_OFF,
 			DONT_ASK_FOR_BAD_RESOLUTION, AUTOMATION_OLD_SCRIPTS_COMPATIBILITY };
-		wxString localePath = Options.pathfull + L"\\Locale";
+		wxString localePath = Options.pathfull + L"/Locale";
 		wxDir kat(localePath);
 		wxArrayString langs;
 		if (kat.IsOpened()) {
@@ -320,7 +321,7 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 		}
 		programLanguages.push_back(L"pl");
 		for (size_t i = 0; i < langs.GetCount(); i++) {
-			wxString fulllang = langs[i].AfterLast(L'\\').BeforeLast(L'.');
+			wxString fulllang = wxFileName(langs[i]).GetName();
 			programLanguages.push_back(fulllang);
 			const wxString& fullName = Options.FindLanguage(fulllang);
 			langs[i] = fullName;
@@ -383,7 +384,7 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 		ConOpt(sc1, GRID_INSERT_END_OFFSET);
 		ConOpt(sc2, GRID_TAGS_SWAP_CHARACTER);
 		wxBoxSizer* MainSizer2 = new wxBoxSizer(wxHORIZONTAL);
-		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Ilość edycji do zapisu")/*, wxDefaultPosition, wxSize(256, -1)*/), 5, wxALIGN_CENTRE_VERTICAL | wxEXPAND);
+		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Ilość edycji do zapisu")/*, wxDefaultPosition, wxSize(256, -1)*/), 5, wxEXPAND);
 		MainSizer2->Add(gridSaveAfter, 0, wxEXPAND);
 		wxBoxSizer* MainSizer3 = new wxBoxSizer(wxHORIZONTAL);
 		MainSizer3->Add(new KaiStaticText(EditorAdvanced, -1, _("Maksymalna ilość plików autozapisu")/*, wxDefaultPosition, wxSize(256, -1)*/), 5, /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND);
@@ -439,7 +440,7 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 		KaiTextCtrl* path = new KaiTextCtrl(EditorAdvanced, ID_EXTERNAL_FONTS_FOLDER, Options.GetString(EXTERNAL_FONTS_DIRECTORY));
 		ConOpt(path, EXTERNAL_FONTS_DIRECTORY);
 		MappedButton* choosePath = new MappedButton(EditorAdvanced, ID_EXTERNAL_FONTS_CHOOSE_FOLDER, _("Wybierz"));
-		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent& event) {
+		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent& event) {
 			wxDirDialog ddlg(this, _("Wybierz zewnętrzny folder czcionek"), path->GetValue());
 			ddlg.ShowModal();
 			path->SetValue(ddlg.GetPath());
@@ -675,7 +676,7 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 		buttonsSizer->Add(deleteHotkey, 0, wxALL, 2);
 		HkeysSizer->Add(buttonsSizer, 0, wxALL | wxALIGN_CENTER, 2);
 		// filter list it need created list
-		Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent &evt){
+		Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=, this](wxCommandEvent &evt){
 			//we check to second collumn that contain shortcut
 			Shortcuts->FilterList(1, filterList->GetSelection());
 		}, 14568);
@@ -830,14 +831,14 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 		wxBoxSizer *sizer1 = new wxBoxSizer(wxHORIZONTAL);
 		wxArrayString choices;
 		wxArrayString files;
-		wxString pathwn = Options.pathfull + L"\\Themes\\";
+		wxString pathwn = Options.pathfull + L"/Themes/";
 		const wxString & programTheme = Options.GetString(PROGRAM_THEME);
 		wxDir kat(pathwn);
 		if (kat.IsOpened()){
 			kat.GetAllFiles(pathwn, &files, L"*.txt", wxDIR_FILES);
 		}
 		for (size_t i = 0; i < files.size(); i++){
-			choices.Add(files[i].AfterLast(L'\\').BeforeLast(L'.'));
+			choices.Add(KaiPathName(files[i]).BeforeLast(L'.'));
 		}
 		if (choices.Index(L"DarkSentro", false) == -1){
 			choices.Insert(L"DarkSentro", 0);
@@ -882,7 +883,7 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 			wxString themeName = newTheme->GetValue();
 			if (themeName.IsEmpty() || choices.Index(themeName, false) != -1){ wxBell(); return; }
 			wxString originalName = themeList->GetString(themeList->GetSelection());
-			wxString dir = Options.pathfull + L"\\Themes\\";
+			wxString dir = Options.pathfull + L"/Themes/";
 			wxString copyPath = dir + themeName + L".txt";
 			if (originalName == L"DarkSentro" || originalName == L"LightSentro"){
 				Options.SaveColors(copyPath);
@@ -903,7 +904,7 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 			int size = themeList->Append(themeName);
 			themeList->SetSelection(size);
 		}, 14566);
-		Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent &evt){
+		Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=, this](wxCommandEvent &evt){
 			wxString themeName = themeList->GetString(themeList->GetSelection());
 			if (themeName.IsEmpty()){ return; }
 			Options.LoadColors(themeName);
@@ -1008,7 +1009,9 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 	OptionsTree->AddSubPage(AudioSecond, _("Zaawansowane"));
 	OptionsTree->AddPage(Themes, _("Motywy"));
 	OptionsTree->AddPage(Hotkeyss, _("Skróty klawiszowe"));
+#ifdef _WIN32
 	OptionsTree->AddPage(Assocs, _("Skojarzenia"));
+#endif
 	OptionsTree->AddPage(SubsProps, _("Właściwości napisów"));
 	OptionsTree->Fit();
 
@@ -1026,7 +1029,7 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 	ButtonsSizer->Add(resetDefaults, 1, wxRIGHT, 2);
 
 	DialogSizer *TreeSizer = new DialogSizer(wxVERTICAL);
-	TreeSizer->Add(OptionsTree, 1, wxALL | wxALIGN_CENTER | wxEXPAND, 2);
+	TreeSizer->Add(OptionsTree, 1, wxALL | wxEXPAND, 2);
 	TreeSizer->Add(ButtonsSizer, 0, wxBOTTOM | wxALIGN_CENTER, 4);
 	SetSizerAndFit(TreeSizer);
 
@@ -1175,8 +1178,10 @@ void OptionsDialog::SetOptions(bool saveall)
 					//we need to call function before set a new path
 					//to remove loaded fonts from last folder
 					if (OB.option == EXTERNAL_FONTS_DIRECTORY) {
-						if (!str.empty() && !str.EndsWith(L"\\"))
-							str << L"\\";
+						wxString separator(wxFileName::GetPathSeparator());
+						str = KaiNormalizePath(str);
+						if (!str.empty() && !str.EndsWith(separator))
+							str << separator;
 
 						FontEnum.ReloadExternalFontsToProcess(str, this);
 					}
@@ -1206,12 +1211,12 @@ void OptionsDialog::SetOptions(bool saveall)
 			KaiListCtrl *list = (KaiListCtrl*)OB.ctrl;
 			if (list->GetModified()){
 
-				if (OB.option == ID_COLOR_CONFIG){
+				if (OB.option == (CONFIG)ID_COLOR_CONFIG){
 					list->SaveAll(1);
 					Options.SaveColors();
 					ChangeColors();
 				}
-				else if (OB.option == ID_HOTKEYS_CONFIG){
+				else if (OB.option == (CONFIG)ID_HOTKEYS_CONFIG){
 					if (list->GetModified() && hotkeysCopy.size()){
 						list->SaveAll(1);
 						Hkeys.SetHotkeysMap(hotkeysCopy);
@@ -1223,7 +1228,8 @@ void OptionsDialog::SetOptions(bool saveall)
 					}
 				}
 				else{
-					wxString extensions[] = { L".ass", L".ssa", L".srt", L".sub", L".txt", L".mkv", L".mp4", L".avi", 
+#ifdef _WIN32
+					wxString extensions[] = { L".ass", L".ssa", L".srt", L".sub", L".txt", L".mkv", L".mp4", L".avi",
 						L".ogm", L".wmv", L".asf", L".rmvb", L".rm", L".3gp", L".mpg", L".mpeg", L".ts", L".m2ts" };
 					wxString extensionsDesc[] = { _("Napisy ASS"), _("Napisy SSA"), _("Napisy SRT"), _("Napisy SUB"),
 						_("Napisy TXT"), _("Wideo MKV"), _("Wideo MP4"), _("Wideo AVI"), _("Wideo OGM"),
@@ -1239,6 +1245,7 @@ void OptionsDialog::SetOptions(bool saveall)
 						}
 					}
 					//Registry::RefreshRegistry();
+#endif
 				}
 			}
 		}

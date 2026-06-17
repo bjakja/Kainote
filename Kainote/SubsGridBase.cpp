@@ -125,7 +125,7 @@ SubsGridBase::SubsGridBase(wxWindow *parent, const long int id, const wxPoint& p
 	timer.SetOwner(this, ID_AUTIMER);
 	//reset autosave on statusbar
 	nullifyTimer.SetOwner(this, 27890);
-	Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
+	Bind(wxEVT_TIMER, [=, this](wxTimerEvent &evt){
 		Kai->SetStatusText(emptyString, 0);
 	}, 27890);
 }
@@ -1469,20 +1469,20 @@ void SubsGridBase::GetAssHeader(wxString* header, bool forFile, bool translated,
 {
 	if (forFile) {
 		AddSInfo(L"Active Line", std::to_wstring(currentLine), false);
-		wxString subsPath = tab->SubsPath.BeforeLast(L'\\');
+		wxString subsPath = KaiPathDir(tab->SubsPath);
 		if (edit->ABox) {
 			wxString path = (edit->ABox->audioName.StartsWith(subsPath) && normalSave) ?
-				edit->ABox->audioName.AfterLast(L'\\') : edit->ABox->audioName;
+				KaiPathName(edit->ABox->audioName) : edit->ABox->audioName;
 			AddSInfo(L"Audio File", path, false);
 		}
 		if (!tab->VideoPath.empty()) {
 			wxString path = (tab->VideoPath.StartsWith(subsPath) && normalSave) ?
-				tab->VideoPath.AfterLast(L'\\') : tab->VideoPath;
+				KaiPathName(tab->VideoPath) : tab->VideoPath;
 			AddSInfo(L"Video File", path, false);
 		}
 		if (!tab->KeyframesPath.empty()) {
 			wxString path = (tab->KeyframesPath.StartsWith(subsPath) && normalSave) ?
-				tab->KeyframesPath.AfterLast(L'\\') : tab->KeyframesPath;
+				KaiPathName(tab->KeyframesPath) : tab->KeyframesPath;
 			AddSInfo(L"Keyframes File", path, false);
 		}
 	}
@@ -1641,7 +1641,7 @@ void SubsGridBase::OnBackupTimer(wxTimerEvent &event)
 	wxString path;
 	wxString ext = (subsFormat < SRT) ? L"ass" : (subsFormat == SRT) ? L"srt" : L"txt";
 
-	path << Options.pathfull << L"\\Subs\\" << tab->SubsName.BeforeLast(L'.')
+	path << Options.pathfull << L"/Subs/" << tab->SubsName.BeforeLast(L'.')
 		<< L"_" << Notebook::GetTabs()->FindPanel(tab) << L"_" << numsave << L"." << ext;
 
 	SaveFile(path, false);

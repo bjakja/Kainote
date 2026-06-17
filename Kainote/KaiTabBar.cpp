@@ -15,7 +15,7 @@
 
 #include "KaiTabBar.h"
 #include "config.h"
-#include "hotkeys.h"
+#include "Hotkeys.h"
 #include <wx/dc.h>
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
@@ -31,8 +31,8 @@ KaiTabBar::KaiTabBar(wxWindow * parent, int id, const wxPoint & position /*= wxD
 	//Bind(wxEVT_SIZE, &KaiTabBar::OnSizeEvent, this);
 	Bind(wxEVT_MOTION, &KaiTabBar::OnMouseEvent, this);
 	Bind(wxEVT_LEAVE_WINDOW, &KaiTabBar::OnMouseEvent, this);
-	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent& evt) {Refresh(false); });
-	Bind(wxEVT_KILL_FOCUS, [=](wxFocusEvent& evt) {Refresh(false); });
+	Bind(wxEVT_SET_FOCUS, [=, this](wxFocusEvent& evt) {Refresh(false); });
+	Bind(wxEVT_KILL_FOCUS, [=, this](wxFocusEvent& evt) {Refresh(false); });
 	wxAcceleratorEntry entries[4];
 	
 	entries[0] = Hkeys.GetHKey(idAndType(GLOBAL_NEXT_TAB));
@@ -43,7 +43,7 @@ KaiTabBar::KaiTabBar(wxWindow * parent, int id, const wxPoint & position /*= wxD
 	wxAcceleratorTable accel(4, entries);
 	SetAcceleratorTable(accel);
 
-	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=, this](wxCommandEvent &evt){
 		if (tabs.size() < 2){ return; }
 		int id = evt.GetId();
 		if (id >= ID_GO_TO_LEFT_TAB && id <= ID_GO_TO_RIGHT_TAB && !HasFocus()) {
@@ -159,7 +159,7 @@ void KaiTabBar::OnPaint(wxPaintEvent& event)
 	int w = 0;
 	int h = 0;
 	GetClientSize(&w, &h);
-	if (w == 0 || h == 0){ return; }
+	if (w < 1 || h < 1){ return; }
 	wxMemoryDC tdc;
 	wxBitmap bmp = wxBitmap(w, tabHeader);
 	tdc.SelectObject(bmp);

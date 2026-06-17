@@ -22,8 +22,8 @@
 #include <wx/regex.h>
 #include <wx/clipbrd.h>
 
-#include "kainoteFrame.h"
-#include "Config.h"
+#include "KainoteFrame.h"
+#include "config.h"
 
 
 TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, const wxPoint& pos, const wxSize& size, long style, const wxValidator& validator, const wxString& name)
@@ -64,7 +64,7 @@ TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, con
 	Bind(wxEVT_RIGHT_UP, &TimeCtrl::OnMouseEvent, this);
 	Bind(wxEVT_MOTION, &TimeCtrl::OnMouseEvent, this);
 	Bind(wxEVT_MOUSEWHEEL, &TimeCtrl::OnMouseEvent, this);
-	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=, this](wxCommandEvent &evt){
 
 
 		if (wxTheClipboard->Open())
@@ -104,12 +104,12 @@ TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, con
 			//wxTheClipboard->Flush();
 		}
 	}, ID_TCTLV);
-	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=, this](wxCommandEvent &evt){
 		if (form >= MDVD || showFrames){ evt.Skip(); return; }
 		SetSelection(0, GetValue().Length());
 		Copy();
 	}, ID_TCTLC);
-	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=, this](wxCommandEvent &evt){
 		//napisaæ tutaj zerowanie przy zaznaczeniu i ogólnie cofanie kursora i zerowanie jednej cyfry
 		timeUnchanged = false;
 		if (form >= MDVD || showFrames){ evt.Skip(); return; }
@@ -134,7 +134,7 @@ TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, con
 		SetValue(timetxt);
 		SetSelection(from, from);
 	}, ID_TBACK);
-	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=, this](wxCommandEvent &evt){
 		timeUnchanged = false;
 		if (form >= MDVD || showFrames){ evt.Skip(); }
 		//napisaæ tutaj zerowanie przy zaznaczeniu i ogólnie nieruchomy kursor i zerowanie jednej cyfry
@@ -143,7 +143,7 @@ TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, con
 
 	bool setNumpadAccels = !Options.GetBool(TEXT_FIELD_ALLOW_NUMPAD_HOTKEYS);
 	if (setNumpadAccels){
-		Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+		Bind(wxEVT_COMMAND_MENU_SELECTED, [=, this](wxCommandEvent &evt){
 			int key = evt.GetId() - 10276;
 			wxKeyEvent kevt;
 			kevt.m_uniChar = key;

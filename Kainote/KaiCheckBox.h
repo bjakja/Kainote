@@ -18,7 +18,7 @@
 #include <wx/defs.h>
 #include <wx/object.h>
 #include <wx/window.h>
-enum COLOR;
+#include "config.h"
 
 class KaiCheckBox : public wxWindow
 {

@@ -16,7 +16,7 @@
 
 //#include "Toolbar.h"
 #include "Hotkeys.h"
-#include "KainoteApp.h"
+#include "kainoteApp.h"
 #include "Toolbar.h"
 #include "KaiScrollbar.h"
 #include "Notebook.h"
@@ -24,11 +24,11 @@
 #include "wx/dc.h"
 #include "wx/dcmemory.h"
 #include "wx/dcclient.h"
-#include "Config.h"
+#include "config.h"
 
 
 KaiToolbar::KaiToolbar(wxWindow *Parent, MenuBar *mainm, int id)
-	:wxWindow(Parent, -1, wxDefaultPosition, wxSize(thickness, -1))
+	:wxWindow(Parent, -1, wxDefaultPosition, wxSize(24, -1))
 	, bmp(nullptr)
 	, Clicked(false)
 	, wasmoved(false)
@@ -157,7 +157,11 @@ void KaiToolbar::OnMouseEvent(wxMouseEvent &event)
 	wxPoint elems = FindElem(event.GetPosition());
 	int elem = elems.x;
 
-	if (elem < 0 || event.Leaving()){/*if(HasCapture()){ReleaseMouse();}*/if (HasToolTips()){ UnsetToolTip(); }
+	if (elem < 0 || event.Leaving()){/*if(HasCapture()){ReleaseMouse();}*/
+#ifdef _WIN32
+	if (HasToolTips()){ UnsetToolTip(); }
+#endif
+	if (KainoteFrame::Get()){ KainoteFrame::Get()->SetStatusText(emptyString, 0); }
 	int tmpsel = sel;
 	sel = -1;
 	oldelem = -1;
@@ -166,7 +170,11 @@ void KaiToolbar::OnMouseEvent(wxMouseEvent &event)
 	return;
 	}
 	if (elem == tools.size() - 1){
-		SetToolTip(_("Wybierz ikony paska narzędzi"));
+		wxString tip = _("Wybierz ikony paska narzędzi");
+#ifdef _WIN32
+		SetToolTip(tip);
+#endif
+		if (KainoteFrame::Get()){ KainoteFrame::Get()->SetStatusText(tip, 0); }
 		sel = elem; oldelem = elem;
 		Refresh(false);
 	}
@@ -174,7 +182,11 @@ void KaiToolbar::OnMouseEvent(wxMouseEvent &event)
 		wxString shkeyadd;
 		wxString shkey = Hkeys.GetStringHotkey(tools[elem]->id);
 		if (shkey != emptyString){ shkeyadd << L" (" << shkey << L")"; }
-		SetToolTip(tools[elem]->label + shkeyadd);
+		wxString tip = tools[elem]->label + shkeyadd;
+#ifdef _WIN32
+		SetToolTip(tip);
+#endif
+		if (KainoteFrame::Get()){ KainoteFrame::Get()->SetStatusText(tip, 0); }
 		sel = elem;
 		//RefreshRect(wxRect(0,elem*iconsize,iconsize,(elem+1)*iconsize),false);
 		Refresh(false);
@@ -233,7 +245,7 @@ void KaiToolbar::OnPaint(wxPaintEvent &event)
 	int w = 0;
 	int h = 0;
 	GetClientSize(&w, &h);
-	if (w == 0 || h == 0){ return; }
+	if (w < 1 || h < 1){ return; }
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < w || bmp->GetHeight() < h)) {
 		delete bmp;
@@ -304,7 +316,7 @@ void KaiToolbar::OnSize(wxSizeEvent &evt)
 	int w = 0;
 	int h = 0;
 	GetClientSize(&w, &h);
-	if (w == 0 || h == 0){ return; }
+	if (w < 1 || h < 1){ return; }
 	bool vertical = alignment % 2 == 0;
 	float maxx = (vertical) ? h : w;
 	int toolbarrows = ((tools.size() * thickness) - 2) / maxx;
@@ -466,7 +478,7 @@ ToolbarMenu::ToolbarMenu(KaiToolbar*_parent, const wxPoint &pos, const wxSize &s
 		parent->alignment = 0;
 	alignments->SetSelection(parent->alignment);
 	alignments->SetToolTip(_("Pozycja paska narzędzi"));
-	Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=, this](wxCommandEvent &evt){
 		parent->alignment = alignments->GetSelection();
 		Options.SetInt(TOOLBAR_ALIGNMENT, parent->alignment);
 		KainoteFrame *win = (KainoteFrame*)parent->GetParent();
@@ -561,7 +573,7 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 	int w = 0;
 	int h = 0;
 	GetClientSize(&w, &h);
-	if (w == 0 || h == 0){ return; }
+	if (w < 1 || h < 1){ return; }
 	int ow = w;
 	int thickness = scroll->GetThickness();
 	w -= (thickness + 1);

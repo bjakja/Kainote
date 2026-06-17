@@ -33,9 +33,9 @@
 // Contact: mailto:zeratul@cellosoft.com
 //
 
-#include "Config.h"
+#include "config.h"
 //#include "Utils.h"
-#include "ColorSpace.h"
+#include "colorspace.h"
 #include "SubsGrid.h"
 
 

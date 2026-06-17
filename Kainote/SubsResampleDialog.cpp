@@ -16,7 +16,7 @@
 
 #include "SubsResampleDialog.h"
 #include "KaiStaticBoxSizer.h"
-#include "kainoteFrame.h"
+#include "KainoteFrame.h"
 #include "SubsGrid.h"
 #include "Notebook.h"
 #include "KaiStaticText.h"
@@ -71,7 +71,7 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 	options.Add(_("Rozciągaj"));
 	resamplingOptions = new KaiRadioBox(this, -1, _("Opcje skalowania"), wxDefaultPosition, wxDefaultSize, options);
 	resamplingOptions->Enable((videoSize.x / (float)subsSize.x) != (videoSize.y / (float)subsSize.y));
-	auto OnChangedResolution = [=](wxCommandEvent &evt)->void{
+	auto OnChangedResolution = [=, this](wxCommandEvent &evt)->void{
 		int subsSizeX = subsResolutionX->GetInt();
 		int subsSizeY = subsResolutionY->GetInt();
 		if (!fromSubs->IsEnabled() && (subsSizeX != subsSize.x || subsSizeY != subsSize.y)){
@@ -90,7 +90,7 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 	};
 	Bind(NUMBER_CHANGED, OnChangedResolution, 26543, 26544);
 	//from subs button bind
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 		subsResolutionX->SetInt(subsSize.x);
 		subsResolutionY->SetInt(subsSize.y);
 		fromSubs->Enable(false);
@@ -98,7 +98,7 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 		OnChangedResolution(event);
 	}, 26547);
 
-	auto OnChangedVideoResolution = [=](wxCommandEvent &evt)->void{
+	auto OnChangedVideoResolution = [=, this](wxCommandEvent &evt)->void{
 		int videoSizeX = destinedResolutionX->GetInt();
 		int videoSizeY = destinedResolutionY->GetInt();
 		if (!fromVideo->IsEnabled() && (videoSizeX != subsSize.x || videoSizeY != subsSize.y)){
@@ -117,7 +117,7 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 	};
 	Bind(NUMBER_CHANGED, OnChangedVideoResolution, 26545, 26546);
 	//from video button bind
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 		destinedResolutionX->SetInt(videoSize.x);
 		destinedResolutionY->SetInt(videoSize.y);
 		fromVideo->Enable(false);
@@ -130,7 +130,7 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 	mainSizer->Add(resamplingOptions, 0, wxALL | wxEXPAND, 2);
 	wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
 	MappedButton *OK = new MappedButton(this, 6548, L"OK");
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 		int subsSizeX = subsResolutionX->GetInt();
 		int subsSizeY = subsResolutionY->GetInt();
 		int videoSizeX = destinedResolutionX->GetInt();
@@ -189,7 +189,7 @@ SubsMismatchResolutionDialog::SubsMismatchResolutionDialog(wxWindow *parent, con
 	}, 26548);*/
 	MappedButton *Cancel = new MappedButton(this, wxID_CANCEL, _("Nie zmieniaj"));
 	MappedButton *TurnOff = new MappedButton(this, 26549, _("Wyłącz ostrzeżenie"));
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 		SubsGrid *grid = Notebook::GetTab()->grid;
 		grid->AddSInfo(L"PlayResX", std::to_wstring(videoSize.x));
 		grid->AddSInfo(L"PlayResY", std::to_wstring(videoSize.y));
@@ -207,7 +207,7 @@ SubsMismatchResolutionDialog::SubsMismatchResolutionDialog(wxWindow *parent, con
 	buttonSizer->Add(OK, 0, wxALL, 2);
 	buttonSizer->Add(Cancel, 0, wxALL, 2);
 	buttonSizer->Add(TurnOff, 0, wxALL, 2);
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 		Options.SetBool(DONT_ASK_FOR_BAD_RESOLUTION, true);
 		Options.SaveOptions(true, false);
 		EndModal(0);
