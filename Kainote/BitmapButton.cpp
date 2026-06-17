@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "BitmapButton.h"
-#include "Config.h"
+#include "config.h"
 #include "Hotkeys.h"
 
 BitmapButton::BitmapButton(wxWindow* parent, wxBitmap bitmap, wxBitmap bitmap1, int hkeyId, const wxString &tooltip, const wxPoint& pos, const wxSize& size, int _window)

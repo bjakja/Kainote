@@ -16,7 +16,7 @@
 
 #include "SubsGridWindow.h"
 #include "config.h"
-#include "kaiMessageBox.h"
+#include "KaiMessageBox.h"
 #include "SubsGridFiltering.h"
 #include "SubsGridPreview.h"
 #include "VisualDrawingShapes.h"

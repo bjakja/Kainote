@@ -21,7 +21,7 @@
 
 
  
-#include "KainoteApp.h"
+#include "kainoteApp.h"
 #include "Menu.h"
 #include "ListControls.h"
 #include "OpennWrite.h"
@@ -47,7 +47,7 @@
 #include <wx/tokenzr.h>
 #include <wx/tooltip.h>
 #endif
-#include "loghandler.h"
+#include "LogHandler.h"
 
 #include "UtilsWindows.h"
 #include <versionhelpers.h>

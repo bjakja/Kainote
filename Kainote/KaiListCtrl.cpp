@@ -438,7 +438,7 @@ int KaiListCtrl::AppendItemWithExtent(Item *item)
 
 int KaiListCtrl::SetItem(size_t row, size_t col, Item *item)
 {
-	if (row >= itemList->size()){ return -1; }
+	if (row >= itemList->size()){ delete item; return -1; }
 	if (col >= (*itemList)[row]->row.size()){
 		(*itemList)[row]->row.push_back(item);
 		return row;

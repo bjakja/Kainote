@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ListControls.h"
-#include "Config.h"
+#include "config.h"
 #include "KaiTextCtrl.h"
 #include "KainoteFrame.h"
 #include <wx/msw/private.h>

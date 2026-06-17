@@ -16,7 +16,7 @@
 
 #include "kainoteApp.h"
 #include "KaiFrame.h"
-#include "Config.h"
+#include "config.h"
 #include "TabPanel.h"
 #include "SubsGrid.h"
 #include "EditBox.h"

@@ -16,14 +16,14 @@
 
 
 #include "FontCollector.h"
-#include "KainoteApp.h"
-#include "Config.h"
+#include "kainoteApp.h"
+#include "config.h"
 #include "Demux.h"
 #include "FontEnumerator.h"
 #include "Notebook.h"
 #include "TabPanel.h"
 #include "SubsGrid.h"
-#include "StyleStore.h"
+#include "stylestore.h"
 #include "ShiftTimes.h"
 #include "KaiMessageBox.h"
 //#include "UtilsWindows.h"

@@ -19,7 +19,7 @@
 #include "Notebook.h"
 #include "KaiMessageBox.h"
 #include "KainoteFrame.h"
-#include "Config.h"
+#include "config.h"
 #include "Hotkeys.h"
 #include "ShiftTimes.h"
 #include "AudioBox.h"

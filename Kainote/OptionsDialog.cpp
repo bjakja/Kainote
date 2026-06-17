@@ -17,7 +17,7 @@
 #include "Registry.h"
 #include "OptionsDialog.h"
 #include "config.h"
-#include "kainoteFrame.h"
+#include "KainoteFrame.h"
 #include "Hotkeys.h"
 #include "NumCtrl.h"
 #include "ColorPicker.h"

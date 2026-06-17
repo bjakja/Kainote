@@ -33,7 +33,7 @@
 #include <wx/msw/private.h>
 #include <wx/mstream.h>
 #include <wx/dc.h>
-#include "Config.h"
+#include "config.h"
 #include "UtilsWindows.h"
 #include <locale>
 #include <algorithm>
@@ -561,11 +561,15 @@ int config::LoadOptions()
 		}
 		isgood = SetRawOptions(txt);
 		if (!isgood) {
+#ifndef _WIN32
+			// Linux: fall back to defaults in-memory so a partially unparseable
+			// config does not abort startup. Do NOT overwrite the user's
+			// Config.txt, keep it recoverable.
 			LoadDefaultConfig();
 			isgood = 2;
-			wxString defaultOptions;
-			GetRawOptions(defaultOptions);
-			ow.FileWrite(path, defaultOptions);
+#endif
+			// Windows keeps isgood == 0: caller warns and exits without
+			// destroying the existing config file (pre-PR behavior).
 		}
 	}
 

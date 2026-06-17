@@ -18,7 +18,7 @@
 #include "NumCtrl.h"
 #include "KaiCheckBox.h"
 #include "MappedButton.h"
-#include "KaiScrollBar.h"
+#include "KaiScrollbar.h"
 #include "ListControls.h"
 #include "StylePreview.h"
 #include "KaiDialog.h"

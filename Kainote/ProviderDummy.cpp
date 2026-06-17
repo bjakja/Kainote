@@ -16,10 +16,10 @@
 
 #include "ProviderDummy.h"
 #include "Provider.h"
-#include "ColorSpace.h"
+#include "colorspace.h"
 #include <wx/tokenzr.h>
 #include "UtilsWindows.h"
-#include "Videobox.h"
+#include "VideoBox.h"
 #include "VideoToolbar.h"
 
 ProviderDummy::~ProviderDummy()

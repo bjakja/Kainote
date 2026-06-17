@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "SubtitlesProvider.h"
-#include "Config.h"
+#include "config.h"
 
 
 std::vector< SubtitlesProviderManager*> SubtitlesProviderManager::gs_Base;

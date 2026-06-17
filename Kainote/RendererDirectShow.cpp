@@ -66,7 +66,7 @@ void RendererDirectShow::ZoomChanged() {}
 #else
 #include "VisualDrawingShapes.h"
 #include "SubtitlesProviderManager.h"
-#include "DShowPlayer.h"
+#include "dshowplayer.h"
 #include "Visuals.h"
 #include "DshowRenderer.h"
 #include "kainoteApp.h"

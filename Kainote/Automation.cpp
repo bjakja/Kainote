@@ -36,7 +36,7 @@
 #include "Automation.h"
 #include "Hotkeys.h"
 
-#include "KainoteApp.h"
+#include "kainoteApp.h"
 #include "AutomationToFile.h"
 #include "AutomationProgress.h"
 
@@ -208,6 +208,9 @@ namespace Auto{
 		wxString path = check_string(L, 1);
 		TabPanel *tab = Notebook::GetTab();
 		path = KaiNormalizePath(path);
+#ifdef _WIN32
+		path.Replace(L'/', L'\\');
+#endif
 		wxString firstAutomation = KaiPathJoin(Options.pathfull, L"Automation");
 		if (path[0] == L'?'){
 			if (path[1] == L'a' && path[4] == L'i') path.replace(0, 6, (tab) ? KaiPathDir(tab->AudioPath) : wxString(L""));
@@ -590,7 +593,6 @@ namespace Auto{
 		stackcheck.check_stack(0);
 
 		// make "aegisub" table
-		lua_pushstring(L, "aegisub");
 		lua_createtable(L, 0, 13);
 
 		set_field<LuaCommand::LuaRegister>(L, "register_macro");

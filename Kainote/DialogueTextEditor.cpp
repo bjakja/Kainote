@@ -19,7 +19,7 @@
 #include "GraphicsD2D.h"
 #include "BidiConversion.h"
 #include "EditBox.h"
-#include "Spellchecker.h"
+#include "SpellChecker.h"
 #include "config.h"
 #include "Menu.h"
 #include <wx/regex.h>

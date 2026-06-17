@@ -29,9 +29,9 @@
 // Aegisub Project http://www.aegisub.org/
 
 #include "AutomationToFile.h"
-#include "Config.h"
+#include "config.h"
 #include "AutomationUtils.h"
-#include "KainoteApp.h"
+#include "kainoteApp.h"
 #include "AudioSpectrum.h"
 #include "Notebook.h"
 #include "AudioBox.h"

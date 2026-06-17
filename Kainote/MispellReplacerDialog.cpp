@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "Config.h"
+#include "config.h"
 #include "MispellReplacerDialog.h"
 #include "MisspellReplacer.h"
 #include "KainoteFrame.h"

@@ -18,7 +18,7 @@
 #include "KaiTextCtrl.h"
 #include "KaiRadioButton.h"
 #include "KaiTabBar.h"
-#include "KaiTreeBook.h"
+#include "KaiTreebook.h"
 #include "config.h"
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>

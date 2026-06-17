@@ -5,6 +5,7 @@ Kainote setup.*
 *.7z
 *.psd
 *.lst
+Thumbs.db
 Trash/
 LanguageTool/
 gitparams.h

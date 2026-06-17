@@ -1,1 +1,0 @@
-GraphicsD2D.h

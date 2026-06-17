@@ -1223,7 +1223,7 @@ void VideoBox::OnPaint(wxPaintEvent& event)
 	}
 	return;
 #endif
-	if (renderer && !renderer->m_BlockResize && renderer->m_State != None && renderer->m_State != Playing){
+	if (renderer && !renderer->m_BlockResize && renderer->m_State == Paused){
 		renderer->Render(true, false);
 	}
 	else if (GetState() == None){

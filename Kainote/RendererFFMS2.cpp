@@ -26,8 +26,6 @@
 #include "VideoFullscreen.h"
 #include "SubtitlesProviderManager.h"
 #ifndef _WIN32
-#include "LinuxSdlRenderer.h"
-#include "LinuxVaapiRenderer.h"
 #include <wx/bitmap.h>
 #include <wx/app.h>
 #include <wx/dcclient.h>
@@ -94,10 +92,6 @@ namespace
 RendererFFMS2::RendererFFMS2(VideoBox *control, bool visualDisabled)
 	: RendererVideo(control, visualDisabled)
 	, m_FFMS2(nullptr)
-#ifndef _WIN32
-	, m_SdlRenderer(new LinuxSdlRenderer())
-	, m_VaapiRenderer(new LinuxVaapiRenderer())
-#endif
 {
 	
 }
@@ -119,7 +113,6 @@ void RendererFFMS2::QueueLinuxRender()
 			m_LinuxPresentFrame.swap(m_LinuxPendingFrame);
 		}
 		if (m_State != None && !m_LinuxPresentFrame.empty()) {
-			PresentLinuxFrame(m_LinuxPresentFrame.data());
 			wxWindow* renderWindow = (videoControl->m_IsFullscreen && videoControl->m_FullScreenWindow) ?
 				static_cast<wxWindow*>(videoControl->m_FullScreenWindow) : static_cast<wxWindow*>(videoControl);
 			if (renderWindow)
@@ -131,20 +124,20 @@ void RendererFFMS2::QueueLinuxRender()
 
 void RendererFFMS2::PresentLinuxFrame(const unsigned char* frame)
 {
-	if (!frame)
+	if (!frame || m_Height <= 0 || m_Pitch <= 0)
 		return;
-
+	{
+		std::lock_guard<std::mutex> pendingLock(m_LinuxPendingFrameMutex);
+		const size_t frameBytes = static_cast<size_t>(m_Height) * static_cast<size_t>(m_Pitch);
+		if (m_LinuxPresentFrame.size() != frameBytes)
+			m_LinuxPresentFrame.resize(frameBytes);
+		if (m_LinuxPresentFrame.data() != frame)
+			memcpy(m_LinuxPresentFrame.data(), frame, frameBytes);
+	}
 	wxWindow* renderWindow = (videoControl->m_IsFullscreen && videoControl->m_FullScreenWindow) ?
 		static_cast<wxWindow*>(videoControl->m_FullScreenWindow) : static_cast<wxWindow*>(videoControl);
-	const bool useVaapi = std::getenv("KAINOTE_ENABLE_VAAPI_RENDER") != nullptr;
-	if (!useVaapi || !m_VaapiRenderer || !m_VaapiRenderer->RenderBgra(renderWindow, frame, m_Width, m_Height, m_Pitch, m_BackBufferRect)) {
-		if (!m_SdlRenderer || !m_SdlRenderer->RenderBgra(renderWindow, frame, m_Width, m_Height, m_Pitch, m_BackBufferRect))
-			DrawBgraFrameWithWx(renderWindow, frame, m_Width, m_Height, m_Pitch, m_BackBufferRect);
-	}
-
-	const unsigned int presented = ++m_LinuxPresentedFrames;
-	if (std::getenv("KAINOTE_DEBUG_LINUX_PLAYBACK") && (presented <= 5 || (presented % 30) == 0))
-		std::fprintf(stderr, "[linux-playback] present=%u time=%d frame=%d\n", presented, m_Time, m_Frame);
+	if (renderWindow)
+		renderWindow->Refresh(false);
 }
 
 void RendererFFMS2::RenderToDc(wxDC& dc)
@@ -157,6 +150,7 @@ void RendererFFMS2::RenderToDc(wxDC& dc)
 	if (!frame)
 		return;
 	DrawBgraFrameWithWxDc(dc, frame, m_Width, m_Height, m_Pitch, m_BackBufferRect);
+	++m_LinuxPresentedFrames;
 	if (m_Visual && !m_HasZoom)
 		m_Visual->DrawWx(dc, m_Time);
 }

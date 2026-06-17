@@ -18,7 +18,7 @@
 #include <wx/defs.h>
 #include <wx/object.h>
 #include <wx/window.h>
-#include "Config.h"
+#include "config.h"
 
 class KaiCheckBox : public wxWindow
 {

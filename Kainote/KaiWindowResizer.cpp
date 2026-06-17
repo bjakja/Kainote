@@ -30,13 +30,6 @@ KaiWindowResizer::KaiWindowResizer(wxWindow *parent, std::function<bool(int)> _c
 	SetCursor(wxCURSOR_SIZENS);
 	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	Bind(wxEVT_MOUSE_CAPTURE_LOST, [this](wxMouseCaptureLostEvent &evt){
-		if (holding){
-			wxPoint screenPosition = wxGetMousePosition();
-			resizerParent->ScreenToClient(&screenPosition.x, &screenPosition.y);
-			if (canResize(screenPosition.y)){
-				doResize(screenPosition.y, false);
-			}
-		}
 		holding = false;
 		if (splitLine){
 			splitLine->Destroy();

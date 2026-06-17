@@ -18,7 +18,7 @@
 #include "SubsGridBase.h"
 //#include "SubsGridPreview.h"
 //#include "SubsGrid.h"
-//#include "Graphicsd2d.h"
+//#include "GraphicsD2D.h"
 //#include <wx/window.h>
 
 class TabPanel;

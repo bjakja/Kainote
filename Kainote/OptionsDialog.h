@@ -20,7 +20,7 @@
 #include "KaiTreebook.h"
 #include "KaiListCtrl.h"
 #include "KaiDialog.h"
-#include "Tabpanel.h"
+#include "TabPanel.h"
 
 #include <vector>
 

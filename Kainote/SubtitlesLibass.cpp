@@ -18,13 +18,13 @@
 #include "SubtitlesProvider.h"
 #include "RendererVideo.h"
 #include "OpennWrite.h"
-#include "kainoteFrame.h"
+#include "KainoteFrame.h"
 #include "DshowRenderer.h"
 #include <wx/msw/winundef.h>
 #include <wx/thread.h>
 #include <process.h>
 #include "config.h"
-#include "utilswindows.h"
+#include "UtilsWindows.h"
 #include "Notebook.h"
 #include "VisualDrawingShapes.h"
 #include "VisualClips.h"

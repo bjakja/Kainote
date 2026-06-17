@@ -22,8 +22,8 @@
 #include <wx/regex.h>
 #include <wx/clipbrd.h>
 
-#include "kainoteFrame.h"
-#include "Config.h"
+#include "KainoteFrame.h"
+#include "config.h"
 
 
 TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, const wxPoint& pos, const wxSize& size, long style, const wxValidator& validator, const wxString& name)

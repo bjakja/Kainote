@@ -25,7 +25,7 @@
 
 #include "SubsTime.h"
 #include "ScriptInfo.h"
-#include "Config.h"
+#include "config.h"
 #include "OptionsDialog.h"
 #include "DropFiles.h"
 #include "OpennWrite.h"
@@ -43,7 +43,7 @@
 #include "Notebook.h"
 #include "Toolbar.h"
 #include "KaiStatusBar.h"
-#include "StyleStore.h"
+#include "stylestore.h"
 
 #include "SubsGrid.h"
 #include "FindReplaceDialog.h"
@@ -51,12 +51,12 @@
 #include "MisspellReplacer.h"
 #include "EditBox.h"
 #include "TabPanel.h"
-#include "shiftTimes.h"
+#include "ShiftTimes.h"
 #include "Menu.h"
 #include "KaiFrame.h"
 #include "SubtitlesProviderManager.h"
 #include "VideoToolbar.h"
-#include "Audiobox.h"
+#include "AudioBox.h"
 #include "TabPanel.h"
 #include "VideoFullscreen.h"
 #include "FontEnumerator.h"
@@ -2389,10 +2389,10 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 				bool isOnAnotherMonitor = tab->video->IsOnAnotherMonitor();
 				switch (viitem->GetId())
 				{
-				case GLOBAL_VIEW_ALL:
 				case GLOBAL_VIEW_SUBS:
 					viitem->Enable(editor);
 					break;
+				case GLOBAL_VIEW_ALL:
 				case GLOBAL_VIEW_VIDEO:
 				case GLOBAL_VIEW_ONLY_VIDEO:
 					viitem->Enable(editor && hasVideoLoaded && !isOnAnotherMonitor);

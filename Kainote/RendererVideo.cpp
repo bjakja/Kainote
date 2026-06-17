@@ -16,7 +16,7 @@
 
 #include "RendererVideo.h"
 #include "VideoToolbar.h"
-#include "kainoteFrame.h"
+#include "KainoteFrame.h"
 #include "CsriMod.h"
 #include "DshowRenderer.h"
 #include "RendererFFMS2.h"

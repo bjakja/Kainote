@@ -15,7 +15,7 @@
 
 
 #include "KaraokeSplitting.h"
-#include "Config.h"
+#include "config.h"
 #include "AudioDisplay.h"
 #include <math.h>
 #include <wx/regex.h>

@@ -28,7 +28,7 @@
 //
 // Aegisub Project http://www.aegisub.org/
 
-#include "Config.h"
+#include "config.h"
 #include "SpellChecker.h"
 #include <wx/dir.h>
 #include <wx/filename.h>
@@ -191,6 +191,7 @@ void SpellChecker::Suggestions(wxString word, wxArrayString &results)
 bool SpellChecker::AddWord(const wxString& word)
 {
 	if (word.IsEmpty() || word.IsNumber()) return false;
+	if (!hunspell || !conv) return false;
 
 	wxCharBuffer wordBuf = word.mb_str(*conv);
 	hunspell->add(std::string(wordBuf.data()));//.mb_str(*conv))
@@ -207,6 +208,8 @@ bool SpellChecker::AddWord(const wxString& word)
 bool SpellChecker::RemoveWords(const wxArrayString &words)
 {
 	if (!words.size())
+		return false;
+	if (!hunspell || !conv)
 		return false;
 
 	int succeded = 0;

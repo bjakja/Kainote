@@ -12,24 +12,28 @@ if(unresolved_deps)
     message(WARNING "Unresolved runtime dependencies: ${unresolved_deps}")
 endif()
 
-# Build a self-contained Linux runtime directory.  Earlier allowlist-based
-# bundling fixed direct deps such as Lua/ICU but missed transitive deps such as
-# libass -> libunibreak and FFmpeg codec/network helpers.  Copy every resolved
-# shared library except the fundamental glibc/ELF loader set that must come from
-# the target system.  The executable is linked with $ORIGIN RPATH, so these
-# copied libraries are preferred when launching ./kainote from the build/package
-# directory.
+# Bundle only the application's own version-sensitive libraries (wxWidgets, ICU,
+# FFMS2, libass, Lua, Hunspell, uchardet and their private transitive helpers)
+# next to the binary.  Everything that has to match the HOST is deliberately NOT
+# copied and is resolved from the system at runtime -- bundling these would break
+# the program once the package is moved to another machine:
+#
+#   * GPU/driver-coupled: libGL/GLVND/EGL/GLX/OpenGL/glapi, libva, libvdpau,
+#     libdrm, libgbm -- GLVND dlopens the host's vendor ICD (e.g. libGLX_nvidia)
+#     which must match the GL stack; a bundled mismatch is a black-screen/crash.
+#   * Windowing/desktop stack: X11/xcb, wayland, xkbcommon and the
+#     GTK/GDK/GLib/pango/cairo/gdk-pixbuf/atk/harfbuzz toolkit -- the host dlopens
+#     matching pixbuf loaders, immodules and theme engines.
+#   * C++/compiler runtime: libstdc++, libgcc_s -- a bundled (older) copy would
+#     win on the process RPATH and then fail host GTK plugins that need a newer
+#     GLIBCXX/CXXABI.
+#   * Host audio: libpulse/libasound -- SDL2 dlopens the host backend anyway.
+#   * glibc/ELF loader: must come from the host kernel/libc.
+#   * GPL-licensed codecs: libx264/libx265 -- not redistributed, to avoid
+#     imposing GPL terms on the bundle; FFmpeg loads the host copies instead.
 set(system_dep_regex
-    "^(ld-linux.*|linux-vdso.*|lib(c|m|dl|pthread|rt|resolv|nsl|util|anl)\\.so.*)$"
+    "^(ld-linux.*|linux-vdso.*|lib(c|m|dl|pthread|rt|resolv|nsl|util|anl)\\.so.*|libstdc\\+\\+\\.so.*|libgcc_s\\.so.*|libGL.*\\.so.*|libEGL.*\\.so.*|libOpenGL\\.so.*|libGLdispatch\\.so.*|libGLX.*\\.so.*|libglapi\\.so.*|libgbm\\.so.*|libdrm.*\\.so.*|libva.*\\.so.*|libvdpau.*\\.so.*|libX.*\\.so.*|libxcb.*\\.so.*|libxshmfence\\.so.*|libxkbcommon.*\\.so.*|libwayland-.*\\.so.*|libgtk-.*\\.so.*|libgdk-.*\\.so.*|libgdk_pixbuf.*\\.so.*|libg(lib|object|io|module|thread)-2\\.0\\.so.*|libpango.*\\.so.*|libcairo.*\\.so.*|libatk.*\\.so.*|libharfbuzz.*\\.so.*|libpulse.*\\.so.*|libasound\\.so.*|libx264\\.so.*|libx265\\.so.*)$"
 )
-
-set(pulse_private_dir "")
-foreach(dep IN LISTS resolved_deps)
-    if(dep MATCHES "/pulseaudio/[^/]+$")
-        get_filename_component(pulse_private_dir "${dep}" DIRECTORY)
-        break()
-    endif()
-endforeach()
 
 set(copied_count 0)
 foreach(dep IN LISTS resolved_deps)
@@ -44,39 +48,6 @@ foreach(dep IN LISTS resolved_deps)
         if(NOT copy_result EQUAL 0)
             message(FATAL_ERROR "Failed to copy runtime dependency ${dep}")
         endif()
-
-        if(dep MATCHES "/pulseaudio/[^/]+$")
-            execute_process(
-                COMMAND "${CMAKE_COMMAND}" -E make_directory "${RUNTIME_DIR}/pulseaudio"
-                RESULT_VARIABLE pulse_mkdir_result
-            )
-            if(NOT pulse_mkdir_result EQUAL 0)
-                message(FATAL_ERROR "Failed to create ${RUNTIME_DIR}/pulseaudio")
-            endif()
-            execute_process(
-                COMMAND "${CMAKE_COMMAND}" -E copy_if_different
-                        "${dep}" "${RUNTIME_DIR}/pulseaudio/${dep_name}"
-                RESULT_VARIABLE pulse_copy_result
-            )
-            if(NOT pulse_copy_result EQUAL 0)
-                message(FATAL_ERROR "Failed to copy PulseAudio runtime dependency ${dep}")
-            endif()
-        endif()
-
-        # libpulse.so carries an absolute RUNPATH to PulseAudio's private helper
-        # directory.  If a user runs the copied bundle on a system without that
-        # exact distro path, the dynamic loader ignores the helper that we copied
-        # beside ./kainote and fails at startup.  Repoint only libpulse's copied
-        # RUNPATH with CMake's built-in ELF editor so the bundle does not depend
-        # on patchelf being installed on the build host.
-        if(pulse_private_dir AND dep_name MATCHES "^libpulse\\.so")
-            file(RPATH_CHANGE
-                FILE "${copied_dep}"
-                OLD_RPATH "${pulse_private_dir}"
-                NEW_RPATH "$ORIGIN:$ORIGIN/pulseaudio"
-            )
-        endif()
-
         math(EXPR copied_count "${copied_count} + 1")
     endif()
 endforeach()

@@ -22,7 +22,7 @@
 
 #include "SubsGrid.h"
 #include "VideoBox.h"
-#include "Editbox.h"
+#include "EditBox.h"
 #include "RendererVideo.h"
 #include "SubtitlesProviderManager.h"
 #include <wx/regex.h>

@@ -16,7 +16,7 @@
 
 #include "SubsResampleDialog.h"
 #include "KaiStaticBoxSizer.h"
-#include "kainoteFrame.h"
+#include "KainoteFrame.h"
 #include "SubsGrid.h"
 #include "Notebook.h"
 #include "KaiStaticText.h"
