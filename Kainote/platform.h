@@ -39,6 +39,8 @@
 #include <wx/defs.h>
 #include <wx/window.h>
 #include <wx/panel.h>
+#include <wx/intl.h>
+#include <wx/power.h>
 
 #ifndef __linux__
 #define __linux__ 1
@@ -320,7 +322,7 @@ inline bool GetFileTime(HANDLE h, FILETIME*, FILETIME*, FILETIME* write) {
 }
 inline bool CloseHandle(HANDLE h) { auto* base = kainote_handle(h); if (!base) return false; delete base; return true; }
 inline DWORD GetLastError() { return errno; }
-inline unsigned short GetSystemDefaultUILanguage() { return 0x409; }
+inline unsigned short GetSystemDefaultUILanguage() { return (wxLocale::GetSystemLanguage() == wxLANGUAGE_POLISH) ? 0x415 : 0x409; }
 
 struct KainoteFindHandle { std::vector<std::filesystem::directory_entry> entries; std::size_t index{}; };
 inline std::wstring kainote_utf8_to_wstring(const std::string& s) { std::wstring_convert<std::codecvt_utf8<wchar_t>> conv; return conv.from_bytes(s); }
@@ -646,7 +648,18 @@ inline BOOL DeleteTimerQueueTimer(HANDLE, HANDLE timer, HANDLE) { return CloseHa
 constexpr int WM_SETICON = 0x0080;
 constexpr unsigned ES_DISPLAY_REQUIRED = 0x2;
 constexpr unsigned ES_CONTINUOUS = 0x80000000u;
-inline unsigned SetThreadExecutionState(unsigned state) { return state; }
+inline unsigned SetThreadExecutionState(unsigned state) {
+    static bool kainoteScreenInhibited = false;
+    const bool want = (state & ES_DISPLAY_REQUIRED) != 0;
+    if (want && !kainoteScreenInhibited) {
+        if (wxPowerResource::Acquire(wxPOWER_RESOURCE_SCREEN, wxS("Kainote video playback")))
+            kainoteScreenInhibited = true;
+    } else if (!want && kainoteScreenInhibited) {
+        wxPowerResource::Release(wxPOWER_RESOURCE_SCREEN);
+        kainoteScreenInhibited = false;
+    }
+    return state;
+}
 constexpr int ICON_BIG = 1;
 inline int GetSystemMetrics(int metric) { return (metric == SM_CXICON || metric == SM_CYICON) ? 32 : 0; }
 constexpr int LOGPIXELSY = 90;
@@ -919,6 +932,16 @@ inline int SHFileOperation(SHFILEOPSTRUCT* op) {
     if (!op || op->wFunc != FO_DELETE || !op->pFrom) return 1;
     std::error_code ec;
     std::filesystem::path p(kainote_normalize_path(op->pFrom));
+    if (op->fFlags & FOF_ALLOWUNDO) {
+        // Recycle-bin semantics: move to the freedesktop trash instead of an
+        // unrecoverable delete. Use gio (part of the GTK/glib stack). If trashing
+        // is unavailable, report failure rather than silently rm the file.
+        std::string quoted = "'";
+        for (char c : p.string()) { if (c == '\'') quoted += "'\\''"; else quoted += c; }
+        quoted += "'";
+        const std::string cmd = "gio trash -- " + quoted + " >/dev/null 2>&1";
+        return std::system(cmd.c_str()) == 0 ? 0 : 1;
+    }
     if (std::filesystem::is_directory(p, ec)) std::filesystem::remove_all(p, ec);
     else std::filesystem::remove(p, ec);
     return ec ? 1 : 0;

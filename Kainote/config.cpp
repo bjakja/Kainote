@@ -1317,6 +1317,22 @@ wxImage CreateImageFromPngResource(const wxString& t_name)
 	return image;
 }
 
+bool KainoteIsWayland()
+{
+#ifdef _WIN32
+	return false;
+#else
+	wxString backend;
+	if (wxGetEnv(L"GDK_BACKEND", &backend)){
+		backend.MakeLower();
+		if (backend.Contains(L"x11")) return false;
+		if (backend.Contains(L"wayland")) return true;
+	}
+	wxString wl;
+	return wxGetEnv(L"WAYLAND_DISPLAY", &wl) && !wl.empty();
+#endif
+}
+
 void MoveToMousePosition(wxWindow* win)
 {
 	wxPoint mst = wxGetMousePosition();

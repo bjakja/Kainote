@@ -259,9 +259,9 @@ public:
 	//void AppendAccelerators(std::vector <wxAcceleratorEntry> *entries);
 	bool SetFont(const wxFont &font);
 	void HideMnemonics();
+	static bool HandleNavKeyIfOpen(wxKeyEvent &evt, bool act);
 private:
 	void OnMouseEvent(wxMouseEvent &evt);
-	//void OnCharHook(wxKeyEvent &evt);
 	void OnPaint(wxPaintEvent &event);
 	void OnSize(wxSizeEvent& event);
 	//void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();}};

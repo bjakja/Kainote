@@ -938,9 +938,14 @@ MenuBar::MenuBar(wxWindow *_parent)
 	
 	Menubar = this;
 	HookKey = nullptr;
-	HookKey = SetWindowsHookEx(WH_KEYBOARD, &OnKey, nullptr, GetCurrentThreadId());
 	HookMouse = nullptr;
+#ifdef _WIN32
+	HookKey = SetWindowsHookEx(WH_KEYBOARD, &OnKey, nullptr, GetCurrentThreadId());
 	HookMouse = SetWindowsHookEx(WH_GETMESSAGE, &OnMouseClick, nullptr, GetCurrentThreadId());
+#endif
+	// On Linux, menubar keyboard navigation is driven from kainoteApp::FilterEvent
+	// (focus-independent), which works even on Wayland where an open menu popup —
+	// not the frame — holds keyboard focus, so no per-window key binding is used here.
 	
 }
 
@@ -1412,6 +1417,118 @@ bool MenuBar::SetFont(const wxFont &_font)
 	Refresh(false);
 	return true;
 }
+
+#ifndef _WIN32
+// Keyboard navigation for the custom menubar, routed from kainoteApp::FilterEvent
+// (focus-independent). The Windows build uses a global WH_KEYBOARD hook; on
+// GTK/Wayland an open menu popup holds keyboard focus, so a frame-bound CHAR_HOOK
+// would not fire. FilterEvent sees key events regardless of focus, so this works
+// on both X11 and Wayland. Returns true when the key is consumed; `act` is true on
+// the primary (CHAR_HOOK) pass and false on the duplicate KEY_DOWN pass.
+bool MenuBar::HandleNavKeyIfOpen(wxKeyEvent& evt, bool act)
+{
+	MenuBar* mb = Menubar;
+	if (!mb) return false;
+	const int kc = evt.GetKeyCode();
+
+	if (!mb->md) {
+		// Alt + a top-level mnemonic letter opens that menu. Discrete combo, no sticky
+		// state; AltGr does not set AltDown() on wxGTK, so text entry is unaffected.
+		if (evt.AltDown() && !evt.ControlDown() && kc >= 'A' && kc <= 'Z') {
+			auto found = mb->mnemonics.find((char)kc);
+			if (found == mb->mnemonics.end()) return false;
+			if (act) {
+				showMnemonics = true;
+				mb->sel = mb->shownMenu = found->second;
+				selectOnStart = 0;
+				mb->ShowMenu();
+			}
+			return true;
+		}
+		return false;
+	}
+
+	switch (kc) {
+	case WXK_ESCAPE:
+		if (act) { MenuDialog::ParentMenu->HideMenus(); mb->HideMnemonics(); }
+		return true;
+	case WXK_RETURN:
+	case WXK_NUMPAD_ENTER:
+		if (act && mb->md->dialog->sel >= 0) {
+			MenuItem* item = mb->md->items[mb->md->dialog->sel];
+			if (item->submenu) {
+				mb->md->dialog->submenuShown = mb->md->dialog->sel;
+				if (mb->md->dialog->submenuToHide == -1) { selectOnStart = 0; mb->md->dialog->showSubmenuTimer.Start(1, true); }
+			} else if (mb->md->dialog->SendEvent(item, 0)) {
+				mb->HideMnemonics();
+			}
+		}
+		return true;
+	case WXK_UP:
+	case WXK_DOWN:
+		if (act && !mb->md->items.empty()) {
+			int step = (kc == WXK_DOWN) ? 1 : -1;
+			do {
+				mb->md->dialog->sel += step;
+				if (mb->md->dialog->sel >= (int)mb->md->items.size()) mb->md->dialog->sel = 0;
+				else if (mb->md->dialog->sel < 0) mb->md->dialog->sel = (int)mb->md->items.size() - 1;
+			} while (mb->md->items[mb->md->dialog->sel]->type == ITEM_SEPARATOR);
+			mb->md->dialog->Refresh(false);
+		}
+		return true;
+	case WXK_RIGHT:
+		if (mb->md->dialog->sel >= 0 && mb->md->items[mb->md->dialog->sel]->submenu) {
+			if (act) {
+				mb->md->dialog->submenuShown = mb->md->dialog->sel;
+				if (mb->md->dialog->submenuToHide == -1) { selectOnStart = 0; mb->md->dialog->showSubmenuTimer.Start(1, true); }
+			}
+			return true;
+		}
+		if (act && !mb->Menus.empty()) {   // no submenu: jump to the next top-level menu
+			mb->sel = (mb->sel < 0 ? 0 : mb->sel + 1);
+			if (mb->sel >= (int)mb->Menus.size()) mb->sel = 0;
+			if (mb->shownMenu != -1 && mb->Menus[mb->shownMenu]->dialog) mb->Menus[mb->shownMenu]->dialog->HideMenus();
+			mb->shownMenu = mb->sel; selectOnStart = 0; mb->Refresh(false); mb->ShowMenu();
+		}
+		return true;
+	case WXK_LEFT:
+		if (mb->md->dialog != MenuDialog::ParentMenu) {   // in a submenu: go back up
+			if (act) {
+				Menu* parent = mb->md->parentMenu;
+				mb->md->DestroyDialog();
+				mb->md = parent;
+				if (mb->md && mb->md->dialog) { mb->md->dialog->submenuToHide = -1; mb->md->dialog->subMenuIsShown = false; mb->md->dialog->Refresh(false); }
+			}
+			return true;
+		}
+		if (act && !mb->Menus.empty()) {   // top-level: jump to the previous menu
+			mb->sel = (mb->sel < 0 ? 0 : mb->sel - 1);
+			if (mb->sel < 0) mb->sel = (int)mb->Menus.size() - 1;
+			if (mb->shownMenu != -1 && mb->Menus[mb->shownMenu]->dialog) mb->Menus[mb->shownMenu]->dialog->HideMenus();
+			mb->shownMenu = mb->sel; selectOnStart = 0; mb->Refresh(false); mb->ShowMenu();
+		}
+		return true;
+	default:
+		break;
+	}
+
+	if (kc >= 'A' && kc <= 'Z' && !evt.ControlDown()) {   // letter mnemonic inside the open menu
+		auto found = mb->md->mnemonics.find((char)kc);
+		if (found == mb->md->mnemonics.end()) return false;
+		if (act) {
+			if (mb->md->items[found->second]->submenu) {
+				mb->md->dialog->sel = mb->md->dialog->submenuShown = found->second;
+				if (mb->md->dialog->submenuToHide == -1) { selectOnStart = 0; mb->md->dialog->showSubmenuTimer.Start(1, true); }
+			} else {
+				MenuItem* item = mb->md->items[found->second];
+				if (mb->md->dialog->SendEvent(item, 0)) mb->HideMnemonics();
+			}
+		}
+		return true;
+	}
+	return false;
+}
+#endif
 
 BEGIN_EVENT_TABLE(MenuBar, wxWindow)
 EVT_MOUSE_EVENTS(MenuBar::OnMouseEvent)
