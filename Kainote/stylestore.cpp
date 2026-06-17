@@ -15,8 +15,8 @@
 
 
 
-#include "StyleStore.h"
-#include "kainoteFrame.h"
+#include "stylestore.h"
+#include "KainoteFrame.h"
 #include "KaiStaticBoxSizer.h"
 #include "config.h"
 #include "SubsGrid.h"
@@ -28,7 +28,7 @@
 #include "EditBox.h"
 #include <wx/tokenzr.h>
 #include <vector>
-#include "Styles.h"
+#include "styles.h"
 #include <wx/intl.h>
 #include <wx/string.h>
 #include <wx/filedlg.h>
@@ -219,6 +219,17 @@ StyleStore::StyleStore(wxWindow* parent, const wxPoint& pos)
 	Connect(ID_CONFIRM, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleStore::OnConfirm);
 	Connect(ID_CLOSE_STYLE_MANAGER, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleStore::OnClose);
 	Connect(ID_DETACH, wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, (wxObjectEventFunction)&StyleStore::OnDetachEdit);
+	Bind(wxEVT_CLOSE_WINDOW, [this](wxCloseEvent& event){
+		Options.SaveOptions(false);
+		int ww, hh;
+		GetPosition(&ww, &hh);
+		Options.SetCoords(STYLE_MANAGER_POSITION, ww, hh);
+		Hide();
+		if (detachedEtit && cc){ cc->Show(false); }
+		if (event.CanVeto()){
+			event.Veto();
+		}
+	});
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &StyleStore::OnStyleMove, this, ID_ASS_MOVE_TO_START, ID_STORE_MOVE_TO_END);
 
 	DoTooltips();
@@ -562,7 +573,7 @@ void StyleStore::OnDeleteCatalog(wxCommandEvent& event)
 	Options.actualStyleDir = Options.dirs[MAX(0, cat - 1)];
 	catalogList->SetSelection(MAX(0, cat - 1));
 	wxString path;
-	path << Options.pathfull << L"\\Catalog\\" << Cat << L".sty";
+	path << Options.pathfull << L"/Catalog/" << Cat << L".sty";
 	wxRemoveFile(path);
 	Options.LoadStyles(Options.actualStyleDir);
 	Store->Refresh(false);
@@ -599,7 +610,7 @@ void StyleStore::LoadStylesS(bool isass)
 {
 	SubsGrid* grid = Notebook::GetTab()->grid;
 	wxFileDialog *openFileDialog = new wxFileDialog(this, _("Wybierz plik ASS"),
-		Notebook::GetTab()->SubsPath.BeforeLast(L'\\'), L"*.ass", _("Pliki napisów ASS(*.ass)|*.ass"),
+		KaiPathDir(Notebook::GetTab()->SubsPath), L"*.ass", _("Pliki napisów ASS(*.ass)|*.ass"),
 		wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 	if (openFileDialog->ShowModal() == wxID_OK){
 		OpenWrite op;

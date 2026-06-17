@@ -19,7 +19,7 @@
 #include "GraphicsD2D.h"
 #include "BidiConversion.h"
 #include "EditBox.h"
-#include "Spellchecker.h"
+#include "SpellChecker.h"
 #include "config.h"
 #include "Menu.h"
 #include <wx/regex.h>
@@ -91,7 +91,7 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	Connect(ID_DEL, ID_WMENU, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&TextEditor::OnAccelerator);
 	Connect(EDITBOX_COMMIT_GO_NEXT_LINE, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&TextEditor::OnAccelerator);
 	if (setNumpadAccels){
-		Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+		Bind(wxEVT_COMMAND_MENU_SELECTED, [=, this](wxCommandEvent &evt){
 			int key = evt.GetId() - 10276;
 			wxKeyEvent kevt;
 			kevt.m_uniChar = key;
@@ -121,7 +121,7 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	SetCaret(caret);
 	caret->Move(3, 2);
 	caret->Show();
-	Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent &evt) {
+	Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=, this](wxCommandEvent &evt) {
 		PutTag();
 	}, GetId());
 }
@@ -1104,7 +1104,8 @@ void TextEditor::OnPaint(wxPaintEvent& event)
 		bitmaph = h;
 		scrollPositionV = 0;
 	}
-
+	// Prepare bitmap
+	if (w < 1 || h < 1){ return; }
 	if (bmp) {
 		if (bmp->GetWidth() < w || bmp->GetHeight() < h) {
 			delete bmp;
@@ -2298,7 +2299,7 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 	menut.Append(MENU_CHANGE_QUOTES, _("Automatycznie zamieniaj cudzysłów"), 
 		nullptr, emptyString, ITEM_CHECK)->Check(Options.GetBool(TEXT_EDITOR_CHANGE_QUOTES));
 	
-	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=, this](wxCommandEvent &evt){
 		MenuItem * item = (MenuItem*)evt.GetClientData();
 		if (!item)
 			return;

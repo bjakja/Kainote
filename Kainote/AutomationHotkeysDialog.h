@@ -17,7 +17,7 @@
 #include "KaiDialog.h"
 #include "KaiListCtrl.h"
 #include "Automation.h"
-#include "hotkeys.h"
+#include "Hotkeys.h"
 
 class AutomationHotkeysDialog : public KaiDialog
 {

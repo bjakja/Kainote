@@ -15,7 +15,7 @@
 
 #include "Automation.h"
 #include "OpennWrite.h"
-#include "Config.h"
+#include "config.h"
 #include <wx/filename.h>
 #include <wx/dir.h>
 
@@ -85,7 +85,7 @@ namespace Auto {
 
 	void AutomationDummyLoader::SaveDummy()
 	{
-		wxString automationDummy = Options.pathfull + L"\\Config\\Automation.txt";
+		wxString automationDummy = Options.pathfull + L"/Config/Automation.txt";
 		OpenWrite ow(automationDummy);
 
 		for (size_t i = 0; i < Scripts.size(); i++) {
@@ -115,7 +115,7 @@ namespace Auto {
 
 	bool AutomationDummyLoader::LoadDummy()
 	{
-		wxString automationDummy = Options.pathfull + L"\\Config\\Automation.txt";
+		wxString automationDummy = Options.pathfull + L"/Config/Automation.txt";
 		wxString automationList;
 		OpenWrite ow;
 		ow.FileOpen(automationDummy, &automationList, false);

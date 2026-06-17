@@ -54,7 +54,7 @@ LogWindow::LogWindow(wxWindow *parent, LogHandler *_handler)
 	sizer->Add(OK, 0, wxALL | wxALIGN_CENTER, 4);
 
 	Bind(EVT_DO_LOG, &LogWindow::OnGetLog, this);
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 		bool isShown = logText->IsShown();
 		logText->Show(!isShown);
 		wxSize size = GetClientSize();
@@ -68,7 +68,7 @@ LogWindow::LogWindow(wxWindow *parent, LogHandler *_handler)
 		}
 		sizer->Fit(this);
 	}, 12456);
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 		Show(false);
 	}, 12457);
 	SetSizerAndFit(sizer);
@@ -101,7 +101,7 @@ LogHandler::LogHandler(wxWindow *_parent)
 {
 	//lWindow = new LogWindow(parent, this);
 	parent = _parent;
-	parent->Bind(EVT_DO_CREATE_LOG_WINDOW, [=](wxThreadEvent &evt){
+	parent->Bind(EVT_DO_CREATE_LOG_WINDOW, [=, this](wxThreadEvent &evt){
 		if (!lWindow){
 			lWindow = new LogWindow(parent, this);
 		}

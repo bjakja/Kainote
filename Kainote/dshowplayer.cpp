@@ -15,8 +15,8 @@
 
 
 #include "config.h"
-#include "DShowPlayer.h"
-#include "Videobox.h"
+#include "dshowplayer.h"
+#include "VideoBox.h"
 #include "Menu.h"
 
 #include <Dvdmedia.h>

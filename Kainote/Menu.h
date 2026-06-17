@@ -125,6 +125,10 @@ class MenuDialog : public wxPopupWindow{
 public:
 	MenuDialog(Menu *parent, wxWindow *DialogParent, const wxPoint &pos, const wxSize &size, bool sendEvent = true);
 	~MenuDialog();
+	static bool IsMenuWindow(wxWindow *win);
+	static bool IsMenuBarWindow(wxWindow *win);
+	static bool IsPointInMenuTree(MenuDialog *dialog, const wxPoint &screenPoint);
+	static bool DismissOnExternalClick(wxWindow *eventWindow);
 
 private:
 	void OnMouseEvent(wxMouseEvent &evt);
@@ -255,9 +259,9 @@ public:
 	//void AppendAccelerators(std::vector <wxAcceleratorEntry> *entries);
 	bool SetFont(const wxFont &font);
 	void HideMnemonics();
+	static bool HandleNavKeyIfOpen(wxKeyEvent &evt, bool act);
 private:
 	void OnMouseEvent(wxMouseEvent &evt);
-	//void OnCharHook(wxKeyEvent &evt);
 	void OnPaint(wxPaintEvent &event);
 	void OnSize(wxSizeEvent& event);
 	//void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();}};

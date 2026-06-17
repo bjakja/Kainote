@@ -69,8 +69,9 @@ private:
 	
 	std::map<const wxWindow*, std::function<void()>> observers;
 	//KainoteFrame* parent;
-	HANDLE eventKillSelf[3];
-	HANDLE checkFontsThread;
+	HANDLE eventKillSelf[3] = { nullptr, nullptr, nullptr };
+	HANDLE checkFontsThread[3] = { nullptr, nullptr, nullptr };
+	HANDLE loadFontsThread = nullptr;
 	wxMutex enumerateMutex;
 	bool hasExternalFontsLoaded = false;
 	Sink* progress = nullptr;

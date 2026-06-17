@@ -32,7 +32,11 @@ wxDEFINE_EVENT(LIST_ITEM_RIGHT_CLICK, wxCommandEvent);
 wxSize Item::GetTextExtents(KaiListCtrl *theList){
 	wxSize size = theList->GetTextExtent(name);
 	size.x += 10;
+#ifdef _WIN32
 	size.y += 4;
+#else
+	size.y += 6;
+#endif
 	return size;
 }
 
@@ -45,7 +49,7 @@ void ItemText::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiList
 			else
 				theList->SetToolTip(name);
 
-		else if (theList->HasToolTips())
+		else
 			theList->UnsetToolTip();
 	}
 }
@@ -218,15 +222,19 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxPoint &pos, const wxS
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &KaiListCtrl::Redo, this, 11643);
 	int fw, fh;
 	GetTextExtent(L"TEX{}", &fw, &fh);
+#ifdef _WIN32
 	lineHeight = fh + 3;
-	headerHeight = fh + 8;
+#else
+	lineHeight = wxMax(18, fh + 6);
+#endif
+	headerHeight = lineHeight + 5;
 
-	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent& evt) {
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [this](wxCommandEvent& evt) {
 		SetSelection(GetSelection() - 1);
 		ScrollTo(scPosV - 1);
 		}, ID_TUP);
 
-	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent& evt) {
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [this](wxCommandEvent& evt) {
 		SetSelection(GetSelection() + 1);
 		ScrollTo(scPosV + 1);
 		}, ID_TDOWN);
@@ -266,7 +274,11 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, int numelem, wxString *list, 
 		widths[0] = origWidths[0] = maxwidth + 28;
 	int fw, fh;
 	GetTextExtent(L"TEX{}", &fw, &fh);
+#ifdef _WIN32
 	lineHeight = fh + 3;
+#else
+	lineHeight = wxMax(18, fh + 6);
+#endif
 }
 
 //textList
@@ -303,7 +315,11 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxArrayString &list, co
 		widths[0] = origWidths[0] = maxwidth + 10;
 	int fw, fh;
 	GetTextExtent(L"TEX{}", &fw, &fh);
+#ifdef _WIN32
 	lineHeight = fh + 3;
+#else
+	lineHeight = wxMax(18, fh + 6);
+#endif
 }
 
 void KaiListCtrl::SetTextArray(const wxArrayString &Array)
@@ -364,13 +380,17 @@ void KaiListCtrl::SetHeaderHeight(int height)
 
 bool KaiListCtrl::SetFont(const wxFont& font)
 {
+	bool result = wxWindow::SetFont(font);
 	int fw, fh;
 	GetTextExtent(L"TEX{}", &fw, &fh);
+#ifdef _WIN32
 	lineHeight = fh + 7;
+#else
+	lineHeight = wxMax(18, fh + 6);
+#endif
 	if (headerHeight > 15)
 		headerHeight = lineHeight + 6;
 
-	bool result = wxWindow::SetFont(font);
 	return result;
 }
 
@@ -418,6 +438,7 @@ int KaiListCtrl::AppendItemWithExtent(Item *item)
 
 int KaiListCtrl::SetItem(size_t row, size_t col, Item *item)
 {
+	if (row >= itemList->size()){ delete item; return -1; }
 	if (col >= (*itemList)[row]->row.size()){
 		(*itemList)[row]->row.push_back(item);
 		return row;
@@ -461,7 +482,7 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 	int w = 0;
 	int h = 0;
 	GetClientSize(&w, &h);
-	if (w == 0 || h == 0){ return; }
+	if (w < 1 || h < 1){ return; }
 	
 	int maxWidth = GetMaxWidth();
 	if (isFiltered)
@@ -483,6 +504,7 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 
 	if (SetScrollBar(wxHORIZONTAL, scPosH, w, maxWidth, w - 2)){
 		GetClientSize(&w, &h);
+		if (w < 1 || h < 1){ return; }
 		if (maxWidth <= w){ scPosH = 0; SetScrollPos(wxHORIZONTAL, 0); }
 	}
 
@@ -498,12 +520,14 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 		maxsize = MIN(maxVisible + scPosV, itemsize - 1);
 		if (SetScrollBar(wxVERTICAL, scPosV, maxVisible, itemsize, maxVisible - 2)){
 			GetClientSize(&w, &h);
+			if (w < 1 || h < 1){ return; }
 		}
 	}
 	else{
 		scPosV = 0;
 		if (SetScrollBar(wxVERTICAL, scPosV, maxVisible, itemsize, maxVisible - 2)){
 			GetClientSize(&w, &h);
+			if (w < 1 || h < 1){ return; }
 		}
 	}
 
@@ -511,6 +535,7 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 		//w -= 12;
 
 	int bitmapw = w;
+	if (bitmapw < 1 || h < 1){ return; }
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < bitmapw || bmp->GetHeight() < h)) {
 		delete bmp;
@@ -733,8 +758,7 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 			}
 
 		}
-		if (HasToolTips())
-			UnsetToolTip();
+		UnsetToolTip();
 		if (lastSelX != -1 && lastSelY != -1 && lastSelY < filteredList.size() && lastSelX < filteredList[lastSelY]->row.size()) {
 			filteredList[lastSelY]->row[lastSelX]->OnMouseEvent(evt, false, true, this, &copy);
 			lastSelX = -1; lastSelY = -1;

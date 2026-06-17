@@ -184,9 +184,16 @@ void csrilib_os_init()
 	if (!rv)
 		*filename = L'\0';
 	slash = wcsrchr(filename, L'\\');
+#ifndef _WIN32
+	wchar_t *unixSlash = wcsrchr(filename, L'/');
+	if (!slash || (unixSlash && unixSlash > slash)){
+		slash = unixSlash;
+	}
+#endif
 	slash = slash ? slash + 1 : filename;
 	*slash = L'\0';
 	wcsncpy(slash, L"Csri", filename + MAX_PATH - slash);
+	filename[MAX_PATH - 1] = L'\0';
 	csrilib_enum_dir(filename);
 	//csrilib_do_load(L"vsfilter_kainote.dll");
 }

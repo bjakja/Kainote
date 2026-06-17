@@ -21,7 +21,9 @@
 
 
  
-#include "KainoteApp.h"
+#include "kainoteApp.h"
+#include "Menu.h"
+#include "ListControls.h"
 #include "OpennWrite.h"
 #include "Hotkeys.h"
 #include "KaiMessageBox.h"
@@ -33,15 +35,140 @@
 #include <wx/ipc.h>
 #include <wx/utils.h>
 #include <wx/intl.h>
+#include <wx/dcscreen.h>
 #include <wx/stdpaths.h>
-#include "loghandler.h"
+#include <wx/filename.h>
+#include <wx/filefn.h>
+#include <wx/log.h>
+#include <wx/weakref.h>
+#ifndef _WIN32
+#include <clocale>
+#include <cstdlib>
+#include <cstring>
+#include <wx/tokenzr.h>
+#include <wx/tooltip.h>
+#endif
+#include "LogHandler.h"
 
 #include "UtilsWindows.h"
 #include <versionhelpers.h>
 //#include <boost/stacktrace.hpp>
+#ifdef _WIN32
 #include <dbghelp.h>
+#endif
 
+namespace {
+#ifndef _WIN32
+wxString JoinOpenPaths(const wxArrayString& openPaths)
+{
+	wxString joined;
+	for (size_t i = 0; i < openPaths.GetCount(); ++i){
+		if (i){ joined += L"|"; }
+		joined += openPaths[i];
+	}
+	return joined;
+}
 
+void QueueOpenPaths(const wxString& packedPaths)
+{
+	kainoteApp *Kai = (kainoteApp *)wxTheApp;
+	if (!Kai){ return; }
+	wxStringTokenizer tkn(packedPaths, L"|");
+	while (tkn.HasMoreTokens()){
+		wxString path = tkn.NextToken();
+		if (!path.empty()){
+			Kai->paths.Add(path);
+		}
+	}
+	if (!Kai->paths.empty()){
+		Kai->openTimer.Start(400, true);
+	}
+}
+
+const wxString KainoteIpcTopic()
+{
+	return L"KainoteOpenFiles";
+}
+
+wxString KainoteIpcServiceName()
+{
+	wxString user = wxGetUserId();
+	if (user.empty()){
+		user = L"user";
+	}
+	wxString safeUser;
+	for (size_t i = 0; i < user.length(); ++i){
+		const wxUniChar ch = user[i];
+		if ((ch >= L'0' && ch <= L'9') || (ch >= L'A' && ch <= L'Z') ||
+			(ch >= L'a' && ch <= L'z') || ch == L'_' || ch == L'-'){
+			safeUser += ch;
+		}
+		else{
+			safeUser += L'_';
+		}
+	}
+	return wxFileName::GetTempDir() + wxFileName::GetPathSeparator() + L"kainote-" + safeUser + L".ipc";
+}
+
+void RemoveKainoteIpcSocket()
+{
+	wxLogNull noLog;
+	wxRemoveFile(KainoteIpcServiceName());
+}
+
+class KainoteIpcConnection : public wxConnection
+{
+public:
+	bool OnExec(const wxString& topic, const wxString& data) override
+	{
+		if (topic != KainoteIpcTopic()){
+			return false;
+		}
+		QueueOpenPaths(data);
+		KainoteFrame *frame = KainoteFrame::Get();
+		if (frame){
+			if (frame->IsIconized()){
+				frame->Iconize(false);
+			}
+			frame->Raise();
+		}
+		return true;
+	}
+};
+
+class KainoteIpcServer : public wxServer
+{
+public:
+	wxConnectionBase *OnAcceptConnection(const wxString& topic) override
+	{
+		if (topic == KainoteIpcTopic()){
+			return new KainoteIpcConnection();
+		}
+		return nullptr;
+	}
+};
+
+bool SendOpenPathsToRunningInstance(const wxString& packedPaths)
+{
+	if (packedPaths.empty()){
+		return false;
+	}
+	wxClient client;
+	for (int attempt = 0; attempt < 100; ++attempt){
+		wxConnectionBase *connection = client.MakeConnection(L"localhost", KainoteIpcServiceName(), KainoteIpcTopic());
+		if (connection){
+			const bool sent = connection->Execute(packedPaths);
+			connection->Disconnect();
+			return sent;
+		}
+		wxMilliSleep(40);
+	}
+	return false;
+}
+#endif
+}
+
+#ifdef _WIN32
 typedef enum MONITOR_DPI_TYPE {
 	MDT_EFFECTIVE_DPI = 0,
 	MDT_ANGULAR_DPI = 1,
@@ -54,13 +181,14 @@ STDAPI GetDpiForMonitor(
 	_In_ MONITOR_DPI_TYPE dpiType,
 	_Out_ UINT* dpiX,
 	_Out_ UINT* dpiY);
+#endif
 
 
-
+#ifdef _WIN32
 LONG __stdcall MyCustomFilter(EXCEPTION_POINTERS* pep)
 {
 	wxStandardPathsBase& paths = wxStandardPaths::Get();
-	wxString exePath = paths.GetExecutablePath().BeforeLast(L'\\') + L"\\MiniDump.dmp";
+	wxString exePath = wxFileName(paths.GetExecutablePath()).GetPath() + L"/MiniDump.dmp";
 	HANDLE hFile = CreateFileW(exePath.wc_str(), GENERIC_READ | GENERIC_WRITE,
 		0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 
@@ -91,6 +219,7 @@ LONG __stdcall MyCustomFilter(EXCEPTION_POINTERS* pep)
 	}
 	return EXCEPTION_EXECUTE_HANDLER;
 }
+#endif
 
 
 
@@ -124,12 +253,70 @@ IMPLEMENT_APP(kainoteApp);
 bool kainoteApp::OnInit()
 {
 
+#ifndef _WIN32
+	m_ipcServer = nullptr;
+#endif
 	m_checker = new wxSingleInstanceChecker();
 
 	//bool wxsOK = true;
 
 	if (!m_checker->IsAnotherRunning())
 	{
+
+#ifndef _WIN32
+		RemoveKainoteIpcSocket();
+		m_ipcServer = new KainoteIpcServer();
+		if (!m_ipcServer->Create(KainoteIpcServiceName())){
+			delete m_ipcServer;
+			m_ipcServer = nullptr;
+			KaiLogSilent(L"Cannot create Kainote IPC server for opening files in a running instance");
+		}
+#endif
+
+#ifndef _WIN32
+		// Keep the C character locale UTF-8 on Unix.  Some wx helpers still
+		// convert narrow source literals through the current C locale; if the
+		// process is left in the default "C" locale after wxLocale::Init() fails
+		// for an ungenerated language such as th_TH.UTF-8, non-ASCII Polish
+		// source strings can convert to empty wxStrings and option labels vanish.
+		// Seed program-font DPI from the real display: the GetDeviceCaps shim only
+		// reports 96 and the DPI-rescale paths are #ifdef _WIN32, so HiDPI Linux UI
+		// fonts would otherwise never scale. Safe here (wx GUI is initialised).
+		{
+			int ydpi = wxScreenDC().GetPPI().y;
+			if (ydpi > 0)
+				Options.FontsRescale(ydpi);
+		}
+		setlocale(LC_CTYPE, "");
+		const char* ctypeLocale = setlocale(LC_CTYPE, nullptr);
+		if (!ctypeLocale || (!std::strstr(ctypeLocale, "UTF-8") && !std::strstr(ctypeLocale, "utf8"))) {
+			if (!setlocale(LC_CTYPE, "C.UTF-8"))
+				setlocale(LC_CTYPE, "en_US.UTF-8");
+		}
+
+		// Point portable Linux runs at a usable gdk-pixbuf loader cache.
+		if (!std::getenv("GDK_PIXBUF_MODULE_FILE")){
+			const wxString pixbufCaches[] = {
+				L"/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders.cache",
+				L"/usr/lib64/gdk-pixbuf-2.0/2.10.0/loaders.cache",
+				L"/usr/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache"
+			};
+			for (const auto& pixbufCache : pixbufCaches){
+				if (wxFileExists(pixbufCache)){
+					setenv("GDK_PIXBUF_MODULE_FILE", pixbufCache.mb_str().data(), 0);
+					wxString pixbufModuleDir = pixbufCache.BeforeLast(wxFileName::GetPathSeparator()) + wxFileName::GetPathSeparator() + L"loaders";
+					if (!std::getenv("GDK_PIXBUF_MODULEDIR") && wxDirExists(pixbufModuleDir))
+						setenv("GDK_PIXBUF_MODULEDIR", pixbufModuleDir.mb_str().data(), 0);
+					break;
+				}
+			}
+		}
+		if (!std::getenv("XDG_DATA_DIRS"))
+			setenv("XDG_DATA_DIRS", "/usr/local/share:/usr/share", 0);
+
+		// Disable native wxGTK tooltip popups; Kainote uses tooltip text for status help.
+		wxToolTip::Enable(false);
+#endif
 
 		wxImage::AddHandler(new wxPNGHandler);
 		wxImage::AddHandler(new wxICOHandler);
@@ -160,22 +347,45 @@ bool kainoteApp::OnInit()
 		if (lang != emptyString && lang != L"pl"){
 			locale = new wxLocale();
 			const  wxLanguageInfo * li = locale->FindLanguageInfo(lang);
-			if (!li)
+			if (!li){
 				KaiMessageBox(L"Cannot find language, language change failed");
+			}
 			else{
+#ifdef _WIN32
 				if (!locale->Init(li->Language, wxLOCALE_DONT_LOAD_DEFAULT)){
 					KaiMessageBox(L"wxLocale cannot initialize, language change failed");
 				}
-				else{
-					locale->AddCatalogLookupPathPrefix(Options.pathfull + L"\\Locale\\");
-					if (!locale->AddCatalog(lang, wxLANGUAGE_POLISH, L"UTF-8")){
-						KaiMessageBox(L"Cannot find translation, language change failed");
-					}
+#else
+				{
+					// On Unix, wxLocale::Init() may fail when the requested OS locale
+					// (for example th_TH.UTF-8) has not been generated.  The message
+					// catalogs can still be loaded after Init() sets wxLocale's internal
+					// language state, so silence wxWidgets' warning dialog and continue.
+					wxLogNull suppressLocaleWarning;
+					locale->Init(li->Language, wxLOCALE_DONT_LOAD_DEFAULT);
+				}
+#endif
+				wxString localePath = Options.pathfull + wxFileName::GetPathSeparator() + L"Locale" + wxFileName::GetPathSeparator();
+#ifndef _WIN32
+				if (!wxDirExists(localePath)){
+					wxString sourceLocalePath = Options.pathfull.BeforeLast(wxFileName::GetPathSeparator()) + wxFileName::GetPathSeparator() + L"Locale" + wxFileName::GetPathSeparator();
+					if (wxDirExists(sourceLocalePath))
+						localePath = sourceLocalePath;
+				}
+#endif
+				locale->AddCatalogLookupPathPrefix(localePath);
+				if (!locale->AddCatalog(lang, wxLANGUAGE_POLISH, L"UTF-8") &&
+					!locale->AddCatalog(li->CanonicalName, wxLANGUAGE_POLISH, L"UTF-8")){
+#ifdef _WIN32
+					KaiMessageBox(L"Cannot find translation, language change failed");
+#endif
 				}
 			}
 		}
 		
+#ifdef _WIN32
 		SetUnhandledExceptionFilter(MyCustomFilter);
+#endif
 
 		//on x64 it makes not working unicode toupper tolower conversion
 		//setlocale(LC_CTYPE, "C");
@@ -195,14 +405,21 @@ bool kainoteApp::OnInit()
 		Options.GetCoords(MONITOR_SIZE, &msizex, &msizey);
 		Options.GetCoords(STYLE_MANAGER_POSITION, &sposx, &sposy);
 		//wxRect(posx, posy, sizex, sizey)
+#ifdef _WIN32
 		wxPoint posOnScreen = wxGetMousePosition();
+#else
+		// Avoid wxGetMousePosition() on Wayland before a keyboard-capable seat exists.
+		wxPoint posOnScreen(posx, posy);
+#endif
 		if (msizex && msizey) {
 			if (IsWindows8OrGreater()) {
+#ifdef _WIN32
 				HMONITOR hmon = MonitorFromPoint(POINT(posOnScreen.x, posOnScreen.y), MONITOR_DEFAULTTONEAREST);
 				unsigned int dpiy = 96, dpix = 96;
 				HRESULT hr = GetDpiForMonitor(hmon, MDT_EFFECTIVE_DPI, &dpix, &dpiy);
 				if (hr == S_OK)
 					Options.FontsRescale(dpiy);
+#endif
 			}
 			wxRect rt = GetMonitorRect1(0/*-1*/, nullptr, wxRect(posOnScreen.x, posOnScreen.y, 1, 1));
 			if (rt.width != msizex || rt.height != msizey) {
@@ -318,11 +535,46 @@ bool kainoteApp::OnInit()
 		if (loadSession){
 			debugtimer.SetOwner(this, 2299);
 			debugtimer.Start(100, true);
-			Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
+			Bind(wxEVT_TIMER, [=, this](wxTimerEvent &evt){
 				Frame->Tabs->LoadLastSession(loadCrashSession);
 			}, 2299);
 		}
 
+#ifndef _WIN32
+		if (const char* autoExitMsText = std::getenv("KAINOTE_AUTOMATION_EXIT_MS")){
+			long autoExitMs = std::strtol(autoExitMsText, nullptr, 10);
+			if (autoExitMs < 1)
+				autoExitMs = 1000;
+			automationExitTimer.SetOwner(this, 3299);
+			Bind(wxEVT_TIMER, [this](wxTimerEvent &evt){
+				for (wxWindowList::compatibility_iterator node = wxTopLevelWindows.GetFirst(); node; node = node->GetNext()){
+					wxWindow* window = node->GetData();
+					KaiDialog* kaiDialog = (window && window->IsKindOf(CLASSINFO(KaiDialog))) ? static_cast<KaiDialog*>(window) : nullptr;
+					if (kaiDialog && kaiDialog->IsShown() && kaiDialog->IsModal()){
+						int escapeId = kaiDialog->GetEscapeId();
+						kaiDialog->EndModal(escapeId != wxID_NONE ? escapeId : wxID_CANCEL);
+						automationExitTimer.Start(250, true);
+						return;
+					}
+					wxDialog* wxDialogWindow = (window && window->IsKindOf(CLASSINFO(wxDialog))) ? static_cast<wxDialog*>(window) : nullptr;
+					if (wxDialogWindow && wxDialogWindow->IsShown() && wxDialogWindow->IsModal()){
+						int escapeId = wxDialogWindow->GetEscapeId();
+						wxDialogWindow->EndModal(escapeId != wxID_NONE ? escapeId : wxID_CANCEL);
+						automationExitTimer.Start(250, true);
+						return;
+					}
+				}
+				if (Frame){
+					// Frame->Close() can synchronously open a modal "save changes?" dialog.
+					// Re-arm the automation timer before closing so the modal loop has a
+					// chance to receive the next tick and dismiss the dialog.
+					automationExitTimer.Start(250, true);
+					Frame->Close();
+				}
+			}, 3299);
+			automationExitTimer.Start(autoExitMs, true);
+		}
+#endif
 
 		wxString path = Options.GetString(EXTERNAL_FONTS_DIRECTORY);
 		if(!path.empty())
@@ -330,16 +582,30 @@ bool kainoteApp::OnInit()
 
 	}
 	else{
+#ifndef _WIN32
+		wxArrayString openPaths;
+		for (int i = 1; i < argc; i++) {
+			openPaths.Add(argv[i]);
+		}
+		wxString subs = JoinOpenPaths(openPaths);
+#else
 		wxString subs;
 		for (int i = 1; i < argc; i++) {
 			subs.Append(argv[i]);
 			if (i + 1 != argc){ subs += L"|"; }
 		}
+#endif
 
 		delete m_checker; // OnExit() won't be called if we return false
 		m_checker = nullptr;
 		if (subs.empty())
 			return false;
+#ifndef _WIN32
+		if (!SendOpenPathsToRunningInstance(subs)){
+			KaiLogSilent(wxString::Format(L"Cannot pass files to an already running instance on this platform: %s", subs));
+		}
+		return false;
+#else
 		//damn wxwidgets, why class name is not customizable?    
 		int count = 0;
 		HWND hWnd = nullptr;
@@ -363,6 +629,7 @@ bool kainoteApp::OnInit()
 		SendMessage(hWnd, WM_COPYDATA, 0, (LPARAM)&cds);
 		
 		return false;
+#endif
 	}
 
 	return true;
@@ -371,9 +638,71 @@ bool kainoteApp::OnInit()
 
 int kainoteApp::OnExit()
 {
+#ifndef _WIN32
+	if (m_ipcServer){ delete m_ipcServer; m_ipcServer = nullptr; }
+	RemoveKainoteIpcSocket();
+#endif
 	if (m_checker){ delete m_checker; }
 	wxDELETE(locale);
 	return 0;
+}
+
+int kainoteApp::FilterEvent(wxEvent& event)
+{
+#ifndef _WIN32
+	const wxEventType type = event.GetEventType();
+	if (type == wxEVT_ENTER_WINDOW || type == wxEVT_MOTION || type == wxEVT_LEAVE_WINDOW){
+		static wxWeakRef<wxWindow> lastTooltipWindow = nullptr;
+		wxWindow *eventWindow = wxDynamicCast(event.GetEventObject(), wxWindow);
+		KainoteFrame *frame = KainoteFrame::Get();
+		if (eventWindow && frame){
+			wxString tip = eventWindow->GetToolTipText();
+			if (tip != emptyString){
+				if (type == wxEVT_LEAVE_WINDOW){
+					if (lastTooltipWindow == eventWindow){ lastTooltipWindow = nullptr; }
+					frame->SetStatusText(emptyString, 0);
+					// Keep wxGTK native tooltip popups disabled for owner-drawn controls.
+					wxToolTip::Enable(false);
+				}
+				else{
+					lastTooltipWindow = eventWindow;
+					tip = tip.BeforeFirst(L'\n');
+					frame->SetStatusText(tip, 0);
+				}
+			}
+			else if (type == wxEVT_MOTION && lastTooltipWindow){
+				wxWindow *top = wxGetTopLevelParent(lastTooltipWindow);
+				const wxPoint mouse = wxGetMousePosition();
+				if (!top || !wxRect(top->GetScreenPosition(), top->GetSize()).Contains(mouse)){
+					lastTooltipWindow = nullptr;
+					frame->SetStatusText(emptyString, 0);
+					wxToolTip::Enable(false);
+				}
+			}
+		}
+	}
+	if (type == wxEVT_LEFT_DOWN || type == wxEVT_RIGHT_DOWN || type == wxEVT_MIDDLE_DOWN ||
+		type == wxEVT_LEFT_UP || type == wxEVT_RIGHT_UP || type == wxEVT_MIDDLE_UP){
+		wxWindow *eventWindow = wxDynamicCast(event.GetEventObject(), wxWindow);
+		if (PopupList::DismissOnExternalClick(eventWindow)){ return 1; }
+		if (MenuDialog::DismissOnExternalClick(eventWindow)){ return 1; }
+	}
+	if (type == wxEVT_KEY_DOWN || type == wxEVT_CHAR_HOOK) {
+		wxKeyEvent* keyEvent = dynamic_cast<wxKeyEvent*>(&event);
+		if (keyEvent) {
+			if (MenuBar::HandleNavKeyIfOpen(*keyEvent, type == wxEVT_CHAR_HOOK)) { return 1; }
+			int key = keyEvent->GetKeyCode();
+			if (key == WXK_ESCAPE || key == L'B' || key == L'b') {
+				TabPanel* tab = Notebook::GetTab();
+				if (tab && tab->video && tab->video->IsFullScreen()) {
+					tab->video->SetFullscreen(false);
+					return 1;
+				}
+			}
+		}
+	}
+#endif
+	return wxApp::FilterEvent(event);
 }
 
 //void kainoteApp::OnUnhandledException()

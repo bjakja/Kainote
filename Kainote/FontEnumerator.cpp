@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "FontEnumerator.h"
-//#include "kainoteFrame.h"
+//#include "KainoteFrame.h"
 #include "Notebook.h"
 #include "ProgressDialog.h"
 
@@ -40,12 +40,32 @@ FontEnumerator::FontEnumerator()
 
 FontEnumerator::~FontEnumerator()
 {
-	SetEvent(eventKillSelf[0]);
-	SetEvent(eventKillSelf[1]);
-	if(hasExternalFontsLoaded)
-		SetEvent(eventKillSelf[2]);
-
-	WaitForSingleObject(checkFontsThread, 2000);
+	for (auto& event : eventKillSelf) {
+		if (event)
+			SetEvent(event);
+	}
+	if (loadFontsThread) {
+		WaitForSingleObject(loadFontsThread, 2000);
+		CloseHandle(loadFontsThread);
+		loadFontsThread = nullptr;
+	}
+	for (auto& event : eventKillSelf) {
+		if (event)
+			SetEvent(event);
+	}
+	for (auto& thread : checkFontsThread) {
+		if (thread) {
+			WaitForSingleObject(thread, 2000);
+			CloseHandle(thread);
+			thread = nullptr;
+		}
+	}
+	for (auto& event : eventKillSelf) {
+		if (event) {
+			CloseHandle(event);
+			event = nullptr;
+		}
+	}
 	delete Fonts;
 	delete FontsTmp;
 	wxDELETE(FilteredFonts);
@@ -58,10 +78,12 @@ void FontEnumerator::StartListening()
 	//without manifest I get only version 6.2
 	//it means that user have Windows 8 without SP
 	for (int i = 0; i < 2; i++){
+		if (!eventKillSelf[i])
+			eventKillSelf[i] = CreateEvent(0, FALSE, FALSE, 0);
 		int * threadNum = new int(i);
-		checkFontsThread = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)CheckFontsProc, threadNum, 0, 0);
-		if(checkFontsThread)
-			SetThreadPriority(checkFontsThread, THREAD_PRIORITY_LOWEST);
+		checkFontsThread[i] = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)CheckFontsProc, threadNum, 0, 0);
+		if(checkFontsThread[i])
+			SetThreadPriority(checkFontsThread[i], THREAD_PRIORITY_LOWEST);
 	}
 }
 
@@ -185,7 +207,13 @@ int __stdcall FontEnumerator::FontEnumeratorProc(LPLOGFONT lplf, TEXTMETRIC* lpt
 DWORD FontEnumerator::CheckFontsProc(int *threadNum)
 {
 	
-	FontEnum.eventKillSelf[*threadNum] = CreateEvent(0, FALSE, FALSE, 0);
+	if (!FontEnum.eventKillSelf[*threadNum])
+		FontEnum.eventKillSelf[*threadNum] = CreateEvent(0, FALSE, FALSE, 0);
+	HANDLE eventKillSelf = FontEnum.eventKillSelf[*threadNum];
+	if (!eventKillSelf) {
+		delete threadNum;
+		return 0;
+	}
 	wxString fontrealpath;
 	if (*threadNum == 0)
 		fontrealpath = wxGetOSDirectory() + L"\\fonts\\";
@@ -208,19 +236,21 @@ DWORD FontEnumerator::CheckFontsProc(int *threadNum)
 	hDir = FindFirstChangeNotification( fontrealpath.wc_str(), TRUE, FILE_NOTIFY_CHANGE_FILE_NAME);// | FILE_NOTIFY_CHANGE_LAST_WRITE
 
 	if (hDir == INVALID_HANDLE_VALUE){ 
+#ifdef _WIN32
 		if (*threadNum == 0){
 			//do not inform on system older than Windows 10 1909 that 
 			//cannot create notification of folder that they do not have
 			//without checking of system version it's impossible to check when it should be shown
 			KaiLog(_("Nie można stworzyć uchwytu notyfikacji zmian folderu czcionek."));
 		}
+#endif
 		//delete num threads to not make memory leaks
 		delete threadNum;
 		return 0; 
 	}
 	HANDLE events_to_wait[] = {
 		hDir,
-		FontEnum.eventKillSelf[*threadNum]
+		eventKillSelf
 	};
 
 	while(1){
@@ -269,9 +299,11 @@ DWORD FontEnumerator::LoadExternalFontsProc(void* path)
 
 	//Listening of external fonts folder
 	int* threadNum = new int(2);
-	FontEnum.checkFontsThread = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)CheckFontsProc, threadNum, 0, 0);
-	if (FontEnum.checkFontsThread)
-		SetThreadPriority(FontEnum.checkFontsThread, THREAD_PRIORITY_LOWEST);
+	if (!FontEnum.eventKillSelf[2])
+		FontEnum.eventKillSelf[2] = CreateEvent(0, FALSE, FALSE, 0);
+	FontEnum.checkFontsThread[2] = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)CheckFontsProc, threadNum, 0, 0);
+	if (FontEnum.checkFontsThread[2])
+		SetThreadPriority(FontEnum.checkFontsThread[2], THREAD_PRIORITY_LOWEST);
 
 	return 0;
 }
@@ -410,7 +442,12 @@ void FontEnumerator::LoadExternalFontsToProcessFromThread(const wxString& fontsP
 	progress = progr;
 	//set worker thread
 	wxString* ppath = new wxString(fontsPath);
-	HANDLE loadFontsThread = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)LoadExternalFontsProc, ppath, 0, 0);
+	if (loadFontsThread) {
+		WaitForSingleObject(loadFontsThread, INFINITE);
+		CloseHandle(loadFontsThread);
+		loadFontsThread = nullptr;
+	}
+	loadFontsThread = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)LoadExternalFontsProc, ppath, 0, 0);
 	
 }
 

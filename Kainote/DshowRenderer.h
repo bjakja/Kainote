@@ -17,6 +17,7 @@
 
 typedef wchar_t* PTCHAR;
 
+#ifdef _WIN32
 #include <streams.h>
 
 enum {    
@@ -67,4 +68,9 @@ private:
 	bool norender;
 	bool noRefresh;
 };
-
+#else
+enum { RGB32, RGB24, YUY2, YV12, IYUV, NV12, ARGB32 };
+struct VideoInf { int width{}; int height{}; float fps{}; int ARatioX{}; int ARatioY{}; unsigned char CT{}; float bytes{}; };
+class RendererVideo;
+class CD2DVideoRender {};
+#endif

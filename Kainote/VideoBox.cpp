@@ -19,7 +19,9 @@
 #include "Menu.h"
 #include "KaiMessageBox.h"
 #include "KaiStaticText.h"
+#ifdef _WIN32
 #include "RendererDirectShow.h"
+#endif
 #include "RendererFFMS2.h"
 #include "Notebook.h"
 #include "KaiSlider.h"
@@ -34,6 +36,7 @@
 #include <wx/gdicmn.h>
 #include <wx/regex.h>
 #include <wx/dir.h>
+#include <wx/filename.h>
 #include <wx/dc.h>
 #include <wx/dcclient.h>
 #include <wx/filedlg.h>
@@ -164,13 +167,13 @@ VideoBox::VideoBox(wxWindow *parent, const wxSize &size)
 	m_VideoToolbar = new VideoToolbar(m_VideoPanel, wxPoint(0, m_PanelHeight - m_ToolBarHeight), wxSize(-1, m_ToolBarHeight));
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoBox::OnChangeVisual, this, ID_VIDEO_TOOLBAR_EVENT);
 
-	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=, this](wxCommandEvent &evt){
 		renderer->VisualChangeTool(evt.GetInt());
 	}, ID_VECTOR_TOOLBAR_EVENT);
-	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=, this](wxCommandEvent &evt){
 		renderer->VisualChangeTool(evt.GetInt());
 	}, ID_MOVE_TOOLBAR_EVENT);
-	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=, this](wxCommandEvent &evt){
 		RefreshTime();
 	}, ID_REFRESH_TIME);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent& evt) {
@@ -274,8 +277,14 @@ bool VideoBox::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*= 
 	bool byFFMS2;
 	KainoteFrame* Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
 	if (customFFMS2 == -1){
+#ifdef _WIN32
 		MenuItem *index = Kai->Menubar->FindItem(GLOBAL_VIDEO_INDEXING);
 		byFFMS2 = index->IsChecked() && index->IsEnabled() && !fulls/* && !isFullscreen*/;
+#else
+		// DirectShow is Windows-only.  On Linux use the FFMS2/FFmpeg path for
+		// video decoding/playback instead of trying to instantiate DirectShow.
+		byFFMS2 = true;
+#endif
 	}
 	else
 		byFFMS2 = customFFMS2 == 1;
@@ -289,8 +298,13 @@ bool VideoBox::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*= 
 	if (!renderer){
 		if (byFFMS2)
 			renderer = new RendererFFMS2(this, m_VideoToolbar->IsVisualsDisabled());
+#ifdef _WIN32
 		else
 			renderer = new RendererDirectShow(this, m_VideoToolbar->IsVisualsDisabled());
+#else
+		else
+			renderer = new RendererFFMS2(this, m_VideoToolbar->IsVisualsDisabled());
+#endif
 	}
 
 
@@ -341,14 +355,14 @@ bool VideoBox::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*= 
 		if ((tab->editor && !m_IsFullscreen) || dontPlayOnStart){ Pause(); }
 		if (!m_VolumeSlider->IsShown()){ 
 			m_VolumeSlider->Show(); 
-			m_TimesTextField->SetSize(m_VideoWindowLastSize.x - 290, -1); 
+			m_TimesTextField->SetSize(wxMax(0, m_VideoWindowLastSize.x - 290), -1);
 		}
 	}
 	else{
 		renderer->m_BlockResize = false;
 		if (m_VolumeSlider->IsShown()){
 			m_VolumeSlider->Show(false);
-			m_TimesTextField->SetSize(m_VideoWindowLastSize.x - 185, -1);
+			m_TimesTextField->SetSize(wxMax(0, m_VideoWindowLastSize.x - 185), -1);
 		}
 		renderer->m_State = Paused;
 		renderer->Render(true, false);
@@ -361,7 +375,7 @@ bool VideoBox::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*= 
 	}
 	//SetFocus();
 	tab->VideoPath = fileName;
-	tab->VideoName = fileName.AfterLast(L'\\');
+	tab->VideoName = KaiPathName(fileName);
 	Kai->SetStatusText(tab->VideoName, 8);
 	if (m_FullScreenWindow){ m_FullScreenWindow->Videolabel->SetLabelText(tab->VideoName); }
 	if (!tab->editor){ Kai->Label(0, true); }
@@ -605,7 +619,11 @@ void VideoBox::OnKeyPress(wxKeyEvent& event)
 		if (key == L'B'){
 			if (GetState() == Playing){ Pause(); }
 			KainoteFrame* Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
+#ifndef _WIN32
+			Kai->Iconize(true);
+#else
 			ShowWindow(Kai->GetHWND(), SW_SHOWMINNOACTIVE);
+#endif
 		}
 	}
 	if (!renderer)
@@ -645,7 +663,8 @@ void VideoBox::NextFile(bool next)
 	}
 	
 	else{ path = Kai->videorec[Kai->videorec.size() - 1]; }
-	wxString pathwn = path.BeforeLast(L'\\');
+	wxFileName videoFileName(path);
+	wxString pathwn = videoFileName.GetPath();
 	wxDir kat(pathwn);
 	if (kat.IsOpened()){
 		files.Clear();
@@ -728,6 +747,10 @@ void VideoBox::SetFullscreen(int monitor)
 
 		m_VideoToolbar->Synchronize(m_FullScreenWindow->vToolbar);
 		RefreshTime();
+#ifndef _WIN32
+		if (m_FullScreenWindow->IsFullScreen())
+			m_FullScreenWindow->ShowFullScreen(false);
+#endif
 		m_FullScreenWindow->Hide();
 		SetCursor(wxCURSOR_ARROW);
 	}
@@ -751,9 +774,44 @@ void VideoBox::SetFullscreen(int monitor)
 		m_FullScreenWindow->vToolbar->Synchronize(m_VideoToolbar);
 		if (!m_PanelOnFullscreen){ m_FullScreenWindow->panel->Hide(); }
 		m_FullScreenWindow->Show();
+#ifndef _WIN32
+		// wxGTK WMs can keep a borderless, stay-on-top frame inside the work area
+		// (leaving panels/docks visible).  Request real fullscreen so the video
+		// surface owns the whole monitor, then relayout against the mapped client.
+		m_FullScreenWindow->ShowFullScreen(true, wxFULLSCREEN_ALL);
+		m_FullScreenWindow->SetPosition(rt.GetPosition());
+		m_FullScreenWindow->SetSize(rt.GetSize());
+#endif
+		// wxGTK may report a transient size before mapping/fullscreen; relayout after Show().
+		m_FullScreenWindow->OnSize();
+		m_FullScreenWindow->Raise();
 		renderer->m_BlockResize = true;
 		renderer->UpdateVideoWindow();
 		renderer->m_BlockResize = false;
+		renderer->Render(true, false);
+		m_FullScreenWindow->Refresh(false);
+		m_FullScreenWindow->Update();
+#ifndef _WIN32
+		// Some wxGTK WMs apply fullscreen geometry asynchronously.  Run one more
+		// layout/render pass after the frame is mapped so the video rect and the
+		// bottom control panel use the real fullscreen client size instead of the
+		// pre-fullscreen work-area size.
+		m_FullScreenWindow->CallAfter([this, monitor]() {
+			if (!m_IsFullscreen || !m_FullScreenWindow || !renderer)
+				return;
+			KainoteFrame* Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
+			wxRect lateRt = GetMonitorRect1(monitor, &MonRects, Kai->GetRect());
+			m_FullScreenWindow->SetPosition(lateRt.GetPosition());
+			m_FullScreenWindow->SetSize(lateRt.GetSize());
+			m_FullScreenWindow->OnSize();
+			renderer->m_BlockResize = true;
+			renderer->UpdateVideoWindow();
+			renderer->m_BlockResize = false;
+			renderer->Render(true, false);
+			m_FullScreenWindow->Refresh(false);
+			m_FullScreenWindow->Update();
+		});
+#endif
 		RefreshTime();
 		if (GetState() == Playing && !m_FullScreenWindow->panel->IsShown()){ m_VideoTimeTimer.Start(1000); }
 		if (!tab->editor)
@@ -763,7 +821,7 @@ void VideoBox::SetFullscreen(int monitor)
 			GetParent()->Layout();
 			m_IsOnAnotherMonitor = true;
 		}
-		SetFocus();
+		m_FullScreenWindow->SetFocus();
 		if (renderer->HasVisual(true)) {
 			SetCursor(wxCURSOR_ARROW);
 		}
@@ -870,11 +928,11 @@ void VideoBox::ContextMenu(const wxPoint &pos)
 	{
 		if (i < Kai->subsrec.size()){
 			if (!wxFileExists(Kai->subsrec[i])){ continue; }
-			menu1->Append(30000 + i, Kai->subsrec[i].AfterLast(L'\\'));
+			menu1->Append(30000 + i, KaiPathName(Kai->subsrec[i]));
 		}
 		if (i < Kai->videorec.size()){
 			if (!wxFileExists(Kai->videorec[i])){ continue; }
-			menu2->Append(30020 + i, Kai->videorec[i].AfterLast(L'\\'));
+			menu2->Append(30020 + i, KaiPathName(Kai->videorec[i]));
 		}
 
 	}
@@ -984,7 +1042,8 @@ void VideoBox::OnHidePB()
 void VideoBox::OnDeleteVideo()
 {
 	wxString path = tab->VideoPath;
-	if (path == emptyString && KaiMessageBox(_("Czy na pewno chcesz przenieść wczytany plik wideo do kosza?"), _("Usuwanie"), wxYES_NO) == wxNO){ return; }
+	if (path == emptyString){ return; }
+	if (KaiMessageBox(_("Czy na pewno chcesz przenieść wczytany plik wideo do kosza?"), _("Usuwanie"), wxYES_NO) == wxNO){ return; }
 	NextFile();
 	CRecycleFile x;
 	x.Recycle(path.data());
@@ -995,8 +1054,8 @@ void VideoBox::OnOpVideo()
 	KainoteFrame* Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
 	wxFileDialog* FileDialog2 = new wxFileDialog(m_IsFullscreen ? m_FullScreenWindow : 
 		(wxWindow *)Kai, _("Wybierz plik wideo"),
-		(tab->SubsPath != emptyString) ? tab->SubsPath.BeforeLast(L'\\') :
-		(Kai->videorec.size() > 0) ? Kai->videorec[Kai->videorec.size() - 1].BeforeLast(L'\\') : emptyString,
+		(tab->SubsPath != emptyString) ? KaiPathDir(tab->SubsPath) :
+		(Kai->videorec.size() > 0) ? KaiPathDir(Kai->videorec[Kai->videorec.size() - 1]) : emptyString,
 		emptyString, _("Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|Wszystkie pliki (*.*)|*.*"),
 		wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 	if (FileDialog2->ShowModal() == wxID_OK){
@@ -1010,8 +1069,8 @@ void VideoBox::OnOpSubs()
 	KainoteFrame* Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
 	if (Kai->SavePrompt(2)){ return; }
 	wxFileDialog* FileDialog = new wxFileDialog(m_IsFullscreen ? m_FullScreenWindow : (wxWindow *)Kai, _("Wybierz plik napisów"),
-		(tab->VideoPath != emptyString) ? tab->VideoPath.BeforeLast(L'\\') :
-		(Kai->subsrec.size() > 0) ? Kai->subsrec[Kai->subsrec.size() - 1].BeforeLast(L'\\') : emptyString, emptyString,
+		(tab->VideoPath != emptyString) ? KaiPathDir(tab->VideoPath) :
+		(Kai->subsrec.size() > 0) ? KaiPathDir(Kai->subsrec[Kai->subsrec.size() - 1]) : emptyString, emptyString,
 		_("Pliki napisów (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"),
 		wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 
@@ -1143,6 +1202,32 @@ void VideoBox::OnSPlus()
 
 void VideoBox::OnPaint(wxPaintEvent& event)
 {
+#ifndef _WIN32
+	wxPaintDC paintDc(this);
+	if (renderer && !renderer->m_BlockResize && renderer->m_State != None){
+		if (RendererFFMS2* ffmsRenderer = dynamic_cast<RendererFFMS2*>(renderer)) {
+			ffmsRenderer->RenderToDc(paintDc);
+		}
+		else {
+			renderer->Render(renderer->m_State != Playing, false);
+		}
+		return;
+	}
+	else if (GetState() == None){
+		int x, y;
+		GetClientSize(&x, &y);
+		paintDc.SetBrush(wxBrush(L"#000000"));
+		paintDc.SetPen(wxPen(L"#000000"));
+		paintDc.DrawRectangle(0, 0, x, y);
+		wxFont font1(72, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma");
+		paintDc.SetFont(font1);
+		wxSize size = paintDc.GetTextExtent(L"KaiNote");
+		paintDc.SetTextForeground(L"#2EA6E2");
+		paintDc.DrawText(L"KaiNote", (x - size.x) / 2, (y - size.y - m_PanelHeight) / 2);
+		return;
+	}
+	return;
+#endif
 	if (renderer && !renderer->m_BlockResize && renderer->m_State == Paused){
 		renderer->Render(true, false);
 	}
@@ -1518,7 +1603,7 @@ void VideoBox::GetFPSAndAspectRatio(float *FPS, float *AspectRatio, int *AspectR
 			*AspectRatio = m_AspectRatio;
 		if (AspectRatioX)
 			*AspectRatioX = m_AspectRatioX;
-		if (AspectRatioX)
+		if (AspectRatioY)
 			*AspectRatioY = m_AspectRatioY;
 	}
 }
@@ -1841,6 +1926,17 @@ bool VideoBox::HasCapture() {
 	}
 }
 bool VideoBox::SetCursor(int cursorId) {
+#ifndef _WIN32
+	// The Windows renderer hides the native pointer while the visual cross/ruler
+	// overlay is drawn by D3D. On wxGTK the Linux presenter currently draws the
+	// video through wx/SDL surfaces, so hiding the pointer makes it disappear
+	// without a visible ruler. Keep fullscreen auto-hide behaviour, but use a
+	// cross cursor for the editor visual area so hovering the preview remains
+	// visible and ruler-like on Linux.
+	if (!m_IsFullscreen && cursorId == wxCURSOR_BLANK) {
+		cursorId = wxCURSOR_CROSS;
+	}
+#endif
 	if (m_IsFullscreen && m_FullScreenWindow && m_LastFullScreenCursor != cursorId) {
 		m_LastFullScreenCursor = cursorId;
 		return m_FullScreenWindow->SetCursor((wxStockCursor)cursorId);

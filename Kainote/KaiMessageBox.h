@@ -19,6 +19,7 @@
 #include "KaiCheckBox.h"
 #include "config.h"
 #include <wx/string.h>
+#include <wx/timer.h>
 
 class KaiMessageDialog : public KaiDialog
 {
@@ -31,6 +32,7 @@ public:
 	void SetHelpLabel(const wxString &label);
 	KaiCheckBox *kcb = nullptr;
 	DialogSizer* sizer2 = nullptr;
+	wxTimer automationDismissTimer;
 
 };
 

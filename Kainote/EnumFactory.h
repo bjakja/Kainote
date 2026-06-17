@@ -27,7 +27,7 @@
 
 /// declare the access function and define enum values
 #define DECLARE_ENUM(EnumType,ENUM_DEF) \
-	enum EnumType { \
+	enum EnumType : int { \
 	ENUM_DEF(ENUM_VALUE) \
   }; \
   const char *GetString(EnumType dummy); \

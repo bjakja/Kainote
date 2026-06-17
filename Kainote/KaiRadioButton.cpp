@@ -20,6 +20,16 @@
 #include "config.h"
 #undef GetClassInfo
 
+namespace
+{
+	KaiRadioButton* AsKaiRadioButton(wxWindow* window)
+	{
+		if (!window || !window->IsKindOf(CLASSINFO(KaiRadioButton)))
+			return nullptr;
+		return static_cast<KaiRadioButton*>(window);
+	}
+}
+
 KaiRadioButton::KaiRadioButton(wxWindow *parent, int id, const wxString& label,
 	const wxPoint& pos, const wxSize& size, long style)
 	: KaiCheckBox(parent, id, label, pos, size, style)
@@ -37,8 +47,8 @@ KaiRadioButton::KaiRadioButton(wxWindow *parent, int id, const wxString& label,
 	entries[3].Set(wxACCEL_NORMAL, WXK_DOWN, ID_ACCEL_RIGHT);
 	wxAcceleratorTable accel(4, entries);
 	SetAcceleratorTable(accel);
-	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){SelectPrev(false); }, ID_ACCEL_LEFT);
-	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){SelectNext(false); }, ID_ACCEL_RIGHT);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=, this](wxCommandEvent &evt){SelectPrev(false); }, ID_ACCEL_LEFT);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=, this](wxCommandEvent &evt){SelectNext(false); }, ID_ACCEL_RIGHT);
 }
 
 void KaiRadioButton::OnMouseLeft(wxMouseEvent &evt)
@@ -75,8 +85,7 @@ void KaiRadioButton::DeselectRest()
 			nodeBefore;
 			nodeBefore = nodeBefore->GetPrevious())
 		{
-			KaiRadioButton *btn = wxDynamicCast(nodeBefore->GetData(),
-				KaiRadioButton);
+			KaiRadioButton *btn = AsKaiRadioButton(nodeBefore->GetData());
 			if (!btn)
 			{
 				// don't stop on non radio buttons, we could have intermixed
@@ -110,8 +119,7 @@ void KaiRadioButton::DeselectRest()
 		nodeAfter;
 		nodeAfter = nodeAfter->GetNext())
 	{
-		KaiRadioButton *btn = wxDynamicCast(nodeAfter->GetData(),
-			KaiRadioButton);
+		KaiRadioButton *btn = AsKaiRadioButton(nodeAfter->GetData());
 
 		if (!btn)
 			continue;
@@ -145,8 +153,7 @@ void KaiRadioButton::SelectPrev(bool first)
 			nodeBefore;
 			nodeBefore = nodeBefore->GetPrevious())
 		{
-			KaiRadioButton *btn = wxDynamicCast(nodeBefore->GetData(),
-				KaiRadioButton);
+			KaiRadioButton *btn = AsKaiRadioButton(nodeBefore->GetData());
 			if (!btn)
 			{
 				// don't stop on non radio buttons, we could have intermixed
@@ -199,8 +206,7 @@ void KaiRadioButton::SelectNext(bool last)
 		nodeAfter;
 		nodeAfter = nodeAfter->GetNext())
 	{
-		KaiRadioButton *btn = wxDynamicCast(nodeAfter->GetData(),
-			KaiRadioButton);
+		KaiRadioButton *btn = AsKaiRadioButton(nodeAfter->GetData());
 
 		if (!btn){
 			if (btntmp && btntmp->CanBeFocused()){
@@ -244,7 +250,7 @@ void KaiRadioButton::SelectNext(bool last)
 	}
 }
 
-wxIMPLEMENT_ABSTRACT_CLASS(KaiRadioButton, wxWindow);
+wxIMPLEMENT_ABSTRACT_CLASS(KaiRadioButton, KaiCheckBox);
 
 KaiRadioBox::KaiRadioBox(wxWindow *parent, int id, const wxString& label,
 	const wxPoint& pos, const wxSize& size, const wxArrayString &names, int spacing, long style)
@@ -258,7 +264,7 @@ KaiRadioBox::KaiRadioBox(wxWindow *parent, int id, const wxString& label,
 		buttons.push_back(new KaiRadioButton(this, 9876 + i, names[i], wxDefaultPosition, wxDefaultSize, (i == 0) ? wxRB_GROUP : 0));
 		box->Add(buttons[i], 1, wxALL, spacing);
 	}
-	Bind(wxEVT_COMMAND_RADIOBUTTON_SELECTED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_RADIOBUTTON_SELECTED, [=, this](wxCommandEvent &evt){
 		selected = evt.GetId() - 9876;
 		wxCommandEvent *evtrb = new wxCommandEvent(wxEVT_COMMAND_RADIOBOX_SELECTED, GetId());
 		wxQueueEvent(GetParent(), evtrb);

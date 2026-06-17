@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "SubsTime.h"
-#include "Config.h"
+#include "config.h"
 #include "SubsDialogue.h"
 #include <wx/log.h>
 

@@ -442,7 +442,7 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 wxPoint AllTags::ChangeVisual(wxString* txt)
 {
 	if (mode == GRADIENT_TEXT_INCREASE || mode == GRADIENT_TEXT_DECREASE) {
-		auto replfunc = [=](const FindData& data, wxString* result, size_t numOfCharacters) {
+		auto replfunc = [=, this](const FindData& data, wxString* result, size_t numOfCharacters) {
 			GetVisualValue(result, data.finding);
 			if (mode == GRADIENT_TEXT_INCREASE)
 				multiplyCounter += (1.f / (numOfCharacters - 1));
@@ -472,7 +472,7 @@ wxPoint AllTags::ChangeVisual(wxString* txt)
 		//if there is one line there's no need to count it
 	}
 	else {
-		auto replfunc = [=](const FindData& data, wxString* result) {
+		auto replfunc = [=, this](const FindData& data, wxString* result) {
 			GetVisualValue(result, data.finding);
 		};
 		ReplaceAll(actualTag.tag + L"([-0-9.,\\(\\) &A-FH]+)", actualTag.tag, txt, replfunc, true);
@@ -484,7 +484,7 @@ wxPoint AllTags::ChangeVisual(wxString* txt)
 void AllTags::ChangeVisual(wxString* txt, Dialogue *dial, size_t numOfSelections)
 {
 	if (mode == GRADIENT_TEXT_INCREASE || mode == GRADIENT_TEXT_DECREASE) {
-		auto replfunc = [=](const FindData& data, wxString* result, size_t numOfCharacters) {
+		auto replfunc = [=, this](const FindData& data, wxString* result, size_t numOfCharacters) {
 			GetVisualValue(result, data.finding);
 			if (numOfCharacters > 1) {
 				if(mode == GRADIENT_TEXT_INCREASE)
@@ -521,7 +521,7 @@ void AllTags::ChangeVisual(wxString* txt, Dialogue *dial, size_t numOfSelections
 			multiplyCounter++;
 	}
 	else {
-		auto replfunc = [=](const FindData& data, wxString* result) {
+		auto replfunc = [=, this](const FindData& data, wxString* result) {
 			GetVisualValue(result, data.finding);
 		};
 		ReplaceAll(actualTag.tag + L"([-0-9.,\\(\\) &A-FH]+)", actualTag.tag, txt, replfunc, true);

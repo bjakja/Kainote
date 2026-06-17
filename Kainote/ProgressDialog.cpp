@@ -50,7 +50,7 @@ ProgresDialog::ProgresDialog(wxWindow *_parent, const wxString &title, const wxP
 	Bind(EVT_SHOW_DIALOG, &ProgresDialog::OnShow, this);
 	Bind(EVT_SET_PROGRESS, &ProgresDialog::OnProgress, this);
 	Bind(EVT_SET_TITLE, &ProgresDialog::OnTitle, this);
-	Bind(EVT_CREATE_SECONDARY_DIALOG, [=](wxThreadEvent &evt){
+	Bind(EVT_CREATE_SECONDARY_DIALOG, [=, this](wxThreadEvent &evt){
 		std::pair<std::function<int()>, wxSemaphore*> pair = evt.GetPayload<std::pair<std::function<int()>, wxSemaphore*>>();
 		wxSemaphore* sema = pair.second;
 		std::function<int()> showDial = pair.first;
@@ -59,12 +59,13 @@ ProgresDialog::ProgresDialog(wxWindow *_parent, const wxString &title, const wxP
 		oldtime = 0;
 		firsttime = timeGetTime();
 	});
-	Bind(EVT_END_MODAL, [=](wxThreadEvent &evt){
-		if (IsModal()){ 
+	Bind(EVT_END_MODAL, [=, this](wxThreadEvent &evt){
+		EndFrameProgress();
+		if (IsModal()){
 			EndModal(wxID_OK);
 		}
-		else{ 
-			Hide(); 
+		else{
+			Hide();
 		}
 	});
 	firsttime = timeGetTime();
@@ -83,9 +84,15 @@ ProgresDialog::ProgresDialog(wxWindow *_parent, const wxString &title, const wxP
 
 ProgresDialog::~ProgresDialog()
 {
-	if (!wasTaskbarInitialized) {
+	EndFrameProgress();
+}
+
+void ProgresDialog::EndFrameProgress()
+{
+	if (!progressEnded && !wasTaskbarInitialized) {
 		KainoteFrame::ProgressEnd();
 	}
+	progressEnded = true;
 }
 
 void ProgresDialog::Progress(int num)
@@ -123,9 +130,7 @@ bool ProgresDialog::WasCancelled()
 void ProgresDialog::OnCancel(wxCommandEvent& event)
 {
 	canceled = true;
-	if (!wasTaskbarInitialized) {
-		KainoteFrame::ProgressEnd();
-	}
+	EndFrameProgress();
 	Hide();
 }
 
@@ -155,37 +160,45 @@ ProgressSink::ProgressSink(wxWindow *parent, const wxString &title, const wxPoin
 
 ProgressSink::~ProgressSink()
 {
-	dlg->Destroy();
+	if (dlg)
+		dlg->Destroy();
 }
 //shows dialog, use only from main thread
 void ProgressSink::ShowDialog()
 {
-	dlg->ShowModal();
+	if (dlg)
+		dlg->ShowModal();
 }
 
 // set name of current task
 void ProgressSink::Title(wxString title)
 {
+	if (!dlg)
+		return;
 	wxThreadEvent *evt = new wxThreadEvent(EVT_SET_TITLE, dlg->GetId());
 	evt->SetPayload(title);
-	wxQueueEvent(dlg, evt);
+	wxQueueEvent(dlg.get(), evt);
 }
 
 bool ProgressSink::WasCancelled()
 {
-	return dlg->WasCancelled();
+	return !dlg || dlg->WasCancelled();
 }
 
 void ProgressSink::Progress(int num)
 {
+	if (!dlg)
+		return;
 	wxThreadEvent *evt = new wxThreadEvent(EVT_SET_PROGRESS, dlg->GetId());
 	evt->SetPayload(num);
-	wxQueueEvent(dlg, evt);
+	wxQueueEvent(dlg.get(), evt);
 }
 void ProgressSink::EndModal()
 {
+	if (!dlg)
+		return;
 	wxThreadEvent *evt = new wxThreadEvent(EVT_END_MODAL, dlg->GetId());
-	wxQueueEvent(dlg, evt);
+	wxQueueEvent(dlg.get(), evt);
 }
 
 wxThread::ExitCode ProgressSink::Entry()
@@ -196,13 +209,15 @@ wxThread::ExitCode ProgressSink::Entry()
 }
 
 int ProgressSink::ShowSecondaryDialog(std::function<int()> dialfunction){
+	if (!dlg)
+		return wxID_CANCEL;
 	wxThreadEvent *evt = new wxThreadEvent(EVT_CREATE_SECONDARY_DIALOG, dlg->GetId());
 	wxSemaphore sema(0, 1);
 	std::pair<std::function<int()>, wxSemaphore*> pair(dialfunction, &sema);
 	evt->SetPayload(pair);
-	wxQueueEvent(dlg, evt);
+	wxQueueEvent(dlg.get(), evt);
 	sema.Wait();
-	return dlg->result;
+	return dlg ? dlg->result : wxID_CANCEL;
 }
 
 ProgressSinkSilent::ProgressSinkSilent(const wxString& _title)

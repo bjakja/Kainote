@@ -23,8 +23,16 @@
 #include "TabPanel.h"
 #include <vector>
 #include <thread>
-#include "..\Thirdparty\ffms2\include\ffms.h"
-
+#include "../Thirdparty/ffms2/include/ffms.h"
+#ifndef FFMS_CS_UNSPECIFIED
+#define FFMS_CS_UNSPECIFIED 0
+#define FFMS_CS_RGB 0
+#define FFMS_CS_BT709 1
+#define FFMS_CS_FCC 4
+#define FFMS_CS_BT470BG 5
+#define FFMS_CS_SMPTE170M 6
+#define FFMS_CS_SMPTE240M 7
+#endif
 class chapter;
 class RendererVideo;
 
@@ -79,27 +87,27 @@ protected:
 	volatile float m_audioProgress = 0;
 	RendererVideo* m_renderer = nullptr;
 	int m_width = -1;
-	int m_height;
-	int m_arwidth;
-	int m_arheight;
-	int m_numFrames;
+	int m_height = -1;
+	int m_arwidth = -1;
+	int m_arheight = -1;
+	int m_numFrames = 0;
 	int m_sampleRate = -1;
-	int m_bytesPerSample;
-	int m_channels;
-	int m_lastTime;
+	int m_bytesPerSample = 0;
+	int m_channels = 0;
+	int m_lastTime = 0;
 	int m_lastFrame = -1;
 	int m_framePlane = 0;
 	int m_changedTime = 0;
 	bool m_isStartTime = false;
 	bool m_refreshAudio = true;
 	double m_duration = 0;
-	float m_FPS;
-	long long m_numSamples;
+	float m_FPS = 0;
+	long long m_numSamples = 0;
 	HANDLE m_thread = nullptr;
-	HANDLE m_eventStartPlayback,
-		m_eventSetPosition,
-		m_eventKillSelf,
-		m_eventComplete;
+	HANDLE m_eventStartPlayback = nullptr;
+	HANDLE m_eventSetPosition = nullptr;
+	HANDLE m_eventKillSelf = nullptr;
+	HANDLE m_eventComplete = nullptr;
 	wxString m_filename;
 	wxArrayInt m_keyFrames;
 	std::vector<int> m_timecodes;

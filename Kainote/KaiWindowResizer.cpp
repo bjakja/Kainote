@@ -20,16 +20,16 @@
 #include "config.h"
 
 KaiWindowResizer::KaiWindowResizer(wxWindow *parent, std::function<bool(int)> _canResize, std::function<void(int, bool)> _doResize)
-	:wxWindow(parent, -1, wxDefaultPosition, wxSize(-1, 5))
+	:wxWindow(parent, -1, wxDefaultPosition, wxSize(-1, 8))
 	, canResize(_canResize)
 	, doResize(_doResize)
 	, resizerParent(parent)
 {
-	SetMaxSize(wxSize(-1, 5));
-	SetMinSize(wxSize(-1, 5));
+	SetMaxSize(wxSize(-1, 8));
+	SetMinSize(wxSize(-1, 8));
 	SetCursor(wxCURSOR_SIZENS);
 	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
-	Bind(wxEVT_MOUSE_CAPTURE_LOST, [=](wxMouseCaptureLostEvent &evt){
+	Bind(wxEVT_MOUSE_CAPTURE_LOST, [this](wxMouseCaptureLostEvent &evt){
 		holding = false;
 		if (splitLine){
 			splitLine->Destroy();
@@ -51,62 +51,76 @@ KaiWindowResizer::~KaiWindowResizer()
 
 void KaiWindowResizer::OnMouseEvent(wxMouseEvent &evt)
 {
-	bool click = evt.LeftDown();
-	bool leftUp = evt.LeftUp();
-
+	const bool click = evt.LeftDown();
+	const bool leftUp = evt.LeftUp();
 	int newPosition = evt.GetY();
 
-	if (!holding && HasCapture())
-		ReleaseMouse();
-
-	if (leftUp && holding) {
-		holding = false;
-		ReleaseMouse();
-		if (splitLine){
-			int x;
-			splitLine->GetPosition(&x, &newPosition);
-			resizerParent->ScreenToClient(&x, &newPosition);
-			splitLine->Destroy();
-			splitLine = nullptr;
-			doResize(newPosition, evt.ShiftDown());
-		}
-
+	if (holding){
+		wxPoint screenPosition = wxGetMousePosition();
+		resizerParent->ScreenToClient(&screenPosition.x, &screenPosition.y);
+		newPosition = screenPosition.y;
 	}
 
-	if (leftUp && !holding) {
+	if (!holding && HasCapture()){
+		ReleaseMouse();
+	}
+
+	if (leftUp && holding){
+		holding = false;
+		if (HasCapture()){
+			ReleaseMouse();
+		}
+		if (splitLine){
+			splitLine->Destroy();
+			splitLine = nullptr;
+		}
+		if (canResize(newPosition)){
+			doResize(newPosition, evt.ShiftDown());
+		}
 		return;
 	}
 
-	if (click && !holding) {
+	if (leftUp){
+		return;
+	}
+
+	if (click && !holding){
 		holding = true;
 		CaptureMouse();
-		int px = 2, py = newPosition;
+		oldy = newPosition;
+#ifdef _WIN32
+		int px = 2, py = evt.GetY();
 		ClientToScreen(&px, &py);
 		splitLine = new wxDialog(this, -1, emptyString, wxPoint(px, py), wxSize(GetSize().GetWidth(), 2), wxSTAY_ON_TOP | wxBORDER_NONE);
 		splitLine->SetBackgroundColour(Options.GetColour(WINDOW_TEXT));
 		splitLine->Show();
+#endif
 	}
 
 	if (holding){
-		int px = 2, py = newPosition;
-		ClientToScreen(&px, &py);
-		int screenX = px, screenY = py;
-		resizerParent->ScreenToClient(&screenX, &screenY);
-		bool canBeResized = canResize(screenY);
-		if (canBeResized && newPosition != oldy){
+		const bool canBeResized = canResize(newPosition);
+#ifdef _WIN32
+		if (canBeResized && splitLine && newPosition != oldy){
+			int px = 2, py = newPosition;
+			resizerParent->ClientToScreen(&px, &py);
 			splitLine->SetPosition(wxPoint(px, py));
 		}
+#else
+		if (canBeResized && newPosition != oldy){
+			doResize(newPosition, evt.ShiftDown());
+		}
+#endif
 		oldy = newPosition;
 	}
 }
 
 void KaiWindowResizer::OnPaint(wxPaintEvent& evt)
 {
-	//for now line will only horizontal
 	const wxColour & pointColor = Options.GetColour(WINDOW_RESIZER_DOTS);
 	const wxColour & backgroundColor = Options.GetColour(WINDOW_BACKGROUND);
 
 	wxSize size = GetClientSize();
+	if (size.x < 1 || size.y < 1){ return; }
 	if (bmp && (bmp->GetWidth() < size.x || bmp->GetHeight() < size.y)) {
 		delete bmp;
 		bmp = nullptr;
@@ -124,11 +138,11 @@ void KaiWindowResizer::OnPaint(wxPaintEvent& evt)
 	while (xpoint <= size.x){
 		if (drawTwoPoints){
 			mdc.DrawPoint(xpoint, 0);
-			mdc.DrawPoint(xpoint, 4);
+			mdc.DrawPoint(xpoint, size.y - 1);
 			drawTwoPoints = false;
 		}
 		else{
-			mdc.DrawPoint(xpoint, 2);
+			mdc.DrawPoint(xpoint, size.y / 2);
 			drawTwoPoints = true;
 		}
 		xpoint += 2;

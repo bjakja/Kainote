@@ -17,10 +17,10 @@
 
 
 
-//#include "Config.h"
+//#include "config.h"
 #include "AudioSpectrum.h"
 
-//#include "ColorSpace.h"
+//#include "colorspace.h"
 #include <wx/log.h>
 #include <process.h>
 #include <assert.h>
@@ -463,7 +463,7 @@ unsigned int __stdcall AudioSpectrumMultiThreading::AudioProc(void* num)
 {
 	int numOfThread = *((int*)num);
 	sthread->AudioPorocessing(numOfThread);
-	delete num;
+	delete (int*)num;
 	return 0;
 }
 void AudioSpectrumMultiThreading::AudioPorocessing(int numOfTread)

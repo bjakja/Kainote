@@ -18,7 +18,7 @@
 
 #include "Hotkeys.h"
 #include "KainoteFrame.h"
-#include "Config.h"
+#include "config.h"
 #include "OpennWrite.h"
 
 #include "KaiMessageBox.h"
@@ -236,7 +236,7 @@ int Hotkeys::LoadHkeys(bool Audio)
 {
 	if (keys.empty()){ FillTable(); }
 	OpenWrite ow;
-	wxString hkpath = (Audio) ? L"\\AudioHotkeys.txt" : L"\\Hotkeys.txt";
+	wxString hkpath = (Audio) ? L"/AudioHotkeys.txt" : L"/Hotkeys.txt";
 	wxString acctxt;
 	//it failed when there was lack of path
 	//need to put everything in right order, options are first
@@ -333,7 +333,7 @@ void Hotkeys::SaveHkeys(bool Audio)
 		}
 	}
 	OpenWrite ow;
-	wxString hkpath = (Audio) ? L"\\AudioHotkeys.txt" : L"\\Hotkeys.txt";
+	wxString hkpath = (Audio) ? L"/AudioHotkeys.txt" : L"/Hotkeys.txt";
 	ow.FileWrite(Options.configPath + hkpath, Texthk);
 
 }

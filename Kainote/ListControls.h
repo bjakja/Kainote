@@ -18,12 +18,13 @@
 #include <map>
 #include <wx/popupwin.h>
 #include <wx/msw/popupwin.h>
+#include <wx/timer.h>
 #include <wx/object.h>
 #include "config.h"
 
 class KaiTextCtrl;
 class KaiScrollbar;
-enum COLOR;
+enum COLOR : int;
 
 class PopupList : public wxPopupWindow{
 	friend class KaiChoice;
@@ -32,6 +33,8 @@ public:
 	PopupList(wxWindow *DialogParent, wxArrayString *list, std::map<int, bool> *disabled);
 	~PopupList();
 	void Popup(const wxPoint &pos, const wxSize &controlSize, int selectedItem);
+	static bool IsPopupListWindow(wxWindow *win);
+	static bool DismissOnExternalClick(wxWindow *eventWindow);
 	void CalcPosAndSize(wxPoint *pos, wxSize *size, const wxSize &controlSize);
 	void EndPartialModal(int ReturnId);
 	void SetSelection(int pos);
@@ -45,6 +48,7 @@ private:
 	void OnPaint(wxPaintEvent &event);
 	void OnScroll(wxScrollEvent& event);
 	void OnIdle(wxIdleEvent& event);
+	void OnDismissTimer(wxTimerEvent& event);
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } };
 	int sel;
 	int scPos;
@@ -58,6 +62,8 @@ protected:
 	int height = 18;
 	KaiScrollbar *scroll;
 	wxPoint originalPosition;
+	wxTimer dismissTimer;
+	static PopupList *activePopup;
 	DECLARE_EVENT_TABLE()
 };
 
@@ -127,7 +133,7 @@ private:
 	void SendEvent(int choice);
 	void SetSelectionByPartialName(const wxString &partialName, bool setText = false, bool selectOnList = false);
 	void SelectChoice(int sel, bool select = true, bool sendEvent = true);
-	inline void CalcMaxWidth(wxSize *result, bool changex, bool changey);
+	void CalcMaxWidth(wxSize *result, bool changex, bool changey);
 	void OnArrow(wxCommandEvent &evt);
 	void OnActivate(wxFocusEvent &evt);
 	bool enter;

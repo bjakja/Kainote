@@ -16,7 +16,7 @@
 
 #include "kainoteApp.h"
 #include "KaiFrame.h"
-#include "Config.h"
+#include "config.h"
 #include "TabPanel.h"
 #include "SubsGrid.h"
 #include "EditBox.h"
@@ -27,9 +27,11 @@
 #include <wx/dc.h>
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
-#include "wx/msw/private.h"
 #include "UtilsWindows.h"
+#ifdef __WXMSW__
+#include "wx/msw/private.h"
 #include <Dwmapi.h>
+#endif
 
 #define GET_X_LPARAM(lp)                        ((int)(short)LOWORD(lp))
 #define GET_Y_LPARAM(lp)                        ((int)(short)HIWORD(lp))
@@ -54,6 +56,7 @@ KaiFrame::KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title/*=""*/
 	// notice that we should append this window to wxTopLevelWindows list
 	// before calling CreateBase() as it behaves differently for TLW and
 	// non-TLW windows
+#ifdef __WXMSW__
 	wxTopLevelWindows.Append(this);
 
 	bool ret = CreateBase(parent, id, pos, sizeReal, style, name);
@@ -77,6 +80,11 @@ KaiFrame::KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title/*=""*/
 
 	MARGINS borderless = { 0, 0, 0, 0 };
 	DwmExtendFrameIntoClientArea(m_hWnd, &borderless);
+#else
+	bool ret = wxTopLevelWindow::Create(parent, id, title, pos, sizeReal, style, name);
+	if (!ret)
+		return;
+#endif
 	wxWindow::SetFont(*Options.GetFont());
 
 	SetForegroundColour(Options.GetColour(WINDOW_TEXT));
@@ -102,6 +110,10 @@ void KaiFrame::OnPaint(wxPaintEvent &evt)
 	int w, h;
 	GetSize(&w, &h);
 	if (w < 1 || h < 1){ return; }
+	const int titleHeight = wxMin(frameTopBorder, h);
+	const int sideHeight = h - titleHeight - frameBorder;
+	const int rightX = w - frameBorder;
+	const int bottomY = h - frameBorder;
 	
 	wxMemoryDC mdc;
 	wxBitmap KaiFrameBitmap(w, h);
@@ -194,10 +206,10 @@ void KaiFrame::OnPaint(wxPaintEvent &evt)
 	//}
 
 	wxPaintDC dc(this);
-	dc.Blit(0, 0, w, frameTopBorder, &mdc, 0, 0);
-	dc.Blit(0, frameTopBorder, frameBorder, h - frameTopBorder - frameBorder, &mdc, 0, frameTopBorder);
-	dc.Blit(w - frameBorder, frameTopBorder, frameBorder, h - frameTopBorder - frameBorder, &mdc, w - frameBorder, frameTopBorder);
-	dc.Blit(0, h - frameBorder, w, frameBorder, &mdc, 0, h - frameBorder);
+	if (titleHeight > 0){ dc.Blit(0, 0, w, titleHeight, &mdc, 0, 0); }
+	if (frameBorder > 0 && sideHeight > 0){ dc.Blit(0, titleHeight, frameBorder, sideHeight, &mdc, 0, titleHeight); }
+	if (frameBorder > 0 && rightX >= 0 && sideHeight > 0){ dc.Blit(rightX, titleHeight, frameBorder, sideHeight, &mdc, rightX, titleHeight); }
+	if (frameBorder > 0 && bottomY >= 0){ dc.Blit(0, bottomY, w, frameBorder, &mdc, 0, bottomY); }
 }
 
 
@@ -262,7 +274,11 @@ void KaiFrame::OnMouseEvent(wxMouseEvent &evt)
 			if (evt.LeftUp()){
 				pushedMinimize = enterMinimize = false;
 				Refresh(false, &rc);
+#ifdef __WXMSW__
 				ShowWindow(GetHWND(), SW_SHOWMINNOACTIVE);
+#else
+				Iconize(true);
+#endif
 			}
 			return;
 	}
@@ -274,6 +290,7 @@ void KaiFrame::OnMouseEvent(wxMouseEvent &evt)
 }
 
 
+#ifdef __WXMSW__
 WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 {
 	if (uMsg == WM_COPYDATA){
@@ -588,13 +605,13 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 		}
 		
 		KainoteFrame::Get()->Thaw();
-		Options.SetCoords(VIDEO_WINDOW_SIZE, vsizex, vsizey);
+	Options.SetCoords(VIDEO_WINDOW_SIZE, vsizex, vsizey);
 		//LastMonitorRect = rt;
 	}
 	
 	return wxTopLevelWindow::MSWWindowProc(uMsg, wParam, lParam);
 }
-
+#endif
 
 
 

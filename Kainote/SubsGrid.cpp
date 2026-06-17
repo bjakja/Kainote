@@ -21,7 +21,7 @@
 #include "KaiMessageBox.h"
 #include "SubsGridFiltering.h"
 #include "SubsGridDialogs.h"
-#include "shiftTimes.h"
+#include "ShiftTimes.h"
 #include "VideoBox.h"
 #include "Notebook.h"
 #include "stylestore.h"
@@ -43,7 +43,7 @@ SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, cons
 	//Editbox here exists
 
 	ignoreFiltered = Options.GetBool(GRID_IGNORE_FILTERING);
-	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=, this](wxCommandEvent &evt){
 		MenuItem *item = (MenuItem*)evt.GetClientData();
 		int id = item->id;
 		//it here changes only one hook that's why there is no bit opetations
@@ -904,7 +904,7 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 void SubsGrid::OnPasteTextTl()
 {
 	wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz plik napisów"), 
-		tab->SubsPath.BeforeLast(L'\\'), emptyString, 
+		KaiPathDir(tab->SubsPath), emptyString,
 		_("Pliki napisów (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"), 
 		wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 	if (FileDialog1->ShowModal() == wxID_OK){
@@ -1127,7 +1127,7 @@ void SubsGrid::OnMkvSubs(wxCommandEvent &event)
 		}
 
 		tab->SubsPath = mkvpath.BeforeLast(L'.') + L"." + ext;
-		tab->SubsName = tab->SubsPath.AfterLast(L'\\');
+		tab->SubsName = KaiPathName(tab->SubsPath);
 		//Kai->SetRecent();
 		Kai->UpdateToolbar();
 		edit->RefreshStyle(true);

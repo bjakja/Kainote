@@ -16,6 +16,8 @@
 #pragma once
 
 #include <wx/wx.h>
+#include <d3d9.h>
+#include <d3dx9.h>
 #if __WXMSW__
 //#include <d3d9.h>
 //#include <d3dx9.h>
@@ -34,10 +36,10 @@ public:
 	Context(RendererVideo *renderer) {};
 	~Context() {};
 	void GetContextList(wxArrayString &list);
-	virtual bool Init() {};
+	virtual bool Init() { return false; };
 	virtual void Clear(bool device = false) {};
 	virtual void Render(bool recreateFrame) {};
-	virtual bool DrawTexture(unsigned char *nframe = nullptr, bool copy = false) {};
+	virtual bool DrawTexture(unsigned char *nframe = nullptr, bool copy = false) { return false; };
 	virtual void DrawProgressBar() {};
 	virtual void DrawZoom() {};
 	virtual void DrawRect(D3DXVECTOR2 position, bool sel = false, float size = 5.0f) {};
@@ -47,7 +49,7 @@ public:
 	virtual void DrawArrow(D3DXVECTOR2 positionStart, D3DXVECTOR2 *positionEnd, int diff = 0) {};
 	virtual void DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen = 4, unsigned int color = 0xFFBB0000) {};
 	virtual void DrawLines(D3DXVECTOR2 *vector, size_t vectorSize, unsigned int color) {};
-	virtual int CreateFont(const wxString &fontName, int height, bool bold, bool italic) {};
+	virtual int CreateFont(const wxString &fontName, int height, bool bold, bool italic) { return 0; };
 	virtual void DrawOutlinedText(int fontIndex, const wxString &text, RECT textRect, unsigned int textAlign, unsigned int color) {};
 	virtual void DrawNormalText(int fontIndex, const wxString &text, RECT textRect, unsigned int textAlign, unsigned int color) {};
 	virtual void DrawPrimitiveUP(D3DPRIMITIVETYPE PrimitiveType, unsigned int PrimitiveCount, const void* pVertexStreamZeroData, unsigned int VertexStreamZeroStride) {};

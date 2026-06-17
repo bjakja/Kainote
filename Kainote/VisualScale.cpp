@@ -522,7 +522,7 @@ wxPoint Scale::ChangeVisual(wxString* txt)
 		//change all tags fscx that are in line and add first one
 		//when there is no tags
 		if (changeAllTags) {
-			auto replfunc = [=](const FindData& data, wxString* result) {
+			auto replfunc = [=, this](const FindData& data, wxString* result) {
 				float scalex = scale.x;
 				if (!data.finding.empty()) {
 					scalex = (wxAtof(data.finding) / 100.f) * (scale.x / lastScale.x);
@@ -542,7 +542,7 @@ wxPoint Scale::ChangeVisual(wxString* txt)
 		//change all tags fscx that are in line and add first one
 		//when there is no tags
 		if (changeAllTags) {
-			auto replfunc = [=](const FindData& data, wxString* result) {
+			auto replfunc = [=, this](const FindData& data, wxString* result) {
 				float scaley = scale.y;
 				if (!data.finding.empty()) {
 					scaley = (wxAtof(data.finding) / 100.f) * (scale.y / lastScale.y);

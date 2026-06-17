@@ -192,14 +192,16 @@ void AllTagsSlider::OnMouseEvent(wxMouseEvent& evt)
 void AllTagsSlider::OnDraw()
 {
 	float range = parent->actualTag.rangeMax - parent->actualTag.rangeMin;
-	if (range <= 0) {
-		KaiLog(L"Bad range");
+	float sliderRange = right - left;
+	if (range <= 0 || sliderRange <= 0 || parent->actualTag.step <= 0 || !parent->device || !parent->line || !parent->font) {
 		return;
 	}
 
-	float sliderRange = right - left;
 	float coeff = sliderRange / range;
 	float step = parent->actualTag.step * coeff;
+	if (step <= 0) {
+		return;
+	}
 	float thumbposdiff = -parent->actualTag.rangeMin;
 	float thumbtop = top - 7;
 	float thumbbottom = bottom + 7;

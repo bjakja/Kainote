@@ -91,6 +91,7 @@ private:
 	char form;
 	KainoteFrame* Kai;
 	bool isscrollbar;
+	bool resizing;
 	int scPos;
 	MappedButton *coll;
 	TabPanel *tab = nullptr;

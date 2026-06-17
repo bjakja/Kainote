@@ -88,7 +88,7 @@ SpellCheckerDialog::SpellCheckerDialog(KainoteFrame *parent)
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SpellCheckerDialog::IgnoreAll, this, ID_IGNORE_ALL);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SpellCheckerDialog::AddWord, this, ID_ADD_WORD);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SpellCheckerDialog::RemoveWord, this, ID_REMOVE_WORD);
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 		Destroy();
 	}, ID_CLOSE_DIALOG);
 	Bind(wxEVT_ACTIVATE, &SpellCheckerDialog::OnActive, this);
@@ -311,7 +311,7 @@ bool SpellCheckerDialog::IsAllUpperCase(const wxString &word)
 
 void SpellCheckerDialog::LoadAddedMisspels(wxArrayString &addedMisspels)
 {
-	wxString userpath = Options.pathfull + L"\\Dictionary\\UserDic.udic";
+	wxString userpath = Options.pathfull + L"/Dictionary/UserDic.udic";
 	if (wxFileExists(userpath)){
 		OpenWrite op;
 		wxString txt;

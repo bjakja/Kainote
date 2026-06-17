@@ -17,6 +17,7 @@
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
 #include <wx/sizer.h>
+#include <wx/settings.h>
 //#include "GraphicsD2D.h"
 
 KaiStaticText::KaiStaticText(wxWindow *parent, int id, const wxString& _text, const wxPoint &pos, const wxSize &size, int style)
@@ -27,6 +28,7 @@ KaiStaticText::KaiStaticText(wxWindow *parent, int id, const wxString& _text, co
 	, textScroll(nullptr)
 	, scPos(0)
 {
+	SetFont(parent->GetFont());
 	int fullw = size.x;
 	int windowHeight = size.y;
 	wxSize newSize = originalSize = size;
@@ -36,8 +38,13 @@ KaiStaticText::KaiStaticText(wxWindow *parent, int id, const wxString& _text, co
 		newSize.x = fullw;
 	}
 	if (size.y < 1){
+#ifdef _WIN32
 		newSize.y = windowHeight + 2;
 		if (windowHeight < 17){ newSize.y = 17; }
+#else
+		newSize.y = windowHeight;
+		if (windowHeight < 15){ newSize.y = 15; }
+#endif
 	}
 	SetMinSize(newSize);
 	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent &evt){});
@@ -173,13 +180,14 @@ void KaiStaticText::OnPaint(wxPaintEvent &evt)
 	int w = 0;
 	int h = 0;
 	GetClientSize(&w, &h);
-	if (w == 0 || h == 0){ return; }
+	if (w < 1 || h < 1){ return; }
 	if (textHeight > 400){
 		if (!textScroll){
 			textScroll = new KaiScrollbar(this, 9999, wxDefaultPosition, wxDefaultSize, wxVERTICAL);
 			textScroll->SetScrollRate(10);
 			int sw = 0, sh = 0;
 			textScroll->GetSize(&sw, &sh);
+			if (w - sw < 1){ return; }
 			textScroll->SetSize(w - sw, 0, sw, h);
 			w -= sw;
 		}
@@ -201,12 +209,26 @@ void KaiStaticText::OnPaint(wxPaintEvent &evt)
 	GraphicsContext *gc = renderer->CreateContext(tdc);
 	if (!gc){*/
 	tdc.SetFont(GetFont());
-	tdc.SetBrush(Options.GetColour(WINDOW_BACKGROUND));
+	wxColour backgroundColour = Options.GetColour(WINDOW_BACKGROUND);
+	if (!backgroundColour.IsOk()) {
+		backgroundColour = GetParent() ? GetParent()->GetBackgroundColour() : wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+	}
+	if (!backgroundColour.IsOk()) {
+		backgroundColour = wxColour(47, 49, 54);
+	}
+	wxColour foregroundColour = Options.GetColour(textColour);
+	if (!foregroundColour.IsOk() || foregroundColour == backgroundColour) {
+		int luminance = (backgroundColour.Red() * 299 + backgroundColour.Green() * 587 + backgroundColour.Blue() * 114) / 1000;
+		foregroundColour = (luminance < 128) ? wxColour(236, 239, 244) : wxColour(0, 0, 0);
+	}
+	tdc.SetBrush(backgroundColour);
 	tdc.SetPen(*wxTRANSPARENT_PEN);
 	tdc.DrawRectangle(0, 0, w, h);
-	tdc.SetTextForeground(Options.GetColour(textColour));
+	tdc.SetTextForeground(foregroundColour);
 	int center = (textHeight < h) ? (h - textHeight) / 2 : 0;
+	tdc.SetClippingRegion(0, 0, w, h);
 	tdc.DrawText(text, 0, -scPos + center);
+	tdc.DestroyClippingRegion();
 	//}
 	//	else{
 	//		gc->SetFont(GetFont(), Options.GetColour(textColour));

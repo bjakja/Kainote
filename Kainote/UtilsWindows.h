@@ -15,12 +15,12 @@
 
 #pragma once
 #include <vector>
-#include <wx\window.h>
-#include "Styles.h"
+#include <wx/window.h>
+#include "styles.h"
 //#undef GetClientRect
 #include <windows.h>
 #include <d3dx9math.h>
-#include <wx\msw\winundef.h>
+#include <wx/msw/winundef.h>
 
 
 struct tagRECT;

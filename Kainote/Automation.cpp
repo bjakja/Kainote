@@ -36,7 +36,7 @@
 #include "Automation.h"
 #include "Hotkeys.h"
 
-#include "KainoteApp.h"
+#include "kainoteApp.h"
 #include "AutomationToFile.h"
 #include "AutomationProgress.h"
 
@@ -59,6 +59,9 @@
 #include <wx/stdpaths.h>
 
 #include "UtilsWindows.h"
+#if defined(LUA_VERSION_NUM) && LUA_VERSION_NUM < 502 && !defined(luaL_setfuncs)
+#define luaL_setfuncs(L, funcs, nup) luaL_register((L), nullptr, (funcs))
+#endif
 //#include <thread>
 //#include <tuple>
 
@@ -204,17 +207,20 @@ namespace Auto{
 	{
 		wxString path = check_string(L, 1);
 		TabPanel *tab = Notebook::GetTab();
+		path = KaiNormalizePath(path);
+#ifdef _WIN32
 		path.Replace(L'/', L'\\');
-		wxString firstAutomation = Options.pathfull + "\\Automation";
+#endif
+		wxString firstAutomation = KaiPathJoin(Options.pathfull, L"Automation");
 		if (path[0] == L'?'){
-			if (path[1] == L'a' && path[4] == L'i') path.replace(0, 6, (tab) ? tab->AudioPath.BeforeLast(L'\\') : wxString(L""));
+			if (path[1] == L'a' && path[4] == L'i') path.replace(0, 6, (tab) ? KaiPathDir(tab->AudioPath) : wxString(L""));
 			else if (path[1] == L'd' && path[4] == L'a') path.replace(0, 5, firstAutomation);
-			else if (path[1] == L'd' && path[4] == L't') path.replace(0, 11, Options.pathfull + wxString(L"\\Dictionary"));
+			else if (path[1] == L'd' && path[4] == L't') path.replace(0, 11, KaiPathJoin(Options.pathfull, L"Dictionary"));
 			else if (path[1] == L'l' && path[4] == L'a') path.replace(0, 6, firstAutomation);
-			else if (path[1] == L's' && path[4] == L'i') path.replace(0, 7, (tab) ? tab->SubsPath.BeforeLast(L'\\') : wxString(L""));
-			else if (path[1] == L't' && path[4] == L'p') path.replace(0, 5, firstAutomation + wxString(L"\\temp"));
+			else if (path[1] == L's' && path[4] == L'i') path.replace(0, 7, (tab) ? KaiPathDir(tab->SubsPath) : wxString(L""));
+			else if (path[1] == L't' && path[4] == L'p') path.replace(0, 5, KaiPathJoin(firstAutomation, L"temp"));
 			else if (path[1] == L'u' && path[4] == L'r') path.replace(0, 5, firstAutomation);
-			else if (path[1] == L'v' && path[4] == L'e') path.replace(0, 6, (tab) ? tab->VideoPath.BeforeLast(L'\\') : wxString(L""));
+			else if (path[1] == L'v' && path[4] == L'e') path.replace(0, 6, (tab) ? KaiPathDir(tab->VideoPath) : wxString(L""));
 		}
 		push_value(L, path);
 		return 1;
@@ -368,7 +374,7 @@ namespace Auto{
 			lua_pushvalue(L, -2);
 			lua_settable(L, -3);
 
-			luaL_register(L, NULL, FrameTableDefinition);
+			luaL_setfuncs(L, FrameTableDefinition, 0);
 		}
 
 		if (tab && tab->video->HasFFMS2()) {
@@ -489,8 +495,8 @@ namespace Auto{
 			PUSH_FIELD(scroll_position, "Active Line");
 			PUSH_FIELD(active_row, "Active Line");
 			PUSH_FIELD(ar_mode, "");
-			set_field(L, "video_position", (c->video->HasFFMS2()) ? 
-				c->video->GetFFMS2()->GetFramefromMS(c->video->Tell()) : NULL);
+			set_field(L, "video_position", (c->video->HasFFMS2()) ?
+				c->video->GetFFMS2()->GetFramefromMS(c->video->Tell()) : 0);
 #undef PUSH_FIELD
 			set_field(L, "audio_file", c->AudioPath);
 			set_field(L, "video_file", c->VideoPath);
@@ -511,8 +517,8 @@ namespace Auto{
 	LuaScript::LuaScript(wxString const& filename)
 		: filename(filename)
 	{
-		include_path.push_back(filename.BeforeLast(L'\\') + L"\\");
-		include_path.push_back(Options.pathfull + L"\\Automation\\automation\\Include\\");
+		include_path.push_back(KaiPathDir(filename, wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR));
+		include_path.push_back(KaiPathJoin(KaiPathJoin(KaiPathJoin(Options.pathfull, L"Automation"), L"automation"), L"Include") + wxFileName::GetPathSeparator());
 		Create();
 	}
 
@@ -524,8 +530,8 @@ namespace Auto{
 		, LowTime(_lowTime)
 		, HighTime(_highTime)
 	{
-		include_path.push_back(_filename.BeforeLast(L'\\') + L"\\");
-		include_path.push_back(Options.pathfull + L"\\Automation\\automation\\Include\\");
+		include_path.push_back(KaiPathDir(_filename, wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR));
+		include_path.push_back(KaiPathJoin(KaiPathJoin(KaiPathJoin(Options.pathfull, L"Automation"), L"automation"), L"Include") + wxFileName::GetPathSeparator());
 		size_t i = 0;
 		size_t macrosSize = _macros.size();
 		if (macrosSize) {
@@ -587,7 +593,6 @@ namespace Auto{
 		stackcheck.check_stack(0);
 
 		// make "aegisub" table
-		lua_pushstring(L, "aegisub");
 		lua_createtable(L, 0, 13);
 
 		set_field<LuaCommand::LuaRegister>(L, "register_macro");
@@ -616,7 +621,7 @@ namespace Auto{
 		lua_setfield(L, -2, "gui");
 
 		// store aegisub table to globals
-		lua_settable(L, LUA_GLOBALSINDEX);
+		lua_setglobal(L, "aegisub");
 		stackcheck.check_stack(0);
 
 		// load user script
@@ -727,9 +732,9 @@ namespace Auto{
 			fullpath = true;
 		}
 		if (!wxFileExists(*filepath)) { // Plain filename
-			if (fullpath){ *filepath = filepath->AfterLast(L'\\'); }
+			if (fullpath){ *filepath = KaiPathName(*filepath); }
 			for (auto const& dir : s->include_path) {
-				*filepath = dir + *filename;
+				*filepath = KaiPathJoin(dir, *filename);
 				if (wxFileExists(*filepath))
 					break;
 			}
@@ -1107,14 +1112,14 @@ namespace Auto{
 	VOID CALLBACK callbackfunc(PVOID   lpParameter, BOOLEAN TimerOrWaitFired) {
 		Automation *auto_ = (Automation*)lpParameter;
 		auto_->ReloadScripts(true);
-		DeleteTimerQueueTimer(auto_->handle, 0, 0);
-		SetEvent(auto_->eventEndAutoload);
+		if (auto_->eventEndAutoload)
+			SetEvent(auto_->eventEndAutoload);
 	}
 
 	Automation::Automation(bool loadSubsScripts, bool loadNow)
 	{
 		initialized = false;
-		AutoloadPath = Options.pathfull + L"\\Automation\\automation\\Autoload";
+		AutoloadPath = Options.pathfull + L"/Automation/automation/Autoload";
 		if (loadSubsScripts){ return; }
 		if (LoadDummy()) {
 			finished = true;
@@ -1139,6 +1144,12 @@ namespace Auto{
 		breakLoading = true;
 		if (eventEndAutoload){
 			WaitForSingleObject(eventEndAutoload, 50000);
+			CloseHandle(eventEndAutoload);
+			eventEndAutoload = nullptr;
+		}
+		if (handle) {
+			DeleteTimerQueueTimer(nullptr, handle, nullptr);
+			handle = nullptr;
 		}
 		if(finished)
 			SaveDummy();

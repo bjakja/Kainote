@@ -51,6 +51,7 @@ public:
 private:
 	void OnMouseEvent(wxMouseEvent& evt);
 	void OnKeyPress(wxKeyEvent& evt);
+	void OnClose(wxCloseEvent& evt);
 	void SetAccels();
 	void OnUseWindowHotkey(wxCommandEvent& event);
 	void OnPaint(wxPaintEvent& evt);

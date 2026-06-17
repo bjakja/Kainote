@@ -49,7 +49,7 @@ void VideoSlider::OnPaint(wxPaintEvent& event)
 	int w = 0;
 	int h = 0;
 	GetClientSize(&w, &h);
-	if (w == 0 || h == 0){ return; }
+	if (w < 1 || h < 1){ return; }
 	wxMemoryDC tdc;
 	wxBitmap videoSliderBitmap(w, h);
 	tdc.SelectObject(videoSliderBitmap);
@@ -314,7 +314,7 @@ void VolSlider::OnPaint(wxPaintEvent& event)
 	int w = 0;
 	int h = 0;
 	GetClientSize(&w, &h);
-	if (w == 0 || h == 0){ return; }
+	if (w < 1 || h < 1){ return; }
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < w || bmp->GetHeight() < h)) {
 		delete bmp;

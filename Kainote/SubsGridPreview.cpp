@@ -19,7 +19,7 @@
 #include "SubsGrid.h"
 #include "SubsGridFiltering.h"
 #include "KainoteFrame.h"
-#include "Config.h"
+#include "config.h"
 #include "TabPanel.h"
 #include "EditBox.h"
 #include "Notebook.h"
@@ -118,6 +118,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	int w = 0;
 	int h = 0;
 	GetClientSize(&w, &h);
+	if (w < 1 || h < 1){ return; }
 	bool bg = false;
 	int size = previewGrid->GetIdCount();
 	int panelrows = (h / (previewGrid->GridHeight + 1));
@@ -138,10 +139,12 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 		//reduced to avoid crash or maybe now not needed cause is key + i < getcount()
 	}
 	int thickness = scrollbar->GetThickness();
+	if (w - (thickness + 4) < 0 || h - previewGrid->GridHeight - 4 < 0){ return; }
 	scrollbar->SetSize(w - (thickness + 4), previewGrid->GridHeight, thickness, h - previewGrid->GridHeight - 4);
 	scrollbar->SetScrollbar(previewGrid->scrollPositionId, panelrows, size + 3, panelrows - 3);
 
 	// Prepare bitmap
+	if (w + scHor < 1 || h < 1){ return; }
 	if (bmp) {
 		if (bmp->GetWidth() < w + scHor || bmp->GetHeight() < h) {
 			delete bmp;
@@ -732,7 +735,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 		if (!shift && !alt) {
 
 
-			//jakbym chcia³ znów daæ zmianê edytowanej linii z ctrl to muszê dorobiæ mu refresh
+			//jakbym chciaÂ³ znÃ³w daÃ¦ zmianÃª edytowanej linii z ctrl to muszÃª dorobiÃ¦ mu refresh
 			if (click && (changeActive || !ctrl) || (dclick && ctrl)) {
 				previewGrid->lastActiveLine = previewGrid->currentLine;
 				tabp->edit->SetLine(row, true, true, true, !ctrl);
@@ -754,9 +757,9 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 				}
 			}
 
-			//1-klikniêcie lewym
-			//2-klikniêcie lewym i edycja na pauzie
-			//3-klikniêcie lewym i edycja na pauzie i odtwarzaniu
+			//1-klikniÃªcie lewym
+			//2-klikniÃªcie lewym i edycja na pauzie
+			//3-klikniÃªcie lewym i edycja na pauzie i odtwarzaniu
 
 			//if (dclick || (click && previewGrid->lastActiveLine != row && mvtal < 4 && mvtal > 0) && pas < 2){
 			//tabp->grid->SetVideoLineTime(event, mvtal);
@@ -914,7 +917,7 @@ void SubsGridPreview::SeekForOccurences()
 			if (abs(startTime - bestStart) > abs(endTime - bestEnd)){
 				bestJ = bestJE;
 			}
-			//bestJ jest naszym wynikiem w tym przypadku, nie potrzebujemy samego czasu który jest najlepszy
+			//bestJ jest naszym wynikiem w tym przypadku, nie potrzebujemy samego czasu ktÃ³ry jest najlepszy
 			previewData.push_back(MultiPreviewData(tab, tab->grid, bestJ, 0));
 		}
 		tabI++;

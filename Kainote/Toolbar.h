@@ -66,6 +66,7 @@ class KaiToolbar :public wxWindow
 public:
 	KaiToolbar(wxWindow *Parent, MenuBar *mainm, int id);
 	virtual ~KaiToolbar();
+	bool HasToolTips() const { return GetToolTip() != nullptr; }
 
 	void AddItem(int id, const wxString &label, wxBitmap *normal, bool enable, byte type = 0, bool toggled = false);
 	void InsertItem(int id, int index, const wxString &label, wxBitmap *normal, bool enable, byte type = 0, bool toggled = false);

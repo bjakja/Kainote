@@ -75,7 +75,7 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	RulesList->InsertColumn(1, _("Opis"), TYPE_TEXT, 290);
 	RulesList->InsertColumn(2, _("Reguła znajdź"), TYPE_TEXT, 100);
 	RulesList->InsertColumn(3, _("Reguła zamień"), TYPE_TEXT, 100);
-	Bind(LIST_ITEM_LEFT_CLICK, [=](wxCommandEvent &evt){
+	Bind(LIST_ITEM_LEFT_CLICK, [=, this](wxCommandEvent &evt){
 		int sel = RulesList->GetSelection();
 		if (sel < 0 || sel >= rules.size())
 			return;
@@ -125,15 +125,15 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	ReplaceRule->Enable(false);
 	MappedButton *ReplaceRules = new MappedButton(this, ID_REPLACE_ALL_RULES, _("Zamień wszystkie błędy\nw bieżącej zakładce"));
 	MappedButton *ReplaceRulesOnAllTabs = new MappedButton(this, ID_REPLACE_ALL_RULES_ON_ALL_TABS, _("Zamień wszystkie błędy\nwe wszystkich zakładkach"));
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){AddRule(); }, ID_ADD_RULE);
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EditRule(); }, ID_EDIT_RULE);
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){RemoveRule(); }, ID_REMOVE_RULE);
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){SeekOnce(); }, ID_FIND_RULE);
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){SeekOnActualTab(); }, ID_FIND_ALL_RULES);
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){SeekOnAllTabs(); }, ID_FIND_ALL_RULES_ON_ALL_TABS);
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){ReplaceOnce(); }, ID_REPLACE_RULE);
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){ReplaceOnActualTab(); }, ID_REPLACE_ALL_RULES);
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){ReplaceOnAllTabs(); }, ID_REPLACE_ALL_RULES_ON_ALL_TABS);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){AddRule(); }, ID_ADD_RULE);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){EditRule(); }, ID_EDIT_RULE);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){RemoveRule(); }, ID_REMOVE_RULE);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){SeekOnce(); }, ID_FIND_RULE);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){SeekOnActualTab(); }, ID_FIND_ALL_RULES);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){SeekOnAllTabs(); }, ID_FIND_ALL_RULES_ON_ALL_TABS);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){ReplaceOnce(); }, ID_REPLACE_RULE);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){ReplaceOnActualTab(); }, ID_REPLACE_ALL_RULES);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){ReplaceOnAllTabs(); }, ID_REPLACE_ALL_RULES_ON_ALL_TABS);
 	int withoutBottom = wxLEFT | wxTOP | wxRIGHT;
 	ButtonsSizer->Add(WhichLinesSizer, 0, wxTOP | wxEXPAND, 2);
 	ButtonsSizer->Add(AddRuleToList, 0, withoutBottom | wxEXPAND, 4);
@@ -263,7 +263,7 @@ void MisspellReplacer::FillRulesList()
 {
 	wxString rulesText;
 	OpenWrite ow;
-	ow.FileOpen(Options.configPath + L"\\Rules.txt", &rulesText);
+	ow.FileOpen(Options.configPath + L"/Rules.txt", &rulesText);
 	if (rulesText.empty()){
 		FillWithDefaultRules(rulesText);
 	}
@@ -664,7 +664,7 @@ void MisspellReplacer::SaveRules()
 		rulesText << rule.description << L"\f" << rule.findRule << L"\f" << rule.replaceRule << L"\f" << rule.options << L"\r\n";
 	}
 	OpenWrite ow;
-	ow.FileWrite(Options.configPath + L"\\Rules.txt", rulesText);
+	ow.FileWrite(Options.configPath + L"/Rules.txt", rulesText);
 }
 
 void MisspellReplacer::MoveCase(const wxString &originalCase, wxString *result, int options)

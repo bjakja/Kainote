@@ -27,7 +27,7 @@ StylePreview::StylePreview(wxWindow *parent, int id, const wxPoint& pos, const w
 {
 	previewStyle = nullptr;
 	m_SubtitlesProvider = SubtitlesProviderManager::Get();
-	Bind(wxEVT_SIZE, [=](wxSizeEvent &evt){ DrawPreview(0); });
+	Bind(wxEVT_SIZE, [=, this](wxSizeEvent &evt){ DrawPreview(0); });
 	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent &evt){});
 }
 StylePreview::~StylePreview()

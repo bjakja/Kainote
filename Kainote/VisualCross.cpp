@@ -26,11 +26,17 @@
 #include "EditBox.h"
 #include "Provider.h"
 #include "VideoFullscreen.h"
+#include <wx/dc.h>
 
 
 Cross::Cross()
 {
 
+}
+
+Cross::~Cross()
+{
+	SAFE_RELEASE(calcfont);
 }
 
 void Cross::OnMouseEvent(wxMouseEvent &event)
@@ -156,6 +162,32 @@ void Cross::Draw(int time)
 	}
 }
 
+void Cross::DrawWx(wxDC& dc, int time)
+{
+	if (!cross || !isOnVideo)
+		return;
+
+	const wxPoint verticalTop((int)vectors[0].x, (int)vectors[0].y);
+	const wxPoint verticalBottom((int)vectors[1].x, (int)vectors[1].y);
+	const wxPoint horizontalLeft((int)vectors[2].x, (int)vectors[2].y);
+	const wxPoint horizontalRight((int)vectors[3].x, (int)vectors[3].y);
+
+	dc.SetPen(wxPen(*wxBLACK, 3));
+	dc.DrawLine(verticalTop, verticalBottom);
+	dc.DrawLine(horizontalLeft, horizontalRight);
+	dc.SetPen(wxPen(*wxWHITE, 1));
+	dc.DrawLine(verticalTop, verticalBottom);
+	dc.DrawLine(horizontalLeft, horizontalRight);
+
+	wxFont* font4 = Options.GetFont(4);
+	if (font4)
+		dc.SetFont(*font4);
+	dc.SetTextForeground(*wxBLACK);
+	dc.DrawText(coords, crossRect.left + 1, crossRect.top + 1);
+	dc.SetTextForeground(*wxWHITE);
+	dc.DrawText(coords, crossRect.left, crossRect.top);
+}
+
 void Cross::DrawLines(wxPoint point)
 {
 	RendererVideo *renderer = tab->video->GetRenderer();
@@ -205,6 +237,11 @@ void Cross::DrawLines(wxPoint point)
 	//play and pause
 	if (tab->video->GetState() <= Paused && !renderer->m_BlockResize){
 		tab->video->Render(renderer->m_VideoResized);
+#ifndef _WIN32
+		wxWindow* renderWindow = (tab->video->IsFullScreen() && tab->video->GetFullScreenWindow()) ?
+			static_cast<wxWindow*>(tab->video->GetFullScreenWindow()) : static_cast<wxWindow*>(tab->video);
+		renderWindow->Refresh(false);
+#endif
 	}
 }
 
@@ -255,6 +292,7 @@ void Cross::SizeChanged(wxRect wsize, LPD3DXLINE _line, LPD3DXFONT _font, LPDIRE
 	Visuals::SizeChanged(wsize, _line, _font, _device);
 	wxFont* font12 = Options.GetFont(4);
 	wxSize pixelSize = font12->GetPixelSize();
+	SAFE_RELEASE(calcfont);
 	if (pixelSize.x == 0 || pixelSize.y == 0) { return; }
 	HRN(D3DXCreateFontW(device, pixelSize.y, 0, FW_BOLD, 0, FALSE, 
 		DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY,

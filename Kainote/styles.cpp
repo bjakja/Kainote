@@ -88,8 +88,9 @@ void AssColor::SetWX(const wxColour &color, int alpha)
 wxString AssColor::GetAss(bool alpha, bool style) const {
 
 	wxString k1 = _T("&H");
-	if (alpha) k1 << wxString::Format(_T("%02X"), a);
-	k1 << wxString::Format(_T("%02X%02X%02X"), b, g, r);
+	if (alpha) k1 << wxString::Format(_T("%02X"), static_cast<unsigned int>(a));
+	k1 << wxString::Format(_T("%02X%02X%02X"), static_cast<unsigned int>(b),
+		static_cast<unsigned int>(g), static_cast<unsigned int>(r));
 	if (!style) k1 << _T("&");
 	return k1;
 }

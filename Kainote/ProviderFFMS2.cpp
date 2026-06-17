@@ -24,8 +24,36 @@
 #include "SubsGrid.h"
 #include <wx/dir.h>
 #include <wx/filename.h>
+#include <algorithm>
+#include <cstddef>
+#include <cstdlib>
+#include <limits>
 #include "UtilsWindows.h"
 #include "Provider.h"
+
+namespace
+{
+	void CopyBgraFrameToBuffer(const FFMS_Frame* frame, unsigned char* dst, int width, int height)
+	{
+		if (!frame || !dst || width <= 0 || height <= 0 || !frame->Data[0])
+			return;
+
+		const int dstPitch = width * 4;
+		const int srcPitch = frame->Linesize[0];
+		const unsigned char* src = frame->Data[0];
+		if (srcPitch < 0)
+			src += static_cast<size_t>(height - 1) * static_cast<size_t>(-srcPitch);
+
+		const int srcRowBytes = std::abs(srcPitch);
+		const int copyBytes = std::min(dstPitch, srcRowBytes);
+		for (int y = 0; y < height; ++y) {
+			const unsigned char* row = src + static_cast<ptrdiff_t>(y) * srcPitch;
+			memcpy(dst + static_cast<size_t>(y) * dstPitch, row, copyBytes);
+			if (copyBytes < dstPitch)
+				memset(dst + static_cast<size_t>(y) * dstPitch + copyBytes, 0, dstPitch - copyBytes);
+		}
+	}
+}
 
 ProviderFFMS2::ProviderFFMS2(const wxString& filename, RendererVideo* renderer, 
 	wxWindow* progressSinkWindow, bool* _success)
@@ -81,11 +109,21 @@ void ProviderFFMS2::Processing()
 
 	progress->EndModal();
 
-	m_framePlane = m_height * m_width * 4;
+	if (!m_success || m_width <= 0 || m_height <= 0) {
+		SetEvent(m_eventComplete);
+		return;
+	}
+	const long long framePlane = static_cast<long long>(m_height) * static_cast<long long>(m_width) * 4;
+	if (framePlane > std::numeric_limits<int>::max()) {
+		KaiLog(_("Rozmiar klatki wideo jest zbyt duży"));
+		m_success = false;
+		SetEvent(m_eventComplete);
+		return;
+	}
+	m_framePlane = static_cast<int>(framePlane);
 	int tdiff = 0;
 
 	SetEvent(m_eventComplete);
-	if (m_width < 0) { return; }
 
 	while (1) {
 		DWORD wait_result = WaitForMultipleObjects(sizeof(events_to_wait) / sizeof(HANDLE), events_to_wait, FALSE, INFINITE);
@@ -105,7 +143,7 @@ void ProviderFFMS2::Processing()
 				if (!m_FFMS2frame) {
 					continue;
 				}
-				memcpy(&buff[0], m_FFMS2frame->Data[0], m_framePlane);
+				CopyBgraFrameToBuffer(m_FFMS2frame, buff, m_width, m_height);
 
 				m_renderer->DrawTexture(buff);
 				m_renderer->Render(false);
@@ -171,7 +209,7 @@ int ProviderFFMS2::Init()
 
 	FFMS_Indexer* Indexer = FFMS_CreateIndexer(m_filename.utf8_str(), &m_errInfo);
 	if (!Indexer) {
-		KaiLogDebug(wxString::Format(_("Wystąpił błąd indeksowania: %s"), m_errInfo.Buffer)); return 0;
+		KaiLogDebug(wxString::Format(_("Wystąpił błąd indeksowania: %s"), wxString::FromUTF8(m_errInfo.Buffer))); return 0;
 	}
 
 	int NumTracks = FFMS_GetNumTracksI(Indexer);
@@ -278,7 +316,9 @@ int ProviderFFMS2::Init()
 	}
 done:
 
-	m_indexPath = Options.pathfull + L"\\Indices\\" + m_filename.AfterLast(L'\\').BeforeLast(L'.') +
+	wxString sep = wxFileName::GetPathSeparator();
+	wxString baseName = wxFileName(m_filename).GetName();
+	m_indexPath = Options.pathfull + sep + L"Indices" + sep + baseName +
 		wxString::Format(L"_%i.ffindex", audiotrack);
 
 	if (wxFileExists(m_indexPath)) {
@@ -301,23 +341,24 @@ done:
 		m_index = FFMS_DoIndexing2(Indexer, FFMS_IEH_IGNORE, &m_errInfo);
 		//in this moment indexer was released, there no need to release it
 		if (m_index == nullptr) {
-			if (wxString(m_errInfo.Buffer).StartsWith(L"Cancelled")) {
+			if (wxString::FromUTF8(m_errInfo.Buffer).StartsWith(L"Cancelled")) {
 				//No need spam user that he clicked cancel button
 				//KaiLog(_("Indeksowanie anulowane przez użytkownika"));
 			}
 			else {
-				KaiLog(wxString::Format(_("Wystąpił błąd indeksowania: %s"), m_errInfo.Buffer));
+				KaiLog(wxString::Format(_("Wystąpił błąd indeksowania: %s"), wxString::FromUTF8(m_errInfo.Buffer)));
 			}
 			//FFMS_CancelIndexing(Indexer);
 			return 0;
 		}
-		if (!wxDir::Exists(m_indexPath.BeforeLast(L'\\')))
+		wxFileName indexFile(m_indexPath);
+		if (!indexFile.DirExists())
 		{
-			wxDir::Make(m_indexPath.BeforeLast(L'\\'));
+			indexFile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 		}
 		if (FFMS_WriteIndex(m_indexPath.utf8_str(), m_index, &m_errInfo))
 		{
-			KaiLogDebug(wxString::Format(_("Nie można zapisać indeksu, wystąpił błąd %s"), m_errInfo.Buffer));
+			KaiLogDebug(wxString::Format(_("Nie można zapisać indeksu, wystąpił błąd %s"), wxString::FromUTF8(m_errInfo.Buffer)));
 			//FFMS_DestroyIndex(index);
 			//FFMS_CancelIndexing(Indexer);
 			//return 0;
@@ -448,7 +489,7 @@ audio:
 	if (audiotrack != -1) {
 		m_audioSource = FFMS_CreateAudioSource(m_filename.utf8_str(), audiotrack, m_index, FFMS_DELAY_FIRST_VIDEO_TRACK, &m_errInfo);
 		if (m_audioSource == nullptr) {
-			KaiLog(wxString::Format(_("Wystąpił błąd tworzenia źródła audio: %s"), m_errInfo.Buffer));
+			KaiLog(wxString::Format(_("Wystąpił błąd tworzenia źródła audio: %s"), wxString::FromUTF8(m_errInfo.Buffer)));
 			return 0;
 		}
 
@@ -457,7 +498,10 @@ audio:
 		resopts->SampleFormat = FFMS_FMT_S16;
 
 		if (FFMS_SetOutputFormatA(m_audioSource, resopts, &m_errInfo)) {
-			KaiLog(wxString::Format(_("Wystąpił błąd konwertowania audio: %s"), m_errInfo.Buffer));
+			KaiLog(wxString::Format(_("Wystąpił błąd konwertowania audio: %s"), wxString::FromUTF8(m_errInfo.Buffer)));
+			FFMS_DestroyResampleOptions(resopts);
+			FFMS_DestroyAudioSource(m_audioSource);
+			m_audioSource = nullptr;
 			return 1;
 		}
 		FFMS_DestroyResampleOptions(resopts);
@@ -487,14 +531,20 @@ ProviderFFMS2::~ProviderFFMS2()
 		SetEvent(m_eventKillSelf);
 		WaitForSingleObject(m_thread, 20000);
 		CloseHandle(m_thread);
-		CloseHandle(m_eventStartPlayback);
-		CloseHandle(m_eventKillSelf);
+		m_thread = nullptr;
 	}
 
 	if (m_audioLoadThread) {
 		m_stopLoadingAudio = true;
 		WaitForSingleObject(m_eventAudioComplete, INFINITE);
+	}
+	if (m_audioSource) {
+		FFMS_DestroyAudioSource(m_audioSource);
+		m_audioSource = nullptr;
+	}
+	if (m_eventAudioComplete) {
 		CloseHandle(m_eventAudioComplete);
+		m_eventAudioComplete = nullptr;
 	}
 	m_keyFrames.Clear();
 	m_timecodes.clear();
@@ -514,7 +564,7 @@ ProviderFFMS2::~ProviderFFMS2()
 
 
 
-int FFMS_CC ProviderFFMS2::UpdateProgress(long long Current, long long Total, void* ICPrivate)
+int FFMS_CC ProviderFFMS2::UpdateProgress(int64_t Current, int64_t Total, void* ICPrivate)
 {
 	ProgressSink* progress = (ProgressSink*)ICPrivate;
 	progress->Progress(((double)Current / (double)Total) * 100);
@@ -524,9 +574,10 @@ int FFMS_CC ProviderFFMS2::UpdateProgress(long long Current, long long Total, vo
 void ProviderFFMS2::AudioLoad(ProviderFFMS2* vf, bool newIndex, int audiotrack)
 {
 	if (vf->m_discCache) {
-		vf->m_diskCacheFilename = emptyString;
-		vf->m_diskCacheFilename << Options.pathfull << L"\\AudioCache\\" <<
-			vf->m_filename.AfterLast(L'\\').BeforeLast(L'.') << L"_track" << audiotrack << L".w64";
+		wxString sep = wxFileName::GetPathSeparator();
+		wxString baseName = wxFileName(vf->m_filename).GetName();
+		vf->m_diskCacheFilename << Options.pathfull << sep << L"AudioCache" << sep <<
+			baseName << L"_track" << audiotrack << L".w64";
 		if (!vf->DiskCache(newIndex)) { goto done; }
 	}
 	else {
@@ -545,8 +596,7 @@ void ProviderFFMS2::GetFrame(int frame, unsigned char* buff)
 {
 	wxCriticalSectionLocker lock(m_blockFrame);
 	const FFMS_Frame *ffmsframe = FFMS_GetFrame(m_videoSource, frame, &m_errInfo);
-	byte* cpy = (byte*)ffmsframe->Data[0];
-	memcpy(&buff[0], cpy, m_framePlane);
+	CopyBgraFrameToBuffer(ffmsframe, buff, m_width, m_height);
 	m_refreshFrame = true;
 }
 
@@ -575,7 +625,7 @@ void ProviderFFMS2::GetAudio(void* buf, long long start, long long count)
 	}
 	wxCriticalSectionLocker lock(m_blockAudio);
 	if (FFMS_GetAudio(m_audioSource, buf, start, count, &m_errInfo)) {
-		KaiLogDebug(L"error audio" + wxString(m_errInfo.Buffer));
+		KaiLogDebug(L"error audio" + wxString::FromUTF8(m_errInfo.Buffer));
 	}
 
 }
@@ -705,7 +755,7 @@ bool ProviderFFMS2::DiskCache(bool newIndex)
 	bool good = true;
 	wxFileName discCacheFile;
 	discCacheFile.Assign(m_diskCacheFilename);
-	if (!discCacheFile.DirExists()) { wxMkdir(m_diskCacheFilename.BeforeLast(L'\\')); }
+	if (!discCacheFile.DirExists()) { discCacheFile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL); }
 	bool fileExists = discCacheFile.FileExists();
 	if (!newIndex && fileExists) {
 		m_fp = _wfopen(m_diskCacheFilename.wc_str(), L"rb");
@@ -767,7 +817,7 @@ void ProviderFFMS2::ClearDiskCache()
 
 void ProviderFFMS2::DeleteOldAudioCache()
 {
-	wxString path = Options.pathfull + L"\\AudioCache";
+	wxString path = Options.pathfull + wxFileName::GetPathSeparator() + L"AudioCache";
 	size_t maxAudio = Options.GetInt(AUDIO_CACHE_FILES_LIMIT);
 	if (maxAudio < 1)
 		return;
@@ -814,7 +864,7 @@ void ProviderFFMS2::GetFrameBuffer(unsigned char** buffer)
 	if (!m_FFMS2frame) {
 		return;
 	}
-	memcpy(*buffer, m_FFMS2frame->Data[0], m_framePlane);
+	CopyBgraFrameToBuffer(m_FFMS2frame, *buffer, m_width, m_height);
 }
 
 wxString ProviderFFMS2::ColorMatrixDescription(int cs, int cr) {

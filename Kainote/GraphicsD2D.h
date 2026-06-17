@@ -15,26 +15,29 @@
 #include <wx/gdicmn.h>  // for wxDash
 #include <wx/object.h>
 #include <wx/font.h>
+#include <wx/pen.h>
+#include <wx/dcclient.h>
+#include <wx/dcmemory.h>
 
-enum wxAntialiasMode;
-//{
-//	wxANTIALIAS_NONE, // should be 0
-//	wxANTIALIAS_DEFAULT
-//};
+#ifndef _WIN32
+#include <wx/graphics.h>
+#else
+class wxGraphicsContext;
+
+enum wxAntialiasMode
+{
+	wxANTIALIAS_NONE,
+	wxANTIALIAS_DEFAULT
+};
 //
-enum wxInterpolationQuality;
-//{
-//	// default interpolation
-//	wxINTERPOLATION_DEFAULT,
-//	// no interpolation
-//	wxINTERPOLATION_NONE,
-//	// fast interpolation, suited for interactivity
-//	wxINTERPOLATION_FAST,
-//	// better quality
-//	wxINTERPOLATION_GOOD,
-//	// best quality, not suited for interactivity
-//	wxINTERPOLATION_BEST
-//};
+enum wxInterpolationQuality
+{
+	wxINTERPOLATION_DEFAULT,
+	wxINTERPOLATION_NONE,
+	wxINTERPOLATION_FAST,
+	wxINTERPOLATION_GOOD,
+	wxINTERPOLATION_BEST
+};
 
 enum wxGradientType
 {
@@ -42,6 +45,7 @@ enum wxGradientType
 	wxGRADIENT_LINEAR,
 	wxGRADIENT_RADIAL
 };
+#endif
 
 //enum wxPenStyle
 //{
@@ -70,7 +74,7 @@ enum wxGradientType
 //	wxPENSTYLE_LAST_HATCH = wxHATCHSTYLE_LAST
 //};
 
-enum wxPenJoin;
+// wxPenJoin is declared by wx/pen.h on wxGTK.
 //{
 //	wxJOIN_INVALID = -1,
 //
@@ -79,7 +83,7 @@ enum wxPenJoin;
 //	wxJOIN_ROUND
 //};
 
-enum wxPenCap;
+// wxPenCap is declared by wx/pen.h on wxGTK.
 //{
 //	wxCAP_INVALID = -1,
 //
@@ -320,7 +324,7 @@ public:
 
 	virtual void GetDPI(wxDouble* dpiX, wxDouble* dpiY) const {};
 	// non virtual functions
-	void StrokeLine(wxDouble x1, wxDouble y1, wxDouble x2, wxDouble y2);
+	virtual void StrokeLine(wxDouble x1, wxDouble y1, wxDouble x2, wxDouble y2);
 
 	void DrawTextU(const wxString& str, wxDouble x, wxDouble y);
 private:

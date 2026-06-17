@@ -115,14 +115,14 @@ FontCatalogList::FontCatalogList(wxWindow* parent, const wxString& styleFont)
 	wxString fontFilterText = Options.GetString(STYLE_EDIT_FILTER_TEXT);
 	fontFilter = new KaiTextCtrl(this, -1, fontFilterText);
 	MappedButton* saveFilter = new MappedButton(this, ID_SAVE_FILTER, _("Zapisz Filtr"));
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent& evt) {
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent& evt) {
 		wxString ctlg = catalog->GetValue();
 		if (!ctlg.empty()) {
 			FCManagement.AddCatalog(ctlg);
 			catalog->Append(ctlg);
 		}
 		}, ID_ADD_CATALOG);
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent& evt) {
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent& evt) {
 		wxString ctlg = catalog->GetValue();
 		int ctlgIndex = catalog->FindString(ctlg);
 		wxPoint cpos = ClientToScreen(catalog->GetPosition());
@@ -136,7 +136,7 @@ FontCatalogList::FontCatalogList(wxWindow* parent, const wxString& styleFont)
 		}
 		}, ID_EDIT_CATALOG);
 
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent& evt) {
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent& evt) {
 		wxString ctlg = catalog->GetValue();
 		int ctlgIndex = catalog->FindString(ctlg);
 		if (!ctlg.empty() && ctlgIndex != -1) {
@@ -149,15 +149,15 @@ FontCatalogList::FontCatalogList(wxWindow* parent, const wxString& styleFont)
 		}
 		}, ID_REMOVE_CATALOG);
 
-	Bind(LIST_ITEM_LEFT_CLICK, [=](wxCommandEvent& evt) {
+	Bind(LIST_ITEM_LEFT_CLICK, [=, this](wxCommandEvent& evt) {
 		RefreshPreview();
 		}, ID_FONT_LIST);
 
-	Bind(wxEVT_COMMAND_TEXT_UPDATED, [=](wxCommandEvent& evt) {
+	Bind(wxEVT_COMMAND_TEXT_UPDATED, [=, this](wxCommandEvent& evt) {
 		SetSelectionByPartialName(fontSeek->GetValue());
 		}, fontSeek->GetId());
 
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent& evt) {
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent& evt) {
 		Options.SetString(STYLE_EDIT_FILTER_TEXT, fontFilter->GetValue());
 		}, ID_SAVE_FILTER);
 
@@ -167,7 +167,7 @@ FontCatalogList::FontCatalogList(wxWindow* parent, const wxString& styleFont)
 	status->SetFieldsCount(2, fields);
 	status->SetLabelText(1, _("Lista katalogów ma opcję autozapisu, pliki znajdują się w folderze \"Config\"."));
 
-	buttonsSizer->Add(new KaiStaticText(this, -1, _("Katalogi:")), 1, wxALL | wxEXPAND | wxALIGN_RIGHT, 2);
+	buttonsSizer->Add(new KaiStaticText(this, -1, _("Katalogi:")), 1, wxALL | wxEXPAND, 2);
 	buttonsSizer->Add(catalog, 3, wxALL | wxEXPAND, 2); 
 	buttonsSizer->Add(addCatalog, 1, wxALL, 2);
 	buttonsSizer->Add(editCatalog, 1, wxALL, 2);
@@ -175,7 +175,7 @@ FontCatalogList::FontCatalogList(wxWindow* parent, const wxString& styleFont)
 	buttonsSizer->Add(loadCatalogs, 1, wxALL, 2);
 	//buttonsSizer->Add(replaceChecked, 1, wxALL, 2);
 	wxBoxSizer* textCtrlsSizer = new wxBoxSizer(wxHORIZONTAL);
-	textCtrlsSizer->Add(new KaiStaticText(this, -1, _("Szukaj:")), 1, wxEXPAND | wxALL | wxALIGN_RIGHT, 2);
+	textCtrlsSizer->Add(new KaiStaticText(this, -1, _("Szukaj:")), 1, wxEXPAND | wxALL, 2);
 	textCtrlsSizer->Add(fontSeek, 3, wxEXPAND | wxALL, 2);
 	textCtrlsSizer->Add(fontFilter, 3, wxEXPAND | wxALL, 2);
 	textCtrlsSizer->Add(saveFilter, 1, wxEXPAND | wxALL, 2);
@@ -189,7 +189,7 @@ FontCatalogList::FontCatalogList(wxWindow* parent, const wxString& styleFont)
 	SetSizerAndFit(main);
 	fontStyle = Styles(L"FontPreview,Arial,80,&H00FFFFFF,&HFF0000FF,&H00301946,&H7A301946,-1,0,0,0,100,100,1.13208,0,1,3.5,0,2,120,120,40,1");
 
-	Bind(wxEVT_SHOW, [=](wxShowEvent& evt) {
+	Bind(wxEVT_SHOW, [=, this](wxShowEvent& evt) {
 		//bool show = evt.();
 		//if (!show) {
 			wxCommandEvent event(CATALOG_CHANGED, GetId());
@@ -197,9 +197,9 @@ FontCatalogList::FontCatalogList(wxWindow* parent, const wxString& styleFont)
 		//}
 	});
 	autoSaveTimer.SetOwner(this, ID_EDIT_TIMER);
-	Bind(wxEVT_TIMER, [=](wxTimerEvent& evt) {
+	Bind(wxEVT_TIMER, [=, this](wxTimerEvent& evt) {
 		status->SetLabelText(0, _("Autozapis"));
-		wxString path = Options.pathfull + L"\\Config\\FontCatalogsAutosave" + std::to_string(autoSaveI) + L".txt";
+		wxString path = Options.pathfull + L"/Config/FontCatalogsAutosave" + std::to_string(autoSaveI) + L".txt";
 		FCManagement.SaveCatalogs(path);
 		autoSaveI++;
 		if (autoSaveI > 2)
@@ -208,7 +208,7 @@ FontCatalogList::FontCatalogList(wxWindow* parent, const wxString& styleFont)
 		autoSaveTimerRemove.Start(10000, true);
 		}, ID_EDIT_TIMER);
 	autoSaveTimerRemove.SetOwner(this, ID_EDIT_TIMER_REMOVE);
-	Bind(wxEVT_TIMER, [=](wxTimerEvent& evt) {
+	Bind(wxEVT_TIMER, [=, this](wxTimerEvent& evt) {
 		status->SetLabelText(0, emptyString);
 		}, ID_EDIT_TIMER_REMOVE);
 	RefreshPreview();
@@ -569,7 +569,7 @@ void FontCatalogManagement::LoadCatalogs(const wxString& external)
 	if (isInit && !isExternal)
 		return;
 
-	wxString path = (isExternal)? external : Options.pathfull + L"\\Config\\FontCatalogs.txt";
+	wxString path = (isExternal)? external : Options.pathfull + L"/Config/FontCatalogs.txt";
 	OpenWrite ow;
 	wxString fontCatalogsText;
 	std::map<wxString, fontList>::iterator it;
@@ -613,7 +613,7 @@ void FontCatalogManagement::LoadCatalogs(const wxString& external)
 
 void FontCatalogManagement::SaveCatalogs(const wxString& external)
 {
-	wxString path = external.empty()? Options.pathfull + L"\\Config\\FontCatalogs.txt" : external;
+	wxString path = external.empty()? Options.pathfull + L"/Config/FontCatalogs.txt" : external;
 	OpenWrite ow(path);
 	for (auto it = fontCatalogs.begin(); it != fontCatalogs.end(); it++) {
 		wxString fontCatalogsText;
@@ -848,7 +848,7 @@ public:
 		catalog = new KaiChoice(this, -1, emptyString, wxDefaultPosition, wxDefaultSize, *catalogs);
 		catalog->SetSelection(0);
 		MappedButton* add = new MappedButton(this, 2998, _("Dodaj"));
-		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent& evt) {
+		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent& evt) {
 			wxString ctlg = catalog->GetValue();
 			if (!ctlg.empty()) {
 				FCManagement.AddCatalog(ctlg, nullptr, false);
@@ -856,7 +856,7 @@ public:
 			}
 			}, 2998);
 
-		bsizer->Add(new KaiStaticText(this, -1, _("Katalogi:")), 1, wxALL | wxEXPAND | wxALIGN_RIGHT, 2);
+		bsizer->Add(new KaiStaticText(this, -1, _("Katalogi:")), 1, wxALL | wxEXPAND, 2);
 		bsizer->Add(catalog, 4, wxALL | wxEXPAND, 4);
 		bsizer->Add(add, 1, wxALL, 4);
 

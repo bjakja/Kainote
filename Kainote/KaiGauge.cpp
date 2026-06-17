@@ -16,7 +16,7 @@
 #include "KaiGauge.h"
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
-#include "Config.h"
+#include "config.h"
 
 KaiGauge::KaiGauge(wxWindow *parent, int id, const wxPoint &pos, const wxSize &size, long style)
 	: wxWindow(parent, id, pos, size, style)

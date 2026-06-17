@@ -21,6 +21,7 @@
 #include "VisualDrawingShapes.h"
 #include "VisualClips.h"
 #include "Visuals.h"
+#include <wx/dc.h>
 
 Move::Move()
 	: Visuals()
@@ -88,6 +89,55 @@ void Move::DrawVisual(int time)
 	DrawCircle(to);
 
 
+}
+
+void Move::DrawWx(wxDC& dc, int time)
+{
+	if (hasLineToMove && lineToMoveVisibility[0]) {
+		DrawRectWx(dc, lineToMoveStart);
+		if (lineStartTime == -1)
+			lineStartTime = time;
+
+		if (lineToMoveVisibility[1]) {
+			D3DXVECTOR2 v2[2];
+			v2[0] = lineToMoveStart;
+			v2[1] = lineToMoveEnd;
+			DrawArrowWx(dc, lineToMoveStart, &v2[1], 6);
+			dc.SetPen(wxPen(wxColour(187, 0, 0), 1));
+			dc.DrawLine((int)v2[0].x, (int)v2[0].y, (int)v2[1].x, (int)v2[1].y);
+			DrawCircleWx(dc, lineToMoveEnd);
+		}
+	}
+
+	if (hasHelperLine) {
+		D3DXVECTOR2 v2[2] = { D3DXVECTOR2(helperLinePos.x, 0), D3DXVECTOR2(helperLinePos.x, this->VideoSize.GetHeight()) };
+		D3DXVECTOR2 v21[2] = { D3DXVECTOR2(0, helperLinePos.y), D3DXVECTOR2(this->VideoSize.GetWidth(), helperLinePos.y) };
+		DrawDashedLineWx(dc, v2, 2, 4, wxColour(255, 0, 255));
+		DrawDashedLineWx(dc, v21, 2, 4, wxColour(255, 0, 255));
+		DrawRectWx(dc, D3DXVECTOR2(helperLinePos.x, helperLinePos.y), false, 4.f);
+	}
+
+	D3DXVECTOR2 v4[2];
+	v4[0] = from;
+	v4[1] = to;
+	DrawArrowWx(dc, from, &v4[1], 6);
+
+	float tmpt = time - moveStart;
+	float tmpt1 = moveEnd - moveStart;
+	float actime = tmpt1 == 0 ? 0 : tmpt / tmpt1;
+	D3DXVECTOR2 dist;
+	if (time < moveStart) { dist.x = from.x, dist.y = from.y; }
+	else if (time > moveEnd) { dist.x = to.x, dist.y = to.y; }
+	else {
+		dist.x = from.x - ((from.x - to.x) * actime);
+		dist.y = from.y - ((from.y - to.y) * actime);
+	}
+
+	dc.SetPen(wxPen(wxColour(187, 0, 0), 1));
+	dc.DrawLine((int)v4[0].x, (int)v4[0].y, (int)v4[1].x, (int)v4[1].y);
+	DrawCrossWx(dc, dist, wxColour(187, 0, 0));
+	DrawRectWx(dc, from);
+	DrawCircleWx(dc, to);
 }
 
 void Move::OnMouseEvent(wxMouseEvent &evt)

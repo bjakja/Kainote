@@ -27,7 +27,7 @@
 //#include "TabPanel.h"
 //#include "VideoToolbar.h"
 #include "Hotkeys.h"
-#include "Editbox.h"
+#include "EditBox.h"
 #include "TabPanel.h"
 #include "SubsGrid.h"
 #include "Provider.h"
@@ -35,6 +35,7 @@
 
 
 #include <wx/string.h>
+#include <wx/colour.h>
 
 #include <wx/bitmap.h>
 
@@ -65,6 +66,7 @@ enum{
 };
 
 class DrawingAndClips;
+class wxDC;
 
 class Visuals : public TagFindReplace
 {
@@ -78,6 +80,12 @@ public:
 	void DrawCross(D3DXVECTOR2 position, D3DCOLOR color = 0xFFFF0000, bool useBegin = true);
 	void DrawArrow(D3DXVECTOR2 vector, D3DXVECTOR2 *vector1, int diff = 0);
 	void DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen = 4, unsigned int color = 0xFFBB0000);
+	void DrawRectWx(wxDC& dc, D3DXVECTOR2 vector, bool sel = false, float size = 5.0f);
+	void DrawCircleWx(wxDC& dc, D3DXVECTOR2 vector, bool sel = false, float size = 6.0f);
+	void DrawCrossWx(wxDC& dc, D3DXVECTOR2 position, const wxColour& color = wxColour(187, 0, 0));
+	void DrawArrowWx(wxDC& dc, D3DXVECTOR2 vector, D3DXVECTOR2* vector1, int diff = 0);
+	void DrawDashedLineWx(wxDC& dc, D3DXVECTOR2* vector, size_t vectorSize, int dashLen = 4, const wxColour& color = wxColour(255, 0, 255));
+	void DrawWarningWx(wxDC& dc, bool comment);
 	//can overwrite but need to use Visuals::SetZoom
 	virtual void SetZoom(D3DXVECTOR2 move, D3DXVECTOR2 scale){
 		zoomMove = move;
@@ -99,6 +107,7 @@ public:
 	//function should skip events when not use it;
 	virtual void OnKeyPress(wxKeyEvent &evt){};
 	virtual void OnMouseCaptureLost(wxMouseCaptureLostEvent &evt){}
+	virtual void DrawWx(wxDC& dc, int time) {};
 	//virtual void GetVisual(wxString *visual){};
 	virtual void ChangeVisual(wxString *txt, Dialogue *_dial, size_t numOfSelections){};
 	virtual wxPoint ChangeVisual(wxString* txt) { return wxPoint(0, 0); };
@@ -200,8 +209,10 @@ public:
 class Cross : public Visuals{
 public:
 	Cross();
+	~Cross() override;
 	void OnMouseEvent(wxMouseEvent &event);
 	void Draw(int time);
+	void DrawWx(wxDC& dc, int time) override;
 	void DrawLines(wxPoint point);
 	void SetCurVisual();
 	void SizeChanged(wxRect wsize, LPD3DXLINE _line, LPD3DXFONT _font, LPDIRECT3DDEVICE9 _device);
@@ -227,6 +238,7 @@ public:
 	void ChangeMultiline(bool all, bool dummy = false);
 	void SetCurVisual();
 	void Draw(int time);
+	void DrawWx(wxDC& dc, int time) override;
 	void ChangeTool(int _tool, bool blockSetCurVisual);
 	void OnKeyPress(wxKeyEvent &evt);
 private:
@@ -263,6 +275,7 @@ class Move : public Visuals
 public:
 	Move();
 	void DrawVisual(int time);
+	void DrawWx(wxDC& dc, int time) override;
 	void OnMouseEvent(wxMouseEvent &event);
 	//void GetVisual(wxString *visual);
 	void ChangeVisual(wxString *txt, Dialogue *_dial, size_t numOfSelections);

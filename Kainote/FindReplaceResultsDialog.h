@@ -17,7 +17,7 @@
 
 #include "KaiDialog.h"
 #include "KaiListCtrl.h"
-#include "kainoteFrame.h"
+#include "KainoteFrame.h"
 #include "MispellReplacerDialog.h"
 #include "FindReplace.h"
 #include "ShiftTimes.h"

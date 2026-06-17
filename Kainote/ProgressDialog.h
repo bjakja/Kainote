@@ -18,6 +18,7 @@
 
 #include "MappedButton.h"
 #include <wx/dialog.h>
+#include <wx/weakref.h>
 #include <functional>
 
 
@@ -33,7 +34,9 @@ private:
 	KaiStaticText *text1;
 
 	bool canceled;
+	bool progressEnded = false;
 	int oldtime;
+	void EndFrameProgress();
 	void OnCancel(wxCommandEvent& event);
 	void OnShow(wxThreadEvent& evt);
 	void OnProgress(wxThreadEvent& evt);
@@ -90,7 +93,7 @@ public:
 private:
 	wxThread::ExitCode Entry();
 	std::function<int()> task;
-	ProgresDialog *dlg;
+	wxWeakRef<ProgresDialog> dlg;
 
 };
 

@@ -121,7 +121,7 @@ SwapPropertiesDialog::SwapPropertiesDialog(wxWindow* parent)
 	MappedButton* Ok = new MappedButton(this, wxID_OK, L"OK");
 	MappedButton* Cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
 	MappedButton* TurnOf = new MappedButton(this, 19921, _("Wyłącz potwierdzenie"));
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent& evt) {
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent& evt) {
 		Options.SetBool(ASS_PROPERTIES_ASK_FOR_CHANGE, false);
 		Options.SaveOptions(true, false);
 		EndModal(19921);

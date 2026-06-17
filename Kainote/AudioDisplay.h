@@ -26,11 +26,13 @@
 #include "KaiScrollbar.h"
 #include "SubsGrid.h"
 //#include "AudioBox.h"
-#include "Editbox.h"
-#include "Tabpanel.h"
+#include "EditBox.h"
+#include "TabPanel.h"
 #include <wx/window.h>
 #include <wx/bitmap.h>
+#include <wx/timer.h>
 //#include <stdint.h>
+#include <vector>
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <atomic>
@@ -144,6 +146,15 @@ private:
 	D3DCOLOR timescaleText;
 	D3DCOLOR waveformModified;
 	D3DCOLOR waveformSelected;
+#ifndef _WIN32
+	std::vector<unsigned char> spectrumBgraBuffer;
+	std::vector<unsigned char> spectrumRgbBuffer;
+	wxSize spectrumWxCacheSize;
+	long long spectrumWxCachePosition = -1;
+	int spectrumWxCacheSamples = -1;
+	int spectrumWxCachePercent = -1;
+	float spectrumWxCacheScale = -1.f;
+#endif
 
 	void OnPaint(wxPaintEvent &event);
 	void OnMouseEvent(wxMouseEvent &event);
@@ -166,6 +177,9 @@ private:
 	void DrawWaveform(bool weak);
 	void DrawSpectrum(bool weak);
 	void DrawProgress();
+#ifndef _WIN32
+	void DrawWithWx(wxDC& dc, bool weak);
+#endif
 	void GetDialoguePos(long long &start, long long &end, bool cap);
 	//void GetKaraokePos(long long &start, long long &end, bool cap);
 	void UpdatePosition(int pos, bool IsSample = false);
@@ -197,6 +211,9 @@ public:
 	AudioBox *box = nullptr;
 	KaiScrollbar *ScrollBar = nullptr;
 	wxTimer ProgressTimer;
+#ifndef _WIN32
+	wxTimer LinuxPlaybackTimer;
+#endif
 	HANDLE UpdateTimerHandle = nullptr;
 	HANDLE PlayEvent;
 	HANDLE DestroyEvent;

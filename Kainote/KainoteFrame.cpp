@@ -25,7 +25,7 @@
 
 #include "SubsTime.h"
 #include "ScriptInfo.h"
-#include "Config.h"
+#include "config.h"
 #include "OptionsDialog.h"
 #include "DropFiles.h"
 #include "OpennWrite.h"
@@ -43,7 +43,7 @@
 #include "Notebook.h"
 #include "Toolbar.h"
 #include "KaiStatusBar.h"
-#include "StyleStore.h"
+#include "stylestore.h"
 
 #include "SubsGrid.h"
 #include "FindReplaceDialog.h"
@@ -51,12 +51,12 @@
 #include "MisspellReplacer.h"
 #include "EditBox.h"
 #include "TabPanel.h"
-#include "shiftTimes.h"
+#include "ShiftTimes.h"
 #include "Menu.h"
 #include "KaiFrame.h"
 #include "SubtitlesProviderManager.h"
 #include "VideoToolbar.h"
-#include "Audiobox.h"
+#include "AudioBox.h"
 #include "TabPanel.h"
 #include "VideoFullscreen.h"
 #include "FontEnumerator.h"
@@ -64,6 +64,7 @@
 #include <wx/dir.h>
 #include <wx/sysopt.h>
 #include <wx/filedlg.h>
+#include <wx/filename.h>
 #include <wx/msw/private.h>
 #include "UtilsWindows.h"
 
@@ -112,6 +113,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Options.GetTable(KEYFRAMES_RECENT, keyframesRecent);
 
 	SetFont(*Options.GetFont());
+#ifdef _WIN32
 	wxIcon KaiIcon(L"KAI_SMALL_ICON", wxBITMAP_TYPE_ICO_RESOURCE);
 	//::SendMessage(GetHwnd(), WM_SETICON, ICON_SMALL, (LPARAM)GetHiconOf(KaiIcon));
 	SetIcon(KaiIcon);
@@ -123,6 +125,14 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	else{
 		::SendMessage(GetHwnd(), WM_SETICON, ICON_BIG, (LPARAM)GetHiconOf(KaiIcon));
 	}
+#else
+	wxString iconPath = Options.pathfull + wxFileName::GetPathSeparator() + L"Kainote" +
+		wxFileName::GetPathSeparator() + L"Bitmaps" + wxFileName::GetPathSeparator() + L"KaiSmallIcon.ico";
+	wxIcon KaiIcon(iconPath, wxBITMAP_TYPE_ICO);
+	if (KaiIcon.IsOk()){
+		SetIcon(KaiIcon);
+	}
+#endif
 
 	Menubar = new MenuBar(this);
 
@@ -386,7 +396,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &KainoteFrame::OnMenuSelected, this, 
 		GLOBAL_ASK_FOR_LOAD_LAST_SESSION, GLOBAL_LOAD_LAST_SESSION_ON_START);
 
-	auto focusFunction = [=](wxFocusEvent &event) -> void {
+	auto focusFunction = [this](wxFocusEvent &event) -> void {
 		TabPanel *tab = GetTab();
 		if (tab->lastFocusedWindowId){
 			wxWindow *win = FindWindowById(tab->lastFocusedWindowId, tab);
@@ -412,7 +422,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Auto = new Auto::Automation();
 	m_SendFocus.SetOwner(this, 6789);
 
-	Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
+	Bind(wxEVT_TIMER, [this](wxTimerEvent &evt){
 		//if it will crash on last focused window
 		//we need to remove last focused window
 		//it's not needed here
@@ -455,10 +465,33 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 		});
 
 	boost::locale::generator gen;
+#ifdef _WIN32
 	// Make system default locale global
 	std::locale loc = gen("");
 	std::locale::global(loc);
 	locale = std::locale("");
+#else
+	// wxLocale may temporarily leave the process locale set to a UI language
+	// that is not generated on Unix; keep startup alive and fall back to a
+	// usable UTF-8/C locale for collation.
+	try{
+		std::locale loc = gen("");
+		std::locale::global(loc);
+		locale = loc;
+	}
+	catch (...){
+		try{
+			std::locale loc = gen("C.UTF-8");
+			std::locale::global(loc);
+			locale = loc;
+		}
+		catch (...){
+			std::locale loc = std::locale::classic();
+			std::locale::global(loc);
+			locale = loc;
+		}
+	}
+#endif
 }
 
 KainoteFrame::~KainoteFrame()
@@ -517,6 +550,8 @@ void KainoteFrame::DestroyDialogs(){
 
 void KainoteFrame::ProgressSetup(const wxString& title)
 {
+	if (!This || Options.GetClosing())
+		return;
 	//DWORD windowsVersion = GetVersion();
 	//DWORD dwMajor = LOBYTE(LOWORD(windowsVersion));
 	//DWORD dwMinor = HIBYTE(LOWORD(windowsVersion));
@@ -534,6 +569,8 @@ void KainoteFrame::ProgressSetup(const wxString& title)
 
 void KainoteFrame::ProgressTitle(const wxString& title)
 {
+	if (!This || Options.GetClosing() || !This->StatusBar)
+		return;
 	This->progressTitle = title;
 	SubsTime progressTime;
 	progressTime.NewTime(timeGetTime() - This->progressFirstTime);
@@ -544,12 +581,14 @@ void KainoteFrame::ProgressTitle(const wxString& title)
 
 void KainoteFrame::ProgressParcentProgress(int parcent, bool showOnStatusBar)
 {
+	if (!This || Options.GetClosing())
+		return;
 	int newTime = timeGetTime() - This->progressFirstTime;
 	if (newTime + 10 > This->progressLastTime) {
 		if (This->taskbar) {
 			This->taskbar->SetProgressValue(This->GetHWND(), (ULONGLONG)parcent, 100);
 		}
-		if (showOnStatusBar) {
+		if (showOnStatusBar && This->StatusBar) {
 			SubsTime progressTime;
 			progressTime.NewTime(newTime);
 
@@ -563,19 +602,24 @@ void KainoteFrame::ProgressParcentProgress(int parcent, bool showOnStatusBar)
 
 void KainoteFrame::ProgressEnd()
 {
+	if (!This || Options.GetClosing())
+		return;
 	if (This->taskbar) {
 		This->taskbar->SetProgressState(This->GetHWND(), TBPF_NOPROGRESS);
 		This->taskbar = nullptr;
 	}
-	This->StatusBar->SetLabelText(0, L"");
+	if (This->StatusBar)
+		This->StatusBar->SetLabelText(0, L"");
 }
 
 bool KainoteFrame::ProgressIsInitialized() {
-	return This->taskbar != nullptr;
+	return This && !Options.GetClosing() && This->taskbar != nullptr;
 }
 
 void KainoteFrame::ProgressSetupEvent(const wxString& title)
 {
+	if (!This || Options.GetClosing())
+		return;
 	wxThreadEvent* evt = new wxThreadEvent(EVT_SETUP, This->GetId());
 	evt->SetPayload(title);
 	wxQueueEvent(This, evt);
@@ -583,6 +627,8 @@ void KainoteFrame::ProgressSetupEvent(const wxString& title)
 
 void KainoteFrame::ProgressTitleEvent(const wxString& title)
 {
+	if (!This || Options.GetClosing())
+		return;
 	wxThreadEvent* evt = new wxThreadEvent(EVT_SET_TITLE, This->GetId());
 	evt->SetPayload(title);
 	wxQueueEvent(This, evt);
@@ -590,6 +636,8 @@ void KainoteFrame::ProgressTitleEvent(const wxString& title)
 
 void KainoteFrame::ProgressParcentProgressEvent(int parcent)
 {
+	if (!This || Options.GetClosing())
+		return;
 	wxThreadEvent* evt = new wxThreadEvent(EVT_SET_PROGRESS, This->GetId());
 	evt->SetPayload(parcent);
 	wxQueueEvent(This, evt);
@@ -597,6 +645,8 @@ void KainoteFrame::ProgressParcentProgressEvent(int parcent)
 
 void KainoteFrame::ProgressEndEvent()
 {
+	if (!This || Options.GetClosing())
+		return;
 	wxThreadEvent* evt = new wxThreadEvent(EVT_END_PROGRESS, This->GetId());
 	wxQueueEvent(This, evt);
 }
@@ -789,6 +839,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		tab->grid->SortIt(id - difid, all);
 	}
 	else if (id >= GLOBAL_VIEW_ALL && id <= GLOBAL_VIEW_SUBS){
+		Freeze();
 		bool vidshow = (id == GLOBAL_VIEW_ALL || id == GLOBAL_VIEW_VIDEO || id == GLOBAL_VIEW_ONLY_VIDEO) && tab->video->GetState() != None;
 		bool vidvis = tab->video->IsShown();
 		if (!vidshow && tab->video->GetState() == Playing){ tab->video->Pause(); }
@@ -799,6 +850,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		if (tab->edit->ABox){
 			tab->edit->ABox->Show((id == GLOBAL_VIEW_ALL || id == GLOBAL_VIEW_AUDIO));
 			if (id == GLOBAL_VIEW_AUDIO){ tab->edit->SetMinSize(wxSize(500, 350)); }
+			else{ tab->edit->SetMinSize(wxSize(-1, 200)); }
 			if (id != GLOBAL_VIEW_AUDIO && id != GLOBAL_VIEW_ALL){
 				tab->edit->windowResizer->Show(false);
 			}
@@ -812,17 +864,27 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 			tab->windowResizer->Show(false);
 			wxSize tabSize = tab->GetClientSize();
 			tab->video->SetMinSize(tabSize);
+			tab->video->InvalidateBestSize();
 		}
-		else if (!tab->edit->IsShown()){
+		else{
 			tab->edit->Show();
 			tab->grid->Show();
-			tab->shiftTimes->Show();
+			tab->shiftTimes->Show(Options.GetBool(SHIFT_TIMES_ON));
 			tab->windowResizer->Show();
 			int x = 0, y = 0;
 			Options.GetCoords(VIDEO_WINDOW_SIZE, &x, &y);
-			tab->video->SetMinSize(wxSize(x, y));
+			if (x > 0 && y > 0){
+				tab->video->SetMinSize(wxSize(x, y));
+				tab->video->InvalidateBestSize();
+			}
 		}
+		tab->VideoEditboxSizer->Layout();
+		tab->GridShiftTimesSizer->Layout();
+		tab->MainSizer->Layout();
 		tab->Layout();
+		tab->SendSizeEvent(wxSEND_EVENT_POST);
+		tab->Refresh(false);
+		Thaw();
 	}
 	else if (id == GLOBAL_AUTOMATION_LOAD_SCRIPT){
 		//if (!Auto){ Auto = new Automation(); }
@@ -833,7 +895,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 			emptyString, _("Pliki skryptów (*.lua),(*.moon)|*.lua;*.moon;"), wxFD_OPEN);
 		if (FileDialog1->ShowModal() == wxID_OK){
 			wxString file = FileDialog1->GetPath();
-			Options.SetString(AUTOMATION_RECENT_FILES, file.AfterLast(L'\\'));
+			Options.SetString(AUTOMATION_RECENT_FILES, KaiPathName(file));
 			//if(Auto->Add(file)){Auto->BuildMenu(&m_AutoMenu);}
 			Auto->Add(file);
 		}
@@ -936,8 +998,8 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 	if (id == GLOBAL_OPEN_SUBS){
 
 		wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz plik napisów"),
-			(tab->VideoPath != emptyString) ? tab->VideoPath.BeforeLast(L'\\') :
-			(subsrec.size() > 0) ? subsrec[0].BeforeLast(L'\\') : emptyString,
+			(tab->VideoPath != emptyString) ? KaiPathDir(tab->VideoPath) :
+			(subsrec.size() > 0) ? KaiPathDir(subsrec[0]) : emptyString,
 			emptyString, _("Pliki napisów (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt|Pliki wideo z wbudowanymi napisami (*.mkv),(*.ogm)|*.mkv;*.ogm"),
 			wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
 		if (FileDialog1->ShowModal() == wxID_OK){
@@ -966,8 +1028,8 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 	}
 	else if (id == GLOBAL_OPEN_VIDEO){
 		wxFileDialog* FileDialog2 = new wxFileDialog(this, _("Wybierz plik wideo"),
-			(tab->SubsPath != emptyString) ? tab->SubsPath.BeforeLast(L'\\') :
-			(videorec.size() > 0) ? videorec[0].BeforeLast(L'\\') : emptyString,
+			(tab->SubsPath != emptyString) ? KaiPathDir(tab->SubsPath) :
+			(videorec.size() > 0) ? KaiPathDir(videorec[0]) : emptyString,
 			emptyString, _("Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.mpg;*.mpeg;*.3gp;*.avs|Wszystkie pliki (*.*)|*.*"),
 			wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
 		if (FileDialog2->ShowModal() == wxID_OK){
@@ -982,8 +1044,8 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 	}
 	else if (id == GLOBAL_OPEN_KEYFRAMES){
 		wxFileDialog* FileDialog2 = new wxFileDialog(this, _("Wybierz plik wideo"),
-			tab->VideoPath != emptyString ? tab->VideoPath.BeforeLast(L'\\') :
-			(keyframesRecent.size() > 0) ? keyframesRecent[0].BeforeLast(L'\\') : emptyString,
+			tab->VideoPath != emptyString ? KaiPathDir(tab->VideoPath) :
+			(keyframesRecent.size() > 0) ? KaiPathDir(keyframesRecent[0]) : emptyString,
 			emptyString, _("Pliki klatek kluczowych (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|Wszystkie pliki (*.*)|*.*"),
 			wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 		if (FileDialog2->ShowModal() == wxID_OK){
@@ -1200,7 +1262,7 @@ void KainoteFrame::Save(bool showDialog, int tabToSave, bool changeLabel)
 
 		wxString path = (atab->VideoPath != emptyString && Options.GetBool(SUBS_AUTONAMING)) ? atab->VideoPath : atab->SubsPath;
 		wxString name = path.BeforeLast(L'.');
-		path = path.BeforeLast(L'\\');
+		path = KaiPathDir(path);
 
 		wxFileDialog saveFileDialog(atab->video->GetMessageWindowParent(), _("Zapisz plik napisów"),
 			path, name, extens, wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
@@ -1216,7 +1278,7 @@ void KainoteFrame::Save(bool showDialog, int tabToSave, bool changeLabel)
 			atab->SubsPath = path;
 			wxString ext = (atab->grid->subsFormat < SRT) ? L"ass" : (atab->grid->subsFormat == SRT) ? L"srt" : L"txt";
 			if (!atab->SubsPath.EndsWith(ext)){ atab->SubsPath << L"." << ext; }
-			atab->SubsName = atab->SubsPath.AfterLast(L'\\');
+			atab->SubsName = KaiPathName(atab->SubsPath);
 			nameWasChanged = true;
 			SetRecent(0, tabToSave);
 		}
@@ -1275,7 +1337,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 		found = FindFile(filename, secondFileName, issubs);
 		if (!issubs && found && !fulls && !tab->video->IsFullScreen()){
 			if (tab->SubsPath == secondFileName || 
-				KaiMessageBox(wxString::Format(_("Wczytać napisy o nazwie \"%s\"?"), secondFileName.AfterLast(L'\\')),
+				KaiMessageBox(wxString::Format(_("Wczytać napisy o nazwie \"%s\"?"), KaiPathName(secondFileName)),
 				_("Potwierdzenie"), wxICON_QUESTION | wxYES_NO, this) == wxNO){
 				found = false;
 			}
@@ -1478,7 +1540,7 @@ void KainoteFrame::AppendRecent(short what, Menu *_Menu)
 			changedRecent = true;
 			continue;
 		}
-		MenuItem* MI = new MenuItem(idd + i, std::to_string(i + 1) + L" " + recs[i].AfterLast(L'\\'), _("Otwórz") + L" " + recs[i]);
+		MenuItem* MI = new MenuItem(idd + i, std::to_string(i + 1) + L" " + KaiPathName(recs[i]), _("Otwórz") + L" " + recs[i]);
 		wmenu->Append(MI);
 		i++;
 	}
@@ -1546,50 +1608,62 @@ void KainoteFrame::OnRecent(wxCommandEvent& event)
 void KainoteFrame::OnSize(wxSizeEvent& event)
 {
 	wxSize size = GetSize();
+#ifndef _WIN32
+	wxSize minSize = GetMinSize();
+	if ((minSize.x > 0 && size.x < minSize.x) || (minSize.y > 0 && size.y < minSize.y)){
+		SetSize(wxMax(size.x, minSize.x), wxMax(size.y, minSize.y));
+		return;
+	}
+#endif
+	if (size.x < 1 || size.y < 1){
+		return;
+	}
 	int fborder, ftopBorder;
 	GetBorders(&fborder, &ftopBorder);
+	fborder = wxMax(0, fborder);
+	ftopBorder = wxMax(0, ftopBorder);
 	borders.x = borders.width = borders.height = fborder;
 	borders.y = ftopBorder;
 
-	int menuHeight = Menubar->GetSize().GetHeight();
-	int toolbarWidth = Toolbar->GetThickness();
-	int statusbarHeight = StatusBar->GetSize().GetHeight();
+	int menuHeight = wxMax(0, Menubar->GetSize().GetHeight());
+	int toolbarWidth = wxMax(0, Toolbar->GetThickness());
+	int statusbarHeight = wxMax(0, StatusBar->GetSize().GetHeight());
 	//0 left, 1 top, 2 right, 3 bottom
 	int toolbarAlignment = Options.GetInt(TOOLBAR_ALIGNMENT);
 	borders.y += menuHeight;
 	borders.height += statusbarHeight;
-	Menubar->SetSize(fborder, ftopBorder, size.x - (fborder * 2), menuHeight);
+	Menubar->SetSize(fborder, ftopBorder, wxMax(0, size.x - (fborder * 2)), menuHeight);
 	switch (toolbarAlignment){
 	case 0://left
-		Toolbar->SetSize(borders.GetX(), borders.y, toolbarWidth, 
-			size.y - borders.y - borders.height);
+		Toolbar->SetSize(borders.GetX(), borders.y, toolbarWidth,
+			wxMax(0, size.y - borders.y - borders.height));
 		borders.x += toolbarWidth;
 		break;
 	case 1://top
-		Toolbar->SetSize(borders.GetX(), borders.y, 
-			size.x - borders.height, toolbarWidth);
+		Toolbar->SetSize(borders.GetX(), borders.y,
+			wxMax(0, size.x - borders.GetX() - borders.width), toolbarWidth);
 		borders.y += toolbarWidth;
 		break;
 	case 2://right
 		borders.width += toolbarWidth;
-		Toolbar->SetSize(size.x - borders.width, borders.y, 
-			toolbarWidth, size.y - borders.y - borders.height);
+		Toolbar->SetSize(wxMax(0, size.x - borders.width), borders.y,
+			toolbarWidth, wxMax(0, size.y - borders.y - borders.height));
 		break;
 	case 3://bottom
 		borders.height += toolbarWidth;
-		Toolbar->SetSize(borders.GetX(), size.y - borders.height, 
-			size.x - borders.GetX() - borders.width, toolbarWidth);
+		Toolbar->SetSize(borders.GetX(), wxMax(0, size.y - borders.height),
+			wxMax(0, size.x - borders.GetX() - borders.width), toolbarWidth);
 		break;
 	default:
-		Toolbar->SetSize(borders.GetX(), borders.y, toolbarWidth, 
-			size.y - borders.y - borders.height);
+		Toolbar->SetSize(borders.GetX(), borders.y, toolbarWidth,
+			wxMax(0, size.y - borders.y - borders.height));
 		borders.x += toolbarWidth;
 		break;
 	}
-	Tabs->SetSize(borders.GetX(), borders.y, 
-		size.x - borders.GetX() - borders.width, size.y - borders.y - borders.height);
-	StatusBar->SetSize(fborder, size.y - statusbarHeight - fborder,
-		size.x - (fborder * 2), statusbarHeight);
+	Tabs->SetSize(borders.GetX(), borders.y,
+		wxMax(0, size.x - borders.GetX() - borders.width), wxMax(0, size.y - borders.y - borders.height));
+	StatusBar->SetSize(fborder, wxMax(0, size.y - statusbarHeight - fborder),
+		wxMax(0, size.x - (fborder * 2)), statusbarHeight);
 	borders.height += Tabs->GetHeight();
 	event.Skip();
 }
@@ -1597,8 +1671,9 @@ void KainoteFrame::OnSize(wxSizeEvent& event)
 
 bool KainoteFrame::FindFile(const wxString &fn, wxString &foundFile, bool video)
 {
-	wxString filespec;
-	wxString path = fn.BeforeLast(L'\\', &filespec);
+	wxFileName fileName(fn);
+	wxString path = fileName.GetPath();
+	wxString filespec = fileName.GetFullName();
 	wxArrayString files;
 
 	wxDir kat(path);
@@ -1912,7 +1987,7 @@ void KainoteFrame::HideEditor(bool save)
 	if (cur->editor){//Turn on of editor
 
 		cur->MainSizer->Detach(cur->video);
-		cur->VideoEditboxSizer->Prepend(cur->video, 0, wxEXPAND | wxALIGN_TOP, 0);
+		cur->VideoEditboxSizer->Prepend(cur->video, 0, wxEXPAND, 0);
 
 		cur->video->ShowVideoToolbar();
 		cur->video->RemoveVisual(false);
@@ -1943,7 +2018,7 @@ void KainoteFrame::HideEditor(bool save)
 
 		cur->VideoEditboxSizer->Detach(cur->video);
 
-		cur->MainSizer->Add(cur->video, 1, wxEXPAND | wxALIGN_TOP, 0);
+		cur->MainSizer->Add(cur->video, 1, wxEXPAND, 0);
 
 		cur->video->HideVideoToolbar();
 
@@ -2069,8 +2144,8 @@ void KainoteFrame::OpenAudioInTab(TabPanel *tab, int id, const wxString &path)
 		wxString audioPath;
 		if (id == GLOBAL_OPEN_AUDIO){
 			wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz plik audio"),
-				(tab->VideoPath != emptyString) ? tab->VideoPath.BeforeLast(L'\\') :
-				(videorec.size() > 0) ? videorec[0].BeforeLast(L'\\') : emptyString, emptyString,
+				(tab->VideoPath != emptyString) ? KaiPathDir(tab->VideoPath) :
+				(videorec.size() > 0) ? KaiPathDir(videorec[0]) : emptyString, emptyString,
 				_("Pliki audio i wideo") +
 				L" (*.wav),(*.w64),(*.flac),(*.ac3),(*.aac),(*.ogg),(*.mp3),(*.mp4),(*.m4a),(*.mkv),(*.avi)|*.wav;*.w64;*.flac;*.ac3;*.aac;*.ogg;*.mp3;*.mp4;*.m4a;*.mkv;*.avi|" +
 				_("Wszystkie pliki") + L" |*.*", wxFD_OPEN);
@@ -2314,15 +2389,18 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 				bool isOnAnotherMonitor = tab->video->IsOnAnotherMonitor();
 				switch (viitem->GetId())
 				{
+				case GLOBAL_VIEW_SUBS:
+					viitem->Enable(editor);
+					break;
 				case GLOBAL_VIEW_ALL:
-				case GLOBAL_VIEW_VIDEO://subs with video
+				case GLOBAL_VIEW_VIDEO:
 				case GLOBAL_VIEW_ONLY_VIDEO:
 					viitem->Enable(editor && hasVideoLoaded && !isOnAnotherMonitor);
 					break;
 				case GLOBAL_VIEW_AUDIO:
 					viitem->Enable(editor && tab->edit->ABox != nullptr);
 					break;
-				default://only subs
+				default:
 					viitem->Enable(editor);
 					break;
 				}

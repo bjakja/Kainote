@@ -16,7 +16,7 @@
 #pragma once
 
 #include "KaiScrollbar.h"
-#include "Styles.h"
+#include "styles.h"
 #include "ListControls.h"
 #include <vector>
 

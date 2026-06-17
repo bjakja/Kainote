@@ -52,8 +52,8 @@ protected:
 	bool onslider;
 	wxBitmap prb;
 	wxBitmap prbh;
-	unsigned long long eventCounter = 0ui64;
-	unsigned long long newEventCounter = 0ui64;
+	unsigned long long eventCounter = 0ULL;
+	unsigned long long newEventCounter = 0ULL;
 	//wxTimer videoSeekTimer;
 	DECLARE_EVENT_TABLE()
 };

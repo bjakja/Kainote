@@ -23,7 +23,7 @@
 class KaiWindowResizer : public wxWindow
 {
 public:
-	KaiWindowResizer(wxWindow *parent/*, wxWindow *_windowBeforeResizer*/, std::function<bool(int)> _canResize, std::function<void(int, bool)> _doResize);
+	KaiWindowResizer(wxWindow *parent, std::function<bool(int)> _canResize, std::function<void(int, bool)> _doResize);
 	virtual ~KaiWindowResizer();
 
 private:

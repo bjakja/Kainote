@@ -19,6 +19,14 @@
 #include "Provider.h"
 #include <d3d9.h>
 #include <d3dx9.h>
+#ifndef _WIN32
+#include <atomic>
+#include <memory>
+#include <mutex>
+#include <thread>
+#include <vector>
+class wxDC;
+#endif
 
 class RendererFFMS2 : public RendererVideo
 {
@@ -52,6 +60,9 @@ public:
 	void GetFpsnRatio(float *fps, long *arx, long *ary);
 	void SetVolume(int vol);
 	bool DrawTexture(unsigned char * nframe = nullptr, bool copy = false);
+#ifndef _WIN32
+	void RenderToDc(wxDC& dc);
+#endif
 	void Render(bool RecreateFrame = true, bool wait = true);
 	void ChangePositionByFrame(int cpos);
 	//it's safe to not exist visual
@@ -72,6 +83,22 @@ public:
 	bool InitRendererDX();
 	Provider* GetFFMS2();
 	Provider *m_FFMS2 = nullptr;
+#ifndef _WIN32
+	std::atomic_bool m_LinuxRenderQueued{ false };
+	std::mutex m_LinuxPendingFrameMutex;
+	std::vector<unsigned char> m_LinuxPendingFrame;
+	std::vector<unsigned char> m_LinuxPresentFrame;
+	std::thread m_LinuxPlaybackThread;
+	std::atomic_bool m_LinuxPlaybackStop{ false };
+	std::atomic_uint m_LinuxPresentedFrames{ 0 };
+#endif
 protected:
 	void DestroyFFMS2();
+#ifndef _WIN32
+	void QueueLinuxRender();
+	void PresentLinuxFrame(const unsigned char* frame);
+	void StartLinuxPlaybackThread();
+	void StopLinuxPlaybackThread();
+	void LinuxPlaybackLoop();
+#endif
 };

@@ -15,7 +15,7 @@
 
 
 #pragma once
-#include "Config.h"
+#include "config.h"
 #include <wx/msw/winundef.h>
 #include <wx/window.h>
 #include <wx/toplevel.h>
@@ -48,7 +48,9 @@ private:
 	//void PaintD2D(GraphicsContext *gc, int w, int h);
 	/*void OnSize(wxSizeEvent &evt);*/
 	void OnMouseEvent(wxMouseEvent &evt);
+#ifdef __WXMSW__
 	WXLRESULT MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);
+#endif
 	void OnEraseBackground(wxEraseEvent()){}
 	
 	long style;
@@ -60,8 +62,13 @@ private:
 	bool enterMinimize;
 	bool pushedMinimize;
 	bool isActive;
+#ifdef __WXMSW__
 	int frameBorder = 7;
 	int frameTopBorder = 26;
+#else
+	int frameBorder = 5;
+	int frameTopBorder = 30;
+#endif
 	//wxRect LastMonitorRect = { -1, -1, -1, -1 };
 	bool wasWindowsSize = false;
 	wxPoint lastPosition = { 0, 0 };

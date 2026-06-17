@@ -31,6 +31,7 @@
 #pragma once
 
 #include "AutomationDummyLoader.h"
+#include "config.h"
 #include <deque>
 #include <vector>
 #include <map>
@@ -155,7 +156,7 @@ namespace Auto {
 
 		wxString GetFilename() const { return filename; }
 		/// The script's file name without path
-		wxString GetPrettyFilename() const { return filename.AfterLast(L'\\'); }
+		wxString GetPrettyFilename() const { return KaiPathName(filename); }
 		/// The script's name. Not required to be unique.
 
 		void RegisterCommand(LuaCommand* command);

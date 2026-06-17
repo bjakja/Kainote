@@ -121,7 +121,7 @@ void AutoSaveOpen::FindFiles()
 
 void AutoSaveOpen::GenerateList()
 {
-	wxString path = Options.pathfull + L"\\Subs\\*";
+	wxString path = Options.pathfull + L"/Subs/*";
 
 	TIME_ZONE_INFORMATION timeZoneInfo;
 	GetTimeZoneInformation(&timeZoneInfo);
@@ -238,7 +238,7 @@ void AutoSaveOpen::OnOkClick(wxCommandEvent& evt)
 
 	auto it = verList->find(item->name);
 	if (it != verList->end()) {
-		wxString filePath = Options.pathfull + L"\\Subs\\" + it->second;
+		wxString filePath = Options.pathfull + L"/Subs/" + it->second;
 		Kai->OpenFile(filePath);
 		EndModal(wxOK);
 		return;

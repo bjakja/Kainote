@@ -5,6 +5,7 @@ Kainote setup.*
 *.7z
 *.psd
 *.lst
+Thumbs.db
 Trash/
 LanguageTool/
 gitparams.h
@@ -23,6 +24,9 @@ gitparams.h
 *.userprefs
 
 # Build results
+build-linux/
+build-asan/
+build-crash/
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/

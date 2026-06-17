@@ -18,8 +18,11 @@
 
 #include "VideoFullscreen.h"
 #include "VideoBox.h"
-#include "KainoteApp.h"
-#include "Config.h"
+#include "RendererFFMS2.h"
+#include "kainoteApp.h"
+#include "config.h"
+#include <wx/dcclient.h>
+#include <wx/event.h>
 
 
 Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
@@ -68,14 +71,14 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 	mstimes->SetCursor(wxCURSOR_ARROW);
 	mstimes->SetBackgroundColour(WINDOW_BACKGROUND);
 	Videolabel = new KaiStaticText(panel, -1, emptyString, wxPoint(644, toolBarHeight - 6), wxSize(1200, 26));
-	Videolabel->Bind(wxEVT_LEFT_DOWN, [=](wxMouseEvent &evt){
+	Videolabel->Bind(wxEVT_LEFT_DOWN, [=, this](wxMouseEvent &evt){
 		panel->SetFocus();
 		evt.Skip();
 	});
 	vToolbar = new VideoToolbar(panel, wxPoint(0, buttonSection), wxSize(-1, -1));
 	vToolbar->SetSize(wxSize(size.x, toolBarHeight));
 	vToolbar->Show(!vc->IsDirectShow());
-	showToolbar->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, [=](wxCommandEvent &evt){
+	showToolbar->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, [=, this](wxCommandEvent &evt){
 		bool show = showToolbar->GetValue();
 		vToolbar->Show(show);
 		if (show){ 
@@ -95,10 +98,12 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 		vc->OnVolume(evt);
 		}, ID_VOL);
 	//Connect(wxEVT_SIZE, (wxObjectEventFunction)&Fullscreen::OnSize);
-	Bind(wxEVT_SYS_COLOUR_CHANGED, [=](wxSysColourChangedEvent & evt){
+	Bind(wxEVT_SYS_COLOUR_CHANGED, [=, this](wxSysColourChangedEvent & evt){
 		panel->SetForegroundColour(Options.GetColour(WINDOW_TEXT));
 		panel->SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	});
+	Bind(wxEVT_CHAR_HOOK, &Fullscreen::OnKeyPress, this);
+	Bind(wxEVT_CLOSE_WINDOW, &Fullscreen::OnClose, this);
 	SetAccels();
 }
 
@@ -144,7 +149,7 @@ void Fullscreen::OnSize()
 			vToolbar->SetSize(0, buttonSection, asize.x, toolBarHeight);
 		}
 		int posx = 180 + toolbarSize.x + 25 + (13 * toolBarHeight);
-		Videolabel->SetSize(posx, toolBarHeight - 4, asize.x - posx - 115, toolBarHeight - 6);
+		Videolabel->SetSize(posx, toolBarHeight - 4, wxMax(0, asize.x - posx - 115), wxMax(0, toolBarHeight - 6));
 	//}
 	//else{
 	//	//mstimes->SetSize(asize.x - difSize, -1);
@@ -154,7 +159,7 @@ void Fullscreen::OnSize()
 	//	Videolabel->SetSize(asize.x - 758, toolBarHeight - 6);
 	//}
 	//
-	vslider->SetSize(wxSize(asize.x, toolBarHeight - 8));
+	vslider->SetSize(wxSize(wxMax(0, asize.x), wxMax(0, toolBarHeight - 8)));
 	if(vc->IsDirectShow()){
 		volslider->Show(); 
 		volslider->SetPosition(wxPoint(asize.x - 110, toolBarHeight - 5));
@@ -186,7 +191,31 @@ void Fullscreen::OnMouseEvent(wxMouseEvent& evt)
 void Fullscreen::OnKeyPress(wxKeyEvent& evt)
 {
 	VideoBox* vc = (VideoBox*)vb;
+	int key = evt.GetKeyCode();
+	if (key == WXK_ESCAPE || key == L'B' || key == L'b') {
+		if (vc->m_IsFullscreen) {
+			vc->SetFullscreen(false);
+			return;
+		}
+	}
 	vc->OnKeyPress(evt);
+}
+
+void Fullscreen::OnClose(wxCloseEvent& evt)
+{
+	// On wxGTK a native WM close of the fullscreen top-level must behave like
+	// leaving fullscreen, not like destroying this cached frame.  VideoBox keeps
+	// m_FullScreenWindow and renderer presentation callbacks can still target it;
+	// allowing Destroy() here leaves a dangling pointer and can crash on the next
+	// preview playback/repaint after fullscreen is closed.
+	VideoBox* vc = (VideoBox*)vb;
+	if (vc && vc->m_IsFullscreen) {
+		evt.Veto();
+		vc->SetFullscreen(false);
+		return;
+	}
+	evt.Veto();
+	Hide();
 }
 
 void Fullscreen::SetAccels()
@@ -237,8 +266,17 @@ void Fullscreen::OnUseWindowHotkey(wxCommandEvent& event)
 
 void Fullscreen::OnPaint(wxPaintEvent& evt)
 {
+	wxPaintDC dc(this);
 	VideoBox* vc = (VideoBox*)vb;
-	vc->OnPaint(evt);
+#ifndef _WIN32
+	if (vc->renderer && vc->renderer->HasFFMS2()) {
+		static_cast<RendererFFMS2*>(vc->renderer)->RenderToDc(dc);
+		return;
+	}
+#endif
+	if (vc->renderer && !vc->renderer->m_BlockResize && vc->renderer->m_State != Playing && vc->renderer->m_State != None) {
+		vc->renderer->Render(true, false);
+	}
 }
 
 BEGIN_EVENT_TABLE(Fullscreen, wxFrame)

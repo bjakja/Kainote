@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include "Styles.h"
+#include "styles.h"
 #include "SubsDialogue.h"
 #include "KaiDialog.h"
 #include <vector>

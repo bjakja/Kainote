@@ -1,0 +1,11 @@
+if(NOT DEFINED SOURCE_LOCALE_DIR OR NOT DEFINED RUNTIME_LOCALE_DIR)
+    message(FATAL_ERROR "SOURCE_LOCALE_DIR and RUNTIME_LOCALE_DIR are required")
+endif()
+
+file(GLOB KAINOTE_MO_FILES "${SOURCE_LOCALE_DIR}/*.mo")
+foreach(mo_file IN LISTS KAINOTE_MO_FILES)
+    get_filename_component(locale_name "${mo_file}" NAME_WE)
+    set(locale_messages_dir "${RUNTIME_LOCALE_DIR}/${locale_name}/LC_MESSAGES")
+    file(MAKE_DIRECTORY "${locale_messages_dir}")
+    file(COPY_FILE "${mo_file}" "${locale_messages_dir}/${locale_name}.mo" ONLY_IF_DIFFERENT)
+endforeach()

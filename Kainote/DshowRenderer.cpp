@@ -15,6 +15,7 @@
 
 
 #include "DshowRenderer.h"
+#ifdef _WIN32
 #include "RendererVideo.h"
 #include "VideoBox.h"
 #include "Hotkeys.h"
@@ -242,3 +243,4 @@ HRESULT CD2DVideoRender::GetVidInfo(VideoInf &vi)
 	vi = Vinfo;
 	return S_OK;
 }
+#endif // _WIN32

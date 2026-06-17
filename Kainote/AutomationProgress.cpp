@@ -31,7 +31,7 @@
 #include "AutomationProgress.h"
 #include "AutomationToFile.h"
 #include "AutomationUtils.h"
-#include "Config.h"
+#include "config.h"
 #include "KaiTextCtrl.h"
 #include <wx/filedlg.h>
 

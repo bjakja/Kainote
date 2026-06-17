@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "HotkeysNaming.h"
-#include "hotkeys.h"
+#include "Hotkeys.h"
 #include "config.h"
 
 HotkeysNaming::HotkeysNaming()

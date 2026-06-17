@@ -25,6 +25,69 @@
 #include "Visuals.h"
 #include "VideoFullscreen.h"
 #include "SubtitlesProviderManager.h"
+#ifndef _WIN32
+#include <wx/bitmap.h>
+#include <wx/app.h>
+#include <wx/dcclient.h>
+#include <wx/image.h>
+#include <wx/thread.h>
+#include <algorithm>
+#include <chrono>
+#include <cstdio>
+#include <cstdlib>
+#endif
+
+#ifndef _WIN32
+namespace
+{
+	void DrawBgraFrameWithWxDc(wxDC& dc, const unsigned char* frame, int width, int height,
+		int pitch, const RECT& targetRect)
+	{
+		if (!frame || width <= 0 || height <= 0 || pitch < width * 4)
+			return;
+
+		const size_t rgbSize = static_cast<size_t>(width) * static_cast<size_t>(height) * 3;
+		unsigned char* rgb = static_cast<unsigned char*>(std::malloc(rgbSize));
+		if (!rgb)
+			return;
+		for (int y = 0; y < height; ++y) {
+			const unsigned char* src = frame + (y * pitch);
+			unsigned char* dst = rgb + (y * width * 3);
+			for (int x = 0; x < width; ++x) {
+				// FFMS2 output is requested as BGRA. wxImage expects RGB.
+				dst[(x * 3) + 0] = src[(x * 4) + 2];
+				dst[(x * 3) + 1] = src[(x * 4) + 1];
+				dst[(x * 3) + 2] = src[(x * 4) + 0];
+			}
+		}
+
+		wxImage image(width, height, rgb, false);
+		int targetWidth = targetRect.right - targetRect.left;
+		int targetHeight = targetRect.bottom - targetRect.top;
+		if (targetWidth <= 0 || targetHeight <= 0)
+			return;
+
+		if (targetWidth != width || targetHeight != height)
+			image.Rescale(targetWidth, targetHeight, wxIMAGE_QUALITY_BILINEAR);
+		if (!image.IsOk())
+			return;
+		wxBitmap bitmap(image);
+		if (!bitmap.IsOk())
+			return;
+
+		dc.DrawBitmap(bitmap, targetRect.left, targetRect.top, false);
+	}
+
+	void DrawBgraFrameWithWx(wxWindow* window, const unsigned char* frame, int width, int height,
+		int pitch, const RECT& targetRect)
+	{
+		if (!window)
+			return;
+		wxClientDC dc(window);
+		DrawBgraFrameWithWxDc(dc, frame, width, height, pitch, targetRect);
+	}
+}
+#endif
 
 RendererFFMS2::RendererFFMS2(VideoBox *control, bool visualDisabled)
 	: RendererVideo(control, visualDisabled)
@@ -33,9 +96,131 @@ RendererFFMS2::RendererFFMS2(VideoBox *control, bool visualDisabled)
 	
 }
 
+#ifndef _WIN32
+void RendererFFMS2::QueueLinuxRender()
+{
+	if (!videoControl)
+		return;
+
+	bool expected = false;
+	if (!m_LinuxRenderQueued.compare_exchange_strong(expected, true))
+		return;
+
+	wxTheApp->CallAfter([this]() {
+		m_LinuxRenderQueued.store(false);
+		{
+			std::lock_guard<std::mutex> lock(m_LinuxPendingFrameMutex);
+			m_LinuxPresentFrame.swap(m_LinuxPendingFrame);
+		}
+		if (m_State != None && !m_LinuxPresentFrame.empty()) {
+			wxWindow* renderWindow = (videoControl->m_IsFullscreen && videoControl->m_FullScreenWindow) ?
+				static_cast<wxWindow*>(videoControl->m_FullScreenWindow) : static_cast<wxWindow*>(videoControl);
+			if (renderWindow)
+				renderWindow->Refresh(false);
+		}
+	});
+	wxWakeUpIdle();
+}
+
+void RendererFFMS2::PresentLinuxFrame(const unsigned char* frame)
+{
+	if (!frame || m_Height <= 0 || m_Pitch <= 0)
+		return;
+	{
+		std::lock_guard<std::mutex> pendingLock(m_LinuxPendingFrameMutex);
+		const size_t frameBytes = static_cast<size_t>(m_Height) * static_cast<size_t>(m_Pitch);
+		if (m_LinuxPresentFrame.size() != frameBytes)
+			m_LinuxPresentFrame.resize(frameBytes);
+		if (m_LinuxPresentFrame.data() != frame)
+			memcpy(m_LinuxPresentFrame.data(), frame, frameBytes);
+	}
+	wxWindow* renderWindow = (videoControl->m_IsFullscreen && videoControl->m_FullScreenWindow) ?
+		static_cast<wxWindow*>(videoControl->m_FullScreenWindow) : static_cast<wxWindow*>(videoControl);
+	if (renderWindow)
+		renderWindow->Refresh(false);
+}
+
+void RendererFFMS2::RenderToDc(wxDC& dc)
+{
+	wxCriticalSectionLocker lock(m_MutexRendering);
+	if (m_Width <= 0 || m_Height <= 0 || m_Pitch <= 0)
+		return;
+	std::lock_guard<std::mutex> pendingLock(m_LinuxPendingFrameMutex);
+	const unsigned char* frame = !m_LinuxPresentFrame.empty() ? m_LinuxPresentFrame.data() : m_FrameBuffer;
+	if (!frame)
+		return;
+	DrawBgraFrameWithWxDc(dc, frame, m_Width, m_Height, m_Pitch, m_BackBufferRect);
+	++m_LinuxPresentedFrames;
+	if (m_Visual && !m_HasZoom)
+		m_Visual->DrawWx(dc, m_Time);
+}
+
+void RendererFFMS2::StartLinuxPlaybackThread()
+{
+	StopLinuxPlaybackThread();
+	m_LinuxPresentedFrames.store(0);
+	m_LinuxPlaybackStop.store(false);
+	m_LinuxPlaybackThread = std::thread(&RendererFFMS2::LinuxPlaybackLoop, this);
+}
+
+void RendererFFMS2::StopLinuxPlaybackThread()
+{
+	m_LinuxPlaybackStop.store(true);
+	if (m_LinuxPlaybackThread.joinable())
+		m_LinuxPlaybackThread.join();
+}
+
+void RendererFFMS2::LinuxPlaybackLoop()
+{
+	if (!m_FFMS2 || m_Width <= 0 || m_Height <= 0 || m_Pitch <= 0)
+		return;
+
+	std::vector<unsigned char> frameBuffer(static_cast<size_t>(m_Height) * static_cast<size_t>(m_Pitch));
+	const bool debugPlayback = std::getenv("KAINOTE_DEBUG_LINUX_PLAYBACK") != nullptr;
+	unsigned int decodedFrames = 0;
+	if (debugPlayback)
+		std::fprintf(stderr, "[linux-playback] start time=%d frame=%d end=%d duration=%d\n", m_Time, m_Frame, m_PlayEndTime, GetDuration());
+	int lastPresentedFrame = -1;
+	int lastPresentedTime = -1;
+	while (!m_LinuxPlaybackStop.load()) {
+		int playTime = static_cast<int>(timeGetTime() - m_LastTime);
+		if (playTime < 0)
+			playTime = 0;
+		if (playTime >= m_PlayEndTime || playTime >= GetDuration()) {
+			wxCommandEvent* evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED, ID_END_OF_STREAM);
+			wxQueueEvent(videoControl, evt);
+			break;
+		}
+
+		const int seekFrom = (lastPresentedFrame >= 0 && playTime >= lastPresentedTime) ? lastPresentedFrame : 0;
+		int nextFrame = m_FFMS2->GetFramefromMS(playTime, seekFrom, true);
+		nextFrame = std::max(0, std::min(nextFrame, m_FFMS2->m_numFrames - 1));
+		if (nextFrame != lastPresentedFrame) {
+			m_Frame = nextFrame;
+			m_Time = m_FFMS2->m_timecodes[m_Frame];
+			m_FFMS2->GetFrame(m_Frame, frameBuffer.data());
+			DrawTexture(frameBuffer.data(), true);
+			++decodedFrames;
+			if (debugPlayback && (decodedFrames <= 5 || (decodedFrames % 30) == 0))
+				std::fprintf(stderr, "[linux-playback] decode=%u playTime=%d time=%d frame=%d\n", decodedFrames, playTime, m_Time, m_Frame);
+			lastPresentedFrame = nextFrame;
+			lastPresentedTime = playTime;
+		}
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(4));
+	}
+	if (debugPlayback)
+		std::fprintf(stderr, "[linux-playback] stop decoded=%u presented=%u time=%d frame=%d\n", decodedFrames, m_LinuxPresentedFrames.load(), m_Time, m_Frame);
+}
+
+#endif
+
 RendererFFMS2::~RendererFFMS2()
 {
 	Stop();
+#ifndef _WIN32
+	StopLinuxPlaybackThread();
+#endif
 
 	m_State = None;
 	SAFE_DELETE(m_FFMS2);
@@ -49,6 +234,42 @@ void RendererFFMS2::DestroyFFMS2()
 bool RendererFFMS2::DrawTexture(unsigned char *nframe, bool copy)
 {
 	wxCriticalSectionLocker lock(m_MutexRendering);
+
+#ifndef _WIN32
+	{
+		unsigned char* fdata = nullptr;
+		if (nframe) {
+			fdata = nframe;
+		}
+		else {
+			fdata = m_FrameBuffer;
+			if (!fdata && m_FFMS2)
+				m_FFMS2->GetFrameBuffer(&fdata);
+			if (!fdata)
+				return false;
+		}
+
+		m_SubsProvider->Draw(fdata, m_Time);
+		if (nframe && m_FrameBuffer) {
+			// Keep the software backbuffer in sync for wxGTK redraws after ASS rendering.
+			memcpy(m_FrameBuffer, fdata, m_Height * m_Pitch);
+		}
+		if (!wxIsMainThread()) {
+			{
+				std::lock_guard<std::mutex> pendingLock(m_LinuxPendingFrameMutex);
+				const size_t frameBytes = static_cast<size_t>(m_Height) * static_cast<size_t>(m_Pitch);
+				if (m_LinuxPendingFrame.size() != frameBytes)
+					m_LinuxPendingFrame.resize(frameBytes);
+				memcpy(m_LinuxPendingFrame.data(), fdata, frameBytes);
+			}
+			QueueLinuxRender();
+			return true;
+		}
+		PresentLinuxFrame(fdata);
+		return true;
+	}
+#endif
+
 	if (!m_MainSurface)
 		return false;
 
@@ -74,8 +295,6 @@ bool RendererFFMS2::DrawTexture(unsigned char *nframe, bool copy)
 
 
 	m_SubsProvider->Draw(fdata, m_Time);
-
-
 #ifdef byvertices
 	HR(m_MainSurface->LockRect(&d3dlr, 0, 0), _("Nie można zablokować bufora tekstury"));//D3DLOCK_NOSYSLOCK
 #else
@@ -117,6 +336,31 @@ bool RendererFFMS2::DrawTexture(unsigned char *nframe, bool copy)
 
 void RendererFFMS2::Render(bool redrawSubsOnFrame, bool wait)
 {
+#ifndef _WIN32
+	{
+		if (!wxIsMainThread()) {
+			QueueLinuxRender();
+			return;
+		}
+		if (redrawSubsOnFrame){
+			{
+				wxCriticalSectionLocker lock(m_MutexRendering);
+				if (m_FrameBuffer && m_FFMS2 && m_Frame >= 0 && m_Frame < m_FFMS2->m_numFrames) {
+					m_FFMS2->GetFrame(m_Frame, m_FrameBuffer);
+				}
+			}
+			DrawTexture();
+			return;
+		}
+		wxCriticalSectionLocker lock(m_MutexRendering);
+		if (m_FrameBuffer) {
+			PresentLinuxFrame(m_FrameBuffer);
+		}
+		m_VideoResized = false;
+		return;
+	}
+#endif
+
 	if (redrawSubsOnFrame && !m_DeviceLost){
 		//no need to return cause of render do not send an event and need to be safe from start.
 		if (!DrawTexture())
@@ -284,9 +528,11 @@ bool RendererFFMS2::OpenFile(const wxString &fname, int subsFlag, bool vobsub, b
 
 	UpdateRects();
 
-	if (!InitDX()){ 
-		return false; 
+#ifdef _WIN32
+	if (!InitDX()){
+		return false;
 	}
+#endif
 	
 	m_SubsProvider->SetVideoParameters(wxSize(m_Width, m_Height), RGB32, false);
 
@@ -294,6 +540,12 @@ bool RendererFFMS2::OpenFile(const wxString &fname, int subsFlag, bool vobsub, b
 	
 	m_State = Stopped;
 	m_FFMS2->GetChapters(&m_Chapters);
+#ifndef _WIN32
+	// Prime wxGTK software backbuffer before fullscreen/first render.
+	if (m_FrameBuffer && m_FFMS2 && m_FFMS2->m_numFrames > 0) {
+		m_FFMS2->GetFrame(m_Frame, m_FrameBuffer);
+	}
+#endif
 
 	if (m_Visual){
 		m_Visual->SizeChanged(wxRect(m_BackBufferRect.left, m_BackBufferRect.top,
@@ -304,11 +556,21 @@ bool RendererFFMS2::OpenFile(const wxString &fname, int subsFlag, bool vobsub, b
 
 bool RendererFFMS2::OpenSubs(int flag, bool redraw, wxString *text, bool resetParameters)
 {
-	wxCriticalSectionLocker lock(m_MutexRendering);
-	if (resetParameters)
-		m_SubsProvider->SetVideoParameters(wxSize(m_Width, m_Height), m_Format, m_SwapFrame);
+	bool result = false;
+	{
+		wxCriticalSectionLocker lock(m_MutexRendering);
+		if (resetParameters)
+			m_SubsProvider->SetVideoParameters(wxSize(m_Width, m_Height), m_Format, m_SwapFrame);
 
-	return m_SubsProvider->Open(tab, flag, text);
+		result = m_SubsProvider->Open(tab, flag, text);
+	}
+
+#ifndef _WIN32
+	if (result && redraw && m_State != None && m_FrameBuffer) {
+		Render(true);
+	}
+#endif
+	return result;
 }
 
 bool RendererFFMS2::Play(int end)
@@ -336,7 +598,11 @@ bool RendererFFMS2::Play(int end)
 	m_Time = m_FFMS2->m_timecodes[m_Frame];
 	m_LastTime = timeGetTime() - m_Time;
 	if (m_AudioPlayer){ m_AudioPlayer->Play(m_Time, -1, false); }
+#ifdef _WIN32
 	m_FFMS2->Play();
+#else
+	StartLinuxPlaybackThread();
+#endif
 
 	return true;
 }
@@ -347,6 +613,9 @@ bool RendererFFMS2::Pause()
 	if (m_State == Playing){
 		SetThreadExecutionState(ES_CONTINUOUS);
 		m_State = Paused;
+#ifndef _WIN32
+		StopLinuxPlaybackThread();
+#endif
 		if (m_AudioPlayer){ m_AudioPlayer->Stop(false); }
 	}
 	else if (m_State != None){
@@ -361,6 +630,9 @@ bool RendererFFMS2::Stop()
 	if (m_State == Playing){
 		SetThreadExecutionState(ES_CONTINUOUS);
 		m_State = Stopped;
+#ifndef _WIN32
+		StopLinuxPlaybackThread();
+#endif
 		if (m_AudioPlayer){
 			m_AudioPlayer->Stop();
 			m_PlayEndTime = GetDuration();

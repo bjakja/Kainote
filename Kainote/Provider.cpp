@@ -48,6 +48,17 @@ Provider* Provider::Get(const wxString& filename, RendererVideo* renderer, wxWin
 
 Provider::~Provider()
 {
+	auto closeHandle = [](HANDLE& handle) {
+		if (handle) {
+			CloseHandle(handle);
+			handle = nullptr;
+		}
+	};
+
+	closeHandle(m_eventStartPlayback);
+	closeHandle(m_eventSetPosition);
+	closeHandle(m_eventKillSelf);
+	closeHandle(m_eventComplete);
 }
 
 void Provider::Play()
@@ -89,12 +100,11 @@ void Provider::GetWaveForm(int* min, int* peak, long long start, int w, int h, i
 
 	// Prepare buffers
 	int needLen = n * m_bytesPerSample;
+	if (needLen <= 0)
+		return;
 
-	void* raw;
-	raw = new char[needLen];
-
-
-	short* raw_short = (short*)raw;
+	char* raw = new char[needLen];
+	short* raw_short = reinterpret_cast<short*>(raw);
 	GetBuffer(raw, start, n);
 	int half_h = h / 2;
 	int half_amplitude = int(half_h * scale);

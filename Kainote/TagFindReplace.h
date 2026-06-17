@@ -17,7 +17,7 @@
 #pragma once
 
 
-#include "Styles.h"
+#include "styles.h"
 //
 //#include "TabPanel.h"
 //#include "DialogueTextEditor.h"
