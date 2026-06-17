@@ -18,7 +18,7 @@
 #include "Demux.h"
 #include "LogHandler.h"
 #include "KaiMessageBox.h"
-#include "StyleListbox.h"
+#include "Stylelistbox.h"
 #include "SubsGrid.h"
 #include "ProgressDialog.h"
 

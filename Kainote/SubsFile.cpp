@@ -17,7 +17,7 @@
 #include "SubsFile.h"
 #include "KaiListCtrl.h"
 #include "MappedButton.h"
-#include "Config.h"
+#include "config.h"
 
 
 HistoryDialog::HistoryDialog(wxWindow *parent, SubsFile *file, std::function<void(int)> func)

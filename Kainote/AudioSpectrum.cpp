@@ -17,10 +17,10 @@
 
 
 
-//#include "Config.h"
+//#include "config.h"
 #include "AudioSpectrum.h"
 
-//#include "ColorSpace.h"
+//#include "colorspace.h"
 #include <wx/log.h>
 #include <process.h>
 #include <assert.h>

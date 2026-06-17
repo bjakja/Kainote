@@ -16,7 +16,7 @@
 #pragma once
 #include <vector>
 #include <wx/window.h>
-#include "Styles.h"
+#include "styles.h"
 //#undef GetClientRect
 #include <windows.h>
 #include <d3dx9math.h>

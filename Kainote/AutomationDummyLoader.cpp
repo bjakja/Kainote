@@ -15,7 +15,7 @@
 
 #include "Automation.h"
 #include "OpennWrite.h"
-#include "Config.h"
+#include "config.h"
 #include <wx/filename.h>
 #include <wx/dir.h>
 

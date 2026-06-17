@@ -15,7 +15,7 @@
 
 #include "KaiTabBar.h"
 #include "config.h"
-#include "hotkeys.h"
+#include "Hotkeys.h"
 #include <wx/dc.h>
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>

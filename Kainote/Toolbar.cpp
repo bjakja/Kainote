@@ -16,7 +16,7 @@
 
 //#include "Toolbar.h"
 #include "Hotkeys.h"
-#include "KainoteApp.h"
+#include "kainoteApp.h"
 #include "Toolbar.h"
 #include "KaiScrollbar.h"
 #include "Notebook.h"
@@ -24,7 +24,7 @@
 #include "wx/dc.h"
 #include "wx/dcmemory.h"
 #include "wx/dcclient.h"
-#include "Config.h"
+#include "config.h"
 
 
 KaiToolbar::KaiToolbar(wxWindow *Parent, MenuBar *mainm, int id)

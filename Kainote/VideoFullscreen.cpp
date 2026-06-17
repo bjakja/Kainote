@@ -19,8 +19,8 @@
 #include "VideoFullscreen.h"
 #include "VideoBox.h"
 #include "RendererFFMS2.h"
-#include "KainoteApp.h"
-#include "Config.h"
+#include "kainoteApp.h"
+#include "config.h"
 #include <wx/dcclient.h>
 #include <wx/event.h>
 
@@ -268,10 +268,12 @@ void Fullscreen::OnPaint(wxPaintEvent& evt)
 {
 	wxPaintDC dc(this);
 	VideoBox* vc = (VideoBox*)vb;
+#ifndef _WIN32
 	if (vc->renderer && vc->renderer->HasFFMS2()) {
 		static_cast<RendererFFMS2*>(vc->renderer)->RenderToDc(dc);
 		return;
 	}
+#endif
 	if (vc->renderer && !vc->renderer->m_BlockResize && vc->renderer->m_State != Playing && vc->renderer->m_State != None) {
 		vc->renderer->Render(true, false);
 	}

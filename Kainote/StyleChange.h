@@ -19,7 +19,7 @@
 #include "ListControls.h"
 #include "MappedButton.h"
 #include "StylePreview.h"
-#include "StyleStore.h"
+#include "stylestore.h"
 #include "NumCtrl.h"
 #include "KaiRadioButton.h"
 #include "KaiDialog.h"

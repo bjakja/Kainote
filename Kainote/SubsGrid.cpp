@@ -21,7 +21,7 @@
 #include "KaiMessageBox.h"
 #include "SubsGridFiltering.h"
 #include "SubsGridDialogs.h"
-#include "shiftTimes.h"
+#include "ShiftTimes.h"
 #include "VideoBox.h"
 #include "Notebook.h"
 #include "stylestore.h"

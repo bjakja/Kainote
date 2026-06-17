@@ -29,7 +29,7 @@
 // Aegisub Project http://www.aegisub.org/
 
 
-#include "Styles.h"
+#include "styles.h"
 #include "NumCtrl.h"
 #include "ColorPicker.h"
 #include "AutomationDialog.h"

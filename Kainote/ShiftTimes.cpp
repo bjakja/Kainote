@@ -15,7 +15,7 @@
 
 
 #include "ShiftTimes.h"
-#include "Config.h"
+#include "config.h"
 #include "Stylelistbox.h"
 #include "KainoteFrame.h"
 #include "EditBox.h"

@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include "Styles.h"
+#include "styles.h"
 #include "EnumFactory.h"
 #include "LogHandler.h"
 #include <wx/msw/winundef.h>

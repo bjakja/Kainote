@@ -25,8 +25,6 @@
 #include <mutex>
 #include <thread>
 #include <vector>
-class LinuxSdlRenderer;
-class LinuxVaapiRenderer;
 class wxDC;
 #endif
 
@@ -86,8 +84,6 @@ public:
 	Provider* GetFFMS2();
 	Provider *m_FFMS2 = nullptr;
 #ifndef _WIN32
-	std::unique_ptr<LinuxSdlRenderer> m_SdlRenderer;
-	std::unique_ptr<LinuxVaapiRenderer> m_VaapiRenderer;
 	std::atomic_bool m_LinuxRenderQueued{ false };
 	std::mutex m_LinuxPendingFrameMutex;
 	std::vector<unsigned char> m_LinuxPendingFrame;

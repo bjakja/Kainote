@@ -23,15 +23,15 @@
 #include "AudioDisplay.h"
 #include "EditBox.h"
 
-#include "Config.h"
+#include "config.h"
 #include "AudioBox.h"
 
-#include "ColorSpace.h"
+#include "colorspace.h"
 #include "Hotkeys.h"
 #include "SubsGrid.h"
 #include "kainoteApp.h"
 #include "RendererVideo.h"
-#include "shiftTimes.h"
+#include "ShiftTimes.h"
 #include "VideoBox.h"
 #include <process.h>
 #include <wx/filename.h>

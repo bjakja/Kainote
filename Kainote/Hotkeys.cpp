@@ -18,7 +18,7 @@
 
 #include "Hotkeys.h"
 #include "KainoteFrame.h"
-#include "Config.h"
+#include "config.h"
 #include "OpennWrite.h"
 
 #include "KaiMessageBox.h"

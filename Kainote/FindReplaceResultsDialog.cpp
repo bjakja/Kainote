@@ -15,7 +15,7 @@
 
 
 
-#include "Config.h"
+#include "config.h"
 #include "FindReplaceResultsDialog.h"
 #include "FindReplace.h"
 #include "MappedButton.h"

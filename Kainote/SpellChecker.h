@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "Config.h"
+#include "config.h"
 #include <hunspell.hxx>
 #include <wx/string.h>
 #include "LineParse.h"

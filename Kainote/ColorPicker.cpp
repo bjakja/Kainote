@@ -43,12 +43,12 @@
 #include <wx/settings.h>
 #include "KaiStaticText.h"
 #include "ColorPicker.h"
-#include "ColorSpace.h"
-#include "KainoteApp.h"
+#include "colorspace.h"
+#include "kainoteApp.h"
 #include "KaiStaticBoxSizer.h"
 
 #include <stdio.h>
-#include "Config.h"
+#include "config.h"
 #include <wx/defs.h>
 #define STATIC_BORDER_FLAG wxSTATIC_BORDER
 

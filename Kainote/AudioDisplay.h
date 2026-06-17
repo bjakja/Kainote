@@ -26,8 +26,8 @@
 #include "KaiScrollbar.h"
 #include "SubsGrid.h"
 //#include "AudioBox.h"
-#include "Editbox.h"
-#include "Tabpanel.h"
+#include "EditBox.h"
+#include "TabPanel.h"
 #include <wx/window.h>
 #include <wx/bitmap.h>
 #include <wx/timer.h>

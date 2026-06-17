@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "FontEnumerator.h"
-//#include "kainoteFrame.h"
+//#include "KainoteFrame.h"
 #include "Notebook.h"
 #include "ProgressDialog.h"
 

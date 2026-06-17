@@ -23,11 +23,11 @@
 #include "OpennWrite.h"
 #include "VideoBox.h"
 
-#include "Editbox.h"
+#include "EditBox.h"
 #include "SubsGrid.h"
 #include "Toolbar.h"
 #include "TabPanel.h"
-#include "shiftTimes.h"
+#include "ShiftTimes.h"
 #include "KainoteFrame.h"
 #include "ModificationChecker.h"
 
@@ -543,7 +543,11 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 	//can make other bugs
 	if (event.Moving() || click){
 
-		if (x > start + TabHeight - 4 && true){ UnsetToolTip(); }
+#ifdef _WIN32
+		if (x > start + TabHeight - 4 && HasToolTips()){ UnsetToolTip(); }
+#else
+		if (x > start + TabHeight - 4){ UnsetToolTip(); }
+#endif
 
 
 		if (!allTabsVisible && x < 20){

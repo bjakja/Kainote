@@ -17,7 +17,7 @@
 
 
 //#include <wx/wx.h>
-#include "Styles.h"
+#include "styles.h"
 #include "KaiTextCtrl.h"
 #include <vector>
 #include "SubtitlesProviderManager.h"

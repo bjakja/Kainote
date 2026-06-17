@@ -17,7 +17,7 @@
 
 
 #include "StyleList.h"
-#include "Styles.h"
+#include "styles.h"
 #include "MappedButton.h"
 #include "ListControls.h"
 #include "KaiDialog.h"

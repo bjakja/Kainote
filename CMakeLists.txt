@@ -76,8 +76,6 @@ add_executable(kainote
     Kainote/KaiPanel.cpp
     Kainote/Languages.cpp
     Kainote/LineParse.cpp
-    Kainote/LinuxSdlRenderer.cpp
-    Kainote/LinuxVaapiRenderer.cpp
     Kainote/Provider.cpp
     Kainote/ProviderDummy.cpp
     Kainote/ProviderFFMS2.cpp
@@ -192,12 +190,15 @@ target_include_directories(kainote PRIVATE
 )
 target_link_libraries(kainote PRIVATE ${wxWidgets_LIBRARIES} PkgConfig::LIBASS PkgConfig::FFMS2 PkgConfig::LUA PkgConfig::HUNSPELL PkgConfig::UCHARDET PkgConfig::LIBCURL PkgConfig::ICU_UC PkgConfig::ICU_I18N PkgConfig::FFMPEG PkgConfig::SDL2 PkgConfig::FONTCONFIG Boost::filesystem Boost::locale Boost::regex $<$<BOOL:${Boost_SYSTEM_FOUND}>:Boost::system> $<$<BOOL:${Boost_THREAD_FOUND}>:Boost::thread> GL ${CMAKE_DL_LIBS})
 set_target_properties(kainote PROPERTIES
-    BUILD_RPATH "$ORIGIN:$ORIGIN/pulseaudio"
-    INSTALL_RPATH "$ORIGIN:$ORIGIN/pulseaudio"
+    BUILD_RPATH "$ORIGIN"
+    INSTALL_RPATH "$ORIGIN"
 )
 # Prefer old-style DT_RPATH over DT_RUNPATH for the portable build tree.  RPATH
-# is applied transitively, so bundled libraries such as libicuuc can resolve
-# their own versioned dependencies (for example libicudata) from $ORIGIN too.
+# is applied transitively, so the bundled app-private libraries (e.g. libicuuc)
+# can resolve their own versioned dependencies (for example libicudata) from
+# $ORIGIN too.  Host-coupled libraries (GL drivers, the GTK/X11 stack and
+# libstdc++) are intentionally NOT bundled (see cmake/CopyRuntimeDependencies),
+# so this RPATH only ever points the loader at our own libraries.
 target_link_options(kainote PRIVATE "-Wl,--disable-new-dtags")
 
 set(KAINOTE_RUNTIME_DIR $<TARGET_FILE_DIR:kainote>)

@@ -15,7 +15,7 @@
 
 
 #include "DropFiles.h"
-#include "kainoteFrame.h"
+#include "KainoteFrame.h"
 #include "Notebook.h"
 #include <wx/event.h>
 

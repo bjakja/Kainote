@@ -18,10 +18,10 @@
 //#include <windows.h>
 #include <WinInet.h>
 #include "UpdateChecker.h"
-#include "Config.h"
+#include "config.h"
 #include "KaiMessageBox.h"
 #include "VersionKainote.h"
-#include "KainoteApp.h"
+#include "kainoteApp.h"
 #include <wx/regex.h>
 
 #pragma comment (lib, "Wininet.lib")

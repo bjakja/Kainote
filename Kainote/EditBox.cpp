@@ -16,7 +16,7 @@
 
 #include "EditBox.h"
 #include "SubsGrid.h"
-#include "KainoteApp.h"
+#include "kainoteApp.h"
 #include <wx/regex.h>
 #include "TabPanel.h"
 #include "FontDialog.h"
@@ -25,7 +25,7 @@
 #include "Visuals.h"
 #include "KaiMessageBox.h"
 #include "TabPanel.h"
-#include "StyleStore.h"
+#include "stylestore.h"
 #include "Notebook.h"
 #include "kainoteApp.h"
 #include "Toolbar.h"

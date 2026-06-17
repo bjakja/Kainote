@@ -16,7 +16,7 @@
 
 
 #include "VideoToolbar.h"
-#include "Config.h"
+#include "config.h"
 #include "Notebook.h"
 #include "Provider.h"
 #include "RendererVideo.h"

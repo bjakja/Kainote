@@ -17,7 +17,7 @@
 
 #include "KaiScrollbar.h"
 #include "SubsDialogue.h"
-#include "Styles.h"
+#include "styles.h"
 
 #include <wx/dc.h>
 #include <wx/dcmemory.h>

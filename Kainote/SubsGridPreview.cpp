@@ -19,7 +19,7 @@
 #include "SubsGrid.h"
 #include "SubsGridFiltering.h"
 #include "KainoteFrame.h"
-#include "Config.h"
+#include "config.h"
 #include "TabPanel.h"
 #include "EditBox.h"
 #include "Notebook.h"

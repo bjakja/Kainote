@@ -16,7 +16,7 @@
 
 #include "Menu.h"
 #include "Hotkeys.h"
-#include "Config.h"
+#include "config.h"
 #include "UtilsWindows.h"
 #include "Toolbar.h"
 #include "KaiScrollbar.h"
@@ -25,7 +25,7 @@
 #include <wx/dc.h>
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
-#include "KainoteApp.h"
+#include "kainoteApp.h"
 #include <locale>
 
 //cannot use font outside class cause it create before it can get font scale from system
@@ -529,7 +529,11 @@ void MenuDialog::OnShowSubmenu(wxTimerEvent &evt)
 	wxPopupWindowBase::DoGetPosition(&x, &y);
 	x += size.x;
 	y += scrollPos * height;
+#ifndef _WIN32
 	parent->items[submenuShown]->submenu->PopupMenu(wxPoint(x, y), this, false);
+#else
+	parent->items[submenuShown]->submenu->PopupMenu(wxPoint(x, y), GetParent(), false);
+#endif
 	submenuToHide = submenuShown;
 	subMenuIsShown = true;
 	selectOnStart = -1;
@@ -583,10 +587,12 @@ void MenuDialog::OnMouseEvent(wxMouseEvent &evt)
 	int x = evt.GetX();
 	int y = evt.GetY();
 	if (x < 0 || x >= w || y < 0 || y >= h){
+#ifndef _WIN32
 		if (evt.LeftDown() || evt.LeftUp() || evt.RightDown() || evt.RightUp() || evt.MiddleDown() || evt.MiddleUp()){
 			HideMenus();
 			if (MenuBar::Menubar){ MenuBar::Menubar->HideMnemonics(); }
 		}
+#endif
 		return;
 	}
 	int elem = y / height;

@@ -27,7 +27,7 @@
 //#include "TabPanel.h"
 //#include "VideoToolbar.h"
 #include "Hotkeys.h"
-#include "Editbox.h"
+#include "EditBox.h"
 #include "TabPanel.h"
 #include "SubsGrid.h"
 #include "Provider.h"
