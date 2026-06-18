@@ -1485,8 +1485,12 @@ void KainoteFrame::SetVideoResolution(int w, int h, bool showDialog)
 
 void KainoteFrame::ShowBadResolutionDialog(const wxSize &videoRes, const wxSize &subsRes)
 {
-	SubsMismatchResolutionDialog badResDialog(this, subsRes, videoRes);
-	badResDialog.ShowModal();
+	CallAfter([this, videoRes, subsRes]{
+		Refresh(false);
+		Update();
+		SubsMismatchResolutionDialog badResDialog(this, subsRes, videoRes);
+		badResDialog.ShowModal();
+	});
 }
 
 //0 - subs, 1 - vids, 2 - auds

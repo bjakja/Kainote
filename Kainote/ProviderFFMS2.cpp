@@ -518,7 +518,6 @@ audio:
 			m_delay = 0;
 		}
 		m_audioLoadThread = new std::thread(AudioLoad, this, newIndex, audiotrack);
-		m_audioLoadThread->detach();
 	}
 	return 1;
 }
@@ -536,7 +535,10 @@ ProviderFFMS2::~ProviderFFMS2()
 
 	if (m_audioLoadThread) {
 		m_stopLoadingAudio = true;
-		WaitForSingleObject(m_eventAudioComplete, INFINITE);
+		if (m_audioLoadThread->joinable())
+			m_audioLoadThread->join();
+		delete m_audioLoadThread;
+		m_audioLoadThread = nullptr;
 	}
 	if (m_audioSource) {
 		FFMS_DestroyAudioSource(m_audioSource);
@@ -588,8 +590,6 @@ done:
 	if (vf->m_audioSource) { FFMS_DestroyAudioSource(vf->m_audioSource); vf->m_audioSource = nullptr; }
 	vf->m_lockGetFrame = false;
 	SetEvent(vf->m_eventAudioComplete);
-	if (vf->m_audioLoadThread) { delete vf->m_audioLoadThread; vf->m_audioLoadThread = nullptr; }
-
 }
 
 void ProviderFFMS2::GetFrame(int frame, unsigned char* buff)

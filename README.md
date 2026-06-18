@@ -559,8 +559,8 @@ Media backends (Windows uses DirectShow / DirectSound / Direct3D):
 
 Other Linux differences:
 
-- Move-to-trash uses freedesktop `gio trash, so the `gio tool (glib2) must be present at runtime; if it is missing, deleting a loaded video is a no-op instead of an unrecoverable hard delete.
-- The file-association ("Skojarzenia") options tab is not shown there is no `xdg-mime backend yet.
+- Move-to-trash uses freedesktop `gio trash`, so the `gio` tool (glib2) must be present at runtime; if it is missing, deleting a loaded video is a no-op instead of an unrecoverable hard delete.
+- The file-association `("Skojarzenia")` options tab is not shown there is no `xdg-mime` backend yet.
 
 Under Wayland specifically (these work normally on X11):
 

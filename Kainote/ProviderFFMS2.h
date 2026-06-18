@@ -16,6 +16,7 @@
 #pragma once
 #include "Provider.h"
 #include "ProgressDialog.h"
+#include <atomic>
 
 
 class ProviderFFMS2 : public Provider
@@ -67,7 +68,7 @@ private:
 	void GetFFMSFrame();
 	static unsigned int __stdcall FFMS2Proc(void* cls);
 	void Processing();
-	volatile bool m_stopLoadingAudio = false;
+	std::atomic<bool> m_stopLoadingAudio{ false };
 	wxCriticalSection m_blockAudio;
 	wxCriticalSection m_blockFrame;
 	FFMS_VideoSource* m_videoSource = nullptr;
