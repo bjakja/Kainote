@@ -23,6 +23,9 @@ gitparams.h
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
+# Compiled translation catalogs (generated from Locale/*.po at build time)
+/Locale/*.mo
+
 # Build results
 build-linux/
 build-asan/
