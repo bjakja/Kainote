@@ -2,7 +2,7 @@
 # Weblate <noreply-mt-weblate@weblate.org>, 2026.
 # altinat <al@altqx.com>, 2026.
 msgid ""
-msgstr "Project-Id-Version: Kainote\nReport-Msgid-Bugs-To: poiiiii4yy@gmail.com\nPOT-Creation-Date: 2022-06-06 20:10+0700\nPO-Revision-Date: 2026-06-17 07:02+0000\nLast-Translator: Allan Nordhøy <epost@anotheragency.no>\nLanguage-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/kainote/kainote/nb_NO/>\nLanguage: nb_NO\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=n != 1;\nX-Generator: Weblate 2026.7.dev0\nX-Poedit-Basepath: ../Kainote\nX-Poedit-SourceCharset: UTF-8\nX-Poedit-KeywordsList: _\nX-Poedit-SearchPath-0: .\nX-Poedit-SearchPathExcluded-0: Bitmaps\nX-Poedit-SearchPathExcluded-1: GFFT\nX-Poedit-SearchPathExcluded-2: include\nX-Poedit-SearchPathExcluded-3: Win32\nX-Poedit-SearchPathExcluded-4: x64\nX-Poedit-SearchPathExcluded-5: ffms2.lib\nX-Poedit-SearchPathExcluded-6: ffms2_x64.lib\nX-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\nX-Poedit-SearchPathExcluded-8: Kainote.vcxproj\nX-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\nX-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\nX-Poedit-SearchPathExcluded-11: RCa00888\nX-Poedit-SearchPathExcluded-12: resource.aps\nX-Poedit-SearchPathExcluded-13: resource.rc\nX-Poedit-SearchPathExcluded-14: CsriMod.cpp\nX-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\nX-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
+msgstr "Project-Id-Version: Kainote\nReport-Msgid-Bugs-To: poiiiii4yy@gmail.com\nPOT-Creation-Date: 2022-06-06 20:10+0700\nPO-Revision-Date: 2026-06-18 07:58+0000\nLast-Translator: Anonymous <noreply@weblate.org>\nLanguage-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/kainote/kainote/nb_NO/>\nLanguage: nb_NO\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=n != 1;\nX-Generator: Weblate 2026.7.dev0\nX-Poedit-Basepath: ../Kainote\nX-Poedit-SourceCharset: UTF-8\nX-Poedit-KeywordsList: _\nX-Poedit-SearchPath-0: .\nX-Poedit-SearchPathExcluded-0: Bitmaps\nX-Poedit-SearchPathExcluded-1: GFFT\nX-Poedit-SearchPathExcluded-2: include\nX-Poedit-SearchPathExcluded-3: Win32\nX-Poedit-SearchPathExcluded-4: x64\nX-Poedit-SearchPathExcluded-5: ffms2.lib\nX-Poedit-SearchPathExcluded-6: ffms2_x64.lib\nX-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\nX-Poedit-SearchPathExcluded-8: Kainote.vcxproj\nX-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\nX-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\nX-Poedit-SearchPathExcluded-11: RCa00888\nX-Poedit-SearchPathExcluded-12: resource.aps\nX-Poedit-SearchPathExcluded-13: resource.rc\nX-Poedit-SearchPathExcluded-14: CsriMod.cpp\nX-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\nX-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
 
 #: AudioBox.cpp:72
 msgid "Pasek szukania"
@@ -9338,3 +9338,155 @@ msgstr "Oppsett"
 #, fuzzy
 msgid "Przeładowywanie"
 msgstr "Laster inn på nytt…"
+
+#: FontEnumerator.cpp:372
+msgid "Usuwanie czcionek z zewnętrznego folderu"
+msgstr ""
+
+#: HotkeysNaming.cpp:157 SubsGrid.cpp:163
+msgid "Podziel linie na słowa"
+msgstr ""
+
+#: OptionsDialog.cpp:439
+msgid "Folder z zewnętrznymi czcionkami"
+msgstr ""
+
+#: HotkeysNaming.cpp:154 SubsGrid.cpp:158
+msgid "Podziel linię do czasu wideo"
+msgstr ""
+
+#: VideoToolbar.cpp:751
+msgid ""
+"Opcje zmiany tagów:\n"
+"Dodaj - zmienia wszystkie tagi dodając ruch z suwaka.\n"
+"Wstaw - wstawia w miejsce kursora w przypadku jednej linii\n"
+"albo na początku w przypadku wielu linii.\n"
+"Pomnóż - mnoży ruch suwaka przez numer zaznaczonej linijki\n"
+"pierwsza linia nie jest zmieniana.\n"
+"Gradnient tekst rosnąco - wstawia tag co znak rosnąco\n"
+"Gradnient tekst malejąco - wstawia tag co znak malejąco\n"
+"Gradient linia rosnąco - wstawia tag w zaznaczone linie rosnąco\n"
+"Gradient linia malejąco - wstawia tag w zaznaczone linie malejąco"
+msgstr ""
+
+#: VisualAllTagsEdition.cpp:89
+msgid "Jedna dodatkowa wartość"
+msgstr ""
+
+#: OptionsDialog.cpp:427
+msgid "Zliczaj spacje i znaki interpunkcyjne dla ZNS"
+msgstr ""
+
+#: VisualAllTagsEdition.cpp:308
+msgid "Pole \"Przeskok\" musi zawierać wartość większą od zera."
+msgstr ""
+
+#: FontEnumerator.cpp:380
+msgid "Wczytywanie czcionek z zewnętrznego folderu"
+msgstr ""
+
+#: VideoToolbar.cpp:748 VisualAllTagsEdition.cpp:87
+msgid "Gradient linia rosnąco"
+msgstr ""
+
+#: ProviderFFMS2.cpp:118
+msgid "Rozmiar klatki wideo jest zbyt duży"
+msgstr ""
+
+#: FontEnumerator.cpp:402
+msgid "Nie można wczytać zewnętrznego katalogu czcionek"
+msgstr ""
+
+#: FontCatalogList.cpp:681 FontCatalogList.cpp:843
+msgid "Dodaj czcionki z napisów"
+msgstr ""
+
+#: OptionsDialog.cpp:577
+msgid "Początkowy zoom wideo w procentach"
+msgstr ""
+
+#: HotkeysNaming.cpp:156 SubsGrid.cpp:162
+msgid "Podziel linie na znaki"
+msgstr ""
+
+#: VisualAllTagsEdition.cpp:91
+msgid "Trzy dodatkowe wartości"
+msgstr ""
+
+#: OptionsDialog.cpp:424
+msgid "Zliczaj spacje i znaki interpunkcyjne dla łamań"
+msgstr ""
+
+#: FontCatalogList.cpp:864
+msgid "Dodaj czcionki z wszystkich otwartych napisów"
+msgstr ""
+
+#: HotkeysNaming.cpp:155 SubsGrid.cpp:160
+msgid "Podziel linie na klatki"
+msgstr ""
+
+#: HotkeysNaming.cpp:158 SubsGrid.cpp:164
+msgid "Podziel linie według łamań"
+msgstr ""
+
+#: VisualAllTagsEdition.cpp:90
+msgid "Dwie dodatkowe wartości"
+msgstr ""
+
+#: SubsGrid.cpp:203
+msgid "Wstaw linie"
+msgstr ""
+
+#: SubsGrid.cpp:218
+msgid "Podziel linie"
+msgstr ""
+
+#: TabPanel.cpp:322
+msgid "Napisy zostały zmodyfikowane przez inny program, przeładować?"
+msgstr ""
+
+#: HotkeysNaming.cpp:205 KainoteFrame.cpp:278
+msgid "Wyłącz powiększenie wideo"
+msgstr ""
+
+#: VideoToolbar.cpp:748 VisualAllTagsEdition.cpp:87
+msgid "Gradient linia malejąco"
+msgstr ""
+
+#: SubsFile.cpp:206
+msgid "Dzielenie linii"
+msgstr ""
+
+#: SubsFile.cpp:205
+msgid "Usunięcie filtrowania"
+msgstr ""
+
+#: ColorPicker.cpp:556
+msgid ""
+"Zamień ze sobą skróty próbnika\n"
+"i okna wyboru kolorów"
+msgstr ""
+
+#: FontEnumerator.cpp:261 FontEnumerator.cpp:441
+msgid "Ładowanie czcionek zewnętrznych"
+msgstr ""
+
+#: OptionsDialog.cpp:444
+msgid "Wybierz zewnętrzny folder czcionek"
+msgstr ""
+
+#: HotkeysNaming.cpp:136 SubsGrid.cpp:219
+msgid "Zaznacz wszystkie linie widoczne na wideo"
+msgstr ""
+
+#: FontCatalogList.cpp:863
+msgid "Usuń całą zawartość katalogu"
+msgstr ""
+
+#: VideoToolbar.cpp:748 VisualAllTagsEdition.cpp:87
+msgid "Gradient tekst malejąco"
+msgstr ""
+
+#: VideoToolbar.cpp:747 VisualAllTagsEdition.cpp:86
+msgid "Gradient tekst rosnąco"
+msgstr ""
