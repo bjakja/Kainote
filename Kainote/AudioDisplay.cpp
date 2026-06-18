@@ -2597,11 +2597,8 @@ void AudioDisplay::UpdateTimer()
 		cursorPaint = true;
 		long long curPos = player->GetCurrentPosition();
 		if (curPos > player->GetStartPosition() && curPos < player->GetEndPosition()) {
-			// Scroll if needed
 			int posX = GetXAtSample(curPos);
-			//bool fullDraw = false;
 			bool centerLock = false;
-			bool scrollToCursor = Options.GetBool(AUDIO_LOCK_SCROLL_ON_CURSOR);
 			if (centerLock) {
 				int goTo = MAX(0, curPos - w * samples / 2);
 				if (goTo >= 0) {
@@ -2610,15 +2607,13 @@ void AudioDisplay::UpdateTimer()
 				}
 			}
 			else {
-				if (scrollToCursor) {
-					if (posX < 50 || posX > w - 50) {
-						int goTo = MAX(0, curPos - 50 * samples);
-						if (goTo >= 0) {
-							UpdatePosition(goTo, true);
-							repaintPlaybackCursor(false);
-							//Sleep(10);
-							return;
-						}
+				// Keep the playhead visible during playback, matching Windows behavior.
+				if (posX < 50 || posX > w - 50) {
+					int goTo = MAX(0, curPos - 50 * samples);
+					if (goTo >= 0) {
+						UpdatePosition(goTo, true);
+						repaintPlaybackCursor(false);
+						return;
 					}
 				}
 			}
@@ -2650,13 +2645,11 @@ void AudioDisplay::UpdateTimer()
 		
 	}
 
-	// Restore background
 	else {
 		cursorPaint = false;
 	}
 	oldCurPos = curpos;
 	if (oldCurPos < 0) oldCurPos = 0;
-	//Sleep(10);
 }
 
 
@@ -2848,4 +2841,3 @@ EVT_KILL_FOCUS(AudioDisplay::OnLoseFocus)
 EVT_MOUSE_CAPTURE_LOST(AudioDisplay::OnLostCapture)
 EVT_ERASE_BACKGROUND(AudioDisplay::OnEraseBackground)
 END_EVENT_TABLE()
-
