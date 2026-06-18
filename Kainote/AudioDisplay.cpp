@@ -1695,6 +1695,15 @@ void AudioDisplay::DrawWithWx(wxDC& dc, bool weak)
 	if (w < 1 || displayH < 1 || isHidden)
 		return;
 
+	int clipX1 = 0, clipX2 = w;
+	if (weak) {
+		wxRect upd = GetUpdateRegion().GetBox();
+		if (!upd.IsEmpty()) {
+			clipX1 = std::max(0, upd.x);
+			clipX2 = std::min(w, upd.x + upd.width);
+		}
+	}
+
 	bool spectrum = (provider && spectrumOn);
 
 	dc.SetPen(*wxTRANSPARENT_PEN);
@@ -1702,7 +1711,7 @@ void AudioDisplay::DrawWithWx(wxDC& dc, bool weak)
 		dc.SetBrush(wxBrush(Options.GetColour(AUDIO_SPECTRUM_BACKGROUND)));
 	else
 		dc.SetBrush(wxBrush(WX_FROM_D3DCOLOR(background)));
-	dc.DrawRectangle(0, 0, w, displayH);
+	dc.DrawRectangle(clipX1, 0, clipX2 - clipX1, displayH);
 
 	if (!loaded || !provider)
 		return;
@@ -1789,8 +1798,8 @@ void AudioDisplay::DrawWithWx(wxDC& dc, bool weak)
 			if (!hasSel)
 				selStartCap = w;
 			auto drawRange = [&](int x1, int x2, D3DCOLOR color) {
-				x1 = std::max(0, x1);
-				x2 = std::min(w, x2);
+				x1 = std::max(clipX1, x1);
+				x2 = std::min(clipX2, x2);
 				dc.SetPen(wxPen(WX_FROM_D3DCOLOR(color), 1));
 				for (int x = x1; x < x2; ++x)
 					dc.DrawLine(x, peak[x], x, min[x] - 1);
@@ -1813,7 +1822,7 @@ void AudioDisplay::DrawWithWx(wxDC& dc, bool weak)
 		int pixBounds = rate / samples;
 		if (pixBounds >= 8) {
 			dc.SetPen(wxPen(WX_FROM_D3DCOLOR(secondBondariesColor), 1, wxPENSTYLE_SHORT_DASH));
-			for (int x = 0; x < w; ++x) {
+			for (int x = clipX1; x < clipX2; ++x) {
 				if (((x * samples) + start) % rate < samples)
 					dc.DrawLine(x, 0, x, h);
 			}
@@ -1859,7 +1868,7 @@ void AudioDisplay::DrawWithWx(wxDC& dc, bool weak)
 		int rate = provider->GetSampleRate();
 		long long start = Position * samples;
 		int lastTextRight = -1000;
-		for (int x = 0; x < w; ++x) {
+		for (int x = clipX1; x < clipX2; ++x) {
 			long long sample = (x * samples) + start;
 			if (rate > 0 && sample % rate < samples) {
 				dc.SetPen(wxPen(WX_FROM_D3DCOLOR(timescaleText), 1));
@@ -2585,6 +2594,8 @@ void AudioDisplay::UpdateTimer()
 				return;
 			}
 		}
+		if (!weak)
+			needImageUpdateWeak = false;
 		Refresh(false);
 #else
 		DoUpdateImage(weak);
