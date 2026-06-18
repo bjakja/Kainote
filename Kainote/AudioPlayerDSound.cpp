@@ -106,6 +106,12 @@ void DirectSoundPlayer2Thread::Run()
 		return;
 	}
 
+	g_signal_connect(sink, "deep-element-added",
+		G_CALLBACK(+[](GstBin *, GstBin *, GstElement *el, gpointer) {
+			if (g_object_class_find_property(G_OBJECT_GET_CLASS(el), "sync"))
+				g_object_set(el, "sync", FALSE, nullptr);
+		}), nullptr);
+
 	GstCaps *caps = gst_caps_new_simple("audio/x-raw",
 		"format", G_TYPE_STRING, GST_AUDIO_NE(S16),
 		"layout", G_TYPE_STRING, "interleaved",
@@ -116,7 +122,7 @@ void DirectSoundPlayer2Thread::Run()
 		"caps", caps,
 		"format", GST_FORMAT_TIME,
 		"stream-type", GST_APP_STREAM_TYPE_STREAM,
-		"is-live", TRUE,
+		"is-live", FALSE,
 		"do-timestamp", TRUE,
 		"block", TRUE,
 		"max-bytes", (guint64)std::max<long long>(bytesPerFrame, maxQueuedFrames * bytesPerFrame),
@@ -175,20 +181,21 @@ void DirectSoundPlayer2Thread::Run()
 		}
 
 		if (goIdle) {
-			// Drop queued audio immediately; TRUE flush_stop can strand timestamps.
+			// Playback stopped: drop queued audio so it goes silent at once.
 			if (active) {
 				gst_element_send_event(pipeline, gst_event_new_flush_start());
-				gst_element_send_event(pipeline, gst_event_new_flush_stop(FALSE));
+				gst_element_send_event(pipeline, gst_event_new_flush_stop(TRUE));
 				active = false;
 			}
 			continue;
 		}
+		const bool wasActive = active;
 		active = true;
 
-		if (restartPlayback) {
-			// Drop queued audio for a crisp restart while preserving running-time.
+		// Only flush when restarting over an already-running stream (switching selections mid-playback). 
+		if (restartPlayback && wasActive) {
 			gst_element_send_event(pipeline, gst_event_new_flush_start());
-			gst_element_send_event(pipeline, gst_event_new_flush_stop(FALSE));
+			gst_element_send_event(pipeline, gst_event_new_flush_stop(TRUE));
 		}
 
 		long long frame = 0;
@@ -209,7 +216,7 @@ void DirectSoundPlayer2Thread::Run()
 				provider->GetBuffer(map.data, frame, framesToWrite, volume);
 				gst_buffer_unmap(buf, &map);
 			}
-			gst_app_src_push_buffer(GST_APP_SRC(src), buf);
+			GstFlowReturn fr = gst_app_src_push_buffer(GST_APP_SRC(src), buf);
 			std::lock_guard<std::mutex> lock(linuxState->mutex);
 			linuxState->currentFrame += framesToWrite;
 		}
@@ -220,6 +227,22 @@ void DirectSoundPlayer2Thread::Run()
 				std::lock_guard<std::mutex> lock(linuxState->mutex);
 				linuxState->playing = false;
 			}
+		}
+
+		if (GstBus *bus = gst_element_get_bus(pipeline)) {
+			GstMessage *m;
+			while ((m = gst_bus_pop_filtered(bus,
+				(GstMessageType)(GST_MESSAGE_ERROR | GST_MESSAGE_WARNING)))) {
+				GError *e = nullptr; gchar *dbg = nullptr;
+				if (GST_MESSAGE_TYPE(m) == GST_MESSAGE_ERROR)
+					gst_message_parse_error(m, &e, &dbg);
+				else
+					gst_message_parse_warning(m, &e, &dbg);
+				if (e) g_error_free(e);
+				g_free(dbg);
+				gst_message_unref(m);
+			}
+			gst_object_unref(bus);
 		}
 	}
 
