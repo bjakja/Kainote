@@ -366,7 +366,7 @@ The executable is written under the repository's Visual Studio output folders, t
 
 ### Linux build
 
-The Linux build uses CMake and system packages. It has been verified on an Ubuntu/Debian-style environment with GCC, wxGTK 3.2, Lua 5.1, FFMS2, FFmpeg, libass, Hunspell, uchardet, libcurl, ICU, Boost, and OpenGL development packages.
+The Linux build uses CMake and system packages. It has been verified on an Ubuntu/Debian-style environment with GCC, wxGTK 3.2, Lua 5.1, FFMS2, FFmpeg, libass, Hunspell, uchardet, libcurl, ICU, Boost, GStreamer 1.x, and OpenGL development packages.
 
 #### 1. Install dependencies on Ubuntu/Debian
 
@@ -394,8 +394,20 @@ sudo apt install --no-install-recommends -y \
   libavcodec-dev \
   libavutil-dev \
   libgl1-mesa-dev \
-  libgtk-3-dev
+  libgtk-3-dev \
+  libgstreamer1.0-dev \
+  libgstreamer-plugins-base1.0-dev \
+  gstreamer1.0-plugins-base \
+  gstreamer1.0-plugins-good \
+  gstreamer1.0-pulseaudio
 ```
+
+GStreamer backs both video and audio playback on Linux, so its runtime plugins
+must be present, not just the `-dev` headers. The `-base` plugins provide
+`appsrc`, `audioconvert`, `audioresample` and `playbin`; the `-good` plugins
+provide `autoaudiosink`; and an audio sink such as `gstreamer1.0-pulseaudio`
+(or `gstreamer1.0-pipewire` / `gstreamer1.0-alsa`) is needed to actually output
+sound. Without these plugins the audio/video pipeline cannot be created.
 
 Optional but useful for headless smoke tests:
 
@@ -422,6 +434,9 @@ The exact package names vary by distribution. Install the equivalent development
 - FFmpeg development libraries: libavformat, libavcodec, libavutil
 - OpenGL/Mesa development headers
 - GTK 3 development headers
+- GStreamer 1.x: the core (`gstreamer-1.0`) plus the `-base` libraries
+  (`gstreamer-app-1.0`, `gstreamer-audio-1.0`, `gstreamer-video-1.0`), and at
+  runtime the base and good plugin sets plus an audio sink (pulse/pipewire/alsa)
 
 For Fedora-like systems, the package set is approximately:
 
@@ -430,7 +445,9 @@ sudo dnf install \
   gcc gcc-c++ make cmake git pkgconf-pkg-config \
   wxGTK-devel wxGTK-gl wxGTK-media \
   libass-devel ffms2-devel lua-devel hunspell-devel uchardet-devel \
-  libcurl-devel libicu-devel boost-devel ffmpeg-devel mesa-libGL-devel gtk3-devel
+  libcurl-devel libicu-devel boost-devel ffmpeg-devel mesa-libGL-devel gtk3-devel \
+  gstreamer1-devel gstreamer1-plugins-base-devel \
+  gstreamer1-plugins-base gstreamer1-plugins-good
 ```
 
 For Arch-like systems, the package set is approximately:
@@ -438,7 +455,8 @@ For Arch-like systems, the package set is approximately:
 ```bash
 sudo pacman -S --needed \
   base-devel cmake git pkgconf wxwidgets-gtk3 libass ffms2 lua51 \
-  hunspell uchardet curl icu boost ffmpeg mesa gtk3
+  hunspell uchardet curl icu boost ffmpeg mesa gtk3 \
+  gstreamer gst-plugins-base gst-plugins-good
 ```
 
 If your distribution only provides Lua 5.4 as `lua`, install the separate Lua 5.1 development package. The CMake file intentionally checks for `lua5.1` because Kainote uses Lua 5.1 APIs such as `lua_getfenv`, `lua_objlen`, and `luaL_register`.
@@ -459,7 +477,11 @@ pkg-config --modversion \
   icu-i18n \
   libavformat \
   libavcodec \
-  libavutil
+  libavutil \
+  gstreamer-1.0 \
+  gstreamer-video-1.0 \
+  gstreamer-audio-1.0 \
+  gstreamer-app-1.0
 ```
 
 Also verify wxWidgets:
@@ -522,8 +544,18 @@ On Linux the build behaves the same as the Windows build except for the followin
 
 Media backends (Windows uses DirectShow / DirectSound / Direct3D):
 
-- Video decodes with FFMS2 and is presented through the wxWidgets software paint path; the DirectShow general-playback path is not available on Linux.
-- Audio plays through SDL2 (PulseAudio/PipeWire); there is no DirectSound path.
+- General video playback uses **GStreamer** in place of DirectShow: `playbin`
+  decodes the file and an `appsink` hands BGRA frames to the app, which
+  composites the libass subtitles and progress bar and presents them through the
+  shared wxWidgets paint path. The frame-accurate FFMS2 path used for
+  typesetting, timing, and visual editing is unchanged.
+- Audio plays through **GStreamer** (`appsrc → audioconvert → audioresample →
+  autoaudiosink`); the playback position is tracked on a wall-clock model. There
+  is no DirectSound path.
+- Because Linux builds may bundle a relocated `libgstreamer`, the plugin search
+  path is pinned at build time (`pkg-config --variable=pluginsdir gstreamer-1.0`)
+  and exported before `gst_init`, so the system GStreamer plugins are found at
+  runtime. The base and good plugin sets (and an audio sink) must be installed.
 
 Other Linux differences:
 
