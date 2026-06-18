@@ -8,7 +8,7 @@ find_package(wxWidgets REQUIRED COMPONENTS core base adv aui html xml gl stc net
 include(${wxWidgets_USE_FILE})
 pkg_check_modules(LIBASS REQUIRED IMPORTED_TARGET libass)
 pkg_check_modules(FFMS2 REQUIRED IMPORTED_TARGET ffms2)
-pkg_check_modules(LUA REQUIRED IMPORTED_TARGET lua5.1)
+pkg_check_modules(LUA REQUIRED IMPORTED_TARGET luajit)
 pkg_check_modules(HUNSPELL REQUIRED IMPORTED_TARGET hunspell)
 pkg_check_modules(UCHARDET REQUIRED IMPORTED_TARGET uchardet)
 pkg_check_modules(LIBCURL REQUIRED IMPORTED_TARGET libcurl)
@@ -22,12 +22,6 @@ pkg_check_modules(FONTCONFIG REQUIRED IMPORTED_TARGET fontconfig)
 # the shared wx paint path, and gstreamer-audio provides linear volume.
 pkg_check_modules(GSTREAMER REQUIRED IMPORTED_TARGET gstreamer-1.0 gstreamer-video-1.0 gstreamer-audio-1.0 gstreamer-app-1.0)
 pkg_get_variable(GSTREAMER_PLUGIN_DIR gstreamer-1.0 pluginsdir)
-
-find_library(LUA_RUNTIME_LIBRARY
-    NAMES liblua5.1.so.0 lua5.1
-    HINTS ${LUA_LIBRARY_DIRS}
-    REQUIRED
-)
 
 # Link Boost statically on Linux so the built binary does not depend on the
 # exact distro Boost shared-library SONAME, e.g. libboost_filesystem.so.1.83.0.
@@ -259,9 +253,6 @@ endif()
 # gettext-style Locale/<lang>/LC_MESSAGES/<lang>.mo paths (for wxLocale).
 add_custom_command(TARGET kainote POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory "${KAINOTE_RUNTIME_DIR}/Locale"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${LUA_RUNTIME_LIBRARY}"
-            "${KAINOTE_RUNTIME_DIR}/liblua5.1.so.0"
     COMMAND ${CMAKE_COMMAND}
             -D SOURCE_LOCALE_DIR="${CMAKE_SOURCE_DIR}/Locale"
             -D RUNTIME_LOCALE_DIR="${KAINOTE_RUNTIME_DIR}/Locale"
