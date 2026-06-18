@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: Kainote\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-06-18 12:12+0700\n"
-"PO-Revision-Date: 2026-03-10 10:10+0000\n"
-"Last-Translator: Weblate <noreply-mt-weblate@weblate.org>\n"
+"PO-Revision-Date: 2026-06-18 16:00+0700\n"
+"Last-Translator: altinat <al@altqx.com>\n"
 "Language-Team: Thai <https://hosted.weblate.org/projects/kainote/kainote/th/"
 ">\n"
 "Language: th_TH\n"
@@ -77,15 +77,15 @@ msgstr "เล่นบรรทัดปัจจุบัน"
 
 #: AudioBox.cpp:144
 msgid "Zatrzymaj odtwarzanie"
-msgstr "หยุดวิดีโอ"
+msgstr "หยุดเล่น"
 
 #: AudioBox.cpp:147
 msgid "Odtwórz przed znacznikiem"
-msgstr "เล่นก่อนหน้าแท็ก"
+msgstr "เล่นก่อนจุดมาร์ก"
 
 #: AudioBox.cpp:149
 msgid "Odtwórz po znaczniku"
-msgstr "เล่นตามหลังแท็ก"
+msgstr "เล่นหลังจุดมาร์ก"
 
 #: AudioBox.cpp:152
 msgid "Odtwórz 500ms przed czasem startowym"
@@ -109,7 +109,7 @@ msgstr "เล่นจนจบ"
 
 #: AudioBox.cpp:163
 msgid "Dodaj wstęp do aktywnej linijki"
-msgstr "เพิ่มส่วนนำยังบรรทัดปัจจุบัน"
+msgstr "เพิ่มส่วนนำให้บรรทัดปัจจุบัน"
 
 #: AudioBox.cpp:165
 msgid "Dodaj zakończenie do aktywnej linijki"
@@ -121,7 +121,7 @@ msgstr "นำการเปลี่ยนแปลงไปใช้"
 
 #: AudioBox.cpp:172 Hotkeys.cpp:210 HotkeysNaming.cpp:57
 msgid "Przejdź do zaznaczenia"
-msgstr "ไปยังเลือกไว้"
+msgstr "ไปยังส่วนที่เลือก"
 
 #: AudioBox.cpp:175
 msgid "Włącz / Wyłącz tworzenie karaoke"
@@ -133,7 +133,7 @@ msgstr "เปิด / ปิดการแยกพยางค์อัตโ
 
 #: AudioBox.cpp:184
 msgid "Automatycznie zatwierdza zmiany"
-msgstr "กระทำการเปลี่ยนแปลงโดยอัตโนมัติ"
+msgstr "ยืนยันการเปลี่ยนแปลงโดยอัตโนมัติ"
 
 #: AudioBox.cpp:188
 msgid "Przechodzenie do następnej linijki po zatwierdzeniu zmian"
@@ -149,7 +149,7 @@ msgstr "โหมดสเปกตรัม"
 
 #: AudioBox.cpp:200
 msgid "Uwydatnienie częstotliwości głosu na spektrum"
-msgstr "เพิ่มประสิทธิภาพความถี่ของสเปกตรัม"
+msgstr "เน้นย่านความถี่เสียงพูดในสเปกตรัม"
 
 #: AudioBox.cpp:267 Provider.cpp:188
 msgid "Nieprawidłowy format klatek kluczowych"
@@ -166,58 +166,58 @@ msgstr "รูปแบบคีย์เฟรมไม่ถูกต้อง
 #: VisualDrawingShapes.cpp:148 VisualDrawingShapes.cpp:166
 #: VisualDrawingShapes.cpp:270
 msgid "Błąd"
-msgstr "ผิดพลาด"
+msgstr "ข้อผิดพลาด"
 
 #: AudioDisplay.cpp:270 RendererVideo.cpp:314
 msgid "Nie można utworzyć obiektu Direct3D"
-msgstr "ไม่สามารถสร้างวัตถุ Direct3D"
+msgstr "ไม่สามารถสร้างวัตถุ Direct3D ได้"
 
 #: AudioDisplay.cpp:304 RendererVideo.cpp:351
 msgid "Nie można utworzyć urządzenia D3D9"
-msgstr "ไม่สามารถสร้างออบเจ็กต์ D3D9"
+msgstr "ไม่สามารถสร้างอุปกรณ์ D3D9 ได้"
 
 #: AudioDisplay.cpp:326 RendererVideo.cpp:374
 msgid "Zawiodło któreś z ustawień DirectX"
-msgstr "มีข้อผิดพลาดในการตั้งค่า DirectX"
+msgstr "การตั้งค่า DirectX บางส่วนล้มเหลว"
 
 #: AudioDisplay.cpp:334
 msgid "Nie można ustawić macierzy porojekcji"
-msgstr "ไม่สามารถกำหนดค่าการแสดงเมทริกซ์ได้"
+msgstr "ไม่สามารถตั้งค่าเมทริกซ์ฉายภาพได้"
 
 #: AudioDisplay.cpp:335 RendererVideo.cpp:383 VisualRotationXY.cpp:164
 msgid "Nie można ustawić macierzy świata"
-msgstr "ไม่สามารถกำหนดค่ามุมมองเมทริกซ์ได้"
+msgstr "ไม่สามารถตั้งค่าเมทริกซ์โลกได้"
 
 #: AudioDisplay.cpp:336 RendererVideo.cpp:384 VisualRotationXY.cpp:165
 msgid "Nie można ustawić macierzy widoku"
-msgstr "ไม่สามารถกำหนดค่ามุมมองเมทริกซ์ได้"
+msgstr "ไม่สามารถตั้งค่าเมทริกซ์มุมมองได้"
 
 #: AudioDisplay.cpp:337 RendererDirectShow.cpp:104 RendererDirectShow.cpp:167
 #: RendererFFMS2.cpp:781
 msgid "Nie można stworzyć powierzchni"
-msgstr "ไม่สามารถสร้างพื้นผิว"
+msgstr "ไม่สามารถสร้างพื้นผิวได้"
 
 #: AudioDisplay.cpp:340 RendererVideo.cpp:397
 msgid "Nie można stworzyć linii D3DX"
-msgstr "ไม่สามารถสร้างเส้น D3DX"
+msgstr "ไม่สามารถสร้างเส้น D3DX ได้"
 
 #: AudioDisplay.cpp:344 AudioDisplay.cpp:345 AudioDisplay.cpp:346
 #: ContextDX9.cpp:196 RendererVideo.cpp:394 RendererVideo.cpp:396
 #: VisualCross.cpp:300 Visuals.cpp:536
 msgid "Nie można stworzyć czcionki D3DX"
-msgstr "ไม่สามารถสร้างแบบอักษร D3DX"
+msgstr "ไม่สามารถสร้างแบบอักษร D3DX ได้"
 
 #: AudioDisplay.cpp:347 RendererDirectShow.cpp:854 RendererFFMS2.cpp:784
 msgid "Nie można stworzyć plain surface"
-msgstr "ไม่สามารถสร้างพื้นผิวธรรมดา"
+msgstr "ไม่สามารถสร้าง plain surface ได้"
 
 #: AudioDisplay.cpp:366 RendererVideo.cpp:339
 msgid "Nie można zresetować Direct3D"
-msgstr "ไม่สามารถรีเซ็ต Direct3D"
+msgstr "ไม่สามารถรีเซ็ต Direct3D ได้"
 
 #: AudioDisplay.cpp:616
 msgid "Zmodyfikowano"
-msgstr "มีการเปลี่ยนแปลง"
+msgstr "แก้ไขแล้ว"
 
 #: AudioDisplay.cpp:620
 msgid "Czas ujemny"
@@ -226,11 +226,11 @@ msgstr "เวลาติดลบ"
 #: AudioDisplay.cpp:1026 RendererDirectShow.cpp:251 RendererDirectShow.cpp:253
 #: RendererDirectShow.cpp:924 RendererFFMS2.cpp:192 RendererFFMS2.cpp:194
 msgid "Nie można zablokować bufora tekstury"
-msgstr "ไม่สามารถล็อคการบัฟเฟอร์พื้นผิว"
+msgstr "ไม่สามารถล็อกบัฟเฟอร์พื้นผิวได้"
 
 #: AudioDisplay.cpp:1047
 msgid "Nie można nałożyć powierzchni spectrum na siebie"
-msgstr "ไม่สามารถซ้อนทับพื้นผิวสเปกตรัม"
+msgstr "ไม่สามารถซ้อนพื้นผิวสเปกตรัมเข้าด้วยกันได้"
 
 #: Automation.cpp:644
 #, c-format
@@ -239,17 +239,17 @@ msgid ""
 "\n"
 "%s."
 msgstr ""
-"เกิดข้อผิดพลาดในสคริปต์เริ่มต้นของ Lua \"%s\": \n"
+"เกิดข้อผิดพลาดขณะเริ่มต้นสคริปต์ Lua \"%s\":\n"
 "\n"
-"%s"
+"%s."
 
 #: Automation.cpp:656
 msgid ""
 "Próbujesz wczytać skrypt Automatyzacji 3 jako skrypt Automatyzacji 4. "
 "Automatyzacja 3 nie jest już wspierana."
 msgstr ""
-"คุณกำลังพยายามโหลดสคริปต์อัตโนมัติเวอร์ชัน 3 ซึ่งสคริปต์อัตโนมัติเวอร์ชัน 4 "
-"ไม่รองรับการโหลดจากสคริปต์อัตโนมัติ 3"
+"คุณกำลังพยายามโหลดสคริปต์ Automation 3 ในฐานะสคริปต์ Automation 4 "
+"ซึ่งไม่รองรับ Automation 3 แล้ว"
 
 #: Automation.cpp:699
 #, c-format
@@ -258,7 +258,7 @@ msgstr "มาโครชื่อ '%s' ได้ถูกกำหนดไว
 
 #: Automation.cpp:813
 msgid "Wystąpił błąd podczas wykonywania skryptu Lua:\n"
-msgstr "เกิดข้อผิดพลาดขณะโหลดสคริปต์ Lua:\n"
+msgstr "เกิดข้อผิดพลาดขณะเรียกใช้สคริปต์ Lua:\n"
 
 #: Automation.cpp:1260 Automation.cpp:1302 KainoteFrame.cpp:925
 #: KainoteFrame.cpp:2622
@@ -273,7 +273,7 @@ msgstr ""
 #: Automation.cpp:1264 Automation.cpp:1306
 #, c-format
 msgid "Nieznany błąd wczytywania skryptu Lua: %s."
-msgstr "เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุขณะโหลดสคริปต์ Lua: %s"
+msgstr "เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุขณะโหลดสคริปต์ Lua: %s."
 
 #: Automation.cpp:1271
 msgid ""
@@ -293,19 +293,19 @@ msgstr ""
 
 #: Automation.cpp:1320
 msgid "Wybierz edytor skryptów"
-msgstr "เลือกโปรแกรมแก้ไขสคริปต์"
+msgstr "เลือกตัวแก้ไขสคริปต์"
 
 #: Automation.cpp:1321
 msgid "Programy (*.exe)|*.exe|Wszystkie pliki (*.*)|*.*"
-msgstr "โปรแกรม (*.exe)|*.exe |แฟ้มทั้งหมด (*.*) |*.*"
+msgstr "โปรแกรม (*.exe)|*.exe|แฟ้มทั้งหมด (*.*)|*.*"
 
 #: Automation.cpp:1337
 msgid "Nie można uruchomić edytora."
-msgstr "ไม่สามารถเปิดตัวแก้ไข"
+msgstr "ไม่สามารถเรียกใช้ตัวแก้ไขได้"
 
 #: Automation.cpp:1337
 msgid "Błąd automatyzacji"
-msgstr "สคริปต์อัตโนมัติเกิดข้อผิดพลาด"
+msgstr "ข้อผิดพลาดของระบบอัตโนมัติ"
 
 #: Automation.cpp:1415 Automation.cpp:1462
 msgid "Pełny opis błędu Lua"
@@ -339,7 +339,7 @@ msgstr "ปุ่มลัด"
 
 #: AutomationHotkeysDialog.cpp:101
 msgid "Folder automatycznego wczytywania"
-msgstr "โฟลเดอร์สคริปต์อัตโนมัติ"
+msgstr "โฟลเดอร์โหลดอัตโนมัติ"
 
 #: AutomationHotkeysDialog.cpp:119
 msgid "Z napisów"
@@ -347,7 +347,7 @@ msgstr "จากคำบรรยาย"
 
 #: AutomationHotkeysDialog.cpp:144 OptionsDialog.cpp:668
 msgid "Mapuj skrót"
-msgstr "แผนผังปุ่มลัด"
+msgstr "กำหนดปุ่มลัด"
 
 #: AutomationHotkeysDialog.cpp:146 AutomationHotkeysDialog.cpp:242
 #: AutomationHotkeysDialog.cpp:252 Hotkeys.cpp:479 Hotkeys.cpp:490
@@ -450,12 +450,12 @@ msgstr "สไตล์"
 
 #: AutomationToFile.cpp:639 AutomationToFile.cpp:641
 msgid "dialogów"
-msgstr "บทบรรยาย"
+msgstr "กล่องโต้ตอบ"
 
 #: AutomationToFile.cpp:642
 #, c-format
 msgid "Nie można dodać linii klasy: %s w pole klasy: %s"
-msgstr "ไม่สามารถเพิ่มบรรทัดของคลาส: %s ในฟิลด์ของคลาส: %s"
+msgstr "ไม่สามารถเพิ่มบรรทัดคลาส %s ลงในช่องคลาส %s ได้"
 
 #: AutomationToFile.cpp:1180
 msgid "Brakujący wskaźnik napisów"
@@ -471,11 +471,11 @@ msgstr "ค้นหาแฟ้ม"
 
 #: AutoSaveOpen.cpp:32
 msgid "Filtruj listę"
-msgstr "รายการตัวกรอง"
+msgstr "กรองรายการ"
 
 #: AutoSaveOpen.cpp:33
 msgid "Wszystkie słowa"
-msgstr "หาทุกคํา"
+msgstr "ทุกคำ"
 
 #: AutoSaveOpen.cpp:42
 msgid "Pliki"
@@ -503,7 +503,7 @@ msgstr "โฟลเดอร์บันทึกอัตโนมัติว
 
 #: AutoSaveOpen.cpp:247
 msgid "Wczytywanie autozapisu nie powiodło się"
-msgstr "ไม่สามารถเปิดโฟลเดอร์บันทึกอัตโนมัติ"
+msgstr "โหลดบันทึกอัตโนมัติไม่สำเร็จ"
 
 #: AutoSavesRemoving.cpp:28 KainoteFrame.cpp:191
 msgid "Usuń pliki tymczasowe"
@@ -591,19 +591,19 @@ msgstr "ลบแฟ้มบันทึกอัตโนมัติที่
 
 #: AutoSavesRemoving.cpp:113
 msgid "Indeks"
-msgstr "แฟ้มการนำเข้า FFMS2"
+msgstr "ดัชนี"
 
 #: AutoSavesRemoving.cpp:115
 msgid "Usuń wybrane indeksy"
-msgstr "ลบแฟ้มการนำเข้าที่เลือก"
+msgstr "ลบดัชนีที่เลือก"
 
 #: AutoSavesRemoving.cpp:117
 msgid "Usuń wszystkie indeksy"
-msgstr "ลบแฟ้มการนำเข้าทั้งหมด"
+msgstr "ลบดัชนีทั้งหมด"
 
 #: AutoSavesRemoving.cpp:119
 msgid "Usuń starsze indeksy"
-msgstr "ลบแฟ้มการนำเข้าที่เก่ากว่า"
+msgstr "ลบดัชนีที่เก่ากว่า"
 
 #: AutoSavesRemoving.cpp:126
 msgid "Audio cache"
@@ -631,7 +631,7 @@ msgstr ""
 
 #: AutoSavesRemoving.cpp:178
 msgid "Pliki indeksów (*.ffindex)|*.ffindex"
-msgstr "แฟ้มการนำเข้า (*.ffindex)|*.ffindex"
+msgstr "แฟ้มดัชนี (*.ffindex)|*.ffindex"
 
 #: AutoSavesRemoving.cpp:179
 msgid "Pliki audio cache (*.w64)|*.w64"
@@ -689,19 +689,20 @@ msgid "Kolor cienia"
 msgstr "สีเงา"
 
 #: ColorPicker.cpp:562
-#, fuzzy
 msgid ""
 "Zamień ze sobą skróty próbnika\n"
 "i okna wyboru kolorów"
-msgstr "สลับปุ่มลัดตัวหยิบสีและหน้าต่างเลือกสี"
+msgstr ""
+"สลับปุ่มลัดระหว่างตัวหยิบสี\n"
+"กับหน้าต่างเลือกสี"
 
 #: ColorPicker.cpp:564
 msgid ""
 "Zahaczenie tej opcji uruchamia próbnik po kliknięciu lewym przyciskiem,\n"
 "a okno wyboru koloru po kliknięciu prawym przyciskiem."
 msgstr ""
-"เมื่อติ๊กตัวเลือกนี้จะเป็นการทำให้สามารถเปิดตัวหยิบสีด้วยคลิกเมาส์ซ้าย\n"
-"และเลือกหน้าต่างสีหลังด้วยคลิกขวา"
+"เมื่อเลือกตัวเลือกนี้ จะเปิดตัวหยิบสีเมื่อคลิกเมาส์ซ้าย\n"
+"และเปิดหน้าต่างเลือกสีเมื่อคลิกเมาส์ขวา"
 
 #: ColorPicker.cpp:574
 msgid "Wybrany kolor:"
@@ -721,7 +722,7 @@ msgstr "น้ำเงิน:"
 
 #: ColorPicker.cpp:607 ColorPicker.cpp:617
 msgid "Odcień:"
-msgstr "สี:"
+msgstr "เฉดสี:"
 
 #: ColorPicker.cpp:609 ColorPicker.cpp:619
 msgid "Nasycenie:"
@@ -733,7 +734,7 @@ msgstr "ความสว่าง:"
 
 #: ColorPicker.cpp:621 VisualAllTagsEdition.cpp:69
 msgid "Wartość:"
-msgstr "น้ำหนัก:"
+msgstr "ค่า:"
 
 #: ColorPicker.cpp:1375
 msgid "Próbnik koloru"
@@ -745,7 +746,7 @@ msgid ""
 "w miejsce wyboru koloru"
 msgstr ""
 "ย้ายหน้าต่าง\n"
-"แทนที่ตัวหยิบสี"
+"ไปยังตำแหน่งที่เลือกสี"
 
 #: config.cpp:629
 #, c-format
@@ -760,11 +761,11 @@ msgstr "ไม่สามารถโหลดชุดรูปแบบได
 #: Demux.cpp:44 ProviderFFMS2.cpp:212 ProviderFFMS2.cpp:349
 #, c-format
 msgid "Wystąpił błąd indeksowania: %s"
-msgstr "เกิดข้อผิดพลาดในการนำเข้า: %s"
+msgstr "เกิดข้อผิดพลาดขณะสร้างดัชนี: %s"
 
 #: Demux.cpp:85
 msgid "Plik nie ma żadnej ścieżki z napisami."
-msgstr "แฟ้มไม่มีคำบรรยายใด ๆ"
+msgstr "แฟ้มนี้ไม่มีแทร็กคำบรรยาย"
 
 #: Demux.cpp:96
 msgid "Wybierz ścieżkę napisów"
@@ -772,11 +773,11 @@ msgstr "เลือกแทร็กคำบรรยาย"
 
 #: Demux.cpp:117
 msgid "Odczyt napisów z pliku Matroska."
-msgstr "กำลังโหลดคำบรรยายจากแฟ้ม Matroska"
+msgstr "กำลังอ่านคำบรรยายจากแฟ้ม Matroska"
 
 #: DialogueTextEditor.cpp:863
 msgid "Sugestie poprawy"
-msgstr "แก้ไขข้อเสนอแนะ"
+msgstr "คำแนะนำการแก้ไข"
 
 #: DialogueTextEditor.cpp:2265 KaiListCtrl.cpp:117 KaiTextCtrl.cpp:1474
 msgid "&Kopiuj"
@@ -800,7 +801,7 @@ msgstr "ค้นหาคำแปลใน pl.ba.bla"
 
 #: DialogueTextEditor.cpp:2272 KaiTextCtrl.cpp:1481
 msgid "Szukaj zaznaczonej frazy w Google"
-msgstr "ค้นหาที่เลือกใน Google"
+msgstr "ค้นหาวลีที่เลือกใน Google"
 
 #: DialogueTextEditor.cpp:2273
 msgid "Szukaj synonimu na synonimy.net"
@@ -808,7 +809,7 @@ msgstr "ค้นหาคำพ้องความหมายบน synonyms
 
 #: DialogueTextEditor.cpp:2283 SpellCheckerDialog.cpp:32
 msgid "Sprawdzanie pisowni"
-msgstr "เครื่องมือตรวจสอบการสะกดคำ"
+msgstr "ตรวจการสะกด"
 
 #: DialogueTextEditor.cpp:2289
 msgid "Zainstalowane języki"
@@ -834,7 +835,7 @@ msgstr "แทนที่เครื่องหมายคำพูดโด
 #: DialogueTextEditor.cpp:2354
 #, c-format
 msgid "Błąd, słowo \"%s\" nie zostało dodane."
-msgstr "เกิดข้อผิดพลาด คำว่า \"%s \" ไม่ถูกเพิ่ม"
+msgstr "เกิดข้อผิดพลาด ไม่ได้เพิ่มคำว่า \"%s\""
 
 #: dshowplayer.cpp:67
 msgid "Nie można zainicjalizować COM"
@@ -846,7 +847,7 @@ msgstr "เกิดข้อผิดพลาดในการเริ่ม
 
 #: dshowplayer.cpp:92
 msgid "Filtr źródła nie został dodany"
-msgstr "ยังไม่ได้เพิ่มแหล่งที่มาของตัวกรอง"
+msgstr "ยังไม่ได้เพิ่มตัวกรองต้นทาง"
 
 #: dshowplayer.cpp:102
 msgid "Nie można dodać renderera wideo"
@@ -854,7 +855,7 @@ msgstr "ไม่สามารถเพิ่มตัวเรนเดอร
 
 #: dshowplayer.cpp:118
 msgid "Nie można utworzyć instancji renderera dźwięku"
-msgstr "ไม่สามารถสร้างอินสแตนซ์ตัวเรนเดอร์สร้างเสียง"
+msgstr "ไม่สามารถสร้างอินสแตนซ์ตัวเรนเดอร์เสียงได้"
 
 #: dshowplayer.cpp:120
 msgid "Nie można dodać renderera Direct Sound"
@@ -863,23 +864,23 @@ msgstr "ไม่สามารถเพิ่มตัวเรนเดอร
 #: dshowplayer.cpp:133 dshowplayer.cpp:154 dshowplayer.cpp:174
 #: dshowplayer.cpp:256
 msgid "Nie można wyliczyć pinów źródła"
-msgstr "ไม่สามารถแจกแจงพินของแหล่งที่มา"
+msgstr "ไม่สามารถแจกแจงพินต้นทางได้"
 
 #: dshowplayer.cpp:175
 msgid "Nie można wyliczyć pinów renderera"
-msgstr "ไม่สามารถแจกแจงพินของตัวเรนเดอร์"
+msgstr "ไม่สามารถแจกแจงพินของตัวเรนเดอร์ได้"
 
 #: dshowplayer.cpp:176
 msgid "Nie można wyliczyć pinów dsound"
-msgstr "ไม่สามารถแจกแจงพิน Direct Sound"
+msgstr "ไม่สามารถแจกแจงพิน DirectSound ได้"
 
 #: dshowplayer.cpp:185
 msgid "Nie można pobrać pinu renderera"
-msgstr "ไม่สามารถโหลดพินของตัวเรนเดอร์"
+msgstr "ไม่สามารถรับพินของตัวเรนเดอร์ได้"
 
 #: dshowplayer.cpp:186
 msgid "Nie można pobrać pinu dsound"
-msgstr "ไม่สามารถโหลดพิน Direct Sound"
+msgstr "ไม่สามารถรับพิน DirectSound ได้"
 
 #: dshowplayer.cpp:199 dshowplayer.cpp:224
 msgid "Brak IMediaTypes"
@@ -907,11 +908,11 @@ msgstr "ไม่พบพินที่เชื่อมโยงแหล่
 
 #: dshowplayer.cpp:216 dshowplayer.cpp:260
 msgid "Nie można pobrać informacji o pinie splittera"
-msgstr "ไม่สามารถโหลดข้อมูลพินแยกสัญญาณได้"
+msgstr "ไม่สามารถรับข้อมูลพินของตัวแยกสัญญาณได้"
 
 #: dshowplayer.cpp:219
 msgid "Nie można wyliczyć pinów splittera"
-msgstr "ไม่สามารถแจกแจงพินตัวแยกสัญญาณ"
+msgstr "ไม่สามารถแจกแจงพินของตัวแยกสัญญาณได้"
 
 #: dshowplayer.cpp:227
 msgid "Nie można połączyć pinu źródła z rendererem wideo2"
@@ -919,35 +920,35 @@ msgstr "ไม่สามารถเชื่อมต่อพินต้น
 
 #: dshowplayer.cpp:257
 msgid "Nie można pobrać pinu źródła"
-msgstr "ไม่สามารถโหลดพินแหล่งที่มาได้"
+msgstr "ไม่สามารถรับพินต้นทางได้"
 
 #: dshowplayer.cpp:404
 msgid "Nie można stworzyć interfejsu filtrów"
-msgstr "ไม่สามารถสร้างอินเตอร์เฟซตัวกรอง"
+msgstr "ไม่สามารถสร้างอินเทอร์เฟซตัวกรองได้"
 
 #: dshowplayer.cpp:408
 msgid "Nie można stworzyć kontrolera"
-msgstr "ไม่สามารถสร้างตัวควบคุม"
+msgstr "ไม่สามารถสร้างตัวควบคุมได้"
 
 #: dshowplayer.cpp:409
 msgid "Nie można stworzyć interfejsu szukania"
-msgstr "ไม่สามารถสร้างอินเตอร์เฟซการค้นหา"
+msgstr "ไม่สามารถสร้างอินเทอร์เฟซการค้นหาได้"
 
 #: dshowplayer.cpp:410
 msgid "Nie można stworzyć interfejsu audio"
-msgstr "ไม่สามารถสร้างอินเตอร์เฟซเสียง"
+msgstr "ไม่สามารถสร้างอินเทอร์เฟซเสียงได้"
 
 #: dshowplayer.cpp:538 dshowplayer.cpp:562
 msgid "Nie można wyliczyć filtrów"
-msgstr "ไม่สามารถแจกแจงตัวกรอง"
+msgstr "ไม่สามารถแจกแจงตัวกรองได้"
 
 #: dshowplayer.cpp:542
 msgid "Nie można pobrać nazwy filtra"
-msgstr "ไม่สามารถโหลดชื่อตัวกรอง"
+msgstr "ไม่สามารถรับชื่อตัวกรองได้"
 
 #: dshowplayer.cpp:565
 msgid "Nie można pobrać konfiguracji filtra"
-msgstr "ไม่สามารถโหลดค่ากำหนดตัวกรอง"
+msgstr "ไม่สามารถรับการกำหนดค่าตัวกรองได้"
 
 #: DummyVideo.cpp:22
 msgid "Opcje dummy wideo"
@@ -1082,7 +1083,7 @@ msgstr "บรรทัด: 0"
 
 #: EditBox.cpp:218
 msgid "Łamania: 0/86"
-msgstr "ยกคำ: 0/86"
+msgstr "การแบ่งบรรทัด: 0/86"
 
 #: EditBox.cpp:219
 msgid "Znaki na sekundę: 0<=15"
@@ -1124,7 +1125,7 @@ msgstr "ความคิดเห็น"
 #: SelectLines.cpp:75 SubsGrid.cpp:462 SubsGrid.cpp:629 SubsGridWindow.cpp:262
 #: SubsGridWindow.cpp:657 SubsGridWindow.cpp:1112 SubsGridWindow.cpp:1278
 msgid "Aktor"
-msgstr "แอคเตอร์"
+msgstr "ผู้พูด"
 
 #: EditBox.cpp:289 FindReplaceDialog.cpp:138 KainoteFrame.cpp:227
 #: SelectLines.cpp:76 SubsGrid.cpp:467 SubsGrid.cpp:634 SubsGridWindow.cpp:266
@@ -1139,7 +1140,7 @@ msgstr "บรรทัด: %i"
 
 #: EditBox.cpp:509
 msgid "Łamania: "
-msgstr "ยกคำ: "
+msgstr "การแบ่งบรรทัด: "
 
 #: EditBox.cpp:512
 #, c-format
@@ -1158,11 +1159,11 @@ msgstr "โหมดผู้แปลจะแสดงและบันทึ
 
 #: EditBox.cpp:1194
 msgid "Kopiuje cały tekst obcojęzyczny do pola z tłumaczeniem"
-msgstr "คัดลอกข้อความภาษาต่างประเทศทั้งหมดไปยังฟิลด์การแปล"
+msgstr "คัดลอกข้อความภาษาต่างประเทศทั้งหมดไปยังช่องการแปล"
 
 #: EditBox.cpp:1195
 msgid "Kopiuje zaznaczony tekst obcojęzyczny do pola z tłumaczeniem"
-msgstr "คัดลอกข้อความภาษาต่างประเทศที่เลือกไปยังฟิลด์การแปล"
+msgstr "คัดลอกข้อความภาษาต่างประเทศที่เลือกไปยังช่องการแปล"
 
 #: EditBox.cpp:1196
 msgid "Ustawia linijkę jako komentarz. Komentarze nie są wyświetlane"
@@ -1190,11 +1191,11 @@ msgstr "สไตล์ของบรรทัด"
 
 #: EditBox.cpp:1202
 msgid "Umożliwia szybką edycję stylu linijki"
-msgstr "สามารถแก้ไขสไตล์ของบรรทัดบัจจุบันอย่างรวดเร็ว"
+msgstr "ช่วยให้แก้ไขสไตล์ของบรรทัดปัจจุบันได้อย่างรวดเร็ว"
 
 #: EditBox.cpp:1203
 msgid "Oznaczenie aktora linijki. Nie wpływa na wygląd napisów"
-msgstr "แอคเตอร์หรือตัวละคร ไม่ได้ส่งผลกระทบต่อสไตล์ที่ปรากฏของคำบรรยาย"
+msgstr "ผู้พูดหรือตัวละครของบรรทัด ไม่มีผลต่อรูปลักษณ์ของคำบรรยาย"
 
 #: EditBox.cpp:1204
 msgid "Margines lewy linijki"
@@ -1257,7 +1258,7 @@ msgstr ""
 
 #: findreplace.cpp:399
 msgid "Wyszukiwanie zakończone, rozpocząć od początku?"
-msgstr "ถึงจุดสิ้นสุดแล้ว จะค้นหาจากจุดเริ่มต้นอีกครั้งไหม?"
+msgstr "ค้นหาจนถึงจุดสิ้นสุดแล้ว ต้องการเริ่มค้นหาจากต้นไฟล์หรือไม่?"
 
 #: findreplace.cpp:399 findreplace.cpp:406 findreplace.cpp:1324
 #: findreplace.cpp:1328 FontCollector.cpp:511 KainoteFrame.cpp:1341
@@ -1277,7 +1278,7 @@ msgstr "ไม่พบวลี \""
 #: findreplace.cpp:815 findreplace.cpp:1129 findreplace.cpp:1170
 #, c-format
 msgid "Zmieniono %i razy."
-msgstr "เปลี่ยนเปลงแล้ว %i ครั้ง"
+msgstr "เปลี่ยนแปลงแล้ว %i ครั้ง"
 
 #: findreplace.cpp:815 findreplace.cpp:1129 findreplace.cpp:1170
 msgid "Szukaj Zamień"
@@ -1288,8 +1289,8 @@ msgid ""
 "Czy na pewno dokonać zmian we wszystkich napisach?\n"
 "W razie pomyłki kopie zapasowe są w folderze 'ReplaceBackup'"
 msgstr ""
-"คุณแน่ใจหรือไม่ว่าต้องการเปลี่ยนแปลงกับคำบรรยายทั้งหมด?\n"
-"หากคุณทำผิดพลาดข้อมูลสำรองของคุณจะอยู่ในโฟลเดอร์ 'ReplaceBackup'"
+"แน่ใจหรือไม่ว่าต้องการเปลี่ยนแปลงคำบรรยายทั้งหมด?\n"
+"หากเกิดข้อผิดพลาด สำเนาสำรองจะอยู่ในโฟลเดอร์ 'ReplaceBackup'"
 
 #: findreplace.cpp:1177 FontCatalogList.cpp:84 KainoteFrame.cpp:912
 #: ShiftTimes.cpp:85 ShiftTimes.cpp:973 ShiftTimes.cpp:978
@@ -1306,8 +1307,9 @@ msgid ""
 "przez co nic nie zostanie znalezione.\n"
 "Co zrobić?"
 msgstr ""
-"สไตล์ทั้งหมดที่เลือกไม่มีอยู่และไม่พบอะไรอีก\n"
-"ทำอย่างไรดี?"
+"สไตล์ที่เลือกทั้งหมดไม่มีอยู่ในคำบรรยายที่ค้นหา\n"
+"จึงจะไม่พบผลลัพธ์ใด ๆ\n"
+"ต้องการทำอย่างไร?"
 
 #: findreplace.cpp:1325 findreplace.cpp:1330
 msgid "Wyczyść style"
@@ -1321,8 +1323,8 @@ msgid ""
 "Co zrobić?"
 msgstr ""
 "สไตล์ที่ชื่อ \"%s\" ไม่มีอยู่ในคำบรรยายปัจจุบัน\n"
-"แต่สามารถลดจำนวนผลการค้นหาลงได้\n"
-"จะทำอย่างไรดี?"
+"ซึ่งอาจทำให้จำนวนผลการค้นหาลดลงอย่างมาก\n"
+"ต้องการทำอย่างไร?"
 
 #: findreplace.cpp:1329
 msgid "Usuń nieistniejące style"
@@ -1346,10 +1348,9 @@ msgid ""
 "Ze względu na dużą wagę plików wideo\n"
 "szukanie wszystkiego \"*.*\" zostaje zmieniane na *.ass"
 msgstr ""
-"สามารถกรองการค้นหาของ Windows ด้วยการคั่นเครื่องหมายอัฒภาค (;) เช่น \"*.ass;*.srt\"\n"
-"หากต้องการค้นหาแฟ้มวิดีโอนั้นจะต้องระบุสกุลของแฟ้มวิดีโอ\n"
-"โดยทั่วไปแล้วค่าเริ่มต้นของการค้นหาคือ \"*.ass\" แต่หากกระบุ \"*.*\" "
-"จะเป็นการการค้นหาทั้งหมด"
+"ตัวกรองการค้นหาของ Windows คั่นด้วยเครื่องหมายอัฒภาค เช่น \"*.ass;*.srt\"\n"
+"เนื่องจากแฟ้มวิดีโอมีขนาดใหญ่\n"
+"การค้นหาทุกอย่างด้วย \"*.*\" จะถูกเปลี่ยนเป็น *.ass"
 
 #: FindReplaceDialog.cpp:71
 msgid "Filtry:"
@@ -1357,7 +1358,7 @@ msgstr "ตัวกรอง:"
 
 #: FindReplaceDialog.cpp:79
 msgid "Katalog szukania napisów:"
-msgstr "แคตตาล็อกที่คำบรรยายกำลังมองหา:"
+msgstr "โฟลเดอร์สำหรับค้นหาคำบรรยาย:"
 
 #: FindReplaceDialog.cpp:84 FontCollector.cpp:419
 msgid "Wybierz folder zapisu"
@@ -1369,7 +1370,7 @@ msgstr "แคตตาล็อก:"
 
 #: FindReplaceDialog.cpp:98 SelectLines.cpp:60
 msgid "Uwzględniaj wielkość liter"
-msgstr "ตรงกันทั้งคำ"
+msgstr "ตรงตามตัวพิมพ์ใหญ่-เล็ก"
 
 #: FindReplaceDialog.cpp:100 SelectLines.cpp:62
 msgid "Wyrażenia regularne"
@@ -1385,7 +1386,7 @@ msgstr "จุดสิ้นสุดของข้อความ"
 
 #: FindReplaceDialog.cpp:110
 msgid "Uwzględnij komentarze"
-msgstr "ความคิดเห็น"
+msgstr "รวมความคิดเห็น"
 
 #: FindReplaceDialog.cpp:112
 msgid "Pomiń tagi"
@@ -1480,7 +1481,7 @@ msgstr "บรรทัดทั้งหมด"
 
 #: FindReplaceDialog.cpp:248 MisspellReplacer.cpp:103 ShiftTimes.cpp:268
 msgid "Zaznaczone linijki"
-msgstr "บรรทัดที่เลือกไว้"
+msgstr "บรรทัดที่เลือก"
 
 #: FindReplaceDialog.cpp:251
 msgid "Od zaznaczonej"
@@ -1567,7 +1568,7 @@ msgstr "แน่ใจหรือไม่ว่าต้องการลบ
 #: FontCatalogList.cpp:143 FontCatalogList.cpp:743 kainoteApp.cpp:524
 #: kainoteApp.cpp:530 Notebook.cpp:976 StyleChange.cpp:461 stylestore.cpp:567
 msgid "Pytanie"
-msgstr "พร้อมท์"
+msgstr "คำถาม"
 
 #: FontCatalogList.cpp:168
 msgid ""
@@ -1618,7 +1619,7 @@ msgstr ""
 
 #: FontCatalogList.cpp:681 FontCatalogList.cpp:843
 msgid "Dodaj czcionki z napisów"
-msgstr "เพิ่มตัวอักษรจากคําบรรยาย"
+msgstr "เพิ่มแบบอักษรจากคำบรรยาย"
 
 #: FontCatalogList.cpp:743
 #, c-format
@@ -1635,7 +1636,7 @@ msgstr "ลบเนื้อหาทั้งหมดของแคตตา
 
 #: FontCatalogList.cpp:864
 msgid "Dodaj czcionki z wszystkich otwartych napisów"
-msgstr "เพิ่มตัวอักษรจากแฟ้ม ASS ทั้งหมดที่เปิดอยู่"
+msgstr "เพิ่มแบบอักษรจากคำบรรยายทั้งหมดที่เปิดอยู่"
 
 #: FontCollector.cpp:97
 msgid "W stylach:\n"
@@ -1721,7 +1722,7 @@ msgstr "เลือกโฟลเดอร์ที่ต้องการค
 
 #: FontCollector.cpp:465
 msgid "Brak wczytanych napisów, wczytaj napisy albo odznacz tę opcję."
-msgstr "ไม่ได้โหลดคำบรรยาย โหลดคำบรรยายหรือยกเลิกการเลือกตัวเลือกนี้"
+msgstr "ยังไม่ได้โหลดคำบรรยาย โปรดโหลดคำบรรยายหรือยกเลิกตัวเลือกนี้"
 
 #: FontCollector.cpp:471
 msgid "Wybierz nazwę dla archiwum"
@@ -1733,7 +1734,7 @@ msgstr "ตำแหน่งที่บันทึกไม่ถูกต้
 
 #: FontCollector.cpp:511
 msgid "Plik zip już istnieje, usunąć go?"
-msgstr "มีแฟ้มบีบอัดอยู่แล้วต้องการลบออกไหม?"
+msgstr "มีแฟ้ม ZIP อยู่แล้ว ต้องการลบหรือไม่?"
 
 #: FontCollector.cpp:584 FontCollector.cpp:641
 msgid "Nie znaleziono czcionki \""
@@ -1863,7 +1864,7 @@ msgstr "แฟ้ม MKV ที่โหลดมาไม่พบแบบอ�
 
 #: FontCollector.cpp:955
 msgid "Zapisano czcionkę o nazwie \""
-msgstr "บันทึกแบบอักษรด้วยแล้วชื่อ \""
+msgstr "บันทึกแบบอักษรชื่อ \""
 
 #: FontCollector.cpp:959
 msgid "Nie można zapisać czcionki o nazwie \""
@@ -2016,7 +2017,7 @@ msgstr "จัดการ"
 
 #: FontDialog.cpp:429
 msgid "Umorzliwia zarządzanie katalogami stylów"
-msgstr "จัดการแบบอักษรในแคตตาล็อก"
+msgstr "ช่วยให้จัดการแคตตาล็อกสไตล์ได้"
 
 #: FontDialog.cpp:431 HotkeysNaming.cpp:120 StyleChange.cpp:86 SubsGrid.cpp:191
 msgid "Filtruj"
@@ -2028,7 +2029,7 @@ msgstr "กรองแบบอักษรตามตัวอักษรท
 
 #: FontDialog.cpp:453
 msgid "Filtrowanie i katalogi czcionek"
-msgstr "กรองตามแบบอักษรของแคตตาล็อก"
+msgstr "การกรองและแคตตาล็อกแบบอักษร"
 
 #: FontEnumerator.cpp:244
 msgid "Nie można stworzyć uchwytu notyfikacji zmian folderu czcionek."
@@ -2049,7 +2050,7 @@ msgstr "กำลังลบแบบอักษรจากโฟลเดอ
 
 #: FontEnumerator.cpp:380
 msgid "Wczytywanie czcionek z zewnętrznego folderu"
-msgstr "กำลังโหลดโหลดแบบอักษรจากโฟลเดอร์ภายนอก"
+msgstr "กำลังโหลดแบบอักษรจากโฟลเดอร์ภายนอก"
 
 #: FontEnumerator.cpp:402
 msgid "Nie można wczytać zewnętrznego katalogu czcionek"
@@ -2395,7 +2396,7 @@ msgstr "ไม่สามารถเรียกคืนปุ่มลัด
 
 #: Hotkeys.cpp:594
 msgid "Mapowanie przycisków"
-msgstr "แผนผังปุ่มลัด"
+msgstr "การกำหนดปุ่มลัด"
 
 #: Hotkeys.cpp:600
 msgid "Skrót globalny"
@@ -2561,7 +2562,7 @@ msgstr "อย่ารีเซ็ตตัวกรองก่อนหน้
 
 #: HotkeysNaming.cpp:123 SubsGrid.cpp:228
 msgid "Ignoruj filtrowanie przy akcjach"
-msgstr "ละเว้นการกรองขณะกระทำการ"
+msgstr "ละเว้นการกรองเมื่อดำเนินการ"
 
 #: HotkeysNaming.cpp:124 SubsGrid.cpp:183
 msgid "Filtrowanie odwrócone"
@@ -2569,7 +2570,7 @@ msgstr "กรองย้อนกลับ"
 
 #: HotkeysNaming.cpp:125 SubsGrid.cpp:147
 msgid "Ukryj aktora"
-msgstr "ซ่อนแอคเตอร์"
+msgstr "ซ่อนผู้พูด"
 
 #: HotkeysNaming.cpp:126 SubsGrid.cpp:153
 msgid "Ukryj znaki na sekundę"
@@ -2609,7 +2610,7 @@ msgstr "ซ่อนสไตล์"
 
 #: HotkeysNaming.cpp:135 SubsGrid.cpp:230
 msgid "Stwórz drzewko"
-msgstr "สร้างไดเรกทอรีทรี"
+msgstr "สร้างทรี"
 
 #: HotkeysNaming.cpp:136 SubsGrid.cpp:219
 msgid "Zaznacz wszystkie linie widoczne na wideo"
@@ -2676,26 +2677,24 @@ msgid "Ustaw nowy FPS"
 msgstr "กำหนดค่า FPS ใหม่"
 
 #: HotkeysNaming.cpp:154 SubsGrid.cpp:158
-#, fuzzy
 msgid "Podziel linię do czasu wideo"
-msgstr "เลือกบรรทัดที่ตรงกับตำแหน่งวิดีโอปัจจุบัน"
+msgstr "แบ่งบรรทัดตามเวลาวิดีโอ"
 
 #: HotkeysNaming.cpp:155 SubsGrid.cpp:160
 msgid "Podziel linie na klatki"
-msgstr ""
+msgstr "แบ่งบรรทัดเป็นเฟรม"
 
 #: HotkeysNaming.cpp:156 SubsGrid.cpp:162
-#, fuzzy
 msgid "Podziel linie na znaki"
-msgstr "กำลังทำบรรทัดซ้ำ"
+msgstr "แบ่งบรรทัดเป็นอักขระ"
 
 #: HotkeysNaming.cpp:157 SubsGrid.cpp:163
 msgid "Podziel linie na słowa"
-msgstr ""
+msgstr "แบ่งบรรทัดเป็นคำ"
 
 #: HotkeysNaming.cpp:158 SubsGrid.cpp:164
 msgid "Podziel linie według łamań"
-msgstr ""
+msgstr "แบ่งบรรทัดตามจุดแบ่งบรรทัด"
 
 #: HotkeysNaming.cpp:159 KainoteFrame.cpp:312
 msgid "Właściwości pliku ASS"
@@ -2707,7 +2706,7 @@ msgstr "เกี่ยวกับ"
 
 #: HotkeysNaming.cpp:161
 msgid "Wątek programu na forum AnimeSub.info"
-msgstr "กระทู้ในฟอรั่มบน AnimeSub.info (ภาษาโปแลนด์)"
+msgstr "กระทู้ในฟอรัมบน AnimeSub.info (ภาษาโปแลนด์)"
 
 #: HotkeysNaming.cpp:167 KainoteFrame.cpp:293
 msgid "Otwórz audio z wideo"
@@ -2719,7 +2718,7 @@ msgstr "โหลดสคริปต์อัตโนมัติ"
 
 #: HotkeysNaming.cpp:169 KainoteFrame.cpp:349 KainoteFrame.cpp:350
 msgid "Otwórz okno mapowania skrótów"
-msgstr "เปิดหน้าต่างแผนผังปุ่มลัด"
+msgstr "เปิดหน้าต่างกำหนดปุ่มลัด"
 
 #: HotkeysNaming.cpp:170 KainoteFrame.cpp:345 KainoteFrame.cpp:346
 msgid "Odśwież skrypty autoload"
@@ -2763,7 +2762,7 @@ msgstr "จัดเรียงทุกบรรทัดตามสไตล
 
 #: HotkeysNaming.cpp:188
 msgid "Sortuj wszystko według aktora"
-msgstr "จัดเรียงทุกบรรทัดตามแอคเตอร์"
+msgstr "จัดเรียงทุกบรรทัดตามผู้พูด"
 
 #: HotkeysNaming.cpp:189
 msgid "Sortuj wszystko według efektu"
@@ -2787,7 +2786,7 @@ msgstr "จัดเรียงบรรทัดที่เลือกตา
 
 #: HotkeysNaming.cpp:194
 msgid "Sortuj zaznaczenie według aktora"
-msgstr "จัดเรียงบรรทัดที่เลือกตามแอคเตอร์"
+msgstr "จัดเรียงบรรทัดที่เลือกตามผู้พูด"
 
 #: HotkeysNaming.cpp:195
 msgid "Sortuj zaznaczenie według efektu"
@@ -2826,9 +2825,8 @@ msgid "Powiększ wideo"
 msgstr "ซูมวิดีโอ"
 
 #: HotkeysNaming.cpp:205 KainoteFrame.cpp:278
-#, fuzzy
 msgid "Wyłącz powiększenie wideo"
-msgstr "ปิดวิดีโอ"
+msgstr "ปิดการซูมวิดีโอ"
 
 #: HotkeysNaming.cpp:206
 msgid "Widok wszystko"
@@ -2856,7 +2854,7 @@ msgstr "ล้างค่าสไตล์ของแฟ้ม ASS"
 
 #: HotkeysNaming.cpp:214 KainoteFrame.cpp:235
 msgid "Popraw drobne błędy (eksperymentalne)"
-msgstr "ตัวแทนที่หลายค่า (ทดลอง)"
+msgstr "แก้ไขข้อผิดพลาดเล็กน้อย (ทดลอง)"
 
 #: HotkeysNaming.cpp:216 KainoteFrame.cpp:155
 msgid "Wczytaj ostatnią sesję"
@@ -2868,11 +2866,11 @@ msgstr "เปิดไฟล์เสียง"
 
 #: HotkeysNaming.cpp:224
 msgid "Odtwórz aktywną linijkę"
-msgstr "เล่นบรรทัดบัจจุบัน"
+msgstr "เล่นบรรทัดปัจจุบัน"
 
 #: HotkeysNaming.cpp:230 KainoteFrame.cpp:185
 msgid "Usuń napisy z edytora"
-msgstr "นำคำบรรยายออกจากเครื่องมือแก้ไข"
+msgstr "นำคำบรรยายออกจากตัวแก้ไข"
 
 #: HotkeysNaming.cpp:232 KainoteFrame.cpp:177
 msgid "Zapisz wszystkie napisy"
@@ -2912,7 +2910,7 @@ msgstr "ไปยังเวลาสิ้นสุด"
 
 #: HotkeysNaming.cpp:249 KainoteFrame.cpp:336 KainoteFrame.cpp:337
 msgid "Sprawdź poprawność pisowni"
-msgstr "เครื่องมือตรวจสอบการสะกดคำ"
+msgstr "ตรวจการสะกด"
 
 #: HotkeysNaming.cpp:251 VideoBox.cpp:960
 msgid "Kopiuj klatkę do schowka"
@@ -2984,7 +2982,7 @@ msgstr "ไม่สามารถโหลดปุ่มลัดได้ �
 
 #: kainoteApp.cpp:524
 msgid "Wczytać poprzednią sesję?"
-msgstr "โหลดเซสชันก่อนหน้าไหม?"
+msgstr "ต้องการโหลดเซสชันก่อนหน้าหรือไม่?"
 
 #: kainoteApp.cpp:530
 msgid ""
@@ -3052,19 +3050,19 @@ msgstr "บันทึกเซสชันเป็นไฟล์"
 
 #: KainoteFrame.cpp:163
 msgid "Pytaj o wczytanie ostatniej sesji przy starcie programu"
-msgstr "ให้ถามว่าจะโหลดเซสชันสุดท้ายเมื่อเริ่มต้นโปรแกรมหรือไม่ เมื่อเริ่มต้นโปรแกรม"
+msgstr "ถามว่าจะโหลดเซสชันล่าสุดเมื่อเริ่มโปรแกรมหรือไม่"
 
 #: KainoteFrame.cpp:164
 msgid "Pyta, czy wczytać ostatnio zaczytane pliki przy starcie programu"
-msgstr "ให้ถามว่าจะโหลดแฟ้มล่าสุดหรือไม่ เมื่อเริ่มต้นโปรแกรม"
+msgstr "ถามว่าจะโหลดแฟ้มที่เปิดล่าสุดเมื่อเริ่มโปรแกรมหรือไม่"
 
 #: KainoteFrame.cpp:167
 msgid "Wczytaj ostatnią sesję przy starcie programu"
-msgstr "โหลดเซสชันสุดท้ายเมื่อเริ่มต้นโปรแกรม"
+msgstr "โหลดเซสชันล่าสุดเมื่อเริ่มโปรแกรม"
 
 #: KainoteFrame.cpp:168
 msgid "Wczytuje poprzednio zaczytane pliki przy starcie programu"
-msgstr "กำลังโหลดเซสชันสุดท้ายเมื่อเริ่มต้นโปรแกรม"
+msgstr "โหลดแฟ้มที่เปิดไว้ก่อนหน้าเมื่อเริ่มโปรแกรม"
 
 #: KainoteFrame.cpp:172
 msgid "&Otwórz napisy"
@@ -3096,11 +3094,11 @@ msgstr "บันทึกเป็น"
 
 #: KainoteFrame.cpp:180
 msgid "Zapisz &tłumaczenie"
-msgstr "บันทึกการแปล"
+msgstr "บันทึก&การแปล"
 
 #: KainoteFrame.cpp:182
 msgid "Ostatnio otwa&rte napisy"
-msgstr "คำบรรยายที่เพิ่งเปิด"
+msgstr "คำบรรยายที่เพิ่งเ&ปิด"
 
 #: KainoteFrame.cpp:183 VideoBox.cpp:949
 msgid "Ostatnio otwarte napisy"
@@ -3210,7 +3208,7 @@ msgstr "จัดเรียงตามสไตล์"
 
 #: KainoteFrame.cpp:226
 msgid "Sortuj według aktora"
-msgstr "จัดเรียงตามแอคเตอร์"
+msgstr "จัดเรียงตามผู้พูด"
 
 #: KainoteFrame.cpp:227
 msgid "Sortuj według efektu"
@@ -3238,11 +3236,11 @@ msgstr "จัดเ&รียงบรรทัดที่เลือก"
 
 #: KainoteFrame.cpp:234
 msgid "Sortuje zaznaczone linie napisów ASS"
-msgstr "จัดเรียงบรรทัดคำบรรยายทั้งหมดในแฟ้ม ASS"
+msgstr "จัดเรียงบรรทัดคำบรรยาย ASS ที่เลือก"
 
 #: KainoteFrame.cpp:236
 msgid "Włącza okno poprawiania błędów"
-msgstr "เปิดใช้งานตัวแทนที่หลายค่า"
+msgstr "เปิดหน้าต่างแก้ไขข้อผิดพลาดเล็กน้อย"
 
 #: KainoteFrame.cpp:237
 msgid "Zaznacz &linijki"
@@ -3462,7 +3460,7 @@ msgstr "เปิดช่วยเหลือในเบราว์เซอ
 
 #: KainoteFrame.cpp:356
 msgid "&Wątek programu na forum AnimeSub.info"
-msgstr "&กระทู้ในฟอรั่มบน Animesub.info (ภาษาโปแลนด์)"
+msgstr "&กระทู้ในฟอรัมบน Animesub.info (ภาษาโปแลนด์)"
 
 #: KainoteFrame.cpp:357
 msgid "Otwiera wątek programu na forum AnimeSub.info"
@@ -3555,7 +3553,7 @@ msgid ""
 msgstr ""
 "ตัวแก้ไขคำบรรยายโดย Marcin Drob หรือที่รู้จักในชื่อ Bakura หรือ Bjakja "
 "(bjakja7@gmail.com)\n"
-"เวอร์ชั่น %s อัพเดทวันที่ %s"
+"เวอร์ชัน %s วันที่ %s"
 
 #: KainoteFrame.cpp:1103
 msgid ""
@@ -3563,7 +3561,7 @@ msgid ""
 "Aegisuba.\n"
 "\n"
 msgstr ""
-"ผมเขียนโปรแกรมนี้เพื่อมาทดแทน Bestplayer และ Aegisub\n"
+"โปรแกรมนี้สร้างขึ้นเพื่อแทนที่ Bestplayer และ Aegisub\n"
 "\n"
 
 #: KainoteFrame.cpp:1104
@@ -3574,9 +3572,9 @@ msgid ""
 "bądź mailowo.\n"
 "\n"
 msgstr ""
-"หากพบข้อบกพร่องหรือมีข้อเสนอแนะเปลี่ยนแปลงหรือฟีเจอร์ใหม่\n"
-"สามารถบอกผมได้ผ่านในเชิร์ฟเวอร์ Discord: https://discord.gg/9WacFTtK6q, Github, "
-"หรืออีเมล (bjakja7@gmail.com)\n"
+"หากพบข้อบกพร่อง หรือมีข้อเสนอแนะเกี่ยวกับการเปลี่ยนแปลงหรือฟีเจอร์ใหม่\n"
+"สามารถแจ้งได้ทาง Discord: https://discord.gg/9WacFTtK6q, GitHub "
+"หรืออีเมล\n"
 "\n"
 
 #: KainoteFrame.cpp:1105
@@ -3589,7 +3587,7 @@ msgid ""
 "automatyzacja\n"
 "i kilka innych pojedynczych funkcji wzięte z Aegisuba -\n"
 msgstr ""
-"ตัวหยิบสี, ถอดซับออกจากแฟ้ม MKV, ออดิโอบอกซ์, ตัวเสียง, สคริปต์อัตโนมัติ\n"
+"ตัวหยิบสี, การถอดซับออกจากแฟ้ม MKV, กล่องเสียง, เครื่องเล่นเสียง, ระบบอัตโนมัติ\n"
 "และคุณสมบัติอื่น ๆ มากมายที่นำมาจาก Aegisub -\n"
 
 #: KainoteFrame.cpp:1118
@@ -3629,25 +3627,25 @@ msgid ""
 "- Devilkan (crashhunter, ze względu na swój system i przyzwyczajenia "
 "wytropił już wiele crashy,\n"
 msgstr ""
-"- Devilkan (นักล่มโปรแกรม เนื่องจากระบบและนิสัยของเขา เขาทำ Kainote crash บ่อยมาก\n"
+"- Devilkan (ผู้ค้นหาข้อขัดข้อง ซึ่งพบข้อขัดข้องจำนวนมากจากระบบและพฤติกรรมการใช้งานของตน\n"
 
 #: KainoteFrame.cpp:1130
 msgid ""
 "pomógł w poprawie działania narzędzi do typesettingu, wymyślił wiele innych "
 "usprawnień).\n"
 msgstr ""
-"และเขามาช่วยปรับปรุงการทำงานและพัฒนาเครื่องมือเรียงพิมพ์การปรับปรุงอื่น ๆ อีกมากมาย)\n"
+"และช่วยปรับปรุงการทำงานของเครื่องมือจัดวางตัวอักษร รวมถึงเสนอการปรับปรุงอื่น ๆ อีกมากมาย)\n"
 
 #: KainoteFrame.cpp:1131
 msgid ""
 "- MatiasMovie (wyłapał parę crashy i zaproponował różne usprawnienia, pomaga "
 "w debugowaniu crashy).\n"
 msgstr ""
-"- MatiasMovie (พบข้อขัดข้องบางส่วนและเสนอแนะการปรับปรุงบางอย่างช่วยแก้ไขข้อบกพร่อง)\n"
+"- MatiasMovie (พบข้อขัดข้องบางส่วน เสนอการปรับปรุงหลายรายการ และช่วยดีบักข้อขัดข้อง)\n"
 
 #: KainoteFrame.cpp:1132
 msgid "- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy).\n"
-msgstr "- mas1904 (ผู้พบข้อผิดพลาดบางอย่างและช่วยแก้ไขข้อผิดพลาด)\n"
+msgstr "- mas1904 (พบข้อผิดพลาดบางส่วนและช่วยดีบักข้อขัดข้อง)\n"
 
 #: KainoteFrame.cpp:1133
 msgid "- Senami (stworzył nowe motywy, a także wyłapał parę błędów).\n"
@@ -3786,7 +3784,7 @@ msgstr "ปุ่มลัดที่สองสามารถกำหนด
 
 #: MisspellReplacer.cpp:30
 msgid "Korekcja drobnych błędów"
-msgstr "ตัวแทนที่หลายค่า"
+msgstr "การแก้ไขข้อผิดพลาดเล็กน้อย"
 
 #: MisspellReplacer.cpp:38
 msgid "Edycja reguły"
@@ -4153,11 +4151,11 @@ msgstr "ซ่อนต้นฉบับที่จะแสดงบนวิ
 
 #: OptionsDialog.cpp:305
 msgid "Nie zmieniaj zaznaczeń przy duplikacji linii dialogowych"
-msgstr "ไม่ยกเลิกการเลือกเมื่อมีการกระทำใด ๆ กับบรรทัด"
+msgstr "ไม่เปลี่ยนรายการที่เลือกเมื่อทำซ้ำบรรทัดบทสนทนา"
 
 #: OptionsDialog.cpp:306
 msgid "Nie wypośrodkowuj aktywnej linii w polu napisów"
-msgstr "ไม่ให้บรรทัดในฟิลด์คำบรรยายอยู่ตรงกลาง"
+msgstr "ไม่จัดบรรทัดปัจจุบันให้อยู่กึ่งกลางในช่องคำบรรยาย"
 
 #: OptionsDialog.cpp:306
 msgid "Używaj skróty klawiszowe numpada w polach tekstowych"
@@ -4238,11 +4236,11 @@ msgstr "แบบอักษรของโปรแกรม:"
 
 #: OptionsDialog.cpp:424
 msgid "Zliczaj spacje i znaki interpunkcyjne dla łamań"
-msgstr ""
+msgstr "นับช่องว่างและเครื่องหมายวรรคตอนในการแบ่งบรรทัด"
 
 #: OptionsDialog.cpp:427
 msgid "Zliczaj spacje i znaki interpunkcyjne dla ZNS"
-msgstr ""
+msgstr "นับช่องว่างและเครื่องหมายวรรคตอนสำหรับ CPS"
 
 #: OptionsDialog.cpp:432
 msgid "Sposób wczytywania skryptów autoload"
@@ -4343,20 +4341,19 @@ msgstr "เปิดวิดีโอตามเวลาของบรรท
 
 #: OptionsDialog.cpp:575
 msgid "Preferowane ścieżki audio (oddzielone średnikiem)"
-msgstr "เลือกแทร็กเสียงที่ต้องการ (คั่นด้วยที่เลือกไว้อัฒภาค)"
+msgstr "แทร็กเสียงที่ต้องการ (คั่นด้วยเครื่องหมายอัฒภาค)"
 
 #: OptionsDialog.cpp:576
 msgid "Sposób szukania wideo w FFMS2 (wymaga ponownego wczytania)"
-msgstr "กรอวิดีโอด้วย FFMS2 (ต้องโหลดซ้ำ)"
+msgstr "วิธีค้นหาวิดีโอใน FFMS2 (ต้องโหลดใหม่)"
 
 #: OptionsDialog.cpp:576
 msgid "Filtr wyświetlania napisów"
 msgstr "ตัวกรองการแสดงผลคำบรรยาย"
 
 #: OptionsDialog.cpp:577
-#, fuzzy
 msgid "Początkowy zoom wideo w procentach"
-msgstr "เริ่มต้นวิดีโอซูมในเปอร์เซ็นต์."
+msgstr "การซูมวิดีโอเริ่มต้นเป็นเปอร์เซ็นต์"
 
 #: OptionsDialog.cpp:596
 msgid "Liniowe"
@@ -4392,7 +4389,7 @@ msgstr "ปุ่มลัดคำอธิบาย"
 
 #: OptionsDialog.cpp:641
 msgid "Skróty edytora"
-msgstr "ปุ่มลัดเครื่องมือแก้ไข"
+msgstr "ปุ่มลัดตัวแก้ไข"
 
 #: OptionsDialog.cpp:641
 msgid "Skróty wideo"
@@ -4688,7 +4685,7 @@ msgstr "ตัวแก้ไข แท็กรหัสแม่แบบ"
 
 #: OptionsDialog.cpp:782
 msgid "Edytor funkcje template"
-msgstr "ตัวแก้ไข ฟังก์ชั่นแม่แบบ"
+msgstr "ตัวแก้ไข ฟังก์ชันแม่แบบ"
 
 #: OptionsDialog.cpp:782
 msgid "Edytor słowa kluczowe template"
@@ -5060,11 +5057,11 @@ msgstr "การค้นหา พื้นหลังนิพจน์ผ�
 
 #: OptionsDialog.cpp:826
 msgid "Pierwszy kolor podglądu stylów"
-msgstr "สีหลักพื้นหลังตัวแสดงผลตัวอย่างสไตล์"
+msgstr "สีแรกสำหรับตัวอย่างสไตล์"
 
 #: OptionsDialog.cpp:826
 msgid "Drugi kolor podglądu stylów"
-msgstr "สีรองพื้นหลังตัวแสดงผลตัวอย่างสไตล์"
+msgstr "สีที่สองสำหรับตัวอย่างสไตล์"
 
 #: OptionsDialog.cpp:851
 msgid "Nazwa motywu:"
@@ -5078,7 +5075,7 @@ msgid ""
 msgstr ""
 "ชื่อของชุดรูปแบบที่ต้องคัดลอก\n"
 "ชุดรูปแบบเริ่มต้น: DarkSentro และ LightSentro\n"
-"ไม่สามารถแก้ไขได้โปรดคัดลอก"
+"ไม่สามารถแก้ไขได้ โปรดคัดลอกก่อน"
 
 #: OptionsDialog.cpp:854 SelectLines.cpp:122 stylestore.cpp:87
 #: stylestore.cpp:140
@@ -5091,7 +5088,7 @@ msgid ""
 "polu tekstowym i polu napisów."
 msgstr ""
 "หมายเหตุ! ความโปร่งใสทำงานบนสเปกตรัมเสียง\n"
-"และในฟิลด์คำบรรยายเท่านั้น"
+"และในช่องคำบรรยายเท่านั้น"
 
 #: OptionsDialog.cpp:873
 msgid "Nazwa"
@@ -5249,7 +5246,7 @@ msgstr "ผู้จัดเวลา"
 #: OptionsPanels.cpp:32 ScriptInfo.cpp:59 SubsGridDialogs.cpp:112
 #: VisualDrawingShapes.cpp:68
 msgid "Edycja"
-msgstr "อัปเดตโดย"
+msgstr "แก้ไข"
 
 #: OptionsPanels.cpp:55
 msgid "Zawsze pytaj o zmianę informacji o napisach"
@@ -5261,11 +5258,11 @@ msgstr "ใช้เวลาไปแล้ว: 00:00:00.00"
 
 #: ProviderFFMS2.cpp:71
 msgid "Indeksowanie pliku wideo"
-msgstr "กำลังนำเข้าแฟ้มวิดีโอ"
+msgstr "กำลังสร้างดัชนีแฟ้มวิดีโอ"
 
 #: ProviderFFMS2.cpp:118
 msgid "Rozmiar klatki wideo jest zbyt duży"
-msgstr ""
+msgstr "ขนาดเฟรมวิดีโอใหญ่เกินไป"
 
 #: ProviderFFMS2.cpp:285 VisualDrawingShapes.cpp:210
 #: VisualDrawingShapes.cpp:274
@@ -5279,11 +5276,11 @@ msgstr "เลือกแทร็ก"
 #: ProviderFFMS2.cpp:361
 #, c-format
 msgid "Nie można zapisać indeksu, wystąpił błąd %s"
-msgstr "ไม่สามารถบันทึกแฟ้มการนำเข้าได้ เนื่องจากเกิดข้อผิดพลาด %s"
+msgstr "ไม่สามารถบันทึกดัชนีได้ เนื่องจากเกิดข้อผิดพลาด %s"
 
 #: ProviderFFMS2.cpp:388
 msgid "Nie można utworzyć VideoSource."
-msgstr "ไม่สามารถสร้าง VideoSource"
+msgstr "ไม่สามารถสร้าง VideoSource ได้"
 
 #: ProviderFFMS2.cpp:427
 msgid "Nie można przekonwertować wideo na RGBA"
@@ -5291,29 +5288,29 @@ msgstr "ไม่สามารถแปลงวิดีโอเป็น RG
 
 #: ProviderFFMS2.cpp:441 ProviderFFMS2.cpp:447
 msgid "Nie można zmienić macierzy YCbCr"
-msgstr "เมทริกซ์ YCbCr ไม่สามารถเปลี่ยนแปลงได้"
+msgstr "ไม่สามารถเปลี่ยนเมทริกซ์ YCbCr ได้"
 
 #: ProviderFFMS2.cpp:457
 msgid "Nie można pobrać ścieżki wideo"
-msgstr "ไม่สามารถโหลดแทร็กวิดีโอ"
+msgstr "ไม่สามารถรับแทร็กวิดีโอได้"
 
 #: ProviderFFMS2.cpp:462
 msgid "Nie można pobrać informacji o wideo"
-msgstr "ไม่สามารถโหลดข้อมูลวิดีโอ"
+msgstr "ไม่สามารถรับข้อมูลวิดีโอได้"
 
 #: ProviderFFMS2.cpp:492
 #, c-format
 msgid "Wystąpił błąd tworzenia źródła audio: %s"
-msgstr "เกิดข้อผิดพลาดในการสร้างแหล่งที่มาเสียง: %s"
+msgstr "เกิดข้อผิดพลาดขณะสร้างต้นทางเสียง: %s"
 
 #: ProviderFFMS2.cpp:501
 #, c-format
 msgid "Wystąpił błąd konwertowania audio: %s"
-msgstr "เกิดข้อผิดพลาดในการแปลงเสียง: %s"
+msgstr "เกิดข้อผิดพลาดขณะแปลงเสียง: %s"
 
 #: ProviderFFMS2.cpp:517
 msgid "Nie można ustawić opóźnienia, przekracza czas trwania audio"
-msgstr "ไม่สามารถตั้งค่าดีเลย์เกินระยะเวลาของเสียง"
+msgstr "ไม่สามารถตั้งค่าดีเลย์ที่เกินระยะเวลาของเสียงได้"
 
 #: ProviderFFMS2.cpp:704
 msgid "Za mało pamięci RAM"
@@ -5321,19 +5318,19 @@ msgstr "แรมไม่เพียงพอ"
 
 #: RendererDirectShow.cpp:106
 msgid "Nie można stworzyć DXVA processor service"
-msgstr "ไม่สามารถสร้างบริการประมวลผล DXVA"
+msgstr "ไม่สามารถสร้างบริการประมวลผล DXVA ได้"
 
 #: RendererDirectShow.cpp:126
 msgid "Nie można pobrać GUIDów DXVA"
-msgstr "ไม่สามารถดาวน์โหลด DXVA GUID ได้"
+msgstr "ไม่สามารถรับ GUID ของ DXVA ได้"
 
 #: RendererDirectShow.cpp:134
 msgid "Nie można uzyskać formatów DXVA"
-msgstr "ไม่สามารถรับรูปแบบ DXVA"
+msgstr "ไม่สามารถรับรูปแบบ DXVA ได้"
 
 #: RendererDirectShow.cpp:145
 msgid "Ten format nie jest obsługiwany przez DXVA"
-msgstr "รูปแบบนี้ไม่รองรับโดย DXVA"
+msgstr "DXVA ไม่รองรับรูปแบบนี้"
 
 #: RendererDirectShow.cpp:149
 msgid "GetVideoProcessorCaps zawiodło"
@@ -5342,19 +5339,19 @@ msgstr "GetVideoProcessorCaps ล้มเหลว"
 #: RendererDirectShow.cpp:157
 #, c-format
 msgid "Nie można stworzyć powierzchni DXVA %i"
-msgstr "ไม่สามารถสร้างพื้นผิว DXVA %i"
+msgstr "ไม่สามารถสร้างพื้นผิว DXVA %i ได้"
 
 #: RendererDirectShow.cpp:160
 msgid "Nie można stworzyć processora DXVA"
-msgstr "ไม่สามารถสร้างการประมวลผล DXVA"
+msgstr "ไม่สามารถสร้างตัวประมวลผล DXVA ได้"
 
 #: RendererDirectShow.cpp:169
 msgid "Zawiodło któreś z ustawień DirectX vertices"
-msgstr "การตั้งค่า DirectX อย่างหนึ่งล้มเหลว"
+msgstr "การตั้งค่า vertex ของ DirectX บางส่วนล้มเหลว"
 
 #: RendererDirectShow.cpp:193 RendererDirectShow.cpp:197
 msgid "Nie można storzyć tekstury napisów"
-msgstr "ไม่สามารถสร้างพื้นผิวคำบรรยาย"
+msgstr "ไม่สามารถสร้างเท็กซ์เจอร์คำบรรยายได้"
 
 #: RendererDirectShow.cpp:222
 msgid "Brak bufora klatki"
@@ -5362,48 +5359,46 @@ msgstr "ไม่มีบัฟเฟอร์เฟรม"
 
 #: RendererDirectShow.cpp:245
 msgid "Nie można odblokować bufora tekstury napisów"
-msgstr "ไม่สามารถปลดล็อคการบัฟเฟอร์พื้นผิวคำบรรยาย"
+msgstr "ไม่สามารถปลดล็อกบัฟเฟอร์เท็กซ์เจอร์คำบรรยายได้"
 
 #: RendererDirectShow.cpp:310 RendererFFMS2.cpp:225
 msgid "Nie można odblokować bufora tekstury"
-msgstr "ไม่สามารถปลดล็อคการบัฟเฟอร์พื้นผิว"
+msgstr "ไม่สามารถปลดล็อกบัฟเฟอร์เท็กซ์เจอร์ได้"
 
 #: RendererDirectShow.cpp:913 RendererFFMS2.cpp:309
 msgid "Nie można nałożyć powierzchni na siebie"
-msgstr "ไม่สามารถวางซ้อนพื้นผิวได้"
+msgstr "ไม่สามารถซ้อนพื้นผิวเข้าด้วยกันได้"
 
 #: RendererGStreamer.cpp:107
 #, c-format
 msgid "Rozdział %i"
-msgstr ""
+msgstr "ตอนที่ %i"
 
 #: RendererGStreamer.cpp:195
 msgid "Plik wideo nie zawiera strumienia obrazu"
-msgstr ""
+msgstr "แฟ้มวิดีโอไม่มีสตรีมภาพ"
 
 #: RendererGStreamer.cpp:273
-#, fuzzy
 msgid "Nie można utworzyć potoku GStreamer (playbin)"
-msgstr "ไม่สามารถสร้างตัวควบคุม"
+msgstr "ไม่สามารถสร้างไปป์ไลน์ GStreamer (playbin) ได้"
 
 #: RendererGStreamer.cpp:303
-#, fuzzy
 msgid "Nie można utworzyć modułu wyświetlania obrazu GStreamer"
-msgstr "ไม่สามารถสร้างกระบวนการได้ ยกเลิกการผนวกแล้ว"
+msgstr "ไม่สามารถสร้างโมดูลแสดงผลภาพของ GStreamer ได้"
 
 #: RendererGStreamer.cpp:335
-#, fuzzy, c-format
+#, c-format
 msgid "Nie można otworzyć pliku wideo: %s"
-msgstr "ไม่สามารถเปิดแฟ้ม \"%s\""
+msgstr "ไม่สามารถเปิดแฟ้มวิดีโอ: %s"
 
 #: RendererGStreamer.cpp:753
 #, c-format
 msgid "Ścieżka %i"
-msgstr ""
+msgstr "แทร็ก %i"
 
 #: RendererVideo.cpp:382 VisualRotationXY.cpp:163
 msgid "Nie można ustawić macierzy projekcji"
-msgstr "ไม่สามารถกำหนดค่าการฉายเมทริกซ์"
+msgstr "ไม่สามารถตั้งค่าเมทริกซ์ฉายภาพได้"
 
 #: ScriptInfo.cpp:69
 msgid "Rozdzielczość"
@@ -5536,7 +5531,7 @@ msgstr "กำหนดค่าเป็นความคิดเห็น"
 
 #: SelectLines.cpp:129
 msgid "Akcja"
-msgstr "กระทำ"
+msgstr "การดำเนินการ"
 
 #: SelectLines.cpp:140
 msgid "Zaznacz na wszystkich zakładkach"
@@ -5637,16 +5632,16 @@ msgid ""
 "Przesuń znacznik\n"
 "do czasu wideo"
 msgstr ""
-"เลื่อนที่เลือกไว้\n"
-"ตามเวลาของวิดีโอ"
+"เลื่อนจุดมาร์ก\n"
+"ไปยังเวลาวิดีโอ"
 
 #: ShiftTimes.cpp:343
 msgid ""
 "Przesuń znacznik\n"
 "do czasu audio"
 msgstr ""
-"เลื่อนที่เลือกไว้\n"
-"ตามเวลาของเสียง"
+"เลื่อนจุดมาร์ก\n"
+"ไปยังเวลาเสียง"
 
 #: ShiftTimes.cpp:354
 msgid "Sposób przesuwania czasów"
@@ -5726,7 +5721,7 @@ msgstr "เลือกสไตล์จากรายการ"
 
 #: ShiftTimes.cpp:552
 msgid "Przesuń według następujących stylów (oddzielone przecinkiem)"
-msgstr "เลื่อนตามสไตล์ต่อไปนี้ (คั่นด้วยที่เลือกไว้อัฒภาค)"
+msgstr "เลื่อนตามสไตล์ต่อไปนี้ (คั่นด้วยเครื่องหมายจุลภาค)"
 
 #: ShiftTimes.cpp:554
 msgid "Czas przesunięcia"
@@ -5858,7 +5853,7 @@ msgid ""
 "Sprawdzanie pisowni zostanie wyłączone"
 msgstr ""
 "ไม่พบแฟ้มพจนานุกรมในโฟลเดอร์ \"%s\\Dictionary\"\n"
-"ตัวตรวจสอบการสะกดจะถูกปิดการใช้งาน"
+"ตัวตรวจการสะกดจะถูกปิดใช้งาน"
 
 #: SpellChecker.cpp:129
 msgid "Nie można odczytać formatu konwersji słownika."
@@ -5866,7 +5861,7 @@ msgstr "ไม่สามารถอ่านรูปแบบการเป
 
 #: SpellChecker.cpp:151
 msgid "Nie można zainicjalizować sprawdzania pisowni."
-msgstr "ไม่สามารถเริ่มตัวตรวจสอบตัวสะกด"
+msgstr "ไม่สามารถเริ่มตัวตรวจการสะกดได้"
 
 #: SpellCheckerDialog.cpp:43
 msgid "Ignoruj komentarze"
@@ -6080,7 +6075,7 @@ msgstr "ตัวอย่างสไตล์:"
 
 #: StyleChange.cpp:461
 msgid "Zmienić wszystkie zaznaczone style?"
-msgstr "ต้องการเปลี่ยนแปลงสไตล์ที่เลือกไว้ทั้งหมดไหม?"
+msgstr "ต้องการเปลี่ยนสไตล์ที่เลือกทั้งหมดหรือไม่?"
 
 #: StyleChange.cpp:691
 msgid "Nazwa stylu"
@@ -6519,7 +6514,7 @@ msgstr "กำลังเปลี่ยนคุณสมบัติคำบ
 
 #: SubsFile.cpp:180
 msgid "Akcja zaznacz linijki"
-msgstr "เลือกบรรทัดที่จะกระทำ"
+msgstr "การดำเนินการเลือกบรรทัด"
 
 #: SubsFile.cpp:181
 msgid "Przesunięcie czasów"
@@ -6583,23 +6578,23 @@ msgstr "เครื่องมือ ไฮดรา"
 
 #: SubsFile.cpp:198
 msgid "Poprawa drobnych błędów"
-msgstr "ตัวแทนที่หลายค่า"
+msgstr "การแก้ไขข้อผิดพลาดเล็กน้อย"
 
 #: SubsFile.cpp:199
 msgid "Wstawienie drzewka"
-msgstr "แทรกไดเรกทอรีทรี"
+msgstr "แทรกทรี"
 
 #: SubsFile.cpp:200
 msgid "Ustawienie opisu"
-msgstr "เพิ่มคำบรรยายไดเรกทอรีทรี"
+msgstr "ตั้งคำอธิบายทรี"
 
 #: SubsFile.cpp:201
 msgid "Dodanie linii do drzewka"
-msgstr "เพิ่มบรรทัดไปยังไดเรกทอรีทรี"
+msgstr "เพิ่มบรรทัดลงในทรี"
 
 #: SubsFile.cpp:202
 msgid "Usunięcie drzewka"
-msgstr "นำไดเรกทอรีทรีออก"
+msgstr "ลบทรี"
 
 #: SubsFile.cpp:203
 msgid "Skrypt automatyzacji"
@@ -6607,22 +6602,20 @@ msgstr "สคริปต์อัตโนมัติ"
 
 #: SubsFile.cpp:204 SubsGrid.cpp:227
 msgid "Filtrowanie"
-msgstr "ตัวกรอง"
+msgstr "การกรอง"
 
 #: SubsFile.cpp:205
-#, fuzzy
 msgid "Usunięcie filtrowania"
-msgstr "กำลังลบบรรทัด"
+msgstr "การลบการกรอง"
 
 #: SubsFile.cpp:206
-#, fuzzy
 msgid "Dzielenie linii"
-msgstr "กำลังทำบรรทัดซ้ำ"
+msgstr "การแบ่งบรรทัด"
 
 #: SubsFile.cpp:718
 #, c-format
 msgid ", aktywna linia %i"
-msgstr "บรรทัดที่เลือก %i"
+msgstr ", บรรทัดปัจจุบัน %i"
 
 #: SubsGridBase.cpp:233
 msgid "Nieprawidłowy FPS. Popraw opcje i spróbuj ponownie."
@@ -6634,12 +6627,12 @@ msgstr "ไม่สามารถโหลดวิดีโอโดยใช
 
 #: SubsGridBase.cpp:470
 msgid "Nie wybrano stylów do przesunięcia"
-msgstr "อย่าเลือกสไตล์อ้างอิงกับการเลื่อนเวลา"
+msgstr "ยังไม่ได้เลือกสไตล์สำหรับการเลื่อนเวลา"
 
 #: SubsGridBase.cpp:488
 #, c-format
 msgid "Czy naprawdę chcesz przesuwać tylko czasy %s?"
-msgstr "ต้องการเลื่อนเวลาเฉพาะ %s ใช่ไหม?"
+msgstr "ต้องการเลื่อนเฉพาะเวลา%sหรือไม่?"
 
 #: SubsGridBase.cpp:489
 msgid "początkowe"
@@ -6651,7 +6644,7 @@ msgstr "สิ้นสุด"
 
 #: SubsGridBase.cpp:499
 msgid "Nie zaznaczono linii do przesunięcia"
-msgstr "ไม่มีบรรทัดเลือกไว้ให้เลื่อน"
+msgstr "ยังไม่ได้เลือกบรรทัดที่จะเลื่อน"
 
 #: SubsGridBase.cpp:1336
 msgid ""
@@ -6671,11 +6664,11 @@ msgstr "อย่าคำนึงถึงบรรทัดที่เลื
 
 #: SubsGrid.cpp:196
 msgid "Wstaw &przed"
-msgstr "แทรกก่อน"
+msgstr "แทรก&ก่อน"
 
 #: SubsGrid.cpp:197
 msgid "Wstaw p&o"
-msgstr "แทรกหลัง"
+msgstr "แทรก&หลัง"
 
 #: SubsGrid.cpp:199
 msgid "Wstaw przed z &czasem wideo"
@@ -6686,9 +6679,8 @@ msgid "Wstaw po z c&zasem wideo"
 msgstr "แทรก&หลังด้วยเวลาวิดีโอ"
 
 #: SubsGrid.cpp:203
-#, fuzzy
 msgid "Wstaw linie"
-msgstr "กำลังแทรกบรรทัด"
+msgstr "แทรกบรรทัด"
 
 #: SubsGrid.cpp:205
 msgid "&Duplikuj linie"
@@ -6696,20 +6688,19 @@ msgstr "&สร้างบรรทัดซ้ำ"
 
 #: SubsGrid.cpp:207
 msgid "Za&mień"
-msgstr "แทนที่"
+msgstr "แ&ทนที่"
 
 #: SubsGrid.cpp:209
 msgid "Złącz &linijki"
 msgstr "ต่อ&บรรทัด"
 
 #: SubsGrid.cpp:218
-#, fuzzy
 msgid "Podziel linie"
-msgstr "กำลังทำบรรทัดซ้ำ"
+msgstr "แบ่งบรรทัด"
 
 #: SubsGrid.cpp:220
 msgid "Kopiuj\tCtrl-C"
-msgstr "คัดลอก\tCtrl -C"
+msgstr "คัดลอก\tCtrl-C"
 
 #: SubsGrid.cpp:221
 msgid "Wytnij\tCtrl-X"
@@ -6733,7 +6724,7 @@ msgstr "เพิ่มบรรทัด"
 
 #: SubsGrid.cpp:270
 msgid "Kopiuj drzewko"
-msgstr "คัดลอกไดเรกทอรีทรี"
+msgstr "คัดลอกทรี"
 
 #: SubsGrid.cpp:271
 msgid "Zmień opis"
@@ -6741,7 +6732,7 @@ msgstr "เปลี่ยนคำอธิบาย"
 
 #: SubsGrid.cpp:272
 msgid "Zaznacz linie drzewka"
-msgstr "เลือกบรรทัดไดเรกทอรีทรี"
+msgstr "เลือกบรรทัดในทรี"
 
 #: SubsGrid.cpp:466 SubsGrid.cpp:633
 msgid "Margines pionowy"
@@ -6800,15 +6791,15 @@ msgstr "FPS ไม่ถูกต้อง"
 
 #: SubsGridDialogs.cpp:73 SubsGridDialogs.cpp:77
 msgid "Opis drzewka"
-msgstr "คำอธิบายไดเรกทอรีทรี"
+msgstr "คำอธิบายทรี"
 
 #: SubsGridDialogs.cpp:83
 msgid "Ustaw nazwę drzewka"
-msgstr "ตั้งชื่อไดเรกทอรีทรี"
+msgstr "ตั้งชื่อทรี"
 
 #: SubsGridDialogs.cpp:83
 msgid "Zmień nazwę drzewka"
-msgstr "เปลี่ยนชื่อไดเรกทอรีทรี"
+msgstr "เปลี่ยนชื่อทรี"
 
 #: SubsGridDialogs.cpp:123
 msgid "Wyłącz potwierdzenie"
@@ -6845,7 +6836,7 @@ msgstr "CPS"
 #: SubsGridWindow.cpp:269 SubsGridWindow.cpp:666 SubsGridWindow.cpp:1137
 #: SubsGridWindow.cpp:1303
 msgid "Łamania"
-msgstr "ยกคำ"
+msgstr "การแบ่งบรรทัด"
 
 #: SubsGridWindow.cpp:270 SubsGridWindow.cpp:667
 msgid "Tekst oryginalny"
@@ -6957,26 +6948,24 @@ msgstr "ไม่สามารถเปิดแฟ้มคำบรรยา
 
 #: SubtitlesVSFilter.cpp:127 SubtitlesVSFilter.cpp:169
 msgid "Nie można zinicjalizować CSRI."
-msgstr "ไม่สามารถเริ่มต้น CSRI"
+msgstr "ไม่สามารถเริ่มต้น CSRI ได้"
 
 #: SubtitlesVSFilter.cpp:131 SubtitlesVSFilter.cpp:176
 msgid "Nie można utworzyć instancji CSRI."
-msgstr "ไม่สามารถสร้างอินสแตนซ์ CSRI"
+msgstr "ไม่สามารถสร้างอินสแตนซ์ CSRI ได้"
 
 #: SubtitlesVSFilter.cpp:142 SubtitlesVSFilter.cpp:188
 #: SubtitlesVSFilter.cpp:282
 msgid "CSRI nie obsługuje tego formatu."
-msgstr "CSRI ไม่สนับสนุนรูปแบบนี้"
+msgstr "CSRI ไม่รองรับรูปแบบนี้"
 
 #: TabPanel.cpp:322
-#, fuzzy
 msgid "Napisy zostały zmodyfikowane przez inny program, przeładować?"
-msgstr "กําหนดค่าโดยโปรแกรมอื่น ๆ การโหลด?"
+msgstr "คำบรรยายถูกแก้ไขโดยโปรแกรมอื่น ต้องการโหลดใหม่หรือไม่?"
 
 #: TabPanel.cpp:322
-#, fuzzy
 msgid "Przeładowywanie"
-msgstr "กำลังโหลดข้อมูลซ้ำ…"
+msgstr "กำลังโหลดใหม่"
 
 #: TextEditorTagList.cpp:132
 msgid "Pokaż opis"
@@ -7096,7 +7085,7 @@ msgstr "ข้อความปรากฏขึ้น / หายไป"
 
 #: TextEditorTagList.cpp:369
 msgid "Pojawianie / znikanie tekstu (zaawansowana wersja)"
-msgstr "ข้อความปรากฏขึ้น / หายไป (เวอร์ชั่นขั้นสูง)"
+msgstr "ข้อความปรากฏขึ้น / หายไป (เวอร์ชันขั้นสูง)"
 
 #: TextEditorTagList.cpp:370
 msgid "Pochylenie w osi X"
@@ -7399,7 +7388,7 @@ msgstr "อัตราส่วนหน้าจอ: %5.3f"
 
 #: VideoBox.cpp:157 VideoFullscreen.cpp:61
 msgid "Odtwórz aktywną linię"
-msgstr "เล่นบรรทัดบัจจุบัน"
+msgstr "เล่นบรรทัดปัจจุบัน"
 
 #: VideoBox.cpp:320
 msgid ""
@@ -7666,8 +7655,8 @@ msgid ""
 "dla wybranego położenia."
 msgstr ""
 "วางตำแหน่งตามสี่เหลี่ยมผืนผ้า\n"
-"หลังจากวาดรูปสี่เหลี่ยมผืนผ้าแล้วข้อความ\n"
-"จะถูกจัดตำแหน่งตามหนึ่งหรือสองแกนที่เลือกไว้"
+"หลังจากวาดสี่เหลี่ยมผืนผ้าแล้ว ข้อความจะถูกจัดตำแหน่ง\n"
+"ตามแกนที่เลือกหนึ่งหรือสองแกน"
 
 #: VideoToolbar.cpp:92
 msgid "Pozycjonuj w osi X"
@@ -7690,7 +7679,7 @@ msgstr ""
 "หลังจากกำหนดจุดแรกก่อนข้อความที่จะขยับ\n"
 "ออฟเซ็ตวิดีโอด้วยเฟรมที่เพียงพอเพื่อให้\n"
 "องค์ประกอบเดียวกันกับที่ตั้งจุดเริ่มต้นยังคงมองเห็นได้ในวิดีโอ\n"
-"vMove จะสร้างจากจุดระหว่างจุดที่หนึ่งกับจุดที่สอง"
+"การเคลื่อนที่เกิดจากการวางจุดที่สอง"
 
 #: VideoToolbar.cpp:99
 msgid "Zmiana wszystkich tagów obrotu wokół osi X / Y"
@@ -7772,27 +7761,22 @@ msgid "Pomnóż+"
 msgstr "คูณ+"
 
 #: VideoToolbar.cpp:747 VisualAllTagsEdition.cpp:86
-#, fuzzy
 msgid "Gradient tekst rosnąco"
-msgstr "ข้อความที่เพิ่มขึ้น"
+msgstr "ไล่ระดับตามข้อความแบบเพิ่มขึ้น"
 
 #: VideoToolbar.cpp:748 VisualAllTagsEdition.cpp:87
-#, fuzzy
 msgid "Gradient tekst malejąco"
-msgstr "ข้อเสียของข้อความ"
+msgstr "ไล่ระดับตามข้อความแบบลดลง"
 
 #: VideoToolbar.cpp:748 VisualAllTagsEdition.cpp:87
-#, fuzzy
 msgid "Gradient linia rosnąco"
-msgstr "สายการผลิตที่เพิ่ม"
+msgstr "ไล่ระดับตามบรรทัดแบบเพิ่มขึ้น"
 
 #: VideoToolbar.cpp:748 VisualAllTagsEdition.cpp:87
-#, fuzzy
 msgid "Gradient linia malejąco"
-msgstr "สายการผลิตที่ลดลง"
+msgstr "ไล่ระดับตามบรรทัดแบบลดลง"
 
 #: VideoToolbar.cpp:751
-#, fuzzy
 msgid ""
 "Opcje zmiany tagów:\n"
 "Dodaj - zmienia wszystkie tagi dodając ruch z suwaka.\n"
@@ -7805,20 +7789,16 @@ msgid ""
 "Gradient linia rosnąco - wstawia tag w zaznaczone linie rosnąco\n"
 "Gradient linia malejąco - wstawia tag w zaznaczone linie malejąco"
 msgstr ""
-"ตัวเลือกของแท็กเปลี่ยน:\n"
-"เพิ่ม - เปลี่ยนแท็กทั้งหมดเพิ่มเลื่อนบนเลื่อน\n"
-"แทรก - ใส่แท็กในแกนเมื่อเส้นหนึ่ง\n"
-"หรือเริ่มต้นสายเมื่อหลายเส้น\n"
-"ขนาดหลาย - เลื่อนเลื่อนบนเส้นเลื่อน\n"
-"บรรทัดแรกไม่มีการเปลี่ยนแปลง ทําจาก cascade\n"
-"ข้อเสียข้อความเพิ่ม - ใส่แท็กในทุกรายการ\n"
-"เพิ่มจํานวนบนเลื่อน\n"
-"ข้อเสียข้อความลบ - ใส่แท็กในตัวละครทั้งหมด\n"
-"ลดลงจากจํานวนช่องเลื่อน\n"
-"สายการผลิตที่เพิ่ม - ใส่แท็กในทุกสาย\n"
-"เพิ่มจํานวนบนเลื่อน\n"
-"การวางเส้นตะกอน - ใส่แท็กในทุกสาย\n"
-"ลดลงจากจํานวนช่องเลื่อน"
+"ตัวเลือกการเปลี่ยนแท็ก:\n"
+"เพิ่ม - เปลี่ยนแท็กทั้งหมดโดยเพิ่มค่าการเลื่อนจากแถบเลื่อน\n"
+"แทรก - แทรกในตำแหน่งเคอร์เซอร์เมื่อมีหนึ่งบรรทัด\n"
+"หรือแทรกที่ต้นบรรทัดเมื่อมีหลายบรรทัด\n"
+"คูณ - คูณค่าการเลื่อนจากแถบเลื่อนด้วยหมายเลขบรรทัดที่เลือก\n"
+"โดยไม่เปลี่ยนแปลงบรรทัดแรก\n"
+"ไล่ระดับตามข้อความแบบเพิ่มขึ้น - แทรกแท็กในแต่ละอักขระแบบเพิ่มค่า\n"
+"ไล่ระดับตามข้อความแบบลดลง - แทรกแท็กในแต่ละอักขระแบบลดค่า\n"
+"ไล่ระดับตามบรรทัดแบบเพิ่มขึ้น - แทรกแท็กในบรรทัดที่เลือกแบบเพิ่มค่า\n"
+"ไล่ระดับตามบรรทัดแบบลดลง - แทรกแท็กในบรรทัดที่เลือกแบบลดค่า"
 
 #: VideoToolbar.cpp:778
 msgid "Edycja tagów z listy oraz tworzenie nowych"
@@ -7862,15 +7842,15 @@ msgstr "ก่อน-ลง"
 
 #: VideoToolbar.cpp:1100
 msgid "Za-góra"
-msgstr "ก่อน-บน"
+msgstr "หลัง-บน"
 
 #: VideoToolbar.cpp:1100
 msgid "Za-środek"
-msgstr "ก่อน-กลาง"
+msgstr "หลัง-กลาง"
 
 #: VideoToolbar.cpp:1100
 msgid "Za-dół"
-msgstr "ก่อน-ลง"
+msgstr "หลัง-ล่าง"
 
 #: VideoToolbar.cpp:1109
 msgid "Położenie tekstu, działa podobnie jak w stylach"
@@ -7914,7 +7894,7 @@ msgstr "ค่าสูงสุด:"
 
 #: VisualAllTagsEdition.cpp:71
 msgid "Przeskok:"
-msgstr "ลำดับ:"
+msgstr "ช่วงก้าว:"
 
 #: VisualAllTagsEdition.cpp:74
 msgid "Wstawiany w miejscu kursora"
@@ -8000,18 +7980,15 @@ msgid ""
 "większą od pola \"Minimalna wartość\"."
 msgstr ""
 "ช่อง \"ค่าสูงสุด\" ต้องมีค่า\n"
-"มากกว่าฟิลด์ \"ค่าต่ำสุด\""
+"มากกว่าช่อง \"ค่าต่ำสุด\""
 
 #: VisualAllTagsEdition.cpp:308
-#, fuzzy
 msgid "Pole \"Przeskok\" musi zawierać wartość większą od zera."
-msgstr ""
-"ช่อง \"ค่าสูงสุด\" ต้องมีค่า\n"
-"มากกว่าฟิลด์ \"ค่าต่ำสุด\""
+msgstr "ช่อง \"ช่วงก้าว\" ต้องมีค่ามากกว่าศูนย์"
 
 #: VisualAllTagsEdition.cpp:312
 msgid "Pole \"Przeskok\" zawiera liczbę zbyt wysoką dla danego przedziału."
-msgstr "ช่อง \"ลำดับ\" มีตัวเลขที่สูงเกินไปสำหรับค่าช่วงที่กำหนด"
+msgstr "ช่อง \"ช่วงก้าว\" มีตัวเลขสูงเกินไปสำหรับช่วงที่กำหนด"
 
 #: VisualClips.cpp:1014
 msgid ""
