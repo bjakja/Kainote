@@ -21,6 +21,7 @@ pkg_check_modules(FONTCONFIG REQUIRED IMPORTED_TARGET fontconfig)
 # frames the app composites (libass subtitles + progress bar) and presents through
 # the shared wx paint path, and gstreamer-audio provides linear volume.
 pkg_check_modules(GSTREAMER REQUIRED IMPORTED_TARGET gstreamer-1.0 gstreamer-video-1.0 gstreamer-audio-1.0 gstreamer-app-1.0)
+pkg_get_variable(GSTREAMER_PLUGIN_DIR gstreamer-1.0 pluginsdir)
 
 find_library(LUA_RUNTIME_LIBRARY
     NAMES liblua5.1.so.0 lua5.1
@@ -193,6 +194,11 @@ target_include_directories(kainote PRIVATE
     ${CMAKE_SOURCE_DIR}/Thirdparty/DependencyControl/include
     ${CMAKE_SOURCE_DIR}/Thirdparty/ffms2/src
 )
+
+if(GSTREAMER_PLUGIN_DIR)
+    set_property(SOURCE Kainote/AudioPlayerDSound.cpp Kainote/RendererGStreamer.cpp
+        APPEND PROPERTY COMPILE_DEFINITIONS "KAI_GST_PLUGIN_DIR=\"${GSTREAMER_PLUGIN_DIR}\"")
+endif()
 
 # Generate Kainote/gitparams.h from the current git HEAD before building.  Runs
 # every build but only rewrites the header when the commit/branch changes, so

@@ -54,6 +54,9 @@ namespace {
 	{
 		static std::once_flag once;
 		std::call_once(once, [] {
+#ifdef KAI_GST_PLUGIN_DIR
+			g_setenv("GST_PLUGIN_PATH_1_0", KAI_GST_PLUGIN_DIR, FALSE);
+#endif
 			GError *err = nullptr;
 			if (!gst_init_check(nullptr, nullptr, &err)) {
 				KaiLog(wxString::Format(L"GStreamer init failed: %s",

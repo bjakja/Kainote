@@ -132,8 +132,10 @@ AudioDisplay::AudioDisplay(wxWindow *parent)
 #ifndef _WIN32
 	LinuxPlaybackTimer.SetOwner(this, Audio_Update_Timer);
 	Bind(wxEVT_TIMER, [=, this](wxTimerEvent&) {
-		if (!stopPlayThread)
+		if (!stopPlayThread) {
 			UpdateTimer();
+			wxWindow::Update();
+		}
 	}, Audio_Update_Timer);
 #endif
 	// Set cursor
@@ -154,13 +156,13 @@ AudioDisplay::~AudioDisplay() {
 	LinuxPlaybackTimer.Stop();
 #endif
 	if (UpdateTimerHandle) {
-		
+
 		stopPlayThread = true;
 		SetEvent(DestroyEvent);
 		WaitForSingleObject(UpdateTimerHandle, 10000);
 		CloseHandle(UpdateTimerHandle);
 		UpdateTimerHandle = nullptr;
-		
+
 	}
 	if (PlayEvent) {
 		CloseHandle(PlayEvent);
@@ -200,21 +202,29 @@ void AudioDisplay::Reset() {
 ////////////////
 // Update image
 void AudioDisplay::UpdateImage(bool weak, bool updateImmediately) {
-	wxCriticalSectionLocker lock(mutex);
-	// Update samples
-	UpdateSamples();
+	{
+		wxCriticalSectionLocker lock(mutex);
+		// Update samples
+		UpdateSamples();
 
-	// Set image as needing to be redrawn
-	//needImageUpdate = true;
-	if(!weak)
-		needImageUpdateWeak = weak;
+		if (!weak)
+			needImageUpdateWeak = weak;
 
-	if (updateImmediately){
-		DoUpdateImage(weak);
-	}
-	else{
+#ifdef _WIN32
+		if (updateImmediately){
+			DoUpdateImage(weak);
+		}
+		else{
+			Refresh(false);
+		}
+#else
 		Refresh(false);
+#endif
 	}
+#ifndef _WIN32
+	if (!weak || updateImmediately)
+		wxWindow::Update();
+#endif
 }
 
 void AudioDisplay::DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, D3DCOLOR fill, int dashLen)
@@ -347,7 +357,7 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 	if (w < 1 || displayH < 1 || isHidden) return;
 	// Loaded?
 	if (!loaded || !provider) return;
-	
+
 	if (LastSize.x != w || LastSize.y != h || !d3dDevice || needToReset) {
 		LastSize = wxSize(w, h);
 		if (!InitDX(wxSize(w, displayH))){
@@ -440,7 +450,7 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 
 		HRN(d3dLine->SetWidth(1.0f), L"line set width failed");
 
-		
+
 		if (!spectrum){
 			//// Waveform
 			if (provider) {
@@ -835,7 +845,7 @@ void AudioDisplay::DrawTimescale() {
 	v2[0] = D3DXVECTOR2(0, h);
 	v2[1] = D3DXVECTOR2(w, h);
 	d3dLine->Draw(v2, 2, timescaleText);
-	
+
 	// Timescale ticks
 	long long start = Position*samples;
 	int rate = provider->GetSampleRate();
@@ -879,7 +889,7 @@ void AudioDisplay::DrawTimescale() {
 			}
 			lineStart = x;
 		}
-		
+
 	}
 	auto drawTime = [=, this](int x, long long pos/*, int *lastTextPos*/, bool drawMS){
 		//wxCoord textW;
@@ -1031,7 +1041,7 @@ void AudioDisplay::DrawSpectrum(bool weak) {
 		spectrumSurface->UnlockRect();
 
 	}
-	
+
 	RECT rc = { screenRect.x, screenRect.y, screenRect.width - screenRect.x, screenRect.height - screenRect.y };
 	if (FAILED(d3dDevice->StretchRect(spectrumSurface, &rc, backBuffer, &rc, D3DTEXF_LINEAR))){
 		KaiLogSilent(_("Nie można nałożyć powierzchni spectrum na siebie"));
@@ -1139,7 +1149,7 @@ void AudioDisplay::Update(bool moveToEnd) {
 void AudioDisplay::MakeDialogueVisible(bool force, bool moveToEnd) {
 	// Variables
 	int startShow = 0, endShow = 0;
-	// In karaoke mode the syllable and as much as possible 
+	// In karaoke mode the syllable and as much as possible
 	//towards the end of the line should be shown
 
 	GetTimesSelection(startShow, endShow, true);
@@ -1157,12 +1167,12 @@ void AudioDisplay::MakeDialogueVisible(bool force, bool moveToEnd) {
 		if ((startX < 50) || (endX >= w - 50)) {
 
 			if (moveToEnd && (endX >= w - 50 || endX < 50)){
-				// Make sure the right edge of the selection is at least 50 pixels 
+				// Make sure the right edge of the selection is at least 50 pixels
 				//from the edge of the display
 				UpdatePosition(endPos - ((w - 50) * samples), true);
 			}
 			else if (!moveToEnd){
-				// Make sure the left edge of the selection is at least 50 pixels 
+				// Make sure the left edge of the selection is at least 50 pixels
 				// from the edge of the display
 				UpdatePosition(startPos - 50 * samples, true);
 			}
@@ -1483,7 +1493,7 @@ void AudioDisplay::ChangeOptions()
 ////////
 // Play
 void AudioDisplay::Play(int start, int end, bool pause) {
-	
+
 	if (pause && tab->video->GetState() == Playing){ tab->video->Pause(); }
 
 	// Check provider
@@ -1511,7 +1521,7 @@ void AudioDisplay::Play(int start, int end, bool pause) {
 	//UpdateImage(false, true);
 	// Call play
 	player->Play(start, end - start);
-	
+
 #ifndef _WIN32
 	stopPlayThread = false;
 	if (!LinuxPlaybackTimer.IsRunning())
@@ -1632,7 +1642,7 @@ void AudioDisplay::SetDialogue(Dialogue *diag, int n, bool moveToEnd) {
 		karaoke->Split();
 	}
 
-	// Update	
+	// Update
 	Update(moveToEnd);
 }
 
@@ -2021,7 +2031,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 				player->SetVolume(value);
 				box->VolumeBar->SetThumbPosition(box->VerticalZoom->GetThumbPosition());
 				Options.SetInt(AUDIO_VOLUME, pos);
-				
+
 			}
 			Options.SetInt(AUDIO_VERTICAL_ZOOM, pos);
 			Options.SaveAudioOpts();
@@ -2414,7 +2424,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 
 
 	}
-	
+
 }
 
 
@@ -2426,7 +2436,7 @@ int AudioDisplay::GetBoundarySnap(int ms, int rangeX, bool shiftHeld, bool start
 
 	// Convert range into miliseconds
 	int rangeMS = rangeX * samples * 1000 / provider->GetSampleRate();
-	
+
 	wxArrayInt boundaries;
 
 	bool snapKey = Options.GetBool(AUDIO_SNAP_TO_KEYFRAMES);
@@ -2646,14 +2656,14 @@ void AudioDisplay::UpdateTimer()
 			repaintPlaybackCursor(true);
 			if (curPos > player->GetEndPosition() + 8192) {
 				player->Stop();
-				
+
 				stopPlayThread = true;
 #ifndef _WIN32
 				LinuxPlaybackTimer.Stop();
 #endif
 			}
 		}
-		
+
 	}
 
 	else {
@@ -2781,9 +2791,9 @@ void AudioDisplay::Commit(bool moveToEnd)
 		CommitChanges(false, false, moveToEnd);//UpdateImage(true);
 		return;
 	}
-	if (!Options.GetBool(DISABLE_LIVE_VIDEO_EDITING)){ 
+	if (!Options.GetBool(DISABLE_LIVE_VIDEO_EDITING)){
 		wxCommandEvent evt;
-		edit->OnEdit(evt); 
+		edit->OnEdit(evt);
 	}
 }
 
@@ -2804,7 +2814,7 @@ void AudioDisplay::DrawKeyframes() {
 		{
 			cur = ((cur - 20) / 10) * 10;
 			//if(provider->Timecodes.size()<1){
-			//	
+			//
 			//	cur -= 21;
 			//}else{
 			//	int frame = provider->GetFramefromMS(cur);
@@ -2837,7 +2847,7 @@ bool AudioDisplay::SetFont(const wxFont &font)
 	//update image instant to avoid crash when sliding
 	//window from one monitor to another
 	UpdateImage(true, true);
-	
+
 	return true;
 }
 ///////////////
