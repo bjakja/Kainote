@@ -150,7 +150,9 @@
 git rev-parse --verify HEAD &gt;&gt;  gitparams.h
 
 echo | set /p dummyName=#define GIT_BRANCH &gt;&gt;  gitparams.h
-git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
+git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h
+
+where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po") do @msgfmt -o "$(SolutionDir)Locale\%%~nf.mo" "%%f") || echo msgfmt (gettext) not found - skipping Locale .mo compilation</Command>
     </PreBuildEvent>
     <Manifest>
       <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
@@ -204,7 +206,9 @@ $(SolutionDir)AutoSending/x64/Release/AutoSending "$(SolutionDir)x64\Release\Kai
 git rev-parse --verify HEAD &gt;&gt;  gitparams.h
 
 echo | set /p dummyName=#define GIT_BRANCH &gt;&gt;  gitparams.h
-git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
+git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h
+
+where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po") do @msgfmt -o "$(SolutionDir)Locale\%%~nf.mo" "%%f") || echo msgfmt (gettext) not found - skipping Locale .mo compilation</Command>
     </PreBuildEvent>
     <Manifest>
       <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
@@ -255,7 +259,9 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
 git rev-parse --verify HEAD &gt;&gt;  gitparams.h
 
 echo | set /p dummyName=#define GIT_BRANCH &gt;&gt;  gitparams.h
-git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
+git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h
+
+where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po") do @msgfmt -o "$(SolutionDir)Locale\%%~nf.mo" "%%f") || echo msgfmt (gettext) not found - skipping Locale .mo compilation</Command>
     </PreBuildEvent>
     <Manifest>
       <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>

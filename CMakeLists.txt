@@ -34,6 +34,10 @@ find_library(LUA_RUNTIME_LIBRARY
 # Other system libraries remain dynamically linked through pkg-config/wxWidgets.
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost REQUIRED COMPONENTS filesystem locale regex OPTIONAL_COMPONENTS system thread)
+find_program(MSGFMT_EXECUTABLE msgfmt)
+if(NOT MSGFMT_EXECUTABLE)
+    message(WARNING "msgfmt (gettext) not found; translation catalogs (Locale/*.mo) will not be built")
+endif()
 add_compile_definitions(_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING _CRT_SECURE_NO_WARNINGS HAVE_DLL_EXPORT LINUX_BUILD KAINOTE_LINUX_BUILD)
 add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-include> $<$<COMPILE_LANGUAGE:CXX>:${CMAKE_SOURCE_DIR}/Kainote/platform.h> -Wno-deprecated-declarations -Wno-narrowing -Wno-unused-result $<$<COMPILE_LANGUAGE:CXX>:-fpermissive>)
 add_executable(kainote
@@ -250,19 +254,18 @@ endif()
 
 # Keep the build tree runnable by copying runtime data next to the executable.
 # Windows embeds PNG RCDATA through resource.rc, but the Linux build loads those
-# resources from files. Keep flat Locale/*.mo for the options list and also copy
-# GNU gettext-style Locale/<lang>/LC_MESSAGES/<lang>.mo paths for wxLocale.
+# resources from files. Translation catalogs are no longer committed: compile
+# Locale/*.po into flat Locale/<lang>.mo (for the options list) and GNU
+# gettext-style Locale/<lang>/LC_MESSAGES/<lang>.mo paths (for wxLocale).
 add_custom_command(TARGET kainote POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory "${KAINOTE_RUNTIME_DIR}/Locale"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
             "${LUA_RUNTIME_LIBRARY}"
             "${KAINOTE_RUNTIME_DIR}/liblua5.1.so.0"
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-            "${CMAKE_SOURCE_DIR}/Locale"
-            "${KAINOTE_RUNTIME_DIR}/Locale"
     COMMAND ${CMAKE_COMMAND}
             -D SOURCE_LOCALE_DIR="${CMAKE_SOURCE_DIR}/Locale"
             -D RUNTIME_LOCALE_DIR="${KAINOTE_RUNTIME_DIR}/Locale"
+            -D MSGFMT_EXECUTABLE="${MSGFMT_EXECUTABLE}"
             -P "${CMAKE_SOURCE_DIR}/cmake/CopyLocaleCatalogs.cmake"
     ${KAINOTE_DICTIONARY_COPY_COMMAND}
     COMMAND ${CMAKE_COMMAND} -E make_directory "${KAINOTE_RUNTIME_DIR}/Kainote"
