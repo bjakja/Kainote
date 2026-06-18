@@ -9,7 +9,7 @@
 # Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>, 2026.
 # "4kŸ\"]ãcJ1Ž{æÓC–â^K^;‰-)åÄ7†”ùüÑIù =z–(:FE½«î!ùñ|ßd›”ïÊ±?" <sooleehin7@gmail.com>, 2026.
 msgid ""
-msgstr "Project-Id-Version: Kainote\nReport-Msgid-Bugs-To: poiiiii4yy@gmail.com\nPOT-Creation-Date: 2022-06-06 20:10+0700\nPO-Revision-Date: 2026-06-18 07:48+0000\nLast-Translator: Anonymous <noreply@weblate.org>\nLanguage-Team: Malay <https://hosted.weblate.org/projects/kainote/kainote/ms/>\nLanguage: ms\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=1; plural=0;\nX-Generator: Weblate 2026.7.dev0\nX-Poedit-Basepath: ../Kainote\nX-Poedit-SourceCharset: UTF-8\nX-Poedit-KeywordsList: _\nX-Poedit-SearchPath-0: .\nX-Poedit-SearchPathExcluded-0: Bitmaps\nX-Poedit-SearchPathExcluded-1: GFFT\nX-Poedit-SearchPathExcluded-2: include\nX-Poedit-SearchPathExcluded-3: Win32\nX-Poedit-SearchPathExcluded-4: x64\nX-Poedit-SearchPathExcluded-5: ffms2.lib\nX-Poedit-SearchPathExcluded-6: ffms2_x64.lib\nX-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\nX-Poedit-SearchPathExcluded-8: Kainote.vcxproj\nX-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\nX-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\nX-Poedit-SearchPathExcluded-11: RCa00888\nX-Poedit-SearchPathExcluded-12: resource.aps\nX-Poedit-SearchPathExcluded-13: resource.rc\nX-Poedit-SearchPathExcluded-14: CsriMod.cpp\nX-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\nX-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
+msgstr "Project-Id-Version: Kainote\nReport-Msgid-Bugs-To: poiiiii4yy@gmail.com\nPOT-Creation-Date: 2022-06-06 20:10+0700\nPO-Revision-Date: 2026-06-18 07:48+0000\nLast-Translator: Niskala Airaha <niskala5570@gmail.com>\nLanguage-Team: Malay <https://hosted.weblate.org/projects/kainote/kainote/ms/>\nLanguage: ms\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=1; plural=0;\nX-Generator: Weblate 2026.7.dev0\nX-Poedit-Basepath: ../Kainote\nX-Poedit-SourceCharset: UTF-8\nX-Poedit-KeywordsList: _\nX-Poedit-SearchPath-0: .\nX-Poedit-SearchPathExcluded-0: Bitmaps\nX-Poedit-SearchPathExcluded-1: GFFT\nX-Poedit-SearchPathExcluded-2: include\nX-Poedit-SearchPathExcluded-3: Win32\nX-Poedit-SearchPathExcluded-4: x64\nX-Poedit-SearchPathExcluded-5: ffms2.lib\nX-Poedit-SearchPathExcluded-6: ffms2_x64.lib\nX-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\nX-Poedit-SearchPathExcluded-8: Kainote.vcxproj\nX-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\nX-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\nX-Poedit-SearchPathExcluded-11: RCa00888\nX-Poedit-SearchPathExcluded-12: resource.aps\nX-Poedit-SearchPathExcluded-13: resource.rc\nX-Poedit-SearchPathExcluded-14: CsriMod.cpp\nX-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\nX-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
 
 #: AudioBox.cpp:72
 msgid "Pasek szukania"
@@ -399,9 +399,7 @@ msgstr "Hapus fail cache audio lama"
 msgid ""
 "Pliki napisów (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*."
 "sub;*.txt"
-msgstr ""
-"Fail sari kata (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*."
-"sub;*.txt"
+msgstr "Fail sari kata (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt"
 
 #: AutoSavesRemoving.cpp:178
 msgid "Pliki indeksów (*.ffindex)|*.ffindex"
@@ -566,9 +564,7 @@ msgstr "Audio"
 msgid ""
 "Ten skrót już istnieje jako skrót do \"%s\".\n"
 "Co zrobić?"
-msgstr ""
-"Kekunci pintas ini telah pun wujud untuk \"%s\".\n"
-"Apa yang perlu dilakukan?"
+msgstr "Kekunci pintas ini telah pun wujud untuk \"%s\".\nApa yang perlu dilakukan?"
 
 #: AutomationHotkeysDialog.cpp:238 AutomationHotkeysDialog.cpp:247
 #: Hotkeys.cpp:477 Hotkeys.cpp:487 KainoteFrame.cpp:1077 KainoteFrame.cpp:1093
@@ -980,9 +976,7 @@ msgstr "Kedudukan teks"
 msgid ""
 "Tryb tłumacza wyświetla i zapisuje zarówno tekst obcojęzyczny, jak i tekst "
 "tłumaczenia"
-msgstr ""
-"Mod penterjemah memaparkan dan menyimpan kedua-dua teks bahasa asing dan "
-"teks terjemahan"
+msgstr "Mod penterjemah memaparkan dan menyimpan kedua-dua teks bahasa asing dan teks terjemahan"
 
 #: EditBox.cpp:1183
 #, fuzzy
@@ -1055,17 +1049,13 @@ msgstr "Baris kesan. Ia digunakan untuk menandakan baris, yang mana digunakan un
 msgid ""
 "Ilość znaków w każdej linijce.\n"
 "Nie więcej niż 43 znaki na linijkę (maksymalnie 2 linijki)"
-msgstr ""
-"Jumlah aksara di setiap baris.\n"
-"Tidak lebih dari 43 aksara per baris (maksimum 2 baris)."
+msgstr "Jumlah aksara di setiap baris.\nTidak lebih dari 43 aksara per baris (maksimum 2 baris)."
 
 #: EditBox.cpp:1198
 msgid ""
 "Znaki na sekundę.\n"
 "Nie powinny przekraczać 15 znaków na sekundę"
-msgstr ""
-"Aksara per saat.\n"
-"Tidak sepatutnya melebihi 15 aksara per saat"
+msgstr "Aksara per saat.\nTidak sepatutnya melebihi 15 aksara per saat"
 
 #: EditBox.cpp:1694 EditBox.cpp:1993
 #, fuzzy
@@ -1099,11 +1089,7 @@ msgid ""
 "Filtry wyszukiwania Windowsa pooddzielane średnikami np \"*.ass;*.srt\".\n"
 "Ze względu na dużą wagę plików wideo\n"
 "szukanie wszystkiego \"*.*\" zostaje zmieniane na *.ass"
-msgstr ""
-"Tapisan Windows diasingkan mengikut koma bertindih, cthnya \"*.ass; *.srt"
-"\".\n"
-"Disebabkan fail video yang terlalu besar\n"
-"untuk mencari kesemuanya \"*.*\" ditukar menjadi *.ass"
+msgstr "Tapisan Windows diasingkan mengikut koma bertindih, cthnya \"*.ass; *.srt\".\nDisebabkan fail video yang terlalu besar\nuntuk mencari kesemuanya \"*.*\" ditukar menjadi *.ass"
 
 #: FindReplaceDialog.cpp:71
 msgid "Filtry:"
@@ -1184,9 +1170,7 @@ msgstr "Cari di dalam semua sari kata\nyang dibuka"
 msgid ""
 "Znajdź wszystko\n"
 "w bieżących napisach"
-msgstr ""
-"Cari di dalam semua\n"
-"sari kata semasa"
+msgstr "Cari di dalam semua\nsari kata semasa"
 
 #: FindReplaceDialog.cpp:184
 #, fuzzy
@@ -1373,10 +1357,7 @@ msgid ""
 "Aby móc dodawać czcionki do katalogu,\n"
 "należy najpierw kliknąć przycisk \"Zarządzaj\",\n"
 "by utworzyć nowy katalog."
-msgstr ""
-"Untuk menambahkan fon ke senarai,\n"
-"klik butang \"Urus\" terlebih dahulu,\n"
-"untuk membuat senarai baharu."
+msgstr "Untuk menambahkan fon ke senarai,\nklik butang \"Urus\" terlebih dahulu,\nuntuk membuat senarai baharu."
 
 #: FontCatalogList.cpp:732
 #, c-format
@@ -1470,8 +1451,7 @@ msgstr "Pilih folder untuk menyimpan fon yang disalin"
 
 #: FontCollector.cpp:463
 msgid "Brak wczytanych napisów, wczytaj napisy albo odznacz tę opcję."
-msgstr ""
-"Tiada sari kata dimuatkan. Muatkan sari kata atau nyahcentang pilihan ini."
+msgstr "Tiada sari kata dimuatkan. Muatkan sari kata atau nyahcentang pilihan ini."
 
 #: FontCollector.cpp:468
 msgid "Wybierz nazwę dla archiwum"
@@ -1604,9 +1584,7 @@ msgstr "Gagal menyalin fon \"%s\"."
 msgid ""
 "Wideo: %s\n"
 "\n"
-msgstr ""
-"Video: %s\n"
-"\n"
+msgstr "Video: %s\n\n"
 
 #: FontCollector.cpp:884
 #, fuzzy
@@ -1636,9 +1614,7 @@ msgstr "Anda tidak boleh menyimpan fon bernama \""
 msgid ""
 "Zakończono, skopiowano %i czcionek.\n"
 "Nie udało się skopiować %i czcionek."
-msgstr ""
-"Selesai, %i fon telah disalin.\n"
-"Gagal menyalin %i fon."
+msgstr "Selesai, %i fon telah disalin.\nGagal menyalin %i fon."
 
 #: FontCollector.cpp:924
 #, c-format
@@ -1665,9 +1641,7 @@ msgstr "\"%s\" adalah fon daripada gaya\nyang tidak digunakan.%s"
 msgid ""
 "\n"
 "Nie zostanie skopiowana."
-msgstr ""
-"\n"
-"Tidak akan disalin."
+msgstr "\nTidak akan disalin."
 
 #: FontCollector.cpp:1049
 #, c-format
@@ -1739,9 +1713,7 @@ msgstr "Tidak dapat membuat proses. Permultipleksan dibatalkan"
 msgid ""
 "\n"
 "Zakończono w %sms"
-msgstr ""
-"\n"
-"Selesai dalam %sms"
+msgstr "\nSelesai dalam %sms"
 
 #: FontDialog.cpp:372
 msgid "Wybierz czcionkę"
@@ -2144,9 +2116,7 @@ msgstr "Kekunci \"%s\" tidak sah"
 #: Hotkeys.cpp:404
 #, c-format
 msgid "Nie można przywrócić skrótu, bo nie ma domyślnego ustawienia o id %i"
-msgstr ""
-"Tetapan ini tidak mempunyai kekunci pintas lalai dengan id %i untuk "
-"dikembalikan semula"
+msgstr "Tetapan ini tidak mempunyai kekunci pintas lalai dengan id %i untuk dikembalikan semula"
 
 #: Hotkeys.cpp:594
 msgid "Mapowanie przycisków"
@@ -2181,9 +2151,7 @@ msgstr "Sila masukkan kekunci pintas untuk \"%s\"."
 #: Hotkeys.cpp:641
 msgid ""
 "Skróty globalne i edytora muszą zawierać modyfikatory (Shift, Ctrl lub Alt)."
-msgstr ""
-"Pintasan umum dan penyunting perlu mempunyai pengubah (cth. Shift, Ctrl, "
-"Alt)."
+msgstr "Pintasan umum dan penyunting perlu mempunyai pengubah (cth. Shift, Ctrl, Alt)."
 
 #: Hotkeys.cpp:644
 #, fuzzy
@@ -3259,18 +3227,13 @@ msgid ""
 "Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
 "(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;"
 "*.rm;*.mpg;*.mpeg;*.3gp;*.avs|Wszystkie pliki (*.*)|*.*"
-msgstr ""
-"Fail video (*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
-"(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;"
-"*.rm;*.mpg;*.mpeg;*.3gp;*.avs|Semua fail (*.*)|*.*"
+msgstr "Fail video (*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.mpg;*.mpeg;*.3gp;*.avs|Semua fail (*.*)|*.*"
 
 #: KainoteFrame.cpp:863
 msgid ""
 "Pliki klatek kluczowych (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*."
 "stats;*.log|Wszystkie pliki (*.*)|*.*"
-msgstr ""
-"Fail bidang kekunci (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;"
-"*.log|Semua fail (*.*)|*.*"
+msgstr "Fail bidang kekunci (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|Semua fail (*.*)|*.*"
 
 #: KainoteFrame.cpp:915
 #, c-format, fuzzy
@@ -3284,10 +3247,7 @@ msgid ""
 "Ten program powstał w celu zastąpienia dwóch programów: Bestplayera i "
 "Aegisuba.\n"
 "\n"
-msgstr ""
-"Saya menulis perisian ini bagi mengantikan dua perisian: Bestplayer dan "
-"Aegisub.\n"
-"\n"
+msgstr "Saya menulis perisian ini bagi mengantikan dua perisian: Bestplayer dan Aegisub.\n\n"
 
 #: KainoteFrame.cpp:918
 msgid ""
@@ -3338,39 +3298,29 @@ msgstr "Penguji:\n"
 msgid ""
 "- Sacredus (chyba pierwszy tłumacz używający trybu tłumacza,\n"
 " nieoceniona pomoc przy testowaniu wydajności na słabym komputerze).\n"
-msgstr ""
-"- Sacredus (penterjemah pertama yang menggunakan mod penterjemah,\n"
-"sangat membantu menguji Kainote pada komputer kentang)\n"
+msgstr "- Sacredus (penterjemah pertama yang menggunakan mod penterjemah,\nsangat membantu menguji Kainote pada komputer kentang)\n"
 
 #: KainoteFrame.cpp:944
 msgid ""
 "- Devilkan (crashhunter, ze względu na swój system i przyzwyczajenia "
 "wytropił już wiele crashy,\n"
-msgstr ""
-"- Devilkan (pemburu ranap, disebabkan sistemnya dan tabiatnya membuatkan "
-"Kainote ranap berkali-kali,\n"
+msgstr "- Devilkan (pemburu ranap, disebabkan sistemnya dan tabiatnya membuatkan Kainote ranap berkali-kali,\n"
 
 #: KainoteFrame.cpp:945
 msgid ""
 "pomógł w poprawie działania narzędzi do typesettingu, wymyślił wiele innych "
 "usprawnień).\n"
-msgstr ""
-"membantu dalam alatan mengatur huruf dan banyak membantu di dalam "
-"penambahbaikan).\n"
+msgstr "membantu dalam alatan mengatur huruf dan banyak membantu di dalam penambahbaikan).\n"
 
 #: KainoteFrame.cpp:946
 msgid ""
 "- MatiasMovie (wyłapał parę crashy i zaproponował różne usprawnienia, pomaga "
 "w debugowaniu crashy).\n"
-msgstr ""
-"- MatiasMovie (menjumpai beberapa ranap dan menyarankan beberapa "
-"penambahbaikan, menolong dalam menyahpepijatan ranap).\n"
+msgstr "- MatiasMovie (menjumpai beberapa ranap dan menyarankan beberapa penambahbaikan, menolong dalam menyahpepijatan ranap).\n"
 
 #: KainoteFrame.cpp:947
 msgid "- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy).\n"
-msgstr ""
-"- mas1904 (menjumpai banyak ralat dan menolong dalam menyahpepijatan "
-"ranap).\n"
+msgstr "- mas1904 (menjumpai banyak ralat dan menolong dalam menyahpepijatan ranap).\n"
 
 #: KainoteFrame.cpp:948
 msgid "- Senami (stworzył nowe motywy, a także wyłapał parę błędów).\n"
@@ -3391,8 +3341,7 @@ msgstr "- Niskala5570 (Terjemahan B.Melayu).\n"
 #: KainoteFrame.cpp:952
 msgid ""
 "Podziękowania także dla osób, które używają programu i zgłaszali błędy.\n"
-msgstr ""
-"Terima kasih kepada pengguna Kainote yang lain yang melaporkan pepijat.\n"
+msgstr "Terima kasih kepada pengguna Kainote yang lain yang melaporkan pepijat.\n"
 
 #: KainoteFrame.cpp:1060
 #, fuzzy
@@ -3408,9 +3357,7 @@ msgstr "Simpan fail sari kata"
 msgid ""
 "Wybrany plik jest tylko do odczytu,\n"
 "proszę zapisać pod inną nazwą lub zmienić atrybuty pliku."
-msgstr ""
-"Fail yang dipilih hanya boleh dibaca sahaja,\n"
-"sila simpan dengan nama lain atau menukar atribut fail."
+msgstr "Fail yang dipilih hanya boleh dibaca sahaja,\nsila simpan dengan nama lain atau menukar atribut fail."
 
 #: KainoteFrame.cpp:1143
 #, c-format, fuzzy
