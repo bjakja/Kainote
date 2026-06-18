@@ -40,7 +40,12 @@ namespace {
 	void EnsureAudioGstInit()
 	{
 		static std::once_flag once;
-		std::call_once(once, [] { gst_init_check(nullptr, nullptr, nullptr); });
+		std::call_once(once, [] {
+#ifdef KAI_GST_PLUGIN_DIR
+			g_setenv("GST_PLUGIN_PATH_1_0", KAI_GST_PLUGIN_DIR, FALSE);
+#endif
+			gst_init_check(nullptr, nullptr, nullptr);
+		});
 	}
 }
 
@@ -63,6 +68,7 @@ struct DirectSoundPlayer2Thread::LinuxAudioState {
 	std::chrono::steady_clock::time_point playbackStart;
 	GstElement *pipeline = nullptr;
 	GstElement *appsrc = nullptr;
+	wxString failMessage;
 };
 
 void DirectSoundPlayer2Thread::Run()
@@ -72,6 +78,7 @@ void DirectSoundPlayer2Thread::Run()
 	auto fail = [this](const wxString &msg) {
 		KaiLog(msg);
 		std::lock_guard<std::mutex> lock(linuxState->mutex);
+		linuxState->failMessage = msg;
 		linuxState->failed = true;
 		linuxState->initialized = true;
 		linuxState->cv.notify_all();
@@ -91,12 +98,18 @@ void DirectSoundPlayer2Thread::Run()
 	GstElement *resample = gst_element_factory_make("audioresample", nullptr);
 	GstElement *sink = gst_element_factory_make("autoaudiosink", nullptr);
 	if (!pipeline || !src || !convert || !resample || !sink) {
+		wxString missing;
+		if (!pipeline) missing += L"pipeline ";
+		if (!src) missing += L"appsrc ";
+		if (!convert) missing += L"audioconvert ";
+		if (!resample) missing += L"audioresample ";
+		if (!sink) missing += L"autoaudiosink ";
 		if (sink) gst_object_unref(sink);
 		if (resample) gst_object_unref(resample);
 		if (convert) gst_object_unref(convert);
 		if (src) gst_object_unref(src);
 		if (pipeline) gst_object_unref(pipeline);
-		fail(L"Cannot create GStreamer audio pipeline");
+		fail(L"Cannot create GStreamer audio pipeline (missing: " + missing + L")");
 		return;
 	}
 	gst_bin_add_many(GST_BIN(pipeline), src, convert, resample, sink, nullptr);
@@ -122,7 +135,7 @@ void DirectSoundPlayer2Thread::Run()
 		"caps", caps,
 		"format", GST_FORMAT_TIME,
 		"stream-type", GST_APP_STREAM_TYPE_STREAM,
-		"is-live", FALSE,
+		"is-live", TRUE,
 		"do-timestamp", TRUE,
 		"block", TRUE,
 		"max-bytes", (guint64)std::max<long long>(bytesPerFrame, maxQueuedFrames * bytesPerFrame),
@@ -192,7 +205,7 @@ void DirectSoundPlayer2Thread::Run()
 		const bool wasActive = active;
 		active = true;
 
-		// Only flush when restarting over an already-running stream (switching selections mid-playback). 
+		// Only flush when restarting over an already-running stream (switching selections mid-playback).
 		if (restartPlayback && wasActive) {
 			gst_element_send_event(pipeline, gst_event_new_flush_start());
 			gst_element_send_event(pipeline, gst_event_new_flush_stop(TRUE));
@@ -286,13 +299,18 @@ DirectSoundPlayer2Thread::DirectSoundPlayer2Thread(Provider *provider, int _Want
 	std::unique_lock<std::mutex> lock(linuxState->mutex);
 	linuxState->cv.wait(lock, [this] { return linuxState->initialized; });
 	const bool failed = linuxState->failed;
+	wxString detail = linuxState->failMessage;
 	lock.unlock();
 	if (failed) {
 		if (linuxState->thread.joinable())
 			linuxState->thread.join();
 		delete linuxState;
 		linuxState = nullptr;
-		throw _T("Failed creating audio playback device.");
+		static wxString s_failDetail;
+		s_failDetail = detail.empty()
+			? wxString(L"Failed creating audio playback device.")
+			: L"Failed creating audio playback device: " + detail;
+		throw (const wxChar *)s_failDetail.wc_str();
 	}
 }
 
