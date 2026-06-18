@@ -4,7 +4,7 @@
 # LibreTranslate <noreply-mt-libretranslate@weblate.org>, 2026.
 # Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>, 2026.
 msgid ""
-msgstr "Project-Id-Version: Kainote\nReport-Msgid-Bugs-To: poiiiii4yy@gmail.com\nPOT-Creation-Date: 2022-06-06 20:10+0700\nPO-Revision-Date: 2026-06-18 07:52+0000\nLast-Translator: labrie75 <labrie75@naver.com>\nLanguage-Team: Korean <https://hosted.weblate.org/projects/kainote/kainote/ko/>\nLanguage: ko_KR\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=1; plural=0;\nX-Generator: Weblate 2026.7.dev0\nX-Poedit-Basepath: ../Kainote\nX-Poedit-SourceCharset: UTF-8\nX-Poedit-KeywordsList: _\nX-Poedit-SearchPath-0: .\nX-Poedit-SearchPathExcluded-0: Bitmaps\nX-Poedit-SearchPathExcluded-1: GFFT\nX-Poedit-SearchPathExcluded-2: include\nX-Poedit-SearchPathExcluded-3: Win32\nX-Poedit-SearchPathExcluded-4: x64\nX-Poedit-SearchPathExcluded-5: ffms2.lib\nX-Poedit-SearchPathExcluded-6: ffms2_x64.lib\nX-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\nX-Poedit-SearchPathExcluded-8: Kainote.vcxproj\nX-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\nX-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\nX-Poedit-SearchPathExcluded-11: RCa00888\nX-Poedit-SearchPathExcluded-12: resource.aps\nX-Poedit-SearchPathExcluded-13: resource.rc\nX-Poedit-SearchPathExcluded-14: CsriMod.cpp\nX-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\nX-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
+msgstr "Project-Id-Version: Kainote\nReport-Msgid-Bugs-To: poiiiii4yy@gmail.com\nPOT-Creation-Date: 2022-06-06 20:10+0700\nPO-Revision-Date: 2026-06-18 07:52+0000\nLast-Translator: Anonymous <noreply@weblate.org>\nLanguage-Team: Korean <https://hosted.weblate.org/projects/kainote/kainote/ko/>\nLanguage: ko_KR\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=1; plural=0;\nX-Generator: Weblate 2026.7.dev0\nX-Poedit-Basepath: ../Kainote\nX-Poedit-SourceCharset: UTF-8\nX-Poedit-KeywordsList: _\nX-Poedit-SearchPath-0: .\nX-Poedit-SearchPathExcluded-0: Bitmaps\nX-Poedit-SearchPathExcluded-1: GFFT\nX-Poedit-SearchPathExcluded-2: include\nX-Poedit-SearchPathExcluded-3: Win32\nX-Poedit-SearchPathExcluded-4: x64\nX-Poedit-SearchPathExcluded-5: ffms2.lib\nX-Poedit-SearchPathExcluded-6: ffms2_x64.lib\nX-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\nX-Poedit-SearchPathExcluded-8: Kainote.vcxproj\nX-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\nX-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\nX-Poedit-SearchPathExcluded-11: RCa00888\nX-Poedit-SearchPathExcluded-12: resource.aps\nX-Poedit-SearchPathExcluded-13: resource.rc\nX-Poedit-SearchPathExcluded-14: CsriMod.cpp\nX-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\nX-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
 
 #: AudioBox.cpp:72
 msgid "Pasek szukania"
@@ -392,9 +392,7 @@ msgstr "오래된 소리 파일 삭제"
 msgid ""
 "Pliki napisów (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*."
 "sub;*.txt"
-msgstr ""
-"자막 파일 (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*."
-"txt"
+msgstr "자막 파일 (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt"
 
 #: AutoSavesRemoving.cpp:178
 msgid "Pliki indeksów (*.ffindex)|*.ffindex"
@@ -559,9 +557,7 @@ msgstr "소리"
 msgid ""
 "Ten skrót już istnieje jako skrót do \"%s\".\n"
 "Co zrobić?"
-msgstr ""
-"단축키가 \"%s\"에 이미 있습니다.\n"
-"어떻게 할까요?"
+msgstr "단축키가 \"%s\"에 이미 있습니다.\n어떻게 할까요?"
 
 #: AutomationHotkeysDialog.cpp:238 AutomationHotkeysDialog.cpp:247
 #: Hotkeys.cpp:477 Hotkeys.cpp:487 KainoteFrame.cpp:1077 KainoteFrame.cpp:1093
@@ -1038,9 +1034,7 @@ msgstr "각 줄의 글자 수.\n한 줄에 43자 이하 (최대 2줄)."
 msgid ""
 "Znaki na sekundę.\n"
 "Nie powinny przekraczać 15 znaków na sekundę"
-msgstr ""
-"초당 문자 수 : \n"
-"초당 15자를 초과 시 확인"
+msgstr "초당 문자 수 : \n초당 15자를 초과 시 확인"
 
 #: EditBox.cpp:1694 EditBox.cpp:1993
 #, fuzzy
@@ -1074,10 +1068,7 @@ msgid ""
 "Filtry wyszukiwania Windowsa pooddzielane średnikami np \"*.ass;*.srt\".\n"
 "Ze względu na dużą wagę plików wideo\n"
 "szukanie wszystkiego \"*.*\" zostaje zmieniane na *.ass"
-msgstr ""
-"세미콜론으로 구분 된 Windows 검색 필터 (예 : \"*.ass; *.srt\").\n"
-"영상 파일이 있을 수도 있어서\n"
-"모든 \"*. *\"검색은 * .ass로 변경됩니다"
+msgstr "세미콜론으로 구분 된 Windows 검색 필터 (예 : \"*.ass; *.srt\").\n영상 파일이 있을 수도 있어서\n모든 \"*. *\"검색은 * .ass로 변경됩니다"
 
 #: FindReplaceDialog.cpp:71
 msgid "Filtry:"
@@ -1345,10 +1336,7 @@ msgid ""
 "Aby móc dodawać czcionki do katalogu,\n"
 "należy najpierw kliknąć przycisk \"Zarządzaj\",\n"
 "by utworzyć nowy katalog."
-msgstr ""
-"목록에 글꼴을 추가하려면\n"
-"먼저 \"글꼴 목록창\"버튼을 클릭하고\n"
-"새 목록를 만듭니다."
+msgstr "목록에 글꼴을 추가하려면\n먼저 \"글꼴 목록창\"버튼을 클릭하고\n새 목록를 만듭니다."
 
 #: FontCatalogList.cpp:732
 #, c-format
@@ -1575,9 +1563,7 @@ msgstr "\"%s\"글꼴을 복사 할 수 없습니다."
 msgid ""
 "Wideo: %s\n"
 "\n"
-msgstr ""
-"영상: %s\n"
-"\n"
+msgstr "영상: %s\n\n"
 
 #: FontCollector.cpp:884
 #, fuzzy
@@ -1607,9 +1593,7 @@ msgstr "이름으로 글꼴을 저장할 수 없습니다 \""
 msgid ""
 "Zakończono, skopiowano %i czcionek.\n"
 "Nie udało się skopiować %i czcionek."
-msgstr ""
-"%i 글꼴을 복사했습니다.\n"
-"%i 글꼴을 복사하지 못했습니다."
+msgstr "%i 글꼴을 복사했습니다.\n%i 글꼴을 복사하지 못했습니다."
 
 #: FontCollector.cpp:924
 #, c-format
@@ -1636,9 +1620,7 @@ msgstr "글꼴 \"%s\"을(를) 스타일에서 가져옴,\n%s은(는) 사용되�
 msgid ""
 "\n"
 "Nie zostanie skopiowana."
-msgstr ""
-"\n"
-"복사되지 않음."
+msgstr "\n복사되지 않음."
 
 #: FontCollector.cpp:1049
 #, c-format
@@ -1710,9 +1692,7 @@ msgstr "프로세스를 만들 수 없음. Muxing은 취소됨"
 msgid ""
 "\n"
 "Zakończono w %sms"
-msgstr ""
-"\n"
-"완료됨 %s ms"
+msgstr "\n완료됨 %s ms"
 
 #: FontDialog.cpp:372
 msgid "Wybierz czcionkę"
@@ -2148,8 +2128,7 @@ msgstr "단축키 입력 \"%s\"."
 #: Hotkeys.cpp:641
 msgid ""
 "Skróty globalne i edytora muszą zawierać modyfikatory (Shift, Ctrl lub Alt)."
-msgstr ""
-"전역 및 편집기 단축키에는 수정자(예: Shift, Ctrl, Alt)가 포함되어야 합니다."
+msgstr "전역 및 편집기 단축키에는 수정자(예: Shift, Ctrl, Alt)가 포함되어야 합니다."
 
 #: Hotkeys.cpp:644
 #, fuzzy
@@ -3208,18 +3187,13 @@ msgid ""
 "Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
 "(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;"
 "*.rm;*.mpg;*.mpeg;*.3gp;*.avs|Wszystkie pliki (*.*)|*.*"
-msgstr ""
-"영상 파일 (*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
-"(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;"
-"*.rm;*.mpg;*.mpeg;*.3gp;*.avs|모든 파일 (*.*)|*.*"
+msgstr "영상 파일 (*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.mpg;*.mpeg;*.3gp;*.avs|모든 파일 (*.*)|*.*"
 
 #: KainoteFrame.cpp:863
 msgid ""
 "Pliki klatek kluczowych (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*."
 "stats;*.log|Wszystkie pliki (*.*)|*.*"
-msgstr ""
-"키 프레임 파일 (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|"
-"모든 파일 (*.*)|*.*"
+msgstr "키 프레임 파일 (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|모든 파일 (*.*)|*.*"
 
 #: KainoteFrame.cpp:915
 #, c-format, fuzzy
@@ -3233,10 +3207,7 @@ msgid ""
 "Ten program powstał w celu zastąpienia dwóch programów: Bestplayera i "
 "Aegisuba.\n"
 "\n"
-msgstr ""
-"두 프로그램을 대체하기 위해이 프로그램을 작성했습니다.: Bestplayer와 "
-"Aegisub.\n"
-"\n"
+msgstr "두 프로그램을 대체하기 위해이 프로그램을 작성했습니다.: Bestplayer와 Aegisub.\n\n"
 
 #: KainoteFrame.cpp:918
 msgid ""
@@ -3287,9 +3258,7 @@ msgstr "테스터:\n"
 msgid ""
 "- Sacredus (chyba pierwszy tłumacz używający trybu tłumacza,\n"
 " nieoceniona pomoc przy testowaniu wydajności na słabym komputerze).\n"
-msgstr ""
-"- Sacredus (번역 모드를 사용하는 첫 번째 사용자입니다,\n"
-"느린 컴퓨터에서 Kainote를 테스트하는데 많은 도움이 되었습니다).\n"
+msgstr "- Sacredus (번역 모드를 사용하는 첫 번째 사용자입니다,\n느린 컴퓨터에서 Kainote를 테스트하는데 많은 도움이 되었습니다).\n"
 
 #: KainoteFrame.cpp:944
 msgid ""
@@ -3301,17 +3270,13 @@ msgstr "- Devilkan (문자 설정 도구를 설정하는데 도움을 주고,\n"
 msgid ""
 "pomógł w poprawie działania narzędzi do typesettingu, wymyślił wiele innych "
 "usprawnień).\n"
-msgstr ""
-"그의 시스템과 습관으로 인해 많은 버그를 추적하고 오류를 수정할 수 있었습니"
-"다).\n"
+msgstr "그의 시스템과 습관으로 인해 많은 버그를 추적하고 오류를 수정할 수 있었습니다).\n"
 
 #: KainoteFrame.cpp:946
 msgid ""
 "- MatiasMovie (wyłapał parę crashy i zaproponował różne usprawnienia, pomaga "
 "w debugowaniu crashy).\n"
-msgstr ""
-"- MatiasMovie (일부 충돌을 발견하고 몇 가지 개선 사항을 제안했으며 버그 수정"
-"에 도움이 되었습니다).\n"
+msgstr "- MatiasMovie (일부 충돌을 발견하고 몇 가지 개선 사항을 제안했으며 버그 수정에 도움이 되었습니다).\n"
 
 #: KainoteFrame.cpp:947
 msgid "- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy).\n"
@@ -3564,18 +3529,14 @@ msgstr "모든 탭 변경"
 msgid ""
 "Nie można zmieniać reguł,\n"
 "gdy okno wyników szukania jest otwarte"
-msgstr ""
-"결과 찾기 창이 열려 있을 때\n"
-"규칙을 변경할 수 없음"
+msgstr "결과 찾기 창이 열려 있을 때\n규칙을 변경할 수 없음"
 
 #: MisspellReplacer.cpp:608 findreplace.cpp:201 findreplace.cpp:1583
 #, c-format
 msgid ""
 "Linia %i nie może być zamieniona,\n"
 "bo została zedytowana."
-msgstr ""
-"편집 되었기 때문에\n"
-"%i 줄을 바꿀 수 없습니다."
+msgstr "편집 되었기 때문에\n%i 줄을 바꿀 수 없습니다."
 
 #: MisspellReplacer.cpp:629
 #, c-format
@@ -3797,9 +3758,7 @@ msgstr "시간 편집 시 다음 행으로 이동 안 함"
 msgid ""
 "Wyłącz pokazywanie edycji na wideo\n"
 "(wymaga ponownego otwarcia zakładek)"
-msgstr ""
-"동영상의 편집 미리 보기를 해제-편집 후 엔터키로 적용\n"
-"(새로 열어야 설정 적용)"
+msgstr "동영상의 편집 미리 보기를 해제-편집 후 엔터키로 적용\n(새로 열어야 설정 적용)"
 
 #: OptionsDialog.cpp:298
 msgid ""
@@ -4122,9 +4081,7 @@ msgstr "램에 소리 불러오기"
 msgid ""
 "Przedział od 0 do 10000, gdzie 0 wyłącza\n"
 "całkowicie usuwanie plików audio cache."
-msgstr ""
-"0 ~ 10000을 입력 할 수 있습니다\n"
-"0은 소리 저장 파일 삭제를 비활성화합니다."
+msgstr "0 ~ 10000을 입력 할 수 있습니다\n0은 소리 저장 파일 삭제를 비활성화합니다."
 
 #: OptionsDialog.cpp:672
 msgid "Przed i po aktywnej"
@@ -5207,9 +5164,7 @@ msgstr "%i 줄 선택 취소."
 msgid ""
 "Wprowadź nazwę profilu,\n"
 "bądź wybierz istniejący, by nadpisać"
-msgstr ""
-"프로필 이름을 쓰거나\n"
-"덮어 쓸 기존 프로필을 선택합니다"
+msgstr "프로필 이름을 쓰거나\n덮어 쓸 기존 프로필을 선택합니다"
 
 #: ShiftTimes.cpp:84
 #, c-format
@@ -5376,17 +5331,13 @@ msgstr "시간 지정"
 msgid ""
 "Przesuwanie zaznaczonej linijki\n"
 "do czasu wideo ± czas przesunięcia"
-msgstr ""
-"선택한 줄 이동\n"
-"영상 시간 ± 만큼 지연"
+msgstr "선택한 줄 이동\n영상 시간 ± 만큼 지연"
 
 #: ShiftTimes.cpp:532
 msgid ""
 "Przesuwanie zaznaczonej linijki do czasu\n"
 "znacznika audio ± czas przesunięcia"
-msgstr ""
-"선택한 줄 이동\n"
-"소리 시간 ± 만큼 지연"
+msgstr "선택한 줄 이동\n소리 시간 ± 만큼 지연"
 
 #: ShiftTimes.cpp:533
 msgid "Przesuwa czas początkowy do czasu wideo / audio"
@@ -5454,33 +5405,25 @@ msgstr "종료 시간 임계값"
 msgid ""
 "Maksymalne przesunięcie do klatki kluczowej\n"
 "przed czasem początkowym w milisekundach"
-msgstr ""
-"시작 시간(ms) 이전\n"
-"최대 키 프레임 시간 변경"
+msgstr "시작 시간(ms) 이전\n최대 키 프레임 시간 변경"
 
 #: ShiftTimes.cpp:550
 msgid ""
 "Maksymalne przesunięcie do klatki kluczowej\n"
 "po czasie początkowym w milisekundach"
-msgstr ""
-"시작 시간(ms) 이후\n"
-"최대 키 프레임 시간 변경"
+msgstr "시작 시간(ms) 이후\n최대 키 프레임 시간 변경"
 
 #: ShiftTimes.cpp:551
 msgid ""
 "Maksymalne przesunięcie do klatki kluczowej\n"
 "przed czasem końcowym w milisekundach"
-msgstr ""
-"종료 시간(ms) 이전 \n"
-"최대 키 프레임 시간 변경"
+msgstr "종료 시간(ms) 이전 \n최대 키 프레임 시간 변경"
 
 #: ShiftTimes.cpp:552
 msgid ""
 "Maksymalne przesunięcie do klatki kluczowej\n"
 "po czasie końcowym w milisekundach"
-msgstr ""
-"종료 시간(ms) 이후\n"
-"최대 키 프레임 시간 변경"
+msgstr "종료 시간(ms) 이후\n최대 키 프레임 시간 변경"
 
 #: ShiftTimes.cpp:948
 msgid "Na liście nie wybrano profilu do usunięcia"
@@ -6273,9 +6216,7 @@ msgstr "이동할 줄이 없습니다"
 msgid ""
 "Czy na pewno chcesz wyłączyć tryb tłumacza?\n"
 "Obcojęzyczny tekst przetłumaczonych linijek zostanie usunięty."
-msgstr ""
-"번역 모드를 끄시겠습니까?\n"
-"원본 글자가 삭제되고 번역 글자만 남게됩니다."
+msgstr "번역 모드를 끄시겠습니까?\n원본 글자가 삭제되고 번역 글자만 남게됩니다."
 
 #: SubsGridDialogs.cpp:23
 msgid "Wybierz nowy FPS"
@@ -6983,10 +6924,7 @@ msgid ""
 "Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
 "(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|"
 "Wszystkie pliki (*.*)|*.*"
-msgstr ""
-"영상 파일(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
-"(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|"
-"모든 파일 (*.*)|*.*"
+msgstr "영상 파일(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|모든 파일 (*.*)|*.*"
 
 #: VideoBox.cpp:1006
 msgid "Pliki napisów (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"
@@ -7644,11 +7582,7 @@ msgid ""
 "%s\n"
 "Usunięte style:\n"
 "%s"
-msgstr ""
-"스타일 사용:\n"
-"%s\n"
-"스타일 삭제:\n"
-"%s"
+msgstr "스타일 사용:\n%s\n스타일 삭제:\n%s"
 
 #: stylestore.cpp:764
 msgid "Status usuniętych stylów"
