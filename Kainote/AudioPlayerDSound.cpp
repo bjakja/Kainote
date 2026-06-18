@@ -175,12 +175,10 @@ void DirectSoundPlayer2Thread::Run()
 		}
 
 		if (goIdle) {
-			// Playback just stopped: drop queued audio so it goes silent at once
-			// (the role SDL_ClearQueuedAudio played).  Edge-triggered so we don't
-			// spam flush events while idle.
+			// Drop queued audio immediately; TRUE flush_stop can strand timestamps.
 			if (active) {
 				gst_element_send_event(pipeline, gst_event_new_flush_start());
-				gst_element_send_event(pipeline, gst_event_new_flush_stop(TRUE));
+				gst_element_send_event(pipeline, gst_event_new_flush_stop(FALSE));
 				active = false;
 			}
 			continue;
@@ -188,9 +186,9 @@ void DirectSoundPlayer2Thread::Run()
 		active = true;
 
 		if (restartPlayback) {
-			// Drop already-queued audio so a new selection starts crisply.
+			// Drop queued audio for a crisp restart while preserving running-time.
 			gst_element_send_event(pipeline, gst_event_new_flush_start());
-			gst_element_send_event(pipeline, gst_event_new_flush_stop(TRUE));
+			gst_element_send_event(pipeline, gst_event_new_flush_stop(FALSE));
 		}
 
 		long long frame = 0;
