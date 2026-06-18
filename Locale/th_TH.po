@@ -4,7 +4,7 @@
 # LibreTranslate <noreply-mt-libretranslate@weblate.org>, 2026.
 # Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>, 2026.
 msgid ""
-msgstr "Project-Id-Version: Kainote\nReport-Msgid-Bugs-To: poiiiii4yy@gmail.com\nPOT-Creation-Date: 2022-06-06 20:10+0700\nPO-Revision-Date: 2026-06-17 07:02+0000\nLast-Translator: LibreTranslate <noreply-mt-libretranslate@weblate.org>\nLanguage-Team: Thai <https://hosted.weblate.org/projects/kainote/kainote/th/>\nLanguage: th_TH\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=1; plural=0;\nX-Generator: Weblate 2026.7.dev0\nX-Poedit-Basepath: ../Kainote\nX-Poedit-SourceCharset: UTF-8\nX-Poedit-KeywordsList: _\nX-Poedit-SearchPath-0: .\nX-Poedit-SearchPathExcluded-0: Bitmaps\nX-Poedit-SearchPathExcluded-1: GFFT\nX-Poedit-SearchPathExcluded-2: include\nX-Poedit-SearchPathExcluded-3: Win32\nX-Poedit-SearchPathExcluded-4: x64\nX-Poedit-SearchPathExcluded-5: ffms2.lib\nX-Poedit-SearchPathExcluded-6: ffms2_x64.lib\nX-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\nX-Poedit-SearchPathExcluded-8: Kainote.vcxproj\nX-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\nX-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\nX-Poedit-SearchPathExcluded-11: RCa00888\nX-Poedit-SearchPathExcluded-12: resource.aps\nX-Poedit-SearchPathExcluded-13: resource.rc\nX-Poedit-SearchPathExcluded-14: CsriMod.cpp\nX-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\nX-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
+msgstr "Project-Id-Version: Kainote\nReport-Msgid-Bugs-To: poiiiii4yy@gmail.com\nPOT-Creation-Date: 2022-06-06 20:10+0700\nPO-Revision-Date: 2026-06-18 07:55+0000\nLast-Translator: altinat <al@altqx.com>\nLanguage-Team: Thai <https://hosted.weblate.org/projects/kainote/kainote/th/>\nLanguage: th_TH\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=1; plural=0;\nX-Generator: Weblate 2026.7.dev0\nX-Poedit-Basepath: ../Kainote\nX-Poedit-SourceCharset: UTF-8\nX-Poedit-KeywordsList: _\nX-Poedit-SearchPath-0: .\nX-Poedit-SearchPathExcluded-0: Bitmaps\nX-Poedit-SearchPathExcluded-1: GFFT\nX-Poedit-SearchPathExcluded-2: include\nX-Poedit-SearchPathExcluded-3: Win32\nX-Poedit-SearchPathExcluded-4: x64\nX-Poedit-SearchPathExcluded-5: ffms2.lib\nX-Poedit-SearchPathExcluded-6: ffms2_x64.lib\nX-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\nX-Poedit-SearchPathExcluded-8: Kainote.vcxproj\nX-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\nX-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\nX-Poedit-SearchPathExcluded-11: RCa00888\nX-Poedit-SearchPathExcluded-12: resource.aps\nX-Poedit-SearchPathExcluded-13: resource.rc\nX-Poedit-SearchPathExcluded-14: CsriMod.cpp\nX-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\nX-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
 
 #: AudioBox.cpp:72
 msgid "Pasek szukania"
@@ -392,9 +392,7 @@ msgstr "ลบแฟ้มแคชเสียงที่เก่ากว่
 msgid ""
 "Pliki napisów (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*."
 "sub;*.txt"
-msgstr ""
-"แฟ้มคำบรรยาย (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;"
-"*.txt"
+msgstr "แฟ้มคำบรรยาย (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt"
 
 #: AutoSavesRemoving.cpp:178
 msgid "Pliki indeksów (*.ffindex)|*.ffindex"
@@ -559,9 +557,7 @@ msgstr "เสียง"
 msgid ""
 "Ten skrót już istnieje jako skrót do \"%s\".\n"
 "Co zrobić?"
-msgstr ""
-"มีปุ่มลัดสำหรับ \"%s\" อยู่แล้ว\n"
-"ต้องการทำอย่างไร?"
+msgstr "มีปุ่มลัดสำหรับ \"%s\" อยู่แล้ว\nต้องการทำอย่างไร?"
 
 #: AutomationHotkeysDialog.cpp:238 AutomationHotkeysDialog.cpp:247
 #: Hotkeys.cpp:477 Hotkeys.cpp:487 KainoteFrame.cpp:1077 KainoteFrame.cpp:1093
@@ -1046,17 +1042,13 @@ msgstr "บรรทัดเอฟเฟกต์ ใช้เพื่อท�
 msgid ""
 "Ilość znaków w każdej linijce.\n"
 "Nie więcej niż 43 znaki na linijkę (maksymalnie 2 linijki)"
-msgstr ""
-"จำนวนอักขระในแต่ละบรรทัด\n"
-"ไม่ควรเกิน 43 อักขระต่อบรรทัด (และไม่เกิน 2 บรรทัด)"
+msgstr "จำนวนอักขระในแต่ละบรรทัด\nไม่ควรเกิน 43 อักขระต่อบรรทัด (และไม่เกิน 2 บรรทัด)"
 
 #: EditBox.cpp:1198
 msgid ""
 "Znaki na sekundę.\n"
 "Nie powinny przekraczać 15 znaków na sekundę"
-msgstr ""
-"อักขระต่อวินาที\n"
-"ไม่ควรเกิน 15 ตัวอักขระต่อวินาที"
+msgstr "อักขระต่อวินาที\nไม่ควรเกิน 15 ตัวอักขระต่อวินาที"
 
 #: EditBox.cpp:1694 EditBox.cpp:1993
 #, fuzzy
@@ -1090,11 +1082,7 @@ msgid ""
 "Filtry wyszukiwania Windowsa pooddzielane średnikami np \"*.ass;*.srt\".\n"
 "Ze względu na dużą wagę plików wideo\n"
 "szukanie wszystkiego \"*.*\" zostaje zmieniane na *.ass"
-msgstr ""
-"สามารถกรองการค้นหาของ Windows ด้วยการคั่นเครื่องหมายอัฒภาค (;) เช่น \"*.ass;*.srt\"\n"
-"หากต้องการค้นหาแฟ้มวิดีโอนั้นจะต้องระบุสกุลของแฟ้มวิดีโอ\n"
-"โดยทั่วไปแล้วค่าเริ่มต้นของการค้นหาคือ \"*.ass\" แต่หากกระบุ \"*.*\" "
-"จะเป็นการการค้นหาทั้งหมด"
+msgstr "สามารถกรองการค้นหาของ Windows ด้วยการคั่นเครื่องหมายอัฒภาค (;) เช่น \"*.ass;*.srt\"\nหากต้องการค้นหาแฟ้มวิดีโอนั้นจะต้องระบุสกุลของแฟ้มวิดีโอ\nโดยทั่วไปแล้วค่าเริ่มต้นของการค้นหาคือ \"*.ass\" แต่หากกระบุ \"*.*\" จะเป็นการการค้นหาทั้งหมด"
 
 #: FindReplaceDialog.cpp:71
 msgid "Filtry:"
@@ -1175,9 +1163,7 @@ msgstr "ค้นหาในคำบรรยาย\nที่เปิดอ�
 msgid ""
 "Znajdź wszystko\n"
 "w bieżących napisach"
-msgstr ""
-"ค้นหาทั้งหมด\n"
-"ในคำบรรยายปัจจุบัน"
+msgstr "ค้นหาทั้งหมด\nในคำบรรยายปัจจุบัน"
 
 #: FindReplaceDialog.cpp:184
 #, fuzzy
@@ -1364,10 +1350,7 @@ msgid ""
 "Aby móc dodawać czcionki do katalogu,\n"
 "należy najpierw kliknąć przycisk \"Zarządzaj\",\n"
 "by utworzyć nowy katalog."
-msgstr ""
-"การจะเพิ่มแบบอักษรลงในแคตตาล็อก\n"
-"จะต้องคลิกปุ่ม \"จัดการ\" ก่อน\n"
-"เพื่อสร้างแคตตาล็อกใหม่"
+msgstr "การจะเพิ่มแบบอักษรลงในแคตตาล็อก\nจะต้องคลิกปุ่ม \"จัดการ\" ก่อน\nเพื่อสร้างแคตตาล็อกใหม่"
 
 #: FontCatalogList.cpp:732
 #, c-format
@@ -1595,9 +1578,7 @@ msgstr "ไม่สามารถคัดลอกแบบอักษร \"
 msgid ""
 "Wideo: %s\n"
 "\n"
-msgstr ""
-"วิดีโอ: %s\n"
-"\n"
+msgstr "วิดีโอ: %s\n\n"
 
 #: FontCollector.cpp:884
 #, fuzzy
@@ -1626,9 +1607,7 @@ msgstr "ไม่สามารถบันทึกแบบอักษรด
 msgid ""
 "Zakończono, skopiowano %i czcionek.\n"
 "Nie udało się skopiować %i czcionek."
-msgstr ""
-"คัดลอกแบบอักษรเสร็จสิ้น %i\n"
-"คัดลอกแบบอักษรล้มเหลว %i"
+msgstr "คัดลอกแบบอักษรเสร็จสิ้น %i\nคัดลอกแบบอักษรล้มเหลว %i"
 
 #: FontCollector.cpp:924
 #, c-format
@@ -1655,9 +1634,7 @@ msgstr "แบบอักษร \"%s\" มาจาก\nสไตล์ที�
 msgid ""
 "\n"
 "Nie zostanie skopiowana."
-msgstr ""
-"\n"
-"จะไม่ถูกคัดลอก"
+msgstr "\nจะไม่ถูกคัดลอก"
 
 #: FontCollector.cpp:1049
 #, c-format
@@ -1729,9 +1706,7 @@ msgstr "ไม่สามารถสร้างกระบวนการไ
 msgid ""
 "\n"
 "Zakończono w %sms"
-msgstr ""
-"\n"
-"เสร็จสิ้นใน %sms"
+msgstr "\nเสร็จสิ้นใน %sms"
 
 #: FontDialog.cpp:372
 msgid "Wybierz czcionkę"
@@ -3242,18 +3217,13 @@ msgid ""
 "Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
 "(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;"
 "*.rm;*.mpg;*.mpeg;*.3gp;*.avs|Wszystkie pliki (*.*)|*.*"
-msgstr ""
-"แฟ้มวิดีโอ (*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
-"(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;"
-"*.rm;*.mpg;*.mpeg;*.3gp;*.avs|แฟ้มทั้งหมด (*.*)|*.*"
+msgstr "แฟ้มวิดีโอ (*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.mpg;*.mpeg;*.3gp;*.avs|แฟ้มทั้งหมด (*.*)|*.*"
 
 #: KainoteFrame.cpp:863
 msgid ""
 "Pliki klatek kluczowych (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*."
 "stats;*.log|Wszystkie pliki (*.*)|*.*"
-msgstr ""
-"แฟ้มคีย์เฟรม (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|"
-"แฟ้มทั้งหมด (*.*)|*.*"
+msgstr "แฟ้มคีย์เฟรม (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|แฟ้มทั้งหมด (*.*)|*.*"
 
 #: KainoteFrame.cpp:915
 #, c-format, fuzzy
@@ -3267,9 +3237,7 @@ msgid ""
 "Ten program powstał w celu zastąpienia dwóch programów: Bestplayera i "
 "Aegisuba.\n"
 "\n"
-msgstr ""
-"ผมเขียนโปรแกรมนี้เพื่อมาทดแทน Bestplayer และ Aegisub\n"
-"\n"
+msgstr "ผมเขียนโปรแกรมนี้เพื่อมาทดแทน Bestplayer และ Aegisub\n\n"
 
 #: KainoteFrame.cpp:918
 msgid ""
@@ -3320,30 +3288,25 @@ msgstr "ผู้ทดสอบ:\n"
 msgid ""
 "- Sacredus (chyba pierwszy tłumacz używający trybu tłumacza,\n"
 " nieoceniona pomoc przy testowaniu wydajności na słabym komputerze).\n"
-msgstr ""
-"- Sacredus (นักแปลคนแรกที่ใช้โหมดการแปล\n"
-"ช่วยได้มากในการทดสอบ Kainote บนคอมพิวเตอร์ช้า)\n"
+msgstr "- Sacredus (นักแปลคนแรกที่ใช้โหมดการแปล\nช่วยได้มากในการทดสอบ Kainote บนคอมพิวเตอร์ช้า)\n"
 
 #: KainoteFrame.cpp:944
 msgid ""
 "- Devilkan (crashhunter, ze względu na swój system i przyzwyczajenia "
 "wytropił już wiele crashy,\n"
-msgstr ""
-"- Devilkan (นักล่มโปรแกรม เนื่องจากระบบและนิสัยของเขา เขาทำ Kainote crash บ่อยมาก\n"
+msgstr "- Devilkan (นักล่มโปรแกรม เนื่องจากระบบและนิสัยของเขา เขาทำ Kainote crash บ่อยมาก\n"
 
 #: KainoteFrame.cpp:945
 msgid ""
 "pomógł w poprawie działania narzędzi do typesettingu, wymyślił wiele innych "
 "usprawnień).\n"
-msgstr ""
-"และเขามาช่วยปรับปรุงการทำงานและพัฒนาเครื่องมือเรียงพิมพ์การปรับปรุงอื่น ๆ อีกมากมาย)\n"
+msgstr "และเขามาช่วยปรับปรุงการทำงานและพัฒนาเครื่องมือเรียงพิมพ์การปรับปรุงอื่น ๆ อีกมากมาย)\n"
 
 #: KainoteFrame.cpp:946
 msgid ""
 "- MatiasMovie (wyłapał parę crashy i zaproponował różne usprawnienia, pomaga "
 "w debugowaniu crashy).\n"
-msgstr ""
-"- MatiasMovie (พบข้อขัดข้องบางส่วนและเสนอแนะการปรับปรุงบางอย่างช่วยแก้ไขข้อบกพร่อง)\n"
+msgstr "- MatiasMovie (พบข้อขัดข้องบางส่วนและเสนอแนะการปรับปรุงบางอย่างช่วยแก้ไขข้อบกพร่อง)\n"
 
 #: KainoteFrame.cpp:947
 msgid "- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy).\n"
@@ -3384,9 +3347,7 @@ msgstr "บันทึกแฟ้มคำบรรยาย"
 msgid ""
 "Wybrany plik jest tylko do odczytu,\n"
 "proszę zapisać pod inną nazwą lub zmienić atrybuty pliku."
-msgstr ""
-"แฟ้มที่เลือกเป็นแฟ้มที่อ่านได้อย่างเดียว\n"
-"โปรดบันทึกด้วยชื่ออื่นหรือเปลี่ยนค่ากำหนดแฟ้ม"
+msgstr "แฟ้มที่เลือกเป็นแฟ้มที่อ่านได้อย่างเดียว\nโปรดบันทึกด้วยชื่ออื่นหรือเปลี่ยนค่ากำหนดแฟ้ม"
 
 #: KainoteFrame.cpp:1143
 #, c-format, fuzzy
@@ -3608,18 +3569,14 @@ msgstr "แทนที่ทั้งหมดในแท็บทั้งห
 msgid ""
 "Nie można zmieniać reguł,\n"
 "gdy okno wyników szukania jest otwarte"
-msgstr ""
-"ไม่สามารถเปลี่ยนกฎ\n"
-"ขณะที่หน้าต่างผลลัพธ์การค้นหาเปิดอยู่"
+msgstr "ไม่สามารถเปลี่ยนกฎ\nขณะที่หน้าต่างผลลัพธ์การค้นหาเปิดอยู่"
 
 #: MisspellReplacer.cpp:608 findreplace.cpp:201 findreplace.cpp:1583
 #, c-format
 msgid ""
 "Linia %i nie może być zamieniona,\n"
 "bo została zedytowana."
-msgstr ""
-"ไม่สามารถแทนที่บรรทัด %i ได้\n"
-"เนื่องจากถูกแก้ไข"
+msgstr "ไม่สามารถแทนที่บรรทัด %i ได้\nเนื่องจากถูกแก้ไข"
 
 #: MisspellReplacer.cpp:629
 #, c-format
@@ -3823,9 +3780,7 @@ msgstr "เปิดการตรวจการสะกดคำ"
 msgid ""
 "Zaznaczaj linijkę z czasem aktywnej\n"
 "linijki poprzedniej zakładki"
-msgstr ""
-"เลือกบรรทัดพร้อมกับเวลาของบรรทัด\n"
-"ปัจจุบันของแท็บก่อนหน้า"
+msgstr "เลือกบรรทัดพร้อมกับเวลาของบรรทัด\nปัจจุบันของแท็บก่อนหน้า"
 
 #: OptionsDialog.cpp:295
 msgid "Pokaż sugestie po dwukrotnym kliknięciu błędu"
@@ -3843,17 +3798,13 @@ msgstr "ไม่ย้ายไปยังบรรทัดถัดไปเ
 msgid ""
 "Wyłącz pokazywanie edycji na wideo\n"
 "(wymaga ponownego otwarcia zakładek)"
-msgstr ""
-"ปิดพรีวิวการแก้ไขในวิดีโอ\n"
-"(ต้องปิดและเปิดแท็บใหม่)"
+msgstr "ปิดพรีวิวการแก้ไขในวิดีโอ\n(ต้องปิดและเปิดแท็บใหม่)"
 
 #: OptionsDialog.cpp:298
 msgid ""
 "Włącz szukanie widocznej linii\n"
 "po wyjściu z pełnego ekranu"
-msgstr ""
-"เปิดใช้การค้นหาบรรทัดที่มองเห็น\n"
-"เมื่อออกจากเต็มหน้าจอ"
+msgstr "เปิดใช้การค้นหาบรรทัดที่มองเห็น\nเมื่อออกจากเต็มหน้าจอ"
 
 #: OptionsDialog.cpp:299
 msgid "Włącz przenoszenie wartości pola przesuwania czasów"
@@ -4171,9 +4122,7 @@ msgstr "โหลดเสียงลงในแรม"
 msgid ""
 "Przedział od 0 do 10000, gdzie 0 wyłącza\n"
 "całkowicie usuwanie plików audio cache."
-msgstr ""
-"ป้อน 0 ถึง 10000 โดยที่ 0 จะปิด\n"
-"การลบแฟ้มแคชเสียง"
+msgstr "ป้อน 0 ถึง 10000 โดยที่ 0 จะปิด\nการลบแฟ้มแคชเสียง"
 
 #: OptionsDialog.cpp:672
 msgid "Przed i po aktywnej"
@@ -5259,9 +5208,7 @@ msgstr "มี %i บรรทัดถูกยกเลิกการเล�
 msgid ""
 "Wprowadź nazwę profilu,\n"
 "bądź wybierz istniejący, by nadpisać"
-msgstr ""
-"ป้อนชื่อโปรไฟล์\n"
-"หรือเลือกที่มีอยู่เพื่อเขียนทับ"
+msgstr "ป้อนชื่อโปรไฟล์\nหรือเลือกที่มีอยู่เพื่อเขียนทับ"
 
 #: ShiftTimes.cpp:84
 #, c-format
@@ -5336,17 +5283,13 @@ msgstr "สิ้นสุด"
 msgid ""
 "Przesuń znacznik\n"
 "do czasu wideo"
-msgstr ""
-"เลื่อนที่เลือกไว้\n"
-"ตามเวลาของวิดีโอ"
+msgstr "เลื่อนที่เลือกไว้\nตามเวลาของวิดีโอ"
 
 #: ShiftTimes.cpp:331
 msgid ""
 "Przesuń znacznik\n"
 "do czasu audio"
-msgstr ""
-"เลื่อนที่เลือกไว้\n"
-"ตามเวลาของเสียง"
+msgstr "เลื่อนที่เลือกไว้\nตามเวลาของเสียง"
 
 #: ShiftTimes.cpp:342
 msgid "Sposób przesuwania czasów"
@@ -5436,17 +5379,13 @@ msgstr "เลื่อนเวลา"
 msgid ""
 "Przesuwanie zaznaczonej linijki\n"
 "do czasu wideo ± czas przesunięcia"
-msgstr ""
-"เลื่อนบรรทัดที่เลือก\n"
-"ไปยังเวลาของวิดีโอ ± เวลาที่เลื่อน"
+msgstr "เลื่อนบรรทัดที่เลือก\nไปยังเวลาของวิดีโอ ± เวลาที่เลื่อน"
 
 #: ShiftTimes.cpp:532
 msgid ""
 "Przesuwanie zaznaczonej linijki do czasu\n"
 "znacznika audio ± czas przesunięcia"
-msgstr ""
-"เลื่อนบรรทัดที่เลือก\n"
-"ไปยังเวลาของเสียง ± เวลาที่เลื่อน"
+msgstr "เลื่อนบรรทัดที่เลือก\nไปยังเวลาของเสียง ± เวลาที่เลื่อน"
 
 #: ShiftTimes.cpp:533
 msgid "Przesuwa czas początkowy do czasu wideo / audio"
@@ -5514,33 +5453,25 @@ msgstr "ขีดจำกัดของการเลื่อนเวลา
 msgid ""
 "Maksymalne przesunięcie do klatki kluczowej\n"
 "przed czasem początkowym w milisekundach"
-msgstr ""
-"เปลี่ยนเวลาสูงสุดเป็นคีย์เฟรม\n"
-"ก่อนเวลาเริ่มต้นเป็นมิลลิวินาที"
+msgstr "เปลี่ยนเวลาสูงสุดเป็นคีย์เฟรม\nก่อนเวลาเริ่มต้นเป็นมิลลิวินาที"
 
 #: ShiftTimes.cpp:550
 msgid ""
 "Maksymalne przesunięcie do klatki kluczowej\n"
 "po czasie początkowym w milisekundach"
-msgstr ""
-"เปลี่ยนเวลาสูงสุดของคีย์เฟรม\n"
-"หลังเวลาเริ่มต้นเป็นมิลลิวินาที"
+msgstr "เปลี่ยนเวลาสูงสุดของคีย์เฟรม\nหลังเวลาเริ่มต้นเป็นมิลลิวินาที"
 
 #: ShiftTimes.cpp:551
 msgid ""
 "Maksymalne przesunięcie do klatki kluczowej\n"
 "przed czasem końcowym w milisekundach"
-msgstr ""
-"เปลี่ยนเวลาสูงสุดของคีย์เฟรม\n"
-"ก่อนเวลาสิ้นสุดเป็นมิลลิวินาที"
+msgstr "เปลี่ยนเวลาสูงสุดของคีย์เฟรม\nก่อนเวลาสิ้นสุดเป็นมิลลิวินาที"
 
 #: ShiftTimes.cpp:552
 msgid ""
 "Maksymalne przesunięcie do klatki kluczowej\n"
 "po czasie końcowym w milisekundach"
-msgstr ""
-"เปลี่ยนเวลาสูงสุดของคีย์เฟรม\n"
-"หลังเวลาสิ้นสุดเป็นมิลลิวินาที"
+msgstr "เปลี่ยนเวลาสูงสุดของคีย์เฟรม\nหลังเวลาสิ้นสุดเป็นมิลลิวินาที"
 
 #: ShiftTimes.cpp:948
 msgid "Na liście nie wybrano profilu do usunięcia"
@@ -6333,9 +6264,7 @@ msgstr "ไม่มีบรรทัดเลือกไว้ให้เล
 msgid ""
 "Czy na pewno chcesz wyłączyć tryb tłumacza?\n"
 "Obcojęzyczny tekst przetłumaczonych linijek zostanie usunięty."
-msgstr ""
-"แน่ใจหรือไม่ว่าต้องการปิดโหมดผู้แปล?\n"
-"ข้อความภาษาต่างประเทศของบรรทัดที่แปลแล้วจะถูกลบ"
+msgstr "แน่ใจหรือไม่ว่าต้องการปิดโหมดผู้แปล?\nข้อความภาษาต่างประเทศของบรรทัดที่แปลแล้วจะถูกลบ"
 
 #: SubsGridDialogs.cpp:23
 msgid "Wybierz nowy FPS"
@@ -7042,10 +6971,7 @@ msgid ""
 "Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
 "(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|"
 "Wszystkie pliki (*.*)|*.*"
-msgstr ""
-"แฟ้มวิดีโอ (*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
-"(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|"
-"แฟ้มทั้งหมด (*.*)|*.*"
+msgstr "แฟ้มวิดีโอ (*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|แฟ้มทั้งหมด (*.*)|*.*"
 
 #: VideoBox.cpp:1006
 msgid "Pliki napisów (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"
@@ -7168,10 +7094,7 @@ msgid ""
 "Ustaw kąt z 2 punktów.\n"
 "Po ustawieniu 2 punktów pod tekstem\n"
 "na wideo oblicza z nich kąt."
-msgstr ""
-"กำหนดมุมจาก 2 จุด\n"
-"หลังจากกำหนด 2 จุดใต้ข้อความในวิดีโอแล้ว\n"
-"ระบบจะคำนวณมุมจากจุดเหล่านั้น"
+msgstr "กำหนดมุมจาก 2 จุด\nหลังจากกำหนด 2 จุดใต้ข้อความในวิดีโอแล้ว\nระบบจะคำนวณมุมจากจุดเหล่านั้น"
 
 #: VideoToolbar.cpp:78
 #, fuzzy
@@ -7190,10 +7113,7 @@ msgid ""
 "Ustaw skalę według prostokąta.\n"
 "Po narysowaniu prostokąta tekst zostanie\n"
 "zeskalowany wg jednej osi badź dwóch."
-msgstr ""
-"กำหนดขนาดตามสี่เหลี่ยม\n"
-"หลังจากวาดสี่เหลี่ยมแล้ว\n"
-"ข้อความจะถูกปรับขนาดตามแกนหนึ่งหรือสองแกน"
+msgstr "กำหนดขนาดตามสี่เหลี่ยม\nหลังจากวาดสี่เหลี่ยมแล้ว\nข้อความจะถูกปรับขนาดตามแกนหนึ่งหรือสองแกน"
 
 #: VideoToolbar.cpp:83
 msgid "Skaluj szerokość"
@@ -7320,10 +7240,7 @@ msgid ""
 "Lista gotowych rysunków ASS z możliwością edycji.\n"
 "Po wybraniu rysunku z listy należy ustawić kursor\n"
 "w miejcu początku przytrzymać lewy przycisk myszy i przeciągnąć."
-msgstr ""
-"รายการภาพวาด ASS ที่สามารถแก้ไขได้\n"
-"หลังจากเลือกภาพวาดจากรายการแล้ว ให้วางเคอร์เซอร์\n"
-"ที่จุดเริ่มต้นแล้วคลิกเมาส์ซ้ายค้างไว้แล้วลากลง"
+msgstr "รายการภาพวาด ASS ที่สามารถแก้ไขได้\nหลังจากเลือกภาพวาดจากรายการแล้ว ให้วางเคอร์เซอร์\nที่จุดเริ่มต้นแล้วคลิกเมาส์ซ้ายค้างไว้แล้วลากลง"
 
 #: VideoToolbar.cpp:735
 msgid "Lista z tagami obsługiwanymi przez narzędzie"
@@ -7668,9 +7585,7 @@ msgstr "เครื่องมือไม่ทำงานในความ
 msgid ""
 "Linia nie jest widoczna na wideo\n"
 "albo ma zerowy czas trwania"
-msgstr ""
-"บรรทัดไม่ปรากฏในวิดีโอ\n"
-"หรืออาจมีเวลาเป็นศูนย์"
+msgstr "บรรทัดไม่ปรากฏในวิดีโอ\nหรืออาจมีเวลาเป็นศูนย์"
 
 #: config.cpp:601
 #, c-format, fuzzy
@@ -7977,11 +7892,7 @@ msgid ""
 "%s\n"
 "Usunięte style:\n"
 "%s"
-msgstr ""
-"สไตล์ที่ใช้อยู่:\n"
-"%s\n"
-"สไตล์ที่ลบไป:\n"
-"%s"
+msgstr "สไตล์ที่ใช้อยู่:\n%s\nสไตล์ที่ลบไป:\n%s"
 
 #: stylestore.cpp:764
 msgid "Status usuniętych stylów"
