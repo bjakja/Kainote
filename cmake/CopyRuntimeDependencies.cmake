@@ -14,16 +14,15 @@ endif()
 
 # Bundle only the application's own version-sensitive libraries (wxWidgets, ICU,
 # FFMS2, libass, Lua, Hunspell, uchardet and their private transitive helpers)
-# next to the binary.  Everything that has to match the HOST is deliberately NOT
-# copied and is resolved from the system at runtime -- bundling these would break
-# the program once the package is moved to another machine:
+# next to the binary.
 #
 #   * GPU/driver-coupled: libGL/GLVND/EGL/GLX/OpenGL/glapi, libva, libvdpau,
 #     libdrm, libgbm -- GLVND dlopens the host's vendor ICD (e.g. libGLX_nvidia)
 #     which must match the GL stack; a bundled mismatch is a black-screen/crash.
 #   * Windowing/desktop stack: X11/xcb, wayland, xkbcommon and the
-#     GTK/GDK/GLib/pango/cairo/gdk-pixbuf/atk/harfbuzz toolkit -- the host dlopens
-#     matching pixbuf loaders, immodules and theme engines.
+#     GTK/GDK/pango/cairo/gdk-pixbuf/atk/harfbuzz toolkit -- the host dlopens
+#     matching pixbuf loaders, immodules and theme engines (GLib above is the
+#     one exception: it is bundled for GStreamer and is forward-compatible).
 #   * C++/compiler runtime: libstdc++, libgcc_s -- a bundled (older) copy would
 #     win on the process RPATH and then fail host GTK plugins that need a newer
 #     GLIBCXX/CXXABI.
@@ -32,7 +31,7 @@ endif()
 #   * GPL-licensed codecs: libx264/libx265 -- not redistributed, to avoid
 #     imposing GPL terms on the bundle; FFmpeg loads the host copies instead.
 set(system_dep_regex
-    "^(ld-linux.*|linux-vdso.*|lib(c|m|dl|pthread|rt|resolv|nsl|util|anl)\\.so.*|libstdc\\+\\+\\.so.*|libgcc_s\\.so.*|libGL.*\\.so.*|libEGL.*\\.so.*|libOpenGL\\.so.*|libGLdispatch\\.so.*|libGLX.*\\.so.*|libglapi\\.so.*|libgbm\\.so.*|libdrm.*\\.so.*|libva.*\\.so.*|libvdpau.*\\.so.*|libX.*\\.so.*|libxcb.*\\.so.*|libxshmfence\\.so.*|libxkbcommon.*\\.so.*|libwayland-.*\\.so.*|libgtk-.*\\.so.*|libgdk-.*\\.so.*|libgdk_pixbuf.*\\.so.*|libg(lib|object|io|module|thread)-2\\.0\\.so.*|libpango.*\\.so.*|libcairo.*\\.so.*|libatk.*\\.so.*|libharfbuzz.*\\.so.*|libpulse.*\\.so.*|libasound\\.so.*|libx264\\.so.*|libx265\\.so.*)$"
+    "^(ld-linux.*|linux-vdso.*|lib(c|m|dl|pthread|rt|resolv|nsl|util|anl)\\.so.*|libstdc\\+\\+\\.so.*|libgcc_s\\.so.*|libGL.*\\.so.*|libEGL.*\\.so.*|libOpenGL\\.so.*|libGLdispatch\\.so.*|libGLX.*\\.so.*|libglapi\\.so.*|libgbm\\.so.*|libdrm.*\\.so.*|libva.*\\.so.*|libvdpau.*\\.so.*|libX.*\\.so.*|libxcb.*\\.so.*|libxshmfence\\.so.*|libxkbcommon.*\\.so.*|libwayland-.*\\.so.*|libgtk-.*\\.so.*|libgdk-.*\\.so.*|libgdk_pixbuf.*\\.so.*|libpango.*\\.so.*|libcairo.*\\.so.*|libatk.*\\.so.*|libharfbuzz.*\\.so.*|libpulse.*\\.so.*|libasound\\.so.*|libx264\\.so.*|libx265\\.so.*)$"
 )
 
 set(copied_count 0)
