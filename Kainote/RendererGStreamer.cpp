@@ -178,6 +178,7 @@ void RendererGStreamer::TearDown()
 	std::lock_guard<std::mutex> lock(m_LinuxPendingFrameMutex);
 	m_LinuxPendingFrame.clear();
 	m_LinuxPresentFrame.clear();
+	m_LinuxPendingTime = -1;
 }
 
 bool RendererGStreamer::WaitPreroll()
@@ -253,7 +254,7 @@ bool RendererGStreamer::QueryVideoInfo()
 
 	gint64 dur = 0;
 	if (gst_element_query_duration(m_Pipeline, GST_FORMAT_TIME, &dur) && dur > 0)
-		m_DurationMs = (int)(dur / GST_MSECOND);
+		m_DurationMs.store((int)(dur / GST_MSECOND));
 	return true;
 }
 
@@ -265,6 +266,9 @@ bool RendererGStreamer::OpenFile(const wxString &fname, int subsFlag, bool vobsu
 	EnsureGstInit();
 
 	m_Time = 0;
+	m_StreamTimeMs.store(0);
+	m_StreamPlayEndMs.store(0);
+	m_DurationMs.store(0);
 	m_Frame = 0;
 	m_ReachedPlayEnd.store(false);
 
@@ -406,10 +410,12 @@ void RendererGStreamer::HandleSample(GstSample *sample)
 	if (w <= 0 || h <= 0)
 		return;
 
+	int frameTimeMs = m_StreamTimeMs.load();
 	if (GST_BUFFER_PTS_IS_VALID(buf)) {
-		const int ms = (int)(GST_BUFFER_PTS(buf) / GST_MSECOND);
-		m_Time = ms;
-		if (m_PlayEndTime && ms >= m_PlayEndTime && !m_ReachedPlayEnd.exchange(true)) {
+		frameTimeMs = (int)(GST_BUFFER_PTS(buf) / GST_MSECOND);
+		m_StreamTimeMs.store(frameTimeMs);
+		const int playEndMs = m_StreamPlayEndMs.load();
+		if (playEndMs && frameTimeMs >= playEndMs && !m_ReachedPlayEnd.exchange(true)) {
 			wxQueueEvent(videoControl, new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, VIDEO_PLAY_PAUSE));
 			wxQueueEvent(videoControl, new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, ID_REFRESH_TIME));
 		}
@@ -438,7 +444,7 @@ void RendererGStreamer::HandleSample(GstSample *sample)
 
 		// Subtitles, then (fullscreen) progress bar, composited into the frame.
 		if (m_SubsOpened)
-			m_SubsProvider->Draw(m_FrameBuffer, m_Time);
+			m_SubsProvider->Draw(m_FrameBuffer, frameTimeMs);
 
 		if (m_PbValid.load() && videoControl->m_FullScreenProgressBar) {
 			std::lock_guard<std::mutex> pbLock(m_PbMutex);
@@ -455,6 +461,7 @@ void RendererGStreamer::HandleSample(GstSample *sample)
 		if (m_LinuxPendingFrame.size() != frameBytes)
 			m_LinuxPendingFrame.resize(frameBytes);
 		memcpy(m_LinuxPendingFrame.data(), m_FrameBuffer, frameBytes);
+		m_LinuxPendingTime = frameTimeMs;
 	}
 	gst_video_frame_unmap(&vframe);
 	QueueLinuxRender();
@@ -510,15 +517,22 @@ void RendererGStreamer::BusLoop()
 			KaiLog(wxString::Format(L"GStreamer: %s", wxString::FromUTF8(err ? err->message : "error")));
 			if (err) g_error_free(err);
 			g_free(dbg);
-			// Don't leave the UI stuck "playing" on a fatal pipeline error.
-			if (m_State == Playing)
-				wxQueueEvent(videoControl, new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, VIDEO_PLAY_PAUSE));
+			// m_State is UI-owned.
+			auto alive = m_LinuxAlive;
+			if (auto *app = wxTheApp) {
+				app->CallAfter([this, alive]() {
+					if (alive->load() && m_State == Playing)
+						wxQueueEvent(videoControl,
+							new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, VIDEO_PLAY_PAUSE));
+				});
+				wxWakeUpIdle();
+			}
 			break;
 		}
 		case GST_MESSAGE_DURATION_CHANGED: {
 			gint64 dur = 0;
 			if (gst_element_query_duration(m_Pipeline, GST_FORMAT_TIME, &dur) && dur > 0)
-				m_DurationMs = (int)(dur / GST_MSECOND);
+				m_DurationMs.store((int)(dur / GST_MSECOND));
 			break;
 		}
 		default:
@@ -552,6 +566,7 @@ bool RendererGStreamer::Play(int end)
 	}
 
 	m_PlayEndTime = (end > 0) ? end : 0;
+	m_StreamPlayEndMs.store(m_PlayEndTime);
 	m_ReachedPlayEnd.store(false);
 	if (m_Time < GetDuration() - m_FrameDuration)
 		gst_element_set_state(m_Pipeline, GST_STATE_PLAYING);
@@ -579,13 +594,15 @@ bool RendererGStreamer::Stop()
 	if (m_State == Playing) {
 		SetThreadExecutionState(ES_CONTINUOUS);
 		m_State = Stopped;
+		m_PlayEndTime = 0;
+		m_StreamPlayEndMs.store(0);
 		if (m_Pipeline) {
 			gst_element_set_state(m_Pipeline, GST_STATE_PAUSED);
 			gst_element_seek_simple(m_Pipeline, GST_FORMAT_TIME,
 				(GstSeekFlags)(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT), 0);
 		}
-		m_PlayEndTime = 0;
 		m_Time = 0;
+		m_StreamTimeMs.store(0);
 		return true;
 	}
 	return false;
@@ -595,6 +612,7 @@ void RendererGStreamer::SetPosition(int _time, bool starttime, bool corect, bool
 {
 	if (!m_Pipeline)
 		return;
+	m_StreamPlayEndMs.store(0);
 	m_Time = MID(0, _time, GetDuration());
 	if (corect) {
 		m_Time /= m_FrameDuration;
@@ -602,6 +620,7 @@ void RendererGStreamer::SetPosition(int _time, bool starttime, bool corect, bool
 		m_Time *= m_FrameDuration;
 	}
 	m_PlayEndTime = 0;
+	m_StreamTimeMs.store(m_Time);
 	m_ReachedPlayEnd.store(false);
 	gst_element_seek_simple(m_Pipeline, GST_FORMAT_TIME,
 		(GstSeekFlags)(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT),
@@ -686,9 +705,9 @@ int RendererGStreamer::GetDuration()
 	if (m_Pipeline) {
 		gint64 dur = 0;
 		if (gst_element_query_duration(m_Pipeline, GST_FORMAT_TIME, &dur) && dur > 0)
-			m_DurationMs = (int)(dur / GST_MSECOND);
+			m_DurationMs.store((int)(dur / GST_MSECOND));
 	}
-	return m_DurationMs;
+	return m_DurationMs.load();
 }
 
 void RendererGStreamer::GetVideoSize(int *width, int *height)

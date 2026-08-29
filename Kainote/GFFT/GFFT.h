@@ -26,17 +26,17 @@ const unsigned long doublelen = line_length * 2;
 class FFT
 {
 public:
-	FFT(){};
+	FFT() = default;
 	~FFT();
 	void Set(Provider *_prov);
 	void Transform(long long whre);
 	float Get(int i);
 	void SetAudio(long long from, long long to);
-	float * output;
+	float * output = nullptr;
 private:
-	Provider *prov;
-	short * input;
-	AbstractFFT<float>* gfft;
+	Provider *prov = nullptr;
+	short * input = nullptr;
+	AbstractFFT<float>* gfft = nullptr;
 	long long inputSize = 0;
 	long long from = 0;
 	//size_t lastend = 0;

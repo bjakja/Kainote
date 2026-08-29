@@ -133,6 +133,7 @@ void ProviderFFMS2::Processing()
 			unsigned char* buff = m_renderer->m_FrameBuffer;
 			int acttime;
 			while (1) {
+				if (WaitForSingleObject(m_eventKillSelf, 0) == WAIT_OBJECT_0) { return; }
 
 				if (m_renderer->m_Frame != m_lastFrame) {
 					m_renderer->m_Time = m_timecodes[m_renderer->m_Frame];
@@ -167,13 +168,13 @@ void ProviderFFMS2::Processing()
 				if (tdiff > 0) { Sleep(tdiff); }
 				else if (tdiff < -20) {
 					while (1) {
+						if (m_renderer->m_Frame >= m_numFrames) {
+							m_renderer->m_Frame = m_numFrames - 1;
+							m_renderer->m_Time = m_renderer->m_PlayEndTime;
+							break;
+						}
 						int frameTime = m_timecodes[m_renderer->m_Frame];
-						if (frameTime >= acttime || frameTime >= m_renderer->m_PlayEndTime || 
-							m_renderer->m_Frame >= m_numFrames) {
-							if (m_renderer->m_Frame >= m_numFrames) {
-								m_renderer->m_Frame = m_numFrames - 1;
-								m_renderer->m_Time = m_renderer->m_PlayEndTime;
-							}
+						if (frameTime >= acttime || frameTime >= m_renderer->m_PlayEndTime) {
 							break;
 						}
 						else {
@@ -528,7 +529,7 @@ ProviderFFMS2::~ProviderFFMS2()
 {
 	if (m_thread) {
 		SetEvent(m_eventKillSelf);
-		WaitForSingleObject(m_thread, 20000);
+		WaitForSingleObject(m_thread, INFINITE);
 		CloseHandle(m_thread);
 		m_thread = nullptr;
 	}
@@ -723,7 +724,7 @@ bool ProviderFFMS2::RAMCache()
 			GetAudio(m_cache[i], pos, halfsize);
 			pos += halfsize;
 		}
-		m_audioProgress = ((float)i / (float)(m_blockNum - 1));
+		m_audioProgress = (m_blockNum > 1) ? ((float)i / (float)(m_blockNum - 1)) : 1.f;
 		if (m_stopLoadingAudio) {
 			m_blockNum = i + 1;
 			break;
@@ -828,28 +829,29 @@ void ProviderFFMS2::DeleteOldAudioCache()
 		kat.GetAllFiles(path, &audioCaches, emptyString, wxDIR_FILES);
 	}
 	if (audioCaches.size() <= maxAudio) { return; }
-	FILETIME ft;
-	SYSTEMTIME st;
-	std::map<unsigned __int64, int> dates;
-	unsigned __int64 datetime;
+	std::multimap<unsigned __int64, size_t> dates;
 	for (size_t i = 0; i < audioCaches.size(); i++) {
 		HANDLE ffile = CreateFile(audioCaches[i].wc_str(), GENERIC_READ, FILE_SHARE_DELETE, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 		if (ffile != INVALID_HANDLE_VALUE) {
-			GetFileTime(ffile, 0, &ft, 0);
+			FILETIME ft{};
+			SYSTEMTIME st{};
+			const bool haveTimestamp = GetFileTime(ffile, 0, &ft, 0) &&
+				FileTimeToSystemTime(&ft, &st);
 			CloseHandle(ffile);
-			FileTimeToSystemTime(&ft, &st);
+			if (!haveTimestamp)
+				continue;
 			if (st.wYear > 3000) { st.wYear = 3000; }
-			datetime = (st.wYear * 980294400000) + (st.wMonth * 2678400000) + (st.wDay * 86400000) + (st.wHour * 3600000) + (st.wMinute * 60000) + (st.wSecond * 1000) + st.wMilliseconds;
-			dates[datetime] = i;
+			const unsigned __int64 datetime = (st.wYear * 980294400000) + (st.wMonth * 2678400000) + (st.wDay * 86400000) + (st.wHour * 3600000) + (st.wMinute * 60000) + (st.wSecond * 1000) + st.wMilliseconds;
+			dates.emplace(datetime, i);
 		}
 
 	}
-	int count = 0;
-	int diff = audioCaches.size() - maxAudio;
+	size_t count = 0;
+	const size_t diff = audioCaches.size() - maxAudio;
 	for (auto cur = dates.begin(); cur != dates.end(); cur++) {
 		if (count >= diff) { break; }
-		int isgood = _wremove(audioCaches[cur->second].wchar_str());
-		count++;
+		if (_wremove(audioCaches[cur->second].wchar_str()) == 0)
+			count++;
 	}
 
 }
@@ -910,4 +912,3 @@ bool ProviderFFMS2::HasVideo()
 {
 	return m_videoSource != nullptr;
 }
-
