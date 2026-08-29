@@ -3924,8 +3924,7 @@ msgstr ""
 msgid ""
 "Nie można zamienić \"%s\" na \"%s\", wykorzystując regułę \"%s\" w linii %i."
 msgstr ""
-"\"%i\"줄에서 \"%s\"규칙을 사용하여 \"%s\"을(를) \"%s\"(으)로 바꿀 수 없습니"
-"다."
+"\"%s\"을(를) \"%s\"(으)로 바꿀 수 없습니다. 규칙: \"%s\", 줄: %i."
 
 #: MisspellReplacer.cpp:713
 msgid "Usuwanie spacji przed przecinkiem bądź kropką"
