@@ -2,6 +2,33 @@ if(NOT DEFINED KAINOTE_EXE OR NOT DEFINED RUNTIME_DIR)
     message(FATAL_ERROR "KAINOTE_EXE and RUNTIME_DIR are required")
 endif()
 
+# Remove previously manifested libraries before rescanning $ORIGIN.
+set(runtime_manifest "${RUNTIME_DIR}/.kainote-runtime-dependencies")
+if(EXISTS "${runtime_manifest}")
+    file(STRINGS "${runtime_manifest}" previous_runtime_deps)
+    foreach(dep_name IN LISTS previous_runtime_deps)
+        if(dep_name MATCHES "^lib[^/\\\\]+\\.so(\\..*)?$")
+            file(REMOVE "${RUNTIME_DIR}/${dep_name}")
+        else()
+            message(WARNING "Ignoring invalid runtime manifest entry: ${dep_name}")
+        endif()
+    endforeach()
+elseif(DEFINED KAINOTE_BUILD_DIR)
+    # Clean pre-manifest files only in the verified CMake build directory.
+    file(REAL_PATH "${RUNTIME_DIR}" runtime_dir_real)
+    file(REAL_PATH "${KAINOTE_BUILD_DIR}" build_dir_real)
+    if(runtime_dir_real STREQUAL build_dir_real AND
+       EXISTS "${build_dir_real}/CMakeCache.txt")
+        file(GLOB legacy_runtime_deps LIST_DIRECTORIES FALSE
+            "${RUNTIME_DIR}/lib*.so" "${RUNTIME_DIR}/lib*.so.*")
+        if(legacy_runtime_deps)
+            list(LENGTH legacy_runtime_deps legacy_count)
+            file(REMOVE ${legacy_runtime_deps})
+            message(STATUS "Removed ${legacy_count} legacy bundled runtime dependencies before dependency discovery")
+        endif()
+    endif()
+endif()
+
 file(GET_RUNTIME_DEPENDENCIES
     EXECUTABLES "${KAINOTE_EXE}"
     RESOLVED_DEPENDENCIES_VAR resolved_deps
@@ -9,7 +36,7 @@ file(GET_RUNTIME_DEPENDENCIES
 )
 
 if(unresolved_deps)
-    message(WARNING "Unresolved runtime dependencies: ${unresolved_deps}")
+    message(FATAL_ERROR "Unresolved runtime dependencies: ${unresolved_deps}")
 endif()
 
 # Bundle only the application's own version-sensitive libraries (wxWidgets, ICU,
@@ -35,6 +62,7 @@ set(system_dep_regex
 )
 
 set(copied_count 0)
+set(copied_names)
 foreach(dep IN LISTS resolved_deps)
     get_filename_component(dep_name "${dep}" NAME)
     if(NOT dep_name MATCHES "${system_dep_regex}")
@@ -47,8 +75,15 @@ foreach(dep IN LISTS resolved_deps)
         if(NOT copy_result EQUAL 0)
             message(FATAL_ERROR "Failed to copy runtime dependency ${dep}")
         endif()
+        list(APPEND copied_names "${dep_name}")
         math(EXPR copied_count "${copied_count} + 1")
     endif()
 endforeach()
+
+list(REMOVE_DUPLICATES copied_names)
+list(SORT copied_names)
+string(REPLACE ";" "\n" runtime_manifest_contents "${copied_names}")
+file(WRITE "${runtime_manifest}.tmp" "${runtime_manifest_contents}\n")
+file(RENAME "${runtime_manifest}.tmp" "${runtime_manifest}")
 
 message(STATUS "Copied ${copied_count} bundled runtime dependencies to ${RUNTIME_DIR}")
