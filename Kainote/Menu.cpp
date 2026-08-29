@@ -298,7 +298,6 @@ bool Menu::Destroy(MenuItem *item)
 		}
 
 	}
-	delete item;
 	return false;
 }
 

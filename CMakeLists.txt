@@ -1,5 +1,8 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.21)
 project(KainoteLinux LANGUAGES C CXX)
+if(POLICY CMP0167)
+    cmake_policy(SET CMP0167 NEW)
+endif()
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC OFF)
@@ -21,19 +24,17 @@ pkg_check_modules(FONTCONFIG REQUIRED IMPORTED_TARGET fontconfig)
 # frames the app composites (libass subtitles + progress bar) and presents through
 # the shared wx paint path, and gstreamer-audio provides linear volume.
 pkg_check_modules(GSTREAMER REQUIRED IMPORTED_TARGET gstreamer-1.0 gstreamer-video-1.0 gstreamer-audio-1.0 gstreamer-app-1.0)
-pkg_get_variable(GSTREAMER_PLUGIN_DIR gstreamer-1.0 pluginsdir)
 
 # Link Boost statically on Linux so the built binary does not depend on the
 # exact distro Boost shared-library SONAME, e.g. libboost_filesystem.so.1.83.0.
 # Other system libraries remain dynamically linked through pkg-config/wxWidgets.
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost REQUIRED COMPONENTS filesystem locale regex OPTIONAL_COMPONENTS system thread)
-find_program(MSGFMT_EXECUTABLE msgfmt)
-if(NOT MSGFMT_EXECUTABLE)
-    message(WARNING "msgfmt (gettext) not found; translation catalogs (Locale/*.mo) will not be built")
-endif()
+find_program(MSGFMT_EXECUTABLE msgfmt REQUIRED)
+find_program(TAR_EXECUTABLE tar REQUIRED)
+find_program(GZIP_EXECUTABLE gzip REQUIRED)
 add_compile_definitions(_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING _CRT_SECURE_NO_WARNINGS HAVE_DLL_EXPORT LINUX_BUILD KAINOTE_LINUX_BUILD)
-add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-include> $<$<COMPILE_LANGUAGE:CXX>:${CMAKE_SOURCE_DIR}/Kainote/platform.h> -Wno-deprecated-declarations -Wno-narrowing -Wno-unused-result $<$<COMPILE_LANGUAGE:CXX>:-fpermissive>)
+add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-include> $<$<COMPILE_LANGUAGE:CXX>:${CMAKE_SOURCE_DIR}/Kainote/platform.h> -Wno-deprecated-declarations -Wno-narrowing -Wno-unused-result)
 add_executable(kainote
     Kainote/Demux.cpp
     Kainote/DialogueTextEditor.cpp
@@ -193,11 +194,6 @@ target_include_directories(kainote PRIVATE
     ${CMAKE_SOURCE_DIR}/Thirdparty/ffms2/src
 )
 
-if(GSTREAMER_PLUGIN_DIR)
-    set_property(SOURCE Kainote/AudioPlayerDSound.cpp Kainote/RendererGStreamer.cpp
-        APPEND PROPERTY COMPILE_DEFINITIONS "KAI_GST_PLUGIN_DIR=\"${GSTREAMER_PLUGIN_DIR}\"")
-endif()
-
 # Generate Kainote/gitparams.h from the current git HEAD before building.  Runs
 # every build but only rewrites the header when the commit/branch changes, so
 # config.cpp recompiles only when the version actually moves.
@@ -244,6 +240,11 @@ elseif(KAINOTE_SYSTEM_DICTIONARY_DIR AND EXISTS "${KAINOTE_SYSTEM_DICTIONARY_DIR
                 "${KAINOTE_SYSTEM_DICTIONARY_DIR}/en_US.dic"
                 "${KAINOTE_RUNTIME_DIR}/Dictionary"
     )
+else()
+    message(WARNING
+        "No en_US Hunspell dictionary was found. Kainote will build, but its "
+        "spell checker will have no default dictionary; install the distribution's "
+        "English Hunspell dictionary package and reconfigure.")
 endif()
 
 # Keep the build tree runnable by copying runtime data next to the executable.
@@ -269,6 +270,42 @@ add_custom_command(TARGET kainote POST_BUILD
     COMMAND ${CMAKE_COMMAND}
             -D KAINOTE_EXE=$<TARGET_FILE:kainote>
             -D RUNTIME_DIR=${KAINOTE_RUNTIME_DIR}
+            -D KAINOTE_BUILD_DIR=${CMAKE_BINARY_DIR}
             -P "${CMAKE_SOURCE_DIR}/cmake/CopyRuntimeDependencies.cmake"
     COMMENT "Copying Kainote runtime resources and bundled libraries"
+)
+
+# Package only explicitly selected runtime files.
+set(KAINOTE_PACKAGE_BASENAME "kainote-linux-${CMAKE_SYSTEM_PROCESSOR}")
+set(KAINOTE_PACKAGE_STAGE_PARENT "${CMAKE_BINARY_DIR}/package-stage")
+set(KAINOTE_PACKAGE_ARCHIVE
+    "${CMAKE_BINARY_DIR}/dist/${KAINOTE_PACKAGE_BASENAME}.tar.gz")
+file(MAKE_DIRECTORY "${KAINOTE_PACKAGE_STAGE_PARENT}")
+add_custom_target(kainote_linux_package
+    # Refresh the dependency manifest before every package.
+    COMMAND ${CMAKE_COMMAND}
+            -D KAINOTE_EXE=$<TARGET_FILE:kainote>
+            -D RUNTIME_DIR=$<TARGET_FILE_DIR:kainote>
+            -D KAINOTE_BUILD_DIR=${CMAKE_BINARY_DIR}
+            -P "${CMAKE_SOURCE_DIR}/cmake/CopyRuntimeDependencies.cmake"
+    COMMAND ${CMAKE_COMMAND}
+            -D KAINOTE_EXE=$<TARGET_FILE:kainote>
+            -D RUNTIME_DIR=$<TARGET_FILE_DIR:kainote>
+            -D SOURCE_DIR=${CMAKE_SOURCE_DIR}
+            -D BINARY_DIR=${CMAKE_BINARY_DIR}
+            -D STAGING_PARENT=${KAINOTE_PACKAGE_STAGE_PARENT}
+            -D PACKAGE_BASENAME=${KAINOTE_PACKAGE_BASENAME}
+            -D ARCHIVE_PATH=${KAINOTE_PACKAGE_ARCHIVE}
+            -D MSGFMT_EXECUTABLE=${MSGFMT_EXECUTABLE}
+            -D TAR_EXECUTABLE=${TAR_EXECUTABLE}
+            -D GZIP_EXECUTABLE=${GZIP_EXECUTABLE}
+            -D SYSTEM_DICTIONARY_DIR=${KAINOTE_SYSTEM_DICTIONARY_DIR}
+            -P "${CMAKE_SOURCE_DIR}/cmake/PackageLinuxRuntime.cmake"
+    DEPENDS kainote
+    BYPRODUCTS
+        "${KAINOTE_PACKAGE_ARCHIVE}"
+        "${KAINOTE_PACKAGE_ARCHIVE}.sha256"
+    WORKING_DIRECTORY "${KAINOTE_PACKAGE_STAGE_PARENT}"
+    COMMENT "Creating clean Kainote Linux runtime archive"
+    VERBATIM
 )

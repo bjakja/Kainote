@@ -33,6 +33,7 @@
 #include <wx/wfstream.h>
 #include <wx/dir.h>
 #include <wx/regex.h>
+#include <wx/utils.h>
 #include <ShlObj.h>
 
 wxDEFINE_EVENT(EVT_APPEND_MESSAGE, wxThreadEvent);
@@ -553,12 +554,14 @@ FontCollector::FontCollector(wxWindow *parent)
 	:zip(nullptr)
 	, fcd(nullptr)
 	, reloadFonts(false)
+	, fontObserverClient(parent)
 {
 	FontEnum.AddClient(parent, [this](){reloadFonts = true; });
 }
 
 FontCollector::~FontCollector()
 {
+	FontEnum.RemoveClient(fontObserverClient);
 	//test if it not crash nothing
 	if (fcd)
 		fcd->Destroy();
@@ -1062,6 +1065,8 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 	bool needInit = true;
 	bool copyFonts = !(operation & CHECK_FONTS);
 	HDC dc = ::CreateCompatibleDC(nullptr);
+	if (!dc)
+		return false;
 	auto it = foundFonts.begin();
 	wxString lastfn;
 	for (size_t k = 0; k < foundFonts.size(); k++){
@@ -1088,7 +1093,7 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 			//no goto cause font is not created yet
 		}
 		auto hfont = CreateFontIndirectW(&mlf);
-		SelectObject(dc, hfont);
+		HGDIOBJ oldFont = SelectObject(dc, hfont);
 		if (font->fakeNormal){
 			flc->AppendWarnings(wxString::Format(_("Czcionka \"%s\" nie ma stylu normalnego."), fn));
 		}
@@ -1179,6 +1184,9 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 						if (needInit) {
 							if (operation & COPY_FONTS && !MakeDirectory(operation & AS_ZIP)) {
 								*notFound = -1;
+								SelectObject(dc, oldFont);
+								DeleteObject(hfont);
+								::DeleteDC(dc);
 								return true;
 							}
 							needInit = false;
@@ -1222,7 +1230,7 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 		//rest fonts it's just bold/italic version not count it
 	done:
 
-		SelectObject(dc, nullptr);
+		SelectObject(dc, oldFont);
 		DeleteObject(hfont);
 	}
 	::DeleteDC(dc);
@@ -1231,38 +1239,41 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 
 void FontCollector::MuxVideoWithSubs()
 {
+	TabPanel* tab = Notebook::GetTab();
+	if (!tab)
+		return;
 
-
-	wxString command = L"\"--ui-language\" \"pl\" \"--output\" \"" + Notebook::GetTab()->VideoPath.BeforeLast(L'.') + L" (1).mkv\" " +
-		L"\"--language\" \"0:und\" \"--language\" \"1:und\" ( \""\
-		+ Notebook::GetTab()->VideoPath +
-		L"\" ) \"--language\" \"0:und\" ( \"" + Notebook::GetTab()->SubsPath +
-		L"\" ) ";// odtąd trzeba dodać czcionki
+	std::vector<wxString> arguments{
+		muxerpath,
+		L"--ui-language", L"pl",
+		L"--output", tab->VideoPath.BeforeLast(L'.') + L" (1).mkv",
+		L"--language", L"0:und",
+		L"--language", L"1:und",
+		L"(", tab->VideoPath, L")",
+		L"--language", L"0:und",
+		L"(", tab->SubsPath, L")"
+	};
 	for (size_t i = 0; i < fontnames.size(); i++){
-		wxString ext = fontnames[i].AfterLast(L'.').Lower();
-		
-		command << L"\"--attachment-name\" \"";
 		wxString name = KaiPathName(fontnames[i]);
-		command << name << L"\" ";
-		command << L"\"--attachment-mime-type\" ";
-		//if(ext=="ttf" || ext=="ttc"){
-		command << L"\"application/x-truetype-font\" ";//}
-		//else if(ext=="otf"){command << L"\"application/font-woff\" ";}
-		//else otf itp
-		command << L"\"--attach-file\" \"";
-		command << KaiPathJoin(fcd->copypath, name) << L"\" ";
+		arguments.push_back(L"--attachment-name");
+		arguments.push_back(name);
+		arguments.push_back(L"--attachment-mime-type");
+		arguments.push_back(L"application/x-truetype-font");
+		arguments.push_back(L"--attach-file");
+		arguments.push_back(KaiPathJoin(fcd->copypath, name));
 	}
-	command.Replace("\\", "/");
-	command << L"\"--track-order\" \"0:0,0:1,1:0\"";
-	wxString fullcommand = L"\"" + muxerpath + L"\"" + command;
+	arguments.push_back(L"--track-order");
+	arguments.push_back(L"0:0,0:1,1:0");
 
-	STARTUPINFO si = { sizeof(si) };
-	PROCESS_INFORMATION pi;
-	if (!CreateProcessW(nullptr, (LPWSTR)fullcommand.wc_str(), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &si, &pi)){
+	std::vector<const wchar_t*> argv;
+	argv.reserve(arguments.size() + 1);
+	for (const auto& argument : arguments)
+		argv.push_back(argument.wc_str());
+	argv.push_back(nullptr);
+
+	if (wxExecute(argv.data(), wxEXEC_ASYNC) == 0){
 		KaiLog(_("Nie można stworzyć procesu, muxowanie przerwane"));
 	}
-
-
 }
 
 void FontCollector::ShowDialog(wxWindow *parent)
@@ -1325,4 +1336,3 @@ wxThread::ExitCode FontCollectorThread::Entry()
 	}
 	return 0;
 }
-

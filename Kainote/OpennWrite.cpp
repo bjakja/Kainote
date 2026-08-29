@@ -22,6 +22,8 @@
 #include <wx/log.h>
 #include "LogHandler.h"
 #include <uchardet.h>
+#include <limits>
+#include <vector>
 
 
 OpenWrite::OpenWrite()
@@ -60,24 +62,29 @@ bool OpenWrite::FileOpen(const wxString &filename, wxString *riddenText, bool te
 	if (!fname.IsFileReadable()){ return false; }
 	if (test){
 		wxFile filetest;
-		wchar_t b[4];
-		filetest.Open(filename, wxFile::read, wxS_DEFAULT);
-		filetest.Read(b, 4);
+		if (!filetest.Open(filename, wxFile::read, wxS_DEFAULT)) { return false; }
+		wxFileOffset fileLength = filetest.Length();
+		if (fileLength < 0 || static_cast<unsigned long long>(fileLength) >
+			static_cast<unsigned long long>(std::numeric_limits<size_t>::max())) {
+			return false;
+		}
+		std::vector<char> buff(static_cast<size_t>(fileLength));
+		if (!buff.empty() && filetest.Read(buff.data(), buff.size()) != buff.size()) {
+			return false;
+		}
 
-		utf8 = ((static_cast <int>(b[0]) > 48000)) ? true : false;
+		utf8 = buff.size() >= 3 && static_cast<unsigned char>(buff[0]) == 0xEF &&
+			static_cast<unsigned char>(buff[1]) == 0xBB &&
+			static_cast<unsigned char>(buff[2]) == 0xBF;
 		if (!utf8){
-			size_t size = filetest.Length();
-			char *buff = new char[size];
-			filetest.Read(buff, size);
-			utf8 = IsUTF8withoutBOM(buff, size);
+			utf8 = IsUTF8withoutBOM(buff.data(), buff.size());
 			if (!utf8) {
 				wxString result;
-				if (CheckCharSet(buff, size, &result)) {
+				if (CheckCharSet(buff.data(), buff.size(), &result)) {
 					result.MakeUpper();
 					conv = new wxCSConv(result);
 				}
 			}
-			delete[] buff;
 		}
 		filetest.Close();
 	}
@@ -148,55 +155,45 @@ void OpenWrite::CloseFile()
 
 bool OpenWrite::IsUTF8withoutBOM(char* buf, size_t size)
 {
-	bool only_saw_ascii_range = true;
+	if (!buf && size != 0) { return false; }
+	bool onlySawAscii = true;
 	size_t pos = 0;
-	int	more_chars = 0;
-	while (pos < size)
-	{
-		unsigned char ch = buf[pos++];
-		if (ch <= 127)
-		{
-			// 1 byte
-			more_chars = 0;
+	auto isContinuation = [](unsigned char ch) { return ch >= 0x80 && ch <= 0xBF; };
+	while (pos < size) {
+		unsigned char first = static_cast<unsigned char>(buf[pos++]);
+		if (first <= 0x7F) { continue; }
+		onlySawAscii = false;
 
+		if (first >= 0xC2 && first <= 0xDF) {
+			if (pos >= size || !isContinuation(static_cast<unsigned char>(buf[pos++]))) { return false; }
 		}
-		else if (ch >= 194 && ch <= 223)
-		{
-			// 2 Byte
-			more_chars = 1;
-
+		else if (first >= 0xE0 && first <= 0xEF) {
+			if (pos + 1 >= size) { return false; }
+			unsigned char second = static_cast<unsigned char>(buf[pos++]);
+			unsigned char third = static_cast<unsigned char>(buf[pos++]);
+			if (!isContinuation(third) ||
+				(first == 0xE0 ? second < 0xA0 || second > 0xBF :
+				 first == 0xED ? second < 0x80 || second > 0x9F : !isContinuation(second))) {
+				return false;
+			}
 		}
-		else if (ch >= 224 && ch <= 239)
-		{
-			// 3 Byte
-			more_chars = 2;
-
+		else if (first >= 0xF0 && first <= 0xF4) {
+			if (pos + 2 >= size) { return false; }
+			unsigned char second = static_cast<unsigned char>(buf[pos++]);
+			unsigned char third = static_cast<unsigned char>(buf[pos++]);
+			unsigned char fourth = static_cast<unsigned char>(buf[pos++]);
+			if (!isContinuation(third) || !isContinuation(fourth) ||
+				(first == 0xF0 ? second < 0x90 || second > 0xBF :
+				 first == 0xF4 ? second < 0x80 || second > 0x8F : !isContinuation(second))) {
+				return false;
+			}
 		}
-		else if (ch >= 240 && ch <= 244)
-		{
-			// 4 Byte
-			more_chars = 3;
-
-		}
-		else
-		{
-			//if this will not work, maybe set continue;
-			continue;
-			//return false; // Not utf8
-		}
-		// Check secondary chars are in range if we are expecting any
-		while (more_chars && pos < size)
-		{
-			only_saw_ascii_range = false; // Seen non-ascii chars now
-			ch = buf[pos++];
-			if (ch < 128 || ch > 205) { return false; } // Not utf8
-			--more_chars;
+		else {
+			return false;
 		}
 	}
 
-	if (only_saw_ascii_range){ return false; }
-
-	return true;
+	return !onlySawAscii;
 
 }
 
@@ -206,15 +203,17 @@ bool OpenWrite::CheckCharSet(char* buf, size_t size, wxString* result)
 	if (!detector)
 		return false;
 
-	int intresult = uchardet_handle_data(detector, buf, size);
+	if (uchardet_handle_data(detector, buf, size) != 0) {
+		uchardet_delete(detector);
+		return false;
+	}
 	uchardet_data_end(detector);
 	const char* encoding = uchardet_get_charset(detector);
-	if (encoding && *encoding)
+	bool detected = encoding && *encoding;
+	if (detected)
 		*result = wxString(encoding);
-	else
-		return false;
 
 	uchardet_delete(detector);
 
-	return true;
+	return detected;
 }

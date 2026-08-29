@@ -106,7 +106,9 @@ private:
 	std::atomic_bool m_PbValid{ false };
 
 	int m_VolumeMb = 0;                 // cached volume, millibels (0 = full, <0 attenuation)
-	int m_DurationMs = 0;               // cached duration
+	std::atomic_int m_StreamTimeMs{ 0 }; // appsink timestamp shared with the UI thread
+	std::atomic_int m_StreamPlayEndMs{ 0 };
+	std::atomic_int m_DurationMs{ 0 };   // cached duration (bus + UI threads)
 	long m_ArX = 0;
 	long m_ArY = 0;
 	std::atomic_bool m_ReachedPlayEnd{ false };

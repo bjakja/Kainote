@@ -134,12 +134,9 @@ void AutoSaveOpen::GenerateList()
 		return;
 	}
 
-	while (1) {
-		int result = FindNextFile(h, &data);
-		if (result == ERROR_NO_MORE_FILES || result == 0) { break; }
-		else if (data.nFileSizeLow == 0) { continue; }
-
+	do {
 		wxString fileName = wxString(data.cFileName);
+		if (fileName == L"." || fileName == L".." || data.nFileSizeLow == 0) { continue; }
 		wxString ext;
 		wxString rest = fileName.BeforeLast(L'.', &ext);
 		wxString fileNum;
@@ -177,7 +174,7 @@ void AutoSaveOpen::GenerateList()
 		else {
 			versions[findResult]->insert(std::pair<wxString, wxString>(accessStringTime, fileName));
 		}
-	}
+	} while (FindNextFile(h, &data));
 	FindClose(h);
 	if (!paths.GetCount()) {
 		KaiLog(_("Folder autozapisu jest pusty"));

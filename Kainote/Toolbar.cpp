@@ -29,12 +29,13 @@
 
 KaiToolbar::KaiToolbar(wxWindow *Parent, MenuBar *mainm, int id)
 	:wxWindow(Parent, -1, wxDefaultPosition, wxSize(24, -1))
-	, bmp(nullptr)
+	, alignment(0)
 	, Clicked(false)
 	, wasmoved(false)
-	, wh(thickness)
+	, wh(24)
 	, oldelem(-1)
 	, sel(-1)
+	, bmp(nullptr)
 	, mb(mainm)
 {
 	alignment = Options.GetInt(TOOLBAR_ALIGNMENT);
@@ -387,7 +388,8 @@ void KaiToolbar::OnToolbarOpts(wxCommandEvent &event)
 	point = GetParent()->ClientToScreen(point);
 	wxSize toolbarSize = GetClientSize();
 
-	int fw, fh, width = 0;
+	int fw = 0, fh = 0, width = 0;
+	GetTextExtent(L"X", &fw, &fh);
 
 	int ysize = ids.size();
 	for (int i = 0; i < ysize; i++){
@@ -694,4 +696,3 @@ EVT_PAINT(ToolbarMenu::OnPaint)
 EVT_MOUSE_CAPTURE_LOST(ToolbarMenu::OnLostCapture)
 EVT_SCROLL(ToolbarMenu::OnScroll)
 END_EVENT_TABLE()
-

@@ -24,6 +24,8 @@
 #include <wx/log.h>
 
 #include <lauxlib.h>
+#include <string>
+#include <vector>
 
 namespace Auto {
 
@@ -31,37 +33,51 @@ namespace Auto {
 
 	bool LoadFile(lua_State *L, wxString const& filename) {
 		wxString script;
-		const char *constbuff;
-		char *buff;
-		int size;
+		std::string compatibilityBuffer;
+		std::vector<char> fileBuffer;
+		const char *buffer = "";
+		size_t size = 0;
 		bool compatybility = Options.GetBool(AUTOMATION_OLD_SCRIPTS_COMPATIBILITY);
 		if (compatybility){
 			OpenWrite ow;
 			if (!ow.FileOpen(filename, &script)){ return false; }
 			script.Replace("kainote", "aegisub");
 
-			constbuff = script.mb_str(wxConvUTF8).data();
-			size = strlen(constbuff);
+			wxCharBuffer encodedScript = script.mb_str(wxConvUTF8);
+			compatibilityBuffer.assign(encodedScript.data(), encodedScript.length());
+			buffer = compatibilityBuffer.data();
+			size = compatibilityBuffer.size();
 		}
 		else{
-			FILE *f = NULL;
-			f = _wfopen(filename.wc_str(), L"rb");
+			FILE *f = _wfopen(filename.wc_str(), L"rb");
 			if (!f){ return false; }
-			fseek(f, 0, SEEK_END);
-			size = ftell(f);
+			if (fseek(f, 0, SEEK_END) != 0) {
+				fclose(f);
+				return false;
+			}
+			long fileSize = ftell(f);
+			if (fileSize < 0) {
+				fclose(f);
+				return false;
+			}
 			rewind(f);
-			buff = new char[size];
-			size = fread(buff, 1, size, f);
+			fileBuffer.resize(static_cast<size_t>(fileSize));
+			size = fileBuffer.empty() ? 0 : fread(fileBuffer.data(), 1, fileBuffer.size(), f);
+			bool readSucceeded = size == fileBuffer.size();
 			fclose(f);
-			
-			if (size >= 3 && buff[0] == -17 && buff[1] == -69 && buff[2] == -65) {
-				buff += 3;
+			if (!readSucceeded) { return false; }
+
+			buffer = fileBuffer.empty() ? "" : fileBuffer.data();
+			if (size >= 3 && static_cast<unsigned char>(buffer[0]) == 0xEF &&
+				static_cast<unsigned char>(buffer[1]) == 0xBB &&
+				static_cast<unsigned char>(buffer[2]) == 0xBF) {
+				buffer += 3;
 				size -= 3;
 			}
 		}
 		//wxString name = filename.AfterLast('\\');
 		if (!filename.EndsWith("moon")){
-			bool ret = luaL_loadbuffer(L, (compatybility) ? constbuff : buff, size, filename.mb_str(wxConvUTF8).data()) == 0;
+			bool ret = luaL_loadbuffer(L, buffer, size, filename.mb_str(wxConvUTF8).data()) == 0;
 
 			return ret;
 
@@ -73,7 +89,7 @@ namespace Auto {
 
 		// Save the text we'll be loading for the line number rewriting in the
 		// error handling
-		lua_pushlstring(L, (compatybility) ? constbuff : buff, size);
+		lua_pushlstring(L, buffer, size);
 		lua_pushvalue(L, -1);
 		lua_setfield(L, LUA_REGISTRYINDEX, ("raw moonscript: " + filename).mb_str(wxConvUTF8).data());
 		

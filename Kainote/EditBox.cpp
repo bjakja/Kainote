@@ -641,10 +641,11 @@ void EditBox::Send(unsigned char editionType, bool gotoNextLine, bool dummy, boo
 void EditBox::PutinNonass(const wxString &text, const wxString &tag)
 {
 	if (grid->subsFormat == TMP) return;
-	long from, to, whre;
+	long from, to;
 	size_t start = 0, len = 0;
 	bool match = false;
 	TextEdit->GetSelection(&from, &to);
+	long whre = from;
 	wxString txt = TextEdit->GetValue();
 	bool oneline = (grid->SelectionsSize() < 2);
 	if (oneline){//Changing only in editbox
@@ -694,7 +695,10 @@ void EditBox::PutinNonass(const wxString &text, const wxString &tag)
 					match = true;
 				}
 			}
-			if (!match){ txt.insert(wheres, L"{" + tag + L"}"); }
+			if (!match){
+				txt.insert(wheres, L"{" + tag + L"}");
+				whre = wheres + tag.length() + 2;
+			}
 
 		}
 
@@ -1610,7 +1614,7 @@ void EditBox::OnColorChange(ColorEvent& event)
 		wxString tag = (intColorNumber == 1) ? L"?c&(.*)&" : L"c&(.*)&";
 		Styles *style = grid->GetStyle(0, line->Style);
 
-		bool found = FindTag(colorNumber + tag, emptyString, 0, true);
+		FindTag(colorNumber + tag, emptyString, 0, true);
 		//check only colors, not aplha
 		if (actualColor.r != choosenColor.r || actualColor.g != choosenColor.g || 
 			actualColor.b != choosenColor.b){
@@ -1619,7 +1623,7 @@ void EditBox::OnColorChange(ColorEvent& event)
 				L"\\" + colorNumber + L"c" + actualColorstr + L"&", false);
 		}
 
-		if (found = FindTag(L"(" + colorNumber + L"a&|alpha.*)", emptyString, 0, true)){
+		if (FindTag(L"(" + colorNumber + L"a&|alpha.*)", emptyString, 0, true)){
 			GetTextResult(&colorString);
 			if (!colorString.StartsWith(colorNumber + L"a&")){
 				wxPoint pos = GetPositionInText();
@@ -2226,4 +2230,3 @@ bool EditBox::SetFont(const wxFont &font)
 	Layout();
 	return true;
 }
-

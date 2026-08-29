@@ -21,7 +21,7 @@ else()
     if(GIT_BRANCH STREQUAL "")
         set(GIT_BRANCH "unknown")
     endif()
-    set(CONTENT "#pragma once\n#define _KAI_QUOTE(x) #x\n#define ADD_QUOTES(x) _KAI_QUOTE(x)\n#define GIT_BRANCH ${GIT_BRANCH}\n#define GIT_CUR_COMMIT ${GIT_COMMIT}\n")
+    set(CONTENT "#pragma once\n#define GIT_BRANCH ${GIT_BRANCH}\n#define GIT_CUR_COMMIT ${GIT_COMMIT}\n")
 endif()
 
 set(OUT "${SRC}/Kainote/gitparams.h")

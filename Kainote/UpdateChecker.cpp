@@ -253,13 +253,8 @@ void UpdateChecker::Update(bool closeProgram /*= true*/)
 			return;
 		}
 	}
-	wchar_t **cmdline = new wchar_t*[3];
-	cmdline[0] = editorbuf.data();
-	cmdline[1] = sfnamebuf.data();
-	cmdline[2] = versionK.data();
-	cmdline[3] = 0;
+	wchar_t *cmdline[] = { editorbuf.data(), sfnamebuf.data(), versionK.data(), nullptr };
 	long res = wxExecute(cmdline);
-	delete[] cmdline;
 }
 
 bool UpdateChecker::CheckForUpdate()

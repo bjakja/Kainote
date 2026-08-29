@@ -932,7 +932,6 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 			DialogColorPicker *dcp = DialogColorPicker::Get(List, itemc->col);
 			wxPoint mst = wxGetMousePosition();
 			wxSize siz = dcp->GetSize();
-			siz.x;
 			wxRect rc = wxGetClientDisplayRect();
 			mst.x -= (siz.x / 2);
 			mst.x = MID(rc.x, mst.x, rc.width - siz.x);

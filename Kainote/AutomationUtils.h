@@ -23,7 +23,7 @@ extern "C" {
 //#include <string>
 #include <vector>
 #include <memory>
-//#include <type_traits>
+#include <type_traits>
 
 
 struct tm;
@@ -59,7 +59,6 @@ namespace Auto{
 	class tagless_find_helper {
 		std::vector<std::pair<size_t, size_t>> blocks;
 		size_t start;
-		//upewniæ siê, ¿e ta klase bêdzie mia³a start na 0;
 		tagless_find_helper(){ start = 0; }
 	public:
 		/// Strip ASS override tags at or after `start` in `str`, and initialize
@@ -96,6 +95,13 @@ namespace Auto{
 	void preload_modules(lua_State *L);
 	//ffi
 	void do_register_lib_function(lua_State *L, const char *name, const char *type_name, void *func);
+	template<typename FunctionPointer>
+	void do_register_lib_function(lua_State *L, const char *name, const char *type_name, FunctionPointer func) {
+		static_assert(std::is_pointer_v<FunctionPointer>);
+		static_assert(std::is_function_v<std::remove_pointer_t<FunctionPointer>>);
+		// POSIX ABI bridge for LuaJIT FFI.
+		do_register_lib_function(L, name, type_name, reinterpret_cast<void *>(func));
+	}
 	void do_register_lib_table(lua_State *L, std::vector<const char *> types);
 
 	//static void register_lib_functions(lua_State *) {
