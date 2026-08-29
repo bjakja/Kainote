@@ -2497,7 +2497,7 @@ wxPoint TextEditor::PosFromCursor(wxPoint cur)
 		GraphicsContext* gc = GetGraphicsContext();
 		if (gc){
 			gc->SetFont(font, L"#000000");
-			double gcfw, gcfh;
+			double gcfw = 0.0, gcfh = 0.0;
 			gc->GetTextExtent(MText.SubString(wraps[cur.y], cur.x), &gcfw, &gcfh);
 			delete gc;
 			fw = gcfw + 0.5f;
@@ -2926,7 +2926,6 @@ EVT_SET_FOCUS(TextEditor::OnKillFocus)
 EVT_COMMAND_SCROLL(3333, TextEditor::OnScroll)
 EVT_MOUSE_CAPTURE_LOST(TextEditor::OnLostCapture)
 END_EVENT_TABLE()
-
 
 
 

@@ -245,7 +245,11 @@ void Visuals::RenderSubs(wxString *subs, bool redraw /*= true*/)
 {
 	//visual, renderer should exist
 	RendererVideo *renderer = tab->video->GetRenderer();
-	if (renderer && !renderer->OpenSubs(OPEN_HAS_OWN_TEXT, true, subs)){ KaiLog(_("Nie można otworzyć napisów")); }
+	if (!renderer) {
+		delete subs;
+		return;
+	}
+	if (!renderer->OpenSubs(OPEN_HAS_OWN_TEXT, true, subs)){ KaiLog(_("Nie można otworzyć napisów")); }
 	tab->video->SetVisualEdition(true);
 	if (redraw){ tab->video->Render(); }
 }
@@ -1294,4 +1298,3 @@ void Visuals::Curve(int pos, std::vector<ClipPoint>* vectorPoints,
 	p_y = b[0] + b[1] + b[2] + b[3];
 	table->push_back(D3DXVECTOR2(p_x, p_y));
 }
-

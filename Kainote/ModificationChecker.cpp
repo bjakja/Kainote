@@ -66,7 +66,7 @@ LastModificationChecker::~LastModificationChecker()
 
 int LastModificationChecker::NeedReload(const wxString& fullpath, SYSTEMTIME* lastSaveTime)
 {
-	FILETIME ft;
+	FILETIME ft{};
 	HANDLE ffile = CreateFileW(fullpath.wc_str(), GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 	//return -1 to show that file not exist;
 	if (ffile == INVALID_HANDLE_VALUE)
@@ -74,6 +74,8 @@ int LastModificationChecker::NeedReload(const wxString& fullpath, SYSTEMTIME* la
 
 	if (!GetFileTime(ffile, 0, 0, &ft)) {
 		KaiLogSilent(L"Could not get subtitles modification time");
+		CloseHandle(ffile);
+		return 0;
 	}
 	CloseHandle(ffile);
 	SYSTEMTIME st;

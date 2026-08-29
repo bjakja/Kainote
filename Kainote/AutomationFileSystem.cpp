@@ -93,8 +93,8 @@ namespace Auto{
 		if(!SystemTimeToFileTime(&st, &ft))
 			throw wxString(L"SystemTimeToFileTime failed with error: " + ErrorString(GetLastError()));
 
-		scoped_holder<HANDLE, BOOL (__stdcall *)(HANDLE)>
-			h(CreateFile(file.c_str(), GENERIC_WRITE, 0, nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr), CloseHandle);
+		scoped_holder<HANDLE, decltype(&CloseHandle)>
+			h(CreateFile(file.c_str(), GENERIC_WRITE, 0, nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr), &CloseHandle);
 		// error handling etc.
 		if (!SetFileTime(h, nullptr, nullptr, &ft))
 			throw wxString(L"SetFileTime failed with error: " + ErrorString(GetLastError()));
@@ -133,22 +133,17 @@ namespace Auto{
 		bool operator==(DirectoryIterator const&) const;
 		bool operator!=(DirectoryIterator const& rhs) const { return !(*this == rhs); }
 		DirectoryIterator& operator++();
+		void Close();
 		std::string const& operator*() const { return value; }
 
 		DirectoryIterator(path const& p, std::string const& filter);
 		DirectoryIterator();
 		~DirectoryIterator();
-
-		template<typename T> void GetAll(T& cont);
+		DirectoryIterator(DirectoryIterator const&) = delete;
+		DirectoryIterator& operator=(DirectoryIterator const&) = delete;
 	};
 
-	static inline DirectoryIterator& begin(DirectoryIterator &it) { return it; }
 	static inline DirectoryIterator end(DirectoryIterator &) { return DirectoryIterator(); }
-
-	template<typename T>
-	inline void DirectoryIterator::GetAll(T& cont) {
-		copy(*this, end(*this), std::back_inserter(cont));
-	}
 
 	//struct DirectoryIterator::PrivData {
 	//	scoped_holder<HANDLE, BOOL (__stdcall *)(HANDLE)> h;//{INVALID_HANDLE_VALUE, FindClose};
@@ -169,7 +164,7 @@ namespace Auto{
 		}
 
 		value = wxString(data.cFileName).ToStdString();
-		while (value[0] == '.' && (value[1] == 0 || value[1] == '.'))
+		while (handle && (value == "." || value == ".."))
 			++*this;
 	}
 
@@ -182,15 +177,20 @@ namespace Auto{
 		if (handle && FindNextFile(handle, &data))
 			value = wxString(data.cFileName).ToStdString();
 		else {
-			//if(privdata){privdata.reset();}
-			//if(privdata){delete privdata; privdata=NULL;}
-			handle = NULL;
-			value.clear();
+			Close();
 		}
 		return *this;
 	}
 
-	DirectoryIterator::~DirectoryIterator() { if (handle){ FindClose(handle); handle=NULL; }}
+	void DirectoryIterator::Close() {
+		if (handle) {
+			FindClose(handle);
+			handle = NULL;
+		}
+		value.clear();
+	}
+
+	DirectoryIterator::~DirectoryIterator() { Close(); }
 
 	template<typename Func>
 	auto wrap(char **err, Func f) -> decltype(f()) {
@@ -249,7 +249,7 @@ namespace Auto{
 	}
 
 	void dir_close(DirectoryIterator &it) {
-		it = DirectoryIterator();
+		it.Close();
 	}
 
 	void dir_free(DirectoryIterator *it) {

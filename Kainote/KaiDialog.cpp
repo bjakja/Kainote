@@ -378,6 +378,8 @@ void KaiDialog::SetNextControl(bool next)
 					}
 				}
 			}
+			if (!nextWindow)
+				break;
 			nextWindow = next ? nextWindow->GetNext() : nextWindow->GetPrevious();
 		}
 	}
