@@ -239,10 +239,9 @@ void AutoSavesRemoving::ClearByDate(int id)
 		return;
 	}
 
-	while (1) {
-		int result = FindNextFile(h, &data);
-		if (result == ERROR_NO_MORE_FILES || result == 0) { break; }
-		else if (data.nFileSizeLow == 0) { continue; }
+	do {
+		wxString fileName = wxString(data.cFileName);
+		if (fileName == L"." || fileName == L".." || data.nFileSizeLow == 0) { continue; }
 		SYSTEMTIME accessSystemTime;
 		SYSTEMTIME accessSystemUniversalTime;
 		FileTimeToSystemTime(&data.ftLastWriteTime, &accessSystemUniversalTime);
@@ -257,8 +256,8 @@ void AutoSavesRemoving::ClearByDate(int id)
 			accessSystemTime.wMonth == chosenTime.wMonth)
 			continue;
 		
-		paths.Add(path + data.cFileName);
-	}
+		paths.Add(path + fileName);
+	} while (FindNextFile(h, &data));
 
 	FindClose(h);
 

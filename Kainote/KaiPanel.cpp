@@ -17,15 +17,33 @@
 #include "ListControls.h"
 #include "KaiRadioButton.h"
 
+#include <vector>
+
 void KaiContainer::OnNavigation(wxNavigationKeyEvent& evt)
 {
+	if (!container) {
+		evt.Skip();
+		return;
+	}
 	bool next = evt.GetDirection();
 	wxWindow* focused = container->FindFocus();
+	if (!focused) {
+		evt.Skip();
+		return;
+	}
 	wxWindow* focusedParent = focused->GetParent();
+	if (!focusedParent) {
+		evt.Skip();
+		return;
+	}
 	bool nextWindowWasNULL = false;
 	if (focusedParent->IsKindOf(CLASSINFO(KaiChoice))) {
 		focused = focusedParent;
 		focusedParent = focusedParent->GetParent();
+		if (!focusedParent) {
+			evt.Skip();
+			return;
+		}
 	}
 
 	wxWindowList& list = focusedParent->GetChildren();
@@ -40,7 +58,10 @@ void KaiContainer::OnNavigation(wxNavigationKeyEvent& evt)
 				nextWindowWasNULL = true;
 				wxWindow* fparent = focusedParent;
 				while (fparent) {
-					wxWindowList& list1 = fparent->GetParent()->GetChildren();
+					wxWindow* parent = fparent->GetParent();
+					if (!parent)
+						break;
+					wxWindowList& list1 = parent->GetChildren();
 					//if panel is empty then just continue
 					//don't give it focus
 					if (!list1.GetCount()) {
@@ -73,7 +94,8 @@ void KaiContainer::OnNavigation(wxNavigationKeyEvent& evt)
 							win = FindCheckedRadiobutton(next, &nextWindow, focused);
 							if (!win) {
 								//get next window before continue
-								nextWindow = next ? nextWindow->GetNext() : nextWindow->GetPrevious();
+								if (nextWindow)
+									nextWindow = next ? nextWindow->GetNext() : nextWindow->GetPrevious();
 								continue;
 							}
 						}
@@ -97,6 +119,8 @@ void KaiContainer::OnNavigation(wxNavigationKeyEvent& evt)
 					}
 				}
 			}
+			if (!nextWindow)
+				break;
 			nextWindow = next ? nextWindow->GetNext() : nextWindow->GetPrevious();
 		}
 	}
@@ -170,28 +194,34 @@ wxWindow* KaiContainer::FindCheckedRadiobutton(bool next, wxWindowListNode** lis
 
 void KaiContainer::OnSetFocus(wxFocusEvent& evt)
 {
-	wxWindow* thiswindow = container;
-	while (thiswindow) {
-		wxWindowList& list = thiswindow->GetChildren();
+	if (!container) {
+		evt.Skip();
+		return;
+	}
+
+	std::vector<wxWindow*> pending{ container };
+	while (!pending.empty()) {
+		wxWindow* current = pending.back();
+		pending.pop_back();
+		wxWindowList& list = current->GetChildren();
 		wxWindowListNode* node = list.GetFirst();
 		wxWindow* win = nullptr;
 		FindFocusable(true, &node, &win);
 		if (win) {
 			win->SetFocus();
-			break;
+			return;
 		}
-		wxWindowListNode* firstnode = list.GetFirst();
-		while (firstnode) {
-			wxObject* data = firstnode->GetData();
+
+		for (wxWindowListNode* childNode = list.GetLast(); childNode;
+			childNode = childNode->GetPrevious()) {
+			wxObject* data = childNode->GetData();
 			if (data) {
-				wxWindow* win1 = wxDynamicCast(data, wxWindow);
-				if (win1) {
-					wxWindowList& list1 = win1->GetChildren();
-					if (list1.GetCount()) {
-						thiswindow = win1;
-					}
-				}
+				wxWindow* child = wxDynamicCast(data, wxWindow);
+				if (child && child->GetChildren().GetCount())
+					pending.push_back(child);
 			}
 		}
 	}
+
+	evt.Skip();
 }

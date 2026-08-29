@@ -183,7 +183,6 @@ void MisspellReplacer::ReplaceChecked()
 	TabPanel *tab = nullptr;
 	Notebook * tabs = Notebook::GetTabs();
 	int oldKeyLine = -1;
-	bool skipTab = false;
 	bool somethingWasChanged = false;
 	size_t size = List->GetCount();
 	for (size_t tt = 0; tt < size; tt++){
@@ -192,14 +191,14 @@ void MisspellReplacer::ReplaceChecked()
 			continue;
 
 		ReplacerSeekResults *SeekResult = (ReplacerSeekResults *)item;
-		tab = SeekResult->tab;
-		// check if skip lines when tab not exist
+		TabPanel *resultTab = SeekResult->tab;
+		if (!resultTab || !tabs || tabs->FindPanel(resultTab, false) == -1 || !resultTab->grid)
+			continue;
+		tab = resultTab;
 		if (tab != oldtab){
-			skipTab = tabs->FindPanel(tab, false) == -1;
 			oldKeyLine = -1;
 		}
-		//skip lines when are out of table range and not existed tab
-		if (skipTab || SeekResult->keyLine >= tab->grid->GetCount())
+		if (SeekResult->keyLine >= tab->grid->GetCount())
 			continue;
 
 		if (SeekResult->keyLine != oldKeyLine){
@@ -773,4 +772,3 @@ Rule::Rule(const wxString & stringRule)
 fail:
 	KaiLog(wxString::Format(_("Reguła \"%s\" jest nieprawidłowa."), stringRule));
 }
-

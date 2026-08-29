@@ -22,7 +22,91 @@
 #include <unicode/localpointer.h>
 #include <unicode/putil.h>
 #include <unicode/ushape.h>
+#include <unicode/ustring.h>
+#include <limits>
+#include <vector>
 //#include <windows.h>
+
+namespace {
+
+bool TransformBidiText(wxString* text,
+	UBiDiLevel inputLevel,
+	UBiDiOrder inputOrder,
+	UBiDiLevel outputLevel,
+	UBiDiOrder outputOrder,
+	uint32_t shapingOptions)
+{
+	if (!text || text->empty())
+		return text != nullptr;
+
+	const wxScopedCharBuffer utf8 = text->utf8_str();
+	if (!utf8.data() || utf8.length() > static_cast<size_t>(std::numeric_limits<int32_t>::max())) {
+		KaiLog(L"Cannot convert bidi text to UTF-8");
+		return false;
+	}
+
+	UErrorCode errorCode = U_ZERO_ERROR;
+	int32_t inputLength = 0;
+	u_strFromUTF8(nullptr, 0, &inputLength, utf8.data(), static_cast<int32_t>(utf8.length()), &errorCode);
+	if (errorCode != U_BUFFER_OVERFLOW_ERROR && U_FAILURE(errorCode)) {
+		KaiLog(L"Cannot convert bidi text to UTF-16: " + wxString::FromUTF8(u_errorName(errorCode)));
+		return false;
+	}
+	if (inputLength > (std::numeric_limits<int32_t>::max() - 1) / 2) {
+		KaiLog(L"Bidi conversion text is too large");
+		return false;
+	}
+
+	errorCode = U_ZERO_ERROR;
+	std::vector<UChar> input(static_cast<size_t>(inputLength) + 1);
+	u_strFromUTF8(input.data(), static_cast<int32_t>(input.size()), &inputLength,
+		utf8.data(), static_cast<int32_t>(utf8.length()), &errorCode);
+	if (U_FAILURE(errorCode)) {
+		KaiLog(L"Cannot convert bidi text to UTF-16: " + wxString::FromUTF8(u_errorName(errorCode)));
+		return false;
+	}
+
+	UBiDiTransform* transform = ubiditransform_open(&errorCode);
+	if (U_FAILURE(errorCode) || !transform) {
+		KaiLog(L"Cannot initialize bidi conversion: " + wxString::FromUTF8(u_errorName(errorCode)));
+		return false;
+	}
+
+	// Unshaping may double the UTF-16 length.
+	const int32_t outputCapacity = inputLength * 2;
+	std::vector<UChar> output(static_cast<size_t>(outputCapacity) + 1);
+	const uint32_t outputLength = ubiditransform_transform(
+		transform, input.data(), inputLength, output.data(), outputCapacity,
+		inputLevel, inputOrder, outputLevel, outputOrder,
+		UBIDI_MIRRORING_OFF, shapingOptions, &errorCode);
+	ubiditransform_close(transform);
+	if (U_FAILURE(errorCode) || outputLength > static_cast<uint32_t>(outputCapacity)) {
+		KaiLog(L"Cannot transform bidi text: " + wxString::FromUTF8(u_errorName(errorCode)));
+		return false;
+	}
+
+	int32_t resultLength = 0;
+	errorCode = U_ZERO_ERROR;
+	u_strToUTF8(nullptr, 0, &resultLength, output.data(), static_cast<int32_t>(outputLength), &errorCode);
+	if (errorCode != U_BUFFER_OVERFLOW_ERROR && U_FAILURE(errorCode)) {
+		KaiLog(L"Cannot convert transformed bidi text to UTF-8: " + wxString::FromUTF8(u_errorName(errorCode)));
+		return false;
+	}
+
+	errorCode = U_ZERO_ERROR;
+	std::vector<char> result(static_cast<size_t>(resultLength) + 1);
+	u_strToUTF8(result.data(), static_cast<int32_t>(result.size()), &resultLength,
+		output.data(), static_cast<int32_t>(outputLength), &errorCode);
+	if (U_FAILURE(errorCode)) {
+		KaiLog(L"Cannot convert transformed bidi text to UTF-8: " + wxString::FromUTF8(u_errorName(errorCode)));
+		return false;
+	}
+
+	*text = wxString::FromUTF8(result.data(), static_cast<size_t>(resultLength));
+	return true;
+}
+
+} // namespace
 
 void ConvertToRTL(wxString* textin, wxString* textout)
 {
@@ -320,64 +404,16 @@ void ConvertToRTLCharsSpellchecker(wxString* textin, wxString* textout)
 
 void BIDIConvert(wxString* text)
 {
-	UErrorCode errorCode = U_ZERO_ERROR;
-
-	// Open a new UBiDiTransform.
-
-	UBiDiTransform* transform = ubiditransform_open(&errorCode);
-
-	// Run a transformation.
-	std::wstring wtext = text->ToStdWstring();
-
-	std::u16string text1(wtext.begin(), wtext.end());
-	size_t len = (text1.size() + 3) * 2;
-	UChar* text2 = (UChar*)malloc(len);
-	if (!text2) {
-		KaiLog(L"Cannot allocate bidi conversion text");
-		return;
-	}
-
-	ubiditransform_transform(transform, text1.data(), -1, text2, (len),
+	TransformBidiText(text,
 		UBIDI_RTL, UBIDI_LOGICAL, UBIDI_LTR, UBIDI_VISUAL,
-		UBIDI_MIRRORING_OFF, U_SHAPE_LETTERS_SHAPE, &errorCode);
-
-	ubiditransform_close(transform);
-	std::u16string result16(text2);
-	const wchar_t* result = reinterpret_cast<const wchar_t*>(result16.c_str());
-
-	(*text) = wxString(result);
-	free(text2);
+		U_SHAPE_LETTERS_SHAPE);
 }
 
 void BIDIReverseConvert(wxString* text)
 {
-	UErrorCode errorCode = U_ZERO_ERROR;
-
-	// Open a new UBiDiTransform.
-
-	UBiDiTransform* transform = ubiditransform_open(&errorCode);
-
-	// Run a transformation.
-	std::wstring wtext = text->ToStdWstring();
-
-	std::u16string text1(wtext.begin(), wtext.end());
-	size_t len = (text1.size() + 3) * 2;
-	UChar* text2 = (UChar*)malloc(len);
-	if (!text2) {
-		KaiLog(L"Cannot allocate bidi conversion text");
-		return;
-	}
-
-	ubiditransform_transform(transform, text1.data(), -1, text2, (len),
+	TransformBidiText(text,
 		UBIDI_LTR, UBIDI_VISUAL, UBIDI_RTL, UBIDI_LOGICAL,
-		UBIDI_MIRRORING_OFF, U_SHAPE_LETTERS_UNSHAPE, &errorCode);
-
-	ubiditransform_close(transform);
-	std::u16string result16(text2);
-	const wchar_t* result = reinterpret_cast<const wchar_t*>(result16.c_str());
-
-	(*text) = wxString(result);
-	free(text2);
+		U_SHAPE_LETTERS_UNSHAPE);
 }
 
 //put normal RTL text and get converted to LTR when text == nullptr or len = 0 function fail

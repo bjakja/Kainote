@@ -491,9 +491,10 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 					wxBitmap arrow = wxBITMAP_PNG(L"arrow_list");
 					// GetDialogueKey was made for loops no checks
 					Dialogue *nextDial = (key < GetCount() - 1) ? GetDialogue(key + 1) : nullptr;
-					if (nextDial && nextDial->treeState == TREE_CLOSED)
-						if(arrow.IsOk())
+					if (nextDial && nextDial->treeState == TREE_CLOSED) {
+						if (arrow.IsOk())
 							tdc.DrawBitmap(arrow, posX + 6, posY + 5);
+					}
 					else{
 						wxBitmap bmp(wxBITMAP_PNG(L"arrow_list"));
 						wxImage img = bmp.ConvertToImage();

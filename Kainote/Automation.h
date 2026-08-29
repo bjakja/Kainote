@@ -93,7 +93,7 @@ namespace Auto {
 
 		void GetFeatureFunction(const char* function) const;
 
-		LuaFeature(lua_State* L) : L(L) { }
+		LuaFeature(lua_State* L) : myid(-2), L(L) { }
 	};
 
 
@@ -249,4 +249,3 @@ namespace Auto {
 		unsigned char* data = nullptr;
 	};
 }
-

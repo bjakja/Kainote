@@ -822,7 +822,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		}
 	}
 	else if (id == GLOBAL_OPEN_SPELLCHECKER){
-		SpellCheckerDialog *SCD = new SpellCheckerDialog(this);
+		new SpellCheckerDialog(this);
 	}
 	else if (id == GLOBAL_HIDE_TAGS){
 		tab->grid->HideOverrideTags();
@@ -956,6 +956,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	}
 	else if (id == GLOBAL_LOAD_LAST_SESSION_ON_START){
 		// 0 nothing 1 ask for load 2 load on start
+		if (!item) return;
 		int config = (int)item->IsChecked() * 2;
 		Options.SetInt(LAST_SESSION_CONFIG, config);
 		MenuItem *item = Menubar->FindItem(GLOBAL_ASK_FOR_LOAD_LAST_SESSION);
@@ -963,6 +964,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	}
 	else if (id == GLOBAL_ASK_FOR_LOAD_LAST_SESSION){
 		// 0 nothing 1 ask for load 2 load on start
+		if (!item) return;
 		int config = (int)item->IsChecked();
 		Options.SetInt(LAST_SESSION_CONFIG, config);
 		MenuItem *item = Menubar->FindItem(GLOBAL_LOAD_LAST_SESSION_ON_START);
@@ -2639,4 +2641,3 @@ bool KainoteFrame::Layout()
 void KainoteFrame::SetStatusText(const wxString& label, int field) {
 	StatusBar->SetLabelText(field, label); 
 }
-
