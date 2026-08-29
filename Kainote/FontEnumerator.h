@@ -23,6 +23,8 @@
 #include <map>
 #include <vector>
 #include <functional>
+#include <atomic>
+#include <memory>
 
 #include <windows.h>
 //#include <windef.h>
@@ -60,11 +62,17 @@ public:
 	HDC hdc;
 	wxString filter;
 private:
+	struct UiRefreshState;
+	void EnumerateFontsLocked(bool reenumerate);
 	void RefreshClientsFonts();
-	static int __stdcall FontEnumeratorProc(LPLOGFONT lplf, TEXTMETRIC *lptm,
-		unsigned int WXUNUSED(dwStyle), long* lParam);
-	static DWORD CheckFontsProc(int *threadNum);
-	static DWORD LoadExternalFontsProc(void *path);
+	void RequestUiRefresh(bool refreshVideo);
+#ifndef _WIN32
+	void RestartLinuxFontWatcher(const wxString& externalFontsPath);
+#endif
+	static int __stdcall FontEnumeratorProc(const LOGFONT* lplf,
+		const TEXTMETRIC* lptm, DWORD WXUNUSED(dwStyle), LPARAM lParam);
+	static DWORD WINAPI CheckFontsProc(void* threadNumber);
+	static DWORD WINAPI LoadExternalFontsProc(void* path);
 	
 	
 	std::map<const wxWindow*, std::function<void()>> observers;
@@ -73,9 +81,14 @@ private:
 	HANDLE checkFontsThread[3] = { nullptr, nullptr, nullptr };
 	HANDLE loadFontsThread = nullptr;
 	wxMutex enumerateMutex;
+	std::shared_ptr<UiRefreshState> uiRefreshState;
+	std::atomic_bool shuttingDown{ false };
 	bool hasExternalFontsLoaded = false;
 	Sink* progress = nullptr;
+#ifndef _WIN32
+	// Updated only while the watcher is stopped.
+	wxString linuxExternalFontsPath;
+#endif
 };
 
 extern FontEnumerator FontEnum;
-
