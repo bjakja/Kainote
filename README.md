@@ -366,7 +366,7 @@ The executable is written under the repository's Visual Studio output folders, t
 
 ### Linux build
 
-The Linux build uses CMake and system packages. It has been verified on an Ubuntu/Debian-style environment with GCC, wxGTK 3.2, Lua 5.1, FFMS2, FFmpeg, libass, Hunspell, uchardet, libcurl, ICU, Boost, GStreamer 1.x, and OpenGL development packages.
+The Linux build uses CMake and system packages. It has been verified on an Ubuntu/Debian-style environment with GCC, wxGTK 3.2, LuaJIT 2.1 (Lua 5.1-compatible), FFMS2, FFmpeg, libass, Hunspell, uchardet, libcurl, ICU, Boost, GStreamer 1.x, and OpenGL development packages.
 
 #### 1. Install dependencies on Ubuntu/Debian
 
@@ -375,14 +375,17 @@ sudo apt update
 sudo apt install --no-install-recommends -y \
   build-essential \
   cmake \
+  gzip \
+  tar \
   git \
   pkg-config \
   libwxgtk3.2-dev \
   libwxgtk-gl3.2-dev \
   libass-dev \
   libffms2-dev \
-  liblua5.1-0-dev \
+  libluajit-5.1-dev \
   libhunspell-dev \
+  hunspell-en-us \
   libuchardet-dev \
   libcurl4-openssl-dev \
   libicu-dev \
@@ -399,7 +402,8 @@ sudo apt install --no-install-recommends -y \
   libgstreamer-plugins-base1.0-dev \
   gstreamer1.0-plugins-base \
   gstreamer1.0-plugins-good \
-  gstreamer1.0-pulseaudio
+  gstreamer1.0-pulseaudio \
+  gettext
 ```
 
 GStreamer backs both video and audio playback on Linux, so its runtime plugins
@@ -420,13 +424,16 @@ sudo apt install --no-install-recommends -y xvfb
 The exact package names vary by distribution. Install the equivalent development packages for:
 
 - C and C++ compiler toolchain (`gcc`, `g++`, `make`)
-- CMake
+- CMake 3.21 or newer
+- GNU tar and gzip (used by the reproducible Linux archive target)
 - pkg-config
 - wxWidgets/wxGTK 3.x with core, base, adv, aui, html, xml, gl, and stc components
 - libass
 - FFMS2
-- Lua 5.1 development headers and library
+- LuaJIT 2.1 development headers and library (the `luajit` pkg-config module)
 - Hunspell
+- A Hunspell dictionary (the runtime copy step looks for `en_US.aff` and `en_US.dic`)
+- GNU gettext (`msgfmt`) for compiling translations
 - uchardet
 - libcurl
 - ICU (`icu-uc` and `icu-i18n` pkg-config modules)
@@ -442,24 +449,24 @@ For Fedora-like systems, the package set is approximately:
 
 ```bash
 sudo dnf install \
-  gcc gcc-c++ make cmake git pkgconf-pkg-config \
+  gcc gcc-c++ make cmake gzip tar git pkgconf-pkg-config \
   wxGTK-devel wxGTK-gl wxGTK-media \
-  libass-devel ffms2-devel lua-devel hunspell-devel uchardet-devel \
+  libass-devel ffms2-devel luajit-devel hunspell-devel hunspell-en-US uchardet-devel \
   libcurl-devel libicu-devel boost-devel ffmpeg-devel mesa-libGL-devel gtk3-devel \
   gstreamer1-devel gstreamer1-plugins-base-devel \
-  gstreamer1-plugins-base gstreamer1-plugins-good
+  gstreamer1-plugins-base gstreamer1-plugins-good gettext
 ```
 
 For Arch-like systems, the package set is approximately:
 
 ```bash
 sudo pacman -S --needed \
-  base-devel cmake git pkgconf wxwidgets-gtk3 libass ffms2 lua51 \
-  hunspell uchardet curl icu boost ffmpeg mesa gtk3 \
-  gstreamer gst-plugins-base gst-plugins-good
+  base-devel cmake gzip tar git pkgconf wxwidgets-gtk3 libass ffms2 luajit \
+  hunspell hunspell-en_us uchardet curl icu boost ffmpeg mesa gtk3 \
+  gstreamer gst-plugins-base gst-plugins-good gettext
 ```
 
-If your distribution only provides Lua 5.4 as `lua`, install the separate Lua 5.1 development package. The CMake file intentionally checks for `lua5.1` because Kainote uses Lua 5.1 APIs such as `lua_getfenv`, `lua_objlen`, and `luaL_register`.
+Kainote requires LuaJIT rather than the standard Lua interpreter: its Automation subsystem uses LuaJIT's FFI as well as Lua 5.1 APIs. The CMake configuration therefore checks for the `luajit` pkg-config module.
 
 #### 3. Verify dependency discovery
 
@@ -469,7 +476,7 @@ Before configuring Kainote, confirm that pkg-config can find the required librar
 pkg-config --modversion \
   libass \
   ffms2 \
-  lua5.1 \
+  luajit \
   hunspell \
   uchardet \
   libcurl \
@@ -505,6 +512,21 @@ The executable is created at:
 ```text
 build-linux/kainote
 ```
+
+To create a clean Linux runtime archive after building:
+
+```bash
+cmake --build build-linux --target kainote_linux_package
+```
+
+The archive and its SHA-256 file are written under `build-linux/dist/`. The
+package target uses an explicit allowlist: it includes the executable,
+manifest-recorded runtime libraries, freshly compiled translations, bitmap
+resources, the project license, and the configured English dictionary when one
+is available. It deliberately excludes CMake internals and any Config,
+Automation, or Themes files created by local runs. Host graphics/windowing
+libraries, codec libraries excluded for licensing reasons, and GStreamer
+plugins remain system requirements; this archive is not a universal AppImage.
 
 #### 5. Run Kainote
 
@@ -552,10 +574,9 @@ Media backends (Windows uses DirectShow / DirectSound / Direct3D):
 - Audio plays through **GStreamer** (`appsrc → audioconvert → audioresample →
   autoaudiosink`); the playback position is tracked on a wall-clock model. There
   is no DirectSound path.
-- Because Linux builds may bundle a relocated `libgstreamer`, the plugin search
-  path is pinned at build time (`pkg-config --variable=pluginsdir gstreamer-1.0`)
-  and exported before `gst_init`, so the system GStreamer plugins are found at
-  runtime. The base and good plugin sets (and an audio sink) must be installed.
+- GStreamer discovers plugins from the runtime system registry and standard
+  plugin paths. The base and good plugin sets (and an audio sink) must be
+  installed on the machine that runs Kainote.
 
 Other Linux differences:
 

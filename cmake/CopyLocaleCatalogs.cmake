@@ -20,7 +20,7 @@ foreach(po_file IN LISTS KAINOTE_PO_FILES)
         RESULT_VARIABLE msgfmt_result
     )
     if(msgfmt_result)
-        message(WARNING "msgfmt failed for ${po_file} (exit ${msgfmt_result})")
+        message(FATAL_ERROR "msgfmt failed for ${po_file} (exit ${msgfmt_result})")
     else()
         file(COPY_FILE "${locale_messages_dir}/${locale_name}.mo"
                        "${RUNTIME_LOCALE_DIR}/${locale_name}.mo" ONLY_IF_DIFFERENT)
