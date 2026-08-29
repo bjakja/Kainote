@@ -403,21 +403,25 @@ AudioSpectrumMultiThreading::AudioSpectrumMultiThreading(Provider *provider, std
 
 AudioSpectrumMultiThreading::~AudioSpectrumMultiThreading()
 {
-	if (ffttable) 
-		delete[] ffttable;
-	if (threads){
+	if (eventKillSelf)
 		SetEvent(eventKillSelf);
-		WaitForMultipleObjects(numThreads, threads, TRUE, 20000);
-		for (int i = 0; i < numThreads; i++){
-			CloseHandle(threads[i]);
-			CloseHandle(eventMakeCache[i]);
-			CloseHandle(eventCacheCopleted[i]);
+	if (threads) {
+		// Workers use these buffers, so join before freeing them.
+		for (int i = 0; i < numThreads; i++) {
+			if (threads[i])
+				WaitForSingleObject(threads[i], INFINITE);
 		}
-		CloseHandle(eventKillSelf);
-		delete[] threads;
-		delete[] eventMakeCache;
-		delete[] eventCacheCopleted;
+		for (int i = 0; i < numThreads; i++){
+			if (threads[i]) CloseHandle(threads[i]);
+			if (eventMakeCache && eventMakeCache[i]) CloseHandle(eventMakeCache[i]);
+			if (eventCacheCopleted && eventCacheCopleted[i]) CloseHandle(eventCacheCopleted[i]);
+		}
 	}
+	if (eventKillSelf) CloseHandle(eventKillSelf);
+	delete[] threads;
+	delete[] eventMakeCache;
+	delete[] eventCacheCopleted;
+	delete[] ffttable;
 }
 
 void AudioSpectrumMultiThreading::CreateCache(unsigned long _start, unsigned long _end)
@@ -518,4 +522,3 @@ void AudioSpectrumMultiThreading::SetAudio(unsigned long _start, int _len, FFT *
 }
 
 AudioSpectrumMultiThreading *AudioSpectrumMultiThreading::sthread = nullptr;
-

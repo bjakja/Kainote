@@ -21,6 +21,7 @@
 #include "SubsGrid.h"
 #include "Provider.h"
 #include "TabPanel.h"
+#include <atomic>
 #include <vector>
 #include <thread>
 #include "../Thirdparty/ffms2/include/ffms.h"
@@ -76,15 +77,15 @@ public:
 	void OpenKeyframes(const wxString& filename);
 	void SetPosition(int time, bool starttime, bool refteshAudio = true);
 	bool AudioNotInitialized() {
-		return audioNotInitialized;
+		return audioNotInitialized.load();
 	}
 	float GetAudioProgress() {
-		return m_audioProgress;
+		return m_audioProgress.load();
 	}
 protected:
 	Provider(const wxString& filename, RendererVideo* renderer);
-	volatile bool audioNotInitialized = true;
-	volatile float m_audioProgress = 0;
+	std::atomic<bool> audioNotInitialized{ true };
+	std::atomic<float> m_audioProgress{ 0 };
 	RendererVideo* m_renderer = nullptr;
 	int m_width = -1;
 	int m_height = -1;

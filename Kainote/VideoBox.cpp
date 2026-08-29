@@ -70,13 +70,13 @@ CRecycleFile::CRecycleFile()
 
 int CRecycleFile::Recycle(const wchar_t *pszPath, BOOL bDelete)
 {
-
-	wchar_t buf[_MAX_PATH + 1];
-	wcscpy(buf, pszPath);
-	buf[wcslen(buf) + 1] = 0;
+	if (!pszPath)
+		return 1;
+	std::wstring from(pszPath);
+	from.push_back(L'\0');
 
 	wFunc = FO_DELETE;
-	pFrom = buf;
+	pFrom = from.c_str();
 	pTo = nullptr;
 	if (bDelete) {
 		fFlags &= ~FOF_ALLOWUNDO;
@@ -84,7 +84,9 @@ int CRecycleFile::Recycle(const wchar_t *pszPath, BOOL bDelete)
 	else {
 		fFlags |= FOF_ALLOWUNDO;
 	}
-	return SHFileOperation(this);
+	int result = SHFileOperation(this);
+	pFrom = nullptr;
+	return result;
 
 }
 
@@ -1315,7 +1317,7 @@ void VideoBox::ChangeOnScreenResolution(TabPanel *tab)
 
 void VideoBox::RefreshTime()
 {
-	if (!renderer && GetState() != None)
+	if (!renderer)
 		return;
 
 	SubsTime videoTime;
@@ -1979,4 +1981,3 @@ EVT_ERASE_BACKGROUND(VideoBox::OnErase)
 EVT_BUTTON(ID_END_OF_STREAM, VideoBox::OnEndFile)
 EVT_MOUSE_CAPTURE_LOST(VideoBox::OnLostCapture)
 END_EVENT_TABLE()
-

@@ -159,10 +159,10 @@ void DirectSoundPlayer2Thread::Run()
 		return;
 	}
 
-	linuxState->pipeline = pipeline;
-	linuxState->appsrc = src;
 	{
 		std::lock_guard<std::mutex> lock(linuxState->mutex);
+		linuxState->pipeline = pipeline;
+		linuxState->appsrc = src;
 		linuxState->initialized = true;
 		linuxState->cv.notify_all();
 	}
@@ -213,25 +213,47 @@ void DirectSoundPlayer2Thread::Run()
 
 		long long frame = 0;
 		long long framesToWrite = 0;
+		double playbackVolume = 1.0;
 		{
 			std::lock_guard<std::mutex> lock(linuxState->mutex);
 			frame = linuxState->currentFrame;
 			framesToWrite = std::min<long long>(chunkFrames, std::max<long long>(0, requestEnd - frame));
+			playbackVolume = volume;
 		}
 
 		if (framesToWrite > 0) {
 			const gsize bytes = static_cast<gsize>(framesToWrite * bytesPerFrame);
 			GstBuffer *buf = gst_buffer_new_allocate(nullptr, bytes, nullptr);
+			if (!buf) {
+				std::lock_guard<std::mutex> lock(linuxState->mutex);
+				linuxState->failed = true;
+				linuxState->playing = false;
+				linuxState->failMessage = L"GStreamer could not allocate an audio buffer";
+				break;
+			}
 			// Let the provider decode straight into the GstBuffer memory (no
 			// intermediate copy), then hand it off; block=TRUE paces to the clock.
-			GstMapInfo map;
-			if (gst_buffer_map(buf, &map, GST_MAP_WRITE)) {
-				provider->GetBuffer(map.data, frame, framesToWrite, volume);
-				gst_buffer_unmap(buf, &map);
+			GstMapInfo map{};
+			if (!gst_buffer_map(buf, &map, GST_MAP_WRITE)) {
+				gst_buffer_unref(buf);
+				std::lock_guard<std::mutex> lock(linuxState->mutex);
+				linuxState->failed = true;
+				linuxState->playing = false;
+				linuxState->failMessage = L"GStreamer could not map an audio buffer";
+				break;
 			}
-			GstFlowReturn fr = gst_app_src_push_buffer(GST_APP_SRC(src), buf);
+			provider->GetBuffer(map.data, frame, framesToWrite, playbackVolume);
+			gst_buffer_unmap(buf, &map);
+			const GstFlowReturn flow = gst_app_src_push_buffer(GST_APP_SRC(src), buf);
 			std::lock_guard<std::mutex> lock(linuxState->mutex);
-			linuxState->currentFrame += framesToWrite;
+			if (flow == GST_FLOW_OK) {
+				linuxState->currentFrame += framesToWrite;
+			}
+			else if (linuxState->running) {
+				linuxState->failed = true;
+				linuxState->playing = false;
+				linuxState->failMessage = L"GStreamer audio pipeline stopped accepting data";
+			}
 		}
 		else {
 			guint64 level = 0;
@@ -260,9 +282,12 @@ void DirectSoundPlayer2Thread::Run()
 	}
 
 	gst_element_set_state(pipeline, GST_STATE_NULL);
+	{
+		std::lock_guard<std::mutex> lock(linuxState->mutex);
+		linuxState->pipeline = nullptr;
+		linuxState->appsrc = nullptr;
+	}
 	gst_object_unref(pipeline);
-	linuxState->pipeline = nullptr;
-	linuxState->appsrc = nullptr;
 }
 
 unsigned int DirectSoundPlayer2Thread::FillAndUnlockBuffers(unsigned char*, unsigned int, unsigned char*, unsigned int,
@@ -317,11 +342,20 @@ DirectSoundPlayer2Thread::DirectSoundPlayer2Thread(Provider *provider, int _Want
 DirectSoundPlayer2Thread::~DirectSoundPlayer2Thread()
 {
 	if (linuxState) {
+		GstElement *pipeline = nullptr;
 		{
 			std::lock_guard<std::mutex> lock(linuxState->mutex);
+			// Keep the pipeline alive while flushing blocked appsrc writes.
+			if (linuxState->pipeline)
+				pipeline = GST_ELEMENT(gst_object_ref(linuxState->pipeline));
 			linuxState->running = false;
 			linuxState->playing = false;
 			linuxState->cv.notify_all();
+		}
+		if (pipeline) {
+			gst_element_send_event(pipeline, gst_event_new_flush_start());
+			gst_element_set_state(pipeline, GST_STATE_NULL);
+			gst_object_unref(pipeline);
 		}
 		if (linuxState->thread.joinable())
 			linuxState->thread.join();
@@ -380,13 +414,15 @@ bool DirectSoundPlayer2Thread::IsPlaying()
 long long DirectSoundPlayer2Thread::GetStartFrame()
 {
 	CheckError();
+	std::lock_guard<std::mutex> lock(linuxState->mutex);
 	return start_frame;
 }
 
 int DirectSoundPlayer2Thread::GetCurrentMS()
 {
 	CheckError();
-	if (!IsPlaying()) return 0;
+	std::lock_guard<std::mutex> lock(linuxState->mutex);
+	if (!linuxState->playing) return 0;
 	return static_cast<int>(timeGetTime() - last_playback_restart);
 }
 
@@ -404,6 +440,7 @@ long long DirectSoundPlayer2Thread::GetCurrentFrame()
 long long DirectSoundPlayer2Thread::GetEndFrame()
 {
 	CheckError();
+	std::lock_guard<std::mutex> lock(linuxState->mutex);
 	return end_frame;
 }
 

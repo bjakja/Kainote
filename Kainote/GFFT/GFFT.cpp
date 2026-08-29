@@ -157,6 +157,7 @@ public:
 template<typename T>
 class AbstractFFT {
 public:
+	virtual ~AbstractFFT() = default;
 	virtual void fft(T*) = 0;
 };
 class EmptyFFT { };
@@ -243,9 +244,15 @@ void FFT::Set(Provider *_prov){
 	Loki::Factory<AbstractFFT<float>, unsigned int> gfft_factory;
 	FactoryInit<GFFTList<GFFT, doublelen, doublelen + 20, float>::Result>::apply(gfft_factory);
 
+	delete gfft;
+	gfft = nullptr;
+	delete[] output;
+	output = nullptr;
+	delete[] input;
+	input = nullptr;
+	inputSize = 0;
 	gfft = gfft_factory.CreateObject(doublelen);
 	prov = _prov;
-	input = nullptr;
 	output = new float[doublelen * 2];
 }
 
@@ -282,4 +289,3 @@ void FFT::Transform(long long whre){
 float FFT::Get(int i){
 	return sqrt(output[i] * output[i] + output[i + 1] * output[i + 1]);
 }
-

@@ -26,7 +26,7 @@ ProviderDummy::~ProviderDummy()
 {
 	if (m_thread) {
 		SetEvent(m_eventKillSelf);
-		WaitForSingleObject(m_thread, 20000);
+		WaitForSingleObject(m_thread, INFINITE);
 		CloseHandle(m_thread);
 		m_thread = nullptr;
 	}
@@ -260,6 +260,7 @@ void ProviderDummy::Processing()
 			byte* buff = (byte*)m_renderer->m_FrameBuffer;
 			int acttime;
 			while (1) {
+				if (WaitForSingleObject(m_eventKillSelf, 0) == WAIT_OBJECT_0) { return; }
 
 				if (m_renderer->m_Frame != m_lastFrame) {
 					m_renderer->m_Time = m_timecodes[m_renderer->m_Frame];
@@ -289,12 +290,13 @@ void ProviderDummy::Processing()
 				if (tdiff > 0) { Sleep(tdiff); }
 				else if (tdiff < -20) {
 					while (1) {
+						if (m_renderer->m_Frame >= m_numFrames) {
+							m_renderer->m_Frame = m_numFrames - 1;
+							m_renderer->m_Time = m_renderer->m_PlayEndTime;
+							break;
+						}
 						int frameTime = m_timecodes[m_renderer->m_Frame];
-						if (frameTime >= acttime || frameTime >= m_renderer->m_PlayEndTime || m_renderer->m_Frame >= m_numFrames) {
-							if (m_renderer->m_Frame >= m_numFrames) {
-								m_renderer->m_Frame = m_numFrames - 1;
-								m_renderer->m_Time = m_renderer->m_PlayEndTime;
-							}
+						if (frameTime >= acttime || frameTime >= m_renderer->m_PlayEndTime) {
 							break;
 						}
 						else {
@@ -316,4 +318,3 @@ void ProviderDummy::Processing()
 
 	}
 }
-

@@ -25,6 +25,7 @@
 #include "VideoBox.h"
 #include "Provider.h"
 #include "TabPanel.h"
+#include <atomic>
 
 class Provider;
 class Fullscreen;
@@ -192,7 +193,7 @@ private:
 	std::vector<RECT> MonRects;
 	bool m_IsOnAnotherMonitor = false;
 	bool m_IsFullscreen = false;
-	bool m_FullScreenProgressBar = false;
+	std::atomic_bool m_FullScreenProgressBar{ false };
 	bool m_PanelOnFullscreen = false;
 	int m_PanelHeight = 44;
 	long m_AspectRatioX, m_AspectRatioY;
@@ -250,5 +251,4 @@ enum
 			}\
 	font->DrawTextW(nullptr, text.wchar_str(), -1, &rect, align, color );
 #endif
-
 
