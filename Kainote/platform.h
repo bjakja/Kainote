@@ -10,6 +10,7 @@
 #include <ctime>
 #include <cwctype>
 #include <chrono>
+#include <cctype>
 #include <string>
 #include <filesystem>
 #include <cstdio>
@@ -33,6 +34,7 @@
 #include <atomic>
 #include <memory>
 #include <map>
+#include <set>
 #include <sys/wait.h>
 #include <fontconfig/fontconfig.h>
 #include <wx/app.h>
@@ -41,6 +43,7 @@
 #include <wx/panel.h>
 #include <wx/intl.h>
 #include <wx/power.h>
+#include <wx/utils.h>
 
 #ifndef __linux__
 #define __linux__ 1
@@ -74,8 +77,9 @@ using BYTE = unsigned char;
 using WORD = std::uint16_t;
 using DWORD = std::uint32_t;
 using UINT = unsigned int;
-using ULONG = unsigned long;
-using LONG = long;
+// Win32 LONG, ULONG, and HRESULT remain 32-bit on LP64 hosts.
+using ULONG = std::uint32_t;
+using LONG = std::int32_t;
 using BOOL = int;
 #ifndef TRUE
 #define TRUE 1
@@ -83,7 +87,7 @@ using BOOL = int;
 #endif
 using BOOLEAN = int;
 using VOID = void;
-using HRESULT = long;
+using HRESULT = std::int32_t;
 using WCHAR = wchar_t;
 using LPCWSTR = const wchar_t*;
 using LPWSTR = wchar_t*;
@@ -221,19 +225,65 @@ inline void GetLocalTime(SYSTEMTIME* st) {
     std::time_t t=std::time(nullptr); std::tm tm{}; localtime_r(&t,&tm);
     st->wYear=tm.tm_year+1900; st->wMonth=tm.tm_mon+1; st->wDay=tm.tm_mday; st->wDayOfWeek=tm.tm_wday; st->wHour=tm.tm_hour; st->wMinute=tm.tm_min; st->wSecond=tm.tm_sec; st->wMilliseconds=0;
 }
+constexpr std::uint64_t KAINOTE_FILETIME_TICKS_PER_SECOND = 10000000ULL;
+constexpr std::int64_t KAINOTE_FILETIME_UNIX_EPOCH_OFFSET = 11644473600LL;
+inline bool kainote_timespec_to_filetime(const timespec& value, FILETIME* output) {
+    if (!output || value.tv_nsec < 0 || value.tv_nsec >= 1000000000L)
+        return false;
+    const std::int64_t unixSeconds = static_cast<std::int64_t>(value.tv_sec);
+    const std::int64_t maxUnixSeconds = static_cast<std::int64_t>(
+        std::numeric_limits<std::uint64_t>::max() / KAINOTE_FILETIME_TICKS_PER_SECOND) -
+        KAINOTE_FILETIME_UNIX_EPOCH_OFFSET;
+    if (unixSeconds < -KAINOTE_FILETIME_UNIX_EPOCH_OFFSET ||
+        unixSeconds > maxUnixSeconds)
+        return false;
+    const std::uint64_t ticks =
+        static_cast<std::uint64_t>(unixSeconds + KAINOTE_FILETIME_UNIX_EPOCH_OFFSET) *
+            KAINOTE_FILETIME_TICKS_PER_SECOND +
+        static_cast<std::uint64_t>(value.tv_nsec) / 100ULL;
+    output->dwLowDateTime = static_cast<DWORD>(ticks);
+    output->dwHighDateTime = static_cast<DWORD>(ticks >> 32);
+    return true;
+}
+inline bool kainote_filetime_to_timespec(const FILETIME* input, timespec* output) {
+    if (!input || !output)
+        return false;
+    const std::uint64_t ticks =
+        (static_cast<std::uint64_t>(input->dwHighDateTime) << 32) |
+        input->dwLowDateTime;
+    const std::int64_t unixSeconds = static_cast<std::int64_t>(
+        ticks / KAINOTE_FILETIME_TICKS_PER_SECOND) -
+        KAINOTE_FILETIME_UNIX_EPOCH_OFFSET;
+    const std::time_t seconds = static_cast<std::time_t>(unixSeconds);
+    if (static_cast<std::int64_t>(seconds) != unixSeconds)
+        return false;
+    output->tv_sec = seconds;
+    output->tv_nsec = static_cast<long>(
+        (ticks % KAINOTE_FILETIME_TICKS_PER_SECOND) * 100ULL);
+    return true;
+}
 inline bool SystemTimeToFileTime(const SYSTEMTIME* st, FILETIME* ft) {
-    if (!st || !ft) return false;
+    if (!st || !ft || st->wYear < 1601 || st->wMonth < 1 || st->wMonth > 12 ||
+        st->wDay < 1 || st->wDay > 31 || st->wHour > 23 || st->wMinute > 59 ||
+        st->wSecond > 59 || st->wMilliseconds > 999) return false;
     std::tm tm{}; tm.tm_year=st->wYear-1900; tm.tm_mon=st->wMonth-1; tm.tm_mday=st->wDay; tm.tm_hour=st->wHour; tm.tm_min=st->wMinute; tm.tm_sec=st->wSecond;
-    auto t = timegm(&tm); auto v=static_cast<std::uint64_t>(t);
-    ft->dwLowDateTime=static_cast<DWORD>(v); ft->dwHighDateTime=static_cast<DWORD>(v>>32); return true;
+    const std::time_t t = timegm(&tm);
+    const timespec value{t, static_cast<long>(st->wMilliseconds) * 1000000L};
+    return kainote_timespec_to_filetime(value, ft);
 }
 inline bool FileTimeToSystemTime(const FILETIME* ft, SYSTEMTIME* st) {
     if (!ft || !st) return false;
-    std::uint64_t v=((std::uint64_t)ft->dwHighDateTime<<32)|ft->dwLowDateTime; kainote_time_t_to_system((std::time_t)v, st); return true;
+    timespec value{};
+    if (!kainote_filetime_to_timespec(ft, &value)) return false;
+    std::tm tm{};
+    if (!gmtime_r(&value.tv_sec, &tm)) return false;
+    kainote_tm_to_system(tm, st);
+    st->wMilliseconds = static_cast<WORD>(value.tv_nsec / 1000000L);
+    return true;
 }
 inline std::time_t kainote_filetime_to_time_t(const FILETIME* ft) {
-    std::uint64_t v = ((std::uint64_t)ft->dwHighDateTime << 32) | ft->dwLowDateTime;
-    return static_cast<std::time_t>(v);
+    timespec value{};
+    return kainote_filetime_to_timespec(ft, &value) ? value.tv_sec : static_cast<std::time_t>(-1);
 }
 struct KainoteHandleBase {
     enum class Kind { File, Event, Thread, Timer, ChangeNotification } kind;
@@ -254,7 +304,8 @@ struct KainoteEventHandle : KainoteHandleBase {
 };
 struct KainoteThreadHandle : KainoteHandleBase {
     std::thread thread;
-    std::atomic<bool> finished{false};
+	// Completion may outlive a closed thread handle.
+    std::shared_ptr<std::atomic<bool>> finished{std::make_shared<std::atomic<bool>>(false)};
     KainoteThreadHandle() : KainoteHandleBase(Kind::Thread) {}
     explicit KainoteThreadHandle(std::thread&& t) : KainoteHandleBase(Kind::Thread), thread(std::move(t)) {}
     ~KainoteThreadHandle() override { if (thread.joinable()) thread.detach(); }
@@ -263,6 +314,8 @@ struct KainoteTimerState {
     std::mutex mutex;
     std::condition_variable cv;
     std::atomic<bool> cancelled{false};
+	// Coalesce callbacks like Win32 timers.
+    std::atomic<bool> callbackPending{false};
 
     bool wait_for_cancel_or_timeout(DWORD milliseconds) {
         if (cancelled.load()) return true;
@@ -291,11 +344,86 @@ struct KainoteTimerHandle : KainoteHandleBase {
 };
 struct KainoteChangeNotificationHandle : KainoteHandleBase {
     int fd{-1};
-    int watch{-1};
-    KainoteChangeNotificationHandle(int inotifyFd, int watchDescriptor)
-        : KainoteHandleBase(Kind::ChangeNotification), fd(inotifyFd), watch(watchDescriptor) {}
+    bool recursive{};
+    uint32_t mask{};
+    std::map<int, std::string> watchPaths;
+    std::set<std::string> watchedPaths;
+
+    KainoteChangeNotificationHandle(int inotifyFd, bool watchRecursively, uint32_t eventMask)
+        : KainoteHandleBase(Kind::ChangeNotification), fd(inotifyFd),
+          recursive(watchRecursively), mask(eventMask) {}
+
+    bool add_directory(const std::filesystem::path& directory) {
+        std::error_code ec;
+        if (!std::filesystem::is_directory(directory, ec)) return false;
+        const std::string normalized = directory.lexically_normal().string();
+        if (!watchedPaths.insert(normalized).second) return true;
+        const int wd = inotify_add_watch(fd, normalized.c_str(), mask | IN_ONLYDIR);
+        if (wd < 0) {
+            watchedPaths.erase(normalized);
+            return false;
+        }
+        auto previous = watchPaths.find(wd);
+        if (previous != watchPaths.end()) watchedPaths.erase(previous->second);
+        watchPaths[wd] = normalized;
+        watchedPaths.insert(normalized);
+        return true;
+    }
+
+    bool add_directory_tree(const std::filesystem::path& root) {
+        bool added = add_directory(root);
+        if (!recursive || !added) return added;
+
+        std::error_code ec;
+        std::filesystem::recursive_directory_iterator iterator(
+            root, std::filesystem::directory_options::skip_permission_denied, ec);
+        const std::filesystem::recursive_directory_iterator end;
+        while (iterator != end) {
+            if (!ec && iterator->is_directory(ec)) add_directory(iterator->path());
+            ec.clear();
+            iterator.increment(ec);
+        }
+        return added;
+    }
+
+    bool consume_events() {
+        alignas(inotify_event) char buffer[64 * 1024];
+        bool consumed = false;
+        while (true) {
+            const ssize_t length = read(fd, buffer, sizeof(buffer));
+            if (length < 0) {
+                if (errno == EINTR) continue;
+                if (errno == EAGAIN || errno == EWOULDBLOCK) break;
+                return false;
+            }
+            if (length == 0) break;
+            consumed = true;
+            std::size_t offset = 0;
+            while (offset + sizeof(inotify_event) <= static_cast<std::size_t>(length)) {
+                const auto* event = reinterpret_cast<const inotify_event*>(buffer + offset);
+                auto watched = watchPaths.find(event->wd);
+                if (recursive && watched != watchPaths.end() && event->len &&
+                    (event->mask & IN_ISDIR) &&
+                    (event->mask & (IN_CREATE | IN_MOVED_TO))) {
+                    add_directory_tree(std::filesystem::path(watched->second) / event->name);
+                }
+                if ((event->mask & IN_IGNORED) && watched != watchPaths.end()) {
+                    watchedPaths.erase(watched->second);
+                    watchPaths.erase(watched);
+                }
+                offset += sizeof(inotify_event) + event->len;
+            }
+        }
+        return consumed;
+    }
+
     ~KainoteChangeNotificationHandle() override {
-        if (fd >= 0 && watch >= 0) inotify_rm_watch(fd, watch);
+        if (fd >= 0) {
+            for (const auto& [watch, unused] : watchPaths) {
+                (void)unused;
+                inotify_rm_watch(fd, watch);
+            }
+        }
         if (fd >= 0) close(fd);
     }
 };
@@ -313,12 +441,16 @@ inline HANDLE CreateFileA(const char* path, DWORD access, DWORD, void*, DWORD cr
 inline HANDLE CreateFile(const wchar_t* path, DWORD access, DWORD share, void* sec, DWORD creation, DWORD flags, HANDLE tmpl) { return CreateFileW(path, access, share, sec, creation, flags, tmpl); }
 inline HANDLE CreateFile(const char* path, DWORD access, DWORD share, void* sec, DWORD creation, DWORD flags, HANDLE tmpl) { return CreateFileA(path, access, share, sec, creation, flags, tmpl); }
 inline KainoteHandleBase* kainote_handle(HANDLE h) { return (!h || h == INVALID_HANDLE_VALUE) ? nullptr : reinterpret_cast<KainoteHandleBase*>(h); }
-inline bool GetFileTime(HANDLE h, FILETIME*, FILETIME*, FILETIME* write) {
+inline bool GetFileTime(HANDLE h, FILETIME* creation, FILETIME* access, FILETIME* write) {
     auto* base = kainote_handle(h);
-    if (!base || base->kind != KainoteHandleBase::Kind::File || !write) return false;
+    if (!base || base->kind != KainoteHandleBase::Kind::File) return false;
     FILE* f = static_cast<KainoteFileHandle*>(base)->file;
     int fd=fileno(f); struct stat st{}; if (fstat(fd,&st)!=0) return false;
-    std::uint64_t v=(std::uint64_t)st.st_mtime; write->dwLowDateTime=(DWORD)v; write->dwHighDateTime=(DWORD)(v>>32); return true;
+	// POSIX has no portable creation time; use ctime as the closest value.
+    if (creation && !kainote_timespec_to_filetime(st.st_ctim, creation)) return false;
+    if (access && !kainote_timespec_to_filetime(st.st_atim, access)) return false;
+    if (write && !kainote_timespec_to_filetime(st.st_mtim, write)) return false;
+    return true;
 }
 inline bool CloseHandle(HANDLE h) { auto* base = kainote_handle(h); if (!base) return false; delete base; return true; }
 inline DWORD GetLastError() { return errno; }
@@ -334,22 +466,61 @@ inline void kainote_fill_find_data(const std::filesystem::directory_entry& e, WI
     auto name = kainote_utf8_to_wstring(e.path().filename().string());
     std::wcsncpy(data->cFileName, name.c_str(), MAX_PATH - 1);
     std::error_code ec; auto sz = e.is_regular_file(ec) ? e.file_size(ec) : 0; data->nFileSizeLow = static_cast<DWORD>(sz & 0xffffffffu);
-    auto ft = e.last_write_time(ec); if (!ec) { auto sctp = std::chrono::time_point_cast<std::chrono::system_clock::duration>(ft - std::filesystem::file_time_type::clock::now() + std::chrono::system_clock::now()); auto tt = std::chrono::system_clock::to_time_t(sctp); std::uint64_t v = static_cast<std::uint64_t>(tt); data->ftLastWriteTime.dwLowDateTime = static_cast<DWORD>(v); data->ftLastWriteTime.dwHighDateTime = static_cast<DWORD>(v >> 32); }
+    struct stat metadata{};
+    if (::stat(e.path().c_str(), &metadata) == 0)
+        kainote_timespec_to_filetime(metadata.st_mtim, &data->ftLastWriteTime);
+}
+inline char kainote_ascii_fold(char ch) {
+    return static_cast<char>(std::tolower(static_cast<unsigned char>(ch)));
+}
+inline bool kainote_windows_wildcard_match(const std::string& name, const std::string& pattern) {
+	// Win32 matching is case-insensitive and treats *.* as match-all.
+    if (pattern == "*" || pattern == "*.*") return true;
+    std::size_t namePos = 0;
+    std::size_t patternPos = 0;
+    std::size_t starPos = std::string::npos;
+    std::size_t retryNamePos = 0;
+    while (namePos < name.size()) {
+        if (patternPos < pattern.size() &&
+            (pattern[patternPos] == '?' ||
+             kainote_ascii_fold(pattern[patternPos]) == kainote_ascii_fold(name[namePos]))) {
+            ++namePos;
+            ++patternPos;
+        } else if (patternPos < pattern.size() && pattern[patternPos] == '*') {
+            starPos = patternPos++;
+            retryNamePos = namePos;
+        } else if (starPos != std::string::npos) {
+            patternPos = starPos + 1;
+            namePos = ++retryNamePos;
+        } else {
+            return false;
+        }
+    }
+    while (patternPos < pattern.size() && pattern[patternPos] == '*') ++patternPos;
+    return patternPos == pattern.size();
 }
 inline HANDLE FindFirstFileW(const wchar_t* pattern, WIN32_FIND_DATAW* data) {
-    std::string pat = kainote_normalize_path(pattern); auto star = pat.find('*'); std::filesystem::path dir = star == std::string::npos ? std::filesystem::path(pat).parent_path() : std::filesystem::path(pat.substr(0, star)).parent_path(); std::string prefix = star == std::string::npos ? std::filesystem::path(pat).filename().string() : std::filesystem::path(pat.substr(0, star)).filename().string();
-    if (dir.empty()) dir = "."; std::error_code ec; if (!std::filesystem::exists(dir, ec)) return INVALID_HANDLE_VALUE;
+    const std::filesystem::path searchPath(kainote_normalize_path(pattern));
+    std::filesystem::path dir = searchPath.parent_path();
+    const std::string wildcard = searchPath.filename().string();
+    if (dir.empty()) dir = ".";
+    std::error_code ec;
+    if (!std::filesystem::is_directory(dir, ec)) return INVALID_HANDLE_VALUE;
     auto* h = new KainoteFindHandle();
-    for (auto& e : std::filesystem::directory_iterator(dir, ec)) { if (ec) break; auto n = e.path().filename().string(); if (prefix.empty() || n.rfind(prefix, 0) == 0) h->entries.push_back(e); }
+    for (auto& e : std::filesystem::directory_iterator(dir, ec)) {
+        if (ec) break;
+        if (kainote_windows_wildcard_match(e.path().filename().string(), wildcard))
+            h->entries.push_back(e);
+    }
     if (h->entries.empty()) { delete h; return INVALID_HANDLE_VALUE; }
     kainote_fill_find_data(h->entries[0], data); return static_cast<HANDLE>(h);
 }
 inline HANDLE FindFirstFileA(const char* pattern, WIN32_FIND_DATA* data) { auto w = kainote_utf8_to_wstring(kainote_normalize_path(pattern)); return FindFirstFileW(w.c_str(), data); }
 inline HANDLE FindFirstFileEx(const char* pattern, FINDEX_INFO_LEVELS, WIN32_FIND_DATA* data, int, void*, DWORD) { return FindFirstFileA(pattern, data); }
 inline HANDLE FindFirstFileEx(const wchar_t* pattern, FINDEX_INFO_LEVELS, WIN32_FIND_DATA* data, int, void*, DWORD) { return FindFirstFileW(pattern, data); }
-inline BOOL FindNextFile(HANDLE handle, WIN32_FIND_DATAW* data) { auto* h = static_cast<KainoteFindHandle*>(handle); if (!h) return 0; if (++h->index >= h->entries.size()) return 0; kainote_fill_find_data(h->entries[h->index], data); return 1; }
+inline BOOL FindNextFile(HANDLE handle, WIN32_FIND_DATAW* data) { if (!handle || handle == INVALID_HANDLE_VALUE) return 0; auto* h = static_cast<KainoteFindHandle*>(handle); if (++h->index >= h->entries.size()) return 0; kainote_fill_find_data(h->entries[h->index], data); return 1; }
 inline BOOL FindNextFileW(HANDLE handle, WIN32_FIND_DATAW* data) { return FindNextFile(handle, data); }
-inline BOOL FindClose(HANDLE handle) { auto* h = static_cast<KainoteFindHandle*>(handle); delete h; return 1; }
+inline BOOL FindClose(HANDLE handle) { if (!handle || handle == INVALID_HANDLE_VALUE) return FALSE; auto* h = static_cast<KainoteFindHandle*>(handle); delete h; return TRUE; }
 
 constexpr DWORD ERROR_NO_MORE_FILES = 18;
 constexpr DWORD ERROR_FILE_NOT_FOUND = 2;
@@ -379,12 +550,10 @@ inline BOOL SetFileTime(HANDLE h, const FILETIME*, const FILETIME* access, const
     times[0] = st.st_atim;
     times[1] = st.st_mtim;
     if (access) {
-        times[0].tv_sec = kainote_filetime_to_time_t(access);
-        times[0].tv_nsec = 0;
+        if (!kainote_filetime_to_timespec(access, &times[0])) return FALSE;
     }
     if (write) {
-        times[1].tv_sec = kainote_filetime_to_time_t(write);
-        times[1].tv_nsec = 0;
+        if (!kainote_filetime_to_timespec(write, &times[1])) return FALSE;
     }
     return futimens(fd, times) == 0 ? TRUE : FALSE;
 }
@@ -411,6 +580,7 @@ inline BOOL SystemTimeToTzSpecificLocalTime(const TIME_ZONE_INFORMATION*, const 
     std::tm tm{};
     if (!localtime_r(&t, &tm)) return FALSE;
     kainote_tm_to_system(tm, local);
+    local->wMilliseconds = universal->wMilliseconds;
     return TRUE;
 }
 #define _wfopen kainote_wfopen
@@ -443,10 +613,22 @@ inline BOOL UnhookWindowsHookEx(HHOOK) { return 1; }
 inline LRESULT CallNextHookEx(HHOOK, int, WPARAM, LPARAM) { return 0; }
 inline std::mutex& kainote_window_timer_mutex() { static std::mutex m; return m; }
 inline std::map<std::pair<std::uintptr_t, UINT>, std::unique_ptr<KainoteTimerHandle>>& kainote_window_timers() { static std::map<std::pair<std::uintptr_t, UINT>, std::unique_ptr<KainoteTimerHandle>> timers; return timers; }
-inline void kainote_dispatch_timer_proc(TIMERPROC proc) {
-    if (!proc) return;
-    if (wxTheApp) wxTheApp->CallAfter([proc]() { proc(); });
-    else proc();
+inline void kainote_dispatch_timer_proc(const std::shared_ptr<KainoteTimerState>& state, TIMERPROC proc) {
+    if (!state || !proc || state->cancelled.load()) return;
+    bool expected = false;
+    if (!state->callbackPending.compare_exchange_strong(expected, true)) return;
+    if (wxTheApp) {
+        std::weak_ptr<KainoteTimerState> weakState = state;
+        wxTheApp->CallAfter([weakState, proc]() {
+            auto lockedState = weakState.lock();
+            if (!lockedState || lockedState->cancelled.load()) return;
+            proc();
+            lockedState->callbackPending.store(false);
+        });
+    } else {
+        if (!state->cancelled.load()) proc();
+        state->callbackPending.store(false);
+    }
 }
 inline UINT SetTimer(HWND hwnd, UINT id, UINT elapsed, TIMERPROC proc) {
     static std::atomic<UINT> nextTimerId{1};
@@ -460,7 +642,7 @@ inline UINT SetTimer(HWND hwnd, UINT id, UINT elapsed, TIMERPROC proc) {
         do {
             if (state->wait_for_cancel_or_timeout(elapsed)) break;
             if (state->cancelled.load()) break;
-            kainote_dispatch_timer_proc(proc);
+            kainote_dispatch_timer_proc(state, proc);
         } while (!state->cancelled.load());
     });
 
@@ -552,11 +734,11 @@ inline DWORD WaitForSingleObject(HANDLE h, DWORD ms) {
         auto* th = static_cast<KainoteThreadHandle*>(base);
         if (ms == INFINITE) {
             if (th->thread.joinable()) th->thread.join();
-            th->finished = true;
+            th->finished->store(true);
             return WAIT_OBJECT_0;
         }
         auto start = std::chrono::steady_clock::now();
-        while (!th->finished.load()) {
+        while (!th->finished->load()) {
             if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= ms) return WAIT_TIMEOUT;
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
@@ -583,26 +765,99 @@ inline DWORD WaitForSingleObject(HANDLE h, DWORD ms) {
         int result = poll(&pfd, 1, timeout);
         if (result == 0) return WAIT_TIMEOUT;
         if (result < 0) return WAIT_FAILED;
-        char buffer[4096];
-        while (read(change->fd, buffer, sizeof(buffer)) > 0) {}
+        if (!(pfd.revents & POLLIN) || !change->consume_events()) return WAIT_FAILED;
         return WAIT_OBJECT_0;
     }
     return WAIT_FAILED;
 }
 inline DWORD WaitForMultipleObjects(DWORD count, const HANDLE* handles, BOOL waitAll, DWORD ms) {
     if (!handles || !count) return WAIT_FAILED;
-    if (waitAll) {
-        for (DWORD i = 0; i < count; ++i) {
-            DWORD r = WaitForSingleObject(handles[i], ms);
-            if (r != WAIT_OBJECT_0) return r;
+    for (DWORD i = 0; i < count; ++i) {
+        auto* base = kainote_handle(handles[i]);
+        if (!base || (base->kind != KainoteHandleBase::Kind::Thread &&
+                      base->kind != KainoteHandleBase::Kind::Event &&
+                      base->kind != KainoteHandleBase::Kind::ChangeNotification)) {
+            return WAIT_FAILED;
         }
-        return WAIT_OBJECT_0;
+    }
+    if (waitAll) {
+        std::vector<KainoteHandleBase*> bases;
+        std::vector<KainoteEventHandle*> events;
+        bases.reserve(count);
+        events.reserve(count);
+        for (DWORD i = 0; i < count; ++i) {
+            auto* base = kainote_handle(handles[i]);
+            bases.push_back(base);
+            if (base->kind == KainoteHandleBase::Kind::Event)
+                events.push_back(static_cast<KainoteEventHandle*>(base));
+        }
+        std::sort(events.begin(), events.end(), std::less<KainoteEventHandle*>{});
+        events.erase(std::unique(events.begin(), events.end()), events.end());
+
+        const auto start = std::chrono::steady_clock::now();
+        while (true) {
+            std::vector<std::unique_lock<std::mutex>> eventLocks;
+            eventLocks.reserve(events.size());
+            for (auto* event : events) eventLocks.emplace_back(event->mutex);
+
+            bool allReady = true;
+            bool failed = false;
+            for (auto* base : bases) {
+                if (base->kind == KainoteHandleBase::Kind::Event) {
+                    if (!static_cast<KainoteEventHandle*>(base)->signaled) allReady = false;
+                } else if (base->kind == KainoteHandleBase::Kind::Thread) {
+                    if (!static_cast<KainoteThreadHandle*>(base)->finished->load()) allReady = false;
+                } else {
+                    auto* change = static_cast<KainoteChangeNotificationHandle*>(base);
+                    if (change->fd < 0) {
+                        failed = true;
+                        allReady = false;
+                        continue;
+                    }
+                    pollfd descriptor{change->fd, POLLIN, 0};
+                    const int result = poll(&descriptor, 1, 0);
+                    if (result < 0 && errno != EINTR) failed = true;
+                    if (result <= 0 || !(descriptor.revents & POLLIN)) allReady = false;
+                    if (descriptor.revents & (POLLERR | POLLHUP | POLLNVAL)) failed = true;
+                }
+            }
+            if (failed) return WAIT_FAILED;
+
+            if (allReady) {
+				// Consume auto-reset events only after every handle is ready.
+                for (auto* base : bases) {
+                    if (base->kind == KainoteHandleBase::Kind::ChangeNotification &&
+                        !static_cast<KainoteChangeNotificationHandle*>(base)->consume_events()) {
+                        return WAIT_FAILED;
+                    }
+                }
+                for (auto* event : events) {
+                    if (!event->manualReset) event->signaled = false;
+                }
+                eventLocks.clear();
+                for (auto* base : bases) {
+                    if (base->kind == KainoteHandleBase::Kind::Thread) {
+                        auto* thread = static_cast<KainoteThreadHandle*>(base);
+                        if (thread->thread.joinable()) thread->thread.join();
+                    }
+                }
+                return WAIT_OBJECT_0;
+            }
+
+            eventLocks.clear();
+            if (ms != INFINITE &&
+                std::chrono::steady_clock::now() - start >= std::chrono::milliseconds(ms)) {
+                return WAIT_TIMEOUT;
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        }
     }
     auto start = std::chrono::steady_clock::now();
     while (true) {
         for (DWORD i = 0; i < count; ++i) {
             DWORD r = WaitForSingleObject(handles[i], 0);
             if (r == WAIT_OBJECT_0) return WAIT_OBJECT_0 + i;
+            if (r == WAIT_FAILED) return WAIT_FAILED;
         }
         if (ms != INFINITE && std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count() >= ms) return WAIT_TIMEOUT;
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -616,7 +871,8 @@ inline uintptr_t _beginthreadex(void*, unsigned, KainoteThreadProc proc, void* d
     if (!proc) return 0;
     if (threadid) *threadid = GetCurrentThreadId();
     auto* handle = new KainoteThreadHandle();
-    handle->thread = std::thread([proc, data, handle]() { proc(data); handle->finished = true; });
+    auto finished = handle->finished;
+    handle->thread = std::thread([proc, data, finished]() { proc(data); finished->store(true); });
     return reinterpret_cast<uintptr_t>(handle);
 }
 inline void Sleep(DWORD ms) { std::this_thread::sleep_for(std::chrono::milliseconds(ms)); }
@@ -881,26 +1137,118 @@ inline DWORD GetFontData(HDC dc, DWORD, DWORD offset, void* buffer, DWORD length
     input.read(reinterpret_cast<char*>(buffer), toRead);
     return static_cast<DWORD>(input.gcount());
 }
-inline HANDLE FindFirstChangeNotification(const wchar_t* path, BOOL, DWORD) {
-    if (!path) return INVALID_HANDLE_VALUE;
-    std::string normalized = kainote_normalize_path(path);
+inline HANDLE kainote_create_change_notification(const std::vector<std::string>& paths, BOOL recursive) {
     int fd = inotify_init1(IN_NONBLOCK | IN_CLOEXEC);
     if (fd < 0) return INVALID_HANDLE_VALUE;
-    const uint32_t mask = IN_CREATE | IN_DELETE | IN_MOVED_FROM | IN_MOVED_TO | IN_CLOSE_WRITE | IN_ATTRIB;
-    int wd = inotify_add_watch(fd, normalized.c_str(), mask);
-    if (wd < 0) {
-        close(fd);
+    const uint32_t mask = IN_CREATE | IN_DELETE | IN_MOVED_FROM | IN_MOVED_TO |
+                          IN_CLOSE_WRITE | IN_ATTRIB | IN_DELETE_SELF | IN_MOVE_SELF;
+    auto* handle = new KainoteChangeNotificationHandle(fd, recursive != FALSE, mask);
+    for (const auto& path : paths) {
+        if (!path.empty()) handle->add_directory_tree(std::filesystem::path(path));
+    }
+    if (handle->watchPaths.empty()) {
+        delete handle;
         return INVALID_HANDLE_VALUE;
     }
-    return reinterpret_cast<HANDLE>(new KainoteChangeNotificationHandle(fd, wd));
+    return reinterpret_cast<HANDLE>(handle);
+}
+inline HANDLE FindFirstChangeNotification(const wchar_t* path, BOOL recursive, DWORD) {
+    if (!path) return INVALID_HANDLE_VALUE;
+    return kainote_create_change_notification({kainote_normalize_path(path)}, recursive);
+}
+inline HANDLE kainote_find_first_change_notifications(const std::vector<std::wstring>& paths, BOOL recursive, DWORD) {
+    std::vector<std::string> normalized;
+    normalized.reserve(paths.size());
+    for (const auto& path : paths) normalized.push_back(kainote_normalize_path(path.c_str()));
+    return kainote_create_change_notification(normalized, recursive);
+}
+inline std::vector<std::wstring> kainote_linux_font_directories() {
+    std::vector<std::wstring> directories;
+    if (!FcInit()) return directories;
+    FcConfig* config = FcConfigGetCurrent();
+    if (!config) return directories;
+    FcStrList* list = FcConfigGetFontDirs(config);
+    if (!list) return directories;
+    while (FcChar8* directory = FcStrListNext(list)) {
+		try {
+			directories.push_back(kainote_utf8_to_wstring(
+				reinterpret_cast<const char*>(directory)));
+		} catch (const std::range_error&) {
+		}
+    }
+    FcStrListDone(list);
+    std::sort(directories.begin(), directories.end());
+    directories.erase(std::unique(directories.begin(), directories.end()), directories.end());
+    return directories;
 }
 inline BOOL FindNextChangeNotification(HANDLE h) {
     auto* base = kainote_handle(h);
     return base && base->kind == KainoteHandleBase::Kind::ChangeNotification ? TRUE : FALSE;
 }
 inline BOOL FindCloseChangeNotification(HANDLE h) { return CloseHandle(h) ? TRUE : FALSE; }
-inline int AddFontResourceExW(const wchar_t* path, DWORD, void*) { if (!path || !FcInit()) return 0; std::string p = kainote_normalize_path(path); FcConfig* config = FcConfigGetCurrent(); if (!config) return 0; if (!FcConfigAppFontAddFile(config, reinterpret_cast<const FcChar8*>(p.c_str()))) return 0; FcConfigBuildFonts(config); return 1; }
-inline BOOL RemoveFontResourceExW(const wchar_t*, DWORD, void*) { if (!FcInit()) return FALSE; FcConfig* config = FcConfigGetCurrent(); if (!config) return FALSE; FcConfigAppFontClear(config); FcConfigBuildFonts(config); return TRUE; }
+inline std::mutex& kainote_app_font_mutex() {
+    static std::mutex mutex;
+    return mutex;
+}
+inline std::map<std::string, std::size_t>& kainote_app_font_references() {
+    static std::map<std::string, std::size_t> references;
+    return references;
+}
+inline bool kainote_rebuild_app_fonts(FcConfig* config) {
+    FcConfigAppFontClear(config);
+    bool addedAll = true;
+    for (const auto& [path, references] : kainote_app_font_references()) {
+        (void)references;
+        if (!FcConfigAppFontAddFile(config,
+                reinterpret_cast<const FcChar8*>(path.c_str()))) {
+            addedAll = false;
+        }
+    }
+    return FcConfigBuildFonts(config) != FcFalse && addedAll;
+}
+inline int AddFontResourceExW(const wchar_t* path, DWORD, void*) {
+    if (!path || !FcInit()) return 0;
+    const std::string normalized = kainote_normalize_path(path);
+    FcConfig* config = FcConfigGetCurrent();
+    if (!config) return 0;
+    std::lock_guard<std::mutex> lock(kainote_app_font_mutex());
+    auto& references = kainote_app_font_references();
+    auto existing = references.find(normalized);
+    if (existing != references.end()) {
+        ++existing->second;
+        return 1;
+    }
+    if (!FcConfigAppFontAddFile(config,
+            reinterpret_cast<const FcChar8*>(normalized.c_str()))) {
+        return 0;
+    }
+    references.emplace(normalized, 1);
+    if (FcConfigBuildFonts(config) == FcFalse) {
+        references.erase(normalized);
+        kainote_rebuild_app_fonts(config);
+        return 0;
+    }
+    return 1;
+}
+inline BOOL RemoveFontResourceExW(const wchar_t* path, DWORD, void*) {
+    if (!path || !FcInit()) return FALSE;
+    const std::string normalized = kainote_normalize_path(path);
+    FcConfig* config = FcConfigGetCurrent();
+    if (!config) return FALSE;
+    std::lock_guard<std::mutex> lock(kainote_app_font_mutex());
+    auto& references = kainote_app_font_references();
+    auto existing = references.find(normalized);
+    if (existing == references.end()) return FALSE;
+    if (existing->second > 1) {
+        --existing->second;
+        return TRUE;
+    }
+    references.erase(existing);
+    if (kainote_rebuild_app_fonts(config)) return TRUE;
+    references.emplace(normalized, 1);
+    kainote_rebuild_app_fonts(config);
+    return FALSE;
+}
 inline LRESULT SendMessage(HWND, UINT, WPARAM, LPARAM) { return 0; }
 inline HICON GetHiconOf(...) { return nullptr; }
 inline HRESULT CoInitialize(void*) { return 0; }
@@ -916,11 +1264,10 @@ constexpr int SW_MINIMIZE = 6;
 constexpr DWORD SEE_MASK_FLAG_NO_UI = 0x400;
 inline BOOL ShellExecuteEx(SHELLEXECUTEINFO* sei) {
     if (!sei || !sei->lpFile) return FALSE;
-    std::string target = kainote_wstring_to_utf8(sei->lpFile);
-    std::string command = "xdg-open \"";
-    for (char ch : target) { if (ch == '"' || ch == '\\') command.push_back('\\'); command.push_back(ch); }
-    command += "\" >/dev/null 2>&1 &";
-    return std::system(command.c_str()) == 0;
+    const wxString target(sei->lpFile);
+    if (target.StartsWith(L"http://") || target.StartsWith(L"https://"))
+        return wxLaunchDefaultBrowser(target) ? TRUE : FALSE;
+    return wxLaunchDefaultApplication(target) ? TRUE : FALSE;
 }
 struct SHFILEOPSTRUCT { HWND hwnd{}; UINT wFunc{}; LPCWSTR pFrom{}; LPCWSTR pTo{}; unsigned short fFlags{}; };
 constexpr UINT FO_DELETE = 0x0003;
@@ -1130,10 +1477,60 @@ inline void SHChangeNotify(long, unsigned, const void*, const void*) {}
 inline UINT RegisterWindowMessage(LPCWSTR) { static UINT next = 0xC000; return next++; }
 struct STARTUPINFO { DWORD cb{}; };
 struct PROCESS_INFORMATION { HANDLE hProcess{}; HANDLE hThread{}; DWORD dwProcessId{}; DWORD dwThreadId{}; };
-inline BOOL CreateProcessW(LPCWSTR, LPWSTR commandLine, void*, void*, BOOL, DWORD, void*, LPCWSTR, STARTUPINFO*, PROCESS_INFORMATION*) {
-    if (!commandLine) return FALSE;
-    std::string command = kainote_wstring_to_utf8(commandLine);
-    return std::system(command.c_str()) == 0;
+inline std::vector<std::wstring> kainote_parse_windows_command_line(LPCWSTR commandLine) {
+    std::vector<std::wstring> arguments;
+    if (!commandLine) return arguments;
+    const wchar_t* cursor = commandLine;
+    while (*cursor) {
+        while (*cursor && std::iswspace(*cursor)) ++cursor;
+        if (!*cursor) break;
+        std::wstring argument;
+        bool quoted = false;
+        while (*cursor && (quoted || !std::iswspace(*cursor))) {
+            if (*cursor == L'\\') {
+                std::size_t slashCount = 0;
+                while (*cursor == L'\\') {
+                    ++slashCount;
+                    ++cursor;
+                }
+                if (*cursor == L'"') {
+                    argument.append(slashCount / 2, L'\\');
+                    if (slashCount % 2) {
+                        argument.push_back(L'"');
+                        ++cursor;
+                    } else {
+                        quoted = !quoted;
+                        ++cursor;
+                    }
+                } else {
+                    argument.append(slashCount, L'\\');
+                }
+            } else if (*cursor == L'"') {
+                quoted = !quoted;
+                ++cursor;
+            } else {
+                argument.push_back(*cursor++);
+            }
+        }
+        arguments.push_back(std::move(argument));
+    }
+    return arguments;
+}
+inline BOOL CreateProcessW(LPCWSTR applicationName, LPWSTR commandLine, void*, void*, BOOL, DWORD, void*, LPCWSTR, STARTUPINFO*, PROCESS_INFORMATION* processInfo) {
+    auto arguments = kainote_parse_windows_command_line(commandLine);
+    if (arguments.empty() && applicationName) arguments.emplace_back(applicationName);
+    if (arguments.empty()) return FALSE;
+    std::vector<const wchar_t*> argv;
+    argv.reserve(arguments.size() + 1);
+    for (const auto& argument : arguments) argv.push_back(argument.c_str());
+    argv.push_back(nullptr);
+    const long pid = wxExecute(argv.data(), wxEXEC_ASYNC);
+    if (pid == 0) return FALSE;
+    if (processInfo) {
+        *processInfo = PROCESS_INFORMATION{};
+        processInfo->dwProcessId = static_cast<DWORD>(pid);
+    }
+    return TRUE;
 }
 constexpr const wchar_t* RT_RCDATA = L"RCDATA";
 inline HRSRC FindResource(void*, const wchar_t*, const wchar_t*) { return nullptr; }
