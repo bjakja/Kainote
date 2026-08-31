@@ -1691,10 +1691,6 @@ msgstr "Senarai bernama \"%s\" telah pun ada. Apa yang perlu dilakukan?"
 msgid "Scal"
 msgstr "Gabung"
 
-#: FontCatalogList.cpp:863
-msgid "Usuń całą zawartość katalogu"
-msgstr ""
-
 #: FontCatalogList.cpp:864
 #, fuzzy
 msgid "Dodaj czcionki z wszystkich otwartych napisów"
@@ -2099,22 +2095,10 @@ msgstr "Penapisan dan senarai fon"
 msgid "Nie można stworzyć uchwytu notyfikacji zmian folderu czcionek."
 msgstr "Gagal mencipta pengurus pemberitahuan untuk folder fon."
 
-#: FontEnumerator.cpp:261 FontEnumerator.cpp:441
-msgid "Ładowanie czcionek zewnętrznych"
-msgstr ""
-
 #: FontEnumerator.cpp:271
 msgid ""
 "Nie można stworzyć następnego uchwytu notyfikacji zmian folderu czcionek."
 msgstr "Gagal mencipta pengurus pemberitahuan seterusnya untuk folder fon."
-
-#: FontEnumerator.cpp:372
-msgid "Usuwanie czcionek z zewnętrznego folderu"
-msgstr ""
-
-#: FontEnumerator.cpp:380
-msgid "Wczytywanie czcionek z zewnętrznego folderu"
-msgstr ""
 
 #: FontEnumerator.cpp:402
 #, fuzzy
@@ -2754,22 +2738,10 @@ msgstr "Tetapkan FPS baharu"
 msgid "Podziel linię do czasu wideo"
 msgstr "Pilih baris pada kedudukan video semasa"
 
-#: HotkeysNaming.cpp:155 SubsGrid.cpp:160
-msgid "Podziel linie na klatki"
-msgstr ""
-
 #: HotkeysNaming.cpp:156 SubsGrid.cpp:162
 #, fuzzy
 msgid "Podziel linie na znaki"
 msgstr "Garisan pendua"
-
-#: HotkeysNaming.cpp:157 SubsGrid.cpp:163
-msgid "Podziel linie na słowa"
-msgstr ""
-
-#: HotkeysNaming.cpp:158 SubsGrid.cpp:164
-msgid "Podziel linie według łamań"
-msgstr ""
 
 #: HotkeysNaming.cpp:159 KainoteFrame.cpp:312
 msgid "Właściwości pliku ASS"
@@ -4418,14 +4390,6 @@ msgstr "Fon kekisi sari kata:"
 msgid "Czcionka programu:"
 msgstr "Fon perisian:"
 
-#: OptionsDialog.cpp:424
-msgid "Zliczaj spacje i znaki interpunkcyjne dla łamań"
-msgstr ""
-
-#: OptionsDialog.cpp:427
-msgid "Zliczaj spacje i znaki interpunkcyjne dla ZNS"
-msgstr ""
-
 #: OptionsDialog.cpp:432
 #, fuzzy
 msgid "Sposób wczytywania skryptów autoload"
@@ -4450,10 +4414,6 @@ msgstr "Setelah menu dibuka secara tak segerak"
 #, fuzzy
 msgid "Przy otwarciu menu"
 msgstr "Setelah menu dibuka"
-
-#: OptionsDialog.cpp:439
-msgid "Folder z zewnętrznymi czcionkami"
-msgstr ""
 
 #: OptionsDialog.cpp:442 VideoToolbar.cpp:508 VideoToolbar.cpp:525
 #, fuzzy
@@ -4558,10 +4518,6 @@ msgstr "Penjangkau video FFMS2 (perlu dimulakan semula)"
 #, fuzzy
 msgid "Filtr wyświetlania napisów"
 msgstr "Penapis sari kata"
-
-#: OptionsDialog.cpp:577
-msgid "Początkowy zoom wideo w procentach"
-msgstr ""
 
 #: OptionsDialog.cpp:596
 #, fuzzy
@@ -5686,10 +5642,6 @@ msgstr "Masa berlalu: 00:00:00.00"
 msgid "Indeksowanie pliku wideo"
 msgstr "Video mengindeks"
 
-#: ProviderFFMS2.cpp:118
-msgid "Rozmiar klatki wideo jest zbyt duży"
-msgstr ""
-
 #: ProviderFFMS2.cpp:285 VisualDrawingShapes.cpp:210
 #: VisualDrawingShapes.cpp:274
 #, fuzzy
@@ -5816,15 +5768,6 @@ msgstr "Tidak dapat mengunci penimbal tekstur"
 msgid "Nie można nałożyć powierzchni na siebie"
 msgstr "Tidak boleh menindih permukaan"
 
-#: RendererGStreamer.cpp:107
-#, c-format
-msgid "Rozdział %i"
-msgstr ""
-
-#: RendererGStreamer.cpp:195
-msgid "Plik wideo nie zawiera strumienia obrazu"
-msgstr ""
-
 #: RendererGStreamer.cpp:273
 #, fuzzy
 msgid "Nie można utworzyć potoku GStreamer (playbin)"
@@ -5839,11 +5782,6 @@ msgstr "Tidak dapat membuat proses. Permultipleksan dibatalkan"
 #, fuzzy, c-format
 msgid "Nie można otworzyć pliku wideo: %s"
 msgstr "Gagal membuka fail \"%s\"."
-
-#: RendererGStreamer.cpp:753
-#, c-format
-msgid "Ścieżka %i"
-msgstr ""
 
 #: RendererVideo.cpp:382 VisualRotationXY.cpp:163
 #, fuzzy
@@ -7766,14 +7704,6 @@ msgstr "Tidak boleh membuat contoh CSRI."
 msgid "CSRI nie obsługuje tego formatu."
 msgstr "CSRI tidak menyokong format ini."
 
-#: TabPanel.cpp:322
-msgid "Napisy zostały zmodyfikowane przez inny program, przeładować?"
-msgstr ""
-
-#: TabPanel.cpp:322
-msgid "Przeładowywanie"
-msgstr ""
-
 #: TextEditorTagList.cpp:132
 #, fuzzy
 msgid "Pokaż opis"
@@ -8660,14 +8590,6 @@ msgstr "Berganda"
 msgid "Pomnóż+"
 msgstr "Darab+"
 
-#: VideoToolbar.cpp:747 VisualAllTagsEdition.cpp:86
-msgid "Gradient tekst rosnąco"
-msgstr ""
-
-#: VideoToolbar.cpp:748 VisualAllTagsEdition.cpp:87
-msgid "Gradient tekst malejąco"
-msgstr ""
-
 #: VideoToolbar.cpp:748 VisualAllTagsEdition.cpp:87
 #, fuzzy
 msgid "Gradient linia rosnąco"
@@ -8677,20 +8599,6 @@ msgstr "Kecerunan warna bayang-bayang"
 #, fuzzy
 msgid "Gradient linia malejąco"
 msgstr "Kecerunan warna bayang-bayang"
-
-#: VideoToolbar.cpp:751
-msgid ""
-"Opcje zmiany tagów:\n"
-"Dodaj - zmienia wszystkie tagi dodając ruch z suwaka.\n"
-"Wstaw - wstawia w miejsce kursora w przypadku jednej linii\n"
-"albo na początku w przypadku wielu linii.\n"
-"Pomnóż - mnoży ruch suwaka przez numer zaznaczonej linijki\n"
-"pierwsza linia nie jest zmieniana.\n"
-"Gradnient tekst rosnąco - wstawia tag co znak rosnąco\n"
-"Gradnient tekst malejąco - wstawia tag co znak malejąco\n"
-"Gradient linia rosnąco - wstawia tag w zaznaczone linie rosnąco\n"
-"Gradient linia malejąco - wstawia tag w zaznaczone linie malejąco"
-msgstr ""
 
 #: VideoToolbar.cpp:778
 #, fuzzy

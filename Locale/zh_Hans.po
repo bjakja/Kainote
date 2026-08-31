@@ -6,49 +6,15 @@
 # LibreTranslate <noreply-mt-libretranslate@weblate.org>, 2026.
 # Weblate <noreply-mt-weblate@weblate.org>, 2026.
 # Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>, 2026.
+# reducedradius <137701630+flytothehighest@users.noreply.github.com>, 2026.
 msgid ""
-msgstr ""
-"Project-Id-Version: Kainote\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-18 12:12+0700\n"
-"PO-Revision-Date: 2026-03-10 12:09+0000\n"
-"Last-Translator: Weblate <noreply-mt-weblate@weblate.org>\n"
-"Language-Team: Chinese (Simplified Han script) <https://hosted.weblate.org/"
-"projects/kainote/kainote/zh_Hans/>\n"
-"Language: zh_Hans\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.17-dev\n"
-"X-Poedit-Basepath: ../Kainote\n"
-"X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: _\n"
-"X-Poedit-SearchPath-0: .\n"
-"X-Poedit-SearchPathExcluded-0: Bitmaps\n"
-"X-Poedit-SearchPathExcluded-1: GFFT\n"
-"X-Poedit-SearchPathExcluded-2: include\n"
-"X-Poedit-SearchPathExcluded-3: Win32\n"
-"X-Poedit-SearchPathExcluded-4: x64\n"
-"X-Poedit-SearchPathExcluded-5: ffms2.lib\n"
-"X-Poedit-SearchPathExcluded-6: ffms2_x64.lib\n"
-"X-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\n"
-"X-Poedit-SearchPathExcluded-8: Kainote.vcxproj\n"
-"X-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\n"
-"X-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\n"
-"X-Poedit-SearchPathExcluded-11: RCa00888\n"
-"X-Poedit-SearchPathExcluded-12: resource.aps\n"
-"X-Poedit-SearchPathExcluded-13: resource.rc\n"
-"X-Poedit-SearchPathExcluded-14: CsriMod.cpp\n"
-"X-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\n"
-"X-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
+msgstr "Project-Id-Version: Kainote\nReport-Msgid-Bugs-To: poiiiii4yy@gmail.com\nPOT-Creation-Date: 2026-06-18 12:12+0700\nPO-Revision-Date: 2026-08-31 12:51+0000\nLast-Translator: reducedradius <137701630+flytothehighest@users.noreply.github.com>\nLanguage-Team: Chinese (Simplified Han script) <https://hosted.weblate.org/projects/kainote/kainote/zh_Hans/>\nLanguage: zh_Hans\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=1; plural=0;\nX-Generator: Weblate 2026.9.dev0\nX-Poedit-Basepath: ../Kainote\nX-Poedit-SourceCharset: UTF-8\nX-Poedit-KeywordsList: _\nX-Poedit-SearchPath-0: .\nX-Poedit-SearchPathExcluded-0: Bitmaps\nX-Poedit-SearchPathExcluded-1: GFFT\nX-Poedit-SearchPathExcluded-2: include\nX-Poedit-SearchPathExcluded-3: Win32\nX-Poedit-SearchPathExcluded-4: x64\nX-Poedit-SearchPathExcluded-5: ffms2.lib\nX-Poedit-SearchPathExcluded-6: ffms2_x64.lib\nX-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\nX-Poedit-SearchPathExcluded-8: Kainote.vcxproj\nX-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\nX-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\nX-Poedit-SearchPathExcluded-11: RCa00888\nX-Poedit-SearchPathExcluded-12: resource.aps\nX-Poedit-SearchPathExcluded-13: resource.rc\nX-Poedit-SearchPathExcluded-14: CsriMod.cpp\nX-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\nX-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
 
 #: AudioBox.cpp:72
 msgid "Pasek szukania"
 msgstr "搜索栏"
 
 #: AudioBox.cpp:86
-#, fuzzy
 msgid "Rozciągnięcie w poziomie"
 msgstr "横向扩展"
 
@@ -58,9 +24,8 @@ msgid "Rozciągnięcie w pionie"
 msgstr "垂直伸缩"
 
 #: AudioBox.cpp:94
-#, fuzzy
 msgid "Głośność"
-msgstr "容量"
+msgstr "音量"
 
 #: AudioBox.cpp:103
 #, fuzzy
@@ -68,14 +33,12 @@ msgid "Połącz suwak głośności i rozciągnięcia"
 msgstr "3. 量增量与扩展之间的联系"
 
 #: AudioBox.cpp:130
-#, fuzzy
 msgid "Odtwórz poprzednią linijkę"
-msgstr "1. 前线游戏"
+msgstr "播放上一行"
 
 #: AudioBox.cpp:134
-#, fuzzy
 msgid "Odtwórz następną linijkę"
-msgstr "下一行"
+msgstr "播放下一行"
 
 #: AudioBox.cpp:138
 #, fuzzy
@@ -123,9 +86,8 @@ msgid "Odtwórz 500ms po czasie końcowym"
 msgstr "末游乐500米"
 
 #: AudioBox.cpp:160
-#, fuzzy
 msgid "Odtwórz do końca"
-msgstr "迎战"
+msgstr "播放至终止"
 
 #: AudioBox.cpp:163
 #, fuzzy
@@ -138,14 +100,12 @@ msgid "Dodaj zakończenie do aktywnej linijki"
 msgstr "加入正线"
 
 #: AudioBox.cpp:170 Hotkeys.cpp:195 HotkeysNaming.cpp:76
-#, fuzzy
 msgid "Zatwierdź zmiany"
 msgstr "应用更改"
 
 #: AudioBox.cpp:172 Hotkeys.cpp:210 HotkeysNaming.cpp:57
-#, fuzzy
 msgid "Przejdź do zaznaczenia"
-msgstr "选 选"
+msgstr "前往选择部分"
 
 #: AudioBox.cpp:175
 #, fuzzy
@@ -202,9 +162,8 @@ msgid "Błąd"
 msgstr "错误"
 
 #: AudioDisplay.cpp:270 RendererVideo.cpp:314
-#, fuzzy
 msgid "Nie można utworzyć obiektu Direct3D"
-msgstr "Cannot 制造直接3D物体"
+msgstr "无法创建Direct3D对象"
 
 #: AudioDisplay.cpp:304 RendererVideo.cpp:351
 #, fuzzy
@@ -255,9 +214,8 @@ msgid "Nie można stworzyć plain surface"
 msgstr "Cannot造就平原表面"
 
 #: AudioDisplay.cpp:366 RendererVideo.cpp:339
-#, fuzzy
 msgid "Nie można zresetować Direct3D"
-msgstr "Cannot reset Direct3D"
+msgstr "无法重置 Direct3D"
 
 #: AudioDisplay.cpp:616
 #, fuzzy
@@ -304,9 +262,8 @@ msgid "Makro o nazwie '%s' jest już zdefiniowane w skrypcie '%s'"
 msgstr "字母“%s”中已经定义的Macro。 页: 1"
 
 #: Automation.cpp:813
-#, fuzzy
 msgid "Wystąpił błąd podczas wykonywania skryptu Lua:\n"
-msgstr "字母Lua在装货时发生错误:\n"
+msgstr "执行Lua脚本时出现错误：\n"
 
 #: Automation.cpp:1260 Automation.cpp:1302 KainoteFrame.cpp:925
 #: KainoteFrame.cpp:2622
@@ -347,14 +304,12 @@ msgid "Wybierz edytor skryptów"
 msgstr "选择文字编辑"
 
 #: Automation.cpp:1321
-#, fuzzy
 msgid "Programy (*.exe)|*.exe|Wszystkie pliki (*.*)|*.*"
-msgstr "Programs (* .exe) * E/CN.6/2009/1"
+msgstr "可执行程序(*.exe)|*.exe|所有文件 (*.*)|*.*"
 
 #: Automation.cpp:1337
-#, fuzzy
 msgid "Nie można uruchomić edytora."
-msgstr "Cannotstart Editor."
+msgstr "无法启动编辑器。"
 
 #: Automation.cpp:1337
 #, fuzzy
@@ -839,9 +794,8 @@ msgstr ""
 "彩色在右边点击后选择窗户."
 
 #: ColorPicker.cpp:574
-#, fuzzy
 msgid "Wybrany kolor:"
-msgstr "选择的颜色"
+msgstr "选择的颜色："
 
 #: ColorPicker.cpp:586
 #, fuzzy
@@ -869,9 +823,8 @@ msgid "Nasycenie:"
 msgstr "饱和度:"
 
 #: ColorPicker.cpp:611
-#, fuzzy
 msgid "Jaskrawość:"
-msgstr "亮度"
+msgstr "亮度："
 
 #: ColorPicker.cpp:621 VisualAllTagsEdition.cpp:69
 #, fuzzy
@@ -1145,9 +1098,8 @@ msgid "Opcje dummy wideo"
 msgstr "Dummy视频选择"
 
 #: DummyVideo.cpp:49
-#, fuzzy
 msgid "Rozdzielczość wideo:"
-msgstr "视频分辨率"
+msgstr "视频分辨率："
 
 #: DummyVideo.cpp:56
 #, fuzzy
@@ -3246,22 +3198,10 @@ msgstr "3. 建立新的财务和财政制度"
 msgid "Podziel linię do czasu wideo"
 msgstr "现有视频位置的选线"
 
-#: HotkeysNaming.cpp:155 SubsGrid.cpp:160
-msgid "Podziel linie na klatki"
-msgstr ""
-
 #: HotkeysNaming.cpp:156 SubsGrid.cpp:162
 #, fuzzy
 msgid "Podziel linie na znaki"
 msgstr "重复项目"
-
-#: HotkeysNaming.cpp:157 SubsGrid.cpp:163
-msgid "Podziel linie na słowa"
-msgstr ""
-
-#: HotkeysNaming.cpp:158 SubsGrid.cpp:164
-msgid "Podziel linie według łamań"
-msgstr ""
 
 #: HotkeysNaming.cpp:159 KainoteFrame.cpp:312
 #, fuzzy
@@ -5165,14 +5105,6 @@ msgstr "二级:"
 msgid "Czcionka programu:"
 msgstr "Program font:"
 
-#: OptionsDialog.cpp:424
-msgid "Zliczaj spacje i znaki interpunkcyjne dla łamań"
-msgstr ""
-
-#: OptionsDialog.cpp:427
-msgid "Zliczaj spacje i znaki interpunkcyjne dla ZNS"
-msgstr ""
-
 #: OptionsDialog.cpp:432
 #, fuzzy
 msgid "Sposób wczytywania skryptów autoload"
@@ -6436,10 +6368,6 @@ msgstr "时间:00:00.00"
 msgid "Indeksowanie pliku wideo"
 msgstr "索引录像"
 
-#: ProviderFFMS2.cpp:118
-msgid "Rozmiar klatki wideo jest zbyt duży"
-msgstr ""
-
 #: ProviderFFMS2.cpp:285 VisualDrawingShapes.cpp:210
 #: VisualDrawingShapes.cpp:274
 #, fuzzy
@@ -6566,15 +6494,6 @@ msgstr "缓冲"
 msgid "Nie można nałożyć powierzchni na siebie"
 msgstr "Cannot overlay surfaces"
 
-#: RendererGStreamer.cpp:107
-#, c-format
-msgid "Rozdział %i"
-msgstr ""
-
-#: RendererGStreamer.cpp:195
-msgid "Plik wideo nie zawiera strumienia obrazu"
-msgstr ""
-
 #: RendererGStreamer.cpp:273
 #, fuzzy
 msgid "Nie można utworzyć potoku GStreamer (playbin)"
@@ -6589,11 +6508,6 @@ msgstr "不可能创造过程。 临时取消"
 #, fuzzy, c-format
 msgid "Nie można otworzyć pliku wideo: %s"
 msgstr "无法打开文件 %s"
-
-#: RendererGStreamer.cpp:753
-#, c-format
-msgid "Ścieżka %i"
-msgstr ""
 
 #: RendererVideo.cpp:382 VisualRotationXY.cpp:163
 #, fuzzy
@@ -9892,3 +9806,48 @@ msgid ""
 msgstr ""
 "录像带没有可见线\n"
 "或无期限"
+
+#: HotkeysNaming.cpp:155 SubsGrid.cpp:160
+#, fuzzy
+msgid "Podziel linie na klatki"
+msgstr "段目"
+
+#: HotkeysNaming.cpp:157 SubsGrid.cpp:163
+#, fuzzy
+msgid "Podziel linie na słowa"
+msgstr "字句"
+
+#: HotkeysNaming.cpp:158 SubsGrid.cpp:164
+#, fuzzy
+msgid "Podziel linie według łamań"
+msgstr "包装"
+
+#: OptionsDialog.cpp:424
+#, fuzzy
+msgid "Zliczaj spacje i znaki interpunkcyjne dla łamań"
+msgstr "包装的空间和固定位置"
+
+#: OptionsDialog.cpp:427
+#, fuzzy
+msgid "Zliczaj spacje i znaki interpunkcyjne dla ZNS"
+msgstr "CPS的空间和固定性计算"
+
+#: ProviderFFMS2.cpp:118
+#, fuzzy
+msgid "Rozmiar klatki wideo jest zbyt duży"
+msgstr "视频规模太大"
+
+#: RendererGStreamer.cpp:107
+#, c-format
+msgid "Rozdział %i"
+msgstr "第%i章"
+
+#: RendererGStreamer.cpp:195
+#, fuzzy
+msgid "Plik wideo nie zawiera strumienia obrazu"
+msgstr "录像文件不含视频流"
+
+#: RendererGStreamer.cpp:753
+#, c-format
+msgid "Ścieżka %i"
+msgstr "轨道%i"
