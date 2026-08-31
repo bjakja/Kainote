@@ -6,41 +6,7 @@
 # Weblate <noreply-mt-weblate@weblate.org>, 2026.
 # LibreTranslate <noreply-mt-libretranslate@weblate.org>, 2026.
 msgid ""
-msgstr ""
-"Project-Id-Version: Kainote\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-18 12:12+0700\n"
-"PO-Revision-Date: 2026-03-10 10:10+0000\n"
-"Last-Translator: Weblate <noreply-mt-weblate@weblate.org>\n"
-"Language-Team: Italian <https://hosted.weblate.org/projects/kainote/kainote/"
-"it/>\n"
-"Language: it\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.17-dev\n"
-"X-Poedit-Basepath: ../Kainote\n"
-"X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: _\n"
-"X-Poedit-SearchPath-0: .\n"
-"X-Poedit-SearchPathExcluded-0: Bitmaps\n"
-"X-Poedit-SearchPathExcluded-1: GFFT\n"
-"X-Poedit-SearchPathExcluded-2: include\n"
-"X-Poedit-SearchPathExcluded-3: Win32\n"
-"X-Poedit-SearchPathExcluded-4: x64\n"
-"X-Poedit-SearchPathExcluded-5: ffms2.lib\n"
-"X-Poedit-SearchPathExcluded-6: ffms2_x64.lib\n"
-"X-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\n"
-"X-Poedit-SearchPathExcluded-8: Kainote.vcxproj\n"
-"X-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\n"
-"X-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\n"
-"X-Poedit-SearchPathExcluded-11: RCa00888\n"
-"X-Poedit-SearchPathExcluded-12: resource.aps\n"
-"X-Poedit-SearchPathExcluded-13: resource.rc\n"
-"X-Poedit-SearchPathExcluded-14: CsriMod.cpp\n"
-"X-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\n"
-"X-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
+msgstr "Project-Id-Version: Kainote\nReport-Msgid-Bugs-To: poiiiii4yy@gmail.com\nPOT-Creation-Date: 2026-06-18 12:12+0700\nPO-Revision-Date: 2026-06-18 14:01+0000\nLast-Translator: LibreTranslate <noreply-mt-libretranslate@weblate.org>\nLanguage-Team: Italian <https://hosted.weblate.org/projects/kainote/kainote/it/>\nLanguage: it\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=n != 1;\nX-Generator: Weblate 2026.7.dev0\nX-Poedit-Basepath: ../Kainote\nX-Poedit-SourceCharset: UTF-8\nX-Poedit-KeywordsList: _\nX-Poedit-SearchPath-0: .\nX-Poedit-SearchPathExcluded-0: Bitmaps\nX-Poedit-SearchPathExcluded-1: GFFT\nX-Poedit-SearchPathExcluded-2: include\nX-Poedit-SearchPathExcluded-3: Win32\nX-Poedit-SearchPathExcluded-4: x64\nX-Poedit-SearchPathExcluded-5: ffms2.lib\nX-Poedit-SearchPathExcluded-6: ffms2_x64.lib\nX-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\nX-Poedit-SearchPathExcluded-8: Kainote.vcxproj\nX-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\nX-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\nX-Poedit-SearchPathExcluded-11: RCa00888\nX-Poedit-SearchPathExcluded-12: resource.aps\nX-Poedit-SearchPathExcluded-13: resource.rc\nX-Poedit-SearchPathExcluded-14: CsriMod.cpp\nX-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\nX-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
 
 #: AudioBox.cpp:72
 msgid "Pasek szukania"
@@ -3213,22 +3179,10 @@ msgstr "Impostare il nuovo FPS"
 msgid "Podziel linię do czasu wideo"
 msgstr "Seleziona la linea nella posizione video corrente"
 
-#: HotkeysNaming.cpp:155 SubsGrid.cpp:160
-msgid "Podziel linie na klatki"
-msgstr ""
-
 #: HotkeysNaming.cpp:156 SubsGrid.cpp:162
 #, fuzzy
 msgid "Podziel linie na znaki"
 msgstr "Duplicazione di linee"
-
-#: HotkeysNaming.cpp:157 SubsGrid.cpp:163
-msgid "Podziel linie na słowa"
-msgstr ""
-
-#: HotkeysNaming.cpp:158 SubsGrid.cpp:164
-msgid "Podziel linie według łamań"
-msgstr ""
 
 #: HotkeysNaming.cpp:159 KainoteFrame.cpp:312
 #, fuzzy
@@ -5138,14 +5092,6 @@ msgstr "Font della griglia dei sottotitoli:"
 msgid "Czcionka programu:"
 msgstr "Carattere del programma:"
 
-#: OptionsDialog.cpp:424
-msgid "Zliczaj spacje i znaki interpunkcyjne dla łamań"
-msgstr ""
-
-#: OptionsDialog.cpp:427
-msgid "Zliczaj spacje i znaki interpunkcyjne dla ZNS"
-msgstr ""
-
 #: OptionsDialog.cpp:432
 #, fuzzy
 msgid "Sposób wczytywania skryptów autoload"
@@ -6413,10 +6359,6 @@ msgstr "Tempo trascorso: 00:00:00.00"
 msgid "Indeksowanie pliku wideo"
 msgstr "Indicizzazione dei video"
 
-#: ProviderFFMS2.cpp:118
-msgid "Rozmiar klatki wideo jest zbyt duży"
-msgstr ""
-
 #: ProviderFFMS2.cpp:285 VisualDrawingShapes.cpp:210
 #: VisualDrawingShapes.cpp:274
 #, fuzzy
@@ -6545,15 +6487,6 @@ msgstr "Impossibile sbloccare il buffer delle texture"
 msgid "Nie można nałożyć powierzchni na siebie"
 msgstr "Non è possibile sovrapporre le superfici"
 
-#: RendererGStreamer.cpp:107
-#, c-format
-msgid "Rozdział %i"
-msgstr ""
-
-#: RendererGStreamer.cpp:195
-msgid "Plik wideo nie zawiera strumienia obrazu"
-msgstr ""
-
 #: RendererGStreamer.cpp:273
 #, fuzzy
 msgid "Nie można utworzyć potoku GStreamer (playbin)"
@@ -6568,11 +6501,6 @@ msgstr "Impossibile creare il processo. Muxing annullato"
 #, fuzzy, c-format
 msgid "Nie można otworzyć pliku wideo: %s"
 msgstr "Impossibile aprire il file \"%s\"."
-
-#: RendererGStreamer.cpp:753
-#, c-format
-msgid "Ścieżka %i"
-msgstr ""
 
 # Zły: nie rozumiem
 #: RendererVideo.cpp:382 VisualRotationXY.cpp:163
@@ -9903,3 +9831,48 @@ msgid ""
 msgstr ""
 "La linea non è visibile sul video\n"
 "o ha durata zero"
+
+#: HotkeysNaming.cpp:155 SubsGrid.cpp:160
+#, fuzzy
+msgid "Podziel linie na klatki"
+msgstr "Linee divise in cornici"
+
+#: HotkeysNaming.cpp:157 SubsGrid.cpp:163
+#, fuzzy
+msgid "Podziel linie na słowa"
+msgstr "Dividere le linee in parole"
+
+#: HotkeysNaming.cpp:158 SubsGrid.cpp:164
+#, fuzzy
+msgid "Podziel linie według łamań"
+msgstr "Linee divise per involucri"
+
+#: OptionsDialog.cpp:424
+#, fuzzy
+msgid "Zliczaj spacje i znaki interpunkcyjne dla łamań"
+msgstr "Calcola spazi e caratteri di punteggiatura per avvolgere"
+
+#: OptionsDialog.cpp:427
+#, fuzzy
+msgid "Zliczaj spacje i znaki interpunkcyjne dla ZNS"
+msgstr "Calcola spazi e caratteri di punteggiatura per CPS"
+
+#: ProviderFFMS2.cpp:118
+#, fuzzy
+msgid "Rozmiar klatki wideo jest zbyt duży"
+msgstr "La dimensione della cornice video è troppo grande"
+
+#: RendererGStreamer.cpp:107
+#, c-format
+msgid "Rozdział %i"
+msgstr "Capitolo %i"
+
+#: RendererGStreamer.cpp:195
+#, fuzzy
+msgid "Plik wideo nie zawiera strumienia obrazu"
+msgstr "Il file video non contiene un flusso video"
+
+#: RendererGStreamer.cpp:753
+#, c-format
+msgid "Ścieżka %i"
+msgstr "Traccia %i"

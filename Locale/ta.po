@@ -7,41 +7,7 @@
 # தமிழ்நேரம் <tamilneram247@gmail.com>, 2025, 2026.
 # Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>, 2026.
 msgid ""
-msgstr ""
-"Project-Id-Version: Kainote\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-18 12:12+0700\n"
-"PO-Revision-Date: 2026-03-10 10:09+0000\n"
-"Last-Translator: Weblate <noreply-mt-weblate@weblate.org>\n"
-"Language-Team: Tamil <https://hosted.weblate.org/projects/kainote/kainote/ta/"
-">\n"
-"Language: ta\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.17-dev\n"
-"X-Poedit-Basepath: ../Kainote\n"
-"X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: _\n"
-"X-Poedit-SearchPath-0: .\n"
-"X-Poedit-SearchPathExcluded-0: Bitmaps\n"
-"X-Poedit-SearchPathExcluded-1: GFFT\n"
-"X-Poedit-SearchPathExcluded-2: include\n"
-"X-Poedit-SearchPathExcluded-3: Win32\n"
-"X-Poedit-SearchPathExcluded-4: x64\n"
-"X-Poedit-SearchPathExcluded-5: ffms2.lib\n"
-"X-Poedit-SearchPathExcluded-6: ffms2_x64.lib\n"
-"X-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\n"
-"X-Poedit-SearchPathExcluded-8: Kainote.vcxproj\n"
-"X-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\n"
-"X-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\n"
-"X-Poedit-SearchPathExcluded-11: RCa00888\n"
-"X-Poedit-SearchPathExcluded-12: resource.aps\n"
-"X-Poedit-SearchPathExcluded-13: resource.rc\n"
-"X-Poedit-SearchPathExcluded-14: CsriMod.cpp\n"
-"X-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\n"
-"X-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
+msgstr "Project-Id-Version: Kainote\nReport-Msgid-Bugs-To: poiiiii4yy@gmail.com\nPOT-Creation-Date: 2026-06-18 12:12+0700\nPO-Revision-Date: 2026-06-18 14:01+0000\nLast-Translator: Weblate <noreply-mt-weblate@weblate.org>\nLanguage-Team: Tamil <https://hosted.weblate.org/projects/kainote/kainote/ta/>\nLanguage: ta\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=n != 1;\nX-Generator: Weblate 2026.7.dev0\nX-Poedit-Basepath: ../Kainote\nX-Poedit-SourceCharset: UTF-8\nX-Poedit-KeywordsList: _\nX-Poedit-SearchPath-0: .\nX-Poedit-SearchPathExcluded-0: Bitmaps\nX-Poedit-SearchPathExcluded-1: GFFT\nX-Poedit-SearchPathExcluded-2: include\nX-Poedit-SearchPathExcluded-3: Win32\nX-Poedit-SearchPathExcluded-4: x64\nX-Poedit-SearchPathExcluded-5: ffms2.lib\nX-Poedit-SearchPathExcluded-6: ffms2_x64.lib\nX-Poedit-SearchPathExcluded-7: Kainote.vcproj.Bakura-Komputer.Bakura.user\nX-Poedit-SearchPathExcluded-8: Kainote.vcxproj\nX-Poedit-SearchPathExcluded-9: Kainote.vcxproj.filters\nX-Poedit-SearchPathExcluded-10: Kainote.vcxproj.user\nX-Poedit-SearchPathExcluded-11: RCa00888\nX-Poedit-SearchPathExcluded-12: resource.aps\nX-Poedit-SearchPathExcluded-13: resource.rc\nX-Poedit-SearchPathExcluded-14: CsriMod.cpp\nX-Poedit-SearchPathExcluded-15: UpdateChecker.cpp\nX-Poedit-SearchPathExcluded-16: KaiTextValidator.cpp\n"
 
 #: AudioBox.cpp:72
 msgid "Pasek szukania"
@@ -1637,10 +1603,6 @@ msgstr "\"%s\" என்று பெயரிடப்பட்ட பட்ட
 msgid "Scal"
 msgstr "ஒன்றிணைக்கவும்"
 
-#: FontCatalogList.cpp:863
-msgid "Usuń całą zawartość katalogu"
-msgstr ""
-
 #: FontCatalogList.cpp:864
 #, fuzzy
 msgid "Dodaj czcionki z wszystkich otwartych napisów"
@@ -2045,22 +2007,10 @@ msgstr "வடிகட்டுதல் மற்றும் எழுத்�
 msgid "Nie można stworzyć uchwytu notyfikacji zmian folderu czcionek."
 msgstr "எழுத்துருக்கள் கோப்புறைக்கு அறிவிப்பு கையாளுதலை உருவாக்க முடியாது."
 
-#: FontEnumerator.cpp:261 FontEnumerator.cpp:441
-msgid "Ładowanie czcionek zewnętrznych"
-msgstr ""
-
 #: FontEnumerator.cpp:271
 msgid ""
 "Nie można stworzyć następnego uchwytu notyfikacji zmian folderu czcionek."
 msgstr "எழுத்துருக்கள் கோப்புறைக்கு அடுத்த அறிவிப்பு கையாளுபவரை உருவாக்க முடியாது."
-
-#: FontEnumerator.cpp:372
-msgid "Usuwanie czcionek z zewnętrznego folderu"
-msgstr ""
-
-#: FontEnumerator.cpp:380
-msgid "Wczytywanie czcionek z zewnętrznego folderu"
-msgstr ""
 
 #: FontEnumerator.cpp:402
 #, fuzzy
@@ -2696,22 +2646,10 @@ msgstr "புதிய FPS ஐ அமைக்கவும்"
 msgid "Podziel linię do czasu wideo"
 msgstr "தற்போதைய வீடியோ நிலையில் வரியைத் தேர்ந்தெடுக்கவும்"
 
-#: HotkeysNaming.cpp:155 SubsGrid.cpp:160
-msgid "Podziel linie na klatki"
-msgstr ""
-
 #: HotkeysNaming.cpp:156 SubsGrid.cpp:162
 #, fuzzy
 msgid "Podziel linie na znaki"
 msgstr "கோடுகள் நகலெடுகிறது"
-
-#: HotkeysNaming.cpp:157 SubsGrid.cpp:163
-msgid "Podziel linie na słowa"
-msgstr ""
-
-#: HotkeysNaming.cpp:158 SubsGrid.cpp:164
-msgid "Podziel linie według łamań"
-msgstr ""
 
 #: HotkeysNaming.cpp:159 KainoteFrame.cpp:312
 msgid "Właściwości pliku ASS"
@@ -4251,14 +4189,6 @@ msgstr "வசன வரிகள் கட்டம் எழுத்துர
 msgid "Czcionka programu:"
 msgstr "நிரல் எழுத்துரு:"
 
-#: OptionsDialog.cpp:424
-msgid "Zliczaj spacje i znaki interpunkcyjne dla łamań"
-msgstr ""
-
-#: OptionsDialog.cpp:427
-msgid "Zliczaj spacje i znaki interpunkcyjne dla ZNS"
-msgstr ""
-
 #: OptionsDialog.cpp:432
 msgid "Sposób wczytywania skryptów autoload"
 msgstr "ஆட்டோலோட் ஏற்றுதல் முறை"
@@ -4278,10 +4208,6 @@ msgstr "திறந்த பட்டியல் ஒத்திசைவற�
 #: OptionsDialog.cpp:433
 msgid "Przy otwarciu menu"
 msgstr "திறந்த மெனுவுக்குப் பிறகு"
-
-#: OptionsDialog.cpp:439
-msgid "Folder z zewnętrznymi czcionkami"
-msgstr ""
 
 #: OptionsDialog.cpp:442 VideoToolbar.cpp:508 VideoToolbar.cpp:525
 msgid "Wybierz"
@@ -4368,10 +4294,6 @@ msgstr "FFMS2 வீடியோ தேடல் (மறுஏற்றம் �
 #: OptionsDialog.cpp:576
 msgid "Filtr wyświetlania napisów"
 msgstr "வசன வரிகள் வடிகட்டி"
-
-#: OptionsDialog.cpp:577
-msgid "Początkowy zoom wideo w procentach"
-msgstr ""
 
 #: OptionsDialog.cpp:596
 msgid "Liniowe"
@@ -5276,10 +5198,6 @@ msgstr "கடந்துவிட்ட நேரம்: 00:00:00.00"
 msgid "Indeksowanie pliku wideo"
 msgstr "குறியீட்டு வீடியோ"
 
-#: ProviderFFMS2.cpp:118
-msgid "Rozmiar klatki wideo jest zbyt duży"
-msgstr ""
-
 #: ProviderFFMS2.cpp:285 VisualDrawingShapes.cpp:210
 #: VisualDrawingShapes.cpp:274
 msgid "Bez nazwy"
@@ -5386,15 +5304,6 @@ msgstr "அமைப்பு இடையகத்தைத் திறக்�
 msgid "Nie można nałożyć powierzchni na siebie"
 msgstr "மேற்பரப்புகளை மேலெழுத முடியாது"
 
-#: RendererGStreamer.cpp:107
-#, c-format
-msgid "Rozdział %i"
-msgstr ""
-
-#: RendererGStreamer.cpp:195
-msgid "Plik wideo nie zawiera strumienia obrazu"
-msgstr ""
-
 #: RendererGStreamer.cpp:273
 #, fuzzy
 msgid "Nie można utworzyć potoku GStreamer (playbin)"
@@ -5409,11 +5318,6 @@ msgstr "செயல்முறையை உருவாக்க முடி�
 #, fuzzy, c-format
 msgid "Nie można otworzyć pliku wideo: %s"
 msgstr "\"%s\" கோப்பைத் திறக்க முடியாது."
-
-#: RendererGStreamer.cpp:753
-#, c-format
-msgid "Ścieżka %i"
-msgstr ""
 
 #: RendererVideo.cpp:382 VisualRotationXY.cpp:163
 msgid "Nie można ustawić macierzy projekcji"
@@ -6990,10 +6894,6 @@ msgid "CSRI nie obsługuje tego formatu."
 msgstr "சி.எச்.ஆர்.ஐ இந்த வடிவமைப்பை ஆதரிக்கவில்லை."
 
 #: TabPanel.cpp:322
-msgid "Napisy zostały zmodyfikowane przez inny program, przeładować?"
-msgstr ""
-
-#: TabPanel.cpp:322
 #, fuzzy
 msgid "Przeładowywanie"
 msgstr "மீண்டும் ஏற்றுதல்…"
@@ -7791,14 +7691,6 @@ msgstr "பெருக்கவும்"
 msgid "Pomnóż+"
 msgstr "பெருக்கல்+"
 
-#: VideoToolbar.cpp:747 VisualAllTagsEdition.cpp:86
-msgid "Gradient tekst rosnąco"
-msgstr ""
-
-#: VideoToolbar.cpp:748 VisualAllTagsEdition.cpp:87
-msgid "Gradient tekst malejąco"
-msgstr ""
-
 #: VideoToolbar.cpp:748 VisualAllTagsEdition.cpp:87
 #, fuzzy
 msgid "Gradient linia rosnąco"
@@ -7808,20 +7700,6 @@ msgstr "நிழல் நிறத்தின் சாய்வு"
 #, fuzzy
 msgid "Gradient linia malejąco"
 msgstr "நிழல் நிறத்தின் சாய்வு"
-
-#: VideoToolbar.cpp:751
-msgid ""
-"Opcje zmiany tagów:\n"
-"Dodaj - zmienia wszystkie tagi dodając ruch z suwaka.\n"
-"Wstaw - wstawia w miejsce kursora w przypadku jednej linii\n"
-"albo na początku w przypadku wielu linii.\n"
-"Pomnóż - mnoży ruch suwaka przez numer zaznaczonej linijki\n"
-"pierwsza linia nie jest zmieniana.\n"
-"Gradnient tekst rosnąco - wstawia tag co znak rosnąco\n"
-"Gradnient tekst malejąco - wstawia tag co znak malejąco\n"
-"Gradient linia rosnąco - wstawia tag w zaznaczone linie rosnąco\n"
-"Gradient linia malejąco - wstawia tag w zaznaczone linie malejąco"
-msgstr ""
 
 #: VideoToolbar.cpp:778
 msgid "Edycja tagów z listy oraz tworzenie nowych"
@@ -8125,3 +8003,48 @@ msgid ""
 msgstr ""
 "வீடியோவில் வரி தெரியவில்லை \n"
 "அல்லது சுழிய காலம் உள்ளது"
+
+#: FontCatalogList.cpp:863
+#, fuzzy
+msgid "Usuń całą zawartość katalogu"
+msgstr "பட்டியலின் அனைத்து உள்ளடக்கங்களையும் அகற்று"
+
+#: FontEnumerator.cpp:261 FontEnumerator.cpp:441
+#, fuzzy
+msgid "Ładowanie czcionek zewnętrznych"
+msgstr "வெளிப்புற எழுத்துருக்களை ஏற்றுகிறது"
+
+#: FontEnumerator.cpp:372
+#, fuzzy
+msgid "Usuwanie czcionek z zewnętrznego folderu"
+msgstr "வெளிப்புற கோப்புறையிலிருந்து எழுத்துருக்களை நீக்குகிறது"
+
+#: FontEnumerator.cpp:380
+#, fuzzy
+msgid "Wczytywanie czcionek z zewnętrznego folderu"
+msgstr "வெளிப்புற கோப்புறையிலிருந்து எழுத்துருக்களை ஏற்றுகிறது"
+
+#: OptionsDialog.cpp:439
+#, fuzzy
+msgid "Folder z zewnętrznymi czcionkami"
+msgstr "வெளிப்புற எழுத்துருக்கள் கொண்ட கோப்புறை"
+
+#: OptionsDialog.cpp:577
+#, fuzzy
+msgid "Początkowy zoom wideo w procentach"
+msgstr "சதவீதத்தில் வீடியோ சூம் தொடங்கவும்."
+
+#: VideoToolbar.cpp:747 VisualAllTagsEdition.cpp:86
+#, fuzzy
+msgid "Gradient tekst rosnąco"
+msgstr "சாய்வு உரை அதிகரிக்கிறது"
+
+#: VideoToolbar.cpp:748 VisualAllTagsEdition.cpp:87
+#, fuzzy
+msgid "Gradient tekst malejąco"
+msgstr "சாய்வு உரை குறைகிறது"
+
+#: RendererGStreamer.cpp:753
+#, c-format
+msgid "Ścieżka %i"
+msgstr "ட்ராக் %i"

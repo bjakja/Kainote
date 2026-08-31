@@ -1903,10 +1903,6 @@ msgstr "Katalog med navnet \"%s\" eksisterer allerede. Hva å gjøre?"
 msgid "Scal"
 msgstr "Flett"
 
-#: FontCatalogList.cpp:863
-msgid "Usuń całą zawartość katalogu"
-msgstr ""
-
 #: FontCatalogList.cpp:864
 #, fuzzy
 msgid "Dodaj czcionki z wszystkich otwartych napisów"
@@ -2364,23 +2360,11 @@ msgstr "Filtrering og fontkataloger"
 msgid "Nie można stworzyć uchwytu notyfikacji zmian folderu czcionek."
 msgstr "Kan ikke opprette varslingsbehandler for fonter-mappen."
 
-#: FontEnumerator.cpp:261 FontEnumerator.cpp:441
-msgid "Ładowanie czcionek zewnętrznych"
-msgstr ""
-
 #: FontEnumerator.cpp:271
 #, fuzzy
 msgid ""
 "Nie można stworzyć następnego uchwytu notyfikacji zmian folderu czcionek."
 msgstr "Kan ikke opprette neste varslingsbehandler for fonter-mappen."
-
-#: FontEnumerator.cpp:372
-msgid "Usuwanie czcionek z zewnętrznego folderu"
-msgstr ""
-
-#: FontEnumerator.cpp:380
-msgid "Wczytywanie czcionek z zewnętrznego folderu"
-msgstr ""
 
 #: FontEnumerator.cpp:402
 #, fuzzy
@@ -3166,22 +3150,10 @@ msgstr "Sett ny FPS"
 msgid "Podziel linię do czasu wideo"
 msgstr "Velg linje ved gjeldende videoposisjon"
 
-#: HotkeysNaming.cpp:155 SubsGrid.cpp:160
-msgid "Podziel linie na klatki"
-msgstr ""
-
 #: HotkeysNaming.cpp:156 SubsGrid.cpp:162
 #, fuzzy
 msgid "Podziel linie na znaki"
 msgstr "Dupliserer linjer"
-
-#: HotkeysNaming.cpp:157 SubsGrid.cpp:163
-msgid "Podziel linie na słowa"
-msgstr ""
-
-#: HotkeysNaming.cpp:158 SubsGrid.cpp:164
-msgid "Podziel linie według łamań"
-msgstr ""
 
 #: HotkeysNaming.cpp:159 KainoteFrame.cpp:312
 #, fuzzy
@@ -5074,14 +5046,6 @@ msgstr "Skriftskrift for undertekster:"
 msgid "Czcionka programu:"
 msgstr "Programfont:"
 
-#: OptionsDialog.cpp:424
-msgid "Zliczaj spacje i znaki interpunkcyjne dla łamań"
-msgstr ""
-
-#: OptionsDialog.cpp:427
-msgid "Zliczaj spacje i znaki interpunkcyjne dla ZNS"
-msgstr ""
-
 #: OptionsDialog.cpp:432
 #, fuzzy
 msgid "Sposób wczytywania skryptów autoload"
@@ -5106,10 +5070,6 @@ msgstr "Etter å ha åpnet menyen asynkront"
 #, fuzzy
 msgid "Przy otwarciu menu"
 msgstr "Etter åpen meny"
-
-#: OptionsDialog.cpp:439
-msgid "Folder z zewnętrznymi czcionkami"
-msgstr ""
 
 #: OptionsDialog.cpp:442 VideoToolbar.cpp:508 VideoToolbar.cpp:525
 #, fuzzy
@@ -5214,10 +5174,6 @@ msgstr "FFMS2-videosøking (krever omlastning)"
 #, fuzzy
 msgid "Filtr wyświetlania napisów"
 msgstr "Undertekstfilter"
-
-#: OptionsDialog.cpp:577
-msgid "Początkowy zoom wideo w procentach"
-msgstr ""
 
 #: OptionsDialog.cpp:596
 #, fuzzy
@@ -6343,10 +6299,6 @@ msgstr "Forløpt tid: 00:00:00.00"
 msgid "Indeksowanie pliku wideo"
 msgstr "Indekseringsvideo"
 
-#: ProviderFFMS2.cpp:118
-msgid "Rozmiar klatki wideo jest zbyt duży"
-msgstr ""
-
 #: ProviderFFMS2.cpp:285 VisualDrawingShapes.cpp:210
 #: VisualDrawingShapes.cpp:274
 #, fuzzy
@@ -6474,15 +6426,6 @@ msgstr "Kan ikke låse opp teksturbuffer"
 msgid "Nie można nałożyć powierzchni na siebie"
 msgstr "Kan ikke overlegge overflater"
 
-#: RendererGStreamer.cpp:107
-#, c-format
-msgid "Rozdział %i"
-msgstr ""
-
-#: RendererGStreamer.cpp:195
-msgid "Plik wideo nie zawiera strumienia obrazu"
-msgstr ""
-
 #: RendererGStreamer.cpp:273
 #, fuzzy
 msgid "Nie można utworzyć potoku GStreamer (playbin)"
@@ -6497,11 +6440,6 @@ msgstr "Kunne ikke opprette prosessen. Muxing avbrutt"
 #, fuzzy, c-format
 msgid "Nie można otworzyć pliku wideo: %s"
 msgstr "Kan ikke åpne filen \"%s\"."
-
-#: RendererGStreamer.cpp:753
-#, c-format
-msgid "Ścieżka %i"
-msgstr ""
 
 #: RendererVideo.cpp:382 VisualRotationXY.cpp:163
 #, fuzzy
@@ -8424,10 +8362,6 @@ msgid "CSRI nie obsługuje tego formatu."
 msgstr "CSRI støtter ikke dette formatet."
 
 #: TabPanel.cpp:322
-msgid "Napisy zostały zmodyfikowane przez inny program, przeładować?"
-msgstr ""
-
-#: TabPanel.cpp:322
 #, fuzzy
 msgid "Przeładowywanie"
 msgstr "Laster inn på nytt…"
@@ -9394,14 +9328,6 @@ msgstr "Mangfoldiggjør"
 msgid "Pomnóż+"
 msgstr "Multipliser+"
 
-#: VideoToolbar.cpp:747 VisualAllTagsEdition.cpp:86
-msgid "Gradient tekst rosnąco"
-msgstr ""
-
-#: VideoToolbar.cpp:748 VisualAllTagsEdition.cpp:87
-msgid "Gradient tekst malejąco"
-msgstr ""
-
 #: VideoToolbar.cpp:748 VisualAllTagsEdition.cpp:87
 #, fuzzy
 msgid "Gradient linia rosnąco"
@@ -9411,20 +9337,6 @@ msgstr "Gradient av skyggefarge"
 #, fuzzy
 msgid "Gradient linia malejąco"
 msgstr "Gradient av skyggefarge"
-
-#: VideoToolbar.cpp:751
-msgid ""
-"Opcje zmiany tagów:\n"
-"Dodaj - zmienia wszystkie tagi dodając ruch z suwaka.\n"
-"Wstaw - wstawia w miejsce kursora w przypadku jednej linii\n"
-"albo na początku w przypadku wielu linii.\n"
-"Pomnóż - mnoży ruch suwaka przez numer zaznaczonej linijki\n"
-"pierwsza linia nie jest zmieniana.\n"
-"Gradnient tekst rosnąco - wstawia tag co znak rosnąco\n"
-"Gradnient tekst malejąco - wstawia tag co znak malejąco\n"
-"Gradient linia rosnąco - wstawia tag w zaznaczone linie rosnąco\n"
-"Gradient linia malejąco - wstawia tag w zaznaczone linie malejąco"
-msgstr ""
 
 #: VideoToolbar.cpp:778
 #, fuzzy
