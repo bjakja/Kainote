@@ -33,7 +33,7 @@
     <ClCompile Include="..\..\Fribidi\lib\fribidi-deprecated.c" />
     <ClCompile Include="..\..\Fribidi\lib\fribidi-joining-types.c" />
     <ClCompile Include="..\..\Fribidi\lib\fribidi-joining.c" />
-    <ClCompile Include="..\..\Fribidi\lib\fribidi-mem.c" />
+    <ClCompile Include="..\..\Fribidi\lib\fribidi-brackets.c" />
     <ClCompile Include="..\..\Fribidi\lib\fribidi-mirroring.c" />
     <ClCompile Include="..\..\Fribidi\lib\fribidi-run.c" />
     <ClCompile Include="..\..\Fribidi\lib\fribidi-shape.c" />
