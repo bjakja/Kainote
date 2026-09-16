@@ -223,6 +223,9 @@ def compile_locales(repo_root: Path, stage: Path) -> int:
         elif po.with_suffix(".mo").exists():
             shutil.copyfile(po.with_suffix(".mo"), mo)
             count += 1
+    if count == 0 and msgfmt is None:
+        log("    ! msgfmt is not on PATH and no compiled catalogs exist: "
+            "the package will have no translations")
     return count
 
 

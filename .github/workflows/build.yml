@@ -46,13 +46,25 @@ jobs:
         continue-on-error: true
         run: |
           choco install gettext --no-progress -y
-          foreach ($dir in @(
+
+          # The install lands outside this process's PATH (choco edits only the
+          # machine one), so look for msgfmt.exe itself: asking `where` here
+          # reports it missing and fails the step even though the install
+          # worked and later steps can find it.
+          $dir = @(
               "$env:ProgramFiles\gettext-iconv\bin",
               "${env:ProgramFiles(x86)}\gettext-iconv\bin",
-              "C:\ProgramData\chocolatey\bin")) {
-            if (Test-Path (Join-Path $dir 'msgfmt.exe')) { $dir | Out-File -Append $env:GITHUB_PATH }
+              "C:\ProgramData\chocolatey\bin") |
+            Where-Object { Test-Path (Join-Path $_ 'msgfmt.exe') } |
+            Select-Object -First 1
+
+          if (-not $dir) {
+            throw 'msgfmt.exe is not where gettext installs it; the package will ship without compiled catalogs'
           }
-          where.exe msgfmt
+
+          $dir | Out-File -Append $env:GITHUB_PATH
+          $env:PATH = "$dir;$env:PATH"
+          msgfmt --version
 
       - name: Install YASM
         run: choco install yasm --no-progress -y
