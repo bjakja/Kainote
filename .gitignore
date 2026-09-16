@@ -254,6 +254,10 @@ build/
 build-*/
 .serena/
 
+# Python bytecode cache (the packaging scripts under .github/scripts)
+__pycache__/
+*.pyc
+
 # MSBuild intermediates (were previously committed under Thirdparty/Build)
 bin/**/*.lib
 obj/**/*.log
