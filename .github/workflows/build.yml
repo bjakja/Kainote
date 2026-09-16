@@ -131,16 +131,20 @@ jobs:
           -Configuration ${{ matrix.configuration }}
           ${{ steps.wx-cache.outputs.cache-hit == 'true' && '-SkipWxWidgets' || '' }}
 
-      # The package ships both executables; the AVX configuration is built first
-      # because both configurations write into x64\Release.
-      - name: Build the AVX configuration
-        if: matrix.configuration == 'Release'
-        timeout-minutes: 90
-        run: msbuild Kainote.sln /m /v:minimal /p:Configuration=Rel_AVX512 /p:Platform=x64
-
       - name: Build
         timeout-minutes: 90
         run: msbuild Kainote.sln /m /v:minimal /p:Configuration=${{ matrix.configuration }} /p:Platform=x64
+
+      # The package ships both executables.  The AVX configuration is built here
+      # rather than as a solution configuration: MSBuild's mapping of Rel_AVX512
+      # gives some dependencies a static runtime (Kasumi.lib), which the dynamic
+      # one this application uses cannot link against (LNK2038/LNK1319).  Built
+      # with the project references already produced above, the AVX executable
+      # links against the Release libraries, whose runtime matches.
+      - name: Build the AVX configuration
+        if: matrix.configuration == 'Release'
+        timeout-minutes: 60
+        run: msbuild Kainote/Kainote.vcxproj /m /v:minimal /p:Configuration=Rel_AVX512 /p:Platform=x64 /p:BuildProjectReferences=false
 
 
       # actions/cache only saves when the job succeeds (post-if: success()), and
