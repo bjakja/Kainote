@@ -174,6 +174,38 @@ bool Demux::GetSubtitles(SubsGrid* target)
 	return false;
 }
 
+// Matroska wants attachment names in UTF-8, but muxers do write the local
+// code page instead. wxConvUTF8 rejects those bytes and hands back an empty
+// string, which KaiPathJoin and KaiPathName then turn back into the output
+// directory, so the font is stored under the directory path with no extension
+// left on it. Latin-1 cannot fail, so falling back to it keeps the bytes and
+// the extension when the name turns out not to be UTF-8 after all.
+//
+// The name also comes straight out of the file, so drop anything that looks
+// like a directory: SaveFont writes it below the chosen directory and a
+// separator in the name would walk back out of it.
+static wxString AttachmentName(const char* filename, const wxString& mimetype, size_t track)
+{
+	wxString name;
+	if (filename && *filename) {
+		name = wxString(filename, wxConvUTF8);
+		if (name.empty())
+			name = wxString(filename, wxConvISO8859_1);
+	}
+
+	name.Replace(L"\\", L"/");
+	name = name.AfterLast(L'/');
+	if (name == L"." || name == L"..")
+		name.Clear();
+
+	if (name.empty()) {
+		const bool opentype = mimetype == L"font/otf" ||
+			mimetype == L"application/vnd.ms-opentype";
+		name = wxString::Format(L"attachment_%i%s", (int)track, opentype ? L".otf" : L".ttf");
+	}
+	return name;
+}
+
 void Demux::GetFontList(wxArrayString* list)
 {
 	int numTracks = FFMS_GetNumTracksI(indexer);
@@ -183,7 +215,7 @@ void Demux::GetFontList(wxArrayString* list)
 			wxString mimetype(attachment->Mimetype, wxConvUTF8);
 			if (mimetype == L"font/ttf" || mimetype == L"font/otf" ||
 				mimetype == L"application/x-truetype-font" || mimetype == L"application/vnd.ms-opentype") {
-				list->Add(wxString(attachment->Filename, wxConvUTF8));
+				list->Add(AttachmentName(attachment->Filename, mimetype, i));
 				attachments.push_back(attachment);
 			}
 			else {
