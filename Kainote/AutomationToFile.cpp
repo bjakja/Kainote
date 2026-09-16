@@ -250,13 +250,13 @@ namespace Auto{
 			lua_setfield(L, -2, "effect");
 
 			bool isTl = adial->TextTl != L"";
-			const char* textTl = adial->TextTl->mb_str(wxConvUTF8).data();
-			const char* text = adial->Text->mb_str(wxConvUTF8).data();
+			wxCharBuffer textTl = adial->TextTl->mb_str(wxConvUTF8);
+			wxCharBuffer text = adial->Text->mb_str(wxConvUTF8);
 
-			lua_pushstring(L, isTl? textTl : text);
+			lua_pushstring(L, isTl ? textTl.data() : text.data());
 			lua_setfield(L, -2, "text");
 			if (isTl) {
-				lua_pushstring(L, text);
+				lua_pushstring(L, text.data());
 				lua_setfield(L, -2, "text_translation");
 			}
 			lua_newtable(L);
@@ -1230,4 +1230,3 @@ namespace Auto{
 		return 0;
 	};
 }
-

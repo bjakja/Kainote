@@ -760,13 +760,16 @@ namespace Auto{
 
 	bool LuaScript::CheckLastModified(bool check)
 	{
-		FILETIME ft;
+		FILETIME ft{};
 
 		HANDLE ffile = CreateFile(GetFilename().wc_str(), GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 		if (ffile == INVALID_HANDLE_VALUE)
 			return false;
 
-		GetFileTime(ffile, 0, 0, &ft);
+		if (!GetFileTime(ffile, 0, 0, &ft)) {
+			CloseHandle(ffile);
+			return false;
+		}
 		CloseHandle(ffile);
 		if (check){
 			if (LowTime != ft.dwLowDateTime || HighTime != ft.dwHighDateTime){
@@ -822,8 +825,10 @@ namespace Auto{
 
 
 		lua_gc(L, LUA_GCCOLLECT, 0);
-		if (ps->Log == L"" && !hasMessage){ ps->lpd->closedialog = true; }
-		else{ ps->lpd->finished = true; }
+		if (ps && ps->lpd) {
+			if (ps->Log == L"" && !hasMessage){ ps->lpd->closedialog = true; }
+			else{ ps->lpd->finished = true; }
+		}
 
 		if (failed){ return (wxThread::ExitCode) 1; }
 		return 0;
@@ -1325,13 +1330,9 @@ namespace Auto{
 		}
 
 		wxWCharBuffer editorbuf = editor.c_str(), sfnamebuf = Filename.c_str();
-		wchar_t **cmdline = new wchar_t*[3];
-		cmdline[0] = editorbuf.data();
-		cmdline[1] = sfnamebuf.data();
-		cmdline[2] = 0;
+		wchar_t *cmdline[] = { editorbuf.data(), sfnamebuf.data(), nullptr };
 
 		long res = wxExecute(cmdline);
-		delete cmdline;
 
 		if (!res) {
 			KaiMessageBox(_("Nie można uruchomić edytora."), _("Błąd automatyzacji"), wxOK | wxICON_ERROR);

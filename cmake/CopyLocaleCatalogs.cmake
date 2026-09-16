@@ -10,6 +10,8 @@ endif()
 # Compile every Locale/*.po into the GNU gettext layout wxLocale expects and a
 # flat copy the options-dialog language list enumerates. .mo files are generated
 # here each build, not committed.
+# A broken .po is fatal only under KAINOTE_STRICT_LOCALES (set when packaging);
+# an ordinary build drops that locale so one bad translation blocks nobody.
 file(GLOB KAINOTE_PO_FILES "${SOURCE_LOCALE_DIR}/*.po")
 foreach(po_file IN LISTS KAINOTE_PO_FILES)
     get_filename_component(locale_name "${po_file}" NAME_WE)
@@ -20,7 +22,15 @@ foreach(po_file IN LISTS KAINOTE_PO_FILES)
         RESULT_VARIABLE msgfmt_result
     )
     if(msgfmt_result)
-        message(WARNING "msgfmt failed for ${po_file} (exit ${msgfmt_result})")
+        if(KAINOTE_STRICT_LOCALES)
+            message(FATAL_ERROR "msgfmt failed for ${po_file} (exit ${msgfmt_result})")
+        endif()
+        # Never leave a truncated or stale catalog for wxLocale to load.
+        file(REMOVE "${locale_messages_dir}/${locale_name}.mo"
+                    "${RUNTIME_LOCALE_DIR}/${locale_name}.mo")
+        message(WARNING
+            "msgfmt failed for ${po_file} (exit ${msgfmt_result}); "
+            "skipping the ${locale_name} translation catalog")
     else()
         file(COPY_FILE "${locale_messages_dir}/${locale_name}.mo"
                        "${RUNTIME_LOCALE_DIR}/${locale_name}.mo" ONLY_IF_DIFFERENT)

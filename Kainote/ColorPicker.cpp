@@ -1247,7 +1247,6 @@ void ButtonColorPicker::OnClick(wxCommandEvent &event)
 	DialogColorPicker *dcp = DialogColorPicker::Get(this, ActualColor);
 	wxPoint mst = wxGetMousePosition();
 	wxSize siz = dcp->GetSize();
-	siz.x;
 	wxRect rc = wxGetClientDisplayRect();
 	mst.x -= (siz.x / 2);
 	mst.x = MID(rc.x, mst.x, rc.width - siz.x);
@@ -1525,10 +1524,9 @@ SimpleColorPicker::~SimpleColorPicker()
 bool SimpleColorPicker::PickColor(AssColor *returnColor)
 {
 	if (scpd->ShowModal() == wxID_OK){
-		if (!returnColor)
+		if (returnColor)
 			*returnColor = scpd->GetColor();
 		return true;
 	}
 	return false;
 }
-

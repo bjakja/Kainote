@@ -132,6 +132,9 @@ Notebook::Notebook(wxWindow *parent, int id)
 
 
 Notebook::~Notebook(){
+	KillTimer(GetHWND(), 9876);
+	if (sthis == this)
+		sthis = nullptr;
 	for (std::vector<TabPanel*>::iterator i = Pages.begin(); i != Pages.end(); i++)
 	{
 		(*i)->Destroy();
@@ -1042,6 +1045,8 @@ int Notebook::GetHeight()
 
 void Notebook::OnResized()
 {
+	if (!sthis)
+		return;
 	KillTimer(sthis->GetHWND(), 9876);
 	int w, h;
 	sthis->GetClientSize(&w, &h);
@@ -1505,28 +1510,31 @@ void Notebook::FindAutoSaveSubstitute(wxString* path, int tab)
 	}
 	SYSTEMTIME highiestTime = {0,0,0,0,0,0,0,0};
 	wxString latestFile;
-	while (1) {
-		if (data.nFileSizeLow == 0) { continue; }
-
-		FILETIME accessTime = data.ftLastWriteTime;
-		SYSTEMTIME accessSystemTime;
-		FileTimeToSystemTime(&accessTime, &accessSystemTime);
-		if (ModifChecker.CheckDate(&highiestTime, &accessSystemTime) ){
-			highiestTime = accessSystemTime;
-			latestFile = wxString(data.cFileName);
+	do {
+		if (data.nFileSizeLow != 0) {
+			FILETIME accessTime = data.ftLastWriteTime;
+			SYSTEMTIME accessSystemTime{};
+			if (FileTimeToSystemTime(&accessTime, &accessSystemTime) &&
+				ModifChecker.CheckDate(&highiestTime, &accessSystemTime)) {
+				highiestTime = accessSystemTime;
+				latestFile = wxString(data.cFileName);
+			}
 		}
-		int result = FindNextFile(h, &data);
-		if (result == ERROR_NO_MORE_FILES || result == 0) { break; }
-	}
+	} while (FindNextFile(h, &data));
 	if (!latestFile.empty()) {
-		FILETIME ft;
+		bool useAutoSave = true;
+		FILETIME ft{};
 		HANDLE ffile = CreateFile(path->wc_str(), 
 			GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-		GetFileTime(ffile, 0, 0, &ft);
-		CloseHandle(ffile);
-		SYSTEMTIME accessSystemTime;
-		FileTimeToSystemTime(&ft, &accessSystemTime);
-		if (ModifChecker.CheckDate(&accessSystemTime, &highiestTime)) {
+		if (ffile != INVALID_HANDLE_VALUE) {
+			SYSTEMTIME accessSystemTime{};
+			if (GetFileTime(ffile, 0, 0, &ft) &&
+				FileTimeToSystemTime(&ft, &accessSystemTime)) {
+				useAutoSave = ModifChecker.CheckDate(&accessSystemTime, &highiestTime);
+			}
+			CloseHandle(ffile);
+		}
+		if (useAutoSave) {
 			*path = Options.pathfull + L"/Subs/" + latestFile;
 			sthis->loadedRecoverySubs = true;
 		}
@@ -1733,4 +1741,3 @@ EVT_SIZE(Notebook::OnSize)
 EVT_PAINT(Notebook::OnPaint)
 EVT_MOUSE_CAPTURE_LOST(Notebook::OnLostCapture)
 END_EVENT_TABLE()
-

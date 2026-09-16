@@ -178,6 +178,8 @@ public:
 	std::mutex m_LinuxPendingFrameMutex;
 	std::vector<unsigned char> m_LinuxPendingFrame;
 	std::vector<unsigned char> m_LinuxPresentFrame;
+	// Timestamp paired with m_LinuxPendingFrame under the same mutex.
+	int m_LinuxPendingTime = -1;
 	std::atomic_uint m_LinuxPresentedFrames{ 0 };
 	// Outlives the renderer (copied into the QueueLinuxRender CallAfter lambda),
 	// so a queued present can't touch a renderer that was deleted meanwhile

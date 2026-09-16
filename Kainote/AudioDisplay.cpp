@@ -752,7 +752,7 @@ void AudioDisplay::DrawInactiveLines() {
 		if (j == line_n) continue;
 		if (j < 0 || j >= grid->GetCount()) continue;
 		shade = grid->GetDialogue(j);
-		if (shade && !shade->isVisible)
+		if (!shade || !shade->isVisible)
 			continue;
 
 		// Get coordinates
@@ -967,7 +967,8 @@ void AudioDisplay::DrawTimescale() {
 // Waveform
 void AudioDisplay::DrawWaveform(bool weak) {
 	// Prepare Waveform
-	if (!weak || peak == nullptr || min == nullptr) {
+	bool rebuildWaveform = !weak || peak == nullptr || min == nullptr;
+	if (rebuildWaveform) {
 		if (peak) delete[] peak;
 		if (min) delete[] min;
 		peak = new int[w];
@@ -975,7 +976,7 @@ void AudioDisplay::DrawWaveform(bool weak) {
 	}
 
 	// Get waveform
-	if (!weak) {
+	if (rebuildWaveform) {
 		provider->GetWaveForm(min, peak, Position*samples, w, h, samples, scale);
 	}
 	d3dLine->Begin();

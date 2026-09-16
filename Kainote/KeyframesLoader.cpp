@@ -26,6 +26,32 @@
 KeyframeLoader::KeyframeLoader(const wxString &filename, wxArrayInt *_keyframes, Provider *_receiver)
 	: keyframes(_keyframes)
 	, receiver(_receiver)
+	, fps(0.f)
+{
+	LoadFile(filename);
+}
+
+KeyframeLoader::KeyframeLoader(const wxString &filename, wxArrayInt *_keyframes, float _fps)
+	: keyframes(_keyframes)
+	, receiver(nullptr)
+	, fps(_fps)
+{
+	LoadFile(filename);
+}
+
+int KeyframeLoader::GetMSfromFrame(int frame)
+{
+	if (receiver)
+		return receiver->GetMSfromFrame(frame);
+
+	//no provider with timecodes, so frame times are counted from fps
+	if (frame < 0 || fps <= 0.f)
+		return 0;
+
+	return (int)(frame * (1000.f / fps));
+}
+
+void KeyframeLoader::LoadFile(const wxString &filename)
 {
 	OpenWrite ow;
 	wxString kftext;
@@ -54,7 +80,7 @@ void KeyframeLoader::OpenAegisubKeyframes(wxStringTokenizer *kftokenizer)
 {
 	while (kftokenizer->HasMoreTokens()){
 		int keyframe = wxAtoi(kftokenizer->GetNextToken());
-		keyframes->push_back(receiver->GetMSfromFrame(keyframe));
+		keyframes->push_back(GetMSfromFrame(keyframe));
 	}
 }
 
@@ -84,7 +110,7 @@ void KeyframeLoader::OpenOtherKeyframes(int type, wxStringTokenizer *kftokenizer
 				frameType = tolower(token[result + 5]);
 		}
 		if (frameType == L'i')
-			keyframes->push_back(receiver->GetMSfromFrame(frameCounter++));
+			keyframes->push_back(GetMSfromFrame(frameCounter++));
 		else if (frameType == L'p' || frameType == L'b')
 			frameCounter++;
 	}

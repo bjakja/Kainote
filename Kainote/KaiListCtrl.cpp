@@ -701,7 +701,11 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 		size_t maxVisible = ((h - headerHeight) / lineHeight) + 1;
 		size_t visibleSize = GetVisibleSize();
 		if (scPosV<0){ scPosV = 0; }
-		else if ((size_t)scPosV > visibleSize + 1 - maxVisible){ scPosV = visibleSize + 1 - maxVisible; }
+		else {
+			size_t maxScroll = visibleSize + 1 > maxVisible ? visibleSize + 1 - maxVisible : 0;
+			if ((size_t)scPosV > maxScroll)
+				scPosV = static_cast<int>(maxScroll);
+		}
 		Refresh(false);
 		return;
 	}
@@ -802,6 +806,9 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 					filteredList[elemYID] = newRow;
 					PushHistory();
 					Refresh(false);
+				}
+				else {
+					delete newRow;
 				}
 				copy = nullptr;
 			}
