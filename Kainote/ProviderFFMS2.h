@@ -65,7 +65,9 @@ private:
 	char** m_cache = nullptr;
 	int m_blockNum = 0;
 	void GetAudio(void* buf, long long start, long long count);
-	void GetFFMSFrame();
+	//fetches the current frame and copies it out under m_blockFrame,
+	//pass forceFetch to skip the "frame did not change" shortcut
+	bool CopyCurrentFrame(unsigned char* buffer, bool forceFetch);
 	static unsigned int __stdcall FFMS2Proc(void* cls);
 	void Processing();
 	std::atomic<bool> m_stopLoadingAudio{ false };
