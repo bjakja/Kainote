@@ -52,10 +52,11 @@ Kainote currently has two supported source-build paths:
 - **Windows**: the upstream Visual Studio solution (`Kainote.sln`). This is the full-featured build that uses DirectShow, DirectSound, Direct3D 9/D3DX9, and the Windows COM/Shell APIs.
 - **Linux**: This build uses wxGTK and system packages where possible. Some Windows-only runtime backends are still compatibility layers or partial ports, but the project can be configured, compiled, linked, and smoke-tested on Linux.
 
-The commands below assume a fresh clone:
+Both start from a recursive clone -- most third-party code is a git submodule,
+and wxWidgets keeps its own dependencies in nested submodules:
 
 ```bash
-git clone https://github.com/bjakja/Kainote.git
+git clone --recurse-submodules https://github.com/bjakja/Kainote.git
 cd Kainote
 ```
 
@@ -63,304 +64,75 @@ cd Kainote
 
 ### Windows build
 
-#### 1. Required tools
-
-Install the following tools before opening the solution:
-
-1. **Visual Studio 2022**
-   - Install the **Desktop development with C++** workload.
-   - Include the **MSVC v143 x64/x86 build tools**.
-   - Include the **Windows 10/11 SDK**.
-   - The solution is normally built as **Release | x64**.
-
-2. **DirectX SDK (June 2010)**
-   - Download from Microsoft: <https://www.microsoft.com/en-us/download/details.aspx?id=6812>
-   - The project expects the default install location:
-     `C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)`
-   - If it is installed somewhere else, update the include/library directories in Visual Studio project properties.
-
-3. **NASM**
-   - Download from <https://www.nasm.us/>.
-   - Add `nasm.exe` to `PATH` during installation, or add it manually afterwards.
-   - Verify from a new terminal:
-
-   ```bat
-   nasm -v
-   ```
-
-4. **Git**
-   - Required for cloning dependency source trees.
-   - Download from <https://git-scm.com/download/win>.
-
-5. **CMake**
-   - Required for some third-party libraries such as AOM and VVENC.
-   - Download from <https://cmake.org/download/> and add it to `PATH`.
-
-6. **MSYS2**
-   - Required for building FFmpeg with the MSVC toolchain.
-   - Download from <https://www.msys2.org/> and install to `C:\msys64`.
-
-#### 2. Third-party source layout
-
-The Visual Studio project expects most third-party source trees under `Thirdparty`.
-After downloading/extracting dependencies, the layout should look like this:
-
-```text
-Kainote/
-  Kainote.sln
-  Kainote/
-    Kainote.vcxproj
-  Thirdparty/
-    boost/
-    icu/
-    wxWidgets/
-    ffms2/
-    luajit/
-    luabins/
-    libass/
-    Hunspell/
-    uchardet/
-    BaseClasses/
-```
-
-At minimum, download/extract the following libraries if they are not already present in the repository checkout:
-
-- **Boost**: <https://www.boost.org/releases/latest/>
-  - Extract or rename the directory to `Thirdparty/boost`.
-- **ICU4C source**: <https://github.com/unicode-org/icu/releases/>
-  - Download the `icu4c-*-src.zip` archive.
-  - Extract or rename the directory to `Thirdparty/icu`.
-- **FFMS2**: <https://github.com/FFMS/ffms2>
-  - Kainote uses additional FFMS2 API functions; see the FFMS2 patching step below.
-
-> Note: building ICU from source can require a large amount of RAM. On machines with limited memory, configure a large Windows page file before building.
-
-#### 3. Build AOM and VVENC pkg-config files
-
-These optional codec libraries are used by the FFmpeg build configuration below.
-They are built with Visual Studio, but their `.pc` files are consumed from MSYS2.
-
-##### AOM / AV1
-
-Open **x64 Native Tools Command Prompt for VS 2022** and run:
-
-```bat
-git clone https://aomedia.googlesource.com/aom C:\src\aom
-mkdir C:\build\aom
-cd /d C:\build\aom
-cmake C:\src\aom -G "Visual Studio 17 2022" -A x64 ^
-  -DCMAKE_BUILD_TYPE=Release ^
-  -DAOM_TARGET_CPU=generic ^
-  -DBUILD_SHARED_LIBS=0 ^
-  -DENABLE_DOCS=0 ^
-  -DENABLE_TESTS=0 ^
-  -DENABLE_TOOLS=0 ^
-  -DENABLE_CCACHE=1 ^
-  -DCONFIG_AV1_ENCODER=0
-cmake --build . --config Release
-```
-
-Edit the generated `aom.pc` so that:
-
-- `includedir` points to a directory containing both the AOM source `aom` headers and the generated `config` headers.
-- `libdir` points to the Release library output directory.
-
-Copy the edited file to:
-
-```text
-C:\msys64\usr\lib\pkgconfig\aom.pc
-```
-
-##### VVENC / H.266
-
-Open **x64 Native Tools Command Prompt for VS 2022** and run:
-
-```bat
-git clone https://github.com/fraunhoferhhi/vvenc C:\src\vvenc
-mkdir C:\build\vvenc
-cd /d C:\build\vvenc
-cmake C:\src\vvenc -G "Visual Studio 17 2022" -A x64 ^
-  -DCMAKE_BUILD_TYPE=Release ^
-  -DBUILD_SHARED_LIBS=0 ^
-  -DVVENC_LIBRARY_ONLY=1
-cmake --build . --config Release
-```
-
-Edit the generated `libvvenc.pc` so that:
-
-- `includedir` points to the directory containing the `vvenc` headers.
-- `libdir` points to the Release library output directory.
-
-Copy the edited file to:
-
-```text
-C:\msys64\usr\lib\pkgconfig\libvvenc.pc
-```
-
-#### 4. Configure MSYS2 for MSVC builds
-
-1. Edit:
-
-   ```text
-   C:\msys64\msys2_shell.cmd
-   ```
-
-2. Find this line:
-
-   ```bat
-   rem set MSYS2_PATH_TYPE=inherit
-   ```
-
-3. Uncomment it:
-
-   ```bat
-   set MSYS2_PATH_TYPE=inherit
-   ```
-
-4. Open **x64 Native Tools Command Prompt for VS 2022**.
-
-5. Start the MSYS2 shell from inside that prompt:
-
-   ```bat
-   C:\msys64\msys2_shell.cmd
-   ```
-
-6. In the MSYS2 shell, install the build tools:
-
-   ```bash
-   pacman -Syu
-   pacman -S --needed make diffutils yasm nasm pkg-config git
-   ```
-
-7. Avoid a linker-name conflict with MSYS2's `link.exe`:
-
-   ```bash
-   if [ -f /usr/bin/link.exe ]; then mv /usr/bin/link.exe /usr/bin/link.exe.bak; fi
-   ```
-
-8. Confirm MSVC tools are visible inside MSYS2:
-
-   ```bash
-   which cl
-   which link
-   cl
-   ```
-
-`which link` should resolve to the Visual Studio linker, not `/usr/bin/link.exe`.
-
-#### 5. Build FFmpeg for FFMS2
-
-From the same MSYS2 shell that inherited the Visual Studio environment:
-
-```bash
-cd /c
-curl -L -o ffmpeg-n7.1.1.zip https://github.com/FFmpeg/FFmpeg/archive/refs/tags/n7.1.1.zip
-unzip ffmpeg-n7.1.1.zip
-mv FFmpeg-n7.1.1 ffmpeg
-cd /c/ffmpeg
-
-./configure \
-  --toolchain=msvc \
-  --enable-gpl \
-  --enable-version3 \
-  --disable-programs \
-  --disable-doc \
-  --disable-avdevice \
-  --disable-postproc \
-  --disable-avfilter \
-  --enable-dxva2 \
-  --enable-d3d11va
-
-make -j$(nproc)
-make install
-```
-
-This installs FFmpeg headers, libraries, and pkg-config files into:
-
-```text
-C:\msys64\usr\local
-```
-
-Make sure MSYS2 can see the installed packages:
-
-```bash
-pkg-config --modversion libavformat libavcodec libavutil
-```
-
-#### 6. Patch/update FFMS2 for Kainote
-
-Kainote requires FFMS2 functions that are not part of the stock public API.
-If you replace `Thirdparty/ffms2` with a fresh upstream checkout, apply the Kainote additions below.
-
-Add the following declarations near the end of `Thirdparty/ffms2/include/ffms.h`, before the final `#endif`:
-
-```c
-// Kainote functions
-FFMS_API(const char*) FFMS_GetTrackName(FFMS_Indexer* Indexer, int Track);
-FFMS_API(const char*) FFMS_GetTrackLanguage(FFMS_Indexer* Indexer, int Track);
-
-typedef struct FFMS_Chapter {
-    const char* Title;
-    int64_t Start;
-    int64_t End;
-} FFMS_Chapter;
-
-typedef struct FFMS_Chapters {
-    FFMS_Chapter* Chapters;
-    int NumOfChapters;
-} FFMS_Chapters;
-
-FFMS_API(FFMS_Chapters*) FFMS_GetChapters(FFMS_Indexer* Indexer);
-FFMS_API(void) FFMS_FreeChapters(FFMS_Chapters** Chapters);
-
-typedef struct FFMS_Attachment {
-    const char* Filename;
-    const char* Mimetype;
-    const uint8_t* Data;
-    int DataSize;
-} FFMS_Attachment;
-
-FFMS_API(FFMS_Attachment*) FFMS_GetAttachment(FFMS_Indexer* Indexer, int Track);
-FFMS_API(void) FFMS_FreeAttachment(FFMS_Attachment** Attachment);
-
-typedef int (FFMS_CC* GetSubtitlesCallback)(int64_t Start, int64_t Duration, int64_t Total, const char* Line, void* ICPrivate);
-FFMS_API(void) FFMS_GetSubtitles(FFMS_Indexer* Indexer, int Track, GetSubtitlesCallback IC, void* ICPrivate);
-FFMS_API(const char*) FFMS_GetSubtitleExtradata(FFMS_Indexer* Indexer, int Track);
-FFMS_API(const char*) FFMS_GetSubtitleFormat(FFMS_Indexer* Indexer, int Track);
-```
-
-Add the following members to the end of the `FFMS_Indexer` class/struct declaration in the FFMS2 indexing header (`Indexing/Indexing.h` or `src/core/indexing.h`, depending on the FFMS2 version):
-
-```cpp
-// Kainote functions
-const char* GetTrackName(int Track);
-const char* GetTrackLanguage(int Track);
-FFMS_Chapters* GetChapters();
-FFMS_Attachment* GetAttachment(int Track);
-void GetSubtitles(int Track, GetSubtitlesCallback IC, void* ICPrivate);
-const char* GetSubtitleExtradata(int Track);
-const char* GetSubtitleFormat(int Track);
-```
-
-Then build FFMS2 according to the FFMS2 build system you are using, making sure it links against the FFmpeg libraries built above. The resulting `ffms2.lib` must be available in one of the Visual Studio library directories used by `Kainote.vcxproj`.
-
-#### 7. Build the Windows solution
-
-1. Open `Kainote.sln` in Visual Studio 2022.
-2. Select:
-   - Configuration: `Release`
-   - Platform: `x64`
-3. If Visual Studio cannot find SDKs or third-party headers/libraries, check:
-   - `Kainote/Kainote.vcxproj`
-   - `Project Properties > C/C++ > General > Additional Include Directories`
-   - `Project Properties > Linker > General > Additional Library Directories`
-4. Build the solution from Visual Studio, or from **x64 Native Tools Command Prompt for VS 2022**:
-
-```bat
+```powershell
+pwsh -File Thirdparty\bootstrap.ps1
 msbuild Kainote.sln /m /p:Configuration=Release /p:Platform=x64
 ```
 
-The executable is written under the repository's Visual Studio output folders, typically `x64\Release` or `bin\x64\Release`, depending on the active project configuration.
+`Kainote.exe` is written to `x64\Release`.
+
+If the clone was not recursive, run `git submodule update --init --recursive`
+first -- `bootstrap.ps1` does this too, but a non-recursive checkout otherwise
+fails inside the wxWidgets build on empty directories.
+
+#### Required tools
+
+| Tool | Why |
+|---|---|
+| **Visual Studio 2022** | Desktop development with C++, MSVC v143, Windows 10/11 SDK |
+| **NASM** | Assembly in libass and LuaJIT. Must be on `PATH` (`nasm -v`) |
+| **Git** | Submodules, and the commit recorded in the title bar |
+| **DirectX SDK (June 2010)** | D3DX9. Expected at `C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)` |
+
+Optionally **gettext** for `msgfmt`, which compiles `Locale\*.po` into `.mo`
+during the build. Without it that step prints a notice and is skipped.
+
+#### What bootstrap.ps1 does
+
+1. `git submodule update --init --recursive`
+2. `hydrate.ps1` — downloads the dependencies that are archives rather than
+   submodules (FFmpeg, Boost, ICU, fribidi, zlib, curl), verifying each
+   archive's SHA-256 against [`Thirdparty/dependencies.json`](Thirdparty/dependencies.json)
+   and refusing to continue on a mismatch
+3. `build-wxwidgets.ps1` — builds wxWidgets 3.3.3 using `wx_vc17.sln`, the
+   solution wxWidgets itself ships
+4. `gen-gitparams.ps1` — writes `Kainote/gitparams.h`
+
+Every step is re-runnable: hydrate skips what is already extracted, and the
+wxWidgets build is incremental. Pass `-Force` to re-extract, or
+`-SkipSubmodules` / `-SkipWxWidgets` to skip a step.
+
+For a Debug build, wxWidgets needs its Debug libraries too:
+
+```powershell
+pwsh -File Thirdparty\bootstrap.ps1 -Configuration Debug
+msbuild Kainote.sln /m /p:Configuration=Debug /p:Platform=x64
+```
+
+#### Where the dependencies come from
+
+Most are git submodules pinned to a release tag; the rest are hash-pinned
+archives. [`Thirdparty/README.md`](Thirdparty/README.md) has the full table and
+explains why each one is where it is.
+
+FFmpeg is a prebuilt developer package — headers, MSVC import libraries and
+runtime DLLs. Building it from source previously required MSYS2 and a
+from-scratch FFmpeg compile; that is no longer part of the build. The DLLs are
+copied next to `Kainote.exe` by a post-build step, so they must ship with the
+application.
+
+> **32-bit.** `Release|Win32` exists but is not exercised. It needs a 32-bit
+> FFmpeg developer package placed at `Thirdparty\ffmpegx32` (same `include\`
+> and `lib\` layout); `hydrate.ps1` does not fetch one. x64 is the supported
+> target.
+
+#### If the build cannot find something
+
+Check that `bootstrap.ps1` completed — most failures are a step that was
+skipped or a submodule that was not checked out. Beyond that, the include and
+library directories live in `Kainote\Kainote.vcxproj` under
+**C/C++ > General > Additional Include Directories** and
+**Linker > General > Additional Library Directories**.
 
 ---
 

@@ -21,9 +21,18 @@ git submodule update --init --recursive
 Then, for the Windows build only:
 
 ```powershell
-pwsh -File Thirdparty\hydrate.ps1            # dependencies that are not submodules
-pwsh -File Thirdparty\build-wxwidgets.ps1    # build wxWidgets with its own solution
+pwsh -File Thirdparty\bootstrap.ps1
 ```
+
+`bootstrap.ps1` runs the three steps in order and is safe to re-run:
+
+| Script | Does |
+|---|---|
+| `hydrate.ps1` | Downloads and verifies the dependencies that are archives |
+| `build-wxwidgets.ps1` | Builds wxWidgets with the solution it ships |
+| `gen-gitparams.ps1` | Writes `Kainote/gitparams.h` |
+
+Each can also be run on its own.
 
 `build-wxwidgets.ps1` runs `Thirdparty\wxWidgets\build\msw\wx_vc17.sln`, the
 solution wxWidgets itself ships, and leaves the static libraries in
@@ -85,6 +94,13 @@ because a submodule would not work or would not pay:
 | `icu` | 78.3 | Very large; only `source/common` and `source/i18n` are used |
 | `zlib` | 1.3.2 | Small enough that an archive is simpler |
 | `curl` | 8.20.0 | Likewise |
+| `ffmpeg` | 7.1.1 | **Not source at all: a prebuilt developer package.** Building FFmpeg for MSVC from source needs MSYS2 and a full compile; this is headers, import libraries and DLLs. |
+
+FFmpeg is a *shared* GPL build, so `avcodec-61.dll` and friends are copied next
+to `Kainote.exe` by a post-build step and have to ship with the application.
+The Linux build already links the distribution's shared FFmpeg, so the two
+platforms now agree. A 32-bit build needs its own package at
+`Thirdparty/ffmpegx32`; `hydrate.ps1` does not fetch one.
 
 `hydrate.ps1` verifies each archive's SHA-256 before extracting and refuses to
 continue on a mismatch. It skips what is already present; pass `-Force` to
@@ -109,6 +125,8 @@ generate:
   "x86/x86inc.asm"` resolves.
 - `Build/HarfBuzz/HarfBuzz.vcxproj` — compiles upstream's `src/harfbuzz.cc`
   amalgamation, so a version bump needs no project edit.
+- `Build/Zlib/Zlib.vcxproj` — zlib ships no MSVC project. `ffms2` links
+  `Zlib.lib`, so this builds it from the hydrated sources.
 
 ## Still vendored in-tree
 
