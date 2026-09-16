@@ -94,10 +94,11 @@ function Expand-Any {
                 throw "No tar executable was found on PATH; it is required to extract $([IO.Path]::GetFileName($Archive))"
             }
 
+            Write-Host "    extracting with tar ($($candidates.Count) candidate(s))"
             $extracted = $false
             $attempts  = @()
             foreach ($tar in $candidates) {
-                $output = & $tar -xf $Archive -C $staging 2>&1
+                $output = $null | & $tar -xf $Archive -C $staging 2>&1
                 $code   = $LASTEXITCODE
                 if ($code -eq 0 -and @(Get-ChildItem -LiteralPath $staging -Force).Count -gt 0) {
                     Write-Host "    extracted with $tar"
@@ -181,7 +182,16 @@ foreach ($dep in $selected) {
 
     if ($needsDownload) {
         Write-Host "    downloading $($dep.url)"
-        Invoke-WithRetry { Invoke-WebRequest -Uri $dep.url -OutFile $archive -UseBasicParsing }
+        # -TimeoutSec matters: PowerShell 7 defaults it to 0, meaning no timeout
+        # at all, so a connection that stalls mid-transfer hangs the build
+        # forever and Invoke-WithRetry never fires because nothing ever throws.
+        # 15 minutes is far more than the largest archive here needs (boost is
+        # 327 MB) while still bounding the failure.
+        Invoke-WithRetry {
+            Invoke-WebRequest -Uri $dep.url -OutFile $archive -UseBasicParsing -TimeoutSec 900
+        }
+        $mb = [Math]::Round((Get-Item -LiteralPath $archive).Length / 1MB, 1)
+        Write-Host "    downloaded $mb MB"
     }
 
     $actual = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash
