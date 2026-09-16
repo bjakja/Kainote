@@ -21,6 +21,7 @@
 #include "Stylelistbox.h"
 #include "SubsGrid.h"
 #include "ProgressDialog.h"
+#include "ZipEntryUtf8.h"
 
 
 Demux::~Demux()
@@ -203,7 +204,7 @@ bool Demux::SaveFont(int i, const wxString& path, wxZipOutputStream* zip)
 	if (zip) {
 		wxString fn = KaiPathName(path);
 		try {
-			isgood = zip->PutNextEntry(fn);
+			isgood = zip->PutNextEntry(new Utf8ZipEntry(fn));
 			zip->Write((void*)attachment->Data, attachment->DataSize);
 		}
 		catch (...)
