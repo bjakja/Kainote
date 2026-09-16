@@ -892,23 +892,32 @@ wxString ProviderFFMS2::ColorMatrixDescription(int cs, int cr) {
 
 void ProviderFFMS2::SetColorSpace(const wxString& matrix)
 {
-	wxCriticalSectionLocker lock(m_blockFrame);
-	if (matrix == m_colorSpace) return;
-	//lockGetFrame = true;
-	if (matrix == m_realColorSpace || (matrix != L"TV.601" && matrix != L"TV.709"))
-		FFMS_SetInputFormatV(m_videoSource, m_CS, m_CR, FFMS_GetPixFmt(""), nullptr);
-	else if (matrix == L"TV.601")
-		FFMS_SetInputFormatV(m_videoSource, FFMS_CS_BT470BG, m_CR, FFMS_GetPixFmt(""), nullptr);
-	else {
+	int failed = 0;
+	{
+		wxCriticalSectionLocker lock(m_blockFrame);
+		if (matrix == m_colorSpace) return;
+		//lockGetFrame = true;
+		if (matrix == m_realColorSpace || (matrix != L"TV.601" && matrix != L"TV.709"))
+			failed = FFMS_SetInputFormatV(m_videoSource, m_CS, m_CR, FFMS_GetPixFmt(""), &m_errInfo);
+		else if (matrix == L"TV.601")
+			failed = FFMS_SetInputFormatV(m_videoSource, FFMS_CS_BT470BG, m_CR, FFMS_GetPixFmt(""), &m_errInfo);
+		else {
+			//lockGetFrame = false;
+			return;
+		}
 		//lockGetFrame = false;
-		return;
+		//the cached frame was produced by the old format and does not survive
+		//the reconfiguration above, a failed reconfiguration can even free it
+		//half way through, so force the next read to fetch again
+		m_FFMS2frame = nullptr;
+		m_refreshFrame = true;
+		//keep the old matrix when nothing changed or the next call asking for it
+		//would be dropped as a no-op and the video would stay unconverted
+		if (!failed)
+			m_colorSpace = matrix;
 	}
-	//lockGetFrame = false;
-	m_colorSpace = matrix;
-	//the cached frame was produced by the old format and does not survive
-	//the reconfiguration above, so force the next read to fetch again
-	m_FFMS2frame = nullptr;
-	m_refreshFrame = true;
+	if (failed)
+		KaiLog(_("Nie można zmienić macierzy YCbCr"));
 
 }
 
