@@ -83,8 +83,6 @@ artifacts/
 *.tlh
 *.tmp
 *.tmp_proj
-*.log
-*.lib
 *.vspscc
 *.vssscc
 .builds
@@ -252,12 +250,13 @@ _Pvt_Extensions
 # FAKE - F# Make
 .fake/
 
-*.css
 build/
 build-*/
 .serena/
 
 # MSBuild intermediates (were previously committed under Thirdparty/Build)
+bin/**/*.lib
+obj/**/*.log
 *.tlog
 *.exp
 *.recipe
