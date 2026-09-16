@@ -76,7 +76,12 @@ public:
 	void DrawProgressBar(const wxString &timesString) override;
 	bool EnumFilters(Menu *menu) override { return false; }
 	bool FilterConfig(wxString name, int idx, wxPoint pos) override { return false; }
-	void OpenKeyframes(const wxString &filename) override {}
+	// playbin has no per-frame provider, so the renderer keeps the keyframes
+	// itself and counts their times from fps (see RendererGStreamer.cpp).
+	void OpenKeyframes(const wxString &filename) override;
+	void GoToNextKeyframe() override;
+	void GoToPrevKeyframe() override;
+	const wxArrayInt &GetKeyframes() { return m_KeyFrames; }
 
 	// appsink callback target (new-sample / new-preroll).  Public only so the
 	// C-linkage trampolines in the .cpp can reach it; do not call directly.
@@ -111,6 +116,7 @@ private:
 	std::atomic_int m_DurationMs{ 0 };   // cached duration (bus + UI threads)
 	long m_ArX = 0;
 	long m_ArY = 0;
+	wxArrayInt m_KeyFrames;            // keyframe times in ms, loaded from a file
 	std::atomic_bool m_ReachedPlayEnd{ false };
 };
 

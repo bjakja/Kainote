@@ -25,12 +25,18 @@ class KeyframeLoader
 public:
 	//load keyframes after loading video, it need timecodes
 	KeyframeLoader(const wxString &filename, wxArrayInt *keyframes, Provider *receiver);
+	//for renderers that have no provider with timecodes (GStreamer on Linux),
+	//frame times are counted from fps, so it's exact only on CFR video
+	KeyframeLoader(const wxString &filename, wxArrayInt *keyframes, float fps);
 private:
+	void LoadFile(const wxString &filename);
+	int GetMSfromFrame(int frame);
 	void OpenAegisubKeyframes(wxStringTokenizer *kftokenizer);
 	void OpenOtherKeyframes(int type, wxStringTokenizer *kftokenizer);
 
 	wxArrayInt *keyframes;
 	Provider *receiver;
+	float fps;
 };
 
 enum{
