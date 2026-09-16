@@ -645,7 +645,7 @@ where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po
     <ProjectReference Include="..\Thirdparty\Build\LuaJit\LuaJit.vcxproj">
       <Project>{ba804678-e98b-4026-8d33-a8c5263c669e}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\Hunspell\msvc\libhunspell.vcxproj">
+    <ProjectReference Include="..\Thirdparty\Build\Hunspell\libhunspell.vcxproj">
       <Project>{53609bb3-d874-465c-af7b-df626db0d89b}</Project>
     </ProjectReference>
   </ItemGroup>

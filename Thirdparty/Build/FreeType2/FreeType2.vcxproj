@@ -419,8 +419,10 @@
     <ClCompile Include="..\..\FreeType2\src\pshinter\pshinter.c" />
     <ClCompile Include="..\..\FreeType2\src\psnames\psmodule.c" />
     <ClCompile Include="..\..\FreeType2\src\raster\raster.c" />
+    <ClCompile Include="..\..\FreeType2\src\sdf\sdf.c" />
     <ClCompile Include="..\..\FreeType2\src\sfnt\sfnt.c" />
     <ClCompile Include="..\..\FreeType2\src\smooth\smooth.c" />
+    <ClCompile Include="..\..\FreeType2\src\svg\svg.c" />
     <ClCompile Include="..\..\FreeType2\src\truetype\truetype.c" />
     <ClCompile Include="..\..\FreeType2\src\type1\type1.c" />
     <ClCompile Include="..\..\FreeType2\src\type42\type42.c" />

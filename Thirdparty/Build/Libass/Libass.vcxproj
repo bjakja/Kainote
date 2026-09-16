@@ -318,6 +318,16 @@
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
     </ProjectReference>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Platform)'=='x64'">
+    <Nasm>
+      <Include>-I"$(SolutionDir)Thirdparty/libass/libass/" -Dprivate_prefix=ass -DPIC=1 -DARCH_X86_64=1</Include>
+    </Nasm>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Platform)'=='Win32'">
+    <Nasm>
+      <Include>-I"$(SolutionDir)Thirdparty/libass/libass/" -Dprivate_prefix=ass -DPIC=1 -DARCH_X86_64=0 -DPREFIX</Include>
+    </Nasm>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <Nasm Include="..\..\libass\libass\x86\be_blur.asm">
       <ExcludeFromBuild Condition="'$(Platform)'!='x64'">true</ExcludeFromBuild>
@@ -352,6 +362,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libass\libass\ass.c" />
+    <ClCompile Include="..\..\libass\libass\ass_arabic_charmap.c" />
     <ClCompile Include="..\..\libass\libass\ass_bitmap.c" />
     <ClCompile Include="..\..\libass\libass\ass_bitmap_engine.c" />
     <ClCompile Include="..\..\libass\libass\ass_blur.c" />

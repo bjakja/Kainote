@@ -154,6 +154,7 @@
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -171,6 +172,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;HB_USE_ATEXIT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -188,6 +190,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;HB_USE_ATEXIT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -209,6 +212,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>Default</LanguageStandard_C>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -229,6 +233,7 @@
       <EnableEnhancedInstructionSet>NoExtensions</EnableEnhancedInstructionSet>
       <LanguageStandard>Default</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -237,64 +242,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\harfbuzz\src\hb-aat-layout.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-aat-map.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-blob.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-buffer-serialize.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-buffer-verify.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-buffer.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-common.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-draw.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-face-builder.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-face.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-fallback-shape.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-font.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-map.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-number.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-cff1-table.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-cff2-table.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-color.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-face.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-font.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-layout.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-map.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-math.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-meta.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-metrics.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-name.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-fallback.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-normalize.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-arabic.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-default.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-hangul.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-hebrew.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-indic-table.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-indic.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-khmer.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-myanmar.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-syllabic.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-thai.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-use.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-vowel-constraints.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-tag.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-var.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-outline.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-paint-bounded.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-paint-extents.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-paint.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-set.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-shape-plan.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-shape.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-shaper.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-subset-cff-common.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-subset-cff1.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-subset-cff2.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-subset-input.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-subset-plan.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-subset.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ucd.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-unicode.cc" />
+    <ClCompile Include="..\..\harfbuzz\src\harfbuzz.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\harfbuzz\src\hb-aat-layout-ankr-table.hh" />
