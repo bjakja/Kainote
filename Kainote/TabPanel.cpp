@@ -438,9 +438,9 @@ void TabPanel::OnSize(wxSizeEvent & evt)
 //	}
 //}
 //
-//void TabPanel::FindFocusable(bool next, wxWindowListNode** node)
+//void TabPanel::FindFocusable(bool next, wxWindowList::compatibility_iterator * node)
 //{
-//	wxWindowListNode* nextWindow = *node;
+//	wxWindowList::compatibility_iterator  nextWindow = *node;
 //	while (nextWindow) {
 //		//check the window and return focusable window
 //		//to avoid infinite loop

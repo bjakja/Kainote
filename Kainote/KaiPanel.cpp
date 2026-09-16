@@ -49,7 +49,11 @@ void KaiContainer::OnNavigation(wxNavigationKeyEvent& evt)
 	wxWindowList& list = focusedParent->GetChildren();
 	auto node = list.Find(focused);
 	if (node) {
-		auto nextWindow = next ? node->GetNext() : node->GetPrevious();
+		// Spell the type out: wxWindowList::Find() yields a raw node pointer when
+		// wxUSE_STD_CONTAINERS is off and a compatibility_iterator when it is on,
+		// so "auto" would deduce a different type per wx build and stop matching
+		// the helpers below, which take a compatibility_iterator*.
+		wxWindowList::compatibility_iterator nextWindow = next ? node->GetNext() : node->GetPrevious();
 		while (1) {
 			if (!nextWindow) {
 				if (nextWindowWasNULL)
@@ -126,9 +130,9 @@ void KaiContainer::OnNavigation(wxNavigationKeyEvent& evt)
 	}
 }
 
-void KaiContainer::FindFocusable(bool next, wxWindowListNode** node, wxWindow** window)
+void KaiContainer::FindFocusable(bool next, wxWindowList::compatibility_iterator * node, wxWindow** window)
 {
-	wxWindowListNode* nextWindow = *node;
+	wxWindowList::compatibility_iterator  nextWindow = *node;
 	while (nextWindow) {
 		//check the window and return focusable window
 		//to avoid infinite loop
@@ -146,7 +150,7 @@ void KaiContainer::FindFocusable(bool next, wxWindowListNode** node, wxWindow** 
 	*node = nextWindow;
 }
 
-wxWindow* KaiContainer::FindCheckedRadiobutton(bool next, wxWindowListNode** listWithRadioButton, wxWindow* focused)
+wxWindow* KaiContainer::FindCheckedRadiobutton(bool next, wxWindowList::compatibility_iterator * listWithRadioButton, wxWindow* focused)
 {
 	wxWindow* result = nullptr;
 	bool beforeGroup = false;
@@ -204,7 +208,7 @@ void KaiContainer::OnSetFocus(wxFocusEvent& evt)
 		wxWindow* current = pending.back();
 		pending.pop_back();
 		wxWindowList& list = current->GetChildren();
-		wxWindowListNode* node = list.GetFirst();
+		wxWindowList::compatibility_iterator  node = list.GetFirst();
 		wxWindow* win = nullptr;
 		FindFocusable(true, &node, &win);
 		if (win) {
@@ -212,7 +216,7 @@ void KaiContainer::OnSetFocus(wxFocusEvent& evt)
 			return;
 		}
 
-		for (wxWindowListNode* childNode = list.GetLast(); childNode;
+		for (wxWindowList::compatibility_iterator  childNode = list.GetLast(); childNode;
 			childNode = childNode->GetPrevious()) {
 			wxObject* data = childNode->GetData();
 			if (data) {

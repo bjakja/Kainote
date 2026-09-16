@@ -190,7 +190,7 @@ bool KaiDialog::IsButtonFocused()
 	return (focused && focused->IsKindOf(wxCLASSINFO(MappedButton)));
 }
 
-//void KaiDialog::SetFocusFromNode(wxWindowListNode* node, wxWindowList& list, bool next)
+//void KaiDialog::SetFocusFromNode(wxWindowList::compatibility_iterator  node, wxWindowList& list, bool next)
 //{
 //	if (!node)
 //		return;
@@ -220,7 +220,7 @@ bool KaiDialog::IsButtonFocused()
 //	}
 //}
 
-wxWindowListNode* KaiDialog::GetTabControl(bool next, wxWindow* focused)
+wxWindowList::compatibility_iterator  KaiDialog::GetTabControl(bool next, wxWindow* focused)
 {
 	wxWindow* tab = nullptr;
 	//every new multitab controls have to be added here
@@ -238,10 +238,10 @@ wxWindowListNode* KaiDialog::GetTabControl(bool next, wxWindow* focused)
 		const wxWindowList& tablist = tab->GetChildren();
 		return next ? tablist.GetFirst() : tablist.GetLast();
 	}
-	return nullptr;
+	return wxWindowList::compatibility_iterator();
 }
 
-wxWindow* KaiDialog::FindCheckedRadiobutton(bool next, wxWindowListNode** listWithRadioButton, wxWindow* focused)
+wxWindow* KaiDialog::FindCheckedRadiobutton(bool next, wxWindowList::compatibility_iterator * listWithRadioButton, wxWindow* focused)
 {
 	wxWindow* result = nullptr;
 	bool beforeGroup = false;
@@ -306,7 +306,9 @@ void KaiDialog::SetNextControl(bool next)
 	const wxWindowList& list = focusedParent->GetChildren();
 	auto node = list.Find(focused);
 	if (node) {
-		auto nextWindow = next ? node->GetNext() : node->GetPrevious();
+		// See the note in KaiPanel.cpp: "auto" deduces a different type depending
+		// on wxUSE_STD_CONTAINERS, so name the compatibility_iterator explicitly.
+		wxWindowList::compatibility_iterator nextWindow = next ? node->GetNext() : node->GetPrevious();
 		while (1) {
 			//if tabbar or treebook is only children then go to its tab
 			if (hasMultiplePages && (next || list.GetCount() == 1)) {

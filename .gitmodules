@@ -22,3 +22,6 @@
 	path = Thirdparty/xy-VSFilter-xy_sub_filter_rc5
 	url = https://github.com/altqx/xy-VSFilter.git
 	shallow = true
+[submodule "Thirdparty/wxWidgets"]
+	path = Thirdparty/wxWidgets
+	url = https://github.com/wxWidgets/wxWidgets.git
