@@ -70,6 +70,14 @@
     <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup Label="KainotePaths">
+    <!-- MSBuild only sets SolutionDir when the build was started from a .sln.
+         Building this project directly, as the AVX configuration does, leaves
+         it empty; every $(SolutionDir)... path below then silently becomes
+         relative and resolves against Kainote\ instead of the repository
+         root. -->
+    <SolutionDir Condition="'$(SolutionDir)' == '' or '$(SolutionDir)' == '*Undefined*'">$(MSBuildThisFileDirectory)..\</SolutionDir>
+  </PropertyGroup>
   <PropertyGroup Label="KainoteWxWidgets">
     <!-- wxWidgets is built by its own solution (Thirdparty\wxWidgets\build\msw\wx_vc17.sln);
          these are the static-library output directories it writes to. -->
