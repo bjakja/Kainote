@@ -48,7 +48,9 @@ wxWidgets' own submodules are missing (src/zlib is empty). Run:
 }
 
 function Find-MSBuild {
-    $msbuild = Get-Command msbuild -CommandType Application -ErrorAction SilentlyContinue
+    # Get-Command returns every match on PATH, so take one rather than an array.
+    $msbuild = Get-Command msbuild -CommandType Application -ErrorAction SilentlyContinue |
+        Select-Object -First 1
     if ($msbuild) { return $msbuild.Source }
 
     $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
