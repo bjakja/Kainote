@@ -27,9 +27,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\..\..\curl\src\curl.rc" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="..\..\..\curl\lib\altsvc.c" />
     <ClCompile Include="..\..\..\curl\lib\amigaos.c" />
     <ClCompile Include="..\..\..\curl\lib\asyn-ares.c" />

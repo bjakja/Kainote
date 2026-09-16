@@ -40,6 +40,7 @@
     <ClCompile Include="..\..\Icu\source\common\bytestriebuilder.cpp" />
     <ClCompile Include="..\..\Icu\source\common\bytestrieiterator.cpp" />
     <ClCompile Include="..\..\Icu\source\common\caniter.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\characterproperties.cpp" />
     <ClCompile Include="..\..\Icu\source\common\chariter.cpp" />
     <ClCompile Include="..\..\Icu\source\common\charstr.cpp" />
     <ClCompile Include="..\..\Icu\source\common\cmemory.cpp" />
@@ -50,23 +51,32 @@
     <ClCompile Include="..\..\Icu\source\common\dictionarydata.cpp" />
     <ClCompile Include="..\..\Icu\source\common\dtintrv.cpp" />
     <ClCompile Include="..\..\Icu\source\common\edits.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\emojiprops.cpp" />
     <ClCompile Include="..\..\Icu\source\common\errorcode.cpp" />
     <ClCompile Include="..\..\Icu\source\common\filteredbrk.cpp" />
     <ClCompile Include="..\..\Icu\source\common\filterednormalizer2.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\fixedstring.cpp" />
     <ClCompile Include="..\..\Icu\source\common\icudataver.cpp" />
     <ClCompile Include="..\..\Icu\source\common\icuplug.cpp" />
-    <ClCompile Include="..\..\Icu\source\common\listformatter.cpp" />
     <ClCompile Include="..\..\Icu\source\common\loadednormalizer2impl.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\localebuilder.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\localematcher.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\localeprioritylist.cpp" />
     <ClCompile Include="..\..\Icu\source\common\locavailable.cpp" />
     <ClCompile Include="..\..\Icu\source\common\locbased.cpp" />
     <ClCompile Include="..\..\Icu\source\common\locdispnames.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\locdistance.cpp" />
     <ClCompile Include="..\..\Icu\source\common\locdspnm.cpp" />
     <ClCompile Include="..\..\Icu\source\common\locid.cpp" />
     <ClCompile Include="..\..\Icu\source\common\loclikely.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\loclikelysubtags.cpp" />
     <ClCompile Include="..\..\Icu\source\common\locmap.cpp" />
     <ClCompile Include="..\..\Icu\source\common\locresdata.cpp" />
     <ClCompile Include="..\..\Icu\source\common\locutil.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\lsr.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\lstmbe.cpp" />
     <ClCompile Include="..\..\Icu\source\common\messagepattern.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\mlbe.cpp" />
     <ClCompile Include="..\..\Icu\source\common\normalizer2.cpp" />
     <ClCompile Include="..\..\Icu\source\common\normalizer2impl.cpp" />
     <ClCompile Include="..\..\Icu\source\common\normlzr.cpp" />
@@ -78,6 +88,7 @@
     <ClCompile Include="..\..\Icu\source\common\punycode.cpp" />
     <ClCompile Include="..\..\Icu\source\common\putil.cpp" />
     <ClCompile Include="..\..\Icu\source\common\rbbi.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\rbbi_cache.cpp" />
     <ClCompile Include="..\..\Icu\source\common\rbbidata.cpp" />
     <ClCompile Include="..\..\Icu\source\common\rbbinode.cpp" />
     <ClCompile Include="..\..\Icu\source\common\rbbirb.cpp" />
@@ -85,10 +96,10 @@
     <ClCompile Include="..\..\Icu\source\common\rbbisetb.cpp" />
     <ClCompile Include="..\..\Icu\source\common\rbbistbl.cpp" />
     <ClCompile Include="..\..\Icu\source\common\rbbitblb.cpp" />
-    <ClCompile Include="..\..\Icu\source\common\rbbi_cache.cpp" />
     <ClCompile Include="..\..\Icu\source\common\resbund.cpp" />
     <ClCompile Include="..\..\Icu\source\common\resbund_cnv.cpp" />
     <ClCompile Include="..\..\Icu\source\common\resource.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\restrace.cpp" />
     <ClCompile Include="..\..\Icu\source\common\ruleiter.cpp" />
     <ClCompile Include="..\..\Icu\source\common\schriter.cpp" />
     <ClCompile Include="..\..\Icu\source\common\serv.cpp" />
@@ -100,14 +111,15 @@
     <ClCompile Include="..\..\Icu\source\common\servslkf.cpp" />
     <ClCompile Include="..\..\Icu\source\common\sharedobject.cpp" />
     <ClCompile Include="..\..\Icu\source\common\simpleformatter.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\static_unicode_sets.cpp" />
     <ClCompile Include="..\..\Icu\source\common\stringpiece.cpp" />
     <ClCompile Include="..\..\Icu\source\common\stringtriebuilder.cpp" />
     <ClCompile Include="..\..\Icu\source\common\uarrsort.cpp" />
     <ClCompile Include="..\..\Icu\source\common\ubidi.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\ubidi_props.cpp" />
     <ClCompile Include="..\..\Icu\source\common\ubidiln.cpp" />
     <ClCompile Include="..\..\Icu\source\common\ubiditransform.cpp" />
     <ClCompile Include="..\..\Icu\source\common\ubidiwrt.cpp" />
-    <ClCompile Include="..\..\Icu\source\common\ubidi_props.cpp" />
     <ClCompile Include="..\..\Icu\source\common\ubrk.cpp" />
     <ClCompile Include="..\..\Icu\source\common\ucase.cpp" />
     <ClCompile Include="..\..\Icu\source\common\ucasemap.cpp" />
@@ -122,14 +134,6 @@
     <ClCompile Include="..\..\Icu\source\common\ucmndata.cpp" />
     <ClCompile Include="..\..\Icu\source\common\ucnv.cpp" />
     <ClCompile Include="..\..\Icu\source\common\ucnv2022.cpp" />
-    <ClCompile Include="..\..\Icu\source\common\ucnvbocu.cpp" />
-    <ClCompile Include="..\..\Icu\source\common\ucnvdisp.cpp" />
-    <ClCompile Include="..\..\Icu\source\common\ucnvhz.cpp" />
-    <ClCompile Include="..\..\Icu\source\common\ucnvisci.cpp" />
-    <ClCompile Include="..\..\Icu\source\common\ucnvlat1.cpp" />
-    <ClCompile Include="..\..\Icu\source\common\ucnvmbcs.cpp" />
-    <ClCompile Include="..\..\Icu\source\common\ucnvscsu.cpp" />
-    <ClCompile Include="..\..\Icu\source\common\ucnvsel.cpp" />
     <ClCompile Include="..\..\Icu\source\common\ucnv_bld.cpp" />
     <ClCompile Include="..\..\Icu\source\common\ucnv_cb.cpp" />
     <ClCompile Include="..\..\Icu\source\common\ucnv_cnv.cpp" />
@@ -143,7 +147,16 @@
     <ClCompile Include="..\..\Icu\source\common\ucnv_u32.cpp" />
     <ClCompile Include="..\..\Icu\source\common\ucnv_u7.cpp" />
     <ClCompile Include="..\..\Icu\source\common\ucnv_u8.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\ucnvbocu.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\ucnvdisp.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\ucnvhz.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\ucnvisci.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\ucnvlat1.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\ucnvmbcs.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\ucnvscsu.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\ucnvsel.cpp" />
     <ClCompile Include="..\..\Icu\source\common\ucol_swp.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\ucptrie.cpp" />
     <ClCompile Include="..\..\Icu\source\common\ucurr.cpp" />
     <ClCompile Include="..\..\Icu\source\common\udata.cpp" />
     <ClCompile Include="..\..\Icu\source\common\udatamem.cpp" />
@@ -156,21 +169,23 @@
     <ClCompile Include="..\..\Icu\source\common\uinvchar.cpp" />
     <ClCompile Include="..\..\Icu\source\common\uiter.cpp" />
     <ClCompile Include="..\..\Icu\source\common\ulist.cpp" />
-    <ClCompile Include="..\..\Icu\source\common\ulistformatter.cpp" />
     <ClCompile Include="..\..\Icu\source\common\uloc.cpp" />
     <ClCompile Include="..\..\Icu\source\common\uloc_keytype.cpp" />
     <ClCompile Include="..\..\Icu\source\common\uloc_tag.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\ulocale.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\ulocbuilder.cpp" />
     <ClCompile Include="..\..\Icu\source\common\umapfile.cpp" />
     <ClCompile Include="..\..\Icu\source\common\umath.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\umutablecptrie.cpp" />
     <ClCompile Include="..\..\Icu\source\common\umutex.cpp" />
     <ClCompile Include="..\..\Icu\source\common\unames.cpp" />
     <ClCompile Include="..\..\Icu\source\common\unifiedcache.cpp" />
     <ClCompile Include="..\..\Icu\source\common\unifilt.cpp" />
     <ClCompile Include="..\..\Icu\source\common\unifunct.cpp" />
     <ClCompile Include="..\..\Icu\source\common\uniset.cpp" />
-    <ClCompile Include="..\..\Icu\source\common\unisetspan.cpp" />
     <ClCompile Include="..\..\Icu\source\common\uniset_closure.cpp" />
     <ClCompile Include="..\..\Icu\source\common\uniset_props.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\unisetspan.cpp" />
     <ClCompile Include="..\..\Icu\source\common\unistr.cpp" />
     <ClCompile Include="..\..\Icu\source\common\unistr_case.cpp" />
     <ClCompile Include="..\..\Icu\source\common\unistr_case_locale.cpp" />
@@ -181,27 +196,27 @@
     <ClCompile Include="..\..\Icu\source\common\unormcmp.cpp" />
     <ClCompile Include="..\..\Icu\source\common\uobject.cpp" />
     <ClCompile Include="..\..\Icu\source\common\uprops.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\ures_cnv.cpp" />
     <ClCompile Include="..\..\Icu\source\common\uresbund.cpp" />
     <ClCompile Include="..\..\Icu\source\common\uresdata.cpp" />
-    <ClCompile Include="..\..\Icu\source\common\ures_cnv.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\usc_impl.cpp" />
     <ClCompile Include="..\..\Icu\source\common\uscript.cpp" />
     <ClCompile Include="..\..\Icu\source\common\uscript_props.cpp" />
-    <ClCompile Include="..\..\Icu\source\common\usc_impl.cpp" />
     <ClCompile Include="..\..\Icu\source\common\uset.cpp" />
-    <ClCompile Include="..\..\Icu\source\common\usetiter.cpp" />
     <ClCompile Include="..\..\Icu\source\common\uset_props.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\usetiter.cpp" />
     <ClCompile Include="..\..\Icu\source\common\ushape.cpp" />
     <ClCompile Include="..\..\Icu\source\common\usprep.cpp" />
     <ClCompile Include="..\..\Icu\source\common\ustack.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\ustr_cnv.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\ustr_titlecase_brkiter.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\ustr_wcs.cpp" />
     <ClCompile Include="..\..\Icu\source\common\ustrcase.cpp" />
     <ClCompile Include="..\..\Icu\source\common\ustrcase_locale.cpp" />
     <ClCompile Include="..\..\Icu\source\common\ustrenum.cpp" />
     <ClCompile Include="..\..\Icu\source\common\ustrfmt.cpp" />
     <ClCompile Include="..\..\Icu\source\common\ustring.cpp" />
     <ClCompile Include="..\..\Icu\source\common\ustrtrns.cpp" />
-    <ClCompile Include="..\..\Icu\source\common\ustr_cnv.cpp" />
-    <ClCompile Include="..\..\Icu\source\common\ustr_titlecase_brkiter.cpp" />
-    <ClCompile Include="..\..\Icu\source\common\ustr_wcs.cpp" />
     <ClCompile Include="..\..\Icu\source\common\utext.cpp" />
     <ClCompile Include="..\..\Icu\source\common\utf_impl.cpp" />
     <ClCompile Include="..\..\Icu\source\common\util.cpp" />
@@ -210,13 +225,13 @@
     <ClCompile Include="..\..\Icu\source\common\utrie.cpp" />
     <ClCompile Include="..\..\Icu\source\common\utrie2.cpp" />
     <ClCompile Include="..\..\Icu\source\common\utrie2_builder.cpp" />
+    <ClCompile Include="..\..\Icu\source\common\utrie_swap.cpp" />
     <ClCompile Include="..\..\Icu\source\common\uts46.cpp" />
     <ClCompile Include="..\..\Icu\source\common\utypes.cpp" />
     <ClCompile Include="..\..\Icu\source\common\uvector.cpp" />
     <ClCompile Include="..\..\Icu\source\common\uvectr32.cpp" />
     <ClCompile Include="..\..\Icu\source\common\uvectr64.cpp" />
     <ClCompile Include="..\..\Icu\source\common\wintz.cpp" />
-    <ClCompile Include="..\..\Icu\source\i18n\affixpatternparser.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\alphaindex.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\anytrans.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\astro.cpp" />
@@ -270,27 +285,31 @@
     <ClCompile Include="..\..\Icu\source\i18n\dayperiodrules.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\dcfmtsym.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\decContext.cpp" />
-    <ClCompile Include="..\..\Icu\source\i18n\decfmtst.cpp" />
-    <ClCompile Include="..\..\Icu\source\i18n\decimalformatpattern.cpp" />
-    <ClCompile Include="..\..\Icu\source\i18n\decimfmt.cpp" />
-    <ClCompile Include="..\..\Icu\source\i18n\decimfmtimpl.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\decNumber.cpp" />
-    <ClCompile Include="..\..\Icu\source\i18n\digitaffix.cpp" />
-    <ClCompile Include="..\..\Icu\source\i18n\digitaffixesandpadding.cpp" />
-    <ClCompile Include="..\..\Icu\source\i18n\digitformatter.cpp" />
-    <ClCompile Include="..\..\Icu\source\i18n\digitgrouping.cpp" />
-    <ClCompile Include="..\..\Icu\source\i18n\digitinterval.cpp" />
-    <ClCompile Include="..\..\Icu\source\i18n\digitlst.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\decimfmt.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\displayoptions.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\double-conversion-bignum-dtoa.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\double-conversion-bignum.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\double-conversion-cached-powers.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\double-conversion-double-to-string.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\double-conversion-fast-dtoa.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\double-conversion-string-to-double.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\double-conversion-strtod.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\dtfmtsym.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\dtitvfmt.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\dtitvinf.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\dtptngen.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\dtrule.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\erarules.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\esctrn.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\ethpccal.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\fmtable.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\fmtable_cnv.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\format.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\formatted_string_builder.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\formattedval_iterimpl.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\formattedval_sbimpl.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\formattedvalue.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\fphdlimp.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\fpositer.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\funcrepl.cpp" />
@@ -301,20 +320,36 @@
     <ClCompile Include="..\..\Icu\source\i18n\indiancal.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\inputext.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\islamcal.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\iso8601cal.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\japancal.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\listformatter.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\measfmt.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\measunit.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\measunit_extra.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\measure.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\messageformat2.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\messageformat2_arguments.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\messageformat2_checker.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\messageformat2_data_model.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\messageformat2_errors.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\messageformat2_evaluation.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\messageformat2_formattable.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\messageformat2_formatter.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\messageformat2_function_registry.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\messageformat2_parser.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\messageformat2_serializer.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\msgfmt.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\name2uni.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\nfrs.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\nfrule.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\nfsubs.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\nortrans.cpp" />
-    <ClCompile Include="..\..\Icu\source\i18n\nounit.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\nultrans.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\number_affixutils.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\number_asformat.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\number_capi.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\number_compact.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\number_currencysymbols.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\number_decimalquantity.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\number_decimfmtprops.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\number_fluent.cpp" />
@@ -322,31 +357,49 @@
     <ClCompile Include="..\..\Icu\source\i18n\number_grouping.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\number_integerwidth.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\number_longnames.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\number_mapper.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\number_modifiers.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\number_multiplier.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\number_notation.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\number_output.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\number_padding.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\number_patternmodifier.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\number_patternstring.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\number_rounding.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\number_scientific.cpp" />
-    <ClCompile Include="..\..\Icu\source\i18n\number_stringbuilder.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\number_simple.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\number_skeletons.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\number_symbolswrapper.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\number_usageprefs.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\number_utils.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\numfmt.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\numparse_affixes.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\numparse_compositions.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\numparse_currency.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\numparse_decimal.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\numparse_impl.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\numparse_parsednumber.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\numparse_scientific.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\numparse_symbols.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\numparse_validators.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\numrange_capi.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\numrange_fluent.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\numrange_impl.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\numsys.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\olsontz.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\persncal.cpp" />
-    <ClCompile Include="..\..\Icu\source\i18n\pluralaffix.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\pluralranges.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\plurfmt.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\plurrule.cpp" />
-    <ClCompile Include="..\..\Icu\source\i18n\precision.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\quant.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\quantityformatter.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\rbnf.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\rbt.cpp" />
-    <ClCompile Include="..\..\Icu\source\i18n\rbtz.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\rbt_data.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\rbt_pars.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\rbt_rule.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\rbt_set.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\rbtz.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\regexcmp.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\regeximp.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\regexst.cpp" />
@@ -364,11 +417,11 @@
     <ClCompile Include="..\..\Icu\source\i18n\selfmt.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\sharedbreakiterator.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\simpletz.cpp" />
-    <ClCompile Include="..\..\Icu\source\i18n\smallintformatter.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\smpdtfmt.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\smpdtfst.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\sortkey.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\standardplural.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\string_segment.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\strmatch.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\strrepl.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\stsearch.cpp" />
@@ -392,19 +445,24 @@
     <ClCompile Include="..\..\Icu\source\i18n\ucal.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\ucln_in.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\ucol.cpp" />
-    <ClCompile Include="..\..\Icu\source\i18n\ucoleitr.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\ucol_res.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\ucol_sit.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\ucoleitr.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\ucsdet.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\udat.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\udateintervalformat.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\udatpg.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\ufieldpositer.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\uitercollationiterator.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\ulistformatter.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\ulocdata.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\umsg.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\unesctrn.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\uni2name.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\units_complexconverter.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\units_converter.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\units_data.cpp" />
+    <ClCompile Include="..\..\Icu\source\i18n\units_router.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\unum.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\unumsys.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\upluralrules.cpp" />
@@ -420,8 +478,6 @@
     <ClCompile Include="..\..\Icu\source\i18n\utf8collationiterator.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\utmscale.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\utrans.cpp" />
-    <ClCompile Include="..\..\Icu\source\i18n\valueformatter.cpp" />
-    <ClCompile Include="..\..\Icu\source\i18n\visibledigits.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\vtzone.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\vzone.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\windtfmt.cpp" />
@@ -780,7 +836,7 @@
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
       <PreprocessorDefinitions>U_STATIC_IMPLEMENTATION;U_ENABLE_DYLOAD=0;U_CHECK_DYLOAD=0;UCONFIG_NO_FILE_IO=1;UCONFIG_NO_LEGACY_CONVERSION=1;U_CHARSET_IS_UTF8=1;UCONFIG_NO_IDNA=1;UCONFIG_NO_FORMATTING=1;U_ATTRIBUTE_DEPRECATED=;_CRT_SECURE_NO_DEPRECATE;U_COMMON_IMPLEMENTATION;U_I18N_IMPLEMENTATION;UCLN_AUTO_ATEXIT;BOOST_HAS_ICU;BOOST_SYSTEM_NO_DEPRECATED;BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/utf-8 /Zm200 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -793,6 +849,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -817,6 +874,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">
     <ClCompile>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -842,6 +900,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
