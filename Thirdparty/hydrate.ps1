@@ -47,9 +47,34 @@ function Invoke-WithRetry {
     }
 }
 
+# Windows commonly has more than one `tar` on PATH: the bsdtar that ships in
+# System32 (Windows 10 1803+) and the GNU tar from Git for Windows.  They are
+# not interchangeable for .tar.xz -- bsdtar links liblzma directly, while GNU
+# tar shells out to an `xz` binary that may not be installed -- and
+# Get-Command returns *all* of them, so taking .Source blindly yields an array
+# that stringifies into one nonsense command name.
+#
+# Return them in preference order, System32 first, without duplicates.
+function Get-TarCandidate {
+    $ordered = @()
+    if ($env:SystemRoot) {
+        $system32 = Join-Path $env:SystemRoot 'system32\tar.exe'
+        if (Test-Path -LiteralPath $system32) { $ordered += $system32 }
+    }
+    $ordered += @(
+        Get-Command tar -CommandType Application -ErrorAction SilentlyContinue |
+            ForEach-Object { $_.Source }
+    )
+
+    $seen = New-Object 'System.Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)
+    foreach ($path in $ordered) {
+        if ($path -and $seen.Add($path)) { $path }
+    }
+}
+
 # Extracts $Archive into $Target, discarding $Strip leading path components.
-# .zip goes through Expand-Archive; tarballs go through bsdtar, which ships with
-# Windows 10 1803+ and every GitHub Actions windows runner.
+# .zip goes through Expand-Archive; tarballs go through whichever tar on this
+# machine can actually read them.
 function Expand-Any {
     param(
         [Parameter(Mandatory)] [string] $Archive,
@@ -64,12 +89,31 @@ function Expand-Any {
             Expand-Archive -LiteralPath $Archive -DestinationPath $staging -Force
         }
         else {
-            $tar = Get-Command tar -CommandType Application -ErrorAction SilentlyContinue
-            if (-not $tar) {
-                throw "tar was not found on PATH; it is required to extract $([IO.Path]::GetFileName($Archive))"
+            $candidates = @(Get-TarCandidate)
+            if ($candidates.Count -eq 0) {
+                throw "No tar executable was found on PATH; it is required to extract $([IO.Path]::GetFileName($Archive))"
             }
-            & $tar.Source -xf $Archive -C $staging
-            if ($LASTEXITCODE -ne 0) { throw "tar failed with exit code $LASTEXITCODE for $Archive" }
+
+            $extracted = $false
+            $attempts  = @()
+            foreach ($tar in $candidates) {
+                $output = & $tar -xf $Archive -C $staging 2>&1
+                $code   = $LASTEXITCODE
+                if ($code -eq 0 -and @(Get-ChildItem -LiteralPath $staging -Force).Count -gt 0) {
+                    Write-Host "    extracted with $tar"
+                    $extracted = $true
+                    break
+                }
+                $attempts += "      $tar -> exit $code $(($output | Out-String).Trim())"
+                # Leave a clean staging directory for the next candidate.
+                Get-ChildItem -LiteralPath $staging -Force |
+                    Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+            }
+            if (-not $extracted) {
+                $name = [IO.Path]::GetFileName($Archive)
+                $tried = $attempts -join [Environment]::NewLine
+                throw "No tar on this machine could extract ${name}:$([Environment]::NewLine)$tried"
+            }
         }
 
         $root = $staging
