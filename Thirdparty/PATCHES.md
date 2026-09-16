@@ -1,97 +1,91 @@
-# Vendored forks and their patches
+# The two forks
 
-Two libraries stay in the tree because Kainote genuinely modifies them. For each
-one, the upstream base is recorded here and the local delta is extracted into
-`Thirdparty/patches/<name>/`, so the changes are reviewable on their own and the
-fork can be rebased later.
+Two dependencies carry Kainote's own changes. Rather than sitting as
+unattributed copies in this tree, each is a fork repository whose `kainote`
+branch is *upstream at a known commit, plus commits that are the changes*. The
+submodule pins one of those commits.
 
-The patches are documentation of what is already in the tree — **the build does
-not apply them.** The source under `Thirdparty/<name>/` is the real thing; the
-patch series exists so you can see the delta, re-derive it, or replay it onto a
-newer upstream.
+That makes the delta reviewable with ordinary git, and makes rebasing onto a
+newer upstream an ordinary rebase.
 
-## ffms2
+## ffms2 — [altqx/ffms2](https://github.com/altqx/ffms2), branch `kainote`
 
 - **Upstream:** <https://github.com/FFMS/ffms2>
 - **Base:** tag `5.0`, plus upstream commit `9417465` ("Add layered decoding
-  support") cherry-picked from master.
-- **Local delta:** 61 lines across 3 files.
+  support") cherry-picked from master
+- **Kainote's own delta:** 61 lines across 3 files, in one commit
 
-| Patch | What it does |
+| Commit | What |
 |---|---|
-| `0001-kainote-metadata-and-attachment-api.patch` | Adds the track name/language, chapter, attachment and subtitle-demux API, plus an `FFMS_ColorSpaces` enum. Bumps `FFMS_VERSION` to 5.1.0.0 so a patched ffms2 is distinguishable from stock 5.0. |
-| `0002-skip-seek-during-init-in-linear-no-rewind-mode.patch` | With `SeekMode < 0` the source must not seek, but init still ran `INITIALIZE_SOURCE`, which does. |
+| `Add layered decoding support` | Upstream cherry-pick, not ours |
+| `Add the Kainote metadata/attachment API and linear no-rewind init fix` | The track name/language, chapter, attachment and subtitle-demux API, exported from `ffms.h`, plus an `FFMS_ColorSpaces` enum. `FFMS_VERSION` becomes 5.1.0.0 so a patched ffms2 is distinguishable from stock 5.0. Also skips the `INITIALIZE_SOURCE` stage when `SeekMode < 0`, since that stage seeks and linear no-rewind mode must not. |
 
-The *definitions* for the API added by patch 1 are not in the upstream tree at
-all — they live in `Thirdparty/Build/FFMS2/indexing_additional.cpp`, which both
+The *definitions* for that API are not in the fork at all — they live in this
+repository, in `Thirdparty/Build/FFMS2/indexing_additional.cpp`, which both
 builds compile.
 
 > **Known hazard.** On Linux, `indexing_additional.cpp` defines out-of-line
-> members of `FFMS_Indexer` against the vendored private header
-> `Thirdparty/ffms2/src/core/indexing.h`, then links against the distribution's
+> members of `FFMS_Indexer` against the submodule's private header
+> `Thirdparty/ffms2/src/core/indexing.h`, then links against the *distribution's*
 > `libffms2`. That is only correct while the distribution ships an ffms2 whose
 > `FFMS_Indexer` layout matches this header. It matches ffms2 5.0, and nothing
 > currently checks. `CMakeLists.txt` should pin a version range for `ffms2`, or
 > the API should be upstreamed so the private header is not needed.
 
-### Rebasing onto a newer ffms2
-
-```sh
-git clone https://github.com/FFMS/ffms2 && cd ffms2
-git checkout <new-tag>
-git apply ../Kainote/Thirdparty/patches/ffms2/*.patch
-```
-
-Then copy the result over `Thirdparty/ffms2/` and regenerate the series.
-
-## xy-VSFilter
+## xy-VSFilter — [altqx/xy-VSFilter](https://github.com/altqx/xy-VSFilter), branch `kainote`
 
 - **Upstream:** <https://github.com/Cyberbeing/xy-VSFilter>, branch
   `xy_sub_filter_rc5`
-- **Base:** commit `591a14c` (2018-09-04, "Kill some warnings")
-- **Local delta:** 3447 lines across 65 files.
+- **Base:** commit `532b756` (2023-02-20, the branch tip; upstream has been
+  dormant since)
+- **Kainote's delta:** 58 modified files (4248 lines) and 12 added, plus the
+  removal of components Kainote never builds
 
-| Patch | What it does |
+| Commit | What |
 |---|---|
-| `0001-kainote-vsfilter-source-changes.patch` | CSRI entry points extended with extra colour formats and a direct `SimpleSubPicProvider` path, plus the subtitle/subpic fixes made since 2018. |
-| `0002-kainote-vsfilter-msvc-integration.patch` | Project and property files retargeted to build inside `Kainote.sln`. |
+| `Remove upstream components Kainote does not build` | Kainote builds seven of this repo's projects; the bundled gtest and boost_lib, the test fixtures, unrar, log4cplus's tests and the DX7 subpic backend are never compiled. Boost comes from Kainote's own hydrated copy. |
+| `Kainote's source changes` | CSRI entry points extended with extra colour formats and a direct `SimpleSubPicProvider` path, the subtitle/subpic fixes accumulated since, and the AviSynth interface headers under `include/avisynth/`. |
+| `Build inside Kainote.sln` | Project and property files retargeted: toolset, output paths, include paths pointing at Kainote's hydrated boost. |
 
-The base was identified by diffing the vendored tree against every commit
-reachable on that branch and taking the closest match, so it is the best
-available estimate rather than a recorded fact. Upstream has been dormant since
-February 2023, and the branch has roughly 700 lines of drift past this base that
-the fork never picked up.
+The base was identified by comparing the vendored tree against every commit on
+that branch and taking the one that maximised exact file matches — 940 of 998.
 
-### Follow-ups
+### Follow-up
 
-- The directory is still named `xy-VSFilter-xy_sub_filter_rc5`, which is just
-  how GitHub's archive happened to unpack. Renaming it to `xy-VSFilter` means
-  touching `Kainote.sln` and every project that references it, so it is left for
-  a separate change.
+The submodule path is still `xy-VSFilter-xy_sub_filter_rc5`, which is just how
+GitHub's archive happened to unpack. Renaming it means touching `Kainote.sln`
+and every project that references it, so it is left for a separate change.
 
-## Regenerating a series
-
-Both series were produced by diffing a clean upstream checkout against the
-vendored tree with CR stripped from both sides:
+## Rebasing a fork onto newer upstream
 
 ```sh
-diff -u --label a/<path> --label b/<path> \
-    <(tr -d '\r' < upstream/<path>) <(tr -d '\r' < Thirdparty/<name>/<path>)
+cd Thirdparty/ffms2
+git remote add upstream https://github.com/FFMS/ffms2.git
+git fetch upstream --tags
+git rebase --onto <new-tag> <old-base> kainote
+# resolve, then:
+git push --force-with-lease origin kainote
+cd ../.. && git add Thirdparty/ffms2 && git commit   # move the submodule pin
 ```
 
-Both were verified by applying them to a fresh checkout of the recorded base and
-confirming the result matches the vendored tree byte-for-byte once line endings
-are normalised.
+To see just the delta at any time:
+
+```sh
+git -C Thirdparty/ffms2 log --oneline 5.0..kainote
+git -C Thirdparty/ffms2 diff 5.0..kainote
+```
 
 ## wxWidgets
 
-`Thirdparty/wxWidgets` is a modified 2.9.4 and is **not** covered by a patch
-series here, because its delta is not a set of intentional patches: a
-tree-wide find-and-replace commented out 4152 `wxCHECK`/`wxASSERT`/`wxFAIL`
-lines across 658 files, including the macro definitions in
-`include/wx/debug.h`. `wxCHECK(cond, rc)` there now expands to nothing while 59
-call sites still use it, 42 of them in code the MSW build compiles, so those
-guards no longer return. Untangling that is its own piece of work — either move
-to wxWidgets 3.3.x (which the Linux build already uses) or restore `debug.h`
-and set `wxDEBUG_LEVEL=0`, which is the supported way to silence assertions
-while keeping the `wxCHECK_*` guards.
+`Thirdparty/wxWidgets` is a modified 2.9.4 and is deliberately **not** a fork
+submodule, because its delta is not a set of intentional patches worth carrying
+forward: a tree-wide find-and-replace commented out 4152
+`wxCHECK`/`wxASSERT`/`wxFAIL` lines across 658 files, including the macro
+definitions in `include/wx/debug.h`. `wxCHECK(cond, rc)` there now expands to
+nothing while 59 call sites still use it, 42 of them in code the MSW build
+compiles, so those guards no longer return.
+
+Untangling that is its own piece of work — either move to wxWidgets 3.3.x (which
+the Linux build already uses) or restore `debug.h` and set `wxDEBUG_LEVEL=0`,
+which is the supported way to silence assertions while keeping the `wxCHECK_*`
+guards.

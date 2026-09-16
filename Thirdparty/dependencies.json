@@ -1,41 +1,28 @@
 {
   "comment": [
-    "Pinned third-party sources for the Windows (Kainote.sln) build.",
-    "These are plain upstream releases carrying no Kainote changes, so they are",
-    "fetched at build time instead of being committed. Run Thirdparty/hydrate.ps1",
-    "before opening Kainote.sln for the first time, or after bumping a version here.",
+    "Third-party sources the Windows (Kainote.sln) build fetches as archives.",
     "",
-    "The MSVC project that compiles each of these lives in Thirdparty/Build/<Name>/",
-    "and IS tracked, because the project files are Kainote's own work.",
+    "Most third-party code is a git submodule instead -- see Thirdparty/README.md.",
+    "These five stay archives because a submodule would not work or would not pay:",
+    "",
+    "  fribidi  its git tag ships none of the generated lib/*.tab.i tables or",
+    "           fribidi-unicode-version.h that the build's sources #include; only",
+    "           the release tarball has them pre-generated.",
+    "  boost    the git repository is a ~500 MB tree of nested submodules.",
+    "  icu      likewise very large, and only source/common + source/i18n are used.",
+    "  zlib     small enough that an archive is simpler.",
+    "  curl     likewise.",
+    "",
+    "Run Thirdparty/hydrate.ps1 to fetch these. It verifies each archive's SHA-256",
+    "before extracting and refuses to continue on a mismatch.",
+    "",
+    "To bump one: change version+url, then put the new archive's SHA-256 in sha256",
+    "(PowerShell: Get-FileHash -Algorithm SHA256 <file>).",
     "",
     "The Linux build (CMakeLists.txt) ignores this file entirely; it resolves every",
-    "one of these through pkg-config against the distribution's packages.",
-    "",
-    "To bump a dependency: change version+url, then put the new archive's SHA-256",
-    "in sha256 (PowerShell: Get-FileHash -Algorithm SHA256 <file>). hydrate.ps1",
-    "refuses to extract an archive whose hash does not match."
+    "one of these through pkg-config against the distribution's packages."
   ],
   "dependencies": [
-    {
-      "name": "freetype",
-      "version": "2.14.3",
-      "directory": "freetype2",
-      "url": "https://download.savannah.gnu.org/releases/freetype/freetype-2.14.3.tar.xz",
-      "sha256": "36bc4f1cc413335368ee656c42afca65c5a3987e8768cc28cf11ba775e785a5f",
-      "strip": 1,
-      "marker": "include/freetype/freetype.h",
-      "license": "FTL or GPL-2.0-or-later"
-    },
-    {
-      "name": "harfbuzz",
-      "version": "14.4.0",
-      "directory": "harfbuzz",
-      "url": "https://github.com/harfbuzz/harfbuzz/releases/download/14.4.0/harfbuzz-14.4.0.tar.xz",
-      "sha256": "2357ed966c6ced7bfa720b0640c0231065af01158fbea215093ffa15aed44371",
-      "strip": 1,
-      "marker": "src/harfbuzz.cc",
-      "license": "MIT"
-    },
     {
       "name": "fribidi",
       "version": "1.0.16",
@@ -46,26 +33,6 @@
       "marker": "lib/fribidi.c",
       "license": "LGPL-2.1-or-later",
       "note": "Must be the release tarball, not a git archive: it ships the pre-generated lib/*.tab.i tables."
-    },
-    {
-      "name": "libass",
-      "version": "0.17.5",
-      "directory": "libass",
-      "url": "https://github.com/libass/libass/releases/download/0.17.5/libass-0.17.5.tar.gz",
-      "sha256": "caab4b993dd7be6187c55623b789ed75dddefea6e65938af134637c732fe094a",
-      "strip": 1,
-      "marker": "libass/ass.c",
-      "license": "ISC"
-    },
-    {
-      "name": "hunspell",
-      "version": "1.7.3",
-      "directory": "Hunspell",
-      "url": "https://github.com/hunspell/hunspell/releases/download/v1.7.3/hunspell-1.7.3.tar.gz",
-      "sha256": "433274dac0619cb00c2e18b43a3dd3a9d50da5b5613fa9b5c21781e35dd76bc1",
-      "strip": 1,
-      "marker": "src/hunspell/hunspell.hxx",
-      "license": "GPL-2.0 or LGPL-2.1 or MPL-1.1"
     },
     {
       "name": "boost",

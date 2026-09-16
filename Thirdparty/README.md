@@ -5,45 +5,77 @@ How Kainote gets its third-party code, and why each library is where it is.
 The two builds source dependencies very differently:
 
 - **Linux** (`CMakeLists.txt`) resolves everything through `pkg-config` against the
-  distribution's packages. It reads nothing in this directory except `luabins`,
+  distribution's packages. It reads nothing here except `luabins`,
   `DependencyControl` and the `ffms2` headers.
 - **Windows** (`Kainote.sln`) builds its dependencies from source, using the MSVC
   project files under `Thirdparty/Build/`.
 
-## Hydrated (not in git)
+## First checkout
 
-These are unmodified upstream releases, so they are downloaded on demand instead
-of being committed. Versions and SHA-256 hashes are pinned in
-[`dependencies.json`](dependencies.json).
+```sh
+git clone --recurse-submodules https://github.com/bjakja/Kainote.git
+# or, in an existing clone:
+git submodule update --init --recursive
+```
 
-Before opening `Kainote.sln` for the first time:
+Then, for the Windows build only, fetch the handful of dependencies that are not
+submodules:
 
 ```powershell
 pwsh -File Thirdparty\hydrate.ps1
 ```
 
-| Directory    | Version | Notes |
-|--------------|---------|-------|
-| `freetype2`  | 2.14.3  | |
-| `harfbuzz`   | 14.4.0  | Built from the `src/harfbuzz.cc` amalgamation |
-| `fribidi`    | 1.0.16  | Release tarball only — it ships the generated `lib/*.tab.i` tables |
-| `libass`     | 0.17.5  | |
-| `Hunspell`   | 1.7.3   | |
-| `boost`      | 1.91.0  | |
-| `icu`        | 78.3    | |
-| `zlib`       | 1.3.2   | |
-| `curl`       | 8.20.0  | |
+## Submodules
 
-`hydrate.ps1` verifies each archive's hash before extracting and refuses to
-continue on a mismatch. It skips libraries that are already present; pass
-`-Force` to re-extract, or `-Only <names>` to work on a subset.
+| Path | Upstream | Pinned at |
+|---|---|---|
+| `freetype2` | [freetype/freetype](https://github.com/freetype/freetype) | `VER-2-14-3` |
+| `harfbuzz` | [harfbuzz/harfbuzz](https://github.com/harfbuzz/harfbuzz) | `14.4.0` |
+| `libass` | [libass/libass](https://github.com/libass/libass) | `0.17.5` |
+| `Hunspell` | [hunspell/hunspell](https://github.com/hunspell/hunspell) | `v1.7.3` |
+| `ffms2` | **[altqx/ffms2](https://github.com/altqx/ffms2)** | branch `kainote` |
+| `xy-VSFilter-xy_sub_filter_rc5` | **[altqx/xy-VSFilter](https://github.com/altqx/xy-VSFilter)** | branch `kainote` |
 
-To bump one of these, edit its `version`, `url` and `sha256` in
-`dependencies.json` and re-run the script. The MSVC project that compiles it
-lives in `Thirdparty/Build/<Name>/` and **is** tracked, because those project
-files are Kainote's own work rather than upstream's.
+The first four are stock upstream at a release tag, so they point straight at
+upstream. The last two carry Kainote's own changes, so they point at forks whose
+`kainote` branch is upstream plus those changes — see [`PATCHES.md`](PATCHES.md).
 
-A few of those projects carry configuration that upstream would normally
+All six are marked `shallow = true` in `.gitmodules`, so `--recurse-submodules`
+fetches depth-1 rather than full history.
+
+To bump one of the upstream four:
+
+```sh
+cd Thirdparty/<name>
+git fetch --tags origin && git checkout <new-tag>
+cd ../.. && git add Thirdparty/<name> && git commit
+```
+
+Then check whether the MSVC project in `Thirdparty/Build/<Name>/` needs new
+source files — that is the part a version bump usually breaks.
+
+## Archives
+
+A few dependencies are still fetched as pinned, hash-verified archives via
+[`dependencies.json`](dependencies.json) and [`hydrate.ps1`](hydrate.ps1),
+because a submodule would not work or would not pay:
+
+| Directory | Version | Why not a submodule |
+|---|---|---|
+| `fribidi` | 1.0.16 | **Its git tag ships none of the generated `lib/*.tab.i` tables or `fribidi-unicode-version.h` that the build's sources `#include`.** They are produced by the `gen.tab` programs at build time; only the release tarball has them pre-generated. |
+| `boost` | 1.91.0 | The git repository is a ~500 MB tree of nested submodules |
+| `icu` | 78.3 | Very large; only `source/common` and `source/i18n` are used |
+| `zlib` | 1.3.2 | Small enough that an archive is simpler |
+| `curl` | 8.20.0 | Likewise |
+
+`hydrate.ps1` verifies each archive's SHA-256 before extracting and refuses to
+continue on a mismatch. It skips what is already present; pass `-Force` to
+re-extract or `-Only <names>` for a subset.
+
+## Build glue that lives here
+
+The `Thirdparty/Build/<Name>/` project files are Kainote's own work, not
+upstream's, and are tracked. A few carry configuration upstream would normally
 generate:
 
 - `Build/Fribidi/fribidi-config.h` — stands in for the `configure`/meson output.
@@ -57,21 +89,18 @@ generate:
   uses (`-Dprivate_prefix=ass -DPIC=1 -DARCH_X86_64=…`, plus `-DPREFIX` on
   32-bit) and an `-I` pointing at the libass source root so `%include
   "x86/x86inc.asm"` resolves.
+- `Build/HarfBuzz/HarfBuzz.vcxproj` — compiles upstream's `src/harfbuzz.cc`
+  amalgamation, so a version bump needs no project edit.
 
-## Vendored, carrying Kainote changes
+## Still vendored in-tree
 
-These stay in git because they are not stock upstream. Base revisions and the
-extracted patch series are recorded in [`PATCHES.md`](PATCHES.md).
-
-| Directory | Upstream | Why it is still here |
-|---|---|---|
-| `ffms2` | [FFMS/ffms2](https://github.com/FFMS/ffms2) 5.0 | Adds a Kainote-only API (track names/languages, chapters, attachments, subtitle demuxing, colorspace enum) |
-| `xy-VSFilter-xy_sub_filter_rc5` | [Cyberbeing/xy-VSFilter](https://github.com/Cyberbeing/xy-VSFilter) | Hard fork with CSRI extensions and extra colour formats; upstream is dormant |
-| `wxWidgets` | 2.9.4 | Locally modified; see the audit notes in `PATCHES.md` |
-| `luabins` | [agladysh/luabins](https://github.com/agladysh/luabins) | Three small fixes for modern LuaJIT (`luaL_reg` → `luaL_Reg`, `LUA_LIB`, `LUAI_BITSINT`); upstream is unmaintained |
-| `uchardet` | [uchardet](https://gitlab.freedesktop.org/uchardet/uchardet) | Tracks upstream *master*, which is ahead of the 0.0.8 release by seven language models Kainote uses; hydrating the release would lose them |
-| `BaseClasses` | DirectShow base classes | Windows SDK sample code, locally patched |
-| `DirectX9`, `karahelper`, `DependencyControl`, `LuaJIT`/`luajit` | — | Windows-only support code |
+| Directory | Why |
+|---|---|
+| `wxWidgets` | Modified 2.9.4; see the note at the end of `PATCHES.md` |
+| `luabins` | Three small fixes for modern LuaJIT (`luaL_reg` → `luaL_Reg`, `LUA_LIB`, `LUAI_BITSINT`); upstream is unmaintained |
+| `uchardet` | Tracks upstream *master*, which is ahead of the 0.0.8 release by seven language models Kainote compiles; pinning the release would lose them |
+| `BaseClasses` | DirectShow base classes from the Windows SDK samples, locally patched |
+| `DirectX9`, `karahelper`, `DependencyControl`, `LuaJIT`/`luajit` | Windows-only support code |
 
 > `Thirdparty/luajit` and `Thirdparty/LuaJIT` are two directories that differ only
 > in case. They hold disjoint file sets and merge into one directory on Windows
