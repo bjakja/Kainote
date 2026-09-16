@@ -138,12 +138,9 @@ void ProviderFFMS2::Processing()
 					m_renderer->m_Time = m_timecodes[m_renderer->m_Frame];
 					m_lastFrame = m_renderer->m_Frame;
 				}
-				GetFFMSFrame();
-
-				if (!m_FFMS2frame) {
+				if (!CopyCurrentFrame(buff, true)) {
 					continue;
 				}
-				CopyBgraFrameToBuffer(m_FFMS2frame, buff, m_width, m_height);
 
 				m_renderer->DrawTexture(buff);
 				m_renderer->Render(false);
@@ -600,10 +597,23 @@ void ProviderFFMS2::GetFrame(int frame, unsigned char* buff)
 	m_refreshFrame = true;
 }
 
-void ProviderFFMS2::GetFFMSFrame()
+bool ProviderFFMS2::CopyCurrentFrame(unsigned char* buffer, bool forceFetch)
 {
+	//FFMS owns the frame memory and FFMS_SetInputFormatV hands it back
+	//reallocated when the colour matrix changes, so the fetch and the read
+	//have to share one lock. Copying after the lock was released is what
+	//crashed playback on a colorspace switch (issue #39).
 	wxCriticalSectionLocker lock(m_blockFrame);
-	m_FFMS2frame = FFMS_GetFrame(m_videoSource, m_renderer->m_Frame, &m_errInfo);
+	if (forceFetch || !m_FFMS2frame || m_renderer->m_Frame != m_lastFrame || m_refreshFrame) {
+		m_FFMS2frame = FFMS_GetFrame(m_videoSource, m_renderer->m_Frame, &m_errInfo);
+		m_lastFrame = m_renderer->m_Frame;
+		m_refreshFrame = false;
+	}
+	if (!m_FFMS2frame) {
+		return false;
+	}
+	CopyBgraFrameToBuffer(m_FFMS2frame, buffer, m_width, m_height);
+	return true;
 }
 
 void ProviderFFMS2::GetAudio(void* buf, long long start, long long count)
@@ -856,15 +866,7 @@ void ProviderFFMS2::DeleteOldAudioCache()
 
 void ProviderFFMS2::GetFrameBuffer(unsigned char** buffer)
 {
-	if (m_renderer->m_Frame != m_lastFrame || m_refreshFrame) {
-		GetFFMSFrame();
-		m_lastFrame = m_renderer->m_Frame;
-		m_refreshFrame = false;
-	}
-	if (!m_FFMS2frame) {
-		return;
-	}
-	CopyBgraFrameToBuffer(m_FFMS2frame, *buffer, m_width, m_height);
+	CopyCurrentFrame(*buffer, false);
 }
 
 wxString ProviderFFMS2::ColorMatrixDescription(int cs, int cr) {
@@ -903,6 +905,10 @@ void ProviderFFMS2::SetColorSpace(const wxString& matrix)
 	}
 	//lockGetFrame = false;
 	m_colorSpace = matrix;
+	//the cached frame was produced by the old format and does not survive
+	//the reconfiguration above, so force the next read to fetch again
+	m_FFMS2frame = nullptr;
+	m_refreshFrame = true;
 
 }
 
