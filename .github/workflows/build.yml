@@ -131,6 +131,13 @@ jobs:
           -Configuration ${{ matrix.configuration }}
           ${{ steps.wx-cache.outputs.cache-hit == 'true' && '-SkipWxWidgets' || '' }}
 
+      # The package ships both executables; the AVX configuration is built first
+      # because both configurations write into x64\Release.
+      - name: Build the AVX configuration
+        if: matrix.configuration == 'Release'
+        timeout-minutes: 90
+        run: msbuild Kainote.sln /m /v:minimal /p:Configuration=Rel_AVX512 /p:Platform=x64
+
       - name: Build
         timeout-minutes: 90
         run: msbuild Kainote.sln /m /v:minimal /p:Configuration=${{ matrix.configuration }} /p:Platform=x64

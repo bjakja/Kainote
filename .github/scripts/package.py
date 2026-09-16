@@ -285,23 +285,129 @@ def copy_external_binaries(repo_root: Path, stage: Path) -> tuple[list[str], lis
     return taken, missing
 
 
-def copy_runtimes(stage: Path) -> tuple[list[str], list[str]]:
+# Microsoft's own DirectX End-User Runtime redistributable; its terms allow
+# shipping the runtime as part of an application, which is how D3DX9_43.dll
+# reaches users.  Fetched from download.microsoft.com, never copied from a
+# machine that happens to have it.
+DX_REDIST_URL = ("https://download.microsoft.com/download/8/4/A/"
+                 "84A35BF1-DAFE-4AE8-82AF-AD2AE20B6B14/directx_Jun2010_redist.exe")
+DX_CAB = "Jun2010_D3DX9_43_x64.cab"
+# The Visual Studio redistributable folder is what Microsoft licenses for
+# app-local deployment, so it is preferred over the machine's System32 copies.
+VS_CRT_DIRS = [
+    "Microsoft Visual Studio/2022/*/VC/Redist/MSVC/*/x64/Microsoft.VC143.CRT",
+    "Microsoft Visual Studio/2022/*/VC/Redist/MSVC/*/x64/Microsoft.VC142.CRT",
+]
+VC_RUNTIME_FALLBACK_DIRS = ["System32", "SysWOW64"]
+D3DX_FILE = "D3DX9_43.dll"
+
+
+def _find_in_dirs(name: str, dirs: list[Path]) -> Path | None:
+    for root in dirs:
+        for candidate in sorted(root.glob(name)) + sorted(root.rglob(name)):
+            if candidate.is_file():
+                return candidate
+    return None
+
+
+def _extract_d3dx9(redist: Path) -> Path | None:
+    """Unpack D3DX9_43.dll from the official DirectX redistributable."""
+    work = redist.parent / "directx"
+    cab = work / DX_CAB
+    if not cab.exists():
+        work.mkdir(parents=True, exist_ok=True)
+        for args in (["/Q:A", f"/T:{work}", "/C"], ["/Q", f"/T:{work}", "/C"]):
+            subprocess.run([str(redist), *args], capture_output=True, text=True, check=False)
+            if cab.exists():
+                break
+    if not cab.exists():
+        for found in work.glob("*.cab"):
+            if "d3dx9_43" in found.name.lower():
+                cab = found
+                break
+    if not cab.exists():
+        log(f"    ! {DX_CAB} not found in the DirectX redistributable; keeping what is there")
+        return None
+    out = work / "unpacked"
+    out.mkdir(parents=True, exist_ok=True)
+    target = out / D3DX_FILE
+    if not target.exists():
+        subprocess.run(["expand", f"-F:{D3DX_FILE}", str(cab), str(out)],
+                       capture_output=True, text=True, check=False)
+    return target if target.exists() else None
+
+
+def copy_runtimes(repo_root: Path, stage: Path) -> tuple[list[str], list[str]]:
     taken: list[str] = []
     missing: list[str] = []
-    roots = [Path(os.environ.get("WINDIR", "C:/Windows")) / d for d in ("System32", "SysWOW64")]
-    for name in VC_RUNTIME + [D3DX]:
+    program_files = Path(os.environ.get("ProgramFiles", "C:/Program Files"))
+    crt_dirs = [Path(p) for pattern in VS_CRT_DIRS for p in program_files.glob(pattern)]
+    system_dirs = [Path(os.environ.get("WINDIR", "C:/Windows")) / d for d in VC_RUNTIME_FALLBACK_DIRS]
+    for name in VC_RUNTIME:
         if (stage / name).exists():
             taken.append(name)
             continue
-        for root in roots:
-            cand = root / name
-            if cand.exists():
-                shutil.copyfile(cand, stage / name)
-                taken.append(name)
-                break
+        src = _find_in_dirs(name, crt_dirs) or _find_in_dirs(name, system_dirs)
+        if src:
+            shutil.copyfile(src, stage / name)
+            taken.append(name)
         else:
             missing.append(name)
+
+    if (stage / D3DX_FILE).exists():
+        taken.append(D3DX_FILE)
+        return taken, missing
+    cache = repo_root / "Thirdparty" / ".cache" / "runtime" / "directx"
+    redist = cache / Path(DX_REDIST_URL).name
+    if fetch(DX_REDIST_URL, redist):
+        extracted = _extract_d3dx9(redist)
+        if extracted:
+            shutil.copyfile(extracted, stage / D3DX_FILE)
+            taken.append(D3DX_FILE)
+        else:
+            missing.append(D3DX_FILE)
+    else:
+        missing.append(D3DX_FILE)
     return taken, missing
+
+
+def write_notices(repo_root: Path, stage: Path) -> Path:
+    """List where every non-built file in the package came from."""
+    data = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    origins: dict[tuple[str, str], int] = {}
+    for entry in data["automation"]:
+        origin = (entry["repo"], entry["ref"][:12])
+        origins[origin] = origins.get(origin, 0) + 1
+    lines = ["Kainote runtime data and where it comes from.", ""]
+    lines.append("Automation 4 library:")
+    for (repo, ref), count in sorted(origins.items()):
+        lines.append(f"  {repo} at {ref} ({count} files)")
+    lines.append("")
+    lines.append("Dictionaries:")
+    for name, src in sorted(data["dictionaries"].items()):
+        lines.append(f"  {name} - {src['repo']} at {src['ref'][:12]}")
+    if (stage / "Csri").is_dir():
+        lines.append("")
+        lines.append("CSRI renderers:")
+        lines.append("  Csri/xy-VSFilter_kainote.dll - built from this repository's VSFilter")
+        for entry in data["external_binaries"]:
+            lines.append(f"  {entry['dest']} - {entry['source']}")
+    if (stage / "Automation" / "automation").is_dir():
+        lines.append("")
+        lines.append("Automation files the released package carries but the upstream repositories")
+        lines.append("above do not publish, plus its changes to the ones they do:")
+        lines.append("  Automation/** - see .github/patches/ in the source tree")
+        lines.append("  Themes/*.txt - from the released package")
+    if any((stage / n).exists() for n in VC_RUNTIME + [D3DX_FILE]):
+        lines.append("")
+        lines.append("Microsoft redistributables (permitted for app-local redistribution with")
+        lines.append("an application; taken from Microsoft's own redistributables):")
+        lines.append("  msvcp140.dll, vcruntime140.dll, vcruntime140_1.dll - Visual Studio redistributable")
+        lines.append("  D3DX9_43.dll - DirectX End-User Runtime (directx_Jun2010_redist.exe)")
+    lines.append("")
+    path = stage / "third-party-notices.txt"
+    path.write_text("\n".join(lines), encoding="utf-8")
+    return path
 
 
 def write_manifest_file(stage: Path) -> None:
@@ -356,7 +462,7 @@ def main() -> int:
     log(f"   binaries: {len(taken)} copied" + (f", missing: {', '.join(missing_bins)}" if missing_bins else ""))
 
     if args.platform == "windows":
-        rt, miss_rt = copy_runtimes(stage)
+        rt, miss_rt = copy_runtimes(repo_root, stage)
         log(f"   runtimes: {len(rt)} copied" + (f", missing: {', '.join(miss_rt)}" if miss_rt else ""))
         ext, miss_ext = copy_external_binaries(repo_root, stage)
         log(f"   external: {len(ext)} copied" + (f", missing: {', '.join(miss_ext)}" if miss_ext else ""))
@@ -388,6 +494,7 @@ def main() -> int:
         if src.exists():
             shutil.copyfile(src, stage / ("LICENSE.txt" if name == "LICENSE" else name))
 
+    write_notices(repo_root, stage)
     write_manifest_file(stage)
     files = sum(1 for p in stage.rglob("*") if p.is_file())
     log(f"== staged {files} files in {stage}")
