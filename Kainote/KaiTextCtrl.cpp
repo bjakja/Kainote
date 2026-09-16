@@ -1480,7 +1480,7 @@ void KaiTextCtrl::ContextMenu(wxPoint mpos)
 	menut.Append(TEXT_SEEKWORDB,_("Szukaj tłumaczenia słowa na pl.ba.bla"))->Enable(Selend.x!=Cursor.x);*/
 	menut.Append(TEXT_SEEKWORDG, _("Szukaj zaznaczonej frazy w Google"))->Enable(Selend.x != Cursor.x);
 
-	menut.Append(TEXT_DEL, _("&Usuń"))->Enable(Selend.x != Cursor.x && !(style & wxTE_READONLY));
+	menut.Append(TEXT_DEL, _(L"&Usuń"))->Enable(Selend.x != Cursor.x && !(style & wxTE_READONLY));
 
 	int id = -1;
 	id = menut.GetPopupMenuSelection(mpos, this);

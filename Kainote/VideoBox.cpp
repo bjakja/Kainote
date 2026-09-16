@@ -154,13 +154,13 @@ VideoBox::VideoBox(wxWindow *parent, const wxSize &size)
 	m_ButtonPreviousFile = new BitmapButton(m_VideoPanel, CreateBitmapFromPngResource(L"backward"), CreateBitmapFromPngResource(L"backward1"),
 		VIDEO_PREVIOUS_FILE, _("Poprzedni plik"), wxPoint(5, m_ToolBarHeight - 6), wxSize(26, 26));
 	m_ButtonPause = new BitmapButton(m_VideoPanel, CreateBitmapFromPngResource(L"play"), CreateBitmapFromPngResource(L"play1"),
-		VIDEO_PLAY_PAUSE, _("Odtwórz / Pauza"), wxPoint(40, m_ToolBarHeight - 6), wxSize(26, 26));
+		VIDEO_PLAY_PAUSE, _(L"Odtwórz / Pauza"), wxPoint(40, m_ToolBarHeight - 6), wxSize(26, 26));
 	m_ButtonPlayLine = new BitmapButton(m_VideoPanel, CreateBitmapFromPngResource(L"playline"), CreateBitmapFromPngResource(L"playline1"),
-		GLOBAL_PLAY_ACTUAL_LINE, _("Odtwórz aktywną linię"), wxPoint(75, m_ToolBarHeight - 6), wxSize(26, 26), GLOBAL_HOTKEY);
+		GLOBAL_PLAY_ACTUAL_LINE, _(L"Odtwórz aktywną linię"), wxPoint(75, m_ToolBarHeight - 6), wxSize(26, 26), GLOBAL_HOTKEY);
 	m_ButtonStop = new BitmapButton(m_VideoPanel, CreateBitmapFromPngResource(L"stop"), CreateBitmapFromPngResource(L"stop1"),
 		VIDEO_STOP, _("Zatrzymaj"), wxPoint(110, m_ToolBarHeight - 6), wxSize(26, 26));
 	m_ButtonNextFile = new BitmapButton(m_VideoPanel, CreateBitmapFromPngResource(L"forward"), CreateBitmapFromPngResource(L"forward1"),
-		VIDEO_NEXT_FILE, _("Następny plik"), wxPoint(145, m_ToolBarHeight - 6), wxSize(26, 26));
+		VIDEO_NEXT_FILE, _(L"Następny plik"), wxPoint(145, m_ToolBarHeight - 6), wxSize(26, 26));
 
 	m_VolumeSlider = new VolSlider(m_VideoPanel, ID_VOL, Options.GetInt(VIDEO_VOLUME), wxPoint(size.x - 110, m_ToolBarHeight - 5), wxSize(110, 25));
 	m_TimesTextField = new KaiTextCtrl(m_VideoPanel, -1, emptyString, wxPoint(180, m_ToolBarHeight - 6), wxSize(360, 25), wxTE_READONLY);
@@ -319,7 +319,7 @@ bool VideoBox::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*= 
 	renderer->m_BlockResize = true;
 	if (!renderer->OpenFile(fileName, subsFlag, !tab->editor, changeAudio)){
 		renderer->m_BlockResize = false;
-		if (!byFFMS2){ KaiMessageBox(_("Plik nie jest poprawnym plikiem wideo albo jest uszkodzony,\nbądź brakuje kodeków czy też splittera"), _("Uwaga")); }
+		if (!byFFMS2){ KaiMessageBox(_(L"Plik nie jest poprawnym plikiem wideo albo jest uszkodzony,\nbądź brakuje kodeków czy też splittera"), _("Uwaga")); }
 		SAFE_DELETE(renderer)
 		return false;
 	}
@@ -877,7 +877,7 @@ void VideoBox::OnPrew()
 	KainoteFrame* Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
 	MenuItem *index = Kai->Menubar->FindItem(GLOBAL_VIDEO_INDEXING);
 	if (index->IsChecked() && index->IsEnabled()/* && !isFullscreen*/){
-		if (KaiMessageBox(_("Czy na pewno chcesz zindeksować poprzednie wideo?"), _("Potwierdzenie"), 
+		if (KaiMessageBox(_(L"Czy na pewno chcesz zindeksować poprzednie wideo?"), _("Potwierdzenie"),
 			wxYES_NO, (m_IsFullscreen) ? (wxWindow*)m_FullScreenWindow : Kai) == wxNO) return;
 	}
 	NextFile(false);
@@ -889,7 +889,7 @@ void VideoBox::OnNext()
 	KainoteFrame* Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
 	MenuItem *index = Kai->Menubar->FindItem(GLOBAL_VIDEO_INDEXING);
 	if (index->IsChecked() && index->IsEnabled()/* && !isFullscreen*/){
-		if (KaiMessageBox(_("Czy na pewno chcesz zindeksować następne wideo?"), _("Potwierdzenie"), 
+		if (KaiMessageBox(_(L"Czy na pewno chcesz zindeksować następne wideo?"), _("Potwierdzenie"),
 			wxYES_NO, (m_IsFullscreen)? (wxWindow*)m_FullScreenWindow : Kai) == wxNO) return;
 	}
 	NextFile();
@@ -910,17 +910,17 @@ void VideoBox::ContextMenu(const wxPoint &pos)
 	Menu* menu = new Menu(VIDEO_HOTKEY);
 	bool editor = tab->editor;
 	wxString txt = L"\t" + Hkeys.GetStringHotkey(VIDEO_PLAY_PAUSE);
-	if (GetState() != Playing){ txt.Prepend(_("Odtwórz")); }
+	if (GetState() != Playing){ txt.Prepend(_(L"Odtwórz")); }
 	else if (GetState() == Playing){ txt.Prepend(_("Pauza")); }
 	if (!m_IsFullscreen && editor)
 	{
-		menu->SetAccMenu(VIDEO_COPY_COORDS, _("Kopiuj pozycję na wideo"));
+		menu->SetAccMenu(VIDEO_COPY_COORDS, _(L"Kopiuj pozycję na wideo"));
 	}
 	menu->Append(VIDEO_PLAY_PAUSE, txt)->Enable(GetState() != None);
 	menu->SetAccMenu(VIDEO_STOP, _("Zatrzymaj"))->Enable(GetState() == Playing);
 	wxString txt1;
-	if (!m_IsFullscreen){ txt1 = _("Pełny ekran\tF"); }
-	else{ txt1 = _("Wyłącz pełny ekran\tEscape"); }
+	if (!m_IsFullscreen){ txt1 = _(L"Pełny ekran\tF"); }
+	else{ txt1 = _(L"Wyłącz pełny ekran\tEscape"); }
 	MenuItem *Item = menu->SetAccMenu(VIDEO_FULL_SCREEN, txt1);
 	Item->Enable(GetState() != None);
 	KainoteFrame* Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
@@ -928,12 +928,12 @@ void VideoBox::ContextMenu(const wxPoint &pos)
 	for (size_t i = 1; i < MonRects.size(); i++)
 	{
 		wxString txt2;
-		if (m_IsFullscreen){ txt2 = wxString::Format(_("Przełącz pełny ekran na %i monitor"), (int)(i + 1)); }
-		else{ txt2 = wxString::Format(_("Włącz pełny ekran na %i monitorze"), (int)(i + 1)); }
+		if (m_IsFullscreen){ txt2 = wxString::Format(_(L"Przełącz pełny ekran na %i monitor"), (int)(i + 1)); }
+		else{ txt2 = wxString::Format(_(L"Włącz pełny ekran na %i monitorze"), (int)(i + 1)); }
 		menu->Append(MENU_MONITORS + i, txt2)->Enable(GetState() != None);
 	}
 	menu->SetWindow(GLOBAL_HOTKEY);
-	menu->SetAccMenu(GLOBAL_EDITOR, _("Otwórz edytor"))->Enable(m_IsFullscreen);
+	menu->SetAccMenu(GLOBAL_EDITOR, _(L"Otwórz edytor"))->Enable(m_IsFullscreen);
 	Menu* menu1 = new Menu();
 	Menu* menu2 = new Menu();
 	for (size_t i = 0; i < 20; i++)
@@ -950,19 +950,19 @@ void VideoBox::ContextMenu(const wxPoint &pos)
 	}
 	menu->Append(ID_MRECSUBS, _("Ostatnio otwarte napisy"), menu1);
 	menu->Append(ID_MRECVIDEO, _("Ostatnio otwarte wideo"), menu2);
-	menu->SetAccMenu(GLOBAL_OPEN_VIDEO, _("Otwórz wideo"));
+	menu->SetAccMenu(GLOBAL_OPEN_VIDEO, _(L"Otwórz wideo"));
 
-	menu->SetAccMenu(GLOBAL_OPEN_SUBS, _("Otwórz napisy"));
+	menu->SetAccMenu(GLOBAL_OPEN_SUBS, _(L"Otwórz napisy"));
 	menu->SetWindow(VIDEO_HOTKEY);
-	menu->SetAccMenu(VIDEO_HIDE_PROGRESS_BAR, _("Ukryj / pokaż pasek postępu"))->Enable(m_IsFullscreen);
-	menu->SetAccMenu(VIDEO_ASPECT_RATIO, _("Zmień proporcje wideo"));
-	menu->SetAccMenu(VIDEO_SAVE_SUBBED_FRAME_TO_PNG, _("Zapisz klatkę z napisami jako PNG"))->Enable(GetState() == Paused);
-	menu->SetAccMenu(VIDEO_COPY_SUBBED_FRAME_TO_CLIPBOARD, _("Kopiuj klatkę z napisami do schowka"))->Enable(GetState() == Paused);
-	menu->SetAccMenu(VIDEO_SAVE_FRAME_TO_PNG, _("Zapisz klatkę jako PNG"))->Enable(GetState() == Paused && tab->editor);
-	menu->SetAccMenu(VIDEO_COPY_FRAME_TO_CLIPBOARD, _("Kopiuj klatkę do schowka"))->Enable(GetState() == Paused && tab->editor);
+	menu->SetAccMenu(VIDEO_HIDE_PROGRESS_BAR, _(L"Ukryj / pokaż pasek postępu"))->Enable(m_IsFullscreen);
+	menu->SetAccMenu(VIDEO_ASPECT_RATIO, _(L"Zmień proporcje wideo"));
+	menu->SetAccMenu(VIDEO_SAVE_SUBBED_FRAME_TO_PNG, _(L"Zapisz klatkę z napisami jako PNG"))->Enable(GetState() == Paused);
+	menu->SetAccMenu(VIDEO_COPY_SUBBED_FRAME_TO_CLIPBOARD, _(L"Kopiuj klatkę z napisami do schowka"))->Enable(GetState() == Paused);
+	menu->SetAccMenu(VIDEO_SAVE_FRAME_TO_PNG, _(L"Zapisz klatkę jako PNG"))->Enable(GetState() == Paused && tab->editor);
+	menu->SetAccMenu(VIDEO_COPY_FRAME_TO_CLIPBOARD, _(L"Kopiuj klatkę do schowka"))->Enable(GetState() == Paused && tab->editor);
 	menu->AppendSeparator();
 
-	menu->SetAccMenu(VIDEO_DELETE_FILE, _("Usuń plik wideo"))->Enable(GetState() != None);
+	menu->SetAccMenu(VIDEO_DELETE_FILE, _(L"Usuń plik wideo"))->Enable(GetState() != None);
 
 	Menu* menu3 = nullptr;
 	int numfilters = 0;
@@ -972,7 +972,7 @@ void VideoBox::ContextMenu(const wxPoint &pos)
 		numfilters = menu3->GetMenuItemCount();
 		// GStreamer has no DirectShow-style filter list, so don't show an empty submenu.
 		if (numfilters > 0)
-			menu->Append(23456, _("Filtry"), menu3, _("Wyświetla użyte filtry"));
+			menu->Append(23456, _("Filtry"), menu3, _(L"Wyświetla użyte filtry"));
 		else {
 			delete menu3;
 			menu3 = nullptr;
@@ -1061,7 +1061,7 @@ void VideoBox::OnDeleteVideo()
 {
 	wxString path = tab->VideoPath;
 	if (path == emptyString){ return; }
-	if (KaiMessageBox(_("Czy na pewno chcesz przenieść wczytany plik wideo do kosza?"), _("Usuwanie"), wxYES_NO) == wxNO){ return; }
+	if (KaiMessageBox(_(L"Czy na pewno chcesz przenieść wczytany plik wideo do kosza?"), _("Usuwanie"), wxYES_NO) == wxNO){ return; }
 	NextFile();
 	CRecycleFile x;
 	x.Recycle(path.data());
@@ -1086,10 +1086,10 @@ void VideoBox::OnOpSubs()
 {
 	KainoteFrame* Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
 	if (Kai->SavePrompt(2)){ return; }
-	wxFileDialog* FileDialog = new wxFileDialog(m_IsFullscreen ? m_FullScreenWindow : (wxWindow *)Kai, _("Wybierz plik napisów"),
+	wxFileDialog* FileDialog = new wxFileDialog(m_IsFullscreen ? m_FullScreenWindow : (wxWindow *)Kai, _(L"Wybierz plik napisów"),
 		(tab->VideoPath != emptyString) ? KaiPathDir(tab->VideoPath) :
 		(Kai->subsrec.size() > 0) ? KaiPathDir(Kai->subsrec[Kai->subsrec.size() - 1]) : emptyString, emptyString,
-		_("Pliki napisów (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"),
+		_(L"Pliki napisów (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"),
 		wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 
 	if (FileDialog->ShowModal() == wxID_OK){

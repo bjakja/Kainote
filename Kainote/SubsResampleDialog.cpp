@@ -23,17 +23,17 @@
 #include "TabPanel.h"
 
 SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize, const wxSize &videoSize, const wxString &subsMatrix, const wxString &videoMatrix)
-	: KaiDialog(parent, -1, _("Zmień rozdzielczość"))
+	: KaiDialog(parent, -1, _(L"Zmień rozdzielczość"))
 {
 	DialogSizer *mainSizer = new DialogSizer(wxVERTICAL);
 	wxBoxSizer *subsResolutionSizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *videoResolutionSizer = new wxBoxSizer(wxHORIZONTAL);
-	KaiStaticBoxSizer *subsResolutionStaticSizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Rozdzielczość napisów"));
-	KaiStaticBoxSizer *videoResolutionStaticSizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Rozdzielczość docelowa"));
+	KaiStaticBoxSizer *subsResolutionStaticSizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _(L"Rozdzielczość napisów"));
+	KaiStaticBoxSizer *videoResolutionStaticSizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _(L"Rozdzielczość docelowa"));
 
 	subsResolutionX = new NumCtrl(this, 26543, std::to_wstring(subsSize.x), 100, 13000, true, wxDefaultPosition, wxSize(60, -1));
 	subsResolutionY = new NumCtrl(this, 26544, std::to_wstring(subsSize.y), 100, 10000, true, wxDefaultPosition, wxSize(60, -1));
-	MappedButton *fromSubs = new MappedButton(this, 26547, _("Pobierz z napisów"));
+	MappedButton *fromSubs = new MappedButton(this, 26547, _(L"Pobierz z napisów"));
 	fromSubs->Enable(false);
 
 #ifdef whithMatrix	
@@ -67,8 +67,8 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 #endif
 
 	wxArrayString options;
-	options.Add(_("Nie rozciągaj"));
-	options.Add(_("Rozciągaj"));
+	options.Add(_(L"Nie rozciągaj"));
+	options.Add(_(L"Rozciągaj"));
 	resamplingOptions = new KaiRadioBox(this, -1, _("Opcje skalowania"), wxDefaultPosition, wxDefaultSize, options);
 	resamplingOptions->Enable((videoSize.x / (float)subsSize.x) != (videoSize.y / (float)subsSize.y));
 	auto OnChangedResolution = [=, this](wxCommandEvent &evt)->void{
@@ -166,29 +166,29 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 
 
 SubsMismatchResolutionDialog::SubsMismatchResolutionDialog(wxWindow *parent, const wxSize &subsSize, const wxSize &videoSize)
-	: KaiDialog(parent, -1, _("Niezgodna rozdzielczość"))
+	: KaiDialog(parent, -1, _(L"Niezgodna rozdzielczość"))
 {
 	DialogSizer *mainSizer = new DialogSizer(wxVERTICAL);
 	wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
-	wxString info = wxString::Format(_("Rozdzielczości wideo i napisów się różnią.\nMożesz zmienić je teraz lub skorzystać ze 'zmień rozdzielczość napisów'.\n\nRozdzielczość wideo: %i x %i\nRozdzielczość napisów: %i x %i\n\nDopasować rozdzielczość do wideo?\n"), videoSize.x, videoSize.y, subsSize.x, subsSize.y);
+	wxString info = wxString::Format(_(L"Rozdzielczości wideo i napisów się różnią.\nMożesz zmienić je teraz lub skorzystać ze 'zmień rozdzielczość napisów'.\n\nRozdzielczość wideo: %i x %i\nRozdzielczość napisów: %i x %i\n\nDopasować rozdzielczość do wideo?\n"), videoSize.x, videoSize.y, subsSize.x, subsSize.y);
 	float resizeX = (videoSize.x / (float)subsSize.x);
 	float resizeY = (videoSize.y / (float)subsSize.y);
 
 	wxArrayString options;
-	options.Add(_("Zmień wyłącznie rozdzielczość napisów"));
-	options.Add(_("Dopasuj skrypt napisów do rozdzielczości wideo (Nie rozciągaj)"));
+	options.Add(_(L"Zmień wyłącznie rozdzielczość napisów"));
+	options.Add(_(L"Dopasuj skrypt napisów do rozdzielczości wideo (Nie rozciągaj)"));
 	if (resizeX != resizeY){
-		options.Add(_("Dopasuj skrypt napisów do rozdzielczości wideo (Rozciągnij)"));
+		options.Add(_(L"Dopasuj skrypt napisów do rozdzielczości wideo (Rozciągnij)"));
 	}
 	resamplingOptions = new KaiRadioBox(this, -1, _("Opcje skalowania"), wxDefaultPosition, wxSize(160, -1), options);
 	resamplingOptions->SetSelection(1);
-	MappedButton *OK = new MappedButton(this, 26548, _("Zmień"));
+	MappedButton *OK = new MappedButton(this, 26548, _(L"Zmień"));
 	/*Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 		Notebook::GetTab()->grid->ResizeSubs(resizeX, resizeY,
 			resamplingOptions->GetSelection() == 2);
 	}, 26548);*/
 	MappedButton *Cancel = new MappedButton(this, wxID_CANCEL, _("Nie zmieniaj"));
-	MappedButton *TurnOff = new MappedButton(this, 26549, _("Wyłącz ostrzeżenie"));
+	MappedButton *TurnOff = new MappedButton(this, 26549, _(L"Wyłącz ostrzeżenie"));
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 		SubsGrid *grid = Notebook::GetTab()->grid;
 		grid->AddSInfo(L"PlayResX", std::to_wstring(videoSize.x));

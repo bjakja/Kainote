@@ -2267,8 +2267,8 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 	menut.Append(TEXTM_PASTE, _("&Wklej"));
 
 	menut.AppendSeparator();
-	menut.Append(TEXTM_SEEKWORDL, _("Szukaj tłumaczenia słowa na ling.pl"))->Enable(Selend.x != Cursor.x);
-	menut.Append(TEXTM_SEEKWORDB, _("Szukaj tłumaczenia słowa na pl.ba.bla"))->Enable(Selend.x != Cursor.x);
+	menut.Append(TEXTM_SEEKWORDL, _(L"Szukaj tłumaczenia słowa na ling.pl"))->Enable(Selend.x != Cursor.x);
+	menut.Append(TEXTM_SEEKWORDB, _(L"Szukaj tłumaczenia słowa na pl.ba.bla"))->Enable(Selend.x != Cursor.x);
 	menut.Append(TEXTM_SEEKWORDG, _("Szukaj zaznaczonej frazy w Google"))->Enable(Selend.x != Cursor.x);
 	menut.Append(TEXTM_SEEKWORDS, _("Szukaj synonimu na synonimy.net"))->Enable(Selend.x != Cursor.x);
 
@@ -2286,17 +2286,17 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 			languageMenu->Append(MENU_SPELLCHECKER_ON + k + 1, dics[k], emptyString, true, 
 				nullptr, nullptr, (language == dics[k])? ITEM_RADIO : ITEM_NORMAL);
 		}
-		menut.Append(MENU_SPELLCHECKER_ON - 1, _("Zainstalowane języki"), languageMenu);
+		menut.Append(MENU_SPELLCHECKER_ON - 1, _(L"Zainstalowane języki"), languageMenu);
 	}
 
 	if (!err.IsEmpty()){
-		menut.Append(TEXTM_ADD, wxString::Format(_("&Dodaj słowo \"%s\" do słownika"), err));
+		menut.Append(TEXTM_ADD, wxString::Format(_(L"&Dodaj słowo \"%s\" do słownika"), err));
 	}
 
-	menut.Append(TEXTM_DEL, _("&Usuń"))->Enable(Selend.x != Cursor.x);
-	menut.Append(MENU_SHOW_STATUS_BAR, _("Pokaż pasek stanu"), nullptr, emptyString, 
+	menut.Append(TEXTM_DEL, _(L"&Usuń"))->Enable(Selend.x != Cursor.x);
+	menut.Append(MENU_SHOW_STATUS_BAR, _(L"Pokaż pasek stanu"), nullptr, emptyString,
 		ITEM_CHECK)->Check(!Options.GetBool(TEXT_EDITOR_HIDE_STATUS_BAR));
-	menut.Append(MENU_CHANGE_QUOTES, _("Automatycznie zamieniaj cudzysłów"), 
+	menut.Append(MENU_CHANGE_QUOTES, _(L"Automatycznie zamieniaj cudzysłów"),
 		nullptr, emptyString, ITEM_CHECK)->Check(Options.GetBool(TEXT_EDITOR_CHANGE_QUOTES));
 	
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=, this](wxCommandEvent &evt){
@@ -2351,7 +2351,7 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 	}
 	else if (id == TEXTM_ADD && !err.IsEmpty()){
 		bool succ = SpellChecker::Get()->AddWord(err);
-		if (!succ){ KaiMessageBox(wxString::Format(_("Błąd, słowo \"%s\" nie zostało dodane."), err)); }
+		if (!succ){ KaiMessageBox(wxString::Format(_(L"Błąd, słowo \"%s\" nie zostało dodane."), err)); }
 		else{ CheckText(); EB->ClearErrs(); Refresh(false); }
 	}
 	else if (id >= TEXTM_SEEKWORDL && id <= TEXTM_SEEKWORDS){

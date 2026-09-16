@@ -19,7 +19,7 @@
 
 
 NewCatalog::NewCatalog(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size)
-	:KaiDialog(parent, id, _("Wybór nazwy katalogu"), wxDefaultPosition, wxSize(300,-1), wxDEFAULT_DIALOG_STYLE)
+	:KaiDialog(parent, id, _(L"Wybór nazwy katalogu"), wxDefaultPosition, wxSize(300,-1), wxDEFAULT_DIALOG_STYLE)
 {
 	KaiTextValidator valid(wxFILTER_EXCLUDE_CHAR_LIST);
 	wxArrayString excludes;
@@ -34,11 +34,11 @@ NewCatalog::NewCatalog(wxWindow* parent, wxWindowID id, const wxPoint& pos, cons
 	excludes.Add(L"|");
 	valid.SetExcludes(excludes);
 	TextCtrl1 = new KaiTextCtrl(this, -1, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER, valid);
-	KaiStaticBoxSizer *StaticBox1 = new KaiStaticBoxSizer(wxVERTICAL, this, _("Podaj nazwę nowego katalogu"));
+	KaiStaticBoxSizer *StaticBox1 = new KaiStaticBoxSizer(wxVERTICAL, this, _(L"Podaj nazwę nowego katalogu"));
 	StaticBox1->Add(TextCtrl1, 0, wxEXPAND | wxALL, 2);
 	wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
 	DialogSizer *sizer1 = new DialogSizer(wxVERTICAL);
-	Button1 = new MappedButton(this, wxID_OK, _("Utwórz"));
+	Button1 = new MappedButton(this, wxID_OK, _(L"Utwórz"));
 	Button2 = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
 	sizer->Add(Button1, 0, wxALL, 5);
 	sizer->Add(Button2, 0, wxALL, 5);

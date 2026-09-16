@@ -132,6 +132,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
+      <AdditionalOptions>/execution-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include\msvc;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;$(KainoteDirectXSdkDir)Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;..\Thirdparty\uchardet\include;..\Thirdparty\uchardet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;WIN32;__WXMSW__;_WINDOWS;_DEBUG;HUNSPELL_STATIC;LUAJIT_ENABLE_LUA52COMPAT;LUAJIT_DISABLE_BUFFER;HAVE_DLL_EXPORT;BOOST_ALL_NO_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -177,6 +178,7 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitp
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
+      <AdditionalOptions>/execution-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include\msvc;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;$(KainoteDirectXSdkDir)Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;..\Thirdparty\uchardet\include;..\Thirdparty\uchardet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -225,6 +227,7 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitp
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">
     <ClCompile>
+      <AdditionalOptions>/execution-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include\msvc;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;$(KainoteDirectXSdkDir)Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;..\Thirdparty\uchardet\include;..\Thirdparty\uchardet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -276,6 +279,7 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitp
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
+      <AdditionalOptions>/execution-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>Default</LanguageStandard_C>
       <AdditionalIncludeDirectories>..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include\msvc;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;$(KainoteDirectXSdkDir)Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>

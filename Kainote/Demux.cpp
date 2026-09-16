@@ -42,7 +42,7 @@ bool Demux::Open(const wxString& filename)
 
 	indexer = FFMS_CreateIndexer(filename.utf8_str(), &errInfo);
 	if (!indexer) {
-		KaiLog(wxString::Format(_("Wystąpił błąd indeksowania: %s"), errInfo.Buffer)); return false;
+		KaiLog(wxString::Format(_(L"Wystąpił błąd indeksowania: %s"), errInfo.Buffer)); return false;
 	}
 	return true;
 }
@@ -83,7 +83,7 @@ bool Demux::GetSubtitles(SubsGrid* target)
 	// No tracks found
 	if (trackList.Count() == 0) {
 		Close();
-		KaiMessageBox(_("Plik nie ma żadnej ścieżki z napisami."));
+		KaiMessageBox(_(L"Plik nie ma żadnej ścieżki z napisami."));
 		return false;
 	}
 
@@ -94,7 +94,7 @@ bool Demux::GetSubtitles(SubsGrid* target)
 
 	// Pick a track
 	else {
-		KaiListBox tracks(target->GetParent(), trackNameList, _("Wybierz ścieżkę napisów"), true);
+		KaiListBox tracks(target->GetParent(), trackNameList, _(L"Wybierz ścieżkę napisów"), true);
 		//int choice = wxGetSingleChoiceIndex(_("Wybierz ścieżkę do wczytania:"), _("Znaleziono kilka ścieżek z napisami"), tracksNames);
 		if (tracks.ShowModal() != wxID_OK) {
 			Close();
@@ -115,7 +115,7 @@ bool Demux::GetSubtitles(SubsGrid* target)
 		else
 			codecType = 2;
 
-		progress = new ProgressSink(target->GetParent(), _("Odczyt napisów z pliku Matroska."));
+		progress = new ProgressSink(target->GetParent(), _(L"Odczyt napisów z pliku Matroska."));
 		progress->SetAndRunTask([=, this]() {
 			FFMS_GetSubtitles(indexer, trackToRead, &Demux::GetSubtitles, (void*)this);
 			if (progress->WasCancelled()) {

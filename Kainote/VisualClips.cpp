@@ -1011,7 +1011,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		{
 			int pos = CheckPos(xy, true);
 			if (psize > 0 && Points[(pos == (int)psize) ? psize - 1 : pos].type == L"m"){
-				KaiMessageBox(_("Ze względu na błędy Vsfiltra możliwość wstawiania dwóch \"m\" po sobie została zablokowana"), 
+				KaiMessageBox(_(L"Ze względu na błędy Vsfiltra możliwość wstawiania dwóch \"m\" po sobie została zablokowana"),
 					_("Uwaga"));
 				return;
 			}

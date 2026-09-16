@@ -382,7 +382,7 @@ DWORD WINAPI FontEnumerator::CheckFontsProc(void* threadNumber)
 			//do not inform on system older than Windows 10 1909 that 
 			//cannot create notification of folder that they do not have
 			//without checking of system version it's impossible to check when it should be shown
-			KaiLog(_("Nie można stworzyć uchwytu notyfikacji zmian folderu czcionek."));
+			KaiLog(_(L"Nie można stworzyć uchwytu notyfikacji zmian folderu czcionek."));
 		}
 #endif
 		//delete num threads to not make memory leaks
@@ -420,7 +420,7 @@ DWORD WINAPI FontEnumerator::CheckFontsProc(void* threadNumber)
 					retryMissingExternalDirectory = false;
 					// No later event is guaranteed, so snapshot immediately.
 					ProgressSinkSilent* progr = new ProgressSinkSilent(
-						_("Ładowanie czcionek zewnętrznych"));
+						_(L"Ładowanie czcionek zewnętrznych"));
 					FontEnum.progress = progr;
 					FontEnum.RemoveExternalFontsFromProcess(fontrealpath);
 					FontEnum.LoadExternalFontsToProcess(fontrealpath);
@@ -444,7 +444,7 @@ DWORD WINAPI FontEnumerator::CheckFontsProc(void* threadNumber)
 			reloadExternalFonts = *threadNum == 0 && !fontrealpath.empty();
 #endif
 			if (reloadExternalFonts) {
-				ProgressSinkSilent* progr = new ProgressSinkSilent(_("Ładowanie czcionek zewnętrznych"));
+				ProgressSinkSilent* progr = new ProgressSinkSilent(_(L"Ładowanie czcionek zewnętrznych"));
 				FontEnum.progress = progr;
 				FontEnum.RemoveExternalFontsFromProcess(fontrealpath);
 				if (wxDirExists(fontrealpath))
@@ -459,7 +459,7 @@ DWORD WINAPI FontEnumerator::CheckFontsProc(void* threadNumber)
 				!fontrealpath.empty() && !wxDirExists(fontrealpath);
 #endif
 			if(FindNextChangeNotification( hDir ) == 0){
-				KaiLog(_("Nie można stworzyć następnego uchwytu notyfikacji zmian folderu czcionek."));
+				KaiLog(_(L"Nie można stworzyć następnego uchwytu notyfikacji zmian folderu czcionek."));
 				FindCloseChangeNotification(hDir);
 				delete threadNum;
 				return 0;
@@ -571,7 +571,7 @@ void FontEnumerator::ReloadExternalFontsToProcess(const wxString& newFontsPath, 
 		Sleep(1000);
 		hasExternalFontsLoaded = true;
 	}
-	ProgressSink *progr = new ProgressSink(parent, _("Usuwanie czcionek z zewnętrznego folderu"));
+	ProgressSink *progr = new ProgressSink(parent, _(L"Usuwanie czcionek z zewnętrznego folderu"));
 	progress = progr;
 	progr->SetAndRunTask([&]() {
 		if (hasExternalFontsLoaded) {
@@ -579,7 +579,7 @@ void FontEnumerator::ReloadExternalFontsToProcess(const wxString& newFontsPath, 
 			RemoveExternalFontsFromProcess(path);
 		}
 		if (wxDirExists(newFontsPath)) {
-			progress->Title(_("Wczytywanie czcionek z zewnętrznego folderu"));
+			progress->Title(_(L"Wczytywanie czcionek z zewnętrznego folderu"));
 			LoadExternalFontsToProcess(newFontsPath);
 		}
 		return 1;
@@ -605,7 +605,7 @@ bool FontEnumerator::LoadExternalFontsToProcess(const wxString& fontsPath)
 	HANDLE h = FindFirstFileW(seekpath.wc_str(), &data);
 	if (h == INVALID_HANDLE_VALUE)
 	{
-		KaiLog(_("Nie można wczytać zewnętrznego katalogu czcionek"));
+		KaiLog(_(L"Nie można wczytać zewnętrznego katalogu czcionek"));
 		return false;
 	}
 	int fontAdded = 0;
@@ -653,7 +653,7 @@ void FontEnumerator::LoadExternalFontsToProcessFromThread(const wxString& fontsP
 	}
 	if (shuttingDown.load())
 		return;
-	ProgressSinkSilent* progr = new ProgressSinkSilent(_("Ładowanie czcionek zewnętrznych"));
+	ProgressSinkSilent* progr = new ProgressSinkSilent(_(L"Ładowanie czcionek zewnętrznych"));
 	progress = progr;
 	wxString* ppath = new wxString(fontsPath);
 	loadFontsThread = CreateThread(nullptr, 0, LoadExternalFontsProc, ppath, 0, 0);
