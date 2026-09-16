@@ -1,0 +1,1472 @@
+{
+ "comment": "Runtime data for the packaged Kainote build. Pins are commit SHAs: bump them deliberately. Generated from the pinned repositories; see .github/scripts/package.py.",
+ "automation": [
+  {
+   "repo": "TypesettingTools/Aegisub",
+   "ref": "ce97a367c611f2433d26ad4b37a7dc8f11d55bfe",
+   "repo_path": "automation/include/aegisub/clipboard.lua",
+   "dest": "Automation/automation/Include/aegisub/clipboard.lua",
+   "source": "aegisub_include"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub",
+   "ref": "ce97a367c611f2433d26ad4b37a7dc8f11d55bfe",
+   "repo_path": "automation/include/aegisub/internal/argcheck.moon",
+   "dest": "Automation/automation/Include/aegisub/internal/argcheck.moon",
+   "source": "aegisub_include"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub",
+   "ref": "ce97a367c611f2433d26ad4b37a7dc8f11d55bfe",
+   "repo_path": "automation/include/aegisub/internal/ffi.moon",
+   "dest": "Automation/automation/Include/aegisub/internal/ffi.moon",
+   "source": "aegisub_include"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub",
+   "ref": "ce97a367c611f2433d26ad4b37a7dc8f11d55bfe",
+   "repo_path": "automation/include/aegisub/lfs.moon",
+   "dest": "Automation/automation/Include/aegisub/lfs.moon",
+   "source": "aegisub_include"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub",
+   "ref": "ce97a367c611f2433d26ad4b37a7dc8f11d55bfe",
+   "repo_path": "automation/include/aegisub/re.moon",
+   "dest": "Automation/automation/Include/aegisub/re.moon",
+   "source": "aegisub_include"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub",
+   "ref": "ce97a367c611f2433d26ad4b37a7dc8f11d55bfe",
+   "repo_path": "automation/include/aegisub/unicode.moon",
+   "dest": "Automation/automation/Include/aegisub/unicode.moon",
+   "source": "aegisub_include"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub",
+   "ref": "ce97a367c611f2433d26ad4b37a7dc8f11d55bfe",
+   "repo_path": "automation/include/aegisub/util.moon",
+   "dest": "Automation/automation/Include/aegisub/util.moon",
+   "source": "aegisub_include"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub",
+   "ref": "ce97a367c611f2433d26ad4b37a7dc8f11d55bfe",
+   "repo_path": "automation/include/cleantags.lua",
+   "dest": "Automation/automation/Include/cleantags.lua",
+   "source": "aegisub_include"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub",
+   "ref": "ce97a367c611f2433d26ad4b37a7dc8f11d55bfe",
+   "repo_path": "automation/include/clipboard.lua",
+   "dest": "Automation/automation/Include/clipboard.lua",
+   "source": "aegisub_include"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub",
+   "ref": "ce97a367c611f2433d26ad4b37a7dc8f11d55bfe",
+   "repo_path": "automation/include/karaskel-auto4.lua",
+   "dest": "Automation/automation/Include/karaskel-auto4.lua",
+   "source": "aegisub_include"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub",
+   "ref": "ce97a367c611f2433d26ad4b37a7dc8f11d55bfe",
+   "repo_path": "automation/include/karaskel.lua",
+   "dest": "Automation/automation/Include/karaskel.lua",
+   "source": "aegisub_include"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub",
+   "ref": "ce97a367c611f2433d26ad4b37a7dc8f11d55bfe",
+   "repo_path": "automation/include/lfs.lua",
+   "dest": "Automation/automation/Include/lfs.lua",
+   "source": "aegisub_include"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub",
+   "ref": "ce97a367c611f2433d26ad4b37a7dc8f11d55bfe",
+   "repo_path": "automation/include/moonscript.lua",
+   "dest": "Automation/automation/Include/moonscript.lua",
+   "source": "aegisub_include"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub",
+   "ref": "ce97a367c611f2433d26ad4b37a7dc8f11d55bfe",
+   "repo_path": "automation/include/re.lua",
+   "dest": "Automation/automation/Include/re.lua",
+   "source": "aegisub_include"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub",
+   "ref": "ce97a367c611f2433d26ad4b37a7dc8f11d55bfe",
+   "repo_path": "automation/include/unicode-monkeypatch.lua",
+   "dest": "Automation/automation/Include/unicode-monkeypatch.lua",
+   "source": "aegisub_include"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub",
+   "ref": "ce97a367c611f2433d26ad4b37a7dc8f11d55bfe",
+   "repo_path": "automation/include/unicode.lua",
+   "dest": "Automation/automation/Include/unicode.lua",
+   "source": "aegisub_include"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub",
+   "ref": "ce97a367c611f2433d26ad4b37a7dc8f11d55bfe",
+   "repo_path": "automation/include/utils-auto4.lua",
+   "dest": "Automation/automation/Include/utils-auto4.lua",
+   "source": "aegisub_include"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub",
+   "ref": "ce97a367c611f2433d26ad4b37a7dc8f11d55bfe",
+   "repo_path": "automation/include/utils.lua",
+   "dest": "Automation/automation/Include/utils.lua",
+   "source": "aegisub_include"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub",
+   "ref": "ce97a367c611f2433d26ad4b37a7dc8f11d55bfe",
+   "repo_path": "automation/autoload/cleantags-autoload.lua",
+   "dest": "Automation/automation/Autoload/cleantags-autoload.lua",
+   "source": "aegisub_autoload"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub",
+   "ref": "ce97a367c611f2433d26ad4b37a7dc8f11d55bfe",
+   "repo_path": "automation/autoload/kara-templater.lua",
+   "dest": "Automation/automation/Autoload/kara-templater.lua",
+   "source": "aegisub_autoload"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub",
+   "ref": "ce97a367c611f2433d26ad4b37a7dc8f11d55bfe",
+   "repo_path": "automation/autoload/karaoke-auto-leadin.lua",
+   "dest": "Automation/automation/Autoload/karaoke-auto-leadin.lua",
+   "source": "aegisub_autoload"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub",
+   "ref": "ce97a367c611f2433d26ad4b37a7dc8f11d55bfe",
+   "repo_path": "automation/autoload/macro-1-edgeblur.lua",
+   "dest": "Automation/automation/Autoload/macro-1-edgeblur.lua",
+   "source": "aegisub_autoload"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub",
+   "ref": "ce97a367c611f2433d26ad4b37a7dc8f11d55bfe",
+   "repo_path": "automation/autoload/macro-2-mkfullwitdh.lua",
+   "dest": "Automation/automation/Autoload/macro-2-mkfullwitdh.lua",
+   "source": "aegisub_autoload"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub",
+   "ref": "ce97a367c611f2433d26ad4b37a7dc8f11d55bfe",
+   "repo_path": "automation/autoload/select-overlaps.moon",
+   "dest": "Automation/automation/Autoload/select-overlaps.moon",
+   "source": "aegisub_autoload"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub",
+   "ref": "ce97a367c611f2433d26ad4b37a7dc8f11d55bfe",
+   "repo_path": "automation/autoload/strip-tags.lua",
+   "dest": "Automation/automation/Autoload/strip-tags.lua",
+   "source": "aegisub_autoload"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/AegisubShims.moon",
+   "dest": "Automation/automation/Include/l0/AegisubShims.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/AegisubShims/aegisub.moon",
+   "dest": "Automation/automation/Include/l0/AegisubShims/aegisub.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/Accessors.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/Accessors.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/ConfigHandler.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/ConfigHandler.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/ConfigView.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/ConfigView.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/Constants.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/Constants.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/Downloader.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/Downloader.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/Enum.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/Enum.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/EventEmitter.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/EventEmitter.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/FeedInventory.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/FeedInventory.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/FeedLoader.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/FeedLoader.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/FeedManager.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/FeedManager.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/FeedTrust.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/FeedTrust.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/FileCache.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/FileCache.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/FileLock.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/FileLock.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/Finalizer.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/Finalizer.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/GitRepository.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/GitRepository.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/Host.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/Host.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/JsonSchema.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/JsonSchema.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/Lock.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/Lock.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/Logger.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/Logger.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/ModuleLoader.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/ModuleLoader.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/ModuleProvider.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/ModuleProvider.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/NamedSemaphore.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/NamedSemaphore.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/PackageRecord.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/PackageRecord.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/ScriptTargetFilter.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/ScriptTargetFilter.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/ScriptUpdateRecord.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/ScriptUpdateRecord.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/SemanticVersion.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/SemanticVersion.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/Stub.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/Stub.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/Timer.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/Timer.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/UnitTestSuite.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/UnitTestSuite.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/UpdateFeed.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/UpdateFeed.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/UpdateTask.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/UpdateTask.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/Updater.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/Updater.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/ZipArchiver.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/ZipArchiver.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/config-schema.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/config-schema.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/domain.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/domain.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/environment.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/environment.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/file-ops.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/file-ops.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/hash.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/hash.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/helpers/ffi-posix.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/helpers/ffi-posix.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/helpers/ffi-windows.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/helpers/ffi-windows.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/helpers/open-url.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/helpers/open-url.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/helpers/resolve-host.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/helpers/resolve-host.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/release-notes.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/release-notes.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/shims/BadMutex.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/shims/BadMutex.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/shims/DownloadManager.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/shims/DownloadManager.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/shims/PreciseTimer.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/shims/PreciseTimer.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/Accessors.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/Accessors.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/BadMutex.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/BadMutex.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/ConfigHandler.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/ConfigHandler.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/ConfigView.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/ConfigView.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/Downloader.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/Downloader.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/Enum.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/Enum.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/FeedInventory.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/FeedInventory.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/FeedLoader.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/FeedLoader.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/FeedManager.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/FeedManager.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/FeedTrust.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/FeedTrust.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/FileCache.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/FileCache.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/FileLock.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/FileLock.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/Finalizer.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/Finalizer.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/GitRepository.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/GitRepository.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/Host.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/Host.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/JsonSchema.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/JsonSchema.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/Lock.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/Lock.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/Logger.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/Logger.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/ModuleLoader.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/ModuleLoader.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/ModuleProvider.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/ModuleProvider.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/NamedSemaphore.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/NamedSemaphore.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/PackageRecord.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/PackageRecord.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/ScriptTargetFilter.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/ScriptTargetFilter.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/ScriptUpdateRecord.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/ScriptUpdateRecord.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/SemanticVersion.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/SemanticVersion.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/Timer.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/Timer.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/UnitTestSuite.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/UnitTestSuite.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/UpdateFeed.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/UpdateFeed.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/UpdateTask.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/UpdateTask.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/Updater.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/Updater.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/ZipArchiver.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/ZipArchiver.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/config-schema.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/config-schema.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/domain.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/domain.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/environment.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/environment.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/ffi-posix.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/ffi-posix.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/file-ops.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/file-ops.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/hash.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/hash.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/helpers/MockHttpServerController.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/helpers/MockHttpServerController.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/helpers/mock-http-server.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/helpers/mock-http-server.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/helpers/stub-helpers.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/helpers/stub-helpers.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/integration/Downloader.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/integration/Downloader.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/integration/ZipArchiver.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/integration/ZipArchiver.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/open-url.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/open-url.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/release-notes.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/release-notes.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/test/utils.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/test/utils.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/DependencyControl/utils.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl/utils.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/MoonCats.moon",
+   "dest": "Automation/automation/Include/l0/MoonCats.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/MoonCats/Diagnostics.moon",
+   "dest": "Automation/automation/Include/l0/MoonCats/Diagnostics.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/MoonCats/DocRenderer.moon",
+   "dest": "Automation/automation/Include/l0/MoonCats/DocRenderer.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/MoonCats/Emitter.moon",
+   "dest": "Automation/automation/Include/l0/MoonCats/Emitter.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/MoonCats/Parser.moon",
+   "dest": "Automation/automation/Include/l0/MoonCats/Parser.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/MoonCats/annotations.moon",
+   "dest": "Automation/automation/Include/l0/MoonCats/annotations.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/MoonCats/test.moon",
+   "dest": "Automation/automation/Include/l0/MoonCats/test.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/MoonCats/test/DocRenderer.moon",
+   "dest": "Automation/automation/Include/l0/MoonCats/test/DocRenderer.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/MoonCats/test/Emitter.moon",
+   "dest": "Automation/automation/Include/l0/MoonCats/test/Emitter.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/MoonCats/test/MoonCats.moon",
+   "dest": "Automation/automation/Include/l0/MoonCats/test/MoonCats.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/MoonCats/test/Parser.moon",
+   "dest": "Automation/automation/Include/l0/MoonCats/test/Parser.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/MoonCats/test/annotations.moon",
+   "dest": "Automation/automation/Include/l0/MoonCats/test/annotations.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/dkjson.moon",
+   "dest": "Automation/automation/Include/l0/dkjson.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/dkjson/test.moon",
+   "dest": "Automation/automation/Include/l0/dkjson/test.moon",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "modules/l0/dkjson/vendor/dkjson.lua",
+   "dest": "Automation/automation/Include/l0/dkjson/vendor/dkjson.lua",
+   "source": "dc_modules"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "macros/l0.DependencyControl.Toolbox.moon",
+   "dest": "Automation/automation/Autoload/l0.DependencyControl.Toolbox.moon",
+   "source": "dc_macros"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "macros/l0.DependencyControl.Toolbox/test.moon",
+   "dest": "Automation/automation/Autoload/l0.DependencyControl.Toolbox/test.moon",
+   "source": "dc_macros"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Base.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Base.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/ClassFactory.lua",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/ClassFactory.lua",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Draw/Bezier.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Draw/Bezier.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Draw/Close.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Draw/Close.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Draw/CommandBase.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Draw/CommandBase.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Draw/Contour.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Draw/Contour.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Draw/DrawingBase.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Draw/DrawingBase.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Draw/Line.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Draw/Line.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Draw/Move.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Draw/Move.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Draw/MoveNc.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Draw/MoveNc.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/FoundationMethods.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/FoundationMethods.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/LineBounds.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/LineBounds.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/LineBoundsBatch.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/LineBoundsBatch.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/LineContents.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/LineContents.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Parser/Drawing.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Parser/Drawing.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Parser/LineText.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Parser/LineText.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Parser/Sections.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Parser/Sections.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Primitive/Number.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Primitive/Number.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Primitive/Point.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Primitive/Point.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Primitive/String.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Primitive/String.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Primitive/Time.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Primitive/Time.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Section/Comment.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Section/Comment.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Section/Drawing.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Section/Drawing.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Section/Tag.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Section/Tag.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Section/Text.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Section/Text.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Tag/Align.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Tag/Align.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Tag/Base.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Tag/Base.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Tag/ClipRect.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Tag/ClipRect.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Tag/ClipVect.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Tag/ClipVect.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Tag/Color.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Tag/Color.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Tag/Fade.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Tag/Fade.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Tag/Indexed.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Tag/Indexed.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Tag/Move.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Tag/Move.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Tag/String.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Tag/String.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Tag/Toggle.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Tag/Toggle.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Tag/Transform.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Tag/Transform.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Tag/Unknown.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Tag/Unknown.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/Tag/Weight.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/Tag/Weight.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/ASSFoundation",
+   "ref": "8fbb4f4261ef701055915e4615e9e58ef289d542",
+   "repo_path": "l0/ASSFoundation/TagList.moon",
+   "dest": "Automation/automation/Include/l0/ASSFoundation/TagList.moon",
+   "source": "assfoundation"
+  },
+  {
+   "repo": "TypesettingTools/Functional",
+   "ref": "5a28339d6d8bcf9b997ec120a7fb5ac6da32d827",
+   "repo_path": "Functional.moon",
+   "dest": "Automation/automation/Include/l0/Functional.moon",
+   "source": "functional"
+  },
+  {
+   "repo": "TypesettingTools/Functional",
+   "ref": "5a28339d6d8bcf9b997ec120a7fb5ac6da32d827",
+   "repo_path": "Tests.moon",
+   "dest": "Automation/automation/Include/l0/Tests.moon",
+   "source": "functional"
+  },
+  {
+   "repo": "TypesettingTools/Yutils",
+   "ref": "364f8fa5a9d909bcdd77aa6f1fc426a0b73c8187",
+   "repo_path": "src/Yutils.lua",
+   "dest": "Automation/automation/Include/Yutils.luaYutils.lua",
+   "source": "yutils"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub-Motion",
+   "ref": "a98331082f80d1f2cd19f70494596ca27f0433d7",
+   "repo_path": "src/ConfigHandler.moon",
+   "dest": "Automation/automation/Include/a-mo/ConfigHandler.moon",
+   "source": "motion"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub-Motion",
+   "ref": "a98331082f80d1f2cd19f70494596ca27f0433d7",
+   "repo_path": "src/DataHandler.moon",
+   "dest": "Automation/automation/Include/a-mo/DataHandler.moon",
+   "source": "motion"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub-Motion",
+   "ref": "a98331082f80d1f2cd19f70494596ca27f0433d7",
+   "repo_path": "src/DataWrapper.moon",
+   "dest": "Automation/automation/Include/a-mo/DataWrapper.moon",
+   "source": "motion"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub-Motion",
+   "ref": "a98331082f80d1f2cd19f70494596ca27f0433d7",
+   "repo_path": "src/Line.moon",
+   "dest": "Automation/automation/Include/a-mo/Line.moon",
+   "source": "motion"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub-Motion",
+   "ref": "a98331082f80d1f2cd19f70494596ca27f0433d7",
+   "repo_path": "src/LineCollection.moon",
+   "dest": "Automation/automation/Include/a-mo/LineCollection.moon",
+   "source": "motion"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub-Motion",
+   "ref": "a98331082f80d1f2cd19f70494596ca27f0433d7",
+   "repo_path": "src/Log.moon",
+   "dest": "Automation/automation/Include/a-mo/Log.moon",
+   "source": "motion"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub-Motion",
+   "ref": "a98331082f80d1f2cd19f70494596ca27f0433d7",
+   "repo_path": "src/Math.moon",
+   "dest": "Automation/automation/Include/a-mo/Math.moon",
+   "source": "motion"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub-Motion",
+   "ref": "a98331082f80d1f2cd19f70494596ca27f0433d7",
+   "repo_path": "src/MotionHandler.moon",
+   "dest": "Automation/automation/Include/a-mo/MotionHandler.moon",
+   "source": "motion"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub-Motion",
+   "ref": "a98331082f80d1f2cd19f70494596ca27f0433d7",
+   "repo_path": "src/ShakeShapeHandler.moon",
+   "dest": "Automation/automation/Include/a-mo/ShakeShapeHandler.moon",
+   "source": "motion"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub-Motion",
+   "ref": "a98331082f80d1f2cd19f70494596ca27f0433d7",
+   "repo_path": "src/Statistics.moon",
+   "dest": "Automation/automation/Include/a-mo/Statistics.moon",
+   "source": "motion"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub-Motion",
+   "ref": "a98331082f80d1f2cd19f70494596ca27f0433d7",
+   "repo_path": "src/Tags.moon",
+   "dest": "Automation/automation/Include/a-mo/Tags.moon",
+   "source": "motion"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub-Motion",
+   "ref": "a98331082f80d1f2cd19f70494596ca27f0433d7",
+   "repo_path": "src/Transform.moon",
+   "dest": "Automation/automation/Include/a-mo/Transform.moon",
+   "source": "motion"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub-Motion",
+   "ref": "a98331082f80d1f2cd19f70494596ca27f0433d7",
+   "repo_path": "src/TrimHandler.moon",
+   "dest": "Automation/automation/Include/a-mo/TrimHandler.moon",
+   "source": "motion"
+  },
+  {
+   "repo": "TypesettingTools/DependencyControl",
+   "ref": "8cd732eae9cb83de06b1ace6da210423827289f2",
+   "repo_path": "l0/DependencyControl.moon",
+   "dest": "Automation/automation/Include/l0/DependencyControl.moon",
+   "source": "extra"
+  },
+  {
+   "repo": "TypesettingTools/Aegisub-Motion",
+   "ref": "a98331082f80d1f2cd19f70494596ca27f0433d7",
+   "repo_path": "Aegisub-Motion.moon",
+   "dest": "Automation/automation/Autoload/a-mo.Aegisub-Motion.moon",
+   "source": "extra"
+  },
+  {
+   "repo": "TypesettingTools/lyger-Aegisub-Scripts",
+   "ref": "f07033106376f3f931712813b7efc8f7d703c16f",
+   "repo_path": "modules/LibLyger.moon",
+   "dest": "Automation/automation/Include/lyger/LibLyger.moon",
+   "source": "extra"
+  },
+  {
+   "repo": "TypesettingTools/SubInspector",
+   "ref": "a346959b24ec5b950b44ea72c3d72f8d08c54222",
+   "repo_path": "examples/Aegisub/Inspector.moon",
+   "dest": "Automation/automation/Include/SubInspector/Inspector.moon",
+   "source": "extra"
+  },
+  {
+   "repo": "torque/ffi-experiments",
+   "ref": "691b128703bac5bf3337e7fab0c9e87878b54b6e",
+   "repo_path": "bad-mutex/BadMutex.moon",
+   "dest": "Automation/automation/Include/BM/BadMutex.moon",
+   "source": "extra"
+  },
+  {
+   "repo": "torque/ffi-experiments",
+   "ref": "691b128703bac5bf3337e7fab0c9e87878b54b6e",
+   "repo_path": "precise-timer/PreciseTimer.moon",
+   "dest": "Automation/automation/Include/PT/PreciseTimer.moon",
+   "source": "extra"
+  },
+  {
+   "repo": "torque/ffi-experiments",
+   "ref": "691b128703bac5bf3337e7fab0c9e87878b54b6e",
+   "repo_path": "threaded-libcurl/DownloadManager.moon",
+   "dest": "Automation/automation/Include/DM/DownloadManager.moon",
+   "source": "extra"
+  },
+  {
+   "repo": "torque/ffi-experiments",
+   "ref": "691b128703bac5bf3337e7fab0c9e87878b54b6e",
+   "repo_path": "requireffi/requireffi.moon",
+   "dest": "Automation/automation/Include/requireffi/requireffi.moon",
+   "source": "extra"
+  }
+ ],
+ "dictionaries": {
+  "en_US.aff": {
+   "url": "https://raw.githubusercontent.com/TypesettingTools/Aegisub-dictionaries/6d792f04521b3ac8823c8e8972fcfd757342da4d/dicts/en_US.aff",
+   "file": "en_US.aff",
+   "repo": "TypesettingTools/Aegisub-dictionaries",
+   "ref": "6d792f04521b3ac8823c8e8972fcfd757342da4d"
+  },
+  "en_US.dic": {
+   "url": "https://raw.githubusercontent.com/TypesettingTools/Aegisub-dictionaries/6d792f04521b3ac8823c8e8972fcfd757342da4d/dicts/en_US.dic",
+   "file": "en_US.dic",
+   "repo": "TypesettingTools/Aegisub-dictionaries",
+   "ref": "6d792f04521b3ac8823c8e8972fcfd757342da4d"
+  },
+  "pl.aff": {
+   "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/pl_PL/pl_PL.aff",
+   "file": "pl_PL.aff",
+   "repo": "LibreOffice/dictionaries",
+   "ref": "32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4"
+  },
+  "pl.dic": {
+   "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/pl_PL/pl_PL.dic",
+   "file": "pl_PL.dic",
+   "repo": "LibreOffice/dictionaries",
+   "ref": "32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4"
+  },
+  "th_TH.aff": {
+   "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/th_TH/th_TH.aff",
+   "file": "th_TH.aff",
+   "repo": "LibreOffice/dictionaries",
+   "ref": "32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4"
+  },
+  "th_TH.dic": {
+   "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/th_TH/th_TH.dic",
+   "file": "th_TH.dic",
+   "repo": "LibreOffice/dictionaries",
+   "ref": "32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4"
+  }
+ },
+ "external_binaries": [
+  {
+   "url": "https://github.com/sorayuki/VSFilterMod/releases/download/r5.2.6/VSFilterMod_bin.zip",
+   "member": "x64/VSFilterMod.dll",
+   "dest": "Csri/VSFiltermod.dll",
+   "source": "sorayuki/VSFilterMod r5.2.6"
+  }
+ ],
+ "known_gaps": [
+  "Automation/automation/Autoload/BezierToText.lua",
+  "Automation/automation/Autoload/gradient-factory.lua",
+  "Automation/automation/Autoload/skew gradient.lua",
+  "Automation/automation/Include/json.lua",
+  "Automation/automation/Include/json/** (12 files)",
+  "Automation/automation/Include/bakukara.lua",
+  "Automation/automation/Include/effector-auto4.lua",
+  "Automation/automation/Include/karahelper.lua",
+  "Automation/automation/Include/SubInspector/Inspector/SubInspector.dll",
+  "Automation/automation/packages/karahelper.dll",
+  "Themes/{AegiMode,DeepDark,DeepLight,MyDeepDark}.txt",
+  "KaiNote_AVX.exe (needs the Rel_AVX512 configuration)"
+ ]
+}
