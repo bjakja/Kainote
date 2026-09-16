@@ -82,9 +82,11 @@ file(COPY_FILE "${SOURCE_DIR}/Kainote/resource.rc"
 file(COPY "${SOURCE_DIR}/Kainote/Bitmaps"
      DESTINATION "${package_root}/Kainote")
 
-# Recompile catalogs instead of using stale runtime copies.
+# Recompile catalogs instead of using stale runtime copies; a release archive
+# ships every locale or none.
 set(SOURCE_LOCALE_DIR "${SOURCE_DIR}/Locale")
 set(RUNTIME_LOCALE_DIR "${package_root}/Locale")
+set(KAINOTE_STRICT_LOCALES TRUE)
 include("${SOURCE_DIR}/cmake/CopyLocaleCatalogs.cmake")
 
 # Prefer the repository dictionary, then the configured en_US pair.
