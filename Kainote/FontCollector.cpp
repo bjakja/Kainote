@@ -26,6 +26,7 @@
 #include "stylestore.h"
 #include "ShiftTimes.h"
 #include "KaiMessageBox.h"
+#include "ZipEntryUtf8.h"
 //#include "UtilsWindows.h"
 #include <wx/msw/winundef.h>
 #include <wx/dirdlg.h>
@@ -873,7 +874,7 @@ bool FontCollector::SaveFont(const wxString &fontPath, FontLogContent *flc)
 		bool isgood = in.IsOk();
 		if (isgood){
 			try {
-				zip->PutNextEntry(fn);
+				zip->PutNextEntry(new Utf8ZipEntry(fn));
 				zip->Write(in);
 				flc->AppendInfo(wxString::Format(_("Dodano do archiwum czcionkę \"%s\"."), fn));
 			}

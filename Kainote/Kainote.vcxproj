@@ -498,6 +498,7 @@ where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Demux.h" />
+    <ClInclude Include="ZipEntryUtf8.h" />
     <ClInclude Include="DialogueTextEditor.h" />
     <ClInclude Include="DummyVideo.h" />
     <ClInclude Include="ModificationChecker.h" />
