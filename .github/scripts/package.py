@@ -32,7 +32,7 @@ HERE = Path(__file__).resolve().parent
 MANIFEST = HERE / "runtime-assets.json"
 
 # name in the build output -> name in the package
-CSRI_RENDERERS = {"VSFilter.dll": "xy-VSFilter_kainote.dll"}
+CSRI_RENDERERS = {"xy-Vsfilter.dll": "xy-VSFilter_kainote.dll"}
 # Kainote's own DependencyControl modules: source dir -> package dir
 LOCAL_MODULES = {
     "Thirdparty/DependencyControl/bad-mutex": "Automation/automation/Include/BM",
@@ -193,41 +193,67 @@ def compile_locales(repo_root: Path, stage: Path) -> int:
     return count
 
 
+def find_output(build_dir: Path, name: str) -> Path | None:
+    """Locate a build output, wherever its project puts it.
+
+    The projects disagree about OutDir: Kainote writes into the platform folder,
+    the CSRI renderer into a csri subfolder, and the DependencyControl modules
+    into Automation/automation/Include/<module>/<name>. Searching keeps the
+    packaging independent of that.
+    """
+    direct = build_dir / name
+    if direct.exists():
+        return direct
+    skip = {".git", "dist", "node_modules", ".cache"}
+    roots = [build_dir, build_dir.parent, build_dir.parent.parent]
+    for root in roots:
+        if not root.is_dir():
+            continue
+        for path in sorted(root.rglob(name)):
+            if path.is_file() and not (skip & set(path.parts)):
+                return path
+    return None
+
+
 def copy_binaries(platform: str, build_dir: Path, stage: Path) -> tuple[list[str], list[str]]:
     taken: list[str] = []
     missing: list[str] = []
     if platform == "windows":
         wanted = ["KaiNote.exe", "KaiNote.pdb", "Icons.dll", "ffms2.dll",
                   "KaiNote_AVX.exe", "KaiNote_AVX.pdb"]
+        modules = {"BadMutex.dll": "BM", "PreciseTimer.dll": "PT", "DownloadManager.dll": "DM"}
+        renderer = "xy-Vsfilter.dll"
     else:
         wanted = ["kainote"]
+        modules = {}
+        renderer = None
     for name in wanted:
-        src = build_dir / name
-        if src.exists():
+        src = find_output(build_dir, name)
+        if src:
             shutil.copyfile(src, stage / name)
             taken.append(name)
         else:
             missing.append(name)
-    # The DependencyControl modules are built by this solution; the release
-    # layout keeps each DLL inside its own module directory.
-    for dll, sub in (("BadMutex.dll", "BM"), ("PreciseTimer.dll", "PT"), ("DownloadManager.dll", "DM")):
-        src = build_dir / dll
-        if src.exists():
-            dest = stage / "Automation" / "automation" / "Include" / sub / dll
-            dest.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(src, dest)
-            taken.append(f"Automation/.../{sub}/{dll}")
+    for dll, sub in modules.items():
+        src = find_output(build_dir, dll)
+        dest = f"Automation/automation/Include/{sub}/{dll}"
+        if src:
+            out = stage / dest
+            out.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(src, out)
+            taken.append(dest)
         else:
-            missing.append(f"Automation/.../{sub}/{dll}")
-    # CSRI renderers we build ourselves, under the name the release layout uses
-    for src_name, dest_name in CSRI_RENDERERS.items():
-        src = build_dir / src_name
-        if src.exists():
-            (stage / "Csri").mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(src, stage / "Csri" / dest_name)
-            taken.append(f"Csri/{dest_name}")
+            missing.append(dest)
+    if renderer:
+        src = find_output(build_dir, renderer)
+        dest = f"Csri/{CSRI_RENDERERS[renderer]}"
+        if src:
+            out = stage / dest
+            out.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(src, out)
+            taken.append(dest)
         else:
-            missing.append(f"Csri/{dest_name}")
+            missing.append(dest)
     return taken, missing
 
 

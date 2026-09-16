@@ -186,14 +186,14 @@ jobs:
       # from pinned public repositories -- see runtime-assets.json.
       - name: Package the runtime
         if: matrix.configuration == 'Release'
-        run: python .github/scripts/package.py --platform windows --build-dir x64/Release --stage "dist/Kainote_x64"
+        run: python .github/scripts/package.py --platform windows --build-dir x64/Release --stage "dist/Kainote_x64" --no-archive
 
       - name: Upload the package
         if: matrix.configuration == 'Release'
         uses: actions/upload-artifact@v4
         with:
           name: kainote-windows-x64
-          path: dist/Kainote_x64
+          path: dist
           if-no-files-found: error
 
   linux:
@@ -233,12 +233,12 @@ jobs:
 
       - name: Package the runtime
         if: matrix.build_type == 'Release'
-        run: python3 .github/scripts/package.py --platform linux --build-dir build --stage dist/kainote-linux-x86_64
+        run: python3 .github/scripts/package.py --platform linux --build-dir build --stage dist/kainote-linux-x86_64 --no-archive
 
       - name: Upload the package
         if: matrix.build_type == 'Release'
         uses: actions/upload-artifact@v4
         with:
           name: kainote-linux-x86_64
-          path: dist/kainote-linux-x86_64
+          path: dist
           if-no-files-found: error
