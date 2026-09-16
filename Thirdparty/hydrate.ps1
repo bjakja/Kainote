@@ -30,6 +30,12 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 $ProgressPreference    = 'SilentlyContinue'
 
+# How long any single extractor gets before it is killed and the next one is
+# tried.  Overridable so the fallback path can be exercised in a test.
+$script:ExtractTimeoutSec = if ($env:KAINOTE_EXTRACT_TIMEOUT_SEC) {
+    [int] $env:KAINOTE_EXTRACT_TIMEOUT_SEC
+} else { 300 }
+
 function Write-Section([string] $Message) {
     Write-Host ''
     Write-Host "==> $Message" -ForegroundColor Cyan
@@ -47,34 +53,140 @@ function Invoke-WithRetry {
     }
 }
 
-# Windows commonly has more than one `tar` on PATH: the bsdtar that ships in
-# System32 (Windows 10 1803+) and the GNU tar from Git for Windows.  They are
-# not interchangeable for .tar.xz -- bsdtar links liblzma directly, while GNU
-# tar shells out to an `xz` binary that may not be installed -- and
-# Get-Command returns *all* of them, so taking .Source blindly yields an array
-# that stringifies into one nonsense command name.
+# Runs a native tool with a hard timeout and captures its output.
 #
-# Return them in preference order, System32 first, without duplicates.
-function Get-TarCandidate {
-    $ordered = @()
-    if ($env:SystemRoot) {
-        $system32 = Join-Path $env:SystemRoot 'system32\tar.exe'
-        if (Test-Path -LiteralPath $system32) { $ordered += $system32 }
-    }
-    $ordered += @(
-        Get-Command tar -CommandType Application -ErrorAction SilentlyContinue |
-            ForEach-Object { $_.Source }
+# A timeout is not paranoia here: Windows' System32 bsdtar is built without
+# liblzma, so for .xz it falls back to spawning an external `xz` helper, and
+# when that helper is absent it can block forever instead of failing.  Without
+# a timeout the first bad candidate hangs the whole build and the fallback
+# below never gets a turn.
+function Invoke-Native {
+    param(
+        [Parameter(Mandatory)] [string]   $FilePath,
+        [Parameter(Mandatory)] [string[]] $Arguments,
+        [int] $TimeoutSec = $script:ExtractTimeoutSec
     )
 
-    $seen = New-Object 'System.Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)
-    foreach ($path in $ordered) {
-        if ($path -and $seen.Add($path)) { $path }
+    $outFile = [IO.Path]::GetTempFileName()
+    $errFile = [IO.Path]::GetTempFileName()
+    try {
+        # Start-Process with redirected streams also detaches stdin, so a tool
+        # that decides to prompt cannot block on a console that is not there.
+        $proc = Start-Process -FilePath $FilePath -ArgumentList $Arguments `
+            -NoNewWindow -PassThru `
+            -RedirectStandardOutput $outFile -RedirectStandardError $errFile
+
+        if (-not $proc.WaitForExit($TimeoutSec * 1000)) {
+            try { $proc.Kill() } catch { }
+            return [pscustomobject]@{ ExitCode = -1; Output = "timed out after ${TimeoutSec}s"; TimedOut = $true }
+        }
+
+        $text = @(
+            (Get-Content -LiteralPath $outFile -Raw -ErrorAction SilentlyContinue),
+            (Get-Content -LiteralPath $errFile -Raw -ErrorAction SilentlyContinue)
+        ) -join ''
+        return [pscustomobject]@{ ExitCode = $proc.ExitCode; Output = $text.Trim(); TimedOut = $false }
+    }
+    finally {
+        Remove-Item -LiteralPath $outFile, $errFile -Force -ErrorAction SilentlyContinue
     }
 }
 
+# 7-Zip reads .tar.xz reliably on Windows and is preinstalled on the GitHub
+# runners, so it is tried before tar.
+function Get-SevenZipCandidate {
+    $ordered = @(
+        (Get-Command 7z  -CommandType Application -ErrorAction SilentlyContinue | ForEach-Object { $_.Source })
+        (Get-Command 7za -CommandType Application -ErrorAction SilentlyContinue | ForEach-Object { $_.Source })
+    )
+    foreach ($env in @($env:ProgramFiles, ${env:ProgramFiles(x86)})) {
+        if ($env) {
+            $candidate = Join-Path $env '7-Zip\7z.exe'
+            if (Test-Path -LiteralPath $candidate) { $ordered += $candidate }
+        }
+    }
+    $seen = New-Object 'System.Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)
+    foreach ($path in $ordered) { if ($path -and $seen.Add($path)) { $path } }
+}
+
+# Windows commonly has more than one `tar` on PATH: the bsdtar in System32 and
+# the GNU tar from Git for Windows.  Get-Command returns all of them, so taking
+# .Source blindly yields an array that stringifies into one nonsense command
+# name.  Git's GNU tar is listed first because it ships its own xz; System32
+# bsdtar is the one that can hang on .xz.
+function Get-TarCandidate {
+    $fromPath = @(
+        Get-Command tar -CommandType Application -ErrorAction SilentlyContinue |
+            ForEach-Object { $_.Source }
+    )
+    $system32 = if ($env:SystemRoot) { Join-Path $env:SystemRoot 'system32\tar.exe' } else { $null }
+
+    $ordered  = @($fromPath | Where-Object { $_ -ne $system32 })
+    $ordered += @($fromPath | Where-Object { $_ -eq $system32 })
+    if ($system32 -and (Test-Path -LiteralPath $system32) -and $ordered -notcontains $system32) {
+        $ordered += $system32
+    }
+
+    $seen = New-Object 'System.Collections.Generic.HashSet[string]' ([StringComparer]::OrdinalIgnoreCase)
+    foreach ($path in $ordered) { if ($path -and $seen.Add($path)) { $path } }
+}
+
+# Unpacks a tarball into $Staging, trying every extractor this machine has
+# until one produces files.  Returns the tool that worked.
+function Expand-Tarball {
+    param(
+        [Parameter(Mandatory)] [string] $Archive,
+        [Parameter(Mandatory)] [string] $Staging
+    )
+
+    $attempts = @()
+
+    function Test-Extracted { @(Get-ChildItem -LiteralPath $Staging -Force).Count -gt 0 }
+    function Clear-Staging {
+        Get-ChildItem -LiteralPath $Staging -Force |
+            Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+    }
+
+    # 7-Zip needs two passes for .tar.xz: decompress, then untar.
+    foreach ($sevenZip in (Get-SevenZipCandidate)) {
+        $mid = Join-Path ([IO.Path]::GetTempPath()) ("kainote-xz-" + [Guid]::NewGuid().ToString('N'))
+        New-Item -ItemType Directory -Force -Path $mid | Out-Null
+        try {
+            $first = Invoke-Native -FilePath $sevenZip -Arguments @('x', '-y', "-o$mid", $Archive)
+            if ($first.ExitCode -eq 0) {
+                $inner = Get-ChildItem -LiteralPath $mid -Filter *.tar -File | Select-Object -First 1
+                if ($inner) {
+                    $second = Invoke-Native -FilePath $sevenZip -Arguments @('x', '-y', "-o$Staging", $inner.FullName)
+                    if ($second.ExitCode -eq 0 -and (Test-Extracted)) { return $sevenZip }
+                    $attempts += "      $sevenZip (untar) -> exit $($second.ExitCode) $($second.Output)"
+                } else {
+                    # Already a plain .tar, or 7-Zip unpacked it in one pass.
+                    Copy-Item -Path (Join-Path $mid '*') -Destination $Staging -Recurse -Force
+                    if (Test-Extracted) { return $sevenZip }
+                }
+            } else {
+                $attempts += "      $sevenZip -> exit $($first.ExitCode) $($first.Output)"
+            }
+        }
+        finally {
+            Remove-Item -LiteralPath $mid -Recurse -Force -ErrorAction SilentlyContinue
+        }
+        Clear-Staging
+    }
+
+    foreach ($tar in (Get-TarCandidate)) {
+        $result = Invoke-Native -FilePath $tar -Arguments @('-xf', $Archive, '-C', $Staging)
+        if ($result.ExitCode -eq 0 -and (Test-Extracted)) { return $tar }
+        $attempts += "      $tar -> exit $($result.ExitCode) $($result.Output)"
+        Clear-Staging
+    }
+
+    $name  = [IO.Path]::GetFileName($Archive)
+    $tried = if ($attempts) { $attempts -join [Environment]::NewLine } else { '      (no extractor found)' }
+    throw "Nothing on this machine could extract ${name}:$([Environment]::NewLine)$tried$([Environment]::NewLine)      Install 7-Zip, or make sure a tar with xz support is on PATH."
+}
+
 # Extracts $Archive into $Target, discarding $Strip leading path components.
-# .zip goes through Expand-Archive; tarballs go through whichever tar on this
-# machine can actually read them.
 function Expand-Any {
     param(
         [Parameter(Mandatory)] [string] $Archive,
@@ -89,32 +201,8 @@ function Expand-Any {
             Expand-Archive -LiteralPath $Archive -DestinationPath $staging -Force
         }
         else {
-            $candidates = @(Get-TarCandidate)
-            if ($candidates.Count -eq 0) {
-                throw "No tar executable was found on PATH; it is required to extract $([IO.Path]::GetFileName($Archive))"
-            }
-
-            Write-Host "    extracting with tar ($($candidates.Count) candidate(s))"
-            $extracted = $false
-            $attempts  = @()
-            foreach ($tar in $candidates) {
-                $output = $null | & $tar -xf $Archive -C $staging 2>&1
-                $code   = $LASTEXITCODE
-                if ($code -eq 0 -and @(Get-ChildItem -LiteralPath $staging -Force).Count -gt 0) {
-                    Write-Host "    extracted with $tar"
-                    $extracted = $true
-                    break
-                }
-                $attempts += "      $tar -> exit $code $(($output | Out-String).Trim())"
-                # Leave a clean staging directory for the next candidate.
-                Get-ChildItem -LiteralPath $staging -Force |
-                    Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
-            }
-            if (-not $extracted) {
-                $name = [IO.Path]::GetFileName($Archive)
-                $tried = $attempts -join [Environment]::NewLine
-                throw "No tar on this machine could extract ${name}:$([Environment]::NewLine)$tried"
-            }
+            $used = Expand-Tarball -Archive $Archive -Staging $staging
+            Write-Host "    extracted with $used"
         }
 
         $root = $staging
