@@ -1,4 +1,4 @@
-//  Copyright (c) 2016-2026, Marcin Drob
+﻿//  Copyright (c) 2016-2026, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -505,6 +505,8 @@ public:
 	const wxString & FindLanguage(const wxString & symbol);
 	//main value is 10 offset from 10
 	wxFont *GetFont(int offset = 0, const wxString& name = L"", bool bold = false);
+	//em height in pixels, the value wxFont::GetPixelSize() returns on Windows
+	int GetFontPixelHeight(const wxFont &font);
 	void FontsClear();
 	int GetDPI();
 	void FontsRescale(int dpi);
