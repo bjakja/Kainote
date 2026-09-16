@@ -139,7 +139,15 @@ void ProviderFFMS2::Processing()
 					m_lastFrame = m_renderer->m_Frame;
 				}
 				if (!CopyCurrentFrame(buff, true)) {
-					continue;
+					// Nothing in this pass advances the frame, so retrying the same
+					// failing fetch just spins the thread at full speed and never
+					// looks at the stop or the kill event again. End the playback
+					// instead and go back to waiting for the next request.
+					KaiLogDebug(wxString::Format(_("Nie można pobrać klatki %i: %s"),
+						m_renderer->m_Frame, wxString::FromUTF8(m_errInfo.Buffer)));
+					wxCommandEvent* evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED, ID_END_OF_STREAM);
+					wxQueueEvent(m_renderer->videoControl, evt);
+					break;
 				}
 
 				m_renderer->DrawTexture(buff);
