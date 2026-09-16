@@ -18,12 +18,24 @@ git clone --recurse-submodules https://github.com/bjakja/Kainote.git
 git submodule update --init --recursive
 ```
 
-Then, for the Windows build only, fetch the handful of dependencies that are not
-submodules:
+Then, for the Windows build only:
 
 ```powershell
-pwsh -File Thirdparty\hydrate.ps1
+pwsh -File Thirdparty\hydrate.ps1            # dependencies that are not submodules
+pwsh -File Thirdparty\build-wxwidgets.ps1    # build wxWidgets with its own solution
 ```
+
+`build-wxwidgets.ps1` runs `Thirdparty\wxWidgets\build\msw\wx_vc17.sln`, the
+solution wxWidgets itself ships, and leaves the static libraries in
+`lib\vc_x64_lib` (x64) or `lib\vc_lib` (Win32). Kainote does not maintain
+project files for wxWidgets and does not customise its `setup.h`; the stock
+configuration is used.
+
+`Kainote.vcxproj` puts `Thirdparty\wxWidgets\include\msvc` on the include path
+ahead of `include`, so `<wx/setup.h>` resolves to wxWidgets' MSVC helper header.
+That header locates the built `setup.h` for the current platform and emits
+`#pragma comment(lib, ...)` for every wxWidgets library, which is why no wx
+libraries are listed in `AdditionalDependencies`.
 
 ## Submodules
 
@@ -33,17 +45,23 @@ pwsh -File Thirdparty\hydrate.ps1
 | `harfbuzz` | [harfbuzz/harfbuzz](https://github.com/harfbuzz/harfbuzz) | `14.4.0` |
 | `libass` | [libass/libass](https://github.com/libass/libass) | `0.17.5` |
 | `Hunspell` | [hunspell/hunspell](https://github.com/hunspell/hunspell) | `v1.7.3` |
+| `wxWidgets` | [wxWidgets/wxWidgets](https://github.com/wxWidgets/wxWidgets) | `v3.3.3` |
 | `ffms2` | **[altqx/ffms2](https://github.com/altqx/ffms2)** | branch `kainote` |
 | `xy-VSFilter-xy_sub_filter_rc5` | **[altqx/xy-VSFilter](https://github.com/altqx/xy-VSFilter)** | branch `kainote` |
 
-The first four are stock upstream at a release tag, so they point straight at
+The first five are stock upstream at a release tag, so they point straight at
 upstream. The last two carry Kainote's own changes, so they point at forks whose
 `kainote` branch is upstream plus those changes — see [`PATCHES.md`](PATCHES.md).
 
-All six are marked `shallow = true` in `.gitmodules`, so `--recurse-submodules`
+All seven are marked `shallow = true` in `.gitmodules`, so `--recurse-submodules`
 fetches depth-1 rather than full history.
 
-To bump one of the upstream four:
+wxWidgets keeps several of its own third-party libraries (zlib, png, pcre,
+scintilla, lexilla, expat…) in **nested** submodules, which is why the checkout
+instructions use `--recursive`. Without it the wxWidgets build fails on empty
+directories.
+
+To bump one of the upstream five:
 
 ```sh
 cd Thirdparty/<name>
@@ -96,7 +114,6 @@ generate:
 
 | Directory | Why |
 |---|---|
-| `wxWidgets` | Modified 2.9.4; see the note at the end of `PATCHES.md` |
 | `luabins` | Three small fixes for modern LuaJIT (`luaL_reg` → `luaL_Reg`, `LUA_LIB`, `LUAI_BITSINT`); upstream is unmaintained |
 | `uchardet` | Tracks upstream *master*, which is ahead of the 0.0.8 release by seven language models Kainote compiles; pinning the release would lose them |
 | `BaseClasses` | DirectShow base classes from the Windows SDK samples, locally patched |

@@ -1435,7 +1435,7 @@ void KainoteFrame::SetSubsResolution(bool showDialog)
 	}
 	int x = 0, y = 0;
 	cur->grid->GetASSRes(&x, &y);
-	wxString resolution = std::to_string(x) + L" x " + std::to_string(y);
+	wxString resolution = wxString::Format(L"%d x %d", x, y);
 	SetStatusText(resolution, 7);
 	wxSize vsize;
 
@@ -1469,7 +1469,7 @@ void KainoteFrame::SetVideoResolution(int w, int h, bool showDialog)
 	SetStatusText(resolution, 5);
 	int x = 0, y = 0;
 	cur->grid->GetASSRes(&x, &y);
-	wxString sres = std::to_string(x) + L" x " + std::to_string(y);
+	wxString sres = wxString::Format(L"%d x %d", x, y);
 	if (resolution != sres && sres.Len() > 3 && cur->editor){
 		StatusBar->SetLabelTextColour(5, WINDOW_WARNING_ELEMENTS);
 		StatusBar->SetLabelTextColour(7, WINDOW_WARNING_ELEMENTS);
@@ -1546,7 +1546,7 @@ void KainoteFrame::AppendRecent(short what, Menu *_Menu)
 			changedRecent = true;
 			continue;
 		}
-		MenuItem* MI = new MenuItem(idd + i, std::to_string(i + 1) + L" " + KaiPathName(recs[i]), _("Otwórz") + L" " + recs[i]);
+		MenuItem* MI = new MenuItem(idd + i, wxString::Format(L"%d %s", i + 1, KaiPathName(recs[i])), _("Otwórz") + L" " + recs[i]);
 		wmenu->Append(MI);
 		i++;
 	}

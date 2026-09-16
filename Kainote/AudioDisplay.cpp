@@ -1088,7 +1088,7 @@ void AudioDisplay::DrawProgress()
 	textParcent.right = w - 20;
 	textParcent.top = halfY - 20;
 	textParcent.bottom = halfY + 20;
-	wxString txt = std::to_string((int)(provider->GetAudioProgress() * 100.f)) + L"%";
+	wxString txt = wxString::Format(L"%d%%", (int)(provider->GetAudioProgress() * 100.f));
 
 	d3dLine->SetWidth(1);
 	d3dLine->Begin();
@@ -1739,7 +1739,7 @@ void AudioDisplay::DrawWithWx(wxDC& dc, bool weak)
 		dc.DrawLine(left + 2, halfY, progressRight, halfY);
 		dc.SetFont(tahoma13);
 		dc.SetTextForeground(*wxWHITE);
-		dc.DrawLabel(std::to_string((int)(provider->GetAudioProgress() * 100.f)) + L"%",
+		dc.DrawLabel(wxString::Format(L"%d%%", (int)(provider->GetAudioProgress() * 100.f)),
 			wxRect(left, halfY - 20, right - left, 40), wxALIGN_CENTER);
 		return;
 	}

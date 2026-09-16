@@ -77,15 +77,13 @@ git -C Thirdparty/ffms2 diff 5.0..kainote
 
 ## wxWidgets
 
-`Thirdparty/wxWidgets` is a modified 2.9.4 and is deliberately **not** a fork
-submodule, because its delta is not a set of intentional patches worth carrying
-forward: a tree-wide find-and-replace commented out 4152
-`wxCHECK`/`wxASSERT`/`wxFAIL` lines across 658 files, including the macro
-definitions in `include/wx/debug.h`. `wxCHECK(cond, rc)` there now expands to
-nothing while 59 call sites still use it, 42 of them in code the MSW build
-compiles, so those guards no longer return.
+No longer a fork. `Thirdparty/wxWidgets` used to be a modified wxWidgets 2.9.4 —
+a 2012 development snapshot of a series upstream never stabilised — whose delta
+was not a set of intentional patches: a tree-wide find-and-replace had commented
+out 4152 `wxCHECK`/`wxASSERT`/`wxFAIL` lines across 658 files, including the
+macro definitions in `include/wx/debug.h`, where `wxCHECK(cond, rc)` expanded to
+nothing while 59 call sites still used it.
 
-Untangling that is its own piece of work — either move to wxWidgets 3.3.x (which
-the Linux build already uses) or restore `debug.h` and set `wxDEBUG_LEVEL=0`,
-which is the supported way to silence assertions while keeping the `wxCHECK_*`
-guards.
+It is now a plain submodule at `v3.3.3` with no local changes, built by
+wxWidgets' own `wx_vc17.sln`. Those guards are upstream's again, so there is
+nothing here to patch.

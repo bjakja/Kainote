@@ -798,9 +798,9 @@ void FindReplace::FindReplaceInSubs(TabWindow *window)
 	int filePos = 0;
 	for (int i = 0; i < loopNumber; i++){
 		int diff = (i < moduloPerThreads) ? 1 : 0;
-		wxArrayString *threadPaths = new wxArrayString(
-			paths.begin() + filePos,
-			paths.begin() + filePos + (pathsPerThreads + diff));
+		wxArrayString *threadPaths = new wxArrayString();
+		for (int p = filePos; p < filePos + pathsPerThreads + diff; p++)
+			threadPaths->Add(paths[p]);
 		std::tuple<FindReplace*, wxArrayString*, int> *data =
 			new std::tuple<FindReplace *, wxArrayString *, int>(this, threadPaths, i);
 		threads[i] = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)FindReplaceInFiles, data, 0, 0);
