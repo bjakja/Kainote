@@ -26,6 +26,7 @@
 #include "LogHandler.h"
 #include "config.h"
 #include "Hotkeys.h"
+#include "KeyframesLoader.h"
 
 #include <gst/gst.h>
 #include <gst/video/video.h>
@@ -379,6 +380,15 @@ bool RendererGStreamer::OpenFile(const wxString &fname, int subsFlag, bool vobsu
 		m_Visual->SizeChanged(wxRect(m_BackBufferRect.left, m_BackBufferRect.top,
 			m_BackBufferRect.right, m_BackBufferRect.bottom), nullptr, nullptr, nullptr);
 	}
+	// Keyframes file dropped / restored before the video was open: now that
+	// QueryVideoInfo has set fps it can be loaded (as ProviderFFMS2 does).
+	m_KeyFrames.clear();
+	if (!videoControl->GetKeyFramesFileName().empty()) {
+		OpenKeyframes(videoControl->GetKeyFramesFileName());
+		if (!m_KeyFrames.empty())
+			videoControl->SetKeyFramesFileName(emptyString);
+	}
+
 	// Present the prerolled frame (it may have arrived before QueryVideoInfo set
 	// the frame buffer up; pull it explicitly to be sure something is on screen).
 	if (m_AppSink) {
@@ -898,6 +908,60 @@ void RendererGStreamer::ChangeVobsub(bool vobsub)
 	// Embedded (muxed) subtitle handling is not wired through the GStreamer
 	// playback path yet; libass overlay covers the editor's subtitles.
 	// ponytail: muxed/vobsub track selection is a follow-up if requested.
+}
+
+// ---------------------------------------------------------------------------
+// Keyframes
+//
+// The FFMS2 path gets keyframes (and a per-frame timecode table) straight from
+// the index, but playbin only exposes timestamps, not a frame table, so here
+// the keyframe numbers read from the file are converted with fps.  That is
+// exact for CFR video and drifts on VFR — the same trade-off ProviderDummy
+// makes.  VideoBox::OpenKeyframes still hands the file to the audio box too,
+// and when audio has its own FFMS2 provider the audio display gets the
+// accurate timecode-based times.
+// ---------------------------------------------------------------------------
+
+void RendererGStreamer::OpenKeyframes(const wxString &filename)
+{
+	// without fps there is nothing to count frame times from; VideoBox stores
+	// the path and OpenFile loads it when the video (and its fps) is known
+	if (videoControl->m_FPS <= 0.f)
+		return;
+
+	wxArrayInt keyframes;
+	KeyframeLoader kfl(filename, &keyframes, videoControl->m_FPS);
+	// a bad format is reported by the audio box, which reads the same file
+	if (keyframes.size())
+		m_KeyFrames = keyframes;
+}
+
+void RendererGStreamer::GoToNextKeyframe()
+{
+	if (m_KeyFrames.empty())
+		return;
+
+	for (size_t i = 0; i < m_KeyFrames.size(); i++){
+		if (m_KeyFrames[i] > m_Time){
+			SetPosition(m_KeyFrames[i]);
+			return;
+		}
+	}
+	SetPosition(m_KeyFrames[0]);
+}
+
+void RendererGStreamer::GoToPrevKeyframe()
+{
+	if (m_KeyFrames.empty())
+		return;
+
+	for (int i = m_KeyFrames.size() - 1; i >= 0; i--){
+		if (m_KeyFrames[i] < m_Time){
+			SetPosition(m_KeyFrames[i]);
+			return;
+		}
+	}
+	SetPosition(m_KeyFrames[m_KeyFrames.size() - 1]);
 }
 
 #endif // _WIN32

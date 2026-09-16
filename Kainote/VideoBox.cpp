@@ -1727,7 +1727,12 @@ void VideoBox::OpenKeyframes(const wxString &filename)
 		m_KeyframesFileName.Empty();
 		return;
 	}
-	else if (tab->edit->ABox) {
+	//renderers without own provider (GStreamer) keep keyframes themselves,
+	//to make seeking to keyframes work, Direct Show ignores it.
+	if (renderer)
+		renderer->OpenKeyframes(filename);
+
+	if (tab->edit->ABox) {
 		// skip return when audio do not have own provider or file didn't have video for take timecodes.
 		if (tab->edit->ABox->OpenKeyframes(filename)) {
 			m_KeyframesFileName.Empty();
