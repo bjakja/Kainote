@@ -25,7 +25,9 @@ Kainote is a powerful subtitle editor designed for a wide range of tasks. It uti
 
 You can download the latest beta version of Kainote from the link below.
 
-[**Download Kainote Beta**](https://drive.google.com/uc?id=1ECqsrLo5d1jPoz-FKvJrS0279YeTKrmS&export=download)
+[**Download Kainote Beta**](https://github.com/bjakja/Kainote/actions/workflows/build.yml?query=branch%3Amaster)
+
+Builds are produced by CI on every push to `master`. Open the newest run and download the package for your platform — **`kainote-windows-x64`** (a zip holding `Kainote_x64\` with the executables, the Automation 4 library, dictionaries, translations, the CSRI renderers and the runtimes Windows does not always have) or **`kainote-linux-x86_64`** (a `.tar.gz` with the binary, the Automation library, dictionaries and translations). GitHub asks you to sign in before it hands over an artifact, and keeps artifacts for 90 days.
 
 **Please Note**: Beta builds are unstable and intended for testing purposes. Features may be incomplete or contain bugs. If you encounter issues or have feedback, please join our Discord server.
 

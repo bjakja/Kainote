@@ -39,6 +39,21 @@ jobs:
       # src/YASM.{props,targets,xml} -- that one calls yasm from PATH.  The
       # chocolatey package provides the assembler itself: yasm publishes its
       # Windows build as yasm-1.2.0-win64.exe, not as an installer.
+      # msgfmt compiles Locale/*.po into the .mo files Kainote loads at run time;
+      # the pre-build event skips that when msgfmt is missing.  Non-fatal, so a
+      # package hiccup costs the artifact its translations, not the build.
+      - name: Install gettext
+        continue-on-error: true
+        run: |
+          choco install gettext --no-progress -y
+          foreach ($dir in @(
+              "$env:ProgramFiles\gettext-iconv\bin",
+              "${env:ProgramFiles(x86)}\gettext-iconv\bin",
+              "C:\ProgramData\chocolatey\bin")) {
+            if (Test-Path (Join-Path $dir 'msgfmt.exe')) { $dir | Out-File -Append $env:GITHUB_PATH }
+          }
+          where.exe msgfmt
+
       - name: Install YASM
         run: choco install yasm --no-progress -y
 
@@ -165,13 +180,20 @@ jobs:
           if (-not (Test-Path $exe)) { throw "not built: $exe" }
           Get-Item $exe | Format-List Name, Length, LastWriteTime
 
-      - uses: actions/upload-artifact@v4
+      # The artifact is the shippable package: binaries plus the runtime data
+      # (Automation 4 library, dictionaries, locales, CSRI renderers and the
+      # runtimes Windows does not always have) assembled by .github/scripts/package.py
+      # from pinned public repositories -- see runtime-assets.json.
+      - name: Package the runtime
         if: matrix.configuration == 'Release'
+        run: python .github/scripts/package.py --platform windows --build-dir x64/Release --stage "dist/Kainote_x64"
+
+      - name: Upload the package
+        if: matrix.configuration == 'Release'
+        uses: actions/upload-artifact@v4
         with:
-          name: kainote-x64
-          path: |
-            x64/Release/Kainote.exe
-            x64/Release/*.dll
+          name: kainote-windows-x64
+          path: dist/Kainote_x64/**
           if-no-files-found: error
 
   linux:
@@ -208,3 +230,15 @@ jobs:
 
       - name: Check the executable exists
         run: test -x build/kainote && ls -l build/kainote
+
+      - name: Package the runtime
+        if: matrix.build_type == 'Release'
+        run: python3 .github/scripts/package.py --platform linux --build-dir build --stage dist/kainote-linux-x86_64
+
+      - name: Upload the package
+        if: matrix.build_type == 'Release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: kainote-linux-x86_64
+          path: dist/kainote-linux-x86_64/**
+          if-no-files-found: error
