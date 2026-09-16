@@ -19,9 +19,25 @@ elseif(DEFINED KAINOTE_BUILD_DIR)
     file(REAL_PATH "${KAINOTE_BUILD_DIR}" build_dir_real)
     if(runtime_dir_real STREQUAL build_dir_real AND
        EXISTS "${build_dir_real}/CMakeCache.txt")
-        file(GLOB legacy_runtime_deps LIST_DIRECTORIES FALSE
-            "${RUNTIME_DIR}/lib*.so" "${RUNTIME_DIR}/lib*.so.*")
+        # RUNTIME_DIR is the build root, so a bare lib*.so glob would also delete
+        # hand-staged libraries. Probe the stale $ORIGIN copies and remove only
+        # the ones the executable actually links.
+        file(GET_RUNTIME_DEPENDENCIES
+            EXECUTABLES "${KAINOTE_EXE}"
+            RESOLVED_DEPENDENCIES_VAR probe_runtime_deps
+        )
+        set(legacy_runtime_deps)
+        foreach(probe_dep IN LISTS probe_runtime_deps)
+            get_filename_component(probe_name "${probe_dep}" NAME)
+            get_filename_component(probe_dir "${probe_dep}" DIRECTORY)
+            file(REAL_PATH "${probe_dir}" probe_dir_real)
+            if(probe_dir_real STREQUAL runtime_dir_real AND
+               probe_name MATCHES "^lib[^/\\\\]+\\.so(\\..*)?$")
+                list(APPEND legacy_runtime_deps "${probe_dep}")
+            endif()
+        endforeach()
         if(legacy_runtime_deps)
+            list(REMOVE_DUPLICATES legacy_runtime_deps)
             list(LENGTH legacy_runtime_deps legacy_count)
             file(REMOVE ${legacy_runtime_deps})
             message(STATUS "Removed ${legacy_count} legacy bundled runtime dependencies before dependency discovery")

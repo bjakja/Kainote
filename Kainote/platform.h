@@ -363,10 +363,14 @@ struct KainoteChangeNotificationHandle : KainoteHandleBase {
             watchedPaths.erase(normalized);
             return false;
         }
-        auto previous = watchPaths.find(wd);
-        if (previous != watchPaths.end()) watchedPaths.erase(previous->second);
-        watchPaths[wd] = normalized;
-        watchedPaths.insert(normalized);
+        // An alias of a watched directory (symlink, bind mount) returns the first
+        // path's descriptor; keep that mapping rather than rebinding it.
+        const auto previous = watchPaths.find(wd);
+        if (previous != watchPaths.end()) {
+            if (previous->second != normalized) watchedPaths.erase(normalized);
+            return true;
+        }
+        watchPaths.emplace(wd, normalized);
         return true;
     }
 
