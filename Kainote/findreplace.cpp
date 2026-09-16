@@ -171,7 +171,6 @@ void FindReplace::ReplaceChecked()
 		TabPanel *tab = nullptr;
 		int oldKeyLine = -1;
 		int numOfChanges = 0;
-		bool skipTab = false;
 		bool skipLine = false;
 		bool lastIsTextTl = false;
 		size_t size = List->GetCount();
@@ -181,15 +180,16 @@ void FindReplace::ReplaceChecked()
 				continue;
 
 			SeekResults *SeekResult = (SeekResults *)item;
-			tab = SeekResult->tab;
-			// check if skip lines when tab not exist
+			TabPanel *resultTab = SeekResult->tab;
+			if (!resultTab || !Kai || !Kai->Tabs ||
+				Kai->Tabs->FindPanel(resultTab, false) == -1 || !resultTab->grid)
+				continue;
+			tab = resultTab;
 			if (tab != oldtab){
-				skipTab = Kai->Tabs->FindPanel(tab, false) == -1;
 				oldKeyLine = -1;
 				lastIsTextTl = false;
 			}
-			//skip lines when are out of table range and not existed tab
-			if (skipTab || SeekResult->keyLine >= tab->grid->GetCount())
+			if (SeekResult->keyLine >= tab->grid->GetCount())
 				continue;
 
 			Dialogue *Dialc = tab->grid->CopyDialogueF(SeekResult->keyLine, true, false);
@@ -1614,4 +1614,3 @@ int FindReplace::ReplaceCheckedInSubs(std::vector<SeekResults *> &results, const
 
 	return numOfChanges;
 }
-

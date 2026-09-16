@@ -200,6 +200,7 @@ private:
 	int operation;
 	bool reloadFonts;
 	bool hasExternalFolder = false;
+	const wxWindow* fontObserverClient = nullptr;
 };
 
 class FontCollectorThread : public wxThread

@@ -40,6 +40,9 @@
 #include <wx/ffile.h>
 #include <wx/window.h>
 #include <locale>
+#include <limits>
+#include <new>
+#include <vector>
 
 SubsGridBase* SubsGridBase::CG1 = NULL;
 SubsGridBase* SubsGridBase::CG2 = NULL;
@@ -1808,19 +1811,26 @@ void SubsGridBase::CompareTexts(compareData &firstCompare, compareData &secondCo
 
 
 	size_t l1 = first.length(), l2 = second.length();
-	size_t sz = (l1 + 1) * (l2 + 1) * sizeof(size_t);
+	if (l1 == std::numeric_limits<size_t>::max() || l2 == std::numeric_limits<size_t>::max() ||
+		(l1 + 1) > std::numeric_limits<size_t>::max() / (l2 + 1)) {
+		KaiLog(L"text comparison is too large");
+		return;
+	}
+	size_t cellCount = (l1 + 1) * (l2 + 1);
 	size_t w = l2 + 1;
-	size_t* dpt;
 	size_t i1, i2;
-	dpt = new size_t[sz];
-
-	if (dpt == nullptr)
-	{
+	std::vector<size_t> dpt;
+	if (cellCount > dpt.max_size()) {
 		KaiLog(L"memory allocation failed");
 		return;
 	}
-
-	memset(dpt, 0, sz);
+	try {
+		dpt.assign(cellCount, 0);
+	}
+	catch (const std::bad_alloc&) {
+		KaiLog(L"memory allocation failed");
+		return;
+	}
 
 	for (i1 = 1; i1 <= l1; i1++){
 		for (i2 = 1; i2 <= l2; i2++)
@@ -1877,8 +1887,6 @@ void SubsGridBase::CompareTexts(compareData &firstCompare, compareData &secondCo
 		secondCompare.push_back(ssecond);
 		secondCompare.push_back((l2 - i2) - 1);
 	}
-
-	delete dpt;
 }
 
 void SubsGridBase::RemoveComparison()
@@ -1976,7 +1984,6 @@ size_t SubsGridBase::GetDialoguePosition(size_t keyPosition)
 	}
 	return dialogues;
 }
-
 
 
 

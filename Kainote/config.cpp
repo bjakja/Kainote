@@ -961,22 +961,33 @@ wxFont *config::GetFont(int offset, const wxString& name, bool bold)
 		fontName = L"Tahoma";
 
 #ifdef _WIN32
+	// Negative lfHeight = em height, the same formula wxMSW's SetPointSize() uses.
 	int newPixelSize = -(int)(((double)fontSize * ((double)fontDPI) / 72.0) + 0.5);
-#else
-	int newPixelSize = std::max(1, (int)(((double)fontSize * ((double)fontDPI) / 72.0) + 0.5));
-#endif
-
 	wxFont *newFont = new wxFont(wxSize(0, newPixelSize), wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, bold? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, false, fontName);
-#ifndef _WIN32
+#else
+	// wxGTK has no native pixel-sized fonts: the ctor falls back to wxFontBase's
+	// search on wxDC::GetCharHeight(), the line height, so the 13 px Windows uses
+	// for 10 pt lands on 8 pt. Pango scales points by the display DPI itself.
+	wxFont *newFont = new wxFont(fontSize, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, bold? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, false, fontName);
 	if (!newFont->IsOk()) {
 		delete newFont;
 		newFont = new wxFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
-		newFont->SetPixelSize(wxSize(0, newPixelSize));
+		newFont->SetPointSize(fontSize);
 		newFont->SetWeight(bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL);
 	}
 #endif
 	programFonts.insert(std::pair<int, wxFont*>(10 + offset, newFont));
 	return newFont;
+}
+
+int config::GetFontPixelHeight(const wxFont &font)
+{
+#ifdef _WIN32
+	return font.GetPixelSize().GetHeight();
+#else
+	// wxGTK would report the line height here, wxMSW the em height; recompute it.
+	return std::max(1, (int)(((double)font.GetPointSize() * ((double)fontDPI) / 72.0) + 0.5));
+#endif
 }
 
 const wxString &config::FindLanguage(const wxString & symbol)

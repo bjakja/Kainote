@@ -41,8 +41,7 @@ class AssColor
 		r = red;
 		g = green;
 		b = blue;
-		if (alpha > -1)
-			a = alpha;
+		a = alpha > -1 ? alpha : 0;
 	}
 	~AssColor();
 	bool operator == (const AssColor &col){ return (a == col.a && r == col.r && g == col.g && b == col.b); }

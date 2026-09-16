@@ -73,7 +73,12 @@ void SubsGridWindow::SetStyle()
 		font.SetFamily(wxFONTFAMILY_SWISS);
 	font.SetWeight(wxFONTWEIGHT_NORMAL);
 	wxFont* defaultFont = Options.GetFont(Options.GetInt(GRID_FONT_SIZE) - 10);
+#ifdef _WIN32
 	font.SetPixelSize(defaultFont->GetPixelSize());
+#else
+	// GetPixelSize() is the line height on wxGTK and drifts between faces.
+	font.SetPointSize(defaultFont->GetPointSize());
+#endif
 	int fw, fh;
 	GetTextExtent(L"#TWFfGH", &fw, &fh, nullptr, nullptr, &font);
 	GridHeight = ((fh + 3) * 2) / 2;
@@ -491,9 +496,10 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 					wxBitmap arrow = wxBITMAP_PNG(L"arrow_list");
 					// GetDialogueKey was made for loops no checks
 					Dialogue *nextDial = (key < GetCount() - 1) ? GetDialogue(key + 1) : nullptr;
-					if (nextDial && nextDial->treeState == TREE_CLOSED)
-						if(arrow.IsOk())
+					if (nextDial && nextDial->treeState == TREE_CLOSED) {
+						if (arrow.IsOk())
 							tdc.DrawBitmap(arrow, posX + 6, posY + 5);
+					}
 					else{
 						wxBitmap bmp(wxBITMAP_PNG(L"arrow_list"));
 						wxImage img = bmp.ConvertToImage();
@@ -623,7 +629,7 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 	int id = scrollPositionId - 1;
 	int idmarkerPos = -1;
 	int idcurrentLine = -1;
-	float fontApproxSize = ((float)font.GetPixelSize().GetHeight()) / 2.5f;
+	float fontApproxSize = ((float)Options.GetFontPixelHeight(font)) / 2.5f;
 	int maxTextLength = 100;
 
 	while (key + 1 <= KeySize && id < scrows - 1){

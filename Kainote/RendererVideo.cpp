@@ -139,10 +139,19 @@ void RendererVideo::QueueLinuxRender()
 	wxTheApp->CallAfter([this, alive]() {
 		if (!alive->load())
 			return; // renderer was destroyed before this ran
-		m_LinuxRenderQueued.store(false);
 		{
 			std::lock_guard<std::mutex> lock(m_LinuxPendingFrameMutex);
-			m_LinuxPresentFrame.swap(m_LinuxPendingFrame);
+			if (!m_LinuxPendingFrame.empty()) {
+				m_LinuxPresentFrame.swap(m_LinuxPendingFrame);
+				// Prevent empty callbacks from restoring the old frame.
+				m_LinuxPendingFrame.clear();
+				if (m_LinuxPendingTime >= 0) {
+					m_Time = m_LinuxPendingTime;
+					m_LinuxPendingTime = -1;
+				}
+			}
+			// Reset under the producer lock to avoid missed frames.
+			m_LinuxRenderQueued.store(false);
 		}
 		if (m_State != None && !m_LinuxPresentFrame.empty()) {
 			wxWindow* renderWindow = (videoControl->m_IsFullscreen && videoControl->m_FullScreenWindow) ?
@@ -976,4 +985,3 @@ PlaybackState RendererVideo::GetState()
 {
 	return m_State;
 }
-

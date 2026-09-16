@@ -274,19 +274,19 @@ bool kainoteApp::OnInit()
 #endif
 
 #ifndef _WIN32
-		// Keep the C character locale UTF-8 on Unix.  Some wx helpers still
-		// convert narrow source literals through the current C locale; if the
-		// process is left in the default "C" locale after wxLocale::Init() fails
-		// for an ungenerated language such as th_TH.UTF-8, non-ASCII Polish
-		// source strings can convert to empty wxStrings and option labels vanish.
-		// Seed program-font DPI from the real display: the GetDeviceCaps shim only
-		// reports 96 and the DPI-rescale paths are #ifdef _WIN32, so HiDPI Linux UI
-		// fonts would otherwise never scale. Safe here (wx GUI is initialised).
+		// Seed the program-font DPI from the real display; the GetDeviceCaps shim
+		// only reports 96 and GetFontPixelHeight() needs the real resolution.
+		// Safe here (wx GUI is initialised).
 		{
 			int ydpi = wxScreenDC().GetPPI().y;
 			if (ydpi > 0)
 				Options.FontsRescale(ydpi);
 		}
+		// Keep the C character locale UTF-8 on Unix.  Some wx helpers still
+		// convert narrow source literals through the current C locale; if the
+		// process is left in the default "C" locale after wxLocale::Init() fails
+		// for an ungenerated language such as th_TH.UTF-8, non-ASCII Polish
+		// source strings can convert to empty wxStrings and option labels vanish.
 		setlocale(LC_CTYPE, "");
 		const char* ctypeLocale = setlocale(LC_CTYPE, nullptr);
 		if (!ctypeLocale || (!std::strstr(ctypeLocale, "UTF-8") && !std::strstr(ctypeLocale, "utf8"))) {

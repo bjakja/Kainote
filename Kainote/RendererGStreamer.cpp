@@ -26,6 +26,7 @@
 #include "LogHandler.h"
 #include "config.h"
 #include "Hotkeys.h"
+#include "KeyframesLoader.h"
 
 #include <gst/gst.h>
 #include <gst/video/video.h>
@@ -178,6 +179,7 @@ void RendererGStreamer::TearDown()
 	std::lock_guard<std::mutex> lock(m_LinuxPendingFrameMutex);
 	m_LinuxPendingFrame.clear();
 	m_LinuxPresentFrame.clear();
+	m_LinuxPendingTime = -1;
 }
 
 bool RendererGStreamer::WaitPreroll()
@@ -253,7 +255,7 @@ bool RendererGStreamer::QueryVideoInfo()
 
 	gint64 dur = 0;
 	if (gst_element_query_duration(m_Pipeline, GST_FORMAT_TIME, &dur) && dur > 0)
-		m_DurationMs = (int)(dur / GST_MSECOND);
+		m_DurationMs.store((int)(dur / GST_MSECOND));
 	return true;
 }
 
@@ -265,6 +267,9 @@ bool RendererGStreamer::OpenFile(const wxString &fname, int subsFlag, bool vobsu
 	EnsureGstInit();
 
 	m_Time = 0;
+	m_StreamTimeMs.store(0);
+	m_StreamPlayEndMs.store(0);
+	m_DurationMs.store(0);
 	m_Frame = 0;
 	m_ReachedPlayEnd.store(false);
 
@@ -375,6 +380,15 @@ bool RendererGStreamer::OpenFile(const wxString &fname, int subsFlag, bool vobsu
 		m_Visual->SizeChanged(wxRect(m_BackBufferRect.left, m_BackBufferRect.top,
 			m_BackBufferRect.right, m_BackBufferRect.bottom), nullptr, nullptr, nullptr);
 	}
+	// Keyframes file dropped / restored before the video was open: now that
+	// QueryVideoInfo has set fps it can be loaded (as ProviderFFMS2 does).
+	m_KeyFrames.clear();
+	if (!videoControl->GetKeyFramesFileName().empty()) {
+		OpenKeyframes(videoControl->GetKeyFramesFileName());
+		if (!m_KeyFrames.empty())
+			videoControl->SetKeyFramesFileName(emptyString);
+	}
+
 	// Present the prerolled frame (it may have arrived before QueryVideoInfo set
 	// the frame buffer up; pull it explicitly to be sure something is on screen).
 	if (m_AppSink) {
@@ -406,10 +420,12 @@ void RendererGStreamer::HandleSample(GstSample *sample)
 	if (w <= 0 || h <= 0)
 		return;
 
+	int frameTimeMs = m_StreamTimeMs.load();
 	if (GST_BUFFER_PTS_IS_VALID(buf)) {
-		const int ms = (int)(GST_BUFFER_PTS(buf) / GST_MSECOND);
-		m_Time = ms;
-		if (m_PlayEndTime && ms >= m_PlayEndTime && !m_ReachedPlayEnd.exchange(true)) {
+		frameTimeMs = (int)(GST_BUFFER_PTS(buf) / GST_MSECOND);
+		m_StreamTimeMs.store(frameTimeMs);
+		const int playEndMs = m_StreamPlayEndMs.load();
+		if (playEndMs && frameTimeMs >= playEndMs && !m_ReachedPlayEnd.exchange(true)) {
 			wxQueueEvent(videoControl, new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, VIDEO_PLAY_PAUSE));
 			wxQueueEvent(videoControl, new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, ID_REFRESH_TIME));
 		}
@@ -438,7 +454,7 @@ void RendererGStreamer::HandleSample(GstSample *sample)
 
 		// Subtitles, then (fullscreen) progress bar, composited into the frame.
 		if (m_SubsOpened)
-			m_SubsProvider->Draw(m_FrameBuffer, m_Time);
+			m_SubsProvider->Draw(m_FrameBuffer, frameTimeMs);
 
 		if (m_PbValid.load() && videoControl->m_FullScreenProgressBar) {
 			std::lock_guard<std::mutex> pbLock(m_PbMutex);
@@ -455,6 +471,7 @@ void RendererGStreamer::HandleSample(GstSample *sample)
 		if (m_LinuxPendingFrame.size() != frameBytes)
 			m_LinuxPendingFrame.resize(frameBytes);
 		memcpy(m_LinuxPendingFrame.data(), m_FrameBuffer, frameBytes);
+		m_LinuxPendingTime = frameTimeMs;
 	}
 	gst_video_frame_unmap(&vframe);
 	QueueLinuxRender();
@@ -510,15 +527,22 @@ void RendererGStreamer::BusLoop()
 			KaiLog(wxString::Format(L"GStreamer: %s", wxString::FromUTF8(err ? err->message : "error")));
 			if (err) g_error_free(err);
 			g_free(dbg);
-			// Don't leave the UI stuck "playing" on a fatal pipeline error.
-			if (m_State == Playing)
-				wxQueueEvent(videoControl, new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, VIDEO_PLAY_PAUSE));
+			// m_State is UI-owned.
+			auto alive = m_LinuxAlive;
+			if (auto *app = wxTheApp) {
+				app->CallAfter([this, alive]() {
+					if (alive->load() && m_State == Playing)
+						wxQueueEvent(videoControl,
+							new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, VIDEO_PLAY_PAUSE));
+				});
+				wxWakeUpIdle();
+			}
 			break;
 		}
 		case GST_MESSAGE_DURATION_CHANGED: {
 			gint64 dur = 0;
 			if (gst_element_query_duration(m_Pipeline, GST_FORMAT_TIME, &dur) && dur > 0)
-				m_DurationMs = (int)(dur / GST_MSECOND);
+				m_DurationMs.store((int)(dur / GST_MSECOND));
 			break;
 		}
 		default:
@@ -552,6 +576,7 @@ bool RendererGStreamer::Play(int end)
 	}
 
 	m_PlayEndTime = (end > 0) ? end : 0;
+	m_StreamPlayEndMs.store(m_PlayEndTime);
 	m_ReachedPlayEnd.store(false);
 	if (m_Time < GetDuration() - m_FrameDuration)
 		gst_element_set_state(m_Pipeline, GST_STATE_PLAYING);
@@ -579,13 +604,15 @@ bool RendererGStreamer::Stop()
 	if (m_State == Playing) {
 		SetThreadExecutionState(ES_CONTINUOUS);
 		m_State = Stopped;
+		m_PlayEndTime = 0;
+		m_StreamPlayEndMs.store(0);
 		if (m_Pipeline) {
 			gst_element_set_state(m_Pipeline, GST_STATE_PAUSED);
 			gst_element_seek_simple(m_Pipeline, GST_FORMAT_TIME,
 				(GstSeekFlags)(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT), 0);
 		}
-		m_PlayEndTime = 0;
 		m_Time = 0;
+		m_StreamTimeMs.store(0);
 		return true;
 	}
 	return false;
@@ -595,6 +622,7 @@ void RendererGStreamer::SetPosition(int _time, bool starttime, bool corect, bool
 {
 	if (!m_Pipeline)
 		return;
+	m_StreamPlayEndMs.store(0);
 	m_Time = MID(0, _time, GetDuration());
 	if (corect) {
 		m_Time /= m_FrameDuration;
@@ -602,6 +630,7 @@ void RendererGStreamer::SetPosition(int _time, bool starttime, bool corect, bool
 		m_Time *= m_FrameDuration;
 	}
 	m_PlayEndTime = 0;
+	m_StreamTimeMs.store(m_Time);
 	m_ReachedPlayEnd.store(false);
 	gst_element_seek_simple(m_Pipeline, GST_FORMAT_TIME,
 		(GstSeekFlags)(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT),
@@ -686,9 +715,9 @@ int RendererGStreamer::GetDuration()
 	if (m_Pipeline) {
 		gint64 dur = 0;
 		if (gst_element_query_duration(m_Pipeline, GST_FORMAT_TIME, &dur) && dur > 0)
-			m_DurationMs = (int)(dur / GST_MSECOND);
+			m_DurationMs.store((int)(dur / GST_MSECOND));
 	}
-	return m_DurationMs;
+	return m_DurationMs.load();
 }
 
 void RendererGStreamer::GetVideoSize(int *width, int *height)
@@ -879,6 +908,60 @@ void RendererGStreamer::ChangeVobsub(bool vobsub)
 	// Embedded (muxed) subtitle handling is not wired through the GStreamer
 	// playback path yet; libass overlay covers the editor's subtitles.
 	// ponytail: muxed/vobsub track selection is a follow-up if requested.
+}
+
+// ---------------------------------------------------------------------------
+// Keyframes
+//
+// The FFMS2 path gets keyframes (and a per-frame timecode table) straight from
+// the index, but playbin only exposes timestamps, not a frame table, so here
+// the keyframe numbers read from the file are converted with fps.  That is
+// exact for CFR video and drifts on VFR — the same trade-off ProviderDummy
+// makes.  VideoBox::OpenKeyframes still hands the file to the audio box too,
+// and when audio has its own FFMS2 provider the audio display gets the
+// accurate timecode-based times.
+// ---------------------------------------------------------------------------
+
+void RendererGStreamer::OpenKeyframes(const wxString &filename)
+{
+	// without fps there is nothing to count frame times from; VideoBox stores
+	// the path and OpenFile loads it when the video (and its fps) is known
+	if (videoControl->m_FPS <= 0.f)
+		return;
+
+	wxArrayInt keyframes;
+	KeyframeLoader kfl(filename, &keyframes, videoControl->m_FPS);
+	// a bad format is reported by the audio box, which reads the same file
+	if (keyframes.size())
+		m_KeyFrames = keyframes;
+}
+
+void RendererGStreamer::GoToNextKeyframe()
+{
+	if (m_KeyFrames.empty())
+		return;
+
+	for (size_t i = 0; i < m_KeyFrames.size(); i++){
+		if (m_KeyFrames[i] > m_Time){
+			SetPosition(m_KeyFrames[i]);
+			return;
+		}
+	}
+	SetPosition(m_KeyFrames[0]);
+}
+
+void RendererGStreamer::GoToPrevKeyframe()
+{
+	if (m_KeyFrames.empty())
+		return;
+
+	for (int i = m_KeyFrames.size() - 1; i >= 0; i--){
+		if (m_KeyFrames[i] < m_Time){
+			SetPosition(m_KeyFrames[i]);
+			return;
+		}
+	}
+	SetPosition(m_KeyFrames[m_KeyFrames.size() - 1]);
 }
 
 #endif // _WIN32

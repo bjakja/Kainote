@@ -91,6 +91,8 @@ SpellCheckerDialog::SpellCheckerDialog(KainoteFrame *parent)
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 		Destroy();
 	}, ID_CLOSE_DIALOG);
+	// This unretained modeless dialog must destroy itself on close.
+	Bind(wxEVT_CLOSE_WINDOW, [this](wxCloseEvent&) { Destroy(); });
 	Bind(wxEVT_ACTIVATE, &SpellCheckerDialog::OnActive, this);
 	SetEscapeId(ID_CLOSE_DIALOG);
 	SetEnterId(ID_REPLACE);
@@ -339,4 +341,3 @@ void SpellCheckerDialog::OnActive(wxActivateEvent &evt)
 		}
 	}
 }
-
