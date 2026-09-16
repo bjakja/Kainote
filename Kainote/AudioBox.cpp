@@ -62,12 +62,12 @@
 // across the upper half of the slider instead.
 static const float MAX_PLAYBACK_VOLUME = 1.5f;
 
-static float AudioDisplayScaleFromSlider(int position)
+float AudioDisplayScaleFromSlider(int position)
 {
 	return pow(float(position) / 50.0f, 3);
 }
 
-static float PlaybackVolumeFromSlider(int position)
+float PlaybackVolumeFromSlider(int position)
 {
 	if (position <= 50)
 		return AudioDisplayScaleFromSlider(position);
