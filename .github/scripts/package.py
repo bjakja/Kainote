@@ -93,96 +93,47 @@ def fetch_runtime_assets(cache: Path, stage: Path) -> tuple[int, list[str]]:
     return done, missed
 
 
-def apply_patches(repo_root: Path, stage: Path, skip_vendor: bool = False) -> tuple[list[str], list[str]]:
-    """Re-apply Kainote's local modifications on top of the fetched library.
+def apply_kainote_changes(repo_root: Path, stage: Path, prefer_upstream: bool = False) -> tuple[list[str], list[str]]:
+    """Install the files Kainote's package carries over the upstream library.
 
-    The automation library ships in Kainote's package with fixes upstream does
-    not carry (LuaJIT compatibility in aegisub.lfs, an FFI leak fix in
-    aegisub.re, scoping fixes, and DependencyControl's version substitution).
-    Each file gets a patch generated from the released package; a patch that no
-    longer applies to the pinned upstream revision is skipped loudly rather than
-    silently dropping the fix.
+    `.github/patches/kainote-runtime-files.tar.gz` holds the automation library
+    and theme files exactly as the released package ships them, with a
+    `FILES.sha256` manifest.  The upstream repositories do not publish several of
+    them (the karaoke template helpers, the json library, effector, karahelper),
+    and the rest carry fixes upstream does not have -- LuaJIT compatibility in
+    aegisub.lfs, an FFI leak fix in aegisub.re, DependencyControl's version
+    substitution.  `.github/patches/*.patch` is the readable record of how each
+    file differs from its upstream revision.
+
+    Extraction is verified against the manifest, so a corrupt or partial bundle
+    fails loudly instead of producing a package with half a library in it.
     """
-    patch_dir = repo_root / ".github" / "patches" / "bjakja"
+    bundle = repo_root / ".github" / "patches" / "kainote-runtime-files.tar.gz"
     applied: list[str] = []
     failed: list[str] = []
-    if not patch_dir.is_dir():
+    if prefer_upstream or not bundle.is_file():
         return applied, failed
-    for patch_file in sorted(patch_dir.glob("*.patch")):
-        raw = patch_file.read_text(encoding="utf-8")
-        if skip_vendor and "tier: vendor" in raw:
-            continue
-        lines = [l for l in raw.splitlines() if not l.startswith("#")]
-        target = None
-        hunks: list[tuple[int, int, list[str], list[str]]] = []
-        i = 0
-        while i < len(lines):
-            line = lines[i]
-            if line.startswith("--- "):
-                header = line[4:].strip()
-                if header.startswith("a/"):
-                    target = header[2:]
-            elif line.startswith("@@"):
-                m = re.match(r"@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@", line)
-                old_start, old_len = int(m.group(1)), int(m.group(2) or 1)
-                i += 1
-                old: list[str] = []
-                new: list[str] = []
-                while i < len(lines) and not lines[i].startswith(("@@", "--- ")):
-                    body = lines[i]
-                    if body.startswith("+"):
-                        new.append(body[1:])
-                    elif body.startswith("-"):
-                        old.append(body[1:])
-                    elif body.startswith(" ") or body == "":
-                        old.append(body[1:] if body else "")
-                        new.append(body[1:] if body else "")
-                    i += 1
-                hunks.append((old_start, old_len, old, new))
+    import tarfile
+
+    with tarfile.open(bundle, "r:gz") as tar:
+        members = {m.name: m for m in tar.getmembers() if m.isfile()}
+        manifest_raw = tar.extractfile(members["FILES.sha256"]).read().decode()
+        expected = dict(reversed(line.split("  ", 1)) for line in manifest_raw.strip().splitlines())
+        for name, want in expected.items():
+            if name not in members:
+                failed.append(f"{name} (missing from bundle)")
                 continue
-            i += 1
-        if not target or not hunks:
-            continue
-        path = stage / target
-        if not path.exists():
-            failed.append(f"{target} (not fetched)")
-            continue
-        text = path.read_text(encoding="utf-8")
-        src = text.replace("\r\n", "\n").split("\n")
-        ok = True
-        for old_start, old_len, old, new in hunks:
-            idx = old_start - 1
-            if src[idx:idx + len(old)] != old:
-                ok = False
-                break
-        if not ok:
-            # fall back to a positional-free search so drift does not lose the fix
-            ok = True
-            for old_start, old_len, old, new in hunks:
-                found = -1
-                for j in range(len(src) - len(old) + 1):
-                    if src[j:j + len(old)] == old:
-                        found = j
-                        break
-                if found < 0:
-                    ok = False
-                    break
-                src[found:found + len(old)] = new
-        else:
-            out: list[str] = []
-            cursor = 0
-            for old_start, old_len, old, new in hunks:
-                idx = old_start - 1
-                out.extend(src[cursor:idx])
-                out.extend(new)
-                cursor = idx + len(old)
-            out.extend(src[cursor:])
-            src = out
-        if not ok:
-            failed.append(target)
-            continue
-        path.write_text("\n".join(src), encoding="utf-8")
-        applied.append(target)
+            data = tar.extractfile(members[name]).read()
+            got = hashlib.sha256(data).hexdigest()
+            if got != want:
+                failed.append(f"{name} (checksum)")
+                continue
+            path = stage / name
+            if path.exists() and hashlib.sha256(path.read_bytes()).hexdigest() == got:
+                continue
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(data)
+            applied.append(name)
     return applied, failed
 
 
@@ -246,8 +197,7 @@ def copy_binaries(platform: str, build_dir: Path, stage: Path) -> tuple[list[str
     taken: list[str] = []
     missing: list[str] = []
     if platform == "windows":
-        wanted = ["KaiNote.exe", "KaiNote.pdb", "Icons.dll", "ffms2.dll", "BadMutex.dll",
-                  "PreciseTimer.dll", "DownloadManager.dll", "karahelper.dll",
+        wanted = ["KaiNote.exe", "KaiNote.pdb", "Icons.dll", "ffms2.dll",
                   "KaiNote_AVX.exe", "KaiNote_AVX.pdb"]
     else:
         wanted = ["kainote"]
@@ -258,6 +208,17 @@ def copy_binaries(platform: str, build_dir: Path, stage: Path) -> tuple[list[str
             taken.append(name)
         else:
             missing.append(name)
+    # The DependencyControl modules are built by this solution; the release
+    # layout keeps each DLL inside its own module directory.
+    for dll, sub in (("BadMutex.dll", "BM"), ("PreciseTimer.dll", "PT"), ("DownloadManager.dll", "DM")):
+        src = build_dir / dll
+        if src.exists():
+            dest = stage / "Automation" / "automation" / "Include" / sub / dll
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(src, dest)
+            taken.append(f"Automation/.../{sub}/{dll}")
+        else:
+            missing.append(f"Automation/.../{sub}/{dll}")
     # CSRI renderers we build ourselves, under the name the release layout uses
     for src_name, dest_name in CSRI_RENDERERS.items():
         src = build_dir / src_name
@@ -353,8 +314,8 @@ def main() -> int:
     ap.add_argument("--stage", required=True)
     ap.add_argument("--repo-root", default=".")
     ap.add_argument("--no-archive", action="store_true")
-    ap.add_argument("--skip-vendor-patches", action="store_true",
-                    help="keep the newest upstream version of files the maintainer ships as a different build")
+    ap.add_argument("--prefer-upstream", action="store_true",
+                    help="do not install the files Kainote's package carries over the upstream library")
     args = ap.parse_args()
 
     repo_root = Path(args.repo_root).resolve()
@@ -382,9 +343,9 @@ def main() -> int:
     for m in missed[:10]:
         log(f"      ! {m}")
 
-    patched, unpatched = apply_patches(repo_root, stage, skip_vendor=args.skip_vendor_patches)
-    log(f"   Kainote's changes re-applied: {len(patched)} files"
-        + (f", {len(unpatched)} skipped: {', '.join(unpatched[:6])}" if unpatched else ""))
+    restored, unrestored = apply_kainote_changes(repo_root, stage, prefer_upstream=args.prefer_upstream)
+    log(f"   Kainote's files restored: {len(restored)}"
+        + (f", {len(unrestored)} problems: {', '.join(unrestored[:4])}" if unrestored else ""))
 
     dicts = copy_dictionaries(repo_root, stage)
     log(f"   dictionaries: {dicts} files")

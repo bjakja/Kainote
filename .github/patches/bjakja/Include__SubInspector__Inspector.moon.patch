@@ -1,0 +1,106 @@
+# Kainote ships a modified version of this file: targeted fix upstream does not carry.
+# tier: fix
+# Regenerate with tools in .github/patches/README.md; applied by .github/scripts/package.py.
+
+
+--- a/Automation/automation/Include/SubInspector/Inspector.moon
++++ b/Automation/automation/Include/SubInspector/Inspector.moon
+@@ -1,6 +1,6 @@
+ -- This library is unlicensed under CC0
+-local ffi, looseVersionCompare
+-versionRecord = '0.8.0'
++local requireffi, ffi, looseVersionCompare
++versionRecord = '0.7.2'
+ 
+ haveDepCtrl, DependencyControl = pcall require, 'l0.DependencyControl'
+ 
+@@ -15,12 +15,13 @@
+ 		feed: "https://raw.githubusercontent.com/TypesettingTools/SubInspector/master/DependencyControl.json",
+ 		{
+ 			{ "ffi" }
++			{ "requireffi.requireffi", version: "0.1.1" }
+ 		}
+ 	} )
+ 
+ 	SIVersionCompat = DependencyControl( {
+ 		moduleName: "SubInspector.Compat",
+-		version: "0.6.0",
++		version: "0.5.1",
+ 		virtual: true
+ 	} )
+ 
+@@ -33,11 +34,12 @@
+ 
+ 		return true
+ 
+-	ffi = versionRecord\requireModules!
++	ffi, requireffi = versionRecord\requireModules!
+ 
+ else
+ 	ffi  = require 'ffi'
+-	SIVersionCompat = 0x000600
++	requireffi = require 'requireffi.requireffi'
++	SIVersionCompat = 0x000501
+ 
+ 	versionComponents = ( version ) ->
+ 		return math.floor(version / 65536) % 256, math.floor(version / 256) % 256, version % 256
+@@ -71,29 +73,7 @@
+ void        si_cleanup( void* );
+ ]] )
+ 
+-loadLibrary = ->
+-	filename = switch ffi.os
+-		when 'Windows' then 'SubInspector.dll'
+-		when 'OSX' then 'libSubInspector.dylib'
+-		else 'libSubInspector.so'
+-
+-	paths = { }
+-	for template in package.path\gmatch '[^;]+'
+-		template = template\gsub '\\', '/'
+-		root = template\match('^(.-)%?%.lua$') or template\match('^(.-)%?%.moon$')
+-		if root
+-			table.insert paths, root .. 'SubInspector/Inspector/' .. filename
+-	-- Package-manager installs can use the system's native library search path.
+-	table.insert paths, 'SubInspector'
+-
+-	errors = { 'Could not load the SubInspector library:' }
+-	for path in *paths
+-		success, library = pcall ffi.load, path
+-		return library if success
+-		table.insert errors, '  ' .. path .. ': ' .. tostring library
+-	error table.concat errors, '\n'
+-
+-SubInspector = loadLibrary!
++SubInspector, libraryPath = requireffi( 'SubInspector.Inspector.SubInspector' )
+ 
+ log = ( message, ... ) ->
+ 	aegisub.log 2, message .. '\n', ...
+@@ -103,17 +83,14 @@
+ 		"[Script Info]"
+ 	}
+ 
+-	-- Preserve script settings that affect libass rendering.
++	-- These are the only header fields that actually affect the way ASS
++	-- is rendered. I don't actually know if ScriptType matters.
+ 	infoFields = {
+ 		PlayResX:   true
+ 		PlayResY:   true
+ 		WrapStyle:  true
+ 		ScriptType: true
+ 		ScaledBorderAndShadow: true
+-		Kerning: true
+-		Language: true
+-		LayoutResX: true
+-		LayoutResY: true
+ 	}
+ 
+ 	styles = { }
+@@ -221,7 +198,7 @@
+ class Inspector
+ 	@version = versionRecord
+ 
+-	new: ( subtitles = error( "You must provide the subtitles object." ), fcConfig, fontDir = aegisub.decode_path( '?script/fonts' ), logFunc = log ) =>
++	new: ( subtitles = error( "You must provide the subtitles object." ), fcConfig = libraryPath .. "fonts.conf", fontDir = aegisub.decode_path( '?script/fonts' ), logFunc = log ) =>
+ 
+ 		success, message = looseVersionCompare SubInspector.si_getVersion!
+ 		assert success, message

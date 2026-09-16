@@ -1,0 +1,19 @@
+# Kainote ships a modified version of this file: targeted fix upstream does not carry.
+# tier: fix
+# Regenerate with tools in .github/patches/README.md; applied by .github/scripts/package.py.
+
+
+--- a/Automation/automation/Include/aegisub/unicode.moon
++++ b/Automation/automation/Include/aegisub/unicode.moon
+@@ -30,9 +30,9 @@
+ 
+ impl = require 'aegisub.__unicode_impl'
+ 
+-check = require 'aegisub.internal.argcheck'
++check = require 'aegisub.argcheck'
+ ffi = require 'ffi'
+-ffi_util = require 'aegisub.internal.ffi'
++ffi_util = require 'aegisub.ffi'
+ 
+ err_buff = ffi.new 'char *[1]'
+ conv_func = (f) -> check'string' (str) ->

@@ -1,6 +1,7 @@
-# Kainote ships a modified version of this file (upstream: TypesettingTools/lyger-Aegisub-Scripts modules/LibLyger.moon).
-# Applied by .github/scripts/package.py; see .github/patches/README.md.
-# Base: bcd78f04535f from runtime-assets.json.
+# Kainote ships a modified version of this file: this file is not published in the upstream repositories the build fetches, so the released copy is the only source.
+# tier: carried
+# Regenerate with tools in .github/patches/README.md; applied by .github/scripts/package.py.
+
 
 --- a/Automation/automation/Include/lyger/LibLyger.moon
 +++ b/Automation/automation/Include/lyger/LibLyger.moon

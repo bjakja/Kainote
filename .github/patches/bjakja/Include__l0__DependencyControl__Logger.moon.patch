@@ -1,7 +1,7 @@
-# Kainote ships a modified version of this file (upstream: TypesettingTools/DependencyControl).
-# Applied by .github/scripts/package.py; see .github/patches/README.md.
-# tier: vendor - the maintainer ships a different build/version of this file, not a targeted fix;
-# skip it with package.py --skip-vendor-patches to stay on the newest upstream release.
+# Kainote ships a modified version of this file: the maintainer ships a different build/version of this file, not a targeted fix.
+# tier: vendor
+# Regenerate with tools in .github/patches/README.md; applied by .github/scripts/package.py.
+
 
 --- a/Automation/automation/Include/l0/DependencyControl/Logger.moon
 +++ b/Automation/automation/Include/l0/DependencyControl/Logger.moon
