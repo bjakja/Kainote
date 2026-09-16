@@ -33,6 +33,18 @@ find_package(Boost REQUIRED COMPONENTS filesystem locale regex OPTIONAL_COMPONEN
 find_program(MSGFMT_EXECUTABLE msgfmt REQUIRED)
 find_program(TAR_EXECUTABLE tar REQUIRED)
 find_program(GZIP_EXECUTABLE gzip REQUIRED)
+
+# Thirdparty/ffms2 is a git submodule (Kainote's ffms2 fork).  The Linux build
+# does not link it -- it links the distribution's libffms2 -- but it does
+# compile Thirdparty/Build/FFMS2/indexing_additional.cpp against ffms2's private
+# headers, so the checkout has to be there.  Fail with something actionable
+# rather than a pile of missing-include errors.
+if(NOT EXISTS "${CMAKE_SOURCE_DIR}/Thirdparty/ffms2/src/core/indexing.h")
+    message(FATAL_ERROR
+        "Thirdparty/ffms2 is empty -- the git submodules have not been checked out.\n"
+        "Run:  git submodule update --init --recursive")
+endif()
+
 add_compile_definitions(_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING _CRT_SECURE_NO_WARNINGS HAVE_DLL_EXPORT LINUX_BUILD KAINOTE_LINUX_BUILD)
 add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-include> $<$<COMPILE_LANGUAGE:CXX>:${CMAKE_SOURCE_DIR}/Kainote/platform.h> -Wno-deprecated-declarations -Wno-narrowing -Wno-unused-result)
 add_executable(kainote
