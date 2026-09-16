@@ -21,11 +21,13 @@
   <PropertyGroup>
     <MiniLuaCommand>$(SolutionDir)bin\$(Platform)\$(Configuration)\minilua</MiniLuaCommand>
     <PackCommand>$(MSBuildThisFileDirectory)pack-dt.lua</PackCommand>
-    <IcuDt>icudt60l</IcuDt>
+    <!-- Version-stamped: ICU 78 ships source/data/in/icudt78l.dat and
+         links against the symbol icudt78_dat.  Bump on an ICU upgrade. -->
+    <IcuDt>icudt78l</IcuDt>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Target Name="PackDataTables" BeforeTargets="ClCompile" Inputs="..\..\Icu\source\data\in\$(IcuDt).dat;pack-dt.lua" Outputs="$(IcuDt).c">
-    <Exec Command="$(MiniLuaCommand) $(PackCommand) &quot;..\..\Icu\source&quot; &quot;$(IcuDt).c&quot;" />
+    <Exec Command="$(MiniLuaCommand) $(PackCommand) &quot;..\..\Icu\source&quot; &quot;$(IcuDt).c&quot; &quot;$(IcuDt)&quot;" />
   </Target>
   <ItemGroup>
     <ClCompile Include="..\..\Icu\source\common\appendable.cpp" />
@@ -428,7 +430,7 @@
     <ClCompile Include="..\..\Icu\source\i18n\zonemeta.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\zrule.cpp" />
     <ClCompile Include="..\..\Icu\source\i18n\ztrans.cpp" />
-    <ClCompile Include="icudt60l.c" />
+    <ClCompile Include="$(IcuDt).c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Icu\source\common\bmpset.h" />
@@ -863,6 +865,13 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <!-- PackDataTables runs minilua, so it has to be built first.  Without
+         this the ICU build fails with exit code 9009, minilua not found. -->
+    <ProjectReference Include="..\Minilua\Minilua.vcxproj">
+      <Project>{325D093D-826B-4A7D-83C7-1CAD22911B9F}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
