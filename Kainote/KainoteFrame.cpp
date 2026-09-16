@@ -72,6 +72,10 @@
 
 
 
+// winsock2.h first: windows.h would pull in the old winsock.h (sockaddr clash).
+#ifdef __WXMSW__
+#include <winsock2.h>
+#endif
 #include <windows.h>
 #include <ShObjIdl.h>
 #include <versionhelpers.h>

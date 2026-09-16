@@ -19,8 +19,12 @@
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
 
+// winsock2.h first: windows.h would pull in the old winsock.h (sockaddr clash).
+#ifdef __WXMSW__
+#include <winsock2.h>
+#endif
 #include <windows.h>
-#include <wx/msw/winundef.h>
+#include "WinUndef.h"
 
 KaiStaticBox::KaiStaticBox(wxWindow *parent, const wxString& _label)
 	:

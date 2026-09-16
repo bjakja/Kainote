@@ -15,13 +15,17 @@
 
 
 #pragma once
-#include <wx/msw/winundef.h>
+#include "WinUndef.h"
 #include <wx/regex.h>
 #include <wx/arrstr.h>
 #include <wx/gdicmn.h>
 #include <vector>
 #include <atomic> 
-//#include <windows.h>
+// winsock2.h first: windows.h would pull in the old winsock.h (sockaddr clash).
+#ifdef __WXMSW__
+#include <winsock2.h>
+#endif
+#include <windows.h>
 
 
 class KainoteFrame;

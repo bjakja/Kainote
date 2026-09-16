@@ -200,6 +200,8 @@ add_executable(kainote
 )
 target_include_directories(kainote PRIVATE
     ${CMAKE_SOURCE_DIR}/Kainote
+    # wx/msw/*.h shims for wxGTK; kept out of Kainote/ for the Windows build.
+    ${CMAKE_SOURCE_DIR}/cmake/linux-compat
     ${CMAKE_SOURCE_DIR}/Kainote/GFFT
     ${CMAKE_SOURCE_DIR}/Thirdparty/luabins/include
     ${CMAKE_SOURCE_DIR}/Thirdparty/DependencyControl/include

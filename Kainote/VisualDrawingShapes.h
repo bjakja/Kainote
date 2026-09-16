@@ -25,6 +25,7 @@
 #include <vector>
 
 #include <d3dx9.h>
+#include "UndoD3DXMacros.h"
 
 //class TabPanel;
 //class DrawingAndClip;

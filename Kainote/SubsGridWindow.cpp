@@ -26,7 +26,7 @@
 #include "GraphicsD2D.h"
 #include "BidiConversion.h"
 #include <wx/regex.h>
-#include <wx/msw/winundef.h>
+#include "WinUndef.h"
 #include <wx/dc.h>
 
 

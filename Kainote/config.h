@@ -19,7 +19,7 @@
 #include "styles.h"
 #include "EnumFactory.h"
 #include "LogHandler.h"
-#include <wx/msw/winundef.h>
+#include "WinUndef.h"
 #include <wx/tokenzr.h>
 #include <wx/utils.h>
 

@@ -18,9 +18,14 @@
 #include <wx/window.h>
 #include "styles.h"
 //#undef GetClientRect
+// winsock2.h first: windows.h would pull in the old winsock.h (sockaddr clash).
+#ifdef __WXMSW__
+#include <winsock2.h>
+#endif
 #include <windows.h>
 #include <d3dx9math.h>
-#include <wx/msw/winundef.h>
+#include "UndoD3DXMacros.h"
+#include "WinUndef.h"
 
 
 struct tagRECT;

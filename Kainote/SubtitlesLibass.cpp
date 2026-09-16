@@ -20,7 +20,7 @@
 #include "OpennWrite.h"
 #include "KainoteFrame.h"
 #include "DshowRenderer.h"
-#include <wx/msw/winundef.h>
+#include "WinUndef.h"
 #include <wx/thread.h>
 #include <process.h>
 #include "config.h"

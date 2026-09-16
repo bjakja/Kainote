@@ -24,7 +24,11 @@
 #include <condition_variable>
 #include <mutex>
 #include <unicode/utf16.h>
-//#include <windows.h>
+// winsock2.h first: windows.h would pull in the old winsock.h (sockaddr clash).
+#ifdef __WXMSW__
+#include <winsock2.h>
+#endif
+#include <windows.h>
 #include <Usp10.h>
 
 #include <ShlObj.h>

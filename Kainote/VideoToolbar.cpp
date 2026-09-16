@@ -20,7 +20,7 @@
 #include "Notebook.h"
 #include "Provider.h"
 #include "RendererVideo.h"
-#include <wx/msw/winundef.h>
+#include "WinUndef.h"
 #include <wx/dc.h>
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>

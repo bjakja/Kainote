@@ -22,7 +22,7 @@
 #include "KaiStaticBoxSizer.h"
 #include "EditBox.h"
 #include "TabPanel.h"
-#include "wx/msw/winundef.h"
+#include "WinUndef.h"
 #include "wx/dirdlg.h"
 
 TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)

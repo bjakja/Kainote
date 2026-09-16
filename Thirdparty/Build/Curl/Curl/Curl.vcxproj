@@ -385,7 +385,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\curl\include;$(SolutionDir)Thirdparty\curl\lib;$(SolutionDir)Thirdparty\zlib</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp14</LanguageStandard>
       <LanguageStandard_C>Default</LanguageStandard_C>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -452,6 +452,11 @@
       <AdditionalDependencies>Ws2_32.Lib;Wldap32.Lib;Crypt32.Lib;</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Zlib\Zlib.vcxproj">
+      <Project>{56E35122-0B51-43D4-A721-472F2F956E0F}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

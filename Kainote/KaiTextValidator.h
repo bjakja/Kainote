@@ -14,7 +14,7 @@
 
 
 class KaiTextCtrl;
-#include <wx/msw/winundef.h>
+#include "WinUndef.h"
 #include "wx/defs.h"
 #include "wx/validate.h"
 #include "wx/valtext.h"

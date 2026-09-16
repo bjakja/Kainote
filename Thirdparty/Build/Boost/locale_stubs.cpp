@@ -15,33 +15,52 @@
 // Aegisub Project http://www.aegisub.org/
 
 #include <boost/locale/gnu_gettext.hpp>
+#include <boost/locale/util/locale_data.hpp>
+#include <vector>
 #include <boost/locale/localization_backend.hpp>
 #include <unicode/locid.h>
 
-// Boost.locale doesn't support partial builds of ICU, so provide stub versions
-// of some of the things we don't use
+// Boost.locale doesn't support partial builds of ICU: this build sets
+// UCONFIG_NO_FORMATTING, so create_formatting/create_parsing/create_calendar
+// have no implementation to compile, and their sources are not in the project.
 namespace boost { namespace locale {
 
 namespace impl_icu {
-struct cdata {
-	icu::Locale locale;
-	std::string encoding;
-	bool utf8;
+// class, not struct: the ICU backend declares this type as a class and MSVC
+// mangles the two keywords differently (V vs U), so a struct here is a
+// different symbol and the callers stay unresolved.
+class cdata {
+public:
+    icu::Locale locale;
+    std::string encoding;
+    bool utf8;
 };
 
-std::locale create_formatting(std::locale const& in, cdata const& cd, character_facet_type type) {
-	return in;
+std::locale create_formatting(std::locale const& in, cdata const& cd, char_facet_t type) {
+    return in;
 }
 
-std::locale create_parsing(std::locale const& in, cdata const& cd, character_facet_type type) {
-	return in;
+std::locale create_parsing(std::locale const& in, cdata const& cd, char_facet_t type) {
+    return in;
 }
 
 std::locale create_calendar(std::locale const& in, cdata const& cd) {
-	return in;
+    return in;
 }
 
 }
+
+// install_message_facet is implemented per backend (std, win32, posix); none is
+// enabled here, and Kainote's messages are its own gettext .mo files.
+namespace detail {
+std::locale install_message_facet(std::locale const& in, char_facet_t /*type*/,
+        util::locale_data const& /*data*/,
+        std::vector<std::string> const& /*domains*/,
+        std::vector<std::string> const& /*paths*/) {
+    return in;
+}
+}
+
 namespace gnu_gettext {
 template<>
 message_format<char> *create_messages_facet(messages_info const &info) {

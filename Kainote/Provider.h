@@ -113,3 +113,4 @@ protected:
 	wxArrayInt m_keyFrames;
 	std::vector<int> m_timecodes;
 };
+
