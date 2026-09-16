@@ -53,6 +53,9 @@
 
 class ToggleButton;
 
+float AudioDisplayScaleFromSlider(int position);
+float PlaybackVolumeFromSlider(int position);
+
 
 
 ///////////////////

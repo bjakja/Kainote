@@ -54,6 +54,27 @@
 #include <math.h>
 //#include <dxgicommon.h>
 
+// Both vertical sliders use a cubic response where position 50 means 100%.
+// Fed straight to the player that reaches 8x at the top of the slider, and
+// Provider::GetBuffer hard clips the result to 16 bit, so loud material tears
+// itself apart long before the slider gets there (issue #450). The waveform
+// scale keeps the full cubic range, the player gets a linear 100% - 150% ramp
+// across the upper half of the slider instead.
+static const float MAX_PLAYBACK_VOLUME = 1.5f;
+
+float AudioDisplayScaleFromSlider(int position)
+{
+	return pow(float(position) / 50.0f, 3);
+}
+
+float PlaybackVolumeFromSlider(int position)
+{
+	if (position <= 50)
+		return AudioDisplayScaleFromSlider(position);
+
+	return 1.0f + ((MAX_PLAYBACK_VOLUME - 1.0f) * (float(position - 50) / 50.0f));
+}
+
 
 AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
 	KaiPanel(parent, -1, wxDefaultPosition, wxSize(0, 0))
@@ -85,7 +106,7 @@ AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
 		zoom, 0, 100, wxDefaultPosition, wxSize(-1, 20), wxSL_VERTICAL | wxSL_BOTH);
 	HorizontalZoom->SetToolTip(_("Rozciągnięcie w poziomie"));
 	int pos = Options.GetInt(AUDIO_VERTICAL_ZOOM);
-	float value = pow(float(pos) / 50.0f, 3);
+	float value = AudioDisplayScaleFromSlider(pos);
 	audioDisplay->SetScale(value);
 	VerticalZoom = new KaiSlider(this, Audio_Vertical_Zoom, pos, 1, 100, 
 		wxDefaultPosition, wxSize(-1, 20), wxSL_VERTICAL | wxSL_BOTH | wxSL_INVERSE);
@@ -229,7 +250,7 @@ void AudioBox::SetFile(wxString file, bool fromvideo) {
 	if (file != emptyString) loaded = audioDisplay->loaded;
 	audioName = file;
 	if (loaded && audioDisplay->player){
-		float value = pow(float(Options.GetInt(AUDIO_VOLUME)) / 50.0f, 3);
+		float value = PlaybackVolumeFromSlider(Options.GetInt(AUDIO_VOLUME));
 		audioDisplay->player->SetVolume(value);
 	}
 }
@@ -293,10 +314,10 @@ void AudioBox::OnHorizontalZoom(wxScrollEvent &event) {
 // Vertical zoom bar changed
 void AudioBox::OnVerticalZoom(wxScrollEvent &event) {
 	int pos = event.GetPosition();
-	float value = pow(float(pos) / 50.0f, 3);
+	float value = AudioDisplayScaleFromSlider(pos);
 	audioDisplay->SetScale(value);
 	if (VerticalLink->GetValue()) {
-		audioDisplay->player->SetVolume(value);
+		audioDisplay->player->SetVolume(PlaybackVolumeFromSlider(pos));
 		VolumeBar->SetThumbPosition(VerticalZoom->GetThumbPosition());
 		Options.SetInt(AUDIO_VOLUME, pos);
 	}
@@ -312,8 +333,7 @@ void AudioBox::OnVerticalZoom(wxScrollEvent &event) {
 // Volume bar changed
 void AudioBox::OnVolume(wxScrollEvent &event) {
 	int pos = event.GetPosition();
-	float value = pow(float(pos) / 50.0f, 3);
-	audioDisplay->player->SetVolume(value);
+	audioDisplay->player->SetVolume(PlaybackVolumeFromSlider(pos));
 	Options.SetInt(AUDIO_VOLUME, pos);
 	if (event.GetEventType() == wxEVT_SCROLL_THUMBRELEASE)
 		Options.SaveAudioOpts();
@@ -322,7 +342,7 @@ void AudioBox::OnVolume(wxScrollEvent &event) {
 
 	if (VerticalLink->GetValue()) {
 		VerticalZoom->SetThumbPosition(VolumeBar->GetThumbPosition());
-		audioDisplay->SetScale(value);
+		audioDisplay->SetScale(AudioDisplayScaleFromSlider(pos));
 		Options.SetInt(AUDIO_VERTICAL_ZOOM, pos);
 	}
 }
@@ -334,9 +354,8 @@ void AudioBox::OnVerticalLink(wxCommandEvent &event) {
 	int pos = VerticalZoom->GetValue();
 	if (pos < 1) pos = 1;
 	if (pos > 100) pos = 100;
-	float value = pow(float(pos) / 50.0f, 3);
 	if (VerticalLink->GetValue()) {
-		audioDisplay->player->SetVolume(value);
+		audioDisplay->player->SetVolume(PlaybackVolumeFromSlider(pos));
 		//VolumeBar->SetValue(pos);
 		VolumeBar->SetThumbPosition(VerticalZoom->GetThumbPosition());
 		Options.SetInt(AUDIO_VOLUME, pos);
@@ -638,14 +657,13 @@ void AudioBox::SetAccels()
 
 void AudioBox::SetVolume(int vol)
 {
-	float value = pow(float(vol) / 50.0f, 3);
-	audioDisplay->player->SetVolume(value);
+	audioDisplay->player->SetVolume(PlaybackVolumeFromSlider(vol));
 	Options.SetInt(AUDIO_VOLUME, vol);
 	Options.SaveAudioOpts();
 	VolumeBar->SetValue(vol);
 	if (VerticalLink->GetValue()) {
 		VerticalZoom->SetThumbPosition(VolumeBar->GetThumbPosition());
-		audioDisplay->SetScale(value);
+		audioDisplay->SetScale(AudioDisplayScaleFromSlider(vol));
 	}
 
 }

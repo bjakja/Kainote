@@ -2025,10 +2025,10 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 
 			int pos = box->VerticalZoom->GetValue() + step;
 			box->VerticalZoom->SetValue(pos);
-			float value = pow(float(pos) / 50.0f, 3);
-			SetScale(value);
+			pos = box->VerticalZoom->GetValue();
+			SetScale(AudioDisplayScaleFromSlider(pos));
 			if (box->VerticalLink->GetValue()) {
-				player->SetVolume(value);
+				player->SetVolume(PlaybackVolumeFromSlider(pos));
 				box->VolumeBar->SetThumbPosition(box->VerticalZoom->GetThumbPosition());
 				Options.SetInt(AUDIO_VOLUME, pos);
 
