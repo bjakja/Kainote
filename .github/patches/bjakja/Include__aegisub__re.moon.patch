@@ -1,0 +1,87 @@
+# Kainote ships a modified version of this file (upstream: TypesettingTools/Aegisub automation/include/aegisub/re.moon).
+# Applied by .github/scripts/package.py; see .github/patches/README.md.
+# Base: 42552e5efb98 from runtime-assets.json.
+
+--- a/Automation/automation/Include/aegisub/re.moon
++++ b/Automation/automation/Include/aegisub/re.moon
+@@ -19,8 +19,8 @@
+ 
+ bit = require 'bit'
+ ffi = require 'ffi'
+-ffi_util = require 'aegisub.internal.ffi'
+-check = require 'aegisub.internal.argcheck'
++ffi_util = require 'aegisub.ffi'
++check = require 'aegisub.argcheck'
+ 
+ ffi.cdef[[
+   typedef struct agi_re_flag {
+@@ -33,33 +33,21 @@
+ -- Get the boost::eegex binding
+ regex = require 'aegisub.__re_impl'
+ 
+-err_buff = ffi.new 'char *[1]'
+-
+--- Raise a Lua error if the last native call reported one
+-checked_call = (f, ...) ->
+-  err_buff[0] = nil
+-  res = f ...
+-
+-  if err_buff[0] != nil
+-    error ffi_util.string(err_buff[0]), 3
+-
+-  return res
+-
+ -- Wrappers to convert returned values from C types to Lua types
+ search = (re, str, start) ->
+   return unless start <= str\len()
+-  res = checked_call regex.search, re, str, str\len(), start, err_buff
++  res = regex.search re, str, str\len(), start
+   return unless res != nil
+   first, last = res[0], res[1]
+-  ffi.gc(res, ffi.C.free)
++  ffi.C.free res
+   first, last
+ 
+ replace = (re, replacement, str, max_count) ->
+-  ffi_util.string (checked_call regex.replace, re, replacement, str, str\len(), max_count, err_buff)
++  ffi_util.string regex.replace re, replacement, str, str\len(), max_count
+ 
+ match = (re, str, start) ->
+   assert start <= str\len()
+-  m = checked_call regex.match, re, str, str\len(), start, err_buff
++  m = regex.match re, str, str\len(), start
+   return unless m != nil
+   ffi.gc m, regex.match_free
+ 
+@@ -68,11 +56,12 @@
+   return unless res != nil
+   res[0], res[1] -- Result buffer is owned by match so no need to free
+ 
++err_buff = ffi.new 'char *[1]'
+ compile = (pattern, flags) ->
+   err_buff[0] = nil
+   re = regex.compile pattern, flags, err_buff
+   if err_buff[0] != nil
+-    return ffi_util.string err_buff[0]
++    return ffi.string err_buff[0]
+   ffi.gc re, regex.regex_free
+ 
+ -- Return the first n elements from ...
+@@ -152,7 +141,7 @@
+       break
+   table.concat(acc, '') .. str\sub pos
+ 
+--- Compiled regular expression type prototype
++-- Compiled regular expression type protoype
+ class RegEx
+   -- Verify that a valid value was passed for self
+   _check_self: =>
+@@ -245,7 +234,7 @@
+ 
+   re = compile pattern, flags
+   if type(re) == 'string'
+-    error re, level + 1
++    error regex, level + 1
+ 
+   RegEx re, stored_level or level + 1
+ 

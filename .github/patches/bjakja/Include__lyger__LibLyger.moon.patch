@@ -1,0 +1,15 @@
+# Kainote ships a modified version of this file (upstream: TypesettingTools/lyger-Aegisub-Scripts modules/LibLyger.moon).
+# Applied by .github/scripts/package.py; see .github/patches/README.md.
+# Base: bcd78f04535f from runtime-assets.json.
+
+--- a/Automation/automation/Include/lyger/LibLyger.moon
++++ b/Automation/automation/Include/lyger/LibLyger.moon
+@@ -34,6 +34,8 @@
+         @set_sub sub, sel, generate_furigana if sub
+ 
+     set_sub: (@sub, @sel = {}, generate_furigana = false) =>
++        local has_script_info
++
+         @script_info, @lines, @dialogue, @dlg_cnt = {}, {}, {}, 0
+         for i, line in ipairs sub
+             @lines[i] = line

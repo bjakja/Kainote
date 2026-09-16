@@ -20,6 +20,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -90,6 +91,99 @@ def fetch_runtime_assets(cache: Path, stage: Path) -> tuple[int, list[str]]:
         shutil.copyfile(cached, target)
         done += 1
     return done, missed
+
+
+def apply_patches(repo_root: Path, stage: Path, skip_vendor: bool = False) -> tuple[list[str], list[str]]:
+    """Re-apply Kainote's local modifications on top of the fetched library.
+
+    The automation library ships in Kainote's package with fixes upstream does
+    not carry (LuaJIT compatibility in aegisub.lfs, an FFI leak fix in
+    aegisub.re, scoping fixes, and DependencyControl's version substitution).
+    Each file gets a patch generated from the released package; a patch that no
+    longer applies to the pinned upstream revision is skipped loudly rather than
+    silently dropping the fix.
+    """
+    patch_dir = repo_root / ".github" / "patches" / "bjakja"
+    applied: list[str] = []
+    failed: list[str] = []
+    if not patch_dir.is_dir():
+        return applied, failed
+    for patch_file in sorted(patch_dir.glob("*.patch")):
+        raw = patch_file.read_text(encoding="utf-8")
+        if skip_vendor and "tier: vendor" in raw:
+            continue
+        lines = [l for l in raw.splitlines() if not l.startswith("#")]
+        target = None
+        hunks: list[tuple[int, int, list[str], list[str]]] = []
+        i = 0
+        while i < len(lines):
+            line = lines[i]
+            if line.startswith("--- "):
+                header = line[4:].strip()
+                if header.startswith("a/"):
+                    target = header[2:]
+            elif line.startswith("@@"):
+                m = re.match(r"@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@", line)
+                old_start, old_len = int(m.group(1)), int(m.group(2) or 1)
+                i += 1
+                old: list[str] = []
+                new: list[str] = []
+                while i < len(lines) and not lines[i].startswith(("@@", "--- ")):
+                    body = lines[i]
+                    if body.startswith("+"):
+                        new.append(body[1:])
+                    elif body.startswith("-"):
+                        old.append(body[1:])
+                    elif body.startswith(" ") or body == "":
+                        old.append(body[1:] if body else "")
+                        new.append(body[1:] if body else "")
+                    i += 1
+                hunks.append((old_start, old_len, old, new))
+                continue
+            i += 1
+        if not target or not hunks:
+            continue
+        path = stage / target
+        if not path.exists():
+            failed.append(f"{target} (not fetched)")
+            continue
+        text = path.read_text(encoding="utf-8")
+        src = text.replace("\r\n", "\n").split("\n")
+        ok = True
+        for old_start, old_len, old, new in hunks:
+            idx = old_start - 1
+            if src[idx:idx + len(old)] != old:
+                ok = False
+                break
+        if not ok:
+            # fall back to a positional-free search so drift does not lose the fix
+            ok = True
+            for old_start, old_len, old, new in hunks:
+                found = -1
+                for j in range(len(src) - len(old) + 1):
+                    if src[j:j + len(old)] == old:
+                        found = j
+                        break
+                if found < 0:
+                    ok = False
+                    break
+                src[found:found + len(old)] = new
+        else:
+            out: list[str] = []
+            cursor = 0
+            for old_start, old_len, old, new in hunks:
+                idx = old_start - 1
+                out.extend(src[cursor:idx])
+                out.extend(new)
+                cursor = idx + len(old)
+            out.extend(src[cursor:])
+            src = out
+        if not ok:
+            failed.append(target)
+            continue
+        path.write_text("\n".join(src), encoding="utf-8")
+        applied.append(target)
+    return applied, failed
 
 
 def copy_local_modules(repo_root: Path, stage: Path) -> int:
@@ -259,6 +353,8 @@ def main() -> int:
     ap.add_argument("--stage", required=True)
     ap.add_argument("--repo-root", default=".")
     ap.add_argument("--no-archive", action="store_true")
+    ap.add_argument("--skip-vendor-patches", action="store_true",
+                    help="keep the newest upstream version of files the maintainer ships as a different build")
     args = ap.parse_args()
 
     repo_root = Path(args.repo_root).resolve()
@@ -285,6 +381,10 @@ def main() -> int:
     log(f"   automation library: {fetched} files" + (f", {len(missed)} failed" if missed else ""))
     for m in missed[:10]:
         log(f"      ! {m}")
+
+    patched, unpatched = apply_patches(repo_root, stage, skip_vendor=args.skip_vendor_patches)
+    log(f"   Kainote's changes re-applied: {len(patched)} files"
+        + (f", {len(unpatched)} skipped: {', '.join(unpatched[:6])}" if unpatched else ""))
 
     dicts = copy_dictionaries(repo_root, stage)
     log(f"   dictionaries: {dicts} files")

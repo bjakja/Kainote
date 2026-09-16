@@ -1,0 +1,87 @@
+# Kainote ships a modified version of this file (upstream: TypesettingTools/Aegisub-Motion Aegisub-Motion.moon).
+# Applied by .github/scripts/package.py; see .github/patches/README.md.
+# Base: b2ea7b964f90 from runtime-assets.json.
+
+--- a/Automation/automation/Autoload/a-mo.Aegisub-Motion.moon
++++ b/Automation/automation/Autoload/a-mo.Aegisub-Motion.moon
+@@ -4,7 +4,7 @@
+ export script_name        = "Aegisub-Motion"
+ export script_description = "A set of tools for simplifying the process of creating and applying motion tracking data with Aegisub."
+ export script_author      = "torque"
+-export script_version     = "##__AEGISUB-MOTION_VERSION__##"
++export script_version     = "1.0.9"
+ export script_namespace   = "a-mo.Aegisub-Motion"
+ 
+ local interface, setProgress, setTask
+@@ -20,15 +20,15 @@
+ 		{
+ 			'aegisub.clipboard'
+ 			'json'
+-			{ 'a-mo.ConfigHandler',  version: '##__CONFIGHANDLER_VERSION__##'  }
+-			{ 'a-mo.DataWrapper',    version: '##__DATAWRAPPER_VERSION__##'    }
+-			{ 'a-mo.LineCollection', version: '##__LINECOLLECTION_VERSION__##' }
+-			{ 'a-mo.Log' ,           version: '##__LOG_VERSION__##'            }
+-			{ 'a-mo.Math' ,          version: '##__MATH_VERSION__##'           }
+-			{ 'a-mo.MotionHandler',  version: '##__MOTIONHANDLER_VERSION__##'  }
+-			{ 'a-mo.Statistics' ,    version: '##__STATISTICS_VERSION__##'     }
+-			{ 'a-mo.TrimHandler',    version: '##__TRIMHANDLER_VERSION__##'    }
+-			{ 'a-mo.Tags',           version: '##__TAGS_VERSION__##'           }
++			{ 'a-mo.ConfigHandler',  version: '1.1.4'  }
++			{ 'a-mo.DataWrapper',    version: '1.0.2'    }
++			{ 'a-mo.LineCollection', version: '1.3.0' }
++			{ 'a-mo.Log' ,           version: '1.0.0'            }
++			{ 'a-mo.Math' ,          version: '1.0.0'           }
++			{ 'a-mo.MotionHandler',  version: '1.1.8'  }
++			{ 'a-mo.Statistics' ,    version: '0.1.3'     }
++			{ 'a-mo.TrimHandler',    version: '1.0.5'    }
++			{ 'a-mo.Tags',           version: '1.3.4'           }
+ 		}
+ 	}
+ 	clipboard, json, ConfigHandler, DataWrapper, LineCollection, log, Math, MotionHandler, Statistics, TrimHandler, Tags = versionRecord\requireModules!
+@@ -142,8 +142,8 @@
+ blank to use the built-in presets (probably what you want).]] }
+ 			prefix:   { config: true, value: "?video", class: "textbox",  x: 0, y: 1, width: 10, height: 1,                                                             hint: "Prefix the encoded video is written. Useful values are ?video for the directory of the currently loaded video and ?script for the directory of the currently open script." }
+ 			makePfix: { config: true, value: true,     class: "checkbox", x: 0, y: 2, width: 10, height: 1, label: "Try to create prefix directory.",                   hint: "Try to create prefix directory." }
+-			preset:   { config: true, value: "ffmpeg", class: "dropdown", x: 0, y: 4, width: 10, height: 1, label: "Sort lines by", items: TrimHandler.existingPresets, hint: "Choose an existing preset by name." }
+-			encBin:   { config: true, value: "",       class: "textbox",  x: 0, y: 6, width: 10, height: 1,                                                             hint: "The full path to your encoding binary (ffmpeg.exe if you're using the default preset)" }
++			preset:   { config: true, value: "x264",   class: "dropdown", x: 0, y: 4, width: 10, height: 1, label: "Sort lines by", items: TrimHandler.existingPresets, hint: "Choose an existing preset by name." }
++			encBin:   { config: true, value: "",       class: "textbox",  x: 0, y: 6, width: 10, height: 1,                                                             hint: "The full path to your encoding binary (x264.exe if you're using the default preset)" }
+ 			command:  { config: true, value: "",       class: "textbox",  x: 0, y: 8, width: 10, height: 4,                                                             hint: "If you want to use a custom encoding command, write it here." }
+ 		}
+ 	}
+@@ -611,10 +611,10 @@
+ 		seenRanges = { }
+ 		for lineIndex in *selectedLines
+ 			lineCollection = LineCollection subtitles, { lineIndex }
+-			continue unless trim\calculateTrimLength lineCollection
+ 			collectionRange = "#{lineCollection.startFrame}-#{lineCollection.endFrame}"
+ 			unless seenRanges[collectionRange]
+ 				seenRanges[collectionRange] = true
++				trim\calculateTrimLength lineCollection
+ 				trim\performTrim!
+ 				stats\incrementValue "trim.clipsCreated"
+ 		stats\incrementValue "trimEach.runCount"
+@@ -650,7 +650,7 @@
+ 				unless uuids[data.uuid]
+ 					.text = data.originalText
+ 					.number = index
+-					.extra['a-mo'] = nil
++					.extra = {}
+ 					uuids[data.uuid] = line
+ 
+ 	indicesToNuke = { }
+@@ -700,13 +700,7 @@
+ 		return false, "You must have a video loaded to run this macro."
+ 	elseif 0 == #selectedLines
+ 		return false, "You must have lines selected to use this macro."
+-
+-	for index in *selectedLines
+-		line = sub[index]
+-		if line.class == "dialogue" and not line.comment
+-			return true
+-
+-	return false, "You must have at least one uncommented dialogue line selected to use this macro."
++	true
+ 
+ if haveDepCtrl
+ 	versionRecord\registerMacros {

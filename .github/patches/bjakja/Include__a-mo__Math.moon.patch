@@ -1,0 +1,13 @@
+# Kainote ships a modified version of this file (upstream: TypesettingTools/Aegisub-Motion src/Math.moon).
+# Applied by .github/scripts/package.py; see .github/patches/README.md.
+# Base: 8a37a451c9ad from runtime-assets.json.
+
+--- a/Automation/automation/Include/a-mo/Math.moon
++++ b/Automation/automation/Include/a-mo/Math.moon
+@@ -1,5 +1,5 @@
+ return {
+-	version: "##__MATH_VERSION__##"
++	version: "1.0.0"
+ 
+ 	round: ( num, idp ) ->
+ 		mult = 10^(idp or 0)
