@@ -630,7 +630,7 @@ void config::LoadColors(const wxString &_themeName){
 			if (g > 10){
 				if (colors[0].IsOk() || g < STYLE_PREVIEW_COLOR2){
 					LoadMissingColours(path);
-					KaiMessageBox(wxString::Format(_("W motywie \"%s\" brakowało część kolorów, zostały doczytane z domyślnego."), themeName));
+					KaiMessageBox(wxString::Format(_(L"W motywie \"%s\" brakowało część kolorów, zostały doczytane z domyślnego."), themeName));
 				}
 				return;
 			}
@@ -640,7 +640,7 @@ void config::LoadColors(const wxString &_themeName){
 	LoadDefaultColors(themeName != L"LightSentro");
 	if (failed){
 		Options.SetString(PROGRAM_THEME, L"DarkSentro");
-		KaiMessageBox(_("Nie można zaczytać motywu, zostanie przywrócony domyśny"));
+		KaiMessageBox(_(L"Nie można zaczytać motywu, zostanie przywrócony domyśny"));
 	}
 }
 

@@ -371,7 +371,7 @@ END_EVENT_TABLE()
 FontDialog *FontDialog::FDialog = nullptr;
 
 FontDialog::FontDialog(wxWindow *parent, Styles *acst, bool changePointToPixel)
-	: KaiDialog(parent, -1, _("Wybierz czcionkę"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+	: KaiDialog(parent, -1, _(L"Wybierz czcionkę"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 	, pointToPixel(changePointToPixel)
 {
 	editedStyle = acst;
@@ -388,7 +388,7 @@ FontDialog::FontDialog(wxWindow *parent, Styles *acst, bool changePointToPixel)
 
 	DialogSizer *Main = new DialogSizer(wxVERTICAL);
 	KaiStaticBoxSizer *Cfont = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Czcionka"));
-	KaiStaticBoxSizer *prev = new KaiStaticBoxSizer(wxVERTICAL, this, _("Podgląd"));
+	KaiStaticBoxSizer *prev = new KaiStaticBoxSizer(wxVERTICAL, this, _(L"Podgląd"));
 	wxBoxSizer *Fattr = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *Bsizer = new wxBoxSizer(wxHORIZONTAL);
 	
@@ -400,9 +400,9 @@ FontDialog::FontDialog(wxWindow *parent, Styles *acst, bool changePointToPixel)
 	Bold->SetValue(acst->Bold);
 	Italic = new KaiCheckBox(this, ID_FONTATTR, _("Kursywa"));
 	Italic->SetValue(acst->Italic);
-	Underl = new KaiCheckBox(this, ID_FONTATTR, _("Podkreślenie"));
+	Underl = new KaiCheckBox(this, ID_FONTATTR, _(L"Podkreślenie"));
 	Underl->SetValue(acst->Underline);
-	Strike = new KaiCheckBox(this, ID_FONTATTR, _("Przekreślenie"));
+	Strike = new KaiCheckBox(this, ID_FONTATTR, _(L"Przekreślenie"));
 	Strike->SetValue(acst->StrikeOut);
 	Preview = new StylePreview(this, -1, wxDefaultPosition, wxSize(-1, 180));
 	Preview->DrawPreview(acst);
@@ -424,12 +424,12 @@ FontDialog::FontDialog(wxWindow *parent, Styles *acst, bool changePointToPixel)
 	fontCatalog->Insert(_("Bez katalogu"), 1);
 	fontCatalog->SetSelection(0);
 	MappedButton* CatalogAdd = new MappedButton(this, ID_CATALOG_ADD1, _("Dodaj"));
-	CatalogAdd->SetToolTip(_("Dodaje czcionki do wcześniej utworzonego katalogu"));
-	MappedButton* CatalogManage = new MappedButton(this, ID_CATALOG_MANAGE1, _("Zarządzaj"));
-	CatalogManage->SetToolTip(_("Umorzliwia zarządzanie katalogami stylów"));
+	CatalogAdd->SetToolTip(_(L"Dodaje czcionki do wcześniej utworzonego katalogu"));
+	MappedButton* CatalogManage = new MappedButton(this, ID_CATALOG_MANAGE1, _(L"Zarządzaj"));
+	CatalogManage->SetToolTip(_(L"Umorzliwia zarządzanie katalogami stylów"));
 	bool fontFilterOn = Options.GetBool(STYLE_EDIT_FILTER_TEXT_ON);
 	Filter = new ToggleButton(this, ID_FILTER1, _("Filtruj"));
-	Filter->SetToolTip(_("Filtruje czcionki, by zawierały wpisane znaki"));
+	Filter->SetToolTip(_(L"Filtruje czcionki, by zawierały wpisane znaki"));
 	Filter->SetValue(fontFilterOn);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent& evt) {
 		wxPoint pos = CatalogAdd->GetPosition();

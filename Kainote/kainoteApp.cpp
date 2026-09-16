@@ -229,7 +229,7 @@ void kainoteApp::OnOutofMemory()
 
 	if (tab->grid->maxx() > 3){
 		tab->grid->RemoveFirst(2);
-		KaiLog(_("Zabrakło pamięci RAM, usunięto część historii"));
+		KaiLog(_(L"Zabrakło pamięci RAM, usunięto część historii"));
 		return;
 	}
 	else if (Notebook::GetTabs()->Size() > 1){
@@ -238,7 +238,7 @@ void kainoteApp::OnOutofMemory()
 			if (i != Notebook::GetTabs()->GetSelection()){
 				if (Notebook::GetTabs()->Page(i)->grid->maxx()>3){
 					Notebook::GetTabs()->Page(i)->grid->RemoveFirst(2);
-					KaiLog(_("Zabrakło pamięci RAM, usunięto część historii"));
+					KaiLog(_(L"Zabrakło pamięci RAM, usunięto część historii"));
 					return;
 				}
 			}
@@ -328,7 +328,7 @@ bool kainoteApp::OnInit()
 		//wxHandleFatalExceptions(true);
 		//0 - failed, 1 - succeeded, 2 - no config
 		int isGood = Options.LoadOptions();
-		if (!isGood){ KaiMessageBox(_("Nie udało się wczytać opcji.\nDziałanie programu zostanie zakończone."), _("Uwaga")); return false; }
+		if (!isGood){ KaiMessageBox(_(L"Nie udało się wczytać opcji.\nDziałanie programu zostanie zakończone."), _("Uwaga")); return false; }
 		//0x0415 	Polish (pl) 	0x15 	LANG_POLISH 	Poland (PL) 	0x01 	SUBLANG_POLISH_POLAND
 		if (isGood == 2 && GetSystemDefaultUILanguage() != 0x415){
 			//what a lame language system, I need to change it.
@@ -393,7 +393,7 @@ bool kainoteApp::OnInit()
 		setlocale(LC_NUMERIC, "C");
 
 		if (!Hkeys.LoadHkeys()){
-			KaiMessageBox(_("Nie udało się wczytać skrótów.\nDziałanie programu zostanie zakończone."), _("Uwaga"));
+			KaiMessageBox(_(L"Nie udało się wczytać skrótów.\nDziałanie programu zostanie zakończone."), _("Uwaga"));
 			wxDELETE(locale); return false;
 		}
 
@@ -521,13 +521,13 @@ bool kainoteApp::OnInit()
 		int session = Options.GetInt(LAST_SESSION_CONFIG);
 		bool loadSession = (session == 2 || Options.HasCrashed()) && !hasPaths;
 		if (session == 1 && !hasPaths){
-			if (KaiMessageBox(_("Wczytać poprzednią sesję?"), _("Pytanie"), wxYES_NO, Frame) == wxYES){
+			if (KaiMessageBox(_(L"Wczytać poprzednią sesję?"), _("Pytanie"), wxYES_NO, Frame) == wxYES){
 				loadSession = true;
 			}
 		}
 		//Check if program was bad close or crashed
 		if (!hasPaths && !loadSession && Notebook::CheckLastSession() == 2) {
-			if (KaiMessageBox(_("Program się skraszował albo został zamknięty w niewłaściwy sposób,\nwczytać poprzednią sesję wraz z najnowszymi napisami z autozapisu?"), _("Pytanie"), wxYES_NO, Frame) == wxYES) {
+			if (KaiMessageBox(_(L"Program się skraszował albo został zamknięty w niewłaściwy sposób,\nwczytać poprzednią sesję wraz z najnowszymi napisami z autozapisu?"), _("Pytanie"), wxYES_NO, Frame) == wxYES) {
 				loadCrashSession = loadSession = true;
 			}
 		}

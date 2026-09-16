@@ -101,7 +101,7 @@ void FontLogContent::DoLog(FontCollector *fc){
 	for (std::map<wxString, wxArrayInt>::iterator cur = styles.begin(); cur != styles.end(); cur++) {
 		messageText << L" - " << cur->first;
 		//if (cur->second.GetCount() > 1){
-			messageText << _(" zakładki: ");
+			messageText << _(L" zakładki: ");
 			for (auto & tab : cur->second)
 				messageText << (tab + 1) << L", ";
 			messageText.RemoveLast(2);
@@ -163,7 +163,7 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 	Pathc->Add(choosepath, 0, wxBOTTOM | wxTOP | wxRIGHT, 3);
 
 	wxArrayString choices;
-	choices.Add(_("Sprawdź dostępność czcionek"));
+	choices.Add(_(L"Sprawdź dostępność czcionek"));
 	choices.Add(_("Skopiuj do wybranego folderu"));
 	choices.Add(_("Spakuj zipem"));
 	//choices.Add(_("Wmuxuj napisy w wideo (wymagany MKVToolnix)"));
@@ -172,12 +172,12 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 	Connect(9987, wxEVT_COMMAND_RADIOBOX_SELECTED, (wxObjectEventFunction)&FontCollectorDialog::OnChangeOpt);
 
 	subsdir = new KaiCheckBox(this, 7998, _("Zapisuj do folderu z napisami / wideo."));
-	subsdir->SetToolTip(_("Zapisuje do folderu z wideo\nprzy wyciąganiu czcionek z pliku MKV."));
+	subsdir->SetToolTip(_(L"Zapisuje do folderu z wideo\nprzy wyciąganiu czcionek z pliku MKV."));
 	subsdir->Enable(Options.GetInt(FONT_COLLECTOR_ACTION) != 0);
 	subsdir->SetValue(Options.GetBool(FONT_COLLECTOR_USE_SUBS_DIRECTORY));
 
 
-	fromMKV = new KaiCheckBox(this, 7991, _("Wyciągnij czcionki z wczytanego pliku MKV"));
+	fromMKV = new KaiCheckBox(this, 7991, _(L"Wyciągnij czcionki z wczytanego pliku MKV"));
 	fromMKV->Enable(Notebook::GetTab()->VideoPath.Lower().EndsWith(L".mkv"));
 	fromMKV->SetValue(Options.GetBool(FONT_COLLECTOR_FROM_MKV));
 
@@ -187,7 +187,7 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 	//console->SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	bok = new MappedButton(this, 9879, _("Rozpocznij"));
 	bok->SetFocus();
-	bStartOnAllTabs = new MappedButton(this, 9880, _("Rozpocznij na zakładkach"));
+	bStartOnAllTabs = new MappedButton(this, 9880, _(L"Rozpocznij na zakładkach"));
 	bOpenFontFolder = new MappedButton(this, 9877, _("Folder zapisu"));
 	bOpenFontFolder->Enable(false);
 	bClose = new MappedButton(this, 9881, _("Zamknij"));
@@ -324,7 +324,7 @@ void FontCollectorDialog::ParseDoubleClickResults(FontLogContent *flc, int curso
 			wxString line = text.Mid(0, end).AfterLast(L'\n');
 			wxString styleName;
 			if (line.StartsWith(L" - ", &styleName)){
-				int result = styleName.find(_(" zakładki: "));
+				int result = styleName.find(_(L" zakładki: "));
 				if (result == -1)
 					return;
 
@@ -371,7 +371,7 @@ void FontCollectorDialog::ParseDoubleClickResults(FontLogContent *flc, int curso
 			wxString line = lineFromStart + lineFromEnd;
 			wxString styleName;
 			if (line.StartsWith(L" - ", &styleName)){
-				size_t result = styleName.find(_(" zakładki: "));
+				size_t result = styleName.find(_(L" zakładki: "));
 				if (result != -1){
 					styleName = styleName.Mid(0, result);
 				}
@@ -421,7 +421,7 @@ void FontCollectorDialog::OnButtonPath(wxCommandEvent &event)
 		destdir = wxDirSelector(_("Wybierz folder zapisu"), path->GetValue(), 0, wxDefaultPosition, this);
 	}
 	else{
-		destdir = wxFileSelector(_("Wybierz nazwę archiwum"), (path->GetValue().EndsWith(L"zip")) ? 
+		destdir = wxFileSelector(_(L"Wybierz nazwę archiwum"), (path->GetValue().EndsWith(L"zip")) ?
 			KaiPathDir(path->GetValue()) : path->GetValue(),
 			(path->GetValue().EndsWith(L"zip")) ? KaiPathName(path->GetValue()) : emptyString,
 			L"zip", _("Pliki archiwum (*.zip)|*.zip"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this);
@@ -453,24 +453,24 @@ void FontCollectorDialog::OnButtonStart(wxCommandEvent &event)
 		bool subsDirectory = subsdir->GetValue();
 		Options.SetString(FONT_COLLECTOR_DIRECTORY, path->GetValue());
 		if (opts->GetSelection() == 3 && (Notebook::GetTab()->VideoPath == emptyString || Notebook::GetTab()->SubsPath == emptyString)){
-			KaiMessageBox(_("Brak wczytanego wideo lub napisów"), emptyString, 4L, this);
+			KaiMessageBox(_(L"Brak wczytanego wideo lub napisów"), emptyString, 4L, this);
 			EnableControls();
 			return;
 		}
 		if (path->GetValue() == emptyString && !subsDirectory){
-			KaiMessageBox(_("Wybierz folder, gdzie mają zostać skopiowane czcionki"), emptyString, 4L, this);
+			KaiMessageBox(_(L"Wybierz folder, gdzie mają zostać skopiowane czcionki"), emptyString, 4L, this);
 			EnableControls();
 			path->SetFocus();
 			return;
 		}
 		if (!subsfromMkv && subsDirectory && Notebook::GetTab()->SubsPath == emptyString){
-			KaiMessageBox(_("Brak wczytanych napisów, wczytaj napisy albo odznacz tę opcję."), emptyString, 4L, this);
+			KaiMessageBox(_(L"Brak wczytanych napisów, wczytaj napisy albo odznacz tę opcję."), emptyString, 4L, this);
 			EnableControls();
 			return;
 		}
 		wxString pathValue = KaiNormalizePath(path->GetValue());
 		if (opts->GetSelection() == 2 && wxDirExists(pathValue) && !subsdir->GetValue()){
-			KaiMessageBox(_("Wybierz nazwę dla archiwum"), emptyString, 4L, this);
+			KaiMessageBox(_(L"Wybierz nazwę dla archiwum"), emptyString, 4L, this);
 			EnableControls();
 			path->SetFocus();
 			return;
@@ -489,7 +489,7 @@ void FontCollectorDialog::OnButtonStart(wxCommandEvent &event)
 				|| fname.GetVolume().length() != 1
 #endif
 				){
-				KaiMessageBox(_("Wybrana ścieżka zapisu jest niepoprawna."), emptyString, 4L, this);
+				KaiMessageBox(_(L"Wybrana ścieżka zapisu jest niepoprawna."), emptyString, 4L, this);
 				EnableControls();
 				return;
 			}
@@ -510,7 +510,7 @@ void FontCollectorDialog::OnButtonStart(wxCommandEvent &event)
 		}
 		else{
 			if (wxFileExists(copypath)){
-				if (KaiMessageBox(_("Plik zip już istnieje, usunąć go?"), _("Potwierdzenie"), wxYES_NO, this) == wxYES){
+				if (KaiMessageBox(_(L"Plik zip już istnieje, usunąć go?"), _("Potwierdzenie"), wxYES_NO, this) == wxYES){
 					if (!wxRemoveFile(copypath)){
 						EnableControls();
 						return;
@@ -598,7 +598,7 @@ void FontCollector::GetAssFonts(SubsFile *subs, int tab)
 			}
 			FontLogContent *flc = findFontsLog[fn];
 			if (!flc){
-				flc = new FontLogContent(wxString::Format(_("Znaleziono czcionkę \"%s\"\n"), fn));
+				flc = new FontLogContent(wxString::Format(_(L"Znaleziono czcionkę \"%s\"\n"), fn));
 				findFontsLog[fn] = flc;
 			}
 			flc->SetStyle(tab, style->Name);
@@ -657,7 +657,7 @@ void FontCollector::GetAssFonts(SubsFile *subs, int tab)
 					if (newFont){
 						FontLogContent *flc = findFontsLog[ifont];
 						if (!flc){
-							flc = new FontLogContent(wxString::Format(_("Znaleziono czcionkę \"%s\"\n"), ifont));
+							flc = new FontLogContent(wxString::Format(_(L"Znaleziono czcionkę \"%s\"\n"), ifont));
 							findFontsLog[ifont] = flc;
 						}
 						flc->SetLine(tab, i);
@@ -723,11 +723,11 @@ void FontCollector::CheckOrCopyFonts()
 			fontSizes.insert(std::pair<long, wxString>(static_cast<long>(size), wxString::FromUTF8(fontPath.c_str())));
 		}
 		if (fontSizes.empty()){
-			SendMessageD(_("Nie można pobrać rozmiarów i nazw plików czcionek\nkopiowanie zostaje przerwane.\n"), fcd->warning);
+			SendMessageD(_(L"Nie można pobrać rozmiarów i nazw plików czcionek\nkopiowanie zostaje przerwane.\n"), fcd->warning);
 			return;
 		}
 		SubsTime processTime(sw.Time());
-		SendMessageD(wxString::Format(_("Pobrano rozmiary i nazwy %i czcionek, upłynęło %sms.\n\n"), (int)fontSizes.size(), processTime.GetFormatted(SRT)), fcd->normal);
+		SendMessageD(wxString::Format(_(L"Pobrano rozmiary i nazwy %i czcionek, upłynęło %sms.\n\n"), (int)fontSizes.size(), processTime.GetFormatted(SRT)), fcd->normal);
 #else
 		fontfolder = wxGetOSDirectory() + L"\\fonts\\";
 		wxString seekpath = fontfolder + L"*";
@@ -735,7 +735,7 @@ void FontCollector::CheckOrCopyFonts()
 		WIN32_FIND_DATAW data;
 		HANDLE h = FindFirstFileW(seekpath.wc_str(), &data);
 		if (h == INVALID_HANDLE_VALUE){
-			SendMessageD(_("Nie można pobrać rozmiarów i nazw plików czcionek\nkopiowanie zostaje przerwane.\n"), fcd->warning);
+			SendMessageD(_(L"Nie można pobrać rozmiarów i nazw plików czcionek\nkopiowanie zostaje przerwane.\n"), fcd->warning);
 			return;
 		}
 		//first file is "." second ".." after there are a font files
@@ -784,7 +784,7 @@ void FontCollector::CheckOrCopyFonts()
 			}
 		}
 		SubsTime processTime(sw.Time());
-		SendMessageD(wxString::Format(_("Pobrano rozmiary i nazwy %i czcionek, upłynęło %sms.\n\n"), (int)fontSizes.size() - 2, processTime.GetFormatted(SRT)), fcd->normal);
+		SendMessageD(wxString::Format(_(L"Pobrano rozmiary i nazwy %i czcionek, upłynęło %sms.\n\n"), (int)fontSizes.size() - 2, processTime.GetFormatted(SRT)), fcd->normal);
 #endif
 	}
 	
@@ -818,7 +818,7 @@ void FontCollector::CheckOrCopyFonts()
 
 	bool allglyphs = CheckPathAndGlyphs(&found, &notFound, &notCopied);
 	if (notFound == -1) {
-		SendMessageD(_("Ścieżka jest niedostępna"), fcd->warning);
+		SendMessageD(_(L"Ścieżka jest niedostępna"), fcd->warning);
 		return;
 	}
 
@@ -831,7 +831,7 @@ void FontCollector::CheckOrCopyFonts()
 		CharMap &ch = FontMap[cur->first];
 		if (!ch.size()){
 			cur->second->AppendWarnings(
-				wxString::Format(_("Czcionka \"%s\" należy do stylu,\nktóry nie jest wykorzystywany."), 
+				wxString::Format(_(L"Czcionka \"%s\" należy do stylu,\nktóry nie jest wykorzystywany."),
 				cur->first));
 			notFound--;
 		}
@@ -840,21 +840,21 @@ void FontCollector::CheckOrCopyFonts()
 	
 	CloseZip();
 
-	wxString noglyphs = (allglyphs) ? emptyString : _("Niektóre czcionki nie mają wszystkich znaków użytych w tekście.\n");
+	wxString noglyphs = (allglyphs) ? emptyString : _(L"Niektóre czcionki nie mają wszystkich znaków użytych w tekście.\n");
 
 	bool checkFonts = (operation & CHECK_FONTS);
 
 	if (notFound || !allglyphs){
 		wxString message;
 		
-		message += L"\n" + wxString::Format(_("Zakończono, %s %s.\n"), (checkFonts) ? _("znaleziono") : _("skopiowano"),
-			MakePolishPlural(found, _("czcionkę"), _("czcionki"), _("czcionek")));
+		message += L"\n" + wxString::Format(_(L"Zakończono, %s %s.\n"), (checkFonts) ? _("znaleziono") : _("skopiowano"),
+			MakePolishPlural(found, _(L"czcionkę"), _("czcionki"), _("czcionek")));
 		if (notFound){
 			message += wxString::Format(_("Nie znaleziono %s.\n"),
 				MakePolishPlural(notFound, _("czcionki"), _("czcionek"), _("czcionek")));
 		}
 		if (notCopied){
-			message += wxString::Format(_("Nie udało się skopiować %s.\n"),
+			message += wxString::Format(_(L"Nie udało się skopiować %s.\n"),
 				MakePolishPlural(notCopied, _("czcionki"), _("czcionek"), _("czcionek")));
 		}
 		
@@ -862,9 +862,9 @@ void FontCollector::CheckOrCopyFonts()
 		SendMessageD(message, fcd->warning);
 	}
 	else{
-		SendMessageD(L"\n" + wxString::Format(_("Zakończono powodzeniem, %s %s.\n"),
+		SendMessageD(L"\n" + wxString::Format(_(L"Zakończono powodzeniem, %s %s.\n"),
 			(checkFonts) ? _("znaleziono") : _("skopiowano"),
-			MakePolishPlural(found, _("czcionkę"), _("czcionki"), _("czcionek"))), wxColour("#008000"));
+			MakePolishPlural(found, _(L"czcionkę"), _("czcionki"), _("czcionek"))), wxColour("#008000"));
 	}
 	fontnames.clear();
 }
@@ -879,7 +879,7 @@ bool FontCollector::SaveFont(const wxString &fontPath, FontLogContent *flc)
 			try {
 				zip->PutNextEntry(new Utf8ZipEntry(fn));
 				zip->Write(in);
-				flc->AppendInfo(wxString::Format(_("Dodano do archiwum czcionkę \"%s\"."), fn));
+				flc->AppendInfo(wxString::Format(_(L"Dodano do archiwum czcionkę \"%s\"."), fn));
 			}
 			catch (...) {
 				isgood = false;
@@ -888,18 +888,18 @@ bool FontCollector::SaveFont(const wxString &fontPath, FontLogContent *flc)
 		}
 
 		if (!isgood){
-			flc->AppendWarnings(wxString::Format(_("Nie można spakować czcionki \"%s\"."), fn));
+			flc->AppendWarnings(wxString::Format(_(L"Nie można spakować czcionki \"%s\"."), fn));
 		}
 		return isgood;
 	}
 	else{
 		if (wxCopyFile(fontPath, KaiPathJoin(fcd->copypath, fn))){
-			flc->AppendInfo(wxString::Format(_("Skopiowano czcionkę \"%s\"."), fn));
+			flc->AppendInfo(wxString::Format(_(L"Skopiowano czcionkę \"%s\"."), fn));
 			return true;
 		}
 		else
 		{
-			flc->AppendWarnings(wxString::Format(_("Nie można skopiować czcionki \"%s\"."), fn));
+			flc->AppendWarnings(wxString::Format(_(L"Nie można skopiować czcionki \"%s\"."), fn));
 			return false;
 		}
 	}
@@ -935,13 +935,13 @@ void FontCollector::CopyMKVFontsFromTab(const wxString &mkvpath)
 	}
 	Demux dmx;
 	if (!dmx.Open(mkvpath)) {
-		SendMessageD(_("Nie można otworzyć pliku MKV"), fcd->warning);
+		SendMessageD(_(L"Nie można otworzyć pliku MKV"), fcd->warning);
 		return;
 	}
 	wxArrayString list;
 	dmx.GetFontList(&list);
 	if (list.size() < 1){
-		SendMessageD(_("Wczytany plik MKV nie ma żadnych czcionek."), fcd->warning);
+		SendMessageD(_(L"Wczytany plik MKV nie ma żadnych czcionek."), fcd->warning);
 		return;
 	}
 
@@ -956,21 +956,21 @@ void FontCollector::CopyMKVFontsFromTab(const wxString &mkvpath)
 		wxString name = list[k];
 		if (dmx.SaveFont(k, KaiPathJoin(KaiPathDir(fcd->copypath), name), zip))
 		{
-			SendMessageD(_("Zapisano czcionkę o nazwie \"") + name + L"\".\n \n", fcd->normal);
+			SendMessageD(_(L"Zapisano czcionkę o nazwie \"") + name + L"\".\n \n", fcd->normal);
 		}
 		else
 		{
-			SendMessageD(_("Nie można zapisać czcionki o nazwie \"") + name + L"\".\n \n", fcd->warning);
+			SendMessageD(_(L"Nie można zapisać czcionki o nazwie \"") + name + L"\".\n \n", fcd->warning);
 			cpfonts--;
 		}
 	}
 
 	if (cpfonts < list.size()){
-		SendMessageD(wxString::Format(_("Zakończono, skopiowano %i czcionek.\nNie udało się skopiować %i czcionek."), 
+		SendMessageD(wxString::Format(_(L"Zakończono, skopiowano %i czcionek.\nNie udało się skopiować %i czcionek."),
 			(int)cpfonts, (int)(list.size() - cpfonts)), fcd->warning);
 	}
 	else{
-		SendMessageD(wxString::Format(_("Zakończono powodzeniem, skopiowano %i czcionek."), (int)cpfonts), wxColour(L"#008000"));
+		SendMessageD(wxString::Format(_(L"Zakończono powodzeniem, skopiowano %i czcionek."), (int)cpfonts), wxColour(L"#008000"));
 	}
 
 	dmx.Close();
@@ -997,7 +997,7 @@ bool FontCollector::MakeDirectory(bool isZip)
 	wxString path = isZip ? KaiPathDir(fcd->copypath) : fcd->copypath;
 	if (!wxDir::Exists(path)) {
 		if (!wxDir::Make(path, 511, wxPATH_MKDIR_FULL)) {
-			SendMessageD(wxString::Format(_("Nie można utworzyć folderu.")), fcd->warning);
+			SendMessageD(wxString::Format(_(L"Nie można utworzyć folderu.")), fcd->warning);
 			return false;
 		}
 	}
@@ -1080,7 +1080,7 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 		SubsFont *font = it->second;
 		FontLogContent *flc = findFontsLog[fn];
 		if (!flc){
-			flc = new FontLogContent(wxString::Format(_("Znaleziono czcionkę \"%s\"."), fn));
+			flc = new FontLogContent(wxString::Format(_(L"Znaleziono czcionkę \"%s\"."), fn));
 			findFontsLog[fn] = flc;
 		}
 		it++;
@@ -1088,7 +1088,7 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 		CharMap &ch = FontMap[fn];
 		if (!ch.size()){
 			if(isNewFont)
-				flc->AppendWarnings(wxString::Format(_("Czcionka \"%s\" należy do stylu,\nktóry nie jest wykorzystywany.%s"), fn, (copyFonts) ? _("\nNie zostanie skopiowana.") : emptyString));
+				flc->AppendWarnings(wxString::Format(_(L"Czcionka \"%s\" należy do stylu,\nktóry nie jest wykorzystywany.%s"), fn, (copyFonts) ? _("\nNie zostanie skopiowana.") : emptyString));
 			
 			continue;
 			//no goto cause font is not created yet
@@ -1099,7 +1099,7 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 			flc->AppendWarnings(wxString::Format(_("Czcionka \"%s\" nie ma stylu normalnego."), fn));
 		}
 		else if (font->fakeBoldItalic){
-			flc->AppendWarnings(wxString::Format(_("Czcionka \"%s\" nie ma pogrubienia z kursywą."), fn));
+			flc->AppendWarnings(wxString::Format(_(L"Czcionka \"%s\" nie ma pogrubienia z kursywą."), fn));
 		}
 		else if (font->fakeBold){
 			flc->AppendWarnings(wxString::Format(_("Czcionka \"%s\" nie ma pogrubienia."), fn));
@@ -1119,11 +1119,11 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 			}
 			if (!FontEnum.CheckGlyphsExists(dc, text, missing))
 			{
-				flc->AppendWarnings(wxString::Format(_("Nie można sprawdzić znaków czcionki \"%s\"."), fn));
+				flc->AppendWarnings(wxString::Format(_(L"Nie można sprawdzić znaków czcionki \"%s\"."), fn));
 			}
 			if (missing.length() > 0){
 				allfound = false;
-				flc->AppendWarnings(wxString::Format(_("Czcionka \"%s\" nie zawiera znaków: \"%s\"."), fn, missing));
+				flc->AppendWarnings(wxString::Format(_(L"Czcionka \"%s\" nie zawiera znaków: \"%s\"."), fn, missing));
 			}
 		}
 		
@@ -1135,7 +1135,7 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 				size = GetFontData(dc, 0, 0, nullptr, 0);
 			}
 			if (size == GDI_ERROR || size == 0){
-				flc->AppendWarnings(wxString::Format(_("Nie można pobrać zawartości czcionki \"%s\"."), fn));
+				flc->AppendWarnings(wxString::Format(_(L"Nie można pobrać zawartości czcionki \"%s\"."), fn));
 				if (isNewFont)
 					(*notFound)++;
 
@@ -1160,7 +1160,7 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 					fp = _wfopen(fullpath.wc_str(), L"rb");
 				}
 				if (!fp){ 
-					flc->AppendWarnings(wxString::Format(_("Nie można otworzyć pliku \"%s\"."), fontSize->second));
+					flc->AppendWarnings(wxString::Format(_(L"Nie można otworzyć pliku \"%s\"."), fontSize->second));
 					//goto done; 
 					continue;
 				}
@@ -1168,14 +1168,14 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 				long lSize = ftell(fp);
 				rewind(fp);
 				if (lSize != size){
-					flc->AppendWarnings(wxString::Format(_("Rozmiar czcionki \"%s\" się różni."), fn));
+					flc->AppendWarnings(wxString::Format(_(L"Rozmiar czcionki \"%s\" się różni."), fn));
 					fclose(fp);
 					//goto done;
 					continue;
 				}
 				int result = fread(&file_buffer[0], 1, size, fp);
 				if (result != size){
-					flc->AppendWarnings(wxString::Format(_("Nie można odczytać czcionki \"%s\" z folderu Fonts."), fn));
+					flc->AppendWarnings(wxString::Format(_(L"Nie można odczytać czcionki \"%s\" z folderu Fonts."), fn));
 				}
 				fclose(fp);
 				if (memcmp(&file_buffer[0], &buffer[0], size) == 0) {
@@ -1221,7 +1221,7 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 				}
 			}
 			if (!succeeded){
-				flc->AppendWarnings(wxString::Format(_("Nie można znaleźć czcionki \"%s\" w folderze Fonts."), fn));
+				flc->AppendWarnings(wxString::Format(_(L"Nie można znaleźć czcionki \"%s\" w folderze Fonts."), fn));
 				(*notFound)++;
 				(*found)--;
 			}
@@ -1273,7 +1273,7 @@ void FontCollector::MuxVideoWithSubs()
 	argv.push_back(nullptr);
 
 	if (wxExecute(argv.data(), wxEXEC_ASYNC) == 0){
-		KaiLog(_("Nie można stworzyć procesu, muxowanie przerwane"));
+		KaiLog(_(L"Nie można stworzyć procesu, muxowanie przerwane"));
 	}
 }
 
@@ -1328,7 +1328,7 @@ wxThread::ExitCode FontCollectorThread::Entry()
 
 	wxThreadEvent *evt = new wxThreadEvent(EVT_ENABLE_BUTTONS, fc->fcd->GetId());
 	SubsTime processTime(fc->sw.Time());
-	fc->SendMessageD(wxString::Format(_("\nZakończono w %sms"), processTime.GetFormatted(SRT)), fc->fcd->normal);
+	fc->SendMessageD(wxString::Format(_(L"\nZakończono w %sms"), processTime.GetFormatted(SRT)), fc->fcd->normal);
 	fc->sw.Pause();
 	wxQueueEvent(fc->fcd, evt);
 	if (fc->operation & FontCollector::COPY_FONTS || fc->operation & FontCollector::COPY_MKV_FONTS){

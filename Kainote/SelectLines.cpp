@@ -48,7 +48,7 @@ SelectLines::SelectLines(KainoteFrame* kfparent)
 	slrbsizer->Add(Contains, 1, wxALL | wxEXPAND, 3);
 	slrbsizer->Add(NotContains, 1, wxALL | wxEXPAND, 3);
 
-	KaiStaticBoxSizer* slsbsizer = new KaiStaticBoxSizer(wxVERTICAL, this, _("Znajdź"));
+	KaiStaticBoxSizer* slsbsizer = new KaiStaticBoxSizer(wxVERTICAL, this, _(L"Znajdź"));
 	wxBoxSizer *sltpsizer = new wxBoxSizer(wxHORIZONTAL);
 	FindText = new KaiChoice(this, -1, emptyString, wxDefaultPosition, wxSize(-1, -1), selsRecent);
 	FindText->SetToolTip(_("Szukany tekst:"));
@@ -57,9 +57,9 @@ SelectLines::SelectLines(KainoteFrame* kfparent)
 	sltpsizer->Add(FindText, 1, wxALL | wxEXPAND, 3);
 	sltpsizer->Add(ChooseStyles, 0, wxALL, 3);
 
-	MatchCase = new KaiCheckBox(this, -1, _("Uwzględniaj wielkość liter"));
+	MatchCase = new KaiCheckBox(this, -1, _(L"Uwzględniaj wielkość liter"));
 	MatchCase->SetValue((options & MATCH_CASE) > 0);
-	RegEx = new KaiCheckBox(this, -1, _("Wyrażenia regularne"));
+	RegEx = new KaiCheckBox(this, -1, _(L"Wyrażenia regularne"));
 	RegEx->SetValue((options & REGULAR_EXPRESSIONS) > 0);
 
 	slsbsizer->Add(slrbsizer, 0, wxEXPAND, 0);
@@ -74,8 +74,8 @@ SelectLines::SelectLines(KainoteFrame* kfparent)
 	CollumnStyle = new KaiRadioButton(this, -1, _("Styl"));
 	CollumnActor = new KaiRadioButton(this, -1, _("Aktor"));
 	CollumnEffect = new KaiRadioButton(this, -1, _("Efekt"));
-	CollumnStartTime = new KaiRadioButton(this, -1, _("Czas Początkowy"));
-	CollumnEndTime = new KaiRadioButton(this, -1, _("Czas Końcowy"));
+	CollumnStartTime = new KaiRadioButton(this, -1, _(L"Czas Początkowy"));
+	CollumnEndTime = new KaiRadioButton(this, -1, _(L"Czas Końcowy"));
 	//catch first options, when there is more options it means that I did a bug or sameone change options
 	if (options & FIELD_TEXT)
 		CollumnText->SetValue(true);
@@ -118,13 +118,13 @@ SelectLines::SelectLines(KainoteFrame* kfparent)
 	Selections->SetSelection(SelettionsOption);
 
 	wxArrayString action;
-	action.Add(_("Nie rób nic"));
+	action.Add(_(L"Nie rób nic"));
 	action.Add(_("Kopiuj"));
 	action.Add(_("Wytnij"));
-	action.Add(_("Przenieś na początek"));
-	action.Add(_("Przenieś na koniec"));
+	action.Add(_(L"Przenieś na początek"));
+	action.Add(_(L"Przenieś na koniec"));
 	action.Add(_("Ustaw jako komentarz"));
-	action.Add(_("Usuń"));
+	action.Add(_(L"Usuń"));
 
 	Actions = new KaiRadioBox(this, -1, _("Akcja"), wxDefaultPosition, wxDefaultSize, action, 2);
 	int ActionsOption = options & DO_COPY ? 1 :
@@ -137,7 +137,7 @@ SelectLines::SelectLines(KainoteFrame* kfparent)
 
 	wxBoxSizer *slbtsizer = new wxBoxSizer(wxHORIZONTAL);
 	Select = new MappedButton(this, ID_SELECTIONS, _("Zaznacz"));
-	MappedButton *SelectOnAllTabs = new MappedButton(this, ID_SELECT_ON_ALL_TABS, _("Zaznacz na wszystkich zakładkach"));
+	MappedButton *SelectOnAllTabs = new MappedButton(this, ID_SELECT_ON_ALL_TABS, _(L"Zaznacz na wszystkich zakładkach"));
 	Close = new MappedButton(this, wxID_CANCEL, _("Zamknij"));
 	slbtsizer->Add(Select, 1, wxALL, 5);
 	slbtsizer->Add(SelectOnAllTabs, 0, wxALL, 5);

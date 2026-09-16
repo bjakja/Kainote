@@ -166,7 +166,7 @@ bool SubtitlesLibass::Open(TabPanel *tab, int flag, wxString *text)
 	if (!m_IsReady || !m_HasParameters) {
 		SAFE_DELETE(text);
 		if (!m_HasParameters)
-			KaiLog(_("Libass działa tylko z FFMS2"));//Libass only works with with FFMS2
+			KaiLog(_(L"Libass działa tylko z FFMS2"));//Libass only works with with FFMS2
 	
 		return false;
 	}
@@ -251,7 +251,7 @@ bool SubtitlesLibass::OpenString(wxString *text)
 	delete text;
 
 	if (!m_AssTrack){
-		KaiLog(_("Nie można otworzyć napisów w Libass"));
+		KaiLog(_(L"Nie można otworzyć napisów w Libass"));
 		return false;
 	}
 	return true;

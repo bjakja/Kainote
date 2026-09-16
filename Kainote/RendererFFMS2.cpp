@@ -189,9 +189,9 @@ bool RendererFFMS2::DrawTexture(unsigned char *nframe, bool copy)
 
 	m_SubsProvider->Draw(fdata, m_Time);
 #ifdef byvertices
-	HR(m_MainSurface->LockRect(&d3dlr, 0, 0), _("Nie można zablokować bufora tekstury"));//D3DLOCK_NOSYSLOCK
+	HR(m_MainSurface->LockRect(&d3dlr, 0, 0), _(L"Nie można zablokować bufora tekstury"));//D3DLOCK_NOSYSLOCK
 #else
-	HR(m_MainSurface->LockRect(&d3dlr, 0, D3DLOCK_NOSYSLOCK), _("Nie można zablokować bufora tekstury"));
+	HR(m_MainSurface->LockRect(&d3dlr, 0, D3DLOCK_NOSYSLOCK), _(L"Nie można zablokować bufora tekstury"));
 #endif
 	texbuf = static_cast<unsigned char*>(d3dlr.pBits);
 
@@ -222,7 +222,7 @@ bool RendererFFMS2::DrawTexture(unsigned char *nframe, bool copy)
 		KaiLog(wxString::Format(L"bad pitch diff %i pitch %i dxpitch %i", diff, m_Pitch, d3dlr.Pitch));
 	}
 
-	HR(m_MainSurface->UnlockRect(), _("Nie można odblokować bufora tekstury"));
+	HR(m_MainSurface->UnlockRect(), _(L"Nie można odblokować bufora tekstury"));
 
 	return true;
 }
@@ -306,7 +306,7 @@ void RendererFFMS2::Render(bool redrawSubsOnFrame, bool wait)
 
 	
 	hr = m_D3DDevice->StretchRect(m_MainSurface, &m_MainStreamRect, m_BlackBarsSurface, &m_BackBufferRect, D3DTEXF_LINEAR);
-	if (FAILED(hr)){ KaiLog(_("Nie można nałożyć powierzchni na siebie")); }
+	if (FAILED(hr)){ KaiLog(_(L"Nie można nałożyć powierzchni na siebie")); }
 
 
 	hr = m_D3DDevice->BeginScene();
@@ -778,10 +778,10 @@ Provider* RendererFFMS2::GetFFMS2()
 bool RendererFFMS2::InitRendererDX()
 {
 #ifndef byvertices
-	HR(m_D3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &m_BlackBarsSurface), _("Nie można stworzyć powierzchni"));
+	HR(m_D3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &m_BlackBarsSurface), _(L"Nie można stworzyć powierzchni"));
 
 	HR(m_D3DDevice->CreateOffscreenPlainSurface(m_Width, m_Height, m_D3DFormat, D3DPOOL_DEFAULT, &m_MainSurface, 0),
-		_("Nie można stworzyć plain surface"));//D3DPOOL_DEFAULT
+		_(L"Nie można stworzyć plain surface"));//D3DPOOL_DEFAULT
 
 #endif
 	return true;

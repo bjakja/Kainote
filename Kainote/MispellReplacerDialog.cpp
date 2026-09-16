@@ -212,7 +212,7 @@ FindResultDialog::FindResultDialog(wxWindow *parent, MisspellReplacer *_MR)
 
 	MappedButton *checkAll = new MappedButton(this, ID_CHECK_ALL, _("Zahacz wszystko"));
 	MappedButton *unCheckAll = new MappedButton(this, ID_UNCHECK_ALL, _("Odhacz wszystko"));
-	replaceChecked = new MappedButton(this, ID_REPLACE_CHECKED, _("Zamień"));
+	replaceChecked = new MappedButton(this, ID_REPLACE_CHECKED, _(L"Zamień"));
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 		CheckUncheckAll(true);
 	}, ID_CHECK_ALL);

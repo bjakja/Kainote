@@ -46,7 +46,7 @@ DummyVideo::DummyVideo(wxWindow* parent)
 	resolutionSizer2->Add(videoResolutionHeight, 1, wxEXPAND, 0);
 	resolutionSizer1->Add(videoResolution, 0, wxBOTTOM | wxEXPAND, 8);
 	resolutionSizer1->Add(resolutionSizer2, 0, wxEXPAND, 0);
-	resolutionSizer->Add(new KaiStaticText(this, -1, _("Rozdzielczość wideo:")), 1, wxALL | wxEXPAND, 4);
+	resolutionSizer->Add(new KaiStaticText(this, -1, _(L"Rozdzielczość wideo:")), 1, wxALL | wxEXPAND, 4);
 	resolutionSizer->Add(resolutionSizer1, 2, wxALL | wxEXPAND, 4);
 
 	wxBoxSizer* colorSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -84,7 +84,7 @@ DummyVideo::DummyVideo(wxWindow* parent)
 	FPSes.Add(L"30"); 
 	FPSes.Add(L"60");
 	frameRate = new KaiChoice(this, -1, L"23.976", wxDefaultPosition, wxDefaultSize, FPSes, 0, valid);
-	FPSSizer->Add(new KaiStaticText(this, -1, _("Klatki na sekundę:")), 1, wxALL | wxEXPAND, 4);
+	FPSSizer->Add(new KaiStaticText(this, -1, _(L"Klatki na sekundę:")), 1, wxALL | wxEXPAND, 4);
 	FPSSizer->Add(frameRate, 2, wxALL | wxEXPAND, 4);
 	wxBoxSizer* durationSizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer* durationSizer2 = new wxBoxSizer(wxVERTICAL);
@@ -117,11 +117,11 @@ wxString DummyVideo::GetDummyText()
 	wxString strFPS = frameRate->GetValue();
 	double fps = 0;
 	if (!strFPS.ToCDouble(&fps)) {
-		KaiMessageBox(_("Nieprawidłowa wartość fps."));
+		KaiMessageBox(_(L"Nieprawidłowa wartość fps."));
 		return wxString();
 	}
 	if (fps < 15 || fps > 120) {
-		KaiMessageBox(_("Nieprawidłowa wartość fps."));
+		KaiMessageBox(_(L"Nieprawidłowa wartość fps."));
 		return wxString();
 	}
 	SubsTime dur = duration->GetTime();

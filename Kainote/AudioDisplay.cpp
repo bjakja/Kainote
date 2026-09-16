@@ -267,7 +267,7 @@ bool AudioDisplay::InitDX(const wxSize &size)
 
 	if (!d3dObject){
 		d3dObject = Direct3DCreate9(D3D_SDK_VERSION);
-		PTR(d3dObject, _("Nie można utworzyć obiektu Direct3D"));
+		PTR(d3dObject, _(L"Nie można utworzyć obiektu Direct3D"));
 	}
 	else{
 		SAFE_RELEASE(spectrumSurface);
@@ -301,7 +301,7 @@ bool AudioDisplay::InitDX(const wxSize &size)
 			D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED, &d3dpp, &d3dDevice);//| D3DCREATE_FPU_PRESERVE
 		if (FAILED(hr)){
 			HR(d3dObject->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd,
-				D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED, &d3dpp, &d3dDevice), _("Nie można utworzyć urządzenia D3D9"));
+				D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED, &d3dpp, &d3dDevice), _(L"Nie można utworzyć urządzenia D3D9"));
 		}
 	}
 	hr = d3dDevice->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, TRUE);
@@ -323,7 +323,7 @@ bool AudioDisplay::InitDX(const wxSize &size)
 	hr = d3dDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
 	hr = d3dDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
 	hr = d3dDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
-	HR(hr, _("Zawiodło któreś z ustawień DirectX"));
+	HR(hr, _(L"Zawiodło któreś z ustawień DirectX"));
 
 	D3DXMATRIX matOrtho;
 	D3DXMATRIX matIdentity;
@@ -331,20 +331,20 @@ bool AudioDisplay::InitDX(const wxSize &size)
 	D3DXMatrixOrthoOffCenterLH(&matOrtho, 0, size.x, size.y, 0, 0.0f, 1.0f);
 	D3DXMatrixIdentity(&matIdentity);
 
-	HR(d3dDevice->SetTransform(D3DTS_PROJECTION, &matOrtho), _("Nie można ustawić macierzy porojekcji"));
-	HR(d3dDevice->SetTransform(D3DTS_WORLD, &matIdentity), _("Nie można ustawić macierzy świata"));
-	HR(d3dDevice->SetTransform(D3DTS_VIEW, &matIdentity), _("Nie można ustawić macierzy widoku"));
-	HR(d3dDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer), _("Nie można stworzyć powierzchni"));
+	HR(d3dDevice->SetTransform(D3DTS_PROJECTION, &matOrtho), _(L"Nie można ustawić macierzy porojekcji"));
+	HR(d3dDevice->SetTransform(D3DTS_WORLD, &matIdentity), _(L"Nie można ustawić macierzy świata"));
+	HR(d3dDevice->SetTransform(D3DTS_VIEW, &matIdentity), _(L"Nie można ustawić macierzy widoku"));
+	HR(d3dDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer), _(L"Nie można stworzyć powierzchni"));
 
 
-	HR(D3DXCreateLine(d3dDevice, &d3dLine), _("Nie można stworzyć linii D3DX"));
+	HR(D3DXCreateLine(d3dDevice, &d3dLine), _(L"Nie można stworzyć linii D3DX"));
 	wxSize sizeTahoma13 = tahoma13.GetPixelSize();
 	wxSize sizeTahoma8 = tahoma8.GetPixelSize();
 	wxSize sizeVerdana11 = verdana11.GetPixelSize();
-	HR(D3DXCreateFontW(d3dDevice, sizeTahoma13.y, sizeTahoma13.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &d3dFontTahoma13), _("Nie można stworzyć czcionki D3DX"));
-	HR(D3DXCreateFontW(d3dDevice, sizeTahoma8.y, sizeTahoma8.x, FW_NORMAL, 0, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &d3dFontTahoma8), _("Nie można stworzyć czcionki D3DX"));
-	HR(D3DXCreateFontW(d3dDevice, sizeVerdana11.y, sizeVerdana11.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Verdana"), &d3dFontVerdana11), _("Nie można stworzyć czcionki D3DX"));
-	HR(d3dDevice->CreateOffscreenPlainSurface(size.x, size.y, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &spectrumSurface, 0), _("Nie można stworzyć plain surface"));
+	HR(D3DXCreateFontW(d3dDevice, sizeTahoma13.y, sizeTahoma13.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &d3dFontTahoma13), _(L"Nie można stworzyć czcionki D3DX"));
+	HR(D3DXCreateFontW(d3dDevice, sizeTahoma8.y, sizeTahoma8.x, FW_NORMAL, 0, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &d3dFontTahoma8), _(L"Nie można stworzyć czcionki D3DX"));
+	HR(D3DXCreateFontW(d3dDevice, sizeVerdana11.y, sizeVerdana11.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Verdana"), &d3dFontVerdana11), _(L"Nie można stworzyć czcionki D3DX"));
+	HR(d3dDevice->CreateOffscreenPlainSurface(size.x, size.y, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &spectrumSurface, 0), _(L"Nie można stworzyć plain surface"));
 	HR(d3dDevice->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE), L"FVF failed");
 
 	return true;
@@ -363,7 +363,7 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 		if (!InitDX(wxSize(w, displayH))){
 			ClearDX();
 			if (!InitDX(wxSize(w, displayH))){
-				KaiLogSilent(L"Audio: " + _("Nie można zresetować Direct3D"));
+				KaiLogSilent(L"Audio: " + _(L"Nie można zresetować Direct3D"));
 				needToReset = true;
 				return;
 			}
@@ -1024,7 +1024,7 @@ void AudioDisplay::DrawSpectrum(bool weak) {
 		spectrumRenderer->SetScaling(scale);
 		D3DLOCKED_RECT d3dlr;
 		try{
-			HRN(spectrumSurface->LockRect(&d3dlr, 0, D3DLOCK_NOSYSLOCK), _("Nie można zablokować bufora tekstury"));
+			HRN(spectrumSurface->LockRect(&d3dlr, 0, D3DLOCK_NOSYSLOCK), _(L"Nie można zablokować bufora tekstury"));
 		}
 		catch (...){}
 		byte *img = static_cast<byte *>(d3dlr.pBits);
@@ -1045,7 +1045,7 @@ void AudioDisplay::DrawSpectrum(bool weak) {
 
 	RECT rc = { screenRect.x, screenRect.y, screenRect.width - screenRect.x, screenRect.height - screenRect.y };
 	if (FAILED(d3dDevice->StretchRect(spectrumSurface, &rc, backBuffer, &rc, D3DTEXF_LINEAR))){
-		KaiLogSilent(_("Nie można nałożyć powierzchni spectrum na siebie"));
+		KaiLogSilent(_(L"Nie można nałożyć powierzchni spectrum na siebie"));
 	}
 
 }

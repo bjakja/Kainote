@@ -64,14 +64,14 @@ public:
 std::map<idAndType, hdata> AutomationHotkeysDialog::allHotkeys;
 
 AutomationHotkeysDialog::AutomationHotkeysDialog(wxWindow *parent, Auto::Automation *Auto)
-	: KaiDialog(parent, -1, _("Lista skrótów klawiszowych skryptów automatyzacji"))
+	: KaiDialog(parent, -1, _(L"Lista skrótów klawiszowych skryptów automatyzacji"))
 	, automation(Auto)
 {
 	DialogSizer *mainSizer = new DialogSizer(wxVERTICAL);
 	hotkeysList = new KaiListCtrl(this, ID_HOTKEYS_LIST, wxDefaultPosition, wxSize(800, 300));
-	hotkeysList->InsertColumn(1, _("Ścieżka i nazwa skryptu"), TYPE_TEXT, 400);
+	hotkeysList->InsertColumn(1, _(L"Ścieżka i nazwa skryptu"), TYPE_TEXT, 400);
 	hotkeysList->InsertColumn(2, _("Makro"), TYPE_TEXT, 300);
-	hotkeysList->InsertColumn(3, _("Skrót"), TYPE_TEXT, 80);
+	hotkeysList->InsertColumn(3, _(L"Skrót"), TYPE_TEXT, 80);
 
 	allHotkeys = std::map<idAndType, hdata>(Hkeys.GetHotkeysMap());
 	std::map<idAndType, hdata> mappedhkeys;
@@ -116,7 +116,7 @@ AutomationHotkeysDialog::AutomationHotkeysDialog(wxWindow *parent, Auto::Automat
 		}
 	}
 	if (automation->ASSScripts.size()) {
-		hotkeysList->AppendItem(new ItemText(_("Z napisów")));
+		hotkeysList->AppendItem(new ItemText(_(L"Z napisów")));
 		for (int i = 0; i < automation->ASSScripts.size(); i++) {
 			Auto::LuaScript* script = automation->ASSScripts[i];
 			auto macros = script->GetMacros();
@@ -141,9 +141,9 @@ AutomationHotkeysDialog::AutomationHotkeysDialog(wxWindow *parent, Auto::Automat
 	wxBoxSizer *buttonsSizer = new wxBoxSizer(wxHORIZONTAL);
 	MappedButton *OK = new MappedButton(this, ID_HOTKEYS_OK, L"OK");
 	Connect(ID_HOTKEYS_OK, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&AutomationHotkeysDialog::OnOK);
-	MappedButton *setHotkey = new MappedButton(this, ID_HOTKEYS_MAP, _("Mapuj skrót"));
+	MappedButton *setHotkey = new MappedButton(this, ID_HOTKEYS_MAP, _(L"Mapuj skrót"));
 	Connect(ID_HOTKEYS_MAP, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&AutomationHotkeysDialog::OnMapHkey);
-	MappedButton *deleteHotkey = new MappedButton(this, ID_HOTKEYS_DELETE, _("Usuń skrót"));
+	MappedButton *deleteHotkey = new MappedButton(this, ID_HOTKEYS_DELETE, _(L"Usuń skrót"));
 	Connect(ID_HOTKEYS_DELETE, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&AutomationHotkeysDialog::OnDeleteHkey);
 	MappedButton *cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
 
@@ -236,20 +236,20 @@ void AutomationHotkeysDialog::OnMapHkey(wxCommandEvent &evt)
 			int result = wxCANCEL;
 			if (doubledHotkey){
 				KaiMessageDialog msg(this,
-					wxString::Format(_("Ten skrót już istnieje jako skrót do \"%s\".\nCo zrobić?"),
+					wxString::Format(_(L"Ten skrót już istnieje jako skrót do \"%s\".\nCo zrobić?"),
 					doubledHkName), _("Uwaga"), wxYES | wxOK | wxCANCEL);
-				msg.SetOkLabel(_("Zamień skróty"));
-				msg.SetYesLabel(_("Usuń skrót"));
+				msg.SetOkLabel(_(L"Zamień skróty"));
+				msg.SetYesLabel(_(L"Usuń skrót"));
 				result = msg.ShowModal();
 			}
 			else{
 				int buttonFlag = (idtypes.size() < 2) ? wxOK : 0;
 				KaiMessageDialog msg(this,
-					wxString::Format(_("Ten skrót już istnieje w %s jako skrót do \"%s\".\nCo zrobić?"),
+					wxString::Format(_(L"Ten skrót już istnieje w %s jako skrót do \"%s\".\nCo zrobić?"),
 					(idtypes.size() > 1) ? _("innych oknach") : _("innym oknie"), doubledHkName), _("Uwaga"), wxYES_NO | buttonFlag | wxCANCEL);
 				if (idtypes.size() < 2)
-					msg.SetOkLabel(_("Zamień skróty"));
-				msg.SetYesLabel(_("Usuń skrót"));
+					msg.SetOkLabel(_(L"Zamień skróty"));
+				msg.SetYesLabel(_(L"Usuń skrót"));
 				msg.SetNoLabel(_("Ustaw mimo to"));
 				result = msg.ShowModal();
 			}

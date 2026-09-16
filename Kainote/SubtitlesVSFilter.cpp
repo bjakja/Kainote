@@ -124,11 +124,11 @@ bool SubtitlesVSFilter::Open(TabPanel *tab, int flag, wxString *text)
 
 	// Select renderer
 	csri_rend *vobsub = GetVSFilter();
-	if (!vobsub){ KaiLogSilent(_("Nie można zinicjalizować CSRI.")); delete textsubs; return false; }
+	if (!vobsub){ KaiLogSilent(_(L"Nie można zinicjalizować CSRI.")); delete textsubs; return false; }
 
 	m_CsriInstance = 
 		csri_open_mem(vobsub, buffer, size, nullptr);
-	if (!m_CsriInstance){ KaiLogSilent(_("Nie można utworzyć instancji CSRI.")); delete textsubs; return false; }
+	if (!m_CsriInstance){ KaiLogSilent(_(L"Nie można utworzyć instancji CSRI.")); delete textsubs; return false; }
 
 
 	if (!m_CsriFormat || csri_request_fmt(m_CsriInstance, m_CsriFormat)){
@@ -139,7 +139,7 @@ bool SubtitlesVSFilter::Open(TabPanel *tab, int flag, wxString *text)
 				return true;
 			}
 		}
-		KaiLogSilent(_("CSRI nie obsługuje tego formatu."));
+		KaiLogSilent(_(L"CSRI nie obsługuje tego formatu."));
 		csri_close(m_CsriInstance);
 		m_CsriInstance = nullptr;
 		delete textsubs; return false;
@@ -166,14 +166,14 @@ bool SubtitlesVSFilter::OpenString(wxString *text)
 	// Select renderer
 	csri_rend *vobsub = GetVSFilter();
 	if (!vobsub){ 
-		KaiLogSilent(_("Nie można zinicjalizować CSRI."));
+		KaiLogSilent(_(L"Nie można zinicjalizować CSRI."));
 		delete text; 
 		return false; 
 	}
 
 	m_CsriInstance = csri_open_mem(vobsub, buffer, size, nullptr);
 	if (!m_CsriInstance){ 
-		KaiLogSilent(_("Nie można utworzyć instancji CSRI."));
+		KaiLogSilent(_(L"Nie można utworzyć instancji CSRI."));
 		delete text; 
 		return false; 
 	}
@@ -185,7 +185,7 @@ bool SubtitlesVSFilter::OpenString(wxString *text)
 				return true;
 			}
 		}
-		KaiLogSilent(_("CSRI nie obsługuje tego formatu."));
+		KaiLogSilent(_(L"CSRI nie obsługuje tego formatu."));
 		csri_close(m_CsriInstance);
 		m_CsriInstance = nullptr;
 		delete text;
@@ -279,7 +279,7 @@ void SubtitlesVSFilter::SetVideoParameters(const wxSize & size, unsigned char fo
 			if (!csri_request_fmt(m_CsriInstance, m_CsriFormat))
 				return;
 		}
-		KaiLog(_("CSRI nie obsługuje tego formatu."));
+		KaiLog(_(L"CSRI nie obsługuje tego formatu."));
 		csri_close(m_CsriInstance);
 		m_CsriInstance = nullptr;
 	}

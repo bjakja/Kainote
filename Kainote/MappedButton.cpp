@@ -268,10 +268,10 @@ void MappedButton::SetToolTip(const wxString &_toolTip)
 			toolTip = toolTip + L" (" + key + L")";
 		}
 		toolTip << L"\n";
-		toolTip << _("Skrót można ustawić Shift + Klik");
+		toolTip << _(L"Skrót można ustawić Shift + Klik");
 		if (twoHotkeys){
 			toolTip << L"\n";
-			toolTip << _("Drugi skrót można ustawić Control + Klik");
+			toolTip << _(L"Drugi skrót można ustawić Control + Klik");
 		}
 		wxWindow::SetToolTip(toolTip);
 	}

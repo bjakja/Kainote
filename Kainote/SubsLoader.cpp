@@ -70,7 +70,7 @@ SubsLoader::SubsLoader(SubsGrid *_grid, const wxString &text, wxString &ext)
 			if (!succeeded){
 				grid->LoadDefault(false, false, false);
 				succeeded = LoadTXT(text);
-				KaiMessageBox(_("Ten plik napisów jest zwykłym tekstem, zostaje otwarty jako napisy ASS"));
+				KaiMessageBox(_(L"Ten plik napisów jest zwykłym tekstem, zostaje otwarty jako napisy ASS"));
 			}
 		}
 		else{ validFormat = true; }
@@ -79,7 +79,7 @@ SubsLoader::SubsLoader(SubsGrid *_grid, const wxString &text, wxString &ext)
 	//text helper class will crash when gets nullptr in = operator
 	if (!succeeded){ 
 		grid->LoadDefault(); 
-		KaiMessageBox(_("Niepoprawny format (plik uszkodzony lub zawiera błędy)")); 
+		KaiMessageBox(_(L"Niepoprawny format (plik uszkodzony lub zawiera błędy)"));
 		grid->subsFormat = ASS; 
 		ext = "ass"; 
 	}

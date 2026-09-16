@@ -84,7 +84,7 @@ TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, cons
 	MainSizer->Add(GridShiftTimesSizer, 1, wxEXPAND, 0);
 	SetSizerAndFit(MainSizer);
 
-	SubsName = _("Bez tytułu");
+	SubsName = _(L"Bez tytułu");
 
 	SetAccels();
 }
@@ -319,7 +319,7 @@ void TabPanel::ReloadSubsIfModified()
 
 	int needReload = ModifChecker.NeedReload(SubsPath, &lastSave);
 	if (needReload == 1) {
-		int result = KaiMessageBox(_("Napisy zostały zmodyfikowane przez inny program, przeładować?"), _("Przeładowywanie"), wxYES | wxNO);
+		int result = KaiMessageBox(_(L"Napisy zostały zmodyfikowane przez inny program, przeładować?"), _(L"Przeładowywanie"), wxYES | wxNO);
 		if (result == wxYES) {
 			wxString ext = SubsPath.AfterLast(L'.');
 			OpenWrite ow;

@@ -113,20 +113,20 @@ void ItemHotkey::OnMapHotkey(KaiListCtrl *theList, int y)
 			int result = wxCANCEL;
 			if (doubledHotkey){
 				KaiMessageDialog msg(theList,
-					wxString::Format(_("Ten skrót już istnieje jako skrót do \"%s\".\nCo zrobić?"),
+					wxString::Format(_(L"Ten skrót już istnieje jako skrót do \"%s\".\nCo zrobić?"),
 					doubledHkName), _("Uwaga"), wxYES | wxOK | wxCANCEL);
-				msg.SetOkLabel(_("Zamień skróty"));
-				msg.SetYesLabel(_("Usuń skrót"));
+				msg.SetOkLabel(_(L"Zamień skróty"));
+				msg.SetYesLabel(_(L"Usuń skrót"));
 				result = msg.ShowModal();
 			}
 			else{
 				int buttonFlag = (idtypes.size() < 2) ? wxOK : 0;
 				KaiMessageDialog msg(theList,
-					wxString::Format(_("Ten skrót już istnieje w %s jako skrót do \"%s\".\nCo zrobić?"),
+					wxString::Format(_(L"Ten skrót już istnieje w %s jako skrót do \"%s\".\nCo zrobić?"),
 					(idtypes.size() > 1) ? _("innych oknach") : _("innym oknie"), doubledHkName), _("Uwaga"), wxYES_NO | buttonFlag | wxCANCEL);
 				if (idtypes.size() < 2)
-					msg.SetOkLabel(_("Zamień skróty"));
-				msg.SetYesLabel(_("Usuń skrót"));
+					msg.SetOkLabel(_(L"Zamień skróty"));
+				msg.SetYesLabel(_(L"Usuń skrót"));
 				msg.SetNoLabel(_("Ustaw mimo to"));
 				result = msg.ShowModal();
 			}
@@ -288,24 +288,24 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 	wxWindow* SubsProps = new SubtitlesProperties(OptionsTree, this);
 
 	hkeymodif = 0;
-	if (!Options.AudioOpts && !Options.LoadAudioOpts()) { KaiMessageBox(_("Nie można wczytać opcji audio"), _("Błąd")); }
+	if (!Options.AudioOpts && !Options.LoadAudioOpts()) { KaiMessageBox(_(L"Nie można wczytać opcji audio"), _(L"Błąd")); }
 
 	//Main
 	{
 		const int optsSize = 18;
 		wxBoxSizer* MainSizer = new wxBoxSizer(wxVERTICAL);
-		wxString labels[optsSize] = { _("Wczytywanie posortowanych napisów"), _("Włącz sprawdzanie pisowni"),
-			_("Zaznaczaj linijkę z czasem aktywnej\nlinijki poprzedniej zakładki"),
-			_("Pokaż sugestie po dwukrotnym kliknięciu błędu"), _("Otwieraj napisy zawsze w nowej karcie"),
-			_("Nie przechodź do następnej linii przy edycji czasów"),
-			_("Wyłącz pokazywanie edycji na wideo\n(wymaga ponownego otwarcia zakładek)"),
-			_("Włącz szukanie widocznej linii\npo wyjściu z pełnego ekranu"),
-			_("Włącz przenoszenie wartości pola przesuwania czasów"), _("Zmieniaj aktywną linię przy zaznaczaniu"),
-			_("Pokazuj oryginał w trybie tłumacza"), _("Ukryj oryginał na wideo w trybie tłumacza"),
-			_("Nie zmieniaj zaznaczeń przy duplikacji linii dialogowych"),
-			_("Nie wypośrodkowuj aktywnej linii w polu napisów"), _("Używaj skróty klawiszowe numpada w polach tekstowych"),
-			_("Wyłącz ostrzeżenia w narzędziach edycji wizualnej"), _("Nie ostrzegaj o niezgodności rozdzielczości"),
-			_("Kompatybilność ze starymi skryptami Kainote") };
+		wxString labels[optsSize] = { _(L"Wczytywanie posortowanych napisów"), _(L"Włącz sprawdzanie pisowni"),
+			_(L"Zaznaczaj linijkę z czasem aktywnej\nlinijki poprzedniej zakładki"),
+			_(L"Pokaż sugestie po dwukrotnym kliknięciu błędu"), _("Otwieraj napisy zawsze w nowej karcie"),
+			_(L"Nie przechodź do następnej linii przy edycji czasów"),
+			_(L"Wyłącz pokazywanie edycji na wideo\n(wymaga ponownego otwarcia zakładek)"),
+			_(L"Włącz szukanie widocznej linii\npo wyjściu z pełnego ekranu"),
+			_(L"Włącz przenoszenie wartości pola przesuwania czasów"), _(L"Zmieniaj aktywną linię przy zaznaczaniu"),
+			_(L"Pokazuj oryginał w trybie tłumacza"), _(L"Ukryj oryginał na wideo w trybie tłumacza"),
+			_(L"Nie zmieniaj zaznaczeń przy duplikacji linii dialogowych"),
+			_(L"Nie wypośrodkowuj aktywnej linii w polu napisów"), _(L"Używaj skróty klawiszowe numpada w polach tekstowych"),
+			_(L"Wyłącz ostrzeżenia w narzędziach edycji wizualnej"), _(L"Nie ostrzegaj o niezgodności rozdzielczości"),
+			_(L"Kompatybilność ze starymi skryptami Kainote") };
 		CONFIG opts[optsSize] = { GRID_LOAD_SORTED_SUBS, SPELLCHECKER_ON, AUTO_SELECT_LINES_FROM_LAST_TAB,
 			EDITBOX_SUGGESTIONS_ON_DOUBLE_CLICK, OPEN_SUBS_IN_NEW_TAB, EDITBOX_DONT_GO_TO_NEXT_LINE_ON_TIMES_EDIT,
 			DISABLE_LIVE_VIDEO_EDITING, GRID_SET_VISIBLE_LINE_AFTER_FULL_SCREEN, SHIFT_TIMES_CHANGE_VALUES_WITH_TAB,
@@ -327,7 +327,7 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 			langs[i] = fullName;
 		}
 		langs.Insert(L"Polski", 0);
-		KaiStaticBoxSizer* langSizer = new KaiStaticBoxSizer(wxVERTICAL, GLOBAL_EDITOR, _("Język (wymaga restartu programu)"));
+		KaiStaticBoxSizer* langSizer = new KaiStaticBoxSizer(wxVERTICAL, GLOBAL_EDITOR, _(L"Język (wymaga restartu programu)"));
 		KaiChoice* programLanguage = new KaiChoice(GLOBAL_EDITOR, ID_PROGRAM_LANGUAGE, wxDefaultPosition, wxDefaultSize, langs);
 		int sel = programLanguage->FindString(Options.FindLanguage(Options.GetString(PROGRAM_LANGUAGE)));
 		if (sel < 0)
@@ -339,8 +339,8 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 		MainSizer->Add(langSizer, 0, wxRIGHT | wxEXPAND, 5);
 		wxArrayString dictionaries;
 		SpellChecker::AvailableDics(dictionaries, dictionaryLanguagesSymbols);
-		if (dictionaries.size() == 0) { dictionaries.Add(_("Umieść pliki .dic i .aff do folderu \"Dictionary\"")); }
-		KaiStaticBoxSizer* dicSizer = new KaiStaticBoxSizer(wxVERTICAL, GLOBAL_EDITOR, _("Język sprawdzania pisowni (folder \"Dictionary\")"));
+		if (dictionaries.size() == 0) { dictionaries.Add(_(L"Umieść pliki .dic i .aff do folderu \"Dictionary\"")); }
+		KaiStaticBoxSizer* dicSizer = new KaiStaticBoxSizer(wxVERTICAL, GLOBAL_EDITOR, _(L"Język sprawdzania pisowni (folder \"Dictionary\")"));
 
 		KaiChoice* dic = new KaiChoice(GLOBAL_EDITOR, ID_DICTIONARY_LANGUAGE, wxDefaultPosition, wxDefaultSize, dictionaries);
 
@@ -363,14 +363,14 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 		wxBoxSizer* Main1Sizer = new wxBoxSizer(wxVERTICAL);
 		//Warning id ID_NUMBER_CONTROL is only for NumCtrl, normal text fields have to have another id
 		NumCtrl* gridSaveAfter = new NumCtrl(EditorAdvanced, ID_NUMBER_CONTROL, Options.GetString(GRID_SAVE_AFTER_CHARACTER_COUNT), 0, 10000, true, wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
-		gridSaveAfter->SetToolTip(_("Zero całkowicie wyłącza zapis przy edycji"));
+		gridSaveAfter->SetToolTip(_(L"Zero całkowicie wyłącza zapis przy edycji"));
 		NumCtrl* autoSaveMax = new NumCtrl(EditorAdvanced, ID_NUMBER_CONTROL, Options.GetString(AUTOSAVE_MAX_FILES), 2, 1000000, true, wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
-		autoSaveMax->SetToolTip(_("Liczbę plików autozapisu można ustawić od 2 do 1000000"));
+		autoSaveMax->SetToolTip(_(L"Liczbę plików autozapisu można ustawić od 2 do 1000000"));
 		int numMaxChars = Options.GetInt(TAB_TEXT_MAX_CHARS);
 		if (!numMaxChars)
 			numMaxChars = 40;
 		NumCtrl* maxTabChars = new NumCtrl(EditorAdvanced, ID_NUMBER_CONTROL, std::to_wstring(numMaxChars), 20, 150, true, wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
-		maxTabChars->SetToolTip(_("Liczbę znaków widocznych na zakładce można ustawić od 20 do 150"));
+		maxTabChars->SetToolTip(_(L"Liczbę znaków widocznych na zakładce można ustawić od 20 do 150"));
 		NumCtrl* ltl = new NumCtrl(EditorAdvanced, ID_NUMBER_CONTROL, Options.GetString(AUTOMATION_TRACE_LEVEL), 0, 5, true, wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
 		NumCtrl* sc = new NumCtrl(EditorAdvanced, ID_NUMBER_CONTROL, Options.GetString(GRID_INSERT_START_OFFSET), -100000, 100000, true, wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
 		NumCtrl* sc1 = new NumCtrl(EditorAdvanced, ID_NUMBER_CONTROL, Options.GetString(GRID_INSERT_END_OFFSET), -100000, 100000, true, wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
@@ -384,25 +384,25 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 		ConOpt(sc1, GRID_INSERT_END_OFFSET);
 		ConOpt(sc2, GRID_TAGS_SWAP_CHARACTER);
 		wxBoxSizer* MainSizer2 = new wxBoxSizer(wxHORIZONTAL);
-		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Ilość edycji do zapisu")/*, wxDefaultPosition, wxSize(256, -1)*/), 5, wxEXPAND);
+		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _(L"Ilość edycji do zapisu")/*, wxDefaultPosition, wxSize(256, -1)*/), 5, wxEXPAND);
 		MainSizer2->Add(gridSaveAfter, 0, wxEXPAND);
 		wxBoxSizer* MainSizer3 = new wxBoxSizer(wxHORIZONTAL);
-		MainSizer3->Add(new KaiStaticText(EditorAdvanced, -1, _("Maksymalna ilość plików autozapisu")/*, wxDefaultPosition, wxSize(256, -1)*/), 5, /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND);
+		MainSizer3->Add(new KaiStaticText(EditorAdvanced, -1, _(L"Maksymalna ilość plików autozapisu")/*, wxDefaultPosition, wxSize(256, -1)*/), 5, /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND);
 		MainSizer3->Add(autoSaveMax, 0, wxEXPAND);
 		wxBoxSizer* MainSizer4 = new wxBoxSizer(wxHORIZONTAL);
-		MainSizer4->Add(new KaiStaticText(EditorAdvanced, -1, _("Przyspieszenie klatki początkowej w ms:")/*, wxDefaultPosition, wxSize(256, -1)*/), 5, /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND);
+		MainSizer4->Add(new KaiStaticText(EditorAdvanced, -1, _(L"Przyspieszenie klatki początkowej w ms:")/*, wxDefaultPosition, wxSize(256, -1)*/), 5, /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND);
 		MainSizer4->Add(sc, 0, wxEXPAND);
 		wxBoxSizer* MainSizer5 = new wxBoxSizer(wxHORIZONTAL);
-		MainSizer5->Add(new KaiStaticText(EditorAdvanced, -1, _("Przyspieszenie klatki końcowej w ms:")), 5, /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND);
+		MainSizer5->Add(new KaiStaticText(EditorAdvanced, -1, _(L"Przyspieszenie klatki końcowej w ms:")), 5, /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND);
 		MainSizer5->Add(sc1, 0, wxEXPAND);
 		wxBoxSizer* MainSizer6 = new wxBoxSizer(wxHORIZONTAL);
-		MainSizer6->Add(new KaiStaticText(EditorAdvanced, -1, _("Znak podmiany tagów ASS:")), 5, /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND);
+		MainSizer6->Add(new KaiStaticText(EditorAdvanced, -1, _(L"Znak podmiany tagów ASS:")), 5, /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND);
 		MainSizer6->Add(sc2, 0, wxEXPAND);
 		wxBoxSizer* MainSizer7 = new wxBoxSizer(wxHORIZONTAL);
-		MainSizer7->Add(new KaiStaticText(EditorAdvanced, -1, _("Ilość znaków widocznych na zakładce")), 5, /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND);
+		MainSizer7->Add(new KaiStaticText(EditorAdvanced, -1, _(L"Ilość znaków widocznych na zakładce")), 5, /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND);
 		MainSizer7->Add(maxTabChars, 0, wxEXPAND);
 		wxBoxSizer* MainSizer8 = new wxBoxSizer(wxHORIZONTAL);
-		MainSizer8->Add(new KaiStaticText(EditorAdvanced, -1, _("Poziom śledzenia logów skryptów LUA")), 5, /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND);
+		MainSizer8->Add(new KaiStaticText(EditorAdvanced, -1, _(L"Poziom śledzenia logów skryptów LUA")), 5, /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND);
 		MainSizer8->Add(ltl, 0, wxEXPAND);
 
 		//MainSizer->Add(MainSizer2,0,wxLEFT|wxTOP,2);
@@ -411,7 +411,7 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 		ConOpt(optf, GRID_FONT);
 		optf->SetMinSize(ltl->GetMinSize());
 		wxBoxSizer* MainSizer9 = new wxBoxSizer(wxHORIZONTAL);
-		MainSizer9->Add(new KaiStaticText(EditorAdvanced, -1, _("Czcionka pola napisów:")), 5, wxRIGHT | /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND, 10);
+		MainSizer9->Add(new KaiStaticText(EditorAdvanced, -1, _(L"Czcionka pola napisów:")), 5, wxRIGHT | /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND, 10);
 		MainSizer9->Add(optf, 0, wxEXPAND);
 
 		FontPickerButton* programFont = new FontPickerButton(EditorAdvanced, -1, wxFont(Options.GetInt(PROGRAM_FONT_SIZE), wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, Options.GetString(PROGRAM_FONT)));
@@ -421,7 +421,7 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 		MainSizer10->Add(new KaiStaticText(EditorAdvanced, -1, _("Czcionka programu:")), 5, wxRIGHT | /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND, 10);
 		MainSizer10->Add(programFont, 0, wxEXPAND);
 
-		KaiCheckBox* allCharWraps = new KaiCheckBox(EditorAdvanced, -1, _("Zliczaj spacje i znaki interpunkcyjne dla łamań"));
+		KaiCheckBox* allCharWraps = new KaiCheckBox(EditorAdvanced, -1, _(L"Zliczaj spacje i znaki interpunkcyjne dla łamań"));
 		allCharWraps->SetValue(Options.GetBool(CALC_SPACES_AND_PUNCTATION_FOR_WRAPS));
 		ConOpt(allCharWraps, CALC_SPACES_AND_PUNCTATION_FOR_WRAPS);
 		KaiCheckBox* allCharCPS = new KaiCheckBox(EditorAdvanced, -1, _("Zliczaj spacje i znaki interpunkcyjne dla ZNS"));
@@ -429,19 +429,19 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 		ConOpt(allCharCPS, CALC_SPACES_AND_PUNCTATION_FOR_CPS);
 		
 
-		KaiStaticBoxSizer* alm = new KaiStaticBoxSizer(wxHORIZONTAL, EditorAdvanced, _("Sposób wczytywania skryptów autoload"));
+		KaiStaticBoxSizer* alm = new KaiStaticBoxSizer(wxHORIZONTAL, EditorAdvanced, _(L"Sposób wczytywania skryptów autoload"));
 		wxString methods[] = { _("Przy starcie programu asynchronicznie"), _("Przy starcie programu"), _("Przy otwarciu menu asynchronicznie"), _("Przy otwarciu menu") };
 		KaiChoice* cmb = new KaiChoice(EditorAdvanced, ID_KAI_CHOICE, wxDefaultPosition, wxSize(200, -1), 4, methods, wxTE_PROCESS_ENTER);
 		cmb->SetSelection(Options.GetInt(AUTOMATION_LOADING_METHOD));
 		ConOpt(cmb, AUTOMATION_LOADING_METHOD);
 		alm->Add(cmb, 1, wxCENTER | wxEXPAND | wxALL, 2);
 
-		KaiStaticBoxSizer* fontsPath = new KaiStaticBoxSizer(wxHORIZONTAL, EditorAdvanced, _("Folder z zewnętrznymi czcionkami"));
+		KaiStaticBoxSizer* fontsPath = new KaiStaticBoxSizer(wxHORIZONTAL, EditorAdvanced, _(L"Folder z zewnętrznymi czcionkami"));
 		KaiTextCtrl* path = new KaiTextCtrl(EditorAdvanced, ID_EXTERNAL_FONTS_FOLDER, Options.GetString(EXTERNAL_FONTS_DIRECTORY));
 		ConOpt(path, EXTERNAL_FONTS_DIRECTORY);
 		MappedButton* choosePath = new MappedButton(EditorAdvanced, ID_EXTERNAL_FONTS_CHOOSE_FOLDER, _("Wybierz"));
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent& event) {
-			wxDirDialog ddlg(this, _("Wybierz zewnętrzny folder czcionek"), path->GetValue());
+			wxDirDialog ddlg(this, _(L"Wybierz zewnętrzny folder czcionek"), path->GetValue());
 			ddlg.ShowModal();
 			path->SetValue(ddlg.GetPath());
 			}, ID_EXTERNAL_FONTS_CHOOSE_FOLDER);
@@ -473,9 +473,9 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 		KaiStaticBoxSizer* obr = new KaiStaticBoxSizer(wxHORIZONTAL, ConvOpt, _("Wybierz katalog"));
 		KaiStaticBoxSizer* obr0 = new KaiStaticBoxSizer(wxHORIZONTAL, ConvOpt, _("Wybierz styl"));
 		KaiStaticBoxSizer* obr1 = new KaiStaticBoxSizer(wxHORIZONTAL, ConvOpt, _("Wybierz FPS"));
-		KaiStaticBoxSizer* obr2 = new KaiStaticBoxSizer(wxHORIZONTAL, ConvOpt, _("Czas w ms na jedną literę"));
-		KaiStaticBoxSizer* obr3 = new KaiStaticBoxSizer(wxHORIZONTAL, ConvOpt, _("Tagi wstawiane na początku każdej linijki ass"));
-		KaiStaticBoxSizer* obr4 = new KaiStaticBoxSizer(wxHORIZONTAL, ConvOpt, _("Rozdzielczość przy konwersji na ASS"));
+		KaiStaticBoxSizer* obr2 = new KaiStaticBoxSizer(wxHORIZONTAL, ConvOpt, _(L"Czas w ms na jedną literę"));
+		KaiStaticBoxSizer* obr3 = new KaiStaticBoxSizer(wxHORIZONTAL, ConvOpt, _(L"Tagi wstawiane na początku każdej linijki ass"));
+		KaiStaticBoxSizer* obr4 = new KaiStaticBoxSizer(wxHORIZONTAL, ConvOpt, _(L"Rozdzielczość przy konwersji na ASS"));
 		wxArrayString styles;
 		wxArrayString FPSes;
 
@@ -506,7 +506,7 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 				if (i == 0) { sel = cmb->FindString(Options.actualStyleDir); }
 				cmb->SetSelection(MAX(0, sel));
 				wxString what = (i == 0) ? _("katalog dla stylu") : _("styl");
-				KaiMessageBox(wxString::Format(_("Wybrany %s konwersji nie istnieje,\nzostanie zmieniony na domyślny"), what), _("Uwaga"));
+				KaiMessageBox(wxString::Format(_(L"Wybrany %s konwersji nie istnieje,\nzostanie zmieniony na domyślny"), what), _("Uwaga"));
 			}
 
 			ConOpt(cmb, (i == 0) ? CONVERT_STYLE_CATALOG : CONVERT_STYLE);
@@ -536,7 +536,7 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 		for (int i = 0; i < 3; i++)
 		{
 			KaiCheckBox* opt = new KaiCheckBox(ConvOpt, -1, (i == 0) ? _("FPS z wideo") :
-				(i == 1) ? _("Nowe czasy końcowe") : _("Pokaż okno przed konwersją"));
+				(i == 1) ? _(L"Nowe czasy końcowe") : _(L"Pokaż okno przed konwersją"));
 			CONFIG optname = (i == 0) ? CONVERT_FPS_FROM_VIDEO : (i == 1) ? CONVERT_NEW_END_TIMES : CONVERT_SHOW_SETTINGS;
 			opt->SetValue(Options.GetBool(optname));
 			ConOpt(opt, optname);
@@ -571,10 +571,10 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 	}
 	//video
 	{
-		wxString voptspl[] = { _("Otwórz wideo z menu kontekstowego na pełnym ekranie"), _("Lewy przycisk myszy pauzuje wideo"),
-			_("Otwieraj wideo z czasem aktywnej linii"), _("Preferowane ścieżki audio (oddzielone średnikiem)"),
-			_("Sposób szukania wideo w FFMS2 (wymaga ponownego wczytania)"), _("Filtr wyświetlania napisów"), 
-			_("Początkowy zoom wideo w procentach")};
+		wxString voptspl[] = { _(L"Otwórz wideo z menu kontekstowego na pełnym ekranie"), _("Lewy przycisk myszy pauzuje wideo"),
+			_("Otwieraj wideo z czasem aktywnej linii"), _(L"Preferowane ścieżki audio (oddzielone średnikiem)"),
+			_(L"Sposób szukania wideo w FFMS2 (wymaga ponownego wczytania)"), _(L"Filtr wyświetlania napisów"),
+			_(L"Początkowy zoom wideo w procentach")};
 		CONFIG vopts[] = { VIDEO_FULL_SCREEN_ON_START, VIDEO_PAUSE_ON_CLICK, OPEN_VIDEO_AT_ACTIVE_LINE,
 			ACCEPTED_AUDIO_STREAM, FFMS2_VIDEO_SEEKING, VSFILTER_INSTANCE, VIDEO_ZOOM_PERCENT };
 		wxBoxSizer *MainSizer = new wxBoxSizer(wxVERTICAL);
@@ -594,7 +594,7 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 		KaiStaticBoxSizer *seekingsizer = new KaiStaticBoxSizer(wxHORIZONTAL, video, voptspl[4]);
 
 		wxString seekingOpts[] = { _("Liniowe"), _("Normalne"), 
-			_("Niebezpieczne (szybkie w każdym przypadku)"), _("Agresywne (szybkie przy cofaniu)") };
+			_(L"Niebezpieczne (szybkie w każdym przypadku)"), _("Agresywne (szybkie przy cofaniu)") };
 		KaiChoice *sopts = new KaiChoice(video, ID_KAI_CHOICE, 
 			wxDefaultPosition, wxSize(200, -1), 4, seekingOpts, wxTE_PROCESS_ENTER);
 		int selection = Options.GetInt(vopts[4]);
@@ -637,15 +637,15 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 	{
 		wxBoxSizer *HkeysSizer = new wxBoxSizer(wxVERTICAL);
 		KaiStaticBoxSizer *filterMode = new KaiStaticBoxSizer(wxHORIZONTAL, Hotkeyss, _("Wybierz rodzaj filtrowania"));
-		wxString filteringModes[] = { _("Wszystko"), _("Ustawione skróty"), _("Skróty Globalne"),
-			_("Skróty napisów"), _("Skróty edytora"), _("Skróty wideo"), _("Skróty audio"), };
+		wxString filteringModes[] = { _("Wszystko"), _(L"Ustawione skróty"), _(L"Skróty Globalne"),
+			_(L"Skróty napisów"), _(L"Skróty edytora"), _(L"Skróty wideo"), _(L"Skróty audio"), };
 		KaiChoice *filterList = new KaiChoice(Hotkeyss, 14568, wxDefaultPosition, wxDefaultSize, 7, filteringModes);
 		filterList->SetSelection(0);
 		filterList->SetToolTip(_("Rodzaj filtrowania:"));
 
 		filterMode->Add(filterList, 1, wxALL | wxEXPAND, 2);
 		HkeysSizer->Add(filterMode, 0, wxEXPAND);
-		wxString mesureText = _("Globalny") + L" " + _("Lista osób pomocnych przy tworzeniu programu");
+		wxString mesureText = _("Globalny") + L" " + _(L"Lista osób pomocnych przy tworzeniu programu");
 		wxString mesureText2 = L"Alt-Shift-Delete";
 		int fw, fww, fh;
 		GetTextExtent(mesureText, &fw, &fh);
@@ -653,23 +653,23 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 
 		Shortcuts = new KaiListCtrl(Hotkeyss, 26667, wxDefaultPosition);
 		Shortcuts->InsertColumn(0, _("Funkcja"), TYPE_TEXT, (fw < 275)? 275 : fw);
-		Shortcuts->InsertColumn(1, _("Skrót"), TYPE_TEXT, (fww < 80)? 80 : fww);
+		Shortcuts->InsertColumn(1, _(L"Skrót"), TYPE_TEXT, (fww < 80)? 80 : fww);
 		Connect(26667, LIST_ITEM_DOUBLECLICKED, (wxObjectEventFunction)&OptionsDialog::OnMapHkey);
 		//Connect(26667,LIST_ITEM_RIGHT_CLICK,(wxObjectEventFunction)&OptionsDialog::OnResetHkey);
 
 		if (!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){ 
-			KaiMessageBox(_("Nie można wczytać skrótów klawiszowych audio"), _("Błąd")); 
+			KaiMessageBox(_(L"Nie można wczytać skrótów klawiszowych audio"), _(L"Błąd"));
 		}
 
 		AddHotkeysOnList();
 
 		HkeysSizer->Add(Shortcuts, 1, wxALL | wxEXPAND, 4);
 		wxBoxSizer *buttonsSizer = new wxBoxSizer(wxHORIZONTAL);
-		MappedButton *setHotkey = new MappedButton(Hotkeyss, 23232, _("Mapuj skrót"));
+		MappedButton *setHotkey = new MappedButton(Hotkeyss, 23232, _(L"Mapuj skrót"));
 		Connect(23232, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&OptionsDialog::OnMapHkey);
-		MappedButton *resetHotkey = new MappedButton(Hotkeyss, 23231, _("Przywróć skrót domyślny"));
+		MappedButton *resetHotkey = new MappedButton(Hotkeyss, 23231, _(L"Przywróć skrót domyślny"));
 		Connect(23231, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&OptionsDialog::OnResetHkey);
-		MappedButton *deleteHotkey = new MappedButton(Hotkeyss, 23230, _("Usuń skrót"));
+		MappedButton *deleteHotkey = new MappedButton(Hotkeyss, 23230, _(L"Usuń skrót"));
 		Connect(23230, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&OptionsDialog::OnDeleteHkey);
 		buttonsSizer->Add(setHotkey, 0, wxALL, 2);
 		buttonsSizer->Add(resetHotkey, 0, wxALL, 2);
@@ -690,11 +690,11 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 	{
 		wxBoxSizer *audio = new wxBoxSizer(wxVERTICAL);
 		const int numOfElements = 13;
-		wxString names[numOfElements] = { _("Wyświetlaj czas przy kursorze"), _("Wyświetlaj znaczniki sekund"), _("Wyświetlaj tło zaznaczenia"),
-			_("Wyświetlaj pozycję wideo"), _("Wyświetlaj klatki kluczowe"), _("Przewijaj wykres audio przy odtwarzaniu"),
-			_("Aktywuj okno audio po najechaniu"), _("Przyklejaj do klatek kluczowych"), _("Przyklejaj do pozostałych linii"),
-			_("Nie odtwarzaj audio po zmianie linijki"), _("Scalaj wszystkie \"n\" z poprzednią sylabą"), 
-			_("Przenoś linie sylab po kliknięciu"),_("Wczytuj audio do pamięci RAM") };
+		wxString names[numOfElements] = { _(L"Wyświetlaj czas przy kursorze"), _(L"Wyświetlaj znaczniki sekund"), _(L"Wyświetlaj tło zaznaczenia"),
+			_(L"Wyświetlaj pozycję wideo"), _(L"Wyświetlaj klatki kluczowe"), _("Przewijaj wykres audio przy odtwarzaniu"),
+			_("Aktywuj okno audio po najechaniu"), _("Przyklejaj do klatek kluczowych"), _(L"Przyklejaj do pozostałych linii"),
+			_("Nie odtwarzaj audio po zmianie linijki"), _(L"Scalaj wszystkie \"n\" z poprzednią sylabą"),
+			_(L"Przenoś linie sylab po kliknięciu"),_(L"Wczytuj audio do pamięci RAM") };
 
 		CONFIG opts[numOfElements] = { AUDIO_DRAW_TIME_CURSOR, AUDIO_DRAW_SECONDARY_LINES, AUDIO_DRAW_SELECTION_BACKGROUND, AUDIO_DRAW_VIDEO_POSITION,
 			AUDIO_DRAW_KEYFRAMES, AUDIO_LOCK_SCROLL_ON_CURSOR, AUDIO_AUTO_FOCUS, AUDIO_SNAP_TO_KEYFRAMES, AUDIO_SNAP_TO_OTHER_LINES,
@@ -721,7 +721,7 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 		NumCtrl *audioCacheFilesLimit = new NumCtrl(AudioSecond, ID_NUMBER_CONTROL, Options.GetString(opts1[4]), 0, 10000, true, wxDefaultPosition, wxSize(300, -1), 0);
 		NumCtrl *leadInTime = new NumCtrl(AudioSecond, ID_NUMBER_CONTROL, Options.GetString(opts1[5]), 0, 10000, true, wxDefaultPosition, wxSize(120, -1), 0);
 		NumCtrl *leadOutTime = new NumCtrl(AudioSecond, ID_NUMBER_CONTROL, Options.GetString(opts1[6]), 0, 10000, true, wxDefaultPosition, wxSize(120, -1), 0);
-		audioCacheFilesLimit->SetToolTip(_("Przedział od 0 do 10000, gdzie 0 wyłącza\ncałkowicie usuwanie plików audio cache."));
+		audioCacheFilesLimit->SetToolTip(_(L"Przedział od 0 do 10000, gdzie 0 wyłącza\ncałkowicie usuwanie plików audio cache."));
 		wxString inact[3] = { _("Brak"), _("Przed i po aktywnej"), _("Wszystkie widoczne") };
 		KaiChoice *displayNonActiveLines = new KaiChoice(AudioSecond, ID_KAI_CHOICE, wxDefaultPosition, wxSize(300, -1), 3, inact);
 		displayNonActiveLines->SetSelection(Options.GetInt(opts1[2]));
@@ -732,13 +732,13 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 		ConOpt(audioCacheFilesLimit, opts1[4]);
 		ConOpt(leadInTime, opts1[5]);
 		ConOpt(leadOutTime, opts1[6]);
-		KaiStaticBoxSizer *DelaySizer = new KaiStaticBoxSizer(wxVERTICAL, AudioSecond, _("Opóźnienie audio w ms"));
+		KaiStaticBoxSizer *DelaySizer = new KaiStaticBoxSizer(wxVERTICAL, AudioSecond, _(L"Opóźnienie audio w ms"));
 		KaiStaticBoxSizer *markPlayTimeSizer = new KaiStaticBoxSizer(wxVERTICAL, AudioSecond, _("Czas odtwarzania audio przed i po znaczniku w ms"));
-		wxString elems[] = { _("Wstęp"), _("Zakończenie") };
+		wxString elems[] = { _(L"Wstęp"), _(L"Zakończenie") };
 		KaiStaticBoxSizer *leadInAndOut = new KaiStaticBoxSizer(wxHORIZONTAL, AudioSecond, 2, elems);
-		KaiStaticBoxSizer *lineThicknessSizer = new KaiStaticBoxSizer(wxVERTICAL, AudioSecond, _("Grubość linii znaczników"));
-		KaiStaticBoxSizer *audioCacheFilesLimitSizer = new KaiStaticBoxSizer(wxVERTICAL, AudioSecond, _("Limit plików audio cache"));
-		KaiStaticBoxSizer *displayNonActiveLinesSizer = new KaiStaticBoxSizer(wxVERTICAL, AudioSecond, _("Sposób wyświetlania nieaktywnych linijek"));
+		KaiStaticBoxSizer *lineThicknessSizer = new KaiStaticBoxSizer(wxVERTICAL, AudioSecond, _(L"Grubość linii znaczników"));
+		KaiStaticBoxSizer *audioCacheFilesLimitSizer = new KaiStaticBoxSizer(wxVERTICAL, AudioSecond, _(L"Limit plików audio cache"));
+		KaiStaticBoxSizer *displayNonActiveLinesSizer = new KaiStaticBoxSizer(wxVERTICAL, AudioSecond, _(L"Sposób wyświetlania nieaktywnych linijek"));
 		DelaySizer->Add(Delay, 1, wxALL | wxEXPAND, 2);
 		markPlayTimeSizer->Add(markPlayTime, 1, wxALL | wxEXPAND, 2);
 		leadInAndOut->Add(leadInTime, 1, wxALL | wxEXPAND, 2);
@@ -762,68 +762,68 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 		const int numColors = 139;
 		wxString labels[numColors] = {
 			//window
-			_("Okno tło"), _("Okno nieaktywne tło"), _("Okno tekst"), _("Okno nieaktywny tekst"),
-			_("Okno obramowanie"), _("Okno obramowanie nieaktywne"), _("Okno tło obramowania"),
-			_("Okno tło obramowania nieaktywne"), _("Okno tekst nagłówka"), _("Okno tekst nagłówka nieaktywny"),
-			_("Okno najechany element nagłówka"), _("Okno wciśnięty element nagłówka"),
-			_("Okno najechane zamykanie"), _("Okno wciśnięte zamykanie"), _("Okno elementy ostrzegające"),
+			_(L"Okno tło"), _(L"Okno nieaktywne tło"), _("Okno tekst"), _("Okno nieaktywny tekst"),
+			_("Okno obramowanie"), _("Okno obramowanie nieaktywne"), _(L"Okno tło obramowania"),
+			_(L"Okno tło obramowania nieaktywne"), _(L"Okno tekst nagłówka"), _(L"Okno tekst nagłówka nieaktywny"),
+			_(L"Okno najechany element nagłówka"), _(L"Okno wciśnięty element nagłówka"),
+			_("Okno najechane zamykanie"), _(L"Okno wciśnięte zamykanie"), _(L"Okno elementy ostrzegające"),
 			//subtitles
-			_("Napisy tekst"), _("Napisy tło"), _("Napisy tło dialogów"), _("Napisy tło komentarzy"),
-			_("Napisy zaznaczenia (przezroczystość)"), _("Napisy linijki widoczne na wideo"),
-			_("Napisy kolidujące linie"), _("Napisy obramowanie linijki"), _("Napisy obramowanie aktywnej linijki"),
-			_("Napisy nagłówek"), _("Napisy tekst nagłówka"),
+			_("Napisy tekst"), _(L"Napisy tło"), _(L"Napisy tło dialogów"), _(L"Napisy tło komentarzy"),
+			_(L"Napisy zaznaczenia (przezroczystość)"), _("Napisy linijki widoczne na wideo"),
+			_(L"Napisy kolidujące linie"), _("Napisy obramowanie linijki"), _("Napisy obramowanie aktywnej linijki"),
+			_(L"Napisy nagłówek"), _(L"Napisy tekst nagłówka"),
 			_("Napisy etykieta"), _("Napisy etykieta zmodyfikowanej linii"), _("Napisy etykieta zapisanej linii"),
-			_("Napisy etykieta niepewnej linii"), _("Napisy tło błędów pisowni"), _("Napisy obramowanie porównania"),
-			_("Napisy tło porównania brak zgodności"), _("Napisy tło porównania zgodność"), 
-			_("Napisy tło komentarza por. brak zgodności"), _("Napisy tło komentarza por. zgodność"),
+			_("Napisy etykieta niepewnej linii"), _(L"Napisy tło błędów pisowni"), _(L"Napisy obramowanie porównania"),
+			_(L"Napisy tło porównania brak zgodności"), _(L"Napisy tło porównania zgodność"),
+			_(L"Napisy tło komentarza por. brak zgodności"), _(L"Napisy tło komentarza por. zgodność"),
 			//editor
-			_("Edytor tekst"), _("Edytor nazwy tagów"), _("Edytor wartości tagów"),
-			_("Edytor nawiasy klamrowe"), _("Edytor operatory tagów"), _("Edytor dzielenie linii i rysunki ASS"), _("Edytor zmienne template"),
-			_("Edytor znaczniki kodu template"), _("Edytor funkcje template"), _("Edytor słowa kluczowe template"), 
-			_("Edytor ciągi znaków template"), _("Edytor zaznaczenie znalezionej frazy"), _("Edytor tło nawiasów"), 
-			_("Edytor tło"), _("Edytor zaznaczenie"), _("Edytor zaznaczenie w nieaktywnym oknie"),
-			_("Edytor obramowanie"), _("Edytor obramowanie aktywnego okna"), _("Edytor błędy pisowni"),
+			_("Edytor tekst"), _(L"Edytor nazwy tagów"), _(L"Edytor wartości tagów"),
+			_("Edytor nawiasy klamrowe"), _(L"Edytor operatory tagów"), _("Edytor dzielenie linii i rysunki ASS"), _("Edytor zmienne template"),
+			_("Edytor znaczniki kodu template"), _("Edytor funkcje template"), _(L"Edytor słowa kluczowe template"),
+			_(L"Edytor ciągi znaków template"), _("Edytor zaznaczenie znalezionej frazy"), _(L"Edytor tło nawiasów"),
+			_(L"Edytor tło"), _("Edytor zaznaczenie"), _("Edytor zaznaczenie w nieaktywnym oknie"),
+			_("Edytor obramowanie"), _("Edytor obramowanie aktywnego okna"), _(L"Edytor błędy pisowni"),
 			//audio
-			_("Audio tło"), _("Audio znacznik start"), _("Audio znacznik koniec"), _("Audio znacznik przesuwania czasów"),
+			_(L"Audio tło"), _("Audio znacznik start"), _("Audio znacznik koniec"), _(L"Audio znacznik przesuwania czasów"),
 			_("Audio znaczniki nieaktywnej linijki"), _("Audio kursor"), _("Audio znaczniki sekund"), _("Audio klatki kluczowe"),
 			_("Audio znaczniki sylab"), _("Audio tekst sylab"), _("Audio zaznaczenie"),
-			_("Audio zaznaczenie po modyfikacji"), _("Audio tło nieaktywnych linijek"), _("Audio wykres falowy"),
+			_("Audio zaznaczenie po modyfikacji"), _(L"Audio tło nieaktywnych linijek"), _("Audio wykres falowy"),
 			_("Audio nieaktywny wykres falowy"), _("Audio zmodyfikowany wykres falowy"), _("Audio zaznaczony wykres falowy"),
-			_("Audio tło spektrum"), _("Audio echo spektrum"), _("Audio spektrum"),
+			_(L"Audio tło spektrum"), _("Audio echo spektrum"), _("Audio spektrum"),
 			//controls
-			_("Pole tekstowe tło"), _("Pole tekstowe obramowanie"),
+			_(L"Pole tekstowe tło"), _("Pole tekstowe obramowanie"),
 			_("Pole tekstowe obramowanie aktywnego okna"), _("Pole tekstowe zaznaczenie"),
 			_("Pole tekstowe zaznaczenie w nieaktywnym oknie"),
-			_("Przycisk i lista tło"), _("Przycisk i lista tło po najechaniu"),
-			_("Przycisk i lista tło po wciśnięciu"), _("Przycisk i lista tło aktywnego"),
+			_(L"Przycisk i lista tło"), _(L"Przycisk i lista tło po najechaniu"),
+			_(L"Przycisk i lista tło po wciśnięciu"), _(L"Przycisk i lista tło aktywnego"),
 			_("Przycisk i lista obramowanie"), _("Przycisk i lista obramowanie po najechaniu"),
-			_("Przycisk i lista obramowanie po wciśnięciu"), _("Przycisk i lista obramowanie aktywnego"),
-			_("Przycisk i lista obramowanie nieaktywne"), _("Przełącznik tło włączonego"),
-			_("Przełącznik obramowanie włączonego"), _("Pasek przewijania tło"), _("Pasek przewijania suwak"),
-			_("Pasek przewijania suwak po najechaniu"), _("Pasek przewijania suwak po wciśnięciu"),
-			_("Ramka z opisem obramowanie"), _("Lista statyczna obramowanie"), _("Lista statyczna tło"),
-			_("Lista statyczna zaznaczenie"), _("Lista statyczna tło nagłówka"), _("Lista statyczna tekst nagłówka"),
+			_(L"Przycisk i lista obramowanie po wciśnięciu"), _("Przycisk i lista obramowanie aktywnego"),
+			_("Przycisk i lista obramowanie nieaktywne"), _(L"Przełącznik tło włączonego"),
+			_(L"Przełącznik obramowanie włączonego"), _(L"Pasek przewijania tło"), _("Pasek przewijania suwak"),
+			_("Pasek przewijania suwak po najechaniu"), _(L"Pasek przewijania suwak po wciśnięciu"),
+			_("Ramka z opisem obramowanie"), _("Lista statyczna obramowanie"), _(L"Lista statyczna tło"),
+			_("Lista statyczna zaznaczenie"), _(L"Lista statyczna tło nagłówka"), _(L"Lista statyczna tekst nagłówka"),
 			_("Pasek statusu obramowanie"),
 			//menu bar
-			_("Pasek menu tło 1"), _("Pasek menu tło 2"), _("Pasek menu obramowanie zaznaczenia"), 
-			_("Pasek menu najechane tło zaznaczenia"), _("Pasek menu kliknięte tło zaznaczenia"), 
-			_("Menu tło"), _("Menu obramowanie zaznaczenia"), _("Menu tło zaznaczenia"),
+			_(L"Pasek menu tło 1"), _(L"Pasek menu tło 2"), _("Pasek menu obramowanie zaznaczenia"),
+			_(L"Pasek menu najechane tło zaznaczenia"), _(L"Pasek menu kliknięte tło zaznaczenia"),
+			_(L"Menu tło"), _("Menu obramowanie zaznaczenia"), _(L"Menu tło zaznaczenia"),
 			//tab bar
-			_("Pasek zakładek tło 1"), _("Pasek zakładek tło 2"), _("Zakładki obramowanie aktywnej"),
-			_("Zakładki obramowanie nieaktywnej"), _("Zakładki tło aktywnej"), _("Zakładki tło nieaktywnej"),
-			_("Zakładki tło nieaktywnej po najechaniu"), _("Zakładki tło drugiej widocznej zakładki"),
-			_("Zakładki tekst aktywnej"), _("Zakładki tekst nieaktywnej"), _("Zakładki zamknięcie po najechaniu"),
-			_("Pasek zakładek strzałka"), _("Pasek zakładek strzałka tło"),
-			_("Pasek zakładek strzałka tło po najechaniu"),
+			_(L"Pasek zakładek tło 1"), _(L"Pasek zakładek tło 2"), _(L"Zakładki obramowanie aktywnej"),
+			_(L"Zakładki obramowanie nieaktywnej"), _(L"Zakładki tło aktywnej"), _(L"Zakładki tło nieaktywnej"),
+			_(L"Zakładki tło nieaktywnej po najechaniu"), _(L"Zakładki tło drugiej widocznej zakładki"),
+			_(L"Zakładki tekst aktywnej"), _(L"Zakładki tekst nieaktywnej"), _(L"Zakładki zamknięcie po najechaniu"),
+			_(L"Pasek zakładek strzałka"), _(L"Pasek zakładek strzałka tło"),
+			_(L"Pasek zakładek strzałka tło po najechaniu"),
 			//slider
-			_("Suwak ścieżka tło"), _("Suwak ścieżka obramowanie"), _("Suwak obramowanie"),
-			_("Suwak obramowanie po najechaniu"), _("Suwak obramowanie po wciśnięciu"), _("Suwak tło"),
-			_("Suwak tło po najechaniu"), _("Suwak tło po wciśnięciu"),
+			_(L"Suwak ścieżka tło"), _(L"Suwak ścieżka obramowanie"), _("Suwak obramowanie"),
+			_("Suwak obramowanie po najechaniu"), _(L"Suwak obramowanie po wciśnięciu"), _(L"Suwak tło"),
+			_(L"Suwak tło po najechaniu"), _(L"Suwak tło po wciśnięciu"),
 			//miscellanous
-			_("Linia zmiany rozdzielczości kropki"), _("Wynik szukania czcionka nazwy pliku"), _("Wynik szukania tło nazwy pliku"),
-			_("Wynik szukania czcionka znalezionej frazy"), _("Wynik szukania tło znalezionej frazy"),
+			_(L"Linia zmiany rozdzielczości kropki"), _("Wynik szukania czcionka nazwy pliku"), _(L"Wynik szukania tło nazwy pliku"),
+			_("Wynik szukania czcionka znalezionej frazy"), _(L"Wynik szukania tło znalezionej frazy"),
 			//styles preview
-			_("Pierwszy kolor podglądu stylów"), _("Drugi kolor podglądu stylów")
+			_(L"Pierwszy kolor podglądu stylów"), _(L"Drugi kolor podglądu stylów")
 		};
 
 
@@ -850,7 +850,7 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 		themeList->SetSelection(themeList->FindString(programTheme));
 		themeList->SetToolTip(_("Nazwa motywu:"));
 		KaiTextCtrl *newTheme = new KaiTextCtrl(Themes, -1, emptyString);
-		newTheme->SetToolTip(_("Nazwa kopiowanego motywu.\nMotywów domyślnych: DarkSentro i LightSentro\nnie można edytować, należy je skopiować."));
+		newTheme->SetToolTip(_(L"Nazwa kopiowanego motywu.\nMotywów domyślnych: DarkSentro i LightSentro\nnie można edytować, należy je skopiować."));
 		MappedButton *copyTheme = new MappedButton(Themes, 14566, _("Kopiuj"));
 
 
@@ -860,7 +860,7 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 		sizer1->Add(copyTheme, 0, wxLEFT | wxTOP | wxBOTTOM, 2);
 		sizer->Add(sizer1, 0, wxALL | wxEXPAND, 2);
 
-		KaiStaticText *warning = new KaiStaticText(Themes, -1, _("UWAGA! Przezroczystość działa tylko na wykresie audio,\npolu tekstowym i polu napisów."));
+		KaiStaticText *warning = new KaiStaticText(Themes, -1, _(L"UWAGA! Przezroczystość działa tylko na wykresie audio,\npolu tekstowym i polu napisów."));
 		sizer->Add(warning, 0, wxALL | wxEXPAND, 2);
 
 		wxString mesureText = _("Pole tekstowe zaznaczenie w nieaktywnym oknie");
@@ -964,7 +964,7 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 
 		wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 		KaiStaticText *warning = new KaiStaticText(Assocs, -1, 
-			_("UWAGA! Działanie na każdym Windowsie jest inne.\nPrzykładowo na Windows7 WMP zablokował\nmożliwość zmiany skojarzeń wideo."));
+			_(L"UWAGA! Działanie na każdym Windowsie jest inne.\nPrzykładowo na Windows7 WMP zablokował\nmożliwość zmiany skojarzeń wideo."));
 		sizer->Add(warning, 0, wxEXPAND | wxALL, 4);
 		KaiListCtrl *CheckListBox = new KaiListCtrl(Assocs, -1, numExtensions, extensionsDesc);
 		for (int i = 0; i < numExtensions; i++){
@@ -1007,11 +1007,11 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 	OptionsTree->AddPage(AudioMain, _("Audio"));
 	OptionsTree->AddSubPage(AudioSecond, _("Zaawansowane"));
 	OptionsTree->AddPage(Themes, _("Motywy"));
-	OptionsTree->AddPage(Hotkeyss, _("Skróty klawiszowe"));
+	OptionsTree->AddPage(Hotkeyss, _(L"Skróty klawiszowe"));
 #ifdef _WIN32
 	OptionsTree->AddPage(Assocs, _("Skojarzenia"));
 #endif
-	OptionsTree->AddPage(SubsProps, _("Właściwości napisów"));
+	OptionsTree->AddPage(SubsProps, _(L"Właściwości napisów"));
 	OptionsTree->Fit();
 
 	//adding buttons
@@ -1020,7 +1020,7 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 	okok = new MappedButton(this, wxID_OK, L"OK");
 	MappedButton *oknow = new MappedButton(this, ID_BCOMMIT, _("Zastosuj"));
 	MappedButton *cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
-	MappedButton *resetDefaults = new MappedButton(this, ID_RESET_DEFAULTS, _("Ustaw domyślne"));
+	MappedButton *resetDefaults = new MappedButton(this, ID_RESET_DEFAULTS, _(L"Ustaw domyślne"));
 
 	ButtonsSizer->Add(okok, 1, wxRIGHT, 2);
 	ButtonsSizer->Add(oknow, 1, wxRIGHT, 2);
