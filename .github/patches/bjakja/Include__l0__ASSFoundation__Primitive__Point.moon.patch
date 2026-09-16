@@ -1,0 +1,17 @@
+# Kainote ships a modified version of this file (upstream: TypesettingTools/ASSFoundation l0/ASSFoundation/Primitive/Point.moon).
+# Applied by .github/scripts/package.py; see .github/patches/README.md.
+# Base: 8fbb4f4261ef from runtime-assets.json.
+
+--- a/Automation/automation/Include/l0/ASSFoundation/Primitive/Point.moon
++++ b/Automation/automation/Include/l0/ASSFoundation/Primitive/Point.moon
+@@ -25,9 +25,7 @@
+ 
+   Point.getTagParams = (precision = @__tag.precision) =>
+     x, y = @x, @y
+-    if @__tag.mod
+-      x %= @__tag.mod
+-      y %= @__tag.mod
++    x, y %= @__tag.mod if @__tag.mod
+ 
+     return round(x, precision), round(y, precision)
+ 

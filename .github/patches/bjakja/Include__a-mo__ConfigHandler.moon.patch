@@ -1,0 +1,22 @@
+# Kainote ships a modified version of this file (upstream: TypesettingTools/Aegisub-Motion src/ConfigHandler.moon).
+# Applied by .github/scripts/package.py; see .github/patches/README.md.
+# Base: c40633b30976 from runtime-assets.json.
+
+--- a/Automation/automation/Include/a-mo/ConfigHandler.moon
++++ b/Automation/automation/Include/a-mo/ConfigHandler.moon
+@@ -1,5 +1,5 @@
+ local json, log
+-version = '##__CONFIGHANDLER_VERSION__##'
++version = '1.1.4'
+ 
+ haveDepCtrl, DependencyControl = pcall require, 'l0.DependencyControl'
+ 
+@@ -14,7 +14,7 @@
+ 		feed: 'https://raw.githubusercontent.com/TypesettingTools/Aegisub-Motion/DepCtrl/DependencyControl.json'
+ 		{
+ 			{ 'json' }
+-			{ 'a-mo.Log', version: '##__LOG_VERSION__##' }
++			{ 'a-mo.Log', version: '1.0.0' }
+ 		}
+ 	}
+ 	json, log = version\requireModules!

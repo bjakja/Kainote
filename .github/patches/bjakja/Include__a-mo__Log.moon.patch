@@ -1,0 +1,13 @@
+# Kainote ships a modified version of this file (upstream: TypesettingTools/Aegisub-Motion src/Log.moon).
+# Applied by .github/scripts/package.py; see .github/patches/README.md.
+# Base: 8a37a451c9ad from runtime-assets.json.
+
+--- a/Automation/automation/Include/a-mo/Log.moon
++++ b/Automation/automation/Include/a-mo/Log.moon
+@@ -1,5 +1,5 @@
+ return {
+-	version: "##__LOG_VERSION__##"
++	version: "1.0.0"
+ 
+ 	debug: (...) ->
+ 		aegisub.log 4, ...

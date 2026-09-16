@@ -1,0 +1,22 @@
+# Kainote ships a modified version of this file (upstream: TypesettingTools/Aegisub-Motion src/ShakeShapeHandler.moon).
+# Applied by .github/scripts/package.py; see .github/patches/README.md.
+# Base: ee982cba49ce from runtime-assets.json.
+
+--- a/Automation/automation/Include/a-mo/ShakeShapeHandler.moon
++++ b/Automation/automation/Include/a-mo/ShakeShapeHandler.moon
+@@ -1,5 +1,5 @@
+ local log
+-version = '##__SHAKESHAPEHANDLER_VERSION__##'
++version = '1.0.2'
+ 
+ haveDepCtrl, DependencyControl = pcall require, 'l0.DependencyControl'
+ 
+@@ -13,7 +13,7 @@
+ 		moduleName: 'a-mo.ShakeShapeHandler'
+ 		feed: 'https://raw.githubusercontent.com/TypesettingTools/Aegisub-Motion/DepCtrl/DependencyControl.json'
+ 		{
+-			{ 'a-mo.Log',  version: '##__LOG_VERSION__##' }
++			{ 'a-mo.Log',  version: '1.0.0' }
+ 		}
+ 	}
+ 	log = version\requireModules!

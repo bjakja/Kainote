@@ -1,0 +1,74 @@
+# Kainote ships a modified version of this file (upstream: TypesettingTools/Aegisub automation/include/aegisub/lfs.moon).
+# Applied by .github/scripts/package.py; see .github/patches/README.md.
+# Base: e3c60514cd1b from runtime-assets.json.
+
+--- a/Automation/automation/Include/aegisub/lfs.moon
++++ b/Automation/automation/Include/aegisub/lfs.moon
+@@ -16,21 +16,29 @@
+ 
+ impl = require 'aegisub.__lfs_impl'
+ 
+-check = require 'aegisub.internal.argcheck'
++check = require 'aegisub.argcheck'
+ ffi = require 'ffi'
+-ffi_util = require 'aegisub.internal.ffi'
++ffi_util = require 'aegisub.ffi'
+ 
+-for k, v in pairs impl
+-  impl[k] = ffi_util.err_arg_to_multiple_return v
++--for k, v in pairs impl
++impl.get_mode = ffi_util.err_arg_to_multiple_return impl.get_mode
++impl.get_mtime = ffi_util.err_arg_to_multiple_return impl.get_mtime
++impl.get_size = ffi_util.err_arg_to_multiple_return impl.get_size
++impl.dir_next = ffi_util.err_arg_to_multiple_return impl.dir_next
++impl.chdir = ffi_util.err_arg_to_multiple_return impl.chdir
++impl.currentdir = ffi_util.err_arg_to_multiple_return impl.currentdir
++impl.mkdir = ffi_util.err_arg_to_multiple_return impl.mkdir
++impl.rmdir = ffi_util.err_arg_to_multiple_return impl.rmdir
++impl.touch = ffi_util.err_arg_to_multiple_return impl.touch
++impl.dir_new = ffi_util.err_arg_to_multiple_return impl.dir_new
+ 
+ string_ret = (f) -> (...) ->
+   res, err = f ...
+   ffi_util.string(res), err
+ 
+--- Convert the C bool returns to lfs's true-or-nil,err convention
+-bool_ret = (f) -> (...) ->
++number_ret = (f) -> (...) ->
+   res, err = f ...
+-  if res then true else nil, err
++  tonumber(res), err
+ 
+ attributes = check'string ?string' (path, field) ->
+   switch field
+@@ -57,7 +65,7 @@
+ 
+ class dir_iter
+   new: (iter) =>
+-    @iter = ffi.gc iter, -> impl.dir_free iter
++    @iter = ffi.gc iter, impl.dir_free
+   close: =>
+     impl.dir_close @iter
+   next: =>
+@@ -68,16 +76,16 @@
+ dir = check'string' (path) ->
+   obj, err = impl.dir_new path
+   if err
+-    error err, 2
++    error 2, err
+   iter = dir_iter obj
+   iter.next, iter
+ 
+ return {
+   :attributes
+-  chdir: check'string' bool_ret impl.chdir
++  chdir: check'string' number_ret impl.chdir
+   currentdir: check'' string_ret impl.currentdir
+   :dir
+-  mkdir: check'string' bool_ret impl.mkdir
+-  rmdir: check'string'bool_ret impl.rmdir
+-  touch: check'string'bool_ret impl.touch
++  mkdir: check'string' number_ret impl.mkdir
++  rmdir: check'string'number_ret impl.rmdir
++  touch: check'string'number_ret impl.touch
+ }

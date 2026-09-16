@@ -1,0 +1,108 @@
+# Kainote ships a modified version of this file (upstream: TypesettingTools/Aegisub-Motion src/LineCollection.moon).
+# Applied by .github/scripts/package.py; see .github/patches/README.md.
+# Base: 1a9d284a5f21 from runtime-assets.json.
+
+--- a/Automation/automation/Include/a-mo/LineCollection.moon
++++ b/Automation/automation/Include/a-mo/LineCollection.moon
+@@ -1,5 +1,5 @@
+ local log, Line
+-version = '##__LINECOLLECTION_VERSION__##'
++version = '1.3.0'
+ 
+ haveDepCtrl, DependencyControl = pcall require, 'l0.DependencyControl'
+ 
+@@ -13,8 +13,8 @@
+ 		moduleName: 'a-mo.LineCollection'
+ 		feed: 'https://raw.githubusercontent.com/TypesettingTools/Aegisub-Motion/DepCtrl/DependencyControl.json'
+ 		{
+-			{ 'a-mo.Log',  version: '##__LOG_VERSION__##'  }
+-			{ 'a-mo.Line', version: '##__LINE_VERSION__##' }
++			{ 'a-mo.Log',  version: '1.0.0'  }
++			{ 'a-mo.Line', version: '1.5.3' }
+ 		}
+ 	}
+ 	log, Line = version\requireModules!
+@@ -30,8 +30,8 @@
+ 
+ 	@fromAllLines: ( sub, validationCb, selectLines ) =>
+ 		sel = { }
+-		for i = 1, #sub
+-			table.insert( sel, i ) if sub[i].class == "dialogue"
++		for i = 1, #@sub
++			table.insert( sel, i ) if @sub[i].class == "dialogue"
+ 		@ sub, sel, validationCb, selectLines
+ 
+ 	new: ( @sub, sel, validationCb, selectLines = true ) =>
+@@ -46,11 +46,9 @@
+ 				else
+ 					metaIndex[index]
+ 
+-		@generateMetaAndStyles!
+-
+ 		if type( sel ) == "table" and #sel > 0
+ 			@collectLines sel, validationCb, selectLines
+-			if #@lines > 0 and frameFromMs 0
++			if frameFromMs 0
+ 				@getFrameInfo!
+ 		else
+ 			for i = #@sub, 1, -1
+@@ -108,30 +106,23 @@
+ 			elseif line.class == "dialogue"
+ 				break
+ 
+-		x, y = tonumber( @meta.PlayResX ) or 0, tonumber( @meta.PlayResY ) or 0
+-		-- Match Aegisub's fallback for omitted script resolution values.
+-		if x == 0 and y == 0
+-			x, y = 384, 288
+-		elseif x == 0
+-			x = y == 1024 and 1280 or math.floor( y*4/3 )
+-		elseif y == 0
+-			y = x == 1280 and 1024 or math.floor( x*3/4 )
+-		@meta.PlayResX, @meta.PlayResY = x, y
+-
+ 		unless next @styles
+ 			log.windowError "No styles could be found and I guarantee that's gonna break something."
+ 
+ 		@hasMetaStyles = true
+ 
+ 	collectLines: ( sel, validationCb = (( line ) -> return not line.comment), selectLines = true ) =>
++		unless @hasMetaStyles
++			@generateMetaAndStyles!
++
+ 		dialogueStart = 0
+ 		for x = 1, #@sub
+ 			if @sub[x].class == "dialogue"
+ 				dialogueStart = x - 1 -- start line of dialogue subs
+ 				break
+ 
+-		@startTime  = nil
+-		@endTime    = nil
++		@startTime  = @sub[sel[1]].start_time
++		@endTime    = @sub[sel[1]].end_time
+ 		@lastLineNumber = 0
+ 
+ 		for i = #sel, 1, -1
+@@ -146,20 +137,15 @@
+ 					.humanizedNumber = .number - dialogueStart
+ 					.styleRef = @styles[.style]
+ 
+-					if @startTime
+-						if .start_time < @startTime
+-							@startTime = .start_time
+-
+-						if .end_time > @endTime
+-							@endTime = .end_time
+-					else
++					if .start_time < @startTime
+ 						@startTime = .start_time
++
++					if .end_time > @endTime
+ 						@endTime = .end_time
+ 
+ 					table.insert @lines, line
+ 
+ 	getFrameInfo: =>
+-		return if #@lines == 0
+ 
+ 		for line in *@lines
+ 			line.startFrame = frameFromMs line.start_time

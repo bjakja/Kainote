@@ -1,0 +1,22 @@
+# Kainote ships a modified version of this file (upstream: TypesettingTools/Aegisub-Motion src/DataHandler.moon).
+# Applied by .github/scripts/package.py; see .github/patches/README.md.
+# Base: 2b75c88b3fe7 from runtime-assets.json.
+
+--- a/Automation/automation/Include/a-mo/DataHandler.moon
++++ b/Automation/automation/Include/a-mo/DataHandler.moon
+@@ -1,5 +1,5 @@
+ local log
+-version = '##__DATAHANDLER_VERSION__##'
++version = '1.0.5'
+ 
+ haveDepCtrl, DependencyControl = pcall require, 'l0.DependencyControl'
+ 
+@@ -13,7 +13,7 @@
+ 		moduleName: 'a-mo.DataHandler'
+ 		feed: 'https://raw.githubusercontent.com/TypesettingTools/Aegisub-Motion/DepCtrl/DependencyControl.json'
+ 		{
+-			{ 'a-mo.Log', version: '##__LOG_VERSION__##' }
++			{ 'a-mo.Log', version: '1.0.0' }
+ 		}
+ 	}
+ 	log = version\requireModules!
