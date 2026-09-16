@@ -1,0 +1,19 @@
+Subject: [PATCH 2/2] Do not seek during init when seekmode is linear no-rewind
+
+With SeekMode < 0 the source must never seek, but initialisation still ran the
+INITIALIZE_SOURCE stage, which does. Go straight to INITIALIZE instead.
+
+--- a/src/core/videosource.cpp
++++ b/src/core/videosource.cpp
+@@ -455,6 +455,11 @@
+             }
+         }
+ 
++        // If we are in linear no-rewind mode, don't attempt to seek during init.
++        // Bypass the INITIALIZE_SOURCE stage.
++        if (SeekMode < 0)
++            Stage = DecodeStage::INITIALIZE;
++
+         // Cannot "output" without doing all other initialization
+         // This is the additional mess required for seekmode=-1 to work in a reasonable way
+         OutputFrame(DecodeFrame);
