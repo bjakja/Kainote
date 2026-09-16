@@ -1,0 +1,1443 @@
+# Kainote ships a modified version of this file: this file is not published in the upstream repositories the build fetches, so the released copy is the only source.
+# tier: carried
+# Regenerate with tools in .github/patches/README.md; applied by .github/scripts/package.py.
+
+
+--- a/Automation/automation/Include/bakukara.lua
++++ b/Automation/automation/Include/bakukara.lua
+@@ -0,0 +1,1435 @@
++﻿--[[
++	Copyright (c) 2009 - 2021 Marcin Drob (Bakura)
++
++	Permission is hereby granted, free of charge, to any person obtaining a copy
++	of this software and associated documentation files (the "Software"), to deal
++	in the Software without restriction, including without limitation the rights
++	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++	copies of the Software, and to permit persons to whom the Software is
++	furnished to do so, subject to the following conditions:
++
++	The above copyright notice and this permission notice shall be included in
++	all copies or substantial portions of the Software.
++
++	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
++	THE SOFTWARE.
++	
++	library for making karaoke and text transiton
++]]
++
++include("utils.lua")
++include("unicode.lua")
++include("karahelper.lua")
++version="7.9.1"
++modified="29 04 2021"
++
++
++lang="pl"
++
++lng=lang=="pl" and {"Bakukara, wersja skryptu ",".\nOstatnio modyfikowany ","Efekt przejścia pl","-- Zaznaczone linie (%d) --","Znak podziału tekstu pl","Kanji w pionie?",
++"Zmieniać czas dzielonych linijek?","W przypadku tekstu pl ta opcja jest nieaktywna, bo podział jest wytworzony przez skrypt.",
++"","\n \nPrzywracanie podziału na k","Styl przywracanego podziału","Tworzenie Efektu Karaoke (%d/%d)...",
++"Obrabiasz romaji lub kanji i linijka "," ze stylem "," nie zawiera podziału na k","Wybierz ==","Brak współrzędnych krzywej, albo są w złym formacie, obowiązują tylko rysunki ass i tabele z współrzędnymi jednej krzywej Beziera.",
++"Czasy nie mają przypisanych tagów","Błąd, clipy nie mają po tyle samo wierszy.","błąd, brak wartości koloru","\nRozdzielczość pliku ass wynosi: ",
++",\na rozdzielczość wideo wynosi: ","\npopraw to, by nie mieć później problemów.",",\n lecz brak wczytanego wideo","Zrób efekt karaoke","Anuluj",
++"Błąd skryptu o nazwie: ","Efekt karaoke","Styl ","== Wszystkie style ==","= Zaznaczone linijki ==","Przywróć podział na k","Przywrócenie podziału na k","Tekst [%s] nie mieści się na całym ekranie, \npodziel linijkę \\N i zapuść ponownie skrypt\n"}
++or
++{"Bakukara, version of script ",".\nLast modified ","Translation transition","-- Selected Lines (%d) --","Character of translation particle","Vertical kanji?",
++"Change time of wrapped lines?","In case of translation this options is inactive bacause k particle is made by script.",
++"","\n \nRestoring k particle","Style of restoring k particle","Making karaoke effect (%d/%d)...",
++"You make romaji or kanji and line "," with style "," dont have k particle","Select ==","Missing points of curve or they are in bad format, function use only ass drawings or tables with points of on Bezier curve.",
++"Times don't have ascribed tags","Error, clips don't have the same elements.","Error, no color value","\nResolution of ass file is: ",
++",\nand resolution of video is: ","\nuse the same resolution or effect can break.",",\n but video isn't loaded","Make karaoke effect","cancel",
++"Error of script: ","Karaoke effect","Style ","== All styles ==","= Selected lines ==","Restore k particle","Restored k particle","Text [%s] is wider then screen, \nsplit line by \\N and apply script again\n"}
++
++conf = {
++[1]={
++		class = "label";
++		x = 0; 
++		y = 0; 
++		height = 1; 
++		width = 1;
++		label = lng[1]..version..lng[2]..modified.."\n " ;
++		},
++[2]={
++		class = "label";
++		x = 0; 
++		y = 1; 
++		height = 1; 
++		width = 1;
++		label = "Karaoke romanji";
++		},		
++[3] = { name = "styleR";
++        class = "dropdown";  
++		x = 1; 
++		y = 1; 
++		height = 1; 
++		width = 3; 
++		items = {}; 
++		value = nil },
++
++[10]={
++		class = "label";
++		x = 0; 
++		y = 3; 
++		height = 1; 
++		width = 1;
++		label = "Karaoke kanji";
++		},		
++[4] = { name = "styleK";
++        class = "dropdown";  
++		x = 1; 
++		y = 3; 
++		height = 1; 
++		width = 3; 
++		items = {}; 
++		value = nil },
++[9]={
++		class = "label";
++		x = 0; 
++		y = 4; 
++		height = 1; 
++		width = 1;
++		label = lng[3];
++		},		
++[5] = { name = "stylePL";
++        class = "dropdown";  
++		x = 1; 
++		y = 4; 
++		height = 1; 
++		width = 3; 
++		items = {}; 
++		value = nil },	
++[6] = { name = "zp";
++        class = "dropdown";  
++		x = 1; 
++		y = 5; 
++		height = 1; 
++		width = 3; 
++		items = {"-","|","*","/"}; 
++		value = "|" },
++[11]={
++		class = "label";
++		x = 0; 
++		y = 5; 
++		height = 1; 
++		width = 1;
++		label = lng[5];
++		},		
++[7] = { name = "kwp";
++        class = "checkbox";
++        label =	lng[6];	
++		x = 0; 
++		y = 2; 
++		height = 1; 
++		width = 3;  
++		value = true; 
++		},
++[8] = { name = "sdl";
++        class = "checkbox";
++        label =	lng[7];	
++		x = 0; 
++		y = 6; 
++		hint=lng[8];
++		height = 1; 
++		width = 2;  
++		value = true; 
++		}		
++		}
++		
++
++out={}
++
++local numOfWraps = 0
++
++function wynik()
++lc = copy_line(line)
++table.insert(out,lc)
++return lc
++end
++
++
++--skl3={["fry"]="\\fry", ["frx"]="\\frx", ["alpha&"]="\\alpha", ["be"]="\\be", ["blur"]="\\blur", ["xbord"]="\\xbord", ["ybord"]="\\ybord", ["xshad"]="\\xshad", ["yshad"]="\\yshad"}
++skl1={fn="fontname",fscx="scale_x",fscy="scale_y",fs="fontsize",bord="outline",b="bold",i="italic",s="strikeout",u="underline",frz="angle",fr="angle",fsp="spacing",ob="borderstyle"}
++skl2={shad="shadow",["1c&"]="color1",["2c&"]="color2",["3c&"]="color3",["4c&"]="color4",["1a&"]="color1",["2a&"]="color2",["3a&"]="color3",["4a&"]="color4"}
++skl4={an="align",fe="encoding",fn="fontname",fscx="scale_x",fscy="scale_y",fs="fontsize",bord="outline",b="bold",i="italic",s="strikeout",u="underline",frz="angle",fr="angle",fsp="spacing",shad="shadow",["c&H"]="color1",["1c&"]="color1",["2c&"]="color2",["3c&"]="color3",["4c&"]="color4",["a&H"]="color1",["1a&"]="color1",["2a&"]="color2",["3a&"]="color3",["4a&"]="color4",ob="borderstyle"}
++
++
++function karaproc(subs, styl, met, konf, selected)
++	
++	
++	Rname, Rstyl = string.headtail(config.styleR)
++	Kname, Kstyl = string.headtail(config.styleK)
++	PLname, PLstyl = string.headtail(config.stylePL)
++	romSelections = Rname == "--"
++	kanjiSelections = Kname == "--"
++	plSelections = PLname == "--"
++	
++	checkSelections = romSelections or kanjiSelections or plSelections
++	
++	local isFirst = true
++	local E,list="",""
++	local i, co = met.fdial, 1
++	ai, msubs=1, #subs-met.fdial
++	styzm={}
++	local selcounter = 1
++	local isSelected = false
++	local orgI = i
++
++	while i <= #subs do
++	aegisub.progress.task(string.format(lng[12], ai, msubs))
++	aegisub.progress.set((ai-1)/msubs*100)
++	if aegisub.progress.is_cancelled() then break end
++		
++	line = subs[i]
++	if checkSelections and orgI == selected[selcounter] then
++		if selcounter > #selected then
++			checkSelections = false
++			--aegisub.log("end counting %d", #selected)
++		end
++		--aegisub.log("sel counter %d next %d, %d, %d\n" .. line.text .. "\n", orgI, #selected, selected[selcounter], selcounter)
++		selcounter = selcounter + 1
++		isSelected = true
++	else
++		isSelected = false
++	end
++	orgI = orgI + 1
++
++	if line.class == "dialogue" and not line.comment and (isSelected or (line.style==Rstyl or line.style==Kstyl or line.style==PLstyl)) then
++	if list~=line.style then
++		pod = i
++		list = line.style
++	end
++
++	--block lines copied to make wraps
++	if numOfWraps < 1 then
++		line.comment = true
++		subs.insert(pod, line)
++		line.comment = false
++		i = i + 1
++		pod = pod + 1
++	else
++		numOfWraps = numOfWraps - 1
++	end
++
++	function cstyle(name,chan)
++	if not styzm[name] then
++	nestyle=copy_line(styl[line.style])
++	nestyle.i=styl[#styl].i+1
++	nestyle.name=name
++	for chant in string.gmatch(chan.."\\", "\\([^\\]*)") do
++	if string.sub(chant,1,2)=="fn" then 
++	nestyle["fontname"] = string.sub(chant,3) 
++	elseif chant:match("\\&(.-)$")~=nil then 
++	nestyle[skl4[string.sub(chant,1,3)]]=string.len(chant:match("\\&(.-)$"))>4 and "&"..chant:match("\\&(.-)$") or "&"..chant:match("\\&(.-)\\&")..styl[line.style][skl4[string.sub(chant,1,3)]]:match("\\&H[0-9A-Fa-f][0-9A-Fa-f](.-)$")
++	elseif chant:len()==2 then 
++	nestyle[skl4[string.sub(chant,1,1)]]= (string.sub(chant,2,2)==0) and false or true 
++	elseif skl4[string.gsub(chant,"[0-9]","")] then
++	nestyle[skl4[string.gsub(chant,"[0-9]","")]]=string.gsub(chant,"[a-z]","") 
++	end 
++	end
++
++	if styl[nestyle.name] then
++	subs[styl[nestyle.name].i]=nestyle
++	else
++	sf,st,di=subs.lengths()
++	subs.insert(sf+st+1, nestyle)
++	i=i+1
++	--pod=pod+1
++	met.fdial=met.fdial+1
++	end
++	styzm[name]=1
++	end
++	return name
++	end
++
++
++	if line.style == Rstyl or romSelections then
++	rom=true
++	kan=false
++	PL=false
++	kwpe=false
++	elseif line.style == Kstyl or kanjiSelections then
++	kan=true
++	rom=false
++	PL=false
++	if konf.kwp then kwpe=true else kwpe=false end
++
++	elseif line.style == PLstyl or plSelections then
++	PL=true
++	rom=false
++	kan=false
++	kwpe=false
++	end
++
++	an= line.text:match("\\an([^\\}]*)") or styl[line.style].align
++	orglinetext = line.text
++
++	if PL then
++		
++	--aegisub.debug.out("org "..line.text.."\n")
++	local numofspaces = 0
++	psp = string.match(line.text:lower(), "\\k") and "" or "{}"
++	--aegisub.debug.out("lt4 "..psp.."\n")
++	if psp ~= "" then
++		numofspaces = numofspaces + 1
++	end
++	spacje1=psp..string.gsub(line.text, "\\N(.)", 
++		function (s) 
++		parti="\\N" 
++		if s ~="{" then 
++			parti=parti.."{}"..s 
++			numofspaces = numofspaces + 1
++		else 
++			parti= parti.."{" 
++		end 
++		return parti 
++		end)
++	--aegisub.debug.out("lt2 "..spacje1.."\n")
++	local block = false
++	local getnext = false
++	local linetext = ""
++	
++	for chars in unicode.chars(spacje1) do
++		if chars == "{" then
++			block = true
++		elseif chars == "}" then
++			block = false
++		elseif not block and chars == " " then
++			getnext = true
++		elseif not block and getnext then
++			if chars ~="{" and chars~="\\" then 
++				linetext = linetext.."{}"
++				numofspaces = numofspaces + 1
++			end
++			getnext = false
++		end
++		if not block and chars == config.zp then
++			linetext = linetext.."{}"
++			numofspaces = numofspaces + 1
++		else
++			linetext = linetext .. chars
++		end
++		
++	end
++	--spacje=string.gsub(spacje1, " (.)", function (s) parti=" " if s ~="{" and s~="\\" then parti=parti..config.zp..s else parti= parti..s end return parti end)
++	--aegisub.debug.out("lt3 "..spacje.."\n")
++	--linetext, ilp=string.gsub(spacje, "["..config.zp.."]", "{}")
++	srcz=(((line.end_time-line.start_time)/10)/numofspaces)
++	firs=true
++	calt,dzie=math.modf(srcz)
++	--aegisub.debug.out("lt1 "..linetext.."\n")
++
++	line.text=string.gsub(linetext, "{}", function (s) if firs then firs=false return "{\\k"..math.floor(calt+(dzie*numofspaces)).."}" else return "{\\k".. calt .."}" end end)
++	line.text=string.gsub(line.text,"}{","")
++--aegisub.debug.out("lt "..line.text.."\n")
++
++	else
++	if string.match(line.text:lower(), "\\k") == nil then
++	aegisub.debug.out(0, lng[13] .. i - met.fdial .. lng[14] .. line.style .. lng[15])
++	return false
++	end
++	end
++
++	ltxt = string.gsub(line.text, "%{([^{}]*)} ([^{}]+)%{", "%{\\k0} {%1%}%2%{" )
++	line.text = string.gsub(ltxt, "%}([^{}]+) {", "%}%1%{\\k0} {" )
++	if line.style == Kstyl then
++	ltxt = string.gsub(line.text, "%{([^{}]*)}　([^{}]+)%{", "%{\\k0}　{%1%}%2%{" )
++	line.text = string.gsub(ltxt, "%}([^{}]+)　{", "%}%1%{\\k0}　{" )
++	end
++
++	actualOrgI = orgI
++	actualSelCounter = selcounter
++	senek=line.text.."\\N"
++	tbl={}
++	ji=1
++	abj=string.gsub(senek, "(.-)\\N", function (s) tbl[ji] = s:trim() ji=ji+1 end)
++	if #tbl>1 then
++	tdp=""
++	edt=0
++	if not config.sdl or PL then
++	ii=1
++	posit={}
++	posit.ilel=#tbl
++	numOfWraps = posit.ilel - 1
++	else
++		numOfWraps = 0
++	end
++
++	for B=1, #tbl do
++	bfr=string.match(tbl[B]:trim(), "(.*){\\[kK]o?f?0}$") or tbl[B]:trim()
++
++	abk = string.gsub(bfr, "\\[kK]f?o?([^}\\]*)", function (s) edt=edt+s end)
++		
++	if B==1 then
++	lx=copy_line(line)
++	lx.text=bfr
++	if config.sdl and not PL then
++	lx.end_time=line.start_time+(edt*10)
++	end
++	else
++	if string.match(bfr, "^{\\[kK]f?o?([^}\\]*)}%s")~=nil then
++	prevk= prevk+string.match(bfr, "^{\\[kK]f?o?([^}\\]*)}%s")
++	bfr=string.gsub(bfr, "^{([^{]*)", "")
++	end
++	l=copy_line(line)
++	if config.sdl and line.style ~= PLstyl then
++	l.text="{"..tdp..bfr:sub(2)
++	l.start_time=line.start_time+(prevk*10)
++	--l.end_time=line.start_time+(edt*10)
++	else
++	l.text="{\\k"..prevk..tdp.."}"..bfr
++	end
++
++	subs.insert(i+B-1,l)
++	----------- add selection for new line if it uses selections
++	if isSelected then
++		table.insert(selected, actualSelCounter, actualOrgI)
++		actualSelCounter = actualSelCounter + 1
++		actualOrgI = actualOrgI + 1
++		for iii = actualSelCounter, #selected do
++			selected[iii] = selected[iii] + 1
++		end
++	end
++
++	end
++
++	if not config.sdl or PL then
++	if math.floor(an/3.1) == 2 then mnb=(B-1) elseif math.floor(an/3.1) == 1 then mnb=(B-0.5)-(#tbl/2) else  mnb=B-#tbl end
++	posit[B]=mnb
++	end
++	abm=string.gsub(tbl[B], "\\([^Kk])([^\\}]*)", function (s,s1) tdp=tdp.."\\"..s..s1 end)
++	prevk=edt
++	end
++	line = lx
++	end
++
++	tags={}
++	ggg=1
++	ghg=1
++	txtcol=""
++	txtCharNum = ""
++	pre1=string.gsub(line.text, "}{", "")
++	prekstripped=string.gsub(pre1, "\\[kKpm#]([^\\}]*)", "")
++	line.text_kstripped=string.gsub(prekstripped.."{@}", "(.-){([^{}]*)}", 
++	function (s3,s) 
++		txtcol = txtcol .. s3  
++		txtCharNum = txtCharNum .. s3
++		if s~="" and s~="@" then 
++		tags[ghg]={} 
++		tags[ghg].ktag=s 
++		tags[ghg].num=ggg 
++		tags[ghg].charNum=txtCharNum:utflen()
++		tags[ghg].txt=txtcol 
++		--aegisub.log(string.format("charnum %d, %s\n",tags[ghg].charNum, txtCharNum))
++		txtcol="" 
++		ghg=ghg+1 
++		return s3.."{"..s.."}" 
++		elseif s=="@" and ghg>1 then 
++			tags[ghg]={} 
++			tags[ghg].txt=txtcol 
++			tags[ghg].charNum=txtCharNum:utflen()
++			return s3 
++		else 
++			ggg=ggg+1
++			txtCharNum = ""
++			return s3 
++		end 
++		end)
++
++	line.text_stripped=string.gsub(line.text_kstripped, "{([^}]*)}", "")
++
++
++	tottx=0
++	totty=0
++	line.kara={}
++	line.kara= aegisub.parse_karaoke_data(line)
++	myst={}
++	--add={}
++	desfont=0
++	if #tags>0 then
++	--aegisub.debug.out("tags "..tags[1].ktag)
++	T=0
++	totymax=0
++	desmin=100000
++	desmax=0
++	ptxt=""
++	fst=line.style
++	swi=false
++
++	for P=1, #tags do
++
++	nstyle=nil
++	if P<#tags then
++	if string.match(tags[P].ktag.."\\","\\r([^\\]*)") ~=nil then
++	s1=string.match(tags[P].ktag.."\\","\\r([^\\]*)")
++	if styl[s1] then
++	nstyle=table.copy(styl[s1])
++	else
++	nstyle=table.copy(styl[line.style])
++	end
++	ryr=true
++	if not myst[tags[P].num] then myst[tags[P].num] = {} end
++		myst[tags[P].num][tags[P].charNum]=nstyle.name
++	--aegisub.log(string.format("myst1[%d][%d] = %s\n", tags[P].num, tags[P].charNum, nstyle.name))
++	end
++	for s,s1,s2 in string.gmatch(tags[P].ktag.."\\", "\\(.)([^0-9H%(\\]*)([^\\]*)") do
++	if s=="f" and s1:sub(1,1)=="n" then
++	pattern,val="fn",s1:sub(2)..s2
++	swi=true
++	elseif (s=="c" or s=="a") and s1=="&" then
++	pattern,val = "1"..s..s1,s2 
++	else
++	pattern,val = s..s1,s2
++	end
++	if not nstyle and (skl1[pattern] or skl2[pattern]) then
++	nstyle=table.copy(styl[fst])
++	repeat
++	nstyle.name=styl[line.style].name .."@".. co
++	co=co+1
++	until styl[nstyle.name] == nil
++	if not myst[tags[P].num] then myst[tags[P].num] = {} end
++	myst[tags[P].num][tags[P].charNum]=nstyle.name
++	--aegisub.log(string.format("myst1[%d][%d] = %s\n", tags[P].num, tags[P].charNum, nstyle.name))
++	end
++
++	if skl1[pattern] then
++	if pattern:len()==1 then
++	if val=="0" then val=false else val=true end
++	end
++	nstyle[skl1[pattern]]=val
++	elseif skl2[pattern] then
++	if string.match(pattern, "[c]")~=nil then
++	val1="&H"..string.sub(nstyle["color"..pattern:sub(1,1)], 3,4)..val:sub(2)
++	elseif pattern:sub(pattern:len())=="&" then
++	val1="&H"..val:sub(2,3)..string.sub(nstyle["color"..pattern:sub(1,1)], 5)
++	else
++	val1=val
++	end
++	nstyle[skl2[pattern]]=val1
++	--elseif skl3[pattern] then
++	--add[skl3[pattern]]=val
++	end
++	end
++	else
++	tags[P].num=10
++	end
++
++	if (tags[P].num>1 or tags[P].charNum>0)  then
++	totx, toty, td, te = aegisub.text_extents(styl[fst], ptxt .. tags[P].txt)
++	tottx=tottx+totx
++	totty=totty+(toty*string.utflen(ptxt..tags[P].txt))
++	if totymax<toty then totymax=toty end
++	if desmin>td then desmin=td end
++	if desmax<td then desmax=td end
++	ptxt=""
++	else
++	ptxt=tags[P].txt
++	end
++
++	if nstyle then
++
++	nstyle.i=styl[#styl].i+1
++	subs.insert(nstyle.i, nstyle)
++	i=i+1
++	pod=pod+1
++	met.fdial=met.fdial+1
++	styl[nstyle.name]=nstyle
++	styl[#styl+1]=nstyle
++
++	fst=nstyle.name
++	--line.style = fst
++	end
++
++	end
++
++
++	if swi then desfont=(desmax-desmin) end
++	end
++
++	-- if myst[0] then
++	-- line.style = myst[0]
++	-- end
++
++	if totty==0 then
++	tottx, toty, td= aegisub.text_extents(styl[line.style], line.text_stripped)
++	totymax=toty
++	desmax=td
++	jjj=line.text_stripped:utflen()
++	yay=((met.res_y-(jjj*toty))/2)
++	else
++	yay=((met.res_y-(totty))/2)
++	end
++	margr=(line.margin_r>0) and line.margin_r or styl[line.style].margin_r
++	margl=(line.margin_l>0) and line.margin_l or styl[line.style].margin_l
++	margt=(line.margin_t>0) and line.margin_t or styl[line.style].margin_t
++	xax= met.res_x - (aegisub.text_extents(styl[line.style], "黒")/2) - margr
++
++	a1, b1, fad1, fad2 = string.find(line.text, "\\fad%(([^,]*),([^)]*)")
++	a1, b1, x, y = string.find(line.text, "\\pos%(([^,]*),([^)]*)")
++
++
++	if x==nil then
++	if an % 3 == 1 then
++	x=margl
++	xkan=margl+(aegisub.text_extents(styl[line.style], "黒")/2)
++	elseif an % 3 == 2 then
++	x=(met.res_x - tottx)/2
++	xkan=met.res_x/2
++	else
++	xkan=xax
++	x=(met.res_x - tottx)-margr
++	end
++
++	if math.floor(an/3.1) == 0 then
++	y = met.res_y-margt
++	ykan=yay*2-margt
++	elseif math.floor(an/3.1) == 1 then
++	y = (met.res_y/2)+(totymax/2)
++	ykan=yay+(totymax/2)
++	elseif math.floor(an/3.1) == 2 then
++	y = margt+totymax
++	ykan=margt+totymax
++	end
++	else
++	if an % 3 == 2 then
++	x=x-(tottx/2)
++	elseif an % 3 == 0 then
++	x=x-tottx
++	end
++	xkan=xax
++	ykan=yay
++	if math.floor(an/3.1) == 2 then
++	y = y+totymax
++	elseif math.floor(an/3.1) == 1 then
++	y = y+(totymax/2)
++	end
++	end
++	if fad1==nil then
++	fad1=0
++	fad2=0
++	end
++
++	if posit then
++	--aegisub.log("ii " .. ii .. " posit " .. posit.ilel)
++	if ii<=posit.ilel then
++	y=y+(posit[ii]*totymax)
++	--aegisub.debug.out("posit "..posit.ilel)
++	ii=ii+1
++	end
++	end
++	if kan then
++	tottx=aegisub.text_extents(styl[line.style], "黒")
++	totymax=totymax*line.text_stripped:utflen()
++	x=xkan
++	y=ykan
++	end
++	line.height=totymax
++	line.xL= kan and x-(tottx/2) or x
++	line.y= kan and y+(totymax/2)or y-(line.height/2)+(desfont/2)
++	line.i=i
++	line.rom=rom
++	line.kan=kan
++	line.pl=PL
++	line.fd1=fad1 * 1
++	line.fd2=fad2 * 1
++	line.width=tottx
++	line.x= kan and x or line.xL+(line.width/2)
++	line.xR= kan and x+(tottx/2) or line.xL+line.width
++	line.yL= kan and y or y-line.height
++	line.yR= kan and y+(totymax) or y+desfont
++	line.styles=styl[line.style]
++	--line.actor="@"..konf.ind
++	konf.ind=konf.ind+1
++	line.text=orglinetext:gsub("\\[#p]([^\\}]*)","")
++	if i~=#subs then
++	line.next=subs[i]
++	else
++	line.next=subs[i-1]
++	end
++	if i~=met.fdial then
++	line.prev=subs[i-1]
++	else
++	line.next=subs[i+1]
++	end
++
++	lic=0
++	lic1=0
++	if tottx > met.res_x-margl-margr then
++	aegisub.debug.out(string.format(lng[34], line.text_stripped))
++	end
++
++	of=0
++	syl={}
++	H=1
++	xxx= x
++	yyy= y
++
++	subs.delete(i)
++	i = i - 1
++
++	--outline = actualStyle.outline
++
++	for h=1, #line.kara do
++	syli = line.kara[h]
++	if string.match(syli.text, "\\#([^\\}]*)")~=nil then
++	E= string.match(syli.text, "\\#([^\\}]*)")
++	end
++	if myst[h-of] and myst[h-of][0] then
++	line.style=myst[h-of][0]
++	end
++	--actualStyle = styl[line.style]
++
++	if string.len(syli.text_stripped) ~=0 then
++	eextx, eexty, eextd, eextl = aegisub.text_extents(styl[line.style], syli.text_stripped)
++	--aegisub.log("syl scale_x %s", actualStyle.scale_x)
++	--eextx = eextx + (outline * syli.text_stripped:utflen())
++	syltekst = kwpe and literujutf(syli.text_stripped) or syli.text_stripped
++	--aegisub.log(eextx .. " " .. eexty .." ")
++
++	yoff=(eextd-desmax)+desfont
++	syl[H]={}
++	syl[H].ifx=E
++	if (rom or PL) then
++	syl[H].xL=xxx
++	xxx = xxx + eextx/2
++	syl[H].x=xxx
++	syl[H].y=yyy-(eexty/2)+yoff
++	syl[H].yL=yyy-eexty+yoff
++	elseif kwpe then
++	syl[H].yL=yyy-(eexty/2)
++	yyy = yyy + (eexty/2) +((syli.text_stripped:utflen()-1)*eexty)/2
++	syl[H].y=yyy-(eexty/2)
++	syl[H].x=xxx
++	syl[H].xL=xxx-(eextx/(syli.text_stripped:utflen()*2))
++	end
++	syl[H].i=H
++	syl[H].style=line.style
++	if styl[line.style].color1:len()==11 then 
++	syl[H].k1, syl[H].a1= "&H"..styl[line.style].color1:sub(5), "&H"..styl[line.style].color1:sub(3,4).."&" 
++	else
++	syl[H].k1, syl[H].a1= styl[line.style].color1, "&H00&"
++	end
++	if styl[line.style].color2:len()==11 then 
++	syl[H].k2, syl[H].a2= "&H"..styl[line.style].color2:sub(5), "&H"..styl[line.style].color2:sub(3,4).."&" 
++	else
++	syl[H].k2, syl[H].a2= styl[line.style].color2, "&H00&"
++	end
++	if styl[line.style].color3:len()==11 then 
++	syl[H].k3, syl[H].a3= "&H"..styl[line.style].color3:sub(5), "&H"..styl[line.style].color3:sub(3,4).."&" 
++	else
++	syl[H].k3, syl[H].a3= styl[line.style].color3, "&H00&"
++	end
++	if styl[line.style].color4:len()==11 then 
++	syl[H].k4, syl[H].a4= "&H"..styl[line.style].color4:sub(5), "&H"..styl[line.style].color4:sub(3,4).."&" 
++	else
++	syl[H].k4, syl[H].a4= styl[line.style].color4, "&H00&"
++	end
++	syl[H].width=eextx
++	syl[H].height=eexty
++	syl[H].start_time=syli.start_time
++	syl[H].end_time=syli.end_time
++	syl[H].duration= syli.duration
++	syl[H].text=syltekst
++	if (rom or PL) then
++	xxx=xxx+eextx/2
++	syl[H].xR=xxx
++	syl[H].yR=yyy+yoff
++	elseif kwpe then
++	yyy=yyy+(eexty/2)+((syli.text_stripped:utflen()-1)*eexty)/2
++	syl[H].yR=yyy-(eexty/2)
++	syl[H].xR=xxx+(eextx/(syli.text_stripped:utflen()*2))
++	end
++
++	lw={}
++
++	for k = 1, syli.text_stripped:utflen() do
++		if myst[h-of] and myst[h-of][k - 1] then
++			line.style = myst[h-of][k - 1]
++		end
++	tyu=literujutf1(syli.text_stripped)
++	local extx, exty, extd, extl = aegisub.text_extents(styl[line.style], tyu[k])
++	--extx = extx + tyu[k]:utflen()
++	lit={}
++	if (rom or PL) then
++	lit.xL=x
++	x = x + extx/2
++	lit.x=x
++	lit.y=y-(exty/2)+yoff
++	lit.yL=y-exty+yoff
++	elseif kwpe then
++	lit.yL=y-(exty/2)
++	y = y + (exty/2)
++	lit.y=y-(exty/2)
++	lit.x=x
++	lit.xL=syl[H].xL
++	end
++	lit.litera=tyu[k]
++	lit.i=k
++	lit.nn=syli.text_stripped:utflen()
++	lit.width=extx
++	lit.height=exty
++	lw[k]=extx
++	if (rom or PL) then
++	x=x+extx/2
++	lit.xR=x
++	lit.yR=y+yoff
++	elseif kwpe then
++	y=y+(exty/2)
++	lit.yR=y-(exty/2)
++	lit.xR=syl[H].xL
++	end
++
++
++	--wstawianie liter
++
++	if doletter and (lit.litera~=" " and lit.litera ~="　") then
++		doletter(line,syl[H],lit,lic1,lic)
++		lic1=lic1+1
++		if #out>0 then
++
++			for g=#out, 1, -1 do
++
++				if rtc and out[g].rtc then
++					subs.insert(i + 1,realtime(out[g],rtc,line.start_time))
++				else
++					subs.insert(i + 1,out[g])
++				end
++
++			end
++
++			i=i+#out
++			out={}
++		end
++		--else
++		--break
++	end
++	end
++	syl[H].lwidth=lw
++	syl[H].litery=tyu
++	if (syl[H].text==" " or syl[H].text =="　") then
++	syl[H]=nil
++		H=H-1
++	end
++		H=H+1
++	else
++		of=of+1
++
++	end
++
++	end
++
++	--wstawianie sylab
++	if dosyllable then
++		for lo=1, #syl do
++			line.style=syl[lo].style
++			syl[lo].nn=#syl
++			dosyllable(line,syl[lo],lic,syl)
++			lic=lic+1
++			if #out>0 then
++				
++				for g=#out, 1, -1 do
++
++					if rtc and out[g].rtc then
++						subs.insert(i + 1,realtime(out[g],rtc,line.start_time))
++					else
++						subs.insert(i + 1,out[g])
++					end
++
++				end
++
++				i=i+#out
++				out={}
++
++			end
++		end
++	end
++
++	--wstawianie linijek
++	if doline then
++		doline(line,syl,ai)
++		if #out>0 then
++			
++			for g=#out, 1, -1 do
++
++				if rtc and out[g].rtc then
++					subs.insert(i + 1,realtime(out[g],rtc,line.start_time))
++				else
++					subs.insert(i + 1,out[g])
++				end
++
++			end
++
++			i=i+#out
++			out={}
++		end
++	end
++
++	
++
++	end
++
++	
++
++	i=i+1
++	ai=ai+1
++
++	--end while
++	end
++
++	scfg=""
++	cn={"styleR","styleK","stylePL","zp","kwp","sdl","ind"}
++	for h=1, #cn do
++		if h<5 or h>6 then
++			scfg=scfg.."|"..konf[cn[h]]
++		else
++			if konf[cn[h]]==false then scfg=scfg.."|0" else scfg=scfg.."|1" end
++		end
++	end
++	if subs[4].key~="Save Config" then
++		subs.insert(4,{class="info",key="Save Config", value=scfg:sub(2)})
++	else
++		subs[4]={class="info",key="Save Config", value=scfg:sub(2)}
++	end
++		
++	svalue=""
++	if Rstyl~=lng[16] then
++		svalue=svalue.."|"..Rstyl
++	end
++	if Kstyl~=lng[16] then
++		svalue=svalue.."|"..Kstyl
++	end
++	if PLstyl~=lng[16] then
++		svalue=svalue.."|"..PLstyl
++	end
++
++end
++--ipk ilość zmian kolorów, ak aktualny kolor
++function tkolor(ipk,ak,...)
++	kolory={...}
++	if ak~=0 then
++		grd=ipk/(#kolory-1)
++		agrd=math.ceil(ak/grd)
++
++		b, g, r=hextobgr(kolory[agrd])
++		b1, g1, r1=hextobgr(kolory[agrd+1])
++		wspr=(r1-r)/grd
++		wspg=(g1-g)/grd
++		wspb=(b1-b)/grd
++		mn=ak-(grd*math.floor(ak/grd))
++		if mn==0 then mn=grd end
++		return bgrtohex(b+math.floor(wspb*mn), g+math.floor(wspg*mn), r+math.floor(wspr*mn))
++	else
++		return kolory[1]
++	end
++end
++
++function docurve(rys,...)
++zm={...}
++fscx=zm[1] or 1
++fscy=zm[2] or 1
++ms=zm[3] or 3
++bend=zm[4]
++randx=zm[5] or 0
++randx1=zm[6] or 0
++randy=zm[7] or 0
++randy1=zm[8] or 0
++X, Y={}, {}
++--aegisub.debug.out("rys "..rys.."\n")
++if type(rys)=="string" then
++seeks=rys.." "
++for q=1, 1000 do
++  aa, ba, cc, dd, ee, ff, reszta=string.find(" "..seeks, " ([0-9.-]+) ([0-9.-]+) ([bl]) ([^blm]+)(.*)")
++ if cc==nil then
++ break
++ end
++ seeks=ff..reszta
++ X[q]={}
++ Y[q]={}
++table.insert(X[q], math.floor(cc*fscx)+math.random(randx,randx1))
++table.insert(Y[q], math.floor(dd*fscy)+math.random(randy,randy1))
++if ee == "b" then
++aa, ba, gg, hh, ii, jj, kk, ll=string.find(ff, "([0-9.-]+) ([0-9.-]+) ([0-9.-]+) ([0-9.-]+) ([0-9.-]+) ([0-9.-]+)")
++if math.max(cc,gg,ii,kk)~=math.min(cc,gg,ii,kk) or math.max(dd,hh,jj,ll)~=math.min(dd,hh,jj,ll) then
++--aegisub.debug.out("ee "..ee.." gg "..gg.." hh "..hh.." ii "..ii.." jj "..jj.." kk "..kk.." ll "..ll.."\n")
++table.insert(X[q], math.floor(gg*fscx)+math.random(randx,randx1))
++table.insert(Y[q], math.floor(hh*fscy)+math.random(randy,randy1))
++table.insert(X[q], math.floor(ii*fscx)+math.random(randx,randx1))
++table.insert(Y[q], math.floor(jj*fscy)+math.random(randy,randy1))
++table.insert(X[q], math.floor(kk*fscx)+math.random(randx,randx1))
++table.insert(Y[q], math.floor(ll*fscy)+math.random(randy,randy1))
++end
++else
++aa, ba, gg, hh=string.find(ff, "([0-9.-]+) ([0-9.-]+)")
++if math.max(cc,gg)~=math.min(cc,gg) or math.max(dd,hh)~=math.min(dd,hh) then
++--aegisub.debug.out("ee "..ee.."gg "..gg.." hh "..hh.."\n")
++table.insert(X[q], math.floor(gg*fscx)+math.random(randx,randx1))
++table.insert(Y[q], math.floor(hh*fscy)+math.random(randy,randy1))
++end
++end
++end
++
++elseif type(rys)=="table" then
++X[1], Y[1]={},{}
++for u=2, #rys, 2 do
++table.insert(X[1], math.floor(rys[u-1]*fscx)+math.random(randx,randx1))
++table.insert(Y[1], math.floor(rys[u]*fscy)+math.random(randy,randy1))
++end
++else
++aegisub.debug.out(lng[17])
++return false
++end
++pX, pY, pT= {},{},{}
++kt =0.0005
++ppx,ppy=X[1][1],Y[1][1]
++table.insert(pX, ppx)
++table.insert(pY, ppy)
++for g=1, #X do
++
++if g>1 and (X[g-1][#X[g-1]]~= X[g][1] and Y[g-1][#Y[g-1]]~= Y[g][1])then
++ppx,ppy=X[g][1],Y[g][1]
++table.insert(pX, ppx)
++table.insert(pY, ppy)
++end
++if #X[g]>3 then
++pt = 0
++for d=1, 500 do
++nt=pt+kt
++for ff=1, 100 do
++nx, ny = Bezier(#X[g], X[g], Y[g], nt)
++dist = math.sqrt(math.abs(nx-ppx)^2+math.abs(ny-ppy)^2)
++if dist>(ms-0.2) and dist<(ms+0.2) or nt>=1 then
++break
++end
++--aegisub.debug.out(string.format("dist %f nt %f\n", dist, nt))
++if ms>dist then
++rd=math.abs(ms/dist)
++else
++rd=-math.abs(ms/dist)
++end
++if dist>ms*2.5 then
++nt=nt-(kt*(dist*2))
++else
++nt=nt+(kt*rd)
++end
++end
++if nt>=1 then
++break
++end
++table.insert(pT, (nt/#X)+((1/#X)*(g-1)))
++pt=nt
++table.insert(pX, nx)
++table.insert(pY, ny)
++
++ppx,ppy=nx,ny
++end
++
++elseif #X[g]==2 then
++--aegisub.debug.out(string.format("n %d, %d, %d, %d\n",X[g][1], X[g][2], Y[g][1], Y[g][2]))
++dist = math.abs(X[g][1]-ppx)+math.abs(Y[g][1]-ppy)
++distp=dist/ms
++--aegisub.debug.out("xx "..X[g][1].." px "..ppx.." yy "..Y[g][1].." px "..ppy.."dsp"..distp.."\n")
++mxs=ms
++if math.abs(X[g][1]-X[g][2]) > math.abs(Y[g][1]-Y[g][2]) then
++mfor=(math.abs(X[g][1]-X[g][2]))/mxs
++--aegisub.debug.out("jj "..(math.abs(X[g][1]-X[g][2])-(ms-dist)).."\n")
++ydziel=(math.abs(Y[g][1]-Y[g][2])/math.abs(X[g][1]-X[g][2]))*mxs
++xdziel=mxs
++else
++mfor=(math.abs(Y[g][1]-Y[g][2]))/mxs
++--aegisub.debug.out("jj "..(math.abs(Y[g][1]-Y[g][2])-(ms-dist)).."\n")
++xdziel=(math.abs(X[g][1]-X[g][2])/math.abs(Y[g][1]-Y[g][2]))*mxs
++ydziel=mxs
++end
++if Y[g][1]>Y[g][2] then
++ydziel=-ydziel
++end
++if X[g][1]>X[g][2] then
++xdziel=-xdziel
++end
++xux=X[g][1]-(xdziel*distp)
++yuy=Y[g][1]-(ydziel*distp)
++--aegisub.debug.out("xd "..xdziel.." yd "..ydziel.."\n")
++--aegisub.debug.out("xd/dp "..xdziel*distp.."yd/dp "..ydziel*distp.."\n")
++for h=0, math.floor(mfor) do
++xux=xux+xdziel
++yuy=yuy+ydziel
++if Y[g][1]>Y[g][2] and yuy < Y[g][2] or Y[g][1]<Y[g][2] and yuy > Y[g][2] or X[g][1]>X[g][2] and xux < X[g][2] or X[g][1]<X[g][2] and xux > X[g][2] then
++break
++end
++mnm=(((g+1)/#X)-(g/#X))/math.ceil(mfor)
++table.insert(pT, (g/#X)+mnm*h)
++table.insert(pX, xux)
++table.insert(pY, yuy)
++ppx,ppy=xux,yuy
++end
++
++end
++end
++return pX, pY, pT
++end
++temp = {}
++function set_temp(ref,val) temp[ref] = val return val end
++function Bezier(n,x,y,t)
++p_x = 0 
++p_y = 0 
++for i = 1, n do 
++p_y = p_y + y[i] * set_temp("bern",bernstein(i-1,n-1,t)) 
++p_x = p_x + x[i] * temp.bern  
++end 
++return p_x, p_y 
++end
++function bernstein(i,n,t) return (factk(n) / (factk(i)*factk(n-i))) * (t^i) * ((1-t)^(n-i)) end
++function factk(n) k = 1 if (n > 1) then for i = 2, n do k = k * i end end return k end
++
++
++function next_utf_char(str, off)
++	local leadb = string.byte(str, off)
++	if leadb < 128 then
++		return off+1
++	elseif leadb < 224 then
++		return off+2
++	elseif leadb < 240 then
++		return off+3
++	elseif leadb < 248 then
++		return off+4
++    elseif leadb < 252 then
++	    return off+5
++	else
++        return off+6
++	end
++	end
++
++function string.utflen(str)
++if not str then return 0 end
++	local i = 1
++	local len = 0
++	while i<=string.len(str) do
++		i = next_utf_char(str, i)
++		len = len + 1
++	end
++	return len
++end
++
++function realtime(out,rtc,lst)
++if out.rtable then
++rtc=out.rtable
++end
++if #rtc % 2==1 then
++aegisub.debug.out(lng[18])
++return out
++end
++fin=out.tin or 2
++fout=out.tout or 0
++wadd=""
++wadd1=nil
++for g=1, #rtc, 2 do
++msfromframe=aegisub.ms_from_frame(rtc[g])
++if msfromframe > out.start_time and msfromframe < out.end_time then
++rcc= msfromframe - out.start_time
++wadd=wadd.."\\t(".. math.floor(rcc - fin) ..",".. math.floor(rcc + fout) ..","..rtc[g+1]..")"
++elseif msfromframe <= out.start_time and msfromframe >= lst-400 then
++wadd1=rtc[g+1]
++end
++end
++
++if wadd1 then
++--aegisub.debug.out("wadd1 "..wadd1)
++tagi={}
++tg=string.gsub(wadd1, "\\(.)([^0-9H%(\\]*)([^\\]*)", function (s,s1,s2) if s=="f" and s1:sub(1,1)=="n" then table.insert(tagi,"\\fn") table.insert(tagi,s1:sub(2)..s2) elseif s=="1" then table.insert(tagi, "\\"..s.."?"..s1) table.insert(tagi,s2) elseif s1=="r" or s1=="rz" then table.insert(tagi, "\\fr[0-9-z]") table.insert(tagi,s2) else table.insert(tagi, "\\"..s..s1) table.insert(tagi,s2) end end)
++tx=out.text
++
++if type(out.rtc)~="table" then
++tmpnum=out.rtc
++out.rtc={ }
++for gg=1, tmpnum do
++if(gg==out.rtc) then
++out.rtc[gg]= true
++else
++out.rtc[gg]= false
++end
++end
++end
++for k=1, #tagi,2 do
++stag=string.gsub(tagi[k],"[?%]0%-%[9]","")
++
++num=0
++tx = tx:gsub(tagi[k].."([^\\}%)]*)", function(s) num = num+1 if num <= #out.rtc and out.rtc[num] then return stag..tagi[k+1] else return false end end )
++if num==0 then
++tx=tx:gsub("}", stag..tagi[k+1].."}",1)
++end
++
++end
++out.text=tx
++end
++
++if wadd~="" then
++--bfr,ftr=out.text:match("(.-)\\}(.*)")
++--out.text=bfr..wadd.."}"..ftr
++out.text=out.text:gsub("}", wadd.."}",1)
++--aegisub.debug.out("wadd "..out.text)
++end
++return out
++end
++
++function drawings(txt,fnc)
++rys=txt .. " "
++rys=rys:gsub("% ([0-9.-]+)% ([^ ]*)", function (xx,yy) if yy:match("^([0-9.-]+)$")==nil then yy=yy:tonumber() end rxx,ryy=fnc(xx,yy) return " "..math.floor(rxx or xx).." "..math.floor(ryy or yy) end)
++return rys
++end
++
++function drawings2(txt,txt1,ik,pX,pY,scX,scY,pX1,pY1,scX1,scY1)
++draw={}
++rys1=txt .. " "
++rys2=txt1 .. " "
++xtab={}
++ytab={}
++rys2=rys2:gsub("% ([0-9.-]+)% ([^ ]*)", function (xx,yy) if yy:match("^([0-9]+)$") then table.insert(ytab,(yy*scY1)+pY1) else aegisub.debug.out("Error, one of y points is missing\n") end table.insert(xtab,(xx*scX1)+pX1) end)
++for w=1, ik do
++cnt=1
++rys1=rys1:gsub("% ([0-9.-]+)% ([^ ]*)", function (xx,yy) if yy:match("^([0-9]+)$") then if not ytab[cnt] then ytab[cnt]=yy end yyy = ((yy*scY)+pY)-ytab[cnt] yyy1=((yy*scY)+pY)-(yyy/ik)*w else yyy=yy aegisub.debug.out("Error, one of y points is missing\n") end if not xtab[cnt] then xtab[cnt]=xx aegisub.debug.out(lng[19]) end xxx = ((xx*scX)+pX)-xtab[cnt] xxx1=((xx*scX)+pX)-(xxx/ik)*w cnt=cnt+1 return " "..xxx1.." "..yyy1 end)
++table.insert(draw,rys1)
++end
++return draw
++end
++
++function cliprys(txt,txt1,ik,pX,pY,scX,scY,pX1,pY1,scX1,scY1)
++clipr={n=0}
++wclip=string.sub(txt, 3, string.len(txt)) .. " "
++wclip1=string.sub(txt1, 3, string.len(txt1)) .. " "
++--aegisub.output_debug(string.format("wclip *%s* *%s*", wclip, wclip1))
++for B=1, 11111 do
++a, b, cc, reszta=string.find(wclip, "^([^ ]*) (.*)")
++a, b, ccc, reszta1=string.find(wclip1, "^([^ ]*) (.*)")
++wclip=reszta
++wclip1=reszta1
++if cc == nil then
++break
++end
++if cc~="m" and cc~= nil then
++table.insert(clipr,cc)
++if ccc == nil then
++aegisub.debug.out("Błąd, clipy nie mają po tyle samo wierszy.")
++return lines
++end
++table.insert(clipr,ccc)
++end
++end
++wynikk={n=0}
++for w=1, ik do
++counter=0
++textclip=""
++for g=1, #clipr/2 do
++if clipr[(g*2)-1] ~= "b" and clipr[(g*2)-1] ~= "l" and clipr[(g*2)-1] ~= "s" and clipr[(g*2)-1] ~= "c" then
++--aegisub.output_debug(string.format("c %s %s", clipr[(g*2)-1], clipr[(g*2)]))
++if counter % 2 == 0 then
++warX=(clipr[(g*2)-1]*scX)+pX
++warX1=(clipr[(g*2)]*scX1)+pX1
++counter=counter+1
++else
++warX=(clipr[(g*2)-1]*scY)+pY
++warX1=(clipr[(g*2)]*scY1)+pY1
++counter=counter+1
++end
++if warX > warX1 then
++waryrd1 = warX-warX1
++waryyrd1 = warX-(waryrd1/ik)*w
++else
++waryrd1 = warX1-warX
++waryyrd1 = warX+(waryrd1/ik)*w
++end
++textclip= textclip .. math.floor(waryyrd1) .. " "
++
++else
++textclip= textclip .. clipr[(g*2)-1] .. " "
++--aegisub.output_debug(string.format("textclip %s clipr %s", textclip, clipr[g]))
++end
++end
++textclipfull= "m " .. string.sub(textclip, 0, string.len(textclip)-1)
++--aegisub.output_debug(string.format("textline %s", textline))
++table.insert(wynikk, textclipfull)
++end
++return wynikk
++end
++
++function frames(sstart,eend,fps)
++if type(sstart) ~= "number" or type(eend) ~= "number" or type(fps) ~= "number" or fps <= 0 then
++		aegisub.debug.out("number, number and number expected")
++		return nil
++	end
++frame_time=1000/fps
++	local cur_start_time, i, n = sstart, 0, math.ceil((eend - sstart) / frame_time)
++	local function fframe()
++		if cur_start_time >= eend then
++			return nil
++		end
++		local return_start_time = cur_start_time
++		local return_end_time = return_start_time + frame_time <= eend and return_start_time + frame_time or eend
++		i=i+1
++		cur_start_time = return_end_time
++return return_start_time, return_end_time, i, n
++end
++return fframe
++end
++function literujutf(str)
++	local i = 1
++	local d = 1
++	local hhhh = ""
++	while i<=string.len(str) do
++		i = next_utf_char(str, i)
++plit = str:sub(d,i-1)
++if i>string.len(str) then
++hhhh=hhhh .. plit
++else
++hhhh=hhhh .. plit .. "\\N"
++        end
++d = i
++end
++	return hhhh
++end
++function literujutf1(str)
++	local i = 1
++	local d = 1
++	local hhhh = {}
++	while i<=string.len(str) do
++		i = next_utf_char(str, i)
++		table.insert(hhhh, str:sub(d,i-1))
++		d = i
++end
++	return hhhh
++end
++function bgrtohex(b,g,r)
++if r~=nil then
++if r < 0 then r=0 end
++if g < 0 then g=0 end
++if b < 0 then b=0 end
++if r > 255 then r=255 end
++if g > 255 then g=255 end
++if b > 255 then b=255 end
++return ass_color(b,g,r)
++elseif b~=nil then
++if b < 0 then b=0 end
++if b > 255 then b=255 end
++return ass_alpha(b)
++else
++aegisub.debug.out(lng[20])
++return "&H000000&"
++end
++end
++
++hextobgr=extract_color
++
++function macro_MF(subs, selected_lines)
++conf[3].items={}
++conf[4].items={}
++conf[5].items={}
++conf[1].label=lng[1]..version..lng[2]..modified.."\n "
++styles, meta=stylecatch(subs)
++conf[3].value = "== "..lng[16]
++table.insert(conf[3].items, conf[3].value)
++table.insert(conf[3].items, string.format(lng[4], #selected_lines))
++conf[4].value = "== "..lng[16]
++table.insert(conf[4].items, conf[4].value)
++table.insert(conf[4].items, string.format(lng[4], #selected_lines))
++conf[5].value = "== "..lng[16]
++table.insert(conf[5].items, conf[5].value)
++table.insert(conf[5].items, string.format(lng[4], #selected_lines))
++for v=1, #styles do
++itemname=  lng[29].. styles[v].name
++table.insert(conf[3].items, itemname)
++table.insert(conf[4].items, itemname)
++table.insert(conf[5].items, itemname)
++end
++xres, yres, ar, artype = aegisub.video_size()
++if xres~=nil then
++if xres~=(meta.res_x*1) and yres~=(meta.res_y*1) then
++conf[1].label=conf[1].label .. lng[21] .. meta.res_x .. " x " .. meta.res_y .. lng[22] .. xres .. " x " .. yres .. lng[23] 
++end
++else
++conf[1].label=conf[1].label .. lng[21] .. meta.res_x .. " x " .. meta.res_y .. lng[24]   
++end
++if subs[4].key=="Save Config" then
++dane=cutstyles(subs[4].value)
++if #dane==7 then 
++for t=3, #dane+1 do
++if dane[t-2]=="0" then conf[t].value= false elseif dane[t-2]=="1" then conf[t].value=true else conf[t].value=dane[t-2] end
++end
++end
++end
++	cfg_res, config = aegisub.dialog.display(conf, {lng[25], lng[26]})
++	if cfg_res == lng[25] then
++	if dane then
++	config.ind=dane[#dane]
++	else
++	config.ind=1
++	end
++	    karaproc(subs, styles, meta, config, selected_lines)
++	end
++end
++
++function cutstyles(styles)
++styles=styles:trim().."|"
++styletable={}
++eee=string.gsub(styles, "(.-)|", function (s) table.insert(styletable, s) end)
++return styletable
++end
++
++function stylecatch(subs)
++	styles={}
++	res={}
++	stc=0
++	for c=1, #subs do
++		li=subs[c]
++		if li.class=="style" then
++			stc=stc+1
++			styles[stc]=li
++			styles[li.name]=li
++			styles[li.name].i=c
++		elseif string.sub(string.lower(li.raw), 1, 8)=="playresx" then
++			res.res_x=li.value
++		elseif string.sub(string.lower(li.raw), 1, 8)=="playresy" then
++			res.res_y=li.value
++		elseif li.class=="dialogue" then
++			res.fdial=c
++			break
++		end
++	end
++	return styles, res
++end
++
++function initpixel(style,text,func)
++if func then
++nstyle=copy_line(style)
++nstyle.align=1
++render = karahelper.render(nstyle,text)
++	--render = karahelper.loadpng("I:\\Moje dokumenty\\kai avek.png")
++	--aegisub.log("png loaded")
++	--local dx = render.offsetx
++	--aegisub.log("height %d, width %d",render.height, render.width)
++	for x=1,render.width do
++	--aegisub.log("x %d, height %d, width %d", x, render.height, render.width)
++		for y=1,render.height do
++			if render.getcolour(x,y)~=0x000000 then -- not transparent
++				local col = render.getcolour(x,y)
++				local al = render.getalpha(x,y)
++
++				func(x,y,col,al,render)
++				
++			end
++		end
++	end
++			
++	--free memory (!!!!!!) pixels array - not nyaaa
++	render.clear() --= nil
++else
++aegisub.debug.out("initpixel shithappens/n")
++end
++
++end
++
++

@@ -193,7 +193,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: kainote-windows-x64
-          path: dist/Kainote_x64/**
+          path: dist/Kainote_x64
           if-no-files-found: error
 
   linux:
@@ -240,5 +240,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: kainote-linux-x86_64
-          path: dist/kainote-linux-x86_64/**
+          path: dist/kainote-linux-x86_64
           if-no-files-found: error

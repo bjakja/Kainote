@@ -1,6 +1,7 @@
-# Kainote ships a modified version of this file (upstream: TypesettingTools/Aegisub automation/autoload/kara-templater.lua).
-# Applied by .github/scripts/package.py; see .github/patches/README.md.
-# Base: 7a8fda007d33 from runtime-assets.json.
+# Kainote ships a modified version of this file: targeted fix upstream does not carry.
+# tier: fix
+# Regenerate with tools in .github/patches/README.md; applied by .github/scripts/package.py.
+
 
 --- a/Automation/automation/Autoload/kara-templater.lua
 +++ b/Automation/automation/Autoload/kara-templater.lua

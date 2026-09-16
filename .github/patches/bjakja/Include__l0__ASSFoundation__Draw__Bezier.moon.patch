@@ -1,6 +1,7 @@
-# Kainote ships a modified version of this file (upstream: TypesettingTools/ASSFoundation l0/ASSFoundation/Draw/Bezier.moon).
-# Applied by .github/scripts/package.py; see .github/patches/README.md.
-# Base: 8fbb4f4261ef from runtime-assets.json.
+# Kainote ships a modified version of this file: targeted fix upstream does not carry.
+# tier: fix
+# Regenerate with tools in .github/patches/README.md; applied by .github/scripts/package.py.
+
 
 --- a/Automation/automation/Include/l0/ASSFoundation/Draw/Bezier.moon
 +++ b/Automation/automation/Include/l0/ASSFoundation/Draw/Bezier.moon

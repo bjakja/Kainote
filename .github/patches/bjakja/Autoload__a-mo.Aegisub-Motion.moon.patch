@@ -1,6 +1,7 @@
-# Kainote ships a modified version of this file (upstream: TypesettingTools/Aegisub-Motion Aegisub-Motion.moon).
-# Applied by .github/scripts/package.py; see .github/patches/README.md.
-# Base: b2ea7b964f90 from runtime-assets.json.
+# Kainote ships a modified version of this file: targeted fix upstream does not carry.
+# tier: fix
+# Regenerate with tools in .github/patches/README.md; applied by .github/scripts/package.py.
+
 
 --- a/Automation/automation/Autoload/a-mo.Aegisub-Motion.moon
 +++ b/Automation/automation/Autoload/a-mo.Aegisub-Motion.moon

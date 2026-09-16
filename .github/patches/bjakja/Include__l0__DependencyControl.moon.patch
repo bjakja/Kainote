@@ -1,11 +1,21 @@
-# Kainote ships a modified version of this file (upstream: TypesettingTools/DependencyControl).
-# Applied by .github/scripts/package.py; see .github/patches/README.md.
-# tier: vendor - the maintainer ships a different build/version of this file, not a targeted fix;
-# skip it with package.py --skip-vendor-patches to stay on the newest upstream release.
+# Kainote ships a modified version of this file: the maintainer ships a different build/version of this file, not a targeted fix.
+# tier: vendor
+# Regenerate with tools in .github/patches/README.md; applied by .github/scripts/package.py.
+
 
 --- a/Automation/automation/Include/l0/DependencyControl.moon
 +++ b/Automation/automation/Include/l0/DependencyControl.moon
-@@ -1,126 +1,563 @@
+@@ -1,136 +1,563 @@
+-MIN_MOONSCRIPT_VERSION = "0.3.0"
+-
+-SemanticVersion = require "l0.DependencyControl.SemanticVersion"
+-moonscript = require 'moonscript.version'
+-assert SemanticVersion\check(moonscript.version, MIN_MOONSCRIPT_VERSION),
+-  [[ DependencyControl requires Moonscript v%s or later to work,
+-however the Version %s provided by your Aegisub installation is outdated.
+-Update to a recent Aegisub build to resolve this issue.
+-]]\format MIN_MOONSCRIPT_VERSION, moonscript.version
+-
 --- DependencyControl also needs a LuaJIT built with Lua 5.2 compatibility (LUAJIT_ENABLE_LUA52COMPAT):
 --- Accessors expose computed properties through the __pairs metamethod, and SemanticVersion compares
 --- across types, neither of which works without it. Probe the __pairs feature we rely on directly.
