@@ -17,28 +17,12 @@
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Rel_AVX2|Win32">
-      <Configuration>Rel_AVX2</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Rel_AVX2|x64">
-      <Configuration>Rel_AVX2</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Rel_AVX512|Win32">
       <Configuration>Rel_AVX512</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Rel_AVX512|x64">
       <Configuration>Rel_AVX512</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Rel_AVX|Win32">
-      <Configuration>Rel_AVX</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Rel_AVX|x64">
-      <Configuration>Rel_AVX</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
@@ -79,34 +63,6 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
@@ -138,18 +94,6 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -161,59 +105,35 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)Thirdparty\ffms2\include;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\core;$(SolutionDir)Thirdparty\zlib;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Thirdparty\ffms2\include;$(SolutionDir)Thirdparty\zlib;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)</OutDir>
     <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\$(ProjectName)</IntDir>
-    <IncludePath>$(SolutionDir)Thirdparty\ffms2\include;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\core;$(SolutionDir)Thirdparty\zlib;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Thirdparty\ffms2\include;$(SolutionDir)Thirdparty\zlib;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)Thirdparty\ffms2\include;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\core;$(SolutionDir)Thirdparty\zlib-1.2.12;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Thirdparty\ffms2\include;$(SolutionDir)Thirdparty\zlib;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)</OutDir>
     <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\$(ProjectName)</IntDir>
-    <IncludePath>$(SolutionDir)Thirdparty\ffms2\include;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\core;$(SolutionDir)Thirdparty\zlib-1.2.12;$(IncludePath)</IncludePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">
-    <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)</OutDir>
-    <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)</IntDir>
-    <IncludePath>$(SolutionDir)Thirdparty\ffms2\include;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\core;$(SolutionDir)Thirdparty\zlib-1.2.12;$(IncludePath)</IncludePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)</OutDir>
-    <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)</IntDir>
-    <IncludePath>$(SolutionDir)Thirdparty\ffms2\include;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\core;$(SolutionDir)Thirdparty\zlib-1.2.12;$(IncludePath)</IncludePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">
-    <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)</OutDir>
-    <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)</IntDir>
-    <IncludePath>$(SolutionDir)Thirdparty\ffms2\include;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\core;$(SolutionDir)Thirdparty\zlib-1.2.12;$(IncludePath)</IncludePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)</OutDir>
-    <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)</IntDir>
-    <IncludePath>$(SolutionDir)Thirdparty\ffms2\include;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\core;$(SolutionDir)Thirdparty\zlib-1.2.12;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Thirdparty\ffms2\include;$(SolutionDir)Thirdparty\zlib;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)$(Platform)\Release\</OutDir>
     <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)Thirdparty\ffms2\include;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\core;$(SolutionDir)Thirdparty\zlib-1.2.12;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Thirdparty\ffms2\include;$(SolutionDir)Thirdparty\zlib;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|Win32'">
     <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\$(ProjectName)</IntDir>
-    <IncludePath>$(SolutionDir)Thirdparty\ffms2\include;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\core;$(SolutionDir)Thirdparty\zlib-1.2.12;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Thirdparty\ffms2\include;$(SolutionDir)Thirdparty\zlib;$(IncludePath)</IncludePath>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -222,7 +142,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>FFMS_EXPORTS;_CRT_SECURE_NO_WARNINGS;__STDC_CONSTANT_MACROS;FFMS_WIN_DEBUG;_DEBUG;_WINDOWS;_USRDLL;FFMS2_EXPORTS;AVS_STATIC_LIB;BUILDING_AVSCORE;wxUSE_GUI=0;wxUSE_BASE=1;wxUSE_STL_BASED_WXSTRING 0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\ffmpeg;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\core;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\ffmpeg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
@@ -230,8 +150,8 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>psapi.lib;uuid.lib;oleaut32.lib;shlwapi.lib;gdi32.lib;vfw32.lib;avutil.lib;avcodec.lib;avformat.lib;swscale.lib;swresample.lib;Zlib.lib;AviSynth.lib;secur32.lib;ws2_32.lib;mfplat.lib;mfuuid.lib;strmiids.lib;ole32.lib;user32.lib;bcrypt.lib;dav1d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)bin\x64\Release;$(SolutionDir)\Thirdparty\ffmpeg\libavutil;$(SolutionDir)\Thirdparty\ffmpeg\libswscale;$(SolutionDir)\Thirdparty\ffmpeg\libswresample;$(SolutionDir)\Thirdparty\ffmpeg\libavformat;$(SolutionDir)\Thirdparty\ffmpeg\libavcodec;$(SolutionDir)bin\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>psapi.lib;uuid.lib;oleaut32.lib;shlwapi.lib;gdi32.lib;vfw32.lib;avutil.lib;avcodec.lib;avformat.lib;swscale.lib;swresample.lib;Zlib.lib;secur32.lib;ws2_32.lib;mfplat.lib;mfuuid.lib;strmiids.lib;ole32.lib;user32.lib;bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\ffmpeg\lib;$(SolutionDir)bin\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -243,7 +163,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>FFMS_EXPORTS;_CRT_SECURE_NO_WARNINGS;__STDC_CONSTANT_MACROS;FFMS_WIN_DEBUG;_DEBUG;_WINDOWS;_USRDLL;FFMS2_EXPORTS;AVS_STATIC_LIB;BUILDING_AVSCORE;wxUSE_GUI=0;wxUSE_BASE=1;wxUSE_STL_BASED_WXSTRING 0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\ffmpeg;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\core;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\ffmpeg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
@@ -251,8 +171,8 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>libavutil.a;libavcodec.a;libavformat.a;libswscale.a;libswresample.a;Zlib.lib;AviSynth.lib;psapi.lib;uuid.lib;oleaut32.lib;shlwapi.lib;gdi32.lib;vfw32.lib;secur32.lib;ws2_32.lib;mfplat.lib;mfuuid.lib;strmiids.lib;ole32.lib;user32.lib;bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)\Thirdparty\ffmpeg\libavutil;$(SolutionDir)\Thirdparty\ffmpeg\libswscale;$(SolutionDir)\Thirdparty\ffmpeg\libswresample;$(SolutionDir)\Thirdparty\ffmpeg\libavformat;$(SolutionDir)\Thirdparty\ffmpeg\libavcodec;$(SolutionDir)bin\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>avutil.lib;avcodec.lib;avformat.lib;swscale.lib;swresample.lib;Zlib.lib;psapi.lib;uuid.lib;oleaut32.lib;shlwapi.lib;gdi32.lib;vfw32.lib;secur32.lib;ws2_32.lib;mfplat.lib;mfuuid.lib;strmiids.lib;ole32.lib;user32.lib;bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\ffmpeg\lib;$(SolutionDir)bin\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -266,7 +186,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>FFMS_EXPORTS;_CRT_SECURE_NO_WARNINGS;__STDC_CONSTANT_MACROS;NDEBUG;_WINDOWS;_USRDLL;FFMS2_EXPORTS;AVS_STATIC_LIB;BUILDING_AVSCORE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\core;$(SolutionDir)Thirdparty\ffmpeg;$(SolutionDir)Thirdparty\zlib;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\ffmpeg\include;$(SolutionDir)Thirdparty\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -275,8 +195,8 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>psapi.lib;uuid.lib;oleaut32.lib;shlwapi.lib;gdi32.lib;vfw32.lib;avutil.lib;avcodec.lib;avformat.lib;swscale.lib;swresample.lib;Zlib.lib;AviSynth.lib;secur32.lib;ws2_32.lib;mfplat.lib;mfuuid.lib;strmiids.lib;ole32.lib;user32.lib;bcrypt.lib;dav1d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\ffmpeg\libavutil;$(SolutionDir)Thirdparty\ffmpeg\libswscale;$(SolutionDir)Thirdparty\ffmpeg\libswresample;$(SolutionDir)Thirdparty\ffmpeg\libavformat;$(SolutionDir)Thirdparty\ffmpeg\libavcodec;$(SolutionDir)Thirdparty\Build\AvisynthPlus\Output;$(SolutionDir)bin\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>psapi.lib;uuid.lib;oleaut32.lib;shlwapi.lib;gdi32.lib;vfw32.lib;avutil.lib;avcodec.lib;avformat.lib;swscale.lib;swresample.lib;Zlib.lib;secur32.lib;ws2_32.lib;mfplat.lib;mfuuid.lib;strmiids.lib;ole32.lib;user32.lib;bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\ffmpeg\lib;$(SolutionDir)bin\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -287,7 +207,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>FFMS_EXPORTS;_CRT_SECURE_NO_WARNINGS;__STDC_CONSTANT_MACROS;NDEBUG;_WINDOWS;_USRDLL;FFMS2_EXPORTS;AVS_STATIC_LIB;BUILDING_AVSCORE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\core;$(SolutionDir)Thirdparty\ffmpegx32;$(SolutionDir)Thirdparty\zlib;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\ffmpegx32\include;$(SolutionDir)Thirdparty\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <EnableEnhancedInstructionSet>NoExtensions</EnableEnhancedInstructionSet>
       <LanguageStandard>stdcpp14</LanguageStandard>
@@ -296,84 +216,8 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>psapi.lib;uuid.lib;oleaut32.lib;shlwapi.lib;gdi32.lib;vfw32.lib;avutil.lib;avcodec.lib;avformat.lib;swscale.lib;swresample.lib;Zlib.lib;AviSynth.lib;secur32.lib;ws2_32.lib;mfplat.lib;mfuuid.lib;strmiids.lib;ole32.lib;user32.lib;bcrypt.lib;dav1d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\ffmpegx32\libavutil;$(SolutionDir)Thirdparty\ffmpegx32\libswscale;$(SolutionDir)Thirdparty\ffmpegx32\libswresample;$(SolutionDir)Thirdparty\ffmpegx32\libavformat;$(SolutionDir)Thirdparty\ffmpegx32\libavcodec;$(SolutionDir)Thirdparty\Build\AvisynthPlus\Output;$(SolutionDir)Thirdparty\Build\dav1dx32\src;$(SolutionDir)bin\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>FFMS_EXPORTS;_CRT_SECURE_NO_WARNINGS;__STDC_CONSTANT_MACROS;NDEBUG;_WINDOWS;_USRDLL;FFMS2_EXPORTS;AVS_STATIC_LIB;BUILDING_AVSCORE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\core;$(SolutionDir)Thirdparty\ffmpeg;$(SolutionDir)Thirdparty\zlib;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>psapi.lib;uuid.lib;oleaut32.lib;shlwapi.lib;gdi32.lib;vfw32.lib;libavutil.a;libavcodec.a;libavformat.a;libswscale.a;libswresample.a;Zlib.lib;AviSynth.lib;secur32.lib;ws2_32.lib;mfplat.lib;mfuuid.lib;strmiids.lib;ole32.lib;user32.lib;bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\ffmpeg\libavutil;$(SolutionDir)Thirdparty\ffmpeg\libswscale;$(SolutionDir)Thirdparty\ffmpeg\libswresample;$(SolutionDir)Thirdparty\ffmpeg\libavformat;$(SolutionDir)Thirdparty\ffmpeg\libavcodec;$(SolutionDir)ffms2\build-msvc\x64\Release;$(SolutionDir)Thirdparty\Build\AvisynthPlus\Output;$(SolutionDir)bin\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>FFMS_EXPORTS;_CRT_SECURE_NO_WARNINGS;__STDC_CONSTANT_MACROS;NDEBUG;_WINDOWS;_USRDLL;FFMS2_EXPORTS;AVS_STATIC_LIB;BUILDING_AVSCORE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\core;$(SolutionDir)Thirdparty\ffmpeg;$(SolutionDir)Thirdparty\zlib;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>psapi.lib;uuid.lib;oleaut32.lib;shlwapi.lib;gdi32.lib;vfw32.lib;libavutil.a;libavcodec.a;libavformat.a;libswscale.a;libswresample.a;Zlib.lib;AviSynth.lib;secur32.lib;ws2_32.lib;mfplat.lib;mfuuid.lib;strmiids.lib;ole32.lib;user32.lib;bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\ffmpeg\libavutil;$(SolutionDir)Thirdparty\ffmpeg\libswscale;$(SolutionDir)Thirdparty\ffmpeg\libswresample;$(SolutionDir)Thirdparty\ffmpeg\libavformat;$(SolutionDir)Thirdparty\ffmpeg\libavcodec;$(SolutionDir)ffms2\build-msvc\x64\Release;$(SolutionDir)Thirdparty\Build\AvisynthPlus\Output;$(SolutionDir)bin\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>FFMS_EXPORTS;_CRT_SECURE_NO_WARNINGS;__STDC_CONSTANT_MACROS;NDEBUG;_WINDOWS;_USRDLL;FFMS2_EXPORTS;AVS_STATIC_LIB;BUILDING_AVSCORE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\core;$(SolutionDir)Thirdparty\ffmpeg;$(SolutionDir)Thirdparty\zlib;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>psapi.lib;uuid.lib;oleaut32.lib;shlwapi.lib;gdi32.lib;vfw32.lib;libavutil.a;libavcodec.a;libavformat.a;libswscale.a;libswresample.a;Zlib.lib;AviSynth.lib;secur32.lib;ws2_32.lib;mfplat.lib;mfuuid.lib;strmiids.lib;ole32.lib;user32.lib;bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\ffmpeg\libavutil;$(SolutionDir)Thirdparty\ffmpeg\libswscale;$(SolutionDir)Thirdparty\ffmpeg\libswresample;$(SolutionDir)Thirdparty\ffmpeg\libavformat;$(SolutionDir)Thirdparty\ffmpeg\libavcodec;$(SolutionDir)ffms2\build-msvc\x64\Release;$(SolutionDir)Thirdparty\Build\AvisynthPlus\Output;$(SolutionDir)bin\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>FFMS_EXPORTS;_CRT_SECURE_NO_WARNINGS;__STDC_CONSTANT_MACROS;NDEBUG;_WINDOWS;_USRDLL;FFMS2_EXPORTS;AVS_STATIC_LIB;BUILDING_AVSCORE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\core;$(SolutionDir)Thirdparty\ffmpeg;$(SolutionDir)Thirdparty\zlib;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>psapi.lib;uuid.lib;oleaut32.lib;shlwapi.lib;gdi32.lib;vfw32.lib;libavutil.a;libavcodec.a;libavformat.a;libswscale.a;libswresample.a;Zlib.lib;AviSynth.lib;secur32.lib;ws2_32.lib;mfplat.lib;mfuuid.lib;strmiids.lib;ole32.lib;user32.lib;bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\ffmpeg\libavutil;$(SolutionDir)Thirdparty\ffmpeg\libswscale;$(SolutionDir)Thirdparty\ffmpeg\libswresample;$(SolutionDir)Thirdparty\ffmpeg\libavformat;$(SolutionDir)Thirdparty\ffmpeg\libavcodec;$(SolutionDir)ffms2\build-msvc\x64\Release;$(SolutionDir)Thirdparty\Build\AvisynthPlus\Output;$(SolutionDir)bin\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>psapi.lib;uuid.lib;oleaut32.lib;shlwapi.lib;gdi32.lib;vfw32.lib;avutil.lib;avcodec.lib;avformat.lib;swscale.lib;swresample.lib;Zlib.lib;secur32.lib;ws2_32.lib;mfplat.lib;mfuuid.lib;strmiids.lib;ole32.lib;user32.lib;bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\ffmpegx32\lib;$(SolutionDir)bin\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">
@@ -384,7 +228,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>FFMS_EXPORTS;_CRT_SECURE_NO_WARNINGS;__STDC_CONSTANT_MACROS;NDEBUG;_WINDOWS;_USRDLL;FFMS2_EXPORTS;AVS_STATIC_LIB;BUILDING_AVSCORE;CONFIG_DXVA2;CONFIG_D3D11VA;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\core;$(SolutionDir)Thirdparty\ffmpeg;$(SolutionDir)Thirdparty\zlib;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\ffmpeg\include;$(SolutionDir)Thirdparty\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -394,8 +238,8 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>psapi.lib;uuid.lib;oleaut32.lib;shlwapi.lib;gdi32.lib;vfw32.lib;avutil.lib;avcodec.lib;avformat.lib;swscale.lib;swresample.lib;Zlib.lib;AviSynth.lib;secur32.lib;ws2_32.lib;mfplat.lib;mfuuid.lib;strmiids.lib;ole32.lib;user32.lib;bcrypt.lib;aom.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty/Build/Aom/Release;$(SolutionDir)Thirdparty\ffmpeg\libavutil;$(SolutionDir)Thirdparty\ffmpeg\libswscale;$(SolutionDir)Thirdparty\ffmpeg\libswresample;$(SolutionDir)Thirdparty\ffmpeg\libavformat;$(SolutionDir)Thirdparty\ffmpeg\libavcodec;$(SolutionDir)ffms2\build-msvc\x64\Release;$(SolutionDir)Thirdparty\Build\AvisynthPlus\Output;$(SolutionDir)bin\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>psapi.lib;uuid.lib;oleaut32.lib;shlwapi.lib;gdi32.lib;vfw32.lib;avutil.lib;avcodec.lib;avformat.lib;swscale.lib;swresample.lib;Zlib.lib;secur32.lib;ws2_32.lib;mfplat.lib;mfuuid.lib;strmiids.lib;ole32.lib;user32.lib;bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\ffmpeg\lib;$(SolutionDir)bin\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>ImageSeq.dll</IgnoreSpecificDefaultLibraries>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
     </Link>
@@ -408,7 +252,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>FFMS_EXPORTS;_CRT_SECURE_NO_WARNINGS;__STDC_CONSTANT_MACROS;NDEBUG;_WINDOWS;_USRDLL;FFMS2_EXPORTS;AVS_STATIC_LIB;BUILDING_AVSCORE;CONFIG_DXVA2;CONFIG_D3D11VA;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\core;$(SolutionDir)Thirdparty\ffmpeg;$(SolutionDir)Thirdparty\zlib;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\ffmpeg\include;$(SolutionDir)Thirdparty\zlib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -418,8 +262,8 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>psapi.lib;uuid.lib;oleaut32.lib;shlwapi.lib;gdi32.lib;vfw32.lib;libavutil.a;libavcodec.a;libavformat.a;libswscale.a;libswresample.a;Zlib.lib;AviSynth.lib;secur32.lib;ws2_32.lib;mfplat.lib;mfuuid.lib;strmiids.lib;ole32.lib;user32.lib;bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\ffmpeg\libavutil;$(SolutionDir)Thirdparty\ffmpeg\libswscale;$(SolutionDir)Thirdparty\ffmpeg\libswresample;$(SolutionDir)Thirdparty\ffmpeg\libavformat;$(SolutionDir)Thirdparty\ffmpeg\libavcodec;$(SolutionDir)ffms2\build-msvc\x64\Release;$(SolutionDir)Thirdparty\Build\AvisynthPlus\Output;$(SolutionDir)bin\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>psapi.lib;uuid.lib;oleaut32.lib;shlwapi.lib;gdi32.lib;vfw32.lib;avutil.lib;avcodec.lib;avformat.lib;swscale.lib;swresample.lib;Zlib.lib;secur32.lib;ws2_32.lib;mfplat.lib;mfuuid.lib;strmiids.lib;ole32.lib;user32.lib;bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\ffmpeg\lib;$(SolutionDir)bin\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>ImageSeq.dll</IgnoreSpecificDefaultLibraries>
       <ImportLibrary>$(OutDir)$(TargetName).lib</ImportLibrary>
     </Link>
@@ -455,10 +299,7 @@
     <ClInclude Include="..\..\ffms2\src\vapoursynth\VSHelper4.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\AvisynthCore\AvisynthCore.vcxproj">
-      <Project>{2ac41f68-e271-4a29-9b99-1c1b27674c08}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\BaseClasses\baseclasses.vcxproj">
+    <ProjectReference Include="..\BaseClasses\BaseClasses.vcxproj">
       <Project>{e8a3f6fa-ae1c-4c8e-a0b6-9c8480324eaa}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Zlib\Zlib.vcxproj">

@@ -148,15 +148,10 @@
       </EntryPointSymbol>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>xcopy /D /Y "$(SolutionDir)Thirdparty\ffmpeg\bin\*.dll" "$(OutDir)" &gt;nul</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>echo | set /p dummyName=#define GIT_CUR_COMMIT &gt;  gitparams.h
-git rev-parse --verify HEAD &gt;&gt;  gitparams.h
-
-echo | set /p dummyName=#define GIT_BRANCH &gt;&gt;  gitparams.h
-git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h
+      <Command>pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitparams.ps1" || powershell -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitparams.ps1"
 
 where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po") do @msgfmt -o "$(SolutionDir)Locale\%%~nf.mo" "%%f") || echo msgfmt (gettext) not found - skipping Locale .mo compilation</Command>
     </PreBuildEvent>
@@ -203,16 +198,10 @@ where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po
       </EntryPointSymbol>
     </Link>
     <PostBuildEvent>
-      <Command>$(SolutionDir)AutoVersioning "$(ProjectDir)VersionKainote.h"
-$(SolutionDir)AutoSending/x64/Release/AutoSending "$(SolutionDir)x64\Release\Kainote x64.zip" "F:\Google Drive\Kainote x64.zip" "x64"
-</Command>
+      <Command>xcopy /D /Y "$(SolutionDir)Thirdparty\ffmpeg\bin\*.dll" "$(OutDir)" &gt;nul</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>echo | set /p dummyName=#define GIT_CUR_COMMIT &gt;  gitparams.h
-git rev-parse --verify HEAD &gt;&gt;  gitparams.h
-
-echo | set /p dummyName=#define GIT_BRANCH &gt;&gt;  gitparams.h
-git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h
+      <Command>pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitparams.ps1" || powershell -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitparams.ps1"
 
 where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po") do @msgfmt -o "$(SolutionDir)Locale\%%~nf.mo" "%%f") || echo msgfmt (gettext) not found - skipping Locale .mo compilation</Command>
     </PreBuildEvent>
@@ -257,15 +246,10 @@ where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po
       <SubSystem>Windows</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>xcopy /D /Y "$(SolutionDir)Thirdparty\ffmpeg\bin\*.dll" "$(OutDir)" &gt;nul</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>echo | set /p dummyName=#define GIT_CUR_COMMIT &gt;  gitparams.h
-git rev-parse --verify HEAD &gt;&gt;  gitparams.h
-
-echo | set /p dummyName=#define GIT_BRANCH &gt;&gt;  gitparams.h
-git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h
+      <Command>pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitparams.ps1" || powershell -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitparams.ps1"
 
 where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po") do @msgfmt -o "$(SolutionDir)Locale\%%~nf.mo" "%%f") || echo msgfmt (gettext) not found - skipping Locale .mo compilation</Command>
     </PreBuildEvent>
@@ -279,12 +263,8 @@ where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
-    </ClCompile>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <ClCompile>
       <LanguageStandard_C>Default</LanguageStandard_C>
-      <AdditionalIncludeDirectories>..\Thirdparty\zlib;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include\msvc;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include\msvc;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>NoExtensions</EnableEnhancedInstructionSet>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
