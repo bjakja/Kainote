@@ -3,7 +3,7 @@
     "Third-party sources the Windows (Kainote.sln) build fetches as archives.",
     "",
     "Most third-party code is a git submodule instead -- see Thirdparty/README.md.",
-    "These five stay archives because a submodule would not work or would not pay:",
+    "These stay archives because a submodule would not work or would not pay:",
     "",
     "  fribidi  its git tag ships none of the generated lib/*.tab.i tables or",
     "           fribidi-unicode-version.h that the build's sources #include; only",
@@ -12,6 +12,8 @@
     "  icu      likewise very large, and only source/common + source/i18n are used.",
     "  zlib     small enough that an archive is simpler.",
     "  curl     likewise.",
+    "  ffmpeg   a prebuilt developer package: headers plus MSVC import libraries.",
+    "           Building FFmpeg from source needed MSYS2 and an hour; this does not.",
     "",
     "Run Thirdparty/hydrate.ps1 to fetch these. It verifies each archive's SHA-256",
     "before extracting and refuses to continue on a mismatch.",
@@ -73,6 +75,17 @@
       "strip": 1,
       "marker": "include/curl/curl.h",
       "license": "curl"
+    },
+    {
+      "name": "ffmpeg",
+      "version": "7.1.1",
+      "directory": "ffmpeg",
+      "url": "https://github.com/GyanD/codexffmpeg/releases/download/7.1.1/ffmpeg-7.1.1-full_build-shared.zip",
+      "sha256": "9f28727e8b472a04c1d2e520aaa425dca82721b995139b35710091130ea6e699",
+      "strip": 1,
+      "marker": "include/libavcodec/avcodec.h",
+      "license": "GPL-3.0-or-later",
+      "note": "Prebuilt shared GPL build: include/ headers, lib/*.lib MSVC import libraries, bin/*.dll runtime. ffms2.vcxproj links avcodec/avformat/avutil/swscale/swresample from lib/, and Kainote copies bin/*.dll next to the executable. A GPL build is required: Kainote is GPL-3."
     }
   ]
 }

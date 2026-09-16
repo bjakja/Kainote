@@ -16,7 +16,7 @@
     pwsh -File Thirdparty/hydrate.ps1
 
 .EXAMPLE
-    pwsh -File Thirdparty/hydrate.ps1 -Only libass,freetype -Force
+    pwsh -File Thirdparty/hydrate.ps1 -Only ffmpeg,boost -Force
 #>
 [CmdletBinding()]
 param(
