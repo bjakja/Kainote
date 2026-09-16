@@ -75,6 +75,12 @@
          these are the static-library output directories it writes to. -->
     <KainoteWxLibDir Condition="'$(Platform)'=='x64'">..\Thirdparty\wxWidgets\lib\vc_x64_lib</KainoteWxLibDir>
     <KainoteWxLibDir Condition="'$(Platform)'=='Win32'">..\Thirdparty\wxWidgets\lib\vc_lib</KainoteWxLibDir>
+    <!-- D3DXCreateFontW / D3DXCreateLine come from the June 2010 DirectX SDK,
+         which is not part of any Windows SDK.  Its installer sets DXSDK_DIR;
+         fall back to the default install location, and allow an override on
+         the command line (/p:KainoteDirectXSdkDir=...). -->
+    <KainoteDirectXSdkDir Condition="'$(KainoteDirectXSdkDir)'=='' and '$(DXSDK_DIR)'!=''">$(DXSDK_DIR)</KainoteDirectXSdkDir>
+    <KainoteDirectXSdkDir Condition="'$(KainoteDirectXSdkDir)'==''">$(ProgramFiles%28x86%29)\Microsoft DirectX SDK %28June 2010%29\</KainoteDirectXSdkDir>
   </PropertyGroup>
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
@@ -119,7 +125,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include\msvc;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;..\Thirdparty\uchardet\include;..\Thirdparty\uchardet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include\msvc;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;$(KainoteDirectXSdkDir)Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;..\Thirdparty\uchardet\include;..\Thirdparty\uchardet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;WIN32;__WXMSW__;_WINDOWS;_DEBUG;HUNSPELL_STATIC;LUAJIT_ENABLE_LUA52COMPAT;LUAJIT_DISABLE_BUFFER;HAVE_DLL_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -137,7 +143,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;Shwinmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;baseclasses.lib;Boost.lib;libhunspell.lib;libass.lib;dsound.lib;dxva2.lib;Dwmapi.lib;dxguid.lib;Uchardet.lib;GFFT.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(KainoteWxLibDir);c:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(SolutionDir)bin\$(Platform)\$(Configuration)\;$(SolutionDir)$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(KainoteWxLibDir);$(KainoteDirectXSdkDir)Lib\x64;$(SolutionDir)bin\$(Platform)\$(Configuration)\;$(SolutionDir)$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>
@@ -165,7 +171,7 @@ where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include\msvc;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;..\Thirdparty\uchardet\include;..\Thirdparty\uchardet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include\msvc;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;$(KainoteDirectXSdkDir)Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;..\Thirdparty\uchardet\include;..\Thirdparty\uchardet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;__WXMSW__;_MBCS;HUNSPELL_STATIC;HAVE_DLL_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -184,7 +190,7 @@ where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;Shwinmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;baseclasses.lib;Boost.lib;libhunspell.lib;libass.lib;dsound.lib;dxva2.lib;Dwmapi.lib;dxguid.lib;Uchardet.lib;GFFT.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(KainoteWxLibDir);$(SolutionDir)bin\$(Platform)\$(Configuration);C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(KainoteWxLibDir);$(SolutionDir)bin\$(Platform)\$(Configuration);$(KainoteDirectXSdkDir)Lib\x64;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -213,7 +219,7 @@ where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include\msvc;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;..\Thirdparty\uchardet\include;..\Thirdparty\uchardet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include\msvc;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;$(KainoteDirectXSdkDir)Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;..\Thirdparty\uchardet\include;..\Thirdparty\uchardet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;__WXMSW__;_MBCS;HUNSPELL_STATIC;LUAJIT_ENABLE_LUA52COMPAT;LUAJIT_DISABLE_BUFFER;HAVE_DLL_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -232,7 +238,7 @@ where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;Shwinmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;baseclasses.lib;Boost.lib;libhunspell.lib;libass.lib;dsound.lib;dxva2.lib;Dwmapi.lib;dxguid.lib;Uchardet.lib;GFFT.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(KainoteWxLibDir);$(SolutionDir)bin\$(Platform)\$(Configuration);C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(SolutionDir)\$(Platform)\Release;$(SolutionDir)bin\$(Platform)\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(KainoteWxLibDir);$(SolutionDir)bin\$(Platform)\$(Configuration);$(KainoteDirectXSdkDir)Lib\x64;$(SolutionDir)\$(Platform)\Release;$(SolutionDir)bin\$(Platform)\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -264,14 +270,14 @@ where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po
     <ClCompile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>Default</LanguageStandard_C>
-      <AdditionalIncludeDirectories>..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include\msvc;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include\msvc;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;$(KainoteDirectXSdkDir)Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>NoExtensions</EnableEnhancedInstructionSet>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PreprocessorDefinitions>_UNICODE;UNICODE;_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;__WXMSW__;_MBCS;HUNSPELL_STATIC;U_COMMON_IMPLEMENTATION;U_I18N_IMPLEMENTATION;U_STATIC_IMPLEMENTATION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(KainoteWxLibDir);$(SolutionDir)bin\$(Platform)\$(Configuration);C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(KainoteWxLibDir);$(SolutionDir)bin\$(Platform)\$(Configuration);$(KainoteDirectXSdkDir)Lib\x86;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;strmBoost.lib;libhunspell.lib;libass.lib;dsound.lib;dxva2.lib;Dwmapi.lib;dxguid.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>msvcrtd.lib;libboost_locale-vc140-mt-1_61.lib;libboost_filesystem-vc140-mt-1_61.lib;libboost_system-vc140-mt-1_61.lib;libboost_regex-vc140-mt-1_61.lib</IgnoreSpecificDefaultLibraries>
     </Link>

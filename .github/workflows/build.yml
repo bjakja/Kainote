@@ -1,0 +1,147 @@
+name: Build
+
+on:
+  push:
+    branches: [master, 'chore/**', 'fix/**', 'feat/**']
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    name: Windows (${{ matrix.configuration }}|x64)
+    runs-on: windows-2022
+    defaults:
+      run:
+        shell: pwsh
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [Release, Debug]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: microsoft/setup-msbuild@v2
+
+      - name: Install NASM
+        run: choco install nasm --no-progress -y
+      - name: Add NASM to PATH
+        run: echo "C:\Program Files\NASM" >> $env:GITHUB_PATH
+
+      # D3DXCreateFontW / D3DXCreateLine live in the June 2010 DirectX SDK,
+      # which no Windows SDK replaced and no runner image carries.  Its
+      # installer fails on modern images (error S1023) because a newer VC++
+      # 2010 redistributable is already present, so extract the payload
+      # instead: only Include and Lib are needed.  Kainote.vcxproj reads
+      # DXSDK_DIR.
+      - name: Cache DirectX SDK
+        id: dxsdk-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/dxsdk
+          key: dxsdk-jun2010-headers-libs-v1
+
+      - name: Fetch DirectX SDK (June 2010)
+        if: steps.dxsdk-cache.outputs.cache-hit != 'true'
+        run: |
+          $url = 'https://download.microsoft.com/download/A/E/7/AE743F1F-632B-4809-87A9-AA1BB3458E31/DXSDK_Jun10.exe'
+          Invoke-WebRequest -Uri $url -OutFile dxsdk.exe -UseBasicParsing
+          & 7z x dxsdk.exe -oraw -y '*\Include\*' '*\Lib\*' | Out-Null
+          $inc = Get-ChildItem raw -Recurse -Directory -Filter Include | Select-Object -First 1
+          $lib = Get-ChildItem raw -Recurse -Directory -Filter Lib     | Select-Object -First 1
+          if (-not $inc -or -not $lib) { throw 'DirectX SDK payload did not contain Include/Lib' }
+          New-Item -ItemType Directory -Force -Path dxsdk | Out-Null
+          Move-Item $inc.FullName dxsdk\Include
+          Move-Item $lib.FullName dxsdk\Lib
+          Remove-Item raw, dxsdk.exe -Recurse -Force
+
+      - name: Point the build at the DirectX SDK
+        run: |
+          if (-not (Test-Path "dxsdk\Lib\x64\d3dx9.lib")) { throw 'd3dx9.lib missing from the extracted SDK' }
+          echo "DXSDK_DIR=${{ github.workspace }}\dxsdk\" >> $env:GITHUB_ENV
+
+      # hydrate.ps1 pulls ~200 MB of archives whose contents are pinned by
+      # SHA-256, so the manifest is a sound cache key.
+      - name: Cache hydrated dependencies
+        uses: actions/cache@v4
+        with:
+          path: Thirdparty/.cache
+          key: hydrate-${{ hashFiles('Thirdparty/dependencies.json') }}
+
+      # wxWidgets takes the bulk of the bootstrap time and only changes when
+      # the submodule pin moves.
+      - name: Resolve the wxWidgets pin
+        id: wx-pin
+        run: echo "sha=$(git rev-parse HEAD:Thirdparty/wxWidgets)" >> $env:GITHUB_OUTPUT
+
+      - name: Cache wxWidgets libraries
+        id: wx-cache
+        uses: actions/cache@v4
+        with:
+          path: Thirdparty/wxWidgets/lib
+          key: wx-${{ matrix.configuration }}-${{ steps.wx-pin.outputs.sha }}-${{ hashFiles('Thirdparty/build-wxwidgets.ps1') }}
+
+      - name: Bootstrap
+        run: >
+          pwsh -File Thirdparty\bootstrap.ps1
+          -Configuration ${{ matrix.configuration }}
+          ${{ steps.wx-cache.outputs.cache-hit == 'true' && '-SkipWxWidgets' || '' }}
+
+      - name: Build
+        run: msbuild Kainote.sln /m /v:minimal /p:Configuration=${{ matrix.configuration }} /p:Platform=x64
+
+      - name: Check the executable exists
+        run: |
+          $exe = "x64\${{ matrix.configuration }}\Kainote.exe"
+          if (-not (Test-Path $exe)) { throw "not built: $exe" }
+          Get-Item $exe | Format-List Name, Length, LastWriteTime
+
+      - uses: actions/upload-artifact@v4
+        if: matrix.configuration == 'Release'
+        with:
+          name: kainote-x64
+          path: |
+            x64/Release/Kainote.exe
+            x64/Release/*.dll
+          if-no-files-found: error
+
+  linux:
+    name: Linux (${{ matrix.build_type }})
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Release, Debug]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential cmake pkg-config ninja-build gettext \
+            libwxgtk3.2-dev libwxgtk-media3.2-dev \
+            libluajit-5.1-dev libffms2-dev \
+            libavformat-dev libavcodec-dev libavutil-dev libswscale-dev libswresample-dev \
+            libass-dev libhunspell-dev libuchardet-dev libcurl4-openssl-dev \
+            libicu-dev libboost-all-dev \
+            libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
+            libgl1-mesa-dev libglu1-mesa-dev
+
+      - name: Configure
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+
+      - name: Build
+        run: cmake --build build -j"$(nproc)"
+
+      - name: Check the executable exists
+        run: test -x build/kainote && ls -l build/kainote
