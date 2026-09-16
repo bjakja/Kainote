@@ -256,3 +256,11 @@ _Pvt_Extensions
 build/
 build-*/
 .serena/
+
+# MSBuild intermediates (were previously committed under Thirdparty/Build)
+*.tlog
+*.exp
+*.recipe
+*.lastbuildstate
+*.idb
+*.ilk
