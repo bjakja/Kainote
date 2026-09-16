@@ -144,7 +144,7 @@ jobs:
       - name: Build the AVX configuration
         if: matrix.configuration == 'Release'
         timeout-minutes: 60
-        run: msbuild Kainote/Kainote.vcxproj /m /v:minimal /p:Configuration=Rel_AVX512 /p:Platform=x64 /p:BuildProjectReferences=false
+        run: msbuild Kainote.sln /m /v:minimal /t:Kainote\Kainote.vcxproj /p:Configuration=Rel_AVX512 /p:Platform=x64 /p:BuildProjectReferences=false
 
 
       # actions/cache only saves when the job succeeds (post-if: success()), and
