@@ -231,11 +231,15 @@
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
-  <Target Name="MiniLua" BeforeTargets="ClCompile" DependsOnTargets="PrepareForBuild" Inputs="$(SolutionDir)Thirdparty\LuaJIT\src\dynasm\dynasm.lua" Outputs="$(SolutionDir)Thirdparty\LuaJIT\src\host\buildvm_arch.h">
+  <Target Name="MiniLuaBuildVmArch" BeforeTargets="ClCompile" DependsOnTargets="PrepareForBuild" Inputs="$(SolutionDir)Thirdparty\LuaJIT\dynasm\dynasm.lua" Outputs="$(SolutionDir)Thirdparty\LuaJIT\src\host\buildvm_arch.h">
     <Exec Command="$(MiniLuaCommand) $(SolutionDir)Thirdparty\LuaJIT\dynasm\dynasm.lua -LN -D WIN -D JIT -D FFI $(MiniLuaPlat) -o $(SolutionDir)Thirdparty\LuaJIT\src\host\buildvm_arch.h $(SolutionDir)Thirdparty\LuaJIT\src\$(MiniLuaVM)" WorkingDirectory="$(SolutionDir)Thirdparty\LuaJIT\src" />
   </Target>
-  <Target Name="MiniLua" BeforeTargets="ClCompile" DependsOnTargets="PrepareForBuild" Inputs="$(SolutionDir)Thirdparty\luajit\src\host\genversion.lua" Outputs="$(SolutionDir)Thirdparty\LuaJIT\src\luajit.h">
-    <Exec Command="$(MiniLuaCommand) $(SolutionDir)Thirdparty\luajit\src\host\genversion.lua $(SolutionDir)Thirdparty\luajit\src\luajit_rolling.h $(SolutionDir)Thirdparty\luajit\src\luajit_relver.txt $(SolutionDir)Thirdparty\LuaJIT\src\luajit.h" WorkingDirectory="$(SolutionDir)Thirdparty\LuaJIT\src" />
+
+  <Target Name="LuaJitRelVer" BeforeTargets="ClCompile" DependsOnTargets="PrepareForBuild" Inputs="$(SolutionDir)Thirdparty\LuaJIT\.relver" Outputs="$(SolutionDir)Thirdparty\LuaJIT\src\luajit_relver.txt">
+    <Copy SourceFiles="$(SolutionDir)Thirdparty\LuaJIT\.relver" DestinationFiles="$(SolutionDir)Thirdparty\LuaJIT\src\luajit_relver.txt" />
+  </Target>
+  <Target Name="MiniLuaVersionHeader" BeforeTargets="ClCompile" DependsOnTargets="PrepareForBuild;LuaJitRelVer" Inputs="$(SolutionDir)Thirdparty\LuaJIT\src\host\genversion.lua;$(SolutionDir)Thirdparty\LuaJIT\.relver" Outputs="$(SolutionDir)Thirdparty\LuaJIT\src\luajit.h">
+    <Exec Command="$(MiniLuaCommand) $(SolutionDir)Thirdparty\LuaJIT\src\host\genversion.lua $(SolutionDir)Thirdparty\LuaJIT\src\luajit_rolling.h $(SolutionDir)Thirdparty\LuaJIT\src\luajit_relver.txt $(SolutionDir)Thirdparty\LuaJIT\src\luajit.h" WorkingDirectory="$(SolutionDir)Thirdparty\LuaJIT\src" />
   </Target>
   <ItemGroup>
     <ClCompile Include="..\..\LuaJIT\src\host\buildvm.c" />
