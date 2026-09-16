@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 """Assemble a runnable Kainote package from a build tree.
 
-Used by .github/workflows/build.yml for both platforms.  The runtime data that
-is not built (the Automation 4 library, dictionaries, the CSRI renderer) is
-fetched from pinned public repositories listed in runtime-assets.json; the
-binaries, the CSRI renderer we do build, and the translations come from the
-build tree and the source tree.
-
-Fetched files are cached under Thirdparty/.cache/runtime so repeat runs are
-cheap; the cache key is the pinned commit, so a bump refetches.
+Used by .github/workflows/build.yml for both platforms.  The Automation 4
+library and the themes are tracked in this repository (see Automation/README.md)
+and copied from the source tree; the dictionaries and the VSFiltermod renderer
+are fetched from pinned upstream locations listed in runtime-assets.json; the
+executables, the CSRI renderer and the DependencyControl modules come from the
+build tree; the translations are compiled from Locale/*.po.
 
 Usage:
   package.py --platform windows|linux --build-dir <dir> --stage <dir> [--repo-root <dir>]
@@ -26,21 +24,33 @@ import subprocess
 import sys
 import tarfile
 import urllib.request
+import zipfile
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 MANIFEST = HERE / "runtime-assets.json"
 
-# name in the build output -> name in the package
+# what the build tree calls the CSRI renderer -> what the package calls it
 CSRI_RENDERERS = {"xy-Vsfilter.dll": "xy-VSFilter_kainote.dll"}
-# Kainote's own DependencyControl modules: source dir -> package dir
-LOCAL_MODULES = {
-    "Thirdparty/DependencyControl/bad-mutex": "Automation/automation/Include/BM",
-    "Thirdparty/DependencyControl/precise-timer": "Automation/automation/Include/PT",
-    "Thirdparty/DependencyControl/threaded-libcurl": "Automation/automation/Include/DM",
-}
+# Kainote's DependencyControl modules: DLL name -> package subdirectory
+LOCAL_MODULES = {"BadMutex.dll": "BM", "PreciseTimer.dll": "PT", "DownloadManager.dll": "DM"}
 VC_RUNTIME = ["msvcp140.dll", "vcruntime140.dll", "vcruntime140_1.dll"]
-D3DX = "D3DX9_43.dll"
+
+# Microsoft's own DirectX End-User Runtime redistributable; its terms allow
+# shipping the runtime as part of an application, which is how D3DX9_43.dll
+# reaches users.  Fetched from download.microsoft.com, never copied from a
+# machine that happens to have it.
+DX_REDIST_URL = ("https://download.microsoft.com/download/8/4/A/"
+                 "84A35BF1-DAFE-4AE8-82AF-AD2AE20B6B14/directx_Jun2010_redist.exe")
+DX_CAB = "Jun2010_D3DX9_43_x64.cab"
+D3DX_FILE = "D3DX9_43.dll"
+# The Visual Studio redistributable folder is what Microsoft licenses for
+# app-local deployment, so it is preferred over the machine's System32 copies.
+VS_CRT_DIRS = [
+    "Microsoft Visual Studio/2022/*/VC/Redist/MSVC/*/x64/Microsoft.VC143.CRT",
+    "Microsoft Visual Studio/2022/*/VC/Redist/MSVC/*/x64/Microsoft.VC142.CRT",
+]
+VC_RUNTIME_FALLBACK_DIRS = ["System32", "SysWOW64"]
 
 
 def log(msg: str) -> None:
@@ -54,7 +64,7 @@ def fetch(url: str, dest: Path) -> bool:
     dest.parent.mkdir(parents=True, exist_ok=True)
     tmp = dest.with_suffix(dest.suffix + ".part")
     try:
-        with urllib.request.urlopen(url, timeout=60) as r, open(tmp, "wb") as f:
+        with urllib.request.urlopen(url, timeout=300) as r, open(tmp, "wb") as f:
             shutil.copyfileobj(r, f)
     except Exception as exc:  # network, 404, ...
         log(f"    ! fetch failed: {url} ({exc})")
@@ -72,97 +82,120 @@ def sha256(path: Path) -> str:
     return h.hexdigest()
 
 
-def fetch_runtime_assets(cache: Path, stage: Path) -> tuple[int, list[str]]:
-    data = json.loads(MANIFEST.read_text(encoding="utf-8"))
-    done = 0
-    missed: list[str] = []
-    for entry in data["automation"]:
-        repo, ref, src, dest = entry["repo"], entry["ref"], entry["repo_path"], entry["dest"]
-        url = f"https://raw.githubusercontent.com/{repo}/{ref}/{src}"
-        cached = cache / ref[:12] / src
-        target = stage / dest
-        if target.exists():
-            done += 1
-            continue
-        if not fetch(url, cached):
-            missed.append(dest)
-            continue
-        target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(cached, target)
-        done += 1
-    return done, missed
-
-
-def apply_kainote_changes(repo_root: Path, stage: Path, prefer_upstream: bool = False) -> tuple[list[str], list[str]]:
-    """Install the files Kainote's package carries over the upstream library.
-
-    `.github/patches/kainote-runtime-files.tar.gz` holds the automation library
-    and theme files exactly as the released package ships them, with a
-    `FILES.sha256` manifest.  The upstream repositories do not publish several of
-    them (the karaoke template helpers, the json library, effector, karahelper),
-    and the rest carry fixes upstream does not have -- LuaJIT compatibility in
-    aegisub.lfs, an FFI leak fix in aegisub.re, DependencyControl's version
-    substitution.  `.github/patches/*.patch` is the readable record of how each
-    file differs from its upstream revision.
-
-    Extraction is verified against the manifest, so a corrupt or partial bundle
-    fails loudly instead of producing a package with half a library in it.
-    """
-    bundle = repo_root / ".github" / "patches" / "kainote-runtime-files.tar.gz"
-    applied: list[str] = []
-    failed: list[str] = []
-    if prefer_upstream or not bundle.is_file():
-        return applied, failed
-    import tarfile
-
-    with tarfile.open(bundle, "r:gz") as tar:
-        members = {m.name: m for m in tar.getmembers() if m.isfile()}
-        manifest_raw = tar.extractfile(members["FILES.sha256"]).read().decode()
-        expected = dict(reversed(line.split("  ", 1)) for line in manifest_raw.strip().splitlines())
-        for name, want in expected.items():
-            if name not in members:
-                failed.append(f"{name} (missing from bundle)")
-                continue
-            data = tar.extractfile(members[name]).read()
-            got = hashlib.sha256(data).hexdigest()
-            if got != want:
-                failed.append(f"{name} (checksum)")
-                continue
-            path = stage / name
-            if path.exists() and hashlib.sha256(path.read_bytes()).hexdigest() == got:
-                continue
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_bytes(data)
-            applied.append(name)
-    return applied, failed
-
-
-def copy_local_modules(repo_root: Path, stage: Path) -> int:
-    """BadMutex / PreciseTimer / DownloadManager scripts live in this tree."""
+def copy_automation(repo_root: Path, stage: Path) -> int:
+    """The tracked automation library and themes (see Automation/README.md)."""
     copied = 0
-    for src_rel, dest_rel in LOCAL_MODULES.items():
-        src = repo_root / src_rel
-        if not src.is_dir():
+    for folder in ("Automation", "Themes"):
+        root = repo_root / folder
+        if not root.is_dir():
             continue
-        for path in src.rglob("*"):
-            if path.is_file() and path.suffix in (".lua", ".moon"):
-                rel = path.relative_to(src)
-                out = stage / dest_rel / rel
-                out.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copyfile(path, out)
+        for path in sorted(root.rglob("*")):
+            if path.is_file():
+                dest = stage / path.relative_to(repo_root)
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(path, dest)
                 copied += 1
     return copied
 
 
-def copy_dictionaries(repo_root: Path, stage: Path) -> int:
-    """en_US from Aegisub's dictionary repo, pl/th_TH from LibreOffice's."""
-    plan = json.loads(MANIFEST.read_text(encoding="utf-8"))["dictionaries"]
+def find_output(build_dir: Path, name: str) -> Path | None:
+    """Locate a build output, wherever its project puts it.
+
+    The projects disagree about OutDir: Kainote writes into the platform folder,
+    the CSRI renderer into a csri subfolder, and the DependencyControl modules
+    into Automation/automation/Include/<module>/<name>. Searching keeps the
+    packaging independent of that.
+    """
+    direct = build_dir / name
+    if direct.exists():
+        return direct
+    skip = {".git", "dist", "node_modules", ".cache"}
+    for root in (build_dir, build_dir.parent, build_dir.parent.parent):
+        if not root.is_dir():
+            continue
+        for path in sorted(root.rglob(name)):
+            if path.is_file() and not (skip & set(path.parts)):
+                return path
+    return None
+
+
+def copy_binaries(platform: str, build_dir: Path, stage: Path) -> tuple[list[str], list[str]]:
+    taken: list[str] = []
+    missing: list[str] = []
+    if platform == "windows":
+        wanted = ["KaiNote.exe", "KaiNote.pdb", "Icons.dll", "ffms2.dll",
+                  "KaiNote_AVX.exe", "KaiNote_AVX.pdb"]
+    else:
+        wanted = ["kainote"]
+    for name in wanted:
+        src = find_output(build_dir, name)
+        if src:
+            shutil.copyfile(src, stage / name)
+            taken.append(name)
+        else:
+            missing.append(name)
+
+    for dll, sub in (LOCAL_MODULES.items() if platform == "windows" else ()):
+        dest = f"Automation/automation/Include/{sub}/{dll}"
+        src = find_output(build_dir, dll)
+        if src:
+            out = stage / dest
+            out.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(src, out)
+            taken.append(dest)
+        else:
+            missing.append(dest)
+
+    if platform == "windows":
+        for built_name, packaged_name in CSRI_RENDERERS.items():
+            dest = f"Csri/{packaged_name}"
+            src = find_output(build_dir, built_name)
+            if src:
+                out = stage / dest
+                out.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(src, out)
+                taken.append(dest)
+            else:
+                missing.append(dest)
+    return taken, missing
+
+
+def copy_external_binaries(repo_root: Path, stage: Path) -> tuple[list[str], list[str]]:
+    """The VSFiltermod renderer (prebuilt, pinned)."""
+    taken: list[str] = []
+    missing: list[str] = []
+    plan = json.loads(MANIFEST.read_text(encoding="utf-8"))["external_binaries"]
     cache = repo_root / "Thirdparty" / ".cache" / "runtime"
+    for entry in plan:
+        cached = cache / "ext" / Path(entry["url"]).name
+        if not fetch(entry["url"], cached):
+            missing.append(entry["dest"])
+            continue
+        out = stage / entry["dest"]
+        out.parent.mkdir(parents=True, exist_ok=True)
+        if cached.suffix == ".zip":
+            with zipfile.ZipFile(cached) as z:
+                member = next((n for n in z.namelist() if n.endswith(entry["member"])), None)
+                if not member:
+                    missing.append(entry["dest"])
+                    continue
+                with z.open(member) as src, open(out, "wb") as dest:
+                    shutil.copyfileobj(src, dest)
+        else:
+            shutil.copyfile(cached, out)
+        taken.append(entry["dest"])
+    return taken, missing
+
+
+def copy_dictionaries(repo_root: Path, stage: Path) -> int:
+    """en_US from Aegisub's dictionary repository, pl/th_TH from LibreOffice's."""
+    plan = json.loads(MANIFEST.read_text(encoding="utf-8"))["dictionaries"]
+    cache = repo_root / "Thirdparty" / ".cache" / "runtime" / "dict"
     out_dir = stage / "Dictionary"
     out_dir.mkdir(parents=True, exist_ok=True)
     copied = 0
     for name, src in plan.items():
-        cached = cache / "dict" / src["file"]
+        cached = cache / src["file"]
         if not fetch(src["url"], cached):
             continue
         shutil.copyfile(cached, out_dir / name)
@@ -193,115 +226,6 @@ def compile_locales(repo_root: Path, stage: Path) -> int:
     return count
 
 
-def find_output(build_dir: Path, name: str) -> Path | None:
-    """Locate a build output, wherever its project puts it.
-
-    The projects disagree about OutDir: Kainote writes into the platform folder,
-    the CSRI renderer into a csri subfolder, and the DependencyControl modules
-    into Automation/automation/Include/<module>/<name>. Searching keeps the
-    packaging independent of that.
-    """
-    direct = build_dir / name
-    if direct.exists():
-        return direct
-    skip = {".git", "dist", "node_modules", ".cache"}
-    roots = [build_dir, build_dir.parent, build_dir.parent.parent]
-    for root in roots:
-        if not root.is_dir():
-            continue
-        for path in sorted(root.rglob(name)):
-            if path.is_file() and not (skip & set(path.parts)):
-                return path
-    return None
-
-
-def copy_binaries(platform: str, build_dir: Path, stage: Path) -> tuple[list[str], list[str]]:
-    taken: list[str] = []
-    missing: list[str] = []
-    if platform == "windows":
-        wanted = ["KaiNote.exe", "KaiNote.pdb", "Icons.dll", "ffms2.dll",
-                  "KaiNote_AVX.exe", "KaiNote_AVX.pdb"]
-        modules = {"BadMutex.dll": "BM", "PreciseTimer.dll": "PT", "DownloadManager.dll": "DM"}
-        renderer = "xy-Vsfilter.dll"
-    else:
-        wanted = ["kainote"]
-        modules = {}
-        renderer = None
-    for name in wanted:
-        src = find_output(build_dir, name)
-        if src:
-            shutil.copyfile(src, stage / name)
-            taken.append(name)
-        else:
-            missing.append(name)
-    for dll, sub in modules.items():
-        src = find_output(build_dir, dll)
-        dest = f"Automation/automation/Include/{sub}/{dll}"
-        if src:
-            out = stage / dest
-            out.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(src, out)
-            taken.append(dest)
-        else:
-            missing.append(dest)
-    if renderer:
-        src = find_output(build_dir, renderer)
-        dest = f"Csri/{CSRI_RENDERERS[renderer]}"
-        if src:
-            out = stage / dest
-            out.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(src, out)
-            taken.append(dest)
-        else:
-            missing.append(dest)
-    return taken, missing
-
-
-def copy_external_binaries(repo_root: Path, stage: Path) -> tuple[list[str], list[str]]:
-    """The VSFiltermod renderer (prebuilt, pinned) and the VC/D3DX runtimes."""
-    taken: list[str] = []
-    missing: list[str] = []
-    plan = json.loads(MANIFEST.read_text(encoding="utf-8"))["external_binaries"]
-    cache = repo_root / "Thirdparty" / ".cache" / "runtime"
-    for entry in plan:
-        cached = cache / "ext" / Path(entry["url"]).name
-        if not fetch(entry["url"], cached):
-            missing.append(entry["dest"])
-            continue
-        if cached.suffix == ".zip":
-            import zipfile
-            with zipfile.ZipFile(cached) as z:
-                member = next((n for n in z.namelist() if n.endswith(entry["member"])), None)
-                if not member:
-                    missing.append(entry["dest"])
-                    continue
-                (stage / entry["dest"]).parent.mkdir(parents=True, exist_ok=True)
-                with z.open(member) as src, open(stage / entry["dest"], "wb") as out:
-                    shutil.copyfileobj(src, out)
-        else:
-            (stage / entry["dest"]).parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(cached, stage / entry["dest"])
-        taken.append(entry["dest"])
-    return taken, missing
-
-
-# Microsoft's own DirectX End-User Runtime redistributable; its terms allow
-# shipping the runtime as part of an application, which is how D3DX9_43.dll
-# reaches users.  Fetched from download.microsoft.com, never copied from a
-# machine that happens to have it.
-DX_REDIST_URL = ("https://download.microsoft.com/download/8/4/A/"
-                 "84A35BF1-DAFE-4AE8-82AF-AD2AE20B6B14/directx_Jun2010_redist.exe")
-DX_CAB = "Jun2010_D3DX9_43_x64.cab"
-# The Visual Studio redistributable folder is what Microsoft licenses for
-# app-local deployment, so it is preferred over the machine's System32 copies.
-VS_CRT_DIRS = [
-    "Microsoft Visual Studio/2022/*/VC/Redist/MSVC/*/x64/Microsoft.VC143.CRT",
-    "Microsoft Visual Studio/2022/*/VC/Redist/MSVC/*/x64/Microsoft.VC142.CRT",
-]
-VC_RUNTIME_FALLBACK_DIRS = ["System32", "SysWOW64"]
-D3DX_FILE = "D3DX9_43.dll"
-
-
 def _find_in_dirs(name: str, dirs: list[Path]) -> Path | None:
     for root in dirs:
         for candidate in sorted(root.glob(name)) + sorted(root.rglob(name)):
@@ -317,7 +241,11 @@ def _extract_d3dx9(redist: Path) -> Path | None:
     if not cab.exists():
         work.mkdir(parents=True, exist_ok=True)
         for args in (["/Q:A", f"/T:{work}", "/C"], ["/Q", f"/T:{work}", "/C"]):
-            subprocess.run([str(redist), *args], capture_output=True, text=True, check=False)
+            try:
+                subprocess.run([str(redist), *args], capture_output=True, text=True, check=False)
+            except OSError as exc:  # not runnable here (e.g. packaging on Linux)
+                log(f"    ! could not run the DirectX redistributable: {exc}")
+                break
             if cab.exists():
                 break
     if not cab.exists():
@@ -326,14 +254,17 @@ def _extract_d3dx9(redist: Path) -> Path | None:
                 cab = found
                 break
     if not cab.exists():
-        log(f"    ! {DX_CAB} not found in the DirectX redistributable; keeping what is there")
+        log(f"    ! {DX_CAB} not found in the DirectX redistributable")
         return None
     out = work / "unpacked"
     out.mkdir(parents=True, exist_ok=True)
     target = out / D3DX_FILE
     if not target.exists():
-        subprocess.run(["expand", f"-F:{D3DX_FILE}", str(cab), str(out)],
-                       capture_output=True, text=True, check=False)
+        try:
+            subprocess.run(["expand", f"-F:{D3DX_FILE}", str(cab), str(out)],
+                           capture_output=True, text=True, check=False)
+        except OSError as exc:
+            log(f"    ! could not run expand: {exc}")
     return target if target.exists() else None
 
 
@@ -374,14 +305,9 @@ def copy_runtimes(repo_root: Path, stage: Path) -> tuple[list[str], list[str]]:
 def write_notices(repo_root: Path, stage: Path) -> Path:
     """List where every non-built file in the package came from."""
     data = json.loads(MANIFEST.read_text(encoding="utf-8"))
-    origins: dict[tuple[str, str], int] = {}
-    for entry in data["automation"]:
-        origin = (entry["repo"], entry["ref"][:12])
-        origins[origin] = origins.get(origin, 0) + 1
     lines = ["Kainote runtime data and where it comes from.", ""]
-    lines.append("Automation 4 library:")
-    for (repo, ref), count in sorted(origins.items()):
-        lines.append(f"  {repo} at {ref} ({count} files)")
+    lines.append("Automation 4 library and themes: tracked in this repository,")
+    lines.append("  assembled from the upstream revisions named in Automation/README.md.")
     lines.append("")
     lines.append("Dictionaries:")
     for name, src in sorted(data["dictionaries"].items()):
@@ -392,12 +318,6 @@ def write_notices(repo_root: Path, stage: Path) -> Path:
         lines.append("  Csri/xy-VSFilter_kainote.dll - built from this repository's VSFilter")
         for entry in data["external_binaries"]:
             lines.append(f"  {entry['dest']} - {entry['source']}")
-    if (stage / "Automation" / "automation").is_dir():
-        lines.append("")
-        lines.append("Automation files the released package carries but the upstream repositories")
-        lines.append("above do not publish, plus its changes to the ones they do:")
-        lines.append("  Automation/** - see .github/patches/ in the source tree")
-        lines.append("  Themes/*.txt - from the released package")
     if any((stage / n).exists() for n in VC_RUNTIME + [D3DX_FILE]):
         lines.append("")
         lines.append("Microsoft redistributables (permitted for app-local redistribution with")
@@ -422,17 +342,14 @@ def archive(platform: str, stage: Path, dist: Path) -> Path:
     dist.mkdir(parents=True, exist_ok=True)
     if platform == "windows":
         out = dist / f"{stage.name}.zip"
-        if out.exists():
-            out.unlink()
-        import zipfile
+        out.unlink(missing_ok=True)
         with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
             for path in sorted(stage.rglob("*")):
                 if path.is_file():
                     z.write(path, Path(stage.name) / path.relative_to(stage))
         return out
     out = dist / f"{stage.name}.tar.gz"
-    if out.exists():
-        out.unlink()
+    out.unlink(missing_ok=True)
     with tarfile.open(out, "w:gz", compresslevel=9) as tar:
         for path in sorted(stage.rglob("*")):
             tar.add(path, arcname=Path(stage.name) / path.relative_to(stage))
@@ -446,8 +363,6 @@ def main() -> int:
     ap.add_argument("--stage", required=True)
     ap.add_argument("--repo-root", default=".")
     ap.add_argument("--no-archive", action="store_true")
-    ap.add_argument("--prefer-upstream", action="store_true",
-                    help="do not install the files Kainote's package carries over the upstream library")
     args = ap.parse_args()
 
     repo_root = Path(args.repo_root).resolve()
@@ -458,8 +373,11 @@ def main() -> int:
     stage.mkdir(parents=True)
 
     log(f"== packaging {args.platform}: build {build_dir} -> {stage}")
-    taken, missing_bins = copy_binaries(args.platform, build_dir, stage)
-    log(f"   binaries: {len(taken)} copied" + (f", missing: {', '.join(missing_bins)}" if missing_bins else ""))
+    library = copy_automation(repo_root, stage)
+    log(f"   automation library and themes: {library} files")
+
+    taken, missing = copy_binaries(args.platform, build_dir, stage)
+    log(f"   binaries: {len(taken)} copied" + (f", missing: {', '.join(missing)}" if missing else ""))
 
     if args.platform == "windows":
         rt, miss_rt = copy_runtimes(repo_root, stage)
@@ -467,28 +385,12 @@ def main() -> int:
         ext, miss_ext = copy_external_binaries(repo_root, stage)
         log(f"   external: {len(ext)} copied" + (f", missing: {', '.join(miss_ext)}" if miss_ext else ""))
 
-    modules = copy_local_modules(repo_root, stage)
-    log(f"   local DependencyControl modules: {modules} files")
-
-    fetched, missed = fetch_runtime_assets(repo_root / "Thirdparty" / ".cache" / "runtime", stage)
-    log(f"   automation library: {fetched} files" + (f", {len(missed)} failed" if missed else ""))
-    for m in missed[:10]:
-        log(f"      ! {m}")
-
-    restored, unrestored = apply_kainote_changes(repo_root, stage, prefer_upstream=args.prefer_upstream)
-    log(f"   Kainote's files restored: {len(restored)}"
-        + (f", {len(unrestored)} problems: {', '.join(unrestored[:4])}" if unrestored else ""))
-
     dicts = copy_dictionaries(repo_root, stage)
     log(f"   dictionaries: {dicts} files")
 
     locales = compile_locales(repo_root, stage)
     log(f"   locales: {locales} catalogs")
 
-    for placeholder in ("Automation/autosave/txt.txt", "Automation/log/txt.txt"):
-        p = stage / placeholder
-        p.parent.mkdir(parents=True, exist_ok=True)
-        p.touch()
     for name in ("README.md", "LICENSE"):
         src = repo_root / name
         if src.exists():
