@@ -240,6 +240,7 @@
     <ClCompile Include="..\..\Boost\libs\locale\src\icu\codecvt.cpp" />
     <ClCompile Include="..\..\Boost\libs\locale\src\icu\collator.cpp" />
     <ClCompile Include="..\..\Boost\libs\locale\src\icu\conversion.cpp" />
+    <ClCompile Include="..\..\Boost\libs\locale\src\util\encoding.cpp" />
     <ClCompile Include="..\..\Boost\libs\locale\src\icu\icu_backend.cpp" />
     <ClCompile Include="..\..\Boost\libs\locale\src\shared\generator.cpp" />
     <ClCompile Include="..\..\Boost\libs\locale\src\shared\ids.cpp" />
@@ -249,36 +250,25 @@
     <ClCompile Include="..\..\Boost\libs\locale\src\util\info.cpp" />
     <ClCompile Include="..\..\Boost\libs\locale\src\util\locale_data.cpp" />
     <ClCompile Include="..\..\Boost\libs\regex\src\posix_api.cpp" />
-    <ClCompile Include="..\..\Boost\libs\regex\src\regex.cpp" />
-    <ClCompile Include="..\..\Boost\libs\regex\src\static_mutex.cpp" />
     <ClCompile Include="..\..\Boost\libs\regex\src\wide_posix_api.cpp" />
-    <ClCompile Include="..\..\Boost\libs\system\src\error_code.cpp" />
     <ClCompile Include="..\..\Boost\libs\thread\src\tss_null.cpp" />
     <ClCompile Include="..\..\Boost\libs\thread\src\win32\thread.cpp" />
     <ClCompile Include="locale_stubs.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Boost\libs\filesystem\src\windows_file_codecvt.hpp" />
-    <ClInclude Include="..\..\Boost\libs\locale\src\encoding\conv.hpp" />
     <ClInclude Include="..\..\Boost\libs\locale\src\icu\all_generator.hpp" />
     <ClInclude Include="..\..\Boost\libs\locale\src\icu\cdata.hpp" />
     <ClInclude Include="..\..\Boost\libs\locale\src\icu\codecvt.hpp" />
     <ClInclude Include="..\..\Boost\libs\locale\src\icu\icu_backend.hpp" />
     <ClInclude Include="..\..\Boost\libs\locale\src\icu\icu_util.hpp" />
-    <ClInclude Include="..\..\Boost\libs\locale\src\icu\predefined_formatters.hpp" />
     <ClInclude Include="..\..\Boost\libs\locale\src\icu\uconv.hpp" />
     <ClInclude Include="..\..\Boost\libs\locale\src\shared\ios_prop.hpp" />
     <ClInclude Include="..\..\Boost\libs\locale\src\shared\mo_hash.hpp" />
     <ClInclude Include="..\..\Boost\libs\locale\src\shared\mo_lambda.hpp" />
     <ClInclude Include="..\..\Boost\libs\locale\src\util\gregorian.hpp" />
-    <ClInclude Include="..\..\Boost\libs\locale\src\util\locale_data.hpp" />
     <ClInclude Include="..\..\Boost\libs\locale\src\util\numeric.hpp" />
     <ClInclude Include="..\..\Boost\libs\locale\src\util\timezone.hpp" />
-    <ClInclude Include="..\..\Boost\libs\regex\src\internals.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\Boost\libs\locale\src\encoding\uconv_codepage.ipp" />
-    <None Include="..\..\Boost\libs\locale\src\encoding\wconv_codepage.ipp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Icu\Icu.vcxproj">

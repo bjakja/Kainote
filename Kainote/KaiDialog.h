@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include <wx/msw/winundef.h>
+#include "WinUndef.h"
 #include <wx/defs.h>
 #include <wx/object.h>
 #include <wx/window.h>

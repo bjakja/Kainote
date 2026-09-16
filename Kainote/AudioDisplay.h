@@ -35,6 +35,7 @@
 #include <vector>
 #include <d3d9.h>
 #include <d3dx9.h>
+#include "UndoD3DXMacros.h"
 #include <atomic>
 
 //////////////

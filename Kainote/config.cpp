@@ -26,7 +26,11 @@
 #include "CsriMod.h"
 #include "Notebook.h"
 #include "gitparams.h"
-//#include <windows.h>
+// winsock2.h first: windows.h would pull in the old winsock.h (sockaddr clash).
+#ifdef __WXMSW__
+#include <winsock2.h>
+#endif
+#include <windows.h>
 #include "ConfigConverter.h"
 #include "SubtitlesProviderManager.h"
 #include <ShlObj.h>

@@ -34,6 +34,14 @@ jobs:
       - name: Add NASM to PATH
         run: echo "C:\Program Files\NASM" >> $env:GITHUB_PATH
 
+      # The VirtualDub libraries assemble their SIMD kernels with YASM, through
+      # the vsyasm integration the xy-VSFilter fork carries as
+      # src/YASM.{props,targets,xml} -- that one calls yasm from PATH.  The
+      # chocolatey package provides the assembler itself: yasm publishes its
+      # Windows build as yasm-1.2.0-win64.exe, not as an installer.
+      - name: Install YASM
+        run: choco install yasm --no-progress -y
+
       # D3DXCreateFontW / D3DXCreateLine live in the June 2010 DirectX SDK,
       # which no Windows SDK replaced and no runner image carries.  Its
       # installer fails on modern images (error S1023) because a newer VC++
@@ -41,8 +49,7 @@ jobs:
       # instead: only Include and Lib are needed.  Kainote.vcxproj reads
       # DXSDK_DIR.
       - name: Cache DirectX SDK
-        id: dxsdk-cache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: ${{ github.workspace }}/dxsdk
           key: dxsdk-jun2010-headers-libs-v1
@@ -69,10 +76,27 @@ jobs:
       # hydrate.ps1 pulls ~200 MB of archives whose contents are pinned by
       # SHA-256, so the manifest is a sound cache key.
       - name: Cache hydrated dependencies
-        uses: actions/cache@v4
+        id: hydrate-cache
+        uses: actions/cache/restore@v4
         with:
           path: Thirdparty/.cache
           key: hydrate-${{ hashFiles('Thirdparty/dependencies.json') }}
+
+      # Verbatim from the manifest + hydrate.ps1, and with no restore-key prefix:
+      # hydrate.ps1 only checks marker files, so a stale tree restored under a
+      # shared prefix would be skipped rather than noticed.
+      - name: Cache hydrated dependency trees
+        id: hydrate-trees-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            Thirdparty/boost
+            Thirdparty/icu
+            Thirdparty/ffmpeg
+            Thirdparty/fribidi
+            Thirdparty/zlib
+            Thirdparty/curl
+          key: hydrate-trees-${{ hashFiles('Thirdparty/dependencies.json', 'Thirdparty/hydrate.ps1') }}
 
       # wxWidgets takes the bulk of the bootstrap time and only changes when
       # the submodule pin moves.
@@ -81,8 +105,7 @@ jobs:
         run: echo "sha=$(git rev-parse HEAD:Thirdparty/wxWidgets)" >> $env:GITHUB_OUTPUT
 
       - name: Cache wxWidgets libraries
-        id: wx-cache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: Thirdparty/wxWidgets/lib
           key: wx-${{ matrix.configuration }}-${{ steps.wx-pin.outputs.sha }}-${{ hashFiles('Thirdparty/build-wxwidgets.ps1') }}
@@ -94,7 +117,47 @@ jobs:
           ${{ steps.wx-cache.outputs.cache-hit == 'true' && '-SkipWxWidgets' || '' }}
 
       - name: Build
+        timeout-minutes: 90
         run: msbuild Kainote.sln /m /v:minimal /p:Configuration=${{ matrix.configuration }} /p:Platform=x64
+
+
+      # actions/cache only saves when the job succeeds (post-if: success()), and
+      # every Windows job here has failed at least once on the way to a green
+      # build, so nothing was ever cached.  Restore above, save here with
+      # if: always(), which is what makes a failing run still worth something.
+      - name: Save DirectX SDK
+        if: always() && steps.dxsdk-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ github.workspace }}/dxsdk
+          key: dxsdk-jun2010-headers-libs-v1
+
+      - name: Save hydrated dependencies
+        if: always() && steps.hydrate-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: Thirdparty/.cache
+          key: hydrate-${{ hashFiles('Thirdparty/dependencies.json') }}
+
+      - name: Save hydrated dependency trees
+        if: always() && steps.hydrate-trees-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            Thirdparty/boost
+            Thirdparty/icu
+            Thirdparty/ffmpeg
+            Thirdparty/fribidi
+            Thirdparty/zlib
+            Thirdparty/curl
+          key: hydrate-trees-${{ hashFiles('Thirdparty/dependencies.json', 'Thirdparty/hydrate.ps1') }}
+
+      - name: Save wxWidgets libraries
+        if: always() && steps.wx-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: Thirdparty/wxWidgets/lib
+          key: wx-${{ matrix.configuration }}-${{ steps.wx-pin.outputs.sha }}-${{ hashFiles('Thirdparty/build-wxwidgets.ps1') }}
 
       - name: Check the executable exists
         run: |

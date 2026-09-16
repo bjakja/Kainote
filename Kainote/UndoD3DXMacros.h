@@ -1,4 +1,4 @@
-//  Copyright (c) 2022 - 2026, Marcin Drob
+//  Copyright (c) 2017 - 2026, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -13,28 +13,12 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
-//#include "VisualClips.h"
-#include <wx/string.h>
-#include <wx/window.h>
-#include <d3d9.h>
-#include <d3dx9.h>
-#include "UndoD3DXMacros.h"
+// No include guard: must run again after every D3DX include.
+//
+// d3dx9core.h puts back the DrawText macro that wx/msw/winundef.h undefined.
+// wx/defs.h re-applies winundef.h outside its own guard, so the next wx header
+// defines that inline function twice and MSVC reports C2084.
 
-class DrawingAndClip;
-
-class ClipPoint
-{
-public:
-	ClipPoint(float x, float y, wxString type, bool isstart);
-	ClipPoint();
-	bool IsInPos(D3DXVECTOR2 pos, float diff);
-	D3DXVECTOR2 GetVector(DrawingAndClip* parent);
-	float wx(DrawingAndClip* parent, bool zoomConversion = false);
-	float wy(DrawingAndClip* parent, bool zoomConversion = false);
-	float x;
-	float y;
-	wxString type;
-	bool start;
-	bool isSelected;
-};
+#ifdef DrawText
+#undef DrawText
+#endif

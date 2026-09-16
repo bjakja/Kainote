@@ -18,6 +18,7 @@
 #include <wx/wx.h>
 #include <d3d9.h>
 #include <d3dx9.h>
+#include "UndoD3DXMacros.h"
 #if __WXMSW__
 //#include <d3d9.h>
 //#include <d3dx9.h>

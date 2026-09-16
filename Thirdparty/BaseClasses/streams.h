@@ -36,6 +36,8 @@
 #endif
 
 
+// winsock2.h must precede windows.h
+#include <winsock2.h>
 #include <windows.h>
 #include <windowsx.h>
 #include <olectl.h>

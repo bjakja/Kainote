@@ -19,33 +19,7 @@
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
 
-#ifndef _WIN32
 #include <wx/graphics.h>
-#else
-class wxGraphicsContext;
-
-enum wxAntialiasMode
-{
-	wxANTIALIAS_NONE,
-	wxANTIALIAS_DEFAULT
-};
-//
-enum wxInterpolationQuality
-{
-	wxINTERPOLATION_DEFAULT,
-	wxINTERPOLATION_NONE,
-	wxINTERPOLATION_FAST,
-	wxINTERPOLATION_GOOD,
-	wxINTERPOLATION_BEST
-};
-
-enum wxGradientType
-{
-	wxGRADIENT_NONE,
-	wxGRADIENT_LINEAR,
-	wxGRADIENT_RADIAL
-};
-#endif
 
 //enum wxPenStyle
 //{

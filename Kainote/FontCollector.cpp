@@ -28,7 +28,7 @@
 #include "KaiMessageBox.h"
 #include "ZipEntryUtf8.h"
 //#include "UtilsWindows.h"
-#include <wx/msw/winundef.h>
+#include "WinUndef.h"
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>
 #include <wx/wfstream.h>

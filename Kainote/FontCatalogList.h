@@ -21,7 +21,7 @@
 #include "MappedButton.h"
 #include "styles.h"
 #include "KaiStatusBar.h"
-#include <wx/msw/winundef.h>
+#include "WinUndef.h"
 #include <wx/timer.h>
 #include <wx/tokenzr.h>
 #include <wx/filedlg.h>
