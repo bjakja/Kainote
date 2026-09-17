@@ -8,11 +8,12 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Kainote\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-18 02:02+0700\n"
+"Report-Msgid-Bugs-To: https://github.com/bjakja/Kainote/issues\n"
+"POT-Creation-Date: 2026-09-18 02:15+0700\n"
 "PO-Revision-Date: 2026-03-10 10:10+0000\n"
 "Last-Translator: Weblate <noreply-mt-weblate@weblate.org>\n"
-"Language-Team: Italian <https://hosted.weblate.org/projects/kainote/kainote/it/>\n"
+"Language-Team: Italian <https://hosted.weblate.org/projects/kainote/kainote/"
+"it/>\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -162,11 +163,11 @@ msgid "Invalid keyframes format"
 msgstr "Formato dei fotogrammi chiave non valido"
 
 #: Kainote/AudioBox.cpp:289 Kainote/Automation.cpp:1414
-#: Kainote/Automation.cpp:1461 Kainote/KainoteFrame.cpp:925
-#: Kainote/KainoteFrame.cpp:929 Kainote/KainoteFrame.cpp:2151
-#: Kainote/KainoteFrame.cpp:2152 Kainote/KainoteFrame.cpp:2602
-#: Kainote/KainoteFrame.cpp:2628 Kainote/KainoteFrame.cpp:2632
-#: Kainote/OptionsDialog.cpp:291 Kainote/OptionsDialog.cpp:661
+#: Kainote/Automation.cpp:1461 Kainote/KainoteFrame.cpp:928
+#: Kainote/KainoteFrame.cpp:932 Kainote/KainoteFrame.cpp:2157
+#: Kainote/KainoteFrame.cpp:2158 Kainote/KainoteFrame.cpp:2608
+#: Kainote/KainoteFrame.cpp:2634 Kainote/KainoteFrame.cpp:2638
+#: Kainote/OptionsDialog.cpp:292 Kainote/OptionsDialog.cpp:664
 #: Kainote/Provider.cpp:188 Kainote/VisualAllTagsEdition.cpp:167
 #: Kainote/VisualAllTagsEdition.cpp:171 Kainote/VisualAllTagsEdition.cpp:189
 #: Kainote/VisualAllTagsEdition.cpp:296 Kainote/VisualAllTagsEdition.cpp:304
@@ -282,7 +283,7 @@ msgstr "File"
 msgid "Versions"
 msgstr "Versioni"
 
-#: Kainote/AutoSaveOpen.cpp:57 Kainote/KainoteFrame.cpp:1553
+#: Kainote/AutoSaveOpen.cpp:57 Kainote/KainoteFrame.cpp:1559
 #, fuzzy
 msgid "Open"
 msgstr "Apri"
@@ -294,7 +295,7 @@ msgstr "Apri"
 #: Kainote/FontCatalogList.cpp:70 Kainote/FontCatalogList.cpp:868
 #: Kainote/FontDialog.cpp:410 Kainote/KaiMessageBox.cpp:79
 #: Kainote/MappedButton.cpp:39 Kainote/NewCatalog.cpp:42
-#: Kainote/OptionsDialog.cpp:1022 Kainote/ProgressDialog.cpp:43
+#: Kainote/OptionsDialog.cpp:1029 Kainote/ProgressDialog.cpp:43
 #: Kainote/ScriptInfo.cpp:160 Kainote/ShiftTimes.cpp:67
 #: Kainote/StyleChange.cpp:270 Kainote/Stylelistbox.cpp:34
 #: Kainote/Stylelistbox.cpp:58 Kainote/Stylelistbox.cpp:112
@@ -311,7 +312,7 @@ msgstr "Annulla"
 msgid "Cannot open auto save folder"
 msgstr "Impossibile aprire la cartella di salvataggio automatico"
 
-#: Kainote/AutoSaveOpen.cpp:150 Kainote/KainoteFrame.cpp:707
+#: Kainote/AutoSaveOpen.cpp:150 Kainote/KainoteFrame.cpp:710
 #: Kainote/ProviderFFMS2.cpp:291 Kainote/TabPanel.cpp:87
 #: Kainote/VisualDrawingShapes.cpp:210 Kainote/VisualDrawingShapes.cpp:274
 #, fuzzy
@@ -328,7 +329,7 @@ msgstr "La cartella di salvataggio automatico è vuota"
 msgid "Failed to load autosave"
 msgstr "Impossibile aprire la cartella di salvataggio automatico"
 
-#: Kainote/AutoSavesRemoving.cpp:28 Kainote/KainoteFrame.cpp:195
+#: Kainote/AutoSavesRemoving.cpp:28 Kainote/KainoteFrame.cpp:196
 #, fuzzy
 msgid "Remove temporary files"
 msgstr "Rimuovere i file temporanei"
@@ -475,8 +476,12 @@ msgstr "Rimuovere i file cache audio più vecchi"
 
 #: Kainote/AutoSavesRemoving.cpp:177
 #, fuzzy
-msgid "Subtitle files (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt"
-msgstr "File dei sottotitoli (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt"
+msgid ""
+"Subtitle files (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|"
+"*.ass;*.ssa;*.srt;*.sub;*.txt"
+msgstr ""
+"File dei sottotitoli (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|"
+"*.ass;*.ssa;*.srt;*.sub;*.txt"
 
 #: Kainote/AutoSavesRemoving.cpp:178
 #, fuzzy
@@ -499,7 +504,7 @@ msgid "Cannot open temporary files folder"
 msgstr "Impossibile aprire la cartella dei file temporanei"
 
 #: Kainote/Automation.cpp:644
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid ""
 "Error initializing Lua script \"%s\":\n"
 "\n"
@@ -511,11 +516,15 @@ msgstr ""
 
 #: Kainote/Automation.cpp:656
 #, fuzzy
-msgid "You are trying to load an Automation 3 script as an Automation 4 script. Automation 3 is no longer supported."
-msgstr "Si sta tentando di caricare lo script Automazione 3 come uno script Automazione 4. L'automazione 3 non è più supportata."
+msgid ""
+"You are trying to load an Automation 3 script as an Automation 4 script. "
+"Automation 3 is no longer supported."
+msgstr ""
+"Si sta tentando di caricare lo script Automazione 3 come uno script "
+"Automazione 4. L'automazione 3 non è più supportata."
 
 #: Kainote/Automation.cpp:699
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Macro named '%s' is already defined in the script '%s'"
 msgstr "La macro denominata '%s' è già definita nello script '%s'."
 
@@ -525,8 +534,8 @@ msgid "An error occurred while executing the Lua script:\n"
 msgstr "Si è verificato un errore durante il caricamento dello script Lua:\n"
 
 #: Kainote/Automation.cpp:1265 Kainote/Automation.cpp:1307
-#: Kainote/KainoteFrame.cpp:929 Kainote/KainoteFrame.cpp:2632
-#, c-format, fuzzy
+#: Kainote/KainoteFrame.cpp:932 Kainote/KainoteFrame.cpp:2638
+#, fuzzy, c-format
 msgid ""
 "Error loading Lua script: %s\n"
 "%s"
@@ -535,7 +544,7 @@ msgstr ""
 "%s"
 
 #: Kainote/Automation.cpp:1269 Kainote/Automation.cpp:1311
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Unknown error loading Lua script: %s."
 msgstr "Errore sconosciuto nel caricamento dello script Lua: %s."
 
@@ -611,7 +620,7 @@ msgstr "Percorso e nome dello script"
 msgid "Macro"
 msgstr "Macro"
 
-#: Kainote/AutomationHotkeysDialog.cpp:74 Kainote/OptionsDialog.cpp:656
+#: Kainote/AutomationHotkeysDialog.cpp:74 Kainote/OptionsDialog.cpp:659
 #, fuzzy
 msgid "Hotkey"
 msgstr "Tasto di scelta rapida"
@@ -626,7 +635,7 @@ msgstr "Cartella di caricamento automatico"
 msgid "From subs"
 msgstr "Da sottopagina"
 
-#: Kainote/AutomationHotkeysDialog.cpp:144 Kainote/OptionsDialog.cpp:668
+#: Kainote/AutomationHotkeysDialog.cpp:144 Kainote/OptionsDialog.cpp:671
 #, fuzzy
 msgid "Map hotkey"
 msgstr "Tasto di scelta rapida della mappa"
@@ -634,45 +643,45 @@ msgstr "Tasto di scelta rapida della mappa"
 #: Kainote/AutomationHotkeysDialog.cpp:146
 #: Kainote/AutomationHotkeysDialog.cpp:242
 #: Kainote/AutomationHotkeysDialog.cpp:252 Kainote/Hotkeys.cpp:479
-#: Kainote/Hotkeys.cpp:490 Kainote/OptionsDialog.cpp:119
-#: Kainote/OptionsDialog.cpp:129 Kainote/OptionsDialog.cpp:672
+#: Kainote/Hotkeys.cpp:490 Kainote/OptionsDialog.cpp:120
+#: Kainote/OptionsDialog.cpp:130 Kainote/OptionsDialog.cpp:675
 #, fuzzy
 msgid "Delete hotkey"
 msgstr "Tasto di scelta rapida per l'eliminazione"
 
 #: Kainote/AutomationHotkeysDialog.cpp:214 Kainote/Hotkeys.cpp:452
-#: Kainote/OptionsDialog.cpp:269 Kainote/OptionsDialog.cpp:1007
+#: Kainote/OptionsDialog.cpp:270 Kainote/OptionsDialog.cpp:1014
 #, fuzzy
 msgid "Audio"
 msgstr "L'applicazione richiede l'accesso al microfono"
 
 #: Kainote/AutomationHotkeysDialog.cpp:214 Kainote/Hotkeys.cpp:452
-#: Kainote/OptionsDialog.cpp:269 Kainote/OptionsDialog.cpp:1002
+#: Kainote/OptionsDialog.cpp:270 Kainote/OptionsDialog.cpp:1009
 #, fuzzy
 msgid "Editor"
 msgstr "Redattore"
 
 #: Kainote/AutomationHotkeysDialog.cpp:214 Kainote/Hotkeys.cpp:452
-#: Kainote/OptionsDialog.cpp:269 Kainote/OptionsDialog.cpp:648
+#: Kainote/OptionsDialog.cpp:270 Kainote/OptionsDialog.cpp:651
 #, fuzzy
 msgid "Global"
 msgstr "Globali"
 
 #: Kainote/AutomationHotkeysDialog.cpp:214 Kainote/Hotkeys.cpp:452
-#: Kainote/OptionsDialog.cpp:269 Kainote/ScriptInfo.cpp:99
+#: Kainote/OptionsDialog.cpp:270 Kainote/ScriptInfo.cpp:99
 #, fuzzy
 msgid "Subtitles"
 msgstr "Sottotitoli"
 
 #: Kainote/AutomationHotkeysDialog.cpp:214 Kainote/Hotkeys.cpp:452
-#: Kainote/OptionsDialog.cpp:269 Kainote/OptionsDialog.cpp:1006
+#: Kainote/OptionsDialog.cpp:270 Kainote/OptionsDialog.cpp:1013
 #, fuzzy
 msgid "Video"
 msgstr "Video"
 
 #: Kainote/AutomationHotkeysDialog.cpp:239 Kainote/Hotkeys.cpp:476
-#: Kainote/OptionsDialog.cpp:116
-#, c-format, fuzzy
+#: Kainote/OptionsDialog.cpp:117
+#, fuzzy, c-format
 msgid ""
 "This hotkey already exists for \"%s\".\n"
 "What to do?"
@@ -682,29 +691,29 @@ msgstr ""
 
 #: Kainote/AutomationHotkeysDialog.cpp:240
 #: Kainote/AutomationHotkeysDialog.cpp:249 Kainote/Hotkeys.cpp:477
-#: Kainote/Hotkeys.cpp:487 Kainote/KainoteFrame.cpp:1280
-#: Kainote/KainoteFrame.cpp:1296 Kainote/KainoteFrame.cpp:1410
-#: Kainote/KainoteFrame.cpp:2499 Kainote/OptionsDialog.cpp:117
-#: Kainote/OptionsDialog.cpp:126 Kainote/OptionsDialog.cpp:509
+#: Kainote/Hotkeys.cpp:487 Kainote/KainoteFrame.cpp:1286
+#: Kainote/KainoteFrame.cpp:1302 Kainote/KainoteFrame.cpp:1416
+#: Kainote/KainoteFrame.cpp:2505 Kainote/OptionsDialog.cpp:118
+#: Kainote/OptionsDialog.cpp:127 Kainote/OptionsDialog.cpp:512
 #: Kainote/SpellCheckerDialog.cpp:147 Kainote/SubsGrid.cpp:1139
 #: Kainote/SubsGridBase.cpp:473 Kainote/SubsGridBase.cpp:502
 #: Kainote/VideoBox.cpp:322 Kainote/VisualClips.cpp:1015
-#: Kainote/kainoteApp.cpp:331 Kainote/kainoteApp.cpp:396
+#: Kainote/kainoteApp.cpp:318 Kainote/kainoteApp.cpp:380
 #, fuzzy
 msgid "Warning"
 msgstr "Avvertenza"
 
 #: Kainote/AutomationHotkeysDialog.cpp:241
 #: Kainote/AutomationHotkeysDialog.cpp:251 Kainote/Hotkeys.cpp:478
-#: Kainote/Hotkeys.cpp:489 Kainote/OptionsDialog.cpp:118
-#: Kainote/OptionsDialog.cpp:128
+#: Kainote/Hotkeys.cpp:489 Kainote/OptionsDialog.cpp:119
+#: Kainote/OptionsDialog.cpp:129
 #, fuzzy
 msgid "Switch hotkeys"
 msgstr "Tasti di scelta rapida"
 
 #: Kainote/AutomationHotkeysDialog.cpp:248 Kainote/Hotkeys.cpp:485
-#: Kainote/OptionsDialog.cpp:125
-#, c-format, fuzzy
+#: Kainote/OptionsDialog.cpp:126
+#, fuzzy, c-format
 msgid ""
 "This shortcut already exists in %s as a shortcut for \"%s\".\n"
 "What would you like to do?"
@@ -713,19 +722,19 @@ msgstr ""
 "Cosa fare?"
 
 #: Kainote/AutomationHotkeysDialog.cpp:249 Kainote/Hotkeys.cpp:486
-#: Kainote/OptionsDialog.cpp:126
+#: Kainote/OptionsDialog.cpp:127
 #, fuzzy
 msgid "another window"
 msgstr "un'altra finestra"
 
 #: Kainote/AutomationHotkeysDialog.cpp:249 Kainote/Hotkeys.cpp:486
-#: Kainote/OptionsDialog.cpp:126
+#: Kainote/OptionsDialog.cpp:127
 #, fuzzy
 msgid "other windows"
 msgstr "un'altra finestra"
 
 #: Kainote/AutomationHotkeysDialog.cpp:253 Kainote/Hotkeys.cpp:491
-#: Kainote/OptionsDialog.cpp:130
+#: Kainote/OptionsDialog.cpp:131
 #, fuzzy
 msgid "Set anyway"
 msgstr "Imposta ancora"
@@ -734,7 +743,8 @@ msgstr "Imposta ancora"
 #: Kainote/FontCollector.cpp:193 Kainote/LogHandler.cpp:50
 #: Kainote/Notebook.cpp:626 Kainote/SelectLines.cpp:141
 #: Kainote/SelectLines.cpp:236 Kainote/SelectLines.cpp:278
-#: Kainote/SpellCheckerDialog.cpp:63 Kainote/stylestore.cpp:171
+#: Kainote/SpellCheckerDialog.cpp:63 Kainote/UpdateChecker.cpp:114
+#: Kainote/stylestore.cpp:171
 #, fuzzy
 msgid "Close"
 msgstr "Chiudi"
@@ -750,9 +760,10 @@ msgid "styles"
 msgstr "stili"
 
 #: Kainote/AutomationToFile.cpp:642
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Cannot add a line of class %s to a field of class %s"
-msgstr "Impossibile aggiungere la riga della classe: %s nel campo della classe: %s"
+msgstr ""
+"Impossibile aggiungere la riga della classe: %s nel campo della classe: %s"
 
 #: Kainote/AutomationToFile.cpp:1180
 #, fuzzy
@@ -821,7 +832,8 @@ msgstr "Colore dell'ombra"
 msgid ""
 "Swap shortcuts between the color picker\n"
 "and the color selection window"
-msgstr "Scambio di scorciatoie per il colorpicker e la finestra di scelta del colore"
+msgstr ""
+"Scambio di scorciatoie per il colorpicker e la finestra di scelta del colore"
 
 #: Kainote/ColorPicker.cpp:564
 #, fuzzy
@@ -888,7 +900,7 @@ msgstr ""
 
 #: Kainote/Demux.cpp:45 Kainote/ProviderFFMS2.cpp:218
 #: Kainote/ProviderFFMS2.cpp:355
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Indexing error occurred: %s"
 msgstr "Si è verificato un errore di indicizzazione: %s"
 
@@ -960,7 +972,7 @@ msgid "Installed languages"
 msgstr "Lingue installate"
 
 #: Kainote/DialogueTextEditor.cpp:2293
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "&Add word \"%s\" to dictionary"
 msgstr "Aggiungi la parola \"%s\" al dizionario"
 
@@ -980,7 +992,7 @@ msgid "Automatically change quotes"
 msgstr "Modifica automatica delle quotazioni"
 
 #: Kainote/DialogueTextEditor.cpp:2354
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Error. Word \"%s\" was not added."
 msgstr "Errore. La parola \"%s\" non è stata aggiunta."
 
@@ -1010,7 +1022,7 @@ msgid "Frames per second:"
 msgstr "Fotogrammi al secondo:"
 
 #: Kainote/DummyVideo.cpp:95
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "This gives %i frames"
 msgstr "È %i cornici"
 
@@ -1203,7 +1215,7 @@ msgid "Comment"
 msgstr "Commento"
 
 #: Kainote/EditBox.cpp:283 Kainote/FindReplaceDialog.cpp:135
-#: Kainote/KainoteFrame.cpp:230 Kainote/SelectLines.cpp:75
+#: Kainote/KainoteFrame.cpp:231 Kainote/SelectLines.cpp:75
 #: Kainote/SubsGrid.cpp:462 Kainote/SubsGrid.cpp:629
 #: Kainote/SubsGridWindow.cpp:267 Kainote/SubsGridWindow.cpp:663
 #: Kainote/SubsGridWindow.cpp:1118 Kainote/SubsGridWindow.cpp:1284
@@ -1212,7 +1224,7 @@ msgid "Actor"
 msgstr "Attore"
 
 #: Kainote/EditBox.cpp:289 Kainote/FindReplaceDialog.cpp:138
-#: Kainote/KainoteFrame.cpp:231 Kainote/SelectLines.cpp:76
+#: Kainote/KainoteFrame.cpp:232 Kainote/SelectLines.cpp:76
 #: Kainote/SubsGrid.cpp:467 Kainote/SubsGrid.cpp:634
 #: Kainote/SubsGridWindow.cpp:271 Kainote/SubsGridWindow.cpp:667
 #: Kainote/SubsGridWindow.cpp:1131 Kainote/SubsGridWindow.cpp:1297
@@ -1221,7 +1233,7 @@ msgid "Effect"
 msgstr "Effetto"
 
 #: Kainote/EditBox.cpp:408
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Line: %i"
 msgstr "Linea: %i"
 
@@ -1231,7 +1243,7 @@ msgid "Wraps: "
 msgstr "Avvolte: "
 
 #: Kainote/EditBox.cpp:512
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Characters per second: %i<=15"
 msgstr "Caratteri al secondo: %i<=15"
 
@@ -1243,8 +1255,11 @@ msgstr "Posizione testo"
 
 #: Kainote/EditBox.cpp:1197
 #, fuzzy
-msgid "Translator mode displays and saves both foreign text and translation text"
-msgstr "La modalità traduttore visualizza e salva sia il testo straniero che il testo di traduzione."
+msgid ""
+"Translator mode displays and saves both foreign text and translation text"
+msgstr ""
+"La modalità traduttore visualizza e salva sia il testo straniero che il "
+"testo di traduzione."
 
 #: Kainote/EditBox.cpp:1198
 #, fuzzy
@@ -1254,7 +1269,8 @@ msgstr "Copia l'intero testo della lingua straniera nel campo di traduzione"
 #: Kainote/EditBox.cpp:1199
 #, fuzzy
 msgid "Copies the selected foreign-language text to the translation field"
-msgstr "Copia il testo selezionato in lingua straniera nel campo di traduzione."
+msgstr ""
+"Copia il testo selezionato in lingua straniera nel campo di traduzione."
 
 #: Kainote/EditBox.cpp:1200
 #, fuzzy
@@ -1313,8 +1329,12 @@ msgstr "La linea di margine superiore e inferiore"
 
 #: Kainote/EditBox.cpp:1211
 #, fuzzy
-msgid "Line effect. Used to mark lines to which karaoke or VSFilter effects should be applied"
-msgstr "L'effetto linea. Viene utilizzato per marcare le linee, che un tempo erano effetti karaoke o VSFilter."
+msgid ""
+"Line effect. Used to mark lines to which karaoke or VSFilter effects should "
+"be applied"
+msgstr ""
+"L'effetto linea. Viene utilizzato per marcare le linee, che un tempo erano "
+"effetti karaoke o VSFilter."
 
 #: Kainote/EditBox.cpp:1212
 #, fuzzy
@@ -1354,6 +1374,96 @@ msgstr "Non tradotto non trovato"
 msgid "Manage tag buttons"
 msgstr "Gestione dei pulsanti dei tag"
 
+#: Kainote/FileTypes.h:62
+#, fuzzy
+msgid "ASS subtitles"
+msgstr "Sottotitoli ASS"
+
+#: Kainote/FileTypes.h:63
+#, fuzzy
+msgid "SSA subtitles"
+msgstr "Sottotitoli SSA"
+
+#: Kainote/FileTypes.h:64
+#, fuzzy
+msgid "SRT subtitles"
+msgstr "Sottotitoli SRT"
+
+#: Kainote/FileTypes.h:65
+#, fuzzy
+msgid "SUB subtitles"
+msgstr "Sottotitoli SUB"
+
+#: Kainote/FileTypes.h:66
+#, fuzzy
+msgid "TXT subtitles"
+msgstr "Sottotitoli TXT"
+
+#: Kainote/FileTypes.h:67
+#, fuzzy
+msgid "Video MKV"
+msgstr "Video MKV"
+
+#: Kainote/FileTypes.h:68
+#, fuzzy
+msgid "Video MP4"
+msgstr "Video MP4"
+
+#: Kainote/FileTypes.h:69
+#, fuzzy
+msgid "Video AVI"
+msgstr "Video AVI"
+
+#: Kainote/FileTypes.h:70
+#, fuzzy
+msgid "Video OGM"
+msgstr "Video OGM"
+
+#: Kainote/FileTypes.h:71
+#, fuzzy
+msgid "Video WMV"
+msgstr "Video WMV"
+
+#: Kainote/FileTypes.h:72
+#, fuzzy
+msgid "Video ASF"
+msgstr "Video ASF"
+
+#: Kainote/FileTypes.h:73
+#, fuzzy
+msgid "Video RMVB"
+msgstr "Video RMVB"
+
+#: Kainote/FileTypes.h:74
+#, fuzzy
+msgid "Video RM"
+msgstr "Video RM"
+
+#: Kainote/FileTypes.h:75
+#, fuzzy
+msgid "Video 3GP"
+msgstr "Video 3GP"
+
+#: Kainote/FileTypes.h:76
+#, fuzzy
+msgid "Video MPG"
+msgstr "Video MPG"
+
+#: Kainote/FileTypes.h:77
+#, fuzzy
+msgid "Video MPEG"
+msgstr "Video MPEG"
+
+#: Kainote/FileTypes.h:79
+#, fuzzy
+msgid "Video TS"
+msgstr "Video TS"
+
+#: Kainote/FileTypes.h:80
+#, fuzzy
+msgid "Video M2TS"
+msgstr "Video M2TS"
+
 #: Kainote/FindReplaceDialog.cpp:44 Kainote/FindReplaceDialog.cpp:47
 #: Kainote/SelectLines.cpp:54
 #, fuzzy
@@ -1373,7 +1483,8 @@ msgid ""
 "Because of the large video file,\n"
 "the search for everything \"*. *\" Is changed to *.ass"
 msgstr ""
-"Filtri di ricerca Windows separati da punto e virgola, ad esempio \"*.ass; *.srt\".\n"
+"Filtri di ricerca Windows separati da punto e virgola, ad esempio \"*.ass; "
+"*.srt\".\n"
 "A causa dei file video di grandi dimensioni,\n"
 "la ricerca di tutto ciò che è \"*. *\" viene modificata in *.ass"
 
@@ -1446,7 +1557,7 @@ msgstr "In campo"
 msgid "Text"
 msgstr "Testo"
 
-#: Kainote/FindReplaceDialog.cpp:129 Kainote/KainoteFrame.cpp:229
+#: Kainote/FindReplaceDialog.cpp:129 Kainote/KainoteFrame.cpp:230
 #: Kainote/SelectLines.cpp:74 Kainote/SubsGrid.cpp:463 Kainote/SubsGrid.cpp:630
 #: Kainote/SubsGridWindow.cpp:266 Kainote/SubsGridWindow.cpp:662
 #: Kainote/SubsGridWindow.cpp:1112 Kainote/SubsGridWindow.cpp:1278
@@ -1456,7 +1567,7 @@ msgstr "Stili"
 
 #: Kainote/FindReplaceDialog.cpp:160 Kainote/FindReplaceDialog.cpp:412
 #: Kainote/FindReplaceDialog.cpp:426 Kainote/Hotkeys.cpp:146
-#: Kainote/HotkeysNaming.cpp:237 Kainote/SelectLines.cpp:51
+#: Kainote/HotkeysNaming.cpp:238 Kainote/SelectLines.cpp:51
 #, fuzzy
 msgid "Find"
 msgstr "Trova"
@@ -1547,7 +1658,7 @@ msgid "From selected"
 msgstr "Da selezionati"
 
 #: Kainote/FindReplaceDialog.cpp:413 Kainote/FindReplaceDialog.cpp:427
-#: Kainote/Hotkeys.cpp:147 Kainote/HotkeysNaming.cpp:174
+#: Kainote/Hotkeys.cpp:147 Kainote/HotkeysNaming.cpp:175
 #, fuzzy
 msgid "Find and replace"
 msgstr "Trova e sostituisci"
@@ -1580,7 +1691,7 @@ msgstr "Sostituisci"
 #: Kainote/FindReplaceResultsDialog.cpp:254
 #: Kainote/FindReplaceResultsDialog.cpp:303
 #: Kainote/MispellReplacerDialog.cpp:139 Kainote/MispellReplacerDialog.cpp:182
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Line %i: "
 msgstr "Linea %i: "
 
@@ -1599,7 +1710,7 @@ msgstr "Scegliere il nome del nuovo catalogo"
 msgid "Enter a name for the new catalog"
 msgstr "Inserire un nome per il nuovo catalogo"
 
-#: Kainote/FontCatalogList.cpp:84 Kainote/KainoteFrame.cpp:916
+#: Kainote/FontCatalogList.cpp:84 Kainote/KainoteFrame.cpp:919
 #: Kainote/ShiftTimes.cpp:85 Kainote/ShiftTimes.cpp:973
 #: Kainote/ShiftTimes.cpp:978 Kainote/findreplace.cpp:1177
 #, fuzzy
@@ -1659,7 +1770,7 @@ msgstr "Siete sicuri di voler eliminare questo catalogo?"
 
 #: Kainote/FontCatalogList.cpp:143 Kainote/FontCatalogList.cpp:743
 #: Kainote/Notebook.cpp:979 Kainote/StyleChange.cpp:461
-#: Kainote/kainoteApp.cpp:524 Kainote/kainoteApp.cpp:530
+#: Kainote/kainoteApp.cpp:508 Kainote/kainoteApp.cpp:514
 #: Kainote/stylestore.cpp:567
 #, fuzzy
 msgid "Prompt"
@@ -1667,8 +1778,11 @@ msgstr "Richiesta"
 
 #: Kainote/FontCatalogList.cpp:168
 #, fuzzy
-msgid "The catalog list has autosave; files are stored in the \"Config\" folder."
-msgstr "L'elenco dei cataloghi ha un salvataggio automatico, i file si trovano nella cartella \"Config\"."
+msgid ""
+"The catalog list has autosave; files are stored in the \"Config\" folder."
+msgstr ""
+"L'elenco dei cataloghi ha un salvataggio automatico, i file si trovano nella "
+"cartella \"Config\"."
 
 #: Kainote/FontCatalogList.cpp:170 Kainote/FontCatalogList.cpp:859
 #, fuzzy
@@ -1685,8 +1799,8 @@ msgstr "Cerca:"
 msgid "Autosave"
 msgstr "Salvataggio automatico"
 
-#: Kainote/FontCatalogList.cpp:314 Kainote/KainoteFrame.cpp:1036
-#: Kainote/KainoteFrame.cpp:1052 Kainote/VideoBox.cpp:1074
+#: Kainote/FontCatalogList.cpp:314 Kainote/KainoteFrame.cpp:1039
+#: Kainote/KainoteFrame.cpp:1055 Kainote/VideoBox.cpp:1074
 #, fuzzy
 msgid "Choose video file"
 msgstr "Scegliere il file video"
@@ -1697,12 +1811,12 @@ msgid "Text files (*.txt)|*.txt"
 msgstr "File di testo (*.txt)|*.txt"
 
 #: Kainote/FontCatalogList.cpp:336
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Cannot find elements of line %i"
 msgstr "Impossibile trovare elementi della linea %i"
 
 #: Kainote/FontCatalogList.cpp:603
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Cannot add font \"%s\"."
 msgstr "Impossibile aggiungere il font \"%s\"."
 
@@ -1723,7 +1837,7 @@ msgid "Add fonts from subtitles"
 msgstr "Aggiungi font dai sottotitoli"
 
 #: Kainote/FontCatalogList.cpp:743
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Catalog named \"%s\" already exists. What to do?"
 msgstr "Il catalogo denominato \"%s\" esiste già. Cosa fare?"
 
@@ -1758,8 +1872,8 @@ msgstr " schede: "
 msgid "In lines: "
 msgstr "Nelle righe: "
 
-#: Kainote/FontCollector.cpp:134 Kainote/HotkeysNaming.cpp:175
-#: Kainote/KainoteFrame.cpp:336 Kainote/KainoteFrame.cpp:337
+#: Kainote/FontCollector.cpp:134 Kainote/HotkeysNaming.cpp:176
+#: Kainote/KainoteFrame.cpp:337 Kainote/KainoteFrame.cpp:338
 #: Kainote/SubsGrid.cpp:242
 #, fuzzy
 msgid "Font collector"
@@ -1785,7 +1899,7 @@ msgstr "Copia nella cartella selezionata"
 msgid "Zip"
 msgstr "CAP"
 
-#: Kainote/FontCollector.cpp:170 Kainote/OptionsDialog.cpp:267
+#: Kainote/FontCollector.cpp:170 Kainote/OptionsDialog.cpp:268
 #: Kainote/ScriptInfo.cpp:132
 #, fuzzy
 msgid "Options"
@@ -1851,7 +1965,9 @@ msgstr "Selezionate la cartella in cui volete copiare i font."
 #: Kainote/FontCollector.cpp:467
 #, fuzzy
 msgid "No subtitles loaded. Load subtitles or deselect this option."
-msgstr "Nessun sottotitolo caricato. Caricare i sottotitoli o deselezionare questa opzione."
+msgstr ""
+"Nessun sottotitolo caricato. Caricare i sottotitoli o deselezionare questa "
+"opzione."
 
 #: Kainote/FontCollector.cpp:473
 #, fuzzy
@@ -1863,8 +1979,8 @@ msgstr "Scegliere un nome per l'archivio"
 msgid "The save path is not valid."
 msgstr "La patch di salvataggio non è valida."
 
-#: Kainote/FontCollector.cpp:513 Kainote/KainoteFrame.cpp:1347
-#: Kainote/KainoteFrame.cpp:2114 Kainote/Notebook.cpp:1211
+#: Kainote/FontCollector.cpp:513 Kainote/KainoteFrame.cpp:1353
+#: Kainote/KainoteFrame.cpp:2120 Kainote/Notebook.cpp:1211
 #: Kainote/SubsGrid.cpp:1100 Kainote/SubsGridBase.cpp:492
 #: Kainote/SubsGridBase.cpp:1340 Kainote/SubsGridDialogs.cpp:108
 #: Kainote/VideoBox.cpp:880 Kainote/VideoBox.cpp:892
@@ -1890,7 +2006,7 @@ msgid "Font not found \""
 msgstr "Font non trovato \""
 
 #: Kainote/FontCollector.cpp:601 Kainote/FontCollector.cpp:660
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Found font \"%s\"\n"
 msgstr "Font trovato \"%s\"\n"
 
@@ -1904,7 +2020,7 @@ msgstr ""
 "la copia viene annullata.\n"
 
 #: Kainote/FontCollector.cpp:730 Kainote/FontCollector.cpp:787
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid ""
 "Retrieved sizes and names of %i fonts, elapsed time %sms.\n"
 "\n"
@@ -1918,7 +2034,7 @@ msgid "Path is not available"
 msgstr "Il percorso non è disponibile"
 
 #: Kainote/FontCollector.cpp:834
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid ""
 "Font \"%s\" belongs to a style\n"
 "that is not used."
@@ -1932,7 +2048,7 @@ msgid "Some fonts do not contain all glyphs used in the text.\n"
 msgstr "Alcuni font non contengono tutti i glips utilizzati nel testo.\n"
 
 #: Kainote/FontCollector.cpp:850
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Finished, %s %s.\n"
 msgstr "Finito, %s %s.\n"
 
@@ -1955,7 +2071,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: Kainote/FontCollector.cpp:854
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Not found %s.\n"
 msgstr "Non trovato %s.\n"
 
@@ -1968,37 +2084,37 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: Kainote/FontCollector.cpp:859
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Cannot copy %s.\n"
 msgstr "Impossibile copiare %s.\n"
 
 #: Kainote/FontCollector.cpp:868
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Completed Successfully, %s %s.\n"
 msgstr "Completato con successo, %s %s.\n"
 
 #: Kainote/FontCollector.cpp:886
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Added font \"%s\" to the archive."
 msgstr "Aggiunto all'archivio il carattere \"%s\"."
 
 #: Kainote/FontCollector.cpp:895
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Cannot zip font \"%s\"."
 msgstr "Impossibile zippare il font \"%s\"."
 
 #: Kainote/FontCollector.cpp:901
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Copied font \"%s\"."
 msgstr "Font copiato \"%s\"."
 
 #: Kainote/FontCollector.cpp:906
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Cannot copy font \"%s\"."
 msgstr "Impossibile copiare il font \"%s\"."
 
 #: Kainote/FontCollector.cpp:920
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid ""
 "Video: %s\n"
 "\n"
@@ -2032,7 +2148,7 @@ msgid "Cannot save font named \""
 msgstr "Non è possibile salvare il font denominato \""
 
 #: Kainote/FontCollector.cpp:973
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid ""
 "Completed, copied %i fonts.\n"
 "Failed to copy %i fonts."
@@ -2041,7 +2157,7 @@ msgstr ""
 "Impossibile copiare i font %i."
 
 #: Kainote/FontCollector.cpp:977
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Completed successfully and copied %i fonts."
 msgstr "Completato con successo e copiato i font di %i."
 
@@ -2051,7 +2167,7 @@ msgid "Cannot create folder."
 msgstr "Impossibile creare una cartella."
 
 #: Kainote/FontCollector.cpp:1087
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Found font \"%s\"."
 msgstr "Trovato il font \"%s\"."
 
@@ -2065,7 +2181,7 @@ msgstr ""
 "Non verrà copiato."
 
 #: Kainote/FontCollector.cpp:1095
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid ""
 "Font \"%s\" belongs to a style\n"
 "that is not used.%s"
@@ -2074,62 +2190,62 @@ msgstr ""
 "che non viene utilizzato.%s"
 
 #: Kainote/FontCollector.cpp:1103
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Font \"%s\" is missing normal style."
 msgstr "Il carattere \"%s\" manca dello stile normale."
 
 #: Kainote/FontCollector.cpp:1106
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Font \"%s\" is missing bold italics."
 msgstr "Il carattere \"%s\" è privo di grassetto e corsivo."
 
 #: Kainote/FontCollector.cpp:1109
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Font \"%s\" is missing bold."
 msgstr "Il carattere \"%s\" è privo di grassetto."
 
 #: Kainote/FontCollector.cpp:1112
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Font \"%s\" is missing italics."
 msgstr "Il carattere \"%s\" è privo di corsivo."
 
 #: Kainote/FontCollector.cpp:1126
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Cannot check the characters in font \"%s\"."
 msgstr "Impossibile verificare i caratteri del font \"%s\"."
 
 #: Kainote/FontCollector.cpp:1130
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Font \"%s\" does not contain characters: \"%s\"."
 msgstr "Il carattere \"%s\" non contiene i caratteri: \"%s\"."
 
 #: Kainote/FontCollector.cpp:1142
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Cannot get the contents of font \"%s\"."
 msgstr "Impossibile ottenere il contenuto del font \"%s\"."
 
 #: Kainote/FontCollector.cpp:1167
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Cannot open file \"%s\"."
 msgstr "Impossibile aprire il file \"%s\"."
 
 #: Kainote/FontCollector.cpp:1175
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Size of font \"%s\" is different."
 msgstr "La dimensione del carattere \"%s\" è diversa."
 
 #: Kainote/FontCollector.cpp:1182
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Could not read \"%s\" font from the Fonts folder."
 msgstr "Impossibile leggere il font \"%s\" dalla cartella Fonts."
 
 #: Kainote/FontCollector.cpp:1188 Kainote/FontCollector.cpp:1211
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Found \"%s\" font file."
 msgstr "Trovato il file di font \"%s\"."
 
 #: Kainote/FontCollector.cpp:1228
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Cannot find \"%s\" font in Fonts folder."
 msgstr "Impossibile trovare il font \"%s\" nella cartella Fonts."
 
@@ -2139,7 +2255,7 @@ msgid "Could not create process. Muxing canceled"
 msgstr "Impossibile creare il processo. Muxing annullato"
 
 #: Kainote/FontCollector.cpp:1335
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid ""
 "\n"
 "Finished in %sms"
@@ -2219,7 +2335,8 @@ msgstr "Caricamento di font esterni"
 #: Kainote/FontEnumerator.cpp:462
 #, fuzzy
 msgid "Cannot create next notification handler for fonts folder."
-msgstr "Impossibile creare un gestore di notifiche successivo per la cartella fonts."
+msgstr ""
+"Impossibile creare un gestore di notifiche successivo per la cartella fonts."
 
 #: Kainote/FontEnumerator.cpp:574
 #, fuzzy
@@ -2241,203 +2358,203 @@ msgstr "Non può caricare la cartella del carattere esterno"
 msgid "Exit"
 msgstr "Esci"
 
-#: Kainote/Hotkeys.cpp:135 Kainote/HotkeysNaming.cpp:211
+#: Kainote/Hotkeys.cpp:135 Kainote/HotkeysNaming.cpp:212
 #: Kainote/Notebook.cpp:600
 #, fuzzy
 msgid "Open new tab"
 msgstr "Aprire una nuova scheda"
 
-#: Kainote/Hotkeys.cpp:136 Kainote/HotkeysNaming.cpp:212
+#: Kainote/Hotkeys.cpp:136 Kainote/HotkeysNaming.cpp:213
 #, fuzzy
 msgid "Close current tab"
 msgstr "Chiudi la scheda corrente"
 
-#: Kainote/Hotkeys.cpp:137 Kainote/HotkeysNaming.cpp:171
+#: Kainote/Hotkeys.cpp:137 Kainote/HotkeysNaming.cpp:172
 #, fuzzy
 msgid "Time shift window"
 msgstr "Orari dei turni"
 
-#: Kainote/Hotkeys.cpp:138 Kainote/HotkeysNaming.cpp:162
-#: Kainote/KainoteFrame.cpp:321
+#: Kainote/Hotkeys.cpp:138 Kainote/HotkeysNaming.cpp:163
+#: Kainote/KainoteFrame.cpp:322
 #, fuzzy
 msgid "Convert to ASS"
 msgstr "Convertire in ASS"
 
-#: Kainote/Hotkeys.cpp:139 Kainote/HotkeysNaming.cpp:163
-#: Kainote/KainoteFrame.cpp:323
+#: Kainote/Hotkeys.cpp:139 Kainote/HotkeysNaming.cpp:164
+#: Kainote/KainoteFrame.cpp:324
 #, fuzzy
 msgid "Convert to SRT"
 msgstr "Convertire in SRT"
 
-#: Kainote/Hotkeys.cpp:140 Kainote/HotkeysNaming.cpp:164
-#: Kainote/KainoteFrame.cpp:325
+#: Kainote/Hotkeys.cpp:140 Kainote/HotkeysNaming.cpp:165
+#: Kainote/KainoteFrame.cpp:326
 #, fuzzy
 msgid "Convert to MDVD"
 msgstr "Convertire in MDVD"
 
-#: Kainote/Hotkeys.cpp:141 Kainote/HotkeysNaming.cpp:165
-#: Kainote/KainoteFrame.cpp:327
+#: Kainote/Hotkeys.cpp:141 Kainote/HotkeysNaming.cpp:166
+#: Kainote/KainoteFrame.cpp:328
 #, fuzzy
 msgid "Convert to MPL2"
 msgstr "Convertire in MPL2"
 
-#: Kainote/Hotkeys.cpp:142 Kainote/HotkeysNaming.cpp:166
-#: Kainote/KainoteFrame.cpp:329
+#: Kainote/Hotkeys.cpp:142 Kainote/HotkeysNaming.cpp:167
+#: Kainote/KainoteFrame.cpp:330
 #, fuzzy
 msgid "Convert to TMP"
 msgstr "Convertire in TMP"
 
-#: Kainote/Hotkeys.cpp:143 Kainote/HotkeysNaming.cpp:250
+#: Kainote/Hotkeys.cpp:143 Kainote/HotkeysNaming.cpp:251
 #: Kainote/stylestore.cpp:41
 #, fuzzy
 msgid "Style manager"
 msgstr "Gestione stili"
 
-#: Kainote/Hotkeys.cpp:144 Kainote/HotkeysNaming.cpp:173
-#: Kainote/KainoteFrame.cpp:314
+#: Kainote/Hotkeys.cpp:144 Kainote/HotkeysNaming.cpp:174
+#: Kainote/KainoteFrame.cpp:315
 #, fuzzy
 msgid "Enable / Disable editor"
 msgstr "Abilita / Disabilita l'editor"
 
-#: Kainote/Hotkeys.cpp:145 Kainote/HotkeysNaming.cpp:222
-#: Kainote/KainoteFrame.cpp:245 Kainote/VideoBox.cpp:953
+#: Kainote/Hotkeys.cpp:145 Kainote/HotkeysNaming.cpp:223
+#: Kainote/KainoteFrame.cpp:246 Kainote/VideoBox.cpp:953
 #, fuzzy
 msgid "Open video"
 msgstr "Apri foto in movimento"
 
-#: Kainote/Hotkeys.cpp:148 Kainote/HotkeysNaming.cpp:201
-#: Kainote/KainoteFrame.cpp:207
+#: Kainote/Hotkeys.cpp:148 Kainote/HotkeysNaming.cpp:202
+#: Kainote/KainoteFrame.cpp:208
 #, fuzzy
 msgid "Undo"
 msgstr "Annulla"
 
-#: Kainote/Hotkeys.cpp:149 Kainote/HotkeysNaming.cpp:228
-#: Kainote/KainoteFrame.cpp:213
+#: Kainote/Hotkeys.cpp:149 Kainote/HotkeysNaming.cpp:229
+#: Kainote/KainoteFrame.cpp:214
 #, fuzzy
 msgid "Redo"
 msgstr "Rifai"
 
-#: Kainote/Hotkeys.cpp:150 Kainote/HotkeysNaming.cpp:179
-#: Kainote/KainoteFrame.cpp:215 Kainote/SubsFile.cpp:24 Kainote/SubsFile.cpp:54
+#: Kainote/Hotkeys.cpp:150 Kainote/HotkeysNaming.cpp:180
+#: Kainote/KainoteFrame.cpp:216 Kainote/SubsFile.cpp:24 Kainote/SubsFile.cpp:54
 #, fuzzy
 msgid "History"
 msgstr "Storia"
 
-#: Kainote/Hotkeys.cpp:151 Kainote/HotkeysNaming.cpp:221
+#: Kainote/Hotkeys.cpp:151 Kainote/HotkeysNaming.cpp:222
 #: Kainote/VideoBox.cpp:955
 #, fuzzy
 msgid "Open subtitles"
 msgstr "Aprire i sottotitoli"
 
-#: Kainote/Hotkeys.cpp:152 Kainote/HotkeysNaming.cpp:233
+#: Kainote/Hotkeys.cpp:152 Kainote/HotkeysNaming.cpp:234
 #: Kainote/Notebook.cpp:890 Kainote/ScriptInfo.cpp:159
 #, fuzzy
 msgid "Save"
 msgstr "Salva"
 
-#: Kainote/Hotkeys.cpp:153 Kainote/HotkeysNaming.cpp:234
+#: Kainote/Hotkeys.cpp:153 Kainote/HotkeysNaming.cpp:235
 #, fuzzy
 msgid "Save as..."
 msgstr "Salva con nome"
 
-#: Kainote/Hotkeys.cpp:154 Kainote/HotkeysNaming.cpp:231
+#: Kainote/Hotkeys.cpp:154 Kainote/HotkeysNaming.cpp:232
 #: Kainote/SubsGrid.cpp:239
 #, fuzzy
 msgid "Delete text"
 msgstr "Elimina testo"
 
-#: Kainote/Hotkeys.cpp:155 Kainote/HotkeysNaming.cpp:229
+#: Kainote/Hotkeys.cpp:155 Kainote/HotkeysNaming.cpp:230
 #: Kainote/TLDialog.cpp:30 Kainote/TLDialog.cpp:38
 #, fuzzy
 msgid "Delete line"
 msgstr "Cancellare la linea"
 
-#: Kainote/Hotkeys.cpp:156 Kainote/HotkeysNaming.cpp:243
-#: Kainote/KainoteFrame.cpp:257
+#: Kainote/Hotkeys.cpp:156 Kainote/HotkeysNaming.cpp:244
+#: Kainote/KainoteFrame.cpp:258
 #, fuzzy
 msgid "Insert start time from video"
 msgstr "Inserire l'ora di inizio dal video"
 
-#: Kainote/Hotkeys.cpp:157 Kainote/HotkeysNaming.cpp:242
-#: Kainote/KainoteFrame.cpp:259
+#: Kainote/Hotkeys.cpp:157 Kainote/HotkeysNaming.cpp:243
+#: Kainote/KainoteFrame.cpp:260
 #, fuzzy
 msgid "Insert end time from video"
 msgstr "Inserire l'ora di fine del video"
 
 #: Kainote/Hotkeys.cpp:158 Kainote/Hotkeys.cpp:176
-#: Kainote/HotkeysNaming.cpp:223 Kainote/HotkeysNaming.cpp:259
-#: Kainote/KainoteFrame.cpp:271 Kainote/VideoBox.cpp:157
+#: Kainote/HotkeysNaming.cpp:224 Kainote/HotkeysNaming.cpp:260
+#: Kainote/KainoteFrame.cpp:272 Kainote/VideoBox.cpp:157
 #: Kainote/VideoFullscreen.cpp:59
 #, fuzzy
 msgid "Play / Pause"
 msgstr "Riproduci / Pausa"
 
-#: Kainote/Hotkeys.cpp:159 Kainote/HotkeysNaming.cpp:225
-#: Kainote/KainoteFrame.cpp:261
+#: Kainote/Hotkeys.cpp:159 Kainote/HotkeysNaming.cpp:226
+#: Kainote/KainoteFrame.cpp:262
 #, fuzzy
 msgid "Previous frame"
 msgstr "Fotogramma Precedente"
 
-#: Kainote/Hotkeys.cpp:160 Kainote/HotkeysNaming.cpp:217
-#: Kainote/KainoteFrame.cpp:263
+#: Kainote/Hotkeys.cpp:160 Kainote/HotkeysNaming.cpp:218
+#: Kainote/KainoteFrame.cpp:264
 #, fuzzy
 msgid "Next frame"
 msgstr "Prossimo fotogramma"
 
 #: Kainote/Hotkeys.cpp:161 Kainote/Hotkeys.cpp:201 Kainote/HotkeysNaming.cpp:48
-#: Kainote/HotkeysNaming.cpp:226
+#: Kainote/HotkeysNaming.cpp:227
 #, fuzzy
 msgid "Previous line"
 msgstr "Link precedente"
 
 #: Kainote/Hotkeys.cpp:162 Kainote/Hotkeys.cpp:203 Kainote/HotkeysNaming.cpp:50
-#: Kainote/HotkeysNaming.cpp:218
+#: Kainote/HotkeysNaming.cpp:219
 #, fuzzy
 msgid "Next line"
 msgstr "Linea successiva"
 
-#: Kainote/Hotkeys.cpp:163 Kainote/HotkeysNaming.cpp:215
-#: Kainote/KainoteFrame.cpp:220
+#: Kainote/Hotkeys.cpp:163 Kainote/HotkeysNaming.cpp:216
+#: Kainote/KainoteFrame.cpp:221
 #, fuzzy
 msgid "Find next"
 msgstr "Trova successivo"
 
-#: Kainote/Hotkeys.cpp:164 Kainote/HotkeysNaming.cpp:180
+#: Kainote/Hotkeys.cpp:164 Kainote/HotkeysNaming.cpp:181
 #, fuzzy
 msgid "Merge with previous line"
 msgstr "Unire alla riga precedente"
 
-#: Kainote/Hotkeys.cpp:165 Kainote/HotkeysNaming.cpp:181
+#: Kainote/Hotkeys.cpp:165 Kainote/HotkeysNaming.cpp:182
 #, fuzzy
 msgid "Merge with next line"
 msgstr "Unire alla riga successiva"
 
-#: Kainote/Hotkeys.cpp:166 Kainote/HotkeysNaming.cpp:248
+#: Kainote/Hotkeys.cpp:166 Kainote/HotkeysNaming.cpp:249
 #, fuzzy
 msgid "Change start time to nearest keyframe"
 msgstr "Cambia l'ora di inizio al fotogramma chiave più vicino"
 
-#: Kainote/Hotkeys.cpp:167 Kainote/HotkeysNaming.cpp:247
+#: Kainote/Hotkeys.cpp:167 Kainote/HotkeysNaming.cpp:248
 #, fuzzy
 msgid "Change end time to nearest keyframe"
 msgstr "Cambia l'ora di fine al fotogramma chiave più vicino"
 
-#: Kainote/Hotkeys.cpp:168 Kainote/HotkeysNaming.cpp:219
+#: Kainote/Hotkeys.cpp:168 Kainote/HotkeysNaming.cpp:220
 #, fuzzy
 msgid "Next tab"
 msgstr "Scheda successiva"
 
-#: Kainote/Hotkeys.cpp:169 Kainote/HotkeysNaming.cpp:227
+#: Kainote/Hotkeys.cpp:169 Kainote/HotkeysNaming.cpp:228
 #, fuzzy
 msgid "Previous tab"
 msgstr "Scheda precedente"
 
-#: Kainote/Hotkeys.cpp:170 Kainote/HotkeysNaming.cpp:238
+#: Kainote/Hotkeys.cpp:170 Kainote/HotkeysNaming.cpp:239
 #, fuzzy
 msgid "Select line at current video position"
 msgstr "Seleziona la linea nella posizione video corrente"
 
-#: Kainote/Hotkeys.cpp:171 Kainote/HotkeysNaming.cpp:176
+#: Kainote/Hotkeys.cpp:171 Kainote/HotkeysNaming.cpp:177
 #, fuzzy
 msgid "Help (not available in English)"
 msgstr "Aiuto (non disponibile in inglese)"
@@ -2465,54 +2582,54 @@ msgstr "Incolla le colonne"
 msgid "Show subtitles preview"
 msgstr "Mostra l'anteprima dei sottotitoli"
 
-#: Kainote/Hotkeys.cpp:177 Kainote/HotkeysNaming.cpp:261
+#: Kainote/Hotkeys.cpp:177 Kainote/HotkeysNaming.cpp:262
 #, fuzzy
 msgid "5 seconds forward"
 msgstr "5 secondi in avanti"
 
-#: Kainote/Hotkeys.cpp:178 Kainote/HotkeysNaming.cpp:254
+#: Kainote/Hotkeys.cpp:178 Kainote/HotkeysNaming.cpp:255
 #, fuzzy
 msgid "5 seconds backward"
 msgstr "5 secondi all'indietro"
 
-#: Kainote/Hotkeys.cpp:179 Kainote/HotkeysNaming.cpp:262
+#: Kainote/Hotkeys.cpp:179 Kainote/HotkeysNaming.cpp:263
 #, fuzzy
 msgid "1 minute forward"
 msgstr "1 minuto in avanti"
 
-#: Kainote/Hotkeys.cpp:180 Kainote/HotkeysNaming.cpp:255
+#: Kainote/Hotkeys.cpp:180 Kainote/HotkeysNaming.cpp:256
 #, fuzzy
 msgid "1 minute backward"
 msgstr "1 minuto all'indietro"
 
-#: Kainote/Hotkeys.cpp:181 Kainote/HotkeysNaming.cpp:258
+#: Kainote/Hotkeys.cpp:181 Kainote/HotkeysNaming.cpp:259
 #: Kainote/VideoBox.cpp:163 Kainote/VideoFullscreen.cpp:65
 #, fuzzy
 msgid "Next file"
 msgstr "File successivo"
 
-#: Kainote/Hotkeys.cpp:182 Kainote/HotkeysNaming.cpp:264
+#: Kainote/Hotkeys.cpp:182 Kainote/HotkeysNaming.cpp:265
 #: Kainote/VideoBox.cpp:155
 #, fuzzy
 msgid "Previous file"
 msgstr "File precedente"
 
-#: Kainote/Hotkeys.cpp:183 Kainote/HotkeysNaming.cpp:267
+#: Kainote/Hotkeys.cpp:183 Kainote/HotkeysNaming.cpp:268
 #, fuzzy
 msgid "Volume up"
 msgstr "Alza volume"
 
-#: Kainote/Hotkeys.cpp:184 Kainote/HotkeysNaming.cpp:268
+#: Kainote/Hotkeys.cpp:184 Kainote/HotkeysNaming.cpp:269
 #, fuzzy
 msgid "Volume down"
 msgstr "Abbassa volume"
 
-#: Kainote/Hotkeys.cpp:185 Kainote/HotkeysNaming.cpp:257
+#: Kainote/Hotkeys.cpp:185 Kainote/HotkeysNaming.cpp:258
 #, fuzzy
 msgid "Next chapter"
 msgstr "Prossimo capitolo"
 
-#: Kainote/Hotkeys.cpp:186 Kainote/HotkeysNaming.cpp:263
+#: Kainote/Hotkeys.cpp:186 Kainote/HotkeysNaming.cpp:264
 #, fuzzy
 msgid "Previous chapter"
 msgstr "Capitolo precedente"
@@ -2604,7 +2721,7 @@ msgid "Play line alt"
 msgstr "Linea di gioco alt"
 
 #: Kainote/Hotkeys.cpp:209 Kainote/HotkeysNaming.cpp:56
-#: Kainote/HotkeysNaming.cpp:270 Kainote/VideoBox.cpp:161
+#: Kainote/HotkeysNaming.cpp:271 Kainote/VideoBox.cpp:161
 #: Kainote/VideoBox.cpp:920 Kainote/VideoFullscreen.cpp:63
 #, fuzzy
 msgid "Stop"
@@ -2662,18 +2779,23 @@ msgstr "Aggiungere il lead-out"
 
 #: Kainote/Hotkeys.cpp:270
 #, fuzzy
-msgid "The shortcuts file is outdated and will be replaced with the default one"
-msgstr "Il file delle scorciatoie è obsoleto, verrà sostituito per impostazione predefinita."
+msgid ""
+"The shortcuts file is outdated and will be replaced with the default one"
+msgstr ""
+"Il file delle scorciatoie è obsoleto, verrà sostituito per impostazione "
+"predefinita."
 
 #: Kainote/Hotkeys.cpp:373
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Shortcut \"%s\" is invalid"
 msgstr "La chiave \"%s\" non è valida"
 
 #: Kainote/Hotkeys.cpp:404
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "This setting does not have a default hotkey with id %i to revert to"
-msgstr "Questa impostazione non ha un tasto di scelta rapida predefinito con id %i per ritornare a"
+msgstr ""
+"Questa impostazione non ha un tasto di scelta rapida predefinito con id %i "
+"per ritornare a"
 
 #: Kainote/Hotkeys.cpp:594
 #, fuzzy
@@ -2706,24 +2828,29 @@ msgid "Video hotkey"
 msgstr "Tasto di scelta rapida video"
 
 #: Kainote/Hotkeys.cpp:608
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Please enter a hotkey for \"%s\"."
 msgstr "Inserire un tasto di scelta rapida per \"%s\"."
 
 #: Kainote/Hotkeys.cpp:641
 #, fuzzy
-msgid "Global and editor shortcuts must include modifiers (e.g. Shift, Ctrl, Alt)."
-msgstr "Le scorciatoie globali e dell'editor devono includere i modificatori (ad esempio, Shift, Ctrl, Alt)."
+msgid ""
+"Global and editor shortcuts must include modifiers (e.g. Shift, Ctrl, Alt)."
+msgstr ""
+"Le scorciatoie globali e dell'editor devono includere i modificatori (ad "
+"esempio, Shift, Ctrl, Alt)."
 
 #: Kainote/Hotkeys.cpp:644
 #, fuzzy
 msgid "You cannot use shortcuts for copying, cutting, and pasting."
-msgstr "Non è possibile utilizzare scorciatoie per copiare, tagliare e incollare."
+msgstr ""
+"Non è possibile utilizzare scorciatoie per copiare, tagliare e incollare."
 
 #: Kainote/Hotkeys.cpp:647
 #, fuzzy
 msgid "You cannot use the program exit shortcut."
-msgstr "Non è possibile utilizzare la scorciatoia per la chiusura del programma."
+msgstr ""
+"Non è possibile utilizzare la scorciatoia per la chiusura del programma."
 
 #: Kainote/HotkeysNaming.cpp:89
 #, fuzzy
@@ -3044,321 +3171,325 @@ msgstr ""
 msgid "Split lines by wraps"
 msgstr ""
 
-#: Kainote/HotkeysNaming.cpp:159 Kainote/KainoteFrame.cpp:316
+#: Kainote/HotkeysNaming.cpp:159 Kainote/KainoteFrame.cpp:317
 #, fuzzy
 msgid "ASS file properties"
 msgstr "Proprietà del file ASS"
 
 #: Kainote/HotkeysNaming.cpp:160
+msgid "Check for updates"
+msgstr ""
+
+#: Kainote/HotkeysNaming.cpp:161
 #, fuzzy
 msgid "About"
 msgstr "Informazioni su Godot"
 
-#: Kainote/HotkeysNaming.cpp:161
+#: Kainote/HotkeysNaming.cpp:162
 #, fuzzy
 msgid "Forum thread on animesub.info (Polish)"
 msgstr "Forum su animesub.info (polacco)"
 
-#: Kainote/HotkeysNaming.cpp:167 Kainote/KainoteFrame.cpp:297
+#: Kainote/HotkeysNaming.cpp:168 Kainote/KainoteFrame.cpp:298
 #, fuzzy
 msgid "Open audio from video"
 msgstr "Aprire l'audio dal video"
 
-#: Kainote/HotkeysNaming.cpp:168 Kainote/KainoteFrame.cpp:347
-#: Kainote/KainoteFrame.cpp:348
+#: Kainote/HotkeysNaming.cpp:169 Kainote/KainoteFrame.cpp:348
+#: Kainote/KainoteFrame.cpp:349
 #, fuzzy
 msgid "Load script"
 msgstr "Caricamento dello script"
 
-#: Kainote/HotkeysNaming.cpp:169 Kainote/KainoteFrame.cpp:353
-#: Kainote/KainoteFrame.cpp:354
+#: Kainote/HotkeysNaming.cpp:170 Kainote/KainoteFrame.cpp:354
+#: Kainote/KainoteFrame.cpp:355
 #, fuzzy
 msgid "Open shortcut mapping window"
 msgstr "Aprire la finestra di mappatura dei collegamenti"
 
-#: Kainote/HotkeysNaming.cpp:170 Kainote/KainoteFrame.cpp:349
-#: Kainote/KainoteFrame.cpp:350
+#: Kainote/HotkeysNaming.cpp:171 Kainote/KainoteFrame.cpp:350
+#: Kainote/KainoteFrame.cpp:351
 #, fuzzy
 msgid "Refresh autoload scripts"
 msgstr "Aggiornare gli script di autocaricamento"
 
-#: Kainote/HotkeysNaming.cpp:172 Kainote/KainoteFrame.cpp:301
+#: Kainote/HotkeysNaming.cpp:173 Kainote/KainoteFrame.cpp:302
 #, fuzzy
 msgid "Close audio"
 msgstr "Chiudere l'audio"
 
-#: Kainote/HotkeysNaming.cpp:177 Kainote/KainoteFrame.cpp:1144
-#: Kainote/OptionsDialog.cpp:648
+#: Kainote/HotkeysNaming.cpp:178 Kainote/KainoteFrame.cpp:1150
+#: Kainote/OptionsDialog.cpp:651
 #, fuzzy
 msgid "Credits"
 msgstr "Crediti"
 
-#: Kainote/HotkeysNaming.cpp:178 Kainote/KainoteFrame.cpp:342
+#: Kainote/HotkeysNaming.cpp:179 Kainote/KainoteFrame.cpp:343
 #, fuzzy
 msgid "Hide tags"
 msgstr "Nascondi etichette"
 
-#: Kainote/HotkeysNaming.cpp:182 Kainote/KainoteFrame.cpp:250
-#: Kainote/KainoteFrame.cpp:251
+#: Kainote/HotkeysNaming.cpp:183 Kainote/KainoteFrame.cpp:251
+#: Kainote/KainoteFrame.cpp:252
 #, fuzzy
 msgid "Open keyframes"
 msgstr "Aprire i fotogrammi chiave"
 
-#: Kainote/HotkeysNaming.cpp:183 Kainote/KainoteFrame.cpp:194
+#: Kainote/HotkeysNaming.cpp:184 Kainote/KainoteFrame.cpp:195
 #, fuzzy
 msgid "Open auto save"
 msgstr "Aprire il salvataggio automatico"
 
-#: Kainote/HotkeysNaming.cpp:184 Kainote/KainoteFrame.cpp:351
-#: Kainote/KainoteFrame.cpp:352
+#: Kainote/HotkeysNaming.cpp:185 Kainote/KainoteFrame.cpp:352
+#: Kainote/KainoteFrame.cpp:353
 #, fuzzy
 msgid "Run the last loaded script"
 msgstr "Eseguire lo script recente"
 
-#: Kainote/HotkeysNaming.cpp:185
+#: Kainote/HotkeysNaming.cpp:186
 #, fuzzy
 msgid "Sort all lines by start time"
 msgstr "Ordinare tutte le righe per ora di inizio"
 
-#: Kainote/HotkeysNaming.cpp:186
+#: Kainote/HotkeysNaming.cpp:187
 #, fuzzy
 msgid "Sort all lines by end time"
 msgstr "Ordinare tutte le righe per ora di fine"
 
-#: Kainote/HotkeysNaming.cpp:187
+#: Kainote/HotkeysNaming.cpp:188
 #, fuzzy
 msgid "Sort all lines by styles"
 msgstr "Ordinare tutte le righe per stili"
 
-#: Kainote/HotkeysNaming.cpp:188
+#: Kainote/HotkeysNaming.cpp:189
 #, fuzzy
 msgid "Sort all lines by actor"
 msgstr "Ordinare tutte le righe per attore"
 
-#: Kainote/HotkeysNaming.cpp:189
+#: Kainote/HotkeysNaming.cpp:190
 #, fuzzy
 msgid "Sort all lines by effect"
 msgstr "Ordinare tutte le righe per effetto"
 
-#: Kainote/HotkeysNaming.cpp:190
+#: Kainote/HotkeysNaming.cpp:191
 #, fuzzy
 msgid "Sort all lines by layer"
 msgstr "Ordinare tutte le righe per livello"
 
-#: Kainote/HotkeysNaming.cpp:191
+#: Kainote/HotkeysNaming.cpp:192
 #, fuzzy
 msgid "Sort selected lines by start time"
 msgstr "Ordinare le righe selezionate in base all'ora di inizio"
 
-#: Kainote/HotkeysNaming.cpp:192
+#: Kainote/HotkeysNaming.cpp:193
 #, fuzzy
 msgid "Sort selected lines by end time"
 msgstr "Ordinare le righe selezionate in base all'ora di fine"
 
-#: Kainote/HotkeysNaming.cpp:193
+#: Kainote/HotkeysNaming.cpp:194
 #, fuzzy
 msgid "Sort selected lines by styles"
 msgstr "Ordinare le righe selezionate per stili"
 
-#: Kainote/HotkeysNaming.cpp:194
+#: Kainote/HotkeysNaming.cpp:195
 #, fuzzy
 msgid "Sort selected lines by actor"
 msgstr "Ordinare le righe selezionate per attore"
 
-#: Kainote/HotkeysNaming.cpp:195
+#: Kainote/HotkeysNaming.cpp:196
 #, fuzzy
 msgid "Sort selected lines by effect"
 msgstr "Ordinare le righe selezionate per effetto"
 
-#: Kainote/HotkeysNaming.cpp:196
+#: Kainote/HotkeysNaming.cpp:197
 #, fuzzy
 msgid "Sort selected lines by layer"
 msgstr "Ordinare le righe selezionate per livello"
 
-#: Kainote/HotkeysNaming.cpp:197
+#: Kainote/HotkeysNaming.cpp:198
 #, fuzzy
 msgid "Shift times / run time post processor"
 msgstr "Tempi di spostamento / tempo di esecuzione post-processing"
 
-#: Kainote/HotkeysNaming.cpp:198 Kainote/KainoteFrame.cpp:274
+#: Kainote/HotkeysNaming.cpp:199 Kainote/KainoteFrame.cpp:275
 #, fuzzy
 msgid "Go to previous keyframe"
 msgstr "Passa al fotogramma precedente"
 
-#: Kainote/HotkeysNaming.cpp:199 Kainote/KainoteFrame.cpp:276
+#: Kainote/HotkeysNaming.cpp:200 Kainote/KainoteFrame.cpp:277
 #, fuzzy
 msgid "Go to next keyframe"
 msgstr "Passa al fotogramma successivo"
 
-#: Kainote/HotkeysNaming.cpp:200 Kainote/KainoteFrame.cpp:338
-#: Kainote/KainoteFrame.cpp:339
+#: Kainote/HotkeysNaming.cpp:201 Kainote/KainoteFrame.cpp:339
+#: Kainote/KainoteFrame.cpp:340
 #, fuzzy
 msgid "Resample subtitles"
 msgstr "Ricampionare i sottotitoli"
 
-#: Kainote/HotkeysNaming.cpp:202 Kainote/KainoteFrame.cpp:210
+#: Kainote/HotkeysNaming.cpp:203 Kainote/KainoteFrame.cpp:211
 #, fuzzy
 msgid "Undo to last save"
 msgstr "Annullamento dell'ultimo salvataggio"
 
-#: Kainote/HotkeysNaming.cpp:203 Kainote/KainoteFrame.cpp:284
+#: Kainote/HotkeysNaming.cpp:204 Kainote/KainoteFrame.cpp:285
 #, fuzzy
 msgid "Open video with FFMS2"
 msgstr "Aprire il video con FFMS2"
 
-#: Kainote/HotkeysNaming.cpp:204 Kainote/KainoteFrame.cpp:281
+#: Kainote/HotkeysNaming.cpp:205 Kainote/KainoteFrame.cpp:282
 #, fuzzy
 msgid "Zoom video"
 msgstr "Zoom video"
 
-#: Kainote/HotkeysNaming.cpp:205 Kainote/KainoteFrame.cpp:282
+#: Kainote/HotkeysNaming.cpp:206 Kainote/KainoteFrame.cpp:283
 #, fuzzy
 msgid "Turn off video zoom"
 msgstr "Spegni lo zoom video"
 
-#: Kainote/HotkeysNaming.cpp:206
+#: Kainote/HotkeysNaming.cpp:207
 #, fuzzy
 msgid "View all"
 msgstr "Visualizza tutto"
 
-#: Kainote/HotkeysNaming.cpp:207
+#: Kainote/HotkeysNaming.cpp:208
 #, fuzzy
 msgid "View audio and subtitles"
 msgstr "Visualizzare l'audio e i sottotitoli"
 
-#: Kainote/HotkeysNaming.cpp:208
+#: Kainote/HotkeysNaming.cpp:209
 #, fuzzy
 msgid "View only subtitles"
 msgstr "Visualizza solo i sottotitoli"
 
-#: Kainote/HotkeysNaming.cpp:209
+#: Kainote/HotkeysNaming.cpp:210
 #, fuzzy
 msgid "View video and subtitles"
 msgstr "Visualizza il video e i sottotitoli"
 
-#: Kainote/HotkeysNaming.cpp:210
+#: Kainote/HotkeysNaming.cpp:211
 #, fuzzy
 msgid "View only video"
 msgstr "Visualizza solo il video"
 
-#: Kainote/HotkeysNaming.cpp:213
+#: Kainote/HotkeysNaming.cpp:214
 #, fuzzy
 msgid "Clean styles of ASS file"
 msgstr "Pulire gli stili del file ASS"
 
-#: Kainote/HotkeysNaming.cpp:214 Kainote/KainoteFrame.cpp:239
+#: Kainote/HotkeysNaming.cpp:215 Kainote/KainoteFrame.cpp:240
 #, fuzzy
 msgid "Fix minor errors (experimental)"
 msgstr "Multireplacer (sperimentale)"
 
-#: Kainote/HotkeysNaming.cpp:216 Kainote/KainoteFrame.cpp:159
+#: Kainote/HotkeysNaming.cpp:217 Kainote/KainoteFrame.cpp:160
 #, fuzzy
 msgid "Load last session"
 msgstr "Carica l'ultima sessione"
 
-#: Kainote/HotkeysNaming.cpp:220 Kainote/KainoteFrame.cpp:291
+#: Kainote/HotkeysNaming.cpp:221 Kainote/KainoteFrame.cpp:292
 #, fuzzy
 msgid "Open audio"
 msgstr "Audio aperto"
 
-#: Kainote/HotkeysNaming.cpp:224
+#: Kainote/HotkeysNaming.cpp:225
 #, fuzzy
 msgid "Play active line"
 msgstr "Linea attiva di gioco"
 
-#: Kainote/HotkeysNaming.cpp:230 Kainote/KainoteFrame.cpp:189
+#: Kainote/HotkeysNaming.cpp:231 Kainote/KainoteFrame.cpp:190
 #, fuzzy
 msgid "Remove subtitles from the editor"
 msgstr "Rimuovere i sottotitoli dall'editor"
 
-#: Kainote/HotkeysNaming.cpp:232 Kainote/KainoteFrame.cpp:181
+#: Kainote/HotkeysNaming.cpp:233 Kainote/KainoteFrame.cpp:182
 #, fuzzy
 msgid "Save all subtitles"
 msgstr "Salvare tutti i sottotitoli"
 
-#: Kainote/HotkeysNaming.cpp:235 Kainote/KainoteFrame.cpp:185
+#: Kainote/HotkeysNaming.cpp:236 Kainote/KainoteFrame.cpp:186
 #, fuzzy
 msgid "Save translation"
 msgstr "Salva la traduzione"
 
-#: Kainote/HotkeysNaming.cpp:236 Kainote/KainoteFrame.cpp:190
-#: Kainote/KainoteFrame.cpp:191
+#: Kainote/HotkeysNaming.cpp:237 Kainote/KainoteFrame.cpp:191
+#: Kainote/KainoteFrame.cpp:192
 #, fuzzy
 msgid "Save subtitles using the video name"
 msgstr "Salvare i sottotitoli con il nome del video"
 
-#: Kainote/HotkeysNaming.cpp:239
+#: Kainote/HotkeysNaming.cpp:240
 #, fuzzy
 msgid "Select lines"
 msgstr "Seleziona le linee"
 
-#: Kainote/HotkeysNaming.cpp:240 Kainote/KainoteFrame.cpp:278
+#: Kainote/HotkeysNaming.cpp:241 Kainote/KainoteFrame.cpp:279
 #, fuzzy
 msgid "Set audio position to video time"
 msgstr "Impostare l'audio con il tempo del video"
 
-#: Kainote/HotkeysNaming.cpp:241 Kainote/KainoteFrame.cpp:280
+#: Kainote/HotkeysNaming.cpp:242 Kainote/KainoteFrame.cpp:281
 #, fuzzy
 msgid "Set audio marker to video time"
 msgstr "Impostare il marcatore audio con il tempo del video"
 
-#: Kainote/HotkeysNaming.cpp:244
+#: Kainote/HotkeysNaming.cpp:245
 #, fuzzy
 msgid "Settings"
 msgstr "Impostazioni"
 
-#: Kainote/HotkeysNaming.cpp:245 Kainote/KainoteFrame.cpp:266
+#: Kainote/HotkeysNaming.cpp:246 Kainote/KainoteFrame.cpp:267
 #, fuzzy
 msgid "Go to start time"
 msgstr "Vai all'ora di inizio"
 
-#: Kainote/HotkeysNaming.cpp:246 Kainote/KainoteFrame.cpp:269
+#: Kainote/HotkeysNaming.cpp:247 Kainote/KainoteFrame.cpp:270
 #, fuzzy
 msgid "Go to end time of line"
 msgstr "Vai al tempo di fine linea"
 
-#: Kainote/HotkeysNaming.cpp:249 Kainote/KainoteFrame.cpp:340
-#: Kainote/KainoteFrame.cpp:341
+#: Kainote/HotkeysNaming.cpp:250 Kainote/KainoteFrame.cpp:341
+#: Kainote/KainoteFrame.cpp:342
 #, fuzzy
 msgid "Check spelling"
 msgstr "Controllo ortografico"
 
-#: Kainote/HotkeysNaming.cpp:251 Kainote/VideoBox.cpp:962
+#: Kainote/HotkeysNaming.cpp:252 Kainote/VideoBox.cpp:962
 #, fuzzy
 msgid "Copy frame to clipboard"
 msgstr "Copiare il fotogramma negli appunti"
 
-#: Kainote/HotkeysNaming.cpp:252 Kainote/VideoBox.cpp:965
+#: Kainote/HotkeysNaming.cpp:253 Kainote/VideoBox.cpp:965
 #, fuzzy
 msgid "Remove video"
 msgstr "Rimuovi video"
 
-#: Kainote/HotkeysNaming.cpp:253 Kainote/VideoBox.cpp:961
+#: Kainote/HotkeysNaming.cpp:254 Kainote/VideoBox.cpp:961
 #, fuzzy
 msgid "Save frame as PNG"
 msgstr "Salvare la cornice come PNG"
 
-#: Kainote/HotkeysNaming.cpp:256 Kainote/VideoBox.cpp:957
+#: Kainote/HotkeysNaming.cpp:257 Kainote/VideoBox.cpp:957
 #, fuzzy
 msgid "Show / hide progress bar"
 msgstr "Mostra / nascondi la barra di avanzamento"
 
-#: Kainote/HotkeysNaming.cpp:260 Kainote/VideoBox.cpp:958
+#: Kainote/HotkeysNaming.cpp:261 Kainote/VideoBox.cpp:958
 #, fuzzy
 msgid "Change aspect ratio"
 msgstr "Modifica del rapporto d'aspetto"
 
-#: Kainote/HotkeysNaming.cpp:265 Kainote/VideoBox.cpp:960
+#: Kainote/HotkeysNaming.cpp:266 Kainote/VideoBox.cpp:960
 #, fuzzy
 msgid "Copy frame with subtitles to clipboard"
 msgstr "Copiare il fotogramma con i sottotitoli negli appunti"
 
-#: Kainote/HotkeysNaming.cpp:266
+#: Kainote/HotkeysNaming.cpp:267
 #, fuzzy
 msgid "Full screen"
 msgstr "Schermo interno"
 
-#: Kainote/HotkeysNaming.cpp:269 Kainote/VideoBox.cpp:959
+#: Kainote/HotkeysNaming.cpp:270 Kainote/VideoBox.cpp:959
 #, fuzzy
 msgid "Save frame with subtitles as PNG"
 msgstr "Salvare il fotogramma con i sottotitoli come PNG"
@@ -3389,242 +3520,243 @@ msgstr "No"
 msgid "Help"
 msgstr "Assistenza"
 
-#: Kainote/KainoteFrame.cpp:103
+#: Kainote/KainoteFrame.cpp:106
 #, fuzzy
 msgid "Untitled - "
 msgstr "Senza titolo - "
 
-#: Kainote/KainoteFrame.cpp:151
+#: Kainote/KainoteFrame.cpp:152
 #, fuzzy
 msgid "Video duration"
 msgstr "Durata del video"
 
-#: Kainote/KainoteFrame.cpp:151
+#: Kainote/KainoteFrame.cpp:152
 #, fuzzy
 msgid "Video scale"
 msgstr "Video scala"
 
-#: Kainote/KainoteFrame.cpp:151
+#: Kainote/KainoteFrame.cpp:152
 #, fuzzy
 msgid "Video zoom"
 msgstr "Zoom video"
 
-#: Kainote/KainoteFrame.cpp:152
+#: Kainote/KainoteFrame.cpp:153
 #, fuzzy
 msgid "Frames per second"
 msgstr "frame al secondo"
 
-#: Kainote/KainoteFrame.cpp:152 Kainote/SubsResampleDialog.cpp:31
+#: Kainote/KainoteFrame.cpp:153 Kainote/SubsResampleDialog.cpp:31
 #, fuzzy
 msgid "Subtitles resolution"
 msgstr "Risoluzione dei sottotitoli"
 
-#: Kainote/KainoteFrame.cpp:152
+#: Kainote/KainoteFrame.cpp:153
 #, fuzzy
 msgid "Video aspect ratio"
 msgstr "Rapporto d'aspetto del video"
 
-#: Kainote/KainoteFrame.cpp:152
+#: Kainote/KainoteFrame.cpp:153
 #, fuzzy
 msgid "Video file name"
 msgstr "Nome del file video"
 
-#: Kainote/KainoteFrame.cpp:152
+#: Kainote/KainoteFrame.cpp:153
 #, fuzzy
 msgid "Video resolution"
 msgstr "Risoluzione video"
 
-#: Kainote/KainoteFrame.cpp:160
+#: Kainote/KainoteFrame.cpp:161
 #, fuzzy
 msgid "Loads previously loaded files"
 msgstr "Aprire i file caricati l'ultima volta"
 
-#: Kainote/KainoteFrame.cpp:161
+#: Kainote/KainoteFrame.cpp:162
 #, fuzzy
 msgid "Load session from file"
 msgstr "Carica la sessione da un file"
 
-#: Kainote/KainoteFrame.cpp:162
+#: Kainote/KainoteFrame.cpp:163
 #, fuzzy
 msgid "Loads session from saved session file"
 msgstr "Carica la sessione da un file di sessione salvato"
 
-#: Kainote/KainoteFrame.cpp:164
+#: Kainote/KainoteFrame.cpp:165
 #, fuzzy
 msgid "Save session to file"
 msgstr "Salva sessione su file"
 
-#: Kainote/KainoteFrame.cpp:164
+#: Kainote/KainoteFrame.cpp:165
 #, fuzzy
 msgid "Saves session to file"
 msgstr "Salva sessione su file"
 
-#: Kainote/KainoteFrame.cpp:167
+#: Kainote/KainoteFrame.cpp:168
 #, fuzzy
 msgid "Ask whether to load the last session at program startup"
-msgstr "Richiedere il caricamento dell'ultima sessione dopo l'inizio del programma"
+msgstr ""
+"Richiedere il caricamento dell'ultima sessione dopo l'inizio del programma"
 
-#: Kainote/KainoteFrame.cpp:168
+#: Kainote/KainoteFrame.cpp:169
 #, fuzzy
 msgid "Asks whether to load previously loaded files at program startup"
 msgstr "Chiede se caricare i file letti di recente all'avvio del programma."
 
-#: Kainote/KainoteFrame.cpp:171
+#: Kainote/KainoteFrame.cpp:172
 #, fuzzy
 msgid "Load last session after program start"
 msgstr "Carica l'ultima sessione dopo l'avvio del programma"
 
-#: Kainote/KainoteFrame.cpp:172
+#: Kainote/KainoteFrame.cpp:173
 #, fuzzy
 msgid "Loads previously loaded files at program startup"
 msgstr "Caricamento dell'ultima sessione dopo l'avvio del programma"
 
-#: Kainote/KainoteFrame.cpp:176
+#: Kainote/KainoteFrame.cpp:177
 #, fuzzy
 msgid "&Open subtitles"
 msgstr "&Aprire i sottotitoli"
 
-#: Kainote/KainoteFrame.cpp:177
+#: Kainote/KainoteFrame.cpp:178
 #, fuzzy
 msgid "Open subtitle file"
 msgstr "Aprire il file dei sottotitoli"
 
-#: Kainote/KainoteFrame.cpp:178
+#: Kainote/KainoteFrame.cpp:179
 #, fuzzy
 msgid "&Save"
 msgstr "&Salva"
 
-#: Kainote/KainoteFrame.cpp:179
+#: Kainote/KainoteFrame.cpp:180
 #, fuzzy
 msgid "Save current file"
 msgstr "Salvare il file corrente"
 
-#: Kainote/KainoteFrame.cpp:180
+#: Kainote/KainoteFrame.cpp:181
 #, fuzzy
 msgid "Save &all"
 msgstr "Salva tutto"
 
-#: Kainote/KainoteFrame.cpp:182
+#: Kainote/KainoteFrame.cpp:183
 #, fuzzy
 msgid "Save &as..."
 msgstr "S&alva come..."
 
-#: Kainote/KainoteFrame.cpp:183
+#: Kainote/KainoteFrame.cpp:184
 #, fuzzy
 msgid "Save as"
 msgstr "Salva come"
 
-#: Kainote/KainoteFrame.cpp:184
+#: Kainote/KainoteFrame.cpp:185
 #, fuzzy
 msgid "Save &translation"
 msgstr "Salva la traduzione"
 
-#: Kainote/KainoteFrame.cpp:186
+#: Kainote/KainoteFrame.cpp:187
 #, fuzzy
 msgid "Recently opened &subtitles"
 msgstr "Sottotitoli aperti di recente"
 
-#: Kainote/KainoteFrame.cpp:187 Kainote/VideoBox.cpp:951
+#: Kainote/KainoteFrame.cpp:188 Kainote/VideoBox.cpp:951
 #, fuzzy
 msgid "Recently opened subtitles"
 msgstr "Sottotitoli aperti di recente"
 
-#: Kainote/KainoteFrame.cpp:188
+#: Kainote/KainoteFrame.cpp:189
 #, fuzzy
 msgid "Remove subtitles from the &editor"
 msgstr "Rimuovere i sottotitoli dall'editor"
 
-#: Kainote/KainoteFrame.cpp:194
+#: Kainote/KainoteFrame.cpp:195
 #, fuzzy
 msgid "Opens the selected autosave from the list"
 msgstr "Apre il salvataggio automatico dall'elenco"
 
-#: Kainote/KainoteFrame.cpp:196
+#: Kainote/KainoteFrame.cpp:197
 #, fuzzy
 msgid "Opens the temporary file removal window"
 msgstr "Apre la finestra di rimozione dei file temporanei"
 
-#: Kainote/KainoteFrame.cpp:197
+#: Kainote/KainoteFrame.cpp:198
 #, fuzzy
 msgid "Show / Hide log window"
 msgstr "Mostra / Nascondi la finestra del registro"
 
-#: Kainote/KainoteFrame.cpp:198
+#: Kainote/KainoteFrame.cpp:199
 #, fuzzy
 msgid "Last session"
 msgstr "Ultima sessione"
 
-#: Kainote/KainoteFrame.cpp:198
+#: Kainote/KainoteFrame.cpp:199
 #, fuzzy
 msgid "Last session options"
 msgstr "Opzioni dell'ultima sessione"
 
-#: Kainote/KainoteFrame.cpp:200
+#: Kainote/KainoteFrame.cpp:201
 #, fuzzy
 msgid "&Settings"
 msgstr "Impo&stazioni"
 
-#: Kainote/KainoteFrame.cpp:201
+#: Kainote/KainoteFrame.cpp:202
 #, fuzzy
 msgid "Program settings"
 msgstr "Impostazioni del programma"
 
-#: Kainote/KainoteFrame.cpp:202
+#: Kainote/KainoteFrame.cpp:203
 #, fuzzy
 msgid "&Exit\tAlt-F4"
 msgstr "Esci Alt-F4"
 
-#: Kainote/KainoteFrame.cpp:203
+#: Kainote/KainoteFrame.cpp:204
 #, fuzzy
 msgid "Exit the program"
 msgstr "Esci dal programma."
 
-#: Kainote/KainoteFrame.cpp:204
+#: Kainote/KainoteFrame.cpp:205
 #, fuzzy
 msgid "&File"
 msgstr "&File"
 
-#: Kainote/KainoteFrame.cpp:207 Kainote/KainoteFrame.cpp:2323
+#: Kainote/KainoteFrame.cpp:208 Kainote/KainoteFrame.cpp:2329
 #, fuzzy
 msgid "&Undo"
 msgstr "Ann&ulla"
 
-#: Kainote/KainoteFrame.cpp:212 Kainote/KainoteFrame.cpp:2339
+#: Kainote/KainoteFrame.cpp:213 Kainote/KainoteFrame.cpp:2345
 #, fuzzy
 msgid "&Redo"
 msgstr "&Ripristina"
 
-#: Kainote/KainoteFrame.cpp:214
+#: Kainote/KainoteFrame.cpp:215
 #, fuzzy
 msgid "&History"
 msgstr "&Storia"
 
-#: Kainote/KainoteFrame.cpp:216
+#: Kainote/KainoteFrame.cpp:217
 #, fuzzy
 msgid "Find and re&place"
 msgstr "Trova e sostituisci"
 
-#: Kainote/KainoteFrame.cpp:217
+#: Kainote/KainoteFrame.cpp:218
 #, fuzzy
 msgid "Searches for the specified text phrases and replaces them"
 msgstr "Cerca le espressioni e le sostituisce"
 
-#: Kainote/KainoteFrame.cpp:218
+#: Kainote/KainoteFrame.cpp:219
 #, fuzzy
 msgid "&Find"
 msgstr "&Trova"
 
-#: Kainote/KainoteFrame.cpp:219
+#: Kainote/KainoteFrame.cpp:220
 #, fuzzy
 msgid "Searches for the specified text phrase"
 msgstr "Ricerca di espressioni"
 
-#: Kainote/KainoteFrame.cpp:221
+#: Kainote/KainoteFrame.cpp:222
 #, fuzzy
 msgid "Finds the next occurrence of the phrase in the text"
 msgstr "Trova la posizione della frase successiva nel testo"
 
-#: Kainote/KainoteFrame.cpp:225 Kainote/ShiftTimes.cpp:357
+#: Kainote/KainoteFrame.cpp:226 Kainote/ShiftTimes.cpp:357
 #: Kainote/SubsGrid.cpp:460 Kainote/SubsGrid.cpp:491 Kainote/SubsGrid.cpp:497
 #: Kainote/SubsGrid.cpp:498 Kainote/SubsGrid.cpp:627 Kainote/SubsGrid.cpp:650
 #: Kainote/SubsGrid.cpp:658 Kainote/SubsGrid.cpp:659
@@ -3632,490 +3764,524 @@ msgstr "Trova la posizione della frase successiva nel testo"
 msgid "The starting time"
 msgstr "L'ora di inizio"
 
-#: Kainote/KainoteFrame.cpp:226
+#: Kainote/KainoteFrame.cpp:227
 #, fuzzy
 msgid "Sort by start time"
 msgstr "Ordina per ora di inizio"
 
-#: Kainote/KainoteFrame.cpp:227 Kainote/SelectLines.cpp:78
+#: Kainote/KainoteFrame.cpp:228 Kainote/SelectLines.cpp:78
 #: Kainote/ShiftTimes.cpp:358 Kainote/SubsGrid.cpp:461 Kainote/SubsGrid.cpp:628
 #, fuzzy
 msgid "End time"
 msgstr "Fine del tempo"
 
-#: Kainote/KainoteFrame.cpp:228
+#: Kainote/KainoteFrame.cpp:229
 #, fuzzy
 msgid "Sort by end time"
 msgstr "Ordina per ora di fine"
 
-#: Kainote/KainoteFrame.cpp:229
+#: Kainote/KainoteFrame.cpp:230
 #, fuzzy
 msgid "Sort by styles"
 msgstr "Ordina per stili"
 
-#: Kainote/KainoteFrame.cpp:230
+#: Kainote/KainoteFrame.cpp:231
 #, fuzzy
 msgid "Sort by actor"
 msgstr "Ordina per attore"
 
-#: Kainote/KainoteFrame.cpp:231
+#: Kainote/KainoteFrame.cpp:232
 #, fuzzy
 msgid "Sort by effect"
 msgstr "Ordina per effetto"
 
-#: Kainote/KainoteFrame.cpp:232 Kainote/SubsGrid.cpp:459
+#: Kainote/KainoteFrame.cpp:233 Kainote/SubsGrid.cpp:459
 #: Kainote/SubsGrid.cpp:626
 #, fuzzy
 msgid "Layer"
 msgstr "Stratificare"
 
-#: Kainote/KainoteFrame.cpp:232
+#: Kainote/KainoteFrame.cpp:233
 #, fuzzy
 msgid "Sort by layer"
 msgstr "Ordinamento per strato"
 
-#: Kainote/KainoteFrame.cpp:235
+#: Kainote/KainoteFrame.cpp:236
 #, fuzzy
 msgid "So&rt all lines"
 msgstr "Tutte le linee"
 
-#: Kainote/KainoteFrame.cpp:236
+#: Kainote/KainoteFrame.cpp:237
 #, fuzzy
 msgid "Sorts all lines in ASS file"
 msgstr "Ordina tutte le righe del file ASS"
 
-#: Kainote/KainoteFrame.cpp:237
+#: Kainote/KainoteFrame.cpp:238
 #, fuzzy
 msgid "So&rt selected lines"
 msgstr "Linee selezionate"
 
-#: Kainote/KainoteFrame.cpp:238
+#: Kainote/KainoteFrame.cpp:239
 #, fuzzy
 msgid "Sorts selected lines in ASS file"
 msgstr "Ordina le righe selezionate nel file ASS"
 
-#: Kainote/KainoteFrame.cpp:240
+#: Kainote/KainoteFrame.cpp:241
 #, fuzzy
 msgid "Turns on multireplacer"
 msgstr "Attiva il multiplatore"
 
-#: Kainote/KainoteFrame.cpp:241
+#: Kainote/KainoteFrame.cpp:242
 #, fuzzy
 msgid "Select &lines"
 msgstr "Selezionare &linee"
 
-#: Kainote/KainoteFrame.cpp:241
+#: Kainote/KainoteFrame.cpp:242
 #, fuzzy
 msgid "Selects lines by expressions"
 msgstr "Seleziona le righe in base alle espressioni"
 
-#: Kainote/KainoteFrame.cpp:242
+#: Kainote/KainoteFrame.cpp:243
 #, fuzzy
 msgid "&Edit"
 msgstr "&Modifica"
 
-#: Kainote/KainoteFrame.cpp:246
+#: Kainote/KainoteFrame.cpp:247
 #, fuzzy
 msgid "Opens video file"
 msgstr "Apre il file video"
 
-#: Kainote/KainoteFrame.cpp:248 Kainote/KainoteFrame.cpp:249
+#: Kainote/KainoteFrame.cpp:249 Kainote/KainoteFrame.cpp:250
 #: Kainote/VideoBox.cpp:952
 #, fuzzy
 msgid "Recently opened videos"
 msgstr "Video aperti di recente"
 
-#: Kainote/KainoteFrame.cpp:254
+#: Kainote/KainoteFrame.cpp:255
 #, fuzzy
 msgid "Recently opened keyframes"
 msgstr "I fotogrammi chiave aperti di recente"
 
-#: Kainote/KainoteFrame.cpp:256
+#: Kainote/KainoteFrame.cpp:257
 #, fuzzy
 msgid "Open dummy video"
 msgstr "Aprire un video fittizio"
 
-#: Kainote/KainoteFrame.cpp:258
+#: Kainote/KainoteFrame.cpp:259
 #, fuzzy
 msgid "Inserts the start time from video"
 msgstr "Inserire l'ora di inizio dal video"
 
-#: Kainote/KainoteFrame.cpp:260
+#: Kainote/KainoteFrame.cpp:261
 #, fuzzy
 msgid "Inserts the end time from video"
 msgstr "Inserire l'ora di fine del video"
 
-#: Kainote/KainoteFrame.cpp:262
+#: Kainote/KainoteFrame.cpp:263
 #, fuzzy
 msgid "Go to previous frame"
 msgstr "Vai al Fotogramma precedente"
 
-#: Kainote/KainoteFrame.cpp:264
+#: Kainote/KainoteFrame.cpp:265
 #, fuzzy
 msgid "Go to next frame"
 msgstr "Vai al prossimo fotogramma"
 
-#: Kainote/KainoteFrame.cpp:266
+#: Kainote/KainoteFrame.cpp:267
 #, fuzzy
 msgid "Moves video to start time"
 msgstr "Sposta il video all'ora di inizio"
 
-#: Kainote/KainoteFrame.cpp:269
+#: Kainote/KainoteFrame.cpp:270
 #, fuzzy
 msgid "Moves video to end time"
 msgstr "Sposta il video all'ora di fine"
 
-#: Kainote/KainoteFrame.cpp:272
+#: Kainote/KainoteFrame.cpp:273
 #, fuzzy
 msgid "Plays / Pauses video"
 msgstr "Riproduce / mette in pausa il video"
 
-#: Kainote/KainoteFrame.cpp:285
+#: Kainote/KainoteFrame.cpp:286
 #, fuzzy
 msgid "Opens video with FFMS2 for frame precision"
 msgstr "Apre il video con FFMS2 per la precisione dei fotogrammi"
 
-#: Kainote/KainoteFrame.cpp:288
+#: Kainote/KainoteFrame.cpp:289
 #, fuzzy
 msgid "&Video"
 msgstr "&Video"
 
-#: Kainote/KainoteFrame.cpp:292
+#: Kainote/KainoteFrame.cpp:293
 #, fuzzy
 msgid "Opens audio file"
 msgstr "Apre il file audio"
 
-#: Kainote/KainoteFrame.cpp:295 Kainote/KainoteFrame.cpp:296
+#: Kainote/KainoteFrame.cpp:296 Kainote/KainoteFrame.cpp:297
 #, fuzzy
 msgid "Recently opened audio"
 msgstr "Audio aperto di recente"
 
-#: Kainote/KainoteFrame.cpp:298
+#: Kainote/KainoteFrame.cpp:299
 #, fuzzy
 msgid "Opens audio from video"
 msgstr "Apre l'audio dal video"
 
-#: Kainote/KainoteFrame.cpp:299
+#: Kainote/KainoteFrame.cpp:300
 #, fuzzy
 msgid "Open blank 2h30m audio"
 msgstr "Aperto vuoto 2h30m audio"
 
-#: Kainote/KainoteFrame.cpp:300
+#: Kainote/KainoteFrame.cpp:301
 #, fuzzy
 msgid "Opens blank audio 2 hour and 30 minutes long"
 msgstr "Apre l'audio vuoto della durata di 2 ore e 30 minuti"
 
-#: Kainote/KainoteFrame.cpp:302
+#: Kainote/KainoteFrame.cpp:303
 #, fuzzy
 msgid "Closes audio"
 msgstr "Chiude l'audio"
 
-#: Kainote/KainoteFrame.cpp:303
+#: Kainote/KainoteFrame.cpp:304
 #, fuzzy
 msgid "A&udio"
 msgstr "A&udio"
 
-#: Kainote/KainoteFrame.cpp:306 Kainote/OptionsDialog.cpp:640
+#: Kainote/KainoteFrame.cpp:307 Kainote/OptionsDialog.cpp:643
 #, fuzzy
 msgid "All"
 msgstr "Tutte"
 
-#: Kainote/KainoteFrame.cpp:306
+#: Kainote/KainoteFrame.cpp:307
 #, fuzzy
 msgid "Shows all windows"
 msgstr "Mostra tutte le finestre"
 
-#: Kainote/KainoteFrame.cpp:307
+#: Kainote/KainoteFrame.cpp:308
 #, fuzzy
 msgid "Shows only video window and subs window"
 msgstr "Mostra solo la finestra video e la finestra dei sottotitoli"
 
-#: Kainote/KainoteFrame.cpp:307
+#: Kainote/KainoteFrame.cpp:308
 #, fuzzy
 msgid "Video and subs"
 msgstr "Video e sottotitoli"
 
-#: Kainote/KainoteFrame.cpp:308
+#: Kainote/KainoteFrame.cpp:309
 #, fuzzy
 msgid "Audio and subs"
 msgstr "Audio e sottotitoli"
 
-#: Kainote/KainoteFrame.cpp:308
+#: Kainote/KainoteFrame.cpp:309
 #, fuzzy
 msgid "Shows only audio window and subs window"
 msgstr "Mostra solo la finestra audio e la finestra dei sottotitoli"
 
-#: Kainote/KainoteFrame.cpp:309
+#: Kainote/KainoteFrame.cpp:310
 #, fuzzy
 msgid "Only video"
 msgstr "Solo video"
 
-#: Kainote/KainoteFrame.cpp:309
+#: Kainote/KainoteFrame.cpp:310
 #, fuzzy
 msgid "Shows only video window"
 msgstr "Mostra solo la finestra video"
 
-#: Kainote/KainoteFrame.cpp:310
+#: Kainote/KainoteFrame.cpp:311
 #, fuzzy
 msgid "Only subtitles"
 msgstr "Solo sottotitoli"
 
-#: Kainote/KainoteFrame.cpp:310
+#: Kainote/KainoteFrame.cpp:311
 #, fuzzy
 msgid "Shows only the subtitle window"
 msgstr "Mostra solo la finestra dei sottotitoli"
 
-#: Kainote/KainoteFrame.cpp:311
+#: Kainote/KainoteFrame.cpp:312
 #, fuzzy
 msgid "View"
 msgstr "Visualizza"
 
-#: Kainote/KainoteFrame.cpp:315
+#: Kainote/KainoteFrame.cpp:316
 #, fuzzy
 msgid "Enables / disables editor"
 msgstr "Attiva/disattiva l'editor"
 
-#: Kainote/KainoteFrame.cpp:317 Kainote/ScriptInfo.cpp:24
+#: Kainote/KainoteFrame.cpp:318 Kainote/ScriptInfo.cpp:24
 #, fuzzy
 msgid "ASS subtitle properties"
 msgstr "Proprietà dei sottotitoli ASS"
 
-#: Kainote/KainoteFrame.cpp:318
+#: Kainote/KainoteFrame.cpp:319
 #, fuzzy
 msgid "Style &manager"
 msgstr "Stile e manager"
 
-#: Kainote/KainoteFrame.cpp:319
+#: Kainote/KainoteFrame.cpp:320
 #, fuzzy
 msgid "Is used to manage ASS styles"
 msgstr "Viene utilizzato per gestire gli stili ASS"
 
-#: Kainote/KainoteFrame.cpp:322
+#: Kainote/KainoteFrame.cpp:323
 #, fuzzy
 msgid "Converts to ASS format"
 msgstr "Converte in formato ASS"
 
-#: Kainote/KainoteFrame.cpp:324
+#: Kainote/KainoteFrame.cpp:325
 #, fuzzy
 msgid "Converts to SRT format"
 msgstr "Converte in formato SRT"
 
-#: Kainote/KainoteFrame.cpp:326
+#: Kainote/KainoteFrame.cpp:327
 #, fuzzy
 msgid "Converts to microDVD format"
 msgstr "Converte in formato microDVD"
 
-#: Kainote/KainoteFrame.cpp:328
+#: Kainote/KainoteFrame.cpp:329
 #, fuzzy
 msgid "Converts to MPL2 format"
 msgstr "Converte in formato MPL2"
 
-#: Kainote/KainoteFrame.cpp:330
+#: Kainote/KainoteFrame.cpp:331
 #, fuzzy
 msgid "Converts to TMPlayer format (not recommended)"
 msgstr "Converte in formato TMPlayer (non consigliato)"
 
-#: Kainote/KainoteFrame.cpp:332 Kainote/OptionsDialog.cpp:1004
+#: Kainote/KainoteFrame.cpp:333 Kainote/OptionsDialog.cpp:1011
 #, fuzzy
 msgid "Conversion"
 msgstr "Conversione"
 
-#: Kainote/KainoteFrame.cpp:332
+#: Kainote/KainoteFrame.cpp:333
 #, fuzzy
 msgid "Converts from one format to another"
 msgstr "Converte da un formato all'altro"
 
-#: Kainote/KainoteFrame.cpp:334
+#: Kainote/KainoteFrame.cpp:335
 #, fuzzy
 msgid "Shift &times...\tCtrl-I"
 msgstr "Maiuscole e minuscole... Ctrl-I"
 
-#: Kainote/KainoteFrame.cpp:335
+#: Kainote/KainoteFrame.cpp:336
 #, fuzzy
 msgid "Shifting subtitle times"
 msgstr "Sposta i tempi dei sottotitoli"
 
-#: Kainote/KainoteFrame.cpp:343
+#: Kainote/KainoteFrame.cpp:344
 #, fuzzy
 msgid "Hides tags in ASS and MDVD"
 msgstr "Nasconde i tag in ASS e MDVD"
 
-#: Kainote/KainoteFrame.cpp:344
+#: Kainote/KainoteFrame.cpp:345
 #, fuzzy
 msgid "Su&btitles"
 msgstr "Su&titoli"
 
-#: Kainote/KainoteFrame.cpp:355
+#: Kainote/KainoteFrame.cpp:356
 #, fuzzy
 msgid "Au&tomation"
 msgstr "Au&tomazione"
 
-#: Kainote/KainoteFrame.cpp:358
+#: Kainote/KainoteFrame.cpp:359
 #, fuzzy
 msgid "&Help (English version is not yet available)"
 msgstr "&Help (la versione inglese non è ancora disponibile)"
 
-#: Kainote/KainoteFrame.cpp:359
+#: Kainote/KainoteFrame.cpp:360
 #, fuzzy
 msgid "Opens help in default browser"
 msgstr "Apre la guida nel browser predefinito"
 
-#: Kainote/KainoteFrame.cpp:360
+#: Kainote/KainoteFrame.cpp:361
 #, fuzzy
 msgid "&Forum thread on animesub.info (Polish)"
 msgstr "Discussione del &Forum su animesub.info (polacco)"
 
-#: Kainote/KainoteFrame.cpp:361
+#: Kainote/KainoteFrame.cpp:362
 #, fuzzy
 msgid "Opens forum thread on animesub.info (Polish)"
 msgstr "Apre un thread del forum su animesub.info (in polacco)"
 
-#: Kainote/KainoteFrame.cpp:362
+#: Kainote/KainoteFrame.cpp:363
+msgid "Check for &updates"
+msgstr ""
+
+#: Kainote/KainoteFrame.cpp:364
+msgid "Checks whether a newer version is available"
+msgstr ""
+
+#: Kainote/KainoteFrame.cpp:365
 #, fuzzy
 msgid "&About"
 msgstr "&Informazioni"
 
-#: Kainote/KainoteFrame.cpp:363
+#: Kainote/KainoteFrame.cpp:366
 #, fuzzy
 msgid "Shows program info"
 msgstr "Mostra le informazioni sul programma"
 
-#: Kainote/KainoteFrame.cpp:365
+#: Kainote/KainoteFrame.cpp:368
 #, fuzzy
 msgid "&Credits"
 msgstr "&Crediti"
 
-#: Kainote/KainoteFrame.cpp:366
+#: Kainote/KainoteFrame.cpp:369
 #, fuzzy
 msgid "Shows credits"
 msgstr "Crediti per gli spettacoli"
 
-#: Kainote/KainoteFrame.cpp:367
+#: Kainote/KainoteFrame.cpp:370
 #, fuzzy
 msgid "&Help"
 msgstr "&Aiuto"
 
-#: Kainote/KainoteFrame.cpp:583 Kainote/KainoteFrame.cpp:600
+#: Kainote/KainoteFrame.cpp:586 Kainote/KainoteFrame.cpp:603
 #: Kainote/ProgressDialog.cpp:109
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Time elapsed: %s"
 msgstr "Tempo trascorso: %s"
 
-#: Kainote/KainoteFrame.cpp:897
+#: Kainote/KainoteFrame.cpp:900
 #, fuzzy
 msgid "Choose script"
 msgstr "Scegliere lo script"
 
-#: Kainote/KainoteFrame.cpp:899
+#: Kainote/KainoteFrame.cpp:902
 #, fuzzy
 msgid "Script files (*.lua),(*.moon)|*.lua;*.moon;"
 msgstr "File di script (*.lua), (*.moon)|*.lua;*.moon;"
 
-#: Kainote/KainoteFrame.cpp:916
+#: Kainote/KainoteFrame.cpp:919
 #, fuzzy
 msgid "This subtitle file does not have any scripts added"
 msgstr "Questi sottotitoli non hanno alcuno script aggiunto"
 
-#: Kainote/KainoteFrame.cpp:925 Kainote/KainoteFrame.cpp:2628
-#, c-format, fuzzy
+#: Kainote/KainoteFrame.cpp:928 Kainote/KainoteFrame.cpp:2634
+#, fuzzy, c-format
 msgid "Validation Lua script '%s' failed"
 msgstr "Lo script Lua di convalida '%s' è fallito"
 
-#: Kainote/KainoteFrame.cpp:1006 Kainote/SubsGrid.cpp:906
+#: Kainote/KainoteFrame.cpp:1009 Kainote/SubsGrid.cpp:906
 #: Kainote/VideoBox.cpp:1089
 #, fuzzy
 msgid "Choose subtitle file"
 msgstr "Scegliere il file dei sottotitoli"
 
-#: Kainote/KainoteFrame.cpp:1009
+#: Kainote/KainoteFrame.cpp:1012
 #, fuzzy
-msgid "Subtitle files (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt|Videos with embedded subtitles (*.mkv),(*.ogm)|*.mkv;*.ogm"
-msgstr "File di sottotitoli (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt|Video con sottotitoli (*.mkv),(*.ogm)|*.mkv;*.ogm"
+msgid ""
+"Subtitle files (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|"
+"*.ass;*.ssa;*.srt;*.sub;*.txt|Videos with embedded subtitles (*.mkv),(*.ogm)|"
+"*.mkv;*.ogm"
+msgstr ""
+"File di sottotitoli (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|"
+"*.ass;*.ssa;*.srt;*.sub;*.txt|Video con sottotitoli (*.mkv),(*.ogm)|"
+"*.mkv;*.ogm"
 
-#: Kainote/KainoteFrame.cpp:1039
+#: Kainote/KainoteFrame.cpp:1042
 #, fuzzy
-msgid "Video files (*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.mpg;*.mpeg;*.3gp;*.avs|All files (*.*)|*.*"
-msgstr "File video (*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.mpg),(*.mpeg),(*.avs).avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.mpg;*.mpeg;*.3gp;*.avs|Tutti i file (*.*)|*.*"
+msgid ""
+"Video files (*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
+"(*.3gp),(*.mpg),(*.mpeg),(*.avs)|"
+"*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.mpg;*.mpeg;*.3gp;*.avs|All "
+"files (*.*)|*.*"
+msgstr ""
+"File video (*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
+"(*.3gp),(*.mpg),(*.mpeg),(*.avs).avs)|"
+"*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.mpg;*.mpeg;*.3gp;*.avs|"
+"Tutti i file (*.*)|*.*"
 
-#: Kainote/KainoteFrame.cpp:1055
+#: Kainote/KainoteFrame.cpp:1058
 #, fuzzy
-msgid "Keyframes file (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|All files (*.*)|*.*"
-msgstr "File Keyframes (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|Tutti i file (*.*)|*.*"
+msgid ""
+"Keyframes file (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|"
+"All files (*.*)|*.*"
+msgstr ""
+"File Keyframes (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|"
+"Tutti i file (*.*)|*.*"
 
-#: Kainote/KainoteFrame.cpp:1107
-#, c-format, fuzzy
+#: Kainote/KainoteFrame.cpp:1113
+#, fuzzy, c-format
 msgid ""
 "Subtitle editor by Marcin Drob aka Bakura or Bjakja (bjakja7@gmail.com),\n"
 "version %s from %s"
 msgstr ""
-"Editore dei sottotitoli Marcin Drob alias Bakura o Bjakja (bjakja7@gmail.com),\n"
+"Editore dei sottotitoli Marcin Drob alias Bakura o Bjakja "
+"(bjakja7@gmail.com),\n"
 "versione %s dal giorno %s"
 
-#: Kainote/KainoteFrame.cpp:1109
+#: Kainote/KainoteFrame.cpp:1115
 #, fuzzy
 msgid ""
 "I wrote this program to replace two programs: Bestplayer and Aegisub.\n"
 "\n"
 msgstr ""
-"Ho scritto questo programma per sostituire due programmi: Bestplayer e Aegisub.\n"
+"Ho scritto questo programma per sostituire due programmi: Bestplayer e "
+"Aegisub.\n"
 "\n"
 
-#: Kainote/KainoteFrame.cpp:1110
+#: Kainote/KainoteFrame.cpp:1116
 #, fuzzy
 msgid ""
-"If you have noticed any bugs or have any suggestions for changes or new features,\n"
-"you can write about it in: Discord https://discord.gg/9WacFTtK6q, Github, or by email.\n"
+"If you have noticed any bugs or have any suggestions for changes or new "
+"features,\n"
+"you can write about it in: Discord https://discord.gg/9WacFTtK6q, Github, or "
+"by email.\n"
 "\n"
 msgstr ""
-"Se avete notato qualche bug o avete suggerimenti per modifiche o nuove funzionalità,\n"
-"potete scriverlo su: Discord https://discord.gg/9WacFTtK6q, Github o via e-mail.\n"
+"Se avete notato qualche bug o avete suggerimenti per modifiche o nuove "
+"funzionalità,\n"
+"potete scriverlo su: Discord https://discord.gg/9WacFTtK6q, Github o via e-"
+"mail.\n"
 "\n"
 
-#: Kainote/KainoteFrame.cpp:1111
+#: Kainote/KainoteFrame.cpp:1117
 #, fuzzy
 msgid "Kainote includes parts of the following projects:\n"
 msgstr "Kainote comprende parti dei seguenti progetti:\n"
 
-#: Kainote/KainoteFrame.cpp:1113
+#: Kainote/KainoteFrame.cpp:1119
 #, fuzzy
 msgid ""
-"Color picker, demuxing subtitles from MKV, audio box, audio player, automation,\n"
+"Color picker, demuxing subtitles from MKV, audio box, audio player, "
+"automation,\n"
 "and several other individual features taken from Aegisub -\n"
 msgstr ""
-"Selezionatore di colori, sottotitolazione mkv, audiobox, lettore audio, automazione\n"
+"Selezionatore di colori, sottotitolazione mkv, audiobox, lettore audio, "
+"automazione\n"
 "e molte altre funzioni prese da Aegisub.\n"
 
-#: Kainote/KainoteFrame.cpp:1124
+#: Kainote/KainoteFrame.cpp:1130
 #, fuzzy
 msgid "About Kainote"
 msgstr "Informazioni su Kainote"
 
-#: Kainote/KainoteFrame.cpp:1129
+#: Kainote/KainoteFrame.cpp:1135
 #, fuzzy
 msgid "Graphical help: (buttons, help pictures etc.)\n"
 msgstr "Aiuto grafico: (pulsanti, immagini di aiuto, ecc.)\n"
 
-#: Kainote/KainoteFrame.cpp:1130
+#: Kainote/KainoteFrame.cpp:1136
 #, fuzzy
 msgid "- Xandros (new video buttons).\n"
 msgstr "- Xandros (nuovi pulsanti video).\n"
 
-#: Kainote/KainoteFrame.cpp:1131
+#: Kainote/KainoteFrame.cpp:1137
 #, fuzzy
 msgid "- Devilkan (menu and toolbar buttons)\n"
 msgstr "- Devilkan (pulsanti del menu e della barra degli strumenti)\n"
 
-#: Kainote/KainoteFrame.cpp:1132
+#: Kainote/KainoteFrame.cpp:1138
 #, fuzzy
 msgid "- Zły Los (icons for file associations and menu).\n"
 msgstr "- Zły Los (icone per associazioni di file e menu).\n"
 
-#: Kainote/KainoteFrame.cpp:1133
+#: Kainote/KainoteFrame.cpp:1139
 #, fuzzy
 msgid "Testers:\n"
 msgstr "Tester:\n"
 
-#: Kainote/KainoteFrame.cpp:1134
+#: Kainote/KainoteFrame.cpp:1140
 #, fuzzy
 msgid ""
 "- Sacredus (first translator using translator mode,\n"
@@ -4124,63 +4290,76 @@ msgstr ""
 "- Sacredus (primo traduttore che usa la modalità traduttore,\n"
 "grande aiuto per testare Kainote su un computer lento)\n"
 
-#: Kainote/KainoteFrame.cpp:1135
+#: Kainote/KainoteFrame.cpp:1141
 #, fuzzy
-msgid "- Devilkan (crashhunter, because of his system and habits he made Kainote crash a lot\n"
-msgstr "- Devilkan (cacciatore di crash, a causa del suo sistema e delle sue abitudini ha fatto sì che Kainote andasse spesso in crash)\n"
+msgid ""
+"- Devilkan (crashhunter, because of his system and habits he made Kainote "
+"crash a lot\n"
+msgstr ""
+"- Devilkan (cacciatore di crash, a causa del suo sistema e delle sue "
+"abitudini ha fatto sì che Kainote andasse spesso in crash)\n"
 
-#: Kainote/KainoteFrame.cpp:1136
+#: Kainote/KainoteFrame.cpp:1142
 #, fuzzy
-msgid "helped with typesetting tools and came up with many more improvements).\n"
-msgstr "ha aiutato con gli strumenti di composizione e ha apportato molti altri miglioramenti).\n"
+msgid ""
+"helped with typesetting tools and came up with many more improvements).\n"
+msgstr ""
+"ha aiutato con gli strumenti di composizione e ha apportato molti altri "
+"miglioramenti).\n"
 
-#: Kainote/KainoteFrame.cpp:1137
+#: Kainote/KainoteFrame.cpp:1143
 #, fuzzy
-msgid "- MatiasMovie (found some crashes and suggessted some improvements, helps with crash debugging).\n"
-msgstr "- MatiasMovie (ha riscontrato alcuni crash e suggerito alcuni miglioramenti, aiutando il debugging dei crash).\n"
+msgid ""
+"- MatiasMovie (found some crashes and suggessted some improvements, helps "
+"with crash debugging).\n"
+msgstr ""
+"- MatiasMovie (ha riscontrato alcuni crash e suggerito alcuni miglioramenti, "
+"aiutando il debugging dei crash).\n"
 
-#: Kainote/KainoteFrame.cpp:1138
+#: Kainote/KainoteFrame.cpp:1144
 #, fuzzy
 msgid "- mas1904 (found some errors and helping with crash debuging).\n"
-msgstr "- mas1904 (ha trovato alcuni errori e ha contribuito al debug degli arresti anomali).\n"
+msgstr ""
+"- mas1904 (ha trovato alcuni errori e ha contribuito al debug degli arresti "
+"anomali).\n"
 
-#: Kainote/KainoteFrame.cpp:1139
+#: Kainote/KainoteFrame.cpp:1145
 #, fuzzy
 msgid "- Senami (made new themes and found some bugs).\n"
 msgstr "- Senami (creazione di nuovi temi e individuazione di alcuni bug).\n"
 
-#: Kainote/KainoteFrame.cpp:1140
+#: Kainote/KainoteFrame.cpp:1146
 #, fuzzy
 msgid "- altinat (Thai translation).\n"
 msgstr "- altinat (traduzione tailandese).\n"
 
-#: Kainote/KainoteFrame.cpp:1141
+#: Kainote/KainoteFrame.cpp:1147
 #, fuzzy
 msgid "- labrie75 (Korean translation).\n"
 msgstr "- labrie75 (traduzione coreana).\n"
 
-#: Kainote/KainoteFrame.cpp:1142
+#: Kainote/KainoteFrame.cpp:1148
 #, fuzzy
 msgid "- Niskala5570 (Malay translation).\n"
 msgstr "- Niskala5570 (traduzione in malese).\n"
 
-#: Kainote/KainoteFrame.cpp:1143
+#: Kainote/KainoteFrame.cpp:1149
 #, fuzzy
 msgid "Thanks to other Kainote users who reported bugs:\n"
 msgstr "Grazie agli altri utenti di Kainote che hanno segnalato i bug:\n"
 
-#: Kainote/KainoteFrame.cpp:1263
+#: Kainote/KainoteFrame.cpp:1269
 #, fuzzy
 msgid "Subtitle file "
 msgstr "File dei sottotitoli "
 
-#: Kainote/KainoteFrame.cpp:1273
+#: Kainote/KainoteFrame.cpp:1279
 #, fuzzy
 msgid "Save subtitle file"
 msgstr "Salvare il file dei sottotitoli"
 
-#: Kainote/KainoteFrame.cpp:1280 Kainote/KainoteFrame.cpp:1296
-#: Kainote/KainoteFrame.cpp:2499
+#: Kainote/KainoteFrame.cpp:1286 Kainote/KainoteFrame.cpp:1302
+#: Kainote/KainoteFrame.cpp:2505
 #, fuzzy
 msgid ""
 "Chosen file is read only,\n"
@@ -4189,17 +4368,17 @@ msgstr ""
 "Il file scelto è di sola lettura,\n"
 "salvare con un altro nome o cambiare l'attributo del file."
 
-#: Kainote/KainoteFrame.cpp:1346
-#, c-format, fuzzy
+#: Kainote/KainoteFrame.cpp:1352
+#, fuzzy, c-format
 msgid "Load subtitles named \"%s\"?"
 msgstr "Vuoi caricare i sottotitoli denominati %s?"
 
-#: Kainote/KainoteFrame.cpp:1410 Kainote/Visuals.cpp:252
+#: Kainote/KainoteFrame.cpp:1416 Kainote/Visuals.cpp:252
 #, fuzzy
 msgid "Cannot open subtitle file"
 msgstr "Impossibile aprire il file dei sottotitoli"
 
-#: Kainote/KainoteFrame.cpp:1559 Kainote/OptionsDialog.cpp:725
+#: Kainote/KainoteFrame.cpp:1565 Kainote/OptionsDialog.cpp:728
 #: Kainote/ProviderFFMS2.cpp:888 Kainote/ProviderFFMS2.cpp:899
 #: Kainote/ScriptInfo.cpp:118 Kainote/stylestore.cpp:771
 #: Kainote/stylestore.cpp:772
@@ -4207,93 +4386,95 @@ msgstr "Impossibile aprire il file dei sottotitoli"
 msgid "None"
 msgstr "Nessuno"
 
-#: Kainote/KainoteFrame.cpp:2109
-#, c-format, fuzzy
+#: Kainote/KainoteFrame.cpp:2115
+#, fuzzy, c-format
 msgid "Save subtitles named \"%s\" before %s?"
 msgstr "Si desidera salvare i sottotitoli denominati \"%s\" prima di %s?"
 
-#: Kainote/KainoteFrame.cpp:2110
+#: Kainote/KainoteFrame.cpp:2116
 #, fuzzy
 msgid "exiting program"
 msgstr "uscita dal programma"
 
-#: Kainote/KainoteFrame.cpp:2111
+#: Kainote/KainoteFrame.cpp:2117
 #, fuzzy
 msgid "closing tab"
 msgstr "scheda di chiusura"
 
-#: Kainote/KainoteFrame.cpp:2112
+#: Kainote/KainoteFrame.cpp:2118
 #, fuzzy
 msgid "loading new subtitles"
 msgstr "caricamento di nuovi sottotitoli"
 
-#: Kainote/KainoteFrame.cpp:2113
+#: Kainote/KainoteFrame.cpp:2119
 #, fuzzy
 msgid "removing subtitles"
 msgstr "rimozione dei sottotitoli"
 
-#: Kainote/KainoteFrame.cpp:2151 Kainote/OptionsDialog.cpp:661
+#: Kainote/KainoteFrame.cpp:2157 Kainote/OptionsDialog.cpp:664
 #, fuzzy
 msgid "Cannot load audio hotkeys"
 msgstr "Impossibile caricare i tasti di scelta rapida audio"
 
-#: Kainote/KainoteFrame.cpp:2152 Kainote/OptionsDialog.cpp:291
+#: Kainote/KainoteFrame.cpp:2158 Kainote/OptionsDialog.cpp:292
 #: Kainote/ProviderFFMS2.cpp:65
 #, fuzzy
 msgid "Cannot load audio configuration"
 msgstr "Impossibile caricare la configurazione audio"
 
-#: Kainote/KainoteFrame.cpp:2156
+#: Kainote/KainoteFrame.cpp:2162
 #, fuzzy
 msgid "Choose audio file"
 msgstr "Scegli un file audio"
 
-#: Kainote/KainoteFrame.cpp:2159
+#: Kainote/KainoteFrame.cpp:2165
 #, fuzzy
 msgid "Audio and video files"
 msgstr "File audio e video"
 
-#: Kainote/KainoteFrame.cpp:2161
+#: Kainote/KainoteFrame.cpp:2167
 #, fuzzy
 msgid "All files"
 msgstr "Tutti i file"
 
-#: Kainote/KainoteFrame.cpp:2320
+#: Kainote/KainoteFrame.cpp:2326
 #, fuzzy
 msgid "Undo to "
 msgstr "Annullare per "
 
-#: Kainote/KainoteFrame.cpp:2336
+#: Kainote/KainoteFrame.cpp:2342
 #, fuzzy
 msgid "Redo to "
 msgstr "Ripetere per "
 
-#: Kainote/KainoteFrame.cpp:2482
+#: Kainote/KainoteFrame.cpp:2488
 #, fuzzy
 msgid "Choose session file"
 msgstr "Scegliere il file della sessione"
 
-#: Kainote/KainoteFrame.cpp:2484 Kainote/KainoteFrame.cpp:2493
+#: Kainote/KainoteFrame.cpp:2490 Kainote/KainoteFrame.cpp:2499
 #, fuzzy
 msgid "Session file (*.kls),|*.kls"
 msgstr "File di sessione (*.kls),|*.kls"
 
-#: Kainote/KainoteFrame.cpp:2492
+#: Kainote/KainoteFrame.cpp:2498
 #, fuzzy
 msgid "Save session file"
 msgstr "Salvare il file della sessione"
 
-#: Kainote/KainoteFrame.cpp:2602
-#, c-format, fuzzy
+#: Kainote/KainoteFrame.cpp:2608
+#, fuzzy, c-format
 msgid "Hotkey \"%s\" it's not script hotkey."
-msgstr "Il tasto di scelta rapida \"%s\" non è un tasto di scelta rapida dello script."
+msgstr ""
+"Il tasto di scelta rapida \"%s\" non è un tasto di scelta rapida dello "
+"script."
 
 #: Kainote/LogHandler.cpp:42
 #, fuzzy
 msgid "Log window"
 msgstr "Finestra del registro"
 
-#: Kainote/MappedButton.cpp:40 Kainote/OptionsDialog.cpp:1021
+#: Kainote/MappedButton.cpp:40 Kainote/OptionsDialog.cpp:1028
 #: Kainote/StyleChange.cpp:269 Kainote/VisualAllTagsEdition.cpp:125
 #: Kainote/VisualDrawingShapes.cpp:101
 #, fuzzy
@@ -4308,7 +4489,9 @@ msgstr " o "
 #: Kainote/MappedButton.cpp:274
 #, fuzzy
 msgid "Second shortcut can be set using Control + Click"
-msgstr "La seconda scorciatoia può essere impostata utilizzando Controllo + Fare clic."
+msgstr ""
+"La seconda scorciatoia può essere impostata utilizzando Controllo + Fare "
+"clic."
 
 #: Kainote/MisspellReplacer.cpp:30
 #, fuzzy
@@ -4455,7 +4638,7 @@ msgstr ""
 
 #: Kainote/MisspellReplacer.cpp:607 Kainote/findreplace.cpp:202
 #: Kainote/findreplace.cpp:1581
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid ""
 "Line %i cannot be replaced,\n"
 "cause it was edited."
@@ -4464,9 +4647,10 @@ msgstr ""
 "perché è stata modificata."
 
 #: Kainote/MisspellReplacer.cpp:628
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Cannot replace \"%s\" to \"%s\", with rule \"%s\" in line %i."
-msgstr "Impossibile sostituire \"%s\" a \"%s\", con la regola \"%s\" nella riga %i."
+msgstr ""
+"Impossibile sostituire \"%s\" a \"%s\", con la regola \"%s\" nella riga %i."
 
 #: Kainote/MisspellReplacer.cpp:712
 #, fuzzy
@@ -4524,7 +4708,7 @@ msgid "Fixing Polish \"bede\""
 msgstr "Correzione del polacco \"bede"
 
 #: Kainote/MisspellReplacer.cpp:773
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Rule \"%s\" is invalid."
 msgstr "La regola \"%s\" non è valida."
 
@@ -4693,17 +4877,17 @@ msgstr "Il file non è stato aperto."
 msgid "Cannot save to file."
 msgstr "Impossibile salvare su file."
 
-#: Kainote/OptionsDialog.cpp:297
+#: Kainote/OptionsDialog.cpp:298
 #, fuzzy
 msgid "Open sorted subtitles"
 msgstr "Aprire i sottotitoli ordinati"
 
-#: Kainote/OptionsDialog.cpp:297
+#: Kainote/OptionsDialog.cpp:298
 #, fuzzy
 msgid "Turn spell checking"
 msgstr "Trasformare il controllo ortografico"
 
-#: Kainote/OptionsDialog.cpp:298
+#: Kainote/OptionsDialog.cpp:299
 #, fuzzy
 msgid ""
 "Select the line with the time line\n"
@@ -4712,22 +4896,22 @@ msgstr ""
 "Selezionare la riga con la linea temporale\n"
 "della scheda attiva precedente"
 
-#: Kainote/OptionsDialog.cpp:299
+#: Kainote/OptionsDialog.cpp:300
 #, fuzzy
 msgid "Always open subtitles in a new tab"
 msgstr "Aprire sempre i sottotitoli in una nuova scheda"
 
-#: Kainote/OptionsDialog.cpp:299
+#: Kainote/OptionsDialog.cpp:300
 #, fuzzy
 msgid "Show suggestions by double-clicking on misspell"
 msgstr "Mostra i suggerimenti facendo doppio clic sull'errore ortografico"
 
-#: Kainote/OptionsDialog.cpp:300
+#: Kainote/OptionsDialog.cpp:301
 #, fuzzy
 msgid "Stay on selected line when editing times"
 msgstr "Rimane sulla linea selezionata durante la modifica dei tempi"
 
-#: Kainote/OptionsDialog.cpp:301
+#: Kainote/OptionsDialog.cpp:302
 #, fuzzy
 msgid ""
 "Turn off edits preview on video\n"
@@ -4736,7 +4920,7 @@ msgstr ""
 "Disattivare l'anteprima delle modifiche sul video\n"
 "(è necessario riaprire la scheda)"
 
-#: Kainote/OptionsDialog.cpp:302
+#: Kainote/OptionsDialog.cpp:303
 #, fuzzy
 msgid ""
 "Turn searching of visible line\n"
@@ -4745,222 +4929,224 @@ msgstr ""
 "Ricerca della linea visibile\n"
 "dopo il passaggio dallo schermo intero"
 
-#: Kainote/OptionsDialog.cpp:303
+#: Kainote/OptionsDialog.cpp:304
 #, fuzzy
 msgid "Change active line after add to selection"
 msgstr "Cambia la linea attiva dopo l'aggiunta alla selezione"
 
-#: Kainote/OptionsDialog.cpp:303
+#: Kainote/OptionsDialog.cpp:304
 #, fuzzy
 msgid "Synchronize time shifting window in all tabs"
 msgstr "Sincronizzare la finestra di spostamento dell'ora in tutte le schede"
 
-#: Kainote/OptionsDialog.cpp:304
+#: Kainote/OptionsDialog.cpp:305
 #, fuzzy
 msgid "Hide original on video in translator mode"
 msgstr "Nascondi l'originale nel video in modalità traduttore"
 
-#: Kainote/OptionsDialog.cpp:304
+#: Kainote/OptionsDialog.cpp:305
 #, fuzzy
 msgid "Show original in translator mode"
 msgstr "Mostra l'originale in modalità traduttore"
 
-#: Kainote/OptionsDialog.cpp:305
+#: Kainote/OptionsDialog.cpp:306
 #, fuzzy
 msgid "Do not change selections when duplicating dialogue lines"
 msgstr "Non modificare la selezione nella duplicazione delle linee di dialogo"
 
-#: Kainote/OptionsDialog.cpp:306
+#: Kainote/OptionsDialog.cpp:307
 #, fuzzy
 msgid "Do not vertically center the active line in the subtitle grid"
-msgstr "Non centrare la linea attiva in verticale nella griglia dei sottotitoli"
+msgstr ""
+"Non centrare la linea attiva in verticale nella griglia dei sottotitoli"
 
-#: Kainote/OptionsDialog.cpp:306
+#: Kainote/OptionsDialog.cpp:307
 #, fuzzy
 msgid "Use numpad shortcuts in text fields"
 msgstr "Utilizzare le scorciatoie del tastierino numerico nei campi di testo"
 
-#: Kainote/OptionsDialog.cpp:307
+#: Kainote/OptionsDialog.cpp:308
 #, fuzzy
 msgid "Do not warn about resolution mismatch"
 msgstr "Non informare sull'incompatibilità della risoluzione"
 
-#: Kainote/OptionsDialog.cpp:307
+#: Kainote/OptionsDialog.cpp:308
 #, fuzzy
 msgid "Turn off visual tools warning"
 msgstr "Disattivare l'avviso degli strumenti visivi"
 
-#: Kainote/OptionsDialog.cpp:308
+#: Kainote/OptionsDialog.cpp:309
 #, fuzzy
 msgid "Compatibility with older Kainote scripts"
 msgstr "Compatibilità con i vecchi script di Kainote"
 
-#: Kainote/OptionsDialog.cpp:330
+#: Kainote/OptionsDialog.cpp:333
 #, fuzzy
 msgid "Language (program restart required)"
 msgstr "Lingua (è richiesto il riavvio del programma)"
 
-#: Kainote/OptionsDialog.cpp:342
+#: Kainote/OptionsDialog.cpp:345
 #, fuzzy
 msgid "Put files .dic and .aff to \"Dictionary\" folder"
 msgstr "Mettere i file .dic e .aff nella cartella \"Dizionario\"."
 
-#: Kainote/OptionsDialog.cpp:343
+#: Kainote/OptionsDialog.cpp:346
 #, fuzzy
 msgid "Spell checker language (\"Dictionary\" folder)"
 msgstr "Lingua del correttore ortografico (cartella \"Dizionario\")"
 
-#: Kainote/OptionsDialog.cpp:366
+#: Kainote/OptionsDialog.cpp:369
 #, fuzzy
 msgid "0 turns off saving while editing"
 msgstr "0 disattiva il salvataggio durante la modifica"
 
-#: Kainote/OptionsDialog.cpp:368
+#: Kainote/OptionsDialog.cpp:371
 #, fuzzy
 msgid "Number of autosaves can be set from 2 to 1000000"
-msgstr "Il numero di salvataggi automatici può essere impostato da 2 a 1000000."
+msgstr ""
+"Il numero di salvataggi automatici può essere impostato da 2 a 1000000."
 
-#: Kainote/OptionsDialog.cpp:373
+#: Kainote/OptionsDialog.cpp:376
 #, fuzzy
 msgid "Number of tab name characters. Range from 20 to 150"
 msgstr "Numero di caratteri del nome della scheda. Intervallo da 20 a 150"
 
-#: Kainote/OptionsDialog.cpp:387
+#: Kainote/OptionsDialog.cpp:390
 #, fuzzy
 msgid "Number of edits to save"
 msgstr "Numero di modifiche da salvare"
 
-#: Kainote/OptionsDialog.cpp:390
+#: Kainote/OptionsDialog.cpp:393
 #, fuzzy
 msgid "Maximum number of autosave files"
 msgstr "Numero massimo di file di salvataggio automatico"
 
-#: Kainote/OptionsDialog.cpp:393
+#: Kainote/OptionsDialog.cpp:396
 #, fuzzy
 msgid "Start frame offset in ms:"
 msgstr "Offset del fotogramma iniziale in ms:"
 
-#: Kainote/OptionsDialog.cpp:396
+#: Kainote/OptionsDialog.cpp:399
 #, fuzzy
 msgid "End frame offset in ms:"
 msgstr "Offset di fine fotogramma in ms:"
 
-#: Kainote/OptionsDialog.cpp:399
+#: Kainote/OptionsDialog.cpp:402
 #, fuzzy
 msgid "ASS tag replacement:"
 msgstr "Sostituzione dell'etichetta ASS:"
 
-#: Kainote/OptionsDialog.cpp:402
+#: Kainote/OptionsDialog.cpp:405
 #, fuzzy
 msgid "Number of tab name characters"
 msgstr "Numero di caratteri del nome della scheda"
 
-#: Kainote/OptionsDialog.cpp:405
+#: Kainote/OptionsDialog.cpp:408
 #, fuzzy
 msgid "LUA scripts tracking level"
 msgstr "Livello di tracciamento degli script LUA"
 
-#: Kainote/OptionsDialog.cpp:414
+#: Kainote/OptionsDialog.cpp:417
 #, fuzzy
 msgid "Subtitle grid font:"
 msgstr "Font della griglia dei sottotitoli:"
 
-#: Kainote/OptionsDialog.cpp:421
+#: Kainote/OptionsDialog.cpp:424
 #, fuzzy
 msgid "Program font:"
 msgstr "Carattere del programma:"
 
-#: Kainote/OptionsDialog.cpp:424
+#: Kainote/OptionsDialog.cpp:427
 msgid "Calculate spaces and punctation characters for wraps"
 msgstr ""
 
-#: Kainote/OptionsDialog.cpp:427
+#: Kainote/OptionsDialog.cpp:430
 msgid "Calculate spaces and punctation characters for CPS"
 msgstr ""
 
-#: Kainote/OptionsDialog.cpp:432
+#: Kainote/OptionsDialog.cpp:435
 #, fuzzy
 msgid "Autoload loading method"
 msgstr "Metodo di caricamento automatico"
 
-#: Kainote/OptionsDialog.cpp:433
+#: Kainote/OptionsDialog.cpp:436
 #, fuzzy
 msgid "After open menu"
 msgstr "Dopo aver aperto il menu"
 
-#: Kainote/OptionsDialog.cpp:433
+#: Kainote/OptionsDialog.cpp:436
 #, fuzzy
 msgid "After open menu asynchronously"
 msgstr "Dopo aver aperto il menu in modo asincrono"
 
-#: Kainote/OptionsDialog.cpp:433
+#: Kainote/OptionsDialog.cpp:436
 #, fuzzy
 msgid "After program start"
 msgstr "Dopo l'avvio del programma"
 
-#: Kainote/OptionsDialog.cpp:433
+#: Kainote/OptionsDialog.cpp:436
 #, fuzzy
 msgid "After program start asynchronously"
 msgstr "Dopo l'avvio del programma in modo asincrono"
 
-#: Kainote/OptionsDialog.cpp:439
+#: Kainote/OptionsDialog.cpp:442
 #, fuzzy
 msgid "Folder with external fonts"
 msgstr "Cartella con caratteri esterni"
 
-#: Kainote/OptionsDialog.cpp:442 Kainote/VideoToolbar.cpp:508
+#: Kainote/OptionsDialog.cpp:445 Kainote/VideoToolbar.cpp:508
 #: Kainote/VideoToolbar.cpp:525
 #, fuzzy
 msgid "Choose"
 msgstr "Scegli"
 
-#: Kainote/OptionsDialog.cpp:444
+#: Kainote/OptionsDialog.cpp:447
 #, fuzzy
 msgid "Choose choose external font folder"
 msgstr "Scegliere la cartella font esterna"
 
-#: Kainote/OptionsDialog.cpp:473
+#: Kainote/OptionsDialog.cpp:476
 #, fuzzy
 msgid "Choose catalog"
 msgstr "Scegliere il catalogo"
 
-#: Kainote/OptionsDialog.cpp:474
+#: Kainote/OptionsDialog.cpp:477
 #, fuzzy
 msgid "Choose style"
 msgstr "Scegliere lo stile"
 
-#: Kainote/OptionsDialog.cpp:475
+#: Kainote/OptionsDialog.cpp:478
 #, fuzzy
 msgid "Choose FPS"
 msgstr "Scegliere FPS"
 
-#: Kainote/OptionsDialog.cpp:476
+#: Kainote/OptionsDialog.cpp:479
 #, fuzzy
 msgid "Time for one letter in milliseconds"
 msgstr "Tempo per una lettera in millisecondi"
 
-#: Kainote/OptionsDialog.cpp:477
+#: Kainote/OptionsDialog.cpp:480
 #, fuzzy
 msgid "Tags to paste at the beginning of every ASS line"
 msgstr "Tag da incollare all'inizio di ogni riga ASS"
 
-#: Kainote/OptionsDialog.cpp:478
+#: Kainote/OptionsDialog.cpp:481
 #, fuzzy
 msgid "Resolution when converting to ASS"
 msgstr "Risoluzione durante la conversione in ASS"
 
-#: Kainote/OptionsDialog.cpp:508
+#: Kainote/OptionsDialog.cpp:511
 #, fuzzy
 msgid "catalog for style"
 msgstr "catalogo per lo stile"
 
-#: Kainote/OptionsDialog.cpp:508
+#: Kainote/OptionsDialog.cpp:511
 #, fuzzy
 msgid "style"
 msgstr "stile"
 
-#: Kainote/OptionsDialog.cpp:509
-#, c-format, fuzzy
+#: Kainote/OptionsDialog.cpp:512
+#, fuzzy, c-format
 msgid ""
 "The selected %s for conversion does not exist\n"
 "and will be changed to the default"
@@ -4968,192 +5154,192 @@ msgstr ""
 "Il sito %s scelto per la conversione non esiste,\n"
 "e sarà cambiato in quello predefinito"
 
-#: Kainote/OptionsDialog.cpp:538
+#: Kainote/OptionsDialog.cpp:541
 #, fuzzy
 msgid "FPS from video"
 msgstr "FPS dal video"
 
-#: Kainote/OptionsDialog.cpp:539
+#: Kainote/OptionsDialog.cpp:542
 #, fuzzy
 msgid "New end times"
 msgstr "Nuovi tempi finali"
 
-#: Kainote/OptionsDialog.cpp:539
+#: Kainote/OptionsDialog.cpp:542
 #, fuzzy
 msgid "Show window before conversion"
 msgstr "Mostra la finestra prima della conversione"
 
-#: Kainote/OptionsDialog.cpp:574
+#: Kainote/OptionsDialog.cpp:577
 #, fuzzy
 msgid "Left mouse button pauses video"
 msgstr "Il tasto sinistro del mouse mette in pausa il video"
 
-#: Kainote/OptionsDialog.cpp:574
+#: Kainote/OptionsDialog.cpp:577
 #, fuzzy
 msgid "Open video from context menu on full screen"
 msgstr "Aprire un video dal menu contestuale a schermo intero"
 
-#: Kainote/OptionsDialog.cpp:575
+#: Kainote/OptionsDialog.cpp:578
 #, fuzzy
 msgid "Open video with time of active line"
 msgstr "Aprire il video con il tempo della linea attiva"
 
-#: Kainote/OptionsDialog.cpp:575
+#: Kainote/OptionsDialog.cpp:578
 #, fuzzy
 msgid "Preferred audio (separated by semicolons)"
 msgstr "Audio preferito (separato da punto e virgola)"
 
-#: Kainote/OptionsDialog.cpp:576
+#: Kainote/OptionsDialog.cpp:579
 #, fuzzy
 msgid "FFMS2 video seeking method (requires reloading)"
 msgstr "Ricerca video FFMS2 (richiede di essere ricaricato)"
 
-#: Kainote/OptionsDialog.cpp:576
+#: Kainote/OptionsDialog.cpp:579
 #, fuzzy
 msgid "Subtitle display filter"
 msgstr "Filtro sottotitoli"
 
-#: Kainote/OptionsDialog.cpp:577
+#: Kainote/OptionsDialog.cpp:580
 #, fuzzy
 msgid "Start video zoom in percent."
 msgstr "Inizia lo zoom video in percentuale."
 
-#: Kainote/OptionsDialog.cpp:596
+#: Kainote/OptionsDialog.cpp:599
 #, fuzzy
 msgid "Linear"
 msgstr "Lineare"
 
-#: Kainote/OptionsDialog.cpp:596 Kainote/ScriptInfo.cpp:143
+#: Kainote/OptionsDialog.cpp:599 Kainote/ScriptInfo.cpp:143
 #, fuzzy
 msgid "Normal"
 msgstr "Normale"
 
-#: Kainote/OptionsDialog.cpp:597
+#: Kainote/OptionsDialog.cpp:600
 #, fuzzy
 msgid "Aggressive (fast in rewind)"
 msgstr "Aggressivo (veloce nel riavvolgimento)"
 
-#: Kainote/OptionsDialog.cpp:597
+#: Kainote/OptionsDialog.cpp:600
 #, fuzzy
 msgid "Unsafe (always fast)"
 msgstr "Non sicuro (sempre veloce)"
 
-#: Kainote/OptionsDialog.cpp:639
+#: Kainote/OptionsDialog.cpp:642
 #, fuzzy
 msgid "Choose filtering"
 msgstr "Scegliere il filtraggio"
 
-#: Kainote/OptionsDialog.cpp:640
+#: Kainote/OptionsDialog.cpp:643
 #, fuzzy
 msgid "Global shortcuts"
 msgstr "Scorciatoie globali"
 
-#: Kainote/OptionsDialog.cpp:640
+#: Kainote/OptionsDialog.cpp:643
 #, fuzzy
 msgid "Set shortcuts"
 msgstr "Impostare le scorciatoie"
 
-#: Kainote/OptionsDialog.cpp:641
+#: Kainote/OptionsDialog.cpp:644
 #, fuzzy
 msgid "Audio Shortcuts"
 msgstr "Scorciatoie audio"
 
-#: Kainote/OptionsDialog.cpp:641
+#: Kainote/OptionsDialog.cpp:644
 #, fuzzy
 msgid "Editor shortcuts"
 msgstr "Scorciatoie dell'editor"
 
-#: Kainote/OptionsDialog.cpp:641
+#: Kainote/OptionsDialog.cpp:644
 #, fuzzy
 msgid "Subtitle shortcuts"
 msgstr "Scorciatoie per i sottotitoli"
 
-#: Kainote/OptionsDialog.cpp:641
+#: Kainote/OptionsDialog.cpp:644
 #, fuzzy
 msgid "Video shortcuts"
 msgstr "Scorciatoie video"
 
-#: Kainote/OptionsDialog.cpp:644
+#: Kainote/OptionsDialog.cpp:647
 #, fuzzy
 msgid "Filtering mode:"
 msgstr "Modalità di filtraggio:"
 
-#: Kainote/OptionsDialog.cpp:655
+#: Kainote/OptionsDialog.cpp:658
 #, fuzzy
 msgid "Function"
 msgstr "Funzioni"
 
-#: Kainote/OptionsDialog.cpp:670
+#: Kainote/OptionsDialog.cpp:673
 #, fuzzy
 msgid "Restore default hotkey"
 msgstr "Ripristino del tasto di scelta rapida predefinito"
 
-#: Kainote/OptionsDialog.cpp:693
+#: Kainote/OptionsDialog.cpp:696
 #, fuzzy
 msgid "Show background selection"
 msgstr "Mostra la selezione dello sfondo"
 
-#: Kainote/OptionsDialog.cpp:693
+#: Kainote/OptionsDialog.cpp:696
 #, fuzzy
 msgid "Show seconds markers"
 msgstr "Mostra i marcatori dei secondi"
 
-#: Kainote/OptionsDialog.cpp:693
+#: Kainote/OptionsDialog.cpp:696
 #, fuzzy
 msgid "Show time next to cursor"
 msgstr "Mostra l'ora accanto al cursore"
 
-#: Kainote/OptionsDialog.cpp:694
+#: Kainote/OptionsDialog.cpp:697
 #, fuzzy
 msgid "Follow audio during playback"
 msgstr "Seguire l'audio durante la riproduzione"
 
-#: Kainote/OptionsDialog.cpp:694
+#: Kainote/OptionsDialog.cpp:697
 #, fuzzy
 msgid "Show keyframes"
 msgstr "Mostra fotogrammi"
 
-#: Kainote/OptionsDialog.cpp:694
+#: Kainote/OptionsDialog.cpp:697
 #, fuzzy
 msgid "Show video position"
 msgstr "Mostra la posizione del video"
 
-#: Kainote/OptionsDialog.cpp:695
+#: Kainote/OptionsDialog.cpp:698
 #, fuzzy
 msgid "Activate the audio when hover"
 msgstr "Attivare l'audio al passaggio del mouse"
 
-#: Kainote/OptionsDialog.cpp:695
+#: Kainote/OptionsDialog.cpp:698
 #, fuzzy
 msgid "Snap to keyframe"
 msgstr "Scatto al fotogramma chiave"
 
-#: Kainote/OptionsDialog.cpp:695
+#: Kainote/OptionsDialog.cpp:698
 #, fuzzy
 msgid "Snap to other lines"
 msgstr "Aggancio ad altre linee"
 
-#: Kainote/OptionsDialog.cpp:696
+#: Kainote/OptionsDialog.cpp:699
 #, fuzzy
 msgid "Do not play audio after changing the line"
 msgstr "Non riprodurre l'audio dopo la modifica della linea"
 
-#: Kainote/OptionsDialog.cpp:696
+#: Kainote/OptionsDialog.cpp:699
 #, fuzzy
 msgid "Merge all the \"n\" with the previous syllable"
 msgstr "Fondere tutte le \"n\" con la sillaba precedente"
 
-#: Kainote/OptionsDialog.cpp:697
+#: Kainote/OptionsDialog.cpp:700
 #, fuzzy
 msgid "Load audio into RAM"
 msgstr "Caricare l'audio nella RAM"
 
-#: Kainote/OptionsDialog.cpp:697
+#: Kainote/OptionsDialog.cpp:700
 #, fuzzy
 msgid "Move syllable line after click"
 msgstr "Spostare la linea delle sillabe dopo il clic"
 
-#: Kainote/OptionsDialog.cpp:724
+#: Kainote/OptionsDialog.cpp:727
 #, fuzzy
 msgid ""
 "Range from 0 to 10000, where 0 turns off\n"
@@ -5162,752 +5348,752 @@ msgstr ""
 "Intervallo da 0 a 10000, dove 0 disattiva\n"
 "la rimozione dei file di cache audio."
 
-#: Kainote/OptionsDialog.cpp:725
+#: Kainote/OptionsDialog.cpp:728
 #, fuzzy
 msgid "All visible"
 msgstr "Tutti visibili"
 
-#: Kainote/OptionsDialog.cpp:725
+#: Kainote/OptionsDialog.cpp:728
 #, fuzzy
 msgid "Before and after the active"
 msgstr "Prima e dopo l'attivo"
 
-#: Kainote/OptionsDialog.cpp:735
+#: Kainote/OptionsDialog.cpp:738
 #, fuzzy
 msgid "Audio delay in milliseconds"
 msgstr "Ritardo audio in millisecondi"
 
-#: Kainote/OptionsDialog.cpp:736
+#: Kainote/OptionsDialog.cpp:739
 #, fuzzy
 msgid "Audio to play before and after the marker in milliseconds"
 msgstr "Audio da riprodurre prima e dopo il marcatore in millisecondi"
 
-#: Kainote/OptionsDialog.cpp:737 Kainote/ShiftTimes.cpp:395
+#: Kainote/OptionsDialog.cpp:740 Kainote/ShiftTimes.cpp:395
 #, fuzzy
 msgid "Lead-in"
 msgstr "Introduzione"
 
-#: Kainote/OptionsDialog.cpp:737 Kainote/ShiftTimes.cpp:398
+#: Kainote/OptionsDialog.cpp:740 Kainote/ShiftTimes.cpp:398
 #, fuzzy
 msgid "Lead-out"
 msgstr "Uscita"
 
-#: Kainote/OptionsDialog.cpp:739
+#: Kainote/OptionsDialog.cpp:742
 #, fuzzy
 msgid "Line boundaries thickness"
 msgstr "Spessore dei confini delle linee"
 
-#: Kainote/OptionsDialog.cpp:740
+#: Kainote/OptionsDialog.cpp:743
 #, fuzzy
 msgid "Audio cache files limit"
 msgstr "Limite dei file audio della cache"
 
-#: Kainote/OptionsDialog.cpp:741
+#: Kainote/OptionsDialog.cpp:744
 #, fuzzy
 msgid "The way to display inactive lines"
 msgstr "Come visualizzare le linee inattive"
 
-#: Kainote/OptionsDialog.cpp:765
+#: Kainote/OptionsDialog.cpp:768
 #, fuzzy
 msgid "Inactive window background"
 msgstr "Sfondo della finestra inattiva"
 
-#: Kainote/OptionsDialog.cpp:765
+#: Kainote/OptionsDialog.cpp:768
 #, fuzzy
 msgid "Inactive window text"
 msgstr "Testo della finestra inattiva"
 
-#: Kainote/OptionsDialog.cpp:765
+#: Kainote/OptionsDialog.cpp:768
 #, fuzzy
 msgid "Window background"
 msgstr "Sfondo della finestra"
 
-#: Kainote/OptionsDialog.cpp:765
+#: Kainote/OptionsDialog.cpp:768
 #, fuzzy
 msgid "Window text"
 msgstr "Testo della finestra"
 
-#: Kainote/OptionsDialog.cpp:766
+#: Kainote/OptionsDialog.cpp:769
 #, fuzzy
 msgid "Inactive window border"
 msgstr "Bordo della finestra inattivo"
 
-#: Kainote/OptionsDialog.cpp:766
+#: Kainote/OptionsDialog.cpp:769
 #, fuzzy
 msgid "Window border"
 msgstr "Bordo della finestra"
 
-#: Kainote/OptionsDialog.cpp:766
+#: Kainote/OptionsDialog.cpp:769
 #, fuzzy
 msgid "Window border background"
 msgstr "Sfondo del bordo della finestra"
 
-#: Kainote/OptionsDialog.cpp:767
+#: Kainote/OptionsDialog.cpp:770
 #, fuzzy
 msgid "Inactive window border background"
 msgstr "Sfondo del bordo della finestra inattiva"
 
-#: Kainote/OptionsDialog.cpp:767
+#: Kainote/OptionsDialog.cpp:770
 #, fuzzy
 msgid "Inactive window header text"
 msgstr "Testo dell'intestazione della finestra inattiva"
 
-#: Kainote/OptionsDialog.cpp:767
+#: Kainote/OptionsDialog.cpp:770
 #, fuzzy
 msgid "Window header text"
 msgstr "Testo dell'intestazione della finestra"
 
-#: Kainote/OptionsDialog.cpp:768
+#: Kainote/OptionsDialog.cpp:771
 #, fuzzy
 msgid "Window invaded element header"
 msgstr "La finestra ha invaso l'intestazione dell'elemento"
 
-#: Kainote/OptionsDialog.cpp:768
+#: Kainote/OptionsDialog.cpp:771
 #, fuzzy
 msgid "Window pressed element header"
 msgstr "Intestazione dell'elemento pressato della finestra"
 
-#: Kainote/OptionsDialog.cpp:769
+#: Kainote/OptionsDialog.cpp:772
 #, fuzzy
 msgid "Window closing upon hover"
 msgstr "Chiusura della finestra al passaggio del mouse"
 
-#: Kainote/OptionsDialog.cpp:769
+#: Kainote/OptionsDialog.cpp:772
 #, fuzzy
 msgid "Window elements warning"
 msgstr "Avviso sugli elementi della finestra"
 
-#: Kainote/OptionsDialog.cpp:769
+#: Kainote/OptionsDialog.cpp:772
 #, fuzzy
 msgid "Window pressed closing"
 msgstr "Chiusura a pressione della finestra"
 
-#: Kainote/OptionsDialog.cpp:771
+#: Kainote/OptionsDialog.cpp:774
 #, fuzzy
 msgid "Subtitle background"
 msgstr "Sfondo dei sottotitoli"
 
-#: Kainote/OptionsDialog.cpp:771
+#: Kainote/OptionsDialog.cpp:774
 #, fuzzy
 msgid "Subtitle comment background"
 msgstr "Sottotitoli commento sfondo"
 
-#: Kainote/OptionsDialog.cpp:771
+#: Kainote/OptionsDialog.cpp:774
 #, fuzzy
 msgid "Subtitle dialogue background"
 msgstr "Sottotitoli dialogo sfondo"
 
-#: Kainote/OptionsDialog.cpp:771
+#: Kainote/OptionsDialog.cpp:774
 #, fuzzy
 msgid "Subtitle text"
 msgstr "Testo dei sottotitoli"
 
-#: Kainote/OptionsDialog.cpp:772
+#: Kainote/OptionsDialog.cpp:775
 #, fuzzy
 msgid "Subtitle lines visible on video"
 msgstr "Linee dei sottotitoli visibili sul video"
 
-#: Kainote/OptionsDialog.cpp:772
+#: Kainote/OptionsDialog.cpp:775
 #, fuzzy
 msgid "Subtitle selection (transparency)"
 msgstr "Selezione dei sottotitoli (trasparenza)"
 
-#: Kainote/OptionsDialog.cpp:773
+#: Kainote/OptionsDialog.cpp:776
 #, fuzzy
 msgid "Subtitle active line border"
 msgstr "Bordo della linea attiva dei sottotitoli"
 
-#: Kainote/OptionsDialog.cpp:773
+#: Kainote/OptionsDialog.cpp:776
 #, fuzzy
 msgid "Subtitle colliding lines"
 msgstr "Sottotitoli che si scontrano con le linee"
 
-#: Kainote/OptionsDialog.cpp:773
+#: Kainote/OptionsDialog.cpp:776
 #, fuzzy
 msgid "Subtitle line border"
 msgstr "Sottotitoli linea di confine"
 
-#: Kainote/OptionsDialog.cpp:774
+#: Kainote/OptionsDialog.cpp:777
 #, fuzzy
 msgid "Subtitle header background"
 msgstr "Sfondo dell'intestazione dei sottotitoli"
 
-#: Kainote/OptionsDialog.cpp:774
+#: Kainote/OptionsDialog.cpp:777
 #, fuzzy
 msgid "Subtitle header text"
 msgstr "Testo dell'intestazione dei sottotitoli"
 
-#: Kainote/OptionsDialog.cpp:775
+#: Kainote/OptionsDialog.cpp:778
 #, fuzzy
 msgid "Subtitle line label"
 msgstr "Etichetta della riga dei sottotitoli"
 
-#: Kainote/OptionsDialog.cpp:775
+#: Kainote/OptionsDialog.cpp:778
 #, fuzzy
 msgid "Subtitle modified-line label"
 msgstr "I sottotitoli etichettano la linea modificata"
 
-#: Kainote/OptionsDialog.cpp:775
+#: Kainote/OptionsDialog.cpp:778
 #, fuzzy
 msgid "Subtitle saved-line label"
 msgstr "I sottotitoli etichettano la linea salvata"
 
-#: Kainote/OptionsDialog.cpp:776
+#: Kainote/OptionsDialog.cpp:779
 #, fuzzy
 msgid "Subtitle comparison border"
 msgstr "Bordo di confronto dei sottotitoli"
 
-#: Kainote/OptionsDialog.cpp:776
+#: Kainote/OptionsDialog.cpp:779
 #, fuzzy
 msgid "Subtitle spelling-error background"
 msgstr "Sottotitoli errore ortografico sfondo"
 
-#: Kainote/OptionsDialog.cpp:776
+#: Kainote/OptionsDialog.cpp:779
 #, fuzzy
 msgid "Subtitle unconfirmed-line label"
 msgstr "I sottotitoli etichettano la linea non confermata"
 
-#: Kainote/OptionsDialog.cpp:777
+#: Kainote/OptionsDialog.cpp:780
 #, fuzzy
 msgid "Subtitle comparison match background"
 msgstr "Confronto tra i sottotitoli e lo sfondo"
 
-#: Kainote/OptionsDialog.cpp:777
+#: Kainote/OptionsDialog.cpp:780
 #, fuzzy
 msgid "Subtitle comparison mismatch background"
 msgstr "Confronto sottotitoli sfondo non corrispondente"
 
-#: Kainote/OptionsDialog.cpp:778
+#: Kainote/OptionsDialog.cpp:781
 #, fuzzy
 msgid "Subtitle comparison comment match background"
 msgstr "Sottotitoli commento commento sfondo"
 
-#: Kainote/OptionsDialog.cpp:778
+#: Kainote/OptionsDialog.cpp:781
 #, fuzzy
 msgid "Subtitle comparison comment mismatch background"
 msgstr "Sottotitoli commento sfondo non corrispondente"
 
-#: Kainote/OptionsDialog.cpp:780
+#: Kainote/OptionsDialog.cpp:783
 #, fuzzy
 msgid "Editor tag names"
 msgstr "Nomi dei tag dell'editor"
 
-#: Kainote/OptionsDialog.cpp:780
+#: Kainote/OptionsDialog.cpp:783
 #, fuzzy
 msgid "Editor tag values"
 msgstr "Valori dei tag dell'editor"
 
-#: Kainote/OptionsDialog.cpp:780
+#: Kainote/OptionsDialog.cpp:783
 #, fuzzy
 msgid "Editor text"
 msgstr "Testo dell'editore"
 
-#: Kainote/OptionsDialog.cpp:781
+#: Kainote/OptionsDialog.cpp:784
 #, fuzzy
 msgid "Editor curly braces"
 msgstr "Parentesi graffe dell'editore"
 
-#: Kainote/OptionsDialog.cpp:781
+#: Kainote/OptionsDialog.cpp:784
 #, fuzzy
 msgid "Editor line splitting and ASS drawings"
 msgstr "Editor di linee di divisione e disegni ASS"
 
-#: Kainote/OptionsDialog.cpp:781
+#: Kainote/OptionsDialog.cpp:784
 #, fuzzy
 msgid "Editor tags operators"
 msgstr "Operatori tag dell'editore"
 
-#: Kainote/OptionsDialog.cpp:781
+#: Kainote/OptionsDialog.cpp:784
 #, fuzzy
 msgid "Editor template variables"
 msgstr "Variabili del template dell'editor"
 
-#: Kainote/OptionsDialog.cpp:782
+#: Kainote/OptionsDialog.cpp:785
 #, fuzzy
 msgid "Editor template code marks"
 msgstr "Segni di codice del modello dell'editor"
 
-#: Kainote/OptionsDialog.cpp:782
+#: Kainote/OptionsDialog.cpp:785
 #, fuzzy
 msgid "Editor template functions"
 msgstr "Funzioni del modello di editor"
 
-#: Kainote/OptionsDialog.cpp:782
+#: Kainote/OptionsDialog.cpp:785
 #, fuzzy
 msgid "Editor template keywords"
 msgstr "Parole chiave del modello di editor"
 
-#: Kainote/OptionsDialog.cpp:783
+#: Kainote/OptionsDialog.cpp:786
 #, fuzzy
 msgid "Editor brackets background"
 msgstr "Sfondo delle parentesi dell'editor"
 
-#: Kainote/OptionsDialog.cpp:783
+#: Kainote/OptionsDialog.cpp:786
 #, fuzzy
 msgid "Editor found words selection"
 msgstr "Selezione delle parole trovate dall'editor"
 
-#: Kainote/OptionsDialog.cpp:783
+#: Kainote/OptionsDialog.cpp:786
 #, fuzzy
 msgid "Editor template strings"
 msgstr "Stringhe dei modelli di editor"
 
-#: Kainote/OptionsDialog.cpp:784
+#: Kainote/OptionsDialog.cpp:787
 #, fuzzy
 msgid "Editor background"
 msgstr "Sfondo dell'editore"
 
-#: Kainote/OptionsDialog.cpp:784
+#: Kainote/OptionsDialog.cpp:787
 #, fuzzy
 msgid "Editor inactive window selection"
 msgstr "Selezione della finestra inattiva dell'editor"
 
-#: Kainote/OptionsDialog.cpp:784
+#: Kainote/OptionsDialog.cpp:787
 #, fuzzy
 msgid "Editor selection"
 msgstr "Selezione dell'editore"
 
-#: Kainote/OptionsDialog.cpp:785
+#: Kainote/OptionsDialog.cpp:788
 #, fuzzy
 msgid "Editor border"
 msgstr "Bordo dell'editore"
 
-#: Kainote/OptionsDialog.cpp:785
+#: Kainote/OptionsDialog.cpp:788
 #, fuzzy
 msgid "Editor border on focus"
 msgstr "Bordo dell'editore a fuoco"
 
-#: Kainote/OptionsDialog.cpp:785
+#: Kainote/OptionsDialog.cpp:788
 #, fuzzy
 msgid "Editor spelling error background"
 msgstr "Errore ortografico dell'editore sfondo"
 
-#: Kainote/OptionsDialog.cpp:787
+#: Kainote/OptionsDialog.cpp:790
 #, fuzzy
 msgid "Audio background"
 msgstr "Sfondo audio"
 
-#: Kainote/OptionsDialog.cpp:787
+#: Kainote/OptionsDialog.cpp:790
 #, fuzzy
 msgid "Audio end marker"
 msgstr "Marcatore di fine audio"
 
-#: Kainote/OptionsDialog.cpp:787
+#: Kainote/OptionsDialog.cpp:790
 #, fuzzy
 msgid "Audio start marker"
 msgstr "Marcatore di inizio audio"
 
-#: Kainote/OptionsDialog.cpp:787
+#: Kainote/OptionsDialog.cpp:790
 #, fuzzy
 msgid "Audio time shift marker"
 msgstr "Marcatore di spostamento temporale audio"
 
-#: Kainote/OptionsDialog.cpp:788
+#: Kainote/OptionsDialog.cpp:791
 #, fuzzy
 msgid "Audio cursor"
 msgstr "Cursore audio"
 
-#: Kainote/OptionsDialog.cpp:788
+#: Kainote/OptionsDialog.cpp:791
 #, fuzzy
 msgid "Audio inactive line marker"
 msgstr "Marcatore di linea audio inattivo"
 
-#: Kainote/OptionsDialog.cpp:788
+#: Kainote/OptionsDialog.cpp:791
 #, fuzzy
 msgid "Audio keyframes"
 msgstr "Fotogrammi chiave audio"
 
-#: Kainote/OptionsDialog.cpp:788
+#: Kainote/OptionsDialog.cpp:791
 #, fuzzy
 msgid "Audio seconds boundaries"
 msgstr "Limiti di secondi audio"
 
-#: Kainote/OptionsDialog.cpp:789
+#: Kainote/OptionsDialog.cpp:792
 #, fuzzy
 msgid "Audio selection"
 msgstr "Selezione audio"
 
-#: Kainote/OptionsDialog.cpp:789
+#: Kainote/OptionsDialog.cpp:792
 #, fuzzy
 msgid "Audio syllable marker"
 msgstr "Marcatore di sillabe audio"
 
-#: Kainote/OptionsDialog.cpp:789
+#: Kainote/OptionsDialog.cpp:792
 #, fuzzy
 msgid "Audio syllable text"
 msgstr "Testo in sillabe audio"
 
-#: Kainote/OptionsDialog.cpp:790
+#: Kainote/OptionsDialog.cpp:793
 #, fuzzy
 msgid "Audio inactive line background"
 msgstr "Sfondo della linea audio inattiva"
 
-#: Kainote/OptionsDialog.cpp:790
+#: Kainote/OptionsDialog.cpp:793
 #, fuzzy
 msgid "Audio the selection after modification"
 msgstr "Audio della selezione dopo la modifica"
 
-#: Kainote/OptionsDialog.cpp:790
+#: Kainote/OptionsDialog.cpp:793
 #, fuzzy
 msgid "Audio waveform"
 msgstr "Forma d'onda audio"
 
-#: Kainote/OptionsDialog.cpp:791
+#: Kainote/OptionsDialog.cpp:794
 #, fuzzy
 msgid "Audio Inactive waveform"
 msgstr "Forma d'onda audio inattiva"
 
-#: Kainote/OptionsDialog.cpp:791
+#: Kainote/OptionsDialog.cpp:794
 #, fuzzy
 msgid "Audio modified waveform"
 msgstr "Forma d'onda audio modificata"
 
-#: Kainote/OptionsDialog.cpp:791
+#: Kainote/OptionsDialog.cpp:794
 #, fuzzy
 msgid "Audio selected waveform"
 msgstr "Forma d'onda audio selezionata"
 
-#: Kainote/OptionsDialog.cpp:792
+#: Kainote/OptionsDialog.cpp:795
 #, fuzzy
 msgid "Audio spectrum"
 msgstr "Spettro audio"
 
-#: Kainote/OptionsDialog.cpp:792
+#: Kainote/OptionsDialog.cpp:795
 #, fuzzy
 msgid "Audio spectrum background"
 msgstr "Spettro audio di fondo"
 
-#: Kainote/OptionsDialog.cpp:792
+#: Kainote/OptionsDialog.cpp:795
 #, fuzzy
 msgid "Audio spectrum echo"
 msgstr "Eco dello spettro audio"
 
-#: Kainote/OptionsDialog.cpp:794
+#: Kainote/OptionsDialog.cpp:797
 #, fuzzy
 msgid "Text field background"
 msgstr "Sfondo del campo di testo"
 
-#: Kainote/OptionsDialog.cpp:794
+#: Kainote/OptionsDialog.cpp:797
 #, fuzzy
 msgid "Text field border"
 msgstr "Bordo del campo di testo"
 
-#: Kainote/OptionsDialog.cpp:795
+#: Kainote/OptionsDialog.cpp:798
 #, fuzzy
 msgid "Text field border on focus"
 msgstr "Bordo del campo di testo al momento della messa a fuoco"
 
-#: Kainote/OptionsDialog.cpp:795
+#: Kainote/OptionsDialog.cpp:798
 #, fuzzy
 msgid "Text field selection"
 msgstr "Selezione del campo di testo"
 
-#: Kainote/OptionsDialog.cpp:796 Kainote/OptionsDialog.cpp:866
+#: Kainote/OptionsDialog.cpp:799 Kainote/OptionsDialog.cpp:869
 #, fuzzy
 msgid "Text field inactive window selection"
 msgstr "Selezione del campo di testo inattivo della finestra"
 
-#: Kainote/OptionsDialog.cpp:797
+#: Kainote/OptionsDialog.cpp:800
 #, fuzzy
 msgid "Button and list background"
 msgstr "Sfondo dei pulsanti e degli elenchi"
 
-#: Kainote/OptionsDialog.cpp:797
+#: Kainote/OptionsDialog.cpp:800
 #, fuzzy
 msgid "Button and list background upon hover"
 msgstr "Sfondo del pulsante e dell'elenco al passaggio del mouse"
 
-#: Kainote/OptionsDialog.cpp:798
+#: Kainote/OptionsDialog.cpp:801
 #, fuzzy
 msgid "Button and list background on focus"
 msgstr "Sfondo del pulsante e dell'elenco sulla messa a fuoco"
 
-#: Kainote/OptionsDialog.cpp:798
+#: Kainote/OptionsDialog.cpp:801
 #, fuzzy
 msgid "Button and list pushed background"
 msgstr "Sfondo del pulsante e dell'elenco spinto"
 
-#: Kainote/OptionsDialog.cpp:799
+#: Kainote/OptionsDialog.cpp:802
 #, fuzzy
 msgid "Button and list border"
 msgstr "Bordo dei pulsanti e degli elenchi"
 
-#: Kainote/OptionsDialog.cpp:799
+#: Kainote/OptionsDialog.cpp:802
 #, fuzzy
 msgid "Button and list border upon hover"
 msgstr "Bordo del pulsante e dell'elenco al passaggio del mouse"
 
-#: Kainote/OptionsDialog.cpp:800
+#: Kainote/OptionsDialog.cpp:803
 #, fuzzy
 msgid "Button and list border of pushed"
 msgstr "Bordo del pulsante e dell'elenco spinto"
 
-#: Kainote/OptionsDialog.cpp:800
+#: Kainote/OptionsDialog.cpp:803
 #, fuzzy
 msgid "Button and list border on focus"
 msgstr "Bordo del pulsante e dell'elenco al momento della messa a fuoco"
 
-#: Kainote/OptionsDialog.cpp:801
+#: Kainote/OptionsDialog.cpp:804
 #, fuzzy
 msgid "Button and list inactive border"
 msgstr "Bordo del pulsante e dell'elenco non attivo"
 
-#: Kainote/OptionsDialog.cpp:801
+#: Kainote/OptionsDialog.cpp:804
 #, fuzzy
 msgid "Togglebutton toggled background"
 msgstr "Togglebutton con sfondo alternato"
 
-#: Kainote/OptionsDialog.cpp:802
+#: Kainote/OptionsDialog.cpp:805
 #, fuzzy
 msgid "Scroll bar background"
 msgstr "Sfondo della barra di scorrimento"
 
-#: Kainote/OptionsDialog.cpp:802
+#: Kainote/OptionsDialog.cpp:805
 #, fuzzy
 msgid "Scroll bar slider"
 msgstr "Cursore della barra di scorrimento"
 
-#: Kainote/OptionsDialog.cpp:802
+#: Kainote/OptionsDialog.cpp:805
 #, fuzzy
 msgid "Togglebutton toggled border"
 msgstr "Bordo del pulsante alternato"
 
-#: Kainote/OptionsDialog.cpp:803
+#: Kainote/OptionsDialog.cpp:806
 #, fuzzy
 msgid "Scroll bar pushed slider"
 msgstr "Barra di scorrimento spinta cursore"
 
-#: Kainote/OptionsDialog.cpp:803
+#: Kainote/OptionsDialog.cpp:806
 #, fuzzy
 msgid "Scroll bar slider upon hover"
 msgstr "Barra di scorrimento al passaggio del mouse"
 
-#: Kainote/OptionsDialog.cpp:804
+#: Kainote/OptionsDialog.cpp:807
 #, fuzzy
 msgid "Static list background"
 msgstr "Sfondo dell'elenco statico"
 
-#: Kainote/OptionsDialog.cpp:804
+#: Kainote/OptionsDialog.cpp:807
 #, fuzzy
 msgid "Static list border"
 msgstr "Bordo dell'elenco statico"
 
-#: Kainote/OptionsDialog.cpp:804
+#: Kainote/OptionsDialog.cpp:807
 #, fuzzy
 msgid "Staticbox border"
 msgstr "Bordo della casella statica"
 
-#: Kainote/OptionsDialog.cpp:805
+#: Kainote/OptionsDialog.cpp:808
 #, fuzzy
 msgid "Static list header background"
 msgstr "Sfondo statico dell'intestazione dell'elenco"
 
-#: Kainote/OptionsDialog.cpp:805
+#: Kainote/OptionsDialog.cpp:808
 #, fuzzy
 msgid "Static list header text"
 msgstr "Testo statico dell'intestazione dell'elenco"
 
-#: Kainote/OptionsDialog.cpp:805
+#: Kainote/OptionsDialog.cpp:808
 #, fuzzy
 msgid "Static list selection"
 msgstr "Selezione dell'elenco statico"
 
-#: Kainote/OptionsDialog.cpp:806
+#: Kainote/OptionsDialog.cpp:809
 #, fuzzy
 msgid "Status bar border"
 msgstr "Bordo della barra di stato"
 
-#: Kainote/OptionsDialog.cpp:808
+#: Kainote/OptionsDialog.cpp:811
 #, fuzzy
 msgid "Menu bar background 1"
 msgstr "Sfondo della barra dei menu 1"
 
-#: Kainote/OptionsDialog.cpp:808
+#: Kainote/OptionsDialog.cpp:811
 #, fuzzy
 msgid "Menu bar background 2"
 msgstr "Sfondo della barra dei menu 2"
 
-#: Kainote/OptionsDialog.cpp:808
+#: Kainote/OptionsDialog.cpp:811
 #, fuzzy
 msgid "Menu bar selection border"
 msgstr "Bordo di selezione della barra dei menu"
 
-#: Kainote/OptionsDialog.cpp:809
+#: Kainote/OptionsDialog.cpp:812
 #, fuzzy
 msgid "Menu bar selection clicked bacground"
 msgstr "Selezione della barra dei menu con sfondo cliccabile"
 
-#: Kainote/OptionsDialog.cpp:809
+#: Kainote/OptionsDialog.cpp:812
 #, fuzzy
 msgid "Menu bar selection hover bacground"
 msgstr "Sfondo della selezione della barra dei menu"
 
-#: Kainote/OptionsDialog.cpp:810
+#: Kainote/OptionsDialog.cpp:813
 #, fuzzy
 msgid "Menu background"
 msgstr "Sfondo del menu"
 
-#: Kainote/OptionsDialog.cpp:810
+#: Kainote/OptionsDialog.cpp:813
 #, fuzzy
 msgid "Menu selection background"
 msgstr "Sfondo della selezione del menu"
 
-#: Kainote/OptionsDialog.cpp:810
+#: Kainote/OptionsDialog.cpp:813
 #, fuzzy
 msgid "Menu selection border"
 msgstr "Bordo di selezione del menu"
 
-#: Kainote/OptionsDialog.cpp:812
+#: Kainote/OptionsDialog.cpp:815
 #, fuzzy
 msgid "Tab active border"
 msgstr "Bordo attivo della scheda"
 
-#: Kainote/OptionsDialog.cpp:812
+#: Kainote/OptionsDialog.cpp:815
 #, fuzzy
 msgid "Tab bar background 1"
 msgstr "Sfondo della barra delle schede 1"
 
-#: Kainote/OptionsDialog.cpp:812
+#: Kainote/OptionsDialog.cpp:815
 #, fuzzy
 msgid "Tab bar background 2"
 msgstr "Sfondo della barra delle schede 2"
 
-#: Kainote/OptionsDialog.cpp:813
+#: Kainote/OptionsDialog.cpp:816
 #, fuzzy
 msgid "Tab active background"
 msgstr "Sfondo attivo della scheda"
 
-#: Kainote/OptionsDialog.cpp:813
+#: Kainote/OptionsDialog.cpp:816
 #, fuzzy
 msgid "Tab inactive background"
 msgstr "Sfondo inattivo della scheda"
 
-#: Kainote/OptionsDialog.cpp:813
+#: Kainote/OptionsDialog.cpp:816
 #, fuzzy
 msgid "Tab inactive border"
 msgstr "Bordo inattivo della scheda"
 
-#: Kainote/OptionsDialog.cpp:814
+#: Kainote/OptionsDialog.cpp:817
 #, fuzzy
 msgid "Tab background of second visible tab"
 msgstr "Sfondo della scheda della seconda scheda visibile"
 
-#: Kainote/OptionsDialog.cpp:814
+#: Kainote/OptionsDialog.cpp:817
 #, fuzzy
 msgid "Tab inactive background upon hover"
 msgstr "Sfondo della scheda inattivo al passaggio del mouse"
 
-#: Kainote/OptionsDialog.cpp:815
+#: Kainote/OptionsDialog.cpp:818
 #, fuzzy
 msgid "Tab active text"
 msgstr "Scheda testo attivo"
 
-#: Kainote/OptionsDialog.cpp:815
+#: Kainote/OptionsDialog.cpp:818
 #, fuzzy
 msgid "Tab close upon hover"
 msgstr "Chiusura della scheda al passaggio del mouse"
 
-#: Kainote/OptionsDialog.cpp:815
+#: Kainote/OptionsDialog.cpp:818
 #, fuzzy
 msgid "Tab inactive text"
 msgstr "Sfondo inattivo della scheda"
 
-#: Kainote/OptionsDialog.cpp:816
+#: Kainote/OptionsDialog.cpp:819
 #, fuzzy
 msgid "Tab bar arrow"
 msgstr "Freccia della barra delle schede"
 
-#: Kainote/OptionsDialog.cpp:816
+#: Kainote/OptionsDialog.cpp:819
 #, fuzzy
 msgid "Tab bar arrow background"
 msgstr "Sfondo della freccia della barra delle schede"
 
-#: Kainote/OptionsDialog.cpp:817
+#: Kainote/OptionsDialog.cpp:820
 #, fuzzy
 msgid "Tab bar arrow background upon hover"
 msgstr "Sfondo della freccia della barra delle schede al passaggio del mouse"
 
-#: Kainote/OptionsDialog.cpp:819
+#: Kainote/OptionsDialog.cpp:822
 #, fuzzy
 msgid "Slider border"
 msgstr "Bordo del cursore"
 
-#: Kainote/OptionsDialog.cpp:819
+#: Kainote/OptionsDialog.cpp:822
 #, fuzzy
 msgid "Slider path background"
 msgstr "Sfondo del percorso del cursore"
 
-#: Kainote/OptionsDialog.cpp:819
+#: Kainote/OptionsDialog.cpp:822
 #, fuzzy
 msgid "Slider path border"
 msgstr "Bordo del percorso del cursore"
 
-#: Kainote/OptionsDialog.cpp:820
+#: Kainote/OptionsDialog.cpp:823
 #, fuzzy
 msgid "Slider background"
 msgstr "Sfondo del cursore"
 
-#: Kainote/OptionsDialog.cpp:820
+#: Kainote/OptionsDialog.cpp:823
 #, fuzzy
 msgid "Slider border of pushed"
 msgstr "Bordo del cursore spinto"
 
-#: Kainote/OptionsDialog.cpp:820
+#: Kainote/OptionsDialog.cpp:823
 #, fuzzy
 msgid "Slider border upon hover"
 msgstr "Bordo del cursore al passaggio del mouse"
 
-#: Kainote/OptionsDialog.cpp:821
+#: Kainote/OptionsDialog.cpp:824
 #, fuzzy
 msgid "Slider background of pushed"
 msgstr "Sfondo del cursore spinto"
 
-#: Kainote/OptionsDialog.cpp:821
+#: Kainote/OptionsDialog.cpp:824
 #, fuzzy
 msgid "Slider background upon hover"
 msgstr "Sfondo del cursore al passaggio del mouse"
 
-#: Kainote/OptionsDialog.cpp:823
+#: Kainote/OptionsDialog.cpp:826
 #, fuzzy
 msgid "Finding result file name background"
 msgstr "Trovare lo sfondo del nome del file dei risultati"
 
-#: Kainote/OptionsDialog.cpp:823
+#: Kainote/OptionsDialog.cpp:826
 #, fuzzy
 msgid "Finding result file name foreground"
 msgstr "Ricerca del nome del file dei risultati in primo piano"
 
-#: Kainote/OptionsDialog.cpp:823
+#: Kainote/OptionsDialog.cpp:826
 #, fuzzy
 msgid "Resize line dots"
 msgstr "Ridimensionare i punti della linea"
 
-#: Kainote/OptionsDialog.cpp:824
+#: Kainote/OptionsDialog.cpp:827
 #, fuzzy
 msgid "Finding result found phrase background"
 msgstr "Risultato trovato frase di sfondo"
 
-#: Kainote/OptionsDialog.cpp:824
+#: Kainote/OptionsDialog.cpp:827
 #, fuzzy
 msgid "Finding result found phrase foreground"
 msgstr "Risultato trovato frase in primo piano"
 
-#: Kainote/OptionsDialog.cpp:826
+#: Kainote/OptionsDialog.cpp:829
 #, fuzzy
 msgid "First color of style preview background"
 msgstr "Primo colore dello sfondo dell'anteprima dello stile"
 
-#: Kainote/OptionsDialog.cpp:826
+#: Kainote/OptionsDialog.cpp:829
 #, fuzzy
 msgid "Second color of style preview background"
 msgstr "Secondo colore dello sfondo dell'anteprima dello stile"
 
-#: Kainote/OptionsDialog.cpp:851
+#: Kainote/OptionsDialog.cpp:854
 #, fuzzy
 msgid "Theme name:"
 msgstr "Nome del tema:"
 
-#: Kainote/OptionsDialog.cpp:853
+#: Kainote/OptionsDialog.cpp:856
 #, fuzzy
 msgid ""
 "Name of the copied theme.\n"
@@ -5918,13 +6104,13 @@ msgstr ""
 "Temi predefiniti: DarkSentro e LightSentro\n"
 "non può essere modificato. Devono essere copiati."
 
-#: Kainote/OptionsDialog.cpp:854 Kainote/SelectLines.cpp:122
+#: Kainote/OptionsDialog.cpp:857 Kainote/SelectLines.cpp:122
 #: Kainote/stylestore.cpp:87 Kainote/stylestore.cpp:140
 #, fuzzy
 msgid "Copy"
 msgstr "Copia"
 
-#: Kainote/OptionsDialog.cpp:863
+#: Kainote/OptionsDialog.cpp:866
 #, fuzzy
 msgid ""
 "Warning! Transparency works only on the audio spectrum,\n"
@@ -5933,107 +6119,17 @@ msgstr ""
 "Attenzione! La trasparenza funziona solo con gli spettri audio,\n"
 "file di testo e griglia dei sottotitoli."
 
-#: Kainote/OptionsDialog.cpp:873
+#: Kainote/OptionsDialog.cpp:876
 #, fuzzy
 msgid "Name"
 msgstr "Nome"
 
-#: Kainote/OptionsDialog.cpp:874
+#: Kainote/OptionsDialog.cpp:877
 #, fuzzy
 msgid "Color"
 msgstr "Colore"
 
-#: Kainote/OptionsDialog.cpp:957 Kainote/OptionsDialog.cpp:1233
-#, fuzzy
-msgid "ASS subtitles"
-msgstr "Sottotitoli ASS"
-
-#: Kainote/OptionsDialog.cpp:957 Kainote/OptionsDialog.cpp:1233
-#, fuzzy
-msgid "SRT subtitles"
-msgstr "Sottotitoli SRT"
-
-#: Kainote/OptionsDialog.cpp:957 Kainote/OptionsDialog.cpp:1233
-#, fuzzy
-msgid "SSA subtitles"
-msgstr "Sottotitoli SSA"
-
-#: Kainote/OptionsDialog.cpp:957 Kainote/OptionsDialog.cpp:1233
-#, fuzzy
-msgid "SUB subtitles"
-msgstr "Sottotitoli SUB"
-
-#: Kainote/OptionsDialog.cpp:958 Kainote/OptionsDialog.cpp:1234
-#, fuzzy
-msgid "TXT subtitles"
-msgstr "Sottotitoli TXT"
-
-#: Kainote/OptionsDialog.cpp:958 Kainote/OptionsDialog.cpp:1234
-#, fuzzy
-msgid "Video AVI"
-msgstr "Video AVI"
-
-#: Kainote/OptionsDialog.cpp:958 Kainote/OptionsDialog.cpp:1234
-#, fuzzy
-msgid "Video MKV"
-msgstr "Video MKV"
-
-#: Kainote/OptionsDialog.cpp:958 Kainote/OptionsDialog.cpp:1234
-#, fuzzy
-msgid "Video MP4"
-msgstr "Video MP4"
-
-#: Kainote/OptionsDialog.cpp:958 Kainote/OptionsDialog.cpp:1234
-#, fuzzy
-msgid "Video OGM"
-msgstr "Video OGM"
-
-#: Kainote/OptionsDialog.cpp:959 Kainote/OptionsDialog.cpp:1235
-#, fuzzy
-msgid "Video 3GP"
-msgstr "Video 3GP"
-
-#: Kainote/OptionsDialog.cpp:959 Kainote/OptionsDialog.cpp:1235
-#, fuzzy
-msgid "Video ASF"
-msgstr "Video ASF"
-
-#: Kainote/OptionsDialog.cpp:959 Kainote/OptionsDialog.cpp:1235
-#, fuzzy
-msgid "Video RM"
-msgstr "Video RM"
-
-#: Kainote/OptionsDialog.cpp:959 Kainote/OptionsDialog.cpp:1235
-#, fuzzy
-msgid "Video RMVB"
-msgstr "Video RMVB"
-
-#: Kainote/OptionsDialog.cpp:959 Kainote/OptionsDialog.cpp:1235
-#, fuzzy
-msgid "Video WMV"
-msgstr "Video WMV"
-
-#: Kainote/OptionsDialog.cpp:960 Kainote/OptionsDialog.cpp:1236
-#, fuzzy
-msgid "Video M2TS"
-msgstr "Video M2TS"
-
-#: Kainote/OptionsDialog.cpp:960 Kainote/OptionsDialog.cpp:1236
-#, fuzzy
-msgid "Video MPEG"
-msgstr "Video MPEG"
-
-#: Kainote/OptionsDialog.cpp:960 Kainote/OptionsDialog.cpp:1236
-#, fuzzy
-msgid "Video MPG"
-msgstr "Video MPG"
-
-#: Kainote/OptionsDialog.cpp:960 Kainote/OptionsDialog.cpp:1236
-#, fuzzy
-msgid "Video TS"
-msgstr "Video TS"
-
-#: Kainote/OptionsDialog.cpp:967
+#: Kainote/OptionsDialog.cpp:970
 #, fuzzy
 msgid ""
 "WARNING! Behavior differs on each Windows version.\n"
@@ -6041,52 +6137,52 @@ msgid ""
 "the ability to change video associations."
 msgstr "ATTENZIONE! Funziona in modo diverso su ogni Windows."
 
-#: Kainote/OptionsDialog.cpp:985
+#: Kainote/OptionsDialog.cpp:992
 #, fuzzy
 msgid "Deselect all"
 msgstr "Deseleziona tutto"
 
-#: Kainote/OptionsDialog.cpp:985
+#: Kainote/OptionsDialog.cpp:992
 #, fuzzy
 msgid "Select all"
 msgstr "Seleziona Tutto"
 
-#: Kainote/OptionsDialog.cpp:985
+#: Kainote/OptionsDialog.cpp:992
 #, fuzzy
 msgid "Select subtitles"
 msgstr "Selezionare i sottotitoli"
 
-#: Kainote/OptionsDialog.cpp:985
+#: Kainote/OptionsDialog.cpp:992
 #, fuzzy
 msgid "Select video"
 msgstr "Selezionare il video"
 
-#: Kainote/OptionsDialog.cpp:1005 Kainote/OptionsDialog.cpp:1008
+#: Kainote/OptionsDialog.cpp:1012 Kainote/OptionsDialog.cpp:1015
 #, fuzzy
 msgid "Advanced"
 msgstr "Avanzato"
 
-#: Kainote/OptionsDialog.cpp:1009
+#: Kainote/OptionsDialog.cpp:1016
 #, fuzzy
 msgid "Themes"
 msgstr "Temi"
 
-#: Kainote/OptionsDialog.cpp:1010
+#: Kainote/OptionsDialog.cpp:1017
 #, fuzzy
 msgid "Hotkeys"
 msgstr "Scorciatoie"
 
-#: Kainote/OptionsDialog.cpp:1012
+#: Kainote/OptionsDialog.cpp:1019
 #, fuzzy
 msgid "Associations"
 msgstr "Associazioni"
 
-#: Kainote/OptionsDialog.cpp:1014
+#: Kainote/OptionsDialog.cpp:1021
 #, fuzzy
 msgid "Subtitle properties"
 msgstr "Proprietà dei sottotitoli ASS"
 
-#: Kainote/OptionsDialog.cpp:1023
+#: Kainote/OptionsDialog.cpp:1030
 #, fuzzy
 msgid "Set default"
 msgstr "Imposta i valori predefiniti"
@@ -6163,7 +6259,7 @@ msgid "Choose the track"
 msgstr "Scegliere il brano"
 
 #: Kainote/ProviderFFMS2.cpp:367
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Cannot save index, error %s occurred"
 msgstr "Impossibile salvare l'indice, si è verificato l'errore %s"
 
@@ -6194,12 +6290,13 @@ msgid "You cannot get information about the video"
 msgstr "Non è possibile ottenere informazioni sul video"
 
 #: Kainote/ProviderFFMS2.cpp:498
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "An error occurred when creating audio source: %s"
-msgstr "Si è verificato un errore durante la creazione della sorgente audio: %s"
+msgstr ""
+"Si è verificato un errore durante la creazione della sorgente audio: %s"
 
 #: Kainote/ProviderFFMS2.cpp:507
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "An error occurred when converting audio: %s"
 msgstr "Si è verificato un errore durante la conversione dell'audio: %s"
 
@@ -6239,7 +6336,7 @@ msgid "GetVideoProcessorCaps failed"
 msgstr "GetVideoProcessorCaps non riuscito"
 
 #: Kainote/RendererDirectShow.cpp:157
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Cannot create DXVA surface %i"
 msgstr "Impossibile creare una superficie DXVA %i"
 
@@ -6298,7 +6395,7 @@ msgid "Cannot create GStreamer video display module"
 msgstr "Impossibile creare il processo. Muxing annullato"
 
 #: Kainote/RendererGStreamer.cpp:340
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Cannot open video file: %s"
 msgstr "Impossibile aprire il file \"%s\"."
 
@@ -6475,17 +6572,17 @@ msgid "Select in all tabs"
 msgstr "Selezionare in tutte le schede"
 
 #: Kainote/SelectLines.cpp:232 Kainote/SelectLines.cpp:274
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "%i lines selected."
 msgstr "%i linee selezionate."
 
 #: Kainote/SelectLines.cpp:233 Kainote/SelectLines.cpp:275
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "%i lines added to selection."
 msgstr "%i linee aggiunte alla selezione."
 
 #: Kainote/SelectLines.cpp:234 Kainote/SelectLines.cpp:276
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "%i lines deselected."
 msgstr "%i linee deselezionate."
 
@@ -6499,7 +6596,7 @@ msgstr ""
 "o selezionare il profilo esistente da sovrascrivere"
 
 #: Kainote/ShiftTimes.cpp:84
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Do you want to overwrite profile of name %s"
 msgstr "Si desidera sovrascrivere il profilo del nome %s"
 
@@ -6766,12 +6863,15 @@ msgstr "La scelta dei tempi di spostamento"
 #: Kainote/ShiftTimes.cpp:564
 #, fuzzy
 msgid "Correction end times, when they are improper or overlap each other"
-msgstr "Correzione dei tempi finali, quando sono impropri o si sovrappongono l'un l'altro"
+msgstr ""
+"Correzione dei tempi finali, quando sono impropri o si sovrappongono l'un "
+"l'altro"
 
 #: Kainote/ShiftTimes.cpp:567
 #, fuzzy
 msgid "Inserts introduction to the start time (good when using fad)"
-msgstr "Inserisce l'introduzione all'ora di inizio (ottimo quando si usa il fad)"
+msgstr ""
+"Inserisce l'introduzione all'ora di inizio (ottimo quando si usa il fad)"
 
 #: Kainote/ShiftTimes.cpp:568
 #, fuzzy
@@ -6781,7 +6881,8 @@ msgstr "Tempo di introduzione in millisecondi"
 #: Kainote/ShiftTimes.cpp:569
 #, fuzzy
 msgid "Inserts introduction to the end time (good when using fad)"
-msgstr "Inserisce l'introduzione al tempo della fine (buona quando si usa il fad)"
+msgstr ""
+"Inserisce l'introduzione al tempo della fine (buona quando si usa il fad)"
 
 #: Kainote/ShiftTimes.cpp:570
 #, fuzzy
@@ -6840,17 +6941,18 @@ msgid "There is no selected profile to remove"
 msgstr "Non c'è nessun profilo selezionato da rimuovere"
 
 #: Kainote/ShiftTimes.cpp:977
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Do you want to remove profile of name \"%s\""
 msgstr "Vuoi rimuovere il profilo del nome \"%s\"?"
 
 #: Kainote/SpellChecker.cpp:121
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid ""
 "No dictionary files were found in the \"%s\\Dictionary\" folder.\n"
 "Spell checking will be disabled"
 msgstr ""
-"Impossibile trovare i file del dizionario nella cartella \"%s\\Dictionary\".\n"
+"Impossibile trovare i file del dizionario nella cartella "
+"\"%s\\Dictionary\".\n"
 "Il correttore ortografico sarà disabilitato"
 
 #: Kainote/SpellChecker.cpp:129
@@ -7572,7 +7674,7 @@ msgid "Splitting lines"
 msgstr "Duplicazione di linee"
 
 #: Kainote/SubsFile.cpp:719
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid ", active line %i"
 msgstr ", linea attiva %i"
 
@@ -7694,7 +7796,8 @@ msgstr "Testo senza tag"
 #: Kainote/SubsGrid.cpp:908
 #, fuzzy
 msgid "Subtitle files (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"
-msgstr "File dei sottotitoli (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"
+msgstr ""
+"File dei sottotitoli (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"
 
 #: Kainote/SubsGrid.cpp:1099
 #, fuzzy
@@ -7708,7 +7811,7 @@ msgstr "Impossibile aprire i sottotitoli"
 
 #: Kainote/SubsGrid.cpp:1274 Kainote/SubsGrid.cpp:1304
 #: Kainote/SubsGrid.cpp:1324
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid ""
 "In line %i, value '%s' cannot be scaled\n"
 "in tag '%s'"
@@ -7730,7 +7833,7 @@ msgid "No styles selected for time shifting"
 msgstr "Non scegliere stili per spostare il tempo con"
 
 #: Kainote/SubsGridBase.cpp:491
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Do you really want to shift only %s times?"
 msgstr "Volete davvero cambiare solo %s volte?"
 
@@ -7851,17 +7954,22 @@ msgstr "Traduzione"
 #: Kainote/SubsGridWindow.cpp:2050
 #, fuzzy
 msgid "Cannot show preview cause grid height is too low"
-msgstr "Non è possibile visualizzare l'anteprima perché l'altezza della griglia è troppo bassa"
+msgstr ""
+"Non è possibile visualizzare l'anteprima perché l'altezza della griglia è "
+"troppo bassa"
 
 #: Kainote/SubsLoader.cpp:73
 #, fuzzy
 msgid "This subtitle file is plain text and will be opened as ASS subtitles"
-msgstr "Questo file di sottotitoli è un testo semplice, è stato aperto come sottotitoli ASS"
+msgstr ""
+"Questo file di sottotitoli è un testo semplice, è stato aperto come "
+"sottotitoli ASS"
 
 #: Kainote/SubsLoader.cpp:82
 #, fuzzy
 msgid "Invalid format (file may be corrupted or contain errors)"
-msgstr "Formato non valido (il file potrebbe essere danneggiato o contenere errori)"
+msgstr ""
+"Formato non valido (il file potrebbe essere danneggiato o contenere errori)"
 
 #: Kainote/SubsResampleDialog.cpp:26
 #, fuzzy
@@ -7904,7 +8012,7 @@ msgid "Incompatible resolution"
 msgstr "Risoluzione incompatibile"
 
 #: Kainote/SubsResampleDialog.cpp:173
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid ""
 "The video and subtitle resolutions are different.\n"
 "You can change them now or use 'Change subtitle resolution'.\n"
@@ -8063,7 +8171,8 @@ msgid ""
 "Translation - text pasted into subtitles with correct timing."
 msgstr ""
 "Descrizione:\n"
-"originale - sottotitoli con il giusto tempo, si può vedere per confrontare le linee, sarà eliminato\n"
+"originale - sottotitoli con il giusto tempo, si può vedere per confrontare "
+"le linee, sarà eliminato\n"
 "traduzione - sottotitoli incollati con la giusta tempistica."
 
 #: Kainote/TabPanel.cpp:322
@@ -8432,7 +8541,7 @@ msgid "Z coordinate for tags \\frx and \\fry"
 msgstr "Coordinata Z per i tag \\frx e \\fry"
 
 #: Kainote/Toolbar.cpp:85
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Cannot find element with id %i"
 msgstr "Impossibile trovare l'elemento con id %i"
 
@@ -8466,33 +8575,42 @@ msgstr "In cima"
 msgid "Toolbar alignment"
 msgstr "Allineamento della barra degli strumenti"
 
-#: Kainote/UpdateChecker.cpp:124
-#, c-format
-msgid "A new version (%s) is available. Update?"
+#: Kainote/UpdateChecker.cpp:80
+msgid "A new version is available"
 msgstr ""
 
-#: Kainote/UpdateChecker.cpp:124
+#: Kainote/UpdateChecker.cpp:89
+#, c-format
+msgid "You have version %s; version %s is available"
+msgstr ""
+
+#: Kainote/UpdateChecker.cpp:101
+msgid "Check for updates automatically"
+msgstr ""
+
+#: Kainote/UpdateChecker.cpp:105
+msgid "Stable versions only"
+msgstr ""
+
+#: Kainote/UpdateChecker.cpp:112
+msgid "Open the download page"
+msgstr ""
+
+#: Kainote/UpdateChecker.cpp:113
+msgid "Remind me in a week"
+msgstr ""
+
+#: Kainote/UpdateChecker.cpp:155 Kainote/UpdateChecker.cpp:176
+msgid "Cannot check for updates"
+msgstr ""
+
+#: Kainote/UpdateChecker.cpp:155 Kainote/UpdateChecker.cpp:176
+#: Kainote/UpdateChecker.cpp:185
 msgid "Update"
 msgstr ""
 
-#: Kainote/UpdateChecker.cpp:125
-msgid "Disable updates"
-msgstr ""
-
-#: Kainote/UpdateChecker.cpp:126
-msgid "Update after closing"
-msgstr ""
-
-#: Kainote/UpdateChecker.cpp:237
-msgid "Cannot download the new version of Kainote"
-msgstr ""
-
-#: Kainote/UpdateChecker.cpp:242
-msgid "Cannot find the Kainote updater"
-msgstr ""
-
-#: Kainote/UpdateChecker.cpp:250 Kainote/UpdateChecker.cpp:255
-msgid "Cannot close Kainote"
+#: Kainote/UpdateChecker.cpp:185
+msgid "You already have the latest version"
 msgstr ""
 
 #: Kainote/UtilsWindows.cpp:40
@@ -8501,7 +8619,7 @@ msgid "Unable to retrieve information about the monitor"
 msgstr "Impossibile recuperare le informazioni sul monitor"
 
 #: Kainote/VideoBox.cpp:110 Kainote/VideoBox.cpp:124
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Aspect ratio: %5.3f"
 msgstr "Rapporto d'aspetto: %5.3f"
 
@@ -8545,12 +8663,12 @@ msgid "Exit full screen\tEscape"
 msgstr "Uscita a schermo intero Fuga"
 
 #: Kainote/VideoBox.cpp:931
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Switch full screen to monitor %i"
 msgstr "Passare a schermo intero al monitor %i"
 
 #: Kainote/VideoBox.cpp:932
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Open in full screen on monitor %i"
 msgstr "Aprire a schermo intero sul monitor %i"
 
@@ -8581,8 +8699,15 @@ msgstr "Cancellazione"
 
 #: Kainote/VideoBox.cpp:1077
 #, fuzzy
-msgid "Video files(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|All files (*.*)|*.*"
-msgstr "File video (*.avi), (*.mkv), (*.mp4), (*.ogm), (*.wmv), (*.asf), (*.rmvb), (*.rm), (*.3gp), (*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|Tutti i file (*.*)|*.*"
+msgid ""
+"Video files(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
+"(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|"
+"All files (*.*)|*.*"
+msgstr ""
+"File video (*.avi), (*.mkv), (*.mp4), (*.ogm), (*.wmv), (*.asf), (*.rmvb), "
+"(*.rm), (*.3gp), (*.avs)|"
+"*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|Tutti i file "
+"(*.*)|*.*"
 
 #: Kainote/VideoBox.cpp:1092
 #, fuzzy
@@ -8908,8 +9033,10 @@ msgid ""
 "of start of drawing and click left mouse button and drag."
 msgstr ""
 "Elenco dei disegni ASS con opzione di modifica.\n"
-"Dopo aver scelto il disegno dall'elenco, è sufficiente posizionare il cursore nel punto in cui\n"
-"dell'inizio del disegno, fare clic con il pulsante sinistro del mouse e trascinare."
+"Dopo aver scelto il disegno dall'elenco, è sufficiente posizionare il "
+"cursore nel punto in cui\n"
+"dell'inizio del disegno, fare clic con il pulsante sinistro del mouse e "
+"trascinare."
 
 #: Kainote/VideoToolbar.cpp:745
 #, fuzzy
@@ -8961,16 +9088,21 @@ msgid ""
 "or at the start for multiple lines.\n"
 "Multiply - multiplies the slider value by the selected line number;\n"
 "the first line is not changed.\n"
-"Gradient text increasing - inserts a tag at each character, increasing the value.\n"
-"Gradient text decreasing - inserts a tag at each character, decreasing the value.\n"
-"Gradient line increasing - inserts a tag in selected lines, increasing the value.\n"
-"Gradient line decreasing - inserts a tag in selected lines, decreasing the value."
+"Gradient text increasing - inserts a tag at each character, increasing the "
+"value.\n"
+"Gradient text decreasing - inserts a tag at each character, decreasing the "
+"value.\n"
+"Gradient line increasing - inserts a tag in selected lines, increasing the "
+"value.\n"
+"Gradient line decreasing - inserts a tag in selected lines, decreasing the "
+"value."
 msgstr ""
 "Opzioni di modifica del tag:\n"
 "Aggiungi - cambia tutti i tag aggiungendo movimento su cursore.\n"
 "Inserisci - inserisce il tag nella posizione del cursore quando una riga\n"
 "o su inizio linea quando multilinea.\n"
-"Multiply - moltiplicare il movimento del cursore per numero od linea selezionata\n"
+"Multiply - moltiplicare il movimento del cursore per numero od linea "
+"selezionata\n"
 "la prima riga non cambia. Realizzato per il posizionamento in cascata.\n"
 "Gradiente testo in aumento - mettere tag in ogni personaggio\n"
 "aumentandolo per numero su cursore\n"
@@ -9049,7 +9181,8 @@ msgstr "Dopo il top"
 #: Kainote/VideoToolbar.cpp:1112
 #, fuzzy
 msgid "Text placing works similar like in styles"
-msgstr "Il posizionamento del testo funziona in modo simile a quello degli stili"
+msgstr ""
+"Il posizionamento del testo funziona in modo simile a quello degli stili"
 
 #: Kainote/VisualAllTagsEdition.cpp:27 Kainote/VisualAllTagsEdition.cpp:51
 #, fuzzy
@@ -9147,7 +9280,7 @@ msgid "Tag change options"
 msgstr "Modifica delle opzioni dei tag"
 
 #: Kainote/VisualAllTagsEdition.cpp:102
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Value %i"
 msgstr "Valore %i"
 
@@ -9182,7 +9315,7 @@ msgid "Cannot remove all tags from list"
 msgstr "Impossibile rimuovere tutti i tag dall'elenco"
 
 #: Kainote/VisualAllTagsEdition.cpp:214
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Save changes to tag \"%s\"?"
 msgstr "Salvare le modifiche del tag \"%s\"?"
 
@@ -9209,8 +9342,11 @@ msgstr ""
 
 #: Kainote/VisualAllTagsEdition.cpp:312
 #, fuzzy
-msgid "Field \"Step\" contains a number too large for the current min-max range."
-msgstr "Il campo \"Step\" contiene un numero troppo grande per l'attuale intervallo min - max."
+msgid ""
+"Field \"Step\" contains a number too large for the current min-max range."
+msgstr ""
+"Il campo \"Step\" contiene un numero troppo grande per l'attuale intervallo "
+"min - max."
 
 #: Kainote/VisualClips.cpp:1014
 #, fuzzy
@@ -9293,7 +9429,7 @@ msgid "Cannot remove all shapes from the list"
 msgstr "Impossibile rimuovere tutte le forme dall'elenco"
 
 #: Kainote/VisualDrawingShapes.cpp:191
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Save changes to shape \"%s\"?"
 msgstr "Salva \"%s\" edizione forma?"
 
@@ -9305,7 +9441,9 @@ msgstr "Il campo \"forma\" non può essere vuoto."
 #: Kainote/VisualMove.cpp:464
 #, fuzzy
 msgid "Video must be set at least one frame after the line's start time"
-msgstr "Il video deve essere impostato almeno un fotogramma dopo l'ora di inizio della linea."
+msgstr ""
+"Il video deve essere impostato almeno un fotogramma dopo l'ora di inizio "
+"della linea."
 
 #: Kainote/VisualRotationZ.cpp:487 Kainote/VisualScale.cpp:772
 #, fuzzy
@@ -9328,12 +9466,15 @@ msgstr ""
 "La linea non è visibile sul video\n"
 "o ha durata zero"
 
-#: Kainote/config.cpp:633
-#, c-format, fuzzy
-msgid "Some colors were absent from theme \"%s\" and were loaded from the default theme."
-msgstr "Nel tema \"%s\" mancavano alcuni colori, che erano stati caricati di default."
+#: Kainote/config.cpp:634
+#, fuzzy, c-format
+msgid ""
+"Some colors were absent from theme \"%s\" and were loaded from the default "
+"theme."
+msgstr ""
+"Nel tema \"%s\" mancavano alcuni colori, che erano stati caricati di default."
 
-#: Kainote/config.cpp:643
+#: Kainote/config.cpp:644
 #, fuzzy
 msgid "Cannot load theme, reset to default"
 msgstr "Impossibile caricare il tema, ripristinare le impostazioni predefinite"
@@ -9497,7 +9638,7 @@ msgstr "Trova/Sostituisci"
 
 #: Kainote/findreplace.cpp:815 Kainote/findreplace.cpp:1129
 #: Kainote/findreplace.cpp:1170
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Replaced %i times."
 msgstr "Sostituito %i volte."
 
@@ -9531,7 +9672,7 @@ msgid "Remove styles"
 msgstr "Rimuovere Stile"
 
 #: Kainote/findreplace.cpp:1328
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid ""
 "Styles named \"%s\" do not exist in the subtitles being searched,\n"
 "which may significantly reduce the number of search results.\n"
@@ -9546,31 +9687,44 @@ msgstr ""
 msgid "Remove nonexistent styles"
 msgstr "Rimuovere gli stili non esistenti"
 
-#: Kainote/kainoteApp.cpp:232 Kainote/kainoteApp.cpp:241
+#: Kainote/kainoteApp.cpp:231 Kainote/kainoteApp.cpp:240
 #, fuzzy
 msgid "Not enough RAM. History partially deleted"
 msgstr "La RAM non è sufficiente. Cronologia parzialmente cancellata"
 
-#: Kainote/kainoteApp.cpp:331
+#: Kainote/kainoteApp.cpp:318
 #, fuzzy
 msgid ""
 "Cannot read settings.\n"
 "The program will be terminated."
 msgstr "Impossibile leggere le impostazioni. Il programma verrà terminato."
 
-#: Kainote/kainoteApp.cpp:396
+#: Kainote/kainoteApp.cpp:345
+msgid "Cannot find language, language change failed"
+msgstr ""
+
+#: Kainote/kainoteApp.cpp:350
+msgid "wxLocale cannot initialize, language change failed"
+msgstr ""
+
+#: Kainote/kainoteApp.cpp:364
+msgid "Cannot find translation, language change failed"
+msgstr ""
+
+#: Kainote/kainoteApp.cpp:380
 #, fuzzy
 msgid ""
 "Cannot read hotkeys.\n"
 "The program will be terminated."
-msgstr "Impossibile leggere i tasti di scelta rapida. Il programma verrà terminato."
+msgstr ""
+"Impossibile leggere i tasti di scelta rapida. Il programma verrà terminato."
 
-#: Kainote/kainoteApp.cpp:524
+#: Kainote/kainoteApp.cpp:508
 #, fuzzy
 msgid "Load last session?"
 msgstr "Caricare l'ultima sessione?"
 
-#: Kainote/kainoteApp.cpp:530
+#: Kainote/kainoteApp.cpp:514
 #, fuzzy
 msgid ""
 "The program crashed or was closed improperly.\n"
@@ -9652,19 +9806,22 @@ msgstr "Staccare la finestra di edizione"
 
 #: Kainote/stylestore.cpp:288 Kainote/stylestore.cpp:320
 #: Kainote/stylestore.cpp:359 Kainote/stylestore.cpp:652
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Style named \"%s\" already exists. Replace?"
 msgstr "Lo stile \"%s\" esiste già. Sostituire?"
 
 #: Kainote/stylestore.cpp:446
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Style named \"%s\" already exists."
 msgstr "Lo stile \"%s\" esiste già."
 
 #: Kainote/stylestore.cpp:508
 #, fuzzy
-msgid "Style name modified. Do you want to change all instances to the new name?"
-msgstr "Nome dello stile modificato. Si desidera cambiare tutte le istanze con il nuovo nome?"
+msgid ""
+"Style name modified. Do you want to change all instances to the new name?"
+msgstr ""
+"Nome dello stile modificato. Si desidera cambiare tutte le istanze con il "
+"nuovo nome?"
 
 #: Kainote/stylestore.cpp:612
 #, fuzzy
@@ -9687,7 +9844,7 @@ msgid "New Style"
 msgstr "Nuovo stile"
 
 #: Kainote/stylestore.cpp:774
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid ""
 "Styles used:\n"
 "%s\n"

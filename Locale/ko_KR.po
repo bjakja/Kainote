@@ -6,11 +6,12 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Kainote\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-18 02:02+0700\n"
+"Report-Msgid-Bugs-To: https://github.com/bjakja/Kainote/issues\n"
+"POT-Creation-Date: 2026-09-18 02:15+0700\n"
 "PO-Revision-Date: 2026-03-10 12:10+0000\n"
 "Last-Translator: Weblate <noreply-mt-weblate@weblate.org>\n"
-"Language-Team: Korean <https://hosted.weblate.org/projects/kainote/kainote/ko/>\n"
+"Language-Team: Korean <https://hosted.weblate.org/projects/kainote/kainote/"
+"ko/>\n"
 "Language: ko_KR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -160,11 +161,11 @@ msgid "Invalid keyframes format"
 msgstr "잘못된 키 프레임 형식"
 
 #: Kainote/AudioBox.cpp:289 Kainote/Automation.cpp:1414
-#: Kainote/Automation.cpp:1461 Kainote/KainoteFrame.cpp:925
-#: Kainote/KainoteFrame.cpp:929 Kainote/KainoteFrame.cpp:2151
-#: Kainote/KainoteFrame.cpp:2152 Kainote/KainoteFrame.cpp:2602
-#: Kainote/KainoteFrame.cpp:2628 Kainote/KainoteFrame.cpp:2632
-#: Kainote/OptionsDialog.cpp:291 Kainote/OptionsDialog.cpp:661
+#: Kainote/Automation.cpp:1461 Kainote/KainoteFrame.cpp:928
+#: Kainote/KainoteFrame.cpp:932 Kainote/KainoteFrame.cpp:2157
+#: Kainote/KainoteFrame.cpp:2158 Kainote/KainoteFrame.cpp:2608
+#: Kainote/KainoteFrame.cpp:2634 Kainote/KainoteFrame.cpp:2638
+#: Kainote/OptionsDialog.cpp:292 Kainote/OptionsDialog.cpp:664
 #: Kainote/Provider.cpp:188 Kainote/VisualAllTagsEdition.cpp:167
 #: Kainote/VisualAllTagsEdition.cpp:171 Kainote/VisualAllTagsEdition.cpp:189
 #: Kainote/VisualAllTagsEdition.cpp:296 Kainote/VisualAllTagsEdition.cpp:304
@@ -267,7 +268,7 @@ msgstr "파일"
 msgid "Versions"
 msgstr "자동 저장 파일"
 
-#: Kainote/AutoSaveOpen.cpp:57 Kainote/KainoteFrame.cpp:1553
+#: Kainote/AutoSaveOpen.cpp:57 Kainote/KainoteFrame.cpp:1559
 msgid "Open"
 msgstr "열기"
 
@@ -278,7 +279,7 @@ msgstr "열기"
 #: Kainote/FontCatalogList.cpp:70 Kainote/FontCatalogList.cpp:868
 #: Kainote/FontDialog.cpp:410 Kainote/KaiMessageBox.cpp:79
 #: Kainote/MappedButton.cpp:39 Kainote/NewCatalog.cpp:42
-#: Kainote/OptionsDialog.cpp:1022 Kainote/ProgressDialog.cpp:43
+#: Kainote/OptionsDialog.cpp:1029 Kainote/ProgressDialog.cpp:43
 #: Kainote/ScriptInfo.cpp:160 Kainote/ShiftTimes.cpp:67
 #: Kainote/StyleChange.cpp:270 Kainote/Stylelistbox.cpp:34
 #: Kainote/Stylelistbox.cpp:58 Kainote/Stylelistbox.cpp:112
@@ -293,7 +294,7 @@ msgstr "취소"
 msgid "Cannot open auto save folder"
 msgstr "자동 저장 폴더를 열 수 없음"
 
-#: Kainote/AutoSaveOpen.cpp:150 Kainote/KainoteFrame.cpp:707
+#: Kainote/AutoSaveOpen.cpp:150 Kainote/KainoteFrame.cpp:710
 #: Kainote/ProviderFFMS2.cpp:291 Kainote/TabPanel.cpp:87
 #: Kainote/VisualDrawingShapes.cpp:210 Kainote/VisualDrawingShapes.cpp:274
 msgid "Untitled"
@@ -307,7 +308,7 @@ msgstr "자동 저장 폴더가 비어 있음"
 msgid "Failed to load autosave"
 msgstr "자동 저장 폴더를 열 수 없습니다"
 
-#: Kainote/AutoSavesRemoving.cpp:28 Kainote/KainoteFrame.cpp:195
+#: Kainote/AutoSavesRemoving.cpp:28 Kainote/KainoteFrame.cpp:196
 msgid "Remove temporary files"
 msgstr "저장 파일 삭제"
 
@@ -424,8 +425,12 @@ msgid "Remove older audio cache files"
 msgstr "오래된 소리 파일 삭제"
 
 #: Kainote/AutoSavesRemoving.cpp:177
-msgid "Subtitle files (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt"
-msgstr "자막 파일 (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt"
+msgid ""
+"Subtitle files (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|"
+"*.ass;*.ssa;*.srt;*.sub;*.txt"
+msgstr ""
+"자막 파일 (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|"
+"*.ass;*.ssa;*.srt;*.sub;*.txt"
 
 #: Kainote/AutoSavesRemoving.cpp:178
 msgid "Index files (*.ffindex)|*.ffindex"
@@ -455,8 +460,12 @@ msgstr ""
 "%s."
 
 #: Kainote/Automation.cpp:656
-msgid "You are trying to load an Automation 3 script as an Automation 4 script. Automation 3 is no longer supported."
-msgstr "자동화 3 스크립트를 자동화 4 스크립트로 불러오려고합니다. 자동화 3은 더 이상 지원되지 않습니다."
+msgid ""
+"You are trying to load an Automation 3 script as an Automation 4 script. "
+"Automation 3 is no longer supported."
+msgstr ""
+"자동화 3 스크립트를 자동화 4 스크립트로 불러오려고합니다. 자동화 3은 더 이상 "
+"지원되지 않습니다."
 
 #: Kainote/Automation.cpp:699
 #, c-format
@@ -468,7 +477,7 @@ msgid "An error occurred while executing the Lua script:\n"
 msgstr "Lua 스크립트를 불러오는 동안 오류가 발생했습니다:\n"
 
 #: Kainote/Automation.cpp:1265 Kainote/Automation.cpp:1307
-#: Kainote/KainoteFrame.cpp:929 Kainote/KainoteFrame.cpp:2632
+#: Kainote/KainoteFrame.cpp:932 Kainote/KainoteFrame.cpp:2638
 #, c-format
 msgid ""
 "Error loading Lua script: %s\n"
@@ -542,7 +551,7 @@ msgstr "경로 및 스크립트 이름"
 msgid "Macro"
 msgstr "매크로"
 
-#: Kainote/AutomationHotkeysDialog.cpp:74 Kainote/OptionsDialog.cpp:656
+#: Kainote/AutomationHotkeysDialog.cpp:74 Kainote/OptionsDialog.cpp:659
 msgid "Hotkey"
 msgstr "단축키"
 
@@ -554,45 +563,45 @@ msgstr "폴더 자동열기"
 msgid "From subs"
 msgstr "자막에서"
 
-#: Kainote/AutomationHotkeysDialog.cpp:144 Kainote/OptionsDialog.cpp:668
+#: Kainote/AutomationHotkeysDialog.cpp:144 Kainote/OptionsDialog.cpp:671
 msgid "Map hotkey"
 msgstr "단축키 설정"
 
 #: Kainote/AutomationHotkeysDialog.cpp:146
 #: Kainote/AutomationHotkeysDialog.cpp:242
 #: Kainote/AutomationHotkeysDialog.cpp:252 Kainote/Hotkeys.cpp:479
-#: Kainote/Hotkeys.cpp:490 Kainote/OptionsDialog.cpp:119
-#: Kainote/OptionsDialog.cpp:129 Kainote/OptionsDialog.cpp:672
+#: Kainote/Hotkeys.cpp:490 Kainote/OptionsDialog.cpp:120
+#: Kainote/OptionsDialog.cpp:130 Kainote/OptionsDialog.cpp:675
 msgid "Delete hotkey"
 msgstr "단축키 삭제"
 
 #: Kainote/AutomationHotkeysDialog.cpp:214 Kainote/Hotkeys.cpp:452
-#: Kainote/OptionsDialog.cpp:269 Kainote/OptionsDialog.cpp:1007
+#: Kainote/OptionsDialog.cpp:270 Kainote/OptionsDialog.cpp:1014
 msgid "Audio"
 msgstr "소리"
 
 #: Kainote/AutomationHotkeysDialog.cpp:214 Kainote/Hotkeys.cpp:452
-#: Kainote/OptionsDialog.cpp:269 Kainote/OptionsDialog.cpp:1002
+#: Kainote/OptionsDialog.cpp:270 Kainote/OptionsDialog.cpp:1009
 msgid "Editor"
 msgstr "일반 설정"
 
 #: Kainote/AutomationHotkeysDialog.cpp:214 Kainote/Hotkeys.cpp:452
-#: Kainote/OptionsDialog.cpp:269 Kainote/OptionsDialog.cpp:648
+#: Kainote/OptionsDialog.cpp:270 Kainote/OptionsDialog.cpp:651
 msgid "Global"
 msgstr "전역"
 
 #: Kainote/AutomationHotkeysDialog.cpp:214 Kainote/Hotkeys.cpp:452
-#: Kainote/OptionsDialog.cpp:269 Kainote/ScriptInfo.cpp:99
+#: Kainote/OptionsDialog.cpp:270 Kainote/ScriptInfo.cpp:99
 msgid "Subtitles"
 msgstr "자막"
 
 #: Kainote/AutomationHotkeysDialog.cpp:214 Kainote/Hotkeys.cpp:452
-#: Kainote/OptionsDialog.cpp:269 Kainote/OptionsDialog.cpp:1006
+#: Kainote/OptionsDialog.cpp:270 Kainote/OptionsDialog.cpp:1013
 msgid "Video"
 msgstr "영상"
 
 #: Kainote/AutomationHotkeysDialog.cpp:239 Kainote/Hotkeys.cpp:476
-#: Kainote/OptionsDialog.cpp:116
+#: Kainote/OptionsDialog.cpp:117
 #, c-format
 msgid ""
 "This hotkey already exists for \"%s\".\n"
@@ -603,26 +612,26 @@ msgstr ""
 
 #: Kainote/AutomationHotkeysDialog.cpp:240
 #: Kainote/AutomationHotkeysDialog.cpp:249 Kainote/Hotkeys.cpp:477
-#: Kainote/Hotkeys.cpp:487 Kainote/KainoteFrame.cpp:1280
-#: Kainote/KainoteFrame.cpp:1296 Kainote/KainoteFrame.cpp:1410
-#: Kainote/KainoteFrame.cpp:2499 Kainote/OptionsDialog.cpp:117
-#: Kainote/OptionsDialog.cpp:126 Kainote/OptionsDialog.cpp:509
+#: Kainote/Hotkeys.cpp:487 Kainote/KainoteFrame.cpp:1286
+#: Kainote/KainoteFrame.cpp:1302 Kainote/KainoteFrame.cpp:1416
+#: Kainote/KainoteFrame.cpp:2505 Kainote/OptionsDialog.cpp:118
+#: Kainote/OptionsDialog.cpp:127 Kainote/OptionsDialog.cpp:512
 #: Kainote/SpellCheckerDialog.cpp:147 Kainote/SubsGrid.cpp:1139
 #: Kainote/SubsGridBase.cpp:473 Kainote/SubsGridBase.cpp:502
 #: Kainote/VideoBox.cpp:322 Kainote/VisualClips.cpp:1015
-#: Kainote/kainoteApp.cpp:331 Kainote/kainoteApp.cpp:396
+#: Kainote/kainoteApp.cpp:318 Kainote/kainoteApp.cpp:380
 msgid "Warning"
 msgstr "경고"
 
 #: Kainote/AutomationHotkeysDialog.cpp:241
 #: Kainote/AutomationHotkeysDialog.cpp:251 Kainote/Hotkeys.cpp:478
-#: Kainote/Hotkeys.cpp:489 Kainote/OptionsDialog.cpp:118
-#: Kainote/OptionsDialog.cpp:128
+#: Kainote/Hotkeys.cpp:489 Kainote/OptionsDialog.cpp:119
+#: Kainote/OptionsDialog.cpp:129
 msgid "Switch hotkeys"
 msgstr "단축키 전환"
 
 #: Kainote/AutomationHotkeysDialog.cpp:248 Kainote/Hotkeys.cpp:485
-#: Kainote/OptionsDialog.cpp:125
+#: Kainote/OptionsDialog.cpp:126
 #, c-format
 msgid ""
 "This shortcut already exists in %s as a shortcut for \"%s\".\n"
@@ -632,17 +641,17 @@ msgstr ""
 "어떻게 하시겠습니까?"
 
 #: Kainote/AutomationHotkeysDialog.cpp:249 Kainote/Hotkeys.cpp:486
-#: Kainote/OptionsDialog.cpp:126
+#: Kainote/OptionsDialog.cpp:127
 msgid "another window"
 msgstr "다른 창"
 
 #: Kainote/AutomationHotkeysDialog.cpp:249 Kainote/Hotkeys.cpp:486
-#: Kainote/OptionsDialog.cpp:126
+#: Kainote/OptionsDialog.cpp:127
 msgid "other windows"
 msgstr "다른 창"
 
 #: Kainote/AutomationHotkeysDialog.cpp:253 Kainote/Hotkeys.cpp:491
-#: Kainote/OptionsDialog.cpp:130
+#: Kainote/OptionsDialog.cpp:131
 msgid "Set anyway"
 msgstr "계속 설정"
 
@@ -650,7 +659,8 @@ msgstr "계속 설정"
 #: Kainote/FontCollector.cpp:193 Kainote/LogHandler.cpp:50
 #: Kainote/Notebook.cpp:626 Kainote/SelectLines.cpp:141
 #: Kainote/SelectLines.cpp:236 Kainote/SelectLines.cpp:278
-#: Kainote/SpellCheckerDialog.cpp:63 Kainote/stylestore.cpp:171
+#: Kainote/SpellCheckerDialog.cpp:63 Kainote/UpdateChecker.cpp:114
+#: Kainote/stylestore.cpp:171
 msgid "Close"
 msgstr "닫기"
 
@@ -1037,7 +1047,7 @@ msgid "Comment"
 msgstr "주석처리"
 
 #: Kainote/EditBox.cpp:283 Kainote/FindReplaceDialog.cpp:135
-#: Kainote/KainoteFrame.cpp:230 Kainote/SelectLines.cpp:75
+#: Kainote/KainoteFrame.cpp:231 Kainote/SelectLines.cpp:75
 #: Kainote/SubsGrid.cpp:462 Kainote/SubsGrid.cpp:629
 #: Kainote/SubsGridWindow.cpp:267 Kainote/SubsGridWindow.cpp:663
 #: Kainote/SubsGridWindow.cpp:1118 Kainote/SubsGridWindow.cpp:1284
@@ -1045,7 +1055,7 @@ msgid "Actor"
 msgstr "배우"
 
 #: Kainote/EditBox.cpp:289 Kainote/FindReplaceDialog.cpp:138
-#: Kainote/KainoteFrame.cpp:231 Kainote/SelectLines.cpp:76
+#: Kainote/KainoteFrame.cpp:232 Kainote/SelectLines.cpp:76
 #: Kainote/SubsGrid.cpp:467 Kainote/SubsGrid.cpp:634
 #: Kainote/SubsGridWindow.cpp:271 Kainote/SubsGridWindow.cpp:667
 #: Kainote/SubsGridWindow.cpp:1131 Kainote/SubsGridWindow.cpp:1297
@@ -1072,7 +1082,8 @@ msgid "Text position"
 msgstr "글자 위치"
 
 #: Kainote/EditBox.cpp:1197
-msgid "Translator mode displays and saves both foreign text and translation text"
+msgid ""
+"Translator mode displays and saves both foreign text and translation text"
 msgstr "번역기 모드는 외국어와 번역을 모두 표시하고 저장합니다"
 
 #: Kainote/EditBox.cpp:1198
@@ -1128,8 +1139,12 @@ msgid "Line top and bottom margins"
 msgstr "세로 여백(상단 및 하단 여백)"
 
 #: Kainote/EditBox.cpp:1211
-msgid "Line effect. Used to mark lines to which karaoke or VSFilter effects should be applied"
-msgstr "줄에 들어가는 효과. 노래방 또는 VSFilter 효과를 적용 할 줄을 표시하는 데 사용됩니다"
+msgid ""
+"Line effect. Used to mark lines to which karaoke or VSFilter effects should "
+"be applied"
+msgstr ""
+"줄에 들어가는 효과. 노래방 또는 VSFilter 효과를 적용 할 줄을 표시하는 데 사용"
+"됩니다"
 
 #: Kainote/EditBox.cpp:1212
 msgid ""
@@ -1162,6 +1177,78 @@ msgstr "번역되지 않은 줄이 없음"
 #: Kainote/EditBox.cpp:2045
 msgid "Manage tag buttons"
 msgstr "상용구 등록"
+
+#: Kainote/FileTypes.h:62
+msgid "ASS subtitles"
+msgstr "자막 ASS"
+
+#: Kainote/FileTypes.h:63
+msgid "SSA subtitles"
+msgstr "자막 SSA"
+
+#: Kainote/FileTypes.h:64
+msgid "SRT subtitles"
+msgstr "자막 SRT"
+
+#: Kainote/FileTypes.h:65
+msgid "SUB subtitles"
+msgstr "자막 SUB"
+
+#: Kainote/FileTypes.h:66
+msgid "TXT subtitles"
+msgstr "자막 TXT"
+
+#: Kainote/FileTypes.h:67
+msgid "Video MKV"
+msgstr "영상 MKV"
+
+#: Kainote/FileTypes.h:68
+msgid "Video MP4"
+msgstr "영상 MP4"
+
+#: Kainote/FileTypes.h:69
+msgid "Video AVI"
+msgstr "영상 AVI"
+
+#: Kainote/FileTypes.h:70
+msgid "Video OGM"
+msgstr "영상 OGM"
+
+#: Kainote/FileTypes.h:71
+msgid "Video WMV"
+msgstr "영상 WMV"
+
+#: Kainote/FileTypes.h:72
+msgid "Video ASF"
+msgstr "영상 ASF"
+
+#: Kainote/FileTypes.h:73
+msgid "Video RMVB"
+msgstr "영상 RMVB"
+
+#: Kainote/FileTypes.h:74
+msgid "Video RM"
+msgstr "영상 RM"
+
+#: Kainote/FileTypes.h:75
+msgid "Video 3GP"
+msgstr "영상 3GP"
+
+#: Kainote/FileTypes.h:76
+msgid "Video MPG"
+msgstr "영상 MPG"
+
+#: Kainote/FileTypes.h:77
+msgid "Video MPEG"
+msgstr "영상 MPEG"
+
+#: Kainote/FileTypes.h:79
+msgid "Video TS"
+msgstr "영상 TS"
+
+#: Kainote/FileTypes.h:80
+msgid "Video M2TS"
+msgstr "영상 M2TS"
 
 #: Kainote/FindReplaceDialog.cpp:44 Kainote/FindReplaceDialog.cpp:47
 #: Kainote/SelectLines.cpp:54
@@ -1239,7 +1326,7 @@ msgstr "찾을 부분"
 msgid "Text"
 msgstr "글자"
 
-#: Kainote/FindReplaceDialog.cpp:129 Kainote/KainoteFrame.cpp:229
+#: Kainote/FindReplaceDialog.cpp:129 Kainote/KainoteFrame.cpp:230
 #: Kainote/SelectLines.cpp:74 Kainote/SubsGrid.cpp:463 Kainote/SubsGrid.cpp:630
 #: Kainote/SubsGridWindow.cpp:266 Kainote/SubsGridWindow.cpp:662
 #: Kainote/SubsGridWindow.cpp:1112 Kainote/SubsGridWindow.cpp:1278
@@ -1248,7 +1335,7 @@ msgstr "스타일"
 
 #: Kainote/FindReplaceDialog.cpp:160 Kainote/FindReplaceDialog.cpp:412
 #: Kainote/FindReplaceDialog.cpp:426 Kainote/Hotkeys.cpp:146
-#: Kainote/HotkeysNaming.cpp:237 Kainote/SelectLines.cpp:51
+#: Kainote/HotkeysNaming.cpp:238 Kainote/SelectLines.cpp:51
 msgid "Find"
 msgstr "찾기"
 
@@ -1325,7 +1412,7 @@ msgid "From selected"
 msgstr "스타일 선택"
 
 #: Kainote/FindReplaceDialog.cpp:413 Kainote/FindReplaceDialog.cpp:427
-#: Kainote/Hotkeys.cpp:147 Kainote/HotkeysNaming.cpp:174
+#: Kainote/Hotkeys.cpp:147 Kainote/HotkeysNaming.cpp:175
 msgid "Find and replace"
 msgstr "찾아서 바꾸기"
 
@@ -1369,7 +1456,7 @@ msgstr "새 목록 이름 선택"
 msgid "Enter a name for the new catalog"
 msgstr "새 목록의 이름"
 
-#: Kainote/FontCatalogList.cpp:84 Kainote/KainoteFrame.cpp:916
+#: Kainote/FontCatalogList.cpp:84 Kainote/KainoteFrame.cpp:919
 #: Kainote/ShiftTimes.cpp:85 Kainote/ShiftTimes.cpp:973
 #: Kainote/ShiftTimes.cpp:978 Kainote/findreplace.cpp:1177
 msgid "Info"
@@ -1419,14 +1506,16 @@ msgstr "이 목록을 삭제하시겠습니까?"
 
 #: Kainote/FontCatalogList.cpp:143 Kainote/FontCatalogList.cpp:743
 #: Kainote/Notebook.cpp:979 Kainote/StyleChange.cpp:461
-#: Kainote/kainoteApp.cpp:524 Kainote/kainoteApp.cpp:530
+#: Kainote/kainoteApp.cpp:508 Kainote/kainoteApp.cpp:514
 #: Kainote/stylestore.cpp:567
 msgid "Prompt"
 msgstr "질문"
 
 #: Kainote/FontCatalogList.cpp:168
-msgid "The catalog list has autosave; files are stored in the \"Config\" folder."
-msgstr "글꼴 목록은 자동 저장 됩니다. 파일은 \"Config\" 폴더에서 찾을 수 있습니다."
+msgid ""
+"The catalog list has autosave; files are stored in the \"Config\" folder."
+msgstr ""
+"글꼴 목록은 자동 저장 됩니다. 파일은 \"Config\" 폴더에서 찾을 수 있습니다."
 
 #: Kainote/FontCatalogList.cpp:170 Kainote/FontCatalogList.cpp:859
 msgid "Catalogs:"
@@ -1440,8 +1529,8 @@ msgstr "찾기:"
 msgid "Autosave"
 msgstr "자동 저장"
 
-#: Kainote/FontCatalogList.cpp:314 Kainote/KainoteFrame.cpp:1036
-#: Kainote/KainoteFrame.cpp:1052 Kainote/VideoBox.cpp:1074
+#: Kainote/FontCatalogList.cpp:314 Kainote/KainoteFrame.cpp:1039
+#: Kainote/KainoteFrame.cpp:1055 Kainote/VideoBox.cpp:1074
 msgid "Choose video file"
 msgstr "영상 파일 선택"
 
@@ -1506,8 +1595,8 @@ msgstr " 색인: "
 msgid "In lines: "
 msgstr "줄에서: "
 
-#: Kainote/FontCollector.cpp:134 Kainote/HotkeysNaming.cpp:175
-#: Kainote/KainoteFrame.cpp:336 Kainote/KainoteFrame.cpp:337
+#: Kainote/FontCollector.cpp:134 Kainote/HotkeysNaming.cpp:176
+#: Kainote/KainoteFrame.cpp:337 Kainote/KainoteFrame.cpp:338
 #: Kainote/SubsGrid.cpp:242
 msgid "Font collector"
 msgstr "글꼴 수집"
@@ -1528,7 +1617,7 @@ msgstr "선택한 폴더에 복사"
 msgid "Zip"
 msgstr "Zip"
 
-#: Kainote/FontCollector.cpp:170 Kainote/OptionsDialog.cpp:267
+#: Kainote/FontCollector.cpp:170 Kainote/OptionsDialog.cpp:268
 #: Kainote/ScriptInfo.cpp:132
 msgid "Options"
 msgstr "선택"
@@ -1592,8 +1681,8 @@ msgstr "이름 선택"
 msgid "The save path is not valid."
 msgstr "저장 경로가 잘못되었습니다."
 
-#: Kainote/FontCollector.cpp:513 Kainote/KainoteFrame.cpp:1347
-#: Kainote/KainoteFrame.cpp:2114 Kainote/Notebook.cpp:1211
+#: Kainote/FontCollector.cpp:513 Kainote/KainoteFrame.cpp:1353
+#: Kainote/KainoteFrame.cpp:2120 Kainote/Notebook.cpp:1211
 #: Kainote/SubsGrid.cpp:1100 Kainote/SubsGridBase.cpp:492
 #: Kainote/SubsGridBase.cpp:1340 Kainote/SubsGridDialogs.cpp:108
 #: Kainote/VideoBox.cpp:880 Kainote/VideoBox.cpp:892
@@ -1941,169 +2030,169 @@ msgstr "외부 글꼴 폴더를로드 할 수 없습니다"
 msgid "Exit"
 msgstr "종료"
 
-#: Kainote/Hotkeys.cpp:135 Kainote/HotkeysNaming.cpp:211
+#: Kainote/Hotkeys.cpp:135 Kainote/HotkeysNaming.cpp:212
 #: Kainote/Notebook.cpp:600
 msgid "Open new tab"
 msgstr "새 탭 열기"
 
-#: Kainote/Hotkeys.cpp:136 Kainote/HotkeysNaming.cpp:212
+#: Kainote/Hotkeys.cpp:136 Kainote/HotkeysNaming.cpp:213
 msgid "Close current tab"
 msgstr "현재 탭 닫기"
 
-#: Kainote/Hotkeys.cpp:137 Kainote/HotkeysNaming.cpp:171
+#: Kainote/Hotkeys.cpp:137 Kainote/HotkeysNaming.cpp:172
 msgid "Time shift window"
 msgstr "시간 이동"
 
-#: Kainote/Hotkeys.cpp:138 Kainote/HotkeysNaming.cpp:162
-#: Kainote/KainoteFrame.cpp:321
+#: Kainote/Hotkeys.cpp:138 Kainote/HotkeysNaming.cpp:163
+#: Kainote/KainoteFrame.cpp:322
 msgid "Convert to ASS"
 msgstr "ASS로 변환"
 
-#: Kainote/Hotkeys.cpp:139 Kainote/HotkeysNaming.cpp:163
-#: Kainote/KainoteFrame.cpp:323
+#: Kainote/Hotkeys.cpp:139 Kainote/HotkeysNaming.cpp:164
+#: Kainote/KainoteFrame.cpp:324
 msgid "Convert to SRT"
 msgstr "SRT로 변환"
 
-#: Kainote/Hotkeys.cpp:140 Kainote/HotkeysNaming.cpp:164
-#: Kainote/KainoteFrame.cpp:325
+#: Kainote/Hotkeys.cpp:140 Kainote/HotkeysNaming.cpp:165
+#: Kainote/KainoteFrame.cpp:326
 msgid "Convert to MDVD"
 msgstr "MDVD로 변환"
 
-#: Kainote/Hotkeys.cpp:141 Kainote/HotkeysNaming.cpp:165
-#: Kainote/KainoteFrame.cpp:327
+#: Kainote/Hotkeys.cpp:141 Kainote/HotkeysNaming.cpp:166
+#: Kainote/KainoteFrame.cpp:328
 msgid "Convert to MPL2"
 msgstr "MPL2로 변환"
 
-#: Kainote/Hotkeys.cpp:142 Kainote/HotkeysNaming.cpp:166
-#: Kainote/KainoteFrame.cpp:329
+#: Kainote/Hotkeys.cpp:142 Kainote/HotkeysNaming.cpp:167
+#: Kainote/KainoteFrame.cpp:330
 msgid "Convert to TMP"
 msgstr "TMP로 변환"
 
-#: Kainote/Hotkeys.cpp:143 Kainote/HotkeysNaming.cpp:250
+#: Kainote/Hotkeys.cpp:143 Kainote/HotkeysNaming.cpp:251
 #: Kainote/stylestore.cpp:41
 msgid "Style manager"
 msgstr "스타일 관리"
 
-#: Kainote/Hotkeys.cpp:144 Kainote/HotkeysNaming.cpp:173
-#: Kainote/KainoteFrame.cpp:314
+#: Kainote/Hotkeys.cpp:144 Kainote/HotkeysNaming.cpp:174
+#: Kainote/KainoteFrame.cpp:315
 msgid "Enable / Disable editor"
 msgstr "편집 활성/비활성"
 
-#: Kainote/Hotkeys.cpp:145 Kainote/HotkeysNaming.cpp:222
-#: Kainote/KainoteFrame.cpp:245 Kainote/VideoBox.cpp:953
+#: Kainote/Hotkeys.cpp:145 Kainote/HotkeysNaming.cpp:223
+#: Kainote/KainoteFrame.cpp:246 Kainote/VideoBox.cpp:953
 msgid "Open video"
 msgstr "영상 파일 열기"
 
-#: Kainote/Hotkeys.cpp:148 Kainote/HotkeysNaming.cpp:201
-#: Kainote/KainoteFrame.cpp:207
+#: Kainote/Hotkeys.cpp:148 Kainote/HotkeysNaming.cpp:202
+#: Kainote/KainoteFrame.cpp:208
 msgid "Undo"
 msgstr "실행 취소"
 
-#: Kainote/Hotkeys.cpp:149 Kainote/HotkeysNaming.cpp:228
-#: Kainote/KainoteFrame.cpp:213
+#: Kainote/Hotkeys.cpp:149 Kainote/HotkeysNaming.cpp:229
+#: Kainote/KainoteFrame.cpp:214
 msgid "Redo"
 msgstr "되돌리기"
 
-#: Kainote/Hotkeys.cpp:150 Kainote/HotkeysNaming.cpp:179
-#: Kainote/KainoteFrame.cpp:215 Kainote/SubsFile.cpp:24 Kainote/SubsFile.cpp:54
+#: Kainote/Hotkeys.cpp:150 Kainote/HotkeysNaming.cpp:180
+#: Kainote/KainoteFrame.cpp:216 Kainote/SubsFile.cpp:24 Kainote/SubsFile.cpp:54
 msgid "History"
 msgstr "기록"
 
-#: Kainote/Hotkeys.cpp:151 Kainote/HotkeysNaming.cpp:221
+#: Kainote/Hotkeys.cpp:151 Kainote/HotkeysNaming.cpp:222
 #: Kainote/VideoBox.cpp:955
 msgid "Open subtitles"
 msgstr "자막 파일 열기"
 
-#: Kainote/Hotkeys.cpp:152 Kainote/HotkeysNaming.cpp:233
+#: Kainote/Hotkeys.cpp:152 Kainote/HotkeysNaming.cpp:234
 #: Kainote/Notebook.cpp:890 Kainote/ScriptInfo.cpp:159
 msgid "Save"
 msgstr "저장"
 
-#: Kainote/Hotkeys.cpp:153 Kainote/HotkeysNaming.cpp:234
+#: Kainote/Hotkeys.cpp:153 Kainote/HotkeysNaming.cpp:235
 msgid "Save as..."
 msgstr "다른 이름으로 저장..."
 
-#: Kainote/Hotkeys.cpp:154 Kainote/HotkeysNaming.cpp:231
+#: Kainote/Hotkeys.cpp:154 Kainote/HotkeysNaming.cpp:232
 #: Kainote/SubsGrid.cpp:239
 msgid "Delete text"
 msgstr "글자 삭제"
 
-#: Kainote/Hotkeys.cpp:155 Kainote/HotkeysNaming.cpp:229
+#: Kainote/Hotkeys.cpp:155 Kainote/HotkeysNaming.cpp:230
 #: Kainote/TLDialog.cpp:30 Kainote/TLDialog.cpp:38
 msgid "Delete line"
 msgstr "줄 삭제"
 
-#: Kainote/Hotkeys.cpp:156 Kainote/HotkeysNaming.cpp:243
-#: Kainote/KainoteFrame.cpp:257
+#: Kainote/Hotkeys.cpp:156 Kainote/HotkeysNaming.cpp:244
+#: Kainote/KainoteFrame.cpp:258
 msgid "Insert start time from video"
 msgstr "영상위치->시작시간"
 
-#: Kainote/Hotkeys.cpp:157 Kainote/HotkeysNaming.cpp:242
-#: Kainote/KainoteFrame.cpp:259
+#: Kainote/Hotkeys.cpp:157 Kainote/HotkeysNaming.cpp:243
+#: Kainote/KainoteFrame.cpp:260
 msgid "Insert end time from video"
 msgstr "영상위치->종료시간"
 
 #: Kainote/Hotkeys.cpp:158 Kainote/Hotkeys.cpp:176
-#: Kainote/HotkeysNaming.cpp:223 Kainote/HotkeysNaming.cpp:259
-#: Kainote/KainoteFrame.cpp:271 Kainote/VideoBox.cpp:157
+#: Kainote/HotkeysNaming.cpp:224 Kainote/HotkeysNaming.cpp:260
+#: Kainote/KainoteFrame.cpp:272 Kainote/VideoBox.cpp:157
 #: Kainote/VideoFullscreen.cpp:59
 msgid "Play / Pause"
 msgstr "재생 / 일시 정지"
 
-#: Kainote/Hotkeys.cpp:159 Kainote/HotkeysNaming.cpp:225
-#: Kainote/KainoteFrame.cpp:261
+#: Kainote/Hotkeys.cpp:159 Kainote/HotkeysNaming.cpp:226
+#: Kainote/KainoteFrame.cpp:262
 msgid "Previous frame"
 msgstr "이전 프레임"
 
-#: Kainote/Hotkeys.cpp:160 Kainote/HotkeysNaming.cpp:217
-#: Kainote/KainoteFrame.cpp:263
+#: Kainote/Hotkeys.cpp:160 Kainote/HotkeysNaming.cpp:218
+#: Kainote/KainoteFrame.cpp:264
 msgid "Next frame"
 msgstr "다음 프레임"
 
 #: Kainote/Hotkeys.cpp:161 Kainote/Hotkeys.cpp:201 Kainote/HotkeysNaming.cpp:48
-#: Kainote/HotkeysNaming.cpp:226
+#: Kainote/HotkeysNaming.cpp:227
 msgid "Previous line"
 msgstr "이전 줄"
 
 #: Kainote/Hotkeys.cpp:162 Kainote/Hotkeys.cpp:203 Kainote/HotkeysNaming.cpp:50
-#: Kainote/HotkeysNaming.cpp:218
+#: Kainote/HotkeysNaming.cpp:219
 msgid "Next line"
 msgstr "다음 줄"
 
-#: Kainote/Hotkeys.cpp:163 Kainote/HotkeysNaming.cpp:215
-#: Kainote/KainoteFrame.cpp:220
+#: Kainote/Hotkeys.cpp:163 Kainote/HotkeysNaming.cpp:216
+#: Kainote/KainoteFrame.cpp:221
 msgid "Find next"
 msgstr "다음 찾기"
 
-#: Kainote/Hotkeys.cpp:164 Kainote/HotkeysNaming.cpp:180
+#: Kainote/Hotkeys.cpp:164 Kainote/HotkeysNaming.cpp:181
 msgid "Merge with previous line"
 msgstr "이전 줄과 병합"
 
-#: Kainote/Hotkeys.cpp:165 Kainote/HotkeysNaming.cpp:181
+#: Kainote/Hotkeys.cpp:165 Kainote/HotkeysNaming.cpp:182
 msgid "Merge with next line"
 msgstr "다음 줄과 병합"
 
-#: Kainote/Hotkeys.cpp:166 Kainote/HotkeysNaming.cpp:248
+#: Kainote/Hotkeys.cpp:166 Kainote/HotkeysNaming.cpp:249
 msgid "Change start time to nearest keyframe"
 msgstr "시작 시간을 가까운 키 프레임으로"
 
-#: Kainote/Hotkeys.cpp:167 Kainote/HotkeysNaming.cpp:247
+#: Kainote/Hotkeys.cpp:167 Kainote/HotkeysNaming.cpp:248
 msgid "Change end time to nearest keyframe"
 msgstr "종료 시간을 가까운 키 프레임으로"
 
-#: Kainote/Hotkeys.cpp:168 Kainote/HotkeysNaming.cpp:219
+#: Kainote/Hotkeys.cpp:168 Kainote/HotkeysNaming.cpp:220
 msgid "Next tab"
 msgstr "다음 탭"
 
-#: Kainote/Hotkeys.cpp:169 Kainote/HotkeysNaming.cpp:227
+#: Kainote/Hotkeys.cpp:169 Kainote/HotkeysNaming.cpp:228
 msgid "Previous tab"
 msgstr "이전 탭"
 
-#: Kainote/Hotkeys.cpp:170 Kainote/HotkeysNaming.cpp:238
+#: Kainote/Hotkeys.cpp:170 Kainote/HotkeysNaming.cpp:239
 msgid "Select line at current video position"
 msgstr "현재 영상지점으로 줄 이동"
 
-#: Kainote/Hotkeys.cpp:171 Kainote/HotkeysNaming.cpp:176
+#: Kainote/Hotkeys.cpp:171 Kainote/HotkeysNaming.cpp:177
 msgid "Help (not available in English)"
 msgstr "도움말 (영어 아님)"
 
@@ -2126,45 +2215,45 @@ msgstr "구분 열 붙여 넣기"
 msgid "Show subtitles preview"
 msgstr "자막 미리보기 표시"
 
-#: Kainote/Hotkeys.cpp:177 Kainote/HotkeysNaming.cpp:261
+#: Kainote/Hotkeys.cpp:177 Kainote/HotkeysNaming.cpp:262
 msgid "5 seconds forward"
 msgstr "5초 앞으로"
 
-#: Kainote/Hotkeys.cpp:178 Kainote/HotkeysNaming.cpp:254
+#: Kainote/Hotkeys.cpp:178 Kainote/HotkeysNaming.cpp:255
 msgid "5 seconds backward"
 msgstr "5초 뒤로"
 
-#: Kainote/Hotkeys.cpp:179 Kainote/HotkeysNaming.cpp:262
+#: Kainote/Hotkeys.cpp:179 Kainote/HotkeysNaming.cpp:263
 msgid "1 minute forward"
 msgstr "1분 앞으로"
 
-#: Kainote/Hotkeys.cpp:180 Kainote/HotkeysNaming.cpp:255
+#: Kainote/Hotkeys.cpp:180 Kainote/HotkeysNaming.cpp:256
 msgid "1 minute backward"
 msgstr "1분 뒤로"
 
-#: Kainote/Hotkeys.cpp:181 Kainote/HotkeysNaming.cpp:258
+#: Kainote/Hotkeys.cpp:181 Kainote/HotkeysNaming.cpp:259
 #: Kainote/VideoBox.cpp:163 Kainote/VideoFullscreen.cpp:65
 msgid "Next file"
 msgstr "다음 파일"
 
-#: Kainote/Hotkeys.cpp:182 Kainote/HotkeysNaming.cpp:264
+#: Kainote/Hotkeys.cpp:182 Kainote/HotkeysNaming.cpp:265
 #: Kainote/VideoBox.cpp:155
 msgid "Previous file"
 msgstr "이전 파일"
 
-#: Kainote/Hotkeys.cpp:183 Kainote/HotkeysNaming.cpp:267
+#: Kainote/Hotkeys.cpp:183 Kainote/HotkeysNaming.cpp:268
 msgid "Volume up"
 msgstr "소리 크게"
 
-#: Kainote/Hotkeys.cpp:184 Kainote/HotkeysNaming.cpp:268
+#: Kainote/Hotkeys.cpp:184 Kainote/HotkeysNaming.cpp:269
 msgid "Volume down"
 msgstr "소리 작게"
 
-#: Kainote/Hotkeys.cpp:185 Kainote/HotkeysNaming.cpp:257
+#: Kainote/Hotkeys.cpp:185 Kainote/HotkeysNaming.cpp:258
 msgid "Next chapter"
 msgstr "다음 장"
 
-#: Kainote/Hotkeys.cpp:186 Kainote/HotkeysNaming.cpp:263
+#: Kainote/Hotkeys.cpp:186 Kainote/HotkeysNaming.cpp:264
 msgid "Previous chapter"
 msgstr "이전 장"
 
@@ -2238,7 +2327,7 @@ msgid "Play line alt"
 msgstr "현재 줄 재생"
 
 #: Kainote/Hotkeys.cpp:209 Kainote/HotkeysNaming.cpp:56
-#: Kainote/HotkeysNaming.cpp:270 Kainote/VideoBox.cpp:161
+#: Kainote/HotkeysNaming.cpp:271 Kainote/VideoBox.cpp:161
 #: Kainote/VideoBox.cpp:920 Kainote/VideoFullscreen.cpp:63
 msgid "Stop"
 msgstr "멈춤"
@@ -2284,7 +2373,8 @@ msgid "Add lead-out"
 msgstr "종결부 추가"
 
 #: Kainote/Hotkeys.cpp:270
-msgid "The shortcuts file is outdated and will be replaced with the default one"
+msgid ""
+"The shortcuts file is outdated and will be replaced with the default one"
 msgstr "단축키 설정 파일은 더 이상 할 수 없으며 기본값으로 대체됩니다"
 
 #: Kainote/Hotkeys.cpp:373
@@ -2327,8 +2417,10 @@ msgid "Please enter a hotkey for \"%s\"."
 msgstr "단축키 입력 \"%s\"."
 
 #: Kainote/Hotkeys.cpp:641
-msgid "Global and editor shortcuts must include modifiers (e.g. Shift, Ctrl, Alt)."
-msgstr "전역 및 편집기 단축키에는 수정자(예: Shift, Ctrl, Alt)가 포함되어야 합니다."
+msgid ""
+"Global and editor shortcuts must include modifiers (e.g. Shift, Ctrl, Alt)."
+msgstr ""
+"전역 및 편집기 단축키에는 수정자(예: Shift, Ctrl, Alt)가 포함되어야 합니다."
 
 #: Kainote/Hotkeys.cpp:644
 msgid "You cannot use shortcuts for copying, cutting, and pasting."
@@ -2599,262 +2691,266 @@ msgstr ""
 msgid "Split lines by wraps"
 msgstr ""
 
-#: Kainote/HotkeysNaming.cpp:159 Kainote/KainoteFrame.cpp:316
+#: Kainote/HotkeysNaming.cpp:159 Kainote/KainoteFrame.cpp:317
 msgid "ASS file properties"
 msgstr "ASS 파일 정보"
 
 #: Kainote/HotkeysNaming.cpp:160
+msgid "Check for updates"
+msgstr ""
+
+#: Kainote/HotkeysNaming.cpp:161
 msgid "About"
 msgstr "프로그램 정보"
 
-#: Kainote/HotkeysNaming.cpp:161
+#: Kainote/HotkeysNaming.cpp:162
 msgid "Forum thread on animesub.info (Polish)"
 msgstr "포럼 animesub.info (폴란드어)"
 
-#: Kainote/HotkeysNaming.cpp:167 Kainote/KainoteFrame.cpp:297
+#: Kainote/HotkeysNaming.cpp:168 Kainote/KainoteFrame.cpp:298
 msgid "Open audio from video"
 msgstr "영상/소리 파일 열기"
 
-#: Kainote/HotkeysNaming.cpp:168 Kainote/KainoteFrame.cpp:347
-#: Kainote/KainoteFrame.cpp:348
+#: Kainote/HotkeysNaming.cpp:169 Kainote/KainoteFrame.cpp:348
+#: Kainote/KainoteFrame.cpp:349
 msgid "Load script"
 msgstr "스크립트 불러오기"
 
-#: Kainote/HotkeysNaming.cpp:169 Kainote/KainoteFrame.cpp:353
-#: Kainote/KainoteFrame.cpp:354
+#: Kainote/HotkeysNaming.cpp:170 Kainote/KainoteFrame.cpp:354
+#: Kainote/KainoteFrame.cpp:355
 msgid "Open shortcut mapping window"
 msgstr "단축키 설정 창 열기"
 
-#: Kainote/HotkeysNaming.cpp:170 Kainote/KainoteFrame.cpp:349
-#: Kainote/KainoteFrame.cpp:350
+#: Kainote/HotkeysNaming.cpp:171 Kainote/KainoteFrame.cpp:350
+#: Kainote/KainoteFrame.cpp:351
 msgid "Refresh autoload scripts"
 msgstr "자동 불러오기 스크립트 새로 고침"
 
-#: Kainote/HotkeysNaming.cpp:172 Kainote/KainoteFrame.cpp:301
+#: Kainote/HotkeysNaming.cpp:173 Kainote/KainoteFrame.cpp:302
 msgid "Close audio"
 msgstr "소리 닫기"
 
-#: Kainote/HotkeysNaming.cpp:177 Kainote/KainoteFrame.cpp:1144
-#: Kainote/OptionsDialog.cpp:648
+#: Kainote/HotkeysNaming.cpp:178 Kainote/KainoteFrame.cpp:1150
+#: Kainote/OptionsDialog.cpp:651
 msgid "Credits"
 msgstr "만든사람들"
 
-#: Kainote/HotkeysNaming.cpp:178 Kainote/KainoteFrame.cpp:342
+#: Kainote/HotkeysNaming.cpp:179 Kainote/KainoteFrame.cpp:343
 msgid "Hide tags"
 msgstr "태그 숨김"
 
-#: Kainote/HotkeysNaming.cpp:182 Kainote/KainoteFrame.cpp:250
-#: Kainote/KainoteFrame.cpp:251
+#: Kainote/HotkeysNaming.cpp:183 Kainote/KainoteFrame.cpp:251
+#: Kainote/KainoteFrame.cpp:252
 msgid "Open keyframes"
 msgstr "키 프레임 열기"
 
-#: Kainote/HotkeysNaming.cpp:183 Kainote/KainoteFrame.cpp:194
+#: Kainote/HotkeysNaming.cpp:184 Kainote/KainoteFrame.cpp:195
 msgid "Open auto save"
 msgstr "자동 저장 파일 열기"
 
-#: Kainote/HotkeysNaming.cpp:184 Kainote/KainoteFrame.cpp:351
-#: Kainote/KainoteFrame.cpp:352
+#: Kainote/HotkeysNaming.cpp:185 Kainote/KainoteFrame.cpp:352
+#: Kainote/KainoteFrame.cpp:353
 msgid "Run the last loaded script"
 msgstr "최근 스크립트 실행"
 
-#: Kainote/HotkeysNaming.cpp:185
+#: Kainote/HotkeysNaming.cpp:186
 msgid "Sort all lines by start time"
 msgstr "모든 줄 정렬 / 시작 시간"
 
-#: Kainote/HotkeysNaming.cpp:186
+#: Kainote/HotkeysNaming.cpp:187
 msgid "Sort all lines by end time"
 msgstr "모든 줄 정렬 / 종료 시간"
 
-#: Kainote/HotkeysNaming.cpp:187
+#: Kainote/HotkeysNaming.cpp:188
 msgid "Sort all lines by styles"
 msgstr "모든 줄 정렬 / 스타일"
 
-#: Kainote/HotkeysNaming.cpp:188
+#: Kainote/HotkeysNaming.cpp:189
 msgid "Sort all lines by actor"
 msgstr "모든 줄 정렬 / 배우"
 
-#: Kainote/HotkeysNaming.cpp:189
+#: Kainote/HotkeysNaming.cpp:190
 msgid "Sort all lines by effect"
 msgstr "모든 줄 정렬 / 효과"
 
-#: Kainote/HotkeysNaming.cpp:190
+#: Kainote/HotkeysNaming.cpp:191
 msgid "Sort all lines by layer"
 msgstr "모든 줄 정렬 / 레이어"
 
-#: Kainote/HotkeysNaming.cpp:191
+#: Kainote/HotkeysNaming.cpp:192
 msgid "Sort selected lines by start time"
 msgstr "선택 줄 정렬 / 시작 시간"
 
-#: Kainote/HotkeysNaming.cpp:192
+#: Kainote/HotkeysNaming.cpp:193
 msgid "Sort selected lines by end time"
 msgstr "선택 줄 정렬 / 종료 시간"
 
-#: Kainote/HotkeysNaming.cpp:193
+#: Kainote/HotkeysNaming.cpp:194
 msgid "Sort selected lines by styles"
 msgstr "선택 줄 정렬 / 스타일"
 
-#: Kainote/HotkeysNaming.cpp:194
+#: Kainote/HotkeysNaming.cpp:195
 msgid "Sort selected lines by actor"
 msgstr "선택 줄 정렬 / 배우"
 
-#: Kainote/HotkeysNaming.cpp:195
+#: Kainote/HotkeysNaming.cpp:196
 msgid "Sort selected lines by effect"
 msgstr "선택 줄 정렬 / 효과"
 
-#: Kainote/HotkeysNaming.cpp:196
+#: Kainote/HotkeysNaming.cpp:197
 msgid "Sort selected lines by layer"
 msgstr "선택 줄 정렬 / 레이어"
 
-#: Kainote/HotkeysNaming.cpp:197
+#: Kainote/HotkeysNaming.cpp:198
 msgid "Shift times / run time post processor"
 msgstr "시간 이동 / 포스트 프로세서"
 
-#: Kainote/HotkeysNaming.cpp:198 Kainote/KainoteFrame.cpp:274
+#: Kainote/HotkeysNaming.cpp:199 Kainote/KainoteFrame.cpp:275
 msgid "Go to previous keyframe"
 msgstr "이전 키 프레임"
 
-#: Kainote/HotkeysNaming.cpp:199 Kainote/KainoteFrame.cpp:276
+#: Kainote/HotkeysNaming.cpp:200 Kainote/KainoteFrame.cpp:277
 msgid "Go to next keyframe"
 msgstr "다음 키 프레임"
 
-#: Kainote/HotkeysNaming.cpp:200 Kainote/KainoteFrame.cpp:338
-#: Kainote/KainoteFrame.cpp:339
+#: Kainote/HotkeysNaming.cpp:201 Kainote/KainoteFrame.cpp:339
+#: Kainote/KainoteFrame.cpp:340
 msgid "Resample subtitles"
 msgstr "자막해상도 변경"
 
-#: Kainote/HotkeysNaming.cpp:202 Kainote/KainoteFrame.cpp:210
+#: Kainote/HotkeysNaming.cpp:203 Kainote/KainoteFrame.cpp:211
 msgid "Undo to last save"
 msgstr "마지막 저장으로 돌리기"
 
-#: Kainote/HotkeysNaming.cpp:203 Kainote/KainoteFrame.cpp:284
+#: Kainote/HotkeysNaming.cpp:204 Kainote/KainoteFrame.cpp:285
 msgid "Open video with FFMS2"
 msgstr "FFMS2로 영상 열기"
 
-#: Kainote/HotkeysNaming.cpp:204 Kainote/KainoteFrame.cpp:281
+#: Kainote/HotkeysNaming.cpp:205 Kainote/KainoteFrame.cpp:282
 #, fuzzy
 msgid "Zoom video"
 msgstr "영상 확대"
 
-#: Kainote/HotkeysNaming.cpp:205 Kainote/KainoteFrame.cpp:282
+#: Kainote/HotkeysNaming.cpp:206 Kainote/KainoteFrame.cpp:283
 #, fuzzy
 msgid "Turn off video zoom"
 msgstr "비디오 줌"
 
-#: Kainote/HotkeysNaming.cpp:206
+#: Kainote/HotkeysNaming.cpp:207
 msgid "View all"
 msgstr "모두 보기"
 
-#: Kainote/HotkeysNaming.cpp:207
+#: Kainote/HotkeysNaming.cpp:208
 msgid "View audio and subtitles"
 msgstr "소리 및 자막보기"
 
-#: Kainote/HotkeysNaming.cpp:208
+#: Kainote/HotkeysNaming.cpp:209
 msgid "View only subtitles"
 msgstr "자막만 보기"
 
-#: Kainote/HotkeysNaming.cpp:209
+#: Kainote/HotkeysNaming.cpp:210
 msgid "View video and subtitles"
 msgstr "영상 및 자막보기"
 
-#: Kainote/HotkeysNaming.cpp:210
+#: Kainote/HotkeysNaming.cpp:211
 msgid "View only video"
 msgstr "영상만 보기"
 
-#: Kainote/HotkeysNaming.cpp:213
+#: Kainote/HotkeysNaming.cpp:214
 msgid "Clean styles of ASS file"
 msgstr "스타일 초기화"
 
-#: Kainote/HotkeysNaming.cpp:214 Kainote/KainoteFrame.cpp:239
+#: Kainote/HotkeysNaming.cpp:215 Kainote/KainoteFrame.cpp:240
 msgid "Fix minor errors (experimental)"
 msgstr "자동 바꾸기 [책임 못 짐]"
 
-#: Kainote/HotkeysNaming.cpp:216 Kainote/KainoteFrame.cpp:159
+#: Kainote/HotkeysNaming.cpp:217 Kainote/KainoteFrame.cpp:160
 msgid "Load last session"
 msgstr "마지막 작업 열기"
 
-#: Kainote/HotkeysNaming.cpp:220 Kainote/KainoteFrame.cpp:291
+#: Kainote/HotkeysNaming.cpp:221 Kainote/KainoteFrame.cpp:292
 msgid "Open audio"
 msgstr "소리 파일 열기"
 
-#: Kainote/HotkeysNaming.cpp:224
+#: Kainote/HotkeysNaming.cpp:225
 msgid "Play active line"
 msgstr "현재 줄 재생"
 
-#: Kainote/HotkeysNaming.cpp:230 Kainote/KainoteFrame.cpp:189
+#: Kainote/HotkeysNaming.cpp:231 Kainote/KainoteFrame.cpp:190
 msgid "Remove subtitles from the editor"
 msgstr "모든 자막을 삭제하고 \"새 자막\"으로 만들기"
 
-#: Kainote/HotkeysNaming.cpp:232 Kainote/KainoteFrame.cpp:181
+#: Kainote/HotkeysNaming.cpp:233 Kainote/KainoteFrame.cpp:182
 msgid "Save all subtitles"
 msgstr "자막 모두 저장"
 
-#: Kainote/HotkeysNaming.cpp:235 Kainote/KainoteFrame.cpp:185
+#: Kainote/HotkeysNaming.cpp:236 Kainote/KainoteFrame.cpp:186
 msgid "Save translation"
 msgstr "번역 저장"
 
-#: Kainote/HotkeysNaming.cpp:236 Kainote/KainoteFrame.cpp:190
-#: Kainote/KainoteFrame.cpp:191
+#: Kainote/HotkeysNaming.cpp:237 Kainote/KainoteFrame.cpp:191
+#: Kainote/KainoteFrame.cpp:192
 msgid "Save subtitles using the video name"
 msgstr "영상과 같은 이름으로 자막 저장"
 
-#: Kainote/HotkeysNaming.cpp:239
+#: Kainote/HotkeysNaming.cpp:240
 msgid "Select lines"
 msgstr "선택 줄"
 
-#: Kainote/HotkeysNaming.cpp:240 Kainote/KainoteFrame.cpp:278
+#: Kainote/HotkeysNaming.cpp:241 Kainote/KainoteFrame.cpp:279
 msgid "Set audio position to video time"
 msgstr "영상지점으로 소리 이동"
 
-#: Kainote/HotkeysNaming.cpp:241 Kainote/KainoteFrame.cpp:280
+#: Kainote/HotkeysNaming.cpp:242 Kainote/KainoteFrame.cpp:281
 msgid "Set audio marker to video time"
 msgstr "영상지점 소리 표시선 설정"
 
-#: Kainote/HotkeysNaming.cpp:244
+#: Kainote/HotkeysNaming.cpp:245
 msgid "Settings"
 msgstr "프로그램 설정"
 
-#: Kainote/HotkeysNaming.cpp:245 Kainote/KainoteFrame.cpp:266
+#: Kainote/HotkeysNaming.cpp:246 Kainote/KainoteFrame.cpp:267
 msgid "Go to start time"
 msgstr "시작 시간으로"
 
-#: Kainote/HotkeysNaming.cpp:246 Kainote/KainoteFrame.cpp:269
+#: Kainote/HotkeysNaming.cpp:247 Kainote/KainoteFrame.cpp:270
 msgid "Go to end time of line"
 msgstr "종료 시간으로"
 
-#: Kainote/HotkeysNaming.cpp:249 Kainote/KainoteFrame.cpp:340
-#: Kainote/KainoteFrame.cpp:341
+#: Kainote/HotkeysNaming.cpp:250 Kainote/KainoteFrame.cpp:341
+#: Kainote/KainoteFrame.cpp:342
 msgid "Check spelling"
 msgstr "철자 확인창"
 
-#: Kainote/HotkeysNaming.cpp:251 Kainote/VideoBox.cpp:962
+#: Kainote/HotkeysNaming.cpp:252 Kainote/VideoBox.cpp:962
 msgid "Copy frame to clipboard"
 msgstr "현재 화면 복사(클립보드)"
 
-#: Kainote/HotkeysNaming.cpp:252 Kainote/VideoBox.cpp:965
+#: Kainote/HotkeysNaming.cpp:253 Kainote/VideoBox.cpp:965
 msgid "Remove video"
 msgstr "영상 삭제(휴지통으로)"
 
-#: Kainote/HotkeysNaming.cpp:253 Kainote/VideoBox.cpp:961
+#: Kainote/HotkeysNaming.cpp:254 Kainote/VideoBox.cpp:961
 msgid "Save frame as PNG"
 msgstr "PNG 파일로 화면 저장"
 
-#: Kainote/HotkeysNaming.cpp:256 Kainote/VideoBox.cpp:957
+#: Kainote/HotkeysNaming.cpp:257 Kainote/VideoBox.cpp:957
 msgid "Show / hide progress bar"
 msgstr "진행 표시 줄 보임/ 숨김"
 
-#: Kainote/HotkeysNaming.cpp:260 Kainote/VideoBox.cpp:958
+#: Kainote/HotkeysNaming.cpp:261 Kainote/VideoBox.cpp:958
 msgid "Change aspect ratio"
 msgstr "가로/세로 비율 변경"
 
-#: Kainote/HotkeysNaming.cpp:265 Kainote/VideoBox.cpp:960
+#: Kainote/HotkeysNaming.cpp:266 Kainote/VideoBox.cpp:960
 msgid "Copy frame with subtitles to clipboard"
 msgstr "현재 화면/자막 복사(클립보드)"
 
-#: Kainote/HotkeysNaming.cpp:266
+#: Kainote/HotkeysNaming.cpp:267
 msgid "Full screen"
 msgstr "전체 화면"
 
-#: Kainote/HotkeysNaming.cpp:269 Kainote/VideoBox.cpp:959
+#: Kainote/HotkeysNaming.cpp:270 Kainote/VideoBox.cpp:959
 msgid "Save frame with subtitles as PNG"
 msgstr "PNG 파일로 화면/자막 저장"
 
@@ -2879,596 +2975,627 @@ msgstr "아니오"
 msgid "Help"
 msgstr "도움말"
 
-#: Kainote/KainoteFrame.cpp:103
+#: Kainote/KainoteFrame.cpp:106
 msgid "Untitled - "
 msgstr "새 자막 - "
 
-#: Kainote/KainoteFrame.cpp:151
+#: Kainote/KainoteFrame.cpp:152
 msgid "Video duration"
 msgstr "영상의 길이"
 
-#: Kainote/KainoteFrame.cpp:151
+#: Kainote/KainoteFrame.cpp:152
 msgid "Video scale"
 msgstr "영상 크기"
 
-#: Kainote/KainoteFrame.cpp:151
+#: Kainote/KainoteFrame.cpp:152
 msgid "Video zoom"
 msgstr "영상 확대"
 
-#: Kainote/KainoteFrame.cpp:152
+#: Kainote/KainoteFrame.cpp:153
 msgid "Frames per second"
 msgstr "초당 프레임"
 
-#: Kainote/KainoteFrame.cpp:152 Kainote/SubsResampleDialog.cpp:31
+#: Kainote/KainoteFrame.cpp:153 Kainote/SubsResampleDialog.cpp:31
 msgid "Subtitles resolution"
 msgstr "자막 해상도"
 
-#: Kainote/KainoteFrame.cpp:152
+#: Kainote/KainoteFrame.cpp:153
 msgid "Video aspect ratio"
 msgstr "영상 가로 세로 비율"
 
-#: Kainote/KainoteFrame.cpp:152
+#: Kainote/KainoteFrame.cpp:153
 msgid "Video file name"
 msgstr "영상 파일 이름"
 
-#: Kainote/KainoteFrame.cpp:152
+#: Kainote/KainoteFrame.cpp:153
 msgid "Video resolution"
 msgstr "영상 해상도"
 
-#: Kainote/KainoteFrame.cpp:160
+#: Kainote/KainoteFrame.cpp:161
 msgid "Loads previously loaded files"
 msgstr "마지막으로 불러온 파일 열기"
 
-#: Kainote/KainoteFrame.cpp:161
+#: Kainote/KainoteFrame.cpp:162
 msgid "Load session from file"
 msgstr "파일에서 세션 불러오기"
 
-#: Kainote/KainoteFrame.cpp:162
+#: Kainote/KainoteFrame.cpp:163
 msgid "Loads session from saved session file"
 msgstr "저장된 세션 파일에서 세션 불러오기"
 
-#: Kainote/KainoteFrame.cpp:164
+#: Kainote/KainoteFrame.cpp:165
 msgid "Save session to file"
 msgstr "파일로 세션 저장"
 
-#: Kainote/KainoteFrame.cpp:164
+#: Kainote/KainoteFrame.cpp:165
 msgid "Saves session to file"
 msgstr "파일로 세션 저장"
 
-#: Kainote/KainoteFrame.cpp:167
+#: Kainote/KainoteFrame.cpp:168
 msgid "Ask whether to load the last session at program startup"
 msgstr "프로그램 실행 시 마지막 작업 물어보기"
 
-#: Kainote/KainoteFrame.cpp:168
+#: Kainote/KainoteFrame.cpp:169
 msgid "Asks whether to load previously loaded files at program startup"
 msgstr "프로그램을 시작할 때 최근에 읽은 파일을 불러올지 묻습니다"
 
-#: Kainote/KainoteFrame.cpp:171
+#: Kainote/KainoteFrame.cpp:172
 msgid "Load last session after program start"
 msgstr "마지막 작업 항상 열기"
 
-#: Kainote/KainoteFrame.cpp:172
+#: Kainote/KainoteFrame.cpp:173
 msgid "Loads previously loaded files at program startup"
 msgstr "프로그램 시작 후 마지막 세션 로드"
 
-#: Kainote/KainoteFrame.cpp:176
+#: Kainote/KainoteFrame.cpp:177
 msgid "&Open subtitles"
 msgstr "자막 열기[&O]"
 
-#: Kainote/KainoteFrame.cpp:177
+#: Kainote/KainoteFrame.cpp:178
 msgid "Open subtitle file"
 msgstr "자막 파일 열기"
 
-#: Kainote/KainoteFrame.cpp:178
+#: Kainote/KainoteFrame.cpp:179
 msgid "&Save"
 msgstr "저장[&S]"
 
-#: Kainote/KainoteFrame.cpp:179
+#: Kainote/KainoteFrame.cpp:180
 msgid "Save current file"
 msgstr "현재 파일 저장"
 
-#: Kainote/KainoteFrame.cpp:180
+#: Kainote/KainoteFrame.cpp:181
 msgid "Save &all"
 msgstr "모두 저장"
 
-#: Kainote/KainoteFrame.cpp:182
+#: Kainote/KainoteFrame.cpp:183
 msgid "Save &as..."
 msgstr "다른 이름으로...[&A]"
 
-#: Kainote/KainoteFrame.cpp:183
+#: Kainote/KainoteFrame.cpp:184
 msgid "Save as"
 msgstr "다른 이름으로 저장"
 
-#: Kainote/KainoteFrame.cpp:184
+#: Kainote/KainoteFrame.cpp:185
 msgid "Save &translation"
 msgstr "번역본 저장"
 
-#: Kainote/KainoteFrame.cpp:186
+#: Kainote/KainoteFrame.cpp:187
 msgid "Recently opened &subtitles"
 msgstr "열었던 자막"
 
-#: Kainote/KainoteFrame.cpp:187 Kainote/VideoBox.cpp:951
+#: Kainote/KainoteFrame.cpp:188 Kainote/VideoBox.cpp:951
 msgid "Recently opened subtitles"
 msgstr "열었던 자막"
 
-#: Kainote/KainoteFrame.cpp:188
+#: Kainote/KainoteFrame.cpp:189
 msgid "Remove subtitles from the &editor"
 msgstr "내용 삭제 후 새 파일 만들기"
 
-#: Kainote/KainoteFrame.cpp:194
+#: Kainote/KainoteFrame.cpp:195
 msgid "Opens the selected autosave from the list"
 msgstr "자동 저장 목록 열기"
 
-#: Kainote/KainoteFrame.cpp:196
+#: Kainote/KainoteFrame.cpp:197
 msgid "Opens the temporary file removal window"
 msgstr "임시 파일 제거 창 열기"
 
-#: Kainote/KainoteFrame.cpp:197
+#: Kainote/KainoteFrame.cpp:198
 msgid "Show / Hide log window"
 msgstr "기록 창 열기/닫기"
 
-#: Kainote/KainoteFrame.cpp:198
+#: Kainote/KainoteFrame.cpp:199
 msgid "Last session"
 msgstr "마지막 작업"
 
-#: Kainote/KainoteFrame.cpp:198
+#: Kainote/KainoteFrame.cpp:199
 msgid "Last session options"
 msgstr "마지막 작업 설정"
 
-#: Kainote/KainoteFrame.cpp:200
+#: Kainote/KainoteFrame.cpp:201
 msgid "&Settings"
 msgstr "설정[&T]"
 
-#: Kainote/KainoteFrame.cpp:201
+#: Kainote/KainoteFrame.cpp:202
 msgid "Program settings"
 msgstr "프로그램 설정"
 
-#: Kainote/KainoteFrame.cpp:202
+#: Kainote/KainoteFrame.cpp:203
 msgid "&Exit\tAlt-F4"
 msgstr "프로그램 종료[&X]\tAlt-F4"
 
-#: Kainote/KainoteFrame.cpp:203
+#: Kainote/KainoteFrame.cpp:204
 msgid "Exit the program"
 msgstr "프로그램 종료"
 
-#: Kainote/KainoteFrame.cpp:204
+#: Kainote/KainoteFrame.cpp:205
 msgid "&File"
 msgstr "파일[&F]"
 
-#: Kainote/KainoteFrame.cpp:207 Kainote/KainoteFrame.cpp:2323
+#: Kainote/KainoteFrame.cpp:208 Kainote/KainoteFrame.cpp:2329
 msgid "&Undo"
 msgstr "실행 취소[&U]"
 
-#: Kainote/KainoteFrame.cpp:212 Kainote/KainoteFrame.cpp:2339
+#: Kainote/KainoteFrame.cpp:213 Kainote/KainoteFrame.cpp:2345
 msgid "&Redo"
 msgstr "되돌리기[&R]"
 
-#: Kainote/KainoteFrame.cpp:214
+#: Kainote/KainoteFrame.cpp:215
 msgid "&History"
 msgstr "수정사항 보기[&H]"
 
-#: Kainote/KainoteFrame.cpp:216
+#: Kainote/KainoteFrame.cpp:217
 msgid "Find and re&place"
 msgstr "찾아서 바꾸기[&P]"
 
-#: Kainote/KainoteFrame.cpp:217
+#: Kainote/KainoteFrame.cpp:218
 msgid "Searches for the specified text phrases and replaces them"
 msgstr "글자를 검색하고 변경합니다"
 
-#: Kainote/KainoteFrame.cpp:218
+#: Kainote/KainoteFrame.cpp:219
 msgid "&Find"
 msgstr "찾기[&F]"
 
-#: Kainote/KainoteFrame.cpp:219
+#: Kainote/KainoteFrame.cpp:220
 msgid "Searches for the specified text phrase"
 msgstr "글자를 검색합니다"
 
-#: Kainote/KainoteFrame.cpp:221
+#: Kainote/KainoteFrame.cpp:222
 msgid "Finds the next occurrence of the phrase in the text"
 msgstr "텍스트에서 다음 문구 위치 찾기"
 
-#: Kainote/KainoteFrame.cpp:225 Kainote/ShiftTimes.cpp:357
+#: Kainote/KainoteFrame.cpp:226 Kainote/ShiftTimes.cpp:357
 #: Kainote/SubsGrid.cpp:460 Kainote/SubsGrid.cpp:491 Kainote/SubsGrid.cpp:497
 #: Kainote/SubsGrid.cpp:498 Kainote/SubsGrid.cpp:627 Kainote/SubsGrid.cpp:650
 #: Kainote/SubsGrid.cpp:658 Kainote/SubsGrid.cpp:659
 msgid "The starting time"
 msgstr "시작 시간"
 
-#: Kainote/KainoteFrame.cpp:226
+#: Kainote/KainoteFrame.cpp:227
 msgid "Sort by start time"
 msgstr "정렬 / 시작 시간"
 
-#: Kainote/KainoteFrame.cpp:227 Kainote/SelectLines.cpp:78
+#: Kainote/KainoteFrame.cpp:228 Kainote/SelectLines.cpp:78
 #: Kainote/ShiftTimes.cpp:358 Kainote/SubsGrid.cpp:461 Kainote/SubsGrid.cpp:628
 msgid "End time"
 msgstr "종료 시간"
 
-#: Kainote/KainoteFrame.cpp:228
+#: Kainote/KainoteFrame.cpp:229
 msgid "Sort by end time"
 msgstr "정렬 / 종료 시간"
 
-#: Kainote/KainoteFrame.cpp:229
+#: Kainote/KainoteFrame.cpp:230
 msgid "Sort by styles"
 msgstr "정렬 / 스타일"
 
-#: Kainote/KainoteFrame.cpp:230
+#: Kainote/KainoteFrame.cpp:231
 msgid "Sort by actor"
 msgstr "정렬 / 배우"
 
-#: Kainote/KainoteFrame.cpp:231
+#: Kainote/KainoteFrame.cpp:232
 msgid "Sort by effect"
 msgstr "정렬 / 효과"
 
-#: Kainote/KainoteFrame.cpp:232 Kainote/SubsGrid.cpp:459
+#: Kainote/KainoteFrame.cpp:233 Kainote/SubsGrid.cpp:459
 #: Kainote/SubsGrid.cpp:626
 msgid "Layer"
 msgstr "레이어"
 
-#: Kainote/KainoteFrame.cpp:232
+#: Kainote/KainoteFrame.cpp:233
 msgid "Sort by layer"
 msgstr "정렬 / 레이어"
 
-#: Kainote/KainoteFrame.cpp:235
+#: Kainote/KainoteFrame.cpp:236
 msgid "So&rt all lines"
 msgstr "줄 정렬[&S]"
 
-#: Kainote/KainoteFrame.cpp:236
+#: Kainote/KainoteFrame.cpp:237
 msgid "Sorts all lines in ASS file"
 msgstr "모든 줄 정렬 / ASS 파일"
 
-#: Kainote/KainoteFrame.cpp:237
+#: Kainote/KainoteFrame.cpp:238
 msgid "So&rt selected lines"
 msgstr "선택 줄 정렬[&O]"
 
-#: Kainote/KainoteFrame.cpp:238
+#: Kainote/KainoteFrame.cpp:239
 msgid "Sorts selected lines in ASS file"
 msgstr "선택 줄 정렬 / ASS 파일"
 
-#: Kainote/KainoteFrame.cpp:240
+#: Kainote/KainoteFrame.cpp:241
 msgid "Turns on multireplacer"
 msgstr "자동 바꾸기 창 열기"
 
-#: Kainote/KainoteFrame.cpp:241
+#: Kainote/KainoteFrame.cpp:242
 msgid "Select &lines"
 msgstr "다중 찾기[&L]"
 
-#: Kainote/KainoteFrame.cpp:241
+#: Kainote/KainoteFrame.cpp:242
 msgid "Selects lines by expressions"
 msgstr "주어진 텍스트 구문으로 선택한 줄을 만듭니다"
 
-#: Kainote/KainoteFrame.cpp:242
+#: Kainote/KainoteFrame.cpp:243
 msgid "&Edit"
 msgstr "편집[&E]"
 
-#: Kainote/KainoteFrame.cpp:246
+#: Kainote/KainoteFrame.cpp:247
 msgid "Opens video file"
 msgstr "영상 파일 열기"
 
-#: Kainote/KainoteFrame.cpp:248 Kainote/KainoteFrame.cpp:249
+#: Kainote/KainoteFrame.cpp:249 Kainote/KainoteFrame.cpp:250
 #: Kainote/VideoBox.cpp:952
 msgid "Recently opened videos"
 msgstr "열었던 영상"
 
-#: Kainote/KainoteFrame.cpp:254
+#: Kainote/KainoteFrame.cpp:255
 msgid "Recently opened keyframes"
 msgstr "열었던 키 프레임"
 
-#: Kainote/KainoteFrame.cpp:256
+#: Kainote/KainoteFrame.cpp:257
 msgid "Open dummy video"
 msgstr "더미 영상 열기"
 
-#: Kainote/KainoteFrame.cpp:258
+#: Kainote/KainoteFrame.cpp:259
 msgid "Inserts the start time from video"
 msgstr "현재 영상위치를 시작시간으로"
 
-#: Kainote/KainoteFrame.cpp:260
+#: Kainote/KainoteFrame.cpp:261
 msgid "Inserts the end time from video"
 msgstr "현재 영상위치를 종료시간으로"
 
-#: Kainote/KainoteFrame.cpp:262
+#: Kainote/KainoteFrame.cpp:263
 msgid "Go to previous frame"
 msgstr "이전 프레임으로 이동"
 
-#: Kainote/KainoteFrame.cpp:264
+#: Kainote/KainoteFrame.cpp:265
 msgid "Go to next frame"
 msgstr "다음 프레임으로 이동"
 
-#: Kainote/KainoteFrame.cpp:266
+#: Kainote/KainoteFrame.cpp:267
 msgid "Moves video to start time"
 msgstr "영상를 시작 시간으로 이동"
 
-#: Kainote/KainoteFrame.cpp:269
+#: Kainote/KainoteFrame.cpp:270
 msgid "Moves video to end time"
 msgstr "영상를 종료 시간으로 이동"
 
-#: Kainote/KainoteFrame.cpp:272
+#: Kainote/KainoteFrame.cpp:273
 msgid "Plays / Pauses video"
 msgstr "영상 재생 / 일시정지"
 
-#: Kainote/KainoteFrame.cpp:285
+#: Kainote/KainoteFrame.cpp:286
 msgid "Opens video with FFMS2 for frame precision"
 msgstr "프레임 정밀도를 위해 FFMS2로 영상 열기"
 
-#: Kainote/KainoteFrame.cpp:288
+#: Kainote/KainoteFrame.cpp:289
 msgid "&Video"
 msgstr "영상[&V]"
 
-#: Kainote/KainoteFrame.cpp:292
+#: Kainote/KainoteFrame.cpp:293
 msgid "Opens audio file"
 msgstr "소리 파일 열기"
 
-#: Kainote/KainoteFrame.cpp:295 Kainote/KainoteFrame.cpp:296
+#: Kainote/KainoteFrame.cpp:296 Kainote/KainoteFrame.cpp:297
 msgid "Recently opened audio"
 msgstr "열었던 소리"
 
-#: Kainote/KainoteFrame.cpp:298
+#: Kainote/KainoteFrame.cpp:299
 msgid "Opens audio from video"
 msgstr "영상/소리 열기"
 
-#: Kainote/KainoteFrame.cpp:299
+#: Kainote/KainoteFrame.cpp:300
 msgid "Open blank 2h30m audio"
 msgstr "빈 2h30m 오디오 열기"
 
-#: Kainote/KainoteFrame.cpp:300
+#: Kainote/KainoteFrame.cpp:301
 msgid "Opens blank audio 2 hour and 30 minutes long"
 msgstr "2시간 30분 길이의 빈 오디오를 엽니다"
 
-#: Kainote/KainoteFrame.cpp:302
+#: Kainote/KainoteFrame.cpp:303
 msgid "Closes audio"
 msgstr "소리를 닫기"
 
-#: Kainote/KainoteFrame.cpp:303
+#: Kainote/KainoteFrame.cpp:304
 msgid "A&udio"
 msgstr "소리[&U]"
 
-#: Kainote/KainoteFrame.cpp:306 Kainote/OptionsDialog.cpp:640
+#: Kainote/KainoteFrame.cpp:307 Kainote/OptionsDialog.cpp:643
 msgid "All"
 msgstr "모두"
 
-#: Kainote/KainoteFrame.cpp:306
+#: Kainote/KainoteFrame.cpp:307
 msgid "Shows all windows"
 msgstr "모든 창을 표시합니다"
 
-#: Kainote/KainoteFrame.cpp:307
+#: Kainote/KainoteFrame.cpp:308
 msgid "Shows only video window and subs window"
 msgstr "영상 창과 자막 창만 표시"
 
-#: Kainote/KainoteFrame.cpp:307
+#: Kainote/KainoteFrame.cpp:308
 msgid "Video and subs"
 msgstr "영상과 자막"
 
-#: Kainote/KainoteFrame.cpp:308
+#: Kainote/KainoteFrame.cpp:309
 msgid "Audio and subs"
 msgstr "소리와 자막"
 
-#: Kainote/KainoteFrame.cpp:308
+#: Kainote/KainoteFrame.cpp:309
 msgid "Shows only audio window and subs window"
 msgstr "소리 창과 자막 창만 표시"
 
-#: Kainote/KainoteFrame.cpp:309
+#: Kainote/KainoteFrame.cpp:310
 msgid "Only video"
 msgstr "영상만"
 
-#: Kainote/KainoteFrame.cpp:309
+#: Kainote/KainoteFrame.cpp:310
 msgid "Shows only video window"
 msgstr "영상 창만 표시"
 
-#: Kainote/KainoteFrame.cpp:310
+#: Kainote/KainoteFrame.cpp:311
 msgid "Only subtitles"
 msgstr "자막만"
 
-#: Kainote/KainoteFrame.cpp:310
+#: Kainote/KainoteFrame.cpp:311
 msgid "Shows only the subtitle window"
 msgstr "자막 창만 표시"
 
-#: Kainote/KainoteFrame.cpp:311
+#: Kainote/KainoteFrame.cpp:312
 msgid "View"
 msgstr "보기[&W]"
 
-#: Kainote/KainoteFrame.cpp:315
+#: Kainote/KainoteFrame.cpp:316
 msgid "Enables / disables editor"
 msgstr "편집박스 활성화 / 비활성화"
 
-#: Kainote/KainoteFrame.cpp:317 Kainote/ScriptInfo.cpp:24
+#: Kainote/KainoteFrame.cpp:318 Kainote/ScriptInfo.cpp:24
 msgid "ASS subtitle properties"
 msgstr "ASS 파일 정보"
 
-#: Kainote/KainoteFrame.cpp:318
+#: Kainote/KainoteFrame.cpp:319
 msgid "Style &manager"
 msgstr "스타일 관리자[&M]"
 
-#: Kainote/KainoteFrame.cpp:319
+#: Kainote/KainoteFrame.cpp:320
 msgid "Is used to manage ASS styles"
 msgstr "ASS 스타일 관리창을 엽니다"
 
-#: Kainote/KainoteFrame.cpp:322
+#: Kainote/KainoteFrame.cpp:323
 msgid "Converts to ASS format"
 msgstr "ASS로 변환"
 
-#: Kainote/KainoteFrame.cpp:324
+#: Kainote/KainoteFrame.cpp:325
 msgid "Converts to SRT format"
 msgstr "SRT로 변환"
 
-#: Kainote/KainoteFrame.cpp:326
+#: Kainote/KainoteFrame.cpp:327
 msgid "Converts to microDVD format"
 msgstr "MicroDVD로 변환하기"
 
-#: Kainote/KainoteFrame.cpp:328
+#: Kainote/KainoteFrame.cpp:329
 msgid "Converts to MPL2 format"
 msgstr "MPL2로 변환"
 
-#: Kainote/KainoteFrame.cpp:330
+#: Kainote/KainoteFrame.cpp:331
 msgid "Converts to TMPlayer format (not recommended)"
 msgstr "TMPlayer(권하지 않음)로 변환"
 
-#: Kainote/KainoteFrame.cpp:332 Kainote/OptionsDialog.cpp:1004
+#: Kainote/KainoteFrame.cpp:333 Kainote/OptionsDialog.cpp:1011
 msgid "Conversion"
 msgstr "변환"
 
-#: Kainote/KainoteFrame.cpp:332
+#: Kainote/KainoteFrame.cpp:333
 msgid "Converts from one format to another"
 msgstr "다른 자막 형식으로 변환"
 
-#: Kainote/KainoteFrame.cpp:334
+#: Kainote/KainoteFrame.cpp:335
 msgid "Shift &times...\tCtrl-I"
 msgstr "시간 조정... Ctrl-I"
 
-#: Kainote/KainoteFrame.cpp:335
+#: Kainote/KainoteFrame.cpp:336
 msgid "Shifting subtitle times"
 msgstr "자막 시간 이동"
 
-#: Kainote/KainoteFrame.cpp:343
+#: Kainote/KainoteFrame.cpp:344
 msgid "Hides tags in ASS and MDVD"
 msgstr "ASS 및 MDVD에서 태그 숨김"
 
-#: Kainote/KainoteFrame.cpp:344
+#: Kainote/KainoteFrame.cpp:345
 msgid "Su&btitles"
 msgstr "자막[&S]"
 
-#: Kainote/KainoteFrame.cpp:355
+#: Kainote/KainoteFrame.cpp:356
 msgid "Au&tomation"
 msgstr "자동화[&A]"
 
-#: Kainote/KainoteFrame.cpp:358
+#: Kainote/KainoteFrame.cpp:359
 msgid "&Help (English version is not yet available)"
 msgstr "도움말[&H] [폴란드어]"
 
-#: Kainote/KainoteFrame.cpp:359
+#: Kainote/KainoteFrame.cpp:360
 msgid "Opens help in default browser"
 msgstr "기본 브라우저에서 도움말 열기"
 
-#: Kainote/KainoteFrame.cpp:360
+#: Kainote/KainoteFrame.cpp:361
 msgid "&Forum thread on animesub.info (Polish)"
 msgstr "포럼[&F] animesub.info [폴란드어]"
 
-#: Kainote/KainoteFrame.cpp:361
+#: Kainote/KainoteFrame.cpp:362
 msgid "Opens forum thread on animesub.info (Polish)"
 msgstr "포럼 게시판을 엽니다 animesub.info[폴란드어]"
 
-#: Kainote/KainoteFrame.cpp:362
+#: Kainote/KainoteFrame.cpp:363
+msgid "Check for &updates"
+msgstr ""
+
+#: Kainote/KainoteFrame.cpp:364
+msgid "Checks whether a newer version is available"
+msgstr ""
+
+#: Kainote/KainoteFrame.cpp:365
 msgid "&About"
 msgstr "프로그램 정보[&A]"
 
-#: Kainote/KainoteFrame.cpp:363
+#: Kainote/KainoteFrame.cpp:366
 msgid "Shows program info"
 msgstr "프로그램 정보 보기"
 
-#: Kainote/KainoteFrame.cpp:365
+#: Kainote/KainoteFrame.cpp:368
 msgid "&Credits"
 msgstr "만든 사람들[&C]"
 
-#: Kainote/KainoteFrame.cpp:366
+#: Kainote/KainoteFrame.cpp:369
 msgid "Shows credits"
 msgstr "도움 준 분들"
 
-#: Kainote/KainoteFrame.cpp:367
+#: Kainote/KainoteFrame.cpp:370
 msgid "&Help"
 msgstr "도움말[&H]"
 
-#: Kainote/KainoteFrame.cpp:583 Kainote/KainoteFrame.cpp:600
+#: Kainote/KainoteFrame.cpp:586 Kainote/KainoteFrame.cpp:603
 #: Kainote/ProgressDialog.cpp:109
 #, c-format
 msgid "Time elapsed: %s"
 msgstr "경과 시간: %s"
 
-#: Kainote/KainoteFrame.cpp:897
+#: Kainote/KainoteFrame.cpp:900
 msgid "Choose script"
 msgstr "스크립트 선택"
 
-#: Kainote/KainoteFrame.cpp:899
+#: Kainote/KainoteFrame.cpp:902
 msgid "Script files (*.lua),(*.moon)|*.lua;*.moon;"
 msgstr "스크립트 파일 (*.lua),(*.moon)|*.lua;*.moon;"
 
-#: Kainote/KainoteFrame.cpp:916
+#: Kainote/KainoteFrame.cpp:919
 msgid "This subtitle file does not have any scripts added"
 msgstr "이 자막에는 스크립트가 추가되지 않았습니다"
 
-#: Kainote/KainoteFrame.cpp:925 Kainote/KainoteFrame.cpp:2628
+#: Kainote/KainoteFrame.cpp:928 Kainote/KainoteFrame.cpp:2634
 #, c-format
 msgid "Validation Lua script '%s' failed"
 msgstr "'%s' Lua 스크립트 유효성 검사 실패"
 
-#: Kainote/KainoteFrame.cpp:1006 Kainote/SubsGrid.cpp:906
+#: Kainote/KainoteFrame.cpp:1009 Kainote/SubsGrid.cpp:906
 #: Kainote/VideoBox.cpp:1089
 msgid "Choose subtitle file"
 msgstr "자막 파일 선택"
 
-#: Kainote/KainoteFrame.cpp:1009
-msgid "Subtitle files (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt|Videos with embedded subtitles (*.mkv),(*.ogm)|*.mkv;*.ogm"
-msgstr "자막 파일(*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*. txt|자막이 있는 영상(*.mkv),(*.ogm)|*.mkv;*.ogm"
+#: Kainote/KainoteFrame.cpp:1012
+msgid ""
+"Subtitle files (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|"
+"*.ass;*.ssa;*.srt;*.sub;*.txt|Videos with embedded subtitles (*.mkv),(*.ogm)|"
+"*.mkv;*.ogm"
+msgstr ""
+"자막 파일(*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*. "
+"txt|자막이 있는 영상(*.mkv),(*.ogm)|*.mkv;*.ogm"
 
-#: Kainote/KainoteFrame.cpp:1039
-msgid "Video files (*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.mpg;*.mpeg;*.3gp;*.avs|All files (*.*)|*.*"
-msgstr "영상 파일 (*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.mpg;*.mpeg;*.3gp;*.avs|모든 파일 (*.*)|*.*"
+#: Kainote/KainoteFrame.cpp:1042
+msgid ""
+"Video files (*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
+"(*.3gp),(*.mpg),(*.mpeg),(*.avs)|"
+"*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.mpg;*.mpeg;*.3gp;*.avs|All "
+"files (*.*)|*.*"
+msgstr ""
+"영상 파일 (*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
+"(*.3gp),(*.mpg),(*.mpeg),(*.avs)|"
+"*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.mpg;*.mpeg;*.3gp;*.avs|모"
+"든 파일 (*.*)|*.*"
 
-#: Kainote/KainoteFrame.cpp:1055
-msgid "Keyframes file (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|All files (*.*)|*.*"
-msgstr "키 프레임 파일 (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|모든 파일 (*.*)|*.*"
+#: Kainote/KainoteFrame.cpp:1058
+msgid ""
+"Keyframes file (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|"
+"All files (*.*)|*.*"
+msgstr ""
+"키 프레임 파일 (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|"
+"모든 파일 (*.*)|*.*"
 
-#: Kainote/KainoteFrame.cpp:1107
+#: Kainote/KainoteFrame.cpp:1113
 #, c-format
 msgid ""
 "Subtitle editor by Marcin Drob aka Bakura or Bjakja (bjakja7@gmail.com),\n"
 "version %s from %s"
 msgstr ""
-"\"Marcin Drob aka Bakura\" 또는 \"Bjakja\"의 자막 편집기 (bjakja7@gmail.com),\n"
+"\"Marcin Drob aka Bakura\" 또는 \"Bjakja\"의 자막 편집기 "
+"(bjakja7@gmail.com),\n"
 "버전 %s, 업데이트 %s"
 
-#: Kainote/KainoteFrame.cpp:1109
+#: Kainote/KainoteFrame.cpp:1115
 msgid ""
 "I wrote this program to replace two programs: Bestplayer and Aegisub.\n"
 "\n"
 msgstr ""
-"두 프로그램을 대체하기 위해이 프로그램을 작성했습니다.: Bestplayer와 Aegisub.\n"
+"두 프로그램을 대체하기 위해이 프로그램을 작성했습니다.: Bestplayer와 "
+"Aegisub.\n"
 "\n"
 
-#: Kainote/KainoteFrame.cpp:1110
+#: Kainote/KainoteFrame.cpp:1116
 msgid ""
-"If you have noticed any bugs or have any suggestions for changes or new features,\n"
-"you can write about it in: Discord https://discord.gg/9WacFTtK6q, Github, or by email.\n"
+"If you have noticed any bugs or have any suggestions for changes or new "
+"features,\n"
+"you can write about it in: Discord https://discord.gg/9WacFTtK6q, Github, or "
+"by email.\n"
 "\n"
 msgstr ""
 "버그를 발견했거나 변경 사항이나 새로운 기능에 대한 제안 사항이 있는 경우,\n"
-"Discord https://discord.gg/9WacFTtK6q, Github 또는 이메일로 이에 대해 작성할 수 있습니다.\n"
+"Discord https://discord.gg/9WacFTtK6q, Github 또는 이메일로 이에 대해 작성할 "
+"수 있습니다.\n"
 "\n"
 
-#: Kainote/KainoteFrame.cpp:1111
+#: Kainote/KainoteFrame.cpp:1117
 msgid "Kainote includes parts of the following projects:\n"
 msgstr "Kainote에는 다음 프로젝트의 일부가 포함됩니다:\n"
 
-#: Kainote/KainoteFrame.cpp:1113
+#: Kainote/KainoteFrame.cpp:1119
 msgid ""
-"Color picker, demuxing subtitles from MKV, audio box, audio player, automation,\n"
+"Color picker, demuxing subtitles from MKV, audio box, audio player, "
+"automation,\n"
 "and several other individual features taken from Aegisub -\n"
 msgstr ""
 "Aegisub에서 가져온 기능 - \n"
 "색상 선택기, mkv자막 muxing, 소리박스, 소리 재생, 자동화\n"
 
-#: Kainote/KainoteFrame.cpp:1124
+#: Kainote/KainoteFrame.cpp:1130
 msgid "About Kainote"
 msgstr "Kainote 정보"
 
-#: Kainote/KainoteFrame.cpp:1129
+#: Kainote/KainoteFrame.cpp:1135
 msgid "Graphical help: (buttons, help pictures etc.)\n"
 msgstr "그래픽 지원: (버튼, 이미지 기타 등등..)\n"
 
-#: Kainote/KainoteFrame.cpp:1130
+#: Kainote/KainoteFrame.cpp:1136
 msgid "- Xandros (new video buttons).\n"
 msgstr "- Xandros (새로운 영상 버튼).\n"
 
-#: Kainote/KainoteFrame.cpp:1131
+#: Kainote/KainoteFrame.cpp:1137
 msgid "- Devilkan (menu and toolbar buttons)\n"
 msgstr "- Devilkan (메뉴 및 도구 모음 버튼)\n"
 
-#: Kainote/KainoteFrame.cpp:1132
+#: Kainote/KainoteFrame.cpp:1138
 msgid "- Zły Los (icons for file associations and menu).\n"
 msgstr "- Zły Los (파일 연결 및 메뉴 아이콘).\n"
 
-#: Kainote/KainoteFrame.cpp:1133
+#: Kainote/KainoteFrame.cpp:1139
 msgid "Testers:\n"
 msgstr "테스터:\n"
 
-#: Kainote/KainoteFrame.cpp:1134
+#: Kainote/KainoteFrame.cpp:1140
 msgid ""
 "- Sacredus (first translator using translator mode,\n"
 "great help testing Kainote on a slow computer)\n"
@@ -3476,52 +3603,61 @@ msgstr ""
 "- Sacredus (번역 모드를 사용하는 첫 번째 사용자입니다,\n"
 "느린 컴퓨터에서 Kainote를 테스트하는데 많은 도움이 되었습니다).\n"
 
-#: Kainote/KainoteFrame.cpp:1135
-msgid "- Devilkan (crashhunter, because of his system and habits he made Kainote crash a lot\n"
+#: Kainote/KainoteFrame.cpp:1141
+msgid ""
+"- Devilkan (crashhunter, because of his system and habits he made Kainote "
+"crash a lot\n"
 msgstr "- Devilkan (문자 설정 도구를 설정하는데 도움을 주고,\n"
 
-#: Kainote/KainoteFrame.cpp:1136
-msgid "helped with typesetting tools and came up with many more improvements).\n"
-msgstr "그의 시스템과 습관으로 인해 많은 버그를 추적하고 오류를 수정할 수 있었습니다).\n"
+#: Kainote/KainoteFrame.cpp:1142
+msgid ""
+"helped with typesetting tools and came up with many more improvements).\n"
+msgstr ""
+"그의 시스템과 습관으로 인해 많은 버그를 추적하고 오류를 수정할 수 있었습니"
+"다).\n"
 
-#: Kainote/KainoteFrame.cpp:1137
-msgid "- MatiasMovie (found some crashes and suggessted some improvements, helps with crash debugging).\n"
-msgstr "- MatiasMovie (일부 충돌을 발견하고 몇 가지 개선 사항을 제안했으며 버그 수정에 도움이 되었습니다).\n"
+#: Kainote/KainoteFrame.cpp:1143
+msgid ""
+"- MatiasMovie (found some crashes and suggessted some improvements, helps "
+"with crash debugging).\n"
+msgstr ""
+"- MatiasMovie (일부 충돌을 발견하고 몇 가지 개선 사항을 제안했으며 버그 수정"
+"에 도움이 되었습니다).\n"
 
-#: Kainote/KainoteFrame.cpp:1138
+#: Kainote/KainoteFrame.cpp:1144
 msgid "- mas1904 (found some errors and helping with crash debuging).\n"
 msgstr "- mas1904 (오류를 발견하고 충돌 디버깅에 도움을 주었습니다).\n"
 
-#: Kainote/KainoteFrame.cpp:1139
+#: Kainote/KainoteFrame.cpp:1145
 msgid "- Senami (made new themes and found some bugs).\n"
 msgstr "- Senami (새로운 테마를 만들고 몇 가지 버그를 발견했습니다).\n"
 
-#: Kainote/KainoteFrame.cpp:1140
+#: Kainote/KainoteFrame.cpp:1146
 msgid "- altinat (Thai translation).\n"
 msgstr "- altinat (태국어 번역).\n"
 
-#: Kainote/KainoteFrame.cpp:1141
+#: Kainote/KainoteFrame.cpp:1147
 msgid "- labrie75 (Korean translation).\n"
 msgstr "- labrie75 (한국어 번역).\n"
 
-#: Kainote/KainoteFrame.cpp:1142
+#: Kainote/KainoteFrame.cpp:1148
 msgid "- Niskala5570 (Malay translation).\n"
 msgstr "- Niskala5570(말레이어 번역).\n"
 
-#: Kainote/KainoteFrame.cpp:1143
+#: Kainote/KainoteFrame.cpp:1149
 msgid "Thanks to other Kainote users who reported bugs:\n"
 msgstr "프로그램을 사용하고 버그를 제보 해 주신 분들께 감사드립니다.\n"
 
-#: Kainote/KainoteFrame.cpp:1263
+#: Kainote/KainoteFrame.cpp:1269
 msgid "Subtitle file "
 msgstr "자막 파일 "
 
-#: Kainote/KainoteFrame.cpp:1273
+#: Kainote/KainoteFrame.cpp:1279
 msgid "Save subtitle file"
 msgstr "자막 파일 저장"
 
-#: Kainote/KainoteFrame.cpp:1280 Kainote/KainoteFrame.cpp:1296
-#: Kainote/KainoteFrame.cpp:2499
+#: Kainote/KainoteFrame.cpp:1286 Kainote/KainoteFrame.cpp:1302
+#: Kainote/KainoteFrame.cpp:2505
 msgid ""
 "Chosen file is read only,\n"
 "please save with different name or change file attribute."
@@ -3529,85 +3665,85 @@ msgstr ""
 "선택한 파일은 읽기 전용이며,\n"
 "다른 이름으로 저장하거나 파일 속성을 변경하십시오."
 
-#: Kainote/KainoteFrame.cpp:1346
+#: Kainote/KainoteFrame.cpp:1352
 #, c-format
 msgid "Load subtitles named \"%s\"?"
 msgstr "%s 파일도 같이 불러 오겠습니까?"
 
-#: Kainote/KainoteFrame.cpp:1410 Kainote/Visuals.cpp:252
+#: Kainote/KainoteFrame.cpp:1416 Kainote/Visuals.cpp:252
 msgid "Cannot open subtitle file"
 msgstr "자막 파일을 열 수 없음"
 
-#: Kainote/KainoteFrame.cpp:1559 Kainote/OptionsDialog.cpp:725
+#: Kainote/KainoteFrame.cpp:1565 Kainote/OptionsDialog.cpp:728
 #: Kainote/ProviderFFMS2.cpp:888 Kainote/ProviderFFMS2.cpp:899
 #: Kainote/ScriptInfo.cpp:118 Kainote/stylestore.cpp:771
 #: Kainote/stylestore.cpp:772
 msgid "None"
 msgstr "없음"
 
-#: Kainote/KainoteFrame.cpp:2109
+#: Kainote/KainoteFrame.cpp:2115
 #, c-format
 msgid "Save subtitles named \"%s\" before %s?"
 msgstr "\"%s\"로 저장 후에 %s?"
 
-#: Kainote/KainoteFrame.cpp:2110
+#: Kainote/KainoteFrame.cpp:2116
 msgid "exiting program"
 msgstr "프로그램 종료"
 
-#: Kainote/KainoteFrame.cpp:2111
+#: Kainote/KainoteFrame.cpp:2117
 msgid "closing tab"
 msgstr "탭 닫기"
 
-#: Kainote/KainoteFrame.cpp:2112
+#: Kainote/KainoteFrame.cpp:2118
 msgid "loading new subtitles"
 msgstr "자막을 불러올까요"
 
-#: Kainote/KainoteFrame.cpp:2113
+#: Kainote/KainoteFrame.cpp:2119
 msgid "removing subtitles"
 msgstr "내용 삭제"
 
-#: Kainote/KainoteFrame.cpp:2151 Kainote/OptionsDialog.cpp:661
+#: Kainote/KainoteFrame.cpp:2157 Kainote/OptionsDialog.cpp:664
 msgid "Cannot load audio hotkeys"
 msgstr "소리 단축키를 불러올 수 없음"
 
-#: Kainote/KainoteFrame.cpp:2152 Kainote/OptionsDialog.cpp:291
+#: Kainote/KainoteFrame.cpp:2158 Kainote/OptionsDialog.cpp:292
 #: Kainote/ProviderFFMS2.cpp:65
 msgid "Cannot load audio configuration"
 msgstr "소리 설정을 불러올 수 없음"
 
-#: Kainote/KainoteFrame.cpp:2156
+#: Kainote/KainoteFrame.cpp:2162
 msgid "Choose audio file"
 msgstr "소리 파일 선택"
 
-#: Kainote/KainoteFrame.cpp:2159
+#: Kainote/KainoteFrame.cpp:2165
 msgid "Audio and video files"
 msgstr "영상 및 소리 파일"
 
-#: Kainote/KainoteFrame.cpp:2161
+#: Kainote/KainoteFrame.cpp:2167
 msgid "All files"
 msgstr "모든 파이"
 
-#: Kainote/KainoteFrame.cpp:2320
+#: Kainote/KainoteFrame.cpp:2326
 msgid "Undo to "
 msgstr "실행 취소 - "
 
-#: Kainote/KainoteFrame.cpp:2336
+#: Kainote/KainoteFrame.cpp:2342
 msgid "Redo to "
 msgstr "되돌리기 - "
 
-#: Kainote/KainoteFrame.cpp:2482
+#: Kainote/KainoteFrame.cpp:2488
 msgid "Choose session file"
 msgstr "세션 파일 선택"
 
-#: Kainote/KainoteFrame.cpp:2484 Kainote/KainoteFrame.cpp:2493
+#: Kainote/KainoteFrame.cpp:2490 Kainote/KainoteFrame.cpp:2499
 msgid "Session file (*.kls),|*.kls"
 msgstr "세션 파일(*.kls),|*.kls"
 
-#: Kainote/KainoteFrame.cpp:2492
+#: Kainote/KainoteFrame.cpp:2498
 msgid "Save session file"
 msgstr "세션 파일 저장"
 
-#: Kainote/KainoteFrame.cpp:2602
+#: Kainote/KainoteFrame.cpp:2608
 #, c-format
 msgid "Hotkey \"%s\" it's not script hotkey."
 msgstr "단축키 '%s'는 스크립트의 내용이 아닙니다."
@@ -3616,7 +3752,7 @@ msgstr "단축키 '%s'는 스크립트의 내용이 아닙니다."
 msgid "Log window"
 msgstr "기록 창"
 
-#: Kainote/MappedButton.cpp:40 Kainote/OptionsDialog.cpp:1021
+#: Kainote/MappedButton.cpp:40 Kainote/OptionsDialog.cpp:1028
 #: Kainote/StyleChange.cpp:269 Kainote/VisualAllTagsEdition.cpp:125
 #: Kainote/VisualDrawingShapes.cpp:101
 msgid "Apply"
@@ -3943,15 +4079,15 @@ msgstr "파일이 열리지 않았습니다."
 msgid "Cannot save to file."
 msgstr "파일을 저장할 수 없습니다."
 
-#: Kainote/OptionsDialog.cpp:297
+#: Kainote/OptionsDialog.cpp:298
 msgid "Open sorted subtitles"
 msgstr "정렬된 자막으로 열기"
 
-#: Kainote/OptionsDialog.cpp:297
+#: Kainote/OptionsDialog.cpp:298
 msgid "Turn spell checking"
 msgstr "맞춤법 검사"
 
-#: Kainote/OptionsDialog.cpp:298
+#: Kainote/OptionsDialog.cpp:299
 msgid ""
 "Select the line with the time line\n"
 "of the previous active tab"
@@ -3959,19 +4095,19 @@ msgstr ""
 "종료 전\n"
 "마지막 탭의 번호 선택"
 
-#: Kainote/OptionsDialog.cpp:299
+#: Kainote/OptionsDialog.cpp:300
 msgid "Always open subtitles in a new tab"
 msgstr "항상 새 탭으로 열기"
 
-#: Kainote/OptionsDialog.cpp:299
+#: Kainote/OptionsDialog.cpp:300
 msgid "Show suggestions by double-clicking on misspell"
 msgstr "두 번 클릭하여 맞춤법 오류 제안을 표시"
 
-#: Kainote/OptionsDialog.cpp:300
+#: Kainote/OptionsDialog.cpp:301
 msgid "Stay on selected line when editing times"
 msgstr "시간 편집 시 다음 행으로 이동 안 함"
 
-#: Kainote/OptionsDialog.cpp:301
+#: Kainote/OptionsDialog.cpp:302
 msgid ""
 "Turn off edits preview on video\n"
 "(re-opening tab is required)"
@@ -3979,7 +4115,7 @@ msgstr ""
 "동영상의 편집 미리 보기를 해제-편집 후 엔터키로 적용\n"
 "(새로 열어야 설정 적용)"
 
-#: Kainote/OptionsDialog.cpp:302
+#: Kainote/OptionsDialog.cpp:303
 msgid ""
 "Turn searching of visible line\n"
 "after switching from full screen"
@@ -3987,182 +4123,182 @@ msgstr ""
 "전체 화면 종료 후\n"
 "영상지점으로 줄 이동"
 
-#: Kainote/OptionsDialog.cpp:303
+#: Kainote/OptionsDialog.cpp:304
 msgid "Change active line after add to selection"
 msgstr "여러 줄 선택시 마지막 선택을 활성 줄로"
 
-#: Kainote/OptionsDialog.cpp:303
+#: Kainote/OptionsDialog.cpp:304
 msgid "Synchronize time shifting window in all tabs"
 msgstr "모든 탭에서 시간 이동 같이 적용"
 
-#: Kainote/OptionsDialog.cpp:304
+#: Kainote/OptionsDialog.cpp:305
 msgid "Hide original on video in translator mode"
 msgstr "번역 모드에서 원본 글자 영상에 출력 안 함"
 
-#: Kainote/OptionsDialog.cpp:304
+#: Kainote/OptionsDialog.cpp:305
 msgid "Show original in translator mode"
 msgstr "번역 모드에서 원본도 같이 보기"
 
-#: Kainote/OptionsDialog.cpp:305
+#: Kainote/OptionsDialog.cpp:306
 msgid "Do not change selections when duplicating dialogue lines"
 msgstr "대화 줄 복제 시 선택 항목 변경 안 함"
 
-#: Kainote/OptionsDialog.cpp:306
+#: Kainote/OptionsDialog.cpp:307
 msgid "Do not vertically center the active line in the subtitle grid"
 msgstr "자막보기의 중앙에 행을 배치하지 마십시오"
 
-#: Kainote/OptionsDialog.cpp:306
+#: Kainote/OptionsDialog.cpp:307
 msgid "Use numpad shortcuts in text fields"
 msgstr "키패드 단축키 지정 사용"
 
-#: Kainote/OptionsDialog.cpp:307
+#: Kainote/OptionsDialog.cpp:308
 msgid "Do not warn about resolution mismatch"
 msgstr "해상도 비호환성에 대해 알리지 않음"
 
-#: Kainote/OptionsDialog.cpp:307
+#: Kainote/OptionsDialog.cpp:308
 msgid "Turn off visual tools warning"
 msgstr "시각적도구 사용 시 경고문구 해제"
 
-#: Kainote/OptionsDialog.cpp:308
+#: Kainote/OptionsDialog.cpp:309
 msgid "Compatibility with older Kainote scripts"
 msgstr "이전 Kainote 스크립트와의 호환성"
 
-#: Kainote/OptionsDialog.cpp:330
+#: Kainote/OptionsDialog.cpp:333
 msgid "Language (program restart required)"
 msgstr "현지화 (프로그램 재시작 후 적용)"
 
-#: Kainote/OptionsDialog.cpp:342
+#: Kainote/OptionsDialog.cpp:345
 msgid "Put files .dic and .aff to \"Dictionary\" folder"
 msgstr ".dic 및 .aff 파일을 \"Dictionary\"폴더에 넣습니다"
 
-#: Kainote/OptionsDialog.cpp:343
+#: Kainote/OptionsDialog.cpp:346
 msgid "Spell checker language (\"Dictionary\" folder)"
 msgstr "맞춤법 검사 (\"Dictionary\" 폴더)"
 
-#: Kainote/OptionsDialog.cpp:366
+#: Kainote/OptionsDialog.cpp:369
 msgid "0 turns off saving while editing"
 msgstr "0으로 하면 저장하지 않음"
 
-#: Kainote/OptionsDialog.cpp:368
+#: Kainote/OptionsDialog.cpp:371
 msgid "Number of autosaves can be set from 2 to 1000000"
 msgstr "자동 저장 수는 2에서 1000000까지 설정할 수 있습니다"
 
-#: Kainote/OptionsDialog.cpp:373
+#: Kainote/OptionsDialog.cpp:376
 msgid "Number of tab name characters. Range from 20 to 150"
 msgstr "탭에 표시되는 문자 수는 20에서 150까지 설정할 수 있습니다"
 
-#: Kainote/OptionsDialog.cpp:387
+#: Kainote/OptionsDialog.cpp:390
 msgid "Number of edits to save"
 msgstr "저장할 수정 횟수"
 
-#: Kainote/OptionsDialog.cpp:390
+#: Kainote/OptionsDialog.cpp:393
 msgid "Maximum number of autosave files"
 msgstr "자동 저장 파일 갯수"
 
-#: Kainote/OptionsDialog.cpp:393
+#: Kainote/OptionsDialog.cpp:396
 msgid "Start frame offset in ms:"
 msgstr "시작 프레임 오프셋(ms):"
 
-#: Kainote/OptionsDialog.cpp:396
+#: Kainote/OptionsDialog.cpp:399
 msgid "End frame offset in ms:"
 msgstr "마지막 프레임 오프셋(ms):"
 
-#: Kainote/OptionsDialog.cpp:399
+#: Kainote/OptionsDialog.cpp:402
 msgid "ASS tag replacement:"
 msgstr "태그숨김 대체 문자:"
 
-#: Kainote/OptionsDialog.cpp:402
+#: Kainote/OptionsDialog.cpp:405
 msgid "Number of tab name characters"
 msgstr "탭 이름 문자 수"
 
-#: Kainote/OptionsDialog.cpp:405
+#: Kainote/OptionsDialog.cpp:408
 msgid "LUA scripts tracking level"
 msgstr "LUA 스크립트 로그 추적 수준"
 
-#: Kainote/OptionsDialog.cpp:414
+#: Kainote/OptionsDialog.cpp:417
 msgid "Subtitle grid font:"
 msgstr "자막보기 글꼴:"
 
-#: Kainote/OptionsDialog.cpp:421
+#: Kainote/OptionsDialog.cpp:424
 msgid "Program font:"
 msgstr "프로그램 글꼴:"
 
-#: Kainote/OptionsDialog.cpp:424
+#: Kainote/OptionsDialog.cpp:427
 msgid "Calculate spaces and punctation characters for wraps"
 msgstr ""
 
-#: Kainote/OptionsDialog.cpp:427
+#: Kainote/OptionsDialog.cpp:430
 msgid "Calculate spaces and punctation characters for CPS"
 msgstr ""
 
-#: Kainote/OptionsDialog.cpp:432
+#: Kainote/OptionsDialog.cpp:435
 msgid "Autoload loading method"
 msgstr "스크립트 자동 불러오기 방법"
 
-#: Kainote/OptionsDialog.cpp:433
+#: Kainote/OptionsDialog.cpp:436
 msgid "After open menu"
 msgstr "자동화 메뉴 클릭 후 모두"
 
-#: Kainote/OptionsDialog.cpp:433
+#: Kainote/OptionsDialog.cpp:436
 msgid "After open menu asynchronously"
 msgstr "자동화 메뉴 클릭 후 순차적으로"
 
-#: Kainote/OptionsDialog.cpp:433
+#: Kainote/OptionsDialog.cpp:436
 msgid "After program start"
 msgstr "프로그램 시작과 동시에"
 
-#: Kainote/OptionsDialog.cpp:433
+#: Kainote/OptionsDialog.cpp:436
 msgid "After program start asynchronously"
 msgstr "프로그램 시작 후"
 
-#: Kainote/OptionsDialog.cpp:439
+#: Kainote/OptionsDialog.cpp:442
 #, fuzzy
 msgid "Folder with external fonts"
 msgstr "외부 글꼴로 폴더"
 
-#: Kainote/OptionsDialog.cpp:442 Kainote/VideoToolbar.cpp:508
+#: Kainote/OptionsDialog.cpp:445 Kainote/VideoToolbar.cpp:508
 #: Kainote/VideoToolbar.cpp:525
 msgid "Choose"
 msgstr "선택"
 
-#: Kainote/OptionsDialog.cpp:444
+#: Kainote/OptionsDialog.cpp:447
 #, fuzzy
 msgid "Choose choose external font folder"
 msgstr "외부 글꼴 폴더를 선택하십시오"
 
-#: Kainote/OptionsDialog.cpp:473
+#: Kainote/OptionsDialog.cpp:476
 msgid "Choose catalog"
 msgstr "글꼴 목록 선택"
 
-#: Kainote/OptionsDialog.cpp:474
+#: Kainote/OptionsDialog.cpp:477
 msgid "Choose style"
 msgstr "스타일 선택"
 
-#: Kainote/OptionsDialog.cpp:475
+#: Kainote/OptionsDialog.cpp:478
 msgid "Choose FPS"
 msgstr "프레임 선택"
 
-#: Kainote/OptionsDialog.cpp:476
+#: Kainote/OptionsDialog.cpp:479
 msgid "Time for one letter in milliseconds"
 msgstr "한 글자의 시간 (ms)"
 
-#: Kainote/OptionsDialog.cpp:477
+#: Kainote/OptionsDialog.cpp:480
 msgid "Tags to paste at the beginning of every ASS line"
 msgstr "ASS 자막 시작 부분에 붙여넣을 태그"
 
-#: Kainote/OptionsDialog.cpp:478
+#: Kainote/OptionsDialog.cpp:481
 msgid "Resolution when converting to ASS"
 msgstr "ASS로 변환 시 자막 해상도"
 
-#: Kainote/OptionsDialog.cpp:508
+#: Kainote/OptionsDialog.cpp:511
 msgid "catalog for style"
 msgstr "스타일 목록"
 
-#: Kainote/OptionsDialog.cpp:508
+#: Kainote/OptionsDialog.cpp:511
 msgid "style"
 msgstr "스타일"
 
-#: Kainote/OptionsDialog.cpp:509
+#: Kainote/OptionsDialog.cpp:512
 #, c-format
 msgid ""
 "The selected %s for conversion does not exist\n"
@@ -4171,156 +4307,156 @@ msgstr ""
 "변환을 위해 선택한 \"%s\"이(가) 없습니다.\n"
 "기본값으로 변경됩니다"
 
-#: Kainote/OptionsDialog.cpp:538
+#: Kainote/OptionsDialog.cpp:541
 msgid "FPS from video"
 msgstr "영상에서 프레임 가져오기(FPS)"
 
-#: Kainote/OptionsDialog.cpp:539
+#: Kainote/OptionsDialog.cpp:542
 msgid "New end times"
 msgstr "새로운 종료 시간"
 
-#: Kainote/OptionsDialog.cpp:539
+#: Kainote/OptionsDialog.cpp:542
 msgid "Show window before conversion"
 msgstr "변환하기 전에 설정창 표시"
 
-#: Kainote/OptionsDialog.cpp:574
+#: Kainote/OptionsDialog.cpp:577
 msgid "Left mouse button pauses video"
 msgstr "마우스 왼쪽 버튼으로 영상 일시 중지"
 
-#: Kainote/OptionsDialog.cpp:574
+#: Kainote/OptionsDialog.cpp:577
 msgid "Open video from context menu on full screen"
 msgstr "전체 화면의 컨텍스트 메뉴에서 영상 열기"
 
-#: Kainote/OptionsDialog.cpp:575
+#: Kainote/OptionsDialog.cpp:578
 msgid "Open video with time of active line"
 msgstr "파일 열 때 선택되어있는 줄로 영상도 이동"
 
-#: Kainote/OptionsDialog.cpp:575
+#: Kainote/OptionsDialog.cpp:578
 msgid "Preferred audio (separated by semicolons)"
 msgstr "선호하는 소리 트랙 (세미콜론으로 구분)"
 
-#: Kainote/OptionsDialog.cpp:576
+#: Kainote/OptionsDialog.cpp:579
 msgid "FFMS2 video seeking method (requires reloading)"
 msgstr "FFMS2 영상 검색 (다시 불러오기 필요)"
 
-#: Kainote/OptionsDialog.cpp:576
+#: Kainote/OptionsDialog.cpp:579
 msgid "Subtitle display filter"
 msgstr "자막 필터"
 
-#: Kainote/OptionsDialog.cpp:577
+#: Kainote/OptionsDialog.cpp:580
 #, fuzzy
 msgid "Start video zoom in percent."
 msgstr "비디오 줌을 퍼센트로 시작합니다."
 
-#: Kainote/OptionsDialog.cpp:596
+#: Kainote/OptionsDialog.cpp:599
 msgid "Linear"
 msgstr "선형적(순차적)"
 
-#: Kainote/OptionsDialog.cpp:596 Kainote/ScriptInfo.cpp:143
+#: Kainote/OptionsDialog.cpp:599 Kainote/ScriptInfo.cpp:143
 msgid "Normal"
 msgstr "기본"
 
-#: Kainote/OptionsDialog.cpp:597
+#: Kainote/OptionsDialog.cpp:600
 msgid "Aggressive (fast in rewind)"
 msgstr "가장 빠름 (빨리 되감기)"
 
-#: Kainote/OptionsDialog.cpp:597
+#: Kainote/OptionsDialog.cpp:600
 msgid "Unsafe (always fast)"
 msgstr "안전하지 않음 (항상 빠름)"
 
-#: Kainote/OptionsDialog.cpp:639
+#: Kainote/OptionsDialog.cpp:642
 msgid "Choose filtering"
 msgstr "항목 선택"
 
-#: Kainote/OptionsDialog.cpp:640
+#: Kainote/OptionsDialog.cpp:643
 msgid "Global shortcuts"
 msgstr "전역"
 
-#: Kainote/OptionsDialog.cpp:640
+#: Kainote/OptionsDialog.cpp:643
 msgid "Set shortcuts"
 msgstr "설정된 것만"
 
-#: Kainote/OptionsDialog.cpp:641
+#: Kainote/OptionsDialog.cpp:644
 msgid "Audio Shortcuts"
 msgstr "소리"
 
-#: Kainote/OptionsDialog.cpp:641
+#: Kainote/OptionsDialog.cpp:644
 msgid "Editor shortcuts"
 msgstr "편집 박스"
 
-#: Kainote/OptionsDialog.cpp:641
+#: Kainote/OptionsDialog.cpp:644
 msgid "Subtitle shortcuts"
 msgstr "자막보기"
 
-#: Kainote/OptionsDialog.cpp:641
+#: Kainote/OptionsDialog.cpp:644
 msgid "Video shortcuts"
 msgstr "영상"
 
-#: Kainote/OptionsDialog.cpp:644
+#: Kainote/OptionsDialog.cpp:647
 msgid "Filtering mode:"
 msgstr "필터 유형 :"
 
-#: Kainote/OptionsDialog.cpp:655
+#: Kainote/OptionsDialog.cpp:658
 msgid "Function"
 msgstr "항목"
 
-#: Kainote/OptionsDialog.cpp:670
+#: Kainote/OptionsDialog.cpp:673
 msgid "Restore default hotkey"
 msgstr "기본 단축키로"
 
-#: Kainote/OptionsDialog.cpp:693
+#: Kainote/OptionsDialog.cpp:696
 msgid "Show background selection"
 msgstr "선택 배경 표시"
 
-#: Kainote/OptionsDialog.cpp:693
+#: Kainote/OptionsDialog.cpp:696
 msgid "Show seconds markers"
 msgstr "중간 점선 보임"
 
-#: Kainote/OptionsDialog.cpp:693
+#: Kainote/OptionsDialog.cpp:696
 msgid "Show time next to cursor"
 msgstr "커서에 시간 표시"
 
-#: Kainote/OptionsDialog.cpp:694
+#: Kainote/OptionsDialog.cpp:697
 msgid "Follow audio during playback"
 msgstr "재생 중 소리 따라 가기"
 
-#: Kainote/OptionsDialog.cpp:694
+#: Kainote/OptionsDialog.cpp:697
 msgid "Show keyframes"
 msgstr "키 프레임 표시"
 
-#: Kainote/OptionsDialog.cpp:694
+#: Kainote/OptionsDialog.cpp:697
 msgid "Show video position"
 msgstr "영상 위치 표시"
 
-#: Kainote/OptionsDialog.cpp:695
+#: Kainote/OptionsDialog.cpp:698
 msgid "Activate the audio when hover"
 msgstr "마우스 오버시 소리 활성화"
 
-#: Kainote/OptionsDialog.cpp:695
+#: Kainote/OptionsDialog.cpp:698
 msgid "Snap to keyframe"
 msgstr "키 프레임에 맞춤"
 
-#: Kainote/OptionsDialog.cpp:695
+#: Kainote/OptionsDialog.cpp:698
 msgid "Snap to other lines"
 msgstr "다른 줄로 설정"
 
-#: Kainote/OptionsDialog.cpp:696
+#: Kainote/OptionsDialog.cpp:699
 msgid "Do not play audio after changing the line"
 msgstr "라인 변경 후 소리 재생 안 함"
 
-#: Kainote/OptionsDialog.cpp:696
+#: Kainote/OptionsDialog.cpp:699
 msgid "Merge all the \"n\" with the previous syllable"
 msgstr "모든 \"n\"을 이전 음절과 병합"
 
-#: Kainote/OptionsDialog.cpp:697
+#: Kainote/OptionsDialog.cpp:700
 msgid "Load audio into RAM"
 msgstr "램에 소리 불러오기"
 
-#: Kainote/OptionsDialog.cpp:697
+#: Kainote/OptionsDialog.cpp:700
 msgid "Move syllable line after click"
 msgstr "클릭 후 음절 이동"
 
-#: Kainote/OptionsDialog.cpp:724
+#: Kainote/OptionsDialog.cpp:727
 msgid ""
 "Range from 0 to 10000, where 0 turns off\n"
 "removing audio cache files."
@@ -4328,603 +4464,603 @@ msgstr ""
 "0 ~ 10000을 입력 할 수 있습니다\n"
 "0은 소리 저장 파일 삭제를 비활성화합니다."
 
-#: Kainote/OptionsDialog.cpp:725
+#: Kainote/OptionsDialog.cpp:728
 msgid "All visible"
 msgstr "모두 표시"
 
-#: Kainote/OptionsDialog.cpp:725
+#: Kainote/OptionsDialog.cpp:728
 msgid "Before and after the active"
 msgstr "활성화 전/후"
 
-#: Kainote/OptionsDialog.cpp:735
+#: Kainote/OptionsDialog.cpp:738
 msgid "Audio delay in milliseconds"
 msgstr "소리 지연 시간(ms)"
 
-#: Kainote/OptionsDialog.cpp:736
+#: Kainote/OptionsDialog.cpp:739
 msgid "Audio to play before and after the marker in milliseconds"
 msgstr "표시선 전/후의 소리 재생 시간 (ms)"
 
-#: Kainote/OptionsDialog.cpp:737 Kainote/ShiftTimes.cpp:395
+#: Kainote/OptionsDialog.cpp:740 Kainote/ShiftTimes.cpp:395
 msgid "Lead-in"
 msgstr "도입부"
 
-#: Kainote/OptionsDialog.cpp:737 Kainote/ShiftTimes.cpp:398
+#: Kainote/OptionsDialog.cpp:740 Kainote/ShiftTimes.cpp:398
 msgid "Lead-out"
 msgstr "종결부"
 
-#: Kainote/OptionsDialog.cpp:739
+#: Kainote/OptionsDialog.cpp:742
 msgid "Line boundaries thickness"
 msgstr "선 두께"
 
-#: Kainote/OptionsDialog.cpp:740
+#: Kainote/OptionsDialog.cpp:743
 msgid "Audio cache files limit"
 msgstr "소리 저장 파일 제한"
 
-#: Kainote/OptionsDialog.cpp:741
+#: Kainote/OptionsDialog.cpp:744
 msgid "The way to display inactive lines"
 msgstr "비활성 라인을 표시하는 방법"
 
-#: Kainote/OptionsDialog.cpp:765
+#: Kainote/OptionsDialog.cpp:768
 msgid "Inactive window background"
 msgstr "비활성 배경"
 
-#: Kainote/OptionsDialog.cpp:765
+#: Kainote/OptionsDialog.cpp:768
 msgid "Inactive window text"
 msgstr "비활성 글자"
 
-#: Kainote/OptionsDialog.cpp:765
+#: Kainote/OptionsDialog.cpp:768
 msgid "Window background"
 msgstr "전체 배경"
 
-#: Kainote/OptionsDialog.cpp:765
+#: Kainote/OptionsDialog.cpp:768
 msgid "Window text"
 msgstr "전체 글자"
 
-#: Kainote/OptionsDialog.cpp:766
+#: Kainote/OptionsDialog.cpp:769
 msgid "Inactive window border"
 msgstr "비활성 창 테두리"
 
-#: Kainote/OptionsDialog.cpp:766
+#: Kainote/OptionsDialog.cpp:769
 msgid "Window border"
 msgstr "창 테두리"
 
-#: Kainote/OptionsDialog.cpp:766
+#: Kainote/OptionsDialog.cpp:769
 msgid "Window border background"
 msgstr "타이틀 배경, 테두리"
 
-#: Kainote/OptionsDialog.cpp:767
+#: Kainote/OptionsDialog.cpp:770
 msgid "Inactive window border background"
 msgstr "비활성 타이틀 배경, 테두리"
 
-#: Kainote/OptionsDialog.cpp:767
+#: Kainote/OptionsDialog.cpp:770
 msgid "Inactive window header text"
 msgstr "비활성 타이틀 글자"
 
-#: Kainote/OptionsDialog.cpp:767
+#: Kainote/OptionsDialog.cpp:770
 msgid "Window header text"
 msgstr "타이틀 글자"
 
-#: Kainote/OptionsDialog.cpp:768
+#: Kainote/OptionsDialog.cpp:771
 msgid "Window invaded element header"
 msgstr "최소화/최대화 마우스 오버"
 
-#: Kainote/OptionsDialog.cpp:768
+#: Kainote/OptionsDialog.cpp:771
 msgid "Window pressed element header"
 msgstr "최대화/최소화 클릭"
 
-#: Kainote/OptionsDialog.cpp:769
+#: Kainote/OptionsDialog.cpp:772
 msgid "Window closing upon hover"
 msgstr "닫기 버튼 마우스 오버"
 
-#: Kainote/OptionsDialog.cpp:769
+#: Kainote/OptionsDialog.cpp:772
 msgid "Window elements warning"
 msgstr "경고 항목"
 
-#: Kainote/OptionsDialog.cpp:769
+#: Kainote/OptionsDialog.cpp:772
 msgid "Window pressed closing"
 msgstr "닫기 버튼 클릭"
 
-#: Kainote/OptionsDialog.cpp:771
+#: Kainote/OptionsDialog.cpp:774
 msgid "Subtitle background"
 msgstr "자막보기 배경"
 
-#: Kainote/OptionsDialog.cpp:771
+#: Kainote/OptionsDialog.cpp:774
 msgid "Subtitle comment background"
 msgstr "자막보기 주석처리 배경"
 
-#: Kainote/OptionsDialog.cpp:771
+#: Kainote/OptionsDialog.cpp:774
 msgid "Subtitle dialogue background"
 msgstr "자막보기 줄 배경"
 
-#: Kainote/OptionsDialog.cpp:771
+#: Kainote/OptionsDialog.cpp:774
 msgid "Subtitle text"
 msgstr "자막보기 글자"
 
-#: Kainote/OptionsDialog.cpp:772
+#: Kainote/OptionsDialog.cpp:775
 msgid "Subtitle lines visible on video"
 msgstr "자막보기 같은 시간 줄 배경"
 
-#: Kainote/OptionsDialog.cpp:772
+#: Kainote/OptionsDialog.cpp:775
 msgid "Subtitle selection (transparency)"
 msgstr "자막보기 선택 줄 배경"
 
-#: Kainote/OptionsDialog.cpp:773
+#: Kainote/OptionsDialog.cpp:776
 msgid "Subtitle active line border"
 msgstr "자막보기 선택 줄 테두리"
 
-#: Kainote/OptionsDialog.cpp:773
+#: Kainote/OptionsDialog.cpp:776
 msgid "Subtitle colliding lines"
 msgstr "자막보기 같은 시간 줄 글자"
 
-#: Kainote/OptionsDialog.cpp:773
+#: Kainote/OptionsDialog.cpp:776
 msgid "Subtitle line border"
 msgstr "자막보기 줄 테두리"
 
-#: Kainote/OptionsDialog.cpp:774
+#: Kainote/OptionsDialog.cpp:777
 msgid "Subtitle header background"
 msgstr "자막보기 구분 배경"
 
-#: Kainote/OptionsDialog.cpp:774
+#: Kainote/OptionsDialog.cpp:777
 msgid "Subtitle header text"
 msgstr "자막보기 구분 글자"
 
-#: Kainote/OptionsDialog.cpp:775
+#: Kainote/OptionsDialog.cpp:778
 msgid "Subtitle line label"
 msgstr "자막보기 번호 배경"
 
-#: Kainote/OptionsDialog.cpp:775
+#: Kainote/OptionsDialog.cpp:778
 msgid "Subtitle modified-line label"
 msgstr "자막보기 수정된 줄"
 
-#: Kainote/OptionsDialog.cpp:775
+#: Kainote/OptionsDialog.cpp:778
 msgid "Subtitle saved-line label"
 msgstr "자막보기 저장된 줄"
 
-#: Kainote/OptionsDialog.cpp:776
+#: Kainote/OptionsDialog.cpp:779
 msgid "Subtitle comparison border"
 msgstr "자막보기 비교 글자 테두리"
 
-#: Kainote/OptionsDialog.cpp:776
+#: Kainote/OptionsDialog.cpp:779
 msgid "Subtitle spelling-error background"
 msgstr "자막보기 철자 오류 배경"
 
-#: Kainote/OptionsDialog.cpp:776
+#: Kainote/OptionsDialog.cpp:779
 msgid "Subtitle unconfirmed-line label"
 msgstr "자막보기 태그가 확인되지 않은 줄"
 
-#: Kainote/OptionsDialog.cpp:777
+#: Kainote/OptionsDialog.cpp:780
 msgid "Subtitle comparison match background"
 msgstr "자막보기 비교 일치함 배경"
 
-#: Kainote/OptionsDialog.cpp:777
+#: Kainote/OptionsDialog.cpp:780
 msgid "Subtitle comparison mismatch background"
 msgstr "자막보기 비교 일치하지 않음 배경"
 
-#: Kainote/OptionsDialog.cpp:778
+#: Kainote/OptionsDialog.cpp:781
 msgid "Subtitle comparison comment match background"
 msgstr "자막보기 비교 일치하는 주석 배경"
 
-#: Kainote/OptionsDialog.cpp:778
+#: Kainote/OptionsDialog.cpp:781
 msgid "Subtitle comparison comment mismatch background"
 msgstr "자막보기 비교 일치하지 않은 주석 배경"
 
-#: Kainote/OptionsDialog.cpp:780
+#: Kainote/OptionsDialog.cpp:783
 msgid "Editor tag names"
 msgstr "편집박스 태그 글자"
 
-#: Kainote/OptionsDialog.cpp:780
+#: Kainote/OptionsDialog.cpp:783
 msgid "Editor tag values"
 msgstr "편집박스 태그 값 글자"
 
-#: Kainote/OptionsDialog.cpp:780
+#: Kainote/OptionsDialog.cpp:783
 msgid "Editor text"
 msgstr "편집박스 글자"
 
-#: Kainote/OptionsDialog.cpp:781
+#: Kainote/OptionsDialog.cpp:784
 msgid "Editor curly braces"
 msgstr "편집박스 중괄호 { }"
 
-#: Kainote/OptionsDialog.cpp:781
+#: Kainote/OptionsDialog.cpp:784
 msgid "Editor line splitting and ASS drawings"
 msgstr "분할선 및 ASS 도면용 편집"
 
-#: Kainote/OptionsDialog.cpp:781
+#: Kainote/OptionsDialog.cpp:784
 msgid "Editor tags operators"
 msgstr "편집박스 태그 구분자"
 
-#: Kainote/OptionsDialog.cpp:781
+#: Kainote/OptionsDialog.cpp:784
 msgid "Editor template variables"
 msgstr "편집박스 템플릿 변수"
 
-#: Kainote/OptionsDialog.cpp:782
+#: Kainote/OptionsDialog.cpp:785
 msgid "Editor template code marks"
 msgstr "편집박스 템플릿 코드 표시"
 
-#: Kainote/OptionsDialog.cpp:782
+#: Kainote/OptionsDialog.cpp:785
 msgid "Editor template functions"
 msgstr "편집박스 템플릿 기능"
 
-#: Kainote/OptionsDialog.cpp:782
+#: Kainote/OptionsDialog.cpp:785
 msgid "Editor template keywords"
 msgstr "편집박스 템플릿 키워드"
 
-#: Kainote/OptionsDialog.cpp:783
+#: Kainote/OptionsDialog.cpp:786
 msgid "Editor brackets background"
 msgstr "편집박스 괄호 배경"
 
-#: Kainote/OptionsDialog.cpp:783
+#: Kainote/OptionsDialog.cpp:786
 msgid "Editor found words selection"
 msgstr "편집박스 찾은 글자 배경"
 
-#: Kainote/OptionsDialog.cpp:783
+#: Kainote/OptionsDialog.cpp:786
 msgid "Editor template strings"
 msgstr "편집박스 템플릿 문자열"
 
-#: Kainote/OptionsDialog.cpp:784
+#: Kainote/OptionsDialog.cpp:787
 msgid "Editor background"
 msgstr "편집박스 배경"
 
-#: Kainote/OptionsDialog.cpp:784
+#: Kainote/OptionsDialog.cpp:787
 msgid "Editor inactive window selection"
 msgstr "편집박스 선택 글자 배경(비활성)"
 
-#: Kainote/OptionsDialog.cpp:784
+#: Kainote/OptionsDialog.cpp:787
 msgid "Editor selection"
 msgstr "편집박스 선택 글자 배경"
 
-#: Kainote/OptionsDialog.cpp:785
+#: Kainote/OptionsDialog.cpp:788
 msgid "Editor border"
 msgstr "편집박스 테두리"
 
-#: Kainote/OptionsDialog.cpp:785
+#: Kainote/OptionsDialog.cpp:788
 msgid "Editor border on focus"
 msgstr "편집박스 편집 중일 때 테두리"
 
-#: Kainote/OptionsDialog.cpp:785
+#: Kainote/OptionsDialog.cpp:788
 msgid "Editor spelling error background"
 msgstr "편집박스 맞춤법 오류 배경"
 
-#: Kainote/OptionsDialog.cpp:787
+#: Kainote/OptionsDialog.cpp:790
 msgid "Audio background"
 msgstr "소리 배경"
 
-#: Kainote/OptionsDialog.cpp:787
+#: Kainote/OptionsDialog.cpp:790
 msgid "Audio end marker"
 msgstr "소리 종료 지점"
 
-#: Kainote/OptionsDialog.cpp:787
+#: Kainote/OptionsDialog.cpp:790
 msgid "Audio start marker"
 msgstr "소리 시작 지점"
 
-#: Kainote/OptionsDialog.cpp:787
+#: Kainote/OptionsDialog.cpp:790
 msgid "Audio time shift marker"
 msgstr "소리 시간 이동 표시선"
 
-#: Kainote/OptionsDialog.cpp:788
+#: Kainote/OptionsDialog.cpp:791
 msgid "Audio cursor"
 msgstr "소리 커서"
 
-#: Kainote/OptionsDialog.cpp:788
+#: Kainote/OptionsDialog.cpp:791
 msgid "Audio inactive line marker"
 msgstr "소리 비활성 라인 표시선"
 
-#: Kainote/OptionsDialog.cpp:788
+#: Kainote/OptionsDialog.cpp:791
 msgid "Audio keyframes"
 msgstr "소리 키 프레임"
 
-#: Kainote/OptionsDialog.cpp:788
+#: Kainote/OptionsDialog.cpp:791
 msgid "Audio seconds boundaries"
 msgstr "소리 점선"
 
-#: Kainote/OptionsDialog.cpp:789
+#: Kainote/OptionsDialog.cpp:792
 msgid "Audio selection"
 msgstr "소리 선택 배경"
 
-#: Kainote/OptionsDialog.cpp:789
+#: Kainote/OptionsDialog.cpp:792
 msgid "Audio syllable marker"
 msgstr "소리 음절 배경"
 
-#: Kainote/OptionsDialog.cpp:789
+#: Kainote/OptionsDialog.cpp:792
 msgid "Audio syllable text"
 msgstr "소리 음절 글자"
 
-#: Kainote/OptionsDialog.cpp:790
+#: Kainote/OptionsDialog.cpp:793
 msgid "Audio inactive line background"
 msgstr "소리 비활성 배경"
 
-#: Kainote/OptionsDialog.cpp:790
+#: Kainote/OptionsDialog.cpp:793
 msgid "Audio the selection after modification"
 msgstr "소리 이동 중 파형 배경"
 
-#: Kainote/OptionsDialog.cpp:790
+#: Kainote/OptionsDialog.cpp:793
 msgid "Audio waveform"
 msgstr "소리 파형"
 
-#: Kainote/OptionsDialog.cpp:791
+#: Kainote/OptionsDialog.cpp:794
 msgid "Audio Inactive waveform"
 msgstr "소리 비활성 파형"
 
-#: Kainote/OptionsDialog.cpp:791
+#: Kainote/OptionsDialog.cpp:794
 msgid "Audio modified waveform"
 msgstr "소리 이동 중 파형"
 
-#: Kainote/OptionsDialog.cpp:791
+#: Kainote/OptionsDialog.cpp:794
 msgid "Audio selected waveform"
 msgstr "소리 선택 파형"
 
-#: Kainote/OptionsDialog.cpp:792
+#: Kainote/OptionsDialog.cpp:795
 msgid "Audio spectrum"
 msgstr "소리 스펙트럼"
 
-#: Kainote/OptionsDialog.cpp:792
+#: Kainote/OptionsDialog.cpp:795
 msgid "Audio spectrum background"
 msgstr "소리 스펙트럼 배경"
 
-#: Kainote/OptionsDialog.cpp:792
+#: Kainote/OptionsDialog.cpp:795
 msgid "Audio spectrum echo"
 msgstr "소리 스펙트럼 에코"
 
-#: Kainote/OptionsDialog.cpp:794
+#: Kainote/OptionsDialog.cpp:797
 msgid "Text field background"
 msgstr "글자 박스 아이콘 배경"
 
-#: Kainote/OptionsDialog.cpp:794
+#: Kainote/OptionsDialog.cpp:797
 msgid "Text field border"
 msgstr "글자 박스 테두리"
 
-#: Kainote/OptionsDialog.cpp:795
+#: Kainote/OptionsDialog.cpp:798
 msgid "Text field border on focus"
 msgstr "글자 박스 작성중 테두리"
 
-#: Kainote/OptionsDialog.cpp:795
+#: Kainote/OptionsDialog.cpp:798
 msgid "Text field selection"
 msgstr "글자 박스 선택 글자"
 
-#: Kainote/OptionsDialog.cpp:796 Kainote/OptionsDialog.cpp:866
+#: Kainote/OptionsDialog.cpp:799 Kainote/OptionsDialog.cpp:869
 msgid "Text field inactive window selection"
 msgstr "글자 박스 비활성 창 선택 글자"
 
-#: Kainote/OptionsDialog.cpp:797
+#: Kainote/OptionsDialog.cpp:800
 msgid "Button and list background"
 msgstr "버튼 배경"
 
-#: Kainote/OptionsDialog.cpp:797
+#: Kainote/OptionsDialog.cpp:800
 msgid "Button and list background upon hover"
 msgstr "버튼 마우스 오버 배경"
 
-#: Kainote/OptionsDialog.cpp:798
+#: Kainote/OptionsDialog.cpp:801
 msgid "Button and list background on focus"
 msgstr "버튼 포커스 배경"
 
-#: Kainote/OptionsDialog.cpp:798
+#: Kainote/OptionsDialog.cpp:801
 msgid "Button and list pushed background"
 msgstr "버튼 클릭 배경"
 
-#: Kainote/OptionsDialog.cpp:799
+#: Kainote/OptionsDialog.cpp:802
 msgid "Button and list border"
 msgstr "버튼 테두리"
 
-#: Kainote/OptionsDialog.cpp:799
+#: Kainote/OptionsDialog.cpp:802
 msgid "Button and list border upon hover"
 msgstr "버튼 마우스 오버 테두리"
 
-#: Kainote/OptionsDialog.cpp:800
+#: Kainote/OptionsDialog.cpp:803
 msgid "Button and list border of pushed"
 msgstr "버튼 클릭 테두리"
 
-#: Kainote/OptionsDialog.cpp:800
+#: Kainote/OptionsDialog.cpp:803
 msgid "Button and list border on focus"
 msgstr "버튼 포커스 테두리"
 
-#: Kainote/OptionsDialog.cpp:801
+#: Kainote/OptionsDialog.cpp:804
 msgid "Button and list inactive border"
 msgstr "버튼 비활성 테두리"
 
-#: Kainote/OptionsDialog.cpp:801
+#: Kainote/OptionsDialog.cpp:804
 msgid "Togglebutton toggled background"
 msgstr "고정된 버튼 배경"
 
-#: Kainote/OptionsDialog.cpp:802
+#: Kainote/OptionsDialog.cpp:805
 msgid "Scroll bar background"
 msgstr "스크롤바 배경"
 
-#: Kainote/OptionsDialog.cpp:802
+#: Kainote/OptionsDialog.cpp:805
 msgid "Scroll bar slider"
 msgstr "스크롤바"
 
-#: Kainote/OptionsDialog.cpp:802
+#: Kainote/OptionsDialog.cpp:805
 msgid "Togglebutton toggled border"
 msgstr "고정된 버튼 테두리"
 
-#: Kainote/OptionsDialog.cpp:803
+#: Kainote/OptionsDialog.cpp:806
 msgid "Scroll bar pushed slider"
 msgstr "스크롤바 클릭"
 
-#: Kainote/OptionsDialog.cpp:803
+#: Kainote/OptionsDialog.cpp:806
 msgid "Scroll bar slider upon hover"
 msgstr "스크롤바 마우스 오버"
 
-#: Kainote/OptionsDialog.cpp:804
+#: Kainote/OptionsDialog.cpp:807
 msgid "Static list background"
 msgstr "고정 메뉴 배경"
 
-#: Kainote/OptionsDialog.cpp:804
+#: Kainote/OptionsDialog.cpp:807
 msgid "Static list border"
 msgstr "고정 메뉴 테두리"
 
-#: Kainote/OptionsDialog.cpp:804
+#: Kainote/OptionsDialog.cpp:807
 msgid "Staticbox border"
 msgstr "고정 메뉴 구분 테두리"
 
-#: Kainote/OptionsDialog.cpp:805
+#: Kainote/OptionsDialog.cpp:808
 msgid "Static list header background"
 msgstr "고정 메뉴 타이틀 배경"
 
-#: Kainote/OptionsDialog.cpp:805
+#: Kainote/OptionsDialog.cpp:808
 msgid "Static list header text"
 msgstr "고정 메뉴 타이틀 글자"
 
-#: Kainote/OptionsDialog.cpp:805
+#: Kainote/OptionsDialog.cpp:808
 msgid "Static list selection"
 msgstr "고정 메뉴 선택 배경"
 
-#: Kainote/OptionsDialog.cpp:806
+#: Kainote/OptionsDialog.cpp:809
 msgid "Status bar border"
 msgstr "하단 상태 바 테두리"
 
-#: Kainote/OptionsDialog.cpp:808
+#: Kainote/OptionsDialog.cpp:811
 msgid "Menu bar background 1"
 msgstr "상단 메뉴 색상 1"
 
-#: Kainote/OptionsDialog.cpp:808
+#: Kainote/OptionsDialog.cpp:811
 msgid "Menu bar background 2"
 msgstr "상단 메뉴 색상 2"
 
-#: Kainote/OptionsDialog.cpp:808
+#: Kainote/OptionsDialog.cpp:811
 msgid "Menu bar selection border"
 msgstr "메뉴 마우스 오버 테두리"
 
-#: Kainote/OptionsDialog.cpp:809
+#: Kainote/OptionsDialog.cpp:812
 msgid "Menu bar selection clicked bacground"
 msgstr "메뉴 클릭 시"
 
-#: Kainote/OptionsDialog.cpp:809
+#: Kainote/OptionsDialog.cpp:812
 msgid "Menu bar selection hover bacground"
 msgstr "메뉴 마우스 오버 배경"
 
-#: Kainote/OptionsDialog.cpp:810
+#: Kainote/OptionsDialog.cpp:813
 msgid "Menu background"
 msgstr "메뉴 배경"
 
-#: Kainote/OptionsDialog.cpp:810
+#: Kainote/OptionsDialog.cpp:813
 msgid "Menu selection background"
 msgstr "선택 메뉴 배경"
 
-#: Kainote/OptionsDialog.cpp:810
+#: Kainote/OptionsDialog.cpp:813
 msgid "Menu selection border"
 msgstr "선택 메뉴 테두리"
 
-#: Kainote/OptionsDialog.cpp:812
+#: Kainote/OptionsDialog.cpp:815
 msgid "Tab active border"
 msgstr "탭 활성 테두리"
 
-#: Kainote/OptionsDialog.cpp:812
+#: Kainote/OptionsDialog.cpp:815
 msgid "Tab bar background 1"
 msgstr "탭 바 배경 1"
 
-#: Kainote/OptionsDialog.cpp:812
+#: Kainote/OptionsDialog.cpp:815
 msgid "Tab bar background 2"
 msgstr "탭 바 배경 2"
 
-#: Kainote/OptionsDialog.cpp:813
+#: Kainote/OptionsDialog.cpp:816
 msgid "Tab active background"
 msgstr "탭 활성 배경"
 
-#: Kainote/OptionsDialog.cpp:813
+#: Kainote/OptionsDialog.cpp:816
 msgid "Tab inactive background"
 msgstr "탭 비활성 배경"
 
-#: Kainote/OptionsDialog.cpp:813
+#: Kainote/OptionsDialog.cpp:816
 msgid "Tab inactive border"
 msgstr "탭 비활성 테두리"
 
-#: Kainote/OptionsDialog.cpp:814
+#: Kainote/OptionsDialog.cpp:817
 msgid "Tab background of second visible tab"
 msgstr "탭 두 번째 배경"
 
-#: Kainote/OptionsDialog.cpp:814
+#: Kainote/OptionsDialog.cpp:817
 msgid "Tab inactive background upon hover"
 msgstr "탭 비활성 마우스 오버 배경"
 
-#: Kainote/OptionsDialog.cpp:815
+#: Kainote/OptionsDialog.cpp:818
 msgid "Tab active text"
 msgstr "탭 활성 글자"
 
-#: Kainote/OptionsDialog.cpp:815
+#: Kainote/OptionsDialog.cpp:818
 msgid "Tab close upon hover"
 msgstr "탭 닫기 마우스 오버"
 
-#: Kainote/OptionsDialog.cpp:815
+#: Kainote/OptionsDialog.cpp:818
 msgid "Tab inactive text"
 msgstr "탭 비활성 글자"
 
-#: Kainote/OptionsDialog.cpp:816
+#: Kainote/OptionsDialog.cpp:819
 msgid "Tab bar arrow"
 msgstr "탭 바 화살표"
 
-#: Kainote/OptionsDialog.cpp:816
+#: Kainote/OptionsDialog.cpp:819
 msgid "Tab bar arrow background"
 msgstr "탭 바 화살표 배경"
 
-#: Kainote/OptionsDialog.cpp:817
+#: Kainote/OptionsDialog.cpp:820
 msgid "Tab bar arrow background upon hover"
 msgstr "탭 바 화살표 마우스 오버 배경"
 
-#: Kainote/OptionsDialog.cpp:819
+#: Kainote/OptionsDialog.cpp:822
 msgid "Slider border"
 msgstr "슬라이더 테두리"
 
-#: Kainote/OptionsDialog.cpp:819
+#: Kainote/OptionsDialog.cpp:822
 msgid "Slider path background"
 msgstr "슬라이더 바 배경"
 
-#: Kainote/OptionsDialog.cpp:819
+#: Kainote/OptionsDialog.cpp:822
 msgid "Slider path border"
 msgstr "슬라이더 바 테두리"
 
-#: Kainote/OptionsDialog.cpp:820
+#: Kainote/OptionsDialog.cpp:823
 msgid "Slider background"
 msgstr "슬라이더 배경"
 
-#: Kainote/OptionsDialog.cpp:820
+#: Kainote/OptionsDialog.cpp:823
 msgid "Slider border of pushed"
 msgstr "슬라이더"
 
-#: Kainote/OptionsDialog.cpp:820
+#: Kainote/OptionsDialog.cpp:823
 msgid "Slider border upon hover"
 msgstr "슬라이더 마우스오버 테두리"
 
-#: Kainote/OptionsDialog.cpp:821
+#: Kainote/OptionsDialog.cpp:824
 msgid "Slider background of pushed"
 msgstr "슬라이더 클릭 테두리"
 
-#: Kainote/OptionsDialog.cpp:821
+#: Kainote/OptionsDialog.cpp:824
 msgid "Slider background upon hover"
 msgstr "슬라이더 마우스오버 배경"
 
-#: Kainote/OptionsDialog.cpp:823
+#: Kainote/OptionsDialog.cpp:826
 msgid "Finding result file name background"
 msgstr "찾기 결과 파일 이름 배경"
 
-#: Kainote/OptionsDialog.cpp:823
+#: Kainote/OptionsDialog.cpp:826
 msgid "Finding result file name foreground"
 msgstr "찾기 결과 파일 이름 글자"
 
-#: Kainote/OptionsDialog.cpp:823
+#: Kainote/OptionsDialog.cpp:826
 msgid "Resize line dots"
 msgstr "줄 점 크기 조정"
 
-#: Kainote/OptionsDialog.cpp:824
+#: Kainote/OptionsDialog.cpp:827
 msgid "Finding result found phrase background"
 msgstr "찾기 결과 찾은 글자 배경"
 
-#: Kainote/OptionsDialog.cpp:824
+#: Kainote/OptionsDialog.cpp:827
 msgid "Finding result found phrase foreground"
 msgstr "찾기 결과 찾은 글자"
 
-#: Kainote/OptionsDialog.cpp:826
+#: Kainote/OptionsDialog.cpp:829
 msgid "First color of style preview background"
 msgstr "미리보기 배경 1"
 
-#: Kainote/OptionsDialog.cpp:826
+#: Kainote/OptionsDialog.cpp:829
 msgid "Second color of style preview background"
 msgstr "미리보기 배경 2"
 
-#: Kainote/OptionsDialog.cpp:851
+#: Kainote/OptionsDialog.cpp:854
 msgid "Theme name:"
 msgstr "테마 이름:"
 
-#: Kainote/OptionsDialog.cpp:853
+#: Kainote/OptionsDialog.cpp:856
 msgid ""
 "Name of the copied theme.\n"
 "Default themes, DarkSentro and LightSentro,\n"
@@ -4934,12 +5070,12 @@ msgstr ""
 "기본 테마 : DarkSentro 및 LightSentro\n"
 "편집 할 수 없습니다. 복사해야합니다."
 
-#: Kainote/OptionsDialog.cpp:854 Kainote/SelectLines.cpp:122
+#: Kainote/OptionsDialog.cpp:857 Kainote/SelectLines.cpp:122
 #: Kainote/stylestore.cpp:87 Kainote/stylestore.cpp:140
 msgid "Copy"
 msgstr "복사"
 
-#: Kainote/OptionsDialog.cpp:863
+#: Kainote/OptionsDialog.cpp:866
 msgid ""
 "Warning! Transparency works only on the audio spectrum,\n"
 "text field, and subtitle grid."
@@ -4947,130 +5083,58 @@ msgstr ""
 "경고 ! 투명도는 소리 스펙트럼,\n"
 "글자 및 자막보기에서 동작합니다."
 
-#: Kainote/OptionsDialog.cpp:873
+#: Kainote/OptionsDialog.cpp:876
 msgid "Name"
 msgstr "이름"
 
-#: Kainote/OptionsDialog.cpp:874
+#: Kainote/OptionsDialog.cpp:877
 msgid "Color"
 msgstr "색상"
 
-#: Kainote/OptionsDialog.cpp:957 Kainote/OptionsDialog.cpp:1233
-msgid "ASS subtitles"
-msgstr "자막 ASS"
-
-#: Kainote/OptionsDialog.cpp:957 Kainote/OptionsDialog.cpp:1233
-msgid "SRT subtitles"
-msgstr "자막 SRT"
-
-#: Kainote/OptionsDialog.cpp:957 Kainote/OptionsDialog.cpp:1233
-msgid "SSA subtitles"
-msgstr "자막 SSA"
-
-#: Kainote/OptionsDialog.cpp:957 Kainote/OptionsDialog.cpp:1233
-msgid "SUB subtitles"
-msgstr "자막 SUB"
-
-#: Kainote/OptionsDialog.cpp:958 Kainote/OptionsDialog.cpp:1234
-msgid "TXT subtitles"
-msgstr "자막 TXT"
-
-#: Kainote/OptionsDialog.cpp:958 Kainote/OptionsDialog.cpp:1234
-msgid "Video AVI"
-msgstr "영상 AVI"
-
-#: Kainote/OptionsDialog.cpp:958 Kainote/OptionsDialog.cpp:1234
-msgid "Video MKV"
-msgstr "영상 MKV"
-
-#: Kainote/OptionsDialog.cpp:958 Kainote/OptionsDialog.cpp:1234
-msgid "Video MP4"
-msgstr "영상 MP4"
-
-#: Kainote/OptionsDialog.cpp:958 Kainote/OptionsDialog.cpp:1234
-msgid "Video OGM"
-msgstr "영상 OGM"
-
-#: Kainote/OptionsDialog.cpp:959 Kainote/OptionsDialog.cpp:1235
-msgid "Video 3GP"
-msgstr "영상 3GP"
-
-#: Kainote/OptionsDialog.cpp:959 Kainote/OptionsDialog.cpp:1235
-msgid "Video ASF"
-msgstr "영상 ASF"
-
-#: Kainote/OptionsDialog.cpp:959 Kainote/OptionsDialog.cpp:1235
-msgid "Video RM"
-msgstr "영상 RM"
-
-#: Kainote/OptionsDialog.cpp:959 Kainote/OptionsDialog.cpp:1235
-msgid "Video RMVB"
-msgstr "영상 RMVB"
-
-#: Kainote/OptionsDialog.cpp:959 Kainote/OptionsDialog.cpp:1235
-msgid "Video WMV"
-msgstr "영상 WMV"
-
-#: Kainote/OptionsDialog.cpp:960 Kainote/OptionsDialog.cpp:1236
-msgid "Video M2TS"
-msgstr "영상 M2TS"
-
-#: Kainote/OptionsDialog.cpp:960 Kainote/OptionsDialog.cpp:1236
-msgid "Video MPEG"
-msgstr "영상 MPEG"
-
-#: Kainote/OptionsDialog.cpp:960 Kainote/OptionsDialog.cpp:1236
-msgid "Video MPG"
-msgstr "영상 MPG"
-
-#: Kainote/OptionsDialog.cpp:960 Kainote/OptionsDialog.cpp:1236
-msgid "Video TS"
-msgstr "영상 TS"
-
-#: Kainote/OptionsDialog.cpp:967
+#: Kainote/OptionsDialog.cpp:970
 msgid ""
 "WARNING! Behavior differs on each Windows version.\n"
 "For example, on Windows 7 WMP blocked\n"
 "the ability to change video associations."
 msgstr "경고! 모든 Windows에서 다르게 작동합니다."
 
-#: Kainote/OptionsDialog.cpp:985
+#: Kainote/OptionsDialog.cpp:992
 msgid "Deselect all"
 msgstr "모두 선택 취소"
 
-#: Kainote/OptionsDialog.cpp:985
+#: Kainote/OptionsDialog.cpp:992
 msgid "Select all"
 msgstr "모두 선택"
 
-#: Kainote/OptionsDialog.cpp:985
+#: Kainote/OptionsDialog.cpp:992
 msgid "Select subtitles"
 msgstr "자막 선택"
 
-#: Kainote/OptionsDialog.cpp:985
+#: Kainote/OptionsDialog.cpp:992
 msgid "Select video"
 msgstr "영상 선택"
 
-#: Kainote/OptionsDialog.cpp:1005 Kainote/OptionsDialog.cpp:1008
+#: Kainote/OptionsDialog.cpp:1012 Kainote/OptionsDialog.cpp:1015
 msgid "Advanced"
 msgstr "고급"
 
-#: Kainote/OptionsDialog.cpp:1009
+#: Kainote/OptionsDialog.cpp:1016
 msgid "Themes"
 msgstr "테마"
 
-#: Kainote/OptionsDialog.cpp:1010
+#: Kainote/OptionsDialog.cpp:1017
 msgid "Hotkeys"
 msgstr "단축키"
 
-#: Kainote/OptionsDialog.cpp:1012
+#: Kainote/OptionsDialog.cpp:1019
 msgid "Associations"
 msgstr "파일 연결"
 
-#: Kainote/OptionsDialog.cpp:1014
+#: Kainote/OptionsDialog.cpp:1021
 msgid "Subtitle properties"
 msgstr "ASS 파일 정보"
 
-#: Kainote/OptionsDialog.cpp:1023
+#: Kainote/OptionsDialog.cpp:1030
 msgid "Set default"
 msgstr "기본값으로 설정"
 
@@ -5252,7 +5316,7 @@ msgid "Cannot create GStreamer video display module"
 msgstr "프로세스를 만들 수 없음. Muxing은 취소됨"
 
 #: Kainote/RendererGStreamer.cpp:340
-#, c-format, fuzzy
+#, fuzzy, c-format
 msgid "Cannot open video file: %s"
 msgstr "\"%s\" 파일을 열 수 없습니다."
 
@@ -7033,33 +7097,42 @@ msgstr "위로"
 msgid "Toolbar alignment"
 msgstr "도구 모음 정렬"
 
-#: Kainote/UpdateChecker.cpp:124
-#, c-format
-msgid "A new version (%s) is available. Update?"
+#: Kainote/UpdateChecker.cpp:80
+msgid "A new version is available"
 msgstr ""
 
-#: Kainote/UpdateChecker.cpp:124
+#: Kainote/UpdateChecker.cpp:89
+#, c-format
+msgid "You have version %s; version %s is available"
+msgstr ""
+
+#: Kainote/UpdateChecker.cpp:101
+msgid "Check for updates automatically"
+msgstr ""
+
+#: Kainote/UpdateChecker.cpp:105
+msgid "Stable versions only"
+msgstr ""
+
+#: Kainote/UpdateChecker.cpp:112
+msgid "Open the download page"
+msgstr ""
+
+#: Kainote/UpdateChecker.cpp:113
+msgid "Remind me in a week"
+msgstr ""
+
+#: Kainote/UpdateChecker.cpp:155 Kainote/UpdateChecker.cpp:176
+msgid "Cannot check for updates"
+msgstr ""
+
+#: Kainote/UpdateChecker.cpp:155 Kainote/UpdateChecker.cpp:176
+#: Kainote/UpdateChecker.cpp:185
 msgid "Update"
 msgstr ""
 
-#: Kainote/UpdateChecker.cpp:125
-msgid "Disable updates"
-msgstr ""
-
-#: Kainote/UpdateChecker.cpp:126
-msgid "Update after closing"
-msgstr ""
-
-#: Kainote/UpdateChecker.cpp:237
-msgid "Cannot download the new version of Kainote"
-msgstr ""
-
-#: Kainote/UpdateChecker.cpp:242
-msgid "Cannot find the Kainote updater"
-msgstr ""
-
-#: Kainote/UpdateChecker.cpp:250 Kainote/UpdateChecker.cpp:255
-msgid "Cannot close Kainote"
+#: Kainote/UpdateChecker.cpp:185
+msgid "You already have the latest version"
 msgstr ""
 
 #: Kainote/UtilsWindows.cpp:40
@@ -7134,8 +7207,14 @@ msgid "Deleting"
 msgstr "삭제 중"
 
 #: Kainote/VideoBox.cpp:1077
-msgid "Video files(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|All files (*.*)|*.*"
-msgstr "영상 파일(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|모든 파일 (*.*)|*.*"
+msgid ""
+"Video files(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
+"(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|"
+"All files (*.*)|*.*"
+msgstr ""
+"영상 파일(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
+"(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|"
+"모든 파일 (*.*)|*.*"
 
 #: Kainote/VideoBox.cpp:1092
 msgid "Subtitle files (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"
@@ -7457,10 +7536,14 @@ msgid ""
 "or at the start for multiple lines.\n"
 "Multiply - multiplies the slider value by the selected line number;\n"
 "the first line is not changed.\n"
-"Gradient text increasing - inserts a tag at each character, increasing the value.\n"
-"Gradient text decreasing - inserts a tag at each character, decreasing the value.\n"
-"Gradient line increasing - inserts a tag in selected lines, increasing the value.\n"
-"Gradient line decreasing - inserts a tag in selected lines, decreasing the value."
+"Gradient text increasing - inserts a tag at each character, increasing the "
+"value.\n"
+"Gradient text decreasing - inserts a tag at each character, decreasing the "
+"value.\n"
+"Gradient line increasing - inserts a tag in selected lines, increasing the "
+"value.\n"
+"Gradient line decreasing - inserts a tag in selected lines, decreasing the "
+"value."
 msgstr ""
 "태그 변경의 옵션 :\n"
 "추가 - 변경 모든 태그 슬라이더에 이동.\n"
@@ -7666,8 +7749,11 @@ msgstr ""
 "\"최소값\" 필드보다 큽니다."
 
 #: Kainote/VisualAllTagsEdition.cpp:312
-msgid "Field \"Step\" contains a number too large for the current min-max range."
-msgstr "\"단계\" 필드에 현재 최소 - 최대 범위에 비해 너무 큰 숫자가 포함되어 있습니다."
+msgid ""
+"Field \"Step\" contains a number too large for the current min-max range."
+msgstr ""
+"\"단계\" 필드에 현재 최소 - 최대 범위에 비해 너무 큰 숫자가 포함되어 있습니"
+"다."
 
 #: Kainote/VisualClips.cpp:1014
 msgid "Double \"m\" was blocked because of Vsfilter bug"
@@ -7764,12 +7850,14 @@ msgstr ""
 "영상에 줄이 표시되지 않거나\n"
 "지속 시간이 0입니다"
 
-#: Kainote/config.cpp:633
+#: Kainote/config.cpp:634
 #, c-format
-msgid "Some colors were absent from theme \"%s\" and were loaded from the default theme."
+msgid ""
+"Some colors were absent from theme \"%s\" and were loaded from the default "
+"theme."
 msgstr "테마 \"%s\"에서 일부 색상이 누락되어 기본값에서 불러옵니다."
 
-#: Kainote/config.cpp:643
+#: Kainote/config.cpp:644
 msgid "Cannot load theme, reset to default"
 msgstr "테마를 불러 올 수 없음. 기본값으로 재설정"
 
@@ -7945,27 +8033,39 @@ msgstr ""
 msgid "Remove nonexistent styles"
 msgstr "존재하지 않는 스타일 제거"
 
-#: Kainote/kainoteApp.cpp:232 Kainote/kainoteApp.cpp:241
+#: Kainote/kainoteApp.cpp:231 Kainote/kainoteApp.cpp:240
 msgid "Not enough RAM. History partially deleted"
 msgstr "RAM 부족, 일부 기록 삭제"
 
-#: Kainote/kainoteApp.cpp:331
+#: Kainote/kainoteApp.cpp:318
 msgid ""
 "Cannot read settings.\n"
 "The program will be terminated."
 msgstr "설정을 읽을 수 없습니다. 프로그램이 종료됩니다."
 
-#: Kainote/kainoteApp.cpp:396
+#: Kainote/kainoteApp.cpp:345
+msgid "Cannot find language, language change failed"
+msgstr ""
+
+#: Kainote/kainoteApp.cpp:350
+msgid "wxLocale cannot initialize, language change failed"
+msgstr ""
+
+#: Kainote/kainoteApp.cpp:364
+msgid "Cannot find translation, language change failed"
+msgstr ""
+
+#: Kainote/kainoteApp.cpp:380
 msgid ""
 "Cannot read hotkeys.\n"
 "The program will be terminated."
 msgstr "단축키를 읽을 수 없습니다. 프로그램이 종료됩니다."
 
-#: Kainote/kainoteApp.cpp:524
+#: Kainote/kainoteApp.cpp:508
 msgid "Load last session?"
 msgstr "마지막 작업 열기?"
 
-#: Kainote/kainoteApp.cpp:530
+#: Kainote/kainoteApp.cpp:514
 msgid ""
 "The program crashed or was closed improperly.\n"
 "Load the last session with the latest autosaved subtitles?"
@@ -8042,7 +8142,8 @@ msgid "Style named \"%s\" already exists."
 msgstr "\"%s\"라는 스타일이 이미 있습니다."
 
 #: Kainote/stylestore.cpp:508
-msgid "Style name modified. Do you want to change all instances to the new name?"
+msgid ""
+"Style name modified. Do you want to change all instances to the new name?"
 msgstr "스타일 이름이 수정되었습니다. 모두 새 이름으로 변경 하시겠습니까?"
 
 #: Kainote/stylestore.cpp:612
