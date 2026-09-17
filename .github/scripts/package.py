@@ -125,12 +125,18 @@ def find_output(build_dir: Path, name: str) -> Path | None:
     return None
 
 
-def copy_binaries(platform: str, build_dir: Path, stage: Path) -> tuple[list[str], list[str]]:
+def copy_binaries(platform: str, build_dir: Path, stage: Path,
+                  flavor: str = "portable") -> tuple[list[str], list[str]]:
     taken: list[str] = []
     missing: list[str] = []
     if platform == "windows":
-        wanted = ["Kainote.exe", "Kainote.pdb", "ffms2.dll",
-                  "Kainote_AVX.exe", "Kainote_AVX.pdb"]
+        if flavor == "installer":
+            # Symbols are 156 MB of the 272 MB tree and useless to end users;
+            # the AVX build is an opt-in the zip still offers.
+            wanted = ["Kainote.exe", "ffms2.dll"]
+        else:
+            wanted = ["Kainote.exe", "Kainote.pdb", "ffms2.dll",
+                      "Kainote_AVX.exe", "Kainote_AVX.pdb"]
     else:
         wanted = ["kainote"]
     for name in wanted:
@@ -383,6 +389,13 @@ def main() -> int:
     ap.add_argument("--stage", required=True)
     ap.add_argument("--repo-root", default=".")
     ap.add_argument("--no-archive", action="store_true")
+    ap.add_argument("--flavor", choices=["portable", "installer"], default="portable",
+                    help="installer drops the debug symbols, the AVX build and "
+                         "portable.txt, since the installer supplies its own layout")
+    ap.add_argument("--strict", action="store_true",
+                    help="treat a missing required binary as an error. A nightly "
+                         "zip can tolerate losing D3DX9_43.dll to a network "
+                         "hiccup; a setup that lands in Program Files cannot")
     args = ap.parse_args()
 
     repo_root = Path(args.repo_root).resolve()
@@ -396,7 +409,7 @@ def main() -> int:
     library = copy_automation(repo_root, stage)
     log(f"   automation library and themes: {library} files")
 
-    taken, missing = copy_binaries(args.platform, build_dir, stage)
+    taken, missing = copy_binaries(args.platform, build_dir, stage, args.flavor)
     log(f"   binaries: {len(taken)} copied" + (f", missing: {', '.join(missing)}" if missing else ""))
 
     if args.platform == "windows":
@@ -415,18 +428,26 @@ def main() -> int:
     locales = compile_locales(repo_root, stage)
     log(f"   locales: {locales} catalogs")
 
-    # Both archives are self-contained directories, so they keep their
-    # settings beside the binary rather than in the user profile. The
-    # installer payload deliberately omits this.
-    (stage / "portable.txt").write_text(
-        "Kainote keeps its settings in this folder.\n"
-        "Delete this file to use the per-user settings folder instead.\n",
-        encoding="utf-8")
+    # An archive is a self-contained directory and keeps its settings beside
+    # the binary; an installed copy uses the per-user folders instead.
+    if args.flavor == "portable":
+        (stage / "portable.txt").write_text(
+            "Kainote keeps its settings in this folder.\n"
+            "Delete this file to use the per-user settings folder instead.\n",
+            encoding="utf-8")
 
     for name in ("README.md", "LICENSE"):
         src = repo_root / name
         if src.exists():
             shutil.copyfile(src, stage / ("LICENSE.txt" if name == "LICENSE" else name))
+
+    if args.strict:
+        required = (["Kainote.exe", "ffms2.dll", "D3DX9_43.dll", *VC_RUNTIME]
+                    if args.platform == "windows" else ["kainote"])
+        absent = [n for n in required if not (stage / n).exists()]
+        if absent:
+            log(f"!! missing required for --strict: {', '.join(absent)}")
+            return 1
 
     write_notices(repo_root, stage)
     write_manifest_file(stage)

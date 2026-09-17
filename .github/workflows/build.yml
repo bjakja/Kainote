@@ -232,6 +232,36 @@ jobs:
         if: matrix.configuration == 'Release'
         run: python .github/scripts/package.py --platform windows --build-dir x64/Release --stage "dist/Kainote_x64" --no-archive
 
+      # Staged outside dist/, or the portable artifact would double in size by
+      # containing a second copy of everything.
+      - name: Package the installer payload
+        if: matrix.configuration == 'Release'
+        run: >
+          python .github/scripts/package.py --platform windows
+          --build-dir x64/Release --stage "build/installer-payload"
+          --flavor installer --strict --no-archive
+
+      - name: Install Inno Setup
+        if: matrix.configuration == 'Release'
+        run: choco install innosetup --version=6.4.3 -y --no-progress
+
+      # A .iss cannot be compiled anywhere but Windows, so this is the only
+      # syntax check the installer script will ever get.
+      - name: Build the installer
+        if: matrix.configuration == 'Release'
+        timeout-minutes: 30
+        run: >
+          pwsh -File packaging/windows/build-installer.ps1
+          -PayloadDir "build/installer-payload" -OutputDir "dist"
+
+      - name: Upload the installer
+        if: matrix.configuration == 'Release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: kainote-windows-installer
+          path: dist/Kainote-*-x64-setup.exe
+          if-no-files-found: error
+
       - name: Upload the package
         if: matrix.configuration == 'Release'
         uses: actions/upload-artifact@v4
@@ -271,6 +301,9 @@ jobs:
 
       - name: Build
         run: cmake --build build -j"$(nproc)"
+
+      - name: Check the installer associations
+        run: python packaging/windows/check_associations.py
 
       - name: Validate the desktop integration
         run: |
