@@ -142,13 +142,27 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: Thirdparty/wxWidgets/lib
-          key: wx-${{ matrix.configuration }}-${{ steps.wx-pin.outputs.sha }}-${{ hashFiles('Thirdparty/build-wxwidgets.ps1') }}
+          key: wx2-${{ matrix.configuration }}-${{ steps.wx-pin.outputs.sha }}-${{ hashFiles('Thirdparty/build-wxwidgets.ps1') }}
+
+      # A cache hit is not proof the libraries are usable: the save step below
+      # used to run on failed runs too, so a partial lib/ could be cached and
+      # then restored over a build that was skipped because of it. Check for
+      # the header the build actually needs.
+      - name: Check the restored wxWidgets libraries
+        id: wx-check
+        run: |
+          $setup = "Thirdparty/wxWidgets/lib/vc_x64_lib/mswu/wx/setup.h"
+          $usable = Test-Path -LiteralPath $setup
+          if (-not $usable -and '${{ steps.wx-cache.outputs.cache-hit }}' -eq 'true') {
+            Write-Host "::warning::wxWidgets cache hit but $setup is missing; rebuilding."
+          }
+          echo "usable=$($usable.ToString().ToLower())" >> $env:GITHUB_OUTPUT
 
       - name: Bootstrap
         run: >
           pwsh -File Thirdparty\bootstrap.ps1
           -Configuration ${{ matrix.configuration }}
-          ${{ steps.wx-cache.outputs.cache-hit == 'true' && '-SkipWxWidgets' || '' }}
+          ${{ steps.wx-check.outputs.usable == 'true' && '-SkipWxWidgets' || '' }}
 
       - name: Build
         timeout-minutes: 90
@@ -218,11 +232,11 @@ jobs:
           key: hydrate-trees-${{ hashFiles('Thirdparty/dependencies.json', 'Thirdparty/hydrate.ps1') }}
 
       - name: Save wxWidgets libraries
-        if: always() && steps.wx-cache.outputs.cache-hit != 'true'
+        if: success() && steps.wx-check.outputs.usable != 'true'
         uses: actions/cache/save@v4
         with:
           path: Thirdparty/wxWidgets/lib
-          key: wx-${{ matrix.configuration }}-${{ steps.wx-pin.outputs.sha }}-${{ hashFiles('Thirdparty/build-wxwidgets.ps1') }}
+          key: wx2-${{ matrix.configuration }}-${{ steps.wx-pin.outputs.sha }}-${{ hashFiles('Thirdparty/build-wxwidgets.ps1') }}
 
       - name: Check the executable exists
         run: |
