@@ -272,6 +272,18 @@ jobs:
       - name: Build
         run: cmake --build build -j"$(nproc)"
 
+      - name: Validate the desktop integration
+        run: |
+          sudo apt-get install -y --no-install-recommends desktop-file-utils appstream libxml2-utils
+          cmake --install build --prefix "$PWD/stage"
+          desktop-file-validate stage/share/applications/io.github.bjakja.Kainote.desktop
+          appstreamcli validate --no-net stage/share/metainfo/io.github.bjakja.Kainote.metainfo.xml
+          xmllint --noout stage/share/mime/packages/kainote.xml
+          # Icon= must actually resolve, or the launcher shows a blank tile.
+          for size in 16x16 32x32 48x48 64x64 128x128 256x256; do
+            test -f "stage/share/icons/hicolor/$size/apps/kainote.png"
+          done
+
       - name: Check the executable exists
         run: test -x build/kainote && ls -l build/kainote
 
