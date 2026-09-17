@@ -250,9 +250,6 @@
     <ClCompile Include="KeyframesLoader.cpp">
       <Filter>K</Filter>
     </ClCompile>
-    <ClCompile Include="Languages.cpp">
-      <Filter>L</Filter>
-    </ClCompile>
     <ClCompile Include="LineParse.cpp">
       <Filter>L</Filter>
     </ClCompile>
