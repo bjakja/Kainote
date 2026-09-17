@@ -401,6 +401,7 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitp
     <ClCompile Include="MenuButton.cpp" />
     <ClCompile Include="MispellReplacerDialog.cpp" />
     <ClCompile Include="OptionsPanels.cpp" />
+    <ClCompile Include="FileTypes.cpp" />
     <ClCompile Include="Registry.cpp" />
     <ClCompile Include="SelectLines.cpp" />
     <ClCompile Include="SpellCheckerDialog.cpp" />
@@ -562,6 +563,8 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitp
     <ClInclude Include="MenuButton.h" />
     <ClInclude Include="MispellReplacerDialog.h" />
     <ClInclude Include="OptionsPanels.h" />
+    <ClInclude Include="FileTypeIcons.h" />
+    <ClInclude Include="FileTypes.h" />
     <ClInclude Include="Registry.h" />
     <ClInclude Include="SelectLines.h" />
     <ClInclude Include="SpellCheckerDialog.h" />

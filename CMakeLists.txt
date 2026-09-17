@@ -97,6 +97,7 @@ add_executable(kainote
     Kainote/ProviderFFMS2.cpp
     Kainote/RendererFFMS2.cpp
     Kainote/RendererGStreamer.cpp
+    Kainote/FileTypes.cpp
     Kainote/Registry.cpp
     Kainote/RendererDirectShow.cpp
     Kainote/RendererVideo.cpp
