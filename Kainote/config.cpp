@@ -19,6 +19,8 @@
 #include "KaiMessageBox.h"
 #include <wx/settings.h>
 #include <wx/stdpaths.h>
+#include <wx/textfile.h>
+#include <wx/file.h>
 #include <wx/dir.h>
 #include <wx/string.h>
 #include <wx/log.h>
@@ -341,7 +343,7 @@ void config::SaveOptions(bool cfg, bool style, bool crashed)
 			stylefile << GetStyle(j)->GetRaw();
 		}
 		wxString path;
-		path << pathfull << wxFileName::GetPathSeparator() << L"Catalog" << wxFileName::GetPathSeparator() << actualStyleDir << L".sty";
+		path << userPath << wxFileName::GetPathSeparator() << L"Catalog" << wxFileName::GetPathSeparator() << actualStyleDir << L".sty";
 		ow.FileWrite(path, stylefile);
 	}
 }
@@ -537,11 +539,255 @@ void config::LoadDefaultColors(bool dark, wxColour *table)
 
 }
 
-int config::LoadOptions()
+// Portable means "keep everything beside the executable", which is what the
+// zip and the Linux tarball have always done. A shipped marker file decides
+// it rather than probing whether the directory is writable: a probe is not
+// stable across runs -- antivirus, an ACL change or one elevated launch flips
+// the answer and the user's settings appear to move -- and it would wrongly
+// call a writable D:\Apps\Kainote portable, so two users of one machine would
+// share a config.
+static bool KainotePortableRequested(const wxString &exeDir)
+{
+	if (wxFileExists(exeDir + wxFileName::GetPathSeparator() + L"portable.txt"))
+		return true;
+
+	wxString unused;
+	return wxGetEnv(L"KAINOTE_PORTABLE", &unused);
+}
+
+// Copy, never move: the source may be read-only, and leaving it intact means
+// a botched migration costs nothing.
+static void KainoteCopyTreeIfMissing(const wxString &from, const wxString &to)
+{
+	if (!wxDirExists(from))
+		return;
+
+	wxFileName::Mkdir(to, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+	wxDir dir(from);
+	wxString name;
+	for (bool more = dir.GetFirst(&name); more; more = dir.GetNext(&name)){
+		wxString src = from + wxFileName::GetPathSeparator() + name;
+		wxString dst = to + wxFileName::GetPathSeparator() + name;
+		if (wxDirExists(src))
+			KainoteCopyTreeIfMissing(src, dst);
+		else if (!wxFileExists(dst))
+			wxCopyFile(src, dst, false);
+	}
+}
+
+void config::MigrateLegacyUserData()
+{
+	wxString stamp = userPath + wxFileName::GetPathSeparator() + L".migrated";
+	if (wxFileExists(stamp))
+		return;
+
+	// Only migrate into an empty profile, and only from an installation that
+	// actually has settings beside the executable.
+	wxString sep = wxFileName::GetPathSeparator();
+	if (wxFileExists(configPath + sep + L"Config.txt"))
+		return;
+
+	wxString legacy = pathfull;
+	if (!wxFileExists(legacy + sep + L"Config" + sep + L"Config.txt")){
+		// The installer cannot copy on the user's behalf -- under elevation it
+		// would write to the admin's profile -- so it leaves a path here
+		// instead and we do the work.
+		wxString hint = userPath + sep + L"import-from.txt";
+		if (!wxFileExists(hint))
+			return;
+
+		wxTextFile hintFile;
+		if (!hintFile.Open(hint) || hintFile.GetLineCount() == 0)
+			return;
+		legacy = hintFile.GetLine(0).Trim().Trim(false);
+		hintFile.Close();
+		if (legacy.empty() || !wxFileExists(legacy + sep + L"Config" + sep + L"Config.txt"))
+			return;
+	}
+
+	KainoteCopyTreeIfMissing(legacy + sep + L"Config", userPath + sep + L"Config");
+	KainoteCopyTreeIfMissing(legacy + sep + L"Catalog", userPath + sep + L"Catalog");
+
+	// Only themes the user added; the shipped ones come with the install.
+	// When the source is the install directory itself this copies nothing,
+	// because every theme there is also "shipped" by that test -- which is
+	// harmless, since ResolveThemeRead still finds them where they are.
+	wxString legacyThemes = legacy + sep + L"Themes";
+	if (wxDirExists(legacyThemes)){
+		wxDir themes(legacyThemes);
+		wxString name;
+		for (bool more = themes.GetFirst(&name, L"*.txt", wxDIR_FILES); more;
+			more = themes.GetNext(&name))
+		{
+			if (wxFileExists(pathfull + sep + L"Themes" + sep + name))
+				continue;
+			wxFileName::Mkdir(userPath + sep + L"Themes", wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+			wxString dst = userPath + sep + L"Themes" + sep + name;
+			if (!wxFileExists(dst))
+				wxCopyFile(legacyThemes + sep + name, dst, false);
+		}
+	}
+
+	wxString legacyUserDic = legacy + sep + L"Dictionary" + sep + L"UserDic.udic";
+	if (wxFileExists(legacyUserDic)){
+		wxFileName::Mkdir(userPath + sep + L"Dictionary", wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+		wxString dst = userPath + sep + L"Dictionary" + sep + L"UserDic.udic";
+		if (!wxFileExists(dst))
+			wxCopyFile(legacyUserDic, dst, false);
+	}
+
+	// Unsaved work. Regenerable caches (Indices, AudioCache) are deliberately
+	// skipped -- they can be gigabytes and cost nothing to rebuild.
+	KainoteCopyTreeIfMissing(legacy + sep + L"Subs", cachePath + sep + L"Subs");
+	KainoteCopyTreeIfMissing(legacy + sep + L"Recovery", cachePath + sep + L"Recovery");
+	KainoteCopyTreeIfMissing(legacy + sep + L"ReplaceBackup", cachePath + sep + L"ReplaceBackup");
+
+	// Automation: DependencyControl's own trees wholesale, but under
+	// autoload/include only what is not already shipped -- that set difference
+	// is what separates installed scripts from the ones in the package.
+	wxString legacyAuto = legacy + sep + L"Automation";
+	wxString userAuto = userPath + sep + L"Automation";
+	if (wxDirExists(legacyAuto)){
+		for (const wchar_t *sub : { L"config", L"log", L"cache", L"feedDump" })
+			KainoteCopyTreeIfMissing(legacyAuto + sep + sub, userAuto + sep + sub);
+
+		for (const wchar_t *sub : { L"automation/autoload", L"automation/include" }){
+			wxString from = legacyAuto + sep + sub;
+			if (!wxDirExists(from))
+				continue;
+			wxDir d(from);
+			wxString name;
+			for (bool more = d.GetFirst(&name); more; more = d.GetNext(&name)){
+				if (wxFileExists(pathfull + sep + L"Automation" + sep + sub + sep + name) ||
+					wxDirExists(pathfull + sep + L"Automation" + sep + sub + sep + name))
+				{
+					continue;
+				}
+				wxString src = from + sep + name;
+				wxString dst = userAuto + sep + sub + sep + name;
+				if (wxDirExists(src))
+					KainoteCopyTreeIfMissing(src, dst);
+				else if (!wxFileExists(dst)){
+					wxFileName::Mkdir(userAuto + sep + sub, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+					wxCopyFile(src, dst, false);
+				}
+			}
+		}
+	}
+
+	OpenWrite ow;
+	ow.FileWrite(stamp, L"migrated from: " + legacy + L"\n");
+	KaiLog(wxString::Format(_("Copied the settings from %s to %s"), legacy, userPath));
+}
+
+// Themes are both shipped and user-editable. Reads prefer the user copy so an
+// edited theme shadows the packaged one; writes always go to the user copy,
+// because the packaged ones are read-only once Kainote is installed.
+wxString config::ResolveThemeRead(const wxString &name)
+{
+	wxString sep = wxFileName::GetPathSeparator();
+	wxString user = userPath + sep + L"Themes" + sep + name + L".txt";
+	if (wxFileExists(user))
+		return user;
+	return pathfull + sep + L"Themes" + sep + name + L".txt";
+}
+
+wxString config::ThemeWritePath(const wxString &name)
+{
+	wxString sep = wxFileName::GetPathSeparator();
+	wxString dir = userPath + sep + L"Themes";
+	wxFileName::Mkdir(dir, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+	return dir + sep + name + L".txt";
+}
+
+void config::CollectThemeNames(wxArrayString &out)
+{
+	wxString sep = wxFileName::GetPathSeparator();
+	for (const wxString &dir : { pathfull + sep + L"Themes", userPath + sep + L"Themes" }){
+		if (!wxDirExists(dir))
+			continue;
+		wxDir d(dir);
+		wxString name;
+		for (bool more = d.GetFirst(&name, L"*.txt", wxDIR_FILES); more;
+			more = d.GetNext(&name))
+		{
+			wxString stem = name.BeforeLast(L'.');
+			if (out.Index(stem) == wxNOT_FOUND)
+				out.Add(stem);
+		}
+	}
+}
+
+void config::InitPaths()
 {
 	wxStandardPathsBase &paths = wxStandardPaths::Get();
 	pathfull = paths.GetExecutablePath().BeforeLast(wxFileName::GetPathSeparator());
-	configPath = pathfull + wxFileName::GetPathSeparator() + L"Config";
+
+	isPortable = KainotePortableRequested(pathfull);
+	if (isPortable){
+		userPath = pathfull;
+		cachePath = pathfull;
+	}
+	else{
+#ifdef _WIN32
+		wxString appData, localAppData;
+		if (!wxGetEnv(L"APPDATA", &appData) || appData.empty())
+			appData = paths.GetUserConfigDir();
+		if (!wxGetEnv(L"LOCALAPPDATA", &localAppData) || localAppData.empty())
+			localAppData = appData;
+
+		userPath = appData + wxFileName::GetPathSeparator() + L"Kainote";
+		cachePath = localAppData + wxFileName::GetPathSeparator() + L"Kainote";
+#else
+		// XDG rather than wxStandardPaths, which still answers ~/.kainote on
+		// Unix; the desktop integration already commits us to XDG.
+		wxString home;
+		if (!wxGetEnv(L"HOME", &home) || home.empty())
+			home = wxGetHomeDir();
+		wxString xdgConfig, xdgCache;
+		if (!wxGetEnv(L"XDG_CONFIG_HOME", &xdgConfig) || xdgConfig.empty())
+			xdgConfig = home + L"/.config";
+		if (!wxGetEnv(L"XDG_CACHE_HOME", &xdgCache) || xdgCache.empty())
+			xdgCache = home + L"/.cache";
+
+		userPath = xdgConfig + L"/kainote";
+		cachePath = xdgCache + L"/kainote";
+#endif
+	}
+
+	configPath = userPath + wxFileName::GetPathSeparator() + L"Config";
+
+	if (isPortable)
+		return;
+
+	wxFileName::Mkdir(userPath, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+	wxFileName::Mkdir(cachePath, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+
+	// OpennWrite silently Mkdir's every write target, so an unwritable root
+	// would otherwise surface as a stream of "Nie można utworzyć pliku."
+	// rather than one intelligible failure. Probe once and fall back to the
+	// old behaviour, which at least leaves the program usable.
+	wxString probe = userPath + wxFileName::GetPathSeparator() + L".write-test";
+	wxFile test;
+	if (!test.Create(probe, true)){
+		KaiLog(wxString::Format(
+			_("Cannot write to the settings folder %s; using the program folder."),
+			userPath));
+		isPortable = true;
+		userPath = pathfull;
+		cachePath = pathfull;
+		configPath = pathfull + wxFileName::GetPathSeparator() + L"Config";
+		return;
+	}
+	test.Close();
+	wxRemoveFile(probe);
+
+	MigrateLegacyUserData();
+}
+
+int config::LoadOptions()
+{
+	InitPaths();
 	wxFileName::Mkdir(configPath, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 	wxString path;
 	path << configPath << wxFileName::GetPathSeparator() << L"Config.txt";
@@ -580,7 +826,7 @@ int config::LoadOptions()
 
 	actualStyleDir = L"Default";
 	path = emptyString;
-	path << pathfull << wxFileName::GetPathSeparator() << L"Catalog" << wxFileName::GetPathSeparator();
+	path << userPath << wxFileName::GetPathSeparator() << L"Catalog" << wxFileName::GetPathSeparator();
 	wxFileName::Mkdir(path, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 	wxDir kat(path);
 	if (kat.IsOpened()){
@@ -611,13 +857,14 @@ void config::LoadColors(const wxString &_themeName){
 	}
 	bool failed = false;
 	if (themeName != L"DarkSentro" && themeName != L"LightSentro"){
-		wxString path = pathfull + wxFileName::GetPathSeparator() + L"Themes" + wxFileName::GetPathSeparator() + themeName + L".txt";
+		wxString path = ResolveThemeRead(themeName);
 		OpenWrite ow;
 		wxString txtColors;
 		if (ow.FileOpen(path, &txtColors, false)){
 			if (txtColors.BeforeFirst(L'\n').Find(L'_') == -1){
 				ConfigConverter::Get()->ConvertColors(&txtColors);
-				ow.FileWrite(path, txtColors);
+				// Never back into the shipped copy.
+				ow.FileWrite(ThemeWritePath(themeName), txtColors);
 			}
 			wxStringTokenizer cfg(txtColors, L"\n");
 			int g = 0;
@@ -661,7 +908,7 @@ void config::LoadStyles(const wxString &katalog)
 {
 	actualStyleDir = katalog;
 	wxString path;
-	path << pathfull << wxFileName::GetPathSeparator() << L"Catalog" << wxFileName::GetPathSeparator() << katalog << L".sty";
+	path << userPath << wxFileName::GetPathSeparator() << L"Catalog" << wxFileName::GetPathSeparator() << katalog << L".sty";
 	OpenWrite ow;
 	for (std::vector<Styles*>::iterator it = assstore.begin(); it != assstore.end(); it++){
 		delete (*it);
@@ -933,7 +1180,7 @@ wxString config::GetStringColor(size_t optionName)
 void config::SaveColors(const wxString &path){
 	wxString finalpath = path;
 	if (path.IsEmpty()){
-		finalpath = pathfull + wxFileName::GetPathSeparator() + L"Themes" + wxFileName::GetPathSeparator() + GetString(PROGRAM_THEME) + L".txt";
+		finalpath = ThemeWritePath(GetString(PROGRAM_THEME));
 	}
 	OpenWrite ow(finalpath, true);
 	//ow.PartFileWrite(L"[" + progname + L"]\n");

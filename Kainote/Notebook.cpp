@@ -1325,7 +1325,7 @@ void Notebook::SaveLastSession(bool beforeClose, bool recovery, const wxString &
 	if (beforeClose)
 		result << L"[Close session]\r\n";
 	int numtab = 0;
-	wxString recoveryPath = Options.pathfull + L"/Recovery/";
+	wxString recoveryPath = Options.cachePath + L"/Recovery/";
 	
 	for (std::vector<TabPanel*>::iterator it = sthis->Pages.begin(); it != sthis->Pages.end(); it++){
 		TabPanel *tab = *it;
@@ -1499,7 +1499,7 @@ void Notebook::FindAutoSaveSubstitute(wxString* path, int tab)
 	if (seekPathWithoutExt.empty())
 		seekPathWithoutExt = seekpath;
 
-	wxString autosavePath = Options.pathfull + L"/Subs/" +
+	wxString autosavePath = Options.cachePath + L"/Subs/" +
 		seekPathWithoutExt + L"_" + std::to_wstring(tab) + L"*";
 
 	WIN32_FIND_DATAW data;
@@ -1535,7 +1535,7 @@ void Notebook::FindAutoSaveSubstitute(wxString* path, int tab)
 			CloseHandle(ffile);
 		}
 		if (useAutoSave) {
-			*path = Options.pathfull + L"/Subs/" + latestFile;
+			*path = Options.cachePath + L"/Subs/" + latestFile;
 			sthis->loadedRecoverySubs = true;
 		}
 		else {

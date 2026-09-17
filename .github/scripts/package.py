@@ -415,6 +415,14 @@ def main() -> int:
     locales = compile_locales(repo_root, stage)
     log(f"   locales: {locales} catalogs")
 
+    # Both archives are self-contained directories, so they keep their
+    # settings beside the binary rather than in the user profile. The
+    # installer payload deliberately omits this.
+    (stage / "portable.txt").write_text(
+        "Kainote keeps its settings in this folder.\n"
+        "Delete this file to use the per-user settings folder instead.\n",
+        encoding="utf-8")
+
     for name in ("README.md", "LICENSE"):
         src = repo_root / name
         if src.exists():
