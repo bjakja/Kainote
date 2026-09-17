@@ -256,24 +256,24 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 			if (isHeadline){
 				strings.push_back(L"#");
 				if (subsFormat < SRT){
-					strings.push_back(_("W."));
+					strings.push_back(_("L."));
 				}
 				strings.push_back(_("Start"));
 				if (subsFormat != TMP){
-					strings.push_back(_("Koniec"));
+					strings.push_back(_("End"));
 				}
 				if (subsFormat < SRT){
-					strings.push_back(_("Styl"));
-					strings.push_back(_("Aktor"));
-					strings.push_back(_("M.L."));
-					strings.push_back(_("M.P."));
-					strings.push_back(_("M.Pi."));
-					strings.push_back(_("Efekt"));
+					strings.push_back(_("Styles"));
+					strings.push_back(_("Actor"));
+					strings.push_back(_("Left"));
+					strings.push_back(_("Right"));
+					strings.push_back(_("Vert."));
+					strings.push_back(_("Effect"));
 				}
-				if (subsFormat != TMP){ strings.push_back(_("ZNS")); }
-				strings.push_back(_(L"Łamania"));
-				strings.push_back(showOriginal ? _("Tekst oryginalny") : _("Tekst"));
-				if (showOriginal){ strings.push_back(_(L"Tekst tłumaczenia")); }
+				if (subsFormat != TMP){ strings.push_back(_("CPS")); }
+				strings.push_back(_("Wraps"));
+				strings.push_back(showOriginal ? _("Original text") : _("Text"));
+				if (showOriginal){ strings.push_back(_("Translation")); }
 				kol = header;
 			}
 			else{
@@ -652,26 +652,26 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 		if (isHeadline){
 			strings.push_back(L"#");
 			if (subsFormat < SRT){
-				strings.push_back(_("W."));
+				strings.push_back(_("L."));
 			}
 			strings.push_back(_("Start"));
 			if (subsFormat != TMP){
-				strings.push_back(_("Koniec"));
+				strings.push_back(_("End"));
 			}
 			if (subsFormat < SRT){
-				strings.push_back(_("Styl"));
-				strings.push_back(_("Aktor"));
-				strings.push_back(_("M.L."));
-				strings.push_back(_("M.P."));
-				strings.push_back(_("M.Pi."));
-				strings.push_back(_("Efekt"));
+				strings.push_back(_("Styles"));
+				strings.push_back(_("Actor"));
+				strings.push_back(_("Left"));
+				strings.push_back(_("Right"));
+				strings.push_back(_("Vert."));
+				strings.push_back(_("Effect"));
 			}
 			if (subsFormat != TMP) {
-				strings.push_back(_("ZNS"));
+				strings.push_back(_("CPS"));
 			}
-			strings.push_back(_(L"Łamania"));
-			strings.push_back(showOriginal ? _("Tekst oryginalny") : _("Tekst"));
-			if (showOriginal){ strings.push_back(_(L"Tekst tłumaczenia")); }
+			strings.push_back(_("Wraps"));
+			strings.push_back(showOriginal ? _("Original text") : _("Text"));
+			if (showOriginal){ strings.push_back(_("Translation")); }
 			col = header;
 		}
 		else{
@@ -1089,58 +1089,58 @@ void SubsGridWindow::AdjustWidthsD2D(GraphicsContext *gc, int cell)
 	}
 
 	if ((subsFormat < SRT) ? (LAYER & cell) : (START & cell)){
-		wxString frst = (subsFormat < SRT) ? _("W.") : _("Start");
+		wxString frst = (subsFormat < SRT) ? _("L.") : _("Start");
 		gc->GetTextExtent(frst, &fw, &fh);
 		GridWidth[1] = (subsFormat < SRT) ? law : stw;
 		if (fw + 10 > GridWidth[1] && GridWidth[1] != 0){ GridWidth[1] = fw + 10; }
 	}
 
 	if ((subsFormat < SRT) ? (START & cell) : (END & cell)){
-		wxString scnd = (subsFormat < SRT) ? _("Start") : _("Koniec");
+		wxString scnd = (subsFormat < SRT) ? _("Start") : _("End");
 		gc->GetTextExtent(scnd, &fw, &fh);
 		GridWidth[2] = (subsFormat < SRT) ? stw : edw;
 		if (fw + 10 > GridWidth[2]){ GridWidth[2] = fw + 10; };
 	}
 	if (subsFormat<SRT){
 		if (END & cell){
-			gc->GetTextExtent(_("Koniec"), &fw, &fh);
+			gc->GetTextExtent(_("End"), &fw, &fh);
 			GridWidth[3] = edw;
 			if (fw + 10>GridWidth[3]){ GridWidth[3] = fw + 10; };
 		}
 
 		if (STYLE & cell){
-			gc->GetTextExtent(_("Styl"), &fw, &fh);
+			gc->GetTextExtent(_("Styles"), &fw, &fh);
 			GridWidth[4] = syw;
 			if (fw + 10 > GridWidth[4]){ GridWidth[4] = fw + 10; }
 		}
 
 		if (ACTOR & cell){
-			gc->GetTextExtent(_("Aktor"), &fw, &fh);
+			gc->GetTextExtent(_("Actor"), &fw, &fh);
 			if (fw + 10 > acw&&acw != 0){ acw = fw + 10; };
 			GridWidth[5] = (acw == 0) ? 0 : acw;
 		}
 
 		if (224 & cell){
-			gc->GetTextExtent(_("M.Pi."), &fw, &fh);
+			gc->GetTextExtent(_("Vert."), &fw, &fh);
 			if (MARGINL & cell){ GridWidth[6] = (!shml) ? 0 : fw + 10; }
 			if (MARGINR & cell){ GridWidth[7] = (!shmr) ? 0 : fw + 10; }
 			if (MARGINV & cell){ GridWidth[8] = (!shmv) ? 0 : fw + 10; }
 		}
 
 		if (EFFECT & cell){
-			gc->GetTextExtent(_("Efekt"), &fw, &fh);
+			gc->GetTextExtent(_("Effect"), &fw, &fh);
 			if (fw + 10 > efw&&efw != 0){ efw = fw + 10; };
 			GridWidth[9] = (efw == 0) ? 0 : efw;
 		}
 	}
 
 	if (CPS & cell){
-		gc->GetTextExtent(_("ZNS"), &fw, &fh);
+		gc->GetTextExtent(_("CPS"), &fw, &fh);
 		GridWidth[(subsFormat < SRT) ? 10 : 3] = fw + 5;
 	}
 
 	if (WRAPS & cell) {
-		gc->GetTextExtent(_(L"Łamania"), &fw, &fh);
+		gc->GetTextExtent(_("Wraps"), &fw, &fh);
 		GridWidth[(subsFormat < SRT) ? 11 : (subsFormat != TMP) ? 4 : 2] = fw + 5;
 	}
 
@@ -1255,58 +1255,58 @@ void SubsGridWindow::AdjustWidths(int cell)
 	}
 
 	if ((subsFormat < SRT) ? (LAYER & cell) : (START & cell)){
-		wxString frst = (subsFormat < SRT) ? _("W.") : _("Start");
+		wxString frst = (subsFormat < SRT) ? _("L.") : _("Start");
 		dc.GetTextExtent(frst, &fw, &fh);
 		GridWidth[1] = (subsFormat < SRT) ? law : stw;
 		if (fw + 10 > GridWidth[1] && GridWidth[1] != 0){ GridWidth[1] = fw + 10; }
 	}
 
 	if ((subsFormat < SRT) ? (START & cell) : (END & cell)){
-		wxString scnd = (subsFormat < SRT) ? _("Start") : _("Koniec");
+		wxString scnd = (subsFormat < SRT) ? _("Start") : _("End");
 		dc.GetTextExtent(scnd, &fw, &fh);
 		GridWidth[2] = (subsFormat < SRT) ? stw : edw;
 		if (fw + 10 > GridWidth[2]){ GridWidth[2] = fw + 10; };
 	}
 	if (subsFormat < SRT){
 		if (END & cell){
-			dc.GetTextExtent(_("Koniec"), &fw, &fh);
+			dc.GetTextExtent(_("End"), &fw, &fh);
 			GridWidth[3] = edw;
 			if (fw + 10>GridWidth[3]){ GridWidth[3] = fw + 10; };
 		}
 
 		if (STYLE & cell){
-			dc.GetTextExtent(_("Styl"), &fw, &fh);
+			dc.GetTextExtent(_("Styles"), &fw, &fh);
 			GridWidth[4] = syw;
 			if (fw + 10 > GridWidth[4]){ GridWidth[4] = fw + 10; }
 		}
 
 		if (ACTOR & cell){
-			dc.GetTextExtent(_("Aktor"), &fw, &fh);
+			dc.GetTextExtent(_("Actor"), &fw, &fh);
 			if (fw + 10 > acw&&acw != 0){ acw = fw + 10; };
 			GridWidth[5] = (acw == 0) ? 0 : acw;
 		}
 
 		if (224 & cell){
-			dc.GetTextExtent(_("M.Pi."), &fw, &fh);
+			dc.GetTextExtent(_("Vert."), &fw, &fh);
 			if (MARGINL & cell){ GridWidth[6] = (!shml) ? 0 : fw + 10; }
 			if (MARGINR & cell){ GridWidth[7] = (!shmr) ? 0 : fw + 10; }
 			if (MARGINV & cell){ GridWidth[8] = (!shmv) ? 0 : fw + 10; }
 		}
 
 		if (EFFECT & cell){
-			dc.GetTextExtent(_("Efekt"), &fw, &fh);
+			dc.GetTextExtent(_("Effect"), &fw, &fh);
 			if (fw + 10 > efw&&efw != 0){ efw = fw + 10; };
 			GridWidth[9] = (efw == 0) ? 0 : efw;
 		}
 	}
 
 	if (CPS & cell){
-		dc.GetTextExtent(_("ZNS"), &fw, &fh);
+		dc.GetTextExtent(_("CPS"), &fw, &fh);
 		GridWidth[(subsFormat < SRT) ? 10 : 3] = fw + 5;
 	}
 
 	if (WRAPS & cell) {
-		dc.GetTextExtent(_(L"Łamania"), &fw, &fh);
+		dc.GetTextExtent(_("Wraps"), &fw, &fh);
 		GridWidth[(subsFormat < SRT) ? 11 : (subsFormat != TMP) ? 4 : 2] = fw + 5;
 	}
 
@@ -2047,7 +2047,7 @@ bool SubsGridWindow::ShowPreviewWindow(SubsGridWindow *previewGrid,
 	int previewHeight = (((h / 3) / realGridHeight) * realGridHeight) + realGridHeight + 4;
 	if (previewHeight < 100)
 		previewHeight = ((100 / realGridHeight) * realGridHeight) + realGridHeight + 4;
-	if (h < 150){ KaiMessageBox(_(L"Nie można wyświetlić podglądu, ponieważ wielkość okna napisów jest zbyt mała")); return false; }
+	if (h < 150){ KaiMessageBox(_("Cannot show preview cause grid height is too low")); return false; }
 	int previewPosition = (diffPosition + 2) * realGridHeight;
 	if (previewPosition + previewHeight > h || previewPosition < 20){
 		int newLine = (((h - previewHeight) / 2) / realGridHeight);

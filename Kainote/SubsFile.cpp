@@ -21,7 +21,7 @@
 
 
 HistoryDialog::HistoryDialog(wxWindow *parent, SubsFile *file, std::function<void(int)> func)
-	: KaiDialog(parent, -1, _("Historia"), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)
+	: KaiDialog(parent, -1, _("History"), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)
 {
 	wxArrayString history;
 	file->GetHistoryTable(&history);
@@ -32,7 +32,7 @@ HistoryDialog::HistoryDialog(wxWindow *parent, SubsFile *file, std::function<voi
 	}, ID_HISTORY_LIST);
 	DialogSizer *main = new DialogSizer(wxVERTICAL);
 	wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
-	MappedButton *Set = new MappedButton(this, ID_SET_HISTORY, _("Ustaw"));
+	MappedButton *Set = new MappedButton(this, ID_SET_HISTORY, _("Set"));
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 		func(HistoryList->GetSelection());
 	}, ID_SET_HISTORY);
@@ -41,7 +41,7 @@ HistoryDialog::HistoryDialog(wxWindow *parent, SubsFile *file, std::function<voi
 		func(HistoryList->GetSelection());
 		Hide();
 	}, ID_SET_HISTORY_AND_CLOSE);
-	MappedButton *Cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
+	MappedButton *Cancel = new MappedButton(this, wxID_CANCEL, _("Cancel"));
 	buttonSizer->Add(Set, 1, wxALL, 3);
 	buttonSizer->Add(Ok, 1, wxALL, 3);
 	buttonSizer->Add(Cancel, 1, wxALL, 3);
@@ -51,8 +51,9 @@ HistoryDialog::HistoryDialog(wxWindow *parent, SubsFile *file, std::function<voi
 	SetSizerAndFit(main);
 	CenterOnParent();
 	HistoryList->SetSelection(file->Iter(), true);
-	SetLabel(_("Historia") + L" (" +
-		MakePolishPlural(history.GetCount(), _("element"), _("elementy"), _(L"elementów")) + L")");
+	SetLabel(_("History") + L" (" +
+		wxString::Format(wxPLURAL("%d element", "%d elements", history.GetCount()),
+			history.GetCount()) + L")");
 }
 
 
@@ -145,65 +146,65 @@ void SubsFile::Create()
 	historyNames = new wxString[GRID_SPLIT_LINES + 1]{
 		//first element is not used but is to secure it from number 0
 		emptyString,
-			_(L"Otwarcie napisów"),
-			_("Nowe napisy"),
-			_("Edycja linii"),
-			_("Edycja wielu linii"),
-			_(L"Poprawa błędu pisowni w polu tekstowym"),
-			_("Powielenie linijek"),
-			_(L"Połączenie linijek"),
-			_(L"Połączenie linijki z poprzednią"),
-			_(L"Połączenie linijki z następną"),
-			/*10*/_(L"Połączenie linijek pozostawienie pierwszej"),
-			_(L"Połączenie linijek pozostawienie ostatniej"),
-			_("Wklejenie linijek"),
-			_("Wklejenie kolumn"),
-			_(L"Wklejenie tłumaczenia"),
-			_(L"Przesunięcie tekstu tłumaczenia"),
-			_(L"Ustawienie czasów linii jako ciągłych"),
-			_("Ustawienie FPSu obliczonego z wideo"),
-			_(L"Ustawienie własnego FPSu"),
-			_("Zamiana linijek"),
-			/*20*/_(L"Konwersja napisów"),
-			_(L"Sortowanie napisów"),
-			_(L"Usunięcie linijek"),
-			_(L"Usunięcie tekstu"),
-			_(L"Ustawienie czasu początkowego"),
-			_(L"Ustawienie czasu końcowego"),
-			_(L"Włączenie trybu tłumacza"),
-			_(L"Wyłączenie trybu tłumacza"),
-			_("Dodanie nowej linii"),
-			_("Wstawienie linii"),
-			/*30*/_("Zmiana czasu na wykresie audio"),
-			_("Przyklejenie do klatki kluczowej"),
-			_(L"Zmiana nagłówku napisów"),
-			_("Akcja zaznacz linijki"),
-			_(L"Przesunięcie czasów"),
-			_(L"Poprawa błędu pisowni"),
-			_(L"Edycja stylów"),
-			_(L"Zmiana rozdzielczości napisów"),
-			_(L"Narzędzie pozycjonowania"),
-			_(L"Narzędzie ruchu"),
-			/*40*/_(L"Narzędzie skalowania"),
-			_(L"Narzędzie obrotów w osi Z"),
-			_(L"Narzędzie obrotów w osiach X i Y"),
-			_(L"Narzędzie wycinków prostokątnych"),
-			_(L"Narzędzie wycinków wektorowych"),
-			_(L"Narzędzie rysunków wektorowych"),
-			_(L"Narzędzie zmieniacz pozycji"),
-			_(L"Narzędzie zmieniacz skali i obrotów"),
-			_(L"Narzędzie hydra"),
-			_(L"Zamień"),
-			_(L"Zamień wszystko"),
-			/*50*/_(L"Poprawa drobnych błędów"),
-			_("Wstawienie drzewka"),
-			_("Ustawienie opisu"),
-			_("Dodanie linii do drzewka"),
-			_(L"Usunięcie drzewka"),
-			_("Skrypt automatyzacji"),
-			_("Filtrowanie"),
-			_(L"Usunięcie filtrowania"),
-			_("Dzielenie linii")
+			_("Opening subtitles"),
+			_("New subtitles"),
+			_("Line editing"),
+			_("Editing multiple lines"),
+			_("Correcting spelling errors in the text field"),
+			_("Duplicating lines"),
+			_("Joining lines"),
+			_("Joining line with the previous line"),
+			_("Joining line with the next line"),
+			/*10*/_("Joining lines and keeping the first"),
+			_("Joining lines and keeping the last"),
+			_("Pasting lines"),
+			_("Pasting columns"),
+			_("Pasting translation"),
+			_("Moving translation text"),
+			_("Setting line times as continuous"),
+			_("Setting FPS from video"),
+			_("Setting custom FPS"),
+			_("Swapping lines"),
+			/*20*/_("Subtitles conversion"),
+			_("Sorting subtitles"),
+			_("Deleting lines"),
+			_("Deleting text"),
+			_("Setting start time"),
+			_("Setting end time"),
+			_("Turning on translator mode"),
+			_("Turning off translator mode"),
+			_("Adding a new line"),
+			_("Inserting line"),
+			/*30*/_("Changing time on audio spectrum"),
+			_("Snapping to keyframe"),
+			_("Changing the subtitle header"),
+			_("Selecting lines"),
+			_("Shifting times"),
+			_("Correcting spelling errors"),
+			_("Style editing"),
+			_("Changing subtitles resolution"),
+			_("Visual positioning tool"),
+			_("Visual movement tool"),
+			/*40*/_("Visual scaling tool"),
+			_("Visual Z-axis rotation tool"),
+			_("Visual X/Y-axis rotation tool"),
+			_("Visual rectangular clipping tool"),
+			_("Visual vector clipping tool"),
+			_("Visual vector drawing tool"),
+			_("Visual position adjustment tool"),
+			_("Visual scale and rotation adjustment tool"),
+			_("Visual Hydra tool"),
+			_("Replace"),
+			_("Replace all"),
+			/*50*/_("Fixing minor errors"),
+			_("Adding tree"),
+			_("Setting tree description"),
+			_("Adding line to tree"),
+			_("Removing tree"),
+			_("Automation script"),
+			_("Filtering"),
+			_("Removing filtering"),
+			_("Splitting lines")
 	};
 	iter = 0;
 	lastSave = 0;
@@ -715,7 +716,7 @@ void SubsFile::GetHistoryTable(wxArrayString *history)
 {
 	for (size_t i = 0; i < undo.size(); i++){
 		history->push_back(historyNames[undo[i]->editionType] +
-			wxString::Format(_(", aktywna linia %i"), (int)GetElementByKey(undo[i]->activeLine) + 1));
+			wxString::Format(_(", active line %i"), (int)GetElementByKey(undo[i]->activeLine) + 1));
 	}
 }
 

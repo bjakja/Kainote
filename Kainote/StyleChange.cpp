@@ -42,7 +42,7 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 	wxBoxSizer *Main2 = nullptr;
 	wxBoxSizer *Main3 = nullptr;
 	if (!window){
-		SCD = new KaiDialog(parent->GetParent(), -1, _("Edycja Stylu"), pos, wxDefaultSize, wxRESIZE_BORDER);
+		SCD = new KaiDialog(parent->GetParent(), -1, _("Style editing"), pos, wxDefaultSize, wxRESIZE_BORDER);
 		Create(SCD, -1);
 		ds = new DialogSizer(wxHORIZONTAL);
 		Main1 = new wxBoxSizer(wxVERTICAL);
@@ -59,14 +59,14 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 
 	wxBoxSizer *Main = new wxBoxSizer(wxVERTICAL);
 
-	KaiStaticBoxSizer *stylename = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Nazwa stylu:"));
+	KaiStaticBoxSizer *stylename = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Style name:"));
 	wxTextValidator valid(wxFILTER_EXCLUDE_CHAR_LIST);
 	valid.SetCharExcludes(L",");
 	styleName = new KaiTextCtrl(this, -1, emptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER, valid);
 	styleName->SetMaxLength(500);
 	stylename->Add(styleName, 1, wxEXPAND | wxALL, 2);
 
-	KaiStaticBoxSizer *stylefont = new KaiStaticBoxSizer(wxVERTICAL, this, _("Czcionka i rozmiar:"));
+	KaiStaticBoxSizer *stylefont = new KaiStaticBoxSizer(wxVERTICAL, this, _("Font and size:"));
 	wxBoxSizer *fntsizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *filtersizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *biussizer = new wxBoxSizer(wxHORIZONTAL);
@@ -76,15 +76,15 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 	fontSize = new NumCtrl(this, ID_TOUTLINE, L"32", 1, 10000, false, wxDefaultPosition, wxSize(66, -1), wxTE_PROCESS_ENTER);
 	FCManagement.LoadCatalogs();
 	fontCatalog = new KaiChoice(this, ID_FONT_CATALOG_LIST, wxDefaultPosition, wxDefaultSize, *FCManagement.GetCatalogNames());
-	fontCatalog->Insert(_("Wszystkie czcionki"), 0);
-	fontCatalog->Insert(_("Bez katalogu"), 1);
+	fontCatalog->Insert(_("All fonts"), 0);
+	fontCatalog->Insert(_("Without catalog"), 1);
 	fontCatalog->SetSelection(0);
-	CatalogAdd = new MappedButton(this, ID_CATALOG_ADD, _("Dodaj"));
-	CatalogAdd->SetToolTip(_(L"Dodaje czcionki do wcześniej utworzonego katalogu"));
-	CatalogManage = new MappedButton(this, ID_CATALOG_MANAGE, _(L"Zarządzaj"));
-	CatalogManage->SetToolTip(_(L"Umorzliwia zarządzanie katalogami czcionek"));
-	Filter = new ToggleButton(this, ID_FILTER, _("Filtruj"));
-	Filter->SetToolTip(_(L"Filtruje czcionki, by zawierały wpisane znaki"));
+	CatalogAdd = new MappedButton(this, ID_CATALOG_ADD, _("Add"));
+	CatalogAdd->SetToolTip(_("Adds fonts to a previously created catalog"));
+	CatalogManage = new MappedButton(this, ID_CATALOG_MANAGE, _("Manage"));
+	CatalogManage->SetToolTip(_("Allows managing font catalogs"));
+	Filter = new ToggleButton(this, ID_FILTER, _("Filter"));
+	Filter->SetToolTip(_("Filters fonts to those containing the entered characters"));
 	Filter->SetValue(fontFilterOn);
 	Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 		ChangeCatalog(true);
@@ -97,8 +97,8 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 			Bind(CATALOG_CHANGED, [=, this](wxCommandEvent& evt) {
 				int sel = fontCatalog->GetSelection();
 				fontCatalog->PutArray(FCManagement.GetCatalogNames());
-				fontCatalog->Insert(_("Wszystkie czcionki"), 0);
-				fontCatalog->Insert(_("Bez katalogu"), 1);
+				fontCatalog->Insert(_("All fonts"), 0);
+				fontCatalog->Insert(_("Without catalog"), 1);
 				fontCatalog->SetSelection(sel);
 				ChangeCatalog();
 				FCManagement.SaveCatalogs();
@@ -116,10 +116,10 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 		ChangeCatalog();
 	}, ID_FONT_CATALOG_LIST);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &StyleChange::OnCatalogAdd, this, ID_CATALOG_ADD);
-	textBold = new KaiCheckBox(this, ID_CBOLD, _("Pogrubienie"));
-	textItalic = new KaiCheckBox(this, ID_CBOLD, _("Kursywa"));
-	textUnderline = new KaiCheckBox(this, ID_CBOLD, _(L"Podkreślenie"));
-	textStrikeout = new KaiCheckBox(this, ID_CBOLD, _(L"Przekreślenie"));
+	textBold = new KaiCheckBox(this, ID_CBOLD, _("Bold"));
+	textItalic = new KaiCheckBox(this, ID_CBOLD, _("Italic"));
+	textUnderline = new KaiCheckBox(this, ID_CBOLD, _("Underline"));
+	textStrikeout = new KaiCheckBox(this, ID_CBOLD, _("Strikethrough"));
 
 	fntsizer->Add(styleFont, 4, wxEXPAND | wxALL, 2);
 	fntsizer->Add(fontSize, 1, wxEXPAND | wxALL, 2);
@@ -137,17 +137,17 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 	stylefont->Add(filtersizer, 0, wxEXPAND, 0);
 	stylefont->Add(biussizer, 0, wxEXPAND /*| wxALIGN_CENTER*/, 0);
 
-	KaiStaticBoxSizer *stylekol = new KaiStaticBoxSizer(wxHORIZONTAL, this, _(L"Kolory i przezroczystość:"));
+	KaiStaticBoxSizer *stylekol = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Colors and transparency:"));
 
 	wxGridSizer *kolgrid = new wxGridSizer(4, 2, 2);
 
-	color1 = new MappedButton(this, ID_BCOLOR1, _("Pierwszy"));
+	color1 = new MappedButton(this, ID_BCOLOR1, _("First"));
 	color1->Bind(wxEVT_RIGHT_UP, &StyleChange::OnColor1RightClick, this);
-	color2 = new MappedButton(this, ID_BCOLOR2, _("Drugi"));
+	color2 = new MappedButton(this, ID_BCOLOR2, _("Second"));
 	color2->Bind(wxEVT_RIGHT_UP, &StyleChange::OnColor2RightClick, this);
-	color3 = new MappedButton(this, ID_BCOLOR3, _(L"Obwódka"));
+	color3 = new MappedButton(this, ID_BCOLOR3, _("Border"));
 	color3->Bind(wxEVT_RIGHT_UP, &StyleChange::OnColor3RightClick, this);
-	color4 = new MappedButton(this, ID_BCOLOR4, _(L"Cień"));
+	color4 = new MappedButton(this, ID_BCOLOR4, _("Shadow"));
 	color4->Bind(wxEVT_RIGHT_UP, &StyleChange::OnColor4RightClick, this);
 
 	alpha1 = new NumCtrl(this, ID_TOUTLINE, L"0", 0, 255, true, wxDefaultPosition, wxSize(80, -1), wxTE_PROCESS_ENTER);
@@ -167,7 +167,7 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 
 	stylekol->Add(kolgrid, 1, wxEXPAND | wxALL, 2);
 
-	wxString labels[] = { _(L"Obwódka:"), _(L"Cień:"), _("Skala X:"), _("Skala Y:") };
+	wxString labels[] = { _("Border:"), _("Shadow:"), _("Scale X:"), _("Scale Y:") };
 	KaiStaticBoxSizer *styleattr = new KaiStaticBoxSizer(wxHORIZONTAL, this, 4, labels);
 
 	outline = new NumCtrl(this, ID_TOUTLINE, emptyString, 0, 1000, false, wxDefaultPosition, wxSize(83, -1), wxTE_PROCESS_ENTER);
@@ -182,17 +182,17 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 
 	wxBoxSizer *sizer1 = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *sizer2 = new wxBoxSizer(wxHORIZONTAL);
-	wxString labels1[] = { _(L"Kąt:"), _(L"Odstępy:"), _(L"Typ obwódki:") };
+	wxString labels1[] = { _("Angle:"), _("Spacing:"), _("Border type:") };
 	KaiStaticBoxSizer *styleattr1 = new KaiStaticBoxSizer(wxHORIZONTAL, this, 3, labels1);
 
 	angle = new NumCtrl(this, ID_TOUTLINE, emptyString, -1000000, 1000000, false, wxDefaultPosition, wxSize(65, -1), wxTE_PROCESS_ENTER);
 	spacing = new NumCtrl(this, ID_TOUTLINE, emptyString, -1000000, 1000000, false, wxDefaultPosition, wxSize(65, -1), wxTE_PROCESS_ENTER);
-	borderStyle = new KaiCheckBox(this, ID_CBOLD, _("Prost. obw."));
+	borderStyle = new KaiCheckBox(this, ID_CBOLD, _("Opaque box"));
 
 	styleattr1->Add(angle, 1, wxEXPAND | wxALL, 2);
 	styleattr1->Add(spacing, 1, wxEXPAND | wxALL, 2);
 	styleattr1->Add(borderStyle, 1, wxEXPAND | wxALL, 2);
-	wxString labels2[] = { _("Margines lewy:"), _("Prawy:"), _("Pionowy:") };
+	wxString labels2[] = { _("Left margin:"), _("Right:"), _("Vertical:") };
 	KaiStaticBoxSizer *stylemargs = new KaiStaticBoxSizer(wxHORIZONTAL, this, 3, labels2);
 
 	leftMargin = new NumCtrl(this, ID_TOUTLINE, emptyString, 0, 9999, true, wxDefaultPosition, wxSize(65, -1), wxTE_PROCESS_ENTER);
@@ -206,7 +206,7 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 	sizer1->Add(styleattr1, 0, wxEXPAND, 0);
 	sizer1->Add(stylemargs, 0, wxEXPAND, 0);
 
-	KaiStaticBoxSizer *stylean = new KaiStaticBoxSizer(wxHORIZONTAL, this, _(L"Położenie tekstu:"));
+	KaiStaticBoxSizer *stylean = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Alignment:"));
 
 	wxGridSizer *angrid = new wxGridSizer(3, 5, 2);
 
@@ -237,37 +237,37 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 
 
 	encs.Add(_("0 - ANSI"));
-	encs.Add(_(L"1 - Domyślny"));
+	encs.Add(_("1 - Default"));
 	encs.Add(_("2 - Symbol"));
 	encs.Add(_("77 - Mac"));
-	encs.Add(_(L"128 - Japoński"));
-	encs.Add(_(L"129 - Koreański"));
+	encs.Add(_("128 - Japanese"));
+	encs.Add(_("129 - Hangul"));
 	encs.Add(_("130 - Johab"));
-	encs.Add(_(L"134 - Chiński GB2312"));
-	encs.Add(_(L"135 - Chiński BIG5"));
-	encs.Add(_("161 - Grecki"));
-	encs.Add(_("162 - Turecki"));
-	encs.Add(_("163 - Wietnamski"));
-	encs.Add(_("177 - Hebrajski"));
-	encs.Add(_("178 - Arabski"));
-	encs.Add(_(L"186 - Języki Bałtyckie"));
-	encs.Add(_("204 - Rosyjski"));
-	encs.Add(_("222 - Tajski"));
-	encs.Add(_(L"238 - Europa Środkowa (Polski)"));
+	encs.Add(_("134 - Chinese GB2312"));
+	encs.Add(_("135 - Chinese BIG5"));
+	encs.Add(_("161 - Greek"));
+	encs.Add(_("162 - Turkish"));
+	encs.Add(_("163 - Vietnamese"));
+	encs.Add(_("177 - Hebrew"));
+	encs.Add(_("178 - Arabic"));
+	encs.Add(_("186 - Baltic"));
+	encs.Add(_("204 - Russian"));
+	encs.Add(_("222 - Thai"));
+	encs.Add(_("238 - Central European (Polish)"));
 	encs.Add(_("255 - OEM"));
 
-	KaiStaticBoxSizer *styleenc = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Kodowanie tekstu:"));
+	KaiStaticBoxSizer *styleenc = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Text encoding:"));
 	textEncoding = new KaiChoice(this, ID_CENCODING, wxDefaultPosition, wxDefaultSize, encs);
 	styleenc->Add(textEncoding, 1, wxEXPAND | wxALL, 2);
 
-	KaiStaticBoxSizer *styleprev = new KaiStaticBoxSizer(wxHORIZONTAL, this, _(L"Podgląd stylu:"));
+	KaiStaticBoxSizer *styleprev = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Style preview:"));
 	Preview = new StylePreview(this, -1, wxDefaultPosition, wxSize(-1, 100));
 	styleprev->Add(Preview, 1, wxEXPAND | wxALL, 2);
 
 	wxBoxSizer *buttons = new wxBoxSizer(wxHORIZONTAL);
 	btnOk = new MappedButton(this, ID_BOK, L"Ok");
-	btnCommit = new MappedButton(this, ID_B_COMMIT, _("Zastosuj"));
-	btnCancel = new MappedButton(this, ID_BCANCEL, _("Anuluj"));
+	btnCommit = new MappedButton(this, ID_B_COMMIT, _("Apply"));
+	btnCancel = new MappedButton(this, ID_BCANCEL, _("Cancel"));
 
 	buttons->Add(btnOk, 1, wxEXPAND | wxALL, 2);
 	buttons->Add(btnCommit, 1, wxEXPAND | wxALL, 2);
@@ -458,7 +458,7 @@ void StyleChange::CommitChange(bool close)
 	int changes = -1;
 	if (allowMultiEdition && CompareStyle && SS->HaveMultiEdition()){
 		changes = CompareStyle->Compare(updateStyle);
-		if (changes && KaiMessageBox(_(L"Zmienić wszystkie zaznaczone style?"), _("Pytanie"), wxYES_NO, this) == wxYES)
+		if (changes && KaiMessageBox(_("Change all selected styles?"), _("Prompt"), wxYES_NO, this) == wxYES)
 		{/*nothing to do*/}
 		else
 			changes = -1;
@@ -688,41 +688,41 @@ bool StyleChange::Show(bool show)
 
 void StyleChange::DoTooltips()
 {
-	styleName->SetToolTip(_("Nazwa stylu"));
-	styleFont->SetToolTip(_("Czcionka"));
-	fontSize->SetToolTip(_("Rozmiar czcionki"));
-	textBold->SetToolTip(_("Pogrubienie"));
-	textItalic->SetToolTip(_("Pochylenie"));
-	textUnderline->SetToolTip(_(L"Podkreślenie"));
-	textStrikeout->SetToolTip(_(L"Przekreślenie"));
-	color1->SetToolTip(_("Kolor podstawowy"));
-	color2->SetToolTip(_(L"Kolor zastępczy do karaoke"));
-	color3->SetToolTip(_(L"Kolor obwódki"));
-	color4->SetToolTip(_("Kolor cienia"));
-	alpha1->SetToolTip(_(L"Przezroczystość koloru podstawowego, 0 - brak, 255 - przezroczystość"));
-	alpha2->SetToolTip(_(L"Przezroczystość koloru zastępczego, 0 - brak, 255 - przezroczystość"));
-	alpha3->SetToolTip(_(L"Przezroczystość koloru obwódki, 0 - brak, 255 - przezroczystość"));
-	alpha4->SetToolTip(_(L"Przezroczystość koloru cienia, 0 - brak, 255 - przezroczystość"));
-	outline->SetToolTip(_(L"Obwódka w pikselach"));
-	shadow->SetToolTip(_(L"Cień w pikselach"));
-	scaleX->SetToolTip(_("Skala X w procentach"));
-	scaleY->SetToolTip(_("Skala Y w procentach"));
-	angle->SetToolTip(_(L"Kąt w stopniach"));
-	spacing->SetToolTip(_(L"Odstępy między literami w pikselach (wartości ujemne dozwolone)"));
-	borderStyle->SetToolTip(_(L"Prostokątna obwódka"));
-	rightMargin->SetToolTip(_("Margines prawy"));
-	leftMargin->SetToolTip(_("Margines lewy"));
-	verticalMargin->SetToolTip(_(L"Margines górny i dolny"));
-	alignment1->SetToolTip(_(L"Lewy dolny róg"));
-	alignment2->SetToolTip(_(L"Wyśrodkowane na dole"));
-	alignment3->SetToolTip(_(L"Prawy dolny róg"));
-	alignment4->SetToolTip(_(L"Wyśrodkowane po lewej"));
-	alignment5->SetToolTip(_(L"Wyśrodkowane"));
-	alignment6->SetToolTip(_(L"Wyśrodkowane po prawej"));
-	alignment7->SetToolTip(_(L"Lewy górny róg"));
-	alignment8->SetToolTip(_(L"Wyśrodkowane u góry"));
-	alignment9->SetToolTip(_(L"Prawy górny róg"));
-	textEncoding->SetToolTip(_("Kodowanie tekstu"));
+	styleName->SetToolTip(_("Style name"));
+	styleFont->SetToolTip(_("Font"));
+	fontSize->SetToolTip(_("Font size"));
+	textBold->SetToolTip(_("Bold"));
+	textItalic->SetToolTip(_("Italic"));
+	textUnderline->SetToolTip(_("Underline"));
+	textStrikeout->SetToolTip(_("Strikethrough"));
+	color1->SetToolTip(_("Primary color"));
+	color2->SetToolTip(_("Secondary color for karaoke"));
+	color3->SetToolTip(_("Border color"));
+	color4->SetToolTip(_("Shadow color"));
+	alpha1->SetToolTip(_("First color transparency, 0 - none, 255 - transparent"));
+	alpha2->SetToolTip(_("Second color transparency, 0 - none, 255 - transparent"));
+	alpha3->SetToolTip(_("Border transparency, 0 - none, 255 - transparent"));
+	alpha4->SetToolTip(_("Shadow transparency, 0 - none, 255 - transparent"));
+	outline->SetToolTip(_("Border size in pixels"));
+	shadow->SetToolTip(_("Shadow size in pixels"));
+	scaleX->SetToolTip(_("Scale X in %"));
+	scaleY->SetToolTip(_("Scale Y in %"));
+	angle->SetToolTip(_("Rotation in degrees"));
+	spacing->SetToolTip(_("Spacing in pixels (negative values permitted)"));
+	borderStyle->SetToolTip(_("Rectangular border"));
+	rightMargin->SetToolTip(_("Right margin"));
+	leftMargin->SetToolTip(_("Left margin"));
+	verticalMargin->SetToolTip(_("Vertical margin"));
+	alignment1->SetToolTip(_("Bottom left"));
+	alignment2->SetToolTip(_("Bottom center"));
+	alignment3->SetToolTip(_("Bottom right"));
+	alignment4->SetToolTip(_("Center left"));
+	alignment5->SetToolTip(_("Center"));
+	alignment6->SetToolTip(_("Center right"));
+	alignment7->SetToolTip(_("Top left"));
+	alignment8->SetToolTip(_("Top center"));
+	alignment9->SetToolTip(_("Top right"));
+	textEncoding->SetToolTip(_("Text encoding"));
 }
 
 void StyleChange::GetColorControls(MappedButton** color, NumCtrl** alpha, int numColor)

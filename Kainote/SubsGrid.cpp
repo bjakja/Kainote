@@ -141,27 +141,27 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	Menu* splitMenu = new Menu(GRID_HOTKEY);
 	Menu* insertMenu = new Menu(GRID_HOTKEY);
 	//hide submenu
-	hidemenu->SetAccMenu(GRID_HIDE_LAYER, _(L"Ukryj warstwę"), _(L"Ukryj warstwę"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & LAYER) != 0);
-	hidemenu->SetAccMenu(GRID_HIDE_START, _(L"Ukryj czas początkowy"), _(L"Ukryj czas początkowy"), true, ITEM_CHECK)->Check((visibleColumns & START) != 0);
-	hidemenu->SetAccMenu(GRID_HIDE_END, _(L"Ukryj czas końcowy"), _(L"Ukryj czas końcowy"), subsFormat != TMP, ITEM_CHECK)->Check((visibleColumns & END) != 0);
-	hidemenu->SetAccMenu(GRID_HIDE_ACTOR, _("Ukryj aktora"), _("Ukryj aktora"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & ACTOR) != 0);
-	hidemenu->SetAccMenu(GRID_HIDE_STYLE, _("Ukryj styl"), _("Ukryj styl"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & STYLE) != 0);
-	hidemenu->SetAccMenu(GRID_HIDE_MARGINL, _("Ukryj lewy margines"), _("Ukryj lewy margines"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & MARGINL) != 0);
-	hidemenu->SetAccMenu(GRID_HIDE_MARGINR, _("Ukryj prawy margines"), _("Ukryj prawy margines"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & MARGINR) != 0);
-	hidemenu->SetAccMenu(GRID_HIDE_MARGINV, _("Ukryj pionowy margines"), _("Ukryj pionowy margines"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & MARGINV) != 0);
-	hidemenu->SetAccMenu(GRID_HIDE_EFFECT, _("Ukryj efekt"), _("Ukryj efekt"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & EFFECT) != 0);
-	hidemenu->SetAccMenu(GRID_HIDE_CPS, _(L"Ukryj znaki na sekundę"), _(L"Ukryj znaki na sekundę"), true, ITEM_CHECK)->Check((visibleColumns & CPS) != 0);
-	hidemenu->SetAccMenu(GRID_HIDE_WRAPS, _(L"Ukryj łamania linii"), _(L"Ukryj łamania linii"), true, ITEM_CHECK)->Check((visibleColumns & WRAPS) != 0);
+	hidemenu->SetAccMenu(GRID_HIDE_LAYER, _("Hide layer"), _("Hide layer"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & LAYER) != 0);
+	hidemenu->SetAccMenu(GRID_HIDE_START, _("Hide start time"), _("Hide start time"), true, ITEM_CHECK)->Check((visibleColumns & START) != 0);
+	hidemenu->SetAccMenu(GRID_HIDE_END, _("Hide end time"), _("Hide end time"), subsFormat != TMP, ITEM_CHECK)->Check((visibleColumns & END) != 0);
+	hidemenu->SetAccMenu(GRID_HIDE_ACTOR, _("Hide actor"), _("Hide actor"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & ACTOR) != 0);
+	hidemenu->SetAccMenu(GRID_HIDE_STYLE, _("Hide style"), _("Hide style"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & STYLE) != 0);
+	hidemenu->SetAccMenu(GRID_HIDE_MARGINL, _("Hide left margin"), _("Hide left margin"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & MARGINL) != 0);
+	hidemenu->SetAccMenu(GRID_HIDE_MARGINR, _("Hide right margin"), _("Hide right margin"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & MARGINR) != 0);
+	hidemenu->SetAccMenu(GRID_HIDE_MARGINV, _("Hide vertical margin"), _("Hide vertical margin"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & MARGINV) != 0);
+	hidemenu->SetAccMenu(GRID_HIDE_EFFECT, _("Hide effect"), _("Hide effect"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & EFFECT) != 0);
+	hidemenu->SetAccMenu(GRID_HIDE_CPS, _("Hide characters per second"), _("Hide characters per second"), true, ITEM_CHECK)->Check((visibleColumns & CPS) != 0);
+	hidemenu->SetAccMenu(GRID_HIDE_WRAPS, _("Hide line wraps"), _("Hide line wraps"), true, ITEM_CHECK)->Check((visibleColumns & WRAPS) != 0);
 
 	//split menu
 	bool isEnabled = (sels == 1 && IsLineVisible(false));
-	splitMenu->SetAccMenu(GRID_SPLIT_BY_VIDEO_TIME, _(L"Podziel linię do czasu wideo"))->Enable(isEnabled);
+	splitMenu->SetAccMenu(GRID_SPLIT_BY_VIDEO_TIME, _("Split line at video time"))->Enable(isEnabled);
 	isEnabled = sels > 0 && tab->video->HasFFMS2();
-	splitMenu->SetAccMenu(GRID_SPLIT_BY_FRAME, _("Podziel linie na klatki"))->Enable(isEnabled);
+	splitMenu->SetAccMenu(GRID_SPLIT_BY_FRAME, _("Split lines into frames"))->Enable(isEnabled);
 	isEnabled = sels > 0;
-	splitMenu->SetAccMenu(GRID_SPLIT_BY_CHARS, _("Podziel linie na znaki"))->Enable(isEnabled);
-	splitMenu->SetAccMenu(GRID_SPLIT_BY_WORDS, _(L"Podziel linie na słowa"))->Enable(isEnabled);
-	splitMenu->SetAccMenu(GRID_SPLIT_BY_WRAPS, _(L"Podziel linie według łamań"))->Enable(isEnabled);
+	splitMenu->SetAccMenu(GRID_SPLIT_BY_CHARS, _("Split lines into characters"))->Enable(isEnabled);
+	splitMenu->SetAccMenu(GRID_SPLIT_BY_WORDS, _("Split lines into words"))->Enable(isEnabled);
+	splitMenu->SetAccMenu(GRID_SPLIT_BY_WRAPS, _("Split lines by wraps"))->Enable(isEnabled);
 
 	//styles menu
 	Menu *stylesMenu = new Menu();
@@ -179,68 +179,68 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	//filter submenu
 	int filterBy = Options.GetInt(GRID_FILTER_BY);
 	bool isASS = subsFormat == ASS;
-	filterMenu->SetAccMenu(GRID_FILTER_AFTER_SUBS_LOAD, _(L"Filtruj po wczytaniu napisów"), _("Nie obejmuje zaznaczonych linii"), isASS, ITEM_CHECK)->Check(Options.GetBool(GRID_FILTER_AFTER_LOAD));
-	filterMenu->SetAccMenu(GRID_FILTER_INVERT, _(L"Filtrowanie odwrócone"), _(L"Filtrowanie odwrócone"), true, ITEM_CHECK)->Check(Options.GetBool(GRID_FILTER_INVERTED));
-	filterMenu->SetAccMenu(GRID_FILTER_DO_NOT_RESET, _(L"Nie resetuj wcześniejszego filtrowania"), _(L"Nie resetuj wcześniejszego filtrowania"), true, ITEM_CHECK)->Check(Options.GetBool(GRID_ADD_TO_FILTER));
-	MenuItem *Item = new MenuItem(GRID_FILTER_BY_STYLES, _("Ukryj linie ze stylami"), _("Ukryj linie ze stylami"), isASS, nullptr, stylesMenu, ITEM_CHECK);
+	filterMenu->SetAccMenu(GRID_FILTER_AFTER_SUBS_LOAD, _("Filter after loading subtitles"), _("Do not include selected lines"), isASS, ITEM_CHECK)->Check(Options.GetBool(GRID_FILTER_AFTER_LOAD));
+	filterMenu->SetAccMenu(GRID_FILTER_INVERT, _("Reverse filtering"), _("Reverse filtering"), true, ITEM_CHECK)->Check(Options.GetBool(GRID_FILTER_INVERTED));
+	filterMenu->SetAccMenu(GRID_FILTER_DO_NOT_RESET, _("Do not reset previous filtering"), _("Do not reset previous filtering"), true, ITEM_CHECK)->Check(Options.GetBool(GRID_ADD_TO_FILTER));
+	MenuItem *Item = new MenuItem(GRID_FILTER_BY_STYLES, _("Hide lines with styles"), _("Hide lines with styles"), isASS, nullptr, stylesMenu, ITEM_CHECK);
 	filterMenu->SetAccMenu(Item, Item->label)->Check(filterStyles.size() > 0);
-	filterMenu->SetAccMenu(GRID_FILTER_BY_SELECTIONS, _("Ukryj zaznaczone linie"), _("Ukryj zaznaczone linie"), sels > 0, ITEM_CHECK)->Check(filterBy & FILTER_BY_SELECTIONS && sels > 0);
-	filterMenu->SetAccMenu(GRID_FILTER_BY_DIALOGUES, _("Ukryj komentarze"), _("Ukryj komentarze"), isASS, ITEM_CHECK)->Check((filterBy & FILTER_BY_DIALOGUES) != 0);
-	filterMenu->SetAccMenu(GRID_FILTER_BY_DOUBTFUL, _(L"Pokaż niepewne"), _(L"Pokaż niepewne"), hasTLMode, ITEM_CHECK)->Check(filterBy & FILTER_BY_DOUBTFUL && hasTLMode);
-	filterMenu->SetAccMenu(GRID_FILTER_BY_UNTRANSLATED, _(L"Pokaż nieprzetłumaczone"), _(L"Pokaż nieprzetłumaczone"), hasTLMode, ITEM_CHECK)->Check(filterBy & FILTER_BY_UNTRANSLATED && hasTLMode);
-	filterMenu->SetAccMenu(GRID_FILTER, _("Filtruj"), _("Filtruj"));
-	filterMenu->SetAccMenu(GRID_FILTER_BY_NOTHING, _(L"Wyłącz filtrowanie"), _(L"Wyłącz filtrowanie"))->Enable(IsFiltered());
+	filterMenu->SetAccMenu(GRID_FILTER_BY_SELECTIONS, _("Hide selected lines"), _("Hide selected lines"), sels > 0, ITEM_CHECK)->Check(filterBy & FILTER_BY_SELECTIONS && sels > 0);
+	filterMenu->SetAccMenu(GRID_FILTER_BY_DIALOGUES, _("Hide comments"), _("Hide comments"), isASS, ITEM_CHECK)->Check((filterBy & FILTER_BY_DIALOGUES) != 0);
+	filterMenu->SetAccMenu(GRID_FILTER_BY_DOUBTFUL, _("Show unconfirmed"), _("Show unconfirmed"), hasTLMode, ITEM_CHECK)->Check(filterBy & FILTER_BY_DOUBTFUL && hasTLMode);
+	filterMenu->SetAccMenu(GRID_FILTER_BY_UNTRANSLATED, _("Show untranslated"), _("Show untranslated"), hasTLMode, ITEM_CHECK)->Check(filterBy & FILTER_BY_UNTRANSLATED && hasTLMode);
+	filterMenu->SetAccMenu(GRID_FILTER, _("Filter"), _("Filter"));
+	filterMenu->SetAccMenu(GRID_FILTER_BY_NOTHING, _("Turn off filtering"), _("Turn off filtering"))->Enable(IsFiltered());
 
 	
 	isEnabled = (sels > 0);
-	insertMenu->SetAccMenu(GRID_INSERT_BEFORE, _("Wstaw &przed"))->Enable(isEnabled);
-	insertMenu->SetAccMenu(GRID_INSERT_AFTER, _("Wstaw p&o"))->Enable(isEnabled);
+	insertMenu->SetAccMenu(GRID_INSERT_BEFORE, _("Insert &before"))->Enable(isEnabled);
+	insertMenu->SetAccMenu(GRID_INSERT_AFTER, _("Insert &after"))->Enable(isEnabled);
 	isEnabled = (isEnabled && tab->video->GetState() != None);
-	insertMenu->SetAccMenu(GRID_INSERT_BEFORE_VIDEO, _("Wstaw przed z &czasem wideo"))->Enable(isEnabled);
-	insertMenu->SetAccMenu(GRID_INSERT_AFTER_VIDEO, _("Wstaw po z c&zasem wideo"))->Enable(isEnabled);
-	insertMenu->SetAccMenu(GRID_INSERT_BEFORE_WITH_VIDEO_FRAME, _("Wstaw przed z czasem klatki wideo"))->Enable(isEnabled);
-	insertMenu->SetAccMenu(GRID_INSERT_AFTER_WITH_VIDEO_FRAME, _("Wstaw po z czasem klatki wideo"))->Enable(isEnabled);
-	menu->Append(4442, _("Wstaw linie"), insertMenu);
+	insertMenu->SetAccMenu(GRID_INSERT_BEFORE_VIDEO, _("Insert before with &video time"))->Enable(isEnabled);
+	insertMenu->SetAccMenu(GRID_INSERT_AFTER_VIDEO, _("Insert &after with video time"))->Enable(isEnabled);
+	insertMenu->SetAccMenu(GRID_INSERT_BEFORE_WITH_VIDEO_FRAME, _("Insert before with video frame time"))->Enable(isEnabled);
+	insertMenu->SetAccMenu(GRID_INSERT_AFTER_WITH_VIDEO_FRAME, _("Insert after with video frame time"))->Enable(isEnabled);
+	menu->Append(4442, _("Insert lines"), insertMenu);
 	isEnabled = (sels > 0);
-	menu->SetAccMenu(GRID_DUPLICATE_LINES, _("&Duplikuj linie"))->Enable(isEnabled);
+	menu->SetAccMenu(GRID_DUPLICATE_LINES, _("&Duplicate lines"))->Enable(isEnabled);
 	isEnabled = (sels == 2);
-	menu->SetAccMenu(GRID_SWAP_LINES, _(L"Za&mień"))->Enable(isEnabled);
+	menu->SetAccMenu(GRID_SWAP_LINES, _("&Swap"))->Enable(isEnabled);
 	isEnabled = (sels >= 2 && sels <= 20);
-	menu->SetAccMenu(GRID_JOIN_LINES, _(L"Złącz &linijki"))->Enable(isEnabled);
+	menu->SetAccMenu(GRID_JOIN_LINES, _("Join &lines"))->Enable(isEnabled);
 	//maybe unblock it at all good to join lines of Aegisub Motion unneeded transitions
 	//there is nothing that can do mess in this case
 	isEnabled = (sels >= 2 && sels <= 500);
-	menu->SetAccMenu(GRID_JOIN_TO_FIRST_LINE, _(L"Złącz linijki zostaw pierwszą"))->Enable(isEnabled);
-	menu->SetAccMenu(GRID_JOIN_TO_LAST_LINE, _(L"Złącz linijki zostaw ostatnią"))->Enable(isEnabled);
+	menu->SetAccMenu(GRID_JOIN_TO_FIRST_LINE, _("Join lines and keep first"))->Enable(isEnabled);
+	menu->SetAccMenu(GRID_JOIN_TO_LAST_LINE, _("Join lines and keep last"))->Enable(isEnabled);
 	isEnabled = (sels > 0);
-	menu->SetAccMenu(GRID_MAKE_CONTINOUS_PREVIOUS_LINE, _(L"Ustaw czasy jako ciągłe (poprzednia linijka)"))->Enable(isEnabled);
-	menu->SetAccMenu(GRID_MAKE_CONTINOUS_NEXT_LINE, _(L"Ustaw czasy jako ciągłe (następna linijka)"))->Enable(isEnabled);
-	menu->Append(4443, _("Podziel linie"), splitMenu);
-	menu->SetAccMenu(GRID_SELECT_VISIBLE_LINES, _("Zaznacz wszystkie linie widoczne na wideo"))->Enable(isEnabled);
-	menu->SetAccMenu(GRID_COPY, _("Kopiuj\tCtrl-C"))->Enable(isEnabled);
-	menu->SetAccMenu(GRID_CUT, _("Wytnij\tCtrl-X"))->Enable(isEnabled);
-	menu->SetAccMenu(GRID_PASTE, _("Wklej\tCtrl-V"));
-	menu->SetAccMenu(GRID_COPY_COLUMNS, _("Kopiuj kolumny"))->Enable(isEnabled);
-	menu->SetAccMenu(GRID_PASTE_COLUMNS, _("Wklej kolumny"));
-	menu->Append(4444, _("Ukryj kolumny"), hidemenu);
-	menu->SetAccMenu(GRID_HIDE_SELECTED, _("Ukryj zaznaczone linijki"))->Enable(sels > 0);
-	menu->Append(4445, _("Filtrowanie"), filterMenu);
-	menu->SetAccMenu(GRID_FILTER_IGNORE_IN_ACTIONS, _("Ignoruj filtrowanie przy akcjach"), emptyString, true, ITEM_CHECK)->
+	menu->SetAccMenu(GRID_MAKE_CONTINOUS_PREVIOUS_LINE, _("Set times as a continuous (previous line)"))->Enable(isEnabled);
+	menu->SetAccMenu(GRID_MAKE_CONTINOUS_NEXT_LINE, _("Set times as a continuous (next line)"))->Enable(isEnabled);
+	menu->Append(4443, _("Split lines"), splitMenu);
+	menu->SetAccMenu(GRID_SELECT_VISIBLE_LINES, _("Select all lines visible on video"))->Enable(isEnabled);
+	menu->SetAccMenu(GRID_COPY, _("Copy\tCtrl-C"))->Enable(isEnabled);
+	menu->SetAccMenu(GRID_CUT, _("Cut\tCtrl-X"))->Enable(isEnabled);
+	menu->SetAccMenu(GRID_PASTE, _("Paste\tCtrl-V"));
+	menu->SetAccMenu(GRID_COPY_COLUMNS, _("Copy columns"))->Enable(isEnabled);
+	menu->SetAccMenu(GRID_PASTE_COLUMNS, _("Paste columns"));
+	menu->Append(4444, _("Hide columns"), hidemenu);
+	menu->SetAccMenu(GRID_HIDE_SELECTED, _("Hide selected lines"))->Enable(sels > 0);
+	menu->Append(4445, _("Filtering"), filterMenu);
+	menu->SetAccMenu(GRID_FILTER_IGNORE_IN_ACTIONS, _("Ignore filtering in some actions"), emptyString, true, ITEM_CHECK)->
 		Check(ignoreFiltered); 
-	menu->SetAccMenu(GRID_TREE_MAKE, _(L"Stwórz drzewko"))->Enable(sels > 0);
-	menu->SetAccMenu(GRID_SHOW_PREVIEW, _(L"Pokaż podgląd napisów"))->Enable(Notebook::GetTabs()->Size() > 1 && !preview);
-	menu->SetAccMenu(GRID_SET_NEW_FPS, _("Ustaw nowy FPS"));
-	menu->SetAccMenu(GRID_SET_FPS_FROM_VIDEO, _("Ustaw FPS z wideo"))->Enable(tab->video->GetState() != None && sels == 2);
-	menu->SetAccMenu(GRID_PASTE_TRANSLATION, _(L"Wklej tekst tłumaczenia"))->
+	menu->SetAccMenu(GRID_TREE_MAKE, _("Make tree"))->Enable(sels > 0);
+	menu->SetAccMenu(GRID_SHOW_PREVIEW, _("Show subtitles preview"))->Enable(Notebook::GetTabs()->Size() > 1 && !preview);
+	menu->SetAccMenu(GRID_SET_NEW_FPS, _("Set new FPS"));
+	menu->SetAccMenu(GRID_SET_FPS_FROM_VIDEO, _("Set FPS from video"))->Enable(tab->video->GetState() != None && sels == 2);
+	menu->SetAccMenu(GRID_PASTE_TRANSLATION, _("Paste translation text"))->
 		Enable(subsFormat < SRT && tab->SubsPath != emptyString);
-	menu->SetAccMenu(GRID_TRANSLATION_DIALOG, _(L"Okno przesuwania dialogów"))->Enable(GetSInfo("TLMode Showtl") == L"Yes");
+	menu->SetAccMenu(GRID_TRANSLATION_DIALOG, _("Dialogue shifting window"))->Enable(GetSInfo("TLMode Showtl") == L"Yes");
 	menu->AppendSeparator();
 
-	menu->SetAccMenu(GLOBAL_REMOVE_TEXT, _(L"Usuń tekst"))->Enable(isEnabled);
-	menu->SetAccMenu(GLOBAL_REMOVE_LINES, _(L"Usuń"))->Enable(isEnabled);
+	menu->SetAccMenu(GLOBAL_REMOVE_TEXT, _("Delete text"))->Enable(isEnabled);
+	menu->SetAccMenu(GLOBAL_REMOVE_LINES, _("Delete"))->Enable(isEnabled);
 	menu->AppendSeparator();
-	menu->SetAccMenu(GLOBAL_OPEN_FONT_COLLECTOR, _("Kolekcjoner czcionek"))->Enable(subsFormat < SRT);
-	menu->SetAccMenu(GRID_SUBS_FROM_MKV, _("Wczytaj napisy z pliku MKV / OGM"))->Enable(tab->VideoName.EndsWith(L".mkv") || tab->VideoName.EndsWith(L".ogm"));
+	menu->SetAccMenu(GLOBAL_OPEN_FONT_COLLECTOR, _("Font collector"))->Enable(subsFormat < SRT);
+	menu->SetAccMenu(GRID_SUBS_FROM_MKV, _("Load subtitles from an MKV/OGM file"))->Enable(tab->VideoName.EndsWith(L".mkv") || tab->VideoName.EndsWith(L".ogm"));
 
 	int Modifiers = 0;
 	int id = menu->GetPopupMenuSelection(pos, this, &Modifiers);
@@ -266,11 +266,11 @@ void SubsGrid::ContextMenuTree(const wxPoint &pos, int treeLine)
 {
 	int sels = SelectionsSize();
 	Menu *menu = new Menu();
-	menu->Append(6789, _("Dodaj linie"))->Enable(sels > 0);
-	menu->Append(6790, _("Kopiuj drzewko"));
-	menu->Append(6791, _(L"Zmień opis"));
-	menu->Append(6793, _("Zaznacz linie drzewka"));
-	menu->Append(6792, _(L"Usuń"));
+	menu->Append(6789, _("Add lines"))->Enable(sels > 0);
+	menu->Append(6790, _("Copy tree"));
+	menu->Append(6791, _("Change description"));
+	menu->Append(6793, _("Select tree lines"));
+	menu->Append(6792, _("Delete"));
 	int id = menu->GetPopupMenuSelection(pos, this);
 	switch (id)
 	{
@@ -456,21 +456,21 @@ void SubsGrid::OnPaste(int id)
 		wxArrayString arr;
 		wxArrayInt vals;
 		if (subsFormat == ASS) {
-			arr.Add(_("Warstwa"));
-			arr.Add(_(L"Czas początkowy"));
-			arr.Add(_(L"Czas końcowy"));
-			arr.Add(_("Aktor"));
-			arr.Add(_("Styl"));
-			arr.Add(_("Margines lewy"));
-			arr.Add(_("Margines prawy"));
-			arr.Add(_("Margines pionowy"));
-			arr.Add(_("Efekt"));
+			arr.Add(_("Layer"));
+			arr.Add(_("The starting time"));
+			arr.Add(_("End time"));
+			arr.Add(_("Actor"));
+			arr.Add(_("Styles"));
+			arr.Add(_("Left margin"));
+			arr.Add(_("Right margin"));
+			arr.Add(_("Vertical margin"));
+			arr.Add(_("Effect"));
 			if (hasTLMode) {
-				arr.Add(_(L"Tekst do oryginału"));
-				arr.Add(_(L"Tekst do tłumaczenia"));
+				arr.Add(_("Text into original"));
+				arr.Add(_("Text into translation"));
 			}
 			else {
-				arr.Add(_("Tekst"));
+				arr.Add(_("Text"));
 			}
 			
 			vals.Add(LAYER);
@@ -488,15 +488,15 @@ void SubsGrid::OnPaste(int id)
 			}
 		}
 		else if (subsFormat == TMP) {
-			arr.Add(_(L"Czas początkowy"));
-			arr.Add(_("Tekst"));
+			arr.Add(_("The starting time"));
+			arr.Add(_("Text"));
 			vals.Add(START);
 			vals.Add(TXT);
 		}
 		else {
-			arr.Add(_(L"Czas początkowy"));
-			arr.Add(_(L"Czas początkowy"));
-			arr.Add(_("Tekst"));
+			arr.Add(_("The starting time"));
+			arr.Add(_("The starting time"));
+			arr.Add(_("Text"));
 			vals.Add(START);
 			vals.Add(END);
 			vals.Add(TXT);
@@ -623,17 +623,17 @@ void SubsGrid::CopyRows(int id)
 		wxArrayString arr;
 		wxArrayInt vals;
 		if (subsFormat == ASS) {
-			arr.Add(_("Warstwa"));
-			arr.Add(_(L"Czas początkowy"));
-			arr.Add(_(L"Czas końcowy"));
-			arr.Add(_("Aktor"));
-			arr.Add(_("Styl"));
-			arr.Add(_("Margines lewy"));
-			arr.Add(_("Margines prawy"));
-			arr.Add(_("Margines pionowy"));
-			arr.Add(_("Efekt"));
-			arr.Add(_("Tekst"));
-			arr.Add(_(L"Tekst bez tagów"));
+			arr.Add(_("Layer"));
+			arr.Add(_("The starting time"));
+			arr.Add(_("End time"));
+			arr.Add(_("Actor"));
+			arr.Add(_("Styles"));
+			arr.Add(_("Left margin"));
+			arr.Add(_("Right margin"));
+			arr.Add(_("Vertical margin"));
+			arr.Add(_("Effect"));
+			arr.Add(_("Text"));
+			arr.Add(_("Text without tags"));
 			vals.Add(LAYER);
 			vals.Add(START);
 			vals.Add(END);
@@ -647,17 +647,17 @@ void SubsGrid::CopyRows(int id)
 			vals.Add(TXTTL);
 		}
 		else if (subsFormat == TMP) {
-			arr.Add(_(L"Czas początkowy"));
-			arr.Add(_("Tekst"));
+			arr.Add(_("The starting time"));
+			arr.Add(_("Text"));
 			//arr.Add(_("Tekst bez tagów"));
 			vals.Add(START);
 			vals.Add(TXT);
 			//vals.Add(TXTTL);
 		}
 		else{
-			arr.Add(_(L"Czas początkowy"));
-			arr.Add(_(L"Czas początkowy"));
-			arr.Add(_("Tekst"));
+			arr.Add(_("The starting time"));
+			arr.Add(_("The starting time"));
+			arr.Add(_("Text"));
 			//arr.Add(_("Tekst bez tagów"));
 			vals.Add(START);
 			vals.Add(END);
@@ -903,9 +903,9 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 
 void SubsGrid::OnPasteTextTl()
 {
-	wxFileDialog *FileDialog1 = new wxFileDialog(this, _(L"Wybierz plik napisów"),
+	wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Choose subtitle file"),
 		KaiPathDir(tab->SubsPath), emptyString,
-		_(L"Pliki napisów (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"),
+		_("Subtitle files (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"),
 		wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 	if (FileDialog1->ShowModal() == wxID_OK){
 		OpenWrite op;
@@ -1096,8 +1096,8 @@ void SubsGrid::OnMkvSubs(wxCommandEvent &event)
 {
 	int idd = event.GetId();
 	if (IsModified()){
-		int wbutton = KaiMessageBox(_(L"Zapisać plik przed wczytaniem napisów z MKV?"),
-			_("Potwierdzenie"), wxICON_QUESTION | wxYES_NO | wxCANCEL, this);
+		int wbutton = KaiMessageBox(_("Save the file before loading subtitles from the MKV?"),
+			_("Confirmation"), wxICON_QUESTION | wxYES_NO | wxCANCEL, this);
 		if (wbutton == wxYES){ Kai->Save(false); }
 		else if (wbutton == wxCANCEL){ return; }
 	}
@@ -1136,7 +1136,7 @@ void SubsGrid::OnMkvSubs(wxCommandEvent &event)
 		//LoadStyleCatalog();
 		if (tab->video->GetState() != None){
 			tab->video->OpenSubs(OPEN_WHOLE_SUBTITLES, true);
-			if (!isgood){ KaiMessageBox(_(L"Otwieranie napisów nie powiodło się"), _("Uwaga")); }
+			if (!isgood){ KaiMessageBox(_("Failed to open subtitles"), _("Warning")); }
 			//pause when changing matrix to avoid crash on slow computers
 			if (tab->video->GetState() == Playing){ 
 				tab->video->Pause();//Render(); 
@@ -1271,7 +1271,7 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 							resizedTag << getfloat(tagValue) << lastC << L" ";
 						}
 						else{
-							KaiLog(wxString::Format(_(L"W linii %i nie można przeskalować wartości '%s'\nw tagu '%s'"),
+							KaiLog(wxString::Format(_("In line %i, value '%s' cannot be scaled\nin tag '%s'"),
 								i + 1, tkn, tag->tagName));
 							resizedTag << tkn << lastC << L" ";
 						}
@@ -1301,7 +1301,7 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 					{
 						if (ii < 4){
 							KaiLog(wxString::Format(
-								_(L"W linii %i nie można przeskalować wartości '%s'\nw tagu '%s'"),
+								_("In line %i, value '%s' cannot be scaled\nin tag '%s'"),
 								i + 1, tkn, tag->tagName));
 						}
 						resizedTag << tkn << L",";
@@ -1321,7 +1321,7 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 				}
 				else{
 					KaiLog(wxString::Format(
-						_(L"W linii %i nie można przeskalować wartości '%s'\nw tagu '%s'"),
+						_("In line %i, value '%s' cannot be scaled\nin tag '%s'"),
 						i + 1, tag->value, tag->tagName));
 					resizedTag = tag->value;
 				}
