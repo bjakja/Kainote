@@ -1,7 +1,7 @@
 foreach(required_var IN ITEMS
         KAINOTE_EXE RUNTIME_DIR SOURCE_DIR BINARY_DIR STAGING_PARENT
-        PACKAGE_BASENAME ARCHIVE_PATH MSGFMT_EXECUTABLE TAR_EXECUTABLE
-        GZIP_EXECUTABLE)
+        PACKAGE_BASENAME ARCHIVE_PATH MSGFMT_EXECUTABLE Python3_EXECUTABLE
+        TAR_EXECUTABLE GZIP_EXECUTABLE)
     if(NOT DEFINED ${required_var} OR "${${required_var}}" STREQUAL "")
         message(FATAL_ERROR "${required_var} is required")
     endif()
@@ -87,6 +87,7 @@ file(COPY "${SOURCE_DIR}/Kainote/Bitmaps"
 set(SOURCE_LOCALE_DIR "${SOURCE_DIR}/Locale")
 set(RUNTIME_LOCALE_DIR "${package_root}/Locale")
 set(KAINOTE_STRICT_LOCALES TRUE)
+set(KAINOTE_SOURCE_DIR "${SOURCE_DIR}")
 include("${SOURCE_DIR}/cmake/CopyLocaleCatalogs.cmake")
 
 # Prefer the repository dictionary, then the configured en_US pair.

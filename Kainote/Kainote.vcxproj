@@ -166,7 +166,7 @@
       <Command>xcopy /D /Y "$(SolutionDir)Thirdparty\ffmpeg\bin\*.dll" "$(OutDir)" &gt;nul</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po") do @(md "$(SolutionDir)Locale\%%~nf\LC_MESSAGES" 2&gt;nul &amp; msgfmt -o "$(SolutionDir)Locale\%%~nf\LC_MESSAGES\%%~nf.mo" "%%f")) || echo msgfmt (gettext) not found - skipping Locale .mo compilation
+      <Command>where python &gt;nul 2&gt;nul &amp;&amp; python "$(SolutionDir)tools\compile_catalogs.py" --po-dir "$(SolutionDir)Locale" --out-dir "$(SolutionDir)Locale" || echo python not found - skipping Locale .mo compilation
 
 pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitparams.ps1" || powershell -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitparams.ps1"</Command>
     </PreBuildEvent>
@@ -217,7 +217,7 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitp
       <Command>xcopy /D /Y "$(SolutionDir)Thirdparty\ffmpeg\bin\*.dll" "$(OutDir)" &gt;nul</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po") do @(md "$(SolutionDir)Locale\%%~nf\LC_MESSAGES" 2&gt;nul &amp; msgfmt -o "$(SolutionDir)Locale\%%~nf\LC_MESSAGES\%%~nf.mo" "%%f")) || echo msgfmt (gettext) not found - skipping Locale .mo compilation
+      <Command>where python &gt;nul 2&gt;nul &amp;&amp; python "$(SolutionDir)tools\compile_catalogs.py" --po-dir "$(SolutionDir)Locale" --out-dir "$(SolutionDir)Locale" || echo python not found - skipping Locale .mo compilation
 
 pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitparams.ps1" || powershell -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitparams.ps1"</Command>
     </PreBuildEvent>
@@ -266,7 +266,7 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitp
       <Command>xcopy /D /Y "$(SolutionDir)Thirdparty\ffmpeg\bin\*.dll" "$(OutDir)" &gt;nul</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po") do @(md "$(SolutionDir)Locale\%%~nf\LC_MESSAGES" 2&gt;nul &amp; msgfmt -o "$(SolutionDir)Locale\%%~nf\LC_MESSAGES\%%~nf.mo" "%%f")) || echo msgfmt (gettext) not found - skipping Locale .mo compilation
+      <Command>where python &gt;nul 2&gt;nul &amp;&amp; python "$(SolutionDir)tools\compile_catalogs.py" --po-dir "$(SolutionDir)Locale" --out-dir "$(SolutionDir)Locale" || echo python not found - skipping Locale .mo compilation
 
 pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitparams.ps1" || powershell -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitparams.ps1"</Command>
     </PreBuildEvent>

@@ -313,20 +313,22 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 			GRID_DUPLICATION_DONT_CHANGE_SELECTION, GRID_DONT_CENTER_ACTIVE_LINE,
 			TEXT_FIELD_ALLOW_NUMPAD_HOTKEYS, VIDEO_VISUAL_WARNINGS_OFF,
 			DONT_ASK_FOR_BAD_RESOLUTION, AUTOMATION_OLD_SCRIPTS_COMPATIBILITY };
-		wxString localePath = Options.pathfull + L"/Locale";
-		wxDir kat(localePath);
+		wxArrayString tags;
+		if (wxTranslations* translations = wxTranslations::Get())
+			tags = translations->GetAvailableTranslations(KAINOTE_CATALOG_DOMAIN);
+		tags.Sort();
+
+		// Built in one pass so the tags and the labels cannot drift apart; the
+		// selection is mapped back to a tag by index.
 		wxArrayString langs;
-		if (kat.IsOpened()) {
-			kat.GetAllFiles(localePath, &langs, L"*.mo", wxDIR_FILES);
-		}
 		programLanguages.push_back(L"en");
-		for (size_t i = 0; i < langs.GetCount(); i++) {
-			wxString fulllang = wxFileName(langs[i]).GetName();
-			programLanguages.push_back(fulllang);
-			const wxString fullName = Options.FindLanguage(fulllang);
-			langs[i] = fullName;
+		langs.Add(L"English");
+		for (size_t i = 0; i < tags.GetCount(); i++) {
+			if (tags[i] == L"en")
+				continue;
+			programLanguages.push_back(tags[i]);
+			langs.Add(Options.FindLanguage(tags[i]));
 		}
-		langs.Insert(L"English", 0);
 		KaiStaticBoxSizer* langSizer = new KaiStaticBoxSizer(wxVERTICAL, GLOBAL_EDITOR, _("Language (program restart required)"));
 		KaiChoice* programLanguage = new KaiChoice(GLOBAL_EDITOR, ID_PROGRAM_LANGUAGE, wxDefaultPosition, wxDefaultSize, langs);
 		int sel = programLanguage->FindString(Options.FindLanguage(Options.GetString(PROGRAM_LANGUAGE)));

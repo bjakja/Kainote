@@ -330,6 +330,13 @@ bool kainoteApp::OnInit()
 		if (lang == L"1"){
 			lang = emptyString; Options.SetString(PROGRAM_LANGUAGE, lang);
 		}
+		// Register the catalogue directory and make sure a wxTranslations exists
+		// even when no catalogue is loaded, so the options dialog can still list
+		// the available languages.  wxLocale keeps an existing one.
+		wxFileTranslationsLoader::AddCatalogLookupPathPrefix(Options.GetLocalePath());
+		if (!wxTranslations::Get())
+			wxTranslations::Set(new wxTranslations());
+
 		// English is the source language: its strings are in the binary already.
 		if (lang != emptyString && lang != L"en"){
 			locale = new wxLocale();
@@ -352,17 +359,7 @@ bool kainoteApp::OnInit()
 					locale->Init(li->Language, wxLOCALE_DONT_LOAD_DEFAULT);
 				}
 #endif
-				wxString localePath = Options.pathfull + wxFileName::GetPathSeparator() + L"Locale" + wxFileName::GetPathSeparator();
-#ifndef _WIN32
-				if (!wxDirExists(localePath)){
-					wxString sourceLocalePath = Options.pathfull.BeforeLast(wxFileName::GetPathSeparator()) + wxFileName::GetPathSeparator() + L"Locale" + wxFileName::GetPathSeparator();
-					if (wxDirExists(sourceLocalePath))
-						localePath = sourceLocalePath;
-				}
-#endif
-				locale->AddCatalogLookupPathPrefix(localePath);
-				if (!locale->AddCatalog(lang, wxLANGUAGE_ENGLISH, L"UTF-8") &&
-					!locale->AddCatalog(li->CanonicalName, wxLANGUAGE_ENGLISH, L"UTF-8")){
+				if (!locale->AddCatalog(KAINOTE_CATALOG_DOMAIN, wxLANGUAGE_ENGLISH, L"UTF-8")){
 #ifdef _WIN32
 					KaiMessageBox(_("Cannot find translation, language change failed"));
 #endif
