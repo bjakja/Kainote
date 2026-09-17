@@ -193,7 +193,7 @@ jobs:
         if: matrix.configuration == 'Release'
         timeout-minutes: 15
         run: |
-          msbuild Icons_dll\Icons_dll.sln /m /v:minimal /p:Configuration=Release /p:Platform=Win32 /p:PlatformToolset=v143 /p:WindowsTargetPlatformVersion=10.0
+          msbuild Icons_dll\Icons_dll.sln /m /v:minimal /p:Configuration=Release /p:Platform=Win32 /p:WindowsTargetPlatformVersion=10.0
 
           # Do not assume the output directory: find what the project produced.
           $built = Get-ChildItem -Path Icons_dll -Recurse -Filter Icons_dll.dll |
