@@ -1,13 +1,17 @@
 name: Build
 
 on:
+  # Only master on push. Branches in this repository with an open pull request
+  # would otherwise be built twice for one commit, once per event.
   push:
-    branches: [master, 'chore/**', 'fix/**', 'feat/**']
+    branches: [master]
   pull_request:
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  # head_ref on a pull_request, ref otherwise, so a branch and its PR share one
+  # group and the older run is cancelled rather than running alongside.
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
 jobs:
