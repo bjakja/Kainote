@@ -269,3 +269,6 @@ obj/**/*.log
 *.lastbuildstate
 *.idb
 *.ilk
+
+# Generated from Kainote/FileTypes.h by gen_associations.py
+packaging/windows/associations.iss
