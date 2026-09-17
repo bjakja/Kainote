@@ -70,13 +70,23 @@ OutputBaseFilename=Kainote-{#AppVersion}-x64-setup
 Name: "polish"; MessagesFile: "compiler:Languages\Polish.isl"
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
+[CustomMessages]
+english.AssocSubs=Associate subtitle files (.ass .ssa .srt .sub)
+english.AssocVideo=Associate video files
+english.AssocTxt=Associate .txt files
+english.AppDescription=Subtitle editor
+polish.AssocSubs=Skojarz pliki napisów (.ass .ssa .srt .sub)
+polish.AssocVideo=Skojarz pliki wideo
+polish.AssocTxt=Skojarz pliki .txt
+polish.AppDescription=Edytor napisów
+
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; Flags: unchecked
-Name: "assoc_subs";  Description: "Skojarz pliki napisów (.ass .ssa .srt .sub)"
-Name: "assoc_video"; Description: "Skojarz pliki wideo"; Flags: unchecked
+Name: "assoc_subs";  Description: "{cm:AssocSubs}"
+Name: "assoc_video"; Description: "{cm:AssocVideo}"; Flags: unchecked
 ; .txt is text/plain in all but name, so taking it machine-wide is its own
 ; decision rather than part of "subtitles".
-Name: "assoc_txt";   Description: "Skojarz pliki .txt"; Flags: unchecked
+Name: "assoc_txt";   Description: "{cm:AssocTxt}"; Flags: unchecked
 
 [Files]
 ; package.py --flavor installer has already pruned the payload: no PDBs, no
@@ -99,7 +109,7 @@ Root: HKLM; Subkey: "Software\Kainote"; ValueType: string; ValueName: "InstallDi
 Root: HKLM; Subkey: "Software\Kainote\Capabilities"; ValueType: string; \
     ValueName: "ApplicationName"; ValueData: "Kainote"
 Root: HKLM; Subkey: "Software\Kainote\Capabilities"; ValueType: string; \
-    ValueName: "ApplicationDescription"; ValueData: "Edytor napisów"
+    ValueName: "ApplicationDescription"; ValueData: "{cm:AppDescription}"
 Root: HKLM; Subkey: "Software\RegisteredApplications"; ValueType: string; \
     ValueName: "Kainote"; ValueData: "Software\Kainote\Capabilities"; Flags: uninsdeletevalue
 Root: HKLM; Subkey: "Software\Classes\Applications\Kainote.exe\shell\open\command"; \
