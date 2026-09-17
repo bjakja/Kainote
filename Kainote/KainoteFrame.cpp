@@ -66,6 +66,8 @@
 #include <wx/filedlg.h>
 #include <wx/filename.h>
 #include <wx/msw/private.h>
+#include <wx/iconbndl.h>
+#include "Registry.h"
 #include "UtilsWindows.h"
 
 #include <boost/locale/generator.hpp>
@@ -118,17 +120,12 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 
 	SetFont(*Options.GetFont());
 #ifdef _WIN32
-	wxIcon KaiIcon(L"KAI_SMALL_ICON", wxBITMAP_TYPE_ICO_RESOURCE);
-	//::SendMessage(GetHwnd(), WM_SETICON, ICON_SMALL, (LPARAM)GetHiconOf(KaiIcon));
-	SetIcon(KaiIcon);
-	const wxSize bigIconSize(::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON));
-	if (bigIconSize.x > 32){
-		wxIcon KaiLargeIcon(L"KAI_TLARGE_ICON", wxBITMAP_TYPE_ICO_RESOURCE);
-		::SendMessage(GetHwnd(), WM_SETICON, ICON_BIG, (LPARAM)GetHiconOf(KaiLargeIcon));
-	}
-	else{
-		::SendMessage(GetHwnd(), WM_SETICON, ICON_BIG, (LPARAM)GetHiconOf(KaiIcon));
-	}
+	// "#1" is IDI_KAINOTE_APP; the bundle lets wx pick the size per monitor.
+	wxIconBundle kaiIcons(L"#1", wxGetInstance());
+	if (kaiIcons.GetIconCount())
+		SetIcons(kaiIcons);
+
+	Registry::MigrateFileAssociationIcons();
 #else
 	wxString iconPath = Options.pathfull + wxFileName::GetPathSeparator() + L"Kainote" +
 		wxFileName::GetPathSeparator() + L"Bitmaps" + wxFileName::GetPathSeparator() + L"KaiSmallIcon.ico";

@@ -184,26 +184,6 @@ jobs:
       # every Windows job here has failed at least once on the way to a green
       # build, so nothing was ever cached.  Restore above, save here with
       # if: always(), which is what makes a failing run still worth something.
-      # The package ships Icons.dll next to the executable: the shell reads it as
-      # the default icon for the file associations Kainote registers
-      # (Registry::AddFileAssociation writes `Icons.dll,<index>` into the registry).
-      # Nothing in Kainote.sln builds it -- it is the separate Win32 project in
-      # Icons_dll/ -- so build that and put the DLL where packaging looks for it.
-      - name: Build the file association icons
-        if: matrix.configuration == 'Release'
-        timeout-minutes: 15
-        run: |
-          msbuild Icons_dll\Icons_dll.sln /m /v:minimal /p:Configuration=Release /p:Platform=Win32 /p:PlatformToolset=v143 /p:WindowsTargetPlatformVersion=10.0
-
-          # Do not assume the output directory: find what the project produced.
-          $built = Get-ChildItem -Path Icons_dll -Recurse -Filter Icons_dll.dll |
-            Where-Object { $_.FullName -notmatch '\\obj\\' } | Select-Object -First 1
-          if (-not $built) {
-            throw 'the icons project produced no Icons_dll.dll'
-          }
-
-          Copy-Item $built.FullName x64\Release\Icons.dll -Force
-          Write-Host "icons: $($built.FullName) -> x64/Release/Icons.dll"
       - name: Save DirectX SDK
         if: always() && steps.dxsdk-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4

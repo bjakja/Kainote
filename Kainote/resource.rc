@@ -1,6 +1,7 @@
 // Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
+#include "FileTypeIcons.h"
 /////////////////////////////////////////////////////////////////////////////
 // Polish (Poland) resources
 
@@ -13,10 +14,30 @@ LANGUAGE LANG_POLISH, SUBLANG_DEFAULT
 // Icon
 //
 
-// Icon with lowest ID value placed first to ensure application icon
-// remains consistent on all systems.
-KAI_TLARGE_ICON          ICON                    "Bitmaps/KaiLargeIcon.ico"
-KAI_SMALL_ICON          ICON                    "Bitmaps/KaiSmallIcon.ico"
+// The app icon must keep the lowest id; see FileTypeIcons.h.
+IDI_KAINOTE_APP         ICON                    "Bitmaps/KaiLargeIcon.ico"
+IDI_KAINOTE_SMALL       ICON                    "Bitmaps/KaiSmallIcon.ico"
+
+// Shell icons for the file types Kainote can associate itself with,
+// previously a separate Icons.dll.
+IDI_FILETYPE_ASS      ICON                    "Bitmaps/Kainote_ass.ico"
+IDI_FILETYPE_SSA      ICON                    "Bitmaps/Kainote_ssa.ico"
+IDI_FILETYPE_SRT      ICON                    "Bitmaps/Kainote_srt.ico"
+IDI_FILETYPE_SUB      ICON                    "Bitmaps/Kainote_sub.ico"
+IDI_FILETYPE_TXT      ICON                    "Bitmaps/Kainote_txt.ico"
+IDI_FILETYPE_MKV      ICON                    "Bitmaps/Video_mkv.ico"
+IDI_FILETYPE_MP4      ICON                    "Bitmaps/Video_mp4.ico"
+IDI_FILETYPE_AVI      ICON                    "Bitmaps/Video_avi.ico"
+IDI_FILETYPE_OGM      ICON                    "Bitmaps/Video_ogm.ico"
+IDI_FILETYPE_WMV      ICON                    "Bitmaps/Video_wmv.ico"
+IDI_FILETYPE_ASF      ICON                    "Bitmaps/Video_asf.ico"
+IDI_FILETYPE_RMVB     ICON                    "Bitmaps/Video_rmvb.ico"
+IDI_FILETYPE_RM       ICON                    "Bitmaps/Video_rm.ico"
+IDI_FILETYPE_3GP      ICON                    "Bitmaps/Video_3gp.ico"
+IDI_FILETYPE_MPG      ICON                    "Bitmaps/Video_mpg.ico"
+IDI_FILETYPE_MPEG     ICON                    "Bitmaps/Video_mpeg.ico"
+IDI_FILETYPE_TS       ICON                    "Bitmaps/Video_ts.ico"
+IDI_FILETYPE_M2TS     ICON                    "Bitmaps/Video_m2ts.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
