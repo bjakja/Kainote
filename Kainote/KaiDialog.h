@@ -78,6 +78,7 @@ private:
 	void OnEscape(wxCommandEvent &evt);
 #ifdef __WXMSW__
 	WXLRESULT MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);
+	WXDWORD MSWGetStyle(long flags, WXDWORD *exstyle) const override;
 #endif
 
 	int escapeId;
