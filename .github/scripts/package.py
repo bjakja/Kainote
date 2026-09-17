@@ -227,7 +227,14 @@ def copy_dictionaries(repo_root: Path, stage: Path) -> int:
 
 
 def compile_locales(repo_root: Path, stage: Path) -> int:
-    """Locale/*.po -> Locale/*.mo, the layout wxLocale loads."""
+    """Locale/*.po -> Locale/<lang>/LC_MESSAGES/<lang>.mo.
+
+    wxWidgets only searches <prefix>/<lang>/LC_MESSAGES and <prefix>/<lang>, and
+    wxFileTranslationsLoader::GetAvailableTranslations() enumerates with
+    wxDIR_DIRS, so a flat Locale/<lang>.mo is never even a candidate.  It used to
+    work before wx 3.0 dropped the bare-prefix search; writing it flat here meant
+    the package shipped catalogs that could not load.
+    """
     po_dir = repo_root / "Locale"
     out_dir = stage / "Locale"
     msgfmt = shutil.which("msgfmt")
@@ -236,7 +243,8 @@ def compile_locales(repo_root: Path, stage: Path) -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
     count = 0
     for po in sorted(po_dir.glob("*.po")):
-        mo = out_dir / (po.stem + ".mo")
+        mo = out_dir / po.stem / "LC_MESSAGES" / (po.stem + ".mo")
+        mo.parent.mkdir(parents=True, exist_ok=True)
         if msgfmt:
             r = subprocess.run([msgfmt, "-o", str(mo), str(po)], capture_output=True, text=True)
             if r.returncode == 0:
