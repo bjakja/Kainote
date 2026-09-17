@@ -1,4 +1,4 @@
-﻿//  Copyright (c) 2018 - 2020, Marcin Drob
+//  Copyright (c) 2018 - 2026, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -13,278 +13,221 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <string>
-#include <stdio.h>
-// winsock2.h first: windows.h would pull in the old winsock.h (sockaddr clash).
-#ifdef __WXMSW__
-#include <winsock2.h>
-#endif
-#include <windows.h>
-#include <WinInet.h>
 #include "UpdateChecker.h"
-#include "config.h"
+#include "JsonValue.h"
+#include "KaiCheckBox.h"
+#include "KaiDialog.h"
 #include "KaiMessageBox.h"
+#include "KaiStaticText.h"
+#include "KaiTextCtrl.h"
+#include "MappedButton.h"
 #include "VersionKainote.h"
-#include "kainoteApp.h"
-#include <wx/regex.h>
+#include "config.h"
+#include <wx/sizer.h>
+#include <wx/utils.h>
+#include <wx/webrequest.h>
+#include <ctime>
 
-#pragma comment (lib, "Wininet.lib")
-
-using namespace std;
-
-//#ifndef SAFE_DELETE
-//#define SAFE_DELETE(x) if (x !=NULL) { delete x; x = NULL; }
-//#endif
-
-UpdateChecker::UpdateChecker()
+namespace
 {
-	//0 on every launch, 1 after two days, 2 after three days, 3 after week, 4 after two weeks, 5 after month, 6 never
-	checkIntensity = Options.GetInt(UPDATER_CHECK_INTENSITY);
-	if (checkIntensity > 5){ return; }
-	//0 on start, 1 on close, 2 on close without asking
-	int checkOptions = Options.GetInt(UPDATER_CHECK_OPTIONS);
-	dontAskForUpdate = checkOptions == 2;
-	checkOnClose = checkOptions > 0;
-	updateStable = Options.GetBool(UPDATER_CHECK_FOR_STABLE);
-}
+	// One place for a fork to change.
+	const wxString kReleasesUrl =
+		L"https://api.github.com/repos/bjakja/Kainote/releases?per_page=10";
 
-UpdateChecker::~UpdateChecker()
-{
-	if (checkOnClose){
-		CheckAsynchronously(this, false);
-	}
-	else if (updateOnClose){
-		Update(false);
-	}
-}
+	constexpr time_t kDay  = 24 * 60 * 60;
+	constexpr time_t kWeek = 7 * kDay;
 
-int UpdateChecker::CheckAsynchronously(UpdateChecker *checker, bool closeProgram /*= true*/)
-{
-	string output;
-	if (checker->Downloader(L"github.com", L"bjakja/Kainote/blob/master/Kaiplayer/VersionKainote.h", NULL, &output)){
-		//error
-		SAFE_DELETE(checker->thread);
-		return 1;
-	}
-	wxString wxOutput = output;
-#ifdef _M_IX86
-	wxString commandname = (checker->updateStable) ? "StableRelease: " : "VersionKainoteX86: ";
-	size_t found = wxOutput.find(commandname);
-#else
-	wxString commandname = (checker->updateStable) ? "StableRelease: " : "VersionKainote ";
-	size_t found = wxOutput.find(commandname);
-#endif
-	if (found == wxNOT_FOUND){
-		SAFE_DELETE(checker->thread);
-		return 1;
-	}
-	size_t foundn = wxOutput.find('\n', found);
-	if (foundn == wxNOT_FOUND){
-		SAFE_DELETE(checker->thread);
-		return 1;
-	}
-	found += commandname.Len();
-	wxString version = wxOutput.Mid(found, foundn - found);
-	wxRegEx reg("<[^<>]*>", wxRE_ADVANCED);
-	reg.ReplaceAll(&version, "");
-	version.Replace("\"", "");
-	wxString buildnum = version.AfterLast('.');
-	int intbuild = wxAtoi(buildnum);
-	int actualBuild = wxAtoi(wxString(VersionKainote).AfterLast('.'));
-	if (actualBuild < intbuild){
-		wxString link;
-		if (checker->updateStable){
-			wxString commandname = "StableReleaseLink: ";
-			size_t found = wxOutput.find(commandname, foundn);
-			if (found == wxNOT_FOUND){
-				SAFE_DELETE(checker->thread);
-				return 1;
-			}
-			found += commandname.Len();
-			size_t foundn = wxOutput.find('\n', found);
-			if (foundn == wxNOT_FOUND){
-				SAFE_DELETE(checker->thread);
-				return 1;
-			}
-			link = wxOutput.Mid(found, foundn - found);
-#ifdef _M_IX86
-			link.Replace("x64.zip", "x86.zip");
-#endif // _M_IX86
-		} else{
-#ifdef _M_IX86
-			link = "https://www.dropbox.com/s/zzz552tm6hq64oi/Kainote%20x86.zip?dl=1";
-#else
-			link = "https://www.dropbox.com/s/t8pkey94ruakyox/Kainote%20x64.zip?dl=1";
-#endif // _M_IX86
-		}
-		link.Replace("https://", "");
-		checker->server = link.BeforeFirst('/', &checker->page);
-		int result = wxYES;
-		if (!checker->dontAskForUpdate){
-			KaiMessageDialog dlgmsg(0, wxString::Format(_("A new version (%s) is available. Update?"), version), _("Update"), wxYES_NO | wxOK | wxHELP);
-			dlgmsg.SetHelpLabel(_("Disable updates"));
-			dlgmsg.SetOkLabel(_("Update after closing"));
-			int result = dlgmsg.ShowModal();
-		}
-		if (result == wxYES){
-			SAFE_DELETE(checker->thread);
-			checker->checkOnClose = false;
-			checker->Update(closeProgram);
-			return 0;
-		}
-		else if (result == wxOK){
-			checker->updateOnClose = true;
-		}
-		else if (result == wxHELP){
-			Options.SetInt(UPDATER_CHECK_INTENSITY, 6);
-		}
-	}
-	SAFE_DELETE(checker->thread);
-	return 0;
-}
-
-int UpdateChecker::Downloader(const wchar_t *server, const wchar_t *page, const wchar_t *filename, string *output)
-{
-	char szData[1024];
-	bool writeToFile = filename != NULL;
-	if (!output && !writeToFile)
-		return 5;
-
-	HANDLE hFile;
-	if (writeToFile){
-		hFile = CreateFileW(filename, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
-		SetFilePointer(hFile, 0, NULL, FILE_BEGIN);
-	}
-	DWORD ss;
-	// initialize WinInet
-	HINTERNET hInternet = InternetOpen(TEXT("Kainote updater"), INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, 0);
-	if (hInternet != NULL)
+	struct ReleaseInfo
 	{
-		// open HTTP session
-		HINTERNET hConnect = InternetConnectW(hInternet, server, INTERNET_DEFAULT_HTTPS_PORT, NULL, NULL, INTERNET_SERVICE_HTTP, 0, 1);
-		if (hConnect != NULL)
+		wxString tag;
+		wxString name;
+		wxString url;
+		wxString notes;
+	};
+
+	// The list endpoint is used rather than /releases/latest because latest
+	// hides prereleases outright, which would leave the "stable only" option
+	// with nothing to do.
+	bool FindNewerRelease(const wxString &body, bool stableOnly, ReleaseInfo *out)
+	{
+		JsonValue root = JsonValue::Parse(std::string(body.utf8_str()));
+		if (root.GetType() != JsonValue::Type::Array)
+			return false;
+
+		for (const JsonValue &release : root.Items()) {
+			if (release.GetBool("draft"))
+				continue;
+			if (stableOnly && release.GetBool("prerelease"))
+				continue;
+
+			wxString tag = release.GetString("tag_name");
+			if (tag.empty() || !UpdateChecker::IsNewerVersion(tag, VersionKainote))
+				continue;
+
+			out->tag = tag;
+			out->name = release.GetString("name", tag);
+			out->url = release.GetString("html_url");
+			out->notes = release.GetString("body");
+			return true;
+		}
+		return false;
+	}
+
+	class UpdateAvailableDialog : public KaiDialog
+	{
+	public:
+		UpdateAvailableDialog(wxWindow *parent, const ReleaseInfo &release)
+			: KaiDialog(parent, -1, _("A new version is available"))
 		{
-			//wstring request = page;
+			wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
-			// open request
-			HINTERNET hRequest = HttpOpenRequestW(hConnect, L"GET", page, NULL, NULL, 0, INTERNET_FLAG_KEEP_CONNECTION | INTERNET_FLAG_SECURE, 1);
-			if (hRequest != NULL)
-			{
-				// send request
-				BOOL isSend = HttpSendRequestW(hRequest, NULL, 0, NULL, 0);
+			KaiStaticText *title = new KaiStaticText(this, -1, release.name);
+			title->SetFont(title->GetFont().Bold());
+			sizer->Add(title, 0, wxEXPAND | wxALL, 4);
 
-				if (isSend)
-				{
-					for (;;)
-					{
-						// reading data
-						DWORD dwByteRead;
-						BOOL isRead = InternetReadFile(hRequest, szData, sizeof(szData), &dwByteRead);
+			sizer->Add(new KaiStaticText(this, -1,
+				wxString::Format(_("You have version %s; version %s is available"),
+					VersionKainote, release.tag)),
+				0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 4);
 
-						// break cycle if error or end
-						if (isRead == FALSE || dwByteRead == 0)
-							break;
+			KaiTextCtrl *notes = new KaiTextCtrl(this, -1, release.notes,
+				wxDefaultPosition, wxSize(460, 220),
+				wxTE_MULTILINE | wxTE_READONLY | wxTE_BESTWRAP);
+			sizer->Add(notes, 1, wxEXPAND | wxALL, 4);
 
-						// saving result
-						if (writeToFile){
-							WriteFile(hFile, szData, dwByteRead, &ss, NULL);
-							if (dwByteRead != ss){
-								return 1;
-							}
-						}
-						else{
-							(*output) += string(szData, dwByteRead);
-						}
-					}
-				}
-				else{ return 4; }
+			sizer->Add(new KaiStaticText(this, -1, release.url),
+				0, wxEXPAND | wxLEFT | wxRIGHT, 4);
 
-				// close request
-				InternetCloseHandle(hRequest);
-			}
-			else{ return 3; }
-			// close session
-			InternetCloseHandle(hConnect);
+			autoCheck = new KaiCheckBox(this, -1, _("Check for updates automatically"));
+			autoCheck->SetValue(Options.GetBool(UPDATER_AUTO_CHECK));
+			sizer->Add(autoCheck, 0, wxEXPAND | wxALL, 4);
+
+			stableOnly = new KaiCheckBox(this, -1, _("Stable versions only"));
+			stableOnly->SetValue(Options.GetBool(UPDATER_CHECK_FOR_STABLE));
+			sizer->Add(stableOnly, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 4);
+
+			wxBoxSizer *buttons = new wxBoxSizer(wxHORIZONTAL);
+			// A MappedButton rather than wxHyperlinkCtrl: nothing else in the
+			// UI is a stock control, so a stock one ignores the theme.
+			MappedButton *open = new MappedButton(this, 20001, _("Open the download page"));
+			MappedButton *later = new MappedButton(this, 20002, _("Remind me in a week"));
+			MappedButton *close = new MappedButton(this, wxID_CLOSE, _("Close"));
+			buttons->Add(open, 1, wxALL, 2);
+			buttons->Add(later, 1, wxALL, 2);
+			buttons->Add(close, 1, wxALL, 2);
+			sizer->Add(buttons, 0, wxEXPAND | wxALL, 2);
+
+			url = release.url;
+			Bind(wxEVT_COMMAND_BUTTON_CLICKED, [this](wxCommandEvent &) {
+				if (!url.empty())
+					wxLaunchDefaultBrowser(url);
+			}, 20001);
+			Bind(wxEVT_COMMAND_BUTTON_CLICKED, [this](wxCommandEvent &) {
+				Options.SetInt(UPDATER_NEXT_CHECK, (int)(time(nullptr) + kWeek));
+				EndModal(wxID_CLOSE);
+			}, 20002);
+			Bind(wxEVT_COMMAND_BUTTON_CLICKED, [this](wxCommandEvent &) {
+				EndModal(wxID_CLOSE);
+			}, wxID_CLOSE);
+
+			SetEscapeId(wxID_CLOSE);
+			SetSizerAndFit(sizer);
 		}
-		else{ return 2; }
-		// close WinInet
-		InternetCloseHandle(hInternet);
-	}
-	if (writeToFile){
-		CloseHandle(hFile);
-	}
-	//cout << output;
-	return 0;
-}
 
-int UpdateChecker::DownloadZip()
-{
-	if (server.empty() || page.empty())
-		return 6;
-
-	savePath = Options.pathfull;
-#ifdef _M_IX86
-	savePath += "\\Kainote x86.zip";
-#else
-	savePath += "\\Kainote x64.zip";
-#endif // _M_IX86
-	return Downloader(server, page, savePath, NULL);
-}
-
-void UpdateChecker::Update(bool closeProgram /*= true*/)
-{
-	if (DownloadZip()){
-		KaiMessageBox(_("Cannot download the new version of Kainote"));
-		return;
-	}
-	wxString updater = Options.pathfull + "/Updater.exe";
-	if (!wxFileExists(updater)){
-		KaiMessageBox(_("Cannot find the Kainote updater"));
-		return;
-	}
-	wxString ver = "Kainote v" + wxString(VersionKainote);
-	wxWCharBuffer editorbuf = updater.c_str(), sfnamebuf = savePath.c_str(), versionK = ver.c_str();
-	if (closeProgram){
-		kainoteApp *Kaia = (kainoteApp *)wxTheApp;
-		if (!Kaia){
-			KaiMessageBox(_("Cannot close Kainote"));
-			updateOnClose = true;
-			return;
-		}
-		if (!Kaia->Frame->Close()){
-			KaiMessageBox(_("Cannot close Kainote"));
-			updateOnClose = true;
-			return;
-		}
-	}
-	wchar_t *cmdline[] = { editorbuf.data(), sfnamebuf.data(), versionK.data(), nullptr };
-	long res = wxExecute(cmdline);
-}
-
-bool UpdateChecker::CheckForUpdate()
-{
-	if (checkIntensity < 6){
-		int lastCheck = Options.GetInt(UPDATER_LAST_CHECK);
-		if (!lastCheck){
-			SYSTEMTIME st;
-			GetSystemTime(&st);
-			lastCheck = st.wDay + (st.wMonth * 31) + (st.wYear * 365);
-			Options.SetInt(UPDATER_LAST_CHECK, lastCheck);
+		void SaveChoices()
+		{
+			Options.SetBool(UPDATER_AUTO_CHECK, autoCheck->GetValue());
+			Options.SetBool(UPDATER_CHECK_FOR_STABLE, stableOnly->GetValue());
 			Options.SaveOptions(true, false);
-			return false;
 		}
-		int templateCheck = (checkIntensity == 1) ? 2 : (checkIntensity == 2) ? 3 : (checkIntensity == 3) ? 7 :
-			(checkIntensity == 4) ? 14 : 31;
-		SYSTEMTIME st;
-		GetSystemTime(&st);
-		int today = st.wDay + (st.wMonth * 31) + (st.wYear * 365);
-		if ((today - lastCheck) < templateCheck)
-			return false;
 
-		lastCheck = today;
-		Options.SetInt(UPDATER_LAST_CHECK, lastCheck);
-		Options.SaveOptions(true, false);
+	private:
+		KaiCheckBox *autoCheck;
+		KaiCheckBox *stableOnly;
+		wxString url;
+	};
+
+	void Check(wxWindow *parent, bool interactive)
+	{
+		wxWebRequest request = wxWebSession::GetDefault().CreateRequest(parent, kReleasesUrl);
+		if (!request.IsOk()) {
+			if (interactive)
+				KaiMessageBox(_("Cannot check for updates"), _("Update"));
+			return;
+		}
+
+		request.SetHeader(L"Accept", L"application/vnd.github+json");
+		request.SetHeader(L"X-GitHub-Api-Version", L"2022-11-28");
+		request.SetHeader(L"User-Agent", wxString::Format(L"Kainote/%s", VersionKainote));
+
+		parent->Bind(wxEVT_WEBREQUEST_STATE, [parent, interactive](wxWebRequestEvent &evt) {
+			if (evt.GetState() == wxWebRequest::State_Active ||
+				evt.GetState() == wxWebRequest::State_Idle)
+			{
+				return;
+			}
+
+			// An automatic check backs off a day whatever happened, so a
+			// server that is down does not mean a request on every start.
+			Options.SetInt(UPDATER_NEXT_CHECK, (int)(time(nullptr) + kDay));
+
+			if (evt.GetState() != wxWebRequest::State_Completed) {
+				if (interactive)
+					KaiMessageBox(_("Cannot check for updates"), _("Update"));
+				return;
+			}
+
+			ReleaseInfo release;
+			if (!FindNewerRelease(evt.GetResponse().AsString(),
+					Options.GetBool(UPDATER_CHECK_FOR_STABLE), &release))
+			{
+				if (interactive)
+					KaiMessageBox(_("You already have the latest version"), _("Update"));
+				return;
+			}
+
+			UpdateAvailableDialog dialog(parent, release);
+			dialog.ShowModal();
+			dialog.SaveChoices();
+		});
+
+		request.Start();
 	}
-	thread = new std::thread(UpdateChecker::CheckAsynchronously, this, true);
-	return true;
+}
+
+bool UpdateChecker::IsNewerVersion(const wxString &tag, const wxString &current)
+{
+	wxString left = tag;
+	wxString right = current;
+	if (left.StartsWith(L"v") || left.StartsWith(L"V"))
+		left = left.Mid(1);
+	if (right.StartsWith(L"v") || right.StartsWith(L"V"))
+		right = right.Mid(1);
+
+	for (int i = 0; i < 4; i++) {
+		long a = 0, b = 0;
+		left.BeforeFirst(L'.').ToLong(&a);
+		right.BeforeFirst(L'.').ToLong(&b);
+		if (a != b)
+			return a > b;
+
+		left = left.AfterFirst(L'.');
+		right = right.AfterFirst(L'.');
+	}
+	return false;
+}
+
+void UpdateChecker::CheckOnStartup(wxWindow *parent)
+{
+	if (!Options.GetBool(UPDATER_AUTO_CHECK))
+		return;
+	if (time(nullptr) < (time_t)Options.GetInt(UPDATER_NEXT_CHECK))
+		return;
+
+	Check(parent, false);
+}
+
+void UpdateChecker::CheckNow(wxWindow *parent)
+{
+	Check(parent, true);
 }

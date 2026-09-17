@@ -388,6 +388,7 @@ void config::LoadDefaultConfig(wxString * defaultOptions)
 	configTable[AUTOMATION_TRACE_LEVEL] = L"3";
 	configTable[AUTOSAVE_MAX_FILES] = L"3";
 	configTable[GRID_CHANGE_ACTIVE_ON_SELECTION] = L"true";
+	configTable[UPDATER_CHECK_FOR_STABLE] = L"true";
 }
 
 //remember, create table[colorsSize] without this size it will crash

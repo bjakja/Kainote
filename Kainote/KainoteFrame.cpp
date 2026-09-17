@@ -68,6 +68,7 @@
 #include <wx/msw/private.h>
 #include <wx/iconbndl.h>
 #include "Registry.h"
+#include "UpdateChecker.h"
 #include "UtilsWindows.h"
 
 #include <boost/locale/generator.hpp>
@@ -134,6 +135,9 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 		SetIcon(KaiIcon);
 	}
 #endif
+
+	// Deferred: wxWebRequest needs a running event loop.
+	CallAfter([this] { UpdateChecker::CheckOnStartup(this); });
 
 	Menubar = new MenuBar(this);
 
@@ -356,6 +360,8 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 		_("Opens help in default browser"), PTR_BITMAP_PNG(L"help"));
 	HelpMenu->AppendTool(Toolbar, GLOBAL_ANSI, _("&Forum thread on animesub.info (Polish)"),
 		_("Opens forum thread on animesub.info (Polish)"), PTR_BITMAP_PNG(L"ansi"));
+	HelpMenu->AppendTool(Toolbar, GLOBAL_CHECK_FOR_UPDATES, _("Check for &updates"),
+		_("Checks whether a newer version is available"), PTR_BITMAP_PNG(L"about"));
 	HelpMenu->AppendTool(Toolbar, GLOBAL_ABOUT, _("&About"), 
 		_("Shows program info"), PTR_BITMAP_PNG(L"about"));
 	HelpMenu->AppendTool(Toolbar, GLOBAL_HELPERS, 
@@ -1099,6 +1105,9 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 	}
 	else if (id == GLOBAL_QUIT){
 		Close();
+	}
+	else if (id == GLOBAL_CHECK_FOR_UPDATES){
+		UpdateChecker::CheckNow(this);
 	}
 	else if (id == GLOBAL_ABOUT){
 		KaiMessageBox(wxString::Format(_("Subtitle editor by Marcin Drob aka Bakura or Bjakja (bjakja7@gmail.com),\nversion %s from %s"),

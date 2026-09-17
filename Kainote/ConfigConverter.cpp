@@ -166,10 +166,7 @@ void ConfigConverter::CreateTable()
 	convertConfig[L"TlModeShowOriginal"] = std::pair<wxString, wxString>(L"TL_MODE_SHOW_ORIGINAL", emptyString);
 	convertConfig[L"ToolbarIDs"] = std::pair<wxString, wxString>(L"TOOLBAR_IDS", L"|");
 	convertConfig[L"ToolbarAlignment"] = std::pair<wxString, wxString>(L"TOOLBAR_ALIGNMENT", emptyString);
-	convertConfig[L"UpdaterCheckIntensity"] = std::pair<wxString, wxString>(L"UPDATER_CHECK_INTENSITY", emptyString);
-	convertConfig[L"UpdaterCheckOptions"] = std::pair<wxString, wxString>(L"UPDATER_CHECK_OPTIONS", emptyString);
 	convertConfig[L"UpdaterCheckForStable"] = std::pair<wxString, wxString>(L"UPDATER_CHECK_FOR_STABLE", emptyString);
-	convertConfig[L"UpdaterLastCheck"] = std::pair<wxString, wxString>(L"UPDATER_LAST_CHECK", emptyString);
 	convertConfig[L"VideoFullskreenOnStart"] = std::pair<wxString, wxString>(L"VIDEO_FULL_SCREEN_ON_START", emptyString);
 	convertConfig[L"VideoIndex"] = std::pair<wxString, wxString>(L"VIDEO_INDEX", emptyString);
 	convertConfig[L"VideoPauseOnClick"] = std::pair<wxString, wxString>(L"VIDEO_PAUSE_ON_CLICK", emptyString);
