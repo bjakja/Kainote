@@ -86,7 +86,7 @@ bool Registry::AddFileAssociation(const wxString &extension, const wxString &ext
 {
 	wxStandardPathsBase &paths = wxStandardPaths::Get();
 	wxString pathfull = paths.GetExecutablePath();
-	wxString progName = KaiPathName(pathfull).BeforeFirst(L'.');
+	wxString progName = kKainoteProgIdPrefix;
 	wxString mainPath = L"Software\\Classes\\";
 	bool success = false;//HKEY_CURRENT_USER//HKEY_LOCAL_MACHINE
 	Registry reg(HKEY_CURRENT_USER, mainPath + extension, success, true);
@@ -142,7 +142,7 @@ void Registry::MigrateFileAssociationIcons()
 {
 	wxStandardPathsBase &paths = wxStandardPaths::Get();
 	wxString pathfull = paths.GetExecutablePath();
-	wxString progName = KaiPathName(pathfull).BeforeFirst(L'.');
+	wxString progName = kKainoteProgIdPrefix;
 	wxString mainPath = L"Software\\Classes\\";
 	bool changedAny = false;
 
@@ -171,15 +171,42 @@ void Registry::MigrateFileAssociationIcons()
 		}
 	}
 
+	// Before the prefix became a constant it came from the executable's
+	// filename, which the package stages as KaiNote.exe. Retire that spelling
+	// so an upgrading zip user is not left with two competing ProgID sets.
+	wxString legacy = KaiPathName(pathfull).BeforeFirst(L'.');
+	if (legacy != progName){
+		for (size_t i = 0; i < kKainoteFileTypeCount; i++){
+			const KainoteFileType &type = kKainoteFileTypes[i];
+			wxString extKey = mainPath + type.extension;
+			bool success = false;
+			Registry reg(HKEY_CURRENT_USER, extKey, success, false);
+			if (!success)
+				continue;
+
+			wxString current;
+			reg.GetStringValue(emptyString, current);
+			reg.CloseRegistry();
+			if (current != legacy + type.extension)
+				continue;
+
+			// Point the extension at the canonical ProgID; the stale tree is
+			// left alone rather than deleted, in case something else uses it.
+			if (reg.OpenNewRegistry(HKEY_CURRENT_USER, extKey, true)){
+				reg.SetStringValue(emptyString, progName + type.extension);
+				reg.CloseRegistry();
+				changedAny = true;
+			}
+		}
+	}
+
 	if (changedAny)
 		SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, nullptr, nullptr);
 }
 
 void Registry::CheckFileAssociation(const wxString *extensions, int numExt, std::vector<bool> &output)
 {
-	wxStandardPathsBase &paths = wxStandardPaths::Get();
-	wxString pathfull = paths.GetExecutablePath();
-	wxString progName = KaiPathName(pathfull).BeforeFirst(L'.');
+	wxString progName = kKainoteProgIdPrefix;
 	wxString mainPath = L"Software\\Classes\\";
 	for (int i = 0; i < numExt; i++){
 		bool success = false;
