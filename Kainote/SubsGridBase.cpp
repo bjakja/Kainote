@@ -1644,7 +1644,7 @@ void SubsGridBase::OnBackupTimer(wxTimerEvent &event)
 	wxString path;
 	wxString ext = (subsFormat < SRT) ? L"ass" : (subsFormat == SRT) ? L"srt" : L"txt";
 
-	path << Options.pathfull << L"/Subs/" << tab->SubsName.BeforeLast(L'.')
+	path << Options.cachePath << L"/Subs/" << tab->SubsName.BeforeLast(L'.')
 		<< L"_" << Notebook::GetTabs()->FindPanel(tab) << L"_" << numsave << L"." << ext;
 
 	SaveFile(path, false);

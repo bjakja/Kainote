@@ -184,11 +184,18 @@ STDAPI GetDpiForMonitor(
 
 
 #ifdef _WIN32
+// Resolved up front: this runs in a crashed process, where allocating a
+// wxString on a possibly corrupt heap is a good way to lose the dump.
+static wchar_t g_miniDumpPath[MAX_PATH] = L"MiniDump.dmp";
+
+void SetMiniDumpPath(const wxString &path)
+{
+	wxStrlcpy(g_miniDumpPath, path.wc_str(), MAX_PATH);
+}
+
 LONG __stdcall MyCustomFilter(EXCEPTION_POINTERS* pep)
 {
-	wxStandardPathsBase& paths = wxStandardPaths::Get();
-	wxString exePath = wxFileName(paths.GetExecutablePath()).GetPath() + L"/MiniDump.dmp";
-	HANDLE hFile = CreateFileW(exePath.wc_str(), GENERIC_READ | GENERIC_WRITE,
+	HANDLE hFile = CreateFileW(g_miniDumpPath, GENERIC_READ | GENERIC_WRITE,
 		0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 
 	if ((hFile != NULL) && (hFile != INVALID_HANDLE_VALUE))
@@ -368,7 +375,8 @@ bool kainoteApp::OnInit()
 		}
 		
 #ifdef _WIN32
-		SetUnhandledExceptionFilter(MyCustomFilter);
+		SetMiniDumpPath(Options.cachePath + L"\\MiniDump.dmp");
+	SetUnhandledExceptionFilter(MyCustomFilter);
 #endif
 
 		//on x64 it makes not working unicode toupper tolower conversion
