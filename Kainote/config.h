@@ -501,6 +501,8 @@ public:
 	void SetHexColor(const wxString &nameAndColor);
 	//if failed returns symbol
 	wxString FindLanguage(const wxString & symbol);
+	//install directory, or the source tree when run from a build
+	wxString GetLocalePath() const;
 	//main value is 10 offset from 10
 	wxFont *GetFont(int offset = 0, const wxString& name = L"", bool bold = false);
 	//em height in pixels, the value wxFont::GetPixelSize() returns on Windows
@@ -607,6 +609,10 @@ bool IsNumber(const wxString& txt);
 void DrawDashedLine(wxDC* dc, wxPoint* vector, size_t vectorSize, int dashLen, const wxColour& color);
 size_t FindFromEnd(const wxString& text, const wxString& whatToFind, bool ignoreCase = false);
 
+
+// Kainote's gettext domain.  It used to be the language tag, which meant
+// there was no stable domain and every gettext tool had to be worked around.
+#define KAINOTE_CATALOG_DOMAIN L"kainote"
 
 extern config Options;
 
