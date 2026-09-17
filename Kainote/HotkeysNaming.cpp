@@ -157,6 +157,7 @@ void HotkeysNaming::CreateNamesMap()
 	names[GRID_SPLIT_BY_WORDS] = _(L"Podziel linie na słowa");
 	names[GRID_SPLIT_BY_WRAPS] = _(L"Podziel linie według łamań");
 	names[GLOBAL_OPEN_ASS_PROPERTIES] = _(L"Właściwości pliku ASS");
+	names[GLOBAL_CHECK_FOR_UPDATES] = _("Sprawdź aktualizacje");
 	names[GLOBAL_ABOUT] = _("O programie");
 	names[GLOBAL_ANSI] = _(L"Wątek programu na forum AnimeSub.info");
 	names[GLOBAL_CONVERT_TO_ASS] = _("Konwertuj do ASS");

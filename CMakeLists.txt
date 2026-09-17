@@ -98,6 +98,8 @@ add_executable(kainote
     Kainote/RendererFFMS2.cpp
     Kainote/RendererGStreamer.cpp
     Kainote/FileTypes.cpp
+    Kainote/JsonValue.cpp
+    Kainote/UpdateChecker.cpp
     Kainote/Registry.cpp
     Kainote/RendererDirectShow.cpp
     Kainote/RendererVideo.cpp
