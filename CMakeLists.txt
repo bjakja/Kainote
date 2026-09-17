@@ -90,7 +90,6 @@ add_executable(kainote
     Kainote/FontCatalogList.cpp
     Kainote/KaiGauge.cpp
     Kainote/KaiPanel.cpp
-    Kainote/Languages.cpp
     Kainote/LineParse.cpp
     Kainote/Provider.cpp
     Kainote/ProviderDummy.cpp

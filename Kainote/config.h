@@ -430,9 +430,7 @@ private:
 	wxColour colors[colorsSize];
 	bool isClosing = false;
 	std::map<int, wxFont*> programFonts;
-	std::map<wxString, wxString> Languages;
 	wxColour defaultColour;
-	void InitLanguagesTable();
 	bool hasCrashed = false;
 	bool ConfigNeedToConvert(const wxString & fullVersion);
 	int lastCheckedId = -1;
@@ -502,7 +500,7 @@ public:
 	void Sortstyles();
 	void SetHexColor(const wxString &nameAndColor);
 	//if failed returns symbol
-	const wxString & FindLanguage(const wxString & symbol);
+	wxString FindLanguage(const wxString & symbol);
 	//main value is 10 offset from 10
 	wxFont *GetFont(int offset = 0, const wxString& name = L"", bool bold = false);
 	//em height in pixels, the value wxFont::GetPixelSize() returns on Windows
