@@ -323,7 +323,7 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 		for (size_t i = 0; i < langs.GetCount(); i++) {
 			wxString fulllang = wxFileName(langs[i]).GetName();
 			programLanguages.push_back(fulllang);
-			const wxString& fullName = Options.FindLanguage(fulllang);
+			const wxString fullName = Options.FindLanguage(fulllang);
 			langs[i] = fullName;
 		}
 		langs.Insert(L"English", 0);

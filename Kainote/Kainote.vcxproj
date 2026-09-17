@@ -349,7 +349,6 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitp
     <ClCompile Include="FontCatalogList.cpp" />
     <ClCompile Include="KaiGauge.cpp" />
     <ClCompile Include="KaiPanel.cpp" />
-    <ClCompile Include="Languages.cpp" />
     <ClCompile Include="LineParse.cpp" />
     <ClCompile Include="Provider.cpp" />
     <ClCompile Include="ProviderDummy.cpp" />

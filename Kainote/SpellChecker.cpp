@@ -97,7 +97,7 @@ void SpellChecker::AvailableDics(wxArrayString &dics, wxArrayString &symbols)
 		if (dic[i].BeforeLast(L'.') == aff[i].BeforeLast(L'.')){
 			wxString symbolName = wxFileName(dic[i]).GetName();
 			symbols.Add(symbolName);
-			const wxString &fullName = Options.FindLanguage(symbolName);
+			const wxString fullName = Options.FindLanguage(symbolName);
 			dics.Add(fullName);
 		}
 	}

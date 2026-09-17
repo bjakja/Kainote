@@ -23,6 +23,7 @@
 #include <wx/string.h>
 #include <wx/log.h>
 #include <wx/filename.h>
+#include <wx/uilocale.h>
 #include "CsriMod.h"
 #include "Notebook.h"
 #include "gitparams.h"
@@ -67,7 +68,6 @@ config::config()
 #endif
 	AudioOpts = false;
 	defaultColour = wxColour();
-	InitLanguagesTable();
 	HDC dc = ::GetDC(nullptr);
 	fontDPI = ::GetDeviceCaps(dc, LOGPIXELSY);
 	::ReleaseDC(nullptr, dc);
@@ -994,13 +994,47 @@ int config::GetFontPixelHeight(const wxFont &font)
 #endif
 }
 
-const wxString &config::FindLanguage(const wxString & symbol)
+wxString config::FindLanguage(const wxString & symbol)
 {
-	const auto &it = Languages.find(symbol);
-	if (it != Languages.end())
+	// The languages Kainote ships a catalogue or a dictionary for.  This used to
+	// be 235 hand-written rows covering every locale anyone might name, which had
+	// drifted: three keys were assigned twice and so lost the endonym they had
+	// been added for, and "am" carried the Armenian name, not the Amharic one.
+	//
+	// wx can name any locale on Windows, but wxUILocale on Unix without ICU only
+	// knows the locales generated on the machine, which is typically a handful;
+	// asking it first would name the same language differently on each platform.
+	// So the shipped list is curated and wx answers for everything else, which in
+	// practice means a Hunspell dictionary the user dropped in themselves.
+	static const std::map<wxString, wxString> shipped = {
+		{ L"de",      L"Deutsch" },
+		{ L"en",      L"English" },
+		{ L"es",      L"Español" },
+		{ L"id",      L"Bahasa Indonesia" },
+		{ L"it",      L"Italiano" },
+		{ L"ko",      L"한국어" },
+		{ L"ms",      L"Melayu" },
+		{ L"nb",      L"Norsk bokmål" },
+		{ L"pl",      L"Polski" },
+		{ L"pt_BR",   L"Português (do Brasil)" },
+		{ L"pt",      L"Português" },
+		{ L"ru",      L"Русский" },
+		{ L"ta",      L"தமிழ்" },
+		{ L"th",      L"ไทย" },
+		{ L"zh_Hans", L"中文 (简体)" },
+		{ L"zh_Hant", L"正體中文 (繁體)" },
+	};
+
+	auto it = shipped.find(symbol);
+	if (it == shipped.end())
+		it = shipped.find(symbol.BeforeFirst(L'_'));
+	if (it != shipped.end())
 		return it->second;
 
-	return symbol;
+	const wxString name = wxUILocale::FromTag(symbol)
+		.GetLocalizedName(wxLOCALE_NAME_LANGUAGE, wxLOCALE_FORM_NATIVE);
+
+	return name.empty() ? symbol : name;
 }
 
 bool config::CheckLastKeyEvent(int id, int timeInterval)
