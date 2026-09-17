@@ -1,7 +1,7 @@
 foreach(required_var IN ITEMS
         KAINOTE_EXE RUNTIME_DIR SOURCE_DIR BINARY_DIR STAGING_PARENT
         PACKAGE_BASENAME ARCHIVE_PATH MSGFMT_EXECUTABLE Python3_EXECUTABLE
-        TAR_EXECUTABLE GZIP_EXECUTABLE)
+        TAR_EXECUTABLE GZIP_EXECUTABLE PACKAGING_DIR DESKTOP_GEN_DIR)
     if(NOT DEFINED ${required_var} OR "${${required_var}}" STREQUAL "")
         message(FATAL_ERROR "${required_var} is required")
     endif()
@@ -112,6 +112,35 @@ if(EXISTS "${SOURCE_DIR}/LICENSE")
     file(COPY_FILE "${SOURCE_DIR}/LICENSE" "${package_root}/LICENSE")
 endif()
 
+# Desktop integration, laid out as it would be under a prefix so
+# install-desktop-integration.sh can copy it straight into XDG_DATA_HOME.
+foreach(desktop_input IN ITEMS
+        "${DESKTOP_GEN_DIR}/io.github.bjakja.Kainote.desktop"
+        "${DESKTOP_GEN_DIR}/io.github.bjakja.Kainote.metainfo.xml"
+        "${PACKAGING_DIR}/mime/kainote.xml"
+        "${PACKAGING_DIR}/install-desktop-integration.sh")
+    if(NOT EXISTS "${desktop_input}")
+        message(FATAL_ERROR "missing desktop integration input: ${desktop_input}")
+    endif()
+endforeach()
+
+file(MAKE_DIRECTORY
+     "${package_root}/share/applications"
+     "${package_root}/share/metainfo"
+     "${package_root}/share/mime/packages"
+     "${package_root}/share/icons")
+file(COPY_FILE "${DESKTOP_GEN_DIR}/io.github.bjakja.Kainote.desktop"
+               "${package_root}/share/applications/io.github.bjakja.Kainote.desktop")
+file(COPY_FILE "${DESKTOP_GEN_DIR}/io.github.bjakja.Kainote.metainfo.xml"
+               "${package_root}/share/metainfo/io.github.bjakja.Kainote.metainfo.xml")
+file(COPY_FILE "${PACKAGING_DIR}/mime/kainote.xml"
+               "${package_root}/share/mime/packages/kainote.xml")
+file(COPY "${PACKAGING_DIR}/icons/hicolor"
+     DESTINATION "${package_root}/share/icons"
+     FILES_MATCHING PATTERN "*.png")
+file(COPY_FILE "${PACKAGING_DIR}/install-desktop-integration.sh"
+               "${package_root}/install-desktop-integration.sh")
+
 # Normalize modes for reproducibility.
 file(GLOB_RECURSE package_entries
     LIST_DIRECTORIES TRUE
@@ -134,6 +163,11 @@ file(CHMOD "${package_root}"
         GROUP_READ GROUP_EXECUTE
         WORLD_READ WORLD_EXECUTE)
 file(CHMOD "${package_root}/kainote"
+    PERMISSIONS
+        OWNER_READ OWNER_WRITE OWNER_EXECUTE
+        GROUP_READ GROUP_EXECUTE
+        WORLD_READ WORLD_EXECUTE)
+file(CHMOD "${package_root}/install-desktop-integration.sh"
     PERMISSIONS
         OWNER_READ OWNER_WRITE OWNER_EXECUTE
         GROUP_READ GROUP_EXECUTE
