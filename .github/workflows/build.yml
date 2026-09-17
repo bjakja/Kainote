@@ -76,6 +76,7 @@ jobs:
       # instead: only Include and Lib are needed.  Kainote.vcxproj reads
       # DXSDK_DIR.
       - name: Cache DirectX SDK
+        id: dxsdk-cache
         uses: actions/cache/restore@v4
         with:
           path: ${{ github.workspace }}/dxsdk
@@ -90,6 +91,7 @@ jobs:
           $inc = Get-ChildItem raw -Recurse -Directory -Filter Include | Select-Object -First 1
           $lib = Get-ChildItem raw -Recurse -Directory -Filter Lib     | Select-Object -First 1
           if (-not $inc -or -not $lib) { throw 'DirectX SDK payload did not contain Include/Lib' }
+          Remove-Item dxsdk -Recurse -Force -ErrorAction SilentlyContinue
           New-Item -ItemType Directory -Force -Path dxsdk | Out-Null
           Move-Item $inc.FullName dxsdk\Include
           Move-Item $lib.FullName dxsdk\Lib
@@ -132,6 +134,7 @@ jobs:
         run: echo "sha=$(git rev-parse HEAD:Thirdparty/wxWidgets)" >> $env:GITHUB_OUTPUT
 
       - name: Cache wxWidgets libraries
+        id: wx-cache
         uses: actions/cache/restore@v4
         with:
           path: Thirdparty/wxWidgets/lib
