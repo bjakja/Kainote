@@ -597,7 +597,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			rightArrowHover = false;
 			RefreshRect(wxRect(start, hh, start + TabHeight - 4, TabHeight), false);
 			//if(oldtab!=i){
-			SetToolTip(_(L"Otwórz nową zakładkę"));
+			SetToolTip(_("Open new tab"));
 			//oldtab=i;}
 			return;
 		}
@@ -623,7 +623,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			RefreshRect(wxRect(0, hh, w, TabHeight), false);
 		}
 		if (i == iter && (x > num + tabSizes[i] - xWidth && x < num + tabSizes[i] - 5)){
-			if (!onx){ SetToolTip(_("Zamknij")); }
+			if (!onx){ SetToolTip(_("Close")); }
 			onx = true;
 			RefreshRect(wxRect(num + tabSizes[i] - xWidth, hh, xWidth, TabHeight), false);
 		}// it can crash here when i is equal tabSizes.GetCount() cause of no refresh of i
@@ -887,28 +887,28 @@ void Notebook::ContextMenu(const wxPoint &pos, int i)
 		tabsMenu.Append(MENU_CHOOSE + g, Page(g)->SubsName, emptyString, true, 0, 0, (g == iter) ? ITEM_RADIO : ITEM_NORMAL);
 	}
 	tabsMenu.AppendSeparator();
-	tabsMenu.Append(MENU_SAVE + i, _("Zapisz"), _("Zapisz"))->Enable(i >= 0 && Pages[i]->grid->IsModified());
-	tabsMenu.Append(MENU_SAVE - 1, _("Zapisz wszystko"), _("Zapisz wszystko"));
-	tabsMenu.Append(MENU_CHOOSE - 1, _(L"Zamknij wszystkie zakładki"), _(L"Zamknij wszystkie zakładki"));
+	tabsMenu.Append(MENU_SAVE + i, _("Save"), _("Save"))->Enable(i >= 0 && Pages[i]->grid->IsModified());
+	tabsMenu.Append(MENU_SAVE - 1, _("Save all"), _("Save all"));
+	tabsMenu.Append(MENU_CHOOSE - 1, _("Close all tabs"), _("Close all tabs"));
 	int num;
 	int tabNum = FindTab(pos.x, &num);
 	if (tabNum != -1) {
 		TabPanel *tab = Pages[tabNum];
 		if (!tab->SubsPath.empty()) {
-			tabsMenu.Append(MENU_OPEN_SUBS_FOLDER, _(L"Otwórz folder zawierający napisy"), _(L"Otwórz folder zawierający napisy"));
+			tabsMenu.Append(MENU_OPEN_SUBS_FOLDER, _("Open the folder containing the subtitles"), _("Open the folder containing the subtitles"));
 		}
 		if (!tab->VideoPath.empty()) {
-			tabsMenu.Append(MENU_OPEN_VIDEO_FOLDER, _(L"Otwórz folder zawierający wideo"), _(L"Otwórz folder zawierający wideo"));
+			tabsMenu.Append(MENU_OPEN_VIDEO_FOLDER, _("Open video containing folder"), _("Open video containing folder"));
 		}
 		if (!tab->AudioPath.empty()) {
-			tabsMenu.Append(MENU_OPEN_AUDIO_FOLDER, _(L"Otwórz folder zawierający audio"), _(L"Otwórz folder zawierający audio"));
+			tabsMenu.Append(MENU_OPEN_AUDIO_FOLDER, _("Open audio containing folder"), _("Open audio containing folder"));
 		}
 		if (!tab->KeyframesPath.empty()) {
-			tabsMenu.Append(MENU_OPEN_KEYFRAMES_FOLDER, _(L"Otwórz folder zawierający klatki kluczowe"), _(L"Otwórz folder zawierający klatki kluczowe"));
+			tabsMenu.Append(MENU_OPEN_KEYFRAMES_FOLDER, _("Open keyframes containing folder"), _("Open keyframes containing folder"));
 		}
 	}
 	if ((i != iter && Size() > 1 && i != -1) || split){
-		wxString txt = (split) ? _(L"Wyświetl jedną zakładkę") : _(L"Wyświetl dwie zakładki");
+		wxString txt = (split) ? _("Show one tab") : _("Show two tabs");
 		tabsMenu.Append((MENU_CHOOSE - 2) - i, txt);
 	}
 	bool canCompare = (i != iter && Size() > 1 && i != -1);
@@ -928,14 +928,14 @@ void Notebook::ContextMenu(const wxPoint &pos, int i)
 	}
 	int compareBy = Options.GetInt(SUBS_COMPARISON_TYPE);
 	Menu *comparisonMenu = new Menu();
-	comparisonMenu->Append(MENU_COMPARE + 1, _(L"Porównaj według czasów"), nullptr, emptyString, ITEM_CHECK, canCompare)->Check(compareBy & COMPARE_BY_TIMES);
-	comparisonMenu->Append(MENU_COMPARE + 2, _(L"Porównaj według widocznych linijek"), nullptr, emptyString, ITEM_CHECK, canCompare)->Check((compareBy & COMPARE_BY_VISIBLE)>0);
-	comparisonMenu->Append(MENU_COMPARE + 3, _(L"Porównaj według zaznaczeń"), nullptr, emptyString, ITEM_CHECK, canCompare && Pages[iter]->grid->SelectionsSize() > 0 && Pages[i]->grid->SelectionsSize() > 0)->Check((compareBy & COMPARE_BY_SELECTIONS) > 0);
-	comparisonMenu->Append(MENU_COMPARE + 4, _(L"Porównaj według stylów"), nullptr, emptyString, ITEM_CHECK, canCompare)->Check((compareBy & COMPARE_BY_STYLES) > 0);
-	comparisonMenu->Append(MENU_COMPARE + 5, _(L"Porównaj według wybranych stylów"), styleComparisonMenu, emptyString, ITEM_CHECK, canCompare)->Check(SubsGridBase::compareStyles.size() > 0);
-	comparisonMenu->Append(MENU_COMPARE, _(L"Porównaj"))->Enable(canCompare);
-	comparisonMenu->Append(MENU_COMPARE - 1, _(L"Wyłącz porównanie"))->Enable(SubsGridBase::hasCompare);
-	tabsMenu.Append(MENU_COMPARE + 6, _(L"Porównanie napisów"), comparisonMenu, _(L"Porównanie napisów"))->Enable(canCompare || SubsGridBase::hasCompare);
+	comparisonMenu->Append(MENU_COMPARE + 1, _("Compare by times"), nullptr, emptyString, ITEM_CHECK, canCompare)->Check(compareBy & COMPARE_BY_TIMES);
+	comparisonMenu->Append(MENU_COMPARE + 2, _("Compare by visible lines"), nullptr, emptyString, ITEM_CHECK, canCompare)->Check((compareBy & COMPARE_BY_VISIBLE)>0);
+	comparisonMenu->Append(MENU_COMPARE + 3, _("Compare by selections"), nullptr, emptyString, ITEM_CHECK, canCompare && Pages[iter]->grid->SelectionsSize() > 0 && Pages[i]->grid->SelectionsSize() > 0)->Check((compareBy & COMPARE_BY_SELECTIONS) > 0);
+	comparisonMenu->Append(MENU_COMPARE + 4, _("Compare by styles"), nullptr, emptyString, ITEM_CHECK, canCompare)->Check((compareBy & COMPARE_BY_STYLES) > 0);
+	comparisonMenu->Append(MENU_COMPARE + 5, _("Compare by selected styles"), styleComparisonMenu, emptyString, ITEM_CHECK, canCompare)->Check(SubsGridBase::compareStyles.size() > 0);
+	comparisonMenu->Append(MENU_COMPARE, _("Compare"))->Enable(canCompare);
+	comparisonMenu->Append(MENU_COMPARE - 1, _("Turn off comparison"))->Enable(SubsGridBase::hasCompare);
+	tabsMenu.Append(MENU_COMPARE + 6, _("Subtitle comparison"), comparisonMenu, _("Subtitle comparison"))->Enable(canCompare || SubsGridBase::hasCompare);
 
 	int id = tabsMenu.GetPopupMenuSelection(pos, this);
 
@@ -976,7 +976,7 @@ void Notebook::OnTabSel(int id)
 		Split(wtab);
 	}
 	else if (wtab < 0){
-		if (KaiMessageBox(_(L"Zostaną zamknięte wszystkie zakładki, kontynuować?"), _("Pytanie"),
+		if (KaiMessageBox(_("All tabs will be closed, continue?"), _("Prompt"),
 			wxYES_NO, Kai, wxDefaultPosition, wxNO) == wxNO)
 			return;
 
@@ -1191,29 +1191,29 @@ int Notebook::LoadVideo(TabPanel *tab, const wxString & path,
 				int flags = wxNO | ASK_ONCE;
 				wxString prompt;
 				if (hasVideoPath || hasAudioPath || hasKeyframePath) {
-					if (hasVideoPath && tab->VideoPath != videopath) { prompt += _("Wideo: ") + videopath + L"\n"; }
+					if (hasVideoPath && tab->VideoPath != videopath) { prompt += _("Video: ") + videopath + L"\n"; }
 					else if (hasVideoPath) { hasVideoPath = false; }
 					if (hasAudioPath && tab->AudioPath != audiopath) { prompt += _("Audio: ") + audiopath + L"\n"; }
 					else if (hasAudioPath) { hasAudioPath = false; }
-					if (hasKeyframePath && tab->KeyframesPath != keyframespath) { prompt += _("Klatki kluczowe: ") + keyframespath + L"\n"; }
+					if (hasKeyframePath && tab->KeyframesPath != keyframespath) { prompt += _("Keyframes: ") + keyframespath + L"\n"; }
 					else if (hasKeyframePath) { hasKeyframePath = false; }
-					if (!prompt.empty()) { prompt.Prepend(_("Skojarzone pliki:\n")); flags |= wxOK; }
+					if (!prompt.empty()) { prompt.Prepend(_("Associated files:\n")); flags |= wxOK; }
 				}
 				if (!path.empty()) {
 					if (tab->VideoPath != path) {
 						if (!prompt.empty()) { prompt += L"\n"; }
-						prompt += _("Wideo z folderu:\n") + KaiPathName(path); flags |= wxYES;
+						prompt += _("Video from directory:\n") + KaiPathName(path); flags |= wxYES;
 					}
 					else
 						return -1;
 				}
 				if (!prompt.empty()) {
-					KaiMessageDialog dlg(this, prompt, _("Potwierdzenie"), flags);
+					KaiMessageDialog dlg(this, prompt, _("Confirmation"), flags);
 					if (flags & wxYES && flags & wxOK) {
-						dlg.SetOkLabel(_("Wczytaj skojarzone"));
-						dlg.SetYesLabel(_("Wczytaj z folderu"));
+						dlg.SetOkLabel(_("Load associated"));
+						dlg.SetYesLabel(_("Load from directory"));
 					}
-					else if (flags & wxOK) { dlg.SetOkLabel(_("Tak")); }
+					else if (flags & wxOK) { dlg.SetOkLabel(_("Yes")); }
 					result = dlg.ShowModal();
 					if (result & ASK_ONCE)
 						promptResult = result;
@@ -1371,7 +1371,7 @@ void Notebook::LoadLastSession(bool loadCrashSession, const wxString &externalPa
 		wxStringTokenizer tokenizer(riddenSession, L"\n", wxTOKEN_STRTOK);
 		wxString header = tokenizer.GetNextToken();
 		if (!header.StartsWith(L"[Kainote")){
-			KaiLog(_(L"Nieprawidłowy plik sesji"));
+			KaiLog(_("Session file is corrupt"));
 			return;
 		}
 

@@ -29,7 +29,7 @@
 #include <wx/clipbrd.h>
 
 SelectLines::SelectLines(KainoteFrame* kfparent)
-	: KaiDialog((wxWindow*)kfparent, -1, _("Zaznacz"))
+	: KaiDialog((wxWindow*)kfparent, -1, _("Select"))
 {
 	Kai = kfparent;
 	Options.GetTable(SELECT_LINES_RECENT_SELECTIONS, selsRecent, wxTOKEN_RET_EMPTY_ALL);
@@ -38,8 +38,8 @@ SelectLines::SelectLines(KainoteFrame* kfparent)
 
 	DialogSizer *slsizer = new DialogSizer(wxVERTICAL);
 	wxBoxSizer *slrbsizer = new wxBoxSizer(wxHORIZONTAL);
-	Contains = new KaiRadioButton(this, -1, _("Zawiera"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-	NotContains = new KaiRadioButton(this, -1, _("Nie zawiera"));
+	Contains = new KaiRadioButton(this, -1, _("With"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+	NotContains = new KaiRadioButton(this, -1, _("Without"));
 	if (options & NOT_CONTAINS)
 		NotContains->SetValue(true);
 	else
@@ -48,18 +48,18 @@ SelectLines::SelectLines(KainoteFrame* kfparent)
 	slrbsizer->Add(Contains, 1, wxALL | wxEXPAND, 3);
 	slrbsizer->Add(NotContains, 1, wxALL | wxEXPAND, 3);
 
-	KaiStaticBoxSizer* slsbsizer = new KaiStaticBoxSizer(wxVERTICAL, this, _(L"Znajdź"));
+	KaiStaticBoxSizer* slsbsizer = new KaiStaticBoxSizer(wxVERTICAL, this, _("Find"));
 	wxBoxSizer *sltpsizer = new wxBoxSizer(wxHORIZONTAL);
 	FindText = new KaiChoice(this, -1, emptyString, wxDefaultPosition, wxSize(-1, -1), selsRecent);
-	FindText->SetToolTip(_("Szukany tekst:"));
+	FindText->SetToolTip(_("Search text:"));
 	FindText->SetMaxLength(MAXINT);
 	ChooseStyles = new MappedButton(this, ID_CHOOSE_STYLES, L"+", -1/*, wxDefaultPosition, wxSize(-1, -1)*/);
 	sltpsizer->Add(FindText, 1, wxALL | wxEXPAND, 3);
 	sltpsizer->Add(ChooseStyles, 0, wxALL, 3);
 
-	MatchCase = new KaiCheckBox(this, -1, _(L"Uwzględniaj wielkość liter"));
+	MatchCase = new KaiCheckBox(this, -1, _("Match case"));
 	MatchCase->SetValue((options & MATCH_CASE) > 0);
-	RegEx = new KaiCheckBox(this, -1, _(L"Wyrażenia regularne"));
+	RegEx = new KaiCheckBox(this, -1, _("Regular expressions"));
 	RegEx->SetValue((options & REGULAR_EXPRESSIONS) > 0);
 
 	slsbsizer->Add(slrbsizer, 0, wxEXPAND, 0);
@@ -67,15 +67,15 @@ SelectLines::SelectLines(KainoteFrame* kfparent)
 	slsbsizer->Add(MatchCase, 0, wxALL, 3);
 	slsbsizer->Add(RegEx, 0, wxALL, 3);
 
-	KaiStaticBoxSizer* slsbsizer1 = new KaiStaticBoxSizer(wxVERTICAL, this, _("W polu"));
+	KaiStaticBoxSizer* slsbsizer1 = new KaiStaticBoxSizer(wxVERTICAL, this, _("In field"));
 	wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *sizer1 = new wxBoxSizer(wxHORIZONTAL);
-	CollumnText = new KaiRadioButton(this, -1, _("Tekst"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-	CollumnStyle = new KaiRadioButton(this, -1, _("Styl"));
-	CollumnActor = new KaiRadioButton(this, -1, _("Aktor"));
-	CollumnEffect = new KaiRadioButton(this, -1, _("Efekt"));
-	CollumnStartTime = new KaiRadioButton(this, -1, _(L"Czas Początkowy"));
-	CollumnEndTime = new KaiRadioButton(this, -1, _(L"Czas Końcowy"));
+	CollumnText = new KaiRadioButton(this, -1, _("Text"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+	CollumnStyle = new KaiRadioButton(this, -1, _("Styles"));
+	CollumnActor = new KaiRadioButton(this, -1, _("Actor"));
+	CollumnEffect = new KaiRadioButton(this, -1, _("Effect"));
+	CollumnStartTime = new KaiRadioButton(this, -1, _("Start time"));
+	CollumnEndTime = new KaiRadioButton(this, -1, _("End time"));
 	//catch first options, when there is more options it means that I did a bug or sameone change options
 	if (options & FIELD_TEXT)
 		CollumnText->SetValue(true);
@@ -98,35 +98,35 @@ SelectLines::SelectLines(KainoteFrame* kfparent)
 	sizer1->Add(CollumnEndTime, 1, wxALL | wxEXPAND, 3);
 	slsbsizer1->Add(sizer, 1, wxEXPAND);
 	slsbsizer1->Add(sizer1, 1, wxEXPAND);
-	KaiStaticBoxSizer* slsbsizer2 = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Dialogi / komentarze"));
+	KaiStaticBoxSizer* slsbsizer2 = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Dialogue / comments"));
 
-	Dialogues = new KaiCheckBox(this, -1, _("Dialogi"));
+	Dialogues = new KaiCheckBox(this, -1, _("Dialogue"));
 	Dialogues->SetValue(options & DIALOGUES || !(options & COMMENTS));
-	Comments = new KaiCheckBox(this, -1, _("Komentarze"));
+	Comments = new KaiCheckBox(this, -1, _("Comments"));
 	Comments->SetValue((options & COMMENTS) > 0);
 
 	slsbsizer2->Add(Dialogues, 0, wxALL, 3);
 	slsbsizer2->Add(Comments, 0, wxALL, 3);
 
 	wxArrayString sels;
-	sels.Add(_("Zaznacz"));
-	sels.Add(_("Dodaj do zaznaczenia"));
-	sels.Add(_("Odznacz"));
+	sels.Add(_("Select"));
+	sels.Add(_("Add to selection"));
+	sels.Add(_("Deselect"));
 
-	Selections = new KaiRadioBox(this, -1, _("Zaznaczenie"), wxDefaultPosition, wxDefaultSize, sels, 2);
+	Selections = new KaiRadioBox(this, -1, _("Selection"), wxDefaultPosition, wxDefaultSize, sels, 2);
 	int SelettionsOption = options & ADD_TO_SELECTION ? 1 : options & DESELECT ? 2 : 0;
 	Selections->SetSelection(SelettionsOption);
 
 	wxArrayString action;
-	action.Add(_(L"Nie rób nic"));
-	action.Add(_("Kopiuj"));
-	action.Add(_("Wytnij"));
-	action.Add(_(L"Przenieś na początek"));
-	action.Add(_(L"Przenieś na koniec"));
-	action.Add(_("Ustaw jako komentarz"));
-	action.Add(_(L"Usuń"));
+	action.Add(_("Do nothing"));
+	action.Add(_("Copy"));
+	action.Add(_("Cut"));
+	action.Add(_("Move to beginning"));
+	action.Add(_("Move to end"));
+	action.Add(_("Set as comment"));
+	action.Add(_("Delete"));
 
-	Actions = new KaiRadioBox(this, -1, _("Akcja"), wxDefaultPosition, wxDefaultSize, action, 2);
+	Actions = new KaiRadioBox(this, -1, _("Action"), wxDefaultPosition, wxDefaultSize, action, 2);
 	int ActionsOption = options & DO_COPY ? 1 :
 		options & DO_CUT ? 2 :
 		options & DO_MOVE_ON_START ? 3 :
@@ -136,9 +136,9 @@ SelectLines::SelectLines(KainoteFrame* kfparent)
 	Actions->SetSelection(ActionsOption);
 
 	wxBoxSizer *slbtsizer = new wxBoxSizer(wxHORIZONTAL);
-	Select = new MappedButton(this, ID_SELECTIONS, _("Zaznacz"));
-	MappedButton *SelectOnAllTabs = new MappedButton(this, ID_SELECT_ON_ALL_TABS, _(L"Zaznacz na wszystkich zakładkach"));
-	Close = new MappedButton(this, wxID_CANCEL, _("Zamknij"));
+	Select = new MappedButton(this, ID_SELECTIONS, _("Select"));
+	MappedButton *SelectOnAllTabs = new MappedButton(this, ID_SELECT_ON_ALL_TABS, _("Select in all tabs"));
+	Close = new MappedButton(this, wxID_CANCEL, _("Close"));
 	slbtsizer->Add(Select, 1, wxALL, 5);
 	slbtsizer->Add(SelectOnAllTabs, 0, wxALL, 5);
 	slbtsizer->Add(Close, 1, wxALL, 5);
@@ -229,11 +229,11 @@ void SelectLines::OnSelect(wxCommandEvent & evt)
 	bool refreshTabLabel = false;
 	int allSelections = SelectOnTab(tab, &refreshTabLabel);
 
-	wxString messagetxt = (selectOptions == 0) ? wxString::Format(_("Zaznaczono %i linijek."), allSelections) :
-		(selectOptions == 1) ? wxString::Format(_("Dodano do zaznaczenia %i linijek."), allSelections) :
-		wxString::Format(_("Odznaczono %i linijek."), allSelections);
-	KaiMessageDialog dlg(this, messagetxt, _("Zaznacz"), wxYES_NO);
-	dlg.SetYesLabel(_("Zamknij"));
+	wxString messagetxt = (selectOptions == 0) ? wxString::Format(_("%i lines selected."), allSelections) :
+		(selectOptions == 1) ? wxString::Format(_("%i lines added to selection."), allSelections) :
+		wxString::Format(_("%i lines deselected."), allSelections);
+	KaiMessageDialog dlg(this, messagetxt, _("Select"), wxYES_NO);
+	dlg.SetYesLabel(_("Close"));
 	dlg.SetNoLabel(L"Ok");
 	int result = dlg.ShowModal();
 	if (result == wxYES){
@@ -271,11 +271,11 @@ void SelectLines::OnSelectInAllTabs(wxCommandEvent& event)
 			Kai->Label(tab->grid->GetActualHistoryIter(), false, i, i != Kai->Tabs->iter);
 	}
 
-	wxString messagetxt = (selectOptions == 0) ? wxString::Format(_("Zaznaczono %i linijek."), selectionsOnAllTabs) :
-		(selectOptions == 1) ? wxString::Format(_("Dodano do zaznaczenia %i linijek."), selectionsOnAllTabs) :
-		wxString::Format(_("Odznaczono %i linijek."), selectionsOnAllTabs);
-	KaiMessageDialog dlg(this, messagetxt, _("Zaznacz"), wxYES_NO);
-	dlg.SetYesLabel(_("Zamknij"));
+	wxString messagetxt = (selectOptions == 0) ? wxString::Format(_("%i lines selected."), selectionsOnAllTabs) :
+		(selectOptions == 1) ? wxString::Format(_("%i lines added to selection."), selectionsOnAllTabs) :
+		wxString::Format(_("%i lines deselected."), selectionsOnAllTabs);
+	KaiMessageDialog dlg(this, messagetxt, _("Select"), wxYES_NO);
+	dlg.SetYesLabel(_("Close"));
 	dlg.SetNoLabel(L"Ok");
 	int result = dlg.ShowModal();
 	if (result == wxYES){

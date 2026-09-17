@@ -29,7 +29,7 @@
 #include <wx/regex.h>
 
 SpellCheckerDialog::SpellCheckerDialog(KainoteFrame *parent)
-	:KaiDialog((wxWindow*)parent, -1, _("Sprawdzanie pisowni"))
+	:KaiDialog((wxWindow*)parent, -1, _("Spellchecker"))
 	, Kai(parent)
 	, lastLine(0)
 	, lastMisspell(0)
@@ -40,27 +40,27 @@ SpellCheckerDialog::SpellCheckerDialog(KainoteFrame *parent)
 	wxBoxSizer *replaceSizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *buttonSizer = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *listSizer = new wxBoxSizer(wxHORIZONTAL);
-	ignoreComments = new KaiCheckBox(this, -1, _("Ignoruj komentarze"));
-	ignoreUpper = new KaiCheckBox(this, -1, _(L"Ignoruj słowa całe pisane\nwielką literą"));
+	ignoreComments = new KaiCheckBox(this, -1, _("Ignore comments"));
+	ignoreUpper = new KaiCheckBox(this, -1, _("Ignore words written entirely\nin uppercase"));
 	//wxString misspellWord = FindNextMisspell();
 	misSpell = new KaiTextCtrl(this, -1, emptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
 	replaceWord = new KaiTextCtrl(this, -1);
 
-	misspellSizer->Add(new KaiStaticText(this, -1, _(L"Błędne słowo:")), 1, wxEXPAND | wxALL, 2);
+	misspellSizer->Add(new KaiStaticText(this, -1, _("Misspell word:")), 1, wxEXPAND | wxALL, 2);
 	misspellSizer->Add(misSpell, 4, wxEXPAND | wxALL, 2);
-	replaceSizer->Add(new KaiStaticText(this, -1, _(L"Zmień na:")), 1, wxEXPAND | wxALL, 2);
+	replaceSizer->Add(new KaiStaticText(this, -1, _("Replace to:")), 1, wxEXPAND | wxALL, 2);
 	replaceSizer->Add(replaceWord, 4, wxEXPAND | wxALL, 2);
 
 	suggestionsList = new KaiListCtrl(this, ID_SUGGESTIONS_LIST, wxArrayString());
-	replace = new MappedButton(this, ID_REPLACE, _(L"Zamień"));
-	replaceAll = new MappedButton(this, ID_REPLACE_ALL, _(L"Zamień wszystko"));
-	ignore = new MappedButton(this, ID_IGNORE, _("Ignoruj"));
-	ignoreAll = new MappedButton(this, ID_IGNORE_ALL, _("Ignoruj wszystko"));
-	addWord = new MappedButton(this, ID_ADD_WORD, _(L"Dodaj do słownika"));
-	removeWord = new MappedButton(this, ID_REMOVE_WORD, _(L"Usuń ze słownika"));
-	removeWord->SetToolTip(_(L"Usuwa ze słownika słowa dodane przez użytkownika."));
+	replace = new MappedButton(this, ID_REPLACE, _("Replace"));
+	replaceAll = new MappedButton(this, ID_REPLACE_ALL, _("Replace all"));
+	ignore = new MappedButton(this, ID_IGNORE, _("Ignore"));
+	ignoreAll = new MappedButton(this, ID_IGNORE_ALL, _("Ignore All"));
+	addWord = new MappedButton(this, ID_ADD_WORD, _("Add to dictionary"));
+	removeWord = new MappedButton(this, ID_REMOVE_WORD, _("Remove from dictionary"));
+	removeWord->SetToolTip(_("Remove from dictionary words added by user."));
 
-	close = new MappedButton(this, ID_CLOSE_DIALOG, _("Zamknij"));
+	close = new MappedButton(this, ID_CLOSE_DIALOG, _("Close"));
 	buttonSizer->Add(ignoreComments, 0, wxEXPAND | wxALL, 2);
 	buttonSizer->Add(ignoreUpper, 0, wxEXPAND | wxALL, 2);
 	buttonSizer->Add(replace, 0, wxEXPAND | wxALL, 2);
@@ -144,7 +144,7 @@ void SpellCheckerDialog::SetNextMisspell()
 		suggestionsList->SetTextArray(wxArrayString());
 		blockOnActive = true;
 		replaceWord->SetValue(emptyString, true);
-		KaiMessageBox(_(L"Nie znaleziono więcej błędów pisowni"), _("Uwaga"), wxOK, this);
+		KaiMessageBox(_("No spelling errors were found"), _("Warning"), wxOK, this);
 		return;
 	}
 	else{
@@ -260,7 +260,7 @@ void SpellCheckerDialog::RemoveWord(wxCommandEvent &evt)
 {
 	wxArrayString addedMisspels;
 	LoadAddedMisspels(addedMisspels);
-	CustomCheckListBox *listOfAddedWords = new CustomCheckListBox(this, addedMisspels, _(L"Słowa dodane do słownika"));
+	CustomCheckListBox *listOfAddedWords = new CustomCheckListBox(this, addedMisspels, _("Words added to dictionary"));
 	if (listOfAddedWords->ShowModal() == wxID_OK){
 		wxArrayString checkedWords;
 		listOfAddedWords->GetCheckedElements(checkedWords);

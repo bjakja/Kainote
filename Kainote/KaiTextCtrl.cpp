@@ -1471,16 +1471,16 @@ void KaiTextCtrl::FindWord(int pos, int *start, int *end)
 void KaiTextCtrl::ContextMenu(wxPoint mpos)
 {
 	Menu menut;
-	menut.Append(TEXT_COPY, _("&Kopiuj"))->Enable(Selend.x != Cursor.x);
-	menut.Append(TEXT_CUT, _("Wy&tnij"))->Enable(Selend.x != Cursor.x && !(style & wxTE_READONLY));
-	menut.Append(TEXT_PASTE, _("&Wklej"))->Enable(!(style & wxTE_READONLY));
+	menut.Append(TEXT_COPY, _("&Copy"))->Enable(Selend.x != Cursor.x);
+	menut.Append(TEXT_CUT, _("Cu&t"))->Enable(Selend.x != Cursor.x && !(style & wxTE_READONLY));
+	menut.Append(TEXT_PASTE, _("&Paste"))->Enable(!(style & wxTE_READONLY));
 
 	menut.AppendSeparator();
 	/*menut.Append(TEXT_SEEKWORDL,_("Szukaj tłumaczenia słowa na ling.pl"))->Enable(Selend.x!=Cursor.x);
 	menut.Append(TEXT_SEEKWORDB,_("Szukaj tłumaczenia słowa na pl.ba.bla"))->Enable(Selend.x!=Cursor.x);*/
-	menut.Append(TEXT_SEEKWORDG, _("Szukaj zaznaczonej frazy w Google"))->Enable(Selend.x != Cursor.x);
+	menut.Append(TEXT_SEEKWORDG, _("Search for the selected phrase on Google"))->Enable(Selend.x != Cursor.x);
 
-	menut.Append(TEXT_DEL, _(L"&Usuń"))->Enable(Selend.x != Cursor.x && !(style & wxTE_READONLY));
+	menut.Append(TEXT_DEL, _("&Delete"))->Enable(Selend.x != Cursor.x && !(style & wxTE_READONLY));
 
 	int id = -1;
 	id = menut.GetPopupMenuSelection(mpos, this);

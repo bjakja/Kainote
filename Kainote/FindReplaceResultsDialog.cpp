@@ -26,7 +26,7 @@
 wxDEFINE_EVENT(CHOOSE_RESULT, wxCommandEvent);
 
 FindReplaceResultsDialog::FindReplaceResultsDialog(wxWindow *parent, FindReplace *FR, bool _findInFiles)
-	: KaiDialog(parent, -1, _("Wyniki szukania"), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)
+	: KaiDialog(parent, -1, _("Search results"), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)
 {
 	DialogSizer * main = new DialogSizer(wxVERTICAL);
 	resultsList = new KaiListCtrl(this, 23323, wxDefaultPosition, wxSize(800, 500));
@@ -44,9 +44,9 @@ FindReplaceResultsDialog::FindReplaceResultsDialog(wxWindow *parent, FindReplace
 	}, 23323);
 	wxBoxSizer *buttonsSizer = new wxBoxSizer(wxHORIZONTAL);
 
-	MappedButton *checkAll = new MappedButton(this, ID_CHECK_ALL, _("Zahacz wszystko"), -1);
-	MappedButton *unCheckAll = new MappedButton(this, ID_UNCHECK_ALL, _("Odhacz wszystko"));
-	replaceChecked = new MappedButton(this, ID_REPLACE_CHECKED, _(L"Zamień"), -1);
+	MappedButton *checkAll = new MappedButton(this, ID_CHECK_ALL, _("Check all"), -1);
+	MappedButton *unCheckAll = new MappedButton(this, ID_UNCHECK_ALL, _("Uncheck all"));
+	replaceChecked = new MappedButton(this, ID_REPLACE_CHECKED, _("Replace"), -1);
 	ReplaceText = new KaiChoice(this, -1, FR->actualReplace, wxDefaultPosition, wxDefaultSize, FR->replaceRecent);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 		CheckUncheckAll(true);
@@ -251,7 +251,7 @@ void SeekResults::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, Kai
 
 void SeekResults::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList)
 {
-	wxString lineNum = wxString::Format(_("Linia %i: "), idLine);
+	wxString lineNum = wxString::Format(_("Line %i: "), idLine);
 	wxString lineAndNum = lineNum + name;
 	wxSize ex = theList->GetTextExtent(lineAndNum);
 	wxSize exOfFound = theList->GetTextExtent(lineAndNum.Mid(0, findPosition.x + lineNum.length()));
@@ -300,7 +300,7 @@ void SeekResults::OnCheckUncheckAll(wxCommandEvent& event)
 }
 
 wxSize SeekResults::GetTextExtents(KaiListCtrl *theList){
-	wxString lineNum = wxString::Format(_("Linia %i: "), idLine);
+	wxString lineNum = wxString::Format(_("Line %i: "), idLine);
 	wxString lineAndNum = lineNum + name;
 	wxSize size = theList->GetTextExtent(lineAndNum);
 	size.x += 32;

@@ -604,7 +604,6 @@ wxImage CreateImageFromPngResource(const wxString& t_name);
 #define PTR_BITMAP_PNG(x) CreateBitmapPointerFromPngResource(x)
 void MoveToMousePosition(wxWindow* win);
 bool KainoteIsWayland();
-wxString MakePolishPlural(int num, const wxString& normal, const wxString& plural24, const wxString& pluralRest);
 
 bool IsNumber(const wxString& txt);
 void DrawDashedLine(wxDC* dc, wxPoint* vector, size_t vectorSize, int dashLen, const wxColour& color);

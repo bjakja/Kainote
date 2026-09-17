@@ -82,7 +82,7 @@ void KaiToolbar::InitToolbar()
 	for (size_t i = 0; i < IDS.size(); i++)
 	{
 		MenuItem *item = mb->FindItem(IDS[i]);
-		if (!item){ KaiLog(wxString::Format(_(L"Nie można znaleźć elementu o id %i"), IDS[i])); continue; }
+		if (!item){ KaiLog(wxString::Format(_("Cannot find element with id %i"), IDS[i])); continue; }
 		wxString desc = item->GetLabelText();
 		bool isToogleButton = item->type == ITEM_CHECK;
 		AddItem(IDS[i], desc, item->icon, item->IsEnabled(), (isToogleButton) ? 2 :
@@ -171,7 +171,7 @@ void KaiToolbar::OnMouseEvent(wxMouseEvent &event)
 	return;
 	}
 	if (elem == tools.size() - 1){
-		wxString tip = _(L"Wybierz ikony paska narzędzi");
+		wxString tip = _("Choose toolbar icons");
 #ifdef _WIN32
 		SetToolTip(tip);
 #endif
@@ -474,12 +474,12 @@ ToolbarMenu::ToolbarMenu(KaiToolbar*_parent, const wxPoint &pos, const wxSize &s
 	SetFont(parent->GetFont());
 	scroll = new KaiScrollbar(this, -1, wxDefaultPosition, wxDefaultSize, wxVERTICAL);
 	Bind(wxEVT_IDLE, &ToolbarMenu::OnIdle, this);
-	wxString ans[] = { _("Po lewej"), _(L"U góry"), _("Po prawej"), _("Na dole") };
+	wxString ans[] = { _("On the left"), _("On top"), _("On right"), _("At bottom") };
 	alignments = new KaiChoice(this, 32213, wxPoint(4, 4), wxSize(size.x - 8, fh), 4, ans);
 	if (parent->alignment > 3 || parent->alignment < 0)
 		parent->alignment = 0;
 	alignments->SetSelection(parent->alignment);
-	alignments->SetToolTip(_(L"Pozycja paska narzędzi"));
+	alignments->SetToolTip(_("Toolbar alignment"));
 	Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=, this](wxCommandEvent &evt){
 		parent->alignment = alignments->GetSelection();
 		Options.SetInt(TOOLBAR_ALIGNMENT, parent->alignment);

@@ -371,7 +371,7 @@ END_EVENT_TABLE()
 FontDialog *FontDialog::FDialog = nullptr;
 
 FontDialog::FontDialog(wxWindow *parent, Styles *acst, bool changePointToPixel)
-	: KaiDialog(parent, -1, _(L"Wybierz czcionkę"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+	: KaiDialog(parent, -1, _("Select a font"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 	, pointToPixel(changePointToPixel)
 {
 	editedStyle = acst;
@@ -387,8 +387,8 @@ FontDialog::FontDialog(wxWindow *parent, Styles *acst, bool changePointToPixel)
 
 
 	DialogSizer *Main = new DialogSizer(wxVERTICAL);
-	KaiStaticBoxSizer *Cfont = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Czcionka"));
-	KaiStaticBoxSizer *prev = new KaiStaticBoxSizer(wxVERTICAL, this, _(L"Podgląd"));
+	KaiStaticBoxSizer *Cfont = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Font"));
+	KaiStaticBoxSizer *prev = new KaiStaticBoxSizer(wxVERTICAL, this, _("Preview"));
 	wxBoxSizer *Fattr = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *Bsizer = new wxBoxSizer(wxHORIZONTAL);
 	
@@ -396,18 +396,18 @@ FontDialog::FontDialog(wxWindow *parent, Styles *acst, bool changePointToPixel)
 
 	FontName = new KaiTextCtrl(this, ID_FONT_NAME, acst->Fontname, wxDefaultPosition, wxSize(150, -1), wxTE_PROCESS_ENTER);
 	FontSize = new NumCtrl(this, ID_FONTSIZE1, acst->Fontsize, 1, 10000, false, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
-	Bold = new KaiCheckBox(this, ID_FONTATTR, _("Pogrubienie"));
+	Bold = new KaiCheckBox(this, ID_FONTATTR, _("Bold"));
 	Bold->SetValue(acst->Bold);
-	Italic = new KaiCheckBox(this, ID_FONTATTR, _("Kursywa"));
+	Italic = new KaiCheckBox(this, ID_FONTATTR, _("Italic"));
 	Italic->SetValue(acst->Italic);
-	Underl = new KaiCheckBox(this, ID_FONTATTR, _(L"Podkreślenie"));
+	Underl = new KaiCheckBox(this, ID_FONTATTR, _("Underline"));
 	Underl->SetValue(acst->Underline);
-	Strike = new KaiCheckBox(this, ID_FONTATTR, _(L"Przekreślenie"));
+	Strike = new KaiCheckBox(this, ID_FONTATTR, _("Strikethrough"));
 	Strike->SetValue(acst->StrikeOut);
 	Preview = new StylePreview(this, -1, wxDefaultPosition, wxSize(-1, 180));
 	Preview->DrawPreview(acst);
 	Buttok = new MappedButton(this, wxID_OK, L"OK");
-	Buttcancel = new MappedButton(this, 8999, _("Anuluj"));
+	Buttcancel = new MappedButton(this, 8999, _("Cancel"));
 	SetEscapeId(8999);
 	Fattr->Add(FontName, 0, wxEXPAND | wxLEFT | wxRIGHT, 5);
 	Fattr->Add(FontSize, 0, wxEXPAND | wxALL, 5);
@@ -420,16 +420,16 @@ FontDialog::FontDialog(wxWindow *parent, Styles *acst, bool changePointToPixel)
 	Cfont->Add(Fattr, 0, wxEXPAND);
 	FCManagement.LoadCatalogs();
 	fontCatalog = new KaiChoice(this, ID_FONT_CATALOG_LIST1, wxDefaultPosition, wxDefaultSize, *FCManagement.GetCatalogNames());
-	fontCatalog->Insert(_("Wszystkie czcionki"), 0);
-	fontCatalog->Insert(_("Bez katalogu"), 1);
+	fontCatalog->Insert(_("All fonts"), 0);
+	fontCatalog->Insert(_("Without catalog"), 1);
 	fontCatalog->SetSelection(0);
-	MappedButton* CatalogAdd = new MappedButton(this, ID_CATALOG_ADD1, _("Dodaj"));
-	CatalogAdd->SetToolTip(_(L"Dodaje czcionki do wcześniej utworzonego katalogu"));
-	MappedButton* CatalogManage = new MappedButton(this, ID_CATALOG_MANAGE1, _(L"Zarządzaj"));
-	CatalogManage->SetToolTip(_(L"Umorzliwia zarządzanie katalogami stylów"));
+	MappedButton* CatalogAdd = new MappedButton(this, ID_CATALOG_ADD1, _("Add"));
+	CatalogAdd->SetToolTip(_("Adds fonts to a previously created catalog"));
+	MappedButton* CatalogManage = new MappedButton(this, ID_CATALOG_MANAGE1, _("Manage"));
+	CatalogManage->SetToolTip(_("Manages font catalogs"));
 	bool fontFilterOn = Options.GetBool(STYLE_EDIT_FILTER_TEXT_ON);
-	Filter = new ToggleButton(this, ID_FILTER1, _("Filtruj"));
-	Filter->SetToolTip(_(L"Filtruje czcionki, by zawierały wpisane znaki"));
+	Filter = new ToggleButton(this, ID_FILTER1, _("Filter"));
+	Filter->SetToolTip(_("Filters fonts to those containing the entered characters"));
 	Filter->SetValue(fontFilterOn);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent& evt) {
 		wxPoint pos = CatalogAdd->GetPosition();
@@ -450,7 +450,7 @@ FontDialog::FontDialog(wxWindow *parent, Styles *acst, bool changePointToPixel)
 	ChangeCatalog();
 
 	Fonts->SetSelectionByName(acst->Fontname);
-	KaiStaticBoxSizer* filtersizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Filtrowanie i katalogi czcionek"));
+	KaiStaticBoxSizer* filtersizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Filtering and font catalogs"));
 	filtersizer->Add(fontCatalog, 3, wxEXPAND | wxALL, 2);
 	filtersizer->Add(CatalogAdd, 1, wxEXPAND | wxALL, 2);
 	filtersizer->Add(CatalogManage, 1, wxEXPAND | wxALL, 2);
@@ -465,8 +465,8 @@ FontDialog::FontDialog(wxWindow *parent, Styles *acst, bool changePointToPixel)
 				int sel = fontCatalog->GetSelection();
 				
 				fontCatalog->PutArray(FCManagement.GetCatalogNames());
-				fontCatalog->Insert(_("Wszystkie czcionki"), 0);
-				fontCatalog->Insert(_("Bez katalogu"), 1);
+				fontCatalog->Insert(_("All fonts"), 0);
+				fontCatalog->Insert(_("Without catalog"), 1);
 				if (sel >= fontCatalog->GetCount()) {
 					sel = fontCatalog->GetCount() - 1;
 				}

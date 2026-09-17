@@ -193,7 +193,7 @@ int ContextDX9::CreateFont(const wxString &fontName, int height, bool bold, bool
 		OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, fontName.wc_str(), &D3DFont);
 
 	if (FAILED(hr)) {
-		KaiLogSilent(_(L"Nie można stworzyć czcionki D3DX"));
+		KaiLogSilent(_("Cannot create D3DX font"));
 		return size - 1;
 	}
 	m_D3DFonts.push_back(D3DFont);

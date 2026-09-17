@@ -293,7 +293,7 @@ namespace Auto{
 		progress_display = new KaiGauge(this, -1, wxDefaultPosition, wxSize(600, 20));
 		title_display = new KaiStaticText(this, -1, L"");
 		task_display = new KaiStaticText(this, -1, L"");
-		cancel_button = new MappedButton(this, 6666, _("Anuluj"));
+		cancel_button = new MappedButton(this, 6666, _("Cancel"));
 		debug_output = new KaiTextCtrl(this, -1, L"", wxDefaultPosition, wxSize(600, 220), wxTE_MULTILINE | wxTE_READONLY);
 		//debug_output->Hide();
 		// put it in a sizer
@@ -445,7 +445,7 @@ namespace Auto{
 		if (finished) {
 			progress_display->SetValue(100);
 			update_timer.Stop();
-			cancel_button->SetLabelText(_("Zamknij"));
+			cancel_button->SetLabelText(_("Close"));
 		}
 		if (cancelled || closedialog){
 			update_timer.Stop();

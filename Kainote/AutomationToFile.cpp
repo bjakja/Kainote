@@ -636,10 +636,10 @@ namespace Auto{
 				else
 				{
 					wxString fclass = (e->lclass == L"info") ? wxString(L"info") : (e->lclass == L"style") ?
-						wxString(_(L"stylów")) : wxString(_(L"dialogów"));
+						wxString(_("styles")) : wxString(_("dialogs"));
 					wxString sclass = (i < sinfo) ? wxString(L"info") : (i < styles) ?
-						wxString(_(L"stylów")) : wxString(_(L"dialogów"));
-					wxString all = wxString::Format(_(L"Nie można dodać linii klasy: %s w pole klasy: %s"),
+						wxString(_("styles")) : wxString(_("dialogs"));
+					wxString all = wxString::Format(_("Cannot add a line of class %s to a field of class %s"),
 						fclass, sclass);
 					SAFE_DELETE(e);
 					lua_pushstring(L, all.mb_str(wxConvUTF8).data());
@@ -1177,7 +1177,7 @@ namespace Auto{
 	{
 		File* Subs = laf->file;
 		if (!Subs) {
-			wxString error = _(L"Brakujący wskaźnik napisów");
+			wxString error = _("Missing subtitles pointer");
 			lua_pushstring(L, error.mb_str(wxConvUTF8).data());
 			lua_error(L);
 		}
