@@ -461,7 +461,7 @@ bool Move::SetMove()
 	int time = tab->video->Tell();
 	if (!lineToMoveVisibility[1] || time == lineStartTime || lineStartTime == -1) {
 		if(time == lineStartTime)
-			KaiLog(_(L"Wideo musi być ustawione minimum jedną klatkę po czasie początkowym linijki"));
+			KaiLog(_("Video must be set at least one frame after the line's start time"));
 
 		return false;
 	}

@@ -357,7 +357,7 @@ void config::LoadDefaultConfig(wxString * defaultOptions)
 	configTable[CONVERT_FPS] = L"23.976";
 	configTable[CONVERT_STYLE] = L"Default";
 	configTable[CONVERT_STYLE_CATALOG] = L"Default";
-	configTable[DICTIONARY_LANGUAGE] = L"pl";
+	configTable[DICTIONARY_LANGUAGE] = L"en_US";
 	configTable[SPELLCHECKER_ON] = L"true";
 	configTable[STYLE_EDIT_FILTER_TEXT] = L"ĄĆĘŁŃÓŚŹŻąćęłńóśźż";
 	configTable[FFMS2_VIDEO_SEEKING] = L"2";
@@ -630,7 +630,7 @@ void config::LoadColors(const wxString &_themeName){
 			if (g > 10){
 				if (colors[0].IsOk() || g < STYLE_PREVIEW_COLOR2){
 					LoadMissingColours(path);
-					KaiMessageBox(wxString::Format(_(L"W motywie \"%s\" brakowało część kolorów, zostały doczytane z domyślnego."), themeName));
+					KaiMessageBox(wxString::Format(_("Some colors were absent from theme \"%s\" and were loaded from the default theme."), themeName));
 				}
 				return;
 			}
@@ -640,7 +640,7 @@ void config::LoadColors(const wxString &_themeName){
 	LoadDefaultColors(themeName != L"LightSentro");
 	if (failed){
 		Options.SetString(PROGRAM_THEME, L"DarkSentro");
-		KaiMessageBox(_(L"Nie można zaczytać motywu, zostanie przywrócony domyśny"));
+		KaiMessageBox(_("Cannot load theme, reset to default"));
 	}
 }
 
@@ -1372,21 +1372,6 @@ void MoveToMousePosition(wxWindow* win)
 	win->Move(mst);
 }
 
-wxString MakePolishPlural(int num, const wxString& normal, const wxString& plural2to4, const wxString& pluralRest)
-{
-	wxString result;
-	int div10mod = (num % 10);
-	int div100mod = (num % 100);
-	if (num == 1 || num == -1) { result = normal; }
-	else if ((div10mod >= 2 && div10mod <= 4) && (div100mod < 10 || div100mod>20)) {
-		result = plural2to4;
-	}
-	else {
-		result = pluralRest;
-	}
-	wxString finalResult;
-	return finalResult << num << " " << result;
-}
 
 bool IsNumber(const wxString& test) {
 	bool isnumber = true;

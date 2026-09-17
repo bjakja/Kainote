@@ -199,7 +199,7 @@ void FindReplace::ReplaceChecked()
 			if (oldKeyLine != SeekResult->keyLine || SeekResult->isTextTL != lastIsTextTl){
 				replacementDiff = 0;
 				if (lineText != SeekResult->name){
-					KaiLog(wxString::Format(_(L"Linia %i nie może być zamieniona,\nbo została zedytowana."),
+					KaiLog(wxString::Format(_("Line %i cannot be replaced,\ncause it was edited."),
 						SeekResult->idLine));
 					skipLine = true;
 					continue;
@@ -396,14 +396,14 @@ seekFromStart:
 		linePosition = 0;
 		fromstart = true;
 		if (!wasResetToStart){
-			if (KaiMessageBox(_(L"Wyszukiwanie zakończone, rozpocząć od początku?"), _("Potwierdzenie"),
+			if (KaiMessageBox(_("Reached end. Search from the beginning?"), _("Confirmation"),
 				wxICON_QUESTION | wxYES_NO, FRD) == wxYES){
 				wasResetToStart = true;
 				goto seekFromStart;
 			}
 		}
 		else{
-			KaiMessageBox(_("Nie znaleziono podanej frazy \"") + findString + L"\".", _("Potwierdzenie"));
+			KaiMessageBox(_("Could not find the specified phrase \"") + findString + L"\".", _("Confirmation"));
 			wasResetToStart = false;
 		}
 	}
@@ -812,7 +812,7 @@ void FindReplace::FindReplaceInSubs(TabWindow *window)
 
 	if (!find && AllReplacements.load()){
 		blockTextChange = true;
-		KaiMessageBox(wxString::Format(_("Zmieniono %i razy."), AllReplacements.load()), _(L"Szukaj Zamień"));
+		KaiMessageBox(wxString::Format(_("Replaced %i times."), AllReplacements.load()), _("Find and Replace"));
 		AddRecent(window);
 		findTextReset = true;
 	}
@@ -1126,7 +1126,7 @@ void FindReplace::ReplaceAll(TabWindow *window)
 			tab->grid->Refresh(false);
 	}
 	blockTextChange = true;
-	KaiMessageBox(wxString::Format(_("Zmieniono %i razy."), allReplacements), _(L"Szukaj Zamień"));
+	KaiMessageBox(wxString::Format(_("Replaced %i times."), allReplacements), _("Find and Replace"));
 	AddRecent(window);
 	findTextReset = true;
 }
@@ -1167,14 +1167,14 @@ void FindReplace::ReplaceInAllOpenedSubs(TabWindow *window)
 	}
 	
 	blockTextChange = true;
-	KaiMessageBox(wxString::Format(_("Zmieniono %i razy."), allTabsReplacements), _(L"Szukaj Zamień"));
+	KaiMessageBox(wxString::Format(_("Replaced %i times."), allTabsReplacements), _("Find and Replace"));
 	AddRecent(window);
 	findTextReset = true;
 }
 
 void FindReplace::ReplaceInSubs(TabWindow *window)
 {
-	int result = KaiMessageBox(_(L"Czy na pewno dokonać zmian we wszystkich napisach?\nW razie pomyłki kopie zapasowe są w folderze 'ReplaceBackup'"), _("Informacja"), wxYES_NO, FRD);
+	int result = KaiMessageBox(_("Are you sure you want to make changes in all subtitle files?\nIf you make a mistake, backups are in the 'ReplaceBackup' folder."), _("Info"), wxYES_NO, FRD);
 	if (result == wxYES){
 		find = false;
 		FindReplaceInSubs(window);
@@ -1292,7 +1292,7 @@ void FindReplace::GetFolderFiles(const wxString &path, const wxString &filters, 
 		}
 	}
 	else{
-		KaiMessageBox(_(L"Ścieżka szukania jest nieprawidłowa"));
+		KaiMessageBox(_("Search path is invalid"));
 	}
 }
 
@@ -1321,14 +1321,14 @@ bool FindReplace::CheckStyles(TabWindow *window, TabPanel *tab)
 		notFoundStyles.RemoveLast();
 		KaiMessageDialog *KMD;
 		if (foundStyles.empty()){
-			KMD = new KaiMessageDialog(FRD, _(L"Wszystkich wybranych stylów nie ma w przeszukiwanych napisach,\nprzez co nic nie zostanie znalezione.\nCo zrobić?"), _("Potwierdzenie"), wxYES | wxCANCEL);
-			KMD->SetYesLabel(_(L"Wyczyść style"));
+			KMD = new KaiMessageDialog(FRD, _("None of the selected styles exist in the subtitles being searched,\nso nothing will be found.\nWhat would you like to do?"), _("Confirmation"), wxYES | wxCANCEL);
+			KMD->SetYesLabel(_("Remove styles"));
 		}
 		else{
-			KMD = new KaiMessageDialog(FRD, wxString::Format(_(L"Stylów o nazwach \"%s\" nie ma w przeszukiwanych napisach,\nco może znacząco zmniejszyć ilość wyników szukania.\nCo zrobić?"), notFoundStyles), _("Potwierdzenie"), wxOK | wxYES_NO | wxCANCEL);
-			KMD->SetOkLabel(_(L"Usuń nieistniejące style"));
-			KMD->SetYesLabel(_(L"Wyczyść style"));
-			KMD->SetNoLabel(_("Ignoruj"));
+			KMD = new KaiMessageDialog(FRD, wxString::Format(_("Styles named \"%s\" do not exist in the subtitles being searched,\nwhich may significantly reduce the number of search results.\nWhat would you like to do?"), notFoundStyles), _("Confirmation"), wxOK | wxYES_NO | wxCANCEL);
+			KMD->SetOkLabel(_("Remove nonexistent styles"));
+			KMD->SetYesLabel(_("Remove styles"));
+			KMD->SetNoLabel(_("Ignore"));
 		}
 		int result = KMD->ShowModal();
 		if (result == wxOK){
@@ -1578,7 +1578,7 @@ int FindReplace::ReplaceCheckedInSubs(std::vector<SeekResults *> &results, const
 		replacementDiff = 0;
 		//need checks
 		if (dialtxt != SeekResult->name){
-			KaiLog(wxString::Format(_(L"Linia %i nie może być zamieniona,\nbo została zedytowana."),
+			KaiLog(wxString::Format(_("Line %i cannot be replaced,\ncause it was edited."),
 				SeekResult->idLine));
 			continue;
 		}

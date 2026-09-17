@@ -20,17 +20,17 @@
 #include <wx/tokenzr.h>
 
 AutoSaveOpen::AutoSaveOpen(KainoteFrame* _Kai)
-	: KaiDialog(_Kai, -1, _(L"Otwórz plik autozapisu"),
+	: KaiDialog(_Kai, -1, _("Open auto save file"),
 		wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 	, Kai(_Kai)
 {
 
 	DialogSizer* mainSizer = new DialogSizer(wxVERTICAL);
-	KaiStaticBoxSizer* seekingSizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Wyszukaj pliki"));
+	KaiStaticBoxSizer* seekingSizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Find files"));
 	seekingText = new KaiTextCtrl(this, ID_AUTO_SAVE_SEEKING_TEXT, emptyString, 
 		wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
-	filterList = new MappedButton(this, ID_AUTO_SAVE_FILTER, _(L"Filtruj listę"));
-	seekAllWords = new KaiCheckBox(this, -1, _(L"Wszystkie słowa"));
+	filterList = new MappedButton(this, ID_AUTO_SAVE_FILTER, _("Filter list"));
+	seekAllWords = new KaiCheckBox(this, -1, _("All words"));
 	seekAllWords->SetValue(true);
 
 	seekingSizer->Add(seekingText, 4, wxALL | wxEXPAND, 4);
@@ -39,12 +39,12 @@ AutoSaveOpen::AutoSaveOpen(KainoteFrame* _Kai)
 
 	GenerateList();
 	wxBoxSizer* listsSizer = new wxBoxSizer(wxHORIZONTAL);
-	KaiStaticBoxSizer* filesSizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Pliki"));
+	KaiStaticBoxSizer* filesSizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Files"));
 	filesList = new KaiListCtrl(this, ID_AUTO_SAVE_LIST, paths, wxDefaultPosition, wxSize(300,400));
 
 	filesSizer->Add(filesList, 1, wxALL | wxEXPAND, 2);
 
-	KaiStaticBoxSizer* versionSizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Wersje"));
+	KaiStaticBoxSizer* versionSizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Versions"));
 	versionList = new KaiListCtrl(this, -1, wxArrayString(), wxDefaultPosition, wxSize(100, 400));
 
 	versionSizer->Add(versionList, 1, wxALL | wxEXPAND, 2);
@@ -54,8 +54,8 @@ AutoSaveOpen::AutoSaveOpen(KainoteFrame* _Kai)
 	
 
 	wxBoxSizer* buttonsSizer = new wxBoxSizer(wxHORIZONTAL);
-	open = new MappedButton(this, ID_AUTO_SAVE_OK, _(L"Otwórz"), -1, wxDefaultPosition, wxSize(100, -1));
-	MappedButton* cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
+	open = new MappedButton(this, ID_AUTO_SAVE_OK, _("Open"), -1, wxDefaultPosition, wxSize(100, -1));
+	MappedButton* cancel = new MappedButton(this, wxID_CANCEL, _("Cancel"));
 
 	buttonsSizer->Add(open, 1, wxALL, 4);
 	buttonsSizer->Add(cancel, 1, wxTOP | wxBOTTOM | wxRIGHT, 4);
@@ -130,7 +130,7 @@ void AutoSaveOpen::GenerateList()
 	HANDLE h = FindFirstFileW(path.wc_str(), &data);
 	if (h == INVALID_HANDLE_VALUE)
 	{
-		KaiLog(_(L"Nie można otworzyć folderu autozapisu"));
+		KaiLog(_("Cannot open auto save folder"));
 		return;
 	}
 
@@ -147,7 +147,7 @@ void AutoSaveOpen::GenerateList()
 			if (fileName.StartsWith(L"DummySubs")) {
 				continue;
 			}
-			strippedFileName = _("Bez Nazwy");
+			strippedFileName = _("Untitled");
 		}
 			
 
@@ -177,7 +177,7 @@ void AutoSaveOpen::GenerateList()
 	} while (FindNextFile(h, &data));
 	FindClose(h);
 	if (!paths.GetCount()) {
-		KaiLog(_("Folder autozapisu jest pusty"));
+		KaiLog(_("Auto save folder is empty"));
 		return;
 	}
 }
@@ -241,7 +241,7 @@ void AutoSaveOpen::OnOkClick(wxCommandEvent& evt)
 		return;
 	}
 
-	KaiLog(_(L"Wczytywanie autozapisu nie powiodło się"));
+	KaiLog(_("Failed to load autosave"));
 }
 
 void AutoSaveOpen::OnListClick(wxCommandEvent& evt)

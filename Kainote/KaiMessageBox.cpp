@@ -35,7 +35,7 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg,
 	int whichFocus = 0;
 	bool setFocus = true;
 	if (elems & ASK_ONCE) {
-		kcb = new KaiCheckBox(this, -1, _("Zastosuj dla wszystkich"));
+		kcb = new KaiCheckBox(this, -1, _("Apply to All"));
 		sizer1->Add(kcb, 0, wxALL| wxALIGN_CENTER_VERTICAL, 3);
 	}
 	if (elems & wxOK){
@@ -50,7 +50,7 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg,
 		}
 	}
 	if (elems & wxYES_TO_ALL){
-		btn = new MappedButton(this, wxYES_TO_ALL, _("Tak dla wszystkich"));
+		btn = new MappedButton(this, wxYES_TO_ALL, _("Yes to all"));
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 			int result = wxYES_TO_ALL | ((kcb && kcb->GetValue()) ? ASK_ONCE : 0);
 			EndModal(result);
@@ -59,7 +59,7 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg,
 		if (setFocus && (buttonWithFocus < 0 || buttonWithFocus == wxYES_TO_ALL)){ btn->SetFocus(); setFocus = false; }
 	}
 	if (elems & wxYES){
-		btn = new MappedButton(this, wxID_YES, _("Tak"), -1, wxDefaultPosition, wxSize(60, -1));
+		btn = new MappedButton(this, wxID_YES, _("Yes"), -1, wxDefaultPosition, wxSize(60, -1));
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 			int result = wxYES | ((kcb && kcb->GetValue()) ? ASK_ONCE : 0);
 			EndModal(result);
@@ -68,7 +68,7 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg,
 		if (setFocus && (buttonWithFocus < 0 || buttonWithFocus == wxYES)){ btn->SetFocus(); setFocus = false; }
 	}
 	if (elems & wxNO){
-		btn = new MappedButton(this, wxID_NO, _("Nie"), -1, wxDefaultPosition, wxSize(60, -1));
+		btn = new MappedButton(this, wxID_NO, _("No"), -1, wxDefaultPosition, wxSize(60, -1));
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 			EndModal(wxNO | ((kcb && kcb->GetValue()) ? ASK_ONCE : 0));
 		}, wxID_NO);
@@ -76,7 +76,7 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg,
 		if (setFocus && (buttonWithFocus < 0 || buttonWithFocus == wxNO)){ btn->SetFocus(); setFocus = false; }
 	}
 	if (elems & wxCANCEL){
-		btn = new MappedButton(this, 9010, _("Anuluj"), -1);
+		btn = new MappedButton(this, 9010, _("Cancel"), -1);
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 			EndModal(wxCANCEL | ((kcb && kcb->GetValue()) ? ASK_ONCE : 0));
 		}, 9010);
@@ -84,7 +84,7 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg,
 		if (setFocus && (buttonWithFocus < 0 || buttonWithFocus == wxCANCEL)){ btn->SetFocus(); setFocus = false; }
 	}
 	if (elems & wxHELP){
-		btn = new MappedButton(this, 9011, _("Pomoc"), -1);
+		btn = new MappedButton(this, 9011, _("Help"), -1);
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 			EndModal(wxHELP | ((kcb && kcb->GetValue()) ? ASK_ONCE : 0));
 		}, 9011);

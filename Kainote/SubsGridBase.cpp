@@ -233,7 +233,7 @@ void SubsGridBase::Convert(char type)
 	if (Options.GetBool(CONVERT_FPS_FROM_VIDEO) && tab->VideoPath != emptyString){
 		Options.SetString(CONVERT_FPS, Kai->GetStatusText(4).BeforeFirst(L' '));
 	}
-	if (Options.GetFloat(CONVERT_FPS) < 1){ KaiMessageBox(_(L"Nieprawidłowy FPS. Popraw opcje i spróbuj ponownie.")); return; }
+	if (Options.GetFloat(CONVERT_FPS) < 1){ KaiMessageBox(_("Invalid FPS. Correct it in options and try again.")); return; }
 
 	bool newendtimes = Options.GetBool(CONVERT_NEW_END_TIMES);
 	int endt = Options.GetInt(CONVERT_TIME_PER_CHARACTER);
@@ -441,7 +441,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 {
 	Provider *FFMS2 = tab->video->GetFFMS2();
 	if (byFrame && !FFMS2){ 
-		KaiLog(_(L"Wideo nie zostało wczytane przez FFMS2")); return; }
+		KaiLog(_("Video was not loaded using FFMS2")); return; }
 	//1 forward / backward, 2 Start Time For V/A Timing, 4 Move to video time, 8 Move to audio time;
 	int moveTimeOptions = Options.GetInt(SHIFT_TIMES_OPTIONS);
 
@@ -470,7 +470,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 	}
 	wxString styles = Options.GetString(SHIFT_TIMES_STYLES);
 	if (styles.empty() && whichLines == 5){
-		KaiMessageBox(_(L"Nie wybrano stylów do przesunięcia"), _("Uwaga"));
+		KaiMessageBox(_("No styles selected for time shifting"), _("Warning"));
 		return;
 	}
 	else{
@@ -488,8 +488,8 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 	std::multimap<Dialogue *, int, compare> tmpmap;
 
 	if (whichTimes != 0 && !PostprocessorOptions){
-		int answer = KaiMessageBox(wxString::Format(_(L"Czy naprawdę chcesz przesuwać tylko czasy %s?"),
-			(whichTimes == 1) ? _(L"początkowe") : _(L"końcowe")), _("Potwierdzenie"), wxYES_NO);
+		int answer = KaiMessageBox(wxString::Format(_("Do you really want to shift only %s times?"),
+			(whichTimes == 1) ? _("start") : _("end")), _("Confirmation"), wxYES_NO);
 		if (answer == wxNO){ return; }
 	}
 
@@ -499,7 +499,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 
 	size_t firstSelection = FirstSelection();
 	if (firstSelection == -1 && whichLines != 0 && whichLines != 4){
-		KaiMessageBox(_(L"Nie zaznaczono linii do przesunięcia"), _("Uwaga")); return;
+		KaiMessageBox(_("No lines selected for shifting"), _("Warning")); return;
 	}
 
 	int difftime = (VAS) ? GetDialogue(markedLine)->Start.mstime : GetDialogue(markedLine)->End.mstime;
@@ -600,7 +600,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 		bool previousIsKeyFrame = true;
 		bool isPreviousEndEdited = false;
 		if (!FFMS2) {
-			KaiLog(_(L"Wideo nie zostało wczytane przez FFMS2"));
+			KaiLog(_("Video was not loaded using FFMS2"));
 			return;
 		}
 
@@ -1336,8 +1336,8 @@ bool SubsGridBase::SetTlMode(bool mode, bool dontShowDialog/* = false*/)
 
 	}
 	else{
-		if (!dontShowDialog && KaiMessageBox(_(L"Czy na pewno chcesz wyłączyć tryb tłumacza?\nObcojęzyczny tekst przetłumaczonych linijek zostanie usunięty."),
-			_("Potwierdzenie"), wxYES_NO, nullptr, wxDefaultPosition, wxNO) == wxNO){
+		if (!dontShowDialog && KaiMessageBox(_("Are you sure you want to turn off translation mode?\nForeign language text will be deleted."),
+			_("Confirmation"), wxYES_NO, nullptr, wxDefaultPosition, wxNO) == wxNO){
 			return true;
 		}
 
@@ -1640,7 +1640,7 @@ bool SubsGridBase::IsLineVisible(bool visibleOnPlay/* = true*/)
 
 void SubsGridBase::OnBackupTimer(wxTimerEvent &event)
 {
-	Kai->SetStatusText(_("Autozapis"), 0);
+	Kai->SetStatusText(_("Autosave"), 0);
 	wxString path;
 	wxString ext = (subsFormat < SRT) ? L"ass" : (subsFormat == SRT) ? L"srt" : L"txt";
 
