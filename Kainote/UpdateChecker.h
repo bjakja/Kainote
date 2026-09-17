@@ -1,4 +1,4 @@
-//  Copyright (c) 2018 - 2020, Marcin Drob
+//  Copyright (c) 2018 - 2026, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -13,30 +13,27 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+// Checks GitHub for a newer release and tells the user about it. It never
+// downloads or installs anything; the dialog opens the release page in a
+// browser, as Aegisub's version check does.
+
 #pragma once
 
-#include <thread>
 #include <wx/string.h>
+
+class wxWindow;
 
 class UpdateChecker
 {
 public:
-	UpdateChecker();
-	~UpdateChecker();
-	//int CheckForUpdate();
-private:
-	static int CheckAsynchronously(UpdateChecker *checker, bool closeProgram = true);
-	int Downloader(const wchar_t *server, const wchar_t *page, const wchar_t *filename, std::string *output);
-	int DownloadZip();
-	void Update(bool closeProgram = true);
-	bool CheckForUpdate();
-	bool updateStable = false;
-	bool checkOnClose = false;
-	bool dontAskForUpdate = false;
-	bool updateOnClose = false;
-	int checkIntensity = 0;
-	wxString server;
-	wxString page;
-	wxString savePath;
-	std::thread *thread = NULL;
+	// Honours the auto-check option and the next-check time, and stays silent
+	// on error or when already current. Safe to call with no network.
+	static void CheckOnStartup(wxWindow *parent);
+
+	// Menu entry: always checks, and reports being up to date and any failure.
+	static void CheckNow(wxWindow *parent);
+
+	// "v1.2.3.4" or "1.2.3.4" against VersionKainote. Compares all four
+	// components; anything unparsable sorts as 0.
+	static bool IsNewerVersion(const wxString &tag, const wxString &current);
 };
