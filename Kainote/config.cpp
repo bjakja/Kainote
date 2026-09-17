@@ -994,6 +994,22 @@ int config::GetFontPixelHeight(const wxFont &font)
 #endif
 }
 
+wxString config::GetLocalePath() const
+{
+	const wxChar sep = wxFileName::GetPathSeparator();
+	const wxString localePath = pathfull + sep + L"Locale" + sep;
+#ifndef _WIN32
+	// Run from a build tree, the catalogues sit one level up from the binary.
+	if (!wxDirExists(localePath)){
+		const wxString sourceLocalePath =
+			pathfull.BeforeLast(sep) + sep + L"Locale" + sep;
+		if (wxDirExists(sourceLocalePath))
+			return sourceLocalePath;
+	}
+#endif
+	return localePath;
+}
+
 wxString config::FindLanguage(const wxString & symbol)
 {
 	// The languages Kainote ships a catalogue or a dictionary for.  This used to

@@ -87,8 +87,10 @@ fails inside the wxWidgets build on empty directories.
 | **Git** | Submodules, and the commit recorded in the title bar |
 | **DirectX SDK (June 2010)** | D3DX9. Expected at `C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)` |
 
-Optionally **gettext** for `msgfmt`, which compiles `Locale\*.po` into `.mo`
-during the build. Without it that step prints a notice and is skipped.
+Optionally **gettext** for `msgfmt` and **Python 3**, which together compile
+`Locale\*.po` into the `Locale\<lang>\LC_MESSAGES\kainote.mo` files the program
+loads. Without either the step prints a notice and is skipped, and the build
+has no translations.
 
 #### What bootstrap.ps1 does
 
@@ -209,6 +211,7 @@ The exact package names vary by distribution. Install the equivalent development
 - Hunspell
 - A Hunspell dictionary (the runtime copy step looks for `en_US.aff` and `en_US.dic`)
 - GNU gettext (`msgfmt`) for compiling translations
+- Python 3, which drives the translation compile step (`tools/compile_catalogs.py`)
 - uchardet
 - libcurl
 - ICU (`icu-uc` and `icu-i18n` pkg-config modules)
