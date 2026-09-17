@@ -17,7 +17,11 @@
 param(
     [Parameter(Mandatory)] [string] $PayloadDir,
     [Parameter(Mandatory)] [string] $OutputDir,
-    [string] $Iscc
+    [string] $Iscc,
+    # A full signtool command line, with $f where the file name goes, e.g.
+    #   'signtool.exe sign /fd sha256 /tr http://timestamp.digicert.com /td sha256 /f cert.pfx /p ... $f'
+    # Left empty the installer is simply unsigned; nothing else changes.
+    [string] $SignCommand
 )
 
 Set-StrictMode -Version Latest
@@ -46,11 +50,10 @@ Write-Host "Kainote version: $appVersion"
 if ($LASTEXITCODE -ne 0) { throw "gen_associations.py failed ($LASTEXITCODE)" }
 
 if (-not $Iscc) {
-    $candidates = @(
-        (Join-Path ${env:ProgramFiles(x86)} 'Inno Setup 6\ISCC.exe'),
-        (Join-Path $env:ProgramFiles 'Inno Setup 6\ISCC.exe')
-    )
-    $Iscc = $candidates | Where-Object { $_ -and (Test-Path -LiteralPath $_) } | Select-Object -First 1
+    $roots = @($env:ProgramFiles, ${env:ProgramFiles(x86)}) | Where-Object { $_ }
+    $Iscc = Get-ChildItem -Path $roots -Filter 'ISCC.exe' -Recurse -ErrorAction SilentlyContinue |
+        Sort-Object FullName -Descending | Select-Object -First 1 |
+        ForEach-Object { $_.FullName }
 }
 if (-not $Iscc) {
     throw "ISCC.exe not found. Install Inno Setup, or pass -Iscc <path>."
@@ -61,11 +64,24 @@ New-Item -ItemType Directory -Force -Path $OutputDir | Out-Null
 $payloadFull = (Resolve-Path -LiteralPath $PayloadDir).Path
 $outputFull = (Resolve-Path -LiteralPath $OutputDir).Path
 
-& $Iscc `
-    "/DAppVersion=$appVersion" `
-    "/DPayloadDir=$payloadFull" `
-    "/DOutputDir=$outputFull" `
-    (Join-Path $PSScriptRoot 'kainote.iss')
+$isccArgs = @(
+    "/DAppVersion=$appVersion"
+    "/DPayloadDir=$payloadFull"
+    "/DOutputDir=$outputFull"
+)
+if ($SignCommand) {
+    # /S defines a named tool; SignTool=kainote in the .iss then uses it, and
+    # SignedUninstaller makes it cover the uninstaller too.
+    $isccArgs += "/Skainote=$SignCommand"
+    $isccArgs += "/DSignInstaller=1"
+    Write-Host "Signing enabled"
+}
+else {
+    Write-Warning "No -SignCommand given: the installer will be unsigned, and SmartScreen will warn on it."
+}
+$isccArgs += (Join-Path $PSScriptRoot 'kainote.iss')
+
+& $Iscc @isccArgs
 
 # ISCC's exit code is easy to lose in a pipeline; this is the only check the
 # .iss ever gets, since it cannot be compiled anywhere but Windows.

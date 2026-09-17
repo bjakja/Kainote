@@ -56,6 +56,13 @@ ChangesAssociations=yes
 CloseApplications=no
 RestartApplications=no
 
+; Signing is opt-in: build-installer.ps1 passes /Skainote=<command> and
+; /DSignInstaller=1 when a certificate is configured, and nothing otherwise.
+#ifdef SignInstaller
+SignTool=kainote
+SignedUninstaller=yes
+#endif
+
 OutputDir={#OutputDir}
 OutputBaseFilename=Kainote-{#AppVersion}-x64-setup
 
