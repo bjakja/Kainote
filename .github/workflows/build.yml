@@ -241,18 +241,25 @@ jobs:
           --build-dir x64/Release --stage "build/installer-payload"
           --flavor installer --strict --no-archive
 
+      # From jrsoftware/issrc directly, pinned by tag and verified by SHA-256,
+      # rather than through Chocolatey as a second unpinned intermediary.
       - name: Install Inno Setup
         if: matrix.configuration == 'Release'
-        run: choco install innosetup --version=6.4.3 -y --no-progress
+        run: pwsh -File packaging/windows/install-innosetup.ps1
 
       # A .iss cannot be compiled anywhere but Windows, so this is the only
       # syntax check the installer script will ever get.
       - name: Build the installer
         if: matrix.configuration == 'Release'
         timeout-minutes: 30
+        # KAINOTE_SIGN_COMMAND is a full signtool command line with $f where the
+        # file name goes. Unset, the installer is simply built unsigned.
+        env:
+          KAINOTE_SIGN_COMMAND: ${{ secrets.KAINOTE_SIGN_COMMAND }}
         run: >
           pwsh -File packaging/windows/build-installer.ps1
           -PayloadDir "build/installer-payload" -OutputDir "dist"
+          -SignCommand "$env:KAINOTE_SIGN_COMMAND"
 
       - name: Upload the installer
         if: matrix.configuration == 'Release'
