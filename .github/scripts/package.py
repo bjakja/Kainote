@@ -32,8 +32,14 @@ MANIFEST = HERE / "runtime-assets.json"
 
 # what the build tree calls the CSRI renderer -> what the package calls it
 CSRI_RENDERERS = {"xy-Vsfilter.dll": "xy-VSFilter_kainote.dll"}
-# Kainote's DependencyControl modules: DLL name -> package subdirectory
-LOCAL_MODULES = {"BadMutex.dll": "BM", "PreciseTimer.dll": "PT", "DownloadManager.dll": "DM"}
+# Kainote's DependencyControl modules: DLL name -> package subdirectory.  The
+# subdirectory has to match the name requireffi is given ("PT.PreciseTimer.
+# PreciseTimer" -> PT/PreciseTimer/PreciseTimer.dll), or the module is not found.
+LOCAL_MODULES = {"BadMutex.dll": "BM/BadMutex",
+                 "PreciseTimer.dll": "PT/PreciseTimer",
+                 "DownloadManager.dll": "DM/DownloadManager"}
+# What ffms2.dll imports; avdevice, avfilter and postproc are not used.
+FFMPEG_LIBS = ["avcodec", "avformat", "avutil", "swresample", "swscale"]
 VC_RUNTIME = ["msvcp140.dll", "vcruntime140.dll", "vcruntime140_1.dll"]
 
 # Microsoft's own DirectX End-User Runtime redistributable; its terms allow
@@ -157,6 +163,23 @@ def copy_binaries(platform: str, build_dir: Path, stage: Path) -> tuple[list[str
                 taken.append(dest)
             else:
                 missing.append(dest)
+    return taken, missing
+
+
+def copy_ffmpeg_runtime(repo_root: Path, build_dir: Path, stage: Path) -> tuple[list[str], list[str]]:
+    """The FFmpeg DLLs ffms2.dll imports, from the hydrated developer package."""
+    taken: list[str] = []
+    missing: list[str] = []
+    binaries = repo_root / "Thirdparty" / "ffmpeg" / "bin"
+    for lib in FFMPEG_LIBS:
+        # The name carries the ABI version (avcodec-61.dll), so match the prefix.
+        found = sorted(binaries.glob(f"{lib}-*.dll")) if binaries.is_dir() else []
+        src = found[0] if found else find_output(build_dir, f"{lib}.dll")
+        if src is None:
+            missing.append(f"{lib}-*.dll")
+            continue
+        shutil.copyfile(src, stage / src.name)
+        taken.append(src.name)
     return taken, missing
 
 
@@ -321,6 +344,12 @@ def write_notices(repo_root: Path, stage: Path) -> Path:
         lines.append("  Csri/xy-VSFilter_kainote.dll - built from this repository's VSFilter")
         for entry in data["external_binaries"]:
             lines.append(f"  {entry['dest']} - {entry['source']}")
+    shipped_ffmpeg = sorted(p.name for lib in FFMPEG_LIBS for p in stage.glob(f"{lib}-*.dll"))
+    if shipped_ffmpeg:
+        lines.append("")
+        lines.append("FFmpeg (GPL-3.0-or-later), the prebuilt shared developer package named in")
+        lines.append("  Thirdparty/dependencies.json; ffms2.dll links against it:")
+        lines.append("  " + ", ".join(shipped_ffmpeg))
     if any((stage / n).exists() for n in VC_RUNTIME + [D3DX_FILE]):
         lines.append("")
         lines.append("Microsoft redistributables (permitted for app-local redistribution with")
@@ -383,6 +412,10 @@ def main() -> int:
     log(f"   binaries: {len(taken)} copied" + (f", missing: {', '.join(missing)}" if missing else ""))
 
     if args.platform == "windows":
+        ff, miss_ff = copy_ffmpeg_runtime(repo_root, build_dir, stage)
+        log(f"   ffmpeg: {len(ff)} copied")
+        if miss_ff:
+            raise SystemExit(f"ffmpeg runtime missing from the package: {', '.join(miss_ff)}")
         rt, miss_rt = copy_runtimes(repo_root, stage)
         log(f"   runtimes: {len(rt)} copied" + (f", missing: {', '.join(miss_rt)}" if miss_rt else ""))
         ext, miss_ext = copy_external_binaries(repo_root, stage)
