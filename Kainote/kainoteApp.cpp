@@ -41,6 +41,7 @@
 #include <wx/filefn.h>
 #include <wx/log.h>
 #include <wx/weakref.h>
+#include <wx/translation.h>
 #ifndef _WIN32
 #include <clocale>
 #include <cstdlib>
@@ -58,6 +59,33 @@
 #endif
 
 namespace {
+// Restores the lookup wx 3.3 removed: <prefix>\<domain>.mo.
+class FlatLocaleLoader : public wxFileTranslationsLoader
+{
+public:
+	explicit FlatLocaleLoader(const wxString &path) : localePath(path) {}
+	wxMsgCatalog *LoadCatalog(const wxString &domain, const wxString &lang) override
+	{
+		const wxString file = localePath + domain + L".mo";
+		if (wxFileExists(file)){
+			if (wxMsgCatalog *catalog = wxMsgCatalog::CreateFromFile(file, domain))
+				return catalog;
+		}
+		return wxFileTranslationsLoader::LoadCatalog(domain, lang);
+	}
+	// AddCatalog() asks this first and gives up if the language is not listed,
+	// so the flat catalogues have to be reported here as well.
+	wxArrayString GetAvailableTranslations(const wxString &domain) const override
+	{
+		wxArrayString languages = wxFileTranslationsLoader::GetAvailableTranslations(domain);
+		if (languages.Index(domain) == wxNOT_FOUND && wxFileExists(localePath + domain + L".mo"))
+			languages.Add(domain);
+		return languages;
+	}
+private:
+	const wxString localePath;
+};
+
 #ifndef _WIN32
 wxString JoinOpenPaths(const wxArrayString& openPaths)
 {
@@ -374,6 +402,10 @@ bool kainoteApp::OnInit()
 				}
 #endif
 				locale->AddCatalogLookupPathPrefix(localePath);
+				// wx 3.3 dropped the bare prefix from its search path, which is
+				// where Kainote's flat Locale\<lang>.mo files are.
+				if (wxTranslations *translations = wxTranslations::Get())
+					translations->SetLoader(new FlatLocaleLoader(localePath));
 				if (!locale->AddCatalog(lang, wxLANGUAGE_POLISH, L"UTF-8") &&
 					!locale->AddCatalog(li->CanonicalName, wxLANGUAGE_POLISH, L"UTF-8")){
 #ifdef _WIN32
