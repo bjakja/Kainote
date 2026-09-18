@@ -629,6 +629,13 @@ void KaiDialog::SetLabel(const wxString &text)
 	Refresh(false, &rc);
 }
 #ifdef __WXMSW__
+WXDWORD KaiDialog::MSWGetStyle(long flags, WXDWORD *exstyle) const
+{
+	// wx 3.3 adds WS_CAPTION for wxCLOSE_BOX too, and we draw the title bar
+	// ourselves. WS_POPUP stops Windows putting a caption back.
+	return (wxTopLevelWindow::MSWGetStyle(flags, exstyle) & ~WS_CAPTION) | WS_POPUP;
+}
+
 WXLRESULT KaiDialog::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 {
 	//if(uMsg == WM_SIZING){

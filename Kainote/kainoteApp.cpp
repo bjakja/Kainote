@@ -41,6 +41,7 @@
 #include <wx/filefn.h>
 #include <wx/log.h>
 #include <wx/weakref.h>
+#include <wx/translation.h>
 #ifndef _WIN32
 #include <clocale>
 #include <cstdlib>

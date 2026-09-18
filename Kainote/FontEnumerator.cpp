@@ -89,8 +89,10 @@ void FontEnumerator::StartListening()
 #ifdef _WIN32
 	const int watcherCount = 2;
 	for (int i = 0; i < watcherCount; i++){
+		// Manual reset: the shutdown signal has to stay raised, otherwise the
+		// first wait to see it consumes it and a later one blocks again.
 		if (!eventKillSelf[i])
-			eventKillSelf[i] = CreateEvent(0, FALSE, FALSE, 0);
+			eventKillSelf[i] = CreateEvent(0, TRUE, FALSE, 0);
 		int * threadNum = new int(i);
 		checkFontsThread[i] = CreateThread(nullptr, 0, CheckFontsProc, threadNum, 0, 0);
 		if(checkFontsThread[i])
@@ -335,7 +337,7 @@ DWORD WINAPI FontEnumerator::CheckFontsProc(void* threadNumber)
 {
 	int* threadNum = static_cast<int*>(threadNumber);
 	if (!FontEnum.eventKillSelf[*threadNum])
-		FontEnum.eventKillSelf[*threadNum] = CreateEvent(0, FALSE, FALSE, 0);
+		FontEnum.eventKillSelf[*threadNum] = CreateEvent(0, TRUE, FALSE, 0);
 	HANDLE eventKillSelf = FontEnum.eventKillSelf[*threadNum];
 	if (!eventKillSelf) {
 		delete threadNum;
@@ -434,8 +436,10 @@ DWORD WINAPI FontEnumerator::CheckFontsProc(void* threadNumber)
 		}
 #endif
 		if(wait_result == WAIT_OBJECT_0 + 0){
-			Sleep(1000);
-			if (WaitForSingleObject(eventKillSelf, 0) == WAIT_OBJECT_0)
+			// Let a burst of font file changes settle before rescanning, but
+			// wake immediately on shutdown instead of sleeping it out: this
+			// wait is what StopEnumeration() blocks the close on.
+			if (WaitForSingleObject(eventKillSelf, 1000) == WAIT_OBJECT_0)
 				break;
 			bool reloadExternalFonts = false;
 #ifdef _WIN32
@@ -621,6 +625,10 @@ bool FontEnumerator::LoadExternalFontsToProcess(const wxString& fontsPath)
 	FindClose(h);
 	size_t size = discoveredFonts.Count();
 	for (size_t i = 0; i < size; i++) {
+		// StopEnumeration() waits for this thread without a timeout, so a
+		// folder still being registered would hold the whole close open.
+		if (shuttingDown.load())
+			break;
 		const wxString& file = discoveredFonts[i];
 		if (ExternalFonts.Index(file) != wxNOT_FOUND)
 			continue;

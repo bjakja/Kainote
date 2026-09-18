@@ -289,12 +289,26 @@ foreach ($dep in $selected) {
     }
     Write-Host "    sha256 ok"
 
+    # The wipe below would take Thirdparty\<dir>\.gitignore with it, and that file
+    # is what keeps the extracted tree out of git. Carry it across, or write it.
+    $ignorePath = Join-Path $target '.gitignore'
+    $ignoreKept = if (Test-Path -LiteralPath $ignorePath) {
+        [IO.File]::ReadAllBytes($ignorePath)
+    } else { $null }
+
     if (Test-Path -LiteralPath $target) {
         Remove-Item -LiteralPath $target -Recurse -Force
     }
 
     $strip = if ($dep.PSObject.Properties.Name -contains 'strip') { [int] $dep.strip } else { 0 }
     Expand-Any -Archive $archive -Target $target -Strip $strip
+
+    if ($null -ne $ignoreKept) {
+        [IO.File]::WriteAllBytes($ignorePath, $ignoreKept)
+    }
+    else {
+        Set-Content -LiteralPath $ignorePath -Value @('*', '!.gitignore') -Encoding utf8NoBOM
+    }
 
     if (-not (Test-Path -LiteralPath $marker)) {
         throw "$($dep.name) did not produce its marker file: $marker"
