@@ -81,8 +81,9 @@ fails inside the wxWidgets build on empty directories.
 
 | Tool | Why |
 |---|---|
-| **Visual Studio 2022** | Desktop development with C++, MSVC v143, Windows 10/11 SDK |
+| **Visual Studio 2022 or newer** | Desktop development with C++, Windows 10/11 SDK, and MFC for C++ (the VSFilter renderer needs it). The projects build with whichever MSVC toolset the installed Visual Studio defaults to. |
 | **NASM** | Assembly in libass and LuaJIT. Must be on `PATH` (`nasm -v`) |
+| **YASM** | Assembly in the VirtualDub libraries the VSFilter renderer builds on. Must be on `PATH` (`yasm --version`) |
 | **Git** | Submodules, and the commit recorded in the title bar |
 | **DirectX SDK (June 2010)** | D3DX9. Expected at `C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)` |
 
