@@ -249,7 +249,7 @@ void Visuals::RenderSubs(wxString *subs, bool redraw /*= true*/)
 		delete subs;
 		return;
 	}
-	if (!renderer->OpenSubs(OPEN_HAS_OWN_TEXT, true, subs)){ KaiLog(_(L"Nie można otworzyć napisów")); }
+	if (!renderer->OpenSubs(OPEN_HAS_OWN_TEXT, true, subs)){ KaiLog(_("Cannot open subtitle file")); }
 	tab->video->SetVisualEdition(true);
 	if (redraw){ tab->video->Render(); }
 }
@@ -481,8 +481,8 @@ void Visuals::DrawWarningWx(wxDC& dc, bool comment)
 {
 	if (Options.GetBool(VIDEO_VISUAL_WARNINGS_OFF))
 		return;
-	wxString text = comment ? _(L"Narzędzia edycji wizualnej\nnie działają na komentarzach") :
-		_("Linia nie jest widoczna na wideo\nalbo ma zerowy czas trwania");
+	wxString text = comment ? _("Visual editing tools\ndo not work on comments") :
+		_("Line is not visible on video\nor has zero duration");
 	wxFont* font4 = Options.GetFont(4);
 	if (font4)
 		dc.SetFont(*font4);
@@ -537,10 +537,10 @@ void Visuals::DrawWarning(bool comment)
 		return;
 
 	LPD3DXFONT warningFont;
-	HRN(D3DXCreateFontW(device, (VideoSize.width - VideoSize.x) / 20, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &warningFont), _(L"Nie można stworzyć czcionki D3DX"));
+	HRN(D3DXCreateFontW(device, (VideoSize.width - VideoSize.x) / 20, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &warningFont), _("Cannot create D3DX font"));
 	RECT rt = { 0, 0, VideoSize.width, VideoSize.height };
-	wxString text = (comment) ? _(L"Narzędzia edycji wizualnej\nnie działają na komentarzach") :
-		_("Linia nie jest widoczna na wideo\nalbo ma zerowy czas trwania");
+	wxString text = (comment) ? _("Visual editing tools\ndo not work on comments") :
+		_("Line is not visible on video\nor has zero duration");
 	DRAWOUTTEXT(warningFont, text, rt, DT_CENTER | DT_VCENTER, 0xFFFF0000);
 	SAFE_RELEASE(warningFont);
 }

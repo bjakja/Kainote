@@ -114,8 +114,8 @@ void ItemColor::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiLis
 {
 	if (event.RightUp()){
 		Menu menut;
-		menut.Append(7786, _("&Kopiuj"));
-		menut.Append(7787, _("&Wklej"));
+		menut.Append(7786, _("&Copy"));
+		menut.Append(7787, _("&Paste"));
 		int id = menut.GetPopupMenuSelection(event.GetPosition(), theList);
 		if (id == 7786){
 			wxString whatcopy = col.GetHex(true);

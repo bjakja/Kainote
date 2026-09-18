@@ -23,8 +23,10 @@ gitparams.h
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
-# Compiled translation catalogs (generated from Locale/*.po at build time)
-/Locale/*.mo
+# Compiled translation catalogs (generated from Locale/*.po at build time).
+# The Windows pre-build event writes them into the source tree, in the
+# <lang>/LC_MESSAGES/ layout wxWidgets actually searches.
+/Locale/**/*.mo
 
 # Build results
 build-linux/

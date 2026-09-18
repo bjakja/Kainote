@@ -484,7 +484,7 @@ void RotationZ::ChangeClipRotationZ(wxString* txt, const D3DXVECTOR2& orgPivot, 
 				points.push_back(ClipPoint(xy[0], xy[3], "l", true));
 			}
 			else {
-				KaiLog(_(L"Nie można pobrać wartości clipa prostokątnego."));
+				KaiLog(_("Cannot read clip rectangle values."));
 			}
 		}
 		else {

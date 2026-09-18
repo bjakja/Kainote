@@ -39,7 +39,7 @@ private:
 };
 
 LogWindow::LogWindow(wxWindow *parent, LogHandler *_handler)
-	: KaiDialog(parent, -1, _(L"Okno Logów"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+	: KaiDialog(parent, -1, _("Log window"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 	, handler(_handler)
 {
 	sizer = new DialogSizer(wxVERTICAL);
@@ -47,7 +47,7 @@ LogWindow::LogWindow(wxWindow *parent, LogHandler *_handler)
 	//MappedButton *collapse = new MappedButton(this, 12456, _("Pokaż resztę logów"));
 	logText = new KaiTextCtrl(this, -1, emptyString, wxDefaultPosition, wxSize(500, 300), wxTE_MULTILINE);
 	logText->Show(false);
-	MappedButton *OK = new MappedButton(this, 12457, _("Zamknij"));
+	MappedButton *OK = new MappedButton(this, 12457, _("Close"));
 	sizer->Add(lastLogText, 0, wxALIGN_CENTER | wxALL, 10);
 	//sizer->Add(collapse, 0, wxALL, 4);
 	sizer->Add(logText, 1, wxEXPAND | wxALL, 4);

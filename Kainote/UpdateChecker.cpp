@@ -121,9 +121,9 @@ int UpdateChecker::CheckAsynchronously(UpdateChecker *checker, bool closeProgram
 		checker->server = link.BeforeFirst('/', &checker->page);
 		int result = wxYES;
 		if (!checker->dontAskForUpdate){
-			KaiMessageDialog dlgmsg(0, wxString::Format(_(L"Dostępna jest nowa wersja programu %s zaktualizować?"), version), _("Aktualizacja"), wxYES_NO | wxOK | wxHELP);
-			dlgmsg.SetHelpLabel(_(L"Wyłącz aktualizacje"));
-			dlgmsg.SetOkLabel(_(L"Zakutalizuj po zamknięciu"));
+			KaiMessageDialog dlgmsg(0, wxString::Format(_("A new version (%s) is available. Update?"), version), _("Update"), wxYES_NO | wxOK | wxHELP);
+			dlgmsg.SetHelpLabel(_("Disable updates"));
+			dlgmsg.SetOkLabel(_("Update after closing"));
 			int result = dlgmsg.ShowModal();
 		}
 		if (result == wxYES){
@@ -234,12 +234,12 @@ int UpdateChecker::DownloadZip()
 void UpdateChecker::Update(bool closeProgram /*= true*/)
 {
 	if (DownloadZip()){
-		KaiMessageBox(_(L"Nie można pobrać nowej wersji Kainote"));
+		KaiMessageBox(_("Cannot download the new version of Kainote"));
 		return;
 	}
 	wxString updater = Options.pathfull + "/Updater.exe";
 	if (!wxFileExists(updater)){
-		KaiMessageBox(_(L"Nie można znaleźć updatera Kainote"));
+		KaiMessageBox(_("Cannot find the Kainote updater"));
 		return;
 	}
 	wxString ver = "Kainote v" + wxString(VersionKainote);
@@ -247,12 +247,12 @@ void UpdateChecker::Update(bool closeProgram /*= true*/)
 	if (closeProgram){
 		kainoteApp *Kaia = (kainoteApp *)wxTheApp;
 		if (!Kaia){
-			KaiMessageBox(_(L"Nie można zamknąć Kainote"));
+			KaiMessageBox(_("Cannot close Kainote"));
 			updateOnClose = true;
 			return;
 		}
 		if (!Kaia->Frame->Close()){
-			KaiMessageBox(_(L"Nie można zamknąć Kainote"));
+			KaiMessageBox(_("Cannot close Kainote"));
 			updateOnClose = true;
 			return;
 		}

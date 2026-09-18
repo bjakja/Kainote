@@ -41,10 +41,10 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 	//find list and description
 	wxBoxSizer* frsbsizer = new wxBoxSizer(wxHORIZONTAL);
 	FindText = new KaiChoice(this, ID_FIND_TEXT, emptyString, wxDefaultPosition, wxSize(276, -1), FR->findRecent);
-	FindText->SetToolTip(_("Szukany tekst:"));
+	FindText->SetToolTip(_("Search text:"));
 	FindText->SetMaxLength(MAXINT);
 	FindText->SetSelection(0);
-	frsbsizer->Add(new KaiStaticText(this, -1, _("Szukany tekst:"), wxDefaultPosition, wxSize(-1/*80*/, -1)),
+	frsbsizer->Add(new KaiStaticText(this, -1, _("Search text:"), wxDefaultPosition, wxSize(-1/*80*/, -1)),
 		1, wxALIGN_CENTER_VERTICAL/* | wxALIGN_RIGHT*/ | wxRIGHT, 4, 0);
 	frsbsizer->Add(FindText, 3, wxEXPAND, 0);
 	mainfrbsizer1->Add(frsbsizer, 0, wxEXPAND | wxALL, 4);
@@ -53,10 +53,10 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 		//replace list and description blocked on window find
 		wxBoxSizer *ReplaceStaticSizer = new wxBoxSizer(wxHORIZONTAL);
 		ReplaceText = new KaiChoice(this, ID_REPLACE_TEXT, emptyString, wxDefaultPosition, wxSize(276, -1), FR->replaceRecent);
-		ReplaceText->SetToolTip(_(L"Zamień na:"));
+		ReplaceText->SetToolTip(_("Replace with:"));
 		ReplaceText->SetMaxLength(MAXINT);
 		ReplaceText->SetSelection(0);
-		KaiStaticText *repDescText = new KaiStaticText(this, -1, _(L"Zamień na:"), wxDefaultPosition, wxSize(-1/*80*/, -1));
+		KaiStaticText *repDescText = new KaiStaticText(this, -1, _("Replace with:"), wxDefaultPosition, wxSize(-1/*80*/, -1));
 		ReplaceStaticSizer->Add(repDescText, 1, wxALIGN_CENTER_VERTICAL /*| wxALIGN_RIGHT*/ | wxRIGHT, 4);
 		ReplaceStaticSizer->Add(ReplaceText, 3, wxEXPAND, 0);
 		mainfrbsizer1->Add(ReplaceStaticSizer, 0, wxEXPAND | wxALL, 4);
@@ -65,10 +65,10 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 		//find in subs filters and path
 		wxBoxSizer *SubsFilterStaticSizer = new wxBoxSizer(wxHORIZONTAL);
 		FindInSubsPattern = new KaiChoice(this, ID_REPLACE_TEXT, emptyString, wxDefaultPosition, wxSize(276, -1), FR->subsFindingFilters);
-		FindInSubsPattern->SetToolTip(_(L"Filtry wyszukiwania Windowsa pooddzielane średnikami np \"*.ass;*.srt\".\nZe względu na dużą wagę plików wideo\nszukanie wszystkiego \"*.*\" zostaje zmieniane na *.ass"));
+		FindInSubsPattern->SetToolTip(_("Windows search filters separated by semicolons, e.g. \"*.ass; *.srt\".\nBecause of the large video file,\nthe search for everything \"*. *\" Is changed to *.ass"));
 		FindInSubsPattern->SetMaxLength(1000);
 		FindInSubsPattern->SetSelection(0);
-		SubsFilterStaticSizer->Add(new KaiStaticText(this, -1, _("Filtry:"), wxDefaultPosition,
+		SubsFilterStaticSizer->Add(new KaiStaticText(this, -1, _("Filters:"), wxDefaultPosition,
 			wxSize(-1/*80*/, -1)), 1, wxALIGN_CENTER_VERTICAL/* | wxALIGN_RIGHT*/ | wxRIGHT, 4);
 		SubsFilterStaticSizer->Add(FindInSubsPattern, 3, wxEXPAND, 0);
 		mainfrbsizer1->Add(SubsFilterStaticSizer, 0, wxEXPAND | wxALL, 4);
@@ -76,16 +76,16 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 		wxBoxSizer *FindInSubsPathStaticSizer = new wxBoxSizer(wxHORIZONTAL);
 		wxBoxSizer *FindInSubsPathAndChooseSizer = new wxBoxSizer(wxHORIZONTAL);
 		FindInSubsPath = new KaiChoice(this, ID_REPLACE_TEXT, emptyString, wxDefaultPosition, wxSize(236, -1), FR->subsFindingPaths);
-		FindInSubsPath->SetToolTip(_(L"Katalog szukania napisów:"));
+		FindInSubsPath->SetToolTip(_("Subtitle search folder:"));
 		FindInSubsPath->SetMaxLength(MAXINT);
 		FindInSubsPath->SetSelection(0);
 		MappedButton *selectFolder = new MappedButton(this, 21345, L" ... ");
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){
-			wxString destdir = wxDirSelector(_("Wybierz folder zapisu"), FindInSubsPath->GetValue(), 0, wxDefaultPosition, this);
+			wxString destdir = wxDirSelector(_("Choose save folder"), FindInSubsPath->GetValue(), 0, wxDefaultPosition, this);
 			if (!destdir.empty())
 				FindInSubsPath->SetValue(destdir);
 		}, 21345);
-		FindInSubsPathStaticSizer->Add(new KaiStaticText(this, -1, _("Katalog:"),
+		FindInSubsPathStaticSizer->Add(new KaiStaticText(this, -1, _("Catalog:"),
 			wxDefaultPosition, wxSize(-1/*80*/, -1)), 1, wxALIGN_CENTER_VERTICAL/* | wxALIGN_RIGHT*/ | wxRIGHT, 4);
 		FindInSubsPathAndChooseSizer->Add(FindInSubsPath, 3, wxEXPAND, 0);
 		FindInSubsPathAndChooseSizer->Add(selectFolder, 0, wxEXPAND | wxLEFT, 4);
@@ -95,47 +95,47 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 	//checkboxes
 	wxBoxSizer* frbsizer1 = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer* checksSizer = new wxBoxSizer(wxVERTICAL);
-	MatchCase = new KaiCheckBox(this, -1, _(L"Uwzględniaj wielkość liter"));
+	MatchCase = new KaiCheckBox(this, -1, _("Match case"));
 	MatchCase->SetValue((options & CASE_SENSITIVE) > 0);
-	RegEx = new KaiCheckBox(this, -1, _(L"Wyrażenia regularne"));
+	RegEx = new KaiCheckBox(this, -1, _("Regular expressions"));
 	RegEx->SetValue((options & REG_EX) > 0);
-	StartLine = new KaiCheckBox(this, ID_START_OF_LINE, _(L"Początek tekstu"));
+	StartLine = new KaiCheckBox(this, ID_START_OF_LINE, _("Beginning of text"));
 	StartLine->SetValue((options & START_OF_TEXT) > 0);
-	EndLine = new KaiCheckBox(this, ID_END_OF_LINE, _("Koniec tekstu"));
+	EndLine = new KaiCheckBox(this, ID_END_OF_LINE, _("End of text"));
 	EndLine->SetValue((options & END_OF_TEXT) > 0);
 	frbsizer1->Add(MatchCase, 0, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
 	frbsizer1->Add(RegEx, 0, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
 	frbsizer1->Add(StartLine, 0, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
 	frbsizer1->Add(EndLine, 0, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
-	UseComments = new KaiCheckBox(this, -1, _(L"Uwzględnij komentarze"));
+	UseComments = new KaiCheckBox(this, -1, _("Include comments"));
 	UseComments->SetValue((options & SEEK_IN_COMMENTS) > 0);
-	OnlyText = new KaiCheckBox(this, ID_ONLY_TEXT, _(L"Pomiń tagi"));
+	OnlyText = new KaiCheckBox(this, ID_ONLY_TEXT, _("Skip tags"));
 	OnlyText->SetValue((options & SEEK_ONLY_IN_TEXT) > 0);
-	OnlyTags = new KaiCheckBox(this, ID_ONLY_TAGS, _(L"Pomiń tekst"));
+	OnlyTags = new KaiCheckBox(this, ID_ONLY_TAGS, _("Skip text"));
 	OnlyTags->SetValue((options & SEEK_ONLY_IN_TAGS) > 0);
 	checksSizer->Add(UseComments, 0, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
 	checksSizer->Add(OnlyText, 0, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
 	checksSizer->Add(OnlyTags, 0, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
 	Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &TabWindow::OnRecheck, this, ID_START_OF_LINE, ID_ONLY_TAGS);
 	//in field
-	KaiStaticBoxSizer* frsbsizer2 = new KaiStaticBoxSizer(wxVERTICAL, this, _("W polu"));
+	KaiStaticBoxSizer* frsbsizer2 = new KaiStaticBoxSizer(wxVERTICAL, this, _("In field"));
 	wxBoxSizer* frbsizer2 = new wxBoxSizer(wxHORIZONTAL);
 
-	CollumnText = new KaiRadioButton(this, -1, _("Tekst"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+	CollumnText = new KaiRadioButton(this, -1, _("Text"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
 	if (options & IN_FIELD_TEXT)
 		CollumnText->SetValue(true);
 	frbsizer2->Add(CollumnText, 1, wxEXPAND | wxALL, 2);
 
-	CollumnStyle = new KaiRadioButton(this, -1, _("Styl"));
+	CollumnStyle = new KaiRadioButton(this, -1, _("Styles"));
 	if (options & IN_FIELD_STYLE)
 		CollumnStyle->SetValue(true);
 	frbsizer2->Add(CollumnStyle, 1, wxEXPAND | wxALL, 2);
 
 	wxBoxSizer* frbsizer3 = new wxBoxSizer(wxHORIZONTAL);
-	CollumnActor = new KaiRadioButton(this, -1, _("Aktor"));
+	CollumnActor = new KaiRadioButton(this, -1, _("Actor"));
 	if (options & IN_FIELD_ACTOR)
 		CollumnActor->SetValue(true);
-	CollumnEffect = new KaiRadioButton(this, -1, _("Efekt"));
+	CollumnEffect = new KaiRadioButton(this, -1, _("Effect"));
 	if (options & IN_FIELD_EFFECT)
 		CollumnEffect->SetValue(true);
 
@@ -157,7 +157,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 	wxBoxSizer* frbsizer = new wxBoxSizer(wxVERTICAL);
 	if (tabNum != WINDOW_FIND_IN_SUBS){
 		//find button
-		MappedButton *ButtonFind = new MappedButton(this, ID_BUTTON_FIND, _(L"Znajdź"), -1, wxDefaultPosition, wxSize(150, -1));
+		MappedButton *ButtonFind = new MappedButton(this, ID_BUTTON_FIND, _("Find"), -1, wxDefaultPosition, wxSize(150, -1));
 		frbsizer->Add(ButtonFind, 0, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, (tabNum == WINDOW_REPLACE) ? 2 : 4);
 
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){ FR->OnFind(this); }, ID_BUTTON_FIND);
@@ -165,9 +165,9 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 	if (tabNum == WINDOW_FIND){
 		//find in all opened subs or in active subs buttons
 		MappedButton *ButtonFindInAllOpenedSubs = new MappedButton(this, 
-			ID_BUTTON_FIND_IN_ALL_OPENED_SUBS, _(L"Znajdź we wszystkich\notwartych napisach"), -1);
+			ID_BUTTON_FIND_IN_ALL_OPENED_SUBS, _("Find in all open\nsubtitles"), -1);
 		MappedButton *ButtonFindAllInCurrentSubs = new MappedButton(this, 
-			ID_BUTTON_FIND_ALL_IN_CURRENT_SUBS, _(L"Znajdź wszystko\nw bieżących napisach"), -1);
+			ID_BUTTON_FIND_ALL_IN_CURRENT_SUBS, _("Find all\nin current subtitles"), -1);
 
 		frbsizer->Add(ButtonFindInAllOpenedSubs, 0, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 4);
 		frbsizer->Add(ButtonFindAllInCurrentSubs, 0, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 4);
@@ -181,10 +181,10 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 	}
 	else if (tabNum == WINDOW_REPLACE){
 		//replace buttons
-		MappedButton *ButtonReplaceNext = new MappedButton(this, ID_BUTTON_REPLACE, _(L"Zamień następne"), -1);
-		MappedButton *ButtonReplaceAll = new MappedButton(this, ID_BUTTON_REPLACE_ALL, _(L"Zamień wszystko"), -1);
+		MappedButton *ButtonReplaceNext = new MappedButton(this, ID_BUTTON_REPLACE, _("Replace next"), -1);
+		MappedButton *ButtonReplaceAll = new MappedButton(this, ID_BUTTON_REPLACE_ALL, _("Replace all"), -1);
 		MappedButton *ButtonReplaceOnAllTabs = new MappedButton(this, 
-			ID_BUTTON_REPLACE_IN_ALL_OPENED_SUBS, _(L"Zamień we wszystkich\notwartych napisach"));
+			ID_BUTTON_REPLACE_IN_ALL_OPENED_SUBS, _("Replace in all open\nsubtitles"));
 
 		frbsizer->Add(ButtonReplaceNext, 1, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 2);
 		frbsizer->Add(ButtonReplaceAll, 1, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 2);
@@ -202,9 +202,9 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 	}
 	else if (tabNum == WINDOW_FIND_IN_SUBS){
 		MappedButton *ButtonFindInSubs = new MappedButton(this, ID_BUTTON_FIND_IN_SUBS, 
-			_(L"Znajdź w napisach"), -1, wxDefaultPosition, wxSize(150, -1));
+			_("Find in subtitles"), -1, wxDefaultPosition, wxSize(150, -1));
 		MappedButton *ButtonReplaceInSubs = new MappedButton(this, ID_BUTTON_REPLACE_IN_SUBS, 
-			_(L"Zamień w napisach"), -1);
+			_("Replace in subtitles"), -1);
 
 		frbsizer->Add(ButtonFindInSubs, 1, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 4);
 		frbsizer->Add(ButtonReplaceInSubs, 1, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 4);
@@ -217,14 +217,14 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 		}, ID_BUTTON_REPLACE_IN_SUBS);
 	}
 
-	MappedButton *ButtonClose = new MappedButton(this, ID_BUTTON_CLOSE, _("Zamknij"));
+	MappedButton *ButtonClose = new MappedButton(this, ID_BUTTON_CLOSE, _("Close"));
 	frbsizer->Add(ButtonClose, 1, wxEXPAND | wxTOP | wxRIGHT, (tabNum == WINDOW_REPLACE) ? 2 : 4);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){ FR->OnClose(); }, ID_BUTTON_CLOSE);
 
 	if (tabNum == WINDOW_FIND_IN_SUBS){
-		SeekInSubFolders = new KaiCheckBox(this, -1, _("Szukaj w podfolderach"));
+		SeekInSubFolders = new KaiCheckBox(this, -1, _("Search in subfolders"));
 		SeekInSubFolders->SetValue((options & SEARCH_SUBFOLDERS) > 0);
-		SeekInHiddenFolders = new KaiCheckBox(this, -1, _("Szukaj\nw ukrytych folderach"));
+		SeekInHiddenFolders = new KaiCheckBox(this, -1, _("Search in hidden\nfolders"));
 		SeekInSubFolders->SetValue((options & SEARCH_HIDDEN_FOLDERS) > 0);
 
 		frbsizer->Add(SeekInSubFolders, 0, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 4);
@@ -240,15 +240,15 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 
 	if (tabNum != WINDOW_FIND_IN_SUBS){
 		//horizontal sizer bottom static box
-		KaiStaticBoxSizer* frsbsizer3 = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Linijki"));
+		KaiStaticBoxSizer* frsbsizer3 = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Lines"));
 
-		AllLines = new KaiRadioButton(this, 23156, _("Wszystkie linijki"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+		AllLines = new KaiRadioButton(this, 23156, _("All lines"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
 		if (options & IN_LINES_ALL)
 			AllLines->SetValue(true);
-		SelectedLines = new KaiRadioButton(this, 23157, _("Zaznaczone linijki"));
+		SelectedLines = new KaiRadioButton(this, 23157, _("Selected lines"));
 		if (options & IN_LINES_SELECTED)
 			SelectedLines->SetValue(true);
-		FromSelection = new KaiRadioButton(this, 23158, _("Od zaznaczonej"));
+		FromSelection = new KaiRadioButton(this, 23158, _("From selected"));
 		if (options & IN_LINES_FROM_SELECTION)
 			FromSelection->SetValue(true);
 
@@ -409,8 +409,8 @@ void TabWindow::OnStylesChoose(wxCommandEvent& event)
 }
 
 FindReplaceDialog::FindReplaceDialog(KainoteFrame *_Kai, int whichWindow)
-	:KaiDialog(_Kai, -1, (whichWindow == WINDOW_FIND) ? _(L"Znajdź") :
-	(whichWindow == WINDOW_REPLACE) ? _(L"Znajdź i zamień") : _(L"Znajdź w napisach"))
+	:KaiDialog(_Kai, -1, (whichWindow == WINDOW_FIND) ? _("Find") :
+	(whichWindow == WINDOW_REPLACE) ? _("Find and replace") : _("Find in subtitles"))
 	, Kai(_Kai)
 {
 	FR = new FindReplace(Kai, this);
@@ -423,9 +423,9 @@ FindReplaceDialog::FindReplaceDialog(KainoteFrame *_Kai, int whichWindow)
 	DialogSizer *mainfrbsizer = new DialogSizer(wxVERTICAL);
 
 	findReplaceTabs = new KaiTabBar(this, -1);
-	findReplaceTabs->AddTab(new TabWindow(findReplaceTabs, -1, WINDOW_FIND, FR), _(L"Znajdź"));
-	findReplaceTabs->AddTab(new TabWindow(findReplaceTabs, -1, WINDOW_REPLACE, FR), _(L"Znajdź i zamień"));
-	findReplaceTabs->AddTab(new TabWindow(findReplaceTabs, -1, WINDOW_FIND_IN_SUBS, FR), _(L"Znajdź w napisach"));
+	findReplaceTabs->AddTab(new TabWindow(findReplaceTabs, -1, WINDOW_FIND, FR), _("Find"));
+	findReplaceTabs->AddTab(new TabWindow(findReplaceTabs, -1, WINDOW_REPLACE, FR), _("Find and replace"));
+	findReplaceTabs->AddTab(new TabWindow(findReplaceTabs, -1, WINDOW_FIND_IN_SUBS, FR), _("Find in subtitles"));
 	findReplaceTabs->Fit();
 	findReplaceTabs->Bind(BEFORE_CHANGING_TAB, [=, this](wxCommandEvent &evt){
 		wxWindow *win = FindFocus();

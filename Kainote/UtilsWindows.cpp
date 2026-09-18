@@ -37,7 +37,7 @@ int CALLBACK MonitorEnumProc1(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMoni
 	WinStruct<MONITORINFO> monitorinfo;
 
 	if (!GetMonitorInfo(hMonitor, &monitorinfo)) {
-		KaiLog(_(L"Nie można pobrać informacji o monitorze"));
+		KaiLog(_("Unable to retrieve information about the monitor"));
 		return TRUE;
 	}
 	//podstawowy monitor ma być pierwszy w tablicy
