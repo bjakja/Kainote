@@ -163,7 +163,10 @@
       </EntryPointSymbol>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /D /Y "$(SolutionDir)Thirdparty\ffmpeg\bin\*.dll" "$(OutDir)" &gt;nul</Command>
+      <Command>xcopy /D /Y "$(SolutionDir)Thirdparty\ffmpeg\bin\*.dll" "$(OutDir)" &gt;nul
+xcopy /D /Y /E /I "$(SolutionDir)Locale" "$(OutDir)Locale" &gt;nul
+xcopy /D /Y /E /I "$(SolutionDir)Themes" "$(OutDir)Themes" &gt;nul
+xcopy /D /Y /E /I "$(SolutionDir)Automation" "$(OutDir)Automation" &gt;nul</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po") do @msgfmt -o "$(SolutionDir)Locale\%%~nf.mo" "%%f") || echo msgfmt (gettext) not found - skipping Locale .mo compilation
@@ -214,7 +217,10 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitp
       </EntryPointSymbol>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /D /Y "$(SolutionDir)Thirdparty\ffmpeg\bin\*.dll" "$(OutDir)" &gt;nul</Command>
+      <Command>xcopy /D /Y "$(SolutionDir)Thirdparty\ffmpeg\bin\*.dll" "$(OutDir)" &gt;nul
+xcopy /D /Y /E /I "$(SolutionDir)Locale" "$(OutDir)Locale" &gt;nul
+xcopy /D /Y /E /I "$(SolutionDir)Themes" "$(OutDir)Themes" &gt;nul
+xcopy /D /Y /E /I "$(SolutionDir)Automation" "$(OutDir)Automation" &gt;nul</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po") do @msgfmt -o "$(SolutionDir)Locale\%%~nf.mo" "%%f") || echo msgfmt (gettext) not found - skipping Locale .mo compilation
@@ -263,7 +269,10 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitp
       <SubSystem>Windows</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /D /Y "$(SolutionDir)Thirdparty\ffmpeg\bin\*.dll" "$(OutDir)" &gt;nul</Command>
+      <Command>xcopy /D /Y "$(SolutionDir)Thirdparty\ffmpeg\bin\*.dll" "$(OutDir)" &gt;nul
+xcopy /D /Y /E /I "$(SolutionDir)Locale" "$(OutDir)Locale" &gt;nul
+xcopy /D /Y /E /I "$(SolutionDir)Themes" "$(OutDir)Themes" &gt;nul
+xcopy /D /Y /E /I "$(SolutionDir)Automation" "$(OutDir)Automation" &gt;nul</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po") do @msgfmt -o "$(SolutionDir)Locale\%%~nf.mo" "%%f") || echo msgfmt (gettext) not found - skipping Locale .mo compilation
