@@ -63,7 +63,7 @@ FindReplace::FindReplace(KainoteFrame* kfparent, FindReplaceDialog *_FRD)
 	SYSTEM_INFO sysinfo;
 	GetSystemInfo(&sysinfo);
 	numOfProcessors = (sysinfo.dwNumberOfProcessors > 0) ? sysinfo.dwNumberOfProcessors : 4;
-	CopyPath = Options.pathfull + L"/ReplaceBackup/";
+	CopyPath = Options.cachePath + L"/ReplaceBackup/";
 }
 
 void FindReplace::ShowResult(TabPanel *tab, const wxString &path, int keyLine, const wxPoint &pos, const wxString & text)
@@ -135,7 +135,7 @@ void FindReplace::ReplaceChecked()
 	if (FRRD->findInFiles){
 		wxString path;
 		wxString oldPath;
-		wxString copyPath = Options.pathfull + L"/ReplaceBackup/";
+		wxString copyPath = Options.cachePath + L"/ReplaceBackup/";
 		DWORD ftyp = GetFileAttributesW(copyPath.wc_str());
 		if (ftyp == INVALID_FILE_ATTRIBUTES){
 			wxMkDir(copyPath, 0777);

@@ -833,16 +833,9 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 		wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 		wxBoxSizer *sizer1 = new wxBoxSizer(wxHORIZONTAL);
 		wxArrayString choices;
-		wxArrayString files;
-		wxString pathwn = Options.pathfull + L"/Themes/";
 		const wxString & programTheme = Options.GetString(PROGRAM_THEME);
-		wxDir kat(pathwn);
-		if (kat.IsOpened()){
-			kat.GetAllFiles(pathwn, &files, L"*.txt", wxDIR_FILES);
-		}
-		for (size_t i = 0; i < files.size(); i++){
-			choices.Add(KaiPathName(files[i]).BeforeLast(L'.'));
-		}
+		// Shipped and user themes together, the user copy winning on a clash.
+		Options.CollectThemeNames(choices);
 		if (choices.Index(L"DarkSentro", false) == -1){
 			choices.Insert(L"DarkSentro", 0);
 		}
@@ -886,20 +879,16 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 			wxString themeName = newTheme->GetValue();
 			if (themeName.IsEmpty() || choices.Index(themeName, false) != -1){ wxBell(); return; }
 			wxString originalName = themeList->GetString(themeList->GetSelection());
-			wxString dir = Options.pathfull + L"/Themes/";
-			wxString copyPath = dir + themeName + L".txt";
+			wxString copyPath = Options.ThemeWritePath(themeName);
 			if (originalName == L"DarkSentro" || originalName == L"LightSentro"){
 				Options.SaveColors(copyPath);
 				List->Enable(true);
 				List->Refresh(false);
 			}
 			else{
-
-				if (!wxDirExists(dir)){
-					wxBell(); return;
-				}
-				wxString originalPath = dir + originalName + L".txt";
-				wxCopyFile(originalPath, copyPath, false);
+				// ThemeWritePath created the directory, so the old bail-out
+				// when it did not exist is gone.
+				wxCopyFile(Options.ResolveThemeRead(originalName), copyPath, false);
 			}
 			Options.SetString(PROGRAM_THEME, themeName);
 			if (!List->IsEnabled()){ List->Enable(false); }

@@ -442,6 +442,27 @@ public:
 	wxString progname;
 	//actual style catalog --- path to program exe
 	wxString actualStyleDir, pathfull, configPath;
+	// Writable roots. Equal to pathfull in portable mode, so the zip keeps
+	// writing beside the executable exactly as it always has.
+	//   userPath  settings worth keeping: config, styles, user themes
+	//   cachePath regenerable bulk: autosaves, ffms2 indices, audio cache
+	// They are split because Indices/ and AudioCache/ are unbounded, and
+	// roaming gigabytes of .w64 at every logoff is not acceptable.
+	wxString userPath, cachePath;
+	bool isPortable = false;
+
+	// Read a theme from the user copy if there is one, else the shipped copy.
+	wxString ResolveThemeRead(const wxString &name);
+	// Themes are always written to the user copy; the shipped ones are
+	// read-only once Kainote is installed somewhere privileged.
+	wxString ThemeWritePath(const wxString &name);
+	void CollectThemeNames(wxArrayString &out);
+	// Fills pathfull / userPath / cachePath / isPortable. Must run before
+	// anything touches them; LoadOptions calls it first.
+	void InitPaths();
+	// One-shot copy of a pre-split installation's settings into the new
+	// roots. Guarded by a stamp file, so it can never run twice.
+	void MigrateLegacyUserData();
 	wxArrayString dirs;
 	bool AudioOpts;
 

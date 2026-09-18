@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Kainote\n"
 "Report-Msgid-Bugs-To: https://github.com/bjakja/Kainote/issues\n"
-"POT-Creation-Date: 2026-09-18 02:15+0700\n"
+"POT-Creation-Date: 2026-09-18 02:18+0700\n"
 "PO-Revision-Date: 2026-09-18 02:03+0700\n"
 "Last-Translator: Marcin Drob <bjakja7@gmail.com>\n"
 "Language-Team: Polish\n"
@@ -135,8 +135,8 @@ msgstr "Uwydatnienie częstotliwości głosu na spektrum"
 msgid "Invalid keyframes format"
 msgstr "Nieprawidłowy format klatek kluczowych"
 
-#: Kainote/AudioBox.cpp:289 Kainote/Automation.cpp:1414
-#: Kainote/Automation.cpp:1461 Kainote/KainoteFrame.cpp:928
+#: Kainote/AudioBox.cpp:289 Kainote/Automation.cpp:1434
+#: Kainote/Automation.cpp:1481 Kainote/KainoteFrame.cpp:928
 #: Kainote/KainoteFrame.cpp:932 Kainote/KainoteFrame.cpp:2157
 #: Kainote/KainoteFrame.cpp:2158 Kainote/KainoteFrame.cpp:2608
 #: Kainote/KainoteFrame.cpp:2634 Kainote/KainoteFrame.cpp:2638
@@ -254,7 +254,7 @@ msgstr "Otwórz"
 #: Kainote/FontCatalogList.cpp:70 Kainote/FontCatalogList.cpp:868
 #: Kainote/FontDialog.cpp:410 Kainote/KaiMessageBox.cpp:79
 #: Kainote/MappedButton.cpp:39 Kainote/NewCatalog.cpp:42
-#: Kainote/OptionsDialog.cpp:1029 Kainote/ProgressDialog.cpp:43
+#: Kainote/OptionsDialog.cpp:1018 Kainote/ProgressDialog.cpp:43
 #: Kainote/ScriptInfo.cpp:160 Kainote/ShiftTimes.cpp:67
 #: Kainote/StyleChange.cpp:270 Kainote/Stylelistbox.cpp:34
 #: Kainote/Stylelistbox.cpp:58 Kainote/Stylelistbox.cpp:112
@@ -419,7 +419,7 @@ msgstr "Wybierz plik i do usunięcia"
 msgid "Cannot open temporary files folder"
 msgstr "Nie można otworzyć folderu plików tymczasowych"
 
-#: Kainote/Automation.cpp:644
+#: Kainote/Automation.cpp:657
 #, c-format
 msgid ""
 "Error initializing Lua script \"%s\":\n"
@@ -430,20 +430,20 @@ msgstr ""
 "\n"
 "%s."
 
-#: Kainote/Automation.cpp:656
+#: Kainote/Automation.cpp:669
 msgid "You are trying to load an Automation 3 script as an Automation 4 script. Automation 3 is no longer supported."
 msgstr "Próbujesz wczytać skrypt Automatyzacji 3 jako skrypt Automatyzacji 4. Automatyzacja 3 nie jest już wspierana."
 
-#: Kainote/Automation.cpp:699
+#: Kainote/Automation.cpp:712
 #, c-format
 msgid "Macro named '%s' is already defined in the script '%s'"
 msgstr "Makro o nazwie '%s' jest już zdefiniowane w skrypcie '%s'"
 
-#: Kainote/Automation.cpp:816
+#: Kainote/Automation.cpp:829
 msgid "An error occurred while executing the Lua script:\n"
 msgstr "Wystąpił błąd podczas wykonywania skryptu Lua:\n"
 
-#: Kainote/Automation.cpp:1265 Kainote/Automation.cpp:1307
+#: Kainote/Automation.cpp:1284 Kainote/Automation.cpp:1327
 #: Kainote/KainoteFrame.cpp:932 Kainote/KainoteFrame.cpp:2638
 #, c-format
 msgid ""
@@ -453,12 +453,12 @@ msgstr ""
 "Błąd wczytywania skryptu Lua: %s\n"
 "%s"
 
-#: Kainote/Automation.cpp:1269 Kainote/Automation.cpp:1311
+#: Kainote/Automation.cpp:1288 Kainote/Automation.cpp:1331
 #, c-format
 msgid "Unknown error loading Lua script: %s."
 msgstr "Nieznany błąd wczytywania skryptu Lua: %s."
 
-#: Kainote/Automation.cpp:1276
+#: Kainote/Automation.cpp:1296
 msgid ""
 "One or more autoload scripts contain errors.\n"
 "See the script descriptions for more information."
@@ -466,7 +466,7 @@ msgstr ""
 "Jeden bądź więcej skryptów autoload zawiera błędy.\n"
 "Obejrzyj opisy skryptów, by uzyskać więcej informacji."
 
-#: Kainote/Automation.cpp:1315
+#: Kainote/Automation.cpp:1335
 msgid ""
 "At least one script in the subtitle file contains errors.\n"
 "See the script descriptions for more information."
@@ -474,27 +474,27 @@ msgstr ""
 "Co najmniej jeden skrypt z pliku napisów zawiera błędy.\n"
 "Zobacz opisy skryptów, by uzyskać więcej informacji."
 
-#: Kainote/Automation.cpp:1325
+#: Kainote/Automation.cpp:1345
 msgid "Select a script editor"
 msgstr "Wybierz edytor skryptów"
 
-#: Kainote/Automation.cpp:1326
+#: Kainote/Automation.cpp:1346
 msgid "Programs (*.exe)|*.exe|All files (*.*)|*.*"
 msgstr "Programy (*.exe)|*.exe|Wszystkie pliki (*.*)|*.*"
 
-#: Kainote/Automation.cpp:1338
+#: Kainote/Automation.cpp:1358
 msgid "Automation error"
 msgstr "Błąd automatyzacji"
 
-#: Kainote/Automation.cpp:1338
+#: Kainote/Automation.cpp:1358
 msgid "Cannot start editor."
 msgstr "Nie można uruchomić edytora."
 
-#: Kainote/Automation.cpp:1416 Kainote/Automation.cpp:1463
+#: Kainote/Automation.cpp:1436 Kainote/Automation.cpp:1483
 msgid "Full Lua error description"
 msgstr "Pełny opis błędu Lua"
 
-#: Kainote/Automation.cpp:1421 Kainote/Automation.cpp:1468
+#: Kainote/Automation.cpp:1441 Kainote/Automation.cpp:1488
 #: Kainote/EditBox.cpp:279 Kainote/FontCatalogList.cpp:108
 #: Kainote/VideoToolbar.cpp:509 Kainote/VideoToolbar.cpp:526
 #: Kainote/VideoToolbar.cpp:781 Kainote/stylestore.cpp:88
@@ -502,7 +502,7 @@ msgstr "Pełny opis błędu Lua"
 msgid "Edit"
 msgstr "Edytuj"
 
-#: Kainote/Automation.cpp:1426 Kainote/Automation.cpp:1473
+#: Kainote/Automation.cpp:1446 Kainote/Automation.cpp:1493
 msgid "Refresh"
 msgstr "Odśwież"
 
@@ -543,12 +543,12 @@ msgid "Delete hotkey"
 msgstr "Usuń skrót"
 
 #: Kainote/AutomationHotkeysDialog.cpp:214 Kainote/Hotkeys.cpp:452
-#: Kainote/OptionsDialog.cpp:270 Kainote/OptionsDialog.cpp:1014
+#: Kainote/OptionsDialog.cpp:270 Kainote/OptionsDialog.cpp:1003
 msgid "Audio"
 msgstr "Audio"
 
 #: Kainote/AutomationHotkeysDialog.cpp:214 Kainote/Hotkeys.cpp:452
-#: Kainote/OptionsDialog.cpp:270 Kainote/OptionsDialog.cpp:1009
+#: Kainote/OptionsDialog.cpp:270 Kainote/OptionsDialog.cpp:998
 msgid "Editor"
 msgstr "Edytor"
 
@@ -563,7 +563,7 @@ msgid "Subtitles"
 msgstr "Napisy"
 
 #: Kainote/AutomationHotkeysDialog.cpp:214 Kainote/Hotkeys.cpp:452
-#: Kainote/OptionsDialog.cpp:270 Kainote/OptionsDialog.cpp:1013
+#: Kainote/OptionsDialog.cpp:270 Kainote/OptionsDialog.cpp:1002
 msgid "Video"
 msgstr "Wideo"
 
@@ -586,7 +586,7 @@ msgstr ""
 #: Kainote/SpellCheckerDialog.cpp:147 Kainote/SubsGrid.cpp:1139
 #: Kainote/SubsGridBase.cpp:473 Kainote/SubsGridBase.cpp:502
 #: Kainote/VideoBox.cpp:322 Kainote/VisualClips.cpp:1015
-#: Kainote/kainoteApp.cpp:318 Kainote/kainoteApp.cpp:380
+#: Kainote/kainoteApp.cpp:325 Kainote/kainoteApp.cpp:388
 msgid "Warning"
 msgstr "Uwaga"
 
@@ -1141,75 +1141,75 @@ msgstr "Nie znaleziono nieprzetłumaczonych"
 msgid "Manage tag buttons"
 msgstr "Zarządzaj przyciskami tagów"
 
-#: Kainote/FileTypes.h:62
+#: Kainote/FileTypes.h:67
 msgid "ASS subtitles"
 msgstr "Napisy ASS"
 
-#: Kainote/FileTypes.h:63
+#: Kainote/FileTypes.h:68
 msgid "SSA subtitles"
 msgstr "Napisy SSA"
 
-#: Kainote/FileTypes.h:64
+#: Kainote/FileTypes.h:69
 msgid "SRT subtitles"
 msgstr "Napisy SRT"
 
-#: Kainote/FileTypes.h:65
+#: Kainote/FileTypes.h:70
 msgid "SUB subtitles"
 msgstr "Napisy SUB"
 
-#: Kainote/FileTypes.h:66
+#: Kainote/FileTypes.h:71
 msgid "TXT subtitles"
 msgstr "Napisy TXT"
 
-#: Kainote/FileTypes.h:67
+#: Kainote/FileTypes.h:72
 msgid "Video MKV"
 msgstr "Wideo MKV"
 
-#: Kainote/FileTypes.h:68
+#: Kainote/FileTypes.h:73
 msgid "Video MP4"
 msgstr "Wideo MP4"
 
-#: Kainote/FileTypes.h:69
+#: Kainote/FileTypes.h:74
 msgid "Video AVI"
 msgstr "Wideo AVI"
 
-#: Kainote/FileTypes.h:70
+#: Kainote/FileTypes.h:75
 msgid "Video OGM"
 msgstr "Wideo OGM"
 
-#: Kainote/FileTypes.h:71
+#: Kainote/FileTypes.h:76
 msgid "Video WMV"
 msgstr "Wideo WMV"
 
-#: Kainote/FileTypes.h:72
+#: Kainote/FileTypes.h:77
 msgid "Video ASF"
 msgstr "Wideo ASF"
 
-#: Kainote/FileTypes.h:73
+#: Kainote/FileTypes.h:78
 msgid "Video RMVB"
 msgstr "Wideo RMVB"
 
-#: Kainote/FileTypes.h:74
+#: Kainote/FileTypes.h:79
 msgid "Video RM"
 msgstr "Wideo RM"
 
-#: Kainote/FileTypes.h:75
+#: Kainote/FileTypes.h:80
 msgid "Video 3GP"
 msgstr "Wideo 3GP"
 
-#: Kainote/FileTypes.h:76
+#: Kainote/FileTypes.h:81
 msgid "Video MPG"
 msgstr "Wideo MPG"
 
-#: Kainote/FileTypes.h:77
+#: Kainote/FileTypes.h:82
 msgid "Video MPEG"
 msgstr "Wideo MPEG"
 
-#: Kainote/FileTypes.h:79
+#: Kainote/FileTypes.h:84
 msgid "Video TS"
 msgstr "Wideo TS"
 
-#: Kainote/FileTypes.h:80
+#: Kainote/FileTypes.h:85
 msgid "Video M2TS"
 msgstr "Wideo M2TS"
 
@@ -1469,7 +1469,7 @@ msgstr "Czy na pewno chcesz usunąć ten katalog?"
 
 #: Kainote/FontCatalogList.cpp:143 Kainote/FontCatalogList.cpp:743
 #: Kainote/Notebook.cpp:979 Kainote/StyleChange.cpp:461
-#: Kainote/kainoteApp.cpp:508 Kainote/kainoteApp.cpp:514
+#: Kainote/kainoteApp.cpp:516 Kainote/kainoteApp.cpp:522
 #: Kainote/stylestore.cpp:567
 msgid "Prompt"
 msgstr "Pytanie"
@@ -3344,7 +3344,7 @@ msgstr "Konwertuje do formatu MPL2"
 msgid "Converts to TMPlayer format (not recommended)"
 msgstr "Konwertuje do formatu TMPlayer (niezalecane)"
 
-#: Kainote/KainoteFrame.cpp:333 Kainote/OptionsDialog.cpp:1011
+#: Kainote/KainoteFrame.cpp:333 Kainote/OptionsDialog.cpp:1000
 msgid "Conversion"
 msgstr "Konwersja"
 
@@ -3667,7 +3667,7 @@ msgstr "Skrót o nazwie '%s' nie należy do skrypru."
 msgid "Log window"
 msgstr "Okno Logów"
 
-#: Kainote/MappedButton.cpp:40 Kainote/OptionsDialog.cpp:1028
+#: Kainote/MappedButton.cpp:40 Kainote/OptionsDialog.cpp:1017
 #: Kainote/StyleChange.cpp:269 Kainote/VisualAllTagsEdition.cpp:125
 #: Kainote/VisualDrawingShapes.cpp:101
 msgid "Apply"
@@ -4736,7 +4736,7 @@ msgstr "Pole tekstowe obramowanie aktywnego okna"
 msgid "Text field selection"
 msgstr "Pole tekstowe zaznaczenie"
 
-#: Kainote/OptionsDialog.cpp:799 Kainote/OptionsDialog.cpp:869
+#: Kainote/OptionsDialog.cpp:799 Kainote/OptionsDialog.cpp:862
 msgid "Text field inactive window selection"
 msgstr "Pole tekstowe zaznaczenie w nieaktywnym oknie"
 
@@ -4976,11 +4976,11 @@ msgstr "Pierwszy kolor podglądu stylów"
 msgid "Second color of style preview background"
 msgstr "Drugi kolor podglądu stylów"
 
-#: Kainote/OptionsDialog.cpp:854
+#: Kainote/OptionsDialog.cpp:847
 msgid "Theme name:"
 msgstr "Nazwa motywu:"
 
-#: Kainote/OptionsDialog.cpp:856
+#: Kainote/OptionsDialog.cpp:849
 msgid ""
 "Name of the copied theme.\n"
 "Default themes, DarkSentro and LightSentro,\n"
@@ -4990,12 +4990,12 @@ msgstr ""
 "Motywów domyślnych: DarkSentro i LightSentro\n"
 "nie można edytować, należy je skopiować."
 
-#: Kainote/OptionsDialog.cpp:857 Kainote/SelectLines.cpp:122
+#: Kainote/OptionsDialog.cpp:850 Kainote/SelectLines.cpp:122
 #: Kainote/stylestore.cpp:87 Kainote/stylestore.cpp:140
 msgid "Copy"
 msgstr "Kopiuj"
 
-#: Kainote/OptionsDialog.cpp:866
+#: Kainote/OptionsDialog.cpp:859
 msgid ""
 "Warning! Transparency works only on the audio spectrum,\n"
 "text field, and subtitle grid."
@@ -5003,15 +5003,15 @@ msgstr ""
 "UWAGA! Przezroczystość działa tylko na wykresie audio,\n"
 "polu tekstowym i polu napisów."
 
-#: Kainote/OptionsDialog.cpp:876
+#: Kainote/OptionsDialog.cpp:869
 msgid "Name"
 msgstr "Nazwa"
 
-#: Kainote/OptionsDialog.cpp:877
+#: Kainote/OptionsDialog.cpp:870
 msgid "Color"
 msgstr "Kolor"
 
-#: Kainote/OptionsDialog.cpp:970
+#: Kainote/OptionsDialog.cpp:959
 msgid ""
 "WARNING! Behavior differs on each Windows version.\n"
 "For example, on Windows 7 WMP blocked\n"
@@ -5021,43 +5021,43 @@ msgstr ""
 "Przykładowo na Windows7 WMP zablokował\n"
 "możliwość zmiany skojarzeń wideo."
 
-#: Kainote/OptionsDialog.cpp:992
+#: Kainote/OptionsDialog.cpp:981
 msgid "Deselect all"
 msgstr "Odznacz wszystko"
 
-#: Kainote/OptionsDialog.cpp:992
+#: Kainote/OptionsDialog.cpp:981
 msgid "Select all"
 msgstr "Zaznacz wszystko"
 
-#: Kainote/OptionsDialog.cpp:992
+#: Kainote/OptionsDialog.cpp:981
 msgid "Select subtitles"
 msgstr "Zaznacz napisy"
 
-#: Kainote/OptionsDialog.cpp:992
+#: Kainote/OptionsDialog.cpp:981
 msgid "Select video"
 msgstr "Zaznacz wideo"
 
-#: Kainote/OptionsDialog.cpp:1012 Kainote/OptionsDialog.cpp:1015
+#: Kainote/OptionsDialog.cpp:1001 Kainote/OptionsDialog.cpp:1004
 msgid "Advanced"
 msgstr "Zaawansowane"
 
-#: Kainote/OptionsDialog.cpp:1016
+#: Kainote/OptionsDialog.cpp:1005
 msgid "Themes"
 msgstr "Motywy"
 
-#: Kainote/OptionsDialog.cpp:1017
+#: Kainote/OptionsDialog.cpp:1006
 msgid "Hotkeys"
 msgstr "Skróty klawiszowe"
 
-#: Kainote/OptionsDialog.cpp:1019
+#: Kainote/OptionsDialog.cpp:1008
 msgid "Associations"
 msgstr "Skojarzenia"
 
-#: Kainote/OptionsDialog.cpp:1021
+#: Kainote/OptionsDialog.cpp:1010
 msgid "Subtitle properties"
 msgstr "Właściwości napisów"
 
-#: Kainote/OptionsDialog.cpp:1030
+#: Kainote/OptionsDialog.cpp:1019
 msgid "Set default"
 msgstr "Ustaw domyślne"
 
@@ -5689,7 +5689,7 @@ msgstr "Na liście nie wybrano profilu do usunięcia"
 msgid "Do you want to remove profile of name \"%s\""
 msgstr "Na pewno chcesz usunąć profil o nazwie \"%s\""
 
-#: Kainote/SpellChecker.cpp:121
+#: Kainote/SpellChecker.cpp:127
 #, c-format
 msgid ""
 "No dictionary files were found in the \"%s\\Dictionary\" folder.\n"
@@ -5698,11 +5698,11 @@ msgstr ""
 "Brak plików słownika w folderze \"%s\\Dictionary\".\n"
 "Sprawdzanie pisowni zostanie wyłączone"
 
-#: Kainote/SpellChecker.cpp:129
+#: Kainote/SpellChecker.cpp:135
 msgid "Unable to read the dictionary conversion format."
 msgstr "Nie można odczytać formatu konwersji słownika."
 
-#: Kainote/SpellChecker.cpp:151
+#: Kainote/SpellChecker.cpp:157
 msgid "Failed to initialize spell checker."
 msgstr "Nie można zainicjalizować sprawdzania pisowni."
 
@@ -7743,12 +7743,22 @@ msgstr ""
 "Linia nie jest widoczna na wideo\n"
 "albo ma zerowy czas trwania"
 
-#: Kainote/config.cpp:634
+#: Kainote/config.cpp:680
+#, c-format
+msgid "Copied the settings from %s to %s"
+msgstr "Skopiowano ustawienia z %s do %s"
+
+#: Kainote/config.cpp:774
+#, c-format
+msgid "Cannot write to the settings folder %s; using the program folder."
+msgstr "Nie można zapisywać w folderze ustawień %s, używam folderu programu."
+
+#: Kainote/config.cpp:881
 #, c-format
 msgid "Some colors were absent from theme \"%s\" and were loaded from the default theme."
 msgstr "W motywie \"%s\" brakowało część kolorów, zostały doczytane z domyślnego."
 
-#: Kainote/config.cpp:644
+#: Kainote/config.cpp:891
 msgid "Cannot load theme, reset to default"
 msgstr "Nie można zaczytać motywu, zostanie przywrócony domyśny"
 
@@ -7925,11 +7935,11 @@ msgstr ""
 msgid "Remove nonexistent styles"
 msgstr "Usuń nieistniejące style"
 
-#: Kainote/kainoteApp.cpp:231 Kainote/kainoteApp.cpp:240
+#: Kainote/kainoteApp.cpp:238 Kainote/kainoteApp.cpp:247
 msgid "Not enough RAM. History partially deleted"
 msgstr "Zabrakło pamięci RAM, usunięto część historii"
 
-#: Kainote/kainoteApp.cpp:318
+#: Kainote/kainoteApp.cpp:325
 msgid ""
 "Cannot read settings.\n"
 "The program will be terminated."
@@ -7937,19 +7947,19 @@ msgstr ""
 "Nie udało się wczytać opcji.\n"
 "Działanie programu zostanie zakończone."
 
-#: Kainote/kainoteApp.cpp:345
+#: Kainote/kainoteApp.cpp:352
 msgid "Cannot find language, language change failed"
 msgstr "Nie znaleziono języka, zmiana języka nie powiodła się"
 
-#: Kainote/kainoteApp.cpp:350
+#: Kainote/kainoteApp.cpp:357
 msgid "wxLocale cannot initialize, language change failed"
 msgstr "wxLocale nie może się zainicjować, zmiana języka nie powiodła się"
 
-#: Kainote/kainoteApp.cpp:364
+#: Kainote/kainoteApp.cpp:371
 msgid "Cannot find translation, language change failed"
 msgstr "Nie znaleziono tłumaczenia, zmiana języka nie powiodła się"
 
-#: Kainote/kainoteApp.cpp:380
+#: Kainote/kainoteApp.cpp:388
 msgid ""
 "Cannot read hotkeys.\n"
 "The program will be terminated."
@@ -7957,11 +7967,11 @@ msgstr ""
 "Nie udało się wczytać skrótów.\n"
 "Działanie programu zostanie zakończone."
 
-#: Kainote/kainoteApp.cpp:508
+#: Kainote/kainoteApp.cpp:516
 msgid "Load last session?"
 msgstr "Wczytać poprzednią sesję?"
 
-#: Kainote/kainoteApp.cpp:514
+#: Kainote/kainoteApp.cpp:522
 msgid ""
 "The program crashed or was closed improperly.\n"
 "Load the last session with the latest autosaved subtitles?"

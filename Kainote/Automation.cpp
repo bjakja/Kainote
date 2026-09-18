@@ -211,15 +211,22 @@ namespace Auto{
 #ifdef _WIN32
 		path.Replace(L'/', L'\\');
 #endif
-		wxString firstAutomation = KaiPathJoin(Options.pathfull, L"Automation");
+		// ?data is the shipped tree and is read-only once installed; ?user and
+		// ?local are the writable ones. They all used to be the same
+		// directory, which is why DependencyControl installed scripts into the
+		// program folder. The layout *under* ?user is unchanged, so an
+		// existing Automation tree migrates as a plain directory copy.
+		wxString shippedAutomation = KaiPathJoin(Options.pathfull, L"Automation");
+		wxString userAutomation = KaiPathJoin(Options.userPath, L"Automation");
+		wxString localAutomation = KaiPathJoin(Options.cachePath, L"Automation");
 		if (path[0] == L'?'){
 			if (path[1] == L'a' && path[4] == L'i') path.replace(0, 6, (tab) ? KaiPathDir(tab->AudioPath) : wxString(L""));
-			else if (path[1] == L'd' && path[4] == L'a') path.replace(0, 5, firstAutomation);
+			else if (path[1] == L'd' && path[4] == L'a') path.replace(0, 5, shippedAutomation);
 			else if (path[1] == L'd' && path[4] == L't') path.replace(0, 11, KaiPathJoin(Options.pathfull, L"Dictionary"));
-			else if (path[1] == L'l' && path[4] == L'a') path.replace(0, 6, firstAutomation);
+			else if (path[1] == L'l' && path[4] == L'a') path.replace(0, 6, localAutomation);
 			else if (path[1] == L's' && path[4] == L'i') path.replace(0, 7, (tab) ? KaiPathDir(tab->SubsPath) : wxString(L""));
-			else if (path[1] == L't' && path[4] == L'p') path.replace(0, 5, KaiPathJoin(firstAutomation, L"temp"));
-			else if (path[1] == L'u' && path[4] == L'r') path.replace(0, 5, firstAutomation);
+			else if (path[1] == L't' && path[4] == L'p') path.replace(0, 5, KaiPathJoin(wxStandardPaths::Get().GetTempDir(), L"Kainote"));
+			else if (path[1] == L'u' && path[4] == L'r') path.replace(0, 5, userAutomation);
 			else if (path[1] == L'v' && path[4] == L'e') path.replace(0, 6, (tab) ? KaiPathDir(tab->VideoPath) : wxString(L""));
 		}
 		push_value(L, path);
@@ -519,6 +526,9 @@ namespace Auto{
 	{
 		include_path.push_back(KaiPathDir(filename, wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR));
 		include_path.push_back(KaiPathJoin(KaiPathJoin(KaiPathJoin(Options.pathfull, L"Automation"), L"automation"), L"Include") + wxFileName::GetPathSeparator());
+		// DependencyControl installs modules here; without it every module it
+		// installs fails to require.
+		include_path.push_back(KaiPathJoin(KaiPathJoin(KaiPathJoin(Options.userPath, L"Automation"), L"automation"), L"include") + wxFileName::GetPathSeparator());
 		Create();
 	}
 
@@ -532,6 +542,9 @@ namespace Auto{
 	{
 		include_path.push_back(KaiPathDir(_filename, wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR));
 		include_path.push_back(KaiPathJoin(KaiPathJoin(KaiPathJoin(Options.pathfull, L"Automation"), L"automation"), L"Include") + wxFileName::GetPathSeparator());
+		// DependencyControl installs modules here; without it every module it
+		// installs fails to require.
+		include_path.push_back(KaiPathJoin(KaiPathJoin(KaiPathJoin(Options.userPath, L"Automation"), L"automation"), L"include") + wxFileName::GetPathSeparator());
 		size_t i = 0;
 		size_t macrosSize = _macros.size();
 		if (macrosSize) {
@@ -1226,17 +1239,23 @@ namespace Auto{
 		}
 		int error_count = 0;
 
-		
+		// Shipped first, then the user tree DependencyControl installs into.
+		wxArrayString autoloadDirs;
+		autoloadDirs.Add(AutoloadPath);
+		if (!Options.isPortable)
+			autoloadDirs.Add(Options.userPath + L"/Automation/automation/autoload");
+
+		for (size_t dirIndex = 0; dirIndex < autoloadDirs.size(); dirIndex++){
+		const wxString &autoloadDir = autoloadDirs[dirIndex];
 		wxDir dir;
-		
-		if (!dir.Open(AutoloadPath)) {
-			//wxLogWarning("Failed to open a directory in the Automation autoload path: %s", dirname.c_str());
-			return;
+
+		if (!dir.Open(autoloadDir)) {
+			continue;
 		}
 
 
 		wxString fn;
-		wxFileName script_path(AutoloadPath, L"");
+		wxFileName script_path(autoloadDir, L"");
 		bool more = dir.GetFirst(&fn, wxEmptyString, wxDIR_FILES);
 
 		while (more) {
@@ -1270,6 +1289,7 @@ namespace Auto{
 			}
 
 			more = dir.GetNext(&fn);
+		}
 		}
 
 		if (error_count > 0) {
