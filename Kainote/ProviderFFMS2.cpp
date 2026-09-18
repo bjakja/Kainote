@@ -62,7 +62,7 @@ ProviderFFMS2::ProviderFFMS2(const wxString& filename, RendererVideo* renderer,
 {
 	if (!Options.AudioOpts && !Options.LoadAudioOpts()) 
 	{ 
-		KaiLogSilent(_("Nie można wczytać opcji audio")); 
+		KaiLogSilent(_(L"Nie można wczytać opcji audio"));
 	}
 
 	m_discCache = !Options.GetBool(AUDIO_RAM_CACHE);
@@ -115,7 +115,7 @@ void ProviderFFMS2::Processing()
 	}
 	const long long framePlane = static_cast<long long>(m_height) * static_cast<long long>(m_width) * 4;
 	if (framePlane > std::numeric_limits<int>::max()) {
-		KaiLog(_("Rozmiar klatki wideo jest zbyt duży"));
+		KaiLog(_(L"Rozmiar klatki wideo jest zbyt duży"));
 		m_success = false;
 		SetEvent(m_eventComplete);
 		return;
@@ -144,7 +144,7 @@ void ProviderFFMS2::Processing()
 					// failing fetch just spins the thread at full speed and never
 					// looks at the stop or the kill event again. End the playback
 					// instead and go back to waiting for the next request.
-					KaiLogDebug(wxString::Format(_("Nie można pobrać klatki %i: %s"),
+					KaiLogDebug(wxString::Format(_(L"Nie można pobrać klatki %i: %s"),
 						m_renderer->m_Frame, wxString::FromUTF8(m_errInfo.Buffer)));
 					wxCommandEvent* evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED, ID_END_OF_STREAM);
 					wxQueueEvent(m_renderer->videoControl, evt);
@@ -215,7 +215,7 @@ int ProviderFFMS2::Init()
 
 	FFMS_Indexer* Indexer = FFMS_CreateIndexer(m_filename.utf8_str(), &m_errInfo);
 	if (!Indexer) {
-		KaiLogDebug(wxString::Format(_("Wystąpił błąd indeksowania: %s"), wxString::FromUTF8(m_errInfo.Buffer))); return 0;
+		KaiLogDebug(wxString::Format(_(L"Wystąpił błąd indeksowania: %s"), wxString::FromUTF8(m_errInfo.Buffer))); return 0;
 	}
 
 	int NumTracks = FFMS_GetNumTracksI(Indexer);
@@ -303,7 +303,7 @@ int ProviderFFMS2::Init()
 		}
 		
 		audiotrack = progress->ShowSecondaryDialog([=]() {
-			KaiListBox tracks1(KainoteFrame::Get(), tracks, _("Wybierz ścieżkę"), true);
+			KaiListBox tracks1(KainoteFrame::Get(), tracks, _(L"Wybierz ścieżkę"), true);
 			if (tracks1.ShowModal() == wxID_OK) {
 				int result = wxAtoi(tracks1.GetSelection().BeforeFirst(':'));
 				return result;
@@ -352,7 +352,7 @@ done:
 				//KaiLog(_("Indeksowanie anulowane przez użytkownika"));
 			}
 			else {
-				KaiLog(wxString::Format(_("Wystąpił błąd indeksowania: %s"), wxString::FromUTF8(m_errInfo.Buffer)));
+				KaiLog(wxString::Format(_(L"Wystąpił błąd indeksowania: %s"), wxString::FromUTF8(m_errInfo.Buffer)));
 			}
 			//FFMS_CancelIndexing(Indexer);
 			return 0;
@@ -364,7 +364,7 @@ done:
 		}
 		if (FFMS_WriteIndex(m_indexPath.utf8_str(), m_index, &m_errInfo))
 		{
-			KaiLogDebug(wxString::Format(_("Nie można zapisać indeksu, wystąpił błąd %s"), wxString::FromUTF8(m_errInfo.Buffer)));
+			KaiLogDebug(wxString::Format(_(L"Nie można zapisać indeksu, wystąpił błąd %s"), wxString::FromUTF8(m_errInfo.Buffer)));
 			//FFMS_DestroyIndex(index);
 			//FFMS_CancelIndexing(Indexer);
 			//return 0;
@@ -391,7 +391,7 @@ done:
 
 		if (m_videoSource == nullptr) {
 			if (audiotrack == -1) {
-				KaiLog(_("Nie można utworzyć VideoSource."));
+				KaiLog(_(L"Nie można utworzyć VideoSource."));
 				return 0;
 			}
 			else
@@ -430,7 +430,7 @@ done:
 		pixfmt[1] = -1;
 
 		if (FFMS_SetOutputFormatV2(m_videoSource, pixfmt, m_width, m_height, FFMS_RESIZER_BILINEAR, &m_errInfo)) {
-			KaiLog(_("Nie można przekonwertować wideo na RGBA"));
+			KaiLog(_(L"Nie można przekonwertować wideo na RGBA"));
 			return 0;
 		}
 
@@ -444,13 +444,13 @@ done:
 			m_colorSpace = m_realColorSpace = ColorMatrixDescription(m_CS, m_CR);
 			if (m_CS == FFMS_CS_BT709 && colormatrix == L"TV.709") {
 				if (FFMS_SetInputFormatV(m_videoSource, FFMS_CS_BT709, m_CR, FFMS_GetPixFmt(""), &m_errInfo)) {
-					KaiLog(_("Nie można zmienić macierzy YCbCr"));
+					KaiLog(_(L"Nie można zmienić macierzy YCbCr"));
 				}
 			}
 			if (colormatrix == L"TV.601") {
 				m_colorSpace = ColorMatrixDescription(FFMS_CS_BT470BG, m_CR);
 				if (FFMS_SetInputFormatV(m_videoSource, FFMS_CS_BT470BG, m_CR, FFMS_GetPixFmt(""), &m_errInfo)) {
-					KaiLog(_("Nie można zmienić macierzy YCbCr"));
+					KaiLog(_(L"Nie można zmienić macierzy YCbCr"));
 				}
 			}
 			else if (colormatrix == L"TV.709") {
@@ -460,12 +460,12 @@ done:
 
 		FFMS_Track* FrameData = FFMS_GetTrackFromVideo(m_videoSource);
 		if (FrameData == nullptr) {
-			KaiLog(_("Nie można pobrać ścieżki wideo"));
+			KaiLog(_(L"Nie można pobrać ścieżki wideo"));
 			return 0;
 		}
 		const FFMS_TrackTimeBase* TimeBase = FFMS_GetTimeBase(FrameData);
 		if (TimeBase == nullptr) {
-			KaiLog(_("Nie można pobrać informacji o wideo"));
+			KaiLog(_(L"Nie można pobrać informacji o wideo"));
 			return 0;
 		}
 
@@ -495,7 +495,7 @@ audio:
 	if (audiotrack != -1) {
 		m_audioSource = FFMS_CreateAudioSource(m_filename.utf8_str(), audiotrack, m_index, FFMS_DELAY_FIRST_VIDEO_TRACK, &m_errInfo);
 		if (m_audioSource == nullptr) {
-			KaiLog(wxString::Format(_("Wystąpił błąd tworzenia źródła audio: %s"), wxString::FromUTF8(m_errInfo.Buffer)));
+			KaiLog(wxString::Format(_(L"Wystąpił błąd tworzenia źródła audio: %s"), wxString::FromUTF8(m_errInfo.Buffer)));
 			return 0;
 		}
 
@@ -504,7 +504,7 @@ audio:
 		resopts->SampleFormat = FFMS_FMT_S16;
 
 		if (FFMS_SetOutputFormatA(m_audioSource, resopts, &m_errInfo)) {
-			KaiLog(wxString::Format(_("Wystąpił błąd konwertowania audio: %s"), wxString::FromUTF8(m_errInfo.Buffer)));
+			KaiLog(wxString::Format(_(L"Wystąpił błąd konwertowania audio: %s"), wxString::FromUTF8(m_errInfo.Buffer)));
 			FFMS_DestroyResampleOptions(resopts);
 			FFMS_DestroyAudioSource(m_audioSource);
 			m_audioSource = nullptr;
@@ -520,7 +520,7 @@ audio:
 		m_channels = 1;
 
 		if (abs(m_delay) >= (m_sampleRate * m_numSamples * m_bytesPerSample)) {
-			KaiLog(_("Nie można ustawić opóźnienia, przekracza czas trwania audio"));
+			KaiLog(_(L"Nie można ustawić opóźnienia, przekracza czas trwania audio"));
 			m_delay = 0;
 		}
 		m_audioLoadThread = new std::thread(AudioLoad, this, newIndex, audiotrack);
@@ -720,7 +720,7 @@ bool ProviderFFMS2::RAMCache()
 	m_blockNum = ((float)end / (float)blsize) + 1;
 	m_cache = nullptr;
 	m_cache = new char* [m_blockNum];
-	if (m_cache == nullptr) { KaiLogSilent(_("Za mało pamięci RAM")); return false; }
+	if (m_cache == nullptr) { KaiLogSilent(_(L"Za mało pamięci RAM")); return false; }
 
 	long long pos = (m_delay < 0) ? -(m_sampleRate * m_delay * m_bytesPerSample) : 0;
 	int halfsize = (blsize / m_bytesPerSample);
@@ -927,7 +927,7 @@ void ProviderFFMS2::SetColorSpace(const wxString& matrix)
 			m_colorSpace = matrix;
 	}
 	if (failed)
-		KaiLog(_("Nie można zmienić macierzy YCbCr"));
+		KaiLog(_(L"Nie można zmienić macierzy YCbCr"));
 
 }
 

@@ -1,0 +1,91 @@
+{
+  "comment": [
+    "Third-party sources the Windows (Kainote.sln) build fetches as archives.",
+    "",
+    "Most third-party code is a git submodule instead -- see Thirdparty/README.md.",
+    "These stay archives because a submodule would not work or would not pay:",
+    "",
+    "  fribidi  its git tag ships none of the generated lib/*.tab.i tables or",
+    "           fribidi-unicode-version.h that the build's sources #include; only",
+    "           the release tarball has them pre-generated.",
+    "  boost    the git repository is a ~500 MB tree of nested submodules.",
+    "  icu      likewise very large, and only source/common + source/i18n are used.",
+    "  zlib     small enough that an archive is simpler.",
+    "  curl     likewise.",
+    "  ffmpeg   a prebuilt developer package: headers plus MSVC import libraries.",
+    "           Building FFmpeg from source needed MSYS2 and an hour; this does not.",
+    "",
+    "Run Thirdparty/hydrate.ps1 to fetch these. It verifies each archive's SHA-256",
+    "before extracting and refuses to continue on a mismatch.",
+    "",
+    "To bump one: change version+url, then put the new archive's SHA-256 in sha256",
+    "(PowerShell: Get-FileHash -Algorithm SHA256 <file>).",
+    "",
+    "The Linux build (CMakeLists.txt) ignores this file entirely; it resolves every",
+    "one of these through pkg-config against the distribution's packages."
+  ],
+  "dependencies": [
+    {
+      "name": "fribidi",
+      "version": "1.0.16",
+      "directory": "fribidi",
+      "url": "https://github.com/fribidi/fribidi/releases/download/v1.0.16/fribidi-1.0.16.tar.xz",
+      "sha256": "1b1cde5b235d40479e91be2f0e88a309e3214c8ab470ec8a2744d82a5a9ea05c",
+      "strip": 1,
+      "marker": "lib/fribidi.c",
+      "license": "LGPL-2.1-or-later",
+      "note": "Must be the release tarball, not a git archive: it ships the pre-generated lib/*.tab.i tables."
+    },
+    {
+      "name": "boost",
+      "version": "1.91.0",
+      "directory": "boost",
+      "url": "https://archives.boost.io/release/1.91.0/source/boost_1_91_0.zip",
+      "sha256": "69c6f32fbda3c478fb310ec251e6699e5e584dbc71afb5425c2f6e98c9540a77",
+      "strip": 1,
+      "marker": "boost/flyweight.hpp",
+      "license": "BSL-1.0"
+    },
+    {
+      "name": "icu",
+      "version": "78.3",
+      "directory": "icu",
+      "url": "https://github.com/unicode-org/icu/releases/download/release-78.3/icu4c-78.3-sources.zip",
+      "sha256": "20b295e2c23c541aec17f35c546e4d3136b7ab7d58e3a5fc4e479958a69b1a2c",
+      "strip": 1,
+      "marker": "source/common/unicode/utypes.h",
+      "license": "Unicode-3.0"
+    },
+    {
+      "name": "zlib",
+      "version": "1.3.2",
+      "directory": "zlib",
+      "url": "https://github.com/madler/zlib/releases/download/v1.3.2/zlib132.zip",
+      "sha256": "e8bf55f3017aa181690990cb58a994e77885da140609fc8f94abe9b65d2cae28",
+      "strip": 1,
+      "marker": "zlib.h",
+      "license": "Zlib"
+    },
+    {
+      "name": "curl",
+      "version": "8.20.0",
+      "directory": "curl",
+      "url": "https://github.com/curl/curl/releases/download/curl-8_20_0/curl-8.20.0.zip",
+      "sha256": "7f351a61dcf6f9025de57ac19eca1f7d9c2099979420a84299f59ce04a1c3bff",
+      "strip": 1,
+      "marker": "include/curl/curl.h",
+      "license": "curl"
+    },
+    {
+      "name": "ffmpeg",
+      "version": "7.1.1",
+      "directory": "ffmpeg",
+      "url": "https://github.com/GyanD/codexffmpeg/releases/download/7.1.1/ffmpeg-7.1.1-full_build-shared.zip",
+      "sha256": "9f28727e8b472a04c1d2e520aaa425dca82721b995139b35710091130ea6e699",
+      "strip": 1,
+      "marker": "include/libavcodec/avcodec.h",
+      "license": "GPL-3.0-or-later",
+      "note": "Prebuilt shared GPL build: include/ headers, lib/*.lib MSVC import libraries, bin/*.dll runtime. ffms2.vcxproj links avcodec/avformat/avutil/swscale/swresample from lib/, and Kainote copies bin/*.dll next to the executable. A GPL build is required: Kainote is GPL-3."
+    }
+  ]
+}

@@ -1,0 +1,836 @@
+﻿--[[
+	Copyright (c) 2021 Marcin Drob (Bakura)
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in
+	all copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+	THE SOFTWARE.
+	
+	Automation script for making skew gradients from skew 4 points clip
+	For example:
+	{\clip(m 1152 879 l 852 1032 829 1029 1132 874)\1c&H3E3FD1&}Ta kra{\1c&HD13E43&}ina sta{\1c&H4FD13E&}ła się bazą
+]]
+
+include("karaskel.lua")
+include("unicode.lua")
+script_name = "Skew gradient"
+script_description = "makes gradient from skew clip from 4 points"
+script_author = "Bakura"
+script_version = "1.5"
+script_modified = "09 05 2021"
+
+
+config = {
+	[1] = { class = "label"; x = 0; y = 0; height = 1; width = 5; label = string.format("%s v%s by Bakura (updated %s)", script_name, script_version, script_modified) },
+	[2] = { class = "label"; x = 0; y = 1; height = 1; width = 5; label = "Script requires a skew vector clip in first line\nand at least two colors. For example:\n{\\clip(m 854 284 l 860 284 1168 447 1160 447)}\nT{\\1c&H130EE2&}e{\\1c&H20FFFF&}x{\\1c&HDAFDFF&}t" },
+	[3] = { class = "label"; x = 0; y = 2; height = 1; width = 1; label = "Apply to"},
+	[4] = { name = "applyto"; class = "dropdown"; x = 1; y = 2; height = 1; width = 4; items = { }; value = nil },
+	[5] = { class = "label"; x = 0; y = 3; height = 1; width = 2; label = "Truncate from top"},
+	[6] = { name = "striptop"; class = "intedit"; x = 2; y = 3; height = 1; width = 3; min = -500; max = 10; value = 5; hint = "It respects also negative values\nwhen normally text is truncated"},
+	[7] = { class = "label"; x = 0; y = 4; height = 1; width = 2; label = "Truncate from bottom"},
+	[8] = { name = "stripbottom"; class = "intedit"; x = 2; y = 4; height = 1; width = 3; min = -500; max = 10; value = 5; hint = "It respects also negative values\nwhen normally text is truncated"},
+	[9] = { class = "label"; x = 0; y = 5; height = 1; width = 2; label = "Truncate from left"},
+	[10] = { name = "stripleft"; class = "intedit"; x = 2; y = 5; height = 1; width = 3; min = -500; max = 400; value = 0; hint = "It respects also negative values\nwhen normally text is truncated"},
+	[11] = { class = "label"; x = 0; y = 6; height = 1; width = 2; label = "Truncate from right"},
+	[12] = { name = "stripright"; class = "intedit"; x = 2; y = 6; height = 1; width = 3; min = -500; max = 400; value = 0; hint = "It respects also negative values\nwhen normally text is truncated"}
+}
+
+out={}
+
+radian = 0.01745329251994329576923690768489
+
+function process_gradient_line(line, rconfig, meta)
+
+	local colors = {}
+	local colnum
+	--local ccount = 1
+
+	for c,color in string.gmatch(line.text, "\\?([1-4\\])c&H([^\\}]+)") do
+		if c == "\\" then
+			colnum = 1
+		else
+			colnum = tonumber(c)
+		end
+		--aegisub.log("color " .. colnum .. " " .. color .."\n")
+		if not colors[colnum] then
+			--aegisub.log("color " .. colnum .. "={}\n")
+			colors[colnum] = {}
+		end
+		colors[colnum][#colors[colnum] + 1] = "&H" .. color
+	end
+	linetext = string.gsub(line.text, "\\?([1-4\\])c&H([^\\}]+)",
+	function(c,color)
+		if c == "\\" then
+			colnum = 1
+		else
+			colnum = tonumber(c)
+		end
+		if colors[colnum] and #colors[colnum] > 1 then
+		--aegisub.log("return \"\"")
+			return ""
+		else
+		--aegisub.log("return color")
+			return "\\" .. colnum .. "c&H" .. color
+		end
+	end)
+	
+	local frz = 0
+	local orgx = line.pos_x
+	local orgy = line.pos_y
+	a, b, frzstr = string.find(line.text, "\\frz?([0-9.-]+)")
+	if frzstr then
+		frz = tonumber(frzstr)
+	end
+	
+	a, b, orgxstr, orgystr = string.find(line.text, "\\org%(([0-9.-]+) ?, ?([0-9.-]+)%)")
+	if orgxstr and orgystr then
+		orgx = tonumber(orgxstr)
+		orgy = tonumber(orgystr)
+	end
+	
+	local hasColor = false
+	for j = 1, 4 do
+		if colors[j] and #colors[j] > 1 then
+			--aegisub.log("color " .. j)
+			hasColor = true
+		end
+	end
+	if not hasColor then
+		error("lines have to have minimum 2 colors")
+	end
+
+	tx = {}
+	ty = {}
+	local hasClip = false
+	line.text = string.gsub(linetext, "\\clip%(m ([0-9-]+) ([0-9-]+) l ([0-9-]+) ([0-9-]+) ([0-9-]+) ([0-9-]+) ([0-9-]+) ([0-9-]+)%)",
+	function(x1, y1, x2, y2, x3, y3, x4, y4)
+		tx[1] = x1
+		ty[1] = y1
+		tx[2] = x2
+		ty[2] = y2
+		tx[3] = x3
+		ty[3] = y3
+		tx[4] = x4
+		ty[4] = y4
+		hasClip = true
+		return ""
+	end)
+	
+	if not hasClip or tx[1] == nil or ty[4] == nil then
+		error("lines have to have skew clip(m x1 y1 l x2 y2 x3 y3 x4 y4)")
+	end
+	local excluded = {}
+	local ytable = {}
+	local xtable = {}
+	for g = 1, 4 do
+		local ymin = 10000000
+		local yi = 0
+		for i = 1, 4 do
+			tyi = tonumber(ty[i])
+			if not excluded[i] and ymin > tyi then
+				ymin = tyi
+				yi = i
+			end
+		end
+		excluded[yi] = yi
+		ytable[g] = tonumber(ty[yi])
+		xtable[g] = tonumber(tx[yi])
+	end
+	-- if xtable[1] > xtable[2] then
+		-- local xtmp = xtable[1]
+		-- local ytmp = ytable[1]
+		-- xtable[1] = xtable[2]
+		-- ytable[1] = ytable[2]
+		-- xtable[2] = xtmp
+		-- ytable[2] = ytmp
+	-- end
+	-- if xtable[3] > xtable[4] then
+		-- local xtmp = xtable[3]
+		-- local ytmp = ytable[3]
+		-- xtable[3] = xtable[4]
+		-- ytable[3] = ytable[4]
+		-- xtable[4] = xtmp
+		-- ytable[4] = ytmp
+	-- end
+
+	--aegisub.log(string.format("clip(m %d %d l %d %d %d %d %d %d)",xtable[1], ytable[1], xtable[2], ytable[2], xtable[3], ytable[3], xtable[4], ytable[4]))
+	if ytable[1] ~= ytable[2] then
+	--aegisub.log("x1 ".. xtable[1] .. " y1 ".. ytable[1].."\n")
+	xtable[1], ytable[1] = correctPoints(xtable[1], ytable[1], xtable[3], ytable[3], ytable[2])
+	--aegisub.log("x1 ".. xtable[1] .. " y1 ".. ytable[1].."\n")
+	end
+	dist = math.abs(xtable[1] - xtable[2])
+	if dist < 1 then
+		error("Distance between x1 and x2 have to be grater then 0")
+	end
+	
+
+	local ydist = math.abs(ytable[1] - ytable[3])
+	local truncateTop = rconfig.striptop
+	local truncateBottom = rconfig.stripbottom
+	local orgdistx = math.abs(line.pos_x - orgx)
+	local orgdisty = math.abs(line.pos_y - orgy)
+	local lleft, ltop, lright, lbottom = rotate_z(frz, orgdistx, orgdisty, line.xL - line.pos_x, line.yL - line.pos_y, line.xR - line.pos_x, line.yR - line.pos_y)
+	local lleft = lleft + line.pos_x
+	local ltop = ltop + line.pos_y
+	local lright = lright + line.pos_x
+	local lbottom = lbottom + line.pos_y
+	local lineheight = math.abs(ltop - lbottom) - truncateTop - truncateBottom
+	--aegisub.log("lh " .. line.height.." top " .. truncateTop .. " bottom " .. truncateBottom .. " res " .. lineheight .. "\n")
+	if ydist ~= lineheight then
+	--aegisub.log("x1 ".. xtable[3] .. " y1 ".. ytable[3].."x1 ".. xtable[4] .. " y1 ".. ytable[4].."\n")
+	xtable[3], ytable[3] = correctPoints(xtable[1], ytable[1], xtable[3], ytable[3], ytable[1] + lineheight)
+	xtable[4], ytable[4] = correctPoints(xtable[2], ytable[2], xtable[4], ytable[4], ytable[2] + lineheight)
+	--aegisub.log("x1 ".. xtable[3] .. " y1 ".. ytable[3].."x1 ".. xtable[4] .. " y1 ".. ytable[4].."\n")
+	ydist = lineheight
+	end
+	--aegisub.log("ydist ".. ydist .. "\n")
+
+	xx1 = xtable[1] < xtable[2] and xtable[1] or xtable[2]
+	xx2 = xtable[3] < xtable[4] and xtable[3] or xtable[4]
+	
+
+	local skewDist = xx2 - xx1
+	local lineWidth = line.width + math.abs(xx1 - xx2) - rconfig.stripleft - rconfig.stripright
+	
+	if (lineWidth < dist * 10) then
+		error("Truncate values are too high")
+	end
+	
+	--aegisub.log("ydist ".. ydist .. "\n")
+	
+	--aegisub.log("no rot ".. line.xL .. " " .. line.yL .. " rot ".. lleft .. " " .. ltop .. "\n")
+	local skewdiff = skewDist > 0 and -skewDist or 0
+	local skewdiff1 = skewDist > 0 and 0 or -skewDist
+	local x1pos = skewdiff + rconfig.stripleft
+	
+	
+	
+	line.text = string.gsub(line.text, "{}", "")
+	--aegisub.log("skewDist "..skewDist.."\n")
+	local numofloops = math.ceil(lineWidth / dist)	
+	-- if frz then
+		-- dist = dist + (dist * math.sin(frz * radian))
+		-- if dist < 1 then
+			-- error("Distance between x1 and x2 have to be grater then 0 "..dist)
+		-- end
+		-- newskewdist = math.abs(xx1 - xx2)
+		-- newskewdist = newskewdist + (newskewdist * math.sin(frz * radian))
+		-- local newwidth = math.sqrt(math.abs(lleft - lright) ^ 2 + math.abs(ltop - lbottom) ^ 2) + newskewdist - rconfig.stripleft - rconfig.stripright
+		-- numofloops = math.ceil(newwidth / dist)
+	-- end
+	-- aegisub.log("dist "..dist.."\n")
+	
+	
+	local maxbord = -1
+	local maxshad = -1
+	local linetextnobord = string.gsub(line.text, "\\bord([0-9.]+)",
+	function(bord)
+		nbord = tonumber(bord)
+		if nbord > maxbord then
+			maxbord = nbord
+		end
+		return ""
+	end)
+	local linetextnobord = string.gsub(linetextnobord, "\\shad([0-9.]+)",
+	function(shad)
+		nshad = tonumber(shad)
+		if nshad > maxshad then
+			maxshad = nshad
+		end
+		return ""
+	end)
+	if maxbord == -1 then
+		maxbord = line.styleref.outline
+	end
+	if maxshad == -1 then
+		maxshad = line.styleref.shadow
+	end
+	
+	linetextnobord = string.gsub(linetextnobord, "{}", "")
+	
+	
+	-- rotate_z(frz, orgdistx, orgdisty
+
+	--aegisub.log("orgdistx " .. orgdistx.." orgdisty " .. orgdisty .."\n")
+	for i = 0,  numofloops -1 do
+		
+		l = result()
+		--l.layer = 0  --warstwa
+		timediff = l.start_time - line.start_time
+		
+		col1 = (colors[1] and #colors[1] > 1) and "\\1c" .. tkolor(numofloops -1, i, table.unpack(colors[1])) or ""
+		col2 = (colors[2] and #colors[2] > 1) and "\\2c" .. tkolor(numofloops -1, i, table.unpack(colors[2])) or ""
+		local yL = ltop + truncateTop
+		local yL1 = yL
+		local xL = i == 0 and skewdiff or lleft + x1pos
+		local xLd = i == numofloops -1 and meta.res_x + skewdiff1 or lleft + x1pos + dist + 1
+		l.text = string.format("{\\an%d\\pos(%s,%s)\\clip(m %d %d l %d %d %d %d %d %d)%s\\bord0\\shad0}%s", 
+			line.an, line.pos_x, line.pos_y, xL, yL, xLd, yL1, 
+			xLd + skewDist, yL1 + ydist, xL + skewDist, yL + ydist, col1 .. col2, linetextnobord)-- text sylaby
+		l.text = string.gsub(l.text, "}{", "")
+		l.layer = line.layer + 1
+		x1pos = x1pos + dist	
+		
+	end
+	
+	if colors[3] and #colors[3] > 1 or colors[4] and #colors[4] > 1 then
+		x1pos = skewDist > 0 and -skewDist or 0
+		for i = 0,  numofloops -1 do
+			
+			l = result()
+			--l.layer = 0  --warstwa
+			timediff = l.start_time - line.start_time
+			col1 = (colors[1] and #colors[1] > 1) and "\\1c" .. tkolor(numofloops -1, i, table.unpack(colors[1])) or ""
+			col2 = (colors[2] and #colors[2] > 1) and "\\2c" .. tkolor(numofloops -1, i, table.unpack(colors[2])) or ""
+			col3 = (colors[3] and #colors[3] > 1) and "\\3c" .. tkolor(numofloops -1, i, table.unpack(colors[3])) or ""
+			col4 = (colors[4] and #colors[4] > 1) and "\\4c" .. tkolor(numofloops -1, i, table.unpack(colors[4])) or ""
+			local yL = ltop + truncateTop
+			local yL1 = yL
+			local xL = i == 0 and skewdiff or lleft + x1pos
+			local xLd = i == numofloops -1 and meta.res_x + skewdiff1 or lleft + x1pos + dist + 1
+			l.text = string.format("{\\an%d\\pos(%s,%s)\\clip(m %d %d l %d %d %d %d %d %d)%s}%s", 
+				line.an, line.pos_x, line.pos_y, xL, yL, xLd, yL1, 
+				xLd + skewDist, yL1 + ydist, xL + skewDist, yL + ydist, col1 .. col2 .. col3 .. col4, line.text)-- text sylaby
+			l.text = string.gsub(l.text, "}{", "")
+			x1pos = x1pos + dist	
+			
+		end
+	elseif maxbord > 0 or maxshad > 0 then
+		l = result()
+		l.text = string.format("{\\an%d\\pos(%s,%s)\\1c%s}%s", line.an, line.pos_x, line.pos_y, line.styleref.color3, line.text)
+	end
+end
+function correctPoints(x1, y1, x2, y2, y1moveto)
+	ydist = y2 - y1
+	xdist = x2 - x1
+	ypos = y1moveto - y1
+	distpos = ypos / ydist
+	ny1 = y1moveto
+	nx1 = x1 + (xdist * distpos)
+	return nx1, ny1
+end
+
+function moveToY(x1, y1, x2, y2, y1moveto)
+	if x1 == x2 then
+		return x1moveto, y1
+	else
+		local xdist = math.abs(x1 - x2)
+		local ydist = math.abs(y1 - y2)
+		angle = math.atan2(ydist, xdist) * (180 / 3.14159265)
+		--angle = angle + 90
+		aegisub.log("angle "..angle.."\n")
+		local xx1 = x1 > x2 and x2 or x1
+		local yy1 = y1 > y2 and y2 or y1
+		-- local yyy1 = x1 > x2 and y2 or y1
+		ymove = math.abs(y1 - y1moveto)
+		--aegisub.log("yyy1 "..yyy1.." ymoveto " ..y1moveto.. "\n")
+		aegisub.log("x1 "..x1.." y1 "..y1.." x2 "..x2.." y2 "..y2.." xmoveto " ..y1moveto.." xmove " ..ymove.. "\n")
+		local nx1 = xx1 + (ymove * math.sin(angle * radian))
+		local ny1 = yy1 + (ymove * math.cos(angle * radian))
+		aegisub.log("nx1 "..nx1.." ny1 "..ny1.."\n")
+		return nx1, ny1
+	end
+end
+
+function moveToX(x1, y1, x2, y2, x1moveto, angle)
+	if y1 == y2 then
+		return x1moveto, y1
+	else
+		angle = angle + 90
+		--aegisub.log("angle "..angle.."\n")
+		xmove = math.abs(x1 - x1moveto)
+		--aegisub.log("x1 "..x1.." y1 "..y1.." x2 "..x2.." y2 "..y2.." xmoveto " ..x1moveto.." xmove " ..xmove.. "\n")
+		local nx1 = x1 + (xmove * math.sin(angle * radian))
+		local ny1 = y1 - (xmove * math.cos(angle * radian))
+		--aegisub.log("nx1 "..nx1.." ny1 "..ny1.."\n")
+		return nx1, ny1
+	end
+end
+
+function process_gradient(subs, styles, meta, rconfig, selected)
+
+	applyTo, applytoStyle = string.headtail(rconfig.applyto)
+	local isSelected = false
+	
+
+	local checkSelections = applyTo == "Selected"
+	local allLines = applyTo == "All"
+	local styleLines = applyTo == "Style"
+
+	local commentPos = -1
+	local i = 1
+	local orgI = 1
+	local selcounter = 1
+
+	while i <= #subs do
+		aegisub.progress.task(string.format("Making gradient, line (%d / %d)", i, #subs))
+		aegisub.progress.set((i - 1) / #subs * 100)
+		if aegisub.progress.is_cancelled() then 
+			aegisub.log("break")
+			break 
+		end
+			
+		local line = subs[i]
+		if checkSelections and orgI == selected[selcounter] then
+			if selcounter > #selected then
+				checkSelections = false
+				--aegisub.log("end counting %d", #selected)
+			end
+			--aegisub.log("sel counter %d next %d, %d, %d\n" .. line.text .. "\n", orgI, #selected, selected[selcounter], selcounter)
+			selcounter = selcounter + 1
+			isSelected = true
+		else
+			isSelected = false
+		end
+		orgI = orgI + 1
+
+		if line.class == "dialogue" and not line.comment and (isSelected or allLines or (styleLines and line.style == applytoStyle)) then
+		
+			--aegisub.log("go to if")
+			if commentPos < 0 then
+				commentPos = i
+			end
+			
+			function result()
+				lc = copy_line(line);
+				table.insert(out,lc)
+				return lc
+			end
+			line.comment = true
+			subs.insert(commentPos, line)
+			line.comment = false
+			i = i + 1
+			commentPos = commentPos + 1
+			if styles[line.style] then
+				line.styleref = styles[line.style]
+			else
+				line.styleref = styles[1]
+			end
+			
+			local marginr=(line.margin_r > 0) and line.margin_r or line.styleref.margin_r
+			local marginl=(line.margin_l > 0) and line.margin_l or line.styleref.margin_l
+			local margint=(line.margin_t > 0) and line.margin_t or line.styleref.margin_t
+			local an = line.styleref.align
+			local x = nil
+			local y = nil
+			local textwidth = 0
+			local textheight = 0
+			
+			
+			local linetext = ""
+			linetext = line.text:gsub("\\an([0-9])",
+			function(annum)
+				an = tonumber(annum)
+				return ""
+			end)
+			
+			line.text = linetext:gsub("\\pos%(([0-9.-]+) ?, ?([0-9.-]+)%)",
+			function(posx, posy)
+				x = tonumber(posx)
+				y = tonumber(posy)
+				return ""
+			end)
+			
+			linetext = line.text:gsub("\\move%(([0-9.-]+) ?, ?([0-9.-]+) ?, ?([0-9.-]+) ?, ?([0-9.-]+)%)",
+			function(posx, posy, posx1, posy1)
+				x = tonumber(posx)
+				y = tonumber(posy)
+				return ""
+			end)
+			line.text = linetext:gsub("\\move%(([0-9.-]+) ?, ?([0-9.-]+) ?, ?([0-9.-]+) ?, ?([0-9.-]+) ?, ?([0-9.-]+) ?, ?([0-9.-]+)%)",
+			function(posx, posy, posx1, posy1, t1, t2)
+				x = tonumber(posx)
+				y = tonumber(posy)
+				return ""
+			end)
+			
+			textWithoutSplit = line.text
+			hasDrawing = false
+			drawingText = ""
+			repeat
+				a, b, p, toendbracket, rest = string.find(textWithoutSplit, "\\p([0-9]+)([^}]*)}(.*)")
+				if p ~= nil then
+					textWithoutSplit = rest
+					local pnum = tonumber(p)
+					if pnum > 0 then
+						drawingText = drawingText .. rest
+					else
+						a, b, before = string.find(textWithoutSplit, "{(.-)\\p0")
+						drawingText = string.sub(drawingText, 1, a)
+					end
+					hasDrawing = true
+				end
+			until p == nil
+			
+			local lineCount = 1
+			local maxHeight = -1
+			textWithoutSplit = string.gsub(textWithoutSplit, "\\(n|N)", 
+				function(s)
+					lineCount = lineCount + 1
+					return "{\\" .. s .. "}"
+				end)
+				
+			textWithoutSplit = string.gsub(textWithoutSplit, "\\h", " ")
+				
+			local maxTextWidth = 0
+			local linestyle = copy_line(line.styleref)
+			local prevstyle = copy_line(linestyle)
+			local first = true
+			for beforeText, tagsBlock in string.gmatch(textWithoutSplit .. "{@}", "(.-){([^{}]*)}") do 
+				local isSplit = tagsBlock == "\\N" or tagsBlock == "\\n"
+				if tagsBlock ~= "" and tagsBlock ~= "@" and not isSplit then 
+					--linestyle = copy_line(line.styleref)
+					for fs in string.gmatch(tagsBlock .. "\\", "\\fs([0-9.]+)") do 
+						linestyle.fontsize = fs
+					end
+					for fscx in string.gmatch(tagsBlock .. "\\", "\\fscx([0-9.]+)") do 
+						linestyle.scale_x = fscx
+					end
+					for fscy in string.gmatch(tagsBlock .. "\\", "\\fscy([0-9.]+)") do 
+						linestyle.scale_y = fscy
+					end
+					for fn in string.gmatch(tagsBlock .. "\\", "\\fn([^\\}]+)") do 
+						--aegisub.log("fn ".. fn .."\n")
+						linestyle.fontname = fn
+					end
+					for fsp in string.gmatch(tagsBlock .. "\\", "\\fsp([0-9.-]+)") do 
+						linestyle.spacing = fsp
+					end
+					if first then
+						line.styleref = copy_line(linestyle)
+					end
+					--aegisub.log("text measuring st"..beforeText.." tb " .. tagsBlock .."\n")
+				end 
+				
+				if beforeText ~= "" then
+					--aegisub.log("text measuring "..beforeText.." fn " .. prevstyle.fontname .."\n")
+					partLineWidth, partLineHeight, td, te = aegisub.text_extents(prevstyle, beforeText)
+					textwidth = textwidth + partLineWidth
+					if isSplit and maxTextWidth < textwidth then
+						maxTextWidth = textwidth
+						textwidth = 0
+					end
+					if maxHeight < partLineHeight then
+						maxHeight = partLineHeight
+					end
+				end
+				prevstyle = copy_line(linestyle)
+			end
+			
+			if maxTextWidth > 0 then
+				textwidth = maxTextWidth
+			end
+			if maxHeight > 0 then
+				textheight = maxHeight
+			end
+			
+			local drawingMinX = 0
+			local drawingMinY = 0
+			local drawingMaxX = 0
+			local drawingMaxY = 0
+			
+			if hasDrawing then
+				if drawingText == "" then
+					hasDrawing = false
+					aegisub.log("Line has empty drawing")
+				else
+					drawingMinX, drawingMinY, drawingMaxX, drawingMaxY = getVectorDrawingsBoundaries(drawingText)
+					
+					textwidth = textwidth + drawingMaxX - drawingMinX
+					textheight = textheight + drawingMaxY - drawingMinY
+					
+					--aegisub.log("values %s, %s, %s, %s, %s, %s", drawingMinX, drawingMinY, drawingMaxX, drawingMaxY, textwidth, textheight)
+					
+				end
+			end
+			
+			
+			--orgx = 0
+			--orgy = 0
+			if x == nil then
+				if an % 3 == 1 then
+					x = marginl
+					line.pos_x = x
+				elseif an % 3 == 2 then
+					x = (meta.res_x - textwidth) / 2
+					line.pos_x = meta.res_x / 2
+				else
+					x = (meta.res_x - textwidth) - marginr
+					line.pos_x = meta.res_x - marginr
+				end
+
+				if math.floor(an / 3.1) == 0 then
+					y = meta.res_y - margint
+					line.pos_y = y
+				elseif math.floor(an/3.1) == 1 then
+					y = (meta.res_y / 2) + (textheight / 2)
+					line.pos_y = (meta.res_y / 2)
+				elseif math.floor(an/3.1) == 2 then
+					y = margint + textheight
+					line.pos_y = margint
+				end
+			else
+				line.pos_x = x
+				line.pos_y = y
+				if an % 3 == 2 then
+					x = x - (textwidth / 2)
+				elseif an % 3 == 0 then
+					x = x - textwidth
+				end
+				if math.floor(an / 3.1) == 2 then
+					y = y + textheight
+				elseif math.floor(an / 3.1) == 1 then
+					y = y + (textheight / 2)
+				end
+			end	
+			
+			if y ~= nil then
+				if math.floor(an / 3.1) == 2 then
+					drawingMaxY = drawingMaxY + y
+					drawingMinY = drawingMinY + y
+				elseif math.floor(an / 3.1) == 1 then
+					drawingMaxY = drawingMaxY + (y - (textheight / 2))
+					drawingMinY = drawingMinY + (y - (textheight / 2))
+				else
+					drawingMaxY = drawingMaxY + (y - textheight)
+					drawingMinY = drawingMinY + (y - textheight)
+				end
+			end
+					
+			line.height = textheight
+			line.y = y - (line.height / 2)
+			line.i = i
+			line.width = textwidth
+			line.x = x + (line.width / 2)
+			line.xL = hasDrawing and drawingMinX + x or x
+			line.xR = hasDrawing and drawingMaxX + x or  line.xL + line.width
+			line.yL = hasDrawing and drawingMinY or y - line.height
+			line.yR = hasDrawing and drawingMaxY or y
+			line.an = an
+			line.has_drawing = hasDrawing
+			line.text_stripped = line.text:gsub("\\{([^}}]*)}","")
+			--aegisub.log("measures x %s, y %s, xL %s, yL %s, xR %s, yR %s", line.x, line.y, line.xL, line.yL, line.xR, line.yR)
+			--out
+			subs.delete(i)
+			i = i - 1
+			
+			--aegisub.log("process gradient")
+			process_gradient_line(line, rconfig, meta)
+			--aegisub.log(string.format("process gradient out table %d", #out))
+			if #out>0 then
+
+				for g = #out, 1, -1 do
+
+					subs.insert(i + 1,out[g])
+
+				end
+
+				i = i + #out
+				out = {}
+			end
+		end
+		i = i + 1
+	end
+end
+
+function getVectorDrawingsBoundaries(text)
+	local drawing = text .. " "
+	local minX = 10000000
+	local minY = 10000000
+	local maxX = -10000000
+	local maxY = -10000000
+	
+	for i = 1, 10000000 do
+		a, b, before, drawx, drawy, rest = string.find(drawing, "(.-)([0-9.-]+) ([0-9.-]+)(.*)")
+		drawing = rest
+		if drawx == nil or rest == nil then
+			if rest ~= nil and string.match(rest, "[0-9.-]") ~= nil then
+				error("Unpaired draw points\n")
+				return nil
+			end
+			break
+		end
+		if string.match(before, "[0-9.-]") ~= nil then
+			error("Bad drawing in: " .. before .. " " .. drawx .. " " .. drawy .. " " .. rest .. "\n")
+			return nil
+		end
+		--aegisub.log("cl" .. drawx .. " " .. drawy .. " before " .. before .. "\n")
+		local dx = tonumber(drawx)
+		local dy = tonumber(drawy)
+		if minX > dx then
+			minX = dx
+		end
+		if minY > dy then
+			minY = dy
+		end
+		if maxX < dx then
+			maxX = dx
+		end
+		if maxY < dy then
+			maxY = dy
+		end
+	end
+	return minX, minY, maxX, maxY
+end
+
+function rotate_z(frz, distorgx, distorgy, ...)
+	pointsTable = {...}
+	if #pointsTable < 2 then
+		--sanity check
+		error("Too few rotation points")
+	elseif #pointsTable % 2 ~= 0 then
+		--sanity check
+		error("Unpaired rotation points")
+	end
+	if frz == 0 then
+		return table.unpack(pointsTable)
+	else
+		local result2 = {}
+		local frzsin = math.sin(-frz * radian)
+		local frzcos = math.cos(-frz * radian)
+		for i = 1, #pointsTable, 2 do
+			local xx = pointsTable[i] + distorgx
+			local yy = pointsTable[i + 1] + distorgy
+			result2[i] = (xx * frzcos) - (yy * frzsin) - distorgx
+			result2[i + 1] = (xx * frzsin) + (yy * frzcos) - distorgy
+		end
+		--aegisub.log("points talbe " .. #pointsTable .. " rt ".. #result2 .. "\n")
+		return table.unpack(result2)
+	end
+end
+
+function macro_process(subs, selected_lines)
+	local meta, styles = karaskel.collect_head(subs)
+	config[4].items={}
+	config[4].value = string.format("Selected lines (%d)", #selected_lines)
+	table.insert(config[4].items, config[4].value)
+	table.insert(config[4].items, "All lines")
+
+	for v=1, #styles do
+		itemname=  "Style " .. styles[v].name
+		table.insert(config[4].items, itemname)
+	end
+	load_config_from_disk(config, #selected_lines)
+
+	cfg_res, rconfig = aegisub.dialog.display(config, {"Make gradient", "Cancel"})
+	if cfg_res == "Make gradient" then
+		strconfig = serializeConfig(rconfig)
+		save_config_to_disk(strconfig)
+	    process_gradient(subs, styles, meta, rconfig, selected_lines)
+	end
+end
+
+--save config to disk from string
+function save_config_to_disk(confResult)
+	path = aegisub.decode_path("?data") .. "\\skew-gradient.conf"
+	handle = io.open(path, "w")
+	if handle then
+		handle:write(confResult)
+		handle:close()
+	end
+end
+
+--load config from disk
+function load_config_from_disk(config, sels)
+	local confResult = ""
+	path = aegisub.decode_path("?data") .. "\\skew-gradient.conf"
+	handle = io.open(path, "r")
+	if handle then
+		confResult = handle:read("*all")
+		io.close(handle)
+		if confResult ~= "" then
+			unserializeConfig(confResult, config, sels)
+		end
+	end
+end
+
+function serializeConfig(result_config)
+	local keys = { 4, 6, 8, 10, 12}
+	local result = ""
+	for i = 1, #keys do
+		result = result .. config[keys[i]].name .. "=" .. result_config[config[keys[i]].name] .. "\n"
+	end
+	--aegisub.log(result .. "\n")
+	return result
+end
+
+function unserializeConfig(strconfig, config, sels)
+	local keys = { 4, 6, 8, 10, 12}
+	local i = 1
+	for name, val in strconfig:gmatch("(.-)=([^\n]*)\n") do
+		if config[keys[i]].name == name then
+			head, tail = string.headtail(val)
+			if head == "Selected" then
+				config[keys[i]].value = string.format("Selected lines (%d)", sels)
+			else
+				config[keys[i]].value = val
+			end
+		end
+		i = i + 1
+	end
+end
+
+function bgrtohex(b,g,r)
+	if r~=nil then
+		if r < 0 then r=0 end
+		if g < 0 then g=0 end
+		if b < 0 then b=0 end
+		if r > 255 then r=255 end
+		if g > 255 then g=255 end
+		if b > 255 then b=255 end
+		return ass_color(b,g,r)
+	elseif b~=nil then
+		if b < 0 then b=0 end
+		if b > 255 then b=255 end
+		return ass_alpha(b)
+	else
+		aegisub.debug.out(lng[20])
+		return "&H000000&"
+	end
+end
+
+hextobgr=extract_color
+
+--numColorChanges ilość zmian kolorów, currentPosition aktualny kolor
+function tkolor(numColorChanges, currentPosition,...)
+	if numColorChanges ~= math.floor(numColorChanges) then
+		error("tkolor numColorChanges have to be integer")
+	end
+	if currentPosition > numColorChanges then
+		error("tkolor currentPosition is greater than numColorChanges")
+	end
+	kolory={...}
+	if currentPosition~=0 then
+		grd=numColorChanges/(#kolory-1)
+		agrd=math.ceil(currentPosition/grd)
+
+		b, g, r=hextobgr(kolory[agrd])
+		b1, g1, r1=hextobgr(kolory[agrd+1])
+		wspr=(r1-r)/grd
+		wspg=(g1-g)/grd
+		wspb=(b1-b)/grd
+		mn=currentPosition-(grd * math.floor(currentPosition/grd))--math.floor
+		if mn==0 then 
+			mn=grd 
+		end
+		return bgrtohex(b+math.floor(wspb*mn), g+math.floor(wspg*mn), r+math.floor(wspr*mn))
+	else
+		return kolory[1]
+	end
+end
+
+aegisub.register_macro(script_name, "", macro_process)

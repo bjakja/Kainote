@@ -45,11 +45,11 @@ FPSDialog::FPSDialog(wxWindow *parent)
 	oldfps->SetSelection(0);
 	newfps = new KaiChoice(this, -1, emptyString, wxDefaultPosition, wxSize(80, -1), fpsy, 0, valid);
 	newfps->SetSelection(2);
-	sizer->Add(new KaiStaticText(this, -1, _("FPS napisów")), 0, wxALIGN_CENTER_VERTICAL | wxALL, 4);
+	sizer->Add(new KaiStaticText(this, -1, _(L"FPS napisów")), 0, wxALIGN_CENTER_VERTICAL | wxALL, 4);
 	sizer->Add(oldfps, 0, wxEXPAND | wxALL, 4);
-	sizer->Add(new KaiStaticText(this, -1, _("Nowy FPS napisów")), 0, wxALIGN_CENTER_VERTICAL | wxALL, 4);
+	sizer->Add(new KaiStaticText(this, -1, _(L"Nowy FPS napisów")), 0, wxALIGN_CENTER_VERTICAL | wxALL, 4);
 	sizer->Add(newfps, 0, wxEXPAND | wxALL, 4);
-	MappedButton *ok = new MappedButton(this, 15555, _("Zmień FPS"));
+	MappedButton *ok = new MappedButton(this, 15555, _(L"Zmień FPS"));
 	Connect(15555, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&FPSDialog::OkClick);
 	MappedButton *cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
 	sizer->Add(ok, 0, wxEXPAND | wxALL, 4);
@@ -66,7 +66,7 @@ void FPSDialog::OkClick(wxCommandEvent &evt)
 	if (oldfps->GetValue().ToDouble(&ofps) && newfps->GetValue().ToDouble(&nfps)){
 		EndModal(1);
 	}
-	else{ KaiMessageBox(_("Niewłaściwy fps")); }
+	else{ KaiMessageBox(_(L"Niewłaściwy fps")); }
 }
 
 TreeDialog::TreeDialog(wxWindow *parent, const wxString & currentName)
@@ -80,7 +80,7 @@ TreeDialog::TreeDialog(wxWindow *parent, const wxString & currentName)
 	treeDescription->SetMaxLength(500);
 	descriptionSizer->Add(treeDescription, 0, wxEXPAND);
 	mainSizer->Add(descriptionSizer, 0, wxEXPAND | wxALL, 2);
-	MappedButton *ok = new MappedButton(this, 15555, currentName.empty() ? _("Ustaw nazwę drzewka") : _("Zmień nazwę drzewka"));
+	MappedButton *ok = new MappedButton(this, 15555, currentName.empty() ? _(L"Ustaw nazwę drzewka") : _(L"Zmień nazwę drzewka"));
 	Connect(15555, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&TreeDialog::OkClick);
 	MappedButton *cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
 	buttonSizer->Add(ok, 0, wxALL, 4);
@@ -109,7 +109,7 @@ SwapPropertiesDialog::SwapPropertiesDialog(wxWindow* parent)
 {
 	DialogSizer* main = new DialogSizer(wxVERTICAL);
 	const int numFields = 6;
-	wxString fieldNames[numFields] = { _("Tytuł"), _("Autor"), _("Tłumaczenie"), _("Korekta"), _("Timing"), _("Edycja") };
+	wxString fieldNames[numFields] = { _(L"Tytuł"), _("Autor"), _(L"Tłumaczenie"), _("Korekta"), _("Timing"), _("Edycja") };
 	CONFIG fieldOnValues[numFields] = { ASS_PROPERTIES_TITLE_ON, ASS_PROPERTIES_SCRIPT_ON, ASS_PROPERTIES_TRANSLATION_ON,
 		ASS_PROPERTIES_EDITING_ON, ASS_PROPERTIES_TIMING_ON, ASS_PROPERTIES_UPDATE_ON };
 	for (int i = 0; i < numFields; i++) {
@@ -120,7 +120,7 @@ SwapPropertiesDialog::SwapPropertiesDialog(wxWindow* parent)
 	wxBoxSizer* buttons = new wxBoxSizer(wxHORIZONTAL);
 	MappedButton* Ok = new MappedButton(this, wxID_OK, L"OK");
 	MappedButton* Cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
-	MappedButton* TurnOf = new MappedButton(this, 19921, _("Wyłącz potwierdzenie"));
+	MappedButton* TurnOf = new MappedButton(this, 19921, _(L"Wyłącz potwierdzenie"));
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent& evt) {
 		Options.SetBool(ASS_PROPERTIES_ASK_FOR_CHANGE, false);
 		Options.SaveOptions(true, false);

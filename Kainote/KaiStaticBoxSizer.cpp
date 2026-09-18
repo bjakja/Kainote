@@ -19,8 +19,12 @@
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
 
+// winsock2.h first: windows.h would pull in the old winsock.h (sockaddr clash).
+#ifdef __WXMSW__
+#include <winsock2.h>
+#endif
 #include <windows.h>
-#include <wx/msw/winundef.h>
+#include "WinUndef.h"
 
 KaiStaticBox::KaiStaticBox(wxWindow *parent, const wxString& _label)
 	:
@@ -179,8 +183,11 @@ KaiStaticBoxSizer::~KaiStaticBoxSizer(){
 	if (box){ delete box; box = nullptr; }
 };
 
-void KaiStaticBoxSizer::RecalcSizes()
+void KaiStaticBoxSizer::RepositionChildren(const wxSize& minSize)
 {
+	if (!box)
+		return;
+
 	wxSize borders = box->CalcBorders();
 
 	box->SetSize(m_position.x, m_position.y, m_size.x, m_size.y);
@@ -196,7 +203,10 @@ void KaiStaticBoxSizer::RecalcSizes()
 	m_position.x += borders.x;
 	m_position.y += borders.y;
 
-	wxBoxSizer::RecalcSizes();
+	wxSize childMin(minSize.x - (2 * borders.x), minSize.y - borders.y - borders.x);
+	if (childMin.x < 0){ childMin.x = 0; }
+	if (childMin.y < 0){ childMin.y = 0; }
+	wxBoxSizer::RepositionChildren(childMin);
 
 	m_position = old_pos;
 	m_size = old_size;
@@ -204,6 +214,9 @@ void KaiStaticBoxSizer::RecalcSizes()
 
 wxSize KaiStaticBoxSizer::CalcMin()
 {
+	if (!box)
+		return wxBoxSizer::CalcMin();
+
 	wxSize borders = box->CalcBorders();
 
 	wxSize ret(wxBoxSizer::CalcMin());
@@ -224,11 +237,11 @@ wxSize KaiStaticBoxSizer::CalcMin()
 
 void KaiStaticBoxSizer::ShowItems(bool show)
 {
-	box->Show(show);
+	if (box){ box->Show(show); }
 	wxBoxSizer::ShowItems(show);
 }
 
-bool KaiStaticBoxSizer::Detach(wxWindow *window)
+bool KaiStaticBoxSizer::Detach(KaiSizerDetachArg *window)
 {
 	if (window == box)
 	{
@@ -241,5 +254,5 @@ bool KaiStaticBoxSizer::Detach(wxWindow *window)
 
 bool KaiStaticBoxSizer::Enable(bool enable)
 {
-	return box->Enable(enable);
+	return box ? box->Enable(enable) : false;
 }

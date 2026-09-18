@@ -78,7 +78,7 @@ TagButtonDialog::TagButtonDialog(wxWindow *parent, int id, const wxString &txtt,
 {
 	DialogSizer *siz = new DialogSizer(wxVERTICAL);
 	wxBoxSizer *siz1 = new wxBoxSizer(wxHORIZONTAL);
-	wxString types[3] = { _("Tag wstawiany w miejsce kursora"), _("Tag wstawiany na początku tekstu"), _("Zwykły tekst") };
+	wxString types[3] = { _("Tag wstawiany w miejsce kursora"), _(L"Tag wstawiany na początku tekstu"), _(L"Zwykły tekst") };
 	type = new KaiChoice(this, -1, wxDefaultPosition, wxDefaultSize, 3, types);
 	type->SetSelection(_type);
 	name = new KaiTextCtrl(this, -1, _name, wxDefaultPosition, wxSize(150, 25), wxTE_PROCESS_ENTER);
@@ -158,11 +158,11 @@ EditBox::EditBox(wxWindow *parent, int idd)
 	isdetached = splittedTags = false;
 	Visual = 0;
 
-	wxString alignments[] = { _("Lewo-dół") + L" (an1)", _("Środek-dół") + L" (an2)", _("Prawo-dół") + L" (an3)",
-		_("Lewo-środek") + L" (an4)", _("Środek") + L" (an5)", _("Prawo-środek") + L" (an6)",
-		_("Lewo-góra") + L" (an7)", _("Środek-góra") + L" (an8)", _("Prawo-góra") + L" (an9)" };
+	wxString alignments[] = { _(L"Lewo-dół") + L" (an1)", _(L"Środek-dół") + L" (an2)", _(L"Prawo-dół") + L" (an3)",
+		_(L"Lewo-środek") + L" (an4)", _(L"Środek") + L" (an5)", _(L"Prawo-środek") + L" (an6)",
+		_(L"Lewo-góra") + L" (an7)", _(L"Środek-góra") + L" (an8)", _(L"Prawo-góra") + L" (an9)" };
 
-	Bfont = new MappedButton(this, EDITBOX_CHANGE_FONT, emptyString, _("Wybór czcionki"), 
+	Bfont = new MappedButton(this, EDITBOX_CHANGE_FONT, emptyString, _(L"Wybór czcionki"),
 		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bfont->SetBitmap(wxBITMAP_PNG(L"FONTS"));
 	Bbold = new MappedButton(this, EDITBOX_INSERT_BOLD, emptyString, _("Pogrubienie"),
@@ -171,21 +171,21 @@ EditBox::EditBox(wxWindow *parent, int idd)
 	Bital = new MappedButton(this, EDITBOX_INSERT_ITALIC, emptyString, _("Pochylenie"),
 		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bital->SetBitmap(wxBITMAP_PNG(L"ITALIC"));
-	Bund = new MappedButton(this, EDITBOX_CHANGE_UNDERLINE, emptyString, _("Podkreślenie"),
+	Bund = new MappedButton(this, EDITBOX_CHANGE_UNDERLINE, emptyString, _(L"Podkreślenie"),
 		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bund->SetBitmap(wxBITMAP_PNG(L"UNDER"));
-	Bstrike = new MappedButton(this, EDITBOX_CHANGE_STRIKEOUT, emptyString, _("Przekreślenie"),
+	Bstrike = new MappedButton(this, EDITBOX_CHANGE_STRIKEOUT, emptyString, _(L"Przekreślenie"),
 		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bstrike->SetBitmap(wxBITMAP_PNG(L"STRIKE"));
 	Bcol1 = new MappedButton(this, EDITBOX_CHANGE_COLOR_PRIMARY, emptyString, _("Kolor podstawowy"), 
 		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bcol1->SetBitmap(wxBITMAP_PNG(L"Kolor1"));
 	Bcol1->Bind(wxEVT_RIGHT_UP, &EditBox::OnColorRightClick, this);
-	Bcol2 = new MappedButton(this, EDITBOX_CHANGE_COLOR_SECONDARY, emptyString, _("Kolor zastępczy do karaoke"), 
+	Bcol2 = new MappedButton(this, EDITBOX_CHANGE_COLOR_SECONDARY, emptyString, _(L"Kolor zastępczy do karaoke"),
 		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bcol2->SetBitmap(wxBITMAP_PNG(L"Kolor2"));
 	Bcol2->Bind(wxEVT_RIGHT_UP, &EditBox::OnColorRightClick, this);
-	Bcol3 = new MappedButton(this, EDITBOX_CHANGE_COLOR_OUTLINE, emptyString, _("Kolor obwódki"), 
+	Bcol3 = new MappedButton(this, EDITBOX_CHANGE_COLOR_OUTLINE, emptyString, _(L"Kolor obwódki"),
 		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bcol3->SetBitmap(wxBITMAP_PNG(L"Kolor3"));
 	Bcol3->Bind(wxEVT_RIGHT_UP, &EditBox::OnColorRightClick, this);
@@ -211,12 +211,12 @@ EditBox::EditBox(wxWindow *parent, int idd)
 	
 	SetTagButtons();
 
-	TlMode = new KaiCheckBox(this, ID_TLMODE, _("Tryb tłumacza"));
+	TlMode = new KaiCheckBox(this, ID_TLMODE, _(L"Tryb tłumacza"));
 	TlMode->SetValue(false);
 	TlMode->Enable(false);
 	LineNumber = new KaiStaticText(this, -1, _("Linia: 0"));
-	Chars = new KaiStaticText(this, -1, _("Łamania: 0/86"));
-	Chtime = new KaiStaticText(this, -1, _("Znaki na sekundę: 0<=15"));
+	Chars = new KaiStaticText(this, -1, _(L"Łamania: 0/86"));
+	Chtime = new KaiStaticText(this, -1, _(L"Znaki na sekundę: 0<=15"));
 	bool asFrames = Options.GetBool(EDITBOX_TIMES_TO_FRAMES_SWITCH);
 	Times = new KaiRadioButton(this, ID_TIMES_FRAMES, _("Czas"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
 	Times->SetValue(!asFrames);
@@ -242,11 +242,11 @@ EditBox::EditBox(wxWindow *parent, int idd)
 	Bcpall->Hide();
 	Bcpsel = new MappedButton(this, EDITBOX_PASTE_SELECTION_TO_TRANSLATION, _("Wklej zaznaczone"), EDITBOX_HOTKEY);
 	Bcpsel->Hide();
-	Bhide = new MappedButton(this, EDITBOX_HIDE_ORIGINAL, _("Ukryj oryginał"), EDITBOX_HOTKEY);
+	Bhide = new MappedButton(this, EDITBOX_HIDE_ORIGINAL, _(L"Ukryj oryginał"), EDITBOX_HOTKEY);
 	Bhide->Hide();
 	DoubtfulTL = new ToggleButton(this, ID_DOUBTFULTL, _("Niepewne"));
 	DoubtfulTL->Hide();
-	AutoMoveTags = new ToggleButton(this, ID_AUTOMOVETAGS, _("Przenoszenie tagów"));
+	AutoMoveTags = new ToggleButton(this, ID_AUTOMOVETAGS, _(L"Przenoszenie tagów"));
 	AutoMoveTags->Hide();
 
 	BoxSizer6 = new wxBoxSizer(wxHORIZONTAL);
@@ -506,10 +506,10 @@ void EditBox::UpdateChars()
 		else {
 			wraps = td.wraps.Mid(0, 50).BeforeLast(L'/') + L"/.../";
 		}
-		Chars->SetLabelText(_("Łamania: ") + wraps + L"43");
+		Chars->SetLabelText(_(L"Łamania: ") + wraps + L"43");
 		Chars->SetForegroundColour((td.badWraps) ? WINDOW_WARNING_ELEMENTS : WINDOW_TEXT);
 		int chtime = td.GetCPS(line);
-		Chtime->SetLabelText(wxString::Format(_("Znaki na sekundę: %i<=15"), chtime));
+		Chtime->SetLabelText(wxString::Format(_(L"Znaki na sekundę: %i<=15"), chtime));
 		Chtime->SetForegroundColour((chtime > 15) ? WINDOW_WARNING_ELEMENTS : WINDOW_TEXT);
 	}
 	BoxSizer5->Layout();
@@ -1193,24 +1193,24 @@ void EditBox::RefreshStyle(bool resetline)
 
 void EditBox::DoTooltips()
 {
-	Ban->SetToolTip(_("Położenie tekstu"));
-	TlMode->SetToolTip(_("Tryb tłumacza wyświetla i zapisuje zarówno tekst obcojęzyczny, jak i tekst tłumaczenia"));
-	Bcpall->SetToolTip(_("Kopiuje cały tekst obcojęzyczny do pola z tłumaczeniem"));
-	Bcpsel->SetToolTip(_("Kopiuje zaznaczony tekst obcojęzyczny do pola z tłumaczeniem"));
-	Comment->SetToolTip(_("Ustawia linijkę jako komentarz. Komentarze nie są wyświetlane"));
-	LayerEdit->SetToolTip(_("Warstwa linijki, wyższe warstwy są na wierzchu"));
-	StartEdit->SetToolTip(_("Czas początkowy linijki"));
-	EndEdit->SetToolTip(_("Czas końcowy linijki"));
+	Ban->SetToolTip(_(L"Położenie tekstu"));
+	TlMode->SetToolTip(_(L"Tryb tłumacza wyświetla i zapisuje zarówno tekst obcojęzyczny, jak i tekst tłumaczenia"));
+	Bcpall->SetToolTip(_(L"Kopiuje cały tekst obcojęzyczny do pola z tłumaczeniem"));
+	Bcpsel->SetToolTip(_(L"Kopiuje zaznaczony tekst obcojęzyczny do pola z tłumaczeniem"));
+	Comment->SetToolTip(_(L"Ustawia linijkę jako komentarz. Komentarze nie są wyświetlane"));
+	LayerEdit->SetToolTip(_(L"Warstwa linijki, wyższe warstwy są na wierzchu"));
+	StartEdit->SetToolTip(_(L"Czas początkowy linijki"));
+	EndEdit->SetToolTip(_(L"Czas końcowy linijki"));
 	DurEdit->SetToolTip(_("Czas trwania linijki"));
 	StyleChoice->SetToolTip(_("Styl linijki"));
-	StyleEdit->SetToolTip(_("Umożliwia szybką edycję stylu linijki"));
-	ActorEdit->SetToolTip(_("Oznaczenie aktora linijki. Nie wpływa na wygląd napisów"));
+	StyleEdit->SetToolTip(_(L"Umożliwia szybką edycję stylu linijki"));
+	ActorEdit->SetToolTip(_(L"Oznaczenie aktora linijki. Nie wpływa na wygląd napisów"));
 	MarginLEdit->SetToolTip(_("Margines lewy linijki"));
 	MarginREdit->SetToolTip(_("Margines prawy linijki"));
-	MarginVEdit->SetToolTip(_("Margines górny i dolny linijki"));
-	EffectEdit->SetToolTip(_("Efekt linijki. Służy do oznaczania linijek, na których zastosowane ma być karaoke bądź efekty VSFiltra"));
-	Chars->SetToolTip(_("Ilość znaków w każdej linijce.\nNie więcej niż 43 znaki na linijkę (maksymalnie 2 linijki)"));
-	Chtime->SetToolTip(_("Znaki na sekundę.\nNie powinny przekraczać 15 znaków na sekundę"));
+	MarginVEdit->SetToolTip(_(L"Margines górny i dolny linijki"));
+	EffectEdit->SetToolTip(_(L"Efekt linijki. Służy do oznaczania linijek, na których zastosowane ma być karaoke bądź efekty VSFiltra"));
+	Chars->SetToolTip(_(L"Ilość znaków w każdej linijce.\nNie więcej niż 43 znaki na linijkę (maksymalnie 2 linijki)"));
+	Chtime->SetToolTip(_(L"Znaki na sekundę.\nNie powinny przekraczać 15 znaków na sekundę"));
 }
 
 wxPoint EditBox::FindBrackets(const wxString & text, long from)
@@ -1741,7 +1741,7 @@ class NumTagButtons : public KaiDialog
 {
 public:
 	NumTagButtons(wxWindow *parent)
-		:KaiDialog(parent, -1, _("Zmień ilość przycisków"))
+		:KaiDialog(parent, -1, _(L"Zmień ilość przycisków"))
 	{
 		DialogSizer *sizer = new DialogSizer(wxVERTICAL);
 		wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -1999,7 +1999,7 @@ SeekUntranslated:
 			return;
 		}
 	}
-	if (CurrentUntranslated == 0){ KaiMessageBox(_("Nie znaleziono nieprzetłumaczonych")); return; }
+	if (CurrentUntranslated == 0){ KaiMessageBox(_(L"Nie znaleziono nieprzetłumaczonych")); return; }
 	CurrentUntranslated = 0;
 	goto SeekUntranslated;
 }
@@ -2040,9 +2040,9 @@ void EditBox::SetTagButtons()
 			}
 			menu->Append(EDITBOX_TAG_BUTTON1 + i, name);
 		}
-		menu->Append(ID_NUM_TAG_BUTTONS, _("Zmień ilość przycisków"));
+		menu->Append(ID_NUM_TAG_BUTTONS, _(L"Zmień ilość przycisków"));
 		if (!TagButtonManager){
-			TagButtonManager = new MenuButton(this, -1, _("Zarządzaj przyciskami tagów"), wxDefaultPosition, wxDefaultSize);
+			TagButtonManager = new MenuButton(this, -1, _(L"Zarządzaj przyciskami tagów"), wxDefaultPosition, wxDefaultSize);
 			BoxSizer4->Add(TagButtonManager, 0, wxALIGN_CENTER | wxALL, 2);
 			Connect(ID_NUM_TAG_BUTTONS, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::OnEditTag);
 		}

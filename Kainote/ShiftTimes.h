@@ -28,7 +28,7 @@
 #include "TimeCtrl.h"
 #include "KaiScrollbar.h"
 #include "KaiStaticBoxSizer.h"
-#include <wx/msw/winundef.h>
+#include "WinUndef.h"
 //#undef GetProfileString
 
 class ShiftTimes: public KaiPanel

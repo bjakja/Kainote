@@ -37,39 +37,59 @@
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <PropertyGroup Label="KainotePaths">
+    <!-- MSBuild only sets SolutionDir when the build was started from a .sln.
+         Building this project directly, as the AVX configuration does, leaves
+         it empty; every $(SolutionDir)... path below then silently becomes
+         relative and resolves against Kainote\ instead of the repository
+         root. -->
+    <SolutionDir Condition="'$(SolutionDir)' == '' or '$(SolutionDir)' == '*Undefined*'">$(MSBuildThisFileDirectory)..\</SolutionDir>
+  </PropertyGroup>
+  <PropertyGroup Label="KainoteWxWidgets">
+    <!-- wxWidgets is built by its own solution (Thirdparty\wxWidgets\build\msw\wx_vc17.sln);
+         these are the static-library output directories it writes to. -->
+    <KainoteWxLibDir Condition="'$(Platform)'=='x64'">..\Thirdparty\wxWidgets\lib\vc_x64_lib</KainoteWxLibDir>
+    <KainoteWxLibDir Condition="'$(Platform)'=='Win32'">..\Thirdparty\wxWidgets\lib\vc_lib</KainoteWxLibDir>
+    <!-- D3DXCreateFontW / D3DXCreateLine come from the June 2010 DirectX SDK,
+         which is not part of any Windows SDK.  Its installer sets DXSDK_DIR;
+         fall back to the default install location, and allow an override on
+         the command line (/p:KainoteDirectXSdkDir=...). -->
+    <KainoteDirectXSdkDir Condition="'$(KainoteDirectXSdkDir)'=='' and '$(DXSDK_DIR)'!=''">$(DXSDK_DIR)</KainoteDirectXSdkDir>
+    <KainoteDirectXSdkDir Condition="'$(KainoteDirectXSdkDir)'==''">$(ProgramFiles%28x86%29)\Microsoft DirectX SDK %28June 2010%29\</KainoteDirectXSdkDir>
+  </PropertyGroup>
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
@@ -112,9 +132,10 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
+      <AdditionalOptions>/execution-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\Thirdparty\wxWidgets\src\zlib;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;..\Thirdparty\uchardet\include;..\Thirdparty\uchardet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;WIN32;__WXMSW__;_WINDOWS;_DEBUG;__WXDEBUG__;HUNSPELL_STATIC;LUAJIT_ENABLE_LUA52COMPAT;LUAJIT_DISABLE_BUFFER;HAVE_DLL_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include\msvc;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;$(KainoteDirectXSdkDir)Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;..\Thirdparty\uchardet\include;..\Thirdparty\uchardet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;WIN32;__WXMSW__;_WINDOWS;_DEBUG;HUNSPELL_STATIC;LUAJIT_ENABLE_LUA52COMPAT;LUAJIT_DISABLE_BUFFER;HAVE_DLL_EXPORT;BOOST_ALL_NO_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
@@ -126,12 +147,12 @@
       <LanguageStandard_C>Default</LanguageStandard_C>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>_DEBUG;__WXMSW__;__WXDEBUG__;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;__WXMSW__;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;Shcore.lib;core.lib;base.lib;wxpng.lib;zlib.lib;wxregex.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;baseclasses.lib;Boost.lib;libhunspell.lib;libass.lib;dsound.lib;dxva2.lib;Dwmapi.lib;dxguid.lib;Uchardet.lib;GFFT.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>c:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(SolutionDir)bin\$(Platform)\$(Configuration)\;$(SolutionDir)$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;Shcore.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;baseclasses.lib;Boost.lib;libhunspell.lib;libass.lib;dsound.lib;dxva2.lib;Dwmapi.lib;dxguid.lib;Uchardet.lib;GFFT.lib;wxmsw33ud_core.lib;wxbase33ud.lib;wxregexud.lib;wxzlibd.lib;wxpngd.lib;wxjpegd.lib;wxtiffd.lib;wxwebpd.lib;wxexpatd.lib;wxlexillad.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(KainoteWxLibDir);$(KainoteDirectXSdkDir)Lib\x64;$(SolutionDir)bin\$(Platform)\$(Configuration)\;$(SolutionDir)$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>
@@ -142,17 +163,15 @@
       </EntryPointSymbol>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>xcopy /D /Y "$(SolutionDir)Thirdparty\ffmpeg\bin\*.dll" "$(OutDir)" &gt;nul
+xcopy /D /Y /E /I "$(SolutionDir)Locale" "$(OutDir)Locale" &gt;nul
+xcopy /D /Y /E /I "$(SolutionDir)Themes" "$(OutDir)Themes" &gt;nul
+xcopy /D /Y /E /I "$(SolutionDir)Automation" "$(OutDir)Automation" &gt;nul</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>echo | set /p dummyName=#define GIT_CUR_COMMIT &gt;  gitparams.h
-git rev-parse --verify HEAD &gt;&gt;  gitparams.h
+      <Command>where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po") do @msgfmt -o "$(SolutionDir)Locale\%%~nf.mo" "%%f") || echo msgfmt (gettext) not found - skipping Locale .mo compilation
 
-echo | set /p dummyName=#define GIT_BRANCH &gt;&gt;  gitparams.h
-git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h
-
-where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po") do @msgfmt -o "$(SolutionDir)Locale\%%~nf.mo" "%%f") || echo msgfmt (gettext) not found - skipping Locale .mo compilation</Command>
+pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitparams.ps1" || powershell -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitparams.ps1"</Command>
     </PreBuildEvent>
     <Manifest>
       <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
@@ -162,10 +181,11 @@ where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
+      <AdditionalOptions>/execution-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\Thirdparty\wxWidgets\src\zlib;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;..\Thirdparty\uchardet\include;..\Thirdparty\uchardet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;HUNSPELL_STATIC;HAVE_DLL_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include\msvc;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;$(KainoteDirectXSdkDir)Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;..\Thirdparty\uchardet\include;..\Thirdparty\uchardet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;__WXMSW__;_MBCS;HUNSPELL_STATIC;HAVE_DLL_EXPORT;BOOST_ALL_NO_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <WarningLevel>Level3</WarningLevel>
@@ -178,12 +198,12 @@ where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>__WXMSW__;__WXDEBUG__;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__WXMSW__;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;Shcore.lib;core.lib;base.lib;wxpng.lib;zlib.lib;wxregex.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;baseclasses.lib;Boost.lib;libhunspell.lib;libass.lib;dsound.lib;dxva2.lib;Dwmapi.lib;dxguid.lib;Uchardet.lib;GFFT.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Platform)\$(Configuration);C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;Shcore.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;baseclasses.lib;Boost.lib;libhunspell.lib;libass.lib;dsound.lib;dxva2.lib;Dwmapi.lib;dxguid.lib;Uchardet.lib;GFFT.lib;wxmsw33u_core.lib;wxbase33u.lib;wxregexu.lib;wxzlib.lib;wxpng.lib;wxjpeg.lib;wxtiff.lib;wxwebp.lib;wxexpat.lib;wxlexilla.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(KainoteWxLibDir);$(SolutionDir)bin\$(Platform)\$(Configuration);$(KainoteDirectXSdkDir)Lib\x64;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -197,18 +217,15 @@ where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po
       </EntryPointSymbol>
     </Link>
     <PostBuildEvent>
-      <Command>$(SolutionDir)AutoVersioning "$(ProjectDir)VersionKainote.h"
-$(SolutionDir)AutoSending/x64/Release/AutoSending "$(SolutionDir)x64\Release\Kainote x64.zip" "F:\Google Drive\Kainote x64.zip" "x64"
-</Command>
+      <Command>xcopy /D /Y "$(SolutionDir)Thirdparty\ffmpeg\bin\*.dll" "$(OutDir)" &gt;nul
+xcopy /D /Y /E /I "$(SolutionDir)Locale" "$(OutDir)Locale" &gt;nul
+xcopy /D /Y /E /I "$(SolutionDir)Themes" "$(OutDir)Themes" &gt;nul
+xcopy /D /Y /E /I "$(SolutionDir)Automation" "$(OutDir)Automation" &gt;nul</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>echo | set /p dummyName=#define GIT_CUR_COMMIT &gt;  gitparams.h
-git rev-parse --verify HEAD &gt;&gt;  gitparams.h
+      <Command>where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po") do @msgfmt -o "$(SolutionDir)Locale\%%~nf.mo" "%%f") || echo msgfmt (gettext) not found - skipping Locale .mo compilation
 
-echo | set /p dummyName=#define GIT_BRANCH &gt;&gt;  gitparams.h
-git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h
-
-where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po") do @msgfmt -o "$(SolutionDir)Locale\%%~nf.mo" "%%f") || echo msgfmt (gettext) not found - skipping Locale .mo compilation</Command>
+pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitparams.ps1" || powershell -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitparams.ps1"</Command>
     </PreBuildEvent>
     <Manifest>
       <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
@@ -216,10 +233,11 @@ where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">
     <ClCompile>
+      <AdditionalOptions>/execution-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\Thirdparty\wxWidgets\src\zlib;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;..\Thirdparty\uchardet\include;..\Thirdparty\uchardet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;HUNSPELL_STATIC;LUAJIT_ENABLE_LUA52COMPAT;LUAJIT_DISABLE_BUFFER;HAVE_DLL_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include\msvc;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;$(KainoteDirectXSdkDir)Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;..\Thirdparty\uchardet\include;..\Thirdparty\uchardet\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;__WXMSW__;_MBCS;HUNSPELL_STATIC;LUAJIT_ENABLE_LUA52COMPAT;LUAJIT_DISABLE_BUFFER;HAVE_DLL_EXPORT;BOOST_ALL_NO_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <WarningLevel>Level3</WarningLevel>
@@ -232,12 +250,12 @@ where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <ResourceCompile>
-      <PreprocessorDefinitions>__WXMSW__;__WXDEBUG__;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>__WXMSW__;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;Shcore.lib;core.lib;base.lib;wxpng.lib;zlib.lib;wxregex.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;baseclasses.lib;Boost.lib;libhunspell.lib;libass.lib;dsound.lib;dxva2.lib;Dwmapi.lib;dxguid.lib;Uchardet.lib;GFFT.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Platform)\$(Configuration);C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(SolutionDir)\$(Platform)\Release;$(SolutionDir)bin\$(Platform)\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;Shcore.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;baseclasses.lib;Boost.lib;libhunspell.lib;libass.lib;dsound.lib;dxva2.lib;Dwmapi.lib;dxguid.lib;Uchardet.lib;GFFT.lib;wxmsw33u_core.lib;wxbase33u.lib;wxregexu.lib;wxzlib.lib;wxpng.lib;wxjpeg.lib;wxtiff.lib;wxwebp.lib;wxexpat.lib;wxlexilla.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(KainoteWxLibDir);$(SolutionDir)bin\$(Platform)\$(Configuration);$(KainoteDirectXSdkDir)Lib\x64;$(SolutionDir)\$(Platform)\Release;$(SolutionDir)bin\$(Platform)\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -251,17 +269,15 @@ where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po
       <SubSystem>Windows</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>xcopy /D /Y "$(SolutionDir)Thirdparty\ffmpeg\bin\*.dll" "$(OutDir)" &gt;nul
+xcopy /D /Y /E /I "$(SolutionDir)Locale" "$(OutDir)Locale" &gt;nul
+xcopy /D /Y /E /I "$(SolutionDir)Themes" "$(OutDir)Themes" &gt;nul
+xcopy /D /Y /E /I "$(SolutionDir)Automation" "$(OutDir)Automation" &gt;nul</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>echo | set /p dummyName=#define GIT_CUR_COMMIT &gt;  gitparams.h
-git rev-parse --verify HEAD &gt;&gt;  gitparams.h
+      <Command>where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po") do @msgfmt -o "$(SolutionDir)Locale\%%~nf.mo" "%%f") || echo msgfmt (gettext) not found - skipping Locale .mo compilation
 
-echo | set /p dummyName=#define GIT_BRANCH &gt;&gt;  gitparams.h
-git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h
-
-where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po") do @msgfmt -o "$(SolutionDir)Locale\%%~nf.mo" "%%f") || echo msgfmt (gettext) not found - skipping Locale .mo compilation</Command>
+pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitparams.ps1" || powershell -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitparams.ps1"</Command>
     </PreBuildEvent>
     <Manifest>
       <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
@@ -272,21 +288,18 @@ where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
+      <AdditionalOptions>/execution-charset:utf-8 %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp20</LanguageStandard>
-    </ClCompile>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <ClCompile>
       <LanguageStandard_C>Default</LanguageStandard_C>
-      <AdditionalIncludeDirectories>..\Thirdparty\zlib;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include\msvc;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;$(KainoteDirectXSdkDir)Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>NoExtensions</EnableEnhancedInstructionSet>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <PreprocessorDefinitions>_UNICODE;UNICODE;_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;HUNSPELL_STATIC;U_COMMON_IMPLEMENTATION;U_I18N_IMPLEMENTATION;U_STATIC_IMPLEMENTATION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;__WXMSW__;_MBCS;HUNSPELL_STATIC;U_COMMON_IMPLEMENTATION;U_I18N_IMPLEMENTATION;U_STATIC_IMPLEMENTATION;BOOST_ALL_NO_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Platform)\$(Configuration);C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;core.lib;base.lib;wxpng.lib;zlib.lib;wxregex.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;strmbase.lib;Boost.lib;libhunspell.lib;libass.lib;dsound.lib;dxva2.lib;Dwmapi.lib;dxguid.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(KainoteWxLibDir);$(SolutionDir)bin\$(Platform)\$(Configuration);$(KainoteDirectXSdkDir)Lib\x86;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;strmBoost.lib;libhunspell.lib;libass.lib;dsound.lib;dxva2.lib;Dwmapi.lib;dxguid.lib;wxmsw33u_core.lib;wxbase33u.lib;wxregexu.lib;wxzlib.lib;wxpng.lib;wxjpeg.lib;wxtiff.lib;wxwebp.lib;wxexpat.lib;wxlexilla.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>msvcrtd.lib;libboost_locale-vc140-mt-1_61.lib;libboost_filesystem-vc140-mt-1_61.lib;libboost_system-vc140-mt-1_61.lib;libboost_regex-vc140-mt-1_61.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -621,9 +634,6 @@ where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po
     <None Include="kai.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Thirdparty\Build\Base\base.vcxproj">
-      <Project>{3fcc50c2-81e9-5db2-b8d8-2129427568b1}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\Thirdparty\Build\Boost\Boost.vcxproj">
       <Project>{c91e1d87-614c-47e8-9587-393568d41738}</Project>
     </ProjectReference>
@@ -645,7 +655,7 @@ where msgfmt &gt;nul 2&gt;nul &amp;&amp; (for %%f in ("$(SolutionDir)Locale\*.po
     <ProjectReference Include="..\Thirdparty\Build\LuaJit\LuaJit.vcxproj">
       <Project>{ba804678-e98b-4026-8d33-a8c5263c669e}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\Hunspell\msvc\libhunspell.vcxproj">
+    <ProjectReference Include="..\Thirdparty\Build\Hunspell\libhunspell.vcxproj">
       <Project>{53609bb3-d874-465c-af7b-df626db0d89b}</Project>
     </ProjectReference>
   </ItemGroup>

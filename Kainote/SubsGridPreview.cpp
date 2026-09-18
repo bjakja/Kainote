@@ -24,7 +24,7 @@
 #include "EditBox.h"
 #include "Notebook.h"
 #include "RendererVideo.h"
-#include <wx/msw/winundef.h>
+#include "WinUndef.h"
 #include <wx/regex.h>
 #include <wx/dc.h>
 #include <wx/dcmemory.h>

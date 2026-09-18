@@ -543,7 +543,7 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color, i
 		wxDefaultPosition, wxSize(32, 32), wxSTATIC_BORDER);
 	screen_dropper = new ColorPickerScreenDropper(this, SELECTOR_DROPPER_PICK, 7, 7, 8, false);
 
-	wxString types[] = { _("Kolor podstawowy"), _("Kolor zastępczy"), _("Kolor obwódki"), _("Kolor cienia") };
+	wxString types[] = { _("Kolor podstawowy"), _(L"Kolor zastępczy"), _(L"Kolor obwódki"), _("Kolor cienia") };
 	colorType = new KaiChoice(this, 9766, wxDefaultPosition, wxSize(-1, -1), 4, types);
 	if (colorNum == -1)
 		colorType->Enable(false);
@@ -559,9 +559,9 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color, i
 		ProcessEvent(ctcevt);
 	}, 9766);
 
-	KaiCheckBox *SwitchClicks = new KaiCheckBox(this, 9456, _("Zamień ze sobą skróty próbnika\ni okna wyboru kolorów"));
+	KaiCheckBox *SwitchClicks = new KaiCheckBox(this, 9456, _(L"Zamień ze sobą skróty próbnika\ni okna wyboru kolorów"));
 	SwitchClicks->SetValue(Options.GetBool(COLORPICKER_SWITCH_CLICKS));
-	SwitchClicks->SetToolTip(_("Zahaczenie tej opcji uruchamia próbnik po kliknięciu lewym przyciskiem,\na okno wyboru koloru po kliknięciu prawym przyciskiem."));
+	SwitchClicks->SetToolTip(_(L"Zahaczenie tej opcji uruchamia próbnik po kliknięciu lewym przyciskiem,\na okno wyboru koloru po kliknięciu prawym przyciskiem."));
 	if (colorNum == -1)
 		SwitchClicks->Enable(false);
 	Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, [=](wxCommandEvent &evt){
@@ -604,21 +604,21 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color, i
 	rgb_box->Add(ass_input_sizer, 0, wxALL | /*wxALIGN_CENTER_VERTICAL | */wxEXPAND, 3);
 
 	wxFlexGridSizer *hsl_sizer = new wxFlexGridSizer(2, 5, 5);
-	hsl_sizer->Add(new KaiStaticText(this, -1, _("Odcień:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL);
+	hsl_sizer->Add(new KaiStaticText(this, -1, _(L"Odcień:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL);
 	hsl_sizer->Add(hsl_input[0], 0);
 	hsl_sizer->Add(new KaiStaticText(this, -1, _("Nasycenie:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL);
 	hsl_sizer->Add(hsl_input[1], 0);
-	hsl_sizer->Add(new KaiStaticText(this, -1, _("Jaskrawość:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL);
+	hsl_sizer->Add(new KaiStaticText(this, -1, _(L"Jaskrawość:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL);
 	hsl_sizer->Add(hsl_input[2], 0);
 	hsl_sizer->AddGrowableCol(0, 1);
 	hsl_box->Add(hsl_sizer, 0, wxALL | /*wxALIGN_CENTER_VERTICAL |*/ wxEXPAND, 3);
 
 	wxFlexGridSizer *hsv_sizer = new wxFlexGridSizer(2, 5, 5);
-	hsv_sizer->Add(new KaiStaticText(this, -1, _("Odcień:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL);
+	hsv_sizer->Add(new KaiStaticText(this, -1, _(L"Odcień:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL);
 	hsv_sizer->Add(hsv_input[0], 0);
 	hsv_sizer->Add(new KaiStaticText(this, -1, _("Nasycenie:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL);
 	hsv_sizer->Add(hsv_input[1], 0);
-	hsv_sizer->Add(new KaiStaticText(this, -1, _("Wartość:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL);
+	hsv_sizer->Add(new KaiStaticText(this, -1, _(L"Wartość:"), wxDefaultPosition, colorinput_labelsize), 1, wxALIGN_CENTER_VERTICAL);
 	hsv_sizer->Add(hsv_input[2], 0);
 	hsv_sizer->AddGrowableCol(0, 1);
 	hsv_box->Add(hsv_sizer, 0, wxALL | /*wxALIGN_CENTER_VERTICAL |*/ wxEXPAND, 3);
@@ -1371,11 +1371,11 @@ void ButtonColorPicker::OnClick(wxCommandEvent &event)
 //}
 
 SimpleColorPickerDialog::SimpleColorPickerDialog(wxWindow *parent, const AssColor &actualColor, int colorNum)
-	: KaiDialog(parent, -1, _("Próbnik koloru"))
+	: KaiDialog(parent, -1, _(L"Próbnik koloru"))
 	, color(actualColor)
 {
 	DialogSizer *ds = new DialogSizer(wxVERTICAL);
-	wxString types[] = { _("Kolor podstawowy"), _("Kolor zastępczy"), _("Kolor obwódki"), _("Kolor cienia") };
+	wxString types[] = { _("Kolor podstawowy"), _(L"Kolor zastępczy"), _(L"Kolor obwódki"), _("Kolor cienia") };
 	colorType = new KaiChoice(this, 9764, wxDefaultPosition, wxDefaultSize, 4, types);
 	if (colorNum == -1)
 		colorType->Enable(false);
@@ -1403,7 +1403,7 @@ SimpleColorPickerDialog::SimpleColorPickerDialog(wxWindow *parent, const AssColo
 		ColorEvent colorevt(COLOR_CHANGED, GetId(), color, colorType->GetSelection() + 1);
 		AddPendingEvent(colorevt);
 	}, 9765);
-	moveWindowToMousePosition = new KaiCheckBox(this, -1, _("Przenoś okno\nw miejsce wyboru koloru"));
+	moveWindowToMousePosition = new KaiCheckBox(this, -1, _(L"Przenoś okno\nw miejsce wyboru koloru"));
 	moveWindowToMousePosition->SetValue(true);
 	wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
 	MappedButton *OK = new MappedButton(this, wxID_OK, L"OK");

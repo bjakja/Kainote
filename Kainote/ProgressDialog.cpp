@@ -39,7 +39,7 @@ ProgresDialog::ProgresDialog(wxWindow *_parent, const wxString &title, const wxP
 	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 	text = new KaiStaticText(this, -1, title);
 	gauge = new KaiGauge(this, -1, wxDefaultPosition, wxSize(300, 20), wxGA_HORIZONTAL);
-	text1 = new KaiStaticText(this, -1, _("Upłynęło 00:00:00.00 sekund"));
+	text1 = new KaiStaticText(this, -1, _(L"Upłynęło 00:00:00.00 sekund"));
 	cancel = new MappedButton(this, 23333, _("Anuluj"));
 	sizer->Add(text, 0, wxALIGN_CENTER | wxALL, 3);//wxALIGN_CENTER|
 	sizer->Add(gauge, 0, wxALIGN_CENTER | wxALL, 3);
@@ -106,7 +106,7 @@ void ProgresDialog::Progress(int num)
 		}
 		SubsTime progressTime;
 		progressTime.NewTime(newtime);
-		text1->SetLabelText(wxString::Format(_("Upłynęło %s sekund"), progressTime.raw()));
+		text1->SetLabelText(wxString::Format(_(L"Upłynęło %s sekund"), progressTime.raw()));
 	}
 	//bool main =wxThread::IsMain();
 	//if(!main){

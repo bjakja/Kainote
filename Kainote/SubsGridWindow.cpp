@@ -26,7 +26,7 @@
 #include "GraphicsD2D.h"
 #include "BidiConversion.h"
 #include <wx/regex.h>
-#include <wx/msw/winundef.h>
+#include "WinUndef.h"
 #include <wx/dc.h>
 
 
@@ -271,9 +271,9 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 					strings.push_back(_("Efekt"));
 				}
 				if (subsFormat != TMP){ strings.push_back(_("ZNS")); }
-				strings.push_back(_("Łamania"));
+				strings.push_back(_(L"Łamania"));
 				strings.push_back(showOriginal ? _("Tekst oryginalny") : _("Tekst"));
-				if (showOriginal){ strings.push_back(_("Tekst tłumaczenia")); }
+				if (showOriginal){ strings.push_back(_(L"Tekst tłumaczenia")); }
 				kol = header;
 			}
 			else{
@@ -669,9 +669,9 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 			if (subsFormat != TMP) {
 				strings.push_back(_("ZNS"));
 			}
-			strings.push_back(_("Łamania"));
+			strings.push_back(_(L"Łamania"));
 			strings.push_back(showOriginal ? _("Tekst oryginalny") : _("Tekst"));
-			if (showOriginal){ strings.push_back(_("Tekst tłumaczenia")); }
+			if (showOriginal){ strings.push_back(_(L"Tekst tłumaczenia")); }
 			col = header;
 		}
 		else{
@@ -1140,7 +1140,7 @@ void SubsGridWindow::AdjustWidthsD2D(GraphicsContext *gc, int cell)
 	}
 
 	if (WRAPS & cell) {
-		gc->GetTextExtent(_("Łamania"), &fw, &fh);
+		gc->GetTextExtent(_(L"Łamania"), &fw, &fh);
 		GridWidth[(subsFormat < SRT) ? 11 : (subsFormat != TMP) ? 4 : 2] = fw + 5;
 	}
 
@@ -1306,7 +1306,7 @@ void SubsGridWindow::AdjustWidths(int cell)
 	}
 
 	if (WRAPS & cell) {
-		dc.GetTextExtent(_("Łamania"), &fw, &fh);
+		dc.GetTextExtent(_(L"Łamania"), &fw, &fh);
 		GridWidth[(subsFormat < SRT) ? 11 : (subsFormat != TMP) ? 4 : 2] = fw + 5;
 	}
 
@@ -2047,7 +2047,7 @@ bool SubsGridWindow::ShowPreviewWindow(SubsGridWindow *previewGrid,
 	int previewHeight = (((h / 3) / realGridHeight) * realGridHeight) + realGridHeight + 4;
 	if (previewHeight < 100)
 		previewHeight = ((100 / realGridHeight) * realGridHeight) + realGridHeight + 4;
-	if (h < 150){ KaiMessageBox(_("Nie można wyświetlić podglądu, ponieważ wielkość okna napisów jest zbyt mała")); return false; }
+	if (h < 150){ KaiMessageBox(_(L"Nie można wyświetlić podglądu, ponieważ wielkość okna napisów jest zbyt mała")); return false; }
 	int previewPosition = (diffPosition + 2) * realGridHeight;
 	if (previewPosition + previewHeight > h || previewPosition < 20){
 		int newLine = (((h - previewHeight) / 2) / realGridHeight);

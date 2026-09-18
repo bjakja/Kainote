@@ -41,6 +41,7 @@
 #include <wx/filefn.h>
 #include <wx/log.h>
 #include <wx/weakref.h>
+#include <wx/translation.h>
 #ifndef _WIN32
 #include <clocale>
 #include <cstdlib>
@@ -58,6 +59,33 @@
 #endif
 
 namespace {
+// Restores the lookup wx 3.3 removed: <prefix>\<domain>.mo.
+class FlatLocaleLoader : public wxFileTranslationsLoader
+{
+public:
+	explicit FlatLocaleLoader(const wxString &path) : localePath(path) {}
+	wxMsgCatalog *LoadCatalog(const wxString &domain, const wxString &lang) override
+	{
+		const wxString file = localePath + domain + L".mo";
+		if (wxFileExists(file)){
+			if (wxMsgCatalog *catalog = wxMsgCatalog::CreateFromFile(file, domain))
+				return catalog;
+		}
+		return wxFileTranslationsLoader::LoadCatalog(domain, lang);
+	}
+	// AddCatalog() asks this first and gives up if the language is not listed,
+	// so the flat catalogues have to be reported here as well.
+	wxArrayString GetAvailableTranslations(const wxString &domain) const override
+	{
+		wxArrayString languages = wxFileTranslationsLoader::GetAvailableTranslations(domain);
+		if (languages.Index(domain) == wxNOT_FOUND && wxFileExists(localePath + domain + L".mo"))
+			languages.Add(domain);
+		return languages;
+	}
+private:
+	const wxString localePath;
+};
+
 #ifndef _WIN32
 wxString JoinOpenPaths(const wxArrayString& openPaths)
 {
@@ -229,7 +257,7 @@ void kainoteApp::OnOutofMemory()
 
 	if (tab->grid->maxx() > 3){
 		tab->grid->RemoveFirst(2);
-		KaiLog(_("Zabrakło pamięci RAM, usunięto część historii"));
+		KaiLog(_(L"Zabrakło pamięci RAM, usunięto część historii"));
 		return;
 	}
 	else if (Notebook::GetTabs()->Size() > 1){
@@ -238,7 +266,7 @@ void kainoteApp::OnOutofMemory()
 			if (i != Notebook::GetTabs()->GetSelection()){
 				if (Notebook::GetTabs()->Page(i)->grid->maxx()>3){
 					Notebook::GetTabs()->Page(i)->grid->RemoveFirst(2);
-					KaiLog(_("Zabrakło pamięci RAM, usunięto część historii"));
+					KaiLog(_(L"Zabrakło pamięci RAM, usunięto część historii"));
 					return;
 				}
 			}
@@ -328,7 +356,7 @@ bool kainoteApp::OnInit()
 		//wxHandleFatalExceptions(true);
 		//0 - failed, 1 - succeeded, 2 - no config
 		int isGood = Options.LoadOptions();
-		if (!isGood){ KaiMessageBox(_("Nie udało się wczytać opcji.\nDziałanie programu zostanie zakończone."), _("Uwaga")); return false; }
+		if (!isGood){ KaiMessageBox(_(L"Nie udało się wczytać opcji.\nDziałanie programu zostanie zakończone."), _("Uwaga")); return false; }
 		//0x0415 	Polish (pl) 	0x15 	LANG_POLISH 	Poland (PL) 	0x01 	SUBLANG_POLISH_POLAND
 		if (isGood == 2 && GetSystemDefaultUILanguage() != 0x415){
 			//what a lame language system, I need to change it.
@@ -374,6 +402,10 @@ bool kainoteApp::OnInit()
 				}
 #endif
 				locale->AddCatalogLookupPathPrefix(localePath);
+				// wx 3.3 dropped the bare prefix from its search path, which is
+				// where Kainote's flat Locale\<lang>.mo files are.
+				if (wxTranslations *translations = wxTranslations::Get())
+					translations->SetLoader(new FlatLocaleLoader(localePath));
 				if (!locale->AddCatalog(lang, wxLANGUAGE_POLISH, L"UTF-8") &&
 					!locale->AddCatalog(li->CanonicalName, wxLANGUAGE_POLISH, L"UTF-8")){
 #ifdef _WIN32
@@ -393,7 +425,7 @@ bool kainoteApp::OnInit()
 		setlocale(LC_NUMERIC, "C");
 
 		if (!Hkeys.LoadHkeys()){
-			KaiMessageBox(_("Nie udało się wczytać skrótów.\nDziałanie programu zostanie zakończone."), _("Uwaga"));
+			KaiMessageBox(_(L"Nie udało się wczytać skrótów.\nDziałanie programu zostanie zakończone."), _("Uwaga"));
 			wxDELETE(locale); return false;
 		}
 
@@ -521,13 +553,13 @@ bool kainoteApp::OnInit()
 		int session = Options.GetInt(LAST_SESSION_CONFIG);
 		bool loadSession = (session == 2 || Options.HasCrashed()) && !hasPaths;
 		if (session == 1 && !hasPaths){
-			if (KaiMessageBox(_("Wczytać poprzednią sesję?"), _("Pytanie"), wxYES_NO, Frame) == wxYES){
+			if (KaiMessageBox(_(L"Wczytać poprzednią sesję?"), _("Pytanie"), wxYES_NO, Frame) == wxYES){
 				loadSession = true;
 			}
 		}
 		//Check if program was bad close or crashed
 		if (!hasPaths && !loadSession && Notebook::CheckLastSession() == 2) {
-			if (KaiMessageBox(_("Program się skraszował albo został zamknięty w niewłaściwy sposób,\nwczytać poprzednią sesję wraz z najnowszymi napisami z autozapisu?"), _("Pytanie"), wxYES_NO, Frame) == wxYES) {
+			if (KaiMessageBox(_(L"Program się skraszował albo został zamknięty w niewłaściwy sposób,\nwczytać poprzednią sesję wraz z najnowszymi napisami z autozapisu?"), _("Pytanie"), wxYES_NO, Frame) == wxYES) {
 				loadCrashSession = loadSession = true;
 			}
 		}
@@ -752,7 +784,7 @@ void kainoteApp::OnOpen(wxTimerEvent &evt)
 bool kainoteApp::IsBusy()
 {
 	wxWindowList children = Frame->GetChildren();
-	for (wxWindowList::Node *node = children.GetFirst(); node; node = node->GetNext()) {
+	for (wxWindowList::compatibility_iterator node = children.GetFirst(); node; node = node->GetNext()) {
 		wxWindow *current = (wxWindow *)node->GetData();
 		if ((current->IsKindOf(CLASSINFO(KaiDialog)) && ((KaiDialog*)current)->IsModal()) ||
 			(current->IsKindOf(CLASSINFO(wxDialog)) && ((wxDialog*)current)->IsModal()) || current->GetId() == 31555)

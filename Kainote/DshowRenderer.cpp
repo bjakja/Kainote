@@ -14,6 +14,11 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
+// winsock2.h first: streams.h and d3d9.h get to windows.h (and winsock.h) first.
+#ifdef _WIN32
+#include <winsock2.h>
+#endif
+
 #include "DshowRenderer.h"
 #ifdef _WIN32
 #include "RendererVideo.h"
@@ -21,6 +26,7 @@
 #include "Hotkeys.h"
 #include <wmsdkidl.h>
 #include <d3d9.h>
+#include "UndoD3DXMacros.h"
 #include <dxva2api.h>
 #include <Dvdmedia.h>
 

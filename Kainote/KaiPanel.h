@@ -27,8 +27,8 @@ public:
 		container = navigation;
 	};
 	void OnNavigation(wxNavigationKeyEvent& evt);
-	void FindFocusable(bool next, wxWindowListNode** node, wxWindow **window = nullptr);
-	wxWindow* FindCheckedRadiobutton(bool next, wxWindowListNode** listWithRadioButton, wxWindow* focused);
+	void FindFocusable(bool next, wxWindowList::compatibility_iterator * node, wxWindow **window = nullptr);
+	wxWindow* FindCheckedRadiobutton(bool next, wxWindowList::compatibility_iterator * listWithRadioButton, wxWindow* focused);
 	void OnSetFocus(wxFocusEvent& evt);
 	wxWindow * container;
 };

@@ -16,13 +16,17 @@
 #pragma  once
 #include "SubtitlesProviderManager.h"
 #include "CsriMod.h"
-#include "wx/msw/winundef.h"
+#include "WinUndef.h"
 #include <wx/window.h>
 #include <wx/arrstr.h>
 #include <atomic>
 
 extern "C" {
+#ifdef __WXMSW__
+#include <libass/ass.h> // the submodule keeps its headers under libass/
+#else
 #include <ass/ass.h>
+#endif
 }
 
 

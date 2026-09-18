@@ -82,7 +82,7 @@ void KaiToolbar::InitToolbar()
 	for (size_t i = 0; i < IDS.size(); i++)
 	{
 		MenuItem *item = mb->FindItem(IDS[i]);
-		if (!item){ KaiLog(wxString::Format(_("Nie można znaleźć elementu o id %i"), IDS[i])); continue; }
+		if (!item){ KaiLog(wxString::Format(_(L"Nie można znaleźć elementu o id %i"), IDS[i])); continue; }
 		wxString desc = item->GetLabelText();
 		bool isToogleButton = item->type == ITEM_CHECK;
 		AddItem(IDS[i], desc, item->icon, item->IsEnabled(), (isToogleButton) ? 2 :
@@ -171,7 +171,7 @@ void KaiToolbar::OnMouseEvent(wxMouseEvent &event)
 	return;
 	}
 	if (elem == tools.size() - 1){
-		wxString tip = _("Wybierz ikony paska narzędzi");
+		wxString tip = _(L"Wybierz ikony paska narzędzi");
 #ifdef _WIN32
 		SetToolTip(tip);
 #endif
@@ -474,12 +474,12 @@ ToolbarMenu::ToolbarMenu(KaiToolbar*_parent, const wxPoint &pos, const wxSize &s
 	SetFont(parent->GetFont());
 	scroll = new KaiScrollbar(this, -1, wxDefaultPosition, wxDefaultSize, wxVERTICAL);
 	Bind(wxEVT_IDLE, &ToolbarMenu::OnIdle, this);
-	wxString ans[] = { _("Po lewej"), _("U góry"), _("Po prawej"), _("Na dole") };
+	wxString ans[] = { _("Po lewej"), _(L"U góry"), _("Po prawej"), _("Na dole") };
 	alignments = new KaiChoice(this, 32213, wxPoint(4, 4), wxSize(size.x - 8, fh), 4, ans);
 	if (parent->alignment > 3 || parent->alignment < 0)
 		parent->alignment = 0;
 	alignments->SetSelection(parent->alignment);
-	alignments->SetToolTip(_("Pozycja paska narzędzi"));
+	alignments->SetToolTip(_(L"Pozycja paska narzędzi"));
 	Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=, this](wxCommandEvent &evt){
 		parent->alignment = alignments->GetSelection();
 		Options.SetInt(TOOLBAR_ALIGNMENT, parent->alignment);
@@ -505,9 +505,7 @@ void ToolbarMenu::OnMouseEvent(wxMouseEvent &evt)
 	if ((x < 0 || y < 0 || x > w || y > h)){
 		if (leftdown){
 			Unbind(wxEVT_IDLE, &ToolbarMenu::OnIdle, this);
-			if (HasCapture()){
-				ReleaseMouse();
-			}
+			DropMouse();
 			Destroy();
 		}
 		return;
@@ -649,34 +647,41 @@ void ToolbarMenu::OnIdle(wxIdleEvent& event)
 	event.Skip();
 
 	if (!parent->IsShownOnScreen()){
+		DropMouse();
 		Destroy();
+		return;
 	}
 
 	if (IsShown())
 	{
-		wxPoint pos = ScreenToClient(wxGetMousePosition());
-		wxRect rect(GetSize());
-
-		if (rect.Contains(pos))
-		{
-			if (HasCapture())
-			{
-				ReleaseMouse();
-			}
+		// Client coordinates need the client size; see PopupList::OnIdle.
+		if (wxRect(GetClientSize()).Contains(ScreenToClient(wxGetMousePosition()))){
+			DropMouse();
 		}
-		else
-		{
-			if (!HasCapture() && !scroll->HasCapture())
-			{
-				CaptureMouse();
-			}
+		else{
+			GrabMouse();
 		}
 	}
 }
 
-void ToolbarMenu::OnLostCapture(wxMouseCaptureLostEvent &evt) 
-{ 
-	if (HasCapture()) { ReleaseMouse(); } 
+// See PopupList::GrabMouse: HasCapture() reads Windows, not wx's capture stack.
+void ToolbarMenu::GrabMouse()
+{
+	if (hasCapture || (scroll && scroll->HasCapture())){ return; }
+	hasCapture = true;
+	CaptureMouse();
+}
+
+void ToolbarMenu::DropMouse()
+{
+	if (!hasCapture){ return; }
+	hasCapture = false;
+	ReleaseMouse();
+}
+
+void ToolbarMenu::OnLostCapture(wxMouseCaptureLostEvent &evt)
+{
+	hasCapture = false;
 }
 
 void ToolbarMenu::OnScroll(wxScrollEvent& event)

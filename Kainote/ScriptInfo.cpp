@@ -21,7 +21,7 @@
 #include <wx/sizer.h>
 
 ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
-	:KaiDialog(parent, -1, _("Właściwości napisów ASS"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE)
+	:KaiDialog(parent, -1, _(L"Właściwości napisów ASS"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE)
 {
 	SetForegroundColour(Options.GetColour(WINDOW_TEXT));
 	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
@@ -46,11 +46,11 @@ ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
 	timing = new KaiTextCtrl(this, -1, emptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
 	update = new KaiTextCtrl(this, -1, emptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
 
-	bxsizer->Add(new KaiStaticText(this, -1, _("Tytuł")), 1, wxEXPAND );
+	bxsizer->Add(new KaiStaticText(this, -1, _(L"Tytuł")), 1, wxEXPAND );
 	bxsizer->Add(title, 2, wxEXPAND);
 	bxsizer1->Add(new KaiStaticText(this, -1, _("Autor")), 1, wxEXPAND);
 	bxsizer1->Add(script, 2, wxEXPAND);
-	bxsizer2->Add(new KaiStaticText(this, -1, _("Tłumaczenie")), 1, wxEXPAND);
+	bxsizer2->Add(new KaiStaticText(this, -1, _(L"Tłumaczenie")), 1, wxEXPAND);
 	bxsizer2->Add(translation, 2, wxEXPAND);
 	bxsizer3->Add(new KaiStaticText(this, -1, _("Korekta")), 1, wxEXPAND);
 	bxsizer3->Add(editing, 2, wxEXPAND);
@@ -66,7 +66,7 @@ ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
 	StaticBox1->Add(bxsizer4, 0, wxEXPAND | wxALL, 5);
 	StaticBox1->Add(bxsizer5, 0, wxEXPAND | wxALL, 5);
 
-	KaiStaticBoxSizer *StaticBox2 = new KaiStaticBoxSizer(wxVERTICAL, this, _("Rozdzielczość"));
+	KaiStaticBoxSizer *StaticBox2 = new KaiStaticBoxSizer(wxVERTICAL, this, _(L"Rozdzielczość"));
 	wxBoxSizer *boxsizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer* boxsizer3 = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer* boxsizer4 = new wxBoxSizer(wxVERTICAL);
@@ -102,7 +102,7 @@ ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
 	boxsizer->Add(height, 1, wxALL, 5);
 	boxsizer->Add(resolutionFromVideo, 2, wxALL, 5);
 
-	boxsizer3->Add(new KaiStaticText(this, -1, _("Układ"), wxDefaultPosition, wxSize(-1, -1)), 1, wxALL | wxALIGN_CENTER_VERTICAL, 5);
+	boxsizer3->Add(new KaiStaticText(this, -1, _(L"Układ"), wxDefaultPosition, wxSize(-1, -1)), 1, wxALL | wxALIGN_CENTER_VERTICAL, 5);
 	boxsizer3->Add(layoutWidth, 1, wxALL, 5);
 	boxsizer3->Add(new KaiStaticText(this, -1, L"  X  ", wxDefaultPosition, wxSize(-1, -1)), 0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
 	boxsizer3->Add(layoutHeight, 1, wxALL, 5);
@@ -135,20 +135,20 @@ ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
 	//wxGridSizer *GridSizer1 = new wxGridSizer(2, 5, 5);
 
 	wrapstyle = new KaiChoice(this, -1/*, wxDefaultPosition, wxSize(160,-1)*/);
-	wrapstyle->SetSelection(wrapstyle->Append(_("0: Autopodział, górna linijka jest szersza")));
-	wrapstyle->Append(_("1: Podział co koniec linijki, dzieli tylko \\N"));
-	wrapstyle->Append(_("2: Brak podziału, dzieli \\n i \\N"));
-	wrapstyle->Append(_("3: Autopodział, dolna linijka jest szersza"));
+	wrapstyle->SetSelection(wrapstyle->Append(_(L"0: Autopodział, górna linijka jest szersza")));
+	wrapstyle->Append(_(L"1: Podział co koniec linijki, dzieli tylko \\N"));
+	wrapstyle->Append(_(L"2: Brak podziału, dzieli \\n i \\N"));
+	wrapstyle->Append(_(L"3: Autopodział, dolna linijka jest szersza"));
 	collision = new KaiChoice(this, -1);
 	collision->SetSelection(collision->Append(_("Normalne")));
-	collision->Append(_("Odwrócone"));
+	collision->Append(_(L"Odwrócone"));
 
 	boxsizer6->Add(new KaiStaticText(this, -1, _("Styl dzielenia linijek")), 1, wxEXPAND | wxLEFT, 5);
 	boxsizer6->Add(wrapstyle, 2, wxEXPAND | wxALL, 5);
 	boxsizer7->Add(new KaiStaticText(this, -1, _("Kolidowanie linijek")), 1, wxEXPAND | wxLEFT, 5);
 	boxsizer7->Add(collision, 2, wxEXPAND | wxALL, 5);
 
-	scaleBorderAndShadow = new KaiCheckBox(this, -1, _("Skaluj obwódkę i cień"));
+	scaleBorderAndShadow = new KaiCheckBox(this, -1, _(L"Skaluj obwódkę i cień"));
 	scaleBorderAndShadow->SetValue(true);
 
 	StaticBox3->Add(boxsizer6, 1, wxEXPAND);
@@ -212,9 +212,9 @@ void ScriptInfo::OnResolutionLink(wxCommandEvent& event)
 
 void ScriptInfo::DoTooltips()
 {
-	height->SetToolTip(_("Wysokość wideo"));
-	width->SetToolTip(_("Szerokość wideo"));
-	wrapstyle->SetToolTip(_("Sposób dzielenia napisów"));
+	height->SetToolTip(_(L"Wysokość wideo"));
+	width->SetToolTip(_(L"Szerokość wideo"));
+	wrapstyle->SetToolTip(_(L"Sposób dzielenia napisów"));
 	collision->SetToolTip(_("Kolidowanie linijek"));
-	scaleBorderAndShadow->SetToolTip(_("Skalowana obwódka i cień"));
+	scaleBorderAndShadow->SetToolTip(_(L"Skalowana obwódka i cień"));
 }

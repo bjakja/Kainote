@@ -41,24 +41,24 @@ SpellCheckerDialog::SpellCheckerDialog(KainoteFrame *parent)
 	wxBoxSizer *buttonSizer = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *listSizer = new wxBoxSizer(wxHORIZONTAL);
 	ignoreComments = new KaiCheckBox(this, -1, _("Ignoruj komentarze"));
-	ignoreUpper = new KaiCheckBox(this, -1, _("Ignoruj słowa całe pisane\nwielką literą"));
+	ignoreUpper = new KaiCheckBox(this, -1, _(L"Ignoruj słowa całe pisane\nwielką literą"));
 	//wxString misspellWord = FindNextMisspell();
 	misSpell = new KaiTextCtrl(this, -1, emptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
 	replaceWord = new KaiTextCtrl(this, -1);
 
-	misspellSizer->Add(new KaiStaticText(this, -1, _("Błędne słowo:")), 1, wxEXPAND | wxALL, 2);
+	misspellSizer->Add(new KaiStaticText(this, -1, _(L"Błędne słowo:")), 1, wxEXPAND | wxALL, 2);
 	misspellSizer->Add(misSpell, 4, wxEXPAND | wxALL, 2);
-	replaceSizer->Add(new KaiStaticText(this, -1, _("Zmień na:")), 1, wxEXPAND | wxALL, 2);
+	replaceSizer->Add(new KaiStaticText(this, -1, _(L"Zmień na:")), 1, wxEXPAND | wxALL, 2);
 	replaceSizer->Add(replaceWord, 4, wxEXPAND | wxALL, 2);
 
 	suggestionsList = new KaiListCtrl(this, ID_SUGGESTIONS_LIST, wxArrayString());
-	replace = new MappedButton(this, ID_REPLACE, _("Zamień"));
-	replaceAll = new MappedButton(this, ID_REPLACE_ALL, _("Zamień wszystko"));
+	replace = new MappedButton(this, ID_REPLACE, _(L"Zamień"));
+	replaceAll = new MappedButton(this, ID_REPLACE_ALL, _(L"Zamień wszystko"));
 	ignore = new MappedButton(this, ID_IGNORE, _("Ignoruj"));
 	ignoreAll = new MappedButton(this, ID_IGNORE_ALL, _("Ignoruj wszystko"));
-	addWord = new MappedButton(this, ID_ADD_WORD, _("Dodaj do słownika"));
-	removeWord = new MappedButton(this, ID_REMOVE_WORD, _("Usuń ze słownika"));
-	removeWord->SetToolTip(_("Usuwa ze słownika słowa dodane przez użytkownika."));
+	addWord = new MappedButton(this, ID_ADD_WORD, _(L"Dodaj do słownika"));
+	removeWord = new MappedButton(this, ID_REMOVE_WORD, _(L"Usuń ze słownika"));
+	removeWord->SetToolTip(_(L"Usuwa ze słownika słowa dodane przez użytkownika."));
 
 	close = new MappedButton(this, ID_CLOSE_DIALOG, _("Zamknij"));
 	buttonSizer->Add(ignoreComments, 0, wxEXPAND | wxALL, 2);
@@ -144,7 +144,7 @@ void SpellCheckerDialog::SetNextMisspell()
 		suggestionsList->SetTextArray(wxArrayString());
 		blockOnActive = true;
 		replaceWord->SetValue(emptyString, true);
-		KaiMessageBox(_("Nie znaleziono więcej błędów pisowni"), _("Uwaga"), wxOK, this);
+		KaiMessageBox(_(L"Nie znaleziono więcej błędów pisowni"), _("Uwaga"), wxOK, this);
 		return;
 	}
 	else{
@@ -260,7 +260,7 @@ void SpellCheckerDialog::RemoveWord(wxCommandEvent &evt)
 {
 	wxArrayString addedMisspels;
 	LoadAddedMisspels(addedMisspels);
-	CustomCheckListBox *listOfAddedWords = new CustomCheckListBox(this, addedMisspels, _("Słowa dodane do słownika"));
+	CustomCheckListBox *listOfAddedWords = new CustomCheckListBox(this, addedMisspels, _(L"Słowa dodane do słownika"));
 	if (listOfAddedWords->ShowModal() == wxID_OK){
 		wxArrayString checkedWords;
 		listOfAddedWords->GetCheckedElements(checkedWords);

@@ -1,0 +1,27 @@
+[submodule "Thirdparty/freetype2"]
+	path = Thirdparty/freetype2
+	url = https://github.com/freetype/freetype.git
+	shallow = true
+[submodule "Thirdparty/harfbuzz"]
+	path = Thirdparty/harfbuzz
+	url = https://github.com/harfbuzz/harfbuzz.git
+	shallow = true
+[submodule "Thirdparty/libass"]
+	path = Thirdparty/libass
+	url = https://github.com/libass/libass.git
+	shallow = true
+[submodule "Thirdparty/Hunspell"]
+	path = Thirdparty/Hunspell
+	url = https://github.com/hunspell/hunspell.git
+	shallow = true
+[submodule "Thirdparty/ffms2"]
+	path = Thirdparty/ffms2
+	url = https://github.com/altqx/ffms2.git
+	shallow = true
+[submodule "Thirdparty/xy-VSFilter-xy_sub_filter_rc5"]
+	path = Thirdparty/xy-VSFilter-xy_sub_filter_rc5
+	url = https://github.com/altqx/xy-VSFilter.git
+	shallow = true
+[submodule "Thirdparty/wxWidgets"]
+	path = Thirdparty/wxWidgets
+	url = https://github.com/wxWidgets/wxWidgets.git

@@ -16,7 +16,7 @@
 #pragma once
 //#include "Utils.h"
 #include "Menu.h"
-#include <wx/msw/winundef.h>
+#include "WinUndef.h"
 #include <wx/window.h>
 #include <wx/dialog.h>
 #include <vector>
@@ -109,13 +109,16 @@ class ToolbarMenu :public wxDialog
 	friend class KaiToolbar;
 public:
 	ToolbarMenu(KaiToolbar *parent, const wxPoint &pos, const wxSize &size, int _height);
-	virtual ~ToolbarMenu(){ wxDELETE(bmp); };
+	virtual ~ToolbarMenu(){ DropMouse(); wxDELETE(bmp); };
 private:
 	void OnMouseEvent(wxMouseEvent &evt);
 	void OnPaint(wxPaintEvent &event);
 	void OnScroll(wxScrollEvent& event);
 	void OnIdle(wxIdleEvent& event);
 	void OnLostCapture(wxMouseCaptureLostEvent &evt);
+	void GrabMouse();
+	void DropMouse();
+	bool hasCapture = false;
 	KaiToolbar *parent;
 	wxBitmap *bmp;
 	KaiScrollbar *scroll;
