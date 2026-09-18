@@ -4544,8 +4544,12 @@ void wxD2DContext::EnsureInitialized()
 	if (!m_renderTargetHolder->IsResourceAcquired())
 	{
 		//loop it avoid to crash when target is null cause of context problem
+		//but only wait when it really is null: sleeping on the success path
+		//cost 10 ms on every single repaint
 		while (!m_cachedRenderTarget) {
 			m_cachedRenderTarget = m_renderTargetHolder->GetD2DResource();
+			if (m_cachedRenderTarget)
+				break;
 			Sleep(10);
 		}
 		GetRenderTarget()->GetTransform(&m_initTransform);

@@ -505,9 +505,7 @@ void ToolbarMenu::OnMouseEvent(wxMouseEvent &evt)
 	if ((x < 0 || y < 0 || x > w || y > h)){
 		if (leftdown){
 			Unbind(wxEVT_IDLE, &ToolbarMenu::OnIdle, this);
-			if (HasCapture()){
-				ReleaseMouse();
-			}
+			DropMouse();
 			Destroy();
 		}
 		return;
@@ -649,34 +647,41 @@ void ToolbarMenu::OnIdle(wxIdleEvent& event)
 	event.Skip();
 
 	if (!parent->IsShownOnScreen()){
+		DropMouse();
 		Destroy();
+		return;
 	}
 
 	if (IsShown())
 	{
-		wxPoint pos = ScreenToClient(wxGetMousePosition());
-		wxRect rect(GetSize());
-
-		if (rect.Contains(pos))
-		{
-			if (HasCapture())
-			{
-				ReleaseMouse();
-			}
+		// Client coordinates need the client size; see PopupList::OnIdle.
+		if (wxRect(GetClientSize()).Contains(ScreenToClient(wxGetMousePosition()))){
+			DropMouse();
 		}
-		else
-		{
-			if (!HasCapture() && !scroll->HasCapture())
-			{
-				CaptureMouse();
-			}
+		else{
+			GrabMouse();
 		}
 	}
 }
 
-void ToolbarMenu::OnLostCapture(wxMouseCaptureLostEvent &evt) 
-{ 
-	if (HasCapture()) { ReleaseMouse(); } 
+// See PopupList::GrabMouse: HasCapture() reads Windows, not wx's capture stack.
+void ToolbarMenu::GrabMouse()
+{
+	if (hasCapture || (scroll && scroll->HasCapture())){ return; }
+	hasCapture = true;
+	CaptureMouse();
+}
+
+void ToolbarMenu::DropMouse()
+{
+	if (!hasCapture){ return; }
+	hasCapture = false;
+	ReleaseMouse();
+}
+
+void ToolbarMenu::OnLostCapture(wxMouseCaptureLostEvent &evt)
+{
+	hasCapture = false;
 }
 
 void ToolbarMenu::OnScroll(wxScrollEvent& event)

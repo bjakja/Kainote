@@ -48,13 +48,17 @@ public:
 	KaiStaticBoxSizer(int orient, wxWindow *parent, const wxString& _label);
 	KaiStaticBoxSizer(int orient, wxWindow *parent, int n, wxString * _labels);
 	virtual ~KaiStaticBoxSizer();
-	void ShowItems( bool show );
+	void ShowItems( bool show ) override;
 	bool Enable(bool enable);
+	// wxWindowBase, not wxWindow: with the old signature this stopped
+	// overriding wxSizer::Detach in wx 3.3, so ~wxWindowBase never cleared box
+	// and the destructor below deleted it a second time.
+	bool Detach( wxWindowBase *window ) override;
 
 private:
-	//void RepositionChildren(const wxSize& minSize);
-	void RecalcSizes();
-	wxSize CalcMin();
-	bool Detach( wxWindow *window );
+	// wxBoxSizer overrides RepositionChildren(), so its RecalcSizes()
+	// compatibility shim never runs and an override of it is dead code.
+	void RepositionChildren(const wxSize& minSize) override;
+	wxSize CalcMin() override;
 	KaiStaticBox *box;
 };

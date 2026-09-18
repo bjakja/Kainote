@@ -37,36 +37,36 @@
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -163,7 +163,10 @@
       </EntryPointSymbol>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /D /Y "$(SolutionDir)Thirdparty\ffmpeg\bin\*.dll" "$(OutDir)" &gt;nul</Command>
+      <Command>xcopy /D /Y "$(SolutionDir)Thirdparty\ffmpeg\bin\*.dll" "$(OutDir)" &gt;nul
+xcopy /D /Y /E /I "$(SolutionDir)Locale" "$(OutDir)Locale" &gt;nul
+xcopy /D /Y /E /I "$(SolutionDir)Themes" "$(OutDir)Themes" &gt;nul
+xcopy /D /Y /E /I "$(SolutionDir)Automation" "$(OutDir)Automation" &gt;nul</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>where python &gt;nul 2&gt;nul &amp;&amp; python "$(SolutionDir)tools\compile_catalogs.py" --po-dir "$(SolutionDir)Locale" --out-dir "$(SolutionDir)Locale" || echo python not found - skipping Locale .mo compilation
@@ -214,7 +217,10 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitp
       </EntryPointSymbol>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /D /Y "$(SolutionDir)Thirdparty\ffmpeg\bin\*.dll" "$(OutDir)" &gt;nul</Command>
+      <Command>xcopy /D /Y "$(SolutionDir)Thirdparty\ffmpeg\bin\*.dll" "$(OutDir)" &gt;nul
+xcopy /D /Y /E /I "$(SolutionDir)Locale" "$(OutDir)Locale" &gt;nul
+xcopy /D /Y /E /I "$(SolutionDir)Themes" "$(OutDir)Themes" &gt;nul
+xcopy /D /Y /E /I "$(SolutionDir)Automation" "$(OutDir)Automation" &gt;nul</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>where python &gt;nul 2&gt;nul &amp;&amp; python "$(SolutionDir)tools\compile_catalogs.py" --po-dir "$(SolutionDir)Locale" --out-dir "$(SolutionDir)Locale" || echo python not found - skipping Locale .mo compilation
@@ -263,7 +269,10 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitp
       <SubSystem>Windows</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /D /Y "$(SolutionDir)Thirdparty\ffmpeg\bin\*.dll" "$(OutDir)" &gt;nul</Command>
+      <Command>xcopy /D /Y "$(SolutionDir)Thirdparty\ffmpeg\bin\*.dll" "$(OutDir)" &gt;nul
+xcopy /D /Y /E /I "$(SolutionDir)Locale" "$(OutDir)Locale" &gt;nul
+xcopy /D /Y /E /I "$(SolutionDir)Themes" "$(OutDir)Themes" &gt;nul
+xcopy /D /Y /E /I "$(SolutionDir)Automation" "$(OutDir)Automation" &gt;nul</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>where python &gt;nul 2&gt;nul &amp;&amp; python "$(SolutionDir)tools\compile_catalogs.py" --po-dir "$(SolutionDir)Locale" --out-dir "$(SolutionDir)Locale" || echo python not found - skipping Locale .mo compilation
