@@ -15,6 +15,7 @@
 
 
 #include "Registry.h"
+#include "FileTypes.h"
 #include "OptionsDialog.h"
 #include "config.h"
 #include "KainoteFrame.h"
@@ -954,13 +955,13 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 	}
 	//associations
 	{
-	wxString extensions[] = { L".ass", L".ssa", L".srt", L".sub", L".txt", L".mkv", L".mp4", L".avi", L".ogm",
-			L".wmv", L".asf", L".rmvb", L".rm", L".3gp", L".mpg", L".mpeg", L".ts", L".m2ts" };
-		wxString extensionsDesc[] = { _("ASS subtitles"), _("SSA subtitles"), _("SRT subtitles"), _("SUB subtitles"), 
-			_("TXT subtitles"), _("Video MKV"), _("Video MP4"), _("Video AVI"), _("Video OGM"),
-			_("Video WMV"), _("Video ASF"), _("Video RMVB"), _("Video RM"), _("Video 3GP"), 
-			_("Video MPG"), _("Video MPEG"), _("Video TS"), _("Video M2TS") };
-		int numExtensions = 18;
+		const int numExtensions = (int)kKainoteFileTypeCount;
+		wxString extensions[kKainoteFileTypeCount];
+		wxString extensionsDesc[kKainoteFileTypeCount];
+		for (size_t i = 0; i < kKainoteFileTypeCount; i++){
+			extensions[i] = kKainoteFileTypes[i].extension;
+			extensionsDesc[i] = KainoteFileTypeDescription(i);
+		}
 
 		Registry::CheckFileAssociation(extensions, numExtensions, registeredExts);
 
@@ -976,8 +977,12 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 		auto changeSelections = [=](wxCommandEvent &evt){
 			int type = evt.GetId() - 17776;
 			for (int i = 0; i < numExtensions; i++){
-				CheckListBox->GetItem(i, 0)->modified = 
-					(type == 1 || (type == 2 && i < 4) || (type == 3 && i>4)) ? true : false;
+				// Was "i < 4", which skipped .txt.
+				const KainoteFileKind kind = kKainoteFileTypes[i].kind;
+				CheckListBox->GetItem(i, 0)->modified =
+					(type == 1 ||
+					 (type == 2 && kind == KainoteFileKind::Subtitle) ||
+					 (type == 3 && kind == KainoteFileKind::Video));
 			}
 			CheckListBox->SetModified(true);
 			CheckListBox->Refresh(false);
@@ -1230,19 +1235,15 @@ void OptionsDialog::SetOptions(bool saveall)
 				}
 				else{
 #ifdef _WIN32
-					wxString extensions[] = { L".ass", L".ssa", L".srt", L".sub", L".txt", L".mkv", L".mp4", L".avi",
-						L".ogm", L".wmv", L".asf", L".rmvb", L".rm", L".3gp", L".mpg", L".mpeg", L".ts", L".m2ts" };
-					wxString extensionsDesc[] = { _("ASS subtitles"), _("SSA subtitles"), _("SRT subtitles"), _("SUB subtitles"),
-						_("TXT subtitles"), _("Video MKV"), _("Video MP4"), _("Video AVI"), _("Video OGM"),
-						_("Video WMV"), _("Video ASF"), _("Video RMVB"), _("Video RM"), _("Video 3GP"),
-						_("Video MPG"), _("Video MPEG"), _("Video TS"), _("Video M2TS") };
-
-					for (size_t i = 0; i < registeredExts.size(); i++){
+					for (size_t i = 0; i < registeredExts.size() && i < kKainoteFileTypeCount; i++){
 						if (list->GetItem(i, 0)->modified != registeredExts[i]){
+							const KainoteFileType &type = kKainoteFileTypes[i];
 							if (registeredExts[i])
-								Registry::RemoveFileAssociation(extensions[i]);
+								Registry::RemoveFileAssociation(type.extension);
 							else
-								Registry::AddFileAssociation(extensions[i], extensionsDesc[i], i);
+								// Resource id, not the row index.
+								Registry::AddFileAssociation(type.extension,
+									KainoteFileTypeDescription(i), type.iconResourceId);
 						}
 					}
 					//Registry::RefreshRegistry();

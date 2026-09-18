@@ -151,7 +151,7 @@
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;Shcore.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;baseclasses.lib;Boost.lib;libhunspell.lib;libass.lib;dsound.lib;dxva2.lib;Dwmapi.lib;dxguid.lib;Uchardet.lib;GFFT.lib;wxmsw33ud_core.lib;wxbase33ud.lib;wxregexud.lib;wxzlibd.lib;wxpngd.lib;wxjpegd.lib;wxtiffd.lib;wxwebpd.lib;wxexpatd.lib;wxlexillad.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;Shcore.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;baseclasses.lib;Boost.lib;libhunspell.lib;libass.lib;dsound.lib;dxva2.lib;Dwmapi.lib;dxguid.lib;Uchardet.lib;GFFT.lib;wxmsw33ud_core.lib;wxbase33ud_net.lib;wxbase33ud.lib;wxregexud.lib;wxzlibd.lib;wxpngd.lib;wxjpegd.lib;wxtiffd.lib;wxwebpd.lib;wxexpatd.lib;wxlexillad.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(KainoteWxLibDir);$(KainoteDirectXSdkDir)Lib\x64;$(SolutionDir)bin\$(Platform)\$(Configuration)\;$(SolutionDir)$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -202,7 +202,7 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitp
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;Shcore.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;baseclasses.lib;Boost.lib;libhunspell.lib;libass.lib;dsound.lib;dxva2.lib;Dwmapi.lib;dxguid.lib;Uchardet.lib;GFFT.lib;wxmsw33u_core.lib;wxbase33u.lib;wxregexu.lib;wxzlib.lib;wxpng.lib;wxjpeg.lib;wxtiff.lib;wxwebp.lib;wxexpat.lib;wxlexilla.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;Shcore.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;baseclasses.lib;Boost.lib;libhunspell.lib;libass.lib;dsound.lib;dxva2.lib;Dwmapi.lib;dxguid.lib;Uchardet.lib;GFFT.lib;wxmsw33u_core.lib;wxbase33u_net.lib;wxbase33u.lib;wxregexu.lib;wxzlib.lib;wxpng.lib;wxjpeg.lib;wxtiff.lib;wxwebp.lib;wxexpat.lib;wxlexilla.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(KainoteWxLibDir);$(SolutionDir)bin\$(Platform)\$(Configuration);$(KainoteDirectXSdkDir)Lib\x64;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
@@ -254,7 +254,7 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitp
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;Shcore.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;baseclasses.lib;Boost.lib;libhunspell.lib;libass.lib;dsound.lib;dxva2.lib;Dwmapi.lib;dxguid.lib;Uchardet.lib;GFFT.lib;wxmsw33u_core.lib;wxbase33u.lib;wxregexu.lib;wxzlib.lib;wxpng.lib;wxjpeg.lib;wxtiff.lib;wxwebp.lib;wxexpat.lib;wxlexilla.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;Shcore.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;baseclasses.lib;Boost.lib;libhunspell.lib;libass.lib;dsound.lib;dxva2.lib;Dwmapi.lib;dxguid.lib;Uchardet.lib;GFFT.lib;wxmsw33u_core.lib;wxbase33u_net.lib;wxbase33u.lib;wxregexu.lib;wxzlib.lib;wxpng.lib;wxjpeg.lib;wxtiff.lib;wxwebp.lib;wxexpat.lib;wxlexilla.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(KainoteWxLibDir);$(SolutionDir)bin\$(Platform)\$(Configuration);$(KainoteDirectXSdkDir)Lib\x64;$(SolutionDir)\$(Platform)\Release;$(SolutionDir)bin\$(Platform)\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
@@ -299,7 +299,7 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitp
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(KainoteWxLibDir);$(SolutionDir)bin\$(Platform)\$(Configuration);$(KainoteDirectXSdkDir)Lib\x86;$(SolutionDir)$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;strmBoost.lib;libhunspell.lib;libass.lib;dsound.lib;dxva2.lib;Dwmapi.lib;dxguid.lib;wxmsw33u_core.lib;wxbase33u.lib;wxregexu.lib;wxzlib.lib;wxpng.lib;wxjpeg.lib;wxtiff.lib;wxwebp.lib;wxexpat.lib;wxlexilla.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;strmBoost.lib;libhunspell.lib;libass.lib;dsound.lib;dxva2.lib;Dwmapi.lib;dxguid.lib;wxmsw33u_core.lib;wxbase33u_net.lib;wxbase33u.lib;wxregexu.lib;wxzlib.lib;wxpng.lib;wxjpeg.lib;wxtiff.lib;wxwebp.lib;wxexpat.lib;wxlexilla.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>msvcrtd.lib;libboost_locale-vc140-mt-1_61.lib;libboost_filesystem-vc140-mt-1_61.lib;libboost_system-vc140-mt-1_61.lib;libboost_regex-vc140-mt-1_61.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -401,6 +401,9 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitp
     <ClCompile Include="MenuButton.cpp" />
     <ClCompile Include="MispellReplacerDialog.cpp" />
     <ClCompile Include="OptionsPanels.cpp" />
+    <ClCompile Include="FileTypes.cpp" />
+    <ClCompile Include="JsonValue.cpp" />
+    <ClCompile Include="UpdateChecker.cpp" />
     <ClCompile Include="Registry.cpp" />
     <ClCompile Include="SelectLines.cpp" />
     <ClCompile Include="SpellCheckerDialog.cpp" />
@@ -562,6 +565,8 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitp
     <ClInclude Include="MenuButton.h" />
     <ClInclude Include="MispellReplacerDialog.h" />
     <ClInclude Include="OptionsPanels.h" />
+    <ClInclude Include="FileTypeIcons.h" />
+    <ClInclude Include="FileTypes.h" />
     <ClInclude Include="Registry.h" />
     <ClInclude Include="SelectLines.h" />
     <ClInclude Include="SpellCheckerDialog.h" />

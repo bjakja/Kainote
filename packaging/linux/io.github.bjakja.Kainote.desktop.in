@@ -1,0 +1,16 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Kainote
+GenericName=Subtitle Editor
+GenericName[pl]=Edytor napisów
+Comment=Edit and time subtitles
+Comment[pl]=Edycja i synchronizacja napisów
+Exec=@KAINOTE_DESKTOP_EXEC@ %f
+Icon=kainote
+Terminal=false
+Categories=AudioVideo;AudioVideoEditing;
+Keywords=subtitle;subtitles;ass;ssa;srt;typesetting;karaoke;
+MimeType=@KAINOTE_DESKTOP_MIMETYPES@
+StartupNotify=true
+StartupWMClass=Kainote
