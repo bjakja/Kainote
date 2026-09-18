@@ -241,7 +241,7 @@ void KaiStaticBoxSizer::ShowItems(bool show)
 	wxBoxSizer::ShowItems(show);
 }
 
-bool KaiStaticBoxSizer::Detach(wxWindowBase *window)
+bool KaiStaticBoxSizer::Detach(KaiSizerDetachArg *window)
 {
 	if (window == box)
 	{
