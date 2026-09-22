@@ -101,9 +101,9 @@ RendererDirectShow::~RendererDirectShow()
 
 bool RendererDirectShow::InitRendererDX()
 {
-	HR(m_D3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &m_BlackBarsSurface), _(L"Nie można stworzyć powierzchni"));
+	HR(m_D3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &m_BlackBarsSurface), _("Cannot create surface"));
 	HR(DXVA2CreateVideoService(m_D3DDevice, IID_IDirectXVideoProcessorService, (VOID**)&m_DXVAService),
-		_(L"Nie można stworzyć DXVA processor service"));
+		_("Cannot create DXVA processor service"));
 	DXVA2_VideoDesc videoDesc;
 	videoDesc.SampleWidth = m_Width;
 	videoDesc.SampleHeight = m_Height;
@@ -123,7 +123,7 @@ bool RendererDirectShow::InitRendererDX()
 	UINT count, count1;
 	GUID* guids = nullptr;
 
-	HR(m_DXVAService->GetVideoProcessorDeviceGuids(&videoDesc, &count, &guids), _(L"Nie można pobrać GUIDów DXVA"));
+	HR(m_DXVAService->GetVideoProcessorDeviceGuids(&videoDesc, &count, &guids), _("Cannot get DXVA GUIDs"));
 	D3DFORMAT* formats = nullptr;
 	bool isgood = false;
 	GUID dxvaGuid;
@@ -131,7 +131,7 @@ bool RendererDirectShow::InitRendererDX()
 	HRESULT hr;
 	for (UINT i = 0; i < count; i++){
 		hr = m_DXVAService->GetVideoProcessorRenderTargets(guids[i], &videoDesc, &count1, &formats);
-		if (FAILED(hr)){ KaiLog(_(L"Nie można uzyskać formatów DXVA")); continue; }
+		if (FAILED(hr)){ KaiLog(_("Cannot enumerate DXVA formats")); continue; }
 		for (UINT j = 0; j < count1; j++)
 		{
 			if (formats[j] == D3DFMT_X8R8G8B8)
@@ -142,11 +142,11 @@ bool RendererDirectShow::InitRendererDX()
 		}
 
 		CoTaskMemFree(formats);
-		if (!isgood){ KaiLog(_(L"Ten format nie jest obsługiwany przez DXVA")); continue; }
+		if (!isgood){ KaiLog(_("This format is not supported by DXVA")); continue; }
 		isgood = false;
 
 		hr = m_DXVAService->GetVideoProcessorCaps(guids[i], &videoDesc, D3DFMT_X8R8G8B8, &DXVAcaps);
-		if (FAILED(hr)){ KaiLog(_(L"GetVideoProcessorCaps zawiodło")); continue; }
+		if (FAILED(hr)){ KaiLog(_("GetVideoProcessorCaps failed")); continue; }
 		if (DXVAcaps.NumForwardRefSamples > 0 || DXVAcaps.NumBackwardRefSamples > 0){
 			continue;
 		}
@@ -154,19 +154,19 @@ bool RendererDirectShow::InitRendererDX()
 		//if(DXVAcaps.DeviceCaps!=4){continue;}//DXVAcaps.InputPool
 		hr = m_DXVAService->CreateSurface(m_Width, m_Height, 0, m_D3DFormat, D3DPOOL_DEFAULT, 0,
 			DXVA2_VideoSoftwareRenderTarget, &m_MainSurface, nullptr);
-		if (FAILED(hr)){ KaiLog(wxString::Format(_(L"Nie można stworzyć powierzchni DXVA %i"), (int)i)); continue; }
+		if (FAILED(hr)){ KaiLog(wxString::Format(_("Cannot create DXVA surface %i"), (int)i)); continue; }
 
 		hr = m_DXVAService->CreateVideoProcessor(guids[i], &videoDesc, D3DFMT_X8R8G8B8, 0, &m_DXVAProcessor);
-		if (FAILED(hr)){ KaiLog(_(L"Nie można stworzyć processora DXVA")); continue; }
+		if (FAILED(hr)){ KaiLog(_("Cannot create DXVA processor")); continue; }
 		dxvaGuid = guids[i]; isgood = true;
 		break;
 	}
 	CoTaskMemFree(guids);
 	PTR(isgood, L"Nie ma żadnych guidów");
 
-	HR(m_D3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &m_BlackBarsSurface), _(L"Nie można stworzyć powierzchni"));
+	HR(m_D3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &m_BlackBarsSurface), _("Cannot create surface"));
 
-	HR(hr, _(L"Zawiodło któreś z ustawień DirectX vertices"));
+	HR(hr, _("One of the DirectX vertices settings failed"));
 
 
 	int windowWidth = m_BackBufferRect.right- m_BackBufferRect.left;
@@ -190,11 +190,11 @@ bool RendererDirectShow::InitRendererDX()
 	
 	HR(m_D3DDevice->CreateTexture(m_WindowWidth, m_WindowHeight, 1,
 		D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &m_SubtitlesTexture, nullptr),
-		_(L"Nie można storzyć tekstury napisów"));
+		_("Cannot create subtitle texture"));
 
 	HR(m_D3DDevice->CreateTexture(m_WindowWidth, m_WindowHeight, 1,
 		D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_BlitTexture, nullptr),
-		_(L"Nie można storzyć tekstury napisów"));
+		_("Cannot create subtitle texture"));
 
 	
 	return true;
@@ -219,7 +219,7 @@ bool RendererDirectShow::DrawTexture(byte *nframe, bool copy)
 		}
 	}
 	else {
-		KaiLog(_("Brak bufora klatki")); return false;
+		KaiLog(_("No frame buffer")); return false;
 	}
 	//int size = m_LastBufferSize / 4;
 	memset(m_SubtitlesBuffer, 0, m_LastBufferSize);
@@ -242,15 +242,15 @@ bool RendererDirectShow::DrawTexture(byte *nframe, bool copy)
 		subssrc -= fwidth;
 	}*/
 
-	HR(m_SubtitlesTexture->UnlockRect(0), _(L"Nie można odblokować bufora tekstury napisów"));
+	HR(m_SubtitlesTexture->UnlockRect(0), _("Cannot unlock subtitle texture buffer"));
 
 	HR(m_D3DDevice->UpdateTexture(m_SubtitlesTexture, m_BlitTexture), L"Cannot update subtitles texture");
 
 	RECT dirty = { 0, 0, m_Width, m_Height };
 #ifdef byvertices
-	HR(m_MainSurface->LockRect(&d3dlr, 0, 0), _(L"Nie można zablokować bufora tekstury"));//D3DLOCK_NOSYSLOCK
+	HR(m_MainSurface->LockRect(&d3dlr, 0, 0), _("Cannot lock texture buffer"));//D3DLOCK_NOSYSLOCK
 #else
-	HR(m_MainSurface->LockRect(&d3dlr, &dirty, 0/*D3DLOCK_NOSYSLOCK*/), _(L"Nie można zablokować bufora tekstury"));
+	HR(m_MainSurface->LockRect(&d3dlr, &dirty, 0/*D3DLOCK_NOSYSLOCK*/), _("Cannot lock texture buffer"));
 #endif
 	texbuf = static_cast<byte *>(d3dlr.pBits);
 
@@ -307,7 +307,7 @@ bool RendererDirectShow::DrawTexture(byte *nframe, bool copy)
 		KaiLog(wxString::Format(L"bad pitch diff %i pitch %i dxpitch %i", diff, m_Pitch, d3dlr.Pitch));
 	}
 
-	HR(m_MainSurface->UnlockRect(), _(L"Nie można odblokować bufora tekstury"));
+	HR(m_MainSurface->UnlockRect(), _("Cannot unlock texture buffer"));
 
 	return true;
 }
@@ -851,7 +851,7 @@ byte *RendererDirectShow::GetFrameWithSubs(bool subs, bool *del)
 		DXVA2_VideoProcessorRenderTarget, &tmp, nullptr);
 	
 	if (FAILED(hr) || !tmp) {
-		KaiLog(_(L"Nie można stworzyć plain surface"));
+		KaiLog(_("Cannot create plain surface"));
 		return nullptr;
 	}
 
@@ -910,7 +910,7 @@ byte *RendererDirectShow::GetFrameWithSubs(bool subs, bool *del)
 
 	hr = m_DXVAProcessor->VideoProcessBlt(tmp, &blt, &samples, 1, nullptr);
 	if (FAILED(hr)) {
-		KaiLog(_(L"Nie można nałożyć powierzchni na siebie"));
+		KaiLog(_("Cannot overlay surfaces"));
 		return nullptr;
 	}
 
@@ -921,7 +921,7 @@ byte *RendererDirectShow::GetFrameWithSubs(bool subs, bool *del)
 	byte* cpy = new byte[buffsize];
 	tmp->LockRect(&d3dlr, &dirty, 0/*D3DLOCK_NOSYSLOCK*/);
 	if (FAILED(hr)) {
-		KaiLog(_(L"Nie można zablokować bufora tekstury"));
+		KaiLog(_("Cannot lock texture buffer"));
 		return nullptr;
 	}
 	byte* texbuf = static_cast<byte*>(d3dlr.pBits);

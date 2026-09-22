@@ -430,9 +430,7 @@ private:
 	wxColour colors[colorsSize];
 	bool isClosing = false;
 	std::map<int, wxFont*> programFonts;
-	std::map<wxString, wxString> Languages;
 	wxColour defaultColour;
-	void InitLanguagesTable();
 	bool hasCrashed = false;
 	bool ConfigNeedToConvert(const wxString & fullVersion);
 	int lastCheckedId = -1;
@@ -502,7 +500,9 @@ public:
 	void Sortstyles();
 	void SetHexColor(const wxString &nameAndColor);
 	//if failed returns symbol
-	const wxString & FindLanguage(const wxString & symbol);
+	wxString FindLanguage(const wxString & symbol);
+	//install directory, or the source tree when run from a build
+	wxString GetLocalePath() const;
 	//main value is 10 offset from 10
 	wxFont *GetFont(int offset = 0, const wxString& name = L"", bool bold = false);
 	//em height in pixels, the value wxFont::GetPixelSize() returns on Windows
@@ -604,12 +604,15 @@ wxImage CreateImageFromPngResource(const wxString& t_name);
 #define PTR_BITMAP_PNG(x) CreateBitmapPointerFromPngResource(x)
 void MoveToMousePosition(wxWindow* win);
 bool KainoteIsWayland();
-wxString MakePolishPlural(int num, const wxString& normal, const wxString& plural24, const wxString& pluralRest);
 
 bool IsNumber(const wxString& txt);
 void DrawDashedLine(wxDC* dc, wxPoint* vector, size_t vectorSize, int dashLen, const wxColour& color);
 size_t FindFromEnd(const wxString& text, const wxString& whatToFind, bool ignoreCase = false);
 
+
+// Kainote's gettext domain.  It used to be the language tag, which meant
+// there was no stable domain and every gettext tool had to be worked around.
+#define KAINOTE_CATALOG_DOMAIN L"kainote"
 
 extern config Options;
 

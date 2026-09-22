@@ -97,7 +97,7 @@ void SpellChecker::AvailableDics(wxArrayString &dics, wxArrayString &symbols)
 		if (dic[i].BeforeLast(L'.') == aff[i].BeforeLast(L'.')){
 			wxString symbolName = wxFileName(dic[i]).GetName();
 			symbols.Add(symbolName);
-			const wxString &fullName = Options.FindLanguage(symbolName);
+			const wxString fullName = Options.FindLanguage(symbolName);
 			dics.Add(fullName);
 		}
 	}
@@ -109,7 +109,7 @@ bool SpellChecker::Initialize()
 
 	//wxString pathhh = Options.pathfull + L"/Dictionary/";
 	wxString name = Options.GetString(DICTIONARY_LANGUAGE);
-	if (name == emptyString){ name = L"pl"; }
+	if (name == emptyString){ name = L"en_US"; }
 	wxString dic = dictionaryPath + name + L".dic";
 	wxString aff = dictionaryPath + name + L".aff";
 	isRTL = (name.StartsWith(L"ar") || name.StartsWith(L"he"));
@@ -118,7 +118,7 @@ bool SpellChecker::Initialize()
 	if (!wxFileExists(dic) || !wxFileExists(aff))
 	{
 		Options.SetBool(SPELLCHECKER_ON, false);
-		KaiMessageBox(wxString::Format(_(L"Brak plików słownika w folderze \"%s\\Dictionary\".\nSprawdzanie pisowni zostanie wyłączone"), Options.pathfull));
+		KaiMessageBox(wxString::Format(_("No dictionary files were found in the \"%s\\Dictionary\" folder.\nSpell checking will be disabled"), Options.pathfull));
 		return false;
 	}
 	// Load
@@ -126,7 +126,7 @@ bool SpellChecker::Initialize()
 
 	if (hunspell) {
 		conv = new wxCSConv(wxString(hunspell->get_dic_encoding(), wxConvUTF8));
-		if (!conv){ KaiMessageBox(_(L"Nie można odczytać formatu konwersji słownika.")); }
+		if (!conv){ KaiMessageBox(_("Unable to read the dictionary conversion format.")); }
 		// Load user dictionary
 		//wxString userpath = pathhh + L"UserDic.udic";
 		if (wxFileExists(userDictionaryPath)) {
@@ -148,7 +148,7 @@ bool SpellChecker::Initialize()
 
 		return true;
 	}
-	else{ KaiMessageBox(_(L"Nie można zainicjalizować sprawdzania pisowni.")); }
+	else{ KaiMessageBox(_("Failed to initialize spell checker.")); }
 	return false;
 }
 

@@ -47,11 +47,11 @@ private:
 };
 
 ProfileEdition::ProfileEdition(wxWindow* parent, const wxArrayString &profiles, const wxPoint &pos)
-	:KaiDialog(parent, -1, _(L"Wybierz nazwę profilu"), pos)
+	:KaiDialog(parent, -1, _("Select the name of the profile"), pos)
 	, profilesNames(profiles)
 {
 	DialogSizer *dSizer = new DialogSizer(wxVERTICAL);
-	KaiStaticText *description = new KaiStaticText(this, -1, _(L"Wprowadź nazwę profilu,\nbądź wybierz istniejący, by nadpisać"));
+	KaiStaticText *description = new KaiStaticText(this, -1, _("Write the name of the profile\nor select existing profile to overwrite"));
 	KaiTextValidator valid(wxFILTER_EXCLUDE_CHAR_LIST);
 	wxArrayString excludes;
 	excludes.Add(L"\\");
@@ -64,7 +64,7 @@ ProfileEdition::ProfileEdition(wxWindow* parent, const wxArrayString &profiles, 
 	profilesList->SetMaxLength(25);
 	wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
 	MappedButton *OK = new MappedButton(this, wxID_OK, L"OK");
-	MappedButton *cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
+	MappedButton *cancel = new MappedButton(this, wxID_CANCEL, _("Cancel"));
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ProfileEdition::OnOKClick, this, wxID_OK);
 	buttonSizer->Add(OK, 1, wxALL | wxEXPAND, 2);
 	buttonSizer->Add(cancel, 1, wxALL | wxEXPAND, 2);
@@ -81,8 +81,8 @@ void ProfileEdition::OnOKClick(wxCommandEvent &evt)
 	wxString thisName = profilesList->GetValue();
 	for (auto name : profilesNames){
 		if (name == thisName){
-			int result = KaiMessageBox(wxString::Format(_(L"Na pewno chcesz nadpisać profil o nazwie %s"),
-				profilesList->GetString(profilesList->GetSelection())), _("Informacja"), wxYES_NO, GetParent(), dialogPos);
+			int result = KaiMessageBox(wxString::Format(_("Do you want to overwrite profile of name %s"),
+				profilesList->GetString(profilesList->GetSelection())), _("Info"), wxYES_NO, GetParent(), dialogPos);
 			if (result != wxYES)
 				return;
 
@@ -255,7 +255,7 @@ void ShiftTimes::CreateControls(bool normal /*= true*/)
 	panel->SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	Main = new wxBoxSizer(wxVERTICAL);
 
-	coll = new MappedButton(panel, 22999, (normal) ? _("Post processor") : _(L"Przesuwanie czasów"));
+	coll = new MappedButton(panel, 22999, (normal) ? _("Post processor") : _("Shift times"));
 	// Bind the synthetic MappedButton event on the button itself; wxGTK does not
 	// reliably bubble this nested header button up to the ShiftTimes panel.
 	coll->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ShiftTimes::CollapsePane, this);
@@ -263,13 +263,13 @@ void ShiftTimes::CreateControls(bool normal /*= true*/)
 	Main->Add(coll, 0, wxEXPAND | wxLEFT | wxRIGHT, 6);
 
 	wxArrayString choices;
-	KaiStaticBoxSizer *linesizer = new KaiStaticBoxSizer(wxVERTICAL, panel, _(L"Które linijki"));
-	choices.Add(_("Wszystkie linijki"));
-	choices.Add(_("Zaznaczone linijki"));
-	choices.Add(_("Od zaznaczonej linijki"));
-	choices.Add(_(L"Czasy wyższe i równe"));
-	choices.Add(_(L"Czasy niższe i równe"));
-	choices.Add(_(L"Według wybranych stylów"));
+	KaiStaticBoxSizer *linesizer = new KaiStaticBoxSizer(wxVERTICAL, panel, _("Which lines"));
+	choices.Add(_("All lines"));
+	choices.Add(_("Selected lines"));
+	choices.Add(_("From the selected line"));
+	choices.Add(_("All times higher and equal"));
+	choices.Add(_("All times lower and equal"));
+	choices.Add(_("According to the selected styles"));
 	WhichLines = new KaiChoice(panel, 22888, wxDefaultPosition, wxDefaultSize, choices, KAI_SCROLL_ON_FOCUS);
 
 	wxBoxSizer *stylesizer = new wxBoxSizer(wxHORIZONTAL);
@@ -283,11 +283,11 @@ void ShiftTimes::CreateControls(bool normal /*= true*/)
 	
 	if (normal){
 		//profiles
-		profileSizer = new KaiStaticBoxSizer(wxHORIZONTAL, panel, _(L"Edycja profilów"));
-		NewProfile = new MappedButton(panel, 31229, L"+", _(L"Dodawanie i edycja profilów"),
+		profileSizer = new KaiStaticBoxSizer(wxHORIZONTAL, panel, _("Profile editing"));
+		NewProfile = new MappedButton(panel, 31229, L"+", _("Adding and editing profiles"),
 			wxDefaultPosition, wxDefaultSize, -1, MAKE_SQUARE_BUTTON);
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ShiftTimes::OnAddProfile, this, 31229);
-		RemoveProfile = new MappedButton(panel, 31230, L"-", _(L"Usuwanie profilów"),
+		RemoveProfile = new MappedButton(panel, 31230, L"-", _("Removing profiles"),
 			wxDefaultPosition, wxDefaultSize, -1, MAKE_SQUARE_BUTTON);
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ShiftTimes::OnRemoveProfile, this, 31230);
 		wxArrayString profileList;
@@ -306,14 +306,14 @@ void ShiftTimes::CreateControls(bool normal /*= true*/)
 		profileSizer->Add(RemoveProfile, 0, wxALIGN_CENTER_VERTICAL | wxBOTTOM | wxTOP | wxRIGHT, 2);
 		profileSizer->Add(ProfilesList, 1, wxALIGN_CENTER_VERTICAL | wxBOTTOM | wxTOP | wxRIGHT, 2);
 		//time frame
-		KaiStaticBoxSizer *timesizer = new KaiStaticBoxSizer(wxVERTICAL, panel, _("Czas"));
+		KaiStaticBoxSizer *timesizer = new KaiStaticBoxSizer(wxVERTICAL, panel, _("Time"));
 		wxGridSizer *timegrid = new wxGridSizer(2, 0, 0);
-		MoveTime = new MappedButton(panel, GLOBAL_SHIFT_TIMES, _(L"Przesuń"), _(L"Przesuń czas napisów"), wxDefaultPosition, wxSize(60, -1), GLOBAL_HOTKEY);
+		MoveTime = new MappedButton(panel, GLOBAL_SHIFT_TIMES, _("Shift"), _("Shift subtitle times"), wxDefaultPosition, wxSize(60, -1), GLOBAL_HOTKEY);
 		TimeText = new TimeCtrl(panel, 22890, L"0:00:00.00", wxDefaultPosition, wxSize(60, -1), wxALIGN_CENTER | wxTE_PROCESS_ENTER);
-		Forward = new KaiRadioButton(panel, 22891, _(L"W przód"));
-		Backward = new KaiRadioButton(panel, 22891, _(L"W tył"));
-		DisplayFrames = new KaiCheckBox(panel, 31221, _("Klatki"));
-		MoveTagTimes = new KaiCheckBox(panel, 22889, _(L"Czasy tagów"));
+		Forward = new KaiRadioButton(panel, 22891, _("Forward"));
+		Backward = new KaiRadioButton(panel, 22891, _("Backward"));
+		DisplayFrames = new KaiCheckBox(panel, 31221, _("Frames"));
+		MoveTagTimes = new KaiCheckBox(panel, 22889, _("Tag times"));
 		Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &ShiftTimes::OnChangeDisplayUnits, this, 31221);
 		Bind(NUMBER_CHANGED, &ShiftTimes::OnEdition, this, 22890);
 		timegrid->Add(TimeText, 0, wxEXPAND | wxLEFT | wxRIGHT, 2);
@@ -327,20 +327,20 @@ void ShiftTimes::CreateControls(bool normal /*= true*/)
 
 
 		//ramka przesuwania wg audio / wideo
-		KaiStaticBoxSizer *VAtiming = new KaiStaticBoxSizer(wxVERTICAL, panel, _("Przesuwanie wg wideo / audio"));
+		KaiStaticBoxSizer *VAtiming = new KaiStaticBoxSizer(wxVERTICAL, panel, _("Shift by video / audio"));
 
 		wxBoxSizer *SE = new wxBoxSizer(wxHORIZONTAL);
-		StartVAtime = new KaiRadioButton(panel, 22891, _(L"Początek"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-		EndVAtime = new KaiRadioButton(panel, 22891, _("Koniec"));
+		StartVAtime = new KaiRadioButton(panel, 22891, _("Beginning"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+		EndVAtime = new KaiRadioButton(panel, 22891, _("End"));
 
 		SE->Add(StartVAtime, 1, wxEXPAND | wxLEFT | wxRIGHT, 2);
 		SE->Add(EndVAtime, 1, wxEXPAND | wxRIGHT, 2);
 
-		MoveToVideoTime = new KaiCheckBox(panel, ID_VIDEO, _(L"Przesuń znacznik\ndo czasu wideo"));
+		MoveToVideoTime = new KaiCheckBox(panel, ID_VIDEO, _("Move the marker\nto video time"));
 		MoveToVideoTime->SetForegroundColour(WINDOW_WARNING_ELEMENTS);
 		MoveToVideoTime->Enable(false);
 
-		MoveToAudioTime = new KaiCheckBox(panel, ID_AUDIO, _(L"Przesuń znacznik\ndo czasu audio"));
+		MoveToAudioTime = new KaiCheckBox(panel, ID_AUDIO, _("Move the marker\nto audio time"));
 		MoveToAudioTime->SetForegroundColour(WINDOW_WARNING_ELEMENTS);
 		MoveToAudioTime->Enable(false);
 
@@ -351,22 +351,22 @@ void ShiftTimes::CreateControls(bool normal /*= true*/)
 		VAtiming->Add(MoveToAudioTime, 1, wxEXPAND | wxLEFT, 2);
 		//VAtiming->Add(picker,0,wxEXPAND|wxLEFT,2);
 
-		KaiStaticBoxSizer *timessizer = new KaiStaticBoxSizer(wxVERTICAL, panel, _(L"Sposób przesuwania czasów"));
+		KaiStaticBoxSizer *timessizer = new KaiStaticBoxSizer(wxVERTICAL, panel, _("A method of time shift"));
 		choices.clear();
-		choices.Add(_("Obydwa czasy"));
-		choices.Add(_(L"Czas początkowy"));
-		choices.Add(_(L"Czas końcowy"));
+		choices.Add(_("Both times"));
+		choices.Add(_("The starting time"));
+		choices.Add(_("End time"));
 
 		WhichTimes = new KaiChoice(panel, 22888, wxDefaultPosition, wxDefaultSize, choices, KAI_SCROLL_ON_FOCUS);
 		WhichTimes->Enable(form != TMP);
 
 		timessizer->Add(WhichTimes, 0, wxEXPAND | wxRIGHT | wxTOP | wxLEFT, 2);
 
-		KaiStaticBoxSizer *cesizer = new KaiStaticBoxSizer(wxVERTICAL, panel, _(L"Korekcja czasów końcowych"));
+		KaiStaticBoxSizer *cesizer = new KaiStaticBoxSizer(wxVERTICAL, panel, _("Correction end times"));
 		choices.clear();
-		choices.Add(_("Pozostaw bez zmian"));
-		choices.Add(_(L"Skoryguj nachodzące czasy"));
-		choices.Add(_("Nowe czasy"));
+		choices.Add(_("Leave unchanged"));
+		choices.Add(_("Adjust overlapping times"));
+		choices.Add(_("New times"));
 		EndTimeCorrection = new KaiChoice(panel, 22888, wxDefaultPosition, wxSize(130, -1), choices, KAI_SCROLL_ON_FOCUS);
 		EndTimeCorrection->SetSelection(0);
 		cesizer->Add(EndTimeCorrection, 0, wxEXPAND | wxLEFT | wxRIGHT, 2);
@@ -387,15 +387,15 @@ void ShiftTimes::CreateControls(bool normal /*= true*/)
 	}
 	else{
 		int pe = Options.GetInt(POSTPROCESSOR_ON);
-		liosizer = new KaiStaticBoxSizer(wxVERTICAL, panel, _(L"Wstęp i zakończenie"));
-		MoveTime = new MappedButton(panel, GLOBAL_SHIFT_TIMES, _("Uruchom postprocessor"), _("Uruchom postprocessor"), wxDefaultPosition, wxDefaultSize, GLOBAL_HOTKEY);
+		liosizer = new KaiStaticBoxSizer(wxVERTICAL, panel, _("Lead-in/lead-out"));
+		MoveTime = new MappedButton(panel, GLOBAL_SHIFT_TIMES, _("Run post processor"), _("Run post processor"), wxDefaultPosition, wxDefaultSize, GLOBAL_HOTKEY);
 		Main->Add(MoveTime, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 6);
 		wxBoxSizer *leadinSizer = new wxBoxSizer(wxHORIZONTAL);
 		wxBoxSizer *leadoutSizer = new wxBoxSizer(wxHORIZONTAL);
-		LeadIn = new KaiCheckBox(panel, -1, _(L"Wstęp"), wxDefaultPosition, wxSize(-1, -1));
+		LeadIn = new KaiCheckBox(panel, -1, _("Lead-in"), wxDefaultPosition, wxSize(-1, -1));
 		LeadIn->SetValue((pe & 1) > 0);
 		LITime = new NumCtrl(panel, -1, Options.GetString(POSTPROCESSOR_LEAD_IN), -10000, 10000, true, wxDefaultPosition, wxSize(40, -1), SCROLL_ON_FOCUS);
-		LeadOut = new KaiCheckBox(panel, -1, _(L"Zakończenie"), wxDefaultPosition, wxSize(-1, -1));
+		LeadOut = new KaiCheckBox(panel, -1, _("Lead-out"), wxDefaultPosition, wxSize(-1, -1));
 		LeadOut->SetValue((pe & 2) > 0);
 		LOTime = new NumCtrl(panel, -1, Options.GetString(POSTPROCESSOR_LEAD_OUT), -10000, 10000, true, wxDefaultPosition, wxSize(40, -1), SCROLL_ON_FOCUS);
 
@@ -407,8 +407,8 @@ void ShiftTimes::CreateControls(bool normal /*= true*/)
 		liosizer->Add(leadinSizer, 1, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 2);
 		liosizer->Add(leadoutSizer, 1, wxEXPAND | wxLEFT | wxRIGHT, 2);
 
-		consizer = new KaiStaticBoxSizer(wxVERTICAL, panel, _(L"Ustaw czasy jako ciągłe"));
-		Continous = new KaiCheckBox(panel, -1, _(L"Włącz"));
+		consizer = new KaiStaticBoxSizer(wxVERTICAL, panel, _("Set times as continuous"));
+		Continous = new KaiCheckBox(panel, -1, _("Enable"));
 		Continous->SetValue((pe & 4) > 0);
 
 		consizer->Add(Continous, 0, wxEXPAND | wxALL, 2);
@@ -418,16 +418,16 @@ void ShiftTimes::CreateControls(bool normal /*= true*/)
 		ThresStart = new NumCtrl(panel, -1, Options.GetString(POSTPROCESSOR_THRESHOLD_START), 0, 10000, true, wxDefaultPosition, wxSize(40, -1), SCROLL_ON_FOCUS);
 		ThresEnd = new NumCtrl(panel, -1, Options.GetString(POSTPROCESSOR_THRESHOLD_END), 0, 10000, true, wxDefaultPosition, wxSize(40, -1), SCROLL_ON_FOCUS);
 
-		ThresStartSizer->Add(new KaiStaticText(panel, -1, _(L"Próg czasu początku"), wxDefaultPosition, wxSize(-1, -1)), 1, wxEXPAND | wxLEFT, 4);
+		ThresStartSizer->Add(new KaiStaticText(panel, -1, _("Start time threshold"), wxDefaultPosition, wxSize(-1, -1)), 1, wxEXPAND | wxLEFT, 4);
 		ThresStartSizer->Add(ThresStart, 0);
-		ThresEndSizer->Add(new KaiStaticText(panel, -1, _(L"Próg czasu końca"), wxDefaultPosition, wxSize(-1, -1)), 1, wxEXPAND | wxLEFT, 4);
+		ThresEndSizer->Add(new KaiStaticText(panel, -1, _("End time threshold"), wxDefaultPosition, wxSize(-1, -1)), 1, wxEXPAND | wxLEFT, 4);
 		ThresEndSizer->Add(ThresEnd, 0);
 
 		consizer->Add(ThresStartSizer, 1, wxEXPAND | wxBOTTOM | wxRIGHT, 2);
 		consizer->Add(ThresEndSizer, 1, wxEXPAND | wxBOTTOM | wxRIGHT, 2);
 
-		snapsizer = new KaiStaticBoxSizer(wxVERTICAL, panel, _(L"Wyrównaj do klatek kluczowych"));
-		SnapKF = new KaiCheckBox(panel, -1, _(L"Włącz"));
+		snapsizer = new KaiStaticBoxSizer(wxVERTICAL, panel, _("Snap to keyframes"));
+		SnapKF = new KaiCheckBox(panel, -1, _("Enable"));
 		SnapKF->Enable(false);
 		SnapKF->SetValue((pe & 8) > 0);
 		snapsizer->Add(SnapKF, 0, wxEXPAND | wxALL, 2);
@@ -441,13 +441,13 @@ void ShiftTimes::CreateControls(bool normal /*= true*/)
 		BeforeEnd = new NumCtrl(panel, -1, Options.GetString(POSTPROCESSOR_KEYFRAME_BEFORE_END), 0, 1000, true, wxDefaultPosition, wxSize(40, -1), SCROLL_ON_FOCUS);
 		AfterEnd = new NumCtrl(panel, -1, Options.GetString(POSTPROCESSOR_KEYFRAME_AFTER_END), 0, 1000, true, wxDefaultPosition, wxSize(40, -1), SCROLL_ON_FOCUS);
 
-		BeforeStartSizer->Add(new KaiStaticText(panel, -1, _(L"Przed czasem początku"), wxDefaultPosition, wxSize(-1, -1)), 1, wxEXPAND | wxLEFT, 4);
+		BeforeStartSizer->Add(new KaiStaticText(panel, -1, _("Before the start of time"), wxDefaultPosition, wxSize(-1, -1)), 1, wxEXPAND | wxLEFT, 4);
 		BeforeStartSizer->Add(BeforeStart, 0);
-		AfterStartSizer->Add(new KaiStaticText(panel, -1, _(L"Po czasie początku"), wxDefaultPosition, wxSize(-1, -1)), 1, wxEXPAND | wxLEFT, 4);
+		AfterStartSizer->Add(new KaiStaticText(panel, -1, _("After the start time"), wxDefaultPosition, wxSize(-1, -1)), 1, wxEXPAND | wxLEFT, 4);
 		AfterStartSizer->Add(AfterStart, 0);
-		BeforeEndSizer->Add(new KaiStaticText(panel, -1, _(L"Przed czasem końca"), wxDefaultPosition, wxSize(-1, -1)), 1, wxEXPAND | wxLEFT, 4);
+		BeforeEndSizer->Add(new KaiStaticText(panel, -1, _("Before the end time"), wxDefaultPosition, wxSize(-1, -1)), 1, wxEXPAND | wxLEFT, 4);
 		BeforeEndSizer->Add(BeforeEnd, 0);
-		AfterEndSizer->Add(new KaiStaticText(panel, -1, _(L"Po czasie końca"), wxDefaultPosition, wxSize(-1, -1)), 1, wxEXPAND | wxLEFT, 4);
+		AfterEndSizer->Add(new KaiStaticText(panel, -1, _("After the end time"), wxDefaultPosition, wxSize(-1, -1)), 1, wxEXPAND | wxLEFT, 4);
 		AfterEndSizer->Add(AfterEnd, 0);
 
 		snapsizer->Add(BeforeStartSizer, 1, wxEXPAND | wxBOTTOM | wxRIGHT, 2);
@@ -547,33 +547,33 @@ void ShiftTimes::OnSize(wxSizeEvent& event)
 
 void ShiftTimes::DoTooltips(bool normal /*= true*/)
 {
-	WhichLines->SetToolTip(_(L"Wybór linijek do przesunięcia"));
-	AddStyles->SetToolTip(_("Wybierz style z listy"));
-	Stylestext->SetToolTip(_(L"Przesuń według następujących stylów (oddzielone przecinkiem)"));
+	WhichLines->SetToolTip(_("The choice of lines to move"));
+	AddStyles->SetToolTip(_("Select a style from the list"));
+	Stylestext->SetToolTip(_("Move according to the following styles (separated by a coma)"));
 	if (normal){
-		TimeText->SetToolTip(_(L"Czas przesunięcia"));
-		MoveToVideoTime->SetToolTip(_(L"Przesuwanie zaznaczonej linijki\ndo czasu wideo ± czas przesunięcia"));
-		MoveToAudioTime->SetToolTip(_(L"Przesuwanie zaznaczonej linijki do czasu\nznacznika audio ± czas przesunięcia"));
-		StartVAtime->SetToolTip(_(L"Przesuwa czas początkowy do czasu wideo / audio"));
-		EndVAtime->SetToolTip(_(L"Przesuwa czas końcowy do czasu wideo / audio"));
-		Forward->SetToolTip(_(L"Opóźnia napisy"));
-		Backward->SetToolTip(_("Przyspiesza napisy"));
-		DisplayFrames->SetToolTip(_("Przesuwa napisy o ustawiony czas / klatki"));
-		MoveTagTimes->SetToolTip(_(L"Przesuwa czasy tagów \\move, \\t, \\fad tak,\nby ich pozycja na wideo się nie zmieniła\n(spowalnia przesuwanie czasów)"));
-		WhichTimes->SetToolTip(_(L"Wybór czasów do przesunięcia"));
-		EndTimeCorrection->SetToolTip(_(L"Korekcja czasów końcowych, gdy są niewłaściwe albo nachodzą na siebie"));
+		TimeText->SetToolTip(_("Time shifts"));
+		MoveToVideoTime->SetToolTip(_(L"Move the selected line \nto the time video ± time shift"));
+		MoveToAudioTime->SetToolTip(_(L"Move the selected lines to\nmark time audio ± time shift"));
+		StartVAtime->SetToolTip(_("Move the start time to the time video / audio"));
+		EndVAtime->SetToolTip(_("Moves the end time to the video/audio time"));
+		Forward->SetToolTip(_("Delays subtitles"));
+		Backward->SetToolTip(_("Speeds up subtitles"));
+		DisplayFrames->SetToolTip(_("Shift times by time / frames"));
+		MoveTagTimes->SetToolTip(_("Shifts \\move, \\t, and \\fad tag times\nso their positions on video do not change\n(slows down time shifting)"));
+		WhichTimes->SetToolTip(_("The choice of times to move"));
+		EndTimeCorrection->SetToolTip(_("Correction end times, when they are improper or overlap each other"));
 	}
 	else{
-		LeadIn->SetToolTip(_(L"Wstawia wstęp do czasu początkowego, dobre przy stosowaniu fad"));
-		LITime->SetToolTip(_(L"Czas wstępu w milisekundach"));
-		LeadOut->SetToolTip(_(L"Wstawia zakończenie do czasu końcowego, dobre przy stosowaniu fad"));
-		LOTime->SetToolTip(_(L"Czas zakończenia w milisekundach"));
-		ThresStart->SetToolTip(_(L"Próg wydłużania czasu początkowego"));
-		ThresEnd->SetToolTip(_(L"Próg wydłużania czasu końcowego"));
-		BeforeStart->SetToolTip(_(L"Maksymalne przesunięcie do klatki kluczowej\nprzed czasem początkowym w milisekundach"));
-		AfterStart->SetToolTip(_(L"Maksymalne przesunięcie do klatki kluczowej\npo czasie początkowym w milisekundach"));
-		BeforeEnd->SetToolTip(_(L"Maksymalne przesunięcie do klatki kluczowej\nprzed czasem końcowym w milisekundach"));
-		AfterEnd->SetToolTip(_(L"Maksymalne przesunięcie do klatki kluczowej\npo czasie końcowym w milisekundach"));
+		LeadIn->SetToolTip(_("Inserts introduction to the start time (good when using fad)"));
+		LITime->SetToolTip(_("Introduction time in milliseconds"));
+		LeadOut->SetToolTip(_("Inserts introduction to the end time (good when using fad)"));
+		LOTime->SetToolTip(_("End time in milliseconds"));
+		ThresStart->SetToolTip(_("Start time extension threshold"));
+		ThresEnd->SetToolTip(_("End time extension threshold"));
+		BeforeStart->SetToolTip(_("The maximum shift to a keyframe \nbefore the start time in milliseconds"));
+		AfterStart->SetToolTip(_("The maximum shift to a keyframe \nafter the start time in milliseconds"));
+		BeforeEnd->SetToolTip(_("The maximum shift to a keyframe \nbefore the end time in milliseconds"));
+		AfterEnd->SetToolTip(_("The maximum shift to a keyframe \nafter the end time in milliseconds"));
 	}
 }
 
@@ -969,13 +969,13 @@ void ShiftTimes::OnRemoveProfile(wxCommandEvent& event)
 	plPos = ClientToScreen(plPos);
 	//here it's possible rather it needs info
 	if (selectedProfile < 0){
-		KaiMessageBox(_(L"Na liście nie wybrano profilu do usunięcia"),
-			_("Informacja"), wxOK, this, wxPoint(0, plPos.y + plSize.y));
+		KaiMessageBox(_("There is no selected profile to remove"),
+			_("Info"), wxOK, this, wxPoint(0, plPos.y + plSize.y));
 		return;
 	}
 	wxString profileName = ProfilesList->GetString(selectedProfile);
-	int result = KaiMessageBox(wxString::Format(_(L"Na pewno chcesz usunąć profil o nazwie \"%s\""), profileName),
-		_("Informacja"), wxYES_NO, this, wxPoint(0, plPos.y + plSize.y));
+	int result = KaiMessageBox(wxString::Format(_("Do you want to remove profile of name \"%s\""), profileName),
+		_("Info"), wxYES_NO, this, wxPoint(0, plPos.y + plSize.y));
 	if (result != wxYES){
 		return;
 	}

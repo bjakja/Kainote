@@ -227,27 +227,15 @@ def copy_dictionaries(repo_root: Path, stage: Path) -> int:
 
 
 def compile_locales(repo_root: Path, stage: Path) -> int:
-    """Locale/*.po -> Locale/*.mo, the layout wxLocale loads."""
-    po_dir = repo_root / "Locale"
-    out_dir = stage / "Locale"
-    msgfmt = shutil.which("msgfmt")
-    if not po_dir.is_dir():
-        return 0
-    out_dir.mkdir(parents=True, exist_ok=True)
-    count = 0
-    for po in sorted(po_dir.glob("*.po")):
-        mo = out_dir / (po.stem + ".mo")
-        if msgfmt:
-            r = subprocess.run([msgfmt, "-o", str(mo), str(po)], capture_output=True, text=True)
-            if r.returncode == 0:
-                count += 1
-            else:
-                log(f"    ! msgfmt failed for {po.name}: {r.stderr.strip()[:160]}")
-        elif po.with_suffix(".mo").exists():
-            shutil.copyfile(po.with_suffix(".mo"), mo)
-            count += 1
-    if count == 0 and msgfmt is None:
-        log("    ! msgfmt is not on PATH and no compiled catalogs exist: "
+    """Locale/*.po -> Locale/<lang>/LC_MESSAGES/kainote.mo via tools/compile_catalogs.py."""
+    sys.path.insert(0, str(repo_root / "tools"))
+    try:
+        from compile_catalogs import compile_catalogs
+    finally:
+        sys.path.pop(0)
+    count = compile_catalogs(repo_root / "Locale", stage / "Locale")
+    if count == 0:
+        log("    ! no translation catalogues were built: "
             "the package will have no translations")
     return count
 
