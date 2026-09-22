@@ -359,7 +359,13 @@ Media backends (Windows uses DirectShow / DirectSound / Direct3D):
 Other Linux differences:
 
 - Move-to-trash uses freedesktop `gio trash`, so the `gio` tool (glib2) must be present at runtime; if it is missing, deleting a loaded video is a no-op instead of an unrecoverable hard delete.
-- The file-association `("Skojarzenia")` options tab is not shown there is no `xdg-mime` backend yet.
+- The file-association `("Skojarzenia")` options tab is not shown. On Linux associations
+  are declared by the `.desktop` file rather than set per extension at runtime. Run
+  `./install-desktop-integration.sh` from the extracted archive to register the menu
+  entry, icons and file types under `~/.local/share`; `--uninstall` removes them. A
+  prefix install (`cmake --install`) installs the same data, but not the executable:
+  Kainote still locates its resources relative to the binary, so it has to run from its
+  own directory.
 
 Under Wayland specifically (these work normally on X11):
 

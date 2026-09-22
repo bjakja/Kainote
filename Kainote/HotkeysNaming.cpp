@@ -157,6 +157,7 @@ void HotkeysNaming::CreateNamesMap()
 	names[GRID_SPLIT_BY_WORDS] = _("Split lines into words");
 	names[GRID_SPLIT_BY_WRAPS] = _("Split lines by wraps");
 	names[GLOBAL_OPEN_ASS_PROPERTIES] = _("ASS file properties");
+	names[GLOBAL_CHECK_FOR_UPDATES] = _("Check for updates");
 	names[GLOBAL_ABOUT] = _("About");
 	names[GLOBAL_ANSI] = _("Forum thread on animesub.info (Polish)");
 	names[GLOBAL_CONVERT_TO_ASS] = _("Convert to ASS");

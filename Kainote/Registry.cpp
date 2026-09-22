@@ -15,6 +15,7 @@
 
 #include "config.h"
 #include "Registry.h"
+#include "FileTypes.h"
 #include "LogHandler.h"
 #include <wx/stdpaths.h>
 #include <ShlObj.h>
@@ -81,7 +82,7 @@ bool Registry::GetStringValue(const wxString &strKey, wxString &outValue)
 	return true;
 }
 
-bool Registry::AddFileAssociation(const wxString &extension, const wxString &extName, int icon)
+bool Registry::AddFileAssociation(const wxString &extension, const wxString &extName, int iconResourceId)
 {
 	wxStandardPathsBase &paths = wxStandardPaths::Get();
 	wxString pathfull = paths.GetExecutablePath();
@@ -102,7 +103,9 @@ bool Registry::AddFileAssociation(const wxString &extension, const wxString &ext
 		KaiLog(L"Can not open extension class"); return false;
 	}
 	if (reg.OpenNewRegistry(HKEY_CURRENT_USER, mainPath + progName + extension + L"\\DefaultIcon", true)){
-		reg.SetStringValue(emptyString, KaiPathJoin(KaiPathDir(pathfull), L"Icons.dll") + L"," + std::to_wstring(icon));
+		// Negative index = resource id rather than position, so reordering
+		// icons later cannot repoint existing associations.
+		reg.SetStringValue(emptyString, L"\"" + pathfull + L"\"," + std::to_wstring(-iconResourceId));
 		reg.CloseRegistry();
 	}
 	else{
@@ -131,6 +134,45 @@ bool Registry::RemoveFileAssociation(const wxString &extension)
 	else{ KaiLog(wxString::Format(L"Can not remove extension %s", extension)); return false; }
 	SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, nullptr, nullptr);
 	return true;
+}
+
+// Associations written against the old Icons.dll would render blank now that
+// it is gone. Cheap enough to fix on every start.
+void Registry::MigrateFileAssociationIcons()
+{
+	wxStandardPathsBase &paths = wxStandardPaths::Get();
+	wxString pathfull = paths.GetExecutablePath();
+	wxString progName = KaiPathName(pathfull).BeforeFirst(L'.');
+	wxString mainPath = L"Software\\Classes\\";
+	bool changedAny = false;
+
+	for (size_t i = 0; i < kKainoteFileTypeCount; i++){
+		const KainoteFileType &type = kKainoteFileTypes[i];
+		wxString iconKey = mainPath + progName + type.extension + L"\\DefaultIcon";
+
+		// Read only: never create an association we do not already own.
+		bool success = false;
+		Registry reg(HKEY_CURRENT_USER, iconKey, success, false);
+		if (!success)
+			continue;
+
+		wxString current;
+		reg.GetStringValue(emptyString, current);
+		reg.CloseRegistry();
+
+		if (!current.Lower().Contains(L"icons.dll"))
+			continue;
+
+		if (reg.OpenNewRegistry(HKEY_CURRENT_USER, iconKey, true)){
+			reg.SetStringValue(emptyString,
+				L"\"" + pathfull + L"\"," + std::to_wstring(-type.iconResourceId));
+			reg.CloseRegistry();
+			changedAny = true;
+		}
+	}
+
+	if (changedAny)
+		SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, nullptr, nullptr);
 }
 
 void Registry::CheckFileAssociation(const wxString *extensions, int numExt, std::vector<bool> &output)

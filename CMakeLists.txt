@@ -97,6 +97,9 @@ add_executable(kainote
     Kainote/ProviderFFMS2.cpp
     Kainote/RendererFFMS2.cpp
     Kainote/RendererGStreamer.cpp
+    Kainote/FileTypes.cpp
+    Kainote/JsonValue.cpp
+    Kainote/UpdateChecker.cpp
     Kainote/Registry.cpp
     Kainote/RendererDirectShow.cpp
     Kainote/RendererVideo.cpp
@@ -294,6 +297,8 @@ set(KAINOTE_PACKAGE_STAGE_PARENT "${CMAKE_BINARY_DIR}/package-stage")
 set(KAINOTE_PACKAGE_ARCHIVE
     "${CMAKE_BINARY_DIR}/dist/${KAINOTE_PACKAGE_BASENAME}.tar.gz")
 file(MAKE_DIRECTORY "${KAINOTE_PACKAGE_STAGE_PARENT}")
+include(${CMAKE_SOURCE_DIR}/cmake/DesktopIntegration.cmake)
+
 add_custom_target(kainote_linux_package
     # Refresh the dependency manifest before every package.
     COMMAND ${CMAKE_COMMAND}
@@ -313,6 +318,8 @@ add_custom_target(kainote_linux_package
             -D Python3_EXECUTABLE=${Python3_EXECUTABLE}
             -D TAR_EXECUTABLE=${TAR_EXECUTABLE}
             -D GZIP_EXECUTABLE=${GZIP_EXECUTABLE}
+            -D PACKAGING_DIR=${CMAKE_SOURCE_DIR}/packaging/linux
+            -D DESKTOP_GEN_DIR=${CMAKE_BINARY_DIR}/packaging
             -D SYSTEM_DICTIONARY_DIR=${KAINOTE_SYSTEM_DICTIONARY_DIR}
             -P "${CMAKE_SOURCE_DIR}/cmake/PackageLinuxRuntime.cmake"
     DEPENDS kainote

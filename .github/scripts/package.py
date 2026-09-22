@@ -129,7 +129,7 @@ def copy_binaries(platform: str, build_dir: Path, stage: Path) -> tuple[list[str
     taken: list[str] = []
     missing: list[str] = []
     if platform == "windows":
-        wanted = ["KaiNote.exe", "KaiNote.pdb", "Icons.dll", "ffms2.dll",
+        wanted = ["KaiNote.exe", "KaiNote.pdb", "ffms2.dll",
                   "KaiNote_AVX.exe", "KaiNote_AVX.pdb"]
     else:
         wanted = ["kainote"]
