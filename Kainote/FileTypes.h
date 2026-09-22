@@ -28,6 +28,11 @@
 #include <cstddef>
 #include <iterator>
 
+// ProgID prefix, e.g. "Kainote.ass". A constant, not the executable's
+// filename: the build produces Kainote.exe but package.py stages it as
+// KaiNote.exe, and deriving from the filename made the two disagree.
+inline constexpr const wchar_t *kKainoteProgIdPrefix = L"Kainote";
+
 enum class KainoteFileKind
 {
 	Subtitle,

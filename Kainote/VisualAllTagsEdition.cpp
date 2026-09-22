@@ -149,7 +149,7 @@ void AllTagsEdition::OnResetDefault(wxCommandEvent& evt)
 {
 	if (KaiMessageBox(_("Are you sure you want to reset to default?"),
 		_("Confirmation"), wxYES_NO, this) == wxYES){
-		wxString path = Options.pathfull + L"/Config/AllTagsSettings.txt";
+		wxString path = Options.userPath + L"/Config/AllTagsSettings.txt";
 		_wremove(path.wc_str());
 		tags.clear();
 		LoadSettings(&tags);
@@ -326,7 +326,7 @@ void AllTagsEdition::Save(int id)
 
 void LoadSettings(std::vector<AllTagsSetting>* tags)
 {
-	wxString path = Options.pathfull + L"/Config/AllTagsSettings.txt";
+	wxString path = Options.userPath + L"/Config/AllTagsSettings.txt";
 	OpenWrite ow;
 	wxString txtSettings;
 	//go inside when used pravious version of hydra
@@ -426,7 +426,7 @@ void GetNames(std::vector<AllTagsSetting>* tags, wxArrayString* nameList)
 
 void SaveSettings(std::vector<AllTagsSetting>* tags)
 {
-	wxString path = Options.pathfull + L"/Config/AllTagsSettings.txt";
+	wxString path = Options.userPath + L"/Config/AllTagsSettings.txt";
 	OpenWrite ow(path);
 	for (size_t i = 0; i < tags->size(); i++) {
 		AllTagsSetting tag = (*tags)[i];

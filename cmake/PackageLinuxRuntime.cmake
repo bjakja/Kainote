@@ -108,6 +108,11 @@ else()
         "default dictionary")
 endif()
 
+# The archive is a self-contained directory, so it keeps its settings beside
+# the binary. Without this marker Kainote would use XDG paths instead.
+file(WRITE "${package_root}/portable.txt"
+     "Kainote keeps its settings in this folder.\nDelete this file to use ~/.config/kainote instead.\n")
+
 if(EXISTS "${SOURCE_DIR}/LICENSE")
     file(COPY_FILE "${SOURCE_DIR}/LICENSE" "${package_root}/LICENSE")
 endif()

@@ -324,7 +324,7 @@ done:
 
 	wxString sep = wxFileName::GetPathSeparator();
 	wxString baseName = wxFileName(m_filename).GetName();
-	m_indexPath = Options.pathfull + sep + L"Indices" + sep + baseName +
+	m_indexPath = Options.cachePath + sep + L"Indices" + sep + baseName +
 		wxString::Format(L"_%i.ffindex", audiotrack);
 
 	if (wxFileExists(m_indexPath)) {
@@ -584,7 +584,7 @@ void ProviderFFMS2::AudioLoad(ProviderFFMS2* vf, bool newIndex, int audiotrack)
 	if (vf->m_discCache) {
 		wxString sep = wxFileName::GetPathSeparator();
 		wxString baseName = wxFileName(vf->m_filename).GetName();
-		vf->m_diskCacheFilename << Options.pathfull << sep << L"AudioCache" << sep <<
+		vf->m_diskCacheFilename << Options.cachePath << sep << L"AudioCache" << sep <<
 			baseName << L"_track" << audiotrack << L".w64";
 		if (!vf->DiskCache(newIndex)) { goto done; }
 	}
@@ -836,7 +836,7 @@ void ProviderFFMS2::ClearDiskCache()
 
 void ProviderFFMS2::DeleteOldAudioCache()
 {
-	wxString path = Options.pathfull + wxFileName::GetPathSeparator() + L"AudioCache";
+	wxString path = Options.cachePath + wxFileName::GetPathSeparator() + L"AudioCache";
 	size_t maxAudio = Options.GetInt(AUDIO_CACHE_FILES_LIMIT);
 	if (maxAudio < 1)
 		return;

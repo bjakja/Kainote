@@ -49,7 +49,9 @@ SpellChecker::SpellChecker()
 	conv = nullptr;
 	SC = nullptr;
 	dictionaryPath = Options.pathfull + L"/Dictionary/";
-	userDictionaryPath = dictionaryPath + L"UserDic.udic";
+	// The shipped dictionaries are read-only once installed, so the user's own
+	// additions live under userPath.
+	userDictionaryPath = Options.userPath + L"/Dictionary/UserDic.udic";
 
 }
 
@@ -85,15 +87,19 @@ void SpellChecker::AvailableDics(wxArrayString &dics, wxArrayString &symbols)
 {
 	wxArrayString dic;
 	wxArrayString aff;
-	wxString dictionaryPath = Options.pathfull + L"/Dictionary";
-	wxDir kat(dictionaryPath);
-	if (kat.IsOpened()){
-
-		kat.GetAllFiles(dictionaryPath, &dic, L"*.dic", wxDIR_FILES);
-		kat.GetAllFiles(dictionaryPath, &aff, L"*.aff", wxDIR_FILES);
+	// Both roots: in a per-machine install the user directory is the only
+	// place a user can add a dictionary.
+	for (const wxString &dictionaryPath : { Options.pathfull + L"/Dictionary",
+		Options.userPath + L"/Dictionary" })
+	{
+		wxDir kat(dictionaryPath);
+		if (kat.IsOpened()){
+			kat.GetAllFiles(dictionaryPath, &dic, L"*.dic", wxDIR_FILES);
+			kat.GetAllFiles(dictionaryPath, &aff, L"*.aff", wxDIR_FILES);
+		}
 	}
 
-	for (size_t i = 0; i < dic.size(); i++){
+	for (size_t i = 0; i < dic.size() && i < aff.size(); i++){
 		if (dic[i].BeforeLast(L'.') == aff[i].BeforeLast(L'.')){
 			wxString symbolName = wxFileName(dic[i]).GetName();
 			symbols.Add(symbolName);

@@ -573,7 +573,7 @@ void StyleStore::OnDeleteCatalog(wxCommandEvent& event)
 	Options.actualStyleDir = Options.dirs[MAX(0, cat - 1)];
 	catalogList->SetSelection(MAX(0, cat - 1));
 	wxString path;
-	path << Options.pathfull << L"/Catalog/" << Cat << L".sty";
+	path << Options.userPath << L"/Catalog/" << Cat << L".sty";
 	wxRemoveFile(path);
 	Options.LoadStyles(Options.actualStyleDir);
 	Store->Refresh(false);
