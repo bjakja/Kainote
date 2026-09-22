@@ -2673,8 +2673,9 @@ msgid "Split line at video time"
 msgstr "Seleccionar la línea en la posición de vídeo actual"
 
 #: Kainote/HotkeysNaming.cpp:155 Kainote/SubsGrid.cpp:160
+#, fuzzy
 msgid "Split lines into frames"
-msgstr ""
+msgstr "Dividir líneas en marcos"
 
 #: Kainote/HotkeysNaming.cpp:156 Kainote/SubsGrid.cpp:162
 #, fuzzy
@@ -2682,12 +2683,14 @@ msgid "Split lines into characters"
 msgstr "Duplicación de líneas"
 
 #: Kainote/HotkeysNaming.cpp:157 Kainote/SubsGrid.cpp:163
+#, fuzzy
 msgid "Split lines into words"
-msgstr ""
+msgstr "Dividir líneas en palabras"
 
 #: Kainote/HotkeysNaming.cpp:158 Kainote/SubsGrid.cpp:164
+#, fuzzy
 msgid "Split lines by wraps"
-msgstr ""
+msgstr "Dividir líneas por envolturas"
 
 #: Kainote/HotkeysNaming.cpp:159 Kainote/KainoteFrame.cpp:316
 #, fuzzy
@@ -4509,12 +4512,14 @@ msgid "Program font:"
 msgstr "Fuente del programa:"
 
 #: Kainote/OptionsDialog.cpp:424
+#, fuzzy
 msgid "Calculate spaces and punctation characters for wraps"
-msgstr ""
+msgstr "Calcular espacios y caracteres de punción para envolturas"
 
 #: Kainote/OptionsDialog.cpp:427
+#, fuzzy
 msgid "Calculate spaces and punctation characters for CPS"
-msgstr ""
+msgstr "Calcular espacios y caracteres de puntación para CPS"
 
 #: Kainote/OptionsDialog.cpp:432
 #, fuzzy
@@ -5787,8 +5792,9 @@ msgid "Indexing video"
 msgstr "Indexación de vídeos"
 
 #: Kainote/ProviderFFMS2.cpp:118
+#, fuzzy
 msgid "Video frame size is too large"
-msgstr ""
+msgstr "El tamaño del marco de vídeo es demasiado grande"
 
 #: Kainote/ProviderFFMS2.cpp:147
 #, c-format
@@ -5919,11 +5925,12 @@ msgstr "No se pueden superponer superficies"
 #: Kainote/RendererGStreamer.cpp:108
 #, c-format
 msgid "Chapter %i"
-msgstr ""
+msgstr "Capítulo %i"
 
 #: Kainote/RendererGStreamer.cpp:197
+#, fuzzy
 msgid "Video file does not contain a video stream"
-msgstr ""
+msgstr "El archivo de vídeo no contiene una secuencia de vídeo"
 
 #: Kainote/RendererGStreamer.cpp:278
 #, fuzzy
@@ -5943,7 +5950,7 @@ msgstr "No se puede abrir el archivo \"%s\"."
 #: Kainote/RendererGStreamer.cpp:782
 #, c-format
 msgid "Track %i"
-msgstr ""
+msgstr "Pista %i"
 
 #: Kainote/RendererVideo.cpp:391 Kainote/VisualRotationXY.cpp:163
 #, fuzzy

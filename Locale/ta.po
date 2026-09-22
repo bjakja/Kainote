@@ -1487,8 +1487,9 @@ msgid "Merge"
 msgstr "ஒன்றிணைக்கவும்"
 
 #: Kainote/FontCatalogList.cpp:863
+#, fuzzy
 msgid "Remove all contents of catalog"
-msgstr ""
+msgstr "பட்டியலின் அனைத்து உள்ளடக்கங்களையும் அகற்று"
 
 #: Kainote/FontCatalogList.cpp:864
 #, fuzzy
@@ -1916,20 +1917,23 @@ msgstr "எழுத்துருக்கள் கோப்புறைக�
 
 #: Kainote/FontEnumerator.cpp:423 Kainote/FontEnumerator.cpp:447
 #: Kainote/FontEnumerator.cpp:656
+#, fuzzy
 msgid "Loading external fonts"
-msgstr ""
+msgstr "வெளிப்புற எழுத்துருக்களை ஏற்றுகிறது"
 
 #: Kainote/FontEnumerator.cpp:462
 msgid "Cannot create next notification handler for fonts folder."
 msgstr "எழுத்துருக்கள் கோப்புறைக்கு அடுத்த அறிவிப்பு கையாளுபவரை உருவாக்க முடியாது."
 
 #: Kainote/FontEnumerator.cpp:574
+#, fuzzy
 msgid "Removing fonts from external folder"
-msgstr ""
+msgstr "வெளிப்புற கோப்புறையிலிருந்து எழுத்துருக்களை நீக்குகிறது"
 
 #: Kainote/FontEnumerator.cpp:582
+#, fuzzy
 msgid "Loading fonts from external folder"
-msgstr ""
+msgstr "வெளிப்புற கோப்புறையிலிருந்து எழுத்துருக்களை ஏற்றுகிறது"
 
 #: Kainote/FontEnumerator.cpp:608
 #, fuzzy
@@ -4115,8 +4119,9 @@ msgid "After program start asynchronously"
 msgstr "நிரல் ஒத்திசைவற்ற முறையில் தொடங்கிய பிறகு"
 
 #: Kainote/OptionsDialog.cpp:439
+#, fuzzy
 msgid "Folder with external fonts"
-msgstr ""
+msgstr "வெளிப்புற எழுத்துருக்கள் கொண்ட கோப்புறை"
 
 #: Kainote/OptionsDialog.cpp:442 Kainote/VideoToolbar.cpp:508
 #: Kainote/VideoToolbar.cpp:525
@@ -4206,8 +4211,9 @@ msgid "Subtitle display filter"
 msgstr "வசன வரிகள் வடிகட்டி"
 
 #: Kainote/OptionsDialog.cpp:577
+#, fuzzy
 msgid "Start video zoom in percent."
-msgstr ""
+msgstr "சதவீதத்தில் வீடியோ சூம் தொடங்கவும்."
 
 #: Kainote/OptionsDialog.cpp:596
 msgid "Linear"
@@ -5256,7 +5262,7 @@ msgstr "\"%s\" கோப்பைத் திறக்க முடியாத
 #: Kainote/RendererGStreamer.cpp:782
 #, c-format
 msgid "Track %i"
-msgstr ""
+msgstr "ட்ராக் %i"
 
 #: Kainote/RendererVideo.cpp:391 Kainote/VisualRotationXY.cpp:163
 msgid "Cannot set matrix projection"
@@ -7411,8 +7417,9 @@ msgid "List of tags that can edit visual tool"
 msgstr "காட்சி கருவியைத் திருத்தக்கூடிய குறிச்சொற்களின் பட்டியல்"
 
 #: Kainote/VideoToolbar.cpp:747 Kainote/VisualAllTagsEdition.cpp:86
+#, fuzzy
 msgid "Gradient text increasing"
-msgstr ""
+msgstr "சாய்வு உரை அதிகரிக்கிறது"
 
 #: Kainote/VideoToolbar.cpp:747 Kainote/VisualAllTagsEdition.cpp:86
 msgid "Insert"
@@ -7438,8 +7445,9 @@ msgid "Gradient line increasing"
 msgstr "நிழல் நிறத்தின் சாய்வு"
 
 #: Kainote/VideoToolbar.cpp:748 Kainote/VisualAllTagsEdition.cpp:87
+#, fuzzy
 msgid "Gradient text decreasing"
-msgstr ""
+msgstr "சாய்வு உரை குறைகிறது"
 
 #: Kainote/VideoToolbar.cpp:751
 msgid ""
