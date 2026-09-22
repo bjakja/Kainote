@@ -2583,8 +2583,9 @@ msgid "Split line at video time"
 msgstr "현재 영상지점으로 줄 이동"
 
 #: Kainote/HotkeysNaming.cpp:155 Kainote/SubsGrid.cpp:160
+#, fuzzy
 msgid "Split lines into frames"
-msgstr ""
+msgstr "프레임에 분할 라인"
 
 #: Kainote/HotkeysNaming.cpp:156 Kainote/SubsGrid.cpp:162
 #, fuzzy
@@ -2592,12 +2593,14 @@ msgid "Split lines into characters"
 msgstr "줄 복사"
 
 #: Kainote/HotkeysNaming.cpp:157 Kainote/SubsGrid.cpp:163
+#, fuzzy
 msgid "Split lines into words"
-msgstr ""
+msgstr "단어로 줄을 분할"
 
 #: Kainote/HotkeysNaming.cpp:158 Kainote/SubsGrid.cpp:164
+#, fuzzy
 msgid "Split lines by wraps"
-msgstr ""
+msgstr "연락처"
 
 #: Kainote/HotkeysNaming.cpp:159 Kainote/KainoteFrame.cpp:316
 msgid "ASS file properties"
@@ -4088,12 +4091,14 @@ msgid "Program font:"
 msgstr "프로그램 글꼴:"
 
 #: Kainote/OptionsDialog.cpp:424
+#, fuzzy
 msgid "Calculate spaces and punctation characters for wraps"
-msgstr ""
+msgstr "포장을 위한 공간과 punctation 문자 계산"
 
 #: Kainote/OptionsDialog.cpp:427
+#, fuzzy
 msgid "Calculate spaces and punctation characters for CPS"
-msgstr ""
+msgstr "공간 계산 및 CPS에 대한 음성"
 
 #: Kainote/OptionsDialog.cpp:432
 msgid "Autoload loading method"
@@ -5122,8 +5127,9 @@ msgid "Indexing video"
 msgstr "영상 색인"
 
 #: Kainote/ProviderFFMS2.cpp:118
+#, fuzzy
 msgid "Video frame size is too large"
-msgstr ""
+msgstr "영상 구조 크기는 너무 크다"
 
 #: Kainote/ProviderFFMS2.cpp:147
 #, c-format
@@ -5235,11 +5241,12 @@ msgstr "표면을 오버레이 할 수 없음"
 #: Kainote/RendererGStreamer.cpp:108
 #, c-format
 msgid "Chapter %i"
-msgstr ""
+msgstr "장 %i"
 
 #: Kainote/RendererGStreamer.cpp:197
+#, fuzzy
 msgid "Video file does not contain a video stream"
-msgstr ""
+msgstr "Video file는 비디오 스트림을 포함하지 않습니다"
 
 #: Kainote/RendererGStreamer.cpp:278
 #, fuzzy
@@ -5259,7 +5266,7 @@ msgstr "\"%s\" 파일을 열 수 없습니다."
 #: Kainote/RendererGStreamer.cpp:782
 #, c-format
 msgid "Track %i"
-msgstr ""
+msgstr "%i 트랙"
 
 #: Kainote/RendererVideo.cpp:391 Kainote/VisualRotationXY.cpp:163
 msgid "Cannot set matrix projection"
