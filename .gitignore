@@ -83,8 +83,6 @@ artifacts/
 *.tlh
 *.tmp
 *.tmp_proj
-*.log
-*.lib
 *.vspscc
 *.vssscc
 .builds
@@ -252,7 +250,20 @@ _Pvt_Extensions
 # FAKE - F# Make
 .fake/
 
-*.css
 build/
 build-*/
 .serena/
+
+# Python bytecode cache (the packaging scripts under .github/scripts)
+__pycache__/
+*.pyc
+
+# MSBuild intermediates (were previously committed under Thirdparty/Build)
+bin/**/*.lib
+obj/**/*.log
+*.tlog
+*.exp
+*.recipe
+*.lastbuildstate
+*.idb
+*.ilk

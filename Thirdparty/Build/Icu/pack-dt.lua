@@ -14,7 +14,10 @@
 --
 -- Aegisub Project http://www.aegisub.org/
 
-local ICU_VERSION = 'icudt60'
+-- The data file and the symbol ICU links against are both version-stamped
+-- (icudt78l.dat -> icudt78_dat).  The name comes from Icu.vcxproj so there is
+-- one place to change on an ICU bump.
+local DEFAULT_DAT = 'icudt78l'
 
 local function try_open(filename, mode)
   local file, err = io.open(filename, mode)
@@ -25,12 +28,16 @@ local function try_open(filename, mode)
   return file
 end
 
-local icu_root, out_path = ...
+local icu_root, out_path, dat_name = ...
+dat_name = dat_name or DEFAULT_DAT
 
-local infile = try_open(string.format('%s/data/in/%sl.dat', icu_root, ICU_VERSION), 'rb')
+-- "icudt78l" (the file) -> "icudt78_dat" (the symbol udata.cpp expects).
+local symbol = dat_name:gsub('l$', '') .. '_dat'
+
+local infile = try_open(string.format('%s/data/in/%s.dat', icu_root, dat_name), 'rb')
 local outfile = try_open(out_path, 'w')
 
-outfile:write("const unsigned char " .. ICU_VERSION .. "_dat[] = {")
+outfile:write("const unsigned char " .. symbol .. "[] = {")
 
 local len = 0
 while true do

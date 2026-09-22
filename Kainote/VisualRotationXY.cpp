@@ -160,9 +160,9 @@ void RotationXY::DrawVisual(int time)
 	D3DXMatrixOrthoOffCenterLH(&matOrtho, 0, s.x, s.y, 0, 0.0f, 1.0f);
 	D3DXMatrixIdentity(&matIdentity);
 
-	HRN(device->SetTransform(D3DTS_PROJECTION, &matOrtho), _("Nie można ustawić macierzy projekcji"));
-	HRN(device->SetTransform(D3DTS_WORLD, &matIdentity), _("Nie można ustawić macierzy świata"));
-	HRN(device->SetTransform(D3DTS_VIEW, &matIdentity), _("Nie można ustawić macierzy widoku"));
+	HRN(device->SetTransform(D3DTS_PROJECTION, &matOrtho), _(L"Nie można ustawić macierzy projekcji"));
+	HRN(device->SetTransform(D3DTS_WORLD, &matIdentity), _(L"Nie można ustawić macierzy świata"));
+	HRN(device->SetTransform(D3DTS_VIEW, &matIdentity), _(L"Nie można ustawić macierzy widoku"));
 	D3DXVECTOR2 v2[4];
 	v2[0].x = org.x - 10.0f;
 	v2[0].y = org.y;

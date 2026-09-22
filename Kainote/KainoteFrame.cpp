@@ -72,6 +72,10 @@
 
 
 
+// winsock2.h first: windows.h would pull in the old winsock.h (sockaddr clash).
+#ifdef __WXMSW__
+#include <winsock2.h>
+#endif
 #include <windows.h>
 #include <ShObjIdl.h>
 #include <versionhelpers.h>
@@ -144,59 +148,59 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	StatusBar = new KaiStatusBar(this, ID_STATUS_BAR);
 	int StatusBarWidths[9] = { -12, 0, 0, 0, 0, 0, 0, 0, -22 };
 	StatusBar->SetFieldsCount(9, StatusBarWidths);
-	wxString tooltips[] = { emptyString, _("Skala obrazu wideo"), _("Powiększenie wideo"), _("Czas trwania wideo"),
-		_("Klatki na Sekundę"), _("Rozdzielczość wideo"), _("Proporcje wideo"), _("Rozdzielczość napisów"), _("Nazwa pliku wideo") };
+	wxString tooltips[] = { emptyString, _("Skala obrazu wideo"), _(L"Powiększenie wideo"), _("Czas trwania wideo"),
+		_(L"Klatki na Sekundę"), _(L"Rozdzielczość wideo"), _("Proporcje wideo"), _(L"Rozdzielczość napisów"), _("Nazwa pliku wideo") };
 	StatusBar->SetTooltips(tooltips, 9);
 
 
 	FileMenu = new Menu();
 	SubsRecMenu = new Menu();
 	Menu *lastSession = new Menu();
-	lastSession->AppendTool(Toolbar, GLOBAL_LOAD_LAST_SESSION, _("Wczytaj ostatnią sesję"), 
+	lastSession->AppendTool(Toolbar, GLOBAL_LOAD_LAST_SESSION, _(L"Wczytaj ostatnią sesję"),
 		_("Wczytuje poprzednio zaczytane pliki"), PTR_BITMAP_PNG(L"OPEN_LAST_SESSION"));
-	lastSession->Append(GLOBAL_LOAD_EXTERNAL_SESSION, _("Wczytaj sesję z pliku"), 
-		_("Wczytuje sesję z wcześniej zapisanego pliku sesji"));
+	lastSession->Append(GLOBAL_LOAD_EXTERNAL_SESSION, _(L"Wczytaj sesję z pliku"),
+		_(L"Wczytuje sesję z wcześniej zapisanego pliku sesji"));
 	lastSession->Append(GLOBAL_SAVE_EXTERNAL_SESSION, 
-		_("Zapisz sesję do pliku"), _("Zapisuje sesję do pliku"));
+		_(L"Zapisz sesję do pliku"), _(L"Zapisuje sesję do pliku"));
 	int lastSessionConfig = Options.GetInt(LAST_SESSION_CONFIG);
 	lastSession->Append(GLOBAL_ASK_FOR_LOAD_LAST_SESSION, 
 		_("Pytaj o wczytanie ostatniej sesji przy starcie programu"), 
-		nullptr, _("Pyta, czy wczytać ostatnio zaczytane pliki przy starcie programu"), 
+		nullptr, _(L"Pyta, czy wczytać ostatnio zaczytane pliki przy starcie programu"),
 		ITEM_CHECK_AND_HIDE)->Check(lastSessionConfig == 1);
 	lastSession->Append(GLOBAL_LOAD_LAST_SESSION_ON_START, 
-		_("Wczytaj ostatnią sesję przy starcie programu"), nullptr, 
+		_(L"Wczytaj ostatnią sesję przy starcie programu"), nullptr,
 		_("Wczytuje poprzednio zaczytane pliki przy starcie programu"), 
 		ITEM_CHECK_AND_HIDE)->Check(lastSessionConfig == 2);
 	
 
-	FileMenu->AppendTool(Toolbar, GLOBAL_OPEN_SUBS, _("&Otwórz napisy"), 
-		_("Otwórz plik napisów"), PTR_BITMAP_PNG(L"opensubs"));
+	FileMenu->AppendTool(Toolbar, GLOBAL_OPEN_SUBS, _(L"&Otwórz napisy"),
+		_(L"Otwórz plik napisów"), PTR_BITMAP_PNG(L"opensubs"));
 	FileMenu->AppendTool(Toolbar, GLOBAL_SAVE_SUBS, _("&Zapisz"), 
 		_("Zapisz aktualny plik"), PTR_BITMAP_PNG(L"save"), false);
 	FileMenu->AppendTool(Toolbar, GLOBAL_SAVE_ALL_SUBS, _("Zapisz &wszystko"), 
 		_("Zapisz wszystkie napisy"), PTR_BITMAP_PNG(L"saveall"));
 	FileMenu->AppendTool(Toolbar, GLOBAL_SAVE_SUBS_AS, _("Zapisz &jako..."), 
 		_("Zapisz jako"), PTR_BITMAP_PNG(L"saveas"));
-	FileMenu->AppendTool(Toolbar, GLOBAL_SAVE_TRANSLATION, _("Zapisz &tłumaczenie"), 
-		_("Zapisz tłumaczenie"), PTR_BITMAP_PNG(L"savetl"), false);
+	FileMenu->AppendTool(Toolbar, GLOBAL_SAVE_TRANSLATION, _(L"Zapisz &tłumaczenie"),
+		_(L"Zapisz tłumaczenie"), PTR_BITMAP_PNG(L"savetl"), false);
 	FileMenu->AppendTool(Toolbar, GLOBAL_RECENT_SUBS, _("Ostatnio otwa&rte napisy"), 
 		_("Ostatnio otwarte napisy"), PTR_BITMAP_PNG(L"recentsubs"), true, SubsRecMenu);
-	FileMenu->AppendTool(Toolbar, GLOBAL_REMOVE_SUBS, _("Usuń napisy z e&dytora"), 
-		_("Usuń napisy z edytora"), PTR_BITMAP_PNG(L"close"));
-	FileMenu->Append(GLOBAL_SAVE_WITH_VIDEO_NAME, _("Zapisuj napisy z nazwą wideo"), 
-		_("Zapisuj napisy z nazwą wideo"), true, 
+	FileMenu->AppendTool(Toolbar, GLOBAL_REMOVE_SUBS, _(L"Usuń napisy z e&dytora"),
+		_(L"Usuń napisy z edytora"), PTR_BITMAP_PNG(L"close"));
+	FileMenu->Append(GLOBAL_SAVE_WITH_VIDEO_NAME, _(L"Zapisuj napisy z nazwą wideo"),
+		_(L"Zapisuj napisy z nazwą wideo"), true,
 		PTR_BITMAP_PNG(L"SAVEWITHVIDEONAME"), nullptr, ITEM_CHECK)->Check(Options.GetBool(SUBS_AUTONAMING));
 	Toolbar->AddID(GLOBAL_SAVE_WITH_VIDEO_NAME);
-	FileMenu->Append(GLOBAL_OPEN_AUTO_SAVE, _("Otwórz autozapis"), _("Otwiera autozapis wybrany z listy"));
-	FileMenu->Append(GLOBAL_DELETE_TEMPORARY_FILES, _("Usuń pliki tymczasowe"), 
-		_("Otwiera okno usuwania plików tymczasowych"));
-	FileMenu->Append(9989, _("Pokaż / Ukryj okno logów"))->DisableMapping();
+	FileMenu->Append(GLOBAL_OPEN_AUTO_SAVE, _(L"Otwórz autozapis"), _("Otwiera autozapis wybrany z listy"));
+	FileMenu->Append(GLOBAL_DELETE_TEMPORARY_FILES, _(L"Usuń pliki tymczasowe"),
+		_(L"Otwiera okno usuwania plików tymczasowych"));
+	FileMenu->Append(9989, _(L"Pokaż / Ukryj okno logów"))->DisableMapping();
 	FileMenu->Append(9990, _("Ostatnia sesja"), _("Opcje ostatniej sesji"), 
 		true, PTR_BITMAP_PNG(L"OPEN_LAST_SESSION"), lastSession);
 	FileMenu->AppendTool(Toolbar, GLOBAL_SETTINGS, _("&Ustawienia"), 
 		_("Ustawienia programu"), PTR_BITMAP_PNG(L"SETTINGS"));
-	FileMenu->AppendTool(Toolbar, GLOBAL_QUIT, _("Wyjści&e\tAlt-F4"), 
-		_("Zakończ działanie programu"), PTR_BITMAP_PNG(L"exit"))->DisableMapping();
+	FileMenu->AppendTool(Toolbar, GLOBAL_QUIT, _(L"Wyjści&e\tAlt-F4"),
+		_(L"Zakończ działanie programu"), PTR_BITMAP_PNG(L"exit"))->DisableMapping();
 	Menubar->Append(FileMenu, _("&Plik"));
 
 	EditMenu = new Menu();
@@ -205,114 +209,114 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	EditMenu->AppendTool(Toolbar, GLOBAL_UNDO_TO_LAST_SAVE, 
 		_("Cofnij do ostatniego zapisu"), _("Cofnij do ostatniego zapisu"), 
 		PTR_BITMAP_PNG(L"UNDOTOLASTSAVE"), false);
-	EditMenu->AppendTool(Toolbar, GLOBAL_REDO, _("&Ponów"), 
-		_("Ponów"), PTR_BITMAP_PNG(L"redo"), false);
+	EditMenu->AppendTool(Toolbar, GLOBAL_REDO, _(L"&Ponów"),
+		_(L"Ponów"), PTR_BITMAP_PNG(L"redo"), false);
 	EditMenu->AppendTool(Toolbar, GLOBAL_HISTORY, _("&Historia"), 
 		_("Historia"), PTR_BITMAP_PNG(L"history"), true);
-	EditMenu->AppendTool(Toolbar, GLOBAL_FIND_REPLACE, _("Znajdź i za&mień"), 
+	EditMenu->AppendTool(Toolbar, GLOBAL_FIND_REPLACE, _(L"Znajdź i za&mień"),
 		_("Szuka i podmienia dane frazy tekstu"), PTR_BITMAP_PNG(L"findreplace"));
-	EditMenu->AppendTool(Toolbar, GLOBAL_SEARCH, _("Z&najdź"), 
+	EditMenu->AppendTool(Toolbar, GLOBAL_SEARCH, _(L"Z&najdź"),
 		_("Szuka dane frazy tekstu"), PTR_BITMAP_PNG(L"search"));
-	EditMenu->AppendTool(Toolbar, GLOBAL_FIND_NEXT, _("Znajdź następny"), 
-		_("Znajduje kolejne wystąpięnie frazy w tekście"), PTR_BITMAP_PNG(L"search"));
+	EditMenu->AppendTool(Toolbar, GLOBAL_FIND_NEXT, _(L"Znajdź następny"),
+		_(L"Znajduje kolejne wystąpięnie frazy w tekście"), PTR_BITMAP_PNG(L"search"));
 	Menu *SortMenu[2];
 	for (int i = 0; i < 2; i++){
 		SortMenu[i] = new Menu();
-		SortMenu[i]->Append(GLOBAL_SORT_ALL_BY_START_TIMES + (6 * i), _("Czas początkowy"), 
-			_("Sortuj według czasu początkowego"));
-		SortMenu[i]->Append(GLOBAL_SORT_ALL_BY_END_TIMES + (6 * i), _("Czas końcowy"), 
-			_("Sortuj według czasu końcowego"));
-		SortMenu[i]->Append(GLOBAL_SORT_ALL_BY_STYLE + (6 * i), _("Style"), _("Sortuj według stylów"));
-		SortMenu[i]->Append(GLOBAL_SORT_ALL_BY_ACTOR + (6 * i), _("Aktor"), _("Sortuj według aktora"));
-		SortMenu[i]->Append(GLOBAL_SORT_ALL_BY_EFFECT + (6 * i), _("Efekt"), _("Sortuj według efektu"));
-		SortMenu[i]->Append(GLOBAL_SORT_ALL_BY_LAYER + (6 * i), _("Warstwa"), _("Sortuj według warstwy"));
+		SortMenu[i]->Append(GLOBAL_SORT_ALL_BY_START_TIMES + (6 * i), _(L"Czas początkowy"),
+			_(L"Sortuj według czasu początkowego"));
+		SortMenu[i]->Append(GLOBAL_SORT_ALL_BY_END_TIMES + (6 * i), _(L"Czas końcowy"),
+			_(L"Sortuj według czasu końcowego"));
+		SortMenu[i]->Append(GLOBAL_SORT_ALL_BY_STYLE + (6 * i), _("Style"), _(L"Sortuj według stylów"));
+		SortMenu[i]->Append(GLOBAL_SORT_ALL_BY_ACTOR + (6 * i), _("Aktor"), _(L"Sortuj według aktora"));
+		SortMenu[i]->Append(GLOBAL_SORT_ALL_BY_EFFECT + (6 * i), _("Efekt"), _(L"Sortuj według efektu"));
+		SortMenu[i]->Append(GLOBAL_SORT_ALL_BY_LAYER + (6 * i), _("Warstwa"), _(L"Sortuj według warstwy"));
 	}
 
 	EditMenu->AppendTool(Toolbar, GLOBAL_SORT_LINES, _("Sort&uj wszystkie linie"), 
-		_("Sortuje wszystkie linie napisów ASS"), PTR_BITMAP_PNG(L"sort"), true, SortMenu[0]);
+		_(L"Sortuje wszystkie linie napisów ASS"), PTR_BITMAP_PNG(L"sort"), true, SortMenu[0]);
 	EditMenu->AppendTool(Toolbar, GLOBAL_SORT_SELECTED_LINES, _("Sortu&j zaznaczone linie"), 
-		_("Sortuje zaznaczone linie napisów ASS"), PTR_BITMAP_PNG(L"sortsel"), true, SortMenu[1]);
-	EditMenu->AppendTool(Toolbar, GLOBAL_MISSPELLS_REPLACER, _("Popraw drobne błędy (eksperymentalne)"), 
-		_("Włącza okno poprawiania błędów"), PTR_BITMAP_PNG(L"sellines"));
+		_(L"Sortuje zaznaczone linie napisów ASS"), PTR_BITMAP_PNG(L"sortsel"), true, SortMenu[1]);
+	EditMenu->AppendTool(Toolbar, GLOBAL_MISSPELLS_REPLACER, _(L"Popraw drobne błędy (eksperymentalne)"),
+		_(L"Włącza okno poprawiania błędów"), PTR_BITMAP_PNG(L"sellines"));
 	EditMenu->AppendTool(Toolbar, GLOBAL_OPEN_SELECT_LINES, _("Zaznacz &linijki"), _("Zaznacza linijki wg danej frazy tekstu"), PTR_BITMAP_PNG(L"sellines"));
 	Menubar->Append(EditMenu, _("&Edycja"));
 
 	VidMenu = new Menu();
-	VidMenu->AppendTool(Toolbar, GLOBAL_OPEN_VIDEO, _("Otwórz wideo"), 
+	VidMenu->AppendTool(Toolbar, GLOBAL_OPEN_VIDEO, _(L"Otwórz wideo"),
 		_("Otwiera wybrane wideo"), PTR_BITMAP_PNG(L"openvideo"));
 	VidsRecMenu = new Menu();
 	VidMenu->AppendTool(Toolbar, GLOBAL_RECENT_VIDEO, _("Ostatnio otwarte wideo"), 
 		_("Ostatnio otwarte video"), PTR_BITMAP_PNG(L"recentvideo"), true, VidsRecMenu);
-	VidMenu->AppendTool(Toolbar, GLOBAL_OPEN_KEYFRAMES, _("Otwórz klatki kluczowe"), 
-		_("Otwórz klatki kluczowe"), PTR_BITMAP_PNG(L"OPEN_KEYFRAMES"));
+	VidMenu->AppendTool(Toolbar, GLOBAL_OPEN_KEYFRAMES, _(L"Otwórz klatki kluczowe"),
+		_(L"Otwórz klatki kluczowe"), PTR_BITMAP_PNG(L"OPEN_KEYFRAMES"));
 	KeyframesRecentMenu = new Menu();
 	VidMenu->AppendTool(Toolbar, GLOBAL_RECENT_KEYFRAMES, 
 		_("Ostatnio otwarte klatki kluczowe"), _("Ostatnio otwarte klatki kluczowe"), 
 		PTR_BITMAP_PNG(L"RECENT_KEYFRAMES"), true, KeyframesRecentMenu);
-	VidMenu->Append(GLOBAL_OPEN_DUMMY_VIDEO, _("Otwórz dummy wideo"), _("Otwórz dummy wideo"));
-	VidMenu->AppendTool(Toolbar, GLOBAL_SET_START_TIME, _("Wstaw czas początkowy z wideo"), 
-		_("Wstawia czas początkowy z wideo"), PTR_BITMAP_PNG(L"setstarttime"), false);
-	VidMenu->AppendTool(Toolbar, GLOBAL_SET_END_TIME, _("Wstaw czas końcowy z wideo"), 
-		_("Wstawia czas końcowy z wideo"), PTR_BITMAP_PNG(L"setendtime"), false);
-	VidMenu->AppendTool(Toolbar, GLOBAL_PREVIOUS_FRAME, _("Klatka w tył"), 
-		_("Przechodzi o jedną klatkę w tył"), PTR_BITMAP_PNG(L"prevframe"), false);
-	VidMenu->AppendTool(Toolbar, GLOBAL_NEXT_FRAME, _("Klatka w przód"), 
-		_("Przechodzi o jedną klatkę w przód"), PTR_BITMAP_PNG(L"nextframe"), false);
+	VidMenu->Append(GLOBAL_OPEN_DUMMY_VIDEO, _(L"Otwórz dummy wideo"), _(L"Otwórz dummy wideo"));
+	VidMenu->AppendTool(Toolbar, GLOBAL_SET_START_TIME, _(L"Wstaw czas początkowy z wideo"),
+		_(L"Wstawia czas początkowy z wideo"), PTR_BITMAP_PNG(L"setstarttime"), false);
+	VidMenu->AppendTool(Toolbar, GLOBAL_SET_END_TIME, _(L"Wstaw czas końcowy z wideo"),
+		_(L"Wstawia czas końcowy z wideo"), PTR_BITMAP_PNG(L"setendtime"), false);
+	VidMenu->AppendTool(Toolbar, GLOBAL_PREVIOUS_FRAME, _(L"Klatka w tył"),
+		_(L"Przechodzi o jedną klatkę w tył"), PTR_BITMAP_PNG(L"prevframe"), false);
+	VidMenu->AppendTool(Toolbar, GLOBAL_NEXT_FRAME, _(L"Klatka w przód"),
+		_(L"Przechodzi o jedną klatkę w przód"), PTR_BITMAP_PNG(L"nextframe"), false);
 	VidMenu->AppendTool(Toolbar, GLOBAL_SET_VIDEO_AT_START_TIME, 
-		_("Przejdź do czasu początkowego linii"), _("Przechodzi wideo do czasu początkowego linii"), 
+		_(L"Przejdź do czasu początkowego linii"), _(L"Przechodzi wideo do czasu początkowego linii"),
 		PTR_BITMAP_PNG(L"videoonstime"));
 	VidMenu->AppendTool(Toolbar, GLOBAL_SET_VIDEO_AT_END_TIME, 
-		_("Przejdź do czasu końcowego linii"), _("Przechodzi wideo do czasu końcowego linii"), 
+		_(L"Przejdź do czasu końcowego linii"), _(L"Przechodzi wideo do czasu końcowego linii"),
 		PTR_BITMAP_PNG(L"videoonetime"));
 	VidMenu->AppendTool(Toolbar, GLOBAL_PLAY_PAUSE, _("Odtwarzaj / Pauza"), 
 		_("Odtwarza lub pauzuje wideo"), PTR_BITMAP_PNG(L"pausemenu"), false);
 	VidMenu->AppendTool(Toolbar, GLOBAL_GO_TO_PREVIOUS_KEYFRAME, 
-		_("Przejdź do poprzedniej klatki kluczowej"), emptyString, PTR_BITMAP_PNG(L"prevkeyframe"));
+		_(L"Przejdź do poprzedniej klatki kluczowej"), emptyString, PTR_BITMAP_PNG(L"prevkeyframe"));
 	VidMenu->AppendTool(Toolbar, GLOBAL_GO_TO_NEXT_KEYFRAME, 
-		_("Przejdź do następnej klatki kluczowej"), emptyString, PTR_BITMAP_PNG(L"nextkeyframe"));
+		_(L"Przejdź do następnej klatki kluczowej"), emptyString, PTR_BITMAP_PNG(L"nextkeyframe"));
 	VidMenu->AppendTool(Toolbar, GLOBAL_SET_AUDIO_FROM_VIDEO, 
 		_("Ustaw audio z czasem wideo"), emptyString, PTR_BITMAP_PNG(L"SETVIDEOTIMEONAUDIO"));
 	VidMenu->AppendTool(Toolbar, GLOBAL_SET_AUDIO_MARK_FROM_VIDEO, 
 		_("Ustaw znacznik audio z czasem wideo"), emptyString, PTR_BITMAP_PNG(L"SETVIDEOTIMEONAUDIOMARK"));
-	VidMenu->AppendTool(Toolbar, GLOBAL_VIDEO_ZOOM, _("Powiększ wideo"), "", PTR_BITMAP_PNG(L"zoom"));
-	VidMenu->Append(GLOBAL_RESET_VIDEO_ZOOM, _("Wyłącz powiększenie wideo"));
+	VidMenu->AppendTool(Toolbar, GLOBAL_VIDEO_ZOOM, _(L"Powiększ wideo"), "", PTR_BITMAP_PNG(L"zoom"));
+	VidMenu->Append(GLOBAL_RESET_VIDEO_ZOOM, _(L"Wyłącz powiększenie wideo"));
 	bool videoIndex = Options.GetBool(VIDEO_INDEX);
 	VidMenu->Append(GLOBAL_VIDEO_INDEXING, _("Otwieraj wideo przez FFMS2"), 
-		_("Otwiera wideo przez FFMS2, co daje dokładność klatkową"), true, 
+		_(L"Otwiera wideo przez FFMS2, co daje dokładność klatkową"), true,
 		PTR_BITMAP_PNG(L"FFMS2INDEXING"), 0, ITEM_CHECK)->Check(videoIndex);
 	Toolbar->AddID(GLOBAL_VIDEO_INDEXING);
 	Menubar->Append(VidMenu, _("&Wideo"));
 
 	AudMenu = new Menu();
-	AudMenu->AppendTool(Toolbar, GLOBAL_OPEN_AUDIO, _("Otwórz audio"), 
+	AudMenu->AppendTool(Toolbar, GLOBAL_OPEN_AUDIO, _(L"Otwórz audio"),
 		_("Otwiera wybrane audio"), PTR_BITMAP_PNG(L"openaudio"));
 	AudsRecMenu = new Menu();
 
 	AudMenu->AppendTool(Toolbar, GLOBAL_RECENT_AUDIO, _("Ostatnio otwarte audio"), 
 		_("Ostatnio otwarte audio"), PTR_BITMAP_PNG(L"recentaudio"), true, AudsRecMenu);
-	AudMenu->AppendTool(Toolbar, GLOBAL_AUDIO_FROM_VIDEO, _("Otwórz audio z wideo"), 
+	AudMenu->AppendTool(Toolbar, GLOBAL_AUDIO_FROM_VIDEO, _(L"Otwórz audio z wideo"),
 		_("Otwiera audio z wideo"), PTR_BITMAP_PNG(L"audiofromvideo"));
-	AudMenu->Append(GLOBAL_OPEN_DUMMY_AUDIO, _("Otwórz puste audio na 2:30 godziny"), 
+	AudMenu->Append(GLOBAL_OPEN_DUMMY_AUDIO, _(L"Otwórz puste audio na 2:30 godziny"),
 		_("Otwiera puste audio na 2:30 godziny"));
 	AudMenu->AppendTool(Toolbar, GLOBAL_CLOSE_AUDIO, _("Zamknij audio"), 
 		_("Zamyka audio"), PTR_BITMAP_PNG(L"closeaudio"));
 	Menubar->Append(AudMenu, _("A&udio"));
 
 	ViewMenu = new Menu();
-	ViewMenu->Append(GLOBAL_VIEW_ALL, _("Wszystko"), _("Wszystkie okna są widoczne"));
-	ViewMenu->Append(GLOBAL_VIEW_VIDEO, _("Wideo i napisy"), _("Widoczne tylko okno wideo i napisów"));
-	ViewMenu->Append(GLOBAL_VIEW_AUDIO, _("Audio i napisy"), _("Widoczne tylko okno audio i napisów"));
+	ViewMenu->Append(GLOBAL_VIEW_ALL, _("Wszystko"), _(L"Wszystkie okna są widoczne"));
+	ViewMenu->Append(GLOBAL_VIEW_VIDEO, _("Wideo i napisy"), _(L"Widoczne tylko okno wideo i napisów"));
+	ViewMenu->Append(GLOBAL_VIEW_AUDIO, _("Audio i napisy"), _(L"Widoczne tylko okno audio i napisów"));
 	ViewMenu->Append(GLOBAL_VIEW_ONLY_VIDEO, _("Tylko wideo"), _("Widoczne tylko okno wideo"));
-	ViewMenu->Append(GLOBAL_VIEW_SUBS, _("Tylko napisy"), _("Widoczne tylko okno napisów"));
+	ViewMenu->Append(GLOBAL_VIEW_SUBS, _("Tylko napisy"), _(L"Widoczne tylko okno napisów"));
 	Menubar->Append(ViewMenu, _("Wido&k"));
 
 	SubsMenu = new Menu();
-	SubsMenu->AppendTool(Toolbar, GLOBAL_EDITOR, _("Włącz / Wyłącz edytor"), 
-		_("Włączanie bądź wyłączanie edytora"), PTR_BITMAP_PNG(L"editor"))->Enable(!videoIndex);
-	SubsMenu->AppendTool(Toolbar, GLOBAL_OPEN_ASS_PROPERTIES, _("Właściwości pliku ASS"), 
-		_("Właściwości napisów ASS"), PTR_BITMAP_PNG(L"ASSPROPS"));
-	SubsMenu->AppendTool(Toolbar, GLOBAL_OPEN_STYLE_MANAGER, _("&Menedżer stylów"), 
-		_("Służy do zarządzania stylami ASS"), PTR_BITMAP_PNG(L"styles"));
+	SubsMenu->AppendTool(Toolbar, GLOBAL_EDITOR, _(L"Włącz / Wyłącz edytor"),
+		_(L"Włączanie bądź wyłączanie edytora"), PTR_BITMAP_PNG(L"editor"))->Enable(!videoIndex);
+	SubsMenu->AppendTool(Toolbar, GLOBAL_OPEN_ASS_PROPERTIES, _(L"Właściwości pliku ASS"),
+		_(L"Właściwości napisów ASS"), PTR_BITMAP_PNG(L"ASSPROPS"));
+	SubsMenu->AppendTool(Toolbar, GLOBAL_OPEN_STYLE_MANAGER, _(L"&Menedżer stylów"),
+		_(L"Służy do zarządzania stylami ASS"), PTR_BITMAP_PNG(L"styles"));
 	ConvMenu = new Menu();
 	ConvMenu->AppendTool(Toolbar, GLOBAL_CONVERT_TO_ASS, _("Konwertuj do ASS"), 
 		_("Konwertuje do formatu ASS"), PTR_BITMAP_PNG(L"convass"), false);
@@ -325,16 +329,16 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	ConvMenu->AppendTool(Toolbar, GLOBAL_CONVERT_TO_TMP, _("Konwertuj do TMP"), 
 		_("Konwertuje do formatu TMPlayer (niezalecane)"), PTR_BITMAP_PNG(L"convtmp"));
 
-	SubsMenu->Append(ID_CONVERSION, _("Konwersja"), _("Konwersja z jednego formatu napisów na inny"), 
+	SubsMenu->Append(ID_CONVERSION, _("Konwersja"), _(L"Konwersja z jednego formatu napisów na inny"),
 		true, PTR_BITMAP_PNG(L"convert"), ConvMenu);
-	SubsMenu->AppendTool(Toolbar, GLOBAL_SHOW_SHIFT_TIMES, _("Okno zmiany &czasów\tCtrl-I"), 
-		_("Przesuwanie czasów napisów"), PTR_BITMAP_PNG(L"times"));
+	SubsMenu->AppendTool(Toolbar, GLOBAL_SHOW_SHIFT_TIMES, _(L"Okno zmiany &czasów\tCtrl-I"),
+		_(L"Przesuwanie czasów napisów"), PTR_BITMAP_PNG(L"times"));
 	SubsMenu->AppendTool(Toolbar, GLOBAL_OPEN_FONT_COLLECTOR, _("Kolekcjoner czcionek"), 
 		_("Kolekcjoner czcionek"), PTR_BITMAP_PNG(L"fontcollector"));
-	SubsMenu->AppendTool(Toolbar, GLOBAL_OPEN_SUBS_RESAMPLE, _("Zmień rozdzielczość napisów"), 
-		_("Zmień rozdzielczość napisów"), PTR_BITMAP_PNG(L"subsresample"));
-	SubsMenu->AppendTool(Toolbar, GLOBAL_OPEN_SPELLCHECKER, _("Sprawdź poprawność pisowni"), 
-		_("Sprawdź poprawność pisowni"), PTR_BITMAP_PNG(L"spellchecker"));
+	SubsMenu->AppendTool(Toolbar, GLOBAL_OPEN_SUBS_RESAMPLE, _(L"Zmień rozdzielczość napisów"),
+		_(L"Zmień rozdzielczość napisów"), PTR_BITMAP_PNG(L"subsresample"));
+	SubsMenu->AppendTool(Toolbar, GLOBAL_OPEN_SPELLCHECKER, _(L"Sprawdź poprawność pisowni"),
+		_(L"Sprawdź poprawność pisowni"), PTR_BITMAP_PNG(L"spellchecker"));
 	SubsMenu->AppendTool(Toolbar, GLOBAL_HIDE_TAGS, _("Ukryj tagi w nawiasach"), 
 		_("Ukrywa tagi w nawiasach ASS i MDVD"), PTR_BITMAP_PNG(L"hidetags"));
 	Menubar->Append(SubsMenu, _("&Napisy"));
@@ -342,24 +346,24 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	m_AutoMenu = new Menu();
 	m_AutoMenu->AppendTool(Toolbar, GLOBAL_AUTOMATION_LOAD_SCRIPT, _("Wczytaj skrypt"), 
 		_("Wczytaj skrypt"), PTR_BITMAP_PNG(L"automation"));
-	m_AutoMenu->Append(GLOBAL_AUTOMATION_RELOAD_AUTOLOAD, _("Odśwież skrypty autoload"), 
-		_("Odśwież skrypty autoload"), true, PTR_BITMAP_PNG(L"automation"));
+	m_AutoMenu->Append(GLOBAL_AUTOMATION_RELOAD_AUTOLOAD, _(L"Odśwież skrypty autoload"),
+		_(L"Odśwież skrypty autoload"), true, PTR_BITMAP_PNG(L"automation"));
 	m_AutoMenu->Append(GLOBAL_AUTOMATION_LOAD_LAST_SCRIPT, _("Uruchom ostatnio zaczytany skrypt"), 
 		_("Uruchom ostatnio zaczytany skrypt"));
-	m_AutoMenu->Append(GLOBAL_AUTOMATION_OPEN_HOTKEYS_WINDOW, _("Otwórz okno mapowania skrótów"), 
-		_("Otwórz okno mapowania skrótów"));
+	m_AutoMenu->Append(GLOBAL_AUTOMATION_OPEN_HOTKEYS_WINDOW, _(L"Otwórz okno mapowania skrótów"),
+		_(L"Otwórz okno mapowania skrótów"));
 	Menubar->Append(m_AutoMenu, _("Au&tomatyzacja"));
 
 	HelpMenu = new Menu();
 	HelpMenu->AppendTool(Toolbar, GLOBAL_HELP, _("&Pomoc (niekompletna, ale jednak)"), 
-		_("Otwiera pomoc w domyślnej przeglądarce"), PTR_BITMAP_PNG(L"help"));
-	HelpMenu->AppendTool(Toolbar, GLOBAL_ANSI, _("&Wątek programu na forum AnimeSub.info"), 
-		_("Otwiera wątek programu na forum AnimeSub.info"), PTR_BITMAP_PNG(L"ansi"));
+		_(L"Otwiera pomoc w domyślnej przeglądarce"), PTR_BITMAP_PNG(L"help"));
+	HelpMenu->AppendTool(Toolbar, GLOBAL_ANSI, _(L"&Wątek programu na forum AnimeSub.info"),
+		_(L"Otwiera wątek programu na forum AnimeSub.info"), PTR_BITMAP_PNG(L"ansi"));
 	HelpMenu->AppendTool(Toolbar, GLOBAL_ABOUT, _("&O programie"), 
-		_("Wyświetla informacje o programie"), PTR_BITMAP_PNG(L"about"));
+		_(L"Wyświetla informacje o programie"), PTR_BITMAP_PNG(L"about"));
 	HelpMenu->AppendTool(Toolbar, GLOBAL_HELPERS, 
-		_("&Lista osób pomocnych przy tworzeniu programu"), 
-		_("Wyświetla listę osób pomocnych przy tworzeniu programu"), PTR_BITMAP_PNG(L"helpers"));
+		_(L"&Lista osób pomocnych przy tworzeniu programu"),
+		_(L"Wyświetla listę osób pomocnych przy tworzeniu programu"), PTR_BITMAP_PNG(L"helpers"));
 	Menubar->Append(HelpMenu, _("Pomo&c"));
 
 	Toolbar->InitToolbar();
@@ -576,7 +580,7 @@ void KainoteFrame::ProgressTitle(const wxString& title)
 	progressTime.NewTime(timeGetTime() - This->progressFirstTime);
 
 	This->StatusBar->SetLabelText(0, This->progressTitle + L" 0%. " + 
-		wxString::Format(_("Upłynęło %s sekund"), progressTime.raw()));
+		wxString::Format(_(L"Upłynęło %s sekund"), progressTime.raw()));
 }
 
 void KainoteFrame::ProgressParcentProgress(int parcent, bool showOnStatusBar)
@@ -593,7 +597,7 @@ void KainoteFrame::ProgressParcentProgress(int parcent, bool showOnStatusBar)
 			progressTime.NewTime(newTime);
 
 			This->StatusBar->SetLabelText(0, This->progressTitle + L" " + std::to_wstring(parcent)
-				+ "%. " + wxString::Format(_("Upłynęło %s sekund"), progressTime.raw()));
+				+ "%. " + wxString::Format(_(L"Upłynęło %s sekund"), progressTime.raw()));
 		}
 	}
 
@@ -700,7 +704,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	else if (id == GLOBAL_REMOVE_SUBS){
 		if (SavePrompt(3)){ event.SetInt(-1); return; }
 		if (tab->SubsPath != emptyString){
-			tab->SubsName = _("Bez tytułu");
+			tab->SubsName = _(L"Bez tytułu");
 			tab->SubsPath = emptyString;
 			Label();
 
@@ -892,7 +896,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 			Auto->AddFromSubs();
 		wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz sktypt"),
 			Options.GetString(AUTOMATION_RECENT_FILES),
-			emptyString, _("Pliki skryptów (*.lua),(*.moon)|*.lua;*.moon;"), wxFD_OPEN);
+			emptyString, _(L"Pliki skryptów (*.lua),(*.moon)|*.lua;*.moon;"), wxFD_OPEN);
 		if (FileDialog1->ShowModal() == wxID_OK){
 			wxString file = FileDialog1->GetPath();
 			Options.SetString(AUTOMATION_RECENT_FILES, KaiPathName(file));
@@ -909,7 +913,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		if (Auto->ASSScripts.size() < 1)
 			Auto->AddFromSubs();
 		int size = Auto->ASSScripts.size();
-		if (!size){ KaiMessageBox(_("Ten plik napisów nie ma dodanych żadnych skryptów"), _("Informacja"), wxOK, this); return; }
+		if (!size){ KaiMessageBox(_(L"Ten plik napisów nie ma dodanych żadnych skryptów"), _("Informacja"), wxOK, this); return; }
 		auto script = Auto->ASSScripts[size - 1];
 		if (script->CheckLastModified(true)){ script->Reload(); }
 		auto macro = script->GetMacro(0);
@@ -918,11 +922,11 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 				macro->Run(tab);
 			}
 			else{
-				KaiMessageBox(wxString::Format(_("Warunki skryptu Lua '%s' nie zostały spełnione"), script->GetPrettyFilename()), _("Błąd"), wxOK, this);
+				KaiMessageBox(wxString::Format(_(L"Warunki skryptu Lua '%s' nie zostały spełnione"), script->GetPrettyFilename()), _(L"Błąd"), wxOK, this);
 			}
 		}
 		else{
-			KaiMessageBox(wxString::Format(_("Błąd wczytywania skryptu Lua: %s\n%s"), script->GetPrettyFilename(), script->GetDescription()), _("Błąd"), wxOK, this);
+			KaiMessageBox(wxString::Format(_(L"Błąd wczytywania skryptu Lua: %s\n%s"), script->GetPrettyFilename(), script->GetDescription()), _(L"Błąd"), wxOK, this);
 			Auto->OnEdit(script->GetFilename());
 		}
 	}
@@ -999,10 +1003,10 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 
 	if (id == GLOBAL_OPEN_SUBS){
 
-		wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz plik napisów"),
+		wxFileDialog *FileDialog1 = new wxFileDialog(this, _(L"Wybierz plik napisów"),
 			(tab->VideoPath != emptyString) ? KaiPathDir(tab->VideoPath) :
 			(subsrec.size() > 0) ? KaiPathDir(subsrec[0]) : emptyString,
-			emptyString, _("Pliki napisów (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt|Pliki wideo z wbudowanymi napisami (*.mkv),(*.ogm)|*.mkv;*.ogm"),
+			emptyString, _(L"Pliki napisów (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt|Pliki wideo z wbudowanymi napisami (*.mkv),(*.ogm)|*.mkv;*.ogm"),
 			wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
 		if (FileDialog1->ShowModal() == wxID_OK){
 			wxArrayString paths;
@@ -1100,13 +1104,13 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 		Close();
 	}
 	else if (id == GLOBAL_ABOUT){
-		KaiMessageBox(wxString::Format(_("Edytor napisów by Marcin Drob aka Bakura lub Bjakja (bjakja7@gmail.com),\nwersja %s z dnia %s"),
+		KaiMessageBox(wxString::Format(_(L"Edytor napisów by Marcin Drob aka Bakura lub Bjakja (bjakja7@gmail.com),\nwersja %s z dnia %s"),
 			Options.progname.AfterFirst(L'v'), Options.GetReleaseDate()) + " \n\n" +
-			_("Ten program powstał w celu zastąpienia dwóch programów: Bestplayera i Aegisuba.\n\n") +
-			_("Jeśli zauważyłeś(aś) jakieś błędy bądź masz jakieś propozycje zmian lub nowych funkcji,\nmożesz napisać o tym na: Discordzie https://discord.gg/9WacFTtK6q, Githubie, bądź mailowo.\n\n") +
-			_("Kainote zawiera w sobie części następujących projektów:\n") +
+			_(L"Ten program powstał w celu zastąpienia dwóch programów: Bestplayera i Aegisuba.\n\n") +
+			_(L"Jeśli zauważyłeś(aś) jakieś błędy bądź masz jakieś propozycje zmian lub nowych funkcji,\nmożesz napisać o tym na: Discordzie https://discord.gg/9WacFTtK6q, Githubie, bądź mailowo.\n\n") +
+			_(L"Kainote zawiera w sobie części następujących projektów:\n") +
 			L"wxWidgets - Copyright © Julian Smart, Robert Roebling et al.\n" +
-			_("Color picker, wymuxowywanie napisów z mkv, audiobox, odwarzacz audio, automatyzacja\ni kilka innych pojedynczych funkcji wzięte z Aegisuba -\n") +
+			_(L"Color picker, wymuxowywanie napisów z mkv, audiobox, odwarzacz audio, automatyzacja\ni kilka innych pojedynczych funkcji wzięte z Aegisuba -\n") +
 			L"Copyright © Rodrigo Braz Monteiro.\n"\
 			L"Hunspell - Copyright © Kevin Hendricks.\n"\
 			L"CSRI - Copyright © David Lamparter.\n"\
@@ -1124,20 +1128,20 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 		wxString Testers = L"SoheiMajin, BadRequest, Ognisty321, ZlyLos, Thomas Leigh, TomBit.";
 		wxString Credits = _("Pomoc graficzna: (przyciski, obrazki do pomocy itd.)\n") +
 			_("- Xandros (przyciski do wideo).\n") +
-			_("- Devilkan (ikony do menu i paska narzędzi, obrazki do pomocy).\n") +
-			_("- Zły Los (ikony do skojarzonych plików i do menu).\n") +
-			_("Testerzy: (mniej i bardziej wprawieni użytkownicy programu)\n") +
-			_("- Sacredus (chyba pierwszy tłumacz używający trybu tłumacza,\n nieoceniona pomoc przy testowaniu wydajności na słabym komputerze).\n") +
-			_("- Devilkan (crashhunter, ze względu na swój system i przyzwyczajenia wytropił już wiele crashy,\n") +
-			_("pomógł w poprawie działania narzędzi do typesettingu, wymyślił wiele innych usprawnień).\n") +
-			_("- MatiasMovie (wyłapał parę crashy i zaproponował różne usprawnienia, pomaga w debugowaniu crashy).\n") +
-			_("- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy).\n") +/* i jar do Language Tool*/
-			_("- Senami (stworzył nowe motywy, a także wyłapał parę błędów).\n") +
-			_("- altinat (tajskie tłumaczenie).\n") +
-			_("- labrie75 (koreańskie tłumaczenie).\n") +
-			_("- Niskala5570 (malajskie tłumaczenie).\n") +
-			_("Podziękowania także dla osób, które używają programu i zgłaszali błędy.\n");
-		KaiMessageBox(Credits + Testers, _("Lista osób pomocnych przy tworzeniu programu"));
+			_(L"- Devilkan (ikony do menu i paska narzędzi, obrazki do pomocy).\n") +
+			_(L"- Zły Los (ikony do skojarzonych plików i do menu).\n") +
+			_(L"Testerzy: (mniej i bardziej wprawieni użytkownicy programu)\n") +
+			_(L"- Sacredus (chyba pierwszy tłumacz używający trybu tłumacza,\n nieoceniona pomoc przy testowaniu wydajności na słabym komputerze).\n") +
+			_(L"- Devilkan (crashhunter, ze względu na swój system i przyzwyczajenia wytropił już wiele crashy,\n") +
+			_(L"pomógł w poprawie działania narzędzi do typesettingu, wymyślił wiele innych usprawnień).\n") +
+			_(L"- MatiasMovie (wyłapał parę crashy i zaproponował różne usprawnienia, pomaga w debugowaniu crashy).\n") +
+			_(L"- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy).\n") +/* i jar do Language Tool*/
+			_(L"- Senami (stworzył nowe motywy, a także wyłapał parę błędów).\n") +
+			_(L"- altinat (tajskie tłumaczenie).\n") +
+			_(L"- labrie75 (koreańskie tłumaczenie).\n") +
+			_(L"- Niskala5570 (malajskie tłumaczenie).\n") +
+			_(L"Podziękowania także dla osób, które używają programu i zgłaszali błędy.\n");
+		KaiMessageBox(Credits + Testers, _(L"Lista osób pomocnych przy tworzeniu programu"));
 
 	}
 	else if (id == GLOBAL_HELP || id == GLOBAL_ANSI){
@@ -1256,7 +1260,7 @@ void KainoteFrame::Save(bool showDialog, int tabToSave, bool changeLabel)
 		|| atab->SubsPath == emptyString || showDialog)
 	{
 	repeatOpening:
-		wxString extens = _("Plik napisów ");
+		wxString extens = _(L"Plik napisów ");
 
 		if (atab->grid->subsFormat < SRT){ extens += L"(*.ass)|*.ass"; }
 		else if (atab->grid->subsFormat == SRT){ extens += L"(*.srt)|*.srt"; }
@@ -1266,14 +1270,14 @@ void KainoteFrame::Save(bool showDialog, int tabToSave, bool changeLabel)
 		wxString name = path.BeforeLast(L'.');
 		path = KaiPathDir(path);
 
-		wxFileDialog saveFileDialog(atab->video->GetMessageWindowParent(), _("Zapisz plik napisów"),
+		wxFileDialog saveFileDialog(atab->video->GetMessageWindowParent(), _(L"Zapisz plik napisów"),
 			path, name, extens, wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
 		if (saveFileDialog.ShowModal() == wxID_OK){
 			wxString path = saveFileDialog.GetPath();
 			DWORD attributes = ::GetFileAttributesW(path.wc_str());
 			if (attributes != -1 && attributes & FILE_ATTRIBUTE_READONLY){
-				KaiMessageBox(_("Wybrany plik jest tylko do odczytu,\nproszę zapisać pod inną nazwą lub zmienić atrybuty pliku."), _("Uwaga"), 4L, this);
+				KaiMessageBox(_(L"Wybrany plik jest tylko do odczytu,\nproszę zapisać pod inną nazwą lub zmienić atrybuty pliku."), _("Uwaga"), 4L, this);
 				goto repeatOpening;
 			}
 
@@ -1289,7 +1293,7 @@ void KainoteFrame::Save(bool showDialog, int tabToSave, bool changeLabel)
 	else{
 		DWORD attributes = ::GetFileAttributesW(atab->SubsPath.wc_str());
 		if (attributes != -1 && attributes & FILE_ATTRIBUTE_READONLY){
-			KaiMessageBox(_("Wybrany plik jest tylko do odczytu,\nproszę zapisać pod inną nazwą lub zmienić atrybuty pliku."), _("Uwaga"), 4L, this);
+			KaiMessageBox(_(L"Wybrany plik jest tylko do odczytu,\nproszę zapisać pod inną nazwą lub zmienić atrybuty pliku."), _("Uwaga"), 4L, this);
 			goto repeatOpening;
 		}
 	}
@@ -1339,7 +1343,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 		found = FindFile(filename, secondFileName, issubs);
 		if (!issubs && found && !fulls && !tab->video->IsFullScreen()){
 			if (tab->SubsPath == secondFileName || 
-				KaiMessageBox(wxString::Format(_("Wczytać napisy o nazwie \"%s\"?"), KaiPathName(secondFileName)),
+				KaiMessageBox(wxString::Format(_(L"Wczytać napisy o nazwie \"%s\"?"), KaiPathName(secondFileName)),
 				_("Potwierdzenie"), wxICON_QUESTION | wxYES_NO, this) == wxNO){
 				found = false;
 			}
@@ -1403,7 +1407,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 	if (isload == -1 && tab->video->GetState() != None) {
 		//open subs and disable visuals when needed
 		bool isgood = tab->video->OpenSubs((tab->editor) ? OPEN_DUMMY : CLOSE_SUBTITLES, true, true);
-		if (!isgood) { KaiMessageBox(_("Nie można otworzyć napisów"), _("Uwaga")); }
+		if (!isgood) { KaiMessageBox(_(L"Nie można otworzyć napisów"), _("Uwaga")); }
 		//set color space	
 		if (tab->grid->subsFormat == ASS) {
 			tab->video->SetColorSpace(tab->grid->GetSInfo(L"YCbCr Matrix"));
@@ -1435,7 +1439,7 @@ void KainoteFrame::SetSubsResolution(bool showDialog)
 	}
 	int x = 0, y = 0;
 	cur->grid->GetASSRes(&x, &y);
-	wxString resolution = std::to_string(x) + L" x " + std::to_string(y);
+	wxString resolution = wxString::Format(L"%d x %d", x, y);
 	SetStatusText(resolution, 7);
 	wxSize vsize;
 
@@ -1469,7 +1473,7 @@ void KainoteFrame::SetVideoResolution(int w, int h, bool showDialog)
 	SetStatusText(resolution, 5);
 	int x = 0, y = 0;
 	cur->grid->GetASSRes(&x, &y);
-	wxString sres = std::to_string(x) + L" x " + std::to_string(y);
+	wxString sres = wxString::Format(L"%d x %d", x, y);
 	if (resolution != sres && sres.Len() > 3 && cur->editor){
 		StatusBar->SetLabelTextColour(5, WINDOW_WARNING_ELEMENTS);
 		StatusBar->SetLabelTextColour(7, WINDOW_WARNING_ELEMENTS);
@@ -1546,7 +1550,7 @@ void KainoteFrame::AppendRecent(short what, Menu *_Menu)
 			changedRecent = true;
 			continue;
 		}
-		MenuItem* MI = new MenuItem(idd + i, std::to_string(i + 1) + L" " + KaiPathName(recs[i]), _("Otwórz") + L" " + recs[i]);
+		MenuItem* MI = new MenuItem(idd + i, wxString::Format(L"%d %s", i + 1, KaiPathName(recs[i])), _(L"Otwórz") + L" " + recs[i]);
 		wmenu->Append(MI);
 		i++;
 	}
@@ -2102,11 +2106,11 @@ bool KainoteFrame::SavePrompt(char mode, int wtab)
 		wxString subsPath = (ext != subsExt && !(ext == L"txt" && subsExt == L"sub")) ?
 			subsName + L"." + ext : atab->SubsName;
 
-		int answer = KaiMessageBox(wxString::Format(_("Zapisać napisy o nazwie \"%s\" przed %s?"),
-			subsPath, (mode == 0) ? _("zamknięciem programu") :
-			(mode == 1) ? _("zamknięciem zakładki") :
-			(mode == 2) ? _("wczytaniem nowych napisów") :
-			_("usunięciem napisów")),
+		int answer = KaiMessageBox(wxString::Format(_(L"Zapisać napisy o nazwie \"%s\" przed %s?"),
+			subsPath, (mode == 0) ? _(L"zamknięciem programu") :
+			(mode == 1) ? _(L"zamknięciem zakładki") :
+			(mode == 2) ? _(L"wczytaniem nowych napisów") :
+			_(L"usunięciem napisów")),
 			_("Potwierdzenie"), wxYES_NO | wxCANCEL, atab->video->GetMessageWindowParent());
 		if (answer == wxCANCEL){ return true; }
 		if (answer == wxYES){
@@ -2144,8 +2148,8 @@ void KainoteFrame::OpenAudioInTab(TabPanel *tab, int id, const wxString &path)
 	}
 	else{
 
-		if (!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){ KaiMessageBox(_("Nie można wczytać skrótów klawiszowych audio"), _("Błąd")); return; }
-		if (!Options.AudioOpts && !Options.LoadAudioOpts()){ KaiMessageBox(_("Nie można wczytać opcji audio"), _("Błąd")); return; }
+		if (!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){ KaiMessageBox(_(L"Nie można wczytać skrótów klawiszowych audio"), _(L"Błąd")); return; }
+		if (!Options.AudioOpts && !Options.LoadAudioOpts()){ KaiMessageBox(_(L"Nie można wczytać opcji audio"), _(L"Błąd")); return; }
 
 		wxString audioPath;
 		if (id == GLOBAL_OPEN_AUDIO){
@@ -2329,10 +2333,10 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 					accelName.Replace(L"+", L"-");
 					if (!redoName.empty()) {
 						wxString lowerRedoName = wxString(redoName[0]).Lower() + redoName.Mid(1);
-						eitem->label = _("&Ponów do ") + lowerRedoName + accelName;
+						eitem->label = _(L"&Ponów do ") + lowerRedoName + accelName;
 					}
 					else {
-						eitem->label = _("&Ponów") + accelName;
+						eitem->label = _(L"&Ponów") + accelName;
 					}
 
 				}
@@ -2492,7 +2496,7 @@ void KainoteFrame::OnExternalSession(int id)
 			wxString path = saveFileDialog.GetPath();
 			DWORD attributes = ::GetFileAttributesW(path.wc_str());
 			if (attributes != -1 && attributes & FILE_ATTRIBUTE_READONLY) {
-				KaiMessageBox(_("Wybrany plik jest tylko do odczytu,\nproszę zapisać pod inną nazwą lub zmienić atrybuty pliku."), _("Uwaga"), 4L, this);
+				KaiMessageBox(_(L"Wybrany plik jest tylko do odczytu,\nproszę zapisać pod inną nazwą lub zmienić atrybuty pliku."), _("Uwaga"), 4L, this);
 				goto repeatOpening;
 			}
 			Tabs->SaveLastSession(false, false, path);
@@ -2595,7 +2599,7 @@ void KainoteFrame::OnRunScript(wxCommandEvent& event)
 	//else 
 	if (Auto->Scripts.size() < 1){ Auto->ReloadScripts(true); }
 	wxString name = Hkeys.GetName(idAndType(event.GetId()));
-	if (!name.StartsWith(L"Script ")){ KaiMessageBox(wxString::Format(_("Skrót o nazwie '%s' nie należy do skrypru.")), _("Błąd")); return; }
+	if (!name.StartsWith(L"Script ")){ KaiMessageBox(wxString::Format(_(L"Skrót o nazwie '%s' nie należy do skrypru.")), _(L"Błąd")); return; }
 	else{ name = name.Mid(7); }
 	wxString path = name.BeforeLast(L'-');
 	int wmacro = 0;
@@ -2621,11 +2625,11 @@ void KainoteFrame::OnRunScript(wxCommandEvent& event)
 			macro->Run(pan);
 		}
 		else{
-			KaiMessageBox(wxString::Format(_("Warunki skryptu Lua '%s' nie zostały spełnione"), script->GetPrettyFilename()), _("Błąd"));
+			KaiMessageBox(wxString::Format(_(L"Warunki skryptu Lua '%s' nie zostały spełnione"), script->GetPrettyFilename()), _(L"Błąd"));
 		}
 	}
 	else{
-		KaiMessageBox(wxString::Format(_("Błąd wczytywania skryptu Lua: %s\n%s"), script->GetPrettyFilename(), script->GetDescription()), _("Błąd"));
+		KaiMessageBox(wxString::Format(_(L"Błąd wczytywania skryptu Lua: %s\n%s"), script->GetPrettyFilename(), script->GetDescription()), _(L"Błąd"));
 		Auto->OnEdit(script->GetFilename());
 	}
 }

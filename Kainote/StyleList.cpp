@@ -17,7 +17,7 @@
 #include "StyleList.h"
 #include "FontEnumerator.h"
 #include "config.h"
-#include <wx/msw/winundef.h>
+#include "WinUndef.h"
 #include <wx/dc.h>
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>

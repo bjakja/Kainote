@@ -46,7 +46,7 @@ FindReplaceResultsDialog::FindReplaceResultsDialog(wxWindow *parent, FindReplace
 
 	MappedButton *checkAll = new MappedButton(this, ID_CHECK_ALL, _("Zahacz wszystko"), -1);
 	MappedButton *unCheckAll = new MappedButton(this, ID_UNCHECK_ALL, _("Odhacz wszystko"));
-	replaceChecked = new MappedButton(this, ID_REPLACE_CHECKED, _("Zamień"), -1);
+	replaceChecked = new MappedButton(this, ID_REPLACE_CHECKED, _(L"Zamień"), -1);
 	ReplaceText = new KaiChoice(this, -1, FR->actualReplace, wxDefaultPosition, wxDefaultSize, FR->replaceRecent);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 		CheckUncheckAll(true);

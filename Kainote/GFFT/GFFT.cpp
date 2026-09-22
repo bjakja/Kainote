@@ -289,3 +289,4 @@ void FFT::Transform(long long whre){
 float FFT::Get(int i){
 	return sqrt(output[i] * output[i] + output[i + 1] * output[i + 1]);
 }
+

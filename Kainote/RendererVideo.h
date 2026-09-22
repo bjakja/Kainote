@@ -24,6 +24,7 @@
 //#include "VisualDrawingShapes.h"
 #include <d3d9.h>
 #include <d3dx9.h>
+#include "UndoD3DXMacros.h"
 #include <dxva2api.h>
 #ifndef _WIN32
 #include <atomic>

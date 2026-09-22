@@ -249,6 +249,28 @@ private:
 	size_t *deleteReference = new size_t(0);
 };
 
+// StoreTextHelper reaches wxString through a user-defined conversion.  Whether
+// that conversion is considered by "literal + helper" depends on the shape of
+// wxString's operator+ overload set, which differs between wxUSE_STD_CONTAINERS
+// builds, so spell the concatenations out here instead of at every call site.
+// The conversion operator is non-const, hence the non-const references.
+inline wxString operator+(const wxString &lhs, StoreTextHelper &rhs)
+{
+	return lhs + static_cast<const wxString &>(rhs);
+}
+inline wxString operator+(const wchar_t *lhs, StoreTextHelper &rhs)
+{
+	return wxString(lhs) + static_cast<const wxString &>(rhs);
+}
+inline wxString operator+(StoreTextHelper &lhs, const wxString &rhs)
+{
+	return static_cast<const wxString &>(lhs) + rhs;
+}
+inline wxString operator+(StoreTextHelper &lhs, const wchar_t *rhs)
+{
+	return static_cast<const wxString &>(lhs) + wxString(rhs);
+}
+
 class TagData
 {
 public:

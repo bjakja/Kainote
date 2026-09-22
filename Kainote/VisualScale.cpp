@@ -769,7 +769,7 @@ void Scale::ChangeClipScale(wxString* txt, const D3DXVECTOR2& activeLinePos, flo
 				points.push_back(ClipPoint(xy[0], xy[3], "l", true));
 			}
 			else {
-				KaiLog(_("Nie można pobrać wartości clipa prostokątnego."));
+				KaiLog(_(L"Nie można pobrać wartości clipa prostokątnego."));
 			}
 		}
 		else {

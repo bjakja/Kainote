@@ -9,16 +9,8 @@
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Rel_AVX2|x64">
-      <Configuration>Rel_AVX2</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Rel_AVX512|x64">
       <Configuration>Rel_AVX512</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Rel_AVX|x64">
-      <Configuration>Rel_AVX</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
@@ -37,41 +29,27 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -84,12 +62,6 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'" Label="PropertySheets">
@@ -106,14 +78,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">
-    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)</OutDir>
-    <IntDir>$(SolutionDirobj\$(Platform)\$(Configuration)</IntDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">
-    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)</OutDir>
-    <IntDir>$(SolutionDirobj\$(Platform)\$(Configuration)</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
@@ -135,7 +99,7 @@
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
-      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/bigobj /w34146 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -154,40 +118,7 @@
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <ConformanceMode>true</ConformanceMode>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;HB_USE_ATEXIT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <ConformanceMode>true</ConformanceMode>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;HB_USE_ATEXIT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
+      <AdditionalOptions>/bigobj /w34146 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -209,6 +140,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>Default</LanguageStandard_C>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <AdditionalOptions>/bigobj /w34146 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -229,6 +161,7 @@
       <EnableEnhancedInstructionSet>NoExtensions</EnableEnhancedInstructionSet>
       <LanguageStandard>Default</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <AdditionalOptions>/bigobj /w34146 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -237,64 +170,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\harfbuzz\src\hb-aat-layout.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-aat-map.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-blob.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-buffer-serialize.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-buffer-verify.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-buffer.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-common.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-draw.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-face-builder.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-face.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-fallback-shape.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-font.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-map.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-number.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-cff1-table.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-cff2-table.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-color.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-face.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-font.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-layout.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-map.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-math.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-meta.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-metrics.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-name.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-fallback.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-normalize.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-arabic.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-default.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-hangul.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-hebrew.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-indic-table.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-indic.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-khmer.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-myanmar.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-syllabic.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-thai.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-use.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shaper-vowel-constraints.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-tag.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ot-var.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-outline.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-paint-bounded.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-paint-extents.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-paint.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-set.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-shape-plan.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-shape.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-shaper.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-subset-cff-common.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-subset-cff1.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-subset-cff2.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-subset-input.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-subset-plan.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-subset.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-ucd.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-unicode.cc" />
+    <ClCompile Include="..\..\harfbuzz\src\harfbuzz.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\harfbuzz\src\hb-aat-layout-ankr-table.hh" />

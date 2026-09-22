@@ -39,7 +39,7 @@ private:
 };
 
 LogWindow::LogWindow(wxWindow *parent, LogHandler *_handler)
-	: KaiDialog(parent, -1, _("Okno Logów"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+	: KaiDialog(parent, -1, _(L"Okno Logów"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 	, handler(_handler)
 {
 	sizer = new DialogSizer(wxVERTICAL);

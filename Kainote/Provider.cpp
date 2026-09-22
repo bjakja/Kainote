@@ -185,7 +185,7 @@ void Provider::OpenKeyframes(const wxString& filename)
 		}
 	}
 	else {
-		KaiMessageBox(_("Nieprawidłowy format klatek kluczowych"), _("Błąd"), 4L, Notebook::GetTab());
+		KaiMessageBox(_(L"Nieprawidłowy format klatek kluczowych"), _(L"Błąd"), 4L, Notebook::GetTab());
 	}
 }
 

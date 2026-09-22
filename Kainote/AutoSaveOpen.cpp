@@ -20,7 +20,7 @@
 #include <wx/tokenzr.h>
 
 AutoSaveOpen::AutoSaveOpen(KainoteFrame* _Kai)
-	: KaiDialog(_Kai, -1, _("Otwórz plik autozapisu"), 
+	: KaiDialog(_Kai, -1, _(L"Otwórz plik autozapisu"),
 		wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 	, Kai(_Kai)
 {
@@ -29,8 +29,8 @@ AutoSaveOpen::AutoSaveOpen(KainoteFrame* _Kai)
 	KaiStaticBoxSizer* seekingSizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Wyszukaj pliki"));
 	seekingText = new KaiTextCtrl(this, ID_AUTO_SAVE_SEEKING_TEXT, emptyString, 
 		wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
-	filterList = new MappedButton(this, ID_AUTO_SAVE_FILTER, _("Filtruj listę"));
-	seekAllWords = new KaiCheckBox(this, -1, _("Wszystkie słowa"));
+	filterList = new MappedButton(this, ID_AUTO_SAVE_FILTER, _(L"Filtruj listę"));
+	seekAllWords = new KaiCheckBox(this, -1, _(L"Wszystkie słowa"));
 	seekAllWords->SetValue(true);
 
 	seekingSizer->Add(seekingText, 4, wxALL | wxEXPAND, 4);
@@ -54,7 +54,7 @@ AutoSaveOpen::AutoSaveOpen(KainoteFrame* _Kai)
 	
 
 	wxBoxSizer* buttonsSizer = new wxBoxSizer(wxHORIZONTAL);
-	open = new MappedButton(this, ID_AUTO_SAVE_OK, _("Otwórz"), -1, wxDefaultPosition, wxSize(100, -1));
+	open = new MappedButton(this, ID_AUTO_SAVE_OK, _(L"Otwórz"), -1, wxDefaultPosition, wxSize(100, -1));
 	MappedButton* cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
 
 	buttonsSizer->Add(open, 1, wxALL, 4);
@@ -130,7 +130,7 @@ void AutoSaveOpen::GenerateList()
 	HANDLE h = FindFirstFileW(path.wc_str(), &data);
 	if (h == INVALID_HANDLE_VALUE)
 	{
-		KaiLog(_("Nie można otworzyć folderu autozapisu"));
+		KaiLog(_(L"Nie można otworzyć folderu autozapisu"));
 		return;
 	}
 
@@ -241,7 +241,7 @@ void AutoSaveOpen::OnOkClick(wxCommandEvent& evt)
 		return;
 	}
 
-	KaiLog(_("Wczytywanie autozapisu nie powiodło się"));
+	KaiLog(_(L"Wczytywanie autozapisu nie powiodło się"));
 }
 
 void AutoSaveOpen::OnListClick(wxCommandEvent& evt)

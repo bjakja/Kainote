@@ -76,6 +76,9 @@
     <ClCompile Include="..\..\libass\libass\ass.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\libass\libass\ass_arabic_charmap.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\libass\libass\ass_bitmap.c">
       <Filter>Source Files</Filter>
     </ClCompile>

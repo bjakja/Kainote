@@ -1,0 +1,63 @@
+{
+ "comment": "Runtime data the build fetches. The Automation 4 library and the themes are tracked in the repository instead (Automation/README.md). Pins are commit SHAs, not branches: bump them deliberately.",
+ "dictionaries": {
+  "en_US.aff": {
+   "url": "https://raw.githubusercontent.com/TypesettingTools/Aegisub-dictionaries/6d792f04521b3ac8823c8e8972fcfd757342da4d/dicts/en_US.aff",
+   "file": "en_US.aff",
+   "repo": "TypesettingTools/Aegisub-dictionaries",
+   "ref": "6d792f04521b3ac8823c8e8972fcfd757342da4d"
+  },
+  "en_US.dic": {
+   "url": "https://raw.githubusercontent.com/TypesettingTools/Aegisub-dictionaries/6d792f04521b3ac8823c8e8972fcfd757342da4d/dicts/en_US.dic",
+   "file": "en_US.dic",
+   "repo": "TypesettingTools/Aegisub-dictionaries",
+   "ref": "6d792f04521b3ac8823c8e8972fcfd757342da4d"
+  },
+  "pl.aff": {
+   "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/pl_PL/pl_PL.aff",
+   "file": "pl_PL.aff",
+   "repo": "LibreOffice/dictionaries",
+   "ref": "32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4"
+  },
+  "pl.dic": {
+   "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/pl_PL/pl_PL.dic",
+   "file": "pl_PL.dic",
+   "repo": "LibreOffice/dictionaries",
+   "ref": "32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4"
+  },
+  "th_TH.aff": {
+   "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/th_TH/th_TH.aff",
+   "file": "th_TH.aff",
+   "repo": "LibreOffice/dictionaries",
+   "ref": "32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4"
+  },
+  "th_TH.dic": {
+   "url": "https://raw.githubusercontent.com/LibreOffice/dictionaries/32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4/th_TH/th_TH.dic",
+   "file": "th_TH.dic",
+   "repo": "LibreOffice/dictionaries",
+   "ref": "32b006a2c22a4ac7e8ed3f03346f7b3d85a970a4"
+  }
+ },
+ "external_binaries": [
+  {
+   "url": "https://github.com/sorayuki/VSFilterMod/releases/download/r5.2.6/VSFilterMod_bin.zip",
+   "member": "x64/VSFilterMod.dll",
+   "dest": "Csri/VSFiltermod.dll",
+   "source": "sorayuki/VSFilterMod r5.2.6"
+  }
+ ],
+ "known_gaps": [
+  "Automation/automation/Autoload/BezierToText.lua",
+  "Automation/automation/Autoload/gradient-factory.lua",
+  "Automation/automation/Autoload/skew gradient.lua",
+  "Automation/automation/Include/json.lua",
+  "Automation/automation/Include/json/** (12 files)",
+  "Automation/automation/Include/bakukara.lua",
+  "Automation/automation/Include/effector-auto4.lua",
+  "Automation/automation/Include/karahelper.lua",
+  "Automation/automation/Include/SubInspector/Inspector/SubInspector.dll",
+  "Automation/automation/packages/karahelper.dll",
+  "Themes/{AegiMode,DeepDark,DeepLight,MyDeepDark}.txt",
+  "KaiNote_AVX.exe (needs the Rel_AVX512 configuration)"
+ ]
+}
