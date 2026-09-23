@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  shared-mime-info already defines every type Kainote registers for, so this
+  only attaches icons. The one glob is belt and braces: audio/aac also claims
+  *.ass, at weight 10 against text/x-ssa's 50, so it already loses.
+-->
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="text/x-ssa">
+    <glob pattern="*.ass" weight="60"/>
+    <icon name="text-x-ssa"/>
+  </mime-type>
+  <mime-type type="application/x-subrip">
+    <icon name="application-x-subrip"/>
+  </mime-type>
+  <mime-type type="text/x-microdvd">
+    <icon name="text-x-microdvd"/>
+  </mime-type>
+</mime-info>

@@ -29,9 +29,13 @@ public:
 	~Registry();
 	void SetStringValue(const wxString &strKey, const wxString &value);
 	bool GetStringValue(const wxString &strKey, wxString &outValue);
-	static bool AddFileAssociation(const wxString &extension, const wxString &extName, int icon);
+	//  iconResourceId is an icon id from FileTypeIcons.h, not a position.
+	static bool AddFileAssociation(const wxString &extension, const wxString &extName, int iconResourceId);
 	static bool RemoveFileAssociation(const wxString &extension);
 	static void CheckFileAssociation(const wxString *extensions, int numExt, std::vector<bool> &output);
+	//  Repoints any association still naming the retired Icons.dll at the
+	//  executable's own icons. Safe to call on every start.
+	static void MigrateFileAssociationIcons();
 	static void RefreshRegistry();
 private:
 	HKEY regHKey = NULL;
