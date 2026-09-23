@@ -98,18 +98,18 @@ bool SubtitlesVSFilter::OpenString(wxString *text)
 
 bool SubtitlesVSFilter::OpenInstance(wxString *text)
 {
-	wxScopedCharBuffer buffer = text->mb_str(wxConvUTF8);
-	int size = strlen(buffer);
-	delete text;
-
 	// Select renderer
 	csri_rend *vobsub = GetVSFilter();
 	if (!vobsub){ 
+		delete text;
 		KaiLogSilent(_("Cannot initialize CSRI."));
 		return false; 
 	}
 
-	m_CsriInstance = csri_open_mem(vobsub, buffer, size, nullptr);
+	// mb_str() points into text's own conversion cache, so text must outlive it
+	wxScopedCharBuffer buffer = text->mb_str(wxConvUTF8);
+	m_CsriInstance = csri_open_mem(vobsub, buffer, strlen(buffer), nullptr);
+	delete text;
 	if (!m_CsriInstance){ 
 		KaiLogSilent(_("Cannot create CSRI instance."));
 		return false; 
