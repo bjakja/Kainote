@@ -188,6 +188,8 @@ inline DWORD timeGetTime() {
     using namespace std::chrono;
     return static_cast<DWORD>(duration_cast<milliseconds>(steady_clock::now().time_since_epoch()).count());
 }
+inline unsigned int timeBeginPeriod(unsigned int) { return 0; }
+inline unsigned int timeEndPeriod(unsigned int) { return 0; }
 
 #ifndef _SPACE
 #define _SPACE 0x0008

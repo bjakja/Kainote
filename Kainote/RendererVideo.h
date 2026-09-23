@@ -222,6 +222,8 @@ protected:
 	virtual void StopStream(){};
 	// the seek target for time: clamped to the video, and on a frame unless SEEK_NO_SNAP
 	int SeekTarget(int time, bool startTime, int flags);
+	// Sleep and timeGetTime step in 1 ms instead of ~15.6 ms while playing
+	void SetFineTimer(bool fine);
 
 	// written by the playback and stream threads as well as the UI thread
 	std::atomic<PlaybackState> m_State{ None };
@@ -251,6 +253,7 @@ private:
 	wxPoint m_ZoomDiff;
 
 	int m_AverangeFrameTime = 42;
+	bool m_FineTimer = false;
 	D3DXVECTOR2 vectors[12];
 	int m_ProgressBarLineWidth = 1;
 	AudioDisplay *m_AudioPlayer = nullptr;

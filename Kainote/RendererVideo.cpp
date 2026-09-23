@@ -117,6 +117,7 @@ RendererVideo::RendererVideo(VideoBox *control, bool visualDisabled)
 RendererVideo::~RendererVideo()
 {
 
+	SetFineTimer(false);
 	Clear();
 	SAFE_DELETE(m_Visual);
 	SAFE_RELEASE(m_SubsProvider);
@@ -502,9 +503,21 @@ bool RendererVideo::Play(int end)
 	OpenSubsForPlayback();
 
 	m_PlayEndTime = (end > 0) ? end : 0;
+	SetFineTimer(true);
 	m_State = Playing;
 	StartStream();
 	return true;
+}
+
+void RendererVideo::SetFineTimer(bool fine)
+{
+	if (fine == m_FineTimer)
+		return;
+	m_FineTimer = fine;
+	if (fine)
+		timeBeginPeriod(1);
+	else
+		timeEndPeriod(1);
 }
 
 bool RendererVideo::Pause()
@@ -513,6 +526,7 @@ bool RendererVideo::Pause()
 		SetThreadExecutionState(ES_CONTINUOUS);
 		m_State = Paused;
 		PauseStream();
+		SetFineTimer(false);
 	}
 	else if (m_State != None){
 		Play();
@@ -528,6 +542,7 @@ bool RendererVideo::Stop()
 	SetThreadExecutionState(ES_CONTINUOUS);
 	m_State = Stopped;
 	StopStream();
+	SetFineTimer(false);
 	m_PlayEndTime = 0;
 	m_Time = 0;
 	return true;
