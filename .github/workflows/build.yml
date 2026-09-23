@@ -15,6 +15,21 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  tests:
+    name: Tests
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -S tests -B build-tests -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build-tests -j"$(nproc)"
+
+      - name: Run
+        run: ctest --test-dir build-tests --output-on-failure
+
   windows:
     name: Windows (${{ matrix.configuration }}|x64)
     runs-on: windows-2022

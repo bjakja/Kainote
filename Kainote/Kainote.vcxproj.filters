@@ -409,6 +409,9 @@
     <ClCompile Include="TextEditorTagList.cpp">
       <Filter>T</Filter>
     </ClCompile>
+    <ClCompile Include="Timebase.cpp">
+      <Filter>T</Filter>
+    </ClCompile>
     <ClCompile Include="TimeCtrl.cpp">
       <Filter>T</Filter>
     </ClCompile>
@@ -829,6 +832,9 @@
       <Filter>T</Filter>
     </ClInclude>
     <ClInclude Include="TextEditorTagList.h">
+      <Filter>T</Filter>
+    </ClInclude>
+    <ClInclude Include="Timebase.h">
       <Filter>T</Filter>
     </ClInclude>
     <ClInclude Include="TimeCtrl.h">

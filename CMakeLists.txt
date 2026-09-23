@@ -185,6 +185,7 @@ add_executable(kainote
     Kainote/SubsGridBase.cpp
     Kainote/TabPanel.cpp
     Kainote/SubsTime.cpp
+    Kainote/Timebase.cpp
     Kainote/TimeCtrl.cpp
     Kainote/TLDialog.cpp
     Kainote/Toolbar.cpp
