@@ -572,11 +572,19 @@ void RendererFFMS2::SetFFMS2Position(int _time, bool starttime, bool refreshAudi
 		}
 	}
 	else{
-		//rebuild spectrum cause position can be changed
-		//and it causes random bugs
-		if (refreshAudio && m_AudioPlayer){ m_AudioPlayer->UpdateImage(false, false); }
-		
-		videoControl->RefreshTime();
+		//seeks usually run on the playback thread, the audio and time controls do not
+		VideoBox *vb = videoControl;
+		auto refreshControls = [vb, refreshAudio]() {
+			RendererVideo *renderer = vb->GetRenderer();
+			//rebuild spectrum cause position can be changed
+			if (refreshAudio && renderer && renderer->m_AudioPlayer)
+				renderer->m_AudioPlayer->UpdateImage(false, false);
+			vb->RefreshTime();
+		};
+		if (wxIsMainThread())
+			refreshControls();
+		else
+			vb->CallAfter(refreshControls);
 		Render();
 	}
 }
