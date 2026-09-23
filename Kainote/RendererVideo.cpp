@@ -23,6 +23,7 @@
 #include "Provider.h"
 #include "VideoFullscreen.h"
 #include "SubtitlesProviderManager.h"
+#include "AudioBox.h"
 
 #include <wx/dir.h>
 #include <wx/clipbrd.h>
@@ -477,6 +478,53 @@ void RendererVideo::ReopenSubsAfterSeek(bool playing)
 	else if (!m_SubsProvider->ShowsWholeSubtitles() && tab->editor){
 		OpenSubs((playing) ? OPEN_WHOLE_SUBTITLES : OPEN_DUMMY, true);
 	}
+}
+
+void RendererVideo::QueueSeekRefresh(bool playing, bool refreshAudio)
+{
+	if (wxIsMainThread()) {
+		SeekRefresh(playing, refreshAudio);
+		return;
+	}
+	std::lock_guard<std::mutex> lock(m_SeekRefreshMutex);
+	m_SeekRefreshPlaying = playing;
+	m_SeekRefreshAudio = m_SeekRefreshAudio || refreshAudio;
+	if (m_SeekRefreshQueued)
+		return;
+	m_SeekRefreshQueued = true;
+	// a renderer made meanwhile has nothing queued, so this is a no-op for it
+	VideoBox *vb = videoControl;
+	vb->CallAfter([vb]() {
+		if (vb->renderer)
+			vb->renderer->RunQueuedSeekRefresh();
+	});
+}
+
+void RendererVideo::RunQueuedSeekRefresh()
+{
+	bool playing, refreshAudio;
+	{
+		std::lock_guard<std::mutex> lock(m_SeekRefreshMutex);
+		if (!m_SeekRefreshQueued)
+			return;
+		m_SeekRefreshQueued = false;
+		playing = m_SeekRefreshPlaying;
+		refreshAudio = m_SeekRefreshAudio;
+		m_SeekRefreshAudio = false;
+	}
+	SeekRefresh(playing, refreshAudio);
+}
+
+void RendererVideo::SeekRefresh(bool playing, bool refreshAudio)
+{
+	ReopenSubsAfterSeek(playing);
+	if (playing)
+		return;
+	//rebuild spectrum cause position can be changed
+	if (refreshAudio && m_AudioPlayer)
+		m_AudioPlayer->UpdateImage(false, false);
+	videoControl->RefreshTime();
+	Render();
 }
 
 bool RendererVideo::PlayLine(int start, int eend)

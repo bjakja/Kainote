@@ -802,6 +802,16 @@ void ProviderFFMS2::DeleteOldAudioCache()
 
 }
 
+void ProviderFFMS2::PrefetchFrame(int frame)
+{
+	wxCriticalSectionLocker lock(m_blockFrame);
+	if (!m_FFMS2frame || frame != m_lastFrame || m_refreshFrame) {
+		m_FFMS2frame = FFMS_GetFrame(m_videoSource, frame, &m_errInfo);
+		m_lastFrame = frame;
+		m_refreshFrame = false;
+	}
+}
+
 void ProviderFFMS2::GetFrameBuffer(int frame, unsigned char** buffer)
 {
 	CopyFrame(frame, *buffer, false);

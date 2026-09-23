@@ -1506,8 +1506,7 @@ void SubsGrid::GetAssHeader(wxString* header, bool forFile, bool translated, boo
 }
 
 
-//this function is called from another thread
-//need to guard every change in dialogues, styles, sinfos, and editbox->line
+//reads the edit box controls, so call it on the UI thread only
 wxString *SubsGrid::GetVisible(bool *visible, wxPoint *point, wxArrayInt *selected, bool allSubs)
 {
 	wxMutexLocker lock(editionMutex);

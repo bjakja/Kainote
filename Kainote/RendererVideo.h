@@ -191,6 +191,10 @@ public:
 	// visual editing and dummy subtitles show one line; playback needs them all
 	void OpenSubsForPlayback();
 	void ReopenSubsAfterSeek(bool playing);
+	// Reopens the subtitles, and when paused redraws, on the UI thread: the
+	// subtitle text comes from the grid and edit box. Seeks from the playback
+	// thread queue one refresh at a time, which takes the latest state.
+	void QueueSeekRefresh(bool playing, bool refreshAudio);
 	// the video shows text that edits have since changed
 	void MarkSubtitlesOutdated();
 	// changes whenever subtitles are opened, on any thread
@@ -255,6 +259,13 @@ private:
 	RECT m_MainStreamRect;
 	wxPoint m_ZoomDiff;
 
+	void RunQueuedSeekRefresh();
+	void SeekRefresh(bool playing, bool refreshAudio);
+
+	std::mutex m_SeekRefreshMutex;
+	bool m_SeekRefreshQueued = false;
+	bool m_SeekRefreshPlaying = false;
+	bool m_SeekRefreshAudio = false;
 	int m_AverangeFrameTime = 42;
 	bool m_FineTimer = false;
 	D3DXVECTOR2 vectors[12];

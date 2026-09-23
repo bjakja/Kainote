@@ -520,28 +520,13 @@ void RendererFFMS2::SetFFMS2Position(int time, bool startTime, bool refreshAudio
 	m_LastTime = timeGetTime() - m_Time;
 	m_PlayEndTime = 0;
 
-	ReopenSubsAfterSeek(playing);
-	if (playing){
-		if (m_AudioPlayer){
-			m_AudioPlayer->player->SetCurrentPosition(m_AudioPlayer->GetSampleAtMS(m_Time));
-		}
-	}
-	else{
-		//seeks usually run on the playback thread, the audio and time controls do not
-		VideoBox *vb = videoControl;
-		auto refreshControls = [vb, refreshAudio]() {
-			RendererVideo *renderer = vb->renderer;
-			//rebuild spectrum cause position can be changed
-			if (refreshAudio && renderer && renderer->m_AudioPlayer)
-				renderer->m_AudioPlayer->UpdateImage(false, false);
-			vb->RefreshTime();
-		};
-		if (wxIsMainThread())
-			refreshControls();
-		else
-			vb->CallAfter(refreshControls);
-		Render();
-	}
+	if (playing && m_AudioPlayer)
+		m_AudioPlayer->player->SetCurrentPosition(m_AudioPlayer->GetSampleAtMS(m_Time));
+	// decode here, off the UI thread, so only copying is left for it
+	if (!playing)
+		m_FFMS2->PrefetchFrame(m_Frame);
+
+	QueueSeekRefresh(playing, refreshAudio);
 }
 
 int RendererFFMS2::GetDuration()

@@ -22,6 +22,7 @@
 #include "DshowRenderer.h"
 #include "WinUndef.h"
 #include <wx/thread.h>
+#include <wx/app.h>
 #include <process.h>
 #include "config.h"
 #include "UtilsWindows.h"
@@ -59,7 +60,7 @@ unsigned int __stdcall  ProcessLibassCache(void *data)
 	}
 	libass->m_IsReady.store(libass->m_Libass != nullptr);
 	//reload all tabs to shows subtitles
-	Notebook::RefreshVideo();
+	wxTheApp->CallAfter([]() { Notebook::RefreshVideo(); });
 
 	return 0;
 }

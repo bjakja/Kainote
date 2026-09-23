@@ -26,6 +26,7 @@ public:
 	virtual ~ProviderFFMS2();
 	void GetFrameBuffer(int frame, unsigned char** buffer) override;
 	void GetFrame(int frame, unsigned char* buff) override;
+	void PrefetchFrame(int frame) override;
 	void GetBuffer(void* buf, long long start, long long count, double vol = 1.0) override;
 	bool RAMCache();
 	int Init();
