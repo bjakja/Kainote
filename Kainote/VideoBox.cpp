@@ -1694,9 +1694,10 @@ void VideoBox::GoToPrevKeyframe()
 void VideoBox::OpenKeyframes(const wxString &filename)
 {
 	if (renderer && !renderer->GetTimebase().IsEmpty()) {
-		m_KeyframesFileName.Empty();
 		std::vector<int> keyframes;
 		KeyframeLoader kfl(filename, &keyframes, renderer->GetTimebase());
+		//filename can be m_KeyframesFileName itself, so clear it only now
+		m_KeyframesFileName.Empty();
 		if (keyframes.empty()) {
 			KaiMessageBox(_("Invalid keyframes format"), _("Error"), 4L, this);
 			return;
