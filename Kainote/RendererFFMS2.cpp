@@ -164,12 +164,18 @@ bool RendererFFMS2::DrawTexture(unsigned char *nframe, bool copy)
 
 	D3DLOCKED_RECT d3dlr;
 
+	bool overlay = UsesOverlay();
 	if (nframe) {
 		fdata = nframe;
 		if (copy) {
 			byte *cpy = m_FrameBuffer;
 			memcpy(cpy, fdata, m_Height * m_Pitch);
 		}
+	}
+	else if (overlay && m_UploadedFrame == m_Frame) {
+		// only the subtitles can have changed, as while dragging a visual tool
+		UpdateOverlay();
+		return true;
 	}
 	else {
 		fdata = m_FrameBuffer;
@@ -178,8 +184,10 @@ bool RendererFFMS2::DrawTexture(unsigned char *nframe, bool copy)
 			return false;
 	}
 
-
-	m_SubsProvider->Draw(fdata, m_Time);
+	if (overlay)
+		UpdateOverlay();
+	else
+		m_SubsProvider->Draw(fdata, m_Time);
 	IDirect3DSurface9 *upload = m_UploadSurfaces[m_UploadIndex];
 	if (!upload)
 		return false;
@@ -218,8 +226,75 @@ bool RendererFFMS2::DrawTexture(unsigned char *nframe, bool copy)
 	SAFE_RELEASE(m_MainSurface);
 	m_MainSurface = upload;
 	m_UploadIndex ^= 1;
+	m_UploadedFrame = overlay ? (int)m_Frame : -1;
 
 	return true;
+}
+
+bool RendererFFMS2::UsesOverlay()
+{
+	return m_OverlayTexture && m_SubsProvider->IsLibass();
+}
+
+// call with m_MutexRendering locked
+void RendererFFMS2::UpdateOverlay()
+{
+	size_t bytes = (size_t)m_Width * m_Height * 4;
+	if (m_Overlay.size() != bytes) {
+		m_Overlay.assign(bytes, 0);
+		m_OverlayUploadAll = true;
+	}
+	wxRect dirty;
+	bool changed = m_SubsProvider->DrawOverlay(m_Overlay.data(), m_Time, &dirty);
+	if (m_OverlayUploadAll) {
+		dirty = wxRect(0, 0, m_Width, m_Height);
+		changed = true;
+		m_OverlayUploadAll = false;
+	}
+	dirty.Intersect(wxRect(0, 0, m_Width, m_Height));
+	if (!changed || dirty.IsEmpty())
+		return;
+
+	RECT rect = { dirty.x, dirty.y, dirty.x + dirty.width, dirty.y + dirty.height };
+	D3DLOCKED_RECT locked;
+	if (FAILED(m_OverlayStaging->LockRect(0, &locked, &rect, 0))) {
+		m_OverlayUploadAll = true;
+		return;
+	}
+	int pitch = m_Width * 4;
+	const unsigned char *src = m_Overlay.data() + dirty.y * pitch + dirty.x * 4;
+	unsigned char *dst = static_cast<unsigned char*>(locked.pBits);
+	for (int y = 0; y < dirty.height; y++)
+		memcpy(dst + y * locked.Pitch, src + y * pitch, dirty.width * 4);
+	m_OverlayStaging->UnlockRect(0);
+	if (FAILED(m_D3DDevice->UpdateTexture(m_OverlayStaging, m_OverlayTexture)))
+		m_OverlayUploadAll = true;
+}
+
+// call inside BeginScene with m_MutexRendering locked
+void RendererFFMS2::DrawOverlay()
+{
+	struct OverlayVertex { float x, y, z, u, v; };
+	float u0 = (float)m_MainStreamRect.left / m_Width, u1 = (float)m_MainStreamRect.right / m_Width;
+	float v0 = (float)m_MainStreamRect.top / m_Height, v1 = (float)m_MainStreamRect.bottom / m_Height;
+	float x0 = m_BackBufferRect.left, x1 = m_BackBufferRect.right;
+	float y0 = m_BackBufferRect.top, y1 = m_BackBufferRect.bottom;
+	OverlayVertex quad[4] = {
+		{ x0, y0, 0.f, u0, v0 }, { x1, y0, 0.f, u1, v0 },
+		{ x0, y1, 0.f, u0, v1 }, { x1, y1, 0.f, u1, v1 },
+	};
+	m_D3DDevice->SetTexture(0, m_OverlayTexture);
+	m_D3DDevice->SetFVF(D3DFVF_XYZ | D3DFVF_TEX1);
+	m_D3DDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	m_D3DDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	m_D3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+	m_D3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+	// the overlay is premultiplied
+	m_D3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ONE);
+	m_D3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, quad, sizeof(OverlayVertex));
+	m_D3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	m_D3DDevice->SetTexture(0, nullptr);
+	m_D3DDevice->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE);
 }
 
 void RendererFFMS2::Render(bool redrawSubsOnFrame, bool wait)
@@ -306,16 +381,8 @@ void RendererFFMS2::Render(bool redrawSubsOnFrame, bool wait)
 
 	hr = m_D3DDevice->BeginScene();
 
-#if byvertices
-
-
-	// Render the vertex buffer contents
-	hr = m_D3DDevice->SetStreamSource(0, vertex, 0, sizeof(CUSTOMVERTEX));
-	hr = m_D3DDevice->SetVertexShader(nullptr);
-	hr = m_D3DDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
-	hr = m_D3DDevice->SetTexture(0, texture);
-	hr = m_D3DDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, 2);
-#endif
+	if (UsesOverlay())
+		DrawOverlay();
 
 	if (m_Visual && !m_HasZoom){ m_Visual->Draw(m_Time); }
 
@@ -592,16 +659,23 @@ void RendererFFMS2::ChangePositionByFrame(int step)
 
 byte *RendererFFMS2::GetFrameWithSubs(bool subs, bool *del)
 {
-	byte *cpy1;
 	int all = m_Height * m_Pitch;
-	if (!subs){
-		*del = true;
-		byte *cpy = new byte[all];
-		cpy1 = cpy;
-		m_FFMS2->GetFrame(m_Frame, cpy1);
+	if (subs && !UsesOverlay()){
+		*del = false;
+		return m_FrameBuffer;
 	}
-	else{ *del = false; }
-	return (!subs) ? cpy1 : m_FrameBuffer;
+	*del = true;
+	byte *cpy = new byte[all];
+	if (subs){
+		// the subtitles are in the overlay, not in the frame
+		wxCriticalSectionLocker lock(m_MutexRendering);
+		memcpy(cpy, m_FrameBuffer, all);
+		m_SubsProvider->Draw(cpy, m_Time);
+	}
+	else{
+		m_FFMS2->GetFrame(m_Frame, cpy);
+	}
+	return cpy;
 }
 
 unsigned char* RendererFFMS2::GetFrame(int frame, bool subs)
@@ -633,6 +707,15 @@ bool RendererFFMS2::InitRendererDX()
 	m_UploadIndex = 0;
 	m_MainSurface = m_UploadSurfaces[1];
 	m_MainSurface->AddRef();
+	m_UploadedFrame = -1;
+
+	if (FAILED(m_D3DDevice->CreateTexture(m_Width, m_Height, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &m_OverlayStaging, nullptr)) ||
+		FAILED(m_D3DDevice->CreateTexture(m_Width, m_Height, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_OverlayTexture, nullptr))) {
+		// without the overlay, subtitles are drawn into the frame
+		SAFE_RELEASE(m_OverlayStaging);
+		SAFE_RELEASE(m_OverlayTexture);
+	}
+	m_OverlayUploadAll = true;
 
 #endif
 	return true;
@@ -640,6 +723,8 @@ bool RendererFFMS2::InitRendererDX()
 
 void RendererFFMS2::ClearObject()
 {
+	SAFE_RELEASE(m_OverlayStaging);
+	SAFE_RELEASE(m_OverlayTexture);
 	SAFE_RELEASE(m_UploadSurfaces[0]);
 	SAFE_RELEASE(m_UploadSurfaces[1]);
 }

@@ -37,10 +37,10 @@ public:
 	virtual ~SubtitlesProvider(){};
 	SubtitlesProvider(){};
 	virtual void Draw(unsigned char* buffer, int time){};
-	// Like Draw, but skips the blend and returns false when the rendered output
-	// is identical to the previous call (lets callers reuse a cached overlay).
-	// Default is conservative: always draws and reports "changed".
-	virtual bool DrawChanged(unsigned char* buffer, int time){ Draw(buffer, time); return true; }
+	// Draws into a transparent ARGB overlay the size of the video, which the
+	// caller keeps between calls. Returns false when the subtitles look the
+	// same as last time; otherwise dirty covers everything that changed.
+	virtual bool DrawOverlay(unsigned char* overlay, int time, wxRect* dirty);
 	// takes the text; nullptr closes the subtitles
 	virtual bool Open(wxString *text){ return false; };
 	//for styles preview
@@ -88,7 +88,7 @@ public:
 	SubtitlesLibass();
 	virtual ~SubtitlesLibass();
 	void Draw(unsigned char* buffer, int time);
-	bool DrawChanged(unsigned char* buffer, int time) override;
+	bool DrawOverlay(unsigned char* overlay, int time, wxRect* dirty) override;
 	bool Open(wxString *text);
 	bool OpenString(wxString *text);
 	void SetVideoParameters(const wxSize& size, unsigned char format, bool isSwapped);
@@ -103,6 +103,11 @@ public:
 private:
 	// Blends a libass image list onto an ARGB (premultiplied) overlay buffer.
 	void BlendImages(ASS_Image* img, unsigned char* buffer);
-	bool m_HasRendered = false; // for DrawChanged's first-call / change tracking
+	ASS_Image* RenderFrame(int time, int* change);
+	bool m_HasRendered = false;
+	// what the last DrawOverlay drew, cleared before the next one draws
+	wxRect m_OverlayDrawn;
+	// all tabs share m_Libass, whose change detection compares with whatever it rendered last
+	static SubtitlesLibass* m_LastRenderer;
 };
 

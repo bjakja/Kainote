@@ -64,6 +64,7 @@ public:
 	void DeleteAudioCache(){ if (m_FFMS2){ m_FFMS2->DeleteOldAudioCache(); } }
 	void SetColorSpace(const wxString& matrix, bool render = true){
 		if (m_FFMS2){
+			m_UploadedFrame = -1;
 			m_FFMS2->SetColorSpace(matrix);
 			if (m_State == Paused)
 				Render();
@@ -77,6 +78,17 @@ public:
 	// reading is never locked; m_MainSurface holds the last one filled
 	IDirect3DSurface9 *m_UploadSurfaces[2] = { nullptr, nullptr };
 	int m_UploadIndex = 0;
+	// libass subtitles live in their own overlay, drawn over the video on the
+	// GPU and redrawn only when they change; the frame then stays clean
+	bool UsesOverlay();
+	void UpdateOverlay();
+	void DrawOverlay();
+	std::vector<unsigned char> m_Overlay;
+	IDirect3DTexture9 *m_OverlayStaging = nullptr;
+	IDirect3DTexture9 *m_OverlayTexture = nullptr;
+	bool m_OverlayUploadAll = true;
+	// the frame in m_MainSurface when it holds no subtitles, else -1
+	int m_UploadedFrame = -1;
 #ifndef _WIN32
 	// Frame-accurate playback driver; the shared software present (buffers,
 	// QueueLinuxRender/PresentLinuxFrame/RenderToDc) lives in RendererVideo.

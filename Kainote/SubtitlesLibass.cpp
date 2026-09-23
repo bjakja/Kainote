@@ -29,6 +29,7 @@
 #include "Notebook.h"
 
 std::atomic<bool> SubtitlesLibass::m_IsReady{ false };
+SubtitlesLibass* SubtitlesLibass::m_LastRenderer = nullptr;
 wxMutex SubtitlesLibass::openMutex;
 
 void MessageCallback(int level, const char *fmt, va_list args, void *) {
@@ -131,30 +132,53 @@ void SubtitlesLibass::BlendImages(ASS_Image* img, unsigned char* buffer)
 	}
 }
 
+// call with openMutex locked
+ASS_Image* SubtitlesLibass::RenderFrame(int time, int* change)
+{
+	*change = 1;
+	if (!(m_IsReady.load() && m_AssTrack))
+		return nullptr;
+	ass_set_frame_size(m_Libass, m_VideoSize.GetWidth(), m_VideoSize.GetHeight());
+	ASS_Image* img = ass_render_frame(m_Libass, m_AssTrack, time, change);
+	if (m_LastRenderer != this)
+		*change = 1;
+	m_LastRenderer = this;
+	return img;
+}
+
 void SubtitlesLibass::Draw(unsigned char* buffer, int time)
 {
 	wxMutexLocker lock(openMutex);
-	if (m_IsReady.load() && m_AssTrack){
-		ass_set_frame_size(m_Libass, m_VideoSize.GetWidth(), m_VideoSize.GetHeight());
-		ASS_Image* img = ass_render_frame(m_Libass, m_AssTrack, time, nullptr);
-		BlendImages(img, buffer);
-	}
+	int change;
+	BlendImages(RenderFrame(time, &change), buffer);
 }
 
-bool SubtitlesLibass::DrawChanged(unsigned char* buffer, int time)
+bool SubtitlesLibass::DrawOverlay(unsigned char* overlay, int time, wxRect* dirty)
 {
 	wxMutexLocker lock(openMutex);
-	if (!(m_IsReady.load() && m_AssTrack))
-		return true; // not ready: caller treats it as a (blank) change
-	ass_set_frame_size(m_Libass, m_VideoSize.GetWidth(), m_VideoSize.GetHeight());
-	int detectChange = 0;
-	ASS_Image* img = ass_render_frame(m_Libass, m_AssTrack, time, &detectChange);
-	// detect_change == 0 means libass produced a bit-identical frame to the
-	// previous render, so the caller can reuse its cached overlay unchanged.
-	if (detectChange == 0 && m_HasRendered)
+	int change;
+	ASS_Image* img = RenderFrame(time, &change);
+	if (m_HasRendered && (change == 0 || (!img && m_OverlayDrawn.IsEmpty())))
 		return false;
 	m_HasRendered = true;
-	BlendImages(img, buffer);
+
+	wxRect frame(0, 0, m_VideoSize.GetWidth(), m_VideoSize.GetHeight());
+	wxRect drawn;
+	for (ASS_Image* i = img; i; i = i->next) {
+		if (i->w && i->h)
+			drawn.Union(wxRect(i->dst_x, i->dst_y, i->w, i->h));
+	}
+	drawn.Intersect(frame);
+	m_OverlayDrawn.Intersect(frame);
+
+	int pitch = frame.width * 4;
+	for (int y = m_OverlayDrawn.y; y < m_OverlayDrawn.GetBottom() + 1; y++)
+		memset(overlay + y * pitch + m_OverlayDrawn.x * 4, 0, m_OverlayDrawn.width * 4);
+	BlendImages(img, overlay);
+
+	*dirty = m_OverlayDrawn;
+	dirty->Union(drawn);
+	m_OverlayDrawn = drawn;
 	return true;
 }
 
@@ -224,7 +248,9 @@ void SubtitlesLibass::SetVideoParameters(const wxSize & size, unsigned char form
 	m_IsSwapped = isSwapped;
 	m_Format = format;
 	m_HasParameters = format == RGB32 || format == ARGB32;
-	m_HasRendered = false; // frame size may have changed; force a re-render
+	// the caller may hand a new overlay of the new size, so clear all of it once
+	m_HasRendered = false;
+	m_OverlayDrawn = wxRect(0, 0, size.GetWidth(), size.GetHeight());
 }
 
 void SubtitlesLibass::ReloadLibraries(bool destroyExisted)

@@ -93,9 +93,9 @@ void SubtitlesProviderManager::Draw(unsigned char* buffer, int time)
 	GetProvider()->Draw(buffer, time);
 }
 
-bool SubtitlesProviderManager::DrawChanged(unsigned char* buffer, int time)
+bool SubtitlesProviderManager::DrawOverlay(unsigned char* overlay, int time, wxRect* dirty)
 {
-	return GetProvider()->DrawChanged(buffer, time);
+	return GetProvider()->DrawOverlay(overlay, time, dirty);
 }
 
 bool SubtitlesProviderManager::Open(int flag, wxString *text)

@@ -43,6 +43,15 @@ void SubtitlesProvider::DestroySubtitlesProvider()
 }
 
 
+bool SubtitlesProvider::DrawOverlay(unsigned char* overlay, int time, wxRect* dirty)
+{
+	// without change detection the whole overlay is drawn again every time
+	memset(overlay, 0, (size_t)m_VideoSize.x * m_VideoSize.y * 4);
+	Draw(overlay, time);
+	*dirty = wxRect(0, 0, m_VideoSize.x, m_VideoSize.y);
+	return true;
+}
+
 SubtitlesVSFilter::SubtitlesVSFilter()
 {
 
