@@ -1067,6 +1067,8 @@ namespace Auto{
 		//refresh styles in editbox
 		c->edit->RefreshStyle();
 
+		if (subsobj->DeletedLines())
+			c->grid->SetAsEdited();
 		c->grid->SetModified(AUTOMATION_SCRIPT, true, false, active_idx);
 		c->grid->RefreshColumns();
 		SAFE_DELETE(subsobj);

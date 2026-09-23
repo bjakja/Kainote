@@ -742,6 +742,8 @@ namespace Auto{
 			}
 		}
 		std::sort(ids.begin(), ids.end());
+		if (ids.size())
+			laf->deleted_lines = true;
 
 		for (int i = ids.size() - 1; i >= 0; i--)
 		{
@@ -789,6 +791,7 @@ namespace Auto{
 
 		if (b < a) return 0;
 		a--; b--;
+		laf->deleted_lines = true;
 
 
 

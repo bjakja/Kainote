@@ -59,6 +59,7 @@ namespace Auto{
 		static bool LineToLua(lua_State *L, int i); 
 		static SubsEntry *LuaToLine(lua_State *L);
 		static void Cancel();
+		bool DeletedLines() const { return deleted_lines; }
 	
 	private:
 		File *file;
@@ -67,6 +68,7 @@ namespace Auto{
 
 		bool can_modify;
 		bool was_cancelled = false;
+		bool deleted_lines = false;
 		char subsFormat = ASS;
 		void CheckAllowModify(); // throws an error if modification is disallowed
 
