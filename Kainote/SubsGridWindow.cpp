@@ -45,6 +45,19 @@ std::unordered_set<wxString, wxStringHash, wxStringEqual> SubsGrid::StyleNames()
 	return names;
 }
 
+template <typename Measure>
+int SubsGrid::TextWidth(const wxString &text, Measure measure)
+{
+	auto found = m_TextWidths.find(text);
+	if (found != m_TextWidths.end())
+		return found->second;
+	if (m_TextWidths.size() > 10000)
+		m_TextWidths.clear();
+	int width = measure(text);
+	m_TextWidths.emplace(text, width);
+	return width;
+}
+
 const wxBitmap &SubsGrid::TreeArrow(bool closed)
 {
 	if (!m_TreeArrows[0].IsOk()) {
@@ -72,6 +85,7 @@ void SubsGrid::SetStyle()
 	int fw, fh;
 	GetTextExtent(L"#TWFfGH", &fw, &fh, nullptr, nullptr, &font);
 	GridHeight = ((fh + 3) * 2) / 2;
+	m_TextWidths.clear();
 	Refresh(false);
 }
 
@@ -991,6 +1005,11 @@ void SubsGrid::AdjustWidthsD2D(GraphicsContext *gc, int cell)
 		return;
 	}
 
+	auto measure = [gc](const wxString &text) {
+		double width = 0, height = 0;
+		gc->GetTextExtent(text, &width, &height);
+		return (int)width;
+	};
 	Dialogue *dial;
 	for (int i = 0; i < maxx; i++){
 		dial = file->GetDialogue(i);
@@ -1011,20 +1030,20 @@ void SubsGrid::AdjustWidthsD2D(GraphicsContext *gc, int cell)
 
 		if (subsFormat<SRT){
 			if ((LAYER & cell) && dial->Layer != 0){
-				gc->GetTextExtent(wxString::Format(L"%i", dial->Layer), &fw, &fh);
-				if (fw + 10>law){ law = fw + 10; }
+				int width = TextWidth(wxString::Format(L"%i", dial->Layer), measure);
+				if (width + 10 > law){ law = width + 10; }
 			}
 			if (STYLE & cell){
-				gc->GetTextExtent(dial->Style, &fw, &fh);
-				if (fw + 10 > syw){ syw = fw + 10; }
+				int width = TextWidth(dial->Style, measure);
+				if (width + 10 > syw){ syw = width + 10; }
 			}
 			if ((ACTOR & cell) && dial->Actor != emptyString){
-				gc->GetTextExtent(dial->Actor, &fw, &fh);
-				if (fw + 10 > acw){ acw = fw + 10; }
+				int width = TextWidth(dial->Actor, measure);
+				if (width + 10 > acw){ acw = width + 10; }
 			}
 			if ((EFFECT & cell) && dial->Effect != emptyString){
-				gc->GetTextExtent(dial->Effect, &fw, &fh);
-				if (fw + 10 > efw){ efw = fw + 10; }
+				int width = TextWidth(dial->Effect, measure);
+				if (width + 10 > efw){ efw = width + 10; }
 			}
 			if ((MARGINL & cell) && dial->MarginL != 0){ shml = true; }
 			if ((MARGINR & cell) && dial->MarginR != 0){ shmr = true; }
@@ -1155,6 +1174,11 @@ void SubsGrid::AdjustWidths(int cell)
 	if (!cell)
 		return;
 
+	auto measure = [&dc](const wxString &text) {
+		int width = 0, height = 0;
+		dc.GetTextExtent(text, &width, &height);
+		return width;
+	};
 	Dialogue *dial;
 	for (int i = 0; i < maxx; i++){
 		dial = file->GetDialogue(i);
@@ -1175,20 +1199,20 @@ void SubsGrid::AdjustWidths(int cell)
 
 		if (subsFormat<SRT){
 			if ((LAYER & cell) && dial->Layer != 0){
-				dc.GetTextExtent(wxString::Format(L"%i", dial->Layer), &fw, &fh);
-				if (fw + 10>law){ law = fw + 10; }
+				int width = TextWidth(wxString::Format(L"%i", dial->Layer), measure);
+				if (width + 10 > law){ law = width + 10; }
 			}
 			if (STYLE & cell){
-				dc.GetTextExtent(dial->Style, &fw, &fh);
-				if (fw + 10 > syw){ syw = fw + 10; }
+				int width = TextWidth(dial->Style, measure);
+				if (width + 10 > syw){ syw = width + 10; }
 			}
 			if ((ACTOR & cell) && dial->Actor != emptyString){
-				dc.GetTextExtent(dial->Actor, &fw, &fh);
-				if (fw + 10 > acw){ acw = fw + 10; }
+				int width = TextWidth(dial->Actor, measure);
+				if (width + 10 > acw){ acw = width + 10; }
 			}
 			if ((EFFECT & cell) && dial->Effect != emptyString){
-				dc.GetTextExtent(dial->Effect, &fw, &fh);
-				if (fw + 10 > efw){ efw = fw + 10; }
+				int width = TextWidth(dial->Effect, measure);
+				if (width + 10 > efw){ efw = width + 10; }
 			}
 			if ((MARGINL & cell) && dial->MarginL != 0){ shml = true; }
 			if ((MARGINR & cell) && dial->MarginR != 0){ shmr = true; }

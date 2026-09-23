@@ -14,6 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
+#include <unordered_map>
 #include <unordered_set>
 #include <wx/hashmap.h>
 #include <wx/regex.h>
@@ -283,6 +284,10 @@ private:
 	// the tree arrows, loaded once: pointing down for a closed tree, up for an open one
 	wxBitmap m_TreeArrows[2];
 	const wxBitmap &TreeArrow(bool closed);
+	// widths of column texts in the grid font, so each distinct one is measured once
+	std::unordered_map<wxString, int, wxStringHash, wxStringEqual> m_TextWidths;
+	template <typename Measure>
+	int TextWidth(const wxString &text, Measure measure);
 public:
 	// override tags as hide-tags shows them, compiled once
 	static wxRegEx &TagsPattern(char format);
