@@ -35,7 +35,7 @@
 
 #pragma once
 
-#include <wx/msw/winundef.h>
+#include "WinUndef.h"
 #include <wx/colour.h>
 #include <wx/string.h>
 

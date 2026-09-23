@@ -16,7 +16,7 @@
 
 #pragma once
 #include "config.h"
-#include <wx/msw/winundef.h>
+#include "WinUndef.h"
 #include <wx/window.h>
 #include <wx/toplevel.h>
 #include <wx/sizer.h>

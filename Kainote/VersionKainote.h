@@ -13,8 +13,12 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-//  This file is for automatic build change
-//  Autoversioning.exe change it after build using commandline
+//  Kainote's declared version.  Bump it deliberately when cutting a release.
+//
+//  This used to be rewritten on every Release|x64 build by AutoVersioning.exe,
+//  a binary with no source in the tree, which meant each build dirtied a
+//  tracked file.  The exact build is identified by gitparams.h instead, which
+//  is generated and gitignored.
 
 //StableRelease: v0.9.3.893
 //StableReleaseLink: https://github.com/bjakja/Kainote/releases/download/v0.9.3.893/Kainote.x64.zip

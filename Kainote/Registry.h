@@ -13,6 +13,10 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+// winsock2.h first: windows.h would pull in the old winsock.h (sockaddr clash).
+#ifdef __WXMSW__
+#include <winsock2.h>
+#endif
 #include <windows.h>
 #include <wx/string.h>
 #include <vector>

@@ -1,0 +1,308 @@
+name: Build
+
+on:
+  # Only master on push. Branches in this repository with an open pull request
+  # would otherwise be built twice for one commit, once per event.
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  # head_ref on a pull_request, ref otherwise, so a branch and its PR share one
+  # group and the older run is cancelled rather than running alongside.
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    name: Windows (${{ matrix.configuration }}|x64)
+    runs-on: windows-2022
+    defaults:
+      run:
+        shell: pwsh
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [Release, Debug]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: microsoft/setup-msbuild@v2
+
+      - name: Install NASM
+        run: choco install nasm --no-progress -y
+      - name: Add NASM to PATH
+        run: echo "C:\Program Files\NASM" >> $env:GITHUB_PATH
+
+      # The VirtualDub libraries assemble their SIMD kernels with YASM, through
+      # the vsyasm integration the xy-VSFilter fork carries as
+      # src/YASM.{props,targets,xml} -- that one calls yasm from PATH.  The
+      # chocolatey package provides the assembler itself: yasm publishes its
+      # Windows build as yasm-1.2.0-win64.exe, not as an installer.
+      # msgfmt compiles Locale/*.po into the .mo files Kainote loads at run time;
+      # the pre-build event skips that when msgfmt is missing.  Non-fatal, so a
+      # package hiccup costs the artifact its translations, not the build.
+      - name: Install gettext
+        continue-on-error: true
+        run: |
+          choco install gettext --no-progress -y
+
+          # The install lands outside this process's PATH (choco edits only the
+          # machine one), so look for msgfmt.exe itself: asking `where` here
+          # reports it missing and fails the step even though the install
+          # worked and later steps can find it.
+          $dir = @(
+              "$env:ProgramFiles\gettext-iconv\bin",
+              "${env:ProgramFiles(x86)}\gettext-iconv\bin",
+              "C:\ProgramData\chocolatey\bin") |
+            Where-Object { Test-Path (Join-Path $_ 'msgfmt.exe') } |
+            Select-Object -First 1
+
+          if (-not $dir) {
+            throw 'msgfmt.exe is not where gettext installs it; the package will ship without compiled catalogs'
+          }
+
+          $dir | Out-File -Append $env:GITHUB_PATH
+          $env:PATH = "$dir;$env:PATH"
+          msgfmt --version
+
+      - name: Install YASM
+        run: choco install yasm --no-progress -y
+
+      # D3DXCreateFontW / D3DXCreateLine live in the June 2010 DirectX SDK,
+      # which no Windows SDK replaced and no runner image carries.  Its
+      # installer fails on modern images (error S1023) because a newer VC++
+      # 2010 redistributable is already present, so extract the payload
+      # instead: only Include and Lib are needed.  Kainote.vcxproj reads
+      # DXSDK_DIR.
+      - name: Cache DirectX SDK
+        id: dxsdk-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ github.workspace }}/dxsdk
+          key: dxsdk-jun2010-headers-libs-v1
+
+      - name: Fetch DirectX SDK (June 2010)
+        if: steps.dxsdk-cache.outputs.cache-hit != 'true'
+        run: |
+          $url = 'https://download.microsoft.com/download/A/E/7/AE743F1F-632B-4809-87A9-AA1BB3458E31/DXSDK_Jun10.exe'
+          Invoke-WebRequest -Uri $url -OutFile dxsdk.exe -UseBasicParsing
+          & 7z x dxsdk.exe -oraw -y '*\Include\*' '*\Lib\*' | Out-Null
+          $inc = Get-ChildItem raw -Recurse -Directory -Filter Include | Select-Object -First 1
+          $lib = Get-ChildItem raw -Recurse -Directory -Filter Lib     | Select-Object -First 1
+          if (-not $inc -or -not $lib) { throw 'DirectX SDK payload did not contain Include/Lib' }
+          Remove-Item dxsdk -Recurse -Force -ErrorAction SilentlyContinue
+          New-Item -ItemType Directory -Force -Path dxsdk | Out-Null
+          Move-Item $inc.FullName dxsdk\Include
+          Move-Item $lib.FullName dxsdk\Lib
+          Remove-Item raw, dxsdk.exe -Recurse -Force
+
+      - name: Point the build at the DirectX SDK
+        run: |
+          if (-not (Test-Path "dxsdk\Lib\x64\d3dx9.lib")) { throw 'd3dx9.lib missing from the extracted SDK' }
+          echo "DXSDK_DIR=${{ github.workspace }}\dxsdk\" >> $env:GITHUB_ENV
+
+      # hydrate.ps1 pulls ~200 MB of archives whose contents are pinned by
+      # SHA-256, so the manifest is a sound cache key.
+      - name: Cache hydrated dependencies
+        id: hydrate-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: Thirdparty/.cache
+          key: hydrate-${{ hashFiles('Thirdparty/dependencies.json') }}
+
+      # Verbatim from the manifest + hydrate.ps1, and with no restore-key prefix:
+      # hydrate.ps1 only checks marker files, so a stale tree restored under a
+      # shared prefix would be skipped rather than noticed.
+      - name: Cache hydrated dependency trees
+        id: hydrate-trees-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            Thirdparty/boost
+            Thirdparty/icu
+            Thirdparty/ffmpeg
+            Thirdparty/fribidi
+            Thirdparty/zlib
+            Thirdparty/curl
+          key: hydrate-trees-${{ hashFiles('Thirdparty/dependencies.json', 'Thirdparty/hydrate.ps1') }}
+
+      # wxWidgets takes the bulk of the bootstrap time and only changes when
+      # the submodule pin moves.
+      - name: Resolve the wxWidgets pin
+        id: wx-pin
+        run: echo "sha=$(git rev-parse HEAD:Thirdparty/wxWidgets)" >> $env:GITHUB_OUTPUT
+
+      - name: Cache wxWidgets libraries
+        id: wx-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: Thirdparty/wxWidgets/lib
+          key: wx2-${{ matrix.configuration }}-${{ steps.wx-pin.outputs.sha }}-${{ hashFiles('Thirdparty/build-wxwidgets.ps1') }}
+
+      # A cache hit is not proof the libraries are usable: the save step below
+      # used to run on failed runs too, so a partial lib/ could be cached and
+      # then restored over a build that was skipped because of it. Check for
+      # the header the build actually needs.
+      - name: Check the restored wxWidgets libraries
+        id: wx-check
+        run: |
+          $setup = "Thirdparty/wxWidgets/lib/vc_x64_lib/mswu/wx/setup.h"
+          $usable = Test-Path -LiteralPath $setup
+          if (-not $usable -and '${{ steps.wx-cache.outputs.cache-hit }}' -eq 'true') {
+            Write-Host "::warning::wxWidgets cache hit but $setup is missing; rebuilding."
+          }
+          echo "usable=$($usable.ToString().ToLower())" >> $env:GITHUB_OUTPUT
+
+      - name: Bootstrap
+        run: >
+          pwsh -File Thirdparty\bootstrap.ps1
+          -Configuration ${{ matrix.configuration }}
+          ${{ steps.wx-check.outputs.usable == 'true' && '-SkipWxWidgets' || '' }}
+
+      - name: Build
+        timeout-minutes: 90
+        run: msbuild Kainote.sln /m /v:minimal /p:Configuration=${{ matrix.configuration }} /p:Platform=x64
+
+      # The package ships both executables.  The AVX configuration is built here
+      # rather than as a solution configuration: MSBuild's mapping of Rel_AVX512
+      # gives some dependencies a static runtime (Kasumi.lib), which the dynamic
+      # one this application uses cannot link against (LNK2038/LNK1319).  Built
+      # with the project references already produced above, the AVX executable
+      # links against the Release libraries, whose runtime matches.
+      - name: Build the AVX configuration
+        if: matrix.configuration == 'Release'
+        timeout-minutes: 60
+        run: msbuild Kainote.sln /m /v:minimal /t:Kainote /p:Configuration=Rel_AVX512 /p:Platform=x64 /p:BuildProjectReferences=false
+
+
+      # actions/cache only saves when the job succeeds (post-if: success()), and
+      # every Windows job here has failed at least once on the way to a green
+      # build, so nothing was ever cached.  Restore above, save here with
+      # if: always(), which is what makes a failing run still worth something.
+      # The package ships Icons.dll next to the executable: the shell reads it as
+      # the default icon for the file associations Kainote registers
+      # (Registry::AddFileAssociation writes `Icons.dll,<index>` into the registry).
+      # Nothing in Kainote.sln builds it -- it is the separate Win32 project in
+      # Icons_dll/ -- so build that and put the DLL where packaging looks for it.
+      - name: Build the file association icons
+        if: matrix.configuration == 'Release'
+        timeout-minutes: 15
+        run: |
+          msbuild Icons_dll\Icons_dll.sln /m /v:minimal /p:Configuration=Release /p:Platform=Win32 /p:WindowsTargetPlatformVersion=10.0
+
+          # Do not assume the output directory: find what the project produced.
+          $built = Get-ChildItem -Path Icons_dll -Recurse -Filter Icons_dll.dll |
+            Where-Object { $_.FullName -notmatch '\\obj\\' } | Select-Object -First 1
+          if (-not $built) {
+            throw 'the icons project produced no Icons_dll.dll'
+          }
+
+          Copy-Item $built.FullName x64\Release\Icons.dll -Force
+          Write-Host "icons: $($built.FullName) -> x64/Release/Icons.dll"
+      - name: Save DirectX SDK
+        if: always() && steps.dxsdk-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ github.workspace }}/dxsdk
+          key: dxsdk-jun2010-headers-libs-v1
+
+      - name: Save hydrated dependencies
+        if: always() && steps.hydrate-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: Thirdparty/.cache
+          key: hydrate-${{ hashFiles('Thirdparty/dependencies.json') }}
+
+      - name: Save hydrated dependency trees
+        if: always() && steps.hydrate-trees-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            Thirdparty/boost
+            Thirdparty/icu
+            Thirdparty/ffmpeg
+            Thirdparty/fribidi
+            Thirdparty/zlib
+            Thirdparty/curl
+          key: hydrate-trees-${{ hashFiles('Thirdparty/dependencies.json', 'Thirdparty/hydrate.ps1') }}
+
+      - name: Save wxWidgets libraries
+        if: success() && steps.wx-check.outputs.usable != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: Thirdparty/wxWidgets/lib
+          key: wx2-${{ matrix.configuration }}-${{ steps.wx-pin.outputs.sha }}-${{ hashFiles('Thirdparty/build-wxwidgets.ps1') }}
+
+      - name: Check the executable exists
+        run: |
+          $exe = "x64\${{ matrix.configuration }}\Kainote.exe"
+          if (-not (Test-Path $exe)) { throw "not built: $exe" }
+          Get-Item $exe | Format-List Name, Length, LastWriteTime
+
+      # The artifact is the shippable package: binaries plus the runtime data
+      # (Automation 4 library, dictionaries, locales, CSRI renderers and the
+      # runtimes Windows does not always have) assembled by .github/scripts/package.py
+      # from pinned public repositories -- see runtime-assets.json.
+      - name: Package the runtime
+        if: matrix.configuration == 'Release'
+        run: python .github/scripts/package.py --platform windows --build-dir x64/Release --stage "dist/Kainote_x64" --no-archive
+
+      - name: Upload the package
+        if: matrix.configuration == 'Release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: kainote-windows-x64
+          path: dist
+          if-no-files-found: error
+
+  linux:
+    name: Linux (${{ matrix.build_type }})
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [Release, Debug]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential cmake pkg-config ninja-build gettext \
+            libwxgtk3.2-dev libwxgtk-media3.2-dev \
+            libluajit-5.1-dev libffms2-dev \
+            libavformat-dev libavcodec-dev libavutil-dev libswscale-dev libswresample-dev \
+            libass-dev libhunspell-dev libuchardet-dev libcurl4-openssl-dev \
+            libicu-dev libboost-all-dev \
+            libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
+            libgl1-mesa-dev libglu1-mesa-dev
+
+      - name: Configure
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+
+      - name: Build
+        run: cmake --build build -j"$(nproc)"
+
+      - name: Check the executable exists
+        run: test -x build/kainote && ls -l build/kainote
+
+      - name: Package the runtime
+        if: matrix.build_type == 'Release'
+        run: python3 .github/scripts/package.py --platform linux --build-dir build --stage dist/kainote-linux-x86_64 --no-archive
+
+      - name: Upload the package
+        if: matrix.build_type == 'Release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: kainote-linux-x86_64
+          path: dist
+          if-no-files-found: error

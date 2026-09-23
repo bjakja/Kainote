@@ -41,10 +41,10 @@
 #include <wx/filefn.h>
 #include <wx/log.h>
 #include <wx/weakref.h>
+#include <wx/translation.h>
 #ifndef _WIN32
 #include <clocale>
 #include <cstdlib>
-#include <cstring>
 #include <wx/tokenzr.h>
 #include <wx/tooltip.h>
 #endif
@@ -229,7 +229,7 @@ void kainoteApp::OnOutofMemory()
 
 	if (tab->grid->maxx() > 3){
 		tab->grid->RemoveFirst(2);
-		KaiLog(_("Zabrakło pamięci RAM, usunięto część historii"));
+		KaiLog(_("Not enough RAM. History partially deleted"));
 		return;
 	}
 	else if (Notebook::GetTabs()->Size() > 1){
@@ -238,7 +238,7 @@ void kainoteApp::OnOutofMemory()
 			if (i != Notebook::GetTabs()->GetSelection()){
 				if (Notebook::GetTabs()->Page(i)->grid->maxx()>3){
 					Notebook::GetTabs()->Page(i)->grid->RemoveFirst(2);
-					KaiLog(_("Zabrakło pamięci RAM, usunięto część historii"));
+					KaiLog(_("Not enough RAM. History partially deleted"));
 					return;
 				}
 			}
@@ -282,18 +282,6 @@ bool kainoteApp::OnInit()
 			if (ydpi > 0)
 				Options.FontsRescale(ydpi);
 		}
-		// Keep the C character locale UTF-8 on Unix.  Some wx helpers still
-		// convert narrow source literals through the current C locale; if the
-		// process is left in the default "C" locale after wxLocale::Init() fails
-		// for an ungenerated language such as th_TH.UTF-8, non-ASCII Polish
-		// source strings can convert to empty wxStrings and option labels vanish.
-		setlocale(LC_CTYPE, "");
-		const char* ctypeLocale = setlocale(LC_CTYPE, nullptr);
-		if (!ctypeLocale || (!std::strstr(ctypeLocale, "UTF-8") && !std::strstr(ctypeLocale, "utf8"))) {
-			if (!setlocale(LC_CTYPE, "C.UTF-8"))
-				setlocale(LC_CTYPE, "en_US.UTF-8");
-		}
-
 		// Point portable Linux runs at a usable gdk-pixbuf loader cache.
 		if (!std::getenv("GDK_PIXBUF_MODULE_FILE")){
 			const wxString pixbufCaches[] = {
@@ -328,12 +316,11 @@ bool kainoteApp::OnInit()
 		//wxHandleFatalExceptions(true);
 		//0 - failed, 1 - succeeded, 2 - no config
 		int isGood = Options.LoadOptions();
-		if (!isGood){ KaiMessageBox(_("Nie udało się wczytać opcji.\nDziałanie programu zostanie zakończone."), _("Uwaga")); return false; }
+		if (!isGood){ KaiMessageBox(_("Cannot read settings.\nThe program will be terminated."), _("Warning")); return false; }
 		//0x0415 	Polish (pl) 	0x15 	LANG_POLISH 	Poland (PL) 	0x01 	SUBLANG_POLISH_POLAND
-		if (isGood == 2 && GetSystemDefaultUILanguage() != 0x415){
-			//what a lame language system, I need to change it.
-			Options.SetString(PROGRAM_LANGUAGE, L"en");
-			Options.SetString(DICTIONARY_LANGUAGE, L"en_US");
+		if (isGood == 2 && GetSystemDefaultUILanguage() == 0x415){
+			Options.SetString(PROGRAM_LANGUAGE, L"pl");
+			Options.SetString(DICTIONARY_LANGUAGE, L"pl");
 		}
 			
 		locale = nullptr;
@@ -342,18 +329,26 @@ bool kainoteApp::OnInit()
 			lang = emptyString; Options.SetString(PROGRAM_LANGUAGE, lang);
 		}
 		if (lang == L"1"){
-			lang = L"en"; Options.SetString(PROGRAM_LANGUAGE, lang);
+			lang = emptyString; Options.SetString(PROGRAM_LANGUAGE, lang);
 		}
-		if (lang != emptyString && lang != L"pl"){
+		// Register the catalogue directory and make sure a wxTranslations exists
+		// even when no catalogue is loaded, so the options dialog can still list
+		// the available languages.  wxLocale keeps an existing one.
+		wxFileTranslationsLoader::AddCatalogLookupPathPrefix(Options.GetLocalePath());
+		if (!wxTranslations::Get())
+			wxTranslations::Set(new wxTranslations());
+
+		// English is the source language: its strings are in the binary already.
+		if (lang != emptyString && lang != L"en"){
 			locale = new wxLocale();
 			const  wxLanguageInfo * li = locale->FindLanguageInfo(lang);
 			if (!li){
-				KaiMessageBox(L"Cannot find language, language change failed");
+				KaiMessageBox(_("Cannot find language, language change failed"));
 			}
 			else{
 #ifdef _WIN32
 				if (!locale->Init(li->Language, wxLOCALE_DONT_LOAD_DEFAULT)){
-					KaiMessageBox(L"wxLocale cannot initialize, language change failed");
+					KaiMessageBox(_("wxLocale cannot initialize, language change failed"));
 				}
 #else
 				{
@@ -365,19 +360,9 @@ bool kainoteApp::OnInit()
 					locale->Init(li->Language, wxLOCALE_DONT_LOAD_DEFAULT);
 				}
 #endif
-				wxString localePath = Options.pathfull + wxFileName::GetPathSeparator() + L"Locale" + wxFileName::GetPathSeparator();
-#ifndef _WIN32
-				if (!wxDirExists(localePath)){
-					wxString sourceLocalePath = Options.pathfull.BeforeLast(wxFileName::GetPathSeparator()) + wxFileName::GetPathSeparator() + L"Locale" + wxFileName::GetPathSeparator();
-					if (wxDirExists(sourceLocalePath))
-						localePath = sourceLocalePath;
-				}
-#endif
-				locale->AddCatalogLookupPathPrefix(localePath);
-				if (!locale->AddCatalog(lang, wxLANGUAGE_POLISH, L"UTF-8") &&
-					!locale->AddCatalog(li->CanonicalName, wxLANGUAGE_POLISH, L"UTF-8")){
+				if (!locale->AddCatalog(KAINOTE_CATALOG_DOMAIN, wxLANGUAGE_ENGLISH, L"UTF-8")){
 #ifdef _WIN32
-					KaiMessageBox(L"Cannot find translation, language change failed");
+					KaiMessageBox(_("Cannot find translation, language change failed"));
 #endif
 				}
 			}
@@ -393,7 +378,7 @@ bool kainoteApp::OnInit()
 		setlocale(LC_NUMERIC, "C");
 
 		if (!Hkeys.LoadHkeys()){
-			KaiMessageBox(_("Nie udało się wczytać skrótów.\nDziałanie programu zostanie zakończone."), _("Uwaga"));
+			KaiMessageBox(_("Cannot read hotkeys.\nThe program will be terminated."), _("Warning"));
 			wxDELETE(locale); return false;
 		}
 
@@ -521,13 +506,13 @@ bool kainoteApp::OnInit()
 		int session = Options.GetInt(LAST_SESSION_CONFIG);
 		bool loadSession = (session == 2 || Options.HasCrashed()) && !hasPaths;
 		if (session == 1 && !hasPaths){
-			if (KaiMessageBox(_("Wczytać poprzednią sesję?"), _("Pytanie"), wxYES_NO, Frame) == wxYES){
+			if (KaiMessageBox(_("Load last session?"), _("Prompt"), wxYES_NO, Frame) == wxYES){
 				loadSession = true;
 			}
 		}
 		//Check if program was bad close or crashed
 		if (!hasPaths && !loadSession && Notebook::CheckLastSession() == 2) {
-			if (KaiMessageBox(_("Program się skraszował albo został zamknięty w niewłaściwy sposób,\nwczytać poprzednią sesję wraz z najnowszymi napisami z autozapisu?"), _("Pytanie"), wxYES_NO, Frame) == wxYES) {
+			if (KaiMessageBox(_("The program crashed or was closed improperly.\nLoad the last session with the latest autosaved subtitles?"), _("Prompt"), wxYES_NO, Frame) == wxYES) {
 				loadCrashSession = loadSession = true;
 			}
 		}
@@ -752,7 +737,7 @@ void kainoteApp::OnOpen(wxTimerEvent &evt)
 bool kainoteApp::IsBusy()
 {
 	wxWindowList children = Frame->GetChildren();
-	for (wxWindowList::Node *node = children.GetFirst(); node; node = node->GetNext()) {
+	for (wxWindowList::compatibility_iterator node = children.GetFirst(); node; node = node->GetNext()) {
 		wxWindow *current = (wxWindow *)node->GetData();
 		if ((current->IsKindOf(CLASSINFO(KaiDialog)) && ((KaiDialog*)current)->IsModal()) ||
 			(current->IsKindOf(CLASSINFO(wxDialog)) && ((wxDialog*)current)->IsModal()) || current->GetId() == 31555)

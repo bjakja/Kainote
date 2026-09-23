@@ -20,7 +20,7 @@
 #include "TabPanel.h"
 #include "KainoteFrame.h"
 
-#include <wx/msw/winundef.h>
+#include "WinUndef.h"
 #include <wx/window.h>
 #include <wx/timer.h>
 #include <wx/dialog.h>

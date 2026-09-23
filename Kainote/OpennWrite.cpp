@@ -38,10 +38,10 @@ OpenWrite::OpenWrite(const wxString &fileName, bool clear)
 	if (!fname.DirExists()){ wxFileName::Mkdir(KaiPathDir(fileName), 511, wxPATH_MKDIR_FULL); }
 	if (fname.FileExists() && !fname.IsFileReadable()){ return; }
 	if (!file.Exists(fileName)){
-		if (!file.Create(fileName, false, wxS_DEFAULT)){ KaiLog(_("Nie można utworzyć pliku.")); }
+		if (!file.Create(fileName, false, wxS_DEFAULT)){ KaiLog(_("Cannot create file.")); }
 	}
 	else{
-		if (!file.Open(fileName, (clear) ? wxFile::write : wxFile::write_append, wxS_DEFAULT)){ KaiLog(_("Nie można otworzyć pliku.")); };
+		if (!file.Open(fileName, (clear) ? wxFile::write : wxFile::write_append, wxS_DEFAULT)){ KaiLog(_("Cannot open file.")); };
 	}
 	isfirst = clear;
 }
@@ -115,7 +115,7 @@ void OpenWrite::FileWrite(const wxString &fileName, const wxString &textfile, bo
 	fname.Assign(fileName);
 	if (!fname.DirExists()){ wxFileName::Mkdir(KaiPathDir(fileName), 511, wxPATH_MKDIR_FULL); }
 	if (fname.FileExists() && !fname.IsFileReadable()){
-		KaiLog(_("Nie można odczytać pliku."));
+		KaiLog(_("Cannot read the file."));
 		return;
 	}
 
@@ -138,14 +138,14 @@ void OpenWrite::FileWrite(const wxString &fileName, const wxString &textfile, bo
 }
 void OpenWrite::PartFileWrite(const wxString &parttext)
 {
-	if (!file.IsOpened()){ KaiLog(_("Plik nie został otwarty.")); return; }
+	if (!file.IsOpened()){ KaiLog(_("The file was not opened.")); return; }
 	if (isfirst){
 		wchar_t bom = 0xFEFF;
-		if (!file.Write(wxString(bom) + parttext/*,wxConvUTF8*/)){ KaiLog(_("Nie można zapisać do pliku.")); };
+		if (!file.Write(wxString(bom) + parttext/*,wxConvUTF8*/)){ KaiLog(_("Cannot save to file.")); };
 		isfirst = false;
 		return;
 	}
-	if (!file.Write(parttext/*,wxConvUTF8*/)){ KaiLog(_("Nie można zapisać do pliku.")); };
+	if (!file.Write(parttext/*,wxConvUTF8*/)){ KaiLog(_("Cannot save to file.")); };
 }
 
 void OpenWrite::CloseFile()

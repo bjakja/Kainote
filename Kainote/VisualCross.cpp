@@ -297,7 +297,7 @@ void Cross::SizeChanged(wxRect wsize, LPD3DXLINE _line, LPD3DXFONT _font, LPDIRE
 	HRN(D3DXCreateFontW(device, pixelSize.y, 0, FW_BOLD, 0, FALSE, 
 		DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
 		DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &calcfont), 
-		_("Nie można stworzyć czcionki D3DX"));
+		_("Cannot create D3DX font"));
 	
 }
 

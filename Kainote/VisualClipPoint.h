@@ -19,6 +19,7 @@
 #include <wx/window.h>
 #include <d3d9.h>
 #include <d3dx9.h>
+#include "UndoD3DXMacros.h"
 
 class DrawingAndClip;
 

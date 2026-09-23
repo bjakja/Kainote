@@ -38,7 +38,7 @@
 
 
 StyleStore::StyleStore(wxWindow* parent, const wxPoint& pos)
-	: KaiDialog(parent, -1, _("Menedżer stylów"), pos, wxSize(400, -1), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+	: KaiDialog(parent, -1, _("Style manager"), pos, wxSize(400, -1), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 	, stayOnTop(false)
 {
 	bool isDetached = detachedEtit = Options.GetBool(STYLE_MANAGER_DETACH_EDIT_WINDOW);
@@ -64,31 +64,31 @@ StyleStore::StyleStore(wxWindow* parent, const wxPoint& pos)
 	wxBoxSizer *Mainsm = new wxBoxSizer(wxVERTICAL);
 	Mainall = new DialogSizer(wxHORIZONTAL);
 
-	KaiStaticBoxSizer *catalogSizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Katalog:"));
+	KaiStaticBoxSizer *catalogSizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Catalog:"));
 	catalogList = new KaiChoice(this, ID_CATALOG, wxDefaultPosition, wxDefaultSize, Options.dirs);
 	int chc = catalogList->FindString(Options.actualStyleDir);
 	catalogList->SetSelection(chc);
-	newCatalog = new MappedButton(this, ID_NEWCAT, _("Nowy"));
-	MappedButton *deleteCatalog = new MappedButton(this, ID_DELCAT, _("Usuń"));
-	deleteCatalog->SetToolTip(_("Usuń wybrany katalog stylów"));
+	newCatalog = new MappedButton(this, ID_NEWCAT, _("New"));
+	MappedButton *deleteCatalog = new MappedButton(this, ID_DELCAT, _("Delete"));
+	deleteCatalog->SetToolTip(_("Delete selected style catalog"));
 	catalogSizer->Add(catalogList, 1, wxEXPAND | wxALL, 2);
 	catalogSizer->Add(newCatalog, 0, wxEXPAND | wxALL, 2);
 	catalogSizer->Add(deleteCatalog, 0, wxEXPAND | wxALL, 2);
 
 
-	KaiStaticBoxSizer *catalogStylesSizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Style katalogu:"));
+	KaiStaticBoxSizer *catalogStylesSizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Styles stored:"));
 	wxBoxSizer *catalogButtonsSizer = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *catalogMainSizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *catalogMoveButtonsSizer = new wxBoxSizer(wxVERTICAL);
 
 	Store = new StyleList(this, ID_STORESTYLES, &Options.assstore, wxDefaultPosition, wxSize(-1, 520));
 
-	storeNew = new MappedButton(this, ID_STORENEW, _("Nowy"));
-	storeCopy = new MappedButton(this, ID_STORECOPY, _("Kopiuj"));
-	storeEdit = new MappedButton(this, ID_STOREEDIT, _("Edytuj"));
-	storeLoad = new MappedButton(this, ID_STORELOAD, _("Wczytaj"));
-	storeDelete = new MappedButton(this, ID_STOREDEL, _("Usuń"));
-	storeSort = new MappedButton(this, ID_STORESORT, _("Sortuj"));
+	storeNew = new MappedButton(this, ID_STORENEW, _("New"));
+	storeCopy = new MappedButton(this, ID_STORECOPY, _("Copy"));
+	storeEdit = new MappedButton(this, ID_STOREEDIT, _("Edit"));
+	storeLoad = new MappedButton(this, ID_STORELOAD, _("Load"));
+	storeDelete = new MappedButton(this, ID_STOREDEL, _("Delete"));
+	storeSort = new MappedButton(this, ID_STORESORT, _("Sort"));
 
 	catalogButtonsSizer->Add(storeNew, 1, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
 	catalogButtonsSizer->Add(storeCopy, 1, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
@@ -103,10 +103,10 @@ StyleStore::StyleStore(wxWindow* parent, const wxPoint& pos)
 	if (fw % 2 == 0)
 		fw--;
 
-	MappedButton *storeMoveToStart = new MappedButton(this, ID_STORE_MOVE_TO_START, _("Przesuń zaznaczone style na sam początek"), arrowUpDouble, wxDefaultPosition, wxSize(fw, fh), -1);
-	MappedButton *storeMoveUp = new MappedButton(this, ID_STORE_MOVE_UP, _("Przesuń zaznaczone style w górę"), arrowUp, wxDefaultPosition, wxSize(fw, fh), -1);
-	MappedButton *storeMoveDown = new MappedButton(this, ID_STORE_MOVE_DOWN, _("Przesuń zaznaczone style w dół"), arrowDown, wxDefaultPosition, wxSize(fw, fh), -1);
-	MappedButton *storeMoveToEnd = new MappedButton(this, ID_STORE_MOVE_TO_END, _("Przesuń zaznaczone style na sam koniec"), arrowDownDouble, wxDefaultPosition, wxSize(fw, fh), -1);
+	MappedButton *storeMoveToStart = new MappedButton(this, ID_STORE_MOVE_TO_START, _("Move selected styles to beginning"), arrowUpDouble, wxDefaultPosition, wxSize(fw, fh), -1);
+	MappedButton *storeMoveUp = new MappedButton(this, ID_STORE_MOVE_UP, _("Move selected styles up"), arrowUp, wxDefaultPosition, wxSize(fw, fh), -1);
+	MappedButton *storeMoveDown = new MappedButton(this, ID_STORE_MOVE_DOWN, _("Move selected styles down"), arrowDown, wxDefaultPosition, wxSize(fw, fh), -1);
+	MappedButton *storeMoveToEnd = new MappedButton(this, ID_STORE_MOVE_TO_END, _("Move selected styles to end"), arrowDownDouble, wxDefaultPosition, wxSize(fw, fh), -1);
 
 	catalogMoveButtonsSizer->Add(storeMoveToStart, 0, wxTOP | wxBOTTOM, 2);
 	catalogMoveButtonsSizer->Add(storeMoveUp, 0, wxTOP | wxBOTTOM, 2);
@@ -121,14 +121,14 @@ StyleStore::StyleStore(wxWindow* parent, const wxPoint& pos)
 
 	wxBoxSizer *addToButtons = new wxBoxSizer(wxHORIZONTAL);
 
-	addToStore = new MappedButton(this, ID_ADDTOSTORE, _("Dodaj do magazynu"), arrowUp, wxDefaultPosition, wxDefaultSize, -1, 0, _("Dodaj do magazynu"));
-	addToAss = new MappedButton(this, ID_ADDTOASS, _("Dodaj do ASS"), arrowDown, wxDefaultPosition, wxDefaultSize, -1, 0, _("Dodaj do ASS"));
-	MappedButton* addToAllAss = new MappedButton(this, ID_ADD_TO_ALL_ASS, _("Dodaj do wszystkich otwartych ASS"), arrowDownDouble, wxDefaultPosition, wxDefaultSize, -1, 0, _("Dodaj do wszystkich otwartych ASS"));
+	addToStore = new MappedButton(this, ID_ADDTOSTORE, _("Add to storage"), arrowUp, wxDefaultPosition, wxDefaultSize, -1, 0, _("Add to storage"));
+	addToAss = new MappedButton(this, ID_ADDTOASS, _("Add to ASS"), arrowDown, wxDefaultPosition, wxDefaultSize, -1, 0, _("Add to ASS"));
+	MappedButton* addToAllAss = new MappedButton(this, ID_ADD_TO_ALL_ASS, _("Add to all open ASS files"), arrowDownDouble, wxDefaultPosition, wxDefaultSize, -1, 0, _("Add to all open ASS files"));
 	addToButtons->Add(addToStore, 1, wxEXPAND | wxALL, 5);
 	addToButtons->Add(addToAss, 1, wxEXPAND | wxALL, 5);
 	//addToButtons->AddStretchSpacer(3);
 
-	KaiStaticBoxSizer *ASSStylesSizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Style pliku ASS:"));
+	KaiStaticBoxSizer *ASSStylesSizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Styles in ASS file:"));
 	wxBoxSizer *ASSButtonsSizer = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *ASSMainSizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *ASSMoveButtonsSizer = new wxBoxSizer(wxVERTICAL);
@@ -136,13 +136,13 @@ StyleStore::StyleStore(wxWindow* parent, const wxPoint& pos)
 	ASSList = new StyleList(this, ID_ASSSTYLES, Notebook::GetTab()->grid->GetStyleTable(), wxDefaultPosition, wxSize(-1, 520));
 
 
-	assNew = new MappedButton(this, ID_ASSNEW, _("Nowy"));
-	assCopy = new MappedButton(this, ID_ASSCOPY, _("Kopiuj"));
-	assEdit = new MappedButton(this, ID_ASSEDIT, _("Edytuj"));
-	assLoad = new MappedButton(this, ID_ASSLOAD, _("Wczytaj"));
-	assDelete = new MappedButton(this, ID_ASSDEL, _("Usuń"));
-	assSort = new MappedButton(this, ID_ASSSORT, _("Sortuj"));
-	SClean = new MappedButton(this, ID_ASSCLEAN, _("Oczyść"));
+	assNew = new MappedButton(this, ID_ASSNEW, _("New"));
+	assCopy = new MappedButton(this, ID_ASSCOPY, _("Copy"));
+	assEdit = new MappedButton(this, ID_ASSEDIT, _("Edit"));
+	assLoad = new MappedButton(this, ID_ASSLOAD, _("Load"));
+	assDelete = new MappedButton(this, ID_ASSDEL, _("Delete"));
+	assSort = new MappedButton(this, ID_ASSSORT, _("Sort"));
+	SClean = new MappedButton(this, ID_ASSCLEAN, _("Clear"));
 
 	ASSButtonsSizer->Add(assNew, 1, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
 	ASSButtonsSizer->Add(assCopy, 1, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
@@ -152,10 +152,10 @@ StyleStore::StyleStore(wxWindow* parent, const wxPoint& pos)
 	ASSButtonsSizer->Add(assSort, 1, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
 	ASSButtonsSizer->Add(SClean, 1, wxEXPAND | wxTOP | wxBOTTOM | wxLEFT, 2);
 
-	MappedButton *ASSMoveToStart = new MappedButton(this, ID_ASS_MOVE_TO_START, _("Przesuń zaznaczone style na sam początek"), arrowUpDouble, wxDefaultPosition, wxSize(fw, fh), -1);
-	MappedButton *ASSMoveUp = new MappedButton(this, ID_ASS_MOVE_UP, _("Przesuń zaznaczone style w górę"), arrowUp, wxDefaultPosition, wxSize(fw, fh), -1);
-	MappedButton *ASSMoveDown = new MappedButton(this, ID_ASS_MOVE_DOWN, _("Przesuń zaznaczone style w dół"), arrowDown, wxDefaultPosition, wxSize(fw, fh), -1);
-	MappedButton *ASSMoveToEnd = new MappedButton(this, ID_ASS_MOVE_TO_END, _("Przesuń zaznaczone style na sam koniec"), arrowDownDouble, wxDefaultPosition, wxSize(fw, fh), -1);
+	MappedButton *ASSMoveToStart = new MappedButton(this, ID_ASS_MOVE_TO_START, _("Move selected styles to beginning"), arrowUpDouble, wxDefaultPosition, wxSize(fw, fh), -1);
+	MappedButton *ASSMoveUp = new MappedButton(this, ID_ASS_MOVE_UP, _("Move selected styles up"), arrowUp, wxDefaultPosition, wxSize(fw, fh), -1);
+	MappedButton *ASSMoveDown = new MappedButton(this, ID_ASS_MOVE_DOWN, _("Move selected styles down"), arrowDown, wxDefaultPosition, wxSize(fw, fh), -1);
+	MappedButton *ASSMoveToEnd = new MappedButton(this, ID_ASS_MOVE_TO_END, _("Move selected styles to end"), arrowDownDouble, wxDefaultPosition, wxSize(fw, fh), -1);
 
 	ASSMoveButtonsSizer->Add(ASSMoveToStart, 0, wxTOP | wxBOTTOM, 2);
 	ASSMoveButtonsSizer->Add(ASSMoveUp, 0, wxTOP | wxBOTTOM, 2);
@@ -168,8 +168,8 @@ StyleStore::StyleStore(wxWindow* parent, const wxPoint& pos)
 
 	ASSStylesSizer->Add(ASSMainSizer, 1, wxEXPAND | wxALL, 2);
 	wxBoxSizer * buttons = new wxBoxSizer(wxHORIZONTAL);
-	close = new MappedButton(this, ID_CLOSE_STYLE_MANAGER, _("Zamknij"));
-	detachEnable = new ToggleButton(this, ID_DETACH, _("Odepnij okno edycji"));
+	close = new MappedButton(this, ID_CLOSE_STYLE_MANAGER, _("Close"));
+	detachEnable = new ToggleButton(this, ID_DETACH, _("Detach editing window"));
 	detachEnable->SetValue(isDetached);
 	buttons->Add(close, 0, wxRIGHT, 2);
 	buttons->Add(detachEnable, 0, wxLEFT, 2);
@@ -285,8 +285,8 @@ void StyleStore::OnAddToStore(wxCommandEvent& event)
 		int found = Options.FindStyle(stylc->Name);
 		if (found != -1){
 			if (prompt != wxYES_TO_ALL){
-				prompt = KaiMessageBox(wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmienić go?"),
-					stylc->Name), _("Potwierdzenie"), wxYES_TO_ALL | wxYES | wxNO | wxCANCEL, this);
+				prompt = KaiMessageBox(wxString::Format(_("Style named \"%s\" already exists. Replace?"),
+					stylc->Name), _("Confirmation"), wxYES_TO_ALL | wxYES | wxNO | wxCANCEL, this);
 				if (prompt == wxCANCEL){ 
 					delete stylc;
 					break; 
@@ -317,8 +317,8 @@ void StyleStore::OnAddToAss(wxCommandEvent& event)
 		int found = grid->FindStyle(stylc->Name);
 		if (found != -1){
 			if (prompt != wxYES_TO_ALL){
-				prompt = KaiMessageBox(wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmienić go?"),
-					stylc->Name), _("Potwierdzenie"), wxYES_TO_ALL | wxYES | wxNO | wxCANCEL, this);
+				prompt = KaiMessageBox(wxString::Format(_("Style named \"%s\" already exists. Replace?"),
+					stylc->Name), _("Confirmation"), wxYES_TO_ALL | wxYES | wxNO | wxCANCEL, this);
 				if (prompt == wxCANCEL){
 					delete stylc;
 					break;
@@ -356,8 +356,8 @@ void StyleStore::OnAddToAssInAllTabs(wxCommandEvent& event)
 			int found = grid->FindStyle(stylc->Name);
 			if (found != -1){
 				if (prompt != wxYES_TO_ALL && prompt != wxCANCEL){
-					prompt = KaiMessageBox(wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmienić go?"),
-						stylc->Name), _("Potwierdzenie"), wxYES_TO_ALL | wxYES | wxNO | wxCANCEL, this);
+					prompt = KaiMessageBox(wxString::Format(_("Style named \"%s\" already exists. Replace?"),
+						stylc->Name), _("Confirmation"), wxYES_TO_ALL | wxYES | wxNO | wxCANCEL, this);
 				}
 				if (prompt == wxYES || prompt == wxYES_TO_ALL){
 					grid->ChangeStyle(stylc, found); 
@@ -443,7 +443,7 @@ bool StyleStore::ChangeStyle(Styles *changedStyle, int cellsToChange /*= -1*/)
 	if (foundStyle != -1 && dummy || (multiplication > 1 || multiplication == 1 && oldname != changedStyle->Name) && !dummy)
 	{
 		Mainall->Fit(this);
-		KaiMessageBox(wxString::Format(_("Styl o nazwie \"%s\" jest już na liście."), changedStyle->Name));
+		KaiMessageBox(wxString::Format(_("Style named \"%s\" already exists."), changedStyle->Name));
 		delete changedStyle;
 		return false;
 	}
@@ -505,7 +505,7 @@ bool StyleStore::ChangeStyle(Styles *changedStyle, int cellsToChange /*= -1*/)
 	Mainall->Fit(this);
 	bool refreshActiveLine = false;
 	if (oldname != changedStyle->Name && ASSStyle && !dummy){
-		int res = KaiMessageBox(_("Nazwa stylu została zmieniona, czy chcesz zmienić ją także w napisach?"), _("Potwierdzenie"), wxYES_NO);
+		int res = KaiMessageBox(_("Style name modified. Do you want to change all instances to the new name?"), _("Confirmation"), wxYES_NO);
 		if (res == wxYES){
 			for (size_t i = 0; i < grid->GetCount(); i++){
 				if (grid->GetDialogue(i)->Style == oldname)
@@ -564,7 +564,7 @@ void StyleStore::OnDeleteCatalog(wxCommandEvent& event)
 	if (cat == -1){ return; }
 	wxString Cat = catalogList->GetString(cat);
 	if (Cat == L"Default"){ wxBell(); return; }
-	if (KaiMessageBox(wxString::Format(("Naprawdę chcesz usunąć katalog o nazwie \"%s\"?"), Cat), _("Pytanie"), 
+	if (KaiMessageBox(wxString::Format((L"Naprawdę chcesz usunąć katalog o nazwie \"%s\"?"), Cat), _("Prompt"),
 		wxYES_NO, nullptr, wxDefaultPosition, wxNO) == wxNO)
 		return;
 
@@ -609,8 +609,8 @@ void StyleStore::OnStoreSort(wxCommandEvent& event)
 void StyleStore::LoadStylesS(bool isass)
 {
 	SubsGrid* grid = Notebook::GetTab()->grid;
-	wxFileDialog *openFileDialog = new wxFileDialog(this, _("Wybierz plik ASS"),
-		KaiPathDir(Notebook::GetTab()->SubsPath), L"*.ass", _("Pliki napisów ASS(*.ass)|*.ass"),
+	wxFileDialog *openFileDialog = new wxFileDialog(this, _("Choose ASS file"),
+		KaiPathDir(Notebook::GetTab()->SubsPath), L"*.ass", _("ASS subtitle files(*.ass)|*.ass"),
 		wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 	if (openFileDialog->ShowModal() == wxID_OK){
 		OpenWrite op;
@@ -649,8 +649,8 @@ void StyleStore::LoadStylesS(bool isass)
 					}
 					else{
 						if (prompt != wxYES_TO_ALL && prompt != wxCANCEL){
-							prompt = KaiMessageBox(wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmienić go?"),
-								stl.CheckListBox->GetItem(v, 0)->name), _("Potwierdzenie"), 
+							prompt = KaiMessageBox(wxString::Format(_("Style named \"%s\" already exists. Replace?"),
+								stl.CheckListBox->GetItem(v, 0)->name), _("Confirmation"), 
 								wxYES_TO_ALL | wxYES | wxNO | wxCANCEL, this);
 							//if(prompt == wxID_CANCEL){return;}
 						}
@@ -688,7 +688,7 @@ void StyleStore::OnAssCopy(wxCommandEvent& event)
 	selnum = selects[0];
 	ASSStyle = true;
 	dummy = true;
-	StylesWindow(_("Kopia ") + kstyle->Name);
+	StylesWindow(_("Copy of ") + kstyle->Name);
 }
 void StyleStore::OnStoreCopy(wxCommandEvent& event)
 {
@@ -699,7 +699,7 @@ void StyleStore::OnStoreCopy(wxCommandEvent& event)
 	selnum = selects[0];
 	ASSStyle = false;
 	dummy = true;
-	StylesWindow(_("Kopia ") + kstyle->Name);
+	StylesWindow(_("Copy of ") + kstyle->Name);
 }
 
 void StyleStore::OnStoreNew(wxCommandEvent& event)
@@ -710,7 +710,7 @@ void StyleStore::OnStoreNew(wxCommandEvent& event)
 	ASSStyle = false;
 	dummy = true;
 	while (gname){
-		wxString ns = _("Nowy Styl");
+		wxString ns = _("New Style");
 		wxString nss = (count == 0) ? ns : ns << count;
 		if (Options.FindStyle(nss) == -1){ StylesWindow(nss); break; }
 		else{ count++; }
@@ -728,7 +728,7 @@ void StyleStore::OnAssNew(wxCommandEvent& event)
 	dummy = true;
 
 	while (gname){
-		wxString ns = _("Nowy Styl");
+		wxString ns = _("New Style");
 		wxString nss = (count == 0) ? ns : ns << count;
 		if (grid->FindStyle(nss) == -1){ StylesWindow(nss); break; }
 		else{ count++; }
@@ -768,33 +768,33 @@ void StyleStore::OnCleanStyles(wxCommandEvent& event)
 	if (!delStyles.empty()){
 		SetModified();
 	}
-	if (existsStyles.IsEmpty()){ existsStyles = _("Brak"); }
-	if (delStyles.IsEmpty()){ delStyles = _("Brak"); }
+	if (existsStyles.IsEmpty()){ existsStyles = _("None"); }
+	if (delStyles.IsEmpty()){ delStyles = _("None"); }
 	wxWindow *parent = (tab->video->IsFullScreen()) ? (wxWindow*)tab->video->GetFullScreenWindow() : nullptr;
-	KaiMessageBox(wxString::Format(_("Używane style:\n%s\nUsunięte style:\n%s"), existsStyles, delStyles), 
-		_("Status usuniętych stylów"), 4L, parent);
+	KaiMessageBox(wxString::Format(_("Styles used:\n%s\nStyles deleted:\n%s"), existsStyles, delStyles),
+		_("Status of deleted styles"), 4L, parent);
 }
 
 
 void StyleStore::DoTooltips()
 {
-	catalogList->SetToolTip(_("Katalog stylów"));
-	newCatalog->SetToolTip(_("Nowy katalog stylów"));
-	storeNew->SetToolTip(_("Utwórz nowy styl magazynu"));
-	storeEdit->SetToolTip(_("Edytuj zaznaczony styl magazynu"));
-	storeCopy->SetToolTip(_("Kopiuj styl magazynu"));
-	storeLoad->SetToolTip(_("Wczytaj do magazynu styl z pliku ass"));
-	storeDelete->SetToolTip(_("Usuń styl z magazynu"));
-	storeSort->SetToolTip(_("Sortuj style w magazynie"));
-	assNew->SetToolTip(_("Utwórz nowy styl napisów"));
-	assEdit->SetToolTip(_("Edytuj zaznaczony styl napisów"));
-	assCopy->SetToolTip(_("Kopiuj styl napisów"));
-	assLoad->SetToolTip(_("Wczytaj do napisów styl z pliku ass"));
-	assDelete->SetToolTip(_("Usuń styl z napisów"));
-	assSort->SetToolTip(_("Sortuj style w napisach"));
-	addToStore->SetToolTip(_("Dodaj do magazynu styl z napisów"));
-	addToAss->SetToolTip(_("Dodaj do napisów styl z magazynu"));
-	SClean->SetToolTip(_("Oczyść napisy z nieużywanych stylów"));
+	catalogList->SetToolTip(_("Style catalog"));
+	newCatalog->SetToolTip(_("New style catalog"));
+	storeNew->SetToolTip(_("Create new style in storage"));
+	storeEdit->SetToolTip(_("Edit selected storage style"));
+	storeCopy->SetToolTip(_("Copy the style in storage"));
+	storeLoad->SetToolTip(_("Load style from external ASS file to storage"));
+	storeDelete->SetToolTip(_("Delete style from storage"));
+	storeSort->SetToolTip(_("Sort styles in storage"));
+	assNew->SetToolTip(_("Create new ASS style"));
+	assEdit->SetToolTip(_("Edit selected ASS style"));
+	assCopy->SetToolTip(_("Copy ASS style"));
+	assLoad->SetToolTip(_("Load style from external ASS file"));
+	assDelete->SetToolTip(_("Delete style from ASS"));
+	assSort->SetToolTip(_("Sort styles in ASS"));
+	addToStore->SetToolTip(_("Copy style from ASS to storage"));
+	addToAss->SetToolTip(_("Copy style from storage to ASS"));
+	SClean->SetToolTip(_("Delete unused ASS styles"));
 }
 
 void StyleStore::OnConfirm(wxCommandEvent& event)

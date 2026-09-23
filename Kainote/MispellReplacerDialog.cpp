@@ -136,7 +136,7 @@ void ReplacerSeekResults::OnMouseEvent(wxMouseEvent &event, bool _enter, bool le
 
 void ReplacerSeekResults::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList)
 {
-	wxString lineNum = wxString::Format(_("Linia %i: "), idLine);
+	wxString lineNum = wxString::Format(_("Line %i: "), idLine);
 	wxString lineAndNum = lineNum + name;
 	wxSize ex = theList->GetTextExtent(lineAndNum);
 	wxSize exOfFound = theList->GetTextExtent(lineAndNum.Mid(0, findPosition.x + lineNum.length()));
@@ -179,7 +179,7 @@ void ReplacerSeekResults::OnPaint(wxMemoryDC *dc, int x, int y, int width, int h
 }
 
 wxSize ReplacerSeekResults::GetTextExtents(KaiListCtrl *theList){
-	wxString lineNum = wxString::Format(_("Linia %i: "), idLine);
+	wxString lineNum = wxString::Format(_("Line %i: "), idLine);
 	wxString lineAndNum = lineNum + name;
 	wxSize size = theList->GetTextExtent(lineAndNum);
 	size.x += 28;
@@ -189,7 +189,7 @@ wxSize ReplacerSeekResults::GetTextExtents(KaiListCtrl *theList){
 
 
 FindResultDialog::FindResultDialog(wxWindow *parent, MisspellReplacer *_MR)
-	: KaiDialog(parent, -1, _("Wyniki szukania"), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)
+	: KaiDialog(parent, -1, _("Search results"), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)
 	, MR(_MR)
 {
 	DialogSizer * main = new DialogSizer(wxVERTICAL);
@@ -210,9 +210,9 @@ FindResultDialog::FindResultDialog(wxWindow *parent, MisspellReplacer *_MR)
 
 	wxBoxSizer *buttonsSizer = new wxBoxSizer(wxHORIZONTAL);
 
-	MappedButton *checkAll = new MappedButton(this, ID_CHECK_ALL, _("Zahacz wszystko"));
-	MappedButton *unCheckAll = new MappedButton(this, ID_UNCHECK_ALL, _("Odhacz wszystko"));
-	replaceChecked = new MappedButton(this, ID_REPLACE_CHECKED, _("Zamień"));
+	MappedButton *checkAll = new MappedButton(this, ID_CHECK_ALL, _("Check all"));
+	MappedButton *unCheckAll = new MappedButton(this, ID_UNCHECK_ALL, _("Uncheck all"));
+	replaceChecked = new MappedButton(this, ID_REPLACE_CHECKED, _("Replace"));
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 		CheckUncheckAll(true);
 	}, ID_CHECK_ALL);

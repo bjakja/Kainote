@@ -5,6 +5,13 @@
     <_PropertySheetDisplayName>Nasm compile targets</_PropertySheetDisplayName>
   </PropertyGroup>
 
+  <!-- nasm was hardcoded to C:\NASM\Nasm.exe, which only exists if you
+       installed it there.  Resolve it from PATH instead, like every other
+       tool this build uses.  Override with /p:NasmExe=<full path>. -->
+  <PropertyGroup>
+    <NasmExe Condition="'$(NasmExe)' == ''">nasm.exe</NasmExe>
+  </PropertyGroup>
+
   <PropertyGroup>
     <BuildCompileTargets>
       _NasmAssemble;
@@ -88,7 +95,7 @@
       Text="%(_Nasm.RelativeOutputDir)%(_Nasm.Filename)%(_Nasm.Extension)"
       />
     <Exec
-      Command="&quot;C:\NASM\Nasm.exe&quot; -Xvc %(_Nasm.Config) %(_Nasm.Include) -o &quot;%(_Nasm.OutputDir)%(_Nasm.Filename).obj&quot; &quot;%(_Nasm.FullPath)&quot;"
+      Command="&quot;$(NasmExe)&quot; -Xvc %(_Nasm.Config) %(_Nasm.Include) -o &quot;%(_Nasm.OutputDir)%(_Nasm.Filename).obj&quot; &quot;%(_Nasm.FullPath)&quot;"
       WorkingDirectory="%(_Nasm.OutputDir)"
       />
     <ItemGroup>
