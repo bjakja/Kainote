@@ -79,7 +79,7 @@ void SubsGridPreview::MakeVisible()
 	int erow = previewGrid->currentLine;
 	if ((previewGrid->scrollPosition > erow || previewGrid->GetKeyFromPosition(previewGrid->scrollPosition, (h / (previewGrid->GridHeight + 1))) < erow + 2)){
 		previewGrid->scrollPosition = previewGrid->GetKeyFromPosition(erow, -((h / (previewGrid->GridHeight + 1)) / 2) + 1);
-		previewGrid->scrollPositionId = previewGrid->GetElementByKey(previewGrid->scrollPosition);
+		previewGrid->scrollPositionId = previewGrid->file->GetElementByKey(previewGrid->scrollPosition);
 	}
 	if (!lastData.grid){
 		lastData.lineRangeStart = erow;
@@ -120,7 +120,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	GetClientSize(&w, &h);
 	if (w < 1 || h < 1){ return; }
 	bool bg = false;
-	int size = previewGrid->GetIdCount();
+	int size = previewGrid->file->GetIdCount();
 	int panelrows = (h / (previewGrid->GridHeight + 1));
 	if (previewGrid->scrollPosition < 0){ previewGrid->scrollPosition = 0; previewGrid->scrollPositionId = 0; }
 	int scrows = previewGrid->scrollPositionId + panelrows;
@@ -129,7 +129,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 		bg = true;
 		scrows = size;
 		previewGrid->scrollPositionId = (scrows - panelrows) + 2;//end of subtitles
-		previewGrid->scrollPosition = previewGrid->GetElementById(previewGrid->scrollPositionId);
+		previewGrid->scrollPosition = previewGrid->file->GetElementById(previewGrid->scrollPositionId);
 		//when all subtitles are visible do not scrolling position = 0
 		if (panelrows > size + 3){ previewGrid->scrollPosition = 0; previewGrid->scrollPositionId = 0; }
 	}
@@ -202,7 +202,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	int states = 0;
 	int startDrawPosYFromPlus = 0;
 
-	size_t keySize = previewGrid->GetCount();
+	size_t keySize = previewGrid->file->GetCount();
 
 	if (previewGrid->SpellErrors.size() < keySize){
 		previewGrid->SpellErrors.resize(keySize);
@@ -210,7 +210,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 
 	TabPanel *tab = (TabPanel*)previewGrid->GetParent();
 	TabPanel *tabp = (TabPanel*)parent->GetParent();
-	Dialogue *acdial = previewGrid->GetDialogue(previewGrid->currentLine);
+	Dialogue *acdial = previewGrid->file->GetDialogue(previewGrid->currentLine);
 	Dialogue *Dial = nullptr;
 
 	int VideoPos = tab->video->GetState() != None ? tab->video->Tell() : -1;
@@ -227,13 +227,13 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	while (key + 1 <= keySize && id < scrows){
 		bool isHeadline = (key < previewGrid->scrollPosition);
 		if (!isHeadline){
-			Dial = previewGrid->GetDialogue(key);
+			Dial = previewGrid->file->GetDialogue(key);
 			if (!Dial->isVisible){ key++; continue; }
 		}
 
-		if (previewGrid->IsFiltered()){
+		if (previewGrid->file->IsFiltered()){
 			posX = 15;
-			unsigned char hasHiddenBlock = previewGrid->CheckIfHasHiddenBlock(key, isHeadline);
+			unsigned char hasHiddenBlock = previewGrid->file->CheckIfHasHiddenBlock(key, isHeadline);
 			if (hasHiddenBlock){
 				tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 				tdc.SetPen(textcol);
@@ -260,7 +260,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 					int halfLine = posY - 1;
 					if (isLastLine && !notVisibleBlock){ halfLine = posY + previewGrid->GridHeight; }
 					tdc.DrawLine(9, startDrawPosYFromPlus, 9, halfLine);
-					if (notVisibleBlock || key + 1 >= keySize || previewGrid->GetDialogue(key + 1)->isVisible != VISIBLE_BLOCK)
+					if (notVisibleBlock || key + 1 >= keySize || previewGrid->file->GetDialogue(key + 1)->isVisible != VISIBLE_BLOCK)
 						tdc.DrawLine(9, halfLine, w + scHor, halfLine);
 					startBlock = false;
 				}
@@ -333,7 +333,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			}
 
 			if (previewGrid->subsFormat < SRT){
-				if (previewGrid->FindStyle(Dial->Style) == -1){ unknownStyle = true; }
+				if (previewGrid->file->FindStyle(Dial->Style) == -1){ unknownStyle = true; }
 				else{ unknownStyle = false; }
 				strings.push_back(Dial->Style);
 				strings.push_back(Dial->Actor);
@@ -382,7 +382,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			strings.push_back((!previewGrid->showOriginal && isTl) ? txttl : txt);
 			if (previewGrid->showOriginal){ strings.push_back(txttl); }
 
-			isSelected = previewGrid->IsSelected(key);
+			isSelected = previewGrid->file->IsSelected(key);
 			comparison = (previewGrid->Comparison && previewGrid->Comparison->at(key).size() > 0);
 			bool comparisonMatch = (previewGrid->Comparison && !previewGrid->Comparison->at(key).differences);
 			bool visibleLine = (Dial->Start.mstime <= VideoPos && Dial->End.mstime > VideoPos);
@@ -488,7 +488,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 		key++;
 	}
 
-	posX = (previewGrid->IsFiltered()) ? 15 : 4;
+	posX = (previewGrid->file->IsFiltered()) ? 15 : 4;
 	if (bg){
 		tdc.SetPen(*wxTRANSPARENT_PEN);
 		tdc.SetBrush(wxBrush(Options.GetColour(GRID_BACKGROUND)));
@@ -540,7 +540,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 	//border on left 4px
 	int curY = (event.GetY());
 	int curX = (event.GetX()) - 4;
-	size_t size = previewGrid->GetCount();
+	size_t size = previewGrid->file->GetCount();
 
 	TabPanel *tab = (TabPanel*)previewGrid->GetParent();
 	TabPanel *tabp = (TabPanel*)parent->GetParent();
@@ -586,7 +586,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 	if (curX < 0 || curX > w - 4){ return; }
 
 	int row = previewGrid->GetKeyFromScrollPos(curY / (previewGrid->GridHeight + 1)) - 1;
-	int hideColumnWidth = (previewGrid->IsFiltered()) ? 12 : 0;
+	int hideColumnWidth = (previewGrid->file->IsFiltered()) ? 12 : 0;
 	bool isNumerizeColumn = (curX >= hideColumnWidth && curX < previewGrid->GridWidth[0] + hideColumnWidth);
 
 	if (left_up && !holding) {
@@ -600,19 +600,19 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 
 
 	//Check if it is tree description line
-	if (previewGrid->CheckIfIsTree(row)){
+	if (previewGrid->file->CheckIfIsTree(row)){
 		if (event.GetModifiers() == 0){
 			if (click){
-				int diff = previewGrid->OpenCloseTree(row);
+				int diff = previewGrid->file->OpenCloseTree(row);
 				previewGrid->RefreshColumns();
 				if (previewGrid->SpellErrors.size() > row + 1)
 					previewGrid->SpellErrors.erase(previewGrid->SpellErrors.begin() + (row + 1), previewGrid->SpellErrors.end());
 
 				if (previewGrid->currentLine > row){
-					int firstSel = previewGrid->FirstSelection();
+					int firstSel = previewGrid->file->FirstSelection();
 					if (firstSel < 0){
 						if (previewGrid->currentLine < size)
-							previewGrid->InsertSelection(previewGrid->currentLine);
+							previewGrid->file->InsertSelection(previewGrid->currentLine);
 						else
 							tab->edit->SetLine(size - 1);
 					}
@@ -636,11 +636,11 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 			int vtime = 0;
 			bool isstart = true;
 			if (shift && previewGrid->subsFormat != TMP){
-				vtime = previewGrid->GetDialogue(row)->End.mstime;
+				vtime = previewGrid->file->GetDialogue(row)->End.mstime;
 				isstart = false;
 			}
 			else{
-				vtime = previewGrid->GetDialogue(row)->Start.mstime;
+				vtime = previewGrid->file->GetDialogue(row)->Start.mstime;
 				isstart = true;
 			}
 			if (ctrl){ vtime -= 1000; }
@@ -665,7 +665,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 	if (event.GetWheelRotation() != 0 && row >= previewGrid->scrollPosition) {
 		int step = 3 * event.GetWheelRotation() / event.GetWheelDelta();
 		previewGrid->scrollPosition = previewGrid->GetKeyFromPosition(previewGrid->scrollPosition, -step);
-		previewGrid->scrollPositionId = previewGrid->GetElementByKey(previewGrid->scrollPosition);
+		previewGrid->scrollPositionId = previewGrid->file->GetElementByKey(previewGrid->scrollPosition);
 		Refresh(false);
 		return;
 	}
@@ -674,14 +674,14 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 		int filterRow = previewGrid->GetKeyFromScrollPos(((curY + (previewGrid->GridHeight / 2)) / (previewGrid->GridHeight + 1)) - 1) - 1;
 		if (filterRow < (int)size && curY >(previewGrid->GridHeight / 2)) {
 			if (click || dclick){
-				unsigned char state = previewGrid->CheckIfHasHiddenBlock(filterRow, filterRow < previewGrid->scrollPosition);
+				unsigned char state = previewGrid->file->CheckIfHasHiddenBlock(filterRow, filterRow < previewGrid->scrollPosition);
 				if (state){
 					SubsGridFiltering filter(previewGrid, previewGrid->currentLine);
 					if (filterRow < previewGrid->scrollPosition){
 						if (state == 1){
 							filterRow = previewGrid->GetKeyFromPosition(filterRow, -1, false);
 							previewGrid->scrollPosition = filterRow ? filterRow + 1 : filterRow;
-							previewGrid->scrollPositionId = previewGrid->GetElementByKey(previewGrid->scrollPosition);
+							previewGrid->scrollPositionId = previewGrid->file->GetElementByKey(previewGrid->scrollPosition);
 						}
 						else{
 							previewGrid->scrollPositionId += 1;
@@ -720,10 +720,10 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 
 		// Toggle selected
 		if (left_up && ctrl && !shift && !alt) {
-			if (!(previewGrid->currentLine == row && previewGrid->SelectionsSize() == 1 && 
-				previewGrid->IsSelected(row))){
-				previewGrid->SelectRow(row, true, !previewGrid->IsSelected(row));
-				if (previewGrid->SelectionsSize() < 1){ previewGrid->SelectRow(previewGrid->currentLine); }
+			if (!(previewGrid->currentLine == row && previewGrid->file->SelectionsSize() == 1 && 
+				previewGrid->file->IsSelected(row))){
+				previewGrid->SelectRow(row, true, !previewGrid->file->IsSelected(row));
+				if (previewGrid->file->SelectionsSize() < 1){ previewGrid->SelectRow(previewGrid->currentLine); }
 				Refresh(false);
 				return;
 			}
@@ -771,8 +771,8 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 
 		if (middle){
 			if (video->GetState() != None){
-				video->PlayLine(previewGrid->GetDialogue(row)->Start.mstime,
-					video->GetTimebase().PlayEndBefore(previewGrid->GetDialogue(row)->End.mstime));
+				video->PlayLine(previewGrid->file->GetDialogue(row)->Start.mstime,
+					video->GetTimebase().PlayEndBefore(previewGrid->file->GetDialogue(row)->End.mstime));
 			}
 
 		}
@@ -797,7 +797,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 			previewGrid->extendRow = previewGrid->lastRow;
 
 			// Set boundaries
-			row = MID(0, row, previewGrid->GetCount() - 1);
+			row = MID(0, row, previewGrid->file->GetCount() - 1);
 			int i1 = row;
 			int i2 = previewGrid->lastRow;
 			if (i1 > i2) {
@@ -807,7 +807,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 			}
 
 			// Toggle each
-			previewGrid->InsertSelections(i1, i2, !ctrl);
+			previewGrid->file->InsertSelections(i1, i2, !ctrl);
 			if (changeActive){
 				previewGrid->lastActiveLine = previewGrid->currentLine;
 				tab->edit->SetLine(row, true, true, false);
@@ -831,7 +831,7 @@ void SubsGridPreview::OnScroll(wxScrollEvent& event)
 	int newPos = event.GetPosition();
 	if (previewGrid->scrollPosition != newPos) {
 		previewGrid->scrollPositionId = newPos;
-		previewGrid->scrollPosition = previewGrid->GetElementById(newPos);
+		previewGrid->scrollPosition = previewGrid->file->GetElementById(newPos);
 		Refresh(false);
 	}
 }
@@ -841,7 +841,7 @@ void SubsGridPreview::OnAccelerator(wxCommandEvent &evt)
 {
 	int id = evt.GetId();
 
-	previewGrid->GetSelections(previewGrid->selections);
+	previewGrid->file->GetSelections(previewGrid->selections);
 	int sels = previewGrid->selections.size();
 	if (id == PREVIEW_COPY && sels > 0) previewGrid->CopyRows(GRID_COPY);
 	if (id == PREVIEW_PASTE && sels > 0){ previewGrid->OnPaste(GRID_PASTE); MakeVisible(); }
@@ -851,16 +851,16 @@ void SubsGridPreview::SeekForOccurences()
 {
 	if (lastData.grid){ lastData.grid->thisPreview = nullptr; }
 	TabPanel *tabp = (TabPanel*)parent->GetParent();
-	Dialogue * actualDial = parent->GetDialogue(tabp->grid->currentLine);
+	Dialogue * actualDial = parent->file->GetDialogue(tabp->grid->currentLine);
 	int startTime = actualDial->Start.mstime;
 	int endTime = actualDial->End.mstime;
 	Notebook * nb = Notebook::GetTabs();
-	SubsFile *thisSubs = parent;
+	SubsFile *thisSubs = parent->file;
 	previewData.clear();
 	int tabI = 0;
 	for (int i = 0; i < nb->Size(); i++){
 		TabPanel *tab = nb->Page(i);
-		SubsFile *subs = tab->grid;
+		SubsFile *subs = tab->grid->file;
 		if (thisSubs == subs){ continue; }
 		int lastLine = -2;
 		int startMin = INT_MAX;

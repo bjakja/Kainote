@@ -116,8 +116,8 @@ void Visuals::GetDialoguesWithoutPosition(Dialogue* dialogue)
 		bool tlMode = tab->grid->hasTLMode;
 		int activeLineKey = tab->grid->currentLine;
 
-		for (size_t i = 0; i < grid->GetCount(); i++) {
-			Dialogue* dial = grid->GetDialogue(i);
+		for (size_t i = 0; i < grid->file->GetCount(); i++) {
+			Dialogue* dial = grid->file->GetDialogue(i);
 			if (!grid->ignoreFiltered && !dial->isVisible || dial->NonDialogue) {
 				continue;
 			}
@@ -150,7 +150,7 @@ D3DXVECTOR2 Visuals::GetDialogueAdditionalPosition(Dialogue* dialogue)
 
 	bool tlMode = tab->grid->hasTLMode;
 	wxRegEx an(L"\\\\an([0-9]+)", wxRE_ADVANCED);
-	Styles* currentDialogueStyle = tab->grid->GetStyle(0, dialogue->Style);
+	Styles* currentDialogueStyle = tab->grid->file->GetStyle(0, dialogue->Style);
 	int curlineAn = wxAtoi(currentDialogueStyle->Alignment);
 	const wxString& txt = dialogue->GetTextNoCopy();
 	if (an.Matches(txt)) {
@@ -171,7 +171,7 @@ D3DXVECTOR2 Visuals::GetDialogueAdditionalPosition(Dialogue* dialogue)
 
 	for (size_t i = 0; i < dialoguesSize; i++){
 		Dialogue *dial = dialoguesWithoutPosition[i];
-		Styles *currentStyle = tab->grid->GetStyle(0, dial->Style);
+		Styles *currentStyle = tab->grid->file->GetStyle(0, dial->Style);
 		const wxString &txt = dial->GetTextNoCopy();
 		int newan = wxAtoi(currentStyle->Alignment);
 		if (an.Matches(txt)){
@@ -639,7 +639,7 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 	}
 
 
-	Styles *currentStyle = grid->GetStyle(0, edit->line->Style);
+	Styles *currentStyle = grid->file->GetStyle(0, edit->line->Style);
 	bool foundpos = false;
 	wxRegEx pos(L"\\\\(pos|move)\\(([^\\)]+)\\)", wxRE_ADVANCED);
 	if (pos.Matches(txt) && tbl){
@@ -736,7 +736,7 @@ void Visuals::SetVisual(bool dummy)
 		bool showOriginalOnVideo = !Options.GetBool(TL_MODE_HIDE_ORIGINAL_ON_VIDEO);
 		wxString *dtxt;
 		wxArrayInt sels;
-		grid->GetSelections(sels);
+		grid->file->GetSelections(sels);
 		bool skipInvisible = dummy && tab->video->GetState() != Playing;
 		size_t selsSize = sels.size();
 		if (dummy && (!dummytext || selPositions.size() != selsSize)){
@@ -753,10 +753,10 @@ void Visuals::SetVisual(bool dummy)
 		if (dummy){ dtxt = new wxString(*dummytext); }
 		int _time = tab->video->Tell();
 		int moveLength = 0;
-		const wxString &tlStyle = tab->grid->GetSInfo(L"TLMode Style");
+		const wxString &tlStyle = tab->grid->file->GetSInfo(L"TLMode Style");
 		for (size_t i = 0; i < sels.size(); i++){
 
-			Dialogue *Dial = grid->GetDialogue(sels[i]);
+			Dialogue *Dial = grid->file->GetDialogue(sels[i]);
 			if (skipInvisible && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)){ continue; }
 
 			wxString txt = Dial->GetTextNoCopy();
@@ -839,7 +839,7 @@ D3DXVECTOR2 Visuals::GetPosition(Dialogue *Dial, bool *putinBracket, wxPoint *Te
 	//calculate right position and pass results to positioning and move.
 	*putinBracket = false;
 	D3DXVECTOR2 result;
-	Styles *currentStyle = tab->grid->GetStyle(0, Dial->Style);
+	Styles *currentStyle = tab->grid->file->GetStyle(0, Dial->Style);
 	const wxString &txt = Dial->GetText();
 	bool foundpos = false;
 	wxRegEx pos(L"\\\\(pos|move)\\(([^\\)]+)\\)", wxRE_ADVANCED);
@@ -964,7 +964,7 @@ D3DXVECTOR2 Visuals::GetTextSize(Dialogue* dial, D3DXVECTOR2* border, Styles* st
 	if (style)
 		measuringStyle = style->Copy();
 	else
-		measuringStyle = tab->grid->GetStyle(0, tab->edit->line->Style)->Copy();
+		measuringStyle = tab->grid->file->GetStyle(0, tab->edit->line->Style)->Copy();
 
 	ParseData* presult = dial->ParseTags(tags, 14, true);
 	float bord = measuringStyle->GetOtlineDouble();

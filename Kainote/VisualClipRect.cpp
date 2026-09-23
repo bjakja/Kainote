@@ -382,12 +382,12 @@ void ClipRect::InvertClip()
 {
 	SubsGrid* grid = tab->grid;
 	wxArrayInt sels;
-	grid->GetSelections(sels);
+	grid->file->GetSelections(sels);
 	wxRegEx re(L"\\\\(i?clip)\\(([^)]*)\\)", wxRE_ADVANCED);
 	if (!re.IsValid())
 		return;
 
-	Dialogue* cdial = grid->GetDialogue(grid->currentLine);
+	Dialogue* cdial = grid->file->GetDialogue(grid->currentLine);
 	const wxString& ctxt = cdial->GetTextNoCopy();
 	wxString clip;
 	size_t movement = 0;

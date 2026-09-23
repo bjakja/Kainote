@@ -71,11 +71,11 @@ void FindReplace::ShowResult(TabPanel *tab, const wxString &path, int keyLine, c
 	if (tab){
 		for (size_t i = 0; i < Kai->Tabs->Size(); i++){
 			if (Kai->Tabs->Page(i) == tab){
-				if (keyLine < tab->grid->GetCount()){
+				if (keyLine < tab->grid->file->GetCount()){
 					if (i != Kai->Tabs->iter)
 						Kai->Tabs->ChangePage(i);
 					//check if it's not out of range
-					if (keyLine < tab->grid->GetCount()){
+					if (keyLine < tab->grid->file->GetCount()){
 						tab->edit->SetLine(keyLine);
 						tab->grid->SelectRow(keyLine);
 						tab->grid->ScrollTo(keyLine, true);
@@ -101,7 +101,7 @@ void FindReplace::ShowResult(TabPanel *tab, const wxString &path, int keyLine, c
 			Kai->OpenFile(path);
 		}
 		TabPanel *ntab = Kai->GetTab();
-		if (keyLine < ntab->grid->GetCount()){
+		if (keyLine < ntab->grid->file->GetCount()){
 			ntab->edit->SetLine(keyLine);
 			ntab->grid->SelectRow(keyLine);
 			ntab->grid->ScrollTo(keyLine, true);
@@ -189,10 +189,10 @@ void FindReplace::ReplaceChecked()
 				oldKeyLine = -1;
 				lastIsTextTl = false;
 			}
-			if (SeekResult->keyLine >= tab->grid->GetCount())
+			if (SeekResult->keyLine >= tab->grid->file->GetCount())
 				continue;
 
-			Dialogue *Dialc = tab->grid->CopyDialogueF(SeekResult->keyLine, true, false);
+			Dialogue *Dialc = tab->grid->file->CopyDialogueF(SeekResult->keyLine, true, false);
 
 			wxString & lineText = Dialc->Text.CheckTlRef(Dialc->TextTl, SeekResult->isTextTL);
 			//skip lines with different texts
@@ -275,7 +275,7 @@ seekFromStart:
 
 	bool foundsome = false;
 	if (fromstart){
-		linePosition = tab->grid->FirstSelection();
+		linePosition = tab->grid->file->FirstSelection();
 		//is it possible to get it -1 if id exists, key also should exist
 		linePosition = (!allLines && linePosition != -1) ? linePosition : 0;
 		textPosition = 0;
@@ -285,14 +285,14 @@ seekFromStart:
 	bool styles = !stylesAsText.empty();
 	bool tlmode = tab->grid->hasTLMode;
 
-	while (linePosition < tab->grid->GetCount())
+	while (linePosition < tab->grid->file->GetCount())
 	{
-		Dialogue *Dial = tab->grid->GetDialogue(linePosition);
+		Dialogue *Dial = tab->grid->file->GetDialogue(linePosition);
 		if (!Dial->isVisible || (skipComments && Dial->IsComment)){ linePosition++; textPosition = 0; continue; }
 		
 		if ((!styles && !selectedLines) ||
 			(styles && stylesAsText.Find(L"," + Dial->Style + L",") != -1) ||
-			(selectedLines && tab->grid->IsSelected(linePosition))){
+			(selectedLines && tab->grid->file->IsSelected(linePosition))){
 			Dial->GetTextElement(dialogueColumn, &txt, tlmode);
 
 			foundPosition = -1;
@@ -383,7 +383,7 @@ seekFromStart:
 
 		}
 		else{ textPosition = 0; linePosition++; }
-		if (!foundsome && linePosition > tab->grid->GetCount() - 1){
+		if (!foundsome && linePosition > tab->grid->file->GetCount() - 1){
 			break;
 		}
 	}
@@ -444,7 +444,7 @@ unsigned long FindReplace::FindAllInTab(void *data)
 		bool isfirst = true;
 
 		size_t firstSelectedId = 0;
-		int tabLinePosition = tab->grid->FirstSelection(&firstSelectedId);
+		int tabLinePosition = tab->grid->file->FirstSelection(&firstSelectedId);
 		tabLinePosition = (!window->AllLines->GetValue() && tabLinePosition != -1) ? tabLinePosition : 0;
 		if (tabLinePosition > 0 && firstSelectedId != -1)
 			positionId = firstSelectedId;
@@ -453,15 +453,15 @@ unsigned long FindReplace::FindAllInTab(void *data)
 
 		bool onlySelections = window->SelectedLines->GetValue();
 
-		for (; tabLinePosition < tab->grid->GetCount(); tabLinePosition++)
+		for (; tabLinePosition < tab->grid->file->GetCount(); tabLinePosition++)
 		{
-			Dialogue *Dial = tab->grid->GetDialogue(tabLinePosition);
+			Dialogue *Dial = tab->grid->file->GetDialogue(tabLinePosition);
 			if (!Dial->isVisible){ continue; }
 			if (fr->skipComments && Dial->IsComment){ positionId++; continue; }
 
 			if ((!styles && !onlySelections) ||
 				(styles && fr->stylesAsText.Find(L"," + Dial->Style + L",") != -1) ||
-				(onlySelections && tab->grid->IsSelected(tabLinePosition))){
+				(onlySelections && tab->grid->file->IsSelected(tabLinePosition))){
 
 				Dial->GetTextElement(dialogueColumn, &txt, hasTlMode);
 
@@ -1068,22 +1068,22 @@ int FindReplace::ReplaceAllInTab(TabPanel *tab, TabWindow *window)
 
 	bool onlysel = window->SelectedLines->GetValue();
 
-	size_t firstSelection = tab->grid->FirstSelection();
+	size_t firstSelection = tab->grid->file->FirstSelection();
 	bool skipFiltered = !tab->grid->ignoreFiltered;
 	bool hasTlMode = tab->grid->hasTLMode;
 
-	for (size_t i = (!window->AllLines->GetValue() && firstSelection != -1) ? firstSelection : 0; i < tab->grid->GetCount(); i++)
+	for (size_t i = (!window->AllLines->GetValue() && firstSelection != -1) ? firstSelection : 0; i < tab->grid->file->GetCount(); i++)
 	{
-		Dialogue *Dial = tab->grid->GetDialogue(i);
+		Dialogue *Dial = tab->grid->file->GetDialogue(i);
 		if (skipFiltered && !Dial->isVisible || Dial->NonDialogue || (skipComments && Dial->IsComment)){ continue; }
 		
 		if ((notstyles || stylesAsText.Find(L"," + Dial->Style + L",") != -1) &&
-			!(onlysel && !(tab->grid->IsSelected(i)))){
+			!(onlysel && !(tab->grid->file->IsSelected(i)))){
 
 			Dial->GetTextElement(dialogueColumn, &txt, hasTlMode);
 			allreps = ReplaceInSubsLine(&txt);
 			if (allreps > 0){
-				Dialogue *Dialc = tab->grid->CopyDialogueF(i);
+				Dialogue *Dialc = tab->grid->file->CopyDialogueF(i);
 				Dialc->SetTextElement(dialogueColumn, txt, hasTlMode);
 				allRelpacements += allreps;
 			}
@@ -1154,7 +1154,7 @@ void FindReplace::ReplaceInAllOpenedSubs(TabWindow *window)
 			else{
 				tab->grid->Refresh(false);
 			}
-			Kai->Label(tab->grid->GetActualHistoryIter(), false, i, i != Kai->Tabs->iter);
+			Kai->Label(tab->grid->file->GetActualHistoryIter(), false, i, i != Kai->Tabs->iter);
 			allTabsReplacements += allReplacements;
 		}
 	}
@@ -1302,7 +1302,7 @@ bool FindReplace::CheckStyles(TabWindow *window, TabPanel *tab)
 
 	while (tknzr.HasMoreTokens()){
 		wxString styleName = tknzr.GetNextToken();
-		int result = tab->grid->FindStyle(styleName);
+		int result = tab->grid->file->FindStyle(styleName);
 		if (result == -1){
 			notFoundStyles << styleName << L", ";
 		}

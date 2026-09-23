@@ -225,7 +225,7 @@ void AllTags::SetCurVisual()
 
 void AllTags::FindTagValues()
 {
-	Styles* currentStyle = tab->grid->GetStyle(0, tab->edit->line->Style);
+	Styles* currentStyle = tab->grid->file->GetStyle(0, tab->edit->line->Style);
 	wxString value;
 	TagValueFromStyle(currentStyle, actualTag.tag, &value);
 	double doubleValue = 0.;

@@ -921,7 +921,7 @@ void FontCatalogManagement::CollectFontsFromSubtitles(const wxString& catalog, b
 
 	while (i < tabsSize) {
 		TabPanel* tab = tabs->Page(i);
-		SubsFile* subs = tab->grid;
+		SubsFile* subs = tab->grid->file;
 
 		std::vector<Styles*>* styles = subs->GetStyleTable();
 

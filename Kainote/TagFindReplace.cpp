@@ -37,7 +37,7 @@ bool TagFindReplace::FindTag(const wxString& pattern, const wxString& text, int 
 		if (txt.empty())
 			txt = editor->GetValue();
 
-		if (currentTab->grid->SelectionsSize() < 2 /*&& !from*/) {
+		if (currentTab->grid->file->SelectionsSize() < 2 /*&& !from*/) {
 			if (mode != 1 && mode != 3) { editor->GetSelection(&from, &to); }
 			if (mode == 2) {
 				wxPoint brackets = FindBrackets(txt, from);
@@ -444,7 +444,7 @@ int TagFindReplace::Replace(const wxString& replaceTxt, wxString* text)
 
 bool TagFindReplace::TagValueFromStyle(Styles* style, const wxString& tag, wxString* value)
 {
-	Styles* currentStyle = style? style : currentTab->grid->GetStyle(0, currentTab->edit->line->Style);
+	Styles* currentStyle = style? style : currentTab->grid->file->GetStyle(0, currentTab->edit->line->Style);
 	if (tag == L"fs")
 		*value = currentStyle->Fontsize;
 	else if (tag == L"bord")
@@ -660,7 +660,7 @@ void TagFindReplace::PutTagInText(const wxString& tag, const wxString& resettag,
 	SubsGrid* grid = currentTab->grid;
 	EditBox* edit = currentTab->edit;
 
-	if (grid->SelectionsSize() < 2) {
+	if (grid->file->SelectionsSize() < 2) {
 		long whre;
 		wxString txt = edit->TextEdit->GetValue();
 		TextEditor* editor = edit->TextEdit;
@@ -714,7 +714,7 @@ void TagFindReplace::PutTagInText(const wxString& tag, const wxString& resettag,
 	}
 	else {
 		wxArrayInt sels;
-		grid->GetSelections(sels);
+		grid->file->GetSelections(sels);
 		for (size_t i = 0; i < sels.size(); i++) {
 			Dialogue* dialc = grid->CopyDialogue(sels[i]);
 			wxString txt = dialc->GetTextNoCopy();

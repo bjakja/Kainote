@@ -71,7 +71,7 @@ void Position::Draw(int time)
 	bool nothintoshow = true;
 	for (size_t i = 0; i < data.size(); i++){
 		auto pos = data[i];
-		Dialogue* dial = tab->grid->GetDialogue(pos->numpos);
+		Dialogue* dial = tab->grid->file->GetDialogue(pos->numpos);
 		if (!dial)
 			continue;
 		//don't forget to check if times are in range time >= start && time < end
@@ -139,7 +139,7 @@ void Position::DrawWx(wxDC& dc, int time)
 	bool nothintoshow = true;
 	for (size_t i = 0; i < data.size(); i++) {
 		auto pos = data[i];
-		Dialogue* dial = tab->grid->GetDialogue(pos->numpos);
+		Dialogue* dial = tab->grid->file->GetDialogue(pos->numpos);
 		if (!dial)
 			continue;
 		if (time >= dial->Start.mstime && time < dial->End.mstime) {
@@ -367,7 +367,7 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 		}
 		tab->video->SetCursor(wxCURSOR_SIZING);
 		wxArrayInt sels;
-		tab->grid->GetSelections(sels);
+		tab->grid->file->GetSelections(sels);
 		if (sels.size() != data.size()){ SetCurVisual(); tab->video->Render(); }
 		firstmove.x = x;
 		firstmove.y = y;
@@ -416,13 +416,13 @@ void Position::SetCurVisual()
 	GetPosnScale(nullptr, &curLineAlingment, moveValues);
 	ClearData();
 	wxArrayInt sels;
-	tab->grid->GetSelections(sels);
+	tab->grid->file->GetSelections(sels);
 	bool putInBracket; 
 	wxPoint textPosition;
 
 	for (size_t i = 0; i < sels.size(); i++){
 		//fix to work with editbox changes
-		Dialogue *dial = (sels[i] == tab->grid->currentLine) ? tab->edit->line : tab->grid->GetDialogue(sels[i]);
+		Dialogue *dial = (sels[i] == tab->grid->currentLine) ? tab->edit->line : tab->grid->file->GetDialogue(sels[i]);
 		if (dial->IsComment){ continue; }
 		double moveTable[5];
 		moveTable[4] = 0.;
@@ -469,10 +469,10 @@ void Position::ChangeMultiline(bool all, bool dummy)
 	bool skipInvisible = !all && tab->video->GetState() != Playing;
 	int _time = tab->video->Tell();
 	int moveLength = 0;
-	const wxString &tlStyle = tab->grid->GetSInfo(L"TLMode Style");
+	const wxString &tlStyle = tab->grid->file->GetSInfo(L"TLMode Style");
 	for (size_t i = 0; i < data.size(); i++){
 		size_t k = data[i]->numpos;
-		Dialogue *Dial = (k == tab->grid->currentLine) ? tab->edit->line : tab->grid->GetDialogue(k);
+		Dialogue *Dial = (k == tab->grid->currentLine) ? tab->edit->line : tab->grid->file->GetDialogue(k);
 		if (!Dial)
 			continue;
 

@@ -463,7 +463,7 @@ void Scale::ChangeVisual(wxString *txt, Dialogue *dial, size_t numOfSelections)
 	}
 	Styles* style = nullptr;
 	if (changeAllTags) {
-		style = tab->grid->GetStyle(0, dial->Style);
+		style = tab->grid->file->GetStyle(0, dial->Style);
 	}
 	if (type != 1){
 		//change all tags fscx that are in line and add first one

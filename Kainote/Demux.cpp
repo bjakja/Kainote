@@ -137,15 +137,15 @@ bool Demux::GetSubtitles(SubsGrid* target)
 					wxString next = token.GetNextToken();
 					if (next.StartsWith(L"Style:")) {
 						//format 2 for SSA
-						target->AddStyle(new Styles(next, codecType == 1? 2 : 1));
+						target->file->AddStyle(new Styles(next, codecType == 1? 2 : 1));
 						type = 1;
 					}
 					else if (next.StartsWith(L"Comment:")) {
-						target->AddLine(new Dialogue(next));
+						target->file->AddLine(new Dialogue(next));
 						type = 2;
 					}
 					else if (type == 0 && !next.StartsWith(L";") && !next.StartsWith(L"[") && !next.StartsWith(L"Format:")) {
-						target->AddSInfo(next);
+						target->file->AddSInfo(next);
 					}
 				}
 
@@ -154,13 +154,13 @@ bool Demux::GetSubtitles(SubsGrid* target)
 
 
 			for (unsigned int i = 0; i < subtitleList.size(); i++) {
-				target->AddLine(new Dialogue(subtitleList[i]));
+				target->file->AddLine(new Dialogue(subtitleList[i]));
 			}
-			const wxString& matrix = target->GetSInfo(L"YCbCr Matrix");
+			const wxString& matrix = target->file->GetSInfo(L"YCbCr Matrix");
 			if ((matrix == emptyString || matrix == L"None") && codecType < 1) 
-				target->AddSInfo(L"YCbCr Matrix", L"TV.601");
+				target->file->AddSInfo(L"YCbCr Matrix", L"TV.601");
 
-			target->EndLoad(OPEN_SUBTITLES, 0, true);
+			target->file->EndLoad(OPEN_SUBTITLES, 0, true);
 			subtitleList.clear();
 
 			return 1;

@@ -740,18 +740,18 @@ void AudioDisplay::DrawInactiveLines() {
 	// All
 	else {
 		shadeFrom = 0;
-		shadeTo = grid->GetCount() - 1;
+		shadeTo = grid->file->GetCount() - 1;
 	}
 	D3DXVECTOR2 v2[2];
-	Dialogue *ADial = grid->GetDialogue(line_n);
+	Dialogue *ADial = grid->file->GetDialogue(line_n);
 	if (!ADial){ return; }
 	int aS = GetXAtMS(ADial->Start.mstime);
 	int aE = GetXAtMS(ADial->End.mstime);
 
 	for (int j = shadeFrom; j <= shadeTo; j++) {
 		if (j == line_n) continue;
-		if (j < 0 || j >= grid->GetCount()) continue;
-		shade = grid->GetDialogue(j);
+		if (j < 0 || j >= grid->file->GetCount()) continue;
+		shade = grid->file->GetDialogue(j);
 		if (!shade || !shade->isVisible)
 			continue;
 
@@ -1374,7 +1374,7 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 	}
 	// Set default selection
 	int n = grid->currentLine;
-	SetDialogue(grid->GetDialogue(n), n);
+	SetDialogue(grid->file->GetDialogue(n), n);
 }
 
 
@@ -1618,7 +1618,7 @@ void AudioDisplay::SetDialogue(Dialogue *diag, int n, bool moveToEnd) {
 		else{
 			size_t prevPos = grid->GetKeyFromPosition(line_n, -1);
 			if (isNextLine && line_n != prevPos){
-				Dialogue *pdial = grid->GetDialogue(prevPos);
+				Dialogue *pdial = grid->file->GetDialogue(prevPos);
 				curStartMS = pdial->End.mstime;
 			}
 			else
@@ -2465,12 +2465,12 @@ int AudioDisplay::GetBoundarySnap(int ms, int rangeX, bool shiftHeld, bool start
 		}
 		else {
 			shadeFrom = 0;
-			shadeTo = grid->GetCount() - 1;
+			shadeTo = grid->file->GetCount() - 1;
 		}
 
 		for (int j = shadeFrom; j <= shadeTo; j++) {
 			if (j == line_n) continue;
-			shade = grid->GetDialogue(j);
+			shade = grid->file->GetDialogue(j);
 			if (!shade->isVisible)
 				continue;
 
@@ -2662,7 +2662,7 @@ void AudioDisplay::ChangeLine(int delta, bool block) {
 
 	// Get next line number and make sure it's within bounds
 
-	if (line_n == 0 && delta < 0 || line_n == grid->GetCount() - 1 && delta > 0) { return; }
+	if (line_n == 0 && delta < 0 || line_n == grid->file->GetCount() - 1 && delta > 0) { return; }
 	int next = grid->GetKeyFromPosition(line_n, delta);
 	// Set stuff
 	grid->SetActive(next);

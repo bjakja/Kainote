@@ -380,9 +380,9 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 		if (Options.GetInt(GRID_SAVE_AFTER_CHARACTER_COUNT) > 1 && rowChanged && save) {
 			Send(EDITBOX_LINE_EDITION, false);
 		}
-		size_t gridCount = grid->GetCount();
+		size_t gridCount = grid->file->GetCount();
 		if (currentLine < gridCount) {
-			Dialogue *prevDial = grid->GetDialogue(currentLine);
+			Dialogue *prevDial = grid->file->GetDialogue(currentLine);
 			if (prevDial->Start.mstime > prevDial->End.mstime) {
 				prevDial->End = prevDial->Start;
 				grid->Refresh(false);
@@ -404,7 +404,7 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 		grid->markedLine = Row;
 		grid->currentLine = Row;
 		wxDELETE(line);
-		line = grid->GetDialogue(currentLine)->Copy();
+		line = grid->file->GetDialogue(currentLine)->Copy();
 		LineNumber->SetLabelText(wxString::Format(_("Line: %i"), (int)grid->GetDialoguePosition(currentLine) + 1));
 		Comment->SetValue(line->IsComment);
 		LayerEdit->SetInt(line->Layer);
@@ -471,7 +471,7 @@ done:
 		}
 		else{
 			if (tab->video->IsShown() || tab->video->IsFullScreen()){
-				Dialogue *next = grid->GetDialogue(grid->GetKeyFromPosition(currentLine, 1));
+				Dialogue *next = grid->file->GetDialogue(grid->GetKeyFromPosition(currentLine, 1));
 				int ed = line->End.mstime, nst = next->Start.mstime;
 				int playend = (nst > ed && playAfter > 2) ? nst : ed;
 				tab->video->PlayLine(line->Start.mstime, tab->video->GetTimebase().PlayEndBefore(playend));
@@ -627,7 +627,7 @@ void EditBox::Send(unsigned char editionType, bool gotoNextLine, bool dummy, boo
 	
 
 	if (cellm){
-		if (currentLine < grid->GetCount() && !dummy){
+		if (currentLine < grid->file->GetCount() && !dummy){
 			grid->ChangeLine(editionType, line, currentLine, cellm, gotoNextLine, visualdummy);
 			if (cellm & ACTOR || cellm & EFFECT){
 				RebuildActorEffectLists();
@@ -647,7 +647,7 @@ void EditBox::PutinNonass(const wxString &text, const wxString &tag)
 	TextEdit->GetSelection(&from, &to);
 	long whre = from;
 	wxString txt = TextEdit->GetValue();
-	bool oneline = (grid->SelectionsSize() < 2);
+	bool oneline = (grid->file->SelectionsSize() < 2);
 	if (oneline){//Changing only in editbox
 		if (grid->subsFormat == SRT){
 
@@ -711,10 +711,10 @@ void EditBox::PutinNonass(const wxString &text, const wxString &tag)
 		wxString chars = (grid->subsFormat == SRT) ? L"<" : L"{";
 		wxString chare = (grid->subsFormat == SRT) ? L">" : L"}";
 		wxArrayInt sels;
-		grid->GetSelections(sels);
+		grid->file->GetSelections(sels);
 		for (size_t i = 0; i < sels.size(); i++)
 		{
-			Dialogue *dialc = grid->CopyDialogueF(sels[i]);
+			Dialogue *dialc = grid->file->CopyDialogueF(sels[i]);
 			wxString txt = dialc->Text;
 			if (txt.StartsWith(chars))
 			{
@@ -735,8 +735,8 @@ void EditBox::PutinNonass(const wxString &text, const wxString &tag)
 void EditBox::OnFontClick(wxCommandEvent& event)
 {
 	char form = grid->subsFormat;
-	Styles *mstyle = (form < SRT) ? grid->GetStyle(0, line->Style)->Copy() : new Styles();
-	int tmpIter = grid->Iter();
+	Styles *mstyle = (form < SRT) ? grid->file->GetStyle(0, line->Style)->Copy() : new Styles();
+	int tmpIter = grid->file->Iter();
 	if (form < SRT){
 		wxString tmp;
 		if (FindTag(L"b(0|1)", emptyString, 0, true)){
@@ -863,7 +863,7 @@ void EditBox::AllColorClick(int numColor, bool leftClick /*= true*/)
 
 	wxString tmptext = TextEdit->GetValue();
 	TextEditor *editor = TextEdit;
-	int tmpIter = grid->Iter();
+	int tmpIter = grid->file->Iter();
 	if (grid->hasTLMode && tmptext == emptyString){
 		tmptext = TextEditOrig->GetValue();
 		editor = TextEditOrig;
@@ -932,7 +932,7 @@ void EditBox::GetColor(AssColor *actualColor, int numColor)
 		colorNumber << numColor;
 		wxString retTag;
 		wxString tag = (numColor == 1) ? L"?c&(.*)" : L"c&(.*)";
-		Styles *style = grid->GetStyle(0, line->Style);
+		Styles *style = grid->file->GetStyle(0, line->Style);
 		*actualColor = (numColor == 1) ? style->PrimaryColour :
 			(numColor == 2) ? style->SecondaryColour :
 			(numColor == 3) ? style->OutlineColour :
@@ -999,7 +999,7 @@ void EditBox::OnNewline(wxCommandEvent& event)
 void EditBox::OnBoldClick(wxCommandEvent& event)
 {
 	if (grid->subsFormat < SRT){
-		Styles *mstyle = grid->GetStyle(0, line->Style);
+		Styles *mstyle = grid->file->GetStyle(0, line->Style);
 		wxString value = (mstyle->Bold) ? L"1" : L"0";
 		wxString nvalue = (mstyle->Bold) ? L"0" : L"1";
 		if (FindTag(L"b(0|1)", emptyString, 0, true)){ 
@@ -1015,7 +1015,7 @@ void EditBox::OnBoldClick(wxCommandEvent& event)
 void EditBox::OnItalicClick(wxCommandEvent& event)
 {
 	if (grid->subsFormat < SRT){
-		Styles *mstyle = grid->GetStyle(0, line->Style);
+		Styles *mstyle = grid->file->GetStyle(0, line->Style);
 		wxString value = (mstyle->Italic) ? L"1" : L"0";
 		wxString nvalue = (mstyle->Italic) ? L"0" : L"1";
 		if (FindTag(L"i(0|1)", emptyString, 0, true)){ 
@@ -1032,7 +1032,7 @@ void EditBox::OnItalicClick(wxCommandEvent& event)
 void EditBox::OnUnderlineClick(wxCommandEvent& event)
 {
 	if (grid->subsFormat < SRT){
-		Styles *mstyle = grid->GetStyle(0, line->Style);
+		Styles *mstyle = grid->file->GetStyle(0, line->Style);
 		wxString value = (mstyle->Underline) ? L"1" : L"0";
 		wxString nvalue = (mstyle->Underline) ? L"0" : L"1";
 		if (FindTag(L"u(0|1)", emptyString, 0, true)){ 
@@ -1047,7 +1047,7 @@ void EditBox::OnUnderlineClick(wxCommandEvent& event)
 void EditBox::OnStrikeClick(wxCommandEvent& event)
 {
 	if (grid->subsFormat < SRT){
-		Styles *mstyle = grid->GetStyle(0, line->Style);
+		Styles *mstyle = grid->file->GetStyle(0, line->Style);
 		wxString value = (mstyle->StrikeOut) ? L"1" : L"0";
 		wxString nvalue = (mstyle->StrikeOut) ? L"0" : L"1";
 		if (FindTag(L"s(0|1)", emptyString, 0, true)){ 
@@ -1174,15 +1174,15 @@ void EditBox::OnCopySelection(wxCommandEvent& event)
 void EditBox::RefreshStyle(bool resetline)
 {
 	StyleChoice->Clear();
-	for (size_t i = 0; i < grid->StylesSize(); i++){
-		StyleChoice->Append(grid->GetStyle(i)->Name);
+	for (size_t i = 0; i < grid->file->StylesSize(); i++){
+		StyleChoice->Append(grid->file->GetStyle(i)->Name);
 	}
 	StyleChoice->Sort();
 	int selection = StyleChoice->FindString(line->Style);
 	StyleChoice->SetSelection(selection);
 
 	if (resetline){
-		if (grid->GetCount() > 0){
+		if (grid->file->GetCount() > 0){
 			SetLine(0);
 		}
 		else{ currentLine = 0; }
@@ -1579,7 +1579,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 	if (tab->video->GetState() != None){
 		//visible=true;
 		visible = grid->IsLineVisible();
-		if (!visible && (lastVisible != visible || grid->IsSelected(currentLine))){ 
+		if (!visible && (lastVisible != visible || grid->file->IsSelected(currentLine))){ 
 			visible = true; 
 			lastVisible = false; 
 		}
@@ -1611,7 +1611,7 @@ void EditBox::OnColorChange(ColorEvent& event)
 		colorNumber << intColorNumber;
 		wxString colorString;
 		wxString tag = (intColorNumber == 1) ? L"?c&(.*)&" : L"c&(.*)&";
-		Styles *style = grid->GetStyle(0, line->Style);
+		Styles *style = grid->file->GetStyle(0, line->Style);
 
 		FindTag(colorNumber + tag, emptyString, 0, true);
 		//check only colors, not aplha
@@ -1685,7 +1685,7 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 		PutTagInText(tag, resetTag);
 	}
 	else{
-		bool oneline = (grid->SelectionsSize() < 2);
+		bool oneline = (grid->file->SelectionsSize() < 2);
 
 		long from, to;
 		wxString txt = TextEdit->GetValue();
@@ -1712,7 +1712,7 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 		}
 		else{
 			wxArrayInt sels;
-			grid->GetSelections(sels);
+			grid->file->GetSelections(sels);
 			for (size_t i = 0; i < sels.size(); i++){
 				long cpyfrom = from;
 				Dialogue *dialc = grid->CopyDialogue(sels[i]);
@@ -1856,7 +1856,7 @@ void EditBox::SetTextWithTags(bool RefreshVideo)
 			goto done;
 		}
 	}
-	if (splittedTags){ delete line; line = grid->GetDialogue(currentLine)->Copy(); }
+	if (splittedTags){ delete line; line = grid->file->GetDialogue(currentLine)->Copy(); }
 	splittedTags = false;
 	TextEdit->SetTextS((TextEditOrig->IsShown()) ? line->TextTl : line->Text, TextEdit->IsModified(), true, false, false);
 	if (TextEditOrig->IsShown()){ TextEditOrig->SetTextS(line->Text, TextEditOrig->IsModified(), true, false, false); }
@@ -1884,7 +1884,7 @@ void EditBox::OnChangeTimeDisplay(wxCommandEvent& event)
 	bool frame = Frames->GetValue();
 	grid->ChangeTimeDisplay(frame);
 	wxDELETE(line);
-	line = grid->GetDialogue(currentLine)->Copy();
+	line = grid->file->GetDialogue(currentLine)->Copy();
 	StartEdit->ShowFrames(frame);
 	EndEdit->ShowFrames(frame);
 	DurEdit->ShowFrames(frame);
@@ -1919,7 +1919,7 @@ void EditBox::OnStyleEdit(wxCommandEvent& event)
 bool EditBox::IsCursorOnStart()
 {
 	// is it possible that some selections can be hidden?
-	if (grid->SelectionsSize() > 1){ return true; }
+	if (grid->file->SelectionsSize() > 1){ return true; }
 	/*if(Visual == CLIPRECT || Visual == MOVE){return true;}
 	wxString txt=TextEdit->GetValue();
 	MTextEditor *GLOBAL_EDITOR = TextEdit;
@@ -1945,9 +1945,9 @@ void EditBox::OnDoubtfulTl(wxCommandEvent& event)
 	if (!grid->hasTLMode){ wxBell(); return; }
 	line->ChangeState(4);
 	wxArrayInt sels;
-	grid->GetSelections(sels);
+	grid->file->GetSelections(sels);
 	for (size_t i = 0; i < sels.size(); i++){
-		Dialogue *dial = grid->CopyDialogueF(sels[i]);
+		Dialogue *dial = grid->file->CopyDialogueF(sels[i]);
 		dial->ChangeState(4);
 	}
 	if (event.GetId() == EDITBOX_SET_DOUBTFUL){
@@ -1962,8 +1962,8 @@ void EditBox::FindNextDoubtfulTl(wxCommandEvent& event)
 {
 	if (!grid->hasTLMode){ wxBell(); return; }
 SeekDoubtful:
-	for (size_t i = CurrentDoubtful; i < grid->GetCount(); i++){
-		Dialogue *dial = grid->GetDialogue(i);
+	for (size_t i = CurrentDoubtful; i < grid->file->GetCount(); i++){
+		Dialogue *dial = grid->file->GetDialogue(i);
 		if (!dial->isVisible)
 			continue;
 
@@ -1984,8 +1984,8 @@ void EditBox::FindNextUnTranslated(wxCommandEvent& event)
 {
 	if (!grid->hasTLMode){ wxBell(); return; }
 SeekUntranslated:
-	for (size_t i = CurrentUntranslated; i < grid->GetCount(); i++){
-		Dialogue *dial = grid->GetDialogue(i);
+	for (size_t i = CurrentUntranslated; i < grid->file->GetCount(); i++){
+		Dialogue *dial = grid->file->GetDialogue(i);
 		if (!dial->isVisible)
 			continue;
 
@@ -2067,7 +2067,7 @@ void EditBox::SetTagButtons()
 
 void EditBox::SetAlignment()
 {
-	Styles* currentStyle = grid->GetStyle(0, line->Style);
+	Styles* currentStyle = grid->file->GetStyle(0, line->Style);
 	const wxString& txt = line->TextTl != L"" ? line->TextTl : line->Text;
 	int tmpan;
 	tmpan = wxAtoi(currentStyle->Alignment);
@@ -2089,8 +2089,8 @@ void EditBox::RebuildActorEffectLists()
 {
 	ActorEdit->Clear();
 	EffectEdit->Clear();
-	for (size_t i = 0; i < grid->GetCount(); i++){
-		Dialogue *dial = grid->GetDialogue(i);
+	for (size_t i = 0; i < grid->file->GetCount(); i++){
+		Dialogue *dial = grid->file->GetDialogue(i);
 		if (!dial->Actor.empty() && ActorEdit->FindString(dial->Actor, true) < 0){
 			ActorEdit->Append(dial->Actor);
 		}

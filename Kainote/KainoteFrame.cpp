@@ -731,7 +731,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		tab->grid->DoUndo(true);
 	}
 	else if (id == GLOBAL_HISTORY){
-		tab->grid->ShowHistory(this, [=](int iter){
+		tab->grid->file->ShowHistory(this, [=](int iter){
 			tab->grid->DoUndo(false, iter);
 		});
 	}
@@ -824,7 +824,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		MR->Show(!MR->IsShown());
 	}
 	else if (id >= GLOBAL_CONVERT_TO_ASS && id <= GLOBAL_CONVERT_TO_MPL2){
-		if (tab->grid->GetSInfo(L"TLMode") != L"Yes"){
+		if (tab->grid->file->GetSInfo(L"TLMode") != L"Yes"){
 			OnConversion((id - GLOBAL_CONVERT_TO_ASS) + 1);
 		}
 	}
@@ -946,14 +946,14 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	}
 	else if (id == GLOBAL_SET_VIDEO_AT_START_TIME){
 		int curline = tab->grid->currentLine;
-		tab->video->Seek(MAX(0, tab->grid->GetDialogue(curline)->Start.mstime), true);
+		tab->video->Seek(MAX(0, tab->grid->file->GetDialogue(curline)->Start.mstime), true);
 	}
 	else if (id == GLOBAL_SET_VIDEO_AT_END_TIME){
 		int curline = tab->grid->currentLine;
-		tab->video->Seek(MAX(0, tab->grid->GetDialogue(curline)->End.mstime), false);
+		tab->video->Seek(MAX(0, tab->grid->file->GetDialogue(curline)->End.mstime), false);
 	}
 	else if (id == GLOBAL_UNDO_TO_LAST_SAVE){
-		tab->grid->DoUndo(false, tab->grid->GetLastSaveIter());
+		tab->grid->DoUndo(false, tab->grid->file->GetLastSaveIter());
 	}
 	else if (id == GLOBAL_LOAD_LAST_SESSION){
 		Tabs->LoadLastSession();
@@ -1161,7 +1161,7 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 void KainoteFrame::OnConversion(char form)
 {
 	TabPanel *tab = GetTab();
-	if (tab->grid->GetSInfo(L"TLMode") == L"Yes"){ return; }
+	if (tab->grid->file->GetSInfo(L"TLMode") == L"Yes"){ return; }
 	if (form != ASS){
 		tab->video->RemoveVisual(true, true);
 	}
@@ -1179,12 +1179,12 @@ void KainoteFrame::OnAssProps()
 	if (GetTab()->video->GetState() != None){ GetTab()->video->GetVideoSize(&x, &y); }
 	ScriptInfo sci(this, x, y);
 	SubsGrid *ngrid = GetTab()->grid;
-	sci.title->SetValue(ngrid->GetSInfo(L"Title"));
-	sci.script->SetValue(ngrid->GetSInfo(L"Original Script"));
-	sci.translation->SetValue(ngrid->GetSInfo(L"Original Translation"));
-	sci.editing->SetValue(ngrid->GetSInfo(L"Original Editing"));
-	sci.timing->SetValue(ngrid->GetSInfo(L"Original Timing"));
-	sci.update->SetValue(ngrid->GetSInfo(L"Script Updated By"));
+	sci.title->SetValue(ngrid->file->GetSInfo(L"Title"));
+	sci.script->SetValue(ngrid->file->GetSInfo(L"Original Script"));
+	sci.translation->SetValue(ngrid->file->GetSInfo(L"Original Translation"));
+	sci.editing->SetValue(ngrid->file->GetSInfo(L"Original Editing"));
+	sci.timing->SetValue(ngrid->file->GetSInfo(L"Original Timing"));
+	sci.update->SetValue(ngrid->file->GetSInfo(L"Script Updated By"));
 	int nx = 0, ny = 0;
 	ngrid->GetASSRes(&nx, &ny);
 	sci.width->SetInt(nx);
@@ -1192,7 +1192,7 @@ void KainoteFrame::OnAssProps()
 	ngrid->GetLayoutRes(&nx, &ny);
 	sci.layoutWidth->SetInt(nx);
 	sci.layoutHeight->SetInt(ny);
-	const wxString &matrix = ngrid->GetSInfo(L"YCbCr Matrix");
+	const wxString &matrix = ngrid->file->GetSInfo(L"YCbCr Matrix");
 	int result = sci.matrix->FindString(matrix);
 	if (matrix.IsEmpty() || result < 0){
 		sci.matrix->SetSelection(0);
@@ -1201,12 +1201,12 @@ void KainoteFrame::OnAssProps()
 	else{
 		sci.matrix->SetSelection(result);
 	}
-	const wxString &wraps = ngrid->GetSInfo(L"WrapStyle");
+	const wxString &wraps = ngrid->file->GetSInfo(L"WrapStyle");
 	int ws = wxAtoi(wraps);
 	sci.wrapstyle->SetSelection(ws);
-	const wxString &colls = ngrid->GetSInfo(L"Collisions");
+	const wxString &colls = ngrid->file->GetSInfo(L"Collisions");
 	if (colls == L"Reverse"){ sci.collision->SetSelection(1); }
-	const wxString &bords = ngrid->GetSInfo(L"ScaledBorderAndShadow");
+	const wxString &bords = ngrid->file->GetSInfo(L"ScaledBorderAndShadow");
 	if (bords == L"no"){ sci.scaleBorderAndShadow->SetValue(false); }
 
 	if (sci.ShowModal() == wxID_OK)
@@ -1222,32 +1222,32 @@ void KainoteFrame::OnAssProps()
 		else if (newlx < 1) { newlx = (float)newlx * (16.0 / 9.0); }
 		else if (newly < 1) { newly = (float)newlx * (9.0 / 16.0); }
 
-		if (sci.title->GetValue() != emptyString){ if (sci.title->IsModified()){ ngrid->AddSInfo(L"Title", sci.title->GetValue()); } }
-		else{ ngrid->AddSInfo(L"Title", L"Kainote Ass File"); }
-		if (sci.script->IsModified()){ ngrid->AddSInfo(L"Original Script", sci.script->GetValue()); }
-		if (sci.translation->IsModified()){ ngrid->AddSInfo(L"Original Translation", sci.translation->GetValue()); }
-		if (sci.editing->IsModified()){ ngrid->AddSInfo(L"Original Editing", sci.editing->GetValue()); }
-		if (sci.timing->IsModified()){ ngrid->AddSInfo(L"Original Timing", sci.timing->GetValue()); }
-		if (sci.update->IsModified()){ ngrid->AddSInfo(L"Script Updated By", sci.update->GetValue()); }
+		if (sci.title->GetValue() != emptyString){ if (sci.title->IsModified()){ ngrid->file->AddSInfo(L"Title", sci.title->GetValue()); } }
+		else{ ngrid->file->AddSInfo(L"Title", L"Kainote Ass File"); }
+		if (sci.script->IsModified()){ ngrid->file->AddSInfo(L"Original Script", sci.script->GetValue()); }
+		if (sci.translation->IsModified()){ ngrid->file->AddSInfo(L"Original Translation", sci.translation->GetValue()); }
+		if (sci.editing->IsModified()){ ngrid->file->AddSInfo(L"Original Editing", sci.editing->GetValue()); }
+		if (sci.timing->IsModified()){ ngrid->file->AddSInfo(L"Original Timing", sci.timing->GetValue()); }
+		if (sci.update->IsModified()){ ngrid->file->AddSInfo(L"Script Updated By", sci.update->GetValue()); }
 
-		if (sci.width->IsModified()){ ngrid->AddSInfo(L"PlayResX", wxString::Format(L"%i", newx)); }
-		if (sci.height->IsModified()){ ngrid->AddSInfo(L"PlayResY", wxString::Format(L"%i", newy)); }
+		if (sci.width->IsModified()){ ngrid->file->AddSInfo(L"PlayResX", wxString::Format(L"%i", newx)); }
+		if (sci.height->IsModified()){ ngrid->file->AddSInfo(L"PlayResY", wxString::Format(L"%i", newy)); }
 		bool link = Options.GetBool(LINK_RESOLUTIONS);
-		bool linkAndLayoutExists = link && (!ngrid->GetSInfo(L"LayoutResX").empty() || !ngrid->GetSInfo(L"LayoutResX").empty());
-		if (sci.layoutWidth->IsModified() || linkAndLayoutExists) { ngrid->AddSInfo(L"LayoutResX", wxString::Format(L"%i", link? newx : newlx)); }
-		if (sci.layoutHeight->IsModified() || linkAndLayoutExists) { ngrid->AddSInfo(L"LayoutResY", wxString::Format(L"%i", link ? newy : newly)); }
+		bool linkAndLayoutExists = link && (!ngrid->file->GetSInfo(L"LayoutResX").empty() || !ngrid->file->GetSInfo(L"LayoutResX").empty());
+		if (sci.layoutWidth->IsModified() || linkAndLayoutExists) { ngrid->file->AddSInfo(L"LayoutResX", wxString::Format(L"%i", link? newx : newlx)); }
+		if (sci.layoutHeight->IsModified() || linkAndLayoutExists) { ngrid->file->AddSInfo(L"LayoutResY", wxString::Format(L"%i", link ? newy : newly)); }
 		int newMatrix = sci.matrix->GetSelection();
 		if (newMatrix != result){
 			wxString val = sci.matrix->GetString(sci.matrix->GetSelection());
-			ngrid->AddSInfo(L"YCbCr Matrix", val);
+			ngrid->file->AddSInfo(L"YCbCr Matrix", val);
 			GetTab()->video->SetColorSpace(val);
 		}
 
-		if (ws != sci.wrapstyle->GetSelection()){ ngrid->AddSInfo(L"WrapStyle", wxString::Format(L"%i", sci.wrapstyle->GetSelection())); }
+		if (ws != sci.wrapstyle->GetSelection()){ ngrid->file->AddSInfo(L"WrapStyle", wxString::Format(L"%i", sci.wrapstyle->GetSelection())); }
 		wxString collis = (sci.collision->GetSelection() == 0) ? L"Normal" : L"Reverse";
-		if (colls != collis){ ngrid->AddSInfo(L"Collisions", collis); }
+		if (colls != collis){ ngrid->file->AddSInfo(L"Collisions", collis); }
 		wxString bordas = (sci.scaleBorderAndShadow->GetValue()) ? L"yes" : L"no";
-		if (bords != bordas){ ngrid->AddSInfo(L"ScaledBorderAndShadow", bordas); }
+		if (bords != bordas){ ngrid->file->AddSInfo(L"ScaledBorderAndShadow", bordas); }
 		ngrid->SetModified(ASS_PROPERTIES);
 		SetSubsResolution();
 	}
@@ -1416,7 +1416,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 		if (!isgood) { KaiMessageBox(_("Cannot open subtitle file"), _("Warning")); }
 		//set color space	
 		if (tab->grid->subsFormat == ASS) {
-			tab->video->SetColorSpace(tab->grid->GetSInfo(L"YCbCr Matrix"));
+			tab->video->SetColorSpace(tab->grid->file->GetSInfo(L"YCbCr Matrix"));
 		}
 	}
 	
@@ -1726,7 +1726,7 @@ void KainoteFrame::Label(int iter/*=0*/, bool video/*=false*/, int wtab/*=-1*/, 
 		return;
 	}
 	wxString whiter;
-	if (atab->grid->IsModified()){ whiter << iter << L"*"; }
+	if (atab->grid->file->IsModified()){ whiter << iter << L"*"; }
 
 	wxString name = (video) ? atab->VideoName : whiter + atab->SubsName;
 	if (!onlyTabs)
@@ -1917,8 +1917,8 @@ void KainoteFrame::OnPageChanged(wxCommandEvent& event)
 	TabPanel *cur = Tabs->GetPage();
 	if (!cur)
 		return;
-	int iter = cur->grid->Iter();
-	if (cur->grid->IsModified()){
+	int iter = cur->grid->file->Iter();
+	if (cur->grid->file->IsModified()){
 		whiter << iter << L"*";
 	}
 	wxString name = (!cur->editor) ? cur->VideoName : cur->SubsName;
@@ -1981,8 +1981,8 @@ void KainoteFrame::OnPageChanged(wxCommandEvent& event)
 
 		if (Options.GetBool(AUTO_SELECT_LINES_FROM_LAST_TAB)){
 			SubsGrid *old = Tabs->Page(Tabs->GetOldSelection())->grid;
-			if (old->FirstSelection() > -1){
-				cur->grid->SelVideoLine(old->GetDialogue(old->FirstSelection())->Start.mstime);
+			if (old->file->FirstSelection() > -1){
+				cur->grid->SelVideoLine(old->file->GetDialogue(old->file->FirstSelection())->Start.mstime);
 			}
 		}
 	}
@@ -2090,7 +2090,7 @@ void KainoteFrame::SaveAll()
 {
 	for (size_t i = 0; i < Tabs->Size(); i++)
 	{
-		if (!Tabs->Page(i)->grid->IsModified()){ continue; }
+		if (!Tabs->Page(i)->grid->file->IsModified()){ continue; }
 		Save(false, i, false);
 		Label(0, false, i);
 	}
@@ -2102,7 +2102,7 @@ bool KainoteFrame::SavePrompt(char mode, int wtab)
 	TabPanel* atab = (wtab < 0) ? GetTab() : Tabs->Page(wtab);
 	if (!atab)
 		return false;
-	if (atab->grid->IsModified()){
+	if (atab->grid->file->IsModified()){
 		wxString ext = (atab->grid->subsFormat == ASS) ? L"ass" : (atab->grid->subsFormat == SRT) ? L"srt" : L"txt";
 		wxString subsExt;
 		wxString subsName = atab->SubsName.BeforeLast(L'.', &subsExt);
@@ -2205,7 +2205,7 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 				int fid = fitem->GetId();
 				switch (fid) {
 				case GLOBAL_SAVE_SUBS:
-					fitem->Enable(editor && tab->grid->IsModified());
+					fitem->Enable(editor && tab->grid->file->IsModified());
 					break;
 				case GLOBAL_SAVE_TRANSLATION:
 					fitem->Enable(editor && tlmode);
@@ -2315,7 +2315,7 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 					if (!curMenu)
 						continue;
 
-					const wxString &undoName = tab->grid->GetUndoName();
+					const wxString &undoName = tab->grid->file->GetUndoName();
 					wxString accel = eitem->GetAccel();
 					wxString accelName = (accel.empty()) ? emptyString : L"\t" + accel;
 					accelName.Replace(L"+", L"-");
@@ -2331,7 +2331,7 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 					if (!curMenu)
 						continue;
 
-					const wxString &redoName = tab->grid->GetRedoName();
+					const wxString &redoName = tab->grid->file->GetRedoName();
 					wxString accel = eitem->GetAccel();
 					wxString accelName = (accel.empty()) ? emptyString : L"\t" + accel;
 					accelName.Replace(L"+", L"-");
@@ -2345,7 +2345,7 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 
 				}
 				else if (eid == GLOBAL_HISTORY) {
-					eitem->Enable(editor && tab->grid->Iter() > 0);
+					eitem->Enable(editor && tab->grid->file->Iter() > 0);
 				}
 				// undo last save is disabled on start and activated later
 				else if(eid != GLOBAL_UNDO_TO_LAST_SAVE){
@@ -2545,11 +2545,11 @@ void KainoteFrame::OnAudioSnap(wxCommandEvent& event)
 		}
 		else {
 			shadeFrom = 0;
-			shadeTo = tab->grid->GetCount();
+			shadeTo = tab->grid->file->GetCount();
 		}
 
 		for (int j = shadeFrom; j < shadeTo; j++) {
-			shade = tab->grid->GetDialogue(j);
+			shade = tab->grid->file->GetDialogue(j);
 			if (!shade->isVisible || j == tab->grid->currentLine) continue;
 
 			int start = shade->Start.mstime;

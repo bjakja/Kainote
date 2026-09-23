@@ -324,7 +324,7 @@ void MoveAll::SetCurVisual()
 					frz = frzd;
 				}
 				else {
-					Styles* actualStyle = tab->grid->GetStyle(0, tab->edit->line->Style);
+					Styles* actualStyle = tab->grid->file->GetStyle(0, tab->edit->line->Style);
 					double result = 0.;
 					actualStyle->Angle.ToDouble(&result);
 					frz = result;
@@ -395,7 +395,7 @@ void MoveAll::ChangeInLines(bool all)
 	drawingOriginalPos = moving;
 	int _time = tab->video->Tell();
 	wxArrayInt sels;
-	tab->grid->GetSelections(sels);
+	tab->grid->file->GetSelections(sels);
 	wxString *dtxt;
 	if (!all){
 		if (!dummytext || selPositions.size() != sels.size()){
@@ -417,12 +417,12 @@ void MoveAll::ChangeInLines(bool all)
 	//bool isOriginal=(tab->Grid1->transl && tab->edit->TextEdit->GetValue()==emptyString);
 	//MTextEditor *GLOBAL_EDITOR=(isOriginal)? tab->edit->TextEditTl : tab->edit->TextEdit;
 	//wxString origText=GLOBAL_EDITOR->GetValue();
-	const wxString &tlModeStyle = tab->grid->GetSInfo(L"TLMode Style");
+	const wxString &tlModeStyle = tab->grid->file->GetSInfo(L"TLMode Style");
 	int moveLength = 0;
 
 	for (size_t i = 0; i < sels.size(); i++){
 		wxString txt;
-		Dialogue *Dial = tab->grid->GetDialogue(sels[i]);
+		Dialogue *Dial = tab->grid->file->GetDialogue(sels[i]);
 
 		if (skipInvisible && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)){ continue; }
 		bool istexttl = (tab->grid->hasTLMode && Dial->TextTl != emptyString);

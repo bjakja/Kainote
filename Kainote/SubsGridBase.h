@@ -43,7 +43,7 @@ private:
 	wxArrayInt lineCompare;
 };
 
-class SubsGridBase :public KaiScrolledWindow, public SubsFile
+class SubsGridBase :public KaiScrolledWindow
 {
 	friend class SubsGridPreview;
 public:
@@ -91,8 +91,8 @@ public:
 	Dialogue *CopyDialogueWithOffset(size_t i, int offset, bool push = true);
 	// returns null when is out of range
 	Dialogue *GetCurrentLine(){
-		if (currentLine < GetCount())
-			return GetDialogue(currentLine);
+		if (currentLine < file->GetCount())
+			return file->GetDialogue(currentLine);
 
 		return NULL;
 	}
@@ -119,6 +119,8 @@ public:
 	SubsGridBase(wxWindow *parent, const long int id, const wxPoint& pos, const wxSize& size, long style);
 	virtual ~SubsGridBase();
 
+	// the subtitles this grid shows and edits
+	SubsFile *file = nullptr;
 	bool hasTLMode = false;
 	bool showOriginal = false;
 	bool makebackup;

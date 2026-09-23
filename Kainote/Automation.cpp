@@ -475,7 +475,7 @@ namespace Auto{
 			lua_pushnil(L);
 		else {
 			lua_createtable(L, 0, 14);
-#define PUSH_FIELD(name, fieldname) set_field(L, #name, c->grid->GetSInfo(#name))
+#define PUSH_FIELD(name, fieldname) set_field(L, #name, c->grid->file->GetSInfo(#name))
 			PUSH_FIELD(automation_scripts, "Automation Scripts");
 			PUSH_FIELD(export_filters, "");
 			PUSH_FIELD(export_encoding, "");
@@ -923,8 +923,8 @@ namespace Auto{
 
 	static std::vector<int> selected_rows(const TabPanel *c)
 	{
-		auto const& sels = c->grid->GetSelectionsAsKeys();
-		int offset = c->grid->SInfoSize() + c->grid->StylesSize() + 1;
+		auto const& sels = c->grid->file->GetSelectionsAsKeys();
+		int offset = c->grid->file->SInfoSize() + c->grid->file->StylesSize() + 1;
 		std::vector<int> rows;
 		rows.reserve(sels.size());
 		for (auto line : sels)
@@ -940,10 +940,10 @@ namespace Auto{
 		lua_pushcclosure(L, add_stack_trace, 0);
 
 		GetFeatureFunction("validate");
-		auto subsobj = new AutoToFile(L, c->grid, true, c->grid->subsFormat);
+		auto subsobj = new AutoToFile(L, c->grid->file, true, c->grid->subsFormat);
 
 		push_value(L, selected_rows(c));
-		push_value(L, c->grid->currentLine + c->grid->SInfoSize() + c->grid->StylesSize() + 1);
+		push_value(L, c->grid->currentLine + c->grid->file->SInfoSize() + c->grid->file->StylesSize() + 1);
 
 		int err = lua_pcall(L, 3, 2, -5 /* three args, function, error handler */);
 		SAFE_DELETE(subsobj);
@@ -974,9 +974,9 @@ namespace Auto{
 		stackcheck.check_stack(0);
 
 		GetFeatureFunction("run");
-		auto subsobj = new AutoToFile(L, c->grid, true, c->grid->subsFormat);
+		auto subsobj = new AutoToFile(L, c->grid->file, true, c->grid->subsFormat);
 
-		int original_offset = c->grid->SInfoSize() + c->grid->StylesSize() + 1;
+		int original_offset = c->grid->file->SInfoSize() + c->grid->file->StylesSize() + 1;
 		auto original_sel = selected_rows(c);
 		// original active do not have offset
 		int original_active = c->grid->currentLine;
@@ -997,7 +997,7 @@ namespace Auto{
 
 		if (ps->lpd->cancelled || failed){
 			SAFE_DELETE(subsobj);
-			c->grid->DummyUndoF();
+			c->grid->file->DummyUndoF();
 
 			delete ps;
 			return;
@@ -1006,10 +1006,10 @@ namespace Auto{
 		//c->grid->file->ReloadVisibleDialogues();
 		//if(ps->lpd->cancelled && ps->lpd->IsModal()){ps->lpd->EndModal(0);}
 		//c->grid->SaveSelections(true);
-		original_offset = c->grid->SInfoSize() + c->grid->StylesSize() + 1;
+		original_offset = c->grid->file->SInfoSize() + c->grid->file->StylesSize() + 1;
 		int active_idx = -1;
 
-		size_t dialsCount = c->grid->GetCount();
+		size_t dialsCount = c->grid->file->GetCount();
 
 		// Check for a new active row
 		if (lua_isnumber(L, -1)) {
@@ -1019,7 +1019,7 @@ namespace Auto{
 				active_idx = original_active;
 			}
 			else
-				c->grid->ClearSelections();
+				c->grid->file->ClearSelections();
 		}
 
 		//stackcheck.check_stack(2);
@@ -1027,7 +1027,7 @@ namespace Auto{
 
 		// top of stack will be selected lines array, if any was returned
 		if (lua_istable(L, -1)) {
-			c->grid->ClearSelections();
+			c->grid->file->ClearSelections();
 			lua_for_each(L, [&] {
 				if (!lua_isnumber(L, -1))
 					return;
@@ -1038,7 +1038,7 @@ namespace Auto{
 				}
 				if (active_idx == -1)
 					active_idx = cur;
-				c->grid->InsertSelection(cur);
+				c->grid->file->InsertSelection(cur);
 			});
 
 		}
@@ -1070,9 +1070,9 @@ namespace Auto{
 		stackcheck.check_stack(0);
 
 		GetFeatureFunction("isactive");
-		auto subsobj = new AutoToFile(L, c->grid, true, c->grid->subsFormat);
+		auto subsobj = new AutoToFile(L, c->grid->file, true, c->grid->subsFormat);
 		push_value(L, selected_rows(c));
-		push_value(L, c->grid->currentLine + c->grid->SInfoSize() + c->grid->StylesSize() + 1);
+		push_value(L, c->grid->currentLine + c->grid->file->SInfoSize() + c->grid->file->StylesSize() + 1);
 
 		int err = lua_pcall(L, 3, 1, 0);
 
@@ -1160,9 +1160,9 @@ namespace Auto{
 		scripts.push_back(ls);
 		if (!autoload && addToSinfo){
 			SubsGrid *grid = Notebook::GetTab()->grid;
-			wxString scriptpaths = grid->GetSInfo(L"Automation Scripts");
+			wxString scriptpaths = grid->file->GetSInfo(L"Automation Scripts");
 			scriptpaths << L"|" << filename;
-			grid->AddSInfo(L"Automation Scripts", scriptpaths);
+			grid->file->AddSInfo(L"Automation Scripts", scriptpaths);
 			grid->SetModified(ASS_PROPERTIES, false, true, -1, false);
 		}
 		HasChanges = true;
@@ -1271,7 +1271,7 @@ namespace Auto{
 
 	bool Automation::AddFromSubs()
 	{
-		wxString paths = Notebook::GetTab()->grid->GetSInfo(L"Automation Scripts");
+		wxString paths = Notebook::GetTab()->grid->file->GetSInfo(L"Automation Scripts");
 
 		if (paths == L""){ return false; }
 		if (paths == scriptpaths && ASSScripts.size() > 0){ return false; }

@@ -252,7 +252,7 @@ void DrawingAndClip::SetCurVisual()
 			frz = frzd;
 		}
 		else {
-			Styles* actualStyle = tab->grid->GetStyle(0, tab->edit->line->Style);
+			Styles* actualStyle = tab->grid->file->GetStyle(0, tab->edit->line->Style);
 			double result = 0.;
 			actualStyle->Angle.ToDouble(&result);
 			frz = result;
@@ -376,7 +376,7 @@ void DrawingAndClip::SetClip(bool dummy, bool redraw, bool changeEditorText)
 		bool showOriginalOnVideo = !Options.GetBool(TL_MODE_HIDE_ORIGINAL_ON_VIDEO);
 		wxString *dtxt;
 		wxArrayInt sels;
-		grid->GetSelections(sels);
+		grid->file->GetSelections(sels);
 		bool skipInvisible = dummy && tab->video->GetState() != Playing;
 		if ((dummy && !dummytext) || selPositions.size() != sels.size()) {
 			bool visible = false;
@@ -390,10 +390,10 @@ void DrawingAndClip::SetClip(bool dummy, bool redraw, bool changeEditorText)
 		if (dummy) { dtxt = new wxString(*dummytext); }
 		int _time = tab->video->Tell();
 		int moveLength = 0;
-		const wxString &tlStyle = tab->grid->GetSInfo(L"TLMode Style");
+		const wxString &tlStyle = tab->grid->file->GetSInfo(L"TLMode Style");
 		for (size_t i = 0; i < sels.size(); i++) {
 
-			Dialogue *Dial = grid->GetDialogue(sels[i]);
+			Dialogue *Dial = grid->file->GetDialogue(sels[i]);
 			if (skipInvisible && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)) { continue; }
 
 			wxString txt = Dial->GetTextNoCopy();
@@ -1285,12 +1285,12 @@ void DrawingAndClip::InvertClip()
 {
 	SubsGrid* grid = tab->grid;
 	wxArrayInt sels;
-	grid->GetSelections(sels);
+	grid->file->GetSelections(sels);
 	wxRegEx re(L"\\\\(i?clip)\\(([^)]*)\\)", wxRE_ADVANCED);
 	if (!re.IsValid())
 		return;
 
-	Dialogue* cdial = grid->GetDialogue(grid->currentLine);
+	Dialogue* cdial = grid->file->GetDialogue(grid->currentLine);
 	const wxString& ctxt = cdial->GetTextNoCopy();
 	wxString clip;
 	size_t movement = 0;

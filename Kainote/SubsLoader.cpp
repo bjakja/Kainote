@@ -112,7 +112,7 @@ bool SubsLoader::LoadASS(const wxString &text)
 				hasFiltering = true;
 
 			if (!tlmode){
-				grid->AddLine(dl);
+				grid->file->AddLine(dl);
 			}
 			else if (tlmode && dl->Style == tlstyle){
 				wxString ntoken = tokenizer.GetNextToken();
@@ -122,42 +122,42 @@ bool SubsLoader::LoadASS(const wxString &text)
 				if (dl->Effect == L"\fD"){
 					tl->ChangeState(4);
 				}
-				grid->AddLine(tl);
+				grid->file->AddLine(tl);
 				delete dl;
 			}
 			else{
-				grid->AddLine(dl);
+				grid->file->AddLine(dl);
 			}
 		}
 		else if (token.StartsWith(L"Style:"))
 		{
 			//1 = ASS, 2 = SSA, needs only for subtitles loading.
-			grid->AddStyle(new Styles(token, format));
+			grid->file->AddStyle(new Styles(token, format));
 			section = 2;
 		}
 		else if (token.StartsWith(L"[V4")){
 			if (!token.StartsWith(L"[V4+")){
 				format = 2;
-				grid->AddSInfo(L"ScriptType", L"4.00+");
+				grid->file->AddSInfo(L"ScriptType", L"4.00+");
 			}
 			//format SSA was removed from working formats
 			//need to send to constructor of styles 2 as format SSA, SRT has 3 to avoid bugs
 			section = 1;
 		}
 		else if (token[0] != L';' && token[0] != L'[' && token.Find(L':') != wxNOT_FOUND && !token.StartsWith(L"Format")){
-			grid->AddSInfo(token);
+			grid->file->AddSInfo(token);
 		}
 		else if (token.StartsWith(L"[Eve")){
-			tlmode = (grid->GetSInfo(L"TLMode") == L"Yes");
-			if (tlmode){ tlstyle = grid->GetSInfo(L"TLMode Style"); if (tlstyle == emptyString){ tlmode = false; } }
+			tlmode = (grid->file->GetSInfo(L"TLMode") == L"Yes");
+			if (tlmode){ tlstyle = grid->file->GetSInfo(L"TLMode Style"); if (tlstyle == emptyString){ tlmode = false; } }
 			section = 3;
 		}
 	}
 	grid->hasTLMode = tlmode;
-	grid->SetFiltered(hasFiltering);
-	const wxString &matrix = grid->GetSInfo(L"YCbCr Matrix");
-	if (matrix == emptyString || matrix == L"None"){ grid->AddSInfo(L"YCbCr Matrix", L"TV.601"); }
-	return grid->GetCount() > 0;
+	grid->file->SetFiltered(hasFiltering);
+	const wxString &matrix = grid->file->GetSInfo(L"YCbCr Matrix");
+	if (matrix == emptyString || matrix == L"None"){ grid->file->AddSInfo(L"YCbCr Matrix", L"TV.601"); }
+	return grid->file->GetCount() > 0;
 }
 
 bool SubsLoader::LoadSRT(const wxString &srttext)
@@ -174,7 +174,7 @@ bool SubsLoader::LoadSRT(const wxString &srttext)
 			//first line is always empty after "1" trim
 			//it's not if there is no number
 			if (!text1.empty()){
-				grid->AddLine(new Dialogue(text1));
+				grid->file->AddLine(new Dialogue(text1));
 				text1.Empty();
 			}
 			//set next line times
@@ -187,10 +187,10 @@ bool SubsLoader::LoadSRT(const wxString &srttext)
 	}
 
 	if (text1 != emptyString){
-		grid->AddLine(new Dialogue(text1.Trim()));
+		grid->file->AddLine(new Dialogue(text1.Trim()));
 		text1 = emptyString;
 	}
-	return grid->GetCount() > 0;
+	return grid->file->GetCount() > 0;
 }
 
 bool SubsLoader::LoadTXT(const wxString &text)
@@ -198,9 +198,9 @@ bool SubsLoader::LoadTXT(const wxString &text)
 	wxStringTokenizer tokenizer(text, L"\n", wxTOKEN_STRTOK);
 	while (tokenizer.HasMoreTokens()){
 		wxString text = tokenizer.GetNextToken().Trim();
-		grid->AddLine(new Dialogue(text.Trim()));
+		grid->file->AddLine(new Dialogue(text.Trim()));
 	}
-	return grid->GetCount() > 0;
+	return grid->file->GetCount() > 0;
 }
 
 void SubsLoader::TrimLastNumber(wxString* text)

@@ -527,7 +527,7 @@ bool RendererDirectShow::OpenFile(const wxString &fname, int subsFlag, bool vobs
 	if (vobsub)
 		subsFlag = CLOSE_SUBTITLES;
 	else {
-		SetColorSpace(tab->grid->GetSInfo(L"YCbCr Matrix"), false);
+		SetColorSpace(tab->grid->file->GetSInfo(L"YCbCr Matrix"), false);
 	}
 
 	OpenSubs(subsFlag, false, nullptr, true);

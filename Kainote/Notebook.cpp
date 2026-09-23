@@ -887,7 +887,7 @@ void Notebook::ContextMenu(const wxPoint &pos, int i)
 		tabsMenu.Append(MENU_CHOOSE + g, Page(g)->SubsName, emptyString, true, 0, 0, (g == iter) ? ITEM_RADIO : ITEM_NORMAL);
 	}
 	tabsMenu.AppendSeparator();
-	tabsMenu.Append(MENU_SAVE + i, _("Save"), _("Save"))->Enable(i >= 0 && Pages[i]->grid->IsModified());
+	tabsMenu.Append(MENU_SAVE + i, _("Save"), _("Save"))->Enable(i >= 0 && Pages[i]->grid->file->IsModified());
 	tabsMenu.Append(MENU_SAVE - 1, _("Save all"), _("Save all"));
 	tabsMenu.Append(MENU_CHOOSE - 1, _("Close all tabs"), _("Close all tabs"));
 	int num;
@@ -930,7 +930,7 @@ void Notebook::ContextMenu(const wxPoint &pos, int i)
 	Menu *comparisonMenu = new Menu();
 	comparisonMenu->Append(MENU_COMPARE + 1, _("Compare by times"), nullptr, emptyString, ITEM_CHECK, canCompare)->Check(compareBy & COMPARE_BY_TIMES);
 	comparisonMenu->Append(MENU_COMPARE + 2, _("Compare by visible lines"), nullptr, emptyString, ITEM_CHECK, canCompare)->Check((compareBy & COMPARE_BY_VISIBLE)>0);
-	comparisonMenu->Append(MENU_COMPARE + 3, _("Compare by selections"), nullptr, emptyString, ITEM_CHECK, canCompare && Pages[iter]->grid->SelectionsSize() > 0 && Pages[i]->grid->SelectionsSize() > 0)->Check((compareBy & COMPARE_BY_SELECTIONS) > 0);
+	comparisonMenu->Append(MENU_COMPARE + 3, _("Compare by selections"), nullptr, emptyString, ITEM_CHECK, canCompare && Pages[iter]->grid->file->SelectionsSize() > 0 && Pages[i]->grid->file->SelectionsSize() > 0)->Check((compareBy & COMPARE_BY_SELECTIONS) > 0);
 	comparisonMenu->Append(MENU_COMPARE + 4, _("Compare by styles"), nullptr, emptyString, ITEM_CHECK, canCompare)->Check((compareBy & COMPARE_BY_STYLES) > 0);
 	comparisonMenu->Append(MENU_COMPARE + 5, _("Compare by selected styles"), styleComparisonMenu, emptyString, ITEM_CHECK, canCompare)->Check(SubsGridBase::compareStyles.size() > 0);
 	comparisonMenu->Append(MENU_COMPARE, _("Compare"))->Enable(canCompare);
@@ -1142,7 +1142,7 @@ bool Notebook::LoadSubtitles(TabPanel *tab, const wxString & path, int active /*
 	if (ext == L"ssa"){ ext = L"ass"; }
 	tab->SubsName = KaiPathName(tab->SubsPath);
 	tab->video->DisableVisuals(ext != L"ass");
-	if (active != -1 && active != tab->grid->currentLine && active < tab->grid->GetCount()){
+	if (active != -1 && active != tab->grid->currentLine && active < tab->grid->file->GetCount()){
 		tab->grid->SetActive(active);
 	}
 	if (scroll != -1)
@@ -1165,11 +1165,11 @@ int Notebook::LoadVideo(TabPanel *tab, const wxString & path,
 	if (hasEditor) {
 		wxString subsPath = (path.empty()) ?
 			KaiPathDir(tab->SubsPath, wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR) : KaiPathDir(path, wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR);
-		audiopath = tab->grid->GetSInfo(L"Audio File");
-		keyframespath = tab->grid->GetSInfo(L"Keyframes File");
+		audiopath = tab->grid->file->GetSInfo(L"Audio File");
+		keyframespath = tab->grid->file->GetSInfo(L"Keyframes File");
 
 		if (loadPrompt) {
-			videopath = tab->grid->GetSInfo(L"Video File");
+			videopath = tab->grid->file->GetSInfo(L"Video File");
 			hasVideoPath = (!videopath.empty() && ((wxFileExists(videopath) && videopath.find(L':') == 1) ||
 				videopath.StartsWith(L"?dummy") || wxFileExists(videopath.Prepend(subsPath))));
 
@@ -1441,7 +1441,7 @@ void Notebook::LoadLastSession(bool loadCrashSession, const wxString &externalPa
 							if (orgSubtitles != subtitles) {
 								tab->SubsPath = orgSubtitles;
 								tab->SubsName = KaiPathName(tab->SubsPath);
-								tab->grid->RemoveLastIterSave();
+								tab->grid->file->RemoveLastIterSave();
 								tab->grid->UpdateUR(true);
 							}
 						}else

@@ -110,9 +110,9 @@ wxString SpellCheckerDialog::FindNextMisspell()
 		lastLine = lastActiveLine = tab->grid->currentLine;
 		lastMisspell = 0;
 	}
-	for (size_t i = lastLine; i < tab->grid->GetCount(); i++){
+	for (size_t i = lastLine; i < tab->grid->file->GetCount(); i++){
 		errors.clear();
-		Dialogue *Dial = tab->grid->GetDialogue(i);
+		Dialogue *Dial = tab->grid->file->GetDialogue(i);
 		if (Dial->IsComment && noComments){ continue; }
 		const wxString Text = 
 			(tab->grid->hasTLMode) ? Dial->TextTl : Dial->Text;
@@ -206,8 +206,8 @@ void SpellCheckerDialog::ReplaceAll(wxCommandEvent &evt)
 	int lenMismatch = 0;
 	int textPos = 0;
 
-	for (size_t i = 0; i < tab->grid->GetCount(); i++){
-		Dialogue *Dial = tab->grid->GetDialogue(i);
+	for (size_t i = 0; i < tab->grid->file->GetCount(); i++){
+		Dialogue *Dial = tab->grid->file->GetDialogue(i);
 		if (Dial->IsComment && noComments){ continue; }
 		wxString lineText = (tab->grid->hasTLMode && Dial->TextTl != emptyString) ? Dial->TextTl : Dial->Text;
 		text = lineText.Lower();

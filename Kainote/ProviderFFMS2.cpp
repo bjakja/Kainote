@@ -365,7 +365,7 @@ done:
 
 		if (m_renderer) {
 			SubsGrid* grid = ((TabPanel*)m_renderer->videoControl->GetParent())->grid;
-			const wxString& colormatrix = grid->GetSInfo(L"YCbCr Matrix");
+			const wxString& colormatrix = grid->file->GetSInfo(L"YCbCr Matrix");
 			bool changeMatrix = false;
 			if (m_CS == FFMS_CS_UNSPECIFIED) {
 				m_CS = m_width > 1024 || m_height >= 600 ? FFMS_CS_BT709 : FFMS_CS_BT470BG;

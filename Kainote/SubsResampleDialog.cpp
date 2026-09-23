@@ -139,15 +139,15 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 			return;
 		}
 		SubsGrid *grid = Notebook::GetTab()->grid;
-		grid->AddSInfo(L"PlayResX", std::to_wstring(videoSizeX));
-		grid->AddSInfo(L"PlayResY", std::to_wstring(videoSizeY));
+		grid->file->AddSInfo(L"PlayResX", std::to_wstring(videoSizeX));
+		grid->file->AddSInfo(L"PlayResY", std::to_wstring(videoSizeY));
 		grid->ResizeSubs(videoSizeX / (float)subsSizeX,
 			videoSizeY / (float)subsSizeY, resamplingOptions->IsEnabled() &&
 			resamplingOptions->GetSelection() == 1);
 
-		if (!grid->GetSInfo(L"LayoutResX").empty() || !grid->GetSInfo(L"LayoutResX").empty()) {
-			grid->AddSInfo(L"LayoutResX", std::to_wstring(videoSizeX));
-			grid->AddSInfo(L"LayoutResY", std::to_wstring(videoSizeY));
+		if (!grid->file->GetSInfo(L"LayoutResX").empty() || !grid->file->GetSInfo(L"LayoutResX").empty()) {
+			grid->file->AddSInfo(L"LayoutResX", std::to_wstring(videoSizeX));
+			grid->file->AddSInfo(L"LayoutResY", std::to_wstring(videoSizeY));
 		}
 
 		grid->SetModified(SUBTITLES_RESAMPLE);
@@ -190,11 +190,11 @@ SubsMismatchResolutionDialog::SubsMismatchResolutionDialog(wxWindow *parent, con
 	MappedButton *TurnOff = new MappedButton(this, 26549, _("Disable warning"));
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent &evt){
 		SubsGrid *grid = Notebook::GetTab()->grid;
-		grid->AddSInfo(L"PlayResX", std::to_wstring(videoSize.x));
-		grid->AddSInfo(L"PlayResY", std::to_wstring(videoSize.y));
-		if (!grid->GetSInfo(L"LayoutResX").empty() || !grid->GetSInfo(L"LayoutResX").empty()) {
-			grid->AddSInfo(L"LayoutResX", std::to_wstring(videoSize.x));
-			grid->AddSInfo(L"LayoutResY", std::to_wstring(videoSize.y));
+		grid->file->AddSInfo(L"PlayResX", std::to_wstring(videoSize.x));
+		grid->file->AddSInfo(L"PlayResY", std::to_wstring(videoSize.y));
+		if (!grid->file->GetSInfo(L"LayoutResX").empty() || !grid->file->GetSInfo(L"LayoutResX").empty()) {
+			grid->file->AddSInfo(L"LayoutResX", std::to_wstring(videoSize.x));
+			grid->file->AddSInfo(L"LayoutResY", std::to_wstring(videoSize.y));
 		}
 		if (resamplingOptions->GetSelection() != 0){
 			grid->ResizeSubs(resizeX, resizeY, resamplingOptions->GetSelection() == 2);

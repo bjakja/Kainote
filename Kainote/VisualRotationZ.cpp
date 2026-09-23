@@ -269,7 +269,7 @@ void RotationZ::SetCurVisual()
 		lastmove.x += lastmove.y;
 	}
 	else{
-		Styles *actualStyle = tab->grid->GetStyle(0, tab->edit->line->Style);
+		Styles *actualStyle = tab->grid->file->GetStyle(0, tab->edit->line->Style);
 		double result = 0.; 
 		actualStyle->Angle.ToDouble(&result);
 		lastmove.y = result;

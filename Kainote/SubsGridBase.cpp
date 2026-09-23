@@ -116,8 +116,9 @@ bool sortlayer(Dialogue *i, Dialogue *j)
 
 SubsGridBase::SubsGridBase(wxWindow *parent, const long int id, const wxPoint& pos, const wxSize& size, long style)
 	: KaiScrolledWindow(parent, id, pos, size, style | wxVERTICAL)
+	, file(new SubsFile())
 {
-	SubsFile::SetMutex(&editionMutex);
+	file->SetMutex(&editionMutex);
 	makebackup = true;
 	ismenushown = false;
 	showFrames = false;
@@ -137,13 +138,14 @@ SubsGridBase::SubsGridBase(wxWindow *parent, const long int id, const wxPoint& p
 SubsGridBase::~SubsGridBase()
 {
 	Clearing(false);
+	delete file;
 }
 
 void SubsGridBase::Clearing(bool setup/* = true*/)
 {
 	SAFE_DELETE(Comparison);
 	if(setup)
-		Clear();
+		file->Clear();
 
 	SpellErrors.clear();
 	showOriginal = false;
@@ -158,7 +160,7 @@ void SubsGridBase::ChangeLine(unsigned char editionType, Dialogue *line1, size_t
 {
 	lastRow = wline;
 	wxArrayInt sels;
-	GetSelections(sels);
+	file->GetSelections(sels);
 	if (sels.size() < 2){
 		ChangeCell(cells, wline, line1);
 	}
@@ -241,16 +243,16 @@ void SubsGridBase::Convert(char type)
 
 	size_t i = 0;
 	Dialogue *lastDialc = nullptr;
-	while (i < GetCount())
+	while (i < file->GetCount())
 	{
-		if ((type > ASS) && (subsFormat < SRT) && GetDialogue(i)->IsComment){
-			while (i < GetCount() && GetDialogue(i)->IsComment){
-				DeleteDialogues(i, i + 1);
+		if ((type > ASS) && (subsFormat < SRT) && file->GetDialogue(i)->IsComment){
+			while (i < file->GetCount() && file->GetDialogue(i)->IsComment){
+				file->DeleteDialogues(i, i + 1);
 			}
-			if (i >= GetCount())
+			if (i >= file->GetCount())
 				break;
 		}
-		Dialogue *dialc = CopyDialogueF(i);
+		Dialogue *dialc = file->CopyDialogueF(i);
 		dialc->Convert(type, prefix);
 		if ((newendtimes && type != TMP) || subsFormat == TMP)
 		{
@@ -277,14 +279,14 @@ void SubsGridBase::Convert(char type)
 		//TODO: make option for video resolution
 		if (resx == emptyString){ resx = L"1280"; }
 		if (resy == emptyString){ resx = L"720"; }
-		AddSInfo(L"PlayResX", resx, false);
-		AddSInfo(L"PlayResY", resy, false);
-		AddSInfo(L"YCbCr Matrix", L"TV.601", false);
-		AddStyle(Options.GetConversionStyle()->Copy()); 
+		file->AddSInfo(L"PlayResX", resx, false);
+		file->AddSInfo(L"PlayResY", resy, false);
+		file->AddSInfo(L"YCbCr Matrix", L"TV.601", false);
+		file->AddStyle(Options.GetConversionStyle()->Copy()); 
 		edit->RefreshStyle();
 	}
 	if (subsFormat == ASS){
-		SortAll([](Dialogue *i, Dialogue *j){
+		file->SortAll([](Dialogue *i, Dialogue *j){
 			if (i->Start.mstime != j->Start.mstime){
 				return (i->Start.mstime < j->Start.mstime);
 			}
@@ -297,19 +299,19 @@ void SubsGridBase::Convert(char type)
 			return (f.compare(&s1[0], &s1[0] + wcslen(s1),
 				&s2[0], &s2[0] + wcslen(s2)) < 0);
 		});
-		Dialogue *lastDialogue = GetDialogue(0);
+		Dialogue *lastDialogue = file->GetDialogue(0);
 		size_t i = 1;
-		while (i < GetCount()){
-			Dialogue *actualDialogue = GetDialogue(i);
+		while (i < file->GetCount()){
+			Dialogue *actualDialogue = file->GetDialogue(i);
 			if (lastDialogue->Start == actualDialogue->Start &&
 				lastDialogue->End == actualDialogue->End &&
 				lastDialogue->Text == actualDialogue->Text){
-				DeleteDialogues(i - 1, i);
+				file->DeleteDialogues(i - 1, i);
 				lastDialogue = actualDialogue;
 				continue;
 			}
 			else if (actualDialogue->Text == emptyString){
-				DeleteDialogues(i, i + 1);
+				file->DeleteDialogues(i, i + 1);
 				continue;
 			}
 			lastDialogue = actualDialogue;
@@ -322,7 +324,7 @@ void SubsGridBase::Convert(char type)
 	if (type == ASS || oldSubsFormat == ASS){
 		Kai->SetSubsResolution();
 	}
-	edit->SetLine((currentLine < GetCount()) ? currentLine : 0);
+	edit->SetLine((currentLine < file->GetCount()) ? currentLine : 0);
 	edit->ResizeTimeControls(subsFormat);
 
 	SetModified(GRID_CONVERT);
@@ -340,7 +342,7 @@ void SubsGridBase::SaveFile(const wxString &filename, bool normalSave, bool load
 		edit->Send(EDITBOX_LINE_EDITION, false, dummyEditboxChanges, true);
 	}
 	wxString txt;
-	const wxString &tlmode = GetSInfo(L"TLMode");
+	const wxString &tlmode = file->GetSInfo(L"TLMode");
 	bool translated = tlmode == L"Translated";
 	bool tlmodeOn = tlmode != emptyString;
 
@@ -351,12 +353,12 @@ void SubsGridBase::SaveFile(const wxString &filename, bool normalSave, bool load
 	
 	ow.PartFileWrite(txt);
 
-	txt = GetSInfo(L"TLMode Style");
+	txt = file->GetSInfo(L"TLMode Style");
 	wxString raw;
 	if (loadFromEditbox){
-		for (size_t i = 0; i < GetCount(); i++)
+		for (size_t i = 0; i < file->GetCount(); i++)
 		{
-			Dialogue *dial = GetDialogue(i);
+			Dialogue *dial = file->GetDialogue(i);
 			if (!ignoreFiltered && !dial->isVisible || dial->NonDialogue){ continue; }
 			//when i == editbox line get the last changes
 			if (i == currentLine){ dial = edit->line; };
@@ -387,9 +389,9 @@ void SubsGridBase::SaveFile(const wxString &filename, bool normalSave, bool load
 		}
 	}
 	else{
-		for (size_t i = 0; i < GetCount(); i++)
+		for (size_t i = 0; i < file->GetCount(); i++)
 		{
-			Dialogue *dial = GetDialogue(i);
+			Dialogue *dial = file->GetDialogue(i);
 
 			if (tlmodeOn){
 				bool hasTextTl = dial->TextTl != emptyString;
@@ -419,7 +421,7 @@ void SubsGridBase::SaveFile(const wxString &filename, bool normalSave, bool load
 
 	ow.CloseFile();
 	if (normalSave){
-		SetLastSave();
+		file->SetLastSave();
 		tab->SetLastSaveTime();
 		Refresh(false);
 	}
@@ -508,12 +510,12 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 
 	//bool fromStyle = false;
 
-	size_t firstSelection = FirstSelection();
+	size_t firstSelection = file->FirstSelection();
 	if (firstSelection == -1 && whichLines != 0 && whichLines != 4){
 		KaiMessageBox(_("No lines selected for shifting"), _("Warning")); return;
 	}
 
-	int difftime = (VAS) ? GetDialogue(markedLine)->Start.mstime : GetDialogue(markedLine)->End.mstime;
+	int difftime = (VAS) ? file->GetDialogue(markedLine)->Start.mstime : file->GetDialogue(markedLine)->End.mstime;
 
 	if ((moveTimeOptions & 4) && tab->video->GetState() != None){
 		if (byFrame){
@@ -537,26 +539,26 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 		}
 	}
 
-	int firsttime = GetDialogue(firstSelection)->Start.mstime;
+	int firsttime = file->GetDialogue(firstSelection)->Start.mstime;
 	Dialogue *dialc;
 	Dialogue *Dial;
 	bool skipFiltered = !ignoreFiltered;
 	if (PostprocessorOptions){ time = 0; frame = 0; VAS = 0; whichTimes = 0; correctEndTimes = 0; moveTimeOptions = 0; }
 
-	for (size_t i = 0; i < GetCount(); i++)
+	for (size_t i = 0; i < file->GetCount(); i++)
 	{
-		Dial = GetDialogue(i);
+		Dial = file->GetDialogue(i);
 		if (skipFiltered && !Dial->isVisible || Dial->NonDialogue){ continue; }
 
 		if (whichLines == 0
-			|| (whichLines == 1 && IsSelected(i))//selected lines
+			|| (whichLines == 1 && file->IsSelected(i))//selected lines
 			|| (whichLines == 3 && firsttime <= Dial->Start.mstime)//times higher or equal
 			|| (whichLines == 2 && i >= firstSelection)//from selection
 			|| (whichLines == 4 && firsttime >= Dial->Start.mstime)//times lower or equal
 			|| (whichLines == 5 && styles.Find(L"," + Dial->Style + L",") != -1))//by choosen styles
 		{
 
-			dialc = CopyDialogueF(i, true, true);
+			dialc = file->CopyDialogueF(i, true, true);
 			int startTrimed = 0, endTrimed = 0, duration = 0;
 			if (changeTagTimes){
 				GetStartEndDelay(timebase, dialc, &startTrimed, &endTrimed);
@@ -782,11 +784,11 @@ void SubsGridBase::SortIt(short what, bool all)
 {
 	SaveSelections();
 	if (all){
-		SortAll((what == 0) ? sortstart : (what == 1) ? sortend : (what == 2) ? sortstyle :
+		file->SortAll((what == 0) ? sortstart : (what == 1) ? sortend : (what == 2) ? sortstyle :
 			(what == 3) ? sortactor : (what == 4) ? sorteffect : sortlayer);
 	}
 	else{
-		SortSelected((what == 0) ? sortstart : (what == 1) ? sortend : (what == 2) ? sortstyle :
+		file->SortSelected((what == 0) ? sortstart : (what == 1) ? sortend : (what == 2) ? sortstyle :
 			(what == 3) ? sortactor : (what == 4) ? sorteffect : sortlayer);
 	}
 
@@ -798,7 +800,7 @@ void SubsGridBase::SortIt(short what, bool all)
 void SubsGridBase::DeleteRow(int rw, int len)
 {
 	int rwlen = rw + len;
-	DeleteDialogues(rw, rwlen);
+	file->DeleteDialogues(rw, rwlen);
 	if ((int)SpellErrors.size() > rwlen){ SpellErrors.erase(SpellErrors.begin() + rw, SpellErrors.begin() + rwlen); }
 	else{ SpellErrors.clear(); }
 }
@@ -806,11 +808,11 @@ void SubsGridBase::DeleteRow(int rw, int len)
 void SubsGridBase::DeleteRows()
 {
 	Freeze();
-	DeleteSelectedDialogues();
-	int sel = FirstSelection();
+	file->DeleteSelectedDialogues();
+	int sel = file->FirstSelection();
 	SpellErrors.clear();
 	SaveSelections(true);
-	if (GetCount() < 1){ AddLine(new Dialogue()); }
+	if (file->GetCount() < 1){ file->AddLine(new Dialogue()); }
 	SetModified(GRID_DELETE_LINES, true, false, sel);
 	Thaw();
 	RefreshColumns();
@@ -821,7 +823,7 @@ bool SubsGridBase::MoveRows(int step, bool keyStep /*= false*/)
 	//this would be less complicated if it use a id for calculation
 	//but it would take more time for calculate ids for all selected lines
 	wxArrayInt sels;
-	GetSelections(sels);
+	file->GetSelections(sels);
 
 	if (sels.GetCount() < 1 && step == 0){ return false; }
 	int blocker = 0;
@@ -829,14 +831,14 @@ bool SubsGridBase::MoveRows(int step, bool keyStep /*= false*/)
 	// get skipped lines from start
 	if (step < 0){
 		for (auto cur = sels.begin(); cur != sels.end(); cur++){
-			if (blocker == GetElementByKey(*cur)){
+			if (blocker == file->GetElementByKey(*cur)){
 				blocker++;
 			}
 			else
 				break;
 		}
 	}
-	int size = GetKeyFromPosition(GetCount(), -1);
+	int size = GetKeyFromPosition(file->GetCount(), -1);
 	int blockersize = size;
 	std::vector<std::pair<Dialogue*, int>> selectedDialogs;
 	for (auto cur = sels.rbegin(); cur != (sels.rend() - blocker); cur++)
@@ -848,9 +850,9 @@ bool SubsGridBase::MoveRows(int step, bool keyStep /*= false*/)
 			backblocker++;
 			continue;
 		}
-		selectedDialogs.push_back(std::make_pair(GetDialogue(sel), sel));
+		selectedDialogs.push_back(std::make_pair(file->GetDialogue(sel), sel));
 		DeleteRow(sel);
-		EraseSelection(sel);
+		file->EraseSelection(sel);
 	}
 	//if something is not skipped go to moving
 	if (!selectedDialogs.size())
@@ -879,7 +881,7 @@ bool SubsGridBase::MoveRows(int step, bool keyStep /*= false*/)
 			Dialogue *Dialc = dialPair.first->Copy();
 			Dialc->ChangeDialogueState(1);
 			InsertRows(sel, 1, Dialc);
-			InsertSelection(sel);
+			file->InsertSelection(sel);
 			lastSel = sel;
 		}
 	}
@@ -911,11 +913,11 @@ bool SubsGridBase::MoveRows(int step, bool keyStep /*= false*/)
 			Dialogue *Dialc = dialPair.first->Copy();
 			Dialc->ChangeDialogueState(1);
 			InsertRows(sel, 1, Dialc);
-			InsertSelection(sel);
+			file->InsertSelection(sel);
 			lastSel = sel;
 		}
 	}
-	size_t firstSelection = FirstSelection();
+	size_t firstSelection = file->FirstSelection();
 	edit->SetLine(firstSelection);
 	ScrollTo(firstSelection, true);
 	Refresh(false);
@@ -925,7 +927,7 @@ bool SubsGridBase::MoveRows(int step, bool keyStep /*= false*/)
 void SubsGridBase::DeleteText()
 {
 	wxArrayInt sels;
-	GetSelections(sels);
+	file->GetSelections(sels);
 	for (auto i : sels){
 		CopyDialogue(i)->Text = emptyString;
 	}
@@ -934,16 +936,16 @@ void SubsGridBase::DeleteText()
 void SubsGridBase::UpdateUR(bool toolbar)
 {
 	bool undo = false, _redo = false;
-	GetURStatus(&undo, &_redo);
+	file->GetURStatus(&undo, &_redo);
 	Kai->Menubar->Enable(GLOBAL_UNDO, undo);
 	Kai->Menubar->Enable(GLOBAL_REDO, _redo);
-	Kai->Menubar->Enable(GLOBAL_UNDO_TO_LAST_SAVE, GetActualHistoryIter() != 0 && GetLastSaveIter() != -1);
+	Kai->Menubar->Enable(GLOBAL_UNDO_TO_LAST_SAVE, file->GetActualHistoryIter() != 0 && file->GetLastSaveIter() != -1);
 	Kai->Menubar->Enable(GLOBAL_SAVE_SUBS, true);
 	if (toolbar){
 		Kai->Toolbar->UpdateId(GLOBAL_UNDO, undo);
 		Kai->Toolbar->UpdateId(GLOBAL_REDO, _redo);
 		Kai->Toolbar->UpdateId(GLOBAL_SAVE_SUBS, true);
-		int iter = Iter();
+		int iter = file->Iter();
 		Kai->Toolbar->UpdateId(GLOBAL_HISTORY, iter > 0);
 	}
 }
@@ -952,20 +954,20 @@ void SubsGridBase::DoUndo(bool redo, int iter)
 {
 	//wxMutexLocker lock(editionMutex);
 	Freeze();
-	const wxString &resolution = GetSInfo(L"PlayResX") + L" x " + GetSInfo(L"PlayResY");
-	const wxString &matrix = GetSInfo(L"YCbCr Matrix");
-	const wxString &tlmode = GetSInfo(L"TLMode");
+	const wxString &resolution = file->GetSInfo(L"PlayResX") + L" x " + file->GetSInfo(L"PlayResY");
+	const wxString &matrix = file->GetSInfo(L"YCbCr Matrix");
+	const wxString &tlmode = file->GetSInfo(L"TLMode");
 	SaveSelections();
 	savedSelections = false;
 	bool failed = false;
-	if (iter != -2){ failed = SetHistory(iter); }
-	else if (redo){ failed = Redo(); }
-	else{ failed = Undo(); }
+	if (iter != -2){ failed = file->SetHistory(iter); }
+	else if (redo){ failed = file->Redo(); }
+	else{ failed = file->Undo(); }
 	if (failed){ Thaw(); return; }
 
 	UpdateUR();
 
-	Kai->Label(GetActualHistoryIter());
+	Kai->Label(file->GetActualHistoryIter());
 
 
 	char oldformat = subsFormat;
@@ -983,15 +985,15 @@ void SubsGridBase::DoUndo(bool redo, int iter)
 
 	if (StyleStore::HasStore()){
 		StyleStore *SS = StyleStore::Get();
-		SS->ASSList->SetArray(GetStyleTable());
+		SS->ASSList->SetArray(file->GetStyleTable());
 		SS->ASSList->Refresh(false);
 	}
 	SpellErrors.clear();
 
-	const wxString &newtlmode = GetSInfo(L"TLMode");
+	const wxString &newtlmode = file->GetSInfo(L"TLMode");
 	if (newtlmode != tlmode){
 		hasTLMode = (newtlmode == L"Yes");
-		showOriginal = (GetSInfo(L"TLMode Showtl") == L"Yes" || (hasTLMode && Options.GetBool(TL_MODE_SHOW_ORIGINAL) != 0));
+		showOriginal = (file->GetSInfo(L"TLMode Showtl") == L"Yes" || (hasTLMode && Options.GetBool(TL_MODE_SHOW_ORIGINAL) != 0));
 		edit->SetTlMode(hasTLMode);
 	}
 	if (Comparison){
@@ -999,25 +1001,25 @@ void SubsGridBase::DoUndo(bool redo, int iter)
 	}
 
 	int corrected = -1;
-	edit->SetLine(FindVisibleKey(GetActiveLine(), &corrected));
-	markedLine = FindVisibleKey(GetMarkerLine());
-	scrollPosition = FindVisibleKey(GetScrollPosition());
-	scrollPositionId = GetElementByKey(scrollPosition);
+	edit->SetLine(file->FindVisibleKey(file->GetActiveLine(), &corrected));
+	markedLine = file->FindVisibleKey(file->GetMarkerLine());
+	scrollPosition = file->FindVisibleKey(file->GetScrollPosition());
+	scrollPositionId = file->GetElementByKey(scrollPosition);
 	if (corrected >= 0){
-		EraseSelection(GetActiveLine());
-		InsertSelection(corrected);
+		file->EraseSelection(file->GetActiveLine());
+		file->InsertSelection(corrected);
 	}
 
 	RefreshColumns();
 	edit->RefreshStyle();
 	VideoBox *vb = tab->video;
 
-	const wxString &newResolution = GetSInfo(L"PlayResX") + L" x " + GetSInfo(L"PlayResY");
+	const wxString &newResolution = file->GetSInfo(L"PlayResX") + L" x " + file->GetSInfo(L"PlayResY");
 	if (resolution != newResolution){
 		Kai->SetSubsResolution();
 		vb->ChangeOnScreenResolution(tab);
 	}
-	const wxString &newmatrix = GetSInfo(L"YCbCr Matrix");
+	const wxString &newmatrix = file->GetSInfo(L"YCbCr Matrix");
 	if (matrix != newmatrix){
 		vb->SetColorSpace(newmatrix);
 	}
@@ -1035,17 +1037,17 @@ void SubsGridBase::DoUndo(bool redo, int iter)
 
 void SubsGridBase::DummyUndo(int newIter)
 {
-	if (newIter >= Iter())
+	if (newIter >= file->Iter())
 		return;
 	//wxMutexLocker lock(editionMutex);
-	DummyUndoF(newIter);
+	file->DummyUndoF(newIter);
 	if (SpellErrors.size() > currentLine)
 		SpellErrors[currentLine].clear();
 
 	edit->SetLine(currentLine, false, false);
 	RefreshColumns();
 	UpdateUR();
-	Kai->Label(GetActualHistoryIter());
+	Kai->Label(file->GetActualHistoryIter());
 	VideoBox *vb = tab->video;
 	if (vb->GetState() != None){
 		vb->OpenSubs(OPEN_DUMMY);
@@ -1060,7 +1062,7 @@ void SubsGridBase::DummyUndo(int newIter)
 void SubsGridBase::InsertRows(int Row,
 	const std::vector<Dialogue *> &RowsTable, bool AddToDestroy)
 {
-	InsertRowsF(Row, RowsTable, AddToDestroy);
+	file->InsertRowsF(Row, RowsTable, AddToDestroy);
 	//spellErrors Array take all dialogues for compatybility
 	//but can be simply cleared
 	if (SpellErrors.size() > Row){
@@ -1074,7 +1076,7 @@ void SubsGridBase::InsertRows(int Row,
 // two addings makes crash when object is destroyed.
 void SubsGridBase::InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy, bool Save)
 {
-	InsertRowsF(Row, NumRows, Dialog, AddToDestroy);
+	file->InsertRowsF(Row, NumRows, Dialog, AddToDestroy);
 	//spellErrors Array take all dialogues for compatybility
 	//but can be simply cleared
 	if (SpellErrors.size() > Row){
@@ -1082,7 +1084,7 @@ void SubsGridBase::InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddTo
 		SpellErrors.insert(SpellErrors.begin() + Row, NumRows, emptyarray);
 	}
 	if (Save){
-		InsertSelection(Row);
+		file->InsertSelection(Row);
 		SetModified(GRID_INSERT_ROW);
 	}
 }
@@ -1092,9 +1094,9 @@ void SubsGridBase::SetSubsFormat(wxString ext)
 	subsFormat = ASS;
 	int rw = 0;
 	char subsext = (ext == L"ass" || ext == L"ssa") ? ASS : (ext == L"srt") ? SRT : TMP;
-	while (rw < GetCount())
+	while (rw < file->GetCount())
 	{
-		Dialogue *dial = GetDialogue(rw);
+		Dialogue *dial = file->GetDialogue(rw);
 		if (dial->NonDialogue || dial->Format == 0){ rw++; }
 		else if (!ext.empty() && (subsext != dial->Format || (subsext == TMP && dial->Format>SRT))){ rw++; }//form=dial->Form; 
 		else{ subsFormat = dial->Format; break; }
@@ -1104,7 +1106,7 @@ void SubsGridBase::SetSubsFormat(wxString ext)
 void SubsGridBase::ChangeActiveLine(int newActive, bool scroll)
 {
 	int newCurrentLine = (newActive >= 0) ? newActive : currentLine;
-	if (newCurrentLine >= GetCount()) { newCurrentLine = GetCount() - 1; }
+	if (newCurrentLine >= file->GetCount()) { newCurrentLine = file->GetCount() - 1; }
 	lastRow = newCurrentLine;
 	if (scroll) {
 		if (Options.GetBool(GRID_DONT_CENTER_ACTIVE_LINE))
@@ -1113,7 +1115,7 @@ void SubsGridBase::ChangeActiveLine(int newActive, bool scroll)
 			ScrollTo(newCurrentLine, true);
 	}
 	edit->SetLine(newCurrentLine);
-	InsertSelection(newCurrentLine);
+	file->InsertSelection(newCurrentLine);
 }
 
 
@@ -1121,10 +1123,10 @@ void SubsGridBase::ChangeActiveLine(int newActive, bool scroll)
 //Every SetModified have to find on list and add etitionType
 void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy, int SetEditBoxLine, bool Scroll)
 {
-	if (HasChangesToRecord()){
+	if (file->HasChangesToRecord()){
 		SpellErrors.clear();
 		//wxMutexLocker lock(editionMutex);
-		if (!IsModified()){
+		if (!file->IsModified()){
 			Kai->Toolbar->UpdateId(GLOBAL_SAVE_SUBS, true);
 			Kai->Menubar->Enable(GLOBAL_SAVE_SUBS, true);
 		}
@@ -1138,8 +1140,8 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 		if (redit)
 			ChangeActiveLine(SetEditBoxLine, Scroll);
 
-		SaveUndo(editionType, currentLine, markedLine);
-		Kai->Label(GetActualHistoryIter(), false, Kai->Tabs->FindPanel(tab));
+		file->SaveUndo(editionType, currentLine, markedLine);
+		Kai->Label(file->GetActualHistoryIter(), false, Kai->Tabs->FindPanel(tab));
 		if (!dummy)
 			ShowEditOnVideo(false);
 
@@ -1185,7 +1187,7 @@ void SubsGridBase::ShowEditOnVideo(bool afterUndo)
 
 void SubsGridBase::SwapRows(int frst, int scnd, bool sav)
 {
-	SwapRowsF(frst, scnd);
+	file->SwapRowsF(frst, scnd);
 	if (SpellErrors.size() > frst && SpellErrors.size() > scnd){
 		TextData tmpspell = SpellErrors[frst];
 		SpellErrors[frst] = SpellErrors[scnd];
@@ -1206,46 +1208,46 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
 		edit->SetTlMode(hasTLMode);
 		Kai->Menubar->Enable(GLOBAL_SAVE_TRANSLATION, hasTLMode);
 	}
-	if (hasTLMode && (GetSInfo(L"TLMode Showtl") == L"Yes" || Options.GetBool(TL_MODE_SHOW_ORIGINAL))){ 
+	if (hasTLMode && (file->GetSInfo(L"TLMode Showtl") == L"Yes" || Options.GetBool(TL_MODE_SHOW_ORIGINAL))){ 
 		showOriginal = true; 
 	}
 
 
 	if (subsFormat == MDVD || subsFormat == MPL2){
 		int endt = Options.GetInt(CONVERT_TIME_PER_CHARACTER);
-		for (size_t i = 0; i < GetCount(); i++){
-			Dialogue *dial = GetDialogue(i);
+		for (size_t i = 0; i < file->GetCount(); i++){
+			Dialogue *dial = file->GetDialogue(i);
 
 			if (dial->End.mstime == 0){
 				int newend = (endt*dial->Text.Len());
 				if (newend < 1000){ newend = 1000; }
 				newend += dial->Start.mstime;
 				dial->End.NewTime(newend);
-				if (i<GetCount() - 1){
-					if (dial->End > GetDialogue(i + 1)->Start){
-						dial->End = GetDialogue(i + 1)->Start;
+				if (i<file->GetCount() - 1){
+					if (dial->End > file->GetDialogue(i + 1)->Start){
+						dial->End = file->GetDialogue(i + 1)->Start;
 					}
 				}
 			}
 		}
 	}
 	else if (subsFormat == ASS){
-		if (ext != L"ass"){ originalFormat = 0; if (StylesSize() < 1){ AddStyle(new Styles()); } }
+		if (ext != L"ass"){ originalFormat = 0; if (file->StylesSize() < 1){ file->AddStyle(new Styles()); } }
 		edit->TlMode->Enable(true); edit->RefreshStyle();
 		if (Options.GetBool(GRID_LOAD_SORTED_SUBS)){
-			SortAll(sortstart);
+			file->SortAll(sortstart);
 		}
-		active = wxAtoi(GetSInfo(L"Active Line"));
-		if (active >= GetCount()){ active = 0; }
+		active = wxAtoi(file->GetSInfo(L"Active Line"));
+		if (active >= file->GetCount()){ active = 0; }
 	}
 	else{ edit->TlMode->Enable(false); }
 
 	tab->SetLastSaveTime();
-	InsertSelection(active);
+	file->InsertSelection(active);
 	lastRow = active;
 	markedLine = active;
 
-	EndLoad(OPEN_SUBTITLES, active);
+	file->EndLoad(OPEN_SUBTITLES, active);
 
 	RefreshColumns();
 	//it's faster to change load audio to true than setting audio from kainoteMain 
@@ -1259,7 +1261,7 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
 		int filterBy = Options.GetInt(GRID_FILTER_BY);
 		if (filterBy && Options.GetBool(GRID_FILTER_AFTER_LOAD) && 
 			filterBy != FILTER_BY_SELECTIONS){
-			SetFiltered();
+			file->SetFiltered();
 			SubsGridFiltering filter((SubsGrid*)this, currentLine);
 			filter.Filter(true);
 		}
@@ -1275,7 +1277,7 @@ void SubsGridBase::SetStartTime(int stime)
 {
 	edit->Send(EDITBOX_LINE_EDITION, false, false, true);
 	wxArrayInt sels;
-	GetSelections(sels);
+	file->GetSelections(sels);
 	for (size_t i = 0; i < sels.size(); i++){
 		Dialogue *dialc = CopyDialogue(sels[i]);
 		if (!dialc){ continue; }
@@ -1291,7 +1293,7 @@ void SubsGridBase::SetEndTime(int etime)
 {
 	edit->Send(EDITBOX_LINE_EDITION, false, false, true);
 	wxArrayInt sels;
-	GetSelections(sels);
+	file->GetSelections(sels);
 	for (size_t i = 0; i < sels.size(); i++){
 		Dialogue *dialc = CopyDialogue(sels[i]);
 		if (!dialc){ continue; }
@@ -1306,22 +1308,22 @@ void SubsGridBase::SetEndTime(int etime)
 bool SubsGridBase::SetTlMode(bool mode, bool dontShowDialog/* = false*/)
 {
 	if (mode){
-		if (GetSInfo(L"TLMode") == emptyString){
+		if (file->GetSInfo(L"TLMode") == emptyString){
 			
-			int ssize = StylesSize();
+			int ssize = file->StylesSize();
 			if (ssize > 0){
-				Styles *tlstyl = GetStyle(0, L"Default")->Copy();
+				Styles *tlstyl = file->GetStyle(0, L"Default")->Copy();
 				for (int i = 0; i < ssize; i++){
 					wxString ns = L"TLmode";
 					wxString nss = (i == 0) ? ns : ns << i;
-					if (FindStyle(nss) == -1){ tlstyl->Name = nss; AddSInfo(L"TLMode Style", nss); break; }
+					if (file->FindStyle(nss) == -1){ tlstyl->Name = nss; file->AddSInfo(L"TLMode Style", nss); break; }
 				}
 				tlstyl->Alignment = L"8";
-				AddStyle(tlstyl);
+				file->AddStyle(tlstyl);
 			}
 
 		}
-		AddSInfo(L"TLMode", L"Yes");
+		file->AddSInfo(L"TLMode", L"Yes");
 		hasTLMode = true;
 		if (Options.GetBool(TL_MODE_SHOW_ORIGINAL)){ showOriginal = true; }
 		Kai->Menubar->Enable(GLOBAL_SAVE_TRANSLATION, true);
@@ -1334,25 +1336,25 @@ bool SubsGridBase::SetTlMode(bool mode, bool dontShowDialog/* = false*/)
 		}
 
 		int iinf = -1;
-		GetSInfo(L"TLMode", &iinf);
+		file->GetSInfo(L"TLMode", &iinf);
 		if (iinf >= 0){
-			DeleteSInfo(iinf);
+			file->DeleteSInfo(iinf);
 		}
 		iinf = -1;
-		const wxString &vall = GetSInfo(L"TLMode Style", &iinf);
+		const wxString &vall = file->GetSInfo(L"TLMode Style", &iinf);
 		if (iinf >= 0){
-			int g = FindStyle(vall);
-			if (g >= 0){ DeleteStyle(g); }
-			DeleteSInfo(iinf);
+			int g = file->FindStyle(vall);
+			if (g >= 0){ file->DeleteStyle(g); }
+			file->DeleteSInfo(iinf);
 		}
 
-		for (size_t i = 0; i < GetCount(); i++)
+		for (size_t i = 0; i < file->GetCount(); i++)
 		{
-			Dialogue *dial = GetDialogue(i);
+			Dialogue *dial = file->GetDialogue(i);
 			Dialogue *dialc = nullptr;
 			if (dial->TextTl != emptyString)
 			{
-				dialc = CopyDialogueF(i);
+				dialc = file->CopyDialogueF(i);
 				dialc->Text = dialc->TextTl;
 				dialc->TextTl = emptyString;
 			}
@@ -1377,31 +1379,31 @@ bool SubsGridBase::SetTlMode(bool mode, bool dontShowDialog/* = false*/)
 void SubsGridBase::NextLine(int direction)
 {
 	if (edit->ABox && edit->ABox->audioDisplay->hold != 0){ return; }
-	int size = GetCount();
+	int size = file->GetCount();
 	size_t newCurrentLine = GetKeyFromPosition(currentLine, direction, false);
 	if (newCurrentLine == -1){
 		if (direction < 0)
 			return;
 
-		size_t lastvisible = GetElementByKey(size - 1);
-		Dialogue *tmp = GetDialogue(lastvisible)->Copy();
+		size_t lastvisible = file->GetElementByKey(size - 1);
+		Dialogue *tmp = file->GetDialogue(lastvisible)->Copy();
 		int eend = tmp->End.mstime;
 		tmp->Start.NewTime(eend);
 		tmp->End.NewTime(eend + 5000);
 		tmp->Text = emptyString;
 		tmp->TextTl = emptyString;
-		AddLine(tmp);
+		file->AddLine(tmp);
 		SetModified(GRID_APPEND_LINE, false);
 		AdjustWidths(subsFormat > TMP ? (START | END) : 0);
-		newCurrentLine = GetCount() - 1;
+		newCurrentLine = file->GetCount() - 1;
 	}
 	if (Options.GetBool(GRID_DONT_CENTER_ACTIVE_LINE))
 		MakeVisible(newCurrentLine);
 	else
 		ScrollTo(newCurrentLine, true);
 
-	ClearSelections();
-	InsertSelection(newCurrentLine);
+	file->ClearSelections();
+	file->InsertSelection(newCurrentLine);
 	lastRow = newCurrentLine;
 	//AdjustWidths(0);
 	Refresh(false);
@@ -1417,28 +1419,28 @@ void SubsGridBase::LoadDefault(bool line, bool sav, bool endload)
 {
 	if (line)
 	{
-		AddLine(new Dialogue());
-		AddStyle(new Styles());
-		InsertSelection(0);
+		file->AddLine(new Dialogue());
+		file->AddStyle(new Styles());
+		file->InsertSelection(0);
 		originalFormat = subsFormat = ASS;
 	}
-	AddSInfo(L"Title", L"Kainote Ass File", sav);
-	AddSInfo(L"PlayResX", L"1280", sav);
-	AddSInfo(L"PlayResY", L"720", sav);
-	AddSInfo(L"ScaledBorderAndShadow", L"yes", sav);
-	AddSInfo(L"WrapStyle", L"0", sav);
-	AddSInfo(L"ScriptType", L"v4.00+", sav);
-	AddSInfo(L"Last Style Storage", L"Default", sav);
-	AddSInfo(L"YCbCr Matrix", L"TV.601", sav);
+	file->AddSInfo(L"Title", L"Kainote Ass File", sav);
+	file->AddSInfo(L"PlayResX", L"1280", sav);
+	file->AddSInfo(L"PlayResY", L"720", sav);
+	file->AddSInfo(L"ScaledBorderAndShadow", L"yes", sav);
+	file->AddSInfo(L"WrapStyle", L"0", sav);
+	file->AddSInfo(L"ScriptType", L"v4.00+", sav);
+	file->AddSInfo(L"Last Style Storage", L"Default", sav);
+	file->AddSInfo(L"YCbCr Matrix", L"TV.601", sav);
 	if (endload){
-		EndLoad(NEW_SUBTITLES, 0);
+		file->EndLoad(NEW_SUBTITLES, 0);
 	}
 }
 
 Dialogue *SubsGridBase::CopyDialogue(size_t i, bool push)
 {
 	if (push && (int)SpellErrors.size() > i){ SpellErrors[i].clear(); }
-	return CopyDialogueF(i, push);
+	return file->CopyDialogueF(i, push);
 }
 
 Dialogue * SubsGridBase::CopyDialogueWithOffset(size_t i, int offset, bool push /*= true*/)
@@ -1454,7 +1456,7 @@ Dialogue * SubsGridBase::GetDialogueWithOffset(size_t i, int offset)
 {
 	size_t newPos = GetKeyFromPosition(i, offset, false);
 	if (newPos != -1){
-		return GetDialogue(newPos);
+		return file->GetDialogue(newPos);
 	}
 	return nullptr;
 }
@@ -1462,22 +1464,22 @@ Dialogue * SubsGridBase::GetDialogueWithOffset(size_t i, int offset)
 void SubsGridBase::GetAssHeader(wxString* header, bool forFile, bool translated, bool normalSave)
 {
 	if (forFile) {
-		AddSInfo(L"Active Line", std::to_wstring(currentLine), false);
+		file->AddSInfo(L"Active Line", std::to_wstring(currentLine), false);
 		wxString subsPath = KaiPathDir(tab->SubsPath);
 		if (edit->ABox) {
 			wxString path = (edit->ABox->audioName.StartsWith(subsPath) && normalSave) ?
 				KaiPathName(edit->ABox->audioName) : edit->ABox->audioName;
-			AddSInfo(L"Audio File", path, false);
+			file->AddSInfo(L"Audio File", path, false);
 		}
 		if (!tab->VideoPath.empty()) {
 			wxString path = (tab->VideoPath.StartsWith(subsPath) && normalSave) ?
 				KaiPathName(tab->VideoPath) : tab->VideoPath;
-			AddSInfo(L"Video File", path, false);
+			file->AddSInfo(L"Video File", path, false);
 		}
 		if (!tab->KeyframesPath.empty()) {
 			wxString path = (tab->KeyframesPath.StartsWith(subsPath) && normalSave) ?
 				KaiPathName(tab->KeyframesPath) : tab->KeyframesPath;
-			AddSInfo(L"Keyframes File", path, false);
+			file->AddSInfo(L"Keyframes File", path, false);
 		}
 	}
 	bool isDummyASS = (!forFile && subsFormat != ASS);
@@ -1494,14 +1496,14 @@ void SubsGridBase::GetAssHeader(wxString* header, bool forFile, bool translated,
 			L"ScriptType : v4.00 +\r\n"\
 			L"YCbCr Matrix : TV.601\r\n";
 	}else
-		GetSInfos((*header), translated);
+		file->GetSInfos((*header), translated);
 
 	(*header) << L"\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding \r\n";
 	if (isDummyASS) {
 		Styles *convStyle = Options.GetConversionStyle();
 		(*header) << convStyle->GetRaw();
 	}else
-		GetStyles((*header), translated);
+		file->GetStyles((*header), translated);
 
 	(*header) << L" \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\n";
 
@@ -1529,18 +1531,18 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 		*visible = false;
 	}
 	bool noLine = true;
-	bool isTlmode = GetSInfo(L"TLMode") == L"Yes";
-	const wxString &tlStyle = GetSInfo(L"TLMode Style");
+	bool isTlmode = file->GetSInfo(L"TLMode") == L"Yes";
+	const wxString &tlStyle = file->GetSInfo(L"TLMode Style");
 	int j = 1;
 
-	for (size_t i = 0; i < GetCount(); i++)
+	for (size_t i = 0; i < file->GetCount(); i++)
 	{
-		Dialogue *dial = GetDialogue(i);
+		Dialogue *dial = file->GetDialogue(i);
 		if (dial->NonDialogue){ continue; }
 		if (i == currentLine){
 			dial = edit->line;
 		}
-		if (selected && IsSelected(i)){
+		if (selected && file->IsSelected(i)){
 			selected->Add(txt->Len());
 			continue;
 		}
@@ -1596,12 +1598,12 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 
 void SubsGridBase::SelectVisible()
 {
-	ClearSelections();
+	file->ClearSelections();
 	int _time = tab->video->Tell();
 
-	for (size_t i = 0; i < GetCount(); i++)
+	for (size_t i = 0; i < file->GetCount(); i++)
 	{
-		Dialogue* dial = GetDialogue(i);
+		Dialogue* dial = file->GetDialogue(i);
 		if (!ignoreFiltered && !dial->isVisible || dial->NonDialogue || dial->IsComment) { continue; }
 		if (i == currentLine) {
 			dial = edit->line;
@@ -1609,10 +1611,10 @@ void SubsGridBase::SelectVisible()
 		
 
 		if ((_time >= (dial->Start.mstime - 5) && _time < (dial->End.mstime - 5))) {
-			InsertSelection(i);
+			file->InsertSelection(i);
 		}
 	}
-	int sel = FirstSelection();
+	int sel = file->FirstSelection();
 	if (sel != -1) {
 		edit->SetLine(sel);
 		ScrollTo(sel, true);
@@ -1648,25 +1650,25 @@ void SubsGridBase::OnBackupTimer(wxTimerEvent &event)
 
 void SubsGridBase::GetASSRes(int *x, int *y)
 {
-	const wxString &oldx = GetSInfo(L"PlayResX");
-	const wxString &oldy = GetSInfo(L"PlayResY");
+	const wxString &oldx = file->GetSInfo(L"PlayResX");
+	const wxString &oldy = file->GetSInfo(L"PlayResY");
 	int nx = wxAtoi(oldx);
 	int ny = wxAtoi(oldy);
 	bool changed = false;
 	if (nx < 1 && ny < 1){
 		nx = 1280; ny = 720;
-		AddSInfo(L"PlayResX", L"1280");
-		AddSInfo(L"PlayResY", L"720");
+		file->AddSInfo(L"PlayResX", L"1280");
+		file->AddSInfo(L"PlayResY", L"720");
 		changed = true;
 	}
 	else if (nx < 1){
 		nx = (float)ny * (16.0 / 9.0);
-		AddSInfo(L"PlayResX", std::to_wstring(nx));
+		file->AddSInfo(L"PlayResX", std::to_wstring(nx));
 		changed = true;
 	}
 	else if (ny < 1){
 		ny = (float)nx * (9.0 / 16.0);
-		AddSInfo(L"PlayResY", std::to_wstring(ny));
+		file->AddSInfo(L"PlayResY", std::to_wstring(ny));
 		changed = true;
 	}
 	*x = nx;
@@ -1678,8 +1680,8 @@ void SubsGridBase::GetLayoutRes(int* x, int* y)
 {
 	//no need to set specially new resolution when 
 	//is not in subtitles
-	const wxString& oldx = GetSInfo(L"LayoutResX");
-	const wxString& oldy = GetSInfo(L"LayoutResY");
+	const wxString& oldx = file->GetSInfo(L"LayoutResX");
+	const wxString& oldy = file->GetSInfo(L"LayoutResY");
 	*x = wxAtoi(oldx);
 	*y = wxAtoi(oldy);
 }
@@ -1689,27 +1691,27 @@ void SubsGridBase::SetLayoutFromSubsRes()
 	if (!Options.GetBool(LINK_RESOLUTIONS))
 		return;
 
-	if (GetSInfo(L"LayoutResX").empty() && GetSInfo(L"LayoutResX").empty())
+	if (file->GetSInfo(L"LayoutResX").empty() && file->GetSInfo(L"LayoutResX").empty())
 		return;
 
 	int x;
 	int y;
 	GetASSRes(&x, &y);
-	AddSInfo(L"LayoutResX", std::to_wstring(x));
-	AddSInfo(L"LayoutResY", std::to_wstring(y));
+	file->AddSInfo(L"LayoutResX", std::to_wstring(x));
+	file->AddSInfo(L"LayoutResY", std::to_wstring(y));
 }
 
 
 void SubsGridBase::SaveSelections(bool clear)
 {
-	SaveSelectionsF(clear, currentLine, markedLine, scrollPosition);
+	file->SaveSelectionsF(clear, currentLine, markedLine, scrollPosition);
 	savedSelections = true;
 }
 
 void SubsGridBase::GetCommonStyles(SubsGridBase *_grid, wxArrayString &styleTable)
 {
-	std::vector<Styles *> *styles1 = GetStyleTable();
-	std::vector<Styles *> *styles2 = _grid->GetStyleTable();
+	std::vector<Styles *> *styles1 = file->GetStyleTable();
+	std::vector<Styles *> *styles2 = _grid->file->GetStyleTable();
 	for (auto style1 : *styles1){
 		for (auto style2 : *styles2){
 			if (style1->Name == style2->Name){
@@ -1722,9 +1724,9 @@ void SubsGridBase::GetCommonStyles(SubsGridBase *_grid, wxArrayString &styleTabl
 void SubsGridBase::SetMDVDTime()
 {
 	float FPS = tab->video->GetFPS();
-	size_t size = GetCount();
+	size_t size = file->GetCount();
 	for (size_t i = 0; i < size; i++) {
-		Dialogue* dial = GetDialogue(i);
+		Dialogue* dial = file->GetDialogue(i);
 		dial->Start.SetMDVDTime(FPS);
 		dial->End.SetMDVDTime(FPS);
 	}
@@ -1742,8 +1744,8 @@ void SubsGridBase::SubsComparison()
 	SubsGridBase* CCG1 = CG1;
 	SubsGridBase* CCG2 = CG2;
 
-	int firstSize = CG1->GetCount(), 
-		secondSize = CG2->GetCount();
+	int firstSize = CG1->file->GetCount(), 
+		secondSize = CG2->file->GetCount();
 	if (CG1->Comparison){ CG1->Comparison->clear(); }
 	else{ CG1->Comparison = new std::vector<compareData>; }
 	if (CG2->Comparison){ CG2->Comparison->clear(); }
@@ -1756,11 +1758,11 @@ void SubsGridBase::SubsComparison()
 	for (int i = 0; i < firstSize; i++){
 
 		int j = lastJ;
-		Dialogue *dial1 = CG1->GetDialogue(i);
+		Dialogue *dial1 = CG1->file->GetDialogue(i);
 		if (compareByVisible && !dial1->isVisible){ continue; }
 		while (j < secondSize){
 
-			Dialogue *dial2 = CG2->GetDialogue(j);
+			Dialogue *dial2 = CG2->file->GetDialogue(j);
 			if (compareByVisible && !dial2->isVisible){ j++; continue; }
 
 			if (compareByTimes && (dial1->Start != dial2->Start || dial1->End != dial2->End)){ j++; continue; }
@@ -1769,7 +1771,7 @@ void SubsGridBase::SubsComparison()
 
 			if (compareByChosenStyles && (compareStyles.Index(dial1->Style) == -1 || dial1->Style != dial2->Style)){ j++; continue; }
 
-			if (compareBySelections && (!CG1->IsSelected(i) || !CG2->IsSelected(j))){ j++; continue; }
+			if (compareBySelections && (!CG1->file->IsSelected(i) || !CG2->file->IsSelected(j))){ j++; continue; }
 
 			compareData & firstCompare = CCG1->Comparison->at(i);
 			compareData & secondCompare = CCG2->Comparison->at(j);
@@ -1907,36 +1909,36 @@ size_t SubsGridBase::GetKeyFromScrollPos(int numOfLines)
 			if (numOfLines == visibleLines)
 				return i;
 
-			if (GetDialogue(i)->isVisible)
+			if (file->GetDialogue(i)->isVisible)
 				visibleLines--;
 		}
 		return 0;
 	}
 
 	size_t visibleLines = 0;
-	for (size_t i = scrollPosition; i < GetCount(); i++){
+	for (size_t i = scrollPosition; i < file->GetCount(); i++){
 		if (numOfLines == visibleLines)
 			return i;
 
-		if (GetDialogue(i)->isVisible)
+		if (file->GetDialogue(i)->isVisible)
 			visibleLines++;
 	}
 
-	return GetCount();
+	return file->GetCount();
 }
 
 
 size_t SubsGridBase::GetKeyFromPosition(size_t position, int delta, bool safe /*= true*/)
 {
-	if (position > GetCount())
+	if (position > file->GetCount())
 		return (safe) ? 0 : -1;
 
 	int visibleLines = 0;
 	if (delta > 0){
 		size_t i = position + 1;
-		while (i < GetCount()){
+		while (i < file->GetCount()){
 
-			if (GetDialogue(i)->isVisible)
+			if (file->GetDialogue(i)->isVisible)
 				visibleLines++;
 			
 			if (delta == visibleLines)
@@ -1945,12 +1947,12 @@ size_t SubsGridBase::GetKeyFromPosition(size_t position, int delta, bool safe /*
 			i++;
 
 		}
-		return (safe) ? GetKeyFromPosition(GetCount(), -1) : -1;
+		return (safe) ? GetKeyFromPosition(file->GetCount(), -1) : -1;
 	}
 	else if (delta < 0 && position > 0){
 		size_t i = position - 1;
 		while (i + 1 > 0){
-			if (GetDialogue(i)->isVisible)
+			if (file->GetDialogue(i)->isVisible)
 				visibleLines--;
 
 			if (delta == visibleLines)
@@ -1958,19 +1960,19 @@ size_t SubsGridBase::GetKeyFromPosition(size_t position, int delta, bool safe /*
 
 			i--;
 		}
-		return (safe) ? GetElementById(0) : -1;
+		return (safe) ? file->GetElementById(0) : -1;
 	}
 	return position;
 }
 
 size_t SubsGridBase::GetDialoguePosition(size_t keyPosition)
 {
-	if (keyPosition >= GetCount())
-		return GetCount() - 1;
+	if (keyPosition >= file->GetCount())
+		return file->GetCount() - 1;
 
 	size_t dialogues = 0;
 	for (size_t i = 0; i < keyPosition; i++) {
-		if (!GetDialogue(i)->NonDialogue)
+		if (!file->GetDialogue(i)->NonDialogue)
 			dialogues++;
 	}
 	return dialogues;

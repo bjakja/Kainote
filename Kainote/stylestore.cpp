@@ -133,7 +133,7 @@ StyleStore::StyleStore(wxWindow* parent, const wxPoint& pos)
 	wxBoxSizer *ASSMainSizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *ASSMoveButtonsSizer = new wxBoxSizer(wxVERTICAL);
 
-	ASSList = new StyleList(this, ID_ASSSTYLES, Notebook::GetTab()->grid->GetStyleTable(), wxDefaultPosition, wxSize(-1, 520));
+	ASSList = new StyleList(this, ID_ASSSTYLES, Notebook::GetTab()->grid->file->GetStyleTable(), wxDefaultPosition, wxSize(-1, 520));
 
 
 	assNew = new MappedButton(this, ID_ASSNEW, _("New"));
@@ -281,7 +281,7 @@ void StyleStore::OnAddToStore(wxCommandEvent& event)
 	Store->SetSelection(wxNOT_FOUND);
 	prompt = 0;
 	for (size_t i = 0; i < sels.GetCount(); i++){
-		Styles *stylc = grid->GetStyle(sels[i])->Copy();
+		Styles *stylc = grid->file->GetStyle(sels[i])->Copy();
 		int found = Options.FindStyle(stylc->Name);
 		if (found != -1){
 			if (prompt != wxYES_TO_ALL){
@@ -314,7 +314,7 @@ void StyleStore::OnAddToAss(wxCommandEvent& event)
 	for (int i = 0; i < numSelections; i++)
 	{
 		Styles *stylc = Options.GetStyle(sels[i])->Copy();
-		int found = grid->FindStyle(stylc->Name);
+		int found = grid->file->FindStyle(stylc->Name);
 		if (found != -1){
 			if (prompt != wxYES_TO_ALL){
 				prompt = KaiMessageBox(wxString::Format(_("Style named \"%s\" already exists. Replace?"),
@@ -325,11 +325,11 @@ void StyleStore::OnAddToAss(wxCommandEvent& event)
 				}
 			}
 			if (prompt == wxYES || prompt == wxYES_TO_ALL){
-				grid->ChangeStyle(stylc, found); ASSList->SetSelection(found);
+				grid->file->ChangeStyle(stylc, found); ASSList->SetSelection(found);
 			}
 			else{ delete stylc; }
 		}
-		else{ grid->AddStyle(stylc); ASSList->SetSelection(grid->StylesSize() - 1); }
+		else{ grid->file->AddStyle(stylc); ASSList->SetSelection(grid->file->StylesSize() - 1); }
 	}
 	SetModified();
 }
@@ -353,23 +353,23 @@ void StyleStore::OnAddToAssInAllTabs(wxCommandEvent& event)
 
 		for (int i = 0; i < numSelections; i++){
 			Styles *stylc = Options.GetStyle(sels[i])->Copy();
-			int found = grid->FindStyle(stylc->Name);
+			int found = grid->file->FindStyle(stylc->Name);
 			if (found != -1){
 				if (prompt != wxYES_TO_ALL && prompt != wxCANCEL){
 					prompt = KaiMessageBox(wxString::Format(_("Style named \"%s\" already exists. Replace?"),
 						stylc->Name), _("Confirmation"), wxYES_TO_ALL | wxYES | wxNO | wxCANCEL, this);
 				}
 				if (prompt == wxYES || prompt == wxYES_TO_ALL){
-					grid->ChangeStyle(stylc, found); 
+					grid->file->ChangeStyle(stylc, found); 
 					if (isActive)
 						ASSList->SetSelection(found);
 				}
 				else{ delete stylc; }
 			}
 			else{ 
-				grid->AddStyle(stylc); 
+				grid->file->AddStyle(stylc); 
 				if (isActive)
-					ASSList->SetSelection(grid->StylesSize() - 1); 
+					ASSList->SetSelection(grid->file->StylesSize() - 1); 
 			}
 		}
 		tab->edit->RefreshStyle();
@@ -377,8 +377,8 @@ void StyleStore::OnAddToAssInAllTabs(wxCommandEvent& event)
 		//refresh to remove missing styles indicators
 		grid->Refresh(false);
 		if (isActive)
-			ASSList->SetArray(grid->GetStyleTable());
-		Kai->Label(tab->grid->GetActualHistoryIter(), false, k, !isActive);
+			ASSList->SetArray(grid->file->GetStyleTable());
+		Kai->Label(tab->grid->file->GetActualHistoryIter(), false, k, !isActive);
 	}
 }
 
@@ -403,7 +403,7 @@ void StyleStore::OnAssDelete(wxCommandEvent& event)
 	if (numSelections < 1){ wxBell(); return; }
 	for (int ii = sels.GetCount() - 1; ii >= 0; ii--)
 	{
-		grid->DeleteStyle(sels[ii]);
+		grid->file->DeleteStyle(sels[ii]);
 	}
 
 	ASSList->SetSelection(0, true);
@@ -415,7 +415,7 @@ void StyleStore::StylesWindow(wxString newname)
 	SubsGrid* grid = Notebook::GetTab()->grid;
 	Styles *tab = nullptr;
 	if (selnum < 0){ tab = new Styles(); }
-	else if (ASSStyle){ tab = grid->GetStyle(selnum)->Copy(); }
+	else if (ASSStyle){ tab = grid->file->GetStyle(selnum)->Copy(); }
 	else{ tab = Options.GetStyle(selnum)->Copy(); }
 	if (newname != emptyString){ tab->Name = newname; }
 	oldname = tab->Name;
@@ -430,13 +430,13 @@ bool StyleStore::ChangeStyle(Styles *changedStyle, int cellsToChange /*= -1*/)
 	//Update();
 	SubsGrid* grid = Notebook::GetTab()->grid;
 	int multiplication = 0;
-	int foundStyle = (ASSStyle) ? grid->FindStyle(changedStyle->Name, &multiplication) : 
+	int foundStyle = (ASSStyle) ? grid->file->FindStyle(changedStyle->Name, &multiplication) : 
 		Options.FindStyle(changedStyle->Name, &multiplication);
 	if (foundStyle != -1) 
 		multiplication = 1;
 
 	if (!dummy){
-		if (ASSStyle && selnum >= grid->StylesSize()){ dummy = true; }
+		if (ASSStyle && selnum >= grid->file->StylesSize()){ dummy = true; }
 		else if (!ASSStyle && selnum >= Options.StoreSize()){ dummy = true; }
 	}
 
@@ -449,7 +449,7 @@ bool StyleStore::ChangeStyle(Styles *changedStyle, int cellsToChange /*= -1*/)
 	}
 
 	if (foundStyle != -1){ selnum = foundStyle; }
-	else if (!dummy){ selnum = (ASSStyle) ? grid->FindStyle(oldname) : Options.FindStyle(oldname); }
+	else if (!dummy){ selnum = (ASSStyle) ? grid->file->FindStyle(oldname) : Options.FindStyle(oldname); }
 	if (selnum < 0){ dummy = true; }
 
 	if (cellsToChange != -1){
@@ -467,12 +467,12 @@ bool StyleStore::ChangeStyle(Styles *changedStyle, int cellsToChange /*= -1*/)
 
 			if (ASSStyle){
 				//when numStyle is greater then size something was wrong
-				if (numStyle >= grid->StylesSize())
+				if (numStyle >= grid->file->StylesSize())
 					break;
 
-				Styles *copy = grid->GetStyle(numStyle)->Copy();
+				Styles *copy = grid->file->GetStyle(numStyle)->Copy();
 				copy->CopyChanges(changedStyle, cellsToChange);
-				grid->ChangeStyle(copy, numStyle);
+				grid->file->ChangeStyle(copy, numStyle);
 			}
 			else{
 				if (numStyle >= Options.StoreSize())
@@ -487,9 +487,9 @@ bool StyleStore::ChangeStyle(Styles *changedStyle, int cellsToChange /*= -1*/)
 
 	if (dummy){
 		if (ASSStyle){
-			grid->AddStyle(changedStyle);
-			ASSList->SetSelection(grid->StylesSize() - 1, cellsToChange == -1);
-			selnum = grid->StylesSize() - 1;
+			grid->file->AddStyle(changedStyle);
+			ASSList->SetSelection(grid->file->StylesSize() - 1, cellsToChange == -1);
+			selnum = grid->file->StylesSize() - 1;
 		}
 		else{
 			Options.AddStyle(changedStyle);
@@ -498,7 +498,7 @@ bool StyleStore::ChangeStyle(Styles *changedStyle, int cellsToChange /*= -1*/)
 		}
 	}
 	else{
-		if (ASSStyle){ grid->ChangeStyle(changedStyle, selnum); ASSList->Refresh(false); }
+		if (ASSStyle){ grid->file->ChangeStyle(changedStyle, selnum); ASSList->Refresh(false); }
 		else{ Options.ChangeStyle(changedStyle, selnum); Store->Refresh(false); }
 	}
 
@@ -507,8 +507,8 @@ bool StyleStore::ChangeStyle(Styles *changedStyle, int cellsToChange /*= -1*/)
 	if (oldname != changedStyle->Name && ASSStyle && !dummy){
 		int res = KaiMessageBox(_("Style name modified. Do you want to change all instances to the new name?"), _("Confirmation"), wxYES_NO);
 		if (res == wxYES){
-			for (size_t i = 0; i < grid->GetCount(); i++){
-				if (grid->GetDialogue(i)->Style == oldname)
+			for (size_t i = 0; i < grid->file->GetCount(); i++){
+				if (grid->file->GetDialogue(i)->Style == oldname)
 				{
 					grid->CopyDialogue(i)->Style = changedStyle->Name;
 				}
@@ -534,7 +534,7 @@ void StyleStore::OnChangeCatalog(wxCommandEvent& event)
 
 	Store->SetSelection(0, true);
 	SubsGrid* grid = Notebook::GetTab()->grid;
-	grid->AddSInfo(L"Last Style Storage", catalogName);
+	grid->file->AddSInfo(L"Last Style Storage", catalogName);
 	isStoreChanged = false;
 }
 
@@ -554,7 +554,7 @@ void StyleStore::OnNewCatalog(wxCommandEvent& event)
 		Options.clearstyles();
 		Store->Refresh(false);
 		SubsGrid* grid = Notebook::GetTab()->grid;
-		grid->AddSInfo(L"Last Style Storage", catalogName);
+		grid->file->AddSInfo(L"Last Style Storage", catalogName);
 	}
 }
 
@@ -578,7 +578,7 @@ void StyleStore::OnDeleteCatalog(wxCommandEvent& event)
 	Options.LoadStyles(Options.actualStyleDir);
 	Store->Refresh(false);
 	SubsGrid* grid = Notebook::GetTab()->grid;
-	grid->AddSInfo(L"Last Style Storage", Options.actualStyleDir);
+	grid->file->AddSInfo(L"Last Style Storage", Options.actualStyleDir);
 }
 
 void StyleStore::OnStoreLoad(wxCommandEvent& event)
@@ -589,7 +589,7 @@ void StyleStore::OnStoreLoad(wxCommandEvent& event)
 void StyleStore::OnAssSort(wxCommandEvent& event)
 {
 	SubsGrid* grid = Notebook::GetTab()->grid;
-	grid->SortStyles(sortfunc);
+	grid->file->SortStyles(sortfunc);
 	ASSList->SetSelection(0, true);
 	SetModified();
 }
@@ -641,9 +641,9 @@ void StyleStore::LoadStylesS(bool isass)
 			{
 				if (stl.CheckListBox->GetItem(v, 0)->modified){
 
-					int fstyle = (isass) ? grid->FindStyle(stl.CheckListBox->GetItem(v, 0)->name) : Options.FindStyle(stl.CheckListBox->GetItem(v, 0)->name);
+					int fstyle = (isass) ? grid->file->FindStyle(stl.CheckListBox->GetItem(v, 0)->name) : Options.FindStyle(stl.CheckListBox->GetItem(v, 0)->name);
 					if (fstyle == -1){
-						if (isass){ grid->AddStyle(tmps[v]); ASSList->Refresh(false); }
+						if (isass){ grid->file->AddStyle(tmps[v]); ASSList->Refresh(false); }
 						else{ Options.AddStyle(tmps[v]); Store->Refresh(false); }
 					}
 					else{
@@ -654,7 +654,7 @@ void StyleStore::LoadStylesS(bool isass)
 							//if(prompt == wxID_CANCEL){return;}
 						}
 						if (prompt == wxYES || prompt == wxYES_TO_ALL){
-							if (isass){ grid->ChangeStyle(tmps[v], fstyle); ASSList->SetSelection(fstyle); }
+							if (isass){ grid->file->ChangeStyle(tmps[v], fstyle); ASSList->SetSelection(fstyle); }
 							else{ Options.ChangeStyle(tmps[v], fstyle); Store->SetSelection(fstyle); }
 						}
 						else{ delete tmps[v]; }
@@ -683,7 +683,7 @@ void StyleStore::OnAssCopy(wxCommandEvent& event)
 	wxArrayInt selects;
 	int numSelections = ASSList->GetSelections(selects);
 	if (numSelections < 1){ wxBell(); return; }
-	Styles *kstyle = grid->GetStyle(selects[0]);
+	Styles *kstyle = grid->file->GetStyle(selects[0]);
 	selnum = selects[0];
 	ASSStyle = true;
 	dummy = true;
@@ -729,7 +729,7 @@ void StyleStore::OnAssNew(wxCommandEvent& event)
 	while (gname){
 		wxString ns = _("New Style");
 		wxString nss = (count == 0) ? ns : ns << count;
-		if (grid->FindStyle(nss) == -1){ StylesWindow(nss); break; }
+		if (grid->file->FindStyle(nss) == -1){ StylesWindow(nss); break; }
 		else{ count++; }
 	}
 }
@@ -741,22 +741,22 @@ void StyleStore::OnCleanStyles(wxCommandEvent& event)
 	wxString existsStyles;
 	TabPanel *tab = Notebook::GetTab();
 	SubsGrid *grid = tab->grid;
-	const wxString &tlStyle = grid->GetSInfo(L"TLMode Style");
+	const wxString &tlStyle = grid->file->GetSInfo(L"TLMode Style");
 
-	for (size_t i = 0; i < grid->GetCount(); i++){
-		lineStyles[grid->GetDialogue(i)->Style] = true;
+	for (size_t i = 0; i < grid->file->GetCount(); i++){
+		lineStyles[grid->file->GetDialogue(i)->Style] = true;
 	}
 
 	size_t j = 0;
-	while (j < grid->StylesSize()){
-		wxString styleName = grid->GetStyle(j)->Name;
+	while (j < grid->file->StylesSize()){
+		wxString styleName = grid->file->GetStyle(j)->Name;
 		if (lineStyles.find(styleName) != lineStyles.end()){
 			existsStyles << styleName << L"\n";
 		}
 		else{
 			if (styleName != tlStyle){
 				delStyles << styleName << L"\n";
-				grid->DeleteStyle(j);
+				grid->file->DeleteStyle(j);
 				continue;
 			}
 			else{ existsStyles << styleName << L"\n"; }
@@ -823,17 +823,17 @@ void StyleStore::SetModified(bool refreshActiveLine /*= false*/)
 	SubsGrid* grid = Notebook::GetTab()->grid;
 	Notebook::GetTab()->edit->RefreshStyle();
 	grid->SetModified(STYLE_MANAGER, refreshActiveLine);
-	ASSList->SetArray(grid->GetStyleTable());
+	ASSList->SetArray(grid->file->GetStyleTable());
 }
 
 void StyleStore::LoadAssStyles(const wxString &styleName /*= ""*/)
 {
 	SubsGrid* grid = Notebook::GetTab()->grid;
-	if (grid->StylesSize() < 1){
-		grid->AddStyle(new Styles());
+	if (grid->file->StylesSize() < 1){
+		grid->file->AddStyle(new Styles());
 	}
-	ASSList->SetArray(grid->GetStyleTable());
-	int wstyle = MAX(0, grid->FindStyle((styleName.empty())? 
+	ASSList->SetArray(grid->file->GetStyleTable());
+	int wstyle = MAX(0, grid->file->FindStyle((styleName.empty())? 
 		Notebook::GetTab()->edit->line->Style : styleName));
 	ASSList->SetSelection(wstyle, true);
 	if (cc->IsShown())
@@ -843,7 +843,7 @@ void StyleStore::LoadAssStyles(const wxString &styleName /*= ""*/)
 	}
 	//grid->LoadStyleCatalog();
 	if (grid->subsFormat != ASS){ return; }
-	const wxString &catalog = grid->GetSInfo(L"Last Style Storage");
+	const wxString &catalog = grid->file->GetSInfo(L"Last Style Storage");
 
 	if (catalog.empty() || catalog == Options.actualStyleDir){ return; }
 	for (size_t i = 0; i < Options.dirs.size(); i++){
@@ -992,7 +992,7 @@ void StyleStore::OnStyleMove(wxCommandEvent& event)
 	wxArrayInt sels;
 	int selSize = (action < 4) ? ASSList->GetSelections(sels) : Store->GetSelections(sels);
 	if (selSize < 1){ wxBell(); return; }
-	std::vector<Styles *> *styleTable = (action < 4) ? Notebook::GetTab()->grid->GetStyleTable() : &Options.assstore;
+	std::vector<Styles *> *styleTable = (action < 4) ? Notebook::GetTab()->grid->file->GetStyleTable() : &Options.assstore;
 	int styleTableSize = styleTable->size();
 	int move = (action % 4 == 0) ? -styleTableSize : (action % 4 == 1) ? -1 :
 		(action % 4 == 2) ? 1 : styleTableSize;
@@ -1014,7 +1014,7 @@ void StyleStore::OnStyleMove(wxCommandEvent& event)
 			moveSelections = lastDownSelection;
 		}
 		if (action < 4){
-			Notebook::GetTab()->grid->MoveStyle(sel, moveSelections);
+			Notebook::GetTab()->grid->file->MoveStyle(sel, moveSelections);
 		}
 		else{
 			Styles *Selected = (*styleTable)[sel];
