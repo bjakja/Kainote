@@ -139,6 +139,8 @@ void Provider::RunPlaybackThread()
 			int acttime;
 			while (1) {
 				if (WaitForSingleObject(m_eventKillSelf, 0) == WAIT_OBJECT_0) { return; }
+				if (WaitForSingleObject(m_eventSetPosition, 0) == WAIT_OBJECT_0)
+					m_renderer->SetFFMS2Position(m_changedTime, m_isStartTime, m_refreshAudio);
 
 				if (m_renderer->m_Frame != m_lastFrame) {
 					m_renderer->m_Time = m_timebase.MsAt(m_renderer->m_Frame);

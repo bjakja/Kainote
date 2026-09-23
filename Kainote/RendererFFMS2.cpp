@@ -536,7 +536,8 @@ bool RendererFFMS2::Stop()
 void RendererFFMS2::SetPosition(int _time, bool starttime/*=true*/, bool corect/*=true*/, 
 	bool async /*= true*/, bool refreshAudio/* = true*/)
 {
-	if (m_State == Playing || !async)
+	//while playing, the playback thread owns the frame and seeks itself
+	if (!async && m_State != Playing)
 		SetFFMS2Position(_time, starttime, refreshAudio);
 	else
 		m_FFMS2->SetPosition(_time, starttime, refreshAudio);

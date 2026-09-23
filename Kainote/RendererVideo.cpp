@@ -433,6 +433,9 @@ bool RendererVideo::PlayLine(int start, int eend)
 	int duration = GetDuration();
 	if (m_State == None || start >= eend || start >= duration){ return false; }
 	if (duration < eend){ eend = duration; }
+	//a seek while playing waits for the playback thread and would reset the end
+	if (m_State == Playing)
+		Pause();
 	SetPosition(start, true, true, false);
 	Play(eend);
 	return true;
