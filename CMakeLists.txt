@@ -127,6 +127,7 @@ add_executable(kainote
     Kainote/KaiGauge.cpp
     Kainote/KaiPanel.cpp
     Kainote/LineParse.cpp
+    Kainote/AssBlend.cpp
     Kainote/FrameQueue.cpp
     Kainote/Playback.cpp
     Kainote/Provider.cpp
