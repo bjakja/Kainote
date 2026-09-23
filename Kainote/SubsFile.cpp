@@ -160,8 +160,14 @@ SubsFile::~SubsFile()
 	Clear(false);
 }
 
+void SubsFile::AddEmbeddedSectionLine(const wxString &line)
+{
+	embeddedSections << line << L"\r\n";
+}
+
 void SubsFile::Clear(bool setup/* = true*/)
 {
+	embeddedSections.clear();
 	if (subs) {
 		subs->Clear();
 		delete subs;

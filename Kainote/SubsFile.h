@@ -116,6 +116,7 @@ private:
 	File *subs;
 	// changed since the last recorded step; every change below sets it
 	bool edited = false;
+	wxString embeddedSections;
 	void LoadCurrentStep();
 
 public:
@@ -217,6 +218,9 @@ public:
 	const wxString &GetUndoName();
 	const wxString &GetRedoName();
 	bool IsFiltered();
+	// [Fonts] and [Graphics] as they were read, written back unchanged after the events
+	const wxString &GetEmbeddedSections() const { return embeddedSections; }
+	void AddEmbeddedSectionLine(const wxString &line);
 	void SetFiltered(bool filtered = true);
 	wxString *historyNames = nullptr;
 	wxMutex *historyGuard = nullptr;

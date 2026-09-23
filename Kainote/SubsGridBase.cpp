@@ -391,6 +391,10 @@ void SubsGrid::SaveFile(const wxString &filename, bool normalSave, bool loadFrom
 
 		}
 	}
+	if (subsFormat < SRT && !file->GetEmbeddedSections().empty()) {
+		wxString embedded = L"\r\n" + file->GetEmbeddedSections();
+		ow.PartFileWrite(embedded);
+	}
 
 	ow.CloseFile();
 	if (normalSave){

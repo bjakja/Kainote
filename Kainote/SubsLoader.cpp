@@ -101,10 +101,18 @@ bool SubsLoader::LoadASS(const wxString &text)
 	wxString tlstyle;
 
 
+	// embedded fonts and pictures are uuencoded lines, kept as they are
+	bool embedded = false;
 	while (tokenizer.HasMoreTokens())
 	{
 		wxString token = tokenizer.GetNextToken().Trim(false);
 		if (token.empty()){ continue; }
+		if (token[0] == L'[')
+			embedded = token.StartsWith(L"[Fonts]") || token.StartsWith(L"[Graphics]");
+		if (embedded) {
+			grid->file->AddEmbeddedSectionLine(token.Trim(true));
+			continue;
+		}
 		if ((token.StartsWith(L"Dial") || token.StartsWith(L"Comm") || (token[0] == L';' && section > 2))){
 			Dialogue *dl = new Dialogue(token);
 			// put it on start cause in tlmode it releases dl
