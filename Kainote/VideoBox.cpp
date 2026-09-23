@@ -1794,6 +1794,12 @@ Provider *VideoBox::GetFFMS2()
 	return nullptr;
 }
 
+void VideoBox::MarkSubtitlesOutdated()
+{
+	if (renderer)
+		renderer->MarkSubtitlesOutdated();
+}
+
 void VideoBox::SetVisualEdition(bool value)
 {
 	if(renderer)

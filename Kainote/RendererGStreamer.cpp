@@ -479,7 +479,7 @@ bool RendererGStreamer::OpenSubs(int flag, bool redraw, wxString *text, bool res
 		std::lock_guard<std::mutex> lock(m_SubsMutex);
 		if (resetParameters)
 			m_SubsProvider->SetVideoParameters(wxSize(m_Width, m_Height), ARGB32, false);
-		result = m_SubsProvider->Open(tab, flag, text);
+		result = m_SubsProvider->Open(flag, SubtitlesText(flag, text));
 		m_SubsOpened = result && flag != CLOSE_SUBTITLES;
 	}
 

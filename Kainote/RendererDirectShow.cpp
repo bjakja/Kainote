@@ -549,7 +549,7 @@ bool RendererDirectShow::OpenSubs(int flag, bool redraw, wxString *text, bool re
 	if (resetParameters)
 		m_SubsProvider->SetVideoParameters(wxSize(m_WindowWidth, m_WindowHeight), ARGB32, m_SwapFrame);
 
-	bool result = m_SubsProvider->Open(tab, flag, text);
+	bool result = m_SubsProvider->Open(flag, SubtitlesText(flag, text));
 
 	if (redraw && m_State != None && m_FrameBuffer){
 		RecreateSurface();

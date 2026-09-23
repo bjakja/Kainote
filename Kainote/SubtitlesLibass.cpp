@@ -26,9 +26,6 @@
 #include "config.h"
 #include "UtilsWindows.h"
 #include "Notebook.h"
-#include "VisualDrawingShapes.h"
-#include "VisualClips.h"
-#include "Visuals.h"
 
 std::atomic<bool> SubtitlesLibass::m_IsReady{ false };
 wxMutex SubtitlesLibass::openMutex;
@@ -160,7 +157,7 @@ bool SubtitlesLibass::DrawChanged(unsigned char* buffer, int time)
 	return true;
 }
 
-bool SubtitlesLibass::Open(TabPanel *tab, int flag, wxString *text)
+bool SubtitlesLibass::Open(wxString *text)
 {
 	wxMutexLocker lock(openMutex);
 	if (!m_IsReady || !m_HasParameters) {
@@ -176,52 +173,15 @@ bool SubtitlesLibass::Open(TabPanel *tab, int flag, wxString *text)
 		m_AssTrack = nullptr;
 	}
 
-	RendererVideo* renderer = tab->video->GetRenderer();
-	if (!renderer) {
-		SAFE_DELETE(text);
-		return false;
-	}
-
-	wxString *textsubs = text;
-	switch (flag){
-	case OPEN_DUMMY:
-		textsubs = tab->grid->GetVisible();
-		renderer->m_HasDummySubs = true;
-		break;
-	case OPEN_WHOLE_SUBTITLES:
-		//make here some function to buffor
-		//or even add olny here a bool
-		textsubs = tab->grid->GetVisible(nullptr, nullptr, nullptr, true);
-		renderer->m_HasDummySubs = false;
-		break;
-	case OPEN_HAS_OWN_TEXT:
-		//make sure that is dummy subs
-		//to not hide subs after visual editon
-		renderer->m_HasDummySubs = true;
-		break;
-	case CLOSE_SUBTITLES:
-		break;
-	default:
-		break;
-	}
-
-
-	if (!textsubs) {
+	if (!text) {
 		return true;
 	}
 
-	//sometimes it crashes on CROSS just like it visual was released and
-	//it still gives mi right values and violate memory on 0x266 adress
-	//m_HasVisualEdition == true cause it's should be set on false
-	if (renderer->m_Visual && renderer->m_Visual->Visual == VECTORCLIP) {
-		renderer->m_Visual->AppendClipMask(textsubs);
-	}
-
-	wxScopedCharBuffer buffer = textsubs->mb_str(wxConvUTF8);
+	wxScopedCharBuffer buffer = text->mb_str(wxConvUTF8);
 	int size = strlen(buffer);
 	m_AssTrack = ass_read_memory(m_Library, buffer.data(), size, nullptr);
 	m_HasRendered = false;
-	delete textsubs;
+	delete text;
 
 	if (!m_AssTrack){
 		KaiLog(_("Libass only opens ASS and SSA subtitles"));//Libass only works with ASS and SSA subtiltes

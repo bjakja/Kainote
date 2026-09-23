@@ -1586,7 +1586,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		else{ lastVisible = visible; }
 		//make sure that dummy edition is true when line is not visible
 		if (!visible){
-			tab->video->GetRenderer()->m_HasDummySubs = true;
+			tab->video->MarkSubtitlesOutdated();
 		}
 		else {
 			openFlag = OPEN_DUMMY;

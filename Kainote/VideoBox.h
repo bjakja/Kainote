@@ -132,6 +132,7 @@ public:
 	}
 	Provider *GetFFMS2();
 	void SetVisualEdition(bool value);
+	void MarkSubtitlesOutdated();
 	//can return null
 	RendererVideo *GetRenderer();
 	//can return null

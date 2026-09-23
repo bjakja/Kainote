@@ -98,9 +98,11 @@ bool SubtitlesProviderManager::DrawChanged(unsigned char* buffer, int time)
 	return GetProvider()->DrawChanged(buffer, time);
 }
 
-bool SubtitlesProviderManager::Open(TabPanel *tab, int flag, wxString *text)
+bool SubtitlesProviderManager::Open(int flag, wxString *text)
 {
-	return GetProvider()->Open(tab, flag, text);
+	bool result = GetProvider()->Open(text);
+	m_ShowsWholeSubtitles = result && flag == OPEN_WHOLE_SUBTITLES;
+	return result;
 }
 //for styles preview
 bool SubtitlesProviderManager::OpenString(wxString *text)

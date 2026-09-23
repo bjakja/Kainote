@@ -448,7 +448,7 @@ bool RendererFFMS2::OpenSubs(int flag, bool redraw, wxString *text, bool resetPa
 		if (resetParameters)
 			m_SubsProvider->SetVideoParameters(wxSize(m_Width, m_Height), m_Format, m_SwapFrame);
 
-		result = m_SubsProvider->Open(tab, flag, text);
+		result = m_SubsProvider->Open(flag, SubtitlesText(flag, text));
 	}
 
 #ifndef _WIN32
@@ -611,7 +611,7 @@ void RendererFFMS2::ChangePositionByFrame(int step)
 	
 		m_Frame = MID(0, m_Frame + step, m_FFMS2->m_numFrames - 1);
 		m_Time = GetTimebase().MsAt(m_Frame);
-		if (m_HasVisualEdition || m_HasDummySubs){
+		if (m_HasVisualEdition || !m_SubsProvider->ShowsWholeSubtitles()){
 			OpenSubs(OPEN_WHOLE_SUBTITLES, false);
 			m_HasVisualEdition = false;
 		}

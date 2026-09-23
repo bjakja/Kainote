@@ -41,7 +41,8 @@ public:
 	// is identical to the previous call (lets callers reuse a cached overlay).
 	// Default is conservative: always draws and reports "changed".
 	virtual bool DrawChanged(unsigned char* buffer, int time){ Draw(buffer, time); return true; }
-	virtual bool Open(TabPanel *tab, int flag, wxString *text){ return false; };
+	// takes the text; nullptr closes the subtitles
+	virtual bool Open(wxString *text){ return false; };
 	//for styles preview
 	virtual bool OpenString(wxString *text){ return false; };
 	virtual void SetVideoParameters(const wxSize& size, unsigned char format, bool isSwapped) {};
@@ -69,11 +70,12 @@ public:
 	SubtitlesVSFilter();
 	virtual ~SubtitlesVSFilter();
 	void Draw(unsigned char* buffer, int time);
-	bool Open(TabPanel *tab, int flag, wxString *text);
+	bool Open(wxString *text);
 	bool OpenString(wxString *text);
 	static void GetProviders(wxArrayString *providerList);
 	void SetVideoParameters(const wxSize& size, unsigned char format, bool isSwapped);
 private:
+	bool OpenInstance(wxString *text);
 	csri_frame *m_CsriFrame = nullptr;
 	csri_fmt *m_CsriFormat = nullptr;
 	csri_inst *m_CsriInstance = nullptr;
@@ -87,7 +89,7 @@ public:
 	virtual ~SubtitlesLibass();
 	void Draw(unsigned char* buffer, int time);
 	bool DrawChanged(unsigned char* buffer, int time) override;
-	bool Open(TabPanel *tab, int flag, wxString *text);
+	bool Open(wxString *text);
 	bool OpenString(wxString *text);
 	void SetVideoParameters(const wxSize& size, unsigned char format, bool isSwapped);
 	void ReloadLibraries(bool destroyExisted = false) override;

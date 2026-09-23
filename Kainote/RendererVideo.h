@@ -129,7 +129,6 @@ public:
 	bool m_DirectShowSeeking;
 	volatile bool m_BlockResize = false;
 	bool m_HasVisualEdition = false;
-	bool m_HasDummySubs = true;
 	bool m_VideoResized = false;
 	bool m_HasZoom = false;
 	bool m_SwapFrame = false;
@@ -195,6 +194,8 @@ public:
 	// visual editing and dummy subtitles show one line; playback needs them all
 	void OpenSubsForPlayback();
 	void ReopenSubsAfterSeek(bool playing);
+	// the video shows text that edits have since changed
+	void MarkSubtitlesOutdated();
 	void Zoom(const wxSize &size);
 	void DrawZoom();
 	void ZoomMouseHandle(wxMouseEvent &evt);
@@ -221,6 +222,8 @@ private:
 
 	bool InitDX();
 	virtual bool InitRendererDX(){ return true; };
+	// the text an OpenSubs flag stands for, with the vector clip mask added
+	wxString *SubtitlesText(int flag, wxString *text);
 	void Clear(bool clearObject = true);
 	virtual void ClearObject() {};
 
