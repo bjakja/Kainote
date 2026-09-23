@@ -82,6 +82,11 @@ int Timebase::FrameAt(int ms) const
 	return frame;
 }
 
+int Timebase::FrameShownAt(int ms) const
+{
+	return (ms < 0) ? 0 : std::max(FrameAt(ms + 1) - 1, 0);
+}
+
 int Timebase::ClampFrame(int frame) const
 {
 	if (frame < 0)

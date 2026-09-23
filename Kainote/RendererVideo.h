@@ -20,6 +20,7 @@
 //#include "Menu.h"
 //#include "SubtitlesProviderManager.h"
 #include "Provider.h"
+#include "Timebase.h"
 #include "KainoteFrame.h"
 //#include "VisualDrawingShapes.h"
 #include <d3d9.h>
@@ -101,16 +102,7 @@ public:
 	virtual bool Stop(){ return false; };
 	virtual void SetPosition(int _time, bool starttime = true, bool corect = true, bool async = true, bool refreshAudio = true){};
 	virtual void SetFFMS2Position(int time, bool starttime, bool refreshAudio = true){};
-	virtual void GoToNextKeyframe(){};
-	virtual void GoToPrevKeyframe(){};
-	virtual int GetFrameTime(bool start = true){ return 0; };
-	virtual void GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd){};
-	virtual int GetFrameTimeFromTime(int time, bool start = true){ return 0; };
-	virtual int GetFrameTimeFromFrame(int frame, bool start = true){ return 0; };
-	//if nothing loaded or loaded via Direct Show VFF is nullptr
-	//return true if VFF is present
-	//bool GetStartEndDurationFromMS(Dialogue *dial, SubsTime &duration);
-	virtual int GetPlayEndTime(int time){ return 0; };
+	virtual Timebase &GetTimebase(){ return m_Timebase; };
 	virtual int GetDuration(){ return 0; };
 	virtual int GetVolume(){ return 0; };
 	virtual void GetVideoSize(int *width, int *height){};
@@ -129,7 +121,6 @@ public:
 	//int GetPreciseTime(bool start = true){};
 	virtual void DeleteAudioCache(){}
 	virtual void SetColorSpace(const wxString& matrix, bool render = true){}
-	virtual void OpenKeyframes(const wxString &filename){};
 	
 	IDirect3DSurface9 * m_MainSurface = nullptr;
 	IDirect3DDevice9 *m_D3DDevice = nullptr;
@@ -170,6 +161,8 @@ public:
 	IDirect3DSurface9 *m_BlackBarsSurface = nullptr;
 	VideoBox *videoControl = nullptr;
 	Visuals *m_Visual = nullptr;
+	// backends without a provider fill this from the frame rate
+	Timebase m_Timebase;
 #ifndef _WIN32
 	// Shared Linux software present: subclasses composite into m_FrameBuffer
 	// (BGRA), double-buffer it here, and RenderToDc blits it to the wx video

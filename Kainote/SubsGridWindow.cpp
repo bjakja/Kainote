@@ -292,13 +292,13 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 				}
 				
 				if (showFrames && tab->video->HasFFMS2()){
-					Provider *FFMS2 = tab->video->GetFFMS2();
+					const Timebase &timebase = tab->video->GetTimebase();
 					wxString frame;
-					frame << FFMS2->GetFramefromMS(Dial->Start.mstime);
+					frame << timebase.FrameAt(Dial->Start.mstime);
 					strings.push_back(frame);
 					if (subsFormat != TMP){
 						frame = emptyString;
-						frame << FFMS2->GetFramefromMS(Dial->End.mstime) - 1;
+						frame << timebase.FrameAt(Dial->End.mstime) - 1;
 						strings.push_back(frame);
 					}
 				}
@@ -689,13 +689,13 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 				strings.push_back(wxString::Format(L"%i", Dial->Layer));
 			}
 			if (showFrames && tab->video->HasFFMS2()){
-				Provider *FFMS2 = tab->video->GetFFMS2();
+				const Timebase &timebase = tab->video->GetTimebase();
 				wxString frame;
-				frame << FFMS2->GetFramefromMS(Dial->Start.mstime);
+				frame << timebase.FrameAt(Dial->Start.mstime);
 				strings.push_back(frame);
 				if (subsFormat != TMP){
 					frame = emptyString;
-					frame << FFMS2->GetFramefromMS(Dial->End.mstime) - 1;
+					frame << timebase.FrameAt(Dial->End.mstime) - 1;
 					strings.push_back(frame);
 				}
 			}
@@ -1065,9 +1065,8 @@ void SubsGridWindow::AdjustWidthsD2D(GraphicsContext *gc, int cell)
 		SubsTime start(startMax);
 		bool canShowFrames = showFrames;
 		if (showFrames){
-			Provider *FFMS2 = tab->video->GetFFMS2();
-			if (FFMS2)
-				start.orgframe = FFMS2->GetFramefromMS(start.mstime);
+			if (tab->video->HasFFMS2())
+				start.orgframe = tab->video->GetTimebase().FrameAt(start.mstime);
 			else
 				canShowFrames = false;
 		}
@@ -1078,9 +1077,8 @@ void SubsGridWindow::AdjustWidthsD2D(GraphicsContext *gc, int cell)
 		SubsTime end(endMax);
 		bool canShowFrames = showFrames;
 		if (showFrames){
-			Provider *FFMS2 = tab->video->GetFFMS2();
-			if (FFMS2)
-				end.orgframe = FFMS2->GetFramefromMS(end.mstime);
+			if (tab->video->HasFFMS2())
+				end.orgframe = tab->video->GetTimebase().FrameAt(end.mstime);
 			else
 				canShowFrames = false;
 		}
@@ -1231,9 +1229,8 @@ void SubsGridWindow::AdjustWidths(int cell)
 		SubsTime start(startMax);
 		bool canShowFrames = showFrames;
 		if (showFrames){
-			Provider *FFMS2 = tab->video->GetFFMS2();
-			if (FFMS2)
-				start.orgframe = FFMS2->GetFramefromMS(start.mstime);
+			if (tab->video->HasFFMS2())
+				start.orgframe = tab->video->GetTimebase().FrameAt(start.mstime);
 			else
 				canShowFrames = false;
 		}
@@ -1244,9 +1241,8 @@ void SubsGridWindow::AdjustWidths(int cell)
 		SubsTime end(endMax);
 		bool canShowFrames = showFrames;
 		if (showFrames){
-			Provider *FFMS2 = tab->video->GetFFMS2();
-			if (FFMS2)
-				end.orgframe = FFMS2->GetFramefromMS(end.mstime);
+			if (tab->video->HasFFMS2())
+				end.orgframe = tab->video->GetTimebase().FrameAt(end.mstime);
 			else
 				canShowFrames = false;
 		}
@@ -1622,7 +1618,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 				else if (preview){ preview->NewSeeking(); }
 			}
 			else if (video->GetState() != None){
-				video->PlayLine(GetDialogue(row)->Start.mstime, video->GetPlayEndTime(GetDialogue(row)->End.mstime));
+				video->PlayLine(GetDialogue(row)->Start.mstime, video->GetTimebase().PlayEndBefore(GetDialogue(row)->End.mstime));
 			}
 
 		}

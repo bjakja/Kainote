@@ -609,15 +609,11 @@ void Visuals::GetMoveTimes(int *start, int *end)
 {
 	VideoBox *video = tab->video;
 	EditBox *edit = tab->edit;
-	Provider *FFMS2 = video->GetFFMS2();
-	float fps;
-	video->GetFPSAndAspectRatio(&fps, nullptr, nullptr, nullptr);
+	const Timebase &timebase = video->GetTimebase();
 	int startTime = ZEROIT(edit->line->Start.mstime);
 	int endTime = ZEROIT(edit->line->End.mstime);
-	int framestart = (!FFMS2) ? (((float)startTime / 1000.f) * fps) + 1 : FFMS2->GetFramefromMS(startTime);
-	int frameend = (!FFMS2) ? ((float)endTime / 1000.f) * fps : FFMS2->GetFramefromMS(endTime) - 1;
-	int msstart = (!FFMS2) ? ((framestart * 1000) / fps) + 0.5f : FFMS2->GetMSfromFrame(framestart);
-	int msend = (!FFMS2) ? ((frameend * 1000) / fps) + 0.5f : FFMS2->GetMSfromFrame(frameend);
+	int msstart = timebase.MsAt(timebase.FrameAt(startTime));
+	int msend = timebase.MsAt(timebase.FrameAt(endTime) - 1);
 	int diff = endTime - startTime;
 
 	if(start)

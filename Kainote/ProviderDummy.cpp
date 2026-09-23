@@ -94,15 +94,7 @@ bool ProviderDummy::HasVideo()
 
 void ProviderDummy::GenerateTimecodes()
 {
-	double timecode = 0.;
-	double frametime = 1000. / m_FPS;
-	size_t counter = 0;
-	m_timecodes.resize(m_numFrames);
-	while (counter < m_numFrames) {
-		m_timecodes[counter] = (int)timecode;
-		timecode += frametime;
-		counter++;
-	}
+	m_timebase = Timebase::FromFps(m_FPS, m_numFrames);
 }
 
 void ProviderDummy::GenerateFrame()
@@ -263,7 +255,7 @@ void ProviderDummy::Processing()
 				if (WaitForSingleObject(m_eventKillSelf, 0) == WAIT_OBJECT_0) { return; }
 
 				if (m_renderer->m_Frame != m_lastFrame) {
-					m_renderer->m_Time = m_timecodes[m_renderer->m_Frame];
+					m_renderer->m_Time = m_timebase.MsAt(m_renderer->m_Frame);
 					m_lastFrame = m_renderer->m_Frame;
 				}
 				
@@ -283,7 +275,7 @@ void ProviderDummy::Processing()
 				acttime = timeGetTime() - m_renderer->m_LastTime;
 
 				m_renderer->m_Frame++;
-				m_renderer->m_Time = m_timecodes[m_renderer->m_Frame];
+				m_renderer->m_Time = m_timebase.MsAt(m_renderer->m_Frame);
 
 				tdiff = m_renderer->m_Time - acttime;
 
@@ -295,7 +287,7 @@ void ProviderDummy::Processing()
 							m_renderer->m_Time = m_renderer->m_PlayEndTime;
 							break;
 						}
-						int frameTime = m_timecodes[m_renderer->m_Frame];
+						int frameTime = m_timebase.MsAt(m_renderer->m_Frame);
 						if (frameTime >= acttime || frameTime >= m_renderer->m_PlayEndTime) {
 							break;
 						}

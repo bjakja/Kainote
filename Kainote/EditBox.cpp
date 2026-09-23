@@ -474,7 +474,7 @@ done:
 				Dialogue *next = grid->GetDialogue(grid->GetKeyFromPosition(currentLine, 1));
 				int ed = line->End.mstime, nst = next->Start.mstime;
 				int playend = (nst > ed && playAfter > 2) ? nst : ed;
-				tab->video->PlayLine(line->Start.mstime, tab->video->GetPlayEndTime(playend));
+				tab->video->PlayLine(line->Start.mstime, tab->video->GetTimebase().PlayEndBefore(playend));
 			}
 		}
 	}

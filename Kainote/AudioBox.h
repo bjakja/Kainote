@@ -129,7 +129,7 @@ public:
 	virtual ~AudioBox(){};
 
 	void SetFile(wxString file, bool fromvideo);
-	void SetKeyframes(const wxArrayInt &keyframes);
+	void SetKeyframes(const std::vector<int> &keyframes);
 	//true when could be loaded else false to store name for later
 	bool OpenKeyframes(const wxString &filename);
 	void SetAccels();

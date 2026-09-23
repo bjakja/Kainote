@@ -600,7 +600,7 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 			}
 		}
 		// Draw keyframes
-		if (drawKeyframes && provider->GetKeyframes().size() > 0) {
+		if (drawKeyframes && provider->GetTimebase().Keyframes().size() > 0) {
 			DrawKeyframes();
 		}
 
@@ -1339,10 +1339,7 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 				//copy keyframes to not check if video is loaded
 
 				if (FFMS2){
-					provider->SetKeyframes(FFMS2->GetKeyframes());
-					provider->SetTimecodes(FFMS2->GetTimecodes());
-					provider->SetNumFrames(FFMS2->GetNumFrames());
-					provider->SetFPS(FFMS2->GetFPS());
+					provider->SetTimebase(FFMS2->GetTimebase());
 				}
 				RendererVideo* renderer = vb->GetRenderer();
 				ownProvider = true;
@@ -2444,25 +2441,14 @@ int AudioDisplay::GetBoundarySnap(int ms, int rangeX, bool shiftHeld, bool start
 	if (shiftHeld) snapKey = !snapKey;
 
 	if (snapKey && drawKeyframes) {
-		const wxArrayInt& keyFrames = provider->GetKeyframes();
-		size_t timecodesSize = provider->GetTimecodes().size();
-		long long keyMS;
+		const Timebase &timebase = provider->GetTimebase();
 
-		for (unsigned int i = 0; i < keyFrames.Count(); i++) {
-			keyMS = keyFrames[i];
+		for (int keyMS : timebase.Keyframes()) {
 			int keyX = GetXAtMS(keyMS);
 			if (keyX >= 0 && keyX < w) {
-				int frameTime = 0;
-				if (timecodesSize < 1){
-					//there is nothing to do when video is not loaded
-					//put half of frame 23.976FPS
-					frameTime = keyMS - 21;
-				}
-				else{
-					int frame = provider->GetFramefromMS(keyMS);
-					int prevFrameTime = provider->GetMSfromFrame(frame - 1);
-					frameTime = keyMS + ((prevFrameTime - keyMS) / 2);
-				}
+				//without video put it half of a 23.976 fps frame earlier
+				int frameTime = timebase.IsEmpty() ? keyMS - 21 :
+					timebase.StartTimeFor(timebase.FrameAt(keyMS));
 				boundaries.Add(ZEROIT(frameTime));
 			}
 		}
@@ -2808,7 +2794,7 @@ void AudioDisplay::DrawKeyframes() {
 	D3DXVECTOR2 v2[2];
 	// Scan list
 	d3dLine->Begin();
-	const wxArrayInt& keyFrames = provider->GetKeyframes();
+	const std::vector<int> &keyFrames = provider->GetTimebase().Keyframes();
 	for (size_t i = 0; i < keyFrames.size(); i++) {
 		int cur = keyFrames[i];
 		if (cur >= mintime && cur <= maxtime)

@@ -42,11 +42,6 @@ public:
 	bool Pause();
 	bool Stop();
 	void SetPosition(int _time, bool starttime = true, bool corect = true, bool async = true, bool refreshAudio = true) override;
-	int GetFrameTime(bool start = true);
-	void GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd);
-	int GetFrameTimeFromTime(int time, bool start = true);
-	int GetFrameTimeFromFrame(int frame, bool start = true);
-	int GetPlayEndTime(int time);
 	int GetDuration();
 	int GetVolume();
 	void GetVideoSize(int *width, int *height);
@@ -64,7 +59,6 @@ public:
 	bool EnumFilters(Menu *menu);
 	bool FilterConfig(wxString name, int idx, wxPoint pos);
 	bool InitRendererDX();
-	void OpenKeyframes(const wxString &filename);
 	void ClearObject();
 	void SetColorSpace(const wxString& matrix, bool render = true) {
 		if (matrix == L"TV.601")

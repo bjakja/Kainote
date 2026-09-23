@@ -71,7 +71,6 @@ void RendererFFMS2::LinuxPlaybackLoop()
 	if (debugPlayback)
 		std::fprintf(stderr, "[linux-playback] start time=%d frame=%d end=%d duration=%d\n", m_Time, m_Frame, m_PlayEndTime, GetDuration());
 	int lastPresentedFrame = -1;
-	int lastPresentedTime = -1;
 	while (!m_LinuxPlaybackStop.load()) {
 		int playTime = static_cast<int>(timeGetTime() - m_LastTime);
 		if (playTime < 0)
@@ -82,19 +81,17 @@ void RendererFFMS2::LinuxPlaybackLoop()
 			break;
 		}
 
-		const int seekFrom = (lastPresentedFrame >= 0 && playTime >= lastPresentedTime) ? lastPresentedFrame : 0;
-		int nextFrame = m_FFMS2->GetFramefromMS(playTime, seekFrom, true);
-		nextFrame = std::max(0, std::min(nextFrame, m_FFMS2->m_numFrames - 1));
+		const Timebase &timebase = m_FFMS2->GetTimebase();
+		int nextFrame = timebase.ClampFrame(timebase.FrameAt(playTime));
 		if (nextFrame != lastPresentedFrame) {
 			m_Frame = nextFrame;
-			m_Time = m_FFMS2->m_timecodes[m_Frame];
+			m_Time = timebase.MsAt(m_Frame);
 			m_FFMS2->GetFrame(m_Frame, frameBuffer.data());
 			DrawTexture(frameBuffer.data(), true);
 			++decodedFrames;
 			if (debugPlayback && (decodedFrames <= 5 || (decodedFrames % 30) == 0))
 				std::fprintf(stderr, "[linux-playback] decode=%u playTime=%d time=%d frame=%d\n", decodedFrames, playTime, m_Time, m_Frame);
 			lastPresentedFrame = nextFrame;
-			lastPresentedTime = playTime;
 		}
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(4));
@@ -488,7 +485,7 @@ bool RendererFFMS2::Play(int end)
 
 	m_State = Playing;
 
-	m_Time = m_FFMS2->m_timecodes[m_Frame];
+	m_Time = m_FFMS2->GetTimebase().MsAt(m_Frame);
 	m_LastTime = timeGetTime() - m_Time;
 	if (m_AudioPlayer){ m_AudioPlayer->Play(m_Time, -1, false); }
 #ifdef _WIN32
@@ -548,12 +545,9 @@ void RendererFFMS2::SetPosition(int _time, bool starttime/*=true*/, bool corect/
 //is from video thread make safe any deletion
 void RendererFFMS2::SetFFMS2Position(int _time, bool starttime, bool refreshAudio/* = true*/){
 	bool playing = m_State == Playing;
-	m_Frame = m_FFMS2->GetFramefromMS(_time, (m_Time > _time) ? 0 : m_Frame);
-	if (!starttime){
-		m_Frame--;
-		if (m_FFMS2->m_timecodes[m_Frame] >= _time){ m_Frame--; }
-	}
-	m_Time = m_FFMS2->m_timecodes[m_Frame];
+	const Timebase &timebase = m_FFMS2->GetTimebase();
+	m_Frame = timebase.ClampFrame(starttime ? timebase.FrameAt(_time) : timebase.FrameShownAt(_time - 1));
+	m_Time = timebase.MsAt(m_Frame);
 	m_LastTime = timeGetTime() - m_Time;
 	m_PlayEndTime = GetDuration();
 
@@ -590,79 +584,6 @@ void RendererFFMS2::SetFFMS2Position(int _time, bool starttime, bool refreshAudi
 int RendererFFMS2::GetDuration()
 {
 	return m_FFMS2 ? m_FFMS2->m_duration * 1000.0 : 0;
-}
-
-int RendererFFMS2::GetFrameTime(bool start)
-{
-	//+5ms to avoid times +27ms where + 17ms is near
-	if (start){
-		int prevFrameTime = m_FFMS2->GetMSfromFrame(m_Frame - 1);
-		return m_Time + (((prevFrameTime - m_Time) / 2.f) + 5);
-	}
-	else{
-		if (m_Frame + 1 >= m_FFMS2->m_numFrames){
-			int prevFrameTime = m_FFMS2->GetMSfromFrame(m_Frame - 1);
-			return m_Time + (((m_Time - prevFrameTime) / 2.f) + 5);
-		}
-		else{
-			int nextFrameTime = m_FFMS2->GetMSfromFrame(m_Frame + 1);
-			return m_Time + (((nextFrameTime - m_Time) / 2.f) + 5);
-		}
-	}
-}
-
-void RendererFFMS2::GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd)
-{
-	if (!retStart || !retEnd){ return; }
-	
-	int frameStartTime = m_FFMS2->GetFramefromMS(startTime);
-	int frameEndTime = m_FFMS2->GetFramefromMS(endTime, frameStartTime);
-	*retStart = m_FFMS2->GetMSfromFrame(frameStartTime) - startTime;
-	*retEnd = m_FFMS2->GetMSfromFrame(frameEndTime) - endTime;
-}
-
-int RendererFFMS2::GetFrameTimeFromTime(int _time, bool start)
-{
-	//+5ms to avoid times +27ms where + 17ms is near
-	if (start){
-		int frameFromTime = m_FFMS2->GetFramefromMS(_time);
-		int prevFrameTime = m_FFMS2->GetMSfromFrame(frameFromTime - 1);
-		int frameTime = m_FFMS2->GetMSfromFrame(frameFromTime);
-		return frameTime + ((prevFrameTime - frameTime) / 2.f) + 5;
-	}
-	else{
-		int frameFromTime = m_FFMS2->GetFramefromMS(_time);
-		int nextFrameTime = m_FFMS2->GetMSfromFrame(frameFromTime + 1);
-		int frameTime = m_FFMS2->GetMSfromFrame(frameFromTime);
-		return frameTime + ((nextFrameTime - frameTime) / 2.f) + 5;
-	}
-}
-
-int RendererFFMS2::GetFrameTimeFromFrame(int frame, bool start)
-{
-	//+5ms to avoid times +27ms where + 17ms is near
-	if (start){
-		int prevFrameTime = m_FFMS2->GetMSfromFrame(frame - 1);
-		int frameTime = m_FFMS2->GetMSfromFrame(frame);
-		return frameTime + ((prevFrameTime - frameTime) / 2.f) + 5;
-	}
-	else{
-		int nextFrameTime = m_FFMS2->GetMSfromFrame(frame + 1);
-		int frameTime = m_FFMS2->GetMSfromFrame(frame);
-		return frameTime + ((nextFrameTime - frameTime) / 2.f) + 5;
-	}
-}
-
-int RendererFFMS2::GetPlayEndTime(int _time)
-{
-	int frameFromTime = m_FFMS2->GetFramefromMS(_time);
-	int prevFrameTime = m_FFMS2->GetMSfromFrame(frameFromTime - 1);
-	return prevFrameTime;
-}
-
-void RendererFFMS2::OpenKeyframes(const wxString &filename)
-{
-	m_FFMS2->OpenKeyframes(filename);
 }
 
 void RendererFFMS2::GetFpsnRatio(float *fps, long *arx, long *ary)
@@ -705,7 +626,7 @@ void RendererFFMS2::ChangePositionByFrame(int step)
 	if (m_State == Playing || m_State == None){ return; }
 	
 		m_Frame = MID(0, m_Frame + step, m_FFMS2->m_numFrames - 1);
-		m_Time = m_FFMS2->m_timecodes[m_Frame];
+		m_Time = m_FFMS2->GetTimebase().MsAt(m_Frame);
 		if (m_HasVisualEdition || m_HasDummySubs){
 			OpenSubs(OPEN_WHOLE_SUBTITLES, false);
 			m_HasVisualEdition = false;
@@ -738,30 +659,9 @@ unsigned char* RendererFFMS2::GetFrame(int frame, bool subs)
 	byte* newFrame = new byte[all];
 	m_FFMS2->GetFrame(frame, newFrame);
 	if (subs) {
-		m_SubsProvider->Draw(newFrame, m_FFMS2->GetMSfromFrame(frame));
+		m_SubsProvider->Draw(newFrame, m_FFMS2->GetTimebase().MsAt(frame));
 	}
 	return newFrame;
-}
-
-void RendererFFMS2::GoToNextKeyframe()
-{
-	for (size_t i = 0; i < m_FFMS2->m_keyFrames.size(); i++){
-		if (m_FFMS2->m_keyFrames[i] > m_Time){
-			SetPosition(m_FFMS2->m_keyFrames[i]);
-			return;
-		}
-	}
-	SetPosition(m_FFMS2->m_keyFrames[0]);
-}
-void RendererFFMS2::GoToPrevKeyframe()
-{
-	for (int i = m_FFMS2->m_keyFrames.size() - 1; i >= 0; i--){
-		if (m_FFMS2->m_keyFrames[i] < m_Time){
-			SetPosition(m_FFMS2->m_keyFrames[i]);
-			return;
-		}
-	}
-	SetPosition(m_FFMS2->m_keyFrames[m_FFMS2->m_keyFrames.size() - 1]);
 }
 
 bool RendererFFMS2::HasFFMS2()

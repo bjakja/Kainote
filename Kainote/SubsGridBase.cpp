@@ -437,10 +437,22 @@ public:
 	} // returns x>y
 };
 
+//how far line start and end sit from the start of the frames they first show on
+static void GetStartEndDelay(const Timebase &timebase, Dialogue *dial, int *startDelay, int *endDelay)
+{
+	if (timebase.IsEmpty()) {
+		*startDelay = *endDelay = 0;
+		return;
+	}
+	*startDelay = timebase.MsAt(timebase.FrameAt(dial->Start.mstime)) - dial->Start.mstime;
+	*endDelay = timebase.MsAt(timebase.FrameAt(dial->End.mstime)) - dial->End.mstime;
+}
+
 void SubsGridBase::ChangeTimes(bool byFrame)
 {
-	Provider *FFMS2 = tab->video->GetFFMS2();
-	if (byFrame && !FFMS2){ 
+	bool hasFFMS2 = tab->video->HasFFMS2();
+	const Timebase &timebase = tab->video->GetTimebase();
+	if (byFrame && !hasFFMS2){ 
 		KaiLog(_("Video was not loaded using FFMS2")); return; }
 	//1 forward / backward, 2 Start Time For V/A Timing, 4 Move to video time, 8 Move to audio time;
 	int moveTimeOptions = Options.GetInt(SHIFT_TIMES_OPTIONS);
@@ -458,7 +470,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 
 	if (PostprocessorOptions){
 		if (subsFormat == TMP || PostprocessorOptions < 16){ PostprocessorOptions = 0; }
-		else if (PostprocessorOptions & 8 && !FFMS2){ PostprocessorOptions ^= 8; }
+		else if (PostprocessorOptions & 8 && !hasFFMS2){ PostprocessorOptions ^= 8; }
 		LeadIn = Options.GetInt(POSTPROCESSOR_LEAD_IN);
 		LeadOut = Options.GetInt(POSTPROCESSOR_LEAD_OUT);
 		ThresholdStart = Options.GetInt(POSTPROCESSOR_THRESHOLD_START);
@@ -506,7 +518,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 
 	if ((moveTimeOptions & 4) && tab->video->GetState() != None){
 		if (byFrame){
-			frame += tab->video->GetCurrentFrame() - FFMS2->GetFramefromMS(difftime);
+			frame += tab->video->GetCurrentFrame() - timebase.FrameAt(difftime);
 		}
 		else{
 			int addedTimes = tab->video->GetFrameTime(VAS != 0) - difftime;
@@ -517,7 +529,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 	}
 	else if ((moveTimeOptions & 8) && edit->ABox && edit->ABox->audioDisplay->hasMark){
 		if (byFrame){
-			frame += FFMS2->GetFramefromMS(edit->ABox->audioDisplay->curMarkMS - difftime);
+			frame += timebase.FrameAt(edit->ABox->audioDisplay->curMarkMS - difftime);
 		}
 		else{
 			int addedTimes = edit->ABox->audioDisplay->curMarkMS - difftime;
@@ -548,7 +560,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 			dialc = CopyDialogueF(i, true, true);
 			int startTrimed = 0, endTrimed = 0, duration = 0;
 			if (changeTagTimes){
-				tab->video->GetStartEndDelay(dialc->Start.mstime, dialc->End.mstime, &startTrimed, &endTrimed);
+				GetStartEndDelay(timebase, dialc, &startTrimed, &endTrimed);
 			}
 			if (time != 0){
 				if (whichTimes != 2){ dialc->Start.Change(time); }
@@ -560,18 +572,18 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 					duration = dialc->End.mstime - dialc->Start.mstime;
 				}
 				if (whichTimes != 2){
-					int startFrame = FFMS2->GetFramefromMS(dialc->Start.mstime) + frame;
-					dialc->Start.NewTime(ZEROIT(tab->video->GetFrameTimeFromFrame(startFrame)));
+					int startFrame = timebase.FrameAt(dialc->Start.mstime) + frame;
+					dialc->Start.NewTime(ZEROIT(timebase.StartTimeFor(startFrame)));
 				}
 				if (whichTimes != 1){
-					int endFrame = FFMS2->GetFramefromMS(dialc->End.mstime) + frame;
-					dialc->End.NewTime(ZEROIT(tab->video->GetFrameTimeFromFrame(endFrame)));
+					int endFrame = timebase.FrameAt(dialc->End.mstime) + frame;
+					dialc->End.NewTime(ZEROIT(timebase.StartTimeFor(endFrame)));
 				}
 				dialc->ChangeDialogueState(1);
 			}
 			if (changeTagTimes){
 				int newStartTrimed = 0, newEndTrimed = 0;
-				tab->video->GetStartEndDelay(dialc->Start.mstime, dialc->End.mstime, &newStartTrimed, &newEndTrimed);
+				GetStartEndDelay(timebase, dialc, &newStartTrimed, &newEndTrimed);
 				if (byFrame){ 
 					newEndTrimed += ((dialc->End.mstime - dialc->Start.mstime) - duration); 
 				}
@@ -599,17 +611,14 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 		bool isEndGreater = false;
 		bool previousIsKeyFrame = true;
 		bool isPreviousEndEdited = false;
-		if (!FFMS2) {
+		if (!hasFFMS2) {
 			KaiLog(_("Video was not loaded using FFMS2"));
 			return;
 		}
 
-		const wxArrayInt& keyFrames = FFMS2->GetKeyframes();
 		wxArrayInt keyFramesStart;
-		for (size_t g = 0; g < keyFrames.Count(); g++) {
-			int keyMS = keyFrames[g];
-			keyFramesStart.Add(ZEROIT(tab->video->GetFrameTimeFromTime(keyMS)));
-		}
+		for (int keyMS : timebase.Keyframes())
+			keyFramesStart.Add(ZEROIT(timebase.StartTimeFor(timebase.FrameAt(keyMS))));
 		for (auto cur = tmpmap.begin(); cur != tmpmap.end(); cur++){
 			auto it = cur;
 			dialc = cur->first;

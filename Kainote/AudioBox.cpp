@@ -257,14 +257,13 @@ void AudioBox::SetFile(wxString file, bool fromvideo) {
 
 
 
-void AudioBox::SetKeyframes(const wxArrayInt &keyframes)
+void AudioBox::SetKeyframes(const std::vector<int> &keyframes)
 {
 	if (!audioDisplay->loaded || !audioDisplay->provider)
 		return;
 
 	if (audioDisplay->ownProvider){
-		audioDisplay->provider->SetKeyframes(keyframes);
-		audioDisplay->provider->SetNumFrames(keyframes.size());
+		audioDisplay->provider->GetTimebase().SetKeyframes(keyframes);
 	}
 
 	Refresh(false);
@@ -272,15 +271,16 @@ void AudioBox::SetKeyframes(const wxArrayInt &keyframes)
 
 bool AudioBox::OpenKeyframes(const wxString & filename)
 {
-	//false when we do not have own provider, 
-	//or was loaded file without video, 
-	//without timecodes we can't do anything
-	//keyframe loader load pseudotimecodes from fps that's a random float number.
-	if (!audioDisplay->ownProvider && audioDisplay->provider && audioDisplay->provider->GetTimecodes().size())
+	//audio sharing the video's provider gets keyframes with the video
+	Provider *provider = audioDisplay->provider;
+	if (!audioDisplay->ownProvider && provider && !provider->GetTimebase().IsEmpty())
 		return false;
 
-	wxArrayInt keyframes;
-	KeyframeLoader kfl(filename, &keyframes, audioDisplay->provider);
+	//audio without video has no frames, count them at the usual film rate
+	Timebase timebase = (provider && !provider->GetTimebase().IsEmpty()) ?
+		provider->GetTimebase() : Timebase::FromFps(24000.f / 1001.f, 0);
+	std::vector<int> keyframes;
+	KeyframeLoader kfl(filename, &keyframes, timebase);
 	if (keyframes.size()){
 		SetKeyframes(keyframes);
 	}

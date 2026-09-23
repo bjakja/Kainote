@@ -1484,7 +1484,8 @@ void SubsGrid::Split(int id)
 		Dialogue* dial = CopyDialogueF(curLine);
 		Dialogue* splitDial = dial->Copy();
 		int _time = tab->video->Tell();
-		_time = tab->video->GetFrameTimeFromTime(_time, false);
+		const Timebase &timebase = tab->video->GetTimebase();
+		_time = timebase.EndTimeFor(timebase.FrameAt(_time));
 		ZEROIT(_time);
 		dial->End.NewTime(_time);
 		splitDial->Start.NewTime(_time);
@@ -1504,8 +1505,9 @@ void SubsGrid::Split(int id)
 			case GRID_SPLIT_BY_FRAME:
 			{
 				if (tab->video->HasFFMS2()) {
-					int frameStart = tab->video->GetFFMS2()->GetFramefromMS(dialc->Start.mstime);
-					int frameEnd = tab->video->GetFFMS2()->GetFramefromMS(dialc->End.mstime);
+					const Timebase &timebase = tab->video->GetTimebase();
+					int frameStart = timebase.FrameAt(dialc->Start.mstime);
+					int frameEnd = timebase.FrameAt(dialc->End.mstime);
 					ParseData* tagsData = dialc->ParseTags(tags2, 2, false);
 					wxString retval;
 					float moveTable[6];
@@ -1525,15 +1527,15 @@ void SubsGrid::Split(int id)
 					}
 				
 					for (int j = frameStart; j < frameEnd; j++) {
-						int lineStart = tab->video->GetFrameTimeFromFrame(j);
-						int lineEnd = tab->video->GetFrameTimeFromFrame(j, false);
+						int lineStart = timebase.StartTimeFor(j);
+						int lineEnd = timebase.EndTimeFor(j);
 						if (j != frameStart) {
 							dialc = dialc->Copy();
 							g++;
 							InsertRows(g, 1, dialc);
 						}
 						if (hasMove) {
-							int frameTime = tab->video->GetFFMS2()->GetMSfromFrame(j);
+							int frameTime = timebase.MsAt(j);
 							D3DXVECTOR2 point(moveTable[0], moveTable[1]);
 							double points[4] = { moveTable[2], moveTable[3], moveTable[4], moveTable[5] };
 							CalcMovePosition(&point, points, frameTime);

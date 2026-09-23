@@ -238,7 +238,7 @@ void TimeCtrl::SetTime(const SubsTime &newtime, bool stillModified, int opt)
 	bool canShowFrames = showFrames && vb && vb->HasFFMS2();
 
 	if (canShowFrames && opt){
-		mTime.orgframe = vb->GetFFMS2()->GetFramefromMS(mTime.mstime);
+		mTime.orgframe = vb->GetTimebase().FrameAt(mTime.mstime);
 		//opt 2 = end frame
 		if (opt == 2) 
 			mTime.orgframe--; 
@@ -258,8 +258,9 @@ SubsTime TimeCtrl::GetTime(char opt)
 	if (canShowFrames && !timeUnchanged){
 		SubsTime cpy = SubsTime(mTime);
 		cpy.ChangeFormat(form);
-		int time = (!opt) ? vb->GetFFMS2()->GetMSfromFrame(cpy.orgframe) :
-			vb->GetRenderer()->GetFrameTimeFromFrame(cpy.orgframe, opt == 1);
+		const Timebase &timebase = vb->GetTimebase();
+		int time = (!opt) ? timebase.MsAt(cpy.orgframe) :
+			(opt == 1) ? timebase.StartTimeFor(cpy.orgframe) : timebase.EndTimeFor(cpy.orgframe);
 
 		cpy.mstime = ZEROIT(time);
 		return cpy;

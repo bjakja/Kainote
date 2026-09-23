@@ -18,7 +18,6 @@
 #include "Provider.h"
 #include "ProviderDummy.h"
 #include "ProviderFFMS2.h"
-#include "KeyframesLoader.h"
 #include "KaiMessageBox.h"
 #include "AudioBox.h"
 #include "VisualDrawingShapes.h"
@@ -120,73 +119,6 @@ void Provider::GetWaveForm(int* min, int* peak, long long start, int w, int h, i
 
 	delete[] raw;
 
-}
-
-int Provider::TimefromFrame(int nframe)
-{
-	if (nframe < 0) { nframe = 0; }
-	if (nframe >= m_numFrames) { nframe = m_numFrames - 1; }
-	return m_timecodes[nframe];
-}
-
-int Provider::FramefromTime(int time)
-{
-	if (time <= 0) { return 0; }
-	int start = m_lastFrame;
-	if (m_lastTime > time)
-	{
-		start = 0;
-	}
-	int wframe = m_numFrames - 1;
-	for (int i = start; i < m_numFrames - 1; i++)
-	{
-		if (m_timecodes[i] >= time && time < m_timecodes[i + 1])
-		{
-			wframe = i;
-			break;
-		}
-	}
-	m_lastFrame = wframe;
-	m_lastTime = time;
-	return m_lastFrame;
-}
-
-int Provider::GetMSfromFrame(int frame)
-{
-	if (frame >= m_numFrames) { return frame * (1000.f / m_FPS); }
-	else if (frame < 0) { return 0; }
-	return m_timecodes[frame];
-}
-
-int Provider::GetFramefromMS(int MS, int seekfrom, bool safe)
-{
-	if (MS <= 0) return 0;
-	int result = (safe) ? m_numFrames - 1 : m_numFrames;
-	for (int i = seekfrom; i < m_numFrames; i++)
-	{
-		if (m_timecodes[i] >= MS)
-		{
-			result = i;
-			break;
-		}
-	}
-	return result;
-}
-
-void Provider::OpenKeyframes(const wxString& filename)
-{
-	wxArrayInt keyframes;
-	KeyframeLoader kfl(filename, &keyframes, this);
-	if (keyframes.size()) {
-		m_keyFrames = keyframes;
-		TabPanel* tab = (m_renderer) ? (TabPanel*)m_renderer->videoControl->GetParent() : Notebook::GetTab();
-		if (tab->edit->ABox) {
-			tab->edit->ABox->SetKeyframes(keyframes);
-		}
-	}
-	else {
-		KaiMessageBox(_("Invalid keyframes format"), _("Error"), 4L, Notebook::GetTab());
-	}
 }
 
 void Provider::SetPosition(int time, bool starttime, bool refteshAudio/* = true*/)

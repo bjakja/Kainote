@@ -33,6 +33,8 @@ public:
 	// The first frame that starts at or after ms, the frame a line starting
 	// at ms first appears on. Past the last frame it extrapolates.
 	int FrameAt(int ms) const;
+	// The frame on screen at ms, the last one that starts at or before it.
+	int FrameShownAt(int ms) const;
 	// When frame starts; 0 for negative frames, extrapolated past the end.
 	int MsAt(int frame) const;
 	int ClampFrame(int frame) const;

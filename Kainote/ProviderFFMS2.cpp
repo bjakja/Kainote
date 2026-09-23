@@ -136,7 +136,7 @@ void ProviderFFMS2::Processing()
 				if (WaitForSingleObject(m_eventKillSelf, 0) == WAIT_OBJECT_0) { return; }
 
 				if (m_renderer->m_Frame != m_lastFrame) {
-					m_renderer->m_Time = m_timecodes[m_renderer->m_Frame];
+					m_renderer->m_Time = m_timebase.MsAt(m_renderer->m_Frame);
 					m_lastFrame = m_renderer->m_Frame;
 				}
 				if (!CopyCurrentFrame(buff, true)) {
@@ -166,7 +166,7 @@ void ProviderFFMS2::Processing()
 				acttime = timeGetTime() - m_renderer->m_LastTime;
 
 				m_renderer->m_Frame++;
-				m_renderer->m_Time = m_timecodes[m_renderer->m_Frame];
+				m_renderer->m_Time = m_timebase.MsAt(m_renderer->m_Frame);
 
 				tdiff = m_renderer->m_Time - acttime;
 
@@ -178,7 +178,7 @@ void ProviderFFMS2::Processing()
 							m_renderer->m_Time = m_renderer->m_PlayEndTime;
 							break;
 						}
-						int frameTime = m_timecodes[m_renderer->m_Frame];
+						int frameTime = m_timebase.MsAt(m_renderer->m_Frame);
 						if (frameTime >= acttime || frameTime >= m_renderer->m_PlayEndTime) {
 							break;
 						}
@@ -473,6 +473,8 @@ done:
 
 
 		// build list of keyframes and timecodes
+		std::vector<int> timecodes;
+		std::vector<int> keyframes;
 		for (int CurFrameNum = 0; CurFrameNum < videoprops->NumFrames; CurFrameNum++) {
 			CurFrameData = FFMS_GetFrameInfo(FrameData, CurFrameNum);
 			if (CurFrameData == nullptr) {
@@ -481,14 +483,12 @@ done:
 
 			int Timestamp = ((CurFrameData->PTS * TimeBase->Num) / TimeBase->Den);
 			// keyframe?
-			if (CurFrameData->KeyFrame) { m_keyFrames.Add(Timestamp); }
-			m_timecodes.push_back(Timestamp);
+			if (CurFrameData->KeyFrame) { keyframes.push_back(Timestamp); }
+			timecodes.push_back(Timestamp);
 
 		}
-		if (m_renderer && !m_renderer->videoControl->GetKeyFramesFileName().empty()) {
-			OpenKeyframes(m_renderer->videoControl->GetKeyFramesFileName());
-			m_renderer->videoControl->SetKeyFramesFileName(emptyString);
-		}
+		m_timebase = Timebase::FromTimecodes(std::move(timecodes), m_FPS);
+		m_timebase.SetKeyframes(std::move(keyframes));
 	}
 audio:
 
@@ -554,8 +554,7 @@ ProviderFFMS2::~ProviderFFMS2()
 		CloseHandle(m_eventAudioComplete);
 		m_eventAudioComplete = nullptr;
 	}
-	m_keyFrames.Clear();
-	m_timecodes.clear();
+	m_timebase = Timebase();
 
 	if (m_videoSource) {
 		FFMS_DestroyVideoSource(m_videoSource); m_videoSource = nullptr;

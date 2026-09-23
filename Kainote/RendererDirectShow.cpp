@@ -37,11 +37,6 @@ bool RendererDirectShow::Play(int) { return false; }
 bool RendererDirectShow::Pause() { return false; }
 bool RendererDirectShow::Stop() { return false; }
 void RendererDirectShow::SetPosition(int, bool, bool, bool, bool) {}
-int RendererDirectShow::GetFrameTime(bool) { return 0; }
-void RendererDirectShow::GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd) { if (retStart) *retStart = startTime; if (retEnd) *retEnd = endTime; }
-int RendererDirectShow::GetFrameTimeFromTime(int time, bool) { return time; }
-int RendererDirectShow::GetFrameTimeFromFrame(int frame, bool) { return frame; }
-int RendererDirectShow::GetPlayEndTime(int time) { return time; }
 int RendererDirectShow::GetDuration() { return 0; }
 int RendererDirectShow::GetVolume() { return 0; }
 void RendererDirectShow::GetVideoSize(int *width, int *height) { if (width) *width = 0; if (height) *height = 0; }
@@ -58,7 +53,6 @@ byte *RendererDirectShow::GetFrameWithSubs(bool, bool *del) { if (del) *del = fa
 bool RendererDirectShow::EnumFilters(Menu*) { return false; }
 bool RendererDirectShow::FilterConfig(wxString, int, wxPoint) { return false; }
 bool RendererDirectShow::InitRendererDX() { return false; }
-void RendererDirectShow::OpenKeyframes(const wxString&) {}
 void RendererDirectShow::ClearObject() {}
 void RendererDirectShow::SetupVertices() {}
 void RendererDirectShow::ZoomChanged() {}
@@ -516,6 +510,7 @@ bool RendererDirectShow::OpenFile(const wxString &fname, int subsFlag, bool vobs
 
 	diff = 0;
 	m_FrameDuration = (1000.0f / videoControl->m_FPS);
+	m_Timebase = Timebase::FromFps(videoControl->m_FPS, (int)(GetDuration() * videoControl->m_FPS / 1000.f));
 	if (videoControl->m_AspectRatioY == 0 || videoControl->m_AspectRatioX == 0){ videoControl->m_AspectRatio = 0.0f; }
 	else{ videoControl->m_AspectRatio = (float)videoControl->m_AspectRatioY / (float)videoControl->m_AspectRatioX; }
 
@@ -650,51 +645,6 @@ void RendererDirectShow::SetPosition(int _time, bool starttime/*=true*/, bool co
 int RendererDirectShow::GetDuration()
 {
 	return m_DirectShowPlayer->GetDuration();
-}
-
-int RendererDirectShow::GetFrameTime(bool start)
-{
-	int halfFrame = (start) ? -(m_FrameDuration / 2.0f) : (m_FrameDuration / 2.0f) + 1;
-	return m_Time + halfFrame;
-}
-
-void RendererDirectShow::GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd)
-{
-	if (!retStart || !retEnd){ return; }
-	
-	int frameStartTime = (((float)startTime / 1000.f) * videoControl->m_FPS);
-	int frameEndTime = (((float)endTime / 1000.f) * videoControl->m_FPS);
-	frameStartTime++;
-	frameEndTime++;
-	*retStart = (((frameStartTime * 1000) / videoControl->m_FPS) + 0.5f) - startTime;
-	*retEnd = (((frameEndTime * 1000) / videoControl->m_FPS) + 0.5f) - endTime;
-
-}
-
-int RendererDirectShow::GetFrameTimeFromTime(int _time, bool start)
-{
-	int halfFrame = (start) ? -(m_FrameDuration / 2.0f) : (m_FrameDuration / 2.0f) + 1;
-	return _time + halfFrame;
-}
-
-int RendererDirectShow::GetFrameTimeFromFrame(int frame, bool start)
-{
-	int halfFrame = (start) ? -(m_FrameDuration / 2.0f) : (m_FrameDuration / 2.0f) + 1;
-	return (frame * (1000.f / videoControl->m_FPS)) + halfFrame;
-}
-
-int RendererDirectShow::GetPlayEndTime(int _time)
-{
-	int newTime = _time;
-	newTime /= m_FrameDuration;
-	newTime = (newTime * m_FrameDuration) + 1.f;
-	if (_time == newTime && newTime % 10 == 0){ newTime -= 5; }
-	return newTime;
-}
-
-void RendererDirectShow::OpenKeyframes(const wxString &filename)
-{
-	
 }
 
 void RendererDirectShow::ClearObject()

@@ -16,27 +16,22 @@
 #pragma once
 //#include <wx/dynarray.h>
 #include <wx/tokenzr.h>
-class Provider;
-class wxArrayInt;
+#include <vector>
+class Timebase;
 
 
 class KeyframeLoader
 {
 public:
-	//load keyframes after loading video, it need timecodes
-	KeyframeLoader(const wxString &filename, wxArrayInt *keyframes, Provider *receiver);
-	//for renderers that have no provider with timecodes (GStreamer on Linux),
-	//frame times are counted from fps, so it's exact only on CFR video
-	KeyframeLoader(const wxString &filename, wxArrayInt *keyframes, float fps);
+	//keyframes are frame numbers in the file, turned into ms with timebase
+	KeyframeLoader(const wxString &filename, std::vector<int> *keyframes, const Timebase &timebase);
 private:
 	void LoadFile(const wxString &filename);
-	int GetMSfromFrame(int frame);
 	void OpenAegisubKeyframes(wxStringTokenizer *kftokenizer);
 	void OpenOtherKeyframes(int type, wxStringTokenizer *kftokenizer);
 
-	wxArrayInt *keyframes;
-	Provider *receiver;
-	float fps;
+	std::vector<int> *keyframes;
+	const Timebase &timebase;
 };
 
 enum{

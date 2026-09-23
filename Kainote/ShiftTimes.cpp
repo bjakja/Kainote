@@ -147,7 +147,7 @@ void ShiftTimes::Contents(bool addopts)
 	bool state;
 	form = tab->grid->subsFormat;
 	VideoBox *vb = tab->video;
-	Provider *FFMS2 = vb->GetFFMS2();
+	bool hasFFMS2 = vb->HasFFMS2();
 	if (form < SRT){
 		state = true;
 		WhichLines->EnableItem(3);
@@ -162,14 +162,14 @@ void ShiftTimes::Contents(bool addopts)
 	}
 	if (!LeadIn){
 		bool lastEnable = DisplayFrames->IsEnabled();
-		DisplayFrames->Enable(FFMS2 != nullptr);
+		DisplayFrames->Enable(hasFFMS2);
 		bool Enable = DisplayFrames->IsEnabled();
 		bool dispFrames = DisplayFrames->GetValue();
 		if (lastEnable != Enable){
-			if (!FFMS2 && (dispFrames || !Enable)){
+			if (!hasFFMS2 && (dispFrames || !Enable)){
 				ChangeDisplayUnits(true);
 			}
-			else if (FFMS2 && dispFrames){
+			else if (hasFFMS2 && dispFrames){
 				ChangeDisplayUnits(false);
 			}
 		}
@@ -190,7 +190,7 @@ void ShiftTimes::Contents(bool addopts)
 		LeadIn->Enable(state);
 		LeadOut->Enable(state);
 		Continous->Enable(state);
-		SnapKF->Enable(state && FFMS2);
+		SnapKF->Enable(state && hasFFMS2);
 	}
 	//if(addopts){RefVals();}
 

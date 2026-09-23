@@ -28,6 +28,7 @@
 #include "Notebook.h"
 #include "KaiSlider.h"
 #include "AudioBox.h"
+#include "KeyframesLoader.h"
 //#include "EditBox.h"
 //#include "SubsGrid.h"
 
@@ -324,6 +325,8 @@ bool VideoBox::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*= 
 		return false;
 	}
 	m_IsDirectShow = !byFFMS2;
+	if (!m_KeyframesFileName.empty())
+		OpenKeyframes(m_KeyframesFileName);
 	if (fulls) { SetFullscreen(); }
 	if (!(IsShown() || (m_FullScreenWindow && m_FullScreenWindow->IsShown()))){
 		shown = false; Show();
@@ -1333,13 +1336,14 @@ void VideoBox::RefreshTime()
 			Dialogue* line = tab->edit->line;
 			if (!m_IsDirectShow){
 				times << renderer->m_Frame << L";  ";
-				if (renderer->HasFFMS2()){
+				const Timebase &timebase = renderer->GetTimebase();
+				if (!timebase.IsEmpty()){
 					if (m_LastActiveLineStartTime != line->Start.mstime) {
-						m_LastActiveLineStartFrame = renderer->GetFFMS2()->GetFramefromMS(line->Start.mstime);
+						m_LastActiveLineStartFrame = timebase.FrameAt(line->Start.mstime);
 						m_LastActiveLineStartTime = line->Start.mstime;
 					}
 					times << (renderer->m_Frame - m_LastActiveLineStartFrame) << L";  ";
-					if (renderer->GetFFMS2()->GetKeyframes().Index(renderer->m_Time) != -1){
+					if (timebase.IsKeyframe(renderer->m_Time)){
 						m_ShownKeyframe = true;
 						m_FullScreenWindow->mstimes->SetForegroundColour(WINDOW_WARNING_ELEMENTS);
 					}
@@ -1370,13 +1374,14 @@ void VideoBox::RefreshTime()
 		Dialogue* line = tab->edit->line;
 		if (!m_IsDirectShow){
 			times << renderer->m_Frame << L";  ";
-			if (renderer->HasFFMS2()){
+			const Timebase &timebase = renderer->GetTimebase();
+			if (!timebase.IsEmpty()){
 				if (m_LastActiveLineStartTime != line->Start.mstime) {
-					m_LastActiveLineStartFrame = renderer->GetFFMS2()->GetFramefromMS(line->Start.mstime);
+					m_LastActiveLineStartFrame = timebase.FrameAt(line->Start.mstime);
 					m_LastActiveLineStartTime = line->Start.mstime;
 				}
 				times << (renderer->m_Frame - m_LastActiveLineStartFrame) << L";  ";
-				if (renderer->GetFFMS2()->GetKeyframes().Index(renderer->m_Time) != -1){
+				if (timebase.IsKeyframe(renderer->m_Time)){
 					m_ShownKeyframe = true;
 					m_TimesTextField->SetForegroundColour(WINDOW_WARNING_ELEMENTS);
 				}
@@ -1669,30 +1674,16 @@ bool VideoBox::RemoveVisual(bool noRefresh, bool disable)
 
 	return false;
 }
+const Timebase &VideoBox::GetTimebase()
+{
+	static const Timebase noVideo;
+	return renderer ? renderer->GetTimebase() : noVideo;
+}
 int VideoBox::GetFrameTime(bool start)
 {
-	if (renderer)
-		return renderer->GetFrameTime(start);
-
-	return 0;
-}
-int VideoBox::GetFrameTimeFromTime(int time, bool start)
-{
-	if (renderer)
-		return renderer->GetFrameTimeFromTime(time, start);
-
-	return 0;
-}
-void VideoBox::GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd)
-{
-	if (renderer)
-		renderer->GetStartEndDelay(startTime, endTime, retStart, retEnd);
-}
-int VideoBox::GetFrameTimeFromFrame(int frame, bool start)
-{
-	if (renderer)
-		return renderer->GetFrameTimeFromFrame(frame, start);
-	return 0;
+	const Timebase &timebase = GetTimebase();
+	int frame = timebase.FrameShownAt(Tell());
+	return start ? timebase.StartTimeFor(frame) : timebase.EndTimeFor(frame);
 }
 void VideoBox::SetZoom(bool reset)
 {
@@ -1712,46 +1703,42 @@ bool VideoBox::HasZoom()
 }
 void VideoBox::GoToNextKeyframe()
 {
-	if (renderer)
-		renderer->GoToNextKeyframe();
+	int keyframe = GetTimebase().NextKeyframe(Tell());
+	if (renderer && keyframe >= 0)
+		renderer->SetPosition(keyframe);
 }
 void VideoBox::GoToPrevKeyframe()
 {
-	if (renderer)
-		renderer->GoToPrevKeyframe();
+	int keyframe = GetTimebase().PrevKeyframe(Tell());
+	if (renderer && keyframe >= 0)
+		renderer->SetPosition(keyframe);
 }
 void VideoBox::OpenKeyframes(const wxString &filename)
 {
-	if (renderer && renderer->HasFFMS2()) {
-		renderer->GetFFMS2()->OpenKeyframes(filename);
+	if (renderer && !renderer->GetTimebase().IsEmpty()) {
+		m_KeyframesFileName.Empty();
+		std::vector<int> keyframes;
+		KeyframeLoader kfl(filename, &keyframes, renderer->GetTimebase());
+		if (keyframes.empty()) {
+			KaiMessageBox(_("Invalid keyframes format"), _("Error"), 4L, this);
+			return;
+		}
+		renderer->GetTimebase().SetKeyframes(std::move(keyframes));
+		if (tab->edit->ABox)
+			tab->edit->ABox->SetKeyframes(renderer->GetTimebase().Keyframes());
+		return;
+	}
+	if (tab->edit->ABox && tab->edit->ABox->OpenKeyframes(filename)) {
 		m_KeyframesFileName.Empty();
 		return;
 	}
-	//renderers without own provider (GStreamer) keep keyframes themselves,
-	//to make seeking to keyframes work, Direct Show ignores it.
-	if (renderer)
-		renderer->OpenKeyframes(filename);
-
-	if (tab->edit->ABox) {
-		// skip return when audio do not have own provider or file didn't have video for take timecodes.
-		if (tab->edit->ABox->OpenKeyframes(filename)) {
-			m_KeyframesFileName.Empty();
-			return;
-		}
-	}
-	//if there is no FFMS2 or audiobox we store keyframes path;
+	//without video or audio keep the path until one is loaded
 	m_KeyframesFileName = filename;
 }
 void VideoBox::SetColorSpace(const wxString& matrix, bool render)
 {
 	if (renderer)
 		renderer->SetColorSpace(matrix, render);
-}
-int VideoBox::GetPlayEndTime(int time)
-{
-	if (renderer)
-		return renderer->GetPlayEndTime(time);
-	return 0;
 }
 void VideoBox::DisableVisuals(bool disable)
 {

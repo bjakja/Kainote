@@ -135,11 +135,7 @@ namespace Auto{
 		lua_pop(L, 1);
 		TabPanel *tab = Notebook::GetTab();
 		if (tab && tab->video->GetState() != None) {
-			float FPS;
-			tab->video->GetFPSAndAspectRatio(&FPS, NULL, NULL, NULL);
-			int frame = (tab->video->IsDirectShow()) ? ((float)ms / 1000.f) * FPS :
-				tab->video->GetFFMS2()->GetFramefromMS(ms, 0, false);
-			lua_pushnumber(L, frame);
+			lua_pushnumber(L, tab->video->GetTimebase().FrameAt(ms));
 		}
 		else {
 			lua_pushnil(L);
@@ -154,11 +150,7 @@ namespace Auto{
 		lua_pop(L, 1);
 		TabPanel *tab = Notebook::GetTab();
 		if (tab && tab->video->GetState() != None) {
-			float FPS;
-			tab->video->GetFPSAndAspectRatio(&FPS, NULL, NULL, NULL);
-			int ms = (tab->video->IsDirectShow()) ? (((frame * 1000) / FPS) - ((1000.f / FPS) / 2.f) ):
-				tab->video->GetRenderer()->GetFrameTimeFromFrame(frame, true);
-			lua_pushnumber(L, ms);
+			lua_pushnumber(L, tab->video->GetTimebase().StartTimeFor(frame));
 		}
 		else {
 			lua_pushnil(L);
@@ -190,8 +182,8 @@ namespace Auto{
 	int get_keyframes(lua_State *L)
 	{
 		TabPanel *tab = Notebook::GetTab();
-		if (tab->video->GetState() != None && tab->video->HasFFMS2()){
-			const wxArrayInt & value = tab->video->GetFFMS2()->GetKeyframes();
+		if (tab->video->GetState() != None){
+			const std::vector<int> &value = tab->video->GetTimebase().Keyframes();
 			lua_createtable(L, value.size(), 0);
 			for (size_t i = 0; i < value.size(); ++i) {
 				push_value(L, value[i]);
@@ -495,8 +487,7 @@ namespace Auto{
 			PUSH_FIELD(scroll_position, "Active Line");
 			PUSH_FIELD(active_row, "Active Line");
 			PUSH_FIELD(ar_mode, "");
-			set_field(L, "video_position", (c->video->HasFFMS2()) ?
-				c->video->GetFFMS2()->GetFramefromMS(c->video->Tell()) : 0);
+			set_field(L, "video_position", c->video->GetTimebase().FrameShownAt(c->video->Tell()));
 #undef PUSH_FIELD
 			set_field(L, "audio_file", c->AudioPath);
 			set_field(L, "video_file", c->VideoPath);

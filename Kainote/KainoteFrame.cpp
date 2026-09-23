@@ -1098,7 +1098,7 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 	}
 	else if (id == GLOBAL_PLAY_ACTUAL_LINE){
 		tab->edit->TextEdit->SetFocus();
-		tab->video->PlayLine(tab->edit->line->Start.mstime, tab->video->GetPlayEndTime(tab->edit->line->End.mstime));
+		tab->video->PlayLine(tab->edit->line->Start.mstime, tab->video->GetTimebase().PlayEndBefore(tab->edit->line->End.mstime));
 	}
 	else if (id == GLOBAL_STYLE_MANAGER_CLEAN_STYLE){
 		StyleStore::Get()->OnCleanStyles(event);
@@ -2520,18 +2520,11 @@ void KainoteFrame::OnAudioSnap(wxCommandEvent& event)
 	int time = (snapStartTime) ? tab->edit->line->Start.mstime : tab->edit->line->End.mstime;
 	int time2 = (snapStartTime) ? tab->edit->line->End.mstime : tab->edit->line->Start.mstime;
 	int snaptime = time;
-	Provider *FFMS2 = tab->video->GetFFMS2();
-	const wxArrayInt &KeyFrames = FFMS2->GetKeyframes();
+	const Timebase &timebase = tab->video->GetTimebase();
 	int lastDifferents = MAXINT;
-	//wxArrayInt boundaries;
-	for (unsigned int i = 0; i < KeyFrames.Count(); i++) {
-		int keyMS = KeyFrames[i];
+	for (int keyMS : timebase.Keyframes()) {
 		if (keyMS >= time - 5000 && keyMS < time + 5000) {
-			int frameTime = 0;
-			int frame = FFMS2->GetFramefromMS(keyMS);
-			int prevFrameTime = FFMS2->GetMSfromFrame(frame - 1);
-			frameTime = keyMS + ((prevFrameTime - keyMS) / 2);
-			frameTime = ZEROIT(frameTime);
+			int frameTime = ZEROIT(timebase.StartTimeFor(timebase.FrameAt(keyMS)));
 			int actualDiff = abs(time - frameTime);
 			if (actualDiff < lastDifferents && actualDiff > 0){
 				if ((snapStartTime && frameTime >= time2) || (!snapStartTime && frameTime <= time2)){ continue; }

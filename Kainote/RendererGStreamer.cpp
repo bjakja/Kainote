@@ -26,7 +26,6 @@
 #include "LogHandler.h"
 #include "config.h"
 #include "Hotkeys.h"
-#include "KeyframesLoader.h"
 
 #include <gst/gst.h>
 #include <gst/video/video.h>
@@ -256,6 +255,7 @@ bool RendererGStreamer::QueryVideoInfo()
 	gint64 dur = 0;
 	if (gst_element_query_duration(m_Pipeline, GST_FORMAT_TIME, &dur) && dur > 0)
 		m_DurationMs.store((int)(dur / GST_MSECOND));
+	m_Timebase = Timebase::FromFps(fps, (int)(m_DurationMs.load() * fps / 1000.f));
 	return true;
 }
 
@@ -380,15 +380,6 @@ bool RendererGStreamer::OpenFile(const wxString &fname, int subsFlag, bool vobsu
 		m_Visual->SizeChanged(wxRect(m_BackBufferRect.left, m_BackBufferRect.top,
 			m_BackBufferRect.right, m_BackBufferRect.bottom), nullptr, nullptr, nullptr);
 	}
-	// Keyframes file dropped / restored before the video was open: now that
-	// QueryVideoInfo has set fps it can be loaded (as ProviderFFMS2 does).
-	m_KeyFrames.clear();
-	if (!videoControl->GetKeyFramesFileName().empty()) {
-		OpenKeyframes(videoControl->GetKeyFramesFileName());
-		if (!m_KeyFrames.empty())
-			videoControl->SetKeyFramesFileName(emptyString);
-	}
-
 	// Present the prerolled frame (it may have arrived before QueryVideoInfo set
 	// the frame buffer up; pull it explicitly to be sure something is on screen).
 	if (m_AppSink) {
@@ -664,49 +655,6 @@ void RendererGStreamer::RecreateSurface()
 }
 
 // ---------------------------------------------------------------------------
-// Frame-timing helpers (identical to the DirectShow renderer — pure
-// m_FrameDuration / FPS arithmetic, no backend state).
-// ---------------------------------------------------------------------------
-
-int RendererGStreamer::GetFrameTime(bool start)
-{
-	int halfFrame = (start) ? -(m_FrameDuration / 2.0f) : (m_FrameDuration / 2.0f) + 1;
-	return m_Time + halfFrame;
-}
-
-void RendererGStreamer::GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd)
-{
-	if (!retStart || !retEnd) { return; }
-	int frameStartTime = (((float)startTime / 1000.f) * videoControl->m_FPS);
-	int frameEndTime = (((float)endTime / 1000.f) * videoControl->m_FPS);
-	frameStartTime++;
-	frameEndTime++;
-	*retStart = (((frameStartTime * 1000) / videoControl->m_FPS) + 0.5f) - startTime;
-	*retEnd = (((frameEndTime * 1000) / videoControl->m_FPS) + 0.5f) - endTime;
-}
-
-int RendererGStreamer::GetFrameTimeFromTime(int _time, bool start)
-{
-	int halfFrame = (start) ? -(m_FrameDuration / 2.0f) : (m_FrameDuration / 2.0f) + 1;
-	return _time + halfFrame;
-}
-
-int RendererGStreamer::GetFrameTimeFromFrame(int frame, bool start)
-{
-	int halfFrame = (start) ? -(m_FrameDuration / 2.0f) : (m_FrameDuration / 2.0f) + 1;
-	return (frame * (1000.f / videoControl->m_FPS)) + halfFrame;
-}
-
-int RendererGStreamer::GetPlayEndTime(int _time)
-{
-	int newTime = _time;
-	newTime /= m_FrameDuration;
-	newTime = (newTime * m_FrameDuration) + 1.f;
-	if (_time == newTime && newTime % 10 == 0) { newTime -= 5; }
-	return newTime;
-}
-
-// ---------------------------------------------------------------------------
 // Info / volume / streams
 // ---------------------------------------------------------------------------
 
@@ -910,58 +858,5 @@ void RendererGStreamer::ChangeVobsub(bool vobsub)
 	// ponytail: muxed/vobsub track selection is a follow-up if requested.
 }
 
-// ---------------------------------------------------------------------------
-// Keyframes
-//
-// The FFMS2 path gets keyframes (and a per-frame timecode table) straight from
-// the index, but playbin only exposes timestamps, not a frame table, so here
-// the keyframe numbers read from the file are converted with fps.  That is
-// exact for CFR video and drifts on VFR — the same trade-off ProviderDummy
-// makes.  VideoBox::OpenKeyframes still hands the file to the audio box too,
-// and when audio has its own FFMS2 provider the audio display gets the
-// accurate timecode-based times.
-// ---------------------------------------------------------------------------
-
-void RendererGStreamer::OpenKeyframes(const wxString &filename)
-{
-	// without fps there is nothing to count frame times from; VideoBox stores
-	// the path and OpenFile loads it when the video (and its fps) is known
-	if (videoControl->m_FPS <= 0.f)
-		return;
-
-	wxArrayInt keyframes;
-	KeyframeLoader kfl(filename, &keyframes, videoControl->m_FPS);
-	// a bad format is reported by the audio box, which reads the same file
-	if (keyframes.size())
-		m_KeyFrames = keyframes;
-}
-
-void RendererGStreamer::GoToNextKeyframe()
-{
-	if (m_KeyFrames.empty())
-		return;
-
-	for (size_t i = 0; i < m_KeyFrames.size(); i++){
-		if (m_KeyFrames[i] > m_Time){
-			SetPosition(m_KeyFrames[i]);
-			return;
-		}
-	}
-	SetPosition(m_KeyFrames[0]);
-}
-
-void RendererGStreamer::GoToPrevKeyframe()
-{
-	if (m_KeyFrames.empty())
-		return;
-
-	for (int i = m_KeyFrames.size() - 1; i >= 0; i--){
-		if (m_KeyFrames[i] < m_Time){
-			SetPosition(m_KeyFrames[i]);
-			return;
-		}
-	}
-	SetPosition(m_KeyFrames[m_KeyFrames.size() - 1]);
-}
 
 #endif // _WIN32

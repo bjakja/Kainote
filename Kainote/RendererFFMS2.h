@@ -45,16 +45,10 @@ public:
 	bool Stop();
 	void SetPosition(int _time, bool starttime = true, bool corect = true, bool async = true, bool refreshAudio = true) override;
 	void SetFFMS2Position(int time, bool starttime, bool refreshAudio = true) override;
-	void GoToNextKeyframe();
-	void GoToPrevKeyframe();
-	int GetFrameTime(bool start = true);
-	void GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd);
-	int GetFrameTimeFromTime(int time, bool start = true);
-	int GetFrameTimeFromFrame(int frame, bool start = true);
+	Timebase &GetTimebase() override { return m_FFMS2 ? m_FFMS2->GetTimebase() : m_Timebase; }
 	//if nothing loaded or loaded via Direct Show VFF is nullptr
 	//return true if VFF is present
 	//bool GetStartEndDurationFromMS(Dialogue *dial, SubsTime &duration);
-	int GetPlayEndTime(int time);
 	int GetDuration();
 	int GetVolume();
 	void GetVideoSize(int *width, int *height);
@@ -76,7 +70,6 @@ public:
 				Render();
 		}
 	}
-	void OpenKeyframes(const wxString &filename);
 	bool HasFFMS2();
 	bool InitRendererDX();
 	Provider* GetFFMS2();

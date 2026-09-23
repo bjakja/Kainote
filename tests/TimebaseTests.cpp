@@ -63,6 +63,18 @@ TEST(frame_at_is_the_first_frame_starting_at_or_after)
 	CHECK_EQ(tb.FrameAt(83), 2);
 }
 
+TEST(frame_shown_at_is_the_frame_on_screen)
+{
+	Timebase tb = Timebase::FromTimecodes(CfrTimecodes(NTSC_FILM, 100), NTSC_FILM);
+	CHECK_EQ(tb.FrameShownAt(0), 0);
+	CHECK_EQ(tb.FrameShownAt(40), 0);
+	CHECK_EQ(tb.FrameShownAt(41), 1);
+	CHECK_EQ(tb.FrameShownAt(82), 1);
+	CHECK_EQ(tb.FrameShownAt(83), 2);
+	for (int f = 0; f < 100; f++)
+		CHECK_EQ(tb.FrameShownAt(tb.MsAt(f)), f);
+}
+
 TEST(timecodes_and_fps_agree_on_constant_frame_rate)
 {
 	Timebase fromTimecodes = Timebase::FromTimecodes(CfrTimecodes(NTSC_FILM, 500), NTSC_FILM);

@@ -28,6 +28,7 @@
 #include <atomic>
 
 class Provider;
+class Timebase;
 class Fullscreen;
 class VideoToolbar;
 class VideoSlider;
@@ -102,17 +103,16 @@ public:
 	void Render(bool recreateFrame = true);
 	void ChangePositionByFrame(int cpos);
 	bool RemoveVisual(bool noRefresh = false, bool disable = false);
+	// empty when no video is loaded
+	const Timebase &GetTimebase();
+	// line time that lands on the frame on screen
 	int GetFrameTime(bool start = true);
-	int GetFrameTimeFromTime(int time, bool start = true);
-	int GetFrameTimeFromFrame(int frame, bool start = true);
-	void GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd);
 	void SetZoom(bool reset = false);
 	bool HasZoom();
 	void GoToNextKeyframe();
 	void GoToPrevKeyframe();
 	void OpenKeyframes(const wxString &filename);
 	void SetColorSpace(const wxString& matrix, bool render = true);
-	int GetPlayEndTime(int time);
 	void DisableVisuals(bool disable);
 	void DeleteAudioCache();
 	wxWindow *GetMessageWindowParent();

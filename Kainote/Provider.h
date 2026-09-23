@@ -21,6 +21,7 @@
 #include "SubsGrid.h"
 #include "Provider.h"
 #include "TabPanel.h"
+#include "Timebase.h"
 #include <atomic>
 #include <vector>
 #include <thread>
@@ -58,23 +59,8 @@ public:
 	int GetChannels();
 	long long GetNumSamples();
 	void GetWaveForm(int* min, int* peak, long long start, int w, int h, int samples, float scale);
-	int TimefromFrame(int nframe);
-	int FramefromTime(int time);
-	int GetMSfromFrame(int frame);
-	int GetFramefromMS(int MS, int seekfrom = 0, bool safe = true);
-	const wxArrayInt& GetKeyframes() { return m_keyFrames; };
-	const std::vector<int> GetTimecodes() { return m_timecodes; };
-	void SetKeyframes(const wxArrayInt& keyframes) {
-		m_keyFrames = keyframes;
-	}
-	void SetTimecodes(const std::vector<int>& timecodes) {
-		m_timecodes = timecodes;
-	}
-	float GetFPS() { return m_FPS; }
-	void SetFPS(float FPS) { m_FPS = FPS; }
-	long long GetNumFrames() { return m_numFrames; }
-	void SetNumFrames(long long numFrames) { m_numFrames = numFrames; }
-	void OpenKeyframes(const wxString& filename);
+	Timebase &GetTimebase() { return m_timebase; }
+	void SetTimebase(const Timebase &timebase) { m_timebase = timebase; }
 	void SetPosition(int time, bool starttime, bool refteshAudio = true);
 	bool AudioNotInitialized() {
 		return audioNotInitialized.load();
@@ -95,7 +81,6 @@ protected:
 	int m_sampleRate = -1;
 	int m_bytesPerSample = 0;
 	int m_channels = 0;
-	int m_lastTime = 0;
 	int m_lastFrame = -1;
 	int m_framePlane = 0;
 	int m_changedTime = 0;
@@ -110,7 +95,6 @@ protected:
 	HANDLE m_eventKillSelf = nullptr;
 	HANDLE m_eventComplete = nullptr;
 	wxString m_filename;
-	wxArrayInt m_keyFrames;
-	std::vector<int> m_timecodes;
+	Timebase m_timebase;
 };
 
