@@ -18,6 +18,7 @@
 #include "KaiListCtrl.h"
 #include "MappedButton.h"
 #include "config.h"
+#include <unordered_set>
 
 
 HistoryDialog::HistoryDialog(wxWindow *parent, SubsFile *file, std::function<void(int)> func)
@@ -111,6 +112,41 @@ static void DestroySnapshot(File *snapshot)
 {
 	snapshot->Clear();
 	delete snapshot;
+}
+
+static const int MAX_UNDO_STEPS = 500;
+
+template <typename T>
+static void HandOverUsed(std::vector<T*> &owned, std::vector<T*> &to, const std::vector<T*> &used)
+{
+	if (owned.empty())
+		return;
+	std::unordered_set<T*> pending(owned.begin(), owned.end());
+	for (T *item : used) {
+		if (pending.erase(item))
+			to.push_back(item);
+	}
+	owned.assign(pending.begin(), pending.end());
+}
+
+// what snapshot created and kept still shows becomes kept's to free
+static void HandOverUsed(File *snapshot, File *kept)
+{
+	HandOverUsed(snapshot->deleteDialogues, kept->deleteDialogues, kept->dialogues);
+	HandOverUsed(snapshot->deleteStyles, kept->deleteStyles, kept->styles);
+	HandOverUsed(snapshot->deleteSinfo, kept->deleteSinfo, kept->sinfo);
+}
+
+// later steps can still show what a dropped step created
+static void MergeOwned(File *dropped, File *kept)
+{
+	auto move = [](auto &from, auto &to) {
+		to.insert(to.end(), from.begin(), from.end());
+		from.clear();
+	};
+	move(dropped->deleteDialogues, kept->deleteDialogues);
+	move(dropped->deleteStyles, kept->deleteStyles);
+	move(dropped->deleteSinfo, kept->deleteSinfo);
 }
 
 SubsFile::SubsFile()
@@ -219,7 +255,17 @@ void SubsFile::SaveUndo(unsigned char editionType, int activeLine, int markerLin
 	subs->activeLine = activeLine;
 	//subs->markerLine = markerLine;
 	subs->editionType = editionType;
-	m_history.Record(subs);
+	File *last = m_history.Current();
+	if (editionType == EDITBOX_LINE_EDITION && last && last->editionType == EDITBOX_LINE_EDITION &&
+		last->activeLine == activeLine && m_history.CanAmend()) {
+		HandOverUsed(last, subs);
+		DestroySnapshot(m_history.SwapCurrent(subs));
+	}
+	else {
+		m_history.Record(subs);
+		if (m_history.Size() > MAX_UNDO_STEPS)
+			m_history.DropOldest(m_history.Size() - MAX_UNDO_STEPS + 1, MergeOwned);
+	}
 	subs = subs->Copy();
 	edited = false;
 }
@@ -560,7 +606,7 @@ void SubsFile::EndLoad(unsigned char editionType, int activeLine, bool initialSa
 void SubsFile::DropOldestHistory(int num)
 {
 	wxMutexLocker lock(*historyGuard);
-	m_history.DropOldest(num);
+	m_history.DropOldest(num, MergeOwned);
 }
 
 void SubsFile::GetURStatus(bool *_undo, bool *_redo)

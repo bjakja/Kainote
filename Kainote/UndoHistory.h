@@ -24,6 +24,7 @@ class UndoHistory
 {
 public:
 	using Destroy = void (*)(T *);
+	using Merge = void (*)(T *dropped, T *kept);
 
 	explicit UndoHistory(Destroy destroy) : m_destroy(destroy) {}
 	~UndoHistory() { Clear(); }
@@ -69,14 +70,28 @@ public:
 		return true;
 	}
 
+	// The last step, when it is neither the first nor the saved one, can be replaced.
+	bool CanAmend() const { return m_step > 0 && m_step == Size() - 1 && m_step != m_saved; }
+	// Puts snapshot in place of the current step and hands the old one back.
+	T *SwapCurrent(T *snapshot)
+	{
+		T *old = m_steps[m_step];
+		m_steps[m_step] = snapshot;
+		return old;
+	}
+
 	// Frees memory by dropping the oldest steps but the first, keeping count - 1.
-	void DropOldest(int count)
+	// merge lets a dropped step hand what later steps still use to the first kept one.
+	void DropOldest(int count, Merge merge = nullptr)
 	{
 		int last = (count < Size()) ? count : Size();
 		if (last <= 1)
 			return;
-		for (int i = 1; i < last; i++)
+		for (int i = 1; i < last; i++) {
+			if (merge && last < Size())
+				merge(m_steps[i], m_steps[last]);
 			m_destroy(m_steps[i]);
+		}
 		m_steps.erase(m_steps.begin() + 1, m_steps.begin() + last);
 		int dropped = last - 1;
 		m_step = (m_step >= last) ? m_step - dropped : 0;

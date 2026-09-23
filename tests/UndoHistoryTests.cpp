@@ -135,3 +135,45 @@ TEST(clearing_frees_every_step)
 	CHECK_EQ(h.steps.Size(), 0);
 	CHECK(h.steps.Current() == nullptr);
 }
+
+TEST(only_the_last_unsaved_step_after_the_first_can_be_amended)
+{
+	History h(0);
+	CHECK(!h.steps.CanAmend());
+	h.steps.Record(new int(1));
+	CHECK(h.steps.CanAmend());
+	h.steps.MarkSaved();
+	CHECK(!h.steps.CanAmend());
+	h.steps.Record(new int(2));
+	h.steps.Record(new int(3));
+	h.steps.Undo();
+	CHECK(!h.steps.CanAmend());
+}
+
+TEST(swapping_the_current_step_hands_back_the_old_one)
+{
+	History h(2);
+	int *old = h.steps.SwapCurrent(new int(20));
+	CHECK_EQ(*old, 2);
+	CHECK_EQ(g_freed, 0);
+	CHECK_EQ(h.steps.Size(), 3);
+	CHECK_EQ(h.Current(), 20);
+	CHECK(h.steps.IsModified());
+	delete old;
+}
+
+namespace {
+std::vector<std::pair<int, int>> g_merged;
+void Merge(int *dropped, int *kept) { g_merged.push_back({ *dropped, *kept }); }
+}
+
+TEST(dropping_the_oldest_steps_merges_each_into_the_first_kept_step)
+{
+	History h(5);
+	g_merged.clear();
+	h.steps.DropOldest(3, Merge);
+	CHECK_EQ(g_merged.size(), size_t(2));
+	CHECK(g_merged[0] == std::make_pair(1, 3));
+	CHECK(g_merged[1] == std::make_pair(2, 3));
+	CHECK_EQ(g_freed, 2);
+}
