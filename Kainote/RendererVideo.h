@@ -131,7 +131,8 @@ public:
 	IDirect3DDevice9 *m_D3DDevice = nullptr;
 	D3DFORMAT m_D3DFormat;
 	volatile bool m_BlockResize = false;
-	bool m_HasVisualEdition = false;
+	// also read by the playback thread's seeks
+	std::atomic<bool> m_HasVisualEdition{ false };
 	bool m_VideoResized = false;
 	bool m_HasZoom = false;
 	bool m_SwapFrame = false;

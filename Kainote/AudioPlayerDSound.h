@@ -21,6 +21,7 @@
 
 #include "Provider.h"
 #include <dsound.h>
+#include <atomic>
 #include <mutex>
 
 
@@ -50,9 +51,10 @@ class DirectSoundPlayer2Thread {
 		is_playing,
 		error_happened;
 
-	double volume =1.0;
-	long long start_frame = 0;
-	long long end_frame = 0;
+	// set by the UI thread, read by the playback thread
+	std::atomic<double> volume{ 1.0 };
+	std::atomic<long long> start_frame{ 0 };
+	std::atomic<long long> end_frame{ 0 };
 
 	int wanted_latency;
 	int buffer_length;

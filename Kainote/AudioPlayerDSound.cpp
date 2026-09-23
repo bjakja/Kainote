@@ -434,7 +434,7 @@ long long DirectSoundPlayer2Thread::GetCurrentFrame()
 	const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
 		std::chrono::steady_clock::now() - linuxState->playbackStart).count();
 	long long audibleFrame = start_frame + elapsed * provider->GetSampleRate() / 1000;
-	return std::min(audibleFrame, end_frame);
+	return std::min(audibleFrame, end_frame.load());
 }
 
 long long DirectSoundPlayer2Thread::GetEndFrame()
@@ -1034,7 +1034,7 @@ long long DirectSoundPlayer2Thread::GetCurrentFrame()
 		ahead = buffer_bytes;
 	long long bytesPerFrame = provider->GetChannels() * provider->GetBytesPerSample();
 	long long frame = written_frame - (long long)ahead / bytesPerFrame;
-	return (frame < start_frame) ? start_frame : frame;
+	return (frame < start_frame) ? start_frame.load() : frame;
 }
 
 
