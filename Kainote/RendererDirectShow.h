@@ -88,6 +88,8 @@ private:
 	int m_WindowWidth = -1;
 	int m_WindowHeight = -1;
 	int m_LastBufferSize = -1;
+	// the subtitle texture must be filled whole, as after it was created
+	bool m_SubtitlesUploadAll = true;
 	DXVA2_VideoTransferMatrix m_VideoMatrix = DXVA2_VideoTransferMatrix_BT601;
 	// the filter corrects the time with the first sample after a seek
 	std::atomic<bool> m_DirectShowSeeking{ false };

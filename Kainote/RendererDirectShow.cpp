@@ -172,6 +172,7 @@ bool RendererDirectShow::InitRendererDX()
 	if (m_SubtitlesBuffer)
 		delete[] m_SubtitlesBuffer;
 	m_SubtitlesBuffer = new unsigned char[m_LastBufferSize];
+	m_SubtitlesUploadAll = true;
 	
 	
 	m_SubsProvider->SetVideoParameters(wxSize(m_WindowWidth, m_WindowHeight), ARGB32, m_SwapFrame);
@@ -214,30 +215,28 @@ bool RendererDirectShow::DrawTexture(byte *nframe, bool copy)
 	else {
 		KaiLog(_("No frame buffer")); return false;
 	}
-	//int size = m_LastBufferSize / 4;
-	memset(m_SubtitlesBuffer, 0, m_LastBufferSize);
-	//byte* buff1 = m_SubtitlesBuffer;
-
-	m_SubsProvider->Draw(m_SubtitlesBuffer, m_Time);
-	//byte* buff = m_SubtitlesBuffer;
-	
-
-	RECT dirtySubs = { 0, 0, m_WindowWidth, m_WindowHeight };
-	//HR(
-	m_SubtitlesTexture->LockRect(0, &d3dSubslr, &dirtySubs, 0);//, _("Nie można zablokować bufora tekstury napisów"));
-	memcpy(d3dSubslr.pBits, m_SubtitlesBuffer, m_LastBufferSize);
-	/*int fwidth = m_WindowWidth * 4;
-	byte *subsdst = (byte*)d3dSubslr.pBits;
-	byte *subssrc = m_SubtitlesBuffer + ((m_WindowWidth * m_WindowHeight * 4) - fwidth);
-	for (int i = 0; i < m_WindowHeight; i++) {
-		memcpy(subsdst, subssrc, fwidth);
-		subsdst += fwidth;
-		subssrc -= fwidth;
-	}*/
-
-	HR(m_SubtitlesTexture->UnlockRect(0), _("Cannot unlock subtitle texture buffer"));
-
-	HR(m_D3DDevice->UpdateTexture(m_SubtitlesTexture, m_BlitTexture), L"Cannot update subtitles texture");
+	// only what changed is cleared, drawn and uploaded
+	wxRect full(0, 0, m_WindowWidth, m_WindowHeight);
+	wxRect changedRect;
+	bool changed = m_SubsProvider->DrawOverlay(m_SubtitlesBuffer, m_Time, &changedRect);
+	if (m_SubtitlesUploadAll) {
+		changedRect = full;
+		changed = true;
+		m_SubtitlesUploadAll = false;
+	}
+	changedRect.Intersect(full);
+	if (changed && !changedRect.IsEmpty()) {
+		const wxRect &dirty = changedRect;
+		RECT dirtySubs = { dirty.x, dirty.y, dirty.x + dirty.width, dirty.y + dirty.height };
+		HR(m_SubtitlesTexture->LockRect(0, &d3dSubslr, &dirtySubs, 0), _("Cannot lock texture buffer"));
+		int pitch = m_WindowWidth * 4;
+		const unsigned char *src = m_SubtitlesBuffer + dirty.y * pitch + dirty.x * 4;
+		unsigned char *dst = static_cast<unsigned char*>(d3dSubslr.pBits);
+		for (int y = 0; y < dirty.height; y++)
+			memcpy(dst + y * d3dSubslr.Pitch, src + y * pitch, dirty.width * 4);
+		HR(m_SubtitlesTexture->UnlockRect(0), _("Cannot unlock subtitle texture buffer"));
+		HR(m_D3DDevice->UpdateTexture(m_SubtitlesTexture, m_BlitTexture), L"Cannot update subtitles texture");
+	}
 
 	RECT dirty = { 0, 0, m_Width, m_Height };
 #ifdef byvertices
