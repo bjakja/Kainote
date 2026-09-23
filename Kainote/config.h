@@ -445,6 +445,8 @@ public:
 	wxArrayString dirs;
 	bool AudioOpts;
 
+	//the audio options are the enum entries up to AUDIO_WHEEL_DEFAULT_TO_ZOOM, saved in AudioConfig.txt
+	static bool IsAudioOption(CONFIG opt){ return opt <= AUDIO_WHEEL_DEFAULT_TO_ZOOM; }
 	void SetClosing(){ isClosing = true; }
 	bool GetClosing(){ return isClosing; }
 
@@ -467,7 +469,6 @@ public:
 	void SetInt(CONFIG opt, int iopt);
 	void SetFloat(CONFIG opt, float fopt);
 	void SetTable(CONFIG opt, wxArrayString &iopt);
-	void SetStringTable(CONFIG opt, wxArrayString &iopt, wxString split = L"|");
 	void SetIntTable(CONFIG opt, wxArrayInt &iopt);
 	void SetCoords(CONFIG opt, int coordx, int coordy);
 	void GetRawOptions(wxString &options, bool Audio = false);
