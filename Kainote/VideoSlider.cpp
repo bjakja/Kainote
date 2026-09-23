@@ -126,7 +126,10 @@ void VideoSlider::SetValue(float pos)
 		int h = 0;
 		GetClientSize(&w, &h);
 		int calc = (w - 30);
-		position = pos*calc;
+		int newPosition = pos*calc;
+		if (newPosition == position)
+			return;
+		position = newPosition;
 		Refresh(false);
 	}
 }

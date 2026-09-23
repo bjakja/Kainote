@@ -1349,7 +1349,6 @@ void VideoBox::ShowTimes(SubsTime &videoTime, KaiTextCtrl *field)
 		times << sdiff << L" ms, " << ediff << L" ms";
 	}
 	field->SetValue(times);
-	field->Update();
 }
 
 void VideoBox::RefreshTime()
@@ -1373,7 +1372,6 @@ void VideoBox::RefreshTime()
 	}
 	else{
 		m_SeekingSlider->SetValue(val);
-		m_SeekingSlider->Update();
 		ShowTimes(videoTime, m_TimesTextField);
 		if (tab->editor)
 			tab->grid->RefreshIfVisible(videoTime.mstime);
