@@ -143,7 +143,7 @@ void Provider::RunPlaybackThread()
 					m_renderer->SetFFMS2Position(m_changedTime, m_isStartTime, m_refreshAudio);
 
 				if (m_renderer->m_Frame != m_lastFrame) {
-					m_renderer->m_Time = m_timebase.MsAt(m_renderer->m_Frame);
+					m_renderer->m_Time = m_renderer->GetTimebase().MsAt(m_renderer->m_Frame);
 					m_lastFrame = m_renderer->m_Frame;
 				}
 				if (!FetchPlaybackFrame(buff)) {
@@ -169,7 +169,7 @@ void Provider::RunPlaybackThread()
 				acttime = timeGetTime() - m_renderer->m_LastTime;
 
 				m_renderer->m_Frame++;
-				m_renderer->m_Time = m_timebase.MsAt(m_renderer->m_Frame);
+				m_renderer->m_Time = m_renderer->GetTimebase().MsAt(m_renderer->m_Frame);
 
 				tdiff = m_renderer->m_Time - acttime;
 
@@ -181,7 +181,7 @@ void Provider::RunPlaybackThread()
 							m_renderer->m_Time = m_renderer->m_PlayEndTime;
 							break;
 						}
-						int frameTime = m_timebase.MsAt(m_renderer->m_Frame);
+						int frameTime = m_renderer->GetTimebase().MsAt(m_renderer->m_Frame);
 						if (frameTime >= acttime || frameTime >= m_renderer->m_PlayEndTime) {
 							break;
 						}

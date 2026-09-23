@@ -18,6 +18,7 @@
 
 //#include "VideoSlider.h"
 #include "BitmapButton.h"
+#include "Timebase.h"
 #include "RendererVideo.h"
 //#include "VideoFullscreen.h"
 
@@ -28,7 +29,6 @@
 #include <atomic>
 
 class Provider;
-class Timebase;
 class Fullscreen;
 class VideoToolbar;
 class VideoSlider;
@@ -102,8 +102,10 @@ public:
 	void Render(bool recreateFrame = true);
 	void ChangePositionByFrame(int cpos);
 	bool RemoveVisual(bool noRefresh = false, bool disable = false);
-	// empty when no video is loaded
+	// the tab's one timebase; no frames without video, keyframes may remain
 	const Timebase &GetTimebase();
+	// the video adapters hand over the opened video's frames and keyframes
+	void SetVideoTimebase(Timebase timebase);
 	// line time that lands on the frame on screen
 	int GetFrameTime(bool start = true);
 	void SetZoom(bool reset = false);
@@ -190,6 +192,7 @@ private:
 	bool m_ShownKeyframe;
 	//wxString oldpath;
 	wxString m_KeyframesFileName;
+	Timebase m_Timebase;
 	std::vector<RECT> MonRects;
 	bool m_IsOnAnotherMonitor = false;
 	bool m_IsFullscreen = false;
@@ -213,6 +216,8 @@ private:
 	void OnChangeVisual(wxCommandEvent &evt);
 	void OnLostCapture(wxMouseCaptureLostEvent &evt);
 	void ChangeButtonBMP(bool play = false);
+	void DeleteRenderer();
+	void KeyframesChanged();
 	
 	wxTimer idletime;
 	DECLARE_EVENT_TABLE()

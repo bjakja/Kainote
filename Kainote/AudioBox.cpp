@@ -42,7 +42,6 @@
 //#include "KainoteFrame.h"
 #include "Notebook.h"
 #include "MappedButton.h"
-#include "KeyframesLoader.h"
 #include "KaiMessageBox.h"
 #include "KaiSlider.h"
 #include "EditBox.h"
@@ -256,40 +255,6 @@ void AudioBox::SetFile(wxString file, bool fromvideo) {
 }
 
 
-
-void AudioBox::SetKeyframes(const std::vector<int> &keyframes)
-{
-	if (!audioDisplay->loaded || !audioDisplay->provider)
-		return;
-
-	if (audioDisplay->ownProvider){
-		audioDisplay->provider->GetTimebase().SetKeyframes(keyframes);
-	}
-
-	Refresh(false);
-}
-
-bool AudioBox::OpenKeyframes(const wxString & filename)
-{
-	//audio sharing the video's provider gets keyframes with the video
-	Provider *provider = audioDisplay->provider;
-	if (!audioDisplay->ownProvider && provider && !provider->GetTimebase().IsEmpty())
-		return false;
-
-	//audio without video has no frames, count them at the usual film rate
-	Timebase timebase = (provider && !provider->GetTimebase().IsEmpty()) ?
-		provider->GetTimebase() : Timebase::FromFps(24000.f / 1001.f, 0);
-	std::vector<int> keyframes;
-	KeyframeLoader kfl(filename, &keyframes, timebase);
-	if (keyframes.size()){
-		SetKeyframes(keyframes);
-	}
-	else{
-		KaiMessageBox(_("Invalid keyframes format"),
-			_("Error"), 4L, Notebook::GetTab());
-	}
-	return true;
-}
 
 /////////////////////
 // Scrollbar changed

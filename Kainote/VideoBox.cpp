@@ -301,7 +301,7 @@ bool VideoBox::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*= 
 		byFFMS2 = true;
 
 	if (byFFMS2 != curentFFMS2){
-		SAFE_DELETE(renderer);
+		DeleteRenderer();
 	}
 	if (!renderer){
 		if (byFFMS2)
@@ -321,7 +321,7 @@ bool VideoBox::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*= 
 	if (!renderer->OpenFile(fileName, subsFlag, !tab->editor, changeAudio)){
 		renderer->m_BlockResize = false;
 		if (!byFFMS2){ KaiMessageBox(_("The file is not a valid video file or is corrupted,\nor codecs or a splitter may be missing"), _("Warning")); }
-		SAFE_DELETE(renderer)
+		DeleteRenderer();
 		return false;
 	}
 	m_IsDirectShow = !byFFMS2;
@@ -1326,7 +1326,7 @@ void VideoBox::ShowTimes(SubsTime &videoTime, KaiTextCtrl *field)
 	Dialogue* line = tab->edit->line;
 	if (!m_IsDirectShow){
 		times << renderer->m_Frame << L";  ";
-		const Timebase &timebase = renderer->GetTimebase();
+		const Timebase &timebase = m_Timebase;
 		if (!timebase.IsEmpty()){
 			if (m_LastActiveLineStartTime != line->Start.mstime) {
 				m_LastActiveLineStartFrame = timebase.FrameAt(line->Start.mstime);
@@ -1654,8 +1654,25 @@ bool VideoBox::RemoveVisual(bool noRefresh, bool disable)
 }
 const Timebase &VideoBox::GetTimebase()
 {
-	static const Timebase noVideo;
-	return renderer ? renderer->GetTimebase() : noVideo;
+	return m_Timebase;
+}
+void VideoBox::SetVideoTimebase(Timebase timebase)
+{
+	m_Timebase = std::move(timebase);
+	KeyframesChanged();
+}
+void VideoBox::DeleteRenderer()
+{
+	SAFE_DELETE(renderer);
+	Timebase keyframesOnly;
+	keyframesOnly.SetKeyframes(m_Timebase.Keyframes());
+	m_Timebase = std::move(keyframesOnly);
+}
+void VideoBox::KeyframesChanged()
+{
+	AudioBox *audio = tab->edit->ABox;
+	if (audio && audio->audioDisplay->loaded)
+		audio->audioDisplay->UpdateImage(true);
 }
 int VideoBox::GetFrameTime(bool start)
 {
@@ -1693,26 +1710,24 @@ void VideoBox::GoToPrevKeyframe()
 }
 void VideoBox::OpenKeyframes(const wxString &filename)
 {
-	if (renderer && !renderer->GetTimebase().IsEmpty()) {
-		std::vector<int> keyframes;
-		KeyframeLoader kfl(filename, &keyframes, renderer->GetTimebase());
-		//filename can be m_KeyframesFileName itself, so clear it only now
-		m_KeyframesFileName.Empty();
-		if (keyframes.empty()) {
-			KaiMessageBox(_("Invalid keyframes format"), _("Error"), 4L, this);
-			return;
-		}
-		renderer->GetTimebase().SetKeyframes(std::move(keyframes));
-		if (tab->edit->ABox)
-			tab->edit->ABox->SetKeyframes(renderer->GetTimebase().Keyframes());
+	AudioBox *audio = tab->edit->ABox;
+	if (m_Timebase.IsEmpty() && !(audio && audio->audioDisplay->loaded)) {
+		//without video or audio keep the path until a video is loaded
+		m_KeyframesFileName = filename;
 		return;
 	}
-	if (tab->edit->ABox && tab->edit->ABox->OpenKeyframes(filename)) {
-		m_KeyframesFileName.Empty();
+	//audio without video has no frames, count them at the usual film rate
+	Timebase frames = m_Timebase.IsEmpty() ? Timebase::FromFps(24000.f / 1001.f, 0) : m_Timebase;
+	std::vector<int> keyframes;
+	KeyframeLoader kfl(filename, &keyframes, frames);
+	//filename can be m_KeyframesFileName itself, so clear it only now
+	m_KeyframesFileName.Empty();
+	if (keyframes.empty()) {
+		KaiMessageBox(_("Invalid keyframes format"), _("Error"), 4L, this);
 		return;
 	}
-	//without video or audio keep the path until one is loaded
-	m_KeyframesFileName = filename;
+	m_Timebase.SetKeyframes(std::move(keyframes));
+	KeyframesChanged();
 }
 void VideoBox::SetColorSpace(const wxString& matrix, bool render)
 {

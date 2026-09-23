@@ -1015,3 +1015,8 @@ PlaybackState RendererVideo::GetState()
 {
 	return m_State;
 }
+
+const Timebase &RendererVideo::GetTimebase()
+{
+	return videoControl->GetTimebase();
+}

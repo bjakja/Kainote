@@ -45,7 +45,6 @@ public:
 	bool Stop();
 	void SetPosition(int _time, bool starttime = true, bool corect = true, bool async = true, bool refreshAudio = true) override;
 	void SetFFMS2Position(int time, bool starttime, bool refreshAudio = true) override;
-	Timebase &GetTimebase() override { return m_FFMS2 ? m_FFMS2->GetTimebase() : m_Timebase; }
 	//if nothing loaded or loaded via Direct Show VFF is nullptr
 	//return true if VFF is present
 	//bool GetStartEndDurationFromMS(Dialogue *dial, SubsTime &duration);

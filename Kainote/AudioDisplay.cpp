@@ -600,7 +600,7 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 			}
 		}
 		// Draw keyframes
-		if (drawKeyframes && provider->GetTimebase().Keyframes().size() > 0) {
+		if (drawKeyframes && tab->video->GetTimebase().Keyframes().size() > 0) {
 			DrawKeyframes();
 		}
 
@@ -1335,11 +1335,6 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 				if (!success || provider->GetSampleRate() < 0) {
 					delete provider; provider = 0;
 					loaded = false; return;
-				}
-				//copy keyframes to not check if video is loaded
-
-				if (FFMS2){
-					provider->SetTimebase(FFMS2->GetTimebase());
 				}
 				RendererVideo* renderer = vb->GetRenderer();
 				ownProvider = true;
@@ -2441,7 +2436,7 @@ int AudioDisplay::GetBoundarySnap(int ms, int rangeX, bool shiftHeld, bool start
 	if (shiftHeld) snapKey = !snapKey;
 
 	if (snapKey && drawKeyframes) {
-		const Timebase &timebase = provider->GetTimebase();
+		const Timebase &timebase = tab->video->GetTimebase();
 
 		for (int keyMS : timebase.Keyframes()) {
 			int keyX = GetXAtMS(keyMS);
@@ -2794,7 +2789,7 @@ void AudioDisplay::DrawKeyframes() {
 	D3DXVECTOR2 v2[2];
 	// Scan list
 	d3dLine->Begin();
-	const std::vector<int> &keyFrames = provider->GetTimebase().Keyframes();
+	const std::vector<int> &keyFrames = tab->video->GetTimebase().Keyframes();
 	for (size_t i = 0; i < keyFrames.size(); i++) {
 		int cur = keyFrames[i];
 		if (cur >= mintime && cur <= maxtime)

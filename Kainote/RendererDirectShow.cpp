@@ -510,7 +510,7 @@ bool RendererDirectShow::OpenFile(const wxString &fname, int subsFlag, bool vobs
 
 	diff = 0;
 	m_FrameDuration = (1000.0f / videoControl->m_FPS);
-	m_Timebase = Timebase::FromFps(videoControl->m_FPS, (int)(GetDuration() * videoControl->m_FPS / 1000.f));
+	videoControl->SetVideoTimebase(Timebase::FromFps(videoControl->m_FPS, (int)(GetDuration() * videoControl->m_FPS / 1000.f)));
 	if (videoControl->m_AspectRatioY == 0 || videoControl->m_AspectRatioX == 0){ videoControl->m_AspectRatio = 0.0f; }
 	else{ videoControl->m_AspectRatio = (float)videoControl->m_AspectRatioY / (float)videoControl->m_AspectRatioX; }
 

@@ -59,8 +59,8 @@ public:
 	int GetChannels();
 	long long GetNumSamples();
 	void GetWaveForm(int* min, int* peak, long long start, int w, int h, int samples, float scale);
-	Timebase &GetTimebase() { return m_timebase; }
-	void SetTimebase(const Timebase &timebase) { m_timebase = timebase; }
+	// the video's frames and keyframes, handed once to the video box
+	Timebase TakeTimebase() { return std::move(m_timebase); }
 	void SetPosition(int time, bool starttime, bool refteshAudio = true);
 	bool AudioNotInitialized() {
 		return audioNotInitialized.load();

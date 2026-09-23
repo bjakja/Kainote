@@ -81,7 +81,7 @@ void RendererFFMS2::LinuxPlaybackLoop()
 			break;
 		}
 
-		const Timebase &timebase = m_FFMS2->GetTimebase();
+		const Timebase &timebase = GetTimebase();
 		int nextFrame = timebase.ClampFrame(timebase.FrameAt(playTime));
 		if (nextFrame != lastPresentedFrame) {
 			m_Frame = nextFrame;
@@ -398,6 +398,7 @@ bool RendererFFMS2::OpenFile(const wxString &fname, int subsFlag, bool vobsub, b
 	if (!m_FFMS2 || m_FFMS2->m_width < 0){
 		return false;
 	}
+	videoControl->SetVideoTimebase(m_FFMS2->TakeTimebase());
 	
 	diff = 0;
 	m_FrameDuration = (1000.0f / videoControl->m_FPS);
@@ -473,7 +474,7 @@ bool RendererFFMS2::Play(int end)
 
 	m_State = Playing;
 
-	m_Time = m_FFMS2->GetTimebase().MsAt(m_Frame);
+	m_Time = GetTimebase().MsAt(m_Frame);
 	m_LastTime = timeGetTime() - m_Time;
 	if (m_AudioPlayer){ m_AudioPlayer->Play(m_Time, -1, false); }
 #ifdef _WIN32
@@ -534,7 +535,7 @@ void RendererFFMS2::SetPosition(int _time, bool starttime/*=true*/, bool corect/
 //is from video thread make safe any deletion
 void RendererFFMS2::SetFFMS2Position(int _time, bool starttime, bool refreshAudio/* = true*/){
 	bool playing = m_State == Playing;
-	const Timebase &timebase = m_FFMS2->GetTimebase();
+	const Timebase &timebase = GetTimebase();
 	m_Frame = timebase.ClampFrame(starttime ? timebase.FrameAt(_time) : timebase.FrameShownAt(_time - 1));
 	m_Time = timebase.MsAt(m_Frame);
 	m_LastTime = timeGetTime() - m_Time;
@@ -609,7 +610,7 @@ void RendererFFMS2::ChangePositionByFrame(int step)
 	if (m_State == Playing || m_State == None){ return; }
 	
 		m_Frame = MID(0, m_Frame + step, m_FFMS2->m_numFrames - 1);
-		m_Time = m_FFMS2->GetTimebase().MsAt(m_Frame);
+		m_Time = GetTimebase().MsAt(m_Frame);
 		if (m_HasVisualEdition || m_HasDummySubs){
 			OpenSubs(OPEN_WHOLE_SUBTITLES, false);
 			m_HasVisualEdition = false;
@@ -642,7 +643,7 @@ unsigned char* RendererFFMS2::GetFrame(int frame, bool subs)
 	byte* newFrame = new byte[all];
 	m_FFMS2->GetFrame(frame, newFrame);
 	if (subs) {
-		m_SubsProvider->Draw(newFrame, m_FFMS2->GetTimebase().MsAt(frame));
+		m_SubsProvider->Draw(newFrame, GetTimebase().MsAt(frame));
 	}
 	return newFrame;
 }

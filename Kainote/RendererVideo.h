@@ -102,7 +102,8 @@ public:
 	virtual bool Stop(){ return false; };
 	virtual void SetPosition(int _time, bool starttime = true, bool corect = true, bool async = true, bool refreshAudio = true){};
 	virtual void SetFFMS2Position(int time, bool starttime, bool refreshAudio = true){};
-	virtual Timebase &GetTimebase(){ return m_Timebase; };
+	// the tab's timebase, owned by the video box
+	const Timebase &GetTimebase();
 	virtual int GetDuration(){ return 0; };
 	virtual int GetVolume(){ return 0; };
 	virtual void GetVideoSize(int *width, int *height){};
@@ -161,8 +162,6 @@ public:
 	IDirect3DSurface9 *m_BlackBarsSurface = nullptr;
 	VideoBox *videoControl = nullptr;
 	Visuals *m_Visual = nullptr;
-	// backends without a provider fill this from the frame rate
-	Timebase m_Timebase;
 #ifndef _WIN32
 	// Shared Linux software present: subclasses composite into m_FrameBuffer
 	// (BGRA), double-buffer it here, and RenderToDc blits it to the wx video
