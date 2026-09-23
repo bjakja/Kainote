@@ -132,6 +132,8 @@ public:
 	void EndLoad(unsigned char editionType, int activeLine, bool initialSave = false);
 	size_t GetCount();
 	size_t GetIdCount();
+	// GetIdCount and, like SubsGrid::GetDialoguePosition, the dialogue number of key, in one pass
+	size_t CountLines(size_t key, size_t *dialogueNumber);
 	void AddLine(Dialogue *dial);
 	//check if exceeds tabe or if dialogue is not visible can return null
 	Dialogue *CopyVisibleDialogue(size_t i, bool push = true, bool keepstate = false);

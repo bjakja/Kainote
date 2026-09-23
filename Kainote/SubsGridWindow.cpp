@@ -123,7 +123,10 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 		}
 	}
 	bool bg = false;
-	int size = file->GetIdCount();
+	if (scrollPosition < 0){ scrollPosition = 0; scrollPositionId = 0; }
+	// the number shown on the first row
+	size_t firstNumber = 0;
+	int size = file->CountLines(scrollPosition, &firstNumber);
 	wxPoint previewpos;
 	wxSize previewsize;
 	if (preview){
@@ -142,6 +145,7 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 		scrollPosition = file->GetElementById(scrollPositionId);
 		// when all subtitles are visible do not scrolling position = 0
 		if (panelrows > size + 3){ scrollPosition = 0; scrollPositionId = 0; }
+		firstNumber = GetDialoguePosition(scrollPosition);
 	}
 	else if (scrows >= size + 2) {
 		bg = true;
@@ -175,7 +179,7 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
 	GraphicsContext* gc = renderer? renderer->CreateContext(tdc) : nullptr;
 	if (gc)
-		PaintD2D(gc, w, h, size, scrows, previewpos, previewsize, bg);
+		PaintD2D(gc, (int)firstNumber, w, h, size, scrows, previewpos, previewsize, bg);
 	else
 	{
 
@@ -236,7 +240,7 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 		//refresh have to be fast, reduce recalculation id to key to minimum
 		//scrollPositionId it's also strored 
 		int key = scrollPosition - 1;
-		int numeration = GetDialoguePosition(scrollPosition);
+		int numeration = (int)firstNumber;
 		int id = scrollPositionId - 1;
 		int idmarkerPos = -1;
 		int idcurrentLine = -1;
@@ -561,7 +565,7 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 	dc.Blit(firstCol + posX, 0, w + scHor, h, &tdc, scHor + firstCol + posX, 0);
 }
 
-void SubsGrid::PaintD2D(GraphicsContext *gc, int w, int h, int size, int scrows, wxPoint previewpos, wxSize previewsize, bool bg)
+void SubsGrid::PaintD2D(GraphicsContext *gc, int firstNumber, int w, int h, int size, int scrows, wxPoint previewpos, wxSize previewsize, bool bg)
 {
 	
 	const wxColour &header = Options.GetColour(GRID_HEADER);
@@ -621,7 +625,7 @@ void SubsGrid::PaintD2D(GraphicsContext *gc, int w, int h, int size, int scrows,
 	//refresh have to be fast, reduce recalculation id to key to minimum
 	//scrollPositionId it's also strored 
 	int key = scrollPosition - 1;
-	int numeration = GetDialoguePosition(scrollPosition);
+	int numeration = firstNumber;
 	int id = scrollPositionId - 1;
 	int idmarkerPos = -1;
 	int idcurrentLine = -1;

@@ -349,6 +349,22 @@ size_t SubsFile::GetIdCount()
 	return idCount;
 }
 
+size_t SubsFile::CountLines(size_t key, size_t *dialogueNumber)
+{
+	size_t count = subs->dialogues.size();
+	size_t idCount = 0;
+	size_t dialogues = 0;
+	for (size_t i = 0; i < count; i++) {
+		Dialogue *dial = subs->dialogues[i];
+		if (dial->isVisible)
+			idCount++;
+		if (i < key && !dial->NonDialogue)
+			dialogues++;
+	}
+	*dialogueNumber = (key >= count) ? count - 1 : dialogues;
+	return idCount;
+}
+
 void SubsFile::AddLine(Dialogue *dial)
 {
 	edited = true;

@@ -228,7 +228,7 @@ private:
 	void OnLostCapture(wxMouseCaptureLostEvent& evt);
 	bool ShowPreviewWindow(SubsGrid *previewGrid, SubsGrid *windowToDraw,
 		int activeLine, int diffPosition);
-	void PaintD2D(GraphicsContext *gc, int w, int h, int size, int scrows,
+	void PaintD2D(GraphicsContext *gc, int firstNumber, int w, int h, int size, int scrows,
 		wxPoint previewpos, wxSize previewsize, bool bg);
 
 	void CopyRows(int id);
