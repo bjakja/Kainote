@@ -56,8 +56,16 @@ fi
 mkdir -p "$data_home/applications" "$data_home/metainfo" \
 	"$data_home/mime/packages" "$data_home/icons"
 
-sed "s|^Exec=.*|Exec=$here/kainote %f|" \
-	"$here/share/applications/$app_id.desktop" \
+# Desktop entry Exec= splits unquoted spaces into arguments. Quote the path and
+# escape characters that are special inside its quoted argument.
+exec_path=$(printf '%s' "$here/kainote" |
+	sed -e 's/\\/\\\\/g' -e 's/"/\\"/g' -e 's/\$/\\$/g' -e 's/`/\\`/g')
+while IFS= read -r line || [ -n "$line" ]; do
+	case "$line" in
+		Exec=*) printf 'Exec="%s" %%f\n' "$exec_path" ;;
+		*) printf '%s\n' "$line" ;;
+	esac
+done < "$here/share/applications/$app_id.desktop" \
 	> "$data_home/applications/$app_id.desktop"
 
 cp "$here/share/metainfo/$app_id.metainfo.xml" "$data_home/metainfo/"

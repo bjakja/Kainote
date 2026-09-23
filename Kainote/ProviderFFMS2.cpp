@@ -126,7 +126,9 @@ void ProviderFFMS2::Processing()
 	}
 	m_framePlane = static_cast<int>(framePlane);
 	SetEvent(m_eventComplete);
+#ifdef _WIN32
 	RunPlaybackThread();
+#endif
 }
 
 

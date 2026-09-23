@@ -235,7 +235,9 @@ unsigned int __stdcall ProviderDummy::DummyProc(void* cls)
 void ProviderDummy::Processing()
 {
 	if (m_width < 0) { return; }
+#ifdef _WIN32
 	RunPlaybackThread();
+#endif
 }
 
 bool ProviderDummy::FetchPlaybackFrame(int frame, unsigned char* buffer)

@@ -41,7 +41,8 @@ public:
 	bool OpenFile(const wxString &fname, int subsFlag, bool vobsub, bool changeAudio = true);
 	bool OpenSubs(int flag, bool redraw = true, wxString *text = nullptr, bool resetParameters = false);
 	void SetPosition(int time, bool startTime = true, int flags = 0) override;
-	// the seek itself; while playing only the playback thread may run it
+	// Seek implementation: provider thread on Windows, main thread after
+	// stopping the frame decoder on Linux.
 	void SetFFMS2Position(int time, bool startTime, bool refreshAudio = true);
 	int GetCurrentFrame() override { return m_Frame; }
 	//if nothing loaded or loaded via Direct Show VFF is nullptr

@@ -7,7 +7,42 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC OFF)
 find_package(PkgConfig REQUIRED)
-find_package(wxWidgets REQUIRED COMPONENTS core base adv aui html xml gl stc net)
+# Windows builds the pinned Thirdparty/wxWidgets 3.3.3 submodule. Use the same
+# source/version on Linux instead of silently accepting the host's wxGTK 3.2.
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(KAINOTE_WX_DEFAULT_CONFIG "${CMAKE_SOURCE_DIR}/build-wx-linux-debug/prefix/bin/wx-config")
+else()
+    set(KAINOTE_WX_DEFAULT_CONFIG "${CMAKE_SOURCE_DIR}/build-wx-linux/prefix/bin/wx-config")
+endif()
+set(KAINOTE_WX_CONFIG "${KAINOTE_WX_DEFAULT_CONFIG}"
+    CACHE FILEPATH "wx-config from the pinned wxWidgets 3.3.3 Linux build")
+if(NOT EXISTS "${KAINOTE_WX_CONFIG}")
+    message(FATAL_ERROR
+        "Pinned wxWidgets 3.3.3 is missing at ${KAINOTE_WX_CONFIG}. "
+        "Run Thirdparty/build-wxwidgets-linux.sh (with --debug for Debug) first, or set KAINOTE_WX_CONFIG "
+        "to a wx-config for wxWidgets 3.3.3.")
+endif()
+execute_process(
+    COMMAND "${KAINOTE_WX_CONFIG}" --prefix
+    OUTPUT_VARIABLE KAINOTE_WX_PREFIX
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    RESULT_VARIABLE KAINOTE_WX_CONFIG_RESULT)
+if(NOT KAINOTE_WX_CONFIG_RESULT EQUAL 0)
+    message(FATAL_ERROR "Could not query ${KAINOTE_WX_CONFIG} for its wxWidgets prefix.")
+endif()
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(KAINOTE_WX_EXPORT_CONFIG debug)
+else()
+    set(KAINOTE_WX_EXPORT_CONFIG release)
+endif()
+if(NOT EXISTS "${KAINOTE_WX_PREFIX}/lib/cmake/wxWidgets-3.3/wxWidgetsTargets-${KAINOTE_WX_EXPORT_CONFIG}.cmake")
+    message(FATAL_ERROR
+        "${KAINOTE_WX_CONFIG} does not point to the pinned wxWidgets 3.3.3 ${KAINOTE_WX_EXPORT_CONFIG} build. "
+        "Run Thirdparty/build-wxwidgets-linux.sh (with --debug for Debug) first.")
+endif()
+set(wxWidgets_CONFIG_EXECUTABLE "${KAINOTE_WX_CONFIG}" CACHE FILEPATH
+    "wx-config selected for Kainote" FORCE)
+find_package(wxWidgets 3.3.3 EXACT REQUIRED COMPONENTS core base adv aui html xml gl stc net)
 include(${wxWidgets_USE_FILE})
 pkg_check_modules(LIBASS REQUIRED IMPORTED_TARGET libass)
 pkg_check_modules(FFMS2 REQUIRED IMPORTED_TARGET ffms2)

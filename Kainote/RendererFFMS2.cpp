@@ -490,14 +490,28 @@ void RendererFFMS2::StopStream()
 void RendererFFMS2::SetPosition(int time, bool startTime, int flags)
 {
 	bool refreshAudio = !(flags & SEEK_KEEP_AUDIO);
+#ifndef _WIN32
+	// Linux playback decodes on m_LinuxPlaybackThread, while subtitle reopening
+	// reads the grid and edit controls. Finish any in-flight decode before the
+	// main thread seeks, then resume from the new clock position.
+	wxASSERT_MSG(wxIsMainThread(), "Linux video seeks must run on the wx main thread");
+	const bool wasPlaying = m_State == Playing;
+	if (wasPlaying)
+		StopLinuxPlaybackThread();
+	SetFFMS2Position(time, startTime, refreshAudio);
+	if (wasPlaying)
+		StartLinuxPlaybackThread();
+#else
 	//while playing, the playback thread owns the frame and seeks itself
 	if ((flags & SEEK_WAIT) && m_State != Playing)
 		SetFFMS2Position(time, startTime, refreshAudio);
 	else
 		m_FFMS2->SetPosition(time, startTime, refreshAudio);
+#endif
 }
 
-//is from video thread make safe any deletion
+// Windows calls this on the provider thread; Linux calls it on the main thread
+// after joining the frame decoder.
 void RendererFFMS2::SetFFMS2Position(int time, bool startTime, bool refreshAudio/* = true*/){
 	bool playing = m_State == Playing;
 	const Timebase &timebase = GetTimebase();
@@ -630,4 +644,3 @@ bool RendererFFMS2::InitRendererDX()
 #endif
 	return true;
 }
-
