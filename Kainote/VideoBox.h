@@ -137,6 +137,12 @@ public:
 	void MarkSubtitlesOutdated();
 	// subtitles a visual tool made itself; takes the text
 	bool OpenOwnSubs(wxString *text);
+	// These open and redraw once the queued input is handled, so a burst of
+	// edits or visual drags draws once; a later call replaces an earlier one.
+	void OpenSubsLater(int flag);
+	// takes the text
+	void OpenOwnSubsLater(wxString *text, bool redraw = true);
+	void SetVisualLater();
 	// a copy of frame to release with delete; nullptr when the video can't give frames
 	unsigned char *GetFrame(int frame, bool withSubtitles);
 	const std::vector<chapter> &GetChapters();
@@ -166,6 +172,17 @@ public:
 	PlaybackState GetState();
 private:
 	void ShowTimes(SubsTime &videoTime, KaiTextCtrl *field);
+	void QueueLater(int kind);
+	void FlushLater();
+	void DropLater();
+
+	enum { LATER_NONE, LATER_FLAG, LATER_OWN_TEXT, LATER_VISUAL };
+	int m_LaterKind = LATER_NONE;
+	int m_LaterFlag = 0;
+	bool m_LaterRedraw = true;
+	bool m_LaterQueued = false;
+	unsigned m_LaterGeneration = 0;
+	wxString *m_LaterText = nullptr;
 
 	BitmapButton* m_ButtonPreviousFile;
 	BitmapButton* m_ButtonPause;

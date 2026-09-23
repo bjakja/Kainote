@@ -1571,7 +1571,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		return;
 
 	if (Visual > 0){
-		tab->video->SetVisual(true);
+		tab->video->SetVisualLater();
 		return;
 	}
 
@@ -1593,11 +1593,8 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		}
 	}
 
-	if (visible && (tab->video->IsShown() || tab->video->IsFullScreen())){
-		tab->video->OpenSubs(openFlag);
-		if (Visual > 0){ tab->video->ResetVisual(); }
-		else if (tab->video->GetState() == Paused){ tab->video->Render(); }
-	}
+	if (visible && (tab->video->IsShown() || tab->video->IsFullScreen()))
+		tab->video->OpenSubsLater(openFlag);
 
 }
 

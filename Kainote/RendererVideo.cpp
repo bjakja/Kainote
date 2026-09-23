@@ -449,6 +449,7 @@ void RendererVideo::MarkSubtitlesOutdated()
 
 wxString *RendererVideo::SubtitlesText(int flag, wxString *text)
 {
+	++m_SubsGeneration;
 	switch (flag){
 	case OPEN_DUMMY:
 		text = tab->grid->GetVisible();

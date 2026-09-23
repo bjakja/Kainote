@@ -193,6 +193,8 @@ public:
 	void ReopenSubsAfterSeek(bool playing);
 	// the video shows text that edits have since changed
 	void MarkSubtitlesOutdated();
+	// changes whenever subtitles are opened, on any thread
+	unsigned SubtitlesGeneration() const { return m_SubsGeneration; }
 	void Zoom(const wxSize &size);
 	void DrawZoom();
 	void ZoomMouseHandle(wxMouseEvent &evt);
@@ -232,6 +234,7 @@ protected:
 	// 0 plays to the end of the video
 	std::atomic<int> m_PlayEndTime{ 0 };
 	std::atomic<size_t> m_LastTime{ 0 };
+	std::atomic<unsigned> m_SubsGeneration{ 0 };
 private:
 
 	bool InitDX();
