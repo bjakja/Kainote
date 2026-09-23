@@ -307,6 +307,20 @@ bool TabPanel::SetFont(const wxFont &font)
 	return wxWindow::SetFont(font);
 }
 
+void TabPanel::ApplyOptionChanges(bool gridFont, bool gridColours, bool audio)
+{
+	if (gridFont){
+		grid->SetStyle();
+		grid->RefreshColumns();
+	}
+	else if (gridColours){
+		grid->Refresh(false);
+	}
+	if (audio && edit->ABox){
+		edit->ABox->audioDisplay->ChangeOptions();
+	}
+}
+
 void TabPanel::SetLastSaveTime()
 {
 	GetSystemTime(&lastSave);

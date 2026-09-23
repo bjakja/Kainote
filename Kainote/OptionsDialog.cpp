@@ -1252,23 +1252,9 @@ void OptionsDialog::SetOptions(bool saveall)
 			}
 		}
 	}
-	if (fontmod){
-		Notebook::GetTab()->grid->SetStyle();
-		Notebook::GetTab()->grid->RefreshColumns();
-		if (Notebook::GetTabs()->split){
-			Notebook::GetTabs()->GetSecondPage()->grid->SetStyle();
-			Notebook::GetTabs()->GetSecondPage()->grid->RefreshColumns();
-		}
-	}
-	if (colmod){
-		Notebook::GetTab()->grid->Refresh(false);
-		if (Notebook::GetTabs()->split){
-			Notebook::GetTabs()->GetSecondPage()->grid->Refresh(false);
-
-		}
-	}
-	if (audio && Notebook::GetTab()->edit->ABox){ 
-		Notebook::GetTab()->edit->ABox->audioDisplay->ChangeOptions();
+	Notebook *tabs = Notebook::GetTabs();
+	for (size_t i = 0; i < tabs->Size(); i++){
+		tabs->Page(i)->ApplyOptionChanges(fontmod, colmod, audio);
 	}
 	Options.SaveOptions();
 	Options.SaveAudioOpts();

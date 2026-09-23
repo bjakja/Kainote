@@ -471,7 +471,7 @@ void ShiftTimes::OnOKClick(wxCommandEvent& event)
 	SaveOptions();
 	int acid = event.GetId();
 	if (acid == GLOBAL_SHIFT_TIMES){
-		tab->grid->ChangeTimes((!LeadIn) ? TimeText->HasShownFrames() : false);
+		tab->grid->ChangeTimes(ShiftTimesSettings::FromOptions(), (!LeadIn) ? TimeText->HasShownFrames() : false);
 	}
 	else if (acid == ID_CLOSE){
 		Hide();

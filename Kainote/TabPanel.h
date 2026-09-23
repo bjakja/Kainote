@@ -50,6 +50,8 @@ public:
 	bool SetFont(const wxFont &font);
 	void SetLastSaveTime();
 	void ReloadSubsIfModified();
+	// catches up with what the options dialog changed
+	void ApplyOptionChanges(bool gridFont, bool gridColours, bool audio);
 
 	bool editor;
 	bool audioHotkeysLoaded = false;

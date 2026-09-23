@@ -29,6 +29,34 @@ class TabPanel;
 class SubsGridPreview;
 class GraphicsContext;
 
+// What ChangeTimes shifts and how, as the shift times panel sets it.
+struct ShiftTimesSettings
+{
+	//1 forward, 2 start time for video/audio timing, 4 move to video time,
+	//8 move to audio time, 16 display frames, 32 move tag times
+	int options = 0;
+	int time = 0;
+	int frames = 0;
+	int whichLines = 0;
+	int whichTimes = 0;
+	int correctEndTimes = 0;
+	int timePerCharacter = 0;
+	wxString styles;
+	//1 lead in, 2 lead out, 4 make times continuous, 8 snap to keyframes, 16 postprocessor shown
+	int postprocessor = 0;
+	int leadIn = 0;
+	int leadOut = 0;
+	int thresholdStart = 0;
+	int thresholdEnd = 0;
+	int keyframeBeforeStart = 0;
+	int keyframeAfterStart = 0;
+	int keyframeBeforeEnd = 0;
+	int keyframeAfterEnd = 0;
+
+	// what the panel last saved
+	static ShiftTimesSettings FromOptions();
+};
+
 class compareData{
 public:
 	compareData(){};
@@ -61,7 +89,7 @@ public:
 	void Convert(char type);
 
 	void SaveFile(const wxString &filename, bool cstat = true, bool loadFromEditbox = false);
-	void ChangeTimes(bool byFrame = false);
+	void ChangeTimes(const ShiftTimesSettings &settings, bool byFrame = false);
 
 	void SortIt(short what, bool all = true);
 	void DeleteRows();

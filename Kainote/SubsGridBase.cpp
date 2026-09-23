@@ -422,39 +422,62 @@ static void GetStartEndDelay(const Timebase &timebase, Dialogue *dial, int *star
 	*endDelay = timebase.MsAt(timebase.FrameAt(dial->End.mstime)) - dial->End.mstime;
 }
 
-void SubsGrid::ChangeTimes(bool byFrame)
+ShiftTimesSettings ShiftTimesSettings::FromOptions()
+{
+	ShiftTimesSettings settings;
+	settings.options = Options.GetInt(SHIFT_TIMES_OPTIONS);
+	settings.time = Options.GetInt(SHIFT_TIMES_TIME);
+	settings.frames = Options.GetInt(SHIFT_TIMES_DISPLAY_FRAMES);
+	settings.whichLines = Options.GetInt(SHIFT_TIMES_WHICH_LINES);
+	settings.whichTimes = Options.GetInt(SHIFT_TIMES_WHICH_TIMES);
+	settings.correctEndTimes = Options.GetInt(SHIFT_TIMES_CORRECT_END_TIMES);
+	settings.timePerCharacter = Options.GetInt(CONVERT_TIME_PER_CHARACTER);
+	settings.styles = Options.GetString(SHIFT_TIMES_STYLES);
+	settings.postprocessor = Options.GetInt(POSTPROCESSOR_ON);
+	settings.leadIn = Options.GetInt(POSTPROCESSOR_LEAD_IN);
+	settings.leadOut = Options.GetInt(POSTPROCESSOR_LEAD_OUT);
+	settings.thresholdStart = Options.GetInt(POSTPROCESSOR_THRESHOLD_START);
+	settings.thresholdEnd = Options.GetInt(POSTPROCESSOR_THRESHOLD_END);
+	settings.keyframeBeforeStart = Options.GetInt(POSTPROCESSOR_KEYFRAME_BEFORE_START);
+	settings.keyframeAfterStart = Options.GetInt(POSTPROCESSOR_KEYFRAME_AFTER_START);
+	settings.keyframeBeforeEnd = Options.GetInt(POSTPROCESSOR_KEYFRAME_BEFORE_END);
+	settings.keyframeAfterEnd = Options.GetInt(POSTPROCESSOR_KEYFRAME_AFTER_END);
+	return settings;
+}
+
+void SubsGrid::ChangeTimes(const ShiftTimesSettings &settings, bool byFrame)
 {
 	bool hasFFMS2 = tab->video->GetTimebase().IsExact();
 	const Timebase &timebase = tab->video->GetTimebase();
 	if (byFrame && !hasFFMS2){ 
 		KaiLog(_("Video was not loaded using FFMS2")); return; }
 	//1 forward / backward, 2 Start Time For V/A Timing, 4 Move to video time, 8 Move to audio time;
-	int moveTimeOptions = Options.GetInt(SHIFT_TIMES_OPTIONS);
+	int moveTimeOptions = settings.options;
 
 	//Time to move
-	int time = (!byFrame) ? Options.GetInt(SHIFT_TIMES_TIME) : 0;
-	int frame = (byFrame) ? Options.GetInt(SHIFT_TIMES_DISPLAY_FRAMES) : 0;
-	int whichLines = MAX(0, Options.GetInt(SHIFT_TIMES_WHICH_LINES));
-	int whichTimes = MAX(0, Options.GetInt(SHIFT_TIMES_WHICH_TIMES));
-	int correctEndTimes = Options.GetInt(SHIFT_TIMES_CORRECT_END_TIMES);
+	int time = (!byFrame) ? settings.time : 0;
+	int frame = (byFrame) ? settings.frames : 0;
+	int whichLines = MAX(0, settings.whichLines);
+	int whichTimes = MAX(0, settings.whichTimes);
+	int correctEndTimes = settings.correctEndTimes;
 	//1 Lead In, 2 Lead Out, 4 Make times continous, 8 Snap to keyframe;
-	int PostprocessorOptions = Options.GetInt(POSTPROCESSOR_ON);
+	int PostprocessorOptions = settings.postprocessor;
 	int LeadIn = 0, LeadOut = 0, ThresholdStart = 0, ThresholdEnd = 0,
 		KeyframeBeforeStart = 0, KeyframeAfterStart = 0, KeyframeBeforeEnd = 0, KeyframeAfterEnd = 0;
 
 	if (PostprocessorOptions){
 		if (subsFormat == TMP || PostprocessorOptions < 16){ PostprocessorOptions = 0; }
 		else if (PostprocessorOptions & 8 && !hasFFMS2){ PostprocessorOptions ^= 8; }
-		LeadIn = Options.GetInt(POSTPROCESSOR_LEAD_IN);
-		LeadOut = Options.GetInt(POSTPROCESSOR_LEAD_OUT);
-		ThresholdStart = Options.GetInt(POSTPROCESSOR_THRESHOLD_START);
-		ThresholdEnd = Options.GetInt(POSTPROCESSOR_THRESHOLD_END);
-		KeyframeBeforeStart = Options.GetInt(POSTPROCESSOR_KEYFRAME_BEFORE_START);
-		KeyframeAfterStart = Options.GetInt(POSTPROCESSOR_KEYFRAME_AFTER_START);
-		KeyframeBeforeEnd = Options.GetInt(POSTPROCESSOR_KEYFRAME_BEFORE_END);
-		KeyframeAfterEnd = Options.GetInt(POSTPROCESSOR_KEYFRAME_AFTER_END);
+		LeadIn = settings.leadIn;
+		LeadOut = settings.leadOut;
+		ThresholdStart = settings.thresholdStart;
+		ThresholdEnd = settings.thresholdEnd;
+		KeyframeBeforeStart = settings.keyframeBeforeStart;
+		KeyframeAfterStart = settings.keyframeAfterStart;
+		KeyframeBeforeEnd = settings.keyframeBeforeEnd;
+		KeyframeAfterEnd = settings.keyframeAfterEnd;
 	}
-	wxString styles = Options.GetString(SHIFT_TIMES_STYLES);
+	wxString styles = settings.styles;
 	if (styles.empty() && whichLines == 5){
 		KaiMessageBox(_("No styles selected for time shifting"), _("Warning"));
 		return;
@@ -580,7 +603,7 @@ void SubsGrid::ChangeTimes(bool byFrame)
 	if (correctEndTimes > 0 || PostprocessorOptions > 16){
 		bool hasend = false;
 		int newstarttime = -1;
-		int endt = Options.GetInt(CONVERT_TIME_PER_CHARACTER);
+		int endt = settings.timePerCharacter;
 		bool isPreviousEndGreater = false;
 		bool isEndGreater = false;
 		bool previousIsKeyFrame = true;
