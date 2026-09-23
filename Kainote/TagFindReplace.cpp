@@ -734,7 +734,6 @@ void TagFindReplace::PutTagInText(const wxString& tag, const wxString& resettag,
 			}
 		}
 		grid->SetModified(EDITBOX_MULTILINE_EDITION);
-		grid->Refresh(false);
 	}
 
 }

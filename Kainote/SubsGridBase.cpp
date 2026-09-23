@@ -795,7 +795,6 @@ void SubsGridBase::SortIt(short what, bool all)
 	//edited = true;
 	SpellErrors.clear();
 	SetModified(GRID_SORT_LINES);
-	Refresh(false);
 }
 
 
@@ -934,7 +933,6 @@ void SubsGridBase::DeleteText()
 		CopyDialogue(i)->Text = emptyString;
 	}
 	SetModified(GRID_DELETE_TEXT);
-	Refresh(false);
 }
 void SubsGridBase::UpdateUR(bool toolbar)
 {
@@ -1027,27 +1025,7 @@ void SubsGridBase::DoUndo(bool redo, int iter)
 		vb->SetColorSpace(newmatrix);
 	}
 
-	if (edit->Visual < CHANGEPOS){
-
-		if (vb->IsShown() || vb->IsFullScreen()){ vb->OpenSubs(OPEN_DUMMY); }
-		int seekAfter = 0;
-		vb->GetVideoListsOptions(nullptr, &seekAfter);
-		if (seekAfter > 1){
-			if (vb->GetState() == Paused || (vb->GetState() == Playing && (seekAfter == 3 || seekAfter == 5))){
-				vb->Seek(edit->line->Start.mstime);
-			}
-		}
-		else{
-			if (vb->GetState() == Paused){ vb->Render(); }
-		}
-	}
-	else if (edit->Visual == CHANGEPOS){
-		vb->SetVisual(true);
-	}
-	else {
-		vb->SetVisual(true, true);
-		if (vb->GetState() == Paused){ vb->Render(); }
-	}
+	ShowEditOnVideo(true);
 
 
 
@@ -1109,7 +1087,6 @@ void SubsGridBase::InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddTo
 	if (Save){
 		InsertSelection(Row);
 		SetModified(GRID_INSERT_ROW);
-		Refresh(false);
 	}
 }
 
@@ -1165,26 +1142,8 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 
 		SaveUndo(editionType, currentLine, markedLine);
 		Kai->Label(GetActualHistoryIter(), false, Kai->Tabs->FindPanel(tab));
-		if (!dummy){
-			VideoBox *vb = tab->video;
-			if (edit->Visual >= CHANGEPOS){
-				vb->SetVisual(true);
-			}
-			else{
-				if (vb->IsShown() || vb->IsFullScreen()){ vb->OpenSubs(OPEN_DUMMY); }
-
-				int seekAfter;
-				vb->GetVideoListsOptions(nullptr, &seekAfter);
-				if (seekAfter > 1){
-					if (vb->GetState() == Paused || (vb->GetState() == Playing && (seekAfter == 3 || seekAfter == 5))){
-						vb->Seek(edit->line->Start.mstime);
-					}
-				}
-				else{
-					if (vb->GetState() == Paused){ vb->Render(); }
-				}
-			}
-		}
+		if (!dummy)
+			ShowEditOnVideo(false);
 
 		if (makebackup){
 			timer.Start(20000, true);
@@ -1195,6 +1154,34 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 	}
 	else if (redit) {
 		ChangeActiveLine(SetEditBoxLine, Scroll);
+	}
+	Refresh(false);
+}
+
+//shows the edited subtitles and, if the options say so, seeks to the active line
+void SubsGridBase::ShowEditOnVideo(bool afterUndo)
+{
+	VideoBox *vb = tab->video;
+	if (edit->Visual < CHANGEPOS){
+		if (vb->IsShown() || vb->IsFullScreen()){ vb->OpenSubs(OPEN_DUMMY); }
+		int seekAfter = 0;
+		vb->GetVideoListsOptions(nullptr, &seekAfter);
+		if (seekAfter > 1){
+			if (vb->GetState() == Paused || (vb->GetState() == Playing && (seekAfter == 3 || seekAfter == 5))){
+				vb->Seek(edit->line->Start.mstime);
+			}
+		}
+		else if (vb->GetState() == Paused){
+			vb->Render();
+		}
+	}
+	else if (edit->Visual == CHANGEPOS || !afterUndo){
+		vb->SetVisual(true);
+	}
+	else{
+		//undo can change what a clip or drawing visual edits
+		vb->SetVisual(true, true);
+		if (vb->GetState() == Paused){ vb->Render(); }
 	}
 }
 
@@ -1299,7 +1286,6 @@ void SubsGridBase::SetStartTime(int stime)
 	}
 	if (sels.size()){
 		SetModified(GRID_SET_START_TIME);
-		Refresh(false);
 	}
 }
 
@@ -1316,7 +1302,6 @@ void SubsGridBase::SetEndTime(int etime)
 	}
 	if (sels.size()){
 		SetModified(GRID_SET_END_TIME);
-		Refresh(false);
 	}
 }
 

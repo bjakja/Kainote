@@ -363,7 +363,6 @@ void SubsGrid::OnDuplicate()
 	}
 	
 	SetModified(GRID_DUPLICATE, true, false, rw1);
-	Refresh(false);
 }
 
 
@@ -744,7 +743,6 @@ void SubsGrid::InsertWithVideoTime(bool before, bool frameTime /*= false*/)
 		}
 		InsertSelections(rw2, rw2 + i - 1, false, true);
 		SetModified(GRID_DUPLICATE, true, false, rw2);
-		Refresh(false);
 	}
 	else {
 		int rw = currentLine;
@@ -986,7 +984,6 @@ void SubsGrid::OnPasteTextTl()
 		showOriginal = true;
 		//edit->SetIt(edit->ebrow);
 		SetModified(GRID_PASTE_TRANSLATION_TO_SUBS);
-		Refresh(false);
 	}
 	FileDialog1->Destroy();
 }
@@ -1087,7 +1084,6 @@ void SubsGrid::MoveTextTL(char mode)
 
 	}
 	SetModified(GRID_TRANSLATION_TEXT_MOVE, true, false, firstSelected);
-	Refresh(false);
 
 }
 
@@ -1372,7 +1368,6 @@ void SubsGrid::OnMakeContinous(int idd)
 		}
 	}
 	SetModified(GRID_MAKE_LINES_CONTINUES);
-	Refresh(false);
 }
 
 void SubsGrid::OnShowPreview()
@@ -1720,7 +1715,6 @@ void SubsGrid::Split(int id)
 
 	}
 	SetModified(GRID_SPLIT_LINES);
-	Refresh(false);
 }
 
 void SubsGrid::TreeAddLines(int treeLine)
@@ -1816,7 +1810,6 @@ void SubsGrid::TreeChangeName(int treeLine)
 	if (td.ShowModal() == wxID_OK){
 		CopyDialogueF(treeLine)->Text = td.GetDescription();
 		SetModified(TREE_SET_DESCRIPTION);
-		Refresh(false);
 	}
 }
 
@@ -1838,7 +1831,6 @@ void SubsGrid::TreeRemove(int treeLine)
 	}
 	DeleteRow(treeLine, 1);
 	SetModified(TREE_REMOVE);
-	Refresh(false);
 }
 
 void SubsGrid::TreeSelect(int treeLine)

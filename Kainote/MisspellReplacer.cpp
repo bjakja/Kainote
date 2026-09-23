@@ -211,9 +211,8 @@ void MisspellReplacer::ReplaceChecked()
 
 		results.push_back(SeekResult);
 		if (tab != oldtab && oldtab && somethingWasChanged){
-			oldtab->grid->SetModified(REPLACED_BY_MISSPELL_REPLACER);
 			oldtab->grid->SpellErrors.clear();
-			oldtab->grid->Refresh(false);
+			oldtab->grid->SetModified(REPLACED_BY_MISSPELL_REPLACER);
 			somethingWasChanged = false;
 		}
 
@@ -228,9 +227,8 @@ void MisspellReplacer::ReplaceChecked()
 	}
 
 	if (tab && somethingWasChanged){
-		tab->grid->SetModified(REPLACED_BY_MISSPELL_REPLACER);
 		tab->grid->SpellErrors.clear();
-		tab->grid->Refresh(false);
+		tab->grid->SetModified(REPLACED_BY_MISSPELL_REPLACER);
 	}
 
 	for (auto cur = rxrules.begin(); cur != rxrules.end(); cur++){
@@ -573,9 +571,8 @@ void MisspellReplacer::ReplaceOnTab(TabPanel *tab)
 		delete cur->first;
 	}
 	if (changedAnything){
-		tab->grid->SetModified(REPLACED_BY_MISSPELL_REPLACER);
 		tab->grid->SpellErrors.clear();
-		tab->grid->Refresh(false);
+		tab->grid->SetModified(REPLACED_BY_MISSPELL_REPLACER);
 	}
 }
 

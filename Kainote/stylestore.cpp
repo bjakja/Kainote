@@ -824,7 +824,6 @@ void StyleStore::SetModified(bool refreshActiveLine /*= false*/)
 	SubsGrid* grid = Notebook::GetTab()->grid;
 	Notebook::GetTab()->edit->RefreshStyle();
 	grid->SetModified(STYLE_MANAGER, refreshActiveLine);
-	grid->Refresh(false);
 	ASSList->SetArray(grid->GetStyleTable());
 }
 

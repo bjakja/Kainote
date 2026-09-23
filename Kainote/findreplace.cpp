@@ -212,9 +212,8 @@ void FindReplace::ReplaceChecked()
 			numOfChanges += ReplaceCheckedLine(&lineText, SeekResult->findPosition, &replacementDiff);
 
 			if (tab != oldtab && oldtab && numOfChanges){
-				oldtab->grid->SetModified(REPLACE_ALL);
 				oldtab->grid->SpellErrors.clear();
-				oldtab->grid->Refresh(false);
+				oldtab->grid->SetModified(REPLACE_ALL);
 				numOfChanges = 0;
 			}
 
@@ -225,9 +224,8 @@ void FindReplace::ReplaceChecked()
 		}
 
 		if (tab && numOfChanges){
-			tab->grid->SetModified(REPLACE_ALL);
 			tab->grid->SpellErrors.clear();
-			tab->grid->Refresh(false);
+			tab->grid->SetModified(REPLACE_ALL);
 		}
 	}
 
@@ -1058,7 +1056,6 @@ void FindReplace::Replace(TabWindow *window)
 	}
 	Dialc->SetTextElement(wrep, replacedText, tab->grid->hasTLMode);
 	grid->SetModified(REPLACE_SINGLE);
-	grid->Refresh(false);
 	textPosition = findstart + rep.length();
 	Find(window);
 }

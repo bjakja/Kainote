@@ -69,6 +69,7 @@ public:
 	void InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy = true, bool Save = false);
 	void SetSubsFormat(wxString ext = emptyString);
 	void ChangeActiveLine(int newActive, bool scroll);
+	//records an undo step for the changes made since the last one and repaints the grid
 	void SetModified(unsigned char editionType, bool redit = true, bool dummy = false, int SetEditBoxLine = -1, bool Scroll = true);
 	void UpdateUR(bool tolbar = true);
 	void GetAssHeader(wxString* header, bool forFile = false, bool translated = false, bool normalSave = true);
@@ -147,6 +148,7 @@ private:
 	virtual void ScrollTo(int y, bool center = false, int offset = 0, bool useUpdate = false){};
 	
 protected:
+	void ShowEditOnVideo(bool afterUndo);
 	static void CompareTexts(compareData &firstTable, compareData &secondTable, 
 		const wxString &first, const wxString &second);
 	short numsave;

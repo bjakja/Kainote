@@ -728,7 +728,6 @@ void EditBox::PutinNonass(const wxString &text, const wxString &tag)
 			}
 		}
 		grid->SetModified(EDITBOX_MULTILINE_EDITION);
-		grid->Refresh(false);
 	}
 
 }
@@ -1729,7 +1728,6 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 				txt.insert(cpyfrom, tag);
 			}
 			grid->SetModified(EDITBOX_MULTILINE_EDITION);
-			grid->Refresh(false);
 
 		}
 
