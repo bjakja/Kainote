@@ -75,7 +75,6 @@ ProviderFFMS2::ProviderFFMS2(const wxString& filename, RendererFFMS2* renderer,
 		unsigned int threadid = 0;
 		m_thread = (HANDLE)_beginthreadex(0, 0, FFMS2Proc, this, 0, &threadid);
 		//CreateThread( nullptr, 0,  (LPTHREAD_START_ROUTINE)FFMS2Proc, this, 0, 0);
-		SetThreadPriority(m_thread, THREAD_PRIORITY_TIME_CRITICAL);
 		SetThreadName(threadid, "VideoThread");
 		progress->ShowDialog();
 		WaitForSingleObject(m_eventComplete, INFINITE);

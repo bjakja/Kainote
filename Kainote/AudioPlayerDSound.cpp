@@ -469,6 +469,7 @@ unsigned int __stdcall DirectSoundPlayer2Thread::ThreadProc(void *parameter)
 
 void DirectSoundPlayer2Thread::Run()
 {
+	MultimediaThread multimedia(L"Audio");
 	// Create DirectSound object
 	IDirectSound8 * defaultPlayback = nullptr;
 	HRESULT hr = DS_OK;

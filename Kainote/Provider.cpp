@@ -24,6 +24,7 @@
 #include "VisualDrawingShapes.h"
 #include "Notebook.h"
 #include "FrameQueue.h"
+#include "UtilsWindows.h"
 
 
 Provider::Provider(const wxString& filename, RendererFFMS2* renderer)
@@ -125,6 +126,7 @@ void Provider::GetWaveForm(int* min, int* peak, long long start, int w, int h, i
 
 void Provider::RunPlaybackThread()
 {
+	MultimediaThread multimedia(L"Playback");
 	HANDLE events_to_wait[] = {
 		m_eventStartPlayback,
 		m_eventSetPosition,
@@ -143,6 +145,7 @@ void Provider::RunPlaybackThread()
 			FrameQueue queue(4, frameBytes, m_numFrames);
 			queue.Reset(m_renderer->m_Frame);
 			std::thread decoder([this, &queue]() {
+				MultimediaThread multimedia(L"Playback");
 				int frame;
 				while (unsigned char *slot = queue.NextToDecode(&frame))
 					queue.Decoded(slot, FetchPlaybackFrame(frame, slot));

@@ -38,6 +38,19 @@ bool IsMonitorRect(std::vector<tagRECT>* MonitorRects, const wxRect& rect);
 bool GetMonitorWithSize(std::vector<tagRECT>* MonitorRects, wxRect *monrect);
 bool GetLineTextExtents(const wxString& text, Styles* style, float* width, float* height, float* descent = nullptr, float* extlead = nullptr);
 void CalcMovePosition(D3DXVECTOR2* point, double* moveTable, int time);
+// Registers the calling thread with the Multimedia Class Scheduler (task
+// "Playback", "Audio"...) for as long as this lives.
+class MultimediaThread
+{
+public:
+	explicit MultimediaThread(const wchar_t *task);
+	~MultimediaThread();
+	MultimediaThread(const MultimediaThread &) = delete;
+	MultimediaThread &operator=(const MultimediaThread &) = delete;
+private:
+	HANDLE m_handle = nullptr;
+};
+
 #ifdef _M_IX86
 void SetThreadName(DWORD id, LPCSTR szThreadName);
 #else
