@@ -21,6 +21,7 @@
 
 #include "Provider.h"
 #include <dsound.h>
+#include <mutex>
 
 
 class DirectSoundPlayer2Thread {
@@ -58,6 +59,17 @@ class DirectSoundPlayer2Thread {
 
 	
 	int last_playback_restart;
+
+	// What the thread has written, so others can work out what was played
+	// from the play cursor. restarting holds from Play until the new data is in.
+	std::mutex position_mutex;
+	IDirectSoundBuffer8 *position_buffer = nullptr;
+	long long written_frame = 0;
+	unsigned long write_offset = 0;
+	unsigned long buffer_bytes = 0;
+	bool restarting = false;
+	bool refilled = false;
+	void SetWritten(long long frame, unsigned long offset, bool refills);
 
 	Provider* provider;
 #ifndef _WIN32

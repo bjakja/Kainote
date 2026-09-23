@@ -163,7 +163,7 @@ void Provider::RunPlaybackThread()
 					break;
 				}
 
-				int played = timeGetTime() - m_renderer->m_LastTime;
+				int played = m_renderer->PlaybackClock();
 				PlaybackStep step = NextPlaybackFrame(timebase, frame, played,
 					m_renderer->m_PlayEndTime, m_numFrames);
 				m_renderer->m_Frame = step.frame;

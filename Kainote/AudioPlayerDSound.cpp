@@ -534,6 +534,12 @@ void DirectSoundPlayer2Thread::Run()
 		return;
 	}
 
+	{
+		std::lock_guard<std::mutex> lock(position_mutex);
+		position_buffer = audioBuffer;
+		buffer_bytes = bufSize;
+	}
+
 	// Now we're ready to roll!
 	SetEvent(thread_running);
 	bool running = true;
@@ -610,6 +616,7 @@ void DirectSoundPlayer2Thread::Run()
 							KaiLogSilent("Could not start looping playback.");
 					}
 
+					SetWritten(next_input_frame, buffer_offset, bytes_filled >= wanted_latency_bytes);
 					SetEvent(is_playing);
 					playback_should_be_running = true;
 
@@ -725,6 +732,7 @@ do_fill_buffer:
 					DWORD bytes_filled = FillAndUnlockBuffers(buf1, buf1sz, buf2, buf2sz, next_input_frame, audioBuffer);
 					buffer_offset += bytes_filled;
 					if (buffer_offset >= bufSize) buffer_offset -= bufSize;
+					SetWritten(next_input_frame, buffer_offset, true);
 
 					if (bytes_filled < 1024)
 					{
@@ -753,8 +761,21 @@ do_fill_buffer:
 		}
 	}
 
+	{
+		std::lock_guard<std::mutex> lock(position_mutex);
+		position_buffer = nullptr;
+	}
 	audioBuffer->Release();
 	defaultPlayback->Release();
+}
+
+void DirectSoundPlayer2Thread::SetWritten(long long frame, unsigned long offset, bool refills)
+{
+	std::lock_guard<std::mutex> lock(position_mutex);
+	written_frame = frame;
+	write_offset = offset;
+	refilled = refills;
+	restarting = false;
 }
 
 
@@ -913,7 +934,11 @@ void DirectSoundPlayer2Thread::Play(long long start, long long count)
 {
 	CheckError();
 
-	start_frame = start;
+	{
+		std::lock_guard<std::mutex> lock(position_mutex);
+		restarting = true;
+		start_frame = start;
+	}
 	end_frame = start+count;
 	SetEvent(event_start_playback);
 	//SYSTEMTIME ftime;
@@ -987,10 +1012,7 @@ int DirectSoundPlayer2Thread::GetCurrentMS()
 
 	if (!IsPlaying()) return 0;
 
-	int milliseconds_elapsed = (int)(timeGetTime() - last_playback_restart);
-	//int milliseconds_elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - last_playback_restart).count();
-
-	return start_frame + milliseconds_elapsed;
+	return (int)(GetCurrentFrame() * 1000 / provider->GetSampleRate());
 }
 
 long long DirectSoundPlayer2Thread::GetCurrentFrame()
@@ -999,11 +1021,19 @@ long long DirectSoundPlayer2Thread::GetCurrentFrame()
 
 	if (!IsPlaying()) return 0;
 
-
-	int milliseconds_elapsed = (int)(timeGetTime() - last_playback_restart);
-	//int milliseconds_elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - last_playback_restart).count();
-
-	return start_frame + (long long)milliseconds_elapsed * provider->GetSampleRate() / 1000;
+	// the frame the sound card plays now: what was written minus what it has not reached
+	std::lock_guard<std::mutex> lock(position_mutex);
+	DWORD playCursor = 0;
+	if (restarting || !position_buffer || !buffer_bytes ||
+		FAILED(position_buffer->GetCurrentPosition(&playCursor, nullptr)))
+		return start_frame;
+	unsigned long ahead = (write_offset + buffer_bytes - playCursor) % buffer_bytes;
+	// a refilled buffer meets the cursor full, a one-shot one meets it played out
+	if (ahead == 0 && refilled)
+		ahead = buffer_bytes;
+	long long bytesPerFrame = provider->GetChannels() * provider->GetBytesPerSample();
+	long long frame = written_frame - (long long)ahead / bytesPerFrame;
+	return (frame < start_frame) ? start_frame : frame;
 }
 
 

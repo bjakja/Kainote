@@ -211,6 +211,9 @@ public:
 	//returns true if removed
 	bool RemoveVisual(bool noRefresh = false, bool disable = false);
 	int GetCurrentPosition();
+	// Milliseconds of the video played so far: the sound card's position when
+	// audio plays, else the system clock kept in step with it.
+	int PlaybackClock();
 	virtual int GetCurrentFrame();
 	bool PlayLine(int start, int end);
 	void UpdateVideoWindow();

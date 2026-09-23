@@ -1059,6 +1059,18 @@ int RendererVideo::GetCurrentPosition()
 	return m_Time;
 }
 
+int RendererVideo::PlaybackClock()
+{
+	DWORD now = timeGetTime();
+	AudioDisplay *audio = m_AudioPlayer;
+	if (audio && audio->player && audio->player->IsPlaying()) {
+		int audioMs = audio->GetMSAtSample(audio->player->GetCurrentPosition());
+		m_LastTime = now - audioMs;
+		return audioMs;
+	}
+	return (int)(now - m_LastTime);
+}
+
 int RendererVideo::GetCurrentFrame()
 {
 	return GetTimebase().FrameShownAt(m_Time);
