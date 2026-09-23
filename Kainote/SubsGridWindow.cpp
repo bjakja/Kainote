@@ -30,6 +30,31 @@
 #include <wx/dc.h>
 
 
+wxRegEx &SubsGrid::TagsPattern(char format)
+{
+	static wxRegEx srtTags(L"\\<[^\\<]*\\>", wxRE_ADVANCED);
+	static wxRegEx assTags(L"\\{[^\\{]*\\}", wxRE_ADVANCED);
+	return (format == SRT) ? srtTags : assTags;
+}
+
+std::unordered_set<wxString, wxStringHash, wxStringEqual> SubsGrid::StyleNames()
+{
+	std::unordered_set<wxString, wxStringHash, wxStringEqual> names;
+	for (size_t i = 0; i < file->StylesSize(); i++)
+		names.insert(file->GetStyle(i)->Name);
+	return names;
+}
+
+const wxBitmap &SubsGrid::TreeArrow(bool closed)
+{
+	if (!m_TreeArrows[0].IsOk()) {
+		m_TreeArrows[0] = wxBITMAP_PNG(L"arrow_list");
+		if (m_TreeArrows[0].IsOk())
+			m_TreeArrows[1] = wxBitmap(m_TreeArrows[0].ConvertToImage().Rotate180());
+	}
+	return m_TreeArrows[closed ? 0 : 1];
+}
+
 void SubsGrid::SetStyle()
 {
 	const wxString & fontname = Options.GetString(GRID_FONT);
@@ -193,6 +218,7 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 		visibleLines.clear();
 
 		std::vector<wxString> strings;
+		auto styleNames = StyleNames();
 		//refresh have to be fast, reduce recalculation id to key to minimum
 		//scrollPositionId it's also strored 
 		int key = scrollPosition - 1;
@@ -273,8 +299,7 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 				}
 
 				if (subsFormat < SRT){
-					if (file->FindStyle(Dial->Style) == -1){ unknownStyle = true; }
-					else{ unknownStyle = false; }
+					unknownStyle = !styleNames.count(Dial->Style);
 					strings.push_back(Dial->Style);
 					strings.push_back(Dial->Actor);
 					strings.push_back(wxString::Format(L"%i", Dial->MarginL));
@@ -315,7 +340,7 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 					badWraps = false;
 				}
 				if (hideOverrideTags) {
-					wxRegEx reg(subsFormat == SRT? L"\\<[^\\<]*\\>" : L"\\{[^\\{]*\\}", wxRE_ADVANCED);
+					wxRegEx &reg = TagsPattern(subsFormat);
 					if (!showOriginal && !isTl)
 						reg.ReplaceAll(&txt, chtag);
 					if ((!showOriginal && isTl) || showOriginal)
@@ -458,20 +483,11 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 					tdc.SetBrush(comm);
 					tdc.SetPen(*wxTRANSPARENT_PEN);
 					tdc.DrawRectangle(posX + 1, posY, w - 1, GridHeight);
-					wxBitmap arrow = wxBITMAP_PNG(L"arrow_list");
 					// GetDialogueKey was made for loops no checks
 					Dialogue *nextDial = (key < file->GetCount() - 1) ? file->GetDialogue(key + 1) : nullptr;
-					if (nextDial && nextDial->treeState == TREE_CLOSED) {
-						if (arrow.IsOk())
-							tdc.DrawBitmap(arrow, posX + 6, posY + 5);
-					}
-					else{
-						wxBitmap bmp(wxBITMAP_PNG(L"arrow_list"));
-						wxImage img = bmp.ConvertToImage();
-						img = img.Rotate180();
-						if (img.IsOk())
-							tdc.DrawBitmap(img, posX + 6, posY + 5);
-					}
+					const wxBitmap &arrow = TreeArrow(nextDial && nextDial->treeState == TREE_CLOSED);
+					if (arrow.IsOk())
+						tdc.DrawBitmap(arrow, posX + 6, posY + 5);
 					tdc.DrawText(Dial->Text, posX + 23, posY + 1);
 					break;
 				}
@@ -587,6 +603,7 @@ void SubsGrid::PaintD2D(GraphicsContext *gc, int w, int h, int size, int scrows,
 	visibleLines.clear();
 
 	std::vector<wxString> strings;
+	auto styleNames = StyleNames();
 	//refresh have to be fast, reduce recalculation id to key to minimum
 	//scrollPositionId it's also strored 
 	int key = scrollPosition - 1;
@@ -670,8 +687,7 @@ void SubsGrid::PaintD2D(GraphicsContext *gc, int w, int h, int size, int scrows,
 			}
 
 			if (subsFormat < SRT){
-				if (file->FindStyle(Dial->Style) == -1){ unknownStyle = true; }
-				else{ unknownStyle = false; }
+				unknownStyle = !styleNames.count(Dial->Style);
 				strings.push_back(Dial->Style);
 				strings.push_back(Dial->Actor);
 				strings.push_back(wxString::Format(L"%i", Dial->MarginL));
@@ -717,7 +733,7 @@ void SubsGrid::PaintD2D(GraphicsContext *gc, int w, int h, int size, int scrows,
 			
 			
 			if (hideOverrideTags) {
-				wxRegEx reg(subsFormat == SRT ? L"\\<[^\\<]*\\>" : L"\\{[^\\{]*\\}", wxRE_ADVANCED);
+				wxRegEx &reg = TagsPattern(subsFormat);
 				if (!showOriginal && !isTl)
 					reg.ReplaceAll(&txt, chtag);
 				if ((!showOriginal && isTl) || showOriginal)
@@ -873,17 +889,11 @@ void SubsGrid::PaintD2D(GraphicsContext *gc, int w, int h, int size, int scrows,
 					gc->DrawRectangle(posX + 1, posY, w - 1, GridHeight);
 					// GetDialogueKey was made for loops no checks
 					Dialogue *nextDial = (key < file->GetCount() - 1) ? file->GetDialogue(key + 1) : nullptr;
-					if (nextDial && nextDial->treeState == TREE_CLOSED) {
-						wxBitmap bmpal(wxBITMAP_PNG(L"arrow_list"));
-						if (bmpal.IsOk())
-							gc->DrawBitmap(bmpal, posX + 6, posY + 5, bmpal.GetWidth(), bmpal.GetHeight());
-					}
-					else {
-						wxBitmap bmp(wxBITMAP_PNG(L"arrow_list"));
-						wxImage img = bmp.ConvertToImage();
-						img = img.Rotate180();
-						if(img.IsOk())
-							gc->DrawBitmap(img, posX + 6, posY + 5, img.GetWidth(), img.GetHeight());
+					bool closed = nextDial && nextDial->treeState == TREE_CLOSED;
+					const wxBitmap &arrow = TreeArrow(closed);
+					if (arrow.IsOk())
+						gc->DrawBitmap(arrow, posX + 6, posY + 5, arrow.GetWidth(), arrow.GetHeight());
+					if (!closed) {
 						gc->SetBrush(*wxTRANSPARENT_BRUSH);
 						gc->SetPen(textcol);
 						gc->StrokeLine(posX, posY + GridHeight, w - 1, posY + GridHeight);

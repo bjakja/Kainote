@@ -219,6 +219,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	wxColour kol;
 
 	std::vector<wxString> strings;
+	auto styleNames = previewGrid->StyleNames();
 	int key = previewGrid->scrollPosition - 1;
 	int id = previewGrid->scrollPositionId - 1;
 	int idmarkerPos = -1;
@@ -333,7 +334,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			}
 
 			if (previewGrid->subsFormat < SRT){
-				if (previewGrid->file->FindStyle(Dial->Style) == -1){ unknownStyle = true; }
+				if (!styleNames.count(Dial->Style)){ unknownStyle = true; }
 				else{ unknownStyle = false; }
 				strings.push_back(Dial->Style);
 				strings.push_back(Dial->Actor);
@@ -373,7 +374,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			}
 
 			if (previewGrid->hideOverrideTags){
-				wxRegEx reg(previewGrid->subsFormat == SRT ? L"\\<[^\\<]*\\>" : L"\\{[^\\{]*\\}", wxRE_ADVANCED);
+				wxRegEx &reg = SubsGrid::TagsPattern(previewGrid->subsFormat);
 				reg.ReplaceAll(&txt, chtag);
 				if (previewGrid->showOriginal){ reg.ReplaceAll(&txttl, chtag); }
 			}

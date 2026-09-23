@@ -14,6 +14,9 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
+#include <unordered_set>
+#include <wx/hashmap.h>
+#include <wx/regex.h>
 
 #include "styles.h"
 #include "SubsDialogue.h"
@@ -277,6 +280,15 @@ private:
 	int lastWidth = 0;
 	int lastHeight = 0;
 	wxBitmap* bmp = nullptr;
+	// the tree arrows, loaded once: pointing down for a closed tree, up for an open one
+	wxBitmap m_TreeArrows[2];
+	const wxBitmap &TreeArrow(bool closed);
+public:
+	// override tags as hide-tags shows them, compiled once
+	static wxRegEx &TagsPattern(char format);
+	// the style names, to tell unknown styles apart without a search per row
+	std::unordered_set<wxString, wxStringHash, wxStringEqual> StyleNames();
+private:
 	wxFont font;
 	SubsGridPreview *thisPreview = nullptr;
 
