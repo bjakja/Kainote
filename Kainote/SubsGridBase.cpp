@@ -1202,7 +1202,7 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
 	bool oldHasTlMode = hasTLMode;
 	int active = 0;
 
-	SubsLoader SL((SubsGrid*)this, str, ext);
+	SubsLoader SL(this, str, ext);
 
 	if (oldHasTlMode != hasTLMode){
 		edit->SetTlMode(hasTLMode);
@@ -1268,7 +1268,7 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
 		edit->RebuildActorEffectLists();
 		SetLayoutFromSubsRes();
 	}
-	((SubsGridWindow*)this)->ScrollTo(active, false, -4);
+	ScrollTo(active, false, -4);
 	if (subsFormat == SRT)
 		edit->ResizeTimeControls(true);
 }
