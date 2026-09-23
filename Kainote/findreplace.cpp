@@ -212,7 +212,6 @@ void FindReplace::ReplaceChecked()
 			numOfChanges += ReplaceCheckedLine(&lineText, SeekResult->findPosition, &replacementDiff);
 
 			if (tab != oldtab && oldtab && numOfChanges){
-				oldtab->grid->SpellErrors.clear();
 				oldtab->grid->SetModified(REPLACE_ALL);
 				numOfChanges = 0;
 			}
@@ -224,7 +223,6 @@ void FindReplace::ReplaceChecked()
 		}
 
 		if (tab && numOfChanges){
-			tab->grid->SpellErrors.clear();
 			tab->grid->SetModified(REPLACE_ALL);
 		}
 	}
@@ -1115,7 +1113,6 @@ void FindReplace::ReplaceAll(TabWindow *window)
 		return;
 	}
 	else if (allReplacements){
-		tab->grid->SpellErrors.clear();
 		tab->grid->SetModified(REPLACE_ALL);
 		if (dialogueColumn < TXT)
 			tab->grid->RefreshColumns(dialogueColumn);
@@ -1150,7 +1147,6 @@ void FindReplace::ReplaceInAllOpenedSubs(TabWindow *window)
 			return;
 		}
 		if (allReplacements){
-			tab->grid->SpellErrors.clear();
 			tab->grid->SetModified(REPLACE_ALL);
 			if (dialogueColumn < TXT){
 				tab->grid->RefreshColumns(dialogueColumn);

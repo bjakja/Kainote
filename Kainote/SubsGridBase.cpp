@@ -325,7 +325,6 @@ void SubsGridBase::Convert(char type)
 	edit->SetLine((currentLine < GetCount()) ? currentLine : 0);
 	edit->ResizeTimeControls(subsFormat);
 
-	SpellErrors.clear();
 	SetModified(GRID_CONVERT);
 	RefreshColumns();
 }
@@ -771,7 +770,6 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 
 	}
 
-	SpellErrors.clear();
 	int tmpMarked = markedLine;
 	SetModified(SHIFT_TIMES, true, false, -1, false);
 	markedLine = tmpMarked;
@@ -793,7 +791,6 @@ void SubsGridBase::SortIt(short what, bool all)
 	}
 
 	//edited = true;
-	SpellErrors.clear();
 	SetModified(GRID_SORT_LINES);
 }
 
@@ -1124,7 +1121,8 @@ void SubsGridBase::ChangeActiveLine(int newActive, bool scroll)
 //Every SetModified have to find on list and add etitionType
 void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy, int SetEditBoxLine, bool Scroll)
 {
-	if (IsNotSaved()){
+	if (HasChangesToRecord()){
+		SpellErrors.clear();
 		//wxMutexLocker lock(editionMutex);
 		if (!IsModified()){
 			Kai->Toolbar->UpdateId(GLOBAL_SAVE_SUBS, true);
@@ -1369,7 +1367,6 @@ bool SubsGridBase::SetTlMode(bool mode, bool dontShowDialog/* = false*/)
 		Kai->Menubar->Enable(GLOBAL_SAVE_TRANSLATION, false);
 	}
 	edit->RefreshStyle();
-	SpellErrors.clear();
 	Refresh(false);
 	SetModified((mode) ? GRID_TURN_ON_TLMODE : GRID_TURN_OFF_TLMODE);
 	return false;

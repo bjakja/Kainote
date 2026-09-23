@@ -18,6 +18,7 @@
 #include "styles.h"
 #include "SubsDialogue.h"
 #include "KaiDialog.h"
+#include "UndoHistory.h"
 #include <vector>
 #include <set>
 #include <functional>
@@ -111,10 +112,11 @@ public:
 class SubsFile
 {
 private:
-	std::vector<File*> undo;
-	int iter;
+	UndoHistory<File> m_history;
 	File *subs;
-	int lastSave;
+	// changed since the last recorded step; every change below sets it
+	bool edited = false;
+	void LoadCurrentStep();
 
 public:
 	SubsFile();
@@ -156,6 +158,9 @@ public:
 	size_t StylesSize();
 	Styles *GetStyle(size_t i, const wxString &name = emptyString);
 	std::vector<Styles*> *GetStyleTable();
+	void InsertStyle(size_t i, Styles *style);
+	void MoveStyle(size_t from, size_t to);
+	void SortStyles(bool func(Styles *i, Styles *j));
 
 	//multiplication must be set to 0
 	size_t FindStyle(const wxString &name, int *multip = nullptr);
@@ -165,12 +170,14 @@ public:
 	const wxString & GetSInfo(const wxString &key, int *ii = 0);
 	SInfo *GetSInfoP(const wxString &key, int *ii);
 	void DeleteSInfo(size_t i);
+	SInfo *GetSInfoAt(size_t i);
+	void SetSInfoAt(size_t i, SInfo *info);
+	void InsertSInfo(size_t i, SInfo *info);
 	void AddSInfo(const wxString &SI, wxString val = emptyString, bool save = true);
 	void GetSInfos(wxString &textSinfo, bool addTlMode = false);
 	size_t SInfoSize();
 	void SaveSelectionsF(bool clear, int currentLine, int markedLine, int scrollPos);
 	size_t FirstSelection(size_t *id = nullptr);
-	File *GetSubs(){ return subs; }
 	void GetSelections(wxArrayInt &selections, bool deselect=false, bool checkVisible = true);
 	const std::set<int> & GetSelectionsAsKeys(){ return subs->Selections; };
 	void InsertSelection(size_t i);
@@ -192,24 +199,23 @@ public:
 	int FindEndOfTree(size_t i);
 	int OpenCloseTree(size_t i);
 	void GetURStatus(bool *_undo, bool *_redo);
-	bool IsNotSaved();
-	void SetAsEdited() { edited = true; }
-	int maxx();
+	// something changed since the last recorded step
+	bool HasChangesToRecord() const { return edited; }
+	int HistorySize() const { return m_history.Size(); }
 	int Iter();
-	void RemoveFirst(int num);
+	void DropOldestHistory(int num);
 	void ShowHistory(wxWindow *parent, std::function<void(int)> functionAfterChangeHistory);
 	void GetHistoryTable(wxArrayString *history);
 	bool SetHistory(int iter);
 	void SetLastSave();
 	int GetActualHistoryIter();
-	int GetLastSaveIter(){ return lastSave; }
-	bool IsModified(){ return iter != lastSave; }
-	void RemoveLastIterSave() { lastSave = -1; }
+	int GetLastSaveIter(){ return m_history.SavedStep(); }
+	bool IsModified(){ return m_history.IsModified(); }
+	void RemoveLastIterSave() { m_history.ForgetSaved(); }
 	const wxString &GetUndoName();
 	const wxString &GetRedoName();
 	bool IsFiltered();
 	void SetFiltered(bool filtered = true);
-	bool edited;
 	wxString *historyNames = nullptr;
 	wxMutex *historyGuard = nullptr;
 };

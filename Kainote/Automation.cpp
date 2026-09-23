@@ -940,7 +940,7 @@ namespace Auto{
 		lua_pushcclosure(L, add_stack_trace, 0);
 
 		GetFeatureFunction("validate");
-		auto subsobj = new AutoToFile(L, c->grid->GetSubs(), true, c->grid->subsFormat);
+		auto subsobj = new AutoToFile(L, c->grid, true, c->grid->subsFormat);
 
 		push_value(L, selected_rows(c));
 		push_value(L, c->grid->currentLine + c->grid->SInfoSize() + c->grid->StylesSize() + 1);
@@ -974,8 +974,7 @@ namespace Auto{
 		stackcheck.check_stack(0);
 
 		GetFeatureFunction("run");
-		File *subs = c->grid->GetSubs();
-		auto subsobj = new AutoToFile(L, subs, true, c->grid->subsFormat);
+		auto subsobj = new AutoToFile(L, c->grid, true, c->grid->subsFormat);
 
 		int original_offset = c->grid->SInfoSize() + c->grid->StylesSize() + 1;
 		auto original_sel = selected_rows(c);
@@ -1049,15 +1048,12 @@ namespace Auto{
 		}
 		if (active_idx == -1)
 			active_idx = original_active;
-		c->grid->SpellErrors.clear();
 		//refresh styles in style manager
 		if (StyleStore::HasStore() && StyleStore::Get()->IsShown())
 			StyleStore::ShowStore();
 		//refresh styles in editbox
 		c->edit->RefreshStyle();
 
-		if (subsobj->DeletedLines())
-			c->grid->SetAsEdited();
 		c->grid->SetModified(AUTOMATION_SCRIPT, true, false, active_idx);
 		c->grid->RefreshColumns();
 		SAFE_DELETE(subsobj);
@@ -1074,7 +1070,7 @@ namespace Auto{
 		stackcheck.check_stack(0);
 
 		GetFeatureFunction("isactive");
-		auto subsobj = new AutoToFile(L, c->grid->GetSubs(), true, c->grid->subsFormat);
+		auto subsobj = new AutoToFile(L, c->grid, true, c->grid->subsFormat);
 		push_value(L, selected_rows(c));
 		push_value(L, c->grid->currentLine + c->grid->SInfoSize() + c->grid->StylesSize() + 1);
 

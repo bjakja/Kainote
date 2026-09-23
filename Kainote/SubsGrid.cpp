@@ -415,8 +415,6 @@ void SubsGrid::OnJoin(wxCommandEvent &event)
 	dialc->End.NewTime(end);
 	dialc->Text = ntext;
 	dialc->TextTl = ntltext;
-	edited = true;
-	SpellErrors.clear();
 	SetModified((idd == GLOBAL_JOIN_WITH_PREVIOUS) ? GRID_JOIN_WITH_PREVIOUS :
 		(idd == GLOBAL_JOIN_WITH_NEXT) ? GRID_JOIN_WITH_NEXT : GRID_JOIN);
 	RefreshColumns();
@@ -439,7 +437,6 @@ void SubsGrid::OnJoinToFirst(int id)
 	DeleteRow(selections[1], selections[selections.size() - 1] - selections[1] + 1);
 
 	InsertSelection(selections[0]);
-	SpellErrors.clear();
 	SetModified((id == GRID_JOIN_TO_LAST_LINE) ? GRID_JOIN_TO_LAST : GRID_JOIN_TO_FIRST);
 	RefreshColumns();
 }

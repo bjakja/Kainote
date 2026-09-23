@@ -617,6 +617,7 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitp
     <ClInclude Include="TabPanel.h" />
     <ClInclude Include="SubsTime.h" />
     <ClInclude Include="Timebase.h" />
+    <ClInclude Include="UndoHistory.h" />
     <ClInclude Include="TimeCtrl.h" />
     <ClInclude Include="TLDialog.h" />
     <ClInclude Include="Videobox.h" />

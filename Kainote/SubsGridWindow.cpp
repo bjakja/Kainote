@@ -1494,7 +1494,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 	if (left_up && holding) {
 		holding = false;
 		//Save swap lines after alt release 
-		if (event.AltDown() && IsNotSaved()){ 
+		if (event.AltDown() && HasChangesToRecord()){ 
 			SetModified(GRID_SWAP); 
 		}
 		ReleaseMouse();
@@ -1555,9 +1555,9 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 		if (holding && alt)
 		{
 			if (lastsel != -1 && lastsel != row) {	
-				if (!edited)
+				if (!HasChangesToRecord())
 					SaveSelections();
-				edited |= MoveRows(GetElementByKey(row) - GetElementByKey(lastsel));
+				MoveRows(GetElementByKey(row) - GetElementByKey(lastsel));
 			}
 			lastsel = row;
 			if (click){
@@ -1836,7 +1836,6 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 			if (FirstSelection() != -1){
 				SaveSelections();
 				if (MoveRows(dir)){
-					edited = true;
 					SetModified(GRID_SWAP);
 				}
 			}

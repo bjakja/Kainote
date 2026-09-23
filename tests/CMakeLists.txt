@@ -8,6 +8,7 @@ add_executable(kainote_tests
     check_main.cpp
     PlaybackTests.cpp
     TimebaseTests.cpp
+    UndoHistoryTests.cpp
     ../Kainote/Playback.cpp
     ../Kainote/Timebase.cpp
 )

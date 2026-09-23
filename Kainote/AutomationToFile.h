@@ -54,21 +54,19 @@ namespace Auto{
 	class AutoToFile{
 
 	public:
-		AutoToFile(lua_State *_L, File *subsfile, bool _can_modify, char subsFormat);
+		AutoToFile(lua_State *_L, SubsFile *subsfile, bool _can_modify, char subsFormat);
 		~AutoToFile();
 		static bool LineToLua(lua_State *L, int i); 
 		static SubsEntry *LuaToLine(lua_State *L);
 		static void Cancel();
-		bool DeletedLines() const { return deleted_lines; }
 	
 	private:
-		File *file;
+		SubsFile *file;
 		AudioSpectrum *spectrum = NULL;
 		lua_State *L;
 
 		bool can_modify;
 		bool was_cancelled = false;
-		bool deleted_lines = false;
 		char subsFormat = ASS;
 		void CheckAllowModify(); // throws an error if modification is disallowed
 
@@ -92,7 +90,7 @@ namespace Auto{
 		static int LuaSetUndoPoint(lua_State *L) {return 0;};
 		//static int LuaGenerateFFT(lua_State *L);
 		static int LuaGetFreqencyReach(lua_State *L);
-		static File* GetSubs(lua_State* L);
+		static SubsFile* GetSubs(lua_State* L);
 
 		static AutoToFile *laf;//GetObjPointer(lua_State *L, int idx);
 

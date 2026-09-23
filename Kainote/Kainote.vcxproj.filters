@@ -843,6 +843,9 @@
     <ClInclude Include="Timebase.h">
       <Filter>T</Filter>
     </ClInclude>
+    <ClInclude Include="UndoHistory.h">
+      <Filter>U</Filter>
+    </ClInclude>
     <ClInclude Include="TimeCtrl.h">
       <Filter>T</Filter>
     </ClInclude>
