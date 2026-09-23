@@ -212,7 +212,7 @@ void FindReplace::ReplaceChecked()
 			numOfChanges += ReplaceCheckedLine(&lineText, SeekResult->findPosition, &replacementDiff);
 
 			if (tab != oldtab && oldtab && numOfChanges){
-				oldtab->grid->SetModified(REPLACED_BY_MISSPELL_REPLACER);
+				oldtab->grid->SetModified(REPLACE_ALL);
 				oldtab->grid->SpellErrors.clear();
 				oldtab->grid->Refresh(false);
 				numOfChanges = 0;
@@ -225,7 +225,7 @@ void FindReplace::ReplaceChecked()
 		}
 
 		if (tab && numOfChanges){
-			tab->grid->SetModified(REPLACED_BY_MISSPELL_REPLACER);
+			tab->grid->SetModified(REPLACE_ALL);
 			tab->grid->SpellErrors.clear();
 			tab->grid->Refresh(false);
 		}
