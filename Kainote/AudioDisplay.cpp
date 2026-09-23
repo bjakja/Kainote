@@ -1045,23 +1045,20 @@ void AudioDisplay::DrawSpectrum(bool weak) {
 		if (!spectrumRenderer)
 			spectrumRenderer = new AudioSpectrum(provider);
 		spectrumRenderer->SetScaling(scale);
+		// the spectrum is drawn a column at a time, which video memory is slow
+		// at, so it is drawn in system memory and copied over in whole rows
+		spectrumPixels.resize((size_t)w * h * 4);
+		spectrumRenderer->RenderRange(Position*samples, (Position + w)*samples, spectrumPixels.data(), w, w, h, samplesPercent);
 		D3DLOCKED_RECT d3dlr;
-		try{
-			HRN(spectrumSurface->LockRect(&d3dlr, 0, D3DLOCK_NOSYSLOCK), _("Cannot lock texture buffer"));
-		}
-		catch (...){}
+		if (FAILED(spectrumSurface->LockRect(&d3dlr, 0, D3DLOCK_NOSYSLOCK)))
+			return;
 		byte *img = static_cast<byte *>(d3dlr.pBits);
-		int dxw = d3dlr.Pitch / 4;
-		if (dxw < w) {
-			//KaiLogSilent(L"DX surface has to small size");
+		if (d3dlr.Pitch < w * 4) {
+			spectrumSurface->UnlockRect();
 			return;
 		}
-
-
-		// Use a slightly slower, but simple way
-		// Always draw the spectrum for the entire width
-		// Hack: without those divs by 2 the display is horizontally compressed
-		spectrumRenderer->RenderRange(Position*samples, (Position + w)*samples, img, w, dxw, h, samplesPercent);
+		for (int y = 0; y < h; y++)
+			memcpy(img + y * d3dlr.Pitch, spectrumPixels.data() + (size_t)y * w * 4, w * 4);
 		spectrumSurface->UnlockRect();
 
 	}

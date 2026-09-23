@@ -97,6 +97,7 @@ private:
 	int *peak = nullptr;
 	int *min = nullptr;
 	std::vector<VERTEX> waveformVertices;
+	std::vector<unsigned char> spectrumPixels;
 
 	wxCriticalSection mutex;
 	int currentSyllable = 0;
