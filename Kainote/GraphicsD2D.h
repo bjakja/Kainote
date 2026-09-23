@@ -10,6 +10,7 @@
 
 
 #pragma once
+#include <vector>
 
 #include <wx/colour.h>
 #include <wx/gdicmn.h>  // for wxDash
@@ -222,6 +223,14 @@ public:
 	virtual bool Contains(wxDouble x, wxDouble y, wxPolygonFillMode fillStyle = wxODDEVEN_RULE) const = 0;
 };
 
+// A stretch of a text drawn in one colour, as characters from start.
+struct TextRun
+{
+	size_t start;
+	size_t length;
+	wxColour colour;
+};
+
 class GraphicsContext 
 {
 public:
@@ -306,6 +315,19 @@ public:
 		wxDouble fw = 0, fh = 0;
 		GetTextExtent(str, &fw, &fh);
 		DrawTextU(str, x + (width - fw) / 2, y);
+	}
+
+	// draws text in font with each run in its colour; text between runs is not drawn
+	virtual void DrawTextRuns(const wxFont& font, const wxString& text, const std::vector<TextRun>& runs,
+		wxDouble x, wxDouble y)
+	{
+		for (const TextRun& run : runs) {
+			SetFont(font, run.colour);
+			wxDouble fw = 0, fh = 0;
+			if (run.start)
+				GetTextExtent(text.Left(run.start), &fw, &fh);
+			DrawTextU(text.Mid(run.start, run.length), x + fw, y);
+		}
 	}
 
 	void DrawTextU(const wxString& str, wxDouble x, wxDouble y);

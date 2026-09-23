@@ -3746,6 +3746,9 @@ public:
 
 	void DrawTextCentered(const wxString& str, wxDouble x, wxDouble y, wxDouble width) override;
 
+	void DrawTextRuns(const wxFont& font, const wxString& text, const std::vector<TextRun>& runs,
+		wxDouble x, wxDouble y) override;
+
 	void PushState();
 
 	void PopState();
@@ -4610,6 +4613,31 @@ void wxD2DContext::DrawTextCentered(const wxString& str, wxDouble x, wxDouble y,
 		return;
 	textLayout->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
 	textLayout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+	DrawLayout(textLayout, x, y);
+}
+
+void wxD2DContext::DrawTextRuns(const wxFont& font, const wxString& text, const std::vector<TextRun>& runs,
+	wxDouble x, wxDouble y)
+{
+	if (runs.empty() || m_composition == wxCOMPOSITION_DEST)
+		return;
+
+	SetFont(font, runs[0].colour);
+	if (!m_font)
+		return;
+	EnsureInitialized();
+	// one layout for the whole text, coloured by ranges
+	wxCOMPtr<IDWriteTextLayout> textLayout = m_font->CreateTextLayout(text);
+	if (!textLayout)
+		return;
+	for (const TextRun& run : runs) {
+		wxD2DBrushData* brush = SolidBrush(run.colour);
+		if (!brush)
+			continue;
+		brush->Bind(this);
+		DWRITE_TEXT_RANGE range = { (UINT32)run.start, (UINT32)run.length };
+		textLayout->SetDrawingEffect(brush->GetBrush(), range);
+	}
 	DrawLayout(textLayout, x, y);
 }
 
