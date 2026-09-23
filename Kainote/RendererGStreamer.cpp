@@ -557,14 +557,7 @@ bool RendererGStreamer::Play(int end)
 		(videoControl->m_FullScreenWindow && videoControl->m_FullScreenWindow->IsShown())))
 		return false;
 
-	if (m_HasVisualEdition) {
-		OpenSubs(OPEN_WHOLE_SUBTITLES, false);
-		if (m_Visual) SAFE_DELETE(m_Visual->dummytext);
-		m_HasVisualEdition = false;
-	}
-	else if (m_HasDummySubs && tab->editor) {
-		OpenSubs(OPEN_WHOLE_SUBTITLES, false);
-	}
+	OpenSubsForPlayback();
 
 	m_PlayEndTime = (end > 0) ? end : 0;
 	m_StreamPlayEndMs.store(m_PlayEndTime);

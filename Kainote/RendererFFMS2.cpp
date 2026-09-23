@@ -470,14 +470,7 @@ bool RendererFFMS2::Play(int end)
 	if (!(videoControl->IsShown() || 
 		(videoControl->m_FullScreenWindow && 
 			videoControl->m_FullScreenWindow->IsShown()))){ return false; }
-	if (m_HasVisualEdition){
-		OpenSubs(OPEN_WHOLE_SUBTITLES, false);
-		SAFE_DELETE(m_Visual->dummytext);
-		m_HasVisualEdition = false;
-	}
-	else if (m_HasDummySubs && tab->editor){
-		OpenSubs(OPEN_WHOLE_SUBTITLES, false);
-	}
+	OpenSubsForPlayback();
 
 	if (end > 0){ m_PlayEndTime = end; }
 	else
@@ -552,21 +545,7 @@ void RendererFFMS2::SetFFMS2Position(int _time, bool starttime, bool refreshAudi
 	m_LastTime = timeGetTime() - m_Time;
 	m_PlayEndTime = GetDuration();
 
-	if (m_HasVisualEdition){
-		//block removing or changing visual from main thread
-		wxMutexLocker lock(m_MutexVisualChange);
-		SAFE_DELETE(m_Visual->dummytext);
-		/*if (m_Visual->Visual == VECTORCLIP){
-			m_Visual->SetClip(m_Visual->GetVisual(), true, false, false);
-		}
-		else{*/
-			OpenSubs((playing) ? OPEN_WHOLE_SUBTITLES : OPEN_DUMMY, true);
-			if (playing){ m_HasVisualEdition = false; }
-		//}
-	}
-	else if (m_HasDummySubs){
-		OpenSubs((playing) ? OPEN_WHOLE_SUBTITLES : OPEN_DUMMY, true);
-	}
+	ReopenSubsAfterSeek(playing);
 	if (playing){
 		if (m_AudioPlayer){
 			m_AudioPlayer->player->SetCurrentPosition(m_AudioPlayer->GetSampleAtMS(m_Time));

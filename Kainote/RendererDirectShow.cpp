@@ -565,14 +565,7 @@ bool RendererDirectShow::Play(int end)
 	if (!(videoControl->IsShown() || 
 		(videoControl->m_FullScreenWindow && 
 			videoControl->m_FullScreenWindow->IsShown()))){ return false; }
-	if (m_HasVisualEdition){
-		OpenSubs(OPEN_WHOLE_SUBTITLES, false);
-		SAFE_DELETE(m_Visual->dummytext);
-		m_HasVisualEdition = false;
-	}
-	else if (m_HasDummySubs && tab->editor){
-		OpenSubs(OPEN_WHOLE_SUBTITLES, false);
-	}
+	OpenSubsForPlayback();
 
 	if (end > 0){ m_PlayEndTime = end; }
 	else
@@ -626,19 +619,7 @@ void RendererDirectShow::SetPosition(int _time, bool starttime/*=true*/, bool co
 	m_PlayEndTime = 0;
 	m_DirectShowSeeking = true;
 	m_DirectShowPlayer->SetPosition(m_Time);
-	if (m_HasVisualEdition){
-		SAFE_DELETE(m_Visual->dummytext);
-		//if (m_Visual->Visual == VECTORCLIP){
-			//m_Visual->SetClip(m_Visual->GetVisual(), true, false, false);
-		//}
-		//else{
-			OpenSubs((playing) ? OPEN_WHOLE_SUBTITLES : OPEN_DUMMY, true);
-			if (m_State == Playing){ m_HasVisualEdition = false; }
-		//}
-	}
-	else if (m_HasDummySubs && tab->editor){
-		OpenSubs((playing) ? OPEN_WHOLE_SUBTITLES : OPEN_DUMMY, true);
-	}
+	ReopenSubsAfterSeek(playing);
 	
 }
 

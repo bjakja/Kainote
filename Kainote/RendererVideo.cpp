@@ -428,6 +428,33 @@ void RendererVideo::Clear(bool clearObject)
 }
 
 
+void RendererVideo::OpenSubsForPlayback()
+{
+	if (m_HasVisualEdition){
+		OpenSubs(OPEN_WHOLE_SUBTITLES, false);
+		if (m_Visual)
+			SAFE_DELETE(m_Visual->dummytext);
+		m_HasVisualEdition = false;
+	}
+	else if (m_HasDummySubs && tab->editor){
+		OpenSubs(OPEN_WHOLE_SUBTITLES, false);
+	}
+}
+
+void RendererVideo::ReopenSubsAfterSeek(bool playing)
+{
+	if (m_HasVisualEdition){
+		//seeks can run on the playback thread, keep the visual in place meanwhile
+		wxMutexLocker lock(m_MutexVisualChange);
+		SAFE_DELETE(m_Visual->dummytext);
+		OpenSubs((playing) ? OPEN_WHOLE_SUBTITLES : OPEN_DUMMY, true);
+		if (playing){ m_HasVisualEdition = false; }
+	}
+	else if (m_HasDummySubs && tab->editor){
+		OpenSubs((playing) ? OPEN_WHOLE_SUBTITLES : OPEN_DUMMY, true);
+	}
+}
+
 bool RendererVideo::PlayLine(int start, int eend)
 {
 	int duration = GetDuration();

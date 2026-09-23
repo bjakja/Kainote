@@ -193,6 +193,9 @@ public:
 	virtual void ZoomChanged() {};
 	// Non virtual functions
 	virtual void DrawProgressBar(const wxString &timesString);
+	// visual editing and dummy subtitles show one line; playback needs them all
+	void OpenSubsForPlayback();
+	void ReopenSubsAfterSeek(bool playing);
 	void Zoom(const wxSize &size);
 	void DrawZoom();
 	void ZoomMouseHandle(wxMouseEvent &evt);
