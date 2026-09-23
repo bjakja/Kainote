@@ -79,8 +79,8 @@ SubtitlesLibass::~SubtitlesLibass()
 		CloseHandle(thread);
 	}
 
-	if (m_AssTrack)
-		ass_free_track(m_AssTrack);
+	m_AssTrack = nullptr;
+	m_Tracks.Clear();
 }
 
 void SubtitlesLibass::BlendImages(ASS_Image* img, unsigned char* buffer)
@@ -156,25 +156,33 @@ bool SubtitlesLibass::Open(wxString *text)
 		return false;
 	}
 
-	if (m_AssTrack){
-		ass_free_track(m_AssTrack);
-		m_AssTrack = nullptr;
-	}
-
+	m_AssTrack = nullptr;
 	if (!text) {
 		return true;
 	}
 
-	wxScopedCharBuffer buffer = text->mb_str(wxConvUTF8);
-	int size = strlen(buffer);
-	m_AssTrack = ass_read_memory(m_Library, buffer.data(), size, nullptr);
-	m_HasRendered = false;
-	delete text;
-
-	if (!m_AssTrack){
+	if (!ReadTrack(text)){
 		KaiLog(_("Libass only opens ASS and SSA subtitles"));//Libass only works with ASS and SSA subtiltes
 		return false;
 	}
+	return true;
+}
+
+bool SubtitlesLibass::ReadTrack(wxString *text)
+{
+	m_HasRendered = false;
+	size_t hash = ParsedScripts<ASS_Track>::Hash(*text);
+	m_AssTrack = m_Tracks.Find(hash);
+	if (m_AssTrack) {
+		delete text;
+		return true;
+	}
+	wxScopedCharBuffer buffer = text->mb_str(wxConvUTF8);
+	m_AssTrack = ass_read_memory(m_Library, buffer.data(), strlen(buffer), nullptr);
+	delete text;
+	if (!m_AssTrack)
+		return false;
+	m_Tracks.Add(hash, m_AssTrack);
 	return true;
 }
 
@@ -186,19 +194,8 @@ bool SubtitlesLibass::OpenString(wxString *text)
 		return false;
 	}
 
-	if (m_AssTrack){
-		ass_free_track(m_AssTrack);
-		m_AssTrack = nullptr;
-	}
-
-	wxScopedCharBuffer buffer = text->mb_str(wxConvUTF8);
-	int size = strlen(buffer);
-	m_AssTrack = ass_read_memory(m_Library, buffer.data(), size, nullptr);
-	m_HasRendered = false;
-
-	delete text;
-
-	if (!m_AssTrack){
+	m_AssTrack = nullptr;
+	if (!ReadTrack(text)){
 		KaiLog(_("Cannot open subtitles in Libass"));
 		return false;
 	}
@@ -222,6 +219,9 @@ void SubtitlesLibass::ReloadLibraries(bool destroyExisted)
 	if (destroyExisted) {
 		//KaiLog("Libass release");
 		m_IsReady.store(false);
+		// tracks belong to the library
+		m_AssTrack = nullptr;
+		m_Tracks.Clear();
 		if (m_Libass) {
 			ass_renderer_done(m_Libass);
 			m_Libass = nullptr;

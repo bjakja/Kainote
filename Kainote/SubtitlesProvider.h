@@ -20,6 +20,8 @@
 #include <wx/window.h>
 #include <wx/arrstr.h>
 #include <atomic>
+#include <string_view>
+#include <vector>
 
 extern "C" {
 #ifdef __WXMSW__
@@ -30,6 +32,62 @@ extern "C" {
 }
 
 
+
+// The last two scripts parsed, by a hash of their text: editing switches
+// between the whole script and one of the edited line, and switching back to
+// one that has not changed then needs no parse.
+template <typename T>
+class ParsedScripts
+{
+public:
+	explicit ParsedScripts(void (*release)(T*)) : m_release(release) {}
+	~ParsedScripts() { Clear(); }
+	static size_t Hash(const wxString &text)
+	{
+		return std::hash<std::wstring_view>()(std::wstring_view(text.wc_str(), text.length()));
+	}
+	T *Find(size_t hash)
+	{
+		for (size_t i = 0; i < m_items.size(); i++) {
+			if (m_items[i].hash == hash) {
+				Entry found = m_items[i];
+				m_items.erase(m_items.begin() + i);
+				m_items.insert(m_items.begin(), found);
+				return found.item;
+			}
+		}
+		return nullptr;
+	}
+	// the one added last is the one in use, so only an older one is released
+	void Add(size_t hash, T *item)
+	{
+		m_items.insert(m_items.begin(), Entry{ hash, item });
+		if (m_items.size() > 2) {
+			m_release(m_items.back().item);
+			m_items.pop_back();
+		}
+	}
+	void Remove(T *item)
+	{
+		for (size_t i = 0; i < m_items.size(); i++) {
+			if (m_items[i].item == item) {
+				m_release(item);
+				m_items.erase(m_items.begin() + i);
+				return;
+			}
+		}
+	}
+	void Clear()
+	{
+		for (Entry &entry : m_items)
+			m_release(entry.item);
+		m_items.clear();
+	}
+private:
+	struct Entry { size_t hash; T *item; };
+	std::vector<Entry> m_items;
+	void (*m_release)(T*);
+};
 
 class SubtitlesProvider
 {
@@ -76,9 +134,12 @@ public:
 	void SetVideoParameters(const wxSize& size, unsigned char format, bool isSwapped);
 private:
 	bool OpenInstance(wxString *text);
+	bool OpenCached(wxString *text);
 	csri_frame *m_CsriFrame = nullptr;
 	csri_fmt *m_CsriFormat = nullptr;
+	// owned by m_Instances
 	csri_inst *m_CsriInstance = nullptr;
+	ParsedScripts<csri_inst> m_Instances{ csri_close };
 	csri_rend *GetVSFilter();
 };
 
@@ -104,6 +165,10 @@ private:
 	// Blends a libass image list onto an ARGB (premultiplied) overlay buffer.
 	void BlendImages(ASS_Image* img, unsigned char* buffer);
 	ASS_Image* RenderFrame(int time, int* change);
+	// call with openMutex locked; takes the text
+	bool ReadTrack(wxString* text);
+	// owns m_AssTrack
+	ParsedScripts<ASS_Track> m_Tracks{ ass_free_track };
 	bool m_HasRendered = false;
 	// what the last DrawOverlay drew, cleared before the next one draws
 	wxRect m_OverlayDrawn;

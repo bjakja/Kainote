@@ -61,8 +61,8 @@ SubtitlesVSFilter::~SubtitlesVSFilter()
 {
 	SAFE_DELETE(m_CsriFrame);
 	SAFE_DELETE(m_CsriFormat);
-	if (m_CsriInstance)
-		csri_close(m_CsriInstance);
+	m_CsriInstance = nullptr;
+	m_Instances.Clear();
 	
 
 }
@@ -83,18 +83,16 @@ void SubtitlesVSFilter::Draw(unsigned char* buffer, int time)
 
 bool SubtitlesVSFilter::Open(wxString *text)
 {
-	if (m_CsriInstance) csri_close(m_CsriInstance);
 	m_CsriInstance = nullptr;
 
 	if (!text)
 		return true;
 
-	return OpenInstance(text);
+	return OpenCached(text);
 }
 
 bool SubtitlesVSFilter::OpenString(wxString *text)
 {
-	if (m_CsriInstance) csri_close(m_CsriInstance);
 	m_CsriInstance = nullptr;
 
 	if (!m_HasParameters){
@@ -102,7 +100,26 @@ bool SubtitlesVSFilter::OpenString(wxString *text)
 		return false;
 	}
 
-	return OpenInstance(text);
+	return OpenCached(text);
+}
+
+bool SubtitlesVSFilter::OpenCached(wxString *text)
+{
+	size_t hash = ParsedScripts<csri_inst>::Hash(*text);
+	if (csri_inst *instance = m_Instances.Find(hash)) {
+		delete text;
+		// the video format may have changed since it was parsed
+		if (m_CsriFormat && !csri_request_fmt(instance, m_CsriFormat)) {
+			m_CsriInstance = instance;
+			return true;
+		}
+		m_Instances.Remove(instance);
+		return false;
+	}
+	if (!OpenInstance(text))
+		return false;
+	m_Instances.Add(hash, m_CsriInstance);
+	return true;
 }
 
 bool SubtitlesVSFilter::OpenInstance(wxString *text)
@@ -221,7 +238,7 @@ void SubtitlesVSFilter::SetVideoParameters(const wxSize & size, unsigned char fo
 				return;
 		}
 		KaiLog(_("CSRI does not support this format."));
-		csri_close(m_CsriInstance);
+		m_Instances.Remove(m_CsriInstance);
 		m_CsriInstance = nullptr;
 	}
 }
