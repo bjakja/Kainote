@@ -1,6 +1,8 @@
 #include "check.h"
 #include "../Kainote/Timebase.h"
 
+#include <climits>
+
 namespace {
 
 const float NTSC_FILM = 24000.f / 1001.f;
@@ -157,6 +159,17 @@ TEST(keyframes_are_sorted_and_wrap_around)
 	CHECK_EQ(tb.PrevKeyframe(2000), 0);
 	CHECK_EQ(tb.PrevKeyframe(2001), 2000);
 	CHECK_EQ(tb.PrevKeyframe(0), 4000);
+}
+
+TEST(huge_times_and_frames_saturate_instead_of_overflowing)
+{
+	Timebase tb = Timebase::FromTimecodes(CfrTimecodes(NTSC_FILM, 100), NTSC_FILM);
+	CHECK_EQ(tb.MsAt(INT_MAX), INT_MAX);
+	CHECK(tb.FrameAt(INT_MAX) > 0);
+	CHECK(tb.FrameShownAt(INT_MAX) > 0);
+	Timebase fast = Timebase::FromFps(2000.f, 0);
+	CHECK_EQ(fast.MsAt(INT_MAX), INT_MAX / 2);
+	CHECK(fast.FrameAt(INT_MAX) > 0);
 }
 
 TEST(fps_is_derived_from_timecodes_when_unknown)

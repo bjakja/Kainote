@@ -16,10 +16,17 @@
 #include "Timebase.h"
 
 #include <algorithm>
+#include <climits>
 #include <cmath>
 
 // Keeps a mid-frame time on the same frame after ASS rounds it to centiseconds.
 static const int CENTISECOND_MARGIN = 5;
+
+// Frame numbers from scripts or typed in can be far past any video.
+static int SaturateToInt(double value)
+{
+	return (value >= (double)INT_MAX) ? INT_MAX : (int)value;
+}
 
 Timebase Timebase::FromTimecodes(std::vector<int> timecodes, float fps)
 {
@@ -50,12 +57,12 @@ int Timebase::MsAt(int frame) const
 	if (frame < 0 || IsEmpty())
 		return 0;
 	if (m_timecodes.empty())
-		return (int)(frame * (double)FrameDuration());
+		return SaturateToInt(frame * (double)FrameDuration());
 
 	int last = (int)m_timecodes.size() - 1;
 	if (frame <= last)
 		return m_timecodes[frame];
-	return m_timecodes[last] + (int)((frame - last) * (double)FrameDuration());
+	return SaturateToInt(m_timecodes[last] + (frame - last) * (double)FrameDuration());
 }
 
 int Timebase::FrameAt(int ms) const
@@ -63,19 +70,20 @@ int Timebase::FrameAt(int ms) const
 	if (ms <= 0 || IsEmpty())
 		return 0;
 
-	int frame;
+	double estimate;
 	if (!m_timecodes.empty()) {
 		auto it = std::lower_bound(m_timecodes.begin(), m_timecodes.end(), ms);
 		if (it != m_timecodes.end())
 			return (int)(it - m_timecodes.begin());
 		int last = (int)m_timecodes.size() - 1;
-		frame = last + (int)std::ceil((ms - m_timecodes[last]) / FrameDuration());
+		estimate = last + std::ceil((ms - m_timecodes[last]) / FrameDuration());
 	}
 	else {
-		frame = (int)std::ceil(ms / FrameDuration());
+		estimate = std::ceil(ms / FrameDuration());
 	}
+	int frame = SaturateToInt(estimate);
 	// the float estimate can be one off where MsAt truncates
-	while (MsAt(frame) < ms)
+	while (frame < INT_MAX && MsAt(frame) < ms)
 		frame++;
 	while (frame > 0 && MsAt(frame - 1) >= ms)
 		frame--;
@@ -84,7 +92,9 @@ int Timebase::FrameAt(int ms) const
 
 int Timebase::FrameShownAt(int ms) const
 {
-	return (ms < 0) ? 0 : std::max(FrameAt(ms + 1) - 1, 0);
+	if (ms < 0)
+		return 0;
+	return std::max(FrameAt((ms < INT_MAX) ? ms + 1 : ms) - 1, 0);
 }
 
 int Timebase::ClampFrame(int frame) const
