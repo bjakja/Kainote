@@ -19,6 +19,7 @@
 #include "Provider.h"
 #include <d3d9.h>
 #include <d3dx9.h>
+#include "UndoD3DXMacros.h"
 #ifndef _WIN32
 #include <atomic>
 #include <memory>

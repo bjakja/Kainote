@@ -860,7 +860,7 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 			wxArrayString suggs;
 			SpellChecker::Get()->Suggestions(err, suggs);
 
-			KaiListBox lw(this, suggs, _("Sugestie poprawy"));
+			KaiListBox lw(this, suggs, _("Fix suggestions"));
 			if (lw.ShowModal() == wxID_OK)
 			{
 				wxString suggestion = lw.GetSelection();
@@ -2262,15 +2262,15 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 	}
 
 
-	menut.Append(TEXTM_COPY, _("&Kopiuj"))->Enable(Selend.x != Cursor.x);
-	menut.Append(TEXTM_CUT, _("Wy&tnij"))->Enable(Selend.x != Cursor.x);
-	menut.Append(TEXTM_PASTE, _("&Wklej"));
+	menut.Append(TEXTM_COPY, _("&Copy"))->Enable(Selend.x != Cursor.x);
+	menut.Append(TEXTM_CUT, _("Cu&t"))->Enable(Selend.x != Cursor.x);
+	menut.Append(TEXTM_PASTE, _("&Paste"));
 
 	menut.AppendSeparator();
-	menut.Append(TEXTM_SEEKWORDL, _("Szukaj tłumaczenia słowa na ling.pl"))->Enable(Selend.x != Cursor.x);
-	menut.Append(TEXTM_SEEKWORDB, _("Szukaj tłumaczenia słowa na pl.ba.bla"))->Enable(Selend.x != Cursor.x);
-	menut.Append(TEXTM_SEEKWORDG, _("Szukaj zaznaczonej frazy w Google"))->Enable(Selend.x != Cursor.x);
-	menut.Append(TEXTM_SEEKWORDS, _("Szukaj synonimu na synonimy.net"))->Enable(Selend.x != Cursor.x);
+	menut.Append(TEXTM_SEEKWORDL, _("Search word translation on ling.pl"))->Enable(Selend.x != Cursor.x);
+	menut.Append(TEXTM_SEEKWORDB, _("Search word translation on pl.ba.bla"))->Enable(Selend.x != Cursor.x);
+	menut.Append(TEXTM_SEEKWORDG, _("Search for the selected phrase on Google"))->Enable(Selend.x != Cursor.x);
+	menut.Append(TEXTM_SEEKWORDS, _("Search for synonyms on synonimy.net"))->Enable(Selend.x != Cursor.x);
 
 	wxArrayString dictionarySymbols;
 	int numOfLanguages = 0;
@@ -2280,23 +2280,23 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 		numOfLanguages = dics.size();
 		const wxString &language = Options.FindLanguage(Options.GetString(DICTIONARY_LANGUAGE));
 		Menu *languageMenu = new Menu();
-		menut.Append(MENU_SPELLCHECKER_ON, _("Sprawdzanie pisowni"), emptyString, true, 
+		menut.Append(MENU_SPELLCHECKER_ON, _("Spellchecker"), emptyString, true, 
 			nullptr, nullptr, ITEM_CHECK_AND_HIDE)->Check(Options.GetBool(SPELLCHECKER_ON));
 		for (int k = 0; k < numOfLanguages; k++){
 			languageMenu->Append(MENU_SPELLCHECKER_ON + k + 1, dics[k], emptyString, true, 
 				nullptr, nullptr, (language == dics[k])? ITEM_RADIO : ITEM_NORMAL);
 		}
-		menut.Append(MENU_SPELLCHECKER_ON - 1, _("Zainstalowane języki"), languageMenu);
+		menut.Append(MENU_SPELLCHECKER_ON - 1, _("Installed languages"), languageMenu);
 	}
 
 	if (!err.IsEmpty()){
-		menut.Append(TEXTM_ADD, wxString::Format(_("&Dodaj słowo \"%s\" do słownika"), err));
+		menut.Append(TEXTM_ADD, wxString::Format(_("&Add word \"%s\" to dictionary"), err));
 	}
 
-	menut.Append(TEXTM_DEL, _("&Usuń"))->Enable(Selend.x != Cursor.x);
-	menut.Append(MENU_SHOW_STATUS_BAR, _("Pokaż pasek stanu"), nullptr, emptyString, 
+	menut.Append(TEXTM_DEL, _("&Delete"))->Enable(Selend.x != Cursor.x);
+	menut.Append(MENU_SHOW_STATUS_BAR, _("Show status bar"), nullptr, emptyString,
 		ITEM_CHECK)->Check(!Options.GetBool(TEXT_EDITOR_HIDE_STATUS_BAR));
-	menut.Append(MENU_CHANGE_QUOTES, _("Automatycznie zamieniaj cudzysłów"), 
+	menut.Append(MENU_CHANGE_QUOTES, _("Automatically change quotes"),
 		nullptr, emptyString, ITEM_CHECK)->Check(Options.GetBool(TEXT_EDITOR_CHANGE_QUOTES));
 	
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=, this](wxCommandEvent &evt){
@@ -2351,7 +2351,7 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 	}
 	else if (id == TEXTM_ADD && !err.IsEmpty()){
 		bool succ = SpellChecker::Get()->AddWord(err);
-		if (!succ){ KaiMessageBox(wxString::Format(_("Błąd, słowo \"%s\" nie zostało dodane."), err)); }
+		if (!succ){ KaiMessageBox(wxString::Format(_("Error. Word \"%s\" was not added."), err)); }
 		else{ CheckText(); EB->ClearErrs(); Refresh(false); }
 	}
 	else if (id >= TEXTM_SEEKWORDL && id <= TEXTM_SEEKWORDS){

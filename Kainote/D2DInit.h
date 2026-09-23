@@ -29,6 +29,10 @@ typedef struct DXGI_JPEG_QUANTIZATION_TABLE
     unsigned char Elements[64];
 } DXGI_JPEG_QUANTIZATION_TABLE; 
 
+// winsock2.h first: windows.h would pull in the old winsock.h (sockaddr clash).
+#ifdef __WXMSW__
+#include <winsock2.h>
+#endif
 #include <windows.h>
 
 #include <dxgitype.h>

@@ -105,7 +105,7 @@ namespace {
 					g_free(title);
 				}
 				else {
-					ch.name = wxString::Format(_("Rozdział %i"), (int)out.size() + 1);
+					ch.name = wxString::Format(_("Chapter %i"), (int)out.size() + 1);
 				}
 				out.push_back(ch);
 			}
@@ -194,7 +194,7 @@ bool RendererGStreamer::QueryVideoInfo()
 	GstPad *pad = nullptr;
 	g_signal_emit_by_name(m_Pipeline, "get-video-pad", 0, &pad);
 	if (!pad) {
-		KaiLog(_("Plik wideo nie zawiera strumienia obrazu"));
+		KaiLog(_("Video file does not contain a video stream"));
 		return false;
 	}
 	GstCaps *caps = gst_pad_get_current_caps(pad);
@@ -275,7 +275,7 @@ bool RendererGStreamer::OpenFile(const wxString &fname, int subsFlag, bool vobsu
 
 	m_Pipeline = gst_element_factory_make("playbin", "kainote-playbin");
 	if (!m_Pipeline) {
-		KaiLog(_("Nie można utworzyć potoku GStreamer (playbin)"));
+		KaiLog(_("Cannot create GStreamer pipeline (playbin)"));
 		return false;
 	}
 
@@ -305,7 +305,7 @@ bool RendererGStreamer::OpenFile(const wxString &fname, int subsFlag, bool vobsu
 		if (sink) gst_object_unref(sink);
 		if (conv) gst_object_unref(conv);
 		if (vbin) gst_object_unref(vbin);
-		KaiLog(_("Nie można utworzyć modułu wyświetlania obrazu GStreamer"));
+		KaiLog(_("Cannot create GStreamer video display module"));
 		TearDown();
 		return false;
 	}
@@ -337,7 +337,7 @@ bool RendererGStreamer::OpenFile(const wxString &fname, int subsFlag, bool vobsu
 	SetVolumeInternal();
 
 	if (gst_element_set_state(m_Pipeline, GST_STATE_PAUSED) == GST_STATE_CHANGE_FAILURE || !WaitPreroll()) {
-		KaiLog(wxString::Format(_("Nie można otworzyć pliku wideo: %s"), fname));
+		KaiLog(wxString::Format(_("Cannot open video file: %s"), fname));
 		TearDown();
 		return false;
 	}
@@ -779,7 +779,7 @@ wxArrayString RendererGStreamer::GetStreams()
 			gst_tag_list_unref(tags);
 		}
 		if (name.empty())
-			name = wxString::Format(_("Ścieżka %i"), (int)(i + 1));
+			name = wxString::Format(_("Track %i"), (int)(i + 1));
 		// Format consumed by VideoBox::ContextMenu: "<ident>:<name> <enabled>".
 		out.Add(wxString::Format(L"A: %s %d", name, (i == current) ? 1 : 0));
 	}

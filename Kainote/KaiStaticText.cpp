@@ -267,7 +267,10 @@ void KaiStaticText::OnMouseScroll(wxMouseEvent &evt)
 bool KaiStaticText::SetFont(const wxFont &font)
 {
 	wxWindow::SetFont(font);
-	int fullw, windowHeight;
+	// CalculateSize reads these as the wrap width and height, and wraps the
+	// label in place, so they cannot be left uninitialised.
+	int fullw = originalSize.x;
+	int windowHeight = originalSize.y;
 	CalculateSize(&fullw, &windowHeight);
 	if (windowHeight < 17){ windowHeight = 17; }
 	SetMinSize(wxSize(fullw, (windowHeight > 400)? 400 : windowHeight));

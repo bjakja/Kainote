@@ -23,10 +23,15 @@
 #include <wx/string.h>
 #include <wx/log.h>
 #include <wx/filename.h>
+#include <wx/uilocale.h>
 #include "CsriMod.h"
 #include "Notebook.h"
 #include "gitparams.h"
-//#include <windows.h>
+// winsock2.h first: windows.h would pull in the old winsock.h (sockaddr clash).
+#ifdef __WXMSW__
+#include <winsock2.h>
+#endif
+#include <windows.h>
 #include "ConfigConverter.h"
 #include "SubtitlesProviderManager.h"
 #include <ShlObj.h>
@@ -63,7 +68,6 @@ config::config()
 #endif
 	AudioOpts = false;
 	defaultColour = wxColour();
-	InitLanguagesTable();
 	HDC dc = ::GetDC(nullptr);
 	fontDPI = ::GetDeviceCaps(dc, LOGPIXELSY);
 	::ReleaseDC(nullptr, dc);
@@ -353,7 +357,7 @@ void config::LoadDefaultConfig(wxString * defaultOptions)
 	configTable[CONVERT_FPS] = L"23.976";
 	configTable[CONVERT_STYLE] = L"Default";
 	configTable[CONVERT_STYLE_CATALOG] = L"Default";
-	configTable[DICTIONARY_LANGUAGE] = L"pl";
+	configTable[DICTIONARY_LANGUAGE] = L"en_US";
 	configTable[SPELLCHECKER_ON] = L"true";
 	configTable[STYLE_EDIT_FILTER_TEXT] = L"ĄĆĘŁŃÓŚŹŻąćęłńóśźż";
 	configTable[FFMS2_VIDEO_SEEKING] = L"2";
@@ -626,7 +630,7 @@ void config::LoadColors(const wxString &_themeName){
 			if (g > 10){
 				if (colors[0].IsOk() || g < STYLE_PREVIEW_COLOR2){
 					LoadMissingColours(path);
-					KaiMessageBox(wxString::Format(_("W motywie \"%s\" brakowało część kolorów, zostały doczytane z domyślnego."), themeName));
+					KaiMessageBox(wxString::Format(_("Some colors were absent from theme \"%s\" and were loaded from the default theme."), themeName));
 				}
 				return;
 			}
@@ -636,7 +640,7 @@ void config::LoadColors(const wxString &_themeName){
 	LoadDefaultColors(themeName != L"LightSentro");
 	if (failed){
 		Options.SetString(PROGRAM_THEME, L"DarkSentro");
-		KaiMessageBox(_("Nie można zaczytać motywu, zostanie przywrócony domyśny"));
+		KaiMessageBox(_("Cannot load theme, reset to default"));
 	}
 }
 
@@ -990,13 +994,63 @@ int config::GetFontPixelHeight(const wxFont &font)
 #endif
 }
 
-const wxString &config::FindLanguage(const wxString & symbol)
+wxString config::GetLocalePath() const
 {
-	const auto &it = Languages.find(symbol);
-	if (it != Languages.end())
+	const wxChar sep = wxFileName::GetPathSeparator();
+	const wxString localePath = pathfull + sep + L"Locale" + sep;
+#ifndef _WIN32
+	// Run from a build tree, the catalogues sit one level up from the binary.
+	if (!wxDirExists(localePath)){
+		const wxString sourceLocalePath =
+			pathfull.BeforeLast(sep) + sep + L"Locale" + sep;
+		if (wxDirExists(sourceLocalePath))
+			return sourceLocalePath;
+	}
+#endif
+	return localePath;
+}
+
+wxString config::FindLanguage(const wxString & symbol)
+{
+	// The languages Kainote ships a catalogue or a dictionary for.  This used to
+	// be 235 hand-written rows covering every locale anyone might name, which had
+	// drifted: three keys were assigned twice and so lost the endonym they had
+	// been added for, and "am" carried the Armenian name, not the Amharic one.
+	//
+	// wx can name any locale on Windows, but wxUILocale on Unix without ICU only
+	// knows the locales generated on the machine, which is typically a handful;
+	// asking it first would name the same language differently on each platform.
+	// So the shipped list is curated and wx answers for everything else, which in
+	// practice means a Hunspell dictionary the user dropped in themselves.
+	static const std::map<wxString, wxString> shipped = {
+		{ L"de",      L"Deutsch" },
+		{ L"en",      L"English" },
+		{ L"es",      L"Español" },
+		{ L"id",      L"Bahasa Indonesia" },
+		{ L"it",      L"Italiano" },
+		{ L"ko",      L"한국어" },
+		{ L"ms",      L"Melayu" },
+		{ L"nb",      L"Norsk bokmål" },
+		{ L"pl",      L"Polski" },
+		{ L"pt_BR",   L"Português (do Brasil)" },
+		{ L"pt",      L"Português" },
+		{ L"ru",      L"Русский" },
+		{ L"ta",      L"தமிழ்" },
+		{ L"th",      L"ไทย" },
+		{ L"zh_Hans", L"中文 (简体)" },
+		{ L"zh_Hant", L"正體中文 (繁體)" },
+	};
+
+	auto it = shipped.find(symbol);
+	if (it == shipped.end())
+		it = shipped.find(symbol.BeforeFirst(L'_'));
+	if (it != shipped.end())
 		return it->second;
 
-	return symbol;
+	const wxString name = wxUILocale::FromTag(symbol)
+		.GetLocalizedName(wxLOCALE_NAME_LANGUAGE, wxLOCALE_FORM_NATIVE);
+
+	return name.empty() ? symbol : name;
 }
 
 bool config::CheckLastKeyEvent(int id, int timeInterval)
@@ -1368,21 +1422,6 @@ void MoveToMousePosition(wxWindow* win)
 	win->Move(mst);
 }
 
-wxString MakePolishPlural(int num, const wxString& normal, const wxString& plural2to4, const wxString& pluralRest)
-{
-	wxString result;
-	int div10mod = (num % 10);
-	int div100mod = (num % 100);
-	if (num == 1 || num == -1) { result = normal; }
-	else if ((div10mod >= 2 && div10mod <= 4) && (div100mod < 10 || div100mod>20)) {
-		result = plural2to4;
-	}
-	else {
-		result = pluralRest;
-	}
-	wxString finalResult;
-	return finalResult << num << " " << result;
-}
 
 bool IsNumber(const wxString& test) {
 	bool isnumber = true;

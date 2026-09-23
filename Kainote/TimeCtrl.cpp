@@ -110,7 +110,7 @@ TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, con
 		Copy();
 	}, ID_TCTLC);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=, this](wxCommandEvent &evt){
-		//napisaæ tutaj zerowanie przy zaznaczeniu i ogólnie cofanie kursora i zerowanie jednej cyfry
+		//napisaÄ‡ tutaj zerowanie przy zaznaczeniu i ogÃ³lnie cofanie kursora i zerowanie jednej cyfry
 		timeUnchanged = false;
 		if (form >= MDVD || showFrames){ evt.Skip(); return; }
 		long from, to;
@@ -137,8 +137,8 @@ TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, con
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=, this](wxCommandEvent &evt){
 		timeUnchanged = false;
 		if (form >= MDVD || showFrames){ evt.Skip(); }
-		//napisaæ tutaj zerowanie przy zaznaczeniu i ogólnie nieruchomy kursor i zerowanie jednej cyfry
-		//w Aegi shit happens wiêc olejê.
+		//napisaÄ‡ tutaj zerowanie przy zaznaczeniu i ogÃ³lnie nieruchomy kursor i zerowanie jednej cyfry
+		//w Aegi shit happens wiÄ™c olejÄ™.
 	}, ID_TDEL);
 
 	bool setNumpadAccels = !Options.GetBool(TEXT_FIELD_ALLOW_NUMPAD_HOTKEYS);

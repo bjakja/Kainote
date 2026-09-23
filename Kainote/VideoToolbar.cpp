@@ -20,7 +20,7 @@
 #include "Notebook.h"
 #include "Provider.h"
 #include "RendererVideo.h"
-#include <wx/msw/winundef.h>
+#include "WinUndef.h"
 #include <wx/dc.h>
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
@@ -40,63 +40,63 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &s
 	if (icons.size() == 0){
 		//Remember! Adding here elements you must change all in h file!!
 		//When icon have black background use 
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"cross"), _("Wskaźnik pozycji")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"position"), _("Przesuwanie tekstu")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"move"), _("Ruch")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"scale"), _("Skalowanie")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"frz"), _("Obrót wokół osi Z")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"frxy"), _("Obrót wokół osi X / Y")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"cliprect"), _("Wycinki prostokątne")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"clip"), _("Wycinki wektorowe")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"drawing"), _("Rysunki wektorowe")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVEAll"), _("Zmieniacz pozycji")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"cross"), _("Position pointer")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"position"), _("Text positioning")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"move"), _("Text moving")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"scale"), _("Text scaling")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"frz"), _("Text Z rotation")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"frxy"), _("Text X / Y rotation")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"cliprect"), _("Rectangle clipping")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"clip"), _("Vector clipping")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"drawing"), _("Vector drawing")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVEAll"), _("Position shifter")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"ALL_TAGS"), _("Hydra")));
 		//it's inactive but I will not change all position when I plan to make a visual for fax
 		//then I will need it back
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_ROTATION"), _("Zmieniacz skali i obrotów")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_ROTATION"), _("Scale and rotation shifter")));
 
 		//12
 		//Here clip icons
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"Vector_Drag"), _("Przesuń punkty")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"Vector_Line"), _("Dodaj linię")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"Vector_Bezier"), _("Dodaj krzywą Beziera")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"VECTOR_BSPLINE"), _("Dodaj krzywą B-sklejaną")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"Vector_Move"), _("Dodaj nowy oddzielny punkt")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"Vector_Delete"), _("Usuń element")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"VECTOR_INVERT_CLIP"), _("Odwróć wycinek")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"Vector_Drag"), _("Move points")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"Vector_Line"), _("Add line")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"Vector_Bezier"), _(L"Add Bézier curve")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"VECTOR_BSPLINE"), _("Add B-spline")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"Vector_Move"), _("Add separate point")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"Vector_Delete"), _("Delete point")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"VECTOR_INVERT_CLIP"), _("Invert clip")));
 		//7
 		//icons move all
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVEPOS"), _("Przenieś punkty pozycjonowania")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVEMOVESTART"), _("Przenieś startowe punkty ruchu")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVE"), _("Przenieś końcowe punkty ruchu")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVECLIPS"), _("Przenieś wycinki")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVEDRAWINGS"), _("Przenieś rysunki,\nużywać tylko w przypadku,\ngdy chcemy przesunąć punkty rysunku,\nnie łączyć z trzema pierwszymi opcjami")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVEORGS"), _("Przenieś punkty org")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVEPOS"), _("Move position points")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVEMOVESTART"), _("Change \\move starting points")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVE"), _("Change \\move ending points")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVECLIPS"), _("Move clips")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVEDRAWINGS"), _("Move drawings;\nuse only when you want\nto move drawing points.\nDo not combine with the first three options")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVEORGS"), _("Move \\org points")));
 		//6
 		//icon rotation z
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"TWO_POINTS"), _("Ustaw kąt z 2 punktów.\nPo ustawieniu 2 punktów pod tekstem\nna wideo oblicza z nich kąt.")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_ROTATION"), _("Zmiana wszystkich tagów obrotu wokół osi Z")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SUBSRESAMPLE"), _("Utrzymanie proporcji, by po obrocie rysunki wektorowe i tekst\nnie poprzestawiały się względem siebie.")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"TWO_POINTS"), _("Set angle from 2 points.\nAfter setting 2 points below text on video\nit calculates angle from it.")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_ROTATION"), _("Changing all Z-rotation tags")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SUBSRESAMPLE"), _("Preserve proportions so that vector drawings and text\nkeep their original positions after rotation.")));
 		//3
 		//icons scale
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"FRAME_TO_SCALE"), _("Ustaw skalę według prostokąta.\nPo narysowaniu prostokąta tekst zostanie\nzeskalowany wg jednej osi badź dwóch.")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_X"), _("Skaluj szerokość")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_LINK"), _("Utrzymuj proporcje")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_Y"), _("Skaluj wysokość")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"ORIGINAL_FRAME"), _("Ustaw własny prostokąt dla obecnej skali.\nW przypadku niepożądanych różnic można ustawić\nwłasny prostokąt dla pierwotnej skali.")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_ROTATION"), _("Zmiana wszystkich tagów skali")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SUBSRESAMPLE"), _("Utrzymanie proporcji, by po skalowaniu rysunki wektorowe i tekst\nnie poprzestawiały się względem siebie.")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"FRAME_TO_SCALE"), _("Set scale by rectangle.\nAfter drawing rectangle text is scaled\nin two or one axis.")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_X"), _("Scale width")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_LINK"), _("Preserve aspect ratio")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_Y"), _("Scale height")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"ORIGINAL_FRAME"), _("Set a custom rectangle for the current scale.\nIf automatic size calculation does not work correctly,\nyou can set a rectangle for the original scale.")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_ROTATION"), _("Change all scale tags")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SUBSRESAMPLE"), _("Preserve proportions so that vector drawings and text\nkeep their original positions after scaling.")));
 		//7
 		//icons position
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"FRAME_TO_SCALE"), _("Ustaw pozycję według prostokąta.\nPo narysowaniu prostokąta tekst zostanie\nspozycjonowany wg jednej osi badź dwóch\ndla wybranego położenia.")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_X"), _("Pozycjonuj w osi X")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_Y"), _("Pozycjonuj w osi Y")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"FRAME_TO_SCALE"), _("Set position by rectangle.\nAfter drawing a rectangle, the line will be\npositioned on one or both axes\nfor the selected alignment.")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_X"), _("Positioning in X axis")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_Y"), _("Positioning in Y axis")));
 		//3
 		//icons move 
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"TWO_POINTS"), _("Ustaw ruch 2 punktów i pozycji wideo.\nPo ustawieniu pierwszego punktu przed tekstem który się porusza.\nPrzesunięciu wideo o tyle klatek,\nby na wideo wciąż był widoczny ten sam element,\ndo którego był ustawiony punkt początkowy.\nRuch generuje postawienie drugiego punktu.")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"TWO_POINTS"), _("Set movement using 2 points and the video position.\nAfter placing the first point before the moving text,\nadvance the video by enough frames\nso that the same video element\nfor which the start point was set remains visible.\nMovement is generated by placing the second point.")));
 		//1
 		//icon rotation x / y
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_ROTATION"), _("Zmiana wszystkich tagów obrotu wokół osi X / Y")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_ROTATION"), _("Changing all X/Y-rotation tags")));
 
 	}
 	//adding visual second toolbar elements
@@ -126,18 +126,18 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &s
 	Connect(wxEVT_MOUSEWHEEL, (wxObjectEventFunction)&VideoToolbar::OnMouseEvent);
 	wxWindow::SetFont(*Options.GetFont(-1));
 
-	wxString movopts[6] = { _("Dwukrotnym kliknięciu linii (zawsze włączone)"), _("Każdej zmianie linii"),
-		_("Kliknięciu linii lub edycji na pauzie"), _("Kliknięciu linii lub edycji"),
-		_("Edycji na pauzie"), _("Edycji") };
-	wxString playopts[4] = { _("Nic"), _("Audio do końca linii"), _("Wideo do końca linii"),
-		_("Wideo do początku następnej linii") };
+	wxString movopts[6] = { _("Double-clicking a line (always on)"), _("Every line change"),
+		_("Clicking a line or editing when paused"), _("Clicking a line or editing"),
+		_("Editing line when paused"), _("Editing") };
+	wxString playopts[4] = { _("Nothing"), _("Audio to the line end time"), _("Video and audio to the line end time"),
+		_("Video and audio to the next line start time") };
 	videoSeekAfter = new KaiChoice(this, ID_SEEK_AFTER, wxPoint(2, 1), wxDefaultSize, 6, movopts);
 	videoSeekAfter->SetSelection(Options.GetInt(MOVE_VIDEO_TO_ACTIVE_LINE));
-	videoSeekAfter->SetToolTip(_("Przesuwaj wideo do aktualnej linii po:"));
+	videoSeekAfter->SetToolTip(_("Move video to selected line on:"));
 	wxSize seekMinSize = videoSeekAfter->GetMinSize();
 	videoPlayAfter = new KaiChoice(this, ID_PLAY_AFTER, wxPoint(seekMinSize.GetWidth() + 2, 1), wxDefaultSize, 4, playopts);
 	videoPlayAfter->SetSelection(Options.GetInt(VIDEO_PLAY_AFTER_SELECTION));
-	videoPlayAfter->SetToolTip(_("Odtwarzaj po zmianie linii:"));
+	videoPlayAfter->SetToolTip(_("On moving to another line play:"));
 	//wxSize playMinSize = videoPlayAfter->GetMinSize();
 	//SetMinSize(wxSize(100, seekMinSize.GetHeight() + 2));
 
@@ -505,11 +505,11 @@ void VectorItem::ShowContols(VideoToolbar* vt)
 		auto *shapes = VideoToolbar::GetShapesSettings();
 		wxArrayString list;
 		GetNames(shapes, &list);
-		list.Insert(_("Wybierz"), 0);
-		list.Add(_("Edytuj"));
+		list.Insert(_("Choose"), 0);
+		list.Add(_("Edit"));
 		shapeList = new KaiChoice(vt, ID_SHAPE_LIST, wxDefaultPosition, wxDefaultSize, list);
 		shapeList->SetFont(*Options.GetFont(-1));
-		shapeList->SetToolTip(_("Lista gotowych rysunków ASS z możliwością edycji.\nPo wybraniu rysunku z listy należy ustawić kursor\nw miejcu początku przytrzymać lewy przycisk myszy i przeciągnąć."));
+		shapeList->SetToolTip(_("List of ASS drawings with edit option.\nAfter choose drawing from list just set cursor i n place\nof start of drawing and click left mouse button and drag."));
 		shapeList->SetSelection(shapeListSelection);
 
 		auto sendItemToggled = [=, this](wxCommandEvent& evt) {
@@ -522,8 +522,8 @@ void VectorItem::ShowContols(VideoToolbar* vt)
 					VideoToolbar::SetShapesSettings(shapes);
 					wxArrayString names;
 					GetNames(shapes, &names);
-					names.Insert(_("Wybierz"), 0);
-					names.Add(_("Edytuj"));
+					names.Insert(_("Choose"), 0);
+					names.Add(_("Edit"));
 					shapeList->PutArray(&names);
 					//starts from 1, 0 is inactive
 					if (shapeListSelection > shapes->size()) {
@@ -742,18 +742,21 @@ void AllTagsItem::ShowContols(VideoToolbar* vtoolbar)
 	wxArrayString list;
 	GetNames(tags, &list);
 	tagList = new KaiChoice(vtoolbar, ID_TAG_LIST, wxDefaultPosition, wxDefaultSize, list);
-	tagList->SetToolTip(_("Lista z tagami obsługiwanymi przez narzędzie"));
+	tagList->SetToolTip(_("List of tags that can edit visual tool"));
 	tagList->SetSelection(selection);
-	wxString optionsList[] = { _("Dodaj"), _("Wstaw"), _("Pomnóż"), _("Pomnóż+"), _("Gradient tekst rosnąco"), 
-		_("Gradient tekst malejąco"), _("Gradient linia rosnąco"), _("Gradient linia malejąco") };
-	wxSize wsize = vtoolbar->GetTextExtent(_("Pomnóż+"));
+	wxString optionsList[] = { _("Add"), _("Insert"), _("Multiply"), _("Multiply+"), _("Gradient text increasing"),
+		_("Gradient text decreasing"), _("Gradient line increasing"), _("Gradient line decreasing") };
+	wxSize wsize = vtoolbar->GetTextExtent(_("Multiply+"));
 	options = new KaiChoice(vtoolbar, ID_OPTIONS, wxDefaultPosition, wxSize(wsize.x + 26, -1), 8, optionsList);
-	options->SetToolTip(_("Opcje zmiany tagów:\nDodaj - zmienia wszystkie tagi dodając ruch z suwaka.\n"\
-		"Wstaw - wstawia w miejsce kursora w przypadku jednej linii\nalbo na początku w przypadku wielu linii.\n"\
-		"Pomnóż - mnoży ruch suwaka przez numer zaznaczonej linijki\npierwsza linia nie jest zmieniana.\n"\
-		"Gradnient tekst rosnąco - wstawia tag co znak rosnąco\nGradnient tekst malejąco - wstawia tag co znak malejąco\n"\
-		"Gradient linia rosnąco - wstawia tag w zaznaczone linie rosnąco\n"\
-		"Gradient linia malejąco - wstawia tag w zaznaczone linie malejąco"));
+	options->SetToolTip(_("Tag change options:\nAdd - changes all tags by adding the slider value.\n"\
+		"Insert - inserts the tag at the cursor position for one line,\n"\
+		"or at the start for multiple lines.\n"\
+		"Multiply - multiplies the slider value by the selected line number;\n"\
+		"the first line is not changed.\n"\
+		"Gradient text increasing - inserts a tag at each character, increasing the value.\n"\
+		"Gradient text decreasing - inserts a tag at each character, decreasing the value.\n"\
+		"Gradient line increasing - inserts a tag in selected lines, increasing the value.\n"\
+		"Gradient line decreasing - inserts a tag in selected lines, decreasing the value."));
 	options->SetSelection(mode);
 
 	auto sendItemToggled = [=, this](wxCommandEvent& evt) {
@@ -775,7 +778,7 @@ void AllTagsItem::ShowContols(VideoToolbar* vtoolbar)
 
 	vtoolbar->Bind(wxEVT_COMMAND_CHOICE_SELECTED, sendItemToggled, ID_OPTIONS);
 
-	edition = new MappedButton(vtoolbar, ID_EDITION, _("Edytuj"), _("Edycja tagów z listy oraz tworzenie nowych"), wxDefaultPosition, wxDefaultSize, -1);
+	edition = new MappedButton(vtoolbar, ID_EDITION, _("Edit"), _("Edit listed tags and create new ones"), wxDefaultPosition, wxDefaultSize, -1);
 	vtoolbar->Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent& evt) {
 		AllTagsEdition edit(vtoolbar, wxPoint(), tags, tagList->GetSelection());
 		if (edit.ShowModal() == wxID_OK) {
@@ -802,7 +805,7 @@ void AllTagsItem::OnSize(VideoToolbar* vt)
 	maxWidth = vt->GetEndDrawPos();
 	wxSize tlbs = tagList->GetBestSize();
 	wxSize ebs = edition->GetBestSize();
-	wxSize obs = vt->GetTextExtent(_("Pomnóż+"));
+	wxSize obs = vt->GetTextExtent(_("Multiply+"));
 	obs.x += 26;
 	obs.y = tlbs.y;
 	wxSize vts = vt->GetSize();
@@ -1090,14 +1093,14 @@ void PositionItem::ShowContols(VideoToolbar* vt)
 	if (alignment)
 		return;
 
-	wxString alignments[] = { _("Lewo-dół"), _("Środek-dół"), _("Prawo-dół"),
-		_("Lewo-środek"), _("Środek"), _("Prawo-środek"), 
-		_("Lewo-góra"), _("Środek-góra"), _("Prawo-góra"), 
+	wxString alignments[] = { _("Bottom-left"), _("Bottom-center"), _("Bottom-right"),
+		_("Middle-left"), _("Center"), _("Middle-right"),
+		_("Top-left"), _("Top-center"), _("Top-right"),
 		//above options
-		_("Lewo-poniżej"), _("Środek-poniżej"), _("Prawo-poniżej"),
-		_("Lewo-ponad"), _("Środek-ponad"), _("Prawo-ponad"),
-		_("Przed-góra"), _("Przed-środek"), _("Przed-dół"), 
-		_("Za-góra"), _("Za-środek"), _("Za-dół") };
+		_("Left-below"), _("Center-below"), _("Right-below"),
+		_("Left-above"), _("Center-above"), _("Right-above"),
+		_("Before-top"), _("Before-center"), _("Before-bottom"),
+		_("After-top"), _("After-center"), _("After-bottom") };
 	alignment = new KaiChoice(vt, ID_ALIGNMENT, wxDefaultPosition, wxDefaultSize, 21, alignments);
 	vt->Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=, this](wxCommandEvent& evt) {
 		wxCommandEvent* evt1 = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, ID_MOVE_TOOLBAR_EVENT);
@@ -1106,7 +1109,7 @@ void PositionItem::ShowContols(VideoToolbar* vt)
 		wxQueueEvent(vt, evt1);
 		}, ID_ALIGNMENT);
 	alignment->SetSelection(an);
-	alignment->SetToolTip(_("Położenie tekstu, działa podobnie jak w stylach"));
+	alignment->SetToolTip(_("Text placing works similar like in styles"));
 	OnSize(vt);
 }
 

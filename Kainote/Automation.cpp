@@ -641,7 +641,7 @@ namespace Auto{
 		// this is where features are registered
 		if (lua_pcall(L, 0, 0, -2)) {
 			// error occurred, assumed to be on top of Lua stack
-			description = wxString::Format(_("Błąd inicjalizacji skryptu Lua \"%s\":\n\n%s."), GetPrettyFilename(), get_string_or_default(L, -1));
+			description = wxString::Format(_("Error initializing Lua script \"%s\":\n\n%s."), GetPrettyFilename(), get_string_or_default(L, -1));
 			//lua_pop(L, 1);
 			lua_pop(L, 2); // error + error handler
 			lua_gc(L, LUA_GCCOLLECT, 0);
@@ -653,7 +653,7 @@ namespace Auto{
 		lua_getglobal(L, "version");
 		if (lua_isnumber(L, -1) && lua_tointeger(L, -1) == 3) {
 			lua_pop(L, 1); // just to avoid tripping the stackcheck in debug
-			description = _("Próbujesz wczytać skrypt Automatyzacji 3 jako skrypt Automatyzacji 4. Automatyzacja 3 nie jest już wspierana.");
+			description = _("You are trying to load an Automation 3 script as an Automation 4 script. Automation 3 is no longer supported.");
 			goto fail;
 		}
 
@@ -696,7 +696,7 @@ namespace Auto{
 	{
 		for (auto macro : macros) {
 			if (macro->StrDisplay() == command->StrDisplay()) {
-				error(L, wxString::Format(_("Makro o nazwie '%s' jest już zdefiniowane w skrypcie '%s'"),
+				error(L, wxString::Format(_("Macro named '%s' is already defined in the script '%s'"),
 					command->StrDisplay().utf8_str().data(), name.utf8_str().data()).mb_str(wxConvUTF8).data());
 			}
 		}
@@ -813,7 +813,7 @@ namespace Auto{
 			if (!lua_isnil(L, -1) && ps) {
 				// if the call failed, log the error here
 				wxString errmsg(get_string_or_default(L, -1));
-				errmsg.Prepend(_("Wystąpił błąd podczas wykonywania skryptu Lua:\n"));
+				errmsg.Prepend(_("An error occurred while executing the Lua script:\n"));
 				ps->SafeQueue(Auto::EVT_MESSAGE, errmsg);
 				hasMessage = true;
 			}
@@ -1262,18 +1262,18 @@ namespace Auto{
 			}
 			catch (const wchar_t *e) {
 				error_count++;
-				KaiLog(wxString::Format(_("Błąd wczytywania skryptu Lua: %s\n%s"), fn.wc_str(), e));
+				KaiLog(wxString::Format(_("Error loading Lua script: %s\n%s"), fn.wc_str(), e));
 			}
 			catch (...) {
 				error_count++;
-				KaiLog(wxString::Format(_("Nieznany błąd wczytywania skryptu Lua: %s."), fn.wc_str()));
+				KaiLog(wxString::Format(_("Unknown error loading Lua script: %s."), fn.wc_str()));
 			}
 
 			more = dir.GetNext(&fn);
 		}
 
 		if (error_count > 0) {
-			KaiLog(_("Jeden bądź więcej skryptów autoload zawiera błędy.\nObejrzyj opisy skryptów, by uzyskać więcej informacji."));
+			KaiLog(_("One or more autoload scripts contain errors.\nSee the script descriptions for more information."));
 		}
 
 
@@ -1304,15 +1304,15 @@ namespace Auto{
 			}
 			catch (const wchar_t *e) {
 				error_count++;
-				KaiLog(wxString::Format(_("Błąd wczytywania skryptu Lua: %s\n%s"), onepath.c_str(), e));
+				KaiLog(wxString::Format(_("Error loading Lua script: %s\n%s"), onepath.c_str(), e));
 			}
 			catch (...) {
 				error_count++;
-				KaiLog(wxString::Format(_("Nieznany błąd wczytywania skryptu Lua: %s."), onepath.c_str()));
+				KaiLog(wxString::Format(_("Unknown error loading Lua script: %s."), onepath.c_str()));
 			}
 		}
 		if (error_count > 0) {
-			KaiLog(_("Co najmniej jeden skrypt z pliku napisów zawiera błędy.\nZobacz opisy skryptów, by uzyskać więcej informacji."));
+			KaiLog(_("At least one script in the subtitle file contains errors.\nSee the script descriptions for more information."));
 		}
 		scriptpaths = paths;
 		return true;
@@ -1322,8 +1322,8 @@ namespace Auto{
 	{
 		wxString editor = Options.GetString(AUTOMATION_SCRIPT_EDITOR);
 		if (editor == L"" || wxGetKeyState(WXK_SHIFT)){
-			editor = wxFileSelector(_("Wybierz edytor skryptów"), L"",
-				L"C:\\Windows\\Notepad.exe", L"exe", _("Programy (*.exe)|*.exe|Wszystkie pliki (*.*)|*.*"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+			editor = wxFileSelector(_("Select a script editor"), L"",
+				L"C:\\Windows\\Notepad.exe", L"exe", _("Programs (*.exe)|*.exe|All files (*.*)|*.*"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 			if (!wxFileExists(editor)){ return; }
 			Options.SetString(AUTOMATION_SCRIPT_EDITOR, editor);
 			Options.SaveOptions();
@@ -1335,7 +1335,7 @@ namespace Auto{
 		long res = wxExecute(cmdline);
 
 		if (!res) {
-			KaiMessageBox(_("Nie można uruchomić edytora."), _("Błąd automatyzacji"), wxOK | wxICON_ERROR);
+			KaiMessageBox(_("Cannot start editor."), _("Automation error"), wxOK | wxICON_ERROR);
 		}
 	}
 
@@ -1411,19 +1411,19 @@ namespace Auto{
 				wxString strippedbug = script->GetDescription();
 				strippedbug.Replace(L"\n", L"");
 				if (strippedbug.Len() > 100){ strippedbug = strippedbug.SubString(0, 100) + L"..."; }
-				submenu->Append(start, strippedbug, _("Błąd"));
+				submenu->Append(start, strippedbug, _("Error"));
 				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
-					KaiMessageBox(script->GetDescription(), _("Pełny opis błędu Lua"));
+					KaiMessageBox(script->GetDescription(), _("Full Lua error description"));
 				}, start);
 				start++;
 			}
 			submenu->AppendSeparator();
-			submenu->Append(start, _("Edytuj"), _("Edytuj"));
+			submenu->Append(start, _("Edit"), _("Edit"));
 			Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
 				Automation::OnEdit(script->GetFilename());
 			}, start);
 			start++;
-			submenu->Append(start, _("Odśwież"), _("Odśwież"));
+			submenu->Append(start, _("Refresh"), _("Refresh"));
 			Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
 				script->Reload();
 			}, start);
@@ -1458,19 +1458,19 @@ namespace Auto{
 				wxString strippedbug = script->GetDescription();
 				strippedbug.Replace(L"\n", L"");
 				if (strippedbug.Len() > 100){ strippedbug = strippedbug.SubString(0, 100) + L"..."; }
-				submenu->Append(start, strippedbug, _("Błąd"));
+				submenu->Append(start, strippedbug, _("Error"));
 				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
-					KaiMessageBox(script->GetDescription(), _("Pełny opis błędu Lua"));
+					KaiMessageBox(script->GetDescription(), _("Full Lua error description"));
 				}, start);
 				start++;
 			}
 			submenu->AppendSeparator();
-			submenu->Append(start, _("Edytuj"), _("Edytuj"));
+			submenu->Append(start, _("Edit"), _("Edit"));
 			Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
 				Automation::OnEdit(script->GetFilename());
 			}, start);
 			start++;
-			submenu->Append(start, _("Odśwież"), _("Odśwież"));
+			submenu->Append(start, _("Refresh"), _("Refresh"));
 			Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
 				script->Reload();
 			}, start);

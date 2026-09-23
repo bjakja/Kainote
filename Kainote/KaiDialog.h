@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include <wx/msw/winundef.h>
+#include "WinUndef.h"
 #include <wx/defs.h>
 #include <wx/object.h>
 #include <wx/window.h>
@@ -64,9 +64,9 @@ public:
 	};
 private:
 	bool IsButtonFocused();
-	//void SetFocusFromNode(wxWindowListNode* node, wxWindowList& list, bool next);
-	wxWindowListNode *GetTabControl(bool next, wxWindow *focused);
-	wxWindow* FindCheckedRadiobutton(bool next, wxWindowListNode** listWithRadioButton, wxWindow * focused);
+	//void SetFocusFromNode(wxWindowList::compatibility_iterator  node, wxWindowList& list, bool next);
+	wxWindowList::compatibility_iterator GetTabControl(bool next, wxWindow *focused);
+	wxWindow* FindCheckedRadiobutton(bool next, wxWindowList::compatibility_iterator * listWithRadioButton, wxWindow * focused);
 	void SetNextControl(bool next);
 	void OnCharHook(wxKeyEvent &evt);
 	void OnPaint(wxPaintEvent &evt);
@@ -78,6 +78,7 @@ private:
 	void OnEscape(wxCommandEvent &evt);
 #ifdef __WXMSW__
 	WXLRESULT MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);
+	WXDWORD MSWGetStyle(long flags, WXDWORD *exstyle) const override;
 #endif
 
 	int escapeId;

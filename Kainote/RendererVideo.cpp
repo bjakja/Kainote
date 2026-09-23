@@ -320,7 +320,7 @@ bool RendererVideo::InitDX()
 
 	if (!m_D3DObject){
 		m_D3DObject = Direct3DCreate9(D3D_SDK_VERSION);
-		PTR(m_D3DObject, _("Nie można utworzyć obiektu Direct3D"));
+		PTR(m_D3DObject, _("Cannot create Direct3D object"));
 	}
 	else{
 		Clear(false);
@@ -345,7 +345,7 @@ bool RendererVideo::InitDX()
 	if (m_D3DDevice){
 		hr = m_D3DDevice->Reset(&d3dpp);
 		if (FAILED(hr)){
-			KaiLogSilent(L"Video: " + _("Nie można zresetować Direct3D"));
+			KaiLogSilent(L"Video: " + _("Cannot reset Direct3D"));
 			return false;
 		}
 	}
@@ -357,7 +357,7 @@ bool RendererVideo::InitDX()
 			HR(m_D3DObject->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_HWND,
 				D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED | 
 				D3DCREATE_FPU_PRESERVE /*| D3DCREATE_PUREDEVICE*/, &d3dpp, &m_D3DDevice),
-				_("Nie można utworzyć urządzenia D3D9"));
+				_("Cannot create D3D9 device"));
 		}
 	}
 
@@ -380,7 +380,7 @@ bool RendererVideo::InitDX()
 	hr = m_D3DDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
 	hr = m_D3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
 	hr = m_D3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
-	HR(hr, _("Zawiodło któreś z ustawień DirectX"));
+	HR(hr, _("One of the DirectX settings failed"));
 
 	D3DXMATRIX matOrtho;
 	D3DXMATRIX matIdentity;
@@ -388,9 +388,9 @@ bool RendererVideo::InitDX()
 	D3DXMatrixOrthoOffCenterLH(&matOrtho, 0.5f, m_WindowRect.right + 0.5f, m_WindowRect.bottom + 0.5f, 0.5f, 0.0f, 1.0f);
 	D3DXMatrixIdentity(&matIdentity);
 
-	HR(m_D3DDevice->SetTransform(D3DTS_PROJECTION, &matOrtho), _("Nie można ustawić macierzy projekcji"));
-	HR(m_D3DDevice->SetTransform(D3DTS_WORLD, &matIdentity), _("Nie można ustawić macierzy świata"));
-	HR(m_D3DDevice->SetTransform(D3DTS_VIEW, &matIdentity), _("Nie można ustawić macierzy widoku"));
+	HR(m_D3DDevice->SetTransform(D3DTS_PROJECTION, &matOrtho), _("Cannot set matrix projection"));
+	HR(m_D3DDevice->SetTransform(D3DTS_WORLD, &matIdentity), _("Cannot set world matrix"));
+	HR(m_D3DDevice->SetTransform(D3DTS_VIEW, &matIdentity), _("Cannot set view matrix"));
 
 
 
@@ -400,10 +400,10 @@ bool RendererVideo::InitDX()
 	wxFont *font12 = Options.GetFont(4);
 	wxSize pixelSize = font12->GetPixelSize();
 	HR(D3DXCreateFontW(m_D3DDevice, pixelSize.y, pixelSize.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &m_D3DFont), _("Nie można stworzyć czcionki D3DX"));
+		DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &m_D3DFont), _("Cannot create D3DX font"));
 	HR(D3DXCreateFontW(m_D3DDevice, pixelSize.y, pixelSize.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &m_D3DCalcFont), _("Nie można stworzyć czcionki D3DX"));
-	HR(D3DXCreateLine(m_D3DDevice, &m_D3DLine), _("Nie można stworzyć linii D3DX"));
+		DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &m_D3DCalcFont), _("Cannot create D3DX font"));
+	HR(D3DXCreateLine(m_D3DDevice, &m_D3DLine), _("Cannot create D3DX line"));
 
 	return true;
 }

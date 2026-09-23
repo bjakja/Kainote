@@ -42,19 +42,29 @@ private:
 	int heightText;
 };
 
+// wx 3.3 changed wxSizer::Detach() to take wxWindowBase*; 3.2 takes wxWindow*.
+#if wxCHECK_VERSION(3, 3, 0)
+using KaiSizerDetachArg = wxWindowBase;
+#else
+using KaiSizerDetachArg = wxWindow;
+#endif
+
 class KaiStaticBoxSizer : public wxBoxSizer
 {
 public:
 	KaiStaticBoxSizer(int orient, wxWindow *parent, const wxString& _label);
 	KaiStaticBoxSizer(int orient, wxWindow *parent, int n, wxString * _labels);
 	virtual ~KaiStaticBoxSizer();
-	void ShowItems( bool show );
+	void ShowItems( bool show ) override;
 	bool Enable(bool enable);
+	// Without an exact match this stopped overriding wxSizer::Detach, so
+	// ~wxWindowBase never cleared box and the destructor deleted it twice.
+	bool Detach( KaiSizerDetachArg *window ) override;
 
 private:
-	//void RepositionChildren(const wxSize& minSize);
-	void RecalcSizes();
-	wxSize CalcMin();
-	bool Detach( wxWindow *window );
+	// wxBoxSizer overrides RepositionChildren(), so its RecalcSizes()
+	// compatibility shim never runs and an override of it is dead code.
+	void RepositionChildren(const wxSize& minSize) override;
+	wxSize CalcMin() override;
 	KaiStaticBox *box;
 };

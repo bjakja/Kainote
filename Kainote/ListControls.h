@@ -49,9 +49,15 @@ private:
 	void OnScroll(wxScrollEvent& event);
 	void OnIdle(wxIdleEvent& event);
 	void OnDismissTimer(wxTimerEvent& event);
-	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } };
+	// Capture is already gone here and wx has popped its stack, so only the
+	// mirror below has to be corrected.
+	void OnLostCapture(wxMouseCaptureLostEvent &evt){ hasCapture = false; };
+	void GrabMouse();
+	void DropMouse();
 	int sel;
 	int scPos;
+	bool hasCapture = false;
+	bool openingClick = false;
 	
 protected:
 	wxBitmap *bmp;

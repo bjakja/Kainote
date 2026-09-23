@@ -27,7 +27,7 @@
 
 #include "VisualAllTagsControls.h"
 #include <vector>
-#include <wx/msw/winundef.h>
+#include "WinUndef.h"
 #include <wx/bitmap.h>
 #include <wx/window.h>
 

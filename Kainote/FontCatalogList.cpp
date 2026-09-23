@@ -54,20 +54,20 @@ private:
 };
 
 CatalogEdition::CatalogEdition(wxWindow* parent, wxArrayString* catalogs, const wxPoint& pos, int selectCatalog)
-	:KaiDialog(parent, -1, _("Wybierz nazwę profilu"), pos)
+	:KaiDialog(parent, -1, _("Select the name of the profile"), pos)
 	, catalogNames(catalogs)
 {
 	DialogSizer* dSizer = new DialogSizer(wxVERTICAL);
-	KaiStaticBoxSizer* descriptionSizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Wprowadź nową nazwę katalogu"));
+	KaiStaticBoxSizer* descriptionSizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Choose new catalog name"));
 	currentCatalog = new KaiChoice(this, -1, wxDefaultPosition, wxDefaultSize, *FCManagement.GetCatalogNames());
 	currentCatalog->SetSelection(selectCatalog != -1? selectCatalog : 0);
 	newCatalog = new KaiTextCtrl(this, -1, emptyString);
 	descriptionSizer->Add(currentCatalog, 1, wxALL | wxEXPAND, 2);
-	descriptionSizer->Add(new KaiStaticText(this, -1, _("Zamień na:")), 0, wxALL | wxEXPAND, 2);
+	descriptionSizer->Add(new KaiStaticText(this, -1, _("Replace with:")), 0, wxALL | wxEXPAND, 2);
 	descriptionSizer->Add(newCatalog, 1, wxALL | wxEXPAND, 2);
 	wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
 	MappedButton* OK = new MappedButton(this, wxID_OK, L"OK");
-	MappedButton* cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
+	MappedButton* cancel = new MappedButton(this, wxID_CANCEL, _("Cancel"));
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &CatalogEdition::OnOKClick, this, wxID_OK);
 	buttonSizer->Add(OK, 1, wxALL | wxEXPAND, 2);
 	buttonSizer->Add(cancel, 1, wxALL | wxEXPAND, 2);
@@ -81,7 +81,7 @@ CatalogEdition::CatalogEdition(wxWindow* parent, wxArrayString* catalogs, const 
 void CatalogEdition::OnOKClick(wxCommandEvent& evt)
 {
 	if (newCatalog->GetValue().empty()) {
-		KaiMessageBox(_("Proszę wprowadzić nazwę nowego katalogu"), _("Informacja"), wxOK, this);
+		KaiMessageBox(_("Enter a name for the new catalog"), _("Info"), wxOK, this);
 		return;
 	}
 
@@ -91,30 +91,30 @@ void CatalogEdition::OnOKClick(wxCommandEvent& evt)
 }
 
 FontCatalogList::FontCatalogList(wxWindow* parent, const wxString& styleFont)
-	: KaiDialog(parent, -1, _("Zarządzanie katalogami czcionek"), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)
+	: KaiDialog(parent, -1, _("Manage font catalogs"), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)
 {
 	This = this;
 	DialogSizer* main = new DialogSizer(wxVERTICAL);
 	fontList = new KaiListCtrl(this, ID_FONT_LIST, wxDefaultPosition, wxSize(700, 300));
 	fontList->SetFont(*Options.GetFont(4));
-	fontList->InsertColumn(0, _("Nazwa czcionki"), TYPE_TEXT, 290);
-	fontList->InsertColumn(1, _("Katalog"), TYPE_LIST, 140);
-	fontList->InsertColumn(2, _("Przykład"), TYPE_TEXT, 330);
+	fontList->InsertColumn(0, _("Font name"), TYPE_TEXT, 290);
+	fontList->InsertColumn(1, _("Catalog"), TYPE_LIST, 140);
+	fontList->InsertColumn(2, _("Sample"), TYPE_TEXT, 330);
 	GenerateList(styleFont);
 
 	wxBoxSizer* buttonsSizer = new wxBoxSizer(wxHORIZONTAL);
 
-	MappedButton* addCatalog = new MappedButton(this, ID_ADD_CATALOG, _("Dodaj"));
-	MappedButton* editCatalog = new MappedButton(this, ID_EDIT_CATALOG, _("Edytuj"));
-	MappedButton* removeCatalog = new MappedButton(this, ID_REMOVE_CATALOG, _("Usuń"));
-	MappedButton* loadCatalogs = new MappedButton(this, ID_LOAD_CATALOGS, _("Wczytaj"));
+	MappedButton* addCatalog = new MappedButton(this, ID_ADD_CATALOG, _("Add"));
+	MappedButton* editCatalog = new MappedButton(this, ID_EDIT_CATALOG, _("Edit"));
+	MappedButton* removeCatalog = new MappedButton(this, ID_REMOVE_CATALOG, _("Delete"));
+	MappedButton* loadCatalogs = new MappedButton(this, ID_LOAD_CATALOGS, _("Load"));
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &FontCatalogList::OnLoadCatalogs, this, ID_LOAD_CATALOGS);
 	wxArrayString* catalogList = FCManagement.GetCatalogNames();
 	catalog = new KaiChoice(this, -1, emptyString, wxDefaultPosition, wxDefaultSize, *catalogList);
 	fontSeek = new KaiTextCtrl(this, ID_FONT_SEEK, emptyString, wxDefaultPosition);
 	wxString fontFilterText = Options.GetString(STYLE_EDIT_FILTER_TEXT);
 	fontFilter = new KaiTextCtrl(this, -1, fontFilterText);
-	MappedButton* saveFilter = new MappedButton(this, ID_SAVE_FILTER, _("Zapisz Filtr"));
+	MappedButton* saveFilter = new MappedButton(this, ID_SAVE_FILTER, _("Save filter"));
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent& evt) {
 		wxString ctlg = catalog->GetValue();
 		if (!ctlg.empty()) {
@@ -140,7 +140,7 @@ FontCatalogList::FontCatalogList(wxWindow* parent, const wxString& styleFont)
 		wxString ctlg = catalog->GetValue();
 		int ctlgIndex = catalog->FindString(ctlg);
 		if (!ctlg.empty() && ctlgIndex != -1) {
-			if (KaiMessageBox(_("Czy na pewno chcesz usunąć ten katalog?"), _("Pytanie"), wxYES_NO, this) == wxYES) {
+			if (KaiMessageBox(_("Are you sure you want to delete this catalog?"), _("Prompt"), wxYES_NO, this) == wxYES) {
 				FCManagement.RemoveCatalog(ctlg);
 				catalog->Delete(ctlgIndex);
 				catalog->SetValue(L"");
@@ -165,9 +165,9 @@ FontCatalogList::FontCatalogList(wxWindow* parent, const wxString& styleFont)
 	status = new KaiStatusBar(this);
 	int fields[2] = { -11, -21 };
 	status->SetFieldsCount(2, fields);
-	status->SetLabelText(1, _("Lista katalogów ma opcję autozapisu, pliki znajdują się w folderze \"Config\"."));
+	status->SetLabelText(1, _("The catalog list has autosave; files are stored in the \"Config\" folder."));
 
-	buttonsSizer->Add(new KaiStaticText(this, -1, _("Katalogi:")), 1, wxALL | wxEXPAND, 2);
+	buttonsSizer->Add(new KaiStaticText(this, -1, _("Catalogs:")), 1, wxALL | wxEXPAND, 2);
 	buttonsSizer->Add(catalog, 3, wxALL | wxEXPAND, 2); 
 	buttonsSizer->Add(addCatalog, 1, wxALL, 2);
 	buttonsSizer->Add(editCatalog, 1, wxALL, 2);
@@ -175,7 +175,7 @@ FontCatalogList::FontCatalogList(wxWindow* parent, const wxString& styleFont)
 	buttonsSizer->Add(loadCatalogs, 1, wxALL, 2);
 	//buttonsSizer->Add(replaceChecked, 1, wxALL, 2);
 	wxBoxSizer* textCtrlsSizer = new wxBoxSizer(wxHORIZONTAL);
-	textCtrlsSizer->Add(new KaiStaticText(this, -1, _("Szukaj:")), 1, wxEXPAND | wxALL, 2);
+	textCtrlsSizer->Add(new KaiStaticText(this, -1, _("Find:")), 1, wxEXPAND | wxALL, 2);
 	textCtrlsSizer->Add(fontSeek, 3, wxEXPAND | wxALL, 2);
 	textCtrlsSizer->Add(fontFilter, 3, wxEXPAND | wxALL, 2);
 	textCtrlsSizer->Add(saveFilter, 1, wxEXPAND | wxALL, 2);
@@ -198,7 +198,7 @@ FontCatalogList::FontCatalogList(wxWindow* parent, const wxString& styleFont)
 	});
 	autoSaveTimer.SetOwner(this, ID_EDIT_TIMER);
 	Bind(wxEVT_TIMER, [=, this](wxTimerEvent& evt) {
-		status->SetLabelText(0, _("Autozapis"));
+		status->SetLabelText(0, _("Autosave"));
 		wxString path = Options.pathfull + L"/Config/FontCatalogsAutosave" + std::to_string(autoSaveI) + L".txt";
 		FCManagement.SaveCatalogs(path);
 		autoSaveI++;
@@ -311,8 +311,8 @@ done:
 
 void FontCatalogList::OnLoadCatalogs(wxCommandEvent& evt)
 {
-	wxFileDialog* FileDialog = new wxFileDialog(this, _("Wybierz plik wideo"), emptyString,
-		emptyString, _("Pliki tekstowe (*.txt)|*.txt"),
+	wxFileDialog* FileDialog = new wxFileDialog(this, _("Choose video file"), emptyString,
+		emptyString, _("Text files (*.txt)|*.txt"),
 		wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 	if (FileDialog->ShowModal() == wxID_OK) {
 		FCManagement.LoadCatalogs(FileDialog->GetPath());
@@ -333,7 +333,7 @@ void FontCatalogList::RefreshList(bool catalogListToo)
 			catalogItem->name = catalog;
 		}
 		else {
-			KaiLog(_("Nie można odnaleźć elementów linii %i"));
+			KaiLog(_("Cannot find elements of line %i"));
 		}
 	}
 	if(catalogListToo)
@@ -600,7 +600,7 @@ void FontCatalogManagement::LoadCatalogs(const wxString& external)
 					}
 					else
 					{
-						KaiLog(wxString::Format(_("Nie można dodać czcionki %s."), token));
+						KaiLog(wxString::Format(_("Cannot add font \"%s\"."), token));
 					}
 				}
 				continue;
@@ -674,11 +674,11 @@ bool FontCatalogManagement::IsFontInCatalog(const wxString& catalog, const wxStr
 wxString FontCatalogManagement::AddToCatalog(const wxString& font, const wxPoint& pos, wxWindow *parent)
 {
 	if (!fontCatalogsNames.GetCount()) {
-		KaiLog(_("Aby móc dodawać czcionki do katalogu,\nnależy najpierw kliknąć przycisk \"Zarządzaj\",\nby utworzyć nowy katalog."));
+		KaiLog(_("For adding fonts to catalog,\nclick \"Manage\" button first,\nto create new catalog."));
 		return L"";
 	}
 	Menu menuList;
-	menuList.Append(2999, _("Dodaj czcionki z napisów"), nullptr, emptyString, ITEM_NORMAL);
+	menuList.Append(2999, _("Add fonts from subtitles"), nullptr, emptyString, ITEM_NORMAL);
 	std::vector<bool> checkTable;
 	int i = 0;
 	for (auto& catalog : fontCatalogsNames) {
@@ -740,9 +740,9 @@ bool FontCatalogManagement::ChangeCatalogName(wxWindow* messagesParent, const wx
 	wxArrayString* fontTable = nullptr;
 	auto itn = fontCatalogs.find(newCatalog);
 	if (itn != fontCatalogs.end()) {
-		KaiMessageDialog dlg(messagesParent, wxString::Format(_("Katalog o nazwie \"%s\" istnieje, co zrobić?"), newCatalog), _("Pytanie"), wxYES_NO | wxCANCEL);
-		dlg.SetYesLabel(_("Scal"));
-		dlg.SetNoLabel(_("Usuń"));
+		KaiMessageDialog dlg(messagesParent, wxString::Format(_("Catalog named \"%s\" already exists. What to do?"), newCatalog), _("Prompt"), wxYES_NO | wxCANCEL);
+		dlg.SetYesLabel(_("Merge"));
+		dlg.SetNoLabel(_("Delete"));
 		int result = dlg.ShowModal();
 		if (result == wxYES) {
 			fontTable = itn->second;
@@ -840,14 +840,14 @@ class GetFontsFromASSDialog : public KaiDialog
 {
 public:
 	GetFontsFromASSDialog(wxWindow *parent, wxArrayString *catalogs)
-		: KaiDialog(parent, -1, _("Dodaj czcionki z napisów"))
+		: KaiDialog(parent, -1, _("Add fonts from subtitles"))
 	{
 		DialogSizer* main = new DialogSizer(wxVERTICAL);
 		wxBoxSizer* bsizer = new wxBoxSizer(wxHORIZONTAL);
 
 		catalog = new KaiChoice(this, -1, emptyString, wxDefaultPosition, wxDefaultSize, *catalogs);
 		catalog->SetSelection(0);
-		MappedButton* add = new MappedButton(this, 2998, _("Dodaj"));
+		MappedButton* add = new MappedButton(this, 2998, _("Add"));
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=, this](wxCommandEvent& evt) {
 			wxString ctlg = catalog->GetValue();
 			if (!ctlg.empty()) {
@@ -856,16 +856,16 @@ public:
 			}
 			}, 2998);
 
-		bsizer->Add(new KaiStaticText(this, -1, _("Katalogi:")), 1, wxALL | wxEXPAND, 2);
+		bsizer->Add(new KaiStaticText(this, -1, _("Catalogs:")), 1, wxALL | wxEXPAND, 2);
 		bsizer->Add(catalog, 4, wxALL | wxEXPAND, 4);
 		bsizer->Add(add, 1, wxALL, 4);
 
-		emptyCatalog = new KaiCheckBox(this, -1, _("Usuń całą zawartość katalogu"));
-		allSubs = new KaiCheckBox(this, -1, _("Dodaj czcionki z wszystkich otwartych napisów"));
+		emptyCatalog = new KaiCheckBox(this, -1, _("Remove all contents of catalog"));
+		allSubs = new KaiCheckBox(this, -1, _("Add fonts from all open subtitles"));
 
 		wxBoxSizer* buttonsizer = new wxBoxSizer(wxHORIZONTAL);
 		MappedButton* Buttonok = new MappedButton(this, wxID_OK, L"OK");
-		MappedButton* Buttoncancel = new MappedButton(this, 8999, _("Anuluj"));
+		MappedButton* Buttoncancel = new MappedButton(this, 8999, _("Cancel"));
 		SetEscapeId(8999);
 		buttonsizer->Add(Buttonok, 1, wxALL, 4);
 		buttonsizer->Add(Buttoncancel, 1, wxALL, 4);

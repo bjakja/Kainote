@@ -130,7 +130,7 @@ void BitmapButton::SetToolTip(const wxString &_toolTip)
 		toolTip = toolTip + L" (" + key + L")";
 	}
 	toolTip << L"\n";
-	toolTip << _("Skrót można ustawić Shift + Klik");
+	toolTip << _("Shortcut can be set using Shift + Click");
 	wxWindow::SetToolTip(toolTip);
 
 }

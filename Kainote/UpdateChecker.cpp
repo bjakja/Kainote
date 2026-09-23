@@ -15,7 +15,11 @@
 
 #include <string>
 #include <stdio.h>
-//#include <windows.h>
+// winsock2.h first: windows.h would pull in the old winsock.h (sockaddr clash).
+#ifdef __WXMSW__
+#include <winsock2.h>
+#endif
+#include <windows.h>
 #include <WinInet.h>
 #include "UpdateChecker.h"
 #include "config.h"
@@ -117,9 +121,9 @@ int UpdateChecker::CheckAsynchronously(UpdateChecker *checker, bool closeProgram
 		checker->server = link.BeforeFirst('/', &checker->page);
 		int result = wxYES;
 		if (!checker->dontAskForUpdate){
-			KaiMessageDialog dlgmsg(0, wxString::Format(_("Dostępna jest nowa wersja programu %s zaktualizować?"), version), _("Aktualizacja"), wxYES_NO | wxOK | wxHELP);
-			dlgmsg.SetHelpLabel(_("Wyłącz aktualizacje"));
-			dlgmsg.SetOkLabel(_("Zakutalizuj po zamknięciu"));
+			KaiMessageDialog dlgmsg(0, wxString::Format(_("A new version (%s) is available. Update?"), version), _("Update"), wxYES_NO | wxOK | wxHELP);
+			dlgmsg.SetHelpLabel(_("Disable updates"));
+			dlgmsg.SetOkLabel(_("Update after closing"));
 			int result = dlgmsg.ShowModal();
 		}
 		if (result == wxYES){
@@ -230,12 +234,12 @@ int UpdateChecker::DownloadZip()
 void UpdateChecker::Update(bool closeProgram /*= true*/)
 {
 	if (DownloadZip()){
-		KaiMessageBox(_("Nie można pobrać nowej wersji Kainote"));
+		KaiMessageBox(_("Cannot download the new version of Kainote"));
 		return;
 	}
 	wxString updater = Options.pathfull + "/Updater.exe";
 	if (!wxFileExists(updater)){
-		KaiMessageBox(_("Nie można znaleźć updatera Kainote"));
+		KaiMessageBox(_("Cannot find the Kainote updater"));
 		return;
 	}
 	wxString ver = "Kainote v" + wxString(VersionKainote);
@@ -243,12 +247,12 @@ void UpdateChecker::Update(bool closeProgram /*= true*/)
 	if (closeProgram){
 		kainoteApp *Kaia = (kainoteApp *)wxTheApp;
 		if (!Kaia){
-			KaiMessageBox(_("Nie można zamknąć Kainote"));
+			KaiMessageBox(_("Cannot close Kainote"));
 			updateOnClose = true;
 			return;
 		}
 		if (!Kaia->Frame->Close()){
-			KaiMessageBox(_("Nie można zamknąć Kainote"));
+			KaiMessageBox(_("Cannot close Kainote"));
 			updateOnClose = true;
 			return;
 		}

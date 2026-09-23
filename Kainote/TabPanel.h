@@ -24,7 +24,7 @@
 #include "KaiWindowResizer.h"
 #include "SubsGrid.h"
 #include "EditBox.h"
-#include <wx/msw/winundef.h>
+#include "WinUndef.h"
 #include <wx/sizer.h>
 
 class ShiftTimes;

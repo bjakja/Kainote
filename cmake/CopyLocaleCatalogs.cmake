@@ -2,37 +2,30 @@ if(NOT DEFINED SOURCE_LOCALE_DIR OR NOT DEFINED RUNTIME_LOCALE_DIR)
     message(FATAL_ERROR "SOURCE_LOCALE_DIR and RUNTIME_LOCALE_DIR are required")
 endif()
 
-if(NOT MSGFMT_EXECUTABLE)
-    message(WARNING "msgfmt not found; translation catalogs (.mo) were not built")
-    return()
+if(NOT DEFINED KAINOTE_SOURCE_DIR)
+    set(KAINOTE_SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/..")
 endif()
 
-# Compile every Locale/*.po into the GNU gettext layout wxLocale expects and a
-# flat copy the options-dialog language list enumerates. .mo files are generated
-# here each build, not committed.
-# A broken .po is fatal only under KAINOTE_STRICT_LOCALES (set when packaging);
-# an ordinary build drops that locale so one bad translation blocks nobody.
-file(GLOB KAINOTE_PO_FILES "${SOURCE_LOCALE_DIR}/*.po")
-foreach(po_file IN LISTS KAINOTE_PO_FILES)
-    get_filename_component(locale_name "${po_file}" NAME_WE)
-    set(locale_messages_dir "${RUNTIME_LOCALE_DIR}/${locale_name}/LC_MESSAGES")
-    file(MAKE_DIRECTORY "${locale_messages_dir}")
-    execute_process(
-        COMMAND "${MSGFMT_EXECUTABLE}" -o "${locale_messages_dir}/${locale_name}.mo" "${po_file}"
-        RESULT_VARIABLE msgfmt_result
-    )
-    if(msgfmt_result)
-        if(KAINOTE_STRICT_LOCALES)
-            message(FATAL_ERROR "msgfmt failed for ${po_file} (exit ${msgfmt_result})")
-        endif()
-        # Never leave a truncated or stale catalog for wxLocale to load.
-        file(REMOVE "${locale_messages_dir}/${locale_name}.mo"
-                    "${RUNTIME_LOCALE_DIR}/${locale_name}.mo")
-        message(WARNING
-            "msgfmt failed for ${po_file} (exit ${msgfmt_result}); "
-            "skipping the ${locale_name} translation catalog")
-    else()
-        file(COPY_FILE "${locale_messages_dir}/${locale_name}.mo"
-                       "${RUNTIME_LOCALE_DIR}/${locale_name}.mo" ONLY_IF_DIFFERENT)
-    endif()
-endforeach()
+# tools/compile_catalogs.py is the one implementation; the packaging script and
+# the Visual Studio pre-build event run the same file.
+set(_kainote_msgfmt_arg)
+if(MSGFMT_EXECUTABLE)
+    set(_kainote_msgfmt_arg --msgfmt "${MSGFMT_EXECUTABLE}")
+endif()
+
+set(_kainote_strict_arg)
+if(KAINOTE_STRICT_LOCALES)
+    set(_kainote_strict_arg --strict)
+endif()
+
+execute_process(
+    COMMAND "${Python3_EXECUTABLE}" "${KAINOTE_SOURCE_DIR}/tools/compile_catalogs.py"
+            --po-dir "${SOURCE_LOCALE_DIR}"
+            --out-dir "${RUNTIME_LOCALE_DIR}"
+            ${_kainote_msgfmt_arg}
+            ${_kainote_strict_arg}
+    RESULT_VARIABLE _kainote_locale_result
+)
+if(_kainote_locale_result)
+    message(FATAL_ERROR "compiling translation catalogs failed (exit ${_kainote_locale_result})")
+endif()

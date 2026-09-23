@@ -20,7 +20,7 @@
 #include "OpennWrite.h"
 #include "KainoteFrame.h"
 #include "DshowRenderer.h"
-#include <wx/msw/winundef.h>
+#include "WinUndef.h"
 #include <wx/thread.h>
 #include <process.h>
 #include "config.h"
@@ -166,7 +166,7 @@ bool SubtitlesLibass::Open(TabPanel *tab, int flag, wxString *text)
 	if (!m_IsReady || !m_HasParameters) {
 		SAFE_DELETE(text);
 		if (!m_HasParameters)
-			KaiLog(_("Libass działa tylko z FFMS2"));//Libass only works with with FFMS2
+			KaiLog(_("Libass works only with FFMS2"));//Libass only works with with FFMS2
 	
 		return false;
 	}
@@ -224,7 +224,7 @@ bool SubtitlesLibass::Open(TabPanel *tab, int flag, wxString *text)
 	delete textsubs;
 
 	if (!m_AssTrack){
-		KaiLog(_("Libass otwiera tylko napisy ASS i SSA"));//Libass only works with ASS and SSA subtiltes
+		KaiLog(_("Libass only opens ASS and SSA subtitles"));//Libass only works with ASS and SSA subtiltes
 		return false;
 	}
 	return true;
@@ -251,7 +251,7 @@ bool SubtitlesLibass::OpenString(wxString *text)
 	delete text;
 
 	if (!m_AssTrack){
-		KaiLog(_("Nie można otworzyć napisów w Libass"));
+		KaiLog(_("Cannot open subtitles in Libass"));
 		return false;
 	}
 	return true;

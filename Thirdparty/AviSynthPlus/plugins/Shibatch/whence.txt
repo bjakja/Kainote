@@ -1,2 +1,0 @@
-This plugin uses code (SSRC, SuperEQ) from Naoki Shibata.
-http://shibatch.sourceforge.net/

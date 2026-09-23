@@ -23,8 +23,10 @@ gitparams.h
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
-# Compiled translation catalogs (generated from Locale/*.po at build time)
-/Locale/*.mo
+# Compiled translation catalogs (generated from Locale/*.po at build time).
+# The Windows pre-build event writes them into the source tree, in the
+# <lang>/LC_MESSAGES/ layout wxWidgets actually searches.
+/Locale/**/*.mo
 
 # Build results
 build-linux/
@@ -83,8 +85,6 @@ artifacts/
 *.tlh
 *.tmp
 *.tmp_proj
-*.log
-*.lib
 *.vspscc
 *.vssscc
 .builds
@@ -252,7 +252,20 @@ _Pvt_Extensions
 # FAKE - F# Make
 .fake/
 
-*.css
 build/
 build-*/
 .serena/
+
+# Python bytecode cache (the packaging scripts under .github/scripts)
+__pycache__/
+*.pyc
+
+# MSBuild intermediates (were previously committed under Thirdparty/Build)
+bin/**/*.lib
+obj/**/*.log
+*.tlog
+*.exp
+*.recipe
+*.lastbuildstate
+*.idb
+*.ilk

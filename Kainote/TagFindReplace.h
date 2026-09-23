@@ -23,7 +23,7 @@
 //#include "DialogueTextEditor.h"
 //#include "EditBox.h"
 //#include "SubsGrid.h"
-#include <wx/msw/winundef.h>
+#include "WinUndef.h"
 #include <wx/string.h>
 #include <wx/gdicmn.h>
 #include <functional>

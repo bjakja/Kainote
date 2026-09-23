@@ -26,10 +26,10 @@ SubtitlesProperties::SubtitlesProperties(wxWindow *parent, OptionsDialog *option
 	: wxWindow(parent, -1)
 {
 	wxBoxSizer *main = new wxBoxSizer(wxVERTICAL);
-	KaiStaticBoxSizer *StaticBox1 = new KaiStaticBoxSizer(wxVERTICAL, this, _("Informacje o napisach"));
+	KaiStaticBoxSizer *StaticBox1 = new KaiStaticBoxSizer(wxVERTICAL, this, _("Subtitle information"));
 	//wxFlexGridSizer *GridSizer=new wxFlexGridSizer(3,5,5);
 	const int numFields = 6;
-	wxString fieldNames[numFields] = { _("Tytuł"), _("Autor"), _("Tłumaczenie"), _("Korekta"), _("Timing"), _("Edycja") };
+	wxString fieldNames[numFields] = { _("Title"), _("Author"), _("Translator"), _("Proofreading"), _("Timer"), _("Editing") };
 	CONFIG fieldValues[numFields] = { ASS_PROPERTIES_TITLE, ASS_PROPERTIES_SCRIPT, ASS_PROPERTIES_TRANSLATION,
 		ASS_PROPERTIES_EDITING, ASS_PROPERTIES_TIMING, ASS_PROPERTIES_UPDATE };
 	CONFIG fieldOnValues[numFields] = { ASS_PROPERTIES_TITLE_ON, ASS_PROPERTIES_SCRIPT_ON, ASS_PROPERTIES_TRANSLATION_ON,
@@ -52,7 +52,7 @@ SubtitlesProperties::SubtitlesProperties(wxWindow *parent, OptionsDialog *option
 	main->Add(StaticBox1, 0, wxEXPAND, 0);
 	const int numCheckbox = 3;
 
-	KaiCheckBox *option = new KaiCheckBox(this, -1, _("Zawsze pytaj o zmianę informacji o napisach"), wxDefaultPosition, wxSize(18, -1));
+	KaiCheckBox *option = new KaiCheckBox(this, -1, _("Always ask before changing subtitle information"), wxDefaultPosition, wxSize(18, -1));
 	option->SetValue(Options.GetBool(ASS_PROPERTIES_ASK_FOR_CHANGE));
 	main->Add(option, 0, wxEXPAND | wxALL, 5);
 	optionsDialog->ConOpt(option, ASS_PROPERTIES_ASK_FOR_CHANGE);

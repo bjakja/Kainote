@@ -20,28 +20,28 @@
 #include "KaiStaticText.h"
 
 TLDialog::TLDialog(wxWindow *parent, SubsGrid *subsgrid)
-	: KaiDialog(parent, -1, _("Opcje dopasowywania tłumaczenia"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE)
+	: KaiDialog(parent, -1, _("Translation matching options"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE)
 {
 	Sbsgrid = subsgrid;
 	DialogSizer *sizer = new DialogSizer(wxVERTICAL);
 	wxBoxSizer *sizer2 = new wxBoxSizer(wxHORIZONTAL);
 	wxGridSizer *sizer1 = new wxGridSizer(2, 2, 2);
 	//uwaga nazewnictwo tutaj jest totalnie fuckuped patrz na opisy co dany efekt robi.
-	Up = new MappedButton(this, 29995, _("Usuń linię"));
-	Up->SetToolTip(_("Usuwa zaznaczoną linijkę.\nTłumaczenie idzie do góry."));
-	Down = new MappedButton(this, 29997, _("Dodaj linię"));
-	Down->SetToolTip(_("Dodaje pustą linijkę przed zaznaczoną.\nTłumaczenie idzie w dół."));
-	UpJoin = new MappedButton(this, 29998, _("Złącz linie"));
-	UpJoin->SetToolTip(_("Złącza następną linijkę z zaznaczoną.\nTłumaczenie idzie do góry."));
-	DownJoin = new MappedButton(this, 29996, _("Złącz linie"));
-	DownJoin->SetToolTip(_("Złącza następną linijkę z zaznaczoną.\nOryginał idzie w górę."));
-	DownDel = new MappedButton(this, 29994, _("Usuń linię"));
-	DownDel->SetToolTip(_("Usuwa zaznaczoną linijkę.\nOryginał idzie do góry."));
-	UpExt = new MappedButton(this, 29993, _("Dodaj linię"));
-	UpExt->SetToolTip(_("Dodaje pustą linijkę przed zaznaczoną.\nOryginał idzie w dół.\nDodanej linii należy ustawić czasy."));
+	Up = new MappedButton(this, 29995, _("Delete line"));
+	Up->SetToolTip(_("Deletes the selected line.\nMoves the translation one line up."));
+	Down = new MappedButton(this, 29997, _("Add line"));
+	Down->SetToolTip(_("Adds a blank line before the selected line.\nMoves the translation one line down."));
+	UpJoin = new MappedButton(this, 29998, _("Join lines"));
+	UpJoin->SetToolTip(_("Joins the selected line with the next line.\nMoves the translation one line up."));
+	DownJoin = new MappedButton(this, 29996, _("Join lines"));
+	DownJoin->SetToolTip(_("Joins the selected line with the next line.\nMoves the original one line up."));
+	DownDel = new MappedButton(this, 29994, _("Delete line"));
+	DownDel->SetToolTip(_("Deletes the selected line.\nMoves the original one line up."));
+	UpExt = new MappedButton(this, 29993, _("Add line"));
+	UpExt->SetToolTip(_("Adds a blank line before the selected line.\nMoves the original one line down.\nThe added line must be timed."));
 
-	sizer2->Add(new KaiStaticText(this, -1, _("Tekst oryginału")), 1, wxLEFT | wxRIGHT | wxEXPAND, 5);
-	sizer2->Add(new KaiStaticText(this, -1, _("Tekst tłumaczenia")), 1, wxLEFT | wxRIGHT | wxEXPAND, 5);
+	sizer2->Add(new KaiStaticText(this, -1, _("Original")), 1, wxLEFT | wxRIGHT | wxEXPAND, 5);
+	sizer2->Add(new KaiStaticText(this, -1, _("Translation")), 1, wxLEFT | wxRIGHT | wxEXPAND, 5);
 
 	sizer1->Add(UpExt, 0, wxALL | wxEXPAND, 5);
 	sizer1->Add(Down, 0, wxALL | wxEXPAND, 5);
@@ -52,7 +52,7 @@ TLDialog::TLDialog(wxWindow *parent, SubsGrid *subsgrid)
 
 	sizer->Add(sizer2, 0, wxEXPAND | wxTOP, 5);
 	sizer->Add(sizer1, 0, wxEXPAND);
-	sizer->Add(new KaiStaticText(this, -1, _("Objaśnienie:\nOryginał - tekst napisów z właściwym timingiem służy\ndo porównania wklejanych dialogów, później zostaje usunięty.\nTłumaczenie - tekst wklejony do napisów z poprawnym timingiem.")), 0, wxEXPAND | wxALL, 5);
+	sizer->Add(new KaiStaticText(this, -1, _("Description:\nOriginal - subtitle text with correct timing, used\nto compare pasted dialogue lines; it is deleted later.\nTranslation - text pasted into subtitles with correct timing.")), 0, wxEXPAND | wxALL, 5);
 	SetSizerAndFit(sizer);
 	CenterOnParent();
 

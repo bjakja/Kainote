@@ -36,10 +36,10 @@ wxString AddText(int id)
 {
 	wxString label;
 	if (id == wxID_OK){ label = L"OK"; }
-	else if (id == wxID_CANCEL){ label = _("Anuluj"); }
-	else if (id == wxID_APPLY){ label = _("Zastosuj"); }
-	else if (id == wxID_YES){ label = _("Tak"); }
-	else if (id == wxID_NO){ label = _("Nie"); }
+	else if (id == wxID_CANCEL){ label = _("Cancel"); }
+	else if (id == wxID_APPLY){ label = _("Apply"); }
+	else if (id == wxID_YES){ label = _("Yes"); }
+	else if (id == wxID_NO){ label = _("No"); }
 	//else jeszcze pewnie tego w chuj jest;
 	return label;
 }
@@ -259,7 +259,7 @@ void MappedButton::SetToolTip(const wxString &_toolTip)
 		wxString key = Hkeys.GetStringHotkey(itype, desc);
 		if (twoHotkeys){
 			idAndType itype(GetId() - 10, Window);
-			key += _(" lub ") + Hkeys.GetStringHotkey(itype);
+			key += _(" or ") + Hkeys.GetStringHotkey(itype);
 		}
 
 
@@ -268,10 +268,10 @@ void MappedButton::SetToolTip(const wxString &_toolTip)
 			toolTip = toolTip + L" (" + key + L")";
 		}
 		toolTip << L"\n";
-		toolTip << _("Skrót można ustawić Shift + Klik");
+		toolTip << _("Shortcut can be set using Shift + Click");
 		if (twoHotkeys){
 			toolTip << L"\n";
-			toolTip << _("Drugi skrót można ustawić Control + Klik");
+			toolTip << _("Second shortcut can be set using Control + Click");
 		}
 		wxWindow::SetToolTip(toolTip);
 	}

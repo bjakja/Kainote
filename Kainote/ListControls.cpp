@@ -797,8 +797,26 @@ PopupList::PopupList(wxWindow *DialogParent, wxArrayString *list, std::map<int, 
 PopupList::~PopupList()
 {
 	dismissTimer.Stop();
+	DropMouse();
 	if (activePopup == this){ activePopup = nullptr; }
 	wxDELETE(bmp);
+}
+
+// HasCapture() asks Windows, CaptureMouse()/ReleaseMouse() maintain a stack of
+// their own, and wx 3.3 drops the window from that stack only on a matched
+// release. Mirroring the state keeps the two in step.
+void PopupList::GrabMouse()
+{
+	if (hasCapture || (scroll && scroll->HasCapture())){ return; }
+	hasCapture = true;
+	CaptureMouse();
+}
+
+void PopupList::DropMouse()
+{
+	if (!hasCapture){ return; }
+	hasCapture = false;
+	ReleaseMouse();
 }
 
 bool PopupList::IsPopupListWindow(wxWindow *win)
@@ -836,6 +854,7 @@ void PopupList::Popup(const wxPoint &pos, const wxSize &controlSize, int selecte
 		activePopup->EndPartialModal(-3);
 	}
 	activePopup = this;
+	openingClick = true;
 	Show();
 	Refresh(false);
 	Update();
@@ -885,9 +904,17 @@ void PopupList::OnMouseEvent(wxMouseEvent &evt)
 	wxSize sz = GetClientSize();
 	if (leftdown || evt.LeftUp()){
 		if (!GetScreenRect().Contains(wxGetMousePosition())){
+			// KaiChoice opens the list on the button *down*, so the matching
+			// up arrives here, over the control rather than over the list.
+			// Dismissing on it closed the list as fast as it opened.
+			if (evt.LeftUp() && openingClick){
+				openingClick = false;
+				return;
+			}
 			EndPartialModal(-3);
 			return;
 		}
+		openingClick = false;
 		if (leftdown){ return; }
 	}
 
@@ -1059,7 +1086,7 @@ void PopupList::EndPartialModal(int ReturnId)
 {
 	dismissTimer.Stop();
 	Unbind(wxEVT_IDLE, &PopupList::OnIdle, this);
-	if (HasCapture()){ ReleaseMouse(); }
+	DropMouse();
 	if (activePopup == this){ activePopup = nullptr; }
 	Hide();
 	((KaiChoice*)Parent)->SetFocus();
@@ -1120,27 +1147,19 @@ void PopupList::OnIdle(wxIdleEvent& event)
 
 	if (!Parent->IsShownOnScreen()){
 		EndPartialModal(-3);
+		return;
 	}
 
 	if (IsShown())
 	{
 #ifdef _WIN32
-		wxPoint pos = ScreenToClient(wxGetMousePosition());
-		wxRect rect(GetSize());
-
-		if (rect.Contains(pos))
-		{
-			if (HasCapture())
-			{
-				ReleaseMouse();
-			}
+		// ScreenToClient() gives client coordinates, so the hit test needs the
+		// client size; with the window size the border counted as inside.
+		if (wxRect(GetClientSize()).Contains(ScreenToClient(wxGetMousePosition()))){
+			DropMouse();
 		}
-		else
-		{
-			if (!HasCapture() && !(scroll && scroll->HasCapture()))
-			{
-				CaptureMouse();
-			}
+		else{
+			GrabMouse();
 		}
 #endif
 	}

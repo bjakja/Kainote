@@ -31,8 +31,21 @@ pkg_check_modules(GSTREAMER REQUIRED IMPORTED_TARGET gstreamer-1.0 gstreamer-vid
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost REQUIRED COMPONENTS filesystem locale regex OPTIONAL_COMPONENTS system thread)
 find_program(MSGFMT_EXECUTABLE msgfmt REQUIRED)
+find_package(Python3 COMPONENTS Interpreter REQUIRED)
 find_program(TAR_EXECUTABLE tar REQUIRED)
 find_program(GZIP_EXECUTABLE gzip REQUIRED)
+
+# Thirdparty/ffms2 is a git submodule (Kainote's ffms2 fork).  The Linux build
+# does not link it -- it links the distribution's libffms2 -- but it does
+# compile Thirdparty/Build/FFMS2/indexing_additional.cpp against ffms2's private
+# headers, so the checkout has to be there.  Fail with something actionable
+# rather than a pile of missing-include errors.
+if(NOT EXISTS "${CMAKE_SOURCE_DIR}/Thirdparty/ffms2/src/core/indexing.h")
+    message(FATAL_ERROR
+        "Thirdparty/ffms2 is empty -- the git submodules have not been checked out.\n"
+        "Run:  git submodule update --init --recursive")
+endif()
+
 add_compile_definitions(_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING _CRT_SECURE_NO_WARNINGS HAVE_DLL_EXPORT LINUX_BUILD KAINOTE_LINUX_BUILD)
 add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-include> $<$<COMPILE_LANGUAGE:CXX>:${CMAKE_SOURCE_DIR}/Kainote/platform.h> -Wno-deprecated-declarations -Wno-narrowing -Wno-unused-result)
 add_executable(kainote
@@ -78,7 +91,6 @@ add_executable(kainote
     Kainote/FontCatalogList.cpp
     Kainote/KaiGauge.cpp
     Kainote/KaiPanel.cpp
-    Kainote/Languages.cpp
     Kainote/LineParse.cpp
     Kainote/Provider.cpp
     Kainote/ProviderDummy.cpp
@@ -188,6 +200,8 @@ add_executable(kainote
 )
 target_include_directories(kainote PRIVATE
     ${CMAKE_SOURCE_DIR}/Kainote
+    # wx/msw/*.h shims for wxGTK; kept out of Kainote/ for the Windows build.
+    ${CMAKE_SOURCE_DIR}/cmake/linux-compat
     ${CMAKE_SOURCE_DIR}/Kainote/GFFT
     ${CMAKE_SOURCE_DIR}/Thirdparty/luabins/include
     ${CMAKE_SOURCE_DIR}/Thirdparty/DependencyControl/include
@@ -249,16 +263,15 @@ endif()
 
 # Keep the build tree runnable by copying runtime data next to the executable.
 # Windows embeds PNG RCDATA through resource.rc, but the Linux build loads those
-# resources from files. Translation catalogs are no longer committed: compile
-# Locale/*.po into flat Locale/<lang>.mo (for the options list) and GNU
-# gettext-style Locale/<lang>/LC_MESSAGES/<lang>.mo paths (for wxLocale).
+# resources from files. Translation catalogs are not committed: compile
+# Locale/*.po into Locale/<lang>/LC_MESSAGES/kainote.mo, the layout wx loads.
 add_custom_command(TARGET kainote POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory "${KAINOTE_RUNTIME_DIR}/Locale"
-    COMMAND ${CMAKE_COMMAND}
-            -D SOURCE_LOCALE_DIR="${CMAKE_SOURCE_DIR}/Locale"
-            -D RUNTIME_LOCALE_DIR="${KAINOTE_RUNTIME_DIR}/Locale"
-            -D MSGFMT_EXECUTABLE="${MSGFMT_EXECUTABLE}"
-            -P "${CMAKE_SOURCE_DIR}/cmake/CopyLocaleCatalogs.cmake"
+    COMMAND ${Python3_EXECUTABLE}
+            "${CMAKE_SOURCE_DIR}/tools/compile_catalogs.py"
+            --po-dir "${CMAKE_SOURCE_DIR}/Locale"
+            --out-dir "${KAINOTE_RUNTIME_DIR}/Locale"
+            --msgfmt "${MSGFMT_EXECUTABLE}"
     ${KAINOTE_DICTIONARY_COPY_COMMAND}
     COMMAND ${CMAKE_COMMAND} -E make_directory "${KAINOTE_RUNTIME_DIR}/Kainote"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
@@ -297,6 +310,7 @@ add_custom_target(kainote_linux_package
             -D PACKAGE_BASENAME=${KAINOTE_PACKAGE_BASENAME}
             -D ARCHIVE_PATH=${KAINOTE_PACKAGE_ARCHIVE}
             -D MSGFMT_EXECUTABLE=${MSGFMT_EXECUTABLE}
+            -D Python3_EXECUTABLE=${Python3_EXECUTABLE}
             -D TAR_EXECUTABLE=${TAR_EXECUTABLE}
             -D GZIP_EXECUTABLE=${GZIP_EXECUTABLE}
             -D SYSTEM_DICTIONARY_DIR=${KAINOTE_SYSTEM_DICTIONARY_DIR}
