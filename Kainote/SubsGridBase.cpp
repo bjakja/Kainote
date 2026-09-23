@@ -1120,7 +1120,9 @@ void SubsGrid::ShowEditedLine(int newActive, bool scroll)
 void SubsGrid::SetModified(unsigned char editionType, bool redit, bool dummy, int SetEditBoxLine, bool Scroll)
 {
 	if (file->HasChangesToRecord()){
-		SpellErrors.clear();
+		// an edit box commit already cleared the rows it changed through CopyDialogue
+		if (editionType != EDITBOX_LINE_EDITION)
+			SpellErrors.clear();
 		//wxMutexLocker lock(editionMutex);
 		if (!file->IsModified()){
 			Kai->Toolbar->UpdateId(GLOBAL_SAVE_SUBS, true);
