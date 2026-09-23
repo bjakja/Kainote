@@ -906,13 +906,10 @@ void SubsGrid::PaintD2D(GraphicsContext *gc, int w, int h, int size, int scrows,
 			}
 			//cur = wxRect(posX + 3, posY, GridWidth[j] - 6, GridHeight);
 			//gc->Clip(cur);
-			float centerPos = 0.f;
-			if (isCenter){
-				double fw, fh;
-				gc->GetTextExtent(strings[j], &fw, &fh);
-				centerPos = ((GridWidth[j] - fw) / 2) - 3;
-			}
-			gc->DrawTextU(strings[j], posX + 3 + centerPos, posY + 1);
+			if (isCenter)
+				gc->DrawTextCentered(strings[j], posX, posY + 1, GridWidth[j]);
+			else
+				gc->DrawTextU(strings[j], posX + 3, posY + 1);
 			//gc->ResetClip();
 			posX += GridWidth[j] + 1;
 

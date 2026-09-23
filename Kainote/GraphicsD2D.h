@@ -300,6 +300,14 @@ public:
 	// non virtual functions
 	virtual void StrokeLine(wxDouble x1, wxDouble y1, wxDouble x2, wxDouble y2);
 
+	// draws str centred in the width starting at x
+	virtual void DrawTextCentered(const wxString& str, wxDouble x, wxDouble y, wxDouble width)
+	{
+		wxDouble fw = 0, fh = 0;
+		GetTextExtent(str, &fw, &fh);
+		DrawTextU(str, x + (width - fw) / 2, y);
+	}
+
 	void DrawTextU(const wxString& str, wxDouble x, wxDouble y);
 private:
 	virtual void DoDrawText(const wxString& str, wxDouble x, wxDouble y){};

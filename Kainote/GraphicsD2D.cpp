@@ -119,6 +119,9 @@ GraphicsRenderer* GraphicsRenderer::GetDirect2DRenderer() { static WxGraphicsRen
 #endif
 
 #include <float.h> // for FLT_MAX, FLT_MIN
+#include <map>
+#include <mutex>
+#include <tuple>
 
 #ifndef WX_PRECOMP
 	#include "wx/dc.h"
@@ -2844,7 +2847,7 @@ class wxD2DFontData/* : public GraphicsObjectRefData*/// : public wxD2DManagedGr
 public:
 	wxD2DFontData(wxD2DRenderer* renderer, const wxFont& font, const wxRealPoint& dpi, const wxColor& color);
 
-	wxCOMPtr<IDWriteTextLayout> CreateTextLayout(const wxString& text) const;
+	wxCOMPtr<IDWriteTextLayout> CreateTextLayout(const wxString& text, FLOAT maxWidth = FLT_MAX) const;
 
 	wxD2DBrushData& GetBrushData() { return m_brushData; }
 
@@ -2852,7 +2855,16 @@ public:
 
 	wxCOMPtr<IDWriteFont> GetFont() { return m_font; }
 
+	void SetColour(wxD2DRenderer* renderer, const wxColour& color)
+	{
+		m_brushData = wxD2DBrushData(renderer, wxBrush(color));
+	}
+
+	static void ClearFormatCache();
+
 private:
+	void CreateFormat(const wxFont& font, const wxRealPoint& dpi);
+
 	// The native, device-independent font object
 	wxCOMPtr<IDWriteFont> m_font;
 
@@ -2867,9 +2879,39 @@ private:
 	bool m_strikethrough;
 };
 
+// text formats are device independent, so every context shares them
+struct CachedFontFormat
+{
+	wxCOMPtr<IDWriteFont> font;
+	wxCOMPtr<IDWriteTextFormat> format;
+};
+static std::mutex gs_fontFormatMutex;
+static std::map<wxString, CachedFontFormat> gs_fontFormats;
+
+void wxD2DFontData::ClearFormatCache()
+{
+	std::lock_guard<std::mutex> lock(gs_fontFormatMutex);
+	gs_fontFormats.clear();
+}
+
 wxD2DFontData::wxD2DFontData(wxD2DRenderer* renderer, const wxFont& font, const wxRealPoint& dpi, const wxColor& color) :
 	/*GraphicsObjectRefData(renderer), */m_brushData(renderer, wxBrush(color)),
 	m_underlined(font.GetUnderlined()), m_strikethrough(font.GetStrikethrough())
+{
+	wxString key = font.GetNativeFontInfoDesc() + wxString::Format(L"|%g", dpi.y);
+	std::lock_guard<std::mutex> lock(gs_fontFormatMutex);
+	auto it = gs_fontFormats.find(key);
+	if (it != gs_fontFormats.end()) {
+		m_font = it->second.font;
+		m_textFormat = it->second.format;
+		return;
+	}
+	CreateFormat(font, dpi);
+	if (m_font && m_textFormat)
+		gs_fontFormats[key] = CachedFontFormat{ m_font, m_textFormat };
+}
+
+void wxD2DFontData::CreateFormat(const wxFont& font, const wxRealPoint& dpi)
 {
 	HRESULT hr;
 
@@ -2939,9 +2981,8 @@ wxD2DFontData::wxD2DFontData(wxD2DRenderer* renderer, const wxFont& font, const 
 	//wxCHECK_HRESULT_RET(hr);
 }
 
-wxCOMPtr<IDWriteTextLayout> wxD2DFontData::CreateTextLayout(const wxString& text) const
+wxCOMPtr<IDWriteTextLayout> wxD2DFontData::CreateTextLayout(const wxString& text, FLOAT maxWidth) const
 {
-	static const FLOAT MAX_WIDTH = FLT_MAX;
 	static const FLOAT MAX_HEIGHT = FLT_MAX;
 
 	HRESULT hr;
@@ -2952,7 +2993,7 @@ wxCOMPtr<IDWriteTextLayout> wxD2DFontData::CreateTextLayout(const wxString& text
 		text.c_str(),
 		text.length(),
 		m_textFormat,
-		MAX_WIDTH,
+		maxWidth,
 		MAX_HEIGHT,
 		&textLayout);
 	wxCHECK2_HRESULT_RET(hr, wxCOMPtr<IDWriteTextLayout>(NULL));
@@ -3555,6 +3596,7 @@ public:
 protected:
 	void DoDrawText(const wxString&, wxDouble, wxDouble) {}
 	wxD2DFontData *m_font = NULL;
+	wxFont m_fontSource;
 	wxD2DRenderer *renderer;
 };
 
@@ -3700,6 +3742,10 @@ public:
 
 	void SetFont(const wxFont& font, const wxColour& col);
 
+	void StrokeLine(wxDouble x1, wxDouble y1, wxDouble x2, wxDouble y2) override;
+
+	void DrawTextCentered(const wxString& str, wxDouble x, wxDouble y, wxDouble width) override;
+
 	void PushState();
 
 	void PopState();
@@ -3715,8 +3761,6 @@ public:
 
 	bool ShouldOffset() const;
 
-	void SetPen(const wxD2DPenData& pen);
-
 	void Flush();
 
 	void GetDPI(wxDouble* dpiX, wxDouble* dpiY) const;
@@ -3730,6 +3774,10 @@ private:
 	void Init();
 
 	void DoDrawText(const wxString& str, wxDouble x, wxDouble y);
+
+	void DrawLayout(IDWriteTextLayout* layout, wxDouble x, wxDouble y);
+
+	wxD2DBrushData* SolidBrush(const wxColour& colour);
 
 	void EnsureInitialized();
 
@@ -3786,9 +3834,16 @@ private:
 	wxDouble m_width,
 		m_height;
 
+	// m_pen and m_brush point into the caches below, or at m_ownedBrush
 	wxD2DPenData * m_pen = NULL;
 	wxD2DBrushData * m_brush = NULL;
+	wxD2DBrushData * m_ownedBrush = NULL;
+	std::map<wxUint32, wxD2DBrushData*> m_brushCache;
+	std::map<std::tuple<wxUint32, double, int>, wxD2DPenData*> m_penCache;
 	wxD2DFontData * m_font = NULL;
+	wxFont m_fontSource;
+	wxString m_fontKey;
+	wxD2DBrushData * m_textBrush = NULL;
 	wxAntialiasMode m_antialias;
 	wxCompositionMode m_composition;
 	wxInterpolationQuality m_interpolation;
@@ -3927,14 +3982,14 @@ wxD2DContext::~wxD2DContext()
 
 	ReleaseResources();
 
-	if (m_pen)
-		delete m_pen;
+	for (auto &pen : m_penCache)
+		delete pen.second;
 
-	if (m_brush)
-		delete m_brush;
+	for (auto &brush : m_brushCache)
+		delete brush.second;
 
-	if (m_font)
-		delete m_font;
+	delete m_ownedBrush;
+	delete m_font;
 }
 
 ID2D1RenderTarget* wxD2DContext::GetRenderTarget() const
@@ -4527,16 +4582,50 @@ void wxD2DContext::DoDrawText(const wxString& str, wxDouble x, wxDouble y)
 	if (m_composition == wxCOMPOSITION_DEST)
 		return;
 
-	//wxD2DFontData* fontData = m_font;
-	//fontData->GetBrushData().Bind(this);
-	m_font->GetBrushData().Bind(this);
 	wxCOMPtr<IDWriteTextLayout> textLayout = m_font->CreateTextLayout(str);
+	DrawLayout(textLayout, x, y);
+}
 
-	// Render the text
-	GetRenderTarget()->DrawTextLayout(
-		D2D1::Point2F(x, y),
-		textLayout,
-		m_font->GetBrushData().GetBrush());
+void wxD2DContext::DrawLayout(IDWriteTextLayout* layout, wxDouble x, wxDouble y)
+{
+	if (!layout)
+		return;
+
+	wxD2DBrushData* brush = m_textBrush ? m_textBrush : &m_font->GetBrushData();
+	brush->Bind(this);
+	GetRenderTarget()->DrawTextLayout(D2D1::Point2F(x, y), layout, brush->GetBrush());
+}
+
+void wxD2DContext::DrawTextCentered(const wxString& str, wxDouble x, wxDouble y, wxDouble width)
+{
+	if (!m_font || m_composition == wxCOMPOSITION_DEST)
+		return;
+
+	if (width <= 0) {
+		DoDrawText(str, x, y);
+		return;
+	}
+	wxCOMPtr<IDWriteTextLayout> textLayout = m_font->CreateTextLayout(str, (FLOAT)width);
+	if (!textLayout)
+		return;
+	textLayout->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
+	textLayout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+	DrawLayout(textLayout, x, y);
+}
+
+void wxD2DContext::StrokeLine(wxDouble x1, wxDouble y1, wxDouble x2, wxDouble y2)
+{
+	if (m_composition == wxCOMPOSITION_DEST || !m_pen)
+		return;
+
+	wxD2DOffsetHelper helper(this);
+
+	EnsureInitialized();
+	AdjustRenderTargetSize();
+
+	m_pen->Bind(this);
+	GetRenderTarget()->DrawLine(D2D1::Point2F(x1, y1), D2D1::Point2F(x2, y2),
+		m_pen->GetBrush(), m_pen->GetWidth(), m_pen->GetStrokeStyle());
 }
 
 void wxD2DContext::EnsureInitialized()
@@ -4558,19 +4647,6 @@ void wxD2DContext::EnsureInitialized()
 	else
 	{
 		m_cachedRenderTarget = m_renderTargetHolder->GetD2DResource();
-	}
-}
-
-void wxD2DContext::SetPen(const wxD2DPenData& pen)
-{
-	m_pen = new wxD2DPenData(pen);
-
-	if (m_pen)
-	{
-		EnsureInitialized();
-
-		//wxD2DPenData* penData = wxGetD2DPenData(pen);
-		m_pen->Bind(this);
 	}
 }
 
@@ -4848,26 +4924,58 @@ private:
 //wxIMPLEMENT_DYNAMIC_CLASS(wxD2DRenderer,wxGraphicsRenderer);
 
 void wxNullContext::SetFont(const wxFont& font, const wxColour& col){
+	if (m_font && font.IsSameAs(m_fontSource))
+		return;
 	wxDELETE(m_font);
 	m_font = renderer->CreateFont(font, col);
+	m_fontSource = font;
 }
 
 GraphicsPathData * wxD2DContext::CreatePath(){ return m_renderer->CreatePath(); };
 
 void wxD2DContext::SetPen(const wxPen& pen, double width){
-	wxGraphicsPenInfo info(pen.GetColour(), width, pen.GetStyle());
-	wxDELETE(m_pen);
-	m_pen = m_renderer->CreatePen(info);
+	if (!pen.IsOk() || pen.GetStyle() == wxPENSTYLE_TRANSPARENT) {
+		m_pen = NULL;
+		return;
+	}
+	wxD2DPenData*& cached = m_penCache[std::make_tuple(pen.GetColour().GetRGBA(), width, (int)pen.GetStyle())];
+	if (!cached)
+		cached = m_renderer->CreatePen(wxGraphicsPenInfo(pen.GetColour(), width, pen.GetStyle()));
+	m_pen = cached;
+}
+
+wxD2DBrushData* wxD2DContext::SolidBrush(const wxColour& colour){
+	wxD2DBrushData*& cached = m_brushCache[colour.GetRGBA()];
+	if (!cached)
+		cached = m_renderer->CreateBrush(wxBrush(colour));
+	return cached;
 }
 
 void wxD2DContext::SetBrush(const wxBrush& brush){
-	wxDELETE(m_brush);
-	m_brush = m_renderer->CreateBrush(brush);
+	if (!brush.IsOk() || brush.GetStyle() == wxBRUSHSTYLE_TRANSPARENT) {
+		m_brush = NULL;
+		return;
+	}
+	if (brush.GetStyle() == wxBRUSHSTYLE_SOLID) {
+		m_brush = SolidBrush(brush.GetColour());
+		return;
+	}
+	wxDELETE(m_ownedBrush);
+	m_ownedBrush = m_renderer->CreateBrush(brush);
+	m_brush = m_ownedBrush;
 }
 
 void wxD2DContext::SetFont(const wxFont& font, const wxColour& col){
+	m_textBrush = col.IsOk() ? SolidBrush(col) : NULL;
+	if (m_font && font.IsSameAs(m_fontSource))
+		return;
+	wxString key = font.GetNativeFontInfoDesc();
+	m_fontSource = font;
+	if (m_font && key == m_fontKey)
+		return;
 	wxDELETE(m_font);
 	m_font = m_renderer->CreateFont(font, col);
+	m_fontKey = key;
 }
 
 GraphicsBitmapData *wxD2DContext::CreateBitmap(const wxBitmap& bmp) const
@@ -5172,6 +5280,8 @@ public:
 			gs_WICImagingFactory->Release();
 			gs_WICImagingFactory = NULL;
 		}
+
+		wxD2DFontData::ClearFormatCache();
 
 		if ( gs_IDWriteFactory )
 		{
