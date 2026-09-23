@@ -4704,26 +4704,46 @@ void wxD2DContext::StrokeLine(wxDouble x1, wxDouble y1, wxDouble x2, wxDouble y2
 		m_pen->GetBrush(), m_pen->GetWidth(), m_pen->GetStrokeStyle());
 }
 
+// A render target that draws nowhere, for when the real one cannot be made,
+// so painting skips a frame instead of waiting for it forever.
+static ID2D1RenderTarget* FallbackRenderTarget(ID2D1Factory* factory)
+{
+	static wxCOMPtr<ID2D1DCRenderTarget> target;
+	if (!target) {
+		HDC screen = ::GetDC(nullptr);
+		HDC dc = ::CreateCompatibleDC(screen);
+		::SelectObject(dc, ::CreateCompatibleBitmap(screen, 1, 1));
+		::ReleaseDC(nullptr, screen);
+		D2D1_RENDER_TARGET_PROPERTIES props = D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_SOFTWARE,
+			D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE));
+		RECT rect = { 0, 0, 1, 1 };
+		if (FAILED(factory->CreateDCRenderTarget(&props, &target)) || FAILED(target->BindDC(dc, &rect)))
+			target.reset();
+	}
+	return target;
+}
+
 void wxD2DContext::EnsureInitialized()
 {
-	if (!m_renderTargetHolder->IsResourceAcquired())
-	{
-		//loop it avoid to crash when target is null cause of context problem
-		//but only wait when it really is null: sleeping on the success path
-		//cost 10 ms on every single repaint
-		while (!m_cachedRenderTarget) {
-			m_cachedRenderTarget = m_renderTargetHolder->GetD2DResource();
-			if (m_cachedRenderTarget)
-				break;
-			Sleep(10);
-		}
-		GetRenderTarget()->GetTransform(&m_initTransform);
-		GetRenderTarget()->BeginDraw();
-	}
-	else
+	if (m_renderTargetHolder->IsResourceAcquired())
 	{
 		m_cachedRenderTarget = m_renderTargetHolder->GetD2DResource();
+		return;
 	}
+	// already drawing into the fallback
+	if (m_cachedRenderTarget)
+		return;
+	for (int attempt = 0; attempt < 5 && !m_cachedRenderTarget; attempt++) {
+		m_cachedRenderTarget = m_renderTargetHolder->GetD2DResource();
+		if (!m_cachedRenderTarget)
+			Sleep(10);
+	}
+	if (!m_cachedRenderTarget)
+		m_cachedRenderTarget = FallbackRenderTarget(m_direct2dFactory);
+	if (!m_cachedRenderTarget)
+		return;
+	GetRenderTarget()->GetTransform(&m_initTransform);
+	GetRenderTarget()->BeginDraw();
 }
 
 void wxD2DContext::AdjustRenderTargetSize()

@@ -312,26 +312,17 @@ void RendererDirectShow::Render(bool redrawSubsOnFrame, bool wait)
 
 	if (m_DeviceLost)
 	{
-		if (FAILED(hr = m_D3DDevice->TestCooperativeLevel()))
+		if (m_D3DDevice)
+			hr = m_D3DDevice->TestCooperativeLevel();
+		if (m_D3DDevice && FAILED(hr) && D3DERR_DEVICENOTRESET != hr)
+			return;
+		if (!m_D3DDevice || FAILED(hr))
 		{
-			if (D3DERR_DEVICELOST == hr ||
-				D3DERR_DRIVERINTERNALERROR == hr){
-				return;
-			}
-
-			if (D3DERR_DEVICENOTRESET == hr)
 			{
 				Clear(true);
-				int i = 0;
-				while (!InitDX()) {
-					Sleep(500);
-					if (i > 10) {
-						//cannot render without initialized DX
-						//return when device will be active again it should work after refresh.
-						return;
-					}
-					i++;
-				}
+				// try again at the next render rather than stalling this one
+				if (!InitDX())
+					return;
 				RecreateSurface();
 				if (m_Visual){
 					m_Visual->SizeChanged(wxRect(m_BackBufferRect.left, m_BackBufferRect.top,

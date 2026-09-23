@@ -563,10 +563,16 @@ void VideoBox::OnMouseEvent(wxMouseEvent& event)
 	}
 
 	if (m_IsFullscreen){
-		if (m_ArrowEater && event.Moving() && !event.ButtonDown()){ 
-			Sleep(200); 
-			m_ArrowEater = false; 
-			return; 
+		if (m_ArrowEater && event.Moving() && !event.ButtonDown()){
+			// ignore the moves of the first 200 ms without blocking the UI thread
+			wxLongLong now = wxGetLocalTimeMillis();
+			if (m_ArrowEaterUntil == 0)
+				m_ArrowEaterUntil = now + 200;
+			if (now < m_ArrowEaterUntil)
+				return;
+			m_ArrowEater = false;
+			m_ArrowEaterUntil = 0;
+			return;
 		}
 		m_FullScreenWindow->GetClientSize(&w, &h);
 		bool onFullVideo = m_Y < h - m_PanelHeight;

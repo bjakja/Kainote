@@ -194,6 +194,8 @@ private:
 	VideoSlider* m_SeekingSlider;
 	wxWindow* m_VideoPanel;
 	bool m_ArrowEater;
+	// when the mouse moves swallowed after hiding the cursor end
+	wxLongLong m_ArrowEaterUntil = 0;
 	bool m_blockRender;
 	wxMutex vbmutex;
 	wxMutex nextmutex;
