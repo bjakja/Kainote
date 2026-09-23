@@ -180,11 +180,10 @@ bool RendererFFMS2::DrawTexture(unsigned char *nframe, bool copy)
 
 
 	m_SubsProvider->Draw(fdata, m_Time);
-#ifdef byvertices
-	HR(m_MainSurface->LockRect(&d3dlr, 0, 0), _("Cannot lock texture buffer"));//D3DLOCK_NOSYSLOCK
-#else
-	HR(m_MainSurface->LockRect(&d3dlr, 0, D3DLOCK_NOSYSLOCK), _("Cannot lock texture buffer"));
-#endif
+	IDirect3DSurface9 *upload = m_UploadSurfaces[m_UploadIndex];
+	if (!upload)
+		return false;
+	HR(upload->LockRect(&d3dlr, 0, D3DLOCK_NOSYSLOCK), _("Cannot lock texture buffer"));
 	texbuf = static_cast<unsigned char*>(d3dlr.pBits);
 
 	diff = d3dlr.Pitch - (m_Width*bytes);
@@ -214,7 +213,11 @@ bool RendererFFMS2::DrawTexture(unsigned char *nframe, bool copy)
 		KaiLog(wxString::Format(L"bad pitch diff %i pitch %i dxpitch %i", diff, m_Pitch, d3dlr.Pitch));
 	}
 
-	HR(m_MainSurface->UnlockRect(), _("Cannot unlock texture buffer"));
+	HR(upload->UnlockRect(), _("Cannot unlock texture buffer"));
+	upload->AddRef();
+	SAFE_RELEASE(m_MainSurface);
+	m_MainSurface = upload;
+	m_UploadIndex ^= 1;
 
 	return true;
 }
@@ -623,9 +626,20 @@ bool RendererFFMS2::InitRendererDX()
 #ifndef byvertices
 	HR(m_D3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &m_BlackBarsSurface), _("Cannot create surface"));
 
-	HR(m_D3DDevice->CreateOffscreenPlainSurface(m_Width, m_Height, m_D3DFormat, D3DPOOL_DEFAULT, &m_MainSurface, 0),
-		_("Cannot create plain surface"));//D3DPOOL_DEFAULT
+	for (IDirect3DSurface9 *&surface : m_UploadSurfaces) {
+		HR(m_D3DDevice->CreateOffscreenPlainSurface(m_Width, m_Height, m_D3DFormat, D3DPOOL_DEFAULT, &surface, 0),
+			_("Cannot create plain surface"));
+	}
+	m_UploadIndex = 0;
+	m_MainSurface = m_UploadSurfaces[1];
+	m_MainSurface->AddRef();
 
 #endif
 	return true;
+}
+
+void RendererFFMS2::ClearObject()
+{
+	SAFE_RELEASE(m_UploadSurfaces[0]);
+	SAFE_RELEASE(m_UploadSurfaces[1]);
 }

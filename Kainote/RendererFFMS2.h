@@ -70,8 +70,13 @@ public:
 		}
 	}
 	bool InitRendererDX();
+	void ClearObject() override;
 	Provider* GetFFMS2();
 	Provider *m_FFMS2 = nullptr;
+	// frames alternate between these, so the one the GPU may still be
+	// reading is never locked; m_MainSurface holds the last one filled
+	IDirect3DSurface9 *m_UploadSurfaces[2] = { nullptr, nullptr };
+	int m_UploadIndex = 0;
 #ifndef _WIN32
 	// Frame-accurate playback driver; the shared software present (buffers,
 	// QueueLinuxRender/PresentLinuxFrame/RenderToDc) lives in RendererVideo.
