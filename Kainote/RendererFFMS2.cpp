@@ -115,11 +115,6 @@ RendererFFMS2::~RendererFFMS2()
 	m_State = None;
 	SAFE_DELETE(m_FFMS2);
 }
-//made function to destroy it before FFMS2
-void RendererFFMS2::DestroyFFMS2()
-{
-	//SAFE_DELETE(m_FFMS2);
-}
 
 bool RendererFFMS2::DrawTexture(unsigned char *nframe, bool copy)
 {

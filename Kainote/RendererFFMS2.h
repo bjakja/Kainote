@@ -81,7 +81,6 @@ public:
 	std::atomic_bool m_LinuxPlaybackStop{ false };
 #endif
 protected:
-	void DestroyFFMS2();
 #ifndef _WIN32
 	void StartLinuxPlaybackThread();
 	void StopLinuxPlaybackThread();
