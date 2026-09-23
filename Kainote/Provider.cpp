@@ -23,6 +23,7 @@
 #include "AudioBox.h"
 #include "VisualDrawingShapes.h"
 #include "Notebook.h"
+#include "FrameQueue.h"
 
 
 Provider::Provider(const wxString& filename, RendererFFMS2* renderer)
@@ -136,20 +137,44 @@ void Provider::RunPlaybackThread()
 		if (wait_result == WAIT_OBJECT_0 + 0)
 		{
 			unsigned char* buff = m_renderer->m_FrameBuffer;
+			size_t frameBytes = (size_t)m_renderer->m_Height * (size_t)m_renderer->m_Pitch;
+			// a second thread decodes a few frames ahead, so a slow frame
+			// does not hold up the one being shown
+			FrameQueue queue(4, frameBytes, m_numFrames);
+			queue.Reset(m_renderer->m_Frame);
+			std::thread decoder([this, &queue]() {
+				int frame;
+				while (unsigned char *slot = queue.NextToDecode(&frame))
+					queue.Decoded(slot, FetchPlaybackFrame(frame, slot));
+			});
+			struct StopDecoder {
+				FrameQueue &queue;
+				std::thread &decoder;
+				~StopDecoder() { queue.Stop(); decoder.join(); }
+			} stopDecoder{ queue, decoder };
+
 			while (1) {
 				if (WaitForSingleObject(m_eventKillSelf, 0) == WAIT_OBJECT_0) { return; }
-				if (WaitForSingleObject(m_eventSetPosition, 0) == WAIT_OBJECT_0)
+				if (WaitForSingleObject(m_eventSetPosition, 0) == WAIT_OBJECT_0) {
 					ApplyPendingSeek();
+					queue.Reset(m_renderer->m_Frame);
+				}
 
 				const Timebase &timebase = m_renderer->GetTimebase();
-				int frame = m_renderer->m_Frame;
-				if (!FetchPlaybackFrame(frame, buff)) {
-					// Retrying a failing fetch would spin the thread without ever
-					// looking at the stop or kill event again, so end playback.
+				FrameQueue::Result decoded = queue.Take(m_renderer->m_Frame);
+				if (!decoded.slot) {
+					// a failed frame or the end: either way nothing more to show
 					wxCommandEvent* evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED, ID_END_OF_STREAM);
 					wxQueueEvent(m_renderer->videoControl, evt);
 					break;
 				}
+				int frame = decoded.frame;
+				if (frame != m_renderer->m_Frame) {
+					m_renderer->m_Frame = frame;
+					m_renderer->m_Time = timebase.MsAt(frame);
+				}
+				memcpy(buff, decoded.slot, frameBytes);
+				queue.Release(decoded.slot);
 
 				m_renderer->DrawTexture(buff);
 				m_renderer->Render(false);
