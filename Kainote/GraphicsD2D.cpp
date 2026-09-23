@@ -3031,6 +3031,11 @@ public:
 	{
 	}
 
+	// the device went away, so a render target kept for reuse must not be reused
+	virtual void DiscardReusable()
+	{
+	}
+
 	// We use this method instead of the one provided by the native render target
 	// because Direct2D 1.0 render targets do not accept a composition mode
 	// parameter, while the device context in Direct2D 1.1 does. This way, we make
@@ -3510,6 +3515,16 @@ private:
 };
 #endif
 
+// Painting creates a context over a memory DC many times a second, so the DC
+// render targets are kept and bound to each new DC instead of being made again.
+// One per alpha mode, used by one context at a time (all on the UI thread).
+struct ReusableDCRenderTarget
+{
+	wxCOMPtr<ID2D1DCRenderTarget> target;
+	bool inUse = false;
+};
+static ReusableDCRenderTarget gs_reusableDCTargets[2];
+
 class wxD2DDCRenderTargetResourceHolder : public wxD2DRenderTargetResourceHolder
 {
 public:
@@ -3518,18 +3533,50 @@ public:
 	{
 	}
 
+	void ReleaseResource() override
+	{
+		if (m_reusable) {
+			m_reusable->inUse = false;
+			m_reusable = nullptr;
+		}
+		wxD2DRenderTargetResourceHolder::ReleaseResource();
+	}
+
+	void DiscardReusable() override
+	{
+		if (m_reusable)
+			m_reusable->target.reset();
+	}
+
 protected:
 	void DoAcquireResource() override
 	{
 		wxCOMPtr<ID2D1DCRenderTarget> renderTarget;
-		D2D1_RENDER_TARGET_PROPERTIES renderTargetProperties = D2D1::RenderTargetProperties(
-			D2D1_RENDER_TARGET_TYPE_DEFAULT,
-			D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, m_alphaMode));
+		ReusableDCRenderTarget &reusable = gs_reusableDCTargets[m_alphaMode == D2D1_ALPHA_MODE_PREMULTIPLIED ? 1 : 0];
+		if (reusable.target && !reusable.inUse && wxIsMainThread()) {
+			renderTarget = reusable.target;
+			// back to the state of a new render target
+			renderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+			renderTarget->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_DEFAULT);
+			renderTarget->SetTags(0, 0);
+		}
+		else {
+			D2D1_RENDER_TARGET_PROPERTIES renderTargetProperties = D2D1::RenderTargetProperties(
+				D2D1_RENDER_TARGET_TYPE_DEFAULT,
+				D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, m_alphaMode));
 
-		HRESULT hr = m_factory->CreateDCRenderTarget(
-			&renderTargetProperties,
-			&renderTarget);
-		//wxCHECK_HRESULT_RET(hr);
+			HRESULT hr = m_factory->CreateDCRenderTarget(
+				&renderTargetProperties,
+				&renderTarget);
+			if (FAILED(hr))
+				return;
+			if (!reusable.target && wxIsMainThread())
+				reusable.target = renderTarget;
+		}
+		if (renderTarget == reusable.target) {
+			reusable.inUse = true;
+			m_reusable = &reusable;
+		}
 
 		// We want draw on the entire device area.
 		// GetClipBox() retrieves logical size of DC
@@ -3538,8 +3585,7 @@ protected:
 		int status = ::GetClipBox(m_hdc, &r);
 		//wxCHECK_RET( status != ERROR, wxS("Error retrieving DC dimensions") );
 
-		hr = renderTarget->BindDC(m_hdc, &r);
-		//wxCHECK_HRESULT_RET(hr);
+		renderTarget->BindDC(m_hdc, &r);
 		renderTarget->SetTransform(
 					   D2D1::Matrix3x2F::Translation(-r.left, -r.top));
 
@@ -3550,6 +3596,7 @@ private:
 	ID2D1Factory* m_factory;
 	HDC m_hdc;
 	D2D1_ALPHA_MODE m_alphaMode;
+	ReusableDCRenderTarget* m_reusable = nullptr;
 };
 
 // The null context has no state of its own and does nothing.
@@ -3981,7 +4028,8 @@ wxD2DContext::~wxD2DContext()
 	}
 
 	HRESULT result = GetRenderTarget()->EndDraw();
-	//wxCHECK_HRESULT_RET(result);
+	if (result == D2DERR_RECREATE_TARGET)
+		m_renderTargetHolder->DiscardReusable();
 
 	ReleaseResources();
 
@@ -5310,6 +5358,8 @@ public:
 		}
 
 		wxD2DFontData::ClearFormatCache();
+		for (ReusableDCRenderTarget &reusable : gs_reusableDCTargets)
+			reusable.target.reset();
 
 		if ( gs_IDWriteFactory )
 		{
