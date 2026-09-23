@@ -33,6 +33,7 @@ public:
 private:
 	static unsigned int __stdcall DummyProc(void* cls);
 	void Processing();
+	bool FetchPlaybackFrame(unsigned char* buffer) override;
 	void GenerateTimecodes();
 	void GenerateFrame();
 	bool ParseDummyData(const wxString& data);

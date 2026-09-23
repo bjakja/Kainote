@@ -70,6 +70,10 @@ public:
 	}
 protected:
 	Provider(const wxString& filename, RendererVideo* renderer);
+	// the playback thread: plays and seeks on request until killed
+	void RunPlaybackThread();
+	// puts the renderer's current frame in buffer; false ends playback
+	virtual bool FetchPlaybackFrame(unsigned char* buffer) { return false; }
 	std::atomic<bool> audioNotInitialized{ true };
 	std::atomic<float> m_audioProgress{ 0 };
 	RendererVideo* m_renderer = nullptr;

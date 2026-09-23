@@ -70,6 +70,7 @@ private:
 	bool CopyCurrentFrame(unsigned char* buffer, bool forceFetch);
 	static unsigned int __stdcall FFMS2Proc(void* cls);
 	void Processing();
+	bool FetchPlaybackFrame(unsigned char* buffer) override;
 	std::atomic<bool> m_stopLoadingAudio{ false };
 	wxCriticalSection m_blockAudio;
 	wxCriticalSection m_blockFrame;

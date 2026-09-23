@@ -91,6 +91,15 @@ ProviderFFMS2::ProviderFFMS2(const wxString& filename, RendererVideo* renderer,
 
 }
 
+bool ProviderFFMS2::FetchPlaybackFrame(unsigned char* buffer)
+{
+	if (CopyCurrentFrame(buffer, true))
+		return true;
+	KaiLogDebug(wxString::Format(_("Cannot get frame %i: %s"),
+		m_renderer->m_Frame, wxString::FromUTF8(m_errInfo.Buffer)));
+	return false;
+}
+
 unsigned int __stdcall ProviderFFMS2::FFMS2Proc(void* cls)
 {
 	((ProviderFFMS2*)cls)->Processing();
@@ -99,12 +108,6 @@ unsigned int __stdcall ProviderFFMS2::FFMS2Proc(void* cls)
 
 void ProviderFFMS2::Processing()
 {
-	HANDLE events_to_wait[] = {
-		m_eventStartPlayback,
-		m_eventSetPosition,
-		m_eventKillSelf
-	};
-
 	m_success = (Init() == 1);
 
 	progress->EndModal();
@@ -121,85 +124,8 @@ void ProviderFFMS2::Processing()
 		return;
 	}
 	m_framePlane = static_cast<int>(framePlane);
-	int tdiff = 0;
-
 	SetEvent(m_eventComplete);
-
-	while (1) {
-		DWORD wait_result = WaitForMultipleObjects(sizeof(events_to_wait) / sizeof(HANDLE), events_to_wait, FALSE, INFINITE);
-
-		if (wait_result == WAIT_OBJECT_0 + 0)
-		{
-			unsigned char* buff = m_renderer->m_FrameBuffer;
-			int acttime;
-			while (1) {
-				if (WaitForSingleObject(m_eventKillSelf, 0) == WAIT_OBJECT_0) { return; }
-
-				if (m_renderer->m_Frame != m_lastFrame) {
-					m_renderer->m_Time = m_timebase.MsAt(m_renderer->m_Frame);
-					m_lastFrame = m_renderer->m_Frame;
-				}
-				if (!CopyCurrentFrame(buff, true)) {
-					// Nothing in this pass advances the frame, so retrying the same
-					// failing fetch just spins the thread at full speed and never
-					// looks at the stop or the kill event again. End the playback
-					// instead and go back to waiting for the next request.
-					KaiLogDebug(wxString::Format(_("Cannot get frame %i: %s"),
-						m_renderer->m_Frame, wxString::FromUTF8(m_errInfo.Buffer)));
-					wxCommandEvent* evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED, ID_END_OF_STREAM);
-					wxQueueEvent(m_renderer->videoControl, evt);
-					break;
-				}
-
-				m_renderer->DrawTexture(buff);
-				m_renderer->Render(false);
-
-				if (m_renderer->m_Time >= m_renderer->m_PlayEndTime || 
-					m_renderer->m_Frame >= m_numFrames - 1) {
-					wxCommandEvent* evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED, ID_END_OF_STREAM);
-					wxQueueEvent(m_renderer->videoControl, evt);
-					break;
-				}
-				else if (m_renderer->m_State != Playing) {
-					break;
-				}
-				acttime = timeGetTime() - m_renderer->m_LastTime;
-
-				m_renderer->m_Frame++;
-				m_renderer->m_Time = m_timebase.MsAt(m_renderer->m_Frame);
-
-				tdiff = m_renderer->m_Time - acttime;
-
-				if (tdiff > 0) { Sleep(tdiff); }
-				else if (tdiff < -20) {
-					while (1) {
-						if (m_renderer->m_Frame >= m_numFrames) {
-							m_renderer->m_Frame = m_numFrames - 1;
-							m_renderer->m_Time = m_renderer->m_PlayEndTime;
-							break;
-						}
-						int frameTime = m_timebase.MsAt(m_renderer->m_Frame);
-						if (frameTime >= acttime || frameTime >= m_renderer->m_PlayEndTime) {
-							break;
-						}
-						else {
-							m_renderer->m_Frame++;
-						}
-					}
-
-				}
-
-			}
-		}
-		else if (wait_result == WAIT_OBJECT_0 + 1) {
-			//entire seeking have to be in this thread or subtitles will out of sync
-			m_renderer->SetFFMS2Position(m_changedTime, m_isStartTime, m_refreshAudio);
-		}
-		else {
-			break;
-		}
-
-	}
+	RunPlaybackThread();
 }
 
 
