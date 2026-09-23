@@ -529,6 +529,7 @@ void DirectSoundPlayer2Thread::Run()
 	audioBuffer7 = nullptr;
 
 	if (!audioBuffer) {
+		defaultPlayback->Release();
 		SetEvent(error_happened);
 		return;
 	}
@@ -574,21 +575,13 @@ void DirectSoundPlayer2Thread::Run()
 					KaiLogSilent("Could not reset playback buffer cursor before filling first buffer.");
 
 				HRESULT res = audioBuffer->Lock(buffer_offset, 0, (void **) &buf, &buf_size, 0, 0, DSBLOCK_ENTIREBUFFER);
-				while (FAILED(res)) // yes, while, so I can break out of it without a goto!
+				if (res == DSERR_BUFFERLOST && SUCCEEDED(audioBuffer->Restore()))
+					res = audioBuffer->Lock(buffer_offset, 0, (void **)&buf, &buf_size, 0, 0, DSBLOCK_ENTIREBUFFER);
+				if (FAILED(res))
 				{
-					if (res == DSERR_BUFFERLOST)
-					{
-						// Try to regain the buffer
-						if (SUCCEEDED(audioBuffer->Restore()) &&
-							SUCCEEDED(audioBuffer->Lock(buffer_offset, 0, ((void**) &buf), &buf_size, 0, 0, DSBLOCK_ENTIREBUFFER)))
-						{
-							break;
-						}
-
-						KaiLogSilent("Lost buffer and could not restore it.");
-					}
-
 					KaiLogSilent("Could not lock buffer for playback.");
+					playback_should_be_running = false;
+					break;
 				}
 
 				// Clear the buffer in case we can't fill it completely
@@ -713,33 +706,20 @@ do_fill_buffer:
 					//assert((unsigned long)bytes_needed <= bufSize);
 
 					HRESULT res = audioBuffer->Lock(buffer_offset, bytes_needed, (void** )&buf1, &buf1sz, (void** )&buf2, &buf2sz, 0);
-					switch (res)
+					if (res == DSERR_BUFFERLOST)
 					{
-					case DSERR_BUFFERLOST:
-						// Try to regain the buffer
-						// When the buffer was lost the entire contents was lost too, so we have to start over
-						if (SUCCEEDED(audioBuffer->Restore()) &&
-							SUCCEEDED(audioBuffer->Lock(0, bufSize, (void**)&buf1, &buf1sz, (void**)&buf2, &buf2sz, 0)) &&
-							SUCCEEDED(audioBuffer->Play(0, 0, DSBPLAY_LOOPING)))
-						{
-							KaiLogDebug("DirectSoundPlayer2: Lost and restored buffer");
-							break;
-						}
-						KaiLogDebug("Lost buffer and could not restore it.");
-
-					case DSERR_INVALIDPARAM:
-						KaiLogDebug("Invalid parameters to IDirectSoundBuffer8::Lock().");
-
-					case DSERR_INVALIDCALL:
-						KaiLogDebug("Invalid call to IDirectSoundBuffer8::Lock().");
-
-					case DSERR_PRIOLEVELNEEDED:
-						KaiLogDebug("Incorrect priority level set on DirectSoundBuffer8 object.");
-
-					default:
-						if (FAILED(res))
-							KaiLogDebug("Could not lock , unknown error.");
-							break;
+						// the contents went with the buffer, so start filling it over
+						buffer_offset = 0;
+						res = audioBuffer->Restore();
+						if (SUCCEEDED(res))
+							res = audioBuffer->Lock(0, bufSize, (void**)&buf1, &buf1sz, (void**)&buf2, &buf2sz, 0);
+						if (SUCCEEDED(res))
+							res = audioBuffer->Play(0, 0, DSBPLAY_LOOPING);
+					}
+					if (FAILED(res))
+					{
+						KaiLogDebug(wxString::Format(L"Could not lock the playback buffer (0x%08X).", (unsigned)res));
+						break;
 					}
 
 					DWORD bytes_filled = FillAndUnlockBuffers(buf1, buf1sz, buf2, buf2sz, next_input_frame, audioBuffer);
@@ -773,7 +753,8 @@ do_fill_buffer:
 		}
 	}
 
-
+	audioBuffer->Release();
+	defaultPlayback->Release();
 }
 
 
@@ -887,8 +868,10 @@ DirectSoundPlayer2Thread::DirectSoundPlayer2Thread(Provider *provider, int _Want
 	thread_handle = (HANDLE)_beginthreadex(0, 0, ThreadProc, this, 0, &threadid);
 	SetThreadName(threadid, "AudioThread");
 
-	if (!thread_handle)
+	if (!thread_handle) {
+		CloseHandles();
 		throw _T("Failed creating playback thread in DirectSoundPlayer2. This is bad.");
+	}
 
 	HANDLE running_or_error[] = { thread_running, error_happened };
 	switch (WaitForMultipleObjects(2, running_or_error, FALSE, INFINITE))
@@ -899,6 +882,9 @@ DirectSoundPlayer2Thread::DirectSoundPlayer2Thread(Provider *provider, int _Want
 
 
 	default:
+		// the thread returns right after signalling the error
+		WaitForSingleObject(thread_handle, INFINITE);
+		CloseHandles();
 		throw _T("Failed wait for thread start or thread error in DirectSoundPlayer2. This is bad.");
 	}
 }
@@ -907,7 +893,19 @@ DirectSoundPlayer2Thread::DirectSoundPlayer2Thread(Provider *provider, int _Want
 DirectSoundPlayer2Thread::~DirectSoundPlayer2Thread()
 {
 	SetEvent(event_kill_self);
-	WaitForSingleObject(thread_handle, 2000);
+	// the thread still uses this object, so it has to be gone before it is freed
+	WaitForSingleObject(thread_handle, INFINITE);
+	CloseHandles();
+}
+
+void DirectSoundPlayer2Thread::CloseHandles()
+{
+	HANDLE handles[] = { thread_handle, event_start_playback, event_stop_playback, event_update_end_time,
+		event_set_volume, event_kill_self, thread_running, is_playing, error_happened };
+	for (HANDLE handle : handles) {
+		if (handle)
+			CloseHandle(handle);
+	}
 }
 
 

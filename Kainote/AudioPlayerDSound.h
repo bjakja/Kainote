@@ -31,8 +31,9 @@ class DirectSoundPlayer2Thread {
 		unsigned int buf2sz, long long& input_frame, IDirectSoundBuffer8* audioBuffer);
 
 	void CheckError();
+	void CloseHandles();
 
-	HANDLE thread_handle;
+	HANDLE thread_handle = nullptr;
 
 	// Used to signal state-changes to thread
 	HANDLE
