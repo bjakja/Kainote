@@ -9,12 +9,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Kainote\n"
-"Report-Msgid-Bugs-To: https://github.com/bjakja/Kainote/issues\n"
-"POT-Creation-Date: 2026-09-18 02:15+0700\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-18 02:02+0700\n"
 "PO-Revision-Date: 2026-03-10 10:09+0000\n"
 "Last-Translator: Weblate <noreply-mt-weblate@weblate.org>\n"
-"Language-Team: Tamil <https://hosted.weblate.org/projects/kainote/kainote/ta/"
-">\n"
+"Language-Team: Tamil <https://hosted.weblate.org/projects/kainote/kainote/ta/>\n"
 "Language: ta\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -164,11 +163,11 @@ msgid "Invalid keyframes format"
 msgstr "தவறான கீஃப்ரேம்கள் வடிவம்"
 
 #: Kainote/AudioBox.cpp:289 Kainote/Automation.cpp:1414
-#: Kainote/Automation.cpp:1461 Kainote/KainoteFrame.cpp:928
-#: Kainote/KainoteFrame.cpp:932 Kainote/KainoteFrame.cpp:2157
-#: Kainote/KainoteFrame.cpp:2158 Kainote/KainoteFrame.cpp:2608
-#: Kainote/KainoteFrame.cpp:2634 Kainote/KainoteFrame.cpp:2638
-#: Kainote/OptionsDialog.cpp:292 Kainote/OptionsDialog.cpp:664
+#: Kainote/Automation.cpp:1461 Kainote/KainoteFrame.cpp:925
+#: Kainote/KainoteFrame.cpp:929 Kainote/KainoteFrame.cpp:2151
+#: Kainote/KainoteFrame.cpp:2152 Kainote/KainoteFrame.cpp:2602
+#: Kainote/KainoteFrame.cpp:2628 Kainote/KainoteFrame.cpp:2632
+#: Kainote/OptionsDialog.cpp:291 Kainote/OptionsDialog.cpp:661
 #: Kainote/Provider.cpp:188 Kainote/VisualAllTagsEdition.cpp:167
 #: Kainote/VisualAllTagsEdition.cpp:171 Kainote/VisualAllTagsEdition.cpp:189
 #: Kainote/VisualAllTagsEdition.cpp:296 Kainote/VisualAllTagsEdition.cpp:304
@@ -271,7 +270,7 @@ msgstr "கோப்புகள்"
 msgid "Versions"
 msgstr "பதிப்புகள்"
 
-#: Kainote/AutoSaveOpen.cpp:57 Kainote/KainoteFrame.cpp:1559
+#: Kainote/AutoSaveOpen.cpp:57 Kainote/KainoteFrame.cpp:1553
 msgid "Open"
 msgstr "திற"
 
@@ -282,7 +281,7 @@ msgstr "திற"
 #: Kainote/FontCatalogList.cpp:70 Kainote/FontCatalogList.cpp:868
 #: Kainote/FontDialog.cpp:410 Kainote/KaiMessageBox.cpp:79
 #: Kainote/MappedButton.cpp:39 Kainote/NewCatalog.cpp:42
-#: Kainote/OptionsDialog.cpp:1029 Kainote/ProgressDialog.cpp:43
+#: Kainote/OptionsDialog.cpp:1022 Kainote/ProgressDialog.cpp:43
 #: Kainote/ScriptInfo.cpp:160 Kainote/ShiftTimes.cpp:67
 #: Kainote/StyleChange.cpp:270 Kainote/Stylelistbox.cpp:34
 #: Kainote/Stylelistbox.cpp:58 Kainote/Stylelistbox.cpp:112
@@ -297,7 +296,7 @@ msgstr "ரத்துசெய்"
 msgid "Cannot open auto save folder"
 msgstr "ஆட்டோ சேமி கோப்புறையைத் திறக்க முடியாது"
 
-#: Kainote/AutoSaveOpen.cpp:150 Kainote/KainoteFrame.cpp:710
+#: Kainote/AutoSaveOpen.cpp:150 Kainote/KainoteFrame.cpp:707
 #: Kainote/ProviderFFMS2.cpp:291 Kainote/TabPanel.cpp:87
 #: Kainote/VisualDrawingShapes.cpp:210 Kainote/VisualDrawingShapes.cpp:274
 msgid "Untitled"
@@ -311,7 +310,7 @@ msgstr "ஆட்டோ சேமி கோப்புறை காலியா
 msgid "Failed to load autosave"
 msgstr "ஆட்டோ சேமிப்பு கோப்புறையைத் திறக்க முடியவில்லை"
 
-#: Kainote/AutoSavesRemoving.cpp:28 Kainote/KainoteFrame.cpp:196
+#: Kainote/AutoSavesRemoving.cpp:28 Kainote/KainoteFrame.cpp:195
 msgid "Remove temporary files"
 msgstr "தற்காலிக கோப்புகளை அகற்று"
 
@@ -428,9 +427,7 @@ msgid "Remove older audio cache files"
 msgstr "பழைய ஆடியோ கேச் கோப்புகளை அகற்று"
 
 #: Kainote/AutoSavesRemoving.cpp:177
-msgid ""
-"Subtitle files (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|"
-"*.ass;*.ssa;*.srt;*.sub;*.txt"
+msgid "Subtitle files (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt"
 msgstr "வசன வரிகள் (*.ஆச்), (*. எச்.எச்.ஏ), (*. எச்.ஆர்.டி), (*. துணை), (*. txt"
 
 #: Kainote/AutoSavesRemoving.cpp:178
@@ -461,12 +458,8 @@ msgstr ""
 "%s."
 
 #: Kainote/Automation.cpp:656
-msgid ""
-"You are trying to load an Automation 3 script as an Automation 4 script. "
-"Automation 3 is no longer supported."
-msgstr ""
-"ச்கிரிப்ட் ஆட்டோமேசன் 3 ஐ ச்கிரிப்ட் ஆட்டோமேசன் 4 ஆக ஏற்ற முயற்சிக்கிறீர்கள். ஆட்டோமேசன் 3 இனி "
-"ஆதரிக்கப்படாது."
+msgid "You are trying to load an Automation 3 script as an Automation 4 script. Automation 3 is no longer supported."
+msgstr "ச்கிரிப்ட் ஆட்டோமேசன் 3 ஐ ச்கிரிப்ட் ஆட்டோமேசன் 4 ஆக ஏற்ற முயற்சிக்கிறீர்கள். ஆட்டோமேசன் 3 இனி ஆதரிக்கப்படாது."
 
 #: Kainote/Automation.cpp:699
 #, c-format
@@ -478,7 +471,7 @@ msgid "An error occurred while executing the Lua script:\n"
 msgstr "ச்கிரிப்ட் லுவா ஏற்றும்போது பிழை ஏற்பட்டது:\n"
 
 #: Kainote/Automation.cpp:1265 Kainote/Automation.cpp:1307
-#: Kainote/KainoteFrame.cpp:932 Kainote/KainoteFrame.cpp:2638
+#: Kainote/KainoteFrame.cpp:929 Kainote/KainoteFrame.cpp:2632
 #, c-format
 msgid ""
 "Error loading Lua script: %s\n"
@@ -552,7 +545,7 @@ msgstr "பாதை மற்றும் ச்கிரிப்ட் பெ
 msgid "Macro"
 msgstr "குறுநிரல்"
 
-#: Kainote/AutomationHotkeysDialog.cpp:74 Kainote/OptionsDialog.cpp:659
+#: Kainote/AutomationHotkeysDialog.cpp:74 Kainote/OptionsDialog.cpp:656
 msgid "Hotkey"
 msgstr "ஆட்ச்கி"
 
@@ -564,45 +557,45 @@ msgstr "ஆட்டோலோட் கோப்புறை"
 msgid "From subs"
 msgstr "சப்சிலிருந்து"
 
-#: Kainote/AutomationHotkeysDialog.cpp:144 Kainote/OptionsDialog.cpp:671
+#: Kainote/AutomationHotkeysDialog.cpp:144 Kainote/OptionsDialog.cpp:668
 msgid "Map hotkey"
 msgstr "வரைபட ஆட்ச்கி"
 
 #: Kainote/AutomationHotkeysDialog.cpp:146
 #: Kainote/AutomationHotkeysDialog.cpp:242
 #: Kainote/AutomationHotkeysDialog.cpp:252 Kainote/Hotkeys.cpp:479
-#: Kainote/Hotkeys.cpp:490 Kainote/OptionsDialog.cpp:120
-#: Kainote/OptionsDialog.cpp:130 Kainote/OptionsDialog.cpp:675
+#: Kainote/Hotkeys.cpp:490 Kainote/OptionsDialog.cpp:119
+#: Kainote/OptionsDialog.cpp:129 Kainote/OptionsDialog.cpp:672
 msgid "Delete hotkey"
 msgstr "ஆட்ச்கியை நீக்கு"
 
 #: Kainote/AutomationHotkeysDialog.cpp:214 Kainote/Hotkeys.cpp:452
-#: Kainote/OptionsDialog.cpp:270 Kainote/OptionsDialog.cpp:1014
+#: Kainote/OptionsDialog.cpp:269 Kainote/OptionsDialog.cpp:1007
 msgid "Audio"
 msgstr "ஆடியோ"
 
 #: Kainote/AutomationHotkeysDialog.cpp:214 Kainote/Hotkeys.cpp:452
-#: Kainote/OptionsDialog.cpp:270 Kainote/OptionsDialog.cpp:1009
+#: Kainote/OptionsDialog.cpp:269 Kainote/OptionsDialog.cpp:1002
 msgid "Editor"
 msgstr "திருத்தி"
 
 #: Kainote/AutomationHotkeysDialog.cpp:214 Kainote/Hotkeys.cpp:452
-#: Kainote/OptionsDialog.cpp:270 Kainote/OptionsDialog.cpp:651
+#: Kainote/OptionsDialog.cpp:269 Kainote/OptionsDialog.cpp:648
 msgid "Global"
 msgstr "உலகளாவிய"
 
 #: Kainote/AutomationHotkeysDialog.cpp:214 Kainote/Hotkeys.cpp:452
-#: Kainote/OptionsDialog.cpp:270 Kainote/ScriptInfo.cpp:99
+#: Kainote/OptionsDialog.cpp:269 Kainote/ScriptInfo.cpp:99
 msgid "Subtitles"
 msgstr "வசன வரிகள்"
 
 #: Kainote/AutomationHotkeysDialog.cpp:214 Kainote/Hotkeys.cpp:452
-#: Kainote/OptionsDialog.cpp:270 Kainote/OptionsDialog.cpp:1013
+#: Kainote/OptionsDialog.cpp:269 Kainote/OptionsDialog.cpp:1006
 msgid "Video"
 msgstr "ஒளிதோற்றம்"
 
 #: Kainote/AutomationHotkeysDialog.cpp:239 Kainote/Hotkeys.cpp:476
-#: Kainote/OptionsDialog.cpp:117
+#: Kainote/OptionsDialog.cpp:116
 #, c-format
 msgid ""
 "This hotkey already exists for \"%s\".\n"
@@ -613,26 +606,26 @@ msgstr ""
 
 #: Kainote/AutomationHotkeysDialog.cpp:240
 #: Kainote/AutomationHotkeysDialog.cpp:249 Kainote/Hotkeys.cpp:477
-#: Kainote/Hotkeys.cpp:487 Kainote/KainoteFrame.cpp:1286
-#: Kainote/KainoteFrame.cpp:1302 Kainote/KainoteFrame.cpp:1416
-#: Kainote/KainoteFrame.cpp:2505 Kainote/OptionsDialog.cpp:118
-#: Kainote/OptionsDialog.cpp:127 Kainote/OptionsDialog.cpp:512
+#: Kainote/Hotkeys.cpp:487 Kainote/KainoteFrame.cpp:1280
+#: Kainote/KainoteFrame.cpp:1296 Kainote/KainoteFrame.cpp:1410
+#: Kainote/KainoteFrame.cpp:2499 Kainote/OptionsDialog.cpp:117
+#: Kainote/OptionsDialog.cpp:126 Kainote/OptionsDialog.cpp:509
 #: Kainote/SpellCheckerDialog.cpp:147 Kainote/SubsGrid.cpp:1139
 #: Kainote/SubsGridBase.cpp:473 Kainote/SubsGridBase.cpp:502
 #: Kainote/VideoBox.cpp:322 Kainote/VisualClips.cpp:1015
-#: Kainote/kainoteApp.cpp:318 Kainote/kainoteApp.cpp:380
+#: Kainote/kainoteApp.cpp:331 Kainote/kainoteApp.cpp:396
 msgid "Warning"
 msgstr "எச்சரிக்கை"
 
 #: Kainote/AutomationHotkeysDialog.cpp:241
 #: Kainote/AutomationHotkeysDialog.cpp:251 Kainote/Hotkeys.cpp:478
-#: Kainote/Hotkeys.cpp:489 Kainote/OptionsDialog.cpp:119
-#: Kainote/OptionsDialog.cpp:129
+#: Kainote/Hotkeys.cpp:489 Kainote/OptionsDialog.cpp:118
+#: Kainote/OptionsDialog.cpp:128
 msgid "Switch hotkeys"
 msgstr "ஆட்ச்கிகளை மாற்றவும்"
 
 #: Kainote/AutomationHotkeysDialog.cpp:248 Kainote/Hotkeys.cpp:485
-#: Kainote/OptionsDialog.cpp:126
+#: Kainote/OptionsDialog.cpp:125
 #, c-format
 msgid ""
 "This shortcut already exists in %s as a shortcut for \"%s\".\n"
@@ -642,17 +635,17 @@ msgstr ""
 "என்ன செய்வது?"
 
 #: Kainote/AutomationHotkeysDialog.cpp:249 Kainote/Hotkeys.cpp:486
-#: Kainote/OptionsDialog.cpp:127
+#: Kainote/OptionsDialog.cpp:126
 msgid "another window"
 msgstr "மற்றொரு சாளரம்"
 
 #: Kainote/AutomationHotkeysDialog.cpp:249 Kainote/Hotkeys.cpp:486
-#: Kainote/OptionsDialog.cpp:127
+#: Kainote/OptionsDialog.cpp:126
 msgid "other windows"
 msgstr "மற்றொரு சாளரங்கள்"
 
 #: Kainote/AutomationHotkeysDialog.cpp:253 Kainote/Hotkeys.cpp:491
-#: Kainote/OptionsDialog.cpp:131
+#: Kainote/OptionsDialog.cpp:130
 msgid "Set anyway"
 msgstr "இன்னும் அமைக்கவும்"
 
@@ -660,8 +653,7 @@ msgstr "இன்னும் அமைக்கவும்"
 #: Kainote/FontCollector.cpp:193 Kainote/LogHandler.cpp:50
 #: Kainote/Notebook.cpp:626 Kainote/SelectLines.cpp:141
 #: Kainote/SelectLines.cpp:236 Kainote/SelectLines.cpp:278
-#: Kainote/SpellCheckerDialog.cpp:63 Kainote/UpdateChecker.cpp:114
-#: Kainote/stylestore.cpp:171
+#: Kainote/SpellCheckerDialog.cpp:63 Kainote/stylestore.cpp:171
 msgid "Close"
 msgstr "மூடு"
 
@@ -1048,7 +1040,7 @@ msgid "Comment"
 msgstr "கருத்து"
 
 #: Kainote/EditBox.cpp:283 Kainote/FindReplaceDialog.cpp:135
-#: Kainote/KainoteFrame.cpp:231 Kainote/SelectLines.cpp:75
+#: Kainote/KainoteFrame.cpp:230 Kainote/SelectLines.cpp:75
 #: Kainote/SubsGrid.cpp:462 Kainote/SubsGrid.cpp:629
 #: Kainote/SubsGridWindow.cpp:267 Kainote/SubsGridWindow.cpp:663
 #: Kainote/SubsGridWindow.cpp:1118 Kainote/SubsGridWindow.cpp:1284
@@ -1056,7 +1048,7 @@ msgid "Actor"
 msgstr "நடிகர்"
 
 #: Kainote/EditBox.cpp:289 Kainote/FindReplaceDialog.cpp:138
-#: Kainote/KainoteFrame.cpp:232 Kainote/SelectLines.cpp:76
+#: Kainote/KainoteFrame.cpp:231 Kainote/SelectLines.cpp:76
 #: Kainote/SubsGrid.cpp:467 Kainote/SubsGrid.cpp:634
 #: Kainote/SubsGridWindow.cpp:271 Kainote/SubsGridWindow.cpp:667
 #: Kainote/SubsGridWindow.cpp:1131 Kainote/SubsGridWindow.cpp:1297
@@ -1083,11 +1075,8 @@ msgid "Text position"
 msgstr "உரை நிலை"
 
 #: Kainote/EditBox.cpp:1197
-msgid ""
-"Translator mode displays and saves both foreign text and translation text"
-msgstr ""
-"மொழிபெயர்ப்பாளர் பயன்முறை வெளிநாட்டு உரை மற்றும் மொழிபெயர்ப்பு உரை இரண்டையும் காண்பிக்கும் "
-"மற்றும் சேமிக்கிறது"
+msgid "Translator mode displays and saves both foreign text and translation text"
+msgstr "மொழிபெயர்ப்பாளர் பயன்முறை வெளிநாட்டு உரை மற்றும் மொழிபெயர்ப்பு உரை இரண்டையும் காண்பிக்கும் மற்றும் சேமிக்கிறது"
 
 #: Kainote/EditBox.cpp:1198
 msgid "Copies all foreign-language text to the translation field"
@@ -1142,12 +1131,8 @@ msgid "Line top and bottom margins"
 msgstr "மேல் மற்றும் கீழ் விளிம்பு வரி"
 
 #: Kainote/EditBox.cpp:1211
-msgid ""
-"Line effect. Used to mark lines to which karaoke or VSFilter effects should "
-"be applied"
-msgstr ""
-"வரி விளைவு. இது கோடுகளைக் குறிக்கப் பயன்படுகிறது, இது கரோக்கி அல்லது வி.எச்.பில்டர் "
-"விளைவுகளாக இருந்தது"
+msgid "Line effect. Used to mark lines to which karaoke or VSFilter effects should be applied"
+msgstr "வரி விளைவு. இது கோடுகளைக் குறிக்கப் பயன்படுகிறது, இது கரோக்கி அல்லது வி.எச்.பில்டர் விளைவுகளாக இருந்தது"
 
 #: Kainote/EditBox.cpp:1212
 msgid ""
@@ -1181,78 +1166,6 @@ msgstr "மொழிபெயர்க்கப்படாதது கிட�
 msgid "Manage tag buttons"
 msgstr "குறிச்சொல் பொத்தான்களை நிர்வகிக்கவும்"
 
-#: Kainote/FileTypes.h:62
-msgid "ASS subtitles"
-msgstr "வசன வரிகள் கழுதை"
-
-#: Kainote/FileTypes.h:63
-msgid "SSA subtitles"
-msgstr "வசன வரிகள் எச்.எச்.ஏ"
-
-#: Kainote/FileTypes.h:64
-msgid "SRT subtitles"
-msgstr "வசன வரிகள் எச்.ஆர்.டி"
-
-#: Kainote/FileTypes.h:65
-msgid "SUB subtitles"
-msgstr "வசன வரிகள் துணை"
-
-#: Kainote/FileTypes.h:66
-msgid "TXT subtitles"
-msgstr "வசன வரிகள் txt"
-
-#: Kainote/FileTypes.h:67
-msgid "Video MKV"
-msgstr "காணொளி எம்கேவி"
-
-#: Kainote/FileTypes.h:68
-msgid "Video MP4"
-msgstr "வீடியோ எம்பி 4"
-
-#: Kainote/FileTypes.h:69
-msgid "Video AVI"
-msgstr "வீடியோ அவி"
-
-#: Kainote/FileTypes.h:70
-msgid "Video OGM"
-msgstr "வீடியோ OGM"
-
-#: Kainote/FileTypes.h:71
-msgid "Video WMV"
-msgstr "வீடியோ WMV"
-
-#: Kainote/FileTypes.h:72
-msgid "Video ASF"
-msgstr "வீடியோ ஏ.எச்.எஃப்"
-
-#: Kainote/FileTypes.h:73
-msgid "Video RMVB"
-msgstr "வீடியோ RMVB"
-
-#: Kainote/FileTypes.h:74
-msgid "Video RM"
-msgstr "வீடியோ ஆர்.எம்"
-
-#: Kainote/FileTypes.h:75
-msgid "Video 3GP"
-msgstr "வீடியோ 3 சிபி"
-
-#: Kainote/FileTypes.h:76
-msgid "Video MPG"
-msgstr "வீடியோ எம்பிசி"
-
-#: Kainote/FileTypes.h:77
-msgid "Video MPEG"
-msgstr "வீடியோ MPEG"
-
-#: Kainote/FileTypes.h:79
-msgid "Video TS"
-msgstr "வீடியோ டி.எச்"
-
-#: Kainote/FileTypes.h:80
-msgid "Video M2TS"
-msgstr "வீடியோ M2TS"
-
 #: Kainote/FindReplaceDialog.cpp:44 Kainote/FindReplaceDialog.cpp:47
 #: Kainote/SelectLines.cpp:54
 msgid "Search text:"
@@ -1269,8 +1182,7 @@ msgid ""
 "Because of the large video file,\n"
 "the search for everything \"*. *\" Is changed to *.ass"
 msgstr ""
-"சாளரங்கள் தேடல் வடிப்பான்கள் அரைப்புள்ளிகளால் பிரிக்கப்படுகின்றன, எ.கா. \"*.ass; "
-"*.srt\".\n"
+"சாளரங்கள் தேடல் வடிப்பான்கள் அரைப்புள்ளிகளால் பிரிக்கப்படுகின்றன, எ.கா. \"*.ass; *.srt\".\n"
 "பெரிய வீடியோ கோப்பு காரணமாக,\n"
 "\"*. *\" அனைத்திற்கும் தேடல் *.ass என மாற்றப்பட்டுள்ளது"
 
@@ -1330,7 +1242,7 @@ msgstr "புலத்தில்"
 msgid "Text"
 msgstr "உரை"
 
-#: Kainote/FindReplaceDialog.cpp:129 Kainote/KainoteFrame.cpp:230
+#: Kainote/FindReplaceDialog.cpp:129 Kainote/KainoteFrame.cpp:229
 #: Kainote/SelectLines.cpp:74 Kainote/SubsGrid.cpp:463 Kainote/SubsGrid.cpp:630
 #: Kainote/SubsGridWindow.cpp:266 Kainote/SubsGridWindow.cpp:662
 #: Kainote/SubsGridWindow.cpp:1112 Kainote/SubsGridWindow.cpp:1278
@@ -1339,7 +1251,7 @@ msgstr "பாணிகள்"
 
 #: Kainote/FindReplaceDialog.cpp:160 Kainote/FindReplaceDialog.cpp:412
 #: Kainote/FindReplaceDialog.cpp:426 Kainote/Hotkeys.cpp:146
-#: Kainote/HotkeysNaming.cpp:238 Kainote/SelectLines.cpp:51
+#: Kainote/HotkeysNaming.cpp:237 Kainote/SelectLines.cpp:51
 msgid "Find"
 msgstr "கண்டுபிடி"
 
@@ -1416,7 +1328,7 @@ msgid "From selected"
 msgstr "தேர்ந்தெடுக்கப்பட்டதிலிருந்து"
 
 #: Kainote/FindReplaceDialog.cpp:413 Kainote/FindReplaceDialog.cpp:427
-#: Kainote/Hotkeys.cpp:147 Kainote/HotkeysNaming.cpp:175
+#: Kainote/Hotkeys.cpp:147 Kainote/HotkeysNaming.cpp:174
 msgid "Find and replace"
 msgstr "கண்டுபிடித்து மாற்றவும்"
 
@@ -1460,7 +1372,7 @@ msgstr "புதிய அட்டவணை பெயரைத் தேர்
 msgid "Enter a name for the new catalog"
 msgstr "புதிய பட்டியலுக்கு ஒரு பெயரை உள்ளிடவும்"
 
-#: Kainote/FontCatalogList.cpp:84 Kainote/KainoteFrame.cpp:919
+#: Kainote/FontCatalogList.cpp:84 Kainote/KainoteFrame.cpp:916
 #: Kainote/ShiftTimes.cpp:85 Kainote/ShiftTimes.cpp:973
 #: Kainote/ShiftTimes.cpp:978 Kainote/findreplace.cpp:1177
 msgid "Info"
@@ -1510,16 +1422,14 @@ msgstr "இந்த பட்டியலை நீக்க விரும்
 
 #: Kainote/FontCatalogList.cpp:143 Kainote/FontCatalogList.cpp:743
 #: Kainote/Notebook.cpp:979 Kainote/StyleChange.cpp:461
-#: Kainote/kainoteApp.cpp:508 Kainote/kainoteApp.cpp:514
+#: Kainote/kainoteApp.cpp:524 Kainote/kainoteApp.cpp:530
 #: Kainote/stylestore.cpp:567
 msgid "Prompt"
 msgstr "உடனடி"
 
 #: Kainote/FontCatalogList.cpp:168
-msgid ""
-"The catalog list has autosave; files are stored in the \"Config\" folder."
-msgstr ""
-"அட்டவணை பட்டியலில் ஆட்டோசேவ் உள்ளது, கோப்புகளை \"கட்டமைப்பு\" கோப்புறையில் காணலாம்."
+msgid "The catalog list has autosave; files are stored in the \"Config\" folder."
+msgstr "அட்டவணை பட்டியலில் ஆட்டோசேவ் உள்ளது, கோப்புகளை \"கட்டமைப்பு\" கோப்புறையில் காணலாம்."
 
 #: Kainote/FontCatalogList.cpp:170 Kainote/FontCatalogList.cpp:859
 msgid "Catalogs:"
@@ -1533,8 +1443,8 @@ msgstr "கண்டுபிடி:"
 msgid "Autosave"
 msgstr "தானிசேமி"
 
-#: Kainote/FontCatalogList.cpp:314 Kainote/KainoteFrame.cpp:1039
-#: Kainote/KainoteFrame.cpp:1055 Kainote/VideoBox.cpp:1074
+#: Kainote/FontCatalogList.cpp:314 Kainote/KainoteFrame.cpp:1036
+#: Kainote/KainoteFrame.cpp:1052 Kainote/VideoBox.cpp:1074
 msgid "Choose video file"
 msgstr "வீடியோ கோப்பைத் தேர்வுசெய்க"
 
@@ -1577,8 +1487,9 @@ msgid "Merge"
 msgstr "ஒன்றிணைக்கவும்"
 
 #: Kainote/FontCatalogList.cpp:863
+#, fuzzy
 msgid "Remove all contents of catalog"
-msgstr ""
+msgstr "பட்டியலின் அனைத்து உள்ளடக்கங்களையும் அகற்று"
 
 #: Kainote/FontCatalogList.cpp:864
 #, fuzzy
@@ -1598,8 +1509,8 @@ msgstr " தாவல்கள்: "
 msgid "In lines: "
 msgstr "வரிகளில்: "
 
-#: Kainote/FontCollector.cpp:134 Kainote/HotkeysNaming.cpp:176
-#: Kainote/KainoteFrame.cpp:337 Kainote/KainoteFrame.cpp:338
+#: Kainote/FontCollector.cpp:134 Kainote/HotkeysNaming.cpp:175
+#: Kainote/KainoteFrame.cpp:336 Kainote/KainoteFrame.cpp:337
 #: Kainote/SubsGrid.cpp:242
 msgid "Font collector"
 msgstr "எழுத்துருக்கள் சேகரிப்பான்"
@@ -1620,7 +1531,7 @@ msgstr "தேர்ந்தெடுக்கப்பட்ட கோப்�
 msgid "Zip"
 msgstr "சிப்"
 
-#: Kainote/FontCollector.cpp:170 Kainote/OptionsDialog.cpp:268
+#: Kainote/FontCollector.cpp:170 Kainote/OptionsDialog.cpp:267
 #: Kainote/ScriptInfo.cpp:132
 msgid "Options"
 msgstr "விருப்பங்கள்"
@@ -1674,9 +1585,7 @@ msgstr "நீங்கள் எழுத்துருக்களை நக�
 
 #: Kainote/FontCollector.cpp:467
 msgid "No subtitles loaded. Load subtitles or deselect this option."
-msgstr ""
-"வசன வரிகள் எதுவும் ஏற்றப்படவில்லை. வசன வரிகள் ஏற்றவும் அல்லது இந்த விருப்பத்தை "
-"தேர்வுநீக்கவும்."
+msgstr "வசன வரிகள் எதுவும் ஏற்றப்படவில்லை. வசன வரிகள் ஏற்றவும் அல்லது இந்த விருப்பத்தை தேர்வுநீக்கவும்."
 
 #: Kainote/FontCollector.cpp:473
 msgid "Choose a name for the archive"
@@ -1686,8 +1595,8 @@ msgstr "காப்பகத்திற்கு ஒரு பெயரைத�
 msgid "The save path is not valid."
 msgstr "சேமி ஒட்டு செல்லுபடியாகாது."
 
-#: Kainote/FontCollector.cpp:513 Kainote/KainoteFrame.cpp:1353
-#: Kainote/KainoteFrame.cpp:2120 Kainote/Notebook.cpp:1211
+#: Kainote/FontCollector.cpp:513 Kainote/KainoteFrame.cpp:1347
+#: Kainote/KainoteFrame.cpp:2114 Kainote/Notebook.cpp:1211
 #: Kainote/SubsGrid.cpp:1100 Kainote/SubsGridBase.cpp:492
 #: Kainote/SubsGridBase.cpp:1340 Kainote/SubsGridDialogs.cpp:108
 #: Kainote/VideoBox.cpp:880 Kainote/VideoBox.cpp:892
@@ -2008,20 +1917,23 @@ msgstr "எழுத்துருக்கள் கோப்புறைக�
 
 #: Kainote/FontEnumerator.cpp:423 Kainote/FontEnumerator.cpp:447
 #: Kainote/FontEnumerator.cpp:656
+#, fuzzy
 msgid "Loading external fonts"
-msgstr ""
+msgstr "வெளிப்புற எழுத்துருக்களை ஏற்றுகிறது"
 
 #: Kainote/FontEnumerator.cpp:462
 msgid "Cannot create next notification handler for fonts folder."
 msgstr "எழுத்துருக்கள் கோப்புறைக்கு அடுத்த அறிவிப்பு கையாளுபவரை உருவாக்க முடியாது."
 
 #: Kainote/FontEnumerator.cpp:574
+#, fuzzy
 msgid "Removing fonts from external folder"
-msgstr ""
+msgstr "வெளிப்புற கோப்புறையிலிருந்து எழுத்துருக்களை நீக்குகிறது"
 
 #: Kainote/FontEnumerator.cpp:582
+#, fuzzy
 msgid "Loading fonts from external folder"
-msgstr ""
+msgstr "வெளிப்புற கோப்புறையிலிருந்து எழுத்துருக்களை ஏற்றுகிறது"
 
 #: Kainote/FontEnumerator.cpp:608
 #, fuzzy
@@ -2032,169 +1944,169 @@ msgstr "ஆடியோ உள்ளமைவை ஏற்ற முடியா
 msgid "Exit"
 msgstr "வெளியேறு"
 
-#: Kainote/Hotkeys.cpp:135 Kainote/HotkeysNaming.cpp:212
+#: Kainote/Hotkeys.cpp:135 Kainote/HotkeysNaming.cpp:211
 #: Kainote/Notebook.cpp:600
 msgid "Open new tab"
 msgstr "புதிய தாவலைத் திறக்கவும்"
 
-#: Kainote/Hotkeys.cpp:136 Kainote/HotkeysNaming.cpp:213
+#: Kainote/Hotkeys.cpp:136 Kainote/HotkeysNaming.cpp:212
 msgid "Close current tab"
 msgstr "தற்போதைய தாவலை மூடு"
 
-#: Kainote/Hotkeys.cpp:137 Kainote/HotkeysNaming.cpp:172
+#: Kainote/Hotkeys.cpp:137 Kainote/HotkeysNaming.cpp:171
 msgid "Time shift window"
 msgstr "சிப்ட் நேரங்கள்"
 
-#: Kainote/Hotkeys.cpp:138 Kainote/HotkeysNaming.cpp:163
-#: Kainote/KainoteFrame.cpp:322
+#: Kainote/Hotkeys.cpp:138 Kainote/HotkeysNaming.cpp:162
+#: Kainote/KainoteFrame.cpp:321
 msgid "Convert to ASS"
 msgstr "கழுதைக்கு மாற்றவும்"
 
-#: Kainote/Hotkeys.cpp:139 Kainote/HotkeysNaming.cpp:164
-#: Kainote/KainoteFrame.cpp:324
+#: Kainote/Hotkeys.cpp:139 Kainote/HotkeysNaming.cpp:163
+#: Kainote/KainoteFrame.cpp:323
 msgid "Convert to SRT"
 msgstr "SRT க்கு மாற்றவும்"
 
-#: Kainote/Hotkeys.cpp:140 Kainote/HotkeysNaming.cpp:165
-#: Kainote/KainoteFrame.cpp:326
+#: Kainote/Hotkeys.cpp:140 Kainote/HotkeysNaming.cpp:164
+#: Kainote/KainoteFrame.cpp:325
 msgid "Convert to MDVD"
 msgstr "MDVD ஆக மாற்றவும்"
 
-#: Kainote/Hotkeys.cpp:141 Kainote/HotkeysNaming.cpp:166
-#: Kainote/KainoteFrame.cpp:328
+#: Kainote/Hotkeys.cpp:141 Kainote/HotkeysNaming.cpp:165
+#: Kainote/KainoteFrame.cpp:327
 msgid "Convert to MPL2"
 msgstr "MPL2 ஆக மாற்றவும்"
 
-#: Kainote/Hotkeys.cpp:142 Kainote/HotkeysNaming.cpp:167
-#: Kainote/KainoteFrame.cpp:330
+#: Kainote/Hotkeys.cpp:142 Kainote/HotkeysNaming.cpp:166
+#: Kainote/KainoteFrame.cpp:329
 msgid "Convert to TMP"
 msgstr "TMP க்கு மாற்றவும்"
 
-#: Kainote/Hotkeys.cpp:143 Kainote/HotkeysNaming.cpp:251
+#: Kainote/Hotkeys.cpp:143 Kainote/HotkeysNaming.cpp:250
 #: Kainote/stylestore.cpp:41
 msgid "Style manager"
 msgstr "பாணி மேனேசர்"
 
-#: Kainote/Hotkeys.cpp:144 Kainote/HotkeysNaming.cpp:174
-#: Kainote/KainoteFrame.cpp:315
+#: Kainote/Hotkeys.cpp:144 Kainote/HotkeysNaming.cpp:173
+#: Kainote/KainoteFrame.cpp:314
 msgid "Enable / Disable editor"
 msgstr "எடிட்டரை இயக்கவும் / முடக்கவும்"
 
-#: Kainote/Hotkeys.cpp:145 Kainote/HotkeysNaming.cpp:223
-#: Kainote/KainoteFrame.cpp:246 Kainote/VideoBox.cpp:953
+#: Kainote/Hotkeys.cpp:145 Kainote/HotkeysNaming.cpp:222
+#: Kainote/KainoteFrame.cpp:245 Kainote/VideoBox.cpp:953
 msgid "Open video"
 msgstr "வீடியோ திறந்த வீடியோ"
 
-#: Kainote/Hotkeys.cpp:148 Kainote/HotkeysNaming.cpp:202
-#: Kainote/KainoteFrame.cpp:208
+#: Kainote/Hotkeys.cpp:148 Kainote/HotkeysNaming.cpp:201
+#: Kainote/KainoteFrame.cpp:207
 msgid "Undo"
 msgstr "செயல்தவிர்"
 
-#: Kainote/Hotkeys.cpp:149 Kainote/HotkeysNaming.cpp:229
-#: Kainote/KainoteFrame.cpp:214
+#: Kainote/Hotkeys.cpp:149 Kainote/HotkeysNaming.cpp:228
+#: Kainote/KainoteFrame.cpp:213
 msgid "Redo"
 msgstr "மீண்டும்செய்"
 
-#: Kainote/Hotkeys.cpp:150 Kainote/HotkeysNaming.cpp:180
-#: Kainote/KainoteFrame.cpp:216 Kainote/SubsFile.cpp:24 Kainote/SubsFile.cpp:54
+#: Kainote/Hotkeys.cpp:150 Kainote/HotkeysNaming.cpp:179
+#: Kainote/KainoteFrame.cpp:215 Kainote/SubsFile.cpp:24 Kainote/SubsFile.cpp:54
 msgid "History"
 msgstr "வரலாறு"
 
-#: Kainote/Hotkeys.cpp:151 Kainote/HotkeysNaming.cpp:222
+#: Kainote/Hotkeys.cpp:151 Kainote/HotkeysNaming.cpp:221
 #: Kainote/VideoBox.cpp:955
 msgid "Open subtitles"
 msgstr "வசன வரிகள் திற"
 
-#: Kainote/Hotkeys.cpp:152 Kainote/HotkeysNaming.cpp:234
+#: Kainote/Hotkeys.cpp:152 Kainote/HotkeysNaming.cpp:233
 #: Kainote/Notebook.cpp:890 Kainote/ScriptInfo.cpp:159
 msgid "Save"
 msgstr "சேமி"
 
-#: Kainote/Hotkeys.cpp:153 Kainote/HotkeysNaming.cpp:235
+#: Kainote/Hotkeys.cpp:153 Kainote/HotkeysNaming.cpp:234
 msgid "Save as..."
 msgstr "சேமி ..."
 
-#: Kainote/Hotkeys.cpp:154 Kainote/HotkeysNaming.cpp:232
+#: Kainote/Hotkeys.cpp:154 Kainote/HotkeysNaming.cpp:231
 #: Kainote/SubsGrid.cpp:239
 msgid "Delete text"
 msgstr "உரையை நீக்கு"
 
-#: Kainote/Hotkeys.cpp:155 Kainote/HotkeysNaming.cpp:230
+#: Kainote/Hotkeys.cpp:155 Kainote/HotkeysNaming.cpp:229
 #: Kainote/TLDialog.cpp:30 Kainote/TLDialog.cpp:38
 msgid "Delete line"
 msgstr "வரியை நீக்கு"
 
-#: Kainote/Hotkeys.cpp:156 Kainote/HotkeysNaming.cpp:244
-#: Kainote/KainoteFrame.cpp:258
+#: Kainote/Hotkeys.cpp:156 Kainote/HotkeysNaming.cpp:243
+#: Kainote/KainoteFrame.cpp:257
 msgid "Insert start time from video"
 msgstr "வீடியோவிலிருந்து தொடக்க நேரத்தை செருகவும்"
 
-#: Kainote/Hotkeys.cpp:157 Kainote/HotkeysNaming.cpp:243
-#: Kainote/KainoteFrame.cpp:260
+#: Kainote/Hotkeys.cpp:157 Kainote/HotkeysNaming.cpp:242
+#: Kainote/KainoteFrame.cpp:259
 msgid "Insert end time from video"
 msgstr "வீடியோவிலிருந்து இறுதி நேரத்தை செருகவும்"
 
 #: Kainote/Hotkeys.cpp:158 Kainote/Hotkeys.cpp:176
-#: Kainote/HotkeysNaming.cpp:224 Kainote/HotkeysNaming.cpp:260
-#: Kainote/KainoteFrame.cpp:272 Kainote/VideoBox.cpp:157
+#: Kainote/HotkeysNaming.cpp:223 Kainote/HotkeysNaming.cpp:259
+#: Kainote/KainoteFrame.cpp:271 Kainote/VideoBox.cpp:157
 #: Kainote/VideoFullscreen.cpp:59
 msgid "Play / Pause"
 msgstr "விளையாடு / இடைநிறுத்தம்"
 
-#: Kainote/Hotkeys.cpp:159 Kainote/HotkeysNaming.cpp:226
-#: Kainote/KainoteFrame.cpp:262
+#: Kainote/Hotkeys.cpp:159 Kainote/HotkeysNaming.cpp:225
+#: Kainote/KainoteFrame.cpp:261
 msgid "Previous frame"
 msgstr "முந்தைய சட்டகம்"
 
-#: Kainote/Hotkeys.cpp:160 Kainote/HotkeysNaming.cpp:218
-#: Kainote/KainoteFrame.cpp:264
+#: Kainote/Hotkeys.cpp:160 Kainote/HotkeysNaming.cpp:217
+#: Kainote/KainoteFrame.cpp:263
 msgid "Next frame"
 msgstr "அடுத்த சட்டகம்"
 
 #: Kainote/Hotkeys.cpp:161 Kainote/Hotkeys.cpp:201 Kainote/HotkeysNaming.cpp:48
-#: Kainote/HotkeysNaming.cpp:227
+#: Kainote/HotkeysNaming.cpp:226
 msgid "Previous line"
 msgstr "முந்தைய வரி"
 
 #: Kainote/Hotkeys.cpp:162 Kainote/Hotkeys.cpp:203 Kainote/HotkeysNaming.cpp:50
-#: Kainote/HotkeysNaming.cpp:219
+#: Kainote/HotkeysNaming.cpp:218
 msgid "Next line"
 msgstr "அடுத்த வரி"
 
-#: Kainote/Hotkeys.cpp:163 Kainote/HotkeysNaming.cpp:216
-#: Kainote/KainoteFrame.cpp:221
+#: Kainote/Hotkeys.cpp:163 Kainote/HotkeysNaming.cpp:215
+#: Kainote/KainoteFrame.cpp:220
 msgid "Find next"
 msgstr "அடுத்ததை தேடு"
 
-#: Kainote/Hotkeys.cpp:164 Kainote/HotkeysNaming.cpp:181
+#: Kainote/Hotkeys.cpp:164 Kainote/HotkeysNaming.cpp:180
 msgid "Merge with previous line"
 msgstr "முந்தைய வரியுடன் ஒன்றிணைக்கவும்"
 
-#: Kainote/Hotkeys.cpp:165 Kainote/HotkeysNaming.cpp:182
+#: Kainote/Hotkeys.cpp:165 Kainote/HotkeysNaming.cpp:181
 msgid "Merge with next line"
 msgstr "அடுத்த வரியுடன் ஒன்றிணைக்கவும்"
 
-#: Kainote/Hotkeys.cpp:166 Kainote/HotkeysNaming.cpp:249
+#: Kainote/Hotkeys.cpp:166 Kainote/HotkeysNaming.cpp:248
 msgid "Change start time to nearest keyframe"
 msgstr "தொடக்க நேரத்தை அருகிலுள்ள கீஃப்ரேமுக்கு மாற்றவும்"
 
-#: Kainote/Hotkeys.cpp:167 Kainote/HotkeysNaming.cpp:248
+#: Kainote/Hotkeys.cpp:167 Kainote/HotkeysNaming.cpp:247
 msgid "Change end time to nearest keyframe"
 msgstr "இறுதி நேரத்தை அருகிலுள்ள கீஃப்ரேமுக்கு மாற்றவும்"
 
-#: Kainote/Hotkeys.cpp:168 Kainote/HotkeysNaming.cpp:220
+#: Kainote/Hotkeys.cpp:168 Kainote/HotkeysNaming.cpp:219
 msgid "Next tab"
 msgstr "அடுத்த தாவல்"
 
-#: Kainote/Hotkeys.cpp:169 Kainote/HotkeysNaming.cpp:228
+#: Kainote/Hotkeys.cpp:169 Kainote/HotkeysNaming.cpp:227
 msgid "Previous tab"
 msgstr "முந்தைய தாவல்"
 
-#: Kainote/Hotkeys.cpp:170 Kainote/HotkeysNaming.cpp:239
+#: Kainote/Hotkeys.cpp:170 Kainote/HotkeysNaming.cpp:238
 msgid "Select line at current video position"
 msgstr "தற்போதைய வீடியோ நிலையில் வரியைத் தேர்ந்தெடுக்கவும்"
 
-#: Kainote/Hotkeys.cpp:171 Kainote/HotkeysNaming.cpp:177
+#: Kainote/Hotkeys.cpp:171 Kainote/HotkeysNaming.cpp:176
 msgid "Help (not available in English)"
 msgstr "உதவி (ஆங்கிலத்தில் கிடைக்கவில்லை)"
 
@@ -2217,45 +2129,45 @@ msgstr "நெடுவரிசைகளை ஒட்டவும்"
 msgid "Show subtitles preview"
 msgstr "வசன வரிகள் முன்னோட்டத்தைக் காட்டு"
 
-#: Kainote/Hotkeys.cpp:177 Kainote/HotkeysNaming.cpp:262
+#: Kainote/Hotkeys.cpp:177 Kainote/HotkeysNaming.cpp:261
 msgid "5 seconds forward"
 msgstr "5 வினாடிகள் முன்னோக்கி"
 
-#: Kainote/Hotkeys.cpp:178 Kainote/HotkeysNaming.cpp:255
+#: Kainote/Hotkeys.cpp:178 Kainote/HotkeysNaming.cpp:254
 msgid "5 seconds backward"
 msgstr "5 விநாடிகள் பின்தங்கிய"
 
-#: Kainote/Hotkeys.cpp:179 Kainote/HotkeysNaming.cpp:263
+#: Kainote/Hotkeys.cpp:179 Kainote/HotkeysNaming.cpp:262
 msgid "1 minute forward"
 msgstr "1 மணித்துளி முன்னோக்கி"
 
-#: Kainote/Hotkeys.cpp:180 Kainote/HotkeysNaming.cpp:256
+#: Kainote/Hotkeys.cpp:180 Kainote/HotkeysNaming.cpp:255
 msgid "1 minute backward"
 msgstr "1 மணித்துளி பின்தங்கிய"
 
-#: Kainote/Hotkeys.cpp:181 Kainote/HotkeysNaming.cpp:259
+#: Kainote/Hotkeys.cpp:181 Kainote/HotkeysNaming.cpp:258
 #: Kainote/VideoBox.cpp:163 Kainote/VideoFullscreen.cpp:65
 msgid "Next file"
 msgstr "அடுத்த கோப்பு"
 
-#: Kainote/Hotkeys.cpp:182 Kainote/HotkeysNaming.cpp:265
+#: Kainote/Hotkeys.cpp:182 Kainote/HotkeysNaming.cpp:264
 #: Kainote/VideoBox.cpp:155
 msgid "Previous file"
 msgstr "முந்தைய கோப்பு"
 
-#: Kainote/Hotkeys.cpp:183 Kainote/HotkeysNaming.cpp:268
+#: Kainote/Hotkeys.cpp:183 Kainote/HotkeysNaming.cpp:267
 msgid "Volume up"
 msgstr "ஒலி கூட்டு"
 
-#: Kainote/Hotkeys.cpp:184 Kainote/HotkeysNaming.cpp:269
+#: Kainote/Hotkeys.cpp:184 Kainote/HotkeysNaming.cpp:268
 msgid "Volume down"
 msgstr "தொகுதி கீழே"
 
-#: Kainote/Hotkeys.cpp:185 Kainote/HotkeysNaming.cpp:258
+#: Kainote/Hotkeys.cpp:185 Kainote/HotkeysNaming.cpp:257
 msgid "Next chapter"
 msgstr "அடுத்த அத்தியாயம்"
 
-#: Kainote/Hotkeys.cpp:186 Kainote/HotkeysNaming.cpp:264
+#: Kainote/Hotkeys.cpp:186 Kainote/HotkeysNaming.cpp:263
 msgid "Previous chapter"
 msgstr "முந்தைய அத்தியாயம்"
 
@@ -2329,7 +2241,7 @@ msgid "Play line alt"
 msgstr "வரி அல்ட் விளையாடுங்கள்"
 
 #: Kainote/Hotkeys.cpp:209 Kainote/HotkeysNaming.cpp:56
-#: Kainote/HotkeysNaming.cpp:271 Kainote/VideoBox.cpp:161
+#: Kainote/HotkeysNaming.cpp:270 Kainote/VideoBox.cpp:161
 #: Kainote/VideoBox.cpp:920 Kainote/VideoFullscreen.cpp:63
 msgid "Stop"
 msgstr "நிறுத்து"
@@ -2375,8 +2287,7 @@ msgid "Add lead-out"
 msgstr "லீட்-அவுட் சேர்க்கவும்"
 
 #: Kainote/Hotkeys.cpp:270
-msgid ""
-"The shortcuts file is outdated and will be replaced with the default one"
+msgid "The shortcuts file is outdated and will be replaced with the default one"
 msgstr "குறுக்குவழிகள் கோப்பு காலாவதியானது, அது இயல்பாக மாற்றப்படும்"
 
 #: Kainote/Hotkeys.cpp:373
@@ -2419,16 +2330,12 @@ msgid "Please enter a hotkey for \"%s\"."
 msgstr "தயவுசெய்து \"%s\" க்கு ஆட்ச்கியை உள்ளிடவும்."
 
 #: Kainote/Hotkeys.cpp:641
-msgid ""
-"Global and editor shortcuts must include modifiers (e.g. Shift, Ctrl, Alt)."
-msgstr ""
-"உலகளாவிய மற்றும் எடிட்டர் குறுக்குவழிகளில் மாற்றியமைப்பாளர்கள் இருக்க வேண்டும் (எ.கா. "
-"சிப்ட், சி.டி.ஆர்.எல், ஆல்ட்)."
+msgid "Global and editor shortcuts must include modifiers (e.g. Shift, Ctrl, Alt)."
+msgstr "உலகளாவிய மற்றும் எடிட்டர் குறுக்குவழிகளில் மாற்றியமைப்பாளர்கள் இருக்க வேண்டும் (எ.கா. சிப்ட், சி.டி.ஆர்.எல், ஆல்ட்)."
 
 #: Kainote/Hotkeys.cpp:644
 msgid "You cannot use shortcuts for copying, cutting, and pasting."
-msgstr ""
-"நகலெடுப்பது, வெட்டுதல் மற்றும் ஒட்டுவதற்கு நீங்கள் குறுக்குவழிகளைப் பயன்படுத்த முடியாது."
+msgstr "நகலெடுப்பது, வெட்டுதல் மற்றும் ஒட்டுவதற்கு நீங்கள் குறுக்குவழிகளைப் பயன்படுத்த முடியாது."
 
 #: Kainote/Hotkeys.cpp:647
 msgid "You cannot use the program exit shortcut."
@@ -2695,266 +2602,262 @@ msgstr ""
 msgid "Split lines by wraps"
 msgstr ""
 
-#: Kainote/HotkeysNaming.cpp:159 Kainote/KainoteFrame.cpp:317
+#: Kainote/HotkeysNaming.cpp:159 Kainote/KainoteFrame.cpp:316
 msgid "ASS file properties"
 msgstr "கழுதை கோப்பு பண்புகள்"
 
 #: Kainote/HotkeysNaming.cpp:160
-msgid "Check for updates"
-msgstr ""
-
-#: Kainote/HotkeysNaming.cpp:161
 msgid "About"
 msgstr "பற்றி"
 
-#: Kainote/HotkeysNaming.cpp:162
+#: Kainote/HotkeysNaming.cpp:161
 msgid "Forum thread on animesub.info (Polish)"
 msgstr "Animesub.info (போலந்து) இல் மன்ற நூல்"
 
-#: Kainote/HotkeysNaming.cpp:168 Kainote/KainoteFrame.cpp:298
+#: Kainote/HotkeysNaming.cpp:167 Kainote/KainoteFrame.cpp:297
 msgid "Open audio from video"
 msgstr "வீடியோவிலிருந்து ஆடியோவைத் திறக்கவும்"
 
-#: Kainote/HotkeysNaming.cpp:169 Kainote/KainoteFrame.cpp:348
-#: Kainote/KainoteFrame.cpp:349
+#: Kainote/HotkeysNaming.cpp:168 Kainote/KainoteFrame.cpp:347
+#: Kainote/KainoteFrame.cpp:348
 msgid "Load script"
 msgstr "ச்கிரிப்டை ஏற்றவும்"
 
-#: Kainote/HotkeysNaming.cpp:170 Kainote/KainoteFrame.cpp:354
-#: Kainote/KainoteFrame.cpp:355
+#: Kainote/HotkeysNaming.cpp:169 Kainote/KainoteFrame.cpp:353
+#: Kainote/KainoteFrame.cpp:354
 msgid "Open shortcut mapping window"
 msgstr "குறுக்குவழி மேப்பிங் சாளரத்தைத் திறக்கவும்"
 
-#: Kainote/HotkeysNaming.cpp:171 Kainote/KainoteFrame.cpp:350
-#: Kainote/KainoteFrame.cpp:351
+#: Kainote/HotkeysNaming.cpp:170 Kainote/KainoteFrame.cpp:349
+#: Kainote/KainoteFrame.cpp:350
 msgid "Refresh autoload scripts"
 msgstr "ஆட்டோலோட் ச்கிரிப்ட்களை புதுப்பிக்கவும்"
 
-#: Kainote/HotkeysNaming.cpp:173 Kainote/KainoteFrame.cpp:302
+#: Kainote/HotkeysNaming.cpp:172 Kainote/KainoteFrame.cpp:301
 msgid "Close audio"
 msgstr "ஆடியோவை மூடு"
 
-#: Kainote/HotkeysNaming.cpp:178 Kainote/KainoteFrame.cpp:1150
-#: Kainote/OptionsDialog.cpp:651
+#: Kainote/HotkeysNaming.cpp:177 Kainote/KainoteFrame.cpp:1144
+#: Kainote/OptionsDialog.cpp:648
 msgid "Credits"
 msgstr "வரவு"
 
-#: Kainote/HotkeysNaming.cpp:179 Kainote/KainoteFrame.cpp:343
+#: Kainote/HotkeysNaming.cpp:178 Kainote/KainoteFrame.cpp:342
 msgid "Hide tags"
 msgstr "குறிச்சொற்களை மறைக்கவும்"
 
-#: Kainote/HotkeysNaming.cpp:183 Kainote/KainoteFrame.cpp:251
-#: Kainote/KainoteFrame.cpp:252
+#: Kainote/HotkeysNaming.cpp:182 Kainote/KainoteFrame.cpp:250
+#: Kainote/KainoteFrame.cpp:251
 msgid "Open keyframes"
 msgstr "கீஃப்ரேம்களைத் திறக்கவும்"
 
-#: Kainote/HotkeysNaming.cpp:184 Kainote/KainoteFrame.cpp:195
+#: Kainote/HotkeysNaming.cpp:183 Kainote/KainoteFrame.cpp:194
 msgid "Open auto save"
 msgstr "திறந்த ஆட்டோ சேமிப்பு"
 
-#: Kainote/HotkeysNaming.cpp:185 Kainote/KainoteFrame.cpp:352
-#: Kainote/KainoteFrame.cpp:353
+#: Kainote/HotkeysNaming.cpp:184 Kainote/KainoteFrame.cpp:351
+#: Kainote/KainoteFrame.cpp:352
 msgid "Run the last loaded script"
 msgstr "அண்மைக் கால ச்கிரிப்டை இயக்கவும்"
 
-#: Kainote/HotkeysNaming.cpp:186
+#: Kainote/HotkeysNaming.cpp:185
 msgid "Sort all lines by start time"
 msgstr "தொடக்க நேரத்தால் எல்லா வரிகளையும் வரிசைப்படுத்துங்கள்"
 
-#: Kainote/HotkeysNaming.cpp:187
+#: Kainote/HotkeysNaming.cpp:186
 msgid "Sort all lines by end time"
 msgstr "அனைத்து வரிகளையும் இறுதி நேரத்தால் வரிசைப்படுத்துங்கள்"
 
-#: Kainote/HotkeysNaming.cpp:188
+#: Kainote/HotkeysNaming.cpp:187
 msgid "Sort all lines by styles"
 msgstr "அனைத்து வரிகளையும் பாணிகளால் வரிசைப்படுத்துங்கள்"
 
-#: Kainote/HotkeysNaming.cpp:189
+#: Kainote/HotkeysNaming.cpp:188
 msgid "Sort all lines by actor"
 msgstr "நடிகரின் அனைத்து வரிகளையும் வரிசைப்படுத்துங்கள்"
 
-#: Kainote/HotkeysNaming.cpp:190
+#: Kainote/HotkeysNaming.cpp:189
 msgid "Sort all lines by effect"
 msgstr "எல்லா வரிகளையும் விளைவால் வரிசைப்படுத்தவும்"
 
-#: Kainote/HotkeysNaming.cpp:191
+#: Kainote/HotkeysNaming.cpp:190
 msgid "Sort all lines by layer"
 msgstr "அனைத்து வரிகளையும் அடுக்கு மூலம் வரிசைப்படுத்தவும்"
 
-#: Kainote/HotkeysNaming.cpp:192
+#: Kainote/HotkeysNaming.cpp:191
 msgid "Sort selected lines by start time"
 msgstr "தொடக்க நேரத்தின் மூலம் தேர்ந்தெடுக்கப்பட்ட வரிகளை வரிசைப்படுத்தவும்"
 
-#: Kainote/HotkeysNaming.cpp:193
+#: Kainote/HotkeysNaming.cpp:192
 msgid "Sort selected lines by end time"
 msgstr "தேர்ந்தெடுக்கப்பட்ட வரிகளை இறுதி நேரத்தில் வரிசைப்படுத்தவும்"
 
-#: Kainote/HotkeysNaming.cpp:194
+#: Kainote/HotkeysNaming.cpp:193
 msgid "Sort selected lines by styles"
 msgstr "தேர்ந்தெடுக்கப்பட்ட வரிகளை பாணிகளால் வரிசைப்படுத்தவும்"
 
-#: Kainote/HotkeysNaming.cpp:195
+#: Kainote/HotkeysNaming.cpp:194
 msgid "Sort selected lines by actor"
 msgstr "நடிகரின் தேர்ந்தெடுக்கப்பட்ட வரிகளை வரிசைப்படுத்தவும்"
 
-#: Kainote/HotkeysNaming.cpp:196
+#: Kainote/HotkeysNaming.cpp:195
 msgid "Sort selected lines by effect"
 msgstr "தேர்ந்தெடுக்கப்பட்ட வரிகளை விளைவு மூலம் வரிசைப்படுத்தவும்"
 
-#: Kainote/HotkeysNaming.cpp:197
+#: Kainote/HotkeysNaming.cpp:196
 msgid "Sort selected lines by layer"
 msgstr "தேர்ந்தெடுக்கப்பட்ட வரிகளை அடுக்கு மூலம் வரிசைப்படுத்தவும்"
 
-#: Kainote/HotkeysNaming.cpp:198
+#: Kainote/HotkeysNaming.cpp:197
 msgid "Shift times / run time post processor"
 msgstr "நேரங்களை மாற்றவும் / நேர போச்ட் செயலி இயக்கவும்"
 
-#: Kainote/HotkeysNaming.cpp:199 Kainote/KainoteFrame.cpp:275
+#: Kainote/HotkeysNaming.cpp:198 Kainote/KainoteFrame.cpp:274
 msgid "Go to previous keyframe"
 msgstr "முந்தைய கீஃப்ரேமுக்குச் செல்லவும்"
 
-#: Kainote/HotkeysNaming.cpp:200 Kainote/KainoteFrame.cpp:277
+#: Kainote/HotkeysNaming.cpp:199 Kainote/KainoteFrame.cpp:276
 msgid "Go to next keyframe"
 msgstr "அடுத்த கீஃப்ரேமுக்குச் செல்லவும்"
 
-#: Kainote/HotkeysNaming.cpp:201 Kainote/KainoteFrame.cpp:339
-#: Kainote/KainoteFrame.cpp:340
+#: Kainote/HotkeysNaming.cpp:200 Kainote/KainoteFrame.cpp:338
+#: Kainote/KainoteFrame.cpp:339
 msgid "Resample subtitles"
 msgstr "மறுவிற்பனை வசன வரிகள்"
 
-#: Kainote/HotkeysNaming.cpp:203 Kainote/KainoteFrame.cpp:211
+#: Kainote/HotkeysNaming.cpp:202 Kainote/KainoteFrame.cpp:210
 msgid "Undo to last save"
 msgstr "செயல்தவிர் பெறுநர் last சேமி"
 
-#: Kainote/HotkeysNaming.cpp:204 Kainote/KainoteFrame.cpp:285
+#: Kainote/HotkeysNaming.cpp:203 Kainote/KainoteFrame.cpp:284
 msgid "Open video with FFMS2"
 msgstr "FFMS2 உடன் வீடியோவைத் திறக்கவும்"
 
-#: Kainote/HotkeysNaming.cpp:205 Kainote/KainoteFrame.cpp:282
+#: Kainote/HotkeysNaming.cpp:204 Kainote/KainoteFrame.cpp:281
 #, fuzzy
 msgid "Zoom video"
 msgstr "சூம் வீடியோ"
 
-#: Kainote/HotkeysNaming.cpp:206 Kainote/KainoteFrame.cpp:283
+#: Kainote/HotkeysNaming.cpp:205 Kainote/KainoteFrame.cpp:282
 #, fuzzy
 msgid "Turn off video zoom"
 msgstr "வீடியோ சூம்"
 
-#: Kainote/HotkeysNaming.cpp:207
+#: Kainote/HotkeysNaming.cpp:206
 msgid "View all"
 msgstr "அனைத்தையும் காண்க"
 
-#: Kainote/HotkeysNaming.cpp:208
+#: Kainote/HotkeysNaming.cpp:207
 msgid "View audio and subtitles"
 msgstr "ஆடியோ மற்றும் வசன வரிகள் காண்க"
 
-#: Kainote/HotkeysNaming.cpp:209
+#: Kainote/HotkeysNaming.cpp:208
 msgid "View only subtitles"
 msgstr "வசன வரிகள் மட்டுமே காண்க"
 
-#: Kainote/HotkeysNaming.cpp:210
+#: Kainote/HotkeysNaming.cpp:209
 msgid "View video and subtitles"
 msgstr "வீடியோ மற்றும் வசனங்களைக் காண்க"
 
-#: Kainote/HotkeysNaming.cpp:211
+#: Kainote/HotkeysNaming.cpp:210
 msgid "View only video"
 msgstr "வீடியோவைக் காண்க"
 
-#: Kainote/HotkeysNaming.cpp:214
+#: Kainote/HotkeysNaming.cpp:213
 msgid "Clean styles of ASS file"
 msgstr "கழுதை கோப்பின் தூய்மையான பாணிகள்"
 
-#: Kainote/HotkeysNaming.cpp:215 Kainote/KainoteFrame.cpp:240
+#: Kainote/HotkeysNaming.cpp:214 Kainote/KainoteFrame.cpp:239
 msgid "Fix minor errors (experimental)"
 msgstr "மல்டிர்பிளாசர் (சோதனை)"
 
-#: Kainote/HotkeysNaming.cpp:217 Kainote/KainoteFrame.cpp:160
+#: Kainote/HotkeysNaming.cpp:216 Kainote/KainoteFrame.cpp:159
 msgid "Load last session"
 msgstr "கடைசி அமர்வை ஏற்றவும்"
 
-#: Kainote/HotkeysNaming.cpp:221 Kainote/KainoteFrame.cpp:292
+#: Kainote/HotkeysNaming.cpp:220 Kainote/KainoteFrame.cpp:291
 msgid "Open audio"
 msgstr "திறந்த ஆடியோ"
 
-#: Kainote/HotkeysNaming.cpp:225
+#: Kainote/HotkeysNaming.cpp:224
 msgid "Play active line"
 msgstr "செயலில் வரி விளையாடுங்கள்"
 
-#: Kainote/HotkeysNaming.cpp:231 Kainote/KainoteFrame.cpp:190
+#: Kainote/HotkeysNaming.cpp:230 Kainote/KainoteFrame.cpp:189
 msgid "Remove subtitles from the editor"
 msgstr "எடிட்டரிடமிருந்து வசன வரிகள் அகற்றவும்"
 
-#: Kainote/HotkeysNaming.cpp:233 Kainote/KainoteFrame.cpp:182
+#: Kainote/HotkeysNaming.cpp:232 Kainote/KainoteFrame.cpp:181
 msgid "Save all subtitles"
 msgstr "அனைத்து வசனங்களையும் சேமிக்கவும்"
 
-#: Kainote/HotkeysNaming.cpp:236 Kainote/KainoteFrame.cpp:186
+#: Kainote/HotkeysNaming.cpp:235 Kainote/KainoteFrame.cpp:185
 msgid "Save translation"
 msgstr "மொழிபெயர்ப்பைச் சேமிக்கவும்"
 
-#: Kainote/HotkeysNaming.cpp:237 Kainote/KainoteFrame.cpp:191
-#: Kainote/KainoteFrame.cpp:192
+#: Kainote/HotkeysNaming.cpp:236 Kainote/KainoteFrame.cpp:190
+#: Kainote/KainoteFrame.cpp:191
 msgid "Save subtitles using the video name"
 msgstr "வீடியோவின் பெயருடன் வசன வரிகள் சேமிக்கவும்"
 
-#: Kainote/HotkeysNaming.cpp:240
+#: Kainote/HotkeysNaming.cpp:239
 msgid "Select lines"
 msgstr "வரிகளைத் தேர்ந்தெடுக்கவும்"
 
-#: Kainote/HotkeysNaming.cpp:241 Kainote/KainoteFrame.cpp:279
+#: Kainote/HotkeysNaming.cpp:240 Kainote/KainoteFrame.cpp:278
 msgid "Set audio position to video time"
 msgstr "வீடியோ நேரத்துடன் ஆடியோவை அமைக்கவும்"
 
-#: Kainote/HotkeysNaming.cpp:242 Kainote/KainoteFrame.cpp:281
+#: Kainote/HotkeysNaming.cpp:241 Kainote/KainoteFrame.cpp:280
 msgid "Set audio marker to video time"
 msgstr "வீடியோ நேரத்துடன் ஆடியோ மார்க்கரை அமைக்கவும்"
 
-#: Kainote/HotkeysNaming.cpp:245
+#: Kainote/HotkeysNaming.cpp:244
 msgid "Settings"
 msgstr "அமைப்புகள்"
 
-#: Kainote/HotkeysNaming.cpp:246 Kainote/KainoteFrame.cpp:267
+#: Kainote/HotkeysNaming.cpp:245 Kainote/KainoteFrame.cpp:266
 msgid "Go to start time"
 msgstr "தொடக்க நேரத்திற்குச் செல்லுங்கள்"
 
-#: Kainote/HotkeysNaming.cpp:247 Kainote/KainoteFrame.cpp:270
+#: Kainote/HotkeysNaming.cpp:246 Kainote/KainoteFrame.cpp:269
 msgid "Go to end time of line"
 msgstr "வரியின் இறுதி நேரத்திற்குச் செல்லுங்கள்"
 
-#: Kainote/HotkeysNaming.cpp:250 Kainote/KainoteFrame.cpp:341
-#: Kainote/KainoteFrame.cpp:342
+#: Kainote/HotkeysNaming.cpp:249 Kainote/KainoteFrame.cpp:340
+#: Kainote/KainoteFrame.cpp:341
 msgid "Check spelling"
 msgstr "எழுத்துப்பிழை சரிபார்ப்பு"
 
-#: Kainote/HotkeysNaming.cpp:252 Kainote/VideoBox.cpp:962
+#: Kainote/HotkeysNaming.cpp:251 Kainote/VideoBox.cpp:962
 msgid "Copy frame to clipboard"
 msgstr "இடைநிலைப்பலகைக்கு சட்டத்தை நகலெடுக்கவும்"
 
-#: Kainote/HotkeysNaming.cpp:253 Kainote/VideoBox.cpp:965
+#: Kainote/HotkeysNaming.cpp:252 Kainote/VideoBox.cpp:965
 msgid "Remove video"
 msgstr "வீடியோவை அகற்று"
 
-#: Kainote/HotkeysNaming.cpp:254 Kainote/VideoBox.cpp:961
+#: Kainote/HotkeysNaming.cpp:253 Kainote/VideoBox.cpp:961
 msgid "Save frame as PNG"
 msgstr "சட்டகமாக png ஆக சேமிக்கவும்"
 
-#: Kainote/HotkeysNaming.cpp:257 Kainote/VideoBox.cpp:957
+#: Kainote/HotkeysNaming.cpp:256 Kainote/VideoBox.cpp:957
 msgid "Show / hide progress bar"
 msgstr "முன்னேற்றப் பட்டியைக் காட்டவும் / மறைக்கவும்"
 
-#: Kainote/HotkeysNaming.cpp:261 Kainote/VideoBox.cpp:958
+#: Kainote/HotkeysNaming.cpp:260 Kainote/VideoBox.cpp:958
 msgid "Change aspect ratio"
 msgstr "அம்ச விகிதத்தை மாற்றவும்"
 
-#: Kainote/HotkeysNaming.cpp:266 Kainote/VideoBox.cpp:960
+#: Kainote/HotkeysNaming.cpp:265 Kainote/VideoBox.cpp:960
 msgid "Copy frame with subtitles to clipboard"
 msgstr "இடைநிலைப்பலகைக்கு வசன வரிகளுடன் சட்டகத்தை நகலெடுக்கவும்"
 
-#: Kainote/HotkeysNaming.cpp:267
+#: Kainote/HotkeysNaming.cpp:266
 msgid "Full screen"
 msgstr "முழுத் திரை"
 
-#: Kainote/HotkeysNaming.cpp:270 Kainote/VideoBox.cpp:959
+#: Kainote/HotkeysNaming.cpp:269 Kainote/VideoBox.cpp:959
 msgid "Save frame with subtitles as PNG"
 msgstr "பி.என்.சி என வசன வரிகள் மூலம் சட்டத்தை சேமிக்கவும்"
 
@@ -2979,564 +2882,542 @@ msgstr "இல்லை"
 msgid "Help"
 msgstr "உதவி"
 
-#: Kainote/KainoteFrame.cpp:106
+#: Kainote/KainoteFrame.cpp:103
 msgid "Untitled - "
 msgstr "பெயரிடப்படாதது - "
 
-#: Kainote/KainoteFrame.cpp:152
+#: Kainote/KainoteFrame.cpp:151
 msgid "Video duration"
 msgstr "வீடியோ காலம்"
 
-#: Kainote/KainoteFrame.cpp:152
+#: Kainote/KainoteFrame.cpp:151
 msgid "Video scale"
 msgstr "வீடியோ அளவு"
 
-#: Kainote/KainoteFrame.cpp:152
+#: Kainote/KainoteFrame.cpp:151
 msgid "Video zoom"
 msgstr "வீடியோ சூம்"
 
-#: Kainote/KainoteFrame.cpp:153
+#: Kainote/KainoteFrame.cpp:152
 msgid "Frames per second"
 msgstr "நொடிக்கு பிரேம்கள்"
 
-#: Kainote/KainoteFrame.cpp:153 Kainote/SubsResampleDialog.cpp:31
+#: Kainote/KainoteFrame.cpp:152 Kainote/SubsResampleDialog.cpp:31
 msgid "Subtitles resolution"
 msgstr "வசனத் தீர்மானம்"
 
-#: Kainote/KainoteFrame.cpp:153
+#: Kainote/KainoteFrame.cpp:152
 msgid "Video aspect ratio"
 msgstr "வீடியோ விகித விகிதம்"
 
-#: Kainote/KainoteFrame.cpp:153
+#: Kainote/KainoteFrame.cpp:152
 msgid "Video file name"
 msgstr "வீடியோ கோப்பு பெயர்"
 
-#: Kainote/KainoteFrame.cpp:153
+#: Kainote/KainoteFrame.cpp:152
 msgid "Video resolution"
 msgstr "வீடியோ தீர்மானம்"
 
-#: Kainote/KainoteFrame.cpp:161
+#: Kainote/KainoteFrame.cpp:160
 msgid "Loads previously loaded files"
 msgstr "திறந்த கோப்புகளை கடந்த முறை ஏற்றியது"
 
-#: Kainote/KainoteFrame.cpp:162
+#: Kainote/KainoteFrame.cpp:161
 msgid "Load session from file"
 msgstr "கோப்பிலிருந்து அமர்வை ஏற்றவும்"
 
-#: Kainote/KainoteFrame.cpp:163
+#: Kainote/KainoteFrame.cpp:162
 msgid "Loads session from saved session file"
 msgstr "சேமித்த அமர்வு கோப்பிலிருந்து அமர்வை ஏற்றுகிறது"
 
-#: Kainote/KainoteFrame.cpp:165
+#: Kainote/KainoteFrame.cpp:164
 msgid "Save session to file"
 msgstr "அமர்வை தாக்கல் செய்ய சேமிக்கவும்"
 
-#: Kainote/KainoteFrame.cpp:165
+#: Kainote/KainoteFrame.cpp:164
 msgid "Saves session to file"
 msgstr "தாக்கல் செய்ய அமர்வை சேமிக்கிறது"
 
-#: Kainote/KainoteFrame.cpp:168
+#: Kainote/KainoteFrame.cpp:167
 msgid "Ask whether to load the last session at program startup"
 msgstr "நிரல் தொடங்கிய பிறகு கடைசி அமர்வைக் கேளுங்கள்"
 
-#: Kainote/KainoteFrame.cpp:169
+#: Kainote/KainoteFrame.cpp:168
 msgid "Asks whether to load previously loaded files at program startup"
 msgstr "நிரல் தொடக்கத்தில் அண்மைக் காலத்தில் படித்த கோப்புகளை ஏற்றலாமா என்று கேட்கிறது"
 
-#: Kainote/KainoteFrame.cpp:172
+#: Kainote/KainoteFrame.cpp:171
 msgid "Load last session after program start"
 msgstr "நிரல் தொடக்கத்திற்குப் பிறகு கடைசி அமர்வை ஏற்றவும்"
 
-#: Kainote/KainoteFrame.cpp:173
+#: Kainote/KainoteFrame.cpp:172
 msgid "Loads previously loaded files at program startup"
 msgstr "நிரல் தொடக்கத்திற்குப் பிறகு கடைசி அமர்வை ஏற்றுகிறது"
 
-#: Kainote/KainoteFrame.cpp:177
+#: Kainote/KainoteFrame.cpp:176
 msgid "&Open subtitles"
 msgstr "வசன வரிகள் திற"
 
-#: Kainote/KainoteFrame.cpp:178
+#: Kainote/KainoteFrame.cpp:177
 msgid "Open subtitle file"
 msgstr "திறந்த வசன கோப்பு"
 
-#: Kainote/KainoteFrame.cpp:179
+#: Kainote/KainoteFrame.cpp:178
 msgid "&Save"
 msgstr "சேமி (&s)"
 
-#: Kainote/KainoteFrame.cpp:180
+#: Kainote/KainoteFrame.cpp:179
 msgid "Save current file"
 msgstr "தற்போதைய கோப்பை சேமிக்கவும்"
 
-#: Kainote/KainoteFrame.cpp:181
+#: Kainote/KainoteFrame.cpp:180
 msgid "Save &all"
 msgstr "அனைத்தையும் சேமி"
 
-#: Kainote/KainoteFrame.cpp:183
+#: Kainote/KainoteFrame.cpp:182
 msgid "Save &as..."
 msgstr "எனச் சேமி..."
 
-#: Kainote/KainoteFrame.cpp:184
+#: Kainote/KainoteFrame.cpp:183
 msgid "Save as"
 msgstr "என சேமி"
 
-#: Kainote/KainoteFrame.cpp:185
+#: Kainote/KainoteFrame.cpp:184
 msgid "Save &translation"
 msgstr "மொழிபெயர்ப்பைச் சேமிக்கவும்"
 
-#: Kainote/KainoteFrame.cpp:187
+#: Kainote/KainoteFrame.cpp:186
 msgid "Recently opened &subtitles"
 msgstr "அண்மைக் காலத்தில் திறக்கப்பட்ட வசன வரிகள்"
 
-#: Kainote/KainoteFrame.cpp:188 Kainote/VideoBox.cpp:951
+#: Kainote/KainoteFrame.cpp:187 Kainote/VideoBox.cpp:951
 msgid "Recently opened subtitles"
 msgstr "அண்மைக் காலத்தில் திறக்கப்பட்ட வசன வரிகள்"
 
-#: Kainote/KainoteFrame.cpp:189
+#: Kainote/KainoteFrame.cpp:188
 msgid "Remove subtitles from the &editor"
 msgstr "எடிட்டரிடமிருந்து வசன வரிகள் அகற்றவும்"
 
-#: Kainote/KainoteFrame.cpp:195
+#: Kainote/KainoteFrame.cpp:194
 msgid "Opens the selected autosave from the list"
 msgstr "பட்டியலிலிருந்து ஆட்டோசேவைத் திறக்கவும்"
 
-#: Kainote/KainoteFrame.cpp:197
+#: Kainote/KainoteFrame.cpp:196
 msgid "Opens the temporary file removal window"
 msgstr "சாளரத்தை அகற்றும் தற்காலிக கோப்புகளைத் திறக்கவும்"
 
-#: Kainote/KainoteFrame.cpp:198
+#: Kainote/KainoteFrame.cpp:197
 msgid "Show / Hide log window"
 msgstr "பதிவு சாளரத்தைக் காட்டவும் / மறைக்கவும்"
 
-#: Kainote/KainoteFrame.cpp:199
+#: Kainote/KainoteFrame.cpp:198
 msgid "Last session"
 msgstr "கடைசி அமர்வு"
 
-#: Kainote/KainoteFrame.cpp:199
+#: Kainote/KainoteFrame.cpp:198
 msgid "Last session options"
 msgstr "கடைசி அமர்வு விருப்பங்கள்"
 
-#: Kainote/KainoteFrame.cpp:201
+#: Kainote/KainoteFrame.cpp:200
 msgid "&Settings"
 msgstr "&அமைப்புகள்"
 
-#: Kainote/KainoteFrame.cpp:202
+#: Kainote/KainoteFrame.cpp:201
 msgid "Program settings"
 msgstr "நிரல் அமைப்புகள்"
 
-#: Kainote/KainoteFrame.cpp:203
+#: Kainote/KainoteFrame.cpp:202
 msgid "&Exit\tAlt-F4"
 msgstr "& Alt-f4 வெளியேறு"
 
-#: Kainote/KainoteFrame.cpp:204
+#: Kainote/KainoteFrame.cpp:203
 msgid "Exit the program"
 msgstr "நிரலில் இருந்து வெளியேறவும்"
 
-#: Kainote/KainoteFrame.cpp:205
+#: Kainote/KainoteFrame.cpp:204
 msgid "&File"
 msgstr "கோப்பு (&f)"
 
-#: Kainote/KainoteFrame.cpp:208 Kainote/KainoteFrame.cpp:2329
+#: Kainote/KainoteFrame.cpp:207 Kainote/KainoteFrame.cpp:2323
 msgid "&Undo"
 msgstr "செயல்தவிர் (&u)"
 
-#: Kainote/KainoteFrame.cpp:213 Kainote/KainoteFrame.cpp:2345
+#: Kainote/KainoteFrame.cpp:212 Kainote/KainoteFrame.cpp:2339
 msgid "&Redo"
 msgstr "மீண்டும்செய் (&r)"
 
-#: Kainote/KainoteFrame.cpp:215
+#: Kainote/KainoteFrame.cpp:214
 msgid "&History"
 msgstr "& வரலாறு"
 
-#: Kainote/KainoteFrame.cpp:217
+#: Kainote/KainoteFrame.cpp:216
 msgid "Find and re&place"
 msgstr "கண்டுபிடித்து மாற்று"
 
-#: Kainote/KainoteFrame.cpp:218
+#: Kainote/KainoteFrame.cpp:217
 msgid "Searches for the specified text phrases and replaces them"
 msgstr "வெளிப்பாடுகளைத் தேடி அவற்றை மாற்றுகிறது"
 
-#: Kainote/KainoteFrame.cpp:219
+#: Kainote/KainoteFrame.cpp:218
 msgid "&Find"
 msgstr "தேடு (&f)"
 
-#: Kainote/KainoteFrame.cpp:220
+#: Kainote/KainoteFrame.cpp:219
 msgid "Searches for the specified text phrase"
 msgstr "வெளிப்பாடுகளைத் தேடுகிறது"
 
-#: Kainote/KainoteFrame.cpp:222
+#: Kainote/KainoteFrame.cpp:221
 msgid "Finds the next occurrence of the phrase in the text"
 msgstr "உரையில் அடுத்த சொற்றொடர் வேலைவாய்ப்பைக் காண்கிறது"
 
-#: Kainote/KainoteFrame.cpp:226 Kainote/ShiftTimes.cpp:357
+#: Kainote/KainoteFrame.cpp:225 Kainote/ShiftTimes.cpp:357
 #: Kainote/SubsGrid.cpp:460 Kainote/SubsGrid.cpp:491 Kainote/SubsGrid.cpp:497
 #: Kainote/SubsGrid.cpp:498 Kainote/SubsGrid.cpp:627 Kainote/SubsGrid.cpp:650
 #: Kainote/SubsGrid.cpp:658 Kainote/SubsGrid.cpp:659
 msgid "The starting time"
 msgstr "அந்தத் தொடக்க நேரம்"
 
-#: Kainote/KainoteFrame.cpp:227
+#: Kainote/KainoteFrame.cpp:226
 msgid "Sort by start time"
 msgstr "தொடக்க நேரத்தால் வரிசைப்படுத்துங்கள்"
 
-#: Kainote/KainoteFrame.cpp:228 Kainote/SelectLines.cpp:78
+#: Kainote/KainoteFrame.cpp:227 Kainote/SelectLines.cpp:78
 #: Kainote/ShiftTimes.cpp:358 Kainote/SubsGrid.cpp:461 Kainote/SubsGrid.cpp:628
 msgid "End time"
 msgstr "இறுதி நேரம்"
 
-#: Kainote/KainoteFrame.cpp:229
+#: Kainote/KainoteFrame.cpp:228
 msgid "Sort by end time"
 msgstr "இறுதி நேரத்தால் வரிசைப்படுத்துங்கள்"
 
-#: Kainote/KainoteFrame.cpp:230
+#: Kainote/KainoteFrame.cpp:229
 msgid "Sort by styles"
 msgstr "பாணிகளால் வரிசைப்படுத்துங்கள்"
 
-#: Kainote/KainoteFrame.cpp:231
+#: Kainote/KainoteFrame.cpp:230
 msgid "Sort by actor"
 msgstr "நடிகரால் வரிசைப்படுத்துங்கள்"
 
-#: Kainote/KainoteFrame.cpp:232
+#: Kainote/KainoteFrame.cpp:231
 msgid "Sort by effect"
 msgstr "விளைவால் வரிசைப்படுத்துங்கள்"
 
-#: Kainote/KainoteFrame.cpp:233 Kainote/SubsGrid.cpp:459
+#: Kainote/KainoteFrame.cpp:232 Kainote/SubsGrid.cpp:459
 #: Kainote/SubsGrid.cpp:626
 msgid "Layer"
 msgstr "அடுக்கு"
 
-#: Kainote/KainoteFrame.cpp:233
+#: Kainote/KainoteFrame.cpp:232
 msgid "Sort by layer"
 msgstr "அடுக்கு மூலம் வரிசைப்படுத்துங்கள்"
 
-#: Kainote/KainoteFrame.cpp:236
+#: Kainote/KainoteFrame.cpp:235
 msgid "So&rt all lines"
 msgstr "எனவே & rt அனைத்து வரிகளும்"
 
-#: Kainote/KainoteFrame.cpp:237
+#: Kainote/KainoteFrame.cpp:236
 msgid "Sorts all lines in ASS file"
 msgstr "கழுதை கோப்பில் அனைத்து வரிகளையும் வரிசைப்படுத்துகிறது"
 
-#: Kainote/KainoteFrame.cpp:238
+#: Kainote/KainoteFrame.cpp:237
 msgid "So&rt selected lines"
 msgstr "எனவே & ஆர்டி தேர்ந்தெடுக்கப்பட்ட கோடுகள்"
 
-#: Kainote/KainoteFrame.cpp:239
+#: Kainote/KainoteFrame.cpp:238
 msgid "Sorts selected lines in ASS file"
 msgstr "கழுதை கோப்பில் தேர்ந்தெடுக்கப்பட்ட வரிகளை வரிசைப்படுத்துகிறது"
 
-#: Kainote/KainoteFrame.cpp:241
+#: Kainote/KainoteFrame.cpp:240
 msgid "Turns on multireplacer"
 msgstr "மல்டி மாற்றியை இயக்கவும்"
 
-#: Kainote/KainoteFrame.cpp:242
+#: Kainote/KainoteFrame.cpp:241
 msgid "Select &lines"
 msgstr "தேர்ந்தெடு & கோடுகள்"
 
-#: Kainote/KainoteFrame.cpp:242
+#: Kainote/KainoteFrame.cpp:241
 msgid "Selects lines by expressions"
 msgstr "வெளிப்பாடுகளால் வரிகளைத் தேர்ந்தெடுக்கிறது"
 
-#: Kainote/KainoteFrame.cpp:243
+#: Kainote/KainoteFrame.cpp:242
 msgid "&Edit"
 msgstr "திருத்து (&e)"
 
-#: Kainote/KainoteFrame.cpp:247
+#: Kainote/KainoteFrame.cpp:246
 msgid "Opens video file"
 msgstr "வீடியோ கோப்பைத் திறக்கவும்"
 
-#: Kainote/KainoteFrame.cpp:249 Kainote/KainoteFrame.cpp:250
+#: Kainote/KainoteFrame.cpp:248 Kainote/KainoteFrame.cpp:249
 #: Kainote/VideoBox.cpp:952
 msgid "Recently opened videos"
 msgstr "அண்மைக் காலத்தில் திறக்கப்பட்ட வீடியோக்கள்"
 
-#: Kainote/KainoteFrame.cpp:255
+#: Kainote/KainoteFrame.cpp:254
 msgid "Recently opened keyframes"
 msgstr "அண்மைக் காலத்தில் திறக்கப்பட்ட கீஃப்ரேம்கள்"
 
-#: Kainote/KainoteFrame.cpp:257
+#: Kainote/KainoteFrame.cpp:256
 msgid "Open dummy video"
 msgstr "திறந்திருக்கும் போலி வீடியோ"
 
-#: Kainote/KainoteFrame.cpp:259
+#: Kainote/KainoteFrame.cpp:258
 msgid "Inserts the start time from video"
 msgstr "வீடியோவிலிருந்து தொடக்க நேரத்தை செருகவும்"
 
-#: Kainote/KainoteFrame.cpp:261
+#: Kainote/KainoteFrame.cpp:260
 msgid "Inserts the end time from video"
 msgstr "வீடியோவிலிருந்து இறுதி நேரத்தை செருகவும்"
 
-#: Kainote/KainoteFrame.cpp:263
+#: Kainote/KainoteFrame.cpp:262
 msgid "Go to previous frame"
 msgstr "முந்தைய சட்டகத்திற்குச் செல்லுங்கள்"
 
-#: Kainote/KainoteFrame.cpp:265
+#: Kainote/KainoteFrame.cpp:264
 msgid "Go to next frame"
 msgstr "அடுத்த சட்டகத்திற்குச் செல்லுங்கள்"
 
-#: Kainote/KainoteFrame.cpp:267
+#: Kainote/KainoteFrame.cpp:266
 msgid "Moves video to start time"
 msgstr "வீடியோவைத் தொடங்க வீடியோவை நகர்த்துகிறது"
 
-#: Kainote/KainoteFrame.cpp:270
+#: Kainote/KainoteFrame.cpp:269
 msgid "Moves video to end time"
 msgstr "வீடியோவை இறுதி நேரத்திற்கு நகர்த்துகிறது"
 
-#: Kainote/KainoteFrame.cpp:273
+#: Kainote/KainoteFrame.cpp:272
 msgid "Plays / Pauses video"
 msgstr "வீடியோவை இயக்கவும் / இடைநிறுத்தவும்"
 
-#: Kainote/KainoteFrame.cpp:286
+#: Kainote/KainoteFrame.cpp:285
 msgid "Opens video with FFMS2 for frame precision"
 msgstr "பிரேம் துல்லியத்திற்காக FFMS2 உடன் வீடியோவைத் திறக்கிறது"
 
-#: Kainote/KainoteFrame.cpp:289
+#: Kainote/KainoteFrame.cpp:288
 msgid "&Video"
 msgstr "& வீடியோ"
 
-#: Kainote/KainoteFrame.cpp:293
+#: Kainote/KainoteFrame.cpp:292
 msgid "Opens audio file"
 msgstr "ஆடியோ கோப்பைத் திறக்கிறது"
 
-#: Kainote/KainoteFrame.cpp:296 Kainote/KainoteFrame.cpp:297
+#: Kainote/KainoteFrame.cpp:295 Kainote/KainoteFrame.cpp:296
 msgid "Recently opened audio"
 msgstr "அண்மைக் காலத்தில் ஆடியோ திறக்கப்பட்டது"
 
-#: Kainote/KainoteFrame.cpp:299
+#: Kainote/KainoteFrame.cpp:298
 msgid "Opens audio from video"
 msgstr "வீடியோவிலிருந்து ஆடியோவைத் திறக்கிறது"
 
-#: Kainote/KainoteFrame.cpp:300
+#: Kainote/KainoteFrame.cpp:299
 msgid "Open blank 2h30m audio"
 msgstr "வெற்று 2h30M ஆடியோவைத் திறக்கவும்"
 
-#: Kainote/KainoteFrame.cpp:301
+#: Kainote/KainoteFrame.cpp:300
 msgid "Opens blank audio 2 hour and 30 minutes long"
 msgstr "வெற்று ஆடியோவை 2 மணி நேரம் 30 நிமிடங்கள் நீளமாக திறக்கிறது"
 
-#: Kainote/KainoteFrame.cpp:303
+#: Kainote/KainoteFrame.cpp:302
 msgid "Closes audio"
 msgstr "ஆடியோவை மூடுகிறது"
 
-#: Kainote/KainoteFrame.cpp:304
+#: Kainote/KainoteFrame.cpp:303
 msgid "A&udio"
 msgstr "A & அழுகை"
 
-#: Kainote/KainoteFrame.cpp:307 Kainote/OptionsDialog.cpp:643
+#: Kainote/KainoteFrame.cpp:306 Kainote/OptionsDialog.cpp:640
 msgid "All"
 msgstr "அனைத்தும்"
 
-#: Kainote/KainoteFrame.cpp:307
+#: Kainote/KainoteFrame.cpp:306
 msgid "Shows all windows"
 msgstr "அனைத்து சாளரங்களையும் காட்டுகிறது"
 
-#: Kainote/KainoteFrame.cpp:308
+#: Kainote/KainoteFrame.cpp:307
 msgid "Shows only video window and subs window"
 msgstr "வீடியோ சாளரம் மற்றும் சப்ச் சாளரத்தை மட்டுமே காட்டுகிறது"
 
-#: Kainote/KainoteFrame.cpp:308
+#: Kainote/KainoteFrame.cpp:307
 msgid "Video and subs"
 msgstr "வீடியோ மற்றும் சப்ச்"
 
-#: Kainote/KainoteFrame.cpp:309
+#: Kainote/KainoteFrame.cpp:308
 msgid "Audio and subs"
 msgstr "ஆடியோ மற்றும் சப்ச்"
 
-#: Kainote/KainoteFrame.cpp:309
+#: Kainote/KainoteFrame.cpp:308
 msgid "Shows only audio window and subs window"
 msgstr "ஆடியோ சாளரம் மற்றும் சப்ச் சாளரத்தை மட்டுமே காட்டுகிறது"
 
-#: Kainote/KainoteFrame.cpp:310
+#: Kainote/KainoteFrame.cpp:309
 msgid "Only video"
 msgstr "வீடியோ மட்டுமே"
 
-#: Kainote/KainoteFrame.cpp:310
+#: Kainote/KainoteFrame.cpp:309
 msgid "Shows only video window"
 msgstr "வீடியோ சாளரத்தை மட்டுமே காட்டுகிறது"
 
-#: Kainote/KainoteFrame.cpp:311
+#: Kainote/KainoteFrame.cpp:310
 msgid "Only subtitles"
 msgstr "வசன வரிகள் மட்டுமே"
 
-#: Kainote/KainoteFrame.cpp:311
+#: Kainote/KainoteFrame.cpp:310
 msgid "Shows only the subtitle window"
 msgstr "வசன வரிகள் சாளரத்தை மட்டுமே காட்டுகிறது"
 
-#: Kainote/KainoteFrame.cpp:312
+#: Kainote/KainoteFrame.cpp:311
 msgid "View"
 msgstr "பார்வை"
 
-#: Kainote/KainoteFrame.cpp:316
+#: Kainote/KainoteFrame.cpp:315
 msgid "Enables / disables editor"
 msgstr "எடிட்டரை இயக்குகிறது / முடக்குகிறது"
 
-#: Kainote/KainoteFrame.cpp:318 Kainote/ScriptInfo.cpp:24
+#: Kainote/KainoteFrame.cpp:317 Kainote/ScriptInfo.cpp:24
 msgid "ASS subtitle properties"
 msgstr "ASS வசன வரிகள் பண்புகள்"
 
-#: Kainote/KainoteFrame.cpp:319
+#: Kainote/KainoteFrame.cpp:318
 msgid "Style &manager"
 msgstr "நடை & மேலாளர்"
 
-#: Kainote/KainoteFrame.cpp:320
+#: Kainote/KainoteFrame.cpp:319
 msgid "Is used to manage ASS styles"
 msgstr "கழுதை பாணிகளை நிர்வகிக்க பயன்படுகிறது"
 
-#: Kainote/KainoteFrame.cpp:323
+#: Kainote/KainoteFrame.cpp:322
 msgid "Converts to ASS format"
 msgstr "கழுதை வடிவத்திற்கு மாற்றுகிறது"
 
-#: Kainote/KainoteFrame.cpp:325
+#: Kainote/KainoteFrame.cpp:324
 msgid "Converts to SRT format"
 msgstr "SRT வடிவத்திற்கு மாற்றுகிறது"
 
-#: Kainote/KainoteFrame.cpp:327
+#: Kainote/KainoteFrame.cpp:326
 msgid "Converts to microDVD format"
 msgstr "மைக்ரோடிவிடி வடிவத்திற்கு மாற்றுகிறது"
 
-#: Kainote/KainoteFrame.cpp:329
+#: Kainote/KainoteFrame.cpp:328
 msgid "Converts to MPL2 format"
 msgstr "MOL2 வடிவத்திற்கு மாற்றவும்"
 
-#: Kainote/KainoteFrame.cpp:331
+#: Kainote/KainoteFrame.cpp:330
 msgid "Converts to TMPlayer format (not recommended)"
 msgstr "TMPlayer வடிவத்திற்கு மாற்றுகிறது (பரிந்துரைக்கப்படவில்லை)"
 
-#: Kainote/KainoteFrame.cpp:333 Kainote/OptionsDialog.cpp:1011
+#: Kainote/KainoteFrame.cpp:332 Kainote/OptionsDialog.cpp:1004
 msgid "Conversion"
 msgstr "மாற்றம்"
 
-#: Kainote/KainoteFrame.cpp:333
+#: Kainote/KainoteFrame.cpp:332
 msgid "Converts from one format to another"
 msgstr "ஒரு வடிவத்திலிருந்து இன்னொரு வடிவத்திற்கு மாற்றுகிறது"
 
-#: Kainote/KainoteFrame.cpp:335
+#: Kainote/KainoteFrame.cpp:334
 msgid "Shift &times...\tCtrl-I"
 msgstr "சிப்ட் & டைம்ச் ... ctrl-i"
 
-#: Kainote/KainoteFrame.cpp:336
+#: Kainote/KainoteFrame.cpp:335
 msgid "Shifting subtitle times"
 msgstr "வசன வரிகளை மாற்றுகிறது"
 
-#: Kainote/KainoteFrame.cpp:344
+#: Kainote/KainoteFrame.cpp:343
 msgid "Hides tags in ASS and MDVD"
 msgstr "குறிச்சொற்களை கழுதை மற்றும் டிவிடியில் மறைக்கவும்"
 
-#: Kainote/KainoteFrame.cpp:345
+#: Kainote/KainoteFrame.cpp:344
 msgid "Su&btitles"
 msgstr "வசன வரிகள்"
 
-#: Kainote/KainoteFrame.cpp:356
+#: Kainote/KainoteFrame.cpp:355
 msgid "Au&tomation"
 msgstr "தானியங்கு"
 
-#: Kainote/KainoteFrame.cpp:359
+#: Kainote/KainoteFrame.cpp:358
 msgid "&Help (English version is not yet available)"
 msgstr "& உதவி (ஆங்கில பதிப்பு இன்னும் கிடைக்கவில்லை)"
 
-#: Kainote/KainoteFrame.cpp:360
+#: Kainote/KainoteFrame.cpp:359
 msgid "Opens help in default browser"
 msgstr "இயல்புநிலை உலாவியில் உதவியைத் திறக்கிறது"
 
-#: Kainote/KainoteFrame.cpp:361
+#: Kainote/KainoteFrame.cpp:360
 msgid "&Forum thread on animesub.info (Polish)"
 msgstr "& Animesub.info (போலந்து) இல் மன்ற நூல்"
 
-#: Kainote/KainoteFrame.cpp:362
+#: Kainote/KainoteFrame.cpp:361
 msgid "Opens forum thread on animesub.info (Polish)"
 msgstr "Animesub.info (போலந்து) இல் மன்ற நூலைத் திறக்கிறது"
 
-#: Kainote/KainoteFrame.cpp:363
-msgid "Check for &updates"
-msgstr ""
-
-#: Kainote/KainoteFrame.cpp:364
-msgid "Checks whether a newer version is available"
-msgstr ""
-
-#: Kainote/KainoteFrame.cpp:365
+#: Kainote/KainoteFrame.cpp:362
 msgid "&About"
 msgstr "&பற்றி"
 
-#: Kainote/KainoteFrame.cpp:366
+#: Kainote/KainoteFrame.cpp:363
 msgid "Shows program info"
 msgstr "நிரல் தகவலைக் காட்டுகிறது"
 
-#: Kainote/KainoteFrame.cpp:368
+#: Kainote/KainoteFrame.cpp:365
 msgid "&Credits"
 msgstr "& வரவு"
 
-#: Kainote/KainoteFrame.cpp:369
+#: Kainote/KainoteFrame.cpp:366
 msgid "Shows credits"
 msgstr "வரவுகளைக் காட்டுகிறது"
 
-#: Kainote/KainoteFrame.cpp:370
+#: Kainote/KainoteFrame.cpp:367
 msgid "&Help"
 msgstr "உதவி (&h)"
 
-#: Kainote/KainoteFrame.cpp:586 Kainote/KainoteFrame.cpp:603
+#: Kainote/KainoteFrame.cpp:583 Kainote/KainoteFrame.cpp:600
 #: Kainote/ProgressDialog.cpp:109
 #, c-format
 msgid "Time elapsed: %s"
 msgstr "நேரம் கடந்துவிட்டது: %s"
 
-#: Kainote/KainoteFrame.cpp:900
+#: Kainote/KainoteFrame.cpp:897
 msgid "Choose script"
 msgstr "ச்கிரிப்டைத் தேர்வுசெய்க"
 
-#: Kainote/KainoteFrame.cpp:902
+#: Kainote/KainoteFrame.cpp:899
 msgid "Script files (*.lua),(*.moon)|*.lua;*.moon;"
 msgstr "ச்கிரிப்ட் கோப்புகள் (*.லுவா), (*. மூன்) |*.லுவா;*. சந்திரன்;"
 
-#: Kainote/KainoteFrame.cpp:919
+#: Kainote/KainoteFrame.cpp:916
 msgid "This subtitle file does not have any scripts added"
 msgstr "இந்த வசன வரிகள் எந்த ச்கிரிப்டுகளும் சேர்க்கப்படவில்லை"
 
-#: Kainote/KainoteFrame.cpp:928 Kainote/KainoteFrame.cpp:2634
+#: Kainote/KainoteFrame.cpp:925 Kainote/KainoteFrame.cpp:2628
 #, c-format
 msgid "Validation Lua script '%s' failed"
 msgstr "சரிபார்ப்பு லுவா ச்கிரிப்ட் '%s' தோல்வியடைந்தது"
 
-#: Kainote/KainoteFrame.cpp:1009 Kainote/SubsGrid.cpp:906
+#: Kainote/KainoteFrame.cpp:1006 Kainote/SubsGrid.cpp:906
 #: Kainote/VideoBox.cpp:1089
 msgid "Choose subtitle file"
 msgstr "வசன வரிகளைத் தேர்வுசெய்க"
 
-#: Kainote/KainoteFrame.cpp:1012
-msgid ""
-"Subtitle files (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|"
-"*.ass;*.ssa;*.srt;*.sub;*.txt|Videos with embedded subtitles (*.mkv),(*.ogm)|"
-"*.mkv;*.ogm"
-msgstr ""
-"வசன வரிகள் (*.ஆச்), (*. எச்.எச்.ஏ), (*. எச்.ஆர்.டி), (*. துணை), (*. TXT | "
-"வசனங்களுடன் வீடியோ (*.MKV), (*. OGM) |*.MKV;*. OGM"
+#: Kainote/KainoteFrame.cpp:1009
+msgid "Subtitle files (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt|Videos with embedded subtitles (*.mkv),(*.ogm)|*.mkv;*.ogm"
+msgstr "வசன வரிகள் (*.ஆச்), (*. எச்.எச்.ஏ), (*. எச்.ஆர்.டி), (*. துணை), (*. TXT | வசனங்களுடன் வீடியோ (*.MKV), (*. OGM) |*.MKV;*. OGM"
 
-#: Kainote/KainoteFrame.cpp:1042
-msgid ""
-"Video files (*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
-"(*.3gp),(*.mpg),(*.mpeg),(*.avs)|"
-"*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.mpg;*.mpeg;*.3gp;*.avs|All "
-"files (*.*)|*.*"
-msgstr ""
-"வீடியோ கோப்புகள் (* g), (*. avs) |*.avi;*. mkv;*. Mp4;* கோப்புகள் (*.*) |*.*"
+#: Kainote/KainoteFrame.cpp:1039
+msgid "Video files (*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.mpg;*.mpeg;*.3gp;*.avs|All files (*.*)|*.*"
+msgstr "வீடியோ கோப்புகள் (* g), (*. avs) |*.avi;*. mkv;*. Mp4;* கோப்புகள் (*.*) |*.*"
 
-#: Kainote/KainoteFrame.cpp:1058
-msgid ""
-"Keyframes file (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|"
-"All files (*.*)|*.*"
-msgstr ""
-"கீஃப்ரேம்கள் கோப்பு (*.txt), (*. பாச்), (*. புள்ளிவிவரங்கள்), (*. பதிவு) |*.txt;* *.*"
+#: Kainote/KainoteFrame.cpp:1055
+msgid "Keyframes file (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|All files (*.*)|*.*"
+msgstr "கீஃப்ரேம்கள் கோப்பு (*.txt), (*. பாச்), (*. புள்ளிவிவரங்கள்), (*. பதிவு) |*.txt;* *.*"
 
-#: Kainote/KainoteFrame.cpp:1113
+#: Kainote/KainoteFrame.cpp:1107
 #, c-format
 msgid ""
 "Subtitle editor by Marcin Drob aka Bakura or Bjakja (bjakja7@gmail.com),\n"
 "version %s from %s"
 msgstr ""
-"மார்கின் ட்ரோப் அக்கா பகுரா அல்லது பிசாக்சா (bjakja7@gmail.com), வசன ஆசிரியர் "
-"ஆசிரியர்,\n"
+"மார்கின் ட்ரோப் அக்கா பகுரா அல்லது பிசாக்சா (bjakja7@gmail.com), வசன ஆசிரியர் ஆசிரியர்,\n"
 " நாள் %s முதல் பதிப்பு %s"
 
-#: Kainote/KainoteFrame.cpp:1115
+#: Kainote/KainoteFrame.cpp:1109
 msgid ""
 "I wrote this program to replace two programs: Bestplayer and Aegisub.\n"
 "\n"
@@ -3544,58 +3425,53 @@ msgstr ""
 "பெச்ட் பிளேயர் மற்றும் ஏசிசுப் ஆகிய இரண்டு நிரல்களை மாற்ற இந்த திட்டத்தை எழுதினேன்.\n"
 "\n"
 
-#: Kainote/KainoteFrame.cpp:1116
+#: Kainote/KainoteFrame.cpp:1110
 msgid ""
-"If you have noticed any bugs or have any suggestions for changes or new "
-"features,\n"
-"you can write about it in: Discord https://discord.gg/9WacFTtK6q, Github, or "
-"by email.\n"
+"If you have noticed any bugs or have any suggestions for changes or new features,\n"
+"you can write about it in: Discord https://discord.gg/9WacFTtK6q, Github, or by email.\n"
 "\n"
 msgstr ""
-"நீங்கள் ஏதேனும் பிழைகள் கவனித்திருந்தால் அல்லது மாற்றங்கள் அல்லது புதிய அம்சங்களுக்கான "
-"பரிந்துரைகள் ஏதேனும் இருந்தால், \n"
-"நீங்கள் இதைப் பற்றி எழுதலாம்: டிச்கார்ட் https://discord.gg/9wacfttk6q, github அல்லது "
-"மின்னஞ்சல் மூலம்.\n"
+"நீங்கள் ஏதேனும் பிழைகள் கவனித்திருந்தால் அல்லது மாற்றங்கள் அல்லது புதிய அம்சங்களுக்கான பரிந்துரைகள் ஏதேனும் இருந்தால், \n"
+"நீங்கள் இதைப் பற்றி எழுதலாம்: டிச்கார்ட் https://discord.gg/9wacfttk6q, github அல்லது மின்னஞ்சல் மூலம்.\n"
 "\n"
 
-#: Kainote/KainoteFrame.cpp:1117
+#: Kainote/KainoteFrame.cpp:1111
 msgid "Kainote includes parts of the following projects:\n"
 msgstr "கைனோட் பின்வரும் திட்டங்களின் சில பகுதிகளை உள்ளடக்கியது:\n"
 
-#: Kainote/KainoteFrame.cpp:1119
+#: Kainote/KainoteFrame.cpp:1113
 msgid ""
-"Color picker, demuxing subtitles from MKV, audio box, audio player, "
-"automation,\n"
+"Color picker, demuxing subtitles from MKV, audio box, audio player, automation,\n"
 "and several other individual features taken from Aegisub -\n"
 msgstr ""
 "கலர் பிக்கர், எம்.கே.வி வசன வருதல், ஆடியோபாக்ச், ஆடியோ பிளேயர், ஆட்டோமேசன்\n"
 " மற்றும் ஏசிசுபிலிருந்து எடுக்கப்பட்ட பல செயல்பாடுகள் -\n"
 
-#: Kainote/KainoteFrame.cpp:1130
+#: Kainote/KainoteFrame.cpp:1124
 msgid "About Kainote"
 msgstr "Avut"
 
-#: Kainote/KainoteFrame.cpp:1135
+#: Kainote/KainoteFrame.cpp:1129
 msgid "Graphical help: (buttons, help pictures etc.)\n"
 msgstr "வரைகலை உதவி: (பொத்தான்கள், உதவி படங்கள் போன்றவை)\n"
 
-#: Kainote/KainoteFrame.cpp:1136
+#: Kainote/KainoteFrame.cpp:1130
 msgid "- Xandros (new video buttons).\n"
 msgstr "- சாண்ட்ரோச் (புதிய வீடியோ பொத்தான்கள்).\n"
 
-#: Kainote/KainoteFrame.cpp:1137
+#: Kainote/KainoteFrame.cpp:1131
 msgid "- Devilkan (menu and toolbar buttons)\n"
 msgstr "- பிசாசன் (மெனு மற்றும் கருவிப்பட்டி பொத்தான்கள்)\n"
 
-#: Kainote/KainoteFrame.cpp:1138
+#: Kainote/KainoteFrame.cpp:1132
 msgid "- Zły Los (icons for file associations and menu).\n"
 msgstr "- ZłY லாச் (கோப்பு சங்கங்கள் மற்றும் மெனுவுக்கான சின்னங்கள்).\n"
 
-#: Kainote/KainoteFrame.cpp:1139
+#: Kainote/KainoteFrame.cpp:1133
 msgid "Testers:\n"
 msgstr "சோதனையாளர்கள்:\n"
 
-#: Kainote/KainoteFrame.cpp:1140
+#: Kainote/KainoteFrame.cpp:1134
 msgid ""
 "- Sacredus (first translator using translator mode,\n"
 "great help testing Kainote on a slow computer)\n"
@@ -3603,62 +3479,52 @@ msgstr ""
 "- சேக்ரெடச் (மொழிபெயர்ப்பாளர் பயன்முறையைப் பயன்படுத்தி முதல் மொழிபெயர்ப்பாளர், \n"
 "மெதுவான கணினியில் கைனோட்டை சோதிக்கும் சிறந்த உதவி)\n"
 
-#: Kainote/KainoteFrame.cpp:1141
-msgid ""
-"- Devilkan (crashhunter, because of his system and habits he made Kainote "
-"crash a lot\n"
-msgstr ""
-"- பிசாசன் (க்ராச்அண்டர், அவரது அமைப்பு மற்றும் பழக்கவழக்கங்கள் காரணமாக அவர் கைனோட்டை நிறைய "
-"செயலிழக்கச் செய்தார்\n"
+#: Kainote/KainoteFrame.cpp:1135
+msgid "- Devilkan (crashhunter, because of his system and habits he made Kainote crash a lot\n"
+msgstr "- பிசாசன் (க்ராச்அண்டர், அவரது அமைப்பு மற்றும் பழக்கவழக்கங்கள் காரணமாக அவர் கைனோட்டை நிறைய செயலிழக்கச் செய்தார்\n"
 
-#: Kainote/KainoteFrame.cpp:1142
-msgid ""
-"helped with typesetting tools and came up with many more improvements).\n"
-msgstr ""
-"தட்டச்சு செய்யும் கருவிகளுக்கு உதவியது மற்றும் இன்னும் பல மேம்பாடுகளைக் கொண்டு வந்தது).\n"
+#: Kainote/KainoteFrame.cpp:1136
+msgid "helped with typesetting tools and came up with many more improvements).\n"
+msgstr "தட்டச்சு செய்யும் கருவிகளுக்கு உதவியது மற்றும் இன்னும் பல மேம்பாடுகளைக் கொண்டு வந்தது).\n"
 
-#: Kainote/KainoteFrame.cpp:1143
-msgid ""
-"- MatiasMovie (found some crashes and suggessted some improvements, helps "
-"with crash debugging).\n"
-msgstr ""
-"- மத்தியாச்மோவி (சில விபத்துக்களைக் கண்டறிந்தது மற்றும் சில மேம்பாடுகளை பரிந்துரைத்தது, "
-"செயலிழப்பு பிழைத்திருத்தத்திற்கு உதவுகிறது).\n"
+#: Kainote/KainoteFrame.cpp:1137
+msgid "- MatiasMovie (found some crashes and suggessted some improvements, helps with crash debugging).\n"
+msgstr "- மத்தியாச்மோவி (சில விபத்துக்களைக் கண்டறிந்தது மற்றும் சில மேம்பாடுகளை பரிந்துரைத்தது, செயலிழப்பு பிழைத்திருத்தத்திற்கு உதவுகிறது).\n"
 
-#: Kainote/KainoteFrame.cpp:1144
+#: Kainote/KainoteFrame.cpp:1138
 msgid "- mas1904 (found some errors and helping with crash debuging).\n"
 msgstr "- MAS 1904 (சில பிழைகள் மற்றும் செயலிழப்பு பிழைத்திருத்தத்திற்கு உதவுதல்).\n"
 
-#: Kainote/KainoteFrame.cpp:1145
+#: Kainote/KainoteFrame.cpp:1139
 msgid "- Senami (made new themes and found some bugs).\n"
 msgstr "- சேனாமி (புதிய கருப்பொருள்களை உருவாக்கி சில பிழைகள் கிடைத்தன).\n"
 
-#: Kainote/KainoteFrame.cpp:1146
+#: Kainote/KainoteFrame.cpp:1140
 msgid "- altinat (Thai translation).\n"
 msgstr "- ஆல்டினாட் (தாய் மொழிபெயர்ப்பு).\n"
 
-#: Kainote/KainoteFrame.cpp:1147
+#: Kainote/KainoteFrame.cpp:1141
 msgid "- labrie75 (Korean translation).\n"
 msgstr "- லாப்ரி 75 (கொரிய மொழிபெயர்ப்பு).\n"
 
-#: Kainote/KainoteFrame.cpp:1148
+#: Kainote/KainoteFrame.cpp:1142
 msgid "- Niskala5570 (Malay translation).\n"
 msgstr "- நிச்கலா 5570 (மலாய் மொழிபெயர்ப்பு).\n"
 
-#: Kainote/KainoteFrame.cpp:1149
+#: Kainote/KainoteFrame.cpp:1143
 msgid "Thanks to other Kainote users who reported bugs:\n"
 msgstr "பிழைகள் புகாரளித்த பிற கைனோட் பயனர்களுக்கு நன்றி:\n"
 
-#: Kainote/KainoteFrame.cpp:1269
+#: Kainote/KainoteFrame.cpp:1263
 msgid "Subtitle file "
 msgstr "வசன வரிகள் கோப்பு "
 
-#: Kainote/KainoteFrame.cpp:1279
+#: Kainote/KainoteFrame.cpp:1273
 msgid "Save subtitle file"
 msgstr "வசன வரிகளைச் சேமிக்கவும்"
 
-#: Kainote/KainoteFrame.cpp:1286 Kainote/KainoteFrame.cpp:1302
-#: Kainote/KainoteFrame.cpp:2505
+#: Kainote/KainoteFrame.cpp:1280 Kainote/KainoteFrame.cpp:1296
+#: Kainote/KainoteFrame.cpp:2499
 msgid ""
 "Chosen file is read only,\n"
 "please save with different name or change file attribute."
@@ -3666,85 +3532,85 @@ msgstr ""
 "தேர்ந்தெடுக்கப்பட்ட கோப்பு மட்டுமே படிக்கப்படுகிறது, \n"
 "தயவுசெய்து வெவ்வேறு பெயருடன் சேமிக்கவும் அல்லது கோப்பு பண்புக்கூறு மாற்றவும்."
 
-#: Kainote/KainoteFrame.cpp:1352
+#: Kainote/KainoteFrame.cpp:1346
 #, c-format
 msgid "Load subtitles named \"%s\"?"
 msgstr "%s என்ற வசன வரிகள் ஏற்ற விரும்புகிறீர்களா?"
 
-#: Kainote/KainoteFrame.cpp:1416 Kainote/Visuals.cpp:252
+#: Kainote/KainoteFrame.cpp:1410 Kainote/Visuals.cpp:252
 msgid "Cannot open subtitle file"
 msgstr "வசன கோப்பைத் திறக்க முடியாது"
 
-#: Kainote/KainoteFrame.cpp:1565 Kainote/OptionsDialog.cpp:728
+#: Kainote/KainoteFrame.cpp:1559 Kainote/OptionsDialog.cpp:725
 #: Kainote/ProviderFFMS2.cpp:888 Kainote/ProviderFFMS2.cpp:899
 #: Kainote/ScriptInfo.cpp:118 Kainote/stylestore.cpp:771
 #: Kainote/stylestore.cpp:772
 msgid "None"
 msgstr "எதுவுமில்லை"
 
-#: Kainote/KainoteFrame.cpp:2115
+#: Kainote/KainoteFrame.cpp:2109
 #, c-format
 msgid "Save subtitles named \"%s\" before %s?"
 msgstr "%s க்கு முன் \" %s\" என்ற வசன வரிகள் சேமிக்க விரும்புகிறீர்களா?"
 
-#: Kainote/KainoteFrame.cpp:2116
+#: Kainote/KainoteFrame.cpp:2110
 msgid "exiting program"
 msgstr "வெளியேறும் திட்டம்"
 
-#: Kainote/KainoteFrame.cpp:2117
+#: Kainote/KainoteFrame.cpp:2111
 msgid "closing tab"
 msgstr "நிறைவு தாவல்"
 
-#: Kainote/KainoteFrame.cpp:2118
+#: Kainote/KainoteFrame.cpp:2112
 msgid "loading new subtitles"
 msgstr "புதிய வசன வரிகள் ஏற்றுகின்றன"
 
-#: Kainote/KainoteFrame.cpp:2119
+#: Kainote/KainoteFrame.cpp:2113
 msgid "removing subtitles"
 msgstr "வசன வரிகள் நீக்குதல்"
 
-#: Kainote/KainoteFrame.cpp:2157 Kainote/OptionsDialog.cpp:664
+#: Kainote/KainoteFrame.cpp:2151 Kainote/OptionsDialog.cpp:661
 msgid "Cannot load audio hotkeys"
 msgstr "ஆடியோ ஆட்கீவை ஏற்ற முடியாது"
 
-#: Kainote/KainoteFrame.cpp:2158 Kainote/OptionsDialog.cpp:292
+#: Kainote/KainoteFrame.cpp:2152 Kainote/OptionsDialog.cpp:291
 #: Kainote/ProviderFFMS2.cpp:65
 msgid "Cannot load audio configuration"
 msgstr "ஆடியோ உள்ளமைவை ஏற்ற முடியாது"
 
-#: Kainote/KainoteFrame.cpp:2162
+#: Kainote/KainoteFrame.cpp:2156
 msgid "Choose audio file"
 msgstr "ஆடியோ கோப்பைத் தேர்வுசெய்க"
 
-#: Kainote/KainoteFrame.cpp:2165
+#: Kainote/KainoteFrame.cpp:2159
 msgid "Audio and video files"
 msgstr "ஆடியோ மற்றும் வீடியோ கோப்புகள்"
 
-#: Kainote/KainoteFrame.cpp:2167
+#: Kainote/KainoteFrame.cpp:2161
 msgid "All files"
 msgstr "அனைத்து கோப்புகள்"
 
-#: Kainote/KainoteFrame.cpp:2326
+#: Kainote/KainoteFrame.cpp:2320
 msgid "Undo to "
 msgstr "செயல்தவிர்க்கவும் "
 
-#: Kainote/KainoteFrame.cpp:2342
+#: Kainote/KainoteFrame.cpp:2336
 msgid "Redo to "
 msgstr "மீண்டும் "
 
-#: Kainote/KainoteFrame.cpp:2488
+#: Kainote/KainoteFrame.cpp:2482
 msgid "Choose session file"
 msgstr "அமர்வு கோப்பைத் தேர்வுசெய்க"
 
-#: Kainote/KainoteFrame.cpp:2490 Kainote/KainoteFrame.cpp:2499
+#: Kainote/KainoteFrame.cpp:2484 Kainote/KainoteFrame.cpp:2493
 msgid "Session file (*.kls),|*.kls"
 msgstr "அமர்வு கோப்பு (*.kls), |*.kls"
 
-#: Kainote/KainoteFrame.cpp:2498
+#: Kainote/KainoteFrame.cpp:2492
 msgid "Save session file"
 msgstr "அமர்வு கோப்பைச் சேமிக்கவும்"
 
-#: Kainote/KainoteFrame.cpp:2608
+#: Kainote/KainoteFrame.cpp:2602
 #, c-format
 msgid "Hotkey \"%s\" it's not script hotkey."
 msgstr "ஆட்ச்கி \"%s\" இது ச்கிரிப்ட் ஆட்ச்கி அல்ல."
@@ -3753,7 +3619,7 @@ msgstr "ஆட்ச்கி \"%s\" இது ச்கிரிப்ட் �
 msgid "Log window"
 msgstr "பதிவு சாளரம்"
 
-#: Kainote/MappedButton.cpp:40 Kainote/OptionsDialog.cpp:1028
+#: Kainote/MappedButton.cpp:40 Kainote/OptionsDialog.cpp:1021
 #: Kainote/StyleChange.cpp:269 Kainote/VisualAllTagsEdition.cpp:125
 #: Kainote/VisualDrawingShapes.cpp:101
 msgid "Apply"
@@ -4080,15 +3946,15 @@ msgstr "கோப்பு திறக்கப்படவில்லை."
 msgid "Cannot save to file."
 msgstr "கோப்பில் சேமிக்க முடியாது."
 
-#: Kainote/OptionsDialog.cpp:298
+#: Kainote/OptionsDialog.cpp:297
 msgid "Open sorted subtitles"
 msgstr "வரிசைப்படுத்தப்பட்ட வசன வரிகள்"
 
-#: Kainote/OptionsDialog.cpp:298
+#: Kainote/OptionsDialog.cpp:297
 msgid "Turn spell checking"
 msgstr "எழுத்துப்பிழை சரிபார்ப்பைத் திருப்புங்கள்"
 
-#: Kainote/OptionsDialog.cpp:299
+#: Kainote/OptionsDialog.cpp:298
 msgid ""
 "Select the line with the time line\n"
 "of the previous active tab"
@@ -4096,19 +3962,19 @@ msgstr ""
 "நேரக் கோட்டுடன் வரியைத் தேர்ந்தெடுக்கவும்\n"
 " முந்தைய செயலில் உள்ள தாவலின்"
 
-#: Kainote/OptionsDialog.cpp:300
+#: Kainote/OptionsDialog.cpp:299
 msgid "Always open subtitles in a new tab"
 msgstr "புதிய தாவலில் எப்போதும் வசன வரிகள் திறக்கவும்"
 
-#: Kainote/OptionsDialog.cpp:300
+#: Kainote/OptionsDialog.cpp:299
 msgid "Show suggestions by double-clicking on misspell"
 msgstr "மிச்ச்பெல்லில் இருமுறை சொடுக்கு செய்வதன் மூலம் பரிந்துரைகளைக் காட்டுங்கள்"
 
-#: Kainote/OptionsDialog.cpp:301
+#: Kainote/OptionsDialog.cpp:300
 msgid "Stay on selected line when editing times"
 msgstr "நேரங்களைத் திருத்தும்போது தேர்ந்தெடுக்கப்பட்ட வரியில் இருங்கள்"
 
-#: Kainote/OptionsDialog.cpp:302
+#: Kainote/OptionsDialog.cpp:301
 msgid ""
 "Turn off edits preview on video\n"
 "(re-opening tab is required)"
@@ -4116,7 +3982,7 @@ msgstr ""
 "வீடியோவில் திருத்தங்கள் முன்னோட்டத்தை அணைக்கவும்\n"
 " (மறு திறக்கும் தாவல் தேவை)"
 
-#: Kainote/OptionsDialog.cpp:303
+#: Kainote/OptionsDialog.cpp:302
 msgid ""
 "Turn searching of visible line\n"
 "after switching from full screen"
@@ -4124,181 +3990,182 @@ msgstr ""
 "புலப்படும் வரியைத் தேடுங்கள் \n"
 "முழுத் திரையில் இருந்து மாறிய பிறகு"
 
-#: Kainote/OptionsDialog.cpp:304
+#: Kainote/OptionsDialog.cpp:303
 msgid "Change active line after add to selection"
 msgstr "தேர்வில் சேர்க்கப்பட்ட பிறகு செயலில் உள்ள வரியை மாற்றவும்"
 
-#: Kainote/OptionsDialog.cpp:304
+#: Kainote/OptionsDialog.cpp:303
 msgid "Synchronize time shifting window in all tabs"
 msgstr "எல்லா தாவல்களிலும் நேரத்தை மாற்றும் சாளரத்தை ஒத்திசைக்கவும்"
 
-#: Kainote/OptionsDialog.cpp:305
+#: Kainote/OptionsDialog.cpp:304
 msgid "Hide original on video in translator mode"
 msgstr "மொழிபெயர்ப்பாளர் பயன்முறையில் வீடியோவில் அசலை மறைக்கவும்"
 
-#: Kainote/OptionsDialog.cpp:305
+#: Kainote/OptionsDialog.cpp:304
 msgid "Show original in translator mode"
 msgstr "மொழிபெயர்ப்பாளர் பயன்முறையில் அசலைக் காட்டு"
 
-#: Kainote/OptionsDialog.cpp:306
+#: Kainote/OptionsDialog.cpp:305
 msgid "Do not change selections when duplicating dialogue lines"
 msgstr "உரையாடல் கோடுகள் நகலெடுப்பில் தேர்வை மாற்ற வேண்டாம்"
 
-#: Kainote/OptionsDialog.cpp:307
+#: Kainote/OptionsDialog.cpp:306
 msgid "Do not vertically center the active line in the subtitle grid"
 msgstr "வசன வரிகள் கட்டத்தில் செங்குத்தாக செயலில் உள்ள வரியை மையப்படுத்த வேண்டாம்"
 
-#: Kainote/OptionsDialog.cpp:307
+#: Kainote/OptionsDialog.cpp:306
 msgid "Use numpad shortcuts in text fields"
 msgstr "உரை புலங்களில் எண்பலகை குறுக்குவழிகளைப் பயன்படுத்தவும்"
 
-#: Kainote/OptionsDialog.cpp:308
+#: Kainote/OptionsDialog.cpp:307
 msgid "Do not warn about resolution mismatch"
 msgstr "தீர்மானம் பொருந்தாத தன்மை பற்றி தெரிவிக்க வேண்டாம்"
 
-#: Kainote/OptionsDialog.cpp:308
+#: Kainote/OptionsDialog.cpp:307
 msgid "Turn off visual tools warning"
 msgstr "காட்சி கருவிகள் எச்சரிக்கையை அணைக்கவும்"
 
-#: Kainote/OptionsDialog.cpp:309
+#: Kainote/OptionsDialog.cpp:308
 msgid "Compatibility with older Kainote scripts"
 msgstr "பழைய கைனோட் ச்கிரிப்டுகளுடன் பொருந்தக்கூடிய தன்மை"
 
-#: Kainote/OptionsDialog.cpp:333
+#: Kainote/OptionsDialog.cpp:330
 msgid "Language (program restart required)"
 msgstr "மொழி (நிரல் மறுதொடக்கம் தேவை)"
 
-#: Kainote/OptionsDialog.cpp:345
+#: Kainote/OptionsDialog.cpp:342
 msgid "Put files .dic and .aff to \"Dictionary\" folder"
 msgstr "கோப்புகளை வைக்கவும் .dic மற்றும் .aff \"அகராதி\" கோப்புறையில்"
 
-#: Kainote/OptionsDialog.cpp:346
+#: Kainote/OptionsDialog.cpp:343
 msgid "Spell checker language (\"Dictionary\" folder)"
 msgstr "எழுத்துப்பிழை செக்கர் மொழி (\"அகராதி\" கோப்புறை)"
 
-#: Kainote/OptionsDialog.cpp:369
+#: Kainote/OptionsDialog.cpp:366
 msgid "0 turns off saving while editing"
 msgstr "0 திருத்துதல் செய்யும் போது சேமிப்பை முடக்குகிறது"
 
-#: Kainote/OptionsDialog.cpp:371
+#: Kainote/OptionsDialog.cpp:368
 msgid "Number of autosaves can be set from 2 to 1000000"
 msgstr "ஆட்டோசேவுகளின் எண்ணிக்கையை 2 முதல் 1000000 வரை அமைக்கலாம்"
 
-#: Kainote/OptionsDialog.cpp:376
+#: Kainote/OptionsDialog.cpp:373
 msgid "Number of tab name characters. Range from 20 to 150"
 msgstr "தாவல் பெயர் எழுத்துகளின் எண்ணிக்கை. 20 முதல் 150 வரை"
 
-#: Kainote/OptionsDialog.cpp:390
+#: Kainote/OptionsDialog.cpp:387
 msgid "Number of edits to save"
 msgstr "சேமிக்க திருத்தங்களின் எண்ணிக்கை"
 
-#: Kainote/OptionsDialog.cpp:393
+#: Kainote/OptionsDialog.cpp:390
 msgid "Maximum number of autosave files"
 msgstr "ஆட்டோசேவ் கோப்புகளின் அதிகபட்ச எண்ணிக்கை"
 
-#: Kainote/OptionsDialog.cpp:396
+#: Kainote/OptionsDialog.cpp:393
 msgid "Start frame offset in ms:"
 msgstr "எம்.எச்சில் பிரேம் ஆஃப்செட்டைத் தொடங்குங்கள்:"
 
-#: Kainote/OptionsDialog.cpp:399
+#: Kainote/OptionsDialog.cpp:396
 msgid "End frame offset in ms:"
 msgstr "எம்.எச்சில் இறுதி பிரேம் ஆஃப்செட்:"
 
-#: Kainote/OptionsDialog.cpp:402
+#: Kainote/OptionsDialog.cpp:399
 msgid "ASS tag replacement:"
 msgstr "கழுதை குறிச்சொல் மாற்று:"
 
-#: Kainote/OptionsDialog.cpp:405
+#: Kainote/OptionsDialog.cpp:402
 msgid "Number of tab name characters"
 msgstr "தாவல் பெயர் எழுத்துகளின் எண்ணிக்கை"
 
-#: Kainote/OptionsDialog.cpp:408
+#: Kainote/OptionsDialog.cpp:405
 msgid "LUA scripts tracking level"
 msgstr "லுவா ச்கிரிப்ட்ச் கண்காணிப்பு நிலை"
 
-#: Kainote/OptionsDialog.cpp:417
+#: Kainote/OptionsDialog.cpp:414
 msgid "Subtitle grid font:"
 msgstr "வசன வரிகள் கட்டம் எழுத்துரு:"
 
-#: Kainote/OptionsDialog.cpp:424
+#: Kainote/OptionsDialog.cpp:421
 msgid "Program font:"
 msgstr "நிரல் எழுத்துரு:"
 
-#: Kainote/OptionsDialog.cpp:427
+#: Kainote/OptionsDialog.cpp:424
 msgid "Calculate spaces and punctation characters for wraps"
 msgstr ""
 
-#: Kainote/OptionsDialog.cpp:430
+#: Kainote/OptionsDialog.cpp:427
 msgid "Calculate spaces and punctation characters for CPS"
 msgstr ""
 
-#: Kainote/OptionsDialog.cpp:435
+#: Kainote/OptionsDialog.cpp:432
 msgid "Autoload loading method"
 msgstr "ஆட்டோலோட் ஏற்றுதல் முறை"
 
-#: Kainote/OptionsDialog.cpp:436
+#: Kainote/OptionsDialog.cpp:433
 msgid "After open menu"
 msgstr "திறந்த மெனுவுக்குப் பிறகு"
 
-#: Kainote/OptionsDialog.cpp:436
+#: Kainote/OptionsDialog.cpp:433
 msgid "After open menu asynchronously"
 msgstr "திறந்த பட்டியல் ஒத்திசைவற்ற பிறகு"
 
-#: Kainote/OptionsDialog.cpp:436
+#: Kainote/OptionsDialog.cpp:433
 msgid "After program start"
 msgstr "நிரல் தொடக்கத்திற்குப் பிறகு"
 
-#: Kainote/OptionsDialog.cpp:436
+#: Kainote/OptionsDialog.cpp:433
 msgid "After program start asynchronously"
 msgstr "நிரல் ஒத்திசைவற்ற முறையில் தொடங்கிய பிறகு"
 
-#: Kainote/OptionsDialog.cpp:442
+#: Kainote/OptionsDialog.cpp:439
+#, fuzzy
 msgid "Folder with external fonts"
-msgstr ""
+msgstr "வெளிப்புற எழுத்துருக்கள் கொண்ட கோப்புறை"
 
-#: Kainote/OptionsDialog.cpp:445 Kainote/VideoToolbar.cpp:508
+#: Kainote/OptionsDialog.cpp:442 Kainote/VideoToolbar.cpp:508
 #: Kainote/VideoToolbar.cpp:525
 msgid "Choose"
 msgstr "தேர்வு"
 
-#: Kainote/OptionsDialog.cpp:447
+#: Kainote/OptionsDialog.cpp:444
 #, fuzzy
 msgid "Choose choose external font folder"
 msgstr "சேமி கோப்புறையைத் தேர்வுசெய்க"
 
-#: Kainote/OptionsDialog.cpp:476
+#: Kainote/OptionsDialog.cpp:473
 msgid "Choose catalog"
 msgstr "பட்டியலைத் தேர்வுசெய்க"
 
-#: Kainote/OptionsDialog.cpp:477
+#: Kainote/OptionsDialog.cpp:474
 msgid "Choose style"
 msgstr "ச்டைலைத் தேர்வுசெய்க"
 
-#: Kainote/OptionsDialog.cpp:478
+#: Kainote/OptionsDialog.cpp:475
 msgid "Choose FPS"
 msgstr "FPS ஐத் தேர்வுசெய்க"
 
-#: Kainote/OptionsDialog.cpp:479
+#: Kainote/OptionsDialog.cpp:476
 msgid "Time for one letter in milliseconds"
 msgstr "மில்லி விநாடிகளில் ஒரு கடிதத்திற்கான நேரம்"
 
-#: Kainote/OptionsDialog.cpp:480
+#: Kainote/OptionsDialog.cpp:477
 msgid "Tags to paste at the beginning of every ASS line"
 msgstr "ஒவ்வொரு கழுதை வரியின் தொடக்கத்திலும் ஒட்ட வேண்டிய குறிச்சொற்கள்"
 
-#: Kainote/OptionsDialog.cpp:481
+#: Kainote/OptionsDialog.cpp:478
 msgid "Resolution when converting to ASS"
 msgstr "கழுதைக்கு மாற்றும்போது தீர்மானம்"
 
-#: Kainote/OptionsDialog.cpp:511
+#: Kainote/OptionsDialog.cpp:508
 msgid "catalog for style"
 msgstr "பாணிக்கான பட்டியல்"
 
-#: Kainote/OptionsDialog.cpp:511
+#: Kainote/OptionsDialog.cpp:508
 msgid "style"
 msgstr "சூல் தண்டு"
 
-#: Kainote/OptionsDialog.cpp:512
+#: Kainote/OptionsDialog.cpp:509
 #, c-format
 msgid ""
 "The selected %s for conversion does not exist\n"
@@ -4307,155 +4174,156 @@ msgstr ""
 "மாற்றத்திற்காக தேர்ந்தெடுக்கப்பட்ட %s இல்லை, \n"
 "மற்றும் இயல்புநிலையாக மாற்றப்படும்"
 
-#: Kainote/OptionsDialog.cpp:541
+#: Kainote/OptionsDialog.cpp:538
 msgid "FPS from video"
 msgstr "வீடியோவிலிருந்து FPS"
 
-#: Kainote/OptionsDialog.cpp:542
+#: Kainote/OptionsDialog.cpp:539
 msgid "New end times"
 msgstr "புதிய இறுதி நேரங்கள்"
 
-#: Kainote/OptionsDialog.cpp:542
+#: Kainote/OptionsDialog.cpp:539
 msgid "Show window before conversion"
 msgstr "மாற்றுவதற்கு முன் சாளரத்தைக் காட்டு"
 
-#: Kainote/OptionsDialog.cpp:577
+#: Kainote/OptionsDialog.cpp:574
 msgid "Left mouse button pauses video"
 msgstr "இடது சுட்டி பொத்தான் வீடியோவை இடைநிறுத்துகிறது"
 
-#: Kainote/OptionsDialog.cpp:577
+#: Kainote/OptionsDialog.cpp:574
 msgid "Open video from context menu on full screen"
 msgstr "முழு திரையில் சூழல் மெனுவிலிருந்து வீடியோவைத் திறக்கவும்"
 
-#: Kainote/OptionsDialog.cpp:578
+#: Kainote/OptionsDialog.cpp:575
 msgid "Open video with time of active line"
 msgstr "செயலில் உள்ள நேரத்துடன் வீடியோவைத் திறக்கவும்"
 
-#: Kainote/OptionsDialog.cpp:578
+#: Kainote/OptionsDialog.cpp:575
 msgid "Preferred audio (separated by semicolons)"
 msgstr "விருப்பமான ஆடியோ (அரைக்காற்புள்ளிகளால் பிரிக்கப்படுகிறது)"
 
-#: Kainote/OptionsDialog.cpp:579
+#: Kainote/OptionsDialog.cpp:576
 msgid "FFMS2 video seeking method (requires reloading)"
 msgstr "FFMS2 வீடியோ தேடல் (மறுஏற்றம் தேவை)"
 
-#: Kainote/OptionsDialog.cpp:579
+#: Kainote/OptionsDialog.cpp:576
 msgid "Subtitle display filter"
 msgstr "வசன வரிகள் வடிகட்டி"
 
-#: Kainote/OptionsDialog.cpp:580
+#: Kainote/OptionsDialog.cpp:577
+#, fuzzy
 msgid "Start video zoom in percent."
-msgstr ""
+msgstr "சதவீதத்தில் வீடியோ சூம் தொடங்கவும்."
 
-#: Kainote/OptionsDialog.cpp:599
+#: Kainote/OptionsDialog.cpp:596
 msgid "Linear"
 msgstr "நேரியல்"
 
-#: Kainote/OptionsDialog.cpp:599 Kainote/ScriptInfo.cpp:143
+#: Kainote/OptionsDialog.cpp:596 Kainote/ScriptInfo.cpp:143
 msgid "Normal"
 msgstr "சாதாரண"
 
-#: Kainote/OptionsDialog.cpp:600
+#: Kainote/OptionsDialog.cpp:597
 msgid "Aggressive (fast in rewind)"
 msgstr "வன்கவர்வு (ரிவைண்டில் வேகமாக)"
 
-#: Kainote/OptionsDialog.cpp:600
+#: Kainote/OptionsDialog.cpp:597
 msgid "Unsafe (always fast)"
 msgstr "பாதுகாப்பற்ற (எப்போதும் வேகமாக)"
 
-#: Kainote/OptionsDialog.cpp:642
+#: Kainote/OptionsDialog.cpp:639
 msgid "Choose filtering"
 msgstr "வடிகட்டலைத் தேர்வுசெய்க"
 
-#: Kainote/OptionsDialog.cpp:643
+#: Kainote/OptionsDialog.cpp:640
 msgid "Global shortcuts"
 msgstr "உலகளாவிய குறுக்குவழிகள்"
 
-#: Kainote/OptionsDialog.cpp:643
+#: Kainote/OptionsDialog.cpp:640
 msgid "Set shortcuts"
 msgstr "குறுக்குவழிகளை அமைக்கவும்"
 
-#: Kainote/OptionsDialog.cpp:644
+#: Kainote/OptionsDialog.cpp:641
 msgid "Audio Shortcuts"
 msgstr "ஆடியோ குறுக்குவழிகள்"
 
-#: Kainote/OptionsDialog.cpp:644
+#: Kainote/OptionsDialog.cpp:641
 msgid "Editor shortcuts"
 msgstr "ஆசிரியர் குறுக்குவழிகள்"
 
-#: Kainote/OptionsDialog.cpp:644
+#: Kainote/OptionsDialog.cpp:641
 msgid "Subtitle shortcuts"
 msgstr "வசன வரிகள் குறுக்குவழிகள்"
 
-#: Kainote/OptionsDialog.cpp:644
+#: Kainote/OptionsDialog.cpp:641
 msgid "Video shortcuts"
 msgstr "வீடியோ குறுக்குவழிகள்"
 
-#: Kainote/OptionsDialog.cpp:647
+#: Kainote/OptionsDialog.cpp:644
 msgid "Filtering mode:"
 msgstr "வடிகட்டுதல் பயன்முறை:"
 
-#: Kainote/OptionsDialog.cpp:658
+#: Kainote/OptionsDialog.cpp:655
 msgid "Function"
 msgstr "சார்பு"
 
-#: Kainote/OptionsDialog.cpp:673
+#: Kainote/OptionsDialog.cpp:670
 msgid "Restore default hotkey"
 msgstr "இயல்புநிலை ஆட்ச்கியை மீட்டமைக்கவும்"
 
-#: Kainote/OptionsDialog.cpp:696
+#: Kainote/OptionsDialog.cpp:693
 msgid "Show background selection"
 msgstr "பின்னணி தேர்வைக் காட்டு"
 
-#: Kainote/OptionsDialog.cpp:696
+#: Kainote/OptionsDialog.cpp:693
 msgid "Show seconds markers"
 msgstr "விநாடிகளின் குறிப்பான்களைக் காட்டு"
 
-#: Kainote/OptionsDialog.cpp:696
+#: Kainote/OptionsDialog.cpp:693
 msgid "Show time next to cursor"
 msgstr "கர்சருக்கு அடுத்து நேரத்தைக் காட்டு"
 
-#: Kainote/OptionsDialog.cpp:697
+#: Kainote/OptionsDialog.cpp:694
 msgid "Follow audio during playback"
 msgstr "பிளேபேக்கின் போது ஆடியோவைப் பின்தொடரவும்"
 
-#: Kainote/OptionsDialog.cpp:697
+#: Kainote/OptionsDialog.cpp:694
 msgid "Show keyframes"
 msgstr "கீஃப்ரேம்களைக் காட்டு"
 
-#: Kainote/OptionsDialog.cpp:697
+#: Kainote/OptionsDialog.cpp:694
 msgid "Show video position"
 msgstr "வீடியோ நிலையைக் காட்டு"
 
-#: Kainote/OptionsDialog.cpp:698
+#: Kainote/OptionsDialog.cpp:695
 msgid "Activate the audio when hover"
 msgstr "வட்டமிடும்போது ஆடியோவை செயல்படுத்தவும்"
 
-#: Kainote/OptionsDialog.cpp:698
+#: Kainote/OptionsDialog.cpp:695
 msgid "Snap to keyframe"
 msgstr "கீஃப்ரேமுக்கு ஒடி"
 
-#: Kainote/OptionsDialog.cpp:698
+#: Kainote/OptionsDialog.cpp:695
 msgid "Snap to other lines"
 msgstr "மற்ற வரிகளுக்கு ஒடி"
 
-#: Kainote/OptionsDialog.cpp:699
+#: Kainote/OptionsDialog.cpp:696
 msgid "Do not play audio after changing the line"
 msgstr "மாற்ற வரிக்குப் பிறகு ஆடியோவை இயக்க வேண்டாம்"
 
-#: Kainote/OptionsDialog.cpp:699
+#: Kainote/OptionsDialog.cpp:696
 msgid "Merge all the \"n\" with the previous syllable"
 msgstr "முந்தைய எழுத்துடன் அனைத்து \"n\" ஐ ஒன்றிணைக்கவும்"
 
-#: Kainote/OptionsDialog.cpp:700
+#: Kainote/OptionsDialog.cpp:697
 msgid "Load audio into RAM"
 msgstr "ஆடியோவை ரேமில் ஏற்றவும்"
 
-#: Kainote/OptionsDialog.cpp:700
+#: Kainote/OptionsDialog.cpp:697
 msgid "Move syllable line after click"
 msgstr "சொடுக்கு செய்த பிறகு எழுத்து வரியை நகர்த்தவும்"
 
-#: Kainote/OptionsDialog.cpp:727
+#: Kainote/OptionsDialog.cpp:724
 msgid ""
 "Range from 0 to 10000, where 0 turns off\n"
 "removing audio cache files."
@@ -4463,603 +4331,603 @@ msgstr ""
 "0 முதல் 10000 வரை இருக்கும், அங்கு 0 அணைக்கப்படும் \n"
 "ஆடியோ கேச் கோப்புகளை அகற்றுதல்."
 
-#: Kainote/OptionsDialog.cpp:728
+#: Kainote/OptionsDialog.cpp:725
 msgid "All visible"
 msgstr "அனைத்தும் தெரியும்"
 
-#: Kainote/OptionsDialog.cpp:728
+#: Kainote/OptionsDialog.cpp:725
 msgid "Before and after the active"
 msgstr "செயலில் முன்னும் பின்னும்"
 
-#: Kainote/OptionsDialog.cpp:738
+#: Kainote/OptionsDialog.cpp:735
 msgid "Audio delay in milliseconds"
 msgstr "மில்லி விநாடிகளில் ஆடியோ நேரந்தவறுகை"
 
-#: Kainote/OptionsDialog.cpp:739
+#: Kainote/OptionsDialog.cpp:736
 msgid "Audio to play before and after the marker in milliseconds"
 msgstr "மில்லி விநாடிகளில் மார்க்கருக்கு முன்னும் பின்னும் இயக்க ஆடியோ"
 
-#: Kainote/OptionsDialog.cpp:740 Kainote/ShiftTimes.cpp:395
+#: Kainote/OptionsDialog.cpp:737 Kainote/ShiftTimes.cpp:395
 msgid "Lead-in"
 msgstr "முன்னணி"
 
-#: Kainote/OptionsDialog.cpp:740 Kainote/ShiftTimes.cpp:398
+#: Kainote/OptionsDialog.cpp:737 Kainote/ShiftTimes.cpp:398
 msgid "Lead-out"
 msgstr "லீட்-அவுட்"
 
-#: Kainote/OptionsDialog.cpp:742
+#: Kainote/OptionsDialog.cpp:739
 msgid "Line boundaries thickness"
 msgstr "வரி எல்லைகள் தடிமன்"
 
-#: Kainote/OptionsDialog.cpp:743
+#: Kainote/OptionsDialog.cpp:740
 msgid "Audio cache files limit"
 msgstr "ஆடியோ கேச் கோப்புகள் வரம்பு"
 
-#: Kainote/OptionsDialog.cpp:744
+#: Kainote/OptionsDialog.cpp:741
 msgid "The way to display inactive lines"
 msgstr "செயலற்ற கோடுகளைக் காண்பிப்பதற்கான வழி"
 
-#: Kainote/OptionsDialog.cpp:768
+#: Kainote/OptionsDialog.cpp:765
 msgid "Inactive window background"
 msgstr "செயலற்ற சாளர பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:768
+#: Kainote/OptionsDialog.cpp:765
 msgid "Inactive window text"
 msgstr "செயலற்ற சாளர உரை"
 
-#: Kainote/OptionsDialog.cpp:768
+#: Kainote/OptionsDialog.cpp:765
 msgid "Window background"
 msgstr "விண்டர் பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:768
+#: Kainote/OptionsDialog.cpp:765
 msgid "Window text"
 msgstr "சாளர உரை"
 
-#: Kainote/OptionsDialog.cpp:769
+#: Kainote/OptionsDialog.cpp:766
 msgid "Inactive window border"
 msgstr "செயலற்ற சாளர எல்லை"
 
-#: Kainote/OptionsDialog.cpp:769
+#: Kainote/OptionsDialog.cpp:766
 msgid "Window border"
 msgstr "சாளரம் எல்லை"
 
-#: Kainote/OptionsDialog.cpp:769
+#: Kainote/OptionsDialog.cpp:766
 msgid "Window border background"
 msgstr "சாளர எல்லை பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:770
+#: Kainote/OptionsDialog.cpp:767
 msgid "Inactive window border background"
 msgstr "செயலற்ற சாளர எல்லை பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:770
+#: Kainote/OptionsDialog.cpp:767
 msgid "Inactive window header text"
 msgstr "செயலற்ற சாளர தலைப்பு உரை"
 
-#: Kainote/OptionsDialog.cpp:770
+#: Kainote/OptionsDialog.cpp:767
 msgid "Window header text"
 msgstr "சாளர தலைப்பு உரை"
 
-#: Kainote/OptionsDialog.cpp:771
+#: Kainote/OptionsDialog.cpp:768
 msgid "Window invaded element header"
 msgstr "சாளரம் படையெடுத்த உறுப்பு தலைப்பு"
 
-#: Kainote/OptionsDialog.cpp:771
+#: Kainote/OptionsDialog.cpp:768
 msgid "Window pressed element header"
 msgstr "சாளரம் அழுத்தப்பட்ட உறுப்பு தலைப்பு"
 
-#: Kainote/OptionsDialog.cpp:772
+#: Kainote/OptionsDialog.cpp:769
 msgid "Window closing upon hover"
 msgstr "ஓவர் மீது சாளர மூடல்"
 
-#: Kainote/OptionsDialog.cpp:772
+#: Kainote/OptionsDialog.cpp:769
 msgid "Window elements warning"
 msgstr "சாளர கூறுகள் முன்னறிவிப்பு"
 
-#: Kainote/OptionsDialog.cpp:772
+#: Kainote/OptionsDialog.cpp:769
 msgid "Window pressed closing"
 msgstr "சாளரம் மூடுவதை அழுத்தியது"
 
-#: Kainote/OptionsDialog.cpp:774
+#: Kainote/OptionsDialog.cpp:771
 msgid "Subtitle background"
 msgstr "வசன வரிகள் பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:774
+#: Kainote/OptionsDialog.cpp:771
 msgid "Subtitle comment background"
 msgstr "வசன வரிகள் கருத்து பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:774
+#: Kainote/OptionsDialog.cpp:771
 msgid "Subtitle dialogue background"
 msgstr "வசன வரிகள் உரையாடல் பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:774
+#: Kainote/OptionsDialog.cpp:771
 msgid "Subtitle text"
 msgstr "வசன வரிகள் உரை"
 
-#: Kainote/OptionsDialog.cpp:775
+#: Kainote/OptionsDialog.cpp:772
 msgid "Subtitle lines visible on video"
 msgstr "வீடியோவில் காணக்கூடிய வசன வரிகள்"
 
-#: Kainote/OptionsDialog.cpp:775
+#: Kainote/OptionsDialog.cpp:772
 msgid "Subtitle selection (transparency)"
 msgstr "வசனத் தேர்வுகள் (வெளிப்படைத்தன்மை)"
 
-#: Kainote/OptionsDialog.cpp:776
+#: Kainote/OptionsDialog.cpp:773
 msgid "Subtitle active line border"
 msgstr "வசன வரிகள் செயலில் வரி எல்லை"
 
-#: Kainote/OptionsDialog.cpp:776
+#: Kainote/OptionsDialog.cpp:773
 msgid "Subtitle colliding lines"
 msgstr "வசன வரிகளை மோதுகிறது"
 
-#: Kainote/OptionsDialog.cpp:776
+#: Kainote/OptionsDialog.cpp:773
 msgid "Subtitle line border"
 msgstr "வசன வரிகள் வரி எல்லை"
 
-#: Kainote/OptionsDialog.cpp:777
+#: Kainote/OptionsDialog.cpp:774
 msgid "Subtitle header background"
 msgstr "வசன வரிகள் தலைப்பு பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:777
+#: Kainote/OptionsDialog.cpp:774
 msgid "Subtitle header text"
 msgstr "வசன வரிகள் தலைப்பு உரை"
 
-#: Kainote/OptionsDialog.cpp:778
+#: Kainote/OptionsDialog.cpp:775
 msgid "Subtitle line label"
 msgstr "வசன வரிகள் வரி சிட்டை"
 
-#: Kainote/OptionsDialog.cpp:778
+#: Kainote/OptionsDialog.cpp:775
 msgid "Subtitle modified-line label"
 msgstr "வசன வரிகள் மாற்றியமைக்கப்பட்ட வரியைக் குறிக்கின்றன"
 
-#: Kainote/OptionsDialog.cpp:778
+#: Kainote/OptionsDialog.cpp:775
 msgid "Subtitle saved-line label"
 msgstr "வசன வரிகள் சேமிக்கப்பட்ட வரியைக் குறிக்கின்றன"
 
-#: Kainote/OptionsDialog.cpp:779
+#: Kainote/OptionsDialog.cpp:776
 msgid "Subtitle comparison border"
 msgstr "வசன வரிகள் ஒப்பீட்டு எல்லை"
 
-#: Kainote/OptionsDialog.cpp:779
+#: Kainote/OptionsDialog.cpp:776
 msgid "Subtitle spelling-error background"
 msgstr "வசன வரிகள் எழுத்துப்பிழை பிழை பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:779
+#: Kainote/OptionsDialog.cpp:776
 msgid "Subtitle unconfirmed-line label"
 msgstr "வசன வரிகள் உறுதிப்படுத்தப்படாத வரியைக் குறிக்கின்றன"
 
-#: Kainote/OptionsDialog.cpp:780
+#: Kainote/OptionsDialog.cpp:777
 msgid "Subtitle comparison match background"
 msgstr "வசன வரிகள் ஒப்பீட்டு பின்னணி போட்டி"
 
-#: Kainote/OptionsDialog.cpp:780
+#: Kainote/OptionsDialog.cpp:777
 msgid "Subtitle comparison mismatch background"
 msgstr "வசன வரிகள் ஒப்பீட்டு பின்னணி பொருந்தவில்லை"
 
-#: Kainote/OptionsDialog.cpp:781
+#: Kainote/OptionsDialog.cpp:778
 msgid "Subtitle comparison comment match background"
 msgstr "வசன வரிகள். கருத்து பின்னணி போட்டி"
 
-#: Kainote/OptionsDialog.cpp:781
+#: Kainote/OptionsDialog.cpp:778
 msgid "Subtitle comparison comment mismatch background"
 msgstr "வசன வரிகள். கருத்து பின்னணி பொருந்தாது"
 
-#: Kainote/OptionsDialog.cpp:783
+#: Kainote/OptionsDialog.cpp:780
 msgid "Editor tag names"
 msgstr "ஆசிரியர் குறிச்சொல் பெயர்கள்"
 
-#: Kainote/OptionsDialog.cpp:783
+#: Kainote/OptionsDialog.cpp:780
 msgid "Editor tag values"
 msgstr "எடிட்டர் குறிச்சொல் மதிப்புகள்"
 
-#: Kainote/OptionsDialog.cpp:783
+#: Kainote/OptionsDialog.cpp:780
 msgid "Editor text"
 msgstr "ஆசிரியர் உரை"
 
-#: Kainote/OptionsDialog.cpp:784
+#: Kainote/OptionsDialog.cpp:781
 msgid "Editor curly braces"
 msgstr "ஆசிரியர் சுருள் பிரேச்கள்"
 
-#: Kainote/OptionsDialog.cpp:784
+#: Kainote/OptionsDialog.cpp:781
 msgid "Editor line splitting and ASS drawings"
 msgstr "எடிட்டர் லைன் பிரித்தல் மற்றும் கழுதை வரைபடங்கள்"
 
-#: Kainote/OptionsDialog.cpp:784
+#: Kainote/OptionsDialog.cpp:781
 msgid "Editor tags operators"
 msgstr "எடிட்டர் குறிச்சொற்கள் ஆபரேட்டர்கள்"
 
-#: Kainote/OptionsDialog.cpp:784
+#: Kainote/OptionsDialog.cpp:781
 msgid "Editor template variables"
 msgstr "எடிட்டர் வார்ப்புரு மாறிகள்"
 
-#: Kainote/OptionsDialog.cpp:785
+#: Kainote/OptionsDialog.cpp:782
 msgid "Editor template code marks"
 msgstr "எடிட்டர் வார்ப்புரு குறியீடு மதிப்பெண்கள்"
 
-#: Kainote/OptionsDialog.cpp:785
+#: Kainote/OptionsDialog.cpp:782
 msgid "Editor template functions"
 msgstr "எடிட்டர் வார்ப்புரு செயல்பாடுகள்"
 
-#: Kainote/OptionsDialog.cpp:785
+#: Kainote/OptionsDialog.cpp:782
 msgid "Editor template keywords"
 msgstr "எடிட்டர் வார்ப்புரு முக்கிய வார்த்தைகள்"
 
-#: Kainote/OptionsDialog.cpp:786
+#: Kainote/OptionsDialog.cpp:783
 msgid "Editor brackets background"
 msgstr "எடிட்டர் அடைப்புக்குறி பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:786
+#: Kainote/OptionsDialog.cpp:783
 msgid "Editor found words selection"
 msgstr "ஆசிரியர் சொற்களைக் கண்டுபிடித்தார்"
 
-#: Kainote/OptionsDialog.cpp:786
+#: Kainote/OptionsDialog.cpp:783
 msgid "Editor template strings"
 msgstr "எடிட்டர் வார்ப்புரு சரங்கள்"
 
-#: Kainote/OptionsDialog.cpp:787
+#: Kainote/OptionsDialog.cpp:784
 msgid "Editor background"
 msgstr "ஆசிரியர் பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:787
+#: Kainote/OptionsDialog.cpp:784
 msgid "Editor inactive window selection"
 msgstr "எடிட்டர் செயலற்ற சாளர தேர்வு"
 
-#: Kainote/OptionsDialog.cpp:787
+#: Kainote/OptionsDialog.cpp:784
 msgid "Editor selection"
 msgstr "ஆசிரியர் தேர்வு"
 
-#: Kainote/OptionsDialog.cpp:788
+#: Kainote/OptionsDialog.cpp:785
 msgid "Editor border"
 msgstr "ஆசிரியர் எல்லை"
 
-#: Kainote/OptionsDialog.cpp:788
+#: Kainote/OptionsDialog.cpp:785
 msgid "Editor border on focus"
 msgstr "கவனம் செலுத்தும் ஆசிரியர் எல்லை"
 
-#: Kainote/OptionsDialog.cpp:788
+#: Kainote/OptionsDialog.cpp:785
 msgid "Editor spelling error background"
 msgstr "ஆசிரியர் எழுத்துப்பிழை பிழை பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:790
+#: Kainote/OptionsDialog.cpp:787
 msgid "Audio background"
 msgstr "ஆடியோ பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:790
+#: Kainote/OptionsDialog.cpp:787
 msgid "Audio end marker"
 msgstr "ஆடியோ எண்ட் மார்க்கர்"
 
-#: Kainote/OptionsDialog.cpp:790
+#: Kainote/OptionsDialog.cpp:787
 msgid "Audio start marker"
 msgstr "ஆடியோ ச்டார்ட் மார்க்கர்"
 
-#: Kainote/OptionsDialog.cpp:790
+#: Kainote/OptionsDialog.cpp:787
 msgid "Audio time shift marker"
 msgstr "ஆடியோ டைம் சிப்ட் மார்க்கர்"
 
-#: Kainote/OptionsDialog.cpp:791
+#: Kainote/OptionsDialog.cpp:788
 msgid "Audio cursor"
 msgstr "கர்சர் ஆடியோ"
 
-#: Kainote/OptionsDialog.cpp:791
+#: Kainote/OptionsDialog.cpp:788
 msgid "Audio inactive line marker"
 msgstr "ஆடியோ செயலற்ற வரி மார்க்கர்"
 
-#: Kainote/OptionsDialog.cpp:791
+#: Kainote/OptionsDialog.cpp:788
 msgid "Audio keyframes"
 msgstr "ஆடியோ கீஃப்ரேம்கள்"
 
-#: Kainote/OptionsDialog.cpp:791
+#: Kainote/OptionsDialog.cpp:788
 msgid "Audio seconds boundaries"
 msgstr "ஆடியோ விநாடிகள் எல்லைகள்"
 
-#: Kainote/OptionsDialog.cpp:792
+#: Kainote/OptionsDialog.cpp:789
 msgid "Audio selection"
 msgstr "ஆடியோ தேர்வு"
 
-#: Kainote/OptionsDialog.cpp:792
+#: Kainote/OptionsDialog.cpp:789
 msgid "Audio syllable marker"
 msgstr "ஆடியோ எழுத்து மார்க்கர்"
 
-#: Kainote/OptionsDialog.cpp:792
+#: Kainote/OptionsDialog.cpp:789
 msgid "Audio syllable text"
 msgstr "ஆடியோ எழுத்து உரை"
 
-#: Kainote/OptionsDialog.cpp:793
+#: Kainote/OptionsDialog.cpp:790
 msgid "Audio inactive line background"
 msgstr "ஆடியோ செயலற்ற வரி பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:793
+#: Kainote/OptionsDialog.cpp:790
 msgid "Audio the selection after modification"
 msgstr "மாற்றத்திற்குப் பிறகு தேர்வு ஆடியோ"
 
-#: Kainote/OptionsDialog.cpp:793
+#: Kainote/OptionsDialog.cpp:790
 msgid "Audio waveform"
 msgstr "ஆடியோ அலைவடிவம்"
 
-#: Kainote/OptionsDialog.cpp:794
+#: Kainote/OptionsDialog.cpp:791
 msgid "Audio Inactive waveform"
 msgstr "ஆடியோ செயலற்ற அலைவடிவம்"
 
-#: Kainote/OptionsDialog.cpp:794
+#: Kainote/OptionsDialog.cpp:791
 msgid "Audio modified waveform"
 msgstr "ஆடியோ மாற்றியமைக்கப்பட்ட அலைவடிவம்"
 
-#: Kainote/OptionsDialog.cpp:794
+#: Kainote/OptionsDialog.cpp:791
 msgid "Audio selected waveform"
 msgstr "ஆடியோ தேர்ந்தெடுக்கப்பட்ட அலைவடிவம்"
 
-#: Kainote/OptionsDialog.cpp:795
+#: Kainote/OptionsDialog.cpp:792
 msgid "Audio spectrum"
 msgstr "ஆடியோ ச்பெக்ட்ரம்"
 
-#: Kainote/OptionsDialog.cpp:795
+#: Kainote/OptionsDialog.cpp:792
 msgid "Audio spectrum background"
 msgstr "ஆடியோ ச்பெக்ட்ரம் பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:795
+#: Kainote/OptionsDialog.cpp:792
 msgid "Audio spectrum echo"
 msgstr "ஆடியோ ச்பெக்ட்ரம் எதிரொலி"
 
-#: Kainote/OptionsDialog.cpp:797
+#: Kainote/OptionsDialog.cpp:794
 msgid "Text field background"
 msgstr "உரை புலம் பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:797
+#: Kainote/OptionsDialog.cpp:794
 msgid "Text field border"
 msgstr "உரை புல எல்லை"
 
-#: Kainote/OptionsDialog.cpp:798
+#: Kainote/OptionsDialog.cpp:795
 msgid "Text field border on focus"
 msgstr "கவனம் செலுத்துவதில் உரை புல எல்லை"
 
-#: Kainote/OptionsDialog.cpp:798
+#: Kainote/OptionsDialog.cpp:795
 msgid "Text field selection"
 msgstr "உரை புலம் தேர்வு"
 
-#: Kainote/OptionsDialog.cpp:799 Kainote/OptionsDialog.cpp:869
+#: Kainote/OptionsDialog.cpp:796 Kainote/OptionsDialog.cpp:866
 msgid "Text field inactive window selection"
 msgstr "உரை புலம் செயலற்ற சாளர தேர்வு"
 
-#: Kainote/OptionsDialog.cpp:800
+#: Kainote/OptionsDialog.cpp:797
 msgid "Button and list background"
 msgstr "பொத்தான் மற்றும் பட்டியல் பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:800
+#: Kainote/OptionsDialog.cpp:797
 msgid "Button and list background upon hover"
 msgstr "பொத்தான் மற்றும் ஓவர் மீது பின்னணி பட்டியல்"
 
-#: Kainote/OptionsDialog.cpp:801
+#: Kainote/OptionsDialog.cpp:798
 msgid "Button and list background on focus"
 msgstr "பொத்தான் மற்றும் பின்னணியை மையமாகக் கொண்டது"
 
-#: Kainote/OptionsDialog.cpp:801
+#: Kainote/OptionsDialog.cpp:798
 msgid "Button and list pushed background"
 msgstr "பொத்தான் மற்றும் பட்டியல் தள்ளப்பட்ட பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:802
+#: Kainote/OptionsDialog.cpp:799
 msgid "Button and list border"
 msgstr "பொத்தான் மற்றும் பட்டியல் எல்லை"
 
-#: Kainote/OptionsDialog.cpp:802
+#: Kainote/OptionsDialog.cpp:799
 msgid "Button and list border upon hover"
 msgstr "பொத்தானை மற்றும் வட்டத்தை பட்டியலிடுங்கள்"
 
-#: Kainote/OptionsDialog.cpp:803
+#: Kainote/OptionsDialog.cpp:800
 msgid "Button and list border of pushed"
 msgstr "பொத்தான் மற்றும் தள்ளப்பட்ட பட்டியல் எல்லை"
 
-#: Kainote/OptionsDialog.cpp:803
+#: Kainote/OptionsDialog.cpp:800
 msgid "Button and list border on focus"
 msgstr "பொத்தான் மற்றும் கவனம் செலுத்துவதில் எல்லை"
 
-#: Kainote/OptionsDialog.cpp:804
+#: Kainote/OptionsDialog.cpp:801
 msgid "Button and list inactive border"
 msgstr "பொத்தான் மற்றும் செயலற்ற எல்லையை பட்டியலிடுங்கள்"
 
-#: Kainote/OptionsDialog.cpp:804
+#: Kainote/OptionsDialog.cpp:801
 msgid "Togglebutton toggled background"
 msgstr "டோக்ல்பட்டன் டாக் செய்யப்பட்ட பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:805
+#: Kainote/OptionsDialog.cpp:802
 msgid "Scroll bar background"
 msgstr "உருள் பார் பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:805
+#: Kainote/OptionsDialog.cpp:802
 msgid "Scroll bar slider"
 msgstr "உருள் பார் ச்லைடர்"
 
-#: Kainote/OptionsDialog.cpp:805
+#: Kainote/OptionsDialog.cpp:802
 msgid "Togglebutton toggled border"
 msgstr "டோக்ல்பட்டன் எல்லை மாற்றினார்"
 
-#: Kainote/OptionsDialog.cpp:806
+#: Kainote/OptionsDialog.cpp:803
 msgid "Scroll bar pushed slider"
 msgstr "ச்லைடரை உருட்டல் பட்டி தள்ளியது"
 
-#: Kainote/OptionsDialog.cpp:806
+#: Kainote/OptionsDialog.cpp:803
 msgid "Scroll bar slider upon hover"
 msgstr "ஓவர் மீது உருள் ச்லைடர்"
 
-#: Kainote/OptionsDialog.cpp:807
+#: Kainote/OptionsDialog.cpp:804
 msgid "Static list background"
 msgstr "நிலையான பட்டியல் பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:807
+#: Kainote/OptionsDialog.cpp:804
 msgid "Static list border"
 msgstr "நிலையான பட்டியல் எல்லை"
 
-#: Kainote/OptionsDialog.cpp:807
+#: Kainote/OptionsDialog.cpp:804
 msgid "Staticbox border"
 msgstr "ச்டாடிக்பாக்ச் எல்லை"
 
-#: Kainote/OptionsDialog.cpp:808
+#: Kainote/OptionsDialog.cpp:805
 msgid "Static list header background"
 msgstr "நிலையான பட்டியல் தலைப்பு பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:808
+#: Kainote/OptionsDialog.cpp:805
 msgid "Static list header text"
 msgstr "நிலையான பட்டியல் தலைப்பு உரை"
 
-#: Kainote/OptionsDialog.cpp:808
+#: Kainote/OptionsDialog.cpp:805
 msgid "Static list selection"
 msgstr "நிலையான பட்டியல் தேர்வு"
 
-#: Kainote/OptionsDialog.cpp:809
+#: Kainote/OptionsDialog.cpp:806
 msgid "Status bar border"
 msgstr "நிலை பட்டி எல்லை"
 
-#: Kainote/OptionsDialog.cpp:811
+#: Kainote/OptionsDialog.cpp:808
 msgid "Menu bar background 1"
 msgstr "பட்டியல் பார் பின்னணி 1"
 
-#: Kainote/OptionsDialog.cpp:811
+#: Kainote/OptionsDialog.cpp:808
 msgid "Menu bar background 2"
 msgstr "பட்டியல் பார் பின்னணி 2"
 
-#: Kainote/OptionsDialog.cpp:811
+#: Kainote/OptionsDialog.cpp:808
 msgid "Menu bar selection border"
 msgstr "பட்டியல் பார் தேர்வு எல்லை"
 
-#: Kainote/OptionsDialog.cpp:812
+#: Kainote/OptionsDialog.cpp:809
 msgid "Menu bar selection clicked bacground"
 msgstr "பட்டியல் பார் தேர்வு பின்னணி சொடுக்கு செய்தது"
 
-#: Kainote/OptionsDialog.cpp:812
+#: Kainote/OptionsDialog.cpp:809
 msgid "Menu bar selection hover bacground"
 msgstr "பட்டியல் பார் தேர்வு மிதவை பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:813
+#: Kainote/OptionsDialog.cpp:810
 msgid "Menu background"
 msgstr "பட்டி பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:813
+#: Kainote/OptionsDialog.cpp:810
 msgid "Menu selection background"
 msgstr "பட்டியல் தேர்வு பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:813
+#: Kainote/OptionsDialog.cpp:810
 msgid "Menu selection border"
 msgstr "பட்டியல் தேர்வு எல்லை"
 
-#: Kainote/OptionsDialog.cpp:815
+#: Kainote/OptionsDialog.cpp:812
 msgid "Tab active border"
 msgstr "தாவல் செயலில் உள்ள எல்லை"
 
-#: Kainote/OptionsDialog.cpp:815
+#: Kainote/OptionsDialog.cpp:812
 msgid "Tab bar background 1"
 msgstr "தாவல் பார் பின்னணி 1"
 
-#: Kainote/OptionsDialog.cpp:815
+#: Kainote/OptionsDialog.cpp:812
 msgid "Tab bar background 2"
 msgstr "தாவல் பார் பின்னணி 2"
 
-#: Kainote/OptionsDialog.cpp:816
+#: Kainote/OptionsDialog.cpp:813
 msgid "Tab active background"
 msgstr "தாவல் செயலில் உள்ள பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:816
+#: Kainote/OptionsDialog.cpp:813
 msgid "Tab inactive background"
 msgstr "தாவல் செயலற்ற பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:816
+#: Kainote/OptionsDialog.cpp:813
 msgid "Tab inactive border"
 msgstr "தாவல் செயலற்ற எல்லை"
 
-#: Kainote/OptionsDialog.cpp:817
+#: Kainote/OptionsDialog.cpp:814
 msgid "Tab background of second visible tab"
 msgstr "இரண்டாவது புலப்படும் தாவலின் தாவல் பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:817
+#: Kainote/OptionsDialog.cpp:814
 msgid "Tab inactive background upon hover"
 msgstr "ஓவர் குறித்த தாவல் செயலற்ற பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:818
+#: Kainote/OptionsDialog.cpp:815
 msgid "Tab active text"
 msgstr "தாவல் செயலில் உள்ள உரை"
 
-#: Kainote/OptionsDialog.cpp:818
+#: Kainote/OptionsDialog.cpp:815
 msgid "Tab close upon hover"
 msgstr "தாவல் மூடு"
 
-#: Kainote/OptionsDialog.cpp:818
+#: Kainote/OptionsDialog.cpp:815
 msgid "Tab inactive text"
 msgstr "தாவல் செயலற்ற பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:819
+#: Kainote/OptionsDialog.cpp:816
 msgid "Tab bar arrow"
 msgstr "தாவல் பார் அம்பு"
 
-#: Kainote/OptionsDialog.cpp:819
+#: Kainote/OptionsDialog.cpp:816
 msgid "Tab bar arrow background"
 msgstr "தாவல் பார் அம்பு பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:820
+#: Kainote/OptionsDialog.cpp:817
 msgid "Tab bar arrow background upon hover"
 msgstr "ஓவர் மீது தாவல் பார் அம்பு பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:822
+#: Kainote/OptionsDialog.cpp:819
 msgid "Slider border"
 msgstr "ச்லைடர் எல்லை"
 
-#: Kainote/OptionsDialog.cpp:822
+#: Kainote/OptionsDialog.cpp:819
 msgid "Slider path background"
 msgstr "ச்லைடர் பாதை பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:822
+#: Kainote/OptionsDialog.cpp:819
 msgid "Slider path border"
 msgstr "ச்லைடர் பாதை எல்லை"
 
-#: Kainote/OptionsDialog.cpp:823
+#: Kainote/OptionsDialog.cpp:820
 msgid "Slider background"
 msgstr "ச்லைடர் பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:823
+#: Kainote/OptionsDialog.cpp:820
 msgid "Slider border of pushed"
 msgstr "தள்ளப்பட்ட ச்லைடர் எல்லை"
 
-#: Kainote/OptionsDialog.cpp:823
+#: Kainote/OptionsDialog.cpp:820
 msgid "Slider border upon hover"
 msgstr "ஓவர் மீது ச்லைடர் எல்லை"
 
-#: Kainote/OptionsDialog.cpp:824
+#: Kainote/OptionsDialog.cpp:821
 msgid "Slider background of pushed"
 msgstr "தள்ளப்பட்ட ச்லைடர் பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:824
+#: Kainote/OptionsDialog.cpp:821
 msgid "Slider background upon hover"
 msgstr "ஓவர் மீது ச்லைடர் பின்னணி"
 
-#: Kainote/OptionsDialog.cpp:826
+#: Kainote/OptionsDialog.cpp:823
 msgid "Finding result file name background"
 msgstr "முடிவு கோப்பு பெயர் பின்னணியைக் கண்டறிதல்"
 
-#: Kainote/OptionsDialog.cpp:826
+#: Kainote/OptionsDialog.cpp:823
 msgid "Finding result file name foreground"
 msgstr "முடிவு கோப்பு பெயர் முன்புறத்தைக் கண்டறிதல்"
 
-#: Kainote/OptionsDialog.cpp:826
+#: Kainote/OptionsDialog.cpp:823
 msgid "Resize line dots"
 msgstr "வரி புள்ளிகளை மறுஅளவிடுங்கள்"
 
-#: Kainote/OptionsDialog.cpp:827
+#: Kainote/OptionsDialog.cpp:824
 msgid "Finding result found phrase background"
 msgstr "முடிவைக் கண்டறிந்த சொற்றொடர் பின்னணியைக் கண்டறிதல்"
 
-#: Kainote/OptionsDialog.cpp:827
+#: Kainote/OptionsDialog.cpp:824
 msgid "Finding result found phrase foreground"
 msgstr "முடிவைக் கண்டறிந்தது சொற்றொடர் முன்புறம்"
 
-#: Kainote/OptionsDialog.cpp:829
+#: Kainote/OptionsDialog.cpp:826
 msgid "First color of style preview background"
 msgstr "பாணி முன்னோட்ட பின்னணியின் முதல் வண்ணம்"
 
-#: Kainote/OptionsDialog.cpp:829
+#: Kainote/OptionsDialog.cpp:826
 msgid "Second color of style preview background"
 msgstr "பாணி முன்னோட்ட பின்னணியின் இரண்டாவது வண்ணம்"
 
-#: Kainote/OptionsDialog.cpp:854
+#: Kainote/OptionsDialog.cpp:851
 msgid "Theme name:"
 msgstr "கருப்பொருள் பெயர்:"
 
-#: Kainote/OptionsDialog.cpp:856
+#: Kainote/OptionsDialog.cpp:853
 msgid ""
 "Name of the copied theme.\n"
 "Default themes, DarkSentro and LightSentro,\n"
@@ -5069,12 +4937,12 @@ msgstr ""
 " இயல்புநிலை கருப்பொருள்கள்: டார்க்சென்ட்ரோ & லைட்சென்ட்ரோ\n"
 " திருத்த முடியாது. அதை நகலெடுக்க வேண்டும்."
 
-#: Kainote/OptionsDialog.cpp:857 Kainote/SelectLines.cpp:122
+#: Kainote/OptionsDialog.cpp:854 Kainote/SelectLines.cpp:122
 #: Kainote/stylestore.cpp:87 Kainote/stylestore.cpp:140
 msgid "Copy"
 msgstr "நகலெடு"
 
-#: Kainote/OptionsDialog.cpp:866
+#: Kainote/OptionsDialog.cpp:863
 msgid ""
 "Warning! Transparency works only on the audio spectrum,\n"
 "text field, and subtitle grid."
@@ -5082,58 +4950,130 @@ msgstr ""
 "எச்சரிக்கை! ஆடியோ ச்பெக்ட்ரனில் மட்டுமே வெளிப்படைத்தன்மை செயல்படுகிறது, \n"
 "உரை கோப்பு மற்றும் வசன வரிகள் கட்டம்."
 
-#: Kainote/OptionsDialog.cpp:876
+#: Kainote/OptionsDialog.cpp:873
 msgid "Name"
 msgstr "பெயர்"
 
-#: Kainote/OptionsDialog.cpp:877
+#: Kainote/OptionsDialog.cpp:874
 msgid "Color"
 msgstr "நிறம்"
 
-#: Kainote/OptionsDialog.cpp:970
+#: Kainote/OptionsDialog.cpp:957 Kainote/OptionsDialog.cpp:1233
+msgid "ASS subtitles"
+msgstr "வசன வரிகள் கழுதை"
+
+#: Kainote/OptionsDialog.cpp:957 Kainote/OptionsDialog.cpp:1233
+msgid "SRT subtitles"
+msgstr "வசன வரிகள் எச்.ஆர்.டி"
+
+#: Kainote/OptionsDialog.cpp:957 Kainote/OptionsDialog.cpp:1233
+msgid "SSA subtitles"
+msgstr "வசன வரிகள் எச்.எச்.ஏ"
+
+#: Kainote/OptionsDialog.cpp:957 Kainote/OptionsDialog.cpp:1233
+msgid "SUB subtitles"
+msgstr "வசன வரிகள் துணை"
+
+#: Kainote/OptionsDialog.cpp:958 Kainote/OptionsDialog.cpp:1234
+msgid "TXT subtitles"
+msgstr "வசன வரிகள் txt"
+
+#: Kainote/OptionsDialog.cpp:958 Kainote/OptionsDialog.cpp:1234
+msgid "Video AVI"
+msgstr "வீடியோ அவி"
+
+#: Kainote/OptionsDialog.cpp:958 Kainote/OptionsDialog.cpp:1234
+msgid "Video MKV"
+msgstr "காணொளி எம்கேவி"
+
+#: Kainote/OptionsDialog.cpp:958 Kainote/OptionsDialog.cpp:1234
+msgid "Video MP4"
+msgstr "வீடியோ எம்பி 4"
+
+#: Kainote/OptionsDialog.cpp:958 Kainote/OptionsDialog.cpp:1234
+msgid "Video OGM"
+msgstr "வீடியோ OGM"
+
+#: Kainote/OptionsDialog.cpp:959 Kainote/OptionsDialog.cpp:1235
+msgid "Video 3GP"
+msgstr "வீடியோ 3 சிபி"
+
+#: Kainote/OptionsDialog.cpp:959 Kainote/OptionsDialog.cpp:1235
+msgid "Video ASF"
+msgstr "வீடியோ ஏ.எச்.எஃப்"
+
+#: Kainote/OptionsDialog.cpp:959 Kainote/OptionsDialog.cpp:1235
+msgid "Video RM"
+msgstr "வீடியோ ஆர்.எம்"
+
+#: Kainote/OptionsDialog.cpp:959 Kainote/OptionsDialog.cpp:1235
+msgid "Video RMVB"
+msgstr "வீடியோ RMVB"
+
+#: Kainote/OptionsDialog.cpp:959 Kainote/OptionsDialog.cpp:1235
+msgid "Video WMV"
+msgstr "வீடியோ WMV"
+
+#: Kainote/OptionsDialog.cpp:960 Kainote/OptionsDialog.cpp:1236
+msgid "Video M2TS"
+msgstr "வீடியோ M2TS"
+
+#: Kainote/OptionsDialog.cpp:960 Kainote/OptionsDialog.cpp:1236
+msgid "Video MPEG"
+msgstr "வீடியோ MPEG"
+
+#: Kainote/OptionsDialog.cpp:960 Kainote/OptionsDialog.cpp:1236
+msgid "Video MPG"
+msgstr "வீடியோ எம்பிசி"
+
+#: Kainote/OptionsDialog.cpp:960 Kainote/OptionsDialog.cpp:1236
+msgid "Video TS"
+msgstr "வீடியோ டி.எச்"
+
+#: Kainote/OptionsDialog.cpp:967
 msgid ""
 "WARNING! Behavior differs on each Windows version.\n"
 "For example, on Windows 7 WMP blocked\n"
 "the ability to change video associations."
 msgstr "எச்சரிக்கை! இது ஒவ்வொரு சாளரங்களிலும் வித்தியாசமாக வேலை செய்கிறது."
 
-#: Kainote/OptionsDialog.cpp:992
+#: Kainote/OptionsDialog.cpp:985
 msgid "Deselect all"
 msgstr "அனைத்தையும் தேர்வு செய்யுங்கள்"
 
-#: Kainote/OptionsDialog.cpp:992
+#: Kainote/OptionsDialog.cpp:985
 msgid "Select all"
 msgstr "அனைத்தையும் தெரிவுசெய்"
 
-#: Kainote/OptionsDialog.cpp:992
+#: Kainote/OptionsDialog.cpp:985
 msgid "Select subtitles"
 msgstr "வசன வரிகள் தேர்ந்தெடுக்கவும்"
 
-#: Kainote/OptionsDialog.cpp:992
+#: Kainote/OptionsDialog.cpp:985
 msgid "Select video"
 msgstr "வீடியோவைத் தேர்ந்தெடுக்கவும்"
 
-#: Kainote/OptionsDialog.cpp:1012 Kainote/OptionsDialog.cpp:1015
+#: Kainote/OptionsDialog.cpp:1005 Kainote/OptionsDialog.cpp:1008
 msgid "Advanced"
 msgstr "மேம்பட்ட"
 
-#: Kainote/OptionsDialog.cpp:1016
+#: Kainote/OptionsDialog.cpp:1009
 msgid "Themes"
 msgstr "கருப்பொருள்கள்"
 
-#: Kainote/OptionsDialog.cpp:1017
+#: Kainote/OptionsDialog.cpp:1010
 msgid "Hotkeys"
 msgstr "ஆட்கீச்"
 
-#: Kainote/OptionsDialog.cpp:1019
+#: Kainote/OptionsDialog.cpp:1012
 msgid "Associations"
 msgstr "சங்கங்கள்"
 
-#: Kainote/OptionsDialog.cpp:1021
+#: Kainote/OptionsDialog.cpp:1014
 msgid "Subtitle properties"
 msgstr "ASS வசன வரிகள் பண்புகள்"
 
-#: Kainote/OptionsDialog.cpp:1030
+#: Kainote/OptionsDialog.cpp:1023
 msgid "Set default"
 msgstr "இயல்புநிலையை அமைக்கவும்"
 
@@ -5315,14 +5255,14 @@ msgid "Cannot create GStreamer video display module"
 msgstr "செயல்முறையை உருவாக்க முடியவில்லை. மக்சிங் ரத்து செய்யப்பட்டது"
 
 #: Kainote/RendererGStreamer.cpp:340
-#, fuzzy, c-format
+#, c-format, fuzzy
 msgid "Cannot open video file: %s"
 msgstr "\"%s\" கோப்பைத் திறக்க முடியாது."
 
 #: Kainote/RendererGStreamer.cpp:782
 #, c-format
 msgid "Track %i"
-msgstr ""
+msgstr "ட்ராக் %i"
 
 #: Kainote/RendererVideo.cpp:391 Kainote/VisualRotationXY.cpp:163
 msgid "Cannot set matrix projection"
@@ -5703,9 +5643,7 @@ msgstr "நகர்த்துவதற்கான நேரங்களி�
 
 #: Kainote/ShiftTimes.cpp:564
 msgid "Correction end times, when they are improper or overlap each other"
-msgstr ""
-"திருத்தம் இறுதி நேரங்கள், அவை முறையற்றதாக இருக்கும்போது அல்லது ஒருவருக்கொருவர் ஒன்றுடன் "
-"ஒன்று"
+msgstr "திருத்தம் இறுதி நேரங்கள், அவை முறையற்றதாக இருக்கும்போது அல்லது ஒருவருக்கொருவர் ஒன்றுடன் ஒன்று"
 
 #: Kainote/ShiftTimes.cpp:567
 msgid "Inserts introduction to the start time (good when using fad)"
@@ -6772,8 +6710,7 @@ msgid ""
 "Translation - text pasted into subtitles with correct timing."
 msgstr ""
 "விளக்கம்: \n"
-"அசல் - சரியான நேரத்துடன் வசன வரிகள், வரிகளை ஒப்பிட்டுப் பார்க்க நீங்கள் அதைப் பார்க்கலாம், "
-"அது நீக்கப்படும் \n"
+"அசல் - சரியான நேரத்துடன் வசன வரிகள், வரிகளை ஒப்பிட்டுப் பார்க்க நீங்கள் அதைப் பார்க்கலாம், அது நீக்கப்படும் \n"
 "மொழிபெயர்ப்பு - நீங்கள் சரியான நேரத்தில் ஒட்டும் வசனங்கள்."
 
 #: Kainote/TabPanel.cpp:322
@@ -7098,42 +7035,33 @@ msgstr "மேலே"
 msgid "Toolbar alignment"
 msgstr "கருவிப்பட்டி சீரமைப்பு"
 
-#: Kainote/UpdateChecker.cpp:80
-msgid "A new version is available"
-msgstr ""
-
-#: Kainote/UpdateChecker.cpp:89
+#: Kainote/UpdateChecker.cpp:124
 #, c-format
-msgid "You have version %s; version %s is available"
+msgid "A new version (%s) is available. Update?"
 msgstr ""
 
-#: Kainote/UpdateChecker.cpp:101
-msgid "Check for updates automatically"
-msgstr ""
-
-#: Kainote/UpdateChecker.cpp:105
-msgid "Stable versions only"
-msgstr ""
-
-#: Kainote/UpdateChecker.cpp:112
-msgid "Open the download page"
-msgstr ""
-
-#: Kainote/UpdateChecker.cpp:113
-msgid "Remind me in a week"
-msgstr ""
-
-#: Kainote/UpdateChecker.cpp:155 Kainote/UpdateChecker.cpp:176
-msgid "Cannot check for updates"
-msgstr ""
-
-#: Kainote/UpdateChecker.cpp:155 Kainote/UpdateChecker.cpp:176
-#: Kainote/UpdateChecker.cpp:185
+#: Kainote/UpdateChecker.cpp:124
 msgid "Update"
 msgstr ""
 
-#: Kainote/UpdateChecker.cpp:185
-msgid "You already have the latest version"
+#: Kainote/UpdateChecker.cpp:125
+msgid "Disable updates"
+msgstr ""
+
+#: Kainote/UpdateChecker.cpp:126
+msgid "Update after closing"
+msgstr ""
+
+#: Kainote/UpdateChecker.cpp:237
+msgid "Cannot download the new version of Kainote"
+msgstr ""
+
+#: Kainote/UpdateChecker.cpp:242
+msgid "Cannot find the Kainote updater"
+msgstr ""
+
+#: Kainote/UpdateChecker.cpp:250 Kainote/UpdateChecker.cpp:255
+msgid "Cannot close Kainote"
 msgstr ""
 
 #: Kainote/UtilsWindows.cpp:40
@@ -7208,13 +7136,8 @@ msgid "Deleting"
 msgstr "நீக்குதல்"
 
 #: Kainote/VideoBox.cpp:1077
-msgid ""
-"Video files(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
-"(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|"
-"All files (*.*)|*.*"
-msgstr ""
-"வீடியோ கோப்புகள் (*. அவி), (*. எம்.கே.வி), (*. MP4), (*. OGM), (*. WMV), (*. "
-"ASF), (*. RMVB), (* p), (*. avs) |*.avi;*. mkv;*. Mp4;* கோப்புகள் (*.*) |*.*"
+msgid "Video files(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|All files (*.*)|*.*"
+msgstr "வீடியோ கோப்புகள் (*. அவி), (*. எம்.கே.வி), (*. MP4), (*. OGM), (*. WMV), (*. ASF), (*. RMVB), (* p), (*. avs) |*.avi;*. mkv;*. Mp4;* கோப்புகள் (*.*) |*.*"
 
 #: Kainote/VideoBox.cpp:1092
 msgid "Subtitle files (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"
@@ -7494,8 +7417,9 @@ msgid "List of tags that can edit visual tool"
 msgstr "காட்சி கருவியைத் திருத்தக்கூடிய குறிச்சொற்களின் பட்டியல்"
 
 #: Kainote/VideoToolbar.cpp:747 Kainote/VisualAllTagsEdition.cpp:86
+#, fuzzy
 msgid "Gradient text increasing"
-msgstr ""
+msgstr "சாய்வு உரை அதிகரிக்கிறது"
 
 #: Kainote/VideoToolbar.cpp:747 Kainote/VisualAllTagsEdition.cpp:86
 msgid "Insert"
@@ -7521,8 +7445,9 @@ msgid "Gradient line increasing"
 msgstr "நிழல் நிறத்தின் சாய்வு"
 
 #: Kainote/VideoToolbar.cpp:748 Kainote/VisualAllTagsEdition.cpp:87
+#, fuzzy
 msgid "Gradient text decreasing"
-msgstr ""
+msgstr "சாய்வு உரை குறைகிறது"
 
 #: Kainote/VideoToolbar.cpp:751
 msgid ""
@@ -7532,14 +7457,10 @@ msgid ""
 "or at the start for multiple lines.\n"
 "Multiply - multiplies the slider value by the selected line number;\n"
 "the first line is not changed.\n"
-"Gradient text increasing - inserts a tag at each character, increasing the "
-"value.\n"
-"Gradient text decreasing - inserts a tag at each character, decreasing the "
-"value.\n"
-"Gradient line increasing - inserts a tag in selected lines, increasing the "
-"value.\n"
-"Gradient line decreasing - inserts a tag in selected lines, decreasing the "
-"value."
+"Gradient text increasing - inserts a tag at each character, increasing the value.\n"
+"Gradient text decreasing - inserts a tag at each character, decreasing the value.\n"
+"Gradient line increasing - inserts a tag in selected lines, increasing the value.\n"
+"Gradient line decreasing - inserts a tag in selected lines, decreasing the value."
 msgstr ""
 
 #: Kainote/VideoToolbar.cpp:781
@@ -7671,9 +7592,7 @@ msgstr "மூன்று கூடுதல் மதிப்புகள்"
 
 #: Kainote/VisualAllTagsEdition.cpp:93
 msgid "Used only when tag have 2 values or more"
-msgstr ""
-"குறிச்சொல்லில் 2 மதிப்புகள் அல்லது அதற்கு மேற்பட்டவை இருக்கும்போது மட்டுமே "
-"பயன்படுத்தப்படுகிறது"
+msgstr "குறிச்சொல்லில் 2 மதிப்புகள் அல்லது அதற்கு மேற்பட்டவை இருக்கும்போது மட்டுமே பயன்படுத்தப்படுகிறது"
 
 #: Kainote/VisualAllTagsEdition.cpp:96
 msgid "Tag change options"
@@ -7733,10 +7652,8 @@ msgstr ""
 "புலம் \"குறைந்தபட்ச மதிப்பு\" இலிருந்து அதிகமாகும்."
 
 #: Kainote/VisualAllTagsEdition.cpp:312
-msgid ""
-"Field \"Step\" contains a number too large for the current min-max range."
-msgstr ""
-"புலம் \"படி\" தற்போதைய மணித்துளி - அதிகபட்ச வரம்பிற்கு மிகச்சிறந்த எண்ணைக் கொண்டுள்ளது."
+msgid "Field \"Step\" contains a number too large for the current min-max range."
+msgstr "புலம் \"படி\" தற்போதைய மணித்துளி - அதிகபட்ச வரம்பிற்கு மிகச்சிறந்த எண்ணைக் கொண்டுள்ளது."
 
 #: Kainote/VisualClips.cpp:1014
 msgid "Double \"m\" was blocked because of Vsfilter bug"
@@ -7813,9 +7730,7 @@ msgstr "புலம் \"வடிவம்\" காலியாக இரு�
 
 #: Kainote/VisualMove.cpp:464
 msgid "Video must be set at least one frame after the line's start time"
-msgstr ""
-"வரியின் தொடக்க நேரத்திற்குப் பிறகு குறைந்தபட்சம் ஒரு சட்டத்தையாவது வீடியோ அமைக்கப்பட "
-"வேண்டும்"
+msgstr "வரியின் தொடக்க நேரத்திற்குப் பிறகு குறைந்தபட்சம் ஒரு சட்டத்தையாவது வீடியோ அமைக்கப்பட வேண்டும்"
 
 #: Kainote/VisualRotationZ.cpp:487 Kainote/VisualScale.cpp:772
 msgid "Cannot read clip rectangle values."
@@ -7835,14 +7750,12 @@ msgstr ""
 "வீடியோவில் வரி தெரியவில்லை \n"
 "அல்லது சுழிய காலம் உள்ளது"
 
-#: Kainote/config.cpp:634
+#: Kainote/config.cpp:633
 #, c-format
-msgid ""
-"Some colors were absent from theme \"%s\" and were loaded from the default "
-"theme."
+msgid "Some colors were absent from theme \"%s\" and were loaded from the default theme."
 msgstr "கருப்பொருள் \"%s\" இல் சில வண்ணங்கள் காணவில்லை, இயல்புநிலையிலிருந்து ஏற்றப்பட்டன."
 
-#: Kainote/config.cpp:644
+#: Kainote/config.cpp:643
 msgid "Cannot load theme, reset to default"
 msgstr "கருப்பொருள் ஏற்ற முடியாது, இயல்புநிலைக்கு மீட்டமைக்கவும்"
 
@@ -8018,39 +7931,27 @@ msgstr ""
 msgid "Remove nonexistent styles"
 msgstr "இல்லாத பாணிகளை அகற்று"
 
-#: Kainote/kainoteApp.cpp:231 Kainote/kainoteApp.cpp:240
+#: Kainote/kainoteApp.cpp:232 Kainote/kainoteApp.cpp:241
 msgid "Not enough RAM. History partially deleted"
 msgstr "போதுமான ரேம் இல்லை. வரலாறு ஓரளவு நீக்கப்பட்டது"
 
-#: Kainote/kainoteApp.cpp:318
+#: Kainote/kainoteApp.cpp:331
 msgid ""
 "Cannot read settings.\n"
 "The program will be terminated."
 msgstr "அமைப்புகளைப் படிக்க முடியாது. நிரல் நிறுத்தப்படும்."
 
-#: Kainote/kainoteApp.cpp:345
-msgid "Cannot find language, language change failed"
-msgstr ""
-
-#: Kainote/kainoteApp.cpp:350
-msgid "wxLocale cannot initialize, language change failed"
-msgstr ""
-
-#: Kainote/kainoteApp.cpp:364
-msgid "Cannot find translation, language change failed"
-msgstr ""
-
-#: Kainote/kainoteApp.cpp:380
+#: Kainote/kainoteApp.cpp:396
 msgid ""
 "Cannot read hotkeys.\n"
 "The program will be terminated."
 msgstr "ஆட்கீசைப் படிக்க முடியாது. நிரல் நிறுத்தப்படும்."
 
-#: Kainote/kainoteApp.cpp:508
+#: Kainote/kainoteApp.cpp:524
 msgid "Load last session?"
 msgstr "கடைசி அமர்வை ஏற்றவா?"
 
-#: Kainote/kainoteApp.cpp:514
+#: Kainote/kainoteApp.cpp:530
 msgid ""
 "The program crashed or was closed improperly.\n"
 "Load the last session with the latest autosaved subtitles?"
@@ -8127,11 +8028,8 @@ msgid "Style named \"%s\" already exists."
 msgstr "\"%s\" என்று பெயரிடப்பட்ட பாணி ஏற்கனவே உள்ளது."
 
 #: Kainote/stylestore.cpp:508
-msgid ""
-"Style name modified. Do you want to change all instances to the new name?"
-msgstr ""
-"பாணி பெயர் மாற்றியமைக்கப்பட்டது. எல்லா நிகழ்வுகளையும் புதிய பெயருக்கு மாற்ற "
-"விரும்புகிறீர்களா?"
+msgid "Style name modified. Do you want to change all instances to the new name?"
+msgstr "பாணி பெயர் மாற்றியமைக்கப்பட்டது. எல்லா நிகழ்வுகளையும் புதிய பெயருக்கு மாற்ற விரும்புகிறீர்களா?"
 
 #: Kainote/stylestore.cpp:612
 msgid "Choose ASS file"
