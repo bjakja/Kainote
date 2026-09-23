@@ -20,6 +20,9 @@
 //#include "Menu.h"
 //#include "SubtitlesProviderManager.h"
 #include "Provider.h"
+#include "Timebase.h"
+#include "Playback.h"
+#include <atomic>
 #include "KainoteFrame.h"
 //#include "VisualDrawingShapes.h"
 #include <d3d9.h>
@@ -96,21 +99,15 @@ public:
 		return false; 
 	};
 	virtual bool OpenSubs(int flag, bool redraw = true, wxString *text = nullptr, bool resetParameters = false){ return false; };
-	virtual bool Play(int end = -1){ return false; };
-	virtual bool Pause(){ return false; };
-	virtual bool Stop(){ return false; };
-	virtual void SetPosition(int _time, bool starttime = true, bool corect = true, bool async = true, bool refreshAudio = true){};
-	virtual void SetFFMS2Position(int time, bool starttime, bool refreshAudio = true){};
-	virtual void GoToNextKeyframe(){};
-	virtual void GoToPrevKeyframe(){};
-	virtual int GetFrameTime(bool start = true){ return 0; };
-	virtual void GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd){};
-	virtual int GetFrameTimeFromTime(int time, bool start = true){ return 0; };
-	virtual int GetFrameTimeFromFrame(int frame, bool start = true){ return 0; };
-	//if nothing loaded or loaded via Direct Show VFF is nullptr
-	//return true if VFF is present
-	//bool GetStartEndDurationFromMS(Dialogue *dial, SubsTime &duration);
-	virtual int GetPlayEndTime(int time){ return 0; };
+	// plays to end, or to the end of the video when end is not above 0
+	bool Play(int end = -1);
+	// pauses playback, or plays when it is paused or stopped
+	bool Pause();
+	bool Stop();
+	// flags are SeekFlags
+	virtual void SetPosition(int time, bool startTime = true, int flags = 0){};
+	// the tab's timebase, owned by the video box
+	const Timebase &GetTimebase();
 	virtual int GetDuration(){ return 0; };
 	virtual int GetVolume(){ return 0; };
 	virtual void GetVideoSize(int *width, int *height){};
@@ -120,7 +117,7 @@ public:
 	virtual void Render(bool RecreateFrame = true, bool wait = true){};
 	virtual void RecreateSurface(){};
 	virtual void EnableStream(long index){};
-	virtual void ChangePositionByFrame(int cpos){};
+	virtual void ChangePositionByFrame(int step);
 	virtual void ChangeVobsub(bool vobsub = false){};
 	virtual wxArrayString GetStreams(){ wxArrayString empty; return empty; };
 	virtual unsigned char *GetFrameWithSubs(bool subs, bool *del){ return nullptr; };
@@ -129,23 +126,18 @@ public:
 	//int GetPreciseTime(bool start = true){};
 	virtual void DeleteAudioCache(){}
 	virtual void SetColorSpace(const wxString& matrix, bool render = true){}
-	virtual void OpenKeyframes(const wxString &filename){};
 	
 	IDirect3DSurface9 * m_MainSurface = nullptr;
 	IDirect3DDevice9 *m_D3DDevice = nullptr;
 	D3DFORMAT m_D3DFormat;
-	bool m_DirectShowSeeking;
 	volatile bool m_BlockResize = false;
 	bool m_HasVisualEdition = false;
-	bool m_HasDummySubs = true;
 	bool m_VideoResized = false;
 	bool m_HasZoom = false;
 	bool m_SwapFrame = false;
 	int m_Width = 0;
 	int m_Height = 0;
 	int m_Pitch = 0;
-	int m_Time = 0;
-	int m_Frame = 0;
 	unsigned char *m_FrameBuffer = nullptr;
 	RECT m_BackBufferRect;
 	unsigned char m_Format;
@@ -159,9 +151,6 @@ public:
 	wxMutex m_MutexProgressBar;
 	wxMutex m_MutexOpen;
 	wxMutex m_MutexVisualChange;
-	PlaybackState m_State = None;
-	int m_PlayEndTime = 0;
-	size_t m_LastTime = 0;
 	FloatRect m_ZoomRect;
 	std::vector<chapter> m_Chapters;
 	IDirectXVideoProcessorService *m_DXVAService = nullptr;
@@ -195,11 +184,15 @@ public:
 
 	virtual bool EnumFilters(Menu *menu){ return false; };
 	virtual bool FilterConfig(wxString name, int idx, wxPoint pos){ return false; };
-	virtual bool HasFFMS2(){ return false; };
 	virtual Provider * GetFFMS2(){ return nullptr; };
 	virtual void ZoomChanged() {};
 	// Non virtual functions
 	virtual void DrawProgressBar(const wxString &timesString);
+	// visual editing and dummy subtitles show one line; playback needs them all
+	void OpenSubsForPlayback();
+	void ReopenSubsAfterSeek(bool playing);
+	// the video shows text that edits have since changed
+	void MarkSubtitlesOutdated();
 	void Zoom(const wxSize &size);
 	void DrawZoom();
 	void ZoomMouseHandle(wxMouseEvent &evt);
@@ -212,7 +205,7 @@ public:
 	//returns true if removed
 	bool RemoveVisual(bool noRefresh = false, bool disable = false);
 	int GetCurrentPosition();
-	int GetCurrentFrame();
+	virtual int GetCurrentFrame();
 	bool PlayLine(int start, int end);
 	void UpdateVideoWindow();
 	bool UpdateRects(bool changeZoom = true);
@@ -222,13 +215,29 @@ public:
 	void SetAudioPlayer(AudioDisplay *player);
 	void SaveFrame(int id);
 	PlaybackState GetState();
+protected:
+	// the adapters start, pause and stop their stream; the state is set around them
+	virtual void StartStream(){};
+	virtual void PauseStream(){};
+	virtual void StopStream(){};
+	// the seek target for time: clamped to the video, and on a frame unless SEEK_NO_SNAP
+	int SeekTarget(int time, bool startTime, int flags);
+
+	// written by the playback and stream threads as well as the UI thread
+	std::atomic<PlaybackState> m_State{ None };
+	std::atomic<int> m_Time{ 0 };
+	std::atomic<int> m_Frame{ 0 };
+	// 0 plays to the end of the video
+	std::atomic<int> m_PlayEndTime{ 0 };
+	std::atomic<size_t> m_LastTime{ 0 };
 private:
 
 	bool InitDX();
 	virtual bool InitRendererDX(){ return true; };
+	// the text an OpenSubs flag stands for, with the vector clip mask added
+	wxString *SubtitlesText(int flag, wxString *text);
 	void Clear(bool clearObject = true);
 	virtual void ClearObject() {};
-	virtual void DestroyFFMS2() {};
 
 	HWND m_HWND;
 	bool m_DeviceLost = false;

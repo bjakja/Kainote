@@ -359,6 +359,7 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitp
     <ClCompile Include="KaiGauge.cpp" />
     <ClCompile Include="KaiPanel.cpp" />
     <ClCompile Include="LineParse.cpp" />
+    <ClCompile Include="Playback.cpp" />
     <ClCompile Include="Provider.cpp" />
     <ClCompile Include="ProviderDummy.cpp" />
     <ClCompile Include="ProviderFFMS2.cpp" />
@@ -453,6 +454,7 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitp
     <ClCompile Include="SubsGridBase.cpp" />
     <ClCompile Include="TabPanel.cpp" />
     <ClCompile Include="SubsTime.cpp" />
+    <ClCompile Include="Timebase.cpp" />
     <ClCompile Include="TimeCtrl.cpp" />
     <ClCompile Include="TLDialog.cpp" />
     <ClCompile Include="Toolbar.cpp" />
@@ -523,6 +525,7 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitp
     <ClInclude Include="KaiPanel.h" />
     <ClInclude Include="LineParse.h" />
     <ClInclude Include="Notebook.h" />
+    <ClInclude Include="Playback.h" />
     <ClInclude Include="Provider.h" />
     <ClInclude Include="ProviderDummy.h" />
     <ClInclude Include="ProviderFFMS2.h" />
@@ -613,6 +616,8 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitp
     <ClInclude Include="SubsGridBase.h" />
     <ClInclude Include="TabPanel.h" />
     <ClInclude Include="SubsTime.h" />
+    <ClInclude Include="Timebase.h" />
+    <ClInclude Include="UndoHistory.h" />
     <ClInclude Include="TimeCtrl.h" />
     <ClInclude Include="TLDialog.h" />
     <ClInclude Include="Videobox.h" />

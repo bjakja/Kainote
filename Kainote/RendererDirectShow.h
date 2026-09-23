@@ -32,21 +32,14 @@ class RendererDirectShow : public RendererVideo
 {
 	friend class RendererVideo;
 	friend class VideoBox;
+	friend class CD2DVideoRender;
 public:
 	RendererDirectShow(VideoBox *control, bool visualDisabled);
 	virtual ~RendererDirectShow();
 
 	bool OpenFile(const wxString &fname, int subsFlag, bool vobsub, bool changeAudio = true);
 	bool OpenSubs(int flag, bool redraw = true, wxString *text = nullptr, bool resetParameters = false);
-	bool Play(int end = -1);
-	bool Pause();
-	bool Stop();
-	void SetPosition(int _time, bool starttime = true, bool corect = true, bool async = true, bool refreshAudio = true) override;
-	int GetFrameTime(bool start = true);
-	void GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd);
-	int GetFrameTimeFromTime(int time, bool start = true);
-	int GetFrameTimeFromFrame(int frame, bool start = true);
-	int GetPlayEndTime(int time);
+	void SetPosition(int time, bool startTime = true, int flags = 0) override;
 	int GetDuration();
 	int GetVolume();
 	void GetVideoSize(int *width, int *height);
@@ -56,7 +49,6 @@ public:
 	void Render(bool RecreateFrame = true, bool wait = true);
 	void RecreateSurface();
 	void EnableStream(long index);
-	void ChangePositionByFrame(int cpos);
 	void ChangeVobsub(bool vobsub = false);
 	wxArrayString GetStreams();
 	byte *GetFrameWithSubs(bool subs, bool *del) override;
@@ -64,7 +56,6 @@ public:
 	bool EnumFilters(Menu *menu);
 	bool FilterConfig(wxString name, int idx, wxPoint pos);
 	bool InitRendererDX();
-	void OpenKeyframes(const wxString &filename);
 	void ClearObject();
 	void SetColorSpace(const wxString& matrix, bool render = true) {
 		if (matrix == L"TV.601")
@@ -77,6 +68,10 @@ public:
 		if (m_State == Paused)
 			Render();
 	}
+protected:
+	void StartStream() override;
+	void PauseStream() override;
+	void StopStream() override;
 private:
 	void SetupVertices();
 	void ZoomChanged();
@@ -94,4 +89,6 @@ private:
 	int m_WindowHeight = -1;
 	int m_LastBufferSize = -1;
 	DXVA2_VideoTransferMatrix m_VideoMatrix = DXVA2_VideoTransferMatrix_BT601;
+	// the filter corrects the time with the first sample after a seek
+	std::atomic<bool> m_DirectShowSeeking{ false };
 };

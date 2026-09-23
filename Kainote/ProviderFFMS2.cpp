@@ -16,6 +16,7 @@
 
 
 #include "ProviderFFMS2.h"
+#include "RendererFFMS2.h"
 #include "LogHandler.h"
 #include "VideoBox.h"
 #include "kainoteApp.h"
@@ -55,7 +56,7 @@ namespace
 	}
 }
 
-ProviderFFMS2::ProviderFFMS2(const wxString& filename, RendererVideo* renderer, 
+ProviderFFMS2::ProviderFFMS2(const wxString& filename, RendererFFMS2* renderer, 
 	wxWindow* progressSinkWindow, bool* _success)
 	: Provider(filename, renderer)
 	, m_eventAudioComplete(CreateEvent(0, FALSE, FALSE, 0))
@@ -91,6 +92,15 @@ ProviderFFMS2::ProviderFFMS2(const wxString& filename, RendererVideo* renderer,
 
 }
 
+bool ProviderFFMS2::FetchPlaybackFrame(int frame, unsigned char* buffer)
+{
+	if (CopyFrame(frame, buffer, true))
+		return true;
+	KaiLogDebug(wxString::Format(_("Cannot get frame %i: %s"),
+		frame, wxString::FromUTF8(m_errInfo.Buffer)));
+	return false;
+}
+
 unsigned int __stdcall ProviderFFMS2::FFMS2Proc(void* cls)
 {
 	((ProviderFFMS2*)cls)->Processing();
@@ -99,12 +109,6 @@ unsigned int __stdcall ProviderFFMS2::FFMS2Proc(void* cls)
 
 void ProviderFFMS2::Processing()
 {
-	HANDLE events_to_wait[] = {
-		m_eventStartPlayback,
-		m_eventSetPosition,
-		m_eventKillSelf
-	};
-
 	m_success = (Init() == 1);
 
 	progress->EndModal();
@@ -121,85 +125,10 @@ void ProviderFFMS2::Processing()
 		return;
 	}
 	m_framePlane = static_cast<int>(framePlane);
-	int tdiff = 0;
-
 	SetEvent(m_eventComplete);
-
-	while (1) {
-		DWORD wait_result = WaitForMultipleObjects(sizeof(events_to_wait) / sizeof(HANDLE), events_to_wait, FALSE, INFINITE);
-
-		if (wait_result == WAIT_OBJECT_0 + 0)
-		{
-			unsigned char* buff = m_renderer->m_FrameBuffer;
-			int acttime;
-			while (1) {
-				if (WaitForSingleObject(m_eventKillSelf, 0) == WAIT_OBJECT_0) { return; }
-
-				if (m_renderer->m_Frame != m_lastFrame) {
-					m_renderer->m_Time = m_timecodes[m_renderer->m_Frame];
-					m_lastFrame = m_renderer->m_Frame;
-				}
-				if (!CopyCurrentFrame(buff, true)) {
-					// Nothing in this pass advances the frame, so retrying the same
-					// failing fetch just spins the thread at full speed and never
-					// looks at the stop or the kill event again. End the playback
-					// instead and go back to waiting for the next request.
-					KaiLogDebug(wxString::Format(_("Cannot get frame %i: %s"),
-						m_renderer->m_Frame, wxString::FromUTF8(m_errInfo.Buffer)));
-					wxCommandEvent* evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED, ID_END_OF_STREAM);
-					wxQueueEvent(m_renderer->videoControl, evt);
-					break;
-				}
-
-				m_renderer->DrawTexture(buff);
-				m_renderer->Render(false);
-
-				if (m_renderer->m_Time >= m_renderer->m_PlayEndTime || 
-					m_renderer->m_Frame >= m_numFrames - 1) {
-					wxCommandEvent* evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED, ID_END_OF_STREAM);
-					wxQueueEvent(m_renderer->videoControl, evt);
-					break;
-				}
-				else if (m_renderer->m_State != Playing) {
-					break;
-				}
-				acttime = timeGetTime() - m_renderer->m_LastTime;
-
-				m_renderer->m_Frame++;
-				m_renderer->m_Time = m_timecodes[m_renderer->m_Frame];
-
-				tdiff = m_renderer->m_Time - acttime;
-
-				if (tdiff > 0) { Sleep(tdiff); }
-				else if (tdiff < -20) {
-					while (1) {
-						if (m_renderer->m_Frame >= m_numFrames) {
-							m_renderer->m_Frame = m_numFrames - 1;
-							m_renderer->m_Time = m_renderer->m_PlayEndTime;
-							break;
-						}
-						int frameTime = m_timecodes[m_renderer->m_Frame];
-						if (frameTime >= acttime || frameTime >= m_renderer->m_PlayEndTime) {
-							break;
-						}
-						else {
-							m_renderer->m_Frame++;
-						}
-					}
-
-				}
-
-			}
-		}
-		else if (wait_result == WAIT_OBJECT_0 + 1) {
-			//entire seeking have to be in this thread or subtitles will out of sync
-			m_renderer->SetFFMS2Position(m_changedTime, m_isStartTime, m_refreshAudio);
-		}
-		else {
-			break;
-		}
-
-	}
+#ifdef _WIN32
+	RunPlaybackThread();
+#endif
 }
 
 
@@ -473,6 +402,8 @@ done:
 
 
 		// build list of keyframes and timecodes
+		std::vector<int> timecodes;
+		std::vector<int> keyframes;
 		for (int CurFrameNum = 0; CurFrameNum < videoprops->NumFrames; CurFrameNum++) {
 			CurFrameData = FFMS_GetFrameInfo(FrameData, CurFrameNum);
 			if (CurFrameData == nullptr) {
@@ -481,14 +412,12 @@ done:
 
 			int Timestamp = ((CurFrameData->PTS * TimeBase->Num) / TimeBase->Den);
 			// keyframe?
-			if (CurFrameData->KeyFrame) { m_keyFrames.Add(Timestamp); }
-			m_timecodes.push_back(Timestamp);
+			if (CurFrameData->KeyFrame) { keyframes.push_back(Timestamp); }
+			timecodes.push_back(Timestamp);
 
 		}
-		if (m_renderer && !m_renderer->videoControl->GetKeyFramesFileName().empty()) {
-			OpenKeyframes(m_renderer->videoControl->GetKeyFramesFileName());
-			m_renderer->videoControl->SetKeyFramesFileName(emptyString);
-		}
+		m_timebase = Timebase::FromTimecodes(std::move(timecodes), m_FPS);
+		m_timebase.SetKeyframes(std::move(keyframes));
 	}
 audio:
 
@@ -554,8 +483,7 @@ ProviderFFMS2::~ProviderFFMS2()
 		CloseHandle(m_eventAudioComplete);
 		m_eventAudioComplete = nullptr;
 	}
-	m_keyFrames.Clear();
-	m_timecodes.clear();
+	m_timebase = Timebase();
 
 	if (m_videoSource) {
 		FFMS_DestroyVideoSource(m_videoSource); m_videoSource = nullptr;
@@ -606,16 +534,16 @@ void ProviderFFMS2::GetFrame(int frame, unsigned char* buff)
 	m_refreshFrame = true;
 }
 
-bool ProviderFFMS2::CopyCurrentFrame(unsigned char* buffer, bool forceFetch)
+bool ProviderFFMS2::CopyFrame(int frame, unsigned char* buffer, bool forceFetch)
 {
 	//FFMS owns the frame memory and FFMS_SetInputFormatV hands it back
 	//reallocated when the colour matrix changes, so the fetch and the read
 	//have to share one lock. Copying after the lock was released is what
 	//crashed playback on a colorspace switch (issue #39).
 	wxCriticalSectionLocker lock(m_blockFrame);
-	if (forceFetch || !m_FFMS2frame || m_renderer->m_Frame != m_lastFrame || m_refreshFrame) {
-		m_FFMS2frame = FFMS_GetFrame(m_videoSource, m_renderer->m_Frame, &m_errInfo);
-		m_lastFrame = m_renderer->m_Frame;
+	if (forceFetch || !m_FFMS2frame || frame != m_lastFrame || m_refreshFrame) {
+		m_FFMS2frame = FFMS_GetFrame(m_videoSource, frame, &m_errInfo);
+		m_lastFrame = frame;
 		m_refreshFrame = false;
 	}
 	if (!m_FFMS2frame) {
@@ -874,9 +802,9 @@ void ProviderFFMS2::DeleteOldAudioCache()
 
 }
 
-void ProviderFFMS2::GetFrameBuffer(unsigned char** buffer)
+void ProviderFFMS2::GetFrameBuffer(int frame, unsigned char** buffer)
 {
-	CopyCurrentFrame(*buffer, false);
+	CopyFrame(frame, *buffer, false);
 }
 
 wxString ProviderFFMS2::ColorMatrixDescription(int cs, int cr) {

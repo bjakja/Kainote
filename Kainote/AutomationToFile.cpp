@@ -86,13 +86,13 @@ namespace Auto{
 			lua_error(L);
 			return false;
 		}
-		File *Subs = GetSubs(L);
+		SubsFile *Subs = GetSubs(L);
 		if (!Subs) {
 			return false;
 		}
-		int sinfo = Subs->sinfo.size();
-		int styles = sinfo + Subs->styles.size();
-		int dials = styles + Subs->dialogues.size();
+		int sinfo = Subs->SInfoSize();
+		int styles = sinfo + Subs->StylesSize();
+		int dials = styles + Subs->GetCount();
 		if (i < 0 || i >= dials){
 			return false;
 		}
@@ -100,7 +100,7 @@ namespace Auto{
 		lua_newtable(L);
 		if (i < sinfo){
 			//it's reading, do not copy
-			SInfo *info = Subs->sinfo[i];
+			SInfo *info = Subs->GetSInfoAt(i);
 
 			lua_pushstring(L, "[Script Info]");
 			lua_setfield(L, -2, "section");
@@ -122,11 +122,11 @@ namespace Auto{
 		{
 			//check if it's not oute of size
 			size_t j = i - sinfo;
-			if (j >= Subs->styles.size())
+			if (j >= Subs->StylesSize())
 				return false;
 
 			//it's reading, do not copy
-			Styles *astyle = Subs->styles[j];
+			Styles *astyle = Subs->GetStyle(j);
 
 			lua_pushstring(L, "[V4+ Styles]");
 			lua_setfield(L, -2, "section");
@@ -207,10 +207,10 @@ namespace Auto{
 		{
 			//check if it's not oute of size
 			size_t j = i - styles;
-			if (j >= Subs->dialogues.size())
+			if (j >= Subs->GetCount())
 				return false;
 			//it's reading, do not copy
-			Dialogue *adial = Subs->dialogues[j];
+			Dialogue *adial = Subs->GetDialogue(j);
 
 			lua_pushstring(L, "[Events]");
 			lua_setfield(L, -2, "section");
@@ -466,7 +466,7 @@ namespace Auto{
 			lua_error(L);
 			return 0;
 		}
-		File *Subs = GetSubs(L);
+		SubsFile *Subs = GetSubs(L);
 		if (!Subs) {
 			return 0;
 		}
@@ -492,7 +492,7 @@ namespace Auto{
 
 			if (strcmp(idx, "n") == 0) {
 				// get number of items
-				lua_pushnumber(L, Subs->dialogues.size() + Subs->sinfo.size() + Subs->styles.size());
+				lua_pushnumber(L, Subs->GetCount() + Subs->SInfoSize() + Subs->StylesSize());
 				return 1;
 
 			}
@@ -573,7 +573,7 @@ namespace Auto{
 			return 0;
 		}
 
-		File* Subs = GetSubs(L);
+		SubsFile *Subs = GetSubs(L);
 		if (!Subs) {
 			return 0;
 		}
@@ -607,9 +607,9 @@ namespace Auto{
 				SubsEntry *e = LuaToLine(L);
 				if (!e){ return 0; }
 				int i = n - 1;
-				int sinfo = Subs->sinfo.size();
-				int styles = sinfo + Subs->styles.size();
-				int dials = styles + Subs->dialogues.size();
+				int sinfo = Subs->SInfoSize();
+				int styles = sinfo + Subs->StylesSize();
+				int dials = styles + Subs->GetCount();
 				if (i < 0 || i >= dials){
 					SAFE_DELETE(e);
 					lua_pushstring(L, "Line index is out of range");
@@ -617,21 +617,15 @@ namespace Auto{
 					return 0;
 				}
 				if (i < sinfo && e->lclass == L"info"){
-					SInfo *inf = e->info->Copy();
-					Subs->deleteSinfo.push_back(inf);
-					Subs->sinfo[i] = inf;
+					Subs->SetSInfoAt(i, e->info->Copy());
 				}
 				else if (i < styles && e->lclass == L"style")
 				{
-					Styles *styl = e->astyle->Copy();
-					Subs->deleteStyles.push_back(styl);
-					Subs->styles[i - sinfo] = styl;
+					Subs->ChangeStyle(e->astyle->Copy(), i - sinfo);
 				}
 				else if (i < dials && e->lclass == L"dialogue")
 				{
-					Dialogue *dial = e->adial->Copy(false, false);
-					Subs->deleteDialogues.push_back(dial);
-					Subs->dialogues[i - styles] = dial;
+					Subs->SetDialogue(i - styles, e->adial->Copy(false, false), true);
 				}
 				else
 				{
@@ -668,12 +662,12 @@ namespace Auto{
 			lua_error(L);
 			return 0;
 		}
-		File *Subs = GetSubs(L);
+		SubsFile *Subs = GetSubs(L);
 		if (!Subs) {
 			return 0;
 		}
 
-		lua_pushnumber(L, Subs->dialogues.size() + Subs->sinfo.size() + Subs->styles.size());
+		lua_pushnumber(L, Subs->GetCount() + Subs->SInfoSize() + Subs->StylesSize());
 		return 1;
 	}
 
@@ -684,13 +678,13 @@ namespace Auto{
 			lua_error(L);
 			return 0;
 		}
-		File* Subs = GetSubs(L);
+		SubsFile *Subs = GetSubs(L);
 		if (!Subs) {
 			return 0;
 		}
-		lua_pushinteger(L, (int)Subs->sinfo.size());
-		lua_pushinteger(L, (int)Subs->styles.size());
-		lua_pushinteger(L, (int)Subs->dialogues.size());
+		lua_pushinteger(L, (int)Subs->SInfoSize());
+		lua_pushinteger(L, (int)Subs->StylesSize());
+		lua_pushinteger(L, (int)Subs->GetCount());
 
 		return 3;
 	}
@@ -703,7 +697,7 @@ namespace Auto{
 			return 0;
 		}
 
-		File* Subs = GetSubs(L);
+		SubsFile *Subs = GetSubs(L);
 		if (!Subs) {
 			return 0;
 		}
@@ -715,9 +709,9 @@ namespace Auto{
 		//ids.reserve(itemcount);
 
 		//dorobić wstawianie do tablic spellerrors i charspersec podczas rysowania
-		int sinfo = Subs->sinfo.size();
-		int styles = sinfo + Subs->styles.size();
-		int dials = styles + Subs->dialogues.size();
+		int sinfo = Subs->SInfoSize();
+		int styles = sinfo + Subs->StylesSize();
+		int dials = styles + Subs->GetCount();
 		// sort the item id's so we can delete from last to first to preserve original numbering
 		if (itemcount == 1 && lua_istable(L, 1)) {
 			lua_pushvalue(L, 1);
@@ -746,13 +740,13 @@ namespace Auto{
 		for (int i = ids.size() - 1; i >= 0; i--)
 		{
 			if (ids[i] < sinfo){
-				Subs->sinfo.erase(Subs->sinfo.begin() + ids[i]);
+				Subs->DeleteSInfo(ids[i]);
 			}
 			else if (ids[i] < styles){
-				Subs->styles.erase(Subs->styles.begin() + (ids[i] - sinfo));
+				Subs->DeleteStyle(ids[i] - sinfo);
 			}
 			else if (ids[i] < dials){
-				Subs->dialogues.erase(Subs->dialogues.begin() + (ids[i] - styles));
+				Subs->DeleteDialogues(ids[i] - styles, ids[i] - styles + 1);
 			}
 		}
 
@@ -766,7 +760,7 @@ namespace Auto{
 			lua_error(L);
 			return 0;
 		}
-		File* Subs = GetSubs(L);
+		SubsFile *Subs = GetSubs(L);
 		if (!Subs) {
 			return 0;
 		}
@@ -779,9 +773,9 @@ namespace Auto{
 		}
 
 		int a = lua_tointeger(L, 1), b = lua_tointeger(L, 2);
-		int sinfo = Subs->sinfo.size();
-		int styles = sinfo + Subs->styles.size();
-		int dials = styles + Subs->dialogues.size();
+		int sinfo = Subs->SInfoSize();
+		int styles = sinfo + Subs->StylesSize();
+		int dials = styles + Subs->GetCount();
 		int all = dials + 1;
 
 		if (a < 1) a = 1;
@@ -794,13 +788,13 @@ namespace Auto{
 
 		for (int i = b; i >= a; i--){
 			if (i < sinfo){
-				Subs->sinfo.erase(Subs->sinfo.begin() + i);
+				Subs->DeleteSInfo(i);
 			}
 			else if (i < styles){
-				Subs->styles.erase(Subs->styles.begin() + (i - sinfo));
+				Subs->DeleteStyle(i - sinfo);
 			}
 			else{
-				Subs->dialogues.erase(Subs->dialogues.begin() + (i - styles));
+				Subs->DeleteDialogues(i - styles, i - styles + 1);
 			}
 		}
 		return 0;
@@ -813,7 +807,7 @@ namespace Auto{
 			lua_error(L);
 			return 0;
 		}
-		File* Subs = GetSubs(L);
+		SubsFile *Subs = GetSubs(L);
 		if (!Subs) {
 			return 0;
 		}
@@ -827,20 +821,14 @@ namespace Auto{
 			if (!e){ return 0; }
 			if (e->lclass == L"info")
 			{
-				SInfo *inf = e->info->Copy();
-				Subs->sinfo.push_back(inf);
-				Subs->deleteSinfo.push_back(inf);
+				Subs->InsertSInfo(Subs->SInfoSize(), e->info->Copy());
 			}
 			else if (e->lclass == L"style")
 			{
-				Styles *styl = e->astyle->Copy();
-				Subs->styles.push_back(styl);
-				Subs->deleteStyles.push_back(styl);
+				Subs->AddStyle(e->astyle->Copy());
 			}
 			if (e->lclass == L"dialogue"){
-				Dialogue *dial = e->adial->Copy();
-				Subs->deleteDialogues.push_back(dial);
-				Subs->dialogues.push_back(dial);
+				Subs->AddLine(e->adial->Copy());
 			}
 			SAFE_DELETE(e);
 		}
@@ -855,7 +843,7 @@ namespace Auto{
 			lua_error(L);
 			return 0;
 		}
-		File* Subs = GetSubs(L);
+		SubsFile *Subs = GetSubs(L);
 		if (!Subs) {
 			return 0;
 		}
@@ -871,7 +859,7 @@ namespace Auto{
 
 		int start = int(lua_tonumber(L, 1) - 1);
 
-		if (start < 0 || start > (int)(Subs->sinfo.size() + Subs->styles.size() + Subs->dialogues.size()))
+		if (start < 0 || start > (int)(Subs->SInfoSize() + Subs->StylesSize() + Subs->GetCount()))
 		{
 			lua_pushstring(L, "Out of range line index");
 			lua_error(L);
@@ -883,35 +871,28 @@ namespace Auto{
 			SubsEntry *e = LuaToLine(L);
 			if (!e){ return 0; }
 			lua_pop(L, 1);
-			int sinfo = Subs->sinfo.size();
-			int stylsize = Subs->styles.size();
+			int sinfo = Subs->SInfoSize();
+			int stylsize = Subs->StylesSize();
 			int styles = sinfo + stylsize;
-			int dialsize = Subs->dialogues.size();
+			int dialsize = Subs->GetCount();
 			int dials = styles + dialsize;
 
 			if (e->lclass == L"info")
 			{
-				SInfo *inf = e->info->Copy();
-				if (start >= sinfo){ Subs->sinfo.push_back(inf); }
-				else{ Subs->sinfo.insert(Subs->sinfo.begin() + start, inf); }
-				Subs->deleteSinfo.push_back(inf);
+				Subs->InsertSInfo(start, e->info->Copy());
 			}
 			else if (e->lclass == L"style")
 			{
-				Styles *styl = e->astyle->Copy();
 				int newStart = start - sinfo;
 				if (newStart < 0) { newStart = 0; }
-				if (newStart >= stylsize){ Subs->styles.push_back(styl); }
-				else{ Subs->styles.insert(Subs->styles.begin() + newStart, styl); }
-				Subs->deleteStyles.push_back(styl);
+				Subs->InsertStyle(newStart, e->astyle->Copy());
 			}
 			else if (e->lclass == L"dialogue")
 			{
 				int newStart = start - styles;
 				if (newStart < 0) { newStart = 0; }
 				Dialogue *dial = e->adial->Copy(false, newStart >= dialsize);
-				if (newStart >= dialsize){ Subs->dialogues.push_back(dial); }
-				else{
+				if (newStart < dialsize){
 					//set treeState and isVisible
 					char treeState = 0;
 					char isVisible = VISIBLE;
@@ -920,12 +901,12 @@ namespace Auto{
 					char treeBefore = 0;
 					char visibleAfter = VISIBLE;
 					char visibleBefore = VISIBLE;
-					Dialogue* diala = Subs->dialogues[newStart];
+					Dialogue* diala = Subs->GetDialogue(newStart);
 					treeAfter = diala->treeState;
 					visibleAfter = diala->isVisible;
 					Dialogue* dialb = nullptr;
 					if (newStart > 0) {
-						dialb = Subs->dialogues[newStart - 1];
+						dialb = Subs->GetDialogue(newStart - 1);
 						treeBefore = dialb->treeState;
 						visibleBefore = dialb->isVisible;
 					}
@@ -939,10 +920,8 @@ namespace Auto{
 						dial->treeState = treeState;
 					if (isVisible != VISIBLE)
 						dial->isVisible = isVisible;
-
-					Subs->dialogues.insert(Subs->dialogues.begin() + newStart, dial); 
 				}
-				Subs->deleteDialogues.push_back(dial);
+				Subs->InsertRowsF(newStart, 1, dial, true);
 			}
 			else{
 				SAFE_DELETE(e);
@@ -1085,12 +1064,12 @@ namespace Auto{
 			lua_error(L);
 			return 0;
 		}
-		File* Subs = GetSubs(L);
+		SubsFile *Subs = GetSubs(L);
 		if (!Subs) {
 			return 0;
 		}
 		size_t i = check_uint(L, 2);
-		if (i >= Subs->dialogues.size() + Subs->sinfo.size() + Subs->styles.size()) {
+		if (i >= Subs->GetCount() + Subs->SInfoSize() + Subs->StylesSize()) {
 			lua_pushnil(L);
 			return 1;
 		}
@@ -1173,9 +1152,9 @@ namespace Auto{
 		return 2;
 	}
 
-	File* AutoToFile::GetSubs(lua_State* L)
+	SubsFile* AutoToFile::GetSubs(lua_State* L)
 	{
-		File* Subs = laf->file;
+		SubsFile* Subs = laf->file;
 		if (!Subs) {
 			wxString error = _("Missing subtitles pointer");
 			lua_pushstring(L, error.mb_str(wxConvUTF8).data());
@@ -1184,7 +1163,7 @@ namespace Auto{
 		return Subs;
 	}
 
-	AutoToFile::AutoToFile(lua_State *_L, File *subsfile, bool _can_modify, char _subsFormat)
+	AutoToFile::AutoToFile(lua_State *_L, SubsFile *subsfile, bool _can_modify, char _subsFormat)
 	{
 		L = _L;
 		can_modify = _can_modify;

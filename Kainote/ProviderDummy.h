@@ -22,8 +22,8 @@ class ProviderDummy : public Provider
 {
 public:
 	virtual ~ProviderDummy();
-	ProviderDummy(const wxString& filename, RendererVideo* renderer, wxWindow* progressSinkWindow, bool* success);
-	void GetFrameBuffer(unsigned char** buffer) override;
+	ProviderDummy(const wxString& filename, RendererFFMS2* renderer, wxWindow* progressSinkWindow, bool* success);
+	void GetFrameBuffer(int frame, unsigned char** buffer) override;
 	void GetFrame(int frame, unsigned char* buff) override;
 	void GetBuffer(void* buf, long long start, long long count, double vol = 1.0) override;
 	void GetChapters(std::vector<chapter>* _chapters) override;
@@ -33,6 +33,7 @@ public:
 private:
 	static unsigned int __stdcall DummyProc(void* cls);
 	void Processing();
+	bool FetchPlaybackFrame(int frame, unsigned char* buffer) override;
 	void GenerateTimecodes();
 	void GenerateFrame();
 	bool ParseDummyData(const wxString& data);

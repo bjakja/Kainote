@@ -42,13 +42,13 @@ struct VideoInf{
 
 #define HR1(x) if(FAILED(x)) { return x; }
 
-class RendererVideo;
+class RendererDirectShow;
 
 class CD2DVideoRender : public CBaseVideoRenderer
 {
 public:
 
-	CD2DVideoRender(RendererVideo *_Vrend, HRESULT* phr);
+	CD2DVideoRender(RendererDirectShow *_Vrend, HRESULT* phr);
 	virtual ~CD2DVideoRender();
 
 	long Render(IMediaSample *pMediaSample);
@@ -62,7 +62,7 @@ public:
 	long GetVidInfo(VideoInf &vi);
 
 private:
-	RendererVideo *Vrend;
+	RendererDirectShow *Vrend;
 	VideoInf Vinfo;
 	int time;
 	bool norender;

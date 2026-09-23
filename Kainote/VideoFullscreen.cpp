@@ -269,12 +269,12 @@ void Fullscreen::OnPaint(wxPaintEvent& evt)
 	wxPaintDC dc(this);
 	VideoBox* vc = (VideoBox*)vb;
 #ifndef _WIN32
-	if (vc->renderer && vc->renderer->m_State != None) {
+	if (vc->renderer && vc->renderer->GetState() != None) {
 		vc->renderer->RenderToDc(dc);
 		return;
 	}
 #endif
-	if (vc->renderer && !vc->renderer->m_BlockResize && vc->renderer->m_State != Playing && vc->renderer->m_State != None) {
+	if (vc->renderer && !vc->renderer->m_BlockResize && vc->renderer->GetState() != Playing && vc->renderer->GetState() != None) {
 		vc->renderer->Render(true, false);
 	}
 }

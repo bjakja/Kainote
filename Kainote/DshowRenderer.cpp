@@ -21,7 +21,7 @@
 
 #include "DshowRenderer.h"
 #ifdef _WIN32
-#include "RendererVideo.h"
+#include "RendererDirectShow.h"
 #include "VideoBox.h"
 #include "Hotkeys.h"
 #include <wmsdkidl.h>
@@ -34,7 +34,7 @@
 static const GUID CLSID_KVideoRenderer =
 { 0x269ba141, 0x1fde, 0x494b, { 0x91, 0x24, 0x45, 0x3a, 0x17, 0x83, 0x8b, 0x9f } };
 
-CD2DVideoRender::CD2DVideoRender(RendererVideo *_Vrend, HRESULT* phr)
+CD2DVideoRender::CD2DVideoRender(RendererDirectShow *_Vrend, HRESULT* phr)
 	: CBaseVideoRenderer(CLSID_KVideoRenderer, L"video Renderer", nullptr, phr)
 {
 	Vrend = _Vrend;

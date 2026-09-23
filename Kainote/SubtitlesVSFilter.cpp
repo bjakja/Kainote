@@ -24,9 +24,6 @@
 #include "DshowRenderer.h"
 #include "CsriMod.h"
 
-#include "VisualDrawingShapes.h"
-#include "VisualClips.h"
-#include "Visuals.h"
 
 
 csri_rend *SubtitlesProvider::m_CsriRenderer = nullptr;
@@ -75,79 +72,16 @@ void SubtitlesVSFilter::Draw(unsigned char* buffer, int time)
 	
 };
 
-bool SubtitlesVSFilter::Open(TabPanel *tab, int flag, wxString *text)
+bool SubtitlesVSFilter::Open(wxString *text)
 {
 	if (m_CsriInstance) csri_close(m_CsriInstance);
 	m_CsriInstance = nullptr;
 
-	wxString *textsubs = text;
-	switch (flag){
-	case OPEN_DUMMY:
-		textsubs = tab->grid->GetVisible();
-		break;
-	case OPEN_WHOLE_SUBTITLES:
-		textsubs = tab->grid->GetVisible(nullptr, nullptr, nullptr, true);
-		break;
-	case CLOSE_SUBTITLES:
-	case OPEN_HAS_OWN_TEXT:
-		break;
-	default:
-		break;
-	}
-
-	RendererVideo* renderer = tab->video->GetRenderer();
-	if (!renderer){
-		delete textsubs;
-		return false;
-	}
-
-	if (!textsubs) {
-		renderer->m_HasDummySubs = true;
-		delete textsubs;
+	if (!text)
 		return true;
-	}
 
-	if (renderer->m_Visual && renderer->m_Visual->Visual == VECTORCLIP){
-		wxString toAppend;
-		renderer->m_Visual->AppendClipMask(&toAppend);
-		if (!toAppend.empty()) {
-			
-				(*textsubs) << toAppend;
-		}
-	}
-
-	renderer->m_HasDummySubs = true;
-
-	wxScopedCharBuffer buffer = textsubs->mb_str(wxConvUTF8);
-	int size = strlen(buffer);
-
-
-	// Select renderer
-	csri_rend *vobsub = GetVSFilter();
-	if (!vobsub){ KaiLogSilent(_("Cannot initialize CSRI.")); delete textsubs; return false; }
-
-	m_CsriInstance = 
-		csri_open_mem(vobsub, buffer, size, nullptr);
-	if (!m_CsriInstance){ KaiLogSilent(_("Cannot create CSRI instance.")); delete textsubs; return false; }
-
-
-	if (!m_CsriFormat || csri_request_fmt(m_CsriInstance, m_CsriFormat)){
-		if (m_CsriFrame->pixfmt == CSRI_F_BGRA) {
-			m_CsriFrame->pixfmt = CSRI_F_BGR_;
-			if (!csri_request_fmt(m_CsriInstance, m_CsriFormat)) {
-				delete text;
-				return true;
-			}
-		}
-		KaiLogSilent(_("CSRI does not support this format."));
-		csri_close(m_CsriInstance);
-		m_CsriInstance = nullptr;
-		delete textsubs; return false;
-	}
-
-	delete textsubs;
-	return true;
-};
+	return OpenInstance(text);
+}
 
 bool SubtitlesVSFilter::OpenString(wxString *text)
 {
@@ -159,42 +93,40 @@ bool SubtitlesVSFilter::OpenString(wxString *text)
 		return false;
 	}
 
+	return OpenInstance(text);
+}
+
+bool SubtitlesVSFilter::OpenInstance(wxString *text)
+{
 	wxScopedCharBuffer buffer = text->mb_str(wxConvUTF8);
 	int size = strlen(buffer);
-
+	delete text;
 
 	// Select renderer
 	csri_rend *vobsub = GetVSFilter();
 	if (!vobsub){ 
 		KaiLogSilent(_("Cannot initialize CSRI."));
-		delete text; 
 		return false; 
 	}
 
 	m_CsriInstance = csri_open_mem(vobsub, buffer, size, nullptr);
 	if (!m_CsriInstance){ 
 		KaiLogSilent(_("Cannot create CSRI instance."));
-		delete text; 
 		return false; 
 	}
 	if (!m_CsriFormat || csri_request_fmt(m_CsriInstance, m_CsriFormat)) {
 		if (m_CsriFrame->pixfmt == CSRI_F_BGRA) {
 			m_CsriFrame->pixfmt = CSRI_F_BGR_;
-			if (!csri_request_fmt(m_CsriInstance, m_CsriFormat)) {
-				delete text;
+			if (!csri_request_fmt(m_CsriInstance, m_CsriFormat))
 				return true;
-			}
 		}
 		KaiLogSilent(_("CSRI does not support this format."));
 		csri_close(m_CsriInstance);
 		m_CsriInstance = nullptr;
-		delete text;
 		return false;
 	}
-
-	delete text;
 	return true;
-};
+}
 
 csri_rend *SubtitlesVSFilter::GetVSFilter()
 {

@@ -1098,7 +1098,7 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 	}
 	else if (id == GLOBAL_PLAY_ACTUAL_LINE){
 		tab->edit->TextEdit->SetFocus();
-		tab->video->PlayLine(tab->edit->line->Start.mstime, tab->video->GetPlayEndTime(tab->edit->line->End.mstime));
+		tab->video->PlayLine(tab->edit->line->Start.mstime, tab->video->GetTimebase().PlayEndBefore(tab->edit->line->End.mstime));
 	}
 	else if (id == GLOBAL_STYLE_MANAGER_CLEAN_STYLE){
 		StyleStore::Get()->OnCleanStyles(event);
@@ -2144,9 +2144,7 @@ void KainoteFrame::OpenAudioInTab(TabPanel *tab, int id, const wxString &path)
 
 	if (id == GLOBAL_CLOSE_AUDIO){
 		if (tab->edit->ABox){
-			RendererVideo *renderer = tab->video->GetRenderer();
-			if (renderer)
-				renderer->SetAudioPlayer(nullptr);
+			tab->video->SetAudioPlayer(nullptr);
 
 			tab->edit->CloseAudio();
 			tab->AudioPath.clear();
@@ -2232,7 +2230,7 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 		if(editor && curMenu)
 			AppendRecent(3);
 
-		bool hasFFMS2 = tab->video->HasFFMS2();
+		bool hasFFMS2 = tab->video->GetTimebase().IsExact();
 		bool hasVideoLoaded = (tab->video->GetState() != None);
 
 		for (int i = 0; i < VidMenu->GetMenuItemCount(); i++) {
@@ -2514,24 +2512,17 @@ void KainoteFrame::OnExternalSession(int id)
 void KainoteFrame::OnAudioSnap(wxCommandEvent& event)
 {
 	TabPanel *tab = GetTab();
-	if (!tab->edit->ABox || !tab->video->HasFFMS2()){ return; }
+	if (!tab->edit->ABox || !tab->video->GetTimebase().IsExact()){ return; }
 	int id = event.GetId();
 	bool snapStartTime = (id == GLOBAL_SNAP_WITH_START);
 	int time = (snapStartTime) ? tab->edit->line->Start.mstime : tab->edit->line->End.mstime;
 	int time2 = (snapStartTime) ? tab->edit->line->End.mstime : tab->edit->line->Start.mstime;
 	int snaptime = time;
-	Provider *FFMS2 = tab->video->GetFFMS2();
-	const wxArrayInt &KeyFrames = FFMS2->GetKeyframes();
+	const Timebase &timebase = tab->video->GetTimebase();
 	int lastDifferents = MAXINT;
-	//wxArrayInt boundaries;
-	for (unsigned int i = 0; i < KeyFrames.Count(); i++) {
-		int keyMS = KeyFrames[i];
+	for (int keyMS : timebase.Keyframes()) {
 		if (keyMS >= time - 5000 && keyMS < time + 5000) {
-			int frameTime = 0;
-			int frame = FFMS2->GetFramefromMS(keyMS);
-			int prevFrameTime = FFMS2->GetMSfromFrame(frame - 1);
-			frameTime = keyMS + ((prevFrameTime - keyMS) / 2);
-			frameTime = ZEROIT(frameTime);
+			int frameTime = ZEROIT(timebase.StartTimeFor(timebase.FrameAt(keyMS)));
 			int actualDiff = abs(time - frameTime);
 			if (actualDiff < lastDifferents && actualDiff > 0){
 				if ((snapStartTime && frameTime >= time2) || (!snapStartTime && frameTime <= time2)){ continue; }

@@ -428,14 +428,127 @@ void RendererVideo::Clear(bool clearObject)
 }
 
 
+void RendererVideo::OpenSubsForPlayback()
+{
+	if (m_HasVisualEdition){
+		OpenSubs(OPEN_WHOLE_SUBTITLES, false);
+		if (m_Visual)
+			SAFE_DELETE(m_Visual->dummytext);
+		m_HasVisualEdition = false;
+	}
+	else if (!m_SubsProvider->ShowsWholeSubtitles() && tab->editor){
+		OpenSubs(OPEN_WHOLE_SUBTITLES, false);
+	}
+}
+
+void RendererVideo::MarkSubtitlesOutdated()
+{
+	m_SubsProvider->MarkOutdated();
+}
+
+wxString *RendererVideo::SubtitlesText(int flag, wxString *text)
+{
+	switch (flag){
+	case OPEN_DUMMY:
+		text = tab->grid->GetVisible();
+		break;
+	case OPEN_WHOLE_SUBTITLES:
+		text = tab->grid->GetVisible(nullptr, nullptr, nullptr, true);
+		break;
+	default:
+		break;
+	}
+	if (text && m_Visual && m_Visual->Visual == VECTORCLIP)
+		m_Visual->AppendClipMask(text);
+	return text;
+}
+
+void RendererVideo::ReopenSubsAfterSeek(bool playing)
+{
+	if (m_HasVisualEdition){
+		//seeks can run on the playback thread, keep the visual in place meanwhile
+		wxMutexLocker lock(m_MutexVisualChange);
+		SAFE_DELETE(m_Visual->dummytext);
+		OpenSubs((playing) ? OPEN_WHOLE_SUBTITLES : OPEN_DUMMY, true);
+		if (playing){ m_HasVisualEdition = false; }
+	}
+	else if (!m_SubsProvider->ShowsWholeSubtitles() && tab->editor){
+		OpenSubs((playing) ? OPEN_WHOLE_SUBTITLES : OPEN_DUMMY, true);
+	}
+}
+
 bool RendererVideo::PlayLine(int start, int eend)
 {
 	int duration = GetDuration();
 	if (m_State == None || start >= eend || start >= duration){ return false; }
 	if (duration < eend){ eend = duration; }
-	SetPosition(start, true, true, false);
+	//a seek while playing waits for the playback thread and would reset the end
+	if (m_State == Playing)
+		Pause();
+	SetPosition(start, true, SEEK_WAIT);
 	Play(eend);
 	return true;
+}
+
+bool RendererVideo::Play(int end)
+{
+	int duration = GetDuration();
+	if (m_State == None || (duration > 0 && m_Time >= duration))
+		return false;
+	SetThreadExecutionState(ES_DISPLAY_REQUIRED | ES_CONTINUOUS);
+	if (!(videoControl->IsShown() ||
+		(videoControl->m_FullScreenWindow && videoControl->m_FullScreenWindow->IsShown())))
+		return false;
+	OpenSubsForPlayback();
+
+	m_PlayEndTime = (end > 0) ? end : 0;
+	m_State = Playing;
+	StartStream();
+	return true;
+}
+
+bool RendererVideo::Pause()
+{
+	if (m_State == Playing){
+		SetThreadExecutionState(ES_CONTINUOUS);
+		m_State = Paused;
+		PauseStream();
+	}
+	else if (m_State != None){
+		Play();
+	}
+	else{ return false; }
+	return true;
+}
+
+bool RendererVideo::Stop()
+{
+	if (m_State != Playing)
+		return false;
+	SetThreadExecutionState(ES_CONTINUOUS);
+	m_State = Stopped;
+	StopStream();
+	m_PlayEndTime = 0;
+	m_Time = 0;
+	return true;
+}
+
+int RendererVideo::SeekTarget(int time, bool startTime, int flags)
+{
+	time = MID(0, time, GetDuration());
+	if (flags & SEEK_NO_SNAP)
+		return time;
+	const Timebase &timebase = GetTimebase();
+	return timebase.MsAt(SeekFrame(timebase, time, startTime));
+}
+
+void RendererVideo::ChangePositionByFrame(int step)
+{
+	if (m_State == Playing || m_State == None){ return; }
+	const Timebase &timebase = GetTimebase();
+	int frame = timebase.ClampFrame(timebase.FrameShownAt(m_Time) + step);
+	SetPosition(timebase.MsAt(frame), true, SEEK_NO_SNAP);
+	videoControl->RefreshTime();
 }
 
 void RendererVideo::SetZoom(float percent, const wxPoint& mousePos)
@@ -884,7 +997,7 @@ int RendererVideo::GetCurrentPosition()
 
 int RendererVideo::GetCurrentFrame()
 {
-	return m_Frame;
+	return GetTimebase().FrameShownAt(m_Time);
 }
 
 void RendererVideo::VisualChangeTool(int tool)
@@ -984,4 +1097,9 @@ void RendererVideo::SaveFrame(int id)
 PlaybackState RendererVideo::GetState()
 {
 	return m_State;
+}
+
+const Timebase &RendererVideo::GetTimebase()
+{
+	return videoControl->GetTimebase();
 }

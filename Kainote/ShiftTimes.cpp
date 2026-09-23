@@ -147,7 +147,7 @@ void ShiftTimes::Contents(bool addopts)
 	bool state;
 	form = tab->grid->subsFormat;
 	VideoBox *vb = tab->video;
-	Provider *FFMS2 = vb->GetFFMS2();
+	bool hasFFMS2 = vb->GetTimebase().IsExact();
 	if (form < SRT){
 		state = true;
 		WhichLines->EnableItem(3);
@@ -162,14 +162,14 @@ void ShiftTimes::Contents(bool addopts)
 	}
 	if (!LeadIn){
 		bool lastEnable = DisplayFrames->IsEnabled();
-		DisplayFrames->Enable(FFMS2 != nullptr);
+		DisplayFrames->Enable(hasFFMS2);
 		bool Enable = DisplayFrames->IsEnabled();
 		bool dispFrames = DisplayFrames->GetValue();
 		if (lastEnable != Enable){
-			if (!FFMS2 && (dispFrames || !Enable)){
+			if (!hasFFMS2 && (dispFrames || !Enable)){
 				ChangeDisplayUnits(true);
 			}
-			else if (FFMS2 && dispFrames){
+			else if (hasFFMS2 && dispFrames){
 				ChangeDisplayUnits(false);
 			}
 		}
@@ -190,7 +190,7 @@ void ShiftTimes::Contents(bool addopts)
 		LeadIn->Enable(state);
 		LeadOut->Enable(state);
 		Continous->Enable(state);
-		SnapKF->Enable(state && FFMS2);
+		SnapKF->Enable(state && hasFFMS2);
 	}
 	//if(addopts){RefVals();}
 
@@ -612,7 +612,7 @@ void ShiftTimes::RefVals(ShiftTimes *secondWindow)
 			ChangeDisplayUnits(!DisplayFrames->GetValue());
 			
 		}
-		else if (!tab->video->HasFFMS2()){
+		else if (!tab->video->GetTimebase().IsExact()){
 			if (DisplayFrames->GetValue()){ ChangeDisplayUnits(true); }
 			DisplayFrames->Enable(false);
 		}
@@ -880,7 +880,7 @@ void ShiftTimes::SetProfile(const wxString &name)
 		bool displayFrames = DisplayFrames->GetValue();
 		bool newDisplayFrames = token == L"1";
 		if (displayFrames != newDisplayFrames){
-			if (tab->video->HasFFMS2()){
+			if (tab->video->GetTimebase().IsExact()){
 				//there are times as true
 				ChangeDisplayUnits(!newDisplayFrames);
 			}

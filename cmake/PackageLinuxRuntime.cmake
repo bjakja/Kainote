@@ -82,6 +82,15 @@ file(COPY_FILE "${SOURCE_DIR}/Kainote/resource.rc"
 file(COPY "${SOURCE_DIR}/Kainote/Bitmaps"
      DESTINATION "${package_root}/Kainote")
 
+# Both directories are read relative to the executable at runtime.
+foreach(runtime_data_dir IN ITEMS Automation Themes)
+    if(NOT IS_DIRECTORY "${SOURCE_DIR}/${runtime_data_dir}")
+        message(FATAL_ERROR "Required Linux runtime data is missing: ${runtime_data_dir}")
+    endif()
+    file(COPY "${SOURCE_DIR}/${runtime_data_dir}"
+         DESTINATION "${package_root}")
+endforeach()
+
 # Recompile catalogs instead of using stale runtime copies; a release archive
 # ships every locale or none.
 set(SOURCE_LOCALE_DIR "${SOURCE_DIR}/Locale")

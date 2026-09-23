@@ -22,9 +22,9 @@
 class ProviderFFMS2 : public Provider
 {
 public:
-	ProviderFFMS2(const wxString& filename, RendererVideo* renderer, wxWindow* progressSinkWindow, bool* success);
+	ProviderFFMS2(const wxString& filename, RendererFFMS2* renderer, wxWindow* progressSinkWindow, bool* success);
 	virtual ~ProviderFFMS2();
-	void GetFrameBuffer(unsigned char** buffer) override;
+	void GetFrameBuffer(int frame, unsigned char** buffer) override;
 	void GetFrame(int frame, unsigned char* buff) override;
 	void GetBuffer(void* buf, long long start, long long count, double vol = 1.0) override;
 	bool RAMCache();
@@ -67,9 +67,10 @@ private:
 	void GetAudio(void* buf, long long start, long long count);
 	//fetches the current frame and copies it out under m_blockFrame,
 	//pass forceFetch to skip the "frame did not change" shortcut
-	bool CopyCurrentFrame(unsigned char* buffer, bool forceFetch);
+	bool CopyFrame(int frame, unsigned char* buffer, bool forceFetch);
 	static unsigned int __stdcall FFMS2Proc(void* cls);
 	void Processing();
+	bool FetchPlaybackFrame(int frame, unsigned char* buffer) override;
 	std::atomic<bool> m_stopLoadingAudio{ false };
 	wxCriticalSection m_blockAudio;
 	wxCriticalSection m_blockFrame;

@@ -33,15 +33,10 @@ RendererDirectShow::~RendererDirectShow()
 
 bool RendererDirectShow::OpenFile(const wxString&, int, bool, bool) { return false; }
 bool RendererDirectShow::OpenSubs(int, bool, wxString*, bool) { return false; }
-bool RendererDirectShow::Play(int) { return false; }
-bool RendererDirectShow::Pause() { return false; }
-bool RendererDirectShow::Stop() { return false; }
-void RendererDirectShow::SetPosition(int, bool, bool, bool, bool) {}
-int RendererDirectShow::GetFrameTime(bool) { return 0; }
-void RendererDirectShow::GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd) { if (retStart) *retStart = startTime; if (retEnd) *retEnd = endTime; }
-int RendererDirectShow::GetFrameTimeFromTime(int time, bool) { return time; }
-int RendererDirectShow::GetFrameTimeFromFrame(int frame, bool) { return frame; }
-int RendererDirectShow::GetPlayEndTime(int time) { return time; }
+void RendererDirectShow::StartStream() {}
+void RendererDirectShow::PauseStream() {}
+void RendererDirectShow::StopStream() {}
+void RendererDirectShow::SetPosition(int, bool, int) {}
 int RendererDirectShow::GetDuration() { return 0; }
 int RendererDirectShow::GetVolume() { return 0; }
 void RendererDirectShow::GetVideoSize(int *width, int *height) { if (width) *width = 0; if (height) *height = 0; }
@@ -51,14 +46,12 @@ bool RendererDirectShow::DrawTexture(byte*, bool) { return false; }
 void RendererDirectShow::Render(bool, bool) {}
 void RendererDirectShow::RecreateSurface() {}
 void RendererDirectShow::EnableStream(long) {}
-void RendererDirectShow::ChangePositionByFrame(int) {}
 void RendererDirectShow::ChangeVobsub(bool) {}
 wxArrayString RendererDirectShow::GetStreams() { return {}; }
 byte *RendererDirectShow::GetFrameWithSubs(bool, bool *del) { if (del) *del = false; return nullptr; }
 bool RendererDirectShow::EnumFilters(Menu*) { return false; }
 bool RendererDirectShow::FilterConfig(wxString, int, wxPoint) { return false; }
 bool RendererDirectShow::InitRendererDX() { return false; }
-void RendererDirectShow::OpenKeyframes(const wxString&) {}
 void RendererDirectShow::ClearObject() {}
 void RendererDirectShow::SetupVertices() {}
 void RendererDirectShow::ZoomChanged() {}
@@ -494,7 +487,7 @@ bool RendererDirectShow::OpenFile(const wxString &fname, int subsFlag, bool vobs
 	m_Frame = 0;
 
 
-	if (!m_DirectShowPlayer){ m_DirectShowPlayer = new DShowPlayer(videoControl); }
+	if (!m_DirectShowPlayer){ m_DirectShowPlayer = new DShowPlayer(videoControl, this); }
 
 	if (!m_DirectShowPlayer->OpenFile(fname, vobsub)){
 		return false;
@@ -516,6 +509,7 @@ bool RendererDirectShow::OpenFile(const wxString &fname, int subsFlag, bool vobs
 
 	diff = 0;
 	m_FrameDuration = (1000.0f / videoControl->m_FPS);
+	videoControl->SetVideoTimebase(Timebase::Estimated(videoControl->m_FPS, (int)(GetDuration() * videoControl->m_FPS / 1000.f)));
 	if (videoControl->m_AspectRatioY == 0 || videoControl->m_AspectRatioX == 0){ videoControl->m_AspectRatio = 0.0f; }
 	else{ videoControl->m_AspectRatio = (float)videoControl->m_AspectRatioY / (float)videoControl->m_AspectRatioX; }
 
@@ -554,7 +548,7 @@ bool RendererDirectShow::OpenSubs(int flag, bool redraw, wxString *text, bool re
 	if (resetParameters)
 		m_SubsProvider->SetVideoParameters(wxSize(m_WindowWidth, m_WindowHeight), ARGB32, m_SwapFrame);
 
-	bool result = m_SubsProvider->Open(tab, flag, text);
+	bool result = m_SubsProvider->Open(flag, SubtitlesText(flag, text));
 
 	if (redraw && m_State != None && m_FrameBuffer){
 		RecreateSurface();
@@ -564,137 +558,35 @@ bool RendererDirectShow::OpenSubs(int flag, bool redraw, wxString *text, bool re
 }
 
 
-bool RendererDirectShow::Play(int end)
+void RendererDirectShow::StartStream()
 {
-	SetThreadExecutionState(ES_DISPLAY_REQUIRED | ES_CONTINUOUS);
-	if (!(videoControl->IsShown() || 
-		(videoControl->m_FullScreenWindow && 
-			videoControl->m_FullScreenWindow->IsShown()))){ return false; }
-	if (m_HasVisualEdition){
-		OpenSubs(OPEN_WHOLE_SUBTITLES, false);
-		SAFE_DELETE(m_Visual->dummytext);
-		m_HasVisualEdition = false;
-	}
-	else if (m_HasDummySubs && tab->editor){
-		OpenSubs(OPEN_WHOLE_SUBTITLES, false);
-	}
-
-	if (end > 0){ m_PlayEndTime = end; }
-	else
-		m_PlayEndTime = 0;
 	if (m_Time < GetDuration() - m_FrameDuration) 
 		m_DirectShowPlayer->Play(); 
-
-	m_State = Playing;
-	return true;
 }
 
-
-bool RendererDirectShow::Pause()
+void RendererDirectShow::PauseStream()
 {
-	if (m_State == Playing){
-		SetThreadExecutionState(ES_CONTINUOUS);
-		m_State = Paused;
-		m_DirectShowPlayer->Pause();
-		
-	}
-	else if (m_State != None){
-		Play();
-	}
-	else{ return false; }
-	return true;
+	m_DirectShowPlayer->Pause();
 }
 
-bool RendererDirectShow::Stop()
+void RendererDirectShow::StopStream()
 {
-	if (m_State == Playing){
-		SetThreadExecutionState(ES_CONTINUOUS);
-		m_State = Stopped;
-		m_DirectShowPlayer->Stop();
-		m_PlayEndTime = 0;
-		m_Time = 0;
-		return true;
-	}
-	return false;
+	m_DirectShowPlayer->Stop();
 }
 
-void RendererDirectShow::SetPosition(int _time, bool starttime/*=true*/, bool corect/*=true*/, bool async /*= true*/, bool refreshAudio/* = true*/)
+void RendererDirectShow::SetPosition(int time, bool startTime, int flags)
 {
-
 	bool playing = m_State == Playing;
-	m_Time = MID(0, _time, GetDuration());
-	if (corect){
-		m_Time /= m_FrameDuration;
-		if (starttime){ m_Time++; }
-		m_Time *= m_FrameDuration;
-	}
+	m_Time = SeekTarget(time, startTime, flags);
 	m_PlayEndTime = 0;
 	m_DirectShowSeeking = true;
 	m_DirectShowPlayer->SetPosition(m_Time);
-	if (m_HasVisualEdition){
-		SAFE_DELETE(m_Visual->dummytext);
-		//if (m_Visual->Visual == VECTORCLIP){
-			//m_Visual->SetClip(m_Visual->GetVisual(), true, false, false);
-		//}
-		//else{
-			OpenSubs((playing) ? OPEN_WHOLE_SUBTITLES : OPEN_DUMMY, true);
-			if (m_State == Playing){ m_HasVisualEdition = false; }
-		//}
-	}
-	else if (m_HasDummySubs && tab->editor){
-		OpenSubs((playing) ? OPEN_WHOLE_SUBTITLES : OPEN_DUMMY, true);
-	}
-	
+	ReopenSubsAfterSeek(playing);
 }
 
 int RendererDirectShow::GetDuration()
 {
 	return m_DirectShowPlayer->GetDuration();
-}
-
-int RendererDirectShow::GetFrameTime(bool start)
-{
-	int halfFrame = (start) ? -(m_FrameDuration / 2.0f) : (m_FrameDuration / 2.0f) + 1;
-	return m_Time + halfFrame;
-}
-
-void RendererDirectShow::GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd)
-{
-	if (!retStart || !retEnd){ return; }
-	
-	int frameStartTime = (((float)startTime / 1000.f) * videoControl->m_FPS);
-	int frameEndTime = (((float)endTime / 1000.f) * videoControl->m_FPS);
-	frameStartTime++;
-	frameEndTime++;
-	*retStart = (((frameStartTime * 1000) / videoControl->m_FPS) + 0.5f) - startTime;
-	*retEnd = (((frameEndTime * 1000) / videoControl->m_FPS) + 0.5f) - endTime;
-
-}
-
-int RendererDirectShow::GetFrameTimeFromTime(int _time, bool start)
-{
-	int halfFrame = (start) ? -(m_FrameDuration / 2.0f) : (m_FrameDuration / 2.0f) + 1;
-	return _time + halfFrame;
-}
-
-int RendererDirectShow::GetFrameTimeFromFrame(int frame, bool start)
-{
-	int halfFrame = (start) ? -(m_FrameDuration / 2.0f) : (m_FrameDuration / 2.0f) + 1;
-	return (frame * (1000.f / videoControl->m_FPS)) + halfFrame;
-}
-
-int RendererDirectShow::GetPlayEndTime(int _time)
-{
-	int newTime = _time;
-	newTime /= m_FrameDuration;
-	newTime = (newTime * m_FrameDuration) + 1.f;
-	if (_time == newTime && newTime % 10 == 0){ newTime -= 5; }
-	return newTime;
-}
-
-void RendererDirectShow::OpenKeyframes(const wxString &filename)
-{
-	
 }
 
 void RendererDirectShow::ClearObject()
@@ -767,17 +659,6 @@ int RendererDirectShow::GetVolume()
 	if (m_State == None){ return 0; }
 	return m_DirectShowPlayer->GetVolume();
 }
-
-void RendererDirectShow::ChangePositionByFrame(int step)
-{
-	if (m_State == Playing || m_State == None){ return; }
-	
-	m_Time += (m_FrameDuration * step);
-	SetPosition(m_Time, true, false);
-	videoControl->RefreshTime();
-
-}
-
 
 wxArrayString RendererDirectShow::GetStreams()
 {

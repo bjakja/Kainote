@@ -29,7 +29,7 @@ class DShowPlayer
 {
 public:
 
-	DShowPlayer(wxWindow*_parent);
+	DShowPlayer(wxWindow*_parent, RendererDirectShow *renderer);
 	~DShowPlayer();
 	bool OpenFile(wxString fname, bool vobsub = false);
 	void Play();
@@ -68,6 +68,7 @@ private:
 
 
 	wxWindow *parent;
+	RendererDirectShow *m_renderer;
 	bool hasVobsub;
 };
 

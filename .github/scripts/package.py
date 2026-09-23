@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 """Assemble a runnable Kainote package from a build tree.
 
-Used by .github/workflows/build.yml for both platforms.  The Automation 4
-library and the themes are tracked in this repository (see Automation/README.md)
+Used by .github/workflows/build.yml for Windows. Linux packages are built by
+the CMake kainote_linux_package target so runtime libraries and bitmap assets
+are included. The Automation 4 library and the themes are tracked in this
+repository (see Automation/README.md)
 and copied from the source tree; the dictionaries and the VSFiltermod renderer
 are fetched from pinned upstream locations listed in runtime-assets.json; the
 executables, the CSRI renderer and the DependencyControl modules come from the
 build tree; the translations are compiled from Locale/*.po.
 
 Usage:
-  package.py --platform windows|linux --build-dir <dir> --stage <dir> [--repo-root <dir>]
+  package.py --platform windows --build-dir <dir> --stage <dir> [--repo-root <dir>]
 """
 
 from __future__ import annotations
@@ -384,6 +386,8 @@ def main() -> int:
     ap.add_argument("--repo-root", default=".")
     ap.add_argument("--no-archive", action="store_true")
     args = ap.parse_args()
+    if args.platform == "linux":
+        ap.error("Linux packages use: cmake --build <build-dir> --target kainote_linux_package")
 
     repo_root = Path(args.repo_root).resolve()
     build_dir = Path(args.build_dir).resolve()

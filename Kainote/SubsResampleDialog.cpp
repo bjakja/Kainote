@@ -151,7 +151,6 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 		}
 
 		grid->SetModified(SUBTITLES_RESAMPLE);
-		grid->Refresh(false);
 		((KainoteFrame *)parent)->SetSubsResolution();
 		EndModal(0);
 	}, 6548);

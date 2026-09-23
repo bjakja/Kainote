@@ -156,7 +156,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	//split menu
 	bool isEnabled = (sels == 1 && IsLineVisible(false));
 	splitMenu->SetAccMenu(GRID_SPLIT_BY_VIDEO_TIME, _("Split line at video time"))->Enable(isEnabled);
-	isEnabled = sels > 0 && tab->video->HasFFMS2();
+	isEnabled = sels > 0 && tab->video->GetTimebase().IsExact();
 	splitMenu->SetAccMenu(GRID_SPLIT_BY_FRAME, _("Split lines into frames"))->Enable(isEnabled);
 	isEnabled = sels > 0;
 	splitMenu->SetAccMenu(GRID_SPLIT_BY_CHARS, _("Split lines into characters"))->Enable(isEnabled);
@@ -363,7 +363,6 @@ void SubsGrid::OnDuplicate()
 	}
 	
 	SetModified(GRID_DUPLICATE, true, false, rw1);
-	Refresh(false);
 }
 
 
@@ -416,8 +415,6 @@ void SubsGrid::OnJoin(wxCommandEvent &event)
 	dialc->End.NewTime(end);
 	dialc->Text = ntext;
 	dialc->TextTl = ntltext;
-	edited = true;
-	SpellErrors.clear();
 	SetModified((idd == GLOBAL_JOIN_WITH_PREVIOUS) ? GRID_JOIN_WITH_PREVIOUS :
 		(idd == GLOBAL_JOIN_WITH_NEXT) ? GRID_JOIN_WITH_NEXT : GRID_JOIN);
 	RefreshColumns();
@@ -440,7 +437,6 @@ void SubsGrid::OnJoinToFirst(int id)
 	DeleteRow(selections[1], selections[selections.size() - 1] - selections[1] + 1);
 
 	InsertSelection(selections[0]);
-	SpellErrors.clear();
 	SetModified((id == GRID_JOIN_TO_LAST_LINE) ? GRID_JOIN_TO_LAST : GRID_JOIN_TO_FIRST);
 	RefreshColumns();
 }
@@ -744,7 +740,6 @@ void SubsGrid::InsertWithVideoTime(bool before, bool frameTime /*= false*/)
 		}
 		InsertSelections(rw2, rw2 + i - 1, false, true);
 		SetModified(GRID_DUPLICATE, true, false, rw2);
-		Refresh(false);
 	}
 	else {
 		int rw = currentLine;
@@ -986,7 +981,6 @@ void SubsGrid::OnPasteTextTl()
 		showOriginal = true;
 		//edit->SetIt(edit->ebrow);
 		SetModified(GRID_PASTE_TRANSLATION_TO_SUBS);
-		Refresh(false);
 	}
 	FileDialog1->Destroy();
 }
@@ -1087,7 +1081,6 @@ void SubsGrid::MoveTextTL(char mode)
 
 	}
 	SetModified(GRID_TRANSLATION_TEXT_MOVE, true, false, firstSelected);
-	Refresh(false);
 
 }
 
@@ -1372,7 +1365,6 @@ void SubsGrid::OnMakeContinous(int idd)
 		}
 	}
 	SetModified(GRID_MAKE_LINES_CONTINUES);
-	Refresh(false);
 }
 
 void SubsGrid::OnShowPreview()
@@ -1484,7 +1476,8 @@ void SubsGrid::Split(int id)
 		Dialogue* dial = CopyDialogueF(curLine);
 		Dialogue* splitDial = dial->Copy();
 		int _time = tab->video->Tell();
-		_time = tab->video->GetFrameTimeFromTime(_time, false);
+		const Timebase &timebase = tab->video->GetTimebase();
+		_time = timebase.EndTimeFor(timebase.FrameAt(_time));
 		ZEROIT(_time);
 		dial->End.NewTime(_time);
 		splitDial->Start.NewTime(_time);
@@ -1503,9 +1496,10 @@ void SubsGrid::Split(int id)
 			switch (id) {
 			case GRID_SPLIT_BY_FRAME:
 			{
-				if (tab->video->HasFFMS2()) {
-					int frameStart = tab->video->GetFFMS2()->GetFramefromMS(dialc->Start.mstime);
-					int frameEnd = tab->video->GetFFMS2()->GetFramefromMS(dialc->End.mstime);
+				if (tab->video->GetTimebase().IsExact()) {
+					const Timebase &timebase = tab->video->GetTimebase();
+					int frameStart = timebase.FrameAt(dialc->Start.mstime);
+					int frameEnd = timebase.FrameAt(dialc->End.mstime);
 					ParseData* tagsData = dialc->ParseTags(tags2, 2, false);
 					wxString retval;
 					float moveTable[6];
@@ -1525,15 +1519,15 @@ void SubsGrid::Split(int id)
 					}
 				
 					for (int j = frameStart; j < frameEnd; j++) {
-						int lineStart = tab->video->GetFrameTimeFromFrame(j);
-						int lineEnd = tab->video->GetFrameTimeFromFrame(j, false);
+						int lineStart = timebase.StartTimeFor(j);
+						int lineEnd = timebase.EndTimeFor(j);
 						if (j != frameStart) {
 							dialc = dialc->Copy();
 							g++;
 							InsertRows(g, 1, dialc);
 						}
 						if (hasMove) {
-							int frameTime = tab->video->GetFFMS2()->GetMSfromFrame(j);
+							int frameTime = timebase.MsAt(j);
 							D3DXVECTOR2 point(moveTable[0], moveTable[1]);
 							double points[4] = { moveTable[2], moveTable[3], moveTable[4], moveTable[5] };
 							CalcMovePosition(&point, points, frameTime);
@@ -1718,7 +1712,6 @@ void SubsGrid::Split(int id)
 
 	}
 	SetModified(GRID_SPLIT_LINES);
-	Refresh(false);
 }
 
 void SubsGrid::TreeAddLines(int treeLine)
@@ -1814,7 +1807,6 @@ void SubsGrid::TreeChangeName(int treeLine)
 	if (td.ShowModal() == wxID_OK){
 		CopyDialogueF(treeLine)->Text = td.GetDescription();
 		SetModified(TREE_SET_DESCRIPTION);
-		Refresh(false);
 	}
 }
 
@@ -1836,7 +1828,6 @@ void SubsGrid::TreeRemove(int treeLine)
 	}
 	DeleteRow(treeLine, 1);
 	SetModified(TREE_REMOVE);
-	Refresh(false);
 }
 
 void SubsGrid::TreeSelect(int treeLine)

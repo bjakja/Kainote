@@ -291,14 +291,14 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 					strings.push_back(wxString::Format(L"%i", Dial->Layer));
 				}
 				
-				if (showFrames && tab->video->HasFFMS2()){
-					Provider *FFMS2 = tab->video->GetFFMS2();
+				if (showFrames && tab->video->GetTimebase().IsExact()){
+					const Timebase &timebase = tab->video->GetTimebase();
 					wxString frame;
-					frame << FFMS2->GetFramefromMS(Dial->Start.mstime);
+					frame << timebase.FrameAt(Dial->Start.mstime);
 					strings.push_back(frame);
 					if (subsFormat != TMP){
 						frame = emptyString;
-						frame << FFMS2->GetFramefromMS(Dial->End.mstime) - 1;
+						frame << timebase.FrameAt(Dial->End.mstime) - 1;
 						strings.push_back(frame);
 					}
 				}
@@ -688,14 +688,14 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 			if (subsFormat < SRT){
 				strings.push_back(wxString::Format(L"%i", Dial->Layer));
 			}
-			if (showFrames && tab->video->HasFFMS2()){
-				Provider *FFMS2 = tab->video->GetFFMS2();
+			if (showFrames && tab->video->GetTimebase().IsExact()){
+				const Timebase &timebase = tab->video->GetTimebase();
 				wxString frame;
-				frame << FFMS2->GetFramefromMS(Dial->Start.mstime);
+				frame << timebase.FrameAt(Dial->Start.mstime);
 				strings.push_back(frame);
 				if (subsFormat != TMP){
 					frame = emptyString;
-					frame << FFMS2->GetFramefromMS(Dial->End.mstime) - 1;
+					frame << timebase.FrameAt(Dial->End.mstime) - 1;
 					strings.push_back(frame);
 				}
 			}
@@ -1065,9 +1065,8 @@ void SubsGridWindow::AdjustWidthsD2D(GraphicsContext *gc, int cell)
 		SubsTime start(startMax);
 		bool canShowFrames = showFrames;
 		if (showFrames){
-			Provider *FFMS2 = tab->video->GetFFMS2();
-			if (FFMS2)
-				start.orgframe = FFMS2->GetFramefromMS(start.mstime);
+			if (tab->video->GetTimebase().IsExact())
+				start.orgframe = tab->video->GetTimebase().FrameAt(start.mstime);
 			else
 				canShowFrames = false;
 		}
@@ -1078,9 +1077,8 @@ void SubsGridWindow::AdjustWidthsD2D(GraphicsContext *gc, int cell)
 		SubsTime end(endMax);
 		bool canShowFrames = showFrames;
 		if (showFrames){
-			Provider *FFMS2 = tab->video->GetFFMS2();
-			if (FFMS2)
-				end.orgframe = FFMS2->GetFramefromMS(end.mstime);
+			if (tab->video->GetTimebase().IsExact())
+				end.orgframe = tab->video->GetTimebase().FrameAt(end.mstime);
 			else
 				canShowFrames = false;
 		}
@@ -1231,9 +1229,8 @@ void SubsGridWindow::AdjustWidths(int cell)
 		SubsTime start(startMax);
 		bool canShowFrames = showFrames;
 		if (showFrames){
-			Provider *FFMS2 = tab->video->GetFFMS2();
-			if (FFMS2)
-				start.orgframe = FFMS2->GetFramefromMS(start.mstime);
+			if (tab->video->GetTimebase().IsExact())
+				start.orgframe = tab->video->GetTimebase().FrameAt(start.mstime);
 			else
 				canShowFrames = false;
 		}
@@ -1244,9 +1241,8 @@ void SubsGridWindow::AdjustWidths(int cell)
 		SubsTime end(endMax);
 		bool canShowFrames = showFrames;
 		if (showFrames){
-			Provider *FFMS2 = tab->video->GetFFMS2();
-			if (FFMS2)
-				end.orgframe = FFMS2->GetFramefromMS(end.mstime);
+			if (tab->video->GetTimebase().IsExact())
+				end.orgframe = tab->video->GetTimebase().FrameAt(end.mstime);
 			else
 				canShowFrames = false;
 		}
@@ -1353,7 +1349,7 @@ void SubsGridWindow::SetVideoLineTime(wxMouseEvent &evt, int mvtal)
 			vczas = edit->line->Start.mstime; isstart = true;
 		}
 		if (evt.LeftDClick() && evt.ControlDown()){ vczas -= 1000; }
-		tab->video->Seek(MAX(0, vczas), isstart, true, false, true, true, false);
+		tab->video->Seek(MAX(0, vczas), isstart, SEEK_KEEP_AUDIO);
 		if (edit->ABox){ edit->ABox->audioDisplay->Update(getEndTime); }
 		if (edit->Visual > CHANGEPOS){
 			tab->video->SetVisual(true, true);
@@ -1472,7 +1468,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 				isstart = true;
 			}
 			if (ctrl){ vtime -= 1000; }
-			tab->video->Seek(MAX(0, vtime), isstart, true, false, true, false, false);
+			tab->video->Seek(MAX(0, vtime), isstart, SEEK_WAIT | SEEK_KEEP_AUDIO);
 			if (edit->ABox){ edit->ABox->audioDisplay->Update(shift && subsFormat != TMP); }
 			if (edit->Visual > CHANGEPOS){
 				tab->video->SetVisual(true, true);
@@ -1498,7 +1494,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 	if (left_up && holding) {
 		holding = false;
 		//Save swap lines after alt release 
-		if (event.AltDown() && IsNotSaved()){ 
+		if (event.AltDown() && HasChangesToRecord()){ 
 			SetModified(GRID_SWAP); 
 		}
 		ReleaseMouse();
@@ -1559,9 +1555,9 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 		if (holding && alt)
 		{
 			if (lastsel != -1 && lastsel != row) {	
-				if (!edited)
+				if (!HasChangesToRecord())
 					SaveSelections();
-				edited |= MoveRows(GetElementByKey(row) - GetElementByKey(lastsel));
+				MoveRows(GetElementByKey(row) - GetElementByKey(lastsel));
 			}
 			lastsel = row;
 			if (click){
@@ -1622,7 +1618,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 				else if (preview){ preview->NewSeeking(); }
 			}
 			else if (video->GetState() != None){
-				video->PlayLine(GetDialogue(row)->Start.mstime, video->GetPlayEndTime(GetDialogue(row)->End.mstime));
+				video->PlayLine(GetDialogue(row)->Start.mstime, video->GetTimebase().PlayEndBefore(GetDialogue(row)->End.mstime));
 			}
 
 		}
@@ -1840,7 +1836,6 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 			if (FirstSelection() != -1){
 				SaveSelections();
 				if (MoveRows(dir)){
-					edited = true;
 					SetModified(GRID_SWAP);
 				}
 			}

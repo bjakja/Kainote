@@ -298,6 +298,9 @@
     <ClCompile Include="ProgressDialog.cpp">
       <Filter>P</Filter>
     </ClCompile>
+    <ClCompile Include="Playback.cpp">
+      <Filter>P</Filter>
+    </ClCompile>
     <ClCompile Include="Provider.cpp">
       <Filter>P</Filter>
     </ClCompile>
@@ -407,6 +410,9 @@
       <Filter>T</Filter>
     </ClCompile>
     <ClCompile Include="TextEditorTagList.cpp">
+      <Filter>T</Filter>
+    </ClCompile>
+    <ClCompile Include="Timebase.cpp">
       <Filter>T</Filter>
     </ClCompile>
     <ClCompile Include="TimeCtrl.cpp">
@@ -723,6 +729,9 @@
     <ClInclude Include="ProgressDialog.h">
       <Filter>P</Filter>
     </ClInclude>
+    <ClInclude Include="Playback.h">
+      <Filter>P</Filter>
+    </ClInclude>
     <ClInclude Include="Provider.h">
       <Filter>P</Filter>
     </ClInclude>
@@ -830,6 +839,12 @@
     </ClInclude>
     <ClInclude Include="TextEditorTagList.h">
       <Filter>T</Filter>
+    </ClInclude>
+    <ClInclude Include="Timebase.h">
+      <Filter>T</Filter>
+    </ClInclude>
+    <ClInclude Include="UndoHistory.h">
+      <Filter>U</Filter>
     </ClInclude>
     <ClInclude Include="TimeCtrl.h">
       <Filter>T</Filter>

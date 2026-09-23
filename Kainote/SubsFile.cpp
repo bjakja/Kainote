@@ -107,7 +107,14 @@ File *File::Copy(bool copySelections)
 	return file;
 }
 
+static void DestroySnapshot(File *snapshot)
+{
+	snapshot->Clear();
+	delete snapshot;
+}
+
 SubsFile::SubsFile()
+	: m_history(DestroySnapshot)
 {
 	Create();
 }
@@ -123,12 +130,7 @@ void SubsFile::Clear(bool setup/* = true*/)
 		subs->Clear();
 		delete subs;
 		subs = nullptr;
-			for (std::vector<File*>::iterator it = undo.begin(); it != undo.end(); it++)
-			{
-				(*it)->Clear();
-				delete (*it);
-			}
-		undo.clear();
+		m_history.Clear();
 		delete[] historyNames;
 	}
 	if (setup) {
@@ -206,8 +208,6 @@ void SubsFile::Create()
 			_("Removing filtering"),
 			_("Splitting lines")
 	};
-	iter = 0;
-	lastSave = 0;
 	edited = false;
 	subs = new File();
 }
@@ -216,104 +216,70 @@ void SubsFile::Create()
 void SubsFile::SaveUndo(unsigned char editionType, int activeLine, int markerLine)
 {
 	wxMutexLocker lock(*historyGuard);
-	if (iter != maxx()){
-		for (std::vector<File*>::iterator it = undo.begin() + iter + 1; it != undo.end(); it++)
-		{
-			(*it)->Clear();
-			delete (*it);
-		}
-		undo.erase(undo.begin() + iter + 1, undo.end());
-		if (lastSave >= undo.size()){ lastSave = -1; }
-	}
 	subs->activeLine = activeLine;
 	//subs->markerLine = markerLine;
 	subs->editionType = editionType;
-	undo.push_back(subs);
+	m_history.Record(subs);
 	subs = subs->Copy();
-	iter++;
 	edited = false;
 }
 
+//the working copy becomes a copy of the current step; call it locked
+void SubsFile::LoadCurrentStep()
+{
+	subs->Clear();
+	delete subs;
+	subs = m_history.Current()->Copy();
+	edited = false;
+}
 
 bool SubsFile::Redo()
 {
-	if (iter < maxx()){
-		wxMutexLocker lock(*historyGuard);
-		iter++;
-		subs->Clear();
-		delete subs;
-		subs = undo[iter]->Copy();
-		return false;
-	}
-	return true;
+	if (!m_history.CanRedo())
+		return true;
+	wxMutexLocker lock(*historyGuard);
+	m_history.Redo();
+	LoadCurrentStep();
+	return false;
 }
 
 bool SubsFile::Undo()
 {
-	if (iter > 0){
-		wxMutexLocker lock(*historyGuard);
-		iter--;
-		subs->Clear();
-		delete subs;
-		subs = undo[iter]->Copy();
-		return false;
-	}
-	return true;
+	if (!m_history.CanUndo())
+		return true;
+	wxMutexLocker lock(*historyGuard);
+	m_history.Undo();
+	LoadCurrentStep();
+	return false;
 }
 
-bool SubsFile::SetHistory(int _iter)
+bool SubsFile::SetHistory(int step)
 {
-	if (_iter < undo.size() && _iter >= 0){
-		wxMutexLocker lock(*historyGuard);
-		iter = _iter;
-		subs->Clear();
-		delete subs;
-		subs = undo[iter]->Copy();
-		return false;
-	}
-	return true;
+	if (!m_history.At(step))
+		return true;
+	wxMutexLocker lock(*historyGuard);
+	m_history.GoTo(step);
+	LoadCurrentStep();
+	return false;
 }
 
 void SubsFile::DummyUndoF()
 {
 	wxMutexLocker lock(*historyGuard);
-	subs->Clear();
-	delete subs;
-	subs = undo[iter]->Copy();
+	LoadCurrentStep();
 }
 
 void SubsFile::DummyUndoF(int newIter)
 {
-	if (newIter < 0 || newIter >= undo.size()){ return; }
+	if (!m_history.At(newIter)){ return; }
 	wxMutexLocker lock(*historyGuard);
-	subs->Clear();
-	delete subs;
-	subs = undo[newIter]->Copy();
-	iter = newIter;
-	if (iter < undo.size() - 1){
-		for (std::vector<File*>::iterator it = undo.begin() + iter + 1; it != undo.end(); it++)
-		{
-			(*it)->Clear();
-			delete (*it);
-		}
-		undo.erase(undo.begin() + iter + 1, undo.end());
-	}
-}
-
-bool SubsFile::IsNotSaved()
-{
-	if ((subs->deleteDialogues.size() == 0 && subs->deleteStyles.size() == 0 && subs->deleteSinfo.size() == 0 && !edited)){ return false; }
-	return true;
-}
-
-int SubsFile::maxx()
-{
-	return undo.size() - 1;
+	m_history.Rewind(newIter);
+	LoadCurrentStep();
 }
 
 int SubsFile::Iter()
 {
-	return iter;
+	return m_history.Step();
 }
 
 //size_t SubsFile::GetCount()
@@ -339,6 +305,7 @@ size_t SubsFile::GetIdCount()
 
 void SubsFile::AddLine(Dialogue *dial)
 {
+	edited = true;
 	subs->deleteDialogues.push_back(dial);
 	subs->dialogues.push_back(dial);
 }
@@ -355,6 +322,7 @@ Dialogue * SubsFile::CopyDialogueF(size_t i, bool push /*= true*/, bool keepstat
 {
 	Dialogue *dial = subs->dialogues[i]->Copy(keepstate, !push);
 	subs->deleteDialogues.push_back(dial);
+	edited = true;
 	if (push){ 
 		subs->dialogues[i] = dial;
 	}
@@ -379,6 +347,7 @@ Dialogue *SubsFile::GetDialogue(size_t i)
 
 void SubsFile::SetDialogue(size_t i, Dialogue *dial, bool addToDestroyer)
 {
+	edited = true;
 	if (i >= subs->dialogues.size())
 		subs->dialogues.push_back(dial);
 	else
@@ -558,6 +527,7 @@ Styles *SubsFile::CopyStyle(size_t i, bool push)
 {
 	Styles *styl = subs->styles[i]->Copy();
 	subs->deleteStyles.push_back(styl);
+	edited = true;
 	if (push){
 		subs->styles[i] = styl;
 	}
@@ -568,6 +538,7 @@ SInfo *SubsFile::CopySinfo(size_t i, bool push)
 {
 	SInfo *sinf = subs->sinfo[i]->Copy();
 	subs->deleteSinfo.push_back(sinf);
+	edited = true;
 	if (push){
 		subs->sinfo[i] = sinf;
 	}
@@ -578,31 +549,24 @@ void SubsFile::EndLoad(unsigned char editionType, int activeLine, bool initialSa
 {
 	//subs->activeLine = activeLine;
 	//subs->markerLine = activeLine;
-	if (initialSave)
-		lastSave = -1;
-
 	subs->editionType = editionType;
-	undo.push_back(subs);
+	m_history.Record(subs);
+	if (initialSave)
+		m_history.ForgetSaved();
 	subs = subs->Copy();
+	edited = false;
 }
 
-void SubsFile::RemoveFirst(int num)
+void SubsFile::DropOldestHistory(int num)
 {
-	//Warning first element of table is subtitles after loading cannot delete it
-	for (std::vector<File*>::iterator it = undo.begin() + 1; it != undo.begin() + num; it++)
-	{
-		(*it)->Clear();
-		delete (*it);
-	}
-	undo.erase(undo.begin() + 1, undo.begin() + num);
-	if (lastSave > iter){ lastSave -= (num - 1); }
-	iter -= (num - 1);
+	wxMutexLocker lock(*historyGuard);
+	m_history.DropOldest(num);
 }
 
 void SubsFile::GetURStatus(bool *_undo, bool *_redo)
 {
-	*_redo = (iter < (int)undo.size() - 1);
-	*_undo = (iter > 0);
+	*_redo = m_history.CanRedo();
+	*_undo = m_history.CanUndo();
 }
 
 //File *SubsFile::GetSubs()
@@ -714,9 +678,10 @@ int SubsFile::OpenCloseTree(size_t i){
 
 void SubsFile::GetHistoryTable(wxArrayString *history)
 {
-	for (size_t i = 0; i < undo.size(); i++){
-		history->push_back(historyNames[undo[i]->editionType] +
-			wxString::Format(_(", active line %i"), (int)GetElementByKey(undo[i]->activeLine) + 1));
+	for (int i = 0; i < m_history.Size(); i++){
+		File *step = m_history.At(i);
+		history->push_back(historyNames[step->editionType] +
+			wxString::Format(_(", active line %i"), (int)GetElementByKey(step->activeLine) + 1));
 	}
 }
 
@@ -728,30 +693,28 @@ void SubsFile::ShowHistory(wxWindow *parent, std::function<void(int)> functionAf
 
 void SubsFile::SetLastSave()
 {
-	lastSave = iter;
+	m_history.MarkSaved();
 }
 
 int SubsFile::GetActualHistoryIter()
 {
-	if (lastSave < 0)
-		return iter;
-	return iter - lastSave;
+	return m_history.StepsFromSave();
 }
 
 const wxString & SubsFile::GetUndoName()
 {
-	if (iter < 1)
+	if (!m_history.CanUndo())
 		return emptyString;
 
-	return historyNames[undo[iter - 1]->editionType];
+	return historyNames[m_history.At(m_history.Step() - 1)->editionType];
 }
 
 const wxString & SubsFile::GetRedoName()
 {
-	if (iter >= maxx())
+	if (!m_history.CanRedo())
 		return emptyString;
 
-	return historyNames[undo[iter + 1]->editionType];
+	return historyNames[m_history.At(m_history.Step() + 1)->editionType];
 }
 
 bool SubsFile::IsFiltered()
@@ -766,12 +729,14 @@ void SubsFile::SetFiltered(bool filtered)
 
 void SubsFile::AddStyle(Styles *nstyl)
 {
+	edited = true;
 	subs->deleteStyles.push_back(nstyl);
 	subs->styles.push_back(nstyl);
 }
 
 void SubsFile::ChangeStyle(Styles *nstyl, size_t i)
 {
+	edited = true;
 	subs->deleteStyles.push_back(nstyl);
 	subs->styles[i] = nstyl;
 }
@@ -798,6 +763,30 @@ Styles *SubsFile::GetStyle(size_t i, const wxString &name/* = emptyString*/)
 std::vector<Styles*> *SubsFile::GetStyleTable()
 {
 	return &subs->styles;
+}
+
+void SubsFile::InsertStyle(size_t i, Styles *style)
+{
+	edited = true;
+	subs->deleteStyles.push_back(style);
+	if (i >= subs->styles.size())
+		subs->styles.push_back(style);
+	else
+		subs->styles.insert(subs->styles.begin() + i, style);
+}
+
+void SubsFile::MoveStyle(size_t from, size_t to)
+{
+	edited = true;
+	Styles *style = subs->styles[from];
+	subs->styles.erase(subs->styles.begin() + from);
+	subs->styles.insert(subs->styles.begin() + to, style);
+}
+
+void SubsFile::SortStyles(bool func(Styles *i, Styles *j))
+{
+	edited = true;
+	std::sort(subs->styles.begin(), subs->styles.end(), func);
 }
 
 //multiplication musi być ustawione na zero, wtedy zwróci ilość multiplikacji
@@ -864,6 +853,28 @@ void SubsFile::DeleteSInfo(size_t i)
 	edited = true;
 }
 
+SInfo *SubsFile::GetSInfoAt(size_t i)
+{
+	return (i < subs->sinfo.size()) ? subs->sinfo[i] : nullptr;
+}
+
+void SubsFile::SetSInfoAt(size_t i, SInfo *info)
+{
+	edited = true;
+	subs->deleteSinfo.push_back(info);
+	subs->sinfo[i] = info;
+}
+
+void SubsFile::InsertSInfo(size_t i, SInfo *info)
+{
+	edited = true;
+	subs->deleteSinfo.push_back(info);
+	if (i >= subs->sinfo.size())
+		subs->sinfo.push_back(info);
+	else
+		subs->sinfo.insert(subs->sinfo.begin() + i, info);
+}
+
 size_t SubsFile::SInfoSize()
 {
 	return subs->sinfo.size();
@@ -871,11 +882,16 @@ size_t SubsFile::SInfoSize()
 
 void SubsFile::SaveSelectionsF(bool clear, int currentLine, int markedLine, int scrollPos)
 {
-	undo[iter]->Selections = subs->Selections;
+	File *step = m_history.Current();
+	if (!step){
+		if (clear){ ClearSelections(); }
+		return;
+	}
+	step->Selections = subs->Selections;
 	//tutaj muszą być przeróbki na klucze
-	undo[iter]->activeLine =currentLine;
-	undo[iter]->markerLine = markedLine;
-	undo[iter]->scrollPosition = scrollPos;
+	step->activeLine = currentLine;
+	step->markerLine = markedLine;
+	step->scrollPosition = scrollPos;
 	if (clear){ ClearSelections(); }
 }
 
@@ -909,6 +925,7 @@ void SubsFile::InsertRowsF(int Row,
 	size_t convertedRow = Row;
 	if (convertedRow >= subs->dialogues.size()){ convertedRow = subs->dialogues.size(); }
 	subs->dialogues.insert(subs->dialogues.begin() + convertedRow, RowsTable.begin(), RowsTable.end());
+	edited = true;
 	if (AddToDestroy){ subs->deleteDialogues.insert(subs->deleteDialogues.end(), RowsTable.begin(), RowsTable.end()); }
 }
 
@@ -917,17 +934,18 @@ void SubsFile::InsertRowsF(int Row, int NumRows, Dialogue *Dialog, bool AddToDes
 	size_t convertedRow = Row;
 	if (convertedRow >= subs->dialogues.size()){ convertedRow = subs->dialogues.size(); }
 	subs->dialogues.insert(subs->dialogues.begin() + convertedRow, NumRows, Dialog);
+	edited = true;
 	if (AddToDestroy){ subs->deleteDialogues.push_back(Dialog); }
 }
 
 void SubsFile::SwapRowsF(int frst, int scnd)
 {
-
-	Dialogue *tmp = subs->dialogues[frst];
-	subs->dialogues[frst] = subs->dialogues[scnd];
-	subs->dialogues[scnd] = tmp;
-	subs->dialogues[frst]->ChangeDialogueState(1);
-	tmp->ChangeDialogueState(1);
+	Dialogue *first = CopyDialogueF(frst);
+	Dialogue *second = CopyDialogueF(scnd);
+	subs->dialogues[frst] = second;
+	subs->dialogues[scnd] = first;
+	first->ChangeDialogueState(1);
+	second->ChangeDialogueState(1);
 }
 
 void SubsFile::AddSInfo(const wxString &SI, wxString val, bool save)
@@ -947,6 +965,7 @@ void SubsFile::AddSInfo(const wxString &SI, wxString val, bool save)
 	oldinfo = GetSInfoP(key, &ii);
 
 	if (!oldinfo || save){
+		edited = true;
 		oldinfo = new SInfo(key, val);
 		if (ii < 0){
 			subs->sinfo.push_back(oldinfo);

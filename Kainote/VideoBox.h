@@ -18,6 +18,7 @@
 
 //#include "VideoSlider.h"
 #include "BitmapButton.h"
+#include "Timebase.h"
 #include "RendererVideo.h"
 //#include "VideoFullscreen.h"
 
@@ -27,6 +28,8 @@
 #include "TabPanel.h"
 #include <atomic>
 
+class AudioDisplay;
+class chapter;
 class Provider;
 class Fullscreen;
 class VideoToolbar;
@@ -41,7 +44,6 @@ class VideoBox : public wxWindow
 {
 	friend class RendererVideo;
 	friend class RendererDirectShow;
-	friend class RendererDummyVideo;
 	friend class RendererFFMS2;
 	friend class RendererGStreamer;
 	friend class Fullscreen;
@@ -58,7 +60,8 @@ public:
 		bool changeAudio = true, int customFFMS2 = -1, bool dontPlayOnStart = false);
 	
 
-	bool Seek(int newPosition, bool starttime = true, bool refreshTime = true, bool reloadSubs = true, bool correct = true, bool asynchonize = true, bool refreshAudio = true);
+	// flags are SeekFlags
+	bool Seek(int time, bool startTime = true, int flags = 0);
 	int Tell();
 	bool CalcSize(int *width, int *height, int wwidth = 0, int wheight = 0, bool setstatus = false, bool calcH = false);
 
@@ -102,17 +105,18 @@ public:
 	void Render(bool recreateFrame = true);
 	void ChangePositionByFrame(int cpos);
 	bool RemoveVisual(bool noRefresh = false, bool disable = false);
+	// the tab's one timebase; no frames without video, keyframes may remain
+	const Timebase &GetTimebase();
+	// the video adapters hand over the opened video's frames and keyframes
+	void SetVideoTimebase(Timebase timebase);
+	// line time that lands on the frame on screen
 	int GetFrameTime(bool start = true);
-	int GetFrameTimeFromTime(int time, bool start = true);
-	int GetFrameTimeFromFrame(int frame, bool start = true);
-	void GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd);
 	void SetZoom(bool reset = false);
 	bool HasZoom();
 	void GoToNextKeyframe();
 	void GoToPrevKeyframe();
 	void OpenKeyframes(const wxString &filename);
 	void SetColorSpace(const wxString& matrix, bool render = true);
-	int GetPlayEndTime(int time);
 	void DisableVisuals(bool disable);
 	void DeleteAudioCache();
 	wxWindow *GetMessageWindowParent();
@@ -121,18 +125,26 @@ public:
 	void GetVideoListsOptions(int *videoPlayAfter, int *videoSeekAfter);
 	void SetVisual(bool settext = false, bool noRefresh = false);
 	void ResetVisual();
-	bool HasFFMS2();
-	//can return null
 	bool HasVideo() {
 		if (renderer)
 			return true;
 
 		return false;
 	}
+	//can return null
 	Provider *GetFFMS2();
 	void SetVisualEdition(bool value);
-	//can return null
-	RendererVideo *GetRenderer();
+	void MarkSubtitlesOutdated();
+	// subtitles a visual tool made itself; takes the text
+	bool OpenOwnSubs(wxString *text);
+	// a copy of frame to release with delete; nullptr when the video can't give frames
+	unsigned char *GetFrame(int frame, bool withSubtitles);
+	const std::vector<chapter> &GetChapters();
+	// where the video is drawn in the window
+	RECT GetVideoRect();
+	// redraws a paused frame unless the window is being resized; false when it didn't
+	bool RedrawPaused();
+	void SetAudioPlayer(AudioDisplay *player);
 	//can return null
 	Fullscreen *GetFullScreenWindow();
 	VideoToolbar *GetVideoToolbar();
@@ -153,6 +165,7 @@ public:
 	void GetWindowSize(int* x, int* y, bool withTabPanel = true);
 	PlaybackState GetState();
 private:
+	void ShowTimes(SubsTime &videoTime, KaiTextCtrl *field);
 
 	BitmapButton* m_ButtonPreviousFile;
 	BitmapButton* m_ButtonPause;
@@ -190,6 +203,7 @@ private:
 	bool m_ShownKeyframe;
 	//wxString oldpath;
 	wxString m_KeyframesFileName;
+	Timebase m_Timebase;
 	std::vector<RECT> MonRects;
 	bool m_IsOnAnotherMonitor = false;
 	bool m_IsFullscreen = false;
@@ -213,6 +227,8 @@ private:
 	void OnChangeVisual(wxCommandEvent &evt);
 	void OnLostCapture(wxMouseCaptureLostEvent &evt);
 	void ChangeButtonBMP(bool play = false);
+	void DeleteRenderer();
+	void KeyframesChanged();
 	
 	wxTimer idletime;
 	DECLARE_EVENT_TABLE()

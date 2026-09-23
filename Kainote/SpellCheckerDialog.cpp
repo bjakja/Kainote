@@ -185,7 +185,6 @@ void SpellCheckerDialog::Replace(wxCommandEvent &evt)
 	SpellChecker::Get()->ReplaceMisspell(errors[lastMisspell].misspell, replaceTxt, 
 		errors[lastMisspell].posStart, errors[lastMisspell].posEnd, &Text, nullptr);
 	tab->grid->SetModified(SPELL_CHECKER);
-	tab->grid->Refresh(false);
 	int oldPos = errors[lastMisspell].posStart;
 	SetNextMisspell();
 	if (errors[lastMisspell].posStart == oldPos) {
@@ -230,7 +229,6 @@ void SpellCheckerDialog::ReplaceAll(wxCommandEvent &evt)
 	}
 
 	tab->grid->SetModified(SPELL_CHECKER);
-	tab->grid->Refresh(false);
 	SetNextMisspell();
 }
 

@@ -41,8 +41,11 @@ public:
 	void Draw(unsigned char* buffer, int time);
 	//set parameters first; skips work + returns false when unchanged since last call
 	bool DrawChanged(unsigned char* buffer, int time);
-	//set parameters first
-	bool Open(TabPanel *tab, int flag, wxString *text);
+	//set parameters first; takes the text, nullptr closes the subtitles
+	bool Open(int flag, wxString *text);
+	// false after dummy or own text was shown, or after edits it doesn't show yet
+	bool ShowsWholeSubtitles() const { return m_ShowsWholeSubtitles; }
+	void MarkOutdated() { m_ShowsWholeSubtitles = false; }
 	//set parameters first
 	//for styles preview and visuals
 	bool OpenString(wxString *text);
@@ -57,6 +60,7 @@ private:
 	SubtitlesProviderManager() {};
 	SubtitlesProviderManager(const SubtitlesProviderManager &copy) = delete;
 	SubtitlesProvider *SP = nullptr;
+	bool m_ShowsWholeSubtitles = false;
 	SubtitlesProvider *GetProvider();
 	static std::vector< SubtitlesProviderManager*> gs_Base;
 };

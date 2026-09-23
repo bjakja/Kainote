@@ -57,12 +57,8 @@ void Cross::OnMouseEvent(wxMouseEvent &event)
 	if (event.Leaving()){
 		if (cross){
 			cross = false;
-			RendererVideo *renderer = tab->video->GetRenderer();
 			tab->video->SetCursor(wxCURSOR_ARROW); 
-				
-			if (tab->video->GetState() <= Paused && !renderer->m_BlockResize){ 
-				tab->video->Render(false); 
-			}
+			tab->video->RedrawPaused();
 		}
 		return;
 	}
@@ -74,12 +70,12 @@ void Cross::OnMouseEvent(wxMouseEvent &event)
 		int nx = 0, ny = 0;
 		int w = 0, h = 0;
 		int diffW = 1, diffH = 1;
-		RendererVideo *renderer = tab->video->GetRenderer();
-		if (renderer){
-			diffX = renderer->m_BackBufferRect.left;
-			diffY = renderer->m_BackBufferRect.top;
-			w = renderer->m_BackBufferRect.right - diffX;
-			h = renderer->m_BackBufferRect.bottom - diffY;
+		if (tab->video->HasVideo()){
+			RECT videoRect = tab->video->GetVideoRect();
+			diffX = videoRect.left;
+			diffY = videoRect.top;
+			w = videoRect.right - diffX;
+			h = videoRect.bottom - diffY;
 			if (diffX)
 				diffW = 0;
 			if (diffY)
@@ -190,15 +186,15 @@ void Cross::DrawWx(wxDC& dc, int time)
 
 void Cross::DrawLines(wxPoint point)
 {
-	RendererVideo *renderer = tab->video->GetRenderer();
-	if (!renderer)
+	if (!tab->video->HasVideo())
 		return;
 
 	//without this mutex it crash maybe only slowing something else and blocking crash in that way
 	wxMutexLocker lock(m_MutexCrossLines);
 	
-	if (point.y < renderer->m_BackBufferRect.top || point.x < renderer->m_BackBufferRect.left ||
-		point.y > renderer->m_BackBufferRect.bottom || point.x > renderer->m_BackBufferRect.right) {
+	RECT videoRect = tab->video->GetVideoRect();
+	if (point.y < videoRect.top || point.x < videoRect.left ||
+		point.y > videoRect.bottom || point.x > videoRect.right) {
 		isOnVideo = false;
 		goto done;
 	}
@@ -224,19 +220,18 @@ void Cross::DrawLines(wxPoint point)
 		crossRect.right = (w < point.x) ? point.x - margin : point.x + fw + margin;
 
 		vectors[0].x = point.x;
-		vectors[0].y = renderer->m_BackBufferRect.top;
+		vectors[0].y = videoRect.top;
 		vectors[1].x = point.x;
-		vectors[1].y = renderer->m_BackBufferRect.bottom;
-		vectors[2].x = renderer->m_BackBufferRect.left;
+		vectors[1].y = videoRect.bottom;
+		vectors[2].x = videoRect.left;
 		vectors[2].y = point.y;
-		vectors[3].x = renderer->m_BackBufferRect.right;
+		vectors[3].x = videoRect.right;
 		vectors[3].y = point.y;
 		cross = true;
 	}
 	done:
 	//play and pause
-	if (tab->video->GetState() <= Paused && !renderer->m_BlockResize){
-		tab->video->Render(renderer->m_VideoResized);
+	if (tab->video->RedrawPaused()){
 #ifndef _WIN32
 		wxWindow* renderWindow = (tab->video->IsFullScreen() && tab->video->GetFullScreenWindow()) ?
 			static_cast<wxWindow*>(tab->video->GetFullScreenWindow()) : static_cast<wxWindow*>(tab->video);
@@ -264,14 +259,12 @@ void Cross::SetCurVisual()
 	int nx = 0, ny = 0;
 	int w = 0, h = 0;
 	int diffW = 1, diffH = 1;
-	RendererVideo *renderer = tab->video->GetRenderer();
-	
-	if (renderer){
-		
-		diffX = renderer->m_BackBufferRect.left;
-		diffY = renderer->m_BackBufferRect.top;
-		w = renderer->m_BackBufferRect.right - diffX;
-		h = renderer->m_BackBufferRect.bottom - diffY;
+	if (tab->video->HasVideo()){
+		RECT videoRect = tab->video->GetVideoRect();
+		diffX = videoRect.left;
+		diffY = videoRect.top;
+		w = videoRect.right - diffX;
+		h = videoRect.bottom - diffY;
 		if (diffX)
 			diffW = 0;
 		if (diffY)

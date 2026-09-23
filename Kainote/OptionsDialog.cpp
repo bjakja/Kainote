@@ -1093,7 +1093,7 @@ void OptionsDialog::SetOptions(bool saveall)
 			bool value = cb->GetValue();
 			if (Options.GetBool(OB.option) != value){
 				Options.SetBool(OB.option, value);
-				if (OB.option <= AUDIO_WHEEL_DEFAULT_TO_ZOOM) { audio = true; }
+				if (config::IsAudioOption(OB.option)) { audio = true; }
 				if (OB.option == SPELLCHECKER_ON) {
 					Notebook::GetTab()->edit->ClearErrs(true, value);
 				}
@@ -1173,7 +1173,7 @@ void OptionsDialog::SetOptions(bool saveall)
 					Options.SetInt(OB.option, cbx->GetSelection());
 				}
 			}
-			if (OB.option <= AUDIO_WHEEL_DEFAULT_TO_ZOOM) { audio = true; }
+			if (config::IsAudioOption(OB.option)) { audio = true; }
 		}
 		else if (OB.ctrl->IsKindOf(CLASSINFO(KaiTextCtrl))) {
 
@@ -1211,7 +1211,7 @@ void OptionsDialog::SetOptions(bool saveall)
 					Options.SetInt(OB.option, num);
 				}
 			}
-			if (OB.option <= AUDIO_WHEEL_DEFAULT_TO_ZOOM){ audio = true; }
+			if (config::IsAudioOption(OB.option)) { audio = true; }
 		}
 		else if (OB.ctrl->IsKindOf(CLASSINFO(KaiListCtrl))){
 			KaiListCtrl *list = (KaiListCtrl*)OB.ctrl;

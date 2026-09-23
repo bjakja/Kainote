@@ -69,38 +69,35 @@ void RendererFFMS2::LinuxPlaybackLoop()
 	const bool debugPlayback = std::getenv("KAINOTE_DEBUG_LINUX_PLAYBACK") != nullptr;
 	unsigned int decodedFrames = 0;
 	if (debugPlayback)
-		std::fprintf(stderr, "[linux-playback] start time=%d frame=%d end=%d duration=%d\n", m_Time, m_Frame, m_PlayEndTime, GetDuration());
+		std::fprintf(stderr, "[linux-playback] start time=%d frame=%d end=%d duration=%d\n", m_Time.load(), m_Frame.load(), m_PlayEndTime.load(), GetDuration());
 	int lastPresentedFrame = -1;
-	int lastPresentedTime = -1;
 	while (!m_LinuxPlaybackStop.load()) {
 		int playTime = static_cast<int>(timeGetTime() - m_LastTime);
 		if (playTime < 0)
 			playTime = 0;
-		if (playTime >= m_PlayEndTime || playTime >= GetDuration()) {
+		if ((m_PlayEndTime > 0 && playTime >= m_PlayEndTime) || playTime >= GetDuration()) {
 			wxCommandEvent* evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED, ID_END_OF_STREAM);
 			wxQueueEvent(videoControl, evt);
 			break;
 		}
 
-		const int seekFrom = (lastPresentedFrame >= 0 && playTime >= lastPresentedTime) ? lastPresentedFrame : 0;
-		int nextFrame = m_FFMS2->GetFramefromMS(playTime, seekFrom, true);
-		nextFrame = std::max(0, std::min(nextFrame, m_FFMS2->m_numFrames - 1));
+		const Timebase &timebase = GetTimebase();
+		int nextFrame = timebase.ClampFrame(timebase.FrameAt(playTime));
 		if (nextFrame != lastPresentedFrame) {
 			m_Frame = nextFrame;
-			m_Time = m_FFMS2->m_timecodes[m_Frame];
+			m_Time = timebase.MsAt(m_Frame);
 			m_FFMS2->GetFrame(m_Frame, frameBuffer.data());
 			DrawTexture(frameBuffer.data(), true);
 			++decodedFrames;
 			if (debugPlayback && (decodedFrames <= 5 || (decodedFrames % 30) == 0))
-				std::fprintf(stderr, "[linux-playback] decode=%u playTime=%d time=%d frame=%d\n", decodedFrames, playTime, m_Time, m_Frame);
+				std::fprintf(stderr, "[linux-playback] decode=%u playTime=%d time=%d frame=%d\n", decodedFrames, playTime, m_Time.load(), m_Frame.load());
 			lastPresentedFrame = nextFrame;
-			lastPresentedTime = playTime;
 		}
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(4));
 	}
 	if (debugPlayback)
-		std::fprintf(stderr, "[linux-playback] stop decoded=%u presented=%u time=%d frame=%d\n", decodedFrames, m_LinuxPresentedFrames.load(), m_Time, m_Frame);
+		std::fprintf(stderr, "[linux-playback] stop decoded=%u presented=%u time=%d frame=%d\n", decodedFrames, m_LinuxPresentedFrames.load(), m_Time.load(), m_Frame.load());
 }
 
 #endif
@@ -118,11 +115,6 @@ RendererFFMS2::~RendererFFMS2()
 	m_State = None;
 	SAFE_DELETE(m_FFMS2);
 }
-//made function to destroy it before FFMS2
-void RendererFFMS2::DestroyFFMS2()
-{
-	//SAFE_DELETE(m_FFMS2);
-}
 
 bool RendererFFMS2::DrawTexture(unsigned char *nframe, bool copy)
 {
@@ -137,7 +129,7 @@ bool RendererFFMS2::DrawTexture(unsigned char *nframe, bool copy)
 		else {
 			fdata = m_FrameBuffer;
 			if (!fdata && m_FFMS2)
-				m_FFMS2->GetFrameBuffer(&fdata);
+				m_FFMS2->GetFrameBuffer(m_Frame, &fdata);
 			if (!fdata)
 				return false;
 		}
@@ -181,7 +173,7 @@ bool RendererFFMS2::DrawTexture(unsigned char *nframe, bool copy)
 	}
 	else {
 		fdata = m_FrameBuffer;
-		m_FFMS2->GetFrameBuffer(&fdata);
+		m_FFMS2->GetFrameBuffer(m_Frame, &fdata);
 		if (!fdata)
 			return false;
 	}
@@ -406,6 +398,7 @@ bool RendererFFMS2::OpenFile(const wxString &fname, int subsFlag, bool vobsub, b
 	if (!m_FFMS2 || m_FFMS2->m_width < 0){
 		return false;
 	}
+	videoControl->SetVideoTimebase(m_FFMS2->TakeTimebase());
 	
 	diff = 0;
 	m_FrameDuration = (1000.0f / videoControl->m_FPS);
@@ -431,7 +424,7 @@ bool RendererFFMS2::OpenFile(const wxString &fname, int subsFlag, bool vobsub, b
 
 	OpenSubs(subsFlag, false);
 	
-	m_State = Stopped;
+	m_State = Paused;
 	m_FFMS2->GetChapters(&m_Chapters);
 #ifndef _WIN32
 	// Prime wxGTK software backbuffer before fullscreen/first render.
@@ -455,7 +448,7 @@ bool RendererFFMS2::OpenSubs(int flag, bool redraw, wxString *text, bool resetPa
 		if (resetParameters)
 			m_SubsProvider->SetVideoParameters(wxSize(m_Width, m_Height), m_Format, m_SwapFrame);
 
-		result = m_SubsProvider->Open(tab, flag, text);
+		result = m_SubsProvider->Open(flag, SubtitlesText(flag, text));
 	}
 
 #ifndef _WIN32
@@ -466,29 +459,9 @@ bool RendererFFMS2::OpenSubs(int flag, bool redraw, wxString *text, bool resetPa
 	return result;
 }
 
-bool RendererFFMS2::Play(int end)
+void RendererFFMS2::StartStream()
 {
-	if (m_Time >= GetDuration()){ return false; }
-	SetThreadExecutionState(ES_DISPLAY_REQUIRED | ES_CONTINUOUS);
-	if (!(videoControl->IsShown() || 
-		(videoControl->m_FullScreenWindow && 
-			videoControl->m_FullScreenWindow->IsShown()))){ return false; }
-	if (m_HasVisualEdition){
-		OpenSubs(OPEN_WHOLE_SUBTITLES, false);
-		SAFE_DELETE(m_Visual->dummytext);
-		m_HasVisualEdition = false;
-	}
-	else if (m_HasDummySubs && tab->editor){
-		OpenSubs(OPEN_WHOLE_SUBTITLES, false);
-	}
-
-	if (end > 0){ m_PlayEndTime = end; }
-	else
-		m_PlayEndTime = GetDuration();
-
-	m_State = Playing;
-
-	m_Time = m_FFMS2->m_timecodes[m_Frame];
+	m_Time = GetTimebase().MsAt(m_Frame);
 	m_LastTime = timeGetTime() - m_Time;
 	if (m_AudioPlayer){ m_AudioPlayer->Play(m_Time, -1, false); }
 #ifdef _WIN32
@@ -496,93 +469,77 @@ bool RendererFFMS2::Play(int end)
 #else
 	StartLinuxPlaybackThread();
 #endif
-
-	return true;
 }
 
-
-bool RendererFFMS2::Pause()
+void RendererFFMS2::PauseStream()
 {
-	if (m_State == Playing){
-		SetThreadExecutionState(ES_CONTINUOUS);
-		m_State = Paused;
 #ifndef _WIN32
-		StopLinuxPlaybackThread();
+	StopLinuxPlaybackThread();
 #endif
-		if (m_AudioPlayer){ m_AudioPlayer->Stop(false); }
-	}
-	else if (m_State != None){
-		Play();
-	}
-	else{ return false; }
-	return true;
+	if (m_AudioPlayer){ m_AudioPlayer->Stop(false); }
 }
 
-bool RendererFFMS2::Stop()
+void RendererFFMS2::StopStream()
 {
-	if (m_State == Playing){
-		SetThreadExecutionState(ES_CONTINUOUS);
-		m_State = Stopped;
 #ifndef _WIN32
-		StopLinuxPlaybackThread();
+	StopLinuxPlaybackThread();
 #endif
-		if (m_AudioPlayer){
-			m_AudioPlayer->Stop();
-			m_PlayEndTime = GetDuration();
-		}
-		m_Time = 0;
-		return true;
-	}
-	return false;
+	if (m_AudioPlayer){ m_AudioPlayer->Stop(); }
 }
 
-void RendererFFMS2::SetPosition(int _time, bool starttime/*=true*/, bool corect/*=true*/, 
-	bool async /*= true*/, bool refreshAudio/* = true*/)
+void RendererFFMS2::SetPosition(int time, bool startTime, int flags)
 {
-	if (m_State == Playing || !async)
-		SetFFMS2Position(_time, starttime, refreshAudio);
+	bool refreshAudio = !(flags & SEEK_KEEP_AUDIO);
+#ifndef _WIN32
+	// Linux playback decodes on m_LinuxPlaybackThread, while subtitle reopening
+	// reads the grid and edit controls. Finish any in-flight decode before the
+	// main thread seeks, then resume from the new clock position.
+	wxASSERT_MSG(wxIsMainThread(), "Linux video seeks must run on the wx main thread");
+	const bool wasPlaying = m_State == Playing;
+	if (wasPlaying)
+		StopLinuxPlaybackThread();
+	SetFFMS2Position(time, startTime, refreshAudio);
+	if (wasPlaying)
+		StartLinuxPlaybackThread();
+#else
+	//while playing, the playback thread owns the frame and seeks itself
+	if ((flags & SEEK_WAIT) && m_State != Playing)
+		SetFFMS2Position(time, startTime, refreshAudio);
 	else
-		m_FFMS2->SetPosition(_time, starttime, refreshAudio);
+		m_FFMS2->SetPosition(time, startTime, refreshAudio);
+#endif
 }
 
-//is from video thread make safe any deletion
-void RendererFFMS2::SetFFMS2Position(int _time, bool starttime, bool refreshAudio/* = true*/){
+// Windows calls this on the provider thread; Linux calls it on the main thread
+// after joining the frame decoder.
+void RendererFFMS2::SetFFMS2Position(int time, bool startTime, bool refreshAudio/* = true*/){
 	bool playing = m_State == Playing;
-	m_Frame = m_FFMS2->GetFramefromMS(_time, (m_Time > _time) ? 0 : m_Frame);
-	if (!starttime){
-		m_Frame--;
-		if (m_FFMS2->m_timecodes[m_Frame] >= _time){ m_Frame--; }
-	}
-	m_Time = m_FFMS2->m_timecodes[m_Frame];
+	const Timebase &timebase = GetTimebase();
+	m_Frame = SeekFrame(timebase, time, startTime);
+	m_Time = timebase.MsAt(m_Frame);
 	m_LastTime = timeGetTime() - m_Time;
-	m_PlayEndTime = GetDuration();
+	m_PlayEndTime = 0;
 
-	if (m_HasVisualEdition){
-		//block removing or changing visual from main thread
-		wxMutexLocker lock(m_MutexVisualChange);
-		SAFE_DELETE(m_Visual->dummytext);
-		/*if (m_Visual->Visual == VECTORCLIP){
-			m_Visual->SetClip(m_Visual->GetVisual(), true, false, false);
-		}
-		else{*/
-			OpenSubs((playing) ? OPEN_WHOLE_SUBTITLES : OPEN_DUMMY, true);
-			if (playing){ m_HasVisualEdition = false; }
-		//}
-	}
-	else if (m_HasDummySubs){
-		OpenSubs((playing) ? OPEN_WHOLE_SUBTITLES : OPEN_DUMMY, true);
-	}
+	ReopenSubsAfterSeek(playing);
 	if (playing){
 		if (m_AudioPlayer){
 			m_AudioPlayer->player->SetCurrentPosition(m_AudioPlayer->GetSampleAtMS(m_Time));
 		}
 	}
 	else{
-		//rebuild spectrum cause position can be changed
-		//and it causes random bugs
-		if (refreshAudio && m_AudioPlayer){ m_AudioPlayer->UpdateImage(false, false); }
-		
-		videoControl->RefreshTime();
+		//seeks usually run on the playback thread, the audio and time controls do not
+		VideoBox *vb = videoControl;
+		auto refreshControls = [vb, refreshAudio]() {
+			RendererVideo *renderer = vb->renderer;
+			//rebuild spectrum cause position can be changed
+			if (refreshAudio && renderer && renderer->m_AudioPlayer)
+				renderer->m_AudioPlayer->UpdateImage(false, false);
+			vb->RefreshTime();
+		};
+		if (wxIsMainThread())
+			refreshControls();
+		else
+			vb->CallAfter(refreshControls);
 		Render();
 	}
 }
@@ -590,79 +547,6 @@ void RendererFFMS2::SetFFMS2Position(int _time, bool starttime, bool refreshAudi
 int RendererFFMS2::GetDuration()
 {
 	return m_FFMS2 ? m_FFMS2->m_duration * 1000.0 : 0;
-}
-
-int RendererFFMS2::GetFrameTime(bool start)
-{
-	//+5ms to avoid times +27ms where + 17ms is near
-	if (start){
-		int prevFrameTime = m_FFMS2->GetMSfromFrame(m_Frame - 1);
-		return m_Time + (((prevFrameTime - m_Time) / 2.f) + 5);
-	}
-	else{
-		if (m_Frame + 1 >= m_FFMS2->m_numFrames){
-			int prevFrameTime = m_FFMS2->GetMSfromFrame(m_Frame - 1);
-			return m_Time + (((m_Time - prevFrameTime) / 2.f) + 5);
-		}
-		else{
-			int nextFrameTime = m_FFMS2->GetMSfromFrame(m_Frame + 1);
-			return m_Time + (((nextFrameTime - m_Time) / 2.f) + 5);
-		}
-	}
-}
-
-void RendererFFMS2::GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd)
-{
-	if (!retStart || !retEnd){ return; }
-	
-	int frameStartTime = m_FFMS2->GetFramefromMS(startTime);
-	int frameEndTime = m_FFMS2->GetFramefromMS(endTime, frameStartTime);
-	*retStart = m_FFMS2->GetMSfromFrame(frameStartTime) - startTime;
-	*retEnd = m_FFMS2->GetMSfromFrame(frameEndTime) - endTime;
-}
-
-int RendererFFMS2::GetFrameTimeFromTime(int _time, bool start)
-{
-	//+5ms to avoid times +27ms where + 17ms is near
-	if (start){
-		int frameFromTime = m_FFMS2->GetFramefromMS(_time);
-		int prevFrameTime = m_FFMS2->GetMSfromFrame(frameFromTime - 1);
-		int frameTime = m_FFMS2->GetMSfromFrame(frameFromTime);
-		return frameTime + ((prevFrameTime - frameTime) / 2.f) + 5;
-	}
-	else{
-		int frameFromTime = m_FFMS2->GetFramefromMS(_time);
-		int nextFrameTime = m_FFMS2->GetMSfromFrame(frameFromTime + 1);
-		int frameTime = m_FFMS2->GetMSfromFrame(frameFromTime);
-		return frameTime + ((nextFrameTime - frameTime) / 2.f) + 5;
-	}
-}
-
-int RendererFFMS2::GetFrameTimeFromFrame(int frame, bool start)
-{
-	//+5ms to avoid times +27ms where + 17ms is near
-	if (start){
-		int prevFrameTime = m_FFMS2->GetMSfromFrame(frame - 1);
-		int frameTime = m_FFMS2->GetMSfromFrame(frame);
-		return frameTime + ((prevFrameTime - frameTime) / 2.f) + 5;
-	}
-	else{
-		int nextFrameTime = m_FFMS2->GetMSfromFrame(frame + 1);
-		int frameTime = m_FFMS2->GetMSfromFrame(frame);
-		return frameTime + ((nextFrameTime - frameTime) / 2.f) + 5;
-	}
-}
-
-int RendererFFMS2::GetPlayEndTime(int _time)
-{
-	int frameFromTime = m_FFMS2->GetFramefromMS(_time);
-	int prevFrameTime = m_FFMS2->GetMSfromFrame(frameFromTime - 1);
-	return prevFrameTime;
-}
-
-void RendererFFMS2::OpenKeyframes(const wxString &filename)
-{
-	m_FFMS2->OpenKeyframes(filename);
 }
 
 void RendererFFMS2::GetFpsnRatio(float *fps, long *arx, long *ary)
@@ -705,8 +589,8 @@ void RendererFFMS2::ChangePositionByFrame(int step)
 	if (m_State == Playing || m_State == None){ return; }
 	
 		m_Frame = MID(0, m_Frame + step, m_FFMS2->m_numFrames - 1);
-		m_Time = m_FFMS2->m_timecodes[m_Frame];
-		if (m_HasVisualEdition || m_HasDummySubs){
+		m_Time = GetTimebase().MsAt(m_Frame);
+		if (m_HasVisualEdition || !m_SubsProvider->ShowsWholeSubtitles()){
 			OpenSubs(OPEN_WHOLE_SUBTITLES, false);
 			m_HasVisualEdition = false;
 		}
@@ -738,35 +622,9 @@ unsigned char* RendererFFMS2::GetFrame(int frame, bool subs)
 	byte* newFrame = new byte[all];
 	m_FFMS2->GetFrame(frame, newFrame);
 	if (subs) {
-		m_SubsProvider->Draw(newFrame, frame);
+		m_SubsProvider->Draw(newFrame, GetTimebase().MsAt(frame));
 	}
 	return newFrame;
-}
-
-void RendererFFMS2::GoToNextKeyframe()
-{
-	for (size_t i = 0; i < m_FFMS2->m_keyFrames.size(); i++){
-		if (m_FFMS2->m_keyFrames[i] > m_Time){
-			SetPosition(m_FFMS2->m_keyFrames[i]);
-			return;
-		}
-	}
-	SetPosition(m_FFMS2->m_keyFrames[0]);
-}
-void RendererFFMS2::GoToPrevKeyframe()
-{
-	for (int i = m_FFMS2->m_keyFrames.size() - 1; i >= 0; i--){
-		if (m_FFMS2->m_keyFrames[i] < m_Time){
-			SetPosition(m_FFMS2->m_keyFrames[i]);
-			return;
-		}
-	}
-	SetPosition(m_FFMS2->m_keyFrames[m_FFMS2->m_keyFrames.size() - 1]);
-}
-
-bool RendererFFMS2::HasFFMS2()
-{
-	return m_FFMS2 != nullptr;
 }
 
 Provider* RendererFFMS2::GetFFMS2()
@@ -786,4 +644,3 @@ bool RendererFFMS2::InitRendererDX()
 #endif
 	return true;
 }
-

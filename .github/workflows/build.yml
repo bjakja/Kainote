@@ -15,6 +15,21 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  tests:
+    name: Tests
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -S tests -B build-tests -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build-tests -j"$(nproc)"
+
+      - name: Run
+        run: ctest --test-dir build-tests --output-on-failure
+
   windows:
     name: Windows (${{ matrix.configuration }}|x64)
     runs-on: windows-2022
@@ -258,13 +273,16 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             build-essential cmake pkg-config ninja-build gettext \
-            libwxgtk3.2-dev libwxgtk-media3.2-dev \
+            libgtk-3-dev \
             libluajit-5.1-dev libffms2-dev \
             libavformat-dev libavcodec-dev libavutil-dev libswscale-dev libswresample-dev \
             libass-dev libhunspell-dev libuchardet-dev libcurl4-openssl-dev \
             libicu-dev libboost-all-dev \
             libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
             libgl1-mesa-dev libglu1-mesa-dev
+
+      - name: Build pinned wxWidgets 3.3.3
+        run: Thirdparty/build-wxwidgets-linux.sh ${{ matrix.build_type == 'Debug' && '--debug' || '' }}
 
       - name: Configure
         run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
@@ -289,12 +307,30 @@ jobs:
 
       - name: Package the runtime
         if: matrix.build_type == 'Release'
-        run: python3 .github/scripts/package.py --platform linux --build-dir build --stage dist/kainote-linux-x86_64 --no-archive
+        run: |
+          cmake --build build --target kainote_linux_package
+          mkdir -p build/package-check
+          tar -xzf build/dist/kainote-linux-x86_64.tar.gz -C build/package-check
+          package=build/package-check/kainote-linux-x86_64
+          test -x "$package/kainote"
+          test -f "$package/libwx_gtk3u_core-3.3.so.3"
+          test -f "$package/Kainote/Bitmaps/HideTags.png"
+          test -f "$package/Automation/automation/Autoload/strip-tags.lua"
+          test -f "$package/Themes/DeepDark.txt"
+          (cd "$package" && sha256sum -c SHA256SUMS)
+          (cd build/dist && sha256sum -c kainote-linux-x86_64.tar.gz.sha256)
+          spaced_package="build/package-check/kainote with spaces"
+          mv "$package" "$spaced_package"
+          XDG_DATA_HOME="$PWD/build/package-check/desktop data" \
+            "$spaced_package/install-desktop-integration.sh"
+          desktop="build/package-check/desktop data/applications/io.github.bjakja.Kainote.desktop"
+          desktop-file-validate "$desktop"
+          grep -Fx "Exec=\"$PWD/$spaced_package/kainote\" %f" "$desktop"
 
       - name: Upload the package
         if: matrix.build_type == 'Release'
         uses: actions/upload-artifact@v4
         with:
           name: kainote-linux-x86_64
-          path: dist
+          path: build/dist/kainote-linux-x86_64.tar.gz*
           if-no-files-found: error

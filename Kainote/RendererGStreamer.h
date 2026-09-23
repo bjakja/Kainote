@@ -47,15 +47,7 @@ public:
 
 	bool OpenFile(const wxString &fname, int subsFlag, bool vobsub, bool changeAudio = true) override;
 	bool OpenSubs(int flag, bool redraw = true, wxString *text = nullptr, bool resetParameters = false) override;
-	bool Play(int end = -1) override;
-	bool Pause() override;
-	bool Stop() override;
-	void SetPosition(int _time, bool starttime = true, bool corect = true, bool async = true, bool refreshAudio = true) override;
-	int GetFrameTime(bool start = true) override;
-	void GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd) override;
-	int GetFrameTimeFromTime(int time, bool start = true) override;
-	int GetFrameTimeFromFrame(int frame, bool start = true) override;
-	int GetPlayEndTime(int time) override;
+	void SetPosition(int time, bool startTime = true, int flags = 0) override;
 	int GetDuration() override;
 	int GetVolume() override;
 	void GetVideoSize(int *width, int *height) override;
@@ -64,7 +56,6 @@ public:
 	void Render(bool RecreateFrame = true, bool wait = true) override;
 	void RecreateSurface() override;
 	void EnableStream(long index) override;
-	void ChangePositionByFrame(int cpos) override;
 	void ChangeVobsub(bool vobsub = false) override;
 	wxArrayString GetStreams() override;
 	// Current frame as a BGRA buffer (caller deletes when *del is set), with the
@@ -76,17 +67,14 @@ public:
 	void DrawProgressBar(const wxString &timesString) override;
 	bool EnumFilters(Menu *menu) override { return false; }
 	bool FilterConfig(wxString name, int idx, wxPoint pos) override { return false; }
-	// playbin has no per-frame provider, so the renderer keeps the keyframes
-	// itself and counts their times from fps (see RendererGStreamer.cpp).
-	void OpenKeyframes(const wxString &filename) override;
-	void GoToNextKeyframe() override;
-	void GoToPrevKeyframe() override;
-	const wxArrayInt &GetKeyframes() { return m_KeyFrames; }
-
 	// appsink callback target (new-sample / new-preroll).  Public only so the
 	// C-linkage trampolines in the .cpp can reach it; do not call directly.
 	void HandleSample(GstSample *sample);
 
+protected:
+	void StartStream() override;
+	void PauseStream() override;
+	void StopStream() override;
 private:
 	void TearDown();
 	bool QueryVideoInfo();
@@ -116,7 +104,6 @@ private:
 	std::atomic_int m_DurationMs{ 0 };   // cached duration (bus + UI threads)
 	long m_ArX = 0;
 	long m_ArY = 0;
-	wxArrayInt m_KeyFrames;            // keyframe times in ms, loaded from a file
 	std::atomic_bool m_ReachedPlayEnd{ false };
 };
 

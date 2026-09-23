@@ -589,9 +589,8 @@ void StyleStore::OnStoreLoad(wxCommandEvent& event)
 void StyleStore::OnAssSort(wxCommandEvent& event)
 {
 	SubsGrid* grid = Notebook::GetTab()->grid;
-	std::sort(grid->GetStyleTable()->begin(), grid->GetStyleTable()->end(), sortfunc);
+	grid->SortStyles(sortfunc);
 	ASSList->SetSelection(0, true);
-	grid->edited = true;
 	SetModified();
 }
 
@@ -824,7 +823,6 @@ void StyleStore::SetModified(bool refreshActiveLine /*= false*/)
 	SubsGrid* grid = Notebook::GetTab()->grid;
 	Notebook::GetTab()->edit->RefreshStyle();
 	grid->SetModified(STYLE_MANAGER, refreshActiveLine);
-	grid->Refresh(false);
 	ASSList->SetArray(grid->GetStyleTable());
 }
 
@@ -1015,16 +1013,20 @@ void StyleStore::OnStyleMove(wxCommandEvent& event)
 		else if (!moveUp && moveSelections > lastDownSelection){
 			moveSelections = lastDownSelection;
 		}
-		Styles *Selected = (*styleTable)[sel];
-		styleTable->erase(styleTable->begin() + sel);
-		styleTable->insert(styleTable->begin() + moveSelections, Selected);
+		if (action < 4){
+			Notebook::GetTab()->grid->MoveStyle(sel, moveSelections);
+		}
+		else{
+			Styles *Selected = (*styleTable)[sel];
+			styleTable->erase(styleTable->begin() + sel);
+			styleTable->insert(styleTable->begin() + moveSelections, Selected);
+		}
 		sels[i] = moveSelections;
 		if (moveUp){ i++; lastUpSelection++; }
 		else{ i--; lastDownSelection--; }
 	}
 	if (action < 4){ 
 		ASSList->SetSelections(sels); 
-		Notebook::GetTab()->grid->edited = true; 
 		SetModified(); 
 	}
 	else{ Store->SetSelections(sels); }

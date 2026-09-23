@@ -316,14 +316,14 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 				strings.push_back(wxString::Format(L"%i", Dial->Layer));
 			}
 
-			if (previewGrid->showFrames && tab->video->HasFFMS2()){
-				Provider *FFMS2 = tab->video->GetFFMS2();
+			if (previewGrid->showFrames && tab->video->GetTimebase().IsExact()){
+				const Timebase &timebase = tab->video->GetTimebase();
 				wxString frame;
-				frame << FFMS2->GetFramefromMS(Dial->Start.mstime);
+				frame << timebase.FrameAt(Dial->Start.mstime);
 				strings.push_back(frame);
 				if (previewGrid->subsFormat != TMP){
 					frame = emptyString;
-					frame << FFMS2->GetFramefromMS(Dial->End.mstime) - 1;
+					frame << timebase.FrameAt(Dial->End.mstime) - 1;
 					strings.push_back(frame);
 				}
 			}
@@ -644,7 +644,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 				isstart = true;
 			}
 			if (ctrl){ vtime -= 1000; }
-			tabp->video->Seek(MAX(0, vtime), isstart, true, false);
+			tabp->video->Seek(MAX(0, vtime), isstart);
 		}
 		return;
 	}
@@ -772,7 +772,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 		if (middle){
 			if (video->GetState() != None){
 				video->PlayLine(previewGrid->GetDialogue(row)->Start.mstime,
-					video->GetPlayEndTime(previewGrid->GetDialogue(row)->End.mstime));
+					video->GetTimebase().PlayEndBefore(previewGrid->GetDialogue(row)->End.mstime));
 			}
 
 		}

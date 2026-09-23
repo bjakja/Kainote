@@ -13,18 +13,18 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "SubsGrid.h"
+#include "SubsGridBase.h"
 #include <wx/string.h>
 
 //class SubsGrid;
 
 class SubsLoader{
 public:
-	SubsLoader(SubsGrid *grid, const wxString &text, wxString &ext);
+	SubsLoader(SubsGridBase *grid, const wxString &text, wxString &ext);
 private:
 	bool LoadASS(const wxString &text);
 	bool LoadSRT(const wxString &text);
 	bool LoadTXT(const wxString &text);
 	void TrimLastNumber(wxString* text);
-	SubsGrid *grid;
+	SubsGridBase *grid;
 };

@@ -28,6 +28,7 @@
 #include "Notebook.h"
 #include "KaiSlider.h"
 #include "AudioBox.h"
+#include "KeyframesLoader.h"
 //#include "EditBox.h"
 //#include "SubsGrid.h"
 
@@ -242,7 +243,7 @@ bool VideoBox::Pause(bool skipWhenOnEnd)
 		LoadVideo(Kai->videorec[Kai->videorec.size() - 1], CLOSE_SUBTITLES);
 		return true;
 	}
-	if (renderer->m_Time >= renderer->GetDuration() && skipWhenOnEnd){ return false; }
+	if (renderer->GetCurrentPosition() >= renderer->GetDuration() && skipWhenOnEnd){ return false; }
 	if (!renderer->Pause()){ return false; }
 	if (GetState() == Paused){
 		m_VideoTimeTimer.Stop(); RefreshTime();
@@ -300,7 +301,7 @@ bool VideoBox::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*= 
 		byFFMS2 = true;
 
 	if (byFFMS2 != curentFFMS2){
-		SAFE_DELETE(renderer);
+		DeleteRenderer();
 	}
 	if (!renderer){
 		if (byFFMS2)
@@ -320,10 +321,12 @@ bool VideoBox::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*= 
 	if (!renderer->OpenFile(fileName, subsFlag, !tab->editor, changeAudio)){
 		renderer->m_BlockResize = false;
 		if (!byFFMS2){ KaiMessageBox(_("The file is not a valid video file or is corrupted,\nor codecs or a splitter may be missing"), _("Warning")); }
-		SAFE_DELETE(renderer)
+		DeleteRenderer();
 		return false;
 	}
 	m_IsDirectShow = !byFFMS2;
+	if (!m_KeyframesFileName.empty())
+		OpenKeyframes(m_KeyframesFileName);
 	if (fulls) { SetFullscreen(); }
 	if (!(IsShown() || (m_FullScreenWindow && m_FullScreenWindow->IsShown()))){
 		shown = false; Show();
@@ -371,7 +374,6 @@ bool VideoBox::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*= 
 			m_VolumeSlider->Show(false);
 			m_TimesTextField->SetSize(wxMax(0, m_VideoWindowLastSize.x - 185), -1);
 		}
-		renderer->m_State = Paused;
 		renderer->Render(true, false);
 	}
 
@@ -409,12 +411,11 @@ bool VideoBox::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*= 
 }
 
 
-bool VideoBox::Seek(int whre, bool starttime/*=true*/, bool disp/*=true*/, bool reloadSubs/*=true*/, 
-	bool correct /*= true*/, bool asynchonize /*= true*/, bool refreshAudio /*= true*/)
+bool VideoBox::Seek(int time, bool startTime/*=true*/, int flags/*=0*/)
 {
 	wxMutexLocker lock(vbmutex);
 	if (!renderer){ return false; }
-	renderer->SetPosition(whre, starttime, correct, asynchonize, refreshAudio);
+	renderer->SetPosition(time, startTime, flags);
 	return true;
 }
 
@@ -998,7 +999,7 @@ void VideoBox::ContextMenu(const wxPoint &pos)
 		timee.NewTime(renderer->m_Chapters[j].time);
 		int ntime = (j >= renderer->m_Chapters.size() - 1) ? INT_MAX : renderer->m_Chapters[(j + 1)].time;
 		menu->Append(MENU_CHAPTERS + j, renderer->m_Chapters[j].name + L"\t[" + timee.raw() + L"]",
-			emptyString, true, 0, 0, (ntime > renderer->m_Time) ? ITEM_RADIO : ITEM_NORMAL);
+			emptyString, true, 0, 0, (ntime > renderer->GetCurrentPosition()) ? ITEM_RADIO : ITEM_NORMAL);
 	}
 	id = 0;
 	int Modifiers = 0;
@@ -1222,7 +1223,7 @@ void VideoBox::OnPaint(wxPaintEvent& event)
 {
 #ifndef _WIN32
 	wxPaintDC paintDc(this);
-	if (renderer && !renderer->m_BlockResize && renderer->m_State != None){
+	if (renderer && !renderer->m_BlockResize && renderer->GetState() != None){
 		// Both Linux renderers (FFMS2 + GStreamer appsink) composite into a BGRA
 		// frame buffer and present through the shared base RenderToDc.
 		renderer->RenderToDc(paintDc);
@@ -1243,7 +1244,7 @@ void VideoBox::OnPaint(wxPaintEvent& event)
 	}
 	return;
 #endif
-	if (renderer && !renderer->m_BlockResize && renderer->m_State == Paused){
+	if (renderer && !renderer->m_BlockResize && renderer->GetState() == Paused){
 		renderer->Render(true, false);
 	}
 	else if (GetState() == None){
@@ -1315,48 +1316,55 @@ void VideoBox::ChangeOnScreenResolution(TabPanel *tab)
 	visual->SetCurVisual();
 }
 
+//time; frame; frames from the active line start; ms from its start and end
+void VideoBox::ShowTimes(SubsTime &videoTime, KaiTextCtrl *field)
+{
+	wxString times;
+	times << videoTime.raw(SRT) << L";  ";
+	Dialogue* line = tab->edit->line;
+	if (!m_IsDirectShow){
+		int frame = renderer->GetCurrentFrame();
+		times << frame << L";  ";
+		const Timebase &timebase = m_Timebase;
+		if (!timebase.IsEmpty()){
+			if (m_LastActiveLineStartTime != line->Start.mstime) {
+				m_LastActiveLineStartFrame = timebase.FrameAt(line->Start.mstime);
+				m_LastActiveLineStartTime = line->Start.mstime;
+			}
+			times << (frame - m_LastActiveLineStartFrame) << L";  ";
+			if (timebase.IsKeyframe(videoTime.mstime)){
+				m_ShownKeyframe = true;
+				field->SetForegroundColour(WINDOW_WARNING_ELEMENTS);
+			}
+			else if (m_ShownKeyframe){
+				m_ShownKeyframe = false;
+				field->SetForegroundColour(WINDOW_TEXT);
+			}
+		}
+	}
+	if (tab->editor){
+		int sdiff = videoTime.mstime - ZEROIT(line->Start.mstime);
+		int ediff = videoTime.mstime - ZEROIT(line->End.mstime);
+		times << sdiff << L" ms, " << ediff << L" ms";
+	}
+	field->SetValue(times);
+	field->Update();
+}
+
 void VideoBox::RefreshTime()
 {
 	if (!renderer)
 		return;
 
 	SubsTime videoTime;
-	videoTime.mstime = renderer->m_Time;
+	videoTime.mstime = renderer->GetCurrentPosition();
 	float dur = renderer->GetDuration();
 	float val = (dur > 0) ? videoTime.mstime / dur : 0.0;
 
 	if (m_IsFullscreen){
 		m_FullScreenWindow->vslider->SetValue(val);
-		if (m_FullScreenWindow->panel->IsShown()){
-			wxString times;
-			times << videoTime.raw(SRT) << L";  ";
-			Dialogue* line = tab->edit->line;
-			if (!m_IsDirectShow){
-				times << renderer->m_Frame << L";  ";
-				if (renderer->HasFFMS2()){
-					if (m_LastActiveLineStartTime != line->Start.mstime) {
-						m_LastActiveLineStartFrame = renderer->GetFFMS2()->GetFramefromMS(line->Start.mstime);
-						m_LastActiveLineStartTime = line->Start.mstime;
-					}
-					times << (renderer->m_Frame - m_LastActiveLineStartFrame) << L";  ";
-					if (renderer->GetFFMS2()->GetKeyframes().Index(renderer->m_Time) != -1){
-						m_ShownKeyframe = true;
-						m_FullScreenWindow->mstimes->SetForegroundColour(WINDOW_WARNING_ELEMENTS);
-					}
-					else if (m_ShownKeyframe){
-						m_ShownKeyframe = false;
-						m_FullScreenWindow->mstimes->SetForegroundColour(WINDOW_TEXT);
-					}
-				}
-			}
-			if (tab->editor){
-				int sdiff = videoTime.mstime - ZEROIT(line->Start.mstime);
-				int ediff = videoTime.mstime - ZEROIT(line->End.mstime);
-				times << sdiff << L" ms, " << ediff << L" ms";
-			}
-			m_FullScreenWindow->mstimes->SetValue(times);
-			m_FullScreenWindow->mstimes->Update();
-		}
+		if (m_FullScreenWindow->panel->IsShown())
+			ShowTimes(videoTime, m_FullScreenWindow->mstimes);
 		if (!m_FullScreenProgressBar){ return; }
 		SubsTime DurationTime;
 		DurationTime.mstime = dur;
@@ -1365,35 +1373,9 @@ void VideoBox::RefreshTime()
 	else{
 		m_SeekingSlider->SetValue(val);
 		m_SeekingSlider->Update();
-		wxString times;
-		times << videoTime.raw(SRT) << L";  ";
-		Dialogue* line = tab->edit->line;
-		if (!m_IsDirectShow){
-			times << renderer->m_Frame << L";  ";
-			if (renderer->HasFFMS2()){
-				if (m_LastActiveLineStartTime != line->Start.mstime) {
-					m_LastActiveLineStartFrame = renderer->GetFFMS2()->GetFramefromMS(line->Start.mstime);
-					m_LastActiveLineStartTime = line->Start.mstime;
-				}
-				times << (renderer->m_Frame - m_LastActiveLineStartFrame) << L";  ";
-				if (renderer->GetFFMS2()->GetKeyframes().Index(renderer->m_Time) != -1){
-					m_ShownKeyframe = true;
-					m_TimesTextField->SetForegroundColour(WINDOW_WARNING_ELEMENTS);
-				}
-				else if (m_ShownKeyframe){
-					m_ShownKeyframe = false;
-					m_TimesTextField->SetForegroundColour(WINDOW_TEXT);
-				}
-			}
-		}
-		if (tab->editor){
-			int sdiff = videoTime.mstime - ZEROIT(line->Start.mstime);
-			int ediff = videoTime.mstime - ZEROIT(line->End.mstime);
-			times << sdiff << L" ms, " << ediff << L" ms";
+		ShowTimes(videoTime, m_TimesTextField);
+		if (tab->editor)
 			tab->grid->RefreshIfVisible(videoTime.mstime);
-		}
-		m_TimesTextField->SetValue(times);
-		m_TimesTextField->Update();
 
 	}
 
@@ -1442,7 +1424,7 @@ void VideoBox::NextChap()
 				if (jj >= (int)chapters.size() - 1){ jj = 0; } 
 				else{ jj++; } 
 			}
-			Seek(chapters[jj].time, true, true, true, false);
+			Seek(chapters[jj].time, true, SEEK_NO_SNAP);
 
 			prevchap = jj;
 			break;
@@ -1466,7 +1448,7 @@ void VideoBox::PrevChap()
 				if (jj < 1){ jj = chapters.size() - 1; } 
 				else{ jj--; } 
 			}
-			Seek(chapters[jj].time, true, true, true, false);
+			Seek(chapters[jj].time, true, SEEK_NO_SNAP);
 			prevchap = jj;
 			break;
 		}
@@ -1669,30 +1651,33 @@ bool VideoBox::RemoveVisual(bool noRefresh, bool disable)
 
 	return false;
 }
+const Timebase &VideoBox::GetTimebase()
+{
+	return m_Timebase;
+}
+void VideoBox::SetVideoTimebase(Timebase timebase)
+{
+	m_Timebase = std::move(timebase);
+	KeyframesChanged();
+}
+void VideoBox::DeleteRenderer()
+{
+	SAFE_DELETE(renderer);
+	Timebase keyframesOnly;
+	keyframesOnly.SetKeyframes(m_Timebase.Keyframes());
+	m_Timebase = std::move(keyframesOnly);
+}
+void VideoBox::KeyframesChanged()
+{
+	AudioBox *audio = tab->edit->ABox;
+	if (audio && audio->audioDisplay->loaded)
+		audio->audioDisplay->UpdateImage(true);
+}
 int VideoBox::GetFrameTime(bool start)
 {
-	if (renderer)
-		return renderer->GetFrameTime(start);
-
-	return 0;
-}
-int VideoBox::GetFrameTimeFromTime(int time, bool start)
-{
-	if (renderer)
-		return renderer->GetFrameTimeFromTime(time, start);
-
-	return 0;
-}
-void VideoBox::GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd)
-{
-	if (renderer)
-		renderer->GetStartEndDelay(startTime, endTime, retStart, retEnd);
-}
-int VideoBox::GetFrameTimeFromFrame(int frame, bool start)
-{
-	if (renderer)
-		return renderer->GetFrameTimeFromFrame(frame, start);
-	return 0;
+	const Timebase &timebase = GetTimebase();
+	int frame = timebase.FrameShownAt(Tell());
+	return start ? timebase.StartTimeFor(frame) : timebase.EndTimeFor(frame);
 }
 void VideoBox::SetZoom(bool reset)
 {
@@ -1712,46 +1697,41 @@ bool VideoBox::HasZoom()
 }
 void VideoBox::GoToNextKeyframe()
 {
-	if (renderer)
-		renderer->GoToNextKeyframe();
+	int keyframe = GetTimebase().NextKeyframe(Tell());
+	if (renderer && keyframe >= 0)
+		renderer->SetPosition(keyframe);
 }
 void VideoBox::GoToPrevKeyframe()
 {
-	if (renderer)
-		renderer->GoToPrevKeyframe();
+	int keyframe = GetTimebase().PrevKeyframe(Tell());
+	if (renderer && keyframe >= 0)
+		renderer->SetPosition(keyframe);
 }
 void VideoBox::OpenKeyframes(const wxString &filename)
 {
-	if (renderer && renderer->HasFFMS2()) {
-		renderer->GetFFMS2()->OpenKeyframes(filename);
-		m_KeyframesFileName.Empty();
+	AudioBox *audio = tab->edit->ABox;
+	if (m_Timebase.IsEmpty() && !(audio && audio->audioDisplay->loaded)) {
+		//without video or audio keep the path until a video is loaded
+		m_KeyframesFileName = filename;
 		return;
 	}
-	//renderers without own provider (GStreamer) keep keyframes themselves,
-	//to make seeking to keyframes work, Direct Show ignores it.
-	if (renderer)
-		renderer->OpenKeyframes(filename);
-
-	if (tab->edit->ABox) {
-		// skip return when audio do not have own provider or file didn't have video for take timecodes.
-		if (tab->edit->ABox->OpenKeyframes(filename)) {
-			m_KeyframesFileName.Empty();
-			return;
-		}
+	//audio without video has no frames, count them at the usual film rate
+	Timebase frames = m_Timebase.IsEmpty() ? Timebase::FromFps(24000.f / 1001.f, 0) : m_Timebase;
+	std::vector<int> keyframes;
+	KeyframeLoader kfl(filename, &keyframes, frames);
+	//filename can be m_KeyframesFileName itself, so clear it only now
+	m_KeyframesFileName.Empty();
+	if (keyframes.empty()) {
+		KaiMessageBox(_("Invalid keyframes format"), _("Error"), 4L, this);
+		return;
 	}
-	//if there is no FFMS2 or audiobox we store keyframes path;
-	m_KeyframesFileName = filename;
+	m_Timebase.SetKeyframes(std::move(keyframes));
+	KeyframesChanged();
 }
 void VideoBox::SetColorSpace(const wxString& matrix, bool render)
 {
 	if (renderer)
 		renderer->SetColorSpace(matrix, render);
-}
-int VideoBox::GetPlayEndTime(int time)
-{
-	if (renderer)
-		return renderer->GetPlayEndTime(time);
-	return 0;
 }
 void VideoBox::DisableVisuals(bool disable)
 {
@@ -1801,10 +1781,6 @@ void VideoBox::ResetVisual()
 		renderer->ResetVisual();
 }
 
-bool VideoBox::HasFFMS2()
-{
-	return renderer && renderer->HasFFMS2();
-}
 Provider *VideoBox::GetFFMS2()
 {
 	if (renderer)
@@ -1813,16 +1789,58 @@ Provider *VideoBox::GetFFMS2()
 	return nullptr;
 }
 
+void VideoBox::MarkSubtitlesOutdated()
+{
+	if (renderer)
+		renderer->MarkSubtitlesOutdated();
+}
+
+bool VideoBox::OpenOwnSubs(wxString *text)
+{
+	if (!renderer) {
+		delete text;
+		return false;
+	}
+	return renderer->OpenSubs(OPEN_HAS_OWN_TEXT, true, text);
+}
+
+unsigned char *VideoBox::GetFrame(int frame, bool withSubtitles)
+{
+	return renderer ? renderer->GetFrame(frame, withSubtitles) : nullptr;
+}
+
+const std::vector<chapter> &VideoBox::GetChapters()
+{
+	static const std::vector<chapter> noChapters;
+	return renderer ? renderer->m_Chapters : noChapters;
+}
+
+RECT VideoBox::GetVideoRect()
+{
+	RECT noVideo = { 0, 0, 0, 0 };
+	return renderer ? renderer->m_BackBufferRect : noVideo;
+}
+
+bool VideoBox::RedrawPaused()
+{
+	if (!renderer || renderer->GetState() > Paused || renderer->m_BlockResize)
+		return false;
+	renderer->Render(renderer->m_VideoResized);
+	return true;
+}
+
+void VideoBox::SetAudioPlayer(AudioDisplay *player)
+{
+	if (renderer)
+		renderer->SetAudioPlayer(player);
+}
+
 void VideoBox::SetVisualEdition(bool value)
 {
 	if(renderer)
 		renderer->m_HasVisualEdition = value;
 }
 
-RendererVideo *VideoBox::GetRenderer()
-{
-	return renderer;
-}
 
 Fullscreen *VideoBox::GetFullScreenWindow()
 {
@@ -1919,7 +1937,7 @@ PlaybackState VideoBox::GetState() {
 	if (!renderer)
 		return None;
 
-	return renderer->m_State;
+	return renderer->GetState();
 }
 void VideoBox::CaptureMouse() {
 	if (m_IsFullscreen && m_FullScreenWindow) {

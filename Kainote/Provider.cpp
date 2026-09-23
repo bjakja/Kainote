@@ -16,16 +16,16 @@
 
 
 #include "Provider.h"
+#include "RendererFFMS2.h"
 #include "ProviderDummy.h"
 #include "ProviderFFMS2.h"
-#include "KeyframesLoader.h"
 #include "KaiMessageBox.h"
 #include "AudioBox.h"
 #include "VisualDrawingShapes.h"
 #include "Notebook.h"
 
 
-Provider::Provider(const wxString& filename, RendererVideo* renderer)
+Provider::Provider(const wxString& filename, RendererFFMS2* renderer)
 	: m_renderer(renderer)
 	, m_filename(filename)
 	, m_eventStartPlayback(CreateEvent(0, FALSE, FALSE, 0))
@@ -35,7 +35,7 @@ Provider::Provider(const wxString& filename, RendererVideo* renderer)
 {
 }
 
-Provider* Provider::Get(const wxString& filename, RendererVideo* renderer, wxWindow* progressSinkWindow, bool* success)
+Provider* Provider::Get(const wxString& filename, RendererFFMS2* renderer, wxWindow* progressSinkWindow, bool* success)
 {
 	if (filename.StartsWith(L"?dummy") || filename.StartsWith(L"dummy")) {
 		return new ProviderDummy(filename, renderer, progressSinkWindow, success);
@@ -122,78 +122,75 @@ void Provider::GetWaveForm(int* min, int* peak, long long start, int w, int h, i
 
 }
 
-int Provider::TimefromFrame(int nframe)
+void Provider::RunPlaybackThread()
 {
-	if (nframe < 0) { nframe = 0; }
-	if (nframe >= m_numFrames) { nframe = m_numFrames - 1; }
-	return m_timecodes[nframe];
-}
+	HANDLE events_to_wait[] = {
+		m_eventStartPlayback,
+		m_eventSetPosition,
+		m_eventKillSelf
+	};
 
-int Provider::FramefromTime(int time)
-{
-	if (time <= 0) { return 0; }
-	int start = m_lastFrame;
-	if (m_lastTime > time)
-	{
-		start = 0;
-	}
-	int wframe = m_numFrames - 1;
-	for (int i = start; i < m_numFrames - 1; i++)
-	{
-		if (m_timecodes[i] >= time && time < m_timecodes[i + 1])
+	while (1) {
+		DWORD wait_result = WaitForMultipleObjects(sizeof(events_to_wait) / sizeof(HANDLE), events_to_wait, FALSE, INFINITE);
+
+		if (wait_result == WAIT_OBJECT_0 + 0)
 		{
-			wframe = i;
+			unsigned char* buff = m_renderer->m_FrameBuffer;
+			while (1) {
+				if (WaitForSingleObject(m_eventKillSelf, 0) == WAIT_OBJECT_0) { return; }
+				if (WaitForSingleObject(m_eventSetPosition, 0) == WAIT_OBJECT_0)
+					ApplyPendingSeek();
+
+				const Timebase &timebase = m_renderer->GetTimebase();
+				int frame = m_renderer->m_Frame;
+				if (!FetchPlaybackFrame(frame, buff)) {
+					// Retrying a failing fetch would spin the thread without ever
+					// looking at the stop or kill event again, so end playback.
+					wxCommandEvent* evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED, ID_END_OF_STREAM);
+					wxQueueEvent(m_renderer->videoControl, evt);
+					break;
+				}
+
+				m_renderer->DrawTexture(buff);
+				m_renderer->Render(false);
+
+				if (PlaybackReachedEnd(frame, m_renderer->m_Time, m_renderer->m_PlayEndTime, m_numFrames)) {
+					wxCommandEvent* evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED, ID_END_OF_STREAM);
+					wxQueueEvent(m_renderer->videoControl, evt);
+					break;
+				}
+				else if (m_renderer->m_State != Playing) {
+					break;
+				}
+
+				int played = timeGetTime() - m_renderer->m_LastTime;
+				PlaybackStep step = NextPlaybackFrame(timebase, frame, played,
+					m_renderer->m_PlayEndTime, m_numFrames);
+				m_renderer->m_Frame = step.frame;
+				m_renderer->m_Time = timebase.MsAt(step.frame);
+				if (step.sleepMs > 0) { Sleep(step.sleepMs); }
+			}
+		}
+		else if (wait_result == WAIT_OBJECT_0 + 1) {
+			//entire seeking have to be in this thread or subtitles will out of sync
+			ApplyPendingSeek();
+		}
+		else {
 			break;
 		}
-	}
-	m_lastFrame = wframe;
-	m_lastTime = time;
-	return m_lastFrame;
-}
 
-int Provider::GetMSfromFrame(int frame)
-{
-	if (frame >= m_numFrames) { return frame * (1000.f / m_FPS); }
-	else if (frame < 0) { return 0; }
-	return m_timecodes[frame];
-}
-
-int Provider::GetFramefromMS(int MS, int seekfrom, bool safe)
-{
-	if (MS <= 0) return 0;
-	int result = (safe) ? m_numFrames - 1 : m_numFrames;
-	for (int i = seekfrom; i < m_numFrames; i++)
-	{
-		if (m_timecodes[i] >= MS)
-		{
-			result = i;
-			break;
-		}
-	}
-	return result;
-}
-
-void Provider::OpenKeyframes(const wxString& filename)
-{
-	wxArrayInt keyframes;
-	KeyframeLoader kfl(filename, &keyframes, this);
-	if (keyframes.size()) {
-		m_keyFrames = keyframes;
-		TabPanel* tab = (m_renderer) ? (TabPanel*)m_renderer->videoControl->GetParent() : Notebook::GetTab();
-		if (tab->edit->ABox) {
-			tab->edit->ABox->SetKeyframes(keyframes);
-		}
-	}
-	else {
-		KaiMessageBox(_("Invalid keyframes format"), _("Error"), 4L, Notebook::GetTab());
 	}
 }
 
-void Provider::SetPosition(int time, bool starttime, bool refteshAudio/* = true*/)
+void Provider::ApplyPendingSeek()
 {
-	m_changedTime = time;
-	m_isStartTime = starttime;
-	m_refreshAudio = refteshAudio;
+	SeekRequest seek;
+	if (m_pendingSeek.Take(&seek))
+		m_renderer->SetFFMS2Position(seek.time, seek.startTime, seek.refreshAudio);
+}
+
+void Provider::SetPosition(int time, bool starttime, bool refreshAudio/* = true*/)
+{
+	m_pendingSeek.Post({ time, starttime, refreshAudio });
 	SetEvent(m_eventSetPosition);
 }
-

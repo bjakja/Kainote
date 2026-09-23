@@ -454,7 +454,7 @@ done:
 	if (seekAfter == 1 && playAfter < 2 && !nochangeline && rowChanged){
 		if (vb->GetState() != None){
 			if (vb->GetState() == Playing){ vb->Pause(); }
-			vb->Seek(line->Start.mstime, true, true, true, true, true, !setaudio);
+			vb->Seek(line->Start.mstime, true, setaudio ? SEEK_KEEP_AUDIO : 0);
 		}
 		//return;
 	}
@@ -474,7 +474,7 @@ done:
 				Dialogue *next = grid->GetDialogue(grid->GetKeyFromPosition(currentLine, 1));
 				int ed = line->End.mstime, nst = next->Start.mstime;
 				int playend = (nst > ed && playAfter > 2) ? nst : ed;
-				tab->video->PlayLine(line->Start.mstime, tab->video->GetPlayEndTime(playend));
+				tab->video->PlayLine(line->Start.mstime, tab->video->GetTimebase().PlayEndBefore(playend));
 			}
 		}
 	}
@@ -728,7 +728,6 @@ void EditBox::PutinNonass(const wxString &text, const wxString &tag)
 			}
 		}
 		grid->SetModified(EDITBOX_MULTILINE_EDITION);
-		grid->Refresh(false);
 	}
 
 }
@@ -1587,7 +1586,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		else{ lastVisible = visible; }
 		//make sure that dummy edition is true when line is not visible
 		if (!visible){
-			tab->video->GetRenderer()->m_HasDummySubs = true;
+			tab->video->MarkSubtitlesOutdated();
 		}
 		else {
 			openFlag = OPEN_DUMMY;
@@ -1729,7 +1728,6 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 				txt.insert(cpyfrom, tag);
 			}
 			grid->SetModified(EDITBOX_MULTILINE_EDITION);
-			grid->Refresh(false);
 
 		}
 

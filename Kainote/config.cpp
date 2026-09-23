@@ -251,7 +251,7 @@ void config::GetRawOptions(wxString &options, bool Audio/*=false*/)
 {
 	options = L"[" + progname + L"]\r\n";
 	for (size_t i = 1; i < configSize; i++) {
-		if ((!Audio && i <= AUDIO_WHEEL_DEFAULT_TO_ZOOM) || (Audio && i > AUDIO_WHEEL_DEFAULT_TO_ZOOM) ||
+		if (IsAudioOption((CONFIG)i) != Audio ||
 			stringConfig[i].empty()) {
 			continue;
 		}
@@ -740,17 +740,6 @@ void config::SetTable(CONFIG opt, wxArrayString &asopt)
 		sresult << L"\t" << asopt[i] << L"\n";
 	}
 	stringConfig[opt] = sresult + L"}";
-}
-
-void config::SetStringTable(CONFIG opt, wxArrayString &asopt, wxString split)
-{
-	wxString sresult;
-	wxString ES;
-	for (size_t i = 0; i < asopt.size(); i++)
-	{
-		wxString endchar = (i == asopt.size() - 1) ? ES : split;
-	}
-	stringConfig[opt] = sresult;
 }
 
 void config::SetIntTable(CONFIG opt, wxArrayInt &asopt)

@@ -27,7 +27,7 @@ You can download the latest beta version of Kainote from the link below.
 
 [**Download Kainote Beta**](https://github.com/bjakja/Kainote/actions/workflows/build.yml?query=branch%3Amaster)
 
-The Automation 4 library and the themes are tracked in this repository; everything else the package needs is either built here or fetched from pinned sources at build time. Builds are produced by CI on every push to `master`. Open the newest run and download the package for your platform — **`kainote-windows-x64`** (a zip holding `Kainote_x64\` with the executables, the Automation 4 library, dictionaries, translations, the CSRI renderers and the runtimes Windows does not always have) or **`kainote-linux-x86_64`** (the same layout, with the `kainote` binary in place of the Windows executables). GitHub asks you to sign in before it hands over an artifact, and keeps artifacts for 90 days.
+The Automation 4 library and the themes are tracked in this repository; everything else the package needs is either built here or fetched from pinned sources at build time. Builds are produced by CI on every push to `master`. Open the newest run and download the package for your platform — **`kainote-windows-x64`** (a zip holding `Kainote_x64\` with the executables, the Automation 4 library, dictionaries, translations, the CSRI renderers and the runtimes Windows does not always have) or **`kainote-linux-x86_64`** (a tarball and checksum for the Linux runtime). Both builds use the pinned wxWidgets 3.3.3 source. GitHub asks you to sign in before it hands over an artifact, and keeps artifacts for 90 days.
 
 **Please Note**: Beta builds are unstable and intended for testing purposes. Features may be incomplete or contain bugs. If you encounter issues or have feedback, please join our Discord server.
 
@@ -143,7 +143,7 @@ library directories live in `Kainote\Kainote.vcxproj` under
 
 ### Linux build
 
-The Linux build uses CMake and system packages. It has been verified on an Ubuntu/Debian-style environment with GCC, wxGTK 3.2, LuaJIT 2.1 (Lua 5.1-compatible), FFMS2, FFmpeg, libass, Hunspell, uchardet, libcurl, ICU, Boost, GStreamer 1.x, and OpenGL development packages.
+The Linux build uses CMake and system packages for most dependencies. wxGTK is built from the same pinned wxWidgets 3.3.3 submodule as the Windows build. It requires GCC, LuaJIT 2.1 (Lua 5.1-compatible), FFMS2, FFmpeg, libass, Hunspell, uchardet, libcurl, ICU, Boost, GStreamer 1.x, and OpenGL development packages.
 
 #### 1. Install dependencies on Ubuntu/Debian
 
@@ -152,12 +152,12 @@ sudo apt update
 sudo apt install --no-install-recommends -y \
   build-essential \
   cmake \
+  ninja-build \
   gzip \
   tar \
   git \
   pkg-config \
-  libwxgtk3.2-dev \
-  libwxgtk-gl3.2-dev \
+  libgtk-3-dev \
   libass-dev \
   libffms2-dev \
   libluajit-5.1-dev \
@@ -204,7 +204,7 @@ The exact package names vary by distribution. Install the equivalent development
 - CMake 3.21 or newer
 - GNU tar and gzip (used by the reproducible Linux archive target)
 - pkg-config
-- wxWidgets/wxGTK 3.x with core, base, adv, aui, html, xml, gl, and stc components
+- GTK 3 and OpenGL development packages for the pinned wxWidgets 3.3.3 build
 - libass
 - FFMS2
 - LuaJIT 2.1 development headers and library (the `luajit` pkg-config module)
@@ -227,8 +227,7 @@ For Fedora-like systems, the package set is approximately:
 
 ```bash
 sudo dnf install \
-  gcc gcc-c++ make cmake gzip tar git pkgconf-pkg-config \
-  wxGTK-devel wxGTK-gl wxGTK-media \
+  gcc gcc-c++ make cmake ninja-build gzip tar git pkgconf-pkg-config \
   libass-devel ffms2-devel luajit-devel hunspell-devel hunspell-en-US uchardet-devel \
   libcurl-devel libicu-devel boost-devel ffmpeg-devel mesa-libGL-devel gtk3-devel \
   gstreamer1-devel gstreamer1-plugins-base-devel \
@@ -239,7 +238,7 @@ For Arch-like systems, the package set is approximately:
 
 ```bash
 sudo pacman -S --needed \
-  base-devel cmake gzip tar git pkgconf wxwidgets-gtk3 libass ffms2 luajit \
+  base-devel cmake ninja gzip tar git pkgconf libass ffms2 luajit \
   hunspell hunspell-en_us uchardet curl icu boost ffmpeg mesa gtk3 \
   gstreamer gst-plugins-base gst-plugins-good gettext
 ```
@@ -269,14 +268,19 @@ pkg-config --modversion \
   gstreamer-app-1.0
 ```
 
-Also verify wxWidgets:
+Build wxWidgets from the pinned submodule, then verify it:
 
 ```bash
-wx-config --version
-wx-config --libs core,base,adv,aui,html,xml,gl,stc
+Thirdparty/build-wxwidgets-linux.sh
+build-wx-linux/prefix/bin/wx-config --version
+build-wx-linux/prefix/bin/wx-config --libs core,base,adv,aui,html,xml,gl,stc,net
 ```
 
-If any command fails, install the missing `-dev`/`-devel` package or adjust `PKG_CONFIG_PATH` so that pkg-config can locate the corresponding `.pc` file.
+The version must be 3.3.3. Kainote's CMake configure uses this private `wx-config` by default and rejects a different wxWidgets version. If a command fails, install the missing `-dev`/`-devel` package or adjust `PKG_CONFIG_PATH` so that pkg-config can locate the corresponding `.pc` file.
+
+For a Debug build, run `Thirdparty/build-wxwidgets-linux.sh --debug` and
+configure Kainote with `-DCMAKE_BUILD_TYPE=Debug`. The Debug build uses its
+own wxWidgets libraries under `build-wx-linux-debug/prefix`.
 
 #### 4. Configure and build
 
