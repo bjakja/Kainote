@@ -1318,6 +1318,40 @@ void VideoBox::ChangeOnScreenResolution(TabPanel *tab)
 	visual->SetCurVisual();
 }
 
+//time; frame; frames from the active line start; ms from its start and end
+void VideoBox::ShowTimes(SubsTime &videoTime, KaiTextCtrl *field)
+{
+	wxString times;
+	times << videoTime.raw(SRT) << L";  ";
+	Dialogue* line = tab->edit->line;
+	if (!m_IsDirectShow){
+		times << renderer->m_Frame << L";  ";
+		const Timebase &timebase = renderer->GetTimebase();
+		if (!timebase.IsEmpty()){
+			if (m_LastActiveLineStartTime != line->Start.mstime) {
+				m_LastActiveLineStartFrame = timebase.FrameAt(line->Start.mstime);
+				m_LastActiveLineStartTime = line->Start.mstime;
+			}
+			times << (renderer->m_Frame - m_LastActiveLineStartFrame) << L";  ";
+			if (timebase.IsKeyframe(renderer->m_Time)){
+				m_ShownKeyframe = true;
+				field->SetForegroundColour(WINDOW_WARNING_ELEMENTS);
+			}
+			else if (m_ShownKeyframe){
+				m_ShownKeyframe = false;
+				field->SetForegroundColour(WINDOW_TEXT);
+			}
+		}
+	}
+	if (tab->editor){
+		int sdiff = videoTime.mstime - ZEROIT(line->Start.mstime);
+		int ediff = videoTime.mstime - ZEROIT(line->End.mstime);
+		times << sdiff << L" ms, " << ediff << L" ms";
+	}
+	field->SetValue(times);
+	field->Update();
+}
+
 void VideoBox::RefreshTime()
 {
 	if (!renderer)
@@ -1330,37 +1364,8 @@ void VideoBox::RefreshTime()
 
 	if (m_IsFullscreen){
 		m_FullScreenWindow->vslider->SetValue(val);
-		if (m_FullScreenWindow->panel->IsShown()){
-			wxString times;
-			times << videoTime.raw(SRT) << L";  ";
-			Dialogue* line = tab->edit->line;
-			if (!m_IsDirectShow){
-				times << renderer->m_Frame << L";  ";
-				const Timebase &timebase = renderer->GetTimebase();
-				if (!timebase.IsEmpty()){
-					if (m_LastActiveLineStartTime != line->Start.mstime) {
-						m_LastActiveLineStartFrame = timebase.FrameAt(line->Start.mstime);
-						m_LastActiveLineStartTime = line->Start.mstime;
-					}
-					times << (renderer->m_Frame - m_LastActiveLineStartFrame) << L";  ";
-					if (timebase.IsKeyframe(renderer->m_Time)){
-						m_ShownKeyframe = true;
-						m_FullScreenWindow->mstimes->SetForegroundColour(WINDOW_WARNING_ELEMENTS);
-					}
-					else if (m_ShownKeyframe){
-						m_ShownKeyframe = false;
-						m_FullScreenWindow->mstimes->SetForegroundColour(WINDOW_TEXT);
-					}
-				}
-			}
-			if (tab->editor){
-				int sdiff = videoTime.mstime - ZEROIT(line->Start.mstime);
-				int ediff = videoTime.mstime - ZEROIT(line->End.mstime);
-				times << sdiff << L" ms, " << ediff << L" ms";
-			}
-			m_FullScreenWindow->mstimes->SetValue(times);
-			m_FullScreenWindow->mstimes->Update();
-		}
+		if (m_FullScreenWindow->panel->IsShown())
+			ShowTimes(videoTime, m_FullScreenWindow->mstimes);
 		if (!m_FullScreenProgressBar){ return; }
 		SubsTime DurationTime;
 		DurationTime.mstime = dur;
@@ -1369,36 +1374,9 @@ void VideoBox::RefreshTime()
 	else{
 		m_SeekingSlider->SetValue(val);
 		m_SeekingSlider->Update();
-		wxString times;
-		times << videoTime.raw(SRT) << L";  ";
-		Dialogue* line = tab->edit->line;
-		if (!m_IsDirectShow){
-			times << renderer->m_Frame << L";  ";
-			const Timebase &timebase = renderer->GetTimebase();
-			if (!timebase.IsEmpty()){
-				if (m_LastActiveLineStartTime != line->Start.mstime) {
-					m_LastActiveLineStartFrame = timebase.FrameAt(line->Start.mstime);
-					m_LastActiveLineStartTime = line->Start.mstime;
-				}
-				times << (renderer->m_Frame - m_LastActiveLineStartFrame) << L";  ";
-				if (timebase.IsKeyframe(renderer->m_Time)){
-					m_ShownKeyframe = true;
-					m_TimesTextField->SetForegroundColour(WINDOW_WARNING_ELEMENTS);
-				}
-				else if (m_ShownKeyframe){
-					m_ShownKeyframe = false;
-					m_TimesTextField->SetForegroundColour(WINDOW_TEXT);
-				}
-			}
-		}
-		if (tab->editor){
-			int sdiff = videoTime.mstime - ZEROIT(line->Start.mstime);
-			int ediff = videoTime.mstime - ZEROIT(line->End.mstime);
-			times << sdiff << L" ms, " << ediff << L" ms";
+		ShowTimes(videoTime, m_TimesTextField);
+		if (tab->editor)
 			tab->grid->RefreshIfVisible(videoTime.mstime);
-		}
-		m_TimesTextField->SetValue(times);
-		m_TimesTextField->Update();
 
 	}
 

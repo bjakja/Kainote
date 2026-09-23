@@ -152,6 +152,7 @@ public:
 	void GetWindowSize(int* x, int* y, bool withTabPanel = true);
 	PlaybackState GetState();
 private:
+	void ShowTimes(SubsTime &videoTime, KaiTextCtrl *field);
 
 	BitmapButton* m_ButtonPreviousFile;
 	BitmapButton* m_ButtonPause;
