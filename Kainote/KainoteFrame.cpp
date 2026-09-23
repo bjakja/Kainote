@@ -1390,7 +1390,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 		}
 		//remove comparison after every subs load or delete 
 		else if (nonewtab && tab->grid->Comparison){
-			SubsGridBase::RemoveComparison();
+			SubsGrid::RemoveComparison();
 		}
 
 		SetRecent();

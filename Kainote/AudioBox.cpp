@@ -75,7 +75,7 @@ float PlaybackVolumeFromSlider(int position)
 }
 
 
-AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
+AudioBox::AudioBox(wxWindow *parent, SubsGrid *grid) :
 	KaiPanel(parent, -1, wxDefaultPosition, wxSize(0, 0))
 {
 	// Setup
@@ -96,7 +96,7 @@ AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
 	audioDisplay->ScrollBar = audioScroll;
 	audioDisplay->box = this;
 	audioDisplay->edit = (EditBox*)parent;
-	audioDisplay->grid = (SubsGrid*)Wgrid;
+	audioDisplay->grid = grid;
 	audioDisplay->tab = (TabPanel *)parent->GetParent();
 	// Zoom
 	int zoom = Options.GetInt(AUDIO_HORIZONTAL_ZOOM);

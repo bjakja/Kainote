@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "SubsGridWindow.h"
+#include "SubsGrid.h"
 #include "config.h"
 #include "KaiMessageBox.h"
 #include "SubsGridFiltering.h"
@@ -30,42 +30,7 @@
 #include <wx/dc.h>
 
 
-SubsGridWindow::SubsGridWindow(wxWindow *parent, const long int id, const wxPoint& pos, const wxSize& size, long style)
-	:SubsGridBase(parent, id, pos, size, style)
-{
-	visibleColumns = Options.GetInt(GRID_HIDE_COLUMNS);
-	hideOverrideTags = Options.GetBool(GRID_HIDE_TAGS);
-	bmp = nullptr;
-	SetStyle();
-	AdjustWidths();
-	//SetFocus();
-	Bind(wxEVT_PAINT, &SubsGridWindow::OnPaint, this);
-	Bind(wxEVT_SIZE, &SubsGridWindow::OnSize, this);
-	Bind(wxEVT_KEY_DOWN, &SubsGridWindow::OnKeyPress, this);
-	Bind(wxEVT_TIMER, &SubsGridWindow::OnBackupTimer, this, ID_AUTIMER);
-	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent &evt){});
-	Bind(wxEVT_MOUSE_CAPTURE_LOST, &SubsGridWindow::OnLostCapture, this);
-	Bind(wxEVT_SCROLLWIN_THUMBTRACK, &SubsGridWindow::OnScroll, this);
-	Bind(wxEVT_MOUSEWHEEL, &SubsGridWindow::OnMouseEvent, this);
-	Bind(wxEVT_MOTION, &SubsGridWindow::OnMouseEvent, this);
-	Bind(wxEVT_LEFT_DOWN, &SubsGridWindow::OnMouseEvent, this);
-	Bind(wxEVT_LEFT_UP, &SubsGridWindow::OnMouseEvent, this);
-	Bind(wxEVT_LEFT_DCLICK, &SubsGridWindow::OnMouseEvent, this);
-	Bind(wxEVT_MIDDLE_DOWN, &SubsGridWindow::OnMouseEvent, this);
-	Bind(wxEVT_RIGHT_DOWN, &SubsGridWindow::OnMouseEvent, this);
-	Bind(wxEVT_RIGHT_UP, &SubsGridWindow::OnMouseEvent, this);
-	Bind(wxEVT_SET_FOCUS, [=, this](wxFocusEvent& evt) {Refresh(false); });
-	Bind(wxEVT_KILL_FOCUS, [=, this](wxFocusEvent& evt) {Refresh(false); });
-}
-
-SubsGridWindow::~SubsGridWindow()
-{
-	if (bmp){ delete bmp; bmp = nullptr; }
-	if (preview){ preview->DestroyPreview(false, true); preview = nullptr; }
-	if (thisPreview){ thisPreview->DestroyPreview(); thisPreview = nullptr; }
-}
-
-void SubsGridWindow::SetStyle()
+void SubsGrid::SetStyle()
 {
 	const wxString & fontname = Options.GetString(GRID_FONT);
 	font.SetFaceName(fontname);
@@ -86,7 +51,7 @@ void SubsGridWindow::SetStyle()
 }
 
 
-void SubsGridWindow::OnPaint(wxPaintEvent& event)
+void SubsGrid::OnPaint(wxPaintEvent& event)
 {
 	int w = 0;
 	int h = 0;
@@ -566,7 +531,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 	dc.Blit(firstCol + posX, 0, w + scHor, h, &tdc, scHor + firstCol + posX, 0);
 }
 
-void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int scrows, wxPoint previewpos, wxSize previewsize, bool bg)
+void SubsGrid::PaintD2D(GraphicsContext *gc, int w, int h, int size, int scrows, wxPoint previewpos, wxSize previewsize, bool bg)
 {
 	
 	const wxColour &header = Options.GetColour(GRID_HEADER);
@@ -997,13 +962,13 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 	delete gc;
 }
 
-void SubsGridWindow::RefreshColumns(int cell)
+void SubsGrid::RefreshColumns(int cell)
 {
 	AdjustWidths(cell);
 	Refresh(false);
 }
 
-void SubsGridWindow::AdjustWidthsD2D(GraphicsContext *gc, int cell)
+void SubsGrid::AdjustWidthsD2D(GraphicsContext *gc, int cell)
 {
 
 	int law = 0, startMax = 0, endMax = 0, stw = 0, edw = 0, syw = 0, acw = 0, efw = 0;
@@ -1161,7 +1126,7 @@ void SubsGridWindow::AdjustWidthsD2D(GraphicsContext *gc, int cell)
 	delete gc;
 }
 
-void SubsGridWindow::AdjustWidths(int cell)
+void SubsGrid::AdjustWidths(int cell)
 {
 	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
 	GraphicsContext* gc = renderer? renderer->CreateMeasuringContext() : nullptr;
@@ -1326,7 +1291,7 @@ void SubsGridWindow::AdjustWidths(int cell)
 }
 
 
-void SubsGridWindow::SetVideoLineTime(wxMouseEvent &evt, int mvtal)
+void SubsGrid::SetVideoLineTime(wxMouseEvent &evt, int mvtal)
 {
 	if (tab->video->GetState() != None){
 		if (tab->video->GetState() != Paused){
@@ -1357,7 +1322,7 @@ void SubsGridWindow::SetVideoLineTime(wxMouseEvent &evt, int mvtal)
 	}
 }
 
-void SubsGridWindow::SetActive(int active)
+void SubsGrid::SetActive(int active)
 {
 	SelectRow(active);
 	lastRow = active;
@@ -1365,7 +1330,7 @@ void SubsGridWindow::SetActive(int active)
 	edit->SetLine(active);
 }
 
-void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
+void SubsGrid::OnMouseEvent(wxMouseEvent &event) {
 
 	int w, h;
 	GetClientSize(&w, &h);
@@ -1384,7 +1349,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 	int curY = event.GetY();
 	if (preview){
 		if (event.ButtonDown())
-			edit->SetGrid((SubsGrid*)this);
+			edit->SetGrid(this);
 
 		wxPoint previewpos = preview->GetPosition();
 		wxSize previewsize = preview->GetSize();
@@ -1510,7 +1475,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 			if ((click || dclick)){
 				unsigned char state = file->CheckIfHasHiddenBlock(filterRow, filterRow < scrollPosition);
 				if (state){
-					SubsGridFiltering filter((SubsGrid*)this, currentLine);
+					SubsGridFiltering filter(this, currentLine);
 					//second part of hack
 					if (filterRow < scrollPosition){
 						if (state == 1){
@@ -1671,7 +1636,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 
 }
 
-void SubsGridWindow::OnScroll(wxScrollWinEvent& event)
+void SubsGrid::OnScroll(wxScrollWinEvent& event)
 {
 	int newPos = event.GetPosition();
 	if (scrollPositionId != newPos) {
@@ -1684,7 +1649,7 @@ void SubsGridWindow::OnScroll(wxScrollWinEvent& event)
 	}
 }
 
-void SubsGridWindow::OnSize(wxSizeEvent& event)
+void SubsGrid::OnSize(wxSizeEvent& event)
 {
 	if (preview){
 		wxSize size = GetClientSize();
@@ -1694,7 +1659,7 @@ void SubsGridWindow::OnSize(wxSizeEvent& event)
 	Update();
 }
 
-void SubsGridWindow::SelectRow(int row, bool addToSelected /*= false*/, bool select /*= true*/, bool norefresh /*= false*/)
+void SubsGrid::SelectRow(int row, bool addToSelected /*= false*/, bool select /*= true*/, bool norefresh /*= false*/)
 {
 	row = MID(0, row, file->GetCount() - 1);
 	if (addToSelected){
@@ -1722,7 +1687,7 @@ void SubsGridWindow::SelectRow(int row, bool addToSelected /*= false*/, bool sel
 	}
 }
 
-void SubsGridWindow::ScrollTo(int y, bool center /*= false*/, int offset /*= 0*/, bool useUpdate/* = false*/){
+void SubsGrid::ScrollTo(int y, bool center /*= false*/, int offset /*= 0*/, bool useUpdate/* = false*/){
 	int w, h;
 	GetClientSize(&w, &h);
 	if (offset){ y = GetKeyFromPosition(y, offset); }
@@ -1749,7 +1714,7 @@ void SubsGridWindow::ScrollTo(int y, bool center /*= false*/, int offset /*= 0*/
 		Update();
 }
 
-void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
+void SubsGrid::OnKeyPress(wxKeyEvent &event) {
 	// Get size
 	int w, h;
 	GetClientSize(&w, &h);
@@ -1880,7 +1845,7 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 
 
 
-void SubsGridWindow::RefreshIfVisible(int time)
+void SubsGrid::RefreshIfVisible(int time)
 {
 	size_t counter = 0;
 	//make it work properly
@@ -1899,7 +1864,7 @@ void SubsGridWindow::RefreshIfVisible(int time)
 
 }
 
-void SubsGridWindow::ChangeTimeDisplay(bool frame)
+void SubsGrid::ChangeTimeDisplay(bool frame)
 {
 	if (frame){
 		showFrames = true;
@@ -1911,7 +1876,7 @@ void SubsGridWindow::ChangeTimeDisplay(bool frame)
 }
 
 
-void SubsGridWindow::HideOverrideTags()
+void SubsGrid::HideOverrideTags()
 {
 	hideOverrideTags = !hideOverrideTags;
 	Options.SetBool(GRID_HIDE_TAGS, hideOverrideTags);
@@ -1920,7 +1885,7 @@ void SubsGridWindow::HideOverrideTags()
 }
 
 
-void SubsGridWindow::ChangeActiveLine(int newActiveLine, bool refresh /*= false*/, bool scroll /*= false*/, bool changeEditboxLine /*= true*/)
+void SubsGrid::ChangeActiveLine(int newActiveLine, bool refresh /*= false*/, bool scroll /*= false*/, bool changeEditboxLine /*= true*/)
 {
 	if (changeEditboxLine)
 		edit->SetLine(newActiveLine);
@@ -1934,7 +1899,7 @@ void SubsGridWindow::ChangeActiveLine(int newActiveLine, bool refresh /*= false*
 		Refresh(false);
 }
 
-void SubsGridWindow::SelVideoLine(int curtime)
+void SubsGrid::SelVideoLine(int curtime)
 {
 	if (tab->video->GetState() == None && curtime < 0){ return; }
 
@@ -1977,10 +1942,10 @@ void SubsGridWindow::SelVideoLine(int curtime)
 
 }
 
-void SubsGridWindow::ShowSecondComparedLine(int Line, bool showPreview, bool fromPreview, bool setViaScroll)
+void SubsGrid::ShowSecondComparedLine(int Line, bool showPreview, bool fromPreview, bool setViaScroll)
 {
-	SubsGridBase* thisgrid = this;
-	SubsGridBase* secondgrid = nullptr;
+	SubsGrid* thisgrid = this;
+	SubsGrid* secondgrid = nullptr;
 	if (thisgrid == CG1)
 		secondgrid = CG2;
 	else if (thisgrid == CG2)
@@ -1995,18 +1960,18 @@ void SubsGridWindow::ShowSecondComparedLine(int Line, bool showPreview, bool fro
 	int secondGridLine = data.secondComparedLine;
 	if (secondGridLine < 0){ return; }
 	if (setViaScroll){
-		((SubsGridWindow*)secondgrid)->scrollPosition = secondGridLine;
-		((SubsGridWindow*)secondgrid)->scrollPositionId = file->GetElementByKey(secondGridLine);
+		secondgrid->scrollPosition = secondGridLine;
+		secondgrid->scrollPositionId = file->GetElementByKey(secondGridLine);
 		secondgrid->Refresh(false);
 		secondgrid->Update();
 		return;
 	}
 	int diffPosition = Line - scrollPosition;
-	((SubsGridWindow*)secondgrid)->scrollPosition = secondGridLine - diffPosition;
-	((SubsGridWindow*)secondgrid)->ChangeActiveLine(secondGridLine, true, fromPreview, !fromPreview);
+	secondgrid->scrollPosition = secondGridLine - diffPosition;
+	secondgrid->ChangeActiveLine(secondGridLine, true, fromPreview, !fromPreview);
 	if (!fromPreview && hiddenSecondGrid){
 		if (!preview){
-			ShowPreviewWindow((SubsGridWindow*)secondgrid, (SubsGridWindow*)thisgrid, Line, diffPosition);
+			ShowPreviewWindow(secondgrid, thisgrid, Line, diffPosition);
 		}
 		else{
 			preview->MakeVisible();
@@ -2015,13 +1980,13 @@ void SubsGridWindow::ShowSecondComparedLine(int Line, bool showPreview, bool fro
 	}
 }
 
-void SubsGridWindow::RefreshPreview()
+void SubsGrid::RefreshPreview()
 {
 	if (preview)
 		preview->Refresh(false);
 }
 
-void SubsGridWindow::ClosePreviewWindows(bool refresh)
+void SubsGrid::ClosePreviewWindows(bool refresh)
 {
 	if (preview){
 		preview->DestroyPreview(refresh);
@@ -2033,8 +1998,8 @@ void SubsGridWindow::ClosePreviewWindows(bool refresh)
 	}
 }
 
-bool SubsGridWindow::ShowPreviewWindow(SubsGridWindow *previewGrid, 
-	SubsGridWindow *windowToDraw, int activeLine, int diffPosition)
+bool SubsGrid::ShowPreviewWindow(SubsGrid *previewGrid, 
+	SubsGrid *windowToDraw, int activeLine, int diffPosition)
 {
 	int w, h;
 	GetClientSize(&w, &h);
@@ -2049,13 +2014,13 @@ bool SubsGridWindow::ShowPreviewWindow(SubsGridWindow *previewGrid,
 		scrollPosition = (activeLine - newLine) + 2;
 		previewPosition = newLine * realGridHeight;
 	}
-	preview = new SubsGridPreview((SubsGrid*)previewGrid, 
-		(SubsGrid*)windowToDraw, previewPosition + 2, wxSize(w, previewHeight));
+	preview = new SubsGridPreview(previewGrid, 
+		windowToDraw, previewPosition + 2, wxSize(w, previewHeight));
 	Refresh(false);
 	return true;
 }
 
-void SubsGridWindow::MakeVisible(int rowKey)
+void SubsGrid::MakeVisible(int rowKey)
 {
 	int position = rowKey;//(rowKey != -1) ? rowKey : currentLine;
 	int w, h;
@@ -2090,7 +2055,7 @@ void SubsGridWindow::MakeVisible(int rowKey)
 	}
 }
 
-void SubsGridWindow::OnLostCapture(wxMouseCaptureLostEvent& evt) {
+void SubsGrid::OnLostCapture(wxMouseCaptureLostEvent& evt) {
 	if (HasCapture()) {
 		ReleaseMouse();
 	}

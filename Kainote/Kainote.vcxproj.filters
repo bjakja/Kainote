@@ -801,9 +801,6 @@
     <ClInclude Include="SubsGrid.h">
       <Filter>S</Filter>
     </ClInclude>
-    <ClInclude Include="SubsGridBase.h">
-      <Filter>S</Filter>
-    </ClInclude>
     <ClInclude Include="SubsGridDialogs.h">
       <Filter>S</Filter>
     </ClInclude>
@@ -811,9 +808,6 @@
       <Filter>S</Filter>
     </ClInclude>
     <ClInclude Include="SubsGridPreview.h">
-      <Filter>S</Filter>
-    </ClInclude>
-    <ClInclude Include="SubsGridWindow.h">
       <Filter>S</Filter>
     </ClInclude>
     <ClInclude Include="SubsLoader.h">

@@ -15,6 +15,7 @@
 
 
 #include "SubsGrid.h"
+#include "SubsGridPreview.h"
 #include "OpennWrite.h"
 #include "TLDialog.h"
 #include "Demux.h"
@@ -35,8 +36,46 @@
 #include <wx/filedlg.h>
 
 SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-	:SubsGridWindow(parent, id, pos, size, style)
+	: KaiScrolledWindow(parent, id, pos, size, style | wxVERTICAL)
+	, file(new SubsFile())
 {
+	file->SetMutex(&editionMutex);
+	makebackup = true;
+	ismenushown = false;
+	showFrames = false;
+	Comparison = nullptr;
+	numsave = 0;
+
+	LoadDefault();
+	timer.SetOwner(this, ID_AUTIMER);
+	//reset autosave on statusbar
+	nullifyTimer.SetOwner(this, 27890);
+	Bind(wxEVT_TIMER, [=, this](wxTimerEvent &evt){
+		Kai->SetStatusText(emptyString, 0);
+	}, 27890);
+
+	visibleColumns = Options.GetInt(GRID_HIDE_COLUMNS);
+	hideOverrideTags = Options.GetBool(GRID_HIDE_TAGS);
+	SetStyle();
+	AdjustWidths();
+	Bind(wxEVT_PAINT, &SubsGrid::OnPaint, this);
+	Bind(wxEVT_SIZE, &SubsGrid::OnSize, this);
+	Bind(wxEVT_KEY_DOWN, &SubsGrid::OnKeyPress, this);
+	Bind(wxEVT_TIMER, &SubsGrid::OnBackupTimer, this, ID_AUTIMER);
+	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent &evt){});
+	Bind(wxEVT_MOUSE_CAPTURE_LOST, &SubsGrid::OnLostCapture, this);
+	Bind(wxEVT_SCROLLWIN_THUMBTRACK, &SubsGrid::OnScroll, this);
+	Bind(wxEVT_MOUSEWHEEL, &SubsGrid::OnMouseEvent, this);
+	Bind(wxEVT_MOTION, &SubsGrid::OnMouseEvent, this);
+	Bind(wxEVT_LEFT_DOWN, &SubsGrid::OnMouseEvent, this);
+	Bind(wxEVT_LEFT_UP, &SubsGrid::OnMouseEvent, this);
+	Bind(wxEVT_LEFT_DCLICK, &SubsGrid::OnMouseEvent, this);
+	Bind(wxEVT_MIDDLE_DOWN, &SubsGrid::OnMouseEvent, this);
+	Bind(wxEVT_RIGHT_DOWN, &SubsGrid::OnMouseEvent, this);
+	Bind(wxEVT_RIGHT_UP, &SubsGrid::OnMouseEvent, this);
+	Bind(wxEVT_SET_FOCUS, [=, this](wxFocusEvent& evt) {Refresh(false); });
+	Bind(wxEVT_KILL_FOCUS, [=, this](wxFocusEvent& evt) {Refresh(false); });
+
 	tab = (TabPanel*)parent;
 	edit = tab->edit;
 	Kai = kfparent;
@@ -124,6 +163,11 @@ SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, cons
 
 SubsGrid::~SubsGrid()
 {
+	if (bmp){ delete bmp; bmp = nullptr; }
+	if (preview){ preview->DestroyPreview(false, true); preview = nullptr; }
+	if (thisPreview){ thisPreview->DestroyPreview(); thisPreview = nullptr; }
+	Clearing(false);
+	delete file;
 }
 
 void SubsGrid::ContextMenu(const wxPoint &pos)
@@ -1369,7 +1413,7 @@ void SubsGrid::OnMakeContinous(int idd)
 
 void SubsGrid::OnShowPreview()
 {
-	if (CG1 == (SubsGridBase*)this || CG2 == (SubsGridBase*)this){
+	if (CG1 == this || CG2 == this){
 		ShowSecondComparedLine(currentLine, true);
 	}
 	else{
@@ -1463,7 +1507,7 @@ bool SubsGrid::SwapAssProperties()
 
 void SubsGrid::Filter(int id)
 {
-	SubsGridFiltering filter((SubsGrid*)this, currentLine);
+	SubsGridFiltering filter(this, currentLine);
 	filter.Filter(false, id == GRID_FILTER_BY_NOTHING);
 }
 
@@ -1873,7 +1917,7 @@ void SubsGrid::RefreshSubsOnVideo(int newActiveLineKey, bool scroll)
 }
 
 
-BEGIN_EVENT_TABLE(SubsGrid, SubsGridBase)
+BEGIN_EVENT_TABLE(SubsGrid, KaiScrolledWindow)
 EVT_MENU(GRID_CUT, SubsGrid::OnAccelerator)
 EVT_MENU(GRID_COPY, SubsGrid::OnAccelerator)
 EVT_MENU(GRID_PASTE, SubsGrid::OnAccelerator)

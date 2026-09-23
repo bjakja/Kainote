@@ -16,7 +16,7 @@
 
 
 #include "SubsFile.h"
-#include "SubsGridBase.h"
+#include "SubsGrid.h"
 #include "SubsGridPreview.h"
 #include "SubsLoader.h"
 #include "SubsGridFiltering.h"
@@ -44,10 +44,10 @@
 #include <new>
 #include <vector>
 
-SubsGridBase* SubsGridBase::CG1 = NULL;
-SubsGridBase* SubsGridBase::CG2 = NULL;
-bool SubsGridBase::hasCompare = false;
-wxArrayString SubsGridBase::compareStyles = wxArrayString();
+SubsGrid* SubsGrid::CG1 = NULL;
+SubsGrid* SubsGrid::CG2 = NULL;
+bool SubsGrid::hasCompare = false;
+wxArrayString SubsGrid::compareStyles = wxArrayString();
 
 
 bool sortstart(Dialogue *i, Dialogue *j)
@@ -114,34 +114,7 @@ bool sortlayer(Dialogue *i, Dialogue *j)
 }
 
 
-SubsGridBase::SubsGridBase(wxWindow *parent, const long int id, const wxPoint& pos, const wxSize& size, long style)
-	: KaiScrolledWindow(parent, id, pos, size, style | wxVERTICAL)
-	, file(new SubsFile())
-{
-	file->SetMutex(&editionMutex);
-	makebackup = true;
-	ismenushown = false;
-	showFrames = false;
-	Comparison = nullptr;
-	numsave = 0;
-
-	LoadDefault();
-	timer.SetOwner(this, ID_AUTIMER);
-	//reset autosave on statusbar
-	nullifyTimer.SetOwner(this, 27890);
-	Bind(wxEVT_TIMER, [=, this](wxTimerEvent &evt){
-		Kai->SetStatusText(emptyString, 0);
-	}, 27890);
-}
-
-
-SubsGridBase::~SubsGridBase()
-{
-	Clearing(false);
-	delete file;
-}
-
-void SubsGridBase::Clearing(bool setup/* = true*/)
+void SubsGrid::Clearing(bool setup/* = true*/)
 {
 	SAFE_DELETE(Comparison);
 	if(setup)
@@ -156,7 +129,7 @@ void SubsGridBase::Clearing(bool setup/* = true*/)
 	scHor = 0;
 }
 
-void SubsGridBase::ChangeLine(unsigned char editionType, Dialogue *line1, size_t wline, long cells, bool selline/*=false*/, bool dummy/*=false*/)
+void SubsGrid::ChangeLine(unsigned char editionType, Dialogue *line1, size_t wline, long cells, bool selline/*=false*/, bool dummy/*=false*/)
 {
 	lastRow = wline;
 	wxArrayInt sels;
@@ -180,7 +153,7 @@ void SubsGridBase::ChangeLine(unsigned char editionType, Dialogue *line1, size_t
 	SetModified(editionType, false, dummy);
 }
 
-void SubsGridBase::ChangeCell(long cells, size_t wline, Dialogue *what)
+void SubsGrid::ChangeCell(long cells, size_t wline, Dialogue *what)
 {
 	Dialogue *dial = CopyDialogue(wline);
 	if (cells & LAYER){
@@ -222,7 +195,7 @@ void SubsGridBase::ChangeCell(long cells, size_t wline, Dialogue *what)
 }
 
 
-void SubsGridBase::Convert(char type)
+void SubsGrid::Convert(char type)
 {
 	if (Options.GetBool(CONVERT_SHOW_SETTINGS)){
 		OptionsDialog od(Kai);
@@ -331,7 +304,7 @@ void SubsGridBase::Convert(char type)
 	RefreshColumns();
 }
 
-void SubsGridBase::SaveFile(const wxString &filename, bool normalSave, bool loadFromEditbox)
+void SubsGrid::SaveFile(const wxString &filename, bool normalSave, bool loadFromEditbox)
 {
 	wxMutexLocker lock(editionMutex);
 
@@ -449,7 +422,7 @@ static void GetStartEndDelay(const Timebase &timebase, Dialogue *dial, int *star
 	*endDelay = timebase.MsAt(timebase.FrameAt(dial->End.mstime)) - dial->End.mstime;
 }
 
-void SubsGridBase::ChangeTimes(bool byFrame)
+void SubsGrid::ChangeTimes(bool byFrame)
 {
 	bool hasFFMS2 = tab->video->GetTimebase().IsExact();
 	const Timebase &timebase = tab->video->GetTimebase();
@@ -780,7 +753,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 }
 
 
-void SubsGridBase::SortIt(short what, bool all)
+void SubsGrid::SortIt(short what, bool all)
 {
 	SaveSelections();
 	if (all){
@@ -797,7 +770,7 @@ void SubsGridBase::SortIt(short what, bool all)
 }
 
 
-void SubsGridBase::DeleteRow(int rw, int len)
+void SubsGrid::DeleteRow(int rw, int len)
 {
 	int rwlen = rw + len;
 	file->DeleteDialogues(rw, rwlen);
@@ -805,7 +778,7 @@ void SubsGridBase::DeleteRow(int rw, int len)
 	else{ SpellErrors.clear(); }
 }
 
-void SubsGridBase::DeleteRows()
+void SubsGrid::DeleteRows()
 {
 	Freeze();
 	file->DeleteSelectedDialogues();
@@ -818,7 +791,7 @@ void SubsGridBase::DeleteRows()
 	RefreshColumns();
 }
 
-bool SubsGridBase::MoveRows(int step, bool keyStep /*= false*/)
+bool SubsGrid::MoveRows(int step, bool keyStep /*= false*/)
 {
 	//this would be less complicated if it use a id for calculation
 	//but it would take more time for calculate ids for all selected lines
@@ -924,7 +897,7 @@ bool SubsGridBase::MoveRows(int step, bool keyStep /*= false*/)
 	return true;
 }
 
-void SubsGridBase::DeleteText()
+void SubsGrid::DeleteText()
 {
 	wxArrayInt sels;
 	file->GetSelections(sels);
@@ -933,7 +906,7 @@ void SubsGridBase::DeleteText()
 	}
 	SetModified(GRID_DELETE_TEXT);
 }
-void SubsGridBase::UpdateUR(bool toolbar)
+void SubsGrid::UpdateUR(bool toolbar)
 {
 	bool undo = false, _redo = false;
 	file->GetURStatus(&undo, &_redo);
@@ -950,7 +923,7 @@ void SubsGridBase::UpdateUR(bool toolbar)
 	}
 }
 
-void SubsGridBase::DoUndo(bool redo, int iter)
+void SubsGrid::DoUndo(bool redo, int iter)
 {
 	//wxMutexLocker lock(editionMutex);
 	Freeze();
@@ -1035,7 +1008,7 @@ void SubsGridBase::DoUndo(bool redo, int iter)
 	}
 }
 
-void SubsGridBase::DummyUndo(int newIter)
+void SubsGrid::DummyUndo(int newIter)
 {
 	if (newIter >= file->Iter())
 		return;
@@ -1059,7 +1032,7 @@ void SubsGridBase::DummyUndo(int newIter)
 // Warning for adding to destroy
 // no adding makes memory leaks
 // two addings makes crash when object is destroyed.
-void SubsGridBase::InsertRows(int Row,
+void SubsGrid::InsertRows(int Row,
 	const std::vector<Dialogue *> &RowsTable, bool AddToDestroy)
 {
 	file->InsertRowsF(Row, RowsTable, AddToDestroy);
@@ -1074,7 +1047,7 @@ void SubsGridBase::InsertRows(int Row,
 // Warning for adding to destroy
 // no adding makes memory leaks
 // two addings makes crash when object is destroyed.
-void SubsGridBase::InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy, bool Save)
+void SubsGrid::InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy, bool Save)
 {
 	file->InsertRowsF(Row, NumRows, Dialog, AddToDestroy);
 	//spellErrors Array take all dialogues for compatybility
@@ -1089,7 +1062,7 @@ void SubsGridBase::InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddTo
 	}
 }
 
-void SubsGridBase::SetSubsFormat(wxString ext)
+void SubsGrid::SetSubsFormat(wxString ext)
 {
 	subsFormat = ASS;
 	int rw = 0;
@@ -1103,7 +1076,7 @@ void SubsGridBase::SetSubsFormat(wxString ext)
 	}
 }
 
-void SubsGridBase::ChangeActiveLine(int newActive, bool scroll)
+void SubsGrid::ShowEditedLine(int newActive, bool scroll)
 {
 	int newCurrentLine = (newActive >= 0) ? newActive : currentLine;
 	if (newCurrentLine >= file->GetCount()) { newCurrentLine = file->GetCount() - 1; }
@@ -1121,7 +1094,7 @@ void SubsGridBase::ChangeActiveLine(int newActive, bool scroll)
 
 //dont guard cause most of functions that it uses have own gauard
 //Every SetModified have to find on list and add etitionType
-void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy, int SetEditBoxLine, bool Scroll)
+void SubsGrid::SetModified(unsigned char editionType, bool redit, bool dummy, int SetEditBoxLine, bool Scroll)
 {
 	if (file->HasChangesToRecord()){
 		SpellErrors.clear();
@@ -1138,7 +1111,7 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 		}
 		savedSelections = false;
 		if (redit)
-			ChangeActiveLine(SetEditBoxLine, Scroll);
+			ShowEditedLine(SetEditBoxLine, Scroll);
 
 		file->SaveUndo(editionType, currentLine, markedLine);
 		Kai->Label(file->GetActualHistoryIter(), false, Kai->Tabs->FindPanel(tab));
@@ -1153,13 +1126,13 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 		UpdateUR();
 	}
 	else if (redit) {
-		ChangeActiveLine(SetEditBoxLine, Scroll);
+		ShowEditedLine(SetEditBoxLine, Scroll);
 	}
 	Refresh(false);
 }
 
 //shows the edited subtitles and, if the options say so, seeks to the active line
-void SubsGridBase::ShowEditOnVideo(bool afterUndo)
+void SubsGrid::ShowEditOnVideo(bool afterUndo)
 {
 	VideoBox *vb = tab->video;
 	if (edit->Visual < CHANGEPOS){
@@ -1185,7 +1158,7 @@ void SubsGridBase::ShowEditOnVideo(bool afterUndo)
 	}
 }
 
-void SubsGridBase::SwapRows(int frst, int scnd, bool sav)
+void SubsGrid::SwapRows(int frst, int scnd, bool sav)
 {
 	file->SwapRowsF(frst, scnd);
 	if (SpellErrors.size() > frst && SpellErrors.size() > scnd){
@@ -1197,7 +1170,7 @@ void SubsGridBase::SwapRows(int frst, int scnd, bool sav)
 	if (sav){ SetModified(GRID_SWAP); }
 }
 
-void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
+void SubsGrid::LoadSubtitles(const wxString &str, wxString &ext)
 {
 	bool oldHasTlMode = hasTLMode;
 	int active = 0;
@@ -1262,7 +1235,7 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
 		if (filterBy && Options.GetBool(GRID_FILTER_AFTER_LOAD) && 
 			filterBy != FILTER_BY_SELECTIONS){
 			file->SetFiltered();
-			SubsGridFiltering filter((SubsGrid*)this, currentLine);
+			SubsGridFiltering filter(this, currentLine);
 			filter.Filter(true);
 		}
 		edit->RebuildActorEffectLists();
@@ -1273,7 +1246,7 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
 		edit->ResizeTimeControls(true);
 }
 
-void SubsGridBase::SetStartTime(int stime)
+void SubsGrid::SetStartTime(int stime)
 {
 	edit->Send(EDITBOX_LINE_EDITION, false, false, true);
 	wxArrayInt sels;
@@ -1289,7 +1262,7 @@ void SubsGridBase::SetStartTime(int stime)
 	}
 }
 
-void SubsGridBase::SetEndTime(int etime)
+void SubsGrid::SetEndTime(int etime)
 {
 	edit->Send(EDITBOX_LINE_EDITION, false, false, true);
 	wxArrayInt sels;
@@ -1305,7 +1278,7 @@ void SubsGridBase::SetEndTime(int etime)
 	}
 }
 
-bool SubsGridBase::SetTlMode(bool mode, bool dontShowDialog/* = false*/)
+bool SubsGrid::SetTlMode(bool mode, bool dontShowDialog/* = false*/)
 {
 	if (mode){
 		if (file->GetSInfo(L"TLMode") == emptyString){
@@ -1376,7 +1349,7 @@ bool SubsGridBase::SetTlMode(bool mode, bool dontShowDialog/* = false*/)
 
 //this method should have different name
 //it also can change line to previous
-void SubsGridBase::NextLine(int direction)
+void SubsGrid::NextLine(int direction)
 {
 	if (edit->ABox && edit->ABox->audioDisplay->hold != 0){ return; }
 	int size = file->GetCount();
@@ -1408,14 +1381,14 @@ void SubsGridBase::NextLine(int direction)
 	//AdjustWidths(0);
 	Refresh(false);
 	edit->SetLine(newCurrentLine, true, true, false, true);
-	SubsGrid *grid = (SubsGrid*)this;
+	SubsGrid *grid = this;
 	if (Comparison){ grid->ShowSecondComparedLine(newCurrentLine); }
 	else if (grid->preview){ grid->preview->NewSeeking(); }
 }
 
 
 
-void SubsGridBase::LoadDefault(bool line, bool sav, bool endload)
+void SubsGrid::LoadDefault(bool line, bool sav, bool endload)
 {
 	if (line)
 	{
@@ -1437,13 +1410,13 @@ void SubsGridBase::LoadDefault(bool line, bool sav, bool endload)
 	}
 }
 
-Dialogue *SubsGridBase::CopyDialogue(size_t i, bool push)
+Dialogue *SubsGrid::CopyDialogue(size_t i, bool push)
 {
 	if (push && (int)SpellErrors.size() > i){ SpellErrors[i].clear(); }
 	return file->CopyDialogueF(i, push);
 }
 
-Dialogue * SubsGridBase::CopyDialogueWithOffset(size_t i, int offset, bool push /*= true*/)
+Dialogue * SubsGrid::CopyDialogueWithOffset(size_t i, int offset, bool push /*= true*/)
 {
 	size_t newPos = GetKeyFromPosition(i, offset, false);
 	if (newPos != -1){
@@ -1452,7 +1425,7 @@ Dialogue * SubsGridBase::CopyDialogueWithOffset(size_t i, int offset, bool push 
 	return nullptr;
 }
 
-Dialogue * SubsGridBase::GetDialogueWithOffset(size_t i, int offset)
+Dialogue * SubsGrid::GetDialogueWithOffset(size_t i, int offset)
 {
 	size_t newPos = GetKeyFromPosition(i, offset, false);
 	if (newPos != -1){
@@ -1461,7 +1434,7 @@ Dialogue * SubsGridBase::GetDialogueWithOffset(size_t i, int offset)
 	return nullptr;
 }
 
-void SubsGridBase::GetAssHeader(wxString* header, bool forFile, bool translated, bool normalSave)
+void SubsGrid::GetAssHeader(wxString* header, bool forFile, bool translated, bool normalSave)
 {
 	if (forFile) {
 		file->AddSInfo(L"Active Line", std::to_wstring(currentLine), false);
@@ -1512,7 +1485,7 @@ void SubsGridBase::GetAssHeader(wxString* header, bool forFile, bool translated,
 
 //this function is called from another thread
 //need to guard every change in dialogues, styles, sinfos, and editbox->line
-wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *selected, bool allSubs)
+wxString *SubsGrid::GetVisible(bool *visible, wxPoint *point, wxArrayInt *selected, bool allSubs)
 {
 	wxMutexLocker lock(editionMutex);
 	bool showOriginalOnVideo = !Options.GetBool(TL_MODE_HIDE_ORIGINAL_ON_VIDEO);
@@ -1596,7 +1569,7 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 	return txt;
 }
 
-void SubsGridBase::SelectVisible()
+void SubsGrid::SelectVisible()
 {
 	file->ClearSelections();
 	int _time = tab->video->Tell();
@@ -1623,7 +1596,7 @@ void SubsGridBase::SelectVisible()
 		Refresh(false);
 }
 
-bool SubsGridBase::IsLineVisible(bool visibleOnPlay/* = true*/)
+bool SubsGrid::IsLineVisible(bool visibleOnPlay/* = true*/)
 {
 	int _time = tab->video->Tell();
 	bool toEnd = tab->video->GetState() == Playing && visibleOnPlay;
@@ -1631,7 +1604,7 @@ bool SubsGridBase::IsLineVisible(bool visibleOnPlay/* = true*/)
 }
 
 
-void SubsGridBase::OnBackupTimer(wxTimerEvent &event)
+void SubsGrid::OnBackupTimer(wxTimerEvent &event)
 {
 	Kai->SetStatusText(_("Autosave"), 0);
 	wxString path;
@@ -1648,7 +1621,7 @@ void SubsGridBase::OnBackupTimer(wxTimerEvent &event)
 	nullifyTimer.Start(5000, true);
 }
 
-void SubsGridBase::GetASSRes(int *x, int *y)
+void SubsGrid::GetASSRes(int *x, int *y)
 {
 	const wxString &oldx = file->GetSInfo(L"PlayResX");
 	const wxString &oldy = file->GetSInfo(L"PlayResY");
@@ -1676,7 +1649,7 @@ void SubsGridBase::GetASSRes(int *x, int *y)
 	//if(changed){SetModified(ASS_PROPERTIES, false, true, -1, false);}
 }
 
-void SubsGridBase::GetLayoutRes(int* x, int* y)
+void SubsGrid::GetLayoutRes(int* x, int* y)
 {
 	//no need to set specially new resolution when 
 	//is not in subtitles
@@ -1686,7 +1659,7 @@ void SubsGridBase::GetLayoutRes(int* x, int* y)
 	*y = wxAtoi(oldy);
 }
 
-void SubsGridBase::SetLayoutFromSubsRes()
+void SubsGrid::SetLayoutFromSubsRes()
 {
 	if (!Options.GetBool(LINK_RESOLUTIONS))
 		return;
@@ -1702,13 +1675,13 @@ void SubsGridBase::SetLayoutFromSubsRes()
 }
 
 
-void SubsGridBase::SaveSelections(bool clear)
+void SubsGrid::SaveSelections(bool clear)
 {
 	file->SaveSelectionsF(clear, currentLine, markedLine, scrollPosition);
 	savedSelections = true;
 }
 
-void SubsGridBase::GetCommonStyles(SubsGridBase *_grid, wxArrayString &styleTable)
+void SubsGrid::GetCommonStyles(SubsGrid *_grid, wxArrayString &styleTable)
 {
 	std::vector<Styles *> *styles1 = file->GetStyleTable();
 	std::vector<Styles *> *styles2 = _grid->file->GetStyleTable();
@@ -1721,7 +1694,7 @@ void SubsGridBase::GetCommonStyles(SubsGridBase *_grid, wxArrayString &styleTabl
 	}
 }
 
-void SubsGridBase::SetMDVDTime()
+void SubsGrid::SetMDVDTime()
 {
 	float FPS = tab->video->GetFPS();
 	size_t size = file->GetCount();
@@ -1732,7 +1705,7 @@ void SubsGridBase::SetMDVDTime()
 	}
 }
 
-void SubsGridBase::SubsComparison()
+void SubsGrid::SubsComparison()
 {
 	int comparisonType = Options.GetInt(SUBS_COMPARISON_TYPE);
 	if (!comparisonType && compareStyles.size() < 1){ return; }
@@ -1741,8 +1714,8 @@ void SubsGridBase::SubsComparison()
 	bool compareByStyles = (comparisonType & COMPARE_BY_STYLES) != 0;
 	bool compareByChosenStyles = compareStyles.size() > 0;
 	bool compareBySelections = (comparisonType & COMPARE_BY_SELECTIONS) != 0;
-	SubsGridBase* CCG1 = CG1;
-	SubsGridBase* CCG2 = CG2;
+	SubsGrid* CCG1 = CG1;
+	SubsGrid* CCG2 = CG2;
 
 	int firstSize = CG1->file->GetCount(), 
 		secondSize = CG2->file->GetCount();
@@ -1792,7 +1765,7 @@ void SubsGridBase::SubsComparison()
 }
 
 
-void SubsGridBase::CompareTexts(compareData &firstCompare, compareData &secondCompare, const wxString &first, const wxString &second)
+void SubsGrid::CompareTexts(compareData &firstCompare, compareData &secondCompare, const wxString &first, const wxString &second)
 {
 	if (first == second){
 		firstCompare.differences = false;
@@ -1882,7 +1855,7 @@ void SubsGridBase::CompareTexts(compareData &firstCompare, compareData &secondCo
 	}
 }
 
-void SubsGridBase::RemoveComparison()
+void SubsGrid::RemoveComparison()
 {
 	if (hasCompare){
 		if (CG1){
@@ -1901,7 +1874,7 @@ void SubsGridBase::RemoveComparison()
 	}
 }
 
-size_t SubsGridBase::GetKeyFromScrollPos(int numOfLines)
+size_t SubsGrid::GetKeyFromScrollPos(int numOfLines)
 {
 	if (numOfLines < 0){
 		int visibleLines = 0;
@@ -1928,7 +1901,7 @@ size_t SubsGridBase::GetKeyFromScrollPos(int numOfLines)
 }
 
 
-size_t SubsGridBase::GetKeyFromPosition(size_t position, int delta, bool safe /*= true*/)
+size_t SubsGrid::GetKeyFromPosition(size_t position, int delta, bool safe /*= true*/)
 {
 	if (position > file->GetCount())
 		return (safe) ? 0 : -1;
@@ -1965,7 +1938,7 @@ size_t SubsGridBase::GetKeyFromPosition(size_t position, int delta, bool safe /*
 	return position;
 }
 
-size_t SubsGridBase::GetDialoguePosition(size_t keyPosition)
+size_t SubsGrid::GetDialoguePosition(size_t keyPosition)
 {
 	if (keyPosition >= file->GetCount())
 		return file->GetCount() - 1;

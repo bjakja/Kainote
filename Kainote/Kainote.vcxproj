@@ -588,7 +588,6 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitp
     <ClInclude Include="SubsGridDialogs.h" />
     <ClInclude Include="SubsGridFiltering.h" />
     <ClInclude Include="SubsGridPreview.h" />
-    <ClInclude Include="SubsGridWindow.h" />
     <ClInclude Include="SubsLoader.h" />
     <ClInclude Include="SubsResampleDialog.h" />
     <ClInclude Include="SubtitlesProvider.h" />
@@ -613,7 +612,6 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitp
     <ClInclude Include="StylePreview.h" />
     <ClInclude Include="SubsDialogue.h" />
     <ClInclude Include="SubsFile.h" />
-    <ClInclude Include="SubsGridBase.h" />
     <ClInclude Include="TabPanel.h" />
     <ClInclude Include="SubsTime.h" />
     <ClInclude Include="Timebase.h" />

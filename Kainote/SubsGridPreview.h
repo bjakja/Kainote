@@ -42,7 +42,6 @@ public:
 
 class SubsGridPreview : public wxWindow
 {
-	friend class SubsGridBase;
 	friend class SubsGrid;
 public:
 	SubsGridPreview(SubsGrid *_previewGrid, SubsGrid *windowToDraw, int posY, const wxSize &size);

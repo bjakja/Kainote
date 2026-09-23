@@ -41,6 +41,8 @@
 ///////////
 // Headers
 #include "AudioDisplay.h"
+
+class SubsGrid;
 #include "KaiPanel.h"
 #include "KaiSlider.h"
 
@@ -125,7 +127,7 @@ public:
 	wxString audioName;
 	bool loaded;
 
-	AudioBox(wxWindow *parent, wxWindow *Wgrid);
+	AudioBox(wxWindow *parent, SubsGrid *grid);
 	virtual ~AudioBox(){};
 
 	void SetFile(wxString file, bool fromvideo);

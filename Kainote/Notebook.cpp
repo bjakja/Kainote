@@ -95,27 +95,27 @@ Notebook::Notebook(wxWindow *parent, int id)
 			break;
 		case 4448:
 		{
-			if (!SubsGridBase::compareStyles.size() && (compareBy & COMPARE_BY_CHOSEN_STYLES))
+			if (!SubsGrid::compareStyles.size() && (compareBy & COMPARE_BY_CHOSEN_STYLES))
 				compareBy ^= COMPARE_BY_CHOSEN_STYLES;
 
 			wxString &name = item->label;
 			bool found = false;
-			for (size_t i = 0; i < SubsGridBase::compareStyles.size(); i++){
-				if (SubsGridBase::compareStyles[i] == name){
-					if (!item->check){ SubsGridBase::compareStyles.RemoveAt(i); }
+			for (size_t i = 0; i < SubsGrid::compareStyles.size(); i++){
+				if (SubsGrid::compareStyles[i] == name){
+					if (!item->check){ SubsGrid::compareStyles.RemoveAt(i); }
 					found = true;
 					break;
 				}
 			}
-			if (!found && item->check){ SubsGridBase::compareStyles.Add(name); }
-			Options.SetTable(SUBS_COMPARISON_STYLES, SubsGridBase::compareStyles);
-			if ((SubsGridBase::compareStyles.size() > 0 && !(compareBy & COMPARE_BY_CHOSEN_STYLES)) ||
-				(SubsGridBase::compareStyles.size() < 1 && compareBy & COMPARE_BY_CHOSEN_STYLES)){
+			if (!found && item->check){ SubsGrid::compareStyles.Add(name); }
+			Options.SetTable(SUBS_COMPARISON_STYLES, SubsGrid::compareStyles);
+			if ((SubsGrid::compareStyles.size() > 0 && !(compareBy & COMPARE_BY_CHOSEN_STYLES)) ||
+				(SubsGrid::compareStyles.size() < 1 && compareBy & COMPARE_BY_CHOSEN_STYLES)){
 				compareBy ^= COMPARE_BY_CHOSEN_STYLES;
 				Menu *parentMenu = nullptr;
 				MenuItem * parentItem = Menu::FindItemGlobally(MENU_COMPARE + 5, &parentMenu);
 				if (parentItem){
-					parentItem->Check(SubsGridBase::compareStyles.size() > 0);
+					parentItem->Check(SubsGrid::compareStyles.size() > 0);
 					if (parentMenu)
 						parentMenu->RefreshMenu();
 				}
@@ -238,7 +238,7 @@ void Notebook::DeletePage(int page)
 	}
 	block = false;
 	//remove compare if it exist
-	SubsGridBase::RemoveComparison();
+	SubsGrid::RemoveComparison();
 
 	int tmpSize = Size();
 	if (split && tmpSize > 2){
@@ -922,7 +922,7 @@ void Notebook::ContextMenu(const wxPoint &pos, int i)
 			MenuItem * styleItem = styleComparisonMenu->Append(4448, availableStyles[i], emptyString, true, nullptr, nullptr, ITEM_CHECK);
 			if (optionsCompareStyles.Index(availableStyles[i]) != -1){ 
 				styleItem->Check(); 
-				SubsGridBase::compareStyles.Add(availableStyles[i]); 
+				SubsGrid::compareStyles.Add(availableStyles[i]); 
 			}
 		}
 	}
@@ -932,10 +932,10 @@ void Notebook::ContextMenu(const wxPoint &pos, int i)
 	comparisonMenu->Append(MENU_COMPARE + 2, _("Compare by visible lines"), nullptr, emptyString, ITEM_CHECK, canCompare)->Check((compareBy & COMPARE_BY_VISIBLE)>0);
 	comparisonMenu->Append(MENU_COMPARE + 3, _("Compare by selections"), nullptr, emptyString, ITEM_CHECK, canCompare && Pages[iter]->grid->file->SelectionsSize() > 0 && Pages[i]->grid->file->SelectionsSize() > 0)->Check((compareBy & COMPARE_BY_SELECTIONS) > 0);
 	comparisonMenu->Append(MENU_COMPARE + 4, _("Compare by styles"), nullptr, emptyString, ITEM_CHECK, canCompare)->Check((compareBy & COMPARE_BY_STYLES) > 0);
-	comparisonMenu->Append(MENU_COMPARE + 5, _("Compare by selected styles"), styleComparisonMenu, emptyString, ITEM_CHECK, canCompare)->Check(SubsGridBase::compareStyles.size() > 0);
+	comparisonMenu->Append(MENU_COMPARE + 5, _("Compare by selected styles"), styleComparisonMenu, emptyString, ITEM_CHECK, canCompare)->Check(SubsGrid::compareStyles.size() > 0);
 	comparisonMenu->Append(MENU_COMPARE, _("Compare"))->Enable(canCompare);
-	comparisonMenu->Append(MENU_COMPARE - 1, _("Turn off comparison"))->Enable(SubsGridBase::hasCompare);
-	tabsMenu.Append(MENU_COMPARE + 6, _("Subtitle comparison"), comparisonMenu, _("Subtitle comparison"))->Enable(canCompare || SubsGridBase::hasCompare);
+	comparisonMenu->Append(MENU_COMPARE - 1, _("Turn off comparison"))->Enable(SubsGrid::hasCompare);
+	tabsMenu.Append(MENU_COMPARE + 6, _("Subtitle comparison"), comparisonMenu, _("Subtitle comparison"))->Enable(canCompare || SubsGrid::hasCompare);
 
 	int id = tabsMenu.GetPopupMenuSelection(pos, this);
 
@@ -944,15 +944,15 @@ void Notebook::ContextMenu(const wxPoint &pos, int i)
 		OnTabSel(id);
 	}
 	else if (id == MENU_COMPARE){
-		SubsGridBase::CG1 = Pages[iter]->grid;
-		SubsGridBase::CG2 = Pages[i]->grid;
-		SubsGridBase::SubsComparison();
-		SubsGridBase::hasCompare = true;
+		SubsGrid::CG1 = Pages[iter]->grid;
+		SubsGrid::CG2 = Pages[i]->grid;
+		SubsGrid::SubsComparison();
+		SubsGrid::hasCompare = true;
 		Pages[iter]->grid->ShowSecondComparedLine(
-			SubsGridBase::CG2->GetScrollPosition(), false, false, true);
+			SubsGrid::CG2->GetScrollPosition(), false, false, true);
 	}
 	else if (id == MENU_COMPARE - 1){
-		SubsGridBase::RemoveComparison();
+		SubsGrid::RemoveComparison();
 	}
 	else if (id >= MENU_OPEN_SUBS_FOLDER && id <= MENU_OPEN_KEYFRAMES_FOLDER && tabNum != -1) {
 		TabPanel *tab = Pages[tabNum];
@@ -986,7 +986,7 @@ void Notebook::OnTabSel(int id)
 		{
 			iter = i;
 			if (Kai->SavePrompt()){ break; }
-			SubsGridBase::RemoveComparison();
+			SubsGrid::RemoveComparison();
 			Pages[i]->Destroy();
 			Pages.pop_back();
 			tabNames.pop_back();

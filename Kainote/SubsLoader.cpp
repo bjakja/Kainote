@@ -23,7 +23,7 @@
 #include <wx/tokenzr.h>
 
 
-SubsLoader::SubsLoader(SubsGridBase *_grid, const wxString &text, wxString &ext)
+SubsLoader::SubsLoader(SubsGrid *_grid, const wxString &text, wxString &ext)
 {
 	grid = _grid;
 	grid->Clearing();
