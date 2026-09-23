@@ -69,13 +69,13 @@ void RendererFFMS2::LinuxPlaybackLoop()
 	const bool debugPlayback = std::getenv("KAINOTE_DEBUG_LINUX_PLAYBACK") != nullptr;
 	unsigned int decodedFrames = 0;
 	if (debugPlayback)
-		std::fprintf(stderr, "[linux-playback] start time=%d frame=%d end=%d duration=%d\n", m_Time, m_Frame, m_PlayEndTime, GetDuration());
+		std::fprintf(stderr, "[linux-playback] start time=%d frame=%d end=%d duration=%d\n", m_Time.load(), m_Frame.load(), m_PlayEndTime.load(), GetDuration());
 	int lastPresentedFrame = -1;
 	while (!m_LinuxPlaybackStop.load()) {
 		int playTime = static_cast<int>(timeGetTime() - m_LastTime);
 		if (playTime < 0)
 			playTime = 0;
-		if (playTime >= m_PlayEndTime || playTime >= GetDuration()) {
+		if ((m_PlayEndTime > 0 && playTime >= m_PlayEndTime) || playTime >= GetDuration()) {
 			wxCommandEvent* evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED, ID_END_OF_STREAM);
 			wxQueueEvent(videoControl, evt);
 			break;
@@ -90,14 +90,14 @@ void RendererFFMS2::LinuxPlaybackLoop()
 			DrawTexture(frameBuffer.data(), true);
 			++decodedFrames;
 			if (debugPlayback && (decodedFrames <= 5 || (decodedFrames % 30) == 0))
-				std::fprintf(stderr, "[linux-playback] decode=%u playTime=%d time=%d frame=%d\n", decodedFrames, playTime, m_Time, m_Frame);
+				std::fprintf(stderr, "[linux-playback] decode=%u playTime=%d time=%d frame=%d\n", decodedFrames, playTime, m_Time.load(), m_Frame.load());
 			lastPresentedFrame = nextFrame;
 		}
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(4));
 	}
 	if (debugPlayback)
-		std::fprintf(stderr, "[linux-playback] stop decoded=%u presented=%u time=%d frame=%d\n", decodedFrames, m_LinuxPresentedFrames.load(), m_Time, m_Frame);
+		std::fprintf(stderr, "[linux-playback] stop decoded=%u presented=%u time=%d frame=%d\n", decodedFrames, m_LinuxPresentedFrames.load(), m_Time.load(), m_Frame.load());
 }
 
 #endif
@@ -129,7 +129,7 @@ bool RendererFFMS2::DrawTexture(unsigned char *nframe, bool copy)
 		else {
 			fdata = m_FrameBuffer;
 			if (!fdata && m_FFMS2)
-				m_FFMS2->GetFrameBuffer(&fdata);
+				m_FFMS2->GetFrameBuffer(m_Frame, &fdata);
 			if (!fdata)
 				return false;
 		}
@@ -173,7 +173,7 @@ bool RendererFFMS2::DrawTexture(unsigned char *nframe, bool copy)
 	}
 	else {
 		fdata = m_FrameBuffer;
-		m_FFMS2->GetFrameBuffer(&fdata);
+		m_FFMS2->GetFrameBuffer(m_Frame, &fdata);
 		if (!fdata)
 			return false;
 	}
@@ -424,7 +424,7 @@ bool RendererFFMS2::OpenFile(const wxString &fname, int subsFlag, bool vobsub, b
 
 	OpenSubs(subsFlag, false);
 	
-	m_State = Stopped;
+	m_State = Paused;
 	m_FFMS2->GetChapters(&m_Chapters);
 #ifndef _WIN32
 	// Prime wxGTK software backbuffer before fullscreen/first render.
@@ -459,21 +459,8 @@ bool RendererFFMS2::OpenSubs(int flag, bool redraw, wxString *text, bool resetPa
 	return result;
 }
 
-bool RendererFFMS2::Play(int end)
+void RendererFFMS2::StartStream()
 {
-	if (m_Time >= GetDuration()){ return false; }
-	SetThreadExecutionState(ES_DISPLAY_REQUIRED | ES_CONTINUOUS);
-	if (!(videoControl->IsShown() || 
-		(videoControl->m_FullScreenWindow && 
-			videoControl->m_FullScreenWindow->IsShown()))){ return false; }
-	OpenSubsForPlayback();
-
-	if (end > 0){ m_PlayEndTime = end; }
-	else
-		m_PlayEndTime = GetDuration();
-
-	m_State = Playing;
-
 	m_Time = GetTimebase().MsAt(m_Frame);
 	m_LastTime = timeGetTime() - m_Time;
 	if (m_AudioPlayer){ m_AudioPlayer->Play(m_Time, -1, false); }
@@ -482,64 +469,42 @@ bool RendererFFMS2::Play(int end)
 #else
 	StartLinuxPlaybackThread();
 #endif
-
-	return true;
 }
 
-
-bool RendererFFMS2::Pause()
+void RendererFFMS2::PauseStream()
 {
-	if (m_State == Playing){
-		SetThreadExecutionState(ES_CONTINUOUS);
-		m_State = Paused;
 #ifndef _WIN32
-		StopLinuxPlaybackThread();
+	StopLinuxPlaybackThread();
 #endif
-		if (m_AudioPlayer){ m_AudioPlayer->Stop(false); }
-	}
-	else if (m_State != None){
-		Play();
-	}
-	else{ return false; }
-	return true;
+	if (m_AudioPlayer){ m_AudioPlayer->Stop(false); }
 }
 
-bool RendererFFMS2::Stop()
+void RendererFFMS2::StopStream()
 {
-	if (m_State == Playing){
-		SetThreadExecutionState(ES_CONTINUOUS);
-		m_State = Stopped;
 #ifndef _WIN32
-		StopLinuxPlaybackThread();
+	StopLinuxPlaybackThread();
 #endif
-		if (m_AudioPlayer){
-			m_AudioPlayer->Stop();
-			m_PlayEndTime = GetDuration();
-		}
-		m_Time = 0;
-		return true;
-	}
-	return false;
+	if (m_AudioPlayer){ m_AudioPlayer->Stop(); }
 }
 
-void RendererFFMS2::SetPosition(int _time, bool starttime/*=true*/, bool corect/*=true*/, 
-	bool async /*= true*/, bool refreshAudio/* = true*/)
+void RendererFFMS2::SetPosition(int time, bool startTime, int flags)
 {
+	bool refreshAudio = !(flags & SEEK_KEEP_AUDIO);
 	//while playing, the playback thread owns the frame and seeks itself
-	if (!async && m_State != Playing)
-		SetFFMS2Position(_time, starttime, refreshAudio);
+	if ((flags & SEEK_WAIT) && m_State != Playing)
+		SetFFMS2Position(time, startTime, refreshAudio);
 	else
-		m_FFMS2->SetPosition(_time, starttime, refreshAudio);
+		m_FFMS2->SetPosition(time, startTime, refreshAudio);
 }
 
 //is from video thread make safe any deletion
-void RendererFFMS2::SetFFMS2Position(int _time, bool starttime, bool refreshAudio/* = true*/){
+void RendererFFMS2::SetFFMS2Position(int time, bool startTime, bool refreshAudio/* = true*/){
 	bool playing = m_State == Playing;
 	const Timebase &timebase = GetTimebase();
-	m_Frame = timebase.ClampFrame(starttime ? timebase.FrameAt(_time) : timebase.FrameShownAt(_time - 1));
+	m_Frame = SeekFrame(timebase, time, startTime);
 	m_Time = timebase.MsAt(m_Frame);
 	m_LastTime = timeGetTime() - m_Time;
-	m_PlayEndTime = GetDuration();
+	m_PlayEndTime = 0;
 
 	ReopenSubsAfterSeek(playing);
 	if (playing){

@@ -644,7 +644,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 				isstart = true;
 			}
 			if (ctrl){ vtime -= 1000; }
-			tabp->video->Seek(MAX(0, vtime), isstart, true, false);
+			tabp->video->Seek(MAX(0, vtime), isstart);
 		}
 		return;
 	}

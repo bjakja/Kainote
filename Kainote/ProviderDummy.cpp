@@ -35,7 +35,7 @@ ProviderDummy::~ProviderDummy()
 	m_FrameBuffer = nullptr;
 }
 
-ProviderDummy::ProviderDummy(const wxString& filename, RendererVideo* renderer, wxWindow* progressSinkWindow, bool* success)
+ProviderDummy::ProviderDummy(const wxString& filename, RendererFFMS2* renderer, wxWindow* progressSinkWindow, bool* success)
 	:Provider(filename, renderer)
 {
 	if (ParseDummyData(filename)) {
@@ -56,7 +56,7 @@ ProviderDummy::ProviderDummy(const wxString& filename, RendererVideo* renderer, 
 	*success = false;
 }
 
-void ProviderDummy::GetFrameBuffer(unsigned char** buffer)
+void ProviderDummy::GetFrameBuffer(int frame, unsigned char** buffer)
 {
 	if (!m_FrameBuffer)
 		GenerateFrame();
@@ -66,7 +66,7 @@ void ProviderDummy::GetFrameBuffer(unsigned char** buffer)
 
 void ProviderDummy::GetFrame(int frame, unsigned char* buff)
 {
-	GetFrameBuffer(&buff);
+	GetFrameBuffer(frame, &buff);
 }
 
 void ProviderDummy::GetBuffer(void* buf, long long start, long long count, double vol)
@@ -238,7 +238,7 @@ void ProviderDummy::Processing()
 	RunPlaybackThread();
 }
 
-bool ProviderDummy::FetchPlaybackFrame(unsigned char* buffer)
+bool ProviderDummy::FetchPlaybackFrame(int frame, unsigned char* buffer)
 {
 	memcpy(buffer, m_FrameBuffer, m_framePlane);
 	return true;

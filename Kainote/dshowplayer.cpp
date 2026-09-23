@@ -50,8 +50,9 @@ const IID IID_IAMExtendedSeeking = { 0xFA2AA8F9, 0x8B62, 0x11D0, { 0xA5, 0x20, 0
 //const CLSID CLSID_Vobsub={0x93A22E7A,0x5091,0x45EF,{0xBA,0x61,0x6D,0xA2,0x61,0x56,0xA5,0xD0}};
 //const CLSID CLSID_LAVVIDEO={0xEE30215D,0x164F,0x4A92,{0xA4,0xEB,0x9D,0x4C,0x13,0x39,0x0F,0x9F}};
 
-DShowPlayer::DShowPlayer(wxWindow*_parent) :
+DShowPlayer::DShowPlayer(wxWindow*_parent, RendererDirectShow *renderer) :
 m_state(None),
+m_renderer(renderer),
 hwndVid(_parent->GetHWND()),
 m_pGraph(nullptr),
 m_pControl(nullptr),
@@ -97,7 +98,7 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 	}else{wLogStatus("Jeśli masz zieloną plamę zamiast wideo zainstaluj Lav filter");}
 	*/
 	HRESULT hr;//renderer here have to be created
-	CD2DVideoRender *renderer = new CD2DVideoRender(video->GetRenderer(), &hr);
+	CD2DVideoRender *renderer = new CD2DVideoRender(m_renderer, &hr);
 	renderer->QueryInterface(IID_IBaseFilter, (void**)&frend.obj);
 	HR(m_pGraph->AddFilter(frend.obj, L"Kainote video Renderer"), _("Cannot add video renderer"));
 

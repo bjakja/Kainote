@@ -22,6 +22,7 @@
 #include "Provider.h"
 #include "TabPanel.h"
 #include "Timebase.h"
+#include "Playback.h"
 #include <atomic>
 #include <vector>
 #include <thread>
@@ -36,16 +37,16 @@
 #define FFMS_CS_SMPTE240M 7
 #endif
 class chapter;
-class RendererVideo;
+class RendererFFMS2;
 
 class Provider
 {
 	friend class RendererFFMS2;
 public:
-	static Provider* Get(const wxString& filename, RendererVideo* renderer, 
+	static Provider* Get(const wxString& filename, RendererFFMS2* renderer, 
 		wxWindow* progressSinkWindow, bool* success);
 	virtual ~Provider();
-	virtual void GetFrameBuffer(unsigned char** buffer) {};
+	virtual void GetFrameBuffer(int frame, unsigned char** buffer) {};
 	virtual void GetFrame(int frame, unsigned char* buff) {};
 	virtual void GetBuffer(void* buf, long long start, long long count, double vol = 1.0) {};
 	virtual void GetChapters(std::vector<chapter>* _chapters) {}
@@ -61,7 +62,7 @@ public:
 	void GetWaveForm(int* min, int* peak, long long start, int w, int h, int samples, float scale);
 	// the video's frames and keyframes, handed once to the video box
 	Timebase TakeTimebase() { return std::move(m_timebase); }
-	void SetPosition(int time, bool starttime, bool refteshAudio = true);
+	void SetPosition(int time, bool starttime, bool refreshAudio = true);
 	bool AudioNotInitialized() {
 		return audioNotInitialized.load();
 	}
@@ -69,14 +70,14 @@ public:
 		return m_audioProgress.load();
 	}
 protected:
-	Provider(const wxString& filename, RendererVideo* renderer);
+	Provider(const wxString& filename, RendererFFMS2* renderer);
 	// the playback thread: plays and seeks on request until killed
 	void RunPlaybackThread();
-	// puts the renderer's current frame in buffer; false ends playback
-	virtual bool FetchPlaybackFrame(unsigned char* buffer) { return false; }
+	// puts frame in buffer; false ends playback
+	virtual bool FetchPlaybackFrame(int frame, unsigned char* buffer) { return false; }
 	std::atomic<bool> audioNotInitialized{ true };
 	std::atomic<float> m_audioProgress{ 0 };
-	RendererVideo* m_renderer = nullptr;
+	RendererFFMS2* m_renderer = nullptr;
 	int m_width = -1;
 	int m_height = -1;
 	int m_arwidth = -1;
@@ -87,9 +88,6 @@ protected:
 	int m_channels = 0;
 	int m_lastFrame = -1;
 	int m_framePlane = 0;
-	int m_changedTime = 0;
-	bool m_isStartTime = false;
-	bool m_refreshAudio = true;
 	double m_duration = 0;
 	float m_FPS = 0;
 	long long m_numSamples = 0;
@@ -100,5 +98,8 @@ protected:
 	HANDLE m_eventComplete = nullptr;
 	wxString m_filename;
 	Timebase m_timebase;
+private:
+	void ApplyPendingSeek();
+	PendingSeek m_pendingSeek;
 };
 

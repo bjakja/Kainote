@@ -92,6 +92,7 @@ add_executable(kainote
     Kainote/KaiGauge.cpp
     Kainote/KaiPanel.cpp
     Kainote/LineParse.cpp
+    Kainote/Playback.cpp
     Kainote/Provider.cpp
     Kainote/ProviderDummy.cpp
     Kainote/ProviderFFMS2.cpp

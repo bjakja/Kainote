@@ -454,7 +454,7 @@ done:
 	if (seekAfter == 1 && playAfter < 2 && !nochangeline && rowChanged){
 		if (vb->GetState() != None){
 			if (vb->GetState() == Playing){ vb->Pause(); }
-			vb->Seek(line->Start.mstime, true, true, true, true, true, !setaudio);
+			vb->Seek(line->Start.mstime, true, setaudio ? SEEK_KEEP_AUDIO : 0);
 		}
 		//return;
 	}

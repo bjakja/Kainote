@@ -16,6 +16,7 @@
 
 
 #include "Provider.h"
+#include "RendererFFMS2.h"
 #include "ProviderDummy.h"
 #include "ProviderFFMS2.h"
 #include "KaiMessageBox.h"
@@ -24,7 +25,7 @@
 #include "Notebook.h"
 
 
-Provider::Provider(const wxString& filename, RendererVideo* renderer)
+Provider::Provider(const wxString& filename, RendererFFMS2* renderer)
 	: m_renderer(renderer)
 	, m_filename(filename)
 	, m_eventStartPlayback(CreateEvent(0, FALSE, FALSE, 0))
@@ -34,7 +35,7 @@ Provider::Provider(const wxString& filename, RendererVideo* renderer)
 {
 }
 
-Provider* Provider::Get(const wxString& filename, RendererVideo* renderer, wxWindow* progressSinkWindow, bool* success)
+Provider* Provider::Get(const wxString& filename, RendererFFMS2* renderer, wxWindow* progressSinkWindow, bool* success)
 {
 	if (filename.StartsWith(L"?dummy") || filename.StartsWith(L"dummy")) {
 		return new ProviderDummy(filename, renderer, progressSinkWindow, success);
@@ -128,7 +129,6 @@ void Provider::RunPlaybackThread()
 		m_eventSetPosition,
 		m_eventKillSelf
 	};
-	int tdiff = 0;
 
 	while (1) {
 		DWORD wait_result = WaitForMultipleObjects(sizeof(events_to_wait) / sizeof(HANDLE), events_to_wait, FALSE, INFINITE);
@@ -136,17 +136,14 @@ void Provider::RunPlaybackThread()
 		if (wait_result == WAIT_OBJECT_0 + 0)
 		{
 			unsigned char* buff = m_renderer->m_FrameBuffer;
-			int acttime;
 			while (1) {
 				if (WaitForSingleObject(m_eventKillSelf, 0) == WAIT_OBJECT_0) { return; }
 				if (WaitForSingleObject(m_eventSetPosition, 0) == WAIT_OBJECT_0)
-					m_renderer->SetFFMS2Position(m_changedTime, m_isStartTime, m_refreshAudio);
+					ApplyPendingSeek();
 
-				if (m_renderer->m_Frame != m_lastFrame) {
-					m_renderer->m_Time = m_renderer->GetTimebase().MsAt(m_renderer->m_Frame);
-					m_lastFrame = m_renderer->m_Frame;
-				}
-				if (!FetchPlaybackFrame(buff)) {
+				const Timebase &timebase = m_renderer->GetTimebase();
+				int frame = m_renderer->m_Frame;
+				if (!FetchPlaybackFrame(frame, buff)) {
 					// Retrying a failing fetch would spin the thread without ever
 					// looking at the stop or kill event again, so end playback.
 					wxCommandEvent* evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED, ID_END_OF_STREAM);
@@ -157,8 +154,7 @@ void Provider::RunPlaybackThread()
 				m_renderer->DrawTexture(buff);
 				m_renderer->Render(false);
 
-				if (m_renderer->m_Time >= m_renderer->m_PlayEndTime || 
-					m_renderer->m_Frame >= m_numFrames - 1) {
+				if (PlaybackReachedEnd(frame, m_renderer->m_Time, m_renderer->m_PlayEndTime, m_numFrames)) {
 					wxCommandEvent* evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED, ID_END_OF_STREAM);
 					wxQueueEvent(m_renderer->videoControl, evt);
 					break;
@@ -166,37 +162,18 @@ void Provider::RunPlaybackThread()
 				else if (m_renderer->m_State != Playing) {
 					break;
 				}
-				acttime = timeGetTime() - m_renderer->m_LastTime;
 
-				m_renderer->m_Frame++;
-				m_renderer->m_Time = m_renderer->GetTimebase().MsAt(m_renderer->m_Frame);
-
-				tdiff = m_renderer->m_Time - acttime;
-
-				if (tdiff > 0) { Sleep(tdiff); }
-				else if (tdiff < -20) {
-					while (1) {
-						if (m_renderer->m_Frame >= m_numFrames) {
-							m_renderer->m_Frame = m_numFrames - 1;
-							m_renderer->m_Time = m_renderer->m_PlayEndTime;
-							break;
-						}
-						int frameTime = m_renderer->GetTimebase().MsAt(m_renderer->m_Frame);
-						if (frameTime >= acttime || frameTime >= m_renderer->m_PlayEndTime) {
-							break;
-						}
-						else {
-							m_renderer->m_Frame++;
-						}
-					}
-
-				}
-
+				int played = timeGetTime() - m_renderer->m_LastTime;
+				PlaybackStep step = NextPlaybackFrame(timebase, frame, played,
+					m_renderer->m_PlayEndTime, m_numFrames);
+				m_renderer->m_Frame = step.frame;
+				m_renderer->m_Time = timebase.MsAt(step.frame);
+				if (step.sleepMs > 0) { Sleep(step.sleepMs); }
 			}
 		}
 		else if (wait_result == WAIT_OBJECT_0 + 1) {
 			//entire seeking have to be in this thread or subtitles will out of sync
-			m_renderer->SetFFMS2Position(m_changedTime, m_isStartTime, m_refreshAudio);
+			ApplyPendingSeek();
 		}
 		else {
 			break;
@@ -205,11 +182,15 @@ void Provider::RunPlaybackThread()
 	}
 }
 
-void Provider::SetPosition(int time, bool starttime, bool refteshAudio/* = true*/)
+void Provider::ApplyPendingSeek()
 {
-	m_changedTime = time;
-	m_isStartTime = starttime;
-	m_refreshAudio = refteshAudio;
-	SetEvent(m_eventSetPosition);
+	SeekRequest seek;
+	if (m_pendingSeek.Take(&seek))
+		m_renderer->SetFFMS2Position(seek.time, seek.startTime, seek.refreshAudio);
 }
 
+void Provider::SetPosition(int time, bool starttime, bool refreshAudio/* = true*/)
+{
+	m_pendingSeek.Post({ time, starttime, refreshAudio });
+	SetEvent(m_eventSetPosition);
+}

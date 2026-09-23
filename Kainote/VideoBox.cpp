@@ -243,7 +243,7 @@ bool VideoBox::Pause(bool skipWhenOnEnd)
 		LoadVideo(Kai->videorec[Kai->videorec.size() - 1], CLOSE_SUBTITLES);
 		return true;
 	}
-	if (renderer->m_Time >= renderer->GetDuration() && skipWhenOnEnd){ return false; }
+	if (renderer->GetCurrentPosition() >= renderer->GetDuration() && skipWhenOnEnd){ return false; }
 	if (!renderer->Pause()){ return false; }
 	if (GetState() == Paused){
 		m_VideoTimeTimer.Stop(); RefreshTime();
@@ -374,7 +374,6 @@ bool VideoBox::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*= 
 			m_VolumeSlider->Show(false);
 			m_TimesTextField->SetSize(wxMax(0, m_VideoWindowLastSize.x - 185), -1);
 		}
-		renderer->m_State = Paused;
 		renderer->Render(true, false);
 	}
 
@@ -412,12 +411,11 @@ bool VideoBox::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*= 
 }
 
 
-bool VideoBox::Seek(int whre, bool starttime/*=true*/, bool disp/*=true*/, bool reloadSubs/*=true*/, 
-	bool correct /*= true*/, bool asynchonize /*= true*/, bool refreshAudio /*= true*/)
+bool VideoBox::Seek(int time, bool startTime/*=true*/, int flags/*=0*/)
 {
 	wxMutexLocker lock(vbmutex);
 	if (!renderer){ return false; }
-	renderer->SetPosition(whre, starttime, correct, asynchonize, refreshAudio);
+	renderer->SetPosition(time, startTime, flags);
 	return true;
 }
 
@@ -1001,7 +999,7 @@ void VideoBox::ContextMenu(const wxPoint &pos)
 		timee.NewTime(renderer->m_Chapters[j].time);
 		int ntime = (j >= renderer->m_Chapters.size() - 1) ? INT_MAX : renderer->m_Chapters[(j + 1)].time;
 		menu->Append(MENU_CHAPTERS + j, renderer->m_Chapters[j].name + L"\t[" + timee.raw() + L"]",
-			emptyString, true, 0, 0, (ntime > renderer->m_Time) ? ITEM_RADIO : ITEM_NORMAL);
+			emptyString, true, 0, 0, (ntime > renderer->GetCurrentPosition()) ? ITEM_RADIO : ITEM_NORMAL);
 	}
 	id = 0;
 	int Modifiers = 0;
@@ -1225,7 +1223,7 @@ void VideoBox::OnPaint(wxPaintEvent& event)
 {
 #ifndef _WIN32
 	wxPaintDC paintDc(this);
-	if (renderer && !renderer->m_BlockResize && renderer->m_State != None){
+	if (renderer && !renderer->m_BlockResize && renderer->GetState() != None){
 		// Both Linux renderers (FFMS2 + GStreamer appsink) composite into a BGRA
 		// frame buffer and present through the shared base RenderToDc.
 		renderer->RenderToDc(paintDc);
@@ -1246,7 +1244,7 @@ void VideoBox::OnPaint(wxPaintEvent& event)
 	}
 	return;
 #endif
-	if (renderer && !renderer->m_BlockResize && renderer->m_State == Paused){
+	if (renderer && !renderer->m_BlockResize && renderer->GetState() == Paused){
 		renderer->Render(true, false);
 	}
 	else if (GetState() == None){
@@ -1325,15 +1323,16 @@ void VideoBox::ShowTimes(SubsTime &videoTime, KaiTextCtrl *field)
 	times << videoTime.raw(SRT) << L";  ";
 	Dialogue* line = tab->edit->line;
 	if (!m_IsDirectShow){
-		times << renderer->m_Frame << L";  ";
+		int frame = renderer->GetCurrentFrame();
+		times << frame << L";  ";
 		const Timebase &timebase = m_Timebase;
 		if (!timebase.IsEmpty()){
 			if (m_LastActiveLineStartTime != line->Start.mstime) {
 				m_LastActiveLineStartFrame = timebase.FrameAt(line->Start.mstime);
 				m_LastActiveLineStartTime = line->Start.mstime;
 			}
-			times << (renderer->m_Frame - m_LastActiveLineStartFrame) << L";  ";
-			if (timebase.IsKeyframe(renderer->m_Time)){
+			times << (frame - m_LastActiveLineStartFrame) << L";  ";
+			if (timebase.IsKeyframe(videoTime.mstime)){
 				m_ShownKeyframe = true;
 				field->SetForegroundColour(WINDOW_WARNING_ELEMENTS);
 			}
@@ -1358,7 +1357,7 @@ void VideoBox::RefreshTime()
 		return;
 
 	SubsTime videoTime;
-	videoTime.mstime = renderer->m_Time;
+	videoTime.mstime = renderer->GetCurrentPosition();
 	float dur = renderer->GetDuration();
 	float val = (dur > 0) ? videoTime.mstime / dur : 0.0;
 
@@ -1425,7 +1424,7 @@ void VideoBox::NextChap()
 				if (jj >= (int)chapters.size() - 1){ jj = 0; } 
 				else{ jj++; } 
 			}
-			Seek(chapters[jj].time, true, true, true, false);
+			Seek(chapters[jj].time, true, SEEK_NO_SNAP);
 
 			prevchap = jj;
 			break;
@@ -1449,7 +1448,7 @@ void VideoBox::PrevChap()
 				if (jj < 1){ jj = chapters.size() - 1; } 
 				else{ jj--; } 
 			}
-			Seek(chapters[jj].time, true, true, true, false);
+			Seek(chapters[jj].time, true, SEEK_NO_SNAP);
 			prevchap = jj;
 			break;
 		}
@@ -1906,7 +1905,7 @@ PlaybackState VideoBox::GetState() {
 	if (!renderer)
 		return None;
 
-	return renderer->m_State;
+	return renderer->GetState();
 }
 void VideoBox::CaptureMouse() {
 	if (m_IsFullscreen && m_FullScreenWindow) {

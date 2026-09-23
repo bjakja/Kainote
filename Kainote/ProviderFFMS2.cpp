@@ -16,6 +16,7 @@
 
 
 #include "ProviderFFMS2.h"
+#include "RendererFFMS2.h"
 #include "LogHandler.h"
 #include "VideoBox.h"
 #include "kainoteApp.h"
@@ -55,7 +56,7 @@ namespace
 	}
 }
 
-ProviderFFMS2::ProviderFFMS2(const wxString& filename, RendererVideo* renderer, 
+ProviderFFMS2::ProviderFFMS2(const wxString& filename, RendererFFMS2* renderer, 
 	wxWindow* progressSinkWindow, bool* _success)
 	: Provider(filename, renderer)
 	, m_eventAudioComplete(CreateEvent(0, FALSE, FALSE, 0))
@@ -91,12 +92,12 @@ ProviderFFMS2::ProviderFFMS2(const wxString& filename, RendererVideo* renderer,
 
 }
 
-bool ProviderFFMS2::FetchPlaybackFrame(unsigned char* buffer)
+bool ProviderFFMS2::FetchPlaybackFrame(int frame, unsigned char* buffer)
 {
-	if (CopyCurrentFrame(buffer, true))
+	if (CopyFrame(frame, buffer, true))
 		return true;
 	KaiLogDebug(wxString::Format(_("Cannot get frame %i: %s"),
-		m_renderer->m_Frame, wxString::FromUTF8(m_errInfo.Buffer)));
+		frame, wxString::FromUTF8(m_errInfo.Buffer)));
 	return false;
 }
 
@@ -531,16 +532,16 @@ void ProviderFFMS2::GetFrame(int frame, unsigned char* buff)
 	m_refreshFrame = true;
 }
 
-bool ProviderFFMS2::CopyCurrentFrame(unsigned char* buffer, bool forceFetch)
+bool ProviderFFMS2::CopyFrame(int frame, unsigned char* buffer, bool forceFetch)
 {
 	//FFMS owns the frame memory and FFMS_SetInputFormatV hands it back
 	//reallocated when the colour matrix changes, so the fetch and the read
 	//have to share one lock. Copying after the lock was released is what
 	//crashed playback on a colorspace switch (issue #39).
 	wxCriticalSectionLocker lock(m_blockFrame);
-	if (forceFetch || !m_FFMS2frame || m_renderer->m_Frame != m_lastFrame || m_refreshFrame) {
-		m_FFMS2frame = FFMS_GetFrame(m_videoSource, m_renderer->m_Frame, &m_errInfo);
-		m_lastFrame = m_renderer->m_Frame;
+	if (forceFetch || !m_FFMS2frame || frame != m_lastFrame || m_refreshFrame) {
+		m_FFMS2frame = FFMS_GetFrame(m_videoSource, frame, &m_errInfo);
+		m_lastFrame = frame;
 		m_refreshFrame = false;
 	}
 	if (!m_FFMS2frame) {
@@ -799,9 +800,9 @@ void ProviderFFMS2::DeleteOldAudioCache()
 
 }
 
-void ProviderFFMS2::GetFrameBuffer(unsigned char** buffer)
+void ProviderFFMS2::GetFrameBuffer(int frame, unsigned char** buffer)
 {
-	CopyCurrentFrame(*buffer, false);
+	CopyFrame(frame, *buffer, false);
 }
 
 wxString ProviderFFMS2::ColorMatrixDescription(int cs, int cr) {

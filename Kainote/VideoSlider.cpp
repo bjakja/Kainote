@@ -254,7 +254,7 @@ void VideoSlider::OnMouseEvent(wxMouseEvent& event)
 
 void VideoSlider::SendTime(int msTimePos)
 {
-	VB->Seek(msTimePos, true, true, true, false);
+	VB->Seek(msTimePos, true, SEEK_NO_SNAP);
 }
 void VideoSlider::OnMouseLeave(wxMouseCaptureLostEvent& event)
 {

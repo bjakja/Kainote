@@ -485,9 +485,70 @@ bool RendererVideo::PlayLine(int start, int eend)
 	//a seek while playing waits for the playback thread and would reset the end
 	if (m_State == Playing)
 		Pause();
-	SetPosition(start, true, true, false);
+	SetPosition(start, true, SEEK_WAIT);
 	Play(eend);
 	return true;
+}
+
+bool RendererVideo::Play(int end)
+{
+	int duration = GetDuration();
+	if (m_State == None || (duration > 0 && m_Time >= duration))
+		return false;
+	SetThreadExecutionState(ES_DISPLAY_REQUIRED | ES_CONTINUOUS);
+	if (!(videoControl->IsShown() ||
+		(videoControl->m_FullScreenWindow && videoControl->m_FullScreenWindow->IsShown())))
+		return false;
+	OpenSubsForPlayback();
+
+	m_PlayEndTime = (end > 0) ? end : 0;
+	m_State = Playing;
+	StartStream();
+	return true;
+}
+
+bool RendererVideo::Pause()
+{
+	if (m_State == Playing){
+		SetThreadExecutionState(ES_CONTINUOUS);
+		m_State = Paused;
+		PauseStream();
+	}
+	else if (m_State != None){
+		Play();
+	}
+	else{ return false; }
+	return true;
+}
+
+bool RendererVideo::Stop()
+{
+	if (m_State != Playing)
+		return false;
+	SetThreadExecutionState(ES_CONTINUOUS);
+	m_State = Stopped;
+	StopStream();
+	m_PlayEndTime = 0;
+	m_Time = 0;
+	return true;
+}
+
+int RendererVideo::SeekTarget(int time, bool startTime, int flags)
+{
+	time = MID(0, time, GetDuration());
+	if (flags & SEEK_NO_SNAP)
+		return time;
+	const Timebase &timebase = GetTimebase();
+	return timebase.MsAt(SeekFrame(timebase, time, startTime));
+}
+
+void RendererVideo::ChangePositionByFrame(int step)
+{
+	if (m_State == Playing || m_State == None){ return; }
+	const Timebase &timebase = GetTimebase();
+	int frame = timebase.ClampFrame(timebase.FrameShownAt(m_Time) + step);
+	SetPosition(timebase.MsAt(frame), true, SEEK_NO_SNAP);
+	videoControl->RefreshTime();
 }
 
 void RendererVideo::SetZoom(float percent, const wxPoint& mousePos)
@@ -936,7 +997,7 @@ int RendererVideo::GetCurrentPosition()
 
 int RendererVideo::GetCurrentFrame()
 {
-	return m_Frame;
+	return GetTimebase().FrameShownAt(m_Time);
 }
 
 void RendererVideo::VisualChangeTool(int tool)

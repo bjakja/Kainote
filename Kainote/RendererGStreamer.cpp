@@ -488,7 +488,7 @@ bool RendererGStreamer::OpenSubs(int flag, bool redraw, wxString *text, bool res
 		// gets recomposited with the new subtitles (new-preroll -> HandleSample).
 		gst_element_seek_simple(m_Pipeline, GST_FORMAT_TIME,
 			(GstSeekFlags)(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE),
-			(gint64)m_Time * GST_MSECOND);
+			(gint64)m_Time.load() * GST_MSECOND);
 	}
 	return result;
 }
@@ -548,86 +548,44 @@ void RendererGStreamer::BusLoop()
 // Transport
 // ---------------------------------------------------------------------------
 
-bool RendererGStreamer::Play(int end)
+void RendererGStreamer::StartStream()
 {
 	if (!m_Pipeline)
-		return false;
-	SetThreadExecutionState(ES_DISPLAY_REQUIRED | ES_CONTINUOUS);
-	if (!(videoControl->IsShown() ||
-		(videoControl->m_FullScreenWindow && videoControl->m_FullScreenWindow->IsShown())))
-		return false;
-
-	OpenSubsForPlayback();
-
-	m_PlayEndTime = (end > 0) ? end : 0;
-	m_StreamPlayEndMs.store(m_PlayEndTime);
+		return;
+	m_StreamPlayEndMs.store(m_PlayEndTime.load());
 	m_ReachedPlayEnd.store(false);
 	if (m_Time < GetDuration() - m_FrameDuration)
 		gst_element_set_state(m_Pipeline, GST_STATE_PLAYING);
-
-	m_State = Playing;
-	return true;
 }
 
-bool RendererGStreamer::Pause()
+void RendererGStreamer::PauseStream()
 {
-	if (m_State == Playing) {
-		SetThreadExecutionState(ES_CONTINUOUS);
-		m_State = Paused;
-		if (m_Pipeline) gst_element_set_state(m_Pipeline, GST_STATE_PAUSED);
-	}
-	else if (m_State != None) {
-		Play();
-	}
-	else { return false; }
-	return true;
+	if (m_Pipeline) gst_element_set_state(m_Pipeline, GST_STATE_PAUSED);
 }
 
-bool RendererGStreamer::Stop()
+void RendererGStreamer::StopStream()
 {
-	if (m_State == Playing) {
-		SetThreadExecutionState(ES_CONTINUOUS);
-		m_State = Stopped;
-		m_PlayEndTime = 0;
-		m_StreamPlayEndMs.store(0);
-		if (m_Pipeline) {
-			gst_element_set_state(m_Pipeline, GST_STATE_PAUSED);
-			gst_element_seek_simple(m_Pipeline, GST_FORMAT_TIME,
-				(GstSeekFlags)(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT), 0);
-		}
-		m_Time = 0;
-		m_StreamTimeMs.store(0);
-		return true;
+	m_StreamPlayEndMs.store(0);
+	if (m_Pipeline) {
+		gst_element_set_state(m_Pipeline, GST_STATE_PAUSED);
+		gst_element_seek_simple(m_Pipeline, GST_FORMAT_TIME,
+			(GstSeekFlags)(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT), 0);
 	}
-	return false;
+	m_StreamTimeMs.store(0);
 }
 
-void RendererGStreamer::SetPosition(int _time, bool starttime, bool corect, bool async, bool refreshAudio)
+void RendererGStreamer::SetPosition(int time, bool startTime, int flags)
 {
 	if (!m_Pipeline)
 		return;
 	m_StreamPlayEndMs.store(0);
-	m_Time = MID(0, _time, GetDuration());
-	if (corect) {
-		m_Time /= m_FrameDuration;
-		if (starttime) { m_Time++; }
-		m_Time *= m_FrameDuration;
-	}
+	m_Time = SeekTarget(time, startTime, flags);
 	m_PlayEndTime = 0;
-	m_StreamTimeMs.store(m_Time);
+	m_StreamTimeMs.store(m_Time.load());
 	m_ReachedPlayEnd.store(false);
 	gst_element_seek_simple(m_Pipeline, GST_FORMAT_TIME,
 		(GstSeekFlags)(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT),
-		(gint64)m_Time * GST_MSECOND);
-}
-
-void RendererGStreamer::ChangePositionByFrame(int step)
-{
-	if (m_State == Playing || m_State == None)
-		return;
-	m_Time += (m_FrameDuration * step);
-	SetPosition(m_Time, true, false);
-	videoControl->RefreshTime();
+		(gint64)m_Time.load() * GST_MSECOND);
 }
 
 void RendererGStreamer::Render(bool, bool)

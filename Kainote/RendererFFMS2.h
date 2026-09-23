@@ -40,11 +40,10 @@ public:
 
 	bool OpenFile(const wxString &fname, int subsFlag, bool vobsub, bool changeAudio = true);
 	bool OpenSubs(int flag, bool redraw = true, wxString *text = nullptr, bool resetParameters = false);
-	bool Play(int end = -1);
-	bool Pause();
-	bool Stop();
-	void SetPosition(int _time, bool starttime = true, bool corect = true, bool async = true, bool refreshAudio = true) override;
-	void SetFFMS2Position(int time, bool starttime, bool refreshAudio = true) override;
+	void SetPosition(int time, bool startTime = true, int flags = 0) override;
+	// the seek itself; while playing only the playback thread may run it
+	void SetFFMS2Position(int time, bool startTime, bool refreshAudio = true);
+	int GetCurrentFrame() override { return m_Frame; }
 	//if nothing loaded or loaded via Direct Show VFF is nullptr
 	//return true if VFF is present
 	//bool GetStartEndDurationFromMS(Dialogue *dial, SubsTime &duration);
@@ -80,6 +79,9 @@ public:
 	std::atomic_bool m_LinuxPlaybackStop{ false };
 #endif
 protected:
+	void StartStream() override;
+	void PauseStream() override;
+	void StopStream() override;
 #ifndef _WIN32
 	void StartLinuxPlaybackThread();
 	void StopLinuxPlaybackThread();

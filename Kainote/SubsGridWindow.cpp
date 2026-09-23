@@ -1349,7 +1349,7 @@ void SubsGridWindow::SetVideoLineTime(wxMouseEvent &evt, int mvtal)
 			vczas = edit->line->Start.mstime; isstart = true;
 		}
 		if (evt.LeftDClick() && evt.ControlDown()){ vczas -= 1000; }
-		tab->video->Seek(MAX(0, vczas), isstart, true, false, true, true, false);
+		tab->video->Seek(MAX(0, vczas), isstart, SEEK_KEEP_AUDIO);
 		if (edit->ABox){ edit->ABox->audioDisplay->Update(getEndTime); }
 		if (edit->Visual > CHANGEPOS){
 			tab->video->SetVisual(true, true);
@@ -1468,7 +1468,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 				isstart = true;
 			}
 			if (ctrl){ vtime -= 1000; }
-			tab->video->Seek(MAX(0, vtime), isstart, true, false, true, false, false);
+			tab->video->Seek(MAX(0, vtime), isstart, SEEK_WAIT | SEEK_KEEP_AUDIO);
 			if (edit->ABox){ edit->ABox->audioDisplay->Update(shift && subsFormat != TMP); }
 			if (edit->Visual > CHANGEPOS){
 				tab->video->SetVisual(true, true);

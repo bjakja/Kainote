@@ -58,7 +58,8 @@ public:
 		bool changeAudio = true, int customFFMS2 = -1, bool dontPlayOnStart = false);
 	
 
-	bool Seek(int newPosition, bool starttime = true, bool refreshTime = true, bool reloadSubs = true, bool correct = true, bool asynchonize = true, bool refreshAudio = true);
+	// flags are SeekFlags
+	bool Seek(int time, bool startTime = true, int flags = 0);
 	int Tell();
 	bool CalcSize(int *width, int *height, int wwidth = 0, int wheight = 0, bool setstatus = false, bool calcH = false);
 

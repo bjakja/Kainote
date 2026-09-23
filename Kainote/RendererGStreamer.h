@@ -47,10 +47,7 @@ public:
 
 	bool OpenFile(const wxString &fname, int subsFlag, bool vobsub, bool changeAudio = true) override;
 	bool OpenSubs(int flag, bool redraw = true, wxString *text = nullptr, bool resetParameters = false) override;
-	bool Play(int end = -1) override;
-	bool Pause() override;
-	bool Stop() override;
-	void SetPosition(int _time, bool starttime = true, bool corect = true, bool async = true, bool refreshAudio = true) override;
+	void SetPosition(int time, bool startTime = true, int flags = 0) override;
 	int GetDuration() override;
 	int GetVolume() override;
 	void GetVideoSize(int *width, int *height) override;
@@ -59,7 +56,6 @@ public:
 	void Render(bool RecreateFrame = true, bool wait = true) override;
 	void RecreateSurface() override;
 	void EnableStream(long index) override;
-	void ChangePositionByFrame(int cpos) override;
 	void ChangeVobsub(bool vobsub = false) override;
 	wxArrayString GetStreams() override;
 	// Current frame as a BGRA buffer (caller deletes when *del is set), with the
@@ -71,13 +67,14 @@ public:
 	void DrawProgressBar(const wxString &timesString) override;
 	bool EnumFilters(Menu *menu) override { return false; }
 	bool FilterConfig(wxString name, int idx, wxPoint pos) override { return false; }
-	// playbin has no per-frame provider, so the renderer keeps the keyframes
-	// itself and counts their times from fps (see RendererGStreamer.cpp).
-
 	// appsink callback target (new-sample / new-preroll).  Public only so the
 	// C-linkage trampolines in the .cpp can reach it; do not call directly.
 	void HandleSample(GstSample *sample);
 
+protected:
+	void StartStream() override;
+	void PauseStream() override;
+	void StopStream() override;
 private:
 	void TearDown();
 	bool QueryVideoInfo();
