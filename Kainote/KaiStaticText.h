@@ -28,7 +28,13 @@ public:
 
 	void OnPaint(wxPaintEvent &evt);
 	void SetLabelText(const wxString &_text);
-	bool SetForegroundColour(COLOR txtColor){ textColour = txtColor, Refresh(false); return false; }
+	bool SetForegroundColour(COLOR txtColor){
+		if (textColour == txtColor)
+			return false;
+		textColour = txtColor;
+		Refresh(false);
+		return true;
+	}
 	wxString GetLabelText() const { return text; }
 	bool SetFont(const wxFont &font);
 

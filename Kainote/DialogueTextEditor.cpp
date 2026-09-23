@@ -421,7 +421,6 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 			Selend = Cursor;
 		}
 		Refresh(false);
-		Update();
 		modified = true;
 		//tag list
 		if (!tagList && (key == L'\\' || (Cursor.x - 2 >= 0 && text[Cursor.x - 2] == L'\\') ||
@@ -678,7 +677,6 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 		else if (Cursor.x>wraps[Cursor.y + 1]){ Cursor.y++; }
 		Selend = Cursor;
 		Refresh(false);
-		Update();
 		modified = true;
 		break;
 

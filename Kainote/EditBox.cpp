@@ -493,7 +493,8 @@ done:
 
 void EditBox::UpdateChars()
 {
-
+	wxSize charsSize = Chars->GetMinSize();
+	wxSize timeSize = Chtime->GetMinSize();
 	if (line->IsComment){
 		Chars->SetLabelText(emptyString);
 		Chtime->SetLabelText(emptyString);
@@ -512,11 +513,11 @@ void EditBox::UpdateChars()
 		Chtime->SetLabelText(wxString::Format(_("Characters per second: %i<=15"), chtime));
 		Chtime->SetForegroundColour((chtime > 15) ? WINDOW_WARNING_ELEMENTS : WINDOW_TEXT);
 	}
+	if (Chars->GetMinSize() == charsSize && Chtime->GetMinSize() == timeSize)
+		return;
 	BoxSizer5->Layout();
 	Frames->Refresh(false);
-	Frames->Update();
 	Times->Refresh(false);
-	Times->Update();
 }
 
 void EditBox::ResizeTimeControls(bool SRT)
