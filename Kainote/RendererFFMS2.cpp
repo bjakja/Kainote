@@ -738,7 +738,7 @@ unsigned char* RendererFFMS2::GetFrame(int frame, bool subs)
 	byte* newFrame = new byte[all];
 	m_FFMS2->GetFrame(frame, newFrame);
 	if (subs) {
-		m_SubsProvider->Draw(newFrame, frame);
+		m_SubsProvider->Draw(newFrame, m_FFMS2->GetMSfromFrame(frame));
 	}
 	return newFrame;
 }
