@@ -96,6 +96,7 @@ private:
 
 	int *peak = nullptr;
 	int *min = nullptr;
+	std::vector<VERTEX> waveformVertices;
 
 	wxCriticalSection mutex;
 	int currentSyllable = 0;
@@ -105,6 +106,10 @@ private:
 	LPDIRECT3DDEVICE9 d3dDevice = nullptr;
 	LPDIRECT3DSURFACE9 backBuffer = nullptr;
 	LPDIRECT3DSURFACE9 spectrumSurface = nullptr;
+	// everything but the play cursor, so a cursor tick only copies it
+	LPDIRECT3DSURFACE9 staticSurface = nullptr;
+	bool staticValid = false;
+	std::atomic<bool> fullRedrawQueued{ false };
 
 	ID3DXLine *d3dLine = nullptr;
 	LPD3DXFONT d3dFontTahoma13 = nullptr;
@@ -186,6 +191,13 @@ private:
 	void UpdatePosition(int pos, bool IsSample = false);
 
 	void DoUpdateImage(bool weak);
+	void DrawCursor();
+	// copies the static layer, draws the cursor over it and presents
+	void PresentWithCursor();
+	// for the cursor thread: redraws only the cursor when it can
+	void DrawCursorFrame();
+	// the cursor thread must not read the grid, so full redraws go to the UI thread
+	void QueueFullRedraw();
 
 public:
 	SubsGrid *grid = nullptr;

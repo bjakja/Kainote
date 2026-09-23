@@ -252,6 +252,8 @@ void AudioDisplay::DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, D3DCOL
 
 void AudioDisplay::ClearDX()
 {
+	staticValid = false;
+	SAFE_RELEASE(staticSurface);
 	SAFE_RELEASE(spectrumSurface);
 	SAFE_RELEASE(backBuffer);
 	SAFE_RELEASE(d3dDevice);
@@ -270,6 +272,8 @@ bool AudioDisplay::InitDX(const wxSize &size)
 		PTR(d3dObject, _("Cannot create Direct3D object"));
 	}
 	else{
+		staticValid = false;
+		SAFE_RELEASE(staticSurface);
 		SAFE_RELEASE(spectrumSurface);
 		SAFE_RELEASE(backBuffer);
 		SAFE_RELEASE(d3dLine);
@@ -345,6 +349,7 @@ bool AudioDisplay::InitDX(const wxSize &size)
 	HR(D3DXCreateFontW(d3dDevice, sizeTahoma8.y, sizeTahoma8.x, FW_NORMAL, 0, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &d3dFontTahoma8), _("Cannot create D3DX font"));
 	HR(D3DXCreateFontW(d3dDevice, sizeVerdana11.y, sizeVerdana11.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Verdana"), &d3dFontVerdana11), _("Cannot create D3DX font"));
 	HR(d3dDevice->CreateOffscreenPlainSurface(size.x, size.y, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &spectrumSurface, 0), _("Cannot create plain surface"));
+	HR(d3dDevice->CreateRenderTarget(size.x, size.y, D3DFMT_X8R8G8B8, D3DMULTISAMPLE_NONE, 0, FALSE, &staticSurface, nullptr), _("Cannot create plain surface"));
 	HR(d3dDevice->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE), L"FVF failed");
 
 	return true;
@@ -399,6 +404,8 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 		deviceLost = false;
 	}
 
+	staticValid = false;
+	hr = d3dDevice->SetRenderTarget(0, staticSurface);
 	// Background
 	hr = d3dDevice->Clear(0, nullptr, D3DCLEAR_TARGET, background, 1.0f, 0);
 
@@ -666,29 +673,6 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 
 
 
-		if (cursorPaint){
-			D3DXVECTOR2 v2[2] = { D3DXVECTOR2(curpos, 0), D3DXVECTOR2(curpos, h) };
-			d3dLine->SetWidth(2);
-			d3dLine->SetAntialias(TRUE);
-			d3dLine->Begin();
-			d3dLine->Draw(v2, 2, AudioCursor);
-			d3dLine->End();
-			d3dLine->SetAntialias(FALSE);
-			d3dLine->SetWidth(1);
-			if (!player->IsPlaying()){
-				SubsTime time;
-				time.NewTime(GetMSAtX(curpos));
-				wxString text = time.GetFormatted(ASS);
-				RECT rect;
-				rect.left = curpos - 150;
-				rect.top = (hasKara) ? 20 : 5;
-				rect.right = rect.left + 300;
-				rect.bottom = rect.top + 100;
-				DRAWOUTTEXT(d3dFontTahoma13, text, rect, DT_CENTER, 0xFFFFFFFF);
-			}
-		}
-
-
 		// Draw focus border
 		if (hasFocus) {
 			D3DXVECTOR2 v5[5] = { D3DXVECTOR2(0, 0), D3DXVECTOR2(w - 1, 0), D3DXVECTOR2(w - 1, h - 1), D3DXVECTOR2(0, h - 1), D3DXVECTOR2(0, 0) };
@@ -699,18 +683,73 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 
 	}
 	hr = d3dDevice->EndScene();
+	staticValid = true;
 
-	hr = d3dDevice->Present(nullptr, nullptr, nullptr, nullptr);
-
-	if (D3DERR_DEVICELOST == hr ||
-		D3DERR_DRIVERINTERNALERROR == hr){
-		deviceLost = true;
+	PresentWithCursor();
+	if (deviceLost)
 		UpdateImage(false, true);
-	}
 	// Done
 	//needImageUpdate = false;
 	if(!weak)
 		needImageUpdateWeak = true;
+}
+
+void AudioDisplay::DrawCursor()
+{
+	D3DXVECTOR2 v2[2] = { D3DXVECTOR2(curpos, 0), D3DXVECTOR2(curpos, h) };
+	d3dLine->SetWidth(2);
+	d3dLine->SetAntialias(TRUE);
+	d3dLine->Begin();
+	d3dLine->Draw(v2, 2, AudioCursor);
+	d3dLine->End();
+	d3dLine->SetAntialias(FALSE);
+	d3dLine->SetWidth(1);
+	if (!player->IsPlaying()){
+		SubsTime time;
+		time.NewTime(GetMSAtX(curpos));
+		wxString text = time.GetFormatted(ASS);
+		RECT rect;
+		rect.left = curpos - 150;
+		rect.top = (hasKara) ? 20 : 5;
+		rect.right = rect.left + 300;
+		rect.bottom = rect.top + 100;
+		DRAWOUTTEXT(d3dFontTahoma13, text, rect, DT_CENTER, 0xFFFFFFFF);
+	}
+}
+
+void AudioDisplay::PresentWithCursor()
+{
+	HRESULT hr = d3dDevice->SetRenderTarget(0, backBuffer);
+	hr = d3dDevice->StretchRect(staticSurface, nullptr, backBuffer, nullptr, D3DTEXF_NONE);
+	if (cursorPaint && !provider->AudioNotInitialized()) {
+		hr = d3dDevice->BeginScene();
+		DrawCursor();
+		hr = d3dDevice->EndScene();
+	}
+	hr = d3dDevice->Present(nullptr, nullptr, nullptr, nullptr);
+	if (D3DERR_DEVICELOST == hr || D3DERR_DRIVERINTERNALERROR == hr){
+		deviceLost = true;
+		staticValid = false;
+	}
+}
+
+void AudioDisplay::DrawCursorFrame()
+{
+	if (!d3dDevice || !staticValid || deviceLost || isHidden) {
+		QueueFullRedraw();
+		return;
+	}
+	PresentWithCursor();
+}
+
+void AudioDisplay::QueueFullRedraw()
+{
+	if (fullRedrawQueued.exchange(true))
+		return;
+	CallAfter([this]() {
+		fullRedrawQueued = false;
+		UpdateImage(false, true);
+	});
 }
 
 
@@ -979,38 +1018,22 @@ void AudioDisplay::DrawWaveform(bool weak) {
 	if (rebuildWaveform) {
 		provider->GetWaveForm(min, peak, Position*samples, w, h, samples, scale);
 	}
-	d3dLine->Begin();
-	// Draw pre-selection
 	if (!hasSel) selStartCap = w;
-	D3DXVECTOR2 v2[2];
-	HRESULT hr;
-	for (long long i = 0; i < selStartCap; i++) {
-		v2[0] = D3DXVECTOR2(i, peak[i]);
-		v2[1] = D3DXVECTOR2(i, min[i] - 1);
-		hr = d3dLine->Draw(v2, 2, waveform);
+	D3DCOLOR waveformSel = waveform;
+	if (hasSel && drawSelectionBackground) {
+		waveformSel = (NeedCommit) ? waveformModified : waveformSelected;
 	}
-
-	if (hasSel) {
-		// Draw selection
-		D3DCOLOR waveformSel = waveform;
-		if (drawSelectionBackground) {
-			if (NeedCommit) waveformSel = waveformModified;
-			else waveformSel = waveformSelected;
-		}
-		for (long long i = selStartCap; i < selEndCap; i++) {
-			v2[0] = D3DXVECTOR2(i, peak[i]);
-			v2[1] = D3DXVECTOR2(i, min[i] - 1);
-			d3dLine->Draw(v2, 2, waveformSel);
-		}
-
-		// Draw post-selection
-		for (long long i = selEndCap; i < w; i++) {
-			v2[0] = D3DXVECTOR2(i, peak[i]);
-			v2[1] = D3DXVECTOR2(i, min[i] - 1);
-			d3dLine->Draw(v2, 2, waveform);
-		}
+	// one line per column, all in a single draw call
+	waveformVertices.resize(w * 2);
+	for (int i = 0; i < w; i++) {
+		bool selected = hasSel && i >= selStartCap && i < selEndCap;
+		D3DCOLOR color = selected ? waveformSel : waveform;
+		float x = i + 0.5f;
+		CreateVERTEX(&waveformVertices[i * 2], x, peak[i] + 0.5f, color);
+		CreateVERTEX(&waveformVertices[i * 2 + 1], x, min[i] - 0.5f, color);
 	}
-	d3dLine->End();
+	if (w > 0)
+		HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINELIST, w, waveformVertices.data(), sizeof(VERTEX)), L"primitive failed");
 }
 
 
@@ -1044,7 +1067,7 @@ void AudioDisplay::DrawSpectrum(bool weak) {
 	}
 
 	RECT rc = { screenRect.x, screenRect.y, screenRect.width - screenRect.x, screenRect.height - screenRect.y };
-	if (FAILED(d3dDevice->StretchRect(spectrumSurface, &rc, backBuffer, &rc, D3DTEXF_LINEAR))){
+	if (FAILED(d3dDevice->StretchRect(spectrumSurface, &rc, staticSurface, &rc, D3DTEXF_LINEAR))){
 		KaiLogSilent(_("Cannot blit spectrum surfaces"));
 	}
 
@@ -1210,6 +1233,7 @@ void AudioDisplay::UpdatePosition(int pos, bool IsSample) {
 	// Set
 	Position = pos;
 	PositionSample = pos*samples;
+	staticValid = false;
 	if(wxThread::IsMain())
 		UpdateScrollbar();
 	else {
@@ -2556,10 +2580,12 @@ unsigned int _stdcall  AudioDisplay::OnUpdateTimer(PVOID pointer)
 		DWORD waitResult = WaitForMultipleObjects(sizeof(eventsToWait) / sizeof(HANDLE), eventsToWait, FALSE, INFINITE);
 		if (waitResult == WAIT_OBJECT_0) {
 			ad->stopPlayThread = false;
+			timeBeginPeriod(1);
 			while (!ad->stopPlayThread) {
 				ad->UpdateTimer();
-				Sleep(18);
+				Sleep(16);
 			}
+			timeEndPeriod(1);
 		}
 		else
 		{
@@ -2588,7 +2614,10 @@ void AudioDisplay::UpdateTimer()
 			needImageUpdateWeak = false;
 		Refresh(false);
 #else
-		DoUpdateImage(weak);
+		if (weak)
+			DrawCursorFrame();
+		else
+			QueueFullRedraw();
 #endif
 	};
 
@@ -2604,7 +2633,7 @@ void AudioDisplay::UpdateTimer()
 				int goTo = MAX(0, curPos - w * samples / 2);
 				if (goTo >= 0) {
 					UpdatePosition(goTo, true);
-					DoUpdateImage(false);
+					repaintPlaybackCursor(false);
 				}
 			}
 			else {
