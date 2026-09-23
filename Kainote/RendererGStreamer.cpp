@@ -255,7 +255,7 @@ bool RendererGStreamer::QueryVideoInfo()
 	gint64 dur = 0;
 	if (gst_element_query_duration(m_Pipeline, GST_FORMAT_TIME, &dur) && dur > 0)
 		m_DurationMs.store((int)(dur / GST_MSECOND));
-	videoControl->SetVideoTimebase(Timebase::FromFps(fps, (int)(m_DurationMs.load() * fps / 1000.f)));
+	videoControl->SetVideoTimebase(Timebase::Estimated(fps, (int)(m_DurationMs.load() * fps / 1000.f)));
 	return true;
 }
 

@@ -244,12 +244,11 @@ bool Visuals::IsInRect(D3DXVECTOR2 pos, D3DXVECTOR2 pos1, D3DXVECTOR2 secondpos,
 void Visuals::RenderSubs(wxString *subs, bool redraw /*= true*/)
 {
 	//visual, renderer should exist
-	RendererVideo *renderer = tab->video->GetRenderer();
-	if (!renderer) {
+	if (!tab->video->HasVideo()) {
 		delete subs;
 		return;
 	}
-	if (!renderer->OpenSubs(OPEN_HAS_OWN_TEXT, true, subs)){ KaiLog(_("Cannot open subtitle file")); }
+	if (!tab->video->OpenOwnSubs(subs)){ KaiLog(_("Cannot open subtitle file")); }
 	tab->video->SetVisualEdition(true);
 	if (redraw){ tab->video->Render(); }
 }

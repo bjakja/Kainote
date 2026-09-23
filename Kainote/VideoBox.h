@@ -28,6 +28,8 @@
 #include "TabPanel.h"
 #include <atomic>
 
+class AudioDisplay;
+class chapter;
 class Provider;
 class Fullscreen;
 class VideoToolbar;
@@ -123,19 +125,26 @@ public:
 	void GetVideoListsOptions(int *videoPlayAfter, int *videoSeekAfter);
 	void SetVisual(bool settext = false, bool noRefresh = false);
 	void ResetVisual();
-	bool HasFFMS2();
-	//can return null
 	bool HasVideo() {
 		if (renderer)
 			return true;
 
 		return false;
 	}
+	//can return null
 	Provider *GetFFMS2();
 	void SetVisualEdition(bool value);
 	void MarkSubtitlesOutdated();
-	//can return null
-	RendererVideo *GetRenderer();
+	// subtitles a visual tool made itself; takes the text
+	bool OpenOwnSubs(wxString *text);
+	// a copy of frame to release with delete; nullptr when the video can't give frames
+	unsigned char *GetFrame(int frame, bool withSubtitles);
+	const std::vector<chapter> &GetChapters();
+	// where the video is drawn in the window
+	RECT GetVideoRect();
+	// redraws a paused frame unless the window is being resized; false when it didn't
+	bool RedrawPaused();
+	void SetAudioPlayer(AudioDisplay *player);
 	//can return null
 	Fullscreen *GetFullScreenWindow();
 	VideoToolbar *GetVideoToolbar();

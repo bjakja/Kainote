@@ -63,10 +63,9 @@ void VideoSlider::OnPaint(wxPaintEvent& event)
 		tdc.SetPen(wxPen(L"#2EA6E2"));
 		int duration = VB->GetDuration();
 		float factor = (float)(w - 30) / (float)duration;
-		RendererVideo *renderer = VB->GetRenderer();
-		if (renderer){
+		{
 			isChapter = false;
-			for (auto & ch : renderer->m_Chapters){
+			for (auto & ch : VB->GetChapters()){
 				int chpos = (ch.time * factor) + 15;
 				if (abs(labelpos - chpos) < 3){
 					isChapter = true;
@@ -241,7 +240,7 @@ void VideoSlider::OnMouseEvent(wxMouseEvent& event)
 		SetFocus();
 	}
 	
-	if (event.GetWheelRotation() != 0 && VB->HasFFMS2()) {
+	if (event.GetWheelRotation() != 0 && VB->GetTimebase().IsExact()) {
 		int step = event.GetWheelRotation() / event.GetWheelDelta();
 		VB->ChangePositionByFrame((step > 0) ? -1 : 1);
 		return;

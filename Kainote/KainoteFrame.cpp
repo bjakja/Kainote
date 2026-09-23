@@ -2144,9 +2144,7 @@ void KainoteFrame::OpenAudioInTab(TabPanel *tab, int id, const wxString &path)
 
 	if (id == GLOBAL_CLOSE_AUDIO){
 		if (tab->edit->ABox){
-			RendererVideo *renderer = tab->video->GetRenderer();
-			if (renderer)
-				renderer->SetAudioPlayer(nullptr);
+			tab->video->SetAudioPlayer(nullptr);
 
 			tab->edit->CloseAudio();
 			tab->AudioPath.clear();
@@ -2232,7 +2230,7 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 		if(editor && curMenu)
 			AppendRecent(3);
 
-		bool hasFFMS2 = tab->video->HasFFMS2();
+		bool hasFFMS2 = tab->video->GetTimebase().IsExact();
 		bool hasVideoLoaded = (tab->video->GetState() != None);
 
 		for (int i = 0; i < VidMenu->GetMenuItemCount(); i++) {
@@ -2514,7 +2512,7 @@ void KainoteFrame::OnExternalSession(int id)
 void KainoteFrame::OnAudioSnap(wxCommandEvent& event)
 {
 	TabPanel *tab = GetTab();
-	if (!tab->edit->ABox || !tab->video->HasFFMS2()){ return; }
+	if (!tab->edit->ABox || !tab->video->GetTimebase().IsExact()){ return; }
 	int id = event.GetId();
 	bool snapStartTime = (id == GLOBAL_SNAP_WITH_START);
 	int time = (snapStartTime) ? tab->edit->line->Start.mstime : tab->edit->line->End.mstime;

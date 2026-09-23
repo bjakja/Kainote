@@ -316,7 +316,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 				strings.push_back(wxString::Format(L"%i", Dial->Layer));
 			}
 
-			if (previewGrid->showFrames && tab->video->HasFFMS2()){
+			if (previewGrid->showFrames && tab->video->GetTimebase().IsExact()){
 				const Timebase &timebase = tab->video->GetTimebase();
 				wxString frame;
 				frame << timebase.FrameAt(Dial->Start.mstime);

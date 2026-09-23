@@ -178,3 +178,12 @@ TEST(fps_is_derived_from_timecodes_when_unknown)
 	CHECK(tb.Fps() > 24.99f && tb.Fps() < 25.01f);
 	CHECK_EQ(tb.FrameCount(), 101);
 }
+
+TEST(frames_from_the_video_are_exact_and_estimated_ones_are_not)
+{
+	CHECK(!Timebase().IsExact());
+	CHECK(Timebase::FromTimecodes({ 0, 40, 80 }, 25.f).IsExact());
+	CHECK(Timebase::FromFps(25.f, 100).IsExact());
+	CHECK(!Timebase::Estimated(25.f, 100).IsExact());
+	CHECK_EQ(Timebase::Estimated(25.f, 100).FrameAt(41), 2);
+}

@@ -1336,10 +1336,8 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 					delete provider; provider = 0;
 					loaded = false; return;
 				}
-				RendererVideo* renderer = vb->GetRenderer();
 				ownProvider = true;
-				if(renderer)
-					renderer->SetAudioPlayer(this);
+				vb->SetAudioPlayer(this);
 			}
 
 

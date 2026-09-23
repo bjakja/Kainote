@@ -147,7 +147,7 @@ void ShiftTimes::Contents(bool addopts)
 	bool state;
 	form = tab->grid->subsFormat;
 	VideoBox *vb = tab->video;
-	bool hasFFMS2 = vb->HasFFMS2();
+	bool hasFFMS2 = vb->GetTimebase().IsExact();
 	if (form < SRT){
 		state = true;
 		WhichLines->EnableItem(3);
@@ -612,7 +612,7 @@ void ShiftTimes::RefVals(ShiftTimes *secondWindow)
 			ChangeDisplayUnits(!DisplayFrames->GetValue());
 			
 		}
-		else if (!tab->video->HasFFMS2()){
+		else if (!tab->video->GetTimebase().IsExact()){
 			if (DisplayFrames->GetValue()){ ChangeDisplayUnits(true); }
 			DisplayFrames->Enable(false);
 		}
@@ -880,7 +880,7 @@ void ShiftTimes::SetProfile(const wxString &name)
 		bool displayFrames = DisplayFrames->GetValue();
 		bool newDisplayFrames = token == L"1";
 		if (displayFrames != newDisplayFrames){
-			if (tab->video->HasFFMS2()){
+			if (tab->video->GetTimebase().IsExact()){
 				//there are times as true
 				ChangeDisplayUnits(!newDisplayFrames);
 			}

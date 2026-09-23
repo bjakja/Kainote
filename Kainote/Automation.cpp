@@ -369,10 +369,8 @@ namespace Auto{
 			luaL_setfuncs(L, FrameTableDefinition, 0);
 		}
 
-		if (tab && tab->video->HasFFMS2()) {
-
-			RendererVideo* renderer = tab->video->GetRenderer();
-			byte* frameBuff = renderer->GetFrame(frameNumber, withSubtitles);
+		byte* frameBuff = tab ? tab->video->GetFrame(frameNumber, withSubtitles) : nullptr;
+		if (frameBuff) {
 			VideoFrame* frame = new VideoFrame();
 
 			tab->video->GetVideoSize(&frame->width, &frame->height);

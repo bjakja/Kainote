@@ -47,6 +47,13 @@ Timebase Timebase::FromFps(float fps, int frameCount)
 	return tb;
 }
 
+Timebase Timebase::Estimated(float fps, int frameCount)
+{
+	Timebase tb = FromFps(fps, frameCount);
+	tb.m_exact = false;
+	return tb;
+}
+
 float Timebase::FrameDuration() const
 {
 	return (m_fps > 0.f) ? 1000.f / m_fps : 0.f;

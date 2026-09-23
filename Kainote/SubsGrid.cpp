@@ -156,7 +156,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	//split menu
 	bool isEnabled = (sels == 1 && IsLineVisible(false));
 	splitMenu->SetAccMenu(GRID_SPLIT_BY_VIDEO_TIME, _("Split line at video time"))->Enable(isEnabled);
-	isEnabled = sels > 0 && tab->video->HasFFMS2();
+	isEnabled = sels > 0 && tab->video->GetTimebase().IsExact();
 	splitMenu->SetAccMenu(GRID_SPLIT_BY_FRAME, _("Split lines into frames"))->Enable(isEnabled);
 	isEnabled = sels > 0;
 	splitMenu->SetAccMenu(GRID_SPLIT_BY_CHARS, _("Split lines into characters"))->Enable(isEnabled);
@@ -1499,7 +1499,7 @@ void SubsGrid::Split(int id)
 			switch (id) {
 			case GRID_SPLIT_BY_FRAME:
 			{
-				if (tab->video->HasFFMS2()) {
+				if (tab->video->GetTimebase().IsExact()) {
 					const Timebase &timebase = tab->video->GetTimebase();
 					int frameStart = timebase.FrameAt(dialc->Start.mstime);
 					int frameEnd = timebase.FrameAt(dialc->End.mstime);

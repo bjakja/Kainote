@@ -291,7 +291,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 					strings.push_back(wxString::Format(L"%i", Dial->Layer));
 				}
 				
-				if (showFrames && tab->video->HasFFMS2()){
+				if (showFrames && tab->video->GetTimebase().IsExact()){
 					const Timebase &timebase = tab->video->GetTimebase();
 					wxString frame;
 					frame << timebase.FrameAt(Dial->Start.mstime);
@@ -688,7 +688,7 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 			if (subsFormat < SRT){
 				strings.push_back(wxString::Format(L"%i", Dial->Layer));
 			}
-			if (showFrames && tab->video->HasFFMS2()){
+			if (showFrames && tab->video->GetTimebase().IsExact()){
 				const Timebase &timebase = tab->video->GetTimebase();
 				wxString frame;
 				frame << timebase.FrameAt(Dial->Start.mstime);
@@ -1065,7 +1065,7 @@ void SubsGridWindow::AdjustWidthsD2D(GraphicsContext *gc, int cell)
 		SubsTime start(startMax);
 		bool canShowFrames = showFrames;
 		if (showFrames){
-			if (tab->video->HasFFMS2())
+			if (tab->video->GetTimebase().IsExact())
 				start.orgframe = tab->video->GetTimebase().FrameAt(start.mstime);
 			else
 				canShowFrames = false;
@@ -1077,7 +1077,7 @@ void SubsGridWindow::AdjustWidthsD2D(GraphicsContext *gc, int cell)
 		SubsTime end(endMax);
 		bool canShowFrames = showFrames;
 		if (showFrames){
-			if (tab->video->HasFFMS2())
+			if (tab->video->GetTimebase().IsExact())
 				end.orgframe = tab->video->GetTimebase().FrameAt(end.mstime);
 			else
 				canShowFrames = false;
@@ -1229,7 +1229,7 @@ void SubsGridWindow::AdjustWidths(int cell)
 		SubsTime start(startMax);
 		bool canShowFrames = showFrames;
 		if (showFrames){
-			if (tab->video->HasFFMS2())
+			if (tab->video->GetTimebase().IsExact())
 				start.orgframe = tab->video->GetTimebase().FrameAt(start.mstime);
 			else
 				canShowFrames = false;
@@ -1241,7 +1241,7 @@ void SubsGridWindow::AdjustWidths(int cell)
 		SubsTime end(endMax);
 		bool canShowFrames = showFrames;
 		if (showFrames){
-			if (tab->video->HasFFMS2())
+			if (tab->video->GetTimebase().IsExact())
 				end.orgframe = tab->video->GetTimebase().FrameAt(end.mstime);
 			else
 				canShowFrames = false;

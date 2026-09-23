@@ -1781,10 +1781,6 @@ void VideoBox::ResetVisual()
 		renderer->ResetVisual();
 }
 
-bool VideoBox::HasFFMS2()
-{
-	return renderer && renderer->HasFFMS2();
-}
 Provider *VideoBox::GetFFMS2()
 {
 	if (renderer)
@@ -1799,16 +1795,52 @@ void VideoBox::MarkSubtitlesOutdated()
 		renderer->MarkSubtitlesOutdated();
 }
 
+bool VideoBox::OpenOwnSubs(wxString *text)
+{
+	if (!renderer) {
+		delete text;
+		return false;
+	}
+	return renderer->OpenSubs(OPEN_HAS_OWN_TEXT, true, text);
+}
+
+unsigned char *VideoBox::GetFrame(int frame, bool withSubtitles)
+{
+	return renderer ? renderer->GetFrame(frame, withSubtitles) : nullptr;
+}
+
+const std::vector<chapter> &VideoBox::GetChapters()
+{
+	static const std::vector<chapter> noChapters;
+	return renderer ? renderer->m_Chapters : noChapters;
+}
+
+RECT VideoBox::GetVideoRect()
+{
+	RECT noVideo = { 0, 0, 0, 0 };
+	return renderer ? renderer->m_BackBufferRect : noVideo;
+}
+
+bool VideoBox::RedrawPaused()
+{
+	if (!renderer || renderer->GetState() > Paused || renderer->m_BlockResize)
+		return false;
+	renderer->Render(renderer->m_VideoResized);
+	return true;
+}
+
+void VideoBox::SetAudioPlayer(AudioDisplay *player)
+{
+	if (renderer)
+		renderer->SetAudioPlayer(player);
+}
+
 void VideoBox::SetVisualEdition(bool value)
 {
 	if(renderer)
 		renderer->m_HasVisualEdition = value;
 }
 
-RendererVideo *VideoBox::GetRenderer()
-{
-	return renderer;
-}
 
 Fullscreen *VideoBox::GetFullScreenWindow()
 {

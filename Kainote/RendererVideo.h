@@ -184,7 +184,6 @@ public:
 
 	virtual bool EnumFilters(Menu *menu){ return false; };
 	virtual bool FilterConfig(wxString name, int idx, wxPoint pos){ return false; };
-	virtual bool HasFFMS2(){ return false; };
 	virtual Provider * GetFFMS2(){ return nullptr; };
 	virtual void ZoomChanged() {};
 	// Non virtual functions

@@ -68,7 +68,6 @@ public:
 				Render();
 		}
 	}
-	bool HasFFMS2();
 	bool InitRendererDX();
 	Provider* GetFFMS2();
 	Provider *m_FFMS2 = nullptr;

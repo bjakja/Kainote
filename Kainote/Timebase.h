@@ -25,8 +25,12 @@ public:
 	Timebase() = default;
 	static Timebase FromTimecodes(std::vector<int> timecodes, float fps);
 	static Timebase FromFps(float fps, int frameCount);
+	// a frame rate a player only reports; its frames may not be the video's
+	static Timebase Estimated(float fps, int frameCount);
 
 	bool IsEmpty() const { return m_fps <= 0.f; }
+	// frames are the video's own, so frame numbers can be trusted
+	bool IsExact() const { return !IsEmpty() && m_exact; }
 	int FrameCount() const { return m_frameCount; }
 	float Fps() const { return m_fps; }
 
@@ -60,4 +64,5 @@ private:
 	std::vector<int> m_keyframes;
 	float m_fps = 0.f;
 	int m_frameCount = 0;
+	bool m_exact = true;
 };

@@ -235,7 +235,7 @@ void TimeCtrl::SetTime(const SubsTime &newtime, bool stillModified, int opt)
 	timeUnchanged = true;
 	mTime = newtime;
 	form = mTime.GetFormat();
-	bool canShowFrames = showFrames && vb && vb->HasFFMS2();
+	bool canShowFrames = showFrames && vb && vb->GetTimebase().IsExact();
 
 	if (canShowFrames && opt){
 		mTime.orgframe = vb->GetTimebase().FrameAt(mTime.mstime);
@@ -253,7 +253,7 @@ void TimeCtrl::SetTime(const SubsTime &newtime, bool stillModified, int opt)
 //0 nothing, 1 -halframe (start), 2 +halfframe (end)
 SubsTime TimeCtrl::GetTime(char opt)
 {
-	bool canShowFrames = showFrames && vb && vb->HasFFMS2();
+	bool canShowFrames = showFrames && vb && vb->GetTimebase().IsExact();
 	mTime.SetRaw(GetValue(), canShowFrames || (showFrames && !vb)? FRAME : form);
 	if (canShowFrames && !timeUnchanged){
 		SubsTime cpy = SubsTime(mTime);

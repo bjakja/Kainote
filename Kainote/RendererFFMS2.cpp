@@ -516,7 +516,7 @@ void RendererFFMS2::SetFFMS2Position(int time, bool startTime, bool refreshAudio
 		//seeks usually run on the playback thread, the audio and time controls do not
 		VideoBox *vb = videoControl;
 		auto refreshControls = [vb, refreshAudio]() {
-			RendererVideo *renderer = vb->GetRenderer();
+			RendererVideo *renderer = vb->renderer;
 			//rebuild spectrum cause position can be changed
 			if (refreshAudio && renderer && renderer->m_AudioPlayer)
 				renderer->m_AudioPlayer->UpdateImage(false, false);
@@ -611,11 +611,6 @@ unsigned char* RendererFFMS2::GetFrame(int frame, bool subs)
 		m_SubsProvider->Draw(newFrame, GetTimebase().MsAt(frame));
 	}
 	return newFrame;
-}
-
-bool RendererFFMS2::HasFFMS2()
-{
-	return m_FFMS2 != nullptr;
 }
 
 Provider* RendererFFMS2::GetFFMS2()

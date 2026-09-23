@@ -450,7 +450,7 @@ static void GetStartEndDelay(const Timebase &timebase, Dialogue *dial, int *star
 
 void SubsGridBase::ChangeTimes(bool byFrame)
 {
-	bool hasFFMS2 = tab->video->HasFFMS2();
+	bool hasFFMS2 = tab->video->GetTimebase().IsExact();
 	const Timebase &timebase = tab->video->GetTimebase();
 	if (byFrame && !hasFFMS2){ 
 		KaiLog(_("Video was not loaded using FFMS2")); return; }
