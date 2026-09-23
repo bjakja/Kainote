@@ -11,10 +11,12 @@ add_executable(kainote_tests
     PlaybackTests.cpp
     TimebaseTests.cpp
     UndoHistoryTests.cpp
+    WaveformPeaksTests.cpp
     ../Kainote/AssBlend.cpp
     ../Kainote/FrameQueue.cpp
     ../Kainote/Playback.cpp
     ../Kainote/Timebase.cpp
+    ../Kainote/WaveformPeaks.cpp
 )
 
 enable_testing()

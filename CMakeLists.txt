@@ -130,6 +130,7 @@ add_executable(kainote
     Kainote/AssBlend.cpp
     Kainote/FrameQueue.cpp
     Kainote/Playback.cpp
+    Kainote/WaveformPeaks.cpp
     Kainote/Provider.cpp
     Kainote/ProviderDummy.cpp
     Kainote/ProviderFFMS2.cpp

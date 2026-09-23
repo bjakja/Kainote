@@ -88,12 +88,43 @@ long long Provider::GetNumSamples()
 	return m_numSamples;
 }
 
+void Provider::BuildPeaks(const std::atomic<bool> &stop)
+{
+	const long long chunk = 1 << 16;
+	std::vector<short> samples(chunk);
+	long long total = GetNumSamples();
+	for (long long pos = 0; pos < total && !stop; pos += chunk) {
+		long long count = std::min(chunk, total - pos);
+		GetBuffer(samples.data(), pos, count);
+		m_peaks.Append(samples.data(), count);
+	}
+	if (!stop)
+		m_peaksReady = true;
+}
+
 void Provider::GetWaveForm(int* min, int* peak, long long start, int w, int h, int samples, float scale) {
 	if (audioNotInitialized) { return; }
 	int n = w * samples;
 	for (int i = 0; i < w; i++) {
 		peak[i] = 0;
 		min[i] = h;
+	}
+	int half_h = h / 2;
+	int half_amplitude = int(half_h * scale);
+	auto toY = [=](int sample) {
+		int y = half_h - (sample * half_amplitude) / 0x8000;
+		return (y > h) ? h : (y < 0) ? 0 : y;
+	};
+
+	// zoomed out, whole blocks of the peak table are close enough
+	if (m_peaksReady && samples >= m_peaks.BlockSamples() * 4) {
+		for (int i = 0; i < w; i++) {
+			short lo = 0, hi = 0;
+			m_peaks.Range(start + (long long)i * samples, samples, &lo, &hi);
+			min[i] = toY(hi);
+			peak[i] = toY(lo);
+		}
+		return;
 	}
 
 	// Prepare waveform
@@ -108,8 +139,6 @@ void Provider::GetWaveForm(int* min, int* peak, long long start, int w, int h, i
 	char* raw = new char[needLen];
 	short* raw_short = reinterpret_cast<short*>(raw);
 	GetBuffer(raw, start, n);
-	int half_h = h / 2;
-	int half_amplitude = int(half_h * scale);
 	// Calculate waveform
 	for (int i = 0; i < n; i++) {
 		cur = i / samples;

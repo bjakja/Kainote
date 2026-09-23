@@ -23,6 +23,7 @@
 #include "TabPanel.h"
 #include "Timebase.h"
 #include "Playback.h"
+#include "WaveformPeaks.h"
 #include <atomic>
 #include <vector>
 #include <thread>
@@ -79,6 +80,10 @@ protected:
 	virtual bool FetchPlaybackFrame(int frame, unsigned char* buffer) { return false; }
 	std::atomic<bool> audioNotInitialized{ true };
 	std::atomic<float> m_audioProgress{ 0 };
+	// reads the whole cached audio once, stopping early when stop is set
+	void BuildPeaks(const std::atomic<bool> &stop);
+	WaveformPeaks m_peaks{ 256 };
+	std::atomic<bool> m_peaksReady{ false };
 	RendererFFMS2* m_renderer = nullptr;
 	int m_width = -1;
 	int m_height = -1;

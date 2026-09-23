@@ -523,6 +523,8 @@ done:
 	if (vf->m_audioSource) { FFMS_DestroyAudioSource(vf->m_audioSource); vf->m_audioSource = nullptr; }
 	vf->m_lockGetFrame = false;
 	SetEvent(vf->m_eventAudioComplete);
+	if (!vf->audioNotInitialized)
+		vf->BuildPeaks(vf->m_stopLoadingAudio);
 }
 
 void ProviderFFMS2::GetFrame(int frame, unsigned char* buff)

@@ -304,6 +304,9 @@
     <ClCompile Include="FrameQueue.cpp">
       <Filter>F</Filter>
     </ClCompile>
+    <ClCompile Include="WaveformPeaks.cpp">
+      <Filter>W</Filter>
+    </ClCompile>
     <ClCompile Include="Playback.cpp">
       <Filter>P</Filter>
     </ClCompile>
@@ -740,6 +743,9 @@
     </ClInclude>
     <ClInclude Include="FrameQueue.h">
       <Filter>F</Filter>
+    </ClInclude>
+    <ClInclude Include="WaveformPeaks.h">
+      <Filter>W</Filter>
     </ClInclude>
     <ClInclude Include="Playback.h">
       <Filter>P</Filter>
