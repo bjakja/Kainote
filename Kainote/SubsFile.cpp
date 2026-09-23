@@ -922,12 +922,12 @@ void SubsFile::InsertRowsF(int Row, int NumRows, Dialogue *Dialog, bool AddToDes
 
 void SubsFile::SwapRowsF(int frst, int scnd)
 {
-
-	Dialogue *tmp = subs->dialogues[frst];
-	subs->dialogues[frst] = subs->dialogues[scnd];
-	subs->dialogues[scnd] = tmp;
-	subs->dialogues[frst]->ChangeDialogueState(1);
-	tmp->ChangeDialogueState(1);
+	Dialogue *first = CopyDialogueF(frst);
+	Dialogue *second = CopyDialogueF(scnd);
+	subs->dialogues[frst] = second;
+	subs->dialogues[scnd] = first;
+	first->ChangeDialogueState(1);
+	second->ChangeDialogueState(1);
 }
 
 void SubsFile::AddSInfo(const wxString &SI, wxString val, bool save)
