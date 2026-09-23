@@ -782,19 +782,20 @@ byte *RendererDirectShow::GetFrameWithSubs(bool subs, bool *del)
 	hr = m_DXVAProcessor->VideoProcessBlt(tmp, &blt, &samples, 1, nullptr);
 	if (FAILED(hr)) {
 		KaiLog(_("Cannot overlay surfaces"));
+		SAFE_RELEASE(tmp);
 		return nullptr;
 	}
 
 	D3DLOCKED_RECT d3dlr;
 	RECT dirty = { 0, 0, m_Width, m_Height };
 
-	int buffsize = m_Width * m_Height * 4;
-	byte* cpy = new byte[buffsize];
-	tmp->LockRect(&d3dlr, &dirty, 0/*D3DLOCK_NOSYSLOCK*/);
-	if (FAILED(hr)) {
+	if (FAILED(tmp->LockRect(&d3dlr, &dirty, 0))) {
 		KaiLog(_("Cannot lock texture buffer"));
+		SAFE_RELEASE(tmp);
 		return nullptr;
 	}
+	int buffsize = m_Width * m_Height * 4;
+	byte* cpy = new byte[buffsize];
 	byte* texbuf = static_cast<byte*>(d3dlr.pBits);
 	int fwidth = m_Width * 4;
 	if (d3dlr.Pitch == fwidth) {
