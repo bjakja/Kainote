@@ -28,6 +28,7 @@ public:
 	void GetFrame(int frame, unsigned char* buff) override;
 	void PrefetchFrame(int frame) override;
 	void GetBuffer(void* buf, long long start, long long count, double vol = 1.0) override;
+	void GetPlaybackBuffer(void* buf, long long start, long long count, double vol = 1.0) override;
 	bool RAMCache();
 	int Init();
 	void GetChapters(std::vector<chapter>* _chapters) override {
@@ -52,7 +53,8 @@ public:
 	volatile bool m_lockGetFrame = true;
 	int m_CR;
 	int m_CS;
-	double m_delay = 0;
+	// frames of silence added before the audio, or skipped from its start when negative
+	long long m_delayFrames = 0;
 	HANDLE m_eventAudioComplete = nullptr;
 	wxString m_diskCacheFilename;
 	wxString m_colorSpace;
@@ -66,6 +68,10 @@ private:
 	char** m_cache = nullptr;
 	int m_blockNum = 0;
 	void GetAudio(void* buf, long long start, long long count);
+	// the cache stores whole frames of m_channels samples
+	int FrameBytes() const { return m_bytesPerSample * m_channels; }
+	// count frames as cached, silence past the end
+	void ReadCache(void* buf, long long start, long long count);
 	//fetches the current frame and copies it out under m_blockFrame,
 	//pass forceFetch to skip the "frame did not change" shortcut
 	bool CopyFrame(int frame, unsigned char* buffer, bool forceFetch);

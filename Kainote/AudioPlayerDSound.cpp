@@ -242,7 +242,7 @@ void DirectSoundPlayer2Thread::Run()
 				linuxState->failMessage = L"GStreamer could not map an audio buffer";
 				break;
 			}
-			provider->GetBuffer(map.data, frame, framesToWrite, playbackVolume);
+			provider->GetPlaybackBuffer(map.data, frame, framesToWrite, playbackVolume);
 			gst_buffer_unmap(buf, &map);
 			const GstFlowReturn flow = gst_app_src_push_buffer(GST_APP_SRC(src), buf);
 			std::lock_guard<std::mutex> lock(linuxState->mutex);
@@ -564,7 +564,7 @@ void DirectSoundPlayer2Thread::Run()
 	unsigned long buffer_offset = 0;
 	bool playback_should_be_running = false;
 	int current_latency = wanted_latency;
-	const DWORD wanted_latency_bytes = wanted_latency * waveFormat.nSamplesPerSec * provider->GetBytesPerSample() / 1000;
+	const DWORD wanted_latency_bytes = wanted_latency * waveFormat.nAvgBytesPerSec / 1000;
 
 	while (running)
 	{
@@ -612,8 +612,8 @@ void DirectSoundPlayer2Thread::Run()
 					if (bytes_filled < wanted_latency_bytes)
 					{
 						// Very short playback length, do without streaming playback
-						current_latency = (bytes_filled * 1000) / (waveFormat.nSamplesPerSec*provider->GetBytesPerSample());
-						current_latency = (bytes_filled * 1000) / (waveFormat.nSamplesPerSec*provider->GetBytesPerSample());
+						current_latency = (bytes_filled * 1000) / waveFormat.nAvgBytesPerSec;
+						current_latency = (bytes_filled * 1000) / waveFormat.nAvgBytesPerSec;
 						if (FAILED(audioBuffer->Play(0, 0, 0)))
 							KaiLogSilent("Could not start single-buffer playback.");
 					}
@@ -752,7 +752,7 @@ do_fill_buffer:
 					else if (bytes_filled < wanted_latency_bytes)
 					{
 						// Didn't fill as much as we wanted to, let's get back to filling sooner than normal
-						current_latency = (bytes_filled * 1000) / (waveFormat.nSamplesPerSec * provider->GetBytesPerSample());
+						current_latency = (bytes_filled * 1000) / waveFormat.nAvgBytesPerSec;
 					}
 					else
 					{
@@ -850,7 +850,7 @@ unsigned int DirectSoundPlayer2Thread::FillAndUnlockBuffers(unsigned char* buf1,
 			buf2sz = 0;
 		}
 
-		provider->GetBuffer(buf1, input_frame, buf1szf, volume);
+		provider->GetPlaybackBuffer(buf1, input_frame, buf1szf, volume);
 
 		input_frame += buf1szf;
 	}
@@ -863,7 +863,7 @@ unsigned int DirectSoundPlayer2Thread::FillAndUnlockBuffers(unsigned char* buf1,
 			buf2sz = buf2szf * bytes_per_frame;
 		}
 
-		provider->GetBuffer(buf2, input_frame, buf2szf, volume);
+		provider->GetPlaybackBuffer(buf2, input_frame, buf2szf, volume);
 
 		input_frame += buf2szf;
 	}

@@ -51,7 +51,13 @@ public:
 	virtual void GetFrame(int frame, unsigned char* buff) {};
 	// decodes frame ahead, so a later GetFrameBuffer only copies it
 	virtual void PrefetchFrame(int frame) {};
+	// count mono samples, for the waveform, spectrum and other analysis
 	virtual void GetBuffer(void* buf, long long start, long long count, double vol = 1.0) {};
+	// count frames of GetChannels() interleaved samples, for playback
+	virtual void GetPlaybackBuffer(void* buf, long long start, long long count, double vol = 1.0)
+	{
+		GetBuffer(buf, start, count, vol);
+	}
 	virtual void GetChapters(std::vector<chapter>* _chapters) {}
 	virtual void DeleteOldAudioCache() {};
 	virtual void SetColorSpace(const wxString& matrix) {};
