@@ -162,11 +162,7 @@ const wxString & config::GetString(CONFIG opt)
 
 bool config::GetBool(CONFIG opt)
 {
-	if (opt >= 0 && opt < configSize){
-		wxString ropt = stringConfig[opt];
-		if (ropt == L"true"){ return true; }
-	}
-	return false;
+	return opt >= 0 && opt < configSize && stringConfig[opt] == L"true";
 }
 
 const wxColour &config::GetColour(COLOR opt)
@@ -196,8 +192,7 @@ float config::GetFloat(CONFIG opt)
 {
 	if (opt >= 0 && opt < configSize){
 		double fl;
-		wxString rawfloat = stringConfig[opt];
-		if (!rawfloat.ToDouble(&fl)){ return 0.0; }
+		if (!stringConfig[opt].ToDouble(&fl)){ return 0.0; }
 		return fl;
 	}
 	return 0.0;
