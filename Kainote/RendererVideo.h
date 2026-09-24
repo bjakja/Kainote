@@ -192,6 +192,8 @@ public:
 	virtual void DrawProgressBar(const wxString &timesString);
 	// visual editing and dummy subtitles show one line; playback needs them all
 	void OpenSubsForPlayback();
+	// while paused after edits, parses the whole script ahead of the next Play
+	void PrepareWholeSubtitles();
 	void ReopenSubsAfterSeek(bool playing);
 	// Reopens the subtitles, and when paused redraws, on the UI thread: the
 	// subtitle text comes from the grid and edit box. Seeks from the playback
@@ -268,6 +270,7 @@ private:
 	RECT m_MainStreamRect;
 	wxPoint m_ZoomDiff;
 
+	wxString *WholeSubtitlesText();
 	void RunQueuedSeekRefresh();
 	void SeekRefresh(bool playing, bool refreshAudio);
 

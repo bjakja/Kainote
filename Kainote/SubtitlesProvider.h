@@ -20,7 +20,10 @@
 #include <wx/window.h>
 #include <wx/arrstr.h>
 #include <atomic>
+#include <mutex>
 #include <string_view>
+#include <thread>
+#include "ParsedScripts.h"
 #include <vector>
 
 extern "C" {
@@ -33,61 +36,10 @@ extern "C" {
 
 
 
-// The last two scripts parsed, by a hash of their text: editing switches
-// between the whole script and one of the edited line, and switching back to
-// one that has not changed then needs no parse.
-template <typename T>
-class ParsedScripts
+inline size_t ScriptHash(const wxString &text)
 {
-public:
-	explicit ParsedScripts(void (*release)(T*)) : m_release(release) {}
-	~ParsedScripts() { Clear(); }
-	static size_t Hash(const wxString &text)
-	{
-		return std::hash<std::wstring_view>()(std::wstring_view(text.wc_str(), text.length()));
-	}
-	T *Find(size_t hash)
-	{
-		for (size_t i = 0; i < m_items.size(); i++) {
-			if (m_items[i].hash == hash) {
-				Entry found = m_items[i];
-				m_items.erase(m_items.begin() + i);
-				m_items.insert(m_items.begin(), found);
-				return found.item;
-			}
-		}
-		return nullptr;
-	}
-	// the one added last is the one in use, so only an older one is released
-	void Add(size_t hash, T *item)
-	{
-		m_items.insert(m_items.begin(), Entry{ hash, item });
-		if (m_items.size() > 2) {
-			m_release(m_items.back().item);
-			m_items.pop_back();
-		}
-	}
-	void Remove(T *item)
-	{
-		for (size_t i = 0; i < m_items.size(); i++) {
-			if (m_items[i].item == item) {
-				m_release(item);
-				m_items.erase(m_items.begin() + i);
-				return;
-			}
-		}
-	}
-	void Clear()
-	{
-		for (Entry &entry : m_items)
-			m_release(entry.item);
-		m_items.clear();
-	}
-private:
-	struct Entry { size_t hash; T *item; };
-	std::vector<Entry> m_items;
-	void (*m_release)(T*);
-};
+	return ScriptTextHash(std::wstring_view(text.wc_str(), text.length()));
+}
 
 class SubtitlesProvider
 {
@@ -106,6 +58,10 @@ public:
 	virtual void SetVideoParameters(const wxSize& size, unsigned char format, bool isSwapped) {};
 	virtual void ReloadLibraries(bool destroyExisted = false) { };
 	virtual bool IsLibass() { return false; }
+	// Parses text in the background so a later Open of the same text finds
+	// it ready; takes the text. Only providers that can do it say so.
+	virtual bool CanPrepare() { return false; }
+	virtual void Prepare(wxString *text) { delete text; }
 	//implementation in subtitlesVsfilter
 	static void DestroySubtitlesProvider();
 	static ASS_Renderer *m_Libass;
@@ -155,6 +111,8 @@ public:
 	void SetVideoParameters(const wxSize& size, unsigned char format, bool isSwapped);
 	void ReloadLibraries(bool destroyExisted = false) override;
 	bool IsLibass() { return true; }
+	bool CanPrepare() override { return true; }
+	void Prepare(wxString *text) override;
 	ASS_Track *m_AssTrack = nullptr;
 	static std::atomic<bool> m_IsReady;
 	HANDLE thread = nullptr;
@@ -174,5 +132,13 @@ private:
 	wxRect m_OverlayDrawn;
 	// all tabs share m_Libass, whose change detection compares with whatever it rendered last
 	static SubtitlesLibass* m_LastRenderer;
+
+	void RunPrepare();
+	std::thread m_PrepareThread;
+	std::mutex m_PrepareMutex;
+	// the latest text to prepare; an older one still waiting is dropped
+	wxString *m_PrepareText = nullptr;
+	bool m_PrepareRunning = false;
+	bool m_StopPrepare = false;
 };
 

@@ -443,6 +443,22 @@ void RendererVideo::OpenSubsForPlayback()
 	}
 }
 
+void RendererVideo::PrepareWholeSubtitles()
+{
+	if (m_State == Playing || !tab->editor || m_SubsProvider->ShowsWholeSubtitles() ||
+		!m_SubsProvider->CanPrepare())
+		return;
+	m_SubsProvider->Prepare(WholeSubtitlesText());
+}
+
+wxString *RendererVideo::WholeSubtitlesText()
+{
+	wxString *text = tab->grid->GetVisible(nullptr, nullptr, nullptr, true);
+	if (text && m_Visual && m_Visual->Visual == VECTORCLIP)
+		m_Visual->AppendClipMask(text);
+	return text;
+}
+
 void RendererVideo::MarkSubtitlesOutdated()
 {
 	m_SubsProvider->MarkOutdated();
@@ -456,8 +472,7 @@ wxString *RendererVideo::SubtitlesText(int flag, wxString *text)
 		text = tab->grid->GetVisible();
 		break;
 	case OPEN_WHOLE_SUBTITLES:
-		text = tab->grid->GetVisible(nullptr, nullptr, nullptr, true);
-		break;
+		return WholeSubtitlesText();
 	default:
 		break;
 	}

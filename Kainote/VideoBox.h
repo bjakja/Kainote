@@ -188,6 +188,8 @@ private:
 	unsigned m_LaterGeneration = 0;
 	wxString *m_LaterText = nullptr;
 	wxTimer m_ResizeTimer;
+	// once edits pause, the whole script is parsed ahead of Play
+	wxTimer m_PrepareTimer;
 	bool m_ResizePending = false;
 
 	BitmapButton* m_ButtonPreviousFile;

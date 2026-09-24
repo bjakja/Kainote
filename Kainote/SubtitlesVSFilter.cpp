@@ -105,7 +105,7 @@ bool SubtitlesVSFilter::OpenString(wxString *text)
 
 bool SubtitlesVSFilter::OpenCached(wxString *text)
 {
-	size_t hash = ParsedScripts<csri_inst>::Hash(*text);
+	size_t hash = ScriptHash(*text);
 	if (csri_inst *instance = m_Instances.Find(hash)) {
 		// the video format may have changed since it was parsed; if so, parse again
 		if (m_CsriFormat && !csri_request_fmt(instance, m_CsriFormat)) {
@@ -117,7 +117,7 @@ bool SubtitlesVSFilter::OpenCached(wxString *text)
 	}
 	if (!OpenInstance(text))
 		return false;
-	m_Instances.Add(hash, m_CsriInstance);
+	m_Instances.Add(hash, m_CsriInstance, m_CsriInstance);
 	return true;
 }
 

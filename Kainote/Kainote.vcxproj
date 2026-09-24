@@ -530,6 +530,7 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitp
     <ClInclude Include="Notebook.h" />
     <ClInclude Include="AssBlend.h" />
     <ClInclude Include="FrameQueue.h" />
+    <ClInclude Include="ParsedScripts.h" />
     <ClInclude Include="Playback.h" />
     <ClInclude Include="WaveformPeaks.h" />
     <ClInclude Include="Provider.h" />

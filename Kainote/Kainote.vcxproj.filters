@@ -744,6 +744,9 @@
     <ClInclude Include="FrameQueue.h">
       <Filter>F</Filter>
     </ClInclude>
+    <ClInclude Include="ParsedScripts.h">
+      <Filter>S</Filter>
+    </ClInclude>
     <ClInclude Include="WaveformPeaks.h">
       <Filter>W</Filter>
     </ClInclude>

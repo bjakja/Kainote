@@ -8,6 +8,7 @@ add_executable(kainote_tests
     check_main.cpp
     AssBlendTests.cpp
     FrameQueueTests.cpp
+    ParsedScriptsTests.cpp
     PlaybackTests.cpp
     TimebaseTests.cpp
     UndoHistoryTests.cpp

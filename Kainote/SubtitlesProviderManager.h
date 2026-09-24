@@ -52,6 +52,9 @@ public:
 	bool OpenString(wxString *text);
 	void SetVideoParameters(const wxSize& size, unsigned char format, bool isSwapped);
 	bool IsLibass();
+	bool CanPrepare();
+	// see SubtitlesProvider::Prepare; takes the text
+	void Prepare(wxString *text);
 	static bool ReloadLibraries();
 	static void GetProviders(wxArrayString *providerList);
 	static void DestroyProviders();

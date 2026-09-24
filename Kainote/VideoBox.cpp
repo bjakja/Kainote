@@ -193,6 +193,11 @@ VideoBox::VideoBox(wxWindow *parent, const wxSize &size)
 
 	m_VideoTimeTimer.SetOwner(this, ID_VIDEO_TIME);
 	m_ResizeTimer.SetOwner(this);
+	m_PrepareTimer.SetOwner(this);
+	Bind(wxEVT_TIMER, [this](wxTimerEvent &) {
+		if (renderer)
+			renderer->PrepareWholeSubtitles();
+	}, m_PrepareTimer.GetId());
 	Bind(wxEVT_TIMER, [this](wxTimerEvent &) { FlushPendingResize(); }, m_ResizeTimer.GetId());
 	idletime.SetOwner(this, ID_IDLE);
 
@@ -1888,6 +1893,8 @@ void VideoBox::FlushLater()
 		delete text;
 		return;
 	}
+	if (kind != LATER_VISUAL)
+		m_PrepareTimer.StartOnce(500);
 	switch (kind) {
 	case LATER_FLAG:
 		renderer->OpenSubs(m_LaterFlag, true);

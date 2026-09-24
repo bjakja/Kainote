@@ -74,6 +74,14 @@ SubtitlesLibass::SubtitlesLibass()
 	
 SubtitlesLibass::~SubtitlesLibass()
 {
+	{
+		std::lock_guard<std::mutex> lock(m_PrepareMutex);
+		m_StopPrepare = true;
+		SAFE_DELETE(m_PrepareText);
+	}
+	if (m_PrepareThread.joinable())
+		m_PrepareThread.join();
+
 	//close it by force can make memory leaks
 	if (thread){
 		CloseHandle(thread);
@@ -173,7 +181,7 @@ bool SubtitlesLibass::Open(wxString *text)
 bool SubtitlesLibass::ReadTrack(wxString *text)
 {
 	m_HasRendered = false;
-	size_t hash = ParsedScripts<ASS_Track>::Hash(*text);
+	size_t hash = ScriptHash(*text);
 	m_AssTrack = m_Tracks.Find(hash);
 	if (m_AssTrack) {
 		delete text;
@@ -184,8 +192,51 @@ bool SubtitlesLibass::ReadTrack(wxString *text)
 	delete text;
 	if (!m_AssTrack)
 		return false;
-	m_Tracks.Add(hash, m_AssTrack);
+	m_Tracks.Add(hash, m_AssTrack, m_AssTrack);
 	return true;
+}
+
+void SubtitlesLibass::Prepare(wxString *text)
+{
+	std::lock_guard<std::mutex> lock(m_PrepareMutex);
+	delete m_PrepareText;
+	m_PrepareText = text;
+	if (m_PrepareRunning || m_StopPrepare)
+		return;
+	// a finished thread has already let go of the lock for good
+	if (m_PrepareThread.joinable())
+		m_PrepareThread.join();
+	m_PrepareRunning = true;
+	m_PrepareThread = std::thread([this]() { RunPrepare(); });
+}
+
+void SubtitlesLibass::RunPrepare()
+{
+	SetThreadName(GetCurrentThreadId(), "LibassPrepare");
+	for (;;) {
+		wxString *text;
+		{
+			std::lock_guard<std::mutex> lock(m_PrepareMutex);
+			text = m_PrepareText;
+			m_PrepareText = nullptr;
+			if (!text || m_StopPrepare) {
+				delete text;
+				m_PrepareRunning = false;
+				return;
+			}
+		}
+		size_t hash = ScriptHash(*text);
+		{
+			// mb_str() can point into the text, so it outlives the parse
+			wxScopedCharBuffer buffer = text->mb_str(wxConvUTF8);
+			wxMutexLocker lock(openMutex);
+			if (m_IsReady && m_Library && !m_Tracks.Find(hash)) {
+				if (ASS_Track *track = ass_read_memory(m_Library, buffer.data(), strlen(buffer), nullptr))
+					m_Tracks.Add(hash, track, m_AssTrack);
+			}
+		}
+		delete text;
+	}
 }
 
 bool SubtitlesLibass::OpenString(wxString *text)

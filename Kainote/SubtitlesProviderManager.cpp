@@ -120,6 +120,16 @@ bool SubtitlesProviderManager::IsLibass()
 	return GetProvider()->IsLibass();
 }
 
+bool SubtitlesProviderManager::CanPrepare()
+{
+	return GetProvider()->CanPrepare();
+}
+
+void SubtitlesProviderManager::Prepare(wxString *text)
+{
+	GetProvider()->Prepare(text);
+}
+
 bool SubtitlesProviderManager::ReloadLibraries()
 {
 	wxString provider = Options.GetString(VSFILTER_INSTANCE);
