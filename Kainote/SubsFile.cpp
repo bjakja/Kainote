@@ -251,6 +251,7 @@ void SubsFile::Create()
 			_("Splitting lines")
 	};
 	edited = false;
+	++version;
 	subs = new File();
 }
 
@@ -276,6 +277,7 @@ void SubsFile::SaveUndo(unsigned char editionType, int activeLine, int markerLin
 	}
 	subs = subs->Copy();
 	edited = false;
+	++version;
 }
 
 //the working copy becomes a copy of the current step; call it locked
@@ -285,6 +287,7 @@ void SubsFile::LoadCurrentStep()
 	delete subs;
 	subs = m_history.Current()->Copy();
 	edited = false;
+	++version;
 	lastStepTyping = false;
 }
 
@@ -347,36 +350,48 @@ size_t SubsFile::GetCount()
 	return subs->dialogues.size();
 }
 
+const SubsFile::VisibleRows &SubsFile::GetVisibleRows()
+{
+	VisibleRows &rows = visibleRows;
+	unsigned epoch = Visibility::Epoch();
+	if (rows.version == version && rows.epoch == epoch && rows.file == subs)
+		return rows;
+	rows.version = version;
+	rows.epoch = epoch;
+	rows.file = subs;
+	size_t count = subs->dialogues.size();
+	rows.keyOfId.clear();
+	rows.idOfKey.resize(count);
+	for (size_t i = 0; i < count; i++) {
+		rows.idOfKey[i] = rows.keyOfId.size();
+		if (subs->dialogues[i]->isVisible)
+			rows.keyOfId.push_back(i);
+	}
+	return rows;
+}
+
 size_t SubsFile::GetIdCount()
 {
-	size_t idCount = 0;
-	for (Dialogue * dial : subs->dialogues){
-		if (dial->isVisible)
-			idCount++;
-	}
-
-	return idCount;
+	return GetVisibleRows().keyOfId.size();
 }
 
 size_t SubsFile::CountLines(size_t key, size_t *dialogueNumber)
 {
 	size_t count = subs->dialogues.size();
-	size_t idCount = 0;
 	size_t dialogues = 0;
-	for (size_t i = 0; i < count; i++) {
-		Dialogue *dial = subs->dialogues[i];
-		if (dial->isVisible)
-			idCount++;
-		if (i < key && !dial->NonDialogue)
-			dialogues++;
+	if (key < count) {
+		for (size_t i = 0; i < key; i++) {
+			if (!subs->dialogues[i]->NonDialogue)
+				dialogues++;
+		}
 	}
 	*dialogueNumber = (key >= count) ? count - 1 : dialogues;
-	return idCount;
+	return GetIdCount();
 }
 
 void SubsFile::AddLine(Dialogue *dial)
 {
-	edited = true;
+	MarkEdited();
 	subs->deleteDialogues.push_back(dial);
 	subs->dialogues.push_back(dial);
 }
@@ -393,7 +408,7 @@ Dialogue * SubsFile::CopyDialogueF(size_t i, bool push /*= true*/, bool keepstat
 {
 	Dialogue *dial = subs->dialogues[i]->Copy(keepstate, !push);
 	subs->deleteDialogues.push_back(dial);
-	edited = true;
+	MarkEdited();
 	if (push){ 
 		subs->dialogues[i] = dial;
 	}
@@ -418,7 +433,7 @@ Dialogue *SubsFile::GetDialogue(size_t i)
 
 void SubsFile::SetDialogue(size_t i, Dialogue *dial, bool addToDestroyer)
 {
-	edited = true;
+	MarkEdited();
 	if (i >= subs->dialogues.size())
 		subs->dialogues.push_back(dial);
 	else
@@ -430,7 +445,7 @@ void SubsFile::SetDialogue(size_t i, Dialogue *dial, bool addToDestroyer)
 
 void SubsFile::DeleteDialogues(size_t from, size_t to)
 {
-	edited = true;
+	MarkEdited();
 	if (from >= subs->dialogues.size())
 		return;
 	else if (to >= subs->dialogues.size())
@@ -447,7 +462,7 @@ void SubsFile::DeleteSelectedDialogues()
 		subs->dialogues.erase(subs->dialogues.begin() + (*i));
 	}
 	if (subs->Selections.size() > 0){ 
-		edited = true; 
+		MarkEdited(); 
 	}
 }
 
@@ -563,42 +578,22 @@ void SubsFile::ClearSelections()
 
 size_t SubsFile::GetElementById(size_t id)
 {
-	size_t countid = -1;
-	for (size_t i = 0; i < subs->dialogues.size(); i++){
-		if (subs->dialogues[i]->isVisible)
-			countid++;
-
-		if (countid == id){
-			return i;
-		}
-	}
-
+	const VisibleRows &rows = GetVisibleRows();
 	// it's possible when id >= size
-	return -1;
+	return (id < rows.keyOfId.size()) ? rows.keyOfId[id] : -1;
 }
 
 size_t SubsFile::GetElementByKey(size_t key)
 {
-	if (key >= subs->dialogues.size())
-		return -1;
-
-	size_t countid = 0;
-	for (size_t i = 0; i < subs->dialogues.size(); i++){
-		if (i == key){
-			return countid;
-		}
-		if (subs->dialogues[i]->isVisible)
-			countid++;
-	}
-	//it's possible to get here?
-	return -1;
+	const VisibleRows &rows = GetVisibleRows();
+	return (key < rows.idOfKey.size()) ? rows.idOfKey[key] : -1;
 }
 
 Styles *SubsFile::CopyStyle(size_t i, bool push)
 {
 	Styles *styl = subs->styles[i]->Copy();
 	subs->deleteStyles.push_back(styl);
-	edited = true;
+	MarkEdited();
 	if (push){
 		subs->styles[i] = styl;
 	}
@@ -609,7 +604,7 @@ SInfo *SubsFile::CopySinfo(size_t i, bool push)
 {
 	SInfo *sinf = subs->sinfo[i]->Copy();
 	subs->deleteSinfo.push_back(sinf);
-	edited = true;
+	MarkEdited();
 	if (push){
 		subs->sinfo[i] = sinf;
 	}
@@ -626,6 +621,7 @@ void SubsFile::EndLoad(unsigned char editionType, int activeLine, bool initialSa
 		m_history.ForgetSaved();
 	subs = subs->Copy();
 	edited = false;
+	++version;
 	lastStepTyping = false;
 }
 
@@ -801,14 +797,14 @@ void SubsFile::SetFiltered(bool filtered)
 
 void SubsFile::AddStyle(Styles *nstyl)
 {
-	edited = true;
+	MarkEdited();
 	subs->deleteStyles.push_back(nstyl);
 	subs->styles.push_back(nstyl);
 }
 
 void SubsFile::ChangeStyle(Styles *nstyl, size_t i)
 {
-	edited = true;
+	MarkEdited();
 	subs->deleteStyles.push_back(nstyl);
 	subs->styles[i] = nstyl;
 }
@@ -839,7 +835,7 @@ std::vector<Styles*> *SubsFile::GetStyleTable()
 
 void SubsFile::InsertStyle(size_t i, Styles *style)
 {
-	edited = true;
+	MarkEdited();
 	subs->deleteStyles.push_back(style);
 	if (i >= subs->styles.size())
 		subs->styles.push_back(style);
@@ -849,7 +845,7 @@ void SubsFile::InsertStyle(size_t i, Styles *style)
 
 void SubsFile::MoveStyle(size_t from, size_t to)
 {
-	edited = true;
+	MarkEdited();
 	Styles *style = subs->styles[from];
 	subs->styles.erase(subs->styles.begin() + from);
 	subs->styles.insert(subs->styles.begin() + to, style);
@@ -857,7 +853,7 @@ void SubsFile::MoveStyle(size_t from, size_t to)
 
 void SubsFile::SortStyles(bool func(Styles *i, Styles *j))
 {
-	edited = true;
+	MarkEdited();
 	std::sort(subs->styles.begin(), subs->styles.end(), func);
 }
 
@@ -892,7 +888,7 @@ void SubsFile::GetStyles(wxString &stylesText, bool tld/* = false*/)
 
 void SubsFile::DeleteStyle(size_t i)
 {
-	edited = true;
+	MarkEdited();
 	subs->styles.erase(subs->styles.begin() + i);
 }
 
@@ -922,7 +918,7 @@ SInfo *SubsFile::GetSInfoP(const wxString &key, int *ii)
 void SubsFile::DeleteSInfo(size_t i)
 {
 	subs->sinfo.erase(subs->sinfo.begin() + i);
-	edited = true;
+	MarkEdited();
 }
 
 SInfo *SubsFile::GetSInfoAt(size_t i)
@@ -932,14 +928,14 @@ SInfo *SubsFile::GetSInfoAt(size_t i)
 
 void SubsFile::SetSInfoAt(size_t i, SInfo *info)
 {
-	edited = true;
+	MarkEdited();
 	subs->deleteSinfo.push_back(info);
 	subs->sinfo[i] = info;
 }
 
 void SubsFile::InsertSInfo(size_t i, SInfo *info)
 {
-	edited = true;
+	MarkEdited();
 	subs->deleteSinfo.push_back(info);
 	if (i >= subs->sinfo.size())
 		subs->sinfo.push_back(info);
@@ -997,7 +993,7 @@ void SubsFile::InsertRowsF(int Row,
 	size_t convertedRow = Row;
 	if (convertedRow >= subs->dialogues.size()){ convertedRow = subs->dialogues.size(); }
 	subs->dialogues.insert(subs->dialogues.begin() + convertedRow, RowsTable.begin(), RowsTable.end());
-	edited = true;
+	MarkEdited();
 	if (AddToDestroy){ subs->deleteDialogues.insert(subs->deleteDialogues.end(), RowsTable.begin(), RowsTable.end()); }
 }
 
@@ -1006,7 +1002,7 @@ void SubsFile::InsertRowsF(int Row, int NumRows, Dialogue *Dialog, bool AddToDes
 	size_t convertedRow = Row;
 	if (convertedRow >= subs->dialogues.size()){ convertedRow = subs->dialogues.size(); }
 	subs->dialogues.insert(subs->dialogues.begin() + convertedRow, NumRows, Dialog);
-	edited = true;
+	MarkEdited();
 	if (AddToDestroy){ subs->deleteDialogues.push_back(Dialog); }
 }
 
@@ -1037,7 +1033,7 @@ void SubsFile::AddSInfo(const wxString &SI, wxString val, bool save)
 	oldinfo = GetSInfoP(key, &ii);
 
 	if (!oldinfo || save){
-		edited = true;
+		MarkEdited();
 		oldinfo = new SInfo(key, val);
 		if (ii < 0){
 			subs->sinfo.push_back(oldinfo);

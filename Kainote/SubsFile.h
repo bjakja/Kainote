@@ -116,6 +116,20 @@ private:
 	File *subs;
 	// changed since the last recorded step; every change below sets it
 	bool edited = false;
+	// bumped whenever the lines or the working copy change
+	size_t version = 0;
+	void MarkEdited() { edited = true; ++version; }
+	// Row ids are positions among the visible lines. Rebuilt when the lines
+	// or any line's visibility change, instead of counting on every paint.
+	struct VisibleRows {
+		size_t version = (size_t)-1;
+		unsigned epoch = 0;
+		File *file = nullptr;
+		std::vector<size_t> keyOfId;
+		// visible lines before each key
+		std::vector<size_t> idOfKey;
+	} visibleRows;
+	const VisibleRows &GetVisibleRows();
 	wxString embeddedSections;
 	// the edit box commits while the user types; those steps merge into one
 	bool typing = false;
