@@ -117,3 +117,21 @@ TEST(stop_wakes_a_waiting_taker)
 	stopper.join();
 	CHECK(r.slot == nullptr);
 }
+
+TEST(a_stopped_queue_plays_again_after_reset)
+{
+	FrameQueue queue(3, sizeof(int), 100);
+	queue.Reset(0);
+	{
+		Decoder decoder(queue);
+		FrameQueue::Result r = queue.Take(0);
+		queue.Release(r.slot);
+	}
+	queue.Reset(40);
+	Decoder decoder(queue);
+	FrameQueue::Result r = queue.Take(40);
+	CHECK(r.slot != nullptr);
+	CHECK_EQ(r.frame, 40);
+	CHECK_EQ(FrameIn(r.slot), 40);
+	queue.Release(r.slot);
+}

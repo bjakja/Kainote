@@ -24,6 +24,7 @@
 #include "VisualDrawingShapes.h"
 #include "Notebook.h"
 #include "FrameQueue.h"
+#include <memory>
 #include "UtilsWindows.h"
 
 
@@ -156,6 +157,7 @@ void Provider::GetWaveForm(int* min, int* peak, long long start, int w, int h, i
 void Provider::RunPlaybackThread()
 {
 	MultimediaThread multimedia(L"Playback");
+	std::unique_ptr<FrameQueue> savedQueue;
 	HANDLE events_to_wait[] = {
 		m_eventStartPlayback,
 		m_eventSetPosition,
@@ -170,8 +172,10 @@ void Provider::RunPlaybackThread()
 			unsigned char* buff = m_renderer->m_FrameBuffer;
 			size_t frameBytes = (size_t)m_renderer->m_Height * (size_t)m_renderer->m_Pitch;
 			// a second thread decodes a few frames ahead, so a slow frame
-			// does not hold up the one being shown
-			FrameQueue queue(4, frameBytes, m_numFrames);
+			// does not hold up the one being shown; kept between plays
+			if (!savedQueue || savedQueue->FrameBytes() != frameBytes || savedQueue->FrameCount() != m_numFrames)
+				savedQueue = std::make_unique<FrameQueue>(4, frameBytes, m_numFrames);
+			FrameQueue &queue = *savedQueue;
 			queue.Reset(m_renderer->m_Frame);
 			std::thread decoder([this, &queue]() {
 				MultimediaThread multimedia(L"Playback");

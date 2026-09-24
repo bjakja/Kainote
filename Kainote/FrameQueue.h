@@ -44,9 +44,11 @@ public:
 	Result Take(int wanted);
 	void Release(unsigned char *slot);
 
-	// Decoding starts over at frame, as after a seek.
+	// Decoding starts over at frame, as after a seek or when playing again.
 	void Reset(int frame);
 	void Stop();
+	size_t FrameBytes() const { return m_slots.empty() ? 0 : m_slots[0].data.size(); }
+	int FrameCount() const { return m_frameCount; }
 
 private:
 	enum State { FREE, DECODING, READY, TAKEN };

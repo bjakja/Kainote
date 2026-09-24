@@ -144,6 +144,7 @@ void FrameQueue::Reset(int frame)
 		m_next = frame;
 		m_wanted = frame;
 		m_failed = false;
+		m_stopped = false;
 	}
 	m_changed.notify_all();
 }
