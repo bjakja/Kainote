@@ -5063,11 +5063,12 @@ void wxD2DContext::SetBrush(const wxBrush& brush){
 
 void wxD2DContext::SetFont(const wxFont& font, const wxColour& col){
 	m_textBrush = col.IsOk() ? SolidBrush(col) : NULL;
-	if (m_font && font.IsSameAs(m_fontSource))
+	// without a colour the text takes the font's own brush, so that one has to match
+	if (m_font && col.IsOk() && font.IsSameAs(m_fontSource))
 		return;
 	wxString key = font.GetNativeFontInfoDesc();
 	m_fontSource = font;
-	if (m_font && key == m_fontKey)
+	if (m_font && col.IsOk() && key == m_fontKey)
 		return;
 	wxDELETE(m_font);
 	m_font = m_renderer->CreateFont(font, col);
