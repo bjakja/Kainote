@@ -37,6 +37,7 @@
 #include <wx/filename.h>
 #include <vector>
 #include "UtilsWindows.h"
+#include "D3D9Device.h"
 
 #ifndef _WIN32
 #include <wx/dcbuffer.h>
@@ -267,11 +268,7 @@ void AudioDisplay::ClearDX()
 bool AudioDisplay::InitDX(const wxSize &size)
 {
 
-	if (!d3dObject){
-		d3dObject = Direct3DCreate9(D3D_SDK_VERSION);
-		PTR(d3dObject, _("Cannot create Direct3D object"));
-	}
-	else{
+	if (d3dObject){
 		staticValid = false;
 		SAFE_RELEASE(staticSurface);
 		SAFE_RELEASE(spectrumSurface);
@@ -304,13 +301,9 @@ bool AudioDisplay::InitDX(const wxSize &size)
 		hr = d3dDevice->Reset(&d3dpp);
 		if (FAILED(hr)){ return false; }
 	}
-	else{
-		hr = d3dObject->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd,
-			D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED, &d3dpp, &d3dDevice);//| D3DCREATE_FPU_PRESERVE
-		if (FAILED(hr)){
-			HR(d3dObject->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd,
-				D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED, &d3dpp, &d3dDevice), _("Cannot create D3D9 device"));
-		}
+	else if (!CreateD3D9Device(hwnd, &d3dpp, D3DCREATE_MULTITHREADED, &d3dObject, &d3dDevice)){
+		KaiLog(_("Cannot create D3D9 device"));
+		return false;
 	}
 	hr = d3dDevice->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, TRUE);
 	hr = d3dDevice->SetRenderState(D3DRS_ANTIALIASEDLINEENABLE, TRUE);
@@ -729,6 +722,11 @@ void AudioDisplay::PresentWithCursor()
 		hr = d3dDevice->EndScene();
 	}
 	hr = d3dDevice->Present(&view, &view, nullptr, nullptr);
+	if (IsD3D9DeviceRemoved(hr)) {
+		// it cannot be reset; the next full redraw makes a new one
+		ClearDX();
+		return;
+	}
 	if (D3DERR_DEVICELOST == hr || D3DERR_DRIVERINTERNALERROR == hr){
 		deviceLost = true;
 		staticValid = false;

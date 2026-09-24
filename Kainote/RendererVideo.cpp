@@ -24,6 +24,7 @@
 #include "VideoFullscreen.h"
 #include "SubtitlesProviderManager.h"
 #include "AudioBox.h"
+#include "D3D9Device.h"
 
 #include <wx/dir.h>
 #include <wx/clipbrd.h>
@@ -323,11 +324,7 @@ void RendererVideo::UpdateVideoWindow()
 bool RendererVideo::InitDX()
 {
 
-	if (!m_D3DObject){
-		m_D3DObject = Direct3DCreate9(D3D_SDK_VERSION);
-		PTR(m_D3DObject, _("Cannot create Direct3D object"));
-	}
-	else{
+	if (m_D3DObject){
 		Clear(false);
 	}
 
@@ -361,16 +358,10 @@ bool RendererVideo::InitDX()
 			return false;
 		}
 	}
-	else{
-		hr = m_D3DObject->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_HWND,
-			D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED | 
-			D3DCREATE_FPU_PRESERVE/* | D3DCREATE_PUREDEVICE*/, &d3dpp, &m_D3DDevice);
-		if (FAILED(hr)){
-			HR(m_D3DObject->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_HWND,
-				D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED | 
-				D3DCREATE_FPU_PRESERVE /*| D3DCREATE_PUREDEVICE*/, &d3dpp, &m_D3DDevice),
-				_("Cannot create D3D9 device"));
-		}
+	else if (!CreateD3D9Device(m_HWND, &d3dpp, D3DCREATE_MULTITHREADED | D3DCREATE_FPU_PRESERVE,
+		&m_D3DObject, &m_D3DDevice)){
+		KaiLog(_("Cannot create D3D9 device"));
+		return false;
 	}
 
 	hr = m_D3DDevice->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, TRUE);

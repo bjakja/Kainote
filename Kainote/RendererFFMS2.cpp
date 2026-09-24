@@ -16,6 +16,7 @@
 
 
 #include "AudioBox.h"
+#include "D3D9Device.h"
 #include "EditBox.h"
 #include "kainoteApp.h"
 #include "OpennWrite.h"
@@ -401,7 +402,10 @@ void RendererFFMS2::Render(bool redrawSubsOnFrame, bool wait)
 	// End the scene
 	hr = m_D3DDevice->EndScene();
 	hr = m_D3DDevice->Present(&m_WindowRect, &m_WindowRect, nullptr, nullptr);
-	if (D3DERR_DEVICELOST == hr ||
+	// a removed device cannot be reset, so it goes and the next render makes a new one
+	if (IsD3D9DeviceRemoved(hr))
+		Clear(true);
+	if (D3DERR_DEVICELOST == hr || IsD3D9DeviceRemoved(hr) ||
 		D3DERR_DRIVERINTERNALERROR == hr){
 		if (!m_DeviceLost){
 			m_DeviceLost = true;
