@@ -747,6 +747,9 @@ bool RendererFFMS2::InitRendererDX()
 
 bool RendererFFMS2::InitNv12()
 {
+#ifndef _WIN32
+	return false;
+#else
 	const D3DFORMAT nv12 = (D3DFORMAT)MAKEFOURCC('N', 'V', '1', '2');
 	if (FAILED(DXVA2CreateVideoService(m_D3DDevice, __uuidof(IDirectXVideoProcessorService), (void**)&m_DXVAService)))
 		return false;
@@ -786,11 +789,13 @@ bool RendererFFMS2::InitNv12()
 		}
 	}
 	return true;
+#endif
 }
 
 // call with m_MutexRendering locked
 void RendererFFMS2::BlitNv12()
 {
+#ifdef _WIN32
 	DXVA2_ExtendedFormat source = {};
 	source.VideoChromaSubsampling = DXVA2_VideoChromaSubsampling_MPEG2;
 	source.NominalRange = m_FFMS2->YuvFullRange() ? DXVA2_NominalRange_0_255 : DXVA2_NominalRange_16_235;
@@ -825,6 +830,7 @@ void RendererFFMS2::BlitNv12()
 	sample.PlanarAlpha = DXVA2_Fixed32OpaqueAlpha();
 	if (FAILED(m_DXVAProcessor->VideoProcessBlt(m_BlackBarsSurface, &blt, &sample, 1, nullptr)))
 		KaiLog(_("Cannot overlay surfaces"));
+#endif
 }
 
 void RendererFFMS2::ClearObject()

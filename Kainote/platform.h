@@ -1595,6 +1595,8 @@ using LPRECT = RECT*;
 struct MONITORINFO { DWORD cbSize{sizeof(MONITORINFO)}; RECT rcMonitor{0,0,1920,1080}; RECT rcWork{0,0,1920,1040}; DWORD dwFlags{1}; };
 constexpr DWORD MONITORINFOF_PRIMARY = 1;
 using MONITORENUMPROC = int (CALLBACK *)(HMONITOR, HDC, LPRECT, LPARAM);
+constexpr DWORD MONITOR_DEFAULTTONEAREST = 2;
+inline HMONITOR MonitorFromWindow(HWND, DWORD) { return nullptr; }
 inline BOOL GetMonitorInfo(HMONITOR, MONITORINFO* info) { if (info) { info->rcMonitor = {0,0,1920,1080}; info->rcWork = {0,0,1920,1040}; info->dwFlags = MONITORINFOF_PRIMARY; } return TRUE; }
 inline BOOL EnumDisplayMonitors(HDC, const RECT*, MONITORENUMPROC proc, LPARAM data) { if (!proc) return FALSE; RECT r{0,0,1920,1080}; return proc(nullptr, nullptr, &r, data); }
 
