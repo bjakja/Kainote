@@ -387,4 +387,15 @@ public:
 
 };
 
+// A canvas for window, or null without Direct2D. The window then clips its
+// children, which the render target would otherwise paint over.
+inline GraphicsCanvas *CreateGraphicsCanvas(wxWindow *window)
+{
+	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+	GraphicsCanvas *canvas = renderer ? renderer->CreateCanvas(window) : NULL;
+	if (canvas)
+		window->SetWindowStyleFlag(window->GetWindowStyleFlag() | wxCLIP_CHILDREN);
+	return canvas;
+}
+
 //#endif

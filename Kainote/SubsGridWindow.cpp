@@ -72,8 +72,7 @@ GraphicsCanvas *SubsGrid::Canvas()
 {
 	if (!m_CanvasTried) {
 		m_CanvasTried = true;
-		if (GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer())
-			m_Canvas.reset(renderer->CreateCanvas(this));
+		m_Canvas.reset(CreateGraphicsCanvas(this));
 	}
 	return m_Canvas.get();
 }
