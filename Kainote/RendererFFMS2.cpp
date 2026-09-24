@@ -368,6 +368,10 @@ void RendererFFMS2::Render(bool redrawSubsOnFrame, bool wait)
 		m_DeviceLost = false;
 	}
 
+	if (!BeginFrame()){
+		Render(true, false);
+		return;
+	}
 	hr = m_D3DDevice->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
 	
@@ -401,10 +405,7 @@ void RendererFFMS2::Render(bool redrawSubsOnFrame, bool wait)
 	if (m_HasZoom){ DrawZoom(); }
 	// End the scene
 	hr = m_D3DDevice->EndScene();
-	hr = m_D3DDevice->Present(&m_WindowRect, &m_WindowRect, nullptr, nullptr);
-	// a removed device cannot be reset, so it goes and the next render makes a new one
-	if (IsD3D9DeviceRemoved(hr))
-		Clear(true);
+	hr = PresentFrame();
 	if (D3DERR_DEVICELOST == hr || IsD3D9DeviceRemoved(hr) ||
 		D3DERR_DRIVERINTERNALERROR == hr){
 		if (!m_DeviceLost){
@@ -714,7 +715,7 @@ Provider* RendererFFMS2::GetFFMS2()
 bool RendererFFMS2::InitRendererDX()
 {
 #ifndef byvertices
-	HR(m_D3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &m_BlackBarsSurface), _("Cannot create surface"));
+	HR(GetBackBuffer(&m_BlackBarsSurface), _("Cannot create surface"));
 
 	if (FAILED(m_D3DDevice->CreateTexture(m_Width, m_Height, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &m_OverlayStaging, nullptr)) ||
 		FAILED(m_D3DDevice->CreateTexture(m_Width, m_Height, 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_OverlayTexture, nullptr))) {

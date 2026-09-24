@@ -251,9 +251,19 @@ void AudioDisplay::DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, D3DCOL
 	}
 }
 
+wxCriticalSection AudioDisplay::deviceLock;
+
+bool AudioDisplay::DeviceReplaced() const
+{
+	return sharedDevice && SharedD3D9Device::Generation(SharedDeviceKind::Audio) != deviceGeneration;
+}
+
 void AudioDisplay::ClearDX()
 {
+	wxCriticalSectionLocker lock(deviceLock);
 	staticValid = false;
+	SAFE_RELEASE(swapChain);
+	sharedDevice = false;
 	SAFE_RELEASE(staticSurface);
 	SAFE_RELEASE(spectrumSurface);
 	SAFE_RELEASE(backBuffer);
@@ -267,8 +277,9 @@ void AudioDisplay::ClearDX()
 
 bool AudioDisplay::InitDX(const wxSize &size)
 {
-
-	if (d3dObject){
+	wxCriticalSectionLocker lock(deviceLock);
+	if (d3dDevice){
+		SAFE_RELEASE(swapChain);
 		staticValid = false;
 		SAFE_RELEASE(staticSurface);
 		SAFE_RELEASE(spectrumSurface);
@@ -297,13 +308,20 @@ bool AudioDisplay::InitDX(const wxSize &size)
 	d3dpp.Flags = 0;
 	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;//D3DPRESENT_INTERVAL_DEFAULT;
 
-	if (d3dDevice){
+	if (!d3dDevice){
+		d3dDevice = SharedD3D9Device::Acquire(SharedDeviceKind::Audio, &deviceGeneration);
+		sharedDevice = d3dDevice != nullptr;
+		if (!sharedDevice && !CreateD3D9Device(hwnd, &d3dpp, D3DCREATE_MULTITHREADED, &d3dObject, &d3dDevice)){
+			KaiLog(_("Cannot create D3D9 device"));
+			return false;
+		}
+	}
+	else if (!sharedDevice){
 		hr = d3dDevice->Reset(&d3dpp);
 		if (FAILED(hr)){ return false; }
 	}
-	else if (!CreateD3D9Device(hwnd, &d3dpp, D3DCREATE_MULTITHREADED, &d3dObject, &d3dDevice)){
-		KaiLog(_("Cannot create D3D9 device"));
-		return false;
+	if (sharedDevice){
+		HR(d3dDevice->CreateAdditionalSwapChain(&d3dpp, &swapChain), _("Cannot create swap chain"));
 	}
 	hr = d3dDevice->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, TRUE);
 	hr = d3dDevice->SetRenderState(D3DRS_ANTIALIASEDLINEENABLE, TRUE);
@@ -330,7 +348,8 @@ bool AudioDisplay::InitDX(const wxSize &size)
 	D3DXMatrixIdentity(&matIdentity);
 	HR(d3dDevice->SetTransform(D3DTS_WORLD, &matIdentity), _("Cannot set world matrix"));
 	HR(d3dDevice->SetTransform(D3DTS_VIEW, &matIdentity), _("Cannot set view matrix"));
-	HR(d3dDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer), _("Cannot create surface"));
+	HR(swapChain ? swapChain->GetBackBuffer(0, D3DBACKBUFFER_TYPE_MONO, &backBuffer)
+		: d3dDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer), _("Cannot create surface"));
 
 
 	HR(D3DXCreateLine(d3dDevice, &d3dLine), _("Cannot create D3DX line"));
@@ -355,6 +374,10 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 	// Loaded?
 	if (!loaded || !provider) return;
 
+	wxCriticalSectionLocker deviceLocker(deviceLock);
+	// another audio view found the shared device removed and it was replaced
+	if (DeviceReplaced())
+		ClearDX();
 	if (!d3dDevice || needToReset || w > bufferSize.x || displayH > bufferSize.y) {
 		LastSize = wxSize(w, h);
 		if (!InitDX(wxSize(w, displayH))){
@@ -712,6 +735,7 @@ void AudioDisplay::DrawCursor()
 
 void AudioDisplay::PresentWithCursor()
 {
+	wxCriticalSectionLocker lock(deviceLock);
 	HRESULT hr = d3dDevice->SetRenderTarget(0, backBuffer);
 	SetView();
 	RECT view = ViewRect();
@@ -721,9 +745,12 @@ void AudioDisplay::PresentWithCursor()
 		DrawCursor();
 		hr = d3dDevice->EndScene();
 	}
-	hr = d3dDevice->Present(&view, &view, nullptr, nullptr);
+	hr = swapChain ? swapChain->Present(&view, &view, nullptr, nullptr, 0)
+		: d3dDevice->Present(&view, &view, nullptr, nullptr);
 	if (IsD3D9DeviceRemoved(hr)) {
 		// it cannot be reset; the next full redraw makes a new one
+		if (sharedDevice)
+			SharedD3D9Device::Removed(SharedDeviceKind::Audio, deviceGeneration);
 		ClearDX();
 		return;
 	}
@@ -751,7 +778,7 @@ void AudioDisplay::SetView()
 
 void AudioDisplay::DrawCursorFrame()
 {
-	if (!d3dDevice || !staticValid || deviceLost || isHidden) {
+	if (!d3dDevice || !staticValid || deviceLost || isHidden || DeviceReplaced()) {
 		QueueFullRedraw();
 		return;
 	}

@@ -155,7 +155,8 @@ public:
 	ID3DXLine *m_D3DLine = nullptr;
 	ID3DXFont *m_D3DFont = nullptr;
 	ID3DXFont * m_D3DCalcFont = nullptr;
-	wxCriticalSection m_MutexRendering;
+	// one for all video views, as they may share a device
+	static wxCriticalSection m_MutexRendering;
 	wxMutex m_MutexProgressBar;
 	wxMutex m_MutexOpen;
 	wxMutex m_MutexVisualChange;
@@ -264,6 +265,17 @@ private:
 	// the back buffer covers the monitor, so a resize within it needs no Reset
 	bool FitsBackBuffer() const;
 	void SetProjection();
+	// the render states every frame starts from
+	void ApplyDeviceState();
+	// With the shared device, points it at this view's swap chain and state;
+	// false when the device was replaced and this view has to make its own again.
+	bool BeginFrame();
+	HRESULT PresentFrame();
+	HRESULT GetBackBuffer(IDirect3DSurface9 **surface);
+	// set while this view draws into its own swap chain of the shared device
+	IDirect3DSwapChain9 *m_SwapChain = nullptr;
+	bool m_SharedDevice = false;
+	unsigned m_DeviceGeneration = 0;
 	HWND m_DeviceWindow = nullptr;
 	UINT m_BackBufferWidth = 0;
 	UINT m_BackBufferHeight = 0;

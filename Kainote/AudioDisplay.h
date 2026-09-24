@@ -110,6 +110,13 @@ private:
 	// everything but the play cursor, so a cursor tick only copies it
 	LPDIRECT3DSURFACE9 staticSurface = nullptr;
 	bool staticValid = false;
+	// set while this view draws into its own swap chain of the shared device
+	IDirect3DSwapChain9 *swapChain = nullptr;
+	bool sharedDevice = false;
+	unsigned deviceGeneration = 0;
+	// every audio view may use the shared device, one at a time
+	static wxCriticalSection deviceLock;
+	bool DeviceReplaced() const;
 	// the back buffer and surfaces are larger than the view, so resizing needs no Reset;
 	// drawing and presenting use the top left of them
 	wxSize bufferSize;

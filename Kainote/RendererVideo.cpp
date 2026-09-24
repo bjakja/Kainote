@@ -87,6 +87,8 @@ namespace
 #endif
 
 
+wxCriticalSection RendererVideo::m_MutexRendering;
+
 void CreateVERTEX(VERTEX * v, float X, float Y, D3DCOLOR colour, float Z)
 {
 	v->fX = X;
@@ -325,8 +327,8 @@ void RendererVideo::UpdateVideoWindow()
 
 bool RendererVideo::InitDX()
 {
-
-	if (m_D3DObject){
+	wxCriticalSectionLocker lock(m_MutexRendering);
+	if (m_D3DDevice){
 		Clear(false);
 	}
 
@@ -353,19 +355,49 @@ bool RendererVideo::InitDX()
 	d3dpp.EnableAutoDepthStencil = FALSE;
 	d3dpp.MultiSampleType = D3DMULTISAMPLE_NONE;
 
-	if (m_D3DDevice){
+	if (!m_D3DDevice){
+		m_D3DDevice = SharedD3D9Device::Acquire(SharedDeviceKind::Video, &m_DeviceGeneration);
+		m_SharedDevice = m_D3DDevice != nullptr;
+		if (!m_SharedDevice && !CreateD3D9Device(m_HWND, &d3dpp, D3DCREATE_MULTITHREADED | D3DCREATE_FPU_PRESERVE,
+			&m_D3DObject, &m_D3DDevice)){
+			KaiLog(_("Cannot create D3D9 device"));
+			return false;
+		}
+	}
+	else if (!m_SharedDevice){
 		hr = m_D3DDevice->Reset(&d3dpp);
 		if (FAILED(hr)){
 			KaiLogSilent(L"Video: " + _("Cannot reset Direct3D"));
 			return false;
 		}
 	}
-	else if (!CreateD3D9Device(m_HWND, &d3dpp, D3DCREATE_MULTITHREADED | D3DCREATE_FPU_PRESERVE,
-		&m_D3DObject, &m_D3DDevice)){
-		KaiLog(_("Cannot create D3D9 device"));
-		return false;
+	if (m_SharedDevice){
+		HR(m_D3DDevice->CreateAdditionalSwapChain(&d3dpp, &m_SwapChain), _("Cannot create swap chain"));
+		IDirect3DSurface9 *target = nullptr;
+		HR(GetBackBuffer(&target), _("Cannot create surface"));
+		m_D3DDevice->SetRenderTarget(0, target);
+		target->Release();
 	}
 
+	ApplyDeviceState();
+
+	if (!InitRendererDX())
+		return false;
+
+	wxFont *font12 = Options.GetFont(4);
+	wxSize pixelSize = font12->GetPixelSize();
+	HR(D3DXCreateFontW(m_D3DDevice, pixelSize.y, pixelSize.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
+		DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &m_D3DFont), _("Cannot create D3DX font"));
+	HR(D3DXCreateFontW(m_D3DDevice, pixelSize.y, pixelSize.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
+		DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &m_D3DCalcFont), _("Cannot create D3DX font"));
+	HR(D3DXCreateLine(m_D3DDevice, &m_D3DLine), _("Cannot create D3DX line"));
+
+	return true;
+}
+
+void RendererVideo::ApplyDeviceState()
+{
+	HRESULT hr;
 	hr = m_D3DDevice->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, TRUE);
 	hr = m_D3DDevice->SetRenderState(D3DRS_ANTIALIASEDLINEENABLE, TRUE);
 
@@ -385,28 +417,49 @@ bool RendererVideo::InitDX()
 	hr = m_D3DDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
 	hr = m_D3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
 	hr = m_D3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
-	HR(hr, _("One of the DirectX settings failed"));
+	hr = m_D3DDevice->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE);
+	hr = m_D3DDevice->SetTexture(0, nullptr);
 
 	D3DXMATRIX matIdentity;
 	D3DXMatrixIdentity(&matIdentity);
 	SetProjection();
-	HR(m_D3DDevice->SetTransform(D3DTS_WORLD, &matIdentity), _("Cannot set world matrix"));
-	HR(m_D3DDevice->SetTransform(D3DTS_VIEW, &matIdentity), _("Cannot set view matrix"));
+	m_D3DDevice->SetTransform(D3DTS_WORLD, &matIdentity);
+	m_D3DDevice->SetTransform(D3DTS_VIEW, &matIdentity);
+}
 
-
-
-	if (!InitRendererDX())
+// call with m_MutexRendering locked
+bool RendererVideo::BeginFrame()
+{
+	if (!m_SharedDevice)
+		return true;
+	if (SharedD3D9Device::Generation(SharedDeviceKind::Video) != m_DeviceGeneration) {
+		Clear(true);
+		m_DeviceLost = true;
 		return false;
-
-	wxFont *font12 = Options.GetFont(4);
-	wxSize pixelSize = font12->GetPixelSize();
-	HR(D3DXCreateFontW(m_D3DDevice, pixelSize.y, pixelSize.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &m_D3DFont), _("Cannot create D3DX font"));
-	HR(D3DXCreateFontW(m_D3DDevice, pixelSize.y, pixelSize.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &m_D3DCalcFont), _("Cannot create D3DX font"));
-	HR(D3DXCreateLine(m_D3DDevice, &m_D3DLine), _("Cannot create D3DX line"));
-
+	}
+	// another view may have drawn since, into its own swap chain and state
+	m_D3DDevice->SetRenderTarget(0, m_BlackBarsSurface);
+	ApplyDeviceState();
 	return true;
+}
+
+HRESULT RendererVideo::PresentFrame()
+{
+	HRESULT hr = m_SwapChain ? m_SwapChain->Present(&m_WindowRect, &m_WindowRect, nullptr, nullptr, 0)
+		: m_D3DDevice->Present(&m_WindowRect, &m_WindowRect, nullptr, nullptr);
+	// a removed device cannot be reset, so it goes and the next render makes a new one
+	if (IsD3D9DeviceRemoved(hr)) {
+		if (m_SharedDevice)
+			SharedD3D9Device::Removed(SharedDeviceKind::Video, m_DeviceGeneration);
+		Clear(true);
+	}
+	return hr;
+}
+
+HRESULT RendererVideo::GetBackBuffer(IDirect3DSurface9 **surface)
+{
+	return m_SwapChain ? m_SwapChain->GetBackBuffer(0, D3DBACKBUFFER_TYPE_MONO, surface)
+		: m_D3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, surface);
 }
 
 bool RendererVideo::FitsBackBuffer() const
@@ -439,9 +492,11 @@ void RendererVideo::Clear(bool clearObject)
 
 	//clear elements in dshow class
 	ClearObject();
+	SAFE_RELEASE(m_SwapChain);
 	if (clearObject){
 		SAFE_RELEASE(m_D3DDevice);
 		SAFE_RELEASE(m_D3DObject);
+		m_SharedDevice = false;
 		m_HasZoom = false;
 	}
 }
