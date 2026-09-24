@@ -311,6 +311,8 @@ public:
 		return *this;
 	}
 	operator unsigned char() const { return value; }
+	// for a line not in any file yet
+	void Init(unsigned char newValue) { value = newValue; }
 	static unsigned Epoch() { return s_Epoch; }
 private:
 	unsigned char value = VISIBLE;
