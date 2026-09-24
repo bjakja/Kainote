@@ -518,8 +518,11 @@ void RendererVideo::RunQueuedSeekRefresh()
 void RendererVideo::SeekRefresh(bool playing, bool refreshAudio)
 {
 	ReopenSubsAfterSeek(playing);
-	if (playing)
+	if (playing) {
+		if (m_AudioPlayer && m_AudioPlayer->player)
+			m_AudioPlayer->player->SetCurrentPosition(m_AudioPlayer->GetSampleAtMS(m_Time));
 		return;
+	}
 	//rebuild spectrum cause position can be changed
 	if (refreshAudio && m_AudioPlayer)
 		m_AudioPlayer->UpdateImage(false, false);
@@ -1062,13 +1065,26 @@ int RendererVideo::GetCurrentPosition()
 int RendererVideo::PlaybackClock()
 {
 	DWORD now = timeGetTime();
-	AudioDisplay *audio = m_AudioPlayer;
-	if (audio && audio->player && audio->player->IsPlaying()) {
-		int audioMs = audio->GetMSAtSample(audio->player->GetCurrentPosition());
+	std::shared_ptr<AudioPosition> position = GetAudioPosition();
+	long long frame = position ? position->Frame() : -1;
+	if (frame >= 0 && position->SampleRate() > 0) {
+		int audioMs = (int)(frame * 1000 / position->SampleRate());
 		m_LastTime = now - audioMs;
 		return audioMs;
 	}
 	return (int)(now - m_LastTime);
+}
+
+void RendererVideo::SetAudioPosition(std::shared_ptr<AudioPosition> position)
+{
+	std::lock_guard<std::mutex> lock(m_AudioPositionMutex);
+	m_AudioPosition = std::move(position);
+}
+
+std::shared_ptr<AudioPosition> RendererVideo::GetAudioPosition()
+{
+	std::lock_guard<std::mutex> lock(m_AudioPositionMutex);
+	return m_AudioPosition;
 }
 
 int RendererVideo::GetCurrentFrame()

@@ -451,6 +451,11 @@ double DirectSoundPlayer2Thread::GetVolume()
 	return volume;
 }
 
+long long AudioPosition::Frame()
+{
+	return -1;
+}
+
 bool DirectSoundPlayer2Thread::IsDead()
 {
 	if (!linuxState) return true;
@@ -536,9 +541,11 @@ void DirectSoundPlayer2Thread::Run()
 	}
 
 	{
-		std::lock_guard<std::mutex> lock(position_mutex);
-		position_buffer = audioBuffer;
-		buffer_bytes = bufSize;
+		std::lock_guard<std::mutex> lock(position->mutex);
+		position->buffer = audioBuffer;
+		position->buffer_bytes = bufSize;
+		position->bytes_per_frame = provider->GetChannels() * provider->GetBytesPerSample();
+		position->sample_rate = provider->GetSampleRate();
 	}
 
 	// Now we're ready to roll!
@@ -587,6 +594,7 @@ void DirectSoundPlayer2Thread::Run()
 				if (FAILED(res))
 				{
 					KaiLogSilent("Could not lock buffer for playback.");
+					SetStopped();
 					playback_should_be_running = false;
 					break;
 				}
@@ -617,7 +625,7 @@ void DirectSoundPlayer2Thread::Run()
 							KaiLogSilent("Could not start looping playback.");
 					}
 
-					SetWritten(next_input_frame, buffer_offset, bytes_filled >= wanted_latency_bytes);
+					SetWritten(next_input_frame, buffer_offset, bytes_filled >= wanted_latency_bytes, true);
 					SetEvent(is_playing);
 					playback_should_be_running = true;
 
@@ -628,7 +636,7 @@ void DirectSoundPlayer2Thread::Run()
 			{
 				// Stop playing
 				audioBuffer->Stop();
-				ResetEvent(is_playing);
+				SetStopped();
 				playback_should_be_running = false;
 				break;
 			}
@@ -639,7 +647,7 @@ void DirectSoundPlayer2Thread::Run()
 				if (end_frame <= next_input_frame)
 				{
 					audioBuffer->Stop();
-					ResetEvent(is_playing);
+					SetStopped();
 					playback_should_be_running = false;
 				}
 				else
@@ -665,7 +673,7 @@ void DirectSoundPlayer2Thread::Run()
 			{
 				// Perform suicide
 				audioBuffer->Stop();
-				ResetEvent(is_playing);
+				SetStopped();
 				playback_should_be_running = false;
 				running = false;
 				break;
@@ -688,7 +696,7 @@ do_fill_buffer:
 						// Not looping playback...
 						// hopefully we only triggered timeout after being done with the buffer
 						audioBuffer->Stop();
-						ResetEvent(is_playing);
+						SetStopped();
 						playback_should_be_running = false;
 						break;
 					}
@@ -733,7 +741,7 @@ do_fill_buffer:
 					DWORD bytes_filled = FillAndUnlockBuffers(buf1, buf1sz, buf2, buf2sz, next_input_frame, audioBuffer);
 					buffer_offset += bytes_filled;
 					if (buffer_offset >= bufSize) buffer_offset -= bufSize;
-					SetWritten(next_input_frame, buffer_offset, true);
+					SetWritten(next_input_frame, buffer_offset, true, false);
 
 					if (bytes_filled < 1024)
 					{
@@ -763,20 +771,46 @@ do_fill_buffer:
 	}
 
 	{
-		std::lock_guard<std::mutex> lock(position_mutex);
-		position_buffer = nullptr;
+		std::lock_guard<std::mutex> lock(position->mutex);
+		position->buffer = nullptr;
+		position->playing = false;
 	}
 	audioBuffer->Release();
 	defaultPlayback->Release();
 }
 
-void DirectSoundPlayer2Thread::SetWritten(long long frame, unsigned long offset, bool refills)
+void DirectSoundPlayer2Thread::SetWritten(long long frame, unsigned long offset, bool refills, bool started)
 {
-	std::lock_guard<std::mutex> lock(position_mutex);
-	written_frame = frame;
-	write_offset = offset;
-	refilled = refills;
-	restarting = false;
+	std::lock_guard<std::mutex> lock(position->mutex);
+	position->written_frame = frame;
+	position->write_offset = offset;
+	position->refilled = refills;
+	if (started)
+		position->restarting = false;
+}
+
+void DirectSoundPlayer2Thread::SetStopped()
+{
+	ResetEvent(is_playing);
+	std::lock_guard<std::mutex> lock(position->mutex);
+	position->playing = false;
+}
+
+long long AudioPosition::Frame()
+{
+	// what was written minus what the sound card has not reached yet
+	std::lock_guard<std::mutex> lock(mutex);
+	if (!playing)
+		return -1;
+	DWORD playCursor = 0;
+	if (restarting || !buffer || !buffer_bytes || FAILED(buffer->GetCurrentPosition(&playCursor, nullptr)))
+		return start_frame;
+	unsigned long ahead = (write_offset + buffer_bytes - playCursor) % buffer_bytes;
+	// a refilled buffer meets the cursor full, a one-shot one meets it played out
+	if (ahead == 0 && refilled)
+		ahead = buffer_bytes;
+	long long frame = written_frame - (long long)ahead / bytes_per_frame;
+	return (frame < start_frame) ? start_frame : frame;
 }
 
 
@@ -936,10 +970,12 @@ void DirectSoundPlayer2Thread::Play(long long start, long long count)
 	CheckError();
 
 	{
-		std::lock_guard<std::mutex> lock(position_mutex);
-		restarting = true;
-		start_frame = start;
+		std::lock_guard<std::mutex> lock(position->mutex);
+		position->restarting = true;
+		position->playing = true;
+		position->start_frame = start;
 	}
+	start_frame = start;
 	end_frame = start+count;
 	SetEvent(event_start_playback);
 	//SYSTEMTIME ftime;
@@ -1022,19 +1058,8 @@ long long DirectSoundPlayer2Thread::GetCurrentFrame()
 
 	if (!IsPlaying()) return 0;
 
-	// the frame the sound card plays now: what was written minus what it has not reached
-	std::lock_guard<std::mutex> lock(position_mutex);
-	DWORD playCursor = 0;
-	if (restarting || !position_buffer || !buffer_bytes ||
-		FAILED(position_buffer->GetCurrentPosition(&playCursor, nullptr)))
-		return start_frame;
-	unsigned long ahead = (write_offset + buffer_bytes - playCursor) % buffer_bytes;
-	// a refilled buffer meets the cursor full, a one-shot one meets it played out
-	if (ahead == 0 && refilled)
-		ahead = buffer_bytes;
-	long long bytesPerFrame = provider->GetChannels() * provider->GetBytesPerSample();
-	long long frame = written_frame - (long long)ahead / bytesPerFrame;
-	return (frame < start_frame) ? start_frame.load() : frame;
+	long long frame = position->Frame();
+	return (frame < 0) ? start_frame.load() : frame;
 }
 
 
@@ -1280,6 +1305,11 @@ void DirectSoundPlayer2::SetEndPosition(long long pos)
 	}
 }
 
+
+std::shared_ptr<AudioPosition> DirectSoundPlayer2::Position()
+{
+	return IsThreadAlive() ? thread->Position() : nullptr;
+}
 
 void DirectSoundPlayer2::SetCurrentPosition(long long pos)
 {

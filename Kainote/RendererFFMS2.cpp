@@ -523,6 +523,7 @@ void RendererFFMS2::StartStream()
 	m_Time = GetTimebase().MsAt(m_Frame);
 	m_LastTime = timeGetTime() - m_Time;
 	if (m_AudioPlayer){ m_AudioPlayer->Play(m_Time, -1, false); }
+	SetAudioPosition((m_AudioPlayer && m_AudioPlayer->player) ? m_AudioPlayer->player->Position() : nullptr);
 #ifdef _WIN32
 	m_FFMS2->Play();
 #else
@@ -536,6 +537,7 @@ void RendererFFMS2::PauseStream()
 	StopLinuxPlaybackThread();
 #endif
 	if (m_AudioPlayer){ m_AudioPlayer->Stop(false); }
+	SetAudioPosition(nullptr);
 }
 
 void RendererFFMS2::StopStream()
@@ -544,6 +546,7 @@ void RendererFFMS2::StopStream()
 	StopLinuxPlaybackThread();
 #endif
 	if (m_AudioPlayer){ m_AudioPlayer->Stop(); }
+	SetAudioPosition(nullptr);
 }
 
 void RendererFFMS2::SetPosition(int time, bool startTime, int flags)
@@ -579,8 +582,10 @@ void RendererFFMS2::SetFFMS2Position(int time, bool startTime, bool refreshAudio
 	m_LastTime = timeGetTime() - m_Time;
 	m_PlayEndTime = 0;
 
-	if (playing && m_AudioPlayer)
-		m_AudioPlayer->player->SetCurrentPosition(m_AudioPlayer->GetSampleAtMS(m_Time));
+	// the audio itself seeks on the UI thread; until then the clock holds here
+	std::shared_ptr<AudioPosition> position = playing ? GetAudioPosition() : nullptr;
+	if (position)
+		position->Restart((long long)m_Time * position->SampleRate() / 1000);
 	// decode here, off the UI thread, so only copying is left for it
 	if (!playing)
 		m_FFMS2->PrefetchFrame(m_Frame);

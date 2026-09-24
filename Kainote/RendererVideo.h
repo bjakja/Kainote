@@ -79,6 +79,7 @@ void CreateVERTEX(VERTEX * v, float X, float Y, D3DCOLOR Color, float Z = 0.0f);
 
 
 class AudioDisplay;
+class AudioPosition;
 class DShowPlayer;
 class Menu;
 class Provider;
@@ -242,6 +243,10 @@ protected:
 	// 0 plays to the end of the video
 	std::atomic<int> m_PlayEndTime{ 0 };
 	std::atomic<size_t> m_LastTime{ 0 };
+	// Taken from the audio player on the UI thread when playback starts, as
+	// the playback thread must not reach the player itself.
+	void SetAudioPosition(std::shared_ptr<AudioPosition> position);
+	std::shared_ptr<AudioPosition> GetAudioPosition();
 	std::atomic<unsigned> m_SubsGeneration{ 0 };
 private:
 
@@ -266,6 +271,8 @@ private:
 	void RunQueuedSeekRefresh();
 	void SeekRefresh(bool playing, bool refreshAudio);
 
+	std::mutex m_AudioPositionMutex;
+	std::shared_ptr<AudioPosition> m_AudioPosition;
 	std::mutex m_SeekRefreshMutex;
 	bool m_SeekRefreshQueued = false;
 	bool m_SeekRefreshPlaying = false;
