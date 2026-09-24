@@ -284,12 +284,16 @@ bool AudioDisplay::InitDX(const wxSize &size)
 
 	HRESULT hr;
 	HWND hwnd = GetHWND();
+	MONITORINFO monitor = { sizeof(MONITORINFO) };
+	GetMonitorInfo(MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST), &monitor);
+	bufferSize = wxSize(wxMax(size.x, (int)(monitor.rcMonitor.right - monitor.rcMonitor.left)),
+		wxMax(size.y, (int)(monitor.rcMonitor.bottom - monitor.rcMonitor.top)));
 	D3DPRESENT_PARAMETERS d3dpp;
 	ZeroMemory(&d3dpp, sizeof(d3dpp));
 	d3dpp.Windowed = TRUE;
 	d3dpp.hDeviceWindow = hwnd;
-	d3dpp.BackBufferWidth = size.x;
-	d3dpp.BackBufferHeight = size.y;
+	d3dpp.BackBufferWidth = bufferSize.x;
+	d3dpp.BackBufferHeight = bufferSize.y;
 	d3dpp.BackBufferCount = 1;
 	d3dpp.SwapEffect = D3DSWAPEFFECT_COPY;//D3DSWAPEFFECT_DISCARD;//D3DSWAPEFFECT_COPY;//
 	d3dpp.BackBufferFormat = D3DFMT_X8R8G8B8;
@@ -329,13 +333,8 @@ bool AudioDisplay::InitDX(const wxSize &size)
 	hr = d3dDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
 	HR(hr, _("One of the DirectX settings failed"));
 
-	D3DXMATRIX matOrtho;
 	D3DXMATRIX matIdentity;
-
-	D3DXMatrixOrthoOffCenterLH(&matOrtho, 0, size.x, size.y, 0, 0.0f, 1.0f);
 	D3DXMatrixIdentity(&matIdentity);
-
-	HR(d3dDevice->SetTransform(D3DTS_PROJECTION, &matOrtho), _("Cannot set projection matrix"));
 	HR(d3dDevice->SetTransform(D3DTS_WORLD, &matIdentity), _("Cannot set world matrix"));
 	HR(d3dDevice->SetTransform(D3DTS_VIEW, &matIdentity), _("Cannot set view matrix"));
 	HR(d3dDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer), _("Cannot create surface"));
@@ -348,8 +347,8 @@ bool AudioDisplay::InitDX(const wxSize &size)
 	HR(D3DXCreateFontW(d3dDevice, sizeTahoma13.y, sizeTahoma13.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &d3dFontTahoma13), _("Cannot create D3DX font"));
 	HR(D3DXCreateFontW(d3dDevice, sizeTahoma8.y, sizeTahoma8.x, FW_NORMAL, 0, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &d3dFontTahoma8), _("Cannot create D3DX font"));
 	HR(D3DXCreateFontW(d3dDevice, sizeVerdana11.y, sizeVerdana11.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Verdana"), &d3dFontVerdana11), _("Cannot create D3DX font"));
-	HR(d3dDevice->CreateOffscreenPlainSurface(size.x, size.y, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &spectrumSurface, 0), _("Cannot create plain surface"));
-	HR(d3dDevice->CreateRenderTarget(size.x, size.y, D3DFMT_X8R8G8B8, D3DMULTISAMPLE_NONE, 0, FALSE, &staticSurface, nullptr), _("Cannot create plain surface"));
+	HR(d3dDevice->CreateOffscreenPlainSurface(bufferSize.x, bufferSize.y, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &spectrumSurface, 0), _("Cannot create plain surface"));
+	HR(d3dDevice->CreateRenderTarget(bufferSize.x, bufferSize.y, D3DFMT_X8R8G8B8, D3DMULTISAMPLE_NONE, 0, FALSE, &staticSurface, nullptr), _("Cannot create plain surface"));
 	HR(d3dDevice->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE), L"FVF failed");
 
 	return true;
@@ -363,7 +362,7 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 	// Loaded?
 	if (!loaded || !provider) return;
 
-	if (LastSize.x != w || LastSize.y != h || !d3dDevice || needToReset) {
+	if (!d3dDevice || needToReset || w > bufferSize.x || displayH > bufferSize.y) {
 		LastSize = wxSize(w, h);
 		if (!InitDX(wxSize(w, displayH))){
 			ClearDX();
@@ -406,6 +405,7 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 
 	staticValid = false;
 	hr = d3dDevice->SetRenderTarget(0, staticSurface);
+	SetView();
 	// Background
 	hr = d3dDevice->Clear(0, nullptr, D3DCLEAR_TARGET, background, 1.0f, 0);
 
@@ -720,17 +720,35 @@ void AudioDisplay::DrawCursor()
 void AudioDisplay::PresentWithCursor()
 {
 	HRESULT hr = d3dDevice->SetRenderTarget(0, backBuffer);
-	hr = d3dDevice->StretchRect(staticSurface, nullptr, backBuffer, nullptr, D3DTEXF_NONE);
+	SetView();
+	RECT view = ViewRect();
+	hr = d3dDevice->StretchRect(staticSurface, &view, backBuffer, &view, D3DTEXF_NONE);
 	if (cursorPaint && !provider->AudioNotInitialized()) {
 		hr = d3dDevice->BeginScene();
 		DrawCursor();
 		hr = d3dDevice->EndScene();
 	}
-	hr = d3dDevice->Present(nullptr, nullptr, nullptr, nullptr);
+	hr = d3dDevice->Present(&view, &view, nullptr, nullptr);
 	if (D3DERR_DEVICELOST == hr || D3DERR_DRIVERINTERNALERROR == hr){
 		deviceLost = true;
 		staticValid = false;
 	}
+}
+
+RECT AudioDisplay::ViewRect() const
+{
+	RECT view = { 0, 0, w, h + timelineHeight };
+	return view;
+}
+
+void AudioDisplay::SetView()
+{
+	RECT view = ViewRect();
+	D3DVIEWPORT9 viewport = { 0, 0, (DWORD)view.right, (DWORD)view.bottom, 0.0f, 1.0f };
+	d3dDevice->SetViewport(&viewport);
+	D3DXMATRIX matOrtho;
+	D3DXMatrixOrthoOffCenterLH(&matOrtho, 0, (float)view.right, (float)view.bottom, 0, 0.0f, 1.0f);
+	d3dDevice->SetTransform(D3DTS_PROJECTION, &matOrtho);
 }
 
 void AudioDisplay::DrawCursorFrame()
