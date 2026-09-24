@@ -1529,6 +1529,21 @@ void KainoteFrame::SetRecent(short what/*=0*/, int numtab /*= -1*/)
 	else{ Options.SetTable(KEYFRAMES_RECENT, recs); }
 }
 
+// a missing network share can stall a check for seconds, so only local files are checked
+static bool IsMissingLocalFile(const wxString &path)
+{
+#ifdef _WIN32
+	if (path.StartsWith(L"\\\\"))
+		return false;
+	if (path.length() > 2 && path[1] == L':') {
+		wchar_t root[] = { (wchar_t)path[0], L':', L'\\', 0 };
+		if (::GetDriveTypeW(root) == DRIVE_REMOTE)
+			return false;
+	}
+#endif
+	return !wxFileExists(path);
+}
+
 //0 - subs, 1 - vids, 2 - auds
 void KainoteFrame::AppendRecent(short what, Menu *_Menu)
 {
@@ -1551,7 +1566,7 @@ void KainoteFrame::AppendRecent(short what, Menu *_Menu)
 	bool changedRecent = false;
 	while (i < recs.size())
 	{
-		if (!wxFileExists(recs[i])){
+		if (IsMissingLocalFile(recs[i])){
 			recs.erase(recs.begin() + i);
 			changedRecent = true;
 			continue;
