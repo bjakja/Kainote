@@ -192,6 +192,8 @@ VideoBox::VideoBox(wxWindow *parent, const wxSize &size)
 	Connect(ID_VOL, wxEVT_SCROLL_CHANGED, (wxObjectEventFunction)&VideoBox::OnVolume);
 
 	m_VideoTimeTimer.SetOwner(this, ID_VIDEO_TIME);
+	m_ResizeTimer.SetOwner(this);
+	Bind(wxEVT_TIMER, [this](wxTimerEvent &) { FlushPendingResize(); }, m_ResizeTimer.GetId());
 	idletime.SetOwner(this, ID_IDLE);
 
 }
@@ -412,6 +414,20 @@ bool VideoBox::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*= 
 }
 
 
+bool VideoBox::s_InteractiveResize = false;
+
+void VideoBox::FlushPendingResize()
+{
+	m_ResizeTimer.Stop();
+	if (!m_ResizePending)
+		return;
+	m_ResizePending = false;
+	if (!renderer)
+		return;
+	renderer->UpdateVideoWindow();
+	Refresh(false);
+}
+
 bool VideoBox::Seek(int time, bool startTime/*=true*/, int flags/*=0*/)
 {
 	wxMutexLocker lock(vbmutex);
@@ -455,7 +471,13 @@ void VideoBox::OnSize(wxSizeEvent& event)
 	m_VolumeSlider->SetPosition(wxPoint(asize.x - 110, m_ToolBarHeight - 5));
 	m_SeekingSlider->SetSize(wxSize(asize.x, m_ToolBarHeight - 8));
 	if (renderer){
-		renderer->UpdateVideoWindow();
+		// each reset rebuilds the device's surfaces, too slow for every step of a drag
+		if (s_InteractiveResize) {
+			m_ResizePending = true;
+			m_ResizeTimer.StartOnce(100);
+		}
+		else
+			renderer->UpdateVideoWindow();
 #ifndef _WIN32
 		// The GStreamer overlay reapplies its render rectangle on the next
 		// paint (FFMS2 re-blits its current frame); force that paint here.

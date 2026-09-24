@@ -377,6 +377,16 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 
 
 	Bind(wxEVT_COMMAND_CHOICE_SELECTED, &KainoteFrame::OnPageChanged, this, ID_TABS);
+	Bind(wxEVT_MOVE_START, [](wxMoveEvent &evt) {
+		VideoBox::s_InteractiveResize = true;
+		evt.Skip();
+	});
+	Bind(wxEVT_MOVE_END, [this](wxMoveEvent &evt) {
+		VideoBox::s_InteractiveResize = false;
+		for (size_t i = 0; i < Tabs->Size(); i++)
+			Tabs->Page(i)->video->FlushPendingResize();
+		evt.Skip();
+	});
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &KainoteFrame::OnPageAdd, this, GLOBAL_ADD_PAGE);
 	Connect(GLOBAL_CLOSE_PAGE, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnPageClose);
 	Connect(GLOBAL_NEXT_TAB, GLOBAL_PREVIOUS_TAB, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnPageChange);

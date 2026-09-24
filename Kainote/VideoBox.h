@@ -143,6 +143,10 @@ public:
 	// takes the text
 	void OpenOwnSubsLater(wxString *text, bool redraw = true);
 	void SetVisualLater();
+	// While the user drags the window edge, resizing the video device waits
+	// until the size settles; FlushPendingResize does it now.
+	static bool s_InteractiveResize;
+	void FlushPendingResize();
 	// a copy of frame to release with delete; nullptr when the video can't give frames
 	unsigned char *GetFrame(int frame, bool withSubtitles);
 	const std::vector<chapter> &GetChapters();
@@ -183,6 +187,8 @@ private:
 	bool m_LaterQueued = false;
 	unsigned m_LaterGeneration = 0;
 	wxString *m_LaterText = nullptr;
+	wxTimer m_ResizeTimer;
+	bool m_ResizePending = false;
 
 	BitmapButton* m_ButtonPreviousFile;
 	BitmapButton* m_ButtonPause;
