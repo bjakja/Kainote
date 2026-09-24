@@ -494,10 +494,16 @@ ProviderFFMS2::~ProviderFFMS2()
 
 	if (m_discCache) { ClearDiskCache(); }
 	else { ClearRAMCache(); }
-	if (!m_stopLoadingAudio && m_discCache && m_diskCacheFilename.EndsWith(L".part")) {
-		wxString discCacheNameWithGoodExt = m_diskCacheFilename;
-		discCacheNameWithGoodExt.RemoveLast(5);
-		_wrename(m_diskCacheFilename.wc_str(), discCacheNameWithGoodExt.wc_str());
+	// m_stopLoadingAudio is set above whenever audio was loaded, so it cannot tell
+	if (m_discCache && m_diskCacheFilename.EndsWith(L".part")) {
+		if (m_diskCacheComplete) {
+			wxString discCacheNameWithGoodExt = m_diskCacheFilename;
+			discCacheNameWithGoodExt.RemoveLast(5);
+			_wrename(m_diskCacheFilename.wc_str(), discCacheNameWithGoodExt.wc_str());
+		}
+		else {
+			_wremove(m_diskCacheFilename.wc_str());
+		}
 	}
 }
 
@@ -754,6 +760,7 @@ bool ProviderFFMS2::DiskCache(bool newIndex)
 			m_audioProgress = ((float)sourceFrame / (float)sourceEnd);
 			if (m_stopLoadingAudio) break;
 		}
+		m_diskCacheComplete = sourceFrame >= sourceEnd;
 		rewind(m_fp);
 	}
 	catch (...) {
