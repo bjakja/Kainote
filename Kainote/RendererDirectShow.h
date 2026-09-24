@@ -75,6 +75,7 @@ protected:
 private:
 	void SetupVertices();
 	void ZoomChanged();
+	void WindowResized() override;
 	DShowPlayer *m_DirectShowPlayer;
 	LPDIRECT3DTEXTURE9 m_SubtitlesTexture = nullptr;
 	LPDIRECT3DTEXTURE9 m_BlitTexture = nullptr;

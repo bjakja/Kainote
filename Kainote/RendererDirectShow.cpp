@@ -56,6 +56,7 @@ bool RendererDirectShow::InitRendererDX() { return false; }
 void RendererDirectShow::ClearObject() {}
 void RendererDirectShow::SetupVertices() {}
 void RendererDirectShow::ZoomChanged() {}
+void RendererDirectShow::WindowResized() {}
 
 #else
 #include "VisualDrawingShapes.h"
@@ -621,6 +622,14 @@ void RendererDirectShow::SetupVertices()
 	pVertices[4].tv = m_MainStreamRect.top / height;//0.2f;
 
 	HRN(hr = m_D3DVertex->Unlock(), "Canot unlock vertex buffer");
+}
+
+void RendererDirectShow::WindowResized()
+{
+	int windowWidth = m_BackBufferRect.right - m_BackBufferRect.left;
+	int windowHeight = m_BackBufferRect.bottom - m_BackBufferRect.top;
+	filtering = (windowWidth == m_Width && windowHeight == m_Height) ? D3DTEXF_POINT : D3DTEXF_LINEAR;
+	ZoomChanged();
 }
 
 void RendererDirectShow::ZoomChanged()

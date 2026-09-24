@@ -295,8 +295,10 @@ void RendererVideo::UpdateVideoWindow()
 	return;
 #endif
 
-	if (FitsBackBuffer())
+	if (FitsBackBuffer()) {
 		SetProjection();
+		WindowResized();
+	}
 	else {
 		if (!InitDX()){
 			//need tests, if lost device return any error when reseting or not

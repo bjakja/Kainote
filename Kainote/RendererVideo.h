@@ -194,6 +194,8 @@ public:
 	virtual bool FilterConfig(wxString name, int idx, wxPoint pos){ return false; };
 	virtual Provider * GetFFMS2(){ return nullptr; };
 	virtual void ZoomChanged() {};
+	// the window changed size without a device reset; rebuild what depends on it
+	virtual void WindowResized() {};
 	// Non virtual functions
 	virtual void DrawProgressBar(const wxString &timesString);
 	// visual editing and dummy subtitles show one line; playback needs them all
