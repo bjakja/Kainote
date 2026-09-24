@@ -415,9 +415,12 @@ bool RendererVideo::FitsBackBuffer() const
 		(UINT)m_WindowRect.right <= m_BackBufferWidth && (UINT)m_WindowRect.bottom <= m_BackBufferHeight;
 }
 
-// window pixels map one to one onto the top left of the back buffer
+// window pixels map one to one onto the top left of the back buffer; the
+// viewport has to match, as the back buffer is larger than the window
 void RendererVideo::SetProjection()
 {
+	D3DVIEWPORT9 viewport = { 0, 0, (DWORD)m_WindowRect.right, (DWORD)m_WindowRect.bottom, 0.0f, 1.0f };
+	m_D3DDevice->SetViewport(&viewport);
 	D3DXMATRIX matOrtho;
 	//fix to shitty subs on radeons texture is stretched and need filtering linear and looks blured or on filter point are pixelized
 	D3DXMatrixOrthoOffCenterLH(&matOrtho, 0.5f, m_WindowRect.right + 0.5f, m_WindowRect.bottom + 0.5f, 0.5f, 0.0f, 1.0f);
