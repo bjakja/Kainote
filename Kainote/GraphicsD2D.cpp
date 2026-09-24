@@ -5229,16 +5229,12 @@ public:
 			return false;
 		wxCOMPtr<ID2D1Bitmap> bitmap;
 		m_scene->GetBitmap(&bitmap);
-		float dpiX, dpiY;
-		m_window->GetDpi(&dpiX, &dpiY);
-		const float sx = 96.f / dpiX, sy = 96.f / dpiY;
 		m_window->BeginDraw();
 		m_window->SetTransform(D2D1::Matrix3x2F::Identity());
 		for (size_t i = 0; i < count; i++) {
 			const wxRect& s = sources[i];
-			D2D1_RECT_F source = D2D1::RectF(s.x * sx, s.y * sy, (s.x + s.width) * sx, (s.y + s.height) * sy);
-			D2D1_RECT_F dest = D2D1::RectF(points[i].x * sx, points[i].y * sy,
-				(points[i].x + s.width) * sx, (points[i].y + s.height) * sy);
+			D2D1_RECT_F source = D2D1::RectF(s.x, s.y, s.x + s.width, s.y + s.height);
+			D2D1_RECT_F dest = D2D1::RectF(points[i].x, points[i].y, points[i].x + s.width, points[i].y + s.height);
 			m_window->DrawBitmap(bitmap, dest, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, source);
 		}
 		HRESULT hr = m_window->EndDraw();
@@ -5264,10 +5260,11 @@ private:
 			if (m_window)
 				return true;
 		}
-		// no vsync wait: a paint must not stall the UI thread
+		// no vsync wait: a paint must not stall the UI thread; 96 DPI keeps
+		// drawing in pixels, as the controls measure everything in pixels
 		if (FAILED(m_factory->CreateHwndRenderTarget(
 			D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_DEFAULT,
-				D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE)),
+				D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE), 96.f, 96.f),
 			D2D1::HwndRenderTargetProperties(m_hwnd, size, D2D1_PRESENT_OPTIONS_IMMEDIATELY),
 			&m_window)))
 			return false;
