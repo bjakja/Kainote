@@ -110,7 +110,7 @@ private:
 	// everything but the play cursor, so a cursor tick only copies it
 	LPDIRECT3DSURFACE9 staticSurface = nullptr;
 	bool staticValid = false;
-	// the back buffer and surfaces cover the monitor, so resizing needs no Reset;
+	// the back buffer and surfaces are larger than the view, so resizing needs no Reset;
 	// drawing and presenting use the top left of them
 	wxSize bufferSize;
 	RECT ViewRect() const;

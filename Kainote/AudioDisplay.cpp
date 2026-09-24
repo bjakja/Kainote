@@ -283,8 +283,8 @@ bool AudioDisplay::InitDX(const wxSize &size)
 	HWND hwnd = GetHWND();
 	MONITORINFO monitor = { sizeof(MONITORINFO) };
 	GetMonitorInfo(MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST), &monitor);
-	bufferSize = wxSize(wxMax(size.x, (int)(monitor.rcMonitor.right - monitor.rcMonitor.left)),
-		wxMax(size.y, (int)(monitor.rcMonitor.bottom - monitor.rcMonitor.top)));
+	// as wide as the monitor, but the view is a short strip, so only some room to grow in height
+	bufferSize = wxSize(wxMax(size.x, (int)(monitor.rcMonitor.right - monitor.rcMonitor.left)), size.y + 256);
 	D3DPRESENT_PARAMETERS d3dpp;
 	ZeroMemory(&d3dpp, sizeof(d3dpp));
 	d3dpp.Windowed = TRUE;
