@@ -3730,6 +3730,10 @@ public:
 
 	wxD2DContext(wxD2DRenderer* renderer, ID2D1Factory* direct2dFactory, void* nativeContext);
 
+	// draws into a render target someone else keeps
+	wxD2DContext(wxD2DRenderer* renderer, ID2D1Factory* direct2dFactory,
+		const wxSharedPtr<wxD2DRenderTargetResourceHolder>& holder, int width, int height);
+
 	~wxD2DContext();
 
 	void Clip(const wxRegion& region);
@@ -3998,6 +4002,17 @@ wxD2DContext::wxD2DContext(wxD2DRenderer* renderer, ID2D1Factory* direct2dFactor
 	m_renderTargetHolder = *((wxSharedPtr<wxD2DRenderTargetResourceHolder>*)nativeContext);
 	m_width = 0;
 	m_height = 0;
+	Init();
+}
+
+wxD2DContext::wxD2DContext(wxD2DRenderer* renderer, ID2D1Factory* direct2dFactory,
+	const wxSharedPtr<wxD2DRenderTargetResourceHolder>& holder, int width, int height) :
+	m_direct2dFactory(direct2dFactory),
+	m_renderTargetHolder(holder),
+	m_renderer(renderer)
+{
+	m_width = width;
+	m_height = height;
 	Init();
 }
 
@@ -4957,6 +4972,8 @@ public:
 
 	GraphicsContext * CreateMeasuringContext();
 
+	GraphicsCanvas * CreateCanvas(wxWindow* window) override;
+
 	wxD2DPathData * CreatePath();
 
 	GraphicsMatrixData *CreateMatrix(
@@ -5146,6 +5163,139 @@ GraphicsContext* wxD2DRenderer::CreateContextFromNativeHDC(WXHDC dc)
 GraphicsContext* wxD2DRenderer::CreateContext(wxWindow* window)
 {
 	return new wxD2DContext(this, m_direct2dFactory, (HWND)window->GetHWND(), window);
+}
+
+// A render target the canvas keeps, lent to one context at a time.
+class wxD2DLentRenderTargetResourceHolder : public wxD2DRenderTargetResourceHolder
+{
+public:
+	explicit wxD2DLentRenderTargetResourceHolder(ID2D1RenderTarget* target) : m_target(target) {}
+	void DiscardReusable() override { m_lost = true; }
+	bool IsLost() const { return m_lost; }
+protected:
+	void DoAcquireResource() override { m_nativeResource = m_target; }
+private:
+	wxCOMPtr<ID2D1RenderTarget> m_target;
+	bool m_lost = false;
+};
+
+class wxD2DCanvas : public GraphicsCanvas
+{
+public:
+	wxD2DCanvas(wxD2DRenderer* renderer, ID2D1Factory* factory, HWND hwnd)
+		: m_renderer(renderer), m_factory(factory), m_hwnd(hwnd) {}
+
+	GraphicsContext* BeginScene(int width, int height) override
+	{
+		m_hasScene = false;
+		if (width < 1 || height < 1 || !EnsureWindowTarget())
+			return NULL;
+		if (!m_scene || m_sceneSize.width < (UINT32)width || m_sceneSize.height < (UINT32)height) {
+			m_scene.reset();
+			D2D1_SIZE_U pixels = D2D1::SizeU(width, height);
+			D2D1_PIXEL_FORMAT format = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE);
+			if (FAILED(m_window->CreateCompatibleRenderTarget(NULL, &pixels, &format,
+				D2D1_COMPATIBLE_RENDER_TARGET_OPTIONS_NONE, &m_scene))) {
+				Discard();
+				return NULL;
+			}
+			m_sceneSize = pixels;
+		}
+		// back to the state of a new render target
+		m_scene->SetTransform(D2D1::Matrix3x2F::Identity());
+		m_scene->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+		m_scene->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_DEFAULT);
+		m_lent = new wxD2DLentRenderTargetResourceHolder(m_scene);
+		m_holder = wxSharedPtr<wxD2DRenderTargetResourceHolder>(m_lent);
+		m_drawing = true;
+		GraphicsContext *made = new wxD2DContext(m_renderer, m_factory, m_holder, width, height);
+		return made;
+	}
+
+	bool Present(const wxRect* sources, const wxPoint* points, size_t count) override
+	{
+		if (m_drawing) {
+			// the scene's context is gone by now, and ended its drawing
+			m_drawing = false;
+			m_hasScene = !m_lent->IsLost();
+			m_holder.reset();
+			m_lent = NULL;
+			if (!m_hasScene) {
+				Discard();
+				return false;
+			}
+		}
+		if (!m_hasScene || !EnsureWindowTarget())
+			return false;
+		wxCOMPtr<ID2D1Bitmap> bitmap;
+		m_scene->GetBitmap(&bitmap);
+		float dpiX, dpiY;
+		m_window->GetDpi(&dpiX, &dpiY);
+		const float sx = 96.f / dpiX, sy = 96.f / dpiY;
+		m_window->BeginDraw();
+		m_window->SetTransform(D2D1::Matrix3x2F::Identity());
+		for (size_t i = 0; i < count; i++) {
+			const wxRect& s = sources[i];
+			D2D1_RECT_F source = D2D1::RectF(s.x * sx, s.y * sy, (s.x + s.width) * sx, (s.y + s.height) * sy);
+			D2D1_RECT_F dest = D2D1::RectF(points[i].x * sx, points[i].y * sy,
+				(points[i].x + s.width) * sx, (points[i].y + s.height) * sy);
+			m_window->DrawBitmap(bitmap, dest, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, source);
+		}
+		HRESULT hr = m_window->EndDraw();
+		if (hr == D2DERR_RECREATE_TARGET) {
+			Discard();
+			return false;
+		}
+		return SUCCEEDED(hr);
+	}
+
+	bool HasScene() const override { return m_hasScene; }
+
+private:
+	bool EnsureWindowTarget()
+	{
+		RECT client;
+		GetClientRect(m_hwnd, &client);
+		D2D1_SIZE_U size = D2D1::SizeU(client.right - client.left, client.bottom - client.top);
+		if (m_window) {
+			D2D1_SIZE_U current = m_window->GetPixelSize();
+			if ((current.width != size.width || current.height != size.height) && FAILED(m_window->Resize(size)))
+				Discard();
+			if (m_window)
+				return true;
+		}
+		// no vsync wait: a paint must not stall the UI thread
+		if (FAILED(m_factory->CreateHwndRenderTarget(
+			D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_DEFAULT,
+				D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE)),
+			D2D1::HwndRenderTargetProperties(m_hwnd, size, D2D1_PRESENT_OPTIONS_IMMEDIATELY),
+			&m_window)))
+			return false;
+		return true;
+	}
+
+	void Discard()
+	{
+		m_hasScene = false;
+		m_scene.reset();
+		m_window.reset();
+	}
+
+	wxD2DRenderer* m_renderer;
+	ID2D1Factory* m_factory;
+	HWND m_hwnd;
+	wxCOMPtr<ID2D1HwndRenderTarget> m_window;
+	wxCOMPtr<ID2D1BitmapRenderTarget> m_scene;
+	D2D1_SIZE_U m_sceneSize = D2D1::SizeU(0, 0);
+	wxSharedPtr<wxD2DRenderTargetResourceHolder> m_holder;
+	wxD2DLentRenderTargetResourceHolder* m_lent = NULL;
+	bool m_drawing = false;
+	bool m_hasScene = false;
+};
+
+GraphicsCanvas* wxD2DRenderer::CreateCanvas(wxWindow* window)
+{
+	return new wxD2DCanvas(this, m_direct2dFactory, (HWND)window->GetHWND());
 }
 
 #if wxUSE_IMAGE

@@ -68,6 +68,24 @@ const wxBitmap &SubsGrid::TreeArrow(bool closed)
 	return m_TreeArrows[closed ? 0 : 1];
 }
 
+GraphicsCanvas *SubsGrid::Canvas()
+{
+	if (!m_CanvasTried) {
+		m_CanvasTried = true;
+		if (GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer())
+			m_Canvas.reset(renderer->CreateCanvas(this));
+	}
+	return m_Canvas.get();
+}
+
+bool SubsGrid::PresentScene(int w, int h)
+{
+	int split = MIN(GridWidth[0] + 1 + posX, w);
+	wxRect sources[2] = { wxRect(0, 0, split, h), wxRect(scHor + split, 0, w - split, h) };
+	wxPoint points[2] = { wxPoint(0, 0), wxPoint(split, 0) };
+	return m_Canvas->Present(sources, points, 2);
+}
+
 void SubsGrid::SetStyle()
 {
 	const wxString & fontname = Options.GetString(GRID_FONT);
@@ -97,6 +115,15 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 	GetClientSize(&w, &h);
 	if (w < 1 || h < 1){ return; }
 	int firstCol = GridWidth[0] + 1;
+	if (Canvas() && m_Canvas->HasScene() && lastWidth == w && lastHeight == h) {
+		// uncovered parts show what was drawn last, as with the bitmap below
+		wxRect box = GetUpdateRegion().GetBox();
+		if (box.width < w || box.height < h) {
+			wxPaintDC dc(this);
+			if (PresentScene(w, h))
+				return;
+		}
+	}
 	wxRegionIterator upd(GetUpdateRegion());
 	while (upd) {
 		wxRect rect(upd.GetRect());
@@ -160,6 +187,24 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 
 	lastWidth = w;
 	lastHeight = h;
+
+	if (Canvas()) {
+		GraphicsContext *gc = m_Canvas->BeginScene(w + scHor, h);
+		if (gc) {
+			// PaintD2D deletes the context
+			PaintD2D(gc, (int)firstNumber, w, h, size, scrows, previewpos, previewsize, bg);
+			wxPaintDC dc(this);
+			if (PresentScene(w, h)) {
+				m_CanvasFailures = 0;
+				return;
+			}
+			// the device was lost; after a few tries the bitmap takes over
+			if (++m_CanvasFailures >= 3)
+				m_Canvas.reset();
+			Refresh(false);
+			return;
+		}
+	}
 
 	// Prepare bitmap
 	if (w + scHor < 1 || h < 1){ return; }

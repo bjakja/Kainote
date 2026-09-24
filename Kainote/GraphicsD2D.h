@@ -339,6 +339,22 @@ private:
 // wxD2DRenderer declaration
 //-----------------------------------------------------------------------------
 
+// A window Direct2D paints without making a render target for every paint:
+// the scene is drawn into an offscreen bitmap that is copied to the window on
+// the GPU, and that also serves repaints of parts of the window.
+class GraphicsCanvas
+{
+public:
+	virtual ~GraphicsCanvas() {}
+	// a context drawing the scene, at least width x height pixels; delete it before Present
+	virtual GraphicsContext *BeginScene(int width, int height) = 0;
+	// copies each source rectangle of the scene to its point in the window; false
+	// when the device was lost, and then the window has to be painted again
+	virtual bool Present(const wxRect *sources, const wxPoint *points, size_t count) = 0;
+	// a scene was drawn and has not been lost since
+	virtual bool HasScene() const = 0;
+};
+
 class GraphicsRenderer
 {
 public:
@@ -365,6 +381,9 @@ public:
 #endif // wxUSE_IMAGE
 
 	virtual GraphicsContext * CreateMeasuringContext(){ return NULL; };
+
+	// null when the renderer draws windows another way
+	virtual GraphicsCanvas * CreateCanvas(wxWindow* window){ return NULL; };
 
 };
 

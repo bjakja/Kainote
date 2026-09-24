@@ -25,6 +25,7 @@
 #include "LineParse.h"
 #include "SubsFile.h"
 #include <vector>
+#include <memory>
 #include <set>
 
 class EditBox;
@@ -32,6 +33,7 @@ class KainoteFrame;
 class TabPanel;
 class SubsGridPreview;
 class GraphicsContext;
+class GraphicsCanvas;
 
 // What ChangeTimes shifts and how, as the shift times panel sets it.
 struct ShiftTimesSettings
@@ -281,6 +283,13 @@ private:
 	int lastWidth = 0;
 	int lastHeight = 0;
 	wxBitmap* bmp = nullptr;
+	// Direct2D draws the grid through this when it can; bmp is the fallback
+	std::unique_ptr<GraphicsCanvas> m_Canvas;
+	bool m_CanvasTried = false;
+	int m_CanvasFailures = 0;
+	GraphicsCanvas *Canvas();
+	// the scene holds the first column in place and the rest scrolled by scHor
+	bool PresentScene(int w, int h);
 	// the tree arrows, loaded once: pointing down for a closed tree, up for an open one
 	wxBitmap m_TreeArrows[2];
 	const wxBitmap &TreeArrow(bool closed);
