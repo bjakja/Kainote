@@ -281,8 +281,45 @@ jobs:
             libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
             libgl1-mesa-dev libglu1-mesa-dev
 
+      # Only the install prefix is consumed (CMakeLists.txt finds wx-config
+      # there), so that is all that is cached.
+      - name: Resolve the wxWidgets pin
+        id: wx-pin
+        run: |
+          echo "sha=$(git rev-parse HEAD:Thirdparty/wxWidgets)" >> "$GITHUB_OUTPUT"
+          echo "prefix=${{ matrix.build_type == 'Debug' && 'build-wx-linux-debug' || 'build-wx-linux' }}/prefix" >> "$GITHUB_OUTPUT"
+
+      - name: Cache wxWidgets
+        id: wx-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ steps.wx-pin.outputs.prefix }}
+          key: wx-linux-ubuntu-24.04-${{ matrix.build_type }}-${{ steps.wx-pin.outputs.sha }}-${{ hashFiles('Thirdparty/build-wxwidgets-linux.sh') }}
+
+      - name: Check the restored wxWidgets
+        id: wx-check
+        run: |
+          wx_config="${{ steps.wx-pin.outputs.prefix }}/bin/wx-config"
+          if [[ -x "$wx_config" ]] && "$wx_config" --version >/dev/null; then
+            echo "usable=true" >> "$GITHUB_OUTPUT"
+          else
+            if [[ '${{ steps.wx-cache.outputs.cache-hit }}' == 'true' ]]; then
+              echo "::warning::wxWidgets cache hit but $wx_config is unusable; rebuilding."
+            fi
+            echo "usable=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Build pinned wxWidgets 3.3.3
+        if: steps.wx-check.outputs.usable != 'true'
         run: Thirdparty/build-wxwidgets-linux.sh ${{ matrix.build_type == 'Debug' && '--debug' || '' }}
+
+      # Saved straight after the build so a later failure still keeps it.
+      - name: Save wxWidgets
+        if: steps.wx-check.outputs.usable != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ steps.wx-pin.outputs.prefix }}
+          key: wx-linux-ubuntu-24.04-${{ matrix.build_type }}-${{ steps.wx-pin.outputs.sha }}-${{ hashFiles('Thirdparty/build-wxwidgets-linux.sh') }}
 
       - name: Configure
         run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
