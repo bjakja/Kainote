@@ -107,14 +107,13 @@ bool SubtitlesVSFilter::OpenCached(wxString *text)
 {
 	size_t hash = ParsedScripts<csri_inst>::Hash(*text);
 	if (csri_inst *instance = m_Instances.Find(hash)) {
-		delete text;
-		// the video format may have changed since it was parsed
+		// the video format may have changed since it was parsed; if so, parse again
 		if (m_CsriFormat && !csri_request_fmt(instance, m_CsriFormat)) {
+			delete text;
 			m_CsriInstance = instance;
 			return true;
 		}
 		m_Instances.Remove(instance);
-		return false;
 	}
 	if (!OpenInstance(text))
 		return false;
