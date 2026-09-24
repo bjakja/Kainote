@@ -732,7 +732,11 @@ void ProviderFFMS2::GetBuffer(void* buf, long long start, long long count, doubl
 		GetPlaybackBuffer(buf, start, count, volume);
 		return;
 	}
-	std::vector<short> frames((size_t)std::max(0LL, count) * m_channels);
+	// kept per thread, as the waveform and spectrum read on every redraw
+	thread_local std::vector<short> frames;
+	size_t needed = (size_t)std::max(0LL, count) * m_channels;
+	if (frames.size() < needed)
+		frames.resize(needed);
 	ReadCache(frames.data(), start, count);
 	short* mono = (short*)buf;
 	for (long long i = 0; i < count; i++) {
