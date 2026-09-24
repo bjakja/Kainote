@@ -23,6 +23,9 @@
 #include "AudioBox.h"
 #include "VisualDrawingShapes.h"
 #include "Notebook.h"
+#include "FrameQueue.h"
+#include <memory>
+#include "UtilsWindows.h"
 
 
 Provider::Provider(const wxString& filename, RendererFFMS2* renderer)
@@ -86,12 +89,43 @@ long long Provider::GetNumSamples()
 	return m_numSamples;
 }
 
+void Provider::BuildPeaks(const std::atomic<bool> &stop)
+{
+	const long long chunk = 1 << 16;
+	std::vector<short> samples(chunk);
+	long long total = GetNumSamples();
+	for (long long pos = 0; pos < total && !stop; pos += chunk) {
+		long long count = std::min(chunk, total - pos);
+		GetBuffer(samples.data(), pos, count);
+		m_peaks.Append(samples.data(), count);
+	}
+	if (!stop)
+		m_peaksReady = true;
+}
+
 void Provider::GetWaveForm(int* min, int* peak, long long start, int w, int h, int samples, float scale) {
 	if (audioNotInitialized) { return; }
 	int n = w * samples;
 	for (int i = 0; i < w; i++) {
 		peak[i] = 0;
 		min[i] = h;
+	}
+	int half_h = h / 2;
+	int half_amplitude = int(half_h * scale);
+	auto toY = [=](int sample) {
+		int y = half_h - (sample * half_amplitude) / 0x8000;
+		return (y > h) ? h : (y < 0) ? 0 : y;
+	};
+
+	// zoomed out, whole blocks of the peak table are close enough
+	if (m_peaksReady && samples >= m_peaks.BlockSamples() * 4) {
+		for (int i = 0; i < w; i++) {
+			short lo = 0, hi = 0;
+			m_peaks.Range(start + (long long)i * samples, samples, &lo, &hi);
+			min[i] = toY(hi);
+			peak[i] = toY(lo);
+		}
+		return;
 	}
 
 	// Prepare waveform
@@ -106,8 +140,6 @@ void Provider::GetWaveForm(int* min, int* peak, long long start, int w, int h, i
 	char* raw = new char[needLen];
 	short* raw_short = reinterpret_cast<short*>(raw);
 	GetBuffer(raw, start, n);
-	int half_h = h / 2;
-	int half_amplitude = int(half_h * scale);
 	// Calculate waveform
 	for (int i = 0; i < n; i++) {
 		cur = i / samples;
@@ -124,6 +156,8 @@ void Provider::GetWaveForm(int* min, int* peak, long long start, int w, int h, i
 
 void Provider::RunPlaybackThread()
 {
+	MultimediaThread multimedia(L"Playback");
+	std::unique_ptr<FrameQueue> savedQueue;
 	HANDLE events_to_wait[] = {
 		m_eventStartPlayback,
 		m_eventSetPosition,
@@ -136,20 +170,47 @@ void Provider::RunPlaybackThread()
 		if (wait_result == WAIT_OBJECT_0 + 0)
 		{
 			unsigned char* buff = m_renderer->m_FrameBuffer;
+			size_t frameBytes = m_renderer->FrameBytes();
+			// a second thread decodes a few frames ahead, so a slow frame
+			// does not hold up the one being shown; kept between plays
+			if (!savedQueue || savedQueue->FrameBytes() != frameBytes || savedQueue->FrameCount() != m_numFrames)
+				savedQueue = std::make_unique<FrameQueue>(4, frameBytes, m_numFrames);
+			FrameQueue &queue = *savedQueue;
+			queue.Reset(m_renderer->m_Frame);
+			std::thread decoder([this, &queue]() {
+				MultimediaThread multimedia(L"Playback");
+				int frame;
+				while (unsigned char *slot = queue.NextToDecode(&frame))
+					queue.Decoded(slot, FetchPlaybackFrame(frame, slot));
+			});
+			struct StopDecoder {
+				FrameQueue &queue;
+				std::thread &decoder;
+				~StopDecoder() { queue.Stop(); decoder.join(); }
+			} stopDecoder{ queue, decoder };
+
 			while (1) {
 				if (WaitForSingleObject(m_eventKillSelf, 0) == WAIT_OBJECT_0) { return; }
-				if (WaitForSingleObject(m_eventSetPosition, 0) == WAIT_OBJECT_0)
+				if (WaitForSingleObject(m_eventSetPosition, 0) == WAIT_OBJECT_0) {
 					ApplyPendingSeek();
+					queue.Reset(m_renderer->m_Frame);
+				}
 
 				const Timebase &timebase = m_renderer->GetTimebase();
-				int frame = m_renderer->m_Frame;
-				if (!FetchPlaybackFrame(frame, buff)) {
-					// Retrying a failing fetch would spin the thread without ever
-					// looking at the stop or kill event again, so end playback.
+				FrameQueue::Result decoded = queue.Take(m_renderer->m_Frame);
+				if (!decoded.slot) {
+					// a failed frame or the end: either way nothing more to show
 					wxCommandEvent* evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED, ID_END_OF_STREAM);
 					wxQueueEvent(m_renderer->videoControl, evt);
 					break;
 				}
+				int frame = decoded.frame;
+				if (frame != m_renderer->m_Frame) {
+					m_renderer->m_Frame = frame;
+					m_renderer->m_Time = timebase.MsAt(frame);
+				}
+				memcpy(buff, decoded.slot, frameBytes);
+				queue.Release(decoded.slot);
 
 				m_renderer->DrawTexture(buff);
 				m_renderer->Render(false);
@@ -163,7 +224,7 @@ void Provider::RunPlaybackThread()
 					break;
 				}
 
-				int played = timeGetTime() - m_renderer->m_LastTime;
+				int played = m_renderer->PlaybackClock();
 				PlaybackStep step = NextPlaybackFrame(timebase, frame, played,
 					m_renderer->m_PlayEndTime, m_numFrames);
 				m_renderer->m_Frame = step.frame;

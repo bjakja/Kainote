@@ -76,6 +76,7 @@ SpellChecker::~SpellChecker()
 
 void SpellChecker::Cleaning()
 {
+	ForgetWordResults();
 	if (hunspell){ delete hunspell; hunspell = nullptr; }
 	if (conv){ delete conv; conv = nullptr; }
 
@@ -161,10 +162,26 @@ bool SpellChecker::CheckWord(wxString *word) {
 		BIDIReverseConvert(word);
 	}
 
+	std::wstring key(word->wc_str(), word->length());
+	{
+		std::lock_guard<std::mutex> lock(wordResultsMutex);
+		auto found = wordResults.find(key);
+		if (found != wordResults.end())
+			return found->second;
+	}
 	wxCharBuffer buf = word->mb_str(*conv);
-	if (buf && strlen(buf)) return (hunspell->spell(buf) == 1);
+	bool correct = buf && strlen(buf) && hunspell->spell(buf) == 1;
+	std::lock_guard<std::mutex> lock(wordResultsMutex);
+	if (wordResults.size() > 100000)
+		wordResults.clear();
+	wordResults.emplace(std::move(key), correct);
+	return correct;
+}
 
-	return false;
+void SpellChecker::ForgetWordResults()
+{
+	std::lock_guard<std::mutex> lock(wordResultsMutex);
+	wordResults.clear();
 }
 
 void SpellChecker::Suggestions(wxString word, wxArrayString &results)
@@ -195,6 +212,7 @@ bool SpellChecker::AddWord(const wxString& word)
 
 	wxCharBuffer wordBuf = word.mb_str(*conv);
 	hunspell->add(std::string(wordBuf.data()));//.mb_str(*conv))
+	ForgetWordResults();
 	//wxString pathhh = Options.pathfull + L"\\Dictionary\\UserDic.udic";
 	OpenWrite ow;
 	wxString txt;
@@ -231,6 +249,7 @@ bool SpellChecker::RemoveWords(const wxArrayString &words)
 				found = true;
 				wxCharBuffer foundWordBuf = words[foundWord].mb_str(*conv);
 				succeded = hunspell->remove(std::string(foundWordBuf.data()));
+				ForgetWordResults();
 				continue;
 			}
 			newTxt << curLine << L"\r\n";

@@ -22,12 +22,16 @@
 #include "DshowRenderer.h"
 #include "WinUndef.h"
 #include <wx/thread.h>
+#include <wx/app.h>
 #include <process.h>
 #include "config.h"
 #include "UtilsWindows.h"
+#include "AssBlend.h"
 #include "Notebook.h"
 
 std::atomic<bool> SubtitlesLibass::m_IsReady{ false };
+SubtitlesLibass* SubtitlesLibass::m_LastRenderer = nullptr;
+std::vector<SubtitlesLibass*> SubtitlesLibass::s_Instances;
 wxMutex SubtitlesLibass::openMutex;
 
 void MessageCallback(int level, const char *fmt, va_list args, void *) {
@@ -59,101 +63,100 @@ unsigned int __stdcall  ProcessLibassCache(void *data)
 	}
 	libass->m_IsReady.store(libass->m_Libass != nullptr);
 	//reload all tabs to shows subtitles
-	Notebook::RefreshVideo();
+	wxTheApp->CallAfter([]() { Notebook::RefreshVideo(); });
 
 	return 0;
 }
 
 SubtitlesLibass::SubtitlesLibass()
 {
+	{
+		wxMutexLocker lock(openMutex);
+		s_Instances.push_back(this);
+	}
 	ReloadLibraries();
 }
 	
 SubtitlesLibass::~SubtitlesLibass()
 {
+	StopPreparing();
+	{
+		wxMutexLocker lock(openMutex);
+		std::erase(s_Instances, this);
+		if (m_LastRenderer == this)
+			m_LastRenderer = nullptr;
+	}
+
 	//close it by force can make memory leaks
 	if (thread){
 		CloseHandle(thread);
 	}
 
-	if (m_AssTrack)
-		ass_free_track(m_AssTrack);
+	m_AssTrack = nullptr;
+	m_Tracks.Clear();
 }
-
-// code taken from Aegisub and MPV
-#define _r(c) ((c)>>24)
-#define _g(c) (((c)>>16)&0xFF)
-#define _b(c) (((c)>>8)&0xFF)
-#define _a(c) ((c)&0xFF)
 
 void SubtitlesLibass::BlendImages(ASS_Image* img, unsigned char* buffer)
 {
 	int videoPitch = m_VideoSize.GetWidth() * m_BytesPerColor;
-	// libass actually returns several alpha-masked monochrome images.
-	// Here, we loop through their linked list, get the colour of the current, and blend into the frame.
-	// This is repeated for all of them.
-	//if there real a swap frame that i have to change it
-
+	// libass returns alpha-masked monochrome images, each blended in its colour
 	for (; img; img = img->next) {
 		if (img->h == 0 || img->w == 0)
 			continue;
-
-		unsigned int a1 = ((unsigned int)_a(img->color));
-		unsigned int a = 255 - a1;
-		unsigned int r = (unsigned int)_r(img->color);
-		unsigned int g = (unsigned int)_g(img->color);
-		unsigned int b = (unsigned int)_b(img->color);
-
-		byte * src = img->bitmap;
-		byte *dst = buffer + (img->dst_y * videoPitch) + (img->dst_x * 4);
-
-		for (int y = 0; y < img->h; y++, dst += videoPitch, src += img->stride) {
-			uint32_t *dstrow = (uint32_t *)dst;
-			for (int x = 0; x < img->w; x++) {
-				const unsigned int v = src[x];
-				int rr = (r * a * v);
-				int gg = (g * a * v);
-				int bb = (b * a * v);
-				int aa = a * v;
-				uint32_t dstpix = dstrow[x];
-				unsigned int dstb = dstpix & 0xFF;
-				unsigned int dstg = (dstpix >> 8) & 0xFF;
-				unsigned int dstr = (dstpix >> 16) & 0xFF;
-				unsigned int dsta = (dstpix >> 24) & 0xFF;
-				dstb = (bb + dstb * (255 * 255 - aa)) / (255 * 255);
-				dstg = (gg + dstg * (255 * 255 - aa)) / (255 * 255);
-				dstr = (rr + dstr * (255 * 255 - aa)) / (255 * 255);
-				dsta = (aa * 255 + dsta * (255 * 255 - aa)) / (255 * 255);
-				dstrow[x] = dstb | (dstg << 8) | (dstr << 16) | (dsta << 24);
-			}
-		}
+		BlendAssBitmap(buffer + (img->dst_y * videoPitch) + (img->dst_x * 4), videoPitch,
+			img->bitmap, img->stride, img->w, img->h, img->color);
 	}
+}
+
+// call with openMutex locked
+ASS_Image* SubtitlesLibass::RenderFrame(int time, int* change)
+{
+	*change = 1;
+	if (!(m_IsReady.load() && m_AssTrack))
+		return nullptr;
+	ass_set_frame_size(m_Libass, m_VideoSize.GetWidth(), m_VideoSize.GetHeight());
+	ASS_Image* img = ass_render_frame(m_Libass, m_AssTrack, time, change);
+	if (m_LastRenderer != this)
+		*change = 1;
+	m_LastRenderer = this;
+	return img;
 }
 
 void SubtitlesLibass::Draw(unsigned char* buffer, int time)
 {
 	wxMutexLocker lock(openMutex);
-	if (m_IsReady.load() && m_AssTrack){
-		ass_set_frame_size(m_Libass, m_VideoSize.GetWidth(), m_VideoSize.GetHeight());
-		ASS_Image* img = ass_render_frame(m_Libass, m_AssTrack, time, nullptr);
-		BlendImages(img, buffer);
-	}
+	int change;
+	BlendImages(RenderFrame(time, &change), buffer);
+	// libass now compares with this render, not with what the overlay shows
+	m_HasRendered = false;
 }
 
-bool SubtitlesLibass::DrawChanged(unsigned char* buffer, int time)
+bool SubtitlesLibass::DrawOverlay(unsigned char* overlay, int time, wxRect* dirty)
 {
 	wxMutexLocker lock(openMutex);
-	if (!(m_IsReady.load() && m_AssTrack))
-		return true; // not ready: caller treats it as a (blank) change
-	ass_set_frame_size(m_Libass, m_VideoSize.GetWidth(), m_VideoSize.GetHeight());
-	int detectChange = 0;
-	ASS_Image* img = ass_render_frame(m_Libass, m_AssTrack, time, &detectChange);
-	// detect_change == 0 means libass produced a bit-identical frame to the
-	// previous render, so the caller can reuse its cached overlay unchanged.
-	if (detectChange == 0 && m_HasRendered)
+	int change;
+	ASS_Image* img = RenderFrame(time, &change);
+	if (m_HasRendered && (change == 0 || (!img && m_OverlayDrawn.IsEmpty())))
 		return false;
 	m_HasRendered = true;
-	BlendImages(img, buffer);
+
+	wxRect frame(0, 0, m_VideoSize.GetWidth(), m_VideoSize.GetHeight());
+	wxRect drawn;
+	for (ASS_Image* i = img; i; i = i->next) {
+		if (i->w && i->h)
+			drawn.Union(wxRect(i->dst_x, i->dst_y, i->w, i->h));
+	}
+	drawn.Intersect(frame);
+	m_OverlayDrawn.Intersect(frame);
+
+	int pitch = frame.width * 4;
+	for (int y = m_OverlayDrawn.y; y < m_OverlayDrawn.GetBottom() + 1; y++)
+		memset(overlay + y * pitch + m_OverlayDrawn.x * 4, 0, m_OverlayDrawn.width * 4);
+	BlendImages(img, overlay);
+
+	*dirty = m_OverlayDrawn;
+	dirty->Union(drawn);
+	m_OverlayDrawn = drawn;
 	return true;
 }
 
@@ -168,26 +171,49 @@ bool SubtitlesLibass::Open(wxString *text)
 		return false;
 	}
 
-	if (m_AssTrack){
-		ass_free_track(m_AssTrack);
-		m_AssTrack = nullptr;
-	}
-
+	m_AssTrack = nullptr;
 	if (!text) {
 		return true;
 	}
 
-	wxScopedCharBuffer buffer = text->mb_str(wxConvUTF8);
-	int size = strlen(buffer);
-	m_AssTrack = ass_read_memory(m_Library, buffer.data(), size, nullptr);
-	m_HasRendered = false;
-	delete text;
-
-	if (!m_AssTrack){
+	if (!ReadTrack(text)){
 		KaiLog(_("Libass only opens ASS and SSA subtitles"));//Libass only works with ASS and SSA subtiltes
 		return false;
 	}
 	return true;
+}
+
+bool SubtitlesLibass::ReadTrack(wxString *text)
+{
+	m_HasRendered = false;
+	size_t hash = ScriptHash(*text);
+	m_AssTrack = m_Tracks.Find(hash);
+	if (m_AssTrack) {
+		delete text;
+		return true;
+	}
+	wxScopedCharBuffer buffer = text->mb_str(wxConvUTF8);
+	m_AssTrack = ass_read_memory(m_Library, buffer.data(), strlen(buffer), nullptr);
+	delete text;
+	if (!m_AssTrack)
+		return false;
+	m_Tracks.Add(hash, m_AssTrack, m_AssTrack);
+	return true;
+}
+
+void SubtitlesLibass::ParseAhead(wxString *text)
+{
+	size_t hash = ScriptHash(*text);
+	{
+		// mb_str() can point into the text, so it outlives the parse
+		wxScopedCharBuffer buffer = text->mb_str(wxConvUTF8);
+		wxMutexLocker lock(openMutex);
+		if (m_IsReady && m_Library && !m_Tracks.Find(hash)) {
+			if (ASS_Track *track = ass_read_memory(m_Library, buffer.data(), strlen(buffer), nullptr))
+				m_Tracks.Add(hash, track, m_AssTrack);
+		}
+	}
+	delete text;
 }
 
 bool SubtitlesLibass::OpenString(wxString *text)
@@ -198,19 +224,8 @@ bool SubtitlesLibass::OpenString(wxString *text)
 		return false;
 	}
 
-	if (m_AssTrack){
-		ass_free_track(m_AssTrack);
-		m_AssTrack = nullptr;
-	}
-
-	wxScopedCharBuffer buffer = text->mb_str(wxConvUTF8);
-	int size = strlen(buffer);
-	m_AssTrack = ass_read_memory(m_Library, buffer.data(), size, nullptr);
-	m_HasRendered = false;
-
-	delete text;
-
-	if (!m_AssTrack){
+	m_AssTrack = nullptr;
+	if (!ReadTrack(text)){
 		KaiLog(_("Cannot open subtitles in Libass"));
 		return false;
 	}
@@ -223,7 +238,17 @@ void SubtitlesLibass::SetVideoParameters(const wxSize & size, unsigned char form
 	m_IsSwapped = isSwapped;
 	m_Format = format;
 	m_HasParameters = format == RGB32 || format == ARGB32;
-	m_HasRendered = false; // frame size may have changed; force a re-render
+	// the caller may hand a new overlay of the new size, so clear all of it once
+	m_HasRendered = false;
+	m_OverlayDrawn = wxRect(0, 0, size.GetWidth(), size.GetHeight());
+}
+
+// call with openMutex locked
+void SubtitlesLibass::ForgetTracks()
+{
+	m_AssTrack = nullptr;
+	m_Tracks.Clear();
+	m_HasRendered = false;
 }
 
 void SubtitlesLibass::ReloadLibraries(bool destroyExisted)
@@ -232,6 +257,9 @@ void SubtitlesLibass::ReloadLibraries(bool destroyExisted)
 	if (destroyExisted) {
 		//KaiLog("Libass release");
 		m_IsReady.store(false);
+		// tracks belong to the library, in every tab
+		for (SubtitlesLibass *instance : s_Instances)
+			instance->ForgetTracks();
 		if (m_Libass) {
 			ass_renderer_done(m_Libass);
 			m_Libass = nullptr;

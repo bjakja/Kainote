@@ -421,7 +421,6 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 			Selend = Cursor;
 		}
 		Refresh(false);
-		Update();
 		modified = true;
 		//tag list
 		if (!tagList && (key == L'\\' || (Cursor.x - 2 >= 0 && text[Cursor.x - 2] == L'\\') ||
@@ -678,7 +677,6 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 		else if (Cursor.x>wraps[Cursor.y + 1]){ Cursor.y++; }
 		Selend = Cursor;
 		Refresh(false);
-		Update();
 		modified = true;
 		break;
 
@@ -1057,6 +1055,15 @@ void TextEditor::OnPaint(wxPaintEvent& event)
 	int w = 0, h = 0;
 	GetClientSize(&w, &h);
 	if (w < 1 || h < 1){ return; }
+	if (Canvas() && m_Canvas->HasScene() && lastWidth == w && lastHeight == h) {
+		// uncovered parts show what was drawn last, as with the bitmap below
+		wxRect box = GetUpdateRegion().GetBox();
+		if (box.width < w || box.height < h) {
+			wxPaintDC dc(this);
+			if (PresentScene(w, h))
+				return;
+		}
+	}
 	wxRegionIterator upd(GetUpdateRegion());
 	while (upd) {
 		wxRect rect(upd.GetRect());
@@ -1104,8 +1111,25 @@ void TextEditor::OnPaint(wxPaintEvent& event)
 		bitmaph = h;
 		scrollPositionV = 0;
 	}
-	// Prepare bitmap
 	if (w < 1 || h < 1){ return; }
+	if (Canvas()) {
+		GraphicsContext *gc = m_Canvas->BeginScene(w, h);
+		if (gc) {
+			DrawFieldD2D(gc, w, h - statusBarHeight, h);
+			delete gc;
+			wxPaintDC dc(this);
+			if (PresentScene(w, h)) {
+				m_CanvasFailures = 0;
+				return;
+			}
+			// the device was lost; after a few tries the bitmap takes over
+			if (++m_CanvasFailures >= 3)
+				m_Canvas.reset();
+			Refresh(false);
+			return;
+		}
+	}
+	// Prepare bitmap
 	if (bmp) {
 		if (bmp->GetWidth() < w || bmp->GetHeight() < h) {
 			delete bmp;
@@ -1131,6 +1155,22 @@ void TextEditor::OnPaint(wxPaintEvent& event)
 	wxPaintDC dc(this);
 	dc.Blit(0, 0, w, h, &bmpDC, 0, 0);
 	//caret->Move(3, 3);
+}
+
+GraphicsCanvas *TextEditor::Canvas()
+{
+	if (!m_CanvasTried) {
+		m_CanvasTried = true;
+		m_Canvas.reset(CreateGraphicsCanvas(this));
+	}
+	return m_Canvas.get();
+}
+
+bool TextEditor::PresentScene(int w, int h)
+{
+	wxRect source(0, 0, w, h);
+	wxPoint point(0, 0);
+	return m_Canvas->Present(&source, &point, 1);
 }
 
 void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
@@ -1328,13 +1368,33 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 
 	bool cursorWasSet = false;
 	bool hasSplit = false;
+	// Each token becomes a coloured run and every row is drawn as one layout,
+	// instead of measuring the row so far and making a layout per token.
+	// Right-to-left text keeps being drawn a character at a time.
+	bool useRuns = !(hasRTL || isRTL);
+	std::vector<TextRun> runs;
+	auto draw = [&](const wxString &text, const wxColour &colour) {
+		if (useRuns) {
+			if (!text.empty())
+				runs.push_back({ (size_t)measureText.length(), (size_t)text.length(), colour });
+			return;
+		}
+		gc->GetTextExtent(measureText, &fw, &fh);
+		gc->SetFont(font, colour);
+		gc->DrawTextU(text, fw + posX, posY);
+	};
+	auto drawRow = [&](const wxString &rowText) {
+		if (!runs.empty())
+			gc->DrawTextRuns(font, rowText, runs, posX, posY);
+		runs.clear();
+	};
 	//Drawing text
 	for (int i = charStart; i < len; i++){
 		if (posY > h)
 			break;
 
 		const wxUniChar &ch = alltext[i];
-		
+
 		if (wline < wraps.size() && i == wraps[wline]){
 			if (Cursor.x + Cursor.y == wchar){
 				double fww = 0.f;
@@ -1346,13 +1406,13 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 			}
 
 			if (parttext != emptyString){
-				gc->GetTextExtent(measureText, &fw, &fh);
 				wxColour fontColor = (val || (isTemplateLine && IsNumberFloat(parttext) && (tags || templateCode))) ? cvalues : (slash) ? cnames :
 					(templateString) ? ctstrings : (isTemplateLine && ch == L'(') ? ctfunctions :
-					(isTemplateLine && CheckIfKeyword(parttext)) ? ctkeywords : 
+					(isTemplateLine && CheckIfKeyword(parttext)) ? ctkeywords :
 					templateCode ? ctvariables : hasDrawing ? csplitanddrawings : ctext;
-				gc->SetFont(font, fontColor);
 				if (hasRTL || isRTL) {
+					gc->GetTextExtent(measureText, &fw, &fh);
+					gc->SetFont(font, fontColor);
 					double chfw = 0.;
 					double chpos = 0.;
 					for (size_t i = 0; i < parttext.size(); i++) {
@@ -1363,9 +1423,10 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 					}
 				}
 				else {
-					gc->DrawTextU(parttext, fw + posX, posY);
+					draw(parttext, fontColor);
 				}
 			}
+			drawRow(measureText + parttext);
 
 			posY += fontHeight;
 			wline++;
@@ -1392,7 +1453,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 					gc->GetTextExtent(measureTxt, &fw, &fh);
 				}
 				else {
-					gc->GetTextExtent(measureText + parttext, &fw, &fh); 
+					gc->GetTextExtent(measureText + parttext, &fw, &fh);
 				}
 			}
 			caret->Move(fw + posX, posY);
@@ -1418,17 +1479,13 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 		}
 		if (isTemplateLine){
 			if (!templateString && (ch == L'!' || (ch == L'.' && !(IsNumberFloat(parttext) || val)) || ch == L',' ||
-				ch == L'+' || ch == L'-' || ch == L'=' || ch == L'(' || ch == L')' || ch == L'>' || ch == L'<' || 
+				ch == L'+' || ch == L'-' || ch == L'=' || ch == L'(' || ch == L')' || ch == L'>' || ch == L'<' ||
 				ch == L'[' || ch == L']' || ch == L'*' || ch == L'/' || ch == L':' || ch == L';' || ch == L'~')){
-				gc->GetTextExtent(measureText, &fw, &fh);
-				gc->SetFont(font, (IsNumberFloat(parttext) || val) ? cvalues : (slash) ? cnames :
+				draw(parttext, (IsNumberFloat(parttext) || val) ? cvalues : (slash) ? cnames :
 					(ch == L'(' && !slash) ? ctfunctions : (CheckIfKeyword(parttext)) ? ctkeywords : ctvariables);
-				gc->DrawTextU(parttext, fw + posX, posY);
 				measureText << parttext;
 				parttext.clear();
-				gc->GetTextExtent(measureText, &fw, &fh);
-				gc->SetFont(font, (ch == L'!') ? ctcodemarks : coperators);
-				gc->DrawTextU(ch, fw + posX, posY);
+				draw(ch, (ch == L'!') ? ctcodemarks : coperators);
 				measureText << ch;
 
 				if (state == 2 && ch == L'!')
@@ -1441,9 +1498,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 			if (ch == L'"'){
 				if (templateString){
 					parttext << ch;
-					gc->GetTextExtent(measureText, &fw, &fh);
-					gc->SetFont(font, ctstrings);
-					gc->DrawTextU(parttext, fw + posX, posY);
+					draw(parttext, ctstrings);
 					measureText << parttext;
 					parttext.clear();
 					templateString = !templateString;
@@ -1453,10 +1508,8 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 				templateString = !templateString;
 			}
 			if (!templateString && ch == L' '){
-				gc->GetTextExtent(measureText, &fw, &fh);
-				gc->SetFont(font, (!templateCode && !val && !slash) ? ctext : (IsNumberFloat(parttext) || val) ? cvalues :
+				draw(parttext, (!templateCode && !val && !slash) ? ctext : (IsNumberFloat(parttext) || val) ? cvalues :
 					(slash) ? cnames : (CheckIfKeyword(parttext)) ? ctkeywords : ctvariables);
-				gc->DrawTextU(parttext, fw + posX, posY);
 				measureText << parttext;
 				parttext.clear();
 				measureText << ch;
@@ -1476,9 +1529,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 		}
 		if (hasSplit) {
 			if (ch == L'N' || ch == L'n' || ch == L'h') {
-				gc->GetTextExtent(measureText, &fw, &fh);
-				gc->SetFont(font, csplitanddrawings);
-				gc->DrawTextU(parttext, fw + posX, posY);
+				draw(parttext, csplitanddrawings);
 				measureText << parttext;
 				parttext.clear();
 			}
@@ -1490,9 +1541,9 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 				tags = ch == L'{';
 				hasSplit = ch == L'\\';
 				wxString bef = parttext.BeforeLast(ch);
-				gc->GetTextExtent(measureText, &fw, &fh);
-				gc->SetFont(font, hasDrawing? csplitanddrawings : ctext);
 				if (hasRTL || isRTL) {
+					gc->GetTextExtent(measureText, &fw, &fh);
+					gc->SetFont(font, hasDrawing? csplitanddrawings : ctext);
 					double chfw = 0.;
 					double chpos = 0.;
 					for (size_t i = 0; i < bef.size(); i++) {
@@ -1503,24 +1554,20 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 					}
 				}
 				else {
-					gc->DrawTextU(bef, fw + posX, posY);
+					draw(bef, hasDrawing ? csplitanddrawings : ctext);
 				}
 				measureText << bef;
 				parttext = ch;
 			}
 			else{
 				wxString &tmp = parttext.RemoveLast(1);
-				gc->GetTextExtent(measureText, &fw, &fh);
-				gc->SetFont(font, (val) ? cvalues : (slash) ? cnames : ctext);
-				gc->DrawTextU(tmp, fw + posX, posY);
+				draw(tmp, (val) ? cvalues : (slash) ? cnames : ctext);
 				measureText << tmp;
 				parttext = ch;
 				tags = slash = val = false;
 			}
 			if (ch != L'\\') {
-				gc->GetTextExtent(measureText, &fw, &fh);
-				gc->SetFont(font, ccurlybraces);
-				gc->DrawTextU(parttext, fw + posX, posY);
+				draw(parttext, ccurlybraces);
 				measureText << parttext;
 				parttext.clear();
 				val = false;
@@ -1538,9 +1585,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 					hasDrawing = pnum > 0;
 				}
 				wxString tmp = (tagtest == L"fn") ? parttext : parttext.RemoveLast(1);
-				gc->GetTextExtent(measureText, &fw, &fh);
-				gc->SetFont(font, cnames);
-				gc->DrawTextU(tmp, fw + posX, posY);
+				draw(tmp, cnames);
 				measureText << tmp;
 				if (tagtest == L"fn"){ parttext.clear(); }
 				else{ parttext = ch; }
@@ -1551,15 +1596,11 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 
 		if ((ch == L'\\' || ch == L'(' || ch == L')' || ch == L',') && tags){
 			wxString tmp = parttext.RemoveLast(1);
-			gc->GetTextExtent(measureText, &fw, &fh);
-			gc->SetFont(font, (val && (ch == L'\\' || ch == L')' || ch == L',')) ? cvalues : slash ? cnames : ctext);
-			gc->DrawTextU(tmp, fw + posX, posY);
+			draw(tmp, (val && (ch == L'\\' || ch == L')' || ch == L',')) ? cvalues : slash ? cnames : ctext);
 			measureText << tmp;
 			parttext = ch;
 			if (ch == L'\\'){ slash = true; }
-			gc->GetTextExtent(measureText, &fw, &fh);
-			gc->SetFont(font, coperators);
-			gc->DrawTextU(parttext, fw + posX, posY);
+			draw(parttext, coperators);
 			measureText << parttext;
 			parttext.clear();
 			if (ch == L'('){ val = true; slash = false; }

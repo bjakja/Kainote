@@ -28,7 +28,9 @@
 #include <algorithm>
 #include <cstddef>
 #include <cstdlib>
+#include <cmath>
 #include <limits>
+#include <vector>
 #include "UtilsWindows.h"
 #include "Provider.h"
 
@@ -54,6 +56,21 @@ namespace
 				memset(dst + static_cast<size_t>(y) * dstPitch + copyBytes, 0, dstPitch - copyBytes);
 		}
 	}
+
+	// packs the luma plane, then the interleaved chroma plane at half height
+	void CopyNv12FrameToBuffer(const FFMS_Frame* frame, unsigned char* dst, int width, int height)
+	{
+		if (!frame || !dst || width <= 0 || height <= 0 || !frame->Data[0] || !frame->Data[1])
+			return;
+		for (int plane = 0; plane < 2; plane++) {
+			int rows = plane ? height / 2 : height;
+			const unsigned char* src = frame->Data[plane];
+			int srcPitch = frame->Linesize[plane];
+			for (int y = 0; y < rows; ++y)
+				memcpy(dst + static_cast<size_t>(y) * width, src + static_cast<ptrdiff_t>(y) * srcPitch, width);
+			dst += static_cast<size_t>(rows) * width;
+		}
+	}
 }
 
 ProviderFFMS2::ProviderFFMS2(const wxString& filename, RendererFFMS2* renderer, 
@@ -75,7 +92,6 @@ ProviderFFMS2::ProviderFFMS2(const wxString& filename, RendererFFMS2* renderer,
 		unsigned int threadid = 0;
 		m_thread = (HANDLE)_beginthreadex(0, 0, FFMS2Proc, this, 0, &threadid);
 		//CreateThread( nullptr, 0,  (LPTHREAD_START_ROUTINE)FFMS2Proc, this, 0, 0);
-		SetThreadPriority(m_thread, THREAD_PRIORITY_TIME_CRITICAL);
 		SetThreadName(threadid, "VideoThread");
 		progress->ShowDialog();
 		WaitForSingleObject(m_eventComplete, INFINITE);
@@ -387,6 +403,14 @@ done:
 			}
 		}
 
+		UpdateYuvMatrix();
+#ifdef _WIN32
+		// NV12 goes to the GPU as it is, which converts it with the matrix above
+		if (m_renderer && Options.GetBool(VIDEO_GPU_CONVERSION) && m_CS != FFMS_CS_RGB &&
+			m_width % 2 == 0 && m_height % 2 == 0)
+			m_nv12 = SetOutputFormat(true);
+#endif
+
 		FFMS_Track* FrameData = FFMS_GetTrackFromVideo(m_videoSource);
 		if (FrameData == nullptr) {
 			KaiLog(_("You cannot load the video track"));
@@ -428,8 +452,10 @@ audio:
 			return 0;
 		}
 
+		// stereo sources play in stereo; the waveform and spectrum read a downmix
+		bool stereo = FFMS_GetAudioProperties(m_audioSource)->Channels > 1;
 		FFMS_ResampleOptions* resopts = FFMS_CreateResampleOptions(m_audioSource);
-		resopts->ChannelLayout = FFMS_CH_FRONT_CENTER;
+		resopts->ChannelLayout = stereo ? (FFMS_CH_FRONT_LEFT | FFMS_CH_FRONT_RIGHT) : FFMS_CH_FRONT_CENTER;
 		resopts->SampleFormat = FFMS_FMT_S16;
 
 		if (FFMS_SetOutputFormatA(m_audioSource, resopts, &m_errInfo)) {
@@ -443,14 +469,14 @@ audio:
 		const FFMS_AudioProperties* audioprops = FFMS_GetAudioProperties(m_audioSource);
 
 		m_sampleRate = audioprops->SampleRate;
-		m_delay = (Options.GetInt(AUDIO_DELAY) / 1000);
+		m_delayFrames = llround(m_sampleRate * (Options.GetInt(AUDIO_DELAY) / 1000.0));
 		m_numSamples = audioprops->NumSamples;
 		m_bytesPerSample = 2;
-		m_channels = 1;
+		m_channels = stereo ? 2 : 1;
 
-		if (abs(m_delay) >= (m_sampleRate * m_numSamples * m_bytesPerSample)) {
+		if (llabs(m_delayFrames) >= m_numSamples) {
 			KaiLog(_("Delay failed, it's longer than audio duration time"));
-			m_delay = 0;
+			m_delayFrames = 0;
 		}
 		m_audioLoadThread = new std::thread(AudioLoad, this, newIndex, audiotrack);
 	}
@@ -491,10 +517,16 @@ ProviderFFMS2::~ProviderFFMS2()
 
 	if (m_discCache) { ClearDiskCache(); }
 	else { ClearRAMCache(); }
-	if (!m_stopLoadingAudio && m_discCache && m_diskCacheFilename.EndsWith(L".part")) {
-		wxString discCacheNameWithGoodExt = m_diskCacheFilename;
-		discCacheNameWithGoodExt.RemoveLast(5);
-		_wrename(m_diskCacheFilename.wc_str(), discCacheNameWithGoodExt.wc_str());
+	// m_stopLoadingAudio is set above whenever audio was loaded, so it cannot tell
+	if (m_discCache && m_diskCacheFilename.EndsWith(L".part")) {
+		if (m_diskCacheComplete) {
+			wxString discCacheNameWithGoodExt = m_diskCacheFilename;
+			discCacheNameWithGoodExt.RemoveLast(5);
+			_wrename(m_diskCacheFilename.wc_str(), discCacheNameWithGoodExt.wc_str());
+		}
+		else {
+			_wremove(m_diskCacheFilename.wc_str());
+		}
 	}
 }
 
@@ -512,8 +544,10 @@ void ProviderFFMS2::AudioLoad(ProviderFFMS2* vf, bool newIndex, int audiotrack)
 	if (vf->m_discCache) {
 		wxString sep = wxFileName::GetPathSeparator();
 		wxString baseName = wxFileName(vf->m_filename).GetName();
+		// a cache made with other channels or another delay holds other data
 		vf->m_diskCacheFilename << Options.pathfull << sep << L"AudioCache" << sep <<
-			baseName << L"_track" << audiotrack << L".w64";
+			baseName << L"_track" << audiotrack << L"_" << vf->m_channels << L"ch_" <<
+			vf->m_delayFrames << L".w64";
 		if (!vf->DiskCache(newIndex)) { goto done; }
 	}
 	else {
@@ -524,14 +558,73 @@ done:
 	if (vf->m_audioSource) { FFMS_DestroyAudioSource(vf->m_audioSource); vf->m_audioSource = nullptr; }
 	vf->m_lockGetFrame = false;
 	SetEvent(vf->m_eventAudioComplete);
+	if (!vf->audioNotInitialized)
+		vf->BuildPeaks(vf->m_stopLoadingAudio);
 }
 
 void ProviderFFMS2::GetFrame(int frame, unsigned char* buff)
 {
 	wxCriticalSectionLocker lock(m_blockFrame);
+	// screenshots and scripts want BGRA converted as before, so NV12 steps aside
+	if (m_nv12)
+		SetOutputFormat(false);
 	const FFMS_Frame *ffmsframe = FFMS_GetFrame(m_videoSource, frame, &m_errInfo);
 	CopyBgraFrameToBuffer(ffmsframe, buff, m_width, m_height);
+	if (m_nv12 && !SetOutputFormat(true))
+		KaiLogSilent(_("Cannot convert video to RGBA"));
 	m_refreshFrame = true;
+}
+
+bool ProviderFFMS2::SetOutputFormat(bool nv12)
+{
+	int pixfmt[2] = { FFMS_GetPixFmt(nv12 ? "nv12" : "bgra"), -1 };
+	if (FFMS_SetOutputFormatV2(m_videoSource, pixfmt, m_width, m_height, FFMS_RESIZER_BILINEAR, &m_errInfo))
+		return false;
+	// frames of the old format do not survive the change
+	m_FFMS2frame = nullptr;
+	m_refreshFrame = true;
+	return true;
+}
+
+void ProviderFFMS2::UseRgbOutput()
+{
+	wxCriticalSectionLocker lock(m_blockFrame);
+	if (m_nv12 && SetOutputFormat(false))
+		m_nv12 = false;
+}
+
+void ProviderFFMS2::CopyToBuffer(const FFMS_Frame* frame, unsigned char* buffer)
+{
+	static const int nv12 = FFMS_GetPixFmt("nv12");
+	// a buffer sized for NV12 takes nothing else
+	if (m_nv12) {
+		if (frame && frame->ConvertedPixelFormat == nv12)
+			CopyNv12FrameToBuffer(frame, buffer, m_width, m_height);
+	}
+	else
+		CopyBgraFrameToBuffer(frame, buffer, m_width, m_height);
+}
+
+void ProviderFFMS2::UpdateYuvMatrix()
+{
+#ifdef _WIN32
+	if (m_colorSpace.EndsWith(L".709"))
+		m_yuvMatrix = DXVA2_VideoTransferMatrix_BT709;
+	else if (m_colorSpace.EndsWith(L".240M"))
+		m_yuvMatrix = DXVA2_VideoTransferMatrix_SMPTE240M;
+	else
+		m_yuvMatrix = DXVA2_VideoTransferMatrix_BT601;
+#endif
+}
+
+int ProviderFFMS2::YuvMatrix()
+{
+	return m_yuvMatrix;
+}
+
+bool ProviderFFMS2::YuvFullRange()
+{
+	return m_CR == FFMS_CR_JPEG;
 }
 
 bool ProviderFFMS2::CopyFrame(int frame, unsigned char* buffer, bool forceFetch)
@@ -549,7 +642,7 @@ bool ProviderFFMS2::CopyFrame(int frame, unsigned char* buffer, bool forceFetch)
 	if (!m_FFMS2frame) {
 		return false;
 	}
-	CopyBgraFrameToBuffer(m_FFMS2frame, buffer, m_width, m_height);
+	CopyToBuffer(m_FFMS2frame, buffer);
 	return true;
 }
 
@@ -577,106 +670,117 @@ void ProviderFFMS2::GetAudio(void* buf, long long start, long long count)
 
 }
 
+void ProviderFFMS2::ReadCache(void* buf, long long start, long long count)
+{
+	const int frameBytes = FrameBytes();
+	if (start + count > m_numSamples) {
+		long long valid = std::max(0LL, m_numSamples - start);
+		memset((char*)buf + valid * frameBytes, 0, (count - valid) * frameBytes);
+		count = valid;
+	}
+	if (count <= 0)
+		return;
+
+	if (m_discCache) {
+		if (m_fp) {
+			wxCriticalSectionLocker lock(m_blockAudio);
+			_fseeki64(m_fp, start * frameBytes, SEEK_SET);
+			fread(buf, 1, count * frameBytes, m_fp);
+		}
+		return;
+	}
+	if (!m_cache)
+		return;
+	char* tmpbuf = (char*)buf;
+	const int blsize = (1 << 22);
+	long long byte = start * frameBytes;
+	int i = (int)(byte >> 22);
+	int offset = (int)(byte & (blsize - 1));
+	long long remaining = count * frameBytes;
+	while (remaining) {
+		int readsize = (int)MIN(remaining, blsize - offset);
+		memcpy(tmpbuf, m_cache[i++] + offset, readsize);
+		tmpbuf += readsize;
+		offset = 0;
+		remaining -= readsize;
+	}
+}
+
+static void ApplyVolume(short* samples, long long count, double volume)
+{
+	if (volume == 1.0)
+		return;
+	for (long long i = 0; i < count; i++) {
+		int value = (int)(samples[i] * volume + 0.5);
+		if (value < -0x8000) value = -0x8000;
+		if (value > 0x7FFF) value = 0x7FFF;
+		samples[i] = value;
+	}
+}
+
+void ProviderFFMS2::GetPlaybackBuffer(void* buf, long long start, long long count, double volume)
+{
+	if (audioNotInitialized) { return; }
+	ReadCache(buf, start, count);
+	ApplyVolume((short*)buf, count * m_channels, volume);
+}
+
 void ProviderFFMS2::GetBuffer(void* buf, long long start, long long count, double volume)
 {
 	if (audioNotInitialized) { return; }
-
-	if (start + count > m_numSamples) {
-		long long oldcount = count;
-		count = m_numSamples - start;
-		if (count < 0) count = 0;
-
-
-		short* temp = (short*)buf;
-		for (int i = count; i < oldcount; i++) {
-			temp[i] = 0;
-		}
+	if (m_channels == 1) {
+		GetPlaybackBuffer(buf, start, count, volume);
+		return;
 	}
-
-	if (count) {
-		if (m_discCache) {
-			if (m_fp) {
-				wxCriticalSectionLocker lock(m_blockAudio);
-				_int64 pos = start * m_bytesPerSample;
-				_fseeki64(m_fp, pos, SEEK_SET);
-				fread(buf, 1, count * m_bytesPerSample, m_fp);
-			}
-		}
-		else {
-			if (!m_cache) { return; }
-			char* tmpbuf = (char*)buf;
-			int i = (start * m_bytesPerSample) >> 22;
-			int blsize = (1 << 22);
-			int offset = (start * m_bytesPerSample) & (blsize - 1);
-			long long remaining = count * m_bytesPerSample;
-			int readsize = remaining;
-
-			while (remaining) {
-				readsize = MIN(remaining, blsize - offset);
-
-				memcpy(tmpbuf, (char*)(m_cache[i++] + offset), readsize);
-				tmpbuf += readsize;
-				offset = 0;
-				remaining -= readsize;
-			}
-		}
-		if (volume == 1.0) return;
-
-
-		// Read raw samples
-		short* buffer = (short*)buf;
-		int value;
-
-		// Modify
-		for (long long i = 0; i < count; i++) {
-			value = (int)(buffer[i] * volume + 0.5);
-			if (value < -0x8000) value = -0x8000;
-			if (value > 0x7FFF) value = 0x7FFF;
-			buffer[i] = value;
-		}
-
+	// kept per thread, as the waveform and spectrum read on every redraw
+	thread_local std::vector<short> frames;
+	size_t needed = (size_t)std::max(0LL, count) * m_channels;
+	if (frames.size() < needed)
+		frames.resize(needed);
+	ReadCache(frames.data(), start, count);
+	short* mono = (short*)buf;
+	for (long long i = 0; i < count; i++) {
+		int sum = 0;
+		for (int c = 0; c < m_channels; c++)
+			sum += frames[i * m_channels + c];
+		mono[i] = (short)(sum / m_channels);
 	}
+	ApplyVolume(mono, count, volume);
 }
 
 bool ProviderFFMS2::RAMCache()
 {
-	//progress->Title(_("Zapisywanie do pamięci RAM"));
 	m_audioProgress = 0;
-	long long end = m_numSamples * m_bytesPerSample;
+	const int frameBytes = FrameBytes();
+	// a positive delay starts with silence, a negative one skips the start
+	long long silence = std::max(0LL, m_delayFrames);
+	long long sourceFrame = std::max(0LL, -m_delayFrames);
+	m_numSamples -= sourceFrame;
+	long long end = m_numSamples * frameBytes;
 
-	int blsize = (1 << 22);
-	m_blockNum = ((float)end / (float)blsize) + 1;
-	m_cache = nullptr;
+	const long long blsize = (1 << 22);
+	m_blockNum = (int)(end / blsize) + 1;
 	m_cache = new char* [m_blockNum];
-	if (m_cache == nullptr) { KaiLogSilent(_("Not enough RAM")); return false; }
 
-	long long pos = (m_delay < 0) ? -(m_sampleRate * m_delay * m_bytesPerSample) : 0;
-	int halfsize = (blsize / m_bytesPerSample);
-
-
+	long long written = 0;
 	for (int i = 0; i < m_blockNum; i++)
 	{
-		if (i >= m_blockNum - 1) { blsize = end - pos; halfsize = (blsize / m_bytesPerSample); }
-		m_cache[i] = new char[blsize];
-		if (m_delay > 0 && i == 0) {
-			int delaysize = m_sampleRate * m_delay * m_bytesPerSample;
-			if (delaysize % 2 == 1) { delaysize++; }
-			int halfdiff = halfsize - (delaysize / m_bytesPerSample);
-			memset(m_cache[i], 0, delaysize);
-			GetAudio(&m_cache[i][delaysize], 0, halfdiff);
-			pos += halfdiff;
+		long long size = std::min(blsize, end - written);
+		m_cache[i] = new char[std::max(1LL, size)];
+		long long frames = size / frameBytes;
+		long long silentFrames = std::clamp(silence - written / frameBytes, 0LL, frames);
+		memset(m_cache[i], 0, silentFrames * frameBytes);
+		if (frames > silentFrames) {
+			GetAudio(m_cache[i] + silentFrames * frameBytes, sourceFrame, frames - silentFrames);
+			sourceFrame += frames - silentFrames;
 		}
-		else {
-			GetAudio(m_cache[i], pos, halfsize);
-			pos += halfsize;
-		}
+		written += size;
 		m_audioProgress = (m_blockNum > 1) ? ((float)i / (float)(m_blockNum - 1)) : 1.f;
 		if (m_stopLoadingAudio) {
 			m_blockNum = i + 1;
 			break;
 		}
 	}
-	if (m_delay < 0) { m_numSamples += (m_sampleRate * m_delay * m_bytesPerSample); }
 	m_audioProgress = 1.f;
 	return true;
 }
@@ -698,6 +802,7 @@ void ProviderFFMS2::ClearRAMCache()
 bool ProviderFFMS2::DiskCache(bool newIndex)
 {
 	m_audioProgress = 0;
+	m_numSamples -= std::max(0LL, -m_delayFrames);
 
 	bool good = true;
 	wxFileName discCacheFile;
@@ -720,33 +825,27 @@ bool ProviderFFMS2::DiskCache(bool newIndex)
 		if (!m_fp)
 			return false;
 	}
-	int block = 332768;
-	if (m_delay > 0) {
-
-		int size = (m_sampleRate * m_delay * m_bytesPerSample);
-		if (size % 2 == 1) { size++; }
-		char* silence = new char[size];
-		memset(silence, 0, size);
-		fwrite(silence, 1, size, m_fp);
-		delete[] silence;
-	}
+	const int frameBytes = FrameBytes();
+	long long block = 332768;
+	long long sourceFrame = std::max(0LL, -m_delayFrames);
+	// the frames read are counted without the skipped start
+	long long sourceEnd = m_numSamples + sourceFrame;
 	try {
-		char* data = new char[block * m_bytesPerSample];
-		int all = (m_numSamples / block) + 1;
-		//long long pos=0;
-		long long pos = (m_delay < 0) ? -(m_sampleRate * m_delay * m_bytesPerSample) : 0;
-		for (int i = 0; i < all; i++) {
-			if (block + pos > m_numSamples) block = m_numSamples - pos;
-			GetAudio(data, pos, block);
-			fwrite(data, 1, block * m_bytesPerSample, m_fp);
-			pos += block;
-			m_audioProgress = ((float)pos / (float)(m_numSamples));
+		if (m_delayFrames > 0) {
+			std::vector<char> silence((size_t)(m_delayFrames * frameBytes));
+			fwrite(silence.data(), 1, silence.size(), m_fp);
+		}
+		std::vector<char> data((size_t)(block * frameBytes));
+		while (sourceFrame < sourceEnd) {
+			long long frames = std::min(block, sourceEnd - sourceFrame);
+			GetAudio(data.data(), sourceFrame, frames);
+			fwrite(data.data(), 1, frames * frameBytes, m_fp);
+			sourceFrame += frames;
+			m_audioProgress = ((float)sourceFrame / (float)sourceEnd);
 			if (m_stopLoadingAudio) break;
 		}
-		delete[] data;
-
+		m_diskCacheComplete = sourceFrame >= sourceEnd;
 		rewind(m_fp);
-		if (m_delay < 0) { m_numSamples += (m_sampleRate * m_delay * m_bytesPerSample); }
 	}
 	catch (...) {
 		good = false;
@@ -802,6 +901,16 @@ void ProviderFFMS2::DeleteOldAudioCache()
 
 }
 
+void ProviderFFMS2::PrefetchFrame(int frame)
+{
+	wxCriticalSectionLocker lock(m_blockFrame);
+	if (!m_FFMS2frame || frame != m_lastFrame || m_refreshFrame) {
+		m_FFMS2frame = FFMS_GetFrame(m_videoSource, frame, &m_errInfo);
+		m_lastFrame = frame;
+		m_refreshFrame = false;
+	}
+}
+
 void ProviderFFMS2::GetFrameBuffer(int frame, unsigned char** buffer)
 {
 	CopyFrame(frame, *buffer, false);
@@ -851,8 +960,10 @@ void ProviderFFMS2::SetColorSpace(const wxString& matrix)
 		m_refreshFrame = true;
 		//keep the old matrix when nothing changed or the next call asking for it
 		//would be dropped as a no-op and the video would stay unconverted
-		if (!failed)
+		if (!failed) {
 			m_colorSpace = matrix;
+			UpdateYuvMatrix();
+		}
 	}
 	if (failed)
 		KaiLog(_("Cannot change YCbCr matrix"));

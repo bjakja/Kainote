@@ -21,6 +21,39 @@
 
 #include "Provider.h"
 #include <dsound.h>
+#include <atomic>
+#include <memory>
+#include <mutex>
+
+// Where the sound card is, for any thread. It outlives the player thread, so
+// a reader never reaches a player the UI thread has since deleted.
+class AudioPosition
+{
+public:
+	// the frame audible now, or -1 when nothing plays
+	long long Frame();
+	int SampleRate() const { return sample_rate; }
+	// from a seek until the new data is written, the position holds at frame
+	void Restart(long long frame)
+	{
+		std::lock_guard<std::mutex> lock(mutex);
+		restarting = true;
+		start_frame = frame;
+	}
+private:
+	friend class DirectSoundPlayer2Thread;
+	std::mutex mutex;
+	IDirectSoundBuffer8 *buffer = nullptr;
+	long long start_frame = 0;
+	long long written_frame = 0;
+	unsigned long write_offset = 0;
+	unsigned long buffer_bytes = 0;
+	long long bytes_per_frame = 2;
+	std::atomic<int> sample_rate{ 0 };
+	bool playing = false;
+	bool restarting = false;
+	bool refilled = false;
+};
 
 
 class DirectSoundPlayer2Thread {
@@ -31,8 +64,9 @@ class DirectSoundPlayer2Thread {
 		unsigned int buf2sz, long long& input_frame, IDirectSoundBuffer8* audioBuffer);
 
 	void CheckError();
+	void CloseHandles();
 
-	HANDLE thread_handle;
+	HANDLE thread_handle = nullptr;
 
 	// Used to signal state-changes to thread
 	HANDLE
@@ -48,15 +82,21 @@ class DirectSoundPlayer2Thread {
 		is_playing,
 		error_happened;
 
-	double volume =1.0;
-	long long start_frame = 0;
-	long long end_frame = 0;
+	// set by the UI thread, read by the playback thread
+	std::atomic<double> volume{ 1.0 };
+	std::atomic<long long> start_frame{ 0 };
+	std::atomic<long long> end_frame{ 0 };
 
 	int wanted_latency;
 	int buffer_length;
 
 	
 	int last_playback_restart;
+
+	std::shared_ptr<AudioPosition> position = std::make_shared<AudioPosition>();
+	// started ends a restart; later fills leave a seek's pending restart alone
+	void SetWritten(long long frame, unsigned long offset, bool refills, bool started);
+	void SetStopped();
 
 	Provider* provider;
 #ifndef _WIN32
@@ -79,6 +119,7 @@ public:
 	long long GetEndFrame();
 	double GetVolume();
 	bool IsDead();
+	const std::shared_ptr<AudioPosition> &Position() const { return position; }
 
 };
 
@@ -112,6 +153,8 @@ public:
 
 	void SetVolume(double vol);
 	double GetVolume();
+	// null until a stream is open
+	std::shared_ptr<AudioPosition> Position();
 	
 
 	Provider * provider;

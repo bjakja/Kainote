@@ -79,6 +79,7 @@ void CreateVERTEX(VERTEX * v, float X, float Y, D3DCOLOR Color, float Z = 0.0f);
 
 
 class AudioDisplay;
+class AudioPosition;
 class DShowPlayer;
 class Menu;
 class Provider;
@@ -131,7 +132,14 @@ public:
 	IDirect3DDevice9 *m_D3DDevice = nullptr;
 	D3DFORMAT m_D3DFormat;
 	volatile bool m_BlockResize = false;
-	bool m_HasVisualEdition = false;
+	// also read by the playback thread's seeks
+	std::atomic<bool> m_HasVisualEdition{ false };
+	// frames are NV12 that DXVA2 converts on the GPU, instead of BGRA
+	bool m_Nv12 = false;
+	size_t FrameBytes() const
+	{
+		return m_Nv12 ? (size_t)m_Width * m_Height * 3 / 2 : (size_t)m_Height * m_Pitch;
+	}
 	bool m_VideoResized = false;
 	bool m_HasZoom = false;
 	bool m_SwapFrame = false;
@@ -147,7 +155,8 @@ public:
 	ID3DXLine *m_D3DLine = nullptr;
 	ID3DXFont *m_D3DFont = nullptr;
 	ID3DXFont * m_D3DCalcFont = nullptr;
-	wxCriticalSection m_MutexRendering;
+	// one for all video views, as they may share a device
+	static wxCriticalSection m_MutexRendering;
 	wxMutex m_MutexProgressBar;
 	wxMutex m_MutexOpen;
 	wxMutex m_MutexVisualChange;
@@ -186,13 +195,23 @@ public:
 	virtual bool FilterConfig(wxString name, int idx, wxPoint pos){ return false; };
 	virtual Provider * GetFFMS2(){ return nullptr; };
 	virtual void ZoomChanged() {};
+	// the window changed size without a device reset; rebuild what depends on it
+	virtual void WindowResized() {};
 	// Non virtual functions
 	virtual void DrawProgressBar(const wxString &timesString);
 	// visual editing and dummy subtitles show one line; playback needs them all
 	void OpenSubsForPlayback();
+	// while paused after edits, parses the whole script ahead of the next Play
+	void PrepareWholeSubtitles();
 	void ReopenSubsAfterSeek(bool playing);
+	// Reopens the subtitles, and when paused redraws, on the UI thread: the
+	// subtitle text comes from the grid and edit box. Seeks from the playback
+	// thread queue one refresh at a time, which takes the latest state.
+	void QueueSeekRefresh(bool playing, bool refreshAudio);
 	// the video shows text that edits have since changed
 	void MarkSubtitlesOutdated();
+	// changes whenever subtitles are opened, on any thread
+	unsigned SubtitlesGeneration() const { return m_SubsGeneration; }
 	void Zoom(const wxSize &size);
 	void DrawZoom();
 	void ZoomMouseHandle(wxMouseEvent &evt);
@@ -205,6 +224,9 @@ public:
 	//returns true if removed
 	bool RemoveVisual(bool noRefresh = false, bool disable = false);
 	int GetCurrentPosition();
+	// Milliseconds of the video played so far: the sound card's position when
+	// audio plays, else the system clock kept in step with it.
+	int PlaybackClock();
 	virtual int GetCurrentFrame();
 	bool PlayLine(int start, int end);
 	void UpdateVideoWindow();
@@ -222,6 +244,8 @@ protected:
 	virtual void StopStream(){};
 	// the seek target for time: clamped to the video, and on a frame unless SEEK_NO_SNAP
 	int SeekTarget(int time, bool startTime, int flags);
+	// Sleep and timeGetTime step in 1 ms instead of ~15.6 ms while playing
+	void SetFineTimer(bool fine);
 
 	// written by the playback and stream threads as well as the UI thread
 	std::atomic<PlaybackState> m_State{ None };
@@ -230,9 +254,31 @@ protected:
 	// 0 plays to the end of the video
 	std::atomic<int> m_PlayEndTime{ 0 };
 	std::atomic<size_t> m_LastTime{ 0 };
+	// Taken from the audio player on the UI thread when playback starts, as
+	// the playback thread must not reach the player itself.
+	void SetAudioPosition(std::shared_ptr<AudioPosition> position);
+	std::shared_ptr<AudioPosition> GetAudioPosition();
+	std::atomic<unsigned> m_SubsGeneration{ 0 };
 private:
 
 	bool InitDX();
+	// the back buffer covers the monitor, so a resize within it needs no Reset
+	bool FitsBackBuffer() const;
+	void SetProjection();
+	// the render states every frame starts from
+	void ApplyDeviceState();
+	// With the shared device, points it at this view's swap chain and state;
+	// false when the device was replaced and this view has to make its own again.
+	bool BeginFrame();
+	HRESULT PresentFrame();
+	HRESULT GetBackBuffer(IDirect3DSurface9 **surface);
+	// set while this view draws into its own swap chain of the shared device
+	IDirect3DSwapChain9 *m_SwapChain = nullptr;
+	bool m_SharedDevice = false;
+	unsigned m_DeviceGeneration = 0;
+	HWND m_DeviceWindow = nullptr;
+	UINT m_BackBufferWidth = 0;
+	UINT m_BackBufferHeight = 0;
 	virtual bool InitRendererDX(){ return true; };
 	// the text an OpenSubs flag stands for, with the vector clip mask added
 	wxString *SubtitlesText(int flag, wxString *text);
@@ -250,7 +296,18 @@ private:
 	RECT m_MainStreamRect;
 	wxPoint m_ZoomDiff;
 
+	wxString *WholeSubtitlesText();
+	void RunQueuedSeekRefresh();
+	void SeekRefresh(bool playing, bool refreshAudio);
+
+	std::mutex m_AudioPositionMutex;
+	std::shared_ptr<AudioPosition> m_AudioPosition;
+	std::mutex m_SeekRefreshMutex;
+	bool m_SeekRefreshQueued = false;
+	bool m_SeekRefreshPlaying = false;
+	bool m_SeekRefreshAudio = false;
 	int m_AverangeFrameTime = 42;
+	bool m_FineTimer = false;
 	D3DXVECTOR2 vectors[12];
 	int m_ProgressBarLineWidth = 1;
 	AudioDisplay *m_AudioPlayer = nullptr;

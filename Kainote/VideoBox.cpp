@@ -192,12 +192,18 @@ VideoBox::VideoBox(wxWindow *parent, const wxSize &size)
 	Connect(ID_VOL, wxEVT_SCROLL_CHANGED, (wxObjectEventFunction)&VideoBox::OnVolume);
 
 	m_VideoTimeTimer.SetOwner(this, ID_VIDEO_TIME);
+	m_PrepareTimer.SetOwner(this);
+	Bind(wxEVT_TIMER, [this](wxTimerEvent &) {
+		if (renderer)
+			renderer->PrepareWholeSubtitles();
+	}, m_PrepareTimer.GetId());
 	idletime.SetOwner(this, ID_IDLE);
 
 }
 
 VideoBox::~VideoBox()
 {
+	DropLater();
 	SAFE_DELETE(renderer);
 }
 
@@ -562,10 +568,16 @@ void VideoBox::OnMouseEvent(wxMouseEvent& event)
 	}
 
 	if (m_IsFullscreen){
-		if (m_ArrowEater && event.Moving() && !event.ButtonDown()){ 
-			Sleep(200); 
-			m_ArrowEater = false; 
-			return; 
+		if (m_ArrowEater && event.Moving() && !event.ButtonDown()){
+			// ignore the moves of the first 200 ms without blocking the UI thread
+			wxLongLong now = wxGetLocalTimeMillis();
+			if (m_ArrowEaterUntil == 0)
+				m_ArrowEaterUntil = now + 200;
+			if (now < m_ArrowEaterUntil)
+				return;
+			m_ArrowEater = false;
+			m_ArrowEaterUntil = 0;
+			return;
 		}
 		m_FullScreenWindow->GetClientSize(&w, &h);
 		bool onFullVideo = m_Y < h - m_PanelHeight;
@@ -1348,7 +1360,6 @@ void VideoBox::ShowTimes(SubsTime &videoTime, KaiTextCtrl *field)
 		times << sdiff << L" ms, " << ediff << L" ms";
 	}
 	field->SetValue(times);
-	field->Update();
 }
 
 void VideoBox::RefreshTime()
@@ -1372,7 +1383,6 @@ void VideoBox::RefreshTime()
 	}
 	else{
 		m_SeekingSlider->SetValue(val);
-		m_SeekingSlider->Update();
 		ShowTimes(videoTime, m_TimesTextField);
 		if (tab->editor)
 			tab->grid->RefreshIfVisible(videoTime.mstime);
@@ -1662,6 +1672,7 @@ void VideoBox::SetVideoTimebase(Timebase timebase)
 }
 void VideoBox::DeleteRenderer()
 {
+	DropLater();
 	SAFE_DELETE(renderer);
 	Timebase keyframesOnly;
 	keyframesOnly.SetKeyframes(m_Timebase.Keyframes());
@@ -1802,6 +1813,82 @@ bool VideoBox::OpenOwnSubs(wxString *text)
 		return false;
 	}
 	return renderer->OpenSubs(OPEN_HAS_OWN_TEXT, true, text);
+}
+
+void VideoBox::OpenSubsLater(int flag)
+{
+	if (!renderer)
+		return;
+	m_LaterFlag = flag;
+	QueueLater(LATER_FLAG);
+}
+
+void VideoBox::OpenOwnSubsLater(wxString *text, bool redraw)
+{
+	if (!renderer) {
+		delete text;
+		return;
+	}
+	bool redrawQueued = m_LaterKind == LATER_OWN_TEXT && m_LaterRedraw;
+	QueueLater(LATER_OWN_TEXT);
+	m_LaterText = text;
+	m_LaterRedraw = redraw || redrawQueued;
+}
+
+void VideoBox::SetVisualLater()
+{
+	if (renderer)
+		QueueLater(LATER_VISUAL);
+}
+
+void VideoBox::QueueLater(int kind)
+{
+	SAFE_DELETE(m_LaterText);
+	m_LaterKind = kind;
+	m_LaterGeneration = renderer->SubtitlesGeneration();
+	if (!m_LaterQueued) {
+		m_LaterQueued = true;
+		CallAfter(&VideoBox::FlushLater);
+	}
+}
+
+void VideoBox::DropLater()
+{
+	m_LaterKind = LATER_NONE;
+	SAFE_DELETE(m_LaterText);
+}
+
+void VideoBox::FlushLater()
+{
+	m_LaterQueued = false;
+	int kind = m_LaterKind;
+	wxString *text = m_LaterText;
+	m_LaterKind = LATER_NONE;
+	m_LaterText = nullptr;
+	// anything opened since the request already shows newer subtitles
+	if (!renderer || kind == LATER_NONE ||
+		(kind != LATER_VISUAL && renderer->SubtitlesGeneration() != m_LaterGeneration)) {
+		delete text;
+		return;
+	}
+	if (kind != LATER_VISUAL)
+		m_PrepareTimer.StartOnce(500);
+	switch (kind) {
+	case LATER_FLAG:
+		renderer->OpenSubs(m_LaterFlag, true);
+		if (GetState() == Paused)
+			renderer->Render();
+		break;
+	case LATER_OWN_TEXT:
+		if (!renderer->OpenSubs(OPEN_HAS_OWN_TEXT, true, text))
+			KaiLog(_("Cannot open subtitle file"));
+		if (m_LaterRedraw)
+			renderer->Render();
+		break;
+	case LATER_VISUAL:
+		renderer->SetVisual(true);
+		break;
+	}
 }
 
 unsigned char *VideoBox::GetFrame(int frame, bool withSubtitles)

@@ -10,6 +10,7 @@
 
 
 #pragma once
+#include <vector>
 
 #include <wx/colour.h>
 #include <wx/gdicmn.h>  // for wxDash
@@ -222,6 +223,14 @@ public:
 	virtual bool Contains(wxDouble x, wxDouble y, wxPolygonFillMode fillStyle = wxODDEVEN_RULE) const = 0;
 };
 
+// A stretch of a text drawn in one colour, as characters from start.
+struct TextRun
+{
+	size_t start;
+	size_t length;
+	wxColour colour;
+};
+
 class GraphicsContext 
 {
 public:
@@ -300,6 +309,27 @@ public:
 	// non virtual functions
 	virtual void StrokeLine(wxDouble x1, wxDouble y1, wxDouble x2, wxDouble y2);
 
+	// draws str centred in the width starting at x
+	virtual void DrawTextCentered(const wxString& str, wxDouble x, wxDouble y, wxDouble width)
+	{
+		wxDouble fw = 0, fh = 0;
+		GetTextExtent(str, &fw, &fh);
+		DrawTextU(str, x + (width - fw) / 2, y);
+	}
+
+	// draws text in font with each run in its colour; text between runs is not drawn
+	virtual void DrawTextRuns(const wxFont& font, const wxString& text, const std::vector<TextRun>& runs,
+		wxDouble x, wxDouble y)
+	{
+		for (const TextRun& run : runs) {
+			SetFont(font, run.colour);
+			wxDouble fw = 0, fh = 0;
+			if (run.start)
+				GetTextExtent(text.Left(run.start), &fw, &fh);
+			DrawTextU(text.Mid(run.start, run.length), x + fw, y);
+		}
+	}
+
 	void DrawTextU(const wxString& str, wxDouble x, wxDouble y);
 private:
 	virtual void DoDrawText(const wxString& str, wxDouble x, wxDouble y){};
@@ -308,6 +338,22 @@ private:
 //-----------------------------------------------------------------------------
 // wxD2DRenderer declaration
 //-----------------------------------------------------------------------------
+
+// A window Direct2D paints without making a render target for every paint:
+// the scene is drawn into an offscreen bitmap that is copied to the window on
+// the GPU, and that also serves repaints of parts of the window.
+class GraphicsCanvas
+{
+public:
+	virtual ~GraphicsCanvas() {}
+	// a context drawing the scene, at least width x height pixels; delete it before Present
+	virtual GraphicsContext *BeginScene(int width, int height) = 0;
+	// copies each source rectangle of the scene to its point in the window; false
+	// when the device was lost, and then the window has to be painted again
+	virtual bool Present(const wxRect *sources, const wxPoint *points, size_t count) = 0;
+	// a scene was drawn and has not been lost since
+	virtual bool HasScene() const = 0;
+};
 
 class GraphicsRenderer
 {
@@ -336,6 +382,20 @@ public:
 
 	virtual GraphicsContext * CreateMeasuringContext(){ return NULL; };
 
+	// null when the renderer draws windows another way
+	virtual GraphicsCanvas * CreateCanvas(wxWindow* window){ return NULL; };
+
 };
+
+// A canvas for window, or null without Direct2D. The window then clips its
+// children, which the render target would otherwise paint over.
+inline GraphicsCanvas *CreateGraphicsCanvas(wxWindow *window)
+{
+	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+	GraphicsCanvas *canvas = renderer ? renderer->CreateCanvas(window) : NULL;
+	if (canvas)
+		window->SetWindowStyleFlag(window->GetWindowStyleFlag() | wxCLIP_CHILDREN);
+	return canvas;
+}
 
 //#endif

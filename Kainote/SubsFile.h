@@ -116,6 +116,24 @@ private:
 	File *subs;
 	// changed since the last recorded step; every change below sets it
 	bool edited = false;
+	// bumped whenever the lines or the working copy change
+	size_t version = 0;
+	void MarkEdited() { edited = true; ++version; }
+	// Row ids are positions among the visible lines. Rebuilt when the lines
+	// or any line's visibility change, instead of counting on every paint.
+	struct VisibleRows {
+		size_t version = (size_t)-1;
+		unsigned epoch = 0;
+		File *file = nullptr;
+		std::vector<size_t> keyOfId;
+		// visible lines before each key
+		std::vector<size_t> idOfKey;
+	} visibleRows;
+	const VisibleRows &GetVisibleRows();
+	wxString embeddedSections;
+	// the edit box commits while the user types; those steps merge into one
+	bool typing = false;
+	bool lastStepTyping = false;
 	void LoadCurrentStep();
 
 public:
@@ -125,6 +143,10 @@ public:
 	void Create();
 	void SetMutex(wxMutex* editionGuard);
 	void SaveUndo(unsigned char editionType, int activeLine, int markerLine);
+	// set around a commit made by typing rather than by the user
+	void SetTyping(bool isTyping) { typing = isTyping; }
+	// typing after this starts a new step even on the same line
+	void EndTypingRun() { lastStepTyping = false; }
 	bool Redo();
 	bool Undo();
 	void DummyUndoF();
@@ -132,6 +154,8 @@ public:
 	void EndLoad(unsigned char editionType, int activeLine, bool initialSave = false);
 	size_t GetCount();
 	size_t GetIdCount();
+	// GetIdCount and, like SubsGrid::GetDialoguePosition, the dialogue number of key, in one pass
+	size_t CountLines(size_t key, size_t *dialogueNumber);
 	void AddLine(Dialogue *dial);
 	//check if exceeds tabe or if dialogue is not visible can return null
 	Dialogue *CopyVisibleDialogue(size_t i, bool push = true, bool keepstate = false);
@@ -215,6 +239,9 @@ public:
 	const wxString &GetUndoName();
 	const wxString &GetRedoName();
 	bool IsFiltered();
+	// [Fonts] and [Graphics] as they were read, written back unchanged after the events
+	const wxString &GetEmbeddedSections() const { return embeddedSections; }
+	void AddEmbeddedSectionLine(const wxString &line);
 	void SetFiltered(bool filtered = true);
 	wxString *historyNames = nullptr;
 	wxMutex *historyGuard = nullptr;

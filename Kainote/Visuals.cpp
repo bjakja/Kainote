@@ -248,9 +248,8 @@ void Visuals::RenderSubs(wxString *subs, bool redraw /*= true*/)
 		delete subs;
 		return;
 	}
-	if (!tab->video->OpenOwnSubs(subs)){ KaiLog(_("Cannot open subtitle file")); }
 	tab->video->SetVisualEdition(true);
-	if (redraw){ tab->video->Render(); }
+	tab->video->OpenOwnSubsLater(subs, redraw);
 }
 
 void Visuals::SetVisual(Dialogue* dial, int tool, bool noRefresh)

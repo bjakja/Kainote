@@ -6,11 +6,18 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Headless tests for the modules that need neither wxWidgets nor a window.
 add_executable(kainote_tests
     check_main.cpp
+    AssBlendTests.cpp
+    FrameQueueTests.cpp
+    ParsedScriptsTests.cpp
     PlaybackTests.cpp
     TimebaseTests.cpp
     UndoHistoryTests.cpp
+    WaveformPeaksTests.cpp
+    ../Kainote/AssBlend.cpp
+    ../Kainote/FrameQueue.cpp
     ../Kainote/Playback.cpp
     ../Kainote/Timebase.cpp
+    ../Kainote/WaveformPeaks.cpp
 )
 
 enable_testing()

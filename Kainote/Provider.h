@@ -23,6 +23,7 @@
 #include "TabPanel.h"
 #include "Timebase.h"
 #include "Playback.h"
+#include "WaveformPeaks.h"
 #include <atomic>
 #include <vector>
 #include <thread>
@@ -48,7 +49,22 @@ public:
 	virtual ~Provider();
 	virtual void GetFrameBuffer(int frame, unsigned char** buffer) {};
 	virtual void GetFrame(int frame, unsigned char* buff) {};
+	// decodes frame ahead, so a later GetFrameBuffer only copies it
+	virtual void PrefetchFrame(int frame) {};
+	// GetFrameBuffer and playback frames come as NV12 for the GPU to convert;
+	// GetFrame always gives BGRA
+	virtual bool IsNv12() { return false; }
+	virtual void UseRgbOutput() {}
+	// the DXVA2_VideoTransferMatrix and range NV12 frames are converted with
+	virtual int YuvMatrix() { return 0; }
+	virtual bool YuvFullRange() { return false; }
+	// count mono samples, for the waveform, spectrum and other analysis
 	virtual void GetBuffer(void* buf, long long start, long long count, double vol = 1.0) {};
+	// count frames of GetChannels() interleaved samples, for playback
+	virtual void GetPlaybackBuffer(void* buf, long long start, long long count, double vol = 1.0)
+	{
+		GetBuffer(buf, start, count, vol);
+	}
 	virtual void GetChapters(std::vector<chapter>* _chapters) {}
 	virtual void DeleteOldAudioCache() {};
 	virtual void SetColorSpace(const wxString& matrix) {};
@@ -77,6 +93,10 @@ protected:
 	virtual bool FetchPlaybackFrame(int frame, unsigned char* buffer) { return false; }
 	std::atomic<bool> audioNotInitialized{ true };
 	std::atomic<float> m_audioProgress{ 0 };
+	// reads the whole cached audio once, stopping early when stop is set
+	void BuildPeaks(const std::atomic<bool> &stop);
+	WaveformPeaks m_peaks{ 256 };
+	std::atomic<bool> m_peaksReady{ false };
 	RendererFFMS2* m_renderer = nullptr;
 	int m_width = -1;
 	int m_height = -1;

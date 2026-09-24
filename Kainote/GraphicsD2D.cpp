@@ -119,6 +119,9 @@ GraphicsRenderer* GraphicsRenderer::GetDirect2DRenderer() { static WxGraphicsRen
 #endif
 
 #include <float.h> // for FLT_MAX, FLT_MIN
+#include <map>
+#include <mutex>
+#include <tuple>
 
 #ifndef WX_PRECOMP
 	#include "wx/dc.h"
@@ -2844,7 +2847,7 @@ class wxD2DFontData/* : public GraphicsObjectRefData*/// : public wxD2DManagedGr
 public:
 	wxD2DFontData(wxD2DRenderer* renderer, const wxFont& font, const wxRealPoint& dpi, const wxColor& color);
 
-	wxCOMPtr<IDWriteTextLayout> CreateTextLayout(const wxString& text) const;
+	wxCOMPtr<IDWriteTextLayout> CreateTextLayout(const wxString& text, FLOAT maxWidth = FLT_MAX) const;
 
 	wxD2DBrushData& GetBrushData() { return m_brushData; }
 
@@ -2852,7 +2855,16 @@ public:
 
 	wxCOMPtr<IDWriteFont> GetFont() { return m_font; }
 
+	void SetColour(wxD2DRenderer* renderer, const wxColour& color)
+	{
+		m_brushData = wxD2DBrushData(renderer, wxBrush(color));
+	}
+
+	static void ClearFormatCache();
+
 private:
+	void CreateFormat(const wxFont& font, const wxRealPoint& dpi);
+
 	// The native, device-independent font object
 	wxCOMPtr<IDWriteFont> m_font;
 
@@ -2867,9 +2879,39 @@ private:
 	bool m_strikethrough;
 };
 
+// text formats are device independent, so every context shares them
+struct CachedFontFormat
+{
+	wxCOMPtr<IDWriteFont> font;
+	wxCOMPtr<IDWriteTextFormat> format;
+};
+static std::mutex gs_fontFormatMutex;
+static std::map<wxString, CachedFontFormat> gs_fontFormats;
+
+void wxD2DFontData::ClearFormatCache()
+{
+	std::lock_guard<std::mutex> lock(gs_fontFormatMutex);
+	gs_fontFormats.clear();
+}
+
 wxD2DFontData::wxD2DFontData(wxD2DRenderer* renderer, const wxFont& font, const wxRealPoint& dpi, const wxColor& color) :
 	/*GraphicsObjectRefData(renderer), */m_brushData(renderer, wxBrush(color)),
 	m_underlined(font.GetUnderlined()), m_strikethrough(font.GetStrikethrough())
+{
+	wxString key = font.GetNativeFontInfoDesc() + wxString::Format(L"|%g", dpi.y);
+	std::lock_guard<std::mutex> lock(gs_fontFormatMutex);
+	auto it = gs_fontFormats.find(key);
+	if (it != gs_fontFormats.end()) {
+		m_font = it->second.font;
+		m_textFormat = it->second.format;
+		return;
+	}
+	CreateFormat(font, dpi);
+	if (m_font && m_textFormat)
+		gs_fontFormats[key] = CachedFontFormat{ m_font, m_textFormat };
+}
+
+void wxD2DFontData::CreateFormat(const wxFont& font, const wxRealPoint& dpi)
 {
 	HRESULT hr;
 
@@ -2939,9 +2981,8 @@ wxD2DFontData::wxD2DFontData(wxD2DRenderer* renderer, const wxFont& font, const 
 	//wxCHECK_HRESULT_RET(hr);
 }
 
-wxCOMPtr<IDWriteTextLayout> wxD2DFontData::CreateTextLayout(const wxString& text) const
+wxCOMPtr<IDWriteTextLayout> wxD2DFontData::CreateTextLayout(const wxString& text, FLOAT maxWidth) const
 {
-	static const FLOAT MAX_WIDTH = FLT_MAX;
 	static const FLOAT MAX_HEIGHT = FLT_MAX;
 
 	HRESULT hr;
@@ -2952,7 +2993,7 @@ wxCOMPtr<IDWriteTextLayout> wxD2DFontData::CreateTextLayout(const wxString& text
 		text.c_str(),
 		text.length(),
 		m_textFormat,
-		MAX_WIDTH,
+		maxWidth,
 		MAX_HEIGHT,
 		&textLayout);
 	wxCHECK2_HRESULT_RET(hr, wxCOMPtr<IDWriteTextLayout>(NULL));
@@ -2987,6 +3028,11 @@ public:
 	// this method empty, while others must adjust the render target size to match
 	// the underlying DC.
 	virtual void Resize()
+	{
+	}
+
+	// the device went away, so a render target kept for reuse must not be reused
+	virtual void DiscardReusable()
 	{
 	}
 
@@ -3469,6 +3515,16 @@ private:
 };
 #endif
 
+// Painting creates a context over a memory DC many times a second, so the DC
+// render targets are kept and bound to each new DC instead of being made again.
+// One per alpha mode, used by one context at a time (all on the UI thread).
+struct ReusableDCRenderTarget
+{
+	wxCOMPtr<ID2D1DCRenderTarget> target;
+	bool inUse = false;
+};
+static ReusableDCRenderTarget gs_reusableDCTargets[2];
+
 class wxD2DDCRenderTargetResourceHolder : public wxD2DRenderTargetResourceHolder
 {
 public:
@@ -3477,18 +3533,50 @@ public:
 	{
 	}
 
+	void ReleaseResource() override
+	{
+		if (m_reusable) {
+			m_reusable->inUse = false;
+			m_reusable = nullptr;
+		}
+		wxD2DRenderTargetResourceHolder::ReleaseResource();
+	}
+
+	void DiscardReusable() override
+	{
+		if (m_reusable)
+			m_reusable->target.reset();
+	}
+
 protected:
 	void DoAcquireResource() override
 	{
 		wxCOMPtr<ID2D1DCRenderTarget> renderTarget;
-		D2D1_RENDER_TARGET_PROPERTIES renderTargetProperties = D2D1::RenderTargetProperties(
-			D2D1_RENDER_TARGET_TYPE_DEFAULT,
-			D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, m_alphaMode));
+		ReusableDCRenderTarget &reusable = gs_reusableDCTargets[m_alphaMode == D2D1_ALPHA_MODE_PREMULTIPLIED ? 1 : 0];
+		if (reusable.target && !reusable.inUse && wxIsMainThread()) {
+			renderTarget = reusable.target;
+			// back to the state of a new render target
+			renderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+			renderTarget->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_DEFAULT);
+			renderTarget->SetTags(0, 0);
+		}
+		else {
+			D2D1_RENDER_TARGET_PROPERTIES renderTargetProperties = D2D1::RenderTargetProperties(
+				D2D1_RENDER_TARGET_TYPE_DEFAULT,
+				D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, m_alphaMode));
 
-		HRESULT hr = m_factory->CreateDCRenderTarget(
-			&renderTargetProperties,
-			&renderTarget);
-		//wxCHECK_HRESULT_RET(hr);
+			HRESULT hr = m_factory->CreateDCRenderTarget(
+				&renderTargetProperties,
+				&renderTarget);
+			if (FAILED(hr))
+				return;
+			if (!reusable.target && wxIsMainThread())
+				reusable.target = renderTarget;
+		}
+		if (renderTarget == reusable.target) {
+			reusable.inUse = true;
+			m_reusable = &reusable;
+		}
 
 		// We want draw on the entire device area.
 		// GetClipBox() retrieves logical size of DC
@@ -3497,8 +3585,7 @@ protected:
 		int status = ::GetClipBox(m_hdc, &r);
 		//wxCHECK_RET( status != ERROR, wxS("Error retrieving DC dimensions") );
 
-		hr = renderTarget->BindDC(m_hdc, &r);
-		//wxCHECK_HRESULT_RET(hr);
+		renderTarget->BindDC(m_hdc, &r);
 		renderTarget->SetTransform(
 					   D2D1::Matrix3x2F::Translation(-r.left, -r.top));
 
@@ -3509,6 +3596,7 @@ private:
 	ID2D1Factory* m_factory;
 	HDC m_hdc;
 	D2D1_ALPHA_MODE m_alphaMode;
+	ReusableDCRenderTarget* m_reusable = nullptr;
 };
 
 // The null context has no state of its own and does nothing.
@@ -3555,6 +3643,7 @@ public:
 protected:
 	void DoDrawText(const wxString&, wxDouble, wxDouble) {}
 	wxD2DFontData *m_font = NULL;
+	wxFont m_fontSource;
 	wxD2DRenderer *renderer;
 };
 
@@ -3641,6 +3730,10 @@ public:
 
 	wxD2DContext(wxD2DRenderer* renderer, ID2D1Factory* direct2dFactory, void* nativeContext);
 
+	// draws into a render target someone else keeps
+	wxD2DContext(wxD2DRenderer* renderer, ID2D1Factory* direct2dFactory,
+		const wxSharedPtr<wxD2DRenderTargetResourceHolder>& holder, int width, int height);
+
 	~wxD2DContext();
 
 	void Clip(const wxRegion& region);
@@ -3700,6 +3793,13 @@ public:
 
 	void SetFont(const wxFont& font, const wxColour& col);
 
+	void StrokeLine(wxDouble x1, wxDouble y1, wxDouble x2, wxDouble y2) override;
+
+	void DrawTextCentered(const wxString& str, wxDouble x, wxDouble y, wxDouble width) override;
+
+	void DrawTextRuns(const wxFont& font, const wxString& text, const std::vector<TextRun>& runs,
+		wxDouble x, wxDouble y) override;
+
 	void PushState();
 
 	void PopState();
@@ -3715,8 +3815,6 @@ public:
 
 	bool ShouldOffset() const;
 
-	void SetPen(const wxD2DPenData& pen);
-
 	void Flush();
 
 	void GetDPI(wxDouble* dpiX, wxDouble* dpiY) const;
@@ -3730,6 +3828,10 @@ private:
 	void Init();
 
 	void DoDrawText(const wxString& str, wxDouble x, wxDouble y);
+
+	void DrawLayout(IDWriteTextLayout* layout, wxDouble x, wxDouble y);
+
+	wxD2DBrushData* SolidBrush(const wxColour& colour);
 
 	void EnsureInitialized();
 
@@ -3786,9 +3888,16 @@ private:
 	wxDouble m_width,
 		m_height;
 
+	// m_pen and m_brush point into the caches below, or at m_ownedBrush
 	wxD2DPenData * m_pen = NULL;
 	wxD2DBrushData * m_brush = NULL;
+	wxD2DBrushData * m_ownedBrush = NULL;
+	std::map<wxUint32, wxD2DBrushData*> m_brushCache;
+	std::map<std::tuple<wxUint32, double, int>, wxD2DPenData*> m_penCache;
 	wxD2DFontData * m_font = NULL;
+	wxFont m_fontSource;
+	wxString m_fontKey;
+	wxD2DBrushData * m_textBrush = NULL;
 	wxAntialiasMode m_antialias;
 	wxCompositionMode m_composition;
 	wxInterpolationQuality m_interpolation;
@@ -3896,6 +4005,17 @@ wxD2DContext::wxD2DContext(wxD2DRenderer* renderer, ID2D1Factory* direct2dFactor
 	Init();
 }
 
+wxD2DContext::wxD2DContext(wxD2DRenderer* renderer, ID2D1Factory* direct2dFactory,
+	const wxSharedPtr<wxD2DRenderTargetResourceHolder>& holder, int width, int height) :
+	m_direct2dFactory(direct2dFactory),
+	m_renderTargetHolder(holder),
+	m_renderer(renderer)
+{
+	m_width = width;
+	m_height = height;
+	Init();
+}
+
 void wxD2DContext::Init()
 {
 	m_cachedRenderTarget = NULL;
@@ -3923,18 +4043,19 @@ wxD2DContext::~wxD2DContext()
 	}
 
 	HRESULT result = GetRenderTarget()->EndDraw();
-	//wxCHECK_HRESULT_RET(result);
+	if (result == D2DERR_RECREATE_TARGET)
+		m_renderTargetHolder->DiscardReusable();
 
 	ReleaseResources();
 
-	if (m_pen)
-		delete m_pen;
+	for (auto &pen : m_penCache)
+		delete pen.second;
 
-	if (m_brush)
-		delete m_brush;
+	for (auto &brush : m_brushCache)
+		delete brush.second;
 
-	if (m_font)
-		delete m_font;
+	delete m_ownedBrush;
+	delete m_font;
 }
 
 ID2D1RenderTarget* wxD2DContext::GetRenderTarget() const
@@ -4527,51 +4648,117 @@ void wxD2DContext::DoDrawText(const wxString& str, wxDouble x, wxDouble y)
 	if (m_composition == wxCOMPOSITION_DEST)
 		return;
 
-	//wxD2DFontData* fontData = m_font;
-	//fontData->GetBrushData().Bind(this);
-	m_font->GetBrushData().Bind(this);
 	wxCOMPtr<IDWriteTextLayout> textLayout = m_font->CreateTextLayout(str);
+	DrawLayout(textLayout, x, y);
+}
 
-	// Render the text
-	GetRenderTarget()->DrawTextLayout(
-		D2D1::Point2F(x, y),
-		textLayout,
-		m_font->GetBrushData().GetBrush());
+void wxD2DContext::DrawLayout(IDWriteTextLayout* layout, wxDouble x, wxDouble y)
+{
+	if (!layout)
+		return;
+
+	wxD2DBrushData* brush = m_textBrush ? m_textBrush : &m_font->GetBrushData();
+	brush->Bind(this);
+	GetRenderTarget()->DrawTextLayout(D2D1::Point2F(x, y), layout, brush->GetBrush());
+}
+
+void wxD2DContext::DrawTextCentered(const wxString& str, wxDouble x, wxDouble y, wxDouble width)
+{
+	if (!m_font || m_composition == wxCOMPOSITION_DEST)
+		return;
+
+	if (width <= 0) {
+		DoDrawText(str, x, y);
+		return;
+	}
+	wxCOMPtr<IDWriteTextLayout> textLayout = m_font->CreateTextLayout(str, (FLOAT)width);
+	if (!textLayout)
+		return;
+	textLayout->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
+	textLayout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+	DrawLayout(textLayout, x, y);
+}
+
+void wxD2DContext::DrawTextRuns(const wxFont& font, const wxString& text, const std::vector<TextRun>& runs,
+	wxDouble x, wxDouble y)
+{
+	if (runs.empty() || m_composition == wxCOMPOSITION_DEST)
+		return;
+
+	SetFont(font, runs[0].colour);
+	if (!m_font)
+		return;
+	EnsureInitialized();
+	// one layout for the whole text, coloured by ranges
+	wxCOMPtr<IDWriteTextLayout> textLayout = m_font->CreateTextLayout(text);
+	if (!textLayout)
+		return;
+	for (const TextRun& run : runs) {
+		wxD2DBrushData* brush = SolidBrush(run.colour);
+		if (!brush)
+			continue;
+		brush->Bind(this);
+		DWRITE_TEXT_RANGE range = { (UINT32)run.start, (UINT32)run.length };
+		textLayout->SetDrawingEffect(brush->GetBrush(), range);
+	}
+	DrawLayout(textLayout, x, y);
+}
+
+void wxD2DContext::StrokeLine(wxDouble x1, wxDouble y1, wxDouble x2, wxDouble y2)
+{
+	if (m_composition == wxCOMPOSITION_DEST || !m_pen)
+		return;
+
+	wxD2DOffsetHelper helper(this);
+
+	EnsureInitialized();
+	AdjustRenderTargetSize();
+
+	m_pen->Bind(this);
+	GetRenderTarget()->DrawLine(D2D1::Point2F(x1, y1), D2D1::Point2F(x2, y2),
+		m_pen->GetBrush(), m_pen->GetWidth(), m_pen->GetStrokeStyle());
+}
+
+// A render target that draws nowhere, for when the real one cannot be made,
+// so painting skips a frame instead of waiting for it forever.
+static ID2D1RenderTarget* FallbackRenderTarget(ID2D1Factory* factory)
+{
+	static wxCOMPtr<ID2D1DCRenderTarget> target;
+	if (!target) {
+		HDC screen = ::GetDC(nullptr);
+		HDC dc = ::CreateCompatibleDC(screen);
+		::SelectObject(dc, ::CreateCompatibleBitmap(screen, 1, 1));
+		::ReleaseDC(nullptr, screen);
+		D2D1_RENDER_TARGET_PROPERTIES props = D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_SOFTWARE,
+			D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE));
+		RECT rect = { 0, 0, 1, 1 };
+		if (FAILED(factory->CreateDCRenderTarget(&props, &target)) || FAILED(target->BindDC(dc, &rect)))
+			target.reset();
+	}
+	return target;
 }
 
 void wxD2DContext::EnsureInitialized()
 {
-	if (!m_renderTargetHolder->IsResourceAcquired())
-	{
-		//loop it avoid to crash when target is null cause of context problem
-		//but only wait when it really is null: sleeping on the success path
-		//cost 10 ms on every single repaint
-		while (!m_cachedRenderTarget) {
-			m_cachedRenderTarget = m_renderTargetHolder->GetD2DResource();
-			if (m_cachedRenderTarget)
-				break;
-			Sleep(10);
-		}
-		GetRenderTarget()->GetTransform(&m_initTransform);
-		GetRenderTarget()->BeginDraw();
-	}
-	else
+	if (m_renderTargetHolder->IsResourceAcquired())
 	{
 		m_cachedRenderTarget = m_renderTargetHolder->GetD2DResource();
+		return;
 	}
-}
-
-void wxD2DContext::SetPen(const wxD2DPenData& pen)
-{
-	m_pen = new wxD2DPenData(pen);
-
-	if (m_pen)
-	{
-		EnsureInitialized();
-
-		//wxD2DPenData* penData = wxGetD2DPenData(pen);
-		m_pen->Bind(this);
+	// already drawing into the fallback
+	if (m_cachedRenderTarget)
+		return;
+	for (int attempt = 0; attempt < 5 && !m_cachedRenderTarget; attempt++) {
+		m_cachedRenderTarget = m_renderTargetHolder->GetD2DResource();
+		if (!m_cachedRenderTarget)
+			Sleep(10);
 	}
+	if (!m_cachedRenderTarget)
+		m_cachedRenderTarget = FallbackRenderTarget(m_direct2dFactory);
+	if (!m_cachedRenderTarget)
+		return;
+	GetRenderTarget()->GetTransform(&m_initTransform);
+	GetRenderTarget()->BeginDraw();
 }
 
 void wxD2DContext::AdjustRenderTargetSize()
@@ -4785,6 +4972,8 @@ public:
 
 	GraphicsContext * CreateMeasuringContext();
 
+	GraphicsCanvas * CreateCanvas(wxWindow* window) override;
+
 	wxD2DPathData * CreatePath();
 
 	GraphicsMatrixData *CreateMatrix(
@@ -4848,26 +5037,59 @@ private:
 //wxIMPLEMENT_DYNAMIC_CLASS(wxD2DRenderer,wxGraphicsRenderer);
 
 void wxNullContext::SetFont(const wxFont& font, const wxColour& col){
+	if (m_font && font.IsSameAs(m_fontSource))
+		return;
 	wxDELETE(m_font);
 	m_font = renderer->CreateFont(font, col);
+	m_fontSource = font;
 }
 
 GraphicsPathData * wxD2DContext::CreatePath(){ return m_renderer->CreatePath(); };
 
 void wxD2DContext::SetPen(const wxPen& pen, double width){
-	wxGraphicsPenInfo info(pen.GetColour(), width, pen.GetStyle());
-	wxDELETE(m_pen);
-	m_pen = m_renderer->CreatePen(info);
+	if (!pen.IsOk() || pen.GetStyle() == wxPENSTYLE_TRANSPARENT) {
+		m_pen = NULL;
+		return;
+	}
+	wxD2DPenData*& cached = m_penCache[std::make_tuple(pen.GetColour().GetRGBA(), width, (int)pen.GetStyle())];
+	if (!cached)
+		cached = m_renderer->CreatePen(wxGraphicsPenInfo(pen.GetColour(), width, pen.GetStyle()));
+	m_pen = cached;
+}
+
+wxD2DBrushData* wxD2DContext::SolidBrush(const wxColour& colour){
+	wxD2DBrushData*& cached = m_brushCache[colour.GetRGBA()];
+	if (!cached)
+		cached = m_renderer->CreateBrush(wxBrush(colour));
+	return cached;
 }
 
 void wxD2DContext::SetBrush(const wxBrush& brush){
-	wxDELETE(m_brush);
-	m_brush = m_renderer->CreateBrush(brush);
+	if (!brush.IsOk() || brush.GetStyle() == wxBRUSHSTYLE_TRANSPARENT) {
+		m_brush = NULL;
+		return;
+	}
+	if (brush.GetStyle() == wxBRUSHSTYLE_SOLID) {
+		m_brush = SolidBrush(brush.GetColour());
+		return;
+	}
+	wxDELETE(m_ownedBrush);
+	m_ownedBrush = m_renderer->CreateBrush(brush);
+	m_brush = m_ownedBrush;
 }
 
 void wxD2DContext::SetFont(const wxFont& font, const wxColour& col){
+	m_textBrush = col.IsOk() ? SolidBrush(col) : NULL;
+	// without a colour the text takes the font's own brush, so that one has to match
+	if (m_font && col.IsOk() && font.IsSameAs(m_fontSource))
+		return;
+	wxString key = font.GetNativeFontInfoDesc();
+	m_fontSource = font;
+	if (m_font && col.IsOk() && key == m_fontKey)
+		return;
 	wxDELETE(m_font);
 	m_font = m_renderer->CreateFont(font, col);
+	m_fontKey = key;
 }
 
 GraphicsBitmapData *wxD2DContext::CreateBitmap(const wxBitmap& bmp) const
@@ -4941,6 +5163,136 @@ GraphicsContext* wxD2DRenderer::CreateContextFromNativeHDC(WXHDC dc)
 GraphicsContext* wxD2DRenderer::CreateContext(wxWindow* window)
 {
 	return new wxD2DContext(this, m_direct2dFactory, (HWND)window->GetHWND(), window);
+}
+
+// A render target the canvas keeps, lent to one context at a time.
+class wxD2DLentRenderTargetResourceHolder : public wxD2DRenderTargetResourceHolder
+{
+public:
+	explicit wxD2DLentRenderTargetResourceHolder(ID2D1RenderTarget* target) : m_target(target) {}
+	void DiscardReusable() override { m_lost = true; }
+	bool IsLost() const { return m_lost; }
+protected:
+	void DoAcquireResource() override { m_nativeResource = m_target; }
+private:
+	wxCOMPtr<ID2D1RenderTarget> m_target;
+	bool m_lost = false;
+};
+
+class wxD2DCanvas : public GraphicsCanvas
+{
+public:
+	wxD2DCanvas(wxD2DRenderer* renderer, ID2D1Factory* factory, HWND hwnd)
+		: m_renderer(renderer), m_factory(factory), m_hwnd(hwnd) {}
+
+	GraphicsContext* BeginScene(int width, int height) override
+	{
+		m_hasScene = false;
+		if (width < 1 || height < 1 || !EnsureWindowTarget())
+			return NULL;
+		if (!m_scene || m_sceneSize.width < (UINT32)width || m_sceneSize.height < (UINT32)height) {
+			m_scene.reset();
+			D2D1_SIZE_U pixels = D2D1::SizeU(width, height);
+			D2D1_PIXEL_FORMAT format = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE);
+			if (FAILED(m_window->CreateCompatibleRenderTarget(NULL, &pixels, &format,
+				D2D1_COMPATIBLE_RENDER_TARGET_OPTIONS_NONE, &m_scene))) {
+				Discard();
+				return NULL;
+			}
+			m_sceneSize = pixels;
+		}
+		// back to the state of a new render target
+		m_scene->SetTransform(D2D1::Matrix3x2F::Identity());
+		m_scene->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+		m_scene->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_DEFAULT);
+		m_lent = new wxD2DLentRenderTargetResourceHolder(m_scene);
+		m_holder = wxSharedPtr<wxD2DRenderTargetResourceHolder>(m_lent);
+		m_drawing = true;
+		GraphicsContext *made = new wxD2DContext(m_renderer, m_factory, m_holder, width, height);
+		return made;
+	}
+
+	bool Present(const wxRect* sources, const wxPoint* points, size_t count) override
+	{
+		if (m_drawing) {
+			// the scene's context is gone by now, and ended its drawing
+			m_drawing = false;
+			m_hasScene = !m_lent->IsLost();
+			m_holder.reset();
+			m_lent = NULL;
+			if (!m_hasScene) {
+				Discard();
+				return false;
+			}
+		}
+		if (!m_hasScene || !EnsureWindowTarget())
+			return false;
+		wxCOMPtr<ID2D1Bitmap> bitmap;
+		m_scene->GetBitmap(&bitmap);
+		m_window->BeginDraw();
+		m_window->SetTransform(D2D1::Matrix3x2F::Identity());
+		for (size_t i = 0; i < count; i++) {
+			const wxRect& s = sources[i];
+			D2D1_RECT_F source = D2D1::RectF(s.x, s.y, s.x + s.width, s.y + s.height);
+			D2D1_RECT_F dest = D2D1::RectF(points[i].x, points[i].y, points[i].x + s.width, points[i].y + s.height);
+			m_window->DrawBitmap(bitmap, dest, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, source);
+		}
+		HRESULT hr = m_window->EndDraw();
+		if (hr == D2DERR_RECREATE_TARGET) {
+			Discard();
+			return false;
+		}
+		return SUCCEEDED(hr);
+	}
+
+	bool HasScene() const override { return m_hasScene; }
+
+private:
+	bool EnsureWindowTarget()
+	{
+		RECT client;
+		GetClientRect(m_hwnd, &client);
+		D2D1_SIZE_U size = D2D1::SizeU(client.right - client.left, client.bottom - client.top);
+		if (m_window) {
+			D2D1_SIZE_U current = m_window->GetPixelSize();
+			if ((current.width != size.width || current.height != size.height) && FAILED(m_window->Resize(size)))
+				Discard();
+			if (m_window)
+				return true;
+		}
+		// no vsync wait: a paint must not stall the UI thread; 96 DPI keeps
+		// drawing in pixels, as the controls measure everything in pixels
+		if (FAILED(m_factory->CreateHwndRenderTarget(
+			D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_DEFAULT,
+				D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE), 96.f, 96.f),
+			D2D1::HwndRenderTargetProperties(m_hwnd, size, D2D1_PRESENT_OPTIONS_IMMEDIATELY),
+			&m_window)))
+			return false;
+		return true;
+	}
+
+	void Discard()
+	{
+		m_hasScene = false;
+		m_scene.reset();
+		m_window.reset();
+	}
+
+	wxD2DRenderer* m_renderer;
+	ID2D1Factory* m_factory;
+	HWND m_hwnd;
+	wxCOMPtr<ID2D1HwndRenderTarget> m_window;
+	wxCOMPtr<ID2D1BitmapRenderTarget> m_scene;
+	D2D1_SIZE_U m_sceneSize = D2D1::SizeU(0, 0);
+	wxSharedPtr<wxD2DRenderTargetResourceHolder> m_holder;
+	wxD2DLentRenderTargetResourceHolder* m_lent = NULL;
+	bool m_drawing = false;
+	bool m_hasScene = false;
+};
+
+GraphicsCanvas* wxD2DRenderer::CreateCanvas(wxWindow* window)
+{
+	return new wxD2DCanvas(this, m_direct2dFactory, (HWND)window->GetHWND());
 }
 
 #if wxUSE_IMAGE
@@ -5172,6 +5524,10 @@ public:
 			gs_WICImagingFactory->Release();
 			gs_WICImagingFactory = NULL;
 		}
+
+		wxD2DFontData::ClearFormatCache();
+		for (ReusableDCRenderTarget &reusable : gs_reusableDCTargets)
+			reusable.target.reset();
 
 		if ( gs_IDWriteFactory )
 		{

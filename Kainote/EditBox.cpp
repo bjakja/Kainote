@@ -360,6 +360,8 @@ EditBox::~EditBox()
 void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool autoPlay)
 {
 	bool rowChanged = currentLine != Row;
+	if (rowChanged)
+		grid->file->EndTypingRun();
 	//when preview is shown do not block setline 
 	//cause after click on preview and click back on original shit happens
 	if (nochangeline && !rowChanged && !tab->grid->preview) { 
@@ -493,7 +495,8 @@ done:
 
 void EditBox::UpdateChars()
 {
-
+	wxSize charsSize = Chars->GetMinSize();
+	wxSize timeSize = Chtime->GetMinSize();
 	if (line->IsComment){
 		Chars->SetLabelText(emptyString);
 		Chtime->SetLabelText(emptyString);
@@ -512,11 +515,11 @@ void EditBox::UpdateChars()
 		Chtime->SetLabelText(wxString::Format(_("Characters per second: %i<=15"), chtime));
 		Chtime->SetForegroundColour((chtime > 15) ? WINDOW_WARNING_ELEMENTS : WINDOW_TEXT);
 	}
+	if (Chars->GetMinSize() == charsSize && Chtime->GetMinSize() == timeSize)
+		return;
 	BoxSizer5->Layout();
 	Frames->Refresh(false);
-	Frames->Update();
 	Times->Refresh(false);
-	Times->Update();
 }
 
 void EditBox::ResizeTimeControls(bool SRT)
@@ -1557,7 +1560,9 @@ void EditBox::OnEdit(wxCommandEvent& event)
 
 	int saveAfter = Options.GetInt(GRID_SAVE_AFTER_CHARACTER_COUNT);
 	if (saveAfter && EditCounter >= saveAfter){
+		grid->file->SetTyping(true);
 		Send(EDITBOX_LINE_EDITION, false, false, true);
+		grid->file->SetTyping(false);
 		if (hasPreviewGrid){
 			tab->grid->RefreshPreview();
 		}
@@ -1571,7 +1576,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		return;
 
 	if (Visual > 0){
-		tab->video->SetVisual(true);
+		tab->video->SetVisualLater();
 		return;
 	}
 
@@ -1593,11 +1598,8 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		}
 	}
 
-	if (visible && (tab->video->IsShown() || tab->video->IsFullScreen())){
-		tab->video->OpenSubs(openFlag);
-		if (Visual > 0){ tab->video->ResetVisual(); }
-		else if (tab->video->GetState() == Paused){ tab->video->Render(); }
-	}
+	if (visible && (tab->video->IsShown() || tab->video->IsFullScreen()))
+		tab->video->OpenSubsLater(openFlag);
 
 }
 

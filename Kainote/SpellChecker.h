@@ -29,6 +29,9 @@
 // Aegisub Project http://www.aegisub.org/
 
 #pragma once
+#include <mutex>
+#include <string>
+#include <unordered_map>
 
 #include "config.h"
 #include <hunspell.hxx>
@@ -73,6 +76,10 @@ private:
 	bool isRTL = false;
 	bool allCPSChars = false;
 	bool allWrapsChars = false;
+	// results by word, dropped whenever the dictionary changes
+	std::unordered_map<std::wstring, bool> wordResults;
+	std::mutex wordResultsMutex;
+	void ForgetWordResults();
 	//no const cause of clearing
 	inline void Check(std::wstring &checkText, TextData *errs, std::vector<MisspellData> *misspells, std::vector<size_t> &textOffset, const wxString &text, bool repltags, int replaceTagsLen, int fullTextLen);
 };

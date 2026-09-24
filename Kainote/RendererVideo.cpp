@@ -23,6 +23,8 @@
 #include "Provider.h"
 #include "VideoFullscreen.h"
 #include "SubtitlesProviderManager.h"
+#include "AudioBox.h"
+#include "D3D9Device.h"
 
 #include <wx/dir.h>
 #include <wx/clipbrd.h>
@@ -85,6 +87,8 @@ namespace
 #endif
 
 
+wxCriticalSection RendererVideo::m_MutexRendering;
+
 void CreateVERTEX(VERTEX * v, float X, float Y, D3DCOLOR colour, float Z)
 {
 	v->fX = X;
@@ -117,6 +121,7 @@ RendererVideo::RendererVideo(VideoBox *control, bool visualDisabled)
 RendererVideo::~RendererVideo()
 {
 
+	SetFineTimer(false);
 	Clear();
 	SAFE_DELETE(m_Visual);
 	SAFE_RELEASE(m_SubsProvider);
@@ -292,16 +297,21 @@ void RendererVideo::UpdateVideoWindow()
 	return;
 #endif
 
-	if (!InitDX()){
-		//need tests, if lost device return any error when reseting or not
-		Clear();
-		if (!InitDX()){
-			return;
-		}
+	if (FitsBackBuffer()) {
+		SetProjection();
+		WindowResized();
 	}
-
-	if (m_FrameBuffer){
-		RecreateSurface();
+	else {
+		if (!InitDX()){
+			//need tests, if lost device return any error when reseting or not
+			Clear();
+			if (!InitDX()){
+				return;
+			}
+		}
+		if (m_FrameBuffer){
+			RecreateSurface();
+		}
 	}
 
 
@@ -317,23 +327,26 @@ void RendererVideo::UpdateVideoWindow()
 
 bool RendererVideo::InitDX()
 {
-
-	if (!m_D3DObject){
-		m_D3DObject = Direct3DCreate9(D3D_SDK_VERSION);
-		PTR(m_D3DObject, _("Cannot create Direct3D object"));
-	}
-	else{
+	wxCriticalSectionLocker lock(m_MutexRendering);
+	if (m_D3DDevice){
 		Clear(false);
 	}
 
 	HRESULT hr;
 
+	// as large as the monitor, so resizing the window does not have to reset the device
+	MONITORINFO monitor = { sizeof(MONITORINFO) };
+	GetMonitorInfo(MonitorFromWindow(m_HWND, MONITOR_DEFAULTTONEAREST), &monitor);
+	m_BackBufferWidth = wxMax((UINT)m_WindowRect.right, (UINT)(monitor.rcMonitor.right - monitor.rcMonitor.left));
+	m_BackBufferHeight = wxMax((UINT)m_WindowRect.bottom, (UINT)(monitor.rcMonitor.bottom - monitor.rcMonitor.top));
+	m_DeviceWindow = m_HWND;
+
 	D3DPRESENT_PARAMETERS d3dpp;
 	ZeroMemory(&d3dpp, sizeof(d3dpp));
 	d3dpp.Windowed = TRUE;
 	d3dpp.hDeviceWindow = m_HWND;
-	d3dpp.BackBufferWidth = m_WindowRect.right;
-	d3dpp.BackBufferHeight = m_WindowRect.bottom;
+	d3dpp.BackBufferWidth = m_BackBufferWidth;
+	d3dpp.BackBufferHeight = m_BackBufferHeight;
 	d3dpp.BackBufferCount = 1;
 	d3dpp.SwapEffect = D3DSWAPEFFECT_COPY;//D3DSWAPEFFECT_COPY;//D3DSWAPEFFECT_DISCARD;//
 	d3dpp.BackBufferFormat = D3DFMT_X8R8G8B8;
@@ -342,25 +355,49 @@ bool RendererVideo::InitDX()
 	d3dpp.EnableAutoDepthStencil = FALSE;
 	d3dpp.MultiSampleType = D3DMULTISAMPLE_NONE;
 
-	if (m_D3DDevice){
+	if (!m_D3DDevice){
+		m_D3DDevice = SharedD3D9Device::Acquire(SharedDeviceKind::Video, &m_DeviceGeneration);
+		m_SharedDevice = m_D3DDevice != nullptr;
+		if (!m_SharedDevice && !CreateD3D9Device(m_HWND, &d3dpp, D3DCREATE_MULTITHREADED | D3DCREATE_FPU_PRESERVE,
+			&m_D3DObject, &m_D3DDevice)){
+			KaiLog(_("Cannot create D3D9 device"));
+			return false;
+		}
+	}
+	else if (!m_SharedDevice){
 		hr = m_D3DDevice->Reset(&d3dpp);
 		if (FAILED(hr)){
 			KaiLogSilent(L"Video: " + _("Cannot reset Direct3D"));
 			return false;
 		}
 	}
-	else{
-		hr = m_D3DObject->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_HWND,
-			D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED | 
-			D3DCREATE_FPU_PRESERVE/* | D3DCREATE_PUREDEVICE*/, &d3dpp, &m_D3DDevice);
-		if (FAILED(hr)){
-			HR(m_D3DObject->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_HWND,
-				D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED | 
-				D3DCREATE_FPU_PRESERVE /*| D3DCREATE_PUREDEVICE*/, &d3dpp, &m_D3DDevice),
-				_("Cannot create D3D9 device"));
-		}
+	if (m_SharedDevice){
+		HR(m_D3DDevice->CreateAdditionalSwapChain(&d3dpp, &m_SwapChain), _("Cannot create swap chain"));
+		IDirect3DSurface9 *target = nullptr;
+		HR(GetBackBuffer(&target), _("Cannot create surface"));
+		m_D3DDevice->SetRenderTarget(0, target);
+		target->Release();
 	}
 
+	ApplyDeviceState();
+
+	if (!InitRendererDX())
+		return false;
+
+	wxFont *font12 = Options.GetFont(4);
+	wxSize pixelSize = font12->GetPixelSize();
+	HR(D3DXCreateFontW(m_D3DDevice, pixelSize.y, pixelSize.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
+		DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &m_D3DFont), _("Cannot create D3DX font"));
+	HR(D3DXCreateFontW(m_D3DDevice, pixelSize.y, pixelSize.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
+		DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &m_D3DCalcFont), _("Cannot create D3DX font"));
+	HR(D3DXCreateLine(m_D3DDevice, &m_D3DLine), _("Cannot create D3DX line"));
+
+	return true;
+}
+
+void RendererVideo::ApplyDeviceState()
+{
+	HRESULT hr;
 	hr = m_D3DDevice->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, TRUE);
 	hr = m_D3DDevice->SetRenderState(D3DRS_ANTIALIASEDLINEENABLE, TRUE);
 
@@ -380,32 +417,67 @@ bool RendererVideo::InitDX()
 	hr = m_D3DDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
 	hr = m_D3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
 	hr = m_D3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
-	HR(hr, _("One of the DirectX settings failed"));
+	hr = m_D3DDevice->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE);
+	hr = m_D3DDevice->SetTexture(0, nullptr);
 
-	D3DXMATRIX matOrtho;
 	D3DXMATRIX matIdentity;
+	D3DXMatrixIdentity(&matIdentity);
+	SetProjection();
+	m_D3DDevice->SetTransform(D3DTS_WORLD, &matIdentity);
+	m_D3DDevice->SetTransform(D3DTS_VIEW, &matIdentity);
+}
+
+// call with m_MutexRendering locked
+bool RendererVideo::BeginFrame()
+{
+	if (!m_SharedDevice)
+		return true;
+	if (SharedD3D9Device::Generation(SharedDeviceKind::Video) != m_DeviceGeneration) {
+		Clear(true);
+		m_DeviceLost = true;
+		return false;
+	}
+	// another view may have drawn since, into its own swap chain and state
+	m_D3DDevice->SetRenderTarget(0, m_BlackBarsSurface);
+	ApplyDeviceState();
+	return true;
+}
+
+HRESULT RendererVideo::PresentFrame()
+{
+	HRESULT hr = m_SwapChain ? m_SwapChain->Present(&m_WindowRect, &m_WindowRect, nullptr, nullptr, 0)
+		: m_D3DDevice->Present(&m_WindowRect, &m_WindowRect, nullptr, nullptr);
+	// a removed device cannot be reset, so it goes and the next render makes a new one
+	if (IsD3D9DeviceRemoved(hr)) {
+		if (m_SharedDevice)
+			SharedD3D9Device::Removed(SharedDeviceKind::Video, m_DeviceGeneration);
+		Clear(true);
+	}
+	return hr;
+}
+
+HRESULT RendererVideo::GetBackBuffer(IDirect3DSurface9 **surface)
+{
+	return m_SwapChain ? m_SwapChain->GetBackBuffer(0, D3DBACKBUFFER_TYPE_MONO, surface)
+		: m_D3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, surface);
+}
+
+bool RendererVideo::FitsBackBuffer() const
+{
+	return m_D3DDevice && !m_DeviceLost && m_HWND == m_DeviceWindow &&
+		(UINT)m_WindowRect.right <= m_BackBufferWidth && (UINT)m_WindowRect.bottom <= m_BackBufferHeight;
+}
+
+// window pixels map one to one onto the top left of the back buffer; the
+// viewport has to match, as the back buffer is larger than the window
+void RendererVideo::SetProjection()
+{
+	D3DVIEWPORT9 viewport = { 0, 0, (DWORD)m_WindowRect.right, (DWORD)m_WindowRect.bottom, 0.0f, 1.0f };
+	m_D3DDevice->SetViewport(&viewport);
+	D3DXMATRIX matOrtho;
 	//fix to shitty subs on radeons texture is stretched and need filtering linear and looks blured or on filter point are pixelized
 	D3DXMatrixOrthoOffCenterLH(&matOrtho, 0.5f, m_WindowRect.right + 0.5f, m_WindowRect.bottom + 0.5f, 0.5f, 0.0f, 1.0f);
-	D3DXMatrixIdentity(&matIdentity);
-
-	HR(m_D3DDevice->SetTransform(D3DTS_PROJECTION, &matOrtho), _("Cannot set matrix projection"));
-	HR(m_D3DDevice->SetTransform(D3DTS_WORLD, &matIdentity), _("Cannot set world matrix"));
-	HR(m_D3DDevice->SetTransform(D3DTS_VIEW, &matIdentity), _("Cannot set view matrix"));
-
-
-
-	if (!InitRendererDX())
-		return false;
-
-	wxFont *font12 = Options.GetFont(4);
-	wxSize pixelSize = font12->GetPixelSize();
-	HR(D3DXCreateFontW(m_D3DDevice, pixelSize.y, pixelSize.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &m_D3DFont), _("Cannot create D3DX font"));
-	HR(D3DXCreateFontW(m_D3DDevice, pixelSize.y, pixelSize.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &m_D3DCalcFont), _("Cannot create D3DX font"));
-	HR(D3DXCreateLine(m_D3DDevice, &m_D3DLine), _("Cannot create D3DX line"));
-
-	return true;
+	m_D3DDevice->SetTransform(D3DTS_PROJECTION, &matOrtho);
 }
 
 void RendererVideo::Clear(bool clearObject)
@@ -420,9 +492,11 @@ void RendererVideo::Clear(bool clearObject)
 
 	//clear elements in dshow class
 	ClearObject();
+	SAFE_RELEASE(m_SwapChain);
 	if (clearObject){
 		SAFE_RELEASE(m_D3DDevice);
 		SAFE_RELEASE(m_D3DObject);
+		m_SharedDevice = false;
 		m_HasZoom = false;
 	}
 }
@@ -441,6 +515,22 @@ void RendererVideo::OpenSubsForPlayback()
 	}
 }
 
+void RendererVideo::PrepareWholeSubtitles()
+{
+	if (m_State == Playing || !tab->editor || m_SubsProvider->ShowsWholeSubtitles() ||
+		!m_SubsProvider->CanPrepare())
+		return;
+	m_SubsProvider->Prepare(WholeSubtitlesText());
+}
+
+wxString *RendererVideo::WholeSubtitlesText()
+{
+	wxString *text = tab->grid->GetVisible(nullptr, nullptr, nullptr, true);
+	if (text && m_Visual && m_Visual->Visual == VECTORCLIP)
+		m_Visual->AppendClipMask(text);
+	return text;
+}
+
 void RendererVideo::MarkSubtitlesOutdated()
 {
 	m_SubsProvider->MarkOutdated();
@@ -448,13 +538,13 @@ void RendererVideo::MarkSubtitlesOutdated()
 
 wxString *RendererVideo::SubtitlesText(int flag, wxString *text)
 {
+	++m_SubsGeneration;
 	switch (flag){
 	case OPEN_DUMMY:
 		text = tab->grid->GetVisible();
 		break;
 	case OPEN_WHOLE_SUBTITLES:
-		text = tab->grid->GetVisible(nullptr, nullptr, nullptr, true);
-		break;
+		return WholeSubtitlesText();
 	default:
 		break;
 	}
@@ -475,6 +565,56 @@ void RendererVideo::ReopenSubsAfterSeek(bool playing)
 	else if (!m_SubsProvider->ShowsWholeSubtitles() && tab->editor){
 		OpenSubs((playing) ? OPEN_WHOLE_SUBTITLES : OPEN_DUMMY, true);
 	}
+}
+
+void RendererVideo::QueueSeekRefresh(bool playing, bool refreshAudio)
+{
+	if (wxIsMainThread()) {
+		SeekRefresh(playing, refreshAudio);
+		return;
+	}
+	std::lock_guard<std::mutex> lock(m_SeekRefreshMutex);
+	m_SeekRefreshPlaying = playing;
+	m_SeekRefreshAudio = m_SeekRefreshAudio || refreshAudio;
+	if (m_SeekRefreshQueued)
+		return;
+	m_SeekRefreshQueued = true;
+	// a renderer made meanwhile has nothing queued, so this is a no-op for it
+	VideoBox *vb = videoControl;
+	vb->CallAfter([vb]() {
+		if (vb->renderer)
+			vb->renderer->RunQueuedSeekRefresh();
+	});
+}
+
+void RendererVideo::RunQueuedSeekRefresh()
+{
+	bool playing, refreshAudio;
+	{
+		std::lock_guard<std::mutex> lock(m_SeekRefreshMutex);
+		if (!m_SeekRefreshQueued)
+			return;
+		m_SeekRefreshQueued = false;
+		playing = m_SeekRefreshPlaying;
+		refreshAudio = m_SeekRefreshAudio;
+		m_SeekRefreshAudio = false;
+	}
+	SeekRefresh(playing, refreshAudio);
+}
+
+void RendererVideo::SeekRefresh(bool playing, bool refreshAudio)
+{
+	ReopenSubsAfterSeek(playing);
+	if (playing) {
+		if (m_AudioPlayer && m_AudioPlayer->player)
+			m_AudioPlayer->player->SetCurrentPosition(m_AudioPlayer->GetSampleAtMS(m_Time));
+		return;
+	}
+	//rebuild spectrum cause position can be changed
+	if (refreshAudio && m_AudioPlayer)
+		m_AudioPlayer->UpdateImage(false, false);
+	videoControl->RefreshTime();
+	Render();
 }
 
 bool RendererVideo::PlayLine(int start, int eend)
@@ -502,9 +642,21 @@ bool RendererVideo::Play(int end)
 	OpenSubsForPlayback();
 
 	m_PlayEndTime = (end > 0) ? end : 0;
+	SetFineTimer(true);
 	m_State = Playing;
 	StartStream();
 	return true;
+}
+
+void RendererVideo::SetFineTimer(bool fine)
+{
+	if (fine == m_FineTimer)
+		return;
+	m_FineTimer = fine;
+	if (fine)
+		timeBeginPeriod(1);
+	else
+		timeEndPeriod(1);
 }
 
 bool RendererVideo::Pause()
@@ -513,6 +665,7 @@ bool RendererVideo::Pause()
 		SetThreadExecutionState(ES_CONTINUOUS);
 		m_State = Paused;
 		PauseStream();
+		SetFineTimer(false);
 	}
 	else if (m_State != None){
 		Play();
@@ -528,6 +681,7 @@ bool RendererVideo::Stop()
 	SetThreadExecutionState(ES_CONTINUOUS);
 	m_State = Stopped;
 	StopStream();
+	SetFineTimer(false);
 	m_PlayEndTime = 0;
 	m_Time = 0;
 	return true;
@@ -993,6 +1147,31 @@ bool RendererVideo::RemoveVisual(bool noRefresh, bool disable)
 int RendererVideo::GetCurrentPosition()
 {
 	return m_Time;
+}
+
+int RendererVideo::PlaybackClock()
+{
+	DWORD now = timeGetTime();
+	std::shared_ptr<AudioPosition> position = GetAudioPosition();
+	long long frame = position ? position->Frame() : -1;
+	if (frame >= 0 && position->SampleRate() > 0) {
+		int audioMs = (int)(frame * 1000 / position->SampleRate());
+		m_LastTime = now - audioMs;
+		return audioMs;
+	}
+	return (int)(now - m_LastTime);
+}
+
+void RendererVideo::SetAudioPosition(std::shared_ptr<AudioPosition> position)
+{
+	std::lock_guard<std::mutex> lock(m_AudioPositionMutex);
+	m_AudioPosition = std::move(position);
+}
+
+std::shared_ptr<AudioPosition> RendererVideo::GetAudioPosition()
+{
+	std::lock_guard<std::mutex> lock(m_AudioPositionMutex);
+	return m_AudioPosition;
 }
 
 int RendererVideo::GetCurrentFrame()

@@ -359,7 +359,11 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitp
     <ClCompile Include="KaiGauge.cpp" />
     <ClCompile Include="KaiPanel.cpp" />
     <ClCompile Include="LineParse.cpp" />
+    <ClCompile Include="AssBlend.cpp" />
+    <ClCompile Include="D3D9Device.cpp" />
+    <ClCompile Include="FrameQueue.cpp" />
     <ClCompile Include="Playback.cpp" />
+    <ClCompile Include="WaveformPeaks.cpp" />
     <ClCompile Include="Provider.cpp" />
     <ClCompile Include="ProviderDummy.cpp" />
     <ClCompile Include="ProviderFFMS2.cpp" />
@@ -525,7 +529,12 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitp
     <ClInclude Include="KaiPanel.h" />
     <ClInclude Include="LineParse.h" />
     <ClInclude Include="Notebook.h" />
+    <ClInclude Include="AssBlend.h" />
+    <ClInclude Include="D3D9Device.h" />
+    <ClInclude Include="FrameQueue.h" />
+    <ClInclude Include="ParsedScripts.h" />
     <ClInclude Include="Playback.h" />
+    <ClInclude Include="WaveformPeaks.h" />
     <ClInclude Include="Provider.h" />
     <ClInclude Include="ProviderDummy.h" />
     <ClInclude Include="ProviderFFMS2.h" />

@@ -34,6 +34,7 @@
 #include <wx/clipbrd.h>
 #include <wx/regex.h>
 #include <wx/filedlg.h>
+#include "GraphicsD2D.h"
 
 SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 	: KaiScrolledWindow(parent, id, pos, size, style | wxVERTICAL)

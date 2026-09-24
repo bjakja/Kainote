@@ -242,7 +242,7 @@ void DirectSoundPlayer2Thread::Run()
 				linuxState->failMessage = L"GStreamer could not map an audio buffer";
 				break;
 			}
-			provider->GetBuffer(map.data, frame, framesToWrite, playbackVolume);
+			provider->GetPlaybackBuffer(map.data, frame, framesToWrite, playbackVolume);
 			gst_buffer_unmap(buf, &map);
 			const GstFlowReturn flow = gst_app_src_push_buffer(GST_APP_SRC(src), buf);
 			std::lock_guard<std::mutex> lock(linuxState->mutex);
@@ -434,7 +434,7 @@ long long DirectSoundPlayer2Thread::GetCurrentFrame()
 	const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
 		std::chrono::steady_clock::now() - linuxState->playbackStart).count();
 	long long audibleFrame = start_frame + elapsed * provider->GetSampleRate() / 1000;
-	return std::min(audibleFrame, end_frame);
+	return std::min(audibleFrame, end_frame.load());
 }
 
 long long DirectSoundPlayer2Thread::GetEndFrame()
@@ -449,6 +449,11 @@ double DirectSoundPlayer2Thread::GetVolume()
 	CheckError();
 	std::lock_guard<std::mutex> lock(linuxState->mutex);
 	return volume;
+}
+
+long long AudioPosition::Frame()
+{
+	return -1;
 }
 
 bool DirectSoundPlayer2Thread::IsDead()
@@ -469,6 +474,7 @@ unsigned int __stdcall DirectSoundPlayer2Thread::ThreadProc(void *parameter)
 
 void DirectSoundPlayer2Thread::Run()
 {
+	MultimediaThread multimedia(L"Audio");
 	// Create DirectSound object
 	IDirectSound8 * defaultPlayback = nullptr;
 	HRESULT hr = DS_OK;
@@ -529,8 +535,17 @@ void DirectSoundPlayer2Thread::Run()
 	audioBuffer7 = nullptr;
 
 	if (!audioBuffer) {
+		defaultPlayback->Release();
 		SetEvent(error_happened);
 		return;
+	}
+
+	{
+		std::lock_guard<std::mutex> lock(position->mutex);
+		position->buffer = audioBuffer;
+		position->buffer_bytes = bufSize;
+		position->bytes_per_frame = provider->GetChannels() * provider->GetBytesPerSample();
+		position->sample_rate = provider->GetSampleRate();
 	}
 
 	// Now we're ready to roll!
@@ -549,7 +564,7 @@ void DirectSoundPlayer2Thread::Run()
 	unsigned long buffer_offset = 0;
 	bool playback_should_be_running = false;
 	int current_latency = wanted_latency;
-	const DWORD wanted_latency_bytes = wanted_latency * waveFormat.nSamplesPerSec * provider->GetBytesPerSample() / 1000;
+	const DWORD wanted_latency_bytes = wanted_latency * waveFormat.nAvgBytesPerSec / 1000;
 
 	while (running)
 	{
@@ -574,21 +589,14 @@ void DirectSoundPlayer2Thread::Run()
 					KaiLogSilent("Could not reset playback buffer cursor before filling first buffer.");
 
 				HRESULT res = audioBuffer->Lock(buffer_offset, 0, (void **) &buf, &buf_size, 0, 0, DSBLOCK_ENTIREBUFFER);
-				while (FAILED(res)) // yes, while, so I can break out of it without a goto!
+				if (res == DSERR_BUFFERLOST && SUCCEEDED(audioBuffer->Restore()))
+					res = audioBuffer->Lock(buffer_offset, 0, (void **)&buf, &buf_size, 0, 0, DSBLOCK_ENTIREBUFFER);
+				if (FAILED(res))
 				{
-					if (res == DSERR_BUFFERLOST)
-					{
-						// Try to regain the buffer
-						if (SUCCEEDED(audioBuffer->Restore()) &&
-							SUCCEEDED(audioBuffer->Lock(buffer_offset, 0, ((void**) &buf), &buf_size, 0, 0, DSBLOCK_ENTIREBUFFER)))
-						{
-							break;
-						}
-
-						KaiLogSilent("Lost buffer and could not restore it.");
-					}
-
 					KaiLogSilent("Could not lock buffer for playback.");
+					SetStopped();
+					playback_should_be_running = false;
+					break;
 				}
 
 				// Clear the buffer in case we can't fill it completely
@@ -604,8 +612,8 @@ void DirectSoundPlayer2Thread::Run()
 					if (bytes_filled < wanted_latency_bytes)
 					{
 						// Very short playback length, do without streaming playback
-						current_latency = (bytes_filled * 1000) / (waveFormat.nSamplesPerSec*provider->GetBytesPerSample());
-						current_latency = (bytes_filled * 1000) / (waveFormat.nSamplesPerSec*provider->GetBytesPerSample());
+						current_latency = (bytes_filled * 1000) / waveFormat.nAvgBytesPerSec;
+						current_latency = (bytes_filled * 1000) / waveFormat.nAvgBytesPerSec;
 						if (FAILED(audioBuffer->Play(0, 0, 0)))
 							KaiLogSilent("Could not start single-buffer playback.");
 					}
@@ -617,6 +625,7 @@ void DirectSoundPlayer2Thread::Run()
 							KaiLogSilent("Could not start looping playback.");
 					}
 
+					SetWritten(next_input_frame, buffer_offset, bytes_filled >= wanted_latency_bytes, true);
 					SetEvent(is_playing);
 					playback_should_be_running = true;
 
@@ -627,7 +636,7 @@ void DirectSoundPlayer2Thread::Run()
 			{
 				// Stop playing
 				audioBuffer->Stop();
-				ResetEvent(is_playing);
+				SetStopped();
 				playback_should_be_running = false;
 				break;
 			}
@@ -638,7 +647,7 @@ void DirectSoundPlayer2Thread::Run()
 				if (end_frame <= next_input_frame)
 				{
 					audioBuffer->Stop();
-					ResetEvent(is_playing);
+					SetStopped();
 					playback_should_be_running = false;
 				}
 				else
@@ -664,7 +673,7 @@ void DirectSoundPlayer2Thread::Run()
 			{
 				// Perform suicide
 				audioBuffer->Stop();
-				ResetEvent(is_playing);
+				SetStopped();
 				playback_should_be_running = false;
 				running = false;
 				break;
@@ -687,7 +696,7 @@ do_fill_buffer:
 						// Not looping playback...
 						// hopefully we only triggered timeout after being done with the buffer
 						audioBuffer->Stop();
-						ResetEvent(is_playing);
+						SetStopped();
 						playback_should_be_running = false;
 						break;
 					}
@@ -713,38 +722,26 @@ do_fill_buffer:
 					//assert((unsigned long)bytes_needed <= bufSize);
 
 					HRESULT res = audioBuffer->Lock(buffer_offset, bytes_needed, (void** )&buf1, &buf1sz, (void** )&buf2, &buf2sz, 0);
-					switch (res)
+					if (res == DSERR_BUFFERLOST)
 					{
-					case DSERR_BUFFERLOST:
-						// Try to regain the buffer
-						// When the buffer was lost the entire contents was lost too, so we have to start over
-						if (SUCCEEDED(audioBuffer->Restore()) &&
-							SUCCEEDED(audioBuffer->Lock(0, bufSize, (void**)&buf1, &buf1sz, (void**)&buf2, &buf2sz, 0)) &&
-							SUCCEEDED(audioBuffer->Play(0, 0, DSBPLAY_LOOPING)))
-						{
-							KaiLogDebug("DirectSoundPlayer2: Lost and restored buffer");
-							break;
-						}
-						KaiLogDebug("Lost buffer and could not restore it.");
-
-					case DSERR_INVALIDPARAM:
-						KaiLogDebug("Invalid parameters to IDirectSoundBuffer8::Lock().");
-
-					case DSERR_INVALIDCALL:
-						KaiLogDebug("Invalid call to IDirectSoundBuffer8::Lock().");
-
-					case DSERR_PRIOLEVELNEEDED:
-						KaiLogDebug("Incorrect priority level set on DirectSoundBuffer8 object.");
-
-					default:
-						if (FAILED(res))
-							KaiLogDebug("Could not lock , unknown error.");
-							break;
+						// the contents went with the buffer, so start filling it over
+						buffer_offset = 0;
+						res = audioBuffer->Restore();
+						if (SUCCEEDED(res))
+							res = audioBuffer->Lock(0, bufSize, (void**)&buf1, &buf1sz, (void**)&buf2, &buf2sz, 0);
+						if (SUCCEEDED(res))
+							res = audioBuffer->Play(0, 0, DSBPLAY_LOOPING);
+					}
+					if (FAILED(res))
+					{
+						KaiLogDebug(wxString::Format(L"Could not lock the playback buffer (0x%08X).", (unsigned)res));
+						break;
 					}
 
 					DWORD bytes_filled = FillAndUnlockBuffers(buf1, buf1sz, buf2, buf2sz, next_input_frame, audioBuffer);
 					buffer_offset += bytes_filled;
 					if (buffer_offset >= bufSize) buffer_offset -= bufSize;
+					SetWritten(next_input_frame, buffer_offset, true, false);
 
 					if (bytes_filled < 1024)
 					{
@@ -755,7 +752,7 @@ do_fill_buffer:
 					else if (bytes_filled < wanted_latency_bytes)
 					{
 						// Didn't fill as much as we wanted to, let's get back to filling sooner than normal
-						current_latency = (bytes_filled * 1000) / (waveFormat.nSamplesPerSec * provider->GetBytesPerSample());
+						current_latency = (bytes_filled * 1000) / waveFormat.nAvgBytesPerSec;
 					}
 					else
 					{
@@ -773,7 +770,47 @@ do_fill_buffer:
 		}
 	}
 
+	{
+		std::lock_guard<std::mutex> lock(position->mutex);
+		position->buffer = nullptr;
+		position->playing = false;
+	}
+	audioBuffer->Release();
+	defaultPlayback->Release();
+}
 
+void DirectSoundPlayer2Thread::SetWritten(long long frame, unsigned long offset, bool refills, bool started)
+{
+	std::lock_guard<std::mutex> lock(position->mutex);
+	position->written_frame = frame;
+	position->write_offset = offset;
+	position->refilled = refills;
+	if (started)
+		position->restarting = false;
+}
+
+void DirectSoundPlayer2Thread::SetStopped()
+{
+	ResetEvent(is_playing);
+	std::lock_guard<std::mutex> lock(position->mutex);
+	position->playing = false;
+}
+
+long long AudioPosition::Frame()
+{
+	// what was written minus what the sound card has not reached yet
+	std::lock_guard<std::mutex> lock(mutex);
+	if (!playing)
+		return -1;
+	DWORD playCursor = 0;
+	if (restarting || !buffer || !buffer_bytes || FAILED(buffer->GetCurrentPosition(&playCursor, nullptr)))
+		return start_frame;
+	unsigned long ahead = (write_offset + buffer_bytes - playCursor) % buffer_bytes;
+	// a refilled buffer meets the cursor full, a one-shot one meets it played out
+	if (ahead == 0 && refilled)
+		ahead = buffer_bytes;
+	long long frame = written_frame - (long long)ahead / bytes_per_frame;
+	return (frame < start_frame) ? start_frame : frame;
 }
 
 
@@ -813,7 +850,7 @@ unsigned int DirectSoundPlayer2Thread::FillAndUnlockBuffers(unsigned char* buf1,
 			buf2sz = 0;
 		}
 
-		provider->GetBuffer(buf1, input_frame, buf1szf, volume);
+		provider->GetPlaybackBuffer(buf1, input_frame, buf1szf, volume);
 
 		input_frame += buf1szf;
 	}
@@ -826,7 +863,7 @@ unsigned int DirectSoundPlayer2Thread::FillAndUnlockBuffers(unsigned char* buf1,
 			buf2sz = buf2szf * bytes_per_frame;
 		}
 
-		provider->GetBuffer(buf2, input_frame, buf2szf, volume);
+		provider->GetPlaybackBuffer(buf2, input_frame, buf2szf, volume);
 
 		input_frame += buf2szf;
 	}
@@ -887,8 +924,10 @@ DirectSoundPlayer2Thread::DirectSoundPlayer2Thread(Provider *provider, int _Want
 	thread_handle = (HANDLE)_beginthreadex(0, 0, ThreadProc, this, 0, &threadid);
 	SetThreadName(threadid, "AudioThread");
 
-	if (!thread_handle)
+	if (!thread_handle) {
+		CloseHandles();
 		throw _T("Failed creating playback thread in DirectSoundPlayer2. This is bad.");
+	}
 
 	HANDLE running_or_error[] = { thread_running, error_happened };
 	switch (WaitForMultipleObjects(2, running_or_error, FALSE, INFINITE))
@@ -899,6 +938,9 @@ DirectSoundPlayer2Thread::DirectSoundPlayer2Thread(Provider *provider, int _Want
 
 
 	default:
+		// the thread returns right after signalling the error
+		WaitForSingleObject(thread_handle, INFINITE);
+		CloseHandles();
 		throw _T("Failed wait for thread start or thread error in DirectSoundPlayer2. This is bad.");
 	}
 }
@@ -907,7 +949,19 @@ DirectSoundPlayer2Thread::DirectSoundPlayer2Thread(Provider *provider, int _Want
 DirectSoundPlayer2Thread::~DirectSoundPlayer2Thread()
 {
 	SetEvent(event_kill_self);
-	WaitForSingleObject(thread_handle, 2000);
+	// the thread still uses this object, so it has to be gone before it is freed
+	WaitForSingleObject(thread_handle, INFINITE);
+	CloseHandles();
+}
+
+void DirectSoundPlayer2Thread::CloseHandles()
+{
+	HANDLE handles[] = { thread_handle, event_start_playback, event_stop_playback, event_update_end_time,
+		event_set_volume, event_kill_self, thread_running, is_playing, error_happened };
+	for (HANDLE handle : handles) {
+		if (handle)
+			CloseHandle(handle);
+	}
 }
 
 
@@ -915,6 +969,12 @@ void DirectSoundPlayer2Thread::Play(long long start, long long count)
 {
 	CheckError();
 
+	{
+		std::lock_guard<std::mutex> lock(position->mutex);
+		position->restarting = true;
+		position->playing = true;
+		position->start_frame = start;
+	}
 	start_frame = start;
 	end_frame = start+count;
 	SetEvent(event_start_playback);
@@ -989,10 +1049,7 @@ int DirectSoundPlayer2Thread::GetCurrentMS()
 
 	if (!IsPlaying()) return 0;
 
-	int milliseconds_elapsed = (int)(timeGetTime() - last_playback_restart);
-	//int milliseconds_elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - last_playback_restart).count();
-
-	return start_frame + milliseconds_elapsed;
+	return (int)(GetCurrentFrame() * 1000 / provider->GetSampleRate());
 }
 
 long long DirectSoundPlayer2Thread::GetCurrentFrame()
@@ -1001,11 +1058,8 @@ long long DirectSoundPlayer2Thread::GetCurrentFrame()
 
 	if (!IsPlaying()) return 0;
 
-
-	int milliseconds_elapsed = (int)(timeGetTime() - last_playback_restart);
-	//int milliseconds_elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - last_playback_restart).count();
-
-	return start_frame + (long long)milliseconds_elapsed * provider->GetSampleRate() / 1000;
+	long long frame = position->Frame();
+	return (frame < 0) ? start_frame.load() : frame;
 }
 
 
@@ -1251,6 +1305,11 @@ void DirectSoundPlayer2::SetEndPosition(long long pos)
 	}
 }
 
+
+std::shared_ptr<AudioPosition> DirectSoundPlayer2::Position()
+{
+	return IsThreadAlive() ? thread->Position() : nullptr;
+}
 
 void DirectSoundPlayer2::SetCurrentPosition(long long pos)
 {

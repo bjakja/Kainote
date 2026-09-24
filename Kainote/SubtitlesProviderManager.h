@@ -17,6 +17,7 @@
 #include "WinUndef.h"
 #include "wx/arrstr.h"
 #include "wx/window.h"
+#include "wx/gdicmn.h"
 #include <vector>
 
 
@@ -39,8 +40,8 @@ public:
 	void Release();
 	//set parameters first
 	void Draw(unsigned char* buffer, int time);
-	//set parameters first; skips work + returns false when unchanged since last call
-	bool DrawChanged(unsigned char* buffer, int time);
+	//set parameters first; see SubtitlesProvider::DrawOverlay
+	bool DrawOverlay(unsigned char* overlay, int time, wxRect* dirty);
 	//set parameters first; takes the text, nullptr closes the subtitles
 	bool Open(int flag, wxString *text);
 	// false after dummy or own text was shown, or after edits it doesn't show yet
@@ -51,6 +52,9 @@ public:
 	bool OpenString(wxString *text);
 	void SetVideoParameters(const wxSize& size, unsigned char format, bool isSwapped);
 	bool IsLibass();
+	bool CanPrepare();
+	// see SubtitlesProvider::Prepare; takes the text
+	void Prepare(wxString *text);
 	static bool ReloadLibraries();
 	static void GetProviders(wxArrayString *providerList);
 	static void DestroyProviders();

@@ -16,6 +16,7 @@
 
 #include "config.h"
 #include "RendererVideo.h"
+#include "D3D9Device.h"
 #include "RendererDirectShow.h"
 #ifndef _WIN32
 
@@ -55,6 +56,7 @@ bool RendererDirectShow::InitRendererDX() { return false; }
 void RendererDirectShow::ClearObject() {}
 void RendererDirectShow::SetupVertices() {}
 void RendererDirectShow::ZoomChanged() {}
+void RendererDirectShow::WindowResized() {}
 
 #else
 #include "VisualDrawingShapes.h"
@@ -94,7 +96,7 @@ RendererDirectShow::~RendererDirectShow()
 
 bool RendererDirectShow::InitRendererDX()
 {
-	HR(m_D3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &m_BlackBarsSurface), _("Cannot create surface"));
+	HR(GetBackBuffer(&m_BlackBarsSurface), _("Cannot create surface"));
 	HR(DXVA2CreateVideoService(m_D3DDevice, IID_IDirectXVideoProcessorService, (VOID**)&m_DXVAService),
 		_("Cannot create DXVA processor service"));
 	DXVA2_VideoDesc videoDesc;
@@ -157,7 +159,6 @@ bool RendererDirectShow::InitRendererDX()
 	CoTaskMemFree(guids);
 	PTR(isgood, L"Nie ma żadnych guidów");
 
-	HR(m_D3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &m_BlackBarsSurface), _("Cannot create surface"));
 
 	HR(hr, _("One of the DirectX vertices settings failed"));
 
@@ -172,6 +173,7 @@ bool RendererDirectShow::InitRendererDX()
 	if (m_SubtitlesBuffer)
 		delete[] m_SubtitlesBuffer;
 	m_SubtitlesBuffer = new unsigned char[m_LastBufferSize];
+	m_SubtitlesUploadAll = true;
 	
 	
 	m_SubsProvider->SetVideoParameters(wxSize(m_WindowWidth, m_WindowHeight), ARGB32, m_SwapFrame);
@@ -214,30 +216,28 @@ bool RendererDirectShow::DrawTexture(byte *nframe, bool copy)
 	else {
 		KaiLog(_("No frame buffer")); return false;
 	}
-	//int size = m_LastBufferSize / 4;
-	memset(m_SubtitlesBuffer, 0, m_LastBufferSize);
-	//byte* buff1 = m_SubtitlesBuffer;
-
-	m_SubsProvider->Draw(m_SubtitlesBuffer, m_Time);
-	//byte* buff = m_SubtitlesBuffer;
-	
-
-	RECT dirtySubs = { 0, 0, m_WindowWidth, m_WindowHeight };
-	//HR(
-	m_SubtitlesTexture->LockRect(0, &d3dSubslr, &dirtySubs, 0);//, _("Nie można zablokować bufora tekstury napisów"));
-	memcpy(d3dSubslr.pBits, m_SubtitlesBuffer, m_LastBufferSize);
-	/*int fwidth = m_WindowWidth * 4;
-	byte *subsdst = (byte*)d3dSubslr.pBits;
-	byte *subssrc = m_SubtitlesBuffer + ((m_WindowWidth * m_WindowHeight * 4) - fwidth);
-	for (int i = 0; i < m_WindowHeight; i++) {
-		memcpy(subsdst, subssrc, fwidth);
-		subsdst += fwidth;
-		subssrc -= fwidth;
-	}*/
-
-	HR(m_SubtitlesTexture->UnlockRect(0), _("Cannot unlock subtitle texture buffer"));
-
-	HR(m_D3DDevice->UpdateTexture(m_SubtitlesTexture, m_BlitTexture), L"Cannot update subtitles texture");
+	// only what changed is cleared, drawn and uploaded
+	wxRect full(0, 0, m_WindowWidth, m_WindowHeight);
+	wxRect changedRect;
+	bool changed = m_SubsProvider->DrawOverlay(m_SubtitlesBuffer, m_Time, &changedRect);
+	if (m_SubtitlesUploadAll) {
+		changedRect = full;
+		changed = true;
+		m_SubtitlesUploadAll = false;
+	}
+	changedRect.Intersect(full);
+	if (changed && !changedRect.IsEmpty()) {
+		const wxRect &dirty = changedRect;
+		RECT dirtySubs = { dirty.x, dirty.y, dirty.x + dirty.width, dirty.y + dirty.height };
+		HR(m_SubtitlesTexture->LockRect(0, &d3dSubslr, &dirtySubs, 0), _("Cannot lock texture buffer"));
+		int pitch = m_WindowWidth * 4;
+		const unsigned char *src = m_SubtitlesBuffer + dirty.y * pitch + dirty.x * 4;
+		unsigned char *dst = static_cast<unsigned char*>(d3dSubslr.pBits);
+		for (int y = 0; y < dirty.height; y++)
+			memcpy(dst + y * d3dSubslr.Pitch, src + y * pitch, dirty.width * 4);
+		HR(m_SubtitlesTexture->UnlockRect(0), _("Cannot unlock subtitle texture buffer"));
+		HR(m_D3DDevice->UpdateTexture(m_SubtitlesTexture, m_BlitTexture), L"Cannot update subtitles texture");
+	}
 
 	RECT dirty = { 0, 0, m_Width, m_Height };
 #ifdef byvertices
@@ -313,26 +313,17 @@ void RendererDirectShow::Render(bool redrawSubsOnFrame, bool wait)
 
 	if (m_DeviceLost)
 	{
-		if (FAILED(hr = m_D3DDevice->TestCooperativeLevel()))
+		if (m_D3DDevice)
+			hr = m_D3DDevice->TestCooperativeLevel();
+		if (m_D3DDevice && FAILED(hr) && D3DERR_DEVICENOTRESET != hr)
+			return;
+		if (!m_D3DDevice || FAILED(hr))
 		{
-			if (D3DERR_DEVICELOST == hr ||
-				D3DERR_DRIVERINTERNALERROR == hr){
-				return;
-			}
-
-			if (D3DERR_DEVICENOTRESET == hr)
 			{
 				Clear(true);
-				int i = 0;
-				while (!InitDX()) {
-					Sleep(500);
-					if (i > 10) {
-						//cannot render without initialized DX
-						//return when device will be active again it should work after refresh.
-						return;
-					}
-					i++;
-				}
+				// try again at the next render rather than stalling this one
+				if (!InitDX())
+					return;
 				RecreateSurface();
 				if (m_Visual){
 					m_Visual->SizeChanged(wxRect(m_BackBufferRect.left, m_BackBufferRect.top,
@@ -347,6 +338,10 @@ void RendererDirectShow::Render(bool redrawSubsOnFrame, bool wait)
 		m_DeviceLost = false;
 	}
 
+	if (!BeginFrame()){
+		Render(true, false);
+		return;
+	}
 	bool isLibass = m_SubsProvider->IsLibass();
 	hr = m_D3DDevice->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
@@ -457,8 +452,8 @@ void RendererDirectShow::Render(bool redrawSubsOnFrame, bool wait)
 	if (m_HasZoom){ DrawZoom(); }
 	// End the scene
 	hr = m_D3DDevice->EndScene();
-	hr = m_D3DDevice->Present(nullptr, &m_WindowRect, nullptr, nullptr);
-	if (D3DERR_DEVICELOST == hr ||
+	hr = PresentFrame();
+	if (D3DERR_DEVICELOST == hr || IsD3D9DeviceRemoved(hr) ||
 		D3DERR_DRIVERINTERNALERROR == hr){
 		if (!m_DeviceLost){
 			m_DeviceLost = true;
@@ -629,6 +624,14 @@ void RendererDirectShow::SetupVertices()
 	HRN(hr = m_D3DVertex->Unlock(), "Canot unlock vertex buffer");
 }
 
+void RendererDirectShow::WindowResized()
+{
+	int windowWidth = m_BackBufferRect.right - m_BackBufferRect.left;
+	int windowHeight = m_BackBufferRect.bottom - m_BackBufferRect.top;
+	filtering = (windowWidth == m_Width && windowHeight == m_Height) ? D3DTEXF_POINT : D3DTEXF_LINEAR;
+	ZoomChanged();
+}
+
 void RendererDirectShow::ZoomChanged()
 {
 	SAFE_RELEASE(m_D3DVertex);
@@ -792,19 +795,20 @@ byte *RendererDirectShow::GetFrameWithSubs(bool subs, bool *del)
 	hr = m_DXVAProcessor->VideoProcessBlt(tmp, &blt, &samples, 1, nullptr);
 	if (FAILED(hr)) {
 		KaiLog(_("Cannot overlay surfaces"));
+		SAFE_RELEASE(tmp);
 		return nullptr;
 	}
 
 	D3DLOCKED_RECT d3dlr;
 	RECT dirty = { 0, 0, m_Width, m_Height };
 
-	int buffsize = m_Width * m_Height * 4;
-	byte* cpy = new byte[buffsize];
-	tmp->LockRect(&d3dlr, &dirty, 0/*D3DLOCK_NOSYSLOCK*/);
-	if (FAILED(hr)) {
+	if (FAILED(tmp->LockRect(&d3dlr, &dirty, 0))) {
 		KaiLog(_("Cannot lock texture buffer"));
+		SAFE_RELEASE(tmp);
 		return nullptr;
 	}
+	int buffsize = m_Width * m_Height * 4;
+	byte* cpy = new byte[buffsize];
 	byte* texbuf = static_cast<byte*>(d3dlr.pBits);
 	int fwidth = m_Width * 4;
 	if (d3dlr.Pitch == fwidth) {

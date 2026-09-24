@@ -14,6 +14,10 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
+#include <unordered_map>
+#include <unordered_set>
+#include <wx/hashmap.h>
+#include <wx/regex.h>
 
 #include "styles.h"
 #include "SubsDialogue.h"
@@ -21,6 +25,7 @@
 #include "LineParse.h"
 #include "SubsFile.h"
 #include <vector>
+#include <memory>
 #include <set>
 
 class EditBox;
@@ -28,6 +33,7 @@ class KainoteFrame;
 class TabPanel;
 class SubsGridPreview;
 class GraphicsContext;
+class GraphicsCanvas;
 
 // What ChangeTimes shifts and how, as the shift times panel sets it.
 struct ShiftTimesSettings
@@ -224,7 +230,7 @@ private:
 	void OnLostCapture(wxMouseCaptureLostEvent& evt);
 	bool ShowPreviewWindow(SubsGrid *previewGrid, SubsGrid *windowToDraw,
 		int activeLine, int diffPosition);
-	void PaintD2D(GraphicsContext *gc, int w, int h, int size, int scrows,
+	void PaintD2D(GraphicsContext *gc, int firstNumber, int w, int h, int size, int scrows,
 		wxPoint previewpos, wxSize previewsize, bool bg);
 
 	void CopyRows(int id);
@@ -277,6 +283,26 @@ private:
 	int lastWidth = 0;
 	int lastHeight = 0;
 	wxBitmap* bmp = nullptr;
+	// Direct2D draws the grid through this when it can; bmp is the fallback
+	std::unique_ptr<GraphicsCanvas> m_Canvas;
+	bool m_CanvasTried = false;
+	int m_CanvasFailures = 0;
+	GraphicsCanvas *Canvas();
+	// the scene holds the first column in place and the rest scrolled by scHor
+	bool PresentScene(int w, int h);
+	// the tree arrows, loaded once: pointing down for a closed tree, up for an open one
+	wxBitmap m_TreeArrows[2];
+	const wxBitmap &TreeArrow(bool closed);
+	// widths of column texts in the grid font, so each distinct one is measured once
+	std::unordered_map<wxString, int, wxStringHash, wxStringEqual> m_TextWidths;
+	template <typename Measure>
+	int TextWidth(const wxString &text, Measure measure);
+public:
+	// override tags as hide-tags shows them, compiled once
+	static wxRegEx &TagsPattern(char format);
+	// the style names, to tell unknown styles apart without a search per row
+	std::unordered_set<wxString, wxStringHash, wxStringEqual> StyleNames();
+private:
 	wxFont font;
 	SubsGridPreview *thisPreview = nullptr;
 

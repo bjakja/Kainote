@@ -93,9 +93,9 @@ void SubtitlesProviderManager::Draw(unsigned char* buffer, int time)
 	GetProvider()->Draw(buffer, time);
 }
 
-bool SubtitlesProviderManager::DrawChanged(unsigned char* buffer, int time)
+bool SubtitlesProviderManager::DrawOverlay(unsigned char* overlay, int time, wxRect* dirty)
 {
-	return GetProvider()->DrawChanged(buffer, time);
+	return GetProvider()->DrawOverlay(overlay, time, dirty);
 }
 
 bool SubtitlesProviderManager::Open(int flag, wxString *text)
@@ -118,6 +118,16 @@ void SubtitlesProviderManager::SetVideoParameters(const wxSize& size, unsigned c
 bool SubtitlesProviderManager::IsLibass()
 {
 	return GetProvider()->IsLibass();
+}
+
+bool SubtitlesProviderManager::CanPrepare()
+{
+	return GetProvider()->CanPrepare();
+}
+
+void SubtitlesProviderManager::Prepare(wxString *text)
+{
+	GetProvider()->Prepare(text);
 }
 
 bool SubtitlesProviderManager::ReloadLibraries()

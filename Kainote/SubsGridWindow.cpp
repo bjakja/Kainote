@@ -30,6 +30,61 @@
 #include <wx/dc.h>
 
 
+wxRegEx &SubsGrid::TagsPattern(char format)
+{
+	static wxRegEx srtTags(L"\\<[^\\<]*\\>", wxRE_ADVANCED);
+	static wxRegEx assTags(L"\\{[^\\{]*\\}", wxRE_ADVANCED);
+	return (format == SRT) ? srtTags : assTags;
+}
+
+std::unordered_set<wxString, wxStringHash, wxStringEqual> SubsGrid::StyleNames()
+{
+	std::unordered_set<wxString, wxStringHash, wxStringEqual> names;
+	for (size_t i = 0; i < file->StylesSize(); i++)
+		names.insert(file->GetStyle(i)->Name);
+	return names;
+}
+
+template <typename Measure>
+int SubsGrid::TextWidth(const wxString &text, Measure measure)
+{
+	auto found = m_TextWidths.find(text);
+	if (found != m_TextWidths.end())
+		return found->second;
+	if (m_TextWidths.size() > 10000)
+		m_TextWidths.clear();
+	int width = measure(text);
+	m_TextWidths.emplace(text, width);
+	return width;
+}
+
+const wxBitmap &SubsGrid::TreeArrow(bool closed)
+{
+	if (!m_TreeArrows[0].IsOk()) {
+		m_TreeArrows[0] = wxBITMAP_PNG(L"arrow_list");
+		if (m_TreeArrows[0].IsOk())
+			m_TreeArrows[1] = wxBitmap(m_TreeArrows[0].ConvertToImage().Rotate180());
+	}
+	return m_TreeArrows[closed ? 0 : 1];
+}
+
+GraphicsCanvas *SubsGrid::Canvas()
+{
+	if (!m_CanvasTried) {
+		m_CanvasTried = true;
+		m_Canvas.reset(CreateGraphicsCanvas(this));
+	}
+	return m_Canvas.get();
+}
+
+bool SubsGrid::PresentScene(int w, int h)
+{
+	int split = MIN(GridWidth[0] + 1 + posX, w);
+	wxRect sources[2] = { wxRect(0, 0, split, h), wxRect(scHor + split, 0, w - split, h) };
+	wxPoint points[2] = { wxPoint(0, 0), wxPoint(split, 0) };
+	return m_Canvas->Present(sources, points, 2);
+}
+
 void SubsGrid::SetStyle()
 {
 	const wxString & fontname = Options.GetString(GRID_FONT);
@@ -47,6 +102,7 @@ void SubsGrid::SetStyle()
 	int fw, fh;
 	GetTextExtent(L"#TWFfGH", &fw, &fh, nullptr, nullptr, &font);
 	GridHeight = ((fh + 3) * 2) / 2;
+	m_TextWidths.clear();
 	Refresh(false);
 }
 
@@ -58,6 +114,15 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 	GetClientSize(&w, &h);
 	if (w < 1 || h < 1){ return; }
 	int firstCol = GridWidth[0] + 1;
+	if (Canvas() && m_Canvas->HasScene() && lastWidth == w && lastHeight == h) {
+		// uncovered parts show what was drawn last, as with the bitmap below
+		wxRect box = GetUpdateRegion().GetBox();
+		if (box.width < w || box.height < h) {
+			wxPaintDC dc(this);
+			if (PresentScene(w, h))
+				return;
+		}
+	}
 	wxRegionIterator upd(GetUpdateRegion());
 	while (upd) {
 		wxRect rect(upd.GetRect());
@@ -84,7 +149,10 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 		}
 	}
 	bool bg = false;
-	int size = file->GetIdCount();
+	if (scrollPosition < 0){ scrollPosition = 0; scrollPositionId = 0; }
+	// the number shown on the first row
+	size_t firstNumber = 0;
+	int size = file->CountLines(scrollPosition, &firstNumber);
 	wxPoint previewpos;
 	wxSize previewsize;
 	if (preview){
@@ -103,6 +171,7 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 		scrollPosition = file->GetElementById(scrollPositionId);
 		// when all subtitles are visible do not scrolling position = 0
 		if (panelrows > size + 3){ scrollPosition = 0; scrollPositionId = 0; }
+		firstNumber = GetDialoguePosition(scrollPosition);
 	}
 	else if (scrows >= size + 2) {
 		bg = true;
@@ -117,6 +186,24 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 
 	lastWidth = w;
 	lastHeight = h;
+
+	if (Canvas()) {
+		GraphicsContext *gc = m_Canvas->BeginScene(w + scHor, h);
+		if (gc) {
+			// PaintD2D deletes the context
+			PaintD2D(gc, (int)firstNumber, w, h, size, scrows, previewpos, previewsize, bg);
+			wxPaintDC dc(this);
+			if (PresentScene(w, h)) {
+				m_CanvasFailures = 0;
+				return;
+			}
+			// the device was lost; after a few tries the bitmap takes over
+			if (++m_CanvasFailures >= 3)
+				m_Canvas.reset();
+			Refresh(false);
+			return;
+		}
+	}
 
 	// Prepare bitmap
 	if (w + scHor < 1 || h < 1){ return; }
@@ -136,7 +223,7 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
 	GraphicsContext* gc = renderer? renderer->CreateContext(tdc) : nullptr;
 	if (gc)
-		PaintD2D(gc, w, h, size, scrows, previewpos, previewsize, bg);
+		PaintD2D(gc, (int)firstNumber, w, h, size, scrows, previewpos, previewsize, bg);
 	else
 	{
 
@@ -193,10 +280,11 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 		visibleLines.clear();
 
 		std::vector<wxString> strings;
+		auto styleNames = StyleNames();
 		//refresh have to be fast, reduce recalculation id to key to minimum
 		//scrollPositionId it's also strored 
 		int key = scrollPosition - 1;
-		int numeration = GetDialoguePosition(scrollPosition);
+		int numeration = (int)firstNumber;
 		int id = scrollPositionId - 1;
 		int idmarkerPos = -1;
 		int idcurrentLine = -1;
@@ -273,8 +361,7 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 				}
 
 				if (subsFormat < SRT){
-					if (file->FindStyle(Dial->Style) == -1){ unknownStyle = true; }
-					else{ unknownStyle = false; }
+					unknownStyle = !styleNames.count(Dial->Style);
 					strings.push_back(Dial->Style);
 					strings.push_back(Dial->Actor);
 					strings.push_back(wxString::Format(L"%i", Dial->MarginL));
@@ -315,7 +402,7 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 					badWraps = false;
 				}
 				if (hideOverrideTags) {
-					wxRegEx reg(subsFormat == SRT? L"\\<[^\\<]*\\>" : L"\\{[^\\{]*\\}", wxRE_ADVANCED);
+					wxRegEx &reg = TagsPattern(subsFormat);
 					if (!showOriginal && !isTl)
 						reg.ReplaceAll(&txt, chtag);
 					if ((!showOriginal && isTl) || showOriginal)
@@ -458,20 +545,11 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 					tdc.SetBrush(comm);
 					tdc.SetPen(*wxTRANSPARENT_PEN);
 					tdc.DrawRectangle(posX + 1, posY, w - 1, GridHeight);
-					wxBitmap arrow = wxBITMAP_PNG(L"arrow_list");
 					// GetDialogueKey was made for loops no checks
 					Dialogue *nextDial = (key < file->GetCount() - 1) ? file->GetDialogue(key + 1) : nullptr;
-					if (nextDial && nextDial->treeState == TREE_CLOSED) {
-						if (arrow.IsOk())
-							tdc.DrawBitmap(arrow, posX + 6, posY + 5);
-					}
-					else{
-						wxBitmap bmp(wxBITMAP_PNG(L"arrow_list"));
-						wxImage img = bmp.ConvertToImage();
-						img = img.Rotate180();
-						if (img.IsOk())
-							tdc.DrawBitmap(img, posX + 6, posY + 5);
-					}
+					const wxBitmap &arrow = TreeArrow(nextDial && nextDial->treeState == TREE_CLOSED);
+					if (arrow.IsOk())
+						tdc.DrawBitmap(arrow, posX + 6, posY + 5);
 					tdc.DrawText(Dial->Text, posX + 23, posY + 1);
 					break;
 				}
@@ -531,7 +609,7 @@ void SubsGrid::OnPaint(wxPaintEvent& event)
 	dc.Blit(firstCol + posX, 0, w + scHor, h, &tdc, scHor + firstCol + posX, 0);
 }
 
-void SubsGrid::PaintD2D(GraphicsContext *gc, int w, int h, int size, int scrows, wxPoint previewpos, wxSize previewsize, bool bg)
+void SubsGrid::PaintD2D(GraphicsContext *gc, int firstNumber, int w, int h, int size, int scrows, wxPoint previewpos, wxSize previewsize, bool bg)
 {
 	
 	const wxColour &header = Options.GetColour(GRID_HEADER);
@@ -587,10 +665,11 @@ void SubsGrid::PaintD2D(GraphicsContext *gc, int w, int h, int size, int scrows,
 	visibleLines.clear();
 
 	std::vector<wxString> strings;
+	auto styleNames = StyleNames();
 	//refresh have to be fast, reduce recalculation id to key to minimum
 	//scrollPositionId it's also strored 
 	int key = scrollPosition - 1;
-	int numeration = GetDialoguePosition(scrollPosition);
+	int numeration = firstNumber;
 	int id = scrollPositionId - 1;
 	int idmarkerPos = -1;
 	int idcurrentLine = -1;
@@ -670,8 +749,7 @@ void SubsGrid::PaintD2D(GraphicsContext *gc, int w, int h, int size, int scrows,
 			}
 
 			if (subsFormat < SRT){
-				if (file->FindStyle(Dial->Style) == -1){ unknownStyle = true; }
-				else{ unknownStyle = false; }
+				unknownStyle = !styleNames.count(Dial->Style);
 				strings.push_back(Dial->Style);
 				strings.push_back(Dial->Actor);
 				strings.push_back(wxString::Format(L"%i", Dial->MarginL));
@@ -717,7 +795,7 @@ void SubsGrid::PaintD2D(GraphicsContext *gc, int w, int h, int size, int scrows,
 			
 			
 			if (hideOverrideTags) {
-				wxRegEx reg(subsFormat == SRT ? L"\\<[^\\<]*\\>" : L"\\{[^\\{]*\\}", wxRE_ADVANCED);
+				wxRegEx &reg = TagsPattern(subsFormat);
 				if (!showOriginal && !isTl)
 					reg.ReplaceAll(&txt, chtag);
 				if ((!showOriginal && isTl) || showOriginal)
@@ -873,17 +951,11 @@ void SubsGrid::PaintD2D(GraphicsContext *gc, int w, int h, int size, int scrows,
 					gc->DrawRectangle(posX + 1, posY, w - 1, GridHeight);
 					// GetDialogueKey was made for loops no checks
 					Dialogue *nextDial = (key < file->GetCount() - 1) ? file->GetDialogue(key + 1) : nullptr;
-					if (nextDial && nextDial->treeState == TREE_CLOSED) {
-						wxBitmap bmpal(wxBITMAP_PNG(L"arrow_list"));
-						if (bmpal.IsOk())
-							gc->DrawBitmap(bmpal, posX + 6, posY + 5, bmpal.GetWidth(), bmpal.GetHeight());
-					}
-					else {
-						wxBitmap bmp(wxBITMAP_PNG(L"arrow_list"));
-						wxImage img = bmp.ConvertToImage();
-						img = img.Rotate180();
-						if(img.IsOk())
-							gc->DrawBitmap(img, posX + 6, posY + 5, img.GetWidth(), img.GetHeight());
+					bool closed = nextDial && nextDial->treeState == TREE_CLOSED;
+					const wxBitmap &arrow = TreeArrow(closed);
+					if (arrow.IsOk())
+						gc->DrawBitmap(arrow, posX + 6, posY + 5, arrow.GetWidth(), arrow.GetHeight());
+					if (!closed) {
 						gc->SetBrush(*wxTRANSPARENT_BRUSH);
 						gc->SetPen(textcol);
 						gc->StrokeLine(posX, posY + GridHeight, w - 1, posY + GridHeight);
@@ -906,13 +978,10 @@ void SubsGrid::PaintD2D(GraphicsContext *gc, int w, int h, int size, int scrows,
 			}
 			//cur = wxRect(posX + 3, posY, GridWidth[j] - 6, GridHeight);
 			//gc->Clip(cur);
-			float centerPos = 0.f;
-			if (isCenter){
-				double fw, fh;
-				gc->GetTextExtent(strings[j], &fw, &fh);
-				centerPos = ((GridWidth[j] - fw) / 2) - 3;
-			}
-			gc->DrawTextU(strings[j], posX + 3 + centerPos, posY + 1);
+			if (isCenter)
+				gc->DrawTextCentered(strings[j], posX, posY + 1, GridWidth[j]);
+			else
+				gc->DrawTextU(strings[j], posX + 3, posY + 1);
 			//gc->ResetClip();
 			posX += GridWidth[j] + 1;
 
@@ -984,6 +1053,11 @@ void SubsGrid::AdjustWidthsD2D(GraphicsContext *gc, int cell)
 		return;
 	}
 
+	auto measure = [gc](const wxString &text) {
+		double width = 0, height = 0;
+		gc->GetTextExtent(text, &width, &height);
+		return (int)width;
+	};
 	Dialogue *dial;
 	for (int i = 0; i < maxx; i++){
 		dial = file->GetDialogue(i);
@@ -1004,20 +1078,20 @@ void SubsGrid::AdjustWidthsD2D(GraphicsContext *gc, int cell)
 
 		if (subsFormat<SRT){
 			if ((LAYER & cell) && dial->Layer != 0){
-				gc->GetTextExtent(wxString::Format(L"%i", dial->Layer), &fw, &fh);
-				if (fw + 10>law){ law = fw + 10; }
+				int width = TextWidth(wxString::Format(L"%i", dial->Layer), measure);
+				if (width + 10 > law){ law = width + 10; }
 			}
 			if (STYLE & cell){
-				gc->GetTextExtent(dial->Style, &fw, &fh);
-				if (fw + 10 > syw){ syw = fw + 10; }
+				int width = TextWidth(dial->Style, measure);
+				if (width + 10 > syw){ syw = width + 10; }
 			}
 			if ((ACTOR & cell) && dial->Actor != emptyString){
-				gc->GetTextExtent(dial->Actor, &fw, &fh);
-				if (fw + 10 > acw){ acw = fw + 10; }
+				int width = TextWidth(dial->Actor, measure);
+				if (width + 10 > acw){ acw = width + 10; }
 			}
 			if ((EFFECT & cell) && dial->Effect != emptyString){
-				gc->GetTextExtent(dial->Effect, &fw, &fh);
-				if (fw + 10 > efw){ efw = fw + 10; }
+				int width = TextWidth(dial->Effect, measure);
+				if (width + 10 > efw){ efw = width + 10; }
 			}
 			if ((MARGINL & cell) && dial->MarginL != 0){ shml = true; }
 			if ((MARGINR & cell) && dial->MarginR != 0){ shmr = true; }
@@ -1148,6 +1222,11 @@ void SubsGrid::AdjustWidths(int cell)
 	if (!cell)
 		return;
 
+	auto measure = [&dc](const wxString &text) {
+		int width = 0, height = 0;
+		dc.GetTextExtent(text, &width, &height);
+		return width;
+	};
 	Dialogue *dial;
 	for (int i = 0; i < maxx; i++){
 		dial = file->GetDialogue(i);
@@ -1168,20 +1247,20 @@ void SubsGrid::AdjustWidths(int cell)
 
 		if (subsFormat<SRT){
 			if ((LAYER & cell) && dial->Layer != 0){
-				dc.GetTextExtent(wxString::Format(L"%i", dial->Layer), &fw, &fh);
-				if (fw + 10>law){ law = fw + 10; }
+				int width = TextWidth(wxString::Format(L"%i", dial->Layer), measure);
+				if (width + 10 > law){ law = width + 10; }
 			}
 			if (STYLE & cell){
-				dc.GetTextExtent(dial->Style, &fw, &fh);
-				if (fw + 10 > syw){ syw = fw + 10; }
+				int width = TextWidth(dial->Style, measure);
+				if (width + 10 > syw){ syw = width + 10; }
 			}
 			if ((ACTOR & cell) && dial->Actor != emptyString){
-				dc.GetTextExtent(dial->Actor, &fw, &fh);
-				if (fw + 10 > acw){ acw = fw + 10; }
+				int width = TextWidth(dial->Actor, measure);
+				if (width + 10 > acw){ acw = width + 10; }
 			}
 			if ((EFFECT & cell) && dial->Effect != emptyString){
-				dc.GetTextExtent(dial->Effect, &fw, &fh);
-				if (fw + 10 > efw){ efw = fw + 10; }
+				int width = TextWidth(dial->Effect, measure);
+				if (width + 10 > efw){ efw = width + 10; }
 			}
 			if ((MARGINL & cell) && dial->MarginL != 0){ shml = true; }
 			if ((MARGINR & cell) && dial->MarginR != 0){ shmr = true; }

@@ -23,6 +23,8 @@
 #include <map>
 #include <iostream>
 #include <boost/locale/boundary/index.hpp>
+
+std::atomic<unsigned> Visibility::s_Epoch{ 0 };
 #include <boost/locale/boundary/segment.hpp>
 #include <boost/locale/boundary/types.hpp>
 
@@ -1073,7 +1075,8 @@ Dialogue *Dialogue::Copy(bool keepstate, bool copyIsVisible)
 	dial->Text = Text;
 	dial->TextTl = TextTl;
 	dial->treeState = treeState;
-	dial->isVisible = isVisible;/*.Store(isVisible, copyIsVisible);*/
+	// the copy is in no file yet, so no file's row numbering changes
+	dial->isVisible.Init(isVisible);
 	dial->parseData = nullptr;
 	return dial;
 }

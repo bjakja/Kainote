@@ -37,6 +37,7 @@
 #include <wx/filename.h>
 #include <vector>
 #include "UtilsWindows.h"
+#include "D3D9Device.h"
 
 #ifndef _WIN32
 #include <wx/dcbuffer.h>
@@ -250,8 +251,20 @@ void AudioDisplay::DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, D3DCOL
 	}
 }
 
+wxCriticalSection AudioDisplay::deviceLock;
+
+bool AudioDisplay::DeviceReplaced() const
+{
+	return sharedDevice && SharedD3D9Device::Generation(SharedDeviceKind::Audio) != deviceGeneration;
+}
+
 void AudioDisplay::ClearDX()
 {
+	wxCriticalSectionLocker lock(deviceLock);
+	staticValid = false;
+	SAFE_RELEASE(swapChain);
+	sharedDevice = false;
+	SAFE_RELEASE(staticSurface);
 	SAFE_RELEASE(spectrumSurface);
 	SAFE_RELEASE(backBuffer);
 	SAFE_RELEASE(d3dDevice);
@@ -264,12 +277,11 @@ void AudioDisplay::ClearDX()
 
 bool AudioDisplay::InitDX(const wxSize &size)
 {
-
-	if (!d3dObject){
-		d3dObject = Direct3DCreate9(D3D_SDK_VERSION);
-		PTR(d3dObject, _("Cannot create Direct3D object"));
-	}
-	else{
+	wxCriticalSectionLocker lock(deviceLock);
+	if (d3dDevice){
+		SAFE_RELEASE(swapChain);
+		staticValid = false;
+		SAFE_RELEASE(staticSurface);
 		SAFE_RELEASE(spectrumSurface);
 		SAFE_RELEASE(backBuffer);
 		SAFE_RELEASE(d3dLine);
@@ -280,29 +292,36 @@ bool AudioDisplay::InitDX(const wxSize &size)
 
 	HRESULT hr;
 	HWND hwnd = GetHWND();
+	MONITORINFO monitor = { sizeof(MONITORINFO) };
+	GetMonitorInfo(MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST), &monitor);
+	// as wide as the monitor, but the view is a short strip, so only some room to grow in height
+	bufferSize = wxSize(wxMax(size.x, (int)(monitor.rcMonitor.right - monitor.rcMonitor.left)), size.y + 256);
 	D3DPRESENT_PARAMETERS d3dpp;
 	ZeroMemory(&d3dpp, sizeof(d3dpp));
 	d3dpp.Windowed = TRUE;
 	d3dpp.hDeviceWindow = hwnd;
-	d3dpp.BackBufferWidth = size.x;
-	d3dpp.BackBufferHeight = size.y;
+	d3dpp.BackBufferWidth = bufferSize.x;
+	d3dpp.BackBufferHeight = bufferSize.y;
 	d3dpp.BackBufferCount = 1;
 	d3dpp.SwapEffect = D3DSWAPEFFECT_COPY;//D3DSWAPEFFECT_DISCARD;//D3DSWAPEFFECT_COPY;//
 	d3dpp.BackBufferFormat = D3DFMT_X8R8G8B8;
 	d3dpp.Flags = 0;
 	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;//D3DPRESENT_INTERVAL_DEFAULT;
 
-	if (d3dDevice){
+	if (!d3dDevice){
+		d3dDevice = SharedD3D9Device::Acquire(SharedDeviceKind::Audio, &deviceGeneration);
+		sharedDevice = d3dDevice != nullptr;
+		if (!sharedDevice && !CreateD3D9Device(hwnd, &d3dpp, D3DCREATE_MULTITHREADED, &d3dObject, &d3dDevice)){
+			KaiLog(_("Cannot create D3D9 device"));
+			return false;
+		}
+	}
+	else if (!sharedDevice){
 		hr = d3dDevice->Reset(&d3dpp);
 		if (FAILED(hr)){ return false; }
 	}
-	else{
-		hr = d3dObject->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd,
-			D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED, &d3dpp, &d3dDevice);//| D3DCREATE_FPU_PRESERVE
-		if (FAILED(hr)){
-			HR(d3dObject->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd,
-				D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED, &d3dpp, &d3dDevice), _("Cannot create D3D9 device"));
-		}
+	if (sharedDevice){
+		HR(d3dDevice->CreateAdditionalSwapChain(&d3dpp, &swapChain), _("Cannot create swap chain"));
 	}
 	hr = d3dDevice->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, TRUE);
 	hr = d3dDevice->SetRenderState(D3DRS_ANTIALIASEDLINEENABLE, TRUE);
@@ -325,16 +344,12 @@ bool AudioDisplay::InitDX(const wxSize &size)
 	hr = d3dDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
 	HR(hr, _("One of the DirectX settings failed"));
 
-	D3DXMATRIX matOrtho;
 	D3DXMATRIX matIdentity;
-
-	D3DXMatrixOrthoOffCenterLH(&matOrtho, 0, size.x, size.y, 0, 0.0f, 1.0f);
 	D3DXMatrixIdentity(&matIdentity);
-
-	HR(d3dDevice->SetTransform(D3DTS_PROJECTION, &matOrtho), _("Cannot set projection matrix"));
 	HR(d3dDevice->SetTransform(D3DTS_WORLD, &matIdentity), _("Cannot set world matrix"));
 	HR(d3dDevice->SetTransform(D3DTS_VIEW, &matIdentity), _("Cannot set view matrix"));
-	HR(d3dDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer), _("Cannot create surface"));
+	HR(swapChain ? swapChain->GetBackBuffer(0, D3DBACKBUFFER_TYPE_MONO, &backBuffer)
+		: d3dDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer), _("Cannot create surface"));
 
 
 	HR(D3DXCreateLine(d3dDevice, &d3dLine), _("Cannot create D3DX line"));
@@ -344,7 +359,8 @@ bool AudioDisplay::InitDX(const wxSize &size)
 	HR(D3DXCreateFontW(d3dDevice, sizeTahoma13.y, sizeTahoma13.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &d3dFontTahoma13), _("Cannot create D3DX font"));
 	HR(D3DXCreateFontW(d3dDevice, sizeTahoma8.y, sizeTahoma8.x, FW_NORMAL, 0, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &d3dFontTahoma8), _("Cannot create D3DX font"));
 	HR(D3DXCreateFontW(d3dDevice, sizeVerdana11.y, sizeVerdana11.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Verdana"), &d3dFontVerdana11), _("Cannot create D3DX font"));
-	HR(d3dDevice->CreateOffscreenPlainSurface(size.x, size.y, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &spectrumSurface, 0), _("Cannot create plain surface"));
+	HR(d3dDevice->CreateOffscreenPlainSurface(bufferSize.x, bufferSize.y, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &spectrumSurface, 0), _("Cannot create plain surface"));
+	HR(d3dDevice->CreateRenderTarget(bufferSize.x, bufferSize.y, D3DFMT_X8R8G8B8, D3DMULTISAMPLE_NONE, 0, FALSE, &staticSurface, nullptr), _("Cannot create plain surface"));
 	HR(d3dDevice->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE), L"FVF failed");
 
 	return true;
@@ -358,7 +374,11 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 	// Loaded?
 	if (!loaded || !provider) return;
 
-	if (LastSize.x != w || LastSize.y != h || !d3dDevice || needToReset) {
+	wxCriticalSectionLocker deviceLocker(deviceLock);
+	// another audio view found the shared device removed and it was replaced
+	if (DeviceReplaced())
+		ClearDX();
+	if (!d3dDevice || needToReset || w > bufferSize.x || displayH > bufferSize.y) {
 		LastSize = wxSize(w, h);
 		if (!InitDX(wxSize(w, displayH))){
 			ClearDX();
@@ -399,6 +419,9 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 		deviceLost = false;
 	}
 
+	staticValid = false;
+	hr = d3dDevice->SetRenderTarget(0, staticSurface);
+	SetView();
 	// Background
 	hr = d3dDevice->Clear(0, nullptr, D3DCLEAR_TARGET, background, 1.0f, 0);
 
@@ -666,29 +689,6 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 
 
 
-		if (cursorPaint){
-			D3DXVECTOR2 v2[2] = { D3DXVECTOR2(curpos, 0), D3DXVECTOR2(curpos, h) };
-			d3dLine->SetWidth(2);
-			d3dLine->SetAntialias(TRUE);
-			d3dLine->Begin();
-			d3dLine->Draw(v2, 2, AudioCursor);
-			d3dLine->End();
-			d3dLine->SetAntialias(FALSE);
-			d3dLine->SetWidth(1);
-			if (!player->IsPlaying()){
-				SubsTime time;
-				time.NewTime(GetMSAtX(curpos));
-				wxString text = time.GetFormatted(ASS);
-				RECT rect;
-				rect.left = curpos - 150;
-				rect.top = (hasKara) ? 20 : 5;
-				rect.right = rect.left + 300;
-				rect.bottom = rect.top + 100;
-				DRAWOUTTEXT(d3dFontTahoma13, text, rect, DT_CENTER, 0xFFFFFFFF);
-			}
-		}
-
-
 		// Draw focus border
 		if (hasFocus) {
 			D3DXVECTOR2 v5[5] = { D3DXVECTOR2(0, 0), D3DXVECTOR2(w - 1, 0), D3DXVECTOR2(w - 1, h - 1), D3DXVECTOR2(0, h - 1), D3DXVECTOR2(0, 0) };
@@ -699,18 +699,100 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 
 	}
 	hr = d3dDevice->EndScene();
+	staticValid = true;
 
-	hr = d3dDevice->Present(nullptr, nullptr, nullptr, nullptr);
-
-	if (D3DERR_DEVICELOST == hr ||
-		D3DERR_DRIVERINTERNALERROR == hr){
-		deviceLost = true;
+	PresentWithCursor();
+	if (deviceLost)
 		UpdateImage(false, true);
-	}
 	// Done
 	//needImageUpdate = false;
 	if(!weak)
 		needImageUpdateWeak = true;
+}
+
+void AudioDisplay::DrawCursor()
+{
+	D3DXVECTOR2 v2[2] = { D3DXVECTOR2(curpos, 0), D3DXVECTOR2(curpos, h) };
+	d3dLine->SetWidth(2);
+	d3dLine->SetAntialias(TRUE);
+	d3dLine->Begin();
+	d3dLine->Draw(v2, 2, AudioCursor);
+	d3dLine->End();
+	d3dLine->SetAntialias(FALSE);
+	d3dLine->SetWidth(1);
+	if (!player->IsPlaying()){
+		SubsTime time;
+		time.NewTime(GetMSAtX(curpos));
+		wxString text = time.GetFormatted(ASS);
+		RECT rect;
+		rect.left = curpos - 150;
+		rect.top = (hasKara) ? 20 : 5;
+		rect.right = rect.left + 300;
+		rect.bottom = rect.top + 100;
+		DRAWOUTTEXT(d3dFontTahoma13, text, rect, DT_CENTER, 0xFFFFFFFF);
+	}
+}
+
+void AudioDisplay::PresentWithCursor()
+{
+	wxCriticalSectionLocker lock(deviceLock);
+	HRESULT hr = d3dDevice->SetRenderTarget(0, backBuffer);
+	SetView();
+	RECT view = ViewRect();
+	hr = d3dDevice->StretchRect(staticSurface, &view, backBuffer, &view, D3DTEXF_NONE);
+	if (cursorPaint && !provider->AudioNotInitialized()) {
+		hr = d3dDevice->BeginScene();
+		DrawCursor();
+		hr = d3dDevice->EndScene();
+	}
+	hr = swapChain ? swapChain->Present(&view, &view, nullptr, nullptr, 0)
+		: d3dDevice->Present(&view, &view, nullptr, nullptr);
+	if (IsD3D9DeviceRemoved(hr)) {
+		// it cannot be reset; the next full redraw makes a new one
+		if (sharedDevice)
+			SharedD3D9Device::Removed(SharedDeviceKind::Audio, deviceGeneration);
+		ClearDX();
+		return;
+	}
+	if (D3DERR_DEVICELOST == hr || D3DERR_DRIVERINTERNALERROR == hr){
+		deviceLost = true;
+		staticValid = false;
+	}
+}
+
+RECT AudioDisplay::ViewRect() const
+{
+	RECT view = { 0, 0, w, h + timelineHeight };
+	return view;
+}
+
+void AudioDisplay::SetView()
+{
+	RECT view = ViewRect();
+	D3DVIEWPORT9 viewport = { 0, 0, (DWORD)view.right, (DWORD)view.bottom, 0.0f, 1.0f };
+	d3dDevice->SetViewport(&viewport);
+	D3DXMATRIX matOrtho;
+	D3DXMatrixOrthoOffCenterLH(&matOrtho, 0, (float)view.right, (float)view.bottom, 0, 0.0f, 1.0f);
+	d3dDevice->SetTransform(D3DTS_PROJECTION, &matOrtho);
+}
+
+void AudioDisplay::DrawCursorFrame()
+{
+	if (!d3dDevice || !staticValid || deviceLost || isHidden || DeviceReplaced()) {
+		QueueFullRedraw();
+		return;
+	}
+	PresentWithCursor();
+}
+
+void AudioDisplay::QueueFullRedraw()
+{
+	if (fullRedrawQueued.exchange(true))
+		return;
+	CallAfter([this]() {
+		fullRedrawQueued = false;
+		UpdateImage(false, true);
+	});
 }
 
 
@@ -979,38 +1061,22 @@ void AudioDisplay::DrawWaveform(bool weak) {
 	if (rebuildWaveform) {
 		provider->GetWaveForm(min, peak, Position*samples, w, h, samples, scale);
 	}
-	d3dLine->Begin();
-	// Draw pre-selection
 	if (!hasSel) selStartCap = w;
-	D3DXVECTOR2 v2[2];
-	HRESULT hr;
-	for (long long i = 0; i < selStartCap; i++) {
-		v2[0] = D3DXVECTOR2(i, peak[i]);
-		v2[1] = D3DXVECTOR2(i, min[i] - 1);
-		hr = d3dLine->Draw(v2, 2, waveform);
+	D3DCOLOR waveformSel = waveform;
+	if (hasSel && drawSelectionBackground) {
+		waveformSel = (NeedCommit) ? waveformModified : waveformSelected;
 	}
-
-	if (hasSel) {
-		// Draw selection
-		D3DCOLOR waveformSel = waveform;
-		if (drawSelectionBackground) {
-			if (NeedCommit) waveformSel = waveformModified;
-			else waveformSel = waveformSelected;
-		}
-		for (long long i = selStartCap; i < selEndCap; i++) {
-			v2[0] = D3DXVECTOR2(i, peak[i]);
-			v2[1] = D3DXVECTOR2(i, min[i] - 1);
-			d3dLine->Draw(v2, 2, waveformSel);
-		}
-
-		// Draw post-selection
-		for (long long i = selEndCap; i < w; i++) {
-			v2[0] = D3DXVECTOR2(i, peak[i]);
-			v2[1] = D3DXVECTOR2(i, min[i] - 1);
-			d3dLine->Draw(v2, 2, waveform);
-		}
+	// one line per column, all in a single draw call
+	waveformVertices.resize(w * 2);
+	for (int i = 0; i < w; i++) {
+		bool selected = hasSel && i >= selStartCap && i < selEndCap;
+		D3DCOLOR color = selected ? waveformSel : waveform;
+		float x = i + 0.5f;
+		CreateVERTEX(&waveformVertices[i * 2], x, peak[i] + 0.5f, color);
+		CreateVERTEX(&waveformVertices[i * 2 + 1], x, min[i] - 0.5f, color);
 	}
-	d3dLine->End();
+	if (w > 0)
+		HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINELIST, w, waveformVertices.data(), sizeof(VERTEX)), L"primitive failed");
 }
 
 
@@ -1022,29 +1088,26 @@ void AudioDisplay::DrawSpectrum(bool weak) {
 		if (!spectrumRenderer)
 			spectrumRenderer = new AudioSpectrum(provider);
 		spectrumRenderer->SetScaling(scale);
+		// the spectrum is drawn a column at a time, which video memory is slow
+		// at, so it is drawn in system memory and copied over in whole rows
+		spectrumPixels.resize((size_t)w * h * 4);
+		spectrumRenderer->RenderRange(Position*samples, (Position + w)*samples, spectrumPixels.data(), w, w, h, samplesPercent);
 		D3DLOCKED_RECT d3dlr;
-		try{
-			HRN(spectrumSurface->LockRect(&d3dlr, 0, D3DLOCK_NOSYSLOCK), _("Cannot lock texture buffer"));
-		}
-		catch (...){}
+		if (FAILED(spectrumSurface->LockRect(&d3dlr, 0, D3DLOCK_NOSYSLOCK)))
+			return;
 		byte *img = static_cast<byte *>(d3dlr.pBits);
-		int dxw = d3dlr.Pitch / 4;
-		if (dxw < w) {
-			//KaiLogSilent(L"DX surface has to small size");
+		if (d3dlr.Pitch < w * 4) {
+			spectrumSurface->UnlockRect();
 			return;
 		}
-
-
-		// Use a slightly slower, but simple way
-		// Always draw the spectrum for the entire width
-		// Hack: without those divs by 2 the display is horizontally compressed
-		spectrumRenderer->RenderRange(Position*samples, (Position + w)*samples, img, w, dxw, h, samplesPercent);
+		for (int y = 0; y < h; y++)
+			memcpy(img + y * d3dlr.Pitch, spectrumPixels.data() + (size_t)y * w * 4, w * 4);
 		spectrumSurface->UnlockRect();
 
 	}
 
 	RECT rc = { screenRect.x, screenRect.y, screenRect.width - screenRect.x, screenRect.height - screenRect.y };
-	if (FAILED(d3dDevice->StretchRect(spectrumSurface, &rc, backBuffer, &rc, D3DTEXF_LINEAR))){
+	if (FAILED(d3dDevice->StretchRect(spectrumSurface, &rc, staticSurface, &rc, D3DTEXF_LINEAR))){
 		KaiLogSilent(_("Cannot blit spectrum surfaces"));
 	}
 
@@ -1210,6 +1273,7 @@ void AudioDisplay::UpdatePosition(int pos, bool IsSample) {
 	// Set
 	Position = pos;
 	PositionSample = pos*samples;
+	staticValid = false;
 	if(wxThread::IsMain())
 		UpdateScrollbar();
 	else {
@@ -2556,10 +2620,12 @@ unsigned int _stdcall  AudioDisplay::OnUpdateTimer(PVOID pointer)
 		DWORD waitResult = WaitForMultipleObjects(sizeof(eventsToWait) / sizeof(HANDLE), eventsToWait, FALSE, INFINITE);
 		if (waitResult == WAIT_OBJECT_0) {
 			ad->stopPlayThread = false;
+			timeBeginPeriod(1);
 			while (!ad->stopPlayThread) {
 				ad->UpdateTimer();
-				Sleep(18);
+				Sleep(16);
 			}
+			timeEndPeriod(1);
 		}
 		else
 		{
@@ -2588,7 +2654,10 @@ void AudioDisplay::UpdateTimer()
 			needImageUpdateWeak = false;
 		Refresh(false);
 #else
-		DoUpdateImage(weak);
+		if (weak)
+			DrawCursorFrame();
+		else
+			QueueFullRedraw();
 #endif
 	};
 
@@ -2604,7 +2673,7 @@ void AudioDisplay::UpdateTimer()
 				int goTo = MAX(0, curPos - w * samples / 2);
 				if (goTo >= 0) {
 					UpdatePosition(goTo, true);
-					DoUpdateImage(false);
+					repaintPlaybackCursor(false);
 				}
 			}
 			else {

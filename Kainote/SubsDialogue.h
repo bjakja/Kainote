@@ -24,6 +24,7 @@
 #include "styles.h"
 #include <wx/colour.h>
 #include <vector>
+#include <atomic>
 
 enum {
 	LAYER = 1,
@@ -293,6 +294,31 @@ public:
 };
 
 //states 0-2 editstate, 4 doubtful, 8 bookmark
+// A line's visibility; any change bumps Epoch, so the file can tell when
+// its cached row numbering is out of date.
+class Visibility
+{
+public:
+	Visibility() = default;
+	Visibility(const Visibility &other) : value(other.value) {}
+	Visibility &operator=(const Visibility &other) { return *this = other.value; }
+	Visibility &operator=(unsigned char newValue)
+	{
+		if (value != newValue) {
+			value = newValue;
+			++s_Epoch;
+		}
+		return *this;
+	}
+	operator unsigned char() const { return value; }
+	// for a line not in any file yet
+	void Init(unsigned char newValue) { value = newValue; }
+	static unsigned Epoch() { return s_Epoch; }
+private:
+	unsigned char value = VISIBLE;
+	static std::atomic<unsigned> s_Epoch;
+};
+
 class Dialogue
 {
 private:
@@ -311,7 +337,7 @@ public:
 	short MarginL, MarginR, MarginV;
 	char Format, treeState = 0;
 	bool NonDialogue, IsComment;
-	unsigned char isVisible = VISIBLE;
+	Visibility isVisible;
 
 	char GetState();
 	//it works like XOR

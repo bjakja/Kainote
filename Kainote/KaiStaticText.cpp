@@ -151,6 +151,8 @@ void KaiStaticText::CalculateSize(int *w, int *h)
 }
 
 void KaiStaticText::SetLabelText(const wxString &_text){
+	if (text == _text)
+		return;
 	text = _text;
 	int fullw = originalSize.x;
 	int windowHeight = originalSize.y;
@@ -168,7 +170,6 @@ void KaiStaticText::SetLabelText(const wxString &_text){
 		}
 		//GetParent()->Layout();
 		Refresh(false);
-		Update();
 		return;
 	}
 

@@ -391,6 +391,10 @@ void SubsGrid::SaveFile(const wxString &filename, bool normalSave, bool loadFrom
 
 		}
 	}
+	if (subsFormat < SRT && !file->GetEmbeddedSections().empty()) {
+		wxString embedded = L"\r\n" + file->GetEmbeddedSections();
+		ow.PartFileWrite(embedded);
+	}
 
 	ow.CloseFile();
 	if (normalSave){
@@ -1120,7 +1124,9 @@ void SubsGrid::ShowEditedLine(int newActive, bool scroll)
 void SubsGrid::SetModified(unsigned char editionType, bool redit, bool dummy, int SetEditBoxLine, bool Scroll)
 {
 	if (file->HasChangesToRecord()){
-		SpellErrors.clear();
+		// an edit box commit already cleared the rows it changed through CopyDialogue
+		if (editionType != EDITBOX_LINE_EDITION)
+			SpellErrors.clear();
 		//wxMutexLocker lock(editionMutex);
 		if (!file->IsModified()){
 			Kai->Toolbar->UpdateId(GLOBAL_SAVE_SUBS, true);
@@ -1506,8 +1512,7 @@ void SubsGrid::GetAssHeader(wxString* header, bool forFile, bool translated, boo
 }
 
 
-//this function is called from another thread
-//need to guard every change in dialogues, styles, sinfos, and editbox->line
+//reads the edit box controls, so call it on the UI thread only
 wxString *SubsGrid::GetVisible(bool *visible, wxPoint *point, wxArrayInt *selected, bool allSubs)
 {
 	wxMutexLocker lock(editionMutex);

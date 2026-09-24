@@ -26,6 +26,28 @@
 #include <wx/dcmemory.h>
 #endif
 #include <vector>
+#ifdef _WIN32
+#include <avrt.h>
+#pragma comment(lib, "avrt.lib")
+#endif
+
+MultimediaThread::MultimediaThread(const wchar_t *task)
+{
+#ifdef _WIN32
+	DWORD taskIndex = 0;
+	m_handle = AvSetMmThreadCharacteristicsW(task, &taskIndex);
+#else
+	(void)task;
+#endif
+}
+
+MultimediaThread::~MultimediaThread()
+{
+#ifdef _WIN32
+	if (m_handle)
+		AvRevertMmThreadCharacteristics(m_handle);
+#endif
+}
 
 
 
