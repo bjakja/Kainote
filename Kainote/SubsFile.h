@@ -117,6 +117,9 @@ private:
 	// changed since the last recorded step; every change below sets it
 	bool edited = false;
 	wxString embeddedSections;
+	// the edit box commits while the user types; those steps merge into one
+	bool typing = false;
+	bool lastStepTyping = false;
 	void LoadCurrentStep();
 
 public:
@@ -126,6 +129,8 @@ public:
 	void Create();
 	void SetMutex(wxMutex* editionGuard);
 	void SaveUndo(unsigned char editionType, int activeLine, int markerLine);
+	// set around a commit made by typing rather than by the user
+	void SetTyping(bool isTyping) { typing = isTyping; }
 	bool Redo();
 	bool Undo();
 	void DummyUndoF();

@@ -262,8 +262,10 @@ void SubsFile::SaveUndo(unsigned char editionType, int activeLine, int markerLin
 	//subs->markerLine = markerLine;
 	subs->editionType = editionType;
 	File *last = m_history.Current();
-	if (editionType == EDITBOX_LINE_EDITION && last && last->editionType == EDITBOX_LINE_EDITION &&
-		last->activeLine == activeLine && m_history.CanAmend()) {
+	bool amend = typing && lastStepTyping && editionType == EDITBOX_LINE_EDITION && last &&
+		last->editionType == EDITBOX_LINE_EDITION && last->activeLine == activeLine && m_history.CanAmend();
+	lastStepTyping = typing && editionType == EDITBOX_LINE_EDITION;
+	if (amend) {
 		HandOverUsed(last, subs);
 		DestroySnapshot(m_history.SwapCurrent(subs));
 	}
@@ -283,6 +285,7 @@ void SubsFile::LoadCurrentStep()
 	delete subs;
 	subs = m_history.Current()->Copy();
 	edited = false;
+	lastStepTyping = false;
 }
 
 bool SubsFile::Redo()
@@ -623,6 +626,7 @@ void SubsFile::EndLoad(unsigned char editionType, int activeLine, bool initialSa
 		m_history.ForgetSaved();
 	subs = subs->Copy();
 	edited = false;
+	lastStepTyping = false;
 }
 
 void SubsFile::DropOldestHistory(int num)

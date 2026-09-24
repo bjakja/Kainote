@@ -1558,7 +1558,9 @@ void EditBox::OnEdit(wxCommandEvent& event)
 
 	int saveAfter = Options.GetInt(GRID_SAVE_AFTER_CHARACTER_COUNT);
 	if (saveAfter && EditCounter >= saveAfter){
+		grid->file->SetTyping(true);
 		Send(EDITBOX_LINE_EDITION, false, false, true);
+		grid->file->SetTyping(false);
 		if (hasPreviewGrid){
 			tab->grid->RefreshPreview();
 		}
