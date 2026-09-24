@@ -23,11 +23,13 @@
 #include "KaiScrollbar.h"
 #include "TextEditorTagList.h"
 #include <map>
+#include <memory>
 #include "LineParse.h"
 
 class EditBox;
 class KainoteFrame;
 class GraphicsContext;
+class GraphicsCanvas;
 wxDECLARE_EVENT(CURSOR_MOVED, wxCommandEvent);
 
 class TextEditor : public wxWindow
@@ -104,6 +106,12 @@ protected:
 	wxPoint RTLtextPos;
 	wxUniChar lastKey;
 	wxBitmap* bmp;
+	// Direct2D draws the field through this when it can; bmp is the fallback
+	std::unique_ptr<GraphicsCanvas> m_Canvas;
+	bool m_CanvasTried = false;
+	int m_CanvasFailures = 0;
+	GraphicsCanvas *Canvas();
+	bool PresentScene(int w, int h);
 	KaiScrollbar *scroll;
 	PopupTagList *tagList = nullptr;
 	wxFont font;
