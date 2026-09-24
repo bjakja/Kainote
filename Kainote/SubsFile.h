@@ -131,6 +131,8 @@ public:
 	void SaveUndo(unsigned char editionType, int activeLine, int markerLine);
 	// set around a commit made by typing rather than by the user
 	void SetTyping(bool isTyping) { typing = isTyping; }
+	// typing after this starts a new step even on the same line
+	void EndTypingRun() { lastStepTyping = false; }
 	bool Redo();
 	bool Undo();
 	void DummyUndoF();

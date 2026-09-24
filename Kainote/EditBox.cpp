@@ -360,6 +360,8 @@ EditBox::~EditBox()
 void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool autoPlay)
 {
 	bool rowChanged = currentLine != Row;
+	if (rowChanged)
+		grid->file->EndTypingRun();
 	//when preview is shown do not block setline 
 	//cause after click on preview and click back on original shit happens
 	if (nochangeline && !rowChanged && !tab->grid->preview) { 
