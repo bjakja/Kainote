@@ -23,6 +23,7 @@
 #include "KainoteFrame.h"
 #include "DshowRenderer.h"
 #include "CsriMod.h"
+#include "UtilsWindows.h"
 
 
 
@@ -43,6 +44,50 @@ void SubtitlesProvider::DestroySubtitlesProvider()
 }
 
 
+void SubtitlesProvider::Prepare(wxString *text)
+{
+	std::lock_guard<std::mutex> lock(m_PrepareMutex);
+	delete m_PrepareText;
+	m_PrepareText = text;
+	if (m_PrepareRunning || m_StopPrepare)
+		return;
+	// a finished thread has already let go of the lock for good
+	if (m_PrepareThread.joinable())
+		m_PrepareThread.join();
+	m_PrepareRunning = true;
+	m_PrepareThread = std::thread([this]() { RunPrepare(); });
+}
+
+void SubtitlesProvider::RunPrepare()
+{
+	SetThreadName(GetCurrentThreadId(), "SubtitlesPrepare");
+	for (;;) {
+		wxString *text;
+		{
+			std::lock_guard<std::mutex> lock(m_PrepareMutex);
+			text = m_PrepareText;
+			m_PrepareText = nullptr;
+			if (!text || m_StopPrepare) {
+				delete text;
+				m_PrepareRunning = false;
+				return;
+			}
+		}
+		ParseAhead(text);
+	}
+}
+
+void SubtitlesProvider::StopPreparing()
+{
+	{
+		std::lock_guard<std::mutex> lock(m_PrepareMutex);
+		m_StopPrepare = true;
+		SAFE_DELETE(m_PrepareText);
+	}
+	if (m_PrepareThread.joinable())
+		m_PrepareThread.join();
+}
+
 bool SubtitlesProvider::DrawOverlay(unsigned char* overlay, int time, wxRect* dirty)
 {
 	// without change detection the whole overlay is drawn again every time
@@ -52,6 +97,8 @@ bool SubtitlesProvider::DrawOverlay(unsigned char* overlay, int time, wxRect* di
 	return true;
 }
 
+std::recursive_mutex SubtitlesVSFilter::s_CsriMutex;
+
 SubtitlesVSFilter::SubtitlesVSFilter()
 {
 
@@ -59,6 +106,8 @@ SubtitlesVSFilter::SubtitlesVSFilter()
 
 SubtitlesVSFilter::~SubtitlesVSFilter()
 {
+	StopPreparing();
+	std::lock_guard<std::recursive_mutex> lock(s_CsriMutex);
 	SAFE_DELETE(m_CsriFrame);
 	SAFE_DELETE(m_CsriFormat);
 	m_CsriInstance = nullptr;
@@ -68,6 +117,7 @@ SubtitlesVSFilter::~SubtitlesVSFilter()
 }
 void SubtitlesVSFilter::Draw(unsigned char* buffer, int time)
 {
+	std::lock_guard<std::recursive_mutex> lock(s_CsriMutex);
 	if (m_CsriInstance){
 		//for swap -pitch and buffer set to last element - pitch
 		m_CsriFrame->strides[0] = (m_IsSwapped) ?
@@ -83,6 +133,7 @@ void SubtitlesVSFilter::Draw(unsigned char* buffer, int time)
 
 bool SubtitlesVSFilter::Open(wxString *text)
 {
+	std::lock_guard<std::recursive_mutex> lock(s_CsriMutex);
 	m_CsriInstance = nullptr;
 
 	if (!text)
@@ -93,6 +144,7 @@ bool SubtitlesVSFilter::Open(wxString *text)
 
 bool SubtitlesVSFilter::OpenString(wxString *text)
 {
+	std::lock_guard<std::recursive_mutex> lock(s_CsriMutex);
 	m_CsriInstance = nullptr;
 
 	if (!m_HasParameters){
@@ -123,34 +175,52 @@ bool SubtitlesVSFilter::OpenCached(wxString *text)
 
 bool SubtitlesVSFilter::OpenInstance(wxString *text)
 {
+	m_CsriInstance = ParseInstance(text);
+	return m_CsriInstance != nullptr;
+}
+
+// call with s_CsriMutex locked
+csri_inst *SubtitlesVSFilter::ParseInstance(wxString *text)
+{
 	// Select renderer
 	csri_rend *vobsub = GetVSFilter();
-	if (!vobsub){ 
+	if (!vobsub){
 		delete text;
 		KaiLogSilent(_("Cannot initialize CSRI."));
-		return false; 
+		return nullptr;
 	}
 
 	// mb_str() points into text's own conversion cache, so text must outlive it
 	wxScopedCharBuffer buffer = text->mb_str(wxConvUTF8);
-	m_CsriInstance = csri_open_mem(vobsub, buffer, strlen(buffer), nullptr);
+	csri_inst *instance = csri_open_mem(vobsub, buffer, strlen(buffer), nullptr);
 	delete text;
-	if (!m_CsriInstance){ 
+	if (!instance){
 		KaiLogSilent(_("Cannot create CSRI instance."));
-		return false; 
+		return nullptr;
 	}
-	if (!m_CsriFormat || csri_request_fmt(m_CsriInstance, m_CsriFormat)) {
-		if (m_CsriFrame->pixfmt == CSRI_F_BGRA) {
+	if (!m_CsriFormat || csri_request_fmt(instance, m_CsriFormat)) {
+		if (m_CsriFrame && m_CsriFrame->pixfmt == CSRI_F_BGRA) {
 			m_CsriFrame->pixfmt = CSRI_F_BGR_;
-			if (!csri_request_fmt(m_CsriInstance, m_CsriFormat))
-				return true;
+			if (!csri_request_fmt(instance, m_CsriFormat))
+				return instance;
 		}
 		KaiLogSilent(_("CSRI does not support this format."));
-		csri_close(m_CsriInstance);
-		m_CsriInstance = nullptr;
-		return false;
+		csri_close(instance);
+		return nullptr;
 	}
-	return true;
+	return instance;
+}
+
+void SubtitlesVSFilter::ParseAhead(wxString *text)
+{
+	size_t hash = ScriptHash(*text);
+	std::lock_guard<std::recursive_mutex> lock(s_CsriMutex);
+	if (!m_HasParameters || !m_CsriFormat || m_Instances.Find(hash)) {
+		delete text;
+		return;
+	}
+	if (csri_inst *instance = ParseInstance(text))
+		m_Instances.Add(hash, instance, m_CsriInstance);
 }
 
 csri_rend *SubtitlesVSFilter::GetVSFilter()
@@ -180,6 +250,8 @@ csri_rend *SubtitlesVSFilter::GetVSFilter()
 
 void SubtitlesVSFilter::GetProviders(wxArrayString *providerList)
 {
+	// it closes the renderer a parse on the worker may be using
+	std::lock_guard<std::recursive_mutex> lock(s_CsriMutex);
 	csri_rend *filter = csri_renderer_default();
 	if (!filter)
 		return;
@@ -207,6 +279,7 @@ void SubtitlesVSFilter::GetProviders(wxArrayString *providerList)
 
 void SubtitlesVSFilter::SetVideoParameters(const wxSize & size, unsigned char format, bool isSwapped)
 {
+	std::lock_guard<std::recursive_mutex> lock(s_CsriMutex);
 	m_VideoSize = size;
 	m_IsSwapped = isSwapped;
 	m_Format = format;

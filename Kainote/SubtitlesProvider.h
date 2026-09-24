@@ -58,17 +58,28 @@ public:
 	virtual void SetVideoParameters(const wxSize& size, unsigned char format, bool isSwapped) {};
 	virtual void ReloadLibraries(bool destroyExisted = false) { };
 	virtual bool IsLibass() { return false; }
-	// Parses text in the background so a later Open of the same text finds
+	// Parses text on a worker thread so a later Open of the same text finds
 	// it ready; takes the text. Only providers that can do it say so.
 	virtual bool CanPrepare() { return false; }
-	virtual void Prepare(wxString *text) { delete text; }
+	void Prepare(wxString *text);
 	//implementation in subtitlesVsfilter
 	static void DestroySubtitlesProvider();
 	static ASS_Renderer *m_Libass;
 	static ASS_Library *m_Library;
 private:
 	SubtitlesProvider(const SubtitlesProvider &copy) = delete;
+	void RunPrepare();
+	std::thread m_PrepareThread;
+	std::mutex m_PrepareMutex;
+	// the latest text to prepare; an older one still waiting is dropped
+	wxString *m_PrepareText = nullptr;
+	bool m_PrepareRunning = false;
+	bool m_StopPrepare = false;
 protected:
+	// on the worker thread; takes the text
+	virtual void ParseAhead(wxString *text) { delete text; }
+	// derived destructors call it first, as the worker calls into them
+	void StopPreparing();
 	wxSize m_VideoSize;
 	unsigned char m_Format = 0;
 	bool m_IsSwapped = false;
@@ -88,7 +99,14 @@ public:
 	bool OpenString(wxString *text);
 	static void GetProviders(wxArrayString *providerList);
 	void SetVideoParameters(const wxSize& size, unsigned char format, bool isSwapped);
+	bool CanPrepare() override { return true; }
+protected:
+	void ParseAhead(wxString *text) override;
 private:
+	// VSFilter is not safe to call from two threads at once, so every call takes this
+	static std::recursive_mutex s_CsriMutex;
+	// a parsed instance that accepts the video format, or nullptr; takes the text
+	csri_inst *ParseInstance(wxString *text);
 	bool OpenInstance(wxString *text);
 	bool OpenCached(wxString *text);
 	csri_frame *m_CsriFrame = nullptr;
@@ -112,7 +130,9 @@ public:
 	void ReloadLibraries(bool destroyExisted = false) override;
 	bool IsLibass() { return true; }
 	bool CanPrepare() override { return true; }
-	void Prepare(wxString *text) override;
+protected:
+	void ParseAhead(wxString *text) override;
+public:
 	ASS_Track *m_AssTrack = nullptr;
 	static std::atomic<bool> m_IsReady;
 	HANDLE thread = nullptr;
@@ -137,12 +157,5 @@ private:
 	static std::vector<SubtitlesLibass*> s_Instances;
 	void ForgetTracks();
 
-	void RunPrepare();
-	std::thread m_PrepareThread;
-	std::mutex m_PrepareMutex;
-	// the latest text to prepare; an older one still waiting is dropped
-	wxString *m_PrepareText = nullptr;
-	bool m_PrepareRunning = false;
-	bool m_StopPrepare = false;
 };
 
