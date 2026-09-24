@@ -31,6 +31,7 @@
 
 std::atomic<bool> SubtitlesLibass::m_IsReady{ false };
 SubtitlesLibass* SubtitlesLibass::m_LastRenderer = nullptr;
+std::vector<SubtitlesLibass*> SubtitlesLibass::s_Instances;
 wxMutex SubtitlesLibass::openMutex;
 
 void MessageCallback(int level, const char *fmt, va_list args, void *) {
@@ -69,6 +70,10 @@ unsigned int __stdcall  ProcessLibassCache(void *data)
 
 SubtitlesLibass::SubtitlesLibass()
 {
+	{
+		wxMutexLocker lock(openMutex);
+		s_Instances.push_back(this);
+	}
 	ReloadLibraries();
 }
 	
@@ -81,6 +86,12 @@ SubtitlesLibass::~SubtitlesLibass()
 	}
 	if (m_PrepareThread.joinable())
 		m_PrepareThread.join();
+	{
+		wxMutexLocker lock(openMutex);
+		std::erase(s_Instances, this);
+		if (m_LastRenderer == this)
+			m_LastRenderer = nullptr;
+	}
 
 	//close it by force can make memory leaks
 	if (thread){
@@ -266,15 +277,23 @@ void SubtitlesLibass::SetVideoParameters(const wxSize & size, unsigned char form
 	m_OverlayDrawn = wxRect(0, 0, size.GetWidth(), size.GetHeight());
 }
 
+// call with openMutex locked
+void SubtitlesLibass::ForgetTracks()
+{
+	m_AssTrack = nullptr;
+	m_Tracks.Clear();
+	m_HasRendered = false;
+}
+
 void SubtitlesLibass::ReloadLibraries(bool destroyExisted)
 {
 	wxMutexLocker lock(openMutex);
 	if (destroyExisted) {
 		//KaiLog("Libass release");
 		m_IsReady.store(false);
-		// tracks belong to the library
-		m_AssTrack = nullptr;
-		m_Tracks.Clear();
+		// tracks belong to the library, in every tab
+		for (SubtitlesLibass *instance : s_Instances)
+			instance->ForgetTracks();
 		if (m_Libass) {
 			ass_renderer_done(m_Libass);
 			m_Libass = nullptr;

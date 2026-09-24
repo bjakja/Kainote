@@ -133,6 +133,10 @@ private:
 	// all tabs share m_Libass, whose change detection compares with whatever it rendered last
 	static SubtitlesLibass* m_LastRenderer;
 
+	// every tab's tracks belong to the shared library; guarded by openMutex
+	static std::vector<SubtitlesLibass*> s_Instances;
+	void ForgetTracks();
+
 	void RunPrepare();
 	std::thread m_PrepareThread;
 	std::mutex m_PrepareMutex;
