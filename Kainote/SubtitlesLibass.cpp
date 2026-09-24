@@ -114,6 +114,8 @@ void SubtitlesLibass::Draw(unsigned char* buffer, int time)
 	wxMutexLocker lock(openMutex);
 	int change;
 	BlendImages(RenderFrame(time, &change), buffer);
+	// libass now compares with this render, not with what the overlay shows
+	m_HasRendered = false;
 }
 
 bool SubtitlesLibass::DrawOverlay(unsigned char* overlay, int time, wxRect* dirty)
