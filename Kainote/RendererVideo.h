@@ -259,6 +259,12 @@ protected:
 private:
 
 	bool InitDX();
+	// the back buffer covers the monitor, so a resize within it needs no Reset
+	bool FitsBackBuffer() const;
+	void SetProjection();
+	HWND m_DeviceWindow = nullptr;
+	UINT m_BackBufferWidth = 0;
+	UINT m_BackBufferHeight = 0;
 	virtual bool InitRendererDX(){ return true; };
 	// the text an OpenSubs flag stands for, with the vector clip mask added
 	wxString *SubtitlesText(int flag, wxString *text);

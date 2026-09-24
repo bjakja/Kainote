@@ -294,16 +294,19 @@ void RendererVideo::UpdateVideoWindow()
 	return;
 #endif
 
-	if (!InitDX()){
-		//need tests, if lost device return any error when reseting or not
-		Clear();
+	if (FitsBackBuffer())
+		SetProjection();
+	else {
 		if (!InitDX()){
-			return;
+			//need tests, if lost device return any error when reseting or not
+			Clear();
+			if (!InitDX()){
+				return;
+			}
 		}
-	}
-
-	if (m_FrameBuffer){
-		RecreateSurface();
+		if (m_FrameBuffer){
+			RecreateSurface();
+		}
 	}
 
 
@@ -330,12 +333,19 @@ bool RendererVideo::InitDX()
 
 	HRESULT hr;
 
+	// as large as the monitor, so resizing the window does not have to reset the device
+	MONITORINFO monitor = { sizeof(MONITORINFO) };
+	GetMonitorInfo(MonitorFromWindow(m_HWND, MONITOR_DEFAULTTONEAREST), &monitor);
+	m_BackBufferWidth = wxMax((UINT)m_WindowRect.right, (UINT)(monitor.rcMonitor.right - monitor.rcMonitor.left));
+	m_BackBufferHeight = wxMax((UINT)m_WindowRect.bottom, (UINT)(monitor.rcMonitor.bottom - monitor.rcMonitor.top));
+	m_DeviceWindow = m_HWND;
+
 	D3DPRESENT_PARAMETERS d3dpp;
 	ZeroMemory(&d3dpp, sizeof(d3dpp));
 	d3dpp.Windowed = TRUE;
 	d3dpp.hDeviceWindow = m_HWND;
-	d3dpp.BackBufferWidth = m_WindowRect.right;
-	d3dpp.BackBufferHeight = m_WindowRect.bottom;
+	d3dpp.BackBufferWidth = m_BackBufferWidth;
+	d3dpp.BackBufferHeight = m_BackBufferHeight;
 	d3dpp.BackBufferCount = 1;
 	d3dpp.SwapEffect = D3DSWAPEFFECT_COPY;//D3DSWAPEFFECT_COPY;//D3DSWAPEFFECT_DISCARD;//
 	d3dpp.BackBufferFormat = D3DFMT_X8R8G8B8;
@@ -384,13 +394,9 @@ bool RendererVideo::InitDX()
 	hr = m_D3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
 	HR(hr, _("One of the DirectX settings failed"));
 
-	D3DXMATRIX matOrtho;
 	D3DXMATRIX matIdentity;
-	//fix to shitty subs on radeons texture is stretched and need filtering linear and looks blured or on filter point are pixelized
-	D3DXMatrixOrthoOffCenterLH(&matOrtho, 0.5f, m_WindowRect.right + 0.5f, m_WindowRect.bottom + 0.5f, 0.5f, 0.0f, 1.0f);
 	D3DXMatrixIdentity(&matIdentity);
-
-	HR(m_D3DDevice->SetTransform(D3DTS_PROJECTION, &matOrtho), _("Cannot set matrix projection"));
+	SetProjection();
 	HR(m_D3DDevice->SetTransform(D3DTS_WORLD, &matIdentity), _("Cannot set world matrix"));
 	HR(m_D3DDevice->SetTransform(D3DTS_VIEW, &matIdentity), _("Cannot set view matrix"));
 
@@ -408,6 +414,21 @@ bool RendererVideo::InitDX()
 	HR(D3DXCreateLine(m_D3DDevice, &m_D3DLine), _("Cannot create D3DX line"));
 
 	return true;
+}
+
+bool RendererVideo::FitsBackBuffer() const
+{
+	return m_D3DDevice && !m_DeviceLost && m_HWND == m_DeviceWindow &&
+		(UINT)m_WindowRect.right <= m_BackBufferWidth && (UINT)m_WindowRect.bottom <= m_BackBufferHeight;
+}
+
+// window pixels map one to one onto the top left of the back buffer
+void RendererVideo::SetProjection()
+{
+	D3DXMATRIX matOrtho;
+	//fix to shitty subs on radeons texture is stretched and need filtering linear and looks blured or on filter point are pixelized
+	D3DXMatrixOrthoOffCenterLH(&matOrtho, 0.5f, m_WindowRect.right + 0.5f, m_WindowRect.bottom + 0.5f, 0.5f, 0.0f, 1.0f);
+	m_D3DDevice->SetTransform(D3DTS_PROJECTION, &matOrtho);
 }
 
 void RendererVideo::Clear(bool clearObject)

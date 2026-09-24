@@ -447,7 +447,7 @@ void RendererDirectShow::Render(bool redrawSubsOnFrame, bool wait)
 	if (m_HasZoom){ DrawZoom(); }
 	// End the scene
 	hr = m_D3DDevice->EndScene();
-	hr = m_D3DDevice->Present(nullptr, &m_WindowRect, nullptr, nullptr);
+	hr = m_D3DDevice->Present(&m_WindowRect, &m_WindowRect, nullptr, nullptr);
 	if (D3DERR_DEVICELOST == hr ||
 		D3DERR_DRIVERINTERNALERROR == hr){
 		if (!m_DeviceLost){
