@@ -575,48 +575,49 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 	//video
 	{
 		wxString voptspl[] = { _("Open video from context menu on full screen"), _("Left mouse button pauses video"),
-			_("Open video with time of active line"), _("Preferred audio (separated by semicolons)"),
+			_("Open video with time of active line"), _("Convert video colours on the GPU (requires reloading)"),
+			_("Preferred audio (separated by semicolons)"),
 			_("FFMS2 video seeking method (requires reloading)"), _("Subtitle display filter"),
 			_("Start video zoom in percent.")};
 		CONFIG vopts[] = { VIDEO_FULL_SCREEN_ON_START, VIDEO_PAUSE_ON_CLICK, OPEN_VIDEO_AT_ACTIVE_LINE,
-			ACCEPTED_AUDIO_STREAM, FFMS2_VIDEO_SEEKING, VSFILTER_INSTANCE, VIDEO_ZOOM_PERCENT };
+			VIDEO_GPU_CONVERSION, ACCEPTED_AUDIO_STREAM, FFMS2_VIDEO_SEEKING, VSFILTER_INSTANCE, VIDEO_ZOOM_PERCENT };
 		wxBoxSizer *MainSizer = new wxBoxSizer(wxVERTICAL);
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 4; i++)
 		{
 			KaiCheckBox *opt = new KaiCheckBox(video, -1, voptspl[i]);
 			opt->SetValue(Options.GetBool(vopts[i]));
 			ConOpt(opt, vopts[i]);
 			MainSizer->Add(opt, 0, wxALL, 2);
 		}
-		KaiStaticBoxSizer *prefaudio = new KaiStaticBoxSizer(wxHORIZONTAL, video, voptspl[3]);
-		KaiTextCtrl *tc = new KaiTextCtrl(video, -1, Options.GetString(vopts[3]), 
+		KaiStaticBoxSizer *prefaudio = new KaiStaticBoxSizer(wxHORIZONTAL, video, voptspl[4]);
+		KaiTextCtrl *tc = new KaiTextCtrl(video, -1, Options.GetString(vopts[4]),
 			wxDefaultPosition, wxSize(250, -1), wxTE_PROCESS_ENTER);
-		ConOpt(tc, vopts[3]);
+		ConOpt(tc, vopts[4]);
 		prefaudio->Add(tc, 1, wxALL | wxEXPAND, 2);
 		MainSizer->Add(prefaudio, 0, wxRIGHT | wxEXPAND, 5);
-		KaiStaticBoxSizer *seekingsizer = new KaiStaticBoxSizer(wxHORIZONTAL, video, voptspl[4]);
+		KaiStaticBoxSizer *seekingsizer = new KaiStaticBoxSizer(wxHORIZONTAL, video, voptspl[5]);
 
 		wxString seekingOpts[] = { _("Linear"), _("Normal"), 
 			_("Unsafe (always fast)"), _("Aggressive (fast in rewind)") };
 		KaiChoice *sopts = new KaiChoice(video, ID_KAI_CHOICE, 
 			wxDefaultPosition, wxSize(200, -1), 4, seekingOpts, wxTE_PROCESS_ENTER);
-		int selection = Options.GetInt(vopts[4]);
+		int selection = Options.GetInt(vopts[5]);
 		if (selection < 0 || selection > 3) {
 			selection = 2;
-			Options.SetInt(vopts[4], selection);
+			Options.SetInt(vopts[5], selection);
 			Options.SaveOptions(true, false);
 		}
 		sopts->SetSelection(selection);
 		seekingsizer->Add(sopts, 1, wxALL | wxEXPAND, 2);
 		MainSizer->Add(seekingsizer, 0, wxRIGHT | wxEXPAND, 5);
-		ConOpt(sopts, vopts[4]);
+		ConOpt(sopts, vopts[5]);
 
-		KaiStaticBoxSizer *filtersizer = new KaiStaticBoxSizer(wxHORIZONTAL, video, voptspl[5]);
+		KaiStaticBoxSizer *filtersizer = new KaiStaticBoxSizer(wxHORIZONTAL, video, voptspl[6]);
 		wxArrayString vsfilters;
 		SubtitlesProviderManager::GetProviders(&vsfilters);
 		KaiChoice *vsfiltersList = new KaiChoice(video, ID_VSFILTER_PROVIDER, 
 			wxDefaultPosition, wxSize(200, -1), vsfilters, wxTE_PROCESS_ENTER);
-		wxString name = Options.GetString(vopts[5]);
+		wxString name = Options.GetString(vopts[6]);
 		int result = vsfilters.Index(name);
 		if (result < 0)
 			result = 0;
@@ -624,16 +625,16 @@ OptionsDialog::OptionsDialog(wxWindow* parent)
 		filtersizer->Add(vsfiltersList, 1, wxALL | wxEXPAND, 2);
 		MainSizer->Add(filtersizer, 0, wxRIGHT | wxEXPAND, 5);
 
-		KaiStaticBoxSizer* zoomsizer = new KaiStaticBoxSizer(wxHORIZONTAL, video, voptspl[6]);
-		int percent = Options.GetInt(vopts[6]);
+		KaiStaticBoxSizer* zoomsizer = new KaiStaticBoxSizer(wxHORIZONTAL, video, voptspl[7]);
+		int percent = Options.GetInt(vopts[7]);
 		if (percent < 100 || percent > 1100)
 			percent = 200;
 
 		NumCtrl* zoomPercent = new NumCtrl(video, ID_VIDEO_ZOOM_PERCENT, (double)percent, 100., 1100., true);
-		ConOpt(zoomPercent, vopts[6]);
+		ConOpt(zoomPercent, vopts[7]);
 		zoomsizer->Add(zoomPercent, 1, wxALL | wxEXPAND, 2);
 		MainSizer->Add(zoomsizer, 0, wxRIGHT | wxEXPAND, 5);
-		ConOpt(vsfiltersList, vopts[5]);
+		ConOpt(vsfiltersList, vopts[6]);
 		video->SetSizerAndFit(MainSizer);
 	}
 	//Hotkeys

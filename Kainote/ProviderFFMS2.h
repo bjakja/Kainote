@@ -27,6 +27,10 @@ public:
 	void GetFrameBuffer(int frame, unsigned char** buffer) override;
 	void GetFrame(int frame, unsigned char* buff) override;
 	void PrefetchFrame(int frame) override;
+	bool IsNv12() override { return m_nv12; }
+	void UseRgbOutput() override;
+	int YuvMatrix() override;
+	bool YuvFullRange() override;
 	void GetBuffer(void* buf, long long start, long long count, double vol = 1.0) override;
 	void GetPlaybackBuffer(void* buf, long long start, long long count, double vol = 1.0) override;
 	bool RAMCache();
@@ -88,5 +92,10 @@ private:
 	FFMS_ErrorInfo m_errInfo;
 	FFMS_Index* m_index = nullptr;
 	const FFMS_Frame* m_FFMS2frame = nullptr;
+	// the frame buffers hold NV12; the FFMS output follows except briefly in GetFrame
+	bool m_nv12 = false;
+	// call with m_blockFrame locked
+	bool SetOutputFormat(bool nv12);
+	void CopyToBuffer(const FFMS_Frame* frame, unsigned char* buffer);
 	bool m_refreshFrame = false;
 };

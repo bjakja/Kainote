@@ -134,6 +134,12 @@ public:
 	volatile bool m_BlockResize = false;
 	// also read by the playback thread's seeks
 	std::atomic<bool> m_HasVisualEdition{ false };
+	// frames are NV12 that DXVA2 converts on the GPU, instead of BGRA
+	bool m_Nv12 = false;
+	size_t FrameBytes() const
+	{
+		return m_Nv12 ? (size_t)m_Width * m_Height * 3 / 2 : (size_t)m_Height * m_Pitch;
+	}
 	bool m_VideoResized = false;
 	bool m_HasZoom = false;
 	bool m_SwapFrame = false;

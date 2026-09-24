@@ -377,6 +377,7 @@ void config::LoadDefaultConfig(wxString * defaultOptions)
 	configTable[SHIFT_TIMES_STYLES] = emptyString;
 	configTable[CONVERT_TIME_PER_CHARACTER] = L"110";
 	configTable[VIDEO_INDEX] = L"true";
+	configTable[VIDEO_GPU_CONVERSION] = L"true";
 	configTable[VIDEO_PROGRESS_BAR] = L"true";
 	configTable[VIDEO_WINDOW_SIZE] = L"500,350";
 	configTable[WINDOW_SIZE] = L"1000,700";

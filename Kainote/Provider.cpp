@@ -170,7 +170,7 @@ void Provider::RunPlaybackThread()
 		if (wait_result == WAIT_OBJECT_0 + 0)
 		{
 			unsigned char* buff = m_renderer->m_FrameBuffer;
-			size_t frameBytes = (size_t)m_renderer->m_Height * (size_t)m_renderer->m_Pitch;
+			size_t frameBytes = m_renderer->FrameBytes();
 			// a second thread decodes a few frames ahead, so a slow frame
 			// does not hold up the one being shown; kept between plays
 			if (!savedQueue || savedQueue->FrameBytes() != frameBytes || savedQueue->FrameCount() != m_numFrames)

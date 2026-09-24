@@ -71,6 +71,9 @@ public:
 		}
 	}
 	bool InitRendererDX();
+	// the DXVA2 surfaces and processor NV12 frames need; false when the GPU cannot
+	bool InitNv12();
+	void BlitNv12();
 	void ClearObject() override;
 	Provider* GetFFMS2();
 	Provider *m_FFMS2 = nullptr;

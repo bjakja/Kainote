@@ -51,6 +51,13 @@ public:
 	virtual void GetFrame(int frame, unsigned char* buff) {};
 	// decodes frame ahead, so a later GetFrameBuffer only copies it
 	virtual void PrefetchFrame(int frame) {};
+	// GetFrameBuffer and playback frames come as NV12 for the GPU to convert;
+	// GetFrame always gives BGRA
+	virtual bool IsNv12() { return false; }
+	virtual void UseRgbOutput() {}
+	// the DXVA2_VideoTransferMatrix and range NV12 frames are converted with
+	virtual int YuvMatrix() { return 0; }
+	virtual bool YuvFullRange() { return false; }
 	// count mono samples, for the waveform, spectrum and other analysis
 	virtual void GetBuffer(void* buf, long long start, long long count, double vol = 1.0) {};
 	// count frames of GetChannels() interleaved samples, for playback

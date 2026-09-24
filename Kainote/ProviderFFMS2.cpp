@@ -56,6 +56,21 @@ namespace
 				memset(dst + static_cast<size_t>(y) * dstPitch + copyBytes, 0, dstPitch - copyBytes);
 		}
 	}
+
+	// packs the luma plane, then the interleaved chroma plane at half height
+	void CopyNv12FrameToBuffer(const FFMS_Frame* frame, unsigned char* dst, int width, int height)
+	{
+		if (!frame || !dst || width <= 0 || height <= 0 || !frame->Data[0] || !frame->Data[1])
+			return;
+		for (int plane = 0; plane < 2; plane++) {
+			int rows = plane ? height / 2 : height;
+			const unsigned char* src = frame->Data[plane];
+			int srcPitch = frame->Linesize[plane];
+			for (int y = 0; y < rows; ++y)
+				memcpy(dst + static_cast<size_t>(y) * width, src + static_cast<ptrdiff_t>(y) * srcPitch, width);
+			dst += static_cast<size_t>(rows) * width;
+		}
+	}
 }
 
 ProviderFFMS2::ProviderFFMS2(const wxString& filename, RendererFFMS2* renderer, 
@@ -388,6 +403,13 @@ done:
 			}
 		}
 
+#ifdef _WIN32
+		// NV12 goes to the GPU as it is, which converts it with the matrix above
+		if (m_renderer && Options.GetBool(VIDEO_GPU_CONVERSION) && m_CS != FFMS_CS_RGB &&
+			m_width % 2 == 0 && m_height % 2 == 0)
+			m_nv12 = SetOutputFormat(true);
+#endif
+
 		FFMS_Track* FrameData = FFMS_GetTrackFromVideo(m_videoSource);
 		if (FrameData == nullptr) {
 			KaiLog(_("You cannot load the video track"));
@@ -542,9 +564,63 @@ done:
 void ProviderFFMS2::GetFrame(int frame, unsigned char* buff)
 {
 	wxCriticalSectionLocker lock(m_blockFrame);
+	// screenshots and scripts want BGRA converted as before, so NV12 steps aside
+	if (m_nv12)
+		SetOutputFormat(false);
 	const FFMS_Frame *ffmsframe = FFMS_GetFrame(m_videoSource, frame, &m_errInfo);
 	CopyBgraFrameToBuffer(ffmsframe, buff, m_width, m_height);
+	if (m_nv12 && !SetOutputFormat(true))
+		KaiLogSilent(_("Cannot convert video to RGBA"));
 	m_refreshFrame = true;
+}
+
+bool ProviderFFMS2::SetOutputFormat(bool nv12)
+{
+	int pixfmt[2] = { FFMS_GetPixFmt(nv12 ? "nv12" : "bgra"), -1 };
+	if (FFMS_SetOutputFormatV2(m_videoSource, pixfmt, m_width, m_height, FFMS_RESIZER_BILINEAR, &m_errInfo))
+		return false;
+	// frames of the old format do not survive the change
+	m_FFMS2frame = nullptr;
+	m_refreshFrame = true;
+	return true;
+}
+
+void ProviderFFMS2::UseRgbOutput()
+{
+	wxCriticalSectionLocker lock(m_blockFrame);
+	if (m_nv12 && SetOutputFormat(false))
+		m_nv12 = false;
+}
+
+void ProviderFFMS2::CopyToBuffer(const FFMS_Frame* frame, unsigned char* buffer)
+{
+	static const int nv12 = FFMS_GetPixFmt("nv12");
+	// a buffer sized for NV12 takes nothing else
+	if (m_nv12) {
+		if (frame && frame->ConvertedPixelFormat == nv12)
+			CopyNv12FrameToBuffer(frame, buffer, m_width, m_height);
+	}
+	else
+		CopyBgraFrameToBuffer(frame, buffer, m_width, m_height);
+}
+
+int ProviderFFMS2::YuvMatrix()
+{
+#ifndef _WIN32
+	return 0;
+#else
+	wxCriticalSectionLocker lock(m_blockFrame);
+	if (m_colorSpace.EndsWith(L".709"))
+		return DXVA2_VideoTransferMatrix_BT709;
+	if (m_colorSpace.EndsWith(L".240M"))
+		return DXVA2_VideoTransferMatrix_SMPTE240M;
+	return DXVA2_VideoTransferMatrix_BT601;
+#endif
+}
+
+bool ProviderFFMS2::YuvFullRange()
+{
+	return m_CR == FFMS_CR_JPEG;
 }
 
 bool ProviderFFMS2::CopyFrame(int frame, unsigned char* buffer, bool forceFetch)
@@ -562,7 +638,7 @@ bool ProviderFFMS2::CopyFrame(int frame, unsigned char* buffer, bool forceFetch)
 	if (!m_FFMS2frame) {
 		return false;
 	}
-	CopyBgraFrameToBuffer(m_FFMS2frame, buffer, m_width, m_height);
+	CopyToBuffer(m_FFMS2frame, buffer);
 	return true;
 }
 
