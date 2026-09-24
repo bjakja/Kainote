@@ -403,6 +403,7 @@ done:
 			}
 		}
 
+		UpdateYuvMatrix();
 #ifdef _WIN32
 		// NV12 goes to the GPU as it is, which converts it with the matrix above
 		if (m_renderer && Options.GetBool(VIDEO_GPU_CONVERSION) && m_CS != FFMS_CS_RGB &&
@@ -604,18 +605,21 @@ void ProviderFFMS2::CopyToBuffer(const FFMS_Frame* frame, unsigned char* buffer)
 		CopyBgraFrameToBuffer(frame, buffer, m_width, m_height);
 }
 
+void ProviderFFMS2::UpdateYuvMatrix()
+{
+#ifdef _WIN32
+	if (m_colorSpace.EndsWith(L".709"))
+		m_yuvMatrix = DXVA2_VideoTransferMatrix_BT709;
+	else if (m_colorSpace.EndsWith(L".240M"))
+		m_yuvMatrix = DXVA2_VideoTransferMatrix_SMPTE240M;
+	else
+		m_yuvMatrix = DXVA2_VideoTransferMatrix_BT601;
+#endif
+}
+
 int ProviderFFMS2::YuvMatrix()
 {
-#ifndef _WIN32
-	return 0;
-#else
-	wxCriticalSectionLocker lock(m_blockFrame);
-	if (m_colorSpace.EndsWith(L".709"))
-		return DXVA2_VideoTransferMatrix_BT709;
-	if (m_colorSpace.EndsWith(L".240M"))
-		return DXVA2_VideoTransferMatrix_SMPTE240M;
-	return DXVA2_VideoTransferMatrix_BT601;
-#endif
+	return m_yuvMatrix;
 }
 
 bool ProviderFFMS2::YuvFullRange()
@@ -952,8 +956,10 @@ void ProviderFFMS2::SetColorSpace(const wxString& matrix)
 		m_refreshFrame = true;
 		//keep the old matrix when nothing changed or the next call asking for it
 		//would be dropped as a no-op and the video would stay unconverted
-		if (!failed)
+		if (!failed) {
 			m_colorSpace = matrix;
+			UpdateYuvMatrix();
+		}
 	}
 	if (failed)
 		KaiLog(_("Cannot change YCbCr matrix"));

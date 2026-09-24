@@ -94,6 +94,10 @@ private:
 	const FFMS_Frame* m_FFMS2frame = nullptr;
 	// the frame buffers hold NV12; the FFMS output follows except briefly in GetFrame
 	bool m_nv12 = false;
+	// read by every render, so it does not wait for the frame lock a decode holds
+	std::atomic<int> m_yuvMatrix{ 0 };
+	// call with m_blockFrame locked, or before frames are read
+	void UpdateYuvMatrix();
 	// call with m_blockFrame locked
 	bool SetOutputFormat(bool nv12);
 	void CopyToBuffer(const FFMS_Frame* frame, unsigned char* buffer);
