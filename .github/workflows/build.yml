@@ -426,6 +426,6 @@ jobs:
         run: >
           gh release create "$GITHUB_REF_NAME" release/*
           --verify-tag
-          --title "Kainote $VERSION"
+          --title "v$VERSION"
           --generate-notes
           ${{ needs.release-version.outputs.prerelease == 'true' && '--prerelease' || '--latest' }}
