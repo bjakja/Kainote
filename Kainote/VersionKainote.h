@@ -16,15 +16,20 @@
 //  Kainote's version, a semantic version (https://semver.org): bump MAJOR for
 //  changes that break existing configs, scripts or workflows, MINOR for new
 //  features, PATCH for fixes only.  A release candidate takes a prerelease
-//  suffix, "1.2.0-rc.1", "1.2.0-rc.2", then "1.2.0" for the release itself.
+//  suffix, "1.x.x-rc.1", "1.x.x-rc.2", then "1.x.x" for the release itself.
 //  Pushing the tag "v" + VersionKainote publishes a GitHub release, marked as
 //  a prerelease when the version has a suffix.
 //
 //  NumVersionKainote is MAJOR,MINOR,PATCH,0 for the Windows version resource;
 //  UpdateChecker.cpp fails the build if the two disagree.
 //
-//  The exact build is identified by gitparams.h, which is generated and
-//  gitignored.
+// How to cut a release:
+// Set VersionKainote in VersionKainote.h to 1.x.x-rc.1 for a candidate, or 1.x.x for a final release.
+// Set NumVersionKainote to 1,2,0,0.
+// The build fails if the two disagree.
+// Push master, then push the tag:
+// git tag v1.x.x-rc.1
+// git push origin v1.x.x-rc.1
 
-#define VersionKainote "1.1.0"
+#define VersionKainote "1.1.0-rc.1"
 #define NumVersionKainote 1,1,0,0
