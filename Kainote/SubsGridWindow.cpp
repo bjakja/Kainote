@@ -2034,13 +2034,14 @@ void SubsGrid::ShowSecondComparedLine(int Line, bool showPreview, bool fromPrevi
 
 	bool hiddenSecondGrid = !secondgrid->IsShownOnScreen();
 	if (!(showPreview || preview) && hiddenSecondGrid){ return; }
-	
+	if (!Comparison || Line < 0 || (size_t)Line >= Comparison->size()){ return; }
+
 	compareData & data = Comparison->at(Line);
 	int secondGridLine = data.secondComparedLine;
 	if (secondGridLine < 0){ return; }
 	if (setViaScroll){
 		secondgrid->scrollPosition = secondGridLine;
-		secondgrid->scrollPositionId = file->GetElementByKey(secondGridLine);
+		secondgrid->scrollPositionId = secondgrid->file->GetElementByKey(secondGridLine);
 		secondgrid->Refresh(false);
 		secondgrid->Update();
 		return;

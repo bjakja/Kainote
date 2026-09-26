@@ -1736,7 +1736,6 @@ void SubsGrid::SetMDVDTime()
 void SubsGrid::SubsComparison()
 {
 	int comparisonType = Options.GetInt(SUBS_COMPARISON_TYPE);
-	if (!comparisonType && compareStyles.size() < 1){ return; }
 	bool compareByVisible = (comparisonType & COMPARE_BY_VISIBLE) != 0;
 	bool compareByTimes = (comparisonType & COMPARE_BY_TIMES) != 0;
 	bool compareByStyles = (comparisonType & COMPARE_BY_STYLES) != 0;
