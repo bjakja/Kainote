@@ -35,6 +35,7 @@ Provider::Provider(const wxString& filename, RendererFFMS2* renderer)
 	, m_eventSetPosition(CreateEvent(0, FALSE, FALSE, 0))
 	, m_eventKillSelf(CreateEvent(0, FALSE, FALSE, 0))
 	, m_eventComplete(CreateEvent(0, FALSE, FALSE, 0))
+	, m_eventPlaybackIdle(CreateEvent(0, TRUE, TRUE, 0))
 {
 }
 
@@ -62,11 +63,20 @@ Provider::~Provider()
 	closeHandle(m_eventSetPosition);
 	closeHandle(m_eventKillSelf);
 	closeHandle(m_eventComplete);
+	closeHandle(m_eventPlaybackIdle);
 }
 
 void Provider::Play()
 {
+	ResetEvent(m_eventPlaybackIdle);
 	SetEvent(m_eventStartPlayback);
+}
+
+void Provider::WaitForPlaybackIdle()
+{
+	// the loop leaves within a frame or two once the state is not Playing;
+	// the timeout only guards the UI thread against a stuck decode
+	WaitForSingleObject(m_eventPlaybackIdle, 1000);
 }
 
 int Provider::GetSampleRate()
@@ -169,6 +179,11 @@ void Provider::RunPlaybackThread()
 
 		if (wait_result == WAIT_OBJECT_0 + 0)
 		{
+			// destroyed last, after the decoder is joined
+			struct SignalIdle {
+				HANDLE idle;
+				~SignalIdle() { SetEvent(idle); }
+			} signalIdle{ m_eventPlaybackIdle };
 			unsigned char* buff = m_renderer->m_FrameBuffer;
 			size_t frameBytes = m_renderer->FrameBytes();
 			// a second thread decodes a few frames ahead, so a slow frame

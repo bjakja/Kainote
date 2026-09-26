@@ -552,6 +552,8 @@ void RendererFFMS2::PauseStream()
 {
 #ifndef _WIN32
 	StopLinuxPlaybackThread();
+#else
+	if (m_FFMS2){ m_FFMS2->WaitForPlaybackIdle(); }
 #endif
 	if (m_AudioPlayer){ m_AudioPlayer->Stop(false); }
 	SetAudioPosition(nullptr);
@@ -561,6 +563,8 @@ void RendererFFMS2::StopStream()
 {
 #ifndef _WIN32
 	StopLinuxPlaybackThread();
+#else
+	if (m_FFMS2){ m_FFMS2->WaitForPlaybackIdle(); }
 #endif
 	if (m_AudioPlayer){ m_AudioPlayer->Stop(); }
 	SetAudioPosition(nullptr);

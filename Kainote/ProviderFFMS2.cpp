@@ -272,7 +272,16 @@ done:
 	m_indexPath = Options.pathfull + sep + L"Indices" + sep + baseName +
 		wxString::Format(L"_%i.ffindex", audiotrack);
 
-	if (wxFileExists(m_indexPath)) {
+	bool indexUsable = wxFileExists(m_indexPath);
+	if (indexUsable) {
+		// FFMS2 matches an index only by size and a hash of the file's ends, so a
+		// file completed after indexing, like a torrent filling in pieces, still matches
+		wxDateTime videoTime = wxFileName(m_filename).GetModificationTime();
+		wxDateTime indexTime = wxFileName(m_indexPath).GetModificationTime();
+		if (videoTime.IsValid() && indexTime.IsValid() && videoTime > indexTime)
+			indexUsable = false;
+	}
+	if (indexUsable) {
 		m_index = FFMS_ReadIndex(m_indexPath.utf8_str(), &m_errInfo);
 		if (!m_index) {/*do nothing to skip*/ }
 		else if (FFMS_IndexBelongsToFile(m_index, m_filename.utf8_str(), &m_errInfo))

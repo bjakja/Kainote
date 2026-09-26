@@ -71,6 +71,8 @@ public:
 	virtual bool HasVideo() { return false; };
 
 	void Play();
+	// until playback leaves its loop it still writes the frame and decodes
+	void WaitForPlaybackIdle();
 	int GetSampleRate();
 	int GetBytesPerSample();
 	int GetChannels();
@@ -116,6 +118,7 @@ protected:
 	HANDLE m_eventSetPosition = nullptr;
 	HANDLE m_eventKillSelf = nullptr;
 	HANDLE m_eventComplete = nullptr;
+	HANDLE m_eventPlaybackIdle = nullptr;
 	wxString m_filename;
 	Timebase m_timebase;
 private:
