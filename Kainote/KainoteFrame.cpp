@@ -1273,7 +1273,7 @@ void KainoteFrame::Save(bool showDialog, int tabToSave, bool changeLabel)
 		else{ extens += L"(*.txt, *.sub)|*.txt;*.sub"; };
 
 		wxString path = (atab->VideoPath != emptyString && Options.GetBool(SUBS_AUTONAMING)) ? atab->VideoPath : atab->SubsPath;
-		wxString name = path.BeforeLast(L'.');
+		wxString name = wxFileName(KaiNormalizePath(path)).GetName();
 		path = KaiPathDir(path);
 
 		wxFileDialog saveFileDialog(atab->video->GetMessageWindowParent(), _("Save subtitle file"),
