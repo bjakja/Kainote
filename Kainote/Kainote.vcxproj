@@ -605,6 +605,7 @@ pwsh -NoProfile -ExecutionPolicy Bypass -File "$(SolutionDir)Thirdparty\gen-gitp
     <ClInclude Include="TextEditorTagList.h" />
     <ClInclude Include="Toolbar.h" />
     <ClInclude Include="UtilsWindows.h" />
+    <ClInclude Include="SemVer.h" />
     <ClInclude Include="VersionKainote.h" />
     <ClInclude Include="Hotkeys.h" />
     <ClInclude Include="KaraokeSplitting.h" />

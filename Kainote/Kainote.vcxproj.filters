@@ -879,6 +879,9 @@
     <ClInclude Include="UtilsWindows.h">
       <Filter>U</Filter>
     </ClInclude>
+    <ClInclude Include="SemVer.h">
+      <Filter>V</Filter>
+    </ClInclude>
     <ClInclude Include="VersionKainote.h">
       <Filter>V</Filter>
     </ClInclude>

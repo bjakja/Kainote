@@ -10,6 +10,7 @@ add_executable(kainote_tests
     FrameQueueTests.cpp
     ParsedScriptsTests.cpp
     PlaybackTests.cpp
+    SemVerTests.cpp
     TimebaseTests.cpp
     UndoHistoryTests.cpp
     WaveformPeaksTests.cpp

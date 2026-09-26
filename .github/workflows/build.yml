@@ -2,9 +2,11 @@ name: Build
 
 on:
   # Only master on push. Branches in this repository with an open pull request
-  # would otherwise be built twice for one commit, once per event.
+  # would otherwise be built twice for one commit, once per event.  A v* tag
+  # builds and publishes a release.
   push:
     branches: [master]
+    tags: ['v*']
   pull_request:
   workflow_dispatch:
 
@@ -371,3 +373,59 @@ jobs:
           name: kainote-linux-x86_64
           path: build/dist/kainote-linux-x86_64.tar.gz*
           if-no-files-found: error
+
+  # Runs alongside the builds so a tag that does not match the source fails
+  # straight away rather than after them.
+  release-version:
+    name: Release version
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      prerelease: ${{ steps.version.outputs.prerelease }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Match the tag against VersionKainote
+        id: version
+        run: |
+          version=$(sed -n 's/^#define[[:space:]]*VersionKainote[[:space:]]*"\(.*\)".*/\1/p' Kainote/VersionKainote.h)
+          if [[ "v$version" != "$GITHUB_REF_NAME" ]]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match VersionKainote \"$version\"; tag v$version instead."
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "prerelease=$([[ "$version" == *-* ]] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+  release:
+    name: Release
+    needs: [release-version, tests, windows, linux]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ needs.release-version.outputs.version }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      # The Windows artifact is the unarchived package directory, since
+      # upload-artifact zips it anyway.
+      - name: Assemble the release files
+        run: |
+          mkdir release
+          (cd artifacts/kainote-windows-x64 && zip -qr "$OLDPWD/release/Kainote-$VERSION-windows-x64.zip" Kainote_x64)
+          cp artifacts/kainote-linux-x86_64/kainote-linux-x86_64.tar.gz "release/kainote-$VERSION-linux-x86_64.tar.gz"
+          (cd release && sha256sum * > SHA256SUMS && cat SHA256SUMS)
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: >
+          gh release create "$GITHUB_REF_NAME" release/*
+          --verify-tag
+          --title "Kainote $VERSION"
+          --generate-notes
+          ${{ needs.release-version.outputs.prerelease == 'true' && '--prerelease' || '--latest' }}

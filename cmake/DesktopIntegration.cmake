@@ -38,9 +38,15 @@ if(KAINOTE_INSTALL_DESKTOP_INTEGRATION)
 
     file(STRINGS "${CMAKE_SOURCE_DIR}/Kainote/VersionKainote.h" _ver_line
          REGEX "^#define[ \t]+VersionKainote[ \t]+\"")
-    string(REGEX MATCH "[0-9.]+" KAINOTE_VERSION "${_ver_line}")
+    string(REGEX REPLACE ".*\"([^\"]+)\".*" "\\1" KAINOTE_VERSION "${_ver_line}")
     if(NOT KAINOTE_VERSION)
         message(FATAL_ERROR "Could not read VersionKainote from Kainote/VersionKainote.h")
+    endif()
+    # A prerelease such as 1.2.0-rc.1 is a development release to AppStream.
+    if(KAINOTE_VERSION MATCHES "-")
+        set(KAINOTE_RELEASE_TYPE "development")
+    else()
+        set(KAINOTE_RELEASE_TYPE "stable")
     endif()
 
     # AppStream requires a date on every release entry. The commit date is the

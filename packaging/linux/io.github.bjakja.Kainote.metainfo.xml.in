@@ -29,7 +29,7 @@
   <url type="bugtracker">https://github.com/bjakja/Kainote/issues</url>
 
   <releases>
-    <release version="@KAINOTE_VERSION@" date="@KAINOTE_RELEASE_DATE@"/>
+    <release version="@KAINOTE_VERSION@" date="@KAINOTE_RELEASE_DATE@" type="@KAINOTE_RELEASE_TYPE@"/>
   </releases>
 
   <content_rating type="oars-1.1"/>

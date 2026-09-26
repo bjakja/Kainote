@@ -21,6 +21,7 @@
 #include "KaiStaticText.h"
 #include "KaiTextCtrl.h"
 #include "MappedButton.h"
+#include "SemVer.h"
 #include "VersionKainote.h"
 #include "config.h"
 #include <wx/sizer.h>
@@ -30,6 +31,13 @@
 
 namespace
 {
+	constexpr std::optional<SemVer> kVersion = ParseSemVer(VersionKainote);
+	constexpr long long kNumVersion[] = { NumVersionKainote };
+	static_assert(kVersion, "VersionKainote is not a semantic version");
+	static_assert(kNumVersion[0] == kVersion->major && kNumVersion[1] == kVersion->minor &&
+		kNumVersion[2] == kVersion->patch && kNumVersion[3] == 0,
+		"NumVersionKainote does not match VersionKainote");
+
 	// One place for a fork to change.
 	const wxString kReleasesUrl =
 		L"https://api.github.com/repos/bjakja/Kainote/releases?per_page=10";
@@ -57,10 +65,9 @@ namespace
 		for (const JsonValue &release : root.Items()) {
 			if (release.GetBool("draft"))
 				continue;
-			if (stableOnly && release.GetBool("prerelease"))
-				continue;
-
 			wxString tag = release.GetString("tag_name");
+			if (stableOnly && (release.GetBool("prerelease") || UpdateChecker::IsPrerelease(tag)))
+				continue;
 			if (tag.empty() || !UpdateChecker::IsNewerVersion(tag, VersionKainote))
 				continue;
 
@@ -197,24 +204,18 @@ namespace
 
 bool UpdateChecker::IsNewerVersion(const wxString &tag, const wxString &current)
 {
-	wxString left = tag;
-	wxString right = current;
-	if (left.StartsWith(L"v") || left.StartsWith(L"V"))
-		left = left.Mid(1);
-	if (right.StartsWith(L"v") || right.StartsWith(L"V"))
-		right = right.Mid(1);
+	std::string left = tag.ToStdString();
+	std::string right = current.ToStdString();
+	std::optional<SemVer> newer = ParseSemVer(left);
+	std::optional<SemVer> installed = ParseSemVer(right);
+	return newer && installed && CompareSemVer(*newer, *installed) > 0;
+}
 
-	for (int i = 0; i < 4; i++) {
-		long a = 0, b = 0;
-		left.BeforeFirst(L'.').ToLong(&a);
-		right.BeforeFirst(L'.').ToLong(&b);
-		if (a != b)
-			return a > b;
-
-		left = left.AfterFirst(L'.');
-		right = right.AfterFirst(L'.');
-	}
-	return false;
+bool UpdateChecker::IsPrerelease(const wxString &tag)
+{
+	std::string text = tag.ToStdString();
+	std::optional<SemVer> version = ParseSemVer(text);
+	return version && !version->prerelease.empty();
 }
 
 void UpdateChecker::CheckOnStartup(wxWindow *parent)

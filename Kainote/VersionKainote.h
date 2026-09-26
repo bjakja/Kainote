@@ -13,16 +13,18 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-//  Kainote's declared version.  Bump it deliberately when cutting a release.
+//  Kainote's version, a semantic version (https://semver.org): bump MAJOR for
+//  changes that break existing configs, scripts or workflows, MINOR for new
+//  features, PATCH for fixes only.  A release candidate takes a prerelease
+//  suffix, "1.2.0-rc.1", "1.2.0-rc.2", then "1.2.0" for the release itself.
+//  Pushing the tag "v" + VersionKainote publishes a GitHub release, marked as
+//  a prerelease when the version has a suffix.
 //
-//  This used to be rewritten on every Release|x64 build by AutoVersioning.exe,
-//  a binary with no source in the tree, which meant each build dirtied a
-//  tracked file.  The exact build is identified by gitparams.h instead, which
-//  is generated and gitignored.
+//  NumVersionKainote is MAJOR,MINOR,PATCH,0 for the Windows version resource;
+//  UpdateChecker.cpp fails the build if the two disagree.
+//
+//  The exact build is identified by gitparams.h, which is generated and
+//  gitignored.
 
-//StableRelease: v0.9.3.893
-//StableReleaseLink: https://github.com/bjakja/Kainote/releases/download/v0.9.3.893/Kainote.x64.zip
-//VersionKainoteX86: 0.9.3.910
-
-#define VersionKainote "1.0.0.1566"
-#define NumVersionKainote 1,0,0,1566
+#define VersionKainote "1.1.0"
+#define NumVersionKainote 1,1,0,0

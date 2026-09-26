@@ -14,6 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
+#include "SemVer.h"
 #include "VersionKainote.h"
 #include "OpennWrite.h"
 #include "KaiMessageBox.h"
@@ -849,13 +850,14 @@ void config::ResetDefault()
 
 bool config::ConfigNeedToConvert(const wxString & fullVersion)
 {
-	int first = fullVersion.find(L".");//0.8.0.build
-	if (first > -1){
-		wxString ver = fullVersion.Mid(first + 5).BeforeFirst(L' ');
-		int version = wxAtoi(ver);
-		return (version < 1142);
-	}
-	return true;
+	// Only configs from before build 1142 of the old four-part versions need converting.
+	wxString version = fullVersion.AfterFirst(L'v').BeforeFirst(L' ');
+	if (ParseSemVer(version.ToStdString()))
+		return false;
+
+	wxArrayString parts = wxSplit(version, L'.');
+	long build = 0;
+	return parts.size() != 4 || !parts[3].ToLong(&build) || build < 1142;
 }
 
 bool config::LoadAudioOpts()
