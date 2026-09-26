@@ -1026,11 +1026,8 @@ void PopupList::OnPaint(wxPaintEvent &event)
 			int descw = 0, desch = 0;
 			GetTextExtent(desc, &descw, &desch, nullptr, nullptr, &font);
 			//the font name cannot have 1000+ chars that's why not check it 
-			if (descw + textw + 12 > w) {
-				if(newWidth < descw + textw + 40)
-					newWidth = descw + textw + 40;
-
-			}
+			if (newWidth < descw + textw + 12)
+				newWidth = descw + textw + 12;
 
 			tdc.SetFont(copyFont);
 			tdc.DrawText(previewText, w - 4 - textw, (height*i) + ((height - texth) / 2));
@@ -1045,20 +1042,20 @@ void PopupList::OnPaint(wxPaintEvent &event)
 		tdc.DrawText(desc, rowRect.x, rowRect.y + wxMax(0, (rowRect.height - desch) / 2));
 		tdc.DestroyClippingRegion();
 	}
-	if (newWidth > 0) {
-		SetSize(wxSize(newWidth, h));
-		wxPoint newPosition = Parent->ClientToScreen(originalPosition);
-		SetPosition(newPosition);
-		
-		if (scroll) {
-			int thickness = scroll->GetThickness();
-			scroll->SetSize(wxMax(0, newWidth - thickness - 1), 1, thickness, wxMax(0, h - 2));
-		}
-		return;
-	}
-
 	wxPaintDC dc(this);
 	dc.Blit(0, 0, ow, h, &tdc, 0, 0);
+
+	// grow only, otherwise the resize and repaint can chase each other
+	if (newWidth > w) {
+		int newOuterWidth = ow + (newWidth - w);
+		SetSize(wxSize(newOuterWidth, h));
+		SetPosition(Parent->ClientToScreen(originalPosition));
+		if (scroll) {
+			int thickness = scroll->GetThickness();
+			scroll->SetSize(wxMax(0, newOuterWidth - thickness - 1), 1, thickness, wxMax(0, h - 2));
+		}
+		Refresh(false);
+	}
 }
 
 void PopupList::SetSelection(int pos){
